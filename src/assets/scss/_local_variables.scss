@@ -1,0 +1,26 @@
+$blue: #00a4ff;
+
+$orange: #ed711f;
+
+$light-blue: #d7e6f8;
+
+$light-gray: #f2f2f2;
+$light-gray-hover: #e5e5e5;
+
+$warn: #e1504a;
+
+@mixin hv {
+  display: flex;
+  align-items: center;
+}
+  
+/** 水平垂直居中 **/
+@mixin hva {
+  @include hv;
+  justify-content: center;
+}
+
+@mixin hvs {
+  @include hva;
+  justify-content: space-between;
+}
