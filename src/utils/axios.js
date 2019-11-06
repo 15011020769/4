@@ -8,7 +8,7 @@ const conf = {
   timeout: 60 * 1000,
   loading: true,
   headers: {
-    uuid: '65f2654cfa2b4ad59ec034899ad5d580',
+    uuid: '8760f095090443b6ac76934866a06e9f',
     Pragma: 'no-cache',
     'Cache-Control': 'no-cache'
   }

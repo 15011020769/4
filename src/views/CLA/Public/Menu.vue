@@ -10,6 +10,10 @@
         <i class="iconfont">&#xe679;</i>
         <span slot="title">跟踪集</span>
       </el-menu-item>
+      <el-menu-item index="History">
+        <i class="iconfont">&#xe679;</i>
+        <span slot="title">历史记录导出</span>
+      </el-menu-item>
     </el-menu>
   </div>
 </template>

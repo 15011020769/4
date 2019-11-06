@@ -276,6 +276,8 @@ export default {
         MaxResults: this.MaxResults,
         StartTime: this.oldTime // 开始时间
       }
+      console.log(params)
+      
       this.axios.post(YJS_LIST, params).then(({ data }) => {
         this.tableData = data.Events
         // console.log(this.tableData)
@@ -345,7 +347,49 @@ export default {
   }
 }
 </script>
-
+<style lang="scss" >
+.search_dropdown {
+  width: 485px;
+  .el-select {
+    .el-input__inner {
+      width: 130px;
+    }
+  }
+  .el-input__inner {
+    width: 300px;
+    margin-left: -1px;
+  }
+  .el-input-group__prepend {
+    border-radius: 0px;
+    width: 105px;
+    height: 28px;
+    background: #f2f2f2;
+    border: 1px solid rgb(221, 221, 221);
+  }
+  .el-input-group__append {
+    width: 0px;
+    height: 0px;
+    padding: 0px;
+    border: 0px;
+  }
+  .el-input-group__append button.el-button {
+    padding: 0px;
+    margin-left: -85px;
+    padding: 6px 7px;
+  }
+}
+.date {
+  .el-date-editor {
+    .el-icon-date {
+      margin-bottom: 8px;
+    }
+  }
+  .el-range-separator{
+    padding:0;
+    margin-bottom: 8px;
+  }
+}
+</style>
 <style lang="scss" scoped >
 .title_top {
   height: 50px;
@@ -379,31 +423,6 @@ export default {
   display: flex;
   .search_dropdown {
     width: 485px;
-    .el-input-group__prepend {
-      border-radius: 0px;
-      width: 105px;
-      height: 28px;
-      background: #f2f2f2;
-      border: 1px solid rgb(221, 221, 221);
-    }
-    .el-input-group__prepend .el-input {
-      border: 0px;
-    }
-    .el-input-group > .el-input__inner {
-      width: 300px;
-      margin-left: -1px;
-    }
-    .el-input-group__append {
-      width: 0px;
-      height: 0px;
-      padding: 0px;
-      border: 0px;
-    }
-    .el-input-group__append button.el-button {
-      padding: 0px;
-      margin-left: -76px;
-      padding: 6px 7px;
-    }
   }
   .search_text {
     .el-input__inner {
@@ -441,7 +460,7 @@ export default {
   }
   .updates_download {
     display: flex;
-    width: 350px;
+    width: 375px;
     justify-content: flex-end;
     .updates {
       margin-right: 5px;

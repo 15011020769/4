@@ -25,7 +25,7 @@
         </div>
       </div>
       <div class="tables">
-        <el-table :data="tableData" style="width: 100%" @click="a">
+        <el-table :data="tableData" style="width: 100%" >
           <template slot="empty">暂无跟踪集</template>
           <el-table-column width="27"></el-table-column>
           <el-table-column prop="name" label="名称" width="225">
@@ -66,12 +66,7 @@ export default {
     }
   },
   created () {
-    this.axios.post(GZJ_LIST).then(({ data }) => {
-      this.tableData = data.auditLists
-      if (this.tableData.length >= 1) {
-        this.isDisabled = true
-      }
-    })
+    this.getData()
   },
   methods: {
     // 详情页跳转
@@ -88,6 +83,19 @@ export default {
       this.$router.push({
         path: '/cloudaudit-tranking/Create-tranking'
       })
+    },
+    getData () {
+      let params = {
+        Version: '2019-03-19',
+        Region: 'ap-guangzhou'
+      }
+      this.axios.post(GZJ_LIST, params).then(({ data }) => {
+        console.log(data)
+        this.tableData = data.auditLists
+        if (this.tableData.length >= 1) {
+          this.isDisabled = true
+        }
+      })
     }
   }
 }
@@ -100,6 +108,8 @@ export default {
   h1 {
     padding-left: 20px;
     line-height: 50px;
+    font-size: 16px;
+    font-weight: 700;
   }
 }
 .tea-content__body {
@@ -117,6 +127,9 @@ export default {
     margin-left: auto;
     margin-right: auto;
     margin-bottom: 20px;
+    p{
+      line-height: 20px;
+    }
   }
 }
 .btn {

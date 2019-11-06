@@ -29,6 +29,14 @@ export default new Router({
       meta: {
         keepAlive: true
       }
+    },
+    {
+      path: '/History', // 历史记录导出
+      name: 'History',
+      component: () => import(/* webpackChunkName: "History" */ './History/History.vue'),
+      meta: {
+        keepAlive: true
+      }
     }
     // {
     //   path: '/NewAudit', // 跟踪集  新建
