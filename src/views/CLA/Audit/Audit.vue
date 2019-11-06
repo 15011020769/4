@@ -59,6 +59,7 @@ export default {
   data () {
     return {
       value1: '',
+      input3: '',
       isDisabled: false, // 创建按钮
       visible: false,
       tableData: [] // 列表数据

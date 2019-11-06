@@ -44,7 +44,7 @@
               <template>
                 <div style="width:80px;" class="daochu">
                   <a href="javascript:;">导出为CSV</a>
-                  <br>
+                  <br />
                   <a href="javascript:;">导出为JSON</a>
                 </div>
               </template>
@@ -243,7 +243,8 @@ export default {
         }
       ],
       value: '1',
-      tableData: ''
+      tableData: '',
+      input3: ''
     }
   },
   created () {
@@ -352,6 +353,8 @@ export default {
   h1 {
     padding-left: 20px;
     line-height: 50px;
+    font-size: 16px;
+    font-weight: 700;
   }
 }
 .tea-content__body {
@@ -450,7 +453,7 @@ export default {
         background: transparent;
         border: 0px;
       }
-      .el-popper[x-placement^="bottom"] {
+      .el-popper[x-placement^='bottom'] {
         width: 100px !important;
       }
     }
@@ -578,7 +581,7 @@ export default {
   }
 }
 
-[class^="el-icon-"] {
+[class^='el-icon-'] {
   margin-top: 2px;
   cursor: pointer;
 }

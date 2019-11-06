@@ -4,7 +4,7 @@ import { Loading } from 'element-ui'
 import axios from 'axios'
 
 const conf = {
-  baseURL: 'http://212.64.104.240:8868/product' || '',
+  baseURL: 'http://212.64.104.240:8868/product/' || '',
   timeout: 60 * 1000,
   loading: true,
   headers: {
