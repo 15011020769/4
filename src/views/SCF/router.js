@@ -1,5 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import overView from './overView/overView'
+import FuncServe from './FuncServe/FuncServe'
 
 Vue.use(Router)
 
@@ -7,17 +9,17 @@ export default new Router({
   mode: 'history',
   base: process.env.BASE_URL,
   redirect: {
-    name: 'OverView'
+    name: 'overView'
   },
   routes: [
     {
       path: '/',
-      redirect: '/OverView'
+      redirect: '/overView'
     },
     {
-      path: '/OverView', // 概览
-      name: 'OverView',
-      component: () => import(/* webpackChunkName: "overview" */ './OverView/OverView.vue'),
+      path: '/overView', // 概览
+      name: 'overView',
+      component: overView,
       meta: {
         keepAlive: true
       }
@@ -25,7 +27,7 @@ export default new Router({
     {
       path: '/FuncServe', // 函数服务
       name: 'FuncServe',
-      component: () => import(/* webpackChunkName: "FuncServe" */ './FuncServe/FuncServe.vue'),
+      component: FuncServe,
       meta: {
         keepAlive: true
       }
