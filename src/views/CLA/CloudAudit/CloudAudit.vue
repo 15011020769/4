@@ -277,7 +277,7 @@ export default {
         StartTime: this.oldTime // 开始时间
       }
       console.log(params)
-      
+
       this.axios.post(YJS_LIST, params).then(({ data }) => {
         this.tableData = data.Events
         // console.log(this.tableData)
@@ -384,8 +384,8 @@ export default {
       margin-bottom: 8px;
     }
   }
-  .el-range-separator{
-    padding:0;
+  .el-range-separator {
+    padding: 0;
     margin-bottom: 8px;
   }
 }
@@ -450,7 +450,7 @@ export default {
     cursor: pointer;
   }
   .date {
-    margin-left: -24px;
+    margin-left: -30px;
   }
   .el-date-editor--daterange.el-input__inner {
     width: 287px;

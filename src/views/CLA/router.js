@@ -37,22 +37,22 @@ export default new Router({
       meta: {
         keepAlive: true
       }
+    },
+    {
+      path: '/NewAudit', // 跟踪集  新建
+      name: 'NewAudit',
+      component: () => import(/* webpackChunkName: "NewAudit" */ './Audit/NewAudit.vue'),
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
+      path: '/DetailAudit', // 跟踪集  详情
+      name: 'DetailAudit',
+      component: () => import(/* webpackChunkName: "DetailAudit" */ './Audit/DetailAudit.vue'),
+      meta: {
+        keepAlive: true
+      }
     }
-    // {
-    //   path: '/NewAudit', // 跟踪集  新建
-    //   name: 'NewAudit',
-    //   component: () => import(/* webpackChunkName: "NewAudit" */ './Audit/NewAudit.vue'),
-    //   meta: {
-    //     keepAlive: true
-    //   }
-    // },
-    // {
-    //   path: '/DetailAudit', // 跟踪集  详情
-    //   name: 'DetailAudit',
-    //   component: () => import(/* webpackChunkName: "DetailAudit" */ './Audit/DetailAudit.vue'),
-    //   meta: {
-    //     keepAlive: true
-    //   }
-    // }
   ]
 })

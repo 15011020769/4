@@ -20,7 +20,7 @@
         </p>
       </div>
       <div class="btn">
-        <el-button :plain="true">申请导出</el-button>
+        <el-button :plain="true" type="text" @click="dialogVisible = true">申请导出</el-button>
       </div>
       <div class="tables">
         <el-table :data="tableData" style="width: 100%">
@@ -44,11 +44,33 @@
               <div v-if="scope.row.status==1" class="off_color">开启</div>
             </template>
           </el-table-column>
-          <el-table-column prop="" label="数据申请时间"></el-table-column>
-          <el-table-column prop="" label="操作"></el-table-column>
+          <el-table-column prop label="数据申请时间"></el-table-column>
+          <el-table-column prop label="操作"></el-table-column>
         </el-table>
       </div>
     </div>
+    <!-- 模态框 -->
+    <el-dialog title="导出条件" :visible.sync="dialogVisible" width="30%" :before-close="handleClose">
+      <el-form :model="form">
+        <el-form-item label="时间范围">
+          <el-radio-group v-model="form.radio2">
+            <el-radio :label="0">最近一个月</el-radio>
+            <el-radio :label="1">最近六个月</el-radio>
+            <el-radio :label="2">自定义时间</el-radio>
+          </el-radio-group>
+          <el-button type="primary" @click="innerVisible = true">打开内层 Dialog</el-button>
+        </el-form-item>
+      </el-form>
+      <el-dialog width="30%" title="操作提示" :visible.sync="innerVisible" append-to-body>
+       <p>1. 历史数据导出为离线操作，导出成功后将通过邮件和短信下发确认投递通知，请确保联系方式无误。</p>
+       <p>2. 导出数据投递至 cos 所产生的存储费用，将依据 COS 标准计费进行收取，查看 COS 计费详情。</p>
+       <el-radio >上述信息我已知晓</el-radio>
+      </el-dialog>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -58,10 +80,24 @@ export default {
       value1: '',
       input3: '',
       visible: false,
+      dialogVisible: false, // 模态框
+      innerVisible: false, // 内层模态窗
+      form: {
+        radio: 1
+      },
       tableData: [] // 列表数据
     }
   },
-  methods: {}
+  methods: {
+    // 模态框的关闭
+    handleClose (done) {
+      this.$confirm('确认关闭？')
+        .then(_ => {
+          done()
+        })
+        .catch(_ => {})
+    }
+  }
 }
 </script>
 
@@ -118,6 +154,7 @@ export default {
     overflow: visible;
   }
   .el-button {
+    padding:8px;
     height: 30px;
     background-color: #006eff;
     color: #fff;

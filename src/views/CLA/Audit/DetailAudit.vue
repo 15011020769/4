@@ -98,7 +98,7 @@
 </template>
 
 <script>
-import { isYan, isYan1 } from '@/utils/validate';
+import { isYan, isYan1 } from '@/utils/validate'
 import {
   GZJ_DETAILIST,
   GZJ_DELETE,
@@ -106,15 +106,15 @@ import {
   GZJ_STRATLOGGING,
   GZJ_UPDATEAUDIT,
   LIST_COSBUCKETS
-} from '@/constants';
+} from '@/constants'
 export default {
   data () {
     let LogFile = (rule, value, callback) => {
       if (value === '') {
-        this.text2 = '';
+        this.text2 = ''
         callback(new Error('请输入cos存储库'))
       } else if (!isYan1(value)) {
-        this.text2 = '';
+        this.text2 = ''
         callback(new Error('仅支持小写字母、数字的组合，不能超过40字符。'))
       } else {
         callback()
@@ -177,40 +177,40 @@ export default {
     // cos存储桶失焦
     cosBlur () {
       if (this.ruleForm.COS == '') {
-        this.borderColor = '#F56C6C';
-        this.text1 = '请输入cos存储库';
-        this.color = '#F56C6C';
+        this.borderColor = '#F56C6C'
+        this.text1 = '请输入cos存储库'
+        this.color = '#F56C6C'
       } else if (!isYan1(this.ruleForm.COS)) {
-        this.text1 = '仅支持小写字母、数字的组合，不能超过40字符。';
-        this.color = '#F56C6C';
-        this.borderColor = '#F56C6C';
+        this.text1 = '仅支持小写字母、数字的组合，不能超过40字符。'
+        this.color = '#F56C6C'
+        this.borderColor = '#F56C6C'
       } else {
         for (var i = 0; i < this.ListCos.length; i++) {
           if (this.ruleForm.COS == this.ListCos[i].name) {
-            this.text1 = '您已创建和拥有此存储桶';
-            this.color = '#F56C6C';
-            this.borderColor = '#F56C6C';
+            this.text1 = '您已创建和拥有此存储桶'
+            this.color = '#F56C6C'
+            this.borderColor = '#F56C6C'
             return
           } else {
-            this.text1 = '仅支持小写字母、数字的组合，不能超过40字符。';
-            this.color = '#888';
-            this.borderColor = '#67C23A';
+            this.text1 = '仅支持小写字母、数字的组合，不能超过40字符。'
+            this.color = '#888'
+            this.borderColor = '#67C23A'
           }
         }
       }
     },
     cosFocus () {
       if (this.text1 == '请输入cos存储库') {
-        this.borderColor = '#F56C6C';
+        this.borderColor = '#F56C6C'
       } else if (
         this.color == '#F56C6C' &&
         this.text1 == '仅支持小写字母、数字的组合，不能超过40字符。'
       ) {
-        this.borderColor = '#F56C6C';
+        this.borderColor = '#F56C6C'
       } else if (this.text1 == '您已创建和拥有此存储桶') {
-        this.borderColor = '#F56C6C';
+        this.borderColor = '#F56C6C'
       } else {
-        this.borderColor = '#2277da';
+        this.borderColor = '#2277da'
       }
     },
     submitForm () {
@@ -239,10 +239,10 @@ export default {
       })
     },
     EmptyData () {
-      this.ruleForm.COS = '';
-      this.text1 = '仅支持小写字母、数字的组合，不能超过40字符。';
-      this.color = '#888';
-      this.borderColor = '#c0c4cc';
+      this.ruleForm.COS = ''
+      this.text1 = '仅支持小写字母、数字的组合，不能超过40字符。'
+      this.color = '#888'
+      this.borderColor = '#c0c4cc'
     },
     // 取消
     resetForm () {
@@ -255,7 +255,7 @@ export default {
       this.ShowBox = true
       this.TextShow = false
       this.EmptyData()
-      this.ruleForm.log_file = '';
+      this.ruleForm.log_file = ''
     },
     Yes () {
       this.YesShow = true
@@ -347,7 +347,7 @@ export default {
   line-height: 50px;
   justify-content: space-between;
   .back {
-    /deep/[class^="el-icon-"] {
+    [class^="el-icon-"] {
       color: #006eff;
       line-height: 50px;
       font-size: 20px;
@@ -362,15 +362,15 @@ export default {
     }
   }
   .off {
-    /deep/.el-switch__label * {
+    .el-switch__label * {
       font-size: 12px;
       color: #000;
     }
-    /deep/.el-switch.is-checked .el-switch__core {
+    .el-switch.is-checked .el-switch__core {
       border-color: #006eff;
       background-color: #006eff;
     }
-    /deep/.el-message-box--center .el-message-box__title {
+    .el-message-box--center .el-message-box__title {
       font-size: 18px;
       color: #171d25;
       vertical-align: middle;
@@ -470,23 +470,23 @@ export default {
       color: #888;
       font-size: 12px;
     }
-    /deep/.el-form-item__label {
+    .el-form-item__label {
       font-size: 12px;
       text-align: left;
       line-height: 30px;
     }
-    /deep/.el-input__inner {
+    .el-input__inner {
       width: 180px;
       height: 30px;
       border-radius: 0px;
     }
-    /deep/.el-form-item__content {
+    .el-form-item__content {
       line-height: 30px;
     }
-    /deep/.el-form-item {
+    .el-form-item {
       margin-bottom: 10px;
     }
-    /deep/.el-input__icon {
+    .el-input__icon {
       height: 116%;
     }
   }
@@ -494,7 +494,7 @@ export default {
 
 .del {
   margin-top: 20px;
-  /deep/.el-button {
+  .el-button {
     height: 30px;
     min-width: 24px;
     padding: 0 20px;
@@ -505,12 +505,12 @@ export default {
     font-size: 12px;
     border-radius: 0px;
   }
-  /deep/.el-button:hover {
+  .el-button:hover {
     background: #0063e5;
     border-color: #0063e5;
     color: #fff;
   }
-  /deep/.el-button.is-plain:hover {
+  .el-button.is-plain:hover {
     background: #0063e5;
     border-color: #0063e5;
     color: #fff;

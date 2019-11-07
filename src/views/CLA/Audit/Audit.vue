@@ -72,7 +72,7 @@ export default {
     // 详情页跳转
     handleClick (rows) {
       this.$router.push({
-        path: '/cloudaudit-tranking/DetailList-tranking',
+        path: '/DetailAudit',
         query: {
           auditNameList: rows.name
         }
@@ -81,7 +81,7 @@ export default {
     // 创建
     Create () {
       this.$router.push({
-        path: '/cloudaudit-tranking/Create-tranking'
+        path: '/NewAudit'
       })
     },
     getData () {
@@ -90,7 +90,6 @@ export default {
         Region: 'ap-guangzhou'
       }
       this.axios.post(GZJ_LIST, params).then(({ data }) => {
-        console.log(data)
         this.tableData = data.auditLists
         if (this.tableData.length >= 1) {
           this.isDisabled = true
