@@ -40,7 +40,8 @@
     <div class="modelchart">
       <h3>使用统计</h3>
       <div>
-        <el-select v-model="value" placeholder="请选择" filterable>
+        
+        <el-select class="selectAddress" v-model="valueAddress" placeholder="请选择" filterable>
           <el-option
             v-for="item in address"
             :key="item.value"
@@ -48,6 +49,66 @@
             :value="item.value">
           </el-option>
         </el-select>
+        
+        <el-button-group>
+          <el-button @click="thisTime(1)">实时</el-button>
+          <el-button @click="thisTime(2)">近24小时</el-button>
+          <el-button @click="thisTime(3)">近七天</el-button>
+        </el-button-group>
+        <el-date-picker class="newDataTime"
+          v-model="value2"
+          type="datetimerange"
+          
+          range-separator="至"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+          align="right">
+        </el-date-picker>
+        <span>
+          粒度：<el-select class="selectTime" v-model="value" placeholder="请选择" filterable >
+          <el-option
+            v-for="item in selectTime"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value">
+          </el-option>
+        </el-select>
+        </span>
+
+      </div>
+      <div class="chartShowCon">
+        <div class="chartShowTit">
+          <el-button-group>
+            <el-button @click="btnClick(1)" :class="{'addColor':type=='1'}">调用次数<span>(次)</span></el-button>
+            <el-button @click="btnClick(2)" :class="{'addColor':type=='2'}">运行时间<span>(ms)</span></el-button>
+            <el-button @click="btnClick(3)" :class="{'addColor':type=='3'}">错误次数<span>(次)</span></el-button>
+            <el-button @click="btnClick(4)" :class="{'addColor':type=='4'}">并发执行个数<span>(个)</span></el-button>
+            <el-button @click="btnClick(5)" :class="{'addColor':type=='5'}">受限次数<span>(次)</span></el-button>
+          </el-button-group>
+        </div>
+        <div class="chartCon" id="echartsShow" ref="chartY">
+
+        </div>
+        <div class="chartNum newClear">
+          <span>函数{{newData}}TOP 10统计</span>
+          <span><a>刷新</a></span>
+        </div>
+        <div class="chartTable">
+          <!-- <el-table :data="tableData"  ref="multipleTable" class="funDataTable">
+            <el-table-column prop="funName" label="函数名"></el-table-column>
+            <el-table-column prop="nameSpace" label="命名空间"></el-table-column>
+            <el-table-column prop="dataNum" label="数据指标"></el-table-column>
+          </el-table> -->
+          <el-table
+              ref="multipleTable"
+              :data="tableData"
+              tooltip-effect="dark"
+              style="width: 100%" class="funDataTable">
+              <el-table-column prop="funName" label="函数名"></el-table-column>
+            <el-table-column prop="nameSpace" label="命名空间"></el-table-column>
+            <el-table-column prop="dataNum" label="数据指标"></el-table-column>
+          </el-table>
+        </div>
       </div>
     </div>
   </div>
@@ -55,6 +116,7 @@
 </template>
 
 <script>
+import echarts from 'echarts'
 
 export default {
   data() {
@@ -63,7 +125,9 @@ export default {
         number:0,
         thirdNum:0
       },
-      svalue:"",
+      type:"1",
+      value:"",
+      valueAddress:"",
       address:[
         {
           value:"1",
@@ -81,13 +145,129 @@ export default {
           value:"4",
           label:"北京"
         }
-      ]
+      ],
+      newData:"调用次数",
+      selectTime:[
+        {
+          value:"time1",
+          label:"一分钟"
+        },
+        {
+          value:"time2",
+          label:"五分钟"
+        },
+        {
+          value:"time3",
+          label:"一小时"
+        },
+        {
+          value:"time4",
+          label:"一天"
+        }
+      ],
+      value2:'',
+      changeColor:"",
+      tableData:[
+        {
+        funName:"函数名1",
+        nameSpace:"命名空间1",
+        dataNum:"数据指标1"
+      },{
+        funName:"函数名2",
+        nameSpace:"命名空间2",
+        dataNum:"数据指标2"
+      },{
+        funName:"函数名3",
+        nameSpace:"命名空间2",
+        dataNum:"数据指标3"
+      }
+      ],
+      charts: ""
     }
+  },
+  methods:{
+    thisTime(thisTime){
+      var ipt1=document.querySelector(".newDataTime input:nth-child(2)");
+      var ipt2=document.querySelector(".newDataTime input:nth-child(4)");
+      const end = new Date();
+      const start = new Date();
+      if(thisTime=="1"){
+        start.setTime(start.getTime() - 3600 * 1000 );
+      }
+      else if(thisTime=="2"){
+        start.setTime(start.getTime() - 3600 * 1000 * 24);
+      }
+      else if(thisTime=="3"){
+        start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+      }
+      ipt1.value=start.toLocaleString('chinese',{hour12:false}).replace(/\//g,'-');
+      ipt2.value=end.toLocaleString('chinese',{hour12:false}).replace(/\//g,'-')
+    },
+    btnClick(clickNode){
+      this.type=clickNode;
+      if(clickNode=="1"){
+        this.newData="调用次数"
+      }else if(clickNode=="2"){
+        this.newData="运行时间"
+      }else if(clickNode=="3"){
+        this.newData="错误次数"
+      }else if(clickNode=="4"){
+        this.newData="并发执行个数"
+      }else if(clickNode=="5"){
+        this.newData="受限次数"
+      }
+    },
+    initChart() {
+      this.chart = echarts.init(document.getElementById("echartsShow"));
+      // 把配置和数据放这里
+      this.chart.setOption({
+          color: ['#3398DB'],
+          tooltip: {
+              trigger: 'axis',
+              axisPointer: { // 坐标轴指示器，坐标轴触发有效
+                  type: 'shadow' 
+              }
+          },
+          grid: {
+              left: '3%',
+              right: '4%',
+              bottom: '3%',
+              containLabel: true
+          },
+          xAxis: [{
+              type: 'category',
+              data: ['1', '2', '3', '4', '5', '6', '7'],
+              axisTick: {
+                  alignWithLabel: true
+              }
+          }],
+          yAxis: [{
+              type: 'value'
+          }],
+          series: [{
+              name: '直接访问',
+              type: 'line',
+              barWidth: '60%',
+              data: [50, 100, 120, 200, 300, 60, 70]
+          }]
+      })
+    }
+  },
+  mounted(){
+    if(this.tableData==""){
+      document.querySelector(".chartTable").innerHTML="暂无数据"
+    }
+    this.initChart();
   }
 }
 </script>
 
 <style scoped lang="scss">
+.newClear:after{
+  display: block;
+  content:"";
+  clear:both;
+}
 .topOverView{
   width:100%;
   height:52px;
@@ -96,8 +276,8 @@ export default {
   border-bottom:1px solid #eee;
   padding:0 20px;
   span:nth-child(1){
-    font-size:18px;
-    font-weight:bold;
+    font-size: 16px;
+    font-weight: 600;
     color:#000;
     float:left;
   }
@@ -112,7 +292,7 @@ export default {
 }
 .mainContainer{
   width:100%;
-  padding:20px 100px;
+  padding:20px 20px;
   box-sizing: border-box;
 }
 .contentTop{
@@ -164,5 +344,64 @@ export default {
     line-height: 28px;
   }
 }
+.selectAddress{
+  margin-right:20px;
+}
+.newDataTime{
+  margin-left:20px;
+}
+.chartShowTit{
+  width:100%;
+  border-bottom:1px solid #eaeaea;
+  height:35px;
+  line-height:38px;
+  margin-top:20px;
+  button{
+    padding:5px 10px;
+    border-bottom:2px solid transparent;
+    margin-right:20px!important;
+    border:none;
+    border-radius: 0;
+    span{
+      font-size:12px;
+      color:#888;
+    }
+  }
+  .addColor{
+    border-bottom:2px solid #006eff;
+    background-color:transparent;
+    font-weight:600;
+    color:#000;
+    span{
+      font-weight: 100;
+    }
+  }
+}
+.chartCon{
+  min-height:300px;
+  // border:1px solid #eaeaea;
+}
+.chartNum{
+  margin-top:20px;
+  margin-bottom:20px;
+  span:nth-child(1){
+    font-weight:600;
+    float:left;
+  }
+  span:nth-child(2){
+    color:#006eff;
+    float:right;
+    cursor: pointer;
+  }
+}
+.chartTable{
+  min-height:32px;
+  line-height:32px;
+  text-align:left;
+  table tbody tr td{
+    text-align:left;
+  }
+}
+
 
 </style>
