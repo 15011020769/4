@@ -266,6 +266,7 @@ export default {
       let lw = new Date(myDate - 1000 * 60 * 60 * 24 * 30).getTime() / 1000
       this.oldTime = parseFloat(lw).toFixed()
       let params = {
+        Version: '2019-03-19',
         EndTime: this.nowtime, // 结束时间1558108799
         LookupAttributes: [
           {
@@ -276,7 +277,7 @@ export default {
         MaxResults: this.MaxResults,
         StartTime: this.oldTime // 开始时间
       }
-      console.log(params)
+      // console.log(params)
 
       this.axios.post(YJS_LIST, params).then(({ data }) => {
         this.tableData = data.Events
