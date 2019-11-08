@@ -2,7 +2,7 @@
   <div class="CAP">
     <div class="big-title">CAP</div>
     <el-menu default-active="2" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose" background-color="#545c64" text-color="#fff" active-text-color="#ffd04b" :router="true">
-      <el-menu-item index="overView">
+      <el-menu-item index="appId">
         <i class="iconfont">&#xe615;</i>
         <span slot="title">APPID列表</span>
       </el-menu-item>

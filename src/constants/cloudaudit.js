@@ -1,8 +1,8 @@
 // 云审计--列表接口
-export const YJS_LIST = 'cloudaudit2/LookupEvents'
+export const YJS_LIST = 'cloudaudit/LookupEvents'
 
 // 云审计--搜索下拉
-export const YJS_GETATTRIBUTEKEY = 'cloudaudit2/GetAttributeKey'
+export const YJS_GETATTRIBUTEKEY = 'cloudaudit/GetAttributeKey'
 
 // 云审计--跟踪集列表
 export const GZJ_LIST = 'cloudaudit/ListAudits'
