@@ -59,12 +59,12 @@
             </el-form-item>
             <div class="allFunList">
               <el-row>
-                <el-col :span="8"
-                v-for="(item,index) in allFunListBox"
-                  :key="index"
-                  :class="isactive==index ? 'addBorderCla':''"
-                  @click="mouseHandel(index)">
-                  <div class="allFunListBoxCon">
+                <el-col :span="8" v-for="(item,index) in allFunListBox" :key="index">
+                  <div
+                    class="allFunListBoxCon"
+                    :class="isactive==index ?'addBorderCla':''"
+                    @click="mouseHandel(index)"
+                  >
                     <div class="funListBoxConTit newClear">
                       <span>{{item.name}}</span>
                       <a class="lookDetail">查看详情</a>
@@ -104,7 +104,9 @@ import SCF_LIST from "@/constants";
 export default {
   data() {
     return {
+      index: "",
       active: 0,
+      showHide: false,
       funName: "",
       runMoment: "",
       createFunTable: {
@@ -207,14 +209,14 @@ export default {
       width: 200px;
       border-right: 0;
     }
-    .el-icon-search {
-      margin-left: -10px;
-    }
     .searchIpt {
       width: 400px;
       input {
-        border-right: 0;
+        // border-right: 0;
         border-radius: 4px 0 0 4px;
+      }
+      input:focus + .el-icon-search {
+        border: 1px solid #006eff;
       }
     }
     .tipCon {
@@ -252,17 +254,26 @@ export default {
         margin-bottom: 20px;
         span:nth-child(1) {
           margin-right: 20px;
+          float: left;
+        }
+        a {
+          display: none;
         }
       }
+    }
+    .addBgColor {
+      background-color: #f2f2f2;
+    }
+
+    .addBorderCla {
+      border: 1px solid #006eff;
     }
     .addBorderColor {
       border: 1px solid #006eff;
     }
   }
 }
-.addBorderCla {
-  border: 1px solid #006eff;
-}
+
 .allFunList {
   padding-left: 82px;
   font-size: 14px;
@@ -280,5 +291,20 @@ export default {
 .stepTip {
   width: 15%;
   margin-bottom: 12px;
+}
+
+.mainContent .mainContForm .allFunListBoxCon:hover {
+  background-color: #f2f2f2;
+  a {
+    display: block;
+    float: left;
+  }
+  a:hover {
+    cursor: pointer;
+    text-decoration: underline;
+  }
+}
+.mainContent .mainContForm .searchIpt input:focus + .el-icon-search {
+  border: 1px solid #006eff;
 }
 </style>
