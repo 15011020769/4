@@ -181,7 +181,7 @@
   </div>
 </template>
 <script>
-import SCF_LIST from "@/constants";
+
 export default {
   data() {
     return {
@@ -289,16 +289,16 @@ export default {
       //console.log(res.data);
       //this.tableDataBegin = res.data.dataTable;
       //this.allData = this.tableDataBegin;
-      this.tableDataBegin = this.allData;
-      // 将数据的长度赋值给totalItems
-      this.totalItems = this.tableDataBegin.length;
-      if (this.totalItems > this.pageSize) {
-        for (let index = 0; index < this.pageSize; index++) {
-          this.tableDataEnd.push(this.tableDataBegin[index]);
+        this.tableDataBegin = this.allData;
+        // 将数据的长度赋值给totalItems
+        this.totalItems = this.tableDataBegin.length;
+        if (this.totalItems > this.pageSize) {
+          for (let index = 0; index < this.pageSize; index++) {
+            this.tableDataEnd.push(this.tableDataBegin[index]);
+          }
+        } else {
+          this.tableDataEnd = this.tableDataBegin;
         }
-      } else {
-        this.tableDataEnd = this.tableDataBegin;
-      }
       //});
     },
     // 搜索

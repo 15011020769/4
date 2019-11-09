@@ -15,10 +15,13 @@
       </span>
     </div>
     <div class="mainContent">
-      <el-steps :active="active" finish-status="success" class="stepTip">
-        <el-step title="基础信息" class="stepTipOne"></el-step>
-        <el-step title="函数配置" class="stepTipTwo"></el-step>
-      </el-steps>
+      <div class="stepOneTopTit newClear">
+        <span>1</span>
+        <span>基础信息</span>
+        <span>></span>
+        <span>2</span>
+        <span>函数配置</span>
+      </div>
       <div class="mainContForm">
         <el-form :model="createFunTable" label-width="80px">
           <el-form-item label="函数名称" :required="true">
@@ -27,9 +30,14 @@
             <p class="tipCon">2. 字母开头，支持 a-z，A-Z，0-9，-，_，且需要以数字或字母结尾</p>
           </el-form-item>
           <el-form-item label="运行环境">
-            <el-select v-model="runMoment">
-              <el-option label="北京" value="beijing"></el-option>
-              <el-option label="台北" value="taibei"></el-option>
+            <el-select v-model="createFunTable.runMoment">
+              <el-option label="Python2.7" value="python1"></el-option>
+              <el-option label="Python3.6" value="python2"></el-option>
+              <el-option label="Nodejs6.10" value="node"></el-option>
+              <el-option label="PHP5" value="php1"></el-option>
+              <el-option label="PHP7" value="php2"></el-option>
+              <el-option label="Golang1" value="golang"></el-option>
+              <el-option label="Java8" value="java"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="创建环境">
@@ -55,11 +63,11 @@
           <div v-if="clickTab">
             <el-form-item label="模板搜索">
               <el-input class="searchIpt" v-model="createFunTable.searchName"></el-input>
-              <el-button class="el-icon-search"></el-button>
+              <el-button class="el-icon-search"  @click="doFilter"></el-button>
             </el-form-item>
             <div class="allFunList">
               <el-row>
-                <el-col :span="8" v-for="(item,index) in allFunListBox" :key="index">
+                <el-col :span="8" v-for="(item,index) in tableDataBegin1" :key="index">
                   <div
                     class="allFunListBoxCon"
                     :class="isactive==index ?'addBorderCla':''"
@@ -91,16 +99,20 @@
                 </el-col>
               </el-row>
             </div>
+            <div class="tabListPage">
+              <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage" :page-sizes="[6, 9, 12, 15]" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper" :total="totalItems">
+              </el-pagination>
+            </div>
           </div>
         </el-form>
       </div>
 
-      <el-button style="margin-top: 12px;" @click="next">下一步</el-button>
+      <el-button class="nextStep" @click="nextStep">下一步</el-button>
     </div>
   </div>
 </template>
 <script>
-import SCF_LIST from "@/constants";
+
 export default {
   data() {
     return {
@@ -108,60 +120,230 @@ export default {
       active: 0,
       showHide: false,
       funName: "",
-      runMoment: "",
       createFunTable: {
         funName: "",
         modelNameSpace: "",
+        runMoment:"Python2.7",
         searchName: ""
       },
       clickTab: true,
-      allFunListBox: [
+      tableDataBegin: [
         {
-          name: "123",
+          name: "函数1",
           funListLangu: "456",
           funListDesc: "789",
           funListTags: "123",
           funListpublish: "456"
         },
         {
-          name: "123",
+          name: "函数2",
           funListLangu: "456",
           funListDesc: "789",
           funListTags: "123",
           funListpublish: "456"
         },
         {
-          name: "123",
+          name: "函数3",
+          funListLangu: "456",
+          funListDesc: "789",
+          funListTags: "123",
+          funListpublish: "456"
+        },
+        {
+          name: "函数3",
+          funListLangu: "456",
+          funListDesc: "789",
+          funListTags: "123",
+          funListpublish: "456"
+        },
+        {
+          name: "函数3",
+          funListLangu: "456",
+          funListDesc: "789",
+          funListTags: "123",
+          funListpublish: "456"
+        },
+        {
+          name: "函数4",
+          funListLangu: "456",
+          funListDesc: "789",
+          funListTags: "123",
+          funListpublish: "456"
+        },
+        {
+          name: "函数3",
+          funListLangu: "456",
+          funListDesc: "789",
+          funListTags: "123",
+          funListpublish: "456"
+        },
+        {
+          name: "函数3",
+          funListLangu: "456",
+          funListDesc: "789",
+          funListTags: "123",
+          funListpublish: "456"
+        },
+        {
+          name: "函数3",
+          funListLangu: "456",
+          funListDesc: "789",
+          funListTags: "123",
+          funListpublish: "456"
+        },
+        {
+          name: "函数3",
+          funListLangu: "456",
+          funListDesc: "789",
+          funListTags: "123",
+          funListpublish: "456"
+        },
+        {
+          name: "函数3",
+          funListLangu: "456",
+          funListDesc: "789",
+          funListTags: "123",
+          funListpublish: "456"
+        },
+        {
+          name: "函数3",
+          funListLangu: "456",
+          funListDesc: "789",
+          funListTags: "123",
+          funListpublish: "456"
+        },
+        {
+          name: "函数3",
           funListLangu: "456",
           funListDesc: "789",
           funListTags: "123",
           funListpublish: "456"
         }
       ],
-      isactive: -1
+      isactive: -1,
+      currentPage: 1,
+      pageSize: 6,
+      totalItems: 0,
+      allData: [],
+      // tableDataBegin: [],
+      tableDataName: "",
+      tableDataEnd: [],
+      filterTableDataEnd: [],
+			flag: false
     };
   },
   computed: {
     // 模糊搜索
   },
-  created() {},
+  created() {
+    this.getData();
+  },
   methods: {
     backFunlist() {
       this.$router.push({
         path: "/FuncServe"
       });
     },
-    next() {
-      if (this.active++ > 2) this.active = 0;
-    },
     mouseHandel(index) {
       console.log(index);
       this.isactive = index;
+    },
+    //搜索
+    doFilter() {
+      //alert(1)
+      this.tableDataBegin = this.allData;
+      this.tableDataEnd = []
+        //每次手动将数据置空,因为会出现多次点击搜索情况
+      this.filterTableDataEnd = [];
+      console.log(this.tableDataBegin)
+      this.tableDataBegin.forEach((val, index) => {
+        console.log(val)
+        if (val.name) {
+          if (val.name.indexOf(this.createFunTable.searchName) == 0 ) {
+            this.filterTableDataEnd.push(val);
+            this.tableDataBegin1 = this.filterTableDataEnd.slice((this.currentPage-1)*this.pageSize,this.currentPage*this.pageSize);
+            console.log(this.tableDataBegin1)
+            // this.tableDataBegin1 = this.filterTableDataEnd.slice((this.currentPage-1)*this.pageSize,this.currentPage*this.pageSize);
+            // console.log(this.tableDataBegin1)
+          } else {
+            this.filterTableDataEnd.push();
+            this.tableDataBegin1 = this.filterTableDataEnd;
+            // this.tableDataBegin1 = this.tableDataBegin.slice((this.currentPage-1)*this.pageSize,this.currentPage*this.pageSize);
+          }
+        };
+      });
+      //页面数据改变重新统计数据数量和当前页
+      this.currentPage = 1
+      this.totalItems = this.filterTableDataEnd.length
+        //渲染表格,根据值
+      this.currentChangePage(this.filterTableDataEnd);
+
+      //页面初始化数据需要判断是否检索过
+      this.flag = true;
+    },
+    // 分页开始
+    getData() {
+      //this.$axios.post('', {}).then((res) => {
+        // console.log(res.data.tableData);
+        //this.tableDataBegin = res.data.tableData;
+        this.allData = this.tableDataBegin;
+        this.tableDataBegin1 = this.tableDataBegin.slice((this.currentPage-1)*this.pageSize,this.currentPage*this.pageSize);
+        //console.log(this.tableDataBegin.length,typeof(this.tableDataBegin))
+        // 将数据的长度赋值给totalItems
+        this.totalItems = this.tableDataBegin.length;
+        if (this.totalItems > this.pageSize) {
+          for (let index = 0; index < this.pageSize; index++) {
+            this.tableDataEnd.push(this.tableDataBegin[index]);
+          }
+        } else {
+          this.tableDataEnd = this.tableDataBegin;
+        }
+      //})
+
+    },
+    handleSizeChange(val) {
+      //console.log(`每页 ${val} 条`);
+      this.pageSize = val;
+      this.tableDataBegin1 = this.tableDataBegin.slice((this.currentPage-1)*this.pageSize,this.currentPage*this.pageSize);
+      this.handleCurrentChange(this.currentPage);
+    },
+    handleCurrentChange(val) {
+      //console.log(`当前页: ${val}`);
+      this.currentPage = val;
+      this.tableDataBegin1 = this.tableDataBegin.slice((this.currentPage-1)*this.pageSize,this.currentPage*this.pageSize);
+      this.tableDataBegin1 = this.filterTableDataEnd.slice((this.currentPage-1)*this.pageSize,this.currentPage*this.pageSize);
+      //需要判断是否检索
+      if (!this.flag) {
+        this.currentChangePage(this.tableDataEnd)
+      } else {
+        this.currentChangePage(this.filterTableDataEnd)
+      }
+    }, //组件自带监控当前页码
+    currentChangePage(list) {
+      let from = (this.currentPage - 1) * this.pageSize;
+      let to = this.currentPage * this.pageSize;
+      this.tableDataEnd = [];
+      for (; from < to; from++) {
+        if (list[from]) {
+          this.tableDataEnd.push(list[from]);
+        }
+      }
+    },
+    nextStep(){
+      window.sessionStorage.setItem("funNameSess", this.createFunTable.funName);
+      window.sessionStorage.setItem("runMoent", this.createFunTable.runMoment);
+      if(this.createFunTable.funName==''){
+        alert("函数名不能为空");
+        return false;
+      }
+      this.$router.push({
+        path: "/createFunStep"
+      });
     }
   }
 };
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 .newClear:after {
   display: block;
   content: "";
@@ -250,6 +432,7 @@ export default {
       background-color: #fff;
       border: 1px solid transparent;
       margin-right: 20px;
+      margin-bottom:20px;
       .funListBoxConTit {
         margin-bottom: 20px;
         span:nth-child(1) {
@@ -306,5 +489,57 @@ export default {
 }
 .mainContent .mainContForm .searchIpt input:focus + .el-icon-search {
   border: 1px solid #006eff;
+}
+.stepOneTopTit{
+  line-height:32px;
+  width:100%;
+  margin-bottom:15px;
+  span:nth-child(1){
+    width:30px;
+    float:left;
+    height:30px;
+    line-height:30px;
+    text-align:center;
+    background-color:#006eff;
+    color:#fff;
+    margin-right:12px;
+    border-radius: 100%;
+  }
+  span:nth-child(2){
+    float:left;
+    color:#000;
+    margin-right:35px;
+    font-weight:600;
+    font-size:14px;
+  }
+  span:nth-child(3){
+    font-size:14px;
+    color:#888;
+    float:left;
+    margin-right:35px;
+  }
+  span:nth-child(4){
+    width:30px;
+    float:left;
+    height:30px;
+    line-height:30px;
+    text-align:center;
+    border:1px solid #888;
+    color:#888;
+    border-radius: 100%;
+    margin-right:12px;
+  }
+  span:nth-child(5){
+    float:left;
+    color:#888;
+    margin-right:40px;
+    font-weight:600;
+    font-size:14px;
+  }
+}
+.nextStep{
+  margin-top:12px!important;
+  color:#fff!important;
+  background-color:#006eff!important;
 }
 </style>

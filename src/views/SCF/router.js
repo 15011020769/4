@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import overView from './overView/overView'
 import FuncServe from './FuncServe/FuncServe'
 import createFun from './FuncServe/createFun'
+import createFunStep from './FuncServe/createFunStep'
 
 Vue.use(Router)
 
@@ -34,9 +35,17 @@ export default new Router({
       }
     },
     {
-      path: '/createFun', // 函数服务
+      path: '/createFun', // 创建函数
       name: 'createFun',
       component: createFun,
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
+      path: '/createFunStep', // 创建函数第二步
+      name: 'createFunStep',
+      component: createFunStep,
       meta: {
         keepAlive: true
       }
