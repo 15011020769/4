@@ -14,10 +14,24 @@
         <el-table-column prop="name" label="名称/ID" width="125">
           <template slot-scope="scope">
             <el-button @click="handleClick(scope.row)" type="text">{{ scope.row.name }}</el-button>
-            <p>12121</p>
+            <p class="edit">
+              12121
+              <el-popover placement="bottom" width="210" v-model="visible">
+                <div class="pop-div" style="height:40px;border-bottom:1px solid #ddd">
+                  <input type="text" style="height:30px;width:100%" />
+                </div>
+                <div class="btn-footer" style="margin-top:10px;">
+                  <el-button type="primary" size="mini" @click="visible = false">保存</el-button>
+                  <el-button size="mini" type="text" @click="visible = false">取消</el-button>
+                </div>
+                <span slot="reference">
+                  <i class="el-icon-edit"></i>
+                </span>
+              </el-popover>
+            </p>
           </template>
         </el-table-column>
-        <el-table-column prop="status" label="状态">
+        <el-table-column prop="status" label="状态" width="80">
           <template slot-scope="scope">
             <div v-if="scope.row.status==0" class="close_color">关闭</div>
             <div v-if="scope.row.status==1" class="off_color">运行中</div>
@@ -33,10 +47,35 @@
             <el-button @click="handleClick(scope.row)" type="text">{{ scope.row.bucketName }}</el-button>
           </template>
         </el-table-column>
-        <el-table-column prop="desc" label="备注" width="50"></el-table-column>
-        <el-table-column prop="mode" label="计费模式" width="125"></el-table-column>
-        <el-table-column prop="limite" label="限速方式" width="125"></el-table-column>
-        <el-table-column prop="createTime" label="创建时间" width="225"></el-table-column>
+        <el-table-column prop label="备注" width="80">
+          <template slot-scope="scope">
+            <p class="edit">
+              1
+              <el-popover placement="bottom" width="210" v-model="visibleDes">
+                <div class="pop-div" style="height:40px;border-bottom:1px solid #ddd">
+                  <input type="text" style="height:30px;width:100%" />
+                </div>
+                <div class="btn-footer" style="margin-top:10px;">
+                  <el-button type="primary" size="mini" @click="visibleDes = false">保存</el-button>
+                  <el-button size="mini" type="text" @click="visibleDes = false">取消</el-button>
+                </div>
+                <span slot="reference">
+                  <i class="el-icon-edit"></i>
+                </span>
+              </el-popover>
+            </p>
+          </template>
+        </el-table-column>
+        <el-table-column prop="mode" label="计费模式" width="115"></el-table-column>
+        <el-table-column prop label="限速方式" width="115">
+          <template slot-scope="scope">
+            <span class="edit">{{scope.row.limite}}</span>
+            <i type="text" @click="editVisible = true">
+              <i class="el-icon-edit"></i>
+            </i>
+          </template>
+        </el-table-column>
+        <el-table-column prop="createTime" label="创建时间" width="200"></el-table-column>
         <el-table-column prop="operate" label="操作" width="180">
           <template slot-scope="scope">
             <el-button @click="handleClick(scope.row)" type="text" size="small">管理实例</el-button>
@@ -142,7 +181,7 @@
     </el-dialog>
     <!-- 编辑模态窗 -->
     <el-dialog title="您已经选择1个云资源" :visible.sync="dialogTagVisible" class="editDialog">
-      <table class="table-div"  >
+      <table class="table-div">
         <tr class="t-head">
           <td>标签键</td>
           <td>标签值</td>
@@ -150,10 +189,14 @@
         </tr>
         <tr class="t-body" v-for="(item, index) in formArr">
           <td>
-            <input type="text">
+            <input type="text" />
           </td>
-          <td><input type="text"></td>
-          <td> <a v-on:click="removeRow(index);" v-show="index >= 0">删除</a></td>
+          <td>
+            <input type="text" />
+          </td>
+          <td>
+            <a v-on:click="removeRow(index);" v-show="index >= 0">删除</a>
+          </td>
         </tr>
       </table>
       <a v-on:click="addRow()" v-show="formArr.length < 5">添加</a>
@@ -161,6 +204,22 @@
         <el-button @click="dialogTagVisible = false">取 消</el-button>
         <el-button type="primary" @click="dialogTagVisible = false">确 定</el-button>
       </span>
+    </el-dialog>
+    <!-- 修改限速方式的模态窗 -->
+    <el-dialog title="变更限速方式" :visible.sync="editVisible" class="formDialog">
+      <el-form :model="formWay">
+        <el-form-item label="限速方式">
+          <el-select v-model="formWay.way" placeholder>
+            <el-option label="地域间带宽" value="INTER_REGION_LIMIT"></el-option>
+            <el-option label="地域出带宽" value="OUTER_REGION_LIMIT"></el-option>
+          </el-select>
+          <p class="edit-p">注意：变更后，原有限速配置将删除， 带宽将设置为 1Gbps（默认），如需更大默认带宽，请提 <a href="">工单申请</a></p>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="editVisible = false">取 消</el-button>
+        <el-button type="primary" @click="editVisible = false">确 定</el-button>
+      </div>
     </el-dialog>
   </div>
 </template>
@@ -172,6 +231,7 @@ export default {
       value1: '',
       input3: '',
       visible: false,
+      visibleDes: false,
       tableData: [
         {
           name: '函数1',
@@ -207,9 +267,13 @@ export default {
         radio2: 1,
         radio3: 0
       },
+      formWay: {
+        way: '地域间带宽'
+      },
       dialogTableVisible: false, // 删除模态窗
       dialogFormVisible: false, // 新建模态窗
       dialogTagVisible: false, // 编辑模态窗
+      editVisible: false, // 修改限速方式模态窗
 
       formInfoObj: {
         key: undefined
@@ -222,7 +286,6 @@ export default {
     this.formArr.push(this.formInfoObj)
   },
   methods: {
-
     // 详情页跳转
     handleClick (rows) {
       this.$router.push({
@@ -339,6 +402,24 @@ export default {
   .el-pagination {
     float: right;
   }
+  .el-popover {
+    .btn-footer {
+      text-align: center;
+      margin: 0;
+    }
+    .pop-div {
+      height: 40px;
+    }
+  }
+
+  .el-icon-edit {
+    display: none;
+  }
+  .el-table__row:hover {
+    .el-icon-edit {
+      display: inline-block;
+    }
+  }
 }
 .newDialog {
   .inputName {
@@ -364,21 +445,28 @@ export default {
     margin-right: 10px;
   }
 }
-.editDialog{
-  .table-div{
-    width:90%;
+.editDialog {
+  .table-div {
+    width: 90%;
     border: 1px solid #ddd;
-    tr{
+    tr {
       width: 30%;
     }
-    .t-head{
+    .t-head {
       height: 45px;
       padding: 0 5px;
     }
-    .t-body{
+    .t-body {
       height: 45px;
       min-height: 200px;
     }
+  }
+}
+.formDialog {
+  .edit-p {
+    color: #e54545;
+    line-height: 20px;
+    margin-left: 10%;
   }
 }
 </style>
