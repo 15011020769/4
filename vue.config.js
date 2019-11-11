@@ -45,14 +45,10 @@ let product = {
     entry: 'src/views/CCN/main.js',
     template: 'src/public/index.html',
     filename: 'index.html',
-<<<<<<< HEAD
     title: '云商平台-云联网',
-=======
-    title: '云商平台-云联网22223232322',
->>>>>>> 'test2'
     chunks: ['chunk-vendors', 'chunk-common', 'CCN']
-  },
-  
+  }
+
 }
 let page = {}
 let productName = process.argv[3].substring(2)// 获取执行哪个文件
