@@ -39,7 +39,8 @@ let product = {
     template: 'src/public/index.html', // 模板来源
     filename: 'index.html', // 在 dist/index.html 的输出
     title: '云商平台-云服务器', // 当使用 title 选项时，template 中的 title 标签需要是 <title><%= htmlWebpackPlugin.options.title %></title>
-    chunks: ['chunk-vendors', 'chunk-common', 'CAM'] // 在这个页面中包含的块，默认情况下会包含,提取出来的通用 chunk 和 vendor chunk。
+    chunks: ['chunk-vendors', 'chunk-common', 'CAM']
+  }, // 在这个页面中包含的块，默认情况下会包含,提取出来的通用 chunk 和 vendor chunk。
   CCN: {
     entry: 'src/views/CCN/main.js',
     template: 'src/public/index.html',
