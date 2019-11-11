@@ -63,7 +63,7 @@
           <div v-if="clickTab">
             <el-form-item label="模板搜索">
               <el-input class="searchIpt" v-model="createFunTable.searchName"></el-input>
-              <el-button class="el-icon-search"  @click="doFilter"></el-button>
+              <el-button class="el-icon-search" @click="doFilter"></el-button>
             </el-form-item>
             <div class="allFunList">
               <el-row>
@@ -74,17 +74,31 @@
                     @click="mouseHandel(index)"
                   >
                     <div class="funListBoxConTit newClear">
-                      <span class="detailName">{{item.name}}</span>
+                      <span>{{item.name}}</span>
                       <a class="lookDetail" @click="lookFunDetails(index)">查看详情</a>
                       <el-dialog
                         title="模板详情"
                         :visible.sync="dialogVisible"
                         width="30%"
                         :before-close="handleClose"
-                        >
+                      >
                         <div class="detailBoxCon">
                           <div class="detailBoxConOne detailBoxC">
                             <h2>基础信息</h2>
+                            <div class="detailBoxcen">
+                              <p>
+                                <span class="leftWidth">名称</span>
+                                <span>{{tableDataBegin1[index].name}}</span>
+                              </p>
+                              <p>
+                                <span class="leftWidth">语言</span>
+                                <span>{{tableDataBegin1[index].funListLangu}}</span>
+                              </p>
+                              <p>
+                                <span class="leftWidth">描述</span>
+                                <span>{{tableDataBegin1[index].funListDesc}}</span>
+                              </p>
+                            </div>
                           </div>
                           <div class="detailBoxConOne detailBoxC">
                             <h2>输入参数</h2>
@@ -100,8 +114,8 @@
                           </div>
                         </div>
                         <span slot="footer" class="dialog-footer">
-                          <el-button @click="dialogVisible = false">关闭</el-button>
-                          <!-- <el-button type="primary" @click="">提交</el-button> -->
+                          <el-button @click="dialogVisible = false">关闭</el-button>
+                          <!-- <el-button type="primary" @click="">提交</el-button> -->
                         </span>
                       </el-dialog>
                     </div>
@@ -128,8 +142,15 @@
               </el-row>
             </div>
             <div class="tabListPage">
-              <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage" :page-sizes="[6, 9, 12, 15]" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper" :total="totalItems">
-              </el-pagination>
+              <el-pagination
+                @size-change="handleSizeChange"
+                @current-change="handleCurrentChange"
+                :current-page="currentPage"
+                :page-sizes="[6, 9, 12, 15]"
+                :page-size="pageSize"
+                layout="total, sizes, prev, pager, next, jumper"
+                :total="totalItems"
+              ></el-pagination>
             </div>
           </div>
         </el-form>
@@ -140,7 +161,6 @@
   </div>
 </template>
 <script>
-
 export default {
   data() {
     return {
@@ -151,7 +171,7 @@ export default {
       createFunTable: {
         funName: "",
         modelNameSpace: "",
-        runMoment:"Python2.7",
+        runMoment: "Python2.7",
         searchName: ""
       },
       clickTab: true,
@@ -253,12 +273,12 @@ export default {
       pageSize: 6,
       totalItems: 0,
       allData: [],
-      // tableDataBegin: [],
+      tableDataBegin1: [],
       tableDataName: "",
       tableDataEnd: [],
       filterTableDataEnd: [],
       flag: false,
-      dialogVisible:false
+      dialogVisible: false
     };
   },
   computed: {
@@ -281,17 +301,20 @@ export default {
     doFilter() {
       //alert(1)
       this.tableDataBegin = this.allData;
-      this.tableDataEnd = []
-        //每次手动将数据置空,因为会出现多次点击搜索情况
+      this.tableDataEnd = [];
+      //每次手动将数据置空,因为会出现多次点击搜索情况
       this.filterTableDataEnd = [];
-      console.log(this.tableDataBegin)
+      console.log(this.tableDataBegin);
       this.tableDataBegin.forEach((val, index) => {
-        console.log(val)
+        console.log(val);
         if (val.name) {
-          if (val.name.indexOf(this.createFunTable.searchName) == 0 ) {
+          if (val.name.indexOf(this.createFunTable.searchName) == 0) {
             this.filterTableDataEnd.push(val);
-            this.tableDataBegin1 = this.filterTableDataEnd.slice((this.currentPage-1)*this.pageSize,this.currentPage*this.pageSize);
-            console.log(this.tableDataBegin1)
+            this.tableDataBegin1 = this.filterTableDataEnd.slice(
+              (this.currentPage - 1) * this.pageSize,
+              this.currentPage * this.pageSize
+            );
+            console.log(this.tableDataBegin1);
             // this.tableDataBegin1 = this.filterTableDataEnd.slice((this.currentPage-1)*this.pageSize,this.currentPage*this.pageSize);
             // console.log(this.tableDataBegin1)
           } else {
@@ -299,12 +322,12 @@ export default {
             this.tableDataBegin1 = this.filterTableDataEnd;
             // this.tableDataBegin1 = this.tableDataBegin.slice((this.currentPage-1)*this.pageSize,this.currentPage*this.pageSize);
           }
-        };
+        }
       });
       //页面数据改变重新统计数据数量和当前页
-      this.currentPage = 1
-      this.totalItems = this.filterTableDataEnd.length
-        //渲染表格,根据值
+      this.currentPage = 1;
+      this.totalItems = this.filterTableDataEnd.length;
+      //渲染表格,根据值
       this.currentChangePage(this.filterTableDataEnd);
 
       //页面初始化数据需要判断是否检索过
@@ -313,39 +336,47 @@ export default {
     // 分页开始
     getData() {
       //this.$axios.post('', {}).then((res) => {
-        // console.log(res.data.tableData);
-        //this.tableDataBegin = res.data.tableData;
-        this.allData = this.tableDataBegin;
-        this.tableDataBegin1 = this.tableDataBegin.slice((this.currentPage-1)*this.pageSize,this.currentPage*this.pageSize);
-        //console.log(this.tableDataBegin.length,typeof(this.tableDataBegin))
-        // 将数据的长度赋值给totalItems
-        this.totalItems = this.tableDataBegin.length;
-        if (this.totalItems > this.pageSize) {
-          for (let index = 0; index < this.pageSize; index++) {
-            this.tableDataEnd.push(this.tableDataBegin[index]);
-          }
-        } else {
-          this.tableDataEnd = this.tableDataBegin;
+      // console.log(res.data.tableData);
+      //this.tableDataBegin = res.data.tableData;
+      this.allData = this.tableDataBegin;
+      this.tableDataBegin1 = this.tableDataBegin.slice(
+        (this.currentPage - 1) * this.pageSize,
+        this.currentPage * this.pageSize
+      );
+      //console.log(this.tableDataBegin.length,typeof(this.tableDataBegin))
+      // 将数据的长度赋值给totalItems
+      this.totalItems = this.tableDataBegin.length;
+      if (this.totalItems > this.pageSize) {
+        for (let index = 0; index < this.pageSize; index++) {
+          this.tableDataEnd.push(this.tableDataBegin[index]);
         }
+      } else {
+        this.tableDataEnd = this.tableDataBegin;
+      }
       //})
-
     },
     handleSizeChange(val) {
       //console.log(`每页 ${val} 条`);
       this.pageSize = val;
-      this.tableDataBegin1 = this.tableDataBegin.slice((this.currentPage-1)*this.pageSize,this.currentPage*this.pageSize);
+      this.tableDataBegin1 = this.tableDataBegin.slice(
+        (this.currentPage - 1) * this.pageSize,
+        this.currentPage * this.pageSize
+      );
       this.handleCurrentChange(this.currentPage);
     },
     handleCurrentChange(val) {
       //console.log(`当前页: ${val}`);
       this.currentPage = val;
-      this.tableDataBegin1 = this.tableDataBegin.slice((this.currentPage-1)*this.pageSize,this.currentPage*this.pageSize);
-      this.tableDataBegin1 = this.filterTableDataEnd.slice((this.currentPage-1)*this.pageSize,this.currentPage*this.pageSize);
+      this.tableDataBegin1 = this.tableDataBegin.slice(
+        (this.currentPage - 1) * this.pageSize,
+        this.currentPage * this.pageSize
+      );
+      //this.tableDataBegin1 = this.filterTableDataEnd.slice((this.currentPage-1)*this.pageSize,this.currentPage*this.pageSize);
       //需要判断是否检索
       if (!this.flag) {
-        this.currentChangePage(this.tableDataEnd)
+        this.currentChangePage(this.tableDataEnd);
       } else {
-        this.currentChangePage(this.filterTableDataEnd)
+        this.currentChangePage(this.filterTableDataEnd);
       }
     }, //组件自带监控当前页码
     currentChangePage(list) {
@@ -358,10 +389,10 @@ export default {
         }
       }
     },
-    nextStep(){
+    nextStep() {
       window.sessionStorage.setItem("funNameSess", this.createFunTable.funName);
       window.sessionStorage.setItem("runMoent", this.createFunTable.runMoment);
-      if(this.createFunTable.funName==''){
+      if (this.createFunTable.funName == "") {
         alert("函数名不能为空");
         return false;
       }
@@ -369,16 +400,18 @@ export default {
         path: "/createFunStep"
       });
     },
+    lookFunDetails(detailIndex) {
+      console.log(detailIndex);
+      console.log(this.tableDataBegin1[detailIndex].name);
+      this.dialogVisible = true;
+    },
     handleClose(done) {
       this.$confirm("确认关闭？")
         .then(_ => {
           done();
         })
         .catch(_ => {});
-    },
-    lookFunDetails(detailIndex){
-      this.dialogVisible=true;
-    } 
+    }
   }
 };
 </script>
@@ -474,7 +507,7 @@ export default {
       margin-bottom:20px;
       .funListBoxConTit {
         margin-bottom: 20px;
-        span:nth-child(1).detailName {
+        span:nth-child(1) {
           margin-right: 20px;
           float: left;
         }
@@ -583,15 +616,30 @@ export default {
 }
 .detailBoxCon{
   min-height:300px;
-}
-.detailBoxC{
-  border-bottom:1px solid #eaeaea;
-  padding:20px 0;
-  h2{
-    font-weight:600;
-    font-size:14px;
-    color:#000;
-    margin-bottom:12px;
+    .detailBoxC{
+      border-bottom:1px solid #eaeaea;
+      padding:20px 0;
+      h2{
+        font-weight:600;
+        font-size:14px;
+        color:#000;
+        margin-bottom:12px;
+      }
+    .detailBoxCen{
+      p{
+        margin-bottom:20px;
+        font-size:12px;
+        span:nth-child(1){
+          color:#888;
+          display:inline-block;
+          width:46px;
+          text-align:center;
+        }
+      }
+    }
   }
 }
+
+
+
 </style>
