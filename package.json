@@ -13,6 +13,8 @@
     "build:CLA": "vue-cli-service build --CLA",
     "serve:CM": "vue-cli-service serve --CM",
     "build:CM": "vue-cli-service build --CM",
+    "serve:CAM": "vue-cli-service serve --CAM",
+    "build:CAM": "vue-cli-service build --CAM",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
