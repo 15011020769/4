@@ -47,8 +47,14 @@ let product = {
     filename: 'index.html',
     title: '云商平台-云联网',
     chunks: ['chunk-vendors', 'chunk-common', 'CCN']
-  }
-
+  },
+  CAP: {
+    entry: 'src/views/CAP/main.js',
+    template: 'src/public/index.html',
+    filename: 'index.html',
+    title: '云商平台-验证码',
+    chunks: ['chunk-vendors', 'chunk-common', 'CAP']
+  },
 }
 let page = {}
 let productName = process.argv[3].substring(2)// 获取执行哪个文件

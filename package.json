@@ -17,6 +17,8 @@
     "build:CAM": "vue-cli-service build --CAM",
     "serve:CCN": "vue-cli-service serve --CCN",
     "build:CCN": "vue-cli-service build --CCN",
+    "serve:CAP": "vue-cli-service serve --CAP",
+    "build:CAP": "vue-cli-service build --CAP",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {

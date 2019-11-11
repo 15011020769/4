@@ -74,7 +74,7 @@
                     @click="mouseHandel(index)"
                   >
                     <div class="funListBoxConTit newClear">
-                      <span>{{item.name}}</span>
+                      <span class="titNew">{{item.name}}</span>
                       <a class="lookDetail" @click="lookFunDetails(index)">查看详情</a>
                       <el-dialog
                         title="模板详情"
@@ -85,7 +85,7 @@
                         <div class="detailBoxCon">
                           <div class="detailBoxConOne detailBoxC">
                             <h2>基础信息</h2>
-                            <div class="detailBoxcen">
+                            <div class="detailBoxCen">
                               <p>
                                 <span class="leftWidth">名称</span>
                                 <span>{{tableDataBegin1[index].name}}</span>
@@ -100,17 +100,21 @@
                               </p>
                             </div>
                           </div>
-                          <div class="detailBoxConOne detailBoxC">
-                            <h2>输入参数</h2>
+                          <div class="detailBoxConTwo detailBoxC">
+                            <h2>输入参数<i class="el-icon-document-copy"></i></h2>
+                            <p>{}</p>
                           </div>
-                          <div class="detailBoxConOne detailBoxC">
-                            <h2>输出参数</h2>
+                          <div class="detailBoxConThree detailBoxC">
+                            <h2>输出参数<i class="el-icon-document-copy"></i></h2>
+                            <p>{}</p>
                           </div>
-                          <div class="detailBoxConOne detailBoxC">
+                          <div class="detailBoxConFour detailBoxC">
                             <h2>注意事项</h2>
+                            <p>无</p>
                           </div>
-                          <div class="detailBoxConOne detailBoxC">
+                          <div class="detailBoxConFive detailBoxC">
                             <h2>模板函数下载地址</h2>
+                            <a href="#">点击下载</a>
                           </div>
                         </div>
                         <span slot="footer" class="dialog-footer">
@@ -315,12 +319,12 @@ export default {
               this.currentPage * this.pageSize
             );
             console.log(this.tableDataBegin1);
-            // this.tableDataBegin1 = this.filterTableDataEnd.slice((this.currentPage-1)*this.pageSize,this.currentPage*this.pageSize);
+            this.tableDataBegin1 = this.filterTableDataEnd.slice((this.currentPage-1)*this.pageSize,this.currentPage*this.pageSize);
             // console.log(this.tableDataBegin1)
           } else {
             this.filterTableDataEnd.push();
             this.tableDataBegin1 = this.filterTableDataEnd;
-            // this.tableDataBegin1 = this.tableDataBegin.slice((this.currentPage-1)*this.pageSize,this.currentPage*this.pageSize);
+            this.tableDataBegin1 = this.filterTableDataEnd.slice((this.currentPage-1)*this.pageSize,this.currentPage*this.pageSize);
           }
         }
       });
@@ -371,6 +375,12 @@ export default {
         (this.currentPage - 1) * this.pageSize,
         this.currentPage * this.pageSize
       );
+      if(this.createFunTable.searchName==""){
+        this.tableDataBegin1 = this.tableDataBegin.slice((this.currentPage-1)*this.pageSize,this.currentPage*this.pageSize);
+      }
+      else if(this.createFunTable.searchName!=""){
+        this.tableDataBegin1 = this.filterTableDataEnd.slice((this.currentPage-1)*this.pageSize,this.currentPage*this.pageSize);
+      }
       //this.tableDataBegin1 = this.filterTableDataEnd.slice((this.currentPage-1)*this.pageSize,this.currentPage*this.pageSize);
       //需要判断是否检索
       if (!this.flag) {
@@ -415,7 +425,7 @@ export default {
   }
 };
 </script>
-<style lang="scss" scoped>
+<style lang="scss">
 .newClear:after {
   display: block;
   content: "";
@@ -504,10 +514,10 @@ export default {
       background-color: #fff;
       border: 1px solid transparent;
       margin-right: 20px;
-      margin-bottom:20px;
+      margin-bottom: 20px;
       .funListBoxConTit {
         margin-bottom: 20px;
-        span:nth-child(1) {
+        span:nth-child(1).titNew {
           margin-right: 20px;
           float: left;
         }
@@ -562,84 +572,83 @@ export default {
 .mainContent .mainContForm .searchIpt input:focus + .el-icon-search {
   border: 1px solid #006eff;
 }
-.stepOneTopTit{
-  line-height:32px;
-  width:100%;
-  margin-bottom:15px;
-  span:nth-child(1){
-    width:30px;
-    float:left;
-    height:30px;
-    line-height:30px;
-    text-align:center;
-    background-color:#006eff;
-    color:#fff;
-    margin-right:12px;
+.stepOneTopTit {
+  line-height: 32px;
+  width: 100%;
+  margin-bottom: 15px;
+  span:nth-child(1) {
+    width: 30px;
+    float: left;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    background-color: #006eff;
+    color: #fff;
+    margin-right: 12px;
     border-radius: 100%;
   }
-  span:nth-child(2){
-    float:left;
-    color:#000;
-    margin-right:35px;
-    font-weight:600;
-    font-size:14px;
+  span:nth-child(2) {
+    float: left;
+    color: #000;
+    margin-right: 35px;
+    font-weight: 600;
+    font-size: 14px;
   }
-  span:nth-child(3){
-    font-size:14px;
-    color:#888;
-    float:left;
-    margin-right:35px;
+  span:nth-child(3) {
+    font-size: 14px;
+    color: #888;
+    float: left;
+    margin-right: 35px;
   }
-  span:nth-child(4){
-    width:30px;
-    float:left;
-    height:30px;
-    line-height:30px;
-    text-align:center;
-    border:1px solid #888;
-    color:#888;
+  span:nth-child(4) {
+    width: 30px;
+    float: left;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    border: 1px solid #888;
+    color: #888;
     border-radius: 100%;
-    margin-right:12px;
+    margin-right: 12px;
   }
-  span:nth-child(5){
-    float:left;
-    color:#888;
-    margin-right:40px;
-    font-weight:600;
-    font-size:14px;
+  span:nth-child(5) {
+    float: left;
+    color: #888;
+    margin-right: 40px;
+    font-weight: 600;
+    font-size: 14px;
   }
 }
-.nextStep{
-  margin-top:12px!important;
-  color:#fff!important;
-  background-color:#006eff!important;
+.nextStep {
+  margin-top: 12px !important;
+  color: #fff !important;
+  background-color: #006eff !important;
 }
-.detailBoxCon{
-  min-height:300px;
-    .detailBoxC{
-      border-bottom:1px solid #eaeaea;
-      padding:20px 0;
-      h2{
-        font-weight:600;
-        font-size:14px;
-        color:#000;
-        margin-bottom:12px;
-      }
+.detailBoxCon {
+  min-height: 300px;
+  .detailBoxC {
+    border-bottom: 1px solid #eaeaea !important;
+    padding:20px 0!important;
+    h2{
+      font-size:14px;
+      font-weight:600;
+      color:#000;
+      margin-bottom:12px;
+    }
     .detailBoxCen{
       p{
         margin-bottom:20px;
         font-size:12px;
         span:nth-child(1){
           color:#888;
-          display:inline-block;
+          display: inline-block;
           width:46px;
-          text-align:center;
         }
       }
     }
   }
+  .detailBoxConFive{
+    border-bottom:0!important;
+  }
 }
-
-
-
 </style>
