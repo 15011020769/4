@@ -74,8 +74,36 @@
                     @click="mouseHandel(index)"
                   >
                     <div class="funListBoxConTit newClear">
-                      <span>{{item.name}}</span>
-                      <a class="lookDetail">查看详情</a>
+                      <span class="detailName">{{item.name}}</span>
+                      <a class="lookDetail" @click="lookFunDetails(index)">查看详情</a>
+                      <el-dialog
+                        title="模板详情"
+                        :visible.sync="dialogVisible"
+                        width="30%"
+                        :before-close="handleClose"
+                        >
+                        <div class="detailBoxCon">
+                          <div class="detailBoxConOne detailBoxC">
+                            <h2>基础信息</h2>
+                          </div>
+                          <div class="detailBoxConOne detailBoxC">
+                            <h2>输入参数</h2>
+                          </div>
+                          <div class="detailBoxConOne detailBoxC">
+                            <h2>输出参数</h2>
+                          </div>
+                          <div class="detailBoxConOne detailBoxC">
+                            <h2>注意事项</h2>
+                          </div>
+                          <div class="detailBoxConOne detailBoxC">
+                            <h2>模板函数下载地址</h2>
+                          </div>
+                        </div>
+                        <span slot="footer" class="dialog-footer">
+                          <el-button @click="dialogVisible = false">关闭</el-button>
+                          <!-- <el-button type="primary" @click="">提交</el-button> -->
+                        </span>
+                      </el-dialog>
                     </div>
                     <div class="funListBoxConP">
                       <p class="funListLangu">
@@ -229,7 +257,8 @@ export default {
       tableDataName: "",
       tableDataEnd: [],
       filterTableDataEnd: [],
-			flag: false
+      flag: false,
+      dialogVisible:false
     };
   },
   computed: {
@@ -339,7 +368,17 @@ export default {
       this.$router.push({
         path: "/createFunStep"
       });
-    }
+    },
+    handleClose(done) {
+      this.$confirm("确认关闭？")
+        .then(_ => {
+          done();
+        })
+        .catch(_ => {});
+    },
+    lookFunDetails(detailIndex){
+      this.dialogVisible=true;
+    } 
   }
 };
 </script>
@@ -435,7 +474,7 @@ export default {
       margin-bottom:20px;
       .funListBoxConTit {
         margin-bottom: 20px;
-        span:nth-child(1) {
+        span:nth-child(1).detailName {
           margin-right: 20px;
           float: left;
         }
@@ -541,5 +580,18 @@ export default {
   margin-top:12px!important;
   color:#fff!important;
   background-color:#006eff!important;
+}
+.detailBoxCon{
+  min-height:300px;
+}
+.detailBoxC{
+  border-bottom:1px solid #eaeaea;
+  padding:20px 0;
+  h2{
+    font-weight:600;
+    font-size:14px;
+    color:#000;
+    margin-bottom:12px;
+  }
 }
 </style>

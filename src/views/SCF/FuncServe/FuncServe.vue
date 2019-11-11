@@ -36,55 +36,71 @@
       </div>
       <div>
         <el-table
-          :data="nameSpaceList"
+          :data="modelNameSpace"
           size="small"
           element-loading-text="Loading"
           highlight-current-row
         >
           <el-table-column label="命名空间">
             <template slot-scope="scope">
-              <el-form :model="modelNameSpace">
+              <el-form :model="modelNameSpace[scope.$index]">
                 <el-form-item prop="nameSpaceOne">
-                  <el-input v-show="true" v-model="modelNameSpace.nameSpaceOne" placeholder />
+                  <el-input v-show="true" v-model="modelNameSpace[scope.$index].nameSpaceOne" :disabled="modelNameSpace[scope.$index].disableDelete" placeholder />
+                  <div v-if="!modelNameSpace[scope.$index].disableDelete">
+                    <p class="modelNameSpace">1. 最多60个字符，最少2个字符</p>
+                    <p class="modelNameSpace">2. 字母开头，支持 a-z，A-Z，0-9，-，_，且需要以数字或字母结尾</p>
+                  </div>
                 </el-form-item>
               </el-form>
             </template>
           </el-table-column>
           <el-table-column label="描述">
             <template slot-scope="scope">
-              <el-form ref="scope.row" :model="modelNameSpace">
+              <el-form ref="scope.row"  :model="modelNameSpace[scope.$index]">
                 <el-form-item prop="nameSpaceTwo">
-                  <el-input type="textarea" v-model="modelNameSpace.nameSpaceTwo" placeholder />
+                  <el-input type="textarea" v-model="modelNameSpace[scope.$index].nameSpaceTwo" placeholder :disabled="modelNameSpace[scope.$index].disableDelete" />
                 </el-form-item>
               </el-form>
             </template>
           </el-table-column>
           <el-table-column label="操作">
             <template slot-scope="scope">
-              <el-form ref="scope.row" :model="modelNameSpace">
+              <el-form ref="scope.row">
                 <el-form-item>
-                  <el-button @click="spaceDelete(scope.$index,scope.row)">删除</el-button>
+                  <span v-if="modelNameSpace[scope.$index].disableDelete">-</span>
+                  <el-button v-if="!modelNameSpace[scope.$index].disableDelete" class="modelDelete" @click="spaceDelete(scope.$index,scope.row)">删除</el-button>
                 </el-form-item>
               </el-form>
             </template>
           </el-table-column>
         </el-table>
       </div>
+      <div>
+        <span @click="addNewNameSpace"><a href="#" v-if="!showTips">新增命名空间({{this.modelNameSpace.length}}/5)</a><span v-if="showTips">新增命名空间（共5个命名空间，已满额）</span></span>
+      </div>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible3 = false">取 消</el-button>
-        <el-button type="primary" @click="sureNameSpaceMag()">确 定</el-button>
+        <el-button type="primary" @click="sureNameSpaceMag()">提交</el-button>
       </span>
     </el-dialog>
     <div class="mainContainer">
       <div class="mainCon">
         <div class="tableTit newClear">
           <el-button size="small" type="primary" class="newCreate" @click="newCreateFun()">新建</el-button>
+          <div class="searchRight">
+            <el-select placeholder="要过滤的标签" v-model="filterConrent">
+              <el-option label="函数描述" value="value1"></el-option>
+              <el-option label="函数名称" value="value2"></el-option>
+              <el-option label="标签" value="value3"></el-option>
+            </el-select>
           <el-input
             v-model="tableDataName"
-            @change="doFilter"
             class="searchs"
             placeholder="请输入搜索内容"
+            @change="iptChange"
           ></el-input>
+          <el-button class="el-icon-search" @click="doFilter"></el-button>
+          </div>
         </div>
         <div class="mainTable">
           <el-table :data="tableDataBegin.slice((currentPage-1)*pageSize,currentPage*pageSize)">
@@ -257,13 +273,17 @@ export default {
         funDecs: ""
       },
       dialogVisible3: false,
-      modelNameSpace: {
-        //命名空间input,textarea绑定的参数
-        nameSpaceOne: "",
-        nameSpaceTwo: ""
-      },
-      nameSpaceList: [], //命名空间表格绑定的数据
-      copyIndex2: ""
+      modelNameSpace:[
+        {
+          //命名空间input,textarea绑定的参数
+          nameSpaceOne: "",
+          nameSpaceTwo: "",
+          disableDelete:false
+        },
+      ],
+      copyIndex2: "",
+      filterConrent:"",
+      showTips:false
     };
   },
   computed: {
@@ -271,6 +291,11 @@ export default {
   },
   created() {
     this.getData();
+  },
+  mounted(){
+    this.modelNameSpace[0].nameSpaceOne="default";
+    this.modelNameSpace[0].nameSpaceTwo="";
+    this.modelNameSpace[0].disableDelete=true;
   },
   methods: {
     getData() {
@@ -303,21 +328,44 @@ export default {
     },
     // 搜索
     doFilter() {
-      console.log(1);
+      console.log(this.filterConrent);
       this.tableDataBegin = this.allData;
       this.tableDataEnd = [];
       //每次手动将数据置空,因为会出现多次点击搜索情况
       this.filterTableDataEnd = [];
       this.tableDataBegin.forEach((val, index) => {
-        if (val.funName) {
-          if (val.funName.indexOf(this.tableDataName) == 0) {
-            this.filterTableDataEnd.push(val);
-            this.tableDataBegin = this.filterTableDataEnd;
-          } else {
-            this.filterTableDataEnd.push();
-            this.tableDataBegin = this.filterTableDataEnd;
+        if(this.filterConrent=="value2"){
+          if (val.funName) {
+            if (val.funName.indexOf(this.tableDataName) == 0) {
+              this.filterTableDataEnd.push(val);
+              this.tableDataBegin = this.filterTableDataEnd;
+            } else {
+              this.filterTableDataEnd.push();
+              this.tableDataBegin = this.filterTableDataEnd;
+            }
+          }
+        }else if(this.filterConrent=="value1"){
+          if (val.description) {
+            if (val.description.indexOf(this.tableDataName) == 0) {
+              this.filterTableDataEnd.push(val);
+              this.tableDataBegin = this.filterTableDataEnd;
+            } else {
+              this.filterTableDataEnd.push();
+              this.tableDataBegin = this.filterTableDataEnd;
+            }
+          }
+        }else if(this.filterConrent=="value3"){
+          if (val.funTabs) {
+            if (val.funTabs.indexOf(this.tableDataName) == 0) {
+              this.filterTableDataEnd.push(val);
+              this.tableDataBegin = this.filterTableDataEnd;
+            } else {
+              this.filterTableDataEnd.push();
+              this.tableDataBegin = this.filterTableDataEnd;
+            }
           }
         }
+        
       });
       //页面数据改变重新统计数据数量和当前页
       this.currentPage = 1;
@@ -424,11 +472,30 @@ export default {
     //命名空间管理的确定按钮
     sureNameSpaceMag() {},
     //删除命名空间
-    spaceDelete(spaceIndex, spaceRow) {},
+    spaceDelete(spaceIndex, spaceRow) {
+      this.modelNameSpace.splice(spaceIndex, 1);
+    },
+    iptChange(){
+      if(this.tableDataName==""){
+        this.getData();
+      }
+    },
     newCreateFun() {
       this.$router.push({
         path: "/createFun"
       });
+    },
+    addNewNameSpace(){
+      if(this.modelNameSpace.length<5){
+        this.modelNameSpace.push({
+          nameSpaceOne: "",
+          nameSpaceTwo: "",
+          disableDelete:false
+        });
+      }
+      else if(this.modelNameSpace.length=5){
+        this.showTips=true;
+      }
     }
   }
 };
@@ -515,9 +582,12 @@ export default {
     float: left;
   }
   .searchs {
-    width: 500px;
-    float: right;
+    width: 450px;
+    // float: right;
   }
+}
+.searchRight{
+  float:right;
 }
 .mainTable {
   // padding:20px 0;
@@ -550,5 +620,14 @@ export default {
   float: right;
   margin-top: 17px;
   margin-left: 5px;
+}
+.modelDelete{
+  border:0!important;
+  color:#006eff!important;
+}
+.modelNameSpace{
+  font-size:12px;
+  color:#888;
+  line-height:14px;
 }
 </style>
