@@ -21,7 +21,8 @@ export default new Router({
       meta: {
         keepAlive: true
       }
-    }, {
+    },
+    {
       path: '/ccnDetail', // ccn  详情
       name: 'ccnDetail',
       component: () => import(/* webpackChunkName: "ccnDetail" */ './ccnPage/ccnDetail.vue'),
@@ -29,6 +30,5 @@ export default new Router({
         keepAlive: true
       }
     }
-
   ]
 })
