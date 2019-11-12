@@ -27,7 +27,7 @@
     <el-dialog
       title="命名空间管理"
       :visible.sync="dialogVisible3"
-      width="30%"
+      width="800px"
       :before-close="handleClose3"
     >
       <div class="regionTit">
@@ -58,7 +58,7 @@
             <template slot-scope="scope">
               <el-form ref="scope.row"  :model="modelNameSpace[scope.$index]">
                 <el-form-item prop="nameSpaceTwo">
-                  <el-input type="textarea" v-model="modelNameSpace[scope.$index].nameSpaceTwo" placeholder :disabled="modelNameSpace[scope.$index].disableDelete" />
+                  <el-input type="textarea" style="min-height:90px;" v-model="modelNameSpace[scope.$index].nameSpaceTwo" placeholder :disabled="modelNameSpace[scope.$index].disableDelete" />
                 </el-form-item>
               </el-form>
             </template>
@@ -431,14 +431,14 @@ export default {
       this.deleteBegin = dataBegin;
       console.log(this.deleteBegin);
       this.dialogVisible = true;
-      console.log(this.deleteBegin.funName);
+      console.log(this.deleteBegin.funName + this.addressIpt);
     },
     //删除函数的确定按钮，调用删除接口
     sureDelete() {
       let params = {
         Version: "2018-04-16",
         Region: this.addressIpt,
-        FunctionName: this.deleteBegin.funName
+        functionName: this.deleteBegin.funName
       };
       console.log(this.deleteBegin.funName);
       this.$axios.post("scf/DeleteFunction", params).then(res => {
