@@ -11,11 +11,10 @@
     <div class="tables">
       <el-table :data="tableData" style="width: 100%">
         <template slot="empty">暂无数据</template>
-        <el-table-column prop="name" label="名称/ID" width="125">
+        <el-table-column prop="CcnName" label="名称/ID" width="125">
           <template slot-scope="scope">
-            <el-button @click="handleClick(scope.row)" type="text">{{ scope.row.name }}</el-button>
+            <el-button @click="handleClick(scope.row)" type="text">{{ scope.row.CcnName }}</el-button>
             <p class="edit">
-              12121
               <el-popover placement="bottom" width="210" v-model="visible">
                 <div class="pop-div" style="height:40px;border-bottom:1px solid #ddd">
                   <input type="text" style="height:30px;width:100%" />
@@ -31,26 +30,29 @@
             </p>
           </template>
         </el-table-column>
-        <el-table-column prop="status" label="状态" width="80">
+        <el-table-column prop="State" label="状态" width="80">
           <template slot-scope="scope">
-            <div v-if="scope.row.status==0" class="close_color">关闭</div>
-            <div v-if="scope.row.status==1" class="off_color">运行中</div>
+            <div v-if="scope.row.State=='AVAILABLE'" class="off_color">运行中</div>
+            <div v-else class="close_color">关闭</div>
           </template>
         </el-table-column>
-        <el-table-column prop="service" label="服务质量" width="80">
+        <el-table-column prop="QosLevel" label="服务质量" width="80">
           <template slot-scope="scope">
-            <div>金</div>
+            <div v-if="scope.row.QosLevel=='PT'">白金</div>
+            <div v-else-if="scope.row.QosLevel=='AU'">金</div>
+            <div v-else-if="scope.row.QosLevel=='AG'">银</div>
+            <div v-else>金</div>
           </template>
         </el-table-column>
-        <el-table-column prop="bucketName" label="关联实例" width="100">
+        <el-table-column prop="InstanceCount" label="关联实例" width="100">
           <template slot-scope="scope">
-            <el-button @click="handleClick(scope.row)" type="text">{{ scope.row.bucketName }}</el-button>
+            <el-button @click="handleClick(scope.row)" type="text">{{ scope.row.InstanceCount }}</el-button>
           </template>
         </el-table-column>
         <el-table-column prop label="备注" width="80">
           <template slot-scope="scope">
             <p class="edit">
-              1
+              {{ scope.row.CcnDescription }}
               <el-popover placement="bottom" width="210" v-model="visibleDes">
                 <div class="pop-div" style="height:40px;border-bottom:1px solid #ddd">
                   <input type="text" style="height:30px;width:100%" />
@@ -66,23 +68,32 @@
             </p>
           </template>
         </el-table-column>
-        <el-table-column prop="mode" label="计费模式" width="115"></el-table-column>
-        <el-table-column prop label="限速方式" width="115">
+        <el-table-column prop="InstanceChargeType" label="计费模式" width="115">
           <template slot-scope="scope">
-            <span class="edit">{{scope.row.limite}}</span>
+            <div v-if="scope.row.InstanceChargeType=='PREPAID'">预付费</div>
+            <div v-else-if="scope.row.InstanceChargeType=='POSTPAID'">后付费</div>
+            <div v-else>后付费</div>
+          </template>
+        </el-table-column>
+        <el-table-column prop="BandwidthLimitType" label="限速方式" width="115">
+          <template slot-scope="scope">
+            <div class="edit" v-if="scope.row.BandwidthLimitType=='OUTER_REGION_LIMIT'">地域出口限速</div>
+            <div class="edit" v-else-if="scope.row.BandwidthLimitType=='INTER_REGION_LIMIT'">地域间限速</div>
+            <div class="edit" v-else>地域出口限速</div>
+            <!-- <span class="edit">{{scope.row.BandwidthLimitType}}</span> -->
             <i type="text" @click="editVisible = true">
               <i class="el-icon-edit"></i>
             </i>
           </template>
         </el-table-column>
-        <el-table-column prop="createTime" label="创建时间" width="200"></el-table-column>
+        <el-table-column prop="CreateTime" label="创建时间" width="200"></el-table-column>
         <el-table-column prop="operate" label="操作" width="180">
           <template slot-scope="scope">
             <el-button @click="handleClick(scope.row)" type="text" size="small">管理实例</el-button>
             <el-button type="text" size="small"></el-button>
             <el-button type="text" @click="dialogTagVisible = true">编辑标签</el-button>
             <br />
-            <el-button type="text" @click="dialogTableVisible = true">删除</el-button>
+            <el-button type="text" @click="deleteCcnClick(scope.row)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -91,21 +102,21 @@
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
         :current-page="currentPage4"
-        :page-sizes="[10,15, 20,25, 30, 35,40]"
+        :page-sizes="[10, 15, 20, 25, 30, 35, 40]"
         :page-size="10"
         layout="total, sizes, prev, pager, next, jumper"
-        :total="20"
+        :total="total"
       ></el-pagination>
     </div>
     <!-- 删除的模态窗 -->
     <el-dialog title="您确认要删除该云联网吗？" :visible.sync="dialogTableVisible">
       <el-table :data="gridData">
         <el-table-column property="ID" label="ID" width="150"></el-table-column>
-        <el-table-column property="name" label="名称" width="200"></el-table-column>
-        <el-table-column property="status" label="状态">
+        <el-table-column property="CcnName" label="名称" width="200"></el-table-column>
+        <el-table-column property="State" label="状态">
           <template slot-scope="scope">
-            <div v-if="scope.row.status==0" class="close_color">关闭</div>
-            <div v-if="scope.row.status==1" class="off_color">运行中</div>
+            <div v-if="scope.row.State=='AVAILABLE'" class="off_color">运行中</div>
+            <div v-else class="close_color">关闭</div>
           </template>
         </el-table-column>
         <el-table-column property="address" label="关联实例">
@@ -123,21 +134,21 @@
     <el-dialog title="新建云联网实例" :visible.sync="dialogFormVisible" class="newDialog">
       <el-form :model="form">
         <el-form-item label="名称">
-          <el-input v-model="form.name" autocomplete="off" class="inputName"></el-input>
+          <el-input v-model="form.CcnName" autocomplete="off" class="inputName"></el-input>
         </el-form-item>
 
         <el-form-item label="计费模式">
-          <el-radio-group v-model="form.radio">
-            <el-radio :label="0">预付费</el-radio>
-            <el-radio :label="1">月95后付费</el-radio>
+          <el-radio-group v-model="form.InstanceChargeType">
+            <el-radio label="PREPAID">预付费</el-radio>
+            <el-radio label="POSTPAID">月95后付费</el-radio>
           </el-radio-group>
           <br />
           <span class="hint trankHint">为了便于测试连通性，地域间默认享有免费10Kbps带宽</span>
         </el-form-item>
         <el-form-item label="限速方式">
-          <el-radio-group v-model="form.radio2">
-            <el-radio :label="0">地域出口限速</el-radio>
-            <el-radio :label="1">地域间限速</el-radio>
+          <el-radio-group v-model="form.BandwidthLimitType">
+            <el-radio label="OUTER_REGION_LIMIT">地域出口限速</el-radio>
+            <el-radio label="INTER_REGION_LIMIT">地域间限速</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="描述">
@@ -145,15 +156,15 @@
             type="textarea"
             :autosize="{ minRows: 2, maxRows: 8}"
             placeholder="请输入内容"
-            v-model="form.textarea"
+            v-model="form.CcnDescription"
             autocomplete="off"
           ></el-input>
         </el-form-item>
         <el-form-item label="服务质量">
-          <el-radio-group v-model="form.radio3">
-            <el-radio :label="0">白金</el-radio>
-            <el-radio :label="1">金</el-radio>
-            <el-radio :label="2">银</el-radio>
+          <el-radio-group v-model="form.QosLevel">
+            <el-radio label="PT">白金</el-radio>
+            <el-radio label="AU">金</el-radio>
+            <el-radio label="AG">银</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="关联实例">
@@ -162,10 +173,9 @@
             <el-option label="专线网关" value="DIRECTCONNECT"></el-option>
             <el-option label="黑石私有网络" value="BMVPC"></el-option>
           </el-select>
-          <el-select v-model="form.region" placeholder="请选择所属区域">
-            <el-option label="华南地区(广州)" value></el-option>
-            <el-option label="华东地区(上海)" value></el-option>
-            <el-option label="港澳台地区(中国台北)" value></el-option>
+          <el-select v-model="form.Region" placeholder="请选择所属区域">
+            <!-- <el-option label="华南地区(广州)" value="ap-taipei"></el-option> -->
+            <el-option label="港澳台地区(中国台北)" value="ap-taipei"></el-option>
           </el-select>
           <el-select v-model="form.item" placeholder="搜索VPC名称或ID">
             <el-option label="vpc-cpoj691h(TestVPC|10.8.0.0/16)" value></el-option>
@@ -176,7 +186,8 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
+        <el-button type="primary" @click="createClick(form)">确 定</el-button>
+        <!-- <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button> -->
       </div>
     </el-dialog>
     <!-- 编辑模态窗 -->
@@ -234,38 +245,38 @@ export default {
       visibleDes: false,
       tableData: [
         {
-          name: '函数1',
-          status: '1',
-          monitor: '监控',
-          service: '金',
-          bucketName: '1',
-          desc: '1',
-          mode: '预付费',
-          limite: '地域间限速',
-          createTime: '2019-11-07 14：05：12'
+          // BandwidthLimitType: "INTER_REGION_LIMIT",
+          // CcnDescription: "hi",
+          // CcnId: "ccn-5d8lfgtn",
+          // CcnName: "xs",
+          // CreateTime: "2019-11-11 09:44:24",
+          // InstanceChargeType: "PREPAID",
+          // InstanceCount: 1,
+          // QosLevel: "AU",
+          // State: "AVAILABLE"
         }
-      ], // 列表数据
+      ], 
+      // 列表数据
       currentPage4: 1,
+      total: 0,
       gridData: [
         {
           ID: 'ccn-5d8lfgtn',
-          name: 'xs',
-          status: '1',
+          CcnName: 'xs',
+          State: 'AVAILABLE',
           conn: '1'
         }
       ],
+      // 新建ccn表单
       form: {
-        name: '',
-        region: '',
-        date1: '',
-        date2: '',
-        delivery: false,
-        type: [],
-        resource: '',
-        desc: '',
-        radio: 1,
-        radio2: 1,
-        radio3: 0
+        CcnName: '',
+        InstanceChargeType: 'POSTPAID',
+        BandwidthLimitType: 'OUTER_REGION_LIMIT',
+        CcnDescription: '',
+        QosLevel: 'AU',
+        vpc: '',
+        Region: '',
+        item: ''
       },
       formWay: {
         way: '地域间带宽'
@@ -278,7 +289,8 @@ export default {
       formInfoObj: {
         key: undefined
       },
-      formArr: []
+      formArr: [],
+      baijin:"PT"
     }
   },
   created () {
@@ -286,16 +298,31 @@ export default {
     this.formArr.push(this.formInfoObj)
   },
   methods: {
+    // 初始化CCN列表数据
+    getData () {
+      var params = {
+        Version: "2017-03-12",
+        Region: "ap-taipei"
+      }
+      this.$axios.post("vpc2/DescribeCcns", params).then(res => {
+        console.log(params);
+        console.log(res);
+        // console.log(res.Response.CcnSet);
+        console.log("成功");
+        this.tableData = res.Response.CcnSet;
+        this.total = res.Response.TotalCount;
+      })
+    },
+
     // 详情页跳转
     handleClick (rows) {
       this.$router.push({
         path: '/ccnDetail',
         query: {
-          ccnList: rows.name
+          ccnList: rows.CcnName
         }
       })
     },
-    getData () {},
     handleSizeChange (val) {
       console.log(`每页 ${val} 条`)
     },
@@ -317,6 +344,41 @@ export default {
     // 删除一行
     removeRow: function (idx) {
       this.formArr.splice(idx, 1)
+    },
+    // 新增ccn
+    createClick: function (form) {
+      console.log(form)
+      var params = {
+        Version: "2017-03-12",
+        Region: "ap-taipei",
+        CcnName: form.CcnName,
+        // CcnDescription: form.CcnDescription,
+        // QosLevel: form.QosLevel,
+        // InstanceChargeType: form.InstanceChargeType,
+        // BandwidthLimitType: form.BandwidthLimitType
+      }
+      this.$axios.post("vpc2/CreateCcn", params).then(res => {
+        console.log(params);
+        console.log(res);
+        console.log("新建成功");
+      })
+      this.dialogFormVisible = false;
+      this.getData();
+    },
+    // 删除ccn
+    deleteCcnClick: function (ccnDetail) {
+      console.log(ccnDetail);
+      var params = {
+        Version: "2017-03-12",
+        Region: "ap-taipei",
+        CcnId: ccnDetail.CcnId
+      }
+      this.$axios.post("vpc2/DeleteCcn", params).then(res => {
+        console.log(params);
+        console.log(res);
+        console.log("删除成功");
+      })
+      this.getData();
     }
   }
 }
