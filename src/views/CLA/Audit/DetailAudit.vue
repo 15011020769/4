@@ -3,7 +3,7 @@
     <div class="title_top">
       <div class="back">
         <i class="el-icon-back" @click="Back()"></i>
-        <span>{{DetailData.Name}}</span>
+        <span>{{DetailData.AuditName}}</span>
       </div>
       <div class="off">
         <el-switch v-model="off" inactive-text="日志记录" @click.native="open()"></el-switch>
@@ -15,12 +15,12 @@
         <div class="basic-b">
           <p>
             <span>跟踪集名称</span>
-            <span>{{DetailData.Name}}</span>
+            <span>{{DetailData.AuditName}}</span>
           </p>
           <p>
             <span>跟踪所有区域</span>
-            <span v-if="DetailData.IsMultiRegionAudit==1">是</span>
-            <span v-if="DetailData.IsMultiRegionAudit==0">否</span>
+            <span v-if="DetailData.IsEnableCmqNotify==1">是</span>
+            <span v-if="DetailData.IsEnableCmqNotify==0">否</span>
           </p>
         </div>
         <p class="basic store">
@@ -34,7 +34,7 @@
           </p>
           <p>
             <span>日志文件前缀</span>
-            <span>{{DetailData.CosKeyPrefix}}</span>
+            <span>{{DetailData.LogFilePrefix}}</span>
           </p>
         </div>
         <el-form
@@ -153,15 +153,17 @@ export default {
   },
   created () {
     let params = {
-      auditNameList: this.$route.query.auditNameList
+      Version:'2019-03-19',
+      Region:'ap-guangzhou',
+      AuditName: this.$route.query.AuditName,
     }
-    this.axios.post(GZJ_DETAILIST, params).then(({ data }) => {
-      this.DetailData = data.auditList[0]
-      if (this.DetailData.Status == 0) {
-        this.off = false
-      } else {
-        this.off = true
-      }
+    this.axios.post(GZJ_DETAILIST, params).then(( data ) => {
+      console.log(data)
+      this. DetailData=data.Response
+      // this.ResList = data.Response
+      // for (var i = 0; i < this.ResList.length; i++) {
+      //   this.ListCosName = this.ResList[i].Name
+      // }
     })
     this.axios.post(LIST_COSBUCKETS).then(({ data }) => {
       this.ListCos = data.cosBucketsList
@@ -214,21 +216,26 @@ export default {
       }
     },
     submitForm () {
-      let _CosBucketName, _IsMultiRegionAudit
+      let CosBucketName, IsCreateNewBucket
       if (this.ruleForm.radio == 0) {
-        _CosBucketName = this.value
-        _IsMultiRegionAudit = 0
+      CosBucketName = this.value
+        IsCreateNewBucket = 0
       } else {
-        _CosBucketName = this.ruleForm.COS
-        _IsMultiRegionAudit = 1
+        CosBucketName = this.ruleForm.COS
+        IsCreateNewBucket = 1
       }
       let params = {
-        Name: this.DetailData.Name, // 跟踪集名称
-        CosBucketName: _CosBucketName, // cos存储桶
-        IsMultiRegionAudit: _IsMultiRegionAudit,
-        CosKeyPrefix: this.ruleForm.log_file // 日志文件前缀
+        // Name: this.DetailData.Name, // 跟踪集名称
+        // CosBucketName: _CosBucketName, // cos存储桶
+        // IsEnableCmqNotify: _IsEnableCmqNotify,
+        // CosKeyPrefix: this.ruleForm.log_file // 日志文件前缀
+        Version:'2019-03-19',
+        Region:'ap-guangzhou',
+        AuditName: this.$route.query.AuditName,
+        LogFilePrefix:this.ruleForm.log_file
       }
       this.axios.post(GZJ_UPDATEAUDIT, params).then(data => {
+        console.log(data)
         if (data.codeDesc == 'Success') {
           this.$router.go(0)
           this.$message({
@@ -270,7 +277,7 @@ export default {
     // 返回
     Back () {
       this.$router.push({
-        path: '/cloudaudit-tranking'
+        path: '/Audit'
       })
     },
     // 开启关闭--日志记录
@@ -321,12 +328,15 @@ export default {
     // 删除
     Del () {
       let params = {
-        Name: this.DetailData.Name
+        AuditName: this.$route.query.AuditName,
+        Version:'2019-03-19',
+        Region:'ap-guangzhou'
       }
-      this.axios.post(GZJ_DELETE, params).then(({ data }) => {
+      this.axios.post(GZJ_DELETE, params).then(( data ) => {
+        console.log(data);
         if (data == '') {
           this.$router.push({
-            path: '/cloudaudit-tranking'
+            path: '/Audit'
           })
           this.$message({
             message: '删除成功'

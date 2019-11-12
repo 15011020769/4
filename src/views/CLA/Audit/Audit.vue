@@ -74,7 +74,7 @@ export default {
       this.$router.push({
         path: '/DetailAudit',
         query: {
-          auditNameList: rows.name
+          AuditName: rows.name
         }
       })
     },

@@ -18,7 +18,7 @@
           <p class="basic store">管理事件</p>
           <el-form-item label="管理事件">
             <el-radio-group v-model="ruleForm.radio2">
-              <el-radio :label="0">全部</el-radio>
+              <el-radio :label="3">全部</el-radio>
               <el-radio :label="1">只读</el-radio>
               <el-radio :label="2">只写</el-radio>
             </el-radio-group>
@@ -195,19 +195,27 @@ export default {
       }
     },
     save () {
-      let _cos
+      let _cos;
       if (this.ruleForm.radio == 1) {
         _cos = this.ruleForm.COS
       } else {
         _cos = this.value
       }
       let params = {
-        IsMultiRegionAudit: 1,
-        Name: this.ruleForm.TrankingName, // 跟踪集名称
+        // Action: "CreateAudit",
+        Version:'2019-03-19',
+        Region:'ap-guangzhou',
+        // CmqQueueName:'cmq-01',
+        CosRegion:'ap-beijing',
+        IsCreateNewBucket: this.ruleForm.radio,
+        IsEnableCmqNotify:0,
+        ReadWriteAttribute:this.ruleForm.radio2,
+        AuditName: this.ruleForm.TrankingName, // 跟踪集名称
         CosBucketName: _cos, // COS Bucket 的名称
-        CosKeyPrefix: this.ruleForm.log_file // COS Bucket 前缀
+        LogFilePrefix: this.ruleForm.logName, // COS Bucket 前缀
       }
       this.axios.post(GZJ_CREATE, params).then(data => {
+        
         if (data.codeDesc == 'Success') {
           this.$router.push({
             path: '/Audit'

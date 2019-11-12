@@ -243,7 +243,7 @@ export default {
         }
       ],
       value: '1',
-      tableData: '',
+      tableData: [],
       input3: ''
     }
   },
@@ -266,7 +266,10 @@ export default {
       let lw = new Date(myDate - 1000 * 60 * 60 * 24 * 30).getTime() / 1000
       this.oldTime = parseFloat(lw).toFixed()
       let params = {
+        // Action:'LookUpEvents',
         Version: '2019-03-19',
+        Region:'ap-taipei',
+        // StartTime:this.oldTime,
         EndTime: this.nowtime, // 结束时间1558108799
         LookupAttributes: [
           {
@@ -281,6 +284,7 @@ export default {
 
       this.axios.post(YJS_LIST, params).then(({ data }) => {
         this.tableData = data.Events
+        
         // console.log(this.tableData)
         this.loading = false
         if (this.tableData.length == 0) {
@@ -294,6 +298,8 @@ export default {
       let startTime = new Date(this.value1[0]).getTime() / 1000
       let endTime = new Date(this.value1[1]).getTime() / 1000
       let params = {
+        Version: '2019-03-19',
+        Region:'ap-taipei',
         EndTime: endTime,
         LookupAttributes: [
           {
