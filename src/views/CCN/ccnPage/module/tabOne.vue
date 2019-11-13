@@ -214,6 +214,11 @@ export default {
   }
   .dialog-footer {
     text-align: center;
+    .el-button {
+      height: 30px;
+      line-height: 6px;
+      border-radius: 0px;
+    }
   }
 }
 </style>
