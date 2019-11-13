@@ -25,7 +25,7 @@
         </el-tab-pane>
       </el-tabs>
     </div>
-    <div class="minitor">
+    <div class="minitor" v-show="minitorShow">
       <div class="time">
         <el-button-group>
           <el-button @click="thisTime(1)">实时</el-button>
@@ -153,6 +153,7 @@ export default {
         }
       ],
       value: '',
+      minitorShow: false, // 监控的显示与隐藏
       options2: [
         {
           value: '选项1',
@@ -203,6 +204,9 @@ export default {
   .tab {
     padding-left: 20px;
     padding-top: 20px;
+    .el-select{
+      margin-right: 10px;
+    }
   }
   .minitor {
     padding-left: 20px;

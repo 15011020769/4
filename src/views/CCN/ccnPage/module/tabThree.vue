@@ -1,10 +1,10 @@
 <!--  -->
 <template>
   <div class="tabThree">
-    <div class="btn">
-      <el-button type="text" @click="newVisible = true">购买带宽</el-button>
-    </div>
     <div class="table">
+      <div class="btn">
+        <el-button type="text" @click="newVisible = true">购买带宽</el-button>
+      </div>
       <el-table :data="tableData" style="width: 100%">
         <template slot="empty">暂无数据</template>
         <el-table-column prop="" label="地域A" width>
@@ -131,27 +131,29 @@ export default {
 </style>
 <style lang="scss" scoped>
 .tabThree {
-  .btn {
-    .el-button {
-      height: 30px;
-      background-color: #006eff;
-      color: #fff;
-      border: 1px solid #006eff;
-      line-height: 0px;
-      border-radius: 0px;
-      font-size: 12px !important;
-      padding: 10px 15px;
-    }
-    .el-button.is-plain:hover {
-      background-color: #0063e5;
-      color: #fff;
-      border: 1px solid #0063e5;
-    }
-  }
   .table {
     margin-top: 20px;
     min-height: 450px;
+    padding: 20px 0 0 20px;;
     background: #fff;
+    .btn {
+
+      .el-button {
+        height: 30px;
+        background-color: #006eff;
+        color: #fff;
+        border: 1px solid #006eff;
+        line-height: 0px;
+        border-radius: 0px;
+        font-size: 12px !important;
+        padding: 10px 15px;
+      }
+      .el-button.is-plain:hover {
+        background-color: #0063e5;
+        color: #fff;
+        border: 1px solid #0063e5;
+      }
+    }
     .close_color {
       color: #e54545;
     }

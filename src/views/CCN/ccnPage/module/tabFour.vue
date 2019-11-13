@@ -20,8 +20,8 @@
           </template>
         </el-table-column>
         <el-table-column prop="nextRegion" label="下一跳所属地域"> </el-table-column>
-        <el-table-column prop="updateTime" label="到期时间" width></el-table-column>
-        <el-table-column prop="operate" label="操作" width>
+        <el-table-column prop="updateTime" label="更新时间" width></el-table-column>
+        <el-table-column prop="operate" label="启用路由" width>
           <template slot-scope="scope">
             <el-switch v-model="value1"> </el-switch>
           </template>

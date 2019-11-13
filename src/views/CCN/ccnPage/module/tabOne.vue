@@ -7,7 +7,7 @@
     <div class="table">
       <el-table :data="tableData" style="width: 100%">
         <template slot="empty">暂无数据</template>
-        <el-table-column prop="name" label="名称/ID" width>
+        <el-table-column prop="name" label="ID/名称" width>
           <template slot-scope="scope">
             <el-button @click="handleClick(scope.row)" type="text">{{ scope.row.name }}</el-button>
             <p class="edit">12121</p>
@@ -27,7 +27,8 @@
         <el-table-column prop="bucketName" label="所属帐号" width>
           <template slot-scope="scope">我的帐号</template>
         </el-table-column>
-        <el-table-column prop="createTime" label="创建时间" width></el-table-column>
+        <el-table-column prop="createTime" label="关联时间" width></el-table-column>
+        <el-table-column prop="region" label="所在地域" width></el-table-column>
         <el-table-column prop="operate" label="操作" width>
           <template slot-scope="scope">
             <el-button type="text" @click="dialogVisible = true">解关联</el-button>
@@ -110,6 +111,7 @@ export default {
           name: 'dddaa',
           status: '1',
           type: '私有网络',
+          region: '中国台北',
           createTime: '2019-11-07 14：05：12'
         }
       ], // 列表数据
