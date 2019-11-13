@@ -12,7 +12,7 @@
     <div class="tables">
       <el-table :data="tableData" style="width: 100%">
         <template slot="empty">暂无数据</template>
-        <el-table-column prop="CcnName" label="名称/ID" width="125">
+        <el-table-column prop="CcnName" :label="$t('CCN.CCN.total.tr1')" width="125">
           <template slot-scope="scope">
             <el-button @click="handleClick(scope.row)" type="text">{{ scope.row.CcnName }}</el-button>
             <p class="edit">
