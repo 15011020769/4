@@ -104,7 +104,11 @@
         </div>
         <div class="mainTable">
           <el-table :data="tableDataBegin.slice((currentPage-1)*pageSize,currentPage*pageSize)">
-            <el-table-column prop="funName" label="函数名"></el-table-column>
+            <el-table-column prop="funName" label="函数名">
+              <template slot-scope="scope">
+                <a href="#" @click="toDoDetail(scope.$index, scope.row)">{{scope.row.funName}}</a>
+              </template>
+            </el-table-column>
             <el-table-column prop="funStatus" label="函数状态"></el-table-column>
             <el-table-column prop="monitor" label="监控"></el-table-column>
             <el-table-column prop="runMoent" label="运行环境"></el-table-column>
@@ -496,6 +500,16 @@ export default {
       else if(this.modelNameSpace.length=5){
         this.showTips=true;
       }
+    },
+    //跳转详情页点击事件
+    toDoDetail(newIndex,newRow){
+      console.log(this.tableDataBegin[newIndex].funName)
+      this.$router.push({
+        path: "/funSeverDetail",
+        query:{
+					msg:this.tableDataBegin[newIndex].funName
+				}
+      });
     }
   }
 };

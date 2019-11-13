@@ -4,6 +4,7 @@ import overView from './overView/overView'
 import FuncServe from './FuncServe/FuncServe'
 import createFun from './FuncServe/createFun'
 import createFunStep from './FuncServe/createFunStep'
+import funSeverDetail from './FuncServe/funSeverDetail'
 
 Vue.use(Router)
 
@@ -49,6 +50,15 @@ export default new Router({
       meta: {
         keepAlive: true
       }
+    },
+    {
+      path: '/funSeverDetail', // 创建函数第二步
+      name: 'funSeverDetail',
+      component: funSeverDetail,
+      meta: {
+        keepAlive: true
+      }
     }
+    
   ]
 })
