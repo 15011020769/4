@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="topFun">
-      <span>函数服务</span>
+      <span>{{$t("SCF.SCF.total.title")}}</span>
       <el-input class="addressName" readonly="readonly" v-model="addressIpt"></el-input>
       <div>
         命名空间：

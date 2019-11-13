@@ -64,15 +64,16 @@
                         </el-select>
                         <p class="tipContent">
                           <span>此角色将用于授权函数运行时操作其他资源的权限。您可以</span>
-                          <a>新建角色<span class="el-icon-share"></span></a>
+                          <a class="tipContentA">新建角色<span class="el-icon-share"></span></a>
                           <span>或对角色</span>
-                          <a>修改权限<span class="el-icon-share"></span></a>
+                          <a class="tipContentA">修改权限<span class="el-icon-share"></span></a>
                         </p>
                       </el-form-item>
                       <el-form-item prop="runMoment" label="运行环境">
                         <span>{{funReast.runMoment}}</span>
                       </el-form-item>
-                      <el-form-item prop="storageMb" label="内存" :required="true">
+                      <el-form-item prop="storageMb" label="内存" :required="true" class="intoAll">
+                        <span slot="label">内存<i class="el-icon-question"></i></span>
                         <el-select v-model="funReast.storageMb">
                           <el-option label="64MB" value="64"></el-option>
                           <el-option label="128MB" value="128"></el-option>
@@ -89,23 +90,74 @@
                           <el-option label="1536MB" value="1536"></el-option>
                         </el-select>
                       </el-form-item>
-                      <el-form-item label="超时时间" prop="timeOutDate">
-                        <el-input class="decsIpt" v-model="funReast.timeOutDate" placeholder=""></el-input>
+                      <el-form-item prop="timeOutDate" label="超时时间"  :required="true" class="timeOutDate newClear">
+                        <span slot="label">超时时间<i class="el-icon-question"></i></span>
+                        <el-input class="timeOutDate1" v-model="funReast.timeOutDate" placeholder=""></el-input><span>秒</span><br/>
                         <p class="tipContent">时间范围：1-900秒</p>
                       </el-form-item>
                       <el-form-item label="描述" prop="description">
-                        <el-input tyle="textarea" class="decsIpt" v-model="funReast.description" placeholder=""></el-input>
+                        <span slot="label">描述<i class="el-icon-question"></i></span>
+                        <el-input type="textarea" v-model="funReast.description" placeholder=""></el-input>
                         <p class="tipContent">最大支持1000个英文字母、数字、空格、逗号、句号、中文</p>
                       </el-form-item>
-                      <el-form-item label="描述" prop="description">
-                        <el-input tyle="textarea" class="decsIpt" v-model="funReast.description" placeholder=""></el-input>
-                        <p class="tipContent">最大支持1000个英文字母、数字、空格、逗号、句号、中文</p>
+                      <el-form-item label="环境变量" prop="variable">
+                        <span slot="label">环境变量<i class="el-icon-question"></i></span>
+                        <el-table
+                          :data="funReast.variable"
+                          size="small"
+                          border
+                          element-loading-text="Loading"
+                          highlight-current-row>
+                          <el-table-column label="key">
+                            <template slot-scope="scope">
+                              <el-form :model="funReast.variable[scope.$index]">
+                                <el-form-item prop="nameSpaceOne">
+                                  <el-input v-show="true" v-model="funReast.variable[scope.$index].key" placeholder />
+                                </el-form-item>
+                              </el-form>
+                            </template>
+                          </el-table-column>
+                          <el-table-column label="value">
+                            <template slot-scope="scope">
+                              <el-form ref="scope.row"  :model="funReast.variable[scope.$index]">
+                                <el-form-item prop="nameSpaceTwo">
+                                  <el-input v-model="funReast.variable[scope.$index].value" placeholder  />
+                                </el-form-item>
+                              </el-form>
+                            </template>
+                          </el-table-column>
+                          <el-table-column label="delete">
+                            <template slot-scope="scope">
+                              <el-form ref="scope.row">
+                                <el-form-item>
+                                  <el-button  class="modelDelete" @click="spaceDelete1(scope.$index,scope.row)">delete</el-button>
+                                </el-form-item>
+                              </el-form>
+                            </template>
+                          </el-table-column>
+                        </el-table>
+                        <a @click="addvariable">添加环境变量</a>
+                      </el-form-item>
+                      <el-form-item label="内网访问" prop="valueChange">
+                        <span slot="label">内网访问<i class="el-icon-question"></i></span>
+                        <el-switch
+                          v-model="funReast.valueChange"
+                          active-color="#006eff"
+                          inactive-color="#888">
+                        </el-switch>
+                        <div v-if="funReast.valueChange">
+                          <el-select v-model="funReast.valueChangeSelect" >
+                            <el-option v-for="item in funReast.valueChangeSelect" :label="item.label" :value="item.value"></el-option>
+                          </el-select>
+                          <p class="tipContent">
+                            <span>如现有的网络不合适，您可以去控制台</span>
+                            <a class="tipContentA">新建私有网络<span class="el-icon-share"></span></a>
+                            <span>或</span>
+                            <a class="tipContentA">新建子网<span class="el-icon-share"></span></a>
+                          </p>
+                        </div>
                       </el-form-item>
                     </el-form>
-                    <span slot="footer" class="dialog-footer">
-                      <el-button @click="dialogVisible2 = false">取 消</el-button>
-                      <el-button type="primary">确 定</el-button>
-                    </span>
                   </el-dialog>
                 </div>
                 <div class="allConListMainCon">
@@ -270,7 +322,25 @@ export default {
         runMoment:"Python2.7",
         storageMb:"",
         timeOutDate:"",
-        description:""
+        description:"",
+        variable:[
+          {
+            key:"12",
+            value:"1"
+          }
+        ],
+        valueChange:false,
+        valueChangeSelect:[
+          {
+            value:"123",
+            label:"123"
+          },
+          {
+            value:"456",
+            label:"456"
+          }
+        ]
+      
       }
     };
   },
@@ -326,6 +396,16 @@ export default {
         nameSpaceTwo: "",
         disableDelete:false
       });
+    },
+    spaceDelete1(spaceIndex, spaceRow) {
+      this.funReast.variable.splice(spaceIndex, 1);
+    },
+    //添加环境变量按钮
+    addvariable(){
+      this.funReast.variable.push({
+        key: "",
+        value: ""
+      })
     }
   }
 };
@@ -461,12 +541,22 @@ export default {
   span{
     float:left;
   }
-  a{
+  a.tipContentA{
     float:left;
     span.el-icon-share{
       float:right;
       margin: 14px 5px 0 0;
     }
+  }
+}
+.timeOutDate{
+  // width:200px!important;
+  .timeOutDate1{
+    width:200px;
+    float:left;
+  }
+  span{
+    float:left;
   }
 }
 </style>
