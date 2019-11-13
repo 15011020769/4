@@ -1,7 +1,8 @@
 <template>
   <div>
     <div class="title_top">
-      <h1>云联网</h1>
+      <!-- <h1>云联网</h1> -->
+      <h1>{{$t("CCN.CCN.total.title")}}</h1>
     </div>
     <div class="tea-content__body">
       <div class="btn">
@@ -255,7 +256,7 @@ export default {
           // QosLevel: "AU",
           // State: "AVAILABLE"
         }
-      ], 
+      ],
       // 列表数据
       currentPage4: 1,
       total: 0,
@@ -290,7 +291,7 @@ export default {
         key: undefined
       },
       formArr: [],
-      baijin:"PT"
+      baijin: 'PT'
     }
   },
   created () {
@@ -301,16 +302,16 @@ export default {
     // 初始化CCN列表数据
     getData () {
       var params = {
-        Version: "2017-03-12",
-        Region: "ap-taipei"
+        Version: '2017-03-12',
+        Region: 'ap-taipei'
       }
-      this.$axios.post("vpc2/DescribeCcns", params).then(res => {
-        console.log(params);
-        console.log(res);
+      this.$axios.post('vpc2/DescribeCcns', params).then(res => {
+        console.log(params)
+        console.log(res)
         // console.log(res.Response.CcnSet);
-        console.log("成功");
-        this.tableData = res.Response.CcnSet;
-        this.total = res.Response.TotalCount;
+        console.log('成功')
+        this.tableData = res.Response.CcnSet
+        this.total = res.Response.TotalCount
       })
     },
 
@@ -349,36 +350,36 @@ export default {
     createClick: function (form) {
       console.log(form)
       var params = {
-        Version: "2017-03-12",
-        Region: "ap-taipei",
-        CcnName: form.CcnName,
+        Version: '2017-03-12',
+        Region: 'ap-taipei',
+        CcnName: form.CcnName
         // CcnDescription: form.CcnDescription,
         // QosLevel: form.QosLevel,
         // InstanceChargeType: form.InstanceChargeType,
         // BandwidthLimitType: form.BandwidthLimitType
       }
-      this.$axios.post("vpc2/CreateCcn", params).then(res => {
-        console.log(params);
-        console.log(res);
-        console.log("新建成功");
+      this.$axios.post('vpc2/CreateCcn', params).then(res => {
+        console.log(params)
+        console.log(res)
+        console.log('新建成功')
       })
-      this.dialogFormVisible = false;
-      this.getData();
+      this.dialogFormVisible = false
+      this.getData()
     },
     // 删除ccn
     deleteCcnClick: function (ccnDetail) {
-      console.log(ccnDetail);
+      console.log(ccnDetail)
       var params = {
-        Version: "2017-03-12",
-        Region: "ap-taipei",
+        Version: '2017-03-12',
+        Region: 'ap-taipei',
         CcnId: ccnDetail.CcnId
       }
-      this.$axios.post("vpc2/DeleteCcn", params).then(res => {
-        console.log(params);
-        console.log(res);
-        console.log("删除成功");
+      this.$axios.post('vpc2/DeleteCcn', params).then(res => {
+        console.log(params)
+        console.log(res)
+        console.log('删除成功')
       })
-      this.getData();
+      this.getData()
     }
   }
 }
