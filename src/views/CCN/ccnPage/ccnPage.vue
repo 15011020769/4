@@ -7,10 +7,9 @@
       <div class="btn">
         <el-button type="text" @click="dialogFormVisible = true">新建</el-button>
         <div class="link">
-        <a >{{$t("CCN.CCN.total.link")}}</a>
+          <a >{{$t("CCN.CCN.total.link")}}</a>
+        </div>
       </div>
-      </div>
-
     </div>
     <div class="tables">
       <el-table :data="tableData" style="width: 100%">
@@ -177,7 +176,6 @@
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">取 消</el-button>
         <el-button type="primary" @click="createClick(form)">{{$t('CCN.CCN.total.sure')}}</el-button>
-        <!-- <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button> -->
       </div>
     </el-dialog>
     <!-- 修改名称updateName模态窗 -->
