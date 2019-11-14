@@ -2,16 +2,15 @@
 <template>
   <div>
     <div class="title_top">
-      <!-- <h1>云联网</h1> -->
       <div class="back">
         <i class="el-icon-back" @click="Back()"></i>
         <span>xs(ccn-5d8lfgtn)</span>
       </div>
       <div class="tabTitle">
-        <span :class="['tab',showIndex==1?'active':'']" @click="handleClick(1)">关联实例</span>
-        <span :class="['tab',showIndex==2?'active':'']" @click="handleClick(2)">监控</span>
-        <span :class="['tab',showIndex==3?'active':'']" @click="handleClick(3)">带宽管理</span>
-        <span :class="['tab',showIndex==4?'active':'']" @click="handleClick(4)">路由表</span>
+        <span :class="['tab',showIndex==1?'active':'']" @click="handleClick(1)">{{$t("CCN.CCN.tabs.tab1")}}</span>
+        <span :class="['tab',showIndex==2?'active':'']" @click="handleClick(2)">{{$t("CCN.CCN.tabs.tab2")}}</span>
+        <span :class="['tab',showIndex==3?'active':'']" @click="handleClick(3)">{{$t("CCN.CCN.tabs.tab3")}}</span>
+        <span :class="['tab',showIndex==4?'active':'']" @click="handleClick(4)">{{$t("CCN.CCN.tabs.tab4")}}</span>
       </div>
       <div class="detailContent">
         <tab-one v-if="showIndex==1"></tab-one>
