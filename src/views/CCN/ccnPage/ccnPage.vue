@@ -155,15 +155,15 @@
           </el-radio-group>
         </el-form-item>
         <el-form-item :label="$t('CCN.CCN.total.new6')">
-          <el-select v-model="form.instanceType" :placeholder="('CCN.CCN.total.vpc1')">
-            <el-option :label="('CCN.CCN.total.vpc1')" value="VPC"></el-option>
-            <el-option :label="('CCN.CCN.total.vpc2')" value="DIRECTCONNECT"></el-option>
+          <el-select v-model="form.instanceType" :placeholder="$t('CCN.CCN.total.vpc1')">
+            <el-option :label="$t('CCN.CCN.total.vpc1')" value="VPC"></el-option>
+            <el-option :label="$t('CCN.CCN.total.vpc2')" value="DIRECTCONNECT"></el-option>
             <!-- <el-option label="黑石私有网络" value="BMVPC"></el-option> -->
           </el-select>
-          <el-select v-model="form.instanceRegion" :placeholder="('CCN.CCN.total.region')">
-            <el-option :label="('CCN.CCN.total.region')" value="ap-taipei"></el-option>
+          <el-select v-model="form.instanceRegion" :placeholder="$t('CCN.CCN.total.region')">
+            <el-option :label="$t('CCN.CCN.total.region')" value="ap-taipei"></el-option>
           </el-select>
-          <el-select v-model="form.instanceId" :placeholder="('CCN.CCN.total.select')">
+          <el-select v-model="form.instanceId" :placeholder="$t('CCN.CCN.total.select')">
             <el-option
               v-for="(item,index) in vpcs"
               :key="index"
@@ -181,7 +181,7 @@
     <!-- 修改名称updateName模态窗 -->
     <el-dialog :title="$t('CCN.CCN.total.editname')" :visible.sync="updateNameVisible" class="formDialog">
       <el-form :model="ccnPublic">
-        <el-form-item :label="$t('CCN.CCN.total.editname1')">
+        <el-form-item :label="$t('CCN.CCN.total.editname2')" :label-width="formLabelWidth">
           <el-input v-model="ccnPublic.CcnName" autocomplete="off" class="inputName"></el-input>
         </el-form-item>
       </el-form>
@@ -193,7 +193,7 @@
     <!-- 修改备注updateDes模态窗 -->
     <el-dialog :title="$t('CCN.CCN.total.editdesc')" :visible.sync="updateDesVisible" class="formDialog">
       <el-form :model="ccnPublic">
-        <el-form-item :label="$t('CCN.CCN.total.editdesc1')">
+        <el-form-item :label="$t('CCN.CCN.total.editdesc1')" :label-width="formLabelWidth">
           <el-input v-model="ccnPublic.CcnDescription" autocomplete="off" class="inputName"></el-input>
         </el-form-item>
       </el-form>
@@ -272,6 +272,7 @@ export default {
         instanceRegion: 'ap-taipei',
         instanceId: ''
       },
+      formLabelWidth: '120px',
       // 删除模态窗回显数据
       gridData: [{
         CcnId: '',
@@ -487,6 +488,9 @@ export default {
 <style lang="scss">
 .el-input__inner {
   height: 30px;
+}
+.el-form-item__label{
+  text-align: left;
 }
 </style>
 <style scoped lang="scss">
