@@ -55,6 +55,13 @@ let product = {
     title: '云商平台-验证码',
     chunks: ['chunk-vendors', 'chunk-common', 'CAP']
   },
+  DDOS: {
+    entry: 'src/views/DDOS/main.js',
+    template: 'src/public/index.html',
+    filename: 'index.html',
+    title: '云商平台-DDoS防护',
+    chunks: ['chunk-vendors', 'chunk-common', 'DDOS']
+  },
 }
 let page = {}
 let productName = process.argv[3].substring(2)// 获取执行哪个文件
