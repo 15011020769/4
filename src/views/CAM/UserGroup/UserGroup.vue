@@ -1,148 +1,273 @@
 <template>
   <div class="Cam">
     <div class="top">
-      <span class="title-left">用户列表</span>
+      <span class="title-left">用户组</span>
       <span class="title-right">
-        <span>CAM用户组使用说明</span>
-        <i class="el-icon-share"></i>
+        <span>CAM用户组使用说明<i class="el-icon-share"></i></span>
       </span>
     </div>
     <div class="cam_button">
-      <!-- <template>
-        <el-button type="text" @click="open" class="btn-fr"><i class="el-icon-setting"></i></el-button> 
-      </template> -->
       <el-row class="cam-lt">
-        <el-button type="primary"  @click="NewUsergroup" >新建用户组</el-button>
-        <el-button disabled>添加用户</el-button>
+        <el-button type="primary"  @click="NewUser" >新建用户组</el-button>
+        <el-button type="primary" @click="addUserGroup()" >添加用户</el-button>
       </el-row>
-
-     <!-- 自定义弹框 -->
-      <el-dialog title="自定义列表字段" :visible.sync="dialogVisible" width="540px" :before-close="handleClose">
-        <div class="tip_box">
-        <span id="limitTip">请选择您想显示的列表详细信息</span></div>
-        <div>
-          <ul>
-              <li><el-checkbox label="用户组名称" disabled></el-checkbox></li>
-              <li><el-checkbox v-model="checked">备注</el-checkbox></li>
-              <li><el-checkbox v-model="checkedtime">创建时间</el-checkbox></li>
-              <li><el-checkbox label="操作" disabled></el-checkbox></li>
-          </ul>
-        </div>
-        <span slot="footer" class="dialog-footer">
-          <el-button @click="dialogVisible = false">取 消</el-button>
-          <el-button type="primary" @click="dialogVisible = falsechecked01;checked01=checked;checkedtime01=checkedtime">确 定</el-button>
-        </span>
-      </el-dialog>
 
       <div class="head-container">
         <!-- 搜索 -->
-        <el-input v-model="value" clearable placeholder="支持搜索用户组名称/备注" style="width: 200px;"  @keyup.enter.native="toQuery"/>
-        <el-button class="suo" icon="el-icon-search" circle></el-button>
-        <el-button icon="el-icon-s-tools" @click="dialogVisible = true"></el-button>
-        <el-button icon="el-icon-download" @click="download = true"></el-button>
+        <el-input v-model="searchValue" clearable placeholder="支持搜索用户组名称/备注" style="width: 300px;"  @keyup.enter.native="toQuery"/>
+        <el-button class="suo" icon="el-icon-search"  show-overflow-tooltip @click="toQuery"></el-button>
       </div>
       
     </div>
     <!-- 表格 -->
     <div class="cam-box">
-        <el-table
-    ref="multipleTable"
-    :data="tableData"
-    tooltip-effect="dark"
-    style="width: 100%; border:1px solid #ddd;padding-top: 8px;" 
-    @selection-change="handleSelectionChange">
-    <el-table-column  v-model="checkeds"
-      type="selection">
-    </el-table-column>
-    <el-table-column
-     prop="groupName"
-      label="用户组名称">
-      <template></template>
-    </el-table-column>
-    <el-table-column
-      prop="remark"  v-if="checked01"
-      label="备注">
-    </el-table-column>
-    <el-table-column
-      prop="createTime" v-if="checkedtime01"
-      label="日期"
-      show-overflow-tooltip>
-    </el-table-column>
-    <el-table-column
-        prop="oper"
-        label="操作">
-        <template scope="scope">
-          <el-button type="text">添加用户</el-button>
-          <el-button @click="open" type="text">删除</el-button>
-        </template>
-      </el-table-column>
-
-  </el-table>
-  <div class="block">
-      <el-pagination
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-        :current-page="currentPage4"
-        :page-sizes="[10, 20, 30, 40]"
-        :page-size="10"
-        layout="total, sizes, prev, pager, next, jumper"
-        :total="totalNum">
-      </el-pagination>
+      <el-table
+        ref="multipleTable"
+        :data="tableData"
+        tooltip-effect="dark"
+        style="width: 100%; border:1px solid #ddd;padding-top: 8px;" 
+        @selection-change="handleSelectionChange">
+        <el-table-column prop="groupId" type="selection" width="30"> </el-table-column>
+        <el-table-column prop="groupName" label="用户组名称" show-overflow-tooltip> </el-table-column>
+        <el-table-column prop="remark" label="备注" show-overflow-tooltip> </el-table-column>
+        <el-table-column prop="createTime" label="创建时间" show-overflow-tooltip> </el-table-column>
+        <el-table-column label="操作" show-overflow-tooltip>
+           &lt;!&ndash;<template slot-scope="scope">
+          <el-button size="mini" type="text" @click="addUserGroup(scope.row.groupId)">添加用户</el-button>
+          <el-button size="mini" type="text" @click="delUserGroup(scope.row.groupId)">删除</el-button>
+        </template>&ndash;&gt;
+        </el-table-column>
+      </el-table>
+      <div class="block">
+        <el-pagination
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page="currentPage4"
+          :page-sizes="[10, 20, 30, 40]"
+          :page-size="10"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="40">
+        </el-pagination>
+      </div>
     </div>
-    </div>
-    
-    
+    <template>
+      <el-dialog title="添加用户" :visible.sync="dialogVisible" :before-close="handleClose" > 
+          <el-transfer filterable
+            v-model="userModel"
+            center="true"
+            :titles="['选择添加的用户','已选择']"
+            :data="userData"
+            :props="{
+              key: 'uid',
+              label: 'name'
+            }"
+            @change="userChange"
+            @left-check-change="changeLeftData"
+          >
+          </el-transfer> 
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="dialogVisible = false">取 消</el-button>
+          <el-button type="primary" @click="addUser">确 定</el-button>
+        </div>
+      </el-dialog>
+    </template>
   </div>
+
 </template>
 <script>
+  // import addUserGroup from './addUserGroup'
   export default {
     data() {
       return {
-        dialogVisible: false,
-        checked: true,
-        checkedtime:true,
-        checked01:false,
-        checkedtime01:false,
-        download:false,
-        checkeds:false,
-        tableData: [{}],
-        totalNum:"0"
+        searchValue: '',
+        userModel: [],
+        userData: [],
+        dialogVisible: false,
+        tableData: []
       }
   },
-    created () {
-    this.getData()
-//     this.formArr.push(this.formInfoObj)
-  },
+  mounted() {
+    this.init()
+  },
   methods: {
-    getData () {
-        var params = {
-          Version: "2019-01-16"
-        }
-        this.$axios.post("cam/ListGroups", params).then(res => {
-          console.log(res.data.groupInfo);
-          console.log(res);
-          console.log("OK!");
-          this.tableData= res.data.groupInfo;
-          this.totalNum=res.data.totalNum;
-        })
-    },
-      open() {
+      //初始化方法。
+      init() {
+        let params = {
+          Action: 'ListGroups',
+          Version: '2019-01-16'
+          // ,
+          // Region: this.$cookie.get("regionv2")
+        };
+        if(this.searchValue != null && this.searchValue != ''){
+          params["keyword"] = this.searchValue
+        };
+        let url = "cam/ListGroups";
+        this.axios.post(url, params).then(data => {
+          this.tableData = data.data.groupInfo
+        }).catch(error => {
+          console.log(error);
+        });
+      },
+      // 打开用户组页面
+      addUserGroup(rowId) {
+        this.checkedGroupId = rowId;
+        // let url = "cam/ListSubAccounts"//获取子用户信息;
+        // let params = {
+        //   Version: "2017-03-12",
+        //   'filterGroups':'',
+        //   Region: this.$cookie.get("regionv2")
+        // };
+        // this.axios.post(url, params).then(data => {
+          let data = {
+            "code": 0,
+            "data": {
+              "code": 0,
+              "message": "",
+              "codeDesc": "Success",
+              "data": {
+                "userInfo": [
+                  {
+                    "uid": 5303664,
+                    "uin": 100012031058,
+                    "name": "taifucloud",
+                    "remark": "",
+                    "canLogin": 1,
+                    "phoneNum": "18738326518",
+                    "countryCode": "86",
+                    "phoneFlag": 0,
+                    "email": "18738326518@163.com",
+                    "emailFlag": 0,
+                    "userType": 3,
+                    "createTime": "2019-11-08 17:25:21",
+                    "isReceiverOwner": 0,
+                    "systemType": "SubAccount",
+                    "needResetPassword": 0,
+                    "consoleLogin": 1,
+                    "wxzsStatus": 0,
+                    "permType": [],
+                    "isDeleted": 0
+                  },
+                  {
+                    "uid": 5303665,
+                    "name": "taifucloud2"
+                  },
+                  {
+                    "uid": 5303666,
+                    "name": "taifucloud3"
+                  },
+                  {
+                    "uid": 5303667,
+                    "name": "taifucloud4"
+                  },
+                  {
+                    "uid": 5303668,
+                    "name": "taifucloud5"
+                  }
+                ],
+                "ownerInfo": [{
+                  "uid": 5303664,
+                  "uin": 100011921910,
+                  "userName": "123456789",
+                  "checkStatus": 0
+                }],
+                "totalNum": "1"
+              }
+            },
+            "mccode": 0,
+            "errObj": {},
+            "reqId": "By7bcetir",
+            "seqId": "7b539cc3-82a9-904a-1d13-42ca752bbeb5"
+          }
+          this.userData = data.data.data.userInfo
+          this.owneruserData = data.data.data.ownerInfo
+          //   this.$message({ message: "执行成功", type: "success" });
+          // 获取数据成功，打开dialog。
+          this.dialogVisible = true
+        //   this.cancel();
+        // }).catch(error => {
+        //   console.log(error);
+        // });
+      },
+      //删除用户组
+      delUserGroup(groupId) {
         this.$confirm('删除该组将不会删除组内的用户，但组内用户将无法接收到该组的短信、邮件通知', '删除分组', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          this.$message({
-            type: 'success',
-            message: '删除成功!'
+          let url = "cam/DeleteGroup";
+          let params = {
+            Action: 'DeleteGroup',
+            Version: '2019-01-16',
+            // GroupId: '' + groupId + '',
+            groupId: groupId
+            // ,
+            // Region: this.$cookie.get("regionv2")
+          };
+          this.axios.post(url, params).then(data => {
+            if(data != null && data.codeDesc === 'Success') {
+              this.$message({ type: 'success', message: '删除成功!' });
+              this.init();
+            }
+            // this.$emit("update");
+            // this.cancel();
+          }).catch(error => {
+            this.$message({ type: 'success', message: error });
+            console.log(error);
           });
         }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: '已取消删除'
-          });          
+          // this.$message({ type: 'info', message: '已取消删除' });          
         });
       },
+      changeLeftData(userModel){
+        this.userModel= [...this.userModel, ...userModel];
+      },
+      addUser(){
+        this.dialogVisible = false
+        let value = this.userModel
+        if(value != null) {
+          let url = "cam/AddUserToGroup";
+          let params = {
+            Action: 'AddUserToGroup',
+            Version: "2019-01-16"//,
+            // Region: this.$cookie.get("regionv2")
+          };
+          for(var i = 0; i < value.length; i++) {
+            params['Info.' + i + '.Uid'] = value[i]
+            params['Info.' + i + '.GroupId'] = this.checkedGroupId
+          }
+          this.axios.post(url, params).then(data => {
+            this.$message({ message: "执行成功", type: "success" });
+            this.$emit("update");
+            this.cancel();
+          }).catch(error => {
+            console.log(error);
+          });
+        }
+      },
+      NewUser() {
+
+      },
+      // 查询方法
+      toQuery(){
+        this.init()
+      },
+      handleSelectionChange() {
+
+      },
+      handleCurrentChange() {
+
+      },
+      handleSizeChange() {
+
+      },
+      currentPage4() {
+
+      },
+      handleClose() {
+        this.dialogVisible = false
+      }
+
     }
   }
 </script>
@@ -214,7 +339,7 @@
     }
     .suo{
       position: absolute;
-      right: 133px;
+      right: 0;
     }
     .cam-box{
       width: 96%;
@@ -228,6 +353,32 @@
     }
     .btn-fr{
       float: right;
+    }
+    .pad{
+      padding: 0 20px 0 20px;
+    }
+    .bor-box{
+      font-size: 12px;
+      line-height: inherit;
+      padding: 10px 30px 10px 20px;
+      vertical-align: middle;
+      color: #003b80;
+      border: 1px solid #97c7ff;
+      border-radius: 2px;
+      background: #e5f0ff;
+      position: relative;
+      box-sizing: border-box;
+      //max-width: 1360px;
+      margin-left: auto;
+    }
+    .bor-box p{
+      line-height: 1.5;
+      margin-bottom: 8px;
+    }
+    .bor-box .num-item{
+      text-indent: -10px;
+      padding-left: 18px;
+      margin-bottom: 0; 
     }
   }
 </style>
