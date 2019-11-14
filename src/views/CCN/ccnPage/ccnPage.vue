@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="title_top">
-      <h1>云联网</h1>
+      <h1>{{$t("CCN.CCN.total.title")}}</h1>
     </div>
     <div class="tea-content__body">
       <div class="btn">
@@ -155,15 +155,15 @@
           </el-radio-group>
         </el-form-item>
         <el-form-item :label="$t('CCN.CCN.total.new6')">
-          <el-select v-model="form.instanceType" placeholder="请选择私有网络">
-            <el-option label="私有网络" value="VPC"></el-option>
-            <el-option label="专线网关" value="DIRECTCONNECT"></el-option>
+          <el-select v-model="form.instanceType" :placeholder="('CCN.CCN.total.vpc1')">
+            <el-option :label="('CCN.CCN.total.vpc1')" value="VPC"></el-option>
+            <el-option :label="('CCN.CCN.total.vpc2')" value="DIRECTCONNECT"></el-option>
             <!-- <el-option label="黑石私有网络" value="BMVPC"></el-option> -->
           </el-select>
-          <el-select v-model="form.instanceRegion" placeholder="请选择所属区域">
-            <el-option label="港澳台地区(中国台北)" value="ap-taipei"></el-option>
+          <el-select v-model="form.instanceRegion" :placeholder="('CCN.CCN.total.region')">
+            <el-option :label="('CCN.CCN.total.region')" value="ap-taipei"></el-option>
           </el-select>
-          <el-select v-model="form.instanceId" placeholder="搜索VPC名称或ID">
+          <el-select v-model="form.instanceId" :placeholder="('CCN.CCN.total.select')">
             <el-option
               v-for="(item,index) in vpcs"
               :key="index"
@@ -179,43 +179,43 @@
       </div>
     </el-dialog>
     <!-- 修改名称updateName模态窗 -->
-    <el-dialog title="修改名称" :visible.sync="updateNameVisible" class="formDialog">
+    <el-dialog :title="$t('CCN.CCN.total.editname')" :visible.sync="updateNameVisible" class="formDialog">
       <el-form :model="ccnPublic">
-        <el-form-item label="名称">
+        <el-form-item :label="$t('CCN.CCN.total.editname1')">
           <el-input v-model="ccnPublic.CcnName" autocomplete="off" class="inputName"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="updateNameVisible = false">取 消</el-button>
-        <el-button type="primary" @click="modifyCcn(ccnPublic)">确 定</el-button>
+        <el-button type="primary" @click="modifyCcn(ccnPublic)">{{$t('CCN.CCN.total.sure')}}</el-button>
       </div>
     </el-dialog>
     <!-- 修改备注updateDes模态窗 -->
-    <el-dialog title="修改备注" :visible.sync="updateDesVisible" class="formDialog">
+    <el-dialog :title="$t('CCN.CCN.total.editdesc')" :visible.sync="updateDesVisible" class="formDialog">
       <el-form :model="ccnPublic">
-        <el-form-item label="备注">
+        <el-form-item :label="$t('CCN.CCN.total.editdesc1')">
           <el-input v-model="ccnPublic.CcnDescription" autocomplete="off" class="inputName"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="updateDesVisible = false">取 消</el-button>
-        <el-button type="primary" @click="modifyCcn(ccnPublic)">确 定</el-button>
+        <el-button type="primary" @click="modifyCcn(ccnPublic)">{{$t('CCN.CCN.total.sure')}}</el-button>
       </div>
     </el-dialog>
     <!-- 修改限速方式的模态窗 -->
-    <el-dialog title="变更限速方式" :visible.sync="updateBandwidthLimitTypeVisible" class="formDialog">
+    <el-dialog :title="$t('CCN.CCN.total.eWay')" :visible.sync="updateBandwidthLimitTypeVisible" class="formDialog">
       <el-form :model="ccnPublic">
-        <el-form-item label="限速方式">
+        <el-form-item :label="$t('CCN.CCN.total.eWay1')">
           <el-select v-model="ccnPublic.BandwidthLimitType" placeholder>
-            <el-option label="地域间带宽" value="INTER_REGION_LIMIT"></el-option>
-            <el-option label="地域出带宽" value="OUTER_REGION_LIMIT"></el-option>
+            <el-option :label="$t('CCN.CCN.total.eWay2')" value="INTER_REGION_LIMIT"></el-option>
+            <el-option :label="$t('CCN.CCN.total.eWay3')" value="OUTER_REGION_LIMIT"></el-option>
           </el-select>
-          <p class="edit-p">注意：变更后，原有限速配置将删除， 带宽将设置为 1Gbps（默认），如需更大默认带宽，请提 <a href="">工单申请</a></p>
+          <p class="edit-p">{{$t("CCN.CCN.total.eWay4")}} <a href="">工單申請</a></p>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="updateBandwidthLimitTypeVisible = false">取 消</el-button>
-        <el-button type="primary" @click="upBandwidthLimitType(ccnPublic)">确 定</el-button>
+        <el-button type="primary" @click="upBandwidthLimitType(ccnPublic)">{{$t('CCN.CCN.total.sure')}}</el-button>
       </div>
     </el-dialog>
     <!-- 编辑模态窗 -->
@@ -281,7 +281,7 @@ export default {
       }],
       // ccn对象（公用）
       ccnPublic: {
-        
+
       },
       dialogTableVisible: false, // 删除模态窗
       dialogFormVisible: false, // 新建模态窗
@@ -297,10 +297,10 @@ export default {
     }
   },
   watch: {
-    "form.instanceType": function (value) {
+    'form.instanceType': function (value) {
       // console.log(value)
       this.getInstanceIds(value)
-    },
+    }
   },
   created () {
     this.getData()
@@ -310,14 +310,14 @@ export default {
     // 初始化CCN列表数据（包括关联实例列表数据）
     getData () {
       var params = {
-        Version: "2017-03-12",
-        Region: "ap-taipei"
+        Version: '2017-03-12',
+        Region: 'ap-taipei'
       }
-      this.$axios.post("vpc2/DescribeCcns", params).then(res => {
-        console.log(res);
-        console.log("获取ccn列表成功");
-        this.tableData = res.Response.CcnSet;
-        this.total = res.Response.TotalCount;
+      this.$axios.post('vpc2/DescribeCcns', params).then(res => {
+        console.log(res)
+        console.log('获取ccn列表成功')
+        this.tableData = res.Response.CcnSet
+        this.total = res.Response.TotalCount
       })
       // 查询实例列表
       // this.$axios.post("vpc2/DescribeCcnAttachedInstances", params).then(res => {
@@ -362,15 +362,15 @@ export default {
         Version: '2017-03-12',
         Region: 'ap-taipei'
       }
-      if (instanceType == "VPC") {  // 私有网络
-        this.$axios.post("vpc2/DescribeVpcs", params).then(res => {
+      if (instanceType == 'VPC') { // 私有网络
+        this.$axios.post('vpc2/DescribeVpcs', params).then(res => {
           console.log(res)
-          this.vpcs = res.Response.VpcSet;
+          this.vpcs = res.Response.VpcSet
         })
-      } else if (instanceType == "DIRECTCONNECT") { // 专线网络
-        this.$axios.post("vpc2/DescribeDirectConnectGateways", params).then(res => {
+      } else if (instanceType == 'DIRECTCONNECT') { // 专线网络
+        this.$axios.post('vpc2/DescribeDirectConnectGateways', params).then(res => {
           console.log(res)
-          this.vpcs = res.Response.DirectConnectGatewaySet;
+          this.vpcs = res.Response.DirectConnectGatewaySet
         })
       }
     },
@@ -378,19 +378,19 @@ export default {
     createClick: function (form) {
       console.log(form)
       var params = {
-        Version: "2017-03-12",
-        Region: "ap-taipei",
+        Version: '2017-03-12',
+        Region: 'ap-taipei',
         CcnName: form.CcnName,
         CcnDescription: form.CcnDescription,
         QosLevel: form.QosLevel,
         InstanceChargeType: form.InstanceChargeType,
         BandwidthLimitType: form.BandwidthLimitType
       }
-      this.$axios.post("vpc2/CreateCcn", params).then(res => {
+      this.$axios.post('vpc2/CreateCcn', params).then(res => {
         // console.log(res);
         // 关联实例
         var params2 = {
-          Version: "2017-03-12",
+          Version: '2017-03-12',
           Region: 'ap-taipei',
           CcnId: res.Response.Ccn.CcnId,
           Instances: [{
@@ -399,87 +399,87 @@ export default {
             InstanceType: form.instanceType
           }]
         }
-        console.log(params2);
-        this.$axios.post("vpc2/AttachCcnInstances", params2).then(res => {
-          console.log(res);
+        console.log(params2)
+        this.$axios.post('vpc2/AttachCcnInstances', params2).then(res => {
+          console.log(res)
         })
-        console.log("新建成功");
-        this.getData();
+        console.log('新建成功')
+        this.getData()
       })
-      this.dialogFormVisible = false;
+      this.dialogFormVisible = false
     },
     // 删除ccn弹窗
     deleteCcn: function (ccnDetail) {
-      this.gridData[0].CcnId = ccnDetail.CcnId;
-      this.gridData[0].CcnName = ccnDetail.CcnName;
-      this.gridData[0].InstanceCount = ccnDetail.InstanceCount;
-      this.gridData[0].State = ccnDetail.State;
-      this.dialogTableVisible = true;
+      this.gridData[0].CcnId = ccnDetail.CcnId
+      this.gridData[0].CcnName = ccnDetail.CcnName
+      this.gridData[0].InstanceCount = ccnDetail.InstanceCount
+      this.gridData[0].State = ccnDetail.State
+      this.dialogTableVisible = true
     },
     delCcn: function (ccnDetail) {
       // console.log(ccnDetail);
       var params = {
-        Version: "2017-03-12",
-        Region: "ap-taipei",
+        Version: '2017-03-12',
+        Region: 'ap-taipei',
         CcnId: ccnDetail.CcnId
       }
-      this.$axios.post("vpc2/DeleteCcn", params).then(res => {
+      this.$axios.post('vpc2/DeleteCcn', params).then(res => {
         // console.log(params);
         // console.log(res);
-        console.log("删除成功");
-        this.getData();
+        console.log('删除成功')
+        this.getData()
       })
-      this.dialogTableVisible = false;
+      this.dialogTableVisible = false
     },
     // 修改名称弹窗
     updateName: function (ccnDetail) {
-      this.ccnPublic = ccnDetail;
-      this.updateNameVisible = true;
+      this.ccnPublic = ccnDetail
+      this.updateNameVisible = true
     },
     // 修改备注弹窗
     updateDes: function (ccnDetail) {
-      this.ccnPublic = ccnDetail;
-      this.updateDesVisible = true;
+      this.ccnPublic = ccnDetail
+      this.updateDesVisible = true
     },
     // 修改ccn公用方法
     modifyCcn: function (ccnDetail) {
       // console.log(ccnDetail);
       var params = {
-        Version: "2017-03-12",
-        Region: "ap-taipei",
+        Version: '2017-03-12',
+        Region: 'ap-taipei',
         CcnId: ccnDetail.CcnId,
         CcnName: ccnDetail.CcnName,
         CcnDescription: ccnDetail.CcnDescription
       }
-      this.$axios.post("vpc2/ModifyCcnAttribute", params).then(res => {
+      this.$axios.post('vpc2/ModifyCcnAttribute', params).then(res => {
         // console.log(params);
         // console.log(res);
-        console.log("修改成功");
-        this.getData();
+        console.log('修改成功')
+        this.getData()
       })
-      this.updateNameVisible = false;
-      this.updateDesVisible = false;
+      this.updateNameVisible = false
+      this.updateDesVisible = false
     },
     // 修改限速方式弹窗
     updateBandwidthLimitType: function (ccnDetail) {
-      this.ccnPublic = ccnDetail;
+      this.ccnPublic = ccnDetail
       this.updateBandwidthLimitTypeVisible = true
     },
     upBandwidthLimitType: function (ccnDetail) {
-      console.log(ccnDetail);
+      console.log(ccnDetail)
       var params = {
-        Version: "2017-03-12",
-        Region: "ap-taipei",
+        Version: '2017-03-12',
+        Region: 'ap-taipei',
         CcnId: ccnDetail.CcnId,
         BandwidthLimitType: ccnDetail.BandwidthLimitType
       }
-      this.$axios.post("vpc2/ModifyCcnRegionBandwidthLimitsType", params).then(res => {
-        console.log(params);
-        console.log(res);
-        console.log("修改成功");
-        this.getData();
+      this.$axios.post('vpc2/ModifyCcnRegionBandwidthLimitsType', params).then(res => {
+        console.log(params)
+        console.log(res)
+        console.log('修改成功')
+        this.getData()
       })
-      this.updateBandwidthLimitTypeVisible = false;
+      this.updateBandwidthLimitTypeVisible = false
     }
   }
 }
