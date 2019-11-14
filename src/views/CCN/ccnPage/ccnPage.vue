@@ -29,6 +29,7 @@
         <el-table-column prop="State" :label="$t('CCN.CCN.total.tr2')" width="80">
           <template slot-scope="scope">
             <div v-if="scope.row.State=='AVAILABLE'" class="off_color">运行中</div>
+            <div v-else-if="scope.row.State=='ISOLATED'" class="close_color">隔离中（欠费停服）</div>
             <div v-else class="close_color">关闭</div>
           </template>
         </el-table-column>
@@ -102,6 +103,7 @@
         <el-table-column property="State" :label="$t('CCN.CCN.total.del2')">
           <template slot-scope="scope">
             <div v-if="scope.row.State=='AVAILABLE'" class="off_color">运行中</div>
+            <div v-else-if="scope.row.State=='ISOLATED'" class="close_color">隔离中（欠费停服）</div>
             <div v-else class="close_color">关闭</div>
           </template>
         </el-table-column>
@@ -154,19 +156,21 @@
           </el-radio-group>
         </el-form-item>
         <el-form-item :label="$t('CCN.CCN.total.new6')">
-          <el-select v-model="form.vpc" placeholder="请选择私有网络">
+          <el-select v-model="form.instanceType" placeholder="请选择私有网络">
             <el-option label="私有网络" value="VPC"></el-option>
             <el-option label="专线网关" value="DIRECTCONNECT"></el-option>
-            <el-option label="黑石私有网络" value="BMVPC"></el-option>
+            <!-- <el-option label="黑石私有网络" value="BMVPC"></el-option> -->
           </el-select>
-          <el-select v-model="form.Region" placeholder="港澳台地區(中國台北)">
-            <!-- <el-option label="华南地区(广州)" value="ap-taipei"></el-option> -->
-            <el-option :label="$t('CCN.CCN.total.region')" value="ap-taipei"></el-option>
+          <el-select v-model="form.instanceRegion" placeholder="请选择所属区域">
+            <el-option label="港澳台地区(中国台北)" value="ap-taipei"></el-option>
           </el-select>
-          <el-select v-model="form.item" :placeholder="$t('CCN.CCN.total.select')">
-            <el-option label="vpc-cpoj691h(TestVPC|10.8.0.0/16)" value></el-option>
-            <el-option label="vpc-12uojx67(123|172.16.0.0/16)" value></el-option>
-            <el-option label="vpc-d8dncvmt(sa|10.0.0.0/16)" value></el-option>
+          <el-select v-model="form.instanceId" placeholder="搜索VPC名称或ID">
+            <el-option
+              v-for="(item,index) in vpcs"
+              :key="index"
+              :label="item.VpcId"
+              :value="item.VpcId"
+            ></el-option>
           </el-select>
         </el-form-item>
       </el-form>
@@ -253,10 +257,12 @@ export default {
       // ccn列表数据
       tableData: [{}],
       // 关联实例列表数据
-      ccnAttachedInstances: [{}],
+      // ccnAttachedInstances: [{}],
       // 分页
       currentPage4: 1,
       total: 0,
+      // 新建ccn模态窗需要的，根据私有网络/专线网络查询VPC列表
+      vpcs: [{}],
       // 新建ccn表单
       form: {
         CcnName: '',
@@ -264,9 +270,9 @@ export default {
         BandwidthLimitType: 'OUTER_REGION_LIMIT',
         CcnDescription: '',
         QosLevel: 'AU',
-        vpc: 'VPC',
-        Region: 'ap-taipei',
-        item: ''
+        instanceType: '',
+        instanceRegion: 'ap-taipei',
+        instanceId: ''
       },
       // 删除模态窗回显数据
       gridData: [{
@@ -292,6 +298,12 @@ export default {
       formArr: []
     }
   },
+  watch: {
+    "form.instanceType": function (value) {
+      // console.log(value)
+      this.getInstanceIds(value)
+    },
+  },
   created () {
     this.getData()
     this.formArr.push(this.formInfoObj)
@@ -304,21 +316,17 @@ export default {
         Region: "ap-taipei"
       }
       this.$axios.post("vpc2/DescribeCcns", params).then(res => {
-        // console.log(params);
-        // console.log(res);
+        console.log(res);
         console.log("获取ccn列表成功");
         this.tableData = res.Response.CcnSet;
         this.total = res.Response.TotalCount;
       })
-      this.$axios.post("vpc2/DescribeCcnAttachedInstances", params).then(res => {
-        console.log(res.Response.InstanceSet);
-      })
-      // var params2 = {
-      //   Version: '',
-      //   Region: ''
-      // }
+      // 查询实例列表
+      // this.$axios.post("vpc2/DescribeCcnAttachedInstances", params).then(res => {
+      //   console.log(res.Response.InstanceSet);
+      // })
     },
-    // 详情页跳转
+    // 详情页跳转(关联实例页面)
     handleClick (rows) {
       this.$router.push({
         path: '/ccnDetail',
@@ -349,12 +357,31 @@ export default {
     removeRow: function (idx) {
       this.formArr.splice(idx, 1)
     },
+    // 查询instanceId
+    getInstanceIds: function (instanceType) {
+      console.log(instanceType)
+      var params = {
+        Version: '2017-03-12',
+        Region: 'ap-taipei'
+      }
+      if (instanceType == "VPC") {  // 私有网络
+        this.$axios.post("vpc2/DescribeVpcs", params).then(res => {
+          console.log(res)
+          this.vpcs = res.Response.VpcSet;
+        })
+      } else if (instanceType == "DIRECTCONNECT") { // 专线网络
+        this.$axios.post("vpc2/DescribeDirectConnectGateways", params).then(res => {
+          console.log(res)
+          this.vpcs = res.Response.DirectConnectGatewaySet;
+        })
+      }
+    },
     // 新建ccn
     createClick: function (form) {
       console.log(form)
       var params = {
         Version: "2017-03-12",
-        Region: form.Region,
+        Region: "ap-taipei",
         CcnName: form.CcnName,
         CcnDescription: form.CcnDescription,
         QosLevel: form.QosLevel,
@@ -362,8 +389,22 @@ export default {
         BandwidthLimitType: form.BandwidthLimitType
       }
       this.$axios.post("vpc2/CreateCcn", params).then(res => {
-        // console.log(params);
         // console.log(res);
+        // 关联实例
+        var params2 = {
+          Version: "2017-03-12",
+          Region: 'ap-taipei',
+          CcnId: res.Response.Ccn.CcnId,
+          Instances: [{
+            InstanceId: form.instanceId,
+            InstanceRegion: form.instanceRegion,
+            InstanceType: form.instanceType
+          }]
+        }
+        console.log(params2);
+        this.$axios.post("vpc2/AttachCcnInstances", params2).then(res => {
+          console.log(res);
+        })
         console.log("新建成功");
         this.getData();
       })
