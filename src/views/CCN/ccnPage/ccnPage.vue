@@ -7,7 +7,11 @@
     <div class="tea-content__body">
       <div class="btn">
         <el-button type="text" @click="dialogFormVisible = true">新建</el-button>
+        <div class="link">
+        <a >{{$t("CCN.CCN.total.link")}}</a>
       </div>
+      </div>
+
     </div>
     <div class="tables">
       <el-table :data="tableData" style="width: 100%">
@@ -31,13 +35,13 @@
             </p>
           </template>
         </el-table-column>
-        <el-table-column prop="State" label="状态" width="80">
+        <el-table-column prop="State" :label="$t('CCN.CCN.total.tr2')" width="80">
           <template slot-scope="scope">
             <div v-if="scope.row.State=='AVAILABLE'" class="off_color">运行中</div>
             <div v-else class="close_color">关闭</div>
           </template>
         </el-table-column>
-        <el-table-column prop="QosLevel" label="服务质量" width="80">
+        <el-table-column prop="QosLevel" :label="$t('CCN.CCN.total.tr3')" width="80">
           <template slot-scope="scope">
             <div v-if="scope.row.QosLevel=='PT'">白金</div>
             <div v-else-if="scope.row.QosLevel=='AU'">金</div>
@@ -45,12 +49,12 @@
             <div v-else>金</div>
           </template>
         </el-table-column>
-        <el-table-column prop="InstanceCount" label="关联实例" width="100">
+        <el-table-column prop="InstanceCount" :label="$t('CCN.CCN.total.tr4')" width="100">
           <template slot-scope="scope">
             <el-button @click="handleClick(scope.row)" type="text">{{ scope.row.InstanceCount }}</el-button>
           </template>
         </el-table-column>
-        <el-table-column prop label="备注" width="80">
+        <el-table-column prop :label="$t('CCN.CCN.total.tr5')" width="80">
           <template slot-scope="scope">
             <p class="edit">
               {{ scope.row.CcnDescription }}
@@ -69,14 +73,14 @@
             </p>
           </template>
         </el-table-column>
-        <el-table-column prop="InstanceChargeType" label="计费模式" width="115">
+        <el-table-column prop="InstanceChargeType" :label="$t('CCN.CCN.total.tr6')" width="115">
           <template slot-scope="scope">
             <div v-if="scope.row.InstanceChargeType=='PREPAID'">预付费</div>
             <div v-else-if="scope.row.InstanceChargeType=='POSTPAID'">后付费</div>
             <div v-else>后付费</div>
           </template>
         </el-table-column>
-        <el-table-column prop="BandwidthLimitType" label="限速方式" width="115">
+        <el-table-column prop="BandwidthLimitType" :label="$t('CCN.CCN.total.tr7')" width="115">
           <template slot-scope="scope">
             <div class="edit" v-if="scope.row.BandwidthLimitType=='OUTER_REGION_LIMIT'">地域出口限速</div>
             <div class="edit" v-else-if="scope.row.BandwidthLimitType=='INTER_REGION_LIMIT'">地域间限速</div>
@@ -87,14 +91,14 @@
             </i>
           </template>
         </el-table-column>
-        <el-table-column prop="CreateTime" label="创建时间" width="200"></el-table-column>
-        <el-table-column prop="operate" label="操作" width="180">
+        <el-table-column prop="CreateTime" :label="$t('CCN.CCN.total.tr8')" width="200"></el-table-column>
+        <el-table-column prop="operate" :label="$t('CCN.CCN.total.tr9')" width="180">
           <template slot-scope="scope">
-            <el-button @click="handleClick(scope.row)" type="text" size="small">管理实例</el-button>
+            <el-button @click="handleClick(scope.row)" type="text" size="small">{{$t('CCN.CCN.total.td1')}}</el-button>
             <el-button type="text" size="small"></el-button>
-            <el-button type="text" @click="dialogTagVisible = true">编辑标签</el-button>
+            <el-button type="text" @click="dialogTagVisible = true">{{$t('CCN.CCN.total.td2')}}</el-button>
             <br />
-            <el-button type="text" @click="deleteCcnClick(scope.row)">删除</el-button>
+            <el-button type="text" @click="deleteCcnClick(scope.row)">{{$t('CCN.CCN.total.td3')}}</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -110,17 +114,17 @@
       ></el-pagination>
     </div>
     <!-- 删除的模态窗 -->
-    <el-dialog title="您确认要删除该云联网吗？" :visible.sync="dialogTableVisible">
+    <el-dialog :title="$t('CCN.CCN.total.del')" :visible.sync="dialogTableVisible">
       <el-table :data="gridData">
         <el-table-column property="ID" label="ID" width="150"></el-table-column>
-        <el-table-column property="CcnName" label="名称" width="200"></el-table-column>
-        <el-table-column property="State" label="状态">
+        <el-table-column property="CcnName" :label="$t('CCN.CCN.total.del1')" width="200"></el-table-column>
+        <el-table-column property="State" :label="$t('CCN.CCN.total.del2')">
           <template slot-scope="scope">
             <div v-if="scope.row.State=='AVAILABLE'" class="off_color">运行中</div>
             <div v-else class="close_color">关闭</div>
           </template>
         </el-table-column>
-        <el-table-column property="address" label="关联实例">
+        <el-table-column property="address" :label="$t('CCN.CCN.total.del3')">
           <template slot-scope="scope">
             <el-button @click="handleClick(scope.row)" type="text">{{ scope.row.conn }}</el-button>
           </template>
@@ -128,57 +132,57 @@
       </el-table>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogTableVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogTableVisible = false">确 定</el-button>
+        <el-button type="primary" @click="dialogTableVisible = false">{{$t('CCN.CCN.total.sure')}}</el-button>
       </span>
     </el-dialog>
     <!-- 新建模态窗 -->
-    <el-dialog title="新建云联网实例" :visible.sync="dialogFormVisible" class="newDialog">
+    <el-dialog :title="$t('CCN.CCN.total.new')" :visible.sync="dialogFormVisible" class="newDialog">
       <el-form :model="form">
-        <el-form-item label="名称">
+        <el-form-item :label="$t('CCN.CCN.total.new1')">
           <el-input v-model="form.CcnName" autocomplete="off" class="inputName"></el-input>
         </el-form-item>
 
-        <el-form-item label="计费模式">
+        <el-form-item :label="$t('CCN.CCN.total.new2')">
           <el-radio-group v-model="form.InstanceChargeType">
-            <el-radio label="PREPAID">预付费</el-radio>
-            <el-radio label="POSTPAID">月95后付费</el-radio>
+            <el-radio label="PREPAID">{{$t('CCN.CCN.total.mode1')}}</el-radio>
+            <el-radio label="POSTPAID">{{$t('CCN.CCN.total.mode2')}}</el-radio>
           </el-radio-group>
           <br />
-          <span class="hint trankHint">为了便于测试连通性，地域间默认享有免费10Kbps带宽</span>
+          <span class="hint trankHint">{{$t('CCN.CCN.total.mode3')}}</span>
         </el-form-item>
-        <el-form-item label="限速方式">
+        <el-form-item :label="$t('CCN.CCN.total.new3')">
           <el-radio-group v-model="form.BandwidthLimitType">
-            <el-radio label="OUTER_REGION_LIMIT">地域出口限速</el-radio>
-            <el-radio label="INTER_REGION_LIMIT">地域间限速</el-radio>
+            <el-radio label="OUTER_REGION_LIMIT">{{$t('CCN.CCN.total.way1')}}</el-radio>
+            <el-radio label="INTER_REGION_LIMIT">{{$t('CCN.CCN.total.way2')}}</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="描述">
+        <el-form-item :label="$t('CCN.CCN.total.new4')">
           <el-input
             type="textarea"
             :autosize="{ minRows: 2, maxRows: 8}"
-            placeholder="请输入内容"
+            :placeholder="$t('CCN.CCN.total.desc')"
             v-model="form.CcnDescription"
             autocomplete="off"
           ></el-input>
         </el-form-item>
-        <el-form-item label="服务质量">
+        <el-form-item :label="$t('CCN.CCN.total.new5')">
           <el-radio-group v-model="form.QosLevel">
-            <el-radio label="PT">白金</el-radio>
-            <el-radio label="AU">金</el-radio>
-            <el-radio label="AG">银</el-radio>
+            <el-radio label="PT">{{$t('CCN.CCN.total.ser1')}}</el-radio>
+            <el-radio label="AU">{{$t('CCN.CCN.total.ser2')}}</el-radio>
+            <el-radio label="AG">{{$t('CCN.CCN.total.ser3')}}</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="关联实例">
+        <el-form-item :label="$t('CCN.CCN.total.new6')">
           <el-select v-model="form.vpc" placeholder="请选择私有网络">
             <el-option label="私有网络" value="VPC"></el-option>
             <el-option label="专线网关" value="DIRECTCONNECT"></el-option>
             <el-option label="黑石私有网络" value="BMVPC"></el-option>
           </el-select>
-          <el-select v-model="form.Region" placeholder="请选择所属区域">
+          <el-select v-model="form.Region" placeholder="港澳台地區(中國台北)">
             <!-- <el-option label="华南地区(广州)" value="ap-taipei"></el-option> -->
-            <el-option label="港澳台地区(中国台北)" value="ap-taipei"></el-option>
+            <el-option :label="$t('CCN.CCN.total.region')" value="ap-taipei"></el-option>
           </el-select>
-          <el-select v-model="form.item" placeholder="搜索VPC名称或ID">
+          <el-select v-model="form.item" :placeholder="$t('CCN.CCN.total.select')">
             <el-option label="vpc-cpoj691h(TestVPC|10.8.0.0/16)" value></el-option>
             <el-option label="vpc-12uojx67(123|172.16.0.0/16)" value></el-option>
             <el-option label="vpc-d8dncvmt(sa|10.0.0.0/16)" value></el-option>
@@ -187,17 +191,18 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="createClick(form)">确 定</el-button>
+        <el-button type="primary" @click="createClick(form)">{{$t('CCN.CCN.total.sure')}}</el-button>
         <!-- <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button> -->
       </div>
     </el-dialog>
     <!-- 编辑模态窗 -->
-    <el-dialog title="您已经选择1个云资源" :visible.sync="dialogTagVisible" class="editDialog">
+    <el-dialog :title="$t('CCN.CCN.total.edit')" :visible.sync="dialogTagVisible" class="editDialog">
+      <span>{{$t('CCN.CCN.total.edit0')}}</span>
       <table class="table-div">
         <tr class="t-head">
-          <td>标签键</td>
-          <td>标签值</td>
-          <td>删除</td>
+          <td>{{$t('CCN.CCN.total.edit1')}}</td>
+          <td>{{$t('CCN.CCN.total.edit2')}}</td>
+          <td>{{$t('CCN.CCN.total.edit3')}}</td>
         </tr>
         <tr class="t-body" v-for="(item, index) in formArr">
           <td>
@@ -207,30 +212,30 @@
             <input type="text" />
           </td>
           <td>
-            <a v-on:click="removeRow(index);" v-show="index >= 0">删除</a>
+            <a v-on:click="removeRow(index);" v-show="index >= 0">{{$t('CCN.CCN.total.edit3')}}</a>
           </td>
         </tr>
       </table>
       <a v-on:click="addRow()" v-show="formArr.length < 5">添加</a>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogTagVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogTagVisible = false">确 定</el-button>
+        <el-button type="primary" @click="dialogTagVisible = false">{{$t('CCN.CCN.total.sure')}}</el-button>
       </span>
     </el-dialog>
     <!-- 修改限速方式的模态窗 -->
-    <el-dialog title="变更限速方式" :visible.sync="editVisible" class="formDialog">
+    <el-dialog :title="$t('CCN.CCN.total.eWay')" :visible.sync="editVisible" class="formDialog">
       <el-form :model="formWay">
-        <el-form-item label="限速方式">
+        <el-form-item :label="$t('CCN.CCN.total.eWay1')">
           <el-select v-model="formWay.way" placeholder>
-            <el-option label="地域间带宽" value="INTER_REGION_LIMIT"></el-option>
-            <el-option label="地域出带宽" value="OUTER_REGION_LIMIT"></el-option>
+            <el-option :label="$t('CCN.CCN.total.eWay2')" value="INTER_REGION_LIMIT"></el-option>
+            <el-option :label="$t('CCN.CCN.total.eWay3')" value="OUTER_REGION_LIMIT"></el-option>
           </el-select>
-          <p class="edit-p">注意：变更后，原有限速配置将删除， 带宽将设置为 1Gbps（默认），如需更大默认带宽，请提 <a href="">工单申请</a></p>
+          <p class="edit-p">{{$t('CCN.CCN.total.eWay4')}} <a href="">工单申请</a></p>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="editVisible = false">取 消</el-button>
-        <el-button type="primary" @click="editVisible = false">确 定</el-button>
+        <el-button type="primary" @click="editVisible = false">{{$t('CCN.CCN.total.sure')}}</el-button>
       </div>
     </el-dialog>
   </div>
@@ -435,6 +440,13 @@ export default {
     background-color: #0063e5;
     color: #fff;
     border: 1px solid #0063e5;
+  }
+}
+.link{
+  float: right;
+  line-height: 30px;
+  a{
+      color: #444;
   }
 }
 .tables {
