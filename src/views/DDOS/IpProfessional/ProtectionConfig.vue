@@ -8,7 +8,11 @@
       <div>
         <el-tabs v-model="activeName" @tab-click="handleClick">
           <el-tab-pane label="DDoS攻击防护" name="first">
+            <div class="mainContent">
+              <div class="mainContentInit">
 
+              </div>
+            </div>
           </el-tab-pane>
           <el-tab-pane label="CC防护" name="second">
             
@@ -57,6 +61,18 @@ export default {
     height:32px;
     line-height: 32px;
     padding:0 20px;
+  }
+}
+.mainContent{
+  width:100%;
+  padding:20px;
+  .mainContentInit{
+    width:100%;
+    min-height:100px;
+    background-color:#fff;
+    padding:20px;
+    box-shadow: 0 2px 3px 0 rgba(0,0,0,.2);
+    border:1px solid #ddd;
   }
 }
 </style>

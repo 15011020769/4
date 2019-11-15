@@ -31,10 +31,33 @@
             v-model="action"
             palceholder="操作"
             class="action"
-            :disabled="action==='新建别名'?true:false"
+            @change="publishNewVewsionHander"
           >
-            <el-option label="发布新版本" value="action"></el-option>
-            <el-option label="新建别名" value="action"></el-option>
+            <el-option label="发布新版本" value="action1"></el-option>
+            
+              <el-dialog
+                    title="发布版本"
+                    :visible.sync="publishNewVewsion"
+                    width="30%"
+                    :append-to-body="true"
+                    :before-close="handleClosePublish"
+                     
+                  >
+              <el-form :model="publishVersion" label-width="100px">
+                <el-form-item label="函数名称">
+                  {{funNameTit}}
+                </el-form-item>
+                <el-form-item label="描述" :required="true">
+                  <el-input v-model="publishVersion.descript" type="textarea" placeholder="请输入版本的描述"/>
+                  <span>最大支持1000个英文字母、数字、空格、逗号、句号、中文</span>
+                </el-form-item>
+              </el-form>
+              <span slot="footer" class="dialog-footer">
+                <el-button @click="publishNewVewsion = false">取 消</el-button>
+                <el-button type="primary" @click="surePublish">确 定</el-button>
+              </span>
+            </el-dialog>
+            <el-option label="新建别名" value="action2"></el-option>
           </el-select>
         </span>
       </div>
@@ -57,23 +80,35 @@
                         <span>{{funReast.funName}}</span>
                       </el-form-item>
                       <el-form-item prop="runRole" label="运行角色" :required="true">
-                        <span slot="label">运行角色<i class="el-icon-question"></i></span>
+                        <span slot="label">
+                          运行角色
+                          <i class="el-icon-question"></i>
+                        </span>
                         <el-select v-model="funReast.runRole">
                           <el-option label="SCF默认运行角色" value="default"></el-option>
                           <el-option label="SCF_QcsRole" value="qsrole"></el-option>
                         </el-select>
                         <p class="tipContent">
                           <span>此角色将用于授权函数运行时操作其他资源的权限。您可以</span>
-                          <a class="tipContentA">新建角色<span class="el-icon-share"></span></a>
+                          <a class="tipContentA">
+                            新建角色
+                            <span class="el-icon-share"></span>
+                          </a>
                           <span>或对角色</span>
-                          <a class="tipContentA">修改权限<span class="el-icon-share"></span></a>
+                          <a class="tipContentA">
+                            修改权限
+                            <span class="el-icon-share"></span>
+                          </a>
                         </p>
                       </el-form-item>
                       <el-form-item prop="runMoment" label="运行环境">
                         <span>{{funReast.runMoment}}</span>
                       </el-form-item>
                       <el-form-item prop="storageMb" label="内存" :required="true" class="intoAll">
-                        <span slot="label">内存<i class="el-icon-question"></i></span>
+                        <span slot="label">
+                          内存
+                          <i class="el-icon-question"></i>
+                        </span>
                         <el-select v-model="funReast.storageMb">
                           <el-option label="64MB" value="64"></el-option>
                           <el-option label="128MB" value="128"></el-option>
@@ -90,38 +125,62 @@
                           <el-option label="1536MB" value="1536"></el-option>
                         </el-select>
                       </el-form-item>
-                      <el-form-item prop="timeOutDate" label="超时时间"  :required="true" class="timeOutDate newClear">
-                        <span slot="label">超时时间<i class="el-icon-question"></i></span>
-                        <el-input class="timeOutDate1" v-model="funReast.timeOutDate" placeholder=""></el-input><span>秒</span><br/>
+                      <el-form-item
+                        prop="timeOutDate"
+                        label="超时时间"
+                        :required="true"
+                        class="timeOutDate newClear"
+                      >
+                        <span slot="label">
+                          超时时间
+                          <i class="el-icon-question"></i>
+                        </span>
+                        <el-input class="timeOutDate1" v-model="funReast.timeOutDate" placeholder></el-input>
+                        <span>秒</span>
+                        <br />
                         <p class="tipContent">时间范围：1-900秒</p>
                       </el-form-item>
                       <el-form-item label="描述" prop="description">
-                        <span slot="label">描述<i class="el-icon-question"></i></span>
-                        <el-input type="textarea" v-model="funReast.description" placeholder=""></el-input>
+                        <span slot="label">
+                          描述
+                          <i class="el-icon-question"></i>
+                        </span>
+                        <el-input type="textarea" v-model="funReast.description" placeholder></el-input>
                         <p class="tipContent">最大支持1000个英文字母、数字、空格、逗号、句号、中文</p>
                       </el-form-item>
                       <el-form-item label="环境变量" prop="variable">
-                        <span slot="label">环境变量<i class="el-icon-question"></i></span>
+                        <span slot="label">
+                          环境变量
+                          <i class="el-icon-question"></i>
+                        </span>
                         <el-table
                           :data="funReast.variable"
                           size="small"
                           border
                           element-loading-text="Loading"
-                          highlight-current-row>
+                          highlight-current-row
+                        >
                           <el-table-column label="key">
                             <template slot-scope="scope">
                               <el-form :model="funReast.variable[scope.$index]">
                                 <el-form-item prop="nameSpaceOne">
-                                  <el-input v-show="true" v-model="funReast.variable[scope.$index].key" placeholder />
+                                  <el-input
+                                    v-show="true"
+                                    v-model="funReast.variable[scope.$index].key"
+                                    placeholder
+                                  />
                                 </el-form-item>
                               </el-form>
                             </template>
                           </el-table-column>
                           <el-table-column label="value">
                             <template slot-scope="scope">
-                              <el-form ref="scope.row"  :model="funReast.variable[scope.$index]">
+                              <el-form ref="scope.row" :model="funReast.variable[scope.$index]">
                                 <el-form-item prop="nameSpaceTwo">
-                                  <el-input v-model="funReast.variable[scope.$index].value" placeholder  />
+                                  <el-input
+                                    v-model="funReast.variable[scope.$index].value"
+                                    placeholder
+                                  />
                                 </el-form-item>
                               </el-form>
                             </template>
@@ -130,7 +189,10 @@
                             <template slot-scope="scope">
                               <el-form ref="scope.row">
                                 <el-form-item>
-                                  <el-button  class="modelDelete" @click="spaceDelete1(scope.$index,scope.row)">delete</el-button>
+                                  <el-button
+                                    class="modelDelete"
+                                    @click="spaceDelete1(scope.$index,scope.row)"
+                                  >delete</el-button>
                                 </el-form-item>
                               </el-form>
                             </template>
@@ -139,25 +201,124 @@
                         <a @click="addvariable">添加环境变量</a>
                       </el-form-item>
                       <el-form-item label="内网访问" prop="valueChange">
-                        <span slot="label">内网访问<i class="el-icon-question"></i></span>
+                        <span slot="label">
+                          内网访问
+                          <i class="el-icon-question"></i>
+                        </span>
                         <el-switch
                           v-model="funReast.valueChange"
                           active-color="#006eff"
-                          inactive-color="#888">
-                        </el-switch>
+                          inactive-color="#888"
+                        ></el-switch>
                         <div v-if="funReast.valueChange">
-                          <el-select v-model="funReast.valueChangeSelect" >
-                            <el-option v-for="item in funReast.valueChangeSelect" :label="item.label" :value="item.value"></el-option>
+                          <el-select
+                            v-model="selectChangeOption"
+                            v-on:change="getSelectOne($event)"
+                          >
+                            <el-option
+                              v-for="item in funReast.valueChangeSelect1"
+                              :label="item.label"
+                              :value="item.value"
+                            ></el-option>
+                          </el-select>
+                          <el-select
+                            v-model="selectChangeOption1"
+                            v-on:change="getSelectTwo($event)"
+                          >
+                            <el-option
+                              v-for="item in funReast.valueChangeSelect2"
+                              :label="item.label"
+                              :value="item.value"
+                            ></el-option>
                           </el-select>
                           <p class="tipContent">
                             <span>如现有的网络不合适，您可以去控制台</span>
-                            <a class="tipContentA">新建私有网络<span class="el-icon-share"></span></a>
+                            <a class="tipContentA">
+                              新建私有网络
+                              <span class="el-icon-share"></span>
+                            </a>
                             <span>或</span>
-                            <a class="tipContentA">新建子网<span class="el-icon-share"></span></a>
+                            <a class="tipContentA">
+                              新建子网
+                              <span class="el-icon-share"></span>
+                            </a>
                           </p>
                         </div>
                       </el-form-item>
+                      <el-form-item label="标签" prop="tagLists">
+                        <p><span></span><i class="el-icon-edit" @click="tagAddTagsBtn=true"></i></p>
+                          <div
+                          title="您已经选择1个云资源"
+                          v-if="tagAddTagsBtn"
+                          width="800px"
+                        >
+                          <div>
+                            <span>新增标签</span>
+                            <el-table
+                              :data="modelNameTags1"
+                              size="small"
+                              element-loading-text="Loading"
+                              highlight-current-row
+                            >
+                              <el-table-column label="标签键">
+                                <template slot-scope="scope">
+                                  <el-form :model="modelNameTags1[scope.$index]">
+                                    <el-form-item prop="nameSpaceOne">
+                                      <!-- <span
+                                        v-if="modelNameTags[scope.$index].disableDelete"
+                                      >{{modelNameTags[scope.$index].nameSpaceOne}}</span> -->
+                                      <el-input
+                                        class="addTabsIpt"
+                                        v-model="modelNameTags1[scope.$index].nameSpaceOne"
+                                        placeholder="添加标签键"
+                                      />
+                                    </el-form-item>
+                                  </el-form>
+                                </template>
+                              </el-table-column>
+                              <el-table-column label="标签值">
+                                <template slot-scope="scope">
+                                  <el-form ref="scope.row" :model="modelNameTags1[scope.$index]">
+                                    <el-form-item prop="nameSpaceTwo">
+                                      <el-input
+                                        class="addTabsIpt"
+                                        v-model="modelNameTags1[scope.$index].nameSpaceTwo"
+                                        placeholder
+                                      />
+                                    </el-form-item>
+                                  </el-form>
+                                </template>
+                              </el-table-column>
+                              <el-table-column label="删除">
+                                <template slot-scope="scope">
+                                  <el-form ref="scope.row">
+                                    <el-form-item>
+                                      <el-button
+                                        class="modelDelete"
+                                        @click="spaceDelete1(scope.$index,scope.row)"
+                                      >删除</el-button>
+                                    </el-form-item>
+                                  </el-form>
+                                </template>
+                              </el-table-column>
+                            </el-table>
+                          </div>
+                          <div>
+                            <span @click="addTabs1">
+                              <a href="#">添加</a>
+                            </span>
+                          </div>
+                          <span slot="footer" class="dialog-footer">
+                            <el-button @click="tagAddTagsBtn = false">取 消</el-button>
+                            <el-button type="primary" @click="sureTabAdd1()">提交</el-button>
+                          </span>
+                        </div>
+                      </el-form-item>
                     </el-form>
+                    <span slot="footer" class="dialog-footer">
+                      <el-button @click="dialogVisible2 = false">取 消</el-button>
+                      <el-button type="primary" @click="saveConfig()">保存</el-button>
+                    </span>
                   </el-dialog>
                 </div>
                 <div class="allConListMainCon">
@@ -217,22 +378,24 @@
                     <div>
                       <span>编辑已有标签</span>
                       <el-table
-                        :data="modelNameSpace"
+                        :data="modelNameTags"
                         size="small"
                         element-loading-text="Loading"
                         highlight-current-row
                       >
-
                         <el-table-column label="标签键">
                           <template slot-scope="scope">
-                            <el-form :model="modelNameSpace[scope.$index]">
+                            <el-form :model="modelNameTags[scope.$index]">
                               <el-form-item prop="nameSpaceOne">
-                                <span v-if="modelNameSpace[scope.$index].disableDelete">{{modelNameSpace[scope.$index].nameSpaceOne}}</span>
-                                <el-input class="addTabsIpt"
-                                  v-model="modelNameSpace[scope.$index].nameSpaceOne"
-                                  v-if="!modelNameSpace[scope.$index].disableDelete"
+                                <span
+                                  v-if="modelNameTags[scope.$index].disableDelete"
+                                >{{modelNameTags[scope.$index].nameSpaceOne}}</span>
+                                <el-input
+                                  class="addTabsIpt"
+                                  v-model="modelNameTags[scope.$index].nameSpaceOne"
+                                  v-if="!modelNameTags[scope.$index].disableDelete"
                                   placeholder
-                                  :disabled="modelNameSpace[scope.$index].disableDelete"
+                                  :disabled="modelNameTags[scope.$index].disableDelete"
                                 />
                               </el-form-item>
                             </el-form>
@@ -240,10 +403,11 @@
                         </el-table-column>
                         <el-table-column label="标签值">
                           <template slot-scope="scope">
-                            <el-form ref="scope.row" :model="modelNameSpace[scope.$index]">
+                            <el-form ref="scope.row" :model="modelNameTags[scope.$index]">
                               <el-form-item prop="nameSpaceTwo">
-                                <el-input class="addTabsIpt"
-                                  v-model="modelNameSpace[scope.$index].nameSpaceTwo"
+                                <el-input
+                                  class="addTabsIpt"
+                                  v-model="modelNameTags[scope.$index].nameSpaceTwo"
                                   placeholder
                                 />
                               </el-form-item>
@@ -279,10 +443,14 @@
             </div>
           </el-tab-pane>
           <el-tab-pane label="函数代码" name="second">
-            <div class="allConListMain"></div>
+            <div class="allConListMain">
+              <funCode/>
+            </div>
           </el-tab-pane>
           <el-tab-pane label="触发方式" name="third">
-            <div class="allConListMain"></div>
+            <div class="allConListMain">
+              <triggerMode/>
+            </div>
           </el-tab-pane>
           <el-tab-pane label="运行日志" name="fouth">
             <div class="allConListMain"></div>
@@ -296,7 +464,14 @@
   </div>
 </template>
 <script>
+import triggerMode from './triggerMode.vue'
+import funCode from './funCode.vue'
+
 export default {
+  components:{
+    triggerMode:triggerMode,
+    funCode:funCode
+  },
   data() {
     return {
       funNameTit: "",
@@ -307,49 +482,80 @@ export default {
       flag: true,
       searchIpt: "",
       dialogVisible1: false,
-      dialogVisible2:false,
-      modelNameSpace:[
+      dialogVisible2: false,
+      dialogVisible3: false,
+      tagAddTagsBtn:false,
+      publishNewVewsion:false,
+      publishVersion:{
+        descript:""
+      },
+      modelNameTags: [
         {
-          //input,textarea绑定的参数
           nameSpaceOne: "",
           nameSpaceTwo: "",
-          disableDelete:false
-        },
+          disableDelete: false
+        }
       ],
-      funReast:{
-        funName:this.funtitle,
-        runRole:"",
-        runMoment:"Python2.7",
-        storageMb:"",
-        timeOutDate:"",
-        description:"",
-        variable:[
+      modelNameTags1: [
+        {
+          nameSpaceOne: "",
+          nameSpaceTwo: "",
+          disableDelete: false
+        }
+      ],
+      funReast: {
+        funName: this.funtitle,
+        runRole: "",
+        runMoment: "Python2.7",
+        storageMb: "",
+        timeOutDate: "",
+        description: "",
+        variable: [
           {
-            key:"12",
-            value:"1"
+            key: "12",
+            value: "1"
           }
         ],
-        valueChange:false,
-        valueChangeSelect:[
+        valueChange: false,
+        valueChangeSelect1: [
           {
-            value:"123",
-            label:"123"
+            value: "123",
+            label: "123"
           },
           {
-            value:"456",
-            label:"456"
+            value: "456",
+            label: "456"
+          }
+        ],
+        valueChangeSelect2: [
+          {
+            a: "123",
+            b: "bbb"
+          },
+          {
+            a: "123",
+            b: "bbb"
+          },
+          {
+            a: "456",
+            b: "1"
+          },
+          {
+            a: "456",
+            b: "1"
           }
         ]
-      
-      }
+      },
+      selectChangeOption: "",
+      selectChangeOption1: ""
     };
   },
   mounted() {
     console.log(this.$route.query.msg);
     this.funNameTit = this.$route.query.msg;
-    this.modelNameSpace[0].nameSpaceOne="default";
-    this.modelNameSpace[0].nameSpaceTwo="";
-    this.modelNameSpace[0].disableDelete=true;
+    this.modelNameTags[0].nameSpaceOne = "default";
+    this.modelNameTags[0].nameSpaceTwo = "";
+    this.modelNameTags[0].disableDelete = true;
   },
   methods: {
     handleClick(tab, event) {
@@ -378,34 +584,98 @@ export default {
         })
         .catch(_ => {});
     },
-    handleClose2(){
-      this.dialogVisible2=false;
+    handleClose2() {
+      this.dialogVisible2 = false;
+    },
+    handleClose3() {
+      this.dialogVisible3 = false;
+    },
+    handleClosePublish(){
+      this.publishNewVewsion = false;
     },
     //删除弹框标签
     spaceDelete(spaceIndex, spaceRow) {
-      this.modelNameSpace.splice(spaceIndex, 1);
+      this.modelNameTags.splice(spaceIndex, 1);
+    },
+    spaceDelete1(spaceIndex, spaceRow) {
+      this.modelNameTags1.splice(spaceIndex, 1);
     },
     //编辑标签提交按钮
-    sureTabAdd(){
-
+    sureTabAdd() {},
+    //新增标签提交按钮
+    sureTabAdd1() {
+      this.tagAddTagsBtn=false;
+    },
+    //发布新版本
+    surePublish(){
+      this.publishNewVewsion=false;
     },
     //添加标签
-    addTabs(){
-      this.modelNameSpace.push({
+    addTabs() {
+      this.modelNameTags.push({
         nameSpaceOne: "",
         nameSpaceTwo: "",
-        disableDelete:false
+        disableDelete: false
+      });
+    },
+    addTabs1() {
+      this.modelNameTags1.push({
+        nameSpaceOne: "",
+        nameSpaceTwo: "",
+        disableDelete: false
       });
     },
     spaceDelete1(spaceIndex, spaceRow) {
       this.funReast.variable.splice(spaceIndex, 1);
     },
     //添加环境变量按钮
-    addvariable(){
+    addvariable() {
       this.funReast.variable.push({
         key: "",
         value: ""
-      })
+      });
+    },
+    //监测select
+    getSelectOne(eventNew) {
+      let tempCity = [];
+      this.funReast.valueChangeSelect2=[
+          {
+            a: "123",
+            b: "bbb"
+          },
+          {
+            a: "123",
+            b: "bbb"
+          },
+          {
+            a: "456",
+            b: "1"
+          },
+          {
+            a: "456",
+            b: "1"
+          }
+        ]
+      console.log(this.funReast.valueChangeSelect2)
+      for (var val of this.funReast.valueChangeSelect2) {
+        console.log(val.a)
+        if (eventNew == val.a) {
+          tempCity.push({ label: val.b, value: val.b });
+        }
+      }
+      this.funReast.valueChangeSelect2=tempCity
+    },
+    getSelectTwo: function (SelectTwo) {
+      this.$forceUpdate()
+    },
+    publishNewVewsionHander(){
+      console.log(this.action)
+      if(this.action=="action1"){
+        this.publishNewVewsion=true;
+      }
+      else{
+        this.publishNewVewsion=false;
+      }
     }
   }
 };
@@ -532,31 +802,31 @@ export default {
     }
   }
 }
-.addTabsIpt{
-  margin-top:45px;
+.addTabsIpt {
+  margin-top: 45px;
 }
-.tipContent{
+.tipContent {
   font-size: 12px;
-  color:#888;
-  span{
-    float:left;
+  color: #888;
+  span {
+    float: left;
   }
-  a.tipContentA{
-    float:left;
-    span.el-icon-share{
-      float:right;
+  a.tipContentA {
+    float: left !important;
+    span.el-icon-share {
+      float: right;
       margin: 14px 5px 0 0;
     }
   }
 }
-.timeOutDate{
+.timeOutDate {
   // width:200px!important;
-  .timeOutDate1{
-    width:200px;
-    float:left;
+  .timeOutDate1 {
+    width: 200px;
+    float: left;
   }
-  span{
-    float:left;
+  span {
+    float: left;
   }
 }
 </style>
