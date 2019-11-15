@@ -54,9 +54,9 @@
         </el-table-column>
         <el-table-column prop="InstanceChargeType" :label="$t('CCN.CCN.total.tr6')" width="115">
           <template slot-scope="scope">
-            <div v-if="scope.row.InstanceChargeType=='PREPAID'">预付费</div>
-            <div v-else-if="scope.row.InstanceChargeType=='POSTPAID'">后付费</div>
-            <div v-else>后付费</div>
+            <div v-if="scope.row.InstanceChargeType=='POSTPAID'">月95后付费</div>
+            <!-- <div v-else-if="scope.row.InstanceChargeType=='PREPAID'">预付费</div> -->
+            <div v-else>月95后付费</div>
           </template>
         </el-table-column>
         <el-table-column prop="BandwidthLimitType" :label="$t('CCN.CCN.total.tr7')" width="115">
@@ -123,7 +123,7 @@
 
         <el-form-item :label="$t('CCN.CCN.total.new2')">
           <el-radio-group v-model="form.InstanceChargeType">
-            <el-radio label="PREPAID">{{$t('CCN.CCN.total.mode1')}}</el-radio>
+            <!-- <el-radio label="PREPAID">{{$t('CCN.CCN.total.mode1')}}</el-radio> -->
             <el-radio label="POSTPAID">{{$t('CCN.CCN.total.mode2')}}</el-radio>
           </el-radio-group>
           <br />
@@ -317,17 +317,13 @@ export default {
         this.tableData = res.Response.CcnSet
         this.total = res.Response.TotalCount
       })
-      // 查询实例列表
-      // this.$axios.post("vpc2/DescribeCcnAttachedInstances", params).then(res => {
-      //   console.log(res.Response.InstanceSet);
-      // })
     },
     // 详情页跳转(关联实例页面)
     handleClick (rows) {
       this.$router.push({
         path: '/ccnDetail',
         query: {
-          ccnList: rows.CcnName
+          ccnId: rows.CcnId
         }
       })
     },
@@ -391,11 +387,9 @@ export default {
           Version: '2017-03-12',
           Region: 'ap-taipei',
           CcnId: res.Response.Ccn.CcnId,
-          Instances: [{
-            InstanceId: form.instanceId,
-            InstanceRegion: form.instanceRegion,
-            InstanceType: form.instanceType
-          }]
+          'Instances.0.InstanceId': form.instanceId,
+          'Instances.0.InstanceRegion': form.instanceRegion,
+          'Instances.0.InstanceType': form.instanceType
         }
         console.log(params2)
         this.$axios.post('vpc2/AttachCcnInstances', params2).then(res => {

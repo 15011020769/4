@@ -47,8 +47,24 @@ export default {
       ] // 列表数据
     }
   },
-  created () {},
-  methods: {}
+  created () {
+    console.log(this.$route.query)
+    this.ccnId = this.$route.query.ccnId
+    this.getData()
+  },
+  methods: {
+    getData: function () {
+      var params = {
+        Version: "2017-03-12",
+        Region: "ap-taipei",
+        CcnId: this.ccnId
+      }
+      // 查询-路由表
+      this.$axios.post("vpc2/DescribeCcnRoutes", params).then(res => {
+        console.log(res);
+      })
+    }
+  }
 }
 </script>
 <style lang="scss">

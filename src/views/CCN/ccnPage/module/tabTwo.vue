@@ -36,7 +36,7 @@
                   ></el-option>
                 </el-select>
               </span>
-              <span class="span-1">港澳台地区(中国台北) - 华南地区(广州)-黑石</span>
+              <span class="span-1">港澳台地区(中国台北)</span>
             </div>
             <div class="box-dis p-style">
               <p>
@@ -302,7 +302,82 @@ export default {
   components: {
     echartLine
   },
-  methods: {}
+  watch: {
+    // "form.instanceType": function (value) {
+    //   // console.log(value)
+    //   this.getInstanceIds(value)
+    // },
+  },
+  created () {
+    console.log(this.$route.query)
+    this.ccnId = this.$route.query.ccnId
+    this.getData()
+  },
+  methods: {
+    // 初始化数据
+    getData: function (){
+      var params = {
+        Version: "2018-07-24",
+        Region: "ap-taipei",
+        Namespace: 'QCE/VBC',
+        MetricName: 'RegionOutPkg',
+        'Instances.0.Dimensions.0.Name': 'CcnId',
+        'Instances.0.Dimensions.0.Value': this.ccnId,
+        // Period: 300,
+        // StartTime: '',
+        // EndTime: ''
+      }
+      var params2 = {
+        Version: "2018-07-24",
+        Region: "ap-taipei",
+        Namespace: 'QCE/VBC',
+        MetricName: 'RegionInPkg',
+        'Instances.0.Dimensions.0.Name': 'CcnId',
+        'Instances.0.Dimensions.0.Value': this.ccnId,
+        // Period: 300,
+        // StartTime: '',
+        // EndTime: ''
+      }
+      var params3 = {
+        Version: "2018-07-24",
+        Region: "ap-taipei",
+        Namespace: 'QCE/VBC',
+        MetricName: 'RegionOutBandwidth',
+        'Instances.0.Dimensions.0.Name': 'CcnId',
+        'Instances.0.Dimensions.0.Value': this.ccnId,
+        // Period: 300,
+        // StartTime: '',
+        // EndTime: ''
+      }
+      var params4 = {
+        Version: "2018-07-24",
+        Region: "ap-taipei",
+        Namespace: 'QCE/VBC',
+        MetricName: 'RegionInBandwidth',
+        'Instances.0.Dimensions.0.Name': 'CcnId',
+        'Instances.0.Dimensions.0.Value': this.ccnId,
+        // Period: 300,
+        // StartTime: '',
+        // EndTime: ''
+      }
+      // 查询-单地域总出包量
+      this.$axios.post("monitor2/GetMonitorData", params).then(res => {
+        console.log(res);
+      })
+      // 查询-单地域总入包量
+      this.$axios.post("monitor2/GetMonitorData", params2).then(res => {
+        console.log(res);
+      })
+      // 查询-单地域总出带宽
+      this.$axios.post("monitor2/GetMonitorData", params3).then(res => {
+        console.log(res);
+      })
+      // 查询-单地域总入带宽
+      this.$axios.post("monitor2/GetMonitorData", params4).then(res => {
+        console.log(res);
+      })
+    },
+  }
 }
 </script>
 <style lang="scss" scoped>
