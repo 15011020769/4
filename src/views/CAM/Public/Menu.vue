@@ -3,37 +3,37 @@
     <div class="big-title">CAM</div>
     <el-menu default-active="2" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose" background-color="#545c64" text-color="#fff" active-text-color="#ffd04b" :router="true">
       <el-menu-item index="UserList">
-        <i class="iconfont">&#58884;</i>
+        <i class="iconfont"></i>
         <span slot="title">用户列表</span>
       </el-menu-item>
       <el-menu-item index="UserGroup">
-        <i class="iconfont">&#58966;</i>
+        <i class="iconfont"></i>
         <span slot="title">用户组</span>
       </el-menu-item>
       <el-menu-item index="Strategy">
-        <i class="iconfont">&#58900;</i>
+        <i class="iconfont"></i>
         <span slot="title">策略</span>
       </el-menu-item>
       <el-menu-item index="Role">
-        <i class="iconfont">&#58899;</i>
+        <i class="iconfont"></i>
         <span slot="title">角色</span>
       </el-menu-item>
       <el-menu-item index="IdentityProvider">
-        <i class="iconfont">&#58881;</i>
+        <i class="iconfont"></i>
         <span slot="title">身份提供商</span>
       </el-menu-item>
       <el-submenu index="2">
         <template slot="title">
-          <i class="iconfont">&#58883;</i>
+          <i class="iconfont"></i>
           <span>访问密钥</span>
         </template>
         <el-menu-item-group>
           <el-menu-item index="ApiKeyManager">
-            <i class="iconfont">&#xe7a5;</i>
+            <i class="iconfont"></i>
             <span slot="title">API密钥管理</span>
           </el-menu-item>
           <el-menu-item index="ProgrameKey">
-            <i class="iconfont">&#xe7a5;</i>
+            <i class="iconfont"></i>
             <span slot="title">项目密钥管理</span>
           </el-menu-item>
         </el-menu-item-group>
