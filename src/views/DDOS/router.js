@@ -1,0 +1,92 @@
+import Vue from 'vue'
+import Router from 'vue-router'
+import ProtectOverview from './ProtectOverview/ProtectOverview'
+import basicProtection from './basicProtection/basicProtection'
+import IpProfessional from './IpProfessional/IpProfessional'
+import ProtectionConfig from './IpProfessional/ProtectionConfig'
+import AccessConfig from './IpProfessional/AccessConfig'
+import AssetList from './IpProfessional/AssetList'
+import unBlocking from './unBlocking/unBlocking'
+import UnblockingRecord from './unBlocking/UnblockingRecord'
+
+
+
+Vue.use(Router)
+
+export default new Router({
+  mode: 'history',
+  base: process.env.BASE_URL,
+  redirect: {
+    name: 'ProtectOverview'
+  },
+  routes: [
+    {
+      path: '/',
+      redirect: '/ProtectOverview'
+    },
+    {
+      path: '/ProtectOverview', // 防护概览
+      name: 'ProtectOverview',
+      component: ProtectOverview,
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
+      path: '/basicProtection', // 安全防护
+      name: 'basicProtection',
+      component: basicProtection,
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
+      path: '/IpProfessional', // 统计报表
+      name: 'IpProfessional',
+      component: IpProfessional,
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
+      path: '/ProtectionConfig', // 防护配置
+      name: 'ProtectionConfig',
+      component: ProtectionConfig,
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
+      path: '/AccessConfig', // 接入配置
+      name: 'AccessConfig',
+      component: AccessConfig,
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
+      path: '/AssetList', // 资产列表
+      name: 'AssetList',
+      component: AssetList,
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
+      path: '/unBlocking', // 解封操作
+      name: 'unBlocking',
+      component: unBlocking,
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
+      path: '/UnblockingRecord', // 解封操作记录
+      name: 'UnblockingRecord',
+      component: UnblockingRecord,
+      meta: {
+        keepAlive: true
+      }
+    }
+  ]
+})

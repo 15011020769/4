@@ -2,34 +2,34 @@
 <template>
   <div class="tabOne">
     <div class="btn">
-      <el-button type="text" @click="newVisible = true">新增实例</el-button>
+      <el-button type="text" @click="newVisible = true">{{$t("CCN.CCN.tabs.tab1new")}}</el-button>
     </div>
     <div class="table">
       <el-table :data="tableData" style="width: 100%">
-        <template slot="empty">暂无数据</template>
-        <el-table-column prop="name" label="ID/名称" width>
+        <template slot="empty">{{$t("CCN.CCN.tabs.tab1no")}}</template>
+        <el-table-column prop="name" :label="$t('CCN.CCN.tabs.tab1tr1')" width>
           <template slot-scope="scope">
             <el-button @click="handleClick(scope.row)" type="text">{{ scope.row.name }}</el-button>
             <p class="edit">12121</p>
           </template>
         </el-table-column>
-        <el-table-column prop="status" label="状态" width>
+        <el-table-column prop="status" :label="$t('CCN.CCN.tabs.tab1tr2')" width>
           <template slot-scope="scope">
             <div v-if="scope.row.status==0" class="close_color">关闭</div>
             <div v-if="scope.row.status==1" class="off_color">已连接</div>
           </template>
         </el-table-column>
-        <el-table-column prop="type" label="实例类型" width>
+        <el-table-column prop="type" :label="$t('CCN.CCN.tabs.tab1tr3')" width>
           <template slot-scope="scope">
             <div>私有网络</div>
           </template>
         </el-table-column>
-        <el-table-column prop="bucketName" label="所属帐号" width>
+        <el-table-column prop="bucketName" :label="$t('CCN.CCN.tabs.tab1tr4')" width>
           <template slot-scope="scope">我的帐号</template>
         </el-table-column>
-        <el-table-column prop="createTime" label="关联时间" width></el-table-column>
-        <el-table-column prop="region" label="所在地域" width></el-table-column>
-        <el-table-column prop="operate" label="操作" width>
+        <el-table-column prop="createTime" :label="$t('CCN.CCN.tabs.tab1tr5')" width></el-table-column>
+        <el-table-column prop="region" :label="$t('CCN.CCN.tabs.tab1tr6')" width></el-table-column>
+        <el-table-column prop="operate" :label="$t('CCN.CCN.tabs.tab1tr7')" width>
           <template slot-scope="scope">
             <el-button type="text" @click="dialogVisible = true">解关联</el-button>
           </template>
@@ -37,16 +37,15 @@
       </el-table>
     </div>
     <!-- 新建关联实例模态窗 -->
-    <el-dialog title="关联实例" :visible.sync="newVisible" class="newDialog">
+    <el-dialog :title="$t('CCN.CCN.tabs.tab1')" :visible.sync="newVisible" class="newDialog">
       <div>
         <span>
-          同地域带宽免费，点击
-          <a href>查看详情</a>
+          {{$t("CCN.CCN.tabs.tab1new1")}}
         </span>
         <div class="body-con">
           <div class="tr-con" v-for="(item, index) in formArr">
             <td>
-              <el-select v-model="value" placeholder="请选择">
+              <el-select v-model="value" :placeholder="$t('CCN.CCN.tabs.tab1new2')">
                 <el-option
                   v-for="item in options"
                   :key="item.value"
@@ -56,7 +55,7 @@
               </el-select>
             </td>
             <td>
-              <el-select v-model="value" placeholder="请选择">
+              <el-select v-model="value" :placeholder="$t('CCN.CCN.tabs.tab1new4')">
                 <el-option
                   v-for="item in options"
                   :key="item.value"
@@ -68,13 +67,13 @@
             <td>
               <el-input
                 size="small"
-                placeholder="请输入内容"
+               :placeholder="$t('CCN.CCN.tabs.select')"
                 suffix-icon="el-icon-search"
                 v-model="input"
               ></el-input>
             </td>
             <td>
-              <a v-on:click="removeRow(index);" v-show="index >= 0">删除</a>
+              <a v-on:click="removeRow(index);" v-show="index >= 0">{{$t("CCN.CCN.total.td3")}}</a>
             </td>
           </div>
           <a v-on:click="addRow()" v-show="formArr.length < 5">添加</a>
@@ -82,18 +81,18 @@
       </div>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="newVisible = false">提交</el-button>
-        <el-button @click="newVisible = false">关闭</el-button>
+        <el-button @click="newVisible = false">{{$t('CCN.CCN.tabs.tab1newc')}}</el-button>
       </div>
     </el-dialog>
-    <!-- 删除模态窗 -->
+    <!-- 解除关联模态窗 -->
     <el-dialog
-      title="您确认要解除该实例与云联网的关联吗？"
+      :title="$t('CCN.CCN.tabs.tab1del')"
       :visible.sync="dialogVisible"
       width="40%"
     >
-      <span>解除关联后，该实例与云联网内其他实例的连接将立刻中断，请您务必确认影响后再操作。</span>
+      <span>{{$t('CCN.CCN.tabs.tab1del1')}}</span>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="dialogVisible = false">确 认</el-button>
+        <el-button type="primary" @click="dialogVisible = false">{{$t('CCN.CCN.total.sure')}}</el-button>
         <el-button @click="dialogVisible = false">取 消</el-button>
       </span>
     </el-dialog>

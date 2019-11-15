@@ -3,7 +3,116 @@
   <div class="tabTwo">
     <div class="tab">
       <el-tabs v-model="activeName">
-        <el-tab-pane label="地域间监控" name="first">
+        <el-tab-pane label="单地域监控" name="first">
+          <div class="check">
+            <span class="">地域</span>
+            <el-checkbox v-model="checked">港澳台地区(中国台北)</el-checkbox>
+          </div>
+
+          <div class="minitor" >
+            <div class="time">
+              <el-button-group>
+                <el-button @click="thisTime(1)">实时</el-button>
+                <el-button @click="thisTime(2)">近24小时</el-button>
+                <el-button @click="thisTime(3)">近七天</el-button>
+              </el-button-group>
+              <el-date-picker
+                class="newDataTime"
+                v-model="value2"
+                type="datetimerange"
+                range-separator="至"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
+                align="right"
+              ></el-date-picker>
+              <span>
+                粒度：
+                <el-select class="selectTime" v-model="value" placeholder="请选择" filterable>
+                  <el-option
+                    v-for="item in selectTime"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                  ></el-option>
+                </el-select>
+              </span>
+              <span class="span-1">港澳台地区(中国台北) - 华南地区(广州)-黑石</span>
+            </div>
+            <div class="box-dis p-style">
+              <p>
+                <i class="el-icon-info"></i
+                >注释：Max、Min和Avg数值统计为当前折线图内所有点的最大值、最小值和平均值
+              </p>
+              <p>
+                <el-button type="text">导出数据</el-button>
+              </p>
+            </div>
+            <div class="box-table">
+              <!-- 表格 -->
+              <el-table :data="tableData" style="width: 100%">
+                <el-table-column prop>
+                  <template slot-scope="scope">
+                    <span style="font-size:12px;font-weight:bolder;">
+                      外网出带宽
+                      <el-popover placement="bottom-start" title width="200" trigger="hover">
+                        <p>外网出带宽</p>
+                        <i class="el-icon-warning" slot="reference"></i>
+                      </el-popover>
+                    </span>
+                  </template>
+                </el-table-column>
+
+                <el-table-column prop="dataPoints" width="600">
+                  <template slot-scope="scope">
+                    <p v-if="scope.row.dataPoints[0] === null">暂无数据</p>
+                    <div class="echart" v-if="scope.row.dataPoints[0] !== null">
+                      <echart-line
+                        id="diskEchearrts-line"
+                        :time="timeData"
+                        :opData="scope.row.dataPoints"
+                        :unit="diskUnit"
+                        :title="diskTitle"
+                        :period="period"
+                        :scale="3"
+                        :xdata="false"
+                      ></echart-line>
+                    </div>
+                  </template>
+                </el-table-column>
+
+                <el-table-column prop>
+                  <template slot-scope="scope">
+                    <p>Max:</p>
+                    <p>--</p>
+                  </template>
+                </el-table-column>
+
+                <el-table-column prop>
+                  <template slot-scope="scope">
+                    <p>Min:</p>
+                    <p>--</p>
+                  </template>
+                </el-table-column>
+
+                <el-table-column prop>
+                  <template slot-scope="scope">
+                    <p>Avg:</p>
+                    <p>--</p>
+                  </template>
+                </el-table-column>
+
+                <el-table-column prop>
+                  <template slot-scope="scope">
+                    <p>
+                      <i class="el-icon-menu i-font" style="font-size:26px;"></i>
+                    </p>
+                  </template>
+                </el-table-column>
+              </el-table>
+            </div>
+          </div>
+        </el-tab-pane>
+        <el-tab-pane label="地域间监控" name="second">
           <div class="selects">
             <el-select v-model="value" placeholder="请选择">
               <el-option
@@ -22,112 +131,110 @@
               ></el-option>
             </el-select>
           </div>
+          <div class="minitor" v-show="minitorShow">
+            <div class="time">
+              <el-button-group>
+                <el-button @click="thisTime(1)">实时</el-button>
+                <el-button @click="thisTime(2)">近24小时</el-button>
+                <el-button @click="thisTime(3)">近七天</el-button>
+              </el-button-group>
+              <el-date-picker
+                class="newDataTime"
+                v-model="value2"
+                type="datetimerange"
+                range-separator="至"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
+                align="right"
+              ></el-date-picker>
+              <span>
+                粒度：
+                <el-select class="selectTime" v-model="value" placeholder="请选择" filterable>
+                  <el-option
+                    v-for="item in selectTime"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                  ></el-option>
+                </el-select>
+              </span>
+              <span class="span-1">港澳台地区(中国台北)</span>
+            </div>
+            <div class="box-dis p-style">
+              <p>
+                <i class="el-icon-info"></i
+                >注释：Max、Min和Avg数值统计为当前折线图内所有点的最大值、最小值和平均值
+              </p>
+              <p>
+                <el-button type="text">导出数据</el-button>
+              </p>
+            </div>
+            <div class="box-table">
+              <!-- 表格 -->
+              <el-table :data="tableData" style="width: 100%">
+                <el-table-column prop>
+                  <template slot-scope="scope">
+                    <span style="font-size:12px;font-weight:bolder;">
+                      外网出带宽
+                      <el-popover placement="bottom-start" title width="200" trigger="hover">
+                        <p>外网出带宽</p>
+                        <i class="el-icon-warning" slot="reference"></i>
+                      </el-popover>
+                    </span>
+                  </template>
+                </el-table-column>
+
+                <el-table-column prop="dataPoints" width="600">
+                  <template slot-scope="scope">
+                    <p v-if="scope.row.dataPoints[0] === null">暂无数据</p>
+                    <div class="echart" v-if="scope.row.dataPoints[0] !== null">
+                      <echart-line
+                        id="diskEchearrts-line"
+                        :time="timeData"
+                        :opData="scope.row.dataPoints"
+                        :unit="diskUnit"
+                        :title="diskTitle"
+                        :period="period"
+                        :scale="3"
+                        :xdata="false"
+                      ></echart-line>
+                    </div>
+                  </template>
+                </el-table-column>
+
+                <el-table-column prop>
+                  <template slot-scope="scope">
+                    <p>Max:</p>
+                    <p>--</p>
+                  </template>
+                </el-table-column>
+
+                <el-table-column prop>
+                  <template slot-scope="scope">
+                    <p>Min:</p>
+                    <p>--</p>
+                  </template>
+                </el-table-column>
+
+                <el-table-column prop>
+                  <template slot-scope="scope">
+                    <p>Avg:</p>
+                    <p>--</p>
+                  </template>
+                </el-table-column>
+
+                <el-table-column prop>
+                  <template slot-scope="scope">
+                    <p>
+                      <i class="el-icon-menu i-font" style="font-size:26px;"></i>
+                    </p>
+                  </template>
+                </el-table-column>
+              </el-table>
+            </div>
+          </div>
         </el-tab-pane>
       </el-tabs>
-    </div>
-    <div class="minitor" v-show="minitorShow">
-      <div class="time">
-        <el-button-group>
-          <el-button @click="thisTime(1)">实时</el-button>
-          <el-button @click="thisTime(2)">近24小时</el-button>
-          <el-button @click="thisTime(3)">近七天</el-button>
-        </el-button-group>
-        <el-date-picker
-          class="newDataTime"
-          v-model="value2"
-          type="datetimerange"
-          range-separator="至"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
-          align="right"
-        ></el-date-picker>
-        <span>
-          粒度：
-          <el-select class="selectTime" v-model="value" placeholder="请选择" filterable>
-            <el-option
-              v-for="item in selectTime"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            ></el-option>
-          </el-select>
-        </span>
-        <span class="span-1">港澳台地区(中国台北) - 华南地区(广州)-黑石</span>
-      </div>
-      <div class="box-dis p-style">
-        <p>
-          <i class="el-icon-info"></i>注释：Max、Min和Avg数值统计为当前折线图内所有点的最大值、最小值和平均值
-        </p>
-        <p>
-          <el-button type="text">导出数据</el-button>
-        </p>
-      </div>
-      <div class="box-table">
-        <!-- 表格 -->
-        <el-table :data="tableData" style="width: 100%">
-          <el-table-column prop>
-            <template slot-scope="scope">
-              <span style="font-size:12px;font-weight:bolder;">
-                外网出带宽
-                <el-popover placement="bottom-start" title width="200" trigger="hover">
-                  <p>外网出带宽</p>
-                  <i class="el-icon-warning" slot="reference"></i>
-                </el-popover>
-              </span>
-            </template>
-          </el-table-column>
-
-          <el-table-column prop="dataPoints" width="600">
-            <template slot-scope="scope">
-              <p v-if="scope.row.dataPoints[0]===null">暂无数据</p>
-              <div class="echart" v-if="scope.row.dataPoints[0]!==null">
-                <echart-line
-                  id="diskEchearrts-line"
-                  :time="timeData"
-                  :opData="scope.row.dataPoints"
-                  :unit="diskUnit"
-                  :title="diskTitle"
-                  :period="period"
-                  :scale="3"
-                  :xdata="false"
-                ></echart-line>
-              </div>
-            </template>
-          </el-table-column>
-
-          <el-table-column prop>
-            <template slot-scope="scope">
-              <p>Max:</p>
-              <p>--</p>
-            </template>
-          </el-table-column>
-
-          <el-table-column prop>
-            <template slot-scope="scope">
-              <p>Min:</p>
-              <p>--</p>
-            </template>
-          </el-table-column>
-
-          <el-table-column prop>
-            <template slot-scope="scope">
-              <p>Avg:</p>
-              <p>--</p>
-            </template>
-          </el-table-column>
-
-          <el-table-column prop>
-            <template slot-scope="scope">
-              <p>
-                <i
-                  class="el-icon-menu i-font"
-                  style="font-size:26px;"
-                ></i>
-              </p>
-            </template>
-          </el-table-column>
-        </el-table>
-      </div>
     </div>
   </div>
 </template>
@@ -138,6 +245,7 @@ export default {
   data () {
     return {
       activeName: 'first',
+      checked: true,
       options: [
         {
           value: '选项1',
@@ -197,19 +305,23 @@ export default {
   methods: {}
 }
 </script>
-<style lang='scss' scoped>
+<style lang="scss" scoped>
 .tabTwo {
   background: #fff;
   min-height: 450px;
   .tab {
     padding-left: 20px;
     padding-top: 20px;
-    .el-select{
+    .el-select {
       margin-right: 10px;
+    }
+    .check {
+      span {
+        margin-right: 20px;
+      }
     }
   }
   .minitor {
-    padding-left: 20px;
     .time {
       margin-top: 10px;
       .el-button-group {

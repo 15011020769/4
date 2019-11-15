@@ -1,43 +1,38 @@
 <template>
   <div>
     <div class="title_top">
-      <!-- <h1>云联网</h1> -->
       <h1>{{$t("CCN.CCN.total.title")}}</h1>
     </div>
     <div class="tea-content__body">
       <div class="btn">
         <el-button type="text" @click="dialogFormVisible = true">新建</el-button>
+        <div class="link">
+          <a >{{$t("CCN.CCN.total.link")}}</a>
+        </div>
       </div>
     </div>
     <div class="tables">
       <el-table :data="tableData" style="width: 100%">
-        <template slot="empty">暂无数据</template>
-        <el-table-column prop="CcnName" :label="$t('CCN.CCN.total.tr1')" width="125">
+        <template slot="empty">{{$t('CCN.CCN.total.tdno')}}</template>
+        <el-table-column prop="CcnId" :label="$t('CCN.CCN.total.tr1')" width="125">
           <template slot-scope="scope">
-            <el-button @click="handleClick(scope.row)" type="text">{{ scope.row.CcnName }}</el-button>
-            <p class="edit">
-              <el-popover placement="bottom" width="210" v-model="visible">
-                <div class="pop-div" style="height:40px;border-bottom:1px solid #ddd">
-                  <input type="text" style="height:30px;width:100%" />
-                </div>
-                <div class="btn-footer" style="margin-top:10px;">
-                  <el-button type="primary" size="mini" @click="visible = false">保存</el-button>
-                  <el-button size="mini" type="text" @click="visible = false">取消</el-button>
-                </div>
-                <span slot="reference">
-                  <i class="el-icon-edit"></i>
-                </span>
-              </el-popover>
+            <el-button @click="handleClick(scope.row)" type="text">{{ scope.row.CcnId }}</el-button>
+            <p id="editName">
+              {{ scope.row.CcnName }}
+              <i type="text" @click="updateName(scope.row)">
+                <i class="el-icon-edit"></i>
+              </i>
             </p>
           </template>
         </el-table-column>
-        <el-table-column prop="State" label="状态" width="80">
+        <el-table-column prop="State" :label="$t('CCN.CCN.total.tr2')" width="80">
           <template slot-scope="scope">
             <div v-if="scope.row.State=='AVAILABLE'" class="off_color">运行中</div>
+            <div v-else-if="scope.row.State=='ISOLATED'" class="close_color">隔离中（欠费停服）</div>
             <div v-else class="close_color">关闭</div>
           </template>
         </el-table-column>
-        <el-table-column prop="QosLevel" label="服务质量" width="80">
+        <el-table-column prop="QosLevel" :label="$t('CCN.CCN.total.tr3')" width="80">
           <template slot-scope="scope">
             <div v-if="scope.row.QosLevel=='PT'">白金</div>
             <div v-else-if="scope.row.QosLevel=='AU'">金</div>
@@ -45,56 +40,46 @@
             <div v-else>金</div>
           </template>
         </el-table-column>
-        <el-table-column prop="InstanceCount" label="关联实例" width="100">
+        <el-table-column prop="InstanceCount" :label="$t('CCN.CCN.total.tr4')" width="100">
           <template slot-scope="scope">
             <el-button @click="handleClick(scope.row)" type="text">{{ scope.row.InstanceCount }}</el-button>
           </template>
         </el-table-column>
-        <el-table-column prop label="备注" width="80">
+        <el-table-column prop :label="$t('CCN.CCN.total.tr5')" width="80">
           <template slot-scope="scope">
-            <p class="edit">
+            <p id="editDes">
               {{ scope.row.CcnDescription }}
-              <el-popover placement="bottom" width="210" v-model="visibleDes">
-                <div class="pop-div" style="height:40px;border-bottom:1px solid #ddd">
-                  <input type="text" style="height:30px;width:100%" />
-                </div>
-                <div class="btn-footer" style="margin-top:10px;">
-                  <el-button type="primary" size="mini" @click="visibleDes = false">保存</el-button>
-                  <el-button size="mini" type="text" @click="visibleDes = false">取消</el-button>
-                </div>
-                <span slot="reference">
-                  <i class="el-icon-edit"></i>
-                </span>
-              </el-popover>
+              <i type="text" @click="updateDes(scope.row)">
+                <i class="el-icon-edit"></i>
+              </i>
             </p>
           </template>
         </el-table-column>
-        <el-table-column prop="InstanceChargeType" label="计费模式" width="115">
+        <el-table-column prop="InstanceChargeType" :label="$t('CCN.CCN.total.tr6')" width="115">
           <template slot-scope="scope">
             <div v-if="scope.row.InstanceChargeType=='PREPAID'">预付费</div>
             <div v-else-if="scope.row.InstanceChargeType=='POSTPAID'">后付费</div>
             <div v-else>后付费</div>
           </template>
         </el-table-column>
-        <el-table-column prop="BandwidthLimitType" label="限速方式" width="115">
+        <el-table-column prop="BandwidthLimitType" :label="$t('CCN.CCN.total.tr7')" width="115">
           <template slot-scope="scope">
             <div class="edit" v-if="scope.row.BandwidthLimitType=='OUTER_REGION_LIMIT'">地域出口限速</div>
             <div class="edit" v-else-if="scope.row.BandwidthLimitType=='INTER_REGION_LIMIT'">地域间限速</div>
             <div class="edit" v-else>地域出口限速</div>
-            <!-- <span class="edit">{{scope.row.BandwidthLimitType}}</span> -->
-            <i type="text" @click="editVisible = true">
+            <i type="text" @click="updateBandwidthLimitType(scope.row)">
               <i class="el-icon-edit"></i>
             </i>
           </template>
         </el-table-column>
-        <el-table-column prop="CreateTime" label="创建时间" width="200"></el-table-column>
-        <el-table-column prop="operate" label="操作" width="180">
+        <el-table-column prop="CreateTime" :label="$t('CCN.CCN.total.tr8')" width="200"></el-table-column>
+        <el-table-column prop="operate" :label="$t('CCN.CCN.total.tr9')" width="180">
           <template slot-scope="scope">
-            <el-button @click="handleClick(scope.row)" type="text" size="small">管理实例</el-button>
+            <el-button @click="handleClick(scope.row)" type="text" size="small">{{$t('CCN.CCN.total.td1')}}</el-button>
             <el-button type="text" size="small"></el-button>
-            <el-button type="text" @click="dialogTagVisible = true">编辑标签</el-button>
+            <el-button type="text" @click="dialogTagVisible = true">{{$t('CCN.CCN.total.td2')}}</el-button>
             <br />
-            <el-button type="text" @click="deleteCcnClick(scope.row)">删除</el-button>
+            <el-button type="text" @click="deleteCcn(scope.row)">{{$t('CCN.CCN.total.td3')}}</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -110,94 +95,137 @@
       ></el-pagination>
     </div>
     <!-- 删除的模态窗 -->
-    <el-dialog title="您确认要删除该云联网吗？" :visible.sync="dialogTableVisible">
+    <el-dialog :title="$t('CCN.CCN.total.del')" :visible.sync="dialogTableVisible">
       <el-table :data="gridData">
-        <el-table-column property="ID" label="ID" width="150"></el-table-column>
-        <el-table-column property="CcnName" label="名称" width="200"></el-table-column>
-        <el-table-column property="State" label="状态">
+        <el-table-column property="CcnId" label="ID" width="150"></el-table-column>
+        <el-table-column property="CcnName" :label="$t('CCN.CCN.total.del1')" width="200"></el-table-column>
+        <el-table-column property="State" :label="$t('CCN.CCN.total.del2')">
           <template slot-scope="scope">
             <div v-if="scope.row.State=='AVAILABLE'" class="off_color">运行中</div>
+            <div v-else-if="scope.row.State=='ISOLATED'" class="close_color">隔离中（欠费停服）</div>
             <div v-else class="close_color">关闭</div>
           </template>
         </el-table-column>
-        <el-table-column property="address" label="关联实例">
+        <el-table-column property="InstanceCount" :label="$t('CCN.CCN.total.del3')">
           <template slot-scope="scope">
-            <el-button @click="handleClick(scope.row)" type="text">{{ scope.row.conn }}</el-button>
+            <el-button @click="handleClick(scope.row)" type="text">{{ scope.row.InstanceCount }}</el-button>
           </template>
         </el-table-column>
       </el-table>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogTableVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogTableVisible = false">确 定</el-button>
+        <el-button type="primary" @click="delCcn(gridData[0])">{{$t('CCN.CCN.total.sure')}}</el-button>
       </span>
     </el-dialog>
     <!-- 新建模态窗 -->
-    <el-dialog title="新建云联网实例" :visible.sync="dialogFormVisible" class="newDialog">
+    <el-dialog :title="$t('CCN.CCN.total.new')" :visible.sync="dialogFormVisible" class="newDialog">
       <el-form :model="form">
-        <el-form-item label="名称">
+        <el-form-item :label="$t('CCN.CCN.total.new1')">
           <el-input v-model="form.CcnName" autocomplete="off" class="inputName"></el-input>
         </el-form-item>
 
-        <el-form-item label="计费模式">
+        <el-form-item :label="$t('CCN.CCN.total.new2')">
           <el-radio-group v-model="form.InstanceChargeType">
-            <el-radio label="PREPAID">预付费</el-radio>
-            <el-radio label="POSTPAID">月95后付费</el-radio>
+            <el-radio label="PREPAID">{{$t('CCN.CCN.total.mode1')}}</el-radio>
+            <el-radio label="POSTPAID">{{$t('CCN.CCN.total.mode2')}}</el-radio>
           </el-radio-group>
           <br />
-          <span class="hint trankHint">为了便于测试连通性，地域间默认享有免费10Kbps带宽</span>
+          <span class="hint trankHint">{{$t('CCN.CCN.total.mode3')}}</span>
         </el-form-item>
-        <el-form-item label="限速方式">
+        <el-form-item :label="$t('CCN.CCN.total.new3')">
           <el-radio-group v-model="form.BandwidthLimitType">
-            <el-radio label="OUTER_REGION_LIMIT">地域出口限速</el-radio>
-            <el-radio label="INTER_REGION_LIMIT">地域间限速</el-radio>
+            <el-radio label="OUTER_REGION_LIMIT">{{$t('CCN.CCN.total.way1')}}</el-radio>
+            <el-radio label="INTER_REGION_LIMIT">{{$t('CCN.CCN.total.way2')}}</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="描述">
+        <el-form-item :label="$t('CCN.CCN.total.new4')">
           <el-input
             type="textarea"
             :autosize="{ minRows: 2, maxRows: 8}"
-            placeholder="请输入内容"
+            :placeholder="$t('CCN.CCN.total.desc')"
             v-model="form.CcnDescription"
             autocomplete="off"
           ></el-input>
         </el-form-item>
-        <el-form-item label="服务质量">
+        <el-form-item :label="$t('CCN.CCN.total.new5')">
           <el-radio-group v-model="form.QosLevel">
-            <el-radio label="PT">白金</el-radio>
-            <el-radio label="AU">金</el-radio>
-            <el-radio label="AG">银</el-radio>
+            <el-radio label="PT">{{$t('CCN.CCN.total.ser1')}}</el-radio>
+            <el-radio label="AU">{{$t('CCN.CCN.total.ser2')}}</el-radio>
+            <el-radio label="AG">{{$t('CCN.CCN.total.ser3')}}</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="关联实例">
-          <el-select v-model="form.vpc" placeholder="请选择私有网络">
-            <el-option label="私有网络" value="VPC"></el-option>
-            <el-option label="专线网关" value="DIRECTCONNECT"></el-option>
-            <el-option label="黑石私有网络" value="BMVPC"></el-option>
+        <el-form-item :label="$t('CCN.CCN.total.new6')">
+          <el-select v-model="form.instanceType" :placeholder="$t('CCN.CCN.total.vpc1')">
+            <el-option :label="$t('CCN.CCN.total.vpc1')" value="VPC"></el-option>
+            <el-option :label="$t('CCN.CCN.total.vpc2')" value="DIRECTCONNECT"></el-option>
+            <!-- <el-option label="黑石私有网络" value="BMVPC"></el-option> -->
           </el-select>
-          <el-select v-model="form.Region" placeholder="请选择所属区域">
-            <!-- <el-option label="华南地区(广州)" value="ap-taipei"></el-option> -->
-            <el-option label="港澳台地区(中国台北)" value="ap-taipei"></el-option>
+          <el-select v-model="form.instanceRegion" :placeholder="$t('CCN.CCN.total.region')">
+            <el-option :label="$t('CCN.CCN.total.region')" value="ap-taipei"></el-option>
           </el-select>
-          <el-select v-model="form.item" placeholder="搜索VPC名称或ID">
-            <el-option label="vpc-cpoj691h(TestVPC|10.8.0.0/16)" value></el-option>
-            <el-option label="vpc-12uojx67(123|172.16.0.0/16)" value></el-option>
-            <el-option label="vpc-d8dncvmt(sa|10.0.0.0/16)" value></el-option>
+          <el-select v-model="form.instanceId" :placeholder="$t('CCN.CCN.total.select')">
+            <el-option
+              v-for="(item,index) in vpcs"
+              :key="index"
+              :label="item.VpcId"
+              :value="item.VpcId"
+            ></el-option>
           </el-select>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="createClick(form)">确 定</el-button>
-        <!-- <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button> -->
+        <el-button type="primary" @click="createClick(form)">{{$t('CCN.CCN.total.sure')}}</el-button>
+      </div>
+    </el-dialog>
+    <!-- 修改名称updateName模态窗 -->
+    <el-dialog :title="$t('CCN.CCN.total.editname')" :visible.sync="updateNameVisible" class="formDialog">
+      <el-form :model="ccnPublic">
+        <el-form-item :label="$t('CCN.CCN.total.editname2')" :label-width="formLabelWidth">
+          <el-input v-model="ccnPublic.CcnName" autocomplete="off" class="inputName"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="updateNameVisible = false">取 消</el-button>
+        <el-button type="primary" @click="modifyCcn(ccnPublic)">{{$t('CCN.CCN.total.sure')}}</el-button>
+      </div>
+    </el-dialog>
+    <!-- 修改备注updateDes模态窗 -->
+    <el-dialog :title="$t('CCN.CCN.total.editdesc')" :visible.sync="updateDesVisible" class="formDialog">
+      <el-form :model="ccnPublic">
+        <el-form-item :label="$t('CCN.CCN.total.editdesc1')" :label-width="formLabelWidth">
+          <el-input v-model="ccnPublic.CcnDescription" autocomplete="off" class="inputName"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="updateDesVisible = false">取 消</el-button>
+        <el-button type="primary" @click="modifyCcn(ccnPublic)">{{$t('CCN.CCN.total.sure')}}</el-button>
+      </div>
+    </el-dialog>
+    <!-- 修改限速方式的模态窗 -->
+    <el-dialog :title="$t('CCN.CCN.total.eWay')" :visible.sync="updateBandwidthLimitTypeVisible" class="formDialog">
+      <el-form :model="ccnPublic">
+        <el-form-item :label="$t('CCN.CCN.total.eWay1')">
+          <el-select v-model="ccnPublic.BandwidthLimitType" placeholder>
+            <el-option :label="$t('CCN.CCN.total.eWay2')" value="INTER_REGION_LIMIT"></el-option>
+            <el-option :label="$t('CCN.CCN.total.eWay3')" value="OUTER_REGION_LIMIT"></el-option>
+          </el-select>
+          <p class="edit-p">{{$t("CCN.CCN.total.eWay4")}} <a href="">工單申請</a></p>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="updateBandwidthLimitTypeVisible = false">取 消</el-button>
+        <el-button type="primary" @click="upBandwidthLimitType(ccnPublic)">{{$t('CCN.CCN.total.sure')}}</el-button>
       </div>
     </el-dialog>
     <!-- 编辑模态窗 -->
-    <el-dialog title="您已经选择1个云资源" :visible.sync="dialogTagVisible" class="editDialog">
+    <el-dialog :title="$t('CCN.CCN.total.edit')" :visible.sync="dialogTagVisible" class="editDialog">
+      <span>{{$t('CCN.CCN.total.edit0')}}</span>
       <table class="table-div">
         <tr class="t-head">
-          <td>标签键</td>
-          <td>标签值</td>
-          <td>删除</td>
+          <td>{{$t('CCN.CCN.total.edit1')}}</td>
+          <td>{{$t('CCN.CCN.total.edit2')}}</td>
+          <td>{{$t('CCN.CCN.total.edit3')}}</td>
         </tr>
         <tr class="t-body" v-for="(item, index) in formArr">
           <td>
@@ -207,31 +235,15 @@
             <input type="text" />
           </td>
           <td>
-            <a v-on:click="removeRow(index);" v-show="index >= 0">删除</a>
+            <a v-on:click="removeRow(index);" v-show="index >= 0">{{$t('CCN.CCN.total.edit3')}}</a>
           </td>
         </tr>
       </table>
       <a v-on:click="addRow()" v-show="formArr.length < 5">添加</a>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogTagVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogTagVisible = false">确 定</el-button>
+        <el-button type="primary" @click="dialogTagVisible = false">{{$t('CCN.CCN.total.sure')}}</el-button>
       </span>
-    </el-dialog>
-    <!-- 修改限速方式的模态窗 -->
-    <el-dialog title="变更限速方式" :visible.sync="editVisible" class="formDialog">
-      <el-form :model="formWay">
-        <el-form-item label="限速方式">
-          <el-select v-model="formWay.way" placeholder>
-            <el-option label="地域间带宽" value="INTER_REGION_LIMIT"></el-option>
-            <el-option label="地域出带宽" value="OUTER_REGION_LIMIT"></el-option>
-          </el-select>
-          <p class="edit-p">注意：变更后，原有限速配置将删除， 带宽将设置为 1Gbps（默认），如需更大默认带宽，请提 <a href="">工单申请</a></p>
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="editVisible = false">取 消</el-button>
-        <el-button type="primary" @click="editVisible = false">确 定</el-button>
-      </div>
     </el-dialog>
   </div>
 </template>
@@ -240,34 +252,15 @@
 export default {
   data () {
     return {
-      value1: '',
-      input3: '',
-      visible: false,
-      visibleDes: false,
-      tableData: [
-        {
-          // BandwidthLimitType: "INTER_REGION_LIMIT",
-          // CcnDescription: "hi",
-          // CcnId: "ccn-5d8lfgtn",
-          // CcnName: "xs",
-          // CreateTime: "2019-11-11 09:44:24",
-          // InstanceChargeType: "PREPAID",
-          // InstanceCount: 1,
-          // QosLevel: "AU",
-          // State: "AVAILABLE"
-        }
-      ],
-      // 列表数据
+      // ccn列表数据
+      tableData: [{}],
+      // 关联实例列表数据
+      // ccnAttachedInstances: [{}],
+      // 分页
       currentPage4: 1,
       total: 0,
-      gridData: [
-        {
-          ID: 'ccn-5d8lfgtn',
-          CcnName: 'xs',
-          State: 'AVAILABLE',
-          conn: '1'
-        }
-      ],
+      // 新建ccn模态窗需要的，根据私有网络/专线网络查询VPC列表
+      vpcs: [{}],
       // 新建ccn表单
       form: {
         CcnName: '',
@@ -275,23 +268,39 @@ export default {
         BandwidthLimitType: 'OUTER_REGION_LIMIT',
         CcnDescription: '',
         QosLevel: 'AU',
-        vpc: '',
-        Region: '',
-        item: ''
+        instanceType: '',
+        instanceRegion: 'ap-taipei',
+        instanceId: ''
       },
-      formWay: {
-        way: '地域间带宽'
+      formLabelWidth: '120px',
+      // 删除模态窗回显数据
+      gridData: [{
+        CcnId: '',
+        CcnName: '',
+        InstanceCount: '',
+        State: ''
+      }],
+      // ccn对象（公用）
+      ccnPublic: {
+
       },
       dialogTableVisible: false, // 删除模态窗
       dialogFormVisible: false, // 新建模态窗
+      updateNameVisible: false, // 修改名称模态窗
+      updateDesVisible: false, // 修改备注模态窗
+      updateBandwidthLimitTypeVisible: false, // 修改限速方式模态窗
       dialogTagVisible: false, // 编辑模态窗
-      editVisible: false, // 修改限速方式模态窗
 
       formInfoObj: {
         key: undefined
       },
-      formArr: [],
-      baijin: 'PT'
+      formArr: []
+    }
+  },
+  watch: {
+    'form.instanceType': function (value) {
+      // console.log(value)
+      this.getInstanceIds(value)
     }
   },
   created () {
@@ -299,23 +308,24 @@ export default {
     this.formArr.push(this.formInfoObj)
   },
   methods: {
-    // 初始化CCN列表数据
+    // 初始化CCN列表数据（包括关联实例列表数据）
     getData () {
       var params = {
         Version: '2017-03-12',
         Region: 'ap-taipei'
       }
       this.$axios.post('vpc2/DescribeCcns', params).then(res => {
-        console.log(params)
         console.log(res)
-        // console.log(res.Response.CcnSet);
-        console.log('成功')
+        console.log('获取ccn列表成功')
         this.tableData = res.Response.CcnSet
         this.total = res.Response.TotalCount
       })
+      // 查询实例列表
+      // this.$axios.post("vpc2/DescribeCcnAttachedInstances", params).then(res => {
+      //   console.log(res.Response.InstanceSet);
+      // })
     },
-
-    // 详情页跳转
+    // 详情页跳转(关联实例页面)
     handleClick (rows) {
       this.$router.push({
         path: '/ccnDetail',
@@ -346,40 +356,131 @@ export default {
     removeRow: function (idx) {
       this.formArr.splice(idx, 1)
     },
-    // 新增ccn
+    // 查询instanceId
+    getInstanceIds: function (instanceType) {
+      console.log(instanceType)
+      var params = {
+        Version: '2017-03-12',
+        Region: 'ap-taipei'
+      }
+      if (instanceType == 'VPC') { // 私有网络
+        this.$axios.post('vpc2/DescribeVpcs', params).then(res => {
+          console.log(res)
+          this.vpcs = res.Response.VpcSet
+        })
+      } else if (instanceType == 'DIRECTCONNECT') { // 专线网络
+        this.$axios.post('vpc2/DescribeDirectConnectGateways', params).then(res => {
+          console.log(res)
+          this.vpcs = res.Response.DirectConnectGatewaySet
+        })
+      }
+    },
+    // 新建ccn
     createClick: function (form) {
       console.log(form)
       var params = {
         Version: '2017-03-12',
         Region: 'ap-taipei',
-        CcnName: form.CcnName
-        // CcnDescription: form.CcnDescription,
-        // QosLevel: form.QosLevel,
-        // InstanceChargeType: form.InstanceChargeType,
-        // BandwidthLimitType: form.BandwidthLimitType
+        CcnName: form.CcnName,
+        CcnDescription: form.CcnDescription,
+        QosLevel: form.QosLevel,
+        InstanceChargeType: form.InstanceChargeType,
+        BandwidthLimitType: form.BandwidthLimitType
       }
       this.$axios.post('vpc2/CreateCcn', params).then(res => {
-        console.log(params)
-        console.log(res)
+        // console.log(res);
+        // 关联实例
+        var params2 = {
+          Version: '2017-03-12',
+          Region: 'ap-taipei',
+          CcnId: res.Response.Ccn.CcnId,
+          Instances: [{
+            InstanceId: form.instanceId,
+            InstanceRegion: form.instanceRegion,
+            InstanceType: form.instanceType
+          }]
+        }
+        console.log(params2)
+        this.$axios.post('vpc2/AttachCcnInstances', params2).then(res => {
+          console.log(res)
+        })
         console.log('新建成功')
+        this.getData()
       })
       this.dialogFormVisible = false
-      this.getData()
     },
-    // 删除ccn
-    deleteCcnClick: function (ccnDetail) {
-      console.log(ccnDetail)
+    // 删除ccn弹窗
+    deleteCcn: function (ccnDetail) {
+      this.gridData[0].CcnId = ccnDetail.CcnId
+      this.gridData[0].CcnName = ccnDetail.CcnName
+      this.gridData[0].InstanceCount = ccnDetail.InstanceCount
+      this.gridData[0].State = ccnDetail.State
+      this.dialogTableVisible = true
+    },
+    delCcn: function (ccnDetail) {
+      // console.log(ccnDetail);
       var params = {
         Version: '2017-03-12',
         Region: 'ap-taipei',
         CcnId: ccnDetail.CcnId
       }
       this.$axios.post('vpc2/DeleteCcn', params).then(res => {
+        // console.log(params);
+        // console.log(res);
+        console.log('删除成功')
+        this.getData()
+      })
+      this.dialogTableVisible = false
+    },
+    // 修改名称弹窗
+    updateName: function (ccnDetail) {
+      this.ccnPublic = ccnDetail
+      this.updateNameVisible = true
+    },
+    // 修改备注弹窗
+    updateDes: function (ccnDetail) {
+      this.ccnPublic = ccnDetail
+      this.updateDesVisible = true
+    },
+    // 修改ccn公用方法
+    modifyCcn: function (ccnDetail) {
+      // console.log(ccnDetail);
+      var params = {
+        Version: '2017-03-12',
+        Region: 'ap-taipei',
+        CcnId: ccnDetail.CcnId,
+        CcnName: ccnDetail.CcnName,
+        CcnDescription: ccnDetail.CcnDescription
+      }
+      this.$axios.post('vpc2/ModifyCcnAttribute', params).then(res => {
+        // console.log(params);
+        // console.log(res);
+        console.log('修改成功')
+        this.getData()
+      })
+      this.updateNameVisible = false
+      this.updateDesVisible = false
+    },
+    // 修改限速方式弹窗
+    updateBandwidthLimitType: function (ccnDetail) {
+      this.ccnPublic = ccnDetail
+      this.updateBandwidthLimitTypeVisible = true
+    },
+    upBandwidthLimitType: function (ccnDetail) {
+      console.log(ccnDetail)
+      var params = {
+        Version: '2017-03-12',
+        Region: 'ap-taipei',
+        CcnId: ccnDetail.CcnId,
+        BandwidthLimitType: ccnDetail.BandwidthLimitType
+      }
+      this.$axios.post('vpc2/ModifyCcnRegionBandwidthLimitsType', params).then(res => {
         console.log(params)
         console.log(res)
-        console.log('删除成功')
+        console.log('修改成功')
+        this.getData()
       })
-      this.getData()
+      this.updateBandwidthLimitTypeVisible = false
     }
   }
 }
@@ -387,6 +488,9 @@ export default {
 <style lang="scss">
 .el-input__inner {
   height: 30px;
+}
+.el-form-item__label{
+  text-align: left;
 }
 </style>
 <style scoped lang="scss">
@@ -435,6 +539,13 @@ export default {
     background-color: #0063e5;
     color: #fff;
     border: 1px solid #0063e5;
+  }
+}
+.link{
+  float: right;
+  line-height: 30px;
+  a{
+      color: #444;
   }
 }
 .tables {
