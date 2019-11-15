@@ -6,7 +6,6 @@ var i18n = new VueI18n({
   messages: {
     'jt': require('@/language/jt'),
     'ft': require('@/language/ft')
-
   }
 })
 export default i18n

@@ -23,7 +23,7 @@ import NavHeader from '@/components/HeaderAside/Header'
 import LeftAside from './Public/Menu'
 export default {
   data () {
-    return {}
+    return {} 
   },
   components: {
     NavHeader,
