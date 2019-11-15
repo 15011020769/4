@@ -6,9 +6,6 @@
     <div class="tea-content__body">
       <div class="btn">
         <el-button type="text" @click="dialogFormVisible = true">新建</el-button>
-        <div class="link">
-          <a >{{$t("CCN.CCN.total.link")}}</a>
-        </div>
       </div>
     </div>
     <div class="tables">
@@ -541,13 +538,7 @@ export default {
     border: 1px solid #0063e5;
   }
 }
-.link{
-  float: right;
-  line-height: 30px;
-  a{
-      color: #444;
-  }
-}
+
 .tables {
   margin-top: 10px;
   margin: 0 20px;
