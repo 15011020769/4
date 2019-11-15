@@ -3,28 +3,28 @@
     <div class="big-title">CAM</div>
     <el-menu default-active="2" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose" background-color="#545c64" text-color="#fff" active-text-color="#ffd04b" :router="true">
       <el-menu-item index="UserList">
-        <i class="iconfont">&#xe678;</i>
+        <i class="iconfont">&#58884;</i>
         <span slot="title">用户列表</span>
       </el-menu-item>
       <el-menu-item index="UserGroup">
-        <i class="iconfont">&#xe677;</i>
+        <i class="iconfont">&#58966;</i>
         <span slot="title">用户组</span>
       </el-menu-item>
       <el-menu-item index="Strategy">
-        <i class="iconfont">&#xe679;</i>
+        <i class="iconfont">&#58900;</i>
         <span slot="title">策略</span>
       </el-menu-item>
       <el-menu-item index="Role">
-        <i class="iconfont">&#xe632;</i>
+        <i class="iconfont">&#58899;</i>
         <span slot="title">角色</span>
       </el-menu-item>
       <el-menu-item index="IdentityProvider">
-        <i class="iconfont">&#xe649;</i>
+        <i class="iconfont">&#58881;</i>
         <span slot="title">身份提供商</span>
       </el-menu-item>
       <el-submenu index="2">
         <template slot="title">
-          <i class="iconfont">&#xe607;</i>
+          <i class="iconfont">&#58883;</i>
           <span>访问密钥</span>
         </template>
         <el-menu-item-group>

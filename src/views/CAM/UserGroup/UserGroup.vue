@@ -1,20 +1,20 @@
 <template>
   <div class="Cam">
     <div class="top">
-      <span class="title-left">用户组</span>
-      <span class="title-right">
+      <span class="title-left">{{$t('CAM.CAM.userGroup.title')}}</span>
+      <!-- <span class="title-right">
         <span>CAM用户组使用说明<i class="el-icon-share"></i></span>
-      </span>
+      </span> -->
     </div>
     <div class="cam_button">
       <el-row class="cam-lt">
-        <el-button type="primary"  @click="NewUser" >新建用户组</el-button>
-        <el-button type="primary" @click="addUserGroup()" >添加用户</el-button>
+        <el-button type="primary"  @click="NewUser" >{{$t('CAM.CAM.userGroup.createBtn')}}</el-button>
+        <el-button type="primary" @click="addUserGroup()" >{{$t('CAM.CAM.userGroup.addBtn')}}</el-button>
       </el-row>
 
       <div class="head-container">
         <!-- 搜索 -->
-        <el-input v-model="searchValue" clearable placeholder="支持搜索用户组名称/备注" style="width: 300px;"  @keyup.enter.native="toQuery"/>
+        <el-input v-model="searchValue" clearable :placeholder="$t('CAM.CAM.userGroup.placeholder')" style="width: 300px;"  @keyup.enter.native="toQuery"/>
         <el-button class="suo" icon="el-icon-search"  show-overflow-tooltip @click="toQuery"></el-button>
       </div>
       
@@ -28,13 +28,13 @@
         style="width: 100%; border:1px solid #ddd;padding-top: 8px;" 
         @selection-change="handleSelectionChange">
         <el-table-column prop="groupId" type="selection" width="30"> </el-table-column>
-        <el-table-column prop="groupName" label="用户组名称" show-overflow-tooltip> </el-table-column>
-        <el-table-column prop="remark" label="备注" show-overflow-tooltip> </el-table-column>
-        <el-table-column prop="createTime" label="创建时间" show-overflow-tooltip> </el-table-column>
-        <el-table-column label="操作" show-overflow-tooltip>
+        <el-table-column prop="groupName" :label="$t('CAM.CAM.userGroup.colNmae')" show-overflow-tooltip> </el-table-column>
+        <el-table-column prop="remark" :label="$t('CAM.CAM.userGroup.colRemark')" show-overflow-tooltip> </el-table-column>
+        <el-table-column prop="createTime" :label="$t('CAM.CAM.userGroup.colCreTime')" show-overflow-tooltip> </el-table-column>
+        <el-table-column :label="$t('CAM.CAM.userGroup.colHandle')" show-overflow-tooltip>
            &lt;!&ndash;<template slot-scope="scope">
-          <el-button size="mini" type="text" @click="addUserGroup(scope.row.groupId)">添加用户</el-button>
-          <el-button size="mini" type="text" @click="delUserGroup(scope.row.groupId)">删除</el-button>
+          <el-button size="mini" type="text" @click="addUserGroup(scope.row.groupId)">{{$t('CAM.CAM.userGroup.createBtn')}}</el-button>
+          <el-button size="mini" type="text" @click="delUserGroup(scope.row.groupId)">{{$t('CAM.CAM.userGroup.delBtn')}}</el-button>
         </template>&ndash;&gt;
         </el-table-column>
       </el-table>
@@ -51,11 +51,12 @@
       </div>
     </div>
     <template>
-      <el-dialog title="添加用户" :visible.sync="dialogVisible" :before-close="handleClose" > 
+      <el-dialog :title="$t('CAM.CAM.userGroup.addTitle')" :visible.sync="dialogVisible" :before-close="handleClose" > 
           <el-transfer filterable
+            :filter-placeholder="$t('CAM.CAM.userGroup.selSearch')"
             v-model="userModel"
             center="true"
-            :titles="['选择添加的用户','已选择']"
+            :titles="[$t('CAM.CAM.userGroup.selection'), $t('CAM.CAM.userGroup.selected')]"
             :data="userData"
             :props="{
               key: 'uid',
@@ -66,8 +67,8 @@
           >
           </el-transfer> 
         <div slot="footer" class="dialog-footer">
-          <el-button @click="dialogVisible = false">取 消</el-button>
-          <el-button type="primary" @click="addUser">确 定</el-button>
+          <el-button @click="dialogVisible = false">{{$t('CAM.CAM.userGroup.selCancelBtn')}}</el-button>
+          <el-button type="primary" @click="addUser">{{$t('CAM.CAM.userGroup.selConfirmBtn')}}</el-button>
         </div>
       </el-dialog>
     </template>
@@ -76,200 +77,191 @@
 </template>
 <script>
   // import addUserGroup from './addUserGroup'
-  export default {
-    data() {
-      return {
-        searchValue: '',
-        userModel: [],
-        userData: [],
-        dialogVisible: false,
-        tableData: []
-      }
+export default {
+  data() {
+    return {
+      searchValue: '',
+      userModel: [],
+      userData: [],
+      dialogVisible: false,
+      tableData: []
+    }
   },
   mounted() {
     this.init()
   },
   methods: {
-      //初始化方法。
-      init() {
-        let params = {
-          Action: 'ListGroups',
-          Version: '2019-01-16'
-          // ,
-          // Region: this.$cookie.get("regionv2")
-        };
-        if(this.searchValue != null && this.searchValue != ''){
-          params["keyword"] = this.searchValue
-        };
-        let url = "cam/ListGroups";
-        this.axios.post(url, params).then(data => {
-          this.tableData = data.data.groupInfo
-        }).catch(error => {
-          console.log(error);
-        });
-      },
-      // 打开用户组页面
-      addUserGroup(rowId) {
-        this.checkedGroupId = rowId;
-        // let url = "cam/ListSubAccounts"//获取子用户信息;
-        // let params = {
-        //   Version: "2017-03-12",
-        //   'filterGroups':'',
-        //   Region: this.$cookie.get("regionv2")
-        // };
-        // this.axios.post(url, params).then(data => {
-          let data = {
-            "code": 0,
-            "data": {
-              "code": 0,
-              "message": "",
-              "codeDesc": "Success",
-              "data": {
-                "userInfo": [
-                  {
-                    "uid": 5303664,
-                    "uin": 100012031058,
-                    "name": "taifucloud",
-                    "remark": "",
-                    "canLogin": 1,
-                    "phoneNum": "18738326518",
-                    "countryCode": "86",
-                    "phoneFlag": 0,
-                    "email": "18738326518@163.com",
-                    "emailFlag": 0,
-                    "userType": 3,
-                    "createTime": "2019-11-08 17:25:21",
-                    "isReceiverOwner": 0,
-                    "systemType": "SubAccount",
-                    "needResetPassword": 0,
-                    "consoleLogin": 1,
-                    "wxzsStatus": 0,
-                    "permType": [],
-                    "isDeleted": 0
-                  },
-                  {
-                    "uid": 5303665,
-                    "name": "taifucloud2"
-                  },
-                  {
-                    "uid": 5303666,
-                    "name": "taifucloud3"
-                  },
-                  {
-                    "uid": 5303667,
-                    "name": "taifucloud4"
-                  },
-                  {
-                    "uid": 5303668,
-                    "name": "taifucloud5"
-                  }
-                ],
-                "ownerInfo": [{
-                  "uid": 5303664,
-                  "uin": 100011921910,
-                  "userName": "123456789",
-                  "checkStatus": 0
-                }],
-                "totalNum": "1"
-              }
-            },
-            "mccode": 0,
-            "errObj": {},
-            "reqId": "By7bcetir",
-            "seqId": "7b539cc3-82a9-904a-1d13-42ca752bbeb5"
-          }
-          this.userData = data.data.data.userInfo
-          this.owneruserData = data.data.data.ownerInfo
-          //   this.$message({ message: "执行成功", type: "success" });
-          // 获取数据成功，打开dialog。
-          this.dialogVisible = true
-        //   this.cancel();
-        // }).catch(error => {
-        //   console.log(error);
-        // });
-      },
-      //删除用户组
-      delUserGroup(groupId) {
-        this.$confirm('删除该组将不会删除组内的用户，但组内用户将无法接收到该组的短信、邮件通知', '删除分组', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          let url = "cam/DeleteGroup";
-          let params = {
-            Action: 'DeleteGroup',
-            Version: '2019-01-16',
-            // GroupId: '' + groupId + '',
-            groupId: groupId
-            // ,
-            // Region: this.$cookie.get("regionv2")
-          };
-          this.axios.post(url, params).then(data => {
-            if(data != null && data.codeDesc === 'Success') {
-              this.$message({ type: 'success', message: '删除成功!' });
-              this.init();
-            }
-            // this.$emit("update");
-            // this.cancel();
-          }).catch(error => {
-            this.$message({ type: 'success', message: error });
-            console.log(error);
-          });
-        }).catch(() => {
-          // this.$message({ type: 'info', message: '已取消删除' });          
-        });
-      },
-      changeLeftData(userModel){
-        this.userModel= [...this.userModel, ...userModel];
-      },
-      addUser(){
-        this.dialogVisible = false
-        let value = this.userModel
-        if(value != null) {
-          let url = "cam/AddUserToGroup";
-          let params = {
-            Action: 'AddUserToGroup',
-            Version: "2019-01-16"//,
-            // Region: this.$cookie.get("regionv2")
-          };
-          for(var i = 0; i < value.length; i++) {
-            params['Info.' + i + '.Uid'] = value[i]
-            params['Info.' + i + '.GroupId'] = this.checkedGroupId
-          }
-          this.axios.post(url, params).then(data => {
-            this.$message({ message: "执行成功", type: "success" });
-            this.$emit("update");
-            this.cancel();
-          }).catch(error => {
-            console.log(error);
-          });
-        }
-      },
-      NewUser() {
-
-      },
-      // 查询方法
-      toQuery(){
-        this.init()
-      },
-      handleSelectionChange() {
-
-      },
-      handleCurrentChange() {
-
-      },
-      handleSizeChange() {
-
-      },
-      currentPage4() {
-
-      },
-      handleClose() {
-        this.dialogVisible = false
+    // 初始化方法。
+    init() {
+      let params = {
+        Action: 'ListGroups',
+        Version: '2019-01-16'
       }
+      if(this.searchValue != null && this.searchValue != ''){
+        params["keyword"] = this.searchValue
+      }
+      let url = "cam/ListGroups"
+      this.axios.post(url, params).then(data => {
+        this.tableData = data.data.groupInfo
+      }).catch(error => {
+        console.log(error)
+      })
+    },
+    // 打开用户组页面
+    addUserGroup(rowId) {
+      this.checkedGroupId = rowId
+      // let url = "cam/ListSubAccounts"//获取子用户信息
+      // let params = {
+      //   Version: "2017-03-12",
+      //   'filterGroups':'',
+      //   Region: this.$cookie.get("regionv2")
+      // }
+      // this.axios.post(url, params).then(data => {
+      let data = {
+        'code': 0,
+        'data': {
+          'code': 0,
+          'message': '',
+          'codeDesc': 'Success',
+          'data': {
+            'userInfo': [
+              {
+                'uid': 5303664,
+                'uin': 100012031058,
+                'name': 'taifucloud',
+                'remark': '',
+                'canLogin': 1,
+                'phoneNum': '18738326518',
+                'countryCode': '86',
+                'phoneFlag': 0,
+                'email': '18738326518@163.com',
+                'emailFlag': 0,
+                'userType': 3,
+                'createTime': '2019-11-08 17:25:21',
+                'isReceiverOwner': 0,
+                'systemType': 'SubAccount',
+                'needResetPassword': 0,
+                'consoleLogin': 1,
+                'wxzsStatus': 0,
+                'permType': [],
+                'isDeleted': 0
+              },
+              {
+                'uid': 5303665,
+                'name': 'taifucloud2'
+              },
+              {
+                'uid': 5303666,
+                'name': 'taifucloud3'
+              },
+              {
+                'uid': 5303667,
+                'name': 'taifucloud4'
+              },
+              {
+                'uid': 5303668,
+                'name': 'taifucloud5'
+              }
+            ],
+            'ownerInfo': [{
+              'uid': 5303664,
+              'uin': 100011921910,
+              'userName': '123456789',
+              'checkStatus': 0
+            }],
+            'totalNum': '1'
+          }
+        },
+        'mccode': 0,
+        'errObj': {},
+        'reqId': 'By7bcetir',
+        'seqId': '7b539cc3-82a9-904a-1d13-42ca752bbeb5'
+      }
+      this.userData = data.data.data.userInfo
+      this.owneruserData = data.data.data.ownerInfo
+      // this.$message({ message: this.$t('CAM.CAM.userGroup.successInfo'), type: "success" })
+      // 获取数据成功，打开dialog。
+    this.dialogVisible = true
+      //   this.cancel()
+      // }).catch(error => {
+      //   console.log(error)
+      // })
+    },
+    // 删除用户组
+    delUserGroup(groupId) {
+      this.$confirm( this.$t('CAM.CAM.userGroup.delHint'), this.$t('CAM.CAM.userGroup.delTitle'), {
+      confirmButtonText: this.$t('CAM.CAM.userGroup.delConfirmBtn'),
+      cancelButtonText: this.$t('CAM.CAM.userGroup.delCancelBtn'),
+      type: 'warning'
+      }).then(() => {
+      let url = "cam/DeleteGroup"
+        let params = {
+          Action: 'DeleteGroup',
+          Version: '2019-01-16',
+          groupId: groupId
+        }
+        this.axios.post(url, params).then(data => {
+          if(data != null && data.codeDesc === 'Success') {
+            this.$message({ type: 'success', message: this.$t('CAM.CAM.userGroup.delInfo')+'!' })
+            this.init()
+          }
+        }).catch(error => {
+          this.$message({ type: 'success', message: error })
+          console.log(error)
+        })
+      }).catch(() => {
+        // this.$message({ type: 'info', message: '已取消删除' })          
+      })
+    },
+    changeLeftData(userModel) {
+      this.userModel= [...this.userModel, ...userModel]
+    },
+    addUser() {
+      this.dialogVisible = false
+      let value = this.userModel
+      if(value != null) {
+        let url = "cam/AddUserToGroup"
+        let params = {
+        Action: 'AddUserToGroup',
+        Version: "2019-01-16"
+      }
+      for(var i = 0; i < value.length; i++) {
+        params['Info.' + i + '.Uid'] = value[i]
+        params['Info.' + i + '.GroupId'] = this.checkedGroupId
+      }
+      this.axios.post(url, params).then(data => {
+        this.$message({ message: this.$t('CAM.CAM.userGroup.successInfo'), type: "success" })
+        this.$emit("update")
+        this.cancel()
+      }).catch(error => {
+        console.log(error)
+      })
+    }
+    },
+    NewUser() {
+      // this.$router.push({name: 'NewUserGroup'})
+    },
+    // 查询方法
+    toQuery(){
+      this.init()
+    },
+    handleSelectionChange() {
 
+    },
+    handleCurrentChange() {
+
+    },
+    handleSizeChange() {
+
+    },
+    currentPage4() {
+
+    },
+    handleClose() {
+      this.dialogVisible = false
     }
   }
+}
 </script>
 <style lang="scss" scoped>
   .Cam {
