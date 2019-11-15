@@ -77,7 +77,13 @@ module.exports = {
       tab1no: '记录为空',
       tab2: '监控',
       tab3: '带宽管理',
-      tab4: '路由表'
+      tab4: '路由表',
+      tab4tr1: '目的端',
+      tab4tr2: '状态',
+      tab4tr3: '下一跳',
+      tab4tr4: '	下一跳所属地域',
+      tab4tr5: '更新时间',
+      tab4tr6: '启用路由'
     }
   }
 }
