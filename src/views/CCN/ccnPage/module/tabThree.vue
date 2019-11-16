@@ -390,7 +390,7 @@ export default {
             }
             .t-body {
              display: flex;
-              min-height: 200px;
+              // min-height: 200px;
               div{
                 margin-right: 20px;
               }
