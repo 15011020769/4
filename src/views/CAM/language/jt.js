@@ -3,6 +3,10 @@ module.exports = {
     userGroup: {
       title: '用户组',
       createBtn: '新建用户组',
+      createNext: '下一步',
+      createWrite: '填写组信息',
+      createRelevance: '关联策略',
+      createCheck: '审阅',
       addBtn: '填加用户组',
       delBtn: '刪除',
       colNmae: '用户组名称',

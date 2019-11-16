@@ -71,6 +71,14 @@ export default new Router({
       }
     },
     {
+      path: '/NewUserGroup', // 新建用户组
+      name: 'NewUserGroup',
+      component: () => import(/* webpackChunkName: "Cam" */ './UserGroup/NewUserGroup.vue'),
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
       path: '/Strategy', // 策略
       name: 'Strategy',
       component: () => import(/* webpackChunkName: "Cam" */ './Strategy/Strategy.vue'),

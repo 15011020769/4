@@ -22,6 +22,7 @@
     <!-- 表格 -->
     <div class="cam-box">
       <el-table
+        v-loading="loading"
         ref="multipleTable"
         :data="tableData"
         tooltip-effect="dark"
@@ -40,9 +41,6 @@
       </el-table>
       <div class="block">
         <el-pagination
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-          :current-page="currentPage4"
           :page-sizes="[10, 20, 30, 40]"
           :page-size="10"
           layout="total, sizes, prev, pager, next, jumper"
@@ -62,7 +60,6 @@
               key: 'uid',
               label: 'name'
             }"
-            @change="userChange"
             @left-check-change="changeLeftData"
           >
           </el-transfer> 
@@ -84,7 +81,8 @@ export default {
       userModel: [],
       userData: [],
       dialogVisible: false,
-      tableData: []
+      tableData: [],
+      loading: true
     }
   },
   mounted() {
@@ -103,6 +101,7 @@ export default {
       let url = "cam/ListGroups"
       this.axios.post(url, params).then(data => {
         this.tableData = data.data.groupInfo
+        this.loading = false
       }).catch(error => {
         console.log(error)
       })
@@ -239,22 +238,14 @@ export default {
     }
     },
     NewUser() {
-      // this.$router.push({name: 'NewUserGroup'})
+      this.$router.push({name: 'NewUserGroup'})
     },
     // 查询方法
     toQuery(){
+      this.loading = true
       this.init()
     },
     handleSelectionChange() {
-
-    },
-    handleCurrentChange() {
-
-    },
-    handleSizeChange() {
-
-    },
-    currentPage4() {
 
     },
     handleClose() {
