@@ -106,13 +106,13 @@
     </div>
     <!-- 地域出带宽 -->
     <div v-show="!regionShow">
-      <span>限速方式：地域出带宽限速 <a @click="updateBandwidthLimitTypeVisible2 = true">变更</a></span>
+      <span>限速方式：{{$t("CCN.CCN.tabs.tab3tit")}} <a @click="updateBandwidthLimitTypeVisible2 = true">{{$t("CCN.CCN.tabs.tab3tit2")}}</a></span>
       <div class="table">
         <div class="btn">
-          <el-button type="text" @click="updateVisible = true">调整带宽限速</el-button>
+          <el-button type="text" @click="updateVisible = true">{{$t("CCN.CCN.tabs.tab3btn")}}</el-button>
         </div>
         <el-table :data="tableDataOut" style="width: 100%">
-          <template slot="empty">暂无数据</template>
+          <template slot="empty">{{$t("CCN.CCN.tabs.tab1no")}}</template>
           <el-table-column prop="Region" label="地域" width>
             <template slot-scope="scope">
               <p class="edit">{{ scope.row.Region }}</p>
@@ -251,9 +251,9 @@ export default {
   created () {
     this.ccnId = this.$route.query.ccnId
     this.BandwidthLimitType = this.$route.query.BandwidthLimitType
-    if (this.BandwidthLimitType=='OUTER_REGION_LIMIT') {  // 出口限速
+    if (this.BandwidthLimitType == 'OUTER_REGION_LIMIT') { // 出口限速
       this.regionShow = false
-    } else if (this.BandwidthLimitType=='INTER_REGION_LIMIT') {
+    } else if (this.BandwidthLimitType == 'INTER_REGION_LIMIT') {
       this.regionShow = true
     }
     this.formArr.push(this.formInfoObj)
@@ -262,15 +262,15 @@ export default {
   methods: {
     getData: function () {
       var params = {
-        Version: "2017-03-12",
-        Region: "ap-taipei",
+        Version: '2017-03-12',
+        Region: 'ap-taipei',
         CcnId: this.ccnId
       }
       // 查询-带宽限速
-      this.$axios.post("vpc2/DescribeCcnRegionBandwidthLimits", params).then(res => {
-        console.log(res);
-        for(let j = 0,len=res.Response.CcnRegionBandwidthLimitSet.length; j < len; j++) {
-          if(res.Response.CcnRegionBandwidthLimitSet[j].Region === 'ap-taipei') {
+      this.$axios.post('vpc2/DescribeCcnRegionBandwidthLimits', params).then(res => {
+        console.log(res)
+        for (let j = 0, len = res.Response.CcnRegionBandwidthLimitSet.length; j < len; j++) {
+          if (res.Response.CcnRegionBandwidthLimitSet[j].Region === 'ap-taipei') {
             // console.log('111')
             this.tableDataOut[0] = res.Response.CcnRegionBandwidthLimitSet[j]
           }
@@ -287,9 +287,9 @@ export default {
         CcnId: this.ccnId,
         BandwidthLimitType: ccnDetail.BandwidthLimitType
       }
-      if (ccnDetail.BandwidthLimitType=='OUTER_REGION_LIMIT') {  // 改为出口限速
+      if (ccnDetail.BandwidthLimitType == 'OUTER_REGION_LIMIT') { // 改为出口限速
         this.regionShow = false
-      } else if (ccnDetail.BandwidthLimitType=='INTER_REGION_LIMIT') {
+      } else if (ccnDetail.BandwidthLimitType == 'INTER_REGION_LIMIT') {
         this.regionShow = true
       }
       this.$axios.post('vpc2/ModifyCcnRegionBandwidthLimitsType', params).then(res => {
