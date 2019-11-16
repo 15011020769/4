@@ -67,7 +67,7 @@
         </el-form>
       </div>
       <el-button class="prevStep" @click="prevStep">上一步</el-button>
-      <el-button class="compileSucc" @click="compileSucc">完成</el-button>
+      <el-button class="compileSucc" @click="compileSucc()">完成</el-button>
     </div>
   </div>
 </template>
@@ -83,7 +83,7 @@ export default {
         runRole:"",
         runFun:"index.main_handler",
         tipFun:"在线编辑",
-        codeContent:"123"
+        codeContent:"function"
       }
     }
   },
@@ -93,7 +93,6 @@ export default {
   created() {
     this.formShowable.funNameStep=window.sessionStorage.getItem("funNameSess");
     this.formShowable.runMoentStep=window.sessionStorage.getItem("runMoent");
-    console.log()
   },
   methods: {
     //回去上一页
@@ -117,15 +116,21 @@ export default {
       }
       let params={
         Version:"2018-04-16",
-        Region:arr[1],
-        functionName:this.formShowable.funNameStep,
-        Code:this.formShowable.codeContent,
-        Description:this.formShowable.descStep,
+        Region:"ap-taipei",
+        FunctionName:this.formShowable.funNameStep,
+        Code:{
+          CosBucketRegion:"ap-taipei",
+          DemoId:"deno-2jcjjl3q",
+        },
+        Description:this.formShowable.descStep, 
         Runtime:this.formShowable.runMoentStep,
-        Role:this.formShowable.runRole
+        Role:this.formShowable.runRole,
       }
-      this.$axios.post('scf/CreateFunction', params).then(res => {
+      this.$axios.post('scf2/CreateFunction', params).then(res => {
         console.log(res)
+          this.$router.push({
+        path: "/FuncServe"
+      });
       });
     }
   }
