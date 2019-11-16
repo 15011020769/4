@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="title_top">
-      <h1>{{$t("CCN.CCN.total.title")}}</h1>
+      <h1>{{ $t('CCN.CCN.total.title') }}</h1>
     </div>
     <div class="tea-content__body">
       <div class="btn">
@@ -10,7 +10,7 @@
     </div>
     <div class="tables">
       <el-table :data="tableData" style="width: 100%">
-        <template slot="empty">{{$t('CCN.CCN.total.tdno')}}</template>
+        <template slot="empty">{{ $t('CCN.CCN.total.tdno') }}</template>
         <el-table-column prop="CcnId" :label="$t('CCN.CCN.total.tr1')" width="125">
           <template slot-scope="scope">
             <el-button @click="handleClick(scope.row)" type="text">{{ scope.row.CcnId }}</el-button>
@@ -24,22 +24,26 @@
         </el-table-column>
         <el-table-column prop="State" :label="$t('CCN.CCN.total.tr2')" width="80">
           <template slot-scope="scope">
-            <div v-if="scope.row.State=='AVAILABLE'" class="off_color">运行中</div>
-            <div v-else-if="scope.row.State=='ISOLATED'" class="close_color">隔离中（欠费停服）</div>
+            <div v-if="scope.row.State == 'AVAILABLE'" class="off_color">运行中</div>
+            <div v-else-if="scope.row.State == 'ISOLATED'" class="close_color">
+              隔离中（欠费停服）
+            </div>
             <div v-else class="close_color">关闭</div>
           </template>
         </el-table-column>
         <el-table-column prop="QosLevel" :label="$t('CCN.CCN.total.tr3')" width="80">
           <template slot-scope="scope">
-            <div v-if="scope.row.QosLevel=='PT'">白金</div>
-            <div v-else-if="scope.row.QosLevel=='AU'">金</div>
-            <div v-else-if="scope.row.QosLevel=='AG'">银</div>
+            <div v-if="scope.row.QosLevel == 'PT'">白金</div>
+            <div v-else-if="scope.row.QosLevel == 'AU'">金</div>
+            <div v-else-if="scope.row.QosLevel == 'AG'">银</div>
             <div v-else>金</div>
           </template>
         </el-table-column>
         <el-table-column prop="InstanceCount" :label="$t('CCN.CCN.total.tr4')" width="100">
           <template slot-scope="scope">
-            <el-button @click="handleClick(scope.row)" type="text">{{ scope.row.InstanceCount }}</el-button>
+            <el-button @click="handleClick(scope.row)" type="text">{{
+              scope.row.InstanceCount
+            }}</el-button>
           </template>
         </el-table-column>
         <el-table-column prop :label="$t('CCN.CCN.total.tr5')" width="80">
@@ -54,29 +58,43 @@
         </el-table-column>
         <el-table-column prop="InstanceChargeType" :label="$t('CCN.CCN.total.tr6')" width="115">
           <template slot-scope="scope">
-            <div v-if="scope.row.InstanceChargeType=='POSTPAID'">月95后付费</div>
+            <div v-if="scope.row.InstanceChargeType == 'POSTPAID'">月95后付费</div>
             <!-- <div v-else-if="scope.row.InstanceChargeType=='PREPAID'">预付费</div> -->
             <div v-else>月95后付费</div>
           </template>
         </el-table-column>
         <el-table-column prop="BandwidthLimitType" :label="$t('CCN.CCN.total.tr7')" width="115">
           <template slot-scope="scope">
-            <div class="edit" v-if="scope.row.BandwidthLimitType=='OUTER_REGION_LIMIT'">地域出口限速</div>
-            <div class="edit" v-else-if="scope.row.BandwidthLimitType=='INTER_REGION_LIMIT'">地域间限速</div>
+            <div class="edit" v-if="scope.row.BandwidthLimitType == 'OUTER_REGION_LIMIT'">
+              地域出口限速
+            </div>
+            <div class="edit" v-else-if="scope.row.BandwidthLimitType == 'INTER_REGION_LIMIT'">
+              地域间限速
+            </div>
             <div class="edit" v-else>地域出口限速</div>
             <i type="text" @click="updateBandwidthLimitType(scope.row)">
               <i class="el-icon-edit"></i>
             </i>
           </template>
         </el-table-column>
-        <el-table-column prop="CreateTime" :label="$t('CCN.CCN.total.tr8')" width="200"></el-table-column>
+        <el-table-column
+          prop="CreateTime"
+          :label="$t('CCN.CCN.total.tr8')"
+          width="200"
+        ></el-table-column>
         <el-table-column prop="operate" :label="$t('CCN.CCN.total.tr9')" width="180">
           <template slot-scope="scope">
-            <el-button @click="handleClick(scope.row)" type="text" size="small">{{$t('CCN.CCN.total.td1')}}</el-button>
+            <el-button @click="handleClick(scope.row)" type="text" size="small">{{
+              $t('CCN.CCN.total.td1')
+            }}</el-button>
             <el-button type="text" size="small"></el-button>
-            <el-button type="text" @click="toTags(scope.row)">{{$t('CCN.CCN.total.td2')}}</el-button>
+            <el-button type="text" @click="toTags(scope.row)">{{
+              $t('CCN.CCN.total.td2')
+            }}</el-button>
             <br />
-            <el-button type="text" @click="deleteCcn(scope.row)">{{$t('CCN.CCN.total.td3')}}</el-button>
+            <el-button type="text" @click="deleteCcn(scope.row)">{{
+              $t('CCN.CCN.total.td3')
+            }}</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -95,23 +113,33 @@
     <el-dialog :title="$t('CCN.CCN.total.del')" :visible.sync="dialogTableVisible">
       <el-table :data="gridData">
         <el-table-column property="CcnId" label="ID" width="150"></el-table-column>
-        <el-table-column property="CcnName" :label="$t('CCN.CCN.total.del1')" width="200"></el-table-column>
+        <el-table-column
+          property="CcnName"
+          :label="$t('CCN.CCN.total.del1')"
+          width="200"
+        ></el-table-column>
         <el-table-column property="State" :label="$t('CCN.CCN.total.del2')">
           <template slot-scope="scope">
-            <div v-if="scope.row.State=='AVAILABLE'" class="off_color">运行中</div>
-            <div v-else-if="scope.row.State=='ISOLATED'" class="close_color">隔离中（欠费停服）</div>
+            <div v-if="scope.row.State == 'AVAILABLE'" class="off_color">运行中</div>
+            <div v-else-if="scope.row.State == 'ISOLATED'" class="close_color">
+              隔离中（欠费停服）
+            </div>
             <div v-else class="close_color">关闭</div>
           </template>
         </el-table-column>
         <el-table-column property="InstanceCount" :label="$t('CCN.CCN.total.del3')">
           <template slot-scope="scope">
-            <el-button @click="handleClick(scope.row)" type="text">{{ scope.row.InstanceCount }}</el-button>
+            <el-button @click="handleClick(scope.row)" type="text">{{
+              scope.row.InstanceCount
+            }}</el-button>
           </template>
         </el-table-column>
       </el-table>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogTableVisible = false">取 消</el-button>
-        <el-button type="primary" @click="delCcn(gridData[0])">{{$t('CCN.CCN.total.sure')}}</el-button>
+        <el-button type="primary" @click="delCcn(gridData[0])">{{
+          $t('CCN.CCN.total.sure')
+        }}</el-button>
       </span>
     </el-dialog>
     <!-- 新建模态窗 -->
@@ -124,21 +152,21 @@
         <el-form-item :label="$t('CCN.CCN.total.new2')">
           <el-radio-group v-model="form.InstanceChargeType">
             <!-- <el-radio label="PREPAID">{{$t('CCN.CCN.total.mode1')}}</el-radio> -->
-            <el-radio label="POSTPAID">{{$t('CCN.CCN.total.mode2')}}</el-radio>
+            <el-radio label="POSTPAID">{{ $t('CCN.CCN.total.mode2') }}</el-radio>
           </el-radio-group>
           <br />
-          <span class="hint trankHint">{{$t('CCN.CCN.total.mode3')}}</span>
+          <span class="hint trankHint">{{ $t('CCN.CCN.total.mode3') }}</span>
         </el-form-item>
         <el-form-item :label="$t('CCN.CCN.total.new3')">
           <el-radio-group v-model="form.BandwidthLimitType">
-            <el-radio label="OUTER_REGION_LIMIT">{{$t('CCN.CCN.total.way1')}}</el-radio>
-            <el-radio label="INTER_REGION_LIMIT">{{$t('CCN.CCN.total.way2')}}</el-radio>
+            <el-radio label="OUTER_REGION_LIMIT">{{ $t('CCN.CCN.total.way1') }}</el-radio>
+            <el-radio label="INTER_REGION_LIMIT">{{ $t('CCN.CCN.total.way2') }}</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item :label="$t('CCN.CCN.total.new4')">
           <el-input
             type="textarea"
-            :autosize="{ minRows: 2, maxRows: 8}"
+            :autosize="{ minRows: 2, maxRows: 8 }"
             :placeholder="$t('CCN.CCN.total.desc')"
             v-model="form.CcnDescription"
             autocomplete="off"
@@ -146,9 +174,9 @@
         </el-form-item>
         <el-form-item :label="$t('CCN.CCN.total.new5')">
           <el-radio-group v-model="form.QosLevel">
-            <el-radio label="PT">{{$t('CCN.CCN.total.ser1')}}</el-radio>
-            <el-radio label="AU">{{$t('CCN.CCN.total.ser2')}}</el-radio>
-            <el-radio label="AG">{{$t('CCN.CCN.total.ser3')}}</el-radio>
+            <el-radio label="PT">{{ $t('CCN.CCN.total.ser1') }}</el-radio>
+            <el-radio label="AU">{{ $t('CCN.CCN.total.ser2') }}</el-radio>
+            <el-radio label="AG">{{ $t('CCN.CCN.total.ser3') }}</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item :label="$t('CCN.CCN.total.new6')">
@@ -162,7 +190,7 @@
           </el-select>
           <el-select v-model="form.instanceId" :placeholder="$t('CCN.CCN.total.select')">
             <el-option
-              v-for="(item,index) in vpcs"
+              v-for="(item, index) in vpcs"
               :key="index"
               :label="item.VpcId"
               :value="item.VpcId"
@@ -172,11 +200,17 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="createClick(form)">{{$t('CCN.CCN.total.sure')}}</el-button>
+        <el-button type="primary" @click="createClick(form)">{{
+          $t('CCN.CCN.total.sure')
+        }}</el-button>
       </div>
     </el-dialog>
     <!-- 修改名称updateName模态窗 -->
-    <el-dialog :title="$t('CCN.CCN.total.editname')" :visible.sync="updateNameVisible" class="formDialog">
+    <el-dialog
+      :title="$t('CCN.CCN.total.editname')"
+      :visible.sync="updateNameVisible"
+      class="formDialog"
+    >
       <el-form :model="ccnPublic">
         <el-form-item :label="$t('CCN.CCN.total.editname2')" :label-width="formLabelWidth">
           <el-input v-model="ccnPublic.CcnName" autocomplete="off" class="inputName"></el-input>
@@ -184,40 +218,62 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="updateNameVisible = false">取 消</el-button>
-        <el-button type="primary" @click="modifyCcn(ccnPublic)">{{$t('CCN.CCN.total.sure')}}</el-button>
+        <el-button type="primary" @click="modifyCcn(ccnPublic)">{{
+          $t('CCN.CCN.total.sure')
+        }}</el-button>
       </div>
     </el-dialog>
     <!-- 修改备注updateDes模态窗 -->
-    <el-dialog :title="$t('CCN.CCN.total.editdesc')" :visible.sync="updateDesVisible" class="formDialog">
+    <el-dialog
+      :title="$t('CCN.CCN.total.editdesc')"
+      :visible.sync="updateDesVisible"
+      class="formDialog"
+    >
       <el-form :model="ccnPublic">
         <el-form-item :label="$t('CCN.CCN.total.editdesc1')" :label-width="formLabelWidth">
-          <el-input v-model="ccnPublic.CcnDescription" autocomplete="off" class="inputName"></el-input>
+          <el-input
+            v-model="ccnPublic.CcnDescription"
+            autocomplete="off"
+            class="inputName"
+          ></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="updateDesVisible = false">取 消</el-button>
-        <el-button type="primary" @click="modifyCcn(ccnPublic)">{{$t('CCN.CCN.total.sure')}}</el-button>
+        <el-button type="primary" @click="modifyCcn(ccnPublic)">{{
+          $t('CCN.CCN.total.sure')
+        }}</el-button>
       </div>
     </el-dialog>
     <!-- 修改限速方式的模态窗 -->
-    <el-dialog :title="$t('CCN.CCN.total.eWay')" :visible.sync="updateBandwidthLimitTypeVisible" class="formDialog">
+    <el-dialog
+      :title="$t('CCN.CCN.total.eWay')"
+      :visible.sync="updateBandwidthLimitTypeVisible"
+      class="formDialog"
+    >
       <el-form :model="ccnPublic">
         <el-form-item :label="$t('CCN.CCN.total.eWay1')">
           <el-select v-model="ccnPublic.BandwidthLimitType" placeholder>
             <el-option :label="$t('CCN.CCN.total.eWay2')" value="INTER_REGION_LIMIT"></el-option>
             <el-option :label="$t('CCN.CCN.total.eWay3')" value="OUTER_REGION_LIMIT"></el-option>
           </el-select>
-          <p class="edit-p">{{$t("CCN.CCN.total.eWay4")}} <a href="">工單申請</a></p>
+          <p class="edit-p">{{ $t('CCN.CCN.total.eWay4') }} <a href="">工單申請</a></p>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="updateBandwidthLimitTypeVisible = false">取 消</el-button>
-        <el-button type="primary" @click="upBandwidthLimitType(ccnPublic)">{{$t('CCN.CCN.total.sure')}}</el-button>
+        <el-button type="primary" @click="upBandwidthLimitType(ccnPublic)">{{
+          $t('CCN.CCN.total.sure')
+        }}</el-button>
       </div>
     </el-dialog>
     <!-- 标签模态窗 -->
-    <el-dialog :title="$t('CCN.CCN.total.edit')" :visible.sync="dialogTagVisible" class="editDialog">
-      <span>{{$t('CCN.CCN.total.edit0')}}</span>
+    <el-dialog
+      :title="$t('CCN.CCN.total.edit')"
+      :visible.sync="dialogTagVisible"
+      class="editDialog"
+    >
+      <span>{{ $t('CCN.CCN.total.edit0') }}</span>
       <!-- <el-table :data="tags" style="width: 100%">
         <template slot="empty">{{$t("CCN.CCN.tabs.tab1no")}}</template>
         <el-table-column prop="Key" :label="$t('CCN.CCN.total.edit1')" width>
@@ -256,9 +312,9 @@
       </table> -->
       <table class="table-div">
         <tr class="t-head">
-          <td>{{$t('CCN.CCN.total.edit1')}}</td>
-          <td>{{$t('CCN.CCN.total.edit2')}}</td>
-          <td>{{$t('CCN.CCN.total.edit3')}}</td>
+          <td>{{ $t('CCN.CCN.total.edit1') }}</td>
+          <td>{{ $t('CCN.CCN.total.edit2') }}</td>
+          <td>{{ $t('CCN.CCN.total.edit3') }}</td>
         </tr>
         <tr class="t-body" v-for="(item, index) in tags">
           <td>
@@ -269,14 +325,17 @@
             <el-input v-model="item.Value" autocomplete="off" class="inputKey"></el-input>
           </td>
           <td>
-            <a v-on:click="removeRow(index, item);" v-show="index >= 0">{{$t('CCN.CCN.total.edit3')}}</a>
+            <a v-on:click="removeRow(index, item)" v-show="index >= 0">{{
+              $t('CCN.CCN.total.edit3')
+            }}</a>
           </td>
         </tr>
       </table>
+
       <a v-on:click="addRow()" v-show="tags.length < 5">添加</a>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogTagVisible = false">取 消</el-button>
-        <el-button type="primary" @click="upTags(tags)">{{$t('CCN.CCN.total.sure')}}</el-button>
+        <el-button type="primary" @click="upTags(tags)">{{ $t('CCN.CCN.total.sure') }}</el-button>
       </span>
     </el-dialog>
   </div>
@@ -326,7 +385,7 @@ export default {
       updateNameVisible: false, // 修改名称模态窗
       updateDesVisible: false, // 修改备注模态窗
       updateBandwidthLimitTypeVisible: false, // 修改限速方式模态窗
-      dialogTagVisible: false, // 编辑模态窗
+      dialogTagVisible: false // 编辑模态窗
     }
   },
   watch: {
@@ -384,7 +443,6 @@ export default {
     // 删除一行
     removeRow: function (idx, item) {
       this.tags.splice(idx, 1)
-      
     },
     // 查询instanceId
     getInstanceIds: function (instanceType) {
@@ -527,21 +585,21 @@ export default {
         Resource: 'qcs::vpc:ap-guangzhou:uin/100011921910:ccn/' + this.ccnIdOfTag
       }
       // 获取新增arr
-      for(let j = 0,len=tagss.length; j < len; j++) {
-        let newKey = [],
+      for (let j = 0, len = tagss.length; j < len; j++) {
+        let newKey = []
       }
-      for(let j = 0,len=tagss.length; j < len; j++) {
-        for(let i = 0,len2=this.oldTags.length; i < len2; i++) {
-          if(tagss[j] )
+      for (let j = 0, len = tagss.length; j < len; j++) {
+        for (let i = 0, len2 = this.oldTags.length; i < len2; i++) {
+          // if(tagss[j] )
         }
-        if(res.Response.CcnRegionBandwidthLimitSet[j].Region === 'ap-taipei') {
+        if (res.Response.CcnRegionBandwidthLimitSet[j].Region === 'ap-taipei') {
           // console.log('111')
           this.tableDataOut[0] = res.Response.CcnRegionBandwidthLimitSet[j]
         }
       }
       // 获取删除arr
-      for(let j = 0,len=res.Response.CcnRegionBandwidthLimitSet.length; j < len; j++) {
-        if(res.Response.CcnRegionBandwidthLimitSet[j].Region === 'ap-taipei') {
+      for (let j = 0, len = res.Response.CcnRegionBandwidthLimitSet.length; j < len; j++) {
+        if (res.Response.CcnRegionBandwidthLimitSet[j].Region === 'ap-taipei') {
           // console.log('111')
           this.tableDataOut[0] = res.Response.CcnRegionBandwidthLimitSet[j]
         }
@@ -561,7 +619,7 @@ export default {
 .el-input__inner {
   height: 30px;
 }
-.el-form-item__label{
+.el-form-item__label {
   text-align: left;
 }
 </style>

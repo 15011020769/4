@@ -4,14 +4,14 @@
     <!-- 地域间带宽 -->
     <div v-show="regionShow">
       <span
-        >限速方式：地域间带宽限速 <a @click="updateBandwidthLimitTypeVisible = true">变更</a></span
+        >限速方式：{{$t("CCN.CCN.tabs.tab3tit1")}} <a @click="updateBandwidthLimitTypeVisible = true">{{$t("CCN.CCN.tabs.tab3tit2")}}</a></span
       >
       <div class="table">
         <div class="btn">
-          <el-button type="text" @click="newVisible = true">调整带宽</el-button>
+          <el-button type="text" @click="newVisible = true">{{$t("CCN.CCN.tabs.tab3btn")}}</el-button>
         </div>
         <el-table :data="tableDataIn" style="width: 100%">
-          <template slot="empty">暂无数据</template>
+          <template slot="empty">{{$t("CCN.CCN.tabs.tab1no")}}</template>
           <el-table-column prop="" label="地域A" width>
             <template slot-scope="scope">
               <p class="edit">12121</p>
@@ -22,7 +22,7 @@
               台北
             </template>
           </el-table-column>
-          <el-table-column prop="band" label="带宽上限(Mbps)" width> </el-table-column>
+          <el-table-column prop="band" :label="$t('CCN.CCN.tabs.tab3tr2')" width> </el-table-column>
         </el-table>
       </div>
       <!--调整带宽模态窗 -->
@@ -32,7 +32,7 @@
             <tr class="t-head">
               <td>地域A</td>
               <td>地域B</td>
-              <td>带宽上限</td>
+              <td>{{$t('CCN.CCN.tabs.tab3tr2')}}</td>
               <td></td>
             </tr>
             <tr class="t-body" v-for="(item, index) in formArr">
@@ -77,7 +77,7 @@
           </table>
         </div>
         <div slot="footer" class="dialog-footer">
-          <el-button type="primary" @click="newVisible = false">确定</el-button>
+          <el-button type="primary" @click="newVisible = false">{{$t('CCN.CCN.total.sure')}}</el-button>
           <el-button @click="newVisible = false">取消</el-button>
         </div>
       </el-dialog>
@@ -113,12 +113,12 @@
         </div>
         <el-table :data="tableDataOut" style="width: 100%">
           <template slot="empty">{{$t("CCN.CCN.tabs.tab1no")}}</template>
-          <el-table-column prop="Region" label="地域" width>
+          <el-table-column prop="Region" :label="$t('CCN.CCN.tabs.tab3tr1')" width>
             <template slot-scope="scope">
               <p class="edit">{{ scope.row.Region }}</p>
             </template>
           </el-table-column>
-          <el-table-column prop="BandwidthLimit" label="带宽上限(Mbps)" width>
+          <el-table-column prop="BandwidthLimit" :label="$t('CCN.CCN.tabs.tab3tr2')" width>
             <template slot-scope="scope">
               <p class="edit">{{ scope.row.BandwidthLimit }}</p>
             </template>
@@ -129,23 +129,23 @@
       <el-dialog title="" :visible.sync="updateVisible" class="updateDialog">
         <div class="transfer">
           <div class="left">
-            <span>添加地域出口限速</span>
+            <span>{{$t('CCN.CCN.tabs.tab3btnD')}}</span>
             <div class="region">
-              <el-checkbox v-model="checked">中国台北</el-checkbox>
+              <el-checkbox v-model="checked">{{$t('CCN.CCN.tabs.tab3R')}}</el-checkbox>
             </div>
           </div>
           <div class="icon">
             <i class="el-icon-arrow-right"></i>
           </div>
           <div class="right">
-            <span>已选择</span>
+            <span>{{$t('CCN.CCN.tabs.tab3btnC')}}</span>
             <div class="region">
               <div class="t-head">
-                <div>地域</div>
-                <div>带宽上限</div>
+                <div>{{$t('CCN.CCN.tabs.tab3tr1')}}</div>
+                <div>{{$t('CCN.CCN.tabs.tab3tr2')}}</div>
               </div>
               <div class="t-body">
-                <div>中国台北</div>
+                <div>{{$t('CCN.CCN.tabs.tab3R')}}</div>
                 <div>
                   <el-input v-model="inputValue1" type="text"></el-input>
                 </div>
@@ -154,7 +154,7 @@
           </div>
         </div>
         <div slot="footer" class="dialog-footer">
-          <el-button type="primary" @click="update1()">确定</el-button>
+          <el-button type="primary" @click="update1()">{{$t('CCN.CCN.total.sure')}}</el-button>
           <el-button @click="updateVisible = false">取消</el-button>
         </div>
       </el-dialog>
