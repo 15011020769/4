@@ -9,7 +9,7 @@
                 提交方法
                 <i class="el-icon-question"></i>
               </span>
-              <el-select v-model="funCodeForm.methodsTip" class="selectSetWidth">
+              <el-select v-model="funCodeForm.methodsTip" class="selectSetWidth" @change="chooseSelect">
                 <el-option label="在线编辑" value="inline"></el-option>
                 <el-option label="本地上传zip包" value="zipFile"></el-option>
                 <el-option label="本地上传文件夹" value="folder"></el-option>
@@ -35,6 +35,12 @@
           </div>
         </div>
         <div class="codeShow" v-if="codeShow"></div>
+        <div class="uploadZipBack" v-if="uploadZipBackBack">
+
+        </div>
+        <div class="uploadCos" v-if="uploadCos"> 
+
+        </div>
         <div class="bottomBtn newClear">
           <el-button type="primary">保存</el-button>
           <el-button>测试</el-button>
@@ -54,11 +60,11 @@
               <el-dialog
                 title="配置测试模板"
                 :visible.sync="newCreateModel"
-                width="30%"
+                width="50%"
                 :append-to-body="true"
                 :before-close="newCreateModelClose"
               >
-                <el-form label-width="92px" :model="configTestModel">
+                <el-form label-width="130px" :model="configTestModel">
                   <el-form-item label="测试事件模板" :required="true">
                     <el-input plcarholder="请输入模板名称" v-model="configTestModel.modelName"/>
                     <p>1. 最多45个字符，最少2个字符</p>
@@ -98,7 +104,7 @@ export default {
   data() {
     return {
       funCodeForm: {
-        methodsTip: "",
+        methodsTip: "inline",
         zxMethods: "index.main_handler",
         runMoment: "Python2.7"
       },
@@ -109,7 +115,9 @@ export default {
       configTestModel:{
         modelName:"",
         useModelCode:""
-      }
+      },
+      uploadZipBackBack:false,
+      uploadCos:false
     };
   },
   methods: {
@@ -119,6 +127,24 @@ export default {
     //配置测试模板确定按钮
     configCodeSure(){
       this.newCreateModel=false;
+    },
+    //监测提交方法下拉框
+    chooseSelect(){
+      if(this.funCodeForm.methodsTip=="inline"){
+        this.codeShow=true;
+      }else{
+        this.codeShow=false;
+        if(this.funCodeForm.methodsTip=="zipFile"||this.funCodeForm.methodsTip=="folder"){
+          this.uploadZipBackBack=true;
+        }else{
+          this.uploadZipBackBack=false;
+          if(this.funCodeForm.methodsTip=="cos"){
+            this.uploadCos=true;
+          }else{
+            this.uploadCos=false;
+          }
+        }
+      }
     }
   }
 };
