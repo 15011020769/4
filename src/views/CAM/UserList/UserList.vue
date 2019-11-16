@@ -2,10 +2,6 @@
   <div class="Cam">
     <div class="top">
       <span class="title-left">用户列表</span>
-      <span class="title-right">
-        <span>CAM用户使用说明</span>
-        <i class="el-icon-share"></i>
-      </span>
     </div>
     <div class="explain">
       <p>
@@ -353,7 +349,7 @@ export default {
   },
   methods: {
     NewUser() {
-      this.$router.push({ name: "NewUser" });
+      this.$router.push({ name: "custormCreate" });
     },
     changeLeftData(val) {
       // console.log("change left data", val);
