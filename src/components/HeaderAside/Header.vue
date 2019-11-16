@@ -10,7 +10,7 @@
       active-text-color="#fff"
     >
       <el-menu-item class="manuList" index="0">
-        <img src="@/assets/logo_5.svg" width="100px" height="50px" alt />
+        <img src="@/assets/logo_5.svg" width="140px" height="60px" alt />
       </el-menu-item>
       <el-menu-item class="manuList" index="1" @mouseenter.native="Show">产品中心</el-menu-item>
       <el-menu-item class="manuList" index="2">定价</el-menu-item>
