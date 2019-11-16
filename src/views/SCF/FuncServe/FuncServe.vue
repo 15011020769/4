@@ -1,16 +1,16 @@
 <template>
   <div>
     <div class="topFun">
-      <span>函数服务</span>
+      <span>{{$t("SCF.SCF.total.title")}}</span>
       <el-input class="addressName" readonly="readonly" v-model="addressIpt"></el-input>
       <div>
         命名空间：
         <el-select class="nameSpace" v-model="nameSpaceValue" placeholder="default(1)" filterable>
           <el-option
             v-for="item in nameSpace"
-            :key="item.Name"
+            :key="item.value"
             :label="item.label"
-            :value="item.Name"
+            :value="item.value"
           ></el-option>
         </el-select>
       </div>
@@ -44,8 +44,8 @@
           <el-table-column label="命名空间">
             <template slot-scope="scope">
               <el-form :model="modelNameSpace[scope.$index]">
-                <el-form-item prop="Name">
-                  <el-input v-show="true" v-model="modelNameSpace[scope.$index].Name" :disabled="modelNameSpace[scope.$index].disableDelete" placeholder />
+                <el-form-item prop="nameSpaceOne">
+                  <el-input v-show="true" v-model="modelNameSpace[scope.$index].nameSpaceOne" :disabled="modelNameSpace[scope.$index].disableDelete" placeholder />
                   <div v-if="!modelNameSpace[scope.$index].disableDelete">
                     <p class="modelNameSpace">1. 最多60个字符，最少2个字符</p>
                     <p class="modelNameSpace">2. 字母开头，支持 a-z，A-Z，0-9，-，_，且需要以数字或字母结尾</p>
@@ -57,8 +57,8 @@
           <el-table-column label="描述">
             <template slot-scope="scope">
               <el-form ref="scope.row"  :model="modelNameSpace[scope.$index]">
-                <el-form-item prop="Description">
-                  <el-input type="textarea" style="min-height:90px;" v-model="modelNameSpace[scope.$index].Description" placeholder :disabled="modelNameSpace[scope.$index].disableDelete" />
+                <el-form-item prop="nameSpaceTwo">
+                  <el-input type="textarea" style="min-height:90px;" v-model="modelNameSpace[scope.$index].nameSpaceTwo" placeholder :disabled="modelNameSpace[scope.$index].disableDelete" />
                 </el-form-item>
               </el-form>
             </template>
@@ -80,7 +80,7 @@
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible3 = false">取 消</el-button>
-        <el-button type="primary" @click="sureNameSpaceMag(modelNameSpace)">提交</el-button>
+        <el-button type="primary" @click="sureNameSpaceMag()">提交</el-button>
       </span>
     </el-dialog>
     <div class="mainContainer">
@@ -106,16 +106,16 @@
           <el-table :data="tableDataBegin.slice((currentPage-1)*pageSize,currentPage*pageSize)">
             <el-table-column prop="funName" label="函数名">
               <template slot-scope="scope">
-                <a href="#" @click="toDoDetail(scope.$index, scope.row)">{{scope.row.functionName}}</a>
+                <a href="#" @click="toDoDetail(scope.$index, scope.row)">{{scope.row.funName}}</a>
               </template>
             </el-table-column>
             <el-table-column prop="funStatus" label="函数状态"></el-table-column>
             <el-table-column prop="monitor" label="监控"></el-table-column>
-            <el-table-column prop="runtime" label="运行环境"></el-table-column>
+            <el-table-column prop="runMoent" label="运行环境"></el-table-column>
             <el-table-column prop="description" label="描述"></el-table-column>
             <el-table-column prop="funTabs" label="标签" width="70px"></el-table-column>
-            <el-table-column prop="modTime" label="创建时间"></el-table-column>
-            <el-table-column prop="addTime" label="上次修改时间"></el-table-column>
+            <el-table-column prop="createTime" label="创建时间"></el-table-column>
+            <el-table-column prop="changeTime" label="上次修改时间"></el-table-column>
             <el-table-column prop="operate" label="操作" width="180">
               <template slot-scope="scope">
                 <el-button
@@ -139,22 +139,24 @@
                 <el-dialog
                   title="函数复制"
                   :visible.sync="dialogVisible2"
-                  width="38%"
+                  width="30%"
                   :before-close="handleClose2"
                 >
                   <el-form ref="form" :model="copyForm" label-width="80px">
                     <el-form-item label="所属地域" :required="true">
                       <el-select v-model="addressIpt">
-                        <!-- <el-option label="台北" value="taipei"></el-option> -->
+                        <el-option label="北京" value="beijing"></el-option>
+                        <el-option label="台北" value="taibei"></el-option>
                       </el-select>
                     </el-form-item>
                     <el-form-item label="命名空间" :required="true">
                       <el-select v-model="nameSpaceValue">
-                      <el-option v-for="item in nameSpace" :key="item.Name" :label="item.label" :value="item.Name"></el-option>
+                        <el-option label="fun1()" value="1"></el-option>
+                        <el-option label="default()" value="2"></el-option>
                       </el-select>
                     </el-form-item>
                     <el-form-item label="函数名称" :required="true">
-                      <el-input v-model="scope.row.functionName"  label-width="80px"></el-input>
+                      <el-input v-model="scope.row.funName"></el-input>
                       <p class="tipBot">1. 最多60个字符，最少2个字符</p>
                       <p class="tipBot">2. 字母开头，支持 a-z，A-Z，0-9，-，_，且需要以数字或字母结尾</p>
                     </el-form-item>
@@ -203,8 +205,17 @@
 export default {
   data() {
     return {
-      nameSpaceValue: [{}],
-      nameSpace: [{}],
+      nameSpaceValue: "",
+      nameSpace: [
+        {
+          value: "default(1)",
+          label: "default(1)"
+        },
+        {
+          value: "default(2)",
+          label: "default(2)"
+        }
+      ],
       addressIpt: "中国台北",
       tableData: [
         {
@@ -254,10 +265,8 @@ export default {
       multipleSelection: [],
       dialogVisible: false,
       deleteIndex: "",
-      deleteBegin: {},
+      deleteBegin: "",
       dialogVisible2: false,
-      defaults:"",
-      branches:0,
       copyForm: {
         //复制函数
         region: this.addressIpt,
@@ -271,9 +280,9 @@ export default {
       modelNameSpace:[
         {
           //命名空间input,textarea绑定的参数
-          Name: "",
-          Description: "",
-          disableDelete:true
+          nameSpaceOne: "",
+          nameSpaceTwo: "",
+          disableDelete:false
         },
       ],
       copyIndex2: "",
@@ -286,44 +295,30 @@ export default {
   },
   created() {
     this.getData();
-    this.getDModelNmaeSpace();
   },
   mounted(){
-    //this.modelNameSpace[0].Name="default";
-    // this.modelNameSpace[0].Description="";
-    //this.modelNameSpace[0].disableDelete=true;
+    this.modelNameSpace[0].nameSpaceOne="default";
+    this.modelNameSpace[0].nameSpaceTwo="";
+    this.modelNameSpace[0].disableDelete=true;
   },
   methods: {
-    //命名空间的列表
-    getDModelNmaeSpace() {
-      let params = {
-        Version: "2018-04-16",
-        Region: "ap-taipei"
-      };
-      this.$axios.post('scf2/ListNamespaces', params).then(res => {
-        //  for(var i=0;i<res.Response.Namespaces.length;i++){
-           this.nameSpace = res.Response.Namespaces;
-           this.modelNameSpace=res.Response.Namespaces;
-           this.modelNameSpace.reverse();
-           this.modelNameSpace[0].disableDelete=true;
-      });
-    },
     getData() {
       var cookies = document.cookie;
       var list = cookies.split(";");
       for (var i = 0; i < list.length; i++) {
         var arr = list[i].split("=");
       }
+      console.log(arr[1]);
       let params = {
         // Action: "ListFunctions",
         Version: "2018-04-16",
         Region: arr[1]
       };
-      this.$axios.post('scf/ListFunctions', params).then(res => {
-        // console.log(res.data.functions);
-        this.tableDataBegin = res.data.functions;
-        //this.allData = this.tableDataBegin;
-        //this.tableDataBegin = this.allData;
+      //this.$axios.post('scf/ListFunctions', params).then(res => {
+      //console.log(res.data);
+      //this.tableDataBegin = res.data.dataTable;
+      //this.allData = this.tableDataBegin;
+        this.tableDataBegin = this.allData;
         // 将数据的长度赋值给totalItems
         this.totalItems = this.tableDataBegin.length;
         if (this.totalItems > this.pageSize) {
@@ -333,7 +328,7 @@ export default {
         } else {
           this.tableDataEnd = this.tableDataBegin;
         }
-      });
+      //});
     },
     // 搜索
     doFilter() {
@@ -438,17 +433,19 @@ export default {
       console.log(index, dataBegin);
       this.deleteIndex = index;
       this.deleteBegin = dataBegin;
+      console.log(this.deleteBegin);
       this.dialogVisible = true;
+      console.log(this.deleteBegin.funName + this.addressIpt);
     },
     //删除函数的确定按钮，调用删除接口
     sureDelete() {
       let params = {
         Version: "2018-04-16",
-        Region: "ap-taipei",
-        FunctionName: this.deleteBegin.functionName
+        Region: this.addressIpt,
+        functionName: this.deleteBegin.funName
       };
-      console.log(params.FunctionName);
-      this.$axios.post("scf2/DeleteFunction", params).then(res => {
+      console.log(this.deleteBegin.funName);
+      this.$axios.post("scf/DeleteFunction", params).then(res => {
         console.log(res);
         console.log("成功");
         this.tableDataBegin.splice(this.deleteIndex, 1);
@@ -466,75 +463,21 @@ export default {
     sureCopy() {
       let params = {
         Version: "2018-04-16",
-        Region: "ap-taipei",
-        FunctionName: this.copyIndex2.functionName,
-        NewFunctionName:""
+        Region: this.addressIpt,
+        FunctionName: this.copyIndex2.funName,
+        NewFunctionName: ""
       };
-      console.log(this.copyIndex2)
-      this.$axios.post("scf2/CopyFunction", params).then(res => {
+      this.$axios.post("scf/CopyFunction", params).then(res => {
         console.log(res);
         console.log("成功");
         this.dialogVisible2 = false;
       });
     },
     //命名空间管理的确定按钮
-    sureNameSpaceMag(modelNameSpace) {
-       console.log(modelNameSpace)
-          let paras = {
-            Version: "2018-04-16",
-            Region: "ap-taipei"
-          };
-          //与库中数据数据对比，判断添加修改
-          this.$axios.post('scf2/ListNamespaces', paras).then(res => {
-             if(modelNameSpace.length>1){
-            for(var i=0;i<modelNameSpace.length;i++){
-            for(var w=0;w<res.Response.Namespaces.length;w++){
-              if(modelNameSpace[i].Name!=res.Response.Namespaces[w].Name){
-            // console.log(modelNameSpace[i].Name+"---"+res.Response.Namespaces[w].Name)
-                //添加
-                 let params={
-                  Version:"2018-04-16",
-                  Region:"ap-taipei",
-                  Namespace:modelNameSpace[i].Name,
-                  Description:modelNameSpace[i].Description,
-                }
-                this.$axios.post('scf2/CreateNamespace', params).then(res =>{
-                  console.log(res)
-                  console.log("添加")
-                  this.dialogVisible3 = false
-                });
-                }else if(modelNameSpace[i].Name==res.Response.Namespaces[w].Name){
-               //更新
-                let params={
-                  Version:"2018-04-16",
-                  Region:"ap-taipei",
-                  Namespace:modelNameSpace[i].Name,
-                  Description:modelNameSpace[i].Description,
-                }
-                this.$axios.post('scf2/UpdateNamespace', params).then(res =>{
-                  console.log(res)
-                  console.log("更新")
-                  this.dialogVisible3 = false
-                });
-                }
-              }
-           }
-          }else{
-            this.dialogVisible3 = false
-          }
-          })
-    },
+    sureNameSpaceMag() {},
     //删除命名空间
     spaceDelete(spaceIndex, spaceRow) {
-        let params={
-        Version:"2018-04-16",
-        Region:"ap-taipei",
-        Namespace:spaceRow.Name,
-      }
-      this.$axios.post('scf2/DeleteNamespace', params).then(res => {
-       console.log(res)
-      });
-       this.modelNameSpace.splice(spaceIndex, 1);
+      this.modelNameSpace.splice(spaceIndex, 1);
     },
     iptChange(){
       if(this.tableDataName==""){
@@ -549,8 +492,8 @@ export default {
     addNewNameSpace(){
       if(this.modelNameSpace.length<5){
         this.modelNameSpace.push({
-          Name: "",
-          Description: "",
+          nameSpaceOne: "",
+          nameSpaceTwo: "",
           disableDelete:false
         });
       }
@@ -560,13 +503,11 @@ export default {
     },
     //跳转详情页点击事件
     toDoDetail(newIndex,newRow){
-      console.log(newIndex)
-      console.log(this.tableDataBegin[newIndex].functionName)
-      this.tableDataBegin.reverse();
+      console.log(this.tableDataBegin[newIndex].funName)
       this.$router.push({
         path: "/funSeverDetail",
         query:{
-					msg:this.tableDataBegin[newIndex].functionName
+					msg:this.tableDataBegin[newIndex].funName
 				}
       });
     }

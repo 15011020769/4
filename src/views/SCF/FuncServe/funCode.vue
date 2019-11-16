@@ -135,6 +135,7 @@ export default {
       }else{
         this.codeShow=false;
         if(this.funCodeForm.methodsTip=="zipFile"||this.funCodeForm.methodsTip=="folder"){
+          console.log(this.funCodeForm.methodsTip)
           this.uploadZipBackBack=true;
         }else{
           this.uploadZipBackBack=false;
