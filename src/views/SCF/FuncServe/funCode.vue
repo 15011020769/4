@@ -36,17 +36,48 @@
         </div>
         <div class="codeShow" v-if="codeShow"></div>
         <div class="uploadZipBack" v-if="uploadZipBackBack">
-
+          <el-form :model="actionSubminFile1" label-width="130px">
+            <el-form-item label="函数代码">
+              <input :model="actionSubminFile1.filesInput" type="file" id="file" accept="application/zip" multiple="multiple" @change="handleFile()"/>
+              <p>请上传zip格式的代码包，最大支持50M（如果zip大于10M，仅显示入口文件）</p>
+              <p class="tipRed" v-if="redTipShow">请上传50M以内zip格式的代码包</p>
+            </el-form-item>
+          </el-form>
+        </div>
+        <div class="uploadFlolder" v-if="uploadFlolderShow">
+          <el-form :model="actionSubminFile2" label-width="130px">
+            <el-form-item label="函数代码">
+              <input :model="actionSubminFile2.filesInput" type="file" id="file1" accept="application/zip" multiple="multiple" @change="handleFile1()"/>
+              <p>请选择文件夹</p>
+            </el-form-item>
+          </el-form>
         </div>
         <div class="uploadCos" v-if="uploadCos"> 
-
+          <el-form :model="actionSubminFile3" label-width="130px">
+            <el-form-item label="COS Bucket">
+              <span slot="label">
+                COS Bucket
+                <i class="el-icon-question"></i>
+              </span>
+              <el-select v-model="actionSubminFile3.cosBucket" placeholder="请选择" class="setWidthChoose">
+                <el-option label="下载代码包" value="code"></el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="COS对象文件">
+              <span slot="label">
+                COS对象文件
+                <i class="el-icon-question"></i>
+              </span>
+              <el-input class="cosFilePath" :model="actionSubminFile3.cosObjFile" placeholder="请输入cos对象文件路径，以/开头"/>
+            </el-form-item>
+          </el-form>
         </div>
         <div class="bottomBtn newClear">
           <el-button type="primary">保存</el-button>
-          <el-button>测试</el-button>
-          <el-form>
-            <el-form-item label="当前测试模板" :required="true" class="floatLeftItem">
-              <el-select v-model="modelList" class="selectSetWidth floatLeftItem1">
+          <el-button @click="bottomCodeShow">测试</el-button>
+          <el-form class="newFormFloat">
+            <el-form-item label="当前测试模板" :required="true">
+              <el-select v-model="modelList" class="selectSetWidth">
                 <el-option label="Hello World事件模板" value="HelloWorld"></el-option>
                 <el-option label="COS 对象存储的 POST 事件模板" value="cospost"></el-option>
                 <el-option label="COS 对象存储的 PUT 事件模板" value="cosput"></el-option>
@@ -95,6 +126,35 @@
             </el-form-item>
           </el-form>
         </div>
+        <div class="bottomCodeShow" v-if="bottomCodeShowBtn">
+          <h3>测试结果<span>成功</span></h3>
+          <div class="borderLeftBlue borderLeftBlue1">
+            <h1>返回结果:</h1>
+            <p>"hello from scf"</p>
+          </div>
+          <div class="newClear">
+            <div class="borderLeftBlue borderLeftBlue2">
+              <h1>摘要:</h1>
+              <p><span>请求ID:</span><span>5a81551d-084b-11ea-a122-5254005dc76e</span></p>
+              <p><span>运行时间:</span><span>0.18000000715255737ms</span></p>
+              <p><span>计费时间:</span><span>100ms</span></p>
+              <p><span>占用内存:</span><span>10.09375MB</span></p>
+            </div>
+            <div class="borderLeftBlue borderLeftBlue3">
+              <h1>日志:</h1>
+              <div>
+                START RequestId: 5a81551d-084b-11ea-a122-5254005dc76e<br/>
+                Event RequestId: 5a81551d-084b-11ea-a122-5254005dc76e<br/>
+                Start Hello World function<br/>
+                Hello World<br/>
+                value1 = test value 1<br/>
+                value2 = test value 2<br/>
+                END RequestId: 5a81551d-084b-11ea-a122-5254005dc76e<br/>
+                Report RequestId: 5a81551d-084b-11ea-a122-5254005dc76e Duration:0.18ms Memory:128MB MaxMemoryUsed:10.0938MB
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -117,7 +177,20 @@ export default {
         useModelCode:""
       },
       uploadZipBackBack:false,
-      uploadCos:false
+      uploadCos:false,
+      uploadFlolderShow:false,
+      redTipShow:false,
+      bottomCodeShowBtn:false,
+      actionSubminFile1:{
+        filesInput:""
+      },
+      actionSubminFile2:{
+        filesInput:""
+      },
+      actionSubminFile3:{
+        cosBucket:"",
+        cosObjFile:""
+      },
     };
   },
   methods: {
@@ -134,18 +207,33 @@ export default {
         this.codeShow=true;
       }else{
         this.codeShow=false;
-        if(this.funCodeForm.methodsTip=="zipFile"||this.funCodeForm.methodsTip=="folder"){
+      }
+      if(this.funCodeForm.methodsTip=="zipFile"){
           console.log(this.funCodeForm.methodsTip)
           this.uploadZipBackBack=true;
         }else{
           this.uploadZipBackBack=false;
-          if(this.funCodeForm.methodsTip=="cos"){
+        }
+        if(this.funCodeForm.methodsTip=="cos"){
             this.uploadCos=true;
           }else{
             this.uploadCos=false;
           }
-        }
-      }
+          if(this.funCodeForm.methodsTip=="folder"){
+              this.uploadFlolderShow=true;
+            }else{
+              this.uploadFlolderShow=false;
+            }
+      
+    },
+    //上传文件
+    handleFile(){},
+    handleFile1(){},
+    //测试按钮
+    bottomCodeShow(){
+      alert(1)
+      // console.log(1)
+      this.bottomCodeShowBtn=true;
     }
   }
 };
@@ -154,7 +242,7 @@ export default {
 .formLeftInput {
   float: left;
   .floatLeftItem {
-    float: left;
+    display: inline-block;
     margin-right: 30px;
   }
 }
@@ -175,6 +263,10 @@ export default {
     float:left;
     margin-right:10px;
   }
+  .newFormFloat{
+    float:left;
+    width:330px;
+  }
 }
 .el-select-dropdown{
   position:relative;
@@ -193,5 +285,98 @@ export default {
 .codeBox{
   border:1px solid #ddd;
   min-height:200px;
+}
+.uploadZipBack{
+  width:100%;
+  min-height:85px;
+  background-color:#f2f2f2;
+  padding:20px 10px;
+}
+.uploadFlolder{
+   width:100%;
+   min-height:85px;
+   background-color:#f2f2f2;
+   padding:20px 10px;
+}
+.uploadCos{
+  width:100%;
+  min-height:85px;
+  background-color:#f2f2f2;
+  padding:20px 10px;
+}
+.fileinput-button {
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
+  input{
+    position:absolute;
+    right: 0px;
+    top: 0px;
+    opacity: 0;
+    font-size: 200px;
+  }
+}
+.tipRed{
+  color:red;
+}
+.setWidthChoose{
+  width:250px;
+  div.el-input{
+    width:250px;
+  }
+}
+.cosFilePath{
+  width:250px;
+  input{
+    width:250px;
+  }
+}
+.bottomCodeShow{
+  width:100%;
+  margin-top:20px;
+  min-height:200px;
+  h3{
+    font-size:14px;
+    font-weight:600;
+    span{
+      color:green;
+    }
+  }
+}
+.borderLeftBlue{
+  background-color:rgb(242, 242, 242);
+  font-size:14px;
+  border-left:11px solid rgb(210, 231, 247);
+  padding:20px 12px;
+  margin-bottom:20px;
+  h1{
+    color:rgb(48, 127, 220);
+    font-size:14px;
+    font-weight:100;
+  }
+}
+.borderLeftBlue2{
+  float:left;
+  margin-right:20px;
+  width:30%;
+  min-height:400px;
+  p{
+    line-height:24px;
+    span:nth-child(1){
+      color:rgb(48, 127, 220);
+    }
+    span:nth-child(2){
+      color:#888;
+    }
+  }
+}
+.borderLeftBlue3{
+  float:left;
+  width:68.7%;
+  min-height:400px;
+  div{
+    line-height: 24px;
+    color:#888;
+  }
 }
 </style>
