@@ -71,27 +71,11 @@
                   <el-option label="私有网络" value="VPC"></el-option>
                   <el-option label="专线网关" value="DIRECTCONNECT"></el-option>
                 </el-select>
-                <!-- <el-select v-model="value" :placeholder="$t('CCN.CCN.tabs.tab1new2')">
-                  <el-option
-                    v-for="item in options"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value"
-                  ></el-option>
-                </el-select> -->
               </td>
               <td>
                 <el-select v-model="form.instanceRegion" :placeholder="$t('CCN.CCN.tabs.tab1new4')">
                   <el-option label="港澳台地区(中国台北)" value="ap-taipei"></el-option>
                 </el-select>
-                <!-- <el-select v-model="value" :placeholder="$t('CCN.CCN.tabs.tab1new4')">
-                  <el-option
-                    v-for="item in options"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value"
-                  ></el-option>
-                </el-select> -->
               </td>
               <td>
                 <el-select v-model="form.instanceId" :placeholder="$t('CCN.CCN.tabs.select')">
@@ -102,12 +86,6 @@
                     :value="item2.VpcId"
                   ></el-option>
                 </el-select>
-                <!-- <el-input
-                  size="small"
-                :placeholder="$t('CCN.CCN.tabs.select')"
-                  suffix-icon="el-icon-search"
-                  v-model="input"
-                ></el-input> -->
               </td>
               <!-- <td>
                 <a v-on:click="removeRow(index);" v-show="index >= 0">{{$t("CCN.CCN.total.td3")}}</a>
@@ -231,8 +209,6 @@ export default {
         'Instances.0.InstanceType': this.instance.InstanceType
       }
       this.$axios.post("vpc2/DetachCcnInstances", params).then(res => {
-        console.log(params);
-        console.log(res);
         this.getData();
       })
       this.dialogVisible = false

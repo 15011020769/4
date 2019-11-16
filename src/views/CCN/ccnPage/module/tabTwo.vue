@@ -182,10 +182,7 @@ export default {
         Namespace: 'QCE/VBC',
         MetricName: 'RegionInPkg',
         'Instances.0.Dimensions.0.Name': 'CcnId',
-        'Instances.0.Dimensions.0.Value': this.ccnId
-        // Period: 300,
-        // StartTime: '',
-        // EndTime: ''
+        'Instances.0.Dimensions.0.Value': this.ccnId,
       }
       var params3 = {
         Version: '2018-07-24',
@@ -193,10 +190,7 @@ export default {
         Namespace: 'QCE/VBC',
         MetricName: 'RegionOutBandwidth',
         'Instances.0.Dimensions.0.Name': 'CcnId',
-        'Instances.0.Dimensions.0.Value': this.ccnId
-        // Period: 300,
-        // StartTime: '',
-        // EndTime: ''
+        'Instances.0.Dimensions.0.Value': this.ccnId,
       }
       var params4 = {
         Version: '2018-07-24',
@@ -204,10 +198,7 @@ export default {
         Namespace: 'QCE/VBC',
         MetricName: 'RegionInBandwidth',
         'Instances.0.Dimensions.0.Name': 'CcnId',
-        'Instances.0.Dimensions.0.Value': this.ccnId
-        // Period: 300,
-        // StartTime: '',
-        // EndTime: ''
+        'Instances.0.Dimensions.0.Value': this.ccnId,
       }
       // 查询-单地域总出包量
       this.$axios.post('monitor2/GetMonitorData', params).then(res => {

@@ -268,48 +268,8 @@
       </div>
     </el-dialog>
     <!-- 标签模态窗 -->
-    <el-dialog
-      :title="$t('CCN.CCN.total.edit')"
-      :visible.sync="dialogTagVisible"
-      class="editDialog"
-    >
-      <span>{{ $t('CCN.CCN.total.edit0') }}</span>
-      <!-- <el-table :data="tags" style="width: 100%">
-        <template slot="empty">{{$t("CCN.CCN.tabs.tab1no")}}</template>
-        <el-table-column prop="Key" :label="$t('CCN.CCN.total.edit1')" width>
-          <template slot-scope="scope">
-            <p class="edit">{{ scope.row.Key }}</p>
-          </template>
-        </el-table-column>
-        <el-table-column prop="Value" :label="$t('CCN.CCN.total.edit2')" width>
-          <template slot-scope="scope">
-            <p class="edit">{{ scope.row.Value }}</p>
-          </template>
-        </el-table-column>
-        <el-table-column prop="operate" :label="$t('CCN.CCN.total.edit3')" width>
-          <template slot-scope="scope">
-            <el-button type="text" @click="delTag(scope.row)">{{$t('CCN.CCN.total.edit3')}}</el-button>
-          </template>
-        </el-table-column>
-      </el-table> -->
-      <!-- <table class="table-div">
-        <tr class="t-head">
-          <td>{{$t('CCN.CCN.total.edit1')}}</td>
-          <td>{{$t('CCN.CCN.total.edit2')}}</td>
-          <td>{{$t('CCN.CCN.total.edit3')}}</td>
-        </tr>
-        <tr class="t-body" v-for="(item, index) in formArr">
-          <td>
-            <input type="text" />
-          </td>
-          <td>
-            <input type="text" />
-          </td>
-          <td>
-            <a v-on:click="removeRow(index);" v-show="index >= 0">{{$t('CCN.CCN.total.edit3')}}</a>
-          </td>
-        </tr>
-      </table> -->
+    <el-dialog :title="$t('CCN.CCN.total.edit')" :visible.sync="dialogTagVisible" class="editDialog">
+      <span>{{$t('CCN.CCN.total.edit0')}}</span>
       <table class="table-div">
         <tr class="t-head">
           <td>{{ $t('CCN.CCN.total.edit1') }}</td>
@@ -325,7 +285,7 @@
             <el-input v-model="item.Value" autocomplete="off" class="inputKey"></el-input>
           </td>
           <td>
-            <a v-on:click="removeRow(index, item)" v-show="index >= 0">{{
+            <a v-on:click="removeRow(index)" v-show="index >= 0">{{
               $t('CCN.CCN.total.edit3')
             }}</a>
           </td>
@@ -390,7 +350,6 @@ export default {
   },
   watch: {
     'form.instanceType': function (value) {
-      // console.log(value)
       this.getInstanceIds(value)
     }
   },
@@ -405,7 +364,6 @@ export default {
         Region: 'ap-taipei'
       }
       this.$axios.post('vpc2/DescribeCcns', params).then(res => {
-        console.log(res)
         console.log('获取ccn列表成功')
         this.tableData = res.Response.CcnSet
         this.total = res.Response.TotalCount
@@ -441,7 +399,7 @@ export default {
       this.tags.push(des)
     },
     // 删除一行
-    removeRow: function (idx, item) {
+    removeRow: function (idx) {
       this.tags.splice(idx, 1)
     },
     // 查询instanceId
@@ -539,8 +497,6 @@ export default {
         CcnDescription: ccnDetail.CcnDescription
       }
       this.$axios.post('vpc2/ModifyCcnAttribute', params).then(res => {
-        // console.log(params);
-        // console.log(res);
         console.log('修改成功')
         this.getData()
       })
@@ -561,8 +517,6 @@ export default {
         BandwidthLimitType: ccnDetail.BandwidthLimitType
       }
       this.$axios.post('vpc2/ModifyCcnRegionBandwidthLimitsType', params).then(res => {
-        console.log(params)
-        console.log(res)
         console.log('修改成功')
         this.getData()
       })
@@ -572,41 +526,47 @@ export default {
     toTags: function (ccnDetail) {
       console.log(ccnDetail)
       this.ccnIdOfTag = ccnDetail.CcnId
-      this.oldTags = ccnDetail.TagSet
+      this.oldTags = JSON.parse(JSON.stringify(ccnDetail.TagSet))
       this.tags = ccnDetail.TagSet
       this.dialogTagVisible = true
     },
-    //
+    // 编辑标签
     upTags: function (tagss) {
-      console.log(tagss)
       var params = {
         Version: '2018-08-13',
         Region: 'ap-taipei',
         Resource: 'qcs::vpc:ap-guangzhou:uin/100011921910:ccn/' + this.ccnIdOfTag
       }
-      // 获取新增arr
-      for (let j = 0, len = tagss.length; j < len; j++) {
-        let newKey = []
+      var newKey = []
+      for(let j = 0,len=tagss.length; j < len; j++) {
+        newKey.push(tagss[j].Key)
       }
-      for (let j = 0, len = tagss.length; j < len; j++) {
-        for (let i = 0, len2 = this.oldTags.length; i < len2; i++) {
-          // if(tagss[j] )
-        }
-        if (res.Response.CcnRegionBandwidthLimitSet[j].Region === 'ap-taipei') {
-          // console.log('111')
-          this.tableDataOut[0] = res.Response.CcnRegionBandwidthLimitSet[j]
-        }
+      var oldKey = []
+      for(let j = 0,len=this.oldTags.length; j < len; j++) {
+        oldKey.push(this.oldTags[j].Key)
       }
       // 获取删除arr
-      for (let j = 0, len = res.Response.CcnRegionBandwidthLimitSet.length; j < len; j++) {
-        if (res.Response.CcnRegionBandwidthLimitSet[j].Region === 'ap-taipei') {
-          // console.log('111')
-          this.tableDataOut[0] = res.Response.CcnRegionBandwidthLimitSet[j]
+      let delCount = 0
+      for(let j = 0,len=oldKey.length; j < len; j++) {
+        if (newKey.indexOf(oldKey[j]) == -1) {
+          let str = 'DeleteTags.'+ delCount +'.TagKey'
+          params[str] = oldKey[j]
+          delCount++
+        }
+      }
+      // 获取新增arr
+      let addCount = 0
+      for(let j = 0,len=newKey.length; j < len; j++) {
+        if (oldKey.indexOf(newKey[j]) == -1) {
+          let str1 = 'ReplaceTags.'+ addCount +'.TagKey'
+          let str2 = 'ReplaceTags.'+ addCount +'.TagValue'
+          params[str1] = newKey[j]
+          params[str2] = tagss[j].Value
+          addCount++
         }
       }
       console.log(params)
       this.$axios.post('tag2/ModifyResourceTags', params).then(res => {
-        console.log(res)
         console.log('修改成功')
         this.getData()
       })

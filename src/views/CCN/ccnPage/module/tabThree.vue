@@ -10,7 +10,7 @@
         <div class="btn">
           <el-button type="text" @click="newVisible = true">{{$t("CCN.CCN.tabs.tab3btn")}}</el-button>
         </div>
-        <el-table :data="tableDataIn" style="width: 100%">
+        <el-table :data="tableData" style="width: 100%">
           <template slot="empty">{{$t("CCN.CCN.tabs.tab1no")}}</template>
           <el-table-column prop="" label="地域A" width>
             <template slot-scope="scope">
@@ -293,7 +293,6 @@ export default {
         this.regionShow = true
       }
       this.$axios.post('vpc2/ModifyCcnRegionBandwidthLimitsType', params).then(res => {
-        console.log(res)
         console.log('修改成功')
         this.getData()
       })
@@ -327,9 +326,6 @@ export default {
         'CcnRegionBandwidthLimits.0.BandwidthLimit': this.inputValue1
       }
       this.$axios.post('vpc2/SetCcnRegionBandwidthLimits', params).then(res => {
-        console.log(params)
-        console.log(123)
-        console.log(res)
         console.log('修改成功')
         this.getData()
       })
