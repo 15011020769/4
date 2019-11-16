@@ -3,10 +3,10 @@
   <div class="tabTwo">
     <div class="tab">
       <el-tabs v-model="activeName">
-        <el-tab-pane label="单地域监控" name="first">
+        <el-tab-pane :label="$t('CCN.CCN.tabs.tab2tag')" name="first">
           <div class="check">
             <span class="">地域</span>
-            <el-checkbox v-model="checked">港澳台地区(中国台北)</el-checkbox>
+            <el-checkbox v-model="checked">{{$t('CCN.CCN.tabs.tab2R')}}</el-checkbox>
           </div>
 
           <div class="minitor" >
@@ -36,15 +36,15 @@
                   ></el-option>
                 </el-select>
               </span>
-              <span class="span-1">港澳台地区(中国台北)</span>
+              <span class="span-1">{{$t('CCN.CCN.tabs.tab2R')}}</span>
             </div>
             <div class="box-dis p-style">
               <p>
                 <i class="el-icon-info"></i
-                >注释：Max、Min和Avg数值统计为当前折线图内所有点的最大值、最小值和平均值
+                >{{$t('CCN.CCN.tabs.tab2D')}}
               </p>
               <p>
-                <el-button type="text">导出数据</el-button>
+                <el-button type="text">{{$t('CCN.CCN.tabs.tab2out')}}</el-button>
               </p>
             </div>
             <div class="box-table">
@@ -124,36 +124,7 @@ export default {
     return {
       activeName: 'first',
       checked: true,
-      options: [
-        {
-          value: '选项1',
-          label: '请选择'
-        },
-        {
-          value: '选项2',
-          label: '华南地区(广州)'
-        },
-        {
-          value: '选项3',
-          label: '华南地区(广州)-黑石'
-        }
-      ],
       value: '',
-      minitorShow: false, // 监控的显示与隐藏
-      options2: [
-        {
-          value: '选项1',
-          label: '请选择'
-        },
-        {
-          value: '选项2',
-          label: '华南地区(广州)'
-        },
-        {
-          value: '选项3',
-          label: '华南地区(广州)-黑石'
-        }
-      ],
       value2: '',
       selectTime: [
         {
@@ -193,68 +164,68 @@ export default {
   },
   methods: {
     // 初始化数据
-    getData: function (){
+    getData: function () {
       var params = {
-        Version: "2018-07-24",
-        Region: "ap-taipei",
+        Version: '2018-07-24',
+        Region: 'ap-taipei',
         Namespace: 'QCE/VBC',
         MetricName: 'RegionOutPkg',
         'Instances.0.Dimensions.0.Name': 'CcnId',
-        'Instances.0.Dimensions.0.Value': this.ccnId,
+        'Instances.0.Dimensions.0.Value': this.ccnId
         // Period: 300,
         // StartTime: '',
         // EndTime: ''
       }
       var params2 = {
-        Version: "2018-07-24",
-        Region: "ap-taipei",
+        Version: '2018-07-24',
+        Region: 'ap-taipei',
         Namespace: 'QCE/VBC',
         MetricName: 'RegionInPkg',
         'Instances.0.Dimensions.0.Name': 'CcnId',
-        'Instances.0.Dimensions.0.Value': this.ccnId,
+        'Instances.0.Dimensions.0.Value': this.ccnId
         // Period: 300,
         // StartTime: '',
         // EndTime: ''
       }
       var params3 = {
-        Version: "2018-07-24",
-        Region: "ap-taipei",
+        Version: '2018-07-24',
+        Region: 'ap-taipei',
         Namespace: 'QCE/VBC',
         MetricName: 'RegionOutBandwidth',
         'Instances.0.Dimensions.0.Name': 'CcnId',
-        'Instances.0.Dimensions.0.Value': this.ccnId,
+        'Instances.0.Dimensions.0.Value': this.ccnId
         // Period: 300,
         // StartTime: '',
         // EndTime: ''
       }
       var params4 = {
-        Version: "2018-07-24",
-        Region: "ap-taipei",
+        Version: '2018-07-24',
+        Region: 'ap-taipei',
         Namespace: 'QCE/VBC',
         MetricName: 'RegionInBandwidth',
         'Instances.0.Dimensions.0.Name': 'CcnId',
-        'Instances.0.Dimensions.0.Value': this.ccnId,
+        'Instances.0.Dimensions.0.Value': this.ccnId
         // Period: 300,
         // StartTime: '',
         // EndTime: ''
       }
       // 查询-单地域总出包量
-      this.$axios.post("monitor2/GetMonitorData", params).then(res => {
-        console.log(res);
+      this.$axios.post('monitor2/GetMonitorData', params).then(res => {
+        console.log(res)
       })
       // 查询-单地域总入包量
-      this.$axios.post("monitor2/GetMonitorData", params2).then(res => {
-        console.log(res);
+      this.$axios.post('monitor2/GetMonitorData', params2).then(res => {
+        console.log(res)
       })
       // 查询-单地域总出带宽
-      this.$axios.post("monitor2/GetMonitorData", params3).then(res => {
-        console.log(res);
+      this.$axios.post('monitor2/GetMonitorData', params3).then(res => {
+        console.log(res)
       })
       // 查询-单地域总入带宽
-      this.$axios.post("monitor2/GetMonitorData", params4).then(res => {
-        console.log(res);
+      this.$axios.post('monitor2/GetMonitorData', params4).then(res => {
+        console.log(res)
       })
-    },
+    }
   }
 }
 </script>
