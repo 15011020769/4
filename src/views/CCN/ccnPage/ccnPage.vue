@@ -74,7 +74,7 @@
           <template slot-scope="scope">
             <el-button @click="handleClick(scope.row)" type="text" size="small">{{$t('CCN.CCN.total.td1')}}</el-button>
             <el-button type="text" size="small"></el-button>
-            <el-button type="text" @click="dialogTagVisible = true">{{$t('CCN.CCN.total.td2')}}</el-button>
+            <el-button type="text" @click="toTags(scope.row)">{{$t('CCN.CCN.total.td2')}}</el-button>
             <br />
             <el-button type="text" @click="deleteCcn(scope.row)">{{$t('CCN.CCN.total.td3')}}</el-button>
           </template>
@@ -215,10 +215,28 @@
         <el-button type="primary" @click="upBandwidthLimitType(ccnPublic)">{{$t('CCN.CCN.total.sure')}}</el-button>
       </div>
     </el-dialog>
-    <!-- 编辑模态窗 -->
+    <!-- 标签模态窗 -->
     <el-dialog :title="$t('CCN.CCN.total.edit')" :visible.sync="dialogTagVisible" class="editDialog">
       <span>{{$t('CCN.CCN.total.edit0')}}</span>
-      <table class="table-div">
+      <!-- <el-table :data="tags" style="width: 100%">
+        <template slot="empty">{{$t("CCN.CCN.tabs.tab1no")}}</template>
+        <el-table-column prop="Key" :label="$t('CCN.CCN.total.edit1')" width>
+          <template slot-scope="scope">
+            <p class="edit">{{ scope.row.Key }}</p>
+          </template>
+        </el-table-column>
+        <el-table-column prop="Value" :label="$t('CCN.CCN.total.edit2')" width>
+          <template slot-scope="scope">
+            <p class="edit">{{ scope.row.Value }}</p>
+          </template>
+        </el-table-column>
+        <el-table-column prop="operate" :label="$t('CCN.CCN.total.edit3')" width>
+          <template slot-scope="scope">
+            <el-button type="text" @click="delTag(scope.row)">{{$t('CCN.CCN.total.edit3')}}</el-button>
+          </template>
+        </el-table-column>
+      </el-table> -->
+      <!-- <table class="table-div">
         <tr class="t-head">
           <td>{{$t('CCN.CCN.total.edit1')}}</td>
           <td>{{$t('CCN.CCN.total.edit2')}}</td>
@@ -235,11 +253,30 @@
             <a v-on:click="removeRow(index);" v-show="index >= 0">{{$t('CCN.CCN.total.edit3')}}</a>
           </td>
         </tr>
+      </table> -->
+      <table class="table-div">
+        <tr class="t-head">
+          <td>{{$t('CCN.CCN.total.edit1')}}</td>
+          <td>{{$t('CCN.CCN.total.edit2')}}</td>
+          <td>{{$t('CCN.CCN.total.edit3')}}</td>
+        </tr>
+        <tr class="t-body" v-for="(item, index) in tags">
+          <td>
+            <!-- <input type="text" /> -->
+            <el-input v-model="item.Key" autocomplete="off" class="inputKey"></el-input>
+          </td>
+          <td>
+            <el-input v-model="item.Value" autocomplete="off" class="inputKey"></el-input>
+          </td>
+          <td>
+            <a v-on:click="removeRow(index, item);" v-show="index >= 0">{{$t('CCN.CCN.total.edit3')}}</a>
+          </td>
+        </tr>
       </table>
-      <a v-on:click="addRow()" v-show="formArr.length < 5">添加</a>
+      <a v-on:click="addRow()" v-show="tags.length < 5">添加</a>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogTagVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogTagVisible = false">{{$t('CCN.CCN.total.sure')}}</el-button>
+        <el-button type="primary" @click="upTags(tags)">{{$t('CCN.CCN.total.sure')}}</el-button>
       </span>
     </el-dialog>
   </div>
@@ -278,20 +315,18 @@ export default {
         State: ''
       }],
       // ccn对象（公用）
-      ccnPublic: {
+      ccnPublic: {},
+      // 标签对象
+      oldTags: [{}],
+      tags: [{}],
+      ccnIdOfTag: '',
 
-      },
       dialogTableVisible: false, // 删除模态窗
       dialogFormVisible: false, // 新建模态窗
       updateNameVisible: false, // 修改名称模态窗
       updateDesVisible: false, // 修改备注模态窗
       updateBandwidthLimitTypeVisible: false, // 修改限速方式模态窗
       dialogTagVisible: false, // 编辑模态窗
-
-      formInfoObj: {
-        key: undefined
-      },
-      formArr: []
     }
   },
   watch: {
@@ -302,7 +337,6 @@ export default {
   },
   created () {
     this.getData()
-    this.formArr.push(this.formInfoObj)
   },
   methods: {
     // 初始化CCN列表数据（包括关联实例列表数据）
@@ -323,7 +357,8 @@ export default {
       this.$router.push({
         path: '/ccnDetail',
         query: {
-          ccnId: rows.CcnId
+          ccnId: rows.CcnId,
+          BandwidthLimitType: rows.BandwidthLimitType
         }
       })
     },
@@ -336,18 +371,20 @@ export default {
     // 生产一个新的obj对象
     copyObj: function () {
       var des = {
-        key: undefined
+        Key: '',
+        Value: ''
       }
       return des
     },
     // 新增一行
     addRow: function () {
       var des = this.copyObj()
-      this.formArr.push(des)
+      this.tags.push(des)
     },
     // 删除一行
-    removeRow: function (idx) {
-      this.formArr.splice(idx, 1)
+    removeRow: function (idx, item) {
+      this.tags.splice(idx, 1)
+      
     },
     // 查询instanceId
     getInstanceIds: function (instanceType) {
@@ -472,6 +509,50 @@ export default {
         this.getData()
       })
       this.updateBandwidthLimitTypeVisible = false
+    },
+    // 进入编辑标签模态窗
+    toTags: function (ccnDetail) {
+      console.log(ccnDetail)
+      this.ccnIdOfTag = ccnDetail.CcnId
+      this.oldTags = ccnDetail.TagSet
+      this.tags = ccnDetail.TagSet
+      this.dialogTagVisible = true
+    },
+    //
+    upTags: function (tagss) {
+      console.log(tagss)
+      var params = {
+        Version: '2018-08-13',
+        Region: 'ap-taipei',
+        Resource: 'qcs::vpc:ap-guangzhou:uin/100011921910:ccn/' + this.ccnIdOfTag
+      }
+      // 获取新增arr
+      for(let j = 0,len=tagss.length; j < len; j++) {
+        let newKey = [],
+      }
+      for(let j = 0,len=tagss.length; j < len; j++) {
+        for(let i = 0,len2=this.oldTags.length; i < len2; i++) {
+          if(tagss[j] )
+        }
+        if(res.Response.CcnRegionBandwidthLimitSet[j].Region === 'ap-taipei') {
+          // console.log('111')
+          this.tableDataOut[0] = res.Response.CcnRegionBandwidthLimitSet[j]
+        }
+      }
+      // 获取删除arr
+      for(let j = 0,len=res.Response.CcnRegionBandwidthLimitSet.length; j < len; j++) {
+        if(res.Response.CcnRegionBandwidthLimitSet[j].Region === 'ap-taipei') {
+          // console.log('111')
+          this.tableDataOut[0] = res.Response.CcnRegionBandwidthLimitSet[j]
+        }
+      }
+      console.log(params)
+      this.$axios.post('tag2/ModifyResourceTags', params).then(res => {
+        console.log(res)
+        console.log('修改成功')
+        this.getData()
+      })
+      this.dialogTagVisible = false
     }
   }
 }

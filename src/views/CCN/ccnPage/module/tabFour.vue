@@ -43,6 +43,7 @@
 export default {
   data () {
     return {
+      ccnId: '',
       visible2: false,
       value1: true,
       tableData: [{}] // 列表数据
