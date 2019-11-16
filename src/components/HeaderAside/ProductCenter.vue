@@ -3,14 +3,8 @@
     <!-- 导航详情栏 -->
     <div class="pro-box">
       <div class="nav-main">
-        <el-autocomplete popper-class="my-autocomplete"
-          v-model="state"
-          :fetch-suggestions="querySearch"
-          placeholder="请输入内容"
-          @select="handleSelect">
-          <i class="el-icon-edit el-input__icon"
-            slot="suffix"
-            @click="handleIconClick">
+        <el-autocomplete popper-class="my-autocomplete" v-model="state" :fetch-suggestions="querySearch" placeholder="请输入内容" @select="handleSelect">
+          <i class="el-icon-edit el-input__icon" slot="suffix" @click="handleIconClick">
           </i>
           <template slot-scope="{ item }">
             <div class="name"><a @click="go(item.url)">{{ item.value }}</a></div>
@@ -24,28 +18,22 @@
             <ul>
               <li class="li-title">计算</li>
               <li>
-                <a @click="go('cvm')">云服务器 CVM</a>
+                <router-link to='/cvm'>云服务器</router-link>
               </li>
               <li>
-                <a @click="go('cbs')">云硬盘 CBS</a>
+                <router-link to='/cbs'>云硬盘</router-link>
               </li>
               <li>
-                <a @click="go('as')">弹性伸缩 AS</a>
+                <router-link to='/tke'>容器服务</router-link>
               </li>
               <li>
-                <a @click="go('tke')">容器服务 TKE</a>
+                <router-link to='/as'>弹性伸缩</router-link>
               </li>
             </ul>
             <ul>
               <li class="li-title">存储</li>
               <li>
-                <a @click="go('cos')">对象存储 COS</a>
-              </li>
-              <li>
-                <a @click="go('cfs')">文件存储 CFS</a>
-              </li>
-              <li>
-                <a @click="go('cls')">日志服务 CLS</a>
+                <router-link to='/cos'>对象存储</router-link>
               </li>
             </ul>
           </div>
@@ -54,28 +42,10 @@
             <ul>
               <li class="li-title">数据库</li>
               <li>
-                <a @click="go('sql')">云数据库MySQL</a>
+                <router-link to='/sql'>Mysql</router-link>
               </li>
               <li>
-                <a @click="go('redis')">云数据库Redis</a>
-              </li>
-              <li>
-                <a @click="go('sqlserver')">云数据库SQLServer</a>
-              </li>
-              <li>
-                <a @click="go('es')">Elasticsearch Service</a>
-              </li>
-              <li>
-                <a @click="go('tdsql')">分布式数据库TDSQL</a>
-              </li>
-              <li>
-                <a @click="go('postsql')">云数据库PostgreSQL</a>
-              </li>
-              <li>
-                <a @click="go('mongodb')">云数据库MongoDB</a>
-              </li>
-              <li>
-                <a @click="go('dts')">数据传输服务DTS</a>
+                <router-link to='/redis'>Redis</router-link>
               </li>
 
             </ul>
@@ -85,28 +55,37 @@
             <ul>
               <li class="li-title">网络</li>
               <li>
-                <a @click="go('clb')">负载均衡CLB</a>
+                <router-link to='/clb'>负载均衡</router-link>
               </li>
               <li>
-                <a @click="go('vpc')">私有网络VPC</a>
+                <router-link to='/dc'>专线接入</router-link>
               </li>
               <li>
-                <a @click="go('vpn')">VPN连接</a>
+                <router-link to='/vpc'>私有网络</router-link>
               </li>
               <li>
-                <a @click="go('nat')">NAT网关</a>
+                <router-link to='/'>弹性网卡</router-link>
               </li>
               <li>
-                <a @click="go('conn')">对等连接PC</a>
+                <router-link to='/nat'>NAT 网关</router-link>
               </li>
               <li>
-                <a @click="go('dc')">专线接入DC</a>
+                <router-link to='/vpn'>VPN 连接</router-link>
+              </li>
+              <li>
+                <router-link to='/'>弹性公网IP</router-link>
+              </li>
+              <li>
+                <router-link to='/ccn'>云联网</router-link>
+              </li>
+              <li>
+                <router-link to='/aia'>Anycast 公网加速</router-link>
               </li>
             </ul>
             <ul>
-              <li class="li-title">基础通信</li>
+              <li class="li-title">Serveless</li>
               <li>
-                <a @click="go('mes')">短信</a>
+                <router-link to='/scf'>云函数</router-link>
               </li>
             </ul>
 
@@ -115,29 +94,34 @@
             <ul>
               <li class="li-title">安全</li>
               <li>
-                <a @click="go('ip')">DDoS防护</a>
+                <router-link to='/cm'>主机安全（云镜）</router-link>
               </li>
               <li>
-                <a @click="go('waf')">网站管家</a>
+                <router-link to='/'>主验证码服务</router-link>
               </li>
               <li>
-                <a @click="go('mirror')">云主机(云镜)</a>
+                <router-link to='/ip'>DDoS 基础防护</router-link>
               </li>
-
+              <li>
+                <router-link to='/'>Web 应用防火墙</router-link>
+              </li>
+              <li>
+                <router-link to='/'>高防IP专业版</router-link>
+              </li>
+              <li>
+                <router-link to='/'>密钥管理服务</router-link>
+              </li>
             </ul>
             <ul>
               <li class="li-title">CDN与加速</li>
               <li>
-                <a @click="go('scd')">静态内容加速SCD</a>
+                <router-link to='/cdn'>内容分发网络CDN</router-link>
               </li>
               <li>
-                <a @click="go('dsa')">动态加速网络DSA</a>
+                <router-link to='/dsa'>动态加速</router-link>
               </li>
               <li>
-                <a @click="go('gcd')">海外加速GCD</a>
-              </li>
-              <li>
-                <a @click="go('gaap')">全球应用加速GAAP</a>
+                <router-link to='/gaap'>全球应用加速</router-link>
               </li>
             </ul>
 
@@ -146,23 +130,31 @@
 
             <ul>
               <li class="li-title">互联网中间件</li>
-
               <li>
-                <a @click="go('ckafka')">消息队列CKAFKA</a>
+                <router-link to='/ckafka'>消息服务ckafka</router-link>
               </li>
             </ul>
 
             <ul>
               <li class="li-title">视频服务</li>
               <li>
-                <a @click="go('vod')">云点播</a>
+                <router-link to='/vod'>云点播</router-link>
+              </li>
+              <li>
+                <router-link to='/'>云直播</router-link>
               </li>
             </ul>
 
             <ul>
-              <li class="li-title">营销风控</li>
+              <li class="li-title">管理工具</li>
               <li>
-                <a @click="go('aa')">活动防刷AA</a>
+                <router-link to='/cm'>云监控</router-link>
+              </li>
+              <li>
+                <router-link to='/'>云审计</router-link>
+              </li>
+              <li>
+                <router-link to='/'>访问管理</router-link>
               </li>
             </ul>
           </div>
@@ -176,14 +168,14 @@
 
 <script>
 export default {
-  data () {
+  data() {
     return {
       restaurants: [],
       state: ''
     }
   },
   methods: {
-    querySearch (queryString, cb) {
+    querySearch(queryString, cb) {
       var restaurants = this.restaurants
       var results = queryString
         ? restaurants.filter(this.createFilter(queryString))
@@ -191,186 +183,107 @@ export default {
       // 调用 callback 返回建议列表的数据
       cb(results)
     },
-    createFilter (queryString) {
+    createFilter(queryString) {
       return restaurant => {
         return (
-          restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) > -1
+          restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) ===
+          0
         )
       }
     },
-    loadAll () {
+    loadAll() {
       return [
         {
-          value: '云服务器 CVM',
-          url: 'cvm'
+          value: '云服务器',
+          url: '/product/CVM/index.html#/cloudHost'
+        },
+        { value: '容器服务', url: '/product/TKE/index.html#/overview' },
+        { value: '弹性伸缩', url: '/product/AS/index.html#/flexGroup' },
+        { value: '对象存储', url: '/product/COS/index.html#/overview' },
+        {
+          value: '文件存储',
+          url: '/product/CFS/index.html#/fileSystem'
+        },
+        { value: '日志服务', url: '/product/CLS/index.html#/overView' },
+        {
+          value: 'Mysql',
+          url: '/product/MYSQL/index.html#/instancesList'
         },
         {
-          value: '云硬盘 CBS',
-          url: 'cbs'
+          value: 'Sqlserver',
+          url: '/product/SQLServer/index.html#/serverList'
         },
         {
-          value: '弹性伸缩 AS',
-          url: 'as'
+          value: 'Postgresql',
+          url: '/product/PostgreSQL/index.html#/postgreList'
+        },
+        { value: 'DCDB', url: '/product/DCDB/index.html#/exampleList' },
+        { value: 'Redis', url: '/product/Redis/index.html#/exampleList' },
+        { value: 'MongoDB', url: '/product/mongoDB/index.html#/copyList' },
+        { value: '数据传输服务', url: '/product/DTS/index.html#/overview' },
+        { value: '负载均衡', url: '/product/CLB/index.html#/LB' },
+        {
+          value: '私有网络',
+          url: '/product/VPC/index.html#/priNetwork'
+        },
+        { value: '专线接入', url: '/product/DC/index.html#/lineAisle' },
+        { value: '消息服务CMQ', url: '/product/CMQ/index.html#/queue' },
+        { value: '消息服务ckafka', url: '/product/CKafka/index.html#/ckafka' },
+        { value: '点播', url: '/product/VOD/index.html#/overview' },
+        { value: '短信', url: '/product/message/index.html#/message' },
+        {
+          value: '主机安全（云镜）',
+          url: '/product/CM/index.html#/overview'
+        },
+        { value: '天御活动防刷', url: '/product/tianyu/index.html#/tianyu' },
+        {
+          value: 'BGP高防IP（属于DDos防护）',
+          url: '/product/DDoS/index.html#/defend_ip'
         },
         {
-          value: '容器服务 TKE',
-          url: 'tke'
+          value: 'WEB防火墙（原网站管家）',
+          url: '/product/WAF/index.html#/nodata'
         },
         {
-          value: '对象存储 COS',
-          url: 'cos'
+          value: '云监控',
+          url: '/product/cloudMonitor/index.html#/cloudServer'
         },
-        {
-          value: '文件存储 CFS',
-          url: 'cfs'
-        },
-        {
-          value: '日志服务 CLS',
-          url: 'cls'
-        },
-        {
-          value: '云数据库MySQL',
-          url: 'sql'
-        },
-
-        {
-          value: '云数据库Redis',
-          url: 'redis'
-        },
-
-        {
-          value: '云数据库SQLServer',
-          url: 'sqlserver'
-        },
-
-        {
-          value: 'Elasticsearch Service',
-          url: 'es'
-        },
-
-        {
-          value: '分布式数据库TDSQL',
-          url: 'tdsql'
-        },
-
-        {
-          value: '云数据库PostgreSQL',
-          url: 'postsql'
-        },
-
-        {
-          value: '云数据库MongoDB',
-          url: 'mongodb'
-        },
-
-        {
-          value: '数据传输服务DTS',
-          url: 'dts'
-        },
-
-        {
-          value: '负载均衡CLB',
-          url: 'clb'
-        },
-
-        {
-          value: '私有网络VPC',
-          url: 'vpc'
-        },
-
-        {
-          value: 'VPN连接',
-          url: 'vpn'
-        },
-
-        {
-          value: 'NAT网关',
-          url: 'nat'
-        },
-
-        {
-          value: '对等连接PC',
-          url: 'conn'
-        },
-
-        {
-          value: '专线接入DC',
-          url: 'dc'
-        },
-
-        {
-          value: '短信',
-          url: 'mes'
-        },
-
-        {
-          value: 'DDoS防护',
-          url: 'ip'
-        },
-
-        {
-          value: '网站管家',
-          url: 'waf'
-        },
-
-        {
-          value: '云主机(云镜)',
-          url: 'mirror'
-        },
-
-        {
-          value: '静态内容加速SCD',
-          url: 'scd'
-        },
-
-        {
-          value: '动态加速网络DSA',
-          url: 'dsa'
-        },
-
-        {
-          value: '海外加速GCD',
-          url: 'gcd'
-        },
-
-        {
-          value: '全球应用加速GAAP',
-          url: 'gaap'
-        },
-
-        {
-          value: '消息队列CKAFKA',
-          url: 'ckafka'
-        },
-
-        {
-          value: '云点播',
-          url: 'vod'
-        },
-
-        {
-          value: '活动防刷AA',
-          url: 'aa'
-        }
+        { value: 'Elasticsearch Service', url: '/product/ES/#/index' },
+        { value: 'CDN', url: '/product/CDN/index.html#/domainMan' },
+        { value: '海外加速', url: '/product/HWCDN/index.html#/overview' },
+        { value: '动态加速', url: '/product/DSA/index.html#/overview' },
+        { value: '全球应用加速', url: '/product/GAAP/index.html#/joinMan' }
       ]
     },
-    handleSelect (item) {
-      this.$emit('childByValue', 'ok')
-      this.$router.push({
-        name: item.url
-      })
+    handleSelect(item) {
+      if (this.$cookie.get('userType') === '1') {
+        window.location.href = window.SITE_CONFIG['consoleUrl'] + item.url
+      } else {
+        this.$confirm('您无权查看该链接', '提示', {
+          showCancelButton: false,
+          showConfirmButton: false,
+          type: 'warning',
+          center: true
+        })
+      }
     },
-    handleIconClick (ev) {
+    handleIconClick(ev) {
       console.log(ev)
     },
-    go (url) {
-      this.$emit('childByValue', 'ok')
-      this.$router.push({
-        name: url
-      })
+    go(url) {
+      if (this.$cookie.get('userType') === '1') {
+        window.location.href = window.SITE_CONFIG['consoleUrl'] + url
+      } else {
+        this.$confirm('您无权查看该链接', '提示', {
+          showCancelButton: false,
+          showConfirmButton: false,
+          type: 'warning',
+          center: true
+        })
+      }
     }
   },
-  mounted () {
+  mounted() {
     this.restaurants = this.loadAll()
   }
 }
@@ -396,7 +309,7 @@ export default {
   }
 }
 .pro-box {
-  height: 460px;
+  height: 526px;
 }
 .box-content {
   display: flex;
