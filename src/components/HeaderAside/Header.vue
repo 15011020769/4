@@ -88,7 +88,7 @@ export default {
     font-size: 16px;
     color: white;
     border-bottom: 0;
-    background-color: #000 !important;
+    background-color: #2d3039 !important;
 
     &:hover {
       background-color: rgb(61, 65, 75) !important;
@@ -144,7 +144,7 @@ export default {
   float: right;
   width: 200px;
   height: 60px;
-  background-color: #000;
+  background-color: #2d3039;
   button {
     font-size: 18px;
     border: none;
@@ -166,13 +166,3 @@ export default {
 }
 </style>
 
-<style>
-/* 暂时在此处处理下拉框的宽度，后期若有变化，再处理 */
-.el-menu--popup {
-  min-width: 138px !important;
-}
-.el-menu--horizontal {
-  border-bottom: 0 solid #fff !important;
-  background-color: #000 !important;
-}
-</style>

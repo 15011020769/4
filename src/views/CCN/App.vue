@@ -64,7 +64,7 @@ export default {
       padding: 0 0 !important;
     }
     .el-aside {
-      background-color: rgb(84, 92, 100);
+      background-color: #292b36;
     }
     .el-main {
       padding: 0;

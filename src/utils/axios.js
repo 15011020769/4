@@ -4,7 +4,7 @@ import { Loading } from 'element-ui'
 import axios from 'axios'
 
 const conf = {
-  baseURL: 'http://212.64.104.240:8868/product/' || '',
+  baseURL: process.env.VUE_APP_serverUrl || '',
   timeout: 60 * 1000,
   loading: true,
   headers: {

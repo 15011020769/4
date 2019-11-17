@@ -4,7 +4,7 @@ import ccnPage from './ccnPage/ccnPage'
 Vue.use(Router)
 
 export default new Router({
-  mode: 'history',
+  // mode: 'history',
   base: process.env.BASE_URL,
   redirect: {
     name: 'ccnPage'
