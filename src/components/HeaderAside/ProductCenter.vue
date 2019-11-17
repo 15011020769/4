@@ -282,9 +282,7 @@ export default {
     },
     go(url) {
       this.$emit('childByValue', 'ok')
-      this.$router.push({
-        name: url
-      })
+      window.location.href = url
     }
   },
   mounted() {
