@@ -3,63 +3,63 @@ let product = {
     entry: 'src/views/CVM/main.js', // page 的入口
     template: 'src/public/index.html', // 模板来源
     filename: 'index.html', // 在 dist/index.html 的输出
-    title: '云商平台-云服务器', // 当使用 title 选项时，template 中的 title 标签需要是 <title><%= htmlWebpackPlugin.options.title %></title>
+    title: '台富云-云服务器', // 当使用 title 选项时，template 中的 title 标签需要是 <title><%= htmlWebpackPlugin.options.title %></title>
     chunks: ['chunk-vendors', 'chunk-common', 'CVM'] // 在这个页面中包含的块，默认情况下会包含,提取出来的通用 chunk 和 vendor chunk。
   },
   MySQL: {
     entry: 'src/views/MySQL/main.js',
     template: 'src/public/index.html',
     filename: 'index.html',
-    title: '云商平台-关系型数据库',
+    title: '台富云-关系型数据库',
     chunks: ['chunk-vendors', 'chunk-common', 'MySQL']
   },
   SCF: {
     entry: 'src/views/SCF/main.js', // page 的入口
     template: 'src/public/index.html', // 模板来源
     filename: 'index.html', // 在 dist/index.html 的输出
-    title: '云商平台-云函数', // 当使用 title 选项时，template 中的 title 标签需要是 <title><%= htmlWebpackPlugin.options.title %></title>
+    title: '台富云-云函数', // 当使用 title 选项时，template 中的 title 标签需要是 <title><%= htmlWebpackPlugin.options.title %></title>
     chunks: ['chunk-vendors', 'chunk-common', 'SCF'] // 在这个页面中包含的块，默认情况下会包含,提取出来的通用 chunk 和 vendor chunk。
   },
   CLA: {
     entry: 'src/views/CLA/main.js',
     template: 'src/public/index.html',
     filename: 'index.html',
-    title: '云商平台-云审计',
+    title: '台富云-云审计',
     chunks: ['chunk-vendors', 'chunk-common', 'CLA']
   },
   CM: {
     entry: 'src/views/CM/main.js',
     template: 'src/public/index.html',
     filename: 'index.html',
-    title: '云商平台-云函数',
+    title: '台富云-云函数',
     chunks: ['chunk-vendors', 'chunk-common', 'CM']
   },
   CAM: {
     entry: 'src/views/CAM/main.js', // page 的入口
     template: 'src/public/index.html', // 模板来源
     filename: 'index.html', // 在 dist/index.html 的输出
-    title: '云商平台-云服务器', // 当使用 title 选项时，template 中的 title 标签需要是 <title><%= htmlWebpackPlugin.options.title %></title>
+    title: '台富云-云服务器', // 当使用 title 选项时，template 中的 title 标签需要是 <title><%= htmlWebpackPlugin.options.title %></title>
     chunks: ['chunk-vendors', 'chunk-common', 'CAM']
   }, // 在这个页面中包含的块，默认情况下会包含,提取出来的通用 chunk 和 vendor chunk。
   CCN: {
     entry: 'src/views/CCN/main.js',
     template: 'src/public/index.html',
     filename: 'index.html',
-    title: '云商平台-云联网',
+    title: '台富云-云联网',
     chunks: ['chunk-vendors', 'chunk-common', 'CCN']
   },
   CAP: {
     entry: 'src/views/CAP/main.js',
     template: 'src/public/index.html',
     filename: 'index.html',
-    title: '云商平台-验证码',
+    title: '台富云-验证码',
     chunks: ['chunk-vendors', 'chunk-common', 'CAP']
   },
   DDOS: {
     entry: 'src/views/DDOS/main.js',
     template: 'src/public/index.html',
     filename: 'index.html',
-    title: '云商平台-DDoS防护',
+    title: '台富云-DDoS防护',
     chunks: ['chunk-vendors', 'chunk-common', 'DDOS']
   },
 }

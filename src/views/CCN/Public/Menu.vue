@@ -1,9 +1,8 @@
 <template>
   <div class="CCN">
-    <div class="big-title">CCN</div>
+    <div class="big-title">云联网 CCN</div>
     <el-menu default-active="2" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose" background-color="#545c64" text-color="#fff" active-text-color="#ffd04b" :router="true">
       <el-menu-item index="ccnPage">
-        <i class="iconfont">&#xe615;</i>
         <span slot="title">云联网</span>
       </el-menu-item>
     </el-menu>

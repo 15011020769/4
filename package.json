@@ -3,10 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "serve:CVM": "vue-cli-service serve --CVM",
-    "build:CVM": "vue-cli-service build --CVM",
-    "serve:MySQL": "vue-cli-service serve --MySQL",
-    "build:MySQL": "vue-cli-service build --MySQL",
     "serve:SCF": "vue-cli-service serve --SCF",
     "build:SCF": "vue-cli-service build --SCF",
     "serve:CLA": "vue-cli-service serve --CLA",
@@ -21,6 +17,7 @@
     "build:CAP": "vue-cli-service build --CAP",
     "serve:DDOS": "vue-cli-service serve --DDOS",
     "build:DDOS": "vue-cli-service build --DDOS",
+    "qa": "npm run build:CCN",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
