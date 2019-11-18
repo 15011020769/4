@@ -252,7 +252,7 @@ export default {
     this.axios
       .post(YJS_GETATTRIBUTEKEY, {
         Version: '2019-03-19',
-        WebsiteType: 'zh'
+        Region: 'ap-taipei'
       })
       .then(data => {
         console.log(data)
@@ -268,8 +268,8 @@ export default {
       let params = {
         // Action:'LookUpEvents',
         Version: '2019-03-19',
-        Region:'ap-taipei',
-        // StartTime:this.oldTime,
+        Region: 'ap-taipei',
+        StartTime: this.oldTime, // 开始时间
         EndTime: this.nowtime, // 结束时间1558108799
         LookupAttributes: [
           {
@@ -277,17 +277,14 @@ export default {
             AttributeValue: 'false'
           }
         ],
-        MaxResults: this.MaxResults,
-        StartTime: this.oldTime // 开始时间
+        MaxResults: this.MaxResults
       }
-      // console.log(params)
-
       this.axios.post(YJS_LIST, params).then(({ data }) => {
         this.tableData = data.Events
-        
+
         // console.log(this.tableData)
         this.loading = false
-        if (this.tableData.length == 0) {
+        if (this.tableData.length === 0) {
           this.Show = false
         } else {
           this.Show = true
@@ -299,7 +296,7 @@ export default {
       let endTime = new Date(this.value1[1]).getTime() / 1000
       let params = {
         Version: '2019-03-19',
-        Region:'ap-taipei',
+        Region: 'ap-taipei',
         EndTime: endTime,
         LookupAttributes: [
           {

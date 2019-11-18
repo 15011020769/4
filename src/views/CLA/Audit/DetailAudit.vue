@@ -121,6 +121,7 @@ export default {
       }
     }
     return {
+      AuditName: '',
       YesShow: true,
       NoShow: false,
       ShowBox: false,
@@ -153,13 +154,13 @@ export default {
   },
   created () {
     let params = {
-      Version:'2019-03-19',
-      Region:'ap-guangzhou',
-      AuditName: this.$route.query.AuditName,
+      Version: '2019-03-19',
+      Region: 'ap-taipei',
+      AuditName: this.$route.query.AuditName
     }
-    this.axios.post(GZJ_DETAILIST, params).then(( data ) => {
+    this.axios.post(GZJ_DETAILIST, params).then((data) => {
       console.log(data)
-      this. DetailData=data.Response
+      this.DetailData = data.Response
       // this.ResList = data.Response
       // for (var i = 0; i < this.ResList.length; i++) {
       //   this.ListCosName = this.ResList[i].Name
@@ -218,7 +219,7 @@ export default {
     submitForm () {
       let CosBucketName, IsCreateNewBucket
       if (this.ruleForm.radio == 0) {
-      CosBucketName = this.value
+        CosBucketName = this.value
         IsCreateNewBucket = 0
       } else {
         CosBucketName = this.ruleForm.COS
@@ -229,10 +230,10 @@ export default {
         // CosBucketName: _CosBucketName, // cos存储桶
         // IsEnableCmqNotify: _IsEnableCmqNotify,
         // CosKeyPrefix: this.ruleForm.log_file // 日志文件前缀
-        Version:'2019-03-19',
-        Region:'ap-guangzhou',
+        Version: '2019-03-19',
+        Region: 'ap-guangzhou',
         AuditName: this.$route.query.AuditName,
-        LogFilePrefix:this.ruleForm.log_file
+        LogFilePrefix: this.ruleForm.log_file
       }
       this.axios.post(GZJ_UPDATEAUDIT, params).then(data => {
         console.log(data)
@@ -329,11 +330,11 @@ export default {
     Del () {
       let params = {
         AuditName: this.$route.query.AuditName,
-        Version:'2019-03-19',
-        Region:'ap-guangzhou'
+        Version: '2019-03-19',
+        Region: 'ap-guangzhou'
       }
-      this.axios.post(GZJ_DELETE, params).then(( data ) => {
-        console.log(data);
+      this.axios.post(GZJ_DELETE, params).then((data) => {
+        console.log(data)
         if (data == '') {
           this.$router.push({
             path: '/Audit'
