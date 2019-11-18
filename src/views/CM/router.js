@@ -77,15 +77,15 @@ export default new Router({
                 keepAlive: true
             }
         },
-        // {
-        //     path: '/NATdetails', // nat详情
-        //     name: 'NATdetails',
-        //     component: () =>
-        //         import ( /* webpackChunkName: "NATgateway" */ './NATdetails/details.vue'),
-        //     meta: {
-        //         keepAlive: true
-        //     }
-        // },
+        {
+            path: '/NATdetails', // nat详情
+            name: 'NATdetails',
+            component: () =>
+                import ( /* webpackChunkName: "NATgateway" */ './NATgateway/details.vue'),
+            meta: {
+                keepAlive: true
+            }
+        },
         {
             path: '/peerConnect', // 对等链接
             name: 'peerConnect',
