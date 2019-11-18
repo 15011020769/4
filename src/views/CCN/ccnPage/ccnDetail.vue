@@ -4,7 +4,7 @@
     <div class="title_top">
       <div class="back">
         <i class="el-icon-back" @click="Back()"></i>
-        <span>xs(ccn-5d8lfgtn)</span>
+        <span>{{ccnName}}({{ccnId}})</span>
       </div>
       <div class="tabTitle">
         <span :class="['tab',showIndex==1?'active':'']" @click="handleClick(1)">{{$t("CCN.CCN.tabs.tab1")}}</span>
@@ -31,7 +31,9 @@ export default {
   data () {
     return {
       activeName: 'second',
-      showIndex: 1
+      showIndex: 1,
+      ccnId: '',
+      ccnName: ''
     }
   },
   components: {
@@ -39,6 +41,10 @@ export default {
     tabTwo,
     tabThree,
     tabFour
+  },
+  created () {
+    this.ccnId = this.$route.query.ccnId
+    this.ccnName = this.$route.query.ccnName
   },
   methods: {
     // 返回

@@ -3,30 +3,34 @@
   <div class="tabThree">
     <!-- 地域间带宽 -->
     <div v-show="regionShow">
-      <span
-        >限速方式：{{$t("CCN.CCN.tabs.tab3tit1")}} <a @click="updateBandwidthLimitTypeVisible = true">{{$t("CCN.CCN.tabs.tab3tit2")}}</a></span
-      >
+      <span>限速方式：{{$t("CCN.CCN.tabs.tab3tit1")}}
+        <a @click="updateBandwidthLimitTypeVisible = true">{{$t("CCN.CCN.tabs.tab3tit2")}}</a>
+      </span>
       <div class="table">
         <div class="btn">
-          <el-button type="text" @click="newVisible = true">{{$t("CCN.CCN.tabs.tab3btn")}}</el-button>
+          <el-button type="text" @click="toUpdateVisible2()">{{$t("CCN.CCN.tabs.tab3btn")}}</el-button>
         </div>
         <el-table :data="tableData" style="width: 100%">
           <template slot="empty">{{$t("CCN.CCN.tabs.tab1no")}}</template>
-          <el-table-column prop="" label="地域A" width>
+          <el-table-column prop="CcnRegionBandwidthLimit.Region" label="地域A" width>
             <template slot-scope="scope">
-              <p class="edit">12121</p>
+              <p class="edit">{{ scope.row.CcnRegionBandwidthLimit.Region }}</p>
             </template>
           </el-table-column>
-          <el-table-column prop="" label="地域B" width>
+          <el-table-column prop="CcnRegionBandwidthLimit.DstRegion" label="地域B" width>
             <template slot-scope="scope">
-              台北
+              <p class="edit">{{ scope.row.CcnRegionBandwidthLimit.DstRegion }}</p>
             </template>
           </el-table-column>
-          <el-table-column prop="band" :label="$t('CCN.CCN.tabs.tab3tr2')" width> </el-table-column>
+          <el-table-column prop="CcnRegionBandwidthLimit.BandwidthLimit" :label="$t('CCN.CCN.tabs.tab3tr2')" width>
+            <template slot-scope="scope">
+              <p class="edit">{{ scope.row.CcnRegionBandwidthLimit.BandwidthLimit }}</p>
+            </template>
+          </el-table-column>
         </el-table>
       </div>
-      <!--调整带宽模态窗 -->
-      <el-dialog title="" :visible.sync="newVisible" class="newDialog">
+      <!--地域间-调整带宽模态窗 -->
+      <el-dialog title="" :visible.sync="updateVisible2" class="newDialog">
         <div>
           <table class="table-div">
             <tr class="t-head">
@@ -35,53 +39,56 @@
               <td>{{$t('CCN.CCN.tabs.tab3tr2')}}</td>
               <td></td>
             </tr>
-            <tr class="t-body" v-for="(item, index) in formArr">
+            <!-- <tr class="t-body" v-for="(item, index) in formArr"> -->
+              <!-- 注释掉‘添加’功能，即不能一次调整多个地域间带宽限速 -->
               <td>
-                <el-select v-model="value" placeholder="请选择">
+                <el-select v-model="upLimits.Region" placeholder="请选择">
                   <el-option
-                    v-for="item in options"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value"
+                    v-for="item in regionSet"
+                    :key="item.Region"
+                    :label="item.RegionName"
+                    :value="item.Region"
                   >
                   </el-option>
                 </el-select>
               </td>
               <td>
-                <el-select v-model="value" placeholder="请选择">
+                <el-select v-model="upLimits.DstRegion" placeholder="请选择">
                   <el-option
-                    v-for="item in options2"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value"
+                    v-for="item in regionSet"
+                    :key="item.Region"
+                    :label="item.RegionName"
+                    :value="item.Region"
                   >
                   </el-option>
                 </el-select>
               </td>
               <td>
-                <el-input v-model="input">
+                <el-input v-model="upLimits.Limits">
                   <template slot="append">Mbps</template>
                 </el-input>
               </td>
-              <td>
-                <a v-on:click="removeRow(index)" v-show="index >= 0"
-                  ><i class="el-icon-error"></i
-                ></a>
-              </td>
-            </tr>
-            <tr>
+              <!-- <td>
+                <a v-on:click="removeRow(index)" v-show="index >= 0">
+                  <i class="el-icon-error"></i>
+                </a>
+              </td> -->
+              <!-- 注释掉‘删除’功能，即每次修改地域间带宽限速只允许编辑一条 -->
+            <!-- </tr> -->
+            <!-- <tr>
               <td colspan="4" style="text-align: center;">
                 <a v-on:click="addRow()" v-show="formArr.length < 5">添加</a>
               </td>
-            </tr>
+            </tr> -->
+            <!-- 注释掉‘添加’功能，即不能一次调整多个地域间带宽限速 -->
           </table>
         </div>
         <div slot="footer" class="dialog-footer">
-          <el-button type="primary" @click="newVisible = false">{{$t('CCN.CCN.total.sure')}}</el-button>
-          <el-button @click="newVisible = false">取消</el-button>
+          <el-button type="primary" @click="updateLimits()">{{$t('CCN.CCN.total.sure')}}</el-button>
+          <el-button @click="updateVisible2 = false">取消</el-button>
         </div>
       </el-dialog>
-      <!-- 修改限速方式的模态窗 -->
+      <!-- 地域间-修改限速方式的模态窗 -->
       <el-dialog
         :title="$t('CCN.CCN.total.eWay')"
         :visible.sync="updateBandwidthLimitTypeVisible"
@@ -111,16 +118,16 @@
         <div class="btn">
           <el-button type="text" @click="updateVisible = true">{{$t("CCN.CCN.tabs.tab3btn")}}</el-button>
         </div>
-        <el-table :data="tableDataOut" style="width: 100%">
+        <el-table :data="tableData" style="width: 100%">
           <template slot="empty">{{$t("CCN.CCN.tabs.tab1no")}}</template>
-          <el-table-column prop="Region" :label="$t('CCN.CCN.tabs.tab3tr1')" width>
+          <el-table-column prop="CcnRegionBandwidthLimit.Region" :label="$t('CCN.CCN.tabs.tab3tr1')" width>
             <template slot-scope="scope">
-              <p class="edit">{{ scope.row.Region }}</p>
+              <p class="edit">{{ scope.row.CcnRegionBandwidthLimit.Region }}</p>
             </template>
           </el-table-column>
-          <el-table-column prop="BandwidthLimit" :label="$t('CCN.CCN.tabs.tab3tr2')" width>
+          <el-table-column prop="CcnRegionBandwidthLimit.BandwidthLimit" :label="$t('CCN.CCN.tabs.tab3tr2')" width>
             <template slot-scope="scope">
-              <p class="edit">{{ scope.row.BandwidthLimit }}</p>
+              <p class="edit">{{ scope.row.CcnRegionBandwidthLimit.BandwidthLimit }}</p>
             </template>
           </el-table-column>
         </el-table>
@@ -131,7 +138,10 @@
           <div class="left">
             <span>{{$t('CCN.CCN.tabs.tab3btnD')}}</span>
             <div class="region">
-              <el-checkbox v-model="checked">{{$t('CCN.CCN.tabs.tab3R')}}</el-checkbox>
+              <el-select v-model="upLimits.Region" placeholder>
+                <el-option :label="$t('CCN.CCN.tabs.tab3R')" value="ap-taipei"></el-option>
+              </el-select>
+              <!-- <el-checkbox v-model="upLimits.Region">{{$t('CCN.CCN.tabs.tab3R')}}</el-checkbox> -->
             </div>
           </div>
           <div class="icon">
@@ -147,14 +157,14 @@
               <div class="t-body">
                 <div>{{$t('CCN.CCN.tabs.tab3R')}}</div>
                 <div>
-                  <el-input v-model="inputValue1" type="text"></el-input>
+                  <el-input v-model="upLimits.Limits" type="text"></el-input>
                 </div>
               </div>
             </div>
           </div>
         </div>
         <div slot="footer" class="dialog-footer">
-          <el-button type="primary" @click="update1()">{{$t('CCN.CCN.total.sure')}}</el-button>
+          <el-button type="primary" @click="updateLimits()">{{$t('CCN.CCN.total.sure')}}</el-button>
           <el-button @click="updateVisible = false">取消</el-button>
         </div>
       </el-dialog>
@@ -191,59 +201,25 @@ export default {
     return {
       ccnId: '',
       regionShow: false,
-      newVisible: false,
-      updateVisible: false,
-      inputValue1: '',
-      tableDataOut: [{}],
+      tableData: [{}], // 带宽限速数据列表
       ccnPublic: {},
-      tableData: [
-        {
-          name: 'dddaa',
-          status: '1',
-          band: '10',
-          expireTime: '2019-11-07 14：05：12'
-        }
-      ], // 列表数据
-      options: [
-        {
-          value: '选项1',
-          label: '北京'
-        },
-        {
-          value: '选项2',
-          label: '中国台北'
-        },
-        {
-          value: '选项3',
-          label: '广州'
-        }
-      ],
-      options2: [
-        {
-          value: '选项1',
-          label: '北京'
-        },
-        {
-          value: '选项2',
-          label: '中国台北'
-        },
-        {
-          value: '选项3',
-          label: '广州'
-        }
-      ],
-      value: '',
-      input: '',
+      regionSet: [{}],  // 地域列表
+      upLimits: {
+        Region: '',
+        DstRegion: '',
+        Limits: ''
+      },
       formLabelWidth: '100px',
       // 调整带宽
       formInfoObj: {
         key: undefined
       },
       formArr: [],
-
+      // 变更限速模式的模态窗控制元素
+      updateVisible2: false,
+      updateVisible: false,
       updateBandwidthLimitTypeVisible: false,
       updateBandwidthLimitTypeVisible2: false,
-      ccnPublic: {},
       // 穿梭框数据
       checked: false
     }
@@ -266,19 +242,13 @@ export default {
         Region: 'ap-taipei',
         CcnId: this.ccnId
       }
-      // 查询-带宽限速
-      this.$axios.post('vpc2/DescribeCcnRegionBandwidthLimits', params).then(res => {
+      // 查询-各地域出带宽限速（DescribeCcnRegionBandwidthLimits原API中给出接口）（GetCcnRegionBandwidthLimits腾讯云给出接口）
+      this.$axios.post('vpc2/GetCcnRegionBandwidthLimits', params).then(res => {
         console.log(res)
-        for (let j = 0, len = res.Response.CcnRegionBandwidthLimitSet.length; j < len; j++) {
-          if (res.Response.CcnRegionBandwidthLimitSet[j].Region === 'ap-taipei') {
-            // console.log('111')
-            this.tableDataOut[0] = res.Response.CcnRegionBandwidthLimitSet[j]
-          }
-        }
+        this.tableData = res.Response.CcnBandwidthSet
       })
-      console.log(this.tableDataOut)
     },
-    // 修改限速方式弹窗 出口
+    // 修改限速方式弹窗
     upBandwidthLimitType: function (ccnDetail) {
       console.log(ccnDetail)
       var params = {
@@ -315,21 +285,34 @@ export default {
     removeRow: function (idx) {
       this.formArr.splice(idx, 1)
     },
-    //
-    update1: function () {
-      console.log(this.inputValue1)
+    // 修改地域间带宽限速-模态窗
+    toUpdateVisible2: function () {
+      var params = {
+        Version: '2017-03-12'
+      }
+      this.$axios.post('cvm2/DescribeRegions', params).then(res => {
+        console.log(res)
+        this.regionSet = res.Response.RegionSet
+      })
+      this.updateVisible2 = true
+    },
+    // 修改带宽限速
+    updateLimits: function () {
       var params = {
         Version: '2017-03-12',
         Region: 'ap-taipei',
         CcnId: this.ccnId,
-        'CcnRegionBandwidthLimits.0.Region': 'ap-taipei',
-        'CcnRegionBandwidthLimits.0.BandwidthLimit': this.inputValue1
+        'CcnRegionBandwidthLimits.0.Region': this.upLimits.Region,
+        'CcnRegionBandwidthLimits.0.BandwidthLimit': this.upLimits.Limits,
+        'CcnRegionBandwidthLimits.0.DstRegion': this.upLimits.DstRegion
       }
       this.$axios.post('vpc2/SetCcnRegionBandwidthLimits', params).then(res => {
+        console.log(params)
         console.log('修改成功')
         this.getData()
       })
       this.updateVisible = false
+      this.updateVisible2 = false
     }
   }
 }

@@ -375,6 +375,7 @@ export default {
         path: '/ccnDetail',
         query: {
           ccnId: rows.CcnId,
+          ccnName: rows.CcnName,
           BandwidthLimitType: rows.BandwidthLimitType
         }
       })
