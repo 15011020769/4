@@ -4,9 +4,8 @@
     <div class="CVM-title">云服务器</div>
     <Cities :cities="cities"
       class="city"
-      :value.sync="selectedRegion"
+      :Cityvalue.sync="selectedRegion"
       @changeCity="changeCity" />
-
     <!-- 搜索 -->
     <div class="Right-style">
       <el-input placeholder="请输入IP或主机名"
@@ -67,7 +66,7 @@
 
 <script>
 import Cities from '@/components/CITY';
-import { CVM_CITY, CVM_LIST, CVM_PROJECT } from '@/constants';
+import { ALL_CITY, CVM_LIST, CVM_PROJECT } from '@/constants';
 export default {
   data() {
     return {
@@ -83,7 +82,7 @@ export default {
         TERMINATING: '销毁中',
       },
       cities: [],
-      selectedRegion: 'ap-beijing', // 默认选中城市
+      selectedRegion: 'ap-taipei', // 默认选中城市
       selectedCity: {}, // 切换城市
       search: '', // 搜索
       TbaleData: [], // 表格数据
@@ -108,19 +107,17 @@ export default {
   methods: {
     // 获取城市列表
     GetCity() {
-      this.axios.get(CVM_CITY).then((data) => {
-        this.cities = data.regionSet;
-        this.selectedRegion = data.regionSet[0].region;
-        this.selectedCity = data.regionSet[0];
-        this.$cookie.set('regionv1', this.selectedCity.regionCode)
-        this.$cookie.set('regionv2', this.selectedCity.region)
+      this.axios.get(ALL_CITY).then((data) => {
+          this.cities = data.data;
+        this.selectedRegion = data.data[0].Region;
+        this.selectedCity = data.data[0];
+        this.$cookie.set('regionv2', this.selectedCity.Region);
       });
     },
     // 切换城市
     changeCity(city) {
-      this.selectedCity = city;
-      this.$cookie.set('regionv1', city.regionCode)
-      this.$cookie.set('regionv2', city.region)
+       this.selectedCity = city;
+      this.$cookie.set('regionv2', city.Region);
       this.GetTabularData();
     },
     // 添加项目列表的表格数据
