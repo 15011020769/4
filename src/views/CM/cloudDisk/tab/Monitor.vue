@@ -112,11 +112,11 @@
 </template>
 
 <script>
-import XTimeX from '@/components/TimeX'
-import echartLine from '@/components/echars-line'
-import { CVM_MONITOR } from '@/constants'
+import XTimeX from '@/components/TimeX';
+import echartLine from '@/components/echars-line';
+import { CVM_MONITOR } from '@/constants';
 export default {
-  data () {
+  data() {
     return {
       ID: this.$route.query.id,
       period: '',
@@ -128,20 +128,20 @@ export default {
       totalPage: 0, // 表格数据数组长度
       tableData: [], // 获取列表数据
       timeData: [], // 折线图的x轴数据
-      jingData: []
-    }
+      jingData: [],
+    };
   },
   components: {
     echartLine,
-    XTimeX
+    XTimeX,
   },
-  created () {},
+  created() {},
   methods: {
-    GetDat (data) {
-      this.period = data[0]
-      this.timeData = data[1]
-      this.Start_End = data[2]
-      this.value = data[3]
+    GetDat(data) {
+      this.period = data[0];
+      this.timeData = data[1];
+      this.Start_End = data[2];
+      this.value = data[3];
       const metricNArr = [
         'disk_read_iops',
         'disk_read_traffic',
@@ -149,16 +149,16 @@ export default {
         'disk_write_traffic',
         'disk_await',
         'disk_svctm',
-        'disk_util'
-      ]
-      this.tableData = []
+        'disk_util',
+      ];
+      this.tableData = [];
       for (let i = 0; i < metricNArr.length; i++) {
-        this.Obtain(metricNArr[i])
+        this.Obtain(metricNArr[i]);
       }
 
-      console.log(this.tableData)
+      console.log(this.tableData);
     },
-    Obtain (metricN) {
+    Obtain(metricN) {
       const param = {
         Region: this.$cookie.get('regionv1'),
         namespace: 'qce/block_storage',
@@ -167,72 +167,72 @@ export default {
         'dimensions.0.value': this.ID,
         period: this.period,
         startTime: this.Start_End.StartTIme,
-        endTime: this.Start_End.EndTIme
-      }
+        endTime: this.Start_End.EndTIme,
+      };
       this.axios.post(CVM_MONITOR, param).then((data) => {
-        this.tableData.push(data)
-      })
+        this.tableData.push(data);
+      });
     },
 
     // 模态框
-    Modality (Y) {
-      this.dialogVisible = true
-      this.opDiskData = Y
+    Modality(Y) {
+      this.dialogVisible = true;
+      this.opDiskData = Y;
     },
 
-    handleClose (done) {
-      done()
-    }
+    handleClose(done) {
+      done();
+    },
   },
   filters: {
-    UpName (value) {
+    UpName(value) {
       if (value === 'disk_read_iops') {
-        return (value = '硬盘读 IOPS')
+        return (value = '硬盘读 IOPS');
       }
       if (value === 'disk_read_traffic') {
-        return (value = '硬盘读流量')
+        return (value = '硬盘读流量');
       }
       if (value === 'disk_write_iops') {
-        return (value = '硬盘写 IOPS')
+        return (value = '硬盘写 IOPS');
       }
       if (value === 'disk_write_traffic') {
-        return (value = '硬盘写流量')
+        return (value = '硬盘写流量');
       }
       if (value === 'disk_await') {
-        return (value = '硬盘 IO 等待时间')
+        return (value = '硬盘 IO 等待时间');
       }
       if (value === 'disk_svctm') {
-        return (value = '硬盘 IO 服务时间')
+        return (value = '硬盘 IO 服务时间');
       }
       if (value === 'disk_util') {
-        return (value = '硬盘 IO 繁忙比率')
+        return (value = '硬盘 IO 繁忙比率');
       }
     },
-    UpTitle (value) {
+    UpTitle(value) {
       if (value === 'disk_read_iops') {
-        return (value = '硬盘平均每秒读次数')
+        return (value = '硬盘平均每秒读次数');
       }
       if (value === 'disk_read_traffic') {
-        return (value = '平均每秒从硬盘读到内存的数据量')
+        return (value = '平均每秒从硬盘读到内存的数据量');
       }
       if (value === 'disk_write_iops') {
-        return (value = '硬盘平均每秒写次数')
+        return (value = '硬盘平均每秒写次数');
       }
       if (value === 'disk_write_traffic') {
-        return (value = '平均每秒从内存写到硬盘的数据量')
+        return (value = '平均每秒从内存写到硬盘的数据量');
       }
       if (value === 'disk_await') {
-        return (value = '硬盘I/O平均每次操作的等待时间')
+        return (value = '硬盘I/O平均每次操作的等待时间');
       }
       if (value === 'disk_svctm') {
-        return (value = '硬盘平均每次I/O操作所花的时间')
+        return (value = '硬盘平均每次I/O操作所花的时间');
       }
       if (value === 'disk_util') {
-        return (value = '硬盘有IO操作的时间与总时间的百分比')
+        return (value = '硬盘有IO操作的时间与总时间的百分比');
       }
-    }
-  }
-}
+    },
+  },
+};
 </script>
 
 <style  scoped lang="scss">
@@ -259,7 +259,7 @@ export default {
         color: #cccccc;
         font-size: 10px;
       }
-      /deep/.el-input {
+       ::v-deep.el-input {
         width: 100px !important;
         border: none;
       }
@@ -295,7 +295,7 @@ export default {
 .dateheight {
   height: 34px;
 }
-/deep/.echart-wh {
+ ::v-deep.echart-wh {
   width: 1100px !important;
   height: 500px !important;
 }
@@ -309,7 +309,7 @@ export default {
       color: #cccccc;
       font-size: 10px;
     }
-    /deep/.el-input {
+     ::v-deep.el-input {
       width: 100px !important;
       border: none;
     }
@@ -318,10 +318,10 @@ export default {
 .box-table {
   width: 100%;
 }
-/deep/.i-font {
+ ::v-deep.i-font {
   font-size: 36px;
 }
-/deep/.el-button--small {
+ ::v-deep.el-button--small {
   font-size: 14px !important;
 }
 </style>
