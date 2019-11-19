@@ -25,6 +25,9 @@
     "serve:DDOS": "vue-cli-service serve --DDOS",
     "build:DDOS": "vue-cli-service build --DDOS",
 
+    "serve:BILL": "vue-cli-service serve --BILL",
+    "build:BILL": "vue-cli-service build --BILL",
+
     "qa": "npm run qa:CCN",
     "lint": "vue-cli-service lint"
   },
