@@ -173,7 +173,7 @@ export default {
     // 获取数据列表
     getDataList() {
       this.dataListLoading = true
-      axios.post(`${VUE_APP_adminUrl}/taifucloud/tbilldetails/list`),
+      axios.post(this.$http.adornUrl('/taifucloud/tbilldetails/list'),
         {
           'page': this.pageIndex,
           'limit': this.pageSize,
