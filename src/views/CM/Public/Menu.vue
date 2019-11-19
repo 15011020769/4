@@ -1,6 +1,6 @@
 <template>
   <div class="CLA">
-    <div class="big-title">CLA</div>
+    <div class="big-title">云监控</div>
     <el-menu default-active="2" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose"
       background-color="#545c64" text-color="#fff" active-text-color="#ffd04b" :router="true">
       <el-menu-item index="overview">
@@ -19,10 +19,33 @@
         <i class="iconfont">&#xe615;</i>
         <span slot="title">告警历史</span>
       </el-menu-item>
-      <el-menu-item index="Toconfigure">
-        <i class="iconfont">&#xe615;</i>
-        <span slot="title">告警配置</span>
-      </el-menu-item>
+
+
+      <el-collapse v-model="activeName" accordion>
+      
+        <el-collapse-item name="1">
+          <template slot="title">
+            <i class="iconfont">&#xe615;</i>
+            告警配置
+          </template>
+          <el-menu-item index="Toconfigure">
+            <i class="iconfont">&#xe615;</i>
+            <span slot="title">告警配置</span>
+          </el-menu-item>
+        </el-collapse-item>
+
+      </el-collapse>
+
+
+
+
+
+
+
+
+
+
+
       <el-menu-item index="EventCenter">
         <i class="iconfont">&#xe615;</i>
         <span slot="title">事件中心</span>
@@ -77,6 +100,7 @@
   export default {
     data() {
       return {
+        activeName: '',
         activeIndex: '1',
         activeIndex2: '1'
       }
@@ -99,12 +123,23 @@
       border-right: 0 !important;
     }
 
+    ::v-deep .el-collapse-item__content {
+      padding: 0;
+    }
+    ::v-deep .el-collapse-item__header {
+      padding: 0;
+      padding-left: 20px;
+      background-color: rgb(84, 92, 100);
+      color: white;
+    }
+    ::v-deep .el-collapse {
+      border: none;
+    }
     .big-title {
       font-size: 16px;
       color: white;
       padding: 20px 0 15px 20px;
     }
-
     .iconfont {
       margin-right: 5px;
       width: 24px;
@@ -112,7 +147,6 @@
       font-size: 16px;
       vertical-align: middle;
     }
-
     ::v-deep .el-menu-item {
       padding-left: 20px !important;
     }
