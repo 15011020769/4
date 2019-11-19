@@ -157,6 +157,96 @@ export default new Router({
             meta: {
                 keepAlive: true
             }
-        }
+        },
+        // -----------------------------------------------------
+        {
+            path: '/overview', // 监控概览
+            name: 'overview',
+            component: () =>
+                import ( /* webpackChunkName: "objectStorage" */ './overview/overview.vue'),
+            meta: {
+                keepAlive: true
+            }
+        },
+        // -----------------------------------------------------
+        {
+            path: '/Template', //  触发条件模板
+            name: 'Template',
+            component: () =>
+                import ( /* webpackChunkName: "objectStorage" */ './Template/Template.vue'),
+            meta: {
+                keepAlive: true
+            }
+        },
+        // -----------------------------------------------------
+        {
+            path: '/Toconfigure', //     告警配置
+            name: 'Toconfigure',
+            component: () =>
+                import ( /* webpackChunkName: "objectStorage" */ './Toconfigure/Toconfigure.vue'),
+            meta: {
+                keepAlive: true
+            }
+        },
+        // -----------------------------------------------------
+        {
+            path: '/History', //       告警历史
+            name: 'History',
+            component: () =>
+                import ( /* webpackChunkName: "objectStorage" */ './History/History.vue'),
+            meta: {
+                keepAlive: true
+            }
+        },
+        // -----------------------------------------------------
+        {
+            path: '/flow', //       流量监控
+            name: 'flow',
+            component: () =>
+                import ( /* webpackChunkName: "objectStorage" */ './flow/flow.vue'),
+            meta: {
+                keepAlive: true
+            }
+        },
+        // -----------------------------------------------------
+        {
+            path: '/EventCenter', //       事件中心
+            name: 'EventCenter',
+            component: () =>
+                import ( /* webpackChunkName: "objectStorage" */ './EventCenter/EventCenter.vue'),
+            meta: {
+                keepAlive: true
+            }
+        },
+        // -----------------------------------------------------
+        {
+            path: '/Dashboard', //       Dashboard
+            name: 'Dashboard',
+            component: () =>
+                import ( /* webpackChunkName: "objectStorage" */ './Dashboard/Dashboard.vue'),
+            meta: {
+                keepAlive: true
+            }
+        },
+        // -----------------------------------------------------
+        {
+            path: '/Custom', //       自定义监控
+            name: 'Custom',
+            component: () =>
+                import ( /* webpackChunkName: "objectStorage" */ './Custom/Custom.vue'),
+            meta: {
+                keepAlive: true
+            }
+        },
+        // -----------------------------------------------------
+        {
+            path: '/Casegrouping', //           实例分组
+            name: 'Casegrouping',
+            component: () =>
+                import ( /* webpackChunkName: "objectStorage" */ './Casegrouping/Casegrouping.vue'),
+            meta: {
+                keepAlive: true
+            }
+        },
     ]
 })
