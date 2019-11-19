@@ -10,6 +10,13 @@
           <el-tab-pane label="DDoS攻击防护" name="first">
             <div class="mainConList">
               <div class="mainConListAll mainConListOne">
+                <!-- <el-button-group class="bthGroup">
+                  <el-button @click="thisTime1(1)">今天</el-button>
+                  <el-button @click="thisTime1(2)">近7天</el-button>
+                  <el-button @click="thisTime1(3)">近15天</el-button>
+                  <el-button @click="thisTime1(4)">近30天</el-button>
+                  <el-button @click="thisTime1(5)">近半年</el-button>
+                </el-button-group> -->
                 <el-date-picker
                   v-model="value1"
                   type="daterange"
@@ -85,6 +92,13 @@
           <el-tab-pane label="CC攻击防护" name="second">
             <div class="mainConList">
               <div class="mainConListAll mainConListOne">
+                <!-- <el-button-group class="bthGroup">
+                  <el-button @click="thisTime2(1)">今天</el-button>
+                  <el-button @click="thisTime2(2)">近7天</el-button>
+                  <el-button @click="thisTime2(3)">近15天</el-button>
+                  <el-button @click="thisTime2(4)">近30天</el-button>
+                  <el-button @click="thisTime2(5)">近半年</el-button>
+                </el-button-group> -->
                 <el-date-picker
                   v-model="value1"
                   type="daterange"
@@ -102,6 +116,13 @@
           <el-tab-pane label="业务" name="third">
             <div class="mainConList">
               <div class="mainConListAll mainConListOne">
+                <!-- <el-button-group class="bthGroup">
+                  <el-button @click="thisTime3(1)">今天</el-button>
+                  <el-button @click="thisTime3(2)">近7天</el-button>
+                  <el-button @click="thisTime3(3)">近15天</el-button>
+                  <el-button @click="thisTime3(4)">近30天</el-button>
+                  <el-button @click="thisTime3(5)">近半年</el-button>
+                </el-button-group> -->
                 <el-date-picker
                   v-model="value1"
                   type="daterange"
