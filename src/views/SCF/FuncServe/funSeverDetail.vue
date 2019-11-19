@@ -412,10 +412,14 @@
             </div>
           </el-tab-pane>
           <el-tab-pane label="运行日志" name="fouth">
-            <div class="allConListMain"></div>
+            <div class="allConListMain">
+              <runningLog/>
+            </div>
           </el-tab-pane>
           <el-tab-pane label="监控信息" name="fifth">
-            <div class="allConListMain"></div>
+            <div class="allConListMain">
+              <monitInfo/>
+            </div>
           </el-tab-pane>
         </el-tabs>
       </div>
@@ -425,11 +429,14 @@
 <script>
 import triggerMode from './triggerMode.vue'
 import funCode from './funCode.vue'
-
+import runningLog from './runningLog'
+import monitInfo from './monitInfo'
 export default {
   components:{
     triggerMode:triggerMode,
-    funCode:funCode
+    funCode:funCode,
+    runningLog:runningLog,
+    monitInfo:monitInfo
   },
   data() {
     return {
@@ -484,28 +491,34 @@ export default {
         valueChange: false,
         valueChangeSelect1: [
           {
+            id:"1",
             value: "123",
             label: "123"
           },
           {
+            id:"2",
             value: "456",
             label: "456"
           }
         ],
         valueChangeSelect2: [
           {
+            id:"1",
             a: "123",
             b: "bbb"
           },
           {
+            id:"2",
             a: "123",
             b: "bbb"
           },
           {
+            id:"3",
             a: "456",
             b: "1"
           },
           {
+            id:"4",
             a: "456",
             b: "1"
           }
@@ -599,11 +612,7 @@ export default {
       }
     },
     handleClose1() {
-      this.$confirm("确认关闭？")
-        .then(_ => {
-          done();
-        })
-        .catch(_ => {});
+      this.dialogVisible1=false;
     },
     handleClose2() {
       this.dialogVisible2 = false;
