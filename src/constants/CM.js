@@ -1,7 +1,7 @@
 // // 云监控接口封装
 export const ALL_CITY = 'pub/zoneAll' // 区域列表
     // // 云服务器
-export const CVM_LIST = 'redesc/cloudServer' // 列表
+export const CVM_LIST = 'cvm2/DescribeInstances' // 列表
 
 export const CVM_PROJECT = 'account/DescribeProject' // 项目列表（云服务器，Mysql共用）
 export const CVM_MONITOR = 'monitor/GetMonitorData' // 监控数据  （mysql部分共用）

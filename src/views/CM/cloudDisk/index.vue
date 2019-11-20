@@ -111,7 +111,7 @@
 </template>
 
 <script>
-import Cities from '@/components/CITY';
+import Cities from '@/components/public/CITY';
 import { DISK_CITY, DISK_LIST } from '@/constants';
 export default {
   data() {
