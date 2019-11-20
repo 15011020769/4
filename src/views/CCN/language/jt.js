@@ -96,6 +96,9 @@ module.exports = {
       tab4tr4: '下一跳所属地域',
       tab4tr5: '更新时间',
       tab4tr6: '启用路由'
+    },
+    menu: {
+      title: '云联网'
     }
   }
 }

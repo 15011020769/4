@@ -1,9 +1,9 @@
 <template>
   <div class="CCN">
-    <div class="big-title">云联网 CCN</div>
+    <div class="big-title">{{$t('CCN.CCN.menu.title')}}</div>
     <el-menu default-active="2" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose" background-color="#545c64" text-color="#fff" active-text-color="#ffd04b" :router="true">
       <el-menu-item index="ccnPage">
-        <span slot="title">云联网</span>
+        <span slot="title">{{$t('CCN.CCN.menu.title')}}</span>
       </el-menu-item>
     </el-menu>
   </div>

@@ -99,6 +99,9 @@ module.exports = {
       tab4tr4: '下一跳所屬地域',
       tab4tr5: '更新時間',
       tab4tr6: '啟用路由'
+    },
+    menu: {
+      title: '雲聯網'
     }
   }
 }

@@ -1,23 +1,17 @@
 <template>
   <div class="portal-header">
-    <el-menu
-      :default-active="activeIndex"
-      class="el-menu-demo floatLeft"
-      mode="horizontal"
-      @select="handleSelect"
-      background-color="#2C303A "
-      text-color="#fff"
-      active-text-color="#fff"
-    >
+    <el-menu :default-active="activeIndex" class="el-menu-demo floatLeft" mode="horizontal" @select="handleSelect" background-color="#2C303A " text-color="#fff" active-text-color="#fff">
       <el-menu-item class="manuList" index="0">
         <img src="@/assets/logo_5.svg" width="140px" height="60px" alt />
       </el-menu-item>
-      <el-menu-item class="manuList" index="1" @mouseenter.native="Show">产品中心</el-menu-item>
-      <el-menu-item class="manuList" index="2">定价</el-menu-item>
+      <el-menu-item class="manuList" index="1" @mouseenter.native="Show">{{$t("COM.COM.center")}}</el-menu-item>
+      <el-menu-item class="manuList" index="2">{{$t("COM.COM.price")}}</el-menu-item>
+      <el-menu-item class="manuList" index="2">{{$t("COM.COM.document")}}</el-menu-item>
     </el-menu>
     <div class="floatRight">
-      <el-button>控制台</el-button>
-      <el-button>登录</el-button>
+      <el-button @click="billClick">{{$t("COM.COM.bill")}}</el-button>
+      <!-- <el-button>{{$t("COM.COM.console")}}</el-button> -->
+      <!-- <el-button>{{$t("COM.COM.login")}}</el-button> -->
     </div>
 
     <transition-group name="hehe">
@@ -56,29 +50,24 @@ export default {
           e.toElement.className === "el-scrollbar" ||
           e.toElement.className === "el-menu-item is-active" ||
           e.toElement.className ===
-            "el-autocomplete-suggestion__wrap el-scrollbar__wrap" ||
+          "el-autocomplete-suggestion__wrap el-scrollbar__wrap" ||
           e.toElement.className === "" ||
           e.toElement.className === "el-menu-item")
       ) {
       } else {
         this.show = false;
       }
+    },
+
+    // 点击费用中心
+    billClick(){
+      window.location.href = '../BILL/index.html#/deal'
     }
   }
 };
 </script>
 
 <style lang="scss" scoped>
-.PRO-style {
-  background-color: #ffffff;
-  color: #000000;
-  display: show;
-  overflow: hidden;
-  z-index: 999;
-  position: absolute;
-  top: 60px;
-  left: 200px;
-}
 .portal-header {
   .el-menu-demo {
     border: 0 !important;
@@ -121,6 +110,18 @@ export default {
 
   .right-item {
     float: right;
+  }
+  .PRO-style {
+    width: 68%;
+    height: 470px;
+    background-color: #202020;
+    color: #fff;
+    display: show;
+    overflow: hidden;
+    z-index: 999;
+    position: fixed;
+    top: 60px;
+    left: 200px;
   }
 }
 .count-li {
