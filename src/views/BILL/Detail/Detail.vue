@@ -1,47 +1,47 @@
 <template>
   <div class="mod-role">
     <span style="font-size: 18px; font-weight: 600; line-height:3;">账单管理</span>
-    <el-date-picker v-model="dataForm.month" type="month" size="small" style="padding-left: 5px;">
+    <el-date-picker v-model="dataForm.month" type="month" value-format="yyyy-MM" size="small" @change="getDataList()" style="padding-left: 5px;">
     </el-date-picker>
     <span>按扣费周期(按扣费时间统计生产月度账单)</span>
     <el-form :inline="true" :model="dataForm" class="demo-form-inline" @keyup.enter.native="getDataList()">
       <el-form-item>
-        <el-select v-model="dataForm.businessCodeName" placeholder="全部产品">
-          <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" size="mini">
+        <el-select v-model="dataForm.businessCodeName" value-key="code" placeholder="全部产品" @change="getChildInfo()" clearable>
+          <el-option v-for="item in getProductList" :key="item.code" :label="item.nameTw" :value="item"  size="mini">
           </el-option>
         </el-select>
-        <el-select v-model="dataForm.productCodeName" placeholder="请先选择产品">
-          <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" size="mini">
+        <el-select v-model="dataForm.productCodeName" value-key="code" placeholder="请先选择产品" @change="getComponentInfo()" clearable>
+          <el-option v-for="item in getChildList" :key="item.code" :label="item.nameTw" :value="item" size="mini">
           </el-option>
         </el-select>
-        <el-select v-model="dataForm.componentCodeName" placeholder="请先子选择产品">
-          <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" size="mini">
+        <el-select v-model="dataForm.componentCodeName" placeholder="请先子选择产品" @change="getInfo()" clearable>
+          <el-option v-for="item in getComponentList" :key="item.name" :label="item.name" :value="item.name" size="mini">
           </el-option>
         </el-select>
-        <el-select v-model="dataForm.projectName" placeholder="全部项目">
-          <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" size="mini">
+        <el-select v-model="dataForm.projectName" placeholder="全部项目" @change="getProjectInfo()" clearable>
+          <el-option v-for="item in getProjectList" :key="item.projectName" :label="item.projectName" :value="item.projectName" size="mini">
           </el-option>
         </el-select>
-        <el-select v-model="dataForm.regionName" placeholder="全部区域">
-          <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" size="mini">
+        <el-select v-model="dataForm.regionName" placeholder="全部区域" @change="getRegionInfo()" clearable>
+          <el-option v-for="item in getRegionList" :key="item.regionName" :label="item.regionName" :value="item.regionName" size="mini">
           </el-option>
         </el-select>
-        <el-select v-model="dataForm.payModeName" placeholder="全部计费模式" style="line-height:4;">
-          <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" size="mini">
+        <el-select v-model="dataForm.payModeName" placeholder="全部计费模式" @change="getPayModeInfo()" clearable>
+          <el-option v-for="item in getPayModeList" :key="item.payModeName" :label="item.payModeName" :value="item.payModeName" size="mini">
           </el-option>
         </el-select>
-        <el-select v-model="dataForm.actionTypeName" placeholder="全部交易类型">
-          <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" size="mini">
+        <el-select v-model="dataForm.actionTypeName" placeholder="全部交易类型" @change="getActionTypeInfo()" clearable>
+          <el-option v-for="item in getActionTypeList" :key="item.actionTypeName" :label="item.actionTypeName" :value="item.actionTypeName" size="mini">
           </el-option>
         </el-select>
-        <el-checkbox v-model="dataForm.checked" style="padding-left: 15px;">不显示0元费用</el-checkbox>
+        <el-checkbox v-model="dataForm.checked" style="padding-left: 15px;" @change="getDataList()">不显示0元费用</el-checkbox>
       </el-form-item>
       <el-form-item>
         <span>总费用：</span>
         <span style="font-size: 20px; color: #006eff;">{{dataForm.allCoat}} 元</span>
         <span> = 现金支付 {{dataForm.cashPayment}} 元 + 赠送金支付 {{dataForm.freePayment}} 元 + 代金券支付 {{dataForm.voucherPayment}} 元</span>
       </el-form-item>
-      <el-form-item style="padding-left: 26.5%;">
+      <el-form-item style="padding-left: 26.5%;" @keyup.enter.native="getDataList()">
         <el-input placeholder="资源实例ID" suffix-icon="el-icon-search" clearable v-model="dataForm.resourceId">
         </el-input>
       </el-form-item>
@@ -124,10 +124,9 @@
 </template>
 
 <script>
-import axios from 'axios'
-// import moment from "moment"
+import moment from 'moment'
 export default {
-  data() {
+  data () {
     return {
       options: [{
         value: '选项1',
@@ -143,7 +142,7 @@ export default {
         label: 'test'
       }],
       dataForm: {
-        businessCodeName: '',
+        businessCodeName: {},
         productCodeName: '',
         componentCodeName: '',
         projectName: '',
@@ -152,7 +151,7 @@ export default {
         actionTypeName: '',
         resourceId: '',
         realCost: '',
-        month: new Date(),
+        month: '',
         checked: false,
         allCoat: '100',
         cashPayment: '70',
@@ -160,61 +159,223 @@ export default {
         voucherPayment: '10'
       },
       dataList: [],
+      getProductList: [],
+      getChildList: [],
+      getProjectList: [],
+      getRegionList: [],
+      getPayModeList: [],
+      getActionTypeList: [],
+      getComponentList: [],
       pageIndex: 1,
       pageSize: 10,
       totalPage: 3,
       dataListLoading: false
     }
   },
-  activated() {
+  mounted () {
+    this.dataForm.month = moment(new Date()).format('YYYY-MM')
+    this.getProductInfo()
     this.getDataList()
+    this.cost()
+    this.getProjectInfo()
+    this.getRegionInfo()
+    this.getPayModeInfo()
+    this.getActionTypeInfo()
   },
   methods: {
     // 获取数据列表
-    getDataList() {
+    getDataList () {
+      var params = {
+        'page': this.pageIndex,
+        'limit': this.pageSize,
+        'businessCodeName': this.dataForm.businessCodeName.nameTw,
+        'productCodeName': this.dataForm.productCodeName.nameTw,
+        'itemCodeName': this.dataForm.componentCodeName,
+        'projectName': this.dataForm.projectName,
+        'regionName': this.dataForm.regionName,
+        'payModeName': this.dataForm.payModeName,
+        'actionTypeName': this.dataForm.actionTypeName,
+        'resourceId': this.dataForm.resourceId,
+        'resourceName': this.dataForm.resourceId,
+        'realCost': this.dataForm.realCost,
+        'month': this.dataForm.month,
+        // 'checked': this.dataForm.checked,
+        'ifDisZero': this.dataForm.checked
+      }
       this.dataListLoading = true
-      axios.post(this.$http.adornUrl('/taifucloud/tbilldetails/list'),
-        {
-          'page': this.pageIndex,
-          'limit': this.pageSize,
-          'businessCodeName': this.dataForm.businessCodeName,
-          'productCodeName': this.dataForm.productCodeName,
-          'componentCodeName': this.dataForm.componentCodeName,
-          'projectName': this.dataForm.projectName,
-          'regionName': this.dataForm.regionName,
-          'payModeName': this.dataForm.payModeName,
-          'actionTypeName': this.dataForm.actionTypeName,
-          'resourceId': this.dataForm.resourceId,
-          'realCost': this.dataForm.realCost,
-          'month': this.dataForm.month,
-          'checked': this.dataForm.checked
-        }).then(({ data }) => {
-          if (data && data.code === 0) {
-            this.dataList = data.page.list
-            this.totalPage = data.page.totalCount
-          } else {
-            this.dataList = []
-            this.totalPage = 0
-          }
-          this.dataListLoading = false
-        })
+      this.$axios.post(`${process.env.VUE_APP_adminUrl}taifucloud/tbilldetails/list`, params).then(data => {
+        if (data && data.code === 0) {
+          this.dataList = data.page.list
+          this.totalPage = data.page.totalCount
+        } else {
+          this.dataList = []
+          this.totalPage = 0
+        }
+        this.dataListLoading = false
+      })
     },
-    download() {
-      console.log('download')
-      this.$refs.iframe.src = this.$http.adornUrl('/taifucloud/tbilldetails/exportList')
+    // 总费用计算
+    cost () {
+      var params = {
+        'businessCodeName': this.dataForm.businessCodeName.nameTw,
+        'productCodeName': this.dataForm.productCodeName.nameTw,
+        'itemCodeName': this.dataForm.componentCodeName,
+        'projectName': this.dataForm.projectName,
+        'regionName': this.dataForm.regionName,
+        'payModeName': this.dataForm.payModeName,
+        'actionTypeName': this.dataForm.actionTypeName,
+        'resourceId': this.dataForm.resourceId,
+        'resourceName': this.dataForm.resourceId,
+        'realCost': this.dataForm.realCost,
+        'month': this.dataForm.month,
+        'ifDisZero': this.dataForm.checked
+      }
+      this.$axios.post(`${process.env.VUE_APP_adminUrl}taifucloud/tbilldetails/getPayAmount`, params).then(data => {
+        if (data.payAmount != null && data.code === 0) {
+          this.dataForm.allCoat = data.payAmount.totalAmount
+          this.dataForm.cashPayment = data.payAmount.cashAmount
+          this.dataForm.freePayment = data.payAmount.incentiveAmount
+          this.dataForm.voucherPayment = data.payAmount.voucherAmount
+        } else {
+          this.dataForm.allCoat = 0
+          this.dataForm.cashPayment = 0
+          this.dataForm.freePayment = 0
+          this.dataForm.voucherPayment = 0
+        }
+      })
+    },
+    download () {
+      var params = {
+        'businessCodeName': this.dataForm.businessCodeName.nameTw,
+        'productCodeName': this.dataForm.productCodeName.nameTw,
+        'itemCodeName': this.dataForm.componentCodeName,
+        'projectName': this.dataForm.projectName,
+        'regionName': this.dataForm.regionName,
+        'payModeName': this.dataForm.payModeName,
+        'actionTypeName': this.dataForm.actionTypeName,
+        'resourceId': this.dataForm.resourceId,
+        'resourceName': this.dataForm.resourceId,
+        'realCost': this.dataForm.realCost,
+        'month': this.dataForm.month,
+        'ifDisZero': this.dataForm.checked
+      }
+      this.$axios.post(`${process.env.VUE_APP_adminUrl}taifucloud/tbilldetails/exportList`, params, { responseType: 'blob' }).then(res => {
+        const content = res
+        const blob = new Blob([content])
+        const fileName = this.dataForm.month + '--账单明细.csv'
+        if ('download' in document.createElement('a')) { 
+          // 非IE下载
+          const elink = document.createElement('a')
+          elink.download = fileName
+          elink.style.display = 'none'
+          elink.href = URL.createObjectURL(blob)
+          document.body.appendChild(elink)
+          elink.click()
+          URL.revokeObjectURL(elink.href) 
+          // 释放URL 对象
+          document.body.removeChild(elink)
+        } else { 
+          // IE10+下载
+          navigator.msSaveBlob(blob, fileName)
+        }
+      })
     },
     // 每页数
-    sizeChangeHandle(val) {
+    sizeChangeHandle (val) {
       this.pageSize = val
       this.pageIndex = 1
       this.getDataList()
+      this.cost()
     },
     // 当前页
-    currentChangeHandle(val) {
+    currentChangeHandle (val) {
       this.pageIndex = val
       this.getDataList()
+      this.cost()
+    },
+    // 获取产品列表
+    getProductInfo () {
+      var params = {
+      }
+      this.$axios.post(`${process.env.VUE_APP_adminUrl}taifucloud/cloud-product/getProduct`, params).then((res) => {
+        this.getProductList = res.list
+      })
+    },
+    // 获取子产品列表
+    getChildInfo () {
+      this.dataForm.productCodeName = ''
+      this.dataForm.componentCodeName = ''
+      var params = {
+        'parentCode': this.dataForm.businessCodeName.code
+      }
+      this.$axios.post(`${process.env.VUE_APP_adminUrl}taifucloud/cloud-product/getProduct`, params).then((res) => {
+        this.getChildList = res.list
+      })
+      this.getComponentList = []
+      this.getDataList()
+      this.cost()
+    },
+    // 获取组件列表
+    getComponentInfo () {
+      this.dataForm.componentCodeName = ''
+      var params = {
+        'projectCode': this.dataForm.productCodeName.code
+      }
+      this.$axios.post(`${process.env.VUE_APP_adminUrl}taifucloud/tcloudsubgroup/getSubByParent`, params).then((res) => {
+        this.getComponentList = res.list
+      })
+      this.getDataList()
+      this.cost()
+    },
+    // 改变组件选项，刷新datagrid和费用项
+    getInfo () {
+      this.getDataList()
+      this.cost()
+    },
+    // 获取项目列表
+    getProjectInfo () {
+      var params = {
+        'month': this.dataForm.month
+      }
+      this.$axios.post(`${process.env.VUE_APP_adminUrl}taifucloud/tbilldetails/projectList`, params).then((res) => {
+        this.getProjectList = res.projectList
+      })
+      this.getDataList()
+      this.cost()
+    },
+    // 获取区域列表
+    getRegionInfo () {
+      var params = {
+        'month': this.dataForm.month
+      }
+      this.$axios.post(`${process.env.VUE_APP_adminUrl}taifucloud/tbilldetails/regionList`, params).then((res) => {
+        this.getRegionList = res.regionList
+      })
+      this.getDataList()
+      this.cost()
+    },
+    // 获取计费模式列表
+    getPayModeInfo () {
+      var params = {
+        'month': this.dataForm.month
+      }
+      this.$axios.post(`${process.env.VUE_APP_adminUrl}taifucloud/tbilldetails/payModeList`, params).then((res) => {
+        this.getPayModeList = res.payModeList
+      })
+      this.getDataList()
+      this.cost()
+    },
+    // 获取交易类型列表
+    getActionTypeInfo () {
+      var params = {
+        'month': this.dataForm.month
+      }
+      this.$axios.post(`${process.env.VUE_APP_adminUrl}taifucloud/tbilldetails/actionTypeList`, params).then((res) => {
+        this.getActionTypeList = res.actionTypeList
+      })
+      this.getDataList()
+      this.cost()
     }
   }
 }
 </script>
-

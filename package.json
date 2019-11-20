@@ -5,26 +5,19 @@
   "scripts": {
     "serve:SCF": "vue-cli-service serve --SCF",
     "build:SCF": "vue-cli-service build --SCF",
-
     "serve:CLA": "vue-cli-service serve --CLA",
     "build:CLA": "vue-cli-service build --CLA",
-
     "serve:CM": "vue-cli-service serve --CM",
     "build:CM": "vue-cli-service build --CM",
-
     "serve:CAM": "vue-cli-service serve --CAM",
     "build:CAM": "vue-cli-service build --CAM",
-
     "serve:CCN": "vue-cli-service serve --CCN",
     "build:CCN": "vue-cli-service build --CCN",
     "qa:CCN": "vue-cli-service build --CCN --mode qa",
-
     "serve:CAP": "vue-cli-service serve --CAP",
     "build:CAP": "vue-cli-service build --CAP",
-
     "serve:DDOS": "vue-cli-service serve --DDOS",
     "build:DDOS": "vue-cli-service build --DDOS",
-
     "serve:BILL": "vue-cli-service serve --BILL",
     "build:BILL": "vue-cli-service build --BILL",
 
@@ -43,6 +36,7 @@
     "moment": "^2.24.0",
     "vue": "^2.6.10",
     "vue-cookie": "^1.1.4",
+    "vue-i18n": "^8.15.0",
     "vue-router": "^3.0.3",
     "vuex": "^3.0.1",
     "xlsx": "^0.15.1"
