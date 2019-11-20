@@ -28,6 +28,9 @@
     "serve:BILL": "vue-cli-service serve --BILL",
     "build:BILL": "vue-cli-service build --BILL",
 
+    "serve:WAF": "vue-cli-service serve --WAF",
+    "build:WAF": "vue-cli-service build --WAF",
+
     "qa": "npm run qa:CCN",
     "lint": "vue-cli-service lint"
   },

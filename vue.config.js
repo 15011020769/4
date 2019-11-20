@@ -68,6 +68,13 @@ let product = {
     filename: 'index.html',
     title: '台富云-费用中心',
     chunks: ['chunk-vendors', 'chunk-common', 'BILL']
+  },
+  WAF: {
+    entry: 'src/views/WAF/main.js',
+    template: 'src/public/index.html',
+    filename: 'index.html',
+    title: '台富云-WEB应用防火墙',
+    chunks: ['chunk-vendors', 'chunk-common', 'WAF']
   }
 }
 let page = {}
