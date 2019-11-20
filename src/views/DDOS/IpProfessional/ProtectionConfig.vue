@@ -81,7 +81,7 @@
                   <el-table-column prop="action" label="操作" width="180">
                     <template slot-scope="scope">
                       <el-button
-                        @click.native.prevent="deleteRow(scope.$index, scope.row)"
+                        @click="configListCon(scope.$index, scope.row)"
                         type="text"
                         size="small"
                       >配置</el-button>
@@ -90,17 +90,63 @@
                         type="text"
                         size="small"
                       >删除</el-button>
+                      <el-dialog
+                        title="删除高级策略"
+                        :visible.sync="dialogVisible"
+                        width="30%"
+                        :before-close="handleClose"
+                      >
+                        <h1 class="deleteTit"><i class="el-icon-warning"></i>确定删除该政策么？</h1>
+                        <p class="deleteCont">删除策略后，该防护策略将从列表中永久删除，不可恢复。若您已开启UDP水印剥离开关，则策略会同步关闭UDP水印剥离开关。</p>
+                        <p class="deleteCont">确定删除该条高级策略(erg)？</p>
+                        <span slot="footer" class="dialog-footer">
+                          <el-button @click="dialogVisible = false">取 消</el-button>
+                          <el-button type="primary" @click="sureDelete()">确 定</el-button>
+                        </span>
+                      </el-dialog>
                       <el-button
-                        @click.native.prevent="deleteRow(scope.$index, scope.row)"
+                        @click="bindingResource(scope.$index, scope.row)"
                         type="text"
                         size="small"
                       >绑定资源</el-button>
+                      <el-dialog
+                        title="绑定资源"
+                        :visible.sync="dialogVisible1"
+                        width="40%"
+                        :before-close="handleClose1"
+                      >
+                        <div style="text-align: center">
+                          <el-transfer
+                            style="text-align: left; display: inline-block"
+                            v-model="valueThrou"
+                            filterable
+                            :left-default-checked="[2, 3]"
+                            :right-default-checked="[1]"
+                            :render-content="renderFunc"
+                            :titles="['Source', 'Target']"
+                            :button-texts="['到左边', '到右边']"
+                            :format="{
+                              noChecked: '${total}',
+                              hasChecked: '${checked}/${total}'
+                            }"
+                            @change="handleChange"
+                            :data="data">
+                            <el-button class="transfer-footer" slot="left-footer" size="small">操作</el-button>
+                            <el-button class="transfer-footer" slot="right-footer" size="small">操作</el-button>
+                          </el-transfer>
+                        </div>
+                        
+                        <span slot="footer" class="dialog-footer">
+                          <el-button @click="dialogVisible1 = false">取 消</el-button>
+                          <el-button type="primary" @click="bindingResourceSure()">确 定</el-button>
+                        </span>
+                      </el-dialog>
                     </template>
                   </el-table-column>
                 </el-table>
               </div>
               <div v-if="!tableShow">
-                <addNewTactics/>
+                <addNewTactics :isShow="tableShow" @closePage="closePageAdd"/>
               </div>
             </div>
           </el-tab-pane>
@@ -113,7 +159,23 @@
 import addNewTactics from './addNewTactics'
 export default {
   data() {
+    // const generateData = _ => {
+    //   const data = [];
+    //   for (let i = 1; i <= 15; i++) {
+    //     data.push({
+    //       key: i,
+    //       label: `备选项 ${ i }`,
+    //       disabled: i % 4 === 0
+    //     });
+    //   }
+    //   return data;
+    // };
     return {
+      data: this.generateData(),
+      valueThrou: [1],
+      renderFunc(h, option) {
+        return <span>{ option.key } </span>;
+      },//穿梭框
       activeName:"first",
       filterConrent:"IP",
       tableDataBegin: [],
@@ -127,6 +189,7 @@ export default {
       flag: false,
       multipleSelection: [],
       dialogVisible: false,
+      dialogVisible1: false,//绑定资源弹框
       filterConrent:"",
       allData:[
         {
@@ -147,7 +210,12 @@ export default {
           createTime:"2019-11-19 10:52:25"
         }
       ],
-      tableShow:true
+      tableShow:true,
+      deleteIndex: "",
+      deleteBegin: {},
+      deleteIndex1: "",
+      deleteBegin1: {},
+      thisData:["1","2","3"]
     }
   },
   components:{
@@ -276,7 +344,68 @@ export default {
     },
     addNewTactics(){
       this.tableShow=false;
-    } 
+    },
+    handleClose(){
+      this.dialogVisible=false;
+    },
+    //绑定资源弹框关闭按钮
+    handleClose1(){
+      this.dialogVisible1=false;
+    },
+    //点击删除函数按钮
+    deleteRow(index, dataBegin) {
+      console.log(index, dataBegin);
+      this.deleteIndex = index;
+      this.deleteBegin = dataBegin;
+      this.dialogVisible = true;
+    },
+    //删除函数的确定按钮，调用删除接口
+    sureDelete() {
+      let params = {
+        Version: "2018-04-16",
+        Region: "ap-taipei",
+        FunctionName: this.deleteBegin.functionName
+      };
+      console.log(params.FunctionName);
+      //this.$axios.post("", params).then(res => {
+        //console.log(res);
+        //console.log("成功");
+        this.tableDataBegin.splice(this.deleteIndex, 1);
+        this.totalItems -= 1;
+        this.dialogVisible = false;
+      //});
+    },
+    //点击表格操作配置按钮
+    configListCon(configIndex,configCon){
+      this.tableShow=false;
+    },
+    //绑定资源按钮
+    bindingResource(bindingIndex,bindingCon){
+      this.deleteIndex1 = bindingIndex;
+      this.deleteBegin1 = bindingCon;
+      this.dialogVisible1 = true;
+    },
+    //绑定资源弹框确定按钮
+    bindingResourceSure(){
+      this.dialogVisible1 = false;
+    },
+    //接收子组件的方法，并让子组件消失父组件显示
+    closePageAdd(obj){
+      console.log(obj)
+      this.tableShow=true;
+    },
+    //穿梭框事件
+    handleChange(value, direction, movedKeys) {
+      console.log(value, direction, movedKeys);
+    },
+    generateData(){
+      const data = [{key:"1"},{key:"2"}];
+      // console.log(thisData)
+      // for (let i =0; i < this.thisData.length; i++) {
+      //   data.push(this.thisData[i]);
+      // }
+      return data;
+    }
   }
 }
 </script>
@@ -329,5 +458,19 @@ export default {
   input{
     width:200px;
   }
+}
+.el-icon-warning{
+  color:red;
+  font-size:34px;
+  margin-right:15px;
+  vertical-align: middle;
+}
+.deleteTit{
+  font-size:18px;
+  color:#000;
+  margin-bottom:12px;
+}
+.deleteCont{
+  padding-left:50px;
 }
 </style>
