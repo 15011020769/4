@@ -103,9 +103,25 @@ export default new Router({
       }
     },
     {
-      path: '/Role', // 角色
+      path: '/Role', // 角色 RoleDetail
       name: 'Role',
       component: () => import(/* webpackChunkName: "Cam" */ './Role/Role.vue'),
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
+      path: '/RoleDetail', // 角色详情
+      name: 'RoleDetail',
+      component: () => import(/* webpackChunkName: "Cam" */ './Role/RoleDetail.vue'),
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
+      path: '/createServe', // 新建角色产品服务
+      name: 'createServe',
+      component: () => import(/* webpackChunkName: "Cam" */ './Role/createServe.vue'),
       meta: {
         keepAlive: true
       }

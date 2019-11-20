@@ -34,8 +34,16 @@
           </div>
         </div>
         <div class="table">
-          <el-table :data="tableData" height="610" border style="width: 100%">
-            <el-table-column type="selection" width="55"></el-table-column>
+          <el-table
+            :data="tableData"
+            height="610"
+            border
+            style="width: 100%"
+            :row-style="{height:0}"
+            :cell-style="{padding:'5px 10px'}"
+            :header-cell-style="{height:'20px',padding:'0px 10px'}"
+          >
+            <el-table-column type="selection" width="60"></el-table-column>
             <el-table-column prop="date" label="策略名" width="150">
               <template slot-scope="scope">
                 <el-button @click="handleClick(scope)" type="text" size="small">{{scope.row.date}}</el-button>
@@ -86,11 +94,19 @@
         </div>
       </div>
     </div>
-    <el-dialog title="" :visible.sync="dialogVisible" width="30%" :before-close="handleClose">
-      <p></p>
+    <el-dialog title :visible.sync="dialogVisible" width="40%" :before-close="handleClose">
+      <h3 style="color:#000;margin-bottom:20px;">关联用户/用户组</h3>
+      <div class="dialog_div">
+        <el-transfer
+          v-model="transfer_value"
+          :props="{key: 'value',label: 'desc'}"
+          :data="transfer_data"
+          filterable
+        ></el-transfer>
+      </div>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+        <el-button size="mini" @click="dialogVisible = false">取 消</el-button>
+        <el-button size="mini" type="primary" @click="dialogVisible = false">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -197,7 +213,22 @@ export default {
       currentPage2: 5,
       currentPage3: 5,
       currentPage4: 4,
-      dialogVisible:true
+      dialogVisible: false,
+      transfer_value: [],
+      transfer_data: [
+        {
+          value: 1,
+          desc: "备选项1"
+        },
+        {
+          value: 2,
+          desc: "备选项2"
+        },
+        {
+          value: 3,
+          desc: "备选项3"
+        }
+      ]
     };
   },
   methods: {
@@ -211,7 +242,10 @@ export default {
     },
     handleSizeChange() {},
     handleCurrentChange() {},
-    handleClick_user() {}
+    handleClick_user() {
+      this.dialogVisible = true;
+    },
+    handleClose() {}
   }
 };
 </script>
@@ -261,6 +295,9 @@ export default {
         display: flex;
         justify-content: space-between;
         margin-bottom: 20px;
+      }
+      .dialog_div {
+        text-align: center;
       }
     }
   }

@@ -1,23 +1,29 @@
 <template>
-  <div class="StrategyDetail">
+  <div class="RoleDetail">
     <div class="top">
-      <img style="width:20px;cursor: pointer;" @click="back" src="../../../assets/CAM/images/left.png" alt>
-      <span class="top_text">AdministratorAccess</span>
+      <img
+        style="width:20px;cursor: pointer;"
+        @click="back"
+        src="../../../assets/CAM/images/left.png"
+        alt
+      >
+      <span class="top_text">CloudAudit_QCSRole</span>
     </div>
     <div class="container">
       <div class="baseInfo">
-        <p class="baseInfo_title">基本信息</p>
+        <p class="baseInfo_title">角色信息</p>
         <div class="baseInfo_flex">
           <div class="baseInfo_left">
-            <p class="baseInfo_cl item">策略</p>
-            <p class="baseInfo_ms item">描述</p>
-            <p class="baseInfo_mark item">备注</p>
-            <p class="baseInfo_type item">策略类型</p>
+            <p class="baseInfo_cl item">角色名称</p>
+            <p class="baseInfo_ms item">RoleArn</p>
+            <p class="baseInfo_mark item">角色ID</p>
+            <p class="baseInfo_type item">角色描述</p>
             <p class="baseInfo_time item">创建时间</p>
           </div>
           <div class="baseInfo_right">
-            <p class="baseInfo_cl item">AdministratorAccess</p>
-            <p class="baseInfo_ms item">该策略允许您管理账户内所有用户及其权限、财务相关的信息、云服务资产。</p>
+            <p class="baseInfo_cl item">CloudAudit_QCSRole</p>
+            <p class="baseInfo_ms item">qcs::cam::uin/100011921910:roleName/CloudAudit_QCSRole</p>
+            <p class="baseInfo_type item">4611686018427967128</p>
             <p class="baseInfo_mark item">
               <el-input
                 v-if="input_show"
@@ -46,85 +52,108 @@
                 class="el-icon-edit item"
               ></i>
             </p>
-            <p class="baseInfo_type item">预设策略</p>
             <p class="baseInfo_time item">2016-06-02 19:40:09</p>
           </div>
         </div>
       </div>
       <div class="tabs">
         <el-tabs v-model="activeName" @tab-click="handleClick">
-          <el-tab-pane label="策略语法" name="first">
-            <div class="markdown"></div>
+          <el-tab-pane label="已授权策略" name="first">
+            <p style="margin:10px">
+              <el-button type="primary" @click="Relation_user" size="small">关联策略</el-button>
+              <el-button
+                type="primary"
+                @click="Relation_user"
+                size="small"
+                :disabled="firstDisplay"
+              >批量解除策略</el-button>
+            </p>
+            <div class="first_table">
+              <el-table
+                :data="first_tableData"
+                height="300"
+                border
+                @selection-change="first_handleSelectionChange"
+                :row-style="{height:0}"
+                :cell-style="{padding:'5px 10px'}"
+                :header-cell-style="{height:'20px',padding:'0px 10px'}"
+                style="width: 100%"
+              >
+                <el-table-column type="selection" width="60"></el-table-column>
+                <el-table-column prop="date" label="策略名">
+                  <template slot-scope="scope">
+                    <el-button
+                      @click="first_handleClick(scope)"
+                      type="text"
+                      size="small"
+                    >{{scope.row.date}}</el-button>
+                  </template>
+                </el-table-column>
+                <el-table-column align="center">
+                  <template slot="header" slot-scope="scope">
+                    <el-dropdown trigger="click" @command="handleCommand" size="mini">
+                      <span style="color:#909399">
+                        {{ tableTitle }}
+                        <i class="el-icon-arrow-down el-icon--right"></i>
+                      </span>
+                      <el-dropdown-menu slot="dropdown">
+                        <el-dropdown-item
+                          v-for="item in table_options"
+                          :key="item.value"
+                          :command="item.label"
+                        >{{item.label}}</el-dropdown-item>
+                      </el-dropdown-menu>
+                    </el-dropdown>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="startTime" label="关联时间"></el-table-column>
+                <el-table-column prop="endTime" label="失效时间"></el-table-column>
+                <el-table-column prop="address" label="操作">
+                  <template slot-scope="scope">
+                    <a href="javascript:;" @click="Relation_user">删除</a>
+                  </template>
+                </el-table-column>
+              </el-table>
+              <div
+                style="background:#fff;padding:10px;display:flex;justify-content: space-between;line-height:30px"
+              >
+                <div>
+                  <span style="font-size:12px;color:#888">已选 0 项，共 309 项</span>
+                </div>
+                <div>
+                  <el-pagination
+                    @size-change="handleSizeChange"
+                    @current-change="handleCurrentChange"
+                    :current-page.sync="currentPage2"
+                    :page-sizes="[100, 200, 300, 400]"
+                    :page-size="100"
+                    layout="sizes, prev, pager, next"
+                    :total="1000"
+                  ></el-pagination>
+                </div>
+              </div>
+            </div>
           </el-tab-pane>
-          <el-tab-pane label="关联用户/组" name="second">
+          <el-tab-pane label="角色载体" name="second">
             <div class="config">
               <p style="margin:10px">
                 <el-button type="primary" @click="Relation_user" size="small">关联用户/用户组</el-button>
-                <el-button
-                  type="primary"
-                  @click="Relieve_user"
-                  size="small"
-                  :disabled="display"
-                >解除用户/用户组</el-button>
               </p>
               <div class="config_table">
                 <el-table
-                  :data="tableData"
+                  :data="second_tableData"
                   height="300"
                   border
                   @selection-change="handleSelectionChange"
-                  :row-style="{height:0}" 
-                  :cell-style="{padding:'5px 10px'}" 
+                  :row-style="{height:0}"
+                  :cell-style="{padding:'5px 10px'}"
                   :header-cell-style="{height:'20px',padding:'0px 10px'}"
                   style="width: 100%"
                 >
-                  <el-table-column type="selection" width="60"></el-table-column>
-                  <el-table-column prop="date" label="关联用户/组">
+                  <el-table-column prop="date" label="角色载体"></el-table-column>
+                  <el-table-column prop="address" label="操作" >
                     <template slot-scope="scope">
-                      <el-button
-                        @click="handleClick1(scope)"
-                        type="text"
-                        size="small"
-                      >{{scope.row.date}}</el-button>
-                    </template>
-                  </el-table-column>
-                  <el-table-column align="center">
-                    <template slot="header" slot-scope="scope">
-                      <el-dropdown trigger="click" @command="handleCommand" size="mini">
-                        <span style="color:#909399">
-                          {{ tableTitle }}
-                          <i class="el-icon-arrow-down el-icon--right"></i>
-                        </span>
-                        <el-dropdown-menu slot="dropdown">
-                          <el-dropdown-item
-                            v-for="item in table_options"
-                            :key="item.value"
-                            :command="item.label"
-                          >{{item.label}}</el-dropdown-item>
-                        </el-dropdown-menu>
-                      </el-dropdown>
-                    </template>
-                  </el-table-column>
-                  <el-table-column prop="address" label="描述">
-                    <template slot-scope="scope">
-                      <el-popover
-                        placement="bottom"
-                        title
-                        width="400"
-                        trigger="click"
-                        v-model="popover_visible"
-                      >
-                        <p style="margin:20px 10px">解除此用户后，将不具备该策略对应的权限，是否确认？</p>
-                        <div style="text-align: right; margin: 0">
-                          <el-button size="mini" type="text" @click="popover_visible = false">取消</el-button>
-                          <el-button
-                            type="primary"
-                            size="mini"
-                            @click="popover_visible = false"
-                          >确定解除</el-button>
-                        </div>
-                        <a href="javascript:;" slot="reference">解除用户</a>
-                      </el-popover>
+                      <el-button size="mini" disabled >解除</el-button>
                     </template>
                   </el-table-column>
                 </el-table>
@@ -149,19 +178,29 @@
               </div>
             </div>
           </el-tab-pane>
+          <el-tab-pane label="撤销会话" name="third">
+            <p>
+              <el-popover
+                placement="top-start"
+                title
+                width="200"
+                trigger="hover"
+                content="您无法撤销服务角色的活跃会话"
+              >
+                <div slot="reference" style="display:inline-block">
+                  <el-button disabled>撤销所有会话</el-button>
+                </div>
+              </el-popover>
+            </p>
+          </el-tab-pane>
         </el-tabs>
       </div>
-      <el-dialog :visible.sync="dialogVisible" width="50%" :before-close="handleClose">
-        <p class="dialog">关联用户/用户组</p>
-        <div style="padding:20px 0 20px 25%;">
-          <el-transfer
-            v-model="transfer_value"
-            :props="{key: 'value',label: 'desc'}"
-            :data="transfer_data"
-            filterable
-          ></el-transfer>
-        </div>
-        <p style="text-align:center">
+      <el-dialog :visible.sync="dialogVisible" width="25%" :before-close="handleClose">
+        <h3 slot="title">风险提醒</h3>
+        <p
+          style="line-height: 20px;padding: 0;background: #fff;font-size: 12px;margin-bottom: 27px;color: #444;"
+        >该角色为您授权的服务角色，擅自更改角色内容（角色关联策略或者角色载体）可能导致您授权的服务无法正确使用该角色。</p>
+        <p style="text-align:center" slot="footer">
           <el-button @click="dialogVisible = false" size="small">取 消</el-button>
           <el-button type="primary" @click="dialogVisible = false" size="small">确 定</el-button>
         </p>
@@ -194,11 +233,22 @@ export default {
   data() {
     return {
       activeName: "first",
-      tableData: [
+      first_tableData: [
         {
           date: "2343535",
           name: "用户",
-          address: "解除用户"
+          address: "解除用户",
+          startTime: "2018-12-14",
+          endTime: "2019-11-11"
+        }
+      ],
+      second_tableData: [
+        {
+          date: "2343535",
+          name: "用户",
+          address: "解除用户",
+          startTime: "2018-12-14",
+          endTime: "2019-11-11"
         }
       ],
       table_options: [
@@ -208,14 +258,15 @@ export default {
         },
         {
           value: "选项2",
-          label: "用户"
+          label: "自定义策略"
         },
         {
           value: "选项3",
-          label: "用户组"
+          label: "预设策略"
         }
       ],
-      tableTitle: "类型",
+      firstDisplay: true,
+      tableTitle: "策略类型",
       currentPage1: 5,
       currentPage2: 5,
       currentPage3: 5,
@@ -260,15 +311,11 @@ export default {
     handleSizeChange() {},
     handleCurrentChange() {},
     handleClose() {},
-    handleSelectionChange(val) {
-      console.log(val);
+    first_handleSelectionChange(val) {
       if (val.length != 0) {
-        this.display = false;
-        val.forEach(element => {
-          this.RelieveData.push(element.date);
-        });
+        this.firstDisplay = false;
       } else {
-        this.display = true;
+        this.firstDisplay = true;
       }
     },
     look_detail() {
@@ -285,14 +332,14 @@ export default {
       this.inputValue = this.input_Value;
       this.input_show = false;
     },
-    back(){
-      this.$router.push("/Strategy")
+    back() {
+      this.$router.push("/Role");
     }
   }
 };
 </script>
 <style lang="scss" scoped>
-.StrategyDetail {
+.RoleDetail {
   .top {
     padding: 20px;
     background-color: #fff;
@@ -330,7 +377,7 @@ export default {
           padding-left: 20px;
         }
         .baseInfo_left {
-          .baseInfo_mark {
+          .baseInfo_type {
             padding-bottom: 40px;
           }
         }
