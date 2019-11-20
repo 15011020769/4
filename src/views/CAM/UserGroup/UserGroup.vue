@@ -9,7 +9,7 @@
     <div class="cam_button">
       <el-row class="cam-lt">
         <el-button type="primary"  @click="NewUser" >{{$t('CAM.CAM.userGroup.createBtn')}}</el-button>
-        <el-button type="primary" @click="addUserGroup()" >{{$t('CAM.CAM.userGroup.addBtn')}}</el-button>
+        <el-button type="primary" :disabled="btnVisible" @click="addUserGroup()" >{{$t('CAM.CAM.userGroup.addBtn')}}</el-button>
       </el-row>
 
       <div class="head-container">
@@ -49,20 +49,67 @@
       </div>
     </div>
     <template>
-      <el-dialog :title="$t('CAM.CAM.userGroup.addTitle')" :visible.sync="dialogVisible" :before-close="handleClose" > 
-          <el-transfer filterable
-            :filter-placeholder="$t('CAM.CAM.userGroup.selSearch')"
-            v-model="userModel"
-            center="true"
-            :titles="[$t('CAM.CAM.userGroup.selection'), $t('CAM.CAM.userGroup.selected')]"
-            :data="userData"
-            :props="{
-              key: 'uid',
-              label: 'name'
-            }"
-            @left-check-change="changeLeftData"
-          >
-          </el-transfer> 
+      <el-dialog :title="$t('CAM.CAM.userGroup.addTitle')"  :visible.sync="dialogVisible" :before-close="handleClose" width="70%"> 
+        <div class="container-left">
+          <p>选择添加的用户（共{{totalNum}}条）</p>
+          <el-input size="mini" v-model="search"  style="width:85%"  @keyup.enter.native="toQuery"/>
+          <el-button size="mini" class="suo" icon="el-icon-search" @click="toQuery"></el-button>
+          <el-table
+            class="table-left"
+                ref="multipleOption"
+                :data="userData"
+                size = "small"
+                height="300"
+                tooltip-effect="dark"
+                style="width: 100%"
+                @row-click="selectedRow"
+                @selection-change="handleSelectionChangeUser">
+                <el-table-column type="selection" prop="uid" width="30"> </el-table-column>
+                  <el-table-column prop="name" label="用户"  show-overflow-tooltip>
+                  </el-table-column>
+                  <el-table-column prop="userType" label="用户类型"  width="100">
+                    <template slot-scope="scope">
+                      <p v-show="scope.row.userType == 1">用户类型</p>
+                      <p v-show="scope.row.userType == 2">用户类型</p>
+                      <p v-show="scope.row.userType == 3">子用户</p>
+                    </template>
+                  </el-table-column>
+          </el-table>
+        </div>
+        <div class="abs">
+          <p>--</p>
+          <div>&nbsp;</div>
+        </div>
+        <div class="container-left">
+          <span>已选择（共条）</span>
+            <el-table
+                class="table-left"
+                ref="multipleSelected"
+                :data="userSelData"
+                tooltip-effect="dark"
+                size = "small"
+                height="300"
+                style="width: 100%">
+                <el-table-column prop="name" label="用户"  show-overflow-tooltip> </el-table-column>
+                <el-table-column prop="userType" label="用户类型"  width="100">
+                  <template slot-scope="scope">
+                    <p v-show="scope.row.userType == 1">用户类型</p>
+                    <p v-show="scope.row.userType == 2">用户类型</p>
+                    <p v-show="scope.row.userType == 3">子用户</p>
+                  </template>
+                </el-table-column>
+                <el-table-column :label="$t('CAM.CAM.userGroup.colHandle')"  width="50">
+                  &lt;!&ndash;<template slot-scope="scope">
+                    <el-button
+                      @click.native.prevent="deleteRow(scope.$index, userSelData)"
+                      type="text"
+                      size="small">
+                      x
+                    </el-button>
+                  </template>&ndash;&gt;
+                </el-table-column>
+            </el-table>
+        </div>
         <div slot="footer" class="dialog-footer">
           <el-button @click="dialogVisible = false">{{$t('CAM.CAM.userGroup.selCancelBtn')}}</el-button>
           <el-button type="primary" @click="addUser">{{$t('CAM.CAM.userGroup.selConfirmBtn')}}</el-button>
@@ -80,8 +127,12 @@ export default {
       searchValue: '',
       userModel: [],
       userData: [],
+      userSelData: [],
       dialogVisible: false,
       tableData: [],
+      search: '',
+      totalNum: 0,
+      btnVisible: true,
       loading: true
     }
   },
@@ -147,19 +198,23 @@ export default {
               },
               {
                 'uid': 5303665,
-                'name': 'taifucloud2'
+                'name': 'taifucloud2',
+                'userType': 3
               },
               {
                 'uid': 5303666,
-                'name': 'taifucloud3'
+                'name': 'taifucloud3',
+                'userType': 3
               },
               {
                 'uid': 5303667,
-                'name': 'taifucloud4'
+                'name': 'taifucloud4',
+                'userType': 3
               },
               {
                 'uid': 5303668,
-                'name': 'taifucloud5'
+                'name': 'taifucloud5',
+                'userType': 3
               }
             ],
             'ownerInfo': [{
@@ -212,9 +267,6 @@ export default {
         // this.$message({ type: 'info', message: '已取消删除' })          
       })
     },
-    changeLeftData(userModel) {
-      this.userModel= [...this.userModel, ...userModel]
-    },
     addUser() {
       this.dialogVisible = false
       let value = this.userModel
@@ -245,11 +297,31 @@ export default {
       this.loading = true
       this.init()
     },
-    handleSelectionChange() {
-
+    handleSelectionChange(val) {
+      console.log(val)
+      if(val != '') {
+        this.btnVisible = false
+      }else {
+        this.btnVisible = true
+      }
     },
     handleClose() {
       this.dialogVisible = false
+    },
+    handleSelectionChangeUser(val) {
+      // 给右边table框赋值，只需在此处赋值即可，selectedRow方法中不写，因为单独点击复选框，只有此方法有效。
+      this.userSelData = val
+    },
+    selectedRow(row, column, event) {
+    // 设置选中或者取消状态
+      this.$refs.multipleOption.toggleRowSelection(row)
+    },
+    deleteRow(index, rows) {
+      // 获取右边框中取消的行数据，将此行数据在右边框中的选中状态取消
+      this.$refs.multipleOption.toggleRowSelection(rows[index],false)
+    },
+    toQuery() {
+      this.init()
     }
   }
 }
@@ -305,7 +377,17 @@ export default {
         justify-content: flex-end;
       }
     }
-
+    .abs{
+      display: inline-block;
+      width: 100px;
+      height: 300px;
+      line-height: 150px;
+      text-align: center;
+    }
+    .container-left{
+      width: 44%;
+      display: inline-block;
+    }
     .cam_button{
       width: 96%;
       height: 40px;
@@ -322,7 +404,6 @@ export default {
     }
     .suo{
       position: absolute;
-      right: 0;
     }
     .cam-box{
       width: 96%;

@@ -2,6 +2,10 @@
   <div class="Cam">
     <div class="top">
       <span class="title-left">用户列表</span>
+      <span class="title-right">
+        <span>CAM用户使用说明</span>
+        <i class="el-icon-share"></i>
+      </span>
     </div>
     <div class="explain">
       <p>
@@ -65,10 +69,26 @@
           </el-form>
         </template>
       </el-table-column>
-      <el-table-column label="用户名称" prop="name"></el-table-column>
-      <el-table-column label="用户类型" prop="type"></el-table-column>
-      <el-table-column label="账号ID" prop="id"></el-table-column>
-      <el-table-column label="关联信息" prop="relation"></el-table-column>
+      <el-table-column label="用户名称">
+        <template slot-scope="scope">
+          <span><a @click="details" href="">{{ scope.row.name }}</a></span>
+        </template>
+      </el-table-column>
+      <el-table-column label="用户类型" prop="type">
+        <template slot-scope="scope">
+          <span>{{ scope.row.type }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="账号ID" prop="id">
+        <template slot-scope="scope">
+          <span>{{ scope.row.id }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="关联信息" prop="relation">
+        <template slot-scope="scope">
+          <span>{{ scope.row.name }}</span>
+        </template>
+      </el-table-column>
       <el-table-column prop="oper" label="操作" width="140">
         <template scope="scope">
           <el-button type="text">授权</el-button>
@@ -355,7 +375,10 @@ export default {
       // console.log("change left data", val);
       // console.log("this is value data:", this.value);
       this.val = [...this.val, ...val];
-    }
+    },
+    details(){
+      this.$router.push({ path: 'details' })
+    },
   }
 };
 </script>

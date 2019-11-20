@@ -79,6 +79,14 @@ export default new Router({
       }
     },
     {
+            path: '/details', // 用户详情
+            name: 'details',
+            component: () => import(/* webpackChunkName: "Cam" */ './UserList/details.vue'),
+            meta: {
+              keepAlive: true
+            }
+    },
+    {
       path: '/Strategy', // 策略
       name: 'Strategy',
       component: () => import(/* webpackChunkName: "Cam" */ './Strategy/Strategy.vue'),

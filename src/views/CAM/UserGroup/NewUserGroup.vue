@@ -15,17 +15,17 @@
       </el-steps>
       <div v-show="active==0">
         <template>
-          <FirstStep :addModel="addModel"/>
+          <FirstStep ref="firstStep" :addModel="addModel"/>
         </template>
       </div>
-      <div v-show="active==1">
+      <div v-show="active==1" >
         <template>
-          <SecondStep :addModel="addModel"/>
+          <SecondStep ref="secondStep" />
         </template>
       </div>
       <div v-show="active==2">
         <template>
-          <ThirdlyStep :addModel="addModel"/>
+          <ThirdlyStep :addModel="addModel" :policiesSelectedData='policiesSelectedData'  />
         </template>
       </div>
       <el-button v-show="active<2&active>0" type="primary" @click="step">上一步</el-button>
@@ -53,6 +53,8 @@
           groupName: '',
           remark: ''
         }
+        ,
+        policiesSelectedData: []
       };
     },
     methods: {
@@ -60,7 +62,26 @@
         this.$router.push({name: 'UserGroup'})
       },
       next() {
-        const addModel = this.addModel;
+        this.policiesSelectedData = this.$refs.secondStep.getDaata()
+        // const addModel = this.addModel;
+        // const addModelRules = this.$refs.firstStep.$refs.addModel
+        // const groupNameRules = this.$refs.firstStep.$refs.groupNameRules
+        // console.log(groupNameRules)
+        // groupNameRules.validate(valid => {
+        //   if (valid) {
+        //     console.log('(^o^)~ 验证成功！')
+        //   } else {
+        //     console.log('-_- 验证失败！')
+        //   }
+        // })
+        // console.log(addModelRules.rules)
+        // console.log(addModelRules.rules.groupName)
+        // console.log(addModelRules.rules.groupName[0].message)
+        // console.log(addModelRules.rules.groupName[0].required)
+        // console.log(addModelRules.rules.groupName[0].trigger)
+        // if(addModelRules.rules.groupName != ''){
+        //   return;
+        // }
         if (this.active++ > 2) {
           this.active = 0;
         }
@@ -105,9 +126,10 @@
   }
   .container {
     width:96%;
-    height:570px;
-    min-height: 500px;
-    margin:10px auto 0;
+    height: 100%;
+    // height:570px;
+    // min-height: 500px;
+    margin:0 auto;
     background: #fff;
     padding:20px;
     p.title,p.explain{
