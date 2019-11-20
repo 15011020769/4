@@ -3,28 +3,37 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+
     "serve:SCF": "vue-cli-service serve --SCF",
     "build:SCF": "vue-cli-service build --SCF",
+
     "serve:CLA": "vue-cli-service serve --CLA",
     "build:CLA": "vue-cli-service build --CLA",
+
     "serve:CM": "vue-cli-service serve --CM",
     "build:CM": "vue-cli-service build --CM",
+
     "serve:CAM": "vue-cli-service serve --CAM",
     "build:CAM": "vue-cli-service build --CAM",
+
     "serve:CCN": "vue-cli-service serve --CCN",
     "build:CCN": "vue-cli-service build --CCN",
     "qa:CCN": "vue-cli-service build --CCN --mode qa",
+
     "serve:CAP": "vue-cli-service serve --CAP",
     "build:CAP": "vue-cli-service build --CAP",
+
     "serve:DDOS": "vue-cli-service serve --DDOS",
     "build:DDOS": "vue-cli-service build --DDOS",
+
     "serve:BILL": "vue-cli-service serve --BILL",
     "build:BILL": "vue-cli-service build --BILL",
+    "qa:BILL": "vue-cli-service build --BILL --mode qa",
 
     "serve:WAF": "vue-cli-service serve --WAF",
     "build:WAF": "vue-cli-service build --WAF",
 
-    "qa": "npm run qa:CCN",
+    "qa": "npm run qa:CCN & npm run qa:BILL",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
