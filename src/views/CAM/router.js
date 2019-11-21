@@ -39,6 +39,14 @@ export default new Router({
       }
     },
     {
+      path: '/adduser',//添加用户组
+      name: 'adduser',
+      component: () => import(/*webpackChunkName:"Cam"*/'./UserList/adduser.vue'),
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
       path: '/custormCreate', // 自定义用户创建
       name: 'custormCreate',
       component: () => import(/* webpackChunkName: "Cam" */ './UserList/custormCreate.vue'),
@@ -79,12 +87,20 @@ export default new Router({
       }
     },
     {
-            path: '/details', // 用户详情
-            name: 'details',
-            component: () => import(/* webpackChunkName: "Cam" */ './UserList/details.vue'),
-            meta: {
-              keepAlive: true
-            }
+      path: '/details',//用户详情
+      name: 'details',
+      component: () => import(/*webpackChunkName:"Cam"*/'./UserList/details.vue'),
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
+      path: '/adduser',//添加用户组
+      name: 'adduser',
+      component: () => import(/*webpackChunkName:"Cam"*/'./UserList/adduser.vue'),
+      meta: {
+        keepAlive: true
+      }
     },
     {
       path: '/Strategy', // 策略
@@ -103,25 +119,9 @@ export default new Router({
       }
     },
     {
-      path: '/Role', // 角色 RoleDetail
+      path: '/Role', // 角色
       name: 'Role',
       component: () => import(/* webpackChunkName: "Cam" */ './Role/Role.vue'),
-      meta: {
-        keepAlive: true
-      }
-    },
-    {
-      path: '/RoleDetail', // 角色详情
-      name: 'RoleDetail',
-      component: () => import(/* webpackChunkName: "Cam" */ './Role/RoleDetail.vue'),
-      meta: {
-        keepAlive: true
-      }
-    },
-    {
-      path: '/createServe', // 新建角色产品服务
-      name: 'createServe',
-      component: () => import(/* webpackChunkName: "Cam" */ './Role/createServe.vue'),
       meta: {
         keepAlive: true
       }
@@ -130,6 +130,14 @@ export default new Router({
       path: '/IdentityProvider', // 身份提供商
       name: 'IdentityProvider',
       component: () => import(/* webpackChunkName: "Cam" */ './IdentityProvider/IdentityProvider.vue'),
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
+      path: '/NewIdentityProvider',//新建身份提供商
+      name: 'NewIdentityProvider',
+      component: () => import(/*webpackChunkName:"Cam"*/'./IdentityProvider/NewIdentityProvider.vue'),
       meta: {
         keepAlive: true
       }
