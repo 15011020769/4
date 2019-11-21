@@ -4,7 +4,7 @@
       <div class="ReportTit newClear">
         <h3 class="ReportTitH3">高防IP专业版</h3>
         <el-select v-model="listResouse">
-          <el-option label="资源列表" value="value1"></el-option>
+          <el-option label="资源列表" value="resourceList"></el-option>
           <el-option label="业务列表" value="value2"></el-option>
         </el-select>
         <el-button class="ReportTitBtn" type="primary">新购</el-button>
@@ -16,7 +16,7 @@
               <el-checkbox label="即将过期" name="comingSoon"></el-checkbox>
             </el-checkbox-group>
             <span class="runningStatusText">运行状态:</span>
-            <el-checkbox-group v-model="sunningStatus"  class="checkTwo">
+            <el-checkbox-group v-model="runningStatus"  class="checkTwo">
               <el-checkbox label="运行中" name="type"></el-checkbox>
               <el-checkbox label="清洗中" name="type"></el-checkbox>
               <el-checkbox label="封堵中" name="type"></el-checkbox>
@@ -87,45 +87,57 @@ export default {
           backSelf: "自动回切"
         }
       ],
-      listResouse:"业务列表",
-      sunningStatus:"",
-      comingSoon:""
+      listResouse: 'resourceList',
+      runningStatus: [],
+      comingSoon: false
     };
+  },
+  watch: {
+    'listResouse': function () {
+      if (this.listResouse == 'resourceList') {
+        this.getData()
+      } else if (this.listResouse != '') {
+        console.log('业务列表')
+      }
+    }
   },
   mounted() {
     this.getData();
   },
   methods: {
     handleClick() {},
-    getData() {
+    getData() { //默认查询 资源列表
       var cookies = document.cookie;
       var list = cookies.split(";");
       for (var i = 0; i < list.length; i++) {
         var arr = list[i].split("=");
       }
       let params = {
-        // Action: "ListFunctions",
-        Version: "2018-04-16",
-        Region: arr[1]
+        Version: '2018-07-09',
+        // Region: '',
+        Business: 'net'
       };
-      //this.$axios.post('', params).then(res => {
-      // console.log(res.data.functions);
-      //this.tableDataBegin = res.data.functions;
-      this.tableDataBegin = this.allData;
-      // 将数据的长度赋值给totalItems
-      this.totalItems = this.tableDataBegin.length;
-      if (this.totalItems > this.pageSize) {
-        for (let index = 0; index < this.pageSize; index++) {
-          this.tableDataEnd.push(this.tableDataBegin[index]);
+      this.$axios.post('dayu2/DescribeResourceList', params).then(res => {
+        console.log(params)
+        console.log(res)
+        this.tableDataBegin = res.Response.ServicePacks;
+        // 将数据的长度赋值给totalItems
+        this.totalItems = this.tableDataBegin.length;
+        if (this.totalItems > this.pageSize) {
+          for (let index = 0; index < this.pageSize; index++) {
+            this.tableDataEnd.push(this.tableDataBegin[index]);
+          }
+        } else {
+          this.tableDataEnd = this.tableDataBegin;
         }
-      } else {
-        this.tableDataEnd = this.tableDataBegin;
-      }
-      //});
+      });
     },
     // 搜索
     doFilter() {
-      console.log(this.filterConrent);
+      // console.log(this.filterConrent);
+      // console.log(this.runningStatus) // 运行状态
+      // console.log(this.comingSoon)  // 即将过期
+      // console.log(this.tableDataName) // 搜索的输入
       this.tableDataBegin = this.allData;
       this.tableDataEnd = [];
       //每次手动将数据置空,因为会出现多次点击搜索情况
@@ -158,7 +170,6 @@ export default {
       this.totalItems = this.filterTableDataEnd.length;
       //渲染表格,根据值
       this.currentChangePage(this.filterTableDataEnd);
-
       //页面初始化数据需要判断是否检索过
       this.flag = true;
     },

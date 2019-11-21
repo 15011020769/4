@@ -35,6 +35,7 @@ export default {
       this.$cookie.set('regionv1', 'gz')
       this.$cookie.set('regionv2', 'ap-guangzhou')
     }
+    console.log(this.$cookie.get('uuid'))
   },
   methods: {
     // 获取项目列表

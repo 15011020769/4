@@ -1,5 +1,5 @@
 <template>
-  <div class="createServe">
+  <div class="createProvider">
     <div class="top">
       <img
         style="width:20px;cursor: pointer;"
@@ -19,25 +19,69 @@
           </el-steps>
         </div>
         <div v-if="active == 1" class="contant_flex">
-          <div class="flex_left">
-            <p style="margin-top:5px;text-overflow:ellipsis;white-space:nowrap">支持角色的服务*</p>
-          </div>
-          <div class="flex_right">
-            <el-checkbox-group
-              v-model="checkedCities"
-              @change="handleCheckedCitiesChange"
-              style="display:flex;flex-flow: row wrap;align-content: flex-start;font-size:12px"
-            >
-              <el-checkbox
-                v-for="city in cities"
-                :label="city"
-                :key="city"
-                style="flex: 0 0 16%;margin-bottom:15px"
-              >{{city}}</el-checkbox>
-            </el-checkbox-group>
+          <div class="first">
+            <div class="first_left">
+              <p style="margin-bottom:50px">身份提供商</p>
+              <p>控制台访问</p>
+              <p style="margin-top:30px">使用条件</p>
+            </div>
+            <div class="first_right">
+              <p style="margin-bottom:30px">
+                <el-select v-model="value" placeholder="暂无可选身份提供商" size="mini">
+                  <el-option
+                    v-for="item in options"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                  ></el-option>
+                </el-select>
+              </p>
+              <p>
+                <el-checkbox v-model="checked">允许当前角色访问控制台</el-checkbox>
+              </p>
+              <div style="width:800px;margin-top:40px">
+                <el-table :data="tableData" height="300" border style="width: 100%">
+                  <el-table-column prop="date" label="键">
+                    <template slot-scope="scope">
+                      <el-select v-model="value" placeholder="请选择" size="mini">
+                        <el-option
+                          v-for="item in options"
+                          :key="item.value"
+                          :label="item.label"
+                          :value="item.value"
+                        ></el-option>
+                      </el-select>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="name" label="条件">
+                    <template slot-scope="scope">
+                      <el-select v-model="value" placeholder="请选择" size="mini">
+                        <el-option
+                          v-for="item in options"
+                          :key="item.value"
+                          :label="item.label"
+                          :value="item.value"
+                        ></el-option>
+                      </el-select>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="address" label="值">
+                    <template slot-scope="scope">
+                      <el-input v-model="input" placeholder="请输入内容" size="mini"></el-input>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="address" label="">
+                    <template slot-scope="scope">
+                     <a href="JavaScript:;" @click="detele(scope)">删除</a>
+                    </template>
+                  </el-table-column>
+                </el-table>
+                <p style="margin-top:20px"><el-button size="small" @click="add_use">新增使用条件</el-button></p>
+              </div>
+            </div>
           </div>
         </div>
-        <div class="tansfer" v-if="active == 2">
+        <!-- <div class="tansfer" v-if="active == 2">
           <el-transfer
             filter-placeholder="支持搜索策略名称/描述/备注"
             v-model="transfer_value"
@@ -66,21 +110,13 @@
             </div>
           </div>
           <div class="content_table">
-            <el-table
-              :data="tableData"
-              height="300"
-              border
-              style="width: 100%"
-              :row-style="{height:0}"
-              :cell-style="{padding:'5px 10px'}"
-              :header-cell-style="{height:'20px',padding:'0px 10px'}"
-            >
+            <el-table :data="tableData" height="300" border style="width: 100%">
               <el-table-column prop="date" label="策略名称"></el-table-column>
               <el-table-column prop="name" label="描述"></el-table-column>
               <el-table-column prop="address" label="策略类型"></el-table-column>
             </el-table>
           </div>
-        </div>
+        </div>-->
         <div style="margin:20px 0px">
           <el-button size="small" v-if="active != 1" @click="reTurn">返回</el-button>
           <el-button type="primary" size="small" @click="next" v-if="active != 3">下一步</el-button>
@@ -96,69 +132,20 @@ export default {
     return {
       active: 1,
       input: "",
+      input_num: "10001921910",
       inputName: "",
       have: false,
+      radio: "1",
+      checked: true,
+      value: "",
       checkedCities: [],
-      cities: [
-        "宙斯盾安全防护",
-        "API网关",
-        "弹性伸缩",
-        "腾讯区块链开发平台",
-        "对象存储批量处理",
-        "蓝鲸平台",
-        "黑石物理服务器1.0",
-        "商业流程服务",
-        "容器服务",
-        "云数据库 MySQL",
-        "内容分发网络",
-        "文件存储",
-        "云防火墙",
-        "数据万象",
-        "消息队列 CKafka",
-        "负载均衡",
-        "云审计",
-        "云端开发环境",
-        "日志服务",
-        "CODING DevOps",
-        "对象存储",
-        "云服务器",
-        "腾讯云开发者平台",
-        "数据集成",
-        "数据安全治理中心",
-        "数据传输服务",
-        "弹性MapReduce",
-        "人脸识别",
-        "身份管理服务",
-        "物联网通信",
-        "加速物联网套件",
-        "开发者实验室",
-        "云直播",
-        "云数据库 MariaDB",
-        "小游戏联机对战引擎",
-        "云数据库 MongoDB",
-        "视频处理",
-        "迁移服务平台",
-        "媒体转码服务",
-        "网络资产风险监测系统",
-        "小程序云主机",
-        "云函数",
-        "流计算Oceanus",
-        "云数据仓库套件-Sparkling",
-        "安全运营中心",
-        "云开发",
-        "数据库中间件",
-        "腾讯智能钛",
-        "智能钛机器学习加速器",
-        "智能钛弹性模型服务",
-        "智能钛机器学习平台",
-        "智能钛自动机器学习",
-        "腾讯微服务平台",
-        "客服支持平台",
-        "微Mall",
-        "腾讯优Mall",
-        "织云"
-      ],
       transfer_value: [],
+      options: [
+        {
+          value: "选项1",
+          label: "暂无可选身份提供商"
+        }
+      ],
       transfer_data: [
         {
           value: 1,
@@ -173,28 +160,15 @@ export default {
           desc: "备选项3"
         }
       ],
-      tableData: [
-        {
-          date: "QCloudFinanceFullAccess",
-          name: "	该策略允许您管理账户内财务相关的内容，例如：付款、开票。",
-          address: "预设策略"
-        }
-      ]
+      tableData: []
     };
   },
   methods: {
     back() {
-      this.$router.push('/Role')
+      this.$router.push("/Role");
     },
     next() {
       if (this.active == 1) {
-        if (this.checkedCities.length == 0) {
-          this.$message("请至少选择一个服务");
-          return;
-        }
-        if (this.active == 3) {
-          return;
-        }
         this.active = this.active + 1;
       } else if (this.active == 2) {
         if (this.transfer_value.length == 0) {
@@ -224,18 +198,26 @@ export default {
         this.have = false;
       }
     },
-    finall(){
-      if(!this.inputName){
+    finall() {
+      if (!this.inputName) {
         this.have = true;
-        return
+        return;
       }
       this.$message("创建角色成功");
+    },
+    add_use(){
+      let obj = {}
+      this.tableData.push(obj)
+    },
+    detele(val){
+      console.log(val.$index)
+      this.tableData.splice(val.$index,1)
     }
   }
 };
 </script>
 <style lang="scss" scoped>
-.createServe {
+.createProvider {
   .top {
     padding: 20px;
     background-color: #fff;
@@ -292,6 +274,15 @@ export default {
           margin-top: 35px;
         }
       }
+    }
+  }
+  .first {
+    display: flex;
+    .first_left {
+      color: #888;
+    }
+    .first_right {
+      padding-left: 50px;
     }
   }
 }

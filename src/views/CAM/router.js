@@ -135,6 +135,38 @@ export default new Router({
       }
     },
     {
+      path: '/RoleDetail', // 角色
+      name: 'RoleDetail',
+      component: () => import(/* webpackChunkName: "Cam" */ './Role/RoleDetail.vue'),
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
+      path: '/createServe', // 新建角色产品服务
+      name: 'createServe',
+      component: () => import(/* webpackChunkName: "Cam" */ './Role/createServe.vue'),
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
+      path: '/createAccount', // 新建腾讯云账户
+      name: 'createAccount',
+      component: () => import(/* webpackChunkName: "Cam" */ './Role/createAccount.vue'),
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
+      path: '/createProvider', // 新建身份提供商
+      name: 'createProvider',
+      component: () => import(/* webpackChunkName: "Cam" */ './Role/createProvider.vue'),
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
       path: '/IdentityProvider', // 身份提供商
       name: 'IdentityProvider',
       component: () => import(/* webpackChunkName: "Cam" */ './IdentityProvider/IdentityProvider.vue'),

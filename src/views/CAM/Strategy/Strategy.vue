@@ -275,7 +275,7 @@ export default {
   }
   .container {
     .contant {
-      max-width: 1360px;
+      max-width: 96%;
       margin: 0 auto;
       .contant_top {
         font-size: 12px;
@@ -288,7 +288,7 @@ export default {
         background: #e5f0ff;
         position: relative;
         box-sizing: border-box;
-        max-width: 1360px;
+        max-width: 96%;
         margin-bottom: 20px;
       }
       .table_opare {

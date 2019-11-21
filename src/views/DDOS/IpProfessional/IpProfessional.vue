@@ -4,7 +4,7 @@
       <div class="ReportTit newClear">
         <h3 class="ReportTitH3">统计报表</h3>
         <el-button class="ReportTitBtn" type="primary">新购</el-button>
-        <el-button class="TestMethod" type="primary" @click="testMethod()">Test接口</el-button>
+        <!-- <el-button class="TestMethod" type="primary" @click="describeCCEvList()">Test接口</el-button> -->
       </div>
       <div>
         <el-tabs v-model="activeName" @tab-click="handleClick">
@@ -28,7 +28,7 @@
                   end-placeholder="结束日期"
                   :picker-options="pickerOptions">
                 </el-date-picker><br/>
-                <el-input v-model="inputId1" @change="inputIdMethod" class="mainConListOneIpt" placeholder="请输入要查询的ID或名称"/>
+                <el-input v-model="inputId1" @change="getData" class="mainConListOneIpt" placeholder="请输入要查询的ID或名称"/>
               </div>
               <div class="mainConListAll mainConListTwo">
                 <el-tabs class="tabsCard" v-model="activeName1" type="card" @tab-click="handleClick1">
@@ -101,7 +101,7 @@
                   <el-button @click="thisTime2(5)">近半年</el-button>
                 </el-button-group> -->
                 <el-date-picker
-                  v-model="value1"
+                  v-model="dateChoice2"
                   type="daterange"
                   align="right"
                   unlink-panels
@@ -110,7 +110,7 @@
                   end-placeholder="结束日期"
                   :picker-options="pickerOptions">
                 </el-date-picker><br/>
-                <el-input class="mainConListOneIpt" placeholder="请输入要查询的ID或名称"/>
+                <el-input v-model="inputId2" @change="describeCCEvList" class="mainConListOneIpt" placeholder="请输入要查询的ID或名称"/>
               </div>
             </div>
           </el-tab-pane>
@@ -125,7 +125,7 @@
                   <el-button @click="thisTime3(5)">近半年</el-button>
                 </el-button-group> -->
                 <el-date-picker
-                  v-model="value1"
+                  v-model="dateChoice3"
                   type="daterange"
                   align="right"
                   unlink-panels
@@ -134,7 +134,7 @@
                   end-placeholder="结束日期"
                   :picker-options="pickerOptions">
                 </el-date-picker><br/>
-                <el-input class="mainConListOneIpt" placeholder="请输入要查询的ID或名称"/>
+                <el-input v-model="inputId3" @change="describeCCSelfDefinePolicy" class="mainConListOneIpt" placeholder="请输入要查询的ID或名称"/>
               </div>
               <div class="mainConListAll mainConListTwo">
                 <el-tabs class="tabsCard" v-model="activeName1" type="card" @tab-click="handleClick1">
@@ -163,15 +163,21 @@ export default {
     return {
       activeName: 'first',
       activeName1:"first",
-      // 获取当前时间和前一天时间
-      endTime: new Date().toLocaleString('chinese',{hour12:false}).replace(/\//g,'-'),
-      startTime: new Date(new Date().getTime() - 24*60*60*1000).toLocaleString('chinese',{hour12:false}).replace(/\//g,'-'),
+      // 日期区间：默认获取当前时间和前一天时间
+      endTime: this.getDateString(new Date()),
+      startTime: this.getDateString(new Date(new Date().getTime() - 24*60*60*1000)),
+      endTime2: this.getDateString(new Date()),
+      startTime2: this.getDateString(new Date(new Date().getTime() - 24*60*60*1000)),
+      endTime3: this.getDateString(new Date()),
+      startTime3: this.getDateString(new Date(new Date().getTime() - 24*60*60*1000)),
       // 日期选择
       dateChoice1: {},
+      dateChoice2: {},
+      dateChoice3: {},
       // 根据Id查询
-      inputId1: '',
-      id: '',
-      value1:"",
+      inputId1: 'bgp-00000010',
+      inputId2: 'bgp-00000010',
+      inputId3: 'bgp-00000010',
       pickerOptions: {
         shortcuts: [{
           text: '今天',
@@ -235,21 +241,32 @@ export default {
   },
   watch: {
     'dateChoice1': function (value) {
-      console.log(this.dateChoice1[0].toLocaleString('chinese',{hour12:false}).replace(/\//g,'-'))
-      this.startTime = value[0].toLocaleString('chinese',{hour12:false}).replace(/\//g,'-');
-      this.endTime = value[1].toLocaleString('chinese',{hour12:false}).replace(/\//g,'-');
+      console.log(this.getDateString(value[0]))
+      this.startTime = this.getDateString(value[0])
+      this.endTime = this.getDateString(value[1])
       this.getData()
     },
-    // 'inputId1': function (value) {
-    //   console.log(value)
-    //   this.id = value
-    // }
+    'dateChoice2': function (value) {
+      console.log(this.getDateString(value[0]))
+      this.startTime2 = this.getDateString(value[0])
+      this.endTime2 = this.getDateString(value[1])
+      this.describeCCEvList()
+    },
+    'dateChoice3': function (value) {
+      console.log(this.getDateString(value[0]))
+      this.startTime3 = this.getDateString(value[0])
+      this.endTime3 = this.getDateString(value[1])
+      this.describeCCSelfDefinePolicy()
+    }
   },
   created() {
-    this.getData();
+    this.getData()
+    this.describeCCEvList()
+    this.describeCCSelfDefinePolicy()
   },
   methods:{
     getData() {
+      // 从cookie中获取资源
       // var cookies = document.cookie;
       // var list = cookies.split(";");
       // for (var i = 0; i < list.length; i++) {
@@ -267,18 +284,58 @@ export default {
         Business: 'net',
         StartTime: this.startTime,//'2018-08-27 15:05:10',
         EndTime: this.endTime,//'2018-08-27 16:05:10',
-        Id: ''
+        Id: this.inputId1
       }
       this.$axios.post('dayu2/DescribeDDoSEvList', params).then(res => {
+        console.log(params)
         console.log(res)
       })
     },
-    inputIdMethod() {
-      this.id = this.inputId1
-      console.log(this.id)
+    // 获取 DDoS 攻击事件详情
+    describeDDoSEvInfo() {
+      let params = {
+        Version: '2018-07-09',
+        // Region: '',
+        Business: 'net',
+        StartTime: this.startTime,//'2018-08-27 15:05:10',
+        EndTime: this.endTime,//'2018-08-27 16:05:10',
+        Id: this.inputId1,
+        Ip: '1.1.1.1'
+      }
+      this.$axios.post('dayu2/DescribeDDoSEvInfo', params).then(res => {
+        console.log(params)
+        console.log(res)
+      })
     },
-    testMethod(){
-      // this.$axios.post('dayu2/DescribeDDoSCount', params).then(res => {
+    // 获取 CC 攻击事件列表
+    describeCCEvList() {
+      let params = {
+        Version: '2018-07-09',
+        // Region: '',
+        Business: 'net',
+        StartTime: this.startTime2,//'2018-08-27 15:05:10',
+        EndTime: this.endTime2,//'2018-08-27 16:05:10',
+        Id: this.inputId2
+        // 'IpList.0': '1.1.1.1'
+      }
+      this.$axios.post('dayu2/DescribeCCEvList', params).then(res => {
+        console.log(params)
+        console.log(res)
+      })
+    },
+    // 业务（未找到接口）
+    describeCCSelfDefinePolicy() {
+      let params = {
+        Version: '2018-07-09',
+        // Region: '',
+        Business: 'net',
+        StartTime: this.startTime3,//'2018-08-27 15:05:10',
+        EndTime: this.endTime3,//'2018-08-27 16:05:10',
+        Id: this.inputId3
+        // 'IpList.0': '1.1.1.1'
+      }
+      // this.$axios.post('dayu2/DescribeCCSelfDefinePolicy', params).then(res => {
+      //   console.log(params)
       //   console.log(res)
       // })
     },
@@ -287,7 +344,6 @@ export default {
       //console.log(tab, event);
     },
     handleClick1(){},
-    
     handleSizeChange(val) {
       console.log(`每页 ${val} 条`);
       this.pageSize = val;
@@ -312,6 +368,10 @@ export default {
           this.tableDataEnd.push(list[from]);
         }
       }
+    },
+    // 时间格式化'yyyy-MM-dd hh:mm:ss'
+    getDateString(date) {
+      return date.toLocaleString('zh',{hour12:false, year: 'numeric',  month: '2-digit',  day: '2-digit',  hour: '2-digit',  minute: '2-digit',  second: '2-digit'}).replace(/\//g,'-');
     }
   }
 }

@@ -1,5 +1,5 @@
 <template>
-  <div class="createServe">
+  <div class="createAccount">
     <div class="top">
       <img
         style="width:20px;cursor: pointer;"
@@ -19,22 +19,26 @@
           </el-steps>
         </div>
         <div v-if="active == 1" class="contant_flex">
-          <div class="flex_left">
-            <p style="margin-top:5px;text-overflow:ellipsis;white-space:nowrap">支持角色的服务*</p>
-          </div>
-          <div class="flex_right">
-            <el-checkbox-group
-              v-model="checkedCities"
-              @change="handleCheckedCitiesChange"
-              style="display:flex;flex-flow: row wrap;align-content: flex-start;font-size:12px"
-            >
-              <el-checkbox
-                v-for="city in cities"
-                :label="city"
-                :key="city"
-                style="flex: 0 0 16%;margin-bottom:15px"
-              >{{city}}</el-checkbox>
-            </el-checkbox-group>
+          <div class="first">
+            <div class="first_left">
+              <p style="margin-bottom:40px">云账号类型</p>
+              <p>账号ID*</p>
+            </div>
+            <div class="first_right">
+              <p style="margin-bottom:30px">
+                <el-radio v-model="radio" label="1">当前主账号</el-radio>
+                <el-radio v-model="radio" label="2">其他主账号</el-radio>
+              </p>
+              <p>
+                <el-input
+                  v-model="input_num"
+                  placeholder="请输入内容"
+                  size="mini"
+                  disabled
+                  style="width:150px"
+                ></el-input>
+              </p>
+            </div>
           </div>
         </div>
         <div class="tansfer" v-if="active == 2">
@@ -66,15 +70,7 @@
             </div>
           </div>
           <div class="content_table">
-            <el-table
-              :data="tableData"
-              height="300"
-              border
-              style="width: 100%"
-              :row-style="{height:0}"
-              :cell-style="{padding:'5px 10px'}"
-              :header-cell-style="{height:'20px',padding:'0px 10px'}"
-            >
+            <el-table :data="tableData" height="300" border style="width: 100%">
               <el-table-column prop="date" label="策略名称"></el-table-column>
               <el-table-column prop="name" label="描述"></el-table-column>
               <el-table-column prop="address" label="策略类型"></el-table-column>
@@ -96,8 +92,10 @@ export default {
     return {
       active: 1,
       input: "",
+      input_num: "10001921910",
       inputName: "",
       have: false,
+      radio: "1",
       checkedCities: [],
       cities: [
         "宙斯盾安全防护",
@@ -184,17 +182,10 @@ export default {
   },
   methods: {
     back() {
-      this.$router.push('/Role')
+      this.$router.push("/Role");
     },
     next() {
       if (this.active == 1) {
-        if (this.checkedCities.length == 0) {
-          this.$message("请至少选择一个服务");
-          return;
-        }
-        if (this.active == 3) {
-          return;
-        }
         this.active = this.active + 1;
       } else if (this.active == 2) {
         if (this.transfer_value.length == 0) {
@@ -224,10 +215,10 @@ export default {
         this.have = false;
       }
     },
-    finall(){
-      if(!this.inputName){
+    finall() {
+      if (!this.inputName) {
         this.have = true;
-        return
+        return;
       }
       this.$message("创建角色成功");
     }
@@ -235,7 +226,7 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-.createServe {
+.createAccount {
   .top {
     padding: 20px;
     background-color: #fff;
@@ -292,6 +283,15 @@ export default {
           margin-top: 35px;
         }
       }
+    }
+  }
+  .first {
+    display: flex;
+    .first_left {
+      color: #888;
+    }
+    .first_right {
+      padding-left: 50px;
     }
   }
 }

@@ -58,6 +58,7 @@ export default {
 <style lang="scss" scoped>
 #CCN {
   height: 100%;
+  font-size: 12px;
   .el-container {
     height: 100%;
     .el-header {
