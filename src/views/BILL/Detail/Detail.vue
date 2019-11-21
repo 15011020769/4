@@ -1,68 +1,71 @@
 <template>
   <div class="mod-role">
-    <span style="font-size: 18px; font-weight: 600; line-height:3;">账单管理</span>
+    <span style="font-size: 16px; font-weight: 700; line-height:3;">账单管理</span>
     <el-date-picker v-model="dataForm.month" type="month" value-format="yyyy-MM" size="small" @change="getDataList()" style="padding-left: 5px;">
     </el-date-picker>
-    <span>按扣费周期(按扣费时间统计生产月度账单)</span>
+    <span style="padding-left: 10px; font-size: 12px;">按扣费周期（按扣费时间统计生产月度账单）</span>
     <el-form :inline="true" :model="dataForm" class="demo-form-inline" @keyup.enter.native="getDataList()">
       <el-form-item>
-        <el-select v-model="dataForm.businessCodeName" value-key="code" placeholder="全部产品" @change="getChildInfo()" clearable>
-          <el-option v-for="item in getProductList" :key="item.code" :label="item.nameTw" :value="item"  size="mini">
+        <el-select v-model="dataForm.businessCodeName" value-key="code" placeholder="全部产品" @change="getChildInfo()" clearable size="small">
+          <el-option v-for="item in getProductList" :key="item.code" :label="item.nameTw" :value="item">
           </el-option>
         </el-select>
-        <el-select v-model="dataForm.productCodeName" value-key="code" placeholder="请先选择产品" @change="getComponentInfo()" clearable>
-          <el-option v-for="item in getChildList" :key="item.code" :label="item.nameTw" :value="item" size="mini">
+        <el-select v-model="dataForm.productCodeName" value-key="code" placeholder="请先选择产品" @change="getComponentInfo()" clearable size="small">
+          <el-option v-for="item in getChildList" :key="item.code" :label="item.nameTw" :value="item">
           </el-option>
         </el-select>
-        <el-select v-model="dataForm.componentCodeName" placeholder="请先子选择产品" @change="getInfo()" clearable>
-          <el-option v-for="item in getComponentList" :key="item.name" :label="item.name" :value="item.name" size="mini">
+        <el-select v-model="dataForm.componentCodeName" placeholder="请先子选择产品" @change="getInfo()" clearable size="small">
+          <el-option v-for="item in getComponentList" :key="item.name" :label="item.name" :value="item.name">
           </el-option>
         </el-select>
-        <el-select v-model="dataForm.projectName" placeholder="全部项目" @change="getProjectInfo()" clearable>
-          <el-option v-for="item in getProjectList" :key="item.projectName" :label="item.projectName" :value="item.projectName" size="mini">
+        <el-select v-model="dataForm.projectName" placeholder="全部项目" @change="getProjectInfo()" clearable size="small">
+          <el-option v-for="item in getProjectList" :key="item.projectName" :label="item.projectName" :value="item.projectName">
           </el-option>
         </el-select>
-        <el-select v-model="dataForm.regionName" placeholder="全部区域" @change="getRegionInfo()" clearable>
-          <el-option v-for="item in getRegionList" :key="item.regionName" :label="item.regionName" :value="item.regionName" size="mini">
+        <el-select v-model="dataForm.regionName" placeholder="全部区域" @change="getRegionInfo()" clearable size="small">
+          <el-option v-for="item in getRegionList" :key="item.regionName" :label="item.regionName" :value="item.regionName">
           </el-option>
         </el-select>
-        <el-select v-model="dataForm.payModeName" placeholder="全部计费模式" @change="getPayModeInfo()" clearable>
-          <el-option v-for="item in getPayModeList" :key="item.payModeName" :label="item.payModeName" :value="item.payModeName" size="mini">
+        <el-select v-model="dataForm.payModeName" placeholder="全部计费模式" @change="getPayModeInfo()" clearable size="small">
+          <el-option v-for="item in getPayModeList" :key="item.payModeName" :label="item.payModeName" :value="item.payModeName">
           </el-option>
         </el-select>
-        <el-select v-model="dataForm.actionTypeName" placeholder="全部交易类型" @change="getActionTypeInfo()" clearable>
-          <el-option v-for="item in getActionTypeList" :key="item.actionTypeName" :label="item.actionTypeName" :value="item.actionTypeName" size="mini">
+        <el-select v-model="dataForm.actionTypeName" placeholder="全部交易类型" @change="getActionTypeInfo()" clearable size="small">
+          <el-option v-for="item in getActionTypeList" :key="item.actionTypeName" :label="item.actionTypeName" :value="item.actionTypeName">
           </el-option>
         </el-select>
         <el-checkbox v-model="dataForm.checked" style="padding-left: 15px;" @change="getDataList()">不显示0元费用</el-checkbox>
       </el-form-item>
       <el-form-item>
-        <span>总费用：</span>
-        <span style="font-size: 20px; color: #006eff;">{{dataForm.allCoat}} 元</span>
-        <span> = 现金支付 {{dataForm.cashPayment}} 元 + 赠送金支付 {{dataForm.freePayment}} 元 + 代金券支付 {{dataForm.voucherPayment}} 元</span>
-      </el-form-item>
-      <el-form-item style="padding-left: 26.5%;" @keyup.enter.native="getDataList()">
-        <el-input placeholder="资源实例ID" suffix-icon="el-icon-search" clearable v-model="dataForm.resourceId">
-        </el-input>
+        <span style="font-size: 14px;">总费用：</span>
+        <span style="font-size: 16px; color: #006eff;">{{dataForm.allCoat}} 元</span>
+        <span style="font-size: 14px;"> = 现金支付 {{dataForm.cashPayment}} 元 + 赠送金支付 {{dataForm.freePayment}} 元 + 代金券支付 {{dataForm.voucherPayment}} 元</span>
       </el-form-item>
       <el-form-item style="float: right;">
-        <el-button type="primary" icon="el-icon-download" @click="download"></el-button>
+        <el-button type="primary" icon="el-icon-download" @click="download" size="small"></el-button>
+      </el-form-item>
+      <el-form-item style="float: right;">
+        <el-button type="primary" @click="search()" size="small">搜索</el-button>
+      </el-form-item>
+      <el-form-item style="float: right;">
+        <el-input placeholder="资源实例ID" clearable v-model="dataForm.resourceId" size="small">
+        </el-input>
       </el-form-item>
     </el-form>
-    <el-table :data="dataList" border style="width: 100%" v-loading="dataListLoading">
-      <el-table-column prop="resourceId" header-align="center" align="center" width="120" fixed label="资源实例ID">
+    <el-table :data="dataList" border style="width: 100%" v-loading="dataListLoading" size="small">
+      <el-table-column prop="resourceId" header-align="center" align="center" width="160" fixed label="资源实例ID">
       </el-table-column>
-      <el-table-column prop="businessCodeName" header-align="center" align="center" width="120" fixed label="产品名称">
+      <el-table-column prop="businessCodeName" header-align="center" align="center" width="160" fixed label="产品名称">
       </el-table-column>
       <el-table-column prop="payModeName" header-align="center" align="center" width="120" label="计费模式">
       </el-table-column>
       <el-table-column prop="projectName" header-align="center" align="center" width="120" label="项目">
       </el-table-column>
-      <el-table-column prop="regionName" header-align="center" align="center" width="150" label="区域">
+      <el-table-column prop="regionName" header-align="center" align="center" width="200" label="区域">
       </el-table-column>
       <el-table-column prop="zoneName" header-align="center" align="center" width="120" label="可用区">
       </el-table-column>
-      <el-table-column prop="productCodeName" header-align="center" align="center" width="120" label="子产品名称">
+      <el-table-column prop="productCodeName" header-align="center" align="center" width="200" label="子产品名称">
       </el-table-column>
       <el-table-column prop="actionTypeName" header-align="center" align="center" width="150" label="交易类型">
       </el-table-column>
@@ -70,15 +73,15 @@
       </el-table-column>
       <el-table-column prop="billId" header-align="center" align="center" width="150" label="交易ID">
       </el-table-column>
-      <el-table-column prop="payTime" header-align="center" align="center" width="120" label="扣费时间">
+      <el-table-column prop="payTime" header-align="center" align="center" width="150" label="扣费时间">
       </el-table-column>
-      <el-table-column prop="feeBeginTime" header-align="center" align="center" width="120" label="开始使用时间">
+      <el-table-column prop="feeBeginTime" header-align="center" align="center" width="150" label="开始使用时间">
       </el-table-column>
-      <el-table-column prop="feeEndTime" header-align="center" align="center" width="120" label="结束使用时间">
+      <el-table-column prop="feeEndTime" header-align="center" align="center" width="150" label="结束使用时间">
       </el-table-column>
       <el-table-column prop="componentCodeName" header-align="center" align="center" width="120" label="组件类型">
       </el-table-column>
-      <el-table-column prop="itemCodeName" header-align="center" align="center" width="120" label="组件名称">
+      <el-table-column prop="itemCodeName" header-align="center" align="center" width="150" label="组件名称">
       </el-table-column>
       <el-table-column prop="singlePrice" header-align="center" align="center" width="120" label="组件刊例价">
       </el-table-column>
@@ -214,6 +217,11 @@ export default {
         this.dataListLoading = false
       })
     },
+    search () {
+      this.pageIndex = 1
+      this.pageSize = 10
+      this.getDataList()
+    },
     // 总费用计算
     cost () {
       var params = {
@@ -263,7 +271,7 @@ export default {
         const content = res
         const blob = new Blob([content])
         const fileName = this.dataForm.month + '--账单明细.csv'
-        if ('download' in document.createElement('a')) { 
+        if ('download' in document.createElement('a')) {
           // 非IE下载
           const elink = document.createElement('a')
           elink.download = fileName
@@ -271,10 +279,10 @@ export default {
           elink.href = URL.createObjectURL(blob)
           document.body.appendChild(elink)
           elink.click()
-          URL.revokeObjectURL(elink.href) 
+          URL.revokeObjectURL(elink.href)
           // 释放URL 对象
           document.body.removeChild(elink)
-        } else { 
+        } else {
           // IE10+下载
           navigator.msSaveBlob(blob, fileName)
         }
@@ -303,6 +311,8 @@ export default {
     },
     // 获取子产品列表
     getChildInfo () {
+      this.pageIndex = 1
+      this.pageSize = 10
       this.dataForm.productCodeName = ''
       this.dataForm.componentCodeName = ''
       var params = {
@@ -317,6 +327,8 @@ export default {
     },
     // 获取组件列表
     getComponentInfo () {
+      this.pageIndex = 1
+      this.pageSize = 10
       this.dataForm.componentCodeName = ''
       var params = {
         'projectCode': this.dataForm.productCodeName.code
@@ -334,6 +346,8 @@ export default {
     },
     // 获取项目列表
     getProjectInfo () {
+      this.pageIndex = 1
+      this.pageSize = 10
       var params = {
         'month': this.dataForm.month
       }
@@ -345,6 +359,8 @@ export default {
     },
     // 获取区域列表
     getRegionInfo () {
+      this.pageIndex = 1
+      this.pageSize = 10
       var params = {
         'month': this.dataForm.month
       }
@@ -356,6 +372,8 @@ export default {
     },
     // 获取计费模式列表
     getPayModeInfo () {
+      this.pageIndex = 1
+      this.pageSize = 10
       var params = {
         'month': this.dataForm.month
       }
@@ -367,6 +385,8 @@ export default {
     },
     // 获取交易类型列表
     getActionTypeInfo () {
+      this.pageIndex = 1
+      this.pageSize = 10
       var params = {
         'month': this.dataForm.month
       }

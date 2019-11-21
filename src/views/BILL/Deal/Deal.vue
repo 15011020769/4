@@ -1,23 +1,23 @@
 <template>
   <div class="mod-role">
-    <span style="font-size: 18px; font-weight: 600; line-height:3;">订单管理</span>
+    <span style="font-size: 16px; font-weight: 700; line-height:3;">订单管理</span>
     <el-form :inline="true" :model="dataForm" class="demo-form-inline" @keyup.enter.native="getDataList()">
       <el-form-item>
-        <el-input placeholder="项目ID" clearable v-model="dataForm.projectId">
+        <el-input placeholder="项目ID" clearable v-model="dataForm.projectId" size="small">
         </el-input>
       </el-form-item>
       <el-form-item>
-        <el-input placeholder="订单编号" clearable v-model="dataForm.orderId">
+        <el-input placeholder="订单编号" clearable v-model="dataForm.orderId" size="small">
         </el-input>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="getDataList()">搜索</el-button>
+        <el-button type="primary" @click="search()" size="small">搜索</el-button>
       </el-form-item>
       <el-form-item style="float: right;">
-        <el-button type="primary" icon="el-icon-download" @click="download"></el-button>
+        <el-button type="primary" icon="el-icon-download" @click="download" size="small"></el-button>
       </el-form-item>
     </el-form>
-    <el-table :data="dataList" border style="width: 100%" v-loading="dataListLoading">
+    <el-table :data="dataList" border style="width: 100%" v-loading="dataListLoading" size="small">
       <div style='display:inline-block;' v-if="false">
         <el-table-column prop="payer" header-align="center" align="center" width="150" label="支付者">
         </el-table-column>
@@ -117,6 +117,11 @@ export default {
         this.dataListLoading = false
       })
     },
+    search () {
+      this.pageIndex = 1
+      this.pageSize = 10
+      this.getDataList()
+    },
     formatterStatus (row, column, cellValue) {
       if (cellValue === '1') {
         return '未支付'
@@ -173,7 +178,7 @@ export default {
           URL.revokeObjectURL(elink.href)
           // 释放URL 对象
           document.body.removeChild(elink)
-        } else { 
+        } else {
           // IE10+下载
           navigator.msSaveBlob(blob, fileName)
         }
