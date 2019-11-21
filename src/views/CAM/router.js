@@ -71,6 +71,14 @@ export default new Router({
       }
     },
     {
+      path: '/Interfacedetails',//接口详情
+      name: 'Interfacedetails',
+      component: () => import(/*webpackChunkName:"Cam"*/'./UserGroup/Interfacedetails.vue'),
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
       path: '/messageCreate', // 新建消息接收人
       name: 'messageCreate',
       component: () => import(/* webpackChunkName: "Cam" */ './UserList/messageCreate.vue'),

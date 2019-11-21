@@ -20,12 +20,14 @@
         <el-form-item label="元数据文档" prop="metadataDocument">
                 <!-- <el-col :span="40"> -->
             <el-upload size="mini"
+            accept="text/xml, application/xml"
                 class="upload-demo"
                 action=""
                 :on-change="handleChange">
-                    <div style="float:left"><el-input :disabled="true" v-model="addModel.metadataDocument"></el-input></div>
+                    <div style="float:left"><el-input type="file" :disabled="true" v-model="addModel.metadataDocument"></el-input></div>
                 <div style="float:right"><el-button size="mini" >选择文件</el-button></div>
             </el-upload>
+            
               <!-- </el-col> -->
         </el-form-item>
       </el-form>

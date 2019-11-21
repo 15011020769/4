@@ -16,10 +16,10 @@
         :data="tableData"
         tooltip-effect="dark"
         style="width: 100%; border:1px solid #ddd;padding-top: 8px;" >
-        <el-table-column prop="groupName" label="提供商名称" show-overflow-tooltip> </el-table-column>
-        <el-table-column prop="remark" label="提供商类型" show-overflow-tooltip> </el-table-column>
+        <el-table-column prop="name" label="提供商名称" show-overflow-tooltip> </el-table-column>
+        <el-table-column prop="description" label="提供商类型" show-overflow-tooltip> </el-table-column>
         <el-table-column prop="createTime" label="创建时间" show-overflow-tooltip> </el-table-column>
-        <el-table-column prop="createTime" label="最后更新时间" show-overflow-tooltip> </el-table-column>
+        <el-table-column prop="modifyTime" label="最后更新时间" show-overflow-tooltip> </el-table-column>
         <el-table-column label="操作" show-overflow-tooltip>
            <!-- &lt;!&ndash;<template slot-scope="scope">
           <el-button size="mini" type="text" ></el-button>
@@ -53,19 +53,18 @@ export default {
   },
   methods: {
     // 初始化方法。
-    init() {
-      // let params = {
-      //   Action: 'ListGroups',
-      //   Version: '2019-01-16'
-      // }
-      // let url = "cam/ListGroups"
-      // this.axios.post(url, params).then(res => {
-      //   this.tableData = res.data.groupInfo
-      //   this.total = parseInt(res.data.totalNum)
+   init() {
+      let params = {
+        Action: 'ListSAMLProviders',
+        Version: '2019-01-16'
+      }
+      let url = "cam2/ListSAMLProviders"
+      this.axios.post(url, params).then(data => {
+        this.tableData = data.Response.SAMLProviderSet
         this.loading = false
-      // }).catch(error => {
-      //   console.log(error)
-      // })
+      }).catch(error => {
+        console.log(error)
+      })
     },
     NewUser() {
       this.$router.push({name: 'NewIdentityProvider'})

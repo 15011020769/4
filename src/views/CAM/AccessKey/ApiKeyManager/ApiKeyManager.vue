@@ -3,9 +3,14 @@
     <div class="top">
       <span class="title-left">API密钥管理</span>
     </div>
+    <div class="explain">
+      <p>
+        <span>您的 API 密钥代表您的账号身份和所拥有的权限，等同于您的登录密码，切勿泄露他人。</span>
+      </p>
+    </div>
     <div class="cam_button">
       <el-row class="cam-lt">
-        <el-button type="primary"  @click="NewUser" >新建秘钥</el-button>
+        <el-button type="primary" size="small" @click="NewUser" >新建秘钥</el-button>
       </el-row>
     </div>
     <!-- 表格 -->
@@ -36,8 +41,25 @@
         </el-pagination>
       </div>
     </div>
+    <template>
+      <div>
+        <el-dialog title="高风险提示" :visible.sync="highRiskHint" :before-close="highRisClose" width="40%"> 
+          <p style="font-size:10px;">
+            您正在使用主账号访问云API密钥管理页面，使用密钥通过云API可以无限制地访问您的腾讯云资源。 云API密钥泄露可能造成您的云上资产损失，强烈建议您登录子用户账户操作并使用子用户密钥访问云API。
+          </p>
+          <p style="font-size:10px;">
+            <el-checkbox v-model="checked">不再显示此信息</el-checkbox>
+          </p>
+          <br/>
+          <br/>
+          <div style="margin:0 auto;text-align: center;">
+            <el-button size="small" @click="highRiskHint = false">&nbsp;&nbsp;继续使用&nbsp;&nbsp;</el-button>
+            <el-button size="small" type="primary" @click="highRiskLink">&nbsp;&nbsp;立即使用子账户&nbsp;&nbsp;</el-button>
+          </div>
+        </el-dialog>
+      </div>
+    </template>
   </div>
-
 </template>
 <script>
 export default {
@@ -45,7 +67,9 @@ export default {
     return {
       tableData: [],
       total: 0,
-      loading: true
+      loading: true,
+      highRiskHint: true,
+      checked: false
     }
   },
   mounted() {
@@ -69,6 +93,12 @@ export default {
     },
     NewUser() {
       this.$router.push({name: 'NewIdentityProvider'})
+    },
+    highRisClose() {
+      this.highRiskHint = false
+    },
+    highRiskLink() {
+      this.$router.push({ name: "custormCreate" });
     }
   }
 }
@@ -190,6 +220,24 @@ export default {
       text-indent: -10px;
       padding-left: 18px;
       margin-bottom: 0; 
+    }
+    .explain {
+      width: 96%;
+      font-size: 12px;
+      padding: 10px 30px 10px 20px;
+      vertical-align: middle;
+      color: #003b80;
+      border: 1px solid #97c7ff;
+      border-radius: 2px;
+      background: #e5f0ff;
+      position: relative;
+      box-sizing: border-box;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .explain p {
+      line-height: 1.5;
+      margin-bottom: 8px;
     }
   }
 </style>

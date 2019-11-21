@@ -119,9 +119,7 @@
       </el-table-column>
       <el-table-column label="用户名称">
         <template slot-scope="scope">
-          <span>
-            <a @click="details" href>{{ scope.row.name }}</a>
-          </span>
+         <el-link @click="details" type="primary">{{ scope.row.name }}</el-link>
         </template>
       </el-table-column>
       <el-table-column label="用户类型" prop="type">

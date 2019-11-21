@@ -29,7 +29,7 @@
         style="width: 100%; border:1px solid #ddd;padding-top: 8px;" 
         @selection-change="handleSelectionChange">
         <el-table-column prop="groupId" type="selection" width="30"> </el-table-column>
-        <el-table-column prop="groupName" :label="$t('CAM.CAM.userGroup.colNmae')" show-overflow-tooltip> </el-table-column>
+        <el-table-column prop="groupName" :label="$t('CAM.CAM.userGroup.colNmae')" show-overflow-tooltip><el-link @click="Interface" type="primary">测试接口组</el-link> </el-table-column>
         <el-table-column prop="remark" :label="$t('CAM.CAM.userGroup.colRemark')" show-overflow-tooltip> </el-table-column>
         <el-table-column prop="createTime" :label="$t('CAM.CAM.userGroup.colCreTime')" show-overflow-tooltip> </el-table-column>
         <el-table-column :label="$t('CAM.CAM.userGroup.colHandle')" show-overflow-tooltip>
@@ -321,6 +321,10 @@ export default {
     },
     toQuery() {
       this.init()
+    },
+    //测试接口详情
+    Interface(){
+      this.$router.push({ name: "Interfacedetails" });
     }
   }
 }
@@ -400,9 +404,7 @@ export default {
     .cam_button{
       position: relative;
     }
-    .suo{
-      position: absolute;
-    }
+    
     .cam-box{
       width: 96%;
       padding: 20px;
