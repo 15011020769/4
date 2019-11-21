@@ -661,7 +661,6 @@ export default {
   .el-table .cell {
     position: relative;
     height: 23px;
-
   }
   .el-button--text {
     height: 23px;
@@ -675,7 +674,7 @@ export default {
     text-overflow: ellipsis;
     white-space: nowrap;
     width: 90px;
-    .i-name{
+    .i-name {
       position: absolute;
       right: 0px;
       bottom: 12px;
@@ -739,6 +738,7 @@ export default {
   .table-div {
     width: 90%;
     border: 1px solid #ddd;
+    padding: 0 5px;
     tr {
       width: 30%;
     }
