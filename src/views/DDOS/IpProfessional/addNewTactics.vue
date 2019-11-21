@@ -241,55 +241,57 @@
           <el-radio label="开启"></el-radio>
         </el-radio-group><br/>
         <span class="spanStyleLabel">源新建连接限速</span>
-        <el-radio-group v-model="radios3">
+        <el-radio-group v-model="radios3" @change="thisNextShowRow(3)">
           <el-radio label="关闭"></el-radio>
           <el-radio label="开启"></el-radio>
         </el-radio-group>
-        <el-input class="inputChange1"></el-input>个/秒<br/>
+        <span  v-if="thisRadio3"><el-input class="inputChange1"></el-input>个/秒</span><br/>
         <span class="spanStyleLabel">源并发连接限制</span>
-        <el-radio-group v-model="radios4">
+        <el-radio-group v-model="radios4" @change="thisNextShowRow(4)">
           <el-radio label="关闭"></el-radio>
           <el-radio label="开启"></el-radio>
-        </el-radio-group><br/>
+        </el-radio-group><span  v-if="thisRadio4"><el-input class="inputChange1"></el-input>个</span><br/>
         <span class="spanStyleLabel">目的新建连接限速</span>
-        <el-radio-group v-model="radios5">
+        <el-radio-group v-model="radios5" @change="thisNextShowRow(5)">
           <el-radio label="关闭"></el-radio>
           <el-radio label="开启"></el-radio>
-        </el-radio-group><br/>
+        </el-radio-group><span  v-if="thisRadio5"><el-input class="inputChange1"></el-input>个/秒</span><br/>
         <span class="spanStyleLabel">目的并发连接数限制</span>
-        <el-radio-group v-model="radios6">
+        <el-radio-group v-model="radios6" @change="thisNextShowRow(6)">
           <el-radio label="关闭"></el-radio>
           <el-radio label="开启"></el-radio>
-        </el-radio-group>
+        </el-radio-group><span  v-if="thisRadio6"><el-input class="inputChange1"></el-input>个</span>
       </div>
       <!-- 异常连接检测 -->
       <div class="childContTit">
         <h2>异常连接检测<i class="el-icon-info"></i></h2>
         <span class="spanStyleLabel">源IP最大异常连接数</span>
-        <el-radio-group v-model="radios7">
+        <el-radio-group v-model="radios7" @change="thisNextShow">
           <el-radio label="关闭"></el-radio>
           <el-radio label="开启"></el-radio>
-        </el-radio-group><br/>
-        <span class="spanStyleLabel">Syn报文占比检测</span>
-        <el-radio-group v-model="radios8">
-          <el-radio label="关闭"></el-radio>
-          <el-radio label="开启"></el-radio>
-        </el-radio-group><br/>
-        <span class="spanStyleLabel">Syn报文数检测</span>
-        <el-radio-group v-model="radios9">
-          <el-radio label="关闭"></el-radio>
-          <el-radio label="开启"></el-radio>
-        </el-radio-group><br/>
-        <span class="spanStyleLabel">连接超时检测</span>
-        <el-radio-group v-model="radios10">
-          <el-radio label="关闭"></el-radio>
-          <el-radio label="开启"></el-radio>
-        </el-radio-group><br/>
-        <span class="spanStyleLabel">异常空连接防护</span>
-        <el-radio-group v-model="radios11">
-          <el-radio label="关闭"></el-radio>
-          <el-radio label="开启"></el-radio>
-        </el-radio-group>
+        </el-radio-group><span  v-if="thisRadio7"><el-input class="inputChange1"></el-input>个</span><br/>
+        <div v-if="thisRadio7">
+          <span class="spanStyleLabel">Syn报文占比检测</span>
+          <el-radio-group v-model="radios8"  @change="thisNextShowRow(8)">
+            <el-radio label="关闭"></el-radio>
+            <el-radio label="开启"></el-radio>
+          </el-radio-group><span v-if="thisRadio8"><span class="spanText">Syn报文占比检测：</span><el-input class="inputChange1"></el-input></span><br/>
+          <span class="spanStyleLabel">Syn报文数检测</span>
+          <el-radio-group v-model="radios9" @change="thisNextShowRow(9)">
+            <el-radio label="关闭"></el-radio>
+            <el-radio label="开启"></el-radio>
+          </el-radio-group><span v-if="thisRadio9"><span class="spanText">Syn报文数检测：</span><el-input class="inputChange1"></el-input></span><br/>
+          <span class="spanStyleLabel">连接超时检测</span>
+          <el-radio-group v-model="radios10" @change="thisNextShowRow(10)">
+            <el-radio label="关闭"></el-radio>
+            <el-radio label="开启"></el-radio>
+          </el-radio-group><span v-if="thisRadio10"><el-input class="inputChange1"></el-input>秒</span><br/>
+          <span class="spanStyleLabel">异常空连接防护</span>
+          <el-radio-group v-model="radios11">
+            <el-radio label="关闭"></el-radio>
+            <el-radio label="开启"></el-radio>
+          </el-radio-group>
+        </div>
       </div>
       <!-- 水印防护 -->
       <div class="childContTit">
@@ -368,7 +370,6 @@
                 <el-radio label="关闭"></el-radio>
                 <el-radio label="开启"></el-radio>
               </el-radio-group>
-
             </h2>
             <p>数据报文经过安全防护系统后，自动剥离UDP报文中的水印，再传到源站。海外地区不支持。</p>
           </div>
@@ -473,6 +474,14 @@ export default {
       radios10:"关闭",
       radios11:"关闭",
       radios12:"关闭",
+      thisRadio3:false,
+      thisRadio4:false,
+      thisRadio5:false,
+      thisRadio6:false,
+      thisRadio7:false,
+      thisRadio8:false,
+      thisRadio9:false,
+      thisRadio10:false
     }
   },
   mounted() {
@@ -603,6 +612,58 @@ export default {
         this.tags5.splice(idx, 1)
       }
     },
+    thisNextShow(){
+      if(this.radios7=="开启"){
+        this.thisRadio7=true;
+      }else{
+        this.thisRadio7=false;
+      }
+    },
+    thisNextShowRow(radioNumber){
+      if(radioNumber==3){
+        if(this.radios3=="开启"){
+          this.thisRadio3=true;
+        }else{
+          this.thisRadio3=false;
+        }
+      }else if(radioNumber==4){
+        if(this.radios4=="开启"){
+          this.thisRadio4=true;
+        }else{
+          this.thisRadio4=false;
+        }
+      }else if(radioNumber==5){
+        if(this.radios5=="开启"){
+          this.thisRadio5=true;
+        }else{
+          this.thisRadio5=false;
+        }
+      }else if(radioNumber==6){
+        if(this.radios6=="开启"){
+          this.thisRadio6=true;
+        }else{
+          this.thisRadio6=false;
+        }
+      }else if(radioNumber==8){
+        if(this.radios8=="开启"){
+          this.thisRadio8=true;
+        }else{
+          this.thisRadio8=false;
+        }
+      }else if(radioNumber==9){
+        if(this.radios9=="开启"){
+          this.thisRadio9=true;
+        }else{
+          this.thisRadio9=false;
+        }
+      }else if(radioNumber==10){
+        if(this.radios10=="开启"){
+          this.thisRadio10=true;
+        }else{
+          this.thisRadio10=false;
+        }
+      }
+    }
   }
 }
 </script>
@@ -661,8 +722,9 @@ export default {
   font-size:12px;
   color:#888;
   margin-right:50px;
-  margin-bottom:25px;
+  display: inline-block;
   line-height:30px;
+  width:147px;
 }
 .el-icon-info{
   color:#888;
@@ -718,51 +780,64 @@ export default {
     td{
       border-bottom:1px solid #eaeaea;
       .selectChange{
-        height:35px;
+        height:30px;
         div{
-          height:35px;
+          height:30px;
           input{
-            height:35px;
+            height:30px;
+            border-radius: 0;
           }
         }
       }
       .selectChange1{
         width:70px;
-        height:35px;
+        height:30px;
         div{
           width:70px;
-          height:35px;
+          height:30px;
           input{
             width:70px;
-            height:35px;
+            height:30px;
+            border-radius: 0;
           }
         }
       }
       .inputChange{
-        height:35px;
+        height:30px;
         width:150px;
         input{
-          height:35px;
+          height:30px;
           width:150px;
+          border-radius: 0;
         }
       }
       .inputChange1{
-        height:35px;
+        height:30px;
         width:70px;
+        margin-bottom: 0;
+        margin-left:0;
         input{
-          height:35px;
+          height:30px;
           width:70px;
+          border-radius: 0;
         }
       }
     }
   }
 }
 .inputChange1{
-  height:35px;
-  width:70px!important;
+  height:30px;
+  width:80px!important;
+  margin-left:12px;
+  margin-bottom:10px;
+  margin-right:6px;
   input{
-    height:35px;
-    width:70px;
+    height:30px;
+    width:80px;
+    border-radius: 0;
   }
+}
+.spanText{
+  margin-left:12px;
 }
 </style>

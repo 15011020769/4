@@ -1,12 +1,12 @@
 <template>
-  <div id="SCF">
+  <div id="DDOS">
     <el-container v-if="$route.meta.keepAlive">
       <el-header>
         <nav-header></nav-header>
       </el-header>
       <el-container height="100%">
         <el-aside width="200px"
-          height="100%">
+          height="100%" v-if="$route.meta.leftNav">
           <left-aside></left-aside>
         </el-aside>
         <el-main>
@@ -56,7 +56,7 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-#SCF {
+#DDOS {
   height: 100%;
   .el-container {
     height: 100%;

@@ -1,5 +1,5 @@
 <template>
-  <div class="CAP">
+  <div class="DDOS">
     <div class="big-title">DDoS</div>
     <!-- <el-menu default-active="2" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose" background-color="#545c64" text-color="#fff" active-text-color="#ffd04b" :router="true">
       <el-menu-item index="appId">
@@ -66,7 +66,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.CAP {
+.DDOS {
   ::v-deep .el-menu{
     border-right: 0 !important;
   }

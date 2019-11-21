@@ -8,7 +8,8 @@ import AccessConfig from './IpProfessional/AccessConfig'
 import AssetList from './IpProfessional/AssetList'
 import unBlocking from './unBlocking/unBlocking'
 import UnblockingRecord from './unBlocking/UnblockingRecord'
-
+import choose from './buy/choose'
+import pay from './buy/pay'
 
 
 Vue.use(Router)
@@ -29,7 +30,8 @@ export default new Router({
       name: 'ProtectOverview',
       component: ProtectOverview,
       meta: {
-        keepAlive: true
+        keepAlive: true,
+        leftNav:true
       }
     },
     {
@@ -37,7 +39,8 @@ export default new Router({
       name: 'basicProtection',
       component: basicProtection,
       meta: {
-        keepAlive: true
+        keepAlive: true,
+        leftNav:true
       }
     },
     {
@@ -45,7 +48,8 @@ export default new Router({
       name: 'IpProfessional',
       component: IpProfessional,
       meta: {
-        keepAlive: true
+        keepAlive: true,
+        leftNav:true
       }
     },
     {
@@ -53,7 +57,8 @@ export default new Router({
       name: 'ProtectionConfig',
       component: ProtectionConfig,
       meta: {
-        keepAlive: true
+        keepAlive: true,
+        leftNav:true
       }
     },
     {
@@ -61,7 +66,8 @@ export default new Router({
       name: 'AccessConfig',
       component: AccessConfig,
       meta: {
-        keepAlive: true
+        keepAlive: true,
+        leftNav:true
       }
     },
     {
@@ -69,7 +75,8 @@ export default new Router({
       name: 'AssetList',
       component: AssetList,
       meta: {
-        keepAlive: true
+        keepAlive: true,
+        leftNav:true
       }
     },
     {
@@ -77,7 +84,8 @@ export default new Router({
       name: 'unBlocking',
       component: unBlocking,
       meta: {
-        keepAlive: true
+        keepAlive: true,
+        leftNav:true
       }
     },
     {
@@ -85,7 +93,26 @@ export default new Router({
       name: 'UnblockingRecord',
       component: UnblockingRecord,
       meta: {
-        keepAlive: true
+        keepAlive: true,
+        leftNav:true
+      }
+    },
+    {
+      path: '/choose', // 新购
+      name: 'choose',
+      component: choose,
+      meta: {
+        keepAlive: true,
+        leftNav:false
+      }
+    },
+    {
+      path: '/pay', // 支付
+      name: 'pay',
+      component: pay,
+      meta: {
+        keepAlive: true,
+        leftNav:false
       }
     }
   ]

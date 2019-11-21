@@ -3,7 +3,7 @@
     <div class="statistReportTit">
       <div class="ReportTit newClear">
         <h3 class="ReportTitH3">防护配置</h3>
-        <el-button class="ReportTitBtn" type="primary">新购</el-button>
+        <el-button class="ReportTitBtn" type="primary" @click="newBuy">新购</el-button>
       </div>
       <div>
         <el-tabs v-model="activeName" @tab-click="handleClick">
@@ -405,6 +405,12 @@ export default {
       //   data.push(this.thisData[i]);
       // }
       return data;
+    },
+    //跳转新购页面
+    newBuy(){
+      this.$router.push({
+        path: '/choose'
+      })
     }
   }
 }
