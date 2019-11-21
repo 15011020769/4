@@ -13,6 +13,7 @@ import City from '@/components/Tools/RegionBtn' // 公共组件城市列表
 import Duration from '@/components/Tools/Duration' // 购买时长组件
 import DatePicker from '@/components/Tools/DatePicker' // 日期选择器控件
 import filters from '@/filters/filters.js'
+import i18n from '@/language/i18n.js' // 引入i18n包
 // 引入基本模板
 const echarts = require('echarts/lib/echarts')
 // 引入折线图组件
@@ -34,6 +35,7 @@ Vue.use(VueCookie)
 
 new Vue({
   router,
+  i18n,
   // store,
   render: h => h(App)
 }).$mount('#app')

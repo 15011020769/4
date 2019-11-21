@@ -539,28 +539,28 @@ export default {
         Resource: 'qcs::vpc:ap-guangzhou:uin/100011921910:ccn/' + this.ccnIdOfTag
       }
       var newKey = []
-      for(let j = 0,len=tagss.length; j < len; j++) {
+      for (let j = 0, len = tagss.length; j < len; j++) {
         newKey.push(tagss[j].Key)
       }
       var oldKey = []
-      for(let j = 0,len=this.oldTags.length; j < len; j++) {
+      for (let j = 0, len = this.oldTags.length; j < len; j++) {
         oldKey.push(this.oldTags[j].Key)
       }
       // 获取删除arr
       let delCount = 0
-      for(let j = 0,len=oldKey.length; j < len; j++) {
+      for (let j = 0, len = oldKey.length; j < len; j++) {
         if (newKey.indexOf(oldKey[j]) == -1) {
-          let str = 'DeleteTags.'+ delCount +'.TagKey'
+          let str = 'DeleteTags.' + delCount + '.TagKey'
           params[str] = oldKey[j]
           delCount++
         }
       }
       // 获取新增arr
       let addCount = 0
-      for(let j = 0,len=newKey.length; j < len; j++) {
+      for (let j = 0, len = newKey.length; j < len; j++) {
         if (oldKey.indexOf(newKey[j]) == -1) {
-          let str1 = 'ReplaceTags.'+ addCount +'.TagKey'
-          let str2 = 'ReplaceTags.'+ addCount +'.TagValue'
+          let str1 = 'ReplaceTags.' + addCount + '.TagKey'
+          let str2 = 'ReplaceTags.' + addCount + '.TagValue'
           params[str1] = newKey[j]
           params[str2] = tagss[j].Value
           addCount++
@@ -624,7 +624,7 @@ export default {
     line-height: 0px;
     border-radius: 0px;
     font-size: 12px !important;
-    padding: 10px 15px;
+    padding: 10px 20px;
   }
   .el-button.is-plain:hover {
     background-color: #0063e5;
