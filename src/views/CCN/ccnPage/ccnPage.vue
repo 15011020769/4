@@ -11,12 +11,12 @@
     <div class="tables">
       <el-table :data="tableData" style="width: 100%">
         <template slot="empty">{{ $t('CCN.CCN.total.tdno') }}</template>
-        <el-table-column prop="CcnId" :label="$t('CCN.CCN.total.tr1')">
+        <el-table-column prop="CcnId" :label="$t('CCN.CCN.total.tr1')" width="130">
           <template slot-scope="scope">
             <el-button @click="handleClick(scope.row)" type="text">{{ scope.row.CcnId }}</el-button>
             <p id="editName" class="p-name">
               {{ scope.row.CcnName }}
-              <i type="text" @click="updateName(scope.row)">
+              <i type="text" @click="updateName(scope.row)" class="i-name">
                 <i class="el-icon-edit"></i>
               </i>
             </p>
@@ -203,7 +203,6 @@
           $t('CCN.CCN.total.sure')
         }}</el-button>
         <el-button @click="dialogFormVisible = false">取 消</el-button>
-
       </div>
     </el-dialog>
     <!-- 修改名称updateName模态窗 -->
@@ -660,7 +659,9 @@ export default {
     font-size: 12px;
   }
   .el-table .cell {
+    position: relative;
     height: 23px;
+
   }
   .el-button--text {
     height: 23px;
@@ -673,6 +674,12 @@ export default {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    width: 90px;
+    .i-name{
+      position: absolute;
+      right: 0px;
+      bottom: 12px;
+    }
   }
   .close_color {
     color: #e54545;
@@ -710,11 +717,7 @@ export default {
     float: left;
     margin-left: 30px;
   }
-  .el-form {
-    ::v-deep .el-form-item__label {
-      font-size: 12px;
-    }
-  }
+
   .el-textarea {
     width: 370px;
     float: left;
@@ -768,9 +771,16 @@ export default {
     text-align: left;
   }
 }
+.el-form {
+  ::v-deep .el-form-item__label {
+    font-size: 12px;
+    text-align: left;
+  }
+}
 .el-input {
-   ::v-deep .el-input__inner {
+  ::v-deep .el-input__inner {
     height: 30px;
+    width: 200px;
   }
 }
 .el-select {
@@ -778,9 +788,9 @@ export default {
     height: 30px;
   }
 }
-.dialog-footer{
+.dialog-footer {
   text-align: center;
-  .el-button{
+  .el-button {
     height: 30px;
     line-height: 0;
     border-radius: 0;
