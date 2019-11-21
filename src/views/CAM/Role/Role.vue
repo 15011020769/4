@@ -57,17 +57,17 @@
       </div>
       <el-dialog :visible.sync="create_dialogVisible" width="30%" :before-close="handleClose">
         <h3 slot="title">选择角色载体</h3>
-        <div class="createItem">
+        <div class="createItem" @click="toServe">
           <i class="strategy-icon ps"></i>
           <h3 style="color:#333;font-weight:400">腾讯云产品服务</h3>
           <p>授权云服务通过角色使用您的云资源</p>
         </div>
-        <div class="createItem">
+        <div class="createItem" @click="toAccount">
           <i class="strategy-icon ca"></i>
           <h3 style="color:#333;font-weight:400">腾讯云账户</h3>
           <p>授权主账号或者其他主账号通过角色使用您的云资源</p>
         </div>
-        <div class="createItem">
+        <div class="createItem" @click="toProvider">
           <i class="strategy-icon sf"></i>
           <h3 style="color:#333;font-weight:400">身份提供商</h3>
           <p>授权腾讯云外部用户身份（如企业用户目录）使用您的云资源</p>
@@ -172,6 +172,15 @@ export default {
     handleCurrentChange() {},
     handleClick_user() {
       this.dialogVisible = true;
+    },
+    toServe(){
+      this.$router.push("/createServe")
+    },
+    toAccount(){
+      this.$router.push("/createAccount")
+    },
+    toProvider(){
+      this.$router.push("/createProvider")
     }
   }
 };
@@ -187,7 +196,7 @@ export default {
     border-bottom: 1px solid #ddd;
   }
   .container {
-    max-width: 1360px;
+    max-width: 96%;
     margin: 0 auto;
     padding-top: 20px;
     .container-text {

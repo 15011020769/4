@@ -352,7 +352,7 @@ export default {
     }
   }
   .container {
-    max-width: 1360px;
+    max-width: 96%;
     margin: 0 auto;
     .baseInfo {
       padding: 20px;

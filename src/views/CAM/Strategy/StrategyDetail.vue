@@ -153,7 +153,7 @@
       </div>
       <el-dialog :visible.sync="dialogVisible" width="50%" :before-close="handleClose">
         <p class="dialog">关联用户/用户组</p>
-        <div style="padding:20px 0 20px 25%;">
+        <div>
           <el-transfer
             v-model="transfer_value"
             :props="{key: 'value',label: 'desc'}"
@@ -161,7 +161,7 @@
             filterable
           ></el-transfer>
         </div>
-        <p style="text-align:center">
+        <p style="text-align:center;margin-top:20px">
           <el-button @click="dialogVisible = false" size="small">取 消</el-button>
           <el-button type="primary" @click="dialogVisible = false" size="small">确 定</el-button>
         </p>
@@ -305,7 +305,7 @@ export default {
     }
   }
   .container {
-    max-width: 1360px;
+    max-width: 96%;
     margin: 0 auto;
     .baseInfo {
       padding: 20px;
