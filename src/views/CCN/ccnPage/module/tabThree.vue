@@ -203,7 +203,7 @@ export default {
       regionShow: false,
       tableData: [{}], // 带宽限速数据列表
       ccnPublic: {},
-      regionSet: [{}],  // 地域列表
+      regionSet: [{}], // 地域列表
       upLimits: {
         Region: '',
         DstRegion: '',
@@ -329,6 +329,9 @@ export default {
 </style>
 <style lang="scss" scoped>
 .tabThree {
+  span{
+    color: #000;
+  }
   .table {
     margin-top: 20px;
     min-height: 450px;
