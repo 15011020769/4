@@ -31,7 +31,6 @@
                 </el-table>
              </div>
             <div class="abs">
-              <p>--</p>
               <div>&nbsp;</div>
             </div>
             <div class="container-left">

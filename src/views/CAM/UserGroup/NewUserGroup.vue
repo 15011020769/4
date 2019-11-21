@@ -1,7 +1,7 @@
 <template>
   <div class="Cam" id="app">
     <div class="top">
-      <i class="el-icon-arrow-left" @click="goback"></i>
+      <i @click="goback" class="el-icon-back" style="padding-right: 10px;font-size: 130%;color: #006eff;font-weight: 900;cursor:pointer;"></i>
       <span class="title-left">{{$t('CAM.CAM.userGroup.createBtn')}}</span>
     </div>
     <div class="container">
@@ -63,7 +63,7 @@
       },
       next() {
         this.policiesSelectedData = this.$refs.secondStep.getDaata()
-        // const addModel = this.addModel;
+        const addModel = this.addModel;
         // const addModelRules = this.$refs.firstStep.$refs.addModel
         // const groupNameRules = this.$refs.firstStep.$refs.groupNameRules
         // console.log(groupNameRules)
@@ -95,6 +95,48 @@
       confirm() {
         if(this.active ==2) {
          this.$router.push({name: 'UserGroup'})
+          // 创建用户组
+          let params = {
+            Action: 'CreateGroup',
+            Version: '2019-01-16'
+          }
+          if(this.addModel.groupName != null && this.addModel.groupName != ''){
+            params["GroupName"] = this.addModel.groupName
+          }
+          if(this.addModel.remark != null && this.addModel.remark != ''){
+            params["Remark"] = this.addModel.remark
+          }
+          let url = "cam/ListGroups"
+          let _this = this
+          this.axios.post(url, params).then(res => {
+            console.log(res)
+            // 获取新创建的用户组ID
+            let AttachGroupId = res.data.data.groupId
+            // 绑定策略到用户组
+            if(AttachGroupId != '') {
+              // policiesSelectedData
+              let PoliciesParams = {
+                Action: 'AttachGroupPolicies',
+                PolicyId: PolicyId,
+                AttachGroupId: AttachGroupId,
+                Version: '2019-01-16'
+              }
+              // 获取策略id
+              let PolicyId = Array
+              let url = "cam/AttachGroupPolicies"
+              this.axios.post(url, PoliciesParams).then(res => {
+                console.log(res)
+                // 添加返回值回显，如用户组名称重复
+                this.loading = false
+              }).catch(error => {
+                console.log(error)
+              })
+            }
+            // 添加返回值回显，如用户组名称重复
+            this.loading = false
+          }).catch(error => {
+            console.log(error)
+          })
         }
       }
     }

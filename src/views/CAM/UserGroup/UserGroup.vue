@@ -77,7 +77,6 @@
           </el-table>
         </div>
         <div class="abs">
-          <p>--</p>
           <div>&nbsp;</div>
         </div>
         <div class="container-left">
@@ -381,7 +380,6 @@ export default {
       display: inline-block;
       width: 100px;
       height: 300px;
-      line-height: 150px;
       text-align: center;
     }
     .container-left{
