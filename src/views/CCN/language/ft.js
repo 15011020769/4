@@ -83,7 +83,7 @@ module.exports = {
       tab2D: '註釋：Max、Min和Avg數值統計為當前折線圖內所有點的最大值、最小值和平均值',
       tab2out: '導出數據',
       tab3: '帶寬管理',
-      tab3tit: '地域出带宽限速',
+      tab3tit: '地域出口帶寬限速',
       tab3tit1: '地域間帶寬限速',
       tab3tit2: '變更',
       tab3tr1: '地域',
@@ -99,6 +99,9 @@ module.exports = {
       tab4tr4: '下一跳所屬地域',
       tab4tr5: '更新時間',
       tab4tr6: '啟用路由'
+    },
+    menu: {
+      title: '雲聯網'
     }
   }
 }

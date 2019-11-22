@@ -1,8 +1,8 @@
 <template>
   <div class="Cam" id="app">
     <div class="top">
-      <i class="el-icon-arrow-left" @click="goback"></i>
-      <span class="title-left">{{$t('CAM.CAM.userGroup.createBtn')}}</span>
+      <i @click="goback" class="el-icon-back" style="padding-right: 10px;font-size: 130%;color: #006eff;font-weight: 900;cursor:pointer;"></i>
+      <span class="title-left">{{$t('CAM.CAM.userGroup.addBtn')}}</span>
     </div>
     <div class="container">
       <el-steps :space="200" :active="active" finish-status="success" simple style="margin-top: 20px;margin-right: 450px;padding-left: 10px;">
@@ -15,17 +15,17 @@
       </el-steps>
       <div v-show="active==0">
         <template>
-          <FirstStep :addModel="addModel"/>
+          <FirstStep ref="firstStep" :addModel="addModel"/>
         </template>
       </div>
-      <div v-show="active==1">
+      <div v-show="active==1" >
         <template>
-          <SecondStep :addModel="addModel"/>
+          <SecondStep ref="secondStep" />
         </template>
       </div>
       <div v-show="active==2">
         <template>
-          <ThirdlyStep :addModel="addModel"/>
+          <ThirdlyStep :addModel="addModel" :policiesSelectedData='policiesSelectedData'  />
         </template>
       </div>
       <el-button v-show="active<2&active>0" type="primary" @click="step">上一步</el-button>
@@ -53,6 +53,8 @@
           groupName: '',
           remark: ''
         }
+        ,
+        policiesSelectedData: []
       };
     },
     methods: {
@@ -60,7 +62,26 @@
         this.$router.push({name: 'UserGroup'})
       },
       next() {
+        this.policiesSelectedData = this.$refs.secondStep.getDaata()
         const addModel = this.addModel;
+        // const addModelRules = this.$refs.firstStep.$refs.addModel
+        // const groupNameRules = this.$refs.firstStep.$refs.groupNameRules
+        // console.log(groupNameRules)
+        // groupNameRules.validate(valid => {
+        //   if (valid) {
+        //     console.log('(^o^)~ 验证成功！')
+        //   } else {
+        //     console.log('-_- 验证失败！')
+        //   }
+        // })
+        // console.log(addModelRules.rules)
+        // console.log(addModelRules.rules.groupName)
+        // console.log(addModelRules.rules.groupName[0].message)
+        // console.log(addModelRules.rules.groupName[0].required)
+        // console.log(addModelRules.rules.groupName[0].trigger)
+        // if(addModelRules.rules.groupName != ''){
+        //   return;
+        // }
         if (this.active++ > 2) {
           this.active = 0;
         }
@@ -73,7 +94,56 @@
       },
       confirm() {
         if(this.active ==2) {
+          debugger
          this.$router.push({name: 'UserGroup'})
+          // 创建用户组
+          let params = {
+            Action: 'CreateGroup',
+            Version: '2019-01-16'
+          }
+          if(this.addModel.groupName != null && this.addModel.groupName != ''){
+            params["GroupName"] = this.addModel.groupName
+          }
+          if(this.addModel.remark != null && this.addModel.remark != ''){
+            params["Remark"] = this.addModel.remark
+          }
+          let url = "cam2/CreateGroup"
+          let _this = this
+          this.axios.post(url, params).then(res => {
+            console.log(res)
+            debugger
+            // 获取新创建的用户组ID
+            let AttachGroupId = res.Response.GroupId
+            let selArr = _this.policiesSelectedData
+            // let PolicyIds = []
+            // 绑定策略到用户组
+            if(AttachGroupId != '' && selArr != '') {
+              // let PolicyId = Array
+              let PoliciesParams = {
+                // Action: 'AttachGroupPolicies',
+                Action: 'AttachGroupPolicy',
+                // PolicyId: PolicyIds,
+                AttachGroupId: AttachGroupId,
+                Version: '2019-01-16'
+              }
+              //目前系统接口只支持单个策略绑定到用户组，不支持多个，所以循环执行绑定方法;此循环只能绑定一个策略。暂时先这么用着，等待接口升级
+              for(var i = 0; i < selArr.length; i++) {
+                // PolicyIds[i] = selArr[i].policyId
+                PoliciesParams['PolicyId'] = selArr[i].policyId
+                // 获取策略id
+                let url = "cam2/AttachGroupPolicy"
+                this.axios.post(url, PoliciesParams).then(res => {
+                  console.log(res)
+                }).catch(error => {
+                  console.log(error)
+                })
+              }
+            }
+            // 添加返回值回显，如用户组名称重复
+            this.loading = false
+          }).catch(error => {
+            console.log(error)
+          })
         }
       }
     }
@@ -105,9 +175,10 @@
   }
   .container {
     width:96%;
-    height:570px;
-    min-height: 500px;
-    margin:10px auto 0;
+    height: 100%;
+    // height:570px;
+    // min-height: 500px;
+    margin:0 auto;
     background: #fff;
     padding:20px;
     p.title,p.explain{

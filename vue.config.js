@@ -62,6 +62,20 @@ let product = {
     title: '台富云-DDoS防护',
     chunks: ['chunk-vendors', 'chunk-common', 'DDOS']
   },
+  BILL: {
+    entry: 'src/views/BILL/main.js',
+    template: 'src/public/index.html',
+    filename: 'index.html',
+    title: '台富云-费用中心',
+    chunks: ['chunk-vendors', 'chunk-common', 'BILL']
+  },
+  WAF: {
+    entry: 'src/views/WAF/main.js',
+    template: 'src/public/index.html',
+    filename: 'index.html',
+    title: '台富云-WEB应用防火墙',
+    chunks: ['chunk-vendors', 'chunk-common', 'WAF']
+  }
 }
 let page = {}
 let productName = process.argv[3].substring(2)// 获取执行哪个文件

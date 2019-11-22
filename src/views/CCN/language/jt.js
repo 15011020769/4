@@ -80,7 +80,7 @@ module.exports = {
       tab2R: '港澳台地区(中国台北)',
       tab2D: '注释：Max、Min和Avg数值统计为当前折线图内所有点的最大值、最小值和平均值',
       tab3: '带宽管理',
-      tab3tit: '地域出带宽限速',
+      tab3tit: '地域出口带宽限速',
       tab3tit1: '地域间带宽限速',
       tab3tit2: '变更',
       tab3tr1: '地域',
@@ -96,6 +96,9 @@ module.exports = {
       tab4tr4: '下一跳所属地域',
       tab4tr5: '更新时间',
       tab4tr6: '启用路由'
+    },
+    menu: {
+      title: '云联网'
     }
   }
 }

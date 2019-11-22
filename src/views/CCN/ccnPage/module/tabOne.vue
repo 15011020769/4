@@ -124,11 +124,11 @@ export default {
       dialogVisible: false,
       tableData: [{}], // 列表数据
       // 解关联模态窗回显数据
-      instance:{
-        CcnId:'',
-        InstanceId:'',
-        InstanceRegion:'',
-        InstanceType:''
+      instance: {
+        CcnId: '',
+        InstanceId: '',
+        InstanceRegion: '',
+        InstanceType: ''
       },
       // 添加关联实例，根据私有网络/专线网络查询VPC列表
       vpcs: [{}],
@@ -148,10 +148,10 @@ export default {
     }
   },
   watch: {
-    "form.instanceType": function (value) {
+    'form.instanceType': function (value) {
       // console.log(value)
       this.getInstanceIds(value)
-    },
+    }
   },
   created () {
     console.log(this.$route.query)
@@ -177,17 +177,17 @@ export default {
       this.formArr.splice(idx, 1)
     },
     // 初始化数据
-    getData: function (){
+    getData: function () {
       var params = {
-        Version: "2017-03-12",
-        Region: "ap-taipei",
+        Version: '2017-03-12',
+        Region: 'ap-taipei',
         CcnId: this.ccnId
       }
       // 查询关联实例列表
-      this.$axios.post("vpc2/DescribeCcnAttachedInstances", params).then(res => {
-        console.log(res);
-        this.tableData = res.Response.InstanceSet;
-        this.total = res.Response.TotalCount;
+      this.$axios.post('vpc2/DescribeCcnAttachedInstances', params).then(res => {
+        console.log(res)
+        this.tableData = res.Response.InstanceSet
+        this.total = res.Response.TotalCount
       })
     },
     // 解除关联模态窗-回显数据
@@ -201,15 +201,15 @@ export default {
     },
     doDelCcnIns: function () {
       var params = {
-        Version: "2017-03-12",
-        Region: "ap-taipei",
+        Version: '2017-03-12',
+        Region: 'ap-taipei',
         CcnId: this.instance.CcnId,
         'Instances.0.InstanceId': this.instance.InstanceId,
         'Instances.0.InstanceRegion': this.instance.InstanceRegion,
         'Instances.0.InstanceType': this.instance.InstanceType
       }
-      this.$axios.post("vpc2/DetachCcnInstances", params).then(res => {
-        this.getData();
+      this.$axios.post('vpc2/DetachCcnInstances', params).then(res => {
+        this.getData()
       })
       this.dialogVisible = false
     },
@@ -220,15 +220,15 @@ export default {
         Version: '2017-03-12',
         Region: 'ap-taipei'
       }
-      if (instanceType == "VPC") {  // 私有网络
-        this.$axios.post("vpc2/DescribeVpcs", params).then(res => {
+      if (instanceType == 'VPC') { // 私有网络
+        this.$axios.post('vpc2/DescribeVpcs', params).then(res => {
           console.log(res)
-          this.vpcs = res.Response.VpcSet;
+          this.vpcs = res.Response.VpcSet
         })
-      } else if (instanceType == "DIRECTCONNECT") { // 专线网络
-        this.$axios.post("vpc2/DescribeDirectConnectGateways", params).then(res => {
+      } else if (instanceType == 'DIRECTCONNECT') { // 专线网络
+        this.$axios.post('vpc2/DescribeDirectConnectGateways', params).then(res => {
           console.log(res)
-          this.vpcs = res.Response.DirectConnectGatewaySet;
+          this.vpcs = res.Response.DirectConnectGatewaySet
         })
       }
     },
@@ -236,20 +236,20 @@ export default {
     attCcnIns: function (ins) {
       // 关联实例
       var params = {
-        Version: "2017-03-12",
+        Version: '2017-03-12',
         Region: 'ap-taipei',
         CcnId: this.ccnId,
         'Instances.0.InstanceId': ins.instanceId,
         'Instances.0.InstanceRegion': ins.instanceRegion,
         'Instances.0.InstanceType': ins.instanceType
       }
-      console.log(params);
-      this.$axios.post("vpc2/AttachCcnInstances", params).then(res => {
-        console.log(res);
-        this.getData();
+      console.log(params)
+      this.$axios.post('vpc2/AttachCcnInstances', params).then(res => {
+        console.log(res)
+        this.getData()
       })
-      console.log("新建成功");
-      this.newVisible = false;
+      console.log('新建成功')
+      this.newVisible = false
     }
   }
 }
@@ -281,9 +281,14 @@ export default {
     }
   }
   .table {
-    margin-top: 20px;
+    margin-top: 10px;
     min-height: 450px;
     background: #fff;
+    .cell{
+      .el-button{
+        padding: 0;
+      }
+    }
     .close_color {
       color: #e54545;
     }

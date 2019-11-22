@@ -1,7 +1,12 @@
+
 <template>
   <div class="Cam">
     <div class="top">
       <span class="title-left">用户列表</span>
+      <span class="title-right">
+        <span>CAM用户使用说明</span>
+        <i class="el-icon-share"></i>
+      </span>
     </div>
     <div class="explain">
       <p>
@@ -17,9 +22,9 @@
 
     <div class="cam_button">
       <el-row class="cam-lt">
-        <el-button type="primary" @click="NewUser">新建用户</el-button>
+        <el-button size="small" type="primary" @click="NewUser">新建用户</el-button>
         <template>
-          <el-select v-model="value" placeholder="更多操作">
+          <el-select size="small" v-model="value" placeholder="更多操作">
             <el-option
               v-for="item in options"
               :key="item.value"
@@ -34,13 +39,61 @@
       <div class="head-container">
         <!-- 搜索 -->
         <el-input
+          size="small"
           v-model="value"
           clearable
           placeholder="支持多关键词(间隔为空格)搜索用户名/ID/SecretId/手机/邮箱/备注"
           style="width: 200px;"
           @keyup.enter.native="toQuery"
         />
-        <el-button class="suo" icon="el-icon-search" circle></el-button>
+        <i class="iconfont magnifier">&#xe608;</i>
+        <i @click="list = true" class="el-icon-s-tools gear"></i>
+        <el-dialog title="自定义列表字段" :visible.sync="list" width="45%" :before-close="handleClose">
+          <div>
+            <div class="tip_box">
+              请选择您想显示的列表详细信息，根据您的分辨率
+              <span id="limitTip">，最多勾选6个字段，已勾选6个。</span>
+            </div>
+            <div>
+              <el-form ref="form" :model="form">
+                <el-form-item label>
+                  <el-checkbox-group v-model="form.type">
+                    <el-checkbox disabled label="详情" name="type"></el-checkbox>
+                  </el-checkbox-group>
+                </el-form-item>
+                <el-form-item label>
+                  <el-checkbox-group v-model="form.type">
+                    <el-checkbox disabled label="用户名称" name="type"></el-checkbox>
+                  </el-checkbox-group>
+                </el-form-item>
+                <el-form-item label>
+                  <el-checkbox-group v-model="form.type">
+                    <el-checkbox disabled label="用户类型" name="type"></el-checkbox>
+                  </el-checkbox-group>
+                </el-form-item>
+                <el-form-item label>
+                  <el-checkbox-group v-model="form.type">
+                    <el-checkbox v-model="checked1" label="账号ID" name="type"></el-checkbox>
+                  </el-checkbox-group>
+                </el-form-item>
+                <el-form-item label>
+                  <el-checkbox-group v-model="form.type">
+                    <el-checkbox disabled label="关联信息" name="type"></el-checkbox>
+                  </el-checkbox-group>
+                </el-form-item>
+                <el-form-item label>
+                  <el-checkbox-group v-model="form.type">
+                    <el-checkbox disabled label="操作" name="type"></el-checkbox>
+                  </el-checkbox-group>
+                </el-form-item>
+                <el-form-item>
+                  <el-button type="primary" @click="onSubmit">确认</el-button>
+                  <el-button>取消</el-button>
+                </el-form-item>
+              </el-form>
+            </div>
+          </div>
+        </el-dialog>
       </div>
     </div>
 
@@ -65,13 +118,30 @@
           </el-form>
         </template>
       </el-table-column>
-      <el-table-column label="用户名称" prop="name"></el-table-column>
-      <el-table-column label="用户类型" prop="type"></el-table-column>
-      <el-table-column label="账号ID" prop="id"></el-table-column>
-      <el-table-column label="关联信息" prop="relation"></el-table-column>
+      <el-table-column label="用户名称">
+        <template slot-scope="scope">
+         <el-link @click="details" type="primary">{{ scope.row.name }}</el-link>
+        </template>
+      </el-table-column>
+      <el-table-column label="用户类型" prop="type">
+        <template slot-scope="scope">
+          <span>{{ scope.row.type }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="账号ID" prop="id">
+        <template slot-scope="scope">
+          <span>{{ scope.row.id }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="关联信息" prop="relation">
+        <template slot-scope="scope">
+          <i @click="details" class="el-icon-mobile mobile"></i>
+          <i @click="details" class="el-icon-message message"></i>
+        </template>
+      </el-table-column>
       <el-table-column prop="oper" label="操作" width="140">
         <template scope="scope">
-          <el-button type="text">授权</el-button>
+          <el-button @click="authorization=true" type="text">授权</el-button>
           <span>|</span>
           <el-dropdown :hide-on-click="false">
             <span class="el-dropdown-link" style="color: #3E8EF7">
@@ -80,10 +150,10 @@
             </span>
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item>
-                <el-button type="text" @click="dialogVisible= true">添加到组</el-button>
+                <el-button type="text" style="color:#000" @click="dialogVisible= true">添加到组</el-button>
               </el-dropdown-item>
               <el-dropdown-item>
-                <el-button type="text" @click="subscribe= true">订阅信息</el-button>
+                <el-button type="text" style="color:#000" @click="subscribe= true">订阅信息</el-button>
               </el-dropdown-item>
               <el-dropdown-item>删除</el-dropdown-item>
             </el-dropdown-menu>
@@ -91,20 +161,164 @@
         </template>
       </el-table-column>
     </el-table>
+    <!-- 授权自定义弹框 -->
+    <el-dialog title="关联策略" :visible.sync="authorization" width="80%" :before-close="handleClose">
+      <div class="container">
+        <div class="container-left">
+          <span>策略列表（共{{totalNum}}条）</span>
+          <div>
+            <el-input
+              size="mini"
+              v-model="searchValue"
+              style="width:89%"
+              @keyup.enter.native="toQuery"
+            />
+            <el-button
+              size="mini"
+              class="suo"
+              icon="el-icon-search"
+              show-overflow-tooltip
+              @click="toQuery"
+            ></el-button>
+          </div>
+          <el-table
+            class="table-left"
+            ref="multipleOption"
+            :data="policiesData"
+            height="300"
+            tooltip-effect="dark"
+            style="width: 100%; border:1px solid #ddd"
+            @row-click="selectedRow"
+            @selection-change="handleSelectionChange"
+          >
+            <el-input
+              size="mini"
+              v-model="searchValue"
+              style="width:40%"
+              @keyup.enter.native="toQuery"
+            />
+            <el-button
+              size="mini"
+              class="suo"
+              icon="el-icon-search"
+              show-overflow-tooltip
+              @click="toQuery"
+            ></el-button>
+            <el-table-column type="selection" prop="policyId" width></el-table-column>
+            <el-table-column  prop="Description" label="策略名" width></el-table-column>
+            <el-table-column prop="PolicyId" label="策略类型" width></el-table-column>
+          </el-table>
+        </div>
 
+        <div class="abs">
+          <div>&nbsp;</div>
+        </div>
+
+        <div class="container-left">
+          <span>已选择（共条）</span>
+          <el-table
+            class="table-left"
+            ref="multipleSelected"
+            :data="policiesSelectedData"
+            tooltip-effect="dark"
+            height="300"
+            style="width: 100%;border:1px solid #ddd"
+          >
+
+            <el-table-column  prop="Description" label="策略名" width></el-table-column>
+            <el-table-column prop="PolicyId" label="策略类型" width></el-table-column>
+
+          </el-table>
+        </div>
+      </div>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="authorization = false">取 消</el-button>
+        <el-button type="primary" @click="authorization = false">确 定</el-button>
+      </div>
+    </el-dialog>
     <!-- 自定义弹框 -->
-    <el-dialog title="添加到组" :visible.sync="dialogVisible" width="550px" :before-close="handleClose">
-      <el-transfer
-        :titles="['选择用户组','已选择']"
-        :button-texts="['','']"
-        filterable
-        :filter-method="filterMethod"
-        filter-placeholder="支持搜索用户组名称/备注"
-        v-model="val"
-        :data="data"
-        @change="handleChange"
-        @left-check-change="changeLeftData"
-      ></el-transfer>
+    <el-dialog title="添加到组" :visible.sync="dialogVisible" width="74%" :before-close="handleClose">
+      <div class="container">
+        <div class="container-left">
+          <span>策略列表（共{{totalNum}}条）</span>
+          <div>
+            <el-input
+            size="mini"
+            v-model="searchValue"
+            style="width:89%"
+            @keyup.enter.native="toQuery"
+          />
+          <el-button
+            size="mini"
+            class="suo"
+            icon="el-icon-search"
+            show-overflow-tooltip
+            @click="toQuery"
+          ></el-button>
+          </div>
+
+          <el-table
+            class="table-left"
+            ref="multipleOption"
+            :data="policiesData"
+            height="300"
+            tooltip-effect="dark"
+            style="width: 100%; border:1px solid #ddd"
+            @row-click="selectedRow"
+            @selection-change="handleSelectionChange"
+          >
+            <el-input
+              size="mini"
+              v-model="searchValue"
+              style="width:40%"
+              @keyup.enter.native="toQuery"
+            />
+            <el-button
+              size="mini"
+              class="suo"
+              icon="el-icon-search"
+              show-overflow-tooltip
+              @click="toQuery"
+            ></el-button>
+            <el-table-column type="selection" prop="policyId" width="100"></el-table-column>
+
+            <el-table-column  label="策略名" width="120"></el-table-column>
+            <el-table-column prop="type" label="策略类型" width="120"></el-table-column>
+          </el-table>
+        </div>
+
+
+  
+        <div class="abs">
+          <div>&nbsp;</div>
+        </div>
+
+        <div class="container-left">
+          <span>已选择（共条）</span>
+          <el-table
+            class="table-left"
+            ref="multipleSelected"
+            :data="policiesSelectedData"
+            tooltip-effect="dark"
+            height="300"
+            style="width: 100%;border:1px solid #ddd"
+          >
+            <el-table-column type="selection" prop="policyId" width="55"></el-table-column>
+            <el-table-column label="策略名" width="120"></el-table-column>
+            <el-table-column prop="type" label="策略类型" width="120"></el-table-column>
+            <el-table-column :label="操作" show-overflow-tooltip>
+              &lt;!&ndash;
+              <template slot-scope="scope">
+                <el-button
+                  @click.native.prevent="deleteRow(scope.$index, policiesSelectedData)"
+                  type="text"
+                  size="small"
+                >移除</el-button>
+              </template>&ndash;&gt;
+            </el-table-column>
+          </el-table>
+        </div>
+      </div>
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="dialogVisible">确 定</el-button>
         <el-button @click="dialogVisible = false">取 消</el-button>
@@ -283,7 +497,23 @@
   </div>
 </template>
 <script>
+
+
 export default {
+  props: {
+    policiesSelectedData: [
+      {
+        policyId: String,
+        policyName: String,
+        description: String,
+        attachments: String,
+        createMode: String,
+        serviceType: String,
+        addTime: String,
+        type: String
+      }
+    ]
+  },
   data() {
     const generateData = _ => {
       const data = [];
@@ -307,11 +537,16 @@ export default {
       return data;
     };
     return {
+      policiesData: [],
+      totalNum: "",
+      list: false,
+      authorization: false,
       data: generateData(),
       val: [],
       filterMethod(query, item) {
         return item.pinyin.indexOf(query) > -1;
       },
+      checked1: true,
       checked2: true,
       subscribe: false,
       dialogVisible: false,
@@ -319,19 +554,19 @@ export default {
       tableData: [
         {
           name: "100011241184_123456789",
-          type:'主账号',
-          id: "12987122",
+          type: "主账号",
+          id: "12987122"
         },
         {
           name: "13124234325",
-          type:'主账号',
-          id: "12987122",
+          type: "主账号",
+          id: "12987122"
         },
         {
           name: "taifucloud",
-          type:'主账号',
-          id: "12987122",
-        },
+          type: "主账号",
+          id: "12987122"
+        }
       ],
       options: [
         {
@@ -344,10 +579,27 @@ export default {
           label: "删除",
           disabled: true
         }
-      ]
+      ],
+      form: {
+        name: "",
+        region: "",
+        date1: "",
+        date2: "",
+        delivery: false,
+        type: [],
+        resource: "",
+        desc: ""
+      }
     };
   },
   methods: {
+    handleClose(done) {
+      this.$confirm("确认关闭？")
+        .then(_ => {
+          done();
+        })
+        .catch(_ => {});
+    },
     NewUser() {
       this.$router.push({ name: "custormCreate" });
     },
@@ -355,8 +607,38 @@ export default {
       // console.log("change left data", val);
       // console.log("this is value data:", this.value);
       this.val = [...this.val, ...val];
+    },
+    details() {
+      this.$router.push({ path: "details" });
+    },
+    handleSelectionChange(val) {
+      // 给右边table框赋值，只需在此处赋值即可，selectedRow方法中不写，因为单独点击复选框，只有此方法有效。
+      this.policiesSelectedData = val;
+    },
+    selectedRow(row, column, event) {
+      // 设置选中或者取消状态
+      this.$refs.multipleOption.toggleRowSelection(row);
+    },
+    deleteRow(index, rows) {
+      // 获取右边框中取消的行数据，将此行数据在右边框中的选中状态取消
+      this.$refs.multipleOption.toggleRowSelection(rows[index], false);
+    },
+    toQuery() {}
+
+  },
+  created(){
+    //获取授权数据
+    let params = {
+       Action:'ListPolicies',
+       Version:'2019-01-16'
     }
-  }
+    let url = 'cam2/ListPolicies'
+    this.axios.post(url,params).then((data)=>{
+       this.policiesData = data.Response.List
+    }).catch(error=>{
+      console.log(error)
+    })
+   }
 };
 </script>
 <style lang="scss" scoped>
@@ -447,6 +729,15 @@ export default {
       }
     }
   }
+  .tip_box {
+    background: #e5f0ff;
+    padding: 8px 10px;
+    margin-bottom: 15px;
+    border-radius: 2px;
+    border: 1px solid #97c7ff;
+    line-height: 20px;
+    color: #003b80;
+  }
   .demo-table-expand {
     font-size: 0;
   }
@@ -458,6 +749,9 @@ export default {
     margin-right: 0;
     margin-bottom: 0;
     width: 50%;
+  }
+  .el-form-item {
+    margin-bottom: 0;
   }
   .content {
     padding: 20px;
@@ -490,6 +784,11 @@ export default {
       justify-content: flex-end;
     }
   }
+  .magnifier {
+    right: 30px;
+    top: 6px;
+    position: absolute;
+  }
   .tc-15-search .tc-15-btn.search {
     position: absolute;
     border-top-left-radius: 0;
@@ -500,6 +799,15 @@ export default {
     height: 28px;
     top: 1px;
     z-index: 99;
+  }
+  .mobile {
+    font-size: 120%;
+    cursor: pointer;
+    margin-right: 10px;
+  }
+  .message {
+    cursor: pointer;
+    font-size: 120%;
   }
   .subs {
     text-align: center;
@@ -533,7 +841,14 @@ export default {
     float: left;
   }
   .head-container {
+    position: relative;
     float: right;
+  }
+  .head-container .gear {
+    cursor: pointer;
+    font-size: 140%;
+    color: #888888;
+    margin: 2px 0 0 5px;
   }
   .letter {
     margin-bottom: 30px;
@@ -553,7 +868,6 @@ export default {
   }
   .suo {
     position: absolute;
-    right: 0;
   }
   .title {
     width: 100%;
@@ -606,5 +920,39 @@ export default {
     margin-top: 20px;
     text-align: center;
   }
+  .container {
+    width: 96%;
+    height: 270px;
+    min-height: 360px;
+    margin: 10px auto 0;
+    background: #fff;
+    padding: 20px;
+    p.title,
+    p.explain {
+      text-align: center;
+      line-height: 20px;
+      font-size: 16px;
+      color: #000;
+      font-weight: 700;
+    }
+    p.explain {
+      font-size: 12px;
+      color: #ccc;
+      margin-top: 10px;
+      line-height: 16px;
+      color: #666;
+    }
+    .abs {
+      display: inline-block;
+      width: 100px;
+      height: 300px;
+      text-align: center;
+    }
+    .container-left {
+      width: 44%;
+      display: inline-block;
+    }
+  }
 }
 </style>
+

@@ -1,12 +1,20 @@
 <template>
   <div class="Cam">
     <div class="top">
-      <i class="el-icon-arrow-left" @click="goback()"></i>
-      <span class="title-left">自定义用户创建</span>
+      <i
+      @click="backoff"
+      class="el-icon-back"
+      style="padding-right: 10px;
+      font-size: 130%;
+      color: #006eff;
+      font-weight: 900;
+      cursor:pointer;"
+      ></i>
+      <span class="title-left">新建子用户</span>
     </div>
     <div class="box-ctr">
       <div class="step">
-        <el-steps :active="active" finish-status="success">
+        <el-steps :active="active" direction="vertical" simple :space="200" style="margin-right: 44%"  finish-status="success">
           <el-step title="填写用户信息"></el-step>
           <el-step title="设置用户权限"></el-step>
           <el-step title="审阅信息和权限"></el-step>
@@ -161,9 +169,7 @@ export default {
           iphone:"",
           value:""
         }
-      ],goback () {
-        this.$router.push({name: 'UserList'})
-      },
+      ],
       value1: false,
       // Boolean: true,
       options: [
@@ -212,6 +218,9 @@ export default {
     },
     resetForm(formName) {
       this.$refs[formName].resetFields();
+    },
+    backoff(){
+      this.$router.push({ path: "UserList" });
     }
   }
 };
@@ -241,7 +250,7 @@ export default {
     height: 59px;
     margin: 0px auto 20px;
     padding: 0px 0px 80px;
-    border-bottom: 1px solid rgb(221, 221, 221);
+    
   }
   .tea-alert {
     padding: 10px 30px 10px 20px;
@@ -306,6 +315,16 @@ export default {
     margin: 0;
     color: #888;
     margin: 10px 0 10px 0;
+  }
+  .el-steps--simple{
+    background-color: #fff;
+  }
+  .el-steps--simple{
+    padding:0 8px;
+  }
+  .step{
+    height: 45px;
+    padding: 0;
   }
 }
 </style>  

@@ -1,5 +1,5 @@
 import Vue from 'vue'
-// import VueCookie from 'vue-cookie'
+import VueCookie from 'vue-cookie'
 import { Loading } from 'element-ui'
 import axios from 'axios'
 
@@ -8,7 +8,7 @@ const conf = {
   timeout: 60 * 1000,
   loading: true,
   headers: {
-    uuid: '8760f095090443b6ac76934866a06e9f',
+    uuid: VueCookie.get('uuid'),
     Pragma: 'no-cache',
     'Cache-Control': 'no-cache'
   }

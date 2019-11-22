@@ -60,7 +60,7 @@
       <el-table :data="tableData" style="width: 100%;  border:1px solid #ddd;padding-top: 8px;">
         <el-table-column label="策略名" width>
           <template slot-scope="scope">
-            <span>{{ scope.row.strategy }}</span>
+            <span>{{ scope.row.strategy }}</span>x
           </template>
         </el-table-column>
         <el-table-column label="策略描述" width>

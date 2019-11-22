@@ -234,7 +234,7 @@ export default {
       search: "",
       allData: [
         {
-          funName: "函数1",
+          funName: "tttt",
           funStatus: "正常",
           monitor: "监控",
           runMoent: "python2.7",
@@ -568,7 +568,7 @@ export default {
       this.$router.push({
         path: "/funSeverDetail",
         query:{
-					msg:this.tableDataBegin[newIndex].functionName
+					functionName:this.tableDataBegin[newIndex].functionName
 				}
       });
     }

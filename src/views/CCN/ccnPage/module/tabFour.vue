@@ -30,7 +30,7 @@
               v-model="scope.row.Enabled"
               @change="change(scope.row)"
               active-color="#13ce66"
-              inactive-color="#ff4949">
+              inactive-color="#888">
             </el-switch>
           </template>
         </el-table-column>
@@ -57,31 +57,31 @@ export default {
   methods: {
     getData: function () {
       var params = {
-        Version: "2017-03-12",
-        Region: "ap-taipei",
+        Version: '2017-03-12',
+        Region: 'ap-taipei',
         CcnId: this.ccnId
       }
       // 查询-路由表
-      this.$axios.post("vpc2/DescribeCcnRoutes", params).then(res => {
-        console.log(res);
-        this.tableData = res.Response.RouteSet;
+      this.$axios.post('vpc2/DescribeCcnRoutes', params).then(res => {
+        console.log(res)
+        this.tableData = res.Response.RouteSet
       })
     },
     change: function (route) {
       var params = {
-        Version: "2017-03-12",
-        Region: "ap-taipei",
+        Version: '2017-03-12',
+        Region: 'ap-taipei',
         CcnId: this.ccnId,
         'RouteIds.0': route.RouteId
       }
       console.log(route)
-      if (route.Enabled) {  // true启用
-        this.$axios.post("vpc2/EnableCcnRoutes", params).then(res => {
-          console.log(res);
+      if (route.Enabled) { // true启用
+        this.$axios.post('vpc2/EnableCcnRoutes', params).then(res => {
+          console.log(res)
         })
-      } else {  // false 禁用
-        this.$axios.post("vpc2/DisableCcnRoutes", params).then(res => {
-          console.log(res);
+      } else { // false 禁用
+        this.$axios.post('vpc2/DisableCcnRoutes', params).then(res => {
+          console.log(res)
         })
       }
     }
@@ -94,6 +94,7 @@ export default {
     font-size: 12px;
     .el-button{
       font-size: 12px;
+      padding: 0;
     }
   }
 }

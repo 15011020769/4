@@ -75,16 +75,16 @@
                     width="800px"
                     :before-close="handleClose2"
                   >
-                    <el-form :model="funReast" label-width="100px">
-                      <el-form-item prop="funName" label="函数名称">
-                        <span>{{funReast.funName}}</span>
+                    <el-form :model="functionData" label-width="100px">
+                      <el-form-item prop="FunctionName" label="函数名称">
+                        <span>{{functionData.FunctionName}}</span>
                       </el-form-item>
-                      <el-form-item prop="runRole" label="运行角色" :required="true">
+                      <el-form-item prop="Role" label="运行角色" :required="true">
                         <span slot="label">
                           运行角色
                           <i class="el-icon-question"></i>
                         </span>
-                        <el-select v-model="funReast.runRole">
+                        <el-select v-model="functionData.Role">
                           <el-option label="SCF默认运行角色" value="default"></el-option>
                           <el-option label="SCF_QcsRole" value="qsrole"></el-option>
                         </el-select>
@@ -101,15 +101,15 @@
                           </a>
                         </p>
                       </el-form-item>
-                      <el-form-item prop="runMoment" label="运行环境">
-                        <span>{{funReast.runMoment}}</span>
+                      <el-form-item prop="Runtime" label="运行环境">
+                        <span>{{functionData.Runtime}}</span>
                       </el-form-item>
-                      <el-form-item prop="storageMb" label="内存" :required="true" class="intoAll">
+                      <el-form-item prop="MemorySize" label="内存" :required="true" class="intoAll">
                         <span slot="label">
                           内存
                           <i class="el-icon-question"></i>
                         </span>
-                        <el-select v-model="funReast.storageMb">
+                        <el-select v-model="functionData.MemorySize">
                           <el-option label="64MB" value="64"></el-option>
                           <el-option label="128MB" value="128"></el-option>
                           <el-option label="256MB" value="256"></el-option>
@@ -125,27 +125,22 @@
                           <el-option label="1536MB" value="1536"></el-option>
                         </el-select>
                       </el-form-item>
-                      <el-form-item
-                        prop="timeOutDate"
-                        label="超时时间"
-                        :required="true"
-                        class="timeOutDate newClear"
-                      >
+                      <el-form-item prop="Timeout" label="超时时间" :required="true" class="timeOutDate newClear" >
                         <span slot="label">
                           超时时间
                           <i class="el-icon-question"></i>
                         </span>
-                        <el-input class="timeOutDate1" v-model="funReast.timeOutDate" placeholder></el-input>
+                        <el-input class="timeOutDate1" v-model="functionData.Timeout" placeholder></el-input>
                         <span>秒</span>
                         <br />
                         <p class="tipContent">时间范围：1-900秒</p>
                       </el-form-item>
-                      <el-form-item label="描述" prop="description">
+                      <el-form-item label="描述" prop="Description">
                         <span slot="label">
                           描述
                           <i class="el-icon-question"></i>
                         </span>
-                        <el-input type="textarea" v-model="funReast.description" placeholder></el-input>
+                        <el-input type="textarea" v-model="functionData.Description" placeholder></el-input>
                         <p class="tipContent">最大支持1000个英文字母、数字、空格、逗号、句号、中文</p>
                       </el-form-item>
                       <el-form-item label="环境变量" prop="variable">
@@ -153,34 +148,21 @@
                           环境变量
                           <i class="el-icon-question"></i>
                         </span>
-                        <el-table
-                          :data="funReast.variable"
-                          size="small"
-                          border
-                          element-loading-text="Loading"
-                          highlight-current-row
-                        >
+                        <el-table :data="functionData.Environment.Variables" size="small" border element-loading-text="Loading" highlight-current-row >
                           <el-table-column label="key">
                             <template slot-scope="scope">
-                              <el-form :model="funReast.variable[scope.$index]">
+                              <el-form :model="functionData.Environment.Variables[scope.$index]">
                                 <el-form-item prop="nameSpaceOne">
-                                  <el-input
-                                    v-show="true"
-                                    v-model="funReast.variable[scope.$index].key"
-                                    placeholder
-                                  />
+                                  <el-input v-show="true" v-model="functionData.Environment.Variables[scope.$index].key" placeholder />
                                 </el-form-item>
                               </el-form>
                             </template>
                           </el-table-column>
                           <el-table-column label="value">
                             <template slot-scope="scope">
-                              <el-form ref="scope.row" :model="funReast.variable[scope.$index]">
+                              <el-form ref="scope.row" :model="functionData.Environment.Variables[scope.$index]">
                                 <el-form-item prop="nameSpaceTwo">
-                                  <el-input
-                                    v-model="funReast.variable[scope.$index].value"
-                                    placeholder
-                                  />
+                                  <el-input v-model="functionData.Environment.Variables[scope.$index].value" placeholder />
                                 </el-form-item>
                               </el-form>
                             </template>
@@ -200,58 +182,30 @@
                         </el-table>
                         <a @click="addvariable">添加环境变量</a>
                       </el-form-item>
-                      <el-form-item label="内网访问" prop="valueChange">
+                      <el-form-item label="内网访问" prop="VpcConfig">
                         <span slot="label">
                           内网访问
                           <i class="el-icon-question"></i>
                         </span>
-                        <el-switch
-                          v-model="funReast.valueChange"
-                          active-color="#006eff"
-                          inactive-color="#888"
-                        ></el-switch>
-                        <div v-if="funReast.valueChange">
-                          <el-select
-                            v-model="selectChangeOption"
-                            v-on:change="getSelectOne($event)"
-                          >
-                            <el-option
-                              v-for="item in funReast.valueChangeSelect1"
-                              :label="item.label"
-                              :value="item.value"
-                            ></el-option>
+                        <el-switch v-model="functionData.VpcConfig"  active-color="#006eff" inactive-color="#888" ></el-switch>
+                        <div v-if="functionData.VpcConfig">
+                          <el-select v-model="functionData.VpcConfig" v-on:change="getSelectOne($event)" >
+                            <el-option v-for="item in functionData.VpcConfig" :label="item.VpcId" :value="item.VpcId" ></el-option>
                           </el-select>
-                          <el-select
-                            v-model="selectChangeOption1"
-                            v-on:change="getSelectTwo($event)"
-                          >
-                            <el-option
-                              v-for="item in funReast.valueChangeSelect2"
-                              :label="item.label"
-                              :value="item.value"
-                            ></el-option>
+                          <el-select v-model="functionData.VpcConfig" v-on:change="getSelectTwo($event)" >
+                            <el-option v-for="item in funReast.VpcConfig" :label="item.SubnetId" :value="item.SubnetId" ></el-option>
                           </el-select>
                           <p class="tipContent">
                             <span>如现有的网络不合适，您可以去控制台</span>
-                            <a class="tipContentA">
-                              新建私有网络
-                              <span class="el-icon-share"></span>
-                            </a>
+                            <a class="tipContentA"> 新建私有网络 <span class="el-icon-share"></span> </a>
                             <span>或</span>
-                            <a class="tipContentA">
-                              新建子网
-                              <span class="el-icon-share"></span>
-                            </a>
+                            <a class="tipContentA"> 新建子网 <span class="el-icon-share"></span> </a>
                           </p>
                         </div>
                       </el-form-item>
                       <el-form-item label="标签" prop="tagLists">
                         <p><span></span><i class="el-icon-edit" @click="tagAddTagsBtn=true"></i></p>
-                          <div
-                          title="您已经选择1个云资源"
-                          v-if="tagAddTagsBtn"
-                          width="800px"
-                        >
+                          <div title="您已经选择1个云资源" v-if="tagAddTagsBtn" width="800px" >
                           <div>
                             <span>新增标签</span>
                             <el-table
@@ -324,48 +278,53 @@
                 <div class="allConListMainCon">
                   <p>
                     <span>函数名称</span>
-                    <span>fun1</span>
+                    <span>{{functionData.FunctionName}}</span>
                   </p>
                   <p>
                     <span>运行角色</span>
-                    <span>QCS_SCFExcuteRole</span>
+                    <span>{{functionData.Role}}</span>
                   </p>
                   <p>
                     <span>运行环境</span>
-                    <span>Python2.7</span>
+                    <span>{{functionData.Runtime}}</span>
                   </p>
                   <p>
                     <span>内存</span>
-                    <span>128MB</span>
+                    <span v-show="functionData.MemorySize">{{functionData.MemorySize}}MB</span>
+                    <span v-show="!functionData.MemorySize">0MB</span>
                   </p>
                   <p>
                     <span>超时时间</span>
-                    <span>3秒</span>
+                    <span v-show="functionData.Timeout">{{functionData.Timeout}}秒</span>
+                    <span v-show="!functionData.Timeout">0秒</span>
                   </p>
                   <p>
                     <span>描述</span>
-                    <span>helloworld 空白模板函数</span>
+                    <span>{{functionData.Description}}</span>
                   </p>
                   <p>
                     <span>修改时间</span>
-                    <span>2019-11-13 10:36:05</span>
+                    <span>{{functionData.ModTime}}</span>
                   </p>
                   <p>
                     <span>环境变量</span>
-                    <span>无环境变量</span>
+                    <span v-show="functionData.environmentFlag">
+                    </span>
+                    <span v-show="functionData.environmentFlag">无环境变量</span>
                   </p>
                   <p>
                     <span>所属网络</span>
-                    <span>无VPC</span>
+                    <span v-show="vpcConfigFlag">{{vpcConfigVpcId}}</span>
+                    <span v-show="!vpcConfigFlag">无VPC</span>
                   </p>
                   <p>
                     <span>所属子网</span>
-                    <span>无子网</span>
+                    <span v-show="vpcConfigFlag">{{vpcConfigSubnetId}}</span>
+                    <span v-show="!vpcConfigFlag">无子网</span>
                   </p>
                   <p>
                     <span>标签</span>
                     <span>
-                      <span>a:b</span>
                       <i class="el-icon-edit" @click="dialogVisible1 = true"></i>
                     </span>
                   </p>
@@ -453,10 +412,14 @@
             </div>
           </el-tab-pane>
           <el-tab-pane label="运行日志" name="fouth">
-            <div class="allConListMain"></div>
+            <div class="allConListMain">
+              <runningLog/>
+            </div>
           </el-tab-pane>
           <el-tab-pane label="监控信息" name="fifth">
-            <div class="allConListMain"></div>
+            <div class="allConListMain">
+              <monitInfo/>
+            </div>
           </el-tab-pane>
         </el-tabs>
       </div>
@@ -466,11 +429,14 @@
 <script>
 import triggerMode from './triggerMode.vue'
 import funCode from './funCode.vue'
-
+import runningLog from './runningLog'
+import monitInfo from './monitInfo'
 export default {
   components:{
     triggerMode:triggerMode,
-    funCode:funCode
+    funCode:funCode,
+    runningLog:runningLog,
+    monitInfo:monitInfo
   },
   data() {
     return {
@@ -503,6 +469,12 @@ export default {
           disableDelete: false
         }
       ],
+      functionData:[],
+      environmentFlag: true,
+      vpcConfigFlag: true,
+      VariablesArr: [],
+      vpcConfigVpcId: '',
+      vpcConfigSubnetId: '',
       funReast: {
         funName: this.funtitle,
         runRole: "",
@@ -519,28 +491,34 @@ export default {
         valueChange: false,
         valueChangeSelect1: [
           {
+            id:"1",
             value: "123",
             label: "123"
           },
           {
+            id:"2",
             value: "456",
             label: "456"
           }
         ],
         valueChangeSelect2: [
           {
+            id:"1",
             a: "123",
             b: "bbb"
           },
           {
+            id:"2",
             a: "123",
             b: "bbb"
           },
           {
+            id:"3",
             a: "456",
             b: "1"
           },
           {
+            id:"4",
             a: "456",
             b: "1"
           }
@@ -551,13 +529,69 @@ export default {
     };
   },
   mounted() {
-    console.log(this.$route.query.msg);
-    this.funNameTit = this.$route.query.msg;
+    console.log(this.$route.query.functionName);
+    this.funNameTit = this.$route.query.functionName;
     this.modelNameTags[0].nameSpaceOne = "default";
     this.modelNameTags[0].nameSpaceTwo = "";
     this.modelNameTags[0].disableDelete = true;
+    this.init()
   },
   methods: {
+    // 获取编辑详情
+    init() {
+      let params = {
+        Action: "GetFunction",
+        Version: "2018-04-16",
+        Region: this.$cookie.get("regionv2")
+      };
+      let functionName = this.$route.query.functionName
+      // functionName = 'tttt'
+      if(functionName != '' && functionName != null) {
+        params['FunctionName'] = functionName
+      }
+      let url = "scf2/GetFunction"
+      this.axios.post(url, params).then(res => {
+        let _this = this
+        this.functionData = res.Response
+        let funcData = this.functionData
+        if(funcData.FunctionName != undefined){
+          _this.VariablesArr = funcData.Environment.Variables
+          console.log(_this.VariablesArr)
+          _this.vpcConfigVpcId = funcData.VpcConfig.VpcId
+          _this.vpcConfigSubnetId = funcData.VpcConfig.SubnetId
+        }else {
+          _this.environmentFlag = false
+          _this.vpcConfigFlag = false
+        }
+      }).catch(error => {
+        console.log(error)
+      })
+    },
+    // 函数配置修改
+    saveConfig(){
+      debugger
+      let params = {
+        Action: "UpdateFunctionConfiguration",
+        Version: "2018-04-16",
+        Region: this.$cookie.get("regionv2"),
+        Description: this.functionData.Description,
+        // Environment: this.functionData.Environment, // 参数传递有问题，暂时屏蔽
+        FunctionName: this.functionData.FunctionName,
+        MemorySize: this.functionData.MemorySize,
+        Role: this.functionData.Role,
+        Timeout: this.functionData.Timeout//,
+        // VpcConfig: this.functionData.VpcConfig // 参数传递有问题，暂时屏蔽
+      }
+      let url = "scf2/UpdateFunctionConfiguration"
+      this.axios.post(url, params).then(res => {
+        console.log(res.Response)
+        this.$message({ type: 'success', message: '执行成功！' })
+        this.dialogVisible2=false
+      }).catch(error => {
+        console.log(error)
+      })
+    }
+    ,
     handleClick(tab, event) {
       //console.log(tab, event);
     },
@@ -578,11 +612,7 @@ export default {
       }
     },
     handleClose1() {
-      this.$confirm("确认关闭？")
-        .then(_ => {
-          done();
-        })
-        .catch(_ => {});
+      this.dialogVisible1=false;
     },
     handleClose2() {
       this.dialogVisible2 = false;

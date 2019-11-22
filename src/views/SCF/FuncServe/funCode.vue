@@ -21,10 +21,10 @@
                 执行方法
                 <i class="el-icon-question"></i>
               </span>
-              <el-input v-model="funCodeForm.zxMethods" />
+              <el-input v-model="functionData.Handler" />
             </el-form-item>
             <el-form-item label="运行环境" class="floatLeftItem">
-              <span>{{funCodeForm.runMoment}}</span>
+              <span>{{functionData.Runtime}}</span>
             </el-form-item>
           </el-form>
           <div class="formRightInput">
@@ -34,50 +34,16 @@
             </el-select>
           </div>
         </div>
-        <div class="codeShow" v-if="codeShow"></div>
-        <div class="uploadZipBack" v-if="uploadZipBackBack">
-          <el-form :model="actionSubminFile1" label-width="130px">
-            <el-form-item label="函数代码">
-              <input :model="actionSubminFile1.filesInput" type="file" id="file" accept="application/zip" multiple="multiple" @change="handleFile()"/>
-              <p>请上传zip格式的代码包，最大支持50M（如果zip大于10M，仅显示入口文件）</p>
-              <p class="tipRed" v-if="redTipShow">请上传50M以内zip格式的代码包</p>
-            </el-form-item>
-          </el-form>
+        <div class="codeShow" v-if="codeShow">
+          <span>{{functionData.CodeInfo}}</span>
         </div>
-        <div class="uploadFlolder" v-if="uploadFlolderShow">
-          <el-form :model="actionSubminFile2" label-width="130px">
-            <el-form-item label="函数代码">
-              <input :model="actionSubminFile2.filesInput" type="file" id="file1" accept="application/zip" multiple="multiple" @change="handleFile1()"/>
-              <p>请选择文件夹</p>
-            </el-form-item>
-          </el-form>
-        </div>
-        <div class="uploadCos" v-if="uploadCos"> 
-          <el-form :model="actionSubminFile3" label-width="130px">
-            <el-form-item label="COS Bucket">
-              <span slot="label">
-                COS Bucket
-                <i class="el-icon-question"></i>
-              </span>
-              <el-select v-model="actionSubminFile3.cosBucket" placeholder="请选择" class="setWidthChoose">
-                <el-option label="下载代码包" value="code"></el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item label="COS对象文件">
-              <span slot="label">
-                COS对象文件
-                <i class="el-icon-question"></i>
-              </span>
-              <el-input class="cosFilePath" :model="actionSubminFile3.cosObjFile" placeholder="请输入cos对象文件路径，以/开头"/>
-            </el-form-item>
-          </el-form>
-        </div>
-        <div class="bottomBtn newClear">
-          <el-button type="primary">保存</el-button>
-          <el-button @click="bottomCodeShow">测试</el-button>
-          <el-form class="newFormFloat">
-            <el-form-item label="当前测试模板" :required="true">
-              <el-select v-model="modelList" class="selectSetWidth">
+        <!-- <div class="bottomBtn newClear"> class导致按钮无法点击-->
+        <div>
+            <el-button type="primary" @click="saveCode">保存</el-button>
+            <el-button @click="testCode">测试</el-button>
+          <el-form>
+            <el-form-item label="当前测试模板" :required="true" class="floatLeftItem">
+              <el-select v-model="modelList" class="selectSetWidth floatLeftItem1">
                 <el-option label="Hello World事件模板" value="HelloWorld"></el-option>
                 <el-option label="COS 对象存储的 POST 事件模板" value="cospost"></el-option>
                 <el-option label="COS 对象存储的 PUT 事件模板" value="cosput"></el-option>
@@ -163,6 +129,8 @@
 export default {
   data() {
     return {
+      functionData:[],
+      FunctionRequestId: '',
       funCodeForm: {
         methodsTip: "inline",
         zxMethods: "index.main_handler",
@@ -193,7 +161,88 @@ export default {
       },
     };
   },
+  mounted() {
+    this.init()
+  },
   methods: {
+    // 查询详情
+    init() {
+      let params = {
+        Action: "GetFunction",
+        Version: "2018-04-16",
+        ShowCode: 'TRUE',
+        Namespace: 'default',
+        Qualifier: '$LATEST',
+        Region: this.$cookie.get("regionv2")
+      };
+      let functionName = this.$route.query.functionName
+      // functionName = 'tttt'
+      if(functionName != '' && functionName != null) {
+        params['FunctionName'] = functionName
+      }
+      console.log(params)
+      let url = "scf2/GetFunction"
+      this.axios.post(url, params).then(res => {
+        let _this = this
+        this.functionData = res.Response
+        let funcData = this.functionData
+        console.log(funcData)
+      }).catch(error => {
+        console.log(error)
+      })
+    },
+    saveCode() {
+      // 点击保存，首先执行uploads，然后重新执行GetFunction，查询信息，
+      // 查询模板GetTempCosInfo，根据返回的ObjectPath模板路径，执行UpdateFunctionCode
+      //UpdateFunctionCode //更新云函数代码
+
+    },
+    testCode() {
+      // ClientContext: '{↵  "key1": "test value 1",↵  "key2": "test value 2"↵}'
+      let params = {
+        Action: "Invoke",
+        Version: "2018-04-16",
+        Namespace: 'default',
+        InvocationType: 'Event',
+        Qualifier: '$LATEST',
+        Region: this.$cookie.get("regionv2")
+      };
+      let functionName = this.$route.query.functionName
+      if(functionName != '' && functionName != null) {
+        params['FunctionName'] = functionName
+      }
+      let url = "scf2/Invoke"
+      this.axios.post(url, params).then(res => {
+        debugger
+        let _this = this
+        this.FunctionRequestId = res.Response.Result.FunctionRequestId
+        console.log(this.FunctionRequestId)
+        // 获取测试日志
+        let params = {
+          Action: "GetFunctionLogs",
+          Version: "2018-04-16",
+          Namespace: 'default',
+          FunctionRequestId: _this.FunctionRequestId,
+          Qualifier: '$LATEST',
+          Region: _this.$cookie.get("regionv2")
+        };
+        if(functionName != '' && functionName != null) {
+          params['FunctionName'] = functionName
+        }
+        console.log(params)
+        let url = "scf2/GetFunctionLogs"
+        this.axios.post(url, params).then(res => {
+          console.log(res)
+          this.ResData = res.Response.Data
+          // 从腾讯云产品执行交易分析，如果日志为空从新查询，一般查询10多次日志就出来
+          console.log(this.ResData)
+        }).catch(error => {
+          console.log(error)
+        })
+      }).catch(error => {
+        console.log(error)
+      })
+    },
     newCreateModelClose(){
       this.newCreateModel=false;
     },

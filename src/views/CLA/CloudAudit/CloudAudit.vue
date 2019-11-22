@@ -11,15 +11,15 @@
       <div class="search">
         <div class="search_dropdown">
           <el-input placeholder="请输入内容" v-model="input3" class="input-with-select">
-            <el-select class="childSelect" slot="prepend" placeholder="只读" v-model="value">
+            <el-select class="childSelect" slot="prepend"  v-model="value">
               <el-option
-                v-for="(item,index) in options"
+                v-for="(item,index) in this.options"
                 :key="index"
-                :label="item.label"
-                :value="item.value"
+                :label="item.Label"
+                :value="item.Value"
               ></el-option>
             </el-select>
-            <el-button slot="append" icon="el-icon-search"></el-button>
+            <el-button slot="append" icon="el-icon-search" @click="seach()"></el-button>
           </el-input>
         </div>
         <div class="date">
@@ -208,43 +208,10 @@ export default {
           }
         ]
       },
-      options: [
-        {
-          value: '1',
-          label: '只读'
-        },
-        {
-          value: '2',
-          label: '访问秘钥'
-        },
-        {
-          value: '3',
-          label: '请求ID'
-        },
-        {
-          value: '4',
-          label: '事件ID'
-        },
-        {
-          value: '5',
-          label: '时间名称'
-        },
-        {
-          value: '6',
-          label: '资源名称'
-        },
-        {
-          value: '7',
-          label: '资源类型'
-        },
-        {
-          value: '8',
-          label: '用户名称'
-        }
-      ],
-      value: '1',
-      tableData: [],
-      input3: ''
+      options: [], // 下拉框数据
+      value: '',
+      input3: '',
+      tableData: []
     }
   },
   created () {
@@ -252,10 +219,11 @@ export default {
     this.axios
       .post(YJS_GETATTRIBUTEKEY, {
         Version: '2019-03-19',
-        WebsiteType: 'zh'
+        Region: 'ap-guangzhou'
       })
       .then(data => {
-        console.log(data)
+        this.options = data.Response.AttributeKeyDetails
+        console.log(this.options)
       })
   },
   methods: {
@@ -268,8 +236,8 @@ export default {
       let params = {
         // Action:'LookUpEvents',
         Version: '2019-03-19',
-        Region:'ap-taipei',
-        // StartTime:this.oldTime,
+        Region: 'ap-taipei',
+        StartTime: this.oldTime, // 开始时间
         EndTime: this.nowtime, // 结束时间1558108799
         LookupAttributes: [
           {
@@ -277,17 +245,14 @@ export default {
             AttributeValue: 'false'
           }
         ],
-        MaxResults: this.MaxResults,
-        StartTime: this.oldTime // 开始时间
+        MaxResults: this.MaxResults
       }
-      // console.log(params)
-
       this.axios.post(YJS_LIST, params).then(({ data }) => {
         this.tableData = data.Events
-        
+
         // console.log(this.tableData)
         this.loading = false
-        if (this.tableData.length == 0) {
+        if (this.tableData.length === 0) {
           this.Show = false
         } else {
           this.Show = true
@@ -299,7 +264,7 @@ export default {
       let endTime = new Date(this.value1[1]).getTime() / 1000
       let params = {
         Version: '2019-03-19',
-        Region:'ap-taipei',
+        Region: 'ap-taipei',
         EndTime: endTime,
         LookupAttributes: [
           {

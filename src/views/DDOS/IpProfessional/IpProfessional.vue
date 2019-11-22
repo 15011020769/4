@@ -4,14 +4,22 @@
       <div class="ReportTit newClear">
         <h3 class="ReportTitH3">统计报表</h3>
         <el-button class="ReportTitBtn" type="primary">新购</el-button>
+        <!-- <el-button class="TestMethod" type="primary" @click="describeCCEvList()">Test接口</el-button> -->
       </div>
       <div>
         <el-tabs v-model="activeName" @tab-click="handleClick">
           <el-tab-pane label="DDoS攻击防护" name="first">
             <div class="mainConList">
               <div class="mainConListAll mainConListOne">
+                <!-- <el-button-group class="bthGroup">
+                  <el-button @click="thisTime1(1)">今天</el-button>
+                  <el-button @click="thisTime1(2)">近7天</el-button>
+                  <el-button @click="thisTime1(3)">近15天</el-button>
+                  <el-button @click="thisTime1(4)">近30天</el-button>
+                  <el-button @click="thisTime1(5)">近半年</el-button>
+                </el-button-group> -->
                 <el-date-picker
-                  v-model="value1"
+                  v-model="dateChoice1"
                   type="daterange"
                   align="right"
                   unlink-panels
@@ -20,7 +28,7 @@
                   end-placeholder="结束日期"
                   :picker-options="pickerOptions">
                 </el-date-picker><br/>
-                <el-input class="mainConListOneIpt" placeholder="请输入要查询的ID或名称"/>
+                <el-input v-model="inputId1" @change="getData" class="mainConListOneIpt" placeholder="请输入要查询的ID或名称"/>
               </div>
               <div class="mainConListAll mainConListTwo">
                 <el-tabs class="tabsCard" v-model="activeName1" type="card" @tab-click="handleClick1">
@@ -85,8 +93,15 @@
           <el-tab-pane label="CC攻击防护" name="second">
             <div class="mainConList">
               <div class="mainConListAll mainConListOne">
+                <!-- <el-button-group class="bthGroup">
+                  <el-button @click="thisTime2(1)">今天</el-button>
+                  <el-button @click="thisTime2(2)">近7天</el-button>
+                  <el-button @click="thisTime2(3)">近15天</el-button>
+                  <el-button @click="thisTime2(4)">近30天</el-button>
+                  <el-button @click="thisTime2(5)">近半年</el-button>
+                </el-button-group> -->
                 <el-date-picker
-                  v-model="value1"
+                  v-model="dateChoice2"
                   type="daterange"
                   align="right"
                   unlink-panels
@@ -95,15 +110,22 @@
                   end-placeholder="结束日期"
                   :picker-options="pickerOptions">
                 </el-date-picker><br/>
-                <el-input class="mainConListOneIpt" placeholder="请输入要查询的ID或名称"/>
+                <el-input v-model="inputId2" @change="describeCCEvList" class="mainConListOneIpt" placeholder="请输入要查询的ID或名称"/>
               </div>
             </div>
           </el-tab-pane>
           <el-tab-pane label="业务" name="third">
             <div class="mainConList">
               <div class="mainConListAll mainConListOne">
+                <!-- <el-button-group class="bthGroup">
+                  <el-button @click="thisTime3(1)">今天</el-button>
+                  <el-button @click="thisTime3(2)">近7天</el-button>
+                  <el-button @click="thisTime3(3)">近15天</el-button>
+                  <el-button @click="thisTime3(4)">近30天</el-button>
+                  <el-button @click="thisTime3(5)">近半年</el-button>
+                </el-button-group> -->
                 <el-date-picker
-                  v-model="value1"
+                  v-model="dateChoice3"
                   type="daterange"
                   align="right"
                   unlink-panels
@@ -112,7 +134,7 @@
                   end-placeholder="结束日期"
                   :picker-options="pickerOptions">
                 </el-date-picker><br/>
-                <el-input class="mainConListOneIpt" placeholder="请输入要查询的ID或名称"/>
+                <el-input v-model="inputId3" @change="describeCCSelfDefinePolicy" class="mainConListOneIpt" placeholder="请输入要查询的ID或名称"/>
               </div>
               <div class="mainConListAll mainConListTwo">
                 <el-tabs class="tabsCard" v-model="activeName1" type="card" @tab-click="handleClick1">
@@ -141,51 +163,65 @@ export default {
     return {
       activeName: 'first',
       activeName1:"first",
-      value1:"",
+      // 日期区间：默认获取当前时间和前一天时间
+      endTime: this.getDateString(new Date()),
+      startTime: this.getDateString(new Date(new Date().getTime() - 24*60*60*1000)),
+      endTime2: this.getDateString(new Date()),
+      startTime2: this.getDateString(new Date(new Date().getTime() - 24*60*60*1000)),
+      endTime3: this.getDateString(new Date()),
+      startTime3: this.getDateString(new Date(new Date().getTime() - 24*60*60*1000)),
+      // 日期选择
+      dateChoice1: {},
+      dateChoice2: {},
+      dateChoice3: {},
+      // 根据Id查询
+      inputId1: 'bgp-00000010',
+      inputId2: 'bgp-00000010',
+      inputId3: 'bgp-00000010',
       pickerOptions: {
-          shortcuts: [{
-            text: '今天',
-            onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 1);
-              picker.$emit('pick', [start, end]);
-            }
-          },{
-            text: '近7天',
-            onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
-              picker.$emit('pick', [start, end]);
-            }
-          }, {
-            text: '近15天',
-            onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 15);
-              picker.$emit('pick', [start, end]);
-            }
-          }, {
-            text: '近30天',
-            onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
-              picker.$emit('pick', [start, end]);
-            }
-          }, {
-            text: '近半年',
-            onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30 * 6);
-              picker.$emit('pick', [start, end]);
-            }
-          }]
-        },
-        tableDataBegin: [],
+        shortcuts: [{
+          text: '今天',
+          onClick(picker) {
+            const end = new Date();
+            const start = new Date();
+            start.setTime(start.getTime() - 3600 * 1000 * 24 * 1);
+            picker.$emit('pick', [start, end]);
+          }
+        },{
+          text: '近7天',
+          onClick(picker) {
+            const end = new Date();
+            const start = new Date();
+            start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+            picker.$emit('pick', [start, end]);
+          }
+        }, {
+          text: '近15天',
+          onClick(picker) {
+            const end = new Date();
+            const start = new Date();
+            start.setTime(start.getTime() - 3600 * 1000 * 24 * 15);
+            picker.$emit('pick', [start, end]);
+          }
+        }, {
+          text: '近30天',
+          onClick(picker) {
+            const end = new Date();
+            const start = new Date();
+            start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+            picker.$emit('pick', [start, end]);
+          }
+        }, {
+          text: '近半年',
+          onClick(picker) {
+            const end = new Date();
+            const start = new Date();
+            start.setTime(start.getTime() - 3600 * 1000 * 24 * 30 * 6);
+            picker.$emit('pick', [start, end]);
+          }
+        }]
+      },
+      tableDataBegin: [], //DDoS攻击详情
       tableDataName: "",
       tableDataEnd: [],
       currentPage: 1,
@@ -203,42 +239,111 @@ export default {
       ]
     }
   },
+  watch: {
+    'dateChoice1': function (value) {
+      console.log(this.getDateString(value[0]))
+      this.startTime = this.getDateString(value[0])
+      this.endTime = this.getDateString(value[1])
+      this.getData()
+    },
+    'dateChoice2': function (value) {
+      console.log(this.getDateString(value[0]))
+      this.startTime2 = this.getDateString(value[0])
+      this.endTime2 = this.getDateString(value[1])
+      this.describeCCEvList()
+    },
+    'dateChoice3': function (value) {
+      console.log(this.getDateString(value[0]))
+      this.startTime3 = this.getDateString(value[0])
+      this.endTime3 = this.getDateString(value[1])
+      this.describeCCSelfDefinePolicy()
+    }
+  },
   created() {
-    this.getData();
+    this.getData()
+    this.describeCCEvList()
+    this.describeCCSelfDefinePolicy()
   },
   methods:{
+    getData() {
+      // 从cookie中获取资源
+      // var cookies = document.cookie;
+      // var list = cookies.split(";");
+      // for (var i = 0; i < list.length; i++) {
+      //   var arr = list[i].split("=");
+      // }
+      // console.log(cookies);
+      // let params = {
+      //   Version: "2018-04-16",
+      //   Region: arr[1]
+      // };
+      // 获取 DDoS 攻击事件列表
+      let params = {
+        Version: '2018-07-09',
+        // Region: '',
+        Business: 'net',
+        StartTime: this.startTime,//'2018-08-27 15:05:10',
+        EndTime: this.endTime,//'2018-08-27 16:05:10',
+        Id: this.inputId1
+      }
+      this.$axios.post('dayu2/DescribeDDoSEvList', params).then(res => {
+        console.log(params)
+        console.log(res)
+      })
+    },
+    // 获取 DDoS 攻击事件详情
+    describeDDoSEvInfo() {
+      let params = {
+        Version: '2018-07-09',
+        // Region: '',
+        Business: 'net',
+        StartTime: this.startTime,//'2018-08-27 15:05:10',
+        EndTime: this.endTime,//'2018-08-27 16:05:10',
+        Id: this.inputId1,
+        Ip: '1.1.1.1'
+      }
+      this.$axios.post('dayu2/DescribeDDoSEvInfo', params).then(res => {
+        console.log(params)
+        console.log(res)
+      })
+    },
+    // 获取 CC 攻击事件列表
+    describeCCEvList() {
+      let params = {
+        Version: '2018-07-09',
+        // Region: '',
+        Business: 'net',
+        StartTime: this.startTime2,//'2018-08-27 15:05:10',
+        EndTime: this.endTime2,//'2018-08-27 16:05:10',
+        Id: this.inputId2
+        // 'IpList.0': '1.1.1.1'
+      }
+      this.$axios.post('dayu2/DescribeCCEvList', params).then(res => {
+        console.log(params)
+        console.log(res)
+      })
+    },
+    // 业务（未找到接口）
+    describeCCSelfDefinePolicy() {
+      let params = {
+        Version: '2018-07-09',
+        // Region: '',
+        Business: 'net',
+        StartTime: this.startTime3,//'2018-08-27 15:05:10',
+        EndTime: this.endTime3,//'2018-08-27 16:05:10',
+        Id: this.inputId3
+        // 'IpList.0': '1.1.1.1'
+      }
+      // this.$axios.post('dayu2/DescribeCCSelfDefinePolicy', params).then(res => {
+      //   console.log(params)
+      //   console.log(res)
+      // })
+    },
+
     handleClick(tab, event) {
       //console.log(tab, event);
     },
     handleClick1(){},
-    getData() {
-      var cookies = document.cookie;
-      var list = cookies.split(";");
-      for (var i = 0; i < list.length; i++) {
-        var arr = list[i].split("=");
-      }
-      console.log(arr[1]);
-      let params = {
-        // Action: "ListFunctions",
-        Version: "2018-04-16",
-        Region: arr[1]
-      };
-      //this.$axios.post('scf/ListFunctions', params).then(res => {
-      //console.log(res.data);
-      //this.tableDataBegin = res.data.dataTable;
-      //this.allData = this.tableDataBegin;
-        this.tableDataBegin = this.allData;
-        // 将数据的长度赋值给totalItems
-        this.totalItems = this.tableDataBegin.length;
-        if (this.totalItems > this.pageSize) {
-          for (let index = 0; index < this.pageSize; index++) {
-            this.tableDataEnd.push(this.tableDataBegin[index]);
-          }
-        } else {
-          this.tableDataEnd = this.tableDataBegin;
-        }
-      //});
-    },
     handleSizeChange(val) {
       console.log(`每页 ${val} 条`);
       this.pageSize = val;
@@ -263,6 +368,10 @@ export default {
           this.tableDataEnd.push(list[from]);
         }
       }
+    },
+    // 时间格式化'yyyy-MM-dd hh:mm:ss'
+    getDateString(date) {
+      return date.toLocaleString('zh',{hour12:false, year: 'numeric',  month: '2-digit',  day: '2-digit',  hour: '2-digit',  minute: '2-digit',  second: '2-digit'}).replace(/\//g,'-');
     }
   }
 }

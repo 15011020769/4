@@ -2,7 +2,7 @@
 export const YJS_LIST = 'cloudaudit/LookupEvents'
 
 // 云审计--搜索下拉
-export const YJS_GETATTRIBUTEKEY = 'cloudaudit/GetAttributeKey'
+export const YJS_GETATTRIBUTEKEY = 'cloudaudit2/GetAttributeKey'
 
 // 云审计--跟踪集列表
 export const GZJ_LIST = 'cloudaudit/ListAudits'
@@ -11,7 +11,7 @@ export const GZJ_LIST = 'cloudaudit/ListAudits'
 export const GZJ_CREATE = 'cloudaudit/CreateAudit'
 
 // 云审计--跟踪集列表详情
-export const GZJ_DETAILIST = 'cloudaudit/DescribeAudits'
+export const GZJ_DETAILIST = 'cloudaudit2/DescribeAudit'
 
 // 云审计--跟踪集删除
 export const GZJ_DELETE = 'cloudaudit/DeleteAudit'
