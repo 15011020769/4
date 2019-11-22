@@ -30,7 +30,7 @@
             <el-table :data="tableDataBegin.slice((currentPage-1)*pageSize,currentPage*pageSize)">
               <el-table-column prop="canmeId" label="CNAME/ID">
                 <template slot-scope="scope">
-                  <a href="#" @click="toDoDetail(scope.$index, scope.row)">{{scope.row.idOrName}}</a>
+                  <a href="#" @click="toDoDetail(scope.$index, scope.row)">{{scope.row.canmeId}}</a>
                 </template>
               </el-table-column>
               <el-table-column prop="domain" label="域名"></el-table-column>
@@ -85,6 +85,11 @@ export default {
           domain: "https",
           nowIp: "10.1.1.212",
           backSelf: "自动回切"
+        },{
+          canmeId: '2',
+          domain: 'https2',
+          nowIp: '1.1.1.2',
+          backSelf: '自动回切2'
         }
       ],
       listResouse: 'resourceList',
@@ -120,7 +125,8 @@ export default {
       this.$axios.post('dayu2/DescribeResourceList', params).then(res => {
         console.log(params)
         console.log(res)
-        this.tableDataBegin = res.Response.ServicePacks;
+        // this.tableDataBegin = res.Response.ServicePacks;
+        this.tableDataBegin = this.allData
         // 将数据的长度赋值给totalItems
         this.totalItems = this.tableDataBegin.length;
         if (this.totalItems > this.pageSize) {
@@ -138,31 +144,16 @@ export default {
       // console.log(this.runningStatus) // 运行状态
       // console.log(this.comingSoon)  // 即将过期
       // console.log(this.tableDataName) // 搜索的输入
-      this.tableDataBegin = this.allData;
       this.tableDataEnd = [];
       //每次手动将数据置空,因为会出现多次点击搜索情况
       this.filterTableDataEnd = [];
       this.tableDataBegin.forEach((val, index) => {
-        if (this.filterConrent == "IP") {
-          console.log(typeof val.ip);
-          if (val.ip == this.tableDataName) {
-            this.filterTableDataEnd.push(val);
-            this.tableDataBegin = this.filterTableDataEnd;
-          } else {
-            this.filterTableDataEnd.push();
-            this.tableDataBegin = this.filterTableDataEnd;
-          }
-        } else if (
-          this.filterConrent == "ID" ||
-          this.filterConrent == "serverBag"
-        ) {
-          if (val.idOrName == this.tableDataName) {
-            this.filterTableDataEnd.push(val);
-            this.tableDataBegin = this.filterTableDataEnd;
-          } else {
-            this.filterTableDataEnd.push();
-            this.tableDataBegin = this.filterTableDataEnd;
-          }
+        if (val.canmeId == this.tableDataName) {
+          this.filterTableDataEnd.push(val);
+          this.tableDataBegin = this.filterTableDataEnd;
+        } else {
+          this.filterTableDataEnd.push();
+          this.tableDataBegin = this.filterTableDataEnd;
         }
       });
       //页面数据改变重新统计数据数量和当前页
