@@ -150,11 +150,19 @@
         this.searchValue = val
       },
       changeinput(val) {
-        console.log(val)
-
+        this.searchInput = val
+        if (this.searchInput === '') {
+          this.GetTabularData()
+        }
       },
       clicksearch(val) {
         this.searchInput = val
+        if (this.searchInput !== '' && this.searchValue !== '') {
+          this.GetTabularData()
+        } else {
+          this.$message.error('请输入正确搜索信息');
+        }
+
       },
       // 添加项目列表的表格数据
       GetTabularData() {
@@ -164,6 +172,11 @@
           Offset: this.currpage * this.pagesize - this.pagesize,
           Limit: this.pagesize,
         };
+        if (this.searchValue !== '' && this.searchInput !== '') {
+          param['Filters.0.Name'] = this.searchValue
+          param['Filters.0.Values.0'] = this.searchInput
+
+        }
         const paramS = {
           allList: 0,
         };
@@ -171,8 +184,11 @@
         this.axios
           .post(CVM_LIST, param)
           .then((data) => {
-            this.TbaleData = data.Response.InstanceSet;
-
+            if (data.Response.Error == undefined) {
+              this.TbaleData = data.Response.InstanceSet;
+            } else {
+              this.$message.error(data.Response.Error.Message);
+            }
 
           })
           .then(() => {
