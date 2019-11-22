@@ -12,7 +12,7 @@
     <div class="container">
       <div class="contant">
         <div class="step">
-          <el-steps :active="active" finish-status="success">
+          <el-steps :active="active" direction="vertical" simple :space="200" finish-status="success">
             <el-step title="输入角色载体信息"></el-step>
             <el-step title="配置角色策略"></el-step>
             <el-step title="审阅"></el-step>
