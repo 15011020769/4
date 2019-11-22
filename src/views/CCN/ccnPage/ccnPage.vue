@@ -688,8 +688,6 @@ export default {
   }
   .el-pagination {
     float: right;
-    ::v-deep .el-pagination__total {
-    }
   }
   .el-popover {
     .btn-footer {

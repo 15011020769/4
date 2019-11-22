@@ -195,7 +195,7 @@ export default {
       }
     },
     save () {
-      let _cos;
+      let _cos
       if (this.ruleForm.radio == 1) {
         _cos = this.ruleForm.COS
       } else {
@@ -203,19 +203,18 @@ export default {
       }
       let params = {
         // Action: "CreateAudit",
-        Version:'2019-03-19',
-        Region:'ap-guangzhou',
+        Version: '2019-03-19',
+        Region: 'ap-guangzhou',
         // CmqQueueName:'cmq-01',
-        CosRegion:'ap-beijing',
+        CosRegion: 'ap-beijing',
         IsCreateNewBucket: this.ruleForm.radio,
-        IsEnableCmqNotify:0,
-        ReadWriteAttribute:this.ruleForm.radio2,
+        IsEnableCmqNotify: 0,
+        ReadWriteAttribute: this.ruleForm.radio2,
         AuditName: this.ruleForm.TrankingName, // 跟踪集名称
         CosBucketName: _cos, // COS Bucket 的名称
-        LogFilePrefix: this.ruleForm.logName, // COS Bucket 前缀
+        LogFilePrefix: this.ruleForm.logName // COS Bucket 前缀
       }
       this.axios.post(GZJ_CREATE, params).then(data => {
-        
         if (data.codeDesc == 'Success') {
           this.$router.push({
             path: '/Audit'
