@@ -202,7 +202,7 @@
         >该角色为您授权的服务角色，擅自更改角色内容（角色关联策略或者角色载体）可能导致您授权的服务无法正确使用该角色。</p>
         <p style="text-align:center" slot="footer">
           <el-button @click="dialogVisible = false" size="small">取 消</el-button>
-          <el-button type="primary" @click="dialogVisible = false" size="small">确 定</el-button>
+          <el-button type="primary" @click="Relievesure_dialogVisible = true;dialogVisible = false;" size="small">确 定</el-button>
         </p>
       </el-dialog>
       <el-dialog :visible.sync="Relieve_dialogVisible" width="30%" :before-close="handleClose">
@@ -225,11 +225,23 @@
           <el-button type="primary" @click="Relieve_dialogVisible = false" size="small">确 定</el-button>
         </p>
       </el-dialog>
+      <el-dialog :visible.sync="Relievesure_dialogVisible" width="70%" :before-close="handleClose">
+        <p class="dialog" slot="title">关联策略</p>
+         <transfer></transfer>
+        <p style="text-align:center;margin-top:30px">
+          <el-button @click="Relievesure_dialogVisible = false" size="small">取 消</el-button>
+          <el-button type="primary" @click="Relievesure_dialogVisible = false" size="small">确 定</el-button>
+        </p>
+      </el-dialog>
     </div>
   </div>
 </template>
 <script>
+import transfer from './component/transfer'
 export default {
+   components: {
+      transfer,
+    },
   data() {
     return {
       activeName: "first",
@@ -274,6 +286,7 @@ export default {
       dialogVisible: false,
       Relieve_dialogVisible: false,
       transfer_value: [],
+      Relievesure_dialogVisible:false,
       transfer_data: [
         {
           value: 1,
@@ -299,6 +312,9 @@ export default {
   },
   methods: {
     handleClick() {},
+    isRelieve(){
+      this.Relievesure_dialogVisible = true
+    },
     Relation_user() {
       this.dialogVisible = true;
     },
