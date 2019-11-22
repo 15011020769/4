@@ -1,3 +1,4 @@
+
 <template>
   <div class="Cam">
     <div class="top">
@@ -204,10 +205,11 @@
               @click="toQuery"
             ></el-button>
             <el-table-column type="selection" prop="policyId" width></el-table-column>
-            <el-table-column label="策略名" width></el-table-column>
-            <el-table-column prop="type" label="策略类型" width></el-table-column>
+            <el-table-column  prop="Description" label="策略名" width></el-table-column>
+            <el-table-column prop="PolicyId" label="策略类型" width></el-table-column>
           </el-table>
         </div>
+
         <div class="abs">
           <div>&nbsp;</div>
         </div>
@@ -222,8 +224,10 @@
             height="300"
             style="width: 100%;border:1px solid #ddd"
           >
-            <el-table-column label="策略名" width></el-table-column>
-            <el-table-column prop="type" label="策略类型" width></el-table-column>
+
+            <el-table-column  prop="Description" label="策略名" width></el-table-column>
+            <el-table-column prop="PolicyId" label="策略类型" width></el-table-column>
+
           </el-table>
         </div>
       </div>
@@ -277,10 +281,14 @@
               @click="toQuery"
             ></el-button>
             <el-table-column type="selection" prop="policyId" width="100"></el-table-column>
-            <el-table-column label="策略名" width="120"></el-table-column>
+
+            <el-table-column  label="策略名" width="120"></el-table-column>
             <el-table-column prop="type" label="策略类型" width="120"></el-table-column>
           </el-table>
         </div>
+
+
+  
         <div class="abs">
           <div>&nbsp;</div>
         </div>
@@ -489,6 +497,8 @@
   </div>
 </template>
 <script>
+
+
 export default {
   props: {
     policiesSelectedData: [
@@ -614,7 +624,21 @@ export default {
       this.$refs.multipleOption.toggleRowSelection(rows[index], false);
     },
     toQuery() {}
-  }
+
+  },
+  created(){
+    //获取授权数据
+    let params = {
+       Action:'ListPolicies',
+       Version:'2019-01-16'
+    }
+    let url = 'cam2/ListPolicies'
+    this.axios.post(url,params).then((data)=>{
+       this.policiesData = data.Response.List
+    }).catch(error=>{
+      console.log(error)
+    })
+   }
 };
 </script>
 <style lang="scss" scoped>
@@ -931,3 +955,4 @@ export default {
   }
 }
 </style>
+
