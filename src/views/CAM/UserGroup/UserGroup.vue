@@ -28,8 +28,12 @@
         tooltip-effect="dark"
         style="width: 100%; border:1px solid #ddd;padding-top: 8px;" 
         @selection-change="handleSelectionChange">
-        <el-table-column prop="groupId" type="selection" width="30"> </el-table-column>
-        <el-table-column prop="groupName" :label="$t('CAM.CAM.userGroup.colNmae')" show-overflow-tooltip> </el-table-column>
+       
+        <el-table-column prop="groupId" type="selection" width="30"></el-table-column>
+       <el-table-column prop="groupName" :label="$t('CAM.CAM.userGroup.colNmae')" show-overflow-tooltip>
+          &lt;!&ndash;<template slot-scope="scope">
+            <el-button @click="Interface" size="mini" type="text">{{scope.row.groupName}}</el-button>
+          </template>&ndash;&gt;</el-table-column>
         <el-table-column prop="remark" :label="$t('CAM.CAM.userGroup.colRemark')" show-overflow-tooltip> </el-table-column>
         <el-table-column prop="createTime" :label="$t('CAM.CAM.userGroup.colCreTime')" show-overflow-tooltip> </el-table-column>
         <el-table-column :label="$t('CAM.CAM.userGroup.colHandle')" show-overflow-tooltip>
@@ -259,6 +263,10 @@ export default {
     },
     toQuery() {
       this.init()
+    },
+    //测试接口详情
+    Interface(){
+      this.$router.push({ name: "Interfacedetails" });
     }
   }
 }
