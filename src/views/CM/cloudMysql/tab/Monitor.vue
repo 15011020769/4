@@ -112,11 +112,11 @@
 </template>
 
 <script>
-import XTimeX from '@/components/TimeX5'
-import echartLine from '@/components/echars-line'
-import { CVM_MONITOR } from '@/constants'
+import XTimeX from '@/components/TimeX5';
+import echartLine from '@/components/echars-line';
+import { CVM_MONITOR } from '@/constants';
 export default {
-  data () {
+  data() {
     return {
       ID: this.$route.query.id,
       period: '',
@@ -127,20 +127,20 @@ export default {
       pageSize: 10, // 每页数
       totalPage: 0, // 表格数据数组长度
       tableData: [], // 获取列表数据
-      timeData: [] // 折线图的x轴数据
-    }
+      timeData: [], // 折线图的x轴数据
+    };
   },
   components: {
     echartLine,
-    XTimeX
+    XTimeX,
   },
-  created () {},
+  created() {},
   methods: {
-    GetDat (data) {
-      this.period = data[0]
-      this.timeData = data[1]
-      this.Start_End = data[2]
-      this.value = data[3]
+    GetDat(data) {
+      this.period = data[0];
+      this.timeData = data[1];
+      this.Start_End = data[2];
+      this.value = data[3];
       // console.log(this.timeData)
       const metricNArr = [
         // 62
@@ -206,16 +206,16 @@ export default {
         'innodb_buffer_pool_reads', // InnoDB物理读
 
         'created_tmp_disk_tables', // 磁盘临时表数量
-        'key_reads' // 硬盘读取数据块次数
-      ]
-      this.tableData = []
+        'key_reads', // 硬盘读取数据块次数
+      ];
+      this.tableData = [];
       for (let i = 0; i < metricNArr.length; i++) {
-        this.Obtain(metricNArr[i])
+        this.Obtain(metricNArr[i]);
       }
 
       // console.log(this.tableData);
     },
-    Obtain (metricN) {
+    Obtain(metricN) {
       const param = {
         Region: this.$cookie.get('regionv2'),
         namespace: 'qce/cdb',
@@ -224,214 +224,214 @@ export default {
         'dimensions.0.value': this.ID,
         period: this.period,
         startTime: this.Start_End.StartTIme,
-        endTime: this.Start_End.EndTIme
-      }
+        endTime: this.Start_End.EndTIme,
+      };
       this.axios.post(CVM_MONITOR, param).then((data) => {
-        this.tableData.push(data)
-      })
+        this.tableData.push(data);
+      });
     },
 
     // 模态框
-    Modality (Y) {
-      this.dialogVisible = true
-      this.opDiskData = Y
+    Modality(Y) {
+      this.dialogVisible = true;
+      this.opDiskData = Y;
     },
 
-    handleClose (done) {
-      done()
-    }
+    handleClose(done) {
+      done();
+    },
   },
   filters: {
-    UpName (value) {
+    UpName(value) {
       if (value === 'slow_queries') {
-        return (value = '慢查询数')
+        return (value = '慢查询数');
       }
       if (value === 'max_connections') {
-        return (value = '最大连接数')
+        return (value = '最大连接数');
       }
       if (value === 'select_scan') {
-        return (value = '全表扫描数')
+        return (value = '全表扫描数');
       }
       if (value === 'select_count') {
-        return (value = '查询数')
+        return (value = '查询数');
       }
       if (value === 'com_update') {
-        return (value = '更新数')
+        return (value = '更新数');
       }
       if (value === 'com_delete') {
-        return (value = '删除数')
+        return (value = '删除数');
       }
       if (value === 'com_insert') {
-        return (value = '插入数')
+        return (value = '插入数');
       }
       if (value === 'com_replace') {
-        return (value = '覆盖数')
+        return (value = '覆盖数');
       }
       if (value === 'queries') {
-        return (value = '总请求数')
+        return (value = '总请求数');
       }
       if (value === 'threads_connected') {
-        return (value = '当前打开连接数')
+        return (value = '当前打开连接数');
       }
       if (value === 'created_tmp_tables') {
-        return (value = '临时表数量')
+        return (value = '临时表数量');
       }
       if (value === 'innodb_cache_use_rate') {
-        return (value = 'innodb缓存使用率')
+        return (value = 'innodb缓存使用率');
       }
       if (value === 'innodb_cache_hit_rate') {
-        return (value = 'innodb缓存命中率')
+        return (value = 'innodb缓存命中率');
       }
       if (value === 'table_locks_waited') {
-        return (value = '等待表锁次数')
+        return (value = '等待表锁次数');
       }
       if (value === 'qcache_hit_rate') {
-        return (value = '缓存命中率')
+        return (value = '缓存命中率');
       }
       if (value === 'qcache_use_rate') {
-        return (value = '缓存使用率')
+        return (value = '缓存使用率');
       }
       if (value === 'bytes_received') {
-        return (value = '内网入流量')
+        return (value = '内网入流量');
       }
       if (value === 'bytes_sent') {
-        return (value = '内网入流量')
+        return (value = '内网入流量');
       }
       if (value === 'capacity') {
-        return (value = '磁盘占用空间')
+        return (value = '磁盘占用空间');
       }
       if (value === 'real_capacity') {
-        return (value = '磁盘使用空间')
+        return (value = '磁盘使用空间');
       }
       if (value === 'cpu_use_rate') {
-        return (value = 'CPU占比')
+        return (value = 'CPU占比');
       }
       if (value === 'tps') {
-        return (value = '每秒执行事务数')
+        return (value = '每秒执行事务数');
       }
       if (value === 'qps') {
-        return (value = '每秒执行操作数')
+        return (value = '每秒执行操作数');
       }
       if (value === 'query_rate') {
-        return (value = '查询使用率')
+        return (value = '查询使用率');
       }
       if (value === 'volume_rate') {
-        return (value = '容量使用率')
+        return (value = '容量使用率');
       }
       if (value === 'key_cache_hit_rate') {
-        return (value = 'myisam缓存命中率')
+        return (value = 'myisam缓存命中率');
       }
       if (value === 'key_cache_use_rate') {
-        return (value = 'myisam缓存使用率')
+        return (value = 'myisam缓存使用率');
       }
       if (value === 'innodb_os_fsyncs') {
-        return (value = 'innodb fsync数量')
+        return (value = 'innodb fsync数量');
       }
       if (value === 'innodb_os_file_writes') {
-        return (value = 'innodb写磁盘数量')
+        return (value = 'innodb写磁盘数量');
       }
       if (value === 'innodb_os_file_reads') {
-        return (value = 'innodb读磁盘数量')
+        return (value = 'innodb读磁盘数量');
       }
       if (value === 'threads_running') {
-        return (value = '运行的线程数')
+        return (value = '运行的线程数');
       }
       if (value === 'opened_tables') {
-        return (value = '已经打开的表数')
+        return (value = '已经打开的表数');
       }
       if (value === 'threads_created') {
-        return (value = '已创建的线程数')
+        return (value = '已创建的线程数');
       }
       if (value === 'innodb_row_lock_time_avg') {
-        return (value = 'InnoDB平均获取行锁时间')
+        return (value = 'InnoDB平均获取行锁时间');
       }
       if (value === 'innodb_rows_read') {
-        return (value = 'InnoDB行读取量')
+        return (value = 'InnoDB行读取量');
       }
       if (value === 'handler_commit') {
-        return (value = '内部提交数')
+        return (value = '内部提交数');
       }
       if (value === 'com_commit') {
-        return (value = '提交数')
+        return (value = '提交数');
       }
       if (value === 'key_writes') {
-        return (value = '数据块写入磁盘次数')
+        return (value = '数据块写入磁盘次数');
       }
       if (value === 'key_write_requests') {
-        return (value = '数据块写入键缓冲次数')
+        return (value = '数据块写入键缓冲次数');
       }
       if (value === 'memory_use') {
-        return (value = '内存占用')
+        return (value = '内存占用');
       }
       if (value === 'innodb_rows_inserted') {
-        return (value = 'InnoDB行插入量')
+        return (value = 'InnoDB行插入量');
       }
       if (value === 'created_tmp_files') {
-        return (value = '临时文件数量')
+        return (value = '临时文件数量');
       }
       if (value === 'innodb_data_read') {
-        return (value = 'InnoDB读取量')
+        return (value = 'InnoDB读取量');
       }
       if (value === 'innodb_row_lock_waits') {
-        return (value = 'InnoDB等待行锁次数')
+        return (value = 'InnoDB等待行锁次数');
       }
       if (value === 'innodb_buffer_pool_read_requests') {
-        return (value = 'InnoDB逻辑读')
+        return (value = 'InnoDB逻辑读');
       }
       if (value === 'innodb_buffer_pool_pages_free') {
-        return (value = 'InnoDB空页数')
+        return (value = 'InnoDB空页数');
       }
       if (value === 'innodb_data_writes') {
-        return (value = 'InnoDB总写入量')
+        return (value = 'InnoDB总写入量');
       }
       if (value === 'key_blocks_unused') {
-        return (value = '键缓存内未使用的块数量')
+        return (value = '键缓存内未使用的块数量');
       }
       if (value === 'com_rollback') {
-        return (value = '回滚数')
+        return (value = '回滚数');
       }
       if (value === 'innodb_data_reads') {
-        return (value = 'InnoDB总读取量')
+        return (value = 'InnoDB总读取量');
       }
       if (value === 'innodb_buffer_pool_reads') {
-        return (value = 'InnoDB物理读')
+        return (value = 'InnoDB物理读');
       }
       if (value === 'key_read_requests') {
-        return (value = '键缓存读取数据块次数')
+        return (value = '键缓存读取数据块次数');
       }
       if (value === 'innodb_data_written') {
-        return (value = 'InnoDB写入量')
+        return (value = 'InnoDB写入量');
       }
       if (value === 'key_blocks_used') {
-        return (value = '键缓存内使用的块数量')
+        return (value = '键缓存内使用的块数量');
       }
       if (value === 'innodb_buffer_pool_pages_total') {
-        return (value = 'InnoDB空页数')
+        return (value = 'InnoDB空页数');
       }
       if (value === 'innodb_rows_deleted') {
-        return (value = 'InnoDB行删除量')
+        return (value = 'InnoDB行删除量');
       }
       if (value === 'innodb_rows_updated') {
-        return (value = 'InnoDB行更新量')
+        return (value = 'InnoDB行更新量');
       }
       if (value === 'handler_read_rnd_next') {
-        return (value = '读下一行请求数')
+        return (value = '读下一行请求数');
       }
       if (value === 'master_slave_sync_distance') {
-        return (value = '主从不同步距离')
+        return (value = '主从不同步距离');
       }
       if (value === 'handler_rollback') {
-        return (value = '内部回滚数')
+        return (value = '内部回滚数');
       }
       if (value === 'created_tmp_disk_tables') {
-        return (value = '磁盘临时表数量')
+        return (value = '磁盘临时表数量');
       }
       if (value === 'key_reads') {
-        return (value = '硬盘读取数据块次数')
+        return (value = '硬盘读取数据块次数');
       }
-    }
-  }
-}
+    },
+  },
+};
 </script>
 
 <style  scoped lang="scss">
@@ -458,7 +458,7 @@ export default {
         color: #cccccc;
         font-size: 10px;
       }
-      /deep/.el-input {
+       ::v-deep.el-input {
         width: 100px !important;
         border: none;
       }
@@ -494,7 +494,7 @@ export default {
 .dateheight {
   height: 34px;
 }
-/deep/.echart-wh {
+ ::v-deep.echart-wh {
   width: 1100px !important;
   height: 500px !important;
 }
@@ -508,7 +508,7 @@ export default {
       color: #cccccc;
       font-size: 10px;
     }
-    /deep/.el-input {
+     ::v-deep.el-input {
       width: 100px !important;
       border: none;
     }
@@ -517,10 +517,10 @@ export default {
 .box-table {
   width: 100%;
 }
-/deep/.i-font {
+ ::v-deep.i-font {
   font-size: 36px;
 }
-/deep/.el-button--small {
+ ::v-deep.el-button--small {
   font-size: 14px !important;
 }
 </style>

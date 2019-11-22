@@ -112,11 +112,11 @@
 </template>
 
 <script>
-import XTimeX from '@/components/TimeXF'
-import echartLine from '@/components/echars-line'
-import { CVM_MONITOR } from '@/constants'
+import XTimeX from '@/components/TimeXF';
+import echartLine from '@/components/echars-line';
+import { CVM_MONITOR } from '@/constants';
 export default {
-  data () {
+  data() {
     return {
       ID: this.$route.query.id,
       period: '',
@@ -128,20 +128,20 @@ export default {
       totalPage: 0, // 表格数据数组长度
       tableData: [], // 获取列表数据
       timeData: [], // 折线图的x轴数据
-      jingData: []
-    }
+      jingData: [],
+    };
   },
   components: {
     echartLine,
-    XTimeX
+    XTimeX,
   },
-  created () {},
+  created() {},
   methods: {
-    GetDat (data) {
-      this.period = data[0]
-      this.timeData = data[1]
-      this.Start_End = data[2]
-      this.value = data[3]
+    GetDat(data) {
+      this.period = data[0];
+      this.timeData = data[1];
+      this.Start_End = data[2];
+      this.value = data[3];
       const metricNArr = [
         'internet_traffic',
         'internal_traffic',
@@ -159,15 +159,15 @@ export default {
         '2xx_response',
         '3xx_response',
         '4xx_response',
-        '5xx_response'
-      ]
+        '5xx_response',
+      ];
       const metricNArr8 = [
         // 这4个产品默认粒度没有60
         'std_storage',
         'sia_storage',
         'nel_storage',
         'arc_storage',
-        // -----------------------------------
+        //-----------------------------------
 
         'internet_traffic',
         'internal_traffic',
@@ -185,23 +185,23 @@ export default {
         '2xx_response',
         '3xx_response',
         '4xx_response',
-        '5xx_response'
-      ]
+        '5xx_response',
+      ];
 
-      this.tableData = []
+      this.tableData = [];
       if (this.period === '60') {
         for (let i = 0; i < metricNArr.length; i++) {
-          this.Obtain(metricNArr[i])
+          this.Obtain(metricNArr[i]);
         }
       } else {
         for (let i = 0; i < metricNArr8.length; i++) {
-          this.Obtain(metricNArr8[i])
+          this.Obtain(metricNArr8[i]);
         }
       }
 
-      console.log(this.tableData)
+      console.log(this.tableData);
     },
-    Obtain (metricN) {
+    Obtain(metricN) {
       const param = {
         Region: this.$cookie.get('regionv2'),
         namespace: 'qce/cos',
@@ -212,92 +212,92 @@ export default {
         'dimensions.1.value': this.ID,
         period: this.period,
         startTime: this.Start_End.StartTIme,
-        endTime: this.Start_End.EndTIme
-      }
+        endTime: this.Start_End.EndTIme,
+      };
       this.axios.post(CVM_MONITOR, param).then((data) => {
-        this.tableData.push(data)
-      })
+        this.tableData.push(data);
+      });
     },
 
     // 模态框
-    Modality (Y) {
-      this.dialogVisible = true
-      this.opDiskData = Y
+    Modality(Y) {
+      this.dialogVisible = true;
+      this.opDiskData = Y;
     },
 
-    handleClose (done) {
-      done()
-    }
+    handleClose(done) {
+      done();
+    },
   },
   filters: {
-    UpName (value) {
+    UpName(value) {
       if (value === 'std_storage') {
-        return (value = '标准存储-存储空间')
+        return (value = '标准存储-存储空间');
       }
       if (value === 'sia_storage') {
-        return (value = '低频存储-存储空间')
+        return (value = '低频存储-存储空间');
       }
       if (value === 'nel_storage') {
-        return (value = '近线存储-存储空间')
+        return (value = '近线存储-存储空间');
       }
       if (value === 'arc_storage') {
-        return (value = '归档存储-存储空间')
+        return (value = '归档存储-存储空间');
       }
       if (value === 'internet_traffic') {
-        return (value = '外网流量')
+        return (value = '外网流量');
       }
       if (value === 'internal_traffic') {
-        return (value = '内网流量')
+        return (value = '内网流量');
       }
       if (value === 'cdn_origin_traffic') {
-        return (value = 'CDN 回源流量')
+        return (value = 'CDN 回源流量');
       }
       if (value === 'inbound_traffic') {
-        return (value = '上传流量')
+        return (value = '上传流量');
       }
       if (value === 'std_retrieval') {
-        return (value = '标准数据读取')
+        return (value = '标准数据读取');
       }
       if (value === 'ia_retrieval') {
-        return (value = '低频数据读取')
+        return (value = '低频数据读取');
       }
       if (value === 'nl_retrieval') {
-        return (value = '近线数据读取')
+        return (value = '近线数据读取');
       }
       if (value === 'std_read_requests') {
-        return (value = '标准存储读请求')
+        return (value = '标准存储读请求');
       }
       if (value === 'std_write_requests') {
-        return (value = '标准存储写请求')
+        return (value = '标准存储写请求');
       }
       if (value === 'ia_read_requests') {
-        return (value = '低频存储读请求')
+        return (value = '低频存储读请求');
       }
       if (value === 'ia_write_requests') {
-        return (value = '低频存储写请求')
+        return (value = '低频存储写请求');
       }
       if (value === 'nl_read_requests') {
-        return (value = '近线存储读请求')
+        return (value = '近线存储读请求');
       }
       if (value === 'nl_write_requests') {
-        return (value = '近线存储写请求')
+        return (value = '近线存储写请求');
       }
 
       if (value === '2xx_response') {
-        return (value = '2xx 状态码')
+        return (value = '2xx 状态码');
       }
       if (value === '3xx_response') {
-        return (value = '3xx 状态码')
+        return (value = '3xx 状态码');
       }
       if (value === '4xx_response') {
-        return (value = '4xx 状态码')
+        return (value = '4xx 状态码');
       }
       if (value === '5xx_response') {
-        return (value = '5xx 状态码')
+        return (value = '5xx 状态码');
       }
-    }
-  }
-}
+    },
+  },
+};
 </script>
 
 <style  scoped lang="scss">
@@ -324,7 +324,7 @@ export default {
         color: #cccccc;
         font-size: 10px;
       }
-      /deep/.el-input {
+       ::v-deep.el-input {
         width: 100px !important;
         border: none;
       }
@@ -360,7 +360,7 @@ export default {
 .dateheight {
   height: 34px;
 }
-/deep/.echart-wh {
+ ::v-deep.echart-wh {
   width: 1100px !important;
   height: 500px !important;
 }
@@ -374,7 +374,7 @@ export default {
       color: #cccccc;
       font-size: 10px;
     }
-    /deep/.el-input {
+     ::v-deep.el-input {
       width: 100px !important;
       border: none;
     }
@@ -383,10 +383,10 @@ export default {
 .box-table {
   width: 100%;
 }
-/deep/.i-font {
+ ::v-deep.i-font {
   font-size: 36px;
 }
-/deep/.el-button--small {
+ ::v-deep.el-button--small {
   font-size: 14px !important;
 }
 </style>

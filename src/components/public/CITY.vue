@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-button-group class="btn-group">
-      <el-button @click.native="changeCity(city)" v-for="(city, index) in cities" :key="index" :type="value === city[key] ? 'primary' : ''">{{ city.regionName }}</el-button>
+      <el-button @click.native="changeCity(city)" v-for="(city, index) in cities" :key="index" :type="Cityvalue === city[Citykey] ? 'primary' : ''">{{ city[label] }}</el-button>
     </el-button-group>
   </div>
 </template>
@@ -10,26 +10,27 @@
 export default {
   name: 'cities',
   props: {
-    value: { // 地区Region v-model
+    Cityvalue: { // 地区Region v-model
       required: true,
       type: String,
+      default: ''
     },
     cities: { // 地区列表
       required: true,
       type: Array,
     },
-    key: { // 比较的字段名  和value prop比较 一致则为激活状态
+    Citykey: { // 比较的字段名  和value prop比较 一致则为激活状态
       type: String,
-      default: 'region',
+      default: 'Region',
     },
     label: { // 要显示的字段名
       type: String,
-      default: 'regionName',
+      default: 'zone',
     },
   },
   methods: {
     changeCity(city) {
-      this.$emit('update:value', city[this.key])
+      this.$emit('update:Cityvalue', city[this.Citykey])
       this.$emit('changeCity', city)
     },
   },

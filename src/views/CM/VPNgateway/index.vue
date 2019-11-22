@@ -79,10 +79,10 @@
 </template>
 
 <script>
-import Cities from '@/components/Cities'
-import { DISK_CITY, VPN_LIST } from '@/constants'
+import Cities from '@/components/Cities';
+import { DISK_CITY, VPN_LIST } from '@/constants';
 export default {
-  data () {
+  data() {
     return {
       cities: [],
       selectedRegion: '', // 默认选中城市
@@ -91,84 +91,84 @@ export default {
       TbaleData: [], // 表格数据
       pagesize: 10, // 分页条数
       pageIndex: 1, // 当前页码
-      totalCount: '' // 条数
+      totalCount: '', // 条数
       // 列表数据处理
-    }
+    };
   },
-  created () {
-    this.GetCity()
+  created() {
+    this.GetCity();
   },
   watch: {
     // 监听城市变化----数据变化
-    selectedRegion () {}
+    selectedRegion() {},
   },
   components: {
-    Cities
+    Cities,
   },
   methods: {
     // 获取城市列表
-    GetCity () {
+    GetCity() {
       this.axios.get(`${DISK_CITY}?product=MONITOR`).then((data) => {
-        this.cities = data.data
-        this.selectedRegion = data.data[0].Region
-        this.selectedCity = data.data[0]
-        this.$cookie.set('regionv1', this.selectedCity.regionCode)
-        this.$cookie.set('regionv2', this.selectedCity.Region)
-        this.GetTabularData()
-      })
+        this.cities = data.data;
+        this.selectedRegion = data.data[0].Region;
+        this.selectedCity = data.data[0];
+        this.$cookie.set('regionv1', this.selectedCity.regionCode);
+        this.$cookie.set('regionv2', this.selectedCity.Region);
+        this.GetTabularData();
+      });
     },
     // 切换城市
-    changeCity (city) {
-      this.selectedCity = city
-      this.$cookie.set('regionv1', city.regionCode)
-      this.$cookie.set('regionv2', city.Region)
-      this.GetTabularData()
+    changeCity(city) {
+      this.selectedCity = city;
+      this.$cookie.set('regionv1', city.regionCode);
+      this.$cookie.set('regionv2', city.Region);
+      this.GetTabularData();
     },
     // 获取表格数据
-    GetTabularData () {
+    GetTabularData() {
       const param = {
         Region: this.selectedRegion,
         offset: this.pageIndex * this.pagesize - this.pagesize,
-        limit: this.pagesize
-      }
+        limit: this.pagesize,
+      };
       this.axios.post(VPN_LIST, param).then((data) => {
-        this.totalCount = data.totalCount
-        this.TbaleData = data.data
+        this.totalCount = data.totalCount;
+        this.TbaleData = data.data;
         // console.log(this.TbaleData);
-      })
+      });
     },
-    handleSizeChange (val) {
-      this.pagesize = val
-      this.GetTabularData()
+    handleSizeChange(val) {
+      this.pagesize = val;
+      this.GetTabularData();
     },
-    handleCurrentChange (val) {
-      this.pageIndex = val
-      this.GetTabularData()
+    handleCurrentChange(val) {
+      this.pageIndex = val;
+      this.GetTabularData();
     },
-    jump (id) {
+    jump(id) {
       this.$router.push({
         name: 'CMVPNdetails',
         query: {
-          id
-        }
-      })
+          id,
+        },
+      });
     },
     // 搜索按钮
-    btnsearch () {
-      const search = this.search
+    btnsearch() {
+      const search = this.search;
       if (search) {
         this.TbaleData = this.TbaleData.filter(product => Object.keys(product).some(
           key => String(product[key])
             .toLowerCase()
-            .indexOf(search) > -1
-        ))
+            .indexOf(search) > -1,
+        ));
       } else {
-        this.GetTabularData()
-        this.TbaleData = this.TbaleData
+        this.GetTabularData();
+        this.TbaleData = this.TbaleData;
       }
-    }
-  }
-}
+    },
+  },
+};
 </script>
 
 <style scoped lang="scss">

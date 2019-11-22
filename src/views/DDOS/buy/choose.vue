@@ -135,7 +135,7 @@
             </li>
           </ul>
         </div>
-        <div class="rightContent">
+        <div class="rightContent" :class="searchBarFixed == true ? 'isFixed' :''">
           <h1>当前配置</h1>
           <div class="allConList">
             <p><span>地域</span><span>{{checked1}}</span></p>
@@ -173,15 +173,18 @@ export default {
       checked2:'20Gbps',//保底防护峰值
       type3:0,
       checked3:'无',//弹性防护峰值
+      checkedRoute3:0,
       type4:1,
       checked4:'100Mbps',//业务规格
+      checkedRoute4:100,
       type5:1,
       checked5:'1个月',//购买时长
       checkOrNull:"否",
       allMoney:'177,000.00',
       checkChange1:'3000',//HTTP
       checkChange2:'3000',//HTTPS
-      saveShow:true
+      saveShow:true,
+      searchBarFixed:false,
     }
   },
   mounted: function () {
@@ -203,9 +206,12 @@ export default {
       this.type3=type3;
       this.checked3=checked;
       if(type3==0){
+        console.log(this.checkedRoute3)
         this.saveShow=true
+        this.checkedRoute3=0
       }else{
-        this.saveShow=false
+        this.saveShow=false;
+        this.checkedRoute3=checked
       }
       console.log(type3,checked)
     },
@@ -216,21 +222,27 @@ export default {
       if(this.type4==1){
         this.checkChange1=3000;
         this.checkChange2=3000;
+        this.checkedRoute4=100;
       }else if(this.type4==2){
         this.checkChange1=5000;
         this.checkChange2=3500;
+        this.checkedRoute4=150;
       }else if(this.type4==3){
         this.checkChange1=7000;
         this.checkChange2=4000;
+        this.checkedRoute4=200;
       }else if(this.type4==4){
         this.checkChange1=20000;
         this.checkChange2=7000;
+        this.checkedRoute4=500;
       }else if(this.type4==5){
         this.checkChange1=40000;
         this.checkChange2=10000;
+        this.checkedRoute4=1000;
       }else if(this.type4==6){
         this.checkChange1=70000;
         this.checkChange2=17000;
+        this.checkedRoute4=2000;
       }
     },
     //购买时长
@@ -249,36 +261,50 @@ export default {
     },
     //点击跳转支付页面
     payPage(){
+      let params={
+        address:this.checked1,
+        savePeak:this.checked2,
+        elasticPeak:this.checkedRoute3,
+        autoPay:this.checkOrNull,
+        BusinessBroadband:this.checkedRoute4,
+        httpQPS:this.checkChange1,
+        httpsQPS:this.checkChange2,
+        shareNum:60,
+        payTime:this.checked5,
+        payMoney:this.allMoney
+      }
+      let objStr = JSON.stringify(params)
+      sessionStorage.setItem("allData", [objStr])
       this.$router.push({
         name: 'pay',
-        params:{
-          address:this.checked1,
-          savePeak:this.checked1,
-          elasticPeak:this.checked3,
-          autoPay:this.checkOrNull,
-          BusinessBroadband:this.checked4,
-          httpQPS:this.checkChange1,
-          httpsQPS:this.checkChange2,
-          shareNum:60,
-          payTime:this.checked5,
-          payMoney:this.allMoney
-        }
+        // params:{
+          
+        // }
       })
     },
     //滚动监听
     handleScroll: function () {
-      // let clientHeight = document.documentElement.clientHeight || document.body.clientHeight;  
-      // // 设备/屏幕高度
-      // let scrollObj = document.querySelector('.rightContent'); // 滚动区域
-      // console.log(scrollObj.scrollTop)
-      // console.log(screen.width - scrollObj.offsetLeft - scrollObj.offsetWidth)
-      // if(scrollObj.offsetTop<=60){
-      //   console.log(scrollObj.offsetTop)
-      //   scrollObj.style.position='fixed';
-      //   scrollObj.style.top='60px';
-      //   scrollObj.style.right=scrollObj.offsetRight
-      // }
-    }
+    //   const that = this
+    // let scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop
+    // that.scrollTop = scrollTop
+    //   console.log(that.scrollTop)
+    //     if (that.scrollTop > 60) {
+    //       that.btnFlag = true
+    //     } else {
+    //       that.btnFlag = false
+    //     }
+      //console.log(scrollTop,document.body.scrollHeight);
+      // console.log(scrollTop)
+      // let offsetTop = document.querySelector('body').offsetTop;
+      // console.log(offsetTop)
+      // document.documentElement.scrollTop = offsetTop.scrollHeight;
+      // //console.log(document.documentElement.scrollTop)
+      // offsetTop.scrollHeight < 60 ? this.searchBarFixed = true : this.searchBarFixed = false;
+    },
+    destroyed () {
+      window.removeEventListener('scroll', this.handleScroll)
+    },
+
   }
 }
 </script>
@@ -446,5 +472,11 @@ export default {
 .seceltList{
   border:1px solid #006eff!important;
   color:#006eff!important;
+}
+.isFixed{
+  position:fixed;
+  background-color:#Fff;
+  top:60px;
+  z-index:999;
 }
 </style>

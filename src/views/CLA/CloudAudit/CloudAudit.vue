@@ -123,9 +123,9 @@
               </el-form>
             </template>
           </el-table-column>
-          <el-table-column label="事件时间" width="163" prop="EventTime"></el-table-column>
-          <el-table-column label="用户名" width="163" prop="Username"></el-table-column>
-          <el-table-column label="事件名称" width="324">
+          <el-table-column label="事件时间"  prop="EventTime"></el-table-column>
+          <el-table-column label="用户名"  prop="Username"></el-table-column>
+          <el-table-column label="事件名称" >
             <template slot-scope="scope">
               <div>
                 {{scope.row.EventName}}
@@ -135,7 +135,7 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column label="资源类型" width="162">
+          <el-table-column label="资源类型" >
             <template slot-scope="scope">
               <div>
                 {{scope.row.Resources.ResourceType}}
@@ -465,6 +465,7 @@ export default {
 }
 .tab-list {
   margin-top: 10px;
+  font-size: 12px;
   .demo-table-expand {
     font-size: 0;
   }

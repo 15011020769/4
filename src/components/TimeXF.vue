@@ -856,7 +856,7 @@ export default {
         color: #cccccc;
         font-size: 10px;
       }
-      /deep/.el-input {
+       ::v-deep.el-input {
         width: 100px !important;
         border: none;
       }
@@ -882,10 +882,10 @@ export default {
   height: 34px;
 }
 
-/deep/.i-font {
+ ::v-deep.i-font {
   font-size: 36px;
 }
-/deep/.el-button--small {
+ ::v-deep.el-button--small {
   font-size: 14px !important;
 }
 .bgImgSet {

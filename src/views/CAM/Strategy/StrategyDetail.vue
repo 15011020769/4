@@ -1,7 +1,12 @@
 <template>
   <div class="StrategyDetail">
     <div class="top">
-      <img style="width:20px;cursor: pointer;" @click="back" src="../../../assets/CAM/images/left.png" alt>
+      <img
+        style="width:20px;cursor: pointer;"
+        @click="back"
+        src="../../../assets/CAM/images/left.png"
+        alt
+      >
       <span class="top_text">AdministratorAccess</span>
     </div>
     <div class="container">
@@ -73,8 +78,8 @@
                   height="300"
                   border
                   @selection-change="handleSelectionChange"
-                  :row-style="{height:0}" 
-                  :cell-style="{padding:'5px 10px'}" 
+                  :row-style="{height:0}"
+                  :cell-style="{padding:'5px 10px'}"
                   :header-cell-style="{height:'20px',padding:'0px 10px'}"
                   style="width: 100%"
                 >
@@ -151,15 +156,10 @@
           </el-tab-pane>
         </el-tabs>
       </div>
-      <el-dialog :visible.sync="dialogVisible" width="50%" :before-close="handleClose">
+      <el-dialog :visible.sync="dialogVisible" width="70%" :before-close="handleClose">
         <p class="dialog">关联用户/用户组</p>
         <div>
-          <el-transfer
-            v-model="transfer_value"
-            :props="{key: 'value',label: 'desc'}"
-            :data="transfer_data"
-            filterable
-          ></el-transfer>
+         <transfer></transfer>
         </div>
         <p style="text-align:center;margin-top:20px">
           <el-button @click="dialogVisible = false" size="small">取 消</el-button>
@@ -190,7 +190,11 @@
   </div>
 </template>
 <script>
+import transfer from "./component/transfer";
 export default {
+  components: {
+    transfer
+  },
   data() {
     return {
       activeName: "first",
@@ -285,8 +289,8 @@ export default {
       this.inputValue = this.input_Value;
       this.input_show = false;
     },
-    back(){
-      this.$router.push("/Strategy")
+    back() {
+      this.$router.push("/Strategy");
     }
   }
 };

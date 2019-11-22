@@ -12,7 +12,7 @@
     <div class="container">
       <div class="contant">
         <div class="step">
-          <el-steps :active="active" finish-status="success">
+          <el-steps :active="active" direction="vertical" simple :space="200" finish-status="success">
             <el-step title="输入角色载体信息"></el-step>
             <el-step title="配置角色策略"></el-step>
             <el-step title="审阅"></el-step>
@@ -38,14 +38,7 @@
           </div>
         </div>
         <div class="tansfer" v-if="active == 2">
-          <el-transfer
-            filter-placeholder="支持搜索策略名称/描述/备注"
-            v-model="transfer_value"
-            :props="{key: 'value',label: 'desc'}"
-            :data="transfer_data"
-            filterable
-            @left-check-change="leftCheck"
-          ></el-transfer>
+          <transfer></transfer>
         </div>
         <div class="shenyue" v-if="active == 3">
           <div class="content_flex">
@@ -91,7 +84,11 @@
   </div>
 </template>
 <script>
+import transfer from './component/transfer'
 export default {
+  components: {
+      transfer,
+    },
   data() {
     return {
       active: 1,
@@ -197,10 +194,6 @@ export default {
         }
         this.active = this.active + 1;
       } else if (this.active == 2) {
-        if (this.transfer_value.length == 0) {
-          this.$message("请至少选择一个策略");
-          return;
-        }
         if (this.active == 3) {
           return;
         }

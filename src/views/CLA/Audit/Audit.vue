@@ -30,22 +30,21 @@
       <div class="tables">
         <el-table :data="tableData" style="width: 100%">
           <template slot="empty">暂无跟踪集</template>
-          <el-table-column width="27"></el-table-column>
-          <el-table-column prop="name" label="名称" width="225">
+          <el-table-column prop="name" label="名称">
             <template slot-scope="scope">
               <el-button @click="handleClick(scope.row)" type="text">{{
                 scope.row.name
               }}</el-button>
             </template>
           </el-table-column>
-          <el-table-column prop="isMultiRegionAudit" label="全部区域" width="225">
+          <el-table-column prop="isMultiRegionAudit" label="全部区域">
             <template slot-scope="scope">
               <div v-if="scope.row.isMultiRegionAudit == 1">是</div>
               <div v-if="scope.row.isMultiRegionAudit == 0">否</div>
             </template>
           </el-table-column>
-          <el-table-column prop="bucketName" label="COS 存储桶" width="225"></el-table-column>
-          <el-table-column prop="prefix" label="日志文件前缀" width="225"></el-table-column>
+          <el-table-column prop="bucketName" label="COS 存储桶"></el-table-column>
+          <el-table-column prop="prefix" label="日志文件前缀"></el-table-column>
           <el-table-column prop="status" label="状态">
             <template slot-scope="scope">
               <div v-if="scope.row.status == 0" class="close_color">关闭</div>
@@ -180,18 +179,20 @@ export default {
 }
 .tables {
   margin-top: 10px;
+  .el-table {
+    font-size: 12px;
+  }
   .el-table th > .cell {
     font-size: 12px;
   }
-  .el-table td {
-    font-size: 12px;
-  }
+
   .el-table .cell {
     height: 23px;
   }
   .el-button--text {
     height: 23px;
     line-height: 0px;
+    font-size: 12px;
   }
   .el-table td:nth-of-type(2) {
     color: #006eff;

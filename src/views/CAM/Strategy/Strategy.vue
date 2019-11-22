@@ -94,15 +94,10 @@
         </div>
       </div>
     </div>
-    <el-dialog title :visible.sync="dialogVisible" width="40%" :before-close="handleClose">
+    <el-dialog title :visible.sync="dialogVisible" width="70%" :before-close="handleClose">
       <h3 style="color:#000;margin-bottom:20px;">关联用户/用户组</h3>
       <div class="dialog_div">
-        <el-transfer
-          v-model="transfer_value"
-          :props="{key: 'value',label: 'desc'}"
-          :data="transfer_data"
-          filterable
-        ></el-transfer>
+        <transfer></transfer>
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button size="mini" @click="dialogVisible = false">取 消</el-button>
@@ -112,7 +107,11 @@
   </div>
 </template>
 <script>
+import transfer from './component/transfer'
 export default {
+   components: {
+      transfer,
+    },
   data() {
     return {
       options: [

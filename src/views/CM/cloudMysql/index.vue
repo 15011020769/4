@@ -86,7 +86,7 @@
 </template>
 
 <script>
-import Cities from '@/components/CITY';
+import Cities from '@/components/public/CITY';
 import { CVM_CITY, MYSQL_LIST, CVM_PROJECT } from '@/constants';
 export default {
   data() {

@@ -19,21 +19,21 @@
 import Monitor from './tab/Monitor'
 
 export default {
-  data () {
+  data() {
     return {
       activeName: 'first',
-      ID: this.$route.query.id
-    }
+      ID: this.$route.query.id,
+    };
   },
   methods: {
-    handleClick (tab, event) {
-      console.log(tab, event)
-    }
+    handleClick(tab, event) {
+      console.log(tab, event);
+    },
   },
   components: {
 
-    Monitor
-  }
+    Monitor,
+  },
 }
 </script>
 
