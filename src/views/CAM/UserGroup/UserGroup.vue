@@ -338,9 +338,6 @@ export default {
     .cam_button{
       position: relative;
     }
-    .suo{
-      position: absolute;
-    }
     .cam-box{
       width: 96%;
       padding: 20px;
