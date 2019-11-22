@@ -263,7 +263,7 @@ export default {
     },
     toQuery() {
       this.init()
-    },
+    }, 
     //测试接口详情
     Interface(){
       this.$router.push({ name: "Interfacedetails" });
