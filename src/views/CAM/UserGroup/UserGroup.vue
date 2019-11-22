@@ -8,8 +8,8 @@
     </div>
     <div class="cam_button">
       <el-row class="cam-lt">
-        <el-button type="primary"  @click="NewUser" >{{$t('CAM.CAM.userGroup.createBtn')}}</el-button>
-        <el-button type="primary" :disabled="btnVisible" @click="addUserGroup()" >{{$t('CAM.CAM.userGroup.addBtn')}}</el-button>
+        <el-button type="primary"  @click="NewUser" >{{$t('CAM.CAM.userGroup.addBtn')}}</el-button>
+        <el-button type="primary" :disabled="btnVisible" @click="addUserGroup()" >{{$t('CAM.CAM.userGroup.createBtn')}}</el-button>
       </el-row>
 
       <div class="head-container">
@@ -29,7 +29,7 @@
         style="width: 100%; border:1px solid #ddd;padding-top: 8px;" 
         @selection-change="handleSelectionChange">
         <el-table-column prop="groupId" type="selection" width="30"> </el-table-column>
-        <el-table-column prop="groupName" :label="$t('CAM.CAM.userGroup.colNmae')" show-overflow-tooltip><el-link @click="Interface" type="primary">测试接口组</el-link> </el-table-column>
+        <el-table-column prop="groupName" :label="$t('CAM.CAM.userGroup.colNmae')" show-overflow-tooltip> </el-table-column>
         <el-table-column prop="remark" :label="$t('CAM.CAM.userGroup.colRemark')" show-overflow-tooltip> </el-table-column>
         <el-table-column prop="createTime" :label="$t('CAM.CAM.userGroup.colCreTime')" show-overflow-tooltip> </el-table-column>
         <el-table-column :label="$t('CAM.CAM.userGroup.colHandle')" show-overflow-tooltip>
@@ -64,14 +64,12 @@
                 style="width: 100%"
                 @row-click="selectedRow"
                 @selection-change="handleSelectionChangeUser">
-                <el-table-column type="selection" prop="uid" width="30"> </el-table-column>
-                  <el-table-column prop="name" label="用户"  show-overflow-tooltip>
+                <el-table-column type="selection" prop="Uin" width="30"> </el-table-column>
+                  <el-table-column prop="Name" label="用户"  show-overflow-tooltip>
                   </el-table-column>
-                  <el-table-column prop="userType" label="用户类型"  width="100">
+                  <el-table-column label="用户类型"  width="100">
                     <template slot-scope="scope">
-                      <p v-show="scope.row.userType == 1">用户类型</p>
-                      <p v-show="scope.row.userType == 2">用户类型</p>
-                      <p v-show="scope.row.userType == 3">子用户</p>
+                      <p>用户类型</p>
                     </template>
                   </el-table-column>
           </el-table>
@@ -89,13 +87,11 @@
                 size = "small"
                 height="300"
                 style="width: 100%">
-                <el-table-column prop="name" label="用户"  show-overflow-tooltip> </el-table-column>
-                <el-table-column prop="userType" label="用户类型"  width="100">
+                <el-table-column prop="Name" label="用户"  show-overflow-tooltip> </el-table-column>
+                <el-table-column label="用户类型"  width="100">
                   <template slot-scope="scope">
-                    <p v-show="scope.row.userType == 1">用户类型</p>
-                    <p v-show="scope.row.userType == 2">用户类型</p>
-                    <p v-show="scope.row.userType == 3">子用户</p>
-                  </template>
+                      <p>用户类型</p>
+                    </template>
                 </el-table-column>
                 <el-table-column :label="$t('CAM.CAM.userGroup.colHandle')"  width="50">
                   &lt;!&ndash;<template slot-scope="scope">
@@ -165,80 +161,22 @@ export default {
       //   'filterGroups':'',
       //   Region: this.$cookie.get("regionv2")
       // }
-      // this.axios.post(url, params).then(data => {
-      let data = {
-        'code': 0,
-        'data': {
-          'code': 0,
-          'message': '',
-          'codeDesc': 'Success',
-          'data': {
-            'userInfo': [
-              {
-                'uid': 5303664,
-                'uin': 100012031058,
-                'name': 'taifucloud',
-                'remark': '',
-                'canLogin': 1,
-                'phoneNum': '18738326518',
-                'countryCode': '86',
-                'phoneFlag': 0,
-                'email': '18738326518@163.com',
-                'emailFlag': 0,
-                'userType': 3,
-                'createTime': '2019-11-08 17:25:21',
-                'isReceiverOwner': 0,
-                'systemType': 'SubAccount',
-                'needResetPassword': 0,
-                'consoleLogin': 1,
-                'wxzsStatus': 0,
-                'permType': [],
-                'isDeleted': 0
-              },
-              {
-                'uid': 5303665,
-                'name': 'taifucloud2',
-                'userType': 3
-              },
-              {
-                'uid': 5303666,
-                'name': 'taifucloud3',
-                'userType': 3
-              },
-              {
-                'uid': 5303667,
-                'name': 'taifucloud4',
-                'userType': 3
-              },
-              {
-                'uid': 5303668,
-                'name': 'taifucloud5',
-                'userType': 3
-              }
-            ],
-            'ownerInfo': [{
-              'uid': 5303664,
-              'uin': 100011921910,
-              'userName': '123456789',
-              'checkStatus': 0
-            }],
-            'totalNum': '1'
-          }
-        },
-        'mccode': 0,
-        'errObj': {},
-        'reqId': 'By7bcetir',
-        'seqId': '7b539cc3-82a9-904a-1d13-42ca752bbeb5'
+      let url = "cam2/ListUsers" // 拉取子用户
+      let params = {
+        Action: 'ListUsers',
+        Version: "2019-01-16"
       }
-      this.userData = data.data.data.userInfo
-      this.owneruserData = data.data.data.ownerInfo
+      this.axios.post(url, params).then(res => {
+      this.userData = res.Response.Data
+      console.log(this.userData)
+      // this.owneruserData = res.data.data.ownerInfo
       // this.$message({ message: this.$t('CAM.CAM.userGroup.successInfo'), type: "success" })
       // 获取数据成功，打开dialog。
-    this.dialogVisible = true
-      //   this.cancel()
-      // }).catch(error => {
-      //   console.log(error)
-      // })
+      this.dialogVisible = true
+      // this.cancel()
+      }).catch(error => {
+        console.log(error)
+      })
     },
     // 删除用户组
     delUserGroup(groupId) {
@@ -321,10 +259,6 @@ export default {
     },
     toQuery() {
       this.init()
-    },
-    //测试接口详情
-    Interface(){
-      this.$router.push({ name: "Interfacedetails" });
     }
   }
 }
@@ -404,7 +338,9 @@ export default {
     .cam_button{
       position: relative;
     }
-    
+    .suo{
+      position: absolute;
+    }
     .cam-box{
       width: 96%;
       padding: 20px;

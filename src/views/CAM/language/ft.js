@@ -2,12 +2,12 @@ module.exports = {
   CAM: {
     userGroup: {
       title: '用戶組',
-      createBtn: '新建用戶組',
+      createBtn: '添加用戶',
       createNext: '下一步',
       createWrite: '填寫組信息',
       createRelevance: '關聯策略',
       createCheck: '審閱',
-      addBtn: '填加用戶組',
+      addBtn: '新建用戶組',
       delBtn: '刪除',
       colNmae: '用戶組名稱',
       colRemark: '備註',

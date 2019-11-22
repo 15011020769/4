@@ -2,7 +2,7 @@
   <div class="Cam" id="app">
     <div class="top">
       <i @click="goback" class="el-icon-back" style="padding-right: 10px;font-size: 130%;color: #006eff;font-weight: 900;cursor:pointer;"></i>
-      <span class="title-left">{{$t('CAM.CAM.userGroup.createBtn')}}</span>
+      <span class="title-left">{{$t('CAM.CAM.userGroup.addBtn')}}</span>
     </div>
     <div class="container">
       <el-steps :space="200" :active="active" finish-status="success" simple style="margin-top: 20px;margin-right: 450px;padding-left: 10px;">
@@ -94,6 +94,7 @@
       },
       confirm() {
         if(this.active ==2) {
+          debugger
          this.$router.push({name: 'UserGroup'})
           // 创建用户组
           let params = {
@@ -106,31 +107,37 @@
           if(this.addModel.remark != null && this.addModel.remark != ''){
             params["Remark"] = this.addModel.remark
           }
-          let url = "cam/ListGroups"
+          let url = "cam2/CreateGroup"
           let _this = this
           this.axios.post(url, params).then(res => {
             console.log(res)
+            debugger
             // 获取新创建的用户组ID
-            let AttachGroupId = res.data.data.groupId
+            let AttachGroupId = res.Response.GroupId
+            let selArr = _this.policiesSelectedData
+            // let PolicyIds = []
             // 绑定策略到用户组
-            if(AttachGroupId != '') {
-              // policiesSelectedData
+            if(AttachGroupId != '' && selArr != '') {
+              // let PolicyId = Array
               let PoliciesParams = {
-                Action: 'AttachGroupPolicies',
-                PolicyId: PolicyId,
+                // Action: 'AttachGroupPolicies',
+                Action: 'AttachGroupPolicy',
+                // PolicyId: PolicyIds,
                 AttachGroupId: AttachGroupId,
                 Version: '2019-01-16'
               }
-              // 获取策略id
-              let PolicyId = Array
-              let url = "cam/AttachGroupPolicies"
-              this.axios.post(url, PoliciesParams).then(res => {
-                console.log(res)
-                // 添加返回值回显，如用户组名称重复
-                this.loading = false
-              }).catch(error => {
-                console.log(error)
-              })
+              //目前系统接口只支持单个策略绑定到用户组，不支持多个，所以循环执行绑定方法;此循环只能绑定一个策略。暂时先这么用着，等待接口升级
+              for(var i = 0; i < selArr.length; i++) {
+                // PolicyIds[i] = selArr[i].policyId
+                PoliciesParams['PolicyId'] = selArr[i].policyId
+                // 获取策略id
+                let url = "cam2/AttachGroupPolicy"
+                this.axios.post(url, PoliciesParams).then(res => {
+                  console.log(res)
+                }).catch(error => {
+                  console.log(error)
+                })
+              }
             }
             // 添加返回值回显，如用户组名称重复
             this.loading = false
