@@ -1,4 +1,3 @@
-
 <template>
   <div class="Cam">
     <div class="top">
@@ -24,7 +23,7 @@
       <el-row class="cam-lt">
         <el-button size="small" type="primary" @click="NewUser">新建用户</el-button>
         <template>
-          <el-select size="small" v-model="value" placeholder="更多操作">
+          <el-select size="small"  placeholder="更多操作">
             <el-option
               v-for="item in options"
               :key="item.value"
@@ -46,7 +45,7 @@
           style="width: 200px;"
           @keyup.enter.native="toQuery"
         />
-        <i class="iconfont magnifier">&#xe608;</i>
+        <i class="iconfont magnifier" @click="input()">&#xe608;</i>
         <i @click="list = true" class="el-icon-s-tools gear"></i>
         <el-dialog title="自定义列表字段" :visible.sync="list" width="45%" :before-close="handleClose">
           <div>
@@ -162,7 +161,7 @@
       </el-table-column>
     </el-table>
     <!-- 授权自定义弹框 -->
-    <el-dialog title="关联策略" :visible.sync="authorization" width="80%" :before-close="handleClose">
+    <!-- <el-dialog title="关联策略" :visible.sync="authorization" width="80%" :before-close="handleClose">
       <div class="container">
         <div class="container-left">
           <span>策略列表（共{{totalNum}}条）</span>
@@ -227,7 +226,16 @@
 
             <el-table-column  prop="Description" label="策略名" width></el-table-column>
             <el-table-column prop="PolicyId" label="策略类型" width></el-table-column>
-
+             <el-table-column :label="操作" show-overflow-tooltip>
+              &lt;!&ndash;
+              <template slot-scope="scope">
+                <el-button
+                  @click.native.prevent="deleteRow(scope.$index, policiesSelectedData)"
+                  type="text"
+                  size="small"
+                >移除</el-button>
+              </template>&ndash;&gt;
+            </el-table-column>
           </el-table>
         </div>
       </div>
@@ -235,9 +243,8 @@
         <el-button @click="authorization = false">取 消</el-button>
         <el-button type="primary" @click="authorization = false">确 定</el-button>
       </div>
-    </el-dialog>
-    <!-- 自定义弹框 -->
-    <el-dialog title="添加到组" :visible.sync="dialogVisible" width="74%" :before-close="handleClose">
+    </el-dialog> -->
+    <el-dialog title="添加到组" :visible.sync="authorization" width="74%" :before-close="handleClose">
       <div class="container">
         <div class="container-left">
           <span>策略列表（共{{totalNum}}条）</span>
@@ -256,7 +263,7 @@
             @click="toQuery"
           ></el-button>
           </div>
-
+           
           <el-table
             class="table-left"
             ref="multipleOption"
@@ -280,11 +287,99 @@
               show-overflow-tooltip
               @click="toQuery"
             ></el-button>
-            <el-table-column type="selection" prop="policyId" width="100"></el-table-column>
-
-            <el-table-column  label="策略名" width="120"></el-table-column>
-            <el-table-column prop="type" label="策略类型" width="120"></el-table-column>
+            <el-table-column type="selection" prop="policyId" width></el-table-column>
+            <el-table-column  prop="Description" label="策略名" width></el-table-column>
+            <el-table-column prop="PolicyId" label="策略类型" width></el-table-column>
           </el-table>
+         
+        </div>
+
+
+  
+        <div class="abs">
+          <div>&nbsp;</div>
+        </div>
+
+        <div class="container-left">
+          <span>已选择（共条）</span>
+          <el-table
+            class="table-left"
+            ref="multipleSelected"
+            :data="policiesSelectedData"
+            tooltip-effect="dark"
+            height="300"
+            style="width: 100%;border:1px solid #ddd"
+          >
+            <el-table-column type="selection" prop="policyId" width></el-table-column>
+            <el-table-column  prop="Description" label="策略名" width></el-table-column>
+            <el-table-column prop="PolicyId" label="策略类型" width></el-table-column>
+            <el-table-column :label="操作" show-overflow-tooltip>
+              &lt;!&ndash;
+              <template slot-scope="scope">
+                <el-button
+                  @click.native.prevent="deleteRow(scope.$index, policiesSelectedData)"
+                  type="text"
+                  size="small"
+                >移除</el-button>
+              </template>&ndash;&gt;
+            </el-table-column>
+          </el-table>
+        </div>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="dialogVisible">确 定</el-button>
+        <el-button @click="dialogVisible = false">取 消</el-button>
+      </span>
+    </el-dialog>
+    <!-- 自定义弹框 -->
+    <el-dialog title="添加到组" :visible.sync="dialogVisible" width="74%" :before-close="handleClose">
+      <div class="container">
+        <div class="container-left">
+          <span>策略列表（共{{totalNum}}条）</span>
+          <div>
+            <el-input
+            size="mini"
+            v-model="searchValue"
+            style="width:89%"
+            @keyup.enter.native="toQuery"
+          />
+          <el-button
+            size="mini"
+            class="suo"
+            icon="el-icon-search"
+            show-overflow-tooltip
+            @click="toQuery"
+          ></el-button>
+          </div>
+           
+          <el-table
+            class="table-left"
+            ref="multipleOption"
+            :data="policiesDatas"
+            height="300"
+            tooltip-effect="dark"
+            style="width: 100%; border:1px solid #ddd"
+            @row-click="selectedRow"
+            @selection-change="handleSelectionChange"
+          >
+            <el-input
+              size="mini"
+              v-model="searchValue"
+              style="width:40%"
+              @keyup.enter.native="toQuery"
+            />
+            <el-button
+              size="mini"
+              class="suo"
+              icon="el-icon-search"
+              show-overflow-tooltip
+              @click="toQuery"
+            ></el-button>
+            <el-table-column type="selection" prop="policyId" width></el-table-column>
+            <el-table-column  prop="GroupName" label="用户名"  width></el-table-column>
+            <!-- <el-table-column prop="PolicyId" label="策略类型" width></el-table-column> -->
+          </el-table>
+         
         </div>
 
 
@@ -304,8 +399,8 @@
             style="width: 100%;border:1px solid #ddd"
           >
             <el-table-column type="selection" prop="policyId" width="55"></el-table-column>
-            <el-table-column label="策略名" width="120"></el-table-column>
-            <el-table-column prop="type" label="策略类型" width="120"></el-table-column>
+            <el-table-column label="用户组" width="120" prop="GroupName"></el-table-column>
+            <!-- <el-table-column prop="type" label="策略类型" width="120"></el-table-column> -->
             <el-table-column :label="操作" show-overflow-tooltip>
               &lt;!&ndash;
               <template slot-scope="scope">
@@ -537,6 +632,7 @@ export default {
       return data;
     };
     return {
+      policiesDatas:[],
       policiesData: [],
       totalNum: "",
       list: false,
@@ -593,6 +689,19 @@ export default {
     };
   },
   methods: {
+  //   input(){
+  //     let params = {
+  //      Action:'GetUser',
+  //      Version:'2019-01-16',
+  //      Name:''
+  //   }
+  //   let url = 'cam2/GetUser'
+  //   this.axios.post(url,params).then((data)=>{
+  //     console.log(data)
+  //   }).catch(error=>{
+  //     console.log(error)
+  //   })
+  // },
     handleClose(done) {
       this.$confirm("确认关闭？")
         .then(_ => {
@@ -638,6 +747,20 @@ export default {
     }).catch(error=>{
       console.log(error)
     })
+    
+    //策略绑定到用户
+    let More = {
+      Action:'ListGroups',
+      Version:'2019-01-16',
+    }
+    let moreUrl = 'cam2/ListGroups'
+    this.axios.post(moreUrl,More).then((data)=>{
+      this.policiesDatas = data.Response.GroupInfo
+      // console.log(data.Response.GroupInfo)
+    }).catch(error=>{
+      console.log(error)
+    })
+   
    }
 };
 </script>

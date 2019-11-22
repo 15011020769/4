@@ -111,9 +111,9 @@ export default {
       searchValue: ''
     };
   },
-//   mounted() {
-//     this.init();
-//   },
+  mounted() {
+    this.init();
+  },
   methods: {
     prev() {
       --this.active;
@@ -123,25 +123,32 @@ export default {
       if (this.active++ > 2) this.active = 0;
     },
     complete() {
-      alert("123");
+      let params = {
+         Action:'AddUser',
+         Version:'2019-01-16'
+      }
+      let url = 'cam2/AddUser'
+      this.axios.post(url,params).then((data)=>{
+        console.log(data)
+      })
     },
-    // init() {
-    //   let params = {
-    //     Action: "ListPolicies",
-    //     scope: "All"
-    //   };
-    //   let url = "cam/ListPolicies";
-    //   this.axios
-    //     .post(url, params)
-    //     .then(res => {
-    //       console.log(res);
-    //       this.totalNum = res.data.totalNum;
-    //       this.policiesData = res.data.list;
-    //     })
-    //     .catch(error => {
-    //       console.log(error);
-    //     });
-    // },
+    init() {
+      let params = {
+        Action: "ListPolicies",
+        scope: "All"
+      };
+      let url = "cam/ListPolicies";
+      this.axios
+        .post(url, params)
+        .then(res => {
+          console.log(res);
+          this.totalNum = res.data.totalNum;
+          this.policiesData = res.data.list;
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    },
     handleSelectionChange(val) {
       // 给右边table框赋值，只需在此处赋值即可，selectedRow方法中不写，因为单独点击复选框，只有此方法有效。
       this.policiesSelectedData = val;
