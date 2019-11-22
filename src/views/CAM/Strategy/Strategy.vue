@@ -283,8 +283,13 @@ export default {
 .Cam {
   height: 100%;
   .top {
-    padding: 10px 20px;
+    color: #000;
+    height: 45px;
+    line-height: 45px;
+    margin-bottom: 20px;
+    padding: 0 20px;
     background: #fff;
+    font-size: 16px;
     display: flex;
     justify-content: space-between;
     margin-bottom: 20px;

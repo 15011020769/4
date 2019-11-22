@@ -189,11 +189,13 @@ export default {
 .Cam {
   .top {
     color: #000;
-    padding: 20px;
+    height: 45px;
+    line-height: 45px;
+    margin-bottom: 20px;
+    padding: 0 20px;
     background: #fff;
     font-size: 16px;
     font-weight: 700;
-    border-bottom: 1px solid #ddd;
   }
   .container {
     max-width: 96%;

@@ -221,9 +221,12 @@ export default {
 <style lang="scss" scoped>
 .createAccount {
   .top {
-    padding: 20px;
+    padding: 0 20px;
     background-color: #fff;
     margin-bottom: 20px;
+    color: #000;
+    height: 45px;
+    line-height: 45px;
     .top_text {
       font-size: 16px;
       font-weight: 700;
