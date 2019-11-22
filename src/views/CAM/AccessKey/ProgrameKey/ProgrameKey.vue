@@ -48,7 +48,7 @@
     <template>
       <div>
         <el-dialog title="请选择需要生成密钥的项目" :visible.sync="dialogHint" :before-close="handleClose" width="40%"> 
-          <div class="explain">
+          <div class="explain" style="margin-bottom: 20px;margin-left: 0px;">
             <p>
               <span style="color:red;">项目密钥暂不支持在云 API 上分项目管理资源</span>
             </p>
@@ -307,9 +307,8 @@ export default {
       background: #e5f0ff;
       position: relative;
       box-sizing: border-box;
-      margin-left: 0px;
+      margin-left: auto;
       margin-right: auto;
-      margin-bottom: 20px;
     }
     .explain p {
       line-height: 1.5;
