@@ -120,7 +120,7 @@
       <el-table-column prop="month" header-align="center" align="center" width="120" label="账单月份">
       </el-table-column>
     </el-table>
-    <el-pagination @size-change="sizeChangeHandle" @current-change="currentChangeHandle" :current-page="pageIndex" :page-sizes="[10, 20, 50, 100]" :page-size="pageSize" :total="totalPage" layout="total, sizes, prev, pager, next, jumper">
+    <el-pagination @size-change="sizeChangeHandle" @current-change="currentChangeHandle" :current-page="pageIndex" :page-sizes="[10, 20, 50, 100]" :page-size="pageSize" :total="totalPage" layout="total, sizes, prev, pager, next, jumper" style="float: right;">
     </el-pagination>
     <iframe ref="iframe" src="" style="display:none"></iframe>
   </div>
@@ -131,19 +131,6 @@ import moment from 'moment'
 export default {
   data () {
     return {
-      options: [{
-        value: '选项1',
-        label: '全部项目'
-      }, {
-        value: '选项2',
-        label: '默认项目'
-      }, {
-        value: '选项3',
-        label: 'taifucloud'
-      }, {
-        value: '选项4',
-        label: 'test'
-      }],
       dataForm: {
         businessCodeName: {},
         productCodeName: '',
@@ -202,8 +189,8 @@ export default {
         'resourceName': this.dataForm.resourceId,
         'realCost': this.dataForm.realCost,
         'month': this.dataForm.month,
-        // 'checked': this.dataForm.checked,
-        'ifDisZero': this.dataForm.checked
+        'ifDisZero': this.dataForm.checked,
+        'uin': '100011921910' //localStorage.getItem("uin");
       }
       this.dataListLoading = true
       this.$axios.post(`${process.env.VUE_APP_adminUrl}taifucloud/tbilldetails/list`, params).then(data => {
@@ -217,6 +204,7 @@ export default {
         this.dataListLoading = false
       })
     },
+    // 搜索
     search () {
       this.pageIndex = 1
       this.pageSize = 10
@@ -236,7 +224,8 @@ export default {
         'resourceName': this.dataForm.resourceId,
         'realCost': this.dataForm.realCost,
         'month': this.dataForm.month,
-        'ifDisZero': this.dataForm.checked
+        'ifDisZero': this.dataForm.checked,
+        'uin': '100011921910' //localStorage.getItem("uin");
       }
       this.$axios.post(`${process.env.VUE_APP_adminUrl}taifucloud/tbilldetails/getPayAmount`, params).then(data => {
         if (data.payAmount != null && data.code === 0) {
@@ -252,6 +241,7 @@ export default {
         }
       })
     },
+    // 下载
     download () {
       var params = {
         'businessCodeName': this.dataForm.businessCodeName.nameTw,
@@ -265,7 +255,8 @@ export default {
         'resourceName': this.dataForm.resourceId,
         'realCost': this.dataForm.realCost,
         'month': this.dataForm.month,
-        'ifDisZero': this.dataForm.checked
+        'ifDisZero': this.dataForm.checked,
+        'uin': '100011921910' //localStorage.getItem("uin");
       }
       this.$axios.post(`${process.env.VUE_APP_adminUrl}taifucloud/tbilldetails/exportList`, params, { responseType: 'blob' }).then(res => {
         const content = res

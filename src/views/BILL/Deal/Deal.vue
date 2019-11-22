@@ -66,7 +66,8 @@
         </template>
       </el-table-column>
     </el-table>
-    <el-pagination @size-change="sizeChangeHandle" @current-change="currentChangeHandle" :current-page="pageIndex" :page-sizes="[10, 20, 50, 100]" :page-size="pageSize" :total="totalPage" layout="total, sizes, prev, pager, next, jumper">
+    </br>
+    <el-pagination @size-change="sizeChangeHandle" @current-change="currentChangeHandle" :current-page="pageIndex" :page-sizes="[10, 20, 50, 100]" :page-size="pageSize" :total="totalPage" layout="total, sizes, prev, pager, next, jumper" style="float: right;">
     </el-pagination>
     <!-- 弹窗, 详情 -->
     <Detail ref="Detail"></Detail>
@@ -103,7 +104,8 @@ export default {
         'page': this.pageIndex,
         'limit': this.pageSize,
         'projectId': this.dataForm.projectId,
-        'orderId': this.dataForm.orderId
+        'orderId': this.dataForm.orderId,
+        'orderOwner': '100011921910' //localStorage.getItem("uin");
       }
       this.$axios.post(`${process.env.VUE_APP_adminUrl}taifucloud/torderdetails/list`, params).then(data => {
         console.log('获取列表成功')
@@ -117,6 +119,7 @@ export default {
         this.dataListLoading = false
       })
     },
+    // 搜索
     search () {
       this.pageIndex = 1
       this.pageSize = 10
@@ -158,10 +161,12 @@ export default {
         return '台币'
       }
     },
+    // 下载
     download () {
       var params = {
         'projectId': this.dataForm.projectId,
-        'orderId': this.dataForm.orderId
+        'orderId': this.dataForm.orderId,
+        'orderOwner': '100011921910' //localStorage.getItem("uin")
       }
       this.$axios.post(`${process.env.VUE_APP_adminUrl}taifucloud/torderdetails/exportList`, params, { responseType: 'blob' }).then(res => {
         const content = res
