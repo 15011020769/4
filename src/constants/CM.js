@@ -4,7 +4,7 @@ export const ALL_CITY = 'pub/zoneAll' // 区域列表
 export const CVM_LIST = 'cvm2/DescribeInstances' // 列表
 
 export const CVM_PROJECT = 'account/DescribeProject' // 项目列表（云服务器，Mysql共用）
-export const CVM_MONITOR = 'monitor/GetMonitorData' // 监控数据  （mysql部分共用）
+export const CVM_MONITOR = 'monitor2/GetMonitorData' // 监控数据  （mysql部分共用）
 
 // Mysql
 export const MYSQL_LIST = 'redesc/cloudMysql' // 列表
