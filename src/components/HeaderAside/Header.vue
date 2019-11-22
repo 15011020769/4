@@ -4,14 +4,9 @@
       <el-menu-item class="manuList" index="0">
         <img src="@/assets/logo_5.svg" width="140px" height="60px" alt />
       </el-menu-item>
-<<<<<<< HEAD
-      <el-menu-item class="manuList" index="1" @mouseenter.native="Show1">产品中心</el-menu-item>
-      <el-menu-item class="manuList" index="2">定价</el-menu-item>
-=======
       <el-menu-item class="manuList" index="1" @mouseenter.native="Show">{{$t("COM.COM.center")}}</el-menu-item>
       <el-menu-item class="manuList" index="2">{{$t("COM.COM.price")}}</el-menu-item>
       <el-menu-item class="manuList" index="2">{{$t("COM.COM.document")}}</el-menu-item>
->>>>>>> release
     </el-menu>
     <div class="floatRight">
       <el-button @click="billClick">{{$t("COM.COM.bill")}}</el-button>
