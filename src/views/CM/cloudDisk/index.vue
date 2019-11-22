@@ -111,7 +111,7 @@
 </template>
 
 <script>
-import Cities from '@/components/Cities';
+import Cities from '@/components/public/CITY';
 import { DISK_CITY, DISK_LIST } from '@/constants';
 export default {
   data() {
@@ -186,7 +186,6 @@ export default {
         this.cities = data.data;
         this.selectedRegion = data.data[0].Region;
         this.selectedCity = data.data[0];
-        this.$cookie.set('regionv1', this.selectedCity.regionCode);
         this.$cookie.set('regionv2', this.selectedCity.Region);
         this.GetTabularData();
       });
@@ -194,7 +193,6 @@ export default {
     // 切换城市
     changeCity(city) {
       this.selectedCity = city;
-      this.$cookie.set('regionv1', city.regionCode);
       this.$cookie.set('regionv2', city.Region);
       this.GetTabularData();
     },

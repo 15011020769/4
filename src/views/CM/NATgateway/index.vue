@@ -1,6 +1,5 @@
 <template>
   <div>
-    <!-- 测试git -->
     <!-- 城市按钮 -->
     <div class="CVM-title">NAT网关</div>
     <Cities :cities="cities"
@@ -88,10 +87,10 @@
 </template>
 
 <script>
-import Cities from '@/components/Cities'
-import { DISK_CITY, NAT_LIST } from '@/constants'
+import Cities from '@/components/Cities';
+import { DISK_CITY, NAT_LIST } from '@/constants';
 export default {
-  data () {
+  data() {
     return {
       cities: [],
       selectedRegion: '', // 默认选中城市
@@ -105,90 +104,90 @@ export default {
       natStatu: {
         0: '运行中',
         1: '不可用',
-        2: '欠费停服'
+        2: '欠费停服',
       },
       natConnStatu: {
         100: '小型',
         300: '中型',
-        1000: '大型'
-      }
-    }
+        1000: '大型',
+      },
+    };
   },
-  created () {
-    this.GetCity()
+  created() {
+    this.GetCity();
   },
   watch: {
     // 监听城市变化----数据变化
-    selectedRegion () {}
+    selectedRegion() {},
   },
   components: {
-    Cities
+    Cities,
   },
   methods: {
     // 获取城市列表
-    GetCity () {
+    GetCity() {
       this.axios.get(`${DISK_CITY}?product=MONITOR`).then((data) => {
-        this.cities = data.data
-        this.selectedRegion = data.data[0].Region
-        this.selectedCity = data.data[0]
-        this.$cookie.set('regionv1', this.selectedCity.regionCode)
-        this.$cookie.set('regionv2', this.selectedCity.Region)
-        this.GetTabularData()
-      })
+        this.cities = data.data;
+        this.selectedRegion = data.data[0].Region;
+        this.selectedCity = data.data[0];
+        this.$cookie.set('regionv1', this.selectedCity.regionCode);
+        this.$cookie.set('regionv2', this.selectedCity.Region);
+        this.GetTabularData();
+      });
     },
     // 切换城市
-    changeCity (city) {
-      this.selectedCity = city
-      this.$cookie.set('regionv1', city.regionCode)
-      this.$cookie.set('regionv2', city.Region)
-      this.GetTabularData()
+    changeCity(city) {
+      this.selectedCity = city;
+      this.$cookie.set('regionv1', city.regionCode);
+      this.$cookie.set('regionv2', city.Region);
+      this.GetTabularData();
     },
     // 获取表格数据
-    GetTabularData () {
+    GetTabularData() {
       const param = {
         Region: this.selectedRegion,
         offset: this.pageIndex * this.pagesize - this.pagesize,
-        limit: this.pagesize
-      }
+        limit: this.pagesize,
+      };
       this.axios.post(NAT_LIST, param).then((data) => {
-        console.log(data)
-        this.totalCount = data.totalCount
-        this.TbaleData = data.storageSet
+        console.log(data);
+        this.totalCount = data.totalCount;
+        this.TbaleData = data.storageSet;
         // console.log(this.TbaleData);
-      })
+      });
     },
-    handleSizeChange (val) {
-      this.pagesize = val
-      this.GetTabularData()
+    handleSizeChange(val) {
+      this.pagesize = val;
+      this.GetTabularData();
     },
-    handleCurrentChange (val) {
-      this.pageIndex = val
-      this.GetTabularData()
+    handleCurrentChange(val) {
+      this.pageIndex = val;
+      this.GetTabularData();
     },
-    jump (id) {
+    jump(id) {
       this.$router.push({
         name: 'NATdetails',
         query: {
-          id
-        }
-      })
+          id,
+        },
+      });
     },
     // 搜索按钮
-    btnsearch () {
-      const search = this.search
+    btnsearch() {
+      const search = this.search;
       if (search) {
         this.TbaleData = this.TbaleData.filter(product => Object.keys(product).some(
           key => String(product[key])
             .toLowerCase()
-            .indexOf(search) > -1
-        ))
+            .indexOf(search) > -1,
+        ));
       } else {
-        this.GetTabularData()
-        this.TbaleData = this.TbaleData
+        this.GetTabularData();
+        this.TbaleData = this.TbaleData;
       }
-    }
-  }
-}
+    },
+  },
+};
 </script>
 
 <style scoped lang="scss">

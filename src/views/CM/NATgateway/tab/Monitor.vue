@@ -109,12 +109,12 @@
 </template>
 
 <script>
-import axios from 'axios'
-import XTimeX from '@/components/TimeX'
-import echartLine from '@/components/echars-line'
-import { CVM_MONITOR } from '@/constants'
+import axios from 'axios';
+import XTimeX from '@/components/TimeX';
+import echartLine from '@/components/echars-line';
+import { CVM_MONITOR } from '@/constants';
 export default {
-  data () {
+  data() {
     return {
       ID: this.$route.query.id,
       period: '',
@@ -126,34 +126,34 @@ export default {
       totalPage: 0, // 表格数据数组长度
       tableData: [], // 获取列表数据
       timeData: [], // 折线图的x轴数据
-      jingData: []
-    }
+      jingData: [],
+    };
   },
   components: {
     echartLine,
-    XTimeX
+    XTimeX,
   },
-  created () {},
+  created() {},
   methods: {
-    GetDat (data) {
-      this.period = data[0]
-      this.timeData = data[1]
-      this.Start_End = data[2]
-      this.value = data[3]
+    GetDat(data) {
+      this.period = data[0];
+      this.timeData = data[1];
+      this.Start_End = data[2];
+      this.value = data[3];
       const metricNArr = [
         'cpu_usage',
         'cpu_loadavg',
         'mem_used',
         'mem_usage',
-        'tcp_curr_estab'
-      ]
-      this.tableData = []
+        'tcp_curr_estab',
+      ];
+      this.tableData = [];
       for (let i = 0; i < metricNArr.length; i++) {
-        this.Obtain(metricNArr[i])
+        this.Obtain(metricNArr[i]);
       }
-      this.getdata()
+      this.getdata();
     },
-    Obtain (metricN) {
+    Obtain(metricN) {
       const param = {
         Region: this.$cookie.get('regionv1'),
         namespace: 'qce/cvm',
@@ -162,17 +162,17 @@ export default {
         'dimensions.0.value': this.ID,
         period: this.period,
         startTime: this.Start_End.StartTIme,
-        endTime: this.Start_End.EndTIme
-      }
+        endTime: this.Start_End.EndTIme,
+      };
       this.axios.post(CVM_MONITOR, param).then((data) => {
-        this.tableData.push(data)
-      })
+        this.tableData.push(data);
+      });
     },
     // 模拟获取数据
-    getdata () {
+    getdata() {
       axios
         .get(
-          'http://localhost:5566/test.json'
+          'http://localhost:5566/test.json',
           // {
           //   headers: {
           //     uuid: this.$cookie.get('uuid'),
@@ -180,22 +180,22 @@ export default {
           // },
         )
         .then(({ data }) => {
-          this.jingData = data.employees
-          console.log(this.jingData)
-          console.log(this.tableData[0])
-        })
+          this.jingData = data.employees;
+          console.log(this.jingData);
+          console.log(this.tableData[0]);
+        });
     },
     // 模态框
-    Modality (Y) {
-      this.dialogVisible = true
-      this.opDiskData = Y
+    Modality(Y) {
+      this.dialogVisible = true;
+      this.opDiskData = Y;
     },
 
-    handleClose (done) {
-      done()
-    }
-  }
-}
+    handleClose(done) {
+      done();
+    },
+  },
+};
 </script>
 
 <style  scoped lang="scss">
@@ -222,7 +222,7 @@ export default {
         color: #cccccc;
         font-size: 10px;
       }
-      /deep/.el-input {
+       ::v-deep.el-input {
         width: 100px !important;
         border: none;
       }
@@ -258,7 +258,7 @@ export default {
 .dateheight {
   height: 34px;
 }
-/deep/.echart-wh {
+ ::v-deep.echart-wh {
   width: 1100px !important;
   height: 500px !important;
 }
@@ -272,7 +272,7 @@ export default {
       color: #cccccc;
       font-size: 10px;
     }
-    /deep/.el-input {
+     ::v-deep.el-input {
       width: 100px !important;
       border: none;
     }
@@ -281,10 +281,10 @@ export default {
 .box-table {
   width: 100%;
 }
-/deep/.i-font {
+ ::v-deep.i-font {
   font-size: 36px;
 }
-/deep/.el-button--small {
+ ::v-deep.el-button--small {
   font-size: 14px !important;
 }
 </style>
