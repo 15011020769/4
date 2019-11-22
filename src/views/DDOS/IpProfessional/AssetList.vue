@@ -7,7 +7,7 @@
           <el-option label="资源列表" value="resourceList"></el-option>
           <el-option label="业务列表" value="value2"></el-option>
         </el-select>
-        <el-button class="ReportTitBtn" type="primary">新购</el-button>
+        <el-button class="ReportTitBtn" type="primary" @click="newBuy">新购</el-button>
       </div>
       <div class="mainContentCenter">
         <div class="textAlignTop newClear">
@@ -190,7 +190,12 @@ export default {
           this.tableDataEnd.push(list[from]);
         }
       }
-    }
+    },
+    newBuy(){
+      this.$router.push({
+        path: '/choose'
+      })
+    },
   }
 };
 </script>
@@ -224,10 +229,14 @@ export default {
       }
       .ReportTitBtn{
         float:right;
-        height:32px;
-        line-height: 32px;
-        padding:0 20px;
+        height:30px;
+        line-height: 30px;
+        padding:0;
         margin-top:8px;
+        width:52px;
+        border-radius: 0;
+        text-align:center;
+        background-color:#006eff;
       }
     }
     .textAlignTop{
@@ -260,6 +269,7 @@ export default {
         margin-top:2px;
         line-height:18px;
         padding-top:10px;
+        padding-left:10px;
         .el-checkbox+.el-checkbox{
           margin-left:10px;
         }

@@ -3,7 +3,7 @@
     <div class="statistReportTit">
       <div class="ReportTit newClear">
         <h3 class="ReportTitH3">统计报表</h3>
-        <el-button class="ReportTitBtn" type="primary">新购</el-button>
+        <el-button class="ReportTitBtn" type="primary" @click="newBuy">新购</el-button>
         <!-- <el-button class="TestMethod" type="primary" @click="describeCCEvList()">Test接口</el-button> -->
       </div>
       <div>
@@ -372,7 +372,12 @@ export default {
     // 时间格式化'yyyy-MM-dd hh:mm:ss'
     getDateString(date) {
       return date.toLocaleString('zh',{hour12:false, year: 'numeric',  month: '2-digit',  day: '2-digit',  hour: '2-digit',  minute: '2-digit',  second: '2-digit'}).replace(/\//g,'-');
-    }
+    },
+    newBuy(){
+      this.$router.push({
+        path: '/choose'
+      })
+    },
   }
 }
 
@@ -396,9 +401,15 @@ export default {
   }
   .ReportTitBtn{
     float:right;
-    height:32px;
-    line-height: 32px;
-    padding:0 20px;
+    height:30px;
+    width:52px;
+    padding:0;
+    color:#fff;
+    border-radius: 0;
+    background-color:#006eff;
+    line-height: 30px;
+    padding:0;
+    text-align:center;
   }
 }
 .mainConList{
