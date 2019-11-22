@@ -10,11 +10,11 @@
           <el-option v-for="item in getProductList" :key="item.code" :label="item.nameTw" :value="item">
           </el-option>
         </el-select>
-        <el-select v-model="dataForm.productCodeName" value-key="code" placeholder="请先选择产品" @change="getComponentInfo()" clearable size="small">
+        <el-select v-model="dataForm.productCodeName" value-key="code" :placeholder="reminder1()" @change="getComponentInfo()" clearable size="small">
           <el-option v-for="item in getChildList" :key="item.code" :label="item.nameTw" :value="item">
           </el-option>
         </el-select>
-        <el-select v-model="dataForm.componentCodeName" placeholder="请先子选择产品" @change="getInfo()" clearable size="small">
+        <el-select v-model="dataForm.componentCodeName" :placeholder="reminder2()" @change="getInfo()" clearable size="small">
           <el-option v-for="item in getComponentList" :key="item.name" :label="item.name" :value="item.name">
           </el-option>
         </el-select>
@@ -386,6 +386,22 @@ export default {
       })
       this.getDataList()
       this.cost()
+    },
+    reminder1 () {
+      if(this.dataForm.businessCodeName.code){
+        return '请选择子产品'
+      } else {
+        
+        return '请先选择产品'
+      }
+    },
+    reminder2 () {
+      if(this.dataForm.productCodeName.code){
+        return '请选择组件类型'
+      } else {
+        
+        return '请先选择子产品'
+      }
     }
   }
 }
