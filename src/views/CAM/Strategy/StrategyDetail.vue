@@ -21,8 +21,8 @@
             <p class="baseInfo_time item">创建时间</p>
           </div>
           <div class="baseInfo_right">
-            <p class="baseInfo_cl item">AdministratorAccess</p>
-            <p class="baseInfo_ms item">该策略允许您管理账户内所有用户及其权限、财务相关的信息、云服务资产。</p>
+            <p class="baseInfo_cl item">{{policy.PolicyName}}</p>
+            <p class="baseInfo_ms item">{{policy.Description}}</p>
             <p class="baseInfo_mark item">
               <el-input
                 v-if="input_show"
@@ -51,8 +51,8 @@
                 class="el-icon-edit item"
               ></i>
             </p>
-            <p class="baseInfo_type item">预设策略</p>
-            <p class="baseInfo_time item">2016-06-02 19:40:09</p>
+            <p class="baseInfo_type item">{{policy.Type}}</p>
+            <p class="baseInfo_time item">{{policy.AddTime}}</p>
           </div>
         </div>
       </div>
@@ -156,7 +156,7 @@
           </el-tab-pane>
         </el-tabs>
       </div>
-      <el-dialog :visible.sync="dialogVisible" width="70%" :before-close="handleClose">
+      <el-dialog :visible.sync="dialogVisible" width="72%" :before-close="handleClose">
         <p class="dialog">关联用户/用户组</p>
         <div>
          <transfer></transfer>
@@ -197,7 +197,8 @@ export default {
   },
   data () {
     return {
-      activeName: 'first',
+      activeName: "first",
+      policy: {},
       tableData: [
         {
           date: '2343535',
@@ -249,6 +250,10 @@ export default {
       input_Value: '',
       input_show: false
     }
+  },
+  created() {
+    console.log(this.$route.query.policy)
+    this.policy = this.$route.query.policy
   },
   methods: {
     handleClick () {},

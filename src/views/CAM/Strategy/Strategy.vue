@@ -190,6 +190,16 @@ export default {
         this.total = res.Response.TotalNum
       })
     },
+    // 跳转到详情页面
+    handleClick(policy) {
+      // console.log(policy);
+      this.$router.push({
+        path: '/StrategyDetail',
+        query: {
+          policy: policy
+        }
+      });
+    },
     // 关联用户/用户组（展现模态框）
     handleClick_user(policy) {
       this.policyId = policy.PolicyId
@@ -262,10 +272,6 @@ export default {
     handleCommand(command) {
       console.log(command);
       this.tableTitle = command;
-    },
-    handleClick(scope) {
-      console.log(scope);
-      this.$router.push("/StrategyDetail");
     },
     // page操作
     handleSizeChange(val) {
