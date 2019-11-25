@@ -94,7 +94,6 @@
       },
       confirm() {
         if(this.active ==2) {
-          debugger
          this.$router.push({name: 'UserGroup'})
           // 创建用户组
           let params = {
@@ -110,8 +109,6 @@
           let url = "cam2/CreateGroup"
           let _this = this
           this.axios.post(url, params).then(res => {
-            console.log(res)
-            debugger
             // 获取新创建的用户组ID
             let AttachGroupId = res.Response.GroupId
             let selArr = _this.policiesSelectedData
@@ -133,7 +130,6 @@
                 // 获取策略id
                 let url = "cam2/AttachGroupPolicy"
                 this.axios.post(url, PoliciesParams).then(res => {
-                  console.log(res)
                 }).catch(error => {
                   console.log(error)
                 })

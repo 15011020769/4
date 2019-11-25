@@ -23,7 +23,7 @@
       <el-row class="cam-lt">
         <el-button size="small" type="primary" @click="NewUser">新建用户</el-button>
         <template>
-          <el-select size="small"  placeholder="更多操作">
+          <el-select size="small"  v-model="value" placeholder="更多操作">
             <el-option
               v-for="item in options"
               :key="item.value"
@@ -45,7 +45,7 @@
           style="width: 200px;"
           @keyup.enter.native="toQuery"
         />
-        <i class="iconfont magnifier" @click="input()">&#xe608;</i>
+        <i class="iconfont magnifier">&#xe608;</i>
         <i @click="list = true" class="el-icon-s-tools gear"></i>
         <el-dialog title="自定义列表字段" :visible.sync="list" width="45%" :before-close="handleClose">
           <div>
@@ -85,13 +85,13 @@
                     <el-checkbox disabled label="操作" name="type"></el-checkbox>
                   </el-checkbox-group>
                 </el-form-item>
-                <el-form-item>
-                  <el-button type="primary" @click="onSubmit">确认</el-button>
-                  <el-button>取消</el-button>
-                </el-form-item>
               </el-form>
             </div>
           </div>
+          <span slot="footer" class="dialog-footer">
+            <el-button size="small" @click="list = false">取 消</el-button>
+            <el-button size="small" type="primary" @click="list = false">确 定</el-button>
+          </span>
         </el-dialog>
       </div>
     </div>
@@ -287,9 +287,9 @@
               show-overflow-tooltip
               @click="toQuery"
             ></el-button>
-            <el-table-column type="selection" prop="policyId" width></el-table-column>
-            <el-table-column  prop="Description" label="策略名" width></el-table-column>
-            <el-table-column prop="PolicyId" label="策略类型" width></el-table-column>
+        <el-table-column type="selection" prop="policyId" width="100"></el-table-column>
+            <el-table-column prop="Description" label="策略名" width="120"></el-table-column>
+            <el-table-column prop="PolicyId" label="策略类型" width="120"></el-table-column>
           </el-table>
          
         </div>
@@ -415,8 +415,8 @@
         </div>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="dialogVisible">确 定</el-button>
-        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button size="small" type="primary" @click="dialogVisible">确 定</el-button>
+        <el-button size="small" @click="dialogVisible = false">取 消</el-button>
       </span>
     </el-dialog>
     <!-- 自定义弹框 -->
@@ -573,23 +573,30 @@
         </el-submenu>
       </el-menu>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="subscribe = false">确 定</el-button>
-        <el-button @click="subscribe = false">取 消</el-button>
+        <el-button size="small" type="primary" @click="subscribe = false">确 定</el-button>
+        <el-button size="small" @click="subscribe = false">取 消</el-button>
       </div>
     </el-dialog>
-
-    <div class="block">
-      <el-pagination
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-        :current-page="currentPage4"
-        :page-sizes="[10, 20, 30, 40]"
-        :page-size="10"
-        layout="total, sizes, prev, pager, next, jumper"
-        :total="40"
-      ></el-pagination>
+<div
+      style="width:96%; margin:0 auto; background:#fff;padding:10px;display:flex;justify-content: space-between;line-height:30px"
+    >
+      <div>
+        <span style="font-size:12px;color:#888">已选 0 项，共 3 项</span>
+      </div>
+      <div>
+        <el-pagination
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page.sync="currentPage2"
+          :page-sizes="[10, 20, 30, 40]"
+          :page-size="10"
+          layout="sizes, prev, pager, next"
+          :total="40"
+        ></el-pagination>
+      </div>
     </div>
   </div>
+
 </template>
 <script>
 
@@ -1072,8 +1079,15 @@ export default {
       text-align: center;
     }
     .container-left {
+      position: relative;
       width: 44%;
       display: inline-block;
+    }
+    .ifier {
+      position: absolute;
+      font-size: 130%;
+      right: 2%;
+      top: 8%;
     }
   }
 }

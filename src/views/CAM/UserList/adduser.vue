@@ -1,6 +1,7 @@
 <template>
   <div class="Cam">
     <div class="top">
+       <i class="el-icon-back back" @click="backoff"></i>
       <span class="title-left">添加到用户组</span>
     </div>
     <div class="add-box">
@@ -15,8 +16,8 @@
             <div class="container-left">
               <span>选择用户组（共{{totalNum}}条）</span>
               <div>
-                <el-input size="mini" v-model="searchValue" style="width:89%" @keyup.enter.native="toQuery" />
-                <el-button size="mini" class="suo" icon="el-icon-search" show-overflow-tooltip @click="toQuery"></el-button>
+                <el-input size="mini" v-model="searchValue" style="width:100%" @keyup.enter.native="toQuery" />
+                <i size="mini" class="suo" icon="el-icon-search ifier" show-overflow-tooltip @click="toQuery"></i>
               </div>
               <el-table
                 class="table-left"
@@ -61,21 +62,21 @@
         <el-button
           style="margin-top: 12px;"
           type="primary"
-          size="medium"
+          size="small"
           @click="prev()"
           v-if="active==2"
         >上一步</el-button>
         <el-button
           style="margin-top: 12px;"
           type="primary"
-          size="medium"
+          size="small"
           @click="next()"
           v-if="active==1"
         >下一步</el-button>
         <el-button
           style="margin-top: 12px;"
           type="primary"
-          size="medium"
+          size="small"
           @click="complete()"
           v-if="active==2"
         >完成</el-button>
@@ -161,7 +162,10 @@ export default {
       // 获取右边框中取消的行数据，将此行数据在右边框中的选中状态取消
       this.$refs.multipleOption.toggleRowSelection(rows[index], false);
     },
-    toQuery() {}
+    toQuery() {},
+    backoff(){
+      this.$router.push({ path: "details" });
+    }
   }
 };
 </script>
@@ -182,6 +186,13 @@ export default {
         color: #006eff;
         border-bottom: 1px solid #006eff;
       }
+    }
+    .back{
+      font-size: 140%;
+      color: #006eff;
+      font-weight: 900;
+      padding-right: 10px;
+      cursor:pointer;
     }
   }
   .add-box {
@@ -232,8 +243,16 @@ export default {
       text-align: center;
     }
     .container-left {
+      position: relative;
       width: 44%;
       display: inline-block;
+    }
+    .ifier{
+      font-size: 140%;
+      color: #888;
+      position: absolute;
+      top: 6%;
+      right: 2%;
     }
   }
   .el-steps--simple{

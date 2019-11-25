@@ -70,8 +70,8 @@
                   </el-form-item>
                 </el-form>
                 <span slot="footer" class="dialog-footer">
-                  <el-button @click="dialogVisible = false">取 消</el-button>
-                  <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+                  <el-button size="mini" type="primary" @click="dialogVisible = false">确 定</el-button>
+                  <el-button size="mini" @click="dialogVisible = false">取 消</el-button>
                 </span>
               </el-dialog>
               <div class="content-box">
@@ -219,8 +219,8 @@
                   </div>
 
                   <div slot="footer" class="dialog-footer">
-                    <el-button type="primary" @click="dialogVi = false">确 定</el-button>
-                    <el-button @click="dialogVi = false">取 消</el-button>
+                    <el-button size="mini" type="primary" @click="dialogVi = false">确 定</el-button>
+                    <el-button size="mini" @click="dialogVi = false">取 消</el-button>
                   </div>
                 </el-dialog>
               </div>

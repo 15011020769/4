@@ -1,16 +1,17 @@
 <template>
   <div class="Cam" id="app">
     <div class="top">
-      <i class="el-icon-arrow-left" @click="goback"></i>
+      <i class="el-icon-back backoff" @click="goback"></i>
       <span class="title-left">新建身份提供商</span>
     </div>
     <div class="container">
-      <el-steps :space="160" :active="active" finish-status="success" simple style="margin-top: 10px;margin-right: 450px;padding-left: 10px;">
+      <el-steps :space="160" :active="active" finish-status="success" simple style="background: #fff; margin-top: 10px;margin-right: 450px;padding-left: 10px;">
         <el-step title="配置提供商信息">
         </el-step>
         <el-step title="审阅并完成" >
         </el-step>
       </el-steps>
+      <hr>
       <div v-show="active==0">
         <template>
           <FirstStep :addModel="addModel"/>
@@ -23,10 +24,10 @@
       </div>
       <br/>
       <br/>
-      <el-button v-show="active>0" type="primary" @click="step">上一步</el-button>
-      <el-button v-show="active<1" type="primary" style="margin-top: 12px;" @click="next">下一步</el-button>
+      <el-button v-show="active>0" size="small" type="primary" @click="step">上一步</el-button>
+      <el-button v-show="active<1" size="small" type="primary" style="margin-top: 12px;" @click="next">下一步</el-button>
       <!-- <el-button v-show="active==1" type="primary" @click="step">返回</el-button> -->
-      <el-button v-show="active==1" type="primary" @click="confirm">确认</el-button>
+      <el-button v-show="active==1" size="small" type="primary" @click="confirm">确认</el-button>
     </div>
   </div>
 </template>
@@ -92,6 +93,12 @@
       height: 30px;
       line-height: 30px;
     }
+    .backoff{
+      font-size: 140%;
+      font-weight: 900;
+      color: #006EFF;
+      cursor:pointer;
+    }
   }
   .container {
     width:96%;
@@ -101,6 +108,12 @@
     margin:0 auto;
     background: #fff;
     padding:20px;
+    hr{
+      padding: 0;
+      border: none;
+      border-bottom: 1px solid #ddd;
+      margin: 20px 0;
+    }
     p.title,p.explain{
       text-align: center;
       line-height: 20px;

@@ -8,16 +8,42 @@
     </div>
     <div class="cam_button">
       <el-row class="cam-lt">
-        <el-button type="primary"  @click="NewUser" >{{$t('CAM.CAM.userGroup.addBtn')}}</el-button>
-        <el-button type="primary" :disabled="btnVisible" @click="addUserGroup()" >{{$t('CAM.CAM.userGroup.createBtn')}}</el-button>
+        <el-button type="primary" size="small" @click="NewUser" >{{$t('CAM.CAM.userGroup.addBtn')}}</el-button>			 
+        <el-button size="small" type="primary" :disabled="btnVisible" @click="addUserGroup()" >{{$t('CAM.CAM.userGroup.createBtn')}}</el-button>
       </el-row>
-
       <div class="head-container">
         <!-- 搜索 -->
-        <el-input v-model="searchValue" clearable :placeholder="$t('CAM.CAM.userGroup.placeholder')" style="width: 300px;"  @keyup.enter.native="toQuery"/>
-        <el-button class="suo" icon="el-icon-search"  show-overflow-tooltip @click="toQuery"></el-button>
-      </div>
-      
+        <el-input size="small" v-model="searchValue" clearable :placeholder="$t('CAM.CAM.userGroup.placeholder')" style="width: 300px;"  @keyup.enter.native="toQuery"/>
+        <i class="el-icon-search ifier" show-overflow-tooltip @click="toQuery"></i>
+        <i class="el-icon-s-tools gear" @click="gear=true"></i>
+        <el-dialog title="自定义列表字段" :visible.sync="gear" width="45%" :before-close="handleClose">
+          <div class="app-cam-alert">
+            <div class="app-cam-alert__info">请选择您想显示的列表详细信息</div>
+          </div>
+          <el-form ref="form" :model="form">
+            <el-form-item>
+              <el-checkbox-group v-model="form.type">
+                <p>
+                  <el-checkbox disabled label="用户组名称" name="type"></el-checkbox>
+                </p>
+                <p>
+                  <el-checkbox label="备注" name="type"></el-checkbox>
+                </p>
+                <p>
+                  <el-checkbox label="创建时间" name="type"></el-checkbox>
+                </p>
+                <p>
+                  <el-checkbox disabled label="操作" name="type"></el-checkbox>
+                </p>
+              </el-checkbox-group>
+            </el-form-item>
+          </el-form>
+          <span slot="footer" class="dialog-footer">
+            <el-button size="small" type="primary" @click="gear = false">确 定</el-button>
+            <el-button size="small" @click="gear = false">取 消</el-button>
+          </span>
+        </el-dialog>													   
+      </div>	  
     </div>
     <!-- 表格 -->
     <div class="cam-box">
@@ -28,33 +54,41 @@
         tooltip-effect="dark"
         style="width: 100%; border:1px solid #ddd;padding-top: 8px;" 
         @selection-change="handleSelectionChange">
-       
-        <el-table-column prop="groupId" type="selection" width="30"></el-table-column>
-       <el-table-column prop="groupName" :label="$t('CAM.CAM.userGroup.colNmae')" show-overflow-tooltip>
-          &lt;!&ndash;<template slot-scope="scope">
-            <el-button @click="Interface" size="mini" type="text">{{scope.row.groupName}}</el-button>
-          </template>&ndash;&gt;</el-table-column>
-        <el-table-column prop="remark" :label="$t('CAM.CAM.userGroup.colRemark')" show-overflow-tooltip> </el-table-column>
-        <el-table-column prop="createTime" :label="$t('CAM.CAM.userGroup.colCreTime')" show-overflow-tooltip> </el-table-column>
+        <el-table-column prop="GroupId" type="selection" width="30"></el-table-column>
+       <el-table-column prop="GroupName" :label="$t('CAM.CAM.userGroup.colNmae')" show-overflow-tooltip>
+          &lt;!&ndash;<template slot-scope="scope">
+            <el-button @click="Interface" size="mini" type="text">{{scope.row.GroupName}}</el-button>
+          </template>&ndash;&gt;
+        </el-table-column>
+        <el-table-column prop="Remark" :label="$t('CAM.CAM.userGroup.colRemark')" show-overflow-tooltip> </el-table-column>
+        <el-table-column prop="CreateTime" :label="$t('CAM.CAM.userGroup.colCreTime')" show-overflow-tooltip> </el-table-column>
         <el-table-column :label="$t('CAM.CAM.userGroup.colHandle')" show-overflow-tooltip>
            &lt;!&ndash;<template slot-scope="scope">
-          <el-button size="mini" type="text" @click="addUserGroup(scope.row.groupId)">{{$t('CAM.CAM.userGroup.createBtn')}}</el-button>
-          <el-button size="mini" type="text" @click="delUserGroup(scope.row.groupId)">{{$t('CAM.CAM.userGroup.delBtn')}}</el-button>
+          <el-button size="mini" type="text" @click="addUserGroup(scope.row.GroupId)">{{$t('CAM.CAM.userGroup.createBtn')}}</el-button>							  
+          <el-button size="mini" type="text" @click="delUserGroup(scope.row.GroupId)">{{$t('CAM.CAM.userGroup.delBtn')}}</el-button>
         </template>&ndash;&gt;
         </el-table-column>
       </el-table>
-      <div class="block">
-        <el-pagination
-          :page-sizes="[10, 20, 30, 40]"
-          :page-size="10"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="40">
-        </el-pagination>
+      <div style="background:#fff;padding:10px;display:flex;justify-content: space-between;line-height:30px">
+        <div>
+          <span style="font-size:12px;color:#888">已选 0 项，共 3 项</span>
+        </div>
+        <div>
+          <el-pagination
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+            :current-page.sync="currentPage2"
+            :page-sizes="[10, 20, 30, 40]"
+            :page-size="10"
+            layout="sizes, prev, pager, next"
+            :total="40"
+          ></el-pagination>
+        </div>
       </div>
     </div>
     <template>
       <el-dialog :title="$t('CAM.CAM.userGroup.addTitle')"  :visible.sync="dialogVisible" :before-close="handleClose" width="70%"> 
-        <div class="container-left">
+				<div class="container-left">
           <p>选择添加的用户（共{{totalNum}}条）</p>
           <el-input size="mini" v-model="search"  style="width:85%"  @keyup.enter.native="toQuery"/>
           <el-button size="mini" class="suo" icon="el-icon-search" @click="toQuery"></el-button>
@@ -82,7 +116,7 @@
           <div>&nbsp;</div>
         </div>
         <div class="container-left">
-          <span>已选择（共条）</span>
+          <span>已选择（{{selNum}}）</span>
             <el-table
                 class="table-left"
                 ref="multipleSelected"
@@ -123,15 +157,27 @@
 export default {
   data() {
     return {
+		  form: {
+        name: "",
+        region: "",
+        date1: "",
+        date2: "",
+        delivery: false,
+        type: [],
+        resource: "",
+        desc: ""
+      },		  
       searchValue: '',
-      userModel: [],
+	    gear: false,
       userData: [],
       userSelData: [],
       dialogVisible: false,
       tableData: [],
       search: '',
       totalNum: 0,
+      selNum: 0,
       btnVisible: true,
+      selectedGroupId: 0,
       loading: true
     }
   },
@@ -146,19 +192,22 @@ export default {
         Version: '2019-01-16'
       }
       if(this.searchValue != null && this.searchValue != ''){
-        params["keyword"] = this.searchValue
+        params["Keyword"] = this.searchValue
       }
-      let url = "cam/ListGroups"
-      this.axios.post(url, params).then(data => {
-        this.tableData = data.data.groupInfo
+      let url = "cam2/ListGroups"
+      this.axios.post(url, params).then(res => {	   
+        this.tableData = res.Response.GroupInfo
         this.loading = false
       }).catch(error => {
         console.log(error)
       })
     },
-    // 打开用户组页面
+    // 打开添加用户页面
     addUserGroup(rowId) {
-      this.checkedGroupId = rowId
+      let _this = this
+      if(rowId != undefined &&rowId != '') {
+        this.selectedGroupId = rowId
+      }
       // let url = "cam/ListSubAccounts"//获取子用户信息
       // let params = {
       //   Version: "2017-03-12",
@@ -171,34 +220,57 @@ export default {
         Version: "2019-01-16"
       }
       this.axios.post(url, params).then(res => {
-      this.userData = res.Response.Data
-      console.log(this.userData)
-      // this.owneruserData = res.data.data.ownerInfo
-      // this.$message({ message: this.$t('CAM.CAM.userGroup.successInfo'), type: "success" })
-      // 获取数据成功，打开dialog。
-      this.dialogVisible = true
-      // this.cancel()
+        this.userData = res.Response.Data
+        this.totalNum = this.userData.length
+        console.log(this.userData)
+        // 获取用户组管理用户
+        let owneruserData = []
+        let paramsGroup = {
+          Action: 'ListUsersForGroup',
+          GroupId: _this.selectedGroupId,
+          Version: '2019-01-16'
+        }
+        let urlGroup = "cam2/ListUsersForGroup"
+        this.axios.post(urlGroup, paramsGroup).then(resGroup => {
+          owneruserData = resGroup.Response.GroupInfo
+          console.log(owneruserData)
+          if(owneruserData != '') {
+            for(var i = 0; i < owneruserData.length; i++) {
+              let selObj = owneruserData[i]
+              // for() {
+
+              // }
+            }
+          }
+        }).catch(error => {
+          console.log(error)
+        })
+        // 获取数据成功，打开dialog。
+        this.dialogVisible = true
+        // this.cancel()
       }).catch(error => {
         console.log(error)
       })
     },
     // 删除用户组
     delUserGroup(groupId) {
+      let _this = this
       this.$confirm( this.$t('CAM.CAM.userGroup.delHint'), this.$t('CAM.CAM.userGroup.delTitle'), {
-      confirmButtonText: this.$t('CAM.CAM.userGroup.delConfirmBtn'),
-      cancelButtonText: this.$t('CAM.CAM.userGroup.delCancelBtn'),
-      type: 'warning'
+        confirmButtonText: this.$t('CAM.CAM.userGroup.delConfirmBtn'),
+        cancelButtonText: this.$t('CAM.CAM.userGroup.delCancelBtn'),
+        type: 'warning'
       }).then(() => {
-      let url = "cam/DeleteGroup"
+        let url = "cam2/DeleteGroup"
         let params = {
           Action: 'DeleteGroup',
           Version: '2019-01-16',
-          groupId: groupId
+          GroupId: groupId
         }
         this.axios.post(url, params).then(data => {
           if(data != null && data.codeDesc === 'Success') {
             this.$message({ type: 'success', message: this.$t('CAM.CAM.userGroup.delInfo')+'!' })
-            this.init()
+            debugger
+            _this.init() // 重新加载页面
           }
         }).catch(error => {
           this.$message({ type: 'success', message: error })
@@ -208,27 +280,30 @@ export default {
         // this.$message({ type: 'info', message: '已取消删除' })          
       })
     },
+    // 用户组添加用户
     addUser() {
+      let GroupId = this.selectedGroupId
       this.dialogVisible = false
-      let value = this.userModel
-      if(value != null) {
-        let url = "cam/AddUserToGroup"
+      let value = this.userSelData
+      if(value != '') {
         let params = {
-        Action: 'AddUserToGroup',
-        Version: "2019-01-16"
+          Action: 'AddUserToGroup',
+          Version: "2019-01-16"
+        }
+        for(var i = 0; i < value.length; i++) {
+          params['Info.' + i + '.Uid'] = value[i].Uid
+          params['Info.' + i + '.GroupId'] = GroupId
+        }
+        let url = "cam2/AddUserToGroup"
+        this.axios.post(url, params).then(data => {
+          this.$message({ message: this.$t('CAM.CAM.userGroup.successInfo'), type: "success" })
+          _this.init() // 重新加载页面
+          // this.$emit("update")
+          // this.cancel()
+        }).catch(error => {
+          console.log(error)
+        })
       }
-      for(var i = 0; i < value.length; i++) {
-        params['Info.' + i + '.Uid'] = value[i]
-        params['Info.' + i + '.GroupId'] = this.checkedGroupId
-      }
-      this.axios.post(url, params).then(data => {
-        this.$message({ message: this.$t('CAM.CAM.userGroup.successInfo'), type: "success" })
-        this.$emit("update")
-        this.cancel()
-      }).catch(error => {
-        console.log(error)
-      })
-    }
     },
     NewUser() {
       this.$router.push({name: 'NewUserGroup'})
@@ -239,9 +314,9 @@ export default {
       this.init()
     },
     handleSelectionChange(val) {
-      console.log(val)
       if(val != '') {
         this.btnVisible = false
+        this.selectedGroupId = val[0].GroupId
       }else {
         this.btnVisible = true
       }
@@ -252,6 +327,7 @@ export default {
     handleSelectionChangeUser(val) {
       // 给右边table框赋值，只需在此处赋值即可，selectedRow方法中不写，因为单独点击复选框，只有此方法有效。
       this.userSelData = val
+      this.selNum = this.userSelData.length
     },
     selectedRow(row, column, event) {
     // 设置选中或者取消状态
@@ -384,6 +460,31 @@ export default {
       text-indent: -10px;
       padding-left: 18px;
       margin-bottom: 0; 
+    }
+    .ifier {
+      font-size: 140%;
+      color: #888;
+      position: absolute;
+      right: 3%;
+      top: 18%;
+    }
+    .gear {
+      font-size: 140%;
+      color: #888;
+      padding-left: 6px;
+    }
+    .app-cam-alert {
+      padding: 10px 30px 10px 20px;
+      vertical-align: middle;
+      color: #003b80;
+      border: 1px solid #97c7ff;
+      border-radius: 2px;
+      background: #e5f0ff;
+      position: relative;
+      box-sizing: border-box;
+      margin-left: auto;
+      margin-right: auto;
+      margin-bottom: 20px;
     }
   }
 </style>
