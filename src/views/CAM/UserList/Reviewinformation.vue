@@ -10,7 +10,7 @@
           <template slot-scope="scope">
             <span>{{ scope.row.user }}</span>
           </template>
-        </el-table-column>
+        </el-table-column>    
         <el-table-column label="手机号" width>
           <template slot-scope="scope">
             <span>{{ scope.row.iphone }}</span>
@@ -60,7 +60,7 @@
       <el-table :data="tableData" style="width: 100%;  border:1px solid #ddd;padding-top: 8px;">
         <el-table-column label="策略名" width>
           <template slot-scope="scope">
-            <span>{{ scope.row.strategy }}</span>x
+            <span>{{ scope.row.strategy }}</span>
           </template>
         </el-table-column>
         <el-table-column label="策略描述" width>
@@ -75,17 +75,25 @@
         </el-table-column>
       </el-table>
     </div>
-    <div class="block">
+    <!-- 分页 -->
+    <div
+      style="background:#fff;padding:10px;display:flex;justify-content: space-between;line-height:30px"
+    >
+      <div>
+        <span style="font-size:12px;color:#888">已选 0 项，共 0 项</span>
+      </div>
+      <div>
         <el-pagination
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
-          :current-page="currentPage4"
+          :current-page.sync="currentPage2"
           :page-sizes="[10, 20, 30, 40]"
           :page-size="10"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="40">
-        </el-pagination>
+          layout="sizes, prev, pager, next"
+          :total="40"
+        ></el-pagination>
       </div>
+    </div>
   </div>
 </template>
 

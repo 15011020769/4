@@ -27,10 +27,10 @@
           <span>高防IP专业版</span>
         </template>
         <el-menu-item-group>
-          <el-menu-item class="selectMenu" index="IpProfessional">.统计报表</el-menu-item>
-          <el-menu-item class="selectMenu" index="ProtectionConfig">.防护配置</el-menu-item>
-          <el-menu-item class="selectMenu" index="AccessConfig">.接入配置</el-menu-item>
-          <el-menu-item class="selectMenu" index="AssetList">.资产列表</el-menu-item>
+          <el-menu-item class="selectMenu" index="IpProfessional">统计报表</el-menu-item>
+          <el-menu-item class="selectMenu" index="ProtectionConfig">防护配置</el-menu-item>
+          <el-menu-item class="selectMenu" index="AccessConfig">接入配置</el-menu-item>
+          <el-menu-item class="selectMenu" index="AssetList">资产列表</el-menu-item>
         </el-menu-item-group>
       </el-submenu>
       <el-submenu index="unBlocking">
@@ -38,8 +38,8 @@
           <span>自助解封</span>
         </template>
         <el-menu-item-group>
-          <el-menu-item class="selectMenu" index="unBlocking">.解封操作</el-menu-item>
-          <el-menu-item class="selectMenu" index="UnblockingRecord">.解封操作记录</el-menu-item>
+          <el-menu-item class="selectMenu" index="unBlocking">解封操作</el-menu-item>
+          <el-menu-item class="selectMenu" index="UnblockingRecord">解封操作记录</el-menu-item>
         </el-menu-item-group>
       </el-submenu>
     </el-menu>

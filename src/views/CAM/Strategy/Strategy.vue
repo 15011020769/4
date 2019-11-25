@@ -25,7 +25,7 @@
         <p class="contant_top">用户或者用户组与策略关联后，即可获得策略所描述的操作权限。</p>
         <div class="table_opare">
           <div>
-            <el-button plain size="small">删除</el-button>
+            <el-button plain size="small" @click="handleDelete()">删除</el-button>
           </div>
           <div>
             <el-input v-model="input" placeholder="支持搜索策略名称/描述/备注" size="small">
@@ -42,14 +42,15 @@
             :row-style="{height:0}"
             :cell-style="{padding:'5px 10px'}"
             :header-cell-style="{height:'20px',padding:'0px 10px'}"
+            @selection-change="handleSelectionChange"
           >
             <el-table-column type="selection" width="60"></el-table-column>
-            <el-table-column prop="date" label="策略名" width="150">
+            <el-table-column prop="PolicyName" label="策略名" width="150">
               <template slot-scope="scope">
-                <el-button @click="handleClick(scope)" type="text" size="small">{{scope.row.date}}</el-button>
+                <el-button @click="handleClick(scope.row)" type="text" size="small">{{scope.row.PolicyName}}</el-button>
               </template>
             </el-table-column>
-            <el-table-column prop="name" label="描述"></el-table-column>
+            <el-table-column prop="Description" label="描述"></el-table-column>
             <el-table-column align="center" width="150">
               <template slot="header" slot-scope="scope">
                 <el-dropdown trigger="click" @command="handleCommand" size="mini">
@@ -66,10 +67,11 @@
                   </el-dropdown-menu>
                 </el-dropdown>
               </template>
+              <template slot-scope="scope">{{scope.row.ServiceType}}</template>
             </el-table-column>
-            <el-table-column prop="address" label="操作" width="150">
+            <el-table-column prop="operate" label="操作" width="150">
               <template slot-scope="scope">
-                <el-button @click="handleClick_user(scope)" type="text" size="small">关联用户/组</el-button>
+                <el-button @click="handleClick_user(scope.row)" type="text" size="small">关联用户/组</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -78,30 +80,38 @@
           style="background:#fff;padding:10px;display:flex;justify-content: space-between;line-height:30px"
         >
           <div>
-            <span style="font-size:12px;color:#888">已选 0 项，共 309 项</span>
+            <span style="font-size:12px;color:#888">已选 33 项，共 {{total}} 项</span>
           </div>
           <div>
             <el-pagination
               @size-change="handleSizeChange"
               @current-change="handleCurrentChange"
-              :current-page.sync="currentPage2"
-              :page-sizes="[100, 200, 300, 400]"
-              :page-size="100"
+              :current-page.sync=currentPage
+              :page-sizes="[10, 20, 30, 40, 50, 60, 70, 80, 90, 100]"
+              :page-size=pageSize
               layout="sizes, prev, pager, next"
-              :total="1000"
+              :total=total
             ></el-pagination>
           </div>
         </div>
       </div>
     </div>
-    <el-dialog title :visible.sync="dialogVisible" width="70%" :before-close="handleClose">
+    <!-- 关联用户/用户组 模态窗 -->
+    <el-dialog title :visible.sync="dialogVisible" width="40%">
       <h3 style="color:#000;margin-bottom:20px;">关联用户/用户组</h3>
       <div class="dialog_div">
-        <transfer></transfer>
+        <el-transfer
+          v-model="transfer_value"
+          :titles="['关联用户', '已选择']"
+          :props="{key: 'Uin',label: 'Name'}"
+          :data="transfer_data"
+          filterable
+          @change="handleChange"
+        ></el-transfer>
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button size="mini" @click="dialogVisible = false">取 消</el-button>
-        <el-button size="mini" type="primary" @click="dialogVisible = false">确 定</el-button>
+        <el-button size="mini" type="primary" @click="attachPolicy">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -130,68 +140,8 @@ export default {
       ],
       value: "",
       input: "",
-      tableData: [
-        {
-          date: "AdministratorAccess",
-          name:
-            "该策略允许您管理账户内所有用户及其权限、财务相关的信息、云服务资产。",
-          address: "智能物联网关"
-        },
-        {
-          date: "	ReadOnlyAccess",
-          name:
-            "该策略允许您只读访问账户内所有支持接口级鉴权或资源级鉴权的云服务资产。",
-          address: "API网关"
-        },
-        {
-          date: "AdministratorAccess",
-          name:
-            "该策略允许您管理账户内所有用户及其权限、财务相关的信息、云服务资产。",
-          address: "智能物联网关"
-        },
-        {
-          date: "	ReadOnlyAccess",
-          name:
-            "该策略允许您只读访问账户内所有支持接口级鉴权或资源级鉴权的云服务资产。",
-          address: "API网关"
-        },
-        {
-          date: "AdministratorAccess",
-          name:
-            "该策略允许您管理账户内所有用户及其权限、财务相关的信息、云服务资产。",
-          address: "智能物联网关"
-        },
-        {
-          date: "	ReadOnlyAccess",
-          name:
-            "该策略允许您只读访问账户内所有支持接口级鉴权或资源级鉴权的云服务资产。",
-          address: "API网关"
-        },
-        {
-          date: "AdministratorAccess",
-          name:
-            "该策略允许您管理账户内所有用户及其权限、财务相关的信息、云服务资产。",
-          address: "智能物联网关"
-        },
-        {
-          date: "	ReadOnlyAccess",
-          name:
-            "该策略允许您只读访问账户内所有支持接口级鉴权或资源级鉴权的云服务资产。",
-          address: "API网关"
-        },
-        {
-          date: "AdministratorAccess",
-          name:
-            "该策略允许您管理账户内所有用户及其权限、财务相关的信息、云服务资产。",
-          address: "智能物联网关"
-        },
-        {
-          date: "	ReadOnlyAccess",
-          name:
-            "该策略允许您只读访问账户内所有支持接口级鉴权或资源级鉴权的云服务资产。",
-          address: "API网关"
-        }
-      ],
+      tableData: [{}],  //策略列表数据
+      selectedData: [], //选择要删除的
       table_options: [
         {
           value: "选项1",
@@ -208,43 +158,155 @@ export default {
       ],
       table_value: "",
       tableTitle: "服务类型",
-      currentPage1: 5,
-      currentPage2: 5,
-      currentPage3: 5,
-      currentPage4: 4,
       dialogVisible: false,
+      policyId: '', // 策略Id
       transfer_value: [],
-      transfer_data: [
-        {
-          value: 1,
-          desc: "备选项1"
-        },
-        {
-          value: 2,
-          desc: "备选项2"
-        },
-        {
-          value: 3,
-          desc: "备选项3"
-        }
-      ]
+      //  用户列表
+      transfer_data: [{}],
+      // 选定的用户列表
+      transfer_data_right: [],
+      //  用户组列表
+      pageSize: 20,
+      total: 0,
+      currentPage: 1,
     };
   },
+  created() {
+    this.getData()
+  },
   methods: {
+    // 初始化策略列表数据（全部策略）
+    getData () {
+      var params = {
+        Version: '2019-01-16',
+        // Region: 'ap-taipei',
+        // Rp: '',
+        // Page: '',
+        // Scope: '',
+        // Keyword: ''
+      }
+      this.$axios.post('cam2/ListPolicies', params).then(res => {
+        console.log('获取策略列表成功')
+        console.log(res)
+        this.tableData = res.Response.List
+        this.total = res.Response.TotalNum
+      })
+    },
+    // 跳转到详情页面
+    handleClick(policy) {
+      // console.log(policy);
+      this.$router.push({
+        path: '/StrategyDetail',
+        query: {
+          policy: policy
+        }
+      });
+    },
+    // 关联用户/用户组（展现模态框）
+    handleClick_user(policy) {
+      this.policyId = policy.PolicyId
+      this.transfer_data.splice(0, this.transfer_data.length)
+      this.transfer_data_right.splice(0, this.transfer_data_right.length)
+      // console.log(policy.PolicyId)
+      // 1.查询用户列表
+      let paramsUser = {
+        Version: '2019-01-16',
+      }
+      this.$axios.post('cam2/ListUsers', paramsUser).then(res => {
+        console.log(res)
+        this.transfer_data = res.Response.Data
+      })
+      // 2.查询用户组列表ListGroups
+      let paramsGroup = {
+        Version: '2019-01-16',
+      }
+      this.$axios.post('cam2/ListGroups', paramsGroup).then(res => {
+        console.log(res)
+        // this.transfer_data = res.Response.Data
+      })
+      // 3.查询策略关联的实体列表
+      // let params2 = {
+      //   Version: '2019-01-16',
+      //   PolicyId: policy.PolicyId
+      // }
+      // this.$axios.post('cam2/ListEntitiesForPolicy', params2).then(res  => {
+      //   console.log(res)
+      // })
+      this.dialogVisible = true
+    },
+    // 穿梭框：value右侧框值、direction操作、movedKeys移动值
+    handleChange(value, direction, movedKeys) {
+      console.log(value, direction, movedKeys);
+      this.transfer_data_right = value
+    },
+    // 关联用户/用户组
+    attachPolicy(){
+      if(this.transfer_data_right.length > 0) {
+        for(let i=0; i < this.transfer_data_right.length; i++) {
+          this.attachUserPolicy(this.policyId, this.transfer_data_right[i])
+        }
+      }
+      this.dialogVisible = false
+    },
+    // 绑定策略到用户组
+    attachGroupPolicy(val1, val2) {
+      let params = {
+        Version: '2019-01-16',
+        PolicyId: val1,
+        AttachGroupId: val2
+      }
+      this.$axios.post('cam2/AttachGroupPolicy', params).then(res  => {
+        console.log(res)
+      })
+    },
+    // 绑定策略到用户
+    attachUserPolicy(val1, val2) {
+      let params = {
+        Version: '2019-01-16',
+        PolicyId: val1,
+        AttachUin: val2
+      }
+      this.$axios.post('cam2/AttachUserPolicy', params).then(res  => {
+        console.log(res)
+      })
+    },
+    // table标题栏选择项
     handleCommand(command) {
       console.log(command);
       this.tableTitle = command;
     },
-    handleClick(scope) {
-      console.log(scope);
-      this.$router.push("/StrategyDetail");
+    // 选择策略
+    handleSelectionChange(data) {
+      this.selectedData = data;
     },
-    handleSizeChange() {},
-    handleCurrentChange() {},
-    handleClick_user() {
-      this.dialogVisible = true;
+    // 批量删除策略
+    handleDelete() {
+      let val = this.selectedData;
+      let params = {
+        Version: '2019-01-16'
+      }
+      if (val) {
+        val.forEach(function(item, index) {
+          let str = 'PolicyId.' + index
+          params[str] = item.PolicyId
+        })
+      }
+      console.log(params)
+      // this.$axios.post('cam2/DeletePolicy', params).then(res  => {
+      //   console.log(res)
+      // })
+      this.selectedData.splice(0, this.selectedData.length)
+      this.getData()
     },
-    handleClose() {}
+    // page操作
+    handleSizeChange(val) {
+      console.log(val)
+      this.pageSize = val
+    },
+    handleCurrentChange(val) {
+      console.log(val)
+      this.currentPage = val
+    }
   }
 };
 </script>
@@ -252,8 +314,13 @@ export default {
 .Cam {
   height: 100%;
   .top {
-    padding: 10px 20px;
+    color: #000;
+    height: 45px;
+    line-height: 45px;
+    margin-bottom: 20px;
+    padding: 0 20px;
     background: #fff;
+    font-size: 16px;
     display: flex;
     justify-content: space-between;
     margin-bottom: 20px;

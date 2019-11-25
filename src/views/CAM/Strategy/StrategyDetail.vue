@@ -21,8 +21,8 @@
             <p class="baseInfo_time item">创建时间</p>
           </div>
           <div class="baseInfo_right">
-            <p class="baseInfo_cl item">AdministratorAccess</p>
-            <p class="baseInfo_ms item">该策略允许您管理账户内所有用户及其权限、财务相关的信息、云服务资产。</p>
+            <p class="baseInfo_cl item">{{policy.PolicyName}}</p>
+            <p class="baseInfo_ms item">{{policy.Description}}</p>
             <p class="baseInfo_mark item">
               <el-input
                 v-if="input_show"
@@ -51,8 +51,8 @@
                 class="el-icon-edit item"
               ></i>
             </p>
-            <p class="baseInfo_type item">预设策略</p>
-            <p class="baseInfo_time item">2016-06-02 19:40:09</p>
+            <p class="baseInfo_type item">{{policy.Type}}</p>
+            <p class="baseInfo_time item">{{policy.AddTime}}</p>
           </div>
         </div>
       </div>
@@ -84,17 +84,17 @@
                   style="width: 100%"
                 >
                   <el-table-column type="selection" width="60"></el-table-column>
-                  <el-table-column prop="date" label="关联用户/组">
+                  <el-table-column prop="Name" label="关联用户/组">
                     <template slot-scope="scope">
                       <el-button
                         @click="handleClick1(scope)"
                         type="text"
                         size="small"
-                      >{{scope.row.date}}</el-button>
+                      >{{scope.row.Name}}</el-button>
                     </template>
                   </el-table-column>
                   <el-table-column align="center">
-                    <template slot="header" slot-scope="scope">
+                    <template slot="header">
                       <el-dropdown trigger="click" @command="handleCommand" size="mini">
                         <span style="color:#909399">
                           {{ tableTitle }}
@@ -109,10 +109,16 @@
                         </el-dropdown-menu>
                       </el-dropdown>
                     </template>
-                  </el-table-column>
-                  <el-table-column prop="address" label="描述">
                     <template slot-scope="scope">
-                      <el-popover
+                      <div v-if="scope.row.RelatedType == '1'" class="off_color">用户</div>
+                      <div v-else-if="scope.row.RelatedType == '2'" class="close_color">用户组</div>
+                      <div v-else-if="scope.row.RelatedType == '3'" class="close_color">角色</div>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="operate" label="操作">
+                    <template slot-scope='scope'>
+                      <el-button @click="detachPolicy(scope.row)" type="text" size="small">解除用户</el-button>
+                      <!-- <el-popover
                         placement="bottom"
                         title
                         width="400"
@@ -129,7 +135,7 @@
                           >确定解除</el-button>
                         </div>
                         <a href="javascript:;" slot="reference">解除用户</a>
-                      </el-popover>
+                      </el-popover> -->
                     </template>
                   </el-table-column>
                 </el-table>
@@ -137,17 +143,17 @@
                   style="background:#fff;padding:10px;display:flex;justify-content: space-between;line-height:30px"
                 >
                   <div>
-                    <span style="font-size:12px;color:#888">已选 0 项，共 309 项</span>
+                    <span style="font-size:12px;color:#888">已选 0 项，共 {{total}} 项</span>
                   </div>
                   <div>
                     <el-pagination
                       @size-change="handleSizeChange"
                       @current-change="handleCurrentChange"
-                      :current-page.sync="currentPage2"
+                      :current-page.sync="currentPage"
                       :page-sizes="[100, 200, 300, 400]"
-                      :page-size="100"
+                      :page-size=pageSize
                       layout="sizes, prev, pager, next"
-                      :total="1000"
+                      :total=total
                     ></el-pagination>
                   </div>
                 </div>
@@ -156,7 +162,8 @@
           </el-tab-pane>
         </el-tabs>
       </div>
-      <el-dialog :visible.sync="dialogVisible" width="70%" :before-close="handleClose">
+      <!-- 关联用户/用户组 模态框 -->
+      <!-- <el-dialog :visible.sync="dialogVisible" width="72%" :before-close="handleClose">
         <p class="dialog">关联用户/用户组</p>
         <div>
          <transfer></transfer>
@@ -165,7 +172,25 @@
           <el-button @click="dialogVisible = false" size="small">取 消</el-button>
           <el-button type="primary" @click="dialogVisible = false" size="small">确 定</el-button>
         </p>
+      </el-dialog> -->
+      <el-dialog :visible.sync="dialogVisible" width="40%">
+        <h3 style="color:#000;margin-bottom:20px;">关联用户/用户组</h3>
+        <div class="dialog_div">
+          <el-transfer
+            v-model="transfer_value"
+            :titles="['关联用户', '已选择']"
+            :props="{key: 'Uin',label: 'Name'}"
+            :data="transfer_data"
+            filterable
+            @change="handleChange"
+          ></el-transfer>
+        </div>
+        <span slot="footer" class="dialog-footer">
+          <el-button size="mini" @click="dialogVisible = false">取 消</el-button>
+          <el-button size="mini" type="primary" @click="attachPolicy">确 定</el-button>
+        </span>
       </el-dialog>
+      <!-- 解除用户/组 模态框 -->
       <el-dialog :visible.sync="Relieve_dialogVisible" width="30%" :before-close="handleClose">
         <p class="dialog">解除用户/组</p>
         <div style="margin:15px 0">
@@ -190,117 +215,203 @@
   </div>
 </template>
 <script>
-import transfer from "./component/transfer";
+import transfer from './component/transfer'
 export default {
   components: {
     transfer
   },
-  data() {
+  data () {
     return {
       activeName: "first",
-      tableData: [
-        {
-          date: "2343535",
-          name: "用户",
-          address: "解除用户"
-        }
-      ],
+      policy: {},
+      entityFilter: 'All', // 4种值：All User Group Role
+      tableData: [{}],
       table_options: [
         {
-          value: "选项1",
-          label: "全部"
+          value: '选项1',
+          label: '全部'
         },
         {
-          value: "选项2",
-          label: "用户"
+          value: '选项2',
+          label: '用户'
         },
         {
-          value: "选项3",
-          label: "用户组"
+          value: '选项3',
+          label: '用户组'
         }
       ],
-      tableTitle: "类型",
-      currentPage1: 5,
-      currentPage2: 5,
-      currentPage3: 5,
-      currentPage4: 4,
+      tableTitle: '类型',
       dialogVisible: false,
       Relieve_dialogVisible: false,
       transfer_value: [],
-      transfer_data: [
-        {
-          value: 1,
-          desc: "备选项1"
-        },
-        {
-          value: 2,
-          desc: "备选项2"
-        },
-        {
-          value: 3,
-          desc: "备选项3"
-        }
-      ],
+      //  用户列表
+      transfer_data: [{}],
+      // 选定的用户列表
+      transfer_data_right: [],
+
       display: true,
       RelieveData: [],
       isShow: false,
       popover_visible: false,
-      inputValue: "-",
-      input_Value: "",
-      input_show: false
-    };
+      inputValue: '-',
+      input_Value: '',
+      input_show: false,
+      pageSize: 100,
+      total: 0,
+      currentPage: 1,
+    }
+  },
+  created() {
+    console.log(this.$route.query.policy)
+    this.policy = this.$route.query.policy
   },
   methods: {
-    handleClick() {},
-    Relation_user() {
-      this.dialogVisible = true;
-    },
-    Relieve_user() {
-      this.Relieve_dialogVisible = true;
-    },
-    handleCommand(command) {
-      this.tableTitle = command;
-    },
-    handleSizeChange() {},
-    handleCurrentChange() {},
-    handleClose() {},
-    handleSelectionChange(val) {
-      console.log(val);
-      if (val.length != 0) {
-        this.display = false;
-        val.forEach(element => {
-          this.RelieveData.push(element.date);
-        });
-      } else {
-        this.display = true;
+    // 切换选择tab标签页
+    handleClick (obj) {
+      console.log(obj.name)
+      if (obj.name == 'second') {
+        this.listEntitiesForPolicy()
       }
     },
-    look_detail() {
-      this.isShow = !this.isShow;
+    // 查询策略关联实例列表
+    listEntitiesForPolicy () {
+      let params = {
+        Version: '2019-01-16',
+        PolicyId: this.policy.PolicyId,
+        EntityFilter: this.entityFilter
+      }
+      this.$axios.post('cam2/ListEntitiesForPolicy', params).then(res => {
+        console.log(res)
+        this.tableData = res.Response.List
+        this.total = res.Response.TotalNum
+      })
     },
-    icon_click() {
-      this.input_show = true;
-      this.input_Value = this.inputValue;
+    // 解除用户、用户组
+    detachPolicy (entity) {
+      console.log()
+      if (entity.RelatedType == 1) {  // user
+        let params = {
+          Version: '2019-01-16',
+          PolicyId: this.policy.PolicyId,
+          DetachUin: entity.Uin
+        }
+        this.$axios.post('cam2/DetachUserPolicy', params).then(res => {
+          this.listEntitiesForPolicy()
+        })
+      } else if (entity.RelatedType == 2) { // group
+        let params = {
+          Version: '2019-01-16',
+          PolicyId: this.policy.PolicyId,
+          DetachGroupId: entity.Id
+        }
+        this.$axios.post('cam2/DetachGroupPolicy', params).then(res => {
+          this.listEntitiesForPolicy()
+        })
+      }
     },
-    input_cancel() {
-      this.input_show = false;
+    // 根据条件查询：策略关联的实例列表
+    handleCommand (command) {
+      this.tableTitle = command
+      if (command == "全部") {
+        this.entityFilter = 'All'
+      } else if (command == "用户") {
+        this.entityFilter = 'User'
+      } else if (command == '用户组') {
+        this.entityFilter = 'Group'
+      }
+      this.listEntitiesForPolicy()
     },
-    input_sure() {
-      this.inputValue = this.input_Value;
-      this.input_show = false;
+    // 2.穿梭框：value右侧框值、direction操作、movedKeys移动值
+    handleChange(value, direction, movedKeys) {
+      console.log(value, direction, movedKeys);
+      this.transfer_data_right = value
     },
-    back() {
-      this.$router.push("/Strategy");
+    // 3.关联用户、用户组
+    attachPolicy(){
+      if(this.transfer_data_right.length > 0) {
+        for(let i=0; i < this.transfer_data_right.length; i++) {
+          this.attachUserPolicy(this.policy.PolicyId, this.transfer_data_right[i])
+        }
+      }
+      setTimeout(() => {
+        this.listEntitiesForPolicy()
+      }, 1000) // 延时1000ms刷新页面
+      this.dialogVisible = false
+    },
+    // 4.绑定策略到用户
+    attachUserPolicy(val1, val2) {
+      let params = {
+        Version: '2019-01-16',
+        PolicyId: val1,
+        AttachUin: val2
+      }
+      this.$axios.post('cam2/AttachUserPolicy', params).then(res  => {
+        console.log(res)
+      })
+    },
+    // 1.关联用户 模态框
+    Relation_user () {
+      // this.policyId = this.policy.PolicyId
+      this.transfer_data.splice(0, this.transfer_data.length)
+      this.transfer_data_right.splice(0, this.transfer_data_right.length)
+      // console.log(policy.PolicyId)
+      // 1.查询用户列表
+      let paramsUser = {
+        Version: '2019-01-16',
+      }
+      this.$axios.post('cam2/ListUsers', paramsUser).then(res => {
+        console.log(res)
+        this.transfer_data = res.Response.Data
+      })
+      this.dialogVisible = true
+    },
+    Relieve_user () {
+      this.Relieve_dialogVisible = true
+    },
+    handleSizeChange () {},
+    handleCurrentChange () {},
+    handleClose () {},
+    handleSelectionChange (val) {
+      if (val.length !== 0) {
+        this.display = false
+        val.forEach(element => {
+          this.RelieveData.push(element.date)
+        })
+      } else {
+        this.display = true
+      }
+    },
+    look_detail () {
+      this.isShow = !this.isShow
+    },
+    icon_click () {
+      this.input_show = true
+      this.input_Value = this.inputValue
+    },
+    input_cancel () {
+      this.input_show = false
+    },
+    input_sure () {
+      this.inputValue = this.input_Value
+      this.input_show = false
+    },
+    back () {
+      this.$router.push('/Strategy')
     }
   }
-};
+}
 </script>
-<style lang="scss" scoped>
+<style lang='scss' scoped>
 .StrategyDetail {
   .top {
-    padding: 20px;
+    padding: 0 20px;
     background-color: #fff;
     margin-bottom: 20px;
+    color: #000;
+    height: 45px;
+    line-height: 45px;
+    margin-bottom: 20px;
+    font-size: 16px;
     .top_text {
       font-size: 16px;
       font-weight: 700;

@@ -3,7 +3,7 @@
     <div class="statistReportTit">
       <div class="ReportTit newClear">
         <h3 class="ReportTitH3">接入配置</h3>
-        <el-button class="ReportTitBtn" type="primary">新购</el-button>
+        <el-button class="ReportTitBtn" type="primary" @click="newBuy">新购</el-button>
       </div>
       <div>
         <el-tabs v-model="activeName" @tab-click="handleClick">
@@ -28,7 +28,12 @@ export default {
     
   },
   methods:{
-    handleClick(){}
+    handleClick(){},
+    newBuy(){
+      this.$router.push({
+        path: '/choose'
+      })
+    },
   }
 }
 </script>
@@ -53,7 +58,7 @@ export default {
     float:right;
     height:32px;
     line-height: 32px;
-    padding:0 20px;
+    padding:0;
   }
 }
 .mainContent{

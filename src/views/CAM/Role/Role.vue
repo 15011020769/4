@@ -22,13 +22,10 @@
             :cell-style="{padding:'10px'}"
             :header-cell-style="{height:'20px',padding:'10px',fontSize:'12px'}"
           >
-            <el-table-column prop="date" label="角色名称" width="150">
-              <template slot-scope="scope">
-                <el-button @click="handleClick(scope)" type="text" size="small">{{scope.row.date}}</el-button>
-              </template>
+            <el-table-column prop="RoleName" label="角色名称" width="150"></el-table-column>
+            <el-table-column prop="PolicyDocument.statement[0].principal.service[0]" label="角色载体">
             </el-table-column>
-            <el-table-column prop="zaiti" label="角色载体"></el-table-column>
-            <el-table-column prop="name" label="描述"></el-table-column>
+            <el-table-column prop="Description" label="描述"></el-table-column>
             <el-table-column prop="address" label="操作" width="100">
               <template slot-scope="scope">
                 <el-button @click="handleClick_user(scope)" type="text" size="small">删除</el-button>
@@ -88,66 +85,7 @@
 export default {
   data() {
     return {
-      options: [
-        {
-          value: "选项1",
-          label: "全部策略"
-        },
-        {
-          value: "选项2",
-          label: "自定义策略"
-        },
-        {
-          value: "选项3",
-          label: "预设策略"
-        }
-      ],
-      value: "",
-      input: "",
-      tableData: [
-        {
-          date: "AdministratorAccess",
-          name:
-            "云函数默认操作角色。该服务角色用于提供云函数 SCF 运行时操作其他云上资源的基本权限。",
-          address: "智能物联网关",
-          zaiti: "产品服务-cloudaudit.cloud.tencent.com"
-        },
-        {
-          date: "	ReadOnlyAccess",
-          name:
-            "云函数默认操作角色。该服务角色用于提供云函数 SCF 运行时操作其他云上资源的基本权限。",
-          address: "API网关",
-          zaiti: "产品服务-scf.qcloud.com"
-        },
-        {
-          date: "AdministratorAccess",
-          name:
-            "云函数默认操作角色。该服务角色用于提供云函数 SCF 运行时操作其他云上资源的基本权限。",
-          address: "智能物联网关",
-          zaiti: "产品服务-cloudaudit.cloud.tencent.com"
-        },
-        {
-          date: "	ReadOnlyAccess",
-          name:
-            "云函数默认操作角色。该服务角色用于提供云函数 SCF 运行时操作其他云上资源的基本权限。",
-          address: "API网关",
-          zaiti: "产品服务-scf.qcloud.com"
-        }
-      ],
-      table_options: [
-        {
-          value: "选项1",
-          label: "全部服务"
-        },
-        {
-          value: "选项2",
-          label: "智能物联网关"
-        },
-        {
-          value: "选项3",
-          label: "API网关"
-        }
-      ],
+      tableData: [],
       table_value: "",
       currentPage1: 5,
       currentPage2: 5,
@@ -157,7 +95,64 @@ export default {
       create_dialogVisible: false
     };
   },
+  created() {
+    this.init();
+  },
   methods: {
+    init() {
+      let params = {
+        Action: "DescribeRoleList",
+        Version: "2019-01-16",
+        Page: "1",
+        Rp: "5"
+      };
+      if (this.searchValue != null && this.searchValue != "") {
+        params["keyword"] = this.searchValue;
+      }
+      let url = "cam2/DescribeRoleList";
+      this.axios
+        .post(url, params)
+        .then(data => {
+          
+          data.Response.List.forEach(item => {
+            item.PolicyDocument = JSON.parse(item.PolicyDocument)
+            debugger;
+            console.log(item.PolicyDocument);
+          });
+          this.tableData = data.Response.List;
+          var dataRole = JSON.parse(data.Response.List);
+          this.loading = false;
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    },
+     // 删除用户组
+    handleClick_user(RoleId) {
+      this.$confirm( this.$t('CAM.CAM.userGroup.delHint'), this.$t('CAM.CAM.userGroup.delTitle'), {
+      confirmButtonText: this.$t('CAM.CAM.userGroup.delConfirmBtn'),
+      cancelButtonText: this.$t('CAM.CAM.userGroup.delCancelBtn'),
+      type: 'warning'
+      }).then(() => {
+      let url = "cam2/DeleteRole"
+        let params = {
+          Action: 'DeleteRole',
+          Version: '2019-01-16',
+          RoleId: RoleId
+        }
+        this.axios.post(url, params).then(data => {
+          if(data != null && data.codeDesc === 'Success') {
+            this.$message({ type: 'success', message: this.$t('CAM.CAM.userGroup.delInfo')+'!' })
+            this.init()
+          }
+        }).catch(error => {
+          this.$message({ type: 'success', message: error })
+          console.log(error)
+        })
+      }).catch(() => {
+        // this.$message({ type: 'info', message: '已取消删除' })          
+      })
+    },
     created_user() {
       this.create_dialogVisible = true;
     },
@@ -166,21 +161,21 @@ export default {
     },
     handleCommand(command) {},
     handleClick(scope) {
-      this.$router.push("/RoleDetail")
+      this.$router.push("/RoleDetail");
     },
     handleSizeChange() {},
     handleCurrentChange() {},
     handleClick_user() {
       this.dialogVisible = true;
     },
-    toServe(){
-      this.$router.push("/createServe")
+    toServe() {
+      this.$router.push("/createServe");
     },
-    toAccount(){
-      this.$router.push("/createAccount")
+    toAccount() {
+      this.$router.push("/createAccount");
     },
-    toProvider(){
-      this.$router.push("/createProvider")
+    toProvider() {
+      this.$router.push("/createProvider");
     }
   }
 };

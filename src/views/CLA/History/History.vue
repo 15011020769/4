@@ -53,6 +53,17 @@
             <el-button type="text" @click="discardVisible = true">丢弃数据</el-button>
           </el-table-column>
         </el-table>
+        <!-- 分页 -->
+        <el-pagination
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page="currentPage"
+          :page-sizes="[10, 20, 30, 50, 100, 200]"
+          :page-size="10"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="4"
+        >
+        </el-pagination>
       </div>
     </div>
     <!-- 导出模态框 -->
@@ -69,7 +80,6 @@
             <el-radio :label="1">最近六个月</el-radio>
             <el-radio :label="2">自定义时间</el-radio>
           </el-radio-group>
-
         </el-form-item>
       </el-form>
       <el-dialog width="30%" title="操作提示" :visible.sync="innerVisible" append-to-body>
@@ -82,9 +92,9 @@
         </p>
         <el-radio v-model="radioIn">上述信息我已知晓</el-radio>
         <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="innerVisible = false">确定</el-button>
-        <el-button @click="innerVisible = false">取 消</el-button>
-      </div>
+          <el-button type="primary" @click="innerVisible = false">确定</el-button>
+          <el-button @click="innerVisible = false">取 消</el-button>
+        </div>
       </el-dialog>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="innerVisible = true">确定</el-button>
@@ -156,7 +166,8 @@ export default {
         isCreate: 0,
         region: '',
         input: ''
-      }
+      },
+      currentPage: 1
     }
   },
   methods: {
@@ -167,6 +178,12 @@ export default {
           done()
         })
         .catch(_ => {})
+    },
+    handleSizeChange (val) {
+      console.log(`每页 ${val} 条`)
+    },
+    handleCurrentChange (val) {
+      console.log(`当前页: ${val}`)
     }
   }
 }
@@ -242,7 +259,7 @@ export default {
 }
 .tables {
   margin-top: 10px;
-   .el-table {
+  .el-table {
     font-size: 12px;
   }
   .el-table th > .cell {
@@ -267,6 +284,9 @@ export default {
   .off_color {
     color: #0abf5b;
   }
+}
+.el-pagination{
+  float: right;
 }
 .formDialog {
   .el-select {
