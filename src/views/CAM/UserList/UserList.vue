@@ -37,15 +37,10 @@
 
       <div class="head-container">
         <!-- 搜索 -->
-        <el-input
-          size="small"
-          v-model="value"
-          clearable
-          placeholder="支持多关键词(间隔为空格)搜索用户名/ID/SecretId/手机/邮箱/备注"
-          style="width: 200px;"
-          @keyup.enter.native="toQuery"
-        />
-        <i class="iconfont magnifier" @click="input()">&#xe608;</i>
+        <!-- <el-input  style="width: 200px;" size="small" :placeholder="$t('CAM.CAM.ListUsers.placeholder')" v-model="searchValue"  @keyup.enter.native="toQuery"></el-input>
+        <i class="iconfont magnifier" @click="toQuery">&#xe608;</i> -->
+        <el-input v-model="searchValue" clearable :placeholder="$t('CAM.CAM.userGroup.placeholder')" style="width: 300px;"  @keyup.enter.native="toQuery"/>
+        <el-button class="suo" icon="el-icon-search"  show-overflow-tooltip @click="toQuery"></el-button>
         <i @click="list = true" class="el-icon-s-tools gear"></i>
         <el-dialog title="自定义列表字段" :visible.sync="list" width="45%" :before-close="handleClose">
           <div>
@@ -102,37 +97,31 @@
       <el-table-column type="expand" label="详情" width="50">
         <template slot-scope="props">
           <el-form label-position="left" inline class="demo-table-expand">
-            <el-form-item label="用户名称">
-              <span>{{ props.row.id }}</span>
+            <el-form-item label="用户名称"  prop="name">
             </el-form-item>
-            <el-form-item label="用户类型">
-              <span>{{ props.row.shopId }}</span>
+            <el-form-item label="用户类型" >
             </el-form-item>
-            <el-form-item label="账号ID">
-              <span>{{ props.row.desc }}</span>
+            <el-form-item label="账号ID" >
             </el-form-item>
             <el-form-item label="关联信息">
-              <span>{{ props.row.address }}</span>
             </el-form-item>
           </el-form>
         </template>
       </el-table-column>
-      <el-table-column label="用户名称">
-        <template slot-scope="scope">
-         <el-link @click="details" type="primary">{{ scope.row.name }}</el-link>
-        </template>
+      <el-table-column label="用户名称"  prop="Name">
+        <!-- <template slot-scope="scope">
+         <el-link></el-link>
+        </template> -->
       </el-table-column>
-      <el-table-column label="用户类型" prop="type">
-        <template slot-scope="scope">
-          <span>{{ scope.row.type }}</span>
-        </template>
+      <el-table-column label="用户类型" prop="PhoneNum">
+        <!-- <template slot-scope="scope">
+        </template> -->
       </el-table-column>
-      <el-table-column label="账号ID" prop="id">
-        <template slot-scope="scope">
-          <span>{{ scope.row.id }}</span>
-        </template>
+      <el-table-column label="账号ID" prop="Uin">
+        <!-- <template slot-scope="scope">
+        </template> -->
       </el-table-column>
-      <el-table-column label="关联信息" prop="relation">
+      <el-table-column label="关联信息" >
         <template slot-scope="scope">
           <i @click="details" class="el-icon-mobile mobile"></i>
           <i @click="details" class="el-icon-message message"></i>
@@ -160,90 +149,6 @@
         </template>
       </el-table-column>
     </el-table>
-    <!-- 授权自定义弹框 -->
-    <!-- <el-dialog title="关联策略" :visible.sync="authorization" width="80%" :before-close="handleClose">
-      <div class="container">
-        <div class="container-left">
-          <span>策略列表（共{{totalNum}}条）</span>
-          <div>
-            <el-input
-              size="mini"
-              v-model="searchValue"
-              style="width:89%"
-              @keyup.enter.native="toQuery"
-            />
-            <el-button
-              size="mini"
-              class="suo"
-              icon="el-icon-search"
-              show-overflow-tooltip
-              @click="toQuery"
-            ></el-button>
-          </div>
-          <el-table
-            class="table-left"
-            ref="multipleOption"
-            :data="policiesData"
-            height="300"
-            tooltip-effect="dark"
-            style="width: 100%; border:1px solid #ddd"
-            @row-click="selectedRow"
-            @selection-change="handleSelectionChange"
-          >
-            <el-input
-              size="mini"
-              v-model="searchValue"
-              style="width:40%"
-              @keyup.enter.native="toQuery"
-            />
-            <el-button
-              size="mini"
-              class="suo"
-              icon="el-icon-search"
-              show-overflow-tooltip
-              @click="toQuery"
-            ></el-button>
-            <el-table-column type="selection" prop="policyId" width></el-table-column>
-            <el-table-column  prop="Description" label="策略名" width></el-table-column>
-            <el-table-column prop="PolicyId" label="策略类型" width></el-table-column>
-          </el-table>
-        </div>
-
-        <div class="abs">
-          <div>&nbsp;</div>
-        </div>
-
-        <div class="container-left">
-          <span>已选择（共条）</span>
-          <el-table
-            class="table-left"
-            ref="multipleSelected"
-            :data="policiesSelectedData"
-            tooltip-effect="dark"
-            height="300"
-            style="width: 100%;border:1px solid #ddd"
-          >
-
-            <el-table-column  prop="Description" label="策略名" width></el-table-column>
-            <el-table-column prop="PolicyId" label="策略类型" width></el-table-column>
-             <el-table-column :label="操作" show-overflow-tooltip>
-              &lt;!&ndash;
-              <template slot-scope="scope">
-                <el-button
-                  @click.native.prevent="deleteRow(scope.$index, policiesSelectedData)"
-                  type="text"
-                  size="small"
-                >移除</el-button>
-              </template>&ndash;&gt;
-            </el-table-column>
-          </el-table>
-        </div>
-      </div>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="authorization = false">取 消</el-button>
-        <el-button type="primary" @click="authorization = false">确 定</el-button>
-      </div>
-    </el-dialog> -->
     <el-dialog title="添加到组" :visible.sync="authorization" width="74%" :before-close="handleClose">
       <div class="container">
         <div class="container-left">
@@ -251,7 +156,6 @@
           <div>
             <el-input
             size="mini"
-            v-model="searchValue"
             style="width:89%"
             @keyup.enter.native="toQuery"
           />
@@ -276,7 +180,6 @@
           >
             <el-input
               size="mini"
-              v-model="searchValue"
               style="width:40%"
               @keyup.enter.native="toQuery"
             />
@@ -287,13 +190,12 @@
               show-overflow-tooltip
               @click="toQuery"
             ></el-button>
-            <el-table-column type="selection" prop="policyId" width></el-table-column>
-            <el-table-column  prop="Description" label="策略名" width></el-table-column>
-            <el-table-column prop="PolicyId" label="策略类型" width></el-table-column>
+              <el-table-column type="selection" prop="policyId" width></el-table-column>
+              <el-table-column  prop="Description" label="策略名" width></el-table-column>
+              <el-table-column prop="PolicyId" label="策略类型" width></el-table-column>
           </el-table>
          
         </div>
-
 
   
         <div class="abs">
@@ -310,7 +212,7 @@
             height="300"
             style="width: 100%;border:1px solid #ddd"
           >
-            <el-table-column type="selection" prop="policyId" width></el-table-column>
+            <!-- <el-table-column type="selection" prop="policyId" width></el-table-column> -->
             <el-table-column  prop="Description" label="策略名" width></el-table-column>
             <el-table-column prop="PolicyId" label="策略类型" width></el-table-column>
             <el-table-column :label="操作" show-overflow-tooltip>
@@ -327,8 +229,8 @@
         </div>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="dialogVisible">确 定</el-button>
-        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="authorization = false">确 定</el-button>
+        <el-button @click="authorization = false">取 消</el-button>
       </span>
     </el-dialog>
     <!-- 自定义弹框 -->
@@ -339,16 +241,13 @@
           <div>
             <el-input
             size="mini"
-            v-model="searchValue"
             style="width:89%"
-            @keyup.enter.native="toQuery"
           />
           <el-button
             size="mini"
             class="suo"
             icon="el-icon-search"
             show-overflow-tooltip
-            @click="toQuery"
           ></el-button>
           </div>
            
@@ -364,16 +263,13 @@
           >
             <el-input
               size="mini"
-              v-model="searchValue"
               style="width:40%"
-              @keyup.enter.native="toQuery"
             />
             <el-button
               size="mini"
               class="suo"
               icon="el-icon-search"
               show-overflow-tooltip
-              @click="toQuery"
             ></el-button>
             <el-table-column type="selection" prop="policyId" width></el-table-column>
             <el-table-column  prop="GroupName" label="用户名"  width></el-table-column>
@@ -381,9 +277,7 @@
           </el-table>
          
         </div>
-
-
-  
+        
         <div class="abs">
           <div>&nbsp;</div>
         </div>
@@ -632,6 +526,7 @@ export default {
       return data;
     };
     return {
+      searchValue:[],
       policiesDatas:[],
       policiesData: [],
       totalNum: "",
@@ -647,23 +542,7 @@ export default {
       subscribe: false,
       dialogVisible: false,
       checked: true,
-      tableData: [
-        {
-          name: "100011241184_123456789",
-          type: "主账号",
-          id: "12987122"
-        },
-        {
-          name: "13124234325",
-          type: "主账号",
-          id: "12987122"
-        },
-        {
-          name: "taifucloud",
-          type: "主账号",
-          id: "12987122"
-        }
-      ],
+      tableData: [],
       options: [
         {
           value: "选项1",
@@ -689,19 +568,28 @@ export default {
     };
   },
   methods: {
-  //   input(){
-  //     let params = {
-  //      Action:'GetUser',
-  //      Version:'2019-01-16',
-  //      Name:''
-  //   }
-  //   let url = 'cam2/GetUser'
-  //   this.axios.post(url,params).then((data)=>{
-  //     console.log(data)
-  //   }).catch(error=>{
-  //     console.log(error)
-  //   })
-  // },
+    init() {
+      let params = {
+        Action: 'GetUser',
+        Version: '2019-01-16',
+        Name:"111"
+      }
+      if(this.searchValue != null && this.searchValue != ''){
+        params = this.searchValue
+      }
+      let url = "cam2/GetUser"
+      this.axios.post(url, params).then(data => {
+       console.log(data)
+      }).catch(error => {
+        console.log(error)
+      })
+    },
+    toQuery(){
+      this.init()
+    },
+    change(e){
+      this.$forceUpdate()
+    },
     handleClose(done) {
       this.$confirm("确认关闭？")
         .then(_ => {
@@ -732,7 +620,6 @@ export default {
       // 获取右边框中取消的行数据，将此行数据在右边框中的选中状态取消
       this.$refs.multipleOption.toggleRowSelection(rows[index], false);
     },
-    toQuery() {}
 
   },
   created(){
@@ -744,6 +631,7 @@ export default {
     let url = 'cam2/ListPolicies'
     this.axios.post(url,params).then((data)=>{
        this.policiesData = data.Response.List
+       console.log(data)
     }).catch(error=>{
       console.log(error)
     })
@@ -756,11 +644,21 @@ export default {
     let moreUrl = 'cam2/ListGroups'
     this.axios.post(moreUrl,More).then((data)=>{
       this.policiesDatas = data.Response.GroupInfo
-      // console.log(data.Response.GroupInfo)
     }).catch(error=>{
       console.log(error)
     })
-   
+
+    //获取用户列表
+    let userList = {
+      Action:'ListUsers',
+      Version:'2019-01-16',
+    }
+    let userListUrl= 'cam2/ListUsers'
+    this.axios.post(userListUrl,userList).then((data)=>{
+       this.tableData = data.Response.Data
+      console.log(data)
+    })
+
    }
 };
 </script>
