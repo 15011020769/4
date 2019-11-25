@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import ProtectOverview from './ProtectOverview/ProtectOverview'
 import basicProtection from './basicProtection/basicProtection'
+import basicProteDetail from './basicProtection/basicProteDetail'
 import IpProfessional from './IpProfessional/IpProfessional'
 import ProtectionConfig from './IpProfessional/ProtectionConfig'
 import AccessConfig from './IpProfessional/AccessConfig'
@@ -35,9 +36,18 @@ export default new Router({
       }
     },
     {
-      path: '/basicProtection', // 安全防护
+      path: '/basicProtection', // 基础防护
       name: 'basicProtection',
       component: basicProtection,
+      meta: {
+        keepAlive: true,
+        leftNav:true
+      }
+    },
+    {
+      path: '/basicProteDetail', // 基础防护详情
+      name: 'basicProteDetail',
+      component: basicProteDetail,
       meta: {
         keepAlive: true,
         leftNav:true

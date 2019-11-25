@@ -15,7 +15,11 @@
       </div>
       <div>
         <el-table :data="tableDataBegin.slice((currentPage-1)*pageSize,currentPage*pageSize)">
-          <el-table-column prop="hostName" label="主机名"></el-table-column>
+          <el-table-column prop="hostName" label="主机名">
+            <template slot-scope="scope">
+              <a href="#" @click="toDoDetail(scope.$index, scope.row)">{{scope.row.hostName}}</a>
+            </template>
+          </el-table-column>
           <el-table-column prop="hostIp" label="绑定IP"></el-table-column>
           <el-table-column prop="hostType" label="主机类型"></el-table-column>
           <el-table-column prop="safeStstus" label="安全状态"></el-table-column>
@@ -165,6 +169,16 @@ export default {
           this.tableDataEnd.push(list[from]);
         }
       }
+    },
+    //跳转详情页
+    toDoDetail(basicIndex,basicRow){
+      sessionStorage.setItem("basicName", this.tableDataBegin[basicIndex].hostName)
+      this.$router.push({
+        name: "basicProteDetail",
+        // params:{
+				// 	functionName:this.tableDataBegin[basicIndex].hostName
+				// }
+      });
     }
   }
 }
