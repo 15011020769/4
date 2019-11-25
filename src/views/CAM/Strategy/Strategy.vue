@@ -25,7 +25,7 @@
         <p class="contant_top">用户或者用户组与策略关联后，即可获得策略所描述的操作权限。</p>
         <div class="table_opare">
           <div>
-            <el-button plain size="small">删除</el-button>
+            <el-button plain size="small" @click="handleDelete()">删除</el-button>
           </div>
           <div>
             <el-input v-model="input" placeholder="支持搜索策略名称/描述/备注" size="small">
@@ -42,6 +42,7 @@
             :row-style="{height:0}"
             :cell-style="{padding:'5px 10px'}"
             :header-cell-style="{height:'20px',padding:'0px 10px'}"
+            @selection-change="handleSelectionChange"
           >
             <el-table-column type="selection" width="60"></el-table-column>
             <el-table-column prop="PolicyName" label="策略名" width="150">
@@ -140,6 +141,7 @@ export default {
       value: "",
       input: "",
       tableData: [{}],  //策略列表数据
+      selectedData: [], //选择要删除的
       table_options: [
         {
           value: "选项1",
@@ -268,10 +270,33 @@ export default {
         console.log(res)
       })
     },
-
+    // table标题栏选择项
     handleCommand(command) {
       console.log(command);
       this.tableTitle = command;
+    },
+    // 选择策略
+    handleSelectionChange(data) {
+      this.selectedData = data;
+    },
+    // 批量删除策略
+    handleDelete() {
+      let val = this.selectedData;
+      let params = {
+        Version: '2019-01-16'
+      }
+      if (val) {
+        val.forEach(function(item, index) {
+          let str = 'PolicyId.' + index
+          params[str] = item.PolicyId
+        })
+      }
+      console.log(params)
+      // this.$axios.post('cam2/DeletePolicy', params).then(res  => {
+      //   console.log(res)
+      // })
+      this.selectedData.splice(0, this.selectedData.length)
+      this.getData()
     },
     // page操作
     handleSizeChange(val) {
