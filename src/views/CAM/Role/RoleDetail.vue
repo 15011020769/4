@@ -240,45 +240,45 @@
 import transfer from './component/transfer'
 export default {
    components: {
-      transfer,
-    },
-  data() {
+    transfer
+  },
+  data () {
     return {
-      activeName: "first",
+      activeName: 'first',
       first_tableData: [
         {
-          date: "2343535",
-          name: "用户",
-          address: "解除用户",
-          startTime: "2018-12-14",
-          endTime: "2019-11-11"
+          date: '2343535',
+          name: '用户',
+          address: '解除用户',
+          startTime: '2018-12-14',
+          endTime: '2019-11-11'
         }
       ],
       second_tableData: [
         {
-          date: "2343535",
-          name: "用户",
-          address: "解除用户",
-          startTime: "2018-12-14",
-          endTime: "2019-11-11"
+          date: '2343535',
+          name: '用户',
+          address: '解除用户',
+          startTime: '2018-12-14',
+          endTime: '2019-11-11'
         }
       ],
       table_options: [
         {
-          value: "选项1",
-          label: "全部"
+          value: '选项1',
+          label: '全部'
         },
         {
-          value: "选项2",
-          label: "自定义策略"
+          value: '选项2',
+          label: '自定义策略'
         },
         {
-          value: "选项3",
-          label: "预设策略"
+          value: '选项3',
+          label: '预设策略'
         }
       ],
       firstDisplay: true,
-      tableTitle: "策略类型",
+      tableTitle: '策略类型',
       currentPage1: 5,
       currentPage2: 5,
       currentPage3: 5,
@@ -286,73 +286,73 @@ export default {
       dialogVisible: false,
       Relieve_dialogVisible: false,
       transfer_value: [],
-      Relievesure_dialogVisible:false,
+      Relievesure_dialogVisible: false,
       transfer_data: [
         {
           value: 1,
-          desc: "备选项1"
+          desc: '备选项1'
         },
         {
           value: 2,
-          desc: "备选项2"
+          desc: '备选项2'
         },
         {
           value: 3,
-          desc: "备选项3"
+          desc: '备选项3'
         }
       ],
       display: true,
       RelieveData: [],
       isShow: false,
       popover_visible: false,
-      inputValue: "-",
-      input_Value: "",
+      inputValue: '-',
+      input_Value: '',
       input_show: false
-    };
+    }
   },
   methods: {
-    handleClick() {},
-    isRelieve(){
+    handleClick () {},
+    isRelieve () {
       this.Relievesure_dialogVisible = true
     },
-    Relation_user() {
-      this.dialogVisible = true;
+    Relation_user () {
+      this.dialogVisible = true
     },
-    Relieve_user() {
-      this.Relieve_dialogVisible = true;
+    Relieve_user () {
+      this.Relieve_dialogVisible = true
     },
-    handleCommand(command) {
-      this.tableTitle = command;
+    handleCommand (command) {
+      this.tableTitle = command
     },
-    handleSizeChange() {},
-    handleCurrentChange() {},
-    handleClose() {},
-    first_handleSelectionChange(val) {
-      if (val.length != 0) {
-        this.firstDisplay = false;
+    handleSizeChange () {},
+    handleCurrentChange () {},
+    handleClose () {},
+    first_handleSelectionChange (val) {
+      if (val.length !== 0) {
+        this.firstDisplay = false
       } else {
-        this.firstDisplay = true;
+        this.firstDisplay = true
       }
     },
-    look_detail() {
-      this.isShow = !this.isShow;
+    look_detail () {
+      this.isShow = !this.isShow
     },
-    icon_click() {
-      this.input_show = true;
-      this.input_Value = this.inputValue;
+    icon_click () {
+      this.input_show = true
+      this.input_Value = this.inputValue
     },
-    input_cancel() {
-      this.input_show = false;
+    input_cancel () {
+      this.input_show = false
     },
-    input_sure() {
-      this.inputValue = this.input_Value;
-      this.input_show = false;
+    input_sure () {
+      this.inputValue = this.input_Value
+      this.input_show = false
     },
-    back() {
-      this.$router.push("/Role");
+    back () {
+      this.$router.push('/Role')
     }
   }
-};
+}
 </script>
 <style lang="scss" scoped>
 .RoleDetail {

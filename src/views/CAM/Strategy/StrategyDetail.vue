@@ -94,7 +94,7 @@
                     </template>
                   </el-table-column>
                   <el-table-column align="center">
-                    <template slot="header" slot-scope="scope">
+                    <template slot="header" slot-scope='scope'>
                       <el-dropdown trigger="click" @command="handleCommand" size="mini">
                         <span style="color:#909399">
                           {{ tableTitle }}
@@ -111,7 +111,7 @@
                     </template>
                   </el-table-column>
                   <el-table-column prop="address" label="描述">
-                    <template slot-scope="scope">
+                    <template slot-scope='scope'>
                       <el-popover
                         placement="bottom"
                         title
@@ -190,36 +190,36 @@
   </div>
 </template>
 <script>
-import transfer from "./component/transfer";
+import transfer from './component/transfer'
 export default {
   components: {
     transfer
   },
-  data() {
+  data () {
     return {
-      activeName: "first",
+      activeName: 'first',
       tableData: [
         {
-          date: "2343535",
-          name: "用户",
-          address: "解除用户"
+          date: '2343535',
+          name: '用户',
+          address: '解除用户'
         }
       ],
       table_options: [
         {
-          value: "选项1",
-          label: "全部"
+          value: '选项1',
+          label: '全部'
         },
         {
-          value: "选项2",
-          label: "用户"
+          value: '选项2',
+          label: '用户'
         },
         {
-          value: "选项3",
-          label: "用户组"
+          value: '选项3',
+          label: '用户组'
         }
       ],
-      tableTitle: "类型",
+      tableTitle: '类型',
       currentPage1: 5,
       currentPage2: 5,
       currentPage3: 5,
@@ -230,72 +230,71 @@ export default {
       transfer_data: [
         {
           value: 1,
-          desc: "备选项1"
+          desc: '备选项1'
         },
         {
           value: 2,
-          desc: "备选项2"
+          desc: '备选项2'
         },
         {
           value: 3,
-          desc: "备选项3"
+          desc: '备选项3'
         }
       ],
       display: true,
       RelieveData: [],
       isShow: false,
       popover_visible: false,
-      inputValue: "-",
-      input_Value: "",
+      inputValue: '-',
+      input_Value: '',
       input_show: false
-    };
+    }
   },
   methods: {
-    handleClick() {},
-    Relation_user() {
-      this.dialogVisible = true;
+    handleClick () {},
+    Relation_user () {
+      this.dialogVisible = true
     },
-    Relieve_user() {
-      this.Relieve_dialogVisible = true;
+    Relieve_user () {
+      this.Relieve_dialogVisible = true
     },
-    handleCommand(command) {
-      this.tableTitle = command;
+    handleCommand (command) {
+      this.tableTitle = command
     },
-    handleSizeChange() {},
-    handleCurrentChange() {},
-    handleClose() {},
-    handleSelectionChange(val) {
-      console.log(val);
-      if (val.length != 0) {
-        this.display = false;
+    handleSizeChange () {},
+    handleCurrentChange () {},
+    handleClose () {},
+    handleSelectionChange (val) {
+      if (val.length !== 0) {
+        this.display = false
         val.forEach(element => {
-          this.RelieveData.push(element.date);
-        });
+          this.RelieveData.push(element.date)
+        })
       } else {
-        this.display = true;
+        this.display = true
       }
     },
-    look_detail() {
-      this.isShow = !this.isShow;
+    look_detail () {
+      this.isShow = !this.isShow
     },
-    icon_click() {
-      this.input_show = true;
-      this.input_Value = this.inputValue;
+    icon_click () {
+      this.input_show = true
+      this.input_Value = this.inputValue
     },
-    input_cancel() {
-      this.input_show = false;
+    input_cancel () {
+      this.input_show = false
     },
-    input_sure() {
-      this.inputValue = this.input_Value;
-      this.input_show = false;
+    input_sure () {
+      this.inputValue = this.input_Value
+      this.input_show = false
     },
-    back() {
-      this.$router.push("/Strategy");
+    back () {
+      this.$router.push('/Strategy')
     }
   }
-};
+}
 </script>
-<style lang="scss" scoped>
+<style lang='scss' scoped>
 .StrategyDetail {
   .top {
     padding: 0 20px;
