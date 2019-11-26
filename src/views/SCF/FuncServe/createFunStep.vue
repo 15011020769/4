@@ -116,12 +116,13 @@ export default {
       }
       let params={
         Version:"2018-04-16",
-        Region:"ap-taipei",
+        Region:this.$cookie.get("regionv2"),
+        Action:"CreateFunction",
         FunctionName:this.formShowable.funNameStep,
-        Code:{
-          CosBucketRegion:"ap-taipei",
-          DemoId:"deno-2jcjjl3q",
-        },
+        // Code:{
+        //   CosBucketRegion:this.$cookie.get("regionv2"),
+        //   DemoId:"demo-keaut4b2",
+        // },
         Description:this.formShowable.descStep, 
         Runtime:this.formShowable.runMoentStep,
         Role:this.formShowable.runRole,

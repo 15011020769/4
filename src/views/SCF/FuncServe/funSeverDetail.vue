@@ -34,21 +34,22 @@
             @change="publishNewVewsionHander"
           >
             <el-option label="发布新版本" value="action1"></el-option>
-            
-              <el-dialog
-                    title="发布版本"
-                    :visible.sync="publishNewVewsion"
-                    width="30%"
-                    :append-to-body="true"
-                    :before-close="handleClosePublish"
-                     
-                  >
+
+            <el-dialog
+              title="发布版本"
+              :visible.sync="publishNewVewsion"
+              width="30%"
+              :append-to-body="true"
+              :before-close="handleClosePublish"
+            >
               <el-form :model="publishVersion" label-width="100px">
-                <el-form-item label="函数名称">
-                  {{funNameTit}}
-                </el-form-item>
+                <el-form-item label="函数名称">{{funNameTit}}</el-form-item>
                 <el-form-item label="描述" :required="true">
-                  <el-input v-model="publishVersion.descript" type="textarea" placeholder="请输入版本的描述"/>
+                  <el-input
+                    v-model="publishVersion.descript"
+                    type="textarea"
+                    placeholder="请输入版本的描述"
+                  />
                   <span>最大支持1000个英文字母、数字、空格、逗号、句号、中文</span>
                 </el-form-item>
               </el-form>
@@ -125,14 +126,19 @@
                           <el-option label="1536MB" value="1536"></el-option>
                         </el-select>
                       </el-form-item>
-                      <el-form-item prop="Timeout" label="超时时间" :required="true" class="timeOutDate newClear" >
+                      <el-form-item
+                        prop="Timeout"
+                        label="超时时间"
+                        :required="true"
+                        class="timeOutDate newClear"
+                      >
                         <span slot="label">
                           超时时间
                           <i class="el-icon-question"></i>
                         </span>
                         <el-input class="timeOutDate1" v-model="functionData.Timeout" placeholder></el-input>
                         <span>秒</span>
-                        <br />
+                        <br>
                         <p class="tipContent">时间范围：1-900秒</p>
                       </el-form-item>
                       <el-form-item label="描述" prop="Description">
@@ -148,21 +154,37 @@
                           环境变量
                           <i class="el-icon-question"></i>
                         </span>
-                        <el-table :data="functionData.Environment.Variables" size="small" border element-loading-text="Loading" highlight-current-row >
+                        <el-table
+                          :data="functionData.Environment.Variables"
+                          size="small"
+                          border
+                          element-loading-text="Loading"
+                          highlight-current-row
+                        >
                           <el-table-column label="key">
                             <template slot-scope="scope">
                               <el-form :model="functionData.Environment.Variables[scope.$index]">
                                 <el-form-item prop="nameSpaceOne">
-                                  <el-input v-show="true" v-model="functionData.Environment.Variables[scope.$index].key" placeholder />
+                                  <el-input
+                                    v-show="true"
+                                    v-model="functionData.Environment.Variables[scope.$index].key"
+                                    placeholder
+                                  />
                                 </el-form-item>
                               </el-form>
                             </template>
                           </el-table-column>
                           <el-table-column label="value">
                             <template slot-scope="scope">
-                              <el-form ref="scope.row" :model="functionData.Environment.Variables[scope.$index]">
+                              <el-form
+                                ref="scope.row"
+                                :model="functionData.Environment.Variables[scope.$index]"
+                              >
                                 <el-form-item prop="nameSpaceTwo">
-                                  <el-input v-model="functionData.Environment.Variables[scope.$index].value" placeholder />
+                                  <el-input
+                                    v-model="functionData.Environment.Variables[scope.$index].value"
+                                    placeholder
+                                  />
                                 </el-form-item>
                               </el-form>
                             </template>
@@ -187,25 +209,52 @@
                           内网访问
                           <i class="el-icon-question"></i>
                         </span>
-                        <el-switch v-model="functionData.VpcConfig"  active-color="#006eff" inactive-color="#888" ></el-switch>
+                        <el-switch
+                          v-model="functionData.VpcConfig"
+                          active-color="#006eff"
+                          inactive-color="#888"
+                        ></el-switch>
                         <div v-if="functionData.VpcConfig">
-                          <el-select v-model="functionData.VpcConfig" v-on:change="getSelectOne($event)" >
-                            <el-option v-for="item in functionData.VpcConfig" :label="item.VpcId" :value="item.VpcId" ></el-option>
+                          <el-select
+                            v-model="functionData.VpcConfig"
+                            v-on:change="getSelectOne($event)"
+                          >
+                            <el-option
+                              v-for="item in functionData.VpcConfig"
+                              :label="item.VpcId"
+                              :value="item.VpcId"
+                            ></el-option>
                           </el-select>
-                          <el-select v-model="functionData.VpcConfig" v-on:change="getSelectTwo($event)" >
-                            <el-option v-for="item in funReast.VpcConfig" :label="item.SubnetId" :value="item.SubnetId" ></el-option>
+                          <el-select
+                            v-model="functionData.VpcConfig"
+                            v-on:change="getSelectTwo($event)"
+                          >
+                            <el-option
+                              v-for="item in funReast.VpcConfig"
+                              :label="item.SubnetId"
+                              :value="item.SubnetId"
+                            ></el-option>
                           </el-select>
                           <p class="tipContent">
                             <span>如现有的网络不合适，您可以去控制台</span>
-                            <a class="tipContentA"> 新建私有网络 <span class="el-icon-share"></span> </a>
+                            <a class="tipContentA">
+                              新建私有网络
+                              <span class="el-icon-share"></span>
+                            </a>
                             <span>或</span>
-                            <a class="tipContentA"> 新建子网 <span class="el-icon-share"></span> </a>
+                            <a class="tipContentA">
+                              新建子网
+                              <span class="el-icon-share"></span>
+                            </a>
                           </p>
                         </div>
                       </el-form-item>
                       <el-form-item label="标签" prop="tagLists">
-                        <p><span></span><i class="el-icon-edit" @click="tagAddTagsBtn=true"></i></p>
-                          <div title="您已经选择1个云资源" v-if="tagAddTagsBtn" width="800px" >
+                        <p>
+                          <span></span>
+                          <i class="el-icon-edit" @click="tagAddTagsBtn=true"></i>
+                        </p>
+                        <div title="您已经选择1个云资源" v-if="tagAddTagsBtn" width="800px">
                           <div>
                             <span>新增标签</span>
                             <el-table
@@ -220,7 +269,7 @@
                                     <el-form-item prop="nameSpaceOne">
                                       <!-- <span
                                         v-if="modelNameTags[scope.$index].disableDelete"
-                                      >{{modelNameTags[scope.$index].nameSpaceOne}}</span> -->
+                                      >{{modelNameTags[scope.$index].nameSpaceOne}}</span>-->
                                       <el-input
                                         class="addTabsIpt"
                                         v-model="modelNameTags1[scope.$index].nameSpaceOne"
@@ -308,8 +357,7 @@
                   </p>
                   <p>
                     <span>环境变量</span>
-                    <span v-show="functionData.environmentFlag">
-                    </span>
+                    <span v-show="functionData.environmentFlag"></span>
                     <span v-show="functionData.environmentFlag">无环境变量</span>
                   </p>
                   <p>
@@ -427,16 +475,16 @@
   </div>
 </template>
 <script>
-import triggerMode from './triggerMode.vue'
-import funCode from './funCode.vue'
-import runningLog from './runningLog'
-import monitInfo from './monitInfo'
+import triggerMode from "./triggerMode.vue";
+import funCode from "./funCode.vue";
+import runningLog from "./runningLog";
+import monitInfo from "./monitInfo";
 export default {
-  components:{
-    triggerMode:triggerMode,
-    funCode:funCode,
-    runningLog:runningLog,
-    monitInfo:monitInfo
+  components: {
+    triggerMode: triggerMode,
+    funCode: funCode,
+    runningLog: runningLog,
+    monitInfo: monitInfo
   },
   data() {
     return {
@@ -450,10 +498,11 @@ export default {
       dialogVisible1: false,
       dialogVisible2: false,
       dialogVisible3: false,
-      tagAddTagsBtn:false,
-      publishNewVewsion:false,
-      publishVersion:{
-        descript:""
+      tagAddTagsBtn: false,
+      publishNewVewsion: false,
+      logData:{},
+      publishVersion: {
+        descript: ""
       },
       modelNameTags: [
         {
@@ -469,12 +518,12 @@ export default {
           disableDelete: false
         }
       ],
-      functionData:[],
+      functionData: [],
       environmentFlag: true,
       vpcConfigFlag: true,
       VariablesArr: [],
-      vpcConfigVpcId: '',
-      vpcConfigSubnetId: '',
+      vpcConfigVpcId: "",
+      vpcConfigSubnetId: "",
       funReast: {
         funName: this.funtitle,
         runRole: "",
@@ -491,34 +540,34 @@ export default {
         valueChange: false,
         valueChangeSelect1: [
           {
-            id:"1",
+            id: "1",
             value: "123",
             label: "123"
           },
           {
-            id:"2",
+            id: "2",
             value: "456",
             label: "456"
           }
         ],
         valueChangeSelect2: [
           {
-            id:"1",
+            id: "1",
             a: "123",
             b: "bbb"
           },
           {
-            id:"2",
+            id: "2",
             a: "123",
             b: "bbb"
           },
           {
-            id:"3",
+            id: "3",
             a: "456",
             b: "1"
           },
           {
-            id:"4",
+            id: "4",
             a: "456",
             b: "1"
           }
@@ -534,7 +583,8 @@ export default {
     this.modelNameTags[0].nameSpaceOne = "default";
     this.modelNameTags[0].nameSpaceTwo = "";
     this.modelNameTags[0].disableDelete = true;
-    this.init()
+    this.init();
+    this.searchVersion();
   },
   methods: {
     // 获取编辑详情
@@ -544,32 +594,35 @@ export default {
         Version: "2018-04-16",
         Region: this.$cookie.get("regionv2")
       };
-      let functionName = this.$route.query.functionName
+      let functionName = this.$route.query.functionName;
       // functionName = 'tttt'
-      if(functionName != '' && functionName != null) {
-        params['FunctionName'] = functionName
+      if (functionName != "" && functionName != null) {
+        params["FunctionName"] = functionName;
       }
-      let url = "scf2/GetFunction"
-      this.axios.post(url, params).then(res => {
-        let _this = this
-        this.functionData = res.Response
-        let funcData = this.functionData
-        if(funcData.FunctionName != undefined){
-          _this.VariablesArr = funcData.Environment.Variables
-          console.log(_this.VariablesArr)
-          _this.vpcConfigVpcId = funcData.VpcConfig.VpcId
-          _this.vpcConfigSubnetId = funcData.VpcConfig.SubnetId
-        }else {
-          _this.environmentFlag = false
-          _this.vpcConfigFlag = false
-        }
-      }).catch(error => {
-        console.log(error)
-      })
+      let url = "scf2/GetFunction";
+      this.axios
+        .post(url, params)
+        .then(res => {
+          let _this = this;
+          this.functionData = res.Response;
+          let funcData = this.functionData;
+          if (funcData.FunctionName != undefined) {
+            _this.VariablesArr = funcData.Environment.Variables;
+            console.log(_this.VariablesArr);
+            _this.vpcConfigVpcId = funcData.VpcConfig.VpcId;
+            _this.vpcConfigSubnetId = funcData.VpcConfig.SubnetId;
+          } else {
+            _this.environmentFlag = false;
+            _this.vpcConfigFlag = false;
+          }
+        })
+        .catch(error => {
+          console.log(error);
+        });
     },
     // 函数配置修改
-    saveConfig(){
-      debugger
+    saveConfig() {
+      debugger;
       let params = {
         Action: "UpdateFunctionConfiguration",
         Version: "2018-04-16",
@@ -579,21 +632,24 @@ export default {
         FunctionName: this.functionData.FunctionName,
         MemorySize: this.functionData.MemorySize,
         Role: this.functionData.Role,
-        Timeout: this.functionData.Timeout//,
+        Timeout: this.functionData.Timeout //,
         // VpcConfig: this.functionData.VpcConfig // 参数传递有问题，暂时屏蔽
-      }
-      let url = "scf2/UpdateFunctionConfiguration"
-      this.axios.post(url, params).then(res => {
-        console.log(res.Response)
-        this.$message({ type: 'success', message: '执行成功！' })
-        this.dialogVisible2=false
-      }).catch(error => {
-        console.log(error)
-      })
-    }
-    ,
+      };
+      let url = "scf2/UpdateFunctionConfiguration";
+      this.axios
+        .post(url, params)
+        .then(res => {
+          console.log(res.Response);
+          this.$message({ type: "success", message: "执行成功！" });
+          this.dialogVisible2 = false;
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    },
     handleClick(tab, event) {
-      //console.log(tab, event);
+      console.log(tab.index);
+      
     },
     handleClick1() {},
     returnBack() {
@@ -612,7 +668,7 @@ export default {
       }
     },
     handleClose1() {
-      this.dialogVisible1=false;
+      this.dialogVisible1 = false;
     },
     handleClose2() {
       this.dialogVisible2 = false;
@@ -620,7 +676,7 @@ export default {
     handleClose3() {
       this.dialogVisible3 = false;
     },
-    handleClosePublish(){
+    handleClosePublish() {
       this.publishNewVewsion = false;
     },
     //删除弹框标签
@@ -634,11 +690,11 @@ export default {
     sureTabAdd() {},
     //新增标签提交按钮
     sureTabAdd1() {
-      this.tagAddTagsBtn=false;
+      this.tagAddTagsBtn = false;
     },
     //发布新版本
-    surePublish(){
-      this.publishNewVewsion=false;
+    surePublish() {
+      this.publishNewVewsion = false;
     },
     //添加标签
     addTabs() {
@@ -668,44 +724,65 @@ export default {
     //监测select
     getSelectOne(eventNew) {
       let tempCity = [];
-      this.funReast.valueChangeSelect2=[
-          {
-            a: "123",
-            b: "bbb"
-          },
-          {
-            a: "123",
-            b: "bbb"
-          },
-          {
-            a: "456",
-            b: "1"
-          },
-          {
-            a: "456",
-            b: "1"
-          }
-        ]
-      console.log(this.funReast.valueChangeSelect2)
+      this.funReast.valueChangeSelect2 = [
+        {
+          a: "123",
+          b: "bbb"
+        },
+        {
+          a: "123",
+          b: "bbb"
+        },
+        {
+          a: "456",
+          b: "1"
+        },
+        {
+          a: "456",
+          b: "1"
+        }
+      ];
+      console.log(this.funReast.valueChangeSelect2);
       for (var val of this.funReast.valueChangeSelect2) {
-        console.log(val.a)
+        console.log(val.a);
         if (eventNew == val.a) {
           tempCity.push({ label: val.b, value: val.b });
         }
       }
-      this.funReast.valueChangeSelect2=tempCity
+      this.funReast.valueChangeSelect2 = tempCity;
     },
-    getSelectTwo: function (SelectTwo) {
-      this.$forceUpdate()
+    getSelectTwo: function(SelectTwo) {
+      this.$forceUpdate();
     },
-    publishNewVewsionHander(){
-      console.log(this.action)
-      if(this.action=="action1"){
-        this.publishNewVewsion=true;
+    publishNewVewsionHander() {
+      console.log(this.action);
+      if (this.action == "action1") {
+        this.publishNewVewsion = true;
+      } else {
+        this.publishNewVewsion = false;
       }
-      else{
-        this.publishNewVewsion=false;
+    },
+    searchVersion() {
+      let _this = this
+      let params = {
+        Action: "ListVersionByFunction",
+        Version: "2018-04-16",
+        Region: this.$cookie.get("regionv2")
+      };
+      let functionName = this.$route.query.functionName;
+      if (functionName != "" && functionName != null) {
+        params["FunctionName"] = functionName;
       }
+      let url = "scf2/ListVersionByFunction";
+      this.axios
+        .post(url, params)
+        .then(res => {
+          _this.logData = res.Response
+          console.log(_this.logData)
+        })
+        .catch(error => {
+          console.log(error);
+        });
     }
   }
 };

@@ -156,7 +156,7 @@
                       </el-select>
                     </el-form-item>
                     <el-form-item label="函数名称" :required="true">
-                      <el-input v-model="scope.row.functionName"  label-width="80px"></el-input>
+                      <el-input v-model="newname"  label-width="80px"></el-input>
                       <p class="tipBot">1. 最多60个字符，最少2个字符</p>
                       <p class="tipBot">2. 字母开头，支持 a-z，A-Z，0-9，-，_，且需要以数字或字母结尾</p>
                     </el-form-item>
@@ -232,6 +232,7 @@ export default {
       ],
       showTables: [],
       search: "",
+      newname:"",
       allData: [
         {
           funName: "tttt",
@@ -445,8 +446,9 @@ export default {
     //删除函数的确定按钮，调用删除接口
     sureDelete() {
       let params = {
+        Action:"DeleteFunction",
         Version: "2018-04-16",
-        Region: "ap-taipei",
+        Region: this.$cookie.get("regionv2"),
         FunctionName: this.deleteBegin.functionName
       };
       console.log(params.FunctionName);
@@ -468,14 +470,14 @@ export default {
     sureCopy() {
       let params = {
         Version: "2018-04-16",
-        Region: "ap-taipei",
+        Region: this.$cookie.get("regionv2"),
         FunctionName: this.copyIndex2.functionName,
-        NewFunctionName: ""
+        NewFunctionName: this.newname,
+        Action:"CopyFunction"
       };
       console.log(this.copyIndex2)
       this.$axios.post("scf2/CopyFunction", params).then(res => {
-        console.log(res);
-        console.log("成功");
+        this.getData();
         this.dialogVisible2 = false;
       });
     },

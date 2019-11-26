@@ -9,7 +9,11 @@
                 提交方法
                 <i class="el-icon-question"></i>
               </span>
-              <el-select v-model="funCodeForm.methodsTip" class="selectSetWidth" @change="chooseSelect">
+              <el-select
+                v-model="funCodeForm.methodsTip"
+                class="selectSetWidth"
+                @change="chooseSelect"
+              >
                 <el-option label="在线编辑" value="inline"></el-option>
                 <el-option label="本地上传zip包" value="zipFile"></el-option>
                 <el-option label="本地上传文件夹" value="folder"></el-option>
@@ -21,7 +25,7 @@
                 执行方法
                 <i class="el-icon-question"></i>
               </span>
-              <el-input v-model="functionData.Handler" />
+              <el-input v-model="functionData.Handler"/>
             </el-form-item>
             <el-form-item label="运行环境" class="floatLeftItem">
               <span>{{functionData.Runtime}}</span>
@@ -39,8 +43,8 @@
         </div>
         <!-- <div class="bottomBtn newClear"> class导致按钮无法点击-->
         <div>
-            <el-button type="primary" @click="saveCode">保存</el-button>
-            <el-button @click="testCode">测试</el-button>
+          <el-button type="primary" @click="saveCode">保存</el-button>
+          <el-button @click="testCode">测试</el-button>
           <el-form>
             <el-form-item label="当前测试模板" :required="true" class="floatLeftItem">
               <el-select v-model="modelList" class="selectSetWidth floatLeftItem1">
@@ -93,7 +97,10 @@
           </el-form>
         </div>
         <div class="bottomCodeShow" v-if="bottomCodeShowBtn">
-          <h3>测试结果<span>成功</span></h3>
+          <h3>
+            测试结果
+            <span>成功</span>
+          </h3>
           <div class="borderLeftBlue borderLeftBlue1">
             <h1>返回结果:</h1>
             <p>"hello from scf"</p>
@@ -101,22 +108,34 @@
           <div class="newClear">
             <div class="borderLeftBlue borderLeftBlue2">
               <h1>摘要:</h1>
-              <p><span>请求ID:</span><span>5a81551d-084b-11ea-a122-5254005dc76e</span></p>
-              <p><span>运行时间:</span><span>0.18000000715255737ms</span></p>
-              <p><span>计费时间:</span><span>100ms</span></p>
-              <p><span>占用内存:</span><span>10.09375MB</span></p>
+              <p>
+                <span>请求ID:</span>
+                <span>5a81551d-084b-11ea-a122-5254005dc76e</span>
+              </p>
+              <p>
+                <span>运行时间:</span>
+                <span>0.18000000715255737ms</span>
+              </p>
+              <p>
+                <span>计费时间:</span>
+                <span>100ms</span>
+              </p>
+              <p>
+                <span>占用内存:</span>
+                <span>10.09375MB</span>
+              </p>
             </div>
             <div class="borderLeftBlue borderLeftBlue3">
               <h1>日志:</h1>
               <div>
-                START RequestId: 5a81551d-084b-11ea-a122-5254005dc76e<br/>
-                Event RequestId: 5a81551d-084b-11ea-a122-5254005dc76e<br/>
-                Start Hello World function<br/>
-                Hello World<br/>
-                value1 = test value 1<br/>
-                value2 = test value 2<br/>
-                END RequestId: 5a81551d-084b-11ea-a122-5254005dc76e<br/>
-                Report RequestId: 5a81551d-084b-11ea-a122-5254005dc76e Duration:0.18ms Memory:128MB MaxMemoryUsed:10.0938MB
+                START RequestId: 5a81551d-084b-11ea-a122-5254005dc76e
+                <br>Event RequestId: 5a81551d-084b-11ea-a122-5254005dc76e
+                <br>Start Hello World function
+                <br>Hello World
+                <br>value1 = test value 1
+                <br>value2 = test value 2
+                <br>END RequestId: 5a81551d-084b-11ea-a122-5254005dc76e
+                <br>Report RequestId: 5a81551d-084b-11ea-a122-5254005dc76e Duration:0.18ms Memory:128MB MaxMemoryUsed:10.0938MB
               </div>
             </div>
           </div>
@@ -129,8 +148,8 @@
 export default {
   data() {
     return {
-      functionData:[],
-      FunctionRequestId: '',
+      functionData: [],
+      FunctionRequestId: "",
       funCodeForm: {
         methodsTip: "inline",
         zxMethods: "index.main_handler",
@@ -138,31 +157,32 @@ export default {
       },
       downLoadZip: "",
       codeShow: true,
-      modelList:"Hello World事件模板",
-      newCreateModel:false,
-      configTestModel:{
-        modelName:"",
-        useModelCode:""
+      modelList: "Hello World事件模板",
+      newCreateModel: false,
+      configTestModel: {
+        modelName: "",
+        useModelCode: ""
       },
-      uploadZipBackBack:false,
-      uploadCos:false,
-      uploadFlolderShow:false,
-      redTipShow:false,
-      bottomCodeShowBtn:false,
-      actionSubminFile1:{
-        filesInput:""
+      uploadZipBackBack: false,
+      uploadCos: false,
+      uploadFlolderShow: false,
+      redTipShow: false,
+      bottomCodeShowBtn: false,
+      actionSubminFile1: {
+        filesInput: ""
       },
-      actionSubminFile2:{
-        filesInput:""
+      actionSubminFile2: {
+        filesInput: ""
       },
-      actionSubminFile3:{
-        cosBucket:"",
-        cosObjFile:""
-      },
+      actionSubminFile3: {
+        cosBucket: "",
+        cosObjFile: ""
+      }
     };
   },
   mounted() {
-    this.init()
+    this.init();
+    console.log(this.$route.query.functionName, "com");
   },
   methods: {
     // 查询详情
@@ -170,119 +190,149 @@ export default {
       let params = {
         Action: "GetFunction",
         Version: "2018-04-16",
-        ShowCode: 'TRUE',
-        Namespace: 'default',
-        Qualifier: '$LATEST',
+        ShowCode: "TRUE",
+        Namespace: "default",
+        Qualifier: "$LATEST",
         Region: this.$cookie.get("regionv2")
       };
-      let functionName = this.$route.query.functionName
+      let functionName = this.$route.query.functionName;
       // functionName = 'tttt'
-      if(functionName != '' && functionName != null) {
-        params['FunctionName'] = functionName
+      if (functionName != "" && functionName != null) {
+        params["FunctionName"] = functionName;
       }
-      console.log(params)
-      let url = "scf2/GetFunction"
-      this.axios.post(url, params).then(res => {
-        let _this = this
-        this.functionData = res.Response
-        let funcData = this.functionData
-        console.log(funcData)
-      }).catch(error => {
-        console.log(error)
-      })
+      console.log(params);
+      let url = "scf2/GetFunction";
+      this.axios
+        .post(url, params)
+        .then(res => {
+          let _this = this;
+          this.functionData = res.Response;
+          let funcData = this.functionData;
+          console.log(funcData);
+        })
+        .catch(error => {
+          console.log(error);
+        });
     },
     saveCode() {
       // 点击保存，首先执行uploads，然后重新执行GetFunction，查询信息，
       // 查询模板GetTempCosInfo，根据返回的ObjectPath模板路径，执行UpdateFunctionCode
       //UpdateFunctionCode //更新云函数代码
+      console.log("saveCode")
 
+      let params = {
+        Action: "UpdateFunctionCode",
+        Version: "2018-04-16",
+        Region: this.$cookie.get("regionv2"),
+        Handler:"index.main_handler",
+      };
+      let functionName = this.$route.query.functionName;
+      // functionName = 'tttt'
+      if (functionName != "" && functionName != null) {
+        params["FunctionName"] = functionName;
+      }
+      console.log(params);
+      let url = "scf2/UpdateFunctionCode";
+      this.axios
+        .post(url, params)
+        .then(res => {
+          console.log(res)
+        })
+        .catch(error => {
+          console.log(error);
+        });
     },
     testCode() {
       // ClientContext: '{↵  "key1": "test value 1",↵  "key2": "test value 2"↵}'
       let params = {
         Action: "Invoke",
         Version: "2018-04-16",
-        Namespace: 'default',
-        InvocationType: 'Event',
-        Qualifier: '$LATEST',
+        Namespace: "default",
+        InvocationType: "Event",
+        Qualifier: "$LATEST",
         Region: this.$cookie.get("regionv2")
       };
-      let functionName = this.$route.query.functionName
-      if(functionName != '' && functionName != null) {
-        params['FunctionName'] = functionName
+      let functionName = this.$route.query.functionName;
+      if (functionName != "" && functionName != null) {
+        params["FunctionName"] = functionName;
       }
-      let url = "scf2/Invoke"
-      this.axios.post(url, params).then(res => {
-        debugger
-        let _this = this
-        this.FunctionRequestId = res.Response.Result.FunctionRequestId
-        console.log(this.FunctionRequestId)
-        // 获取测试日志
-        let params = {
-          Action: "GetFunctionLogs",
-          Version: "2018-04-16",
-          Namespace: 'default',
-          FunctionRequestId: _this.FunctionRequestId,
-          Qualifier: '$LATEST',
-          Region: _this.$cookie.get("regionv2")
-        };
-        if(functionName != '' && functionName != null) {
-          params['FunctionName'] = functionName
-        }
-        console.log(params)
-        let url = "scf2/GetFunctionLogs"
-        this.axios.post(url, params).then(res => {
-          console.log(res)
-          this.ResData = res.Response.Data
-          // 从腾讯云产品执行交易分析，如果日志为空从新查询，一般查询10多次日志就出来
-          console.log(this.ResData)
-        }).catch(error => {
-          console.log(error)
+      let url = "scf2/Invoke";
+      this.axios
+        .post(url, params)
+        .then(res => {
+          debugger;
+          let _this = this;
+          this.FunctionRequestId = res.Response.Result.FunctionRequestId;
+          console.log(this.FunctionRequestId);
+          // 获取测试日志
+          let params = {
+            Action: "GetFunctionLogs",
+            Version: "2018-04-16",
+            Namespace: "default",
+            FunctionRequestId: _this.FunctionRequestId,
+            Qualifier: "$LATEST",
+            Region: _this.$cookie.get("regionv2")
+          };
+          if (functionName != "" && functionName != null) {
+            params["FunctionName"] = functionName;
+          }
+          console.log(params);
+          let url = "scf2/GetFunctionLogs";
+          this.axios
+            .post(url, params)
+            .then(res => {
+              console.log(res);
+              this.ResData = res.Response.Data;
+              // 从腾讯云产品执行交易分析，如果日志为空从新查询，一般查询10多次日志就出来
+              console.log(this.ResData);
+            })
+            .catch(error => {
+              console.log(error);
+            });
         })
-      }).catch(error => {
-        console.log(error)
-      })
+        .catch(error => {
+          console.log(error);
+        });
     },
-    newCreateModelClose(){
-      this.newCreateModel=false;
+    newCreateModelClose() {
+      this.newCreateModel = false;
     },
     //配置测试模板确定按钮
-    configCodeSure(){
-      this.newCreateModel=false;
+    configCodeSure() {
+      this.newCreateModel = false;
     },
     //监测提交方法下拉框
-    chooseSelect(){
-      if(this.funCodeForm.methodsTip=="inline"){
-        this.codeShow=true;
-      }else{
-        this.codeShow=false;
+    chooseSelect() {
+      if (this.funCodeForm.methodsTip == "inline") {
+        this.codeShow = true;
+      } else {
+        this.codeShow = false;
       }
-      if(this.funCodeForm.methodsTip=="zipFile"){
-          console.log(this.funCodeForm.methodsTip)
-          this.uploadZipBackBack=true;
-        }else{
-          this.uploadZipBackBack=false;
-        }
-        if(this.funCodeForm.methodsTip=="cos"){
-            this.uploadCos=true;
-          }else{
-            this.uploadCos=false;
-          }
-          if(this.funCodeForm.methodsTip=="folder"){
-              this.uploadFlolderShow=true;
-            }else{
-              this.uploadFlolderShow=false;
-            }
-      
+      if (this.funCodeForm.methodsTip == "zipFile") {
+        console.log(this.funCodeForm.methodsTip);
+        this.uploadZipBackBack = true;
+      } else {
+        this.uploadZipBackBack = false;
+      }
+      if (this.funCodeForm.methodsTip == "cos") {
+        this.uploadCos = true;
+      } else {
+        this.uploadCos = false;
+      }
+      if (this.funCodeForm.methodsTip == "folder") {
+        this.uploadFlolderShow = true;
+      } else {
+        this.uploadFlolderShow = false;
+      }
     },
     //上传文件
-    handleFile(){},
-    handleFile1(){},
+    handleFile() {},
+    handleFile1() {},
     //测试按钮
-    bottomCodeShow(){
-      alert(1)
+    bottomCodeShow() {
+      alert(1);
       // console.log(1)
-      this.bottomCodeShowBtn=true;
+      this.bottomCodeShowBtn = true;
     }
   }
 };
@@ -304,128 +354,128 @@ export default {
   background-color: #fff;
   border: 1px solid #ddd;
 }
-.bottomBtn{
-  padding:20px 0;
-  border-top:1px solid #ddd;
-  margin-top:20px;
-  button{
-    float:left;
-    margin-right:10px;
+.bottomBtn {
+  padding: 20px 0;
+  border-top: 1px solid #ddd;
+  margin-top: 20px;
+  button {
+    float: left;
+    margin-right: 10px;
   }
-  .newFormFloat{
-    float:left;
-    width:330px;
-  }
-}
-.el-select-dropdown{
-  position:relative;
-  p{
-    position:absolute;
-    bottom:0;
-    margin-top:30px;
-    width:100%;
-    line-height:30px;
-    background-color:#fff;
-    border-top:1px solid #ddd;
-    color:#3E8EF7;
-    text-indent:12px;
+  .newFormFloat {
+    float: left;
+    width: 330px;
   }
 }
-.codeBox{
-  border:1px solid #ddd;
-  min-height:200px;
+.el-select-dropdown {
+  position: relative;
+  p {
+    position: absolute;
+    bottom: 0;
+    margin-top: 30px;
+    width: 100%;
+    line-height: 30px;
+    background-color: #fff;
+    border-top: 1px solid #ddd;
+    color: #3e8ef7;
+    text-indent: 12px;
+  }
 }
-.uploadZipBack{
-  width:100%;
-  min-height:85px;
-  background-color:#f2f2f2;
-  padding:20px 10px;
+.codeBox {
+  border: 1px solid #ddd;
+  min-height: 200px;
 }
-.uploadFlolder{
-   width:100%;
-   min-height:85px;
-   background-color:#f2f2f2;
-   padding:20px 10px;
+.uploadZipBack {
+  width: 100%;
+  min-height: 85px;
+  background-color: #f2f2f2;
+  padding: 20px 10px;
 }
-.uploadCos{
-  width:100%;
-  min-height:85px;
-  background-color:#f2f2f2;
-  padding:20px 10px;
+.uploadFlolder {
+  width: 100%;
+  min-height: 85px;
+  background-color: #f2f2f2;
+  padding: 20px 10px;
+}
+.uploadCos {
+  width: 100%;
+  min-height: 85px;
+  background-color: #f2f2f2;
+  padding: 20px 10px;
 }
 .fileinput-button {
   position: relative;
   display: inline-block;
   overflow: hidden;
-  input{
-    position:absolute;
+  input {
+    position: absolute;
     right: 0px;
     top: 0px;
     opacity: 0;
     font-size: 200px;
   }
 }
-.tipRed{
-  color:red;
+.tipRed {
+  color: red;
 }
-.setWidthChoose{
-  width:250px;
-  div.el-input{
-    width:250px;
+.setWidthChoose {
+  width: 250px;
+  div.el-input {
+    width: 250px;
   }
 }
-.cosFilePath{
-  width:250px;
-  input{
-    width:250px;
+.cosFilePath {
+  width: 250px;
+  input {
+    width: 250px;
   }
 }
-.bottomCodeShow{
-  width:100%;
-  margin-top:20px;
-  min-height:200px;
-  h3{
-    font-size:14px;
-    font-weight:600;
-    span{
-      color:green;
+.bottomCodeShow {
+  width: 100%;
+  margin-top: 20px;
+  min-height: 200px;
+  h3 {
+    font-size: 14px;
+    font-weight: 600;
+    span {
+      color: green;
     }
   }
 }
-.borderLeftBlue{
-  background-color:rgb(242, 242, 242);
-  font-size:14px;
-  border-left:11px solid rgb(210, 231, 247);
-  padding:20px 12px;
-  margin-bottom:20px;
-  h1{
-    color:rgb(48, 127, 220);
-    font-size:14px;
-    font-weight:100;
+.borderLeftBlue {
+  background-color: rgb(242, 242, 242);
+  font-size: 14px;
+  border-left: 11px solid rgb(210, 231, 247);
+  padding: 20px 12px;
+  margin-bottom: 20px;
+  h1 {
+    color: rgb(48, 127, 220);
+    font-size: 14px;
+    font-weight: 100;
   }
 }
-.borderLeftBlue2{
-  float:left;
-  margin-right:20px;
-  width:30%;
-  min-height:400px;
-  p{
-    line-height:24px;
-    span:nth-child(1){
-      color:rgb(48, 127, 220);
-    }
-    span:nth-child(2){
-      color:#888;
-    }
-  }
-}
-.borderLeftBlue3{
-  float:left;
-  width:68.7%;
-  min-height:400px;
-  div{
+.borderLeftBlue2 {
+  float: left;
+  margin-right: 20px;
+  width: 30%;
+  min-height: 400px;
+  p {
     line-height: 24px;
-    color:#888;
+    span:nth-child(1) {
+      color: rgb(48, 127, 220);
+    }
+    span:nth-child(2) {
+      color: #888;
+    }
+  }
+}
+.borderLeftBlue3 {
+  float: left;
+  width: 68.7%;
+  min-height: 400px;
+  div {
+    line-height: 24px;
+    color: #888;
   }
 }
 </style>
