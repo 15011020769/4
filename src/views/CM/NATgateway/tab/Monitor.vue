@@ -111,7 +111,10 @@
       echartLine,
       XTimeX,
     },
-    created() {},
+  created() {
+    
+    // ssss
+    },
     methods: {
       GetDat(data) {
         this.period = data[0];
