@@ -165,7 +165,7 @@
 <script>
 //import XTimeX from '@/components/TimeX'
 import echartLine from '@/components/echars-line'
-//import { CVM_MONITOR } from '@/constants'
+//import { All_MONITOR } from '@/constants'
 export default {
   data() {
     return {

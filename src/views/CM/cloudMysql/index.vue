@@ -87,7 +87,7 @@
 
 <script>
 import Cities from '@/components/public/CITY';
-import { CVM_CITY, MYSQL_LIST, CVM_PROJECT } from '@/constants';
+import { CVM_CITY, MYSQL_LIST, ALL_PROJECT } from '@/constants';
 export default {
   data() {
     return {
@@ -159,7 +159,7 @@ export default {
         })
         .then(() => {
           // 获取项目列表
-          this.axios.post(CVM_PROJECT, paramS).then((data) => {
+          this.axios.post(ALL_PROJECT, paramS).then((data) => {
             this.ProjectData = data.data;
 
             for (let i = 0; i < this.TbaleData.length; i++) {

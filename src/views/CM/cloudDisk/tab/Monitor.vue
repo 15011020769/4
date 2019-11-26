@@ -2,9 +2,7 @@
   <div class='Monitor'>
 
     <!-- 时间粒度搜素 -->
-    <XTimeX v-on:qiehuan="GetDat"
-      :classsvalue='value'></XTimeX>
-
+    <XTimeX v-on:switchData="GetDat" :classsvalue='value'></XTimeX>
     <div class='box-dis p-style'>
       <p><i class="el-icon-info"></i>注释：Max、Min和Avg数值统计为当前折线图内所有点的最大值、最小值和平均值</p>
       <p>
@@ -13,40 +11,26 @@
     </div>
     <div class='box-table'>
       <!-- 表格 -->
-      <el-table :data="tableData"
-        style="width: 100%">
-
+      <el-table :data="tableData" style="width: 100%">
         <el-table-column prop="">
           <template slot-scope="scope">
             <span style="font-size:12px;font-weight:bolder;">
-              {{scope.row.metricName | UpName(value)}}
-              <el-popover placement="bottom-start"
-                title=""
-                width="200"
-                trigger="hover">
-                <p>{{scope.row.metricName | UpTitle(value)}}</p>
-                <i class="el-icon-warning"
-                  slot="reference"></i>
+              {{scope.row.MetricName | UpName(value)}}
+              <el-popover placement="bottom-start" title="" width="200" trigger="hover">
+                <p>{{scope.row.MetricName | UpTitle(value)}}</p>
+                <i class="el-icon-warning" slot="reference"></i>
               </el-popover>
             </span>
 
           </template>
         </el-table-column>
 
-        <el-table-column prop="dataPoints"
-          width="600">
+        <el-table-column prop="DataPoints" width="600">
           <template slot-scope="scope">
-            <p v-if="scope.row.dataPoints[0]===null"> 暂无数据</p>
-            <div class='echart'
-              v-if="scope.row.dataPoints[0]!==null">
-              <echart-line id="diskEchearrts-line"
-                :time='timeData'
-                :opData='scope.row.dataPoints'
-                :unit='diskUnit'
-                :title="diskTitle"
-                :period=period
-                :scale=3
-                :xdata=false>
+            <p v-if="scope.row.DataPoints[0]===null"> 暂无数据</p>
+            <div class='echart' v-if="scope.row.DataPoints[0]!==null">
+              <echart-line id="diskEchearrts-line" :time='scope.row.DataPoints[0].Timestamps | UpTime'
+                :opData='scope.row.DataPoints[0].Values' :scale=3 :period=period :xdata=false>
               </echart-line>
             </div>
 
@@ -79,9 +63,7 @@
 
         <el-table-column prop="">
           <template slot-scope="scope">
-            <p> <i class="el-icon-menu i-font"
-                style="font-size:26px;"
-                @click="Modality(scope.row.dataPoints)"></i>
+            <p> <i class="el-icon-menu i-font" style="font-size:26px;" @click="Modality(scope.row.MetricName)"></i>
             </p>
 
           </template>
@@ -89,20 +71,10 @@
 
       </el-table>
       <!-- 模态框 -->
-      <el-dialog title="集群健康状态"
-        :visible.sync="dialogVisible"
-        width="60%"
-        :before-close="handleClose">
-        <XTimeX v-on:qiehuan="GetDat"
-          :classsvalue='value'></XTimeX>
-        <echart-line id="diskEchearrts-line"
-          class="echart-wh"
-          :time='timeData'
-          :opData='opDiskData'
-          :unit='diskUnit'
-          :period=period
-          :title="diskTitle"
-          :xdata=true>
+      <el-dialog title="集群健康状态" :visible.sync="dialogVisible" width="60%" :before-close="handleClose">
+        <XTimeX v-on:switchData="GetDat" :classsvalue='value'></XTimeX>
+        <echart-line id="diskEchearrts-line" class="echart-wh" :time='timeData | UpTime' :opData='jingData'
+          :period=period :xdata=true>
         </echart-line>
       </el-dialog>
 
@@ -112,216 +84,329 @@
 </template>
 
 <script>
-import XTimeX from '@/components/TimeX';
-import echartLine from '@/components/echars-line';
-import { CVM_MONITOR } from '@/constants';
-export default {
-  data() {
-    return {
-      ID: this.$route.query.id,
-      period: '',
-      Start_End: [],
-      value: 1,
-      dialogVisible: false, // 模态框 （放大后的折线图）
-      pageIndex: 1, // 当前页
-      pageSize: 10, // 每页数
-      totalPage: 0, // 表格数据数组长度
-      tableData: [], // 获取列表数据
-      timeData: [], // 折线图的x轴数据
-      jingData: [],
-    };
-  },
-  components: {
-    echartLine,
-    XTimeX,
-  },
-  created() {},
-  methods: {
-    GetDat(data) {
-      this.period = data[0];
-      this.timeData = data[1];
-      this.Start_End = data[2];
-      this.value = data[3];
-      const metricNArr = [
-        'disk_read_iops',
-        'disk_read_traffic',
-        'disk_write_iops',
-        'disk_write_traffic',
-        'disk_await',
-        'disk_svctm',
-        'disk_util',
-      ];
-      this.tableData = [];
-      for (let i = 0; i < metricNArr.length; i++) {
-        this.Obtain(metricNArr[i]);
-      }
-
-      console.log(this.tableData);
-    },
-    Obtain(metricN) {
-      const param = {
-        Region: this.$cookie.get('regionv1'),
-        namespace: 'qce/block_storage',
-        metricName: metricN,
-        'dimensions.0.name': 'diskId',
-        'dimensions.0.value': this.ID,
-        period: this.period,
-        startTime: this.Start_End.StartTIme,
-        endTime: this.Start_End.EndTIme,
+  import moment from 'moment';
+  import XTimeX from '@/components/public/TimeX';
+  import echartLine from '@/components/public/echars-line';
+  import {
+    All_MONITOR
+  } from '@/constants';
+  export default {
+    data() {
+      return {
+        ID: this.$route.query.id,
+        period: '',
+        Start_End: [],
+        value: 1,
+        dialogVisible: false, // 模态框 （放大后的折线图）
+        pageIndex: 1, // 当前页
+        pageSize: 10, // 每页数
+        totalPage: 0, // 表格数据数组长度
+        tableData: [], // 获取列表数据
+        timeData: [], // 折线图的x轴数据
+        jingData: [],
+        MetricName: ''
       };
-      this.axios.post(CVM_MONITOR, param).then((data) => {
-        this.tableData.push(data);
-      });
     },
+    components: {
+      echartLine,
+      XTimeX,
+    },
+    created() {},
+    methods: {
+      GetDat(data) {
+        this.period = data[0];
+        this.Start_End = data[1];
+        this.value = data[2]
+        const metricNArr = [
+          'CPUUsage',
+          'CPULoadAvg',
+          'MemUsed',
+          'MemUsage',
+          'TcpCurrEstab',
+          'lanOuttraffic',
+          'lanIntraffic',
+          'lanOutpkg',
+          'lanInpkg',
+          'WanOuttraffic',
+          'WanIntraffic',
+          'AccOuttraffic',
+          'WanOutpkg',
+          'WanInpkg'
+        ];
+        this.tableData = []
+        for (let i = 0; i < metricNArr.length; i++) {
+          this.Obtain(metricNArr[i]);
+        }
+        if (this.MetricName) {
+          this.getModality(this.MetricName)
+        }
+      },
+      // 
+      Obtain(metricN) {
+        const param = {
+          Version: '2018-07-24',
+          Region: this.$cookie.get('regionv2'),
+          Namespace: 'QCE/BLOCK_STORAGE',
+          MetricName: metricN,
+          'Instances.0.Dimensions.0.Name': 'diskId',
+          'Instances.0.Dimensions.0.Value': this.ID,
+          Period: this.period,
+          StartTime: this.Start_End.StartTIme,
+          EndTime: this.Start_End.EndTIme,
+        };
+        this.axios.post(All_MONITOR, param).then((data) => {
+          this.tableData.push(data.Response);
+        });
+      },
+      getModality(MetricName) {
+        const param = {
+          Version: '2018-07-24',
+          Region: this.$cookie.get('regionv2'),
+          Namespace: 'QCE/BLOCK_STORAGE',
+          MetricName: MetricName,
+          'Instances.0.Dimensions.0.Name': 'diskId',
+          'Instances.0.Dimensions.0.Value': this.ID,
+          Period: this.period,
+          StartTime: this.Start_End.StartTIme,
+          EndTime: this.Start_End.EndTIme,
+        };
+        this.axios.post(All_MONITOR, param).then((data) => {
+          this.timeData = data.Response.DataPoints[0].Timestamps
+          this.jingData = data.Response.DataPoints[0].Values
+        });
+      },
+      // 模态框
+      Modality(MetricName) {
+        this.MetricName = MetricName
+        this.dialogVisible = true;
+        this.getModality(this.MetricName)
+      },
+      handleClose(done) {
+        done();
+      },
 
-    // 模态框
-    Modality(Y) {
-      this.dialogVisible = true;
-      this.opDiskData = Y;
     },
+    filters: {
+      UpName(value) {
+        if (value === 'lanOuttraffic') {
+          return (value = '内网出带宽');
+        }
+        if (value === 'lanIntraffic') {
+          return (value = '内网入带宽');
+        }
+        if (value === 'lanOutpkg') {
+          return (value = '内网出包量');
+        }
+        if (value === 'lanInpkg') {
+          return (value = '内网入包量');
+        }
+        if (value === 'WanOuttraffic') {
+          return (value = '外网出带宽');
+        }
+        if (value === 'WanIntraffic') {
+          return (value = '外网入带宽');
+        }
+        if (value === 'AccOuttraffic') {
+          return (value = '外网出流量');
+        }
+        if (value === 'WanOutpkg') {
+          return (value = '外网出包量');
+        }
+        if (value === 'WanInpkg') {
+          return (value = '外网入包量');
+        }
+        if (value === 'CPUUsage') {
+          return (value = 'CPU使用率');
+        }
 
-    handleClose(done) {
-      done();
+        if (value === 'CPULoadAvg') {
+          return (value = 'CPU平均负载');
+        }
+        if (value === 'MemUsed') {
+          return (value = '内存使用量');
+        }
+        if (value === 'MemUsage') {
+          return (value = '内存利用率');
+        }
+        if (value === 'TcpCurrEstab') {
+          return (value = 'TCP连接数');
+        }
+        if (value === '') {
+          return (value = '');
+        }
+      },
+      UpTitle(value) {
+        if (value === 'lanOuttraffic') {
+          return (value = '内网网卡的平均每秒出流量');
+        }
+        if (value === 'lanIntraffic') {
+          return (value = '内网网卡的平均每秒入流量');
+        }
+        if (value === 'lanOutpkg') {
+          return (value = '内网网卡的平均每秒出包量');
+        }
+        if (value === 'lanInpkg') {
+          return (value = '内网网卡的平均每秒入包量');
+        }
+        if (value === 'WanOuttraffic') {
+          return (value = '外网平均每秒出流量，最小粒度数据为10秒总流量/10秒 计算得出');
+        }
+        if (value === 'WanIntraffic') {
+          return (value = '外网平均每秒入流量');
+        }
+        if (value === 'AccOuttraffic') {
+          return (value = '外网网卡的平均每秒出流量');
+        }
+        if (value === 'WanOutpkg') {
+          return (value = '外网平均每秒出包量');
+        }
+        if (value === 'WanInpkg') {
+          return (value = '外网平均每秒入包量');
+        }
+        if (value === 'CPUUsage') {
+          return (value = 'CPU利用率是通过CVM子机内部监控组件采集上报，数据更加精准');
+        }
+        if (value === 'CPULoadAvg') {
+          return (value = '1分钟内CPU平均负载，取 /proc/loadavg 第一列数据（windows操作系统无此指标），依赖监控组件安装采集');
+        }
+        if (value === 'MemUsed') {
+          return (value = '使用的内存量，不包括系统缓存和缓存区占用内存，依赖监控组件安装采集');
+        }
+        if (value === 'MemUsage') {
+          return (value = '用户实际使用的内存量与总内存量之比，不包括缓冲区与系统缓存占用的内存');
+        }
+        if (value === 'TcpCurrEstab') {
+          return (value = '处于 ESTABLISHED 状态的 TCP 连接数量，依赖监控组件安装采集');
+        }
+        if (value === '') {
+          return (value = '');
+        }
+      },
+      UpTime(value) {
+        let timeArr = []
+        for (let i = 0; i < value.length; i++) {
+          let uptime = moment(value[i] * 1000).format(
+            'YYYY-MM-DD HH:mm:ss',
+          );
+          timeArr.push(uptime)
+        }
+
+        return timeArr
+      }
     },
-  },
-  filters: {
-    UpName(value) {
-      if (value === 'disk_read_iops') {
-        return (value = '硬盘读 IOPS');
-      }
-      if (value === 'disk_read_traffic') {
-        return (value = '硬盘读流量');
-      }
-      if (value === 'disk_write_iops') {
-        return (value = '硬盘写 IOPS');
-      }
-      if (value === 'disk_write_traffic') {
-        return (value = '硬盘写流量');
-      }
-      if (value === 'disk_await') {
-        return (value = '硬盘 IO 等待时间');
-      }
-      if (value === 'disk_svctm') {
-        return (value = '硬盘 IO 服务时间');
-      }
-      if (value === 'disk_util') {
-        return (value = '硬盘 IO 繁忙比率');
-      }
-    },
-    UpTitle(value) {
-      if (value === 'disk_read_iops') {
-        return (value = '硬盘平均每秒读次数');
-      }
-      if (value === 'disk_read_traffic') {
-        return (value = '平均每秒从硬盘读到内存的数据量');
-      }
-      if (value === 'disk_write_iops') {
-        return (value = '硬盘平均每秒写次数');
-      }
-      if (value === 'disk_write_traffic') {
-        return (value = '平均每秒从内存写到硬盘的数据量');
-      }
-      if (value === 'disk_await') {
-        return (value = '硬盘I/O平均每次操作的等待时间');
-      }
-      if (value === 'disk_svctm') {
-        return (value = '硬盘平均每次I/O操作所花的时间');
-      }
-      if (value === 'disk_util') {
-        return (value = '硬盘有IO操作的时间与总时间的百分比');
-      }
-    },
-  },
-};
+  };
+
 </script>
 
-<style  scoped lang="scss">
-.Monitor {
-  background: #ffffff;
-  margin-top: 20px;
-  margin-bottom: 50px;
-  border: 1px solid #cccccc;
-  -webkit-box-shadow: 0px 3px 3px #c8c8c8;
-  -moz-box-shadow: 0px 3px 3px #c8c8c8;
-  box-shadow: 0px 3px 3px #c8c8c8;
-}
-.box-dis {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 40px;
+<style scoped lang="scss">
+  .Monitor {
+    background: #ffffff;
+    margin-top: 20px;
+    margin-bottom: 50px;
+    border: 1px solid #cccccc;
+    -webkit-box-shadow: 0px 3px 3px #c8c8c8;
+    -moz-box-shadow: 0px 3px 3px #c8c8c8;
+    box-shadow: 0px 3px 3px #c8c8c8;
+  }
+
+  .box-dis {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 40px;
+
+    .btn-style {
+      margin-left: 20px;
+      display: flex;
+      line-height: 32px;
+
+      .drop {
+        margin-left: 30px;
+
+        span {
+          color: #cccccc;
+          font-size: 10px;
+        }
+
+        ::v-deep.el-input {
+          width: 100px !important;
+          border: none;
+        }
+      }
+    }
+
+    p:nth-child(1) {
+      color: #ccc;
+      font-size: 14px;
+      margin-left: 30px;
+    }
+
+    p:nth-child(2) {
+      margin-right: 20px;
+    }
+  }
+
+  .btn-sty {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .p-dis {
+    display: flex;
+
+    span {
+      line-height: 40px;
+    }
+
+    .width-date {
+      width: 150px;
+      margin-left: 20px;
+    }
+  }
+
+  .margin-row {
+    margin-top: 30px;
+    margin-left: 55%;
+  }
+
+  .dateheight {
+    height: 34px;
+  }
+
+  ::v-deep.echart-wh {
+    width: 100% !important;
+    height: 500px !important;
+  }
+
   .btn-style {
     margin-left: 20px;
     display: flex;
     line-height: 32px;
+
     .drop {
-      margin-left: 30px;
+      margin-left: 500px;
+
       span {
         color: #cccccc;
         font-size: 10px;
       }
-       ::v-deep.el-input {
+
+      ::v-deep.el-input {
         width: 100px !important;
         border: none;
       }
     }
   }
-  p:nth-child(1) {
-    color: #ccc;
-    font-size: 14px;
-    margin-left: 30px;
+
+  .box-table {
+    width: 100%;
   }
-  p:nth-child(2) {
-    margin-right: 20px;
+
+  ::v-deep.i-font {
+    font-size: 36px;
   }
-}
-.btn-sty {
-  display: flex;
-  justify-content: space-between;
-}
-.p-dis {
-  display: flex;
-  span {
-    line-height: 40px;
+
+  ::v-deep.el-button--small {
+    font-size: 14px !important;
   }
-  .width-date {
-    width: 150px;
-    margin-left: 20px;
-  }
-}
-.margin-row {
-  margin-top: 30px;
-  margin-left: 55%;
-}
-.dateheight {
-  height: 34px;
-}
- ::v-deep.echart-wh {
-  width: 1100px !important;
-  height: 500px !important;
-}
-.btn-style {
-  margin-left: 20px;
-  display: flex;
-  line-height: 32px;
-  .drop {
-    margin-left: 500px;
-    span {
-      color: #cccccc;
-      font-size: 10px;
-    }
-     ::v-deep.el-input {
-      width: 100px !important;
-      border: none;
-    }
-  }
-}
-.box-table {
-  width: 100%;
-}
- ::v-deep.i-font {
-  font-size: 36px;
-}
- ::v-deep.el-button--small {
-  font-size: 14px !important;
-}
+
 </style>
