@@ -175,7 +175,6 @@
         if (this.searchValue !== '' && this.searchInput !== '') {
           param['Filters.0.Name'] = this.searchValue
           param['Filters.0.Values.0'] = this.searchInput
-
         }
         const paramS = {
           allList: 0,
