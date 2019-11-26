@@ -1,6 +1,5 @@
 <template>
   <div class='Monitor'>
-
     <!-- 时间粒度搜素 -->
     <XTimeX v-on:switchData="GetDat" :classsvalue='value'></XTimeX>
     <div class='box-dis p-style'>
@@ -118,20 +117,13 @@
         this.Start_End = data[1];
         this.value = data[2]
         const metricNArr = [
-          'CPUUsage',
-          'CPULoadAvg',
-          'MemUsed',
-          'MemUsage',
-          'TcpCurrEstab',
-          'lanOuttraffic',
-          'lanIntraffic',
-          'lanOutpkg',
-          'lanInpkg',
-          'WanOuttraffic',
-          'WanIntraffic',
-          'AccOuttraffic',
-          'WanOutpkg',
-          'WanInpkg'
+          'DiskReadIops',
+          'DiskReadTraffic',
+          'DiskWriteIops',
+          'DiskWriteTraffic',
+          'DiskAwait',
+          'DiskSvctm',
+          'DiskUtil'
         ];
         this.tableData = []
         for (let i = 0; i < metricNArr.length; i++) {
@@ -188,95 +180,53 @@
     },
     filters: {
       UpName(value) {
-        if (value === 'lanOuttraffic') {
-          return (value = '内网出带宽');
+        if (value === 'DiskReadIops') {
+          return (value = '硬盘读 IOPS');
         }
-        if (value === 'lanIntraffic') {
-          return (value = '内网入带宽');
+        if (value === 'DiskReadTraffic') {
+          return (value = '硬盘读流量');
         }
-        if (value === 'lanOutpkg') {
-          return (value = '内网出包量');
+        if (value === 'DiskWriteIops') {
+          return (value = '硬盘写 IOPS	');
         }
-        if (value === 'lanInpkg') {
-          return (value = '内网入包量');
+        if (value === 'DiskWriteTraffic') {
+          return (value = '硬盘写流量');
         }
-        if (value === 'WanOuttraffic') {
-          return (value = '外网出带宽');
+        if (value === 'DiskAwait') {
+          return (value = '硬盘 IO 等待时间');
         }
-        if (value === 'WanIntraffic') {
-          return (value = '外网入带宽');
+        if (value === 'DiskSvctm') {
+          return (value = '硬盘 IO 服务时间');
         }
-        if (value === 'AccOuttraffic') {
-          return (value = '外网出流量');
-        }
-        if (value === 'WanOutpkg') {
-          return (value = '外网出包量');
-        }
-        if (value === 'WanInpkg') {
-          return (value = '外网入包量');
-        }
-        if (value === 'CPUUsage') {
-          return (value = 'CPU使用率');
-        }
-
-        if (value === 'CPULoadAvg') {
-          return (value = 'CPU平均负载');
-        }
-        if (value === 'MemUsed') {
-          return (value = '内存使用量');
-        }
-        if (value === 'MemUsage') {
-          return (value = '内存利用率');
-        }
-        if (value === 'TcpCurrEstab') {
-          return (value = 'TCP连接数');
+        if (value === 'DiskUtil') {
+          return (value = '硬盘 IO 繁忙比率');
         }
         if (value === '') {
           return (value = '');
         }
+
       },
       UpTitle(value) {
-        if (value === 'lanOuttraffic') {
-          return (value = '内网网卡的平均每秒出流量');
+        if (value === 'DiskReadIops') {
+          return (value = '硬盘平均每秒读次数');
         }
-        if (value === 'lanIntraffic') {
-          return (value = '内网网卡的平均每秒入流量');
+        if (value === 'DiskReadTraffic') {
+          return (value = '平均每秒从硬盘读到内存的数据量');
         }
-        if (value === 'lanOutpkg') {
-          return (value = '内网网卡的平均每秒出包量');
+        if (value === 'DiskWriteIops') {
+          return (value = '硬盘平均每秒写次数');
         }
-        if (value === 'lanInpkg') {
-          return (value = '内网网卡的平均每秒入包量');
+        if (value === 'DiskWriteTraffic') {
+          return (value = '平均每秒从内存写到硬盘的数据量');
         }
-        if (value === 'WanOuttraffic') {
-          return (value = '外网平均每秒出流量，最小粒度数据为10秒总流量/10秒 计算得出');
+        if (value === 'DiskAwait') {
+          return (value = '硬盘I/O平均每次操作的等待时间');
         }
-        if (value === 'WanIntraffic') {
-          return (value = '外网平均每秒入流量');
+        if (value === 'DiskSvctm') {
+          return (value = '硬盘平均每次I/O操作所花的时间');
         }
-        if (value === 'AccOuttraffic') {
-          return (value = '外网网卡的平均每秒出流量');
-        }
-        if (value === 'WanOutpkg') {
-          return (value = '外网平均每秒出包量');
-        }
-        if (value === 'WanInpkg') {
-          return (value = '外网平均每秒入包量');
-        }
-        if (value === 'CPUUsage') {
-          return (value = 'CPU利用率是通过CVM子机内部监控组件采集上报，数据更加精准');
-        }
-        if (value === 'CPULoadAvg') {
-          return (value = '1分钟内CPU平均负载，取 /proc/loadavg 第一列数据（windows操作系统无此指标），依赖监控组件安装采集');
-        }
-        if (value === 'MemUsed') {
-          return (value = '使用的内存量，不包括系统缓存和缓存区占用内存，依赖监控组件安装采集');
-        }
-        if (value === 'MemUsage') {
-          return (value = '用户实际使用的内存量与总内存量之比，不包括缓冲区与系统缓存占用的内存');
-        }
-        if (value === 'TcpCurrEstab') {
-          return (value = '处于 ESTABLISHED 状态的 TCP 连接数量，依赖监控组件安装采集');
+        if (value === 'DiskUtil') {
+          return (value = '硬盘有IO操作的时间与总时间的百分比');
         }
         if (value === '') {
           return (value = '');
