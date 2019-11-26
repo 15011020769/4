@@ -60,7 +60,7 @@
         <el-table-column label="健康状态"></el-table-column>
         <el-table-column label="告警策略数"></el-table-column>
       </el-table>
-      <div class="Right-style pagstyle">
+      <div class="Right-style pagstyle" style="display:flex;justify-content:flex-end;padding:20px;">
         <el-pagination
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
@@ -238,6 +238,7 @@ export default {
   line-height: 60px;
   font-weight: bold;
   padding-left: 20px;
+  font-size: 16px;
 }
 
 .Right-style {
