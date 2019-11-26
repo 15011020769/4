@@ -71,7 +71,7 @@
   import {
     ALL_CITY,
     CVM_LIST,
-    CVM_PROJECT
+    ALL_PROJECT
   } from '@/constants';
   export default {
     data() {
@@ -193,7 +193,7 @@
           })
           .then(() => {
             // 获取项目列表
-            this.axios.post(CVM_PROJECT, paramS).then((data) => {
+            this.axios.post(ALL_PROJECT, paramS).then((data) => {
               this.ProjectData = data.data;
               for (let i = 0; i < this.TbaleData.length; i++) {
 

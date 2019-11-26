@@ -114,7 +114,7 @@
 <script>
 import XTimeX from '@/components/TimeXF';
 import echartLine from '@/components/echars-line';
-import { CVM_MONITOR } from '@/constants';
+import { All_MONITOR } from '@/constants';
 export default {
   data() {
     return {
@@ -214,7 +214,7 @@ export default {
         startTime: this.Start_End.StartTIme,
         endTime: this.Start_End.EndTIme,
       };
-      this.axios.post(CVM_MONITOR, param).then((data) => {
+      this.axios.post(All_MONITOR, param).then((data) => {
         this.tableData.push(data);
       });
     },

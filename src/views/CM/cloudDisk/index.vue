@@ -73,26 +73,20 @@
   import {
     ALL_CITY,
     DISK_LIST,
-    CVM_PROJECT
+    ALL_PROJECT
   } from '@/constants';
   export default {
     data() {
       return {
         searchOptions: [{
-          value: 'project-id',
-          label: '项目ID'
+          value: 'disk-usage',
+          label: '云盘类型'
         }, {
-          value: 'instance-id',
-          label: '实例ID'
+          value: 'disk-id',
+          label: '云硬盘ID'
         }, {
-          value: 'instance-name',
-          label: '实例名称'
-        }, {
-          value: 'private-ip-address',
-          label: '内网IP'
-        }, {
-          value: 'public-ip-address ',
-          label: '公网IP'
+          value: 'disk-name',
+          label: '云盘名称'
         }],
         searchValue: '',
         DiskUsage: {
@@ -195,7 +189,7 @@
       },
       jump(id) {
         this.$router.push({
-          name: 'CMCVMdetails',
+          name: 'Diskdetails',
           query: {
             id,
           },
