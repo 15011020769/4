@@ -75,6 +75,13 @@ let product = {
     filename: 'index.html',
     title: '台富云-WEB应用防火墙',
     chunks: ['chunk-vendors', 'chunk-common', 'WAF']
+  },
+  KMS: {
+    entry: 'src/views/KMS/main.js',
+    template: 'src/public/index.html',
+    filename: 'index.html',
+    title: '台富云-密钥管理系统',
+    chunks: ['chunk-vendors', 'chunk-common', 'KMS']
   }
 }
 let page = {}

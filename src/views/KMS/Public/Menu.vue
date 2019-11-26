@@ -1,15 +1,12 @@
 <template>
-  <div class="CCN">
-    <div class="big-title">费用中心</div>
-    <el-menu default-active="2" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose" background-color="#292b36" text-color="#fff" active-text-color="#ffd04b" :router="true">
-      <el-menu-item index="deal">
-        <span slot="title">订单管理</span>
+  <div class="kms">
+    <div class="big-title">密钥管理系统</div>
+    <el-menu default-active="2" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose" background-color="#545c64" text-color="#fff" active-text-color="#ffd04b" :router="true">
+      <el-menu-item index="userKms">
+        <span slot="title">用户密钥</span>
       </el-menu-item>
-      <el-menu-item index="overview">
-        <span slot="title">账单概览</span>
-      </el-menu-item>
-      <el-menu-item index="detail">
-        <span slot="title">账单明细</span>
+      <el-menu-item index="cloudsKms">
+        <span slot="title">云产品密钥</span>
       </el-menu-item>
     </el-menu>
   </div>
@@ -35,7 +32,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.CCN {
+.kms {
   ::v-deep .el-menu{
     border-right: 0 !important;
   }

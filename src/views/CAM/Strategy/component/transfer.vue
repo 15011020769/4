@@ -8,7 +8,7 @@
         <el-table
           class="table-left"
           ref="multipleOption"
-          :data="policiesData"
+          :data="transfer_data"
           size="small"
           height="300"
           tooltip-effect="dark"
@@ -16,15 +16,14 @@
           @row-click="selectedRow"
           @selection-change="handleSelectionChange"
         >
-          <el-table-column type="selection" prop="policyId" width="30"></el-table-column>
-          <el-table-column prop="policyName" label="用户" show-overflow-tooltip>
+          <el-table-column type="selection" prop="id" width="28"></el-table-column>
+          <el-table-column prop="name" label="用户" show-overflow-tooltip>
             <template slot-scope="scope">
-              <p>{{scope.row.policyName}}</p>
-              <p>{{scope.row.description}}</p>
+              <p>{{scope.row.name}}</p>
             </template>
           </el-table-column>
           <el-table-column prop="type" label="切换成用户组" width="200">
-            <template slot="header" slot-scope="scope">
+            <template slot="header">
               <el-dropdown trigger="click" @command="handleCommand" size="mini">
                 <span style="color:#909399">
                   {{ tableTitle }}
@@ -32,12 +31,16 @@
                 </span>
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item
-                    v-for="item in table_options"
+                    v-for="item in table_options2"
                     :key="item.value"
                     :command="item.label"
                   >{{item.label}}</el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
+            </template>
+            <template slot-scope="scope">
+              <div v-if="scope.row.type == 'user'">用户</div>
+              <div v-else-if="scope.row.type == 'group'">用户组</div>
             </template>
           </el-table-column>
         </el-table>
@@ -88,30 +91,72 @@ export default {
   },
   data() {
     return {
-      policiesData: [
-        {policyName:"2453",type:"用户"},
-        {policyName:"2453",type:"用户组"},
-        ],
+      //  用户/用户组列表
+      transfer_data: [{}],
+      // 选定的用户列表
+      transfer_data_right: [],
+      
       policiesSelectedData: [],
       totalNum: "",
       search: "",
       rp: 20,
       page: 1,
       tableTitle: "切换成用户组",
-      table_options: [
+      table_options2: [
         {
-          value: "选项1",
+          value: "user",
           label: "用户"
         },
         {
-          value: "选项2",
+          value: "group",
           label: "用户组"
         },
       ]
-    };
+    }
   },
-  mounted() {},
+  created() {
+    this.getList()
+  },
   methods: {
+    getList () {
+      console.log('method getData')
+      this.transfer_data.splice(0, this.transfer_data.length)
+      this.transfer_data_right.splice(0, this.transfer_data_right.length)
+      // 1.查询用户列表
+      let paramsUser = {
+        Version: '2019-01-16',
+      }
+      this.$axios.post('cam2/ListUsers', paramsUser).then(res => {
+        for(let i in res.Response.Data) {
+          let str = {}
+          str.name = res.Response.Data[i].Name
+          str.id = res.Response.Data[i].Uin
+          str.type = 'user'
+          this.transfer_data.push(str)
+        }
+      })
+      // 2.查询用户组列表ListGroups
+      let paramsGroup = {
+        Version: '2019-01-16',
+      }
+      this.$axios.post('cam2/ListGroups', paramsGroup).then(res => {
+        for(let i in res.Response.GroupInfo) {
+          let str = {}
+          str.name = res.Response.GroupInfo[i].GroupName
+          str.id = res.Response.GroupInfo[i].GroupId
+          str.type = 'group'
+          this.transfer_data.push(str)
+        }
+      })
+      // 3.查询策略关联的实体列表
+      // let params2 = {
+      //   Version: '2019-01-16',
+      //   PolicyId: policy.PolicyId
+      // }
+      // this.$axios.post('cam2/ListEntitiesForPolicy', params2).then(res  => {
+      //   console.log(res)
+      // })
+    },
     handleCommand(command) {
       console.log(command);
       this.tableTitle = command;

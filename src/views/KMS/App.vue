@@ -1,5 +1,5 @@
 <template>
-  <div id="CAP">
+  <div id="KMS">
     <el-container v-if="$route.meta.keepAlive">
       <el-header>
         <nav-header></nav-header>
@@ -21,7 +21,6 @@
 <script>
 import NavHeader from '@/components/HeaderAside/Header'
 import LeftAside from './Public/Menu'
-
 export default {
   data () {
     return {}
@@ -57,7 +56,7 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-#CAP {
+#KMS {
   height: 100%;
   .el-container {
     height: 100%;

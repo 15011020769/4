@@ -40,7 +40,7 @@
                     <el-input size="mini" v-model="scope.row.name"></el-input>
                   </template>
                 </el-table-column>
-                <el-table-column label="备注" show-overflow-tooltip>
+                <el-table-column label="备注" show-overflow-tooltip prop="mailbox">
                   <template slot-scope="scope">
                     <el-input size="mini" v-model="scope.row.mailbox"></el-input>
                   </template>
@@ -58,7 +58,7 @@
                   <el-input size="mini" class="hanlin wid" v-model="scope.row.iphone"></el-input>
                   </template>
                 </el-table-column>
-                <el-table-column prop="mailbox" label="邮箱">
+                <el-table-column prop="remarks" label="邮箱">
                   <template slot-scope="scope">
                     <el-input class="hanlin wids" size="mini" v-model="scope.row.remarks"></el-input>
                     <el-button type="text">删除</el-button>
@@ -199,6 +199,21 @@ export default {
   },
 
   methods: {
+    complete(){
+      console.log(this.tableData)
+       let params = {
+         Action:'AddUser',
+         Version:'2019-01-16',
+         Name:this.tableData[0].name,
+         PhoneNum:this.tableData[0].iphone,
+         Remark:this.tableData[0].mailbox,
+         Email:this.tableData[0].remarks
+       }
+       let url = 'cam2/AddUser'
+       this.axios.post(url,params).then((data)=>{
+           console.log(data)
+       })
+    },
     prev() {
       --this.active;
       if(this.active < 0) this.active = 0;

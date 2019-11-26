@@ -3,7 +3,7 @@
     <div class="top">
       <div class="top-left">
         <span class="top-text">策略</span>
-        <el-select size="mini" v-model="value" placeholder="全部策略">
+        <el-select size="mini" v-model="policyScope" placeholder="全部策略" @change="changePolicyScope">
           <el-option
             v-for="item in options"
             :key="item.value"
@@ -80,7 +80,7 @@
           style="background:#fff;padding:10px;display:flex;justify-content: space-between;line-height:30px"
         >
           <div>
-            <span style="font-size:12px;color:#888">已选 33 项，共 {{total}} 项</span>
+            <span style="font-size:12px;color:#888">已选 {{choiceNum}} 项，共 {{total}} 项</span>
           </div>
           <div>
             <el-pagination
@@ -97,18 +97,10 @@
       </div>
     </div>
     <!-- 关联用户/用户组 模态窗 -->
-    <el-dialog title :visible.sync="dialogVisible" width="50%">
+    <el-dialog title :visible.sync="dialogVisible" width="72%">
       <h3 style="color:#000;margin-bottom:20px;">关联用户/用户组</h3>
       <div class="dialog_div">
-        <!-- <el-transfer
-          v-model="transfer_value"
-          :titles="['关联用户', '已选择']"
-          :props="{key: 'Uin',label: 'Name'}"
-          :data="transfer_data"
-          filterable
-          @change="handleChange"
-        ></el-transfer> -->
-        <transfer></transfer>
+        <transfer v-if="transferFlag"></transfer>
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button size="mini" @click="dialogVisible = false">取 消</el-button>
@@ -120,26 +112,26 @@
 <script>
 import transfer from './component/transfer'
 export default {
-   components: {
-      transfer,
-    },
+  components: {
+    transfer,
+  },
   data() {
     return {
       options: [
         {
-          value: "选项1",
+          value: "All",
           label: "全部策略"
         },
         {
-          value: "选项2",
+          value: "Local",
           label: "自定义策略"
         },
         {
-          value: "选项3",
+          value: "QCS",
           label: "预设策略"
         }
       ],
-      value: "",
+      policyScope: 'All',
       input: "",
       tableData: [{}],  //策略列表数据
       selectedData: [], //选择要删除的
@@ -161,13 +153,9 @@ export default {
       tableTitle: "服务类型",
       dialogVisible: false,
       policyId: '', // 策略Id
-      transfer_value: [],
-      //  用户列表
-      transfer_data: [{}],
-      // 选定的用户列表
-      transfer_data_right: [],
-      //  用户组列表
+      transferFlag: false,  //模态框强制刷新flag
       pageSize: 20,
+      choiceNum: 0,
       total: 0,
       currentPage: 1,
     };
@@ -176,14 +164,14 @@ export default {
     this.getData()
   },
   methods: {
-    // 初始化策略列表数据（全部策略）
+    // 初始化策略列表数据（默认全部策略）
     getData () {
       var params = {
         Version: '2019-01-16',
         // Region: 'ap-taipei',
         // Rp: '',
         // Page: '',
-        // Scope: '',
+        Scope: this.policyScope,
         // Keyword: ''
       }
       this.$axios.post('cam2/ListPolicies', params).then(res => {
@@ -192,6 +180,10 @@ export default {
         this.tableData = res.Response.List
         this.total = res.Response.TotalNum
       })
+    },
+    changePolicyScope () {
+      console.log(this.policyScope)
+      this.getData()
     },
     // 跳转到详情页面
     handleClick(policy) {
@@ -206,33 +198,10 @@ export default {
     // 关联用户/用户组（展现模态框）
     handleClick_user(policy) {
       this.policyId = policy.PolicyId
-      this.transfer_data.splice(0, this.transfer_data.length)
-      this.transfer_data_right.splice(0, this.transfer_data_right.length)
-      // console.log(policy.PolicyId)
-      // 1.查询用户列表
-      let paramsUser = {
-        Version: '2019-01-16',
-      }
-      this.$axios.post('cam2/ListUsers', paramsUser).then(res => {
-        console.log(res)
-        this.transfer_data = res.Response.Data
+      this.transferFlag= false
+      this.$nextTick(() => {
+          this.transferFlag= true;
       })
-      // 2.查询用户组列表ListGroups
-      let paramsGroup = {
-        Version: '2019-01-16',
-      }
-      this.$axios.post('cam2/ListGroups', paramsGroup).then(res => {
-        console.log(res)
-        // this.transfer_data = res.Response.Data
-      })
-      // 3.查询策略关联的实体列表
-      // let params2 = {
-      //   Version: '2019-01-16',
-      //   PolicyId: policy.PolicyId
-      // }
-      // this.$axios.post('cam2/ListEntitiesForPolicy', params2).then(res  => {
-      //   console.log(res)
-      // })
       this.dialogVisible = true
     },
     // 穿梭框：value右侧框值、direction操作、movedKeys移动值
@@ -279,6 +248,7 @@ export default {
     // 选择策略
     handleSelectionChange(data) {
       this.selectedData = data;
+      this.choiceNum = data.length
     },
     // 批量删除策略
     handleDelete() {
@@ -292,10 +262,9 @@ export default {
           params[str] = item.PolicyId
         })
       }
-      console.log(params)
-      // this.$axios.post('cam2/DeletePolicy', params).then(res  => {
-      //   console.log(res)
-      // })
+       this.$axios.post('cam2/DeletePolicy', params).then(res  => {
+         console.log(res)
+       })
       this.selectedData.splice(0, this.selectedData.length)
       this.getData()
     },

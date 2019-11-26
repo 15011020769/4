@@ -43,3 +43,11 @@ a:hover,
 a:focus {
   text-decoration: none;
 }
+.dialog-footer {
+  text-align: center;
+  .el-button {
+    height: 30px;
+    line-height: 0;
+    border-radius: 0;
+  }
+}

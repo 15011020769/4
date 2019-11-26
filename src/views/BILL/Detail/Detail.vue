@@ -1,6 +1,6 @@
 <template>
   <div class="mod-role">
-    <span style="font-size: 16px; font-weight: 700; line-height:3;">账单管理</span>
+    <span style="font-size: 16px; font-weight: 700; line-height:3;">账单明细</span>
     <el-date-picker v-model="dataForm.month" type="month" value-format="yyyy-MM" size="small" @change="getDataList()" style="padding-left: 5px;">
     </el-date-picker>
     <span style="padding-left: 10px; font-size: 12px;">按扣费周期（按扣费时间统计生产月度账单）</span>
@@ -388,18 +388,16 @@ export default {
       this.cost()
     },
     reminder1 () {
-      if(this.dataForm.businessCodeName.code){
+      if (this.dataForm.businessCodeName.code) {
         return '请选择子产品'
       } else {
-        
         return '请先选择产品'
       }
     },
     reminder2 () {
-      if(this.dataForm.productCodeName.code){
+      if (this.dataForm.productCodeName.code) {
         return '请选择组件类型'
       } else {
-        
         return '请先选择子产品'
       }
     }
