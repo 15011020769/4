@@ -13,15 +13,16 @@ import City from '@/components/Tools/RegionBtn' // 公共组件城市列表
 import Duration from '@/components/Tools/Duration' // 购买时长组件
 import DatePicker from '@/components/Tools/DatePicker' // 日期选择器控件
 import filters from '@/filters/filters.js'
+import i18n from '@/language/i18n.js' // 引入i18n包
 // 引入基本模板
 const echarts = require('echarts/lib/echarts')
-// 引入折线图组件
+    // 引入折线图组件
 require('echarts/lib/chart/line')
-// 引入提示框和title组件，图例
+    // 引入提示框和title组件，图例
 require('echarts/lib/component/tooltip')
 Vue.prototype.$echarts = echarts
 for (let key in filters) {
-  Vue.filter(key, filters[key])
+    Vue.filter(key, filters[key])
 }
 
 Vue.config.productionTip = false
@@ -33,7 +34,8 @@ Vue.use(ElementUI)
 Vue.use(VueCookie)
 
 new Vue({
-  router,
-  // store,
-  render: h => h(App)
+    router,
+    i18n,
+    // store,
+    render: h => h(App)
 }).$mount('#app')
