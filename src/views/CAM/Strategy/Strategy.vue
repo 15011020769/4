@@ -97,17 +97,10 @@
       </div>
     </div>
     <!-- 关联用户/用户组 模态窗 -->
-    <el-dialog title :visible.sync="dialogVisible" width="40%">
+    <el-dialog title :visible.sync="dialogVisible" width="72%">
       <h3 style="color:#000;margin-bottom:20px;">关联用户/用户组</h3>
       <div class="dialog_div">
-        <el-transfer
-          v-model="transfer_value"
-          :titles="['关联用户', '已选择']"
-          :props="{key: 'Uin',label: 'Name'}"
-          :data="transfer_data"
-          filterable
-          @change="handleChange"
-        ></el-transfer>
+        <transfer v-if="transferFlag"></transfer>
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button size="mini" @click="dialogVisible = false">取 消</el-button>
@@ -160,12 +153,7 @@ export default {
       tableTitle: "服务类型",
       dialogVisible: false,
       policyId: '', // 策略Id
-      transfer_value: [],
-      //  用户列表
-      transfer_data: [{}],
-      // 选定的用户列表
-      transfer_data_right: [],
-      //  用户组列表
+      transferFlag: false,  //模态框强制刷新flag
       pageSize: 20,
       choiceNum: 0,
       total: 0,
@@ -210,33 +198,10 @@ export default {
     // 关联用户/用户组（展现模态框）
     handleClick_user(policy) {
       this.policyId = policy.PolicyId
-      this.transfer_data.splice(0, this.transfer_data.length)
-      this.transfer_data_right.splice(0, this.transfer_data_right.length)
-      // console.log(policy.PolicyId)
-      // 1.查询用户列表
-      let paramsUser = {
-        Version: '2019-01-16',
-      }
-      this.$axios.post('cam2/ListUsers', paramsUser).then(res => {
-        console.log(res)
-        this.transfer_data = res.Response.Data
+      this.transferFlag= false
+      this.$nextTick(() => {
+          this.transferFlag= true;
       })
-      // 2.查询用户组列表ListGroups
-      let paramsGroup = {
-        Version: '2019-01-16',
-      }
-      this.$axios.post('cam2/ListGroups', paramsGroup).then(res => {
-        console.log(res)
-        // this.transfer_data = res.Response.Data
-      })
-      // 3.查询策略关联的实体列表
-      // let params2 = {
-      //   Version: '2019-01-16',
-      //   PolicyId: policy.PolicyId
-      // }
-      // this.$axios.post('cam2/ListEntitiesForPolicy', params2).then(res  => {
-      //   console.log(res)
-      // })
       this.dialogVisible = true
     },
     // 穿梭框：value右侧框值、direction操作、movedKeys移动值
