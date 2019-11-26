@@ -2,7 +2,7 @@
   <div class="Cam">
     <div class="container">
       <div class="container-left">
-        <p>{{$t('CAM.CAM.Role.assoUser')}}（共{{totalNum}}条）</p>
+        <p>{{$t('CAM.CAM.Role.policyList')}}（共{{totalNum}}条）</p>
         <el-input size="mini" v-model="search" style="width:85%" @keyup.enter.native="toQuery"/>
         <el-button size="mini" class="suo" icon="el-icon-search" @click="toQuery"></el-button>
         <el-table

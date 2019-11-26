@@ -59,7 +59,7 @@ module.exports = {
       currentMainAccount:'當前主賬號',
       otherMainAccount:'其他主賬號',
       cardId:'賬號ID',
-      assoUser:'關聯用戶',
+      policyList:'策略列表',
       policyName:'策略名',
       switchUserGroup:'切換成用戶組',
       hasChosen:'已選擇',
