@@ -262,10 +262,9 @@ export default {
           params[str] = item.PolicyId
         })
       }
-      console.log(params)
-      // this.$axios.post('cam2/DeletePolicy', params).then(res  => {
-      //   console.log(res)
-      // })
+       this.$axios.post('cam2/DeletePolicy', params).then(res  => {
+         console.log(res)
+       })
       this.selectedData.splice(0, this.selectedData.length)
       this.getData()
     },

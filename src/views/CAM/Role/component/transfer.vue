@@ -3,11 +3,11 @@
     <div class="container">
       <div class="container-left">
         <p>{{$t('CAM.CAM.Role.policyList')}}（共{{totalNum}}条）</p>
-        <el-input size="mini" v-model="search" style="width:85%" @keyup.enter.native="toQuery"/>
-        <el-button size="mini" class="suo" icon="el-icon-search" @click="toQuery"></el-button>
+        <el-input size="mini" v-model="strategyValue" style="width:85%"  @keyup.enter.native="toQueryCL"/>
+        <el-button size="mini" class="suo" icon="el-icon-search" show-overflow-tooltip @click="toQueryCL"></el-button>
         <el-table
           class="table-left"
-          ref="multipleOption"
+          ref="multipleOption" 
           :data="policiesData"
           size="small"
           height="300"
@@ -17,13 +17,13 @@
           @selection-change="handleSelectionChange"
         >
           <el-table-column type="selection" prop="policyId" width="30"></el-table-column>
-          <el-table-column prop="policyName" :label="$t('CAM.CAM.Role.policyName')" show-overflow-tooltip>
-            <template slot-scope="scope">
-              <p>AdministratorAccess</p>
-              <p>该策略允许您管理账户内所有云服务资产。</p>
+          <el-table-column prop="Description" :label="$t('CAM.CAM.Role.policyName')" show-overflow-tooltip>
+           <template slot-scope="scope">
+             <p>{{scope.row.PolicyName}}</p>
+             <p>{{scope.row.Description}}</p>
             </template>
           </el-table-column>
-          <el-table-column prop="type" :label="$t('CAM.CAM.Role.switchUserGroup')" width="200">
+          <el-table-column prop="Type" :label="$t('CAM.CAM.Role.switchUserGroup')" width="80">
             <template slot="header" slot-scope="scope">
               <el-dropdown trigger="click" @command="handleCommand" size="mini">
                 <span style="color:#909399">
@@ -56,13 +56,13 @@
           height="300"
           style="width: 100%"
         >
-          <el-table-column prop="policyName" :label="$t('CAM.CAM.Role.strategy')" show-overflow-tooltip>
+          <el-table-column prop="Description" :label="$t('CAM.CAM.Role.strategy')" show-overflow-tooltip>
             <template slot-scope="scope">
-              <p>{{scope.row.policyName}}</p>
-              <p>{{scope.row.description}}</p>
+              <p>{{scope.row.PolicyName}}</p>
+              <p>{{scope.row.Description}}</p>
             </template>
           </el-table-column>
-          <el-table-column prop="type" :label="$t('CAM.CAM.Role.strategyType')" width="100"></el-table-column>
+          <el-table-column prop="Type" :label="$t('CAM.CAM.Role.strategyType')" width="100"></el-table-column>
           <el-table-column :label="$t('CAM.CAM.userGroup.colHandle')" width="50">
             &lt;!&ndash;
             <template slot-scope="scope">
@@ -81,14 +81,24 @@
 
 <script>
 export default {
-  props: {},
+  props: {
+    policiesSelectedData: [
+      {
+        policyId: String,
+        policyName: String,
+        description: String,
+        attachments: String,
+        createMode: String,
+        serviceType: String,
+        addTime: String,
+        type: String
+      }
+    ]
+  },
   data() {
     return {
-      policiesData: [
-        { policyName: "2453", type: "用户" },
-        { policyName: "2453", type: "用户组" }
-      ],
-      policiesSelectedData: [],
+      policiesData: [],
+      strategyValue:[],
       totalNum: "",
       search: "",
       rp: 20,
@@ -110,8 +120,43 @@ export default {
       ]
     };
   },
-  mounted() {},
+  mounted() {
+    this.init()
+  },
   methods: {
+    init() {
+            let params = {
+                Action: 'ListPolicies',
+                Version:'2019-01-16'
+            }
+            if(this.search != null && this.search != '') {
+              params['Keyword'] = this.search
+            }
+            let url = "cam2/ListPolicies"
+            this.axios.post(url, params).then(res => {
+               this.policiesData = res.Response.List;
+            }).catch(error => {
+                console.log(error)
+            })
+        },
+    //策略搜索
+    CeInit(){
+       let params = {
+         Action:"ListPolicies",
+         Version:"2019-01-16"
+       }
+       debugger;
+       if(this.strategyValue != null && this.strategyValue != ''){
+          params["Keyword"] = this.strategyValue
+       }
+       let url = "cam2/ListPolicies"
+       this.axios.post(url,params).then(data => {
+         this.policiesData = data.Response.List
+       })
+    },
+     toQueryCL(){
+      this.CeInit()
+    },
     handleCommand(command) {
       console.log(command);
       this.tableTitle = command;
