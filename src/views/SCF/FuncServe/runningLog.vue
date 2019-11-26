@@ -28,7 +28,7 @@
       <div class="bottomContent newClear">
         <div class="leftConList">
           <ul>
-            <li v-for="item in logList" :key="item.id">
+            <li v-for="(item,index) in logList" :key="item.id" @click="clickLog(index)" :class="{'logActive': logIndex == index}">
               <span>{{item.time}}</span>
               <span>{{item.status}}</span>
             </li>
@@ -54,13 +54,6 @@
             <div class="logContent">
               <h1>日志：</h1>
               <div class="logCodeCont" v-html="logData.Data[logIndex].Log">
-                <!-- START RequestId: f25925b2-0855-11ea-b666-5254000c8aa4
-                <br>Event RequestId: f25925b2-0855-11ea-b666-5254000c8aa4
-                <br>Hello World
-                <br>value1 = test value 1
-                <br>value2 = test value 2
-                <br>END RequestId: f25925b2-0855-11ea-b666-5254000c8aa4
-                <br>Report RequestId: f25925b2-0855-11ea-b666-5254000c8aa4 Duration:0ms Memory:128MB MaxMemoryUsed:10.093750MB -->
               </div>
             </div>
           </div>
@@ -139,6 +132,10 @@ export default {
         .catch(error => {
           console.log(error);
         });
+    },
+    clickLog(index){
+      console.log(index)
+      this.logIndex = index
     }
   }
 };
@@ -175,7 +172,8 @@ export default {
     float: left;
     width: 370px;
     border-right: 1px solid #ddd;
-    min-height: 500px;
+    height: 690px;
+    overflow-y: scroll;
     ul {
       li {
         width: 100%;
@@ -215,7 +213,7 @@ export default {
     }
     .logAndData {
       border-left: 11px solid rgb(210, 231, 247);
-      min-height: 300px;
+      min-height: 600px;
       background-color: rgb(242, 242, 242);
       padding: 12px;
       div {
@@ -230,6 +228,9 @@ export default {
         font-size: 14px;
       }
     }
+  }
+  .logActive{
+    background-color: #e5e5e5
   }
 }
 </style>

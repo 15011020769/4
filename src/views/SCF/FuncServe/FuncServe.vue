@@ -89,8 +89,8 @@
           <el-button size="small" type="primary" class="newCreate" @click="newCreateFun()">新建</el-button>
           <div class="searchRight">
             <el-select placeholder="要过滤的标签" v-model="filterConrent">
-              <el-option label="函数描述" value="value1"></el-option>
               <el-option label="函数名称" value="value2"></el-option>
+              <el-option label="函数描述" value="value1"></el-option>
               <el-option label="标签" value="value3"></el-option>
             </el-select>
           <el-input
@@ -233,18 +233,7 @@ export default {
       showTables: [],
       search: "",
       newname:"",
-      allData: [
-        {
-          funName: "tttt",
-          funStatus: "正常",
-          monitor: "监控",
-          runMoent: "python2.7",
-          description: "描述",
-          funTabs: "123",
-          createTime: "2019-11-07 14：05：12",
-          changeTime: "2019-11-07 14：05：12"
-        }
-      ],
+      allData: [],
       title: [{ title: "123" }, { title: "456" }],
       tableDataBegin: [],
       tableDataName: "",
@@ -280,7 +269,7 @@ export default {
         },
       ],
       copyIndex2: "",
-      filterConrent:"",
+      filterConrent:"value2",
       showTips:false
     };
   },
@@ -320,7 +309,7 @@ export default {
       let params = {
         // Action: "ListFunctions",
         Version: "2018-04-16",
-        Region: arr[1]
+        Region: this.$cookie.get("regionv2")
       };
       this.$axios.post('scf/ListFunctions', params).then(res => {
         // console.log(res.data.functions);
@@ -341,14 +330,16 @@ export default {
     // 搜索
     doFilter() {
       console.log(this.filterConrent);
-      this.tableDataBegin = this.allData;
+      // this.tableDataBegin = this.allData;
       this.tableDataEnd = [];
       //每次手动将数据置空,因为会出现多次点击搜索情况
       this.filterTableDataEnd = [];
+      console.log(this.tableDataBegin)
+      console.log(this.tableDataName)
       this.tableDataBegin.forEach((val, index) => {
         if(this.filterConrent=="value2"){
-          if (val.funName) {
-            if (val.funName.indexOf(this.tableDataName) == 0) {
+          if (val.functionName) {
+            if (val.functionName.indexOf(this.tableDataName) !== -1) {
               this.filterTableDataEnd.push(val);
               this.tableDataBegin = this.filterTableDataEnd;
             } else {
@@ -356,6 +347,7 @@ export default {
               this.tableDataBegin = this.filterTableDataEnd;
             }
           }
+          console.log(this.tableDataBegin)
         }else if(this.filterConrent=="value1"){
           if (val.description) {
             if (val.description.indexOf(this.tableDataName) == 0) {

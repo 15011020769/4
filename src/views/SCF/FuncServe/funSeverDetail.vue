@@ -456,7 +456,7 @@
           </el-tab-pane>
           <el-tab-pane label="触发方式" name="third">
             <div class="allConListMain">
-              <triggerMode/>
+              <triggerMode ref="mychild" @childFn="childFn" />
             </div>
           </el-tab-pane>
           <el-tab-pane label="运行日志" name="fouth">
@@ -471,6 +471,13 @@
           </el-tab-pane>
         </el-tabs>
       </div>
+      <el-dialog title="提示" :visible.sync="centerDialogVisible" width="30%">
+        <h3 slot="title">您确定要删除该触发器吗？</h3>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="centerDialogVisible = false">取 消</el-button>
+          <el-button type="primary" @click="detele()">确 定</el-button>
+        </span>
+      </el-dialog>
     </div>
   </div>
 </template>
@@ -500,7 +507,8 @@ export default {
       dialogVisible3: false,
       tagAddTagsBtn: false,
       publishNewVewsion: false,
-      logData:{},
+      centerDialogVisible: false,
+      logData: {},
       publishVersion: {
         descript: ""
       },
@@ -524,6 +532,7 @@ export default {
       VariablesArr: [],
       vpcConfigVpcId: "",
       vpcConfigSubnetId: "",
+      childData:{},
       funReast: {
         funName: this.funtitle,
         runRole: "",
@@ -647,9 +656,26 @@ export default {
           console.log(error);
         });
     },
+     getfunction() {
+      let params = {
+        Version: "2018-04-16",
+        Region: this.$cookie.get("regionv2"),
+        Action: "GetFunction"
+      };
+      let functionName = this.$route.query.functionName;
+      if (functionName != "" && functionName != null) {
+        params["FunctionName"] = functionName;
+      }
+      this.$axios.post("scf2/GetFunction", params).then(res => {
+        console.log(res);
+        this.triggerBoxList = res.Response.Triggers;
+        for (let i = 0; i < this.triggerBoxList.length; i++) {
+          this.switch1[i] = true;
+        }
+      });
+    },
     handleClick(tab, event) {
       console.log(tab.index);
-      
     },
     handleClick1() {},
     returnBack() {
@@ -763,7 +789,7 @@ export default {
       }
     },
     searchVersion() {
-      let _this = this
+      let _this = this;
       let params = {
         Action: "ListVersionByFunction",
         Version: "2018-04-16",
@@ -777,12 +803,35 @@ export default {
       this.axios
         .post(url, params)
         .then(res => {
-          _this.logData = res.Response
-          console.log(_this.logData)
+          _this.logData = res.Response;
+          console.log(_this.logData);
         })
         .catch(error => {
           console.log(error);
         });
+    },
+    childFn(val){
+     this.childData = val
+     this.centerDialogVisible = true
+    },
+    detele () {
+      this.centerDialogVisible = false
+      let params = {
+        Version: "2018-04-16",
+        Region: this.$cookie.get("regionv2"),
+        Action: "DeleteTrigger",
+        TriggerName: this.childData.TriggerName,
+        Type: this.childData.Type
+      };
+      let functionName = this.$route.query.functionName;
+      if (functionName != "" && functionName != null) {
+        params["FunctionName"] = functionName;
+      }
+      this.$axios.post("scf2/DeleteTrigger", params).then(res => {
+        console.log(res);
+        console.log(this.$refs.mychild)
+        this.$refs.mychild.getfunction();
+      });
     }
   }
 };
