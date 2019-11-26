@@ -6,5 +6,6 @@ module.exports = {
   'CAM': require('@/views/CAM/language/ft'),
   'DDOS': require('@/views/DDOS/language/ft'),
   'CLA': require('@/views/CLA/language/ft'),
-  'CAP': require('@/views/CAP/language/ft')
+  'CAP': require('@/views/CAP/language/ft'),
+  'KMS': require('@/views/KMS/language/ft')
 }
