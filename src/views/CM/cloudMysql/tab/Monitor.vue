@@ -144,69 +144,76 @@ export default {
       // console.log(this.timeData)
       const metricNArr = [
         // 62
-        'slow_queries', // 慢查询数
-        'max_connections', // 最大连接数
-        'select_scan', // 全表扫描数
-        'select_count', // 查询数
-        'com_update', // 更新数
-        'com_delete', // 删除数
-        'com_insert', // 插入数
-        'com_replace', // 覆盖数
-        'queries', // 总请求数
-        'threads_connected', // 当前打开连接数
-        'real_capacity', // 磁盘使用空间
-        'capacity', // 磁盘占用空间
-        'bytes_sent', // 内网出流量
-        'bytes_received', // 内网入流量
-        'qcache_use_rate', // 缓存使用率
-        'qcache_hit_rate', // 缓存命中率
-        'table_locks_waited', // 等待表锁次数
-        'created_tmp_tables', // 临时表数量
-        'innodb_cache_use_rate', // innodb缓存使用率
-        'innodb_cache_hit_rate', // innodb缓存命中率
-        'innodb_os_file_reads', // innodb读磁盘数量
-        'innodb_os_file_writes', // innodb写磁盘数量
-        'innodb_os_fsyncs', // innodb fsync数量
-        'key_cache_use_rate', // myisam缓存使用率
-        'key_cache_hit_rate', // myisam缓存命中率
-        'volume_rate', // 容量使用率
-        'query_rate', // 查询使用率
-        'qps', // 每秒执行操作数
-        'tps', // 每秒执行事务数
-        'cpu_use_rate', // CPU占比
-        'memory_use', // 内存占用
-        'key_write_requests', // 数据块写入键缓冲次数
-        'key_writes', // 数据块写入磁盘次数
-        'com_commit', // 提交数
-        'handler_commit', // 内部提交数
-        'innodb_rows_read', // InnoDB行读取量
-        'innodb_row_lock_time_avg', // InnoDB平均获取行锁时间
-        'threads_created', // 已创建的线程数
-        'opened_tables', // 已经打开的表数
-        'threads_running', // 运行的线程数
-        'innodb_data_reads', // InnoDB总读取量
-        'com_rollback', // 回滚数
-        'key_blocks_unused', // 键缓存内未使用的块数量
-        'innodb_data_writes', // InnoDB总写入量
-        'innodb_buffer_pool_pages_free', // InnoDB空页数
-        'innodb_rows_inserted', // InnoDB行插入量
-        'created_tmp_files', // 临时文件数量
-        'innodb_data_read', // InnoDB读取量
-        'innodb_row_lock_waits', // InnoDB等待行锁次数
-        'innodb_buffer_pool_read_requests', // InnoDB逻辑读
-        'handler_rollback', // 内部回滚数
-        'master_slave_sync_distance', // 主从不同步距离
-        'handler_read_rnd_next', // 读下一行请求数
-        'innodb_rows_updated', // InnoDB行更新量
-        'innodb_rows_deleted', // InnoDB行删除量
-        'innodb_buffer_pool_pages_total', // InnoDB空页数
-        'key_blocks_used', // 键缓存内使用的块数量
-        'innodb_data_written', // InnoDB写入量
-        'key_read_requests', // 键缓存读取数据块次数
-        'innodb_buffer_pool_reads', // InnoDB物理读
+        'CPUUseRate',
+        'MemoryUseRate',
+        'MemoryUse', 
+        'VolumeRate', 
+        'RealCapacity', 
+        'Capacity', 
+        'BytesSent', 
+        'BytesReceived',
+        'QPS', 
+        'TPS',
+        'MaxConnections',
+        'ThreadsConnected',
+        'ConnectionUseRate', 
+        'SlowQueries', 
+        'SelectScan', 
+        'SelectCount', 
+        'ComUpdate',
+        'ComDelete', 
+        'ComInsert', 
+        'ComReplace', 
+        'Queries',
+        'QueryRate', 
+        'CreatedTmpTables', 
+        'TableLocksWaited', 
+        'InnodbCacheUseRate',
+        'InnodbCacheHitRate', 
+        'InnodbOsFileReads',
+        'InnodbOsFileWrites', 
+        'InnodbOsFsyncs',
+        'InnodbNumOpenFiles',
+        'KeyCacheUseRate', 
+        'KeyCacheHitRate', 
+        'ComCommit', 
+        'ComRollback', 
+        'ThreadsCreated', 
+        'ThreadsRunning', 
+        'CreatedTmpDiskTables', 
+        'CreatedTmpFiles', 
+        'HandlerReadRndNext', 
+        'HandlerRollback', 
+        'HandlerCommit', 
+        'InnodbBufferPoolPagesFree', 
+        'InnodbBufferPoolPagesTotal', 
+        'InnodbBufferPoolReadRequests', 
+        'InnodbBufferPoolReads', 
+        'InnodbDataReads', 
+        'InnodbDataRead', 
+        'InnodbDataWrites', 
+        'InnodbDataWritten', 
+        'InnodbRowsDeleted', 
+        'InnodbRowsInserted', 
+        'InnodbRowsUpdated', 
+        'InnodbRowsRead', 
+        'InnodbRowLockTimeAvg', 
+        'InnodbRowLockWaits',
+        'KeyBlocksUnused', 
+        'KeyBlocksUsed', 
+        'KeyReadRequests',
+        'KeyReads', 
+        'KeyWriteRequests', 
+        'KeyWrites', 
+        'OpenedTables', 
 
-        'created_tmp_disk_tables', // 磁盘临时表数量
-        'key_reads', // 硬盘读取数据块次数
+        'TableLocksImmediate', 
+        'OpenFiles', 
+        'LogCapacity',
+        'SlaveIoRunning',
+        'SlaveSqlRunning',
+        'MasterSlaveSyncDistance',
+        'SecondsBehindMaster'
       ];
       this.tableData = [];
       for (let i = 0; i < metricNArr.length; i++) {
@@ -243,26 +250,26 @@ export default {
   },
   filters: {
     UpName(value) {
-      if (value === 'slow_queries') {
-        return (value = '慢查询数');
+      if (value === 'CPUUseRate') {
+        return (value = 'CPU利用率');
       }
-      if (value === 'max_connections') {
-        return (value = '最大连接数');
+      if (value === 'MemoryUseRate') {
+        return (value = '内存利用率');
       }
-      if (value === 'select_scan') {
-        return (value = '全表扫描数');
+      if (value === 'MemoryUse') {
+        return (value = '内存占用');
       }
-      if (value === 'select_count') {
-        return (value = '查询数');
+      if (value === 'VolumeRate') {
+        return (value = '磁盘使用率');
       }
-      if (value === 'com_update') {
-        return (value = '更新数');
+      if (value === 'RealCapacity') {
+        return (value = '磁盘使用空间（仅包含数据空间使用量）');
       }
-      if (value === 'com_delete') {
-        return (value = '删除数');
+      if (value === 'Capacity') {
+        return (value = '	磁盘占用空间（包含数据及日志空间使用量）');
       }
-      if (value === 'com_insert') {
-        return (value = '插入数');
+      if (value === 'BytesSent') {
+        return (value = '内网出流量');
       }
       if (value === 'com_replace') {
         return (value = '覆盖数');
