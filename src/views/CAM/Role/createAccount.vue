@@ -7,27 +7,27 @@
         src="../../../assets/CAM/images/left.png"
         alt
       >
-      <span class="top_text">新建自定义角色</span>
+      <span class="top_text">{{$t('CAM.CAM.Role.top_text')}}</span>
     </div>
     <div class="container">
       <div class="contant">
         <div class="step">
           <el-steps :active="active" simple :space="200" finish-status="success">
-            <el-step title="输入角色载体信息"></el-step>
-            <el-step title="配置角色策略"></el-step>
-            <el-step title="审阅"></el-step>
+            <el-step :title="$t('CAM.CAM.Role.step_titile1')"></el-step>
+            <el-step :title="$t('CAM.CAM.Role.step_titile2')"></el-step>
+            <el-step :title="$t('CAM.CAM.Role.step_titile3')"></el-step>
           </el-steps>
         </div>
         <div v-if="active == 1" class="contant_flex">
           <div class="first">
             <div class="first_left">
-              <p style="margin-bottom:40px">云账号类型</p>
-              <p>账号ID*</p>
+              <p style="margin-bottom:40px">{{$t('CAM.CAM.Role.cloudCardType')}}</p>
+              <p>{{$t('CAM.CAM.Role.cardId')}}</p>
             </div>
             <div class="first_right">
               <p style="margin-bottom:30px">
-                <el-radio v-model="radio" label="1">当前主账号</el-radio>
-                <el-radio v-model="radio" label="2">其他主账号</el-radio>
+                <el-radio v-model="radio" label="1">{{$t('CAM.CAM.Role.currentMainAccount')}}</el-radio>
+                <el-radio v-model="radio" label="2">{{$t('CAM.CAM.Role.otherMainAccount')}}</el-radio>
               </p>
               <p>
                 <el-input
@@ -47,14 +47,14 @@
         <div class="shenyue" v-if="active == 3">
           <div class="content_flex">
             <div class="content_left">
-              <p class="juese">角色名称*</p>
-              <p class="juese" style="margin-top:55px">角色描述</p>
-              <p class="juese">角色载体</p>
+              <p class="juese">{{$t('CAM.CAM.Role.roleName')}}*</p>
+              <p class="juese" style="margin-top:55px">{{$t('CAM.CAM.Role.roleDesc')}}</p>
+              <p class="juese">{{$t('CAM.CAM.Role.roleCarrier')}}</p>
             </div>
             <div class="content_right">
               <div class="jscontent" style="height:50px">
-                <el-input v-model="inputName" placeholder="请输入角色名称" size="mini" @blur="jsname"></el-input>
-                <p v-if="have" style="font-size:12px;color:#E1504A;padding-top:10px">角色名称不能为空</p>
+                <el-input v-model="inputName" :placeholder="$t('CAM.CAM.Role.inputRoleName')" size="mini" @blur="jsname"></el-input>
+                <p v-if="have" style="font-size:12px;color:#E1504A;padding-top:10px">{{$t('CAM.CAM.Role.isNotNullRoleName')}}</p>
               </div>
               <p class="jscontent">
                 <el-input v-model="input" placeholder size="mini"></el-input>
@@ -64,16 +64,16 @@
           </div>
           <div class="content_table">
             <el-table :data="tableData" height="300" border style="width: 100%">
-              <el-table-column prop="date" label="策略名称"></el-table-column>
-              <el-table-column prop="name" label="描述"></el-table-column>
-              <el-table-column prop="address" label="策略类型"></el-table-column>
+              <el-table-column prop="date" :label="$t('CAM.CAM.Role.strategyName')"></el-table-column>
+              <el-table-column prop="name" :label="$t('CAM.CAM.Role.desc')"></el-table-column>
+              <el-table-column prop="address" :label="$t('CAM.CAM.Role.strategyType')"></el-table-column>
             </el-table>
           </div>
         </div>
         <div style="margin:20px 0px">
-          <el-button size="small" v-if="active != 1" @click="reTurn">返回</el-button>
-          <el-button type="primary" size="small" @click="next" v-if="active != 3">下一步</el-button>
-          <el-button type="primary" size="small" v-if="active == 3" @click="finall">完成</el-button>
+          <el-button size="small" v-if="active != 1" @click="reTurn">{{$t('CAM.CAM.Role.goBack')}}</el-button>
+          <el-button type="primary" size="small" @click="next" v-if="active != 3">{{$t('CAM.CAM.Role.toStep')}}</el-button>
+          <el-button type="primary" size="small" v-if="active == 3" @click="finall">{{$t('CAM.CAM.Role.complete')}}</el-button>
         </div>
       </div>
     </div>
@@ -93,66 +93,8 @@ export default {
       inputName: "",
       have: false,
       radio: "1",
-      checkedCities: [],
-      cities: [
-        "宙斯盾安全防护",
-        "API网关",
-        "弹性伸缩",
-        "腾讯区块链开发平台",
-        "对象存储批量处理",
-        "蓝鲸平台",
-        "黑石物理服务器1.0",
-        "商业流程服务",
-        "容器服务",
-        "云数据库 MySQL",
-        "内容分发网络",
-        "文件存储",
-        "云防火墙",
-        "数据万象",
-        "消息队列 CKafka",
-        "负载均衡",
-        "云审计",
-        "云端开发环境",
-        "日志服务",
-        "CODING DevOps",
-        "对象存储",
-        "云服务器",
-        "腾讯云开发者平台",
-        "数据集成",
-        "数据安全治理中心",
-        "数据传输服务",
-        "弹性MapReduce",
-        "人脸识别",
-        "身份管理服务",
-        "物联网通信",
-        "加速物联网套件",
-        "开发者实验室",
-        "云直播",
-        "云数据库 MariaDB",
-        "小游戏联机对战引擎",
-        "云数据库 MongoDB",
-        "视频处理",
-        "迁移服务平台",
-        "媒体转码服务",
-        "网络资产风险监测系统",
-        "小程序云主机",
-        "云函数",
-        "流计算Oceanus",
-        "云数据仓库套件-Sparkling",
-        "安全运营中心",
-        "云开发",
-        "数据库中间件",
-        "腾讯智能钛",
-        "智能钛机器学习加速器",
-        "智能钛弹性模型服务",
-        "智能钛机器学习平台",
-        "智能钛自动机器学习",
-        "腾讯微服务平台",
-        "客服支持平台",
-        "微Mall",
-        "腾讯优Mall",
-        "织云"
-      ],
+      policiesData: [],
+      policiesSelectedData: [],
       transfer_value: [],
       transfer_data: [
         {
@@ -177,10 +119,32 @@ export default {
       ]
     };
   },
+  mounted() {
+        this.init()
+    },
   methods: {
     back() {
       this.$router.push("/Role");
     },
+     init() {
+            let params = {
+                Action: 'ListPolicies',
+                rp: this.rp,
+                page: this.page,
+                scope:'All'
+            }
+            if(this.search != null && this.search != '') {
+              params['Keyword'] = this.search
+            }
+            let url = "cam/ListPolicies"
+            this.axios.post(url, params).then(res => {
+                console.log(res)
+                this.totalNum = res.data.totalNum
+                this.policiesData = res.data.list
+            }).catch(error => {
+                console.log(error)
+            })
+        },
     next() {
       if (this.active == 1) {
         this.active = this.active + 1;
@@ -197,9 +161,7 @@ export default {
       }
       this.active = this.active - 1;
     },
-    handleCheckedCitiesChange(val) {
-      console.log(val);
-    },
+ 
     leftCheck(val) {},
     jsname() {
       if (!this.inputName) {

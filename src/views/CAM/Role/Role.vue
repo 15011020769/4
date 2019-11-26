@@ -1,20 +1,21 @@
 <template>
   <div class="Cam">
     <div class="top">
-      <p>角色</p>
+      <p>{{$t('CAM.CAM.Role.title')}}</p>
     </div>
     <div class="container">
       <div class="container-text">
-        <h4 style="margin-bottom:10px;">为什么我的账户出现了新角色？</h4>
-        <p>在服务中完成特定操作 (如授权创建服务角色) 时，服务可能为您创建服务相关角色。或者，如果您在某项服务开始支持服务相关角色之前已在使用该服务，则该服务可能自动在您的账户中创建角色。</p>
+        <h4 style="margin-bottom:10px;">{{$t('CAM.CAM.Role.roleTitle1')}}</h4>
+        <p>{{$t('CAM.CAM.Role.roleTitle2')}}</p>
       </div>
       <div class="container_table">
         <p>
-          <el-button type="primary" size="small" @click="created_user">新建角色</el-button>
+          <el-button type="primary" size="small" @click="created_user">{{$t('CAM.CAM.Role.addBtn')}}</el-button>
         </p>
         <div class="table">
           <el-table
             :data="tableData"
+            v-loading="loading"
             height="450"
             border
             style="width: 100%"
@@ -22,13 +23,12 @@
             :cell-style="{padding:'10px'}"
             :header-cell-style="{height:'20px',padding:'10px',fontSize:'12px'}"
           >
-            <el-table-column prop="RoleName" label="角色名称" width="150"></el-table-column>
-            <el-table-column prop="PolicyDocument.statement[0].principal.service[0]" label="角色载体">
-            </el-table-column>
-            <el-table-column prop="Description" label="描述"></el-table-column>
-            <el-table-column prop="address" label="操作" width="100">
+            <el-table-column prop="RoleName" :label="$t('CAM.CAM.Role.roleName')" width="180"></el-table-column>
+            <el-table-column prop="PolicyDocument.statement[0].principal.service[0]" :label="$t('CAM.CAM.Role.roleCarrier')" width="200"></el-table-column>
+            <el-table-column prop="Description" :label="$t('CAM.CAM.Role.roleDesc')"></el-table-column>
+            <el-table-column prop="oper" :label="$t('CAM.CAM.Role.colHandle')" width="100">
               <template slot-scope="scope">
-                <el-button @click="handleClick_user(scope)" type="text" size="small">删除</el-button>
+                <el-button @click="delete_Role(scope.row.RoleId)" type="text" size="small">{{$t('CAM.CAM.Role.delBtn')}}</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -43,40 +43,32 @@
                 @size-change="handleSizeChange"
                 @current-change="handleCurrentChange"
                 :current-page.sync="currentPage2"
-                :page-sizes="[100, 200, 300, 400]"
-                :page-size="100"
-                layout="sizes, prev, pager, next"
-                :total="1000"
+                :page-sizes="[5, 10, 15, 20]"
+                :page-size="5"
+                layout="total, sizes, prev, pager, next, jumper"
+                :total="total"
               ></el-pagination>
             </div>
           </div>
         </div>
       </div>
       <el-dialog :visible.sync="create_dialogVisible" width="30%" :before-close="handleClose">
-        <h3 slot="title">选择角色载体</h3>
+        <h3 slot="title">{{$t('CAM.CAM.Role.selectCarrier')}}</h3>
         <div class="createItem" @click="toServe">
           <i class="strategy-icon ps"></i>
-          <h3 style="color:#333;font-weight:400">腾讯云产品服务</h3>
-          <p>授权云服务通过角色使用您的云资源</p>
+          <h3 style="color:#333;font-weight:400">{{$t('CAM.CAM.Role.tencentProductService')}}</h3>
+          <p>{{$t('CAM.CAM.Role.tencentProductServiceTitle')}}</p>
         </div>
         <div class="createItem" @click="toAccount">
           <i class="strategy-icon ca"></i>
-          <h3 style="color:#333;font-weight:400">腾讯云账户</h3>
-          <p>授权主账号或者其他主账号通过角色使用您的云资源</p>
+          <h3 style="color:#333;font-weight:400">{{$t('CAM.CAM.Role.tencentCard')}}</h3>
+          <p>{{$t('CAM.CAM.Role.tencentCardTitle')}}</p>
         </div>
         <div class="createItem" @click="toProvider">
           <i class="strategy-icon sf"></i>
-          <h3 style="color:#333;font-weight:400">身份提供商</h3>
-          <p>授权腾讯云外部用户身份（如企业用户目录）使用您的云资源</p>
+          <h3 style="color:#333;font-weight:400">{{$t('CAM.CAM.Role.identityProvider')}}</h3>
+          <p>{{$t('CAM.CAM.Role.identityProviderTitle')}}</p>
         </div>
-      </el-dialog>
-      <el-dialog :visible.sync="dialogVisible" width="30%" :before-close="handleClose">
-        <h3 slot="title">删除角色</h3>
-        <p>此操作将删除该角色，同时解除该服务角色已关联的策略以及授权关系。您确定要删除该角色吗？</p>
-        <span slot="footer" class="dialog-footer">
-          <el-button @click="dialogVisible = false">取 消</el-button>
-          <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
-        </span>
       </el-dialog>
     </div>
   </div>
@@ -85,14 +77,12 @@
 export default {
   data() {
     return {
+      loading: true,
       tableData: [],
-      table_value: "",
-      currentPage1: 5,
-      currentPage2: 5,
-      currentPage3: 5,
-      currentPage4: 4,
-      dialogVisible: false,
-      create_dialogVisible: false
+       // 分页
+      currentPage2: 1,
+      total: 0,
+      create_dialogVisible:false
     };
   },
   created() {
@@ -113,47 +103,64 @@ export default {
       this.axios
         .post(url, params)
         .then(data => {
-          
-          data.Response.List.forEach(item => {
-            item.PolicyDocument = JSON.parse(item.PolicyDocument)
-            debugger;
-            console.log(item.PolicyDocument);
-          });
-          this.tableData = data.Response.List;
-          var dataRole = JSON.parse(data.Response.List);
-          this.loading = false;
+          if (data === ""||data.Response.error=='undefined'||data.Response.List.length==0) {
+            this.loading = false;
+          } else {
+            this.loading = false;
+            data.Response.List.forEach(item => {
+              item.PolicyDocument = JSON.parse(item.PolicyDocument);
+              console.log(item.PolicyDocument);
+            });
+            this.tableData = data.Response.List;
+            var dataRole = JSON.parse(data.Response.List);
+          }
         })
         .catch(error => {
           console.log(error);
         });
     },
-     // 删除用户组
-    handleClick_user(RoleId) {
-      this.$confirm( this.$t('CAM.CAM.userGroup.delHint'), this.$t('CAM.CAM.userGroup.delTitle'), {
-      confirmButtonText: this.$t('CAM.CAM.userGroup.delConfirmBtn'),
-      cancelButtonText: this.$t('CAM.CAM.userGroup.delCancelBtn'),
-      type: 'warning'
-      }).then(() => {
-      let url = "cam2/DeleteRole"
-        let params = {
-          Action: 'DeleteRole',
-          Version: '2019-01-16',
-          RoleId: RoleId
+    // 删除角色
+    delete_Role(RoleId) {
+      this.$confirm(
+        this.$t("CAM.CAM.Role.delHint"),
+        this.$t("CAM.CAM.Role.delTitle"),
+        {
+          confirmButtonText: this.$t("CAM.CAM.Role.delConfirmBtn"),
+          cancelButtonText: this.$t("CAM.CAM.Role.delCancelBtn"),
+          type: "warning"
         }
-        this.axios.post(url, params).then(data => {
-          if(data != null && data.codeDesc === 'Success') {
-            this.$message({ type: 'success', message: this.$t('CAM.CAM.userGroup.delInfo')+'!' })
-            this.init()
-          }
-        }).catch(error => {
-          this.$message({ type: 'success', message: error })
-          console.log(error)
+      )
+        .then(() => {
+          let url = "cam2/DeleteRole";
+          let params = {
+            Action: "DeleteRole",
+            Version: "2019-01-16",
+            RoleId: RoleId
+          };
+          this.axios
+            .post(url, params)
+            .then(data => {
+              debugger;
+              if (data != null && data.Response.RequestId != "") {
+                this.$message({
+                  type: "success",
+                  message: this.$t("CAM.CAM.Role.delInfo") + "!"
+                });
+                this.init();
+                this.loading = false;
+              }
+            })
+            .catch(error => {
+              this.$message({ type: "success", message: error });
+              console.log(error);
+            });
         })
-      }).catch(() => {
-        // this.$message({ type: 'info', message: '已取消删除' })          
-      })
+        .catch(() => {
+          // this.$message({ type: 'info', message: '已取消删除' })
+        });
     },
     created_user() {
+      console.log(1111)
       this.create_dialogVisible = true;
     },
     handleClose() {
@@ -163,8 +170,12 @@ export default {
     handleClick(scope) {
       this.$router.push("/RoleDetail");
     },
-    handleSizeChange() {},
-    handleCurrentChange() {},
+    handleSizeChange (val) {
+      console.log(`每页 ${val} 条`)
+    },
+    handleCurrentChange (val) {
+      console.log(`当前页: ${val}`)
+    },
     handleClick_user() {
       this.dialogVisible = true;
     },

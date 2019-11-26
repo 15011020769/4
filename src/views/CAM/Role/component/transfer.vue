@@ -2,7 +2,7 @@
   <div class="Cam">
     <div class="container">
       <div class="container-left">
-        <p>关联用户（共{{totalNum}}条）</p>
+        <p>{{$t('CAM.CAM.Role.assoUser')}}（共{{totalNum}}条）</p>
         <el-input size="mini" v-model="search" style="width:85%" @keyup.enter.native="toQuery"/>
         <el-button size="mini" class="suo" icon="el-icon-search" @click="toQuery"></el-button>
         <el-table
@@ -17,13 +17,13 @@
           @selection-change="handleSelectionChange"
         >
           <el-table-column type="selection" prop="policyId" width="30"></el-table-column>
-          <el-table-column prop="policyName" label="策略名" show-overflow-tooltip>
+          <el-table-column prop="policyName" :label="$t('CAM.CAM.Role.policyName')" show-overflow-tooltip>
             <template slot-scope="scope">
               <p>AdministratorAccess</p>
               <p>该策略允许您管理账户内所有云服务资产。</p>
             </template>
           </el-table-column>
-          <el-table-column prop="type" label="切换成用户组" width="200">
+          <el-table-column prop="type" :label="$t('CAM.CAM.Role.switchUserGroup')" width="200">
             <template slot="header" slot-scope="scope">
               <el-dropdown trigger="click" @command="handleCommand" size="mini">
                 <span style="color:#909399">
@@ -46,7 +46,7 @@
         <div>&nbsp;</div>
       </div>
       <div class="container-left">
-        <span>已选择（共条）</span>
+        <span>{{$t('CAM.CAM.Role.hasChosen')}}（共条）</span>
         <el-table
           class="table-left"
           ref="multipleSelected"
@@ -56,13 +56,13 @@
           height="300"
           style="width: 100%"
         >
-          <el-table-column prop="policyName" label="策略" show-overflow-tooltip>
+          <el-table-column prop="policyName" :label="$t('CAM.CAM.Role.strategy')" show-overflow-tooltip>
             <template slot-scope="scope">
               <p>{{scope.row.policyName}}</p>
               <p>{{scope.row.description}}</p>
             </template>
           </el-table-column>
-          <el-table-column prop="type" label="策略类型" width="100"></el-table-column>
+          <el-table-column prop="type" :label="$t('CAM.CAM.Role.strategyType')" width="100"></el-table-column>
           <el-table-column :label="$t('CAM.CAM.userGroup.colHandle')" width="50">
             &lt;!&ndash;
             <template slot-scope="scope">
