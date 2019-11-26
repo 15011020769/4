@@ -37,22 +37,10 @@
 
       <div class="head-container">
         <!-- 搜索 -->
-<<<<<<< HEAD
         <!-- <el-input  style="width: 200px;" size="small" :placeholder="$t('CAM.CAM.ListUsers.placeholder')" v-model="searchValue"  @keyup.enter.native="toQuery"></el-input>
         <i class="iconfont magnifier" @click="toQuery">&#xe608;</i> -->
         <el-input v-model="searchValue" clearable :placeholder="$t('CAM.CAM.userGroup.placeholder')" style="width: 300px;"  @keyup.enter.native="toQuery"/>
         <el-button class="suo" icon="el-icon-search"  show-overflow-tooltip @click="toQuery"></el-button>
-=======
-        <el-input
-          size="small"
-          v-model="value"
-          clearable
-          placeholder="支持多关键词(间隔为空格)搜索用户名/ID/SecretId/手机/邮箱/备注"
-          style="width: 200px;"
-          @keyup.enter.native="toQuery"
-        />
-        <i class="iconfont magnifier">&#xe608;</i>
->>>>>>> c0cd69436562b001578747f50a5bcd7c2262c861
         <i @click="list = true" class="el-icon-s-tools gear"></i>
         <el-dialog title="自定义列表字段" :visible.sync="list" width="45%" :before-close="handleClose">
           <div>
@@ -84,7 +72,7 @@
                 </el-form-item>
                 <el-form-item label>
                   <el-checkbox-group v-model="form.type">
-                    <el-checkbox disabled label="关联信息" name="type"></el-checkbox>
+                    <el-checkbox disabled label="关 联信息" name="type"></el-checkbox>
                   </el-checkbox-group>
                 </el-form-item>
                 <el-form-item label>
@@ -202,15 +190,9 @@
               show-overflow-tooltip
               @click="toQuery"
             ></el-button>
-<<<<<<< HEAD
               <el-table-column type="selection" prop="policyId" width></el-table-column>
               <el-table-column  prop="Description" label="策略名" width></el-table-column>
               <el-table-column prop="PolicyId" label="策略类型" width></el-table-column>
-=======
-        <el-table-column type="selection" prop="policyId" width="100"></el-table-column>
-            <el-table-column prop="Description" label="策略名" width="120"></el-table-column>
-            <el-table-column prop="PolicyId" label="策略类型" width="120"></el-table-column>
->>>>>>> c0cd69436562b001578747f50a5bcd7c2262c861
           </el-table>
          
         </div>
