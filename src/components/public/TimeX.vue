@@ -99,7 +99,7 @@
       },
     },
     created() {
-    this.TimeChoice(1)
+      this.TimeChoice(1)
     },
     methods: {
       //点击时间按钮  

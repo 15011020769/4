@@ -10,7 +10,7 @@ export const MYSQL_LIST = 'redesc/cloudMysql' // 列表
     // 云硬盘
 export const DISK_LIST = 'cbs2/DescribeDisks' // 列表
     //负载均衡
-export const CLB_LIST = 'clb2/DescribeLoadBalancers' // 列表
+export const CLB_LIST = 'lb2/DescribeLoadBalancers' // 列表
     // NAT网关
 export const NAT_LIST = 'vpc/DescribeNatGateway' // 列表
     // 对等连接
