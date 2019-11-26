@@ -23,6 +23,8 @@
     "qa:BILL": "vue-cli-service build --BILL --mode qa",
     "serve:WAF": "vue-cli-service serve --WAF",
     "build:WAF": "vue-cli-service build --WAF",
+    "serve:KMS": "vue-cli-service serve --KMS",
+    "build:KMS": "vue-cli-service build --KMS",
     "qa": "npm run qa:CCN & npm run qa:BILL",
     "lint": "vue-cli-service lint"
   },
