@@ -2,7 +2,7 @@
   <div>
     <div class='datails-nav'>
      <ul>
-       <router-link to="/CMcloudDisk"><li><i class="el-icon-back"></i></li></router-link>
+       <router-link to="/cloudDisk"><li><i class="el-icon-back"></i></li></router-link>
 
        <li><h3>{{ID}}</h3></li>
      </ul>
