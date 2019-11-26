@@ -317,6 +317,7 @@ export default {
     min-height: 350px;
     .spanLine{
       margin:0 5px;
+      color:#bbb;
     }
     table th:nth-child(7),table td:nth-child(7),table th:nth-child(6),table td:nth-child(6){
       text-align:center;
