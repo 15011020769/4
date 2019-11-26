@@ -3,7 +3,7 @@
     <div class="top">
       <div class="top-left">
         <span class="top-text">策略</span>
-        <el-select size="mini" v-model="value" placeholder="全部策略">
+        <el-select size="mini" v-model="policyScope" placeholder="全部策略" @change="changePolicyScope">
           <el-option
             v-for="item in options"
             :key="item.value"
@@ -80,7 +80,7 @@
           style="background:#fff;padding:10px;display:flex;justify-content: space-between;line-height:30px"
         >
           <div>
-            <span style="font-size:12px;color:#888">已选 33 项，共 {{total}} 项</span>
+            <span style="font-size:12px;color:#888">已选 {{choiceNum}} 项，共 {{total}} 项</span>
           </div>
           <div>
             <el-pagination
@@ -119,26 +119,26 @@
 <script>
 import transfer from './component/transfer'
 export default {
-   components: {
-      transfer,
-    },
+  components: {
+    transfer,
+  },
   data() {
     return {
       options: [
         {
-          value: "选项1",
+          value: "All",
           label: "全部策略"
         },
         {
-          value: "选项2",
+          value: "Local",
           label: "自定义策略"
         },
         {
-          value: "选项3",
+          value: "QCS",
           label: "预设策略"
         }
       ],
-      value: "",
+      policyScope: 'All',
       input: "",
       tableData: [{}],  //策略列表数据
       selectedData: [], //选择要删除的
@@ -167,6 +167,7 @@ export default {
       transfer_data_right: [],
       //  用户组列表
       pageSize: 20,
+      choiceNum: 0,
       total: 0,
       currentPage: 1,
     };
@@ -175,14 +176,14 @@ export default {
     this.getData()
   },
   methods: {
-    // 初始化策略列表数据（全部策略）
+    // 初始化策略列表数据（默认全部策略）
     getData () {
       var params = {
         Version: '2019-01-16',
         // Region: 'ap-taipei',
         // Rp: '',
         // Page: '',
-        // Scope: '',
+        Scope: this.policyScope,
         // Keyword: ''
       }
       this.$axios.post('cam2/ListPolicies', params).then(res => {
@@ -191,6 +192,10 @@ export default {
         this.tableData = res.Response.List
         this.total = res.Response.TotalNum
       })
+    },
+    changePolicyScope () {
+      console.log(this.policyScope)
+      this.getData()
     },
     // 跳转到详情页面
     handleClick(policy) {
@@ -278,6 +283,7 @@ export default {
     // 选择策略
     handleSelectionChange(data) {
       this.selectedData = data;
+      this.choiceNum = data.length
     },
     // 批量删除策略
     handleDelete() {
