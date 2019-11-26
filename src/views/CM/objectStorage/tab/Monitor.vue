@@ -88,7 +88,7 @@
   import XTimeX from '@/components/public/TimeX';
   import echartLine from '@/components/public/echars-line';
   import {
-    OBJ_MONITOR
+    All_MONITOR
   } from '@/constants';
   export default {
     data() {
@@ -158,7 +158,7 @@
           StartTime: this.Start_End.StartTIme,
           EndTime: this.Start_End.EndTIme,
         };
-        this.axios.post(CVM_MONITOR, param).then((data) => {
+        this.axios.post(All_MONITOR, param).then((data) => {
           this.tableData.push(data.Response);
         });
       },
@@ -174,7 +174,7 @@
           StartTime: this.Start_End.StartTIme,
           EndTime: this.Start_End.EndTIme,
         };
-        this.axios.post(CVM_MONITOR, param).then((data) => {
+        this.axios.post(All_MONITOR, param).then((data) => {
           this.timeData = data.Response.DataPoints[0].Timestamps
           this.jingData = data.Response.DataPoints[0].Values
         });
