@@ -94,6 +94,7 @@
     data() {
       return {
         ID: this.$route.query.id,
+        Appid:this.$route.query.id.split("-")[1],
         period: '',
         Start_End: [],
         value: 1,
@@ -152,8 +153,10 @@
           Region: this.$cookie.get('regionv2'),
           Namespace: 'QCE/COS',
           MetricName: metricN,
-          'Instances.0.Dimensions.0.Name': 'InstanceId',
-          'Instances.0.Dimensions.0.Value': this.ID,
+          'Instances.0.Dimensions.0.Name': 'appid',
+          'Instances.0.Dimensions.0.Value': this.Appid,
+          'Instances.0.Dimensions.1.Name':'bucket',
+          'Instances.0.Dimensions.1.Value':this.ID,
           Period: this.period,
           StartTime: this.Start_End.StartTIme,
           EndTime: this.Start_End.EndTIme,
@@ -166,9 +169,9 @@
         const param = {
           Version: '2018-07-24',
           Region: this.$cookie.get('regionv2'),
-          Namespace: 'QCE/CVM',
+          Namespace: 'QCE/COS',
           MetricName: MetricName,
-          'Instances.0.Dimensions.0.Name': 'InstanceId',
+          'Instances.0.Dimensions.0.Name': 'bucket',
           'Instances.0.Dimensions.0.Value': this.ID,
           Period: this.period,
           StartTime: this.Start_End.StartTIme,
