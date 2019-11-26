@@ -17,7 +17,7 @@
             <p>
               <a @click="jump(scope.row.InstanceId)" style="cursor:pointer;">{{scope.row.InstanceId}}</a>
             </p>
-            {{ scope.row.InstanceName}}
+            {{ scope.row.InstanceId}}
           </template>
         </el-table-column>
         <el-table-column prop="" label="监控">
@@ -175,6 +175,7 @@
         if (this.searchValue !== '' && this.searchInput !== '') {
           param['Filters.0.Name'] = this.searchValue
           param['Filters.0.Values.0'] = this.searchInput
+
         }
         const paramS = {
           allList: 0,
@@ -193,6 +194,7 @@
           .then(() => {
             // 获取项目列表
             this.axios.post(ALL_PROJECT, paramS).then((data) => {
+              console.log(data)
               this.ProjectData = data.data;
               for (let i = 0; i < this.TbaleData.length; i++) {
 

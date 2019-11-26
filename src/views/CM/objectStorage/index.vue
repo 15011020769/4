@@ -17,7 +17,6 @@
             <p>
               <a @click="jump(scope.row.Name)" style="cursor:pointer;">{{scope.row.Name}}</a>
             </p>
-            {{ scope.row.Name}}
           </template>
         </el-table-column>
         <el-table-column prop="" label="监控">
@@ -61,20 +60,8 @@
     data() {
       return {
         searchOptions: [{
-          value: 'project-id',
-          label: '项目ID'
-        }, {
-          value: 'instance-id',
-          label: '实例ID'
-        }, {
-          value: 'instance-name',
-          label: '实例名称'
-        }, {
-          value: 'private-ip-address',
-          label: '内网IP'
-        }, {
-          value: 'public-ip-address ',
-          label: '公网IP'
+          value: 'bucket',
+          label: '存储桶名称'
         }],
         searchValue: '',
         instanceStatus: {
@@ -156,24 +143,24 @@
           // Offset: this.currpage * this.pagesize - this.pagesize,
           // Limit: this.pagesize,
         };
-        // if (this.searchValue !== '' && this.searchInput !== '') {
-        //   param['Filters.0.Name'] = this.searchValue
-        //   param['Filters.0.Values.0'] = this.searchInput
+        if (this.searchValue !== '' && this.searchInput !== '') {
+          param['Filters.0.Name'] = this.searchValue
+          param['Filters.0.Values.0'] = this.searchInput
 
-        // }
+        }
         // const paramS = {
         //   allList: 0,
         // };
         // 获取表格数据
         this.axios
           .post(OBJ_LIST, param)
-          .then((data) => {           
+          .then((data) => {    
+            console.log(data)      
             // if (data.Response.Error == undefined) {
               this.TbaleData = data.Buckets.Bucket;
             // } else {
             //   this.$message.error(data.Response.Error.Message);
             // }
-            console.log(data.Buckets.Bucket)
             this.ProTableData = this.TbaleData;
           })
           // .then(() => {
@@ -207,7 +194,7 @@
         this.GetTabularData()
       },
       jump(id) {
-        console.log('sss')
+        console.log(id)
         this.$router.push({
           name: 'CMobjdetails',
           query: {
