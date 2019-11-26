@@ -5,16 +5,19 @@ export const ALL_PROJECT = 'account/DescribeProject' // 项目列表
 
 // // 云服务器
 export const CVM_LIST = 'cvm2/DescribeInstances' // 列表
-    // Mysql
+// Mysql
 export const MYSQL_LIST = 'redesc/cloudMysql' // 列表
-    // 云硬盘
+// 云硬盘
 export const DISK_LIST = 'cbs2/DescribeDisks' // 列表
-    //负载均衡
+//负载均衡
 export const CLB_LIST = 'lb2/DescribeLoadBalancers' // 列表
-    // NAT网关
+// NAT网关
+// NAT网关
 export const NAT_LIST = 'vpc/DescribeNatGateway' // 列表
-    // 对等连接
+// 对等连接
 export const PEE_LIST = 'vpc/DescribeVpcPeeringConnections' // 列表
+// 云数据库Redis
+export const REDIS_LIST = 'redis2/DescribeInstances' // 列表
 
 // VPN网关
 export const VPN_LIST = 'vpc/DescribeVpnGw' // 列表
