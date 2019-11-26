@@ -236,24 +236,53 @@
         }
       },
       UpTitle(value) {
-        if (value === 'tcp_curr_estab') {
-          return (value = '处于 ESTABLISHED 状态的 TCP 连接数量，依赖监控组件安装采集');
+        if (value === 'lanOuttraffic') {
+          return (value = '内网网卡的平均每秒出流量');
         }
-        if (value === 'cpu_usage') {
+        if (value === 'lanIntraffic') {
+          return (value = '内网网卡的平均每秒入流量');
+        }
+        if (value === 'lanOutpkg') {
+          return (value = '内网网卡的平均每秒出包量');
+        }
+        if (value === 'lanInpkg') {
+          return (value = '内网网卡的平均每秒入包量');
+        }
+        if (value === 'WanOuttraffic') {
+          return (value = '外网平均每秒出流量，最小粒度数据为10秒总流量/10秒 计算得出');
+        }
+        if (value === 'WanIntraffic') {
+          return (value = '外网平均每秒入流量');
+        }
+        if (value === 'AccOuttraffic') {
+          return (value = '外网网卡的平均每秒出流量');
+        }
+        if (value === 'WanOutpkg') {
+          return (value = '外网平均每秒出包量');
+        }
+        if (value === 'WanInpkg') {
+          return (value = '外网平均每秒入包量');
+        }
+        if (value === 'CPUUsage') {
           return (value = 'CPU利用率是通过CVM子机内部监控组件采集上报，数据更加精准');
         }
-        if (value === 'cpu_loadavg') {
+        if (value === 'CPULoadAvg') {
           return (value = '1分钟内CPU平均负载，取 /proc/loadavg 第一列数据（windows操作系统无此指标），依赖监控组件安装采集');
         }
-        if (value === 'mem_used') {
+        if (value === 'MemUsed') {
           return (value = '使用的内存量，不包括系统缓存和缓存区占用内存，依赖监控组件安装采集');
         }
-        if (value === 'mem_usage') {
+        if (value === 'MemUsage') {
           return (value = '用户实际使用的内存量与总内存量之比，不包括缓冲区与系统缓存占用的内存');
+        }
+        if (value === 'TcpCurrEstab') {
+          return (value = '处于 ESTABLISHED 状态的 TCP 连接数量，依赖监控组件安装采集');
+        }
+        if (value === '') {
+          return (value = '');
         }
       },
       UpTime(value) {
-
         let timeArr = []
         for (let i = 0; i < value.length; i++) {
           let uptime = moment(value[i] * 1000).format(
