@@ -74,3 +74,14 @@ a:focus {
 .gray-c{
   color: gray;
 }
+.el-table{
+  font-size: 12px;
+}
+.dialog-footer {
+  text-align: center;
+  .el-button {
+    height: 30px;
+    line-height: 0;
+    border-radius: 0;
+  }
+}

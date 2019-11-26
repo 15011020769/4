@@ -786,6 +786,7 @@ export default {
     height: 30px;
   }
 }
+
 .dialog-footer {
   text-align: center;
   .el-button {
