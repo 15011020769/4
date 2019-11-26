@@ -70,7 +70,7 @@
   import SEARCH from '@/components/public/SEARCH';
   import {
     ALL_CITY,
-    CVM_LIST,
+    CLB_LIST,
     ALL_PROJECT
   } from '@/constants';
   export default {
@@ -168,7 +168,7 @@
       GetTabularData() {
         const param = {
           Region: this.selectedRegion,
-          Version: '2017-03-12',
+          Version: '2018-03-17',
           Offset: this.currpage * this.pagesize - this.pagesize,
           Limit: this.pagesize,
         };
@@ -182,8 +182,9 @@
         };
         // 获取表格数据
         this.axios
-          .post(CVM_LIST, param)
+          .post(CLB_LIST, param)
           .then((data) => {
+            console.log(data)
             if (data.Response.Error == undefined) {
               this.TbaleData = data.Response.InstanceSet;
             } else {
@@ -191,26 +192,6 @@
             }
 
           })
-          .then(() => {
-            // 获取项目列表
-            this.axios.post(ALL_PROJECT, paramS).then((data) => {
-              this.ProjectData = data.data;
-              for (let i = 0; i < this.TbaleData.length; i++) {
-
-                for (let j = 0; j < this.ProjectData.length; j++) {
-                  if (
-                    this.TbaleData[i].Placement.ProjectId == this.ProjectData[j].projectId
-                  ) {
-                    this.TbaleData[i].projectName = this.ProjectData[j].projectName;
-                  }
-                  if (this.TbaleData[i].Placement.ProjectId == 0) {
-                    this.TbaleData[i].projectName = '默认项目';
-                  }
-                }
-              }
-              this.ProTableData = this.TbaleData;
-            });
-          });
       },
       handleSizeChange(val) {
         this.pagesize = val
