@@ -72,7 +72,7 @@
                 </el-form-item>
                 <el-form-item label>
                   <el-checkbox-group v-model="form.type">
-                    <el-checkbox disabled label="关 联信息" name="type"></el-checkbox>
+                    <el-checkbox disabled label="关联信息" name="type"></el-checkbox>
                   </el-checkbox-group>
                 </el-form-item>
                 <el-form-item label>
@@ -143,18 +143,32 @@
               <el-dropdown-item>
                 <el-button type="text" style="color:#000" @click="subscribe= true">订阅信息</el-button>
               </el-dropdown-item>
-              <el-dropdown-item>删除</el-dropdown-item>
+              <!-- <el-dropdown-item>删除</el-dropdown-item> -->
+              <el-button type="text" style="color:#000;padding-left:20px;"  @click="todeleteShow(scope.row)">删除</el-button>
             </el-dropdown-menu>
           </el-dropdown>
         </template>
       </el-table-column>
     </el-table>
+
+    <el-dialog
+  title="提示"
+  :visible.sync="deleteShow"
+  width="30%"
+  :before-close="CloseShow">
+  <span>这是一段信息</span>
+  <span slot="footer" class="dialog-footer">
+    <el-button @click="deleteShow = false">取 消</el-button>
+    <el-button type="primary" @click="sureDelet">确 定</el-button>
+  </span>
+</el-dialog>
+
     <el-dialog title="添加到组" :visible.sync="authorization" width="74%" :before-close="handleClose">
       <div class="container">
         <div class="container-left">
           <span>策略列表（共{{totalNum}}条）</span>
           <div>
-            <el-input
+            <!-- <el-input
             size="mini"
             style="width:89%"
             @keyup.enter.native="toQuery"
@@ -165,7 +179,9 @@
             icon="el-icon-search"
             show-overflow-tooltip
             @click="toQuery"
-          ></el-button>
+          ></el-button> -->
+          <el-input v-model="ClsearchValue" clearable style="width:90%;"  @keyup.enter.native="toQueryCL"/>
+          <el-button class="suo" icon="el-icon-search"  show-overflow-tooltip @click="toQueryCL"></el-button>
           </div>
            
           <el-table
@@ -192,7 +208,11 @@
             ></el-button>
               <el-table-column type="selection" prop="policyId" width></el-table-column>
               <el-table-column  prop="Description" label="策略名" width></el-table-column>
-              <el-table-column prop="PolicyId" label="策略类型" width></el-table-column>
+              <el-table-column label="策略类型" prop="type" width>
+                 <template slot-scope="scope">
+                    {{scope.row.type == '1'?'自定义策略':'预设策略'}}
+                 </template>
+              </el-table-column>
           </el-table>
          
         </div>
@@ -212,9 +232,12 @@
             height="300"
             style="width: 100%;border:1px solid #ddd"
           >
-            <!-- <el-table-column type="selection" prop="policyId" width></el-table-column> -->
             <el-table-column  prop="Description" label="策略名" width></el-table-column>
-            <el-table-column prop="PolicyId" label="策略类型" width></el-table-column>
+            <el-table-column prop="type" label="策略类型" width>
+               <template slot-scope="scope">
+                    {{scope.row.type == '1'?'自定义策略':'预设策略'}}
+                 </template>
+            </el-table-column>
             <el-table-column :label="操作" show-overflow-tooltip>
               &lt;!&ndash;
               <template slot-scope="scope">
@@ -239,7 +262,7 @@
         <div class="container-left">
           <span>策略列表（共{{totalNum}}条）</span>
           <div>
-            <el-input
+            <!-- <el-input
             size="mini"
             style="width:89%"
           />
@@ -248,7 +271,9 @@
             class="suo"
             icon="el-icon-search"
             show-overflow-tooltip
-          ></el-button>
+          ></el-button> -->
+           <el-input v-model="UsersearchValue" placeholder="搜索" clearable style="width:90%;"  @keyup.enter.native="toQueryUser"/>
+           <el-button class="suo" icon="el-icon-search"  show-overflow-tooltip @click="toQueryUser"></el-button>
           </div>
            
           <el-table
@@ -273,7 +298,6 @@
             ></el-button>
             <el-table-column type="selection" prop="policyId" width></el-table-column>
             <el-table-column  prop="GroupName" label="用户名"  width></el-table-column>
-            <!-- <el-table-column prop="PolicyId" label="策略类型" width></el-table-column> -->
           </el-table>
          
         </div>
@@ -294,7 +318,6 @@
           >
             <el-table-column type="selection" prop="policyId" width="55"></el-table-column>
             <el-table-column label="用户组" width="120" prop="GroupName"></el-table-column>
-            <!-- <el-table-column prop="type" label="策略类型" width="120"></el-table-column> -->
             <el-table-column :label="操作" show-overflow-tooltip>
               &lt;!&ndash;
               <template slot-scope="scope">
@@ -533,6 +556,10 @@ export default {
       return data;
     };
     return {
+      deleteName: '',
+      deleteShow:false,
+      UsersearchValue:[],
+      ClsearchValue:[],
       searchValue:[],
       policiesDatas:[],
       policiesData: [],
@@ -549,7 +576,7 @@ export default {
       subscribe: false,
       dialogVisible: false,
       checked: true,
-      tableData: [],
+      tableData: [{}],
       options: [
         {
           value: "选项1",
@@ -575,24 +602,75 @@ export default {
     };
   },
   methods: {
-    init() {
+    todeleteShow(user){
+      this.deleteName = user.Name
+      this.deleteShow = true
+    },
+    sureDelet(){
       let params = {
-        Action: 'GetUser',
-        Version: '2019-01-16',
-        Name:"111"
+        Action:'DeleteUser',
+        Version:'2019-01-16',
+        Name:this.deleteName
       }
-      if(this.searchValue != null && this.searchValue != ''){
-        params = this.searchValue
+      let url = 'cam2/DeleteUser'
+      this.axios.post(url,params).then((data)=>{
+        console.log(data)
+      })
+      
+    },
+    // init() {
+    //   let params = {
+    //     Action: 'GetUser',
+    //     Version: '2019-01-16',
+    //     Name:"111"
+    //   }
+    //   if(this.searchValue != null && this.searchValue != ''){
+    //     params = this.searchValue
+    //   }
+    //   let url = "cam2/GetUser"
+    //   this.axios.post(url, params).then(data => {
+    //    console.log(data)
+    //   }).catch(error => {
+    //     console.log(error)
+    //   })
+    // },
+    // toQuery(){
+    //   this.init()
+    // },
+
+    //策略搜索
+    CeInit(){
+       let params = {
+         Action:"ListPolicies",
+         Version:"2019-01-16"
+       }
+       if(this.ClsearchValue != null && this.ClsearchValue != ''){
+          params["Keyword"] = this.ClsearchValue
+       }
+       let url = "cam2/ListPolicies"
+       this.axios.post(url,params).then(data => {
+         this.policiesData = data.Response.List
+       })
+    },
+    toQueryCL(){
+      this.CeInit()
+    },
+    // 用户搜索
+    UserInit(){
+      let params = {
+        Action:"ListGroups",
+        Version:"2019-01-16"
       }
-      let url = "cam2/GetUser"
-      this.axios.post(url, params).then(data => {
-       console.log(data)
-      }).catch(error => {
-        console.log(error)
+      if(this.UsersearchValue != null && this.UsersearchValue != ""){
+         params["Keyword"] = this.UsersearchValue
+      }
+      let url = "cam2/ListGroups"
+      this.axios.post(url,params).then(data => {
+        this.policiesDatas = data.Response.GroupInfo
       })
     },
-    toQuery(){
-      this.init()
+    toQueryUser(){
+      this.UserInit()
     },
     change(e){
       this.$forceUpdate()
@@ -627,6 +705,13 @@ export default {
       // 获取右边框中取消的行数据，将此行数据在右边框中的选中状态取消
       this.$refs.multipleOption.toggleRowSelection(rows[index], false);
     },
+    CloseShow(done) {
+        this.$confirm('确认关闭？')
+          .then(_ => {
+            done();
+          })
+          .catch(_ => {});
+    }
 
   },
   created(){
@@ -663,7 +748,8 @@ export default {
     let userListUrl= 'cam2/ListUsers'
     this.axios.post(userListUrl,userList).then((data)=>{
        this.tableData = data.Response.Data
-      console.log(data)
+    }).catch(error=>{
+       console.log(error)
     })
 
    }
