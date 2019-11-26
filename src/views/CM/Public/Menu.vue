@@ -3,7 +3,7 @@
     <div class="big-title">云监控</div>
     <el-menu default-active="2" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose"
       background-color="#545c64" text-color="#fff" active-text-color="#ffd04b" :router="true">
-      <el-menu-item index="overview">
+      <!-- <el-menu-item index="overview">
         <i class="iconfont">&#xe615;</i>
         <span slot="title">监控概览</span>
       </el-menu-item>
@@ -34,19 +34,10 @@
           </el-menu-item>
         </el-collapse-item>
 
-      </el-collapse>
-
-
-
-
-
-
-
-
-
-
-
-      <el-menu-item index="EventCenter">
+      </el-collapse> -->
+      <!-- 
+    
+      <!-- <el-menu-item index="EventCenter">
         <i class="iconfont">&#xe615;</i>
         <span slot="title">事件中心</span>
       </el-menu-item>
@@ -58,38 +49,71 @@
       <el-menu-item index="flow">
         <i class="iconfont">&#xe615;</i>
         <span slot="title">流量监控</span>
-      </el-menu-item>
+      </el-menu-item> -->
       <el-menu-item index="CVM">
-        <i class="iconfont">&#xe615;</i>
         <span slot="title">云服务器</span>
       </el-menu-item>
       <el-menu-item index="cloudDisk">
-        <i class="iconfont">&#xe679;</i>
-        <span slot="title">云硬盘</span>
+        <span slot="title">块存储</span>
       </el-menu-item>
-      <el-menu-item index="cloudMysql">
-        <i class="iconfont">&#xe679;</i>
-        <span slot="title">云数据库</span>
+      <el-menu-item index="CLBload">
+        <span slot="title">负载均衡-CLB</span>
       </el-menu-item>
-      <el-menu-item index="NATgateway">
-        <i class="iconfont">&#xe679;</i>
-        <span slot="title">NAT网关</span>
-      </el-menu-item>
+
+      <el-collapse v-model="activeName" accordion>
+        <el-collapse-item name="1">
+          <template slot="title">
+            云数据库
+          </template>
+          <el-menu-item index="cloudMysql">
+            <span slot="title">MySQL</span>
+          </el-menu-item>
+          <el-menu-item index="Redis">
+            <span slot="title">Redis</span>
+          </el-menu-item>
+        </el-collapse-item>
+      </el-collapse>
+
+      <el-collapse v-model="activeName1" accordion>
+        <el-collapse-item name="1">
+          <template slot="title">
+            私有网络
+          </template>
+          <el-menu-item index="NATgateway">
+            <span slot="title">NAT网关</span>
+          </el-menu-item>
+          <el-menu-item index="VPNgateway">
+            <span slot="title">VPN网关</span>
+          </el-menu-item>
+          <el-menu-item index="VPNchannel">
+            <span slot="title">VPN通道</span>
+          </el-menu-item>
+          <el-menu-item index="networkIP">
+            <span slot="title">弹性公网IP</span>
+          </el-menu-item>
+        </el-collapse-item>
+      </el-collapse>
+
+      <el-collapse v-model="activeName2" accordion>
+        <el-collapse-item name="1">
+          <template slot="title">
+            专线接入
+          </template>
+          <el-menu-item index="Physics">
+            <span slot="title">物理专线</span>
+          </el-menu-item>
+          <el-menu-item index="Private">
+            <span slot="title">专线通道</span>
+          </el-menu-item>
+        </el-collapse-item>
+      </el-collapse>
 
       <!-- <el-menu-item index="peerConnect">
         <i class="iconfont">&#xe679;</i>
         <span slot="title">对等连接</span>
       </el-menu-item> -->
-      <el-menu-item index="VPNgateway">
-        <i class="iconfont">&#xe679;</i>
-        <span slot="title">VPN网关</span>
-      </el-menu-item>
-      <el-menu-item index="VPNchannel">
-        <i class="iconfont">&#xe679;</i>
-        <span slot="title">VPN通道</span>
-      </el-menu-item>
+
       <el-menu-item index="objectStorage">
-        <i class="iconfont">&#xe679;</i>
         <span slot="title">对象存储</span>
       </el-menu-item>
     </el-menu>
@@ -101,6 +125,8 @@
     data() {
       return {
         activeName: '',
+        activeName1: '',
+        activeName2: '',
         activeIndex: '1',
         activeIndex2: '1'
       }
@@ -126,20 +152,24 @@
     ::v-deep .el-collapse-item__content {
       padding: 0;
     }
+
     ::v-deep .el-collapse-item__header {
       padding: 0;
       padding-left: 20px;
       background-color: rgb(84, 92, 100);
       color: white;
     }
+
     ::v-deep .el-collapse {
       border: none;
     }
+
     .big-title {
       font-size: 16px;
       color: white;
       padding: 20px 0 15px 20px;
     }
+
     .iconfont {
       margin-right: 5px;
       width: 24px;
@@ -147,6 +177,7 @@
       font-size: 16px;
       vertical-align: middle;
     }
+
     ::v-deep .el-menu-item {
       padding-left: 20px !important;
     }

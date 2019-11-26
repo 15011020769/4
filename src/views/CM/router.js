@@ -49,9 +49,28 @@ export default new Router({
                 keepAlive: true
             }
         },
+        {
+            path: '/CLBload', // 负载均衡
+            name: 'CLBload',
+            component: () =>
+                import ( /* webpackChunkName: "CVM" */ './CLBload/index.vue'),
+            meta: {
+                keepAlive: true
+            }
+        },
+        {
+            path: '/CLBloaddetails', // 负载均衡详情监控
+            name: 'CLBloaddetails',
+            component: () =>
+                import ( /* webpackChunkName: "CVM" */ './CLBload/details.vue'),
+            meta: {
+                keepAlive: true
+            }
+        },
+
 
         {
-            path: '/cloudMysql', // 云数据库
+            path: '/cloudMysql', // Mysql
             name: 'cloudMysql',
             component: () =>
                 import ( /* webpackChunkName: "cloudMysql" */ './cloudMysql/index.vue'),
@@ -60,10 +79,87 @@ export default new Router({
             }
         },
         {
-            path: '/CMMysqldetails', // 云数据库详情
+            path: '/CMMysqldetails', // Mysql详情
             name: 'CMMysqldetails',
             component: () =>
                 import ( /* webpackChunkName: "cloudMysql" */ './cloudMysql/details.vue'),
+            meta: {
+                keepAlive: true
+            }
+        },
+
+
+
+        {
+            path: '/Redis', // redis
+            name: 'Redis',
+            component: () =>
+                import ( /* webpackChunkName: "CVM" */ './redis/index.vue'),
+            meta: {
+                keepAlive: true
+            }
+        },
+        {
+            path: '/Redisdetails', //  redis详情监控
+            name: 'Redisdetails',
+            component: () =>
+                import ( /* webpackChunkName: "CVM" */ './redis/details.vue'),
+            meta: {
+                keepAlive: true
+            }
+        },
+        {
+            path: '/networkIP', // 弹性公网IP
+            name: 'networkIP',
+            component: () =>
+                import ( /* webpackChunkName: "CVM" */ './network/index.vue'),
+            meta: {
+                keepAlive: true
+            }
+        },
+        {
+            path: '/networkdetails', //  弹性公网IP详情监控
+            name: 'networkdetails',
+            component: () =>
+                import ( /* webpackChunkName: "CVM" */ './network/details.vue'),
+            meta: {
+                keepAlive: true
+            }
+        },
+
+
+        {
+            path: '/Private', // 专线通道
+            name: 'Private',
+            component: () =>
+                import ( /* webpackChunkName: "CVM" */ './Private/index.vue'),
+            meta: {
+                keepAlive: true
+            }
+        },
+        {
+            path: '/Privatedetails', //  专线通道详情监控
+            name: 'Privatedetails',
+            component: () =>
+                import ( /* webpackChunkName: "CVM" */ './Private/details.vue'),
+            meta: {
+                keepAlive: true
+            }
+        },
+        {
+            path: '/Physics', // 物理专线
+            name: 'Physics',
+            component: () =>
+                import ( /* webpackChunkName: "CVM" */ './Physics/index.vue'),
+            meta: {
+                keepAlive: true
+            }
+        },
+        {
+            path: '/Physicsdetails', //  物理专线详情监控
+            name: 'Physicsdetails',
+            component: () =>
+                import ( /* webpackChunkName: "CVM" */ './Physics/details.vue'),
             meta: {
                 keepAlive: true
             }
