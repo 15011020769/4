@@ -59,9 +59,6 @@
             <p v-for="i in scope.row.PublicIpAddresses">{{i}}</p>
           </template>
         </el-table-column>
-
-        <el-table-column prop="projectName" label="所属项目"></el-table-column>
-
         <el-table-column label="健康状态">
           <template slot-scope="scope">
             <p
