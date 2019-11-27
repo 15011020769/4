@@ -44,7 +44,7 @@
             <el-table-column type="selection" width="55"></el-table-column>
             <el-table-column prop="KeyId" label="密钥ID/密钥名称">
               <template slot-scope="scope">
-                <a href="#">{{scope.row.KeyId}}</a><br />
+                <a href="#" @click="todoDetails(scope.row)">{{scope.row.KeyId}}</a><br />
                 <span>{{ scope.row.Alias}}</span>
               </template>
             </el-table-column>
@@ -98,7 +98,15 @@ export default {
       deleteIndex: "",
       deleteBegin: {},
       dialogVisible: false,//新建模态框
-      allData: [],
+      allData: [
+        {
+          KeyId:"1235468165",
+          Alias:"222",
+          KeyState:"已启用",
+          CreateTime:"5696523658",
+          Origin:"外部"
+        }
+      ],
       createForm: {
         name: "",
         discription: "",
@@ -131,20 +139,20 @@ export default {
       this.$axios.post('kms2/ListKeys', params).then(res => {
         // console.log(res.Response);
         var arrlist = res.Response.Keys;
-        var DataList = []
+        var DataList = [];
         for (let i = 0; i < arrlist.length; i++) {
-          let params = {
-            Version: '2019-01-18',
-            Region: 'ap-taipei',
-          };
+           let params = {
+             Version: '2019-01-18',
+             Region: 'ap-taipei',
+           };
           params['KeyId'] = arrlist[i].KeyId
-          this.$axios.post('kms2/DescribeKey', params).then(res => {
+        this.$axios.post('kms2/DescribeKey', params).then(res => {
             DataList.push(res.Response.KeyMetadata)
             // console.log(DataList)
-            this.tableDataBegin = DataList;
+          this.tableDataBegin = DataList;
 
             this.allData = DataList
-            // this.tableDataBegin = this.allData;
+            //this.tableDataBegin = this.allData;
             // 将数据的长度赋值给totalItems
             this.totalItems = this.tableDataBegin.length;
             if (this.totalItems > this.pageSize) {
@@ -155,9 +163,9 @@ export default {
               this.tableDataEnd = this.tableDataBegin;
             }
             
-          });
+         });
         }
-        // this.filterState()
+         //this.filterState()
       });
     },
     //搜索
@@ -258,6 +266,22 @@ export default {
           state = 'KMS'
         } 
         return state;
+    },
+    //跳转详情页
+    todoDetails(projeatRow){
+      console.log(projeatRow)
+      let params={
+        Alias:projeatRow.Alias,
+        CreateTime:this.timestampToTime(projeatRow.CreateTime),
+        KeyId:projeatRow.KeyId,
+        KeyState:this.filterState(projeatRow.KeyState),
+        Origin:this.filterKey(projeatRow.Origin),
+        address:this.thisAddress
+      }
+      sessionStorage.setItem("projectId", JSON.stringify(params));
+      this.$router.push({
+        name:"userKmsDetails"
+      })
     }
   }
 }
