@@ -43,10 +43,11 @@
         </div>
         <!-- <div class="bottomBtn newClear"> class导致按钮无法点击-->
         <div>
-          <el-button type="primary" @click="saveCode">保存</el-button>
-          <el-button @click="testCode">测试</el-button>
-          <el-form>
-            <el-form-item label="当前测试模板" :required="true" class="floatLeftItem">
+          <el-button type="primary" @click="saveCode" size="small">保存</el-button>
+          <el-button @click="testCode" size="small">测试</el-button>
+          <span style="padding:0 20px">*当前测试模板</span>
+          <el-form style="display:inline-block">
+            <el-form-item label :required="true" class="floatLeftItem">
               <el-select v-model="modelList" class="selectSetWidth floatLeftItem1">
                 <el-option label="Hello World事件模板" value="HelloWorld"></el-option>
                 <el-option label="COS 对象存储的 POST 事件模板" value="cospost"></el-option>
@@ -95,6 +96,18 @@
               </el-dialog>
             </el-form-item>
           </el-form>
+        </div>
+        <div class="tea-form" style="width: 100%;">
+          <div class="tea-form" style="display:flex">
+            <p style="padding-right:20px">函数代码</p>
+            <div >
+              <div style="display:flex">
+                 <el-input v-model="input" placeholder="请输入内容" style="margin-right:20px" size="small" disabled @input="inpChange"></el-input>
+                 <el-input style="padding:0;width:90px" type="file" class="btnUp" size="small" ></el-input>
+              </div>
+              <p style="margin-top:15px">请上传zip格式的代码包，最大支持50M（如果zip大于10M，仅显示入口文件）</p>
+            </div>
+          </div>
         </div>
         <div class="bottomCodeShow" v-if="bottomCodeShowBtn">
           <h3>
@@ -182,7 +195,6 @@ export default {
   },
   mounted() {
     this.init();
-    console.log(this.$route.query.functionName, "com");
   },
   methods: {
     // 查询详情
@@ -200,7 +212,6 @@ export default {
       if (functionName != "" && functionName != null) {
         params["FunctionName"] = functionName;
       }
-      console.log(params);
       let url = "scf2/GetFunction";
       this.axios
         .post(url, params)
@@ -208,7 +219,6 @@ export default {
           let _this = this;
           this.functionData = res.Response;
           let funcData = this.functionData;
-          console.log(funcData);
         })
         .catch(error => {
           console.log(error);
@@ -218,29 +228,27 @@ export default {
       // 点击保存，首先执行uploads，然后重新执行GetFunction，查询信息，
       // 查询模板GetTempCosInfo，根据返回的ObjectPath模板路径，执行UpdateFunctionCode
       //UpdateFunctionCode //更新云函数代码
-      console.log("saveCode")
-
       let params = {
         Action: "UpdateFunctionCode",
         Version: "2018-04-16",
         Region: this.$cookie.get("regionv2"),
-        Handler:"index.main_handler",
+        Handler: "index.main_handler"
       };
       let functionName = this.$route.query.functionName;
       // functionName = 'tttt'
       if (functionName != "" && functionName != null) {
         params["FunctionName"] = functionName;
       }
-      console.log(params);
       let url = "scf2/UpdateFunctionCode";
       this.axios
         .post(url, params)
-        .then(res => {
-          console.log(res)
-        })
+        .then(res => {})
         .catch(error => {
           console.log(error);
         });
+    },
+    inpChange(val,evn){
+      console.log(val)
     },
     testCode() {
       // ClientContext: '{↵  "key1": "test value 1",↵  "key2": "test value 2"↵}'
@@ -260,10 +268,8 @@ export default {
       this.axios
         .post(url, params)
         .then(res => {
-          debugger;
           let _this = this;
           this.FunctionRequestId = res.Response.Result.FunctionRequestId;
-          console.log(this.FunctionRequestId);
           // 获取测试日志
           let params = {
             Action: "GetFunctionLogs",
@@ -276,15 +282,12 @@ export default {
           if (functionName != "" && functionName != null) {
             params["FunctionName"] = functionName;
           }
-          console.log(params);
           let url = "scf2/GetFunctionLogs";
           this.axios
             .post(url, params)
             .then(res => {
-              console.log(res);
               this.ResData = res.Response.Data;
               // 从腾讯云产品执行交易分析，如果日志为空从新查询，一般查询10多次日志就出来
-              console.log(this.ResData);
             })
             .catch(error => {
               console.log(error);
@@ -309,7 +312,6 @@ export default {
         this.codeShow = false;
       }
       if (this.funCodeForm.methodsTip == "zipFile") {
-        console.log(this.funCodeForm.methodsTip);
         this.uploadZipBackBack = true;
       } else {
         this.uploadZipBackBack = false;
@@ -331,7 +333,6 @@ export default {
     //测试按钮
     bottomCodeShow() {
       alert(1);
-      // console.log(1)
       this.bottomCodeShowBtn = true;
     }
   }
@@ -477,5 +478,18 @@ export default {
     line-height: 24px;
     color: #888;
   }
+}
+.tea-form {
+    display: table;
+    font-size: 12px;
+    line-height: 1.5;
+}
+.tea-form .tea-form {
+    background-color: #f2f2f2;
+    padding: 10px;
+    width:100%
+}
+.btnUp .el-input__inner{
+  padding:0;
 }
 </style>

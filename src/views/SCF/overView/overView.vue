@@ -232,7 +232,6 @@ export default {
       if (functionName != "" && functionName != null) {
         params["FunctionName"] = functionName;
       }
-      console.log(params);
       let url = "scf2/GetFunction";
       this.axios
         .post(url, params)
@@ -240,7 +239,6 @@ export default {
           let _this = this;
           this.functionData = res.Response;
           let funcData = this.functionData;
-          console.log(funcData);
         })
         .catch(error => {
           console.log(error);

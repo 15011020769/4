@@ -394,15 +394,10 @@
                           <template slot-scope="scope">
                             <el-form :model="modelNameTags[scope.$index]">
                               <el-form-item prop="nameSpaceOne">
-                                <span
-                                  v-if="modelNameTags[scope.$index].disableDelete"
-                                >{{modelNameTags[scope.$index].nameSpaceOne}}</span>
                                 <el-input
                                   class="addTabsIpt"
                                   v-model="modelNameTags[scope.$index].nameSpaceOne"
-                                  v-if="!modelNameTags[scope.$index].disableDelete"
                                   placeholder
-                                  :disabled="modelNameTags[scope.$index].disableDelete"
                                 />
                               </el-form-item>
                             </el-form>
@@ -456,7 +451,7 @@
           </el-tab-pane>
           <el-tab-pane label="触发方式" name="third">
             <div class="allConListMain">
-              <triggerMode ref="mychild" @childFn="childFn" />
+              <triggerMode ref="mychild" @childFn="childFn"/>
             </div>
           </el-tab-pane>
           <el-tab-pane label="运行日志" name="fouth">
@@ -526,13 +521,19 @@ export default {
           disableDelete: false
         }
       ],
-      functionData: [],
+      options: [],
+      options1: [],
+      functionData: {
+        Environment:{
+          Variables:"",
+        },
+      },
       environmentFlag: true,
       vpcConfigFlag: true,
       VariablesArr: [],
       vpcConfigVpcId: "",
       vpcConfigSubnetId: "",
-      childData:{},
+      childData: {},
       funReast: {
         funName: this.funtitle,
         runRole: "",
@@ -587,9 +588,8 @@ export default {
     };
   },
   mounted() {
-    console.log(this.$route.query.functionName);
     this.funNameTit = this.$route.query.functionName;
-    this.modelNameTags[0].nameSpaceOne = "default";
+    this.modelNameTags[0].nameSpaceOne = "";
     this.modelNameTags[0].nameSpaceTwo = "";
     this.modelNameTags[0].disableDelete = true;
     this.init();
@@ -631,7 +631,7 @@ export default {
     },
     // 函数配置修改
     saveConfig() {
-      debugger;
+      // debugger;
       let params = {
         Action: "UpdateFunctionConfiguration",
         Version: "2018-04-16",
@@ -656,7 +656,7 @@ export default {
           console.log(error);
         });
     },
-     getfunction() {
+    getfunction() {
       let params = {
         Version: "2018-04-16",
         Region: this.$cookie.get("regionv2"),
@@ -810,12 +810,12 @@ export default {
           console.log(error);
         });
     },
-    childFn(val){
-     this.childData = val
-     this.centerDialogVisible = true
+    childFn(val) {
+      this.childData = val;
+      this.centerDialogVisible = true;
     },
-    detele () {
-      this.centerDialogVisible = false
+    detele() {
+      this.centerDialogVisible = false;
       let params = {
         Version: "2018-04-16",
         Region: this.$cookie.get("regionv2"),
@@ -829,8 +829,19 @@ export default {
       }
       this.$axios.post("scf2/DeleteTrigger", params).then(res => {
         console.log(res);
-        console.log(this.$refs.mychild)
+        console.log(this.$refs.mychild);
         this.$refs.mychild.getfunction();
+      });
+    },
+    getTable() {
+      let params = {
+        Version: "2018-07-24",
+        Region: this.$cookie.get("regionv2"),
+        Action: "DescribeBaseMetrics",
+        Namespace:"QCE/CVM"
+      };
+      this.$axios.post("scf2/DescribeBaseMetrics", params).then(res => {
+        console.log(res,"table");
       });
     }
   }
@@ -958,9 +969,7 @@ export default {
     }
   }
 }
-.addTabsIpt {
-  margin-top: 45px;
-}
+
 .tipContent {
   font-size: 12px;
   color: #888;

@@ -34,7 +34,7 @@
             </li>
           </ul>
         </div>
-        <div class="RightShow">
+        <div class="RightShow" v-if="logData && logData.Data&&logData.Data.length != 0">
           <p>请求ID：{{logData.Data[logIndex].RequestId}}</p>
           <div class="timeCenterShow">
             <span>时间：</span>
@@ -66,19 +66,19 @@
 export default {
   data() {
     return {
-      logStatus: "全部状态",
+      logStatus: "",
       value1: "",
       iptSearch: "",
       logIndex:0,
       logData:{},
-      logList: [
-        // { id: "1", time: "2019-11-18 10:21:21", status: "调用成功" },
-        // { id: "2", time: "2019-11-19 15:50:21", status: "调用成功" }
-      ]
+      logList: [],
     };
   },
+  created() {
+   this.searchLogs();
+  },
   mounted() {
-    this.searchLogs();
+    
   },
   methods: {
     thisTime(thisTime) {
@@ -113,28 +113,25 @@ export default {
       if (functionName != "" && functionName != null) {
         params["FunctionName"] = functionName;
       }
-      console.log(params);
       let url = "scf2/GetFunctionLogs";
       this.axios
         .post(url, params)
         .then(res => {
           _this.logData = res.Response
+          console.log(_this.logData)
           res.Response.Data.forEach((element,index) => {
             let obj = {}
-            obj.id = index
             obj.time = element.StartTime
             obj.status = "调用成功"
             _this.logList.push(obj)
             element.Log = element.Log.replace(/\n/g,"<br/>")
           });
-          console.log(res.Response)
         })
         .catch(error => {
           console.log(error);
         });
     },
     clickLog(index){
-      console.log(index)
       this.logIndex = index
     }
   }

@@ -113,7 +113,7 @@ export default {
     );
     this.formShowable.runMoentStep = window.sessionStorage.getItem("runMoent");
 
-    this.list()
+    this.list();
   },
   methods: {
     //回去上一页
@@ -136,12 +136,16 @@ export default {
         Action: "CreateFunction",
         FunctionName: this.formShowable.funNameStep,
         Code: {
-          CosBucketRegion: this.$cookie.get("regionv2"),
-          DemoId: "demo-keaut4b2"
+          ZipFile:
+            "UEsDBAoAAAAIABU0e0/2ybv3kQAAAOUAAAAIAAAAaW5kZXgucHltjbEOglAMRXe+4gYXnoqDkyFxd3ZxNIQWfebRR0pBP18ESRzs0qT3ntMV8nWOKpKXW4He6sPnkPimjWp4dFES4hpN6eV6L4UCa8YDi21HSIxf5ooE47TqxbL0zBX7gQlTqUCKzWTZUd+03YJ6oXHjiL1z+It/5bOgM82Wb+63fuIQIp5RA6VzoGy9ypJc5uQNUEsBAhQACgAAAAgAFTR7T/bJu/eRAAAA5QAAAAgAAAAAAAAAAAAAAAAAAAAAAGluZGV4LnB5UEsFBgAAAAABAAEANgAAALcAAAAAAA=="
         },
-        Description: this.formShowable.descStep,
-        Runtime: this.formShowable.runMoentStep,
-        Role: this.formShowable.runRole
+        Type: "Event",
+        UseGpu: "FALSE",
+        Runtime: "Python3.6",
+        Description: "helloworld 空白模板函数",
+        InstallDependency: "FALSE",
+        MemorySize: 128,
+        Namespace: "default"
       };
       this.$axios.post("scf2/CreateFunction", params).then(res => {
         console.log(res);
@@ -153,7 +157,7 @@ export default {
     list() {
       let params = {
         Version: "2017-03-12",
-        Region: this.$cookie.get("regionv2"),
+        Region: this.$cookie.get("regionv2")
       };
       this.$axios.post("bucket/list", params).then(res => {
         console.log(res);

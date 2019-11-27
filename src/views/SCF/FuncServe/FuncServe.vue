@@ -5,7 +5,7 @@
       <el-input class="addressName" readonly="readonly" v-model="addressIpt"></el-input>
       <div>
         命名空间：
-        <el-select class="nameSpace" v-model="nameSpaceValue" placeholder="default(1)" filterable>
+        <el-select class="nameSpace" v-model="nameSpaceValue" @change="nameRoom" placeholder="default(1)" filterable>
           <el-option
             v-for="item in nameSpace"
             :key="item.Name"
@@ -45,8 +45,8 @@
             <template slot-scope="scope">
               <el-form :model="modelNameSpace[scope.$index]">
                 <el-form-item prop="Name">
-                  <el-input v-show="true" v-model="modelNameSpace[scope.$index].Name" :disabled="modelNameSpace[scope.$index].disableDelete" placeholder />
-                  <div v-if="!modelNameSpace[scope.$index].disableDelete">
+                  <el-input v-show="true" :class="{'inputactive':!modelNameSpace[scope.$index].disableDelete}" @blur="inpBlur(modelNameSpace[scope.$index].Name)" v-model="modelNameSpace[scope.$index].Name" :disabled="modelNameSpace[scope.$index].disableDelete" placeholder />
+                  <div v-if="!modelNameSpace[scope.$index].disableDelete" :class="{'errActive':isbol}">
                     <p class="modelNameSpace">1. 最多60个字符，最少2个字符</p>
                     <p class="modelNameSpace">2. 字母开头，支持 a-z，A-Z，0-9，-，_，且需要以数字或字母结尾</p>
                   </div>
@@ -58,7 +58,7 @@
             <template slot-scope="scope">
               <el-form ref="scope.row"  :model="modelNameSpace[scope.$index]">
                 <el-form-item prop="Description">
-                  <el-input type="textarea" style="min-height:90px;" v-model="modelNameSpace[scope.$index].Description" placeholder :disabled="modelNameSpace[scope.$index].disableDelete" />
+                  <el-input v-model="modelNameSpace[scope.$index].Description" placeholder :disabled="modelNameSpace[scope.$index].disableDelete&&scope.$index == 0" />
                 </el-form-item>
               </el-form>
             </template>
@@ -67,8 +67,8 @@
             <template slot-scope="scope">
               <el-form ref="scope.row">
                 <el-form-item>
-                  <span v-if="modelNameSpace[scope.$index].disableDelete">-</span>
-                  <el-button v-if="!modelNameSpace[scope.$index].disableDelete" class="modelDelete" @click="spaceDelete(scope.$index,scope.row)">删除</el-button>
+                  <span v-if="modelNameSpace[scope.$index].disableDelete&&scope.$index == 0">-</span>
+                  <el-button v-if="modelNameSpace[scope.$index].disableDelete && scope.$index != 0" class="modelDelete" @click="spaceDelete(scope.$index,scope.row)">删除</el-button>
                 </el-form-item>
               </el-form>
             </template>
@@ -156,7 +156,7 @@
                       </el-select>
                     </el-form-item>
                     <el-form-item label="函数名称" :required="true">
-                      <el-input v-model="newname"  label-width="80px"></el-input>
+                      <el-input v-model="newname"  label-width="80px" @blur="inpBlur"></el-input>
                       <p class="tipBot">1. 最多60个字符，最少2个字符</p>
                       <p class="tipBot">2. 字母开头，支持 a-z，A-Z，0-9，-，_，且需要以数字或字母结尾</p>
                     </el-form-item>
@@ -270,7 +270,8 @@ export default {
       ],
       copyIndex2: "",
       filterConrent:"value2",
-      showTips:false
+      showTips:false,
+      isbol:false
     };
   },
   computed: {
@@ -286,6 +287,20 @@ export default {
     //this.modelNameSpace[0].disableDelete=true;
   },
   methods: {
+    inpBlur (val) {
+      if(val){
+        let reg = /^[a-zA-Z][a-zA-Z0-9_-]{2,59}$/
+        let bol = reg.test(val)
+        console.log(bol)
+        if(!bol){
+           this.isbol = true
+        }else{
+          this.isbol = false
+        }
+      } else {
+        this.isbol = true
+      }
+    },
     //命名空间的列表
     getDModelNmaeSpace() {
       let params = {
@@ -293,11 +308,13 @@ export default {
         Region: "ap-taipei"
       };
       this.$axios.post('scf2/ListNamespaces', params).then(res => {
-        //  for(var i=0;i<res.Response.Namespaces.length;i++){
            this.nameSpace = res.Response.Namespaces;
            this.modelNameSpace=res.Response.Namespaces;
            this.modelNameSpace.reverse();
-           this.modelNameSpace[0].disableDelete=true;
+          //  this.modelNameSpace[0].disableDelete=true;
+           this.modelNameSpace.forEach(item =>{
+             item.disableDelete = true
+           })
       });
     },
     getData() {
@@ -486,7 +503,6 @@ export default {
             for(var i=0;i<modelNameSpace.length;i++){
             for(var w=0;w<res.Response.Namespaces.length;w++){
               if(modelNameSpace[i].Name!=res.Response.Namespaces[w].Name){
-            // console.log(modelNameSpace[i].Name+"---"+res.Response.Namespaces[w].Name)
                 //添加
                  let params={
                   Version:"2018-04-16",
@@ -498,6 +514,7 @@ export default {
                   console.log(res)
                   console.log("添加")
                   this.dialogVisible3 = false
+                  this.getDModelNmaeSpace()
                 });
                 }else if(modelNameSpace[i].Name==res.Response.Namespaces[w].Name){
                //更新
@@ -511,6 +528,7 @@ export default {
                   console.log(res)
                   console.log("更新")
                   this.dialogVisible3 = false
+                  this.getDModelNmaeSpace()
                 });
                 }
               }
@@ -564,6 +582,35 @@ export default {
         query:{
 					functionName:this.tableDataBegin[newIndex].functionName
 				}
+      });
+    },
+    nameRoom(val){
+      console.log(val)
+      var cookies = document.cookie;
+      var list = cookies.split(";");
+      for (var i = 0; i < list.length; i++) {
+        var arr = list[i].split("=");
+      }
+      let params = {
+        // Action: "ListFunctions",
+        Version: "2018-04-16",
+        Region: this.$cookie.get("regionv2"),
+        Namespace:val
+      };
+      this.$axios.post('scf/ListFunctions', params).then(res => {
+        // console.log(res.data.functions);
+        this.tableDataBegin = res.data.functions;
+        //this.allData = this.tableDataBegin;
+        //this.tableDataBegin = this.allData;
+        // 将数据的长度赋值给totalItems
+        this.totalItems = this.tableDataBegin.length;
+        if (this.totalItems > this.pageSize) {
+          for (let index = 0; index < this.pageSize; index++) {
+            this.tableDataEnd.push(this.tableDataBegin[index]);
+          }
+        } else {
+          this.tableDataEnd = this.tableDataBegin;
+        }
       });
     }
   }
@@ -624,6 +671,9 @@ export default {
       color: #888;
     }
   }
+}
+.errActive p{
+  color:#e1504a !important;
 }
 
 .addressName {
@@ -698,5 +748,8 @@ export default {
   font-size:12px;
   color:#888;
   line-height:14px;
+}
+.inputactive{
+  margin-top:45px
 }
 </style>

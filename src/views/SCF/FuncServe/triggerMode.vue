@@ -13,7 +13,7 @@
                 触发方式
                 <i class="el-icon-question"></i>
               </span>
-              <el-select v-model="formTriggerForm.triggerType" class="selectSetWidth">
+              <el-select v-model="formTriggerForm.triggerType" @change="chufatype" class="selectSetWidth">
                 <el-option label="定时触发" value="timer"></el-option>
                 <el-option label="COS触发" value="cos"></el-option>
                 <el-option label="CMQ主题订阅触发" value="cmq"></el-option>
@@ -168,6 +168,8 @@ export default {
         _this.getfunction();
         _this.formTriggerForm.tasksName = ""
         _this.formTriggerForm.writeIsTrue = ""
+        _this.formTriggerForm.triggerType = "timer"
+        _this.formTriggerForm.triggerTime = "每5分钟（每5分钟的0秒执行一次）"
       });
     },
     //监测select变化
@@ -211,6 +213,9 @@ export default {
           this.switch1[i] = true;
         }
       });
+    },
+    chufatype(val) {
+      this.formTriggerForm.triggerType = val
     }
   }
 };
