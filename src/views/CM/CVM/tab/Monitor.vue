@@ -27,7 +27,7 @@
 
         <el-table-column prop="DataPoints" width="600">
           <template slot-scope="scope">
-            <p v-if="sscope.row.DataPoints[0].Values.length==0">暂无数据</p>
+            <p v-if="scope.row.DataPoints[0].Values.length==0">暂无数据</p>
             <div class='echart' v-if="scope.row.DataPoints[0].Values.length!=0">
               <echart-line id="diskEchearrts-line" :time='scope.row.DataPoints[0].Timestamps | UpTime'
                 :opData='scope.row.DataPoints[0].Values' :scale=3 :period=period :xdata=false>
