@@ -15,7 +15,8 @@
         <el-table-column prop="" label="ID/主机名 " width="120">
           <template slot-scope="scope">
             <p>
-              <a @click="jump(scope.row.LoadBalancerId)" style="cursor:pointer;">{{scope.row.LoadBalancerId}}</a>
+              <a @click="jump(scope.row.LoadBalancerId,scope.row.VpcId)"
+                style="cursor:pointer;">{{scope.row.LoadBalancerId}}</a>
             </p>
             {{ scope.row.LoadBalancerName}}
           </template>
@@ -173,11 +174,12 @@
         this.currpage = val;
         this.GetTabularData()
       },
-      jump(id) {
+      jump(id, VpcId) {
         this.$router.push({
-          name: 'CMCVMdetails',
+          name: 'CLBloaddetails',
           query: {
             id,
+            VpcId
           },
         });
       }
