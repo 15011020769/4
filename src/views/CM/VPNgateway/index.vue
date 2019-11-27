@@ -29,9 +29,9 @@
         <el-table-column prop label="ID/主机名 ">
           <template slot-scope="scope">
             <p>
-              <a @click="jump(scope.row.vpcId)" style="cursor:pointer;">{{scope.row.vpcId}}</a>
+              <a @click="jump(scope.row.VpnGatewayId)" style="cursor:pointer;">{{scope.row.VpnGatewayId}}</a>
             </p>
-            {{ scope.row.vpcName}}
+            {{ scope.row.VpnGatewayName}}
           </template>
         </el-table-column>
         <el-table-column prop label="监控">
@@ -42,8 +42,8 @@
         <el-table-column prop label="状态">
           <template slot-scope="scope">
             <p
-              :class="[0,2,4].indexOf(scope.row.vpcConnStatus) != -1 ? 'orange' : [1,3].indexOf(scope.row.vpcConnStatus) != -1 ? 'red' : 'green'"
-            >{{vpcConnState[scope.row.vpnGwStatus]}}</p>
+              :class="scope.row.State == 'PENDING' ? 'orange' : scope.row.State == 'AVAILABLE' ? 'green' : 'red'"
+            >{{vpcConnState[scope.row.State]}}</p>
           </template>
         </el-table-column>
 
@@ -80,22 +80,18 @@ export default {
     return {
       searchOptions: [
         {
-          value: "vpcId",
+          value: "vpn-gateway-id",
           label: "ID"
         },
         {
-          value: "vpnGwName",
+          value: "vpn-gateway-name",
           label: "名称"
         }
       ],
       vpcConnState: {
-        0: "创建中",
-        1: "创建出错",
-        2: "修改中",
-        3: "修改出错",
-        4: "删除中",
-        5: "删除出错",
-        6: "运行正常"
+        PENDING: "生产中",
+        AVAILABLE: "运行中",
+        DELETING: "删除中"
       },
       searchValue: "",
       instanceStatus: {
@@ -177,15 +173,21 @@ export default {
         Limit: this.pagesize
       };
       if (this.searchValue !== "" && this.searchInput !== "") {
-        param[this.searchValue] = this.searchInput;
+        param["Filters.0.Name"] = this.searchValue;
+        param["Filters.0.Values.0"] = this.searchInput;
       }
       const paramS = {
         allList: 0
       };
       // 获取表格数据
       this.axios.post(VPN_LIST, param).then(data => {
-        this.TbaleData = data.data;
-        this.ProTableData = this.TbaleData;
+        if (data.Response.Error == undefined) {
+
+          this.TbaleData = data.Response.VpnGatewaySet;
+          this.ProTableData = this.TbaleData;
+        } else {
+          this.$message.error(data.Response.Error.Message);
+        }
       });
     },
     handleSizeChange(val) {

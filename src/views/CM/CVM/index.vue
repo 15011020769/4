@@ -194,7 +194,6 @@
           .then(() => {
             // 获取项目列表
             this.axios.post(ALL_PROJECT, paramS).then((data) => {
-              console.log(data)
               this.ProjectData = data.data;
               for (let i = 0; i < this.TbaleData.length; i++) {
 
