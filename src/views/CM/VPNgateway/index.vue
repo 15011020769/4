@@ -177,6 +177,7 @@ export default {
   line-height: 60px;
   font-weight: bold;
   padding-left: 20px;
+  font-size: 16px;
 }
 .city {
   margin: 20px 20px 0 20px;

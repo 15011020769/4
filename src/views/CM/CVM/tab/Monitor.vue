@@ -12,7 +12,7 @@
     <div class='box-table'>
       <!-- 表格 -->
       <el-table :data="tableData" style="width: 100%">
-        <el-table-column prop="">
+        <el-table-column prop="" width="130">
           <template slot-scope="scope">
             <span style="font-size:12px;font-weight:bolder;">
               {{scope.row.MetricName | UpName(value)}}
@@ -25,7 +25,7 @@
           </template>
         </el-table-column>
 
-        <el-table-column prop="DataPoints" width="600">
+        <el-table-column prop="DataPoints" width="550">
           <template slot-scope="scope">
             <p v-if="scope.row.DataPoints[0].Values.length==0">暂无数据</p>
             <div class='echart' v-if="scope.row.DataPoints[0].Values.length!=0">

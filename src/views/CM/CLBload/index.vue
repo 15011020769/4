@@ -211,6 +211,7 @@
     line-height: 60px;
     font-weight: bold;
     padding-left: 20px;
+    font-size: 16px;
   }
 
   .Right-style {
