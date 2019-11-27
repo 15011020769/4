@@ -148,7 +148,6 @@
       // 
       Obtain(metricN) {
         const param = {
-          Action:'GetMonitorData',
           Version: '2018-07-24',
           Region: this.$cookie.get('regionv2'),
           Namespace: 'QCE/COS',
