@@ -155,7 +155,7 @@
         this.axios
           .post(OBJ_LIST, param)
           .then((data) => {    
-            console.log(data)      
+     
             // if (data.Response.Error == undefined) {
               this.TbaleData = data.Buckets.Bucket;
             // } else {

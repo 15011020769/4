@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- 城市按钮 -->
-    <div class="CVM-title">物理专线</div>
+    <div class="CVM-title">专线接入-物理专线</div>
     <div class="tool">
       <Cities :cities="cities" class="city" :Cityvalue.sync="selectedRegion" @changeCity="changeCity" />
       <!-- 搜索 -->
@@ -9,7 +9,7 @@
         :searchInput='searchInput' @changeinput='changeinput' @clicksearch='clicksearch'></SEARCH>
     </div>
     <!-- 表格 -->
-    <div class="Table-SY">
+    <!-- <div class="Table-SY">
       <el-table :data="ProTableData.slice((currpage - 1) * pagesize, currpage * pagesize)" height="550"
         style="width: 100%">
         <el-table-column prop="" label="ID/主机名 ">
@@ -17,7 +17,7 @@
             <p>
               <a @click="jump(scope.row.InstanceId)" style="cursor:pointer;">{{scope.row.InstanceId}}</a>
             </p>
-            {{ scope.row.InstanceName}}
+            {{ scope.row.InstanceId}}
           </template>
         </el-table-column>
         <el-table-column prop="" label="监控">
@@ -60,8 +60,62 @@
           :total="ProTableData.length">
         </el-pagination>
       </div>
-    </div>
+    </div> -->
+<div class="Table-SY">
+      <el-table :data="ProTableData.slice((currpage - 1) * pagesize, currpage * pagesize)" height="550"
+        style="width: 100%">
+        <el-table-column prop="" label="ID/主机名 ">
+          <template slot-scope="scope">
+            <p>
+              <a @click="jump(scope.row.DirectConnectId)" style="cursor:pointer;">{{scope.row.DirectConnectId}}</a>
+            </p>
+            {{ scope.row.DirectConnectName}}
+          </template>
+        </el-table-column>
+        <el-table-column prop="" label="监控">
+          <template slot-scope="scope">
+            <i class="el-icon-share"></i>
+          </template>
+        </el-table-column>
+        <el-table-column prop="" label="状态">
+          <template slot-scope="scope">
+            <p :class="scope.row.State==='RUNNING'?'green':scope.row.InstanceState==='STOPPED'?'red':'orange'">
+              {{instanceStatus[scope.row.State]}}</p>
+          </template>
+        </el-table-column>
 
+        <el-table-column prop="" label="带宽">
+          <template slot-scope="scope">
+            <p>{{scope.row.Bandwidth}} </p>
+          </template>
+        </el-table-column>
+
+        <el-table-column prop="projectName" label="所在地">
+          <template slot-scope="scope">
+            <p>{{scope.row.Location}} </p>
+          </template>
+        </el-table-column>
+
+        <el-table-column label="健康状态">
+          <template slot-scope="scope">
+            <p :class="scope.row.RestrictState==='NORMAL'?'green':scope.row.RestrictState==='EXPIRED'?'red':'orange'">
+              {{RestrictState[scope.row.RestrictState]}}</p>
+          </template>
+        </el-table-column>
+        <el-table-column label="告警策略数">
+          <template slot-scope="scope">
+            <p :class="scope.row.RestrictState==='NORMAL'?'green':scope.row.RestrictState==='EXPIRED'?'red':'orange'">
+              {{RestrictState[scope.row.RestrictState]}}</p>
+          </template>
+        </el-table-column>
+      </el-table>
+      <div class="Right-style pagstyle">
+        <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
+          :page-sizes="[20, 30, 40,50,100]" :page-size="pagesize" layout="total, sizes, prev, pager, next, jumper"
+          :total="ProTableData.length">
+        </el-pagination>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -70,38 +124,26 @@
   import SEARCH from '@/components/public/SEARCH';
   import {
     ALL_CITY,
-    CVM_LIST,
+    Physics_LIST,
     ALL_PROJECT
   } from '@/constants';
   export default {
     data() {
       return {
         searchOptions: [{
-          value: 'project-id',
-          label: '项目ID'
-        }, {
-          value: 'instance-id',
-          label: '实例ID'
-        }, {
-          value: 'instance-name',
-          label: '实例名称'
-        }, {
-          value: 'private-ip-address',
-          label: '内网IP'
-        }, {
-          value: 'public-ip-address ',
-          label: '公网IP'
+          value: 'DirectConnectId',
+          label: '专线ID'
         }],
         searchValue: '',
         instanceStatus: {
-          PENDING: '创建中',
-          LAUNCH_FAILED: '创建失败',
-          RUNNING: '运行中',
-          STOPPED: '已关机',
-          STARTING: '开机中',
-          STOPPING: '关机中',
-          REBOOTING: '重启中',
-          SHUTDOWN: '待回收',
+          PENDING: '申请中',
+          REJECTED: '申请驳回',
+          TOPAY: '待付款',
+          PAID: '已付款',
+          ALLOCATED: '建设中',
+          AVAILABLE: '已开通',
+          DELETING: '删除中',
+          DELETED: '待回收',
           TERMINATING: '销毁中',
         },
         RestrictState: {
@@ -168,13 +210,13 @@
       GetTabularData() {
         const param = {
           Region: this.selectedRegion,
-          Version: '2017-03-12',
+          Version: '2018-04-10',
           Offset: this.currpage * this.pagesize - this.pagesize,
           Limit: this.pagesize,
         };
         if (this.searchValue !== '' && this.searchInput !== '') {
-          param['Filters.0.Name'] = this.searchValue
-          param['Filters.0.Values.0'] = this.searchInput
+          // param['Filters.0.Name'] = this.searchValue
+          param['DirectConnectIds.0'] = this.searchInput
 
         }
         const paramS = {
@@ -182,35 +224,37 @@
         };
         // 获取表格数据
         this.axios
-          .post(CVM_LIST, param)
+          .post(Physics_LIST, param)
           .then((data) => {
+            
             if (data.Response.Error == undefined) {
-              this.TbaleData = data.Response.InstanceSet;
+              this.TbaleData = data.Response.DirectConnectSet;
             } else {
               this.$message.error(data.Response.Error.Message);
             }
-
-          })
-          .then(() => {
-            // 获取项目列表
-            this.axios.post(ALL_PROJECT, paramS).then((data) => {
-              this.ProjectData = data.data;
-              for (let i = 0; i < this.TbaleData.length; i++) {
-
-                for (let j = 0; j < this.ProjectData.length; j++) {
-                  if (
-                    this.TbaleData[i].Placement.ProjectId == this.ProjectData[j].projectId
-                  ) {
-                    this.TbaleData[i].projectName = this.ProjectData[j].projectName;
-                  }
-                  if (this.TbaleData[i].Placement.ProjectId == 0) {
-                    this.TbaleData[i].projectName = '默认项目';
-                  }
-                }
-              }
               this.ProTableData = this.TbaleData;
-            });
-          });
+              console.log(this.ProTableData)
+          })
+          // .then(() => {
+          //   // 获取项目列表
+          //   this.axios.post(ALL_PROJECT, paramS).then((data) => {
+          //     this.ProjectData = data.data;
+          //     for (let i = 0; i < this.TbaleData.length; i++) {
+
+          //       for (let j = 0; j < this.ProjectData.length; j++) {
+          //         if (
+          //           this.TbaleData[i].Placement.ProjectId == this.ProjectData[j].projectId
+          //         ) {
+          //           this.TbaleData[i].projectName = this.ProjectData[j].projectName;
+          //         }
+          //         if (this.TbaleData[i].Placement.ProjectId == 0) {
+          //           this.TbaleData[i].projectName = '默认项目';
+          //         }
+          //       }
+          //     }
+          //     this.ProTableData = this.TbaleData;
+          //   });
+          // });
       },
       handleSizeChange(val) {
         this.pagesize = val
@@ -223,7 +267,7 @@
       },
       jump(id) {
         this.$router.push({
-          name: 'CMCVMdetails',
+          name: 'Physicsdetails',
           query: {
             id,
           },
