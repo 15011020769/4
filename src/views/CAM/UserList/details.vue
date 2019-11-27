@@ -10,9 +10,9 @@
       font-weight: 900;
       cursor:pointer;"
       ></i>
-      <span class="title-left">用户详情</span>
+      <span class="title-left">{{$t('CAM.CAM.userDetails.title')}}</span>
       <span class="title-right">
-        <span>CAM用户使用说明</span>
+        <span>{{$t('CAM.CAM.userDetails.CAMUse')}}</span>
         <i class="el-icon-share"></i>
       </span>
     </div>
@@ -25,14 +25,14 @@
               <div class="account-left">
                 <h3>
                   <span>100011241184_123456789</span>
-                  <span class="tag">主账号</span>
+                  <span class="tag">{{$t('CAM.CAM.userDetails.userNumb')}}</span>
                 </h3>
               </div>
               <div class="account-right">
-                <el-button type="text" @click="dialogVisible = true">修改</el-button>
+                <el-button type="text" @click="dialogVisible = true">{{$t('CAM.CAM.userDetails.updata')}}</el-button>
               </div>
               <el-dialog
-                title="编辑信息"
+               :title="$t('CAM.CAM.userDetails.updataTest')"
                 :visible.sync="dialogVisible"
                 width="40%"
                 :before-close="handleClose"
@@ -42,13 +42,9 @@
                   label-width="160px"
                   :model="formLabelAlign"
                 >
-                  <el-form-item label="用户名">
-                    <el-input
-                      class="inp-width"
-                      :disabled="true"
-                      size="mini"
-                      v-model="formLabelAlign.name"
-                    ></el-input>
+                  <el-form-item label="用户名" >
+                    <el-input class="inp-width" size="mini" v-model="formLabelAlign.name">
+                    </el-input>
                   </el-form-item>
                   <el-form-item label-width="160px" label="备注">
                     <el-input class="inp-width" size="mini" v-model="formLabelAlign.region"></el-input>
@@ -60,17 +56,17 @@
                       <option value></option>
                       <option value></option>
                     </select>
-                    <el-input class="inps-width" size="mini" v-model="formLabelAlign.type"></el-input>
+                    <el-input class="inps-width" size="mini" v-model="formLabelAlign.phone"></el-input>
                   </el-form-item>
                   <el-form-item label-width="160px" label="邮箱">
-                    <el-input class="inp-width" size="mini" v-model="formLabelAlign.type"></el-input>
+                    <el-input class="inp-width" size="mini" v-model="formLabelAlign.email"></el-input>
                   </el-form-item>
                   <el-form-item label-width="160px" label="是否允许微信接收通知">
                     <el-switch v-model="value1"></el-switch>
                   </el-form-item>
                 </el-form>
                 <span slot="footer" class="dialog-footer">
-                  <el-button size="mini" type="primary" @click="dialogVisible = false">确 定</el-button>
+                  <el-button size="mini" type="primary" @click="sureUpdata">确 定</el-button>
                   <el-button size="mini" @click="dialogVisible = false">取 消</el-button>
                 </span>
               </el-dialog>
@@ -78,44 +74,44 @@
                 <div class="content-left">
                   <div class="content-id">
                     <label for>
-                      账号ID
+                      {{$t('CAM.CAM.userDetails.numbId')}}
                       <i>*</i>
                     </label>
-                    <span>100011921910</span>
+                    <span>{{content.Uin}}</span>
                   </div>
                   <div class="content-remarks">
                     <label for>
-                      备注
+                      {{$t('CAM.CAM.userDetails.rember')}}
                       <i>*</i>
                     </label>
-                    <span>-</span>
+                    <span>{{content.Remark}}</span>
                   </div>
                 </div>
                 <div class="content-right">
                   <div class="iphone">
                     <label for>
-                      手机
+                      {{$t('CAM.CAM.userDetails.phone')}}
                       <i>*</i>
                     </label>
-                    <span>+86-</span>
+                    <span>+86-{{content.PhoneNum}}</span>
                   </div>
                   <div class="mailbox">
                     <label for>
-                      邮箱
+                      {{$t('CAM.CAM.userDetails.email')}}
                       <i>*</i>
                     </label>
-                    <span>-</span>
+                    <span>-{{content.Email}}</span>
                   </div>
                   <div class="wechat">
                     <label for>
-                      微信
+                      {{$t('CAM.CAM.userDetails.weChat')}}
                       <i>*</i>
                     </label>
                     <span>-</span>
                   </div>
                   <div class="notice">
                     <label for>
-                      是否允许微信接收通知
+                      {{$t('CAM.CAM.userDetails.recive')}}
                       <i>*</i>
                     </label>
                     <span>否</span>
@@ -129,34 +125,34 @@
           <div class="grid-content bg-purple">
             <div class="quick">
               <h3>
-                <span>快捷操作</span>
+                <span>{{$t('CAM.CAM.userDetails.shortcuts')}}</span>
               </h3>
               <div class="subscribe">
                 <div class="btns">
-                  <el-button size="mini" @click="dialogVi = true">订阅消息</el-button>
+                  <el-button size="mini" @click="dialogVi = true">{{$t('CAM.CAM.userDetails.news')}}</el-button>
                 </div>
                 <el-dialog
-                  title="订阅信息"
+                  :title="$t('CAM.CAM.userDetails.news')"
                   :visible.sync="dialogVi"
                   width="900px"
                   :before-close="handleClose"
                 >
                   <div class="title">
                     <p class="title-p">
-                      要管理不同消息类型的接收人及接收方式可以前往
-                      <a href>消息中心-消息订阅</a>
+                      {{$t('CAM.CAM.userDetails.newsTitle')}}
+                      <a href>{{$t('CAM.CAM.userDetails.test')}}</a>
                     </p>
                   </div>
                   <div class="letter">
                     <div class="receive">
-                      <label>消息接收人</label>
+                      <label>{{$t('CAM.CAM.userDetails.testPerson')}}</label>
                     </div>
                     <div class="number">
                       <p>100011241184_123456789</p>
                     </div>
                   </div>
                   <div class="subs">
-                    <label>订阅消息类型</label>
+                    <label>{{$t('CAM.CAM.userDetails.testType')}}</label>
                   </div>
                   <div class="subs-right">
                     <el-table :data="tableData" style="width: 100%; border:1px solid #ddd">
@@ -166,7 +162,7 @@
                           <el-table-column label width="281">
                             <template slot-scope="scope">
                               <span>
-                                <el-checkbox v-model="checked">账户欠费通知</el-checkbox>
+                                <el-checkbox v-model="checked">{{$t('CAM.CAM.userDetails.oweInform')}}</el-checkbox>
                               </span>
                             </template>
                           </el-table-column>
@@ -202,16 +198,16 @@
                         </el-table>
                       </el-table-column>
                       <el-table-column label prop="id" width="281px">
-                        <el-checkbox v-model="checked">财务信息</el-checkbox>
+                        <el-checkbox v-model="checked">{{$t('CAM.CAM.userDetails.financial')}}</el-checkbox>
                       </el-table-column>
-                      <el-table-column label="站内信" prop="name"></el-table-column>
-                      <el-table-column label="邮件" prop="desc"></el-table-column>
-                      <el-table-column label="短信" prop="id"></el-table-column>
-                      <el-table-column label="微信" prop="name"></el-table-column>
-                      <el-table-column label="操作" prop="desc">
+                      <el-table-column :label="$t('CAM.CAM.userDetails.standLetter')" prop="name"></el-table-column>
+                      <el-table-column :label="$t('CAM.CAM.userDetails.setEmail')" prop="desc"></el-table-column>
+                      <el-table-column :label="$t('CAM.CAM.userDetails.SMS')" prop="id"></el-table-column>
+                      <el-table-column :label="$t('CAM.CAM.userDetails.weChat')" prop="name"></el-table-column>
+                      <el-table-column :label="$t('CAM.CAM.userDetails.operation')" prop="desc">
                         <template slot-scope="scope">
                           <span>
-                            <el-link type="primary">展开</el-link>
+                            <el-link type="primary">{{$t('CAM.CAM.userDetails.open')}}</el-link>
                           </span>
                         </template>
                       </el-table-column>
@@ -219,7 +215,7 @@
                   </div>
 
                   <div slot="footer" class="dialog-footer">
-                    <el-button size="mini" type="primary" @click="dialogVi = false">确 定</el-button>
+                    <el-button size="mini" type="primary" @click="dialogVi = false">确定</el-button>
                     <el-button size="mini" @click="dialogVi = false">取 消</el-button>
                   </div>
                 </el-dialog>
@@ -238,8 +234,8 @@
                 <i>&nbsp;</i>
               </div>
               <div class="userlist-right">
-                <h4>开始使用用户组</h4>
-                <p>此用户还没有加入任何用户组</p>
+                <h4>{{$t('CAM.CAM.userDetails.beiginUse')}}</h4>
+                <p>{{$t('CAM.CAM.userDetails.noJoin')}}</p>
                 <el-button @click="add" type="primary" size="mini">添加到用户组</el-button>
               </div>
             </div>
@@ -253,6 +249,7 @@
 export default {
   data() {
     return {
+      content:{},
       checked: true,
       dialogVi: false,
       showHeader: false,
@@ -262,9 +259,11 @@ export default {
       value1: false,
       value: "+86",
       formLabelAlign: {
-        name: "100011241184_123456789",
+        name: "",
         region: "",
-        type: ""
+        type: "",
+        phone:"",
+        email:""
       },
       options: [
         {
@@ -329,6 +328,36 @@ export default {
     };
   },
   methods: {
+    init(){
+          let userList = {
+            Action:'ListUsers',
+            Version:'2019-01-16',
+          }
+          let userListUrl= 'cam2/ListUsers'
+          this.axios.post(userListUrl,userList).then((data)=>{
+            this.tableData = data.Response.Data
+            console.log(data)
+          }).catch(error=>{
+            console.log(error)
+          })
+    },
+    sureUpdata(){
+       console.log('11')
+       let params = {
+         Action:'UpdateUser',
+         Version:'2019-01-16',
+         Name:this.formLabelAlign.name,
+         Email:this.formLabelAlign.email,
+         PhoneNum:this.formLabelAlign.phone,
+         Remark:this.formLabelAlign.region
+       }
+       let url = 'cam2/UpdateUser'
+       this.axios.post(url,params).then(data=>{
+         console.log(data)
+         this.init()
+       })
+       this.dialogVisible=false
+    },
     handleClose(done) {
       this.$confirm("确认关闭？")
         .then(_ => {
@@ -345,7 +374,10 @@ export default {
     backoff(){
       this.$router.push({ path: "UserList" });
     }
-  }
+  },
+  created() {
+    this.content = this.$route.query.content
+  },
 };
 </script>
 <style lang="scss">

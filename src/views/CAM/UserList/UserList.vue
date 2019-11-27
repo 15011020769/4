@@ -1,9 +1,9 @@
 <template>
   <div class="Cam">
     <div class="top">
-      <span class="title-left">用户列表</span>
+      <span class="title-left">{{$t('CAM.CAM.userList.userTitle')}}</span>
       <span class="title-right">
-        <span>CAM用户使用说明</span>
+        <span>{{$t('CAM.CAM.userList.CAMUse')}}</span>
         <i class="el-icon-share"></i>
       </span>
     </div>
@@ -12,18 +12,18 @@
         <span>如何查看更多信息？</span>
       </p>
       <p>
-        <span>&nbsp;&nbsp;访问管理对您的敏感信息进行安全升级保护，您可以点击列表中【详情】列下拉按钮【?】查看用户的身份安全状态、已加入组以及消息订阅等更多信息。您也可以点击用户名进入用户详细信息中</span>
+        <span>&nbsp;&nbsp;{{$t('CAM.CAM.userList.userTest')}}</span>
       </p>
       <p>
-        <span>&nbsp;&nbsp;&nbsp;查看或编辑。</span>
+        <span>&nbsp;&nbsp;&nbsp;{{$t('CAM.CAM.userList.userUp')}}</span>
       </p>
     </div>
 
     <div class="cam_button">
       <el-row class="cam-lt">
-        <el-button size="small" type="primary" @click="NewUser">新建用户</el-button>
+        <el-button size="small" type="primary" @click="NewUser">{{$t('CAM.CAM.userList.addUser')}}</el-button>
         <template>
-          <el-select size="small"  v-model="value" placeholder="更多操作">
+          <el-select size="small"  v-model="value" :placeholder="$t('CAM.CAM.userList.moreOperation')" style="padding-left:20px;">
             <el-option
               v-for="item in options"
               :key="item.value"
@@ -37,10 +37,15 @@
 
       <div class="head-container">
         <!-- 搜索 -->
-        <!-- <el-input  style="width: 200px;" size="small" :placeholder="$t('CAM.CAM.ListUsers.placeholder')" v-model="searchValue"  @keyup.enter.native="toQuery"></el-input>
-        <i class="iconfont magnifier" @click="toQuery">&#xe608;</i> -->
-        <el-input v-model="searchValue" clearable :placeholder="$t('CAM.CAM.userGroup.placeholder')" style="width: 300px;"  @keyup.enter.native="toQuery"/>
-        <el-button class="suo" icon="el-icon-search"  show-overflow-tooltip @click="toQuery"></el-button>
+        <el-input  clearable style="width: 300px;" v-model="search" :placeholder="$t('CAM.CAM.userList.searchPlaceholder')"/>
+        <!-- <el-button class="suo" icon="el-icon-search"  show-overflow-tooltip @click="selectuser"></el-button> -->
+            
+                <!-- <el-input
+                  v-model="search"
+                  size="mini"
+                  placeholder="输入关键字搜索" @input="change($event)"/> -->
+             
+ 
         <i @click="list = true" class="el-icon-s-tools gear"></i>
         <el-dialog title="自定义列表字段" :visible.sync="list" width="45%" :before-close="handleClose">
           <div>
@@ -92,9 +97,9 @@
     </div>
 
     <!-- 表格 -->
-    <el-table :data="tableData" style="width: 96%; margin: 0 auto;">
+    <el-table :data="tableData.filter(data => !search || data.Name.toLowerCase().includes(search.toLowerCase()))" style="width: 96%; margin: 0 auto;">
       <el-table-column type="selection" width="55"></el-table-column>
-      <el-table-column type="expand" label="详情" width="50">
+      <el-table-column type="expand" :label="$t('CAM.CAM.userList.userDetails')" width="50">
         <template slot-scope="props">
           <el-form label-position="left" inline class="demo-table-expand">
             <el-form-item label="用户名称"  prop="name">
@@ -108,26 +113,34 @@
           </el-form>
         </template>
       </el-table-column>
-      <el-table-column label="用户名称"  prop="Name">
-        <!-- <template slot-scope="scope">
-         <el-link></el-link>
-        </template> -->
+
+      <el-table-column :label="$t('CAM.CAM.userList.userName')" prop="Name">
+        <template slot-scope="scope">
+          <el-link @click="details(scope.row)" type="primary">
+              {{scope.row.Name}}
+          </el-link>
+        </template>
+      </el-table-column>
+
+      <el-table-column :label="$t('CAM.CAM.userList.userType')" prop="PhoneNum">
+        <template slot-scope="scope">
+           {{scope.row.PhoneNum}}
+        </template>
       </el-table-column>
-      <el-table-column label="用户类型" prop="PhoneNum">
-        <!-- <template slot-scope="scope">
-        </template> -->
+
+      <el-table-column :label="$t('CAM.CAM.userList.userId')"  label="账号ID" prop="Uin">
+        <template slot-scope="scope">
+           {{scope.row.Uin}}
+        </template>
       </el-table-column>
-      <el-table-column label="账号ID" prop="Uin">
-        <!-- <template slot-scope="scope">
-        </template> -->
-      </el-table-column>
-      <el-table-column label="关联信息" >
+
+      <el-table-column :label="$t('CAM.CAM.userList.userMessage')" >
         <template slot-scope="scope">
           <i @click="details" class="el-icon-mobile mobile"></i>
           <i @click="details" class="el-icon-message message"></i>
         </template>
       </el-table-column>
-      <el-table-column prop="oper" label="操作" width="140">
+      <el-table-column prop="oper" :label="$t('CAM.CAM.userList.userOperation')" width="140">
         <template scope="scope">
           <el-button @click="authorization=true" type="text">授权</el-button>
           <span>|</span>
@@ -168,22 +181,10 @@
         <div class="container-left">
           <span>策略列表（共{{totalNum}}条）</span>
           <div>
-            <!-- <el-input
-            size="mini"
-            style="width:89%"
-            @keyup.enter.native="toQuery"
-          />
-          <el-button
-            size="mini"
-            class="suo"
-            icon="el-icon-search"
-            show-overflow-tooltip
-            @click="toQuery"
-          ></el-button> -->
           <el-input v-model="ClsearchValue" clearable style="width:90%;"  @keyup.enter.native="toQueryCL"/>
           <el-button class="suo" icon="el-icon-search"  show-overflow-tooltip @click="toQueryCL"></el-button>
           </div>
-           
+          
           <el-table
             class="table-left"
             ref="multipleOption"
@@ -556,7 +557,9 @@ export default {
       return data;
     };
     return {
+      search:'',
       deleteName: '',
+      selectName:'',
       deleteShow:false,
       UsersearchValue:[],
       ClsearchValue:[],
@@ -602,6 +605,10 @@ export default {
     };
   },
   methods: {
+    change(e){
+      this.$forceUpdate()
+    },
+    //删除子用户
     todeleteShow(user){
       this.deleteName = user.Name
       this.deleteShow = true
@@ -614,30 +621,10 @@ export default {
       }
       let url = 'cam2/DeleteUser'
       this.axios.post(url,params).then((data)=>{
-        console.log(data)
+          this.selectData()
       })
-      
+         this.deleteShow = false
     },
-    // init() {
-    //   let params = {
-    //     Action: 'GetUser',
-    //     Version: '2019-01-16',
-    //     Name:"111"
-    //   }
-    //   if(this.searchValue != null && this.searchValue != ''){
-    //     params = this.searchValue
-    //   }
-    //   let url = "cam2/GetUser"
-    //   this.axios.post(url, params).then(data => {
-    //    console.log(data)
-    //   }).catch(error => {
-    //     console.log(error)
-    //   })
-    // },
-    // toQuery(){
-    //   this.init()
-    // },
-
     //策略搜索
     CeInit(){
        let params = {
@@ -672,6 +659,33 @@ export default {
     toQueryUser(){
       this.UserInit()
     },
+    //查询
+    selectuser(){
+         let selectList = {
+          Action:'GetUser',
+          Version:'2019-01-16',
+          Name:this.selectName
+       }
+       let url = 'cam2/GetUser'
+       this.axios.post(url,selectList).then((data)=>{
+         console.log(data)
+         this.tableData = data
+       })
+    },
+
+
+    //用户列表
+    selectData(){
+     let userList = {
+            Action:'ListUsers',
+            Version:'2019-01-16',
+          }
+       let userListUrl= 'cam2/ListUsers'
+       this.axios.post(userListUrl,userList).then((data)=>{
+            this.tableData = data.Response.Data
+       })
+    },
+
     change(e){
       this.$forceUpdate()
     },
@@ -690,8 +704,14 @@ export default {
       // console.log("this is value data:", this.value);
       this.val = [...this.val, ...val];
     },
-    details() {
-      this.$router.push({ path: "details" });
+    details(content) {
+      this.$router.push({ 
+        path: "details",
+        query:{
+          content:content
+        }  
+      });
+      console.log(content)
     },
     handleSelectionChange(val) {
       // 给右边table框赋值，只需在此处赋值即可，selectedRow方法中不写，因为单独点击复选框，只有此方法有效。
@@ -748,11 +768,11 @@ export default {
     let userListUrl= 'cam2/ListUsers'
     this.axios.post(userListUrl,userList).then((data)=>{
        this.tableData = data.Response.Data
+       console.log(data)
     }).catch(error=>{
        console.log(error)
     })
-
-   }
+  }
 };
 </script>
 <style lang="scss" scoped>

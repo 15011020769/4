@@ -10,24 +10,24 @@
       font-weight: 900;
       cursor:pointer;"
       ></i>
-      <span class="title-left">新建子用户</span>
+      <span class="title-left">{{$t('CAM.CAM.userList.addChileUser')}}</span>
     </div>
     <div class="box-ctr">
       <div class="step">
         <el-steps :active="active" direction="vertical" simple :space="200" style="margin-right: 44%"  finish-status="success">
-          <el-step title="填写用户信息"></el-step>
-          <el-step title="设置用户权限"></el-step>
-          <el-step title="审阅信息和权限"></el-step>
+          <el-step :title="$t('CAM.CAM.userList.userInformation')"></el-step>
+          <el-step :title="$t('CAM.CAM.userList.userPermissions')"></el-step>
+          <el-step :title="$t('CAM.CAM.userList.userInfor')"></el-step>
         </el-steps>
       </div>
       <div v-show="active==1">
         <div class="tea-alert">
-          <div class="tea-alert__info">因子用户登录使用用户名，用户名一经确定将无法更改。在创建用户后，您可以查看并下载密钥等相关信息。</div>
+          <div class="tea-alert__info">{{$t('CAM.CAM.userList.userWhy')}}</div>
         </div>
         <div class="blish">
           <!-- table表格 -->
           <el-form ref="tableData" label-width="100px">
-            <el-form-item label="设置用户信息" prop="type">
+            <el-form-item :label="$t('CAM.CAM.userList.setUser')" prop="type">
               <el-table
                 ref="multipleTable"
                 :data="tableData"
@@ -35,17 +35,17 @@
                 row-style="height:50px" :header-cell-style="{padding:'0'}" cell-style="padding:0" border style="width: 100%"
                 @selection-change="handleSelectionChange()"
               >
-                <el-table-column prop="name" label="用户名">
+                <el-table-column prop="name" :label="$t('CAM.CAM.userList.setName')">
                   <template slot-scope="scope">
                     <el-input size="mini" v-model="scope.row.name"></el-input>
                   </template>
                 </el-table-column>
-                <el-table-column label="备注" show-overflow-tooltip prop="mailbox">
+                <el-table-column :label="$t('CAM.CAM.userList.setNote')" show-overflow-tooltip prop="mailbox">
                   <template slot-scope="scope">
                     <el-input size="mini" v-model="scope.row.mailbox"></el-input>
                   </template>
                 </el-table-column>
-                <el-table-column label="手机" width="380">
+                <el-table-column :label="$t('CAM.CAM.userList.setPhone')" width="380">
                   <template slot-scope="scope">
                   <el-select size="mini" v-model="value" placeholder="请选择">
                     <el-option
@@ -58,33 +58,33 @@
                   <el-input size="mini" class="hanlin wid" v-model="scope.row.iphone"></el-input>
                   </template>
                 </el-table-column>
-                <el-table-column prop="remarks" label="邮箱">
+                <el-table-column prop="remarks" :label="$t('CAM.CAM.userList.setEmail')">
                   <template slot-scope="scope">
                     <el-input class="hanlin wids" size="mini" v-model="scope.row.remarks"></el-input>
-                    <el-button type="text">删除</el-button>
+                    <el-button type="text">{{$t('CAM.CAM.userList.setDelete')}}</el-button>
                   </template>
                 </el-table-column>
               </el-table>
               <div class="btn">
-                <el-button size="small">新增用户</el-button>
-                <p>(单次最多创建10个用户)</p>
+                <el-button size="small">{{$t('CAM.CAM.userList.setAddUser')}}</el-button>
+                <p>{{$t('CAM.CAM.userList.addTenUser')}}</p>
               </div>
             </el-form-item>
             <!-- 接收微信消息 -->
-            <el-form-item label="接收微信消息" prop="type">
+            <el-form-item :label="$t('CAM.CAM.userList.getWeChat')" prop="type">
               <el-switch v-model="value1"></el-switch>
               <div class="describe">
-                <p>1.邮箱将收到一封包含二维码的邮件，微信扫码并关注公众号即可接收通知</p>
-                <p>2.前往 消息中心->消息订阅 设置微信为接收方式后即可接收消息。</p>
+                <p>1.{{$t('CAM.CAM.userList.weChatContent')}}</p>
+                <p>2.{{$t('CAM.CAM.userList.setGo')}}</p>
               </div>
             </el-form-item>
             <!-- 访问方式 -->
-            <el-form-item label="访问方式" prop="type">
+            <el-form-item :label="$t('CAM.CAM.userList.accessWay')" prop="type">
               <div class="visit">
-                <el-checkbox v-model="checked">编程访问</el-checkbox>
-                <p>启用SecretId和SecretKey，支持腾讯云API、SDK和其他开发工具访问</p>
-                <el-checkbox v-model="checked1">腾讯云控制台访问</el-checkbox>
-                <p>启用密码，允许用户登录到腾讯云控制台</p>
+                <el-checkbox v-model="checked">{{$t('CAM.CAM.userList.programmingAccess')}}</el-checkbox>
+                <p>{{$t('CAM.CAM.userList.setMore')}}</p>
+                <el-checkbox v-model="checked1">{{$t('CAM.CAM.userList.tencentAccess')}}</el-checkbox>
+                <p>{{$t('CAM.CAM.userList.tencentMore')}}</p>
               </div>
             </el-form-item>
             <el-form-item v-if="checked1" label="控制台密码" prop="type">
@@ -237,6 +237,9 @@ export default {
     backoff(){
       this.$router.push({ path: "UserList" });
     }
+  },
+  created() {
+    
   }
 };
 </script>
