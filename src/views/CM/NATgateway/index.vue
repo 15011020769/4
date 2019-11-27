@@ -25,9 +25,9 @@
         <el-table-column prop label="ID/主机名">
           <template slot-scope="scope">
             <p>
-              <a @click="jump(scope.row.natId)" style="cursor:pointer;">{{scope.row.natId}}</a>
+              <a @click="jump(scope.row.NatGatewayId)" style="cursor:pointer;">{{scope.row.NatGatewayId}}</a>
             </p>
-            <p>{{scope.row.natName}}</p>
+            <p>{{scope.row.NatGatewayName}}</p>
           </template>
         </el-table-column>
 
@@ -39,22 +39,14 @@
 
         <el-table-column prop label="状态">
           <template slot-scope="scope">
-            <p style="color: #06c290">{{natStatu[scope.row.state]}}</p>
+            <p :class="scope.row.State == 'FAILED' ? 'red' :' green'">{{natStatu[scope.row.State]}}</p>
           </template>
         </el-table-column>
 
         <el-table-column prop label="私有网络">
           <template slot-scope="scope">
-            <a href>{{scope.row.unVpcId}}</a>
-            <p>{{scope.row.vpcName}}</p>
-          </template>
-        </el-table-column>
-        <el-table-column prop label="类型">
-          <template slot-scope="scope">
-            <p v-show="scope.row.maxConcurrent/10000 == 100" style="font-size: 12px;">小型</p>
-            <p v-show="scope.row.maxConcurrent/10000 == 300" style="font-size: 12px;">中型</p>
-            <p v-show="scope.row.maxConcurrent/10000 == 1000" style="font-size: 12px;">大型</p>
-            <p style="font-size: 12px;">最大并发连接数{{scope.row.maxConcurrent/10000}}万</p>
+            <a href>{{scope.row.PublicIpAddressSet[0].PublicIpAddress}}</a>
+            <p>{{scope.row.PublicIpAddressSet[0].AddressId}}</p>
           </template>
         </el-table-column>
         <el-table-column label="健康状态"></el-table-column>
@@ -84,19 +76,21 @@ export default {
     return {
       searchOptions: [
         {
-          value: "natId",
+          value: "nat-gateway-id",
           label: "ID"
         },
         {
-          value: "natName",
+          value: "nat-gateway-name",
           label: "名称"
         }
       ],
       // 列表数据处理
       natStatu: {
-        0: "运行中",
-        1: "不可用",
-        2: "欠费停服"
+        PENDING: "生产中",
+        DELETING: "删除中",
+        AVAILABLE: "运行中",
+        UPDATING: "升级中",
+        FAILED: "失败"
       },
       natConnStatu: {
         100: "小型",
@@ -179,19 +173,24 @@ export default {
       const param = {
         Region: this.selectedRegion,
         Offset: this.currpage * this.pagesize - this.pagesize,
-        Limit: this.pagesize
+        Limit: this.pagesize,
+        Version: "2017-03-12"
       };
       if (this.searchValue !== "" && this.searchInput !== "") {
-        param[this.searchValue] = this.searchInput;
+        param["Filters.0.Name"] = this.searchValue;
+        param["Filters.0.Values.0"] = this.searchInput;
       }
       const paramS = {
         allList: 0
       };
-      this.axios
-        .post(NAT_LIST, param)
-        .then(data => {
-          this.TbaleData = data.data;
-        });
+      this.axios.post(NAT_LIST, param).then(data => {
+        if (data.Response.Error == undefined) {
+          this.TbaleData = data.Response.NatGatewaySet;
+          this.ProTableData = this.TbaleData;
+        } else {
+          this.$message.error(data.Response.Error.Message);
+        }
+      });
     },
     handleSizeChange(val) {
       this.pagesize = val;
