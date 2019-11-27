@@ -23,8 +23,12 @@
              <p>{{scope.row.Description}}</p>
             </template>
           </el-table-column>
-          <el-table-column prop="Type" :label="$t('CAM.CAM.Role.switchUserGroup')" width="80">
-            <template slot="header" slot-scope="scope">
+          <el-table-column prop="Type" :label="$t('CAM.CAM.Role.strategyType')" width="80">
+             <template slot-scope="scope">
+                <p v-show="scope.row.Type == 1">自定义策略</p >
+                <p v-show="scope.row.Type == 2">预设策略</p >
+             </template>
+            <!-- <template slot="header" slot-scope="scope">
               <el-dropdown trigger="click" @command="handleCommand" size="mini">
                 <span style="color:#909399">
                   {{ tableTitle }}
@@ -38,7 +42,7 @@
                   >{{item.label}}</el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
-            </template>
+            </template> -->
           </el-table-column>
         </el-table>
       </div>
@@ -62,7 +66,13 @@
               <p>{{scope.row.Description}}</p>
             </template>
           </el-table-column>
-          <el-table-column prop="Type" :label="$t('CAM.CAM.Role.strategyType')" width="100"></el-table-column>
+     
+          <el-table-column prop="Type" :label="$t('CAM.CAM.Role.strategyType')" width="100">
+             <template slot-scope="scope">
+                <p v-show="scope.row.Type == 1">自定义策略</p >
+                <p v-show="scope.row.Type == 2">预设策略</p >
+             </template>
+          </el-table-column>
           <el-table-column :label="$t('CAM.CAM.userGroup.colHandle')" width="50">
             &lt;!&ndash;
             <template slot-scope="scope">
@@ -81,43 +91,16 @@
 
 <script>
 export default {
-  props: {
-    policiesSelectedData: [
-      {
-        policyId: String,
-        policyName: String,
-        description: String,
-        attachments: String,
-        createMode: String,
-        serviceType: String,
-        addTime: String,
-        type: String
-      }
-    ]
-  },
   data() {
     return {
       policiesData: [],
+      policiesSelectedData: [],
       strategyValue:[],
       totalNum: "",
       search: "",
       rp: 20,
       page: 1,
-      tableTitle: "策略类型",
-      table_options: [
-        {
-          value: "选项1",
-          label: "全部"
-        },
-        {
-          value: "选项2",
-          label: "预设策略"
-        },
-        {
-          value: "选项3",
-          label: "自定义策略"
-        }
-      ]
+      tableTitle: "策略类型"
     };
   },
   mounted() {
@@ -134,7 +117,8 @@ export default {
             }
             let url = "cam2/ListPolicies"
             this.axios.post(url, params).then(res => {
-               this.policiesData = res.Response.List;
+              debugger
+            this.policiesData = res.Response.List;
             }).catch(error => {
                 console.log(error)
             })
@@ -145,7 +129,6 @@ export default {
          Action:"ListPolicies",
          Version:"2019-01-16"
        }
-       debugger;
        if(this.strategyValue != null && this.strategyValue != ''){
           params["Keyword"] = this.strategyValue
        }
@@ -176,7 +159,7 @@ export default {
     toQuery() {
       this.init();
     },
-    getDaata() {
+    getData() {
       return this.policiesSelectedData;
     }
   }
