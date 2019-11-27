@@ -33,7 +33,7 @@
       return {
         activeName: 'first',
         ID: this.$route.query.id,
-        VpcId: this.$route.query.VpcId,
+        vip: this.$route.query.vip,
       };
     },
     methods: {

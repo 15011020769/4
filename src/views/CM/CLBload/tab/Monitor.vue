@@ -27,8 +27,8 @@
 
         <el-table-column prop="DataPoints" width="600">
           <template slot-scope="scope">
-            <p v-if="scope.row.DataPoints[0]===null"> 暂无数据</p>
-            <div class='echart' v-if="scope.row.DataPoints[0]!==null">
+            <p v-if="scope.row.DataPoints[0].Values.length==0"> 暂无数据</p>
+            <div class='echart' v-if="scope.row.DataPoints[0].Values.length!=0">
               <echart-line id="diskEchearrts-line" :time='scope.row.DataPoints[0].Timestamps | UpTime'
                 :opData='scope.row.DataPoints[0].Values' :scale=3 :period=period :xdata=false>
               </echart-line>
@@ -93,7 +93,7 @@
   export default {
     data() {
       return {
-        VpcId: this.$route.query.VpcId,
+        vip: this.$route.query.vip,
         period: '',
         Start_End: [],
         value: 1,
@@ -116,15 +116,16 @@
     },
     methods: {
       GetDat(data) {
-        if (data[0] == 10) {
-          this.period = 60
-        } else {
-          this.period = data[0];
-        }
+        this.period = data[0];
         this.Start_End = data[1];
         this.value = data[2]
         const metricNArr = [
-          'Connum'
+          'Connum',
+          'NewConn',
+          'Intraffic',
+          'Outtraffic',
+          'Inpkg',
+          'Outpkg'
         ];
         this.tableData = []
         for (let i = 0; i < metricNArr.length; i++) {
@@ -142,7 +143,7 @@
           Namespace: 'QCE/LB_PUBLIC',
           MetricName: metricN,
           'Instances.0.Dimensions.0.Name': 'vip',
-          'Instances.0.Dimensions.0.Value': '175.97.144.80',
+          'Instances.0.Dimensions.0.Value': this.vip,
           Period: this.period,
           StartTime: this.Start_End.StartTIme,
           EndTime: this.Start_End.EndTIme,
@@ -158,7 +159,7 @@
           Namespace: 'QCE/LB_PUBLIC',
           MetricName: MetricName,
           'Instances.0.Dimensions.0.Name': 'vip',
-          'Instances.0.Dimensions.0.Value': '175.97.144.80',
+          'Instances.0.Dimensions.0.Value': this.vip,
           Period: this.period,
           StartTime: this.Start_End.StartTIme,
           EndTime: this.Start_End.EndTIme,
@@ -181,95 +182,48 @@
     },
     filters: {
       UpName(value) {
-        if (value === 'lanOuttraffic') {
-          return (value = '内网出带宽');
+        if (value === 'Connum') {
+          return (value = '当前连接数');
         }
-        if (value === 'lanIntraffic') {
-          return (value = '内网入带宽');
+        if (value === 'NewConn') {
+          return (value = '新增连接数');
         }
-        if (value === 'lanOutpkg') {
-          return (value = '内网出包量');
-        }
-        if (value === 'lanInpkg') {
-          return (value = '内网入包量');
-        }
-        if (value === 'WanOuttraffic') {
-          return (value = '外网出带宽');
-        }
-        if (value === 'WanIntraffic') {
-          return (value = '外网入带宽');
-        }
-        if (value === 'AccOuttraffic') {
-          return (value = '外网出流量');
-        }
-        if (value === 'WanOutpkg') {
-          return (value = '外网出包量');
-        }
-        if (value === 'WanInpkg') {
-          return (value = '外网入包量');
-        }
-        if (value === 'CPUUsage') {
-          return (value = 'CPU使用率');
+        if (value === 'Intraffic') {
+          return (value = '入流量');
         }
 
-        if (value === 'CPULoadAvg') {
-          return (value = 'CPU平均负载');
+        if (value === 'Outtraffic') {
+          return (value = ' 出流量');
         }
-        if (value === 'MemUsed') {
-          return (value = '内存使用量');
+        if (value === 'Inpkg') {
+          return (value = '入包量');
         }
-        if (value === 'MemUsage') {
-          return (value = '内存利用率');
-        }
-        if (value === 'TcpCurrEstab') {
-          return (value = 'TCP连接数');
+        if (value === 'Outpkg') {
+          return (value = '出包量');
         }
         if (value === '') {
           return (value = '');
         }
       },
       UpTitle(value) {
-        if (value === 'lanOuttraffic') {
-          return (value = '内网网卡的平均每秒出流量');
+        if (value === 'Connum') {
+          return (value = '当前连接数');
         }
-        if (value === 'lanIntraffic') {
-          return (value = '内网网卡的平均每秒入流量');
+        if (value === 'NewConn') {
+          return (value = '新增连接数');
         }
-        if (value === 'lanOutpkg') {
-          return (value = '内网网卡的平均每秒出包量');
+        if (value === 'Intraffic') {
+          return (value = '入流量');
         }
-        if (value === 'lanInpkg') {
-          return (value = '内网网卡的平均每秒入包量');
+
+        if (value === 'Outtraffic') {
+          return (value = ' 出流量');
         }
-        if (value === 'WanOuttraffic') {
-          return (value = '外网平均每秒出流量，最小粒度数据为10秒总流量/10秒 计算得出');
+        if (value === 'Inpkg') {
+          return (value = '入包量');
         }
-        if (value === 'WanIntraffic') {
-          return (value = '外网平均每秒入流量');
-        }
-        if (value === 'AccOuttraffic') {
-          return (value = '外网网卡的平均每秒出流量');
-        }
-        if (value === 'WanOutpkg') {
-          return (value = '外网平均每秒出包量');
-        }
-        if (value === 'WanInpkg') {
-          return (value = '外网平均每秒入包量');
-        }
-        if (value === 'CPUUsage') {
-          return (value = 'CPU利用率是通过CVM子机内部监控组件采集上报，数据更加精准');
-        }
-        if (value === 'CPULoadAvg') {
-          return (value = '1分钟内CPU平均负载，取 /proc/loadavg 第一列数据（windows操作系统无此指标），依赖监控组件安装采集');
-        }
-        if (value === 'MemUsed') {
-          return (value = '使用的内存量，不包括系统缓存和缓存区占用内存，依赖监控组件安装采集');
-        }
-        if (value === 'MemUsage') {
-          return (value = '用户实际使用的内存量与总内存量之比，不包括缓冲区与系统缓存占用的内存');
-        }
-        if (value === 'TcpCurrEstab') {
-          return (value = '处于 ESTABLISHED 状态的 TCP 连接数量，依赖监控组件安装采集');
+        if (value === 'Outpkg') {
+          return (value = '出包量');
         }
         if (value === '') {
           return (value = '');
