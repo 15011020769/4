@@ -10,14 +10,13 @@
     </div>
     <!-- 表格 -->
     <div class="Table-SY">
-      <el-table :data="ProTableData.slice((currpage - 1) * pagesize, currpage * pagesize)" height="550"
+      <el-table :data="TbaleData.slice((currpage - 1) * pagesize, currpage * pagesize)" height="550"
         style="width: 100%">
-        <el-table-column prop="" label="ID/主机名 ">
+        <el-table-column prop="" label="ID/名称">
           <template slot-scope="scope">
             <p>
-              <a @click="jump(scope.row.InstanceId)" style="cursor:pointer;">{{scope.row.InstanceId}}</a>
+              <a @click="jump(scope.row.AddressIp)" style="cursor:pointer;">{{scope.row.AddressId}}</a>
             </p>
-            {{ scope.row.InstanceName}}
           </template>
         </el-table-column>
         <el-table-column prop="" label="监控">
@@ -25,39 +24,18 @@
             <i class="el-icon-share"></i>
           </template>
         </el-table-column>
-        <el-table-column prop="" label="状态">
+        <el-table-column prop="" label="弹性IP地址">
           <template slot-scope="scope">
-            <p :class="scope.row.InstanceState==='RUNNING'?'green':scope.row.InstanceState==='STOPPED'?'red':'orange'">
-              {{instanceStatus[scope.row.InstanceState]}}</p>
+            <p>
+              {{scope.row.AddressIp}}</p>
           </template>
         </el-table-column>
 
-        <el-table-column prop="" label="网络类型">
-          <template slot-scope="scope">
-            <p>VPC 网络 </p>
-          </template>
-        </el-table-column>
-        <el-table-column prop="" label="IP地址">
-          <template slot-scope="scope">
-            <p v-for="i in scope.row.PrivateIpAddresses">{{i}}(内网)</p>
-            <p v-for="i in scope.row.PublicIpAddresses">{{i}}</p>
-          </template>
-        </el-table-column>
-
-        <el-table-column prop="projectName" label="所属项目">
-        </el-table-column>
-
-        <el-table-column label="健康状态">
-          <template slot-scope="scope">
-            <p :class="scope.row.RestrictState==='NORMAL'?'green':scope.row.RestrictState==='EXPIRED'?'red':'orange'">
-              {{RestrictState[scope.row.RestrictState]}}</p>
-          </template>
-        </el-table-column>
       </el-table>
       <div class="Right-style pagstyle">
         <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
           :page-sizes="[20, 30, 40,50,100]" :page-size="pagesize" layout="total, sizes, prev, pager, next, jumper"
-          :total="ProTableData.length">
+          :total="TbaleData.length">
         </el-pagination>
       </div>
     </div>
@@ -70,27 +48,18 @@
   import SEARCH from '@/components/public/SEARCH';
   import {
     ALL_CITY,
-    CVM_LIST,
+    NETIP_LIST,
     ALL_PROJECT
   } from '@/constants';
   export default {
     data() {
       return {
         searchOptions: [{
-          value: 'project-id',
-          label: '项目ID'
+          value: 'address-id',
+          label: 'EIP-ID'
         }, {
-          value: 'instance-id',
-          label: '实例ID'
-        }, {
-          value: 'instance-name',
-          label: '实例名称'
-        }, {
-          value: 'private-ip-address',
-          label: '内网IP'
-        }, {
-          value: 'public-ip-address ',
-          label: '公网IP'
+          value: 'address-ip',
+          label: 'EIP-IP'
         }],
         searchValue: '',
         instanceStatus: {
@@ -112,11 +81,8 @@
         cities: [],
         selectedRegion: 'ap-taipei', // 默认选中城市
         selectedCity: {}, // 切换城市
-        search: '', // 搜索
         searchInput: '',
         TbaleData: [], // 表格数据
-        ProjectData: [], // 项目列表数据
-        ProTableData: [], // 添加完项目列表的表格数据
         pagesize: 20, // 分页条数
         currpage: 1, // 当前页码
       };
@@ -182,35 +148,16 @@
         };
         // 获取表格数据
         this.axios
-          .post(CVM_LIST, param)
+          .post(NETIP_LIST, param)
           .then((data) => {
             if (data.Response.Error == undefined) {
-              this.TbaleData = data.Response.InstanceSet;
+              this.TbaleData = data.Response.AddressSet;
             } else {
               this.$message.error(data.Response.Error.Message);
             }
 
           })
-          .then(() => {
-            // 获取项目列表
-            this.axios.post(ALL_PROJECT, paramS).then((data) => {
-              this.ProjectData = data.data;
-              for (let i = 0; i < this.TbaleData.length; i++) {
 
-                for (let j = 0; j < this.ProjectData.length; j++) {
-                  if (
-                    this.TbaleData[i].Placement.ProjectId == this.ProjectData[j].projectId
-                  ) {
-                    this.TbaleData[i].projectName = this.ProjectData[j].projectName;
-                  }
-                  if (this.TbaleData[i].Placement.ProjectId == 0) {
-                    this.TbaleData[i].projectName = '默认项目';
-                  }
-                }
-              }
-              this.ProTableData = this.TbaleData;
-            });
-          });
       },
       handleSizeChange(val) {
         this.pagesize = val
@@ -223,7 +170,7 @@
       },
       jump(id) {
         this.$router.push({
-          name: 'CMCVMdetails',
+          name: 'networkdetails',
           query: {
             id,
           },
