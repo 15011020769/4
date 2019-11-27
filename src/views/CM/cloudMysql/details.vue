@@ -2,7 +2,7 @@
   <div>
     <div class="datails-nav">
       <ul>
-        <router-link to="/CMcloudMysql">
+        <router-link to="/cloudMysql">
           <li>
             <i class="el-icon-back"></i>
             <span>返回列表</span>
