@@ -11,18 +11,14 @@
           <el-button :disabled="true">启用密钥</el-button>
           <el-button :disabled="true">禁用密钥</el-button>
         </div>
-        <el-dialog class="dialogModel"
-          title="新建密钥"
-          :visible.sync="dialogVisible"
-          width="30%"
-          :before-close="handleClose">
+        <el-dialog class="dialogModel" title="新建密钥" :visible.sync="dialogVisible" width="30%" :before-close="handleClose">
           <el-form :model="createForm" label-width="100px">
             <el-form-item label="密钥名称">
               <el-input v-model="createForm.name"></el-input>
               <p>最长可输入60个字符，不可为空，请使用字母、数字及字符“_”和“-”，首字符必须为字母或者数字，且不能用 KMS- 开头。</p>
             </el-form-item>
             <el-form-item label="描述信息">
-              <el-input v-model="createForm.discription" type="textarea"/>
+              <el-input v-model="createForm.discription" type="textarea" />
               <p>最长可输入1024个字符</p>
             </el-form-item>
             <el-form-item label="密钥材料来源">
@@ -44,41 +40,40 @@
       </div>
       <div class="tableCoontent">
         <div class="tableList">
-          <el-table 
-            ref="multipleTable"
-            :data="tableDataBegin.slice((currentPage-1)*pageSize,currentPage*pageSize)"
-            tooltip-effect="dark"
-            style="width: 100%"
-            @selection-change="handleSelectionChange">
+          <el-table ref="multipleTable" :data="tableDataBegin.slice((currentPage-1)*pageSize,currentPage*pageSize)" tooltip-effect="dark" style="width: 100%" @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="55"></el-table-column>
-            <el-table-column prop="idName" label="密钥ID/密钥名称">
+            <el-table-column prop="KeyId" label="密钥ID/密钥名称">
               <template slot-scope="scope">
-                <a href="#">{{scope.row.idName.id}}</a><br/>
-                <span>{{ scope.row.idName.name}}</span>
+                <a href="#">{{scope.row.KeyId}}</a><br />
+                <span>{{ scope.row.Alias}}</span>
               </template>
             </el-table-column>
-            <el-table-column prop="status" label="状态"></el-table-column>
-            <el-table-column prop="createTime" label="创建时间" show-overflow-tooltip></el-table-column>
-            <el-table-column prop="kmsSource" label="密钥来源"></el-table-column>
+            <el-table-column prop="KeyState" label="状态">
+              <template slot-scope="scope"> 
+                <span>{{filterState(scope.row.KeyState)}}</span>
+              </template>
+            </el-table-column>
+            <el-table-column prop="CreateTime" label="创建时间" show-overflow-tooltip>
+              <template slot-scope="scope">
+                <span>{{timestampToTime(scope.row.CreateTime)}}</span>
+              </template>
+            </el-table-column>
+            <el-table-column prop="Origin" label="密钥来源">
+              <template slot-scope="scope"> 
+                <span>{{filterKey(scope.row.Origin)}}</span>
+              </template>
+            </el-table-column>
             <el-table-column prop="kmsChange" label="密钥轮换">
               <a href="#">启用轮换</a><span class="spanLine">|</span><a href="#">禁用轮换</a>
             </el-table-column>
             <el-table-column prop="action" label="操作" class="action">
-              <a href="#">启用密钥</a><span class="spanLine">|</span><a href="#">禁用密钥</a><br/>
+              <a href="#">启用密钥</a><span class="spanLine">|</span><a href="#">禁用密钥</a><br />
               <a href="#">计划删除</a><span class="spanLine">|</span><a href="#">取消删除</a>
             </el-table-column>
           </el-table>
         </div>
         <div class="tabListPage">
-          <el-pagination
-            @size-change="handleSizeChange"
-            @current-change="handleCurrentChange"
-            :current-page="currentPage"
-            :page-sizes="[10, 20, 30, 50]"
-            :page-size="pageSize"
-            layout="total, sizes, prev, pager, next, jumper"
-            :total="totalItems"
-          ></el-pagination>
+          <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage" :page-sizes="[10, 20, 30, 50]" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper" :total="totalItems"></el-pagination>
         </div>
       </div>
     </div>
@@ -86,10 +81,10 @@
 </template>
 <script>
 export default {
-  data(){
+  data() {
     return {
-      thisAddress:'中国台北',
-      tableDataName:"",
+      thisAddress: '中国台北',
+      tableDataName: "",
       tableDataBegin: [],
       tableDataName: "",
       tableDataEnd: [],
@@ -102,29 +97,22 @@ export default {
       dialogVisible: false,
       deleteIndex: "",
       deleteBegin: {},
-      dialogVisible:false,//新建模态框
-      allData:[
-        {
-          idName:{
-            id:"1",
-            name:"2"
-          },
-          status:"状态",
-          createTime:"创建时间",
-          kmsSource:"密钥来源"
-        }
-      ],
-      createForm:{
-        name:"",
-        discription:"",
-        resource:"KMS"
+      dialogVisible: false,//新建模态框
+      allData: [],
+      createForm: {
+        name: "",
+        discription: "",
+        resource: ""
       },//新建form
     }
+  },
+  filters: {
+     
   },
   created() {
     this.getData();
   },
-  methods:{
+  methods: {
     handleSelectionChange(val) {
       this.multipleSelection = val;
     },
@@ -136,24 +124,41 @@ export default {
         var arr = list[i].split("=");
       }
       let params = {
-        // Action: "ListFunctions",
-        Version: "2018-04-16",
-        Region: arr[1]
+        Version: '2019-01-18',
+        Region: 'ap-taipei',
+
       };
-      //this.$axios.post('scf/ListFunctions', params).then(res => {
-        // console.log(res.data.functions);
-        //this.tableDataBegin = res.data.functions;
-        this.tableDataBegin = this.allData;
-        // 将数据的长度赋值给totalItems
-        this.totalItems = this.tableDataBegin.length;
-        if (this.totalItems > this.pageSize) {
-          for (let index = 0; index < this.pageSize; index++) {
-            this.tableDataEnd.push(this.tableDataBegin[index]);
-          }
-        } else {
-          this.tableDataEnd = this.tableDataBegin;
+      this.$axios.post('kms2/ListKeys', params).then(res => {
+        // console.log(res.Response);
+        var arrlist = res.Response.Keys;
+        var DataList = []
+        for (let i = 0; i < arrlist.length; i++) {
+          let params = {
+            Version: '2019-01-18',
+            Region: 'ap-taipei',
+          };
+          params['KeyId'] = arrlist[i].KeyId
+          this.$axios.post('kms2/DescribeKey', params).then(res => {
+            DataList.push(res.Response.KeyMetadata)
+            // console.log(DataList)
+            this.tableDataBegin = DataList;
+
+            this.allData = DataList
+            // this.tableDataBegin = this.allData;
+            // 将数据的长度赋值给totalItems
+            this.totalItems = this.tableDataBegin.length;
+            if (this.totalItems > this.pageSize) {
+              for (let index = 0; index < this.pageSize; index++) {
+                this.tableDataEnd.push(this.tableDataBegin[index]);
+              }
+            } else {
+              this.tableDataEnd = this.tableDataBegin;
+            }
+            
+          });
         }
-      //});
+        // this.filterState()
+      });
     },
     //搜索
     doFilter() {
@@ -163,15 +168,15 @@ export default {
       //每次手动将数据置空,因为会出现多次点击搜索情况
       this.filterTableDataEnd = [];
       this.tableDataBegin.forEach((val, index) => {
-          if (val.idName) {
-            if (val.idName.id.indexOf(this.tableDataName) == 0||val.idName.name.indexOf(this.tableDataName) == 0) {
-              this.filterTableDataEnd.push(val);
-              this.tableDataBegin = this.filterTableDataEnd;
-            } else {
-              this.filterTableDataEnd.push();
-              this.tableDataBegin = this.filterTableDataEnd;
-            }
+        if (val.KeyId) {
+          if (val.KeyId.indexOf(this.tableDataName) == 0 || val.Alias.indexOf(this.tableDataName) == 0) {
+            this.filterTableDataEnd.push(val);
+            this.tableDataBegin = this.filterTableDataEnd;
+          } else {
+            this.filterTableDataEnd.push();
+            this.tableDataBegin = this.filterTableDataEnd;
           }
+        }
       });
       //页面数据改变重新统计数据数量和当前页
       this.currentPage = 1;
@@ -208,151 +213,196 @@ export default {
         }
       }
     },
-    handleClose(){
-      this.dialogVisible=false;
+    handleClose() {
+      this.dialogVisible = false;
     },
     //新建确定按钮
-    sureNewCreate(){
-
+    sureNewCreate() {
+      let params = {
+        Version: '2019-01-18',
+        Region: 'ap-taipei',
+        Alias: this.createForm.name
+      };
+      this.$axios.post('kms2/CreateKey', params).then(res => {
+        // console.log(res.Response);
+        getData()
+        this.dialogVisible = false
+      });
+    },
+    timestampToTime(timestamp) {
+      var date = new Date(timestamp * 1000);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
+      var Y = date.getFullYear() + '-';
+      var M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '-';
+      var D = date.getDate() + ' ';
+      var h = date.getHours() + ':';
+      var m = date.getMinutes() + ':';
+      var s = date.getSeconds();
+      return Y + M + D + h + m + s;
+    },
+    //状态处理
+    filterState(state){
+       if (state == 'Enabled') {
+          state = '已启用'
+        } else if (state == 'PendingImport') {
+          state = '待导入'
+        } else if (state == 'Disabled') {
+          state = '已禁用'
+        }
+        return state;
+    },
+    //状态处理
+    filterKey(state){
+       if (state == 'EXTERNAL') {
+          state = '外部'
+        } else if (state == 'TENCENT_KMS') {
+          state = 'KMS'
+        } 
+        return state;
     }
   }
 }
 </script>
 <style lang="scss">
-.newClear:after{
+.newClear:after {
   display: block;
-  content:"";
-  clear:both;
+  content: "";
+  clear: both;
 }
-.topConTit{
-  width:100%;
-  height:50px;
-  line-height:50px;
-  background-color:#fff;
-  border-bottom:1px solid #ddd;
-  padding:0 20px;
-  span.titFont{
-    font-size:16px;
-    font-weight:600;
+.topConTit {
+  width: 100%;
+  height: 50px;
+  line-height: 50px;
+  background-color: #fff;
+  border-bottom: 1px solid #ddd;
+  padding: 0 20px;
+  span.titFont {
+    font-size: 16px;
+    font-weight: 600;
   }
-  span.taibeiCheck{
-    width:78px;
-    height:22px;
+  span.taibeiCheck {
+    width: 78px;
+    height: 22px;
     text-align: center;
-    line-height:22px;
-    color:#006eff;
-    border:1px solid #006eff;
-    background-color:#fff;
-    margin-left:20px;
+    line-height: 22px;
+    color: #006eff;
+    border: 1px solid #006eff;
+    background-color: #fff;
+    margin-left: 20px;
     display: inline-block;
   }
 }
-.mainContent{
-  width:100%;
-  padding:20px;
-  .mainContBtn{
-    margin-bottom:20px;
-    .conLeftBtn{
-      float:left;
-      button{
-        height:30px;
+.mainContent {
+  width: 100%;
+  padding: 20px;
+  .mainContBtn {
+    margin-bottom: 20px;
+    .conLeftBtn {
+      float: left;
+      button {
+        height: 30px;
         border-radius: 0;
-        line-height:30px;
-        padding:0 20px;
-        border:1px solid #ddd;
+        line-height: 30px;
+        padding: 0 20px;
+        border: 1px solid #ddd;
       }
-      button:nth-child(1){
-        background-color:#006eff;
-        color:#fff;
-        border:1px solid #006eff
-        ;
+      button:nth-child(1) {
+        background-color: #006eff;
+        color: #fff;
+        border: 1px solid #006eff;
       }
     }
-    .conRightSearch{
-      float:right;
-      .iptSearch{
-        width:160px;
-        border-right:0;
+    .conRightSearch {
+      float: right;
+      .iptSearch {
+        width: 160px;
+        border-right: 0;
         border-radius: 0;
-        height:30px;
-        float:left;
-        input.el-input__inner{
-          width:160px;
+        height: 30px;
+        float: left;
+        input.el-input__inner {
+          width: 160px;
           border-radius: 0;
-          font-size:12px;
-          height:30px;
-          border-right:0;
-          :focus{
-            border:none;
+          font-size: 12px;
+          height: 30px;
+          border-right: 0;
+          :focus {
+            border: none;
             outline: none;
           }
         }
       }
-      .el-icon-search{
-        width:36px;
+      .el-icon-search {
+        width: 36px;
         border-radius: 0;
-        border-left:0;
-        background-color:#fff;
-        height:30px;
+        border-left: 0;
+        background-color: #fff;
+        height: 30px;
         outline: none;
-        border:1px solid #ddd;
-        float:left;
+        border: 1px solid #ddd;
+        float: left;
       }
     }
   }
 }
-.mainContent .mainContBtn .conRightSearch .iptSearch input.el-input__inner:focus{
+.mainContent
+  .mainContBtn
+  .conRightSearch
+  .iptSearch
+  input.el-input__inner:focus {
   border: 1px solid #ddd;
   border-right: 0;
   outline: none;
 }
-.tableCoontent{
-  width:100%;
-  min-height:200px;
-  background-color:#fff;
-  border:1px solid #ddd;
+.tableCoontent {
+  width: 100%;
+  min-height: 200px;
+  background-color: #fff;
+  border: 1px solid #ddd;
   // padding:20px;
-  .tableList{
-    width:100%;
+  .tableList {
+    width: 100%;
     min-height: 350px;
     .spanLine{
       margin:0 5px;
       color:#bbb;
     }
-    table th:nth-child(7),table td:nth-child(7),table th:nth-child(6),table td:nth-child(6){
-      text-align:center;
+    table th:nth-child(7),
+    table td:nth-child(7),
+    table th:nth-child(6),
+    table td:nth-child(6) {
+      text-align: center;
     }
   }
-  .tabListPage{
-    width:100%;
-    padding:12px 20px 20px;
-    border-top:1px solid #ddd;
-    text-align:right;
+  .tabListPage {
+    width: 100%;
+    padding: 12px 20px 20px;
+    border-top: 1px solid #ddd;
+    text-align: right;
   }
 }
-.dialogModel{
-  p{
-    font-size:12px;
-    color:#888;
-    line-height:22px;
+.dialogModel {
+  p {
+    font-size: 12px;
+    color: #888;
+    line-height: 22px;
   }
-  .el-dialog__title{
-    font-weight:600;
-    font-size:14px;
+  .el-dialog__title {
+    font-weight: 600;
+    font-size: 14px;
   }
-  .el-form-item__label{
-    font-size:12px;
-    color:#888;
-    text-align:left;
+  .el-form-item__label {
+    font-size: 12px;
+    color: #888;
+    text-align: left;
   }
-  .el-input__inner{
-    width:180px;
-    height:30px;
+  .el-input__inner {
+    width: 180px;
+    height: 30px;
     border-radius: 0;
   }
-  .el-textarea__inner{
-    width:330px;
-    height:100px;
+  .el-textarea__inner {
+    width: 330px;
+    height: 100px;
     resize: none;
   }
 }
