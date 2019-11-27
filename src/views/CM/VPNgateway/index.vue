@@ -31,7 +31,7 @@
             <p>
               <a @click="jump(scope.row.vpcId)" style="cursor:pointer;">{{scope.row.vpcId}}</a>
             </p>
-            {{ scope.row.vpnGwName}}
+            {{ scope.row.vpcName}}
           </template>
         </el-table-column>
         <el-table-column prop label="监控">
@@ -48,12 +48,14 @@
         </el-table-column>
 
         <el-table-column prop label="所属网络">
+          <template slot-scope="scope">
+            <p style="color: #65a5f9;">{{scope.row.unVpcId}}</p>
+            <p>{{ scope.row.vpnGwName}}</p>
+          </template>
         </el-table-column>
 
-        <el-table-column label="健康状态">
-        </el-table-column>
-        <el-table-column prop label="告警策略数">
-        </el-table-column>
+        <el-table-column label="健康状态"></el-table-column>
+        <el-table-column prop label="告警策略数"></el-table-column>
       </el-table>
       <div class="Right-style pagstyle">
         <el-pagination
