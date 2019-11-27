@@ -85,7 +85,7 @@
 
 <script>
   import moment from 'moment';
-  import XTimeX from '@/components/public/TimeX';
+  import XTimeX from '@/components/public/TimeXK';
   import echartLine from '@/components/public/echars-line';
   import {
     All_MONITOR
@@ -94,7 +94,7 @@
     data() {
       return {
         ID: this.$route.query.id,
-        Appid:this.$route.query.id.split("-")[1],
+        Appid: this.$route.query.id.split("-")[1],
         period: '',
         Start_End: [],
         value: 1,
@@ -152,10 +152,8 @@
           Region: this.$cookie.get('regionv2'),
           Namespace: 'QCE/COS',
           MetricName: metricN,
-          'Instances.0.Dimensions.0.Name': 'appid',
-          'Instances.0.Dimensions.0.Value': this.Appid,
-          'Instances.0.Dimensions.1.Name':'bucket',
-          'Instances.0.Dimensions.1.Value':this.ID,
+          'Instances.0.Dimensions.0.Name': 'bucket',
+          'Instances.0.Dimensions.0.Value': this.ID,
           Period: this.period,
           StartTime: this.Start_End.StartTIme,
           EndTime: this.Start_End.EndTIme,
@@ -237,13 +235,13 @@
         if (value === 'IaReadRequests') {
           return (value = '	低频存储读请求');
         }
-         if (value === 'IaWriteRequests') {
+        if (value === 'IaWriteRequests') {
           return (value = '	低频存储写请求');
         }
-         if (value === 'NlReadRequests') {
+        if (value === 'NlReadRequests') {
           return (value = '	近线存储读请求');
         }
-         if (value === 'NlWriteRequests') {
+        if (value === 'NlWriteRequests') {
           return (value = '近线存储写请求');
         }
         if (value === '') {
