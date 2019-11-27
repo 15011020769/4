@@ -121,20 +121,41 @@ export default {
     echartLine,
     XTimeX
   },
-  created() {
-    // ssss
-  },
+  created() {},
   methods: {
     GetDat(data) {
       this.period = data[0];
       this.Start_End = data[1];
       this.value = data[2];
       const metricNArr = [
-        "Outbandwidth",
-        "Inbandwidth",
-        "Outpkg",
-        "Inpkg",
-        "Conns"
+        "CacheHitRatio",
+        "CmdstatGet",
+        "CmdstatGetbit",
+        "CmdstatGetrange",
+        "CmdstatHget",
+        "CmdstatHgetall",
+        "CmdstatHmget",
+        "CmdstatHmset",
+        "CmdstatHset",
+        "CmdstatHsetnx",
+        "CmdstatLset",
+        "CmdstatMget",
+        "CmdstatMset",
+        "CmdstatMsetnx",
+        "CmdstatSet",
+        "CmdstatSetbit",
+        "CmdstatSetex",
+        "CmdstatSetrange",
+        "Qps",
+        "Connections",
+        "CpuUs",
+        "InFlow",
+        "Keys",
+        "OutFlow",
+        "StatGet",
+        "StatSet",
+        "Storage",
+        "StorageUs"
       ];
       this.tableData = [];
       for (let i = 0; i < metricNArr.length; i++) {
@@ -146,12 +167,15 @@ export default {
     },
     //
     Obtain(metricN) {
+      // if (this.period == 10) {
+      //   this.period = 60;
+      // }
       const param = {
         Version: "2018-07-24",
         Region: this.$cookie.get("regionv2"),
-        Namespace: "QCE/NAT_GATEWAY",
+        Namespace: "QCE/REDIS",
         MetricName: metricN,
-        "Instances.0.Dimensions.0.Name": "natId",
+        "Instances.0.Dimensions.0.Name": "redis_uuid",
         "Instances.0.Dimensions.0.Value": this.ID,
         Period: this.period,
         StartTime: this.Start_End.StartTIme,
@@ -162,12 +186,15 @@ export default {
       });
     },
     getModality(MetricName) {
+      // if (this.period == 10) {
+      //   this.period = 60;
+      // }
       const param = {
         Version: "2018-07-24",
         Region: this.$cookie.get("regionv2"),
-        Namespace: "QCE/NAT_GATEWAY",
+        Namespace: "QCE/REDIS",
         MetricName: MetricName,
-        "Instances.0.Dimensions.0.Name": "natId",
+        "Instances.0.Dimensions.0.Name": "redis_uuid",
         "Instances.0.Dimensions.0.Value": this.ID,
         Period: this.period,
         StartTime: this.Start_End.StartTIme,
@@ -190,40 +217,101 @@ export default {
   },
   filters: {
     UpName(value) {
-      if (value === "Outbandwidth") {
-        return (value = "外网出带宽");
+      if (value === "CacheHitRatio") {
+        return (value = "cache命中率");
       }
-      if (value === "Inbandwidth") {
-        return (value = "外网入带宽");
+      if (value === "CmdstatGet") {
+        return (value = "get命令数");
       }
-      if (value === "Outpkg") {
-        return (value = "出包量");
+      if (value === "CmdstatGetbit") {
+        return (value = "getbit命令数");
       }
-      if (value === "Inpkg") {
-        return (value = "	入包量");
+      if (value === "CmdstatGetrange") {
+        return (value = "getrange命令数");
       }
-      if (value === "Conns") {
-        return (value = "连接数");
+      if (value === "CmdstatHget") {
+        return (value = "hget命令数");
+      }
+      if (value === "CmdstatHgetall") {
+        return (value = "hgetall命令数");
+      }
+      if (value === "AccOuttraffic") {
+        return (value = "外网出流量");
+      }
+      if (value === "WanOutpkg") {
+        return (value = "外网出包量");
+      }
+      if (value === "WanInpkg") {
+        return (value = "外网入包量");
+      }
+      if (value === "CPUUsage") {
+        return (value = "CPU使用率");
+      }
+
+      if (value === "CPULoadAvg") {
+        return (value = "CPU平均负载");
+      }
+      if (value === "MemUsed") {
+        return (value = "内存使用量");
+      }
+      if (value === "MemUsage") {
+        return (value = "内存利用率");
+      }
+      if (value === "TcpCurrEstab") {
+        return (value = "TCP连接数");
       }
       if (value === "") {
         return (value = "");
       }
     },
     UpTitle(value) {
-      if (value === "Outbandwidth") {
-        return (value = "NAT网关平均每秒出流量");
+      if (value === "lanOuttraffic") {
+        return (value = "内网网卡的平均每秒出流量");
       }
-      if (value === "Inbandwidth") {
-        return (value = "NAT网关平均每秒入流量");
+      if (value === "lanIntraffic") {
+        return (value = "内网网卡的平均每秒入流量");
       }
-      if (value === "Outpkg") {
-        return (value = "NAT网关平均每秒出包量");
+      if (value === "lanOutpkg") {
+        return (value = "内网网卡的平均每秒出包量");
       }
-      if (value === "Inpkg") {
-        return (value = "	NAT网关平均每秒入包量");
+      if (value === "lanInpkg") {
+        return (value = "内网网卡的平均每秒入包量");
       }
-      if (value === "Conns") {
-        return (value = "NAT网关的实时并发数");
+      if (value === "WanOuttraffic") {
+        return (value =
+          "外网平均每秒出流量，最小粒度数据为10秒总流量/10秒 计算得出");
+      }
+      if (value === "WanIntraffic") {
+        return (value = "外网平均每秒入流量");
+      }
+      if (value === "AccOuttraffic") {
+        return (value = "外网网卡的平均每秒出流量");
+      }
+      if (value === "WanOutpkg") {
+        return (value = "外网平均每秒出包量");
+      }
+      if (value === "WanInpkg") {
+        return (value = "外网平均每秒入包量");
+      }
+      if (value === "CPUUsage") {
+        return (value =
+          "CPU利用率是通过CVM子机内部监控组件采集上报，数据更加精准");
+      }
+      if (value === "CPULoadAvg") {
+        return (value =
+          "1分钟内CPU平均负载，取 /proc/loadavg 第一列数据（windows操作系统无此指标），依赖监控组件安装采集");
+      }
+      if (value === "MemUsed") {
+        return (value =
+          "使用的内存量，不包括系统缓存和缓存区占用内存，依赖监控组件安装采集");
+      }
+      if (value === "MemUsage") {
+        return (value =
+          "用户实际使用的内存量与总内存量之比，不包括缓冲区与系统缓存占用的内存");
+      }
+      if (value === "TcpCurrEstab") {
+        return (value =
+          "处于 ESTABLISHED 状态的 TCP 连接数量，依赖监控组件安装采集");
       }
       if (value === "") {
         return (value = "");
