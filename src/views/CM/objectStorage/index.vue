@@ -26,7 +26,7 @@
         </el-table-column>
         <el-table-column prop="" label="地域">
           <template slot-scope="scope">
-            <p :class="scope.row.InstanceState==='RUNNING'?'green':scope.row.InstanceState==='STOPPED'?'red':'orange'">
+            <p >
               {{scope.row.zone.zone}}</p>
           </template>
         </el-table-column>

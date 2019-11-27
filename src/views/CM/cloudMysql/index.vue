@@ -35,7 +35,6 @@
               >{{scope.row.InstanceId}}</a>
             </p>
             <p>{{ scope.row.InstanceName}}</p>
-            
           </template>
         </el-table-column>
         <el-table-column prop label="监控">
@@ -45,7 +44,7 @@
         </el-table-column>
         <el-table-column prop label="状态">
           <template slot-scope="scope">
-            <p>{{RestrictState[scope.row.Status]}}</p>
+            <p :class="scope.row.Status===1?'green':scope.row.Status===5?'red':'orange'">{{RestrictState[scope.row.Status]}}</p>
           </template>
         </el-table-column>
         <el-table-column prop label="内网IP/端口">
@@ -69,7 +68,8 @@
         <el-table-column prop="projectName" label="所属项目">
           <template slot-scope="scope">
             <p>{{scope.row.projectName}}</p>
-          </template></el-table-column>
+          </template>
+        </el-table-column>
       </el-table>
       <div class="Right-style pagstyle">
         <el-pagination
@@ -94,8 +94,8 @@ export default {
     return {
       searchOptions: [
         {
-          value: "bucket",
-          label: "存储桶名称"
+          value: "InstanceIds.0",
+          label: "实例 ID"
         }
       ],
       searchValue: "",
@@ -110,13 +110,13 @@ export default {
         7: "外网访问关闭中",
         8: "密码修改中",
         9: "实例名修改中",
-        10:"重启中",
-        12:"自建迁移中",
-        13:"删除库表中",
-        14:"灾备实例创建同步中",
-        15:"升级待切换",
-        16:"升级切换中",
-        17:"升级切换完成"
+        10: "重启中",
+        12: "自建迁移中",
+        13: "删除库表中",
+        14: "灾备实例创建同步中",
+        15: "升级待切换",
+        16: "升级切换中",
+        17: "升级切换完成"
       },
       RestrictState: {
         0: "创建中",
@@ -124,7 +124,7 @@ export default {
         4: "隔离中",
         5: "已隔离"
       },
-       InstanceTypeState: {
+      InstanceTypeState: {
         1: "主实例",
         2: "灾备实例",
         3: "只读实例"
@@ -192,8 +192,7 @@ export default {
         Limit: this.pagesize
       };
       if (this.searchValue !== "" && this.searchInput !== "") {
-        param["Filters.0.Name"] = this.searchValue;
-        param["Filters.0.Values.0"] = this.searchInput;
+        param[this.searchValue] = this.searchInput;
       }
       const paramS = {
         allList: 0
@@ -203,30 +202,29 @@ export default {
         .post(MYSQL_LIST, param)
         .then(data => {
           // console.log(data);
-          // if (data.Response.Error == undefined) {
-          this.TbaleData = data.Response.Items;
-          // } else {
-          //   this.$message.error(data.Response.Error.Message);
-          // }
-          // this.ProTableData = this.TbaleData;
+          if (data.Response.Error == undefined) {
+            this.TbaleData = data.Response.Items;
+          } else {
+            this.$message.error(data.Response.Error.Message);
+          }
         })
 
         .then(() => {
           // 获取项目列表
           this.axios.post(ALL_PROJECT, paramS).then(data => {
-            // console.log(data)
+            console.log(data)
             this.ProjectData = data.data;
             for (let i = 0; i < this.TbaleData.length; i++) {
               for (let j = 0; j < this.ProjectData.length; j++) {
                 if (
-                  this.TbaleData[i].rojectId == this.ProjectData[j].projectId
+                  this.TbaleData[i].ProjectId == this.ProjectData[j].projectId
                 ) {
-                  this.TbaleData[i].projectName = this.ProjectData[
-                    j
-                  ].projectName;
+                  this.TbaleData[i].projectName = this.ProjectData[j].projectName;
+                  console.log(0)
                 }
                 if (this.TbaleData[i].ProjectId == 0) {
                   this.TbaleData[i].projectName = "默认项目";
+                  console.log(1)
                 }
               }
             }
