@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- 城市按钮 -->
-    <div class="CVM-title">对象存储</div>
+    <div class="CVM-title">MySQL</div>
     <div class="tool">
       <Cities
         :cities="cities"
@@ -26,47 +26,50 @@
         height="550"
         style="width: 100%"
       >
-        <el-table-column prop label="实例名">
+        <el-table-column prop label="ID/名称">
           <template slot-scope="scope">
             <p>
               <a
-                @click="jump(scope.row.uInstanceId)"
+                @click="jump(scope.row.InstanceId)"
                 style="cursor:pointer;"
-              >{{scope.row.uInstanceId}}</a>
+              >{{scope.row.InstanceId}}</a>
             </p>
-            <p>{{scope.row.cdbInstanceName}}</p>
-            {{ scope.row.InstanceName}}
+            <p>{{ scope.row.InstanceName}}</p>
+            
           </template>
         </el-table-column>
-        <el-table-column prop label="磁盘使用空间">
+        <el-table-column prop label="监控">
           <template slot-scope="scope">
-            <p>{{scope.row.real_capacity}}MB</p>
+            <i class="el-icon-share"></i>
           </template>
         </el-table-column>
-        <el-table-column prop label="容量使用率">
+        <el-table-column prop label="状态">
           <template slot-scope="scope">
-            <p>{{scope.row.volume_rate}}%</p>
+            <p>{{RestrictState[scope.row.Status]}}</p>
           </template>
         </el-table-column>
-        <el-table-column prop label="总请求数">
+        <el-table-column prop label="内网IP/端口">
           <template slot-scope="scope">
-            <p>{{scope.row.queries}}次/秒</p>
+            <p>{{scope.row.Vip}}/{{scope.row.Vport}}</p>
           </template>
         </el-table-column>
 
-        <el-table-column prop label="查询使用率">
+        <el-table-column prop label="网络类型">
           <template slot-scope="scope">
-            <p>{{scope.row.query_rate}}%</p>
+            <p>VPC 网络</p>
           </template>
         </el-table-column>
 
-        <el-table-column prop label="慢查询数">
+        <el-table-column prop label="类型">
           <template slot-scope="scope">
-            <p>{{scope.row.slow_queries}}次/分</p>
+            <p>{{InstanceTypeState[scope.row.InstanceType]}}</p>
           </template>
         </el-table-column>
 
-        <el-table-column prop="projectName" label="所属项目"></el-table-column>
+        <el-table-column prop="projectName" label="所属项目">
+          <template slot-scope="scope">
+            <p>{{scope.row.projectName}}</p>
+          </template></el-table-column>
       </el-table>
       <div class="Right-style pagstyle">
         <el-pagination
@@ -85,7 +88,7 @@
 <script>
 import Cities from "@/components/public/CITY";
 import SEARCH from "@/components/public/SEARCH";
-import { ALL_CITY, MYSQL_LIST, ALL_PROJEC, OBJ_LIST } from "@/constants";
+import { ALL_CITY, MYSQL_LIST, ALL_PROJECT, OBJ_LIST } from "@/constants";
 export default {
   data() {
     return {
@@ -96,21 +99,35 @@ export default {
         }
       ],
       searchValue: "",
-      instanceStatus: {
-        PENDING: "创建中",
-        LAUNCH_FAILED: "创建失败",
-        RUNNING: "运行中",
-        STOPPED: "已关机",
-        STARTING: "开机中",
-        STOPPING: "关机中",
-        REBOOTING: "重启中",
-        SHUTDOWN: "待回收",
-        TERMINATING: "销毁中"
+      TaskStatusStatus: {
+        0: "没有任务",
+        1: "升级中",
+        2: "数据导入中",
+        3: "开放Slave中",
+        4: "外网访问开通中",
+        5: "批量操作执行中",
+        6: "回档中",
+        7: "外网访问关闭中",
+        8: "密码修改中",
+        9: "实例名修改中",
+        10:"重启中",
+        12:"自建迁移中",
+        13:"删除库表中",
+        14:"灾备实例创建同步中",
+        15:"升级待切换",
+        16:"升级切换中",
+        17:"升级切换完成"
       },
       RestrictState: {
-        NORMAL: "健康",
-        EXPIRED: "过期",
-        PROTECTIVELY_ISOLATED: "隔离"
+        0: "创建中",
+        1: "运行中",
+        4: "隔离中",
+        5: "已隔离"
+      },
+       InstanceTypeState: {
+        1: "主实例",
+        2: "灾备实例",
+        3: "只读实例"
       },
       cities: [],
       selectedRegion: "ap-taipei", // 默认选中城市
@@ -170,7 +187,7 @@ export default {
     GetTabularData() {
       const param = {
         Region: this.selectedRegion,
-        Version: "2019-07-25",
+        Version: "2017-03-20",
         Offset: this.currpage * this.pagesize - this.pagesize,
         Limit: this.pagesize
       };
@@ -178,39 +195,45 @@ export default {
         param["Filters.0.Name"] = this.searchValue;
         param["Filters.0.Values.0"] = this.searchInput;
       }
-      // const paramS = {
-      //   allList: 0,
-      // };
+      const paramS = {
+        allList: 0
+      };
       // 获取表格数据
-      this.axios.post(MYSQL_LIST, param).then(data => {
-        console.log(data);
-        // if (data.Response.Error == undefined) {
-        this.TbaleData = data.Buckets.Bucket;
-        // } else {
-        //   this.$message.error(data.Response.Error.Message);
-        // }
-        this.ProTableData = this.TbaleData;
-      });
-      // .then(() => {
-      //   // 获取项目列表
-      //   this.axios.post(CVM_PROJECT, paramS).then((data) => {
-      //     this.ProjectData = data.data;
-      //     for (let i = 0; i < this.TbaleData.length; i++) {
+      this.axios
+        .post(MYSQL_LIST, param)
+        .then(data => {
+          // console.log(data);
+          // if (data.Response.Error == undefined) {
+          this.TbaleData = data.Response.Items;
+          // } else {
+          //   this.$message.error(data.Response.Error.Message);
+          // }
+          // this.ProTableData = this.TbaleData;
+        })
 
-      //       for (let j = 0; j < this.ProjectData.length; j++) {
-      //         if (
-      //           this.TbaleData[i].Placement.ProjectId == this.ProjectData[j].projectId
-      //         ) {
-      //           this.TbaleData[i].projectName = this.ProjectData[j].projectName;
-      //         }
-      //         if (this.TbaleData[i].Placement.ProjectId == 0) {
-      //           this.TbaleData[i].projectName = '默认项目';
-      //         }
-      //       }
-      //     }
-      //     this.ProTableData = this.TbaleData;
-      //   });
-      // });
+        .then(() => {
+          // 获取项目列表
+          this.axios.post(ALL_PROJECT, paramS).then(data => {
+            // console.log(data)
+            this.ProjectData = data.data;
+            for (let i = 0; i < this.TbaleData.length; i++) {
+              for (let j = 0; j < this.ProjectData.length; j++) {
+                if (
+                  this.TbaleData[i].rojectId == this.ProjectData[j].projectId
+                ) {
+                  this.TbaleData[i].projectName = this.ProjectData[
+                    j
+                  ].projectName;
+                }
+                if (this.TbaleData[i].ProjectId == 0) {
+                  this.TbaleData[i].projectName = "默认项目";
+                }
+              }
+            }
+            this.ProTableData = this.TbaleData;
+            console.log(this.ProTableData);
+          });
+        });
     },
     handleSizeChange(val) {
       this.pagesize = val;
@@ -224,7 +247,7 @@ export default {
     jump(id) {
       console.log(id);
       this.$router.push({
-        name: "CMobjdetails",
+        name: "CMMysqldetails",
         query: {
           id
         }

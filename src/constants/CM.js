@@ -6,7 +6,7 @@ export const ALL_PROJECT = 'account/DescribeProject' // 项目列表
 // // 云服务器
 export const CVM_LIST = 'cvm2/DescribeInstances' // 列表
 // Mysql
-export const MYSQL_LIST = 'redesc/cloudMysql' // 列表
+export const MYSQL_LIST = 'cdb2/DescribeDBInstances' // 列表
 // 云硬盘
 export const DISK_LIST = 'cbs2/DescribeDisks' // 列表
 //负载均衡
