@@ -13,7 +13,7 @@
     <div class="box-table">
       <!-- 表格 -->
       <el-table :data="tableData" style="width: 100%">
-        <el-table-column prop>
+        <el-table-column prop width="130">
           <template slot-scope="scope">
             <span style="font-size:12px;font-weight:bolder;">
               {{scope.row.MetricName | UpName(value)}}
@@ -25,10 +25,10 @@
           </template>
         </el-table-column>
 
-        <el-table-column prop="DataPoints" width="600">
+        <el-table-column prop="DataPoints" width="550">
           <template slot-scope="scope">
-            <p v-if="scope.row.DataPoints[0]===null">暂无数据</p>
-            <div class="echart" v-if="scope.row.DataPoints[0]!==null">
+            <p v-if="scope.row.DataPoints[0].Values.length==0">暂无数据</p>
+            <div class="echart" v-if="scope.row.DataPoints[0].Values.length!=0">
               <echart-line
                 id="diskEchearrts-line"
                 :time="scope.row.DataPoints[0].Timestamps | UpTime"
@@ -97,7 +97,7 @@
 
 <script>
 import moment from "moment";
-import XTimeX from "@/components/public/TimeX";
+import XTimeX from "@/components/public/TimeXK";
 import echartLine from "@/components/public/echars-line";
 import { All_MONITOR } from "@/constants";
 export default {
@@ -235,83 +235,162 @@ export default {
       if (value === "CmdstatHgetall") {
         return (value = "hgetall命令数");
       }
-      if (value === "AccOuttraffic") {
-        return (value = "外网出流量");
+      if (value === "CmdstatHmget") {
+        return (value = "hmget命令数");
       }
-      if (value === "WanOutpkg") {
-        return (value = "外网出包量");
+      if (value === "CmdstatHmset") {
+        return (value = "hmset命令数");
       }
-      if (value === "WanInpkg") {
-        return (value = "外网入包量");
+      if (value === "CmdstatHset") {
+        return (value = "hset命令数");
       }
-      if (value === "CPUUsage") {
-        return (value = "CPU使用率");
+      if (value === "CmdstatHsetnx") {
+        return (value = "hsetnx命令数");
+      }
+      if (value === "CmdstatLset") {
+        return (value = "lset命令数");
       }
 
-      if (value === "CPULoadAvg") {
-        return (value = "CPU平均负载");
+      if (value === "CmdstatMget") {
+        return (value = "mget命令数");
       }
-      if (value === "MemUsed") {
-        return (value = "内存使用量");
+      if (value === "CmdstatMset") {
+        return (value = "mset命令数");
       }
-      if (value === "MemUsage") {
-        return (value = "内存利用率");
+      if (value === "CmdstatMsetnx") {
+        return (value = "msetnx命令数");
       }
-      if (value === "TcpCurrEstab") {
-        return (value = "TCP连接数");
+      if (value === "CmdstatSet") {
+        return (value = "set命令数");
+      }
+      if (value === "CmdstatSetbit") {
+        return (value = "setbit命令数");
+      }
+      if (value === "CmdstatSetex") {
+        return (value = "setex命令数");
+      }
+      if (value === "CmdstatSetrange") {
+        return (value = "setrange命令数");
+      }
+      if (value === "Qps") {
+        return (value = "每秒执行命令数");
+      }
+      if (value === "Connections") {
+        return (value = "连接数");
+      }
+      if (value === "CpuUs") {
+        return (value = "cpu利用率");
+      }
+      if (value === "InFlow") {
+        return (value = "内网入流量");
+      }
+      if (value === "Keys") {
+        return (value = "key总数");
+      }
+      if (value === "OutFlow") {
+        return (value = "内网出流量");
+      }
+      if (value === "StatGet") {
+        return (value = "所有get命令数");
+      }
+      if (value === "StatSet") {
+        return (value = "所有set命令数");
+      }
+      if (value === "Storage") {
+        return (value = "已使用容量");
+      }
+      if (value === "StorageUs") {
+        return (value = "容量使用率");
       }
       if (value === "") {
         return (value = "");
       }
     },
     UpTitle(value) {
-      if (value === "lanOuttraffic") {
-        return (value = "内网网卡的平均每秒出流量");
+      if (value === "CacheHitRatio") {
+        return (value = "cache命中率");
       }
-      if (value === "lanIntraffic") {
-        return (value = "内网网卡的平均每秒入流量");
+      if (value === "CmdstatGet") {
+        return (value = "get命令数");
       }
-      if (value === "lanOutpkg") {
-        return (value = "内网网卡的平均每秒出包量");
+      if (value === "CmdstatGetbit") {
+        return (value = "getbit命令数");
       }
-      if (value === "lanInpkg") {
-        return (value = "内网网卡的平均每秒入包量");
+      if (value === "CmdstatGetrange") {
+        return (value = "getrange命令数");
       }
-      if (value === "WanOuttraffic") {
-        return (value =
-          "外网平均每秒出流量，最小粒度数据为10秒总流量/10秒 计算得出");
+      if (value === "CmdstatHget") {
+        return (value = "hget命令数");
       }
-      if (value === "WanIntraffic") {
-        return (value = "外网平均每秒入流量");
+      if (value === "CmdstatHgetall") {
+        return (value = "hgetall命令数");
       }
-      if (value === "AccOuttraffic") {
-        return (value = "外网网卡的平均每秒出流量");
+      if (value === "CmdstatHmget") {
+        return (value = "hmget命令数");
       }
-      if (value === "WanOutpkg") {
-        return (value = "外网平均每秒出包量");
+      if (value === "CmdstatHmset") {
+        return (value = "hmset命令数");
       }
-      if (value === "WanInpkg") {
-        return (value = "外网平均每秒入包量");
+      if (value === "CmdstatHset") {
+        return (value = "hset命令数");
       }
-      if (value === "CPUUsage") {
-        return (value =
-          "CPU利用率是通过CVM子机内部监控组件采集上报，数据更加精准");
+      if (value === "CmdstatHsetnx") {
+        return (value = "hsetnx命令数");
       }
-      if (value === "CPULoadAvg") {
-        return (value =
-          "1分钟内CPU平均负载，取 /proc/loadavg 第一列数据（windows操作系统无此指标），依赖监控组件安装采集");
+      if (value === "CmdstatLset") {
+        return (value = "lset命令数");
       }
-      if (value === "MemUsed") {
-        return (value =
-          "使用的内存量，不包括系统缓存和缓存区占用内存，依赖监控组件安装采集");
+
+      if (value === "CmdstatMget") {
+        return (value = "mget命令数");
       }
-      if (value === "MemUsage") {
-        return (value =
-          "用户实际使用的内存量与总内存量之比，不包括缓冲区与系统缓存占用的内存");
+      if (value === "CmdstatMset") {
+        return (value = "mset命令数");
       }
-      if (value === "TcpCurrEstab") {
-        return (value =
-          "处于 ESTABLISHED 状态的 TCP 连接数量，依赖监控组件安装采集");
+      if (value === "CmdstatMsetnx") {
+        return (value = "msetnx命令数");
+      }
+      if (value === "CmdstatSet") {
+        return (value = "set命令数");
+      }
+      if (value === "CmdstatSetbit") {
+        return (value = "setbit命令数");
+      }
+      if (value === "CmdstatSetex") {
+        return (value = "setex命令数");
+      }
+      if (value === "CmdstatSetrange") {
+        return (value = "setrange命令数");
+      }
+      if (value === "Qps") {
+        return (value = "每秒执行命令数");
+      }
+      if (value === "Connections") {
+        return (value = "连接数");
+      }
+      if (value === "CpuUs") {
+        return (value = "cpu利用率");
+      }
+      if (value === "InFlow") {
+        return (value = "内网入流量");
+      }
+      if (value === "Keys") {
+        return (value = "key总数");
+      }
+      if (value === "OutFlow") {
+        return (value = "内网出流量");
+      }
+      if (value === "StatGet") {
+        return (value = "所有get命令数");
+      }
+      if (value === "StatSet") {
+        return (value = "所有set命令数");
+      }
+      if (value === "Storage") {
+        return (value = "已使用容量");
+      }
+      if (value === "StorageUs") {
+        return (value = "容量使用率");
       }
       if (value === "") {
         return (value = "");
