@@ -60,25 +60,26 @@
         <span slot="title">负载均衡-CLB</span>
       </el-menu-item>
 
-      <el-collapse v-model="activeName" accordion>
-        <el-collapse-item name="1">
-          <template slot="title">
-            云数据库
-          </template>
+
+      <el-submenu index="1">
+        <template slot="title">
+          <span>云数据库</span>
+        </template>
+        <el-menu-item-group>
           <el-menu-item index="cloudMysql">
             <span slot="title">MySQL</span>
           </el-menu-item>
           <el-menu-item index="Redis">
             <span slot="title">Redis</span>
           </el-menu-item>
-        </el-collapse-item>
-      </el-collapse>
+        </el-menu-item-group>
+      </el-submenu>
 
-      <el-collapse v-model="activeName1" accordion>
-        <el-collapse-item name="1">
-          <template slot="title">
-            私有网络
-          </template>
+      <el-submenu index="2">
+        <template slot="title">
+          <span>私有网络</span>
+        </template>
+        <el-menu-item-group>
           <el-menu-item index="NATgateway">
             <span slot="title">NAT网关</span>
           </el-menu-item>
@@ -91,23 +92,23 @@
           <el-menu-item index="networkIP">
             <span slot="title">弹性公网IP</span>
           </el-menu-item>
-        </el-collapse-item>
-      </el-collapse>
+        </el-menu-item-group>
+      </el-submenu>
 
-      <el-collapse v-model="activeName2" accordion>
-        <el-collapse-item name="1">
-          <template slot="title">
-            专线接入
-          </template>
+
+      <el-submenu index="3">
+        <template slot="title">
+          <span>专线接入</span>
+        </template>
+        <el-menu-item-group>
           <el-menu-item index="Physics">
             <span slot="title">物理专线</span>
           </el-menu-item>
           <el-menu-item index="Private">
             <span slot="title">专线通道</span>
           </el-menu-item>
-        </el-collapse-item>
-      </el-collapse>
-
+        </el-menu-item-group>
+      </el-submenu>
       <!-- <el-menu-item index="peerConnect">
         <i class="iconfont">&#xe679;</i>
         <span slot="title">对等连接</span>
@@ -133,10 +134,10 @@
     },
     methods: {
       handleOpen(key, keyPath) {
-        console.log(key, keyPath)
+        // console.log(key, keyPath)
       },
       handleClose(key, keyPath) {
-        console.log(key, keyPath)
+        // console.log(key, keyPath)
       }
     }
   }
