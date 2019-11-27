@@ -17,7 +17,7 @@
             <span style="font-size:12px;font-weight:bolder;">
               {{scope.row.MetricName | UpName(value)}}
               <el-popover placement="bottom-start" title="" width="200" trigger="hover">
-                <p>{{scope.row.MetricName | UpTitle(value)}}</p>
+                <p>{{scope.row.MetricName | UpName(value)}}</p>
                 <i class="el-icon-warning" slot="reference"></i>
               </el-popover>
             </span>
@@ -27,8 +27,8 @@
 
         <el-table-column prop="DataPoints" width="600">
           <template slot-scope="scope">
-            <p v-if="scope.row.DataPoints[0]===null"> 暂无数据</p>
-            <div class='echart' v-if="scope.row.DataPoints[0]!==null">
+            <p v-if="scope.row.DataPoints[0].Values.length==0">暂无数据</p>
+            <div class='echart' v-if="scope.row.DataPoints[0].Values.length!=0">
               <echart-line id="diskEchearrts-line" :time='scope.row.DataPoints[0].Timestamps | UpTime'
                 :opData='scope.row.DataPoints[0].Values' :scale=3 :period=period :xdata=false>
               </echart-line>
@@ -85,7 +85,7 @@
 
 <script>
   import moment from 'moment';
-  import XTimeX from '@/components/public/TimeX';
+  import XTimeX from '@/components/public/TimeXK';
   import echartLine from '@/components/public/echars-line';
   import {
     All_MONITOR
@@ -118,20 +118,76 @@
         this.Start_End = data[1];
         this.value = data[2]
         const metricNArr = [
-          'CPUUsage',
-          'CPULoadAvg',
-          'MemUsed',
-          'MemUsage',
-          'TcpCurrEstab',
-          'lanOuttraffic',
-          'lanIntraffic',
-          'lanOutpkg',
-          'lanInpkg',
-          'WanOuttraffic',
-          'WanIntraffic',
-          'AccOuttraffic',
-          'WanOutpkg',
-          'WanInpkg'
+        "CPUUseRate",
+        "MemoryUseRate",
+        "MemoryUse",
+        "VolumeRate",
+        "RealCapacity",
+        "Capacity",
+        "BytesSent",
+        "BytesReceived",
+        "QPS",
+        "TPS",
+        "MaxConnections",
+        "ThreadsConnected",
+        "ConnectionUseRate",
+        "SlowQueries",
+        "SelectScan",
+        "SelectCount",
+        "ComUpdate",
+        "ComDelete",
+        "ComInsert",
+        "ComReplace",
+        "Queries",
+        "QueryRate",
+        "CreatedTmpTables",
+        "TableLocksWaited",
+        "InnodbCacheUseRate",
+        "InnodbCacheHitRate",
+        "InnodbOsFileReads",
+        "InnodbOsFileWrites",
+        "InnodbOsFsyncs",
+        "InnodbNumOpenFiles",
+        "KeyCacheUseRate",
+        "KeyCacheHitRate",
+        "ComCommit",
+        "ComRollback",
+        "ThreadsCreated",
+        "ThreadsRunning",
+        "CreatedTmpDiskTables",
+        "CreatedTmpFiles",
+        "HandlerReadRndNext",
+        "HandlerRollback",
+        "HandlerCommit",
+        "InnodbBufferPoolPagesFree",
+        "InnodbBufferPoolPagesTotal",
+        "InnodbBufferPoolReadRequests",
+        "InnodbBufferPoolReads",
+        "InnodbDataReads",
+        "InnodbDataRead",
+        "InnodbDataWrites",
+        "InnodbDataWritten",
+        "InnodbRowsDeleted",
+        "InnodbRowsInserted",
+        "InnodbRowsUpdated",
+        "InnodbRowsRead",
+        "InnodbRowLockTimeAvg",
+        "InnodbRowLockWaits",
+        "KeyBlocksUnused",
+        "KeyBlocksUsed",
+        "KeyReadRequests",
+        "KeyReads",
+        "KeyWriteRequests",
+        "KeyWrites",
+        "OpenedTables",
+
+        "TableLocksImmediate",
+        "OpenFiles",
+        "LogCapacity",
+        "SlaveIoRunning",
+        "SlaveSqlRunning",
+        "MasterSlaveSyncDistance",
+        "SecondsBehindMaster"
         ];
         this.tableData = []
         for (let i = 0; i < metricNArr.length; i++) {
@@ -146,7 +202,7 @@
         const param = {
           Version: '2018-07-24',
           Region: this.$cookie.get('regionv2'),
-          Namespace: 'QCE/CVM',
+          Namespace: 'QCE/CDB',
           MetricName: metricN,
           'Instances.0.Dimensions.0.Name': 'InstanceId',
           'Instances.0.Dimensions.0.Value': this.ID,
@@ -188,99 +244,213 @@
     },
     filters: {
       UpName(value) {
-        if (value === 'lanOuttraffic') {
-          return (value = '内网出带宽');
-        }
-        if (value === 'lanIntraffic') {
-          return (value = '内网入带宽');
-        }
-        if (value === 'lanOutpkg') {
-          return (value = '内网出包量');
-        }
-        if (value === 'lanInpkg') {
-          return (value = '内网入包量');
-        }
-        if (value === 'WanOuttraffic') {
-          return (value = '外网出带宽');
-        }
-        if (value === 'WanIntraffic') {
-          return (value = '外网入带宽');
-        }
-        if (value === 'AccOuttraffic') {
-          return (value = '外网出流量');
-        }
-        if (value === 'WanOutpkg') {
-          return (value = '外网出包量');
-        }
-        if (value === 'WanInpkg') {
-          return (value = '外网入包量');
-        }
-        if (value === 'CPUUsage') {
-          return (value = 'CPU使用率');
-        }
-
-        if (value === 'CPULoadAvg') {
-          return (value = 'CPU平均负载');
-        }
-        if (value === 'MemUsed') {
-          return (value = '内存使用量');
-        }
-        if (value === 'MemUsage') {
-          return (value = '内存利用率');
-        }
-        if (value === 'TcpCurrEstab') {
-          return (value = 'TCP连接数');
-        }
-        if (value === '') {
-          return (value = '');
-        }
-      },
-      UpTitle(value) {
-        if (value === 'lanOuttraffic') {
-          return (value = '内网网卡的平均每秒出流量');
-        }
-        if (value === 'lanIntraffic') {
-          return (value = '内网网卡的平均每秒入流量');
-        }
-        if (value === 'lanOutpkg') {
-          return (value = '内网网卡的平均每秒出包量');
-        }
-        if (value === 'lanInpkg') {
-          return (value = '内网网卡的平均每秒入包量');
-        }
-        if (value === 'WanOuttraffic') {
-          return (value = '外网平均每秒出流量，最小粒度数据为10秒总流量/10秒 计算得出');
-        }
-        if (value === 'WanIntraffic') {
-          return (value = '外网平均每秒入流量');
-        }
-        if (value === 'AccOuttraffic') {
-          return (value = '外网网卡的平均每秒出流量');
-        }
-        if (value === 'WanOutpkg') {
-          return (value = '外网平均每秒出包量');
-        }
-        if (value === 'WanInpkg') {
-          return (value = '外网平均每秒入包量');
-        }
-        if (value === 'CPUUsage') {
-          return (value = 'CPU利用率是通过CVM子机内部监控组件采集上报，数据更加精准');
-        }
-        if (value === 'CPULoadAvg') {
-          return (value = '1分钟内CPU平均负载，取 /proc/loadavg 第一列数据（windows操作系统无此指标），依赖监控组件安装采集');
-        }
-        if (value === 'MemUsed') {
-          return (value = '使用的内存量，不包括系统缓存和缓存区占用内存，依赖监控组件安装采集');
-        }
-        if (value === 'MemUsage') {
-          return (value = '用户实际使用的内存量与总内存量之比，不包括缓冲区与系统缓存占用的内存');
-        }
-        if (value === 'TcpCurrEstab') {
-          return (value = '处于 ESTABLISHED 状态的 TCP 连接数量，依赖监控组件安装采集');
-        }
-        if (value === '') {
-          return (value = '');
-        }
+        if (value === "CPUUseRate") {
+        return (value = "CPU利用率");
+      }
+      if (value === "MemoryUseRate") {
+        return (value = "内存利用率");
+      }
+      if (value === "MemoryUse") {
+        return (value = "内存占用");
+      }
+      if (value === "VolumeRate") {
+        return (value = "磁盘使用率");
+      }
+      if (value === "RealCapacity") {
+        return (value = "磁盘使用空间（仅包含数据空间使用量）");
+      }
+      if (value === "Capacity") {
+        return (value = "	磁盘占用空间（包含数据及日志空间使用量）");
+      }
+      if (value === "BytesSent") {
+        return (value = "内网出流量");
+      }
+      if (value === "BytesReceived") {
+        return (value = "	内网入流量");
+      }
+      if (value === "QPS") {
+        return (value = "每秒执行操作数");
+      }
+      if (value === "TPS") {
+        return (value = "每秒执行事务数");
+      }
+      if (value === "MaxConnections") {
+        return (value = "最大连接数");
+      }
+      if (value === "ThreadsConnected") {
+        return (value = "当前打开连接数");
+      }
+      if (value === "ConnectionUseRate") {
+        return (value = "连接数利用率");
+      }
+      if (value === "SlowQueries") {
+        return (value = "慢查询数");
+      }
+      if (value === "SelectScan") {
+        return (value = "全表扫描数");
+      }
+      if (value === "SelectCount") {
+        return (value = "查询数");
+      }
+      if (value === "ComUpdate") {
+        return (value = "更新数");
+      }
+      if (value === "ComDelete") {
+        return (value = "删除数");
+      }
+      if (value === "ComInsert") {
+        return (value = "插入数");
+      }
+      if (value === "ComReplace") {
+        return (value = "覆盖数");
+      }
+      if (value === "Queries") {
+        return (value = "总请求数");
+      }
+      if (value === "QueryRate") {
+        return (value = "查询使用率");
+      }
+      if (value === "CreatedTmpTables") {
+        return (value = "临时表数量");
+      }
+      if (value === "TableLocksWaited") {
+        return (value = "等待表锁次数");
+      }
+      if (value === "InnodbCacheUseRate") {
+        return (value = "innodb缓存使用率");
+      }
+      if (value === "InnodbCacheHitRate") {
+        return (value = "innodb缓存命中率");
+      }
+      if (value === "InnodbOsFileReads") {
+        return (value = "innodb读磁盘数量");
+      }
+      if (value === "InnodbOsFileWrites") {
+        return (value = "innodb写磁盘数量");
+      }
+      if (value === "InnodbOsFsyncs") {
+        return (value = "innodb fsync数量");
+      }
+      if (value === "InnodbNumOpenFiles") {
+        return (value = "当前InnoDB打开表的数量");
+      }
+      if (value === "KeyCacheUseRate") {
+        return (value = "myisam缓存使用率");
+      }
+      if (value === "KeyCacheHitRate") {
+        return (value = "myisam缓存命中率");
+      }
+      if (value === "ComCommit") {
+        return (value = "提交数");
+      }
+      if (value === "ComRollback") {
+        return (value = "回滚数");
+      }
+      if (value === "ThreadsCreated") {
+        return (value = "已创建的线程数");
+      }
+      if (value === "ThreadsRunning") {
+        return (value = "运行的线程数");
+      }
+      if (value === "CreatedTmpDiskTables") {
+        return (value = "磁盘临时表数量");
+      }
+      if (value === "CreatedTmpFiles") {
+        return (value = "临时文件数量");
+      }
+      if (value === "HandlerReadRndNext") {
+        return (value = "读下一行请求数");
+      }
+      if (value === "HandlerRollback") {
+        return (value = "内部回滚数");
+      }
+      if (value === "HandlerCommit") {
+        return (value = "内部提交数");
+      }
+      if (value === "InnodbBufferPoolPagesFree") {
+        return (value = "InnoDB空页数");
+      }
+      if (value === "InnodbBufferPoolPagesTotal") {
+        return (value = "InnoDB总页数");
+      }
+      if (value === "InnodbBufferPoolReadRequests") {
+        return (value = "InnoDB逻辑读");
+      }
+      if (value === "InnodbBufferPoolReads") {
+        return (value = "InnoDB物理读");
+      }
+      if (value === "InnodbDataReads") {
+        return (value = "InnoDB总读取量");
+      }
+      if (value === "InnodbDataRead") {
+        return (value = "InnoDB读取量");
+      }
+      if (value === "InnodbDataWrites") {
+        return (value = "	InnoDB总写入量");
+      }
+      if (value === "InnodbDataWritten") {
+        return (value = "InnoDB写入量");
+      }
+      if (value === "InnodbRowsDeleted") {
+        return (value = "InnoDB行删除量");
+      }
+      if (value === "InnodbRowsInserted") {
+        return (value = "InnoDB行插入量");
+      }
+      if (value === "InnodbRowsUpdated") {
+        return (value = "InnoDB行更新量");
+      }
+      if (value === "InnodbRowsRead") {
+        return (value = "	InnoDB行读取量");
+      }
+      if (value === "InnodbRowLockTimeAvg") {
+        return (value = "InnoDB平均获取行锁时间");
+      }
+      if (value === "InnodbRowLockWaits") {
+        return (value = "InnoDB等待行锁次数");
+      }
+      if (value === "KeyBlocksUnused") {
+        return (value = "键缓存内未使用的块数量");
+      }
+      if (value === "KeyBlocksUsed") {
+        return (value = "	键缓存内使用的块数量");
+      }
+      if (value === "KeyReadRequests") {
+        return (value = "键缓存读取数据块次数");
+      }
+      if (value === "KeyReads") {
+        return (value = "硬盘读取数据块次数");
+      }
+      if (value === "KeyWriteRequests") {
+        return (value = "数据块写入键缓冲次数");
+      }
+      if (value === "KeyWrites") {
+        return (value = "数据块写入磁盘次数");
+      }
+      if (value === "OpenedTables") {
+        return (value = "已经打开的表数");
+      }
+      if (value === "TableLocksImmediate") {
+        return (value = "立即释放的表锁数");
+      }
+      if (value === "OpenFiles") {
+        return (value = "打开文件总数");
+      }
+      if (value === "LogCapacity") {
+        return (value = "日志使用量");
+      }
+      if (value === "SlaveIoRunning") {
+        return (value = "IO线程状态");
+      }
+      if (value === "SlaveSqlRunning") {
+        return (value = "SQL线程状态");
+      }
+      if (value === "MasterSlaveSyncDistance") {
+        return (value = "主从延迟距离");
+      }
+      if (value === "SecondsBehindMaster") {
+        return (value = "SlaveSqlRunning");
+      }
       },
       UpTime(value) {
         let timeArr = []
