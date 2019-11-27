@@ -16,7 +16,7 @@
         <el-input size="small" v-model="searchValue" clearable :placeholder="$t('CAM.CAM.userGroup.placeholder')" style="width: 300px;"  @keyup.enter.native="toQuery"/>
         <i class="el-icon-search ifier" show-overflow-tooltip @click="toQuery"></i>
         <i class="el-icon-s-tools gear" @click="gear=true"></i>
-        <el-dialog title="自定义列表字段" :visible.sync="gear" width="45%" :before-close="handleClose">
+        <el-dialog title="自定义列表字段" :visible.sync="gear" width="45%" :before-close="handleCloseGear">
           <div class="app-cam-alert">
             <div class="app-cam-alert__info">请选择您想显示的列表详细信息</div>
           </div>
@@ -54,10 +54,10 @@
         tooltip-effect="dark"
         style="width: 100%; border:1px solid #ddd;padding-top: 8px;" 
         @selection-change="handleSelectionChange">
-        <el-table-column prop="GroupId" type="selection" width="30"></el-table-column>
+        <el-table-column prop="GroupId" type="selection" width="28"></el-table-column>
        <el-table-column prop="GroupName" :label="$t('CAM.CAM.userGroup.colNmae')" show-overflow-tooltip>
           &lt;!&ndash;<template slot-scope="scope">
-            <el-button @click="Interface" size="mini" type="text">{{scope.row.GroupName}}</el-button>
+            <el-button @click="Interface(scope.row.GroupId)" size="mini" type="text">{{scope.row.GroupName}}</el-button>
           </template>&ndash;&gt;
         </el-table-column>
         <el-table-column prop="Remark" :label="$t('CAM.CAM.userGroup.colRemark')" show-overflow-tooltip> </el-table-column>
@@ -77,7 +77,7 @@
           <el-pagination
             @size-change="handleSizeChange"
             @current-change="handleCurrentChange"
-            :current-page.sync="currentPage2"
+            :current-page.sync="currentPage"
             :page-sizes="[10, 20, 30, 40]"
             :page-size="10"
             layout="sizes, prev, pager, next"
@@ -90,8 +90,8 @@
       <el-dialog :title="$t('CAM.CAM.userGroup.addTitle')"  :visible.sync="dialogVisible" :before-close="handleClose" width="70%"> 
 				<div class="container-left">
           <p>选择添加的用户（共{{totalNum}}条）</p>
-          <el-input size="mini" v-model="search"  style="width:85%"  @keyup.enter.native="toQuery"/>
-          <el-button size="mini" class="suo" icon="el-icon-search" @click="toQuery"></el-button>
+          <el-input size="mini" v-model="search"  style="width:100%"  @keyup.enter.native="toQuery"/>
+          <i size="mini" class="el-icon-search fier" @click="toQuery"></i>
           <el-table
             class="table-left"
                 ref="multipleOption"
@@ -102,12 +102,12 @@
                 style="width: 100%"
                 @row-click="selectedRow"
                 @selection-change="handleSelectionChangeUser">
-                <el-table-column type="selection" prop="Uin" width="30"> </el-table-column>
+                <el-table-column type="selection" prop="Uin" width="28"> </el-table-column>
                   <el-table-column prop="Name" label="用户"  show-overflow-tooltip>
                   </el-table-column>
                   <el-table-column label="用户类型"  width="100">
                     <template slot-scope="scope">
-                      <p>用户类型</p>
+                      <p>子用户</p>
                     </template>
                   </el-table-column>
           </el-table>
@@ -195,9 +195,14 @@ export default {
         params["Keyword"] = this.searchValue
       }
       let url = "cam2/ListGroups"
-      this.axios.post(url, params).then(res => {	   
-        this.tableData = res.Response.GroupInfo
-        this.loading = false
+      this.axios.post(url, params).then(res => {
+        if(res != '') {
+          this.tableData = res.Response.GroupInfo
+          this.loading = false
+        }else{
+          this.loading = false
+          this.$message({ type: 'info', message: '无响应数据！' })
+        }
       }).catch(error => {
         console.log(error)
       })
@@ -205,7 +210,7 @@ export default {
     // 打开添加用户页面
     addUserGroup(rowId) {
       let _this = this
-      if(rowId != undefined &&rowId != '') {
+      if(rowId != undefined && rowId != '') {
         this.selectedGroupId = rowId
       }
       // let url = "cam/ListSubAccounts"//获取子用户信息
@@ -220,9 +225,9 @@ export default {
         Version: "2019-01-16"
       }
       this.axios.post(url, params).then(res => {
-        this.userData = res.Response.Data
+        this.userData = []
+        let userAllData = res.Response.Data
         this.totalNum = this.userData.length
-        console.log(this.userData)
         // 获取用户组管理用户
         let owneruserData = []
         let paramsGroup = {
@@ -232,15 +237,22 @@ export default {
         }
         let urlGroup = "cam2/ListUsersForGroup"
         this.axios.post(urlGroup, paramsGroup).then(resGroup => {
-          owneruserData = resGroup.Response.GroupInfo
-          console.log(owneruserData)
+          // 不直接将子用户信息赋予用户组选择框中,是避免页面出现 过滤后的子用户信息刷新覆盖初始信息
+          owneruserData = resGroup.Response.UserInfo
+          // 用户组拥有子用户，系统将拥有子用户从用户组添加框中去掉，避免重复选择
           if(owneruserData != '') {
             for(var i = 0; i < owneruserData.length; i++) {
-              let selObj = owneruserData[i]
-              // for() {
-
-              // }
+              let ownerObj = owneruserData[i]
+              for(var j = 0; j < userAllData.length; j++) {
+                let allObj = userAllData[j]
+                if(allObj.Uin === ownerObj.Uin){
+                  userAllData.splice(j,1)
+                }
+              }
             }
+            _this.userData = userAllData
+          }else{
+            _this.userData = userAllData
           }
         }).catch(error => {
           console.log(error)
@@ -269,7 +281,6 @@ export default {
         this.axios.post(url, params).then(data => {
           if(data != null && data.codeDesc === 'Success') {
             this.$message({ type: 'success', message: this.$t('CAM.CAM.userGroup.delInfo')+'!' })
-            debugger
             _this.init() // 重新加载页面
           }
         }).catch(error => {
@@ -324,6 +335,9 @@ export default {
     handleClose() {
       this.dialogVisible = false
     },
+    handleCloseGear() {
+      this.gear = false
+    },
     handleSelectionChangeUser(val) {
       // 给右边table框赋值，只需在此处赋值即可，selectedRow方法中不写，因为单独点击复选框，只有此方法有效。
       this.userSelData = val
@@ -341,8 +355,25 @@ export default {
       this.init()
     }, 
     //测试接口详情
-    Interface(){
-      this.$router.push({ name: "Interfacedetails" });
+    Interface(groupId){
+      this.$router.push({
+        name: "Interfacedetails",
+        query:{
+          GroupId: groupId
+        }
+      });
+    },
+    handleSizeChange() {
+
+    },
+    handleCurrentChange() {
+
+    },
+    currentPage2() {
+
+    },
+    currentPage() {
+
     }
   }
 }
@@ -405,6 +436,7 @@ export default {
       text-align: center;
     }
     .container-left{
+      position: relative;
       width: 44%;
       display: inline-block;
     }
@@ -462,6 +494,7 @@ export default {
       margin-bottom: 0; 
     }
     .ifier {
+      cursor:pointer;
       font-size: 140%;
       color: #888;
       position: absolute;
@@ -469,9 +502,18 @@ export default {
       top: 18%;
     }
     .gear {
+      cursor:pointer;
       font-size: 140%;
       color: #888;
       padding-left: 6px;
+    }
+    .fier{
+      cursor:pointer;
+      font-size: 140%;
+      color: #888;
+      position: absolute;
+      right: 3%;
+      top: 8%;
     }
     .app-cam-alert {
       padding: 10px 30px 10px 20px;

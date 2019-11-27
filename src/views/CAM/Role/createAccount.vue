@@ -42,38 +42,38 @@
           </div>
         </div>
         <div class="tansfer" v-if="active == 2">
-          <transfer></transfer>
+          <transfer ref="tansferStep"></transfer>
         </div>
         <div class="shenyue" v-if="active == 3">
           <div class="content_flex">
             <div class="content_left">
-              <p class="juese">{{$t('CAM.CAM.Role.roleName')}}*</p>
+              <p class="juese" >{{$t('CAM.CAM.Role.roleName')}}*</p>
               <p class="juese" style="margin-top:55px">{{$t('CAM.CAM.Role.roleDesc')}}</p>
               <p class="juese">{{$t('CAM.CAM.Role.roleCarrier')}}</p>
             </div>
             <div class="content_right">
               <div class="jscontent" style="height:50px">
-                <el-input v-model="inputName" :placeholder="$t('CAM.CAM.Role.inputRoleName')" size="mini" @blur="jsname"></el-input>
+                <el-input v-model="inputRoleName" :placeholder="$t('CAM.CAM.Role.inputRoleName')" size="mini" @blur="jsname"></el-input>
                 <p v-if="have" style="font-size:12px;color:#E1504A;padding-top:10px">{{$t('CAM.CAM.Role.isNotNullRoleName')}}</p>
               </div>
               <p class="jscontent">
-                <el-input v-model="input" placeholder size="mini"></el-input>
+                <el-input v-model="inputRoleDesc" placeholder size="mini"></el-input>
               </p>
               <p class="jscontent text">服务-mps.cloud.tencent.com</p>
             </div>
           </div>
           <div class="content_table">
-            <el-table :data="tableData" height="300" border style="width: 100%">
-              <el-table-column prop="date" :label="$t('CAM.CAM.Role.strategyName')"></el-table-column>
-              <el-table-column prop="name" :label="$t('CAM.CAM.Role.desc')"></el-table-column>
-              <el-table-column prop="address" :label="$t('CAM.CAM.Role.strategyType')"></el-table-column>
+            <el-table :data="policiesSelectedData" height="300" border style="width: 100%">
+              <el-table-column prop="PolicyName" :label="$t('CAM.CAM.Role.strategyName')"></el-table-column>
+              <el-table-column prop="Description" :label="$t('CAM.CAM.Role.desc')"></el-table-column>
+              <el-table-column prop="Type" :label="$t('CAM.CAM.Role.strategyType')"></el-table-column>
             </el-table>
           </div>
         </div>
         <div style="margin:20px 0px">
           <el-button size="small" v-if="active != 1" @click="reTurn">{{$t('CAM.CAM.Role.goBack')}}</el-button>
           <el-button type="primary" size="small" @click="next" v-if="active != 3">{{$t('CAM.CAM.Role.toStep')}}</el-button>
-          <el-button type="primary" size="small" v-if="active == 3" @click="finall">{{$t('CAM.CAM.Role.complete')}}</el-button>
+          <el-button type="primary" size="small" v-if="active == 3" @click="complete">{{$t('CAM.CAM.Role.complete')}}</el-button>
         </div>
       </div>
     </div>
@@ -88,28 +88,14 @@ export default {
   data() {
     return {
       active: 1,
-      input: "",
       input_num: "10001921910",
-      inputName: "",
+      inputRoleName: '',
+      inputRoleDesc:'',
       have: false,
       radio: "1",
       policiesData: [],
       policiesSelectedData: [],
       transfer_value: [],
-      transfer_data: [
-        {
-          value: 1,
-          desc: "备选项1"
-        },
-        {
-          value: 2,
-          desc: "备选项2"
-        },
-        {
-          value: 3,
-          desc: "备选项3"
-        }
-      ],
       tableData: [
         {
           date: "QCloudFinanceFullAccess",
@@ -119,36 +105,17 @@ export default {
       ]
     };
   },
-  mounted() {
-        this.init()
-    },
+  
   methods: {
     back() {
       this.$router.push("/Role");
     },
-     init() {
-            let params = {
-                Action: 'ListPolicies',
-                rp: this.rp,
-                page: this.page,
-                scope:'All'
-            }
-            if(this.search != null && this.search != '') {
-              params['Keyword'] = this.search
-            }
-            let url = "cam/ListPolicies"
-            this.axios.post(url, params).then(res => {
-                console.log(res)
-                this.totalNum = res.data.totalNum
-                this.policiesData = res.data.list
-            }).catch(error => {
-                console.log(error)
-            })
-        },
     next() {
       if (this.active == 1) {
         this.active = this.active + 1;
       } else if (this.active == 2) {
+        this.policiesSelectedData = this.$refs.tansferStep.getData()
+        console.log(this.policiesSelectedData)
         if (this.active == 3) {
           return;
         }
@@ -170,12 +137,26 @@ export default {
         this.have = false;
       }
     },
-    finall() {
-      if (!this.inputName) {
+    //新建自定义角色创建
+    complete() {
+      if (!this.inputRoleName) {
         this.have = true;
         return;
       }
-      this.$message("创建角色成功");
+       let params = {
+         Action:"CreateRole",
+         Version:"2019-01-16",
+         RoleName:this.inputRoleName,
+         Description:this.inputRoleDesc,
+         PolicyDocument:this.policiesSelectedData
+       }
+       let url = "cam2/CreateRole"
+       this.axios.post(url,params).then(data => {
+         debugger;
+       this.policiesData = data.Response.RoleId
+       this.$message("创建角色成功");
+
+       })
     }
   }
 };

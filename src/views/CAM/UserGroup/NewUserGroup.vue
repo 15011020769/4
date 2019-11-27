@@ -28,10 +28,10 @@
           <ThirdlyStep :addModel="addModel" :policiesSelectedData='policiesSelectedData'  />
         </template>
       </div>
-      <el-button v-show="active<2&active>0" type="primary" @click="step">上一步</el-button>
-      <el-button v-show="active<2" type="primary" style="margin-top: 12px;" @click="next">{{$t('CAM.CAM.userGroup.createNext')}}</el-button>
-      <el-button v-show="active==2" type="primary" @click="step">返回</el-button>
-      <el-button v-show="active==2" type="primary" @click="confirm">确认</el-button>
+      <el-button v-show="active<2&active>0" size="small" type="primary" @click="step">上一步</el-button>
+      <el-button v-show="active<2" size="small" type="primary" style="margin-top: 12px;" @click="next">{{$t('CAM.CAM.userGroup.createNext')}}</el-button>
+      <el-button v-show="active==2" size="small" type="primary" @click="step">返回</el-button>
+      <el-button v-show="active==2" size="small" type="primary" @click="confirm">确认</el-button>
     </div>
   </div>
 </template>
@@ -52,8 +52,7 @@
         addModel : {
           groupName: '',
           remark: ''
-        }
-        ,
+        },
         policiesSelectedData: []
       };
     },
@@ -112,24 +111,20 @@
             // 获取新创建的用户组ID
             let AttachGroupId = res.Response.GroupId
             let selArr = _this.policiesSelectedData
-            // let PolicyIds = []
             // 绑定策略到用户组
             if(AttachGroupId != '' && selArr != '') {
-              // let PolicyId = Array
-              let PoliciesParams = {
-                // Action: 'AttachGroupPolicies',
-                Action: 'AttachGroupPolicy',
-                // PolicyId: PolicyIds,
-                AttachGroupId: AttachGroupId,
-                Version: '2019-01-16'
-              }
-              //目前系统接口只支持单个策略绑定到用户组，不支持多个，所以循环执行绑定方法;此循环只能绑定一个策略。暂时先这么用着，等待接口升级
+                let urlPolicies = "cam2/AttachGroupPolicy"
+              //目前系统接口只支持单个策略绑定到用户组，不支持多个，所以循环执行绑定方法
               for(var i = 0; i < selArr.length; i++) {
-                // PolicyIds[i] = selArr[i].policyId
-                PoliciesParams['PolicyId'] = selArr[i].policyId
+                let paramsurlPolicies = {
+                  Action: 'AttachGroupPolicy',
+                  AttachGroupId: AttachGroupId,
+                  PolicyId: selArr[i].PolicyId,
+                  Version: '2019-01-16'
+                }
                 // 获取策略id
-                let url = "cam2/AttachGroupPolicy"
-                this.axios.post(url, PoliciesParams).then(res => {
+                debugger
+                this.axios.post(urlPolicies, paramsurlPolicies).then(res => {
                 }).catch(error => {
                   console.log(error)
                 })
@@ -237,6 +232,9 @@
     position: absolute;
     right: 0;
   }
-
+  .el-steps--simple{
+    background-color: #fff;
+  }
+  
 }
 </style>

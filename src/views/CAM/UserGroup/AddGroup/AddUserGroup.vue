@@ -3,10 +3,10 @@
     <div class="container">
       <el-form :model="addModel" :rules="rules" ref="addModel" label-width="100px">
         <el-form-item label="用户组名称" prop="groupName" >
-          <el-input ref="groupNameRules" v-model="addModel.groupName"></el-input>
+          <el-input size="mini" ref="groupNameRules" v-model="addModel.groupName"></el-input>
         </el-form-item>
         <el-form-item label="备注" prop="remark">
-          <el-input type="textarea" v-model="addModel.remark"></el-input>
+          <el-input size="mini" type="textarea" v-model="addModel.remark"></el-input>
         </el-form-item>
       </el-form>
     </div>
@@ -54,6 +54,12 @@
       margin-top: 10px;
       line-height: 16px;
       color: #666;
+    }
+    .el-input{
+      width: 50%;
+    }
+    .el-textarea{
+      width: 50%;
     }
   }
 

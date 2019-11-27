@@ -140,7 +140,6 @@ export default {
           this.axios
             .post(url, params)
             .then(data => {
-              debugger;
               if (data != null && data.Response.RequestId != "") {
                 this.$message({
                   type: "success",

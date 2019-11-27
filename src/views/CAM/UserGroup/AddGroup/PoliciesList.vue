@@ -3,8 +3,8 @@
         <div class="container">
             <div class="container-left">
               <p>选择策略（共{{totalNum}}条）</p>
-              <el-input size="mini" v-model="search"  style="width:85%"  @keyup.enter.native="toQuery"/>
-              <el-button size="mini" class="suo" icon="el-icon-search" @click="toQuery"></el-button>
+              <el-input size="mini" v-model="search"  style="width:100%"  @keyup.enter.native="toQuery"/>
+              <i class="el-icon-search ifier" @click="toQuery"></i>
               <el-table
                 class="table-left"
                     ref="multipleOption"
@@ -15,17 +15,17 @@
                     style="width: 100%"
                     @row-click="selectedRow"
                     @selection-change="handleSelectionChange">
-                    <el-table-column type="selection" prop="policyId" width="30"> </el-table-column>
-                      <el-table-column prop="policyName" label="策略名"  show-overflow-tooltip>
+                    <el-table-column type="selection" prop="PolicyId" width="28"> </el-table-column>
+                      <el-table-column prop="PolicyName" label="策略名"  show-overflow-tooltip>
                         <template slot-scope="scope">
-                          <p>{{scope.row.policyName}}</p>
-                          <p>{{scope.row.description}}</p>
+                          <p>{{scope.row.PolicyName}}</p>
+                          <p>{{scope.row.Description}}</p>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="type" label="策略类型"  width="100">
+                      <el-table-column prop="Type" label="策略类型"  width="100">
                         <template slot-scope="scope">
-                          <p v-show="scope.row.type == 1">自定义策略</p>
-                          <p v-show="scope.row.type == 2">预设策略</p>
+                          <p v-show="scope.row.Type == 1">自定义策略</p>
+                          <p v-show="scope.row.Type == 2">预设策略</p>
                         </template>
                       </el-table-column>
                 </el-table>
@@ -43,18 +43,18 @@
                   size = "small"
                   height="300"
                   style="width: 100%">
-                  <el-table-column prop="policyName" label="策略名"  show-overflow-tooltip>
+                  <el-table-column prop="PolicyName" label="策略名"  show-overflow-tooltip>
                     <template slot-scope="scope">
-                      <p>{{scope.row.policyName}}</p>
-                      <p>{{scope.row.description}}</p>
+                      <p>{{scope.row.PolicyName}}</p>
+                      <p>{{scope.row.Description}}</p>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="type" label="策略类型"  width="100">
-                      <template slot-scope="scope">
-                        <p v-show="scope.row.type == 1">自定义策略</p>
-                        <p v-show="scope.row.type == 2">预设策略</p>
-                      </template>
-                    </el-table-column>
+                  <el-table-column prop="Type" label="策略类型"  width="100">
+                    <template slot-scope="scope">
+                      <p v-show="scope.row.Type == 1">自定义策略</p>
+                      <p v-show="scope.row.Type == 2">预设策略</p>
+                    </template>
+                  </el-table-column>
                   <el-table-column :label="$t('CAM.CAM.userGroup.colHandle')"  width="50">
                     &lt;!&ndash;<template slot-scope="scope">
                       <el-button
@@ -94,18 +94,20 @@
         init() {
             let params = {
                 Action: 'ListPolicies',
-                rp: this.rp,
-                page: this.page,
-                scope:'All'
+                Version: '2019-01-16'
+                // ,
+                // rp: this.rp,
+                // page: this.page,
+                // scope:'All'
             }
             if(this.search != null && this.search != '') {
               params['Keyword'] = this.search
             }
-            let url = "cam/ListPolicies"
+            let url = "cam2/ListPolicies"
             this.axios.post(url, params).then(res => {
                 console.log(res)
-                this.totalNum = res.data.totalNum
-                this.policiesData = res.data.list
+                this.totalNum = res.Response.TotalNum
+                this.policiesData = res.Response.List
             }).catch(error => {
                 console.log(error)
             })
@@ -161,10 +163,16 @@
       text-align: center;
     }
     .container-left{
+      position: relative;
       width: 44%;
       display: inline-block;
     }
   }
-
+  .ifier{
+    position: absolute;
+    font-size: 130%;
+    right: 2%;
+    top: 6%;
+  }
 }
 </style>
