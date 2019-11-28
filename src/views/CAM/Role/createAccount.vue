@@ -6,7 +6,7 @@
         @click="back"
         src="../../../assets/CAM/images/left.png"
         alt
-      >
+      />
       <span class="top_text">{{$t('CAM.CAM.Role.top_text')}}</span>
     </div>
     <div class="container">
@@ -47,14 +47,22 @@
         <div class="shenyue" v-if="active == 3">
           <div class="content_flex">
             <div class="content_left">
-              <p class="juese" >{{$t('CAM.CAM.Role.roleName')}}*</p>
+              <p class="juese">{{$t('CAM.CAM.Role.roleName')}}*</p>
               <p class="juese" style="margin-top:55px">{{$t('CAM.CAM.Role.roleDesc')}}</p>
               <p class="juese">{{$t('CAM.CAM.Role.roleCarrier')}}</p>
             </div>
             <div class="content_right">
               <div class="jscontent" style="height:50px">
-                <el-input v-model="inputRoleName" :placeholder="$t('CAM.CAM.Role.inputRoleName')" size="mini" @blur="jsname"></el-input>
-                <p v-if="have" style="font-size:12px;color:#E1504A;padding-top:10px">{{$t('CAM.CAM.Role.isNotNullRoleName')}}</p>
+                <el-input
+                  v-model="inputRoleName"
+                  :placeholder="$t('CAM.CAM.Role.inputRoleName')"
+                  size="mini"
+                  @blur="jsname"
+                ></el-input>
+                <p
+                  v-if="have"
+                  style="font-size:12px;color:#E1504A;padding-top:10px"
+                >{{$t('CAM.CAM.Role.isNotNullRoleName')}}</p>
               </div>
               <p class="jscontent">
                 <el-input v-model="inputRoleDesc" placeholder size="mini"></el-input>
@@ -66,31 +74,46 @@
             <el-table :data="policiesSelectedData" height="300" border style="width: 100%">
               <el-table-column prop="PolicyName" :label="$t('CAM.CAM.Role.strategyName')"></el-table-column>
               <el-table-column prop="Description" :label="$t('CAM.CAM.Role.desc')"></el-table-column>
-              <el-table-column prop="Type" :label="$t('CAM.CAM.Role.strategyType')"></el-table-column>
+              <el-table-column prop="Type" :label="$t('CAM.CAM.Role.strategyType')">
+                <template slot-scope="scope">
+                  <p v-show="scope.row.Type == 1">自定义策略</p>
+                  <p v-show="scope.row.Type == 2">预设策略</p>
+                </template>
+              </el-table-column>
             </el-table>
           </div>
         </div>
         <div style="margin:20px 0px">
           <el-button size="small" v-if="active != 1" @click="reTurn">{{$t('CAM.CAM.Role.goBack')}}</el-button>
-          <el-button type="primary" size="small" @click="next" v-if="active != 3">{{$t('CAM.CAM.Role.toStep')}}</el-button>
-          <el-button type="primary" size="small" v-if="active == 3" @click="complete">{{$t('CAM.CAM.Role.complete')}}</el-button>
+          <el-button
+            type="primary"
+            size="small"
+            @click="next"
+            v-if="active != 3"
+          >{{$t('CAM.CAM.Role.toStep')}}</el-button>
+          <el-button
+            type="primary"
+            size="small"
+            v-if="active == 3"
+            @click="complete"
+          >{{$t('CAM.CAM.Role.complete')}}</el-button>
         </div>
       </div>
     </div>
   </div>
 </template>
 <script>
-import transfer from './component/transfer'
+import transfer from "./component/transfer";
 export default {
   components: {
-      transfer,
-    },
+    transfer
+  },
   data() {
     return {
       active: 1,
       input_num: "10001921910",
-      inputRoleName: '',
-      inputRoleDesc:'',
+      inputRoleName: "",
+      inputRoleDesc: "",
       have: false,
       radio: "1",
       policiesData: [],
@@ -105,7 +128,7 @@ export default {
       ]
     };
   },
-  
+
   methods: {
     back() {
       this.$router.push("/Role");
@@ -114,8 +137,8 @@ export default {
       if (this.active == 1) {
         this.active = this.active + 1;
       } else if (this.active == 2) {
-        this.policiesSelectedData = this.$refs.tansferStep.getData()
-        console.log(this.policiesSelectedData)
+        this.policiesSelectedData = this.$refs.tansferStep.getData();
+        console.log(this.policiesSelectedData);
         if (this.active == 3) {
           return;
         }
@@ -128,7 +151,7 @@ export default {
       }
       this.active = this.active - 1;
     },
- 
+
     leftCheck(val) {},
     jsname() {
       if (!this.inputName) {
@@ -143,20 +166,31 @@ export default {
         this.have = true;
         return;
       }
-       let params = {
-         Action:"CreateRole",
-         Version:"2019-01-16",
-         RoleName:this.inputRoleName,
-         Description:this.inputRoleDesc,
-         PolicyDocument:this.policiesSelectedData
-       }
-       let url = "cam2/CreateRole"
-       this.axios.post(url,params).then(data => {
-         debugger;
-       this.policiesData = data.Response.RoleId
-       this.$message("创建角色成功");
-
-       })
+      let params = {
+        Action: "CreateRole",
+        Version: "2019-01-16",
+        RoleName: this.inputRoleName,
+        Description: this.inputRoleDesc,
+        PolicyDocument: this.policiesSelectedData
+      };
+      let url = "cam2/CreateRole";
+      this.axios.post(url, params).then(data => {
+        debugger;
+        this.policiesData = data.Response.RoleId;
+        this.$message("创建角色成功");
+      });
+    },
+    //获取角色详情
+    roleDetail() {
+      let params = {
+        Action: "GetRole",
+        Version: "2019-01-16"
+      };
+      let url = "cam2/GetRole";
+      this.axios.post(url, params).then(data => {
+        debugger;
+        this.policiesData = data.Response.PolicyDocument;
+      });
     }
   }
 };

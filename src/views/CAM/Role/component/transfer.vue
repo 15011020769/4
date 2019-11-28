@@ -3,11 +3,22 @@
     <div class="container">
       <div class="container-left">
         <p>{{$t('CAM.CAM.Role.policyList')}}（共{{totalNum}}条）</p>
-        <el-input size="mini" v-model="strategyValue" style="width:85%"  @keyup.enter.native="toQueryCL"/>
-        <el-button size="mini" class="suo" icon="el-icon-search" show-overflow-tooltip @click="toQueryCL"></el-button>
+        <el-input
+          size="mini"
+          v-model="strategyValue"
+          style="width:85%"
+          @keyup.enter.native="toQueryCL"
+        />
+        <el-button
+          size="mini"
+          class="suo"
+          icon="el-icon-search"
+          show-overflow-tooltip
+          @click="toQueryCL"
+        ></el-button>
         <el-table
           class="table-left"
-          ref="multipleOption" 
+          ref="multipleOption"
           :data="policiesData"
           size="small"
           height="300"
@@ -15,19 +26,24 @@
           style="width: 100%"
           @row-click="selectedRow"
           @selection-change="handleSelectionChange"
+          v-tableloadmore="tableloadmore"
         >
           <el-table-column type="selection" prop="policyId" width="30"></el-table-column>
-          <el-table-column prop="Description" :label="$t('CAM.CAM.Role.policyName')" show-overflow-tooltip>
-           <template slot-scope="scope">
-             <p>{{scope.row.PolicyName}}</p>
-             <p>{{scope.row.Description}}</p>
+          <el-table-column
+            prop="Description"
+            :label="$t('CAM.CAM.Role.policyName')"
+            show-overflow-tooltip
+          >
+            <template slot-scope="scope">
+              <p>{{scope.row.PolicyName}}</p>
+              <p>{{scope.row.Description}}</p>
             </template>
           </el-table-column>
           <el-table-column prop="Type" :label="$t('CAM.CAM.Role.strategyType')" width="80">
-             <template slot-scope="scope">
-                <p v-show="scope.row.Type == 1">自定义策略</p >
-                <p v-show="scope.row.Type == 2">预设策略</p >
-             </template>
+            <template slot-scope="scope">
+              <p v-show="scope.row.Type == 1">自定义策略</p>
+              <p v-show="scope.row.Type == 2">预设策略</p>
+            </template>
             <!-- <template slot="header" slot-scope="scope">
               <el-dropdown trigger="click" @command="handleCommand" size="mini">
                 <span style="color:#909399">
@@ -42,7 +58,7 @@
                   >{{item.label}}</el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
-            </template> -->
+            </template>-->
           </el-table-column>
         </el-table>
       </div>
@@ -60,18 +76,22 @@
           height="300"
           style="width: 100%"
         >
-          <el-table-column prop="Description" :label="$t('CAM.CAM.Role.strategy')" show-overflow-tooltip>
+          <el-table-column
+            prop="Description"
+            :label="$t('CAM.CAM.Role.strategy')"
+            show-overflow-tooltip
+          >
             <template slot-scope="scope">
               <p>{{scope.row.PolicyName}}</p>
               <p>{{scope.row.Description}}</p>
             </template>
           </el-table-column>
-     
+
           <el-table-column prop="Type" :label="$t('CAM.CAM.Role.strategyType')" width="100">
-             <template slot-scope="scope">
-                <p v-show="scope.row.Type == 1">自定义策略</p >
-                <p v-show="scope.row.Type == 2">预设策略</p >
-             </template>
+            <template slot-scope="scope">
+              <p v-show="scope.row.Type == 1">自定义策略</p>
+              <p v-show="scope.row.Type == 2">预设策略</p>
+            </template>
           </el-table-column>
           <el-table-column :label="$t('CAM.CAM.userGroup.colHandle')" width="50">
             &lt;!&ndash;
@@ -91,11 +111,47 @@
 
 <script>
 export default {
+  directives:{
+     tableloadmore:{
+       bind(el,binding) {
+         console.log('我是自定义')
+              // 获取element-ui定义好的scroll盒子
+            const SELECTWRAP_DOM = el.querySelector('.el-table__body-wrapper');
+            SELECTWRAP_DOM.addEventListener('scroll', function() {
+
+                /*
+                * scrollHeight 获取元素内容高度(只读)
+                * scrollTop 获取或者设置元素的偏移值,常用于, 计算滚动条的位置, 当一个元素的容器没有产生垂直方向的滚动条, 那它的scrollTop的值默认为0.
+                * clientHeight 读取元素的可见高度(只读)
+                * 如果元素滚动到底, 下面等式返回true, 没有则返回false:
+                * ele.scrollHeight - ele.scrollTop === ele.clientHeight;
+                */
+                  let sign = 180; // 定义默认的向上滚于乡下滚的边界
+                  const CONDITION = ((this.scrollHeight - this.scrollTop === this.clientHeight) && 
+                                  this.scrollTop > sign)// 注意: && this.scrollTop
+                  debugger;
+                  
+                  if(this.scrollTop > sign) {
+                      sign = this.scrollTop;
+                      console.log('向下')
+                  }
+                  if(this.scrollTop < sign) {
+                      sign = this.scrollTop;
+                      console.log('向上')
+                  }
+                  
+                  if(CONDITION) {
+                      binding.value();
+                  }
+            });
+       }
+     }
+  },
   data() {
     return {
       policiesData: [],
       policiesSelectedData: [],
-      strategyValue:[],
+      strategyValue: [],
       totalNum: "",
       search: "",
       rp: 20,
@@ -103,42 +159,51 @@ export default {
       tableTitle: "策略类型"
     };
   },
+ 
   mounted() {
-    this.init()
+    this.init();
   },
   methods: {
     init() {
-            let params = {
-                Action: 'ListPolicies',
-                Version:'2019-01-16'
-            }
-            if(this.search != null && this.search != '') {
-              params['Keyword'] = this.search
-            }
-            let url = "cam2/ListPolicies"
-            this.axios.post(url, params).then(res => {
-              debugger
-            this.policiesData = res.Response.List;
-            }).catch(error => {
-                console.log(error)
-            })
-        },
-    //策略搜索
-    CeInit(){
-       let params = {
-         Action:"ListPolicies",
-         Version:"2019-01-16"
-       }
-       if(this.strategyValue != null && this.strategyValue != ''){
-          params["Keyword"] = this.strategyValue
-       }
-       let url = "cam2/ListPolicies"
-       this.axios.post(url,params).then(data => {
-         this.policiesData = data.Response.List
-       })
+      let params = {
+        Action: "ListPolicies",
+        Version: "2019-01-16"
+      };
+      if (this.search != null && this.search != "") {
+        params["Keyword"] = this.search;
+      }
+      let url = "cam2/ListPolicies";
+      this.axios
+        .post(url, params)
+        .then(res => {
+          debugger;
+          this.policiesData = res.Response.List;
+        })
+        .catch(error => {
+          console.log(error);
+        });
     },
-     toQueryCL(){
-      this.CeInit()
+     // 表格到底后执行  这里写你要做的事
+    tableloadmore() {
+      console.log("333");
+      this.init()
+    },
+    //策略搜索
+    CeInit() {
+      let params = {
+        Action: "ListPolicies",
+        Version: "2019-01-16"
+      };
+      if (this.strategyValue != null && this.strategyValue != "") {
+        params["Keyword"] = this.strategyValue;
+      }
+      let url = "cam2/ListPolicies";
+      this.axios.post(url, params).then(data => {
+        this.policiesData = data.Response.List;
+      });
+    },
+    toQueryCL() {
+      this.CeInit();
     },
     handleCommand(command) {
       console.log(command);

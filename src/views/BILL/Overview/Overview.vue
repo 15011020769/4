@@ -9,14 +9,14 @@
         <el-col :span="18">
           <span style="font-size: 14px; font-weight: 700; line-height:1">费用趋势</span>
           <span style="font-size: 12px; color: #888;  margin-left: 5px; line-height:1">（单位：元）</span>
-          <el-select style="float: right;" v-model="yearvalue" @change="selectYear" size="small">
-            <el-option v-for="item in years" :key="item.value" :label="item.label" :value="item.value" size="mini">
-            </el-option>
-          </el-select>
           <el-select style="float: right;" v-model="value" @change="changeSelect" size="small">
             <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" size="mini">
             </el-option>
           </el-select>
+          <el-button-group style="float: right;">
+            <el-button @click="initChartBar('half')" size="small">近半年</el-button>
+            <el-button @click="initChartBar('year')" size="small">近一年</el-button>
+          </el-button-group>
           <div id="J_chartBarBox" class="chart-box" style="height: 250px;"></div>
         </el-col>
         <el-col :span="6">
@@ -55,62 +55,87 @@
       <span style="font-size: 12px; color: #888;  margin-left: 5px; line-height:1">（单位：元）</span>
       <div><br></div>
       <div>
-        <el-tabs v-model="activeName" type="card" @tab-click="handleClick">
+        <el-tabs v-model="activeName" type="card">
           <el-tab-pane label="按产品汇总" name="first">
             <div id="main2" style="float:left; width:1067px; height: 300px"></div>
             <el-table :data="dataList1" v-loading="dataListLoading" style="width: 100%;">
               <el-table-column prop="business_code_name" label="产品名称">
               </el-table-column>
-              <el-table-column prop="cashAmount" header-align="center" align="center" label="现金支付">
+              <el-table-column prop="cashAmount" align="right" label="现金支付">
                 <template slot-scope="scope">
                   <span>{{scope.row.cashAmount}} 元</span>
                 </template>
               </el-table-column>
-              <el-table-column prop="incentiveAmount" header-align="center" align="center" label="赠送金支付">
+              <el-table-column prop="incentiveAmount" align="right" label="赠送金支付">
                 <template slot-scope="scope">
                   <span>{{scope.row.incentiveAmount}} 元</span>
                 </template>
               </el-table-column>
-              <el-table-column prop="voucherAmount" header-align="center" align="center" label="代金券支付">
+              <el-table-column prop="voucherAmount" align="right" label="代金券支付">
                 <template slot-scope="scope">
                   <span>{{scope.row.voucherAmount}} 元</span>
                 </template>
               </el-table-column>
-              <el-table-column prop="totalAmount" header-align="center" align="center" label="总费用">
+              <el-table-column prop="totalAmount" align="right" label="总费用">
                 <template slot-scope="scope">
                   <span>{{scope.row.totalAmount}} 元</span>
                 </template>
               </el-table-column>
-              <el-table-column prop="state" header-align="center" align="center" label="费用趋势">
+              <el-table-column prop="state" align="center" label="费用趋势">
+                <template slot-scope="scope">
+                  <div slot="reference" >
+                    <el-popover placement="left" width="700" ref="popover" trigger="hover" >
+                      <div slot="reference">
+                        <svg t="1574819723346" :index="scope.$index" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2324" width="40" height="20"><path d="M664.1 783c-3.8 0-7.6-0.2-11.3-0.5-36.3-3.1-68.9-20.6-96.9-52.1-28.4-32-52.5-79.4-71.4-140.8-32.4-105-66.1-182.6-100.3-230.6-25.5-35.8-50.2-54-73.4-54h-0.4c-38.8 0.4-84.8 51-129.3 142.7-37 76.2-59.4 153-59.7 153.8L64 582.6c1-3.4 24.3-83.1 63.7-164.3 56.8-117 118.1-176.6 182.1-177.3h1c43 0 83.8 26.7 121.2 79.3 38.2 53.7 75.1 137.5 109.5 249.3 29.3 94.9 68.3 145.1 116 149.1 21.3 1.8 45.6-5.2 72.2-20.9 24.5-14.4 50.3-35.8 76.8-63.5 49.6-51.9 87.7-111.9 100.1-137.6L960 526c-14.6 30.4-56.4 96.4-111.4 154-30.4 31.8-60.6 56.6-89.9 73.9-32.8 19.3-64.6 29.1-94.6 29.1z" fill="#1296db" p-id="2325"></path></svg>
+                      </div>
+                      <div name="tableLine1" style="height: 250px; width:650px"></div>
+                    </el-popover>
+                  </div>
+                </template>
               </el-table-column>
             </el-table>
+            <el-pagination @size-change="sizeChangeHandle" @current-change="currentChangeHandle" :current-page="pageIndex" :page-sizes="[10, 20, 50, 100]" :page-size="pageSize" :total="totalPage1" layout="total, sizes, prev, pager, next, jumper" style="float: right;">
+            </el-pagination>
           </el-tab-pane>
           <el-tab-pane label="按项目（组）汇总" name="second" style="width:100%">
             <div id="main3" style="float: left; width: 1067px; height: 300px"></div>
             <el-table :data="dataList2" row-key="id" :tree-props="{children: 'children'}"  v-loading="dataListLoading" style="width: 100%; margin-bottom: 20px;">
               <el-table-column prop="project_name" label="项目名称" ></el-table-column>
-              <el-table-column prop="cashAmount" header-align="center" align="center" label="现金支付">
+              <el-table-column prop="cashAmount" align="right" label="现金支付">
                 <template slot-scope="scope">
                   <span>{{scope.row.cashAmount}} 元</span>
                 </template>
               </el-table-column>
-              <el-table-column prop="incentiveAmount" header-align="center" align="center" label="赠送金支付">
+              <el-table-column prop="incentiveAmount" align="right" label="赠送金支付">
                 <template slot-scope="scope">
                   <span>{{scope.row.incentiveAmount}} 元</span>
                 </template>
               </el-table-column>
-              <el-table-column prop="voucherAmount" header-align="center" align="center" label="代金券支付">
+              <el-table-column prop="voucherAmount" align="right" label="代金券支付">
                 <template slot-scope="scope">
                   <span>{{scope.row.voucherAmount}} 元</span>
                 </template>
               </el-table-column>
-              <el-table-column prop="totalAmount" header-align="center" align="center" label="总费用">
+              <el-table-column prop="totalAmount" align="right" label="总费用">
                 <template slot-scope="scope">
                   <span>{{scope.row.totalAmount}} 元</span>
                 </template>
               </el-table-column>
-              <el-table-column prop="state" header-align="center" align="center" label="费用趋势"></el-table-column>
+              <el-table-column prop="state" align="center" label="费用趋势">
+                <template slot-scope="scope">
+                  <div slot="reference" >
+                    <el-popover placement="left" width="700" ref="popover" trigger="hover" >
+                      <div slot="reference">
+                        <svg t="1574819723346" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2324" width="40" height="20"><path d="M664.1 783c-3.8 0-7.6-0.2-11.3-0.5-36.3-3.1-68.9-20.6-96.9-52.1-28.4-32-52.5-79.4-71.4-140.8-32.4-105-66.1-182.6-100.3-230.6-25.5-35.8-50.2-54-73.4-54h-0.4c-38.8 0.4-84.8 51-129.3 142.7-37 76.2-59.4 153-59.7 153.8L64 582.6c1-3.4 24.3-83.1 63.7-164.3 56.8-117 118.1-176.6 182.1-177.3h1c43 0 83.8 26.7 121.2 79.3 38.2 53.7 75.1 137.5 109.5 249.3 29.3 94.9 68.3 145.1 116 149.1 21.3 1.8 45.6-5.2 72.2-20.9 24.5-14.4 50.3-35.8 76.8-63.5 49.6-51.9 87.7-111.9 100.1-137.6L960 526c-14.6 30.4-56.4 96.4-111.4 154-30.4 31.8-60.6 56.6-89.9 73.9-32.8 19.3-64.6 29.1-94.6 29.1z" fill="#1296db" p-id="2325"></path></svg>
+                      </div>
+                      <div name="tableLine2" :id="'tableLine2-'+scope.row.id" style="height: 250px; width:650px"></div>
+                    </el-popover>
+                  </div>
+                </template>
+              </el-table-column>
             </el-table>
+            <el-pagination @size-change="sizeChangeHandle" @current-change="currentChangeHandle" :current-page="pageIndex" :page-sizes="[10, 20, 50, 100]" :page-size="pageSize" :total="totalPage2" layout="total, sizes, prev, pager, next, jumper" style="float: right;">
+            </el-pagination>
           </el-tab-pane>
         </el-tabs>
       </div>
@@ -127,17 +152,22 @@ export default {
       chartBar: null,
       chartRing: null,
       chartShadow: null,
+      charLine1: null,
       activeName: 'first',
       dataList1: [],
       dataList2: [],
       month: '',
       value: '',
-      yearvalue: '',
-      total: '',
+      yearvalue: 'half',
+      total: 0,
       cash: '',
       incentive: '',
       voucher: '',
       dataListLoading: false,
+      pageIndex: 1,
+      pageSize: 10,
+      totalPage1: 1,
+      totalPage2: 1,
       options: [{
         value: 'total',
         label: '总费用'
@@ -150,13 +180,6 @@ export default {
       }, {
         value: 'voucher',
         label: '代金券支付'
-      }],
-      years: [{
-        value: 'half',
-        label: '近半年'
-      }, {
-        value: 'year',
-        label: '近一年'
       }]
     }
   },
@@ -168,7 +191,8 @@ export default {
     this.initCost()
     this.getDataList1()
     this.getDataList2()
-    this.initLine()
+    this.initLine1()
+    this.initLine2()
   },
   activated () {
     if (this.chartBar) {
@@ -180,10 +204,32 @@ export default {
     if (this.chartShadow) {
       this.chartShadow.resize()
     }
+    if (this.charLine1) {
+      this.charLine1.resize()
+    }
+    if (this.charLine2) {
+      this.charLine1.resize()
+    }
   },
   methods: {
+    // 每页数
+    sizeChangeHandle (val) {
+      this.pageSize = val
+      this.pageIndex = 1
+      this.getDataList1()
+    },
+    // 当前页
+    currentChangeHandle (val) {
+      this.pageIndex = val
+      this.getDataList1()
+    },
     // 柱状图
-    initChartBar () {
+    initChartBar (param) {
+      if (param == undefined || param == '') {
+        this.yearvalue = 'half'
+      } else {
+        this.yearvalue = param
+      }
       this.$axios.post(`${process.env.VUE_APP_adminUrl}taifucloud/tbilldetails/costTrend?date=` + this.month + `&year=` + this.yearvalue + `&costType=` + this.value + `&uin=` + `100011921910`).then(data => {
         var list = data.chart
         const months = []
@@ -281,7 +327,6 @@ export default {
             trigger: 'item',
             formatter: '{b} </br>{c} ({d}%)'
           },
-          //color: colors,
           legend: {
             orient: 'vertical',
             x: 'right',
@@ -309,10 +354,10 @@ export default {
           },
           series: [{
             type: 'pie',
-            center: ['20%', '50%'], // 饼图的圆心坐标
+            center: ['20%', '50%'],
             radius: ['50%', '70%'],
             avoidLabelOverlap: false,
-            label: { //  饼图图形上的文本标签
+            label: {
               normal: {
                 show: true,
                 position: 'center',
@@ -344,15 +389,16 @@ export default {
     // 表格1
     getDataList1 () {
       this.$axios.post(`${process.env.VUE_APP_adminUrl}taifucloud/tbilldetails/productTotalList?date=` + this.month + `&uin=` +
-        `100011921910`).then(data => {
-        console.log('---' + data)
+        `100011921910&pages=` + this.pageIndex + `&limit=` + this.pageSize).then(data => {
+        // console.log('---' + data)
         if (data && data.code === 0) {
-          this.dataList1 = data.list
-        // this.totalPage = data.page.totalCount
+          this.dataList1 = data.data.list
+          this.totalPage1 = data.data.totalCount
         } else {
           this.dataList1 = []
-        // this.totalPage = 0
+          this.totalPage1 = 0
         }
+        this.initLine1()
         this.dataListLoading = false
       })
     },
@@ -375,41 +421,40 @@ export default {
             }
           },
           grid: {
-            left: 100,
-            right: 10
-            // right: '40%',
-            // bottom: '3%',
-            // containLabel: true
+            left: '3%',
+            right: '4%',
+            bottom: '3%',
+            containLabel: true
           },
           xAxis: {
             type: 'value',
             axisTick: {
-              show: false //不显示坐标轴刻度线
+              show: false
             },
             axisLine: {
-              show: false //不显示坐标轴线
+              show: false
             },
             axisLabel: {
-              show: false //不显示坐标轴上的文字
+              show: false
             },
             splitLine: {
-              show: false //不显示网格线
+              show: false
             }
           },
           yAxis: {
             data: projects,
             type: 'category',
             axisLine: {
-              show: false //不显示坐标轴线
+              show: false
             },
             axisTick: {
-              show: false //不显示坐标轴刻度线
+              show: false
             }
           },
           series: [{
             type: 'bar',
             color: '#006EFF',
-            barWidth: 30,
+            barWidth: 24,
             data: totalAmounts
           }]
         }
@@ -422,85 +467,206 @@ export default {
     },
     // 表格2
     getDataList2 () {
-      this.$axios.post(`${process.env.VUE_APP_adminUrl}taifucloud/tbilldetails/projectCol?date=` + this.month + `&uin=` +
-        `100011921910`).then(data => {
-        console.log('---' + data)
+      this.$axios.post(`${process.env.VUE_APP_adminUrl}taifucloud/tbilldetails/projectColList?date=` + this.month + `&uin=` +
+        `100011921910&pages=` + this.pageIndex + `&limit=` + this.pageSize).then(data => {
         if (data && data.code === 0) {
-          this.dataList2 = data.chart
-        // this.totalPage = data.page.totalCount
+          this.dataList2 = data.data.list
+          this.totalPage2 = data.data.totalCount
         } else {
           this.dataList2 = []
-        // this.totalPage = 0
+          this.totalPage2 = 0
         }
+        this.initLine2()
         this.dataListLoading = false
       })
     },
-    // 折线图
-    initLine () {
-      this.$axios.post(`${process.env.VUE_APP_adminUrl}taifucloud/tbilldetails/getLineList?date=` + this.month + `&uin=` +
-        `100011921910`).then(data => {
-        var list = data.chart
-        var projects = []
-        var totalAmounts = []
-        for (var i = 0; i < list.length; i++) {
-          projects.push(list[i].project_name)
-          totalAmounts.push(list[i].totalAmount)
-        }
-        var option = {
-          tooltip: {
-            trigger: 'axis',
-            axisPointer: {
-              type: 'shadow'
-            }
-          },
-          grid: {
-            left: 100,
-            right: 10
-            // right: '40%',
-            // bottom: '3%',
-            // containLabel: true
-          },
-          xAxis: {
-            type: 'value',
-            axisTick: {
-              show: false //不显示坐标轴刻度线
+    // 折线图1
+    initLine1 () {
+      this.dataList1.forEach((row, index) => {
+        const productName = row.business_code_name
+        this.$axios.post(`${process.env.VUE_APP_adminUrl}taifucloud/tbilldetails/getLineList?date=` + this.month + `&uin=` +
+          `100011921910` + `&businessCodeName=` + productName).then(data => {
+          var list = data.chart
+          var xMonth = []
+          var yTotalAmounts = []
+          var yCastAmounts = []
+          for (var i = list.length - 1; i >= 0; i--) {
+            xMonth.push(list[i].month)
+            yTotalAmounts.push(list[i].totalAmount)
+            yCastAmounts.push(list[i].cashAmount)
+          }
+          var option = {
+            title: {
+              text: productName + '的费用趋势'
             },
-            axisLine: {
-              show: false //不显示坐标轴线
+            tooltip: {
+              trigger: 'axis'
             },
-            axisLabel: {
-              show: false //不显示坐标轴上的文字
+            legend: {
+              data: ['总费用', '现金支付'],
+              x: 'right'
             },
-            splitLine: {
-              show: false //不显示网格线
-            }
-          },
-          yAxis: {
-            data: projects,
-            type: 'category',
-            axisLine: {
-              show: false //不显示坐标轴线
+            grid: {
+              left: '3%',
+              right: '4%',
+              bottom: '3%',
+              containLabel: true
             },
-            axisTick: {
-              show: false //不显示坐标轴刻度线
-            }
-          },
-          series: [{
-            type: 'bar',
-            color: '#006EFF',
-            barWidth: 30,
-            data: totalAmounts
-          }]
-        }
-        this.chartShadow = echarts.init(document.getElementById('main4'))
-        this.chartShadow.setOption(option)
-        window.addEventListener('resize', () => {
-          this.chartShadow.resize()
+            xAxis: {
+              type: 'category',
+              boundaryGap: false,
+              data: xMonth
+            },
+            yAxis: {
+              type: 'value'
+            },
+            series: [
+              {
+                name: '总费用',
+                type: 'line',
+                stack: '总量',
+                data: yTotalAmounts
+              },
+              {
+                name: '现金支付',
+                type: 'line',
+                stack: '总量',
+                data: yCastAmounts
+              }
+            ]
+          }
+          document.getElementsByName('tableLine1')[index].id = 'tableLine1' + index
+          this.charLine1 = echarts.init(document.getElementById('tableLine1' + index))
+          this.charLine1.setOption(option)
+          window.addEventListener('resize', () => {
+            this.charLine1.resize()
+          })
         })
       })
     },
-    selectYear () {
-      this.initChartBar()
+    // 折线图2
+    initLine2 () {
+      // console.log(this.dataList2)
+      this.dataList2.forEach((row, index) => {
+        const project = row.project_name
+        this.$axios.post(`${process.env.VUE_APP_adminUrl}taifucloud/tbilldetails/getLineList?date=` + this.month + `&uin=` +
+          `100011921910` + `&projectName=` + project).then(data => {
+          var list = data.chart
+          var xMonth = []
+          var yTotalAmounts = []
+          var yCastAmounts = []
+          for (var i = list.length - 1; i >= 0; i--) {
+            xMonth.push(list[i].month)
+            yTotalAmounts.push(list[i].totalAmount)
+            yCastAmounts.push(list[i].cashAmount)
+          }
+          var option = {
+            title: {
+              text: project + '的费用趋势'
+            },
+            tooltip: {
+              trigger: 'axis'
+            },
+            legend: {
+              data: ['总费用', '现金支付'],
+              x: 'right'
+            },
+            grid: {
+              left: '3%',
+              right: '4%',
+              bottom: '3%',
+              containLabel: true
+            },
+            xAxis: {
+              type: 'category',
+              boundaryGap: false,
+              data: xMonth
+            },
+            yAxis: {
+              type: 'value'
+            },
+            series: [
+              {
+                name: '总费用',
+                type: 'line',
+                stack: '总量',
+                data: yTotalAmounts
+              },
+              {
+                name: '现金支付',
+                type: 'line',
+                stack: '总量',
+                data: yCastAmounts
+              }
+            ]
+          }
+          this.charLine2 = echarts.init(document.getElementById('tableLine2-' + row.id))
+          this.charLine2.setOption(option)
+          window.addEventListener('resize', () => {
+            this.charLine2.resize()
+          })
+          row.children.forEach((value, index) => {
+            // console.log(row.id)
+            this.$axios.post(`${process.env.VUE_APP_adminUrl}taifucloud/tbilldetails/getLineList?date=` + this.month + `&uin=` +
+            `100011921910` + `&projectName=` + project + `&businessCodeName=` + value.project_name).then(data => {
+              var list = data.chart
+              var xMonth = []
+              var yTotalAmounts = []
+              var yCastAmounts = []
+              for (var i = list.length - 1; i >= 0; i--) {
+                xMonth.push(list[i].month)
+                yTotalAmounts.push(list[i].totalAmount)
+                yCastAmounts.push(list[i].cashAmount)
+              }
+              var option = {
+                title: {
+                  text: value.project_name + '的费用趋势'
+                },
+                tooltip: {
+                  trigger: 'axis'
+                },
+                legend: {
+                  data: ['总费用', '现金支付'],
+                  x: 'right'
+                },
+                grid: {
+                  left: '3%',
+                  right: '4%',
+                  bottom: '3%',
+                  containLabel: true
+                },
+                xAxis: {
+                  type: 'category',
+                  boundaryGap: false,
+                  data: xMonth
+                },
+                yAxis: {
+                  type: 'value'
+                },
+                series: [
+                  {
+                    name: '总费用',
+                    type: 'line',
+                    stack: '总量',
+                    data: yTotalAmounts
+                  },
+                  {
+                    name: '现金支付',
+                    type: 'line',
+                    stack: '总量',
+                    data: yCastAmounts
+                  }
+                ]
+              }
+              this.charLine2 = echarts.init(document.getElementById('tableLine2-' + value.id))
+              this.charLine2.setOption(option)
+              window.addEventListener('resize', () => {
+                this.charLine2.resize()
+              })
+            })
+          })
+        })
+      })
     },
     changeSelect () {
       this.initChartBar()
@@ -512,14 +678,10 @@ export default {
       this.initCost()
       this.getDataList1()
       this.getDataList2()
-    },
-    handleClick (tab, event) {
-      console.log(tab, event)
     }
   },
   created () {
     this.value = this.options[0].value
-    this.yearvalue = this.years[0].value
   }
 }
 </script>
