@@ -172,7 +172,7 @@ export default {
     doFilter() {
       console.log(this.filterConrent);
       this.tableDataBegin = this.allData;
-      this.tableDataEnd = [];
+      //this.tableDataEnd = [];
       //每次手动将数据置空,因为会出现多次点击搜索情况
       this.filterTableDataEnd = [];
       this.tableDataBegin.forEach((val, index) => {

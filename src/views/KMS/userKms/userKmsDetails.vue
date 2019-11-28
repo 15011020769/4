@@ -17,8 +17,8 @@
 							width="30%"
 							:before-close="handleClose1">
 							<div class="dialogModelCon newClear">
-								<div class="newClear"><span>原名称</span><span>{{projectDetail.Alias}}</span></div>
-								<div class="newClear"><span>新名称</span><span><el-input v-model="changeName" class="newName"></el-input><p class="tipP">最长可输入60个字符，不可为空，请使用字母、数字及字符“_”和“-”，首字符必须为字母或者数字，且不能用 KMS- 开头。</p></span></div>
+								<div class="newClear"><span class="dialogText">原名称</span><span>{{projectDetail.Alias}}</span></div>
+								<div class="newClear"><span class="dialogText">新名称</span><span><el-input v-model="changeName" class="newName"></el-input><p class="tipP">最长可输入60个字符，不可为空，请使用字母、数字及字符“_”和“-”，首字符必须为字母或者数字，且不能用 KMS- 开头。</p></span></div>
 							</div>
 							<span slot="footer" class="dialog-footer">
 								<el-button @click="dialogModel1 = false">取 消</el-button>
@@ -60,13 +60,92 @@
 							:visible.sync="dialogModel3"
 							width="30%"
 							:before-close="handleClose3">
-							<div class="dialogModelCon">
-								
+							<div class="dialogModelConT">
+								<div class="TopStepDownload" v-if="thisStepOne">
+									<div class="topStepOne newClear">
+										<p class="stepOne step"><span class="stepCir">1</span><span class="stepText">密钥参数下载</span></p>
+										<span class="rightArrow">></span>
+										<p class="step"><span class="stepCir">2</span><span class="stepText">密钥导入</span></p>
+										<span class="rightArrow">></span>
+										<p class="step"><span class="stepCir">3</span><span class="stepText">导入状态</span></p>
+									</div>
+									<div class="tipBlue">
+										温馨提示：密钥材料需要通过加密公钥加密后才可以导入，请选择一个用于加密密钥材料的算法，生成的密钥导入参数将在24小时后过期，请及时下载！
+									</div>
+									<div class="labelCheck newClear">
+										<div class="newClear"><span class="labelCheckText">算法类型</span><span><el-radio v-model="thisSuanType" label="RSA_2048"></el-radio></span></div>
+										<div class="newClear">
+											<span class="labelCheckText">加密算法</span>
+											<span>
+												<el-select class="selectSuan" v-model="thisAddSuan">
+													<el-option label="RSAES_PKCS1_V1_5" value="RSAES_PKCS1_V1_5"></el-option>
+													<el-option label="RSAES_OAEP_SHA_1" value="RSAES_OAEP_SHA_1"></el-option>
+													<el-option label="RSAES_OAEP_SHA_256" value="RSAES_OAEP_SHA_256"></el-option>
+												</el-select>
+												<el-button>下载</el-button>
+											</span>
+										</div>
+									</div>
+									<div class="botBtn">
+										<el-button @click="dialogModel3 = false">取 消</el-button>
+										<el-button type="primary" @click="nextStepOne">下一步</el-button>
+									</div>
+								</div>
+								<div class="TopStepDownload" v-if="thisStepTwo">
+									<div class="topStepOne newClear">
+										<p class="stepTwo step"><span class="stepCir"><i class="el-icon-check"></i></span><span class="stepText">密钥参数下载</span></p>
+										<span class="rightArrow">></span>
+										<p class="stepOne step"><span class="stepCir">2</span><span class="stepText">密钥导入</span></p>
+										<span class="rightArrow">></span>
+										<p class="step"><span class="stepCir">3</span><span class="stepText">导入状态</span></p>
+									</div>
+									<div class="labelCheckTwo newClear">
+										<div class="newClear">
+											<span class="labelCheckText">加密密钥材料</span>
+											<span><input class="choseFileText" type="text" v-model="PlaintextRead" placeholder="还未选择文件" readonly/><a href="#" class="chooseFile"><span>选择文件</span><input type="file" @change="PlaintextReadHande"></a></span>
+										</div>
+										<div class="newClear">
+											<span class="labelCheckText">导入令牌</span>
+											<span><input class="choseFileText" v-model="exportRead" type="text" placeholder="还未选择文件" readonly/><a href="#" class="chooseFile"><span>选择文件</span><input type="file" @change="exportChange"></a></span>
+										</div>
+										<div class="newClear">
+											<span class="labelCheckText">密钥材料过期时间</span>
+											<span>
+												<el-select class="selectSuanTwo" v-model="outTimeSet" @change="timeOutChange">
+													<el-option label="永不过期" value="forver"></el-option>
+													<el-option label="设置过期时间" value="setTime"></el-option>
+												</el-select>
+												<el-date-picker v-if="isSettimeOut"
+													v-model="selectTime"
+													type="date"
+													placeholder="选择日期" class="setTimeOutTime">
+												</el-date-picker><br/>
+                        <span class="tipStep">若您已订阅产品信息，您将在密钥材料过期前三天收到告警信息</span>
+											</span>
+										</div>
+									</div>
+									<div class="botBtn">
+										<el-button type="primary" @click="prevOne">上一步</el-button>
+										<el-button @click="nextStepTwo" :disabled="PlaintextRead==''||exportRead==''?true:false">导入密钥</el-button>
+									</div>
+								</div>
+                <div class="TopStepDownload" v-if="thisStepThree">
+									<div class="topStepOne newClear">
+										<p class="stepTwo step"><span class="stepCir"><i class="el-icon-check"></i></span><span class="stepText">密钥参数下载</span></p>
+										<span class="rightArrow">></span>
+										<p class="stepTwo step"><span class="stepCir"><i class="el-icon-check"></i></span><span class="stepText">密钥导入</span></p>
+										<span class="rightArrow">></span>
+										<p class="stepOne step"><span class="stepCir">3</span><span class="stepText">导入状态</span></p>
+									</div>
+									<div class="labelCheckTwo newClear">
+										
+									</div>
+									<div class="botBtn">
+										<el-button type="primary" @click="prevTwo">上一步</el-button>
+										<el-button @click="stepSure" :disabled="true">确定</el-button>
+									</div>
+								</div>
 							</div>
-							<span slot="footer" class="dialog-footer">
-								<el-button @click="dialogModel3 = false">取 消</el-button>
-								<el-button type="primary" @click="changeDescriptionSure">确 定</el-button>
-							</span>
 						</el-dialog>
 					</div>
 				</div>
@@ -87,7 +166,7 @@
 						</div>
 						<div>
 							<el-input class="textareaIpt" :disabled="true" type="textarea" v-model="downLoadText"></el-input>
-							<el-button :disabled="downLoadText==''?true:false" type="primary">下载</el-button>
+							<el-button :disabled="downLoadText==''?true:false" type="primary" @click="downloadTxt">下载</el-button>
 						</div>
 					</div>
 				</div>
@@ -112,6 +191,16 @@ export default {
 			Ciphertext:"",//请输入密文
 			disableTextarea:true,//解密加密第二框
 			downLoadText:'',//'执行加解密之后的下载框'
+			thisSuanType:'RSA_2048',//算法类型
+			thisAddSuan:'RSAES_PKCS1_V1_5',//加密算法
+			thisStepOne:true,//第一步
+			thisStepTwo:false,//第二步
+			thisStepThree:false,//第三步
+			selectTime:'',//选择过期时间
+			outTimeSet:"forver",//绑定过期时间
+      isSettimeOut:false,//是否设置过期时间
+      PlaintextRead:"",//密钥材料
+      exportRead:"",//导入令牌
 		}
 	},
 	created(){
@@ -218,6 +307,66 @@ export default {
 				this.disableTextarea=false;
 			}
 		},
+		//下载按钮
+		downloadTxt(){
+			this.exportRaw(this.projectDetail.KeyId+'.txt',this.downLoadText)
+		},
+		//下载文件函数
+		fakeClick(obj) {
+			var ev = document.createEvent("MouseEvents");
+			ev.initMouseEvent("click", true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+			obj.dispatchEvent(ev);
+		},
+		//下载文件函数
+		exportRaw(name, data) {
+			var urlObject = window.URL || window.webkitURL || window;
+			var export_blob = new Blob([data]);
+			var save_link = document.createElementNS("http://www.w3.org/1999/xhtml", "a")
+			save_link.href = urlObject.createObjectURL(export_blob);
+			save_link.download = name;
+			this.fakeClick(save_link);
+		},
+		//第一步的下一步按钮 
+		nextStepOne(){
+			this.thisStepOne=false;
+      this.thisStepTwo=true;
+      this.thisStepThree=false;
+		},
+		//第二步的下一步按钮\导入密钥按钮
+		nextStepTwo(){
+      this.thisStepOne=false;
+      this.thisStepTwo=false;
+      this.thisStepThree=true;
+		},
+		//第二步的上一步按钮
+		prevOne(){
+			this.thisStepOne=true;
+      this.thisStepTwo=false;
+      this.thisStepThree=false;
+    },
+    //第三步的上一步按钮
+    prevTwo(){
+      this.thisStepOne=false;
+      this.thisStepTwo=true;
+      this.thisStepThree=false;
+    },
+		//监测选择设置过期时间变化
+		timeOutChange(){
+			if(this.outTimeSet=='setTime'){
+				this.isSettimeOut=true;
+			}else{
+				this.isSettimeOut=false;
+			}
+    },
+    //加密密钥材料change
+    PlaintextReadHande(e){
+      this.PlaintextRead=e.target.files[0].name;
+      //console.log(e.target.files[0].name)
+    },
+    //导入令牌change
+    exportChange(e){
+      this.exportRead=e.target.files[0].name;
+    }
 	}
 }
 </script>
@@ -331,7 +480,7 @@ export default {
 	div{
 		margin-bottom:20px;
 		width:100%;
-		span:nth-child(1){
+		span:nth-child(1).dialogText{
 			font-size:12px;
 			color:#888;
 			display: inline-block;
@@ -373,4 +522,193 @@ export default {
 		font-weight:600;
 	}
 }
+.dialogModelConT{
+	button{
+		width:70px;
+		height:30px;
+		border-radius: 0;
+		padding:0;
+		line-height:30px;
+	}
+}
+.TopStepDownload{
+	.topStepOne{
+		width:100%;
+		border-bottom:1px solid #ddd;
+		margin-bottom:20px;
+		p.step{
+			float:left;
+			span:nth-child(1).stepCir{
+				width:26px;
+				height:26px;
+				display: inline-block;
+				border-radius: 100%;
+				background-color:#fff;
+				margin-right:12px;
+				color:#999;
+				text-align:center;
+				line-height:26px;
+				float:left;
+				border:1px solid #999;
+			}
+			span:nth-child(2).stepText{
+				color:#999;
+				font-size:12px;
+				width:78px;
+			}
+		}
+		p.stepOne{
+			span:nth-child(1).stepCir{
+				background-color:#0068f2;
+				color:#fff;
+				border:1px solid #0068f2;
+			}
+			span:nth-child(2).stepText{
+				color:#000;
+				font-weight:bold;
+			}
+		}
+		p.stepTwo{
+			span:nth-child(1).stepCir{
+				background-color:#fff;
+				color:#0068f2;
+				border:1px solid #0068f2;
+			}
+			span:nth-child(2).stepText{
+				color:#000;
+			}
+		}
+		span.rightArrow{
+			font-size:20px!important;
+			color:#999;
+			float:left;
+			margin:0 35px;
+			width:auto!important;
+		}
+	}
+	.tipBlue{
+		font-size: 12px;
+    margin-bottom: 20px;
+    line-height: inherit;
+    padding: 10px 30px 10px 20px;
+    color: #003b80;
+    border: 1px solid #97c7ff;
+    background-color: #e5f0ff;
+	}
+	.labelCheck{
+		div{
+			margin-bottom:12px;
+			span:nth-child(1).labelCheckText{
+				display: inline-block;
+				width:70px;
+				color:#999;
+				font-size:12px;
+			}
+			.selectSuan{
+				width:170px;
+				height:30px;
+				div{
+					width:170px;
+					height:30px;
+					input{
+						width:170px;
+						height:30px;
+						border-radius: 0;
+					}
+				}
+			}
+			button{
+				height:30px;
+				border-radius: 0;
+				display: inline-block;
+				padding:0;
+				line-height:30px;
+				width:70px;
+				margin-left:20px;
+			}
+		}
+	}
+	.labelCheckTwo{
+			div{
+			margin-bottom:12px;
+			span:nth-child(1).labelCheckText{
+				display: inline-block;
+				width:115px;
+				color:#999;
+				font-size:12px;
+			}
+      .choseFileText{
+        height: 30px;
+        line-height: normal;
+        width: 180px;
+        border:1px solid #ddd;
+        outline: none;
+        background: #f2f2f2;
+        text-indent:12px;
+        font-size:12px;
+      }
+      .chooseFile{
+        text-decoration: none;
+        color: #000;
+        border: solid 1px #ddd;
+        width: 70px;
+        height: 30px;
+        line-height: 30px;
+        text-align: center;
+        display: inline-block;
+        overflow: hidden;
+        position: relative;
+        top: 9px;
+        margin-left: 10px;  
+        font-size:12px;
+        input{
+          opacity: 0;
+          filter: alpha(opacity=0);
+          position: absolute;
+          top: 0;
+          right: 0;
+          cursor: pointer;
+        }
+      }
+      .selectSuanTwo{
+        width:100px;
+				height:30px;
+				div{
+					width:100px;
+					height:30px;
+					input{
+						width:100px;
+						height:30px;
+						border-radius: 0;
+            font-size:12px;
+					}
+				}
+      }
+      .tipStep{
+        padding-left:115px;
+        font-size:12px;
+        color:#999;
+        display: inline-block;
+        margin:12px 0;
+      }
+		}
+    .setTimeOutTime{
+      width:120px;
+      height:30px;
+      margin-left:12px;
+      input{
+        width:120px;
+        height:30px;
+        border-radius: 0;
+      }
+      .el-input__icon{
+        line-height:32px;
+      }
+    }
+	}
+	.botBtn{
+		padding-left:200px;
+	}
+}
+
 </style>
