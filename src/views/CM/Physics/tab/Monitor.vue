@@ -13,10 +13,11 @@
     <div class="box-table">
       <!-- 表格 -->
       <el-table :data="tableData" style="width: 100%">
-        <el-table-column prop width="130">
+        <el-table-column prop width="150">
           <template slot-scope="scope">
-            <span style="font-size:12px;font-weight:bolder;">
+            <span style="font-size:12px;font-weight:bolder;color:#333;font-weight:600;">
               {{scope.row.MetricName | UpName(value)}}
+              <span class="symbol">{{scope.row.symbol}}</span>
               <el-popover placement="bottom-start" title width="200" trigger="hover">
                 <p>{{scope.row.MetricName | UpTitle(value)}}</p>
                 <i class="el-icon-warning" slot="reference"></i>
@@ -128,16 +129,17 @@ export default {
       this.Start_End = data[1];
       this.value = data[2];
       const metricNArr = ["Inbandwidth", "Outbandwidth"];
+      const symbol = ["Bps", "Bps"];
       this.tableData = [];
       for (let i = 0; i < metricNArr.length; i++) {
-        this.Obtain(metricNArr[i]);
+        this.Obtain(metricNArr[i], symbol[i]);
       }
       if (this.MetricName) {
         this.getModality(this.MetricName);
       }
     },
     //
-    Obtain(metricN) {
+    Obtain(metricN, symbol) {
       const param = {
         Version: "2018-07-24",
         Region: this.$cookie.get("regionv2"),
@@ -150,6 +152,7 @@ export default {
         EndTime: this.Start_End.EndTIme
       };
       this.axios.post(All_MONITOR, param).then(data => {
+        data.Response.symbol = symbol;
         this.tableData.push(data.Response);
       });
     },
@@ -256,6 +259,9 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.symbol {
+  color: #bbb;
+}
 .Monitor {
   background: #ffffff;
   margin-top: 20px;

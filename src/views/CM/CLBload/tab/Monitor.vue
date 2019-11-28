@@ -14,8 +14,9 @@
       <el-table :data="tableData" style="width: 100%">
         <el-table-column prop="" width="130">
           <template slot-scope="scope">
-            <span style="font-size:12px;font-weight:bolder;">
+            <span style="font-size:12px;font-weight:bolder;color:#333;font-weight:600;">
               {{scope.row.MetricName | UpName(value)}}
+              <span class="symbol">{{scope.row.symbol}}</span>
               <el-popover placement="bottom-start" title="" width="200" trigger="hover">
                 <p>{{scope.row.MetricName | UpTitle(value)}}</p>
                 <i class="el-icon-warning" slot="reference"></i>
@@ -127,16 +128,17 @@
           'Inpkg',
           'Outpkg'
         ];
+        const symbol = ["个/分钟", "个/分钟", "Mbps", "Mbps","个/秒","个/秒"];
         this.tableData = []
         for (let i = 0; i < metricNArr.length; i++) {
-          this.Obtain(metricNArr[i]);
+          this.Obtain(metricNArr[i],symbol[i]);
         }
         if (this.MetricName) {
           this.getModality(this.MetricName)
         }
       },
       // 
-      Obtain(metricN) {
+      Obtain(metricN,symbol) {
         const param = {
           Version: '2018-07-24',
           Region: this.$cookie.get('regionv2'),
@@ -149,6 +151,7 @@
           EndTime: this.Start_End.EndTIme,
         };
         this.axios.post(All_MONITOR, param).then((data) => {
+          data.Response.symbol = symbol;
           this.tableData.push(data.Response);
         });
       },
@@ -246,6 +249,9 @@
 </script>
 
 <style scoped lang="scss">
+.symbol {
+  color: #bbb;
+}
   .Monitor {
     background: #ffffff;
     margin-top: 20px;
