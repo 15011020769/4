@@ -88,7 +88,8 @@
   import XTimeX from '@/components/public/TimeX';
   import echartLine from '@/components/public/echars-line';
   import {
-    All_MONITOR
+    All_MONITOR,
+    ALL_Basics
   } from '@/constants';
   export default {
     data() {
@@ -136,6 +137,7 @@
         this.tableData = []
         for (let i = 0; i < metricNArr.length; i++) {
           this.Obtain(metricNArr[i]);
+          this.Basics(metricNArr[i])
         }
         if (this.MetricName) {
           this.getModality(this.MetricName)
@@ -156,6 +158,17 @@
         };
         this.axios.post(All_MONITOR, param).then((data) => {
           this.tableData.push(data.Response);
+        });
+      },
+      Basics(metricN) {
+        const param = {
+          Version: '2018-07-24',
+          Region: this.$cookie.get('regionv2'),
+          Namespace: 'QCE/CVM',
+          MetricName: metricN,
+        };
+        this.axios.post(ALL_Basics, param).then((data) => {
+          console.log(data)
         });
       },
       getModality(MetricName) {
