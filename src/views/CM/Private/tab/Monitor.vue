@@ -7,7 +7,7 @@
         <i class="el-icon-info"></i>注释：Max、Min和Avg数值统计为当前折线图内所有点的最大值、最小值和平均值
       </p>
       <p>
-        <el-button type="text">导出数据ss</el-button>
+        <el-button type="text">导出数据</el-button>
       </p>
     </div>
     <div class="box-table">
