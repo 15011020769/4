@@ -1,6 +1,8 @@
 import Vue from 'vue'
 import VueCookie from 'vue-cookie'
-import { Loading } from 'element-ui'
+import {
+  Loading
+} from 'element-ui'
 import axios from 'axios'
 
 const conf = {
@@ -8,8 +10,8 @@ const conf = {
   timeout: 60 * 1000,
   loading: true,
   headers: {
-    // uuid: VueCookie.get('uuid'),
-    uuid: '123456789',
+    uuid: VueCookie.get('uuid'),
+    // uuid: '123456789',
     Pragma: 'no-cache',
     'Cache-Control': 'no-cache'
   }
@@ -43,12 +45,12 @@ Plugin.install = function (vue) {
   window.axios = instance
   Object.defineProperties(vue.prototype, {
     axios: {
-      get () {
+      get() {
         return instance
       }
     },
     $axios: {
-      get () {
+      get() {
         return instance
       }
     }

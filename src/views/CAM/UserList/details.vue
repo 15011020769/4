@@ -2,9 +2,9 @@
   <div class="Cam">
     <div class="top">
       <i
-      @click="backoff"
-      class="el-icon-back"
-      style="padding-right: 10px;
+        @click="backoff"
+        class="el-icon-back"
+        style="padding-right: 10px;
       font-size: 130%;
       color: #006eff;
       font-weight: 900;
@@ -24,15 +24,18 @@
             <div class="account">
               <div class="account-left">
                 <h3>
-                  <span>100011241184_123456789</span>
+                  <span>{{content.Name}}</span>
                   <span class="tag">{{$t('CAM.CAM.userDetails.userNumb')}}</span>
                 </h3>
               </div>
               <div class="account-right">
-                <el-button type="text" @click="dialogVisible = true">{{$t('CAM.CAM.userDetails.updata')}}</el-button>
+                <el-button
+                  type="text"
+                  @click="dialogVisible = true"
+                >{{$t('CAM.CAM.userDetails.updata')}}</el-button>
               </div>
               <el-dialog
-               :title="$t('CAM.CAM.userDetails.updataTest')"
+                :title="$t('CAM.CAM.userDetails.updataTest')"
                 :visible.sync="dialogVisible"
                 width="40%"
                 :before-close="handleClose"
@@ -42,9 +45,8 @@
                   label-width="160px"
                   :model="formLabelAlign"
                 >
-                  <el-form-item label="用户名" >
-                    <el-input class="inp-width" size="mini" v-model="formLabelAlign.name">
-                    </el-input>
+                  <el-form-item label="用户名">
+                    <el-input class="inp-width" size="mini" v-model="formLabelAlign.name"></el-input>
                   </el-form-item>
                   <el-form-item label-width="160px" label="备注">
                     <el-input class="inp-width" size="mini" v-model="formLabelAlign.region"></el-input>
@@ -140,7 +142,9 @@
                   <div class="title">
                     <p class="title-p">
                       {{$t('CAM.CAM.userDetails.newsTitle')}}
-                      <a href>{{$t('CAM.CAM.userDetails.test')}}</a>
+                      <a
+                        href
+                      >{{$t('CAM.CAM.userDetails.test')}}</a>
                     </p>
                   </div>
                   <div class="letter">
@@ -162,7 +166,9 @@
                           <el-table-column label width="281">
                             <template slot-scope="scope">
                               <span>
-                                <el-checkbox v-model="checked">{{$t('CAM.CAM.userDetails.oweInform')}}</el-checkbox>
+                                <el-checkbox
+                                  v-model="checked"
+                                >{{$t('CAM.CAM.userDetails.oweInform')}}</el-checkbox>
                               </span>
                             </template>
                           </el-table-column>
@@ -226,30 +232,95 @@
       </el-row>
       <!-- 下半部分 -->
       <div class="userlist">
-        <el-tabs v-model="activeName" @tab-click="handleClick">
-          <el-tab-pane label="组（0）" name="first">
-            <div class="userlist-box">
-              <div class="userlist-left">
-                <i class="iconfont block">&#xe6f8;</i>
-                <i>&nbsp;</i>
+        <template>
+          <el-tabs v-model="activeName" @tab-click="handleClick">
+            <el-tab-pane label="权限(0)" name="first">
+              <div class="explain">
+                <p>关联策略以获取策略包含的操作权限。解除策略将失去策略包含的操作权限。特别的，解除随组关联类型的策略是通过将用户从关联该策略的用户组中移出。</p>
               </div>
-              <div class="userlist-right">
-                <h4>{{$t('CAM.CAM.userDetails.beiginUse')}}</h4>
-                <p>{{$t('CAM.CAM.userDetails.noJoin')}}</p>
-                <el-button @click="add" type="primary" size="mini">添加到用户组</el-button>
-              </div>
-            </div>
-          </el-tab-pane>
-        </el-tabs>
+              <el-button class="clButton" type="primary" @click="NewUser" size="small">关联策略</el-button>
+              <el-button class="clButton" type="primary" @click="NewUser" size="small" disabled="true">解除策略</el-button>
+            
+    <el-table :data="tableDatas" style="width: 96%; margin: 0 auto;">
+      <el-table-column type="selection" width="55" v-if="show"></el-table-column>
+      <el-table-column label="策略名" prop="PolicyName"></el-table-column>
+
+      <el-table-column label="关联类型" prop="Remark"></el-table-column>
+
+      <el-table-column label="策略类型"  prop="Type"> 
+         <template slot-scope="scope">
+            {{scope.row.Type == '1'?'自定义策略':'预设策略'}}
+         </template>
+      </el-table-column>
+
+      <el-table-column label="关联时间" prop="AddTime" ></el-table-column>
+      <el-table-column prop="oper" label="操作" width="140">
+        <template scope="scope">
+          <el-button @click="authorization=true" type="text">授权</el-button>
+          <span>|</span>
+          <el-dropdown :hide-on-click="false">
+            <span class="el-dropdown-link" style="color: #3E8EF7">
+              更多
+              <i class="el-icon-arrow-down el-icon--right"></i>
+            </span>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item>
+                <el-button type="text" style="color:#000" @click="dialogVisible= true">添加到组</el-button>
+              </el-dropdown-item>
+              <el-dropdown-item>
+                <el-button type="text" style="color:#000" @click="subscribe= true">订阅信息</el-button>
+              </el-dropdown-item>
+              <!-- <el-dropdown-item>删除</el-dropdown-item> -->
+              <el-button type="text" style="color:#000;padding-left:20px;"  @click="todeleteShow(scope.row)">删除</el-button>
+            </el-dropdown-menu>
+          </el-dropdown>
+        </template>
+      </el-table-column>
+    </el-table>
+</el-tab-pane>
+
+
+            <el-tab-pane label="组(1)" name="second">
+              <el-button class="clButton" type="primary" @click="NewUser" size="small">加入到组</el-button>
+              <el-button class="clButton" type="primary" @click="NewUser" size="small" disabled="true">移出组</el-button>
+                 <el-table :data="teamTableData" style="width: 96%; margin: 0 auto;">
+      <el-table-column type="selection" width="55" v-if="show"></el-table-column>
+      <el-table-column label="组名称"></el-table-column>
+      <el-table-column label="关联策略"></el-table-column>
+      <el-table-column label="备注"> </el-table-column>
+      <el-table-column label="操作"></el-table-column>
+      <el-table-column prop="oper" label="操作" width="140"></el-table-column>
+       </el-table>
+            </el-tab-pane>
+
+            <el-tab-pane label="安全" name="third">安全</el-tab-pane>
+            <el-tab-pane label="API密钥" name="fourth">密钥</el-tab-pane>
+            <el-tab-pane label="小程序" name="fifth" v-yjy>小程序</el-tab-pane>
+          </el-tabs>
+        </template>
+      </div>
+    </div>
+  </div>
+</template>
       </div>
     </div>
   </div>
 </template>
 <script>
 export default {
+  directives: {
+    yjy: {
+      inserted: function(el) {
+        console.log(111);
+      }
+    }
+  },
   data() {
     return {
-      content:{},
+      show:true,
+      disabled:false,
+      tableDatas: [],
+      content: {},
       checked: true,
       dialogVi: false,
       showHeader: false,
@@ -262,8 +333,8 @@ export default {
         name: "",
         region: "",
         type: "",
-        phone:"",
-        email:""
+        phone: "",
+        email: ""
       },
       options: [
         {
@@ -328,35 +399,48 @@ export default {
     };
   },
   methods: {
-    init(){
-          let userList = {
-            Action:'ListUsers',
-            Version:'2019-01-16',
-          }
-          let userListUrl= 'cam2/ListUsers'
-          this.axios.post(userListUrl,userList).then((data)=>{
-            this.tableData = data.Response.Data
-            console.log(data)
-          }).catch(error=>{
-            console.log(error)
-          })
+    init() {
+      let userList = {
+        Action: "ListUsers",
+        Version: "2019-01-16"
+      };
+      let userListUrl = "cam2/ListUsers";
+      this.axios
+        .post(userListUrl, userList)
+        .then(data => {
+          this.tableData = data.Response.Data;
+          console.log(data);
+        })
+        .catch(error => {
+          console.log(error);
+        });
     },
-    sureUpdata(){
-       console.log('11')
-       let params = {
-         Action:'UpdateUser',
-         Version:'2019-01-16',
-         Name:this.formLabelAlign.name,
-         Email:this.formLabelAlign.email,
-         PhoneNum:this.formLabelAlign.phone,
-         Remark:this.formLabelAlign.region
-       }
-       let url = 'cam2/UpdateUser'
-       this.axios.post(url,params).then(data=>{
-         console.log(data)
-         this.init()
-       })
-       this.dialogVisible=false
+    sureUpdata() {
+      console.log("11");
+      let params = {
+        policyDocument: {
+          "version":"2.0",
+          "statement":[{
+               "action":"name/sts:AssumeRole",
+               "effect":"allow",
+               "principal":{
+                 "qcs":["qcs::cam::uin/100011921910:root"]
+                }
+            }]
+        },
+        Action: "UpdateUser",
+        Version: "2019-01-16",
+        Name: this.formLabelAlign.name,
+        Email: this.formLabelAlign.email,
+        PhoneNum: this.formLabelAlign.phone,
+        Remark: this.formLabelAlign.region
+      };
+      let url = "cam2/UpdateUser";
+      this.axios.post(url, params).then(data => {
+        console.log(data);
+        this.init();
+      });
+      this.dialogVisible = false;
     },
     handleClose(done) {
       this.$confirm("确认关闭？")
@@ -371,16 +455,43 @@ export default {
     add() {
       this.$router.push({ path: "adduser" });
     },
-    backoff(){
+    backoff() {
       this.$router.push({ path: "UserList" });
     }
   },
   created() {
-    this.content = this.$route.query.content
-  },
+    var data = 
+    this.content = this.$route.query.content;
+    let params = {
+      Action:'ListPolicies',
+      Version:'2019-01-16'
+    }
+    let url = 'cam2/ListPolicies'
+    this.axios.post(url,params).then((data)=>{
+       this.tableDatas = data.Response.List
+    })
+  }
 };
 </script>
 <style lang="scss">
+.table1{
+  text-align: center;
+}
+.clButton {
+  margin-top: 15px;
+}
+.explain {
+  width: 100%;
+  font-size: 12px;
+  padding: 10px 30px 10px 20px;
+  vertical-align: middle;
+  color: #003b80;
+  border: 1px solid #97c7ff;
+  border-radius: 2px;
+  background: #e5f0ff;
+  position: relative;
+  box-sizing: border-box;
+}
 .aaa {
   padding: 0 !important;
 }
@@ -544,7 +655,7 @@ export default {
     .userlist {
       margin-top: 20px;
       padding: 20px;
-      height: 291px;
+      height: 600px;
       background-color: #ffffff;
     }
     .quick {

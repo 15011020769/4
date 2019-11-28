@@ -57,7 +57,7 @@
               <el-form ref="form" :model="form">
                 <el-form-item label>
                   <el-checkbox-group v-model="form.type">
-                    <el-checkbox disabled label="详情" name="type"></el-checkbox>
+                    <el-checkbox disabled label="详情"></el-checkbox>
                   </el-checkbox-group>
                 </el-form-item>
                 <el-form-item label>
@@ -100,19 +100,36 @@
     <el-table :data="tableData.filter(data => !search || data.Name.toLowerCase().includes(search.toLowerCase()))" style="width: 96%; margin: 0 auto;">
       <el-table-column type="selection" width="55"></el-table-column>
       <el-table-column type="expand" :label="$t('CAM.CAM.userList.userDetails')" width="50">
-        <template slot-scope="props">
-          <el-form label-position="left" inline class="demo-table-expand">
-            <el-form-item label="用户名称"  prop="name">
+        <template slot-scope="scope">
+          <el-form label-position="left" inline class="demo-table-expand" :model="form">
+            <el-form-item label="用户名称">
+               {{scope.row.Name}}
             </el-form-item>
             <el-form-item label="用户类型" >
+               {{scope.row.Remark}}
             </el-form-item>
             <el-form-item label="账号ID" >
+              {{scope.row.Uin}}
             </el-form-item>
             <el-form-item label="关联信息">
+              
             </el-form-item>
+
+            <el-form-item >
+                    <el-link @click="details(scope.row)" type="primary">
+                        <span>查看用户信息</span>
+                    </el-link>
+              
+            </el-form-item>
+          
+               
           </el-form>
         </template>
+        
       </el-table-column>
+       
+                
+         
 
       <el-table-column :label="$t('CAM.CAM.userList.userName')" prop="Name">
         <template slot-scope="scope">
@@ -122,9 +139,9 @@
         </template>
       </el-table-column>
 
-      <el-table-column :label="$t('CAM.CAM.userList.userType')" prop="PhoneNum">
+      <el-table-column :label="$t('CAM.CAM.userList.userType')" prop="Remark">
         <template slot-scope="scope">
-           {{scope.row.PhoneNum}}
+           {{scope.row.Remark}}
         </template>
       </el-table-column>
 
@@ -557,6 +574,9 @@ export default {
       return data;
     };
     return {
+      form:{
+        name:'yjy'
+      },
       search:'',
       deleteName: '',
       selectName:'',
@@ -579,7 +599,9 @@ export default {
       subscribe: false,
       dialogVisible: false,
       checked: true,
-      tableData: [{}],
+      tableData: [{
+        Name:""
+      }],
       options: [
         {
           value: "选项1",
