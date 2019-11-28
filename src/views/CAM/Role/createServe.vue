@@ -38,7 +38,7 @@
           </div>
         </div>
         <div class="tansfer" v-if="active == 2">
-          <transfer></transfer>
+          <transfer ref="tansferStep"></transfer>
         </div>
         <div class="shenyue" v-if="active == 3">
           <div class="content_flex">
@@ -49,18 +49,18 @@
             </div>
             <div class="content_right">
               <div class="jscontent" style="height:50px">
-                <el-input v-model="inputName" placeholder="请输入角色名称" size="mini" @blur="jsname"></el-input>
+                <el-input v-model="inputRoleName" placeholder="请输入角色名称" size="mini" @blur="jsname"></el-input>
                 <p v-if="have" style="font-size:12px;color:#E1504A;padding-top:10px">角色名称不能为空</p>
               </div>
               <p class="jscontent">
-                <el-input v-model="input" placeholder size="mini"></el-input>
+                <el-input v-model="inputRoleDesc" placeholder size="mini"></el-input>
               </p>
               <p class="jscontent text">服务-mps.cloud.tencent.com</p>
             </div>
           </div>
           <div class="content_table">
             <el-table
-              :data="tableData"
+              :data="policiesSelectedData"
               height="300"
               border
               style="width: 100%"
@@ -68,16 +68,21 @@
               :cell-style="{padding:'5px 10px'}"
               :header-cell-style="{height:'20px',padding:'0px 10px'}"
             >
-              <el-table-column prop="date" label="策略名称"></el-table-column>
-              <el-table-column prop="name" label="描述"></el-table-column>
-              <el-table-column prop="address" label="策略类型"></el-table-column>
+              <el-table-column prop="PolicyName" label="策略名称"></el-table-column>
+              <el-table-column prop="Description" label="描述"></el-table-column>
+              <el-table-column prop="Type" label="策略类型">
+                <template slot-scope="scope">
+                      <p v-show="scope.row.Type == 1">自定义策略</p >
+                      <p v-show="scope.row.Type == 2">预设策略</p >
+                    </template>
+              </el-table-column>
             </el-table>
           </div>
         </div>
         <div style="margin:20px 0px">
           <el-button size="small" v-if="active != 1" @click="reTurn">返回</el-button>
           <el-button type="primary" size="small" @click="next" v-if="active != 3">下一步</el-button>
-          <el-button type="primary" size="small" v-if="active == 3" @click="finall">完成</el-button>
+          <el-button type="primary" size="small" v-if="active == 3" @click="complete">完成</el-button>
         </div>
       </div>
     </div>
@@ -92,9 +97,10 @@ export default {
   data () {
     return {
       active: 1,
-      input: '',
-      inputName: '',
+      inputRoleDesc: '',
+      inputRoleName: '',
       have: false,
+      policiesSelectedData: [],
       checkedCities: [],
       cities: [
         '宙斯盾安全防护',
@@ -197,6 +203,8 @@ export default {
         if (this.active === 3) {
           return
         }
+        this.policiesSelectedData = this.$refs.tansferStep.getData()
+        console.log(this.policiesSelectedData)
         this.active = this.active + 1
       }
     },
@@ -211,18 +219,43 @@ export default {
     },
     leftCheck (val) {},
     jsname () {
-      if (!this.inputName) {
+      if (!this.inputRoleName) {
         this.have = true
       } else {
         this.have = false
       }
     },
-    finall () {
-      if (!this.inputName) {
-        this.have = true
-        return
+    //新建自定义角色创建
+    complete() {
+      if (!this.inputRoleName) {
+        this.have = true;
+        return;
       }
-      this.$message('创建角色成功')
+      let params = {
+        Action: "CreateRole",
+        Version: "2019-01-16",
+        RoleName: this.inputRoleName,
+        Description: this.inputRoleDesc,
+        PolicyDocument: this.policiesSelectedData
+      };
+      let url = "cam2/CreateRole";
+      this.axios.post(url, params).then(data => {
+        debugger;
+        this.policiesData = data.Response.RoleId;
+        this.$message("创建角色成功");
+      });
+    },
+    //获取角色详情
+    roleDetail() {
+      let params = {
+        Action: "GetRole",
+        Version: "2019-01-16"
+      };
+      let url = "cam2/GetRole";
+      this.axios.post(url, params).then(data => {
+        debugger;
+        this.policiesData = data.Response.PolicyDocument;
+      });
     }
   }
 }
