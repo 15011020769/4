@@ -211,7 +211,6 @@ export default {
         .then(data => {
           if (data.Response.Error == undefined) {
             this.TbaleData = data.Response.InstanceSet;
-          
           } else {
             this.$message.error(data.Response.Error.Message);
           }
@@ -235,8 +234,8 @@ export default {
                 }
               }
             }
-            this.loadShow = false;
             this.ProTableData = this.TbaleData;
+            this.loadShow = false;
           });
         });
     },

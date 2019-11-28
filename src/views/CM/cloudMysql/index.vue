@@ -1,5 +1,6 @@
 <template>
-  <div>
+  <div class="CM-wrap">
+    <Loading :show="loadShow" />
     <!-- 城市按钮 -->
     <div class="CVM-title">MySQL</div>
     <div class="tool">
@@ -88,10 +89,12 @@
 <script>
 import Cities from "@/components/public/CITY";
 import SEARCH from "@/components/public/SEARCH";
+import Loading from "@/components/public/Loading";
 import { ALL_CITY, MYSQL_LIST, ALL_PROJECT, OBJ_LIST } from "@/constants";
 export default {
   data() {
     return {
+      loadShow: true,
       searchOptions: [
         {
           value: "InstanceIds.0",
@@ -147,7 +150,8 @@ export default {
   },
   components: {
     Cities,
-    SEARCH
+    SEARCH,
+    Loading
   },
   methods: {
     // 获取城市列表
@@ -212,7 +216,6 @@ export default {
         .then(() => {
           // 获取项目列表
           this.axios.post(ALL_PROJECT, paramS).then(data => {
-            console.log(data)
             this.ProjectData = data.data;
             for (let i = 0; i < this.TbaleData.length; i++) {
               for (let j = 0; j < this.ProjectData.length; j++) {
@@ -220,16 +223,14 @@ export default {
                   this.TbaleData[i].ProjectId == this.ProjectData[j].projectId
                 ) {
                   this.TbaleData[i].projectName = this.ProjectData[j].projectName;
-                  console.log(0)
                 }
                 if (this.TbaleData[i].ProjectId == 0) {
                   this.TbaleData[i].projectName = "默认项目";
-                  console.log(1)
                 }
               }
             }
+            this.loadShow = false;
             this.ProTableData = this.TbaleData;
-            console.log(this.ProTableData);
           });
         });
     },
@@ -256,6 +257,10 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.CM-wrap{
+  width: 100%;
+  height: 100%;
+}
 .green {
   color: green;
 }
