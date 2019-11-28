@@ -1,7 +1,9 @@
 // // 云监控接口封装
 export const ALL_CITY = 'pub/zoneAll' // 区域列表
 export const All_MONITOR = 'monitor2/GetMonitorData' // 监控接口
+export const ALL_Basics = 'monitor2/DescribeBaseMetrics' // 监控基础指标
 export const ALL_PROJECT = 'account/DescribeProject' // 项目列表
+
 
 // // 云服务器
 export const CVM_LIST = 'cvm2/DescribeInstances' // 列表
@@ -22,7 +24,7 @@ export const REDIS_LIST = 'redis2/DescribeInstances' // 列表
 export const Physics_LIST = 'dc2/DescribeDirectConnects' // 列表
     //专线通道
 export const Private_LIST = 'dc2/DescribeDirectConnectTunnels' // 列表
-// VPN网关
+    // VPN网关
 export const VPN_LIST = 'vpc2/DescribeVpnGateways' // 列表
 
 // vpn 通道
