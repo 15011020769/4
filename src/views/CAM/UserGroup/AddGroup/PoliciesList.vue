@@ -15,7 +15,7 @@
                     style="width: 100%"
                     @row-click="selectedRow"
                     @selection-change="handleSelectionChange">
-                    <el-table-column type="selection" prop="PolicyId" width="28"> </el-table-column>
+                    <el-table-column type="selection" prop="PolicyId" width="29"> </el-table-column>
                       <el-table-column prop="PolicyName" label="策略名"  show-overflow-tooltip>
                         <template slot-scope="scope">
                           <p>{{scope.row.PolicyName}}</p>

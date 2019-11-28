@@ -38,10 +38,10 @@
               </el-checkbox-group>
             </el-form-item>
           </el-form>
-          <span slot="footer" class="dialog-footer">
+          <div slot="footer" class="dialog-footer">
             <el-button size="small" type="primary" @click="gear = false">确 定</el-button>
             <el-button size="small" @click="gear = false">取 消</el-button>
-          </span>
+          </div>
         </el-dialog>													   
       </div>	  
     </div>
@@ -99,10 +99,10 @@
                 size = "small"
                 height="300"
                 tooltip-effect="dark"
-                style="width: 100%"
+                style="width: 100%;"
                 @row-click="selectedRow"
                 @selection-change="handleSelectionChangeUser">
-                <el-table-column type="selection" prop="Uin" width="28"> </el-table-column>
+                <el-table-column type="selection" prop="Uin" width="29"> </el-table-column>
                   <el-table-column prop="Name" label="用户"  show-overflow-tooltip>
                   </el-table-column>
                   <el-table-column label="用户类型"  width="100">
@@ -112,8 +112,10 @@
                   </el-table-column>
           </el-table>
         </div>
-        <div class="abs">
-          <div>&nbsp;</div>
+        <div class="direction">
+          <div class="direction-icon">
+            <i class="iconfont">&#xe603;</i>
+          </div>
         </div>
         <div class="container-left">
           <span>已选择（{{selNum}}）</span>
@@ -124,7 +126,7 @@
                 tooltip-effect="dark"
                 size = "small"
                 height="300"
-                style="width: 100%">
+                style="width: 100%;">
                 <el-table-column prop="Name" label="用户"  show-overflow-tooltip> </el-table-column>
                 <el-table-column label="用户类型"  width="100">
                   <template slot-scope="scope">
@@ -144,8 +146,8 @@
             </el-table>
         </div>
         <div slot="footer" class="dialog-footer">
-          <el-button @click="dialogVisible = false">{{$t('CAM.CAM.userGroup.selCancelBtn')}}</el-button>
           <el-button type="primary" @click="addUser">{{$t('CAM.CAM.userGroup.selConfirmBtn')}}</el-button>
+          <el-button @click="dialogVisible = false">{{$t('CAM.CAM.userGroup.selCancelBtn')}}</el-button>
         </div>
       </el-dialog>
     </template>
@@ -429,11 +431,16 @@ export default {
         justify-content: flex-end;
       }
     }
-    .abs{
+    .direction{
       display: inline-block;
       width: 100px;
-      height: 300px;
       text-align: center;
+    }
+    .direction-icon{
+      float: left;
+      width: 100px;
+      height: 300px;
+      line-height: 300px;
     }
     .container-left{
       position: relative;

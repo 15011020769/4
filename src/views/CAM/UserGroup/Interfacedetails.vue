@@ -83,8 +83,8 @@
                   <div class="container-left">
                     <span>选择策略 （共{{totalNumPolicies}}条）</span>
                     <div>
-                      <el-input size="mini" v-model="searchPolicies" style="width:89%" @keyup.enter.native="toQueryPolicies" />
-                      <el-button size="mini" class="suo" icon="el-icon-search" show-overflow-tooltip @click="toQueryPolicies" ></el-button>
+                      <el-input size="mini" v-model="searchPolicies" style="width:100%" @keyup.enter.native="toQueryPolicies" />
+                      <i size="mini" class="el-icon-search fier" show-overflow-tooltip @click="toQueryPolicies" ></i>
                     </div>
                     <el-table
                       class="table-left"
@@ -96,7 +96,7 @@
                       style="width: 100%"
                       @row-click="selectedRowPolicies"
                       @selection-change="handleSelectionChangePolicies">
-                        <el-table-column type="selection" prop="PolicyId" width="28"> </el-table-column>
+                        <el-table-column type="selection" prop="PolicyId" width="29"> </el-table-column>
                         <el-table-column prop="PolicyName" label="策略名"  show-overflow-tooltip>
                           <template slot-scope="scope">
                             <p>{{scope.row.PolicyName}}</p>
@@ -111,8 +111,10 @@
                         </el-table-column>
                       </el-table>
                   </div>
-                  <div class="abs">
-                    <div>&nbsp;</div>
+                  <div class="direction">
+                    <div class="direction-icon">
+                      <i class="iconfont">&#xe603;</i>
+                    </div>
                   </div>
                   <div class="container-left">
                     <span>已选择（共条）</span>
@@ -149,10 +151,10 @@
                   </el-table>
                   </div>
                 </div>
-                <span slot="footer" class="dialog-footer">
-                  <el-button @click="dialogVisible = false">取 消</el-button>
+                <div slot="footer" class="dialog-footer">
                   <el-button type="primary" @click="addPoliciesToGroup">确 定</el-button>
-                </span>
+                  <el-button @click="dialogVisible = false">取 消</el-button>
+                </div>
               </el-dialog>
               <!-- 关联策略弹出框 end -->
             </el-tab-pane>
@@ -208,7 +210,7 @@
                           style="width: 100%"
                           @row-click="selectedRow"
                           @selection-change="handleSelectionChangeUser">
-                          <el-table-column type="selection" prop="Uin" width="28"> </el-table-column>
+                          <el-table-column type="selection" prop="Uin" width="29"> </el-table-column>
                             <el-table-column prop="Name" label="用户"  show-overflow-tooltip>
                             </el-table-column>
                             <el-table-column label="用户类型"  width="100">
@@ -755,19 +757,10 @@ export default {
       line-height: 16px;
       color: #666;
     }
-    .abs {
-      display: inline-block;
-      width: 100px;
-      height: 300px;
-      text-align: center;
-    }
     .container-left {
       width: 44%;
       display: inline-block;
     }
-  }
-  .el-dialog__footer {
-    text-align: center;
   }
   .block {
     text-align: right;
@@ -779,6 +772,9 @@ export default {
   .el-form-item__label {
     text-align: left;
   }
+  .el-input__inner{
+    position: relative;
+  }
   .el-input {
     width: 20%;
   }
@@ -786,5 +782,24 @@ export default {
       color: #0ABF5B;
       margin-left: 10px;
   }
+  .fier{
+      cursor:pointer;
+      font-size: 140%;
+      color: #888;
+      position: absolute;
+      left: 42%;
+      top: 26%;
+    }
+  .direction{
+      display: inline-block;
+      width: 100px;
+      text-align: center;
+    }
+    .direction-icon{
+      float: left;
+      width: 100px;
+      height: 300px;
+      line-height: 300px;
+    }
 }
 </style>

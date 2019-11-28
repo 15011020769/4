@@ -30,7 +30,7 @@
       </div>
       <el-button v-show="active<2&active>0" size="small" type="primary" @click="step">上一步</el-button>
       <el-button v-show="active<2" size="small" type="primary" style="margin-top: 12px;" @click="next">{{$t('CAM.CAM.userGroup.createNext')}}</el-button>
-      <el-button v-show="active==2" size="small" type="primary" @click="step">返回</el-button>
+      <el-button v-show="active==2" size="small" @click="step">返回</el-button>
       <el-button v-show="active==2" size="small" type="primary" @click="confirm">确认</el-button>
     </div>
   </div>
