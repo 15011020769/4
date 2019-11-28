@@ -49,7 +49,7 @@
 
         <el-table-column prop label="所属网络">
           <template slot-scope="scope">
-            <p style="color: #65a5f9;">{{scope.row.unVpcId}}</p>
+            <p style="color: #65a5f9;">{{scope.row.VpcId}}</p>
             <p>{{ scope.row.vpnGwName}}</p>
           </template>
         </el-table-column>

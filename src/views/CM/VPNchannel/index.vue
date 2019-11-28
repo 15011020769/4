@@ -52,8 +52,8 @@
 
         <el-table-column prop label="所属网络" width="150">
           <template slot-scope="scope">
-            <p style="color: #65a5f9;">{{scope.row.vpcId}}</p>
-            <p>{{scope.row.vpcName}}</p>
+            <p style="color: #65a5f9;">{{scope.row.VpcId}}</p>
+            <p>{{scope.row.VpcName}}</p>
           </template>
         </el-table-column>
         <el-table-column prop label="VPN网关" width="150">
