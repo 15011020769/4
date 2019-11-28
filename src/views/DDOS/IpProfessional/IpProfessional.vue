@@ -8,16 +8,9 @@
       </div>
       <div>
         <el-tabs v-model="activeName" @tab-click="handleClick">
-          <el-tab-pane label="DDoS攻击防护" name="first">
+          <el-tab-pane label="DDoS攻击防护" name="ddos">
             <div class="mainConList">
               <div class="mainConListAll mainConListOne">
-                <!-- <el-button-group class="bthGroup">
-                  <el-button @click="thisTime1(1)">今天</el-button>
-                  <el-button @click="thisTime1(2)">近7天</el-button>
-                  <el-button @click="thisTime1(3)">近15天</el-button>
-                  <el-button @click="thisTime1(4)">近30天</el-button>
-                  <el-button @click="thisTime1(5)">近半年</el-button>
-                </el-button-group> -->
                 <el-date-picker
                   v-model="dateChoice1"
                   type="daterange"
@@ -28,16 +21,16 @@
                   end-placeholder="结束日期"
                   :picker-options="pickerOptions">
                 </el-date-picker><br/>
-                <el-input v-model="inputId1" @change="getData" class="mainConListOneIpt" placeholder="请输入要查询的ID或名称"/>
+                <el-input v-model="inputId" @change="changeId" class="mainConListOneIpt" placeholder="请输入要查询的ID或名称"/>
               </div>
               <div class="mainConListAll mainConListTwo">
                 <el-tabs class="tabsCard" v-model="activeName1" type="card" @tab-click="handleClick1">
-                  <el-tab-pane label="攻击流量宽带" name="first">
+                  <el-tab-pane label="攻击流量宽带" name="bps">
                     <div>
                       攻击流量宽带
                     </div>
                   </el-tab-pane>
-                  <el-tab-pane label="攻击包速率" name="second">
+                  <el-tab-pane label="攻击包速率" name="pps">
                     <div>
                       攻击包速率
                     </div>
@@ -49,7 +42,7 @@
               </div>
               <div class="mainConListAll mainConListFour">
                 <h3>DDoS攻击详情</h3>
-                <el-table :data="tableDataBegin.slice((currentPage-1)*pageSize,currentPage*pageSize)">
+                <el-table :data="tableDataOfDescribeDDoSNetEvList.slice((currentPage-1)*pageSize,currentPage*pageSize)">
                   <el-table-column prop="attackTime" label="攻击时间"></el-table-column>
                   <el-table-column prop="durnTime" label="持续时间"></el-table-column>
                   <el-table-column prop="attackType" label="攻击类型"></el-table-column>
@@ -90,16 +83,9 @@
               </div>
             </div>
           </el-tab-pane>
-          <el-tab-pane label="CC攻击防护" name="second">
+          <el-tab-pane label="CC攻击防护" name="cc">
             <div class="mainConList">
               <div class="mainConListAll mainConListOne">
-                <!-- <el-button-group class="bthGroup">
-                  <el-button @click="thisTime2(1)">今天</el-button>
-                  <el-button @click="thisTime2(2)">近7天</el-button>
-                  <el-button @click="thisTime2(3)">近15天</el-button>
-                  <el-button @click="thisTime2(4)">近30天</el-button>
-                  <el-button @click="thisTime2(5)">近半年</el-button>
-                </el-button-group> -->
                 <el-date-picker
                   v-model="dateChoice2"
                   type="daterange"
@@ -110,20 +96,13 @@
                   end-placeholder="结束日期"
                   :picker-options="pickerOptions">
                 </el-date-picker><br/>
-                <el-input v-model="inputId2" @change="describeCCEvList" class="mainConListOneIpt" placeholder="请输入要查询的ID或名称"/>
+                <el-input v-model="inputIdCC" @change="changeIdCC" class="mainConListOneIpt" placeholder="请输入要查询的ID或名称"/>
               </div>
             </div>
           </el-tab-pane>
-          <el-tab-pane label="业务" name="third">
+          <el-tab-pane label="业务" name="service">
             <div class="mainConList">
               <div class="mainConListAll mainConListOne">
-                <!-- <el-button-group class="bthGroup">
-                  <el-button @click="thisTime3(1)">今天</el-button>
-                  <el-button @click="thisTime3(2)">近7天</el-button>
-                  <el-button @click="thisTime3(3)">近15天</el-button>
-                  <el-button @click="thisTime3(4)">近30天</el-button>
-                  <el-button @click="thisTime3(5)">近半年</el-button>
-                </el-button-group> -->
                 <el-date-picker
                   v-model="dateChoice3"
                   type="daterange"
@@ -134,16 +113,16 @@
                   end-placeholder="结束日期"
                   :picker-options="pickerOptions">
                 </el-date-picker><br/>
-                <el-input v-model="inputId3" @change="describeCCSelfDefinePolicy" class="mainConListOneIpt" placeholder="请输入要查询的ID或名称"/>
+                <el-input v-model="inputIdService" @change="changeIdService" class="mainConListOneIpt" placeholder="请输入要查询的ID或名称"/>
               </div>
               <div class="mainConListAll mainConListTwo">
-                <el-tabs class="tabsCard" v-model="activeName1" type="card" @tab-click="handleClick1">
-                  <el-tab-pane label="攻击流量宽带" name="first">
+                <el-tabs class="tabsCard" v-model="activeName2" type="card" @tab-click="handleClick2">
+                  <el-tab-pane label="攻击流量宽带" name="traffic">
                     <div>
                       攻击流量宽带
                     </div>
                   </el-tab-pane>
-                  <el-tab-pane label="攻击包速率" name="second">
+                  <el-tab-pane label="攻击包速率" name="pkg">
                     <div>
                       攻击包速率
                     </div>
@@ -161,23 +140,45 @@
 export default {
   data() {
     return {
-      activeName: 'first',
-      activeName1:"first",
+      activeName: 'ddos',//一级tab标识
+      activeName1: 'bps',//DDoS攻击防护-二级tab标识
+      activeName2: 'traffic',//业务-二级tab标识
       // 日期区间：默认获取当前时间和前一天时间
       endTime: this.getDateString(new Date()),
       startTime: this.getDateString(new Date(new Date().getTime() - 24*60*60*1000)),
-      endTime2: this.getDateString(new Date()),
-      startTime2: this.getDateString(new Date(new Date().getTime() - 24*60*60*1000)),
-      endTime3: this.getDateString(new Date()),
-      startTime3: this.getDateString(new Date(new Date().getTime() - 24*60*60*1000)),
+      endTimeCC: this.getDateString(new Date()),
+      startTimeCC: this.getDateString(new Date(new Date().getTime() - 24*60*60*1000)),
+      endTimeService: this.getDateString(new Date()),
+      startTimeService: this.getDateString(new Date(new Date().getTime() - 24*60*60*1000)),
       // 日期选择
       dateChoice1: {},
       dateChoice2: {},
       dateChoice3: {},
       // 根据Id查询
-      inputId1: 'bgp-00000010',
-      inputId2: 'bgp-00000010',
-      inputId3: 'bgp-00000010',
+      resourceId: '',
+      inputId: 'net-0000006y',
+      inputIdCC: 'net-0000006y',
+      inputIdService: 'net-0000006y',
+      metricName: 'bps',//指标，取值[bps(攻击流量带宽，pps(攻击包速率))]
+      metricName2: 'traffic',//指标，取值[traffic（攻击协议流量, 单位KB）, pkg（攻击协议报文数）, num（攻击事件次数）]
+      metricNames: ['traffic', 'pkg', 'num'],
+      metricNameCC: 'inqps',//指标，取值[inqps(总请求峰值，dropqps(攻击请求峰值))]
+      metricNameCCs: ['inqps', 'dropqps'],
+      metricNameService: 'traffic',//指标名，取值：traffic表示流量带宽，pkg表示包速率
+      metricNameServices: ['traffic', 'pkg'],
+      metricNameService2: 'connum',//指标名，取值：（通过腾讯云获取的值connum/inactive_conn），以下为API给出
+        //connum表示总TCP连接数（新建TCP连接数与活跃TCP连接数的和）；
+        // new_conn表示新建TCP连接数；
+        // intraffic表示入流量；
+        // outtraffic表示出流量；
+        // alltraffic表示出流量和入流量之和；
+        // inpkg表示入包速率；
+        // outpkg表示出包速率；
+      metricNameService2s: ['connum', 'inactive_conn'],
+      period: 300,//统计粒度，取值[300(5分钟)，3600(小时)，86400(天)]
+      periodCC: 300,//统计粒度，取值[300(5分钟)，3600(小时)，86400(天)]
+      periodService: 300,//统计粒度，取值[300(5分钟)，3600(小时)，86400(天)]
+      statistics: 'max',//统计方式，取值：max表示最大值；min表示最小值；avg表示均值；
       pickerOptions: {
         shortcuts: [{
           text: '今天',
@@ -221,7 +222,7 @@ export default {
           }
         }]
       },
-      tableDataBegin: [], //DDoS攻击详情
+      tableDataOfDescribeDDoSNetEvList: [], //DDoS攻击事件列表
       tableDataName: "",
       tableDataEnd: [],
       currentPage: 1,
@@ -248,102 +249,219 @@ export default {
     },
     'dateChoice2': function (value) {
       console.log(this.getDateString(value[0]))
-      this.startTime2 = this.getDateString(value[0])
-      this.endTime2 = this.getDateString(value[1])
-      this.describeCCEvList()
+      this.startTimeCC = this.getDateString(value[0])
+      this.endTimeCC = this.getDateString(value[1])
+      this.getDataCC()
     },
     'dateChoice3': function (value) {
       console.log(this.getDateString(value[0]))
-      this.startTime3 = this.getDateString(value[0])
-      this.endTime3 = this.getDateString(value[1])
-      this.describeCCSelfDefinePolicy()
+      this.startTimeService = this.getDateString(value[0])
+      this.endTimeService = this.getDateString(value[1])
+      this.getDataService()
     }
   },
   created() {
+    this.describeResourceList() //获取资源列表的接口单独调用（因为日期变更不需要调用此接口）
     this.getData()
-    this.describeCCEvList()
-    this.describeCCSelfDefinePolicy()
   },
   methods:{
     getData() {
-      // 从cookie中获取资源
-      // var cookies = document.cookie;
-      // var list = cookies.split(";");
-      // for (var i = 0; i < list.length; i++) {
-      //   var arr = list[i].split("=");
-      // }
-      // console.log(cookies);
-      // let params = {
-      //   Version: "2018-04-16",
-      //   Region: arr[1]
-      // };
-      // 获取 DDoS 攻击事件列表
+      this.describeDDoSNetTrend()
+      for(let index in this.metricNames){
+        this.metricName2 = this.metricNames[index]
+        this.describeDDoSNetCount()
+      }
+      this.describeDDoSNetEvList()
+    },
+    getDataCC(){
+      for(let index in this.metricNameCCs){
+        this.metricNameCC = this.metricNameCCs[index]
+        this.describeCCTrend()
+      }
+      this.describeCCEvList()
+    },
+    getDataService() {
+      this.describleL4Rules()
+      this.describeTransmitStatis()
+      for(let index in this.metricNameService2s){
+        this.metricNameService2 = this.metricNameService2s[index]
+        this.describeBaradData()
+      }
+    },
+    // 获取资源列表
+    describeResourceList() {
+      let params = {
+        Version: '2018-07-09',
+        Business: 'net',
+      }
+      if(this.resourceId != '' && this.resourceId != null) {
+        params['IdList.0'] = this.resourceId
+      }
+      this.$axios.post('dayu2/DescribeResourceList', params).then(res => {
+        console.log(res)
+      })
+    },
+    // 1.1.获取高防IP专业版资源的DDoS攻击指标数据
+    describeDDoSNetTrend() {
       let params = {
         Version: '2018-07-09',
         // Region: '',
         Business: 'net',
-        StartTime: this.startTime,//'2018-08-27 15:05:10',
-        EndTime: this.endTime,//'2018-08-27 16:05:10',
-        Id: this.inputId1
+        Id: this.inputId,
+        MetricName: this.metricName,//指标，取值[bps(攻击流量带宽，pps(攻击包速率))]
+        Period: this.period,//统计粒度，取值[300(5分钟)，3600(小时)，86400(天)]
+        StartTime: this.startTime,
+        EndTime: this.endTime,
       }
-      this.$axios.post('dayu2/DescribeDDoSEvList', params).then(res => {
-        console.log(params)
+      this.$axios.post('dayu2/DescribeDDoSNetTrend', params).then(res => {
         console.log(res)
       })
     },
-    // 获取 DDoS 攻击事件详情
-    describeDDoSEvInfo() {
+    // 1.2.获取高防IP专业版资源的DDoS攻击占比分析
+    describeDDoSNetCount() {
       let params = {
         Version: '2018-07-09',
         // Region: '',
         Business: 'net',
-        StartTime: this.startTime,//'2018-08-27 15:05:10',
-        EndTime: this.endTime,//'2018-08-27 16:05:10',
-        Id: this.inputId1,
-        Ip: '1.1.1.1'
+        Id: this.inputId,
+        StartTime: this.startTime,
+        EndTime: this.endTime,
+        MetricName: this.metricName2,//指标，取值[traffic（攻击协议流量, 单位KB）, pkg（攻击协议报文数）, num（攻击事件次数）]
       }
-      this.$axios.post('dayu2/DescribeDDoSEvInfo', params).then(res => {
-        console.log(params)
+      this.$axios.post('dayu2/DescribeDDoSNetCount', params).then(res => {
         console.log(res)
       })
     },
-    // 获取 CC 攻击事件列表
+    // 1.3.获取高防IP专业版资源的DDoS攻击事件列表
+    describeDDoSNetEvList() {
+      let params = {
+        Version: '2018-07-09',
+        // Region: '',
+        Business: 'net',
+        Id: this.inputId,
+        StartTime: this.startTime,
+        EndTime: this.endTime,
+        //Limit: '',  //一页条数，填0表示不分页
+        //Offset: ''  //页起始偏移，取值为(页码-1)*一页条数
+      }
+      this.$axios.post('dayu2/DescribeDDoSNetEvList', params).then(res => {
+        console.log(res)
+        this.tableDataOfDescribeDDoSNetEvList = res.Response.Data
+      })
+    },
+    // DDOS资源Id变化时，重新获取数据
+    changeId() {
+      this.resourceId = this.inputId
+      this.describeResourceList()
+      this.getData()
+    },
+    // 2.1.获取CC攻击指标数据
+    describeCCTrend() {
+      let params = {
+        Version: '2018-07-09',
+        Business: 'net',
+        Id: this.inputIdCC,
+        Ip: '175.97.142.150',//资源的IP
+        MetricName: this.metricNameCC,//指标，取值[inqps(总请求峰值，dropqps(攻击请求峰值))]
+        Period: this.periodCC,//统计粒度，取值[300(5分钟)，3600(小时)，86400(天)]
+        StartTime: this.startTimeCC,
+        EndTime: this.endTimeCC,
+      }
+      this.$axios.post('dayu2/DescribeCCTrend', params).then(res => {
+        console.log(res)
+      })
+    },
+    // 2.2.获取 CC 攻击事件列表
     describeCCEvList() {
       let params = {
         Version: '2018-07-09',
-        // Region: '',
         Business: 'net',
-        StartTime: this.startTime2,//'2018-08-27 15:05:10',
-        EndTime: this.endTime2,//'2018-08-27 16:05:10',
-        Id: this.inputId2
-        // 'IpList.0': '1.1.1.1'
+        StartTime: this.startTimeCC,
+        EndTime: this.endTimeCC,
+        Id: this.inputIdCC,
       }
       this.$axios.post('dayu2/DescribeCCEvList', params).then(res => {
-        console.log(params)
         console.log(res)
       })
     },
-    // 业务（未找到接口）
-    describeCCSelfDefinePolicy() {
+    // CC资源Id变化时，重新获取数据
+    changeIdCC() {
+      this.resourceId = this.inputIdCC
+      this.describeResourceList()
+      this.getDataCC()
+    },
+    // 3.1.获取L4转发规则
+    describleL4Rules() {
       let params = {
         Version: '2018-07-09',
-        // Region: '',
         Business: 'net',
-        StartTime: this.startTime3,//'2018-08-27 15:05:10',
-        EndTime: this.endTime3,//'2018-08-27 16:05:10',
-        Id: this.inputId3
-        // 'IpList.0': '1.1.1.1'
+        Id: this.inputIdService,
       }
-      // this.$axios.post('dayu2/DescribeCCSelfDefinePolicy', params).then(res => {
-      //   console.log(params)
-      //   console.log(res)
-      // })
+      this.$axios.post('dayu2/DescribleL4Rules', params).then(res => {
+        console.log(res)
+      })
     },
-
+    // 3.2.获取业务转发统计数据
+    describeTransmitStatis() {
+      let params = {
+        Version: '2018-07-09',
+        Business: 'net',
+        Id: this.inputIdService,
+        MetricName: this.metricNameService,//指标名，取值：traffic表示流量带宽，pkg表示包速率
+        Period: this.periodService,//统计粒度，取值[300(5分钟)，3600(小时)，86400(天)]
+        StartTime: this.startTimeService,
+        EndTime: this.endTimeService,
+      }
+      this.$axios.post('dayu2/DescribeTransmitStatis', params).then(res => {
+        console.log(res)
+      })
+    },
+    // 3.3.获取转发报表数据
+    describeBaradData() {
+      let params = {
+        Version: '2018-07-09',
+        Business: 'net',
+        Id: this.inputIdService,
+        Ip: '175.97.142.150',//资源的IP
+        MetricName: this.metricNameService2,
+        Period: this.periodService,//统计粒度，取值[300(5分钟)，3600(小时)，86400(天)]
+        StartTime: this.startTimeService,
+        EndTime: this.endTimeService,
+        Statistics: this.statistics,//统计方式，取值：max表示最大值；min表示最小值；avg表示均值；
+      }
+      this.$axios.post('dayu2/DescribeBaradData', params).then(res => {
+        console.log(res)
+      })
+    },
+    // 业务资源id变化时，重新获取数据
+    changeIdService() {
+      this.resourceId = this.inputIdService
+      this.describeResourceList()
+      this.getDataService()
+    },
+    // tab页面切换
     handleClick(tab, event) {
-      //console.log(tab, event);
+      this.describeResourceList() //获取资源列表的接口单独调用（因为日期变更不需要调用此接口）
+      if(tab.name == 'ddos') { //DDOS攻击防护
+        this.getData()
+      } else if(tab.name == 'cc') { //CC攻击防护
+        this.getDataCC()
+      } else if(tab.name == 'service') {  //业务
+        this.getDataService()
+      }
     },
-    handleClick1(){},
+    // DDOS攻击防护-二级tab切换
+    handleClick1(value){
+      console.log(value.name)
+      this.metricName = value.name
+      this.describeDDoSNetTrend()
+    },
+    // 业务-二级tab切换
+    handleClick2(value){
+      console.log(value.name)
+      this.metricNameService = value.name
+      this.describeTransmitStatis()
+    },
     handleSizeChange(val) {
       console.log(`每页 ${val} 条`);
       this.pageSize = val;
