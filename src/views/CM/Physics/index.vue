@@ -1,5 +1,6 @@
 <template>
-  <div>
+  <div class="CM-wrap">
+    <Loading :show="loadShow" />
     <!-- 城市按钮 -->
     <div class="CVM-title">专线接入-物理专线</div>
     <div class="tool">
@@ -122,6 +123,7 @@
 <script>
   import Cities from '@/components/public/CITY';
   import SEARCH from '@/components/public/SEARCH';
+  import Loading from "@/components/public/Loading";
   import {
     ALL_CITY,
     Physics_LIST,
@@ -130,6 +132,7 @@
   export default {
     data() {
       return {
+        loadShow:true,
         searchOptions: [{
           value: 'DirectConnectId',
           label: '专线ID'
@@ -169,7 +172,8 @@
     },
     components: {
       Cities,
-      SEARCH
+      SEARCH,
+      Loading
     },
     methods: {
       // 获取城市列表
@@ -233,28 +237,8 @@
               this.$message.error(data.Response.Error.Message);
             }
               this.ProTableData = this.TbaleData;
-              console.log(this.ProTableData)
+              this.loadShow = false;
           })
-          // .then(() => {
-          //   // 获取项目列表
-          //   this.axios.post(ALL_PROJECT, paramS).then((data) => {
-          //     this.ProjectData = data.data;
-          //     for (let i = 0; i < this.TbaleData.length; i++) {
-
-          //       for (let j = 0; j < this.ProjectData.length; j++) {
-          //         if (
-          //           this.TbaleData[i].Placement.ProjectId == this.ProjectData[j].projectId
-          //         ) {
-          //           this.TbaleData[i].projectName = this.ProjectData[j].projectName;
-          //         }
-          //         if (this.TbaleData[i].Placement.ProjectId == 0) {
-          //           this.TbaleData[i].projectName = '默认项目';
-          //         }
-          //       }
-          //     }
-          //     this.ProTableData = this.TbaleData;
-          //   });
-          // });
       },
       handleSizeChange(val) {
         this.pagesize = val
@@ -279,6 +263,10 @@
 </script>
 
 <style scoped lang="scss">
+.CM-wrap{
+  width: 100%;
+  height: 100%;
+}
   .green {
     color: green
   }

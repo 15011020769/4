@@ -1,5 +1,6 @@
 <template>
-  <div>
+  <div class="CM-wrap">
+    <Loading :show="loadShow" />
     <!-- 城市按钮 -->
     <div class="CVM-title">专线接入-专线通道</div>
     <div class="tool">
@@ -116,6 +117,7 @@
 <script>
   import Cities from '@/components/public/CITY';
   import SEARCH from '@/components/public/SEARCH';
+  import Loading from "@/components/public/Loading";
   import {
     ALL_CITY,
     Private_LIST,
@@ -124,6 +126,7 @@
   export default {
     data() {
       return {
+        loadShow:true,
         searchOptions: [{
           value: 'DirectConnectIds',
           label: '通道ID'
@@ -163,7 +166,8 @@
     },
     components: {
       Cities,
-      SEARCH
+      SEARCH,
+      Loading
     },
     methods: {
       // 获取城市列表
@@ -226,6 +230,7 @@
               this.$message.error(data.Response.Error.Message);
             }
               this.ProTableData = this.TbaleData;
+              this.loadShow = false;
               
           })
           // .then(() => {
@@ -272,6 +277,10 @@
 </script>
 
 <style scoped lang="scss">
+.CM-wrap{
+  width: 100%;
+  height: 100%;
+}
   .green {
     color: green
   }

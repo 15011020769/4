@@ -1,5 +1,6 @@
 <template>
-  <div>
+  <div class="CM-wrap">
+    <Loading :show="loadShow" />
     <!-- 城市按钮 -->
     <div class="CVM-title">Redis</div>
     <div class="tool">
@@ -84,10 +85,12 @@
 <script>
 import Cities from "@/components/public/CITY";
 import SEARCH from "@/components/public/SEARCH";
+import Loading from "@/components/public/Loading";
 import { ALL_CITY, REDIS_LIST, ALL_PROJECT } from "@/constants";
 export default {
   data() {
     return {
+      loadShow: true,
       searchOptions: [
         {
           value: "InstanceId",
@@ -133,7 +136,8 @@ export default {
   },
   components: {
     Cities,
-    SEARCH
+    SEARCH,
+    Loading
   },
   methods: {
     // 获取城市列表
@@ -213,6 +217,7 @@ export default {
               }
             }
             this.ProTableData = this.TbaleData;
+            this.loadShow = false;
           });
         });
     },
@@ -238,6 +243,10 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.CM-wrap{
+  width: 100%;
+  height: 100%;
+}
 .green {
   color: green;
 }

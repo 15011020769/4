@@ -1,5 +1,6 @@
 <template>
-  <div>
+  <div class="CM-wrap">
+    <Loading :show="loadShow" />
     <!-- 城市按钮 -->
     <div class="CVM-title">对象存储</div>
     <div class="tool">
@@ -67,10 +68,12 @@
 <script>
 import Cities from "@/components/public/CITY";
 import SEARCH from "@/components/public/SEARCH";
+import Loading from "@/components/public/Loading";
 import { ALL_CITY, OBJ_LIST, CVM_PROJECT } from "@/constants";
 export default {
   data() {
     return {
+      loadShow:true,
       searchOptions: [
         {
           value: "bucket",
@@ -113,7 +116,8 @@ export default {
   },
   components: {
     Cities,
-    SEARCH
+    SEARCH,
+    Loading
   },
   methods: {
     // 获取城市列表
@@ -188,6 +192,7 @@ export default {
         //   this.$message.error(data.Response.Error.Message);
         // }
         this.ProTableData = this.TbaleData;
+        this.loadShow = false;
       });
       // .then(() => {
       //   // 获取项目列表
@@ -233,6 +238,10 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.CM-wrap{
+  width: 100%;
+  height: 100%;
+}
 .green {
   color: green;
 }
