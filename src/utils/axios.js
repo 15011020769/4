@@ -8,7 +8,8 @@ const conf = {
   timeout: 60 * 1000,
   loading: true,
   headers: {
-    uuid: VueCookie.get('uuid'),
+    // uuid: VueCookie.get('uuid'),
+    uuid: '123456789',
     Pragma: 'no-cache',
     'Cache-Control': 'no-cache'
   }
