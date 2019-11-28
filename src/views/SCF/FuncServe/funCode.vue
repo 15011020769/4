@@ -102,8 +102,8 @@
             <p style="padding-right:20px">函数代码</p>
             <div >
               <div style="display:flex">
-                 <el-input v-model="input" placeholder="请输入内容" style="margin-right:20px" size="small" disabled @input="inpChange"></el-input>
-                 <el-input style="padding:0;width:90px" type="file" class="btnUp" size="small" ></el-input>
+                 <el-input v-model="disinput" placeholder="还未选择文件" style="margin-right:20px" size="small" disabled ></el-input>
+                 <el-input style="padding:0;width:90px" type="file" class="btnUp" size="small" @input='inpChange'></el-input>
               </div>
               <p style="margin-top:15px">请上传zip格式的代码包，最大支持50M（如果zip大于10M，仅显示入口文件）</p>
             </div>
@@ -168,6 +168,7 @@ export default {
         zxMethods: "index.main_handler",
         runMoment: "Python2.7"
       },
+      disinput:"",
       downLoadZip: "",
       codeShow: true,
       modelList: "Hello World事件模板",
@@ -190,7 +191,8 @@ export default {
       actionSubminFile3: {
         cosBucket: "",
         cosObjFile: ""
-      }
+      },
+      input:"",
     };
   },
   mounted() {
@@ -247,8 +249,8 @@ export default {
           console.log(error);
         });
     },
-    inpChange(val,evn){
-      console.log(val)
+    inpChange(val){
+      this.disinput = val
     },
     testCode() {
       // ClientContext: '{↵  "key1": "test value 1",↵  "key2": "test value 2"↵}'

@@ -18,8 +18,9 @@
           start-placeholder="开始日期"
           end-placeholder="结束日期"
           class="timeNode"
+          @change="sureDate"
         ></el-date-picker>
-        <el-button type="primary" @click="reset">重置</el-button>
+        <el-button type="primary" @click="reset" size="small">重置</el-button>
         <div class="topFloatRight">
           <el-input v-model="iptSearch" placeholder="请输入requestID" class="rigthSearch"/>
           <el-button class="el-icon-search"></el-button>
@@ -28,7 +29,13 @@
       <div class="bottomContent newClear">
         <div class="leftConList">
           <ul>
-            <li v-for="(item,index) in logList" :key="item.id" @click="clickLog(index)" :class="{'logActive': logIndex == index}">
+            <p v-if="logList.length == 0" class="text-weak">暂无日志信息</p>
+            <li
+              v-for="(item,index) in logList"
+              :key="item.id"
+              @click="clickLog(index)"
+              :class="{'logActive': logIndex == index}"
+            >
               <span>{{item.time}}</span>
               <span>{{item.status}}</span>
             </li>
@@ -53,8 +60,30 @@
             </div>
             <div class="logContent">
               <h1>日志：</h1>
-              <div class="logCodeCont" v-html="logData.Data[logIndex].Log">
-              </div>
+              <div class="logCodeCont" v-html="logData.Data[logIndex].Log"></div>
+            </div>
+          </div>
+        </div>
+        <div class="RightShow" v-if="logData.Data.length == 0">
+          <p>请求ID：</p>
+          <div class="timeCenterShow">
+            <span>时间：</span>
+            <span class="marginColor"></span>
+            <span>运行时间：</span>
+            <span class="marginColor"></span>
+            <span>计费时间:</span>
+            <span class="marginColor">ms</span>
+            <span>占用内存</span>
+            <span class="marginColor">mb</span>
+          </div>
+          <div class="logAndData">
+            <div class="dataContent">
+              <h1>返回数据：</h1>
+              <p></p>
+            </div>
+            <div class="logContent">
+              <h1>日志：</h1>
+              <div class="logCodeCont"></div>
             </div>
           </div>
         </div>
@@ -69,17 +98,17 @@ export default {
       logStatus: "",
       value1: "",
       iptSearch: "",
-      logIndex:0,
-      logData:{},
-      logList: [],
+      logIndex: 0,
+      logData: {
+        Data: []
+      },
+      logList: []
     };
   },
   created() {
-   this.searchLogs();
+    this.searchLogs();
   },
-  mounted() {
-    
-  },
+  mounted() {},
   methods: {
     thisTime(thisTime) {
       var ipt1 = document.querySelector(".timeNode input:nth-child(2)");
@@ -101,6 +130,7 @@ export default {
     reset() {
       this.logStatus = "全部状态";
       this.value1 = null;
+      this.searchLogs();
     },
     searchLogs() {
       let _this = this;
@@ -117,22 +147,69 @@ export default {
       this.axios
         .post(url, params)
         .then(res => {
-          _this.logData = res.Response
-          console.log(_this.logData)
-          res.Response.Data.forEach((element,index) => {
-            let obj = {}
-            obj.time = element.StartTime
-            obj.status = "调用成功"
-            _this.logList.push(obj)
-            element.Log = element.Log.replace(/\n/g,"<br/>")
+          _this.logData = res.Response;
+          console.log(_this.logData);
+          res.Response.Data.forEach((element, index) => {
+            let obj = {};
+            obj.time = element.StartTime;
+            obj.status = "调用成功";
+            _this.logList.push(obj);
+            element.Log = element.Log.replace(/\n/g, "<br/>");
           });
         })
         .catch(error => {
           console.log(error);
         });
     },
-    clickLog(index){
-      this.logIndex = index
+    clickLog(index) {
+      this.logIndex = index;
+    },
+    formatDateTime(inputTime) {
+      var date = new Date(inputTime);
+      var y = date.getFullYear();
+      var m = date.getMonth() + 1;
+      m = m < 10 ? "0" + m : m;
+      var d = date.getDate();
+      d = d < 10 ? "0" + d : d;
+      var h = date.getHours();
+      h = h < 10 ? "0" + h : h;
+      var minute = date.getMinutes();
+      var second = date.getSeconds();
+      minute = minute < 10 ? "0" + minute : minute;
+      second = second < 10 ? "0" + second : second;
+      return y + "-" + m + "-" + d+ ' '  + '00' + ":" + '00' + ":" + '00';
+    },
+    // 选择日期
+    sureDate(val, item) {
+      let _this = this;
+      let params = {
+        Action: "GetFunctionLogs",
+        Version: "2018-04-16",
+        Region: _this.$cookie.get("regionv2"),
+        StartTime: this.formatDateTime(val[0].getTime()),
+        EndTime: this.formatDateTime(val[1].getTime())
+      };
+      let functionName = this.$route.query.functionName;
+      if (functionName != "" && functionName != null) {
+        params["FunctionName"] = functionName;
+      }
+      let url = "scf2/GetFunctionLogs";
+      this.axios
+        .post(url, params)
+        .then(res => {
+          _this.logData = res.Response;
+          console.log(_this.logData);
+          res.Response.Data.forEach((element, index) => {
+            let obj = {};
+            obj.time = element.StartTime;
+            obj.status = "调用成功";
+            _this.logList.push(obj);
+            element.Log = element.Log.replace(/\n/g, "<br/>");
+          });
+        })
+        .catch(error => {
+          console.log(error);
+        });
     }
   }
 };
@@ -158,6 +235,11 @@ export default {
       }
     }
   }
+}
+.text-weak {
+  color: #bbb !important;
+  line-height: 49px;
+  padding: 0 20px;
 }
 .bottomContent {
   min-height: 500px;
@@ -226,8 +308,8 @@ export default {
       }
     }
   }
-  .logActive{
-    background-color: #e5e5e5
+  .logActive {
+    background-color: #e5e5e5;
   }
 }
 </style>

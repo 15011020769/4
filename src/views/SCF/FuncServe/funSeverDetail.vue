@@ -8,7 +8,7 @@
         </span>
         <span class="spanRight">
           <span class="selectDrow" @click="selectDrow">
-            <el-button>{{}}</el-button>
+            <el-button style="font-size:12px;color:#000">{{functionData.FunctionVersion}}</el-button>
             <i class="el-icon-caret-bottom"></i>
           </span>
           <div class="selectDrowBox" v-if="trueOrFalse">
@@ -223,6 +223,7 @@
                               v-for="item in functionData.VpcConfig"
                               :label="item.VpcId"
                               :value="item.VpcId"
+                              :key="item"
                             ></el-option>
                           </el-select>
                           <el-select
@@ -233,6 +234,7 @@
                               v-for="item in funReast.VpcConfig"
                               :label="item.SubnetId"
                               :value="item.SubnetId"
+                              :key="item"
                             ></el-option>
                           </el-select>
                           <p class="tipContent">
@@ -524,9 +526,9 @@ export default {
       options: [],
       options1: [],
       functionData: {
-        Environment:{
-          Variables:"",
-        },
+        Environment: {
+          Variables: ""
+        }
       },
       environmentFlag: true,
       vpcConfigFlag: true,
@@ -594,6 +596,7 @@ export default {
     this.modelNameTags[0].disableDelete = true;
     this.init();
     this.searchVersion();
+    this.GetMonitorData()
   },
   methods: {
     // 获取编辑详情
@@ -624,6 +627,7 @@ export default {
             _this.environmentFlag = false;
             _this.vpcConfigFlag = false;
           }
+          console.log(this.functionData)
         })
         .catch(error => {
           console.log(error);
@@ -674,6 +678,9 @@ export default {
         }
       });
     },
+    inpChange(val){
+      console.log(val)
+    },
     handleClick(tab, event) {
       console.log(tab.index);
     },
@@ -720,6 +727,25 @@ export default {
     },
     //发布新版本
     surePublish() {
+      let params = {
+        Action: "PublishVersion",
+        Version: "2018-04-16",
+        Region: this.$cookie.get("regionv2"),
+        Description:this.publishVersion.descript
+      };
+      let functionName = this.$route.query.functionName;
+      if (functionName != "" && functionName != null) {
+        params["FunctionName"] = functionName;
+      }
+      let url = "scf2/PublishVersion";
+      this.axios
+        .post(url, params)
+        .then(res => {
+          
+        })
+        .catch(error => {
+          console.log(error);
+        });
       this.publishNewVewsion = false;
     },
     //添加标签
@@ -838,11 +864,31 @@ export default {
         Version: "2018-07-24",
         Region: this.$cookie.get("regionv2"),
         Action: "DescribeBaseMetrics",
-        Namespace:"QCE/CVM"
+        Namespace: "QCE/CVM"
       };
       this.$axios.post("scf2/DescribeBaseMetrics", params).then(res => {
-        console.log(res,"table");
+        console.log(res, "table");
       });
+    },
+    // 监控数据
+    GetMonitorData() {
+      let params = {
+        Version: "2018-07-24",
+        Region: this.$cookie.get("regionv2"),
+        Namespace: "QCE/VBC",
+        MetricName: "RegionInPkg",
+        "Instances.0.Dimensions.0.Name": "CcnId",
+        "Instances.0.Dimensions.0.Value": this.$route.query.functionName
+      };
+      let url = "monitor2/GetMonitorData";
+      this.axios
+        .post(url, params)
+        .then(res => {
+          console.log(res.Response);
+        })
+        .catch(error => {
+          console.log(error);
+        });
     }
   }
 };
@@ -875,6 +921,11 @@ export default {
         button {
           height: 36px;
           border: none;
+          span{
+            font-size:12px;
+            color:#000;
+            font-weight:500
+          }
         }
       }
       .action {
