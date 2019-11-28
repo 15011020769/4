@@ -40,11 +40,12 @@
             </template>
           </el-table-column>
           <el-table-column prop="Type" :label="$t('CAM.CAM.Role.strategyType')" width="80">
-            <template slot-scope="scope">
+             <template slot-scope="scope">
               <p v-show="scope.row.Type == 1">自定义策略</p>
               <p v-show="scope.row.Type == 2">预设策略</p>
-            </template>
-            <!-- <template slot="header" slot-scope="scope">
+              <p v-show="scope.row.Type == 3">全部</p>
+            </template> 
+             <!-- <template slot="header" slot-scope="scope">
               <el-dropdown trigger="click" @command="handleCommand" size="mini">
                 <span style="color:#909399">
                   {{ tableTitle }}
@@ -58,7 +59,7 @@
                   >{{item.label}}</el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
-            </template>-->
+            </template> -->
           </el-table-column>
         </el-table>
       </div>
@@ -126,10 +127,9 @@ export default {
                 * 如果元素滚动到底, 下面等式返回true, 没有则返回false:
                 * ele.scrollHeight - ele.scrollTop === ele.clientHeight;
                 */
-                  let sign = 180; // 定义默认的向上滚于乡下滚的边界
+                  let sign = 80; // 定义默认的向上滚于乡下滚的边界
                   const CONDITION = ((this.scrollHeight - this.scrollTop === this.clientHeight) && 
                                   this.scrollTop > sign)// 注意: && this.scrollTop
-                  debugger;
                   
                   if(this.scrollTop > sign) {
                       sign = this.scrollTop;
@@ -140,7 +140,7 @@ export default {
                       console.log('向上')
                   }
                   
-                  if(CONDITION) {
+                  if(!CONDITION) {
                       binding.value();
                   }
             });
@@ -176,7 +176,6 @@ export default {
       this.axios
         .post(url, params)
         .then(res => {
-          debugger;
           this.policiesData = res.Response.List;
         })
         .catch(error => {
@@ -185,8 +184,21 @@ export default {
     },
      // 表格到底后执行  这里写你要做的事
     tableloadmore() {
-      console.log("333");
-      this.init()
+        let params = {
+        Action: "ListPolicies",
+        Version: "2019-01-16"
+      };
+      if (this.search != null && this.search != "") {
+        params["Keyword"] = this.search;
+      }
+      let url = "cam2/ListPolicies";
+      this.axios
+        .post(url, params)
+        .then(res => {
+          this.policiesData = res.Response.List;
+        })
+        .catch(error => {
+        });
     },
     //策略搜索
     CeInit() {

@@ -171,7 +171,7 @@ export default {
         Version: "2019-01-16",
         RoleName: this.inputRoleName,
         Description: this.inputRoleDesc,
-        PolicyDocument: this.policiesSelectedData
+        policyDocument: {"version":"2.0","statement":[{"action":"name/sts:AssumeRole","effect":"allow","principal":{"qcs":["qcs::cam::uin/100011921910:root"]}}]}
       };
       let url = "cam2/CreateRole";
       this.axios.post(url, params).then(data => {
