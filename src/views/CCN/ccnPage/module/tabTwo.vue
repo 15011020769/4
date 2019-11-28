@@ -181,7 +181,7 @@ export default {
         Region: this.$cookie.get("regionv2"),
         Namespace: "QCE/VBC",
         MetricName: MetricName,
-        "Instances.0.Dimensions.0.Name": "CcnId",
+        "Instances.0.Dimensions.0.Name": "InstanceId",
         "Instances.0.Dimensions.0.Value": this.ID,
         Period: this.period,
         StartTime: this.Start_End.StartTIme,
