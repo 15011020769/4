@@ -45,8 +45,8 @@
 
         <el-table-column prop label="私有网络">
           <template slot-scope="scope">
-            <a href>{{scope.row.PublicIpAddressSet[0].PublicIpAddress}}</a>
-            <p>{{scope.row.PublicIpAddressSet[0].AddressId}}</p>
+            <a href>{{scope.row.VpcId}}</a>
+            <p></p>
           </template>
         </el-table-column>
         <el-table-column label="健康状态"></el-table-column>
