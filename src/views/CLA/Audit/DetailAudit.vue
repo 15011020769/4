@@ -93,8 +93,8 @@
             </el-form-item>
             <el-form-item label="cos存储桶" v-if="YesShow">
               <div>
-                <select name="" id="" class="select-1">
-                  <option value="">中国台北</option>
+                <select name id class="select-1">
+                  <option value>中国台北</option>
                 </select>
                 <input
                   type="text"
@@ -122,15 +122,14 @@
               </el-select>
             </el-form-item>
             <el-form-item>
-              <span>添加 <a @click="setClick()">高级设置</a></span>
+              <span>
+                添加
+                <a @click="setClick()">高级设置</a>
+              </span>
             </el-form-item>
             <div class="setShow" v-if="setShow">
               <el-form-item label="日志文件前缀" prop="log_file">
-                <el-input
-                  v-model="ruleForm.log_file"
-                  placeholder="请输入日志文件前缀"
-                  style="width:200px"
-                ></el-input>
+                <el-input v-model="ruleForm.log_file" placeholder="请输入日志文件前缀" style="width:200px"></el-input>
                 <p class="hint">{{ text2 }}</p>
               </el-form-item>
               <el-form-item label="发送CMQ通知">
@@ -175,7 +174,7 @@
 </template>
 
 <script>
-import { isYan, isYan1 } from '@/utils/validate'
+import { isYan, isYan1 } from "@/utils/validate";
 import {
   GZJ_DETAILIST,
   GZJ_DELETE,
@@ -183,22 +182,22 @@ import {
   GZJ_STRATLOGGING,
   GZJ_UPDATEAUDIT,
   LIST_COSBUCKETS
-} from '@/constants'
+} from "@/constants";
 export default {
-  data () {
+  data() {
     let LogFile = (rule, value, callback) => {
-      if (value === '') {
-        this.text2 = ''
-        callback(new Error('请输入cos存储库'))
+      if (value === "") {
+        this.text2 = "";
+        callback(new Error("请输入cos存储库"));
       } else if (!isYan1(value)) {
-        this.text2 = ''
-        callback(new Error('仅支持小写字母、数字的组合，不能超过40字符。'))
+        this.text2 = "";
+        callback(new Error("仅支持小写字母、数字的组合，不能超过40字符。"));
       } else {
-        callback()
+        callback();
       }
-    }
+    };
     return {
-      AuditName: '',
+      AuditName: "",
       YesShow: true,
       NoShow: false,
       ShowBox: false,
@@ -209,156 +208,156 @@ export default {
       creatCMQ: false, // 创建cmq的显示与隐藏
       off: true,
       select: false,
-      color: '',
-      borderColor: '',
-      value: '', // 下拉cos存储桶选择内容
-      DetailData: '',
-      ListCos: '', // 否--cos存储桶
-      ListCosName: '',
-      text: '仅支持大小写字母、数字、以及-_.的组合，不能超过40字符。',
-      text1: '仅支持小写字母、数字的组合，不能超过40字符。',
-      text2: '仅支持小写字母、数字的组合，不能超过40字符。',
+      color: "",
+      borderColor: "",
+      value: "", // 下拉cos存储桶选择内容
+      DetailData: "",
+      ListCos: "", // 否--cos存储桶
+      ListCosName: "",
+      text: "仅支持大小写字母、数字、以及-_.的组合，不能超过40字符。",
+      text1: "仅支持小写字母、数字的组合，不能超过40字符。",
+      text2: "仅支持小写字母、数字的组合，不能超过40字符。",
       ruleForm: {
         radio: 1,
         radio2: 0,
-        COS: '',
-        log_file: '',
-        CMQ: ''
+        COS: "",
+        log_file: "",
+        CMQ: ""
       },
       rules: {
         log_file: [
           {
             validator: LogFile,
-            trigger: 'blur'
+            trigger: "blur"
           }
         ]
       }
-    }
+    };
   },
-  created () {
+  created() {
     let params = {
-      Version: '2019-03-19',
-      Region: 'ap-guangzhou',
+      Version: "2019-03-19",
+      Region: "ap-guangzhou",
       AuditName: this.$route.query.AuditName
-    }
+    };
     this.axios.post(GZJ_DETAILIST, params).then(data => {
-      console.log(data.Response)
-      this.DetailData = data.Response
+      console.log(data.Response);
+      this.DetailData = data.Response;
       // this.ResList = data.Response
       // for (var i = 0; i < this.ResList.length; i++) {
       //   this.ListCosName = this.ResList[i].Name
       // }
-    })
+    });
     this.axios.post(LIST_COSBUCKETS).then(({ data }) => {
-      this.ListCos = data.cosBucketsList
+      this.ListCos = data.cosBucketsList;
       for (var i = 0; i < this.ListCos.length; i++) {
-        this.ListCosName = this.ListCos[i].Name
+        this.ListCosName = this.ListCos[i].Name;
       }
       if (this.ListCos.length <= 0) {
-        this.select = true
+        this.select = true;
       }
-    })
+    });
   },
   methods: {
     // cos存储桶失焦
-    cosBlur () {
-      if (this.ruleForm.COS == '') {
-        this.borderColor = '#F56C6C'
-        this.text1 = '请输入cos存储库'
-        this.color = '#F56C6C'
+    cosBlur() {
+      if (this.ruleForm.COS == "") {
+        this.borderColor = "#F56C6C";
+        this.text1 = "请输入cos存储库";
+        this.color = "#F56C6C";
       } else if (!isYan1(this.ruleForm.COS)) {
-        this.text1 = '仅支持小写字母、数字的组合，不能超过40字符。'
-        this.color = '#F56C6C'
-        this.borderColor = '#F56C6C'
+        this.text1 = "仅支持小写字母、数字的组合，不能超过40字符。";
+        this.color = "#F56C6C";
+        this.borderColor = "#F56C6C";
       } else {
         for (var i = 0; i < this.ListCos.length; i++) {
           if (this.ruleForm.COS == this.ListCos[i].name) {
-            this.text1 = '您已创建和拥有此存储桶'
-            this.color = '#F56C6C'
-            this.borderColor = '#F56C6C'
-            return
+            this.text1 = "您已创建和拥有此存储桶";
+            this.color = "#F56C6C";
+            this.borderColor = "#F56C6C";
+            return;
           } else {
-            this.text1 = '仅支持小写字母、数字的组合，不能超过40字符。'
-            this.color = '#888'
-            this.borderColor = '#67C23A'
+            this.text1 = "仅支持小写字母、数字的组合，不能超过40字符。";
+            this.color = "#888";
+            this.borderColor = "#67C23A";
           }
         }
       }
     },
-    cosFocus () {
-      if (this.text1 == '请输入cos存储库') {
-        this.borderColor = '#F56C6C'
+    cosFocus() {
+      if (this.text1 == "请输入cos存储库") {
+        this.borderColor = "#F56C6C";
       } else if (
-        this.color == '#F56C6C' &&
-        this.text1 == '仅支持小写字母、数字的组合，不能超过40字符。'
+        this.color == "#F56C6C" &&
+        this.text1 == "仅支持小写字母、数字的组合，不能超过40字符。"
       ) {
-        this.borderColor = '#F56C6C'
-      } else if (this.text1 == '您已创建和拥有此存储桶') {
-        this.borderColor = '#F56C6C'
+        this.borderColor = "#F56C6C";
+      } else if (this.text1 == "您已创建和拥有此存储桶") {
+        this.borderColor = "#F56C6C";
       } else {
-        this.borderColor = '#2277da'
+        this.borderColor = "#2277da";
       }
     },
-    submitForm () {
-      let CosBucketName, IsCreateNewBucket
+    submitForm() {
+      let CosBucketName, IsCreateNewBucket;
       if (this.ruleForm.radio == 0) {
-        CosBucketName = this.value
-        IsCreateNewBucket = 0
+        CosBucketName = this.value;
+        IsCreateNewBucket = 0;
       } else {
-        CosBucketName = this.ruleForm.COS
-        IsCreateNewBucket = 1
+        CosBucketName = this.ruleForm.COS;
+        IsCreateNewBucket = 1;
       }
       let params = {
         // Name: this.DetailData.Name, // 跟踪集名称
         // CosBucketName: _CosBucketName, // cos存储桶
         // IsEnableCmqNotify: _IsEnableCmqNotify,
         // CosKeyPrefix: this.ruleForm.log_file // 日志文件前缀
-        Version: '2019-03-19',
-        Region: 'ap-guangzhou',
+        Version: "2019-03-19",
+        Region: "ap-guangzhou",
         AuditName: this.$route.query.AuditName,
         LogFilePrefix: this.ruleForm.log_file
-      }
+      };
       this.axios.post(GZJ_UPDATEAUDIT, params).then(data => {
-        console.log(data)
-        if (data.codeDesc == 'Success') {
-          this.$router.go(0)
+        console.log(data);
+        if (data.codeDesc == "Success") {
+          this.$router.go(0);
           this.$message({
-            message: '更新成功',
-            type: 'success'
-          })
+            message: "更新成功",
+            type: "success"
+          });
         }
-      })
+      });
     },
-    EmptyData () {
-      this.ruleForm.COS = ''
-      this.text1 = '仅支持小写字母、数字的组合，不能超过40字符。'
-      this.color = '#888'
-      this.borderColor = '#c0c4cc'
+    EmptyData() {
+      this.ruleForm.COS = "";
+      this.text1 = "仅支持小写字母、数字的组合，不能超过40字符。";
+      this.color = "#888";
+      this.borderColor = "#c0c4cc";
     },
     // 取消
-    resetForm () {
-      this.ShowBox = !this.ShowBox
-      this.TextShow = true
-      this.EmptyData()
+    resetForm() {
+      this.ShowBox = !this.ShowBox;
+      this.TextShow = true;
+      this.EmptyData();
     },
-    editClose () {
-      this.editShow = true
+    editClose() {
+      this.editShow = true;
     },
     // 编辑
-    edit () {
-      this.editShow = false
+    edit() {
+      this.editShow = false;
     },
-    editSave () {
+    editSave() {
       // let ReadWriteAttribute = this.editradio
-      console.log(this.editradio)
+      console.log(this.editradio);
       let params = {
-        Version: '2019-03-19',
-        Region: 'ap-guangzhou',
+        Version: "2019-03-19",
+        Region: "ap-guangzhou",
         AuditName: this.$route.query.AuditName,
         ReadWriteAttribute: this.editradio
-      }
+      };
       this.axios.post(GZJ_UPDATEAUDIT, params).then(data => {
-        console.log(data)
+        console.log(data);
         // if (data.codeDesc == 'Success') {
         //   this.$router.go(0)
         //   this.$message({
@@ -366,107 +365,106 @@ export default {
         //     type: 'success'
         //   })
         // }
-      })
+      });
     },
-    redact () {
-      this.ShowBox = true
-      this.TextShow = false
-      this.EmptyData()
-      this.ruleForm.log_file = ''
+    redact() {
+      this.ShowBox = true;
+      this.TextShow = false;
+      this.EmptyData();
+      this.ruleForm.log_file = "";
     },
-    Yes () {
-      this.YesShow = true
-      this.NoShow = false
-      this.EmptyData()
+    Yes() {
+      this.YesShow = true;
+      this.NoShow = false;
+      this.EmptyData();
     },
-    NO () {
-      this.YesShow = false
-      this.NoShow = true
-      this.EmptyData()
+    NO() {
+      this.YesShow = false;
+      this.NoShow = true;
+      this.EmptyData();
     },
-    setClick () {
-      this.setShow = !this.setShow
-      this.creatCMQ = false
+    setClick() {
+      this.setShow = !this.setShow;
+      this.creatCMQ = false;
     },
-    sendYes () {
-      this.creatCMQ = true
+    sendYes() {
+      this.creatCMQ = true;
     },
-    sendNo () {
-      this.creatCMQ = false
+    sendNo() {
+      this.creatCMQ = false;
     },
     // 返回
-    Back () {
+    Back() {
       this.$router.push({
-        path: '/Audit'
-      })
+        path: "/Audit"
+      });
     },
     // 开启关闭--日志记录
-    open () {
+    open() {
       let _data = {
         Name: this.DetailData.Name
-      }
+      };
       if (this.off == false) {
         this.$confirm(
-          '停止后，您无法再将日志文件收集到您的 COS 存储桶和日志组中。之前的日志文件仍可访问',
-          '确定停止日志记录吗？',
+          "停止后，您无法再将日志文件收集到您的 COS 存储桶和日志组中。之前的日志文件仍可访问",
+          "确定停止日志记录吗？",
           {
-            confirmButtonText: '确定停止',
-            cancelButtonText: '取消'
+            confirmButtonText: "确定停止",
+            cancelButtonText: "取消"
           }
         )
           .then(() => {
             this.axios.post(GZJ_STOPLOGGING, _data).then(({ data }) => {
               this.$router.push({
-                path: '/cloudaudit-tranking'
-              })
+                path: "/cloudaudit-tranking"
+              });
               this.$message({
-                type: 'success',
-                message: '关闭成功!'
-              })
-            })
+                type: "success",
+                message: "关闭成功!"
+              });
+            });
           })
-          .catch(() => {})
+          .catch(() => {});
       } else {
         this.axios
           .post(GZJ_STRATLOGGING, _data)
           .then(data => {
             if (data.code != 0) {
               this.$message({
-                type: 'error',
+                type: "error",
                 message: data.message
-              })
+              });
             }
           })
           .catch(error => {
             this.$message({
-              type: 'error',
-              message: '错误'
-            })
-          })
+              type: "error",
+              message: "错误"
+            });
+          });
       }
     },
     // 删除
-    Del () {
+    Del() {
       let params = {
         AuditName: this.$route.query.AuditName,
-        Version: '2019-03-19',
-        Region: 'ap-guangzhou'
-      }
-      console.log(this.$route.query.AuditName)
-      this.axios.post(GZJ_DELETE, params).then(data => {
-        console.log(data)
-        // if (data == '') {
-        //   this.$router.push({
-        //     path: '/Audit'
-        //   })
-        //   this.$message({
-        //     message: '删除成功'
-        //   })
-        // }
-      })
+        Version: "2019-03-19",
+        Region: "ap-guangzhou"
+      };
+      this.axios.post("cloudaudit2/DeleteAudit", params).then(data => {
+        if (data.Response.IsSuccess == 1) {
+          this.$message({
+            message: "删除成功",
+            type: "success"
+          });
+          this.$router.push("/Audit");
+        } else {
+          this.$message.error("删除失败");
+        }
+      });
     }
   }
-}
+};
 </script>
 
 <style scoped lang="scss">
@@ -478,7 +476,7 @@ export default {
   line-height: 50px;
   justify-content: space-between;
   .back {
-    [class^='el-icon-'] {
+    [class^="el-icon-"] {
       color: #006eff;
       line-height: 50px;
       font-size: 20px;

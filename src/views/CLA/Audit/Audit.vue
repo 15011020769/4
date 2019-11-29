@@ -93,7 +93,8 @@ export default {
         Version: '2019-03-19',
         Region: 'ap-guangzhou'
       }
-      this.axios.post(GZJ_LIST, params).then(({ data }) => {
+      this.axios.post('cloudaudit/ListAudits', params).then(({ data }) => {
+        console.log(data)
         this.tableData = data.auditLists
         if (this.tableData.length >= 1) {
           this.isDisabled = true

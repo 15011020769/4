@@ -71,8 +71,8 @@
               <i class="el-icon-caret-bottom" v-show="setShow"></i>
             </p>
             <div class="set-box" v-show="setShow">
-              <el-form-item label="日志文件前缀" prop="CmqQueueName">
-                <el-input v-model="ruleForm.CmqQueueName" placeholder="请输入日志文件前缀"></el-input>
+              <el-form-item label="日志文件前缀" prop="LogFilePrefix">
+                <el-input v-model="ruleForm.LogFilePrefix" placeholder="请输入日志文件前缀"></el-input>
               </el-form-item>
               <el-form-item label="发送CMQ通知" class="CMQ" required>
                 <el-radio-group v-model="ruleForm.IsEnableCmqNotify">
@@ -85,7 +85,8 @@
           <div class="main-box" style="border:0;">
             <el-form-item>
               <el-button @click="_cancel">取消</el-button>
-              <el-button type="primary" @click="_onSubmit('ruleForm')">立即创建</el-button>
+              <el-button type="primary" @click="_onSubmit('ruleForm')" v-show="!btnLoad">立即创建</el-button>
+              <el-button type="primary" icon="el-icon-loading" v-show="btnLoad"></el-button>
             </el-form-item>
           </div>
         </el-form>
@@ -112,7 +113,7 @@ export default {
         }
       }, 1000);
     };
-    var CmqQueueName = (rule, value, callback) => {
+    var LogFilePrefix = (rule, value, callback) => {
       var reg = /^[a-zA-Z0-9]{3,40}$/;
       if (!value) {
         callback();
@@ -144,6 +145,7 @@ export default {
       select: {
         index: 0
       },
+      btnLoad: false,
       BucketSelect: {
         name: ""
       },
@@ -151,13 +153,12 @@ export default {
         AuditName: "",
         ReadWriteAttribute: "全部",
         IsCreateNewBucket: "是",
-        CmqQueueName: "",
         CosBucketName: "",
         IsEnableCmqNotify: "否",
         CosRegion: ""
       },
       rules: {
-        CmqQueueName: [{ validator: CmqQueueName, trigger: "blur" }],
+        LogFilePrefix: [{ validator: LogFilePrefix, trigger: "blur" }],
         AuditName: [{ validator: AuditName, trigger: "blur" }],
         CosBucketName: [{ validator: CosBucketName, trigger: "blur" }]
       },
@@ -183,6 +184,7 @@ export default {
       this.setShow = !this.setShow;
     },
     _onSubmit(formName) {
+      this.btnLoad = true;
       this.$refs[formName].validate(valid => {
         if (valid) {
           this.ruleForm.IsEnableCmqNotify == "是"
@@ -202,17 +204,21 @@ export default {
           this.axios
             .post("cloudaudit2/CreateAudit", this.ruleForm)
             .then(res => {
+              console.log(res);
               if (res.Response.IsSuccess == 1) {
                 this.$message({
                   message: "创建成功",
                   type: "success"
                 });
+                this.btnLoad = false;
                 this.$router.push("/Audit");
               } else {
                 this.$message.error("创建失败");
+                this.btnLoad = false;
               }
             });
         } else {
+          this.btnLoad = false;
           return false;
         }
       });
