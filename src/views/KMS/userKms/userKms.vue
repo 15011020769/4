@@ -8,8 +8,8 @@
       <div class="mainContBtn newClear">
         <div class="conLeftBtn">
           <el-button @click="dialogVisible = true">新建</el-button>
-          <el-button :disabled="true">启用密钥</el-button>
-          <el-button :disabled="true">禁用密钥</el-button>
+          <el-button :disabled="isHaveDisable">启用密钥</el-button>
+          <el-button :disabled="isHaveEnable">禁用密钥</el-button>
         </div>
         <el-dialog class="dialogModel" title="新建密钥" :visible.sync="dialogVisible" width="30%" :before-close="handleClose">
           <el-form :model="createForm" label-width="100px">
@@ -111,7 +111,9 @@ export default {
         name: "",
         discription: "",
         resource: ""
-      },//新建form
+      },//
+      isHaveDisable:true,//是否有已禁用
+      isHaveEnable:true,//是否有已启用
     }
   },
   filters: {
@@ -121,8 +123,22 @@ export default {
     this.getData();
   },
   methods: {
+    //判断是否有已禁用，已启用
     handleSelectionChange(val) {
+      console.log(val)
       this.multipleSelection = val;
+      this.multipleSelection.map(item => {
+        console.log(item)
+        if(item.KeyState=="Enabled"){
+          console.log(111)
+          console.log(item.KeyState)
+          this.isHaveEnable=false;
+        }else{
+          console.log(22222)
+          console.log(item.KeyState)
+          this.isHaveEnable=true;
+        }
+      })
     },
     //获取主密钥列表
     getData() {
