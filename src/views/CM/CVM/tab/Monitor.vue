@@ -39,21 +39,21 @@
         <el-table-column prop>
           <template slot-scope="scope">
             <p>Max:</p>
-            <p>--</p>
+            <p>{{scope.row.DataPoints[0].Values|CMMax}}%</p>
           </template>
         </el-table-column>
 
         <el-table-column prop>
           <template slot-scope="scope">
             <p>Min:</p>
-            <p>--</p>
+            <p>{{scope.row.DataPoints[0].Values|CMMin}}</p>
           </template>
         </el-table-column>
 
         <el-table-column prop>
           <template slot-scope="scope">
             <p>Avg:</p>
-            <p>--</p>
+            <p>{{scope.row.DataPoints[0].Values|CMAvg}}</p>
           </template>
         </el-table-column>
 
@@ -145,7 +145,6 @@
         this.tableData = [];
         for (let i = 0; i < metricNArr.length; i++) {
           this.Obtain(metricNArr[i], symbol[i]);
-          this.Basics(metricNArr[i])
           // this.tableData[i].symbol = symbol
         }
         if (this.MetricName) {
@@ -187,17 +186,7 @@
           this.jingData = data.Response.DataPoints[0].Values;
         });
       },
-      Basics(metricN) {
-        const param = {
-          Version: '2018-07-24',
-          Region: this.$cookie.get('regionv2'),
-          Namespace: 'QCE/CVM',
-          MetricName: metricN,
-        };
-        this.axios.post(ALL_Basics, param).then((data) => {
-          console.log(data)
-        });
-      },
+
 
       // 模态框
       Modality(MetricName) {
