@@ -19,7 +19,7 @@
               {{scope.row.MetricName | UpName(value)}}
               <span class="symbol">{{scope.row.symbol}}</span>
               <el-popover placement="bottom-start" title width="200" trigger="hover">
-                <p>{{scope.row.MetricName | UpTitle(value)}}</p>
+                <p>{{scope.row.MetricName | UpName(value)}}</p>
                 <i class="el-icon-warning" slot="reference"></i>
               </el-popover>
             </span>
@@ -44,22 +44,22 @@
 
         <el-table-column prop>
           <template slot-scope="scope">
-            <p>Max:</p>
-            <p>--</p>
+            <p style="font-size:12px;color:#bbb">Max:</p>
+            <span>{{scope.row.DataPoints[0].Values|CMMax}}</span><span >{{scope.row.symbol}}</span>
           </template>
         </el-table-column>
 
         <el-table-column prop>
           <template slot-scope="scope">
-            <p>Min:</p>
-            <p>--</p>
+            <p style="font-size:12px;color:#bbb">Min:</p>
+            <span>{{scope.row.DataPoints[0].Values|CMMin}}</span><span >{{scope.row.symbol}}</span>
           </template>
         </el-table-column>
 
         <el-table-column prop>
           <template slot-scope="scope">
-            <p>Avg:</p>
-            <p>--</p>
+            <p style="font-size:12px;color:#bbb">Avg:</p>
+            <span>{{scope.row.DataPoints[0].Values|CMAvg}}</span><span >{{scope.row.symbol}}</span>
           </template>
         </el-table-column>
 

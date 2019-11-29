@@ -38,22 +38,22 @@
 
         <el-table-column prop>
           <template slot-scope="scope">
-            <p>Max:</p>
-            <p>{{scope.row.DataPoints[0].Values|CMMax}}%</p>
+            <p style="font-size:12px;color:#bbb">Max:</p>
+            <span>{{scope.row.DataPoints[0].Values|CMMax}}</span><span >{{scope.row.symbol}}</span>
           </template>
         </el-table-column>
 
         <el-table-column prop>
           <template slot-scope="scope">
-            <p>Min:</p>
-            <p>{{scope.row.DataPoints[0].Values|CMMin}}</p>
+            <p style="font-size:12px;color:#bbb">Min:</p>
+            <span>{{scope.row.DataPoints[0].Values|CMMin}}</span><span >{{scope.row.symbol}}</span>
           </template>
         </el-table-column>
 
         <el-table-column prop>
           <template slot-scope="scope">
-            <p>Avg:</p>
-            <p>{{scope.row.DataPoints[0].Values|CMAvg}}</p>
+            <p style="font-size:12px;color:#bbb">Avg:</p>
+            <span>{{scope.row.DataPoints[0].Values|CMAvg}}</span><span >{{scope.row.symbol}}</span>
           </template>
         </el-table-column>
 
