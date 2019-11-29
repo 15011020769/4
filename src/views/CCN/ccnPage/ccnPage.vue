@@ -688,6 +688,8 @@ export default {
   }
   .el-pagination {
     float: right;
+    ::v-deep .el-pagination__total {
+    }
   }
   .el-popover {
     .btn-footer {
@@ -786,7 +788,6 @@ export default {
     height: 30px;
   }
 }
-
 .dialog-footer {
   text-align: center;
   .el-button {
