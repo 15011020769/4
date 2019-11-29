@@ -80,7 +80,7 @@
   export default {
     data() {
       return {
-        loadShow: true,
+        loadShow: false,
         searchOptions: [{
           value: 'disk-usage',
           label: '云盘类型'

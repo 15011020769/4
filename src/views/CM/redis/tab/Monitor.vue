@@ -41,27 +41,38 @@
             </div>
           </template>
         </el-table-column>
-
+         <el-table-column prop>
+          <template slot-scope="scope">
+            <p style="font-size:12px;color:#bbb;font-weight:600">Max:</p>
+            <template v-if="scope.row.DataPoints[0].Values.length!==0">
+              <span  style="color:#333;font-weight:600;font-size: 12px;">{{scope.row.DataPoints[0].Values|CMMax}}</span>
+              <span style="color:#333;font-weight:600;font-size: 12px;">{{scope.row.symbol}}</span>
+            </template>
+            <template v-if="scope.row.DataPoints[0].Values.length==0">-</template>
+          </template>
+        </el-table-column>
         <el-table-column prop>
           <template slot-scope="scope">
-            <p style="font-size:12px;color:#bbb">Max:</p>
-            <span>{{scope.row.DataPoints[0].Values|CMMax}}</span><span>{{scope.row.symbol}}</span>
+            <p style="font-size:12px;color:#bbb;font-weight:600">Min:</p>
+            <template v-if="scope.row.DataPoints[0].Values.length!==0">
+              <span style="color:#333;font-weight:600;font-size: 12px;">{{scope.row.DataPoints[0].Values|CMMin}}</span>
+              <span style="color:#333;font-weight:600;font-size: 12px;">{{scope.row.symbol}}</span>
+            </template>
+            <template v-if="scope.row.DataPoints[0].Values.length==0">-</template>
           </template>
         </el-table-column>
 
         <el-table-column prop>
           <template slot-scope="scope">
-            <p style="font-size:12px;color:#bbb">Min:</p>
-            <span>{{scope.row.DataPoints[0].Values|CMMin}}</span><span >{{scope.row.symbol}}</span>
+            <p style="font-size:12px;color:#bbb;font-weight:600">Avg:</p>
+            <template v-if="scope.row.DataPoints[0].Values.length!==0">
+              <span style="color:#333;font-weight:600;font-size: 12px;">{{scope.row.DataPoints[0].Values|CMAvg}}</span>
+              <span style="color:#333;font-weight:600;font-size: 12px;">{{scope.row.symbol}}</span>
+            </template>
+            <template v-if="scope.row.DataPoints[0].Values.length==0">-</template>
           </template>
         </el-table-column>
 
-        <el-table-column prop>
-          <template slot-scope="scope">
-            <p style="font-size:12px;color:#bbb">Avg:</p>
-            <span>{{scope.row.DataPoints[0].Values|CMAvg}}</span><span>{{scope.row.symbol}}</span>
-          </template>
-        </el-table-column>
 
         <el-table-column prop>
           <template slot-scope="scope">
@@ -340,7 +351,8 @@ export default {
     },
     UpTitle(value) {
       if (value === "CacheHitRatio") {
-        return (value = "1分钟取内取 keyspace_misses、keyspace_hits通过如下计算 （1- keyspace_misses/keyspace_hits）* 100% 得出。不再维护该指标");
+        return (value =
+          "1分钟取内取 keyspace_misses、keyspace_hits通过如下计算 （1- keyspace_misses/keyspace_hits）* 100% 得出。不再维护该指标");
       }
       if (value === "CmdstatGet") {
         return (value = "1分钟内 get 命令请求数");
@@ -413,10 +425,12 @@ export default {
         return (value = "1分钟内出流量总和");
       }
       if (value === "StatGet") {
-        return (value = "	1分钟内 get, hget, hgetall, hmget, mget, getbit, getrange 命令请求数");
+        return (value =
+          "	1分钟内 get, hget, hgetall, hmget, mget, getbit, getrange 命令请求数");
       }
       if (value === "StatSet") {
-        return (value = "1分钟内 set, hset, hmset, hsetnx, lset, mset, msetnx, setbit, setex, setrange, setnx 命令请求数");
+        return (value =
+          "1分钟内 set, hset, hmset, hsetnx, lset, mset, msetnx, setbit, setex, setrange, setnx 命令请求数");
       }
       if (value === "Storage") {
         return (value = "	1分钟内已使用容量的最大值");
