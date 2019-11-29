@@ -177,7 +177,7 @@ export default {
       ].label;
     },
     _back() {
-      console.log("ok");
+      this.$router.push("/Audit");
     },
     _set() {
       this.setShow = !this.setShow;
@@ -218,7 +218,7 @@ export default {
       });
     },
     _cancel() {
-      console.log("cancel");
+      this.$router.push("/Audit");
     },
     _radio() {
       var val = this.ruleForm.IsCreateNewBucket;
