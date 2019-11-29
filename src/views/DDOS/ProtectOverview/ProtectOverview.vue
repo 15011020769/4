@@ -10,17 +10,17 @@
               <div class="allConMainOneLeft">
                 <h3>安全统计（本月）</h3>
                 <el-row class="allConMainOneRow">
-                  <el-col :span="8" class="LeftConOne LeftConRow">
+                  <el-col :span="8" class="LeftConOne LeftConRow" >
                     <p>攻击次数</p>
-                    <p>0</p>
+                    <p>{{attackData[1].Value}}</p>
                   </el-col>
                   <el-col :span="8" class="LeftConTwo LeftConRow">
                     <p>封堵次数</p>
-                    <p>0</p>
+                    <p>{{attackData[2].Value}}</p>
                   </el-col>
                   <el-col :span="8" class="LeftConThree LeftConRow">
                     <p>攻击峰值</p>
-                    <p>0<span>Mbps</span></p>
+                    <p>{{attackData[3].Value}}<span>Mbps</span></p>
                   </el-col>
                 </el-row>
               </div>
@@ -66,13 +66,13 @@
               <div class="allConMainOneRight allConMainTwoRight allConMainTwoLeft">
                 <el-row class="productRow">
                   <el-col :span="12" class="productRow1"> 
-                    高防IP专业版 <span>0</span>
+                    高防IP专业版 <span>{{packDataIP[0].Value}}</span>
                   </el-col>
                   <el-col :span="12" class="productRow2"> 
-                    <p><span></span><span>清洗中</span><span>0</span></p>
-                    <p><span></span><span>封堵中</span><span>0</span></p>
-                    <p><span></span><span>即将到期</span><span>0</span></p>
-                    <p><span></span><span>已到期</span><span>0</span></p>
+                    <p><span></span><span>清洗中</span><span>{{packDataIP[1].Value}}</span></p>
+                    <p><span></span><span>封堵中</span><span>{{packDataIP[2].Value}}</span></p>
+                    <p><span></span><span>即将到期</span><span>{{packDataIP[4].Value}}</span></p>
+                    <p><span></span><span>已到期</span><span>{{packDataIP[3].Value}}</span></p>
                   </el-col>
                 </el-row>
               </div>
@@ -158,6 +158,53 @@
 export default {
   data() {
 		return {
+      // 安全统计-本月
+      attackData: [
+        {Key: 'AttackIpCount', Value:'0', desc: '受攻击的IP数'},
+        {Key: 'AttackCount', Value:'0', desc: '攻击次数'},
+        {Key: 'BlockCount', Value:'0', desc: '封堵次数'},
+        {Key: 'MaxMbps', Value:'0', desc: '攻击峰值Mbps'},
+        {Key: 'IpNum', Value:'0', desc: '统计的IP数据'}
+      ],
+      // 获取产品总览
+      packParams: ['bgpip', 'bgp', 'net', 'shield'],
+      business: 'net',// 产品代号
+      packDataIP: [ // 高防IP专业版 net
+        {Key: 'TotalPackCount',Value: '0'},
+        {Key: 'AttackPackCount',Value: '0'},
+        {Key: 'BlockPackCount',Value: '0'},
+        {Key: 'ExpiredPackCount',Value: '0'},
+        {Key: 'ExpireingPackCount',Value: '0'},
+        {Key: 'IsolatePackCount',Value: '0'}
+      ],
+      packDataBgpip: [ // bgpip
+        {Key: 'TotalPackCount',Value: '0'},
+        {Key: 'AttackPackCount',Value: '0'},
+        {Key: 'BlockPackCount',Value: '0'},
+        {Key: 'ExpiredPackCount',Value: '0'},
+        {Key: 'ExpireingPackCount',Value: '0'},
+        {Key: 'IsolatePackCount',Value: '0'}
+      ],
+      packDataBgp: [ // bgp
+        {Key: 'TotalPackCount',Value: '0'},
+        {Key: 'AttackPackCount',Value: '0'},
+        {Key: 'BlockPackCount',Value: '0'},
+        {Key: 'ExpiredPackCount',Value: '0'},
+        {Key: 'ExpireingPackCount',Value: '0'},
+        {Key: 'IsolatePackCount',Value: '0'}
+      ],
+      packDataShield: [ // shield
+        {Key: 'TotalPackCount',Value: '0'},
+        {Key: 'AttackPackCount',Value: '0'},
+        {Key: 'BlockPackCount',Value: '0'},
+        {Key: 'ExpiredPackCount',Value: '0'},
+        {Key: 'ExpireingPackCount',Value: '0'},
+        {Key: 'IsolatePackCount',Value: '0'}
+      ],
+      // 日期区间：默认获取当前时间和前一天时间
+      endTime: this.getDateString(new Date()),
+      startTime: this.getDateString(new Date(new Date().getTime() - 24*60*60*1000)),
+
       type:1,
       tableDataBegin: [],
       tableDataName: "",
@@ -187,6 +234,88 @@ export default {
     this.getData();
   },
   methods:{
+    getData() {
+      this.describeSecIndex()
+      for(let i in this.packParams) {
+        this.business = this.packParams[i]
+        switch (this.packParams[i]) {//['bgpip', 'bgp', 'net', 'shield']
+          case 'net':
+            this.describePackIndex(this.packDataIP)
+            break;
+          case 'bgpip':
+            this.describePackIndex(this.packDataBgpip)
+            break;
+          case 'bgp':
+            this.describePackIndex(this.packDataBgp)
+            break;
+          case 'shield':
+            this.describePackIndex(this.packDataShield)
+            break;
+        }
+      }
+      this.describeInsurePacks()
+      this.describeDDoSEvList()
+    },
+    // 1.1.获取安全统计-本月
+    describeSecIndex() {
+      let params = {
+        Version: '2018-07-09',
+      }
+      this.$axios.post('dayu2/DescribeSecIndex', params).then(res => {
+        console.log(res)
+        for(let i in this.attackData) {
+          for(let j in res.Response.Data) {
+            if (this.attackData[i].Key == res.Response.Data[j].Key) {
+              this.attackData[i].Value = res.Response.Data[j].Value
+              break
+            }
+          }
+        }
+      })
+    },
+    // 1.2.获取产品总览
+    describePackIndex(packData) {
+      let params = {
+        Version: '2018-07-09',
+        Business: this.business,
+      }
+      this.$axios.post('dayu2/DescribePackIndex', params).then(res => {
+        console.log(res)
+        for(let i in packData) {
+          for(let j in res.Response.Data) {
+            if (packData[i].Key == res.Response.Data[j].Key) {
+              packData[i].Value = res.Response.Data[j].Value
+              break
+            }
+          }
+        }
+      })
+    },
+    // 1.3.获取保险包套餐列表
+    describeInsurePacks() {
+      let params = {
+        Version: '2018-07-09',
+      }
+      this.$axios.post('dayu2/DescribeInsurePacks', params).then(res => {
+        console.log(res)
+      })
+    },
+    // 1.4.获取DDoS攻击事件列表
+    describeDDoSEvList() {
+      let params = {
+        Version: '2018-07-09',
+        Business: 'bgp',//腾讯云用的bgp
+        StartTime: this.startTime,
+        EndTime: this.endTime,
+      }
+      this.$axios.post('dayu2/DescribeDDoSEvList', params).then(res => {
+        console.log(res)
+      })
+    },
+    // 时间格式化'yyyy-MM-dd hh:mm:ss'
+    getDateString(date) {
+      return date.toLocaleString('zh',{hour12:false, year: 'numeric',  month: '2-digit',  day: '2-digit',  hour: '2-digit',  minute: '2-digit',  second: '2-digit'}).replace(/\//g,'-');
+    },
     //下面tab切换表格
     btnClick(clickNode){
       this.type=clickNode;
@@ -202,7 +331,7 @@ export default {
         this.newData="受限次数"
       }
     },
-    getData() {
+    getDataOld() {
       var cookies = document.cookie;
       var list = cookies.split(";");
       for (var i = 0; i < list.length; i++) {
