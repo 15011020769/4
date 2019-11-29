@@ -452,16 +452,17 @@ export default {
         Version: '2019-03-19',
         Region: 'ap-guangzhou'
       }
+      console.log(this.$route.query.AuditName)
       this.axios.post(GZJ_DELETE, params).then(data => {
         console.log(data)
-        if (data == '') {
-          this.$router.push({
-            path: '/Audit'
-          })
-          this.$message({
-            message: '删除成功'
-          })
-        }
+        // if (data == '') {
+        //   this.$router.push({
+        //     path: '/Audit'
+        //   })
+        //   this.$message({
+        //     message: '删除成功'
+        //   })
+        // }
       })
     }
   }

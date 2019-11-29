@@ -1,77 +1,93 @@
 <template>
-  <div>
-    <div class="title_top">
-      <i class="el-icon-back" @click="resetForm()"></i>
-      <h1>创建跟踪集</h1>
-    </div>
-    <div class="tea-content__body">
-      <div class="form">
-        <p class="basic">基础信息</p>
-        <el-form :model="ruleForm" :rules="rules" ref="ruleForm" class="demo-ruleForm">
-          <el-form-item label="跟踪集名称" prop="TrankingName">
-            <el-input v-model="ruleForm.TrankingName" placeholder="请输入跟踪集名称"></el-input>
-            <p class="hint trankHint">{{text}}</p>
-          </el-form-item>
-          <el-form-item label="跟踪所有区域">
-            <span>是</span>
-          </el-form-item>
-          <p class="basic store">管理事件</p>
-          <el-form-item label="管理事件">
-            <el-radio-group v-model="ruleForm.radio2">
-              <el-radio :label="3">全部</el-radio>
-              <el-radio :label="1">只读</el-radio>
-              <el-radio :label="2">只写</el-radio>
-            </el-radio-group>
-          </el-form-item>
-          <p class="basic store">存储位置</p>
-          <el-form-item label="创建新的cos存储桶">
-            <el-radio-group v-model="ruleForm.radio">
-              <el-radio :label="1" @change="Yes()">是</el-radio>
-              <el-radio :label="0" @change="NO()">否</el-radio>
-            </el-radio-group>
-          </el-form-item>
-          <div class="cos_box" v-if="YesShow">
-            <label>cos存储桶</label>
-            <div>
-              <input
-                type="text"
-                v-model="ruleForm.COS"
-                placeholder="请输入Bucket名称"
-                @blur="cosBlur()"
-                @focus="cosFocus()"
-                :style="{'border-color':borderColor}"
-              />
-              <p class="hint" :style="{'color':color}">{{text1}}</p>
+  <div class="newAudit-wrap">
+    <Header :backShow="true" title="创建跟踪集" @_back="_back" />
+    <div class="newAudit-main">
+      <div class="newAudit-box">
+        <el-form
+          :model="ruleForm"
+          status-icon
+          :rules="rules"
+          ref="ruleForm"
+          label-width="100px"
+          class="demo-ruleForm"
+        >
+          <div class="main-box">
+            <h2>基础信息</h2>
+            <el-form-item label="跟踪集名称" prop="AuditName" required>
+              <el-input v-model="ruleForm.AuditName"></el-input>
+            </el-form-item>
+            <el-form-item label="跟踪所有区域">
+              <p style="font-size:12px;">是</p>
+            </el-form-item>
+          </div>
+          <div class="main-box">
+            <h2>管理事件</h2>
+            <el-form-item label="管理事件" required>
+              <el-radio-group v-model="ruleForm.ReadWriteAttribute">
+                <el-radio label="全部"></el-radio>
+                <el-radio label="只读"></el-radio>
+                <el-radio label="只写"></el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </div>
+          <div class="main-box">
+            <h2>存储位置</h2>
+            <el-form-item label="创建新的cos存储桶" class="store">
+              <el-radio-group v-model="ruleForm.IsCreateNewBucket" @change="_radio">
+                <el-radio label="是"></el-radio>
+                <el-radio label="否"></el-radio>
+              </el-radio-group>
+            </el-form-item>
+            <el-form-item label="cos存储桶" required class="select">
+              <el-select v-model="select.name" placeholder="请选择" @change="_select">
+                <el-option
+                  v-for="item in select.options"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                ></el-option>
+              </el-select>
+              <el-form-item label prop="CosBucketName" class="seletInp" v-show="!cosShow">
+                <el-input v-model="ruleForm.CosBucketName" placeholder="请输入Bucket名称"></el-input>
+              </el-form-item>
+              <el-select
+                v-model="BucketSelect.name"
+                v-show="cosShow"
+                class="BucketSelect"
+                @change="_BucketSelect"
+              >
+                <el-option
+                  v-for="item in BucketSelect.options"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                ></el-option>
+              </el-select>
+            </el-form-item>
+            <p class="addTxt">
+              添加
+              <span @click="_set">高级设置</span>
+              <i class="el-icon-caret-right" v-show="!setShow"></i>
+              <i class="el-icon-caret-bottom" v-show="setShow"></i>
+            </p>
+            <div class="set-box" v-show="setShow">
+              <el-form-item label="日志文件前缀" prop="CmqQueueName">
+                <el-input v-model="ruleForm.CmqQueueName" placeholder="请输入日志文件前缀"></el-input>
+              </el-form-item>
+              <el-form-item label="发送CMQ通知" class="CMQ" required>
+                <el-radio-group v-model="ruleForm.IsEnableCmqNotify">
+                  <el-radio label="是"></el-radio>
+                  <el-radio label="否"></el-radio>
+                </el-radio-group>
+              </el-form-item>
             </div>
           </div>
-          <el-form-item label="cos存储桶" v-if="NoShow">
-            <el-select v-model="value" v-if="select">
-              <el-option label="暂无可用cos存储桶"></el-option>
-            </el-select>
-            <el-select v-model="value" v-if="!select">
-              <el-option
-                v-for="(item,index) in ListCos"
-                :key="index"
-                :label="item.name"
-                :value="item.name"
-              ></el-option>
-            </el-select>
-            <p class="hint">{{text2}}</p>
-          </el-form-item>
-          <el-form-item label="日志文件前缀" prop="logName">
-            <el-input v-model="ruleForm.logName" placeholder="请输入日志文件前缀"></el-input>
-            <p class="hint trankHint">{{text}}</p>
-          </el-form-item>
-          <el-form-item label="发送CMQ通知">
-            <el-radio-group v-model="ruleForm.radio3">
-              <el-radio :label="1" @change="Yes()">是</el-radio>
-              <el-radio :label="0" @change="NO()">否</el-radio>
-            </el-radio-group>
-          </el-form-item>
-          <el-form-item class="btns">
-            <el-button @click="resetForm()">取消</el-button>
-            <el-button class="btn-b" :plain="true" @click="save()">完成创建</el-button>
-          </el-form-item>
+          <div class="main-box" style="border:0;">
+            <el-form-item>
+              <el-button @click="_cancel">取消</el-button>
+              <el-button type="primary" @click="_onSubmit('ruleForm')">立即创建</el-button>
+            </el-form-item>
+          </div>
         </el-form>
       </div>
     </div>
@@ -79,314 +95,276 @@
 </template>
 
 <script>
-import { isYan, isYan1 } from '@/utils/validate'
-import { GZJ_CREATE, LIST_COSBUCKETS } from '@/constants'
+import Header from "../Public/Head";
+import { LIST_COSBUCKETS, GZJ_LIST } from "../../../constants";
 export default {
-  data () {
-    let validatePass = (rule, value, callback) => {
-      if (value === '') {
-        this.text = ''
-        callback(new Error('请输入跟踪集名称'))
-      } else if (!isYan(value)) {
-        this.text = ''
-        callback(new Error('仅支持大小写字母、数字、以及.的组合，不能超过40字符。'))
-      } else {
-        callback()
+  name: "new-audit",
+  data() {
+    var AuditName = (rule, value, callback) => {
+      var reg = /^[a-zA-Z0-9_]{3,128}$/;
+      setTimeout(() => {
+        if (!reg.test(value)) {
+          callback(
+            new Error("仅支持大小写字母、数字、以及_的组合，3-128个字符。")
+          );
+        } else {
+          callback();
+        }
+      }, 1000);
+    };
+    var CmqQueueName = (rule, value, callback) => {
+      var reg = /^[a-zA-Z0-9]{3,40}$/;
+      if (!value) {
+        callback();
       }
-    }
-    let LogFile = (rule, value, callback) => {
-      if (value === '') {
-        this.text2 = ''
-        callback(new Error('请输入cos存储库'))
-      } else if (!isYan1(value)) {
-        this.text2 = ''
-        callback(new Error('仅支持小写字母、数字的组合，不能超过40字符。'))
-      } else {
-        callback()
-      }
-    }
+      setTimeout(() => {
+        if (!reg.test(value)) {
+          callback(new Error("仅支持字母和数字的组合，3-40个字符。"));
+        } else {
+          callback();
+        }
+      }, 1000);
+    };
+    var CosBucketName = (rule, value, callback) => {
+      var reg = /^[a-z0-9-]{1,40}$/;
+      setTimeout(() => {
+        if (!reg.test(value)) {
+          callback(
+            new Error(
+              '仅支持小写字母、数字以及中划线" - "的组合，不能超过40字符。'
+            )
+          );
+        } else {
+          callback();
+        }
+      }, 1000);
+    };
     return {
-      YesShow: true,
-      NoShow: false,
-      select: false,
-      ListCosName: '',
-      color: '',
-      borderColor: '',
-      value: '', // 下拉cos存储桶选择内容
-      ListCos: '', // 否--cos存储桶
-      text: '仅支持大小写字母、数字、以及_的组合，3-128个字符。',
-      text1: '仅支持小写字母、数字的组合，不能超过40字符。',
-      text2: '仅支持小写字母、数字的组合，不能超过40字符。',
+      setShow: false,
+      select: {
+        index: 0
+      },
+      BucketSelect: {
+        name: ""
+      },
       ruleForm: {
-        radio: 1,
-        radio2: 0,
-        radion3: 1,
-        TrankingName: '',
-        logName: '',
-        COS: '',
-        COS1: '',
-        log_file: ''
+        AuditName: "",
+        ReadWriteAttribute: "全部",
+        IsCreateNewBucket: "是",
+        CmqQueueName: "",
+        CosBucketName: "",
+        IsEnableCmqNotify: "否",
+        CosRegion: ""
       },
       rules: {
-        TrankingName: [
-          {
-            validator: validatePass,
-            trigger: 'blur'
-          }
-        ],
-        log_file: [
-          {
-            validator: LogFile,
-            trigger: 'blur'
-          }
-        ]
-      }
-    }
+        CmqQueueName: [{ validator: CmqQueueName, trigger: "blur" }],
+        AuditName: [{ validator: AuditName, trigger: "blur" }],
+        CosBucketName: [{ validator: CosBucketName, trigger: "blur" }]
+      },
+      cosShow: false
+    };
   },
-  created () {
-    this.axios.post(LIST_COSBUCKETS).then(({ data }) => {
-      this.ListCos = data.cosBucketsList
-      for (var i = 0; i < this.ListCos.length; i++) {
-        this.ListCosName = this.ListCos[i].Name
-      }
-      if (this.ListCos.length <= 0) {
-        this.select = true
-      }
-    })
+  components: {
+    Header
   },
   methods: {
-    // cos存储桶失焦
-    cosBlur () {
-      if (this.ruleForm.COS == '') {
-        this.borderColor = '#F56C6C'
-        this.text1 = '请输入cos存储库'
-        this.color = '#F56C6C'
-      } else if (!isYan1(this.ruleForm.COS)) {
-        this.text1 = '仅支持小写字母、数字的组合，不能超过40字符。'
-        this.color = '#F56C6C'
-        this.borderColor = '#F56C6C'
+    _select() {
+      this.select.index = this.select.options[this.select.name].value;
+    },
+    _BucketSelect() {
+      this.ruleForm.CosBucketName = this.BucketSelect.options[
+        this.BucketSelect.name
+      ].label;
+    },
+    _back() {
+      console.log("ok");
+    },
+    _set() {
+      this.setShow = !this.setShow;
+    },
+    _onSubmit(formName) {
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          this.ruleForm.IsEnableCmqNotify == "是"
+            ? (this.ruleForm.IsEnableCmqNotify = 1)
+            : (this.ruleForm.IsEnableCmqNotify = 0);
+          this.ruleForm.IsCreateNewBucket == "是"
+            ? (this.ruleForm.IsCreateNewBucket = 1)
+            : (this.ruleForm.IsCreateNewBucket = 0);
+          this.ruleForm.ReadWriteAttribute == "只读"
+            ? (this.ruleForm.ReadWriteAttribute = 1)
+            : this.ruleForm.ReadWriteAttribute == "只写"
+            ? (this.ruleForm.ReadWriteAttribute = 2)
+            : (this.ruleForm.ReadWriteAttribute = 3);
+          this.ruleForm.Version = "2019-03-19";
+          this.ruleForm.Region = "ap-guangzhou";
+          this.ruleForm.CosRegion = this.select.options[this.select.index].name;
+          this.axios
+            .post("cloudaudit2/CreateAudit", this.ruleForm)
+            .then(res => {
+              if (res.Response.IsSuccess == 1) {
+                this.$message({
+                  message: "创建成功",
+                  type: "success"
+                });
+                this.$router.push("/Audit");
+              } else {
+                this.$message.error("创建失败");
+              }
+            });
+        } else {
+          return false;
+        }
+      });
+    },
+    _cancel() {
+      console.log("cancel");
+    },
+    _radio() {
+      var val = this.ruleForm.IsCreateNewBucket;
+      if (val == "是") {
+        this.cosShow = false;
+        this.ruleForm.CosBucketName = "";
+        this.BucketSelect.name = "";
       } else {
-        for (var i = 0; i < this.ListCos.length; i++) {
-          if (this.ruleForm.COS == this.ListCos[i].name) {
-            this.text1 = '您已创建和拥有此存储桶'
-            this.color = '#F56C6C'
-            this.borderColor = '#F56C6C'
-            return
-          } else {
-            this.text1 = '仅支持小写字母、数字的组合，不能超过40字符。'
-            this.color = '#888'
-            this.borderColor = '#67C23A'
+        this.cosShow = true;
+      }
+    }
+  },
+  created() {
+    //BucketSelect
+    this.axios.post(LIST_COSBUCKETS).then(res => {
+      var data = res.data.cosBucketsList;
+      var arr = [];
+      data.forEach((item, index) => {
+        const obj = {
+          label: item.name,
+          value: index,
+          name: item.region,
+          id: item.appId
+        };
+        arr.push(obj);
+      });
+      this.BucketSelect.options = arr;
+    });
+    const params = {
+      Version: "2019-03-19",
+      Region: "ap-guangzhou"
+    };
+    //	cos地域
+    this.axios.post("cloudaudit2/ListCosEnableRegion", params).then(res => {
+      var data = res.Response.EnableRegions;
+      var arr = [];
+      data.forEach((item, index) => {
+        const obj = {
+          label: item.CosRegionName,
+          value: index,
+          name: item.CosRegion
+        };
+        arr.push(obj);
+      });
+      this.select.options = arr;
+      this.select.name = arr[0].label;
+    });
+  }
+};
+</script>
+
+<style scoped lang='scss'>
+.newAudit-wrap {
+  .newAudit-main {
+    padding: 20px;
+    padding-bottom: 0;
+    box-sizing: border-box;
+    .newAudit-box {
+      background-color: #fff;
+      box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
+      box-sizing: border-box;
+      max-width: 1360px;
+      margin: 0 auto;
+      padding: 0 20px;
+
+      .main-box {
+        border-bottom: 1px #f2f2f2 solid;
+        .BucketSelect >>> .el-input {
+          width: 200px;
+          margin-bottom: 22px;
+          margin-left: 10px;
+        }
+
+        .select .el-form-item__content {
+          display: flex;
+        }
+        .addTxt {
+          font-size: 12px;
+          padding-bottom: 20px;
+          box-sizing: border-box;
+          margin-left: 100px;
+          span {
+            color: #006eff;
+            cursor: pointer;
+          }
+          span:hover {
+            border-bottom: 1px #006eff solid;
+            line-height: 12px;
           }
         }
       }
-    },
-    cosFocus () {
-      if (this.text1 == '请输入cos存储库') {
-        this.borderColor = '#F56C6C'
-      } else if (
-        this.color == '#F56C6C' &&
-        this.text1 == '仅支持小写字母、数字的组合，不能超过40字符。'
-      ) {
-        this.borderColor = '#F56C6C'
-      } else if (this.text1 == '您已创建和拥有此存储桶') {
-        this.borderColor = '#F56C6C'
-      } else {
-        this.borderColor = '#2277da'
+
+      h2 {
+        font-size: 14px;
+        padding-bottom: 10px;
+        padding-top: 25px;
+        box-sizing: border-box;
       }
-    },
-    save () {
-      let _cos
-      if (this.ruleForm.radio == 1) {
-        _cos = this.ruleForm.COS
-      } else {
-        _cos = this.value
+      .main-box >>> .el-form-item__label {
+        font-size: 12px;
+        text-align: left;
       }
-      let params = {
-        // Action: "CreateAudit",
-        Version: '2019-03-19',
-        Region: 'ap-guangzhou',
-        // CmqQueueName:'cmq-01',
-        CosRegion: 'ap-beijing',
-        IsCreateNewBucket: this.ruleForm.radio,
-        IsEnableCmqNotify: 0,
-        ReadWriteAttribute: this.ruleForm.radio2,
-        AuditName: this.ruleForm.TrankingName, // 跟踪集名称
-        CosBucketName: _cos, // COS Bucket 的名称
-        LogFilePrefix: this.ruleForm.logName // COS Bucket 前缀
+      .main-box >>> .el-input {
+        width: 200px;
       }
-      this.axios.post(GZJ_CREATE, params).then(data => {
-        if (data.codeDesc == 'Success') {
-          this.$router.push({
-            path: '/Audit'
-          })
-          this.$message({
-            message: '创建成功'
-          })
-        }
-      })
-    },
-    EmptyData () {
-      this.ruleForm.COS = ''
-      this.text1 = '仅支持小写字母、数字的组合，不能超过40字符。'
-      this.color = '#888'
-      this.borderColor = '#c0c4cc'
-    },
-    resetForm () {
-      this.$router.replace({
-        path: '/Audit'
-      })
-    },
-    Yes () {
-      this.YesShow = true
-      this.NoShow = false
-      this.EmptyData()
-    },
-    NO () {
-      this.YesShow = false
-      this.NoShow = true
-      this.EmptyData()
-    }
-  }
-}
-</script>
-<style lang="scss">
-.form {
-  .demo-ruleForm {
-    .el-form-item__content {
-      float: left;
-    }
-    .el-input__inner {
-      width: 200px;
-      height: 30px;
-      border-radius: 0px;
-    }
-  }
-  .btns {
-    .el-button {
-      height: 30px;
-      line-height: 5px;
-      border-radius: 0;
-    }
-    .btn-b {
-          background-color: #006eff;
-          color: #fff;
-          border: 1px solid #006eff;
-        }
-  }
-}
-</style>
-<style scoped lang="scss">
-.title_top {
-  display: flex;
-  justify-content: flex-start;
-  height: 50px;
-  background: #fff;
-  & > i {
-    width: 16px;
-    height: 16px;
-    font-size: 16px;
-    font-weight: 900;
-    line-height: 48px;
-    text-align: center;
-    margin-left: 20px;
-    color: #006eff;
-    cursor: pointer;
-  }
-  h1 {
-    padding-left: 10px;
-    line-height: 50px;
-    font-size: 16px;
-    font-weight: 700;
-  }
-}
-.cos_box {
-  display: flex;
-  height: 55px;
-  margin-bottom: 22px;
-  & > label {
-    font-size: 12px;
-    text-align: left;
-    line-height: 30px;
-    width: 144px;
-    display: inline-block;
-    color: #606266;
-  }
-  & > div {
-    & > input {
-      border: 1px solid #dcdfe6;
-      padding: 0 15px;
-      width: 150px;
-      height: 30px;
-      outline: none;
-    }
-    input:hover {
-      border: 1px solid #c0c4cc;
-    }
-    input::-webkit-input-placeholder {
-      color: #c0c4cc;
-      font-size: 14px;
-    }
-    input:-moz-placeholder {
-      color: #c0c4cc;
-      font-size: 14px;
-    }
-    input::-moz-placeholder {
-      color: #c0c4cc;
-      font-size: 14px;
-    }
-    input:-ms-input-placeholder {
-      color: #c0c4cc;
-      font-size: 14px;
-    }
-    & > p {
-      margin-top: 2px !important;
-      border: 0;
-    }
-  }
-}
-.tea-content__body {
-  padding: 20px;
-  .form {
-    padding: 15px;
-    background: #fff;
-    .basic {
-      -webkit-margin-before: 1em;
-      -webkit-margin-after: 1em;
-      -webkit-margin-start: 0px;
-      -webkit-margin-end: 0px;
-      font-weight: bold;
-      line-height: 30px;
-      color: #000;
-      font-size: 14px;
-    }
-    .store {
-      border-top: 1px solid #ddd;
-      margin-top: 20px;
-      padding-top: 20px;
-    }
-    .hint {
-      color: #888;
-      font-size: 12px;
-      margin-top: -5px;
-    }
-    .el-form-item__label {
-      font-size: 12px;
-      text-align: left;
-      line-height: 30px;
-    }
-    .el-input__inner {
-      width: 180px;
-      height: 30px;
-      border-radius: 0px;
-    }
-    .el-form-item__content {
-      line-height: 30px;
-    }
-    .el-form-item {
-      margin-bottom: 22px !important;
-    }
-    .el-select .el-input .el-select__caret.is-reverse {
-      margin-top: -10px;
+      .main-box >>> .el-input__inner {
+        border-radius: 0;
+        height: 30px;
+        padding-left: 5px;
+      }
+      .main-box >>> .el-radio__label {
+        font-size: 12px;
+      }
+      .store >>> .el-form-item__label:nth-child(1) {
+        line-height: 16px;
+        margin-top: 5px;
+      }
+      .main-box >>> .el-form-item {
+        margin-bottom: 12px;
+      }
+      .select >>> .el-select {
+        width: 70px;
+        float: left;
+      }
+      .select >>> .el-input--suffix {
+        width: 70px;
+      }
+      .select >>> .el-form-item__error {
+        width: 400px;
+      }
+      .seletInp {
+        margin-left: 10px;
+        float: left;
+      }
+      .main-box >>> input {
+        font-size: 12px;
+      }
+      .main-box >>> button {
+        font-size: 12px;
+        height: 30px;
+        border-radius: 0;
+        line-height: 30px;
+        padding: 0 15px;
+        box-sizing: border-box;
+        margin: 10px 10px 20px 0;
+      }
     }
   }
 }
