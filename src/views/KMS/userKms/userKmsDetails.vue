@@ -9,7 +9,7 @@
 				<div class="projectDetailOne">
 					<h2>密钥信息</h2>
 					<div class="detailList">
-						<p><span>名称</span><span>{{projectDetail.Alias}}</span><i class="el-icon-edit" @click="changeNameHand"></i></p>
+						<p><span>名称</span><span>{{keyList.Alias}}</span><i class="el-icon-edit" @click="changeNameHand"></i></p>
 						<el-dialog
 							class="changeNameModel"
 							title="修改密钥名称"
@@ -17,7 +17,7 @@
 							width="30%"
 							:before-close="handleClose1">
 							<div class="dialogModelCon newClear">
-								<div class="newClear"><span class="dialogText">原名称</span><span>{{projectDetail.Alias}}</span></div>
+								<div class="newClear"><span class="dialogText">原名称</span><span>{{keyList.Alias}}</span></div>
 								<div class="newClear"><span class="dialogText">新名称</span><span><el-input v-model="changeName" class="newName"></el-input><p class="tipP">最长可输入60个字符，不可为空，请使用字母、数字及字符“_”和“-”，首字符必须为字母或者数字，且不能用 KMS- 开头。</p></span></div>
 							</div>
 							<span slot="footer" class="dialog-footer">
@@ -31,7 +31,7 @@
 						<p><span>创建时间</span><span>{{projectDetail.CreateTime}}</span></p>
 						<p><span>创建者</span><span>{{keyList.Owner}}</span></p>
 						<p><span>轮换状态</span><span>{{projectDetail.CreateTime}}</span></p>
-						<p><span>描述信息</span><span>{{keyList.DeletionDate}}</span><i class="el-icon-edit" @click="newDescription"></i></p>
+						<p><span>描述信息</span><span>{{keyList.Description}}</span><i class="el-icon-edit" @click="newDescription"></i></p>
 						<el-dialog
 							class="changeNameModel"
 							title="修改密钥描述信息"
@@ -39,7 +39,7 @@
 							width="30%"
 							:before-close="handleClose2">
 							<div class="dialogModelCon">
-								<div class="newClear"><span>原描述信息</span><span>{{discription}}</span></div>
+								<div class="newClear"><span>原描述信息</span><span>{{keyList.Description}}</span></div>
 								<div class="newClear"><span>新描述信息</span><span><el-input type="textarea" v-model="descriptionNew" class="newDescription"></el-input></span></div>
 							</div>
 							<span slot="footer" class="dialog-footer">
@@ -142,7 +142,7 @@
 									</div>
 									<div class="botBtn">
 										<el-button type="primary" @click="prevTwo">上一步</el-button>
-										<el-button @click="stepSure" :disabled="true">确定</el-button>
+										<!-- <el-button @click="stepSure" :disabled="true">确定</el-button> -->
 									</div>
 								</div>
 							</div>
@@ -214,6 +214,7 @@ export default {
       };
       this.$axios.post('kms2/DescribeKey', params).then(res => {     
         this.keyList=res.Response.KeyMetadata;
+        // console.log(this.keyList)
        
       });
 		
@@ -234,12 +235,12 @@ export default {
 		//修改名称按钮
 		changeNameHand(){
 			this.dialogModel1=true;
-			this.changeName=this.projectDetail.Alias
+			this.changeName=this.keyList.Alias
 		},
 		//修改描述信息按钮
 		newDescription(){
 			this.dialogModel2=true;
-			this.descriptionNew=this.discription;
+			this.descriptionNew=this.keyList.Description;
 		},
 		//修改密钥名称确定按钮
 		changeNameSure(){
@@ -251,15 +252,14 @@ export default {
 				KeyId:this.projectDetail.KeyId
 			};
 			this.$axios.post('kms2/UpdateAlias', params).then(res => {
-				console.log(res)
-				this.projectDetail.Alias=this.changeName;
+				this.keyList.Alias=this.changeName;
 				this.dialogModel1=false;
 			})
 		},
 		//修改密钥描述确定按钮
 		changeDescriptionSure(){
 			let params = {
-				Action:"UpdateKeyDescription",
+				// Action:"UpdateKeyDescription",
         Version: '2019-01-18',
         Region: 'ap-taipei',
 				Description:this.descriptionNew,
@@ -267,7 +267,7 @@ export default {
 			};
 			this.$axios.post('kms2/UpdateKeyDescription', params).then(res => {
 				console.log(res)
-				this.discription=this.descriptionNew;
+				this.keyList.Description=this.descriptionNew;
 				this.dialogModel2=false;
 			})
 		},
@@ -335,16 +335,36 @@ export default {
 			save_link.download = name;
 			this.fakeClick(save_link);
 		},
-		//第一步的下一步按钮 
+		//第一步的下一步按钮 获取导入主密钥（CMK）材料的参数
 		nextStepOne(){
 			this.thisStepOne=false;
-      this.thisStepTwo=true;
+      // this.thisStepTwo=true;
       this.thisStepThree=false;
+      let params = {
+        Version: '2019-01-18',
+        Region: 'ap-taipei',
+        KeyId:this.projectDetail.KeyId,
+        WrappingAlgorithm:this.thisAddSuan,
+        WrappingKeySpec:this.thisSuanType
+      };
+      console.log(params)
+			this.$axios.post('kms2/GetParametersForImport', params).then(res => {
+				console.log(res)
+			})
 		},
 		//第二步的下一步按钮\导入密钥按钮
 		nextStepTwo(){
       this.thisStepOne=false;
       this.thisStepTwo=false;
+      // let params = {
+      //   Version: '2019-01-18',
+      //   Region: 'ap-taipei',
+			// 	CiphertextBlob:this.Ciphertext
+			// };
+			// this.$axios.post('kms2/ImportKeyMaterial', params).then(res => {
+			// 	console.log(res)
+			// 	this.downLoadText=res.Response.Plaintext
+			// })
       this.thisStepThree=true;
 		},
 		//第二步的上一步按钮
