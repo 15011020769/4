@@ -29,9 +29,9 @@
 						<p><span>状态</span><span>{{projectDetail.KeyState}}</span></p>
 						<p><span>地区</span><span>{{projectDetail.address}}</span></p>
 						<p><span>创建时间</span><span>{{projectDetail.CreateTime}}</span></p>
-						<p><span>创建者</span><span>{{createUser}}</span></p>
+						<p><span>创建者</span><span>{{keyList.Owner}}</span></p>
 						<p><span>轮换状态</span><span>{{projectDetail.CreateTime}}</span></p>
-						<p><span>描述信息</span><span>{{discription}}</span><i class="el-icon-edit" @click="newDescription"></i></p>
+						<p><span>描述信息</span><span>{{keyList.DeletionDate}}</span><i class="el-icon-edit" @click="newDescription"></i></p>
 						<el-dialog
 							class="changeNameModel"
 							title="修改密钥描述信息"
@@ -201,13 +201,22 @@ export default {
       isSettimeOut:false,//是否设置过期时间
       PlaintextRead:"",//密钥材料
       exportRead:"",//导入令牌
+      keyList:[]
 		}
 	},
 	created(){
-		this.projectDetail=JSON.parse(sessionStorage.getItem("projectId"));
-		//console.log(this.projectDetail)
-		this.createUser="one";
-		this.discription="123"
+    this.projectDetail=JSON.parse(sessionStorage.getItem("projectId"));
+    // console.log(this.projectDetail)
+    let params = {
+        Version: '2019-01-18',
+        Region: 'ap-taipei',
+        KeyId: this.projectDetail.KeyId
+      };
+      this.$axios.post('kms2/DescribeKey', params).then(res => {     
+        this.keyList=res.Response.KeyMetadata;
+       
+      });
+		
 	},
 	methods:{
 		//修改名称关闭按钮

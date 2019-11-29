@@ -124,7 +124,7 @@ export default {
     handleSelectionChange(val) {
       this.multipleSelection = val;
     },
-    //获取全部数据
+    //获取主密钥列表
     getData() {
       var cookies = document.cookie;
       var list = cookies.split(";");
@@ -136,23 +136,14 @@ export default {
         Region: 'ap-taipei',
 
       };
-      this.$axios.post('kms2/ListKeys', params).then(res => {
-        // console.log(res.Response);
-        var arrlist = res.Response.Keys;
-        var DataList = [];
-        for (let i = 0; i < arrlist.length; i++) {
-           let params = {
-             Version: '2019-01-18',
-             Region: 'ap-taipei',
-           };
-          params['KeyId'] = arrlist[i].KeyId
-        this.$axios.post('kms2/DescribeKey', params).then(res => {
-            DataList.push(res.Response.KeyMetadata)
-            // console.log(DataList)
-          this.tableDataBegin = DataList;
+      // this.$axios.post('kms2/ListKeys', params).then(res => {
 
+      // });
+      //获取主密钥列表详情
+      this.$axios.post('kms2/ListKeyDetail', params).then(res => {
+            var DataList = res.Response.KeyMetadatas
+            this.tableDataBegin = DataList;
             this.allData = DataList
-            //this.tableDataBegin = this.allData;
             // 将数据的长度赋值给totalItems
             this.totalItems = this.tableDataBegin.length;
             if (this.totalItems > this.pageSize) {
@@ -164,9 +155,6 @@ export default {
             }
             
          });
-        }
-         //this.filterState()
-      });
     },
     //搜索
     doFilter() {
