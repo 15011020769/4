@@ -91,7 +91,7 @@
                       ref="multipleOptionPolicies"
                       :data="policiesAllData"
                       size = "small"
-                      height="300"
+                      height="45vh"
                       tooltip-effect="dark"
                       style="width: 100%"
                       @row-click="selectedRowPolicies"
@@ -124,7 +124,7 @@
                       :data="policiesSelectedData"
                       tooltip-effect="dark"
                       size = "small"
-                      height="300"
+                      height="50vh"
                       style="width: 100%">
                       <el-table-column prop="PolicyName" label="策略名"  show-overflow-tooltip>
                         <template slot-scope="scope">
@@ -197,20 +197,20 @@
                   <div class="container-left">
                     <p>选择添加的用户（共{{totalNumUser}}条）</p>
                     <div>
-                      <el-input size="mini" v-model="searchUser" style="width:89%" @keyup.enter.native="toQueryUser" />
-                      <el-button size="mini" class="suo" icon="el-icon-search" show-overflow-tooltip @click="toQueryUser" ></el-button>
+                      <el-input size="mini" v-model="searchUser" style="width:100%" @keyup.enter.native="toQueryUser" />
+                      <i size="mini" class="el-icon-search fier" show-overflow-tooltip @click="toQueryUser" ></i>
                     </div>
                     <el-table
                       class="table-left"
                           ref="multipleOptionUser"
                           :data="userData"
                           size = "small"
-                          height="300"
+                          height="45vh"
                           tooltip-effect="dark"
                           style="width: 100%"
                           @row-click="selectedRow"
                           @selection-change="handleSelectionChangeUser">
-                          <el-table-column type="selection" prop="Uin" width="29"> </el-table-column>
+                          <el-table-column type="selection" prop="Uin" width="28"> </el-table-column>
                             <el-table-column prop="Name" label="用户"  show-overflow-tooltip>
                             </el-table-column>
                             <el-table-column label="用户类型"  width="100">
@@ -220,8 +220,10 @@
                             </el-table-column>
                     </el-table>
                   </div>
-                  <div class="abs">
-                    <div>&nbsp;</div>
+                  <div class="direction">
+                    <div class="direction-icon">
+                      <i class="iconfont">&#xe603;</i>
+                    </div>
                   </div>
                   <div class="container-left">
                     <span>已选择（{{selNum}}）</span>
@@ -231,7 +233,7 @@
                       :data="userSelData"
                       tooltip-effect="dark"
                       size = "small"
-                      height="300"
+                      height="50vh"
                       style="width: 100%">
                       <el-table-column prop="Name" label="用户"  show-overflow-tooltip> </el-table-column>
                       <el-table-column label="用户类型"  width="100">
@@ -252,10 +254,10 @@
                     </el-table>
                   </div>
                 </div>
-                <span slot="footer" class="dialog-footer">
+                <div slot="footer" class="dialog-footer">
                   <el-button @click="dialogUser = false">取 消</el-button>
                   <el-button type="primary" @click="addUserToGroup">确 定</el-button>
-                </span>
+                </div>
               </el-dialog>
               <!-- dialog 用户组弹出框 end -->
             </el-tab-pane>
@@ -758,8 +760,10 @@ export default {
       color: #666;
     }
     .container-left {
-      width: 44%;
-      display: inline-block;
+      width: 48%;
+      display: table-cell;
+      position: relative;
+      vertical-align: top;
     }
   }
   .block {
@@ -784,22 +788,26 @@ export default {
   }
   .fier{
       cursor:pointer;
-      font-size: 140%;
+      font-size: 130%;
       color: #888;
       position: absolute;
-      left: 42%;
-      top: 26%;
+      right: 2%;
+      top: 8%;
     }
   .direction{
-      display: inline-block;
-      width: 100px;
+      display: table-cell;
+      width: 38px;
       text-align: center;
+      vertical-align: middle;
     }
     .direction-icon{
-      float: left;
-      width: 100px;
-      height: 300px;
-      line-height: 300px;
+      width: 16px;
+      height: 16px;
+      display: inline-block;
+      vertical-align: middle;
+      background-repeat: no-repeat;
+      background-position: inherit;
+      font-size: 0;
     }
 }
 </style>

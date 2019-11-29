@@ -10,7 +10,7 @@
                     ref="multipleOption"
                     :data="policiesData"
                     size = "small"
-                    height="300"
+                    height="55vh"
                     tooltip-effect="dark"
                     style="width: 100%"
                     @row-click="selectedRow"
@@ -30,8 +30,10 @@
                       </el-table-column>
                 </el-table>
              </div>
-            <div class="abs">
-              <div>&nbsp;</div>
+            <div class="direction">
+              <div class="direction-icon">
+                <i class="iconfont">&#xe603;</i>
+              </div>
             </div>
             <div class="container-left">
               <span>已选择（共条）</span>
@@ -41,7 +43,7 @@
                   :data="policiesSelectedData"
                   tooltip-effect="dark"
                   size = "small"
-                  height="300"
+                  height="60vh"
                   style="width: 100%">
                   <el-table-column prop="PolicyName" label="策略名"  show-overflow-tooltip>
                     <template slot-scope="scope">
@@ -156,23 +158,33 @@
       line-height: 16px;
       color: #666;
     }
-    .abs{
-      display: inline-block;
-      width: 100px;
-      height: 300px;
-      text-align: center;
-    }
-    .container-left{
-      position: relative;
-      width: 44%;
-      display: inline-block;
-    }
-  }
-  .ifier{
+    .ifier{
     position: absolute;
     font-size: 130%;
     right: 2%;
     top: 6%;
+  }
+  .direction{
+      display: table-cell;
+      width: 38px;
+      text-align: center;
+      vertical-align: middle;
+    }
+    .direction-icon{
+      width: 16px;
+      height: 16px;
+      display: inline-block;
+      vertical-align: middle;
+      background-repeat: no-repeat;
+      background-position: inherit;
+      font-size: 0;
+    }
+    .container-left {
+      width: 48%;
+      display: table-cell;
+      position: relative;
+      vertical-align: top;
+    }
   }
 }
 </style>

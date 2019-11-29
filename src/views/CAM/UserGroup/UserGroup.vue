@@ -97,12 +97,12 @@
                 ref="multipleOption"
                 :data="userData"
                 size = "small"
-                height="300"
+                height="55vh"
                 tooltip-effect="dark"
                 style="width: 100%;"
                 @row-click="selectedRow"
                 @selection-change="handleSelectionChangeUser">
-                <el-table-column type="selection" prop="Uin" width="29"> </el-table-column>
+                <el-table-column type="selection" prop="Uin" width="28"> </el-table-column>
                   <el-table-column prop="Name" label="用户"  show-overflow-tooltip>
                   </el-table-column>
                   <el-table-column label="用户类型"  width="100">
@@ -125,7 +125,7 @@
                 :data="userSelData"
                 tooltip-effect="dark"
                 size = "small"
-                height="300"
+                height="60vh"
                 style="width: 100%;">
                 <el-table-column prop="Name" label="用户"  show-overflow-tooltip> </el-table-column>
                 <el-table-column label="用户类型"  width="100">
@@ -432,20 +432,26 @@ export default {
       }
     }
     .direction{
-      display: inline-block;
-      width: 100px;
+      display: table-cell;
+      width: 38px;
       text-align: center;
+      vertical-align: middle;
     }
     .direction-icon{
-      float: left;
-      width: 100px;
-      height: 300px;
-      line-height: 300px;
-    }
-    .container-left{
-      position: relative;
-      width: 44%;
+      width: 16px;
+      height: 16px;
       display: inline-block;
+      vertical-align: middle;
+      background-repeat: no-repeat;
+      background-position: inherit;
+      font-size: 0;
+    }
+    .container-left {
+      width: 48%;
+      height: 100%;
+      display: table-cell;
+      position: relative;
+      vertical-align: top;
     }
     .cam_button{
       width: 96%;
@@ -520,7 +526,7 @@ export default {
       color: #888;
       position: absolute;
       right: 3%;
-      top: 8%;
+      top: 7%;
     }
     .app-cam-alert {
       padding: 10px 30px 10px 20px;
