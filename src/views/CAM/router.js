@@ -31,6 +31,22 @@ export default new Router({
       }
     },
     {
+      path: '/addPolicyToUser', // 用户添加到策略
+      name: 'addPolicyToUser',
+      component: () => import(/* webpackChunkName: "Cam" */ './UserList/addPolicyToUser.vue'),
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
+      path: '/addTeamUser', // 添加到用户组
+      name: 'addTeamUser',
+      component: () => import(/* webpackChunkName: "Cam" */ './UserList/addTeamUser.vue'),
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
       path: '/NewUser', // 新建用户
       name: 'NewUser',
       component: () => import(/* webpackChunkName: "Cam" */ './UserList/NewUser.vue'),

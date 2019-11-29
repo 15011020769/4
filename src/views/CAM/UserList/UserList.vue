@@ -102,22 +102,33 @@
       <el-table-column type="expand" :label="$t('CAM.CAM.userList.userDetails')" width="50">
         <template slot-scope="scope">
           <el-form label-position="left" inline class="demo-table-expand" :model="form">
-            <el-form-item label="用户名称">
+            <el-form-item label="用户组:"></el-form-item>
+            <el-form-item label="用户名称:">
                {{scope.row.Name}}
             </el-form-item>
-            <el-form-item label="用户类型" >
+            <el-form-item label="用户类型:" >
                {{scope.row.Remark}}
             </el-form-item>
-            <el-form-item label="账号ID" >
+            <el-form-item label="账号ID:" >
               {{scope.row.Uin}}
             </el-form-item>
-            <el-form-item label="关联信息">
-              
+            <el-form-item label="关联信息:"></el-form-item>
+             <el-form-item label="登录保护:">
+                <span style="color:red">未开启保护</span>
             </el-form-item>
-
+            <el-form-item label="消息订阅:"></el-form-item>
+            <el-form-item label="操作保护:">
+                <span style="color:red">未开启保护</span>
+            </el-form-item>
+            <el-form-item label="控制台访问:">
+              <span style="color:green">启用</span>
+            </el-form-item>
+            <el-form-item label="MFA设备:">
+              <span style="color:red">未绑定MFA设备</span>
+            </el-form-item>
             <el-form-item >
                     <el-link @click="details(scope.row)" type="primary">
-                        <span>查看用户信息</span>
+                        <span>查看用户详情></span>
                     </el-link>
               
             </el-form-item>

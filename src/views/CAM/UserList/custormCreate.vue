@@ -20,7 +20,7 @@
           <el-step :title="$t('CAM.CAM.userList.userInfor')"></el-step>
         </el-steps>
       </div>
-      <div v-show="active==1">
+      <div >
         <div class="tea-alert">
           <div class="tea-alert__info">{{$t('CAM.CAM.userList.userWhy')}}</div>
         </div>

@@ -238,62 +238,59 @@
               <div class="explain">
                 <p>关联策略以获取策略包含的操作权限。解除策略将失去策略包含的操作权限。特别的，解除随组关联类型的策略是通过将用户从关联该策略的用户组中移出。</p>
               </div>
-              <el-button class="clButton" type="primary" @click="NewUser" size="small">关联策略</el-button>
-              <el-button class="clButton" type="primary" @click="NewUser" size="small" disabled="true">解除策略</el-button>
-            
-    <el-table :data="tableDatas" style="width: 96%; margin: 0 auto;">
-      <el-table-column type="selection" width="55" v-if="show"></el-table-column>
-      <el-table-column label="策略名" prop="PolicyName"></el-table-column>
+              <el-button class="clButton" type="primary" size="small" @click="newUser">关联策略</el-button>
+              <el-button class="clButton" type="primary" size="small" disabled="true">解除策略</el-button>
 
-      <el-table-column label="关联类型" prop="Remark"></el-table-column>
+              <el-table :data="tableDatas" style="width: 96%; margin: 0 auto;" height="500">
+                <el-table-column type="selection" width="55" v-if="show"></el-table-column>
+                <el-table-column label="策略名" prop="PolicyName"></el-table-column>
 
-      <el-table-column label="策略类型"  prop="Type"> 
-         <template slot-scope="scope">
-            {{scope.row.Type == '1'?'自定义策略':'预设策略'}}
-         </template>
-      </el-table-column>
+                <el-table-column label="关联类型" prop="ServiceType"></el-table-column>
 
-      <el-table-column label="关联时间" prop="AddTime" ></el-table-column>
-      <el-table-column prop="oper" label="操作" width="140">
-        <template scope="scope">
-          <el-button @click="authorization=true" type="text">授权</el-button>
-          <span>|</span>
-          <el-dropdown :hide-on-click="false">
-            <span class="el-dropdown-link" style="color: #3E8EF7">
-              更多
-              <i class="el-icon-arrow-down el-icon--right"></i>
-            </span>
-            <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item>
-                <el-button type="text" style="color:#000" @click="dialogVisible= true">添加到组</el-button>
-              </el-dropdown-item>
-              <el-dropdown-item>
-                <el-button type="text" style="color:#000" @click="subscribe= true">订阅信息</el-button>
-              </el-dropdown-item>
-              <!-- <el-dropdown-item>删除</el-dropdown-item> -->
-              <el-button type="text" style="color:#000;padding-left:20px;"  @click="todeleteShow(scope.row)">删除</el-button>
-            </el-dropdown-menu>
-          </el-dropdown>
-        </template>
-      </el-table-column>
-    </el-table>
-</el-tab-pane>
+                <el-table-column label="策略类型" prop="Type">
+                  <template slot-scope="scope">{{scope.row.Type == '1'?'自定义策略':'预设策略'}}</template>
+                </el-table-column>
 
-
-            <el-tab-pane label="组(1)" name="second">
-              <el-button class="clButton" type="primary" @click="NewUser" size="small">加入到组</el-button>
-              <el-button class="clButton" type="primary" @click="NewUser" size="small" disabled="true">移出组</el-button>
-                 <el-table :data="teamTableData" style="width: 96%; margin: 0 auto;">
-      <el-table-column type="selection" width="55" v-if="show"></el-table-column>
-      <el-table-column label="组名称"></el-table-column>
-      <el-table-column label="关联策略"></el-table-column>
-      <el-table-column label="备注"> </el-table-column>
-      <el-table-column label="操作"></el-table-column>
-      <el-table-column prop="oper" label="操作" width="140"></el-table-column>
-       </el-table>
+                <el-table-column label="关联时间" prop="AddTime"></el-table-column>
+                <el-table-column prop="oper" label="操作" width="140">
+                  <template slot-scope="scope">
+                    <el-button
+                      @click.native.prevent="deleteRow(scope.$index, tableData)"
+                      type="text"
+                      size="small"
+                    >解除</el-button>
+                  </template>
+                </el-table-column>
+              </el-table>
             </el-tab-pane>
 
-            <el-tab-pane label="安全" name="third">安全</el-tab-pane>
+            <el-tab-pane label="组(1)" name="second">
+              <el-button class="clButton" type="primary" size="small" @click="addTeam">加入到组</el-button>
+              <el-button class="clButton" type="primary" size="small" disabled="true">移出组</el-button>
+              <el-table :data="teamTableData" style="width: 96%; margin: 0 auto;" height="500px">
+                <el-table-column type="selection" width="55" v-if="show"></el-table-column>
+                <el-table-column label="组名称" prop="GroupName"></el-table-column>
+                <el-table-column label="关联策略" prop="CreateTime"></el-table-column>
+                <el-table-column label="备注" prop="Remark"></el-table-column>
+                <el-table-column label="操作"></el-table-column>
+              </el-table>
+            </el-tab-pane>
+
+            <el-tab-pane label="安全" name="third">
+              <el-collapse v-model="activeNames" @change="handleChange">
+                <el-collapse-item title="身份安全" name="1">
+                  <div><span style="color:#666">登录保护: </span><span style="color:red">未开启保护</span></div>
+                  <div><span style="color:#666">操作保护: </span><span style="color:red">未开启保护</span></div>
+                  <div><span style="color:#666">MFA设备: </span><span style="color:red">未绑定MFA设备</span></div>
+                </el-collapse-item>
+                <el-collapse-item title="访问安全" name="2">
+                  <div><span style="color:#666">控制台访问管理: </span><span style="color:red">已启用</span></div>
+                  <div><span style="color:#666">控制台登录链接: </span><span style="color:red">未开启保护</span></div>
+                  <div><span style="color:#666">上次访问: </span><span style="color:red">-</span></div>
+                  <div><span style="color:#666">上次敏感操作: </span><span style="color:red">查看详情</span></div>
+                </el-collapse-item>
+              </el-collapse>
+            </el-tab-pane>
             <el-tab-pane label="API密钥" name="fourth">密钥</el-tab-pane>
             <el-tab-pane label="小程序" name="fifth" v-yjy>小程序</el-tab-pane>
           </el-tabs>
@@ -317,8 +314,10 @@ export default {
   },
   data() {
     return {
-      show:true,
-      disabled:false,
+      activeNames: ['1'],
+      teamTableData: [],
+      show: true,
+      disabled: false,
       tableDatas: [],
       content: {},
       checked: true,
@@ -399,6 +398,12 @@ export default {
     };
   },
   methods: {
+    newUser() {
+      this.$router.push({ name: "addPolicyToUser" });
+    },
+    addTeam(){
+      this.$router.push({ name: "addTeamUser" });
+    },
     init() {
       let userList = {
         Action: "ListUsers",
@@ -418,16 +423,6 @@ export default {
     sureUpdata() {
       console.log("11");
       let params = {
-        policyDocument: {
-          "version":"2.0",
-          "statement":[{
-               "action":"name/sts:AssumeRole",
-               "effect":"allow",
-               "principal":{
-                 "qcs":["qcs::cam::uin/100011921910:root"]
-                }
-            }]
-        },
         Action: "UpdateUser",
         Version: "2019-01-16",
         Name: this.formLabelAlign.name,
@@ -457,24 +452,36 @@ export default {
     },
     backoff() {
       this.$router.push({ path: "UserList" });
-    }
+    },
+     handleChange(val) {
+        console.log(val);
+      }
   },
   created() {
-    var data = 
     this.content = this.$route.query.content;
     let params = {
-      Action:'ListPolicies',
-      Version:'2019-01-16'
-    }
-    let url = 'cam2/ListPolicies'
-    this.axios.post(url,params).then((data)=>{
-       this.tableDatas = data.Response.List
-    })
+      Action: "ListPolicies",
+      Version: "2019-01-16"
+    };
+    let url = "cam2/ListPolicies";
+    this.axios.post(url, params).then(data => {
+      this.tableDatas = data.Response.List;
+      console.log(data);
+    });
+    let teamParams = {
+      Action: "ListGroups",
+      Version: "2019-01-16"
+    };
+    let teamUrl = "cam2/ListGroups";
+    this.axios.post(teamUrl, teamParams).then(data => {
+      this.teamTableData = data.Response.GroupInfo;
+      console.log(data);
+    });
   }
 };
 </script>
 <style lang="scss">
-.table1{
+.table1 {
   text-align: center;
 }
 .clButton {
@@ -655,7 +662,7 @@ export default {
     .userlist {
       margin-top: 20px;
       padding: 20px;
-      height: 600px;
+      height: 700px;
       background-color: #ffffff;
     }
     .quick {

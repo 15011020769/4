@@ -17,30 +17,18 @@
         <p>(共304条)</p>
       </div>
       <el-table
-        :data="tableData"
+        :data="tableDatas"
         height="350"
         @selection-change="handleSelectionChange"
         style="width: 100%; border:1px solid #ddd;padding-top: 8px;"
       >
         <el-table-column type="selection" width="55"></el-table-column>
-        <el-table-column label="策略名" width>
+        <el-table-column label="策略名" width prop="PolicyName"></el-table-column>
+        <el-table-column label="描述" width prop="Description"></el-table-column>
+        <el-table-column label="引用次数" width prop="Attachments"></el-table-column>
+        <el-table-column label="策略类型" width prop="Type">
           <template slot-scope="scope">
-            <span>{{ scope.row.name }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="描述" width>
-          <template slot-scope="scope">
-            <span>{{ scope.row.describe }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="引用次数" width>
-          <template slot-scope="scope">
-            <span>{{ scope.row.frequency }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="策略类型" width>
-          <template slot-scope="scope">
-            <span>{{ scope.row.type }}</span>
+              {{scope.row.type == '1'?'自定义策略':'预设策略'}}
           </template>
         </el-table-column>
       </el-table>
@@ -159,113 +147,7 @@ export default {
       dialogVisible: false,
       activeName: "first",
       checked: "",
-      tableData: [
-        {
-          //从策略列表中选取策略关联
-          name: "王小虎",
-          describe: "2016-05-03",
-          frequency: "上海市普陀区金沙江路 1518 弄",
-          type: "预设策略",
-          //复用现有用户策略
-          user: "1231231",
-          remarks: "4325323",
-          associated: "-",
-          //添加至组获得随组权限
-          group: "测试组",
-          prepare: "数据",
-          relation: "-"
-        },
-        {
-          //从策略列表中选取策略关联
-          name: "王小虎",
-          describe: "2016-05-03",
-          frequency: "上海市普陀区金沙江路 1518 弄",
-          type: "预设策略",
-          //复用现有用户策略
-          user: "1231231",
-          remarks: "4325323",
-          associated: "-",
-          //添加至组获得随组权限
-          group: "测试组",
-          prepare: "数据",
-          relation: "-"
-        },
-        {
-          //从策略列表中选取策略关联
-          name: "王小虎",
-          describe: "2016-05-03",
-          frequency: "上海市普陀区金沙江路 1518 弄",
-          type: "预设策略",
-          //复用现有用户策略
-          user: "1231231",
-          remarks: "4325323",
-          associated: "-",
-          //添加至组获得随组权限
-          group: "测试组",
-          prepare: "数据",
-          relation: "-"
-        },
-        {
-          //从策略列表中选取策略关联
-          name: "王小虎",
-          describe: "2016-05-03",
-          frequency: "上海市普陀区金沙江路 1518 弄",
-          type: "预设策略",
-          //复用现有用户策略
-          user: "1231231",
-          remarks: "4325323",
-          associated: "-",
-          //添加至组获得随组权限
-          group: "测试组",
-          prepare: "数据",
-          relation: "-"
-        },
-        {
-          //从策略列表中选取策略关联
-          name: "王小虎",
-          describe: "2016-05-03",
-          frequency: "上海市普陀区金沙江路 1518 弄",
-          type: "预设策略",
-          //复用现有用户策略
-          user: "1231231",
-          remarks: "4325323",
-          associated: "-",
-          //添加至组获得随组权限
-          group: "测试组",
-          prepare: "数据",
-          relation: "-"
-        },
-        {
-          //从策略列表中选取策略关联
-          name: "王小虎",
-          describe: "2016-05-03",
-          frequency: "上海市普陀区金沙江路 1518 弄",
-          type: "预设策略",
-          //复用现有用户策略
-          user: "1231231",
-          remarks: "4325323",
-          associated: "-",
-          //添加至组获得随组权限
-          group: "测试组",
-          prepare: "数据",
-          relation: "-"
-        },
-        {
-          //从策略列表中选取策略关联
-          name: "王小虎",
-          describe: "2016-05-03",
-          frequency: "上海市普陀区金沙江路 1518 弄",
-          type: "预设策略",
-          //复用现有用户策略
-          user: "1231231",
-          remarks: "4325323",
-          associated: "-",
-          //添加至组获得随组权限
-          group: "测试组",
-          prepare: "数据",
-          relation: "-"
-        }
-      ]
+      tableDatas: []
     };
   },
 
@@ -280,6 +162,17 @@ export default {
         })
         .catch(_ => {});
     },
+  },
+  created(){
+    let params = {
+      Action: "ListPolicies",
+      Version: "2019-01-16"
+    };
+    let url = "cam2/ListPolicies";
+    this.axios.post(url, params).then(data => {
+      this.tableDatas = data.Response.List;
+      console.log(data);
+    });
   }
 };
 </script>
