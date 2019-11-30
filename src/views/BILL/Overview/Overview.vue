@@ -1,21 +1,21 @@
 <template>
   <div id="Overview">
-    <span style="font-size: 16px; font-weight: 700; line-height:3;">账单概览</span>
+    <span style="font-size: 16px; font-weight: 700; line-height:3;">{{$t('BILL.BILL.Overview.title')}}</span>
     <el-date-picker v-model="month" type="month" value-format="yyyy-MM" size="small" @change="getDataChar()" style="padding-left: 5px;">
     </el-date-picker>
-    <span style="padding-left: 10px; font-size: 12px;">按扣费周期（按扣费时间统计生产月度账单）</span>
+    <span style="padding-left: 10px; font-size: 12px;">{{$t('BILL.BILL.Overview.note')}}</span>
     <el-card>
       <el-row :gutter="20">
         <el-col :span="18">
-          <span style="font-size: 14px; font-weight: 700; line-height:1">费用趋势</span>
-          <span style="font-size: 12px; color: #888;  margin-left: 5px; line-height:1">（单位：元）</span>
+          <span style="font-size: 14px; font-weight: 700; line-height:1">{{$t('BILL.BILL.Overview.costTrend')}}</span>
+          <span style="font-size: 12px; color: #888;  margin-left: 5px; line-height:1">{{$t('BILL.BILL.Overview.unit')}}</span>
           <el-select style="float: right;" v-model="value" @change="changeSelect" size="small">
             <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" size="mini">
             </el-option>
           </el-select>
           <el-button-group style="float: right;">
-            <el-button @click="initChartBar('half')" size="small">近半年</el-button>
-            <el-button @click="initChartBar('year')" size="small">近一年</el-button>
+            <el-button @click="initChartBar('half')" size="small">{{$t('BILL.BILL.Overview.half')}}</el-button>
+            <el-button @click="initChartBar('year')" size="small">{{$t('BILL.BILL.Overview.year')}}</el-button>
           </el-button-group>
           <div id="J_chartBarBox" class="chart-box" style="height: 250px;"></div>
         </el-col>
@@ -23,26 +23,26 @@
           <el-form>
             <span style="font-size: 16px; color: #000; line-height: 50px;">{{this.month.split('-')[0]}} 年 {{this.month.split('-')[1]}} 月</span>
             <el-form-item style="height: 20px;">
-              <span style="font-size: 12px; color: #666;">统计周期</span>
-              <span style="float: right; font-size: 12px; color: #666;">按扣费周期</span>
+              <span style="font-size: 12px; color: #666;">{{$t('BILL.BILL.Overview.statCycle')}}</span>
+              <span style="float: right; font-size: 12px; color: #666;">{{$t('BILL.BILL.Overview.feeCycle')}}</span>
             </el-form-item>
             <el-form-item style="height: 20px;">
-              <span style="font-size: 12px; color: #666;">总费用</span>
+              <span style="font-size: 12px; color: #666;">{{$t('BILL.BILL.Overview.totalAmount')}}</span>
               <span style="font-size: 16px; float: right; color: #006EFF;">{{this.total}}</span>
             </el-form-item>
             <span style="float: right;">=</span>
             <el-form-item style="height: 20px;">
-              <span style="font-size: 12px; color: #666;">现金支付</span>
+              <span style="font-size: 12px; color: #666;">{{$t('BILL.BILL.Overview.cashAmount')}}</span>
               <span style="font-size: 16px; float: right;">{{this.cash}}</span>
             </el-form-item>
             <span style="float: right;">+</span>
             <el-form-item style="height: 20px;">
-              <span style="font-size: 12px; color: #666;">赠送金支付</span>
+              <span style="font-size: 12px; color: #666;">{{$t('BILL.BILL.Overview.incentiveAmount')}}</span>
               <span style="font-size: 16px; float: right;">{{this.incentive}}</span>
             </el-form-item>
             <span style="float: right;">+</span>
             <el-form-item style="height: 20px;">
-              <span style="font-size: 12px; color: #666;">代金券支付</span>
+              <span style="font-size: 12px; color: #666;">{{$t('BILL.BILL.Overview.voucherAmount')}}</span>
               <span style="font-size: 16px; float: right;">{{this.voucher}}</span>
             </el-form-item>
           </el-form>
@@ -51,37 +51,37 @@
     </el-card>
     <br>
     <el-card>
-      <span style="font-size: 14px; font-weight: 700; line-height:1">{{this.month.split('-')[0]}}年{{this.month.split('-')[1]}}月账单汇总</span>
-      <span style="font-size: 12px; color: #888;  margin-left: 5px; line-height:1">（单位：元）</span>
+      <span style="font-size: 14px; font-weight: 700; line-height:1">{{this.month.split('-')[0]}}年{{this.month.split('-')[1]}}月{{$t('BILL.BILL.Overview.billSum')}}</span>
+      <span style="font-size: 12px; color: #888;  margin-left: 5px; line-height:1">{{$t('BILL.BILL.Overview.unit')}}</span>
       <div><br></div>
       <div>
         <el-tabs v-model="activeName" type="card">
-          <el-tab-pane label="按产品汇总" name="first">
+          <el-tab-pane :label="$t('BILL.BILL.Overview.productSum')" name="first">
             <div id="main2" style="float:left; width:1067px; height: 300px"></div>
             <el-table :data="dataList1" v-loading="dataListLoading" style="width: 100%;">
-              <el-table-column prop="business_code_name" label="产品名称">
+              <el-table-column prop="business_code_name" :label="$t('BILL.BILL.Overview.businessCodeName')">
               </el-table-column>
-              <el-table-column prop="cashAmount" align="right" label="现金支付">
+              <el-table-column prop="cashAmount" align="right" :label="$t('BILL.BILL.Overview.cashAmount')">
                 <template slot-scope="scope">
                   <span>{{scope.row.cashAmount}} 元</span>
                 </template>
               </el-table-column>
-              <el-table-column prop="incentiveAmount" align="right" label="赠送金支付">
+              <el-table-column prop="incentiveAmount" align="right" :label="$t('BILL.BILL.Overview.incentiveAmount')">
                 <template slot-scope="scope">
                   <span>{{scope.row.incentiveAmount}} 元</span>
                 </template>
               </el-table-column>
-              <el-table-column prop="voucherAmount" align="right" label="代金券支付">
+              <el-table-column prop="voucherAmount" align="right" :label="$t('BILL.BILL.Overview.voucherAmount')">
                 <template slot-scope="scope">
                   <span>{{scope.row.voucherAmount}} 元</span>
                 </template>
               </el-table-column>
-              <el-table-column prop="totalAmount" align="right" label="总费用">
+              <el-table-column prop="totalAmount" align="right" :label="$t('BILL.BILL.Overview.totalAmount')">
                 <template slot-scope="scope">
                   <span>{{scope.row.totalAmount}} 元</span>
                 </template>
               </el-table-column>
-              <el-table-column prop="state" align="center" label="费用趋势">
+              <el-table-column prop="state" align="center" :label="$t('BILL.BILL.Overview.costTrend')">
                 <template slot-scope="scope">
                   <div slot="reference" >
                     <el-popover placement="left" width="700" ref="popover" trigger="hover" >
@@ -97,31 +97,31 @@
             <el-pagination @size-change="sizeChangeHandle" @current-change="currentChangeHandle" :current-page="pageIndex" :page-sizes="[10, 20, 50, 100]" :page-size="pageSize" :total="totalPage1" layout="total, sizes, prev, pager, next, jumper" style="float: right;">
             </el-pagination>
           </el-tab-pane>
-          <el-tab-pane label="按项目（组）汇总" name="second" style="width:100%">
+          <el-tab-pane :label="$t('BILL.BILL.Overview.projectSum')" name="second" style="width:100%">
             <div id="main3" style="float: left; width: 1067px; height: 300px"></div>
             <el-table :data="dataList2" row-key="id" :tree-props="{children: 'children'}"  v-loading="dataListLoading" style="width: 100%; margin-bottom: 20px;">
-              <el-table-column prop="project_name" label="项目名称" ></el-table-column>
-              <el-table-column prop="cashAmount" align="right" label="现金支付">
+              <el-table-column prop="project_name" :label="$t('BILL.BILL.Overview.projectName')" ></el-table-column>
+              <el-table-column prop="cashAmount" align="right" :label="$t('BILL.BILL.Overview.cashAmount')">
                 <template slot-scope="scope">
                   <span>{{scope.row.cashAmount}} 元</span>
                 </template>
               </el-table-column>
-              <el-table-column prop="incentiveAmount" align="right" label="赠送金支付">
+              <el-table-column prop="incentiveAmount" align="right" :label="$t('BILL.BILL.Overview.incentiveAmount')">
                 <template slot-scope="scope">
                   <span>{{scope.row.incentiveAmount}} 元</span>
                 </template>
               </el-table-column>
-              <el-table-column prop="voucherAmount" align="right" label="代金券支付">
+              <el-table-column prop="voucherAmount" align="right" :label="$t('BILL.BILL.Overview.voucherAmount')">
                 <template slot-scope="scope">
                   <span>{{scope.row.voucherAmount}} 元</span>
                 </template>
               </el-table-column>
-              <el-table-column prop="totalAmount" align="right" label="总费用">
+              <el-table-column prop="totalAmount" align="right" :label="$t('BILL.BILL.Overview.totalAmount')">
                 <template slot-scope="scope">
                   <span>{{scope.row.totalAmount}} 元</span>
                 </template>
               </el-table-column>
-              <el-table-column prop="state" align="center" label="费用趋势">
+              <el-table-column prop="state" align="center" :label="$t('BILL.BILL.Overview.costTrend')">
                 <template slot-scope="scope">
                   <div slot="reference" >
                     <el-popover placement="left" width="700" ref="popover" trigger="hover" >
@@ -170,16 +170,16 @@ export default {
       totalPage2: 1,
       options: [{
         value: 'total',
-        label: '总费用'
+        label: this.$t('BILL.BILL.Overview.totalAmount')
       }, {
         value: 'cash',
-        label: '现金支付'
+        label: this.$t('BILL.BILL.Overview.cashAmount')
       }, {
         value: 'incentive',
-        label: '赠送金支付'
+        label: this.$t('BILL.BILL.Overview.incentiveAmount')
       }, {
         value: 'voucher',
-        label: '代金券支付'
+        label: this.$t('BILL.BILL.Overview.voucherAmount')
       }]
     }
   },
@@ -230,7 +230,7 @@ export default {
       } else {
         this.yearvalue = param
       }
-      this.$axios.post(`${process.env.VUE_APP_adminUrl}taifucloud/tbilldetails/costTrend?date=` + this.month + `&year=` + this.yearvalue + `&costType=` + this.value + `&uin=` + `100011921910`).then(data => {
+      this.$axios.post(`${process.env.VUE_APP_adminUrl}taifucloud/tbilldetails/costTrend?date=` + this.month + `&year=` + this.yearvalue + `&costType=` + this.value + `&uin=` + this.$cookie.get('uin')).then(data => {
         var list = data.chart
         const months = []
         var totalAmounts = []
@@ -297,7 +297,7 @@ export default {
     // 费用计算
     initCost () {
       this.$axios.post(`${process.env.VUE_APP_adminUrl}taifucloud/tbilldetails/costTrend?date=` + this.month + `&year=` + this
-        .yearvalue + `&costType=` + this.value + `&uin=` + `100011921910`).then(data => {
+        .yearvalue + `&costType=` + this.value + `&uin=` + this.$cookie.get('uin')).then(data => {
         this.total = data.chart[data.chart.length - 1].totalAmount
         this.cash = data.chart[data.chart.length - 1].cashAmount
         this.incentive = data.chart[data.chart.length - 1].incentiveAmount
@@ -307,7 +307,7 @@ export default {
     // 环状图
     initChart () {
       this.$axios.post(`${process.env.VUE_APP_adminUrl}taifucloud/tbilldetails/productTotal?date=` + this.month + `&uin=` +
-        `100011921910`).then(data => {
+        this.$cookie.get('uin')).then(data => {
         var list = data.chart
         var arr = []
         var values = []
@@ -389,7 +389,7 @@ export default {
     // 表格1
     getDataList1 () {
       this.$axios.post(`${process.env.VUE_APP_adminUrl}taifucloud/tbilldetails/productTotalList?date=` + this.month + `&uin=` +
-        `100011921910&pages=` + this.pageIndex + `&limit=` + this.pageSize).then(data => {
+        this.$cookie.get('uin') + `&pages=` + this.pageIndex + `&limit=` + this.pageSize).then(data => {
         // console.log('---' + data)
         if (data && data.code === 0) {
           this.dataList1 = data.data.list
@@ -405,7 +405,7 @@ export default {
     // 条形图
     initShadow () {
       this.$axios.post(`${process.env.VUE_APP_adminUrl}taifucloud/tbilldetails/projectCol?date=` + this.month + `&uin=` +
-        `100011921910`).then(data => {
+        this.$cookie.get('uin')).then(data => {
         var list = data.chart
         var projects = []
         var totalAmounts = []
@@ -468,7 +468,7 @@ export default {
     // 表格2
     getDataList2 () {
       this.$axios.post(`${process.env.VUE_APP_adminUrl}taifucloud/tbilldetails/projectColList?date=` + this.month + `&uin=` +
-        `100011921910&pages=` + this.pageIndex + `&limit=` + this.pageSize).then(data => {
+        this.$cookie.get('uin') + `&pages=` + this.pageIndex + `&limit=` + this.pageSize).then(data => {
         if (data && data.code === 0) {
           this.dataList2 = data.data.list
           this.totalPage2 = data.data.totalCount
@@ -485,7 +485,7 @@ export default {
       this.dataList1.forEach((row, index) => {
         const productName = row.business_code_name
         this.$axios.post(`${process.env.VUE_APP_adminUrl}taifucloud/tbilldetails/getLineList?date=` + this.month + `&uin=` +
-          `100011921910` + `&businessCodeName=` + productName).then(data => {
+         this.$cookie.get('uin') + `&businessCodeName=` + productName).then(data => {
           var list = data.chart
           var xMonth = []
           var yTotalAmounts = []
@@ -550,7 +550,7 @@ export default {
       this.dataList2.forEach((row, index) => {
         const project = row.project_name
         this.$axios.post(`${process.env.VUE_APP_adminUrl}taifucloud/tbilldetails/getLineList?date=` + this.month + `&uin=` +
-          `100011921910` + `&projectName=` + project).then(data => {
+          this.$cookie.get('uin') + `&projectName=` + project).then(data => {
           var list = data.chart
           var xMonth = []
           var yTotalAmounts = []
@@ -608,7 +608,7 @@ export default {
           row.children.forEach((value, index) => {
             // console.log(row.id)
             this.$axios.post(`${process.env.VUE_APP_adminUrl}taifucloud/tbilldetails/getLineList?date=` + this.month + `&uin=` +
-            `100011921910` + `&projectName=` + project + `&businessCodeName=` + value.project_name).then(data => {
+            this.$cookie.get('uin') + `&projectName=` + project + `&businessCodeName=` + value.project_name).then(data => {
               var list = data.chart
               var xMonth = []
               var yTotalAmounts = []

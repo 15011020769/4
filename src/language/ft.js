@@ -7,5 +7,6 @@ module.exports = {
   'DDOS': require('@/views/DDOS/language/ft'),
   'CLA': require('@/views/CLA/language/ft'),
   'CAP': require('@/views/CAP/language/ft'),
-  'KMS': require('@/views/KMS/language/ft')
+  'KMS': require('@/views/KMS/language/ft'),
+  'BILL': require('@/views/BILL/language/ft')
 }

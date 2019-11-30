@@ -1,13 +1,15 @@
 <template>
-  <div class="mod-role">
-    <span style="font-size: 16px; font-weight: 700; line-height:3;">订单管理</span>
+  <div class="Cam">
+    <div class="top">
+      <span class="title-left">{{$t('BILL.BILL.Deal.title')}}</span>
+    </div>
     <el-form :inline="true" :model="dataForm" class="demo-form-inline" @keyup.enter.native="getDataList()">
       <el-form-item>
-        <el-input placeholder="项目ID" clearable v-model="dataForm.projectId" size="small">
+        <el-input :placeholder="$t('BILL.BILL.Deal.projectId')" clearable v-model="dataForm.projectId" size="small">
         </el-input>
       </el-form-item>
       <el-form-item>
-        <el-input placeholder="订单编号" clearable v-model="dataForm.orderId" size="small">
+        <el-input :placeholder="$t('BILL.BILL.Deal.orderId')" clearable v-model="dataForm.orderId" size="small">
         </el-input>
       </el-form-item>
       <el-form-item>
@@ -17,58 +19,46 @@
         <el-button type="primary" icon="el-icon-download" @click="download" size="small"></el-button>
       </el-form-item>
     </el-form>
-    <el-table :data="dataList" border style="width: 100%" v-loading="dataListLoading" size="small">
-      <div style='display:inline-block;' v-if="false">
-        <el-table-column prop="payer" header-align="center" align="center" width="150" label="支付者">
+    <div class="cam-box">
+      <el-table :data="dataList" border style="width: 100%" v-loading="dataListLoading" size="small">
+        <el-table-column prop="orderId" header-align="center" align="center" width="150" :label="$t('BILL.BILL.Deal.orderId')">
         </el-table-column>
-          <el-table-column prop="creator" header-align="center" align="center" width="160" label="创建人">
+        <el-table-column prop="status" header-align="center" align="center" width="120" :label="$t('BILL.BILL.Deal.status')" :formatter="formatterStatus">
         </el-table-column>
-          <el-table-column prop="productInfo" header-align="center" align="center" width="160" label="产品详情">
+        <el-table-column prop="projectId" header-align="center" align="center" width="120" :label="$t('BILL.BILL.Deal.projectId')">
         </el-table-column>
-          <el-table-column prop="offset" header-align="center" align="center" width="120" label="数据偏移量">
+        <el-table-column prop="goodsCategoryId" header-align="center" align="center" width="120" :label="$t('BILL.BILL.Deal.goodsCategoryId')">
         </el-table-column>
-        <el-table-column prop="timeSpan" header-align="center" align="center" width="120" label="时长">
+        <el-table-column prop="realTotalCost" header-align="center" align="center" width="150" :label="$t('BILL.BILL.Deal.realTotalCost')">
         </el-table-column>
-        <el-table-column prop="timeUnit" header-align="center" align="center" width="120" label="时间单位">
+        <el-table-column prop="voucherDecline" header-align="center" align="center" width="150" :label="$t('BILL.BILL.Deal.voucherDecline')">
         </el-table-column>
-      </div>
-      <el-table-column prop="orderId" header-align="center" align="center" width="150" label="订单编号">
-      </el-table-column>
-      <el-table-column prop="status" header-align="center" align="center" width="120" label="订单状态" :formatter="formatterStatus">
-      </el-table-column>
-       <el-table-column prop="projectId" header-align="center" align="center" width="120" label="项目ID">
-      </el-table-column>
-      <el-table-column prop="goodsCategoryId" header-align="center" align="center" width="120" label="产品分类ID">
-      </el-table-column>
-      <el-table-column prop="realTotalCost" header-align="center" align="center" width="150" label="实际支付金额(分)">
-      </el-table-column>
-      <el-table-column prop="voucherDecline" header-align="center" align="center" width="150" label="代金券抵扣金额(分)">
-      </el-table-column>
-      <el-table-column prop="policy" header-align="center" align="center" width="120" label="折扣率">
-      </el-table-column>
-      <el-table-column prop="price" header-align="center" align="center" width="120" label="单价(分)">
-      </el-table-column>
-      <el-table-column prop="totalCost" header-align="center" align="center" width="120" label="原价(分)">
-      </el-table-column>
-      <el-table-column prop="usdCost" header-align="center" align="center" width="120" label="美元金额">
-      </el-table-column>
-      <el-table-column prop="ntCost" header-align="center" align="center" width="120" label="台币金额">
-      </el-table-column>
-      <el-table-column prop="month" header-align="center" align="center" width="120" label="订单所属月份">
-      </el-table-column>
-      <el-table-column prop="currency" header-align="center" align="center" width="120" label="货币单位" :formatter="formatterCurrency">
-      </el-table-column>
-       <el-table-column prop="createTime" header-align="center" align="center" width="160" label="创建时间">
-      </el-table-column>
-      <el-table-column fixed="right" header-align="center" align="center" width="180" label="操作">
-        <template slot-scope="scope">
-          <el-button type="text" size="small" @click="detailHandle(scope.row)">详情</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
-    <br>
-    <el-pagination @size-change="sizeChangeHandle" @current-change="currentChangeHandle" :current-page="pageIndex" :page-sizes="[10, 20, 50, 100]" :page-size="pageSize" :total="totalPage" layout="total, sizes, prev, pager, next, jumper" style="float: right;">
-    </el-pagination>
+        <el-table-column prop="policy" header-align="center" align="center" width="120" :label="$t('BILL.BILL.Deal.policy')">
+        </el-table-column>
+        <el-table-column prop="price" header-align="center" align="center" width="120" :label="$t('BILL.BILL.Deal.price')">
+        </el-table-column>
+        <el-table-column prop="totalCost" header-align="center" align="center" width="120" :label="$t('BILL.BILL.Deal.totalCost')">
+        </el-table-column>
+        <el-table-column prop="usdCost" header-align="center" align="center" width="120" :label="$t('BILL.BILL.Deal.usdCost')">
+        </el-table-column>
+        <el-table-column prop="ntCost" header-align="center" align="center" width="120" :label="$t('BILL.BILL.Deal.ntCost')">
+        </el-table-column>
+        <el-table-column prop="month" header-align="center" align="center" width="120" :label="$t('BILL.BILL.Deal.month')">
+        </el-table-column>
+        <el-table-column prop="currency" header-align="center" align="center" width="120" :label="$t('BILL.BILL.Deal.currency')" :formatter="formatterCurrency">
+        </el-table-column>
+        <el-table-column prop="createTime" header-align="center" align="center" width="160" :label="$t('BILL.BILL.Deal.createTime')">
+        </el-table-column>
+        <el-table-column fixed="right" header-align="center" align="center" width="180" label="操作">
+          <template slot-scope="scope">
+            <el-button type="text" size="small" @click="detailHandle(scope.row)">{{$t('BILL.BILL.Deal.details')}}</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+      <el-pagination @size-change="sizeChangeHandle" @current-change="currentChangeHandle" :current-page="pageIndex" :page-sizes="[10, 20, 50, 100]" :page-size="pageSize" :total="totalPage" layout="total, sizes, prev, pager, next, jumper" style="float: right;">
+      </el-pagination>
+    </div>
+    
     <!-- 弹窗, 详情 -->
     <Detail ref="Detail"></Detail>
   </div>
@@ -105,7 +95,7 @@ export default {
         'limit': this.pageSize,
         'projectId': this.dataForm.projectId,
         'orderId': this.dataForm.orderId,
-        'orderOwner': '100011921910' //localStorage.getItem("uin");
+        'orderOwner': this.$cookie.get('uin')
       }
       this.$axios.post(`${process.env.VUE_APP_adminUrl}taifucloud/torderdetails/list`, params).then(data => {
         console.log('获取列表成功')
@@ -166,7 +156,7 @@ export default {
       var params = {
         'projectId': this.dataForm.projectId,
         'orderId': this.dataForm.orderId,
-        'orderOwner': '100011921910' //localStorage.getItem("uin")
+        'orderOwner': this.$cookie.get('uin')
       }
       this.$axios.post(`${process.env.VUE_APP_adminUrl}taifucloud/torderdetails/exportList`, params, { responseType: 'blob' }).then(res => {
         const content = res
@@ -208,3 +198,149 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+  .Cam {
+    .top {
+      height: 45px;
+      line-height: 45px;
+      margin-bottom: 20px;
+      padding: 0 20px;
+      background: #fff;
+      .title-left {
+        font-size: 14px;
+        font-weight: bolder;
+      }
+    }
+    .content {
+      padding: 20px;
+      .operation {
+        margin-bottom: 10px;
+      }
+      .search {
+        overflow: hidden;
+        padding: 10px 0;
+        .search-left {
+          float: left;
+          .searchBox {
+            display: inline-block;
+          }
+        }
+        .search-right {
+          float: right;
+          margin-top: 10px;
+          :hover {
+            cursor: pointer;
+          }
+          i {
+            padding: 0 3px;
+          }
+        }
+      }
+      .cam-pag {
+        padding: 10px 0;
+        display: flex;
+        justify-content: flex-end;
+      }
+    }
+    .abs{
+      display: inline-block;
+      width: 100px;
+      height: 300px;
+      text-align: center;
+    }
+    .container-left{
+      position: relative;
+      width: 44%;
+      display: inline-block;
+    }
+    .cam_button{
+      width: 96%;
+      height: 40px;
+      margin: 10px auto;
+    }
+    .cam-lt{
+      float: left;
+    }
+    .head-container{
+      float: right;
+    }
+    .cam_button{
+      position: relative;
+    }
+    .cam-box{
+      width: 96%;
+      padding: 20px;
+      background-color: #fff;
+      margin: 0 auto;
+    }
+    .block{
+      text-align: right;
+      padding-top: 10px;
+    }
+    .btn-fr{
+      float: right;
+    }
+    .pad{
+      padding: 0 20px 0 20px;
+    }
+    .bor-box{
+      font-size: 12px;
+      line-height: inherit;
+      padding: 10px 30px 10px 20px;
+      vertical-align: middle;
+      color: #003b80;
+      border: 1px solid #97c7ff;
+      border-radius: 2px;
+      background: #e5f0ff;
+      position: relative;
+      box-sizing: border-box;
+      //max-width: 1360px;
+      margin-left: auto;
+    }
+    .bor-box p{
+      line-height: 1.5;
+      margin-bottom: 8px;
+    }
+    .bor-box .num-item{
+      text-indent: -10px;
+      padding-left: 18px;
+      margin-bottom: 0; 
+    }
+    .ifier {
+      cursor:pointer;
+      font-size: 140%;
+      color: #888;
+      position: absolute;
+      right: 3%;
+      top: 18%;
+    }
+    .gear {
+      cursor:pointer;
+      font-size: 140%;
+      color: #888;
+      padding-left: 6px;
+    }
+    .fier{
+      cursor:pointer;
+      font-size: 140%;
+      color: #888;
+      position: absolute;
+      right: 3%;
+      top: 8%;
+    }
+    .app-cam-alert {
+      padding: 10px 30px 10px 20px;
+      vertical-align: middle;
+      color: #003b80;
+      border: 1px solid #97c7ff;
+      border-radius: 2px;
+      background: #e5f0ff;
+      position: relative;
+      box-sizing: border-box;
+      margin-left: auto;
+      margin-right: auto;
+      margin-bottom: 20px;
+    }
+  }
+</style>
