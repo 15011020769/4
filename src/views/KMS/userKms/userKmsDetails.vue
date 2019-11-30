@@ -26,11 +26,17 @@
 							</span>
 						</el-dialog>
 						<p><span>ID</span><span>{{projectDetail.KeyId}}</span></p>
-						<p><span>状态</span><span>{{projectDetail.KeyState}}</span></p>
+						<p><span>状态</span><span :style="projectDetail.KeyState=='已启用'?'color:#000':'color:#ff9d00'">{{projectDetail.KeyState}}</span>
+                <a href="#" :style="projectDetail.KeyState=='已禁用' || projectDetail.KeyState=='待导入' || keyList.KeyState=='PendingDelete'?'display:none':'display:inline-block'">&nbsp;禁用密钥</a>
+                <a href="#" :style="projectDetail.KeyState=='已启用' || projectDetail.KeyState=='待导入' || keyList.KeyState=='PendingDelete'?'display:none':'display:inline-block'">&nbsp;启用密钥</a>
+                <a href="#" :style="projectDetail.KeyState=='已启用' || projectDetail.KeyState=='待导入' || projectDetail.KeyState=='已禁用'?'display:none':'display:inline-block'">&nbsp;取消删除</a>
+            </p>
 						<p><span>地区</span><span>{{projectDetail.address}}</span></p>
 						<p><span>创建时间</span><span>{{projectDetail.CreateTime}}</span></p>
 						<p><span>创建者</span><span>{{keyList.Owner}}</span></p>
-						<p><span>轮换状态</span><span>{{projectDetail.CreateTime}}</span></p>
+						<p><span>轮换状态</span><span>{{projectDetail.CreateTime}}</span>
+            
+            </p>
 						<p><span>描述信息</span><span>{{keyList.Description}}</span><i class="el-icon-edit" @click="newDescription"></i></p>
 						<el-dialog
 							class="changeNameModel"
@@ -49,7 +55,7 @@
 						</el-dialog>
 					</div>
 				</div>
-				<div class="projectDetailOne">
+				<div class="projectDetailOne" v-if="keyList.KeyState == 'PendingImport'?keyStatus=true:keyStatus=false" >
 					<h2>密钥材料</h2>
 					<div class="detailList">
 						<p><span>密钥来源</span><span>{{projectDetail.Origin}}</span></p>
@@ -118,7 +124,7 @@
 												<el-date-picker v-if="isSettimeOut"
 													v-model="selectTime"
 													type="date"
-													placeholder="选择日期" class="setTimeOutTime">
+													placeholder="选择日期" class="setTimeOutTime" >
 												</el-date-picker><br/>
                         <span class="tipStep">若您已订阅产品信息，您将在密钥材料过期前三天收到告警信息</span>
 											</span>
@@ -152,15 +158,15 @@
 				<div class="projectDetailThree newClear">
 					<h2>在线工具<i class="el-icon-info"></i></h2>
 					<div class="btnBottom">
-						<button @click="changeBtnEncrypt(1)" :class="thisType=='1'?'bthBorderColor':''">加密</button>
-						<button @click="changeBtnEncrypt(2)" :class="thisType=='2'?'bthBorderColor':''">解密</button>
+						<button @click="changeBtnEncrypt(1)" :class="thisType=='1'?'bthBorderColor':''" :disabled='keyList.KeyState=="Disabled"||keyList.KeyState=="PendingDelete"?true:false'>加密</button>
+						<button @click="changeBtnEncrypt(2)" :class="thisType=='2'?'bthBorderColor':''" :disabled='keyList.KeyState=="Disabled"||keyList.KeyState=="PendingDelete"?true:false'>解密</button>
 					</div>
 					<div class="EncryptText newClear">
-						<div v-if="thisType=='1'?true:false">
-							<el-input class="textareaIpt" v-model="Plaintext" type="textarea" placeholder="请输入明文" @input='changeTextarea1'></el-input>
+						<div v-if="thisType=='1'||thisType=='0'?true:false">
+							<el-input :disabled='keyList.KeyState=="Disabled"||keyList.KeyState=="PendingDelete"?true:false' class="textareaIpt" v-model="Plaintext" type="textarea" placeholder="请输入明文" @input='changeTextarea1'></el-input>
 							<el-button @click="actionPlain" :disabled="disableTextarea" type="primary">执行</el-button>
 						</div>
-						<div v-if="thisType=='2'?true:false">
+						<div v-if="thisType=='2'||thisType=='3'?true:false">
 							<el-input class="textareaIpt" v-model="Ciphertext" type="textarea" placeholder="请输入密文" @input='changeTextarea1'></el-input>
 							<el-button @click="actionCipher" :disabled="disableTextarea" type="primary">执行</el-button>
 						</div>
@@ -175,6 +181,7 @@
 	</div>
 </template>
 <script>
+import moment from 'moment'
 export default {
 	data(){
 		return{
@@ -196,12 +203,14 @@ export default {
 			thisStepOne:true,//第一步
 			thisStepTwo:false,//第二步
 			thisStepThree:false,//第三步
-			selectTime:'',//选择过期时间
+			selectTime:'0',//选择过期时间
 			outTimeSet:"forver",//绑定过期时间
       isSettimeOut:false,//是否设置过期时间
       PlaintextRead:"",//密钥材料
       exportRead:"",//导入令牌
-      keyList:[]
+      keyList:[],
+      keyStatus:true,
+      GetParameters:''
 		}
 	},
 	created(){
@@ -214,6 +223,8 @@ export default {
       };
       this.$axios.post('kms2/DescribeKey', params).then(res => {     
         this.keyList=res.Response.KeyMetadata;
+        
+        this.keyList.KeyState=="Disabled"||this.keyList.KeyState=="PendingDelete"?this.thisType="0":3
         // console.log(this.keyList)
        
       });
@@ -285,7 +296,14 @@ export default {
 				KeyId:this.projectDetail.KeyId
 			};
 			this.$axios.post('kms2/Encrypt', params).then(res => {
-				console.log(res);
+        // console.log(res.Response.Error.Message);
+        if(res.Response.Error !== undefined){
+          this.$message({
+            showClose: true,
+            message: res.Response.Error.Message,
+            type: 'error'
+          });
+        }
 				this.downLoadText=res.Response.CiphertextBlob
 			})
 		},
@@ -298,7 +316,14 @@ export default {
 				CiphertextBlob:this.Ciphertext
 			};
 			this.$axios.post('kms2/Decrypt', params).then(res => {
-				console.log(res)
+        // console.log(res)
+        if(res.Response.Error !== undefined){
+          this.$message({
+            showClose: true,
+            message: res.Response.Error.Message,
+            type: 'error'
+          });
+        }
 				this.downLoadText=res.Response.Plaintext
 			})
 		},
@@ -338,7 +363,6 @@ export default {
 		//第一步的下一步按钮 获取导入主密钥（CMK）材料的参数
 		nextStepOne(){
 			this.thisStepOne=false;
-      // this.thisStepTwo=true;
       this.thisStepThree=false;
       let params = {
         Version: '2019-01-18',
@@ -349,22 +373,35 @@ export default {
       };
       console.log(params)
 			this.$axios.post('kms2/GetParametersForImport', params).then(res => {
-				console.log(res)
+        this.GetParameters=res.Response
+        console.log(this.GetParameters)
+        this.thisStepTwo=true;
 			})
 		},
 		//第二步的下一步按钮\导入密钥按钮
 		nextStepTwo(){
+     
       this.thisStepOne=false;
       this.thisStepTwo=false;
-      // let params = {
-      //   Version: '2019-01-18',
-      //   Region: 'ap-taipei',
-			// 	CiphertextBlob:this.Ciphertext
-			// };
-			// this.$axios.post('kms2/ImportKeyMaterial', params).then(res => {
-			// 	console.log(res)
-			// 	this.downLoadText=res.Response.Plaintext
-			// })
+      let params = {
+        Version: '2019-01-18',
+        Region: 'ap-taipei',
+        EncryptedKeyMaterial:this.GetParameters.PublicKey,
+        ImportToken:this.GetParameters.ImportToken,
+        KeyId:this.GetParameters.KeyId,
+        // ValidTo:this.selectTime
+      };
+      if(this.selectTime == '0'){
+         params['ValidTo']='0'
+      }else{
+        params['ValidTo']=Date.parse(moment(this.selectTime).format('YYYY-MM-DD'))/1000
+
+      }
+       console.log(params)
+			this.$axios.post('kms2/ImportKeyMaterial', params).then(res => {
+        console.log(res)
+        
+			})
       this.thisStepThree=true;
 		},
 		//第二步的上一步按钮
@@ -382,9 +419,11 @@ export default {
 		//监测选择设置过期时间变化
 		timeOutChange(){
 			if(this.outTimeSet=='setTime'){
-				this.isSettimeOut=true;
+        this.isSettimeOut=true;
+        this.selectTime=''
 			}else{
-				this.isSettimeOut=false;
+        this.isSettimeOut=false;
+        this.selectTime='0'
 			}
     },
     //加密密钥材料change
