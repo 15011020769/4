@@ -10,10 +10,10 @@
           <a href="JavaScript:;">跟踪集使用指南。</a>
         </p>
         <p>
-          <span
-            >2.
-            当您的跟踪集为正常状态时，跟踪集会将您账号下的操作日志记录，存储到跟踪集配置的存储桶中；当您的跟踪集为关闭状态，操作日志不会存储到对应的存储桶。</span
-          >
+          <span>
+            2.
+            当您的跟踪集为正常状态时，跟踪集会将您账号下的操作日志记录，存储到跟踪集配置的存储桶中；当您的跟踪集为关闭状态，操作日志不会存储到对应的存储桶。
+          </span>
         </p>
         <p>
           <span>3. 因为记录跟踪日志，所产生的COS存储费用，将依据COS标准计费进行收取，</span>
@@ -28,13 +28,15 @@
         </div>
       </div>
       <div class="tables">
-        <el-table :data="tableData" style="width: 100%">
+        <el-table :data="tableData" style="width: 100%" v-loading="loading">
           <template slot="empty">暂无跟踪集</template>
           <el-table-column prop="name" label="名称">
             <template slot-scope="scope">
-              <el-button @click="handleClick(scope.row)" type="text">{{
+              <el-button @click="handleClick(scope.row)" type="text">
+                {{
                 scope.row.name
-              }}</el-button>
+                }}
+              </el-button>
             </template>
           </el-table-column>
           <el-table-column prop="isMultiRegionAudit" label="全部区域">
@@ -58,51 +60,53 @@
 </template>
 
 <script>
-import { GZJ_LIST } from '@/constants'
+import { GZJ_LIST } from "@/constants";
 export default {
-  data () {
+  data() {
     return {
-      value1: '',
-      input3: '',
+      value1: "",
+      input3: "",
       isDisabled: false, // 创建按钮
       visible: false,
-      tableData: [] // 列表数据
-    }
+      tableData: [], // 列表数据
+      loading: true
+    };
   },
-  created () {
-    this.getData()
+  created() {
+    this.getData();
   },
   methods: {
     // 详情页跳转
-    handleClick (rows) {
+    handleClick(rows) {
       this.$router.push({
-        path: '/DetailAudit',
+        path: "/DetailAudit",
         query: {
           AuditName: rows.name
         }
-      })
+      });
     },
     // 创建
-    Create () {
+    Create() {
       this.$router.push({
-        path: '/NewAudit'
-      })
+        path: "/NewAudit"
+      });
     },
-    getData () {
+    getData() {
       let params = {
-        Version: '2019-03-19',
-        Region: 'ap-guangzhou'
-      }
-      this.axios.post('cloudaudit/ListAudits', params).then(({ data }) => {
-        console.log(data)
-        this.tableData = data.auditLists
+        Version: "2019-03-19",
+        Region: "ap-guangzhou"
+      };
+      this.axios.post("cloudaudit/ListAudits", params).then(({ data }) => {
+        console.log(data);
+        this.tableData = data.auditLists;
+        this.loading = false;
         if (this.tableData.length >= 1) {
-          this.isDisabled = true
+          this.isDisabled = true;
         }
-      })
+      });
     }
   }
-}
+};
 </script>
 
 <style scoped lang="scss">
