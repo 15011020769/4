@@ -11,73 +11,73 @@
           <div class="item">
             <ul>
               <li class="li-title">{{$t("COM.COM.calculate")}}</li>
-              <li @click="go('../CVM/index.html#/cloudHost')">{{$t("COM.COM.cvm")}}</li>
-              <li @click="go('../CVM/index.html#/cloudDisk')">{{$t("COM.COM.cbs")}}</li>
-              <li @click="go('../TKE/index.html#/overview')">{{$t("COM.COM.as")}}</li>
-              <li @click="go('../AS/index.html#/flexGroup')">{{$t("COM.COM.tke")}}</li>
+              <li class="li-sub" @click="go('../CVM/index.html#/cloudHost')">{{$t("COM.COM.cvm")}}</li>
+              <li class="li-sub" @click="go('../CVM/index.html#/cloudDisk')">{{$t("COM.COM.cbs")}}</li>
+              <li @click="testFun">{{$t("COM.COM.as")}}</li>
+              <li class="li-sub" @click="go('../AS/index.html#/flexGroup')">{{$t("COM.COM.tke")}}</li>
             </ul>
             <ul>
               <li class="li-title">{{$t("COM.COM.tool")}}</li>
-              <li @click="go('cm')">{{$t("COM.COM.cm")}}</li>
-              <li>{{$t("COM.COM.cloudAudit")}}</li>
-              <li>{{$t("COM.COM.cam")}}</li>
+              <li @click="testFun">{{$t("COM.COM.cm")}}</li>
+              <li @click="testFun">{{$t("COM.COM.cloudAudit")}}</li>
+              <li @click="testFun">{{$t("COM.COM.cam")}}</li>
             </ul>
             <ul>
               <li class="li-title">{{$t("COM.COM.server")}}</li>
-              <li @click="go('vod')">{{$t("COM.COM.vod")}}</li>
-              <li>{{$t("COM.COM.live")}}</li>
+              <li @click="testFun">{{$t("COM.COM.vod")}}</li>
+              <li @click="testFun">{{$t("COM.COM.live")}}</li>
             </ul>
           </div>
           <div class="item">
             <ul>
               <li class="li-title">{{$t("COM.COM.safe")}}</li>
-              <li @click="go('cm')">{{$t("COM.COM.yunjing")}}</li>
-              <li @click="go('ip')">{{$t("COM.COM.ddos")}}</li>
-              <li>{{$t("COM.COM.waf")}}</li>
-              <li>{{$t("COM.COM.bgp")}}</li>
-              <li>{{$t("COM.COM.kms")}}</li>
+              <li @click="testFun">{{$t("COM.COM.yunjing")}}</li>
+              <li @click="testFun">{{$t("COM.COM.ddos")}}</li>
+              <li @click="testFun">{{$t("COM.COM.waf")}}</li>
+              <li @click="testFun">{{$t("COM.COM.bgp")}}</li>
+              <li @click="testFun">{{$t("COM.COM.kms")}}</li>
             </ul>
             <ul>
               <li class="li-title">{{$t("COM.COM.database")}}</li>
-              <li @click="go('../MYSQL/index.html#/instancesList')">{{$t("COM.COM.database")}}MySQL</li>
-              <li @click="go('../Redis/index.html#/exampleList')">{{$t("COM.COM.database")}}Redis</li>
+              <li class="li-sub" @click="go('../MYSQL/index.html#/instancesList')">{{$t("COM.COM.database")}}MySQL</li>
+              <li class="li-sub" @click="go('../Redis/index.html#/exampleList')">{{$t("COM.COM.database")}}Redis</li>
             </ul>
             <ul>
               <li class="li-title">{{$t("COM.COM.middleware")}}</li>
-              <li @click="go('ckafka')">{{$t("COM.COM.ckafka")}}</li>
+              <li @click="testFun">{{$t("COM.COM.ckafka")}}</li>
             </ul>
           </div>
           <div class="item">
             <ul>
               <li class="li-title">{{$t("COM.COM.net")}}</li>
-              <li @click="go('../CLB/index.html#/LB')">{{$t("COM.COM.clb")}}</li>
-              <li @click="go('../DC/index.html#/lineAisle')">{{$t("COM.COM.dc")}}</li>
-              <li @click="go('../VPC/index.html#/priNetwork')">{{$t("COM.COM.vpc")}}</li>
-              <li @click="go('../VPC/index.html#/elaCard')">{{$t("COM.COM.eni")}}</li>
-              <li @click="go('../VPC/index.html#/natGateway')">{{$t("COM.COM.nat")}}</li>
-              <li @click="go('../VPC/index.html#/vpnGateway')">{{$t("COM.COM.vpn")}}</li>
-              <li @click="go('../CVM/index.html#/elasticityIp')">{{$t("COM.COM.eip")}}</li>
-              <li @click="go('../CCN/index.html#/ccnPage')">{{$t("COM.COM.ccn")}}</li>
+              <li class="li-sub" @click="go('../CLB/index.html#/LB')">{{$t("COM.COM.clb")}}</li>
+              <li class="li-sub" @click="go('../DC/index.html#/lineAisle')">{{$t("COM.COM.dc")}}</li>
+              <li class="li-sub" @click="go('../VPC/index.html#/priNetwork')">{{$t("COM.COM.vpc")}}</li>
+              <li class="li-sub" @click="go('../VPC/index.html#/elaCard')">{{$t("COM.COM.eni")}}</li>
+              <li class="li-sub" @click="go('../VPC/index.html#/natGateway')">{{$t("COM.COM.nat")}}</li>
+              <li class="li-sub" @click="go('../VPC/index.html#/vpnGateway')">{{$t("COM.COM.vpn")}}</li>
+              <li class="li-sub" @click="go('../CVM/index.html#/elasticityIp')">{{$t("COM.COM.eip")}}</li>
+              <li class="li-sub" @click="go('../CCN/index.html#/ccnPage')">{{$t("COM.COM.ccn")}}</li>
             </ul>
             <ul>
               <li class="li-title">{{$t("COM.COM.cosTitle")}}</li>
-              <li @click="go('cos')">{{$t("COM.COM.cos")}}</li>
+              <li @click="testFun">{{$t("COM.COM.cos")}}</li>
             </ul>
           </div>
           <div class="item">
             <ul>
               <li class="li-title">{{$t("COM.COM.cdnTitle")}}</li>
-              <li @click="go('cdn')">CDN</li>
-              <li @click="go('dsa')">{{$t("COM.COM.dsa")}}</li>
-              <li @click="go('gaap')">{{$t("COM.COM.gaap")}}</li>
+              <li @click="testFun">CDN</li>
+              <li @click="testFun">{{$t("COM.COM.dsa")}}</li>
+              <li @click="testFun">{{$t("COM.COM.gaap")}}</li>
             </ul>
             <ul>
               <li class="li-title">Serveless</li>
-              <li>{{$t("COM.COM.scf")}}</li>
+              <li @click="testFun">{{$t("COM.COM.scf")}}</li>
             </ul>
             <ul>
               <li class="li-title">{{$t("COM.COM.pro")}}</li>
-              <li>{{$t("COM.COM.pro")}}</li>
+              <li class="li-sub" @click="go('../PRO/index.html#/proManage')">{{$t("COM.COM.pro")}}</li>
             </ul>
           </div>
         </div>
@@ -278,6 +278,11 @@ export default {
     go(url) {
       this.$emit('childByValue', 'ok')
       window.location.href = url
+    },
+
+    testFun() {
+      // 内测中，敬请期待！
+      this.$message('內測中，敬請期待！');
     }
   },
   mounted() {
@@ -346,6 +351,7 @@ export default {
           font-size: 12px;
           line-height: 25px;
           color: #888;
+          cursor: pointer;
         }
         .li-title {
           font-size: 14px;
@@ -355,6 +361,9 @@ export default {
           cursor: default;
           line-height: 20px;
           text-align: left;
+        }
+        .li-sub {
+          color: #3d91ff !important;
         }
       }
     }

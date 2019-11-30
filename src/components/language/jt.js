@@ -44,6 +44,13 @@ module.exports = {
     console: '控制台',
     login: '登录',
     register: '免费注册',
-    bill: '费用中心'
+    bill: '费用中心',
+    userCenter: '用户中心',
+    info: '消息中心',
+    workorder: '我的工单',
+    back: '返回',
+    h: '退出',
+    hintTitle: '提示',
+    hintContent: '確定進行[退出]操作?'
   }
 }
