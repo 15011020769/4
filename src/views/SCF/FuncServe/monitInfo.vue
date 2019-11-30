@@ -24,21 +24,13 @@
         </el-table-column>
               
               <el-table-column prop="dataPoints" width="600">
-                <template slot-scope="scope">
-                  <p v-if="scope.row.dataPoints[0]===null"> 暂无数据</p>
-                  <div class='echart'
-                    v-if="scope.row.dataPoints[0]!==null">
-                    <echart-line id="diskEchearrts-line"
-                      :time='scope.row.DataPoints[0].Timestamps | UpTime'
-                      :opData='scope.row.DataPoints[0].Values'
-                      :unit='diskUnit'
-                      :title="diskTitle"
-                      :period=period
-                      :scale=3
-                      :xdata=false>
-                    </echart-line>
-                  </div>
-                </template>
+               <template slot-scope="scope">
+            <p v-if="scope.row.DataPoints[0].Values.length==0">暂无数据</p>
+            <div class="echart" v-if="scope.row.DataPoints[0].Values.length!=0">
+              <echart-line id="diskEchearrts-line" :time="scope.row.DataPoints[0].Timestamps | UpTime"
+                :opData="scope.row.DataPoints[0].Values" :scale="3" :period="period" :xdata="false"></echart-line>
+            </div>
+          </template>
               </el-table-column>
               <el-table-column prop="">
                 <template slot-scope="scope">
@@ -96,13 +88,13 @@
   </div>
 </template>
 <script>
- import XTimeX from '@/components/public/TimeX';
+ import XTimeX from '@/components/public/TimeXK';
 import echartLine from '@/components/echars-line'
-import { CVM_MONITOR } from '@/constants'
+import { All_MONITOR } from '@/constants'
 export default {
   data() {
     return {
-      ID: this.$route.query.id,
+      functionName: this.$route.query.functionName,
         period: '',
         Start_End: [],
         value: 1,
@@ -126,14 +118,23 @@ export default {
         this.Start_End = data[1];
         this.value = data[2]
         const metricNArr = [
-          'CallNumber',//调用次数
-          'RunTime',//运行时间
-          'WrongNumber',//错误次数
-          'ConcurrentExecution ',//并发执行次数
-          'OutgoingNetworkFlow',//外网出流量
-          'InternalSystemError',//系统内部错误
-          'FunctionError',//函数错误次数
-          'RightCall',//正确调用次数
+          'Invocation',//调用次数
+          'Duration',//运行时间
+          'Error',//错误次数
+          'ConfigMem',//配置内存
+          'FunctionErrorPercentage',//函数错误率
+          'Http432',//资源超过限制
+          'Http433',//函数执行超时
+          'Http434',//内存超过限制
+          'Mem',//运行内存
+          'MemDuration',//时间内存
+          'ConcurrentExecutions',//并发执行次数
+          'OutFlow',//外网出流量
+          'Syserr',//系统内部错误
+          'Http4xx',//函数错误次数
+          'Http2xx',//正确调用次数
+          'ServerErrorPercentage',//平台错误率
+          'Throttle	'//函数运行受限次数
         ];
         this.tableData = []
         for (let i = 0; i < metricNArr.length; i++) {
@@ -146,34 +147,34 @@ export default {
       Obtain(metricN) {
         const param = {
           Version: '2018-07-24',
+          Action: 'GetMonitorData',
           Region: this.$cookie.get('regionv2'),
-          Namespace: 'QCE/VBC',
-          MetricName: "RegionInPkg",
-          'Instances.0.Dimensions.0.Name': 'CcnId',
-          'Instances.0.Dimensions.0.Value': this.$route.query.functionName,
+          Namespace: 'QCE/SCF_V2',
+          MetricName: metricN,
+          'Instances.0.Dimensions.0.Name': 'functionName',
+          'Instances.0.Dimensions.0.Value': this.functionName,
           Period: this.period,
           StartTime: this.Start_End.StartTIme,
           EndTime: this.Start_End.EndTIme,
         };
-        this.axios.post(CVM_MONITOR, param).then((data) => {
+        this.axios.post(All_MONITOR, param).then((data) => {
           this.tableData.push(data.Response);
         });
       },
       getModality(MetricName) {
-        console.log("===========================================================");
         const param = {
           Version: '2018-07-24',
           Region: this.$cookie.get('regionv2'),
-          Namespace: 'QCE/VBC',
-          MetricName: "RegionInPkg",
-          'Instances.0.Dimensions.0.Name': 'CcnId',
-          'Instances.0.Dimensions.0.Value': this.$route.query.functionName,
+          Namespace: 'QCE/SCF_V2',
+          MetricName: MetricName,
+          'Instances.0.Dimensions.0.Name': 'functionName',
+          'Instances.0.Dimensions.0.Value': this.functionName,
           Period: this.period,
           StartTime: this.Start_End.StartTIme,
           EndTime: this.Start_End.EndTIme,
         };
         console.log(param)
-        this.axios.post(CVM_MONITOR, param).then((data) => {
+        this.axios.post(All_MONITOR, param).then((data) => {
           this.timeData = data.Response.DataPoints[0].Timestamps
           this.jingData = data.Response.DataPoints[0].Values
         });
@@ -201,28 +202,28 @@ export default {
   },
   filters: {
       UpName(value) {
-        if (value === 'CallNumber') {
+        if (value === 'Invocation') {
           return (value = '调用次数 次');
         }
-        if (value === 'RunTime') {
+        if (value === 'Duration') {
           return (value = '运行时间 ms');
         }
-        if (value === 'WrongNumber') {
+        if (value === 'Error') {
           return (value = '错误次数 次');
         }
-        if (value === 'ConcurrentExecution') {
+        if (value === 'ConcurrentExecutions') {
           return (value = '并发执行次数 次');
         }
-        if (value === 'OutgoingNetworkFlow') {
+        if (value === 'OutFlow') {
           return (value = '外网出流量 KB');
         }
-        if (value === 'InternalSystemError') {
+        if (value === 'Syserr') {
           return (value = '系统内部错误(HTTP 5xx) 次');
         }
-        if (value === 'FunctionError') {
+        if (value === 'Http4xx') {
           return (value = '函数错误次数(HTTP 4xx) 次');
         }
-        if (value === 'RightCall') {
+        if (value === 'Http2xx') {
           return (value = '正确调用次数(HTTP 2xx) 次');
         }
       },
