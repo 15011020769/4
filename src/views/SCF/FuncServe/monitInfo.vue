@@ -2,42 +2,7 @@
   <div>
     <div class="contentMain">
       <div class="contentMainList newClear">
-        <div class="newClear">
-          <el-button-group class="bthGroup">
-            <el-button @click="thisTime(1)">实时</el-button>
-            <el-button @click="thisTime(2)">近24小时</el-button>
-            <el-button @click="thisTime(3)">近七天</el-button>
-          </el-button-group>
-          <el-date-picker
-            v-model="value1"
-            type="datetimerange"
-            range-separator="至"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期"
-            class="runningTime">
-          </el-date-picker>
-          <el-button v-if="dataChange" @click="timeNodeShow" class="dataChange">数据对比</el-button>
-          <span v-if="timeNode2">
-              对比：
-              <el-date-picker
-                v-model="value2"
-                type="datetimerange"
-                range-separator="至"
-                start-placeholder="开始日期"
-                end-placeholder="结束日期"
-                class="runningTime2">
-              </el-date-picker>
-              <i class="el-icon-close" @click="closeTimeNode2"></i>
-          </span>
-          <span>
-            时间粒度：
-            <el-select v-model="hourOrDay"> 
-              <el-option label="1小时" value="hour"></el-option>
-              <el-option label="1天" value="day"></el-option>
-            </el-select>
-          </span>
-          <span class="resher"><a href="#">刷新</a></span>
-        </div>
+        <XTimeX v-on:switchData="GetDat" :classsvalue='value'></XTimeX>
         <div class="echartsShowData newClear">
           <p class="newClear">
             <span><i class="el-icon-info"></i>注释：Max、Min和Avg数值统计为当前折线图内所有点的最大值、最小值和平均值</span>
@@ -45,27 +10,33 @@
           </p>
           <div>
             <el-table :data="tableData">
-              <el-table-column
-                width="270">
-                <template slot-scope="scope">
-                  <span>{{tableData[scope.$index].name}}</span><span class="spanColor">{{tableData[scope.$index].pre}}</span><i class="el-icon-info"></i>
-                </template>
-              </el-table-column>
-              <el-table-column prop="dataPoints"
-                width="600">
+             <el-table-column prop="">
+          <template slot-scope="scope">
+            <span style="font-size:12px;font-weight:bolder;">
+              {{scope.row.MetricName | UpName(value)}}
+              <el-popover placement="bottom-start" title="" width="200" trigger="hover">
+                <p>{{scope.row.MetricName | UpTitle(value)}}</p>
+                <i class="el-icon-warning" slot="reference"></i>
+              </el-popover>
+            </span>
+
+          </template>
+        </el-table-column>
+              
+              <el-table-column prop="dataPoints" width="600">
                 <template slot-scope="scope">
                   <p v-if="scope.row.dataPoints[0]===null"> 暂无数据</p>
                   <div class='echart'
                     v-if="scope.row.dataPoints[0]!==null">
-                    <!-- <echart-line id="diskEchearrts-line"
-                      :time='timeData'
-                      :opData='scope.row.dataPoints'
+                    <echart-line id="diskEchearrts-line"
+                      :time='scope.row.DataPoints[0].Timestamps | UpTime'
+                      :opData='scope.row.DataPoints[0].Values'
                       :unit='diskUnit'
                       :title="diskTitle"
                       :period=period
                       :scale=3
                       :xdata=false>
-                    </echart-line> -->
+                    </echart-line>
                   </div>
                 </template>
               </el-table-column>
@@ -91,60 +62,22 @@
                 width="180">
                 <template slot-scope="scope">
                   <i class="el-icon-rank"
-                    @click="Modality(scope.$index,scope.row.dataPoints)">
+                    @click="Modality(scope.row.MetricName)">
                   </i>
                   <el-dialog :title="newTitle"
                     :visible.sync="dialogVisible"
                     width="60%"
                     :before-close="handleClose">
-                    <!-- <XTimeX v-on:qiehuan="GetDat"
-                      :classsvalue='value'></XTimeX> -->
-                      <div class="newClear">
-                        <el-button-group class="bthGroup">
-                          <el-button @click="thisTime(1)">实时</el-button>
-                          <el-button @click="thisTime(2)">近24小时</el-button>
-                          <el-button @click="thisTime(3)">近七天</el-button>
-                        </el-button-group>
-                        <el-date-picker
-                          v-model="value1"
-                          type="datetimerange"
-                          range-separator="至"
-                          start-placeholder="开始日期"
-                          end-placeholder="结束日期"
-                          class="runningTime">
-                        </el-date-picker>
-                        
-                        <span v-if="timeNode2">
-                            对比：
-                            <el-date-picker
-                              v-model="value2"
-                              type="datetimerange"
-                              range-separator="至"
-                              start-placeholder="开始日期"
-                              end-placeholder="结束日期"
-                              class="runningTime2">
-                            </el-date-picker>
-                        </span>
-                        <div class="resher">
-                          <span>
-                            时间粒度：
-                            <el-select v-model="hourOrDay"> 
-                              <el-option label="1小时" value="hour"></el-option>
-                              <el-option label="1天" value="day"></el-option>
-                            </el-select>
-                          </span>
-                          <span ><a href="#">刷新</a></span>
-                        </div>
-                      </div>
-                    <!-- <echart-line id="diskEchearrts-line"
+                     <XTimeX v-on:switchData="GetDat" :classsvalue='value'></XTimeX>
+                     <echart-line id="diskEchearrts-line"
                       class="echart-wh"
-                      :time='timeData'
-                      :opData='opDiskData'
+                      :time='scope.row.DataPoints[0].Timestamps | UpTime'
+                      :opData='scope.row.DataPoints[0].Values'
                       :unit='diskUnit'
                       :period=period
                       :title="diskTitle"
                       :xdata=true>
-                    </echart-line> -->
+                    </echart-line>
                   </el-dialog> 
                   <i class="el-icon-menu"
                     @click="posiAbsolu(scope.$index)">
@@ -163,100 +96,88 @@
   </div>
 </template>
 <script>
-//import XTimeX from '@/components/TimeX'
+ import XTimeX from '@/components/public/TimeX';
 import echartLine from '@/components/echars-line'
-//import { All_MONITOR } from '@/constants'
+import { CVM_MONITOR } from '@/constants'
 export default {
   data() {
     return {
-      value1:'',
-      value2:'',
-      dataChange:true,
-      timeNode2:false,
-      hourOrDay:"1小时",
-      timeData: [], // 折线图的x轴数据
-      period: '',
-      diskTitle:"",
-      diskUnit:'',
-      newTitle:"",
-      activeIndex:-1,
-      posiAbsoluShow:false,
-      flag:true,
-      dialogVisible:false,
-      tableData:[
-        {
-          name:"调用次数",
-          pre:"次",
-          dataPoints:[{}]
-        },
-        { 
-          name:"运行时间",
-          pre:"ms",
-          dataPoints:[{}]
-        },
-        {
-          name:"错误次数",
-          pre:"次",
-          dataPoints:[{}]
-        },
-        {
-          name:"并发执行次数",
-          pre:"次",
-          dataPoints:[{}]
-        },
-        {
-          name:"外网出流量",
-          pre:"KB",
-          dataPoints:[{}]
-        },
-        {
-          name:"系统内部错误(HTTP 5xx)",
-          pre:"次",
-          dataPoints:[{}]
-        },
-        {
-          name:"函数错误次数(HTTP 4xx)",
-          pre:"次",
-          dataPoints:[{}]
-        },
-        {
-          name:"正确调用次数(HTTP 2xx)",
-          pre:"次",
-          dataPoints:[{}]
-        }
-      ]
+      ID: this.$route.query.id,
+        period: '',
+        Start_End: [],
+        value: 1,
+        dialogVisible: false, // 模态框 （放大后的折线图）
+        pageIndex: 1, // 当前页
+        pageSize: 10, // 每页数
+        totalPage: 0, // 表格数据数组长度
+        tableData: [], // 获取列表数据
+        timeData: [], // 折线图的x轴数据
+        jingData: [],
+        MetricName: ''
     };
   },
   components: {
     echartLine,
-    //XTimeX
+    XTimeX
   },
   methods: {
-    timeNodeShow(){
-      this.timeNode2=true;
-      this.dataChange=false;
-    },
-    closeTimeNode2(){
-      this.timeNode2=false;
-      this.dataChange=true;
-    },
-    thisTime(thisTime){
-      var ipt1=document.querySelector(".runningTime input:nth-child(2)");
-      var ipt2=document.querySelector(".runningTime input:nth-child(4)");
-      const end = new Date();
-      const start = new Date();
-      if(thisTime=="1"){
-        start.setTime(start.getTime() - 3600 * 1000 );
-      }
-      else if(thisTime=="2"){
-        start.setTime(start.getTime() - 3600 * 1000 * 24);
-      }
-      else if(thisTime=="3"){
-        start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
-      }
-      ipt1.value=start.toLocaleString('chinese',{hour12:false}).replace(/\//g,'-');
-      ipt2.value=end.toLocaleString('chinese',{hour12:false}).replace(/\//g,'-')
-    },
+    GetDat(data) {
+        this.period = data[0];
+        this.Start_End = data[1];
+        this.value = data[2]
+        const metricNArr = [
+          'CallNumber',//调用次数
+          'RunTime',//运行时间
+          'WrongNumber',//错误次数
+          'ConcurrentExecution ',//并发执行次数
+          'OutgoingNetworkFlow',//外网出流量
+          'InternalSystemError',//系统内部错误
+          'FunctionError',//函数错误次数
+          'RightCall',//正确调用次数
+        ];
+        this.tableData = []
+        for (let i = 0; i < metricNArr.length; i++) {
+          this.Obtain(metricNArr[i]);
+        }
+        if (this.MetricName) {
+          this.getModality(this.MetricName)
+        }
+      },
+      Obtain(metricN) {
+        const param = {
+          Version: '2018-07-24',
+          Region: this.$cookie.get('regionv2'),
+          Namespace: 'QCE/VBC',
+          MetricName: "RegionInPkg",
+          'Instances.0.Dimensions.0.Name': 'CcnId',
+          'Instances.0.Dimensions.0.Value': this.$route.query.functionName,
+          Period: this.period,
+          StartTime: this.Start_End.StartTIme,
+          EndTime: this.Start_End.EndTIme,
+        };
+        this.axios.post(CVM_MONITOR, param).then((data) => {
+          this.tableData.push(data.Response);
+        });
+      },
+      getModality(MetricName) {
+        console.log("===========================================================");
+        const param = {
+          Version: '2018-07-24',
+          Region: this.$cookie.get('regionv2'),
+          Namespace: 'QCE/VBC',
+          MetricName: "RegionInPkg",
+          'Instances.0.Dimensions.0.Name': 'CcnId',
+          'Instances.0.Dimensions.0.Value': this.$route.query.functionName,
+          Period: this.period,
+          StartTime: this.Start_End.StartTIme,
+          EndTime: this.Start_End.EndTIme,
+        };
+        console.log(param)
+        this.axios.post(CVM_MONITOR, param).then((data) => {
+          this.timeData = data.Response.DataPoints[0].Timestamps
+          this.jingData = data.Response.DataPoints[0].Values
+        });
+      },
     handleClose(){
       this.dialogVisible=false;
     },
@@ -264,6 +185,9 @@ export default {
       //console.log(newIndex)
       this.dialogVisible=true;
       this.newTitle=this.tableData[newIndex].name;
+      this.MetricName = MetricName
+      this.dialogVisible = true;
+      this.getModality(this.MetricName)
     },
     posiAbsolu(newIndex1){
       if(this.flag){
@@ -274,7 +198,47 @@ export default {
         this.flag=true;
       }
     }
-  }
+  },
+  filters: {
+      UpName(value) {
+        if (value === 'CallNumber') {
+          return (value = '调用次数 次');
+        }
+        if (value === 'RunTime') {
+          return (value = '运行时间 ms');
+        }
+        if (value === 'WrongNumber') {
+          return (value = '错误次数 次');
+        }
+        if (value === 'ConcurrentExecution') {
+          return (value = '并发执行次数 次');
+        }
+        if (value === 'OutgoingNetworkFlow') {
+          return (value = '外网出流量 KB');
+        }
+        if (value === 'InternalSystemError') {
+          return (value = '系统内部错误(HTTP 5xx) 次');
+        }
+        if (value === 'FunctionError') {
+          return (value = '函数错误次数(HTTP 4xx) 次');
+        }
+        if (value === 'RightCall') {
+          return (value = '正确调用次数(HTTP 2xx) 次');
+        }
+      },
+      UpTime(value) {
+
+        let timeArr = []
+        for (let i = 0; i < value.length; i++) {
+          let uptime = moment(value[i] * 1000).format(
+            'YYYY-MM-DD HH:mm:ss',
+          );
+          timeArr.push(uptime)
+        }
+
+        return timeArr
+      }
+    },
 };
 </script>
 <style lang="scss">

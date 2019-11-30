@@ -596,7 +596,7 @@ export default {
     this.modelNameTags[0].disableDelete = true;
     this.init();
     this.searchVersion();
-    this.GetMonitorData()
+    this.getModality()
   },
   methods: {
     // 获取编辑详情
@@ -871,20 +871,27 @@ export default {
       });
     },
     // 监控数据
-    GetMonitorData() {
+   getModality () {
       let params = {
         Version: "2018-07-24",
         Region: this.$cookie.get("regionv2"),
+        Action: "GetMonitorData",
         Namespace: "QCE/VBC",
         MetricName: "RegionInPkg",
+        Period: 300,
         "Instances.0.Dimensions.0.Name": "CcnId",
-        "Instances.0.Dimensions.0.Value": this.$route.query.functionName
+        "Instances.0.Dimensions.0.Value": this.$route.query.functionName,
+        StartTime: this.Start_End.StartTIme,
+        EndTime: this.Start_End.EndTIme,
+
       };
+      console.log(params);
       let url = "monitor2/GetMonitorData";
       this.axios
         .post(url, params)
         .then(res => {
           console.log(res.Response);
+          this.tableData.push(data.Response);
         })
         .catch(error => {
           console.log(error);
