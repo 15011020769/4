@@ -9,7 +9,9 @@
         <div class="conLeftBtn">
           <el-button @click="dialogVisible = true">新建</el-button>
           <el-button :disabled="isHaveDisable">启用密钥</el-button>
+          <!-- <el-button :disabled="false" v-if="!isHaveDisable">启用密钥</el-button> -->
           <el-button :disabled="isHaveEnable">禁用密钥</el-button>
+          <!-- <el-button :disabled="false" v-if="!isHaveEnable">禁用密钥</el-button> -->
         </div>
         <el-dialog class="dialogModel" title="新建密钥" :visible.sync="dialogVisible" width="30%" :before-close="handleClose">
           <el-form :model="createForm" label-width="100px">
@@ -40,7 +42,8 @@
       </div>
       <div class="tableCoontent">
         <div class="tableList">
-          <el-table ref="multipleTable" :data="tableDataBegin.slice((currentPage-1)*pageSize,currentPage*pageSize)" tooltip-effect="dark" style="width: 100%" @selection-change="handleSelectionChange">
+          <el-table ref="multipleTable" :data="tableDataBegin.slice((currentPage-1)*pageSize,currentPage*pageSize)" tooltip-effect="dark" style="width: 100%" 
+          @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="55"></el-table-column>
             <el-table-column prop="KeyId" label="密钥ID/密钥名称">
               <template slot-scope="scope">
@@ -50,7 +53,7 @@
             </el-table-column>
             <el-table-column prop="KeyState" label="状态">
               <template slot-scope="scope"> 
-                <span>{{filterState(scope.row.KeyState)}}</span>
+                <span :style="scope.row.KeyState=='Disabled'||scope.row.KeyState=='PendingDelete'||scope.row.KeyState=='PendingImport'?'color:#ff9d00':'color:#000'">{{filterState(scope.row.KeyState)}}</span>
               </template>
             </el-table-column>
             <el-table-column prop="CreateTime" label="创建时间" show-overflow-tooltip>
@@ -64,11 +67,24 @@
               </template>
             </el-table-column>
             <el-table-column prop="kmsChange" label="密钥轮换">
-              <a href="#">启用轮换</a><span class="spanLine">|</span><a href="#">禁用轮换</a>
+              <template slot-scope="scope">
+                <a href="#" class="aColorGree" :style="scope.row.KeyState=='PendingDelete'||scope.row.KeyState=='PendingImport'||changeStatus!=='启用轮换'?'pointer-events:none':'color:#006eff'" 
+                @click="startChange(scope.row,$event)">启用轮换</a>
+                <span class="spanLine">|</span>
+                <a href="#" class="aColorGree" :style="scope.row.KeyState=='PendingDelete'||scope.row.KeyState=='PendingImport'||changeStatus=='启用轮换'?'pointer-events:none':'color:#006eff'" 
+                @click="stopChange">禁用轮换</a>
+                <stopChange :isShow="doalogModelBox"/>
+              </template>
             </el-table-column>
             <el-table-column prop="action" label="操作" class="action">
-              <a href="#">启用密钥</a><span class="spanLine">|</span><a href="#">禁用密钥</a><br />
-              <a href="#">计划删除</a><span class="spanLine">|</span><a href="#">取消删除</a>
+              <template slot-scope="scope">
+                <a href="#" class="aColorGree" :style="scope.row.KeyState=='Enabled'||scope.row.KeyState=='PendingDelete'||scope.row.KeyState=='PendingImport'?'pointer-events:none':'color:#006eff'">启用密钥</a>
+                <span class="spanLine">|</span>
+                <a href="#" class="aColorGree" :style="scope.row.KeyState=='Disabled'||scope.row.KeyState=='PendingDelete'||scope.row.KeyState=='PendingImport'?'pointer-events:none':'color:#006eff'">禁用密钥</a><br />
+                <a href="#" class="aColorGree" :style="scope.row.KeyState=='PendingDelete'?'pointer-events:none':'color:#006eff'">计划删除</a>
+                <span class="spanLine">|</span>
+                <a href="#" class="aColorGree" :style="scope.row.KeyState=='PendingDelete'?'color:#006eff':'pointer-events:none'">取消删除</a>
+              </template>
             </el-table-column>
           </el-table>
         </div>
@@ -80,6 +96,7 @@
   </div>
 </template>
 <script>
+import stopChange from './stopChange'
 export default {
   data() {
     return {
@@ -112,9 +129,14 @@ export default {
         discription: "",
         resource: ""
       },//
-      isHaveDisable:true,//是否有已禁用
-      isHaveEnable:true,//是否有已启用
+      isHaveDisable:true,// 启用密钥 是否有已禁用
+      isHaveEnable:true,// 禁用密钥 是否有已启用
+      changeStatus:'启用轮换',//轮换状态默认为启用轮换
+      doalogModelBox:{},//启用框
     }
+  },
+  components:{
+    stopChange:stopChange,
   },
   filters: {
      
@@ -126,19 +148,20 @@ export default {
     //判断是否有已禁用，已启用
     handleSelectionChange(val) {
       console.log(val)
+     //var  _this = this;
       this.multipleSelection = val;
       this.multipleSelection.map(item => {
         console.log(item)
-        if(item.KeyState=="Enabled"){
-          console.log(111)
-          console.log(item.KeyState)
-          this.isHaveEnable=false;
-        }else{
-          console.log(22222)
-          console.log(item.KeyState)
-          this.isHaveEnable=true;
+        if(item.KeyState == "Enabled"){
+           this.isHaveEnable=false;
+           return;
+        }else if(item.KeyState == "Disabled"){
+          this.isHaveDisable=false;
         }
       })
+    },
+    handerChange(){
+      console.log(111)
     },
     //获取主密钥列表
     getData() {
@@ -237,7 +260,7 @@ export default {
       };
       this.$axios.post('kms2/CreateKey', params).then(res => {
         // console.log(res.Response);
-        getData()
+        this.getData()
         this.dialogVisible = false
       });
     },
@@ -286,6 +309,21 @@ export default {
       this.$router.push({
         name:"userKmsDetails"
       })
+    },
+    //启用轮换
+    startChange(scopeRow,e){
+      console.log(e.target.innerHTML);
+      console.log(scopeRow);
+      let params={
+        dialogModelChange:false,
+        nickName:scopeRow.Alias,
+        nickId:scopeRow.KeyId
+      }
+      this.doalogModelBox=params;
+    },
+    //禁用轮换
+    stopChange(e){
+      console.log(e)
     }
   }
 }
@@ -429,9 +467,12 @@ export default {
     border-radius: 0;
   }
   .el-textarea__inner {
-    width: 330px;
+    width: 80%;
     height: 100px;
     resize: none;
   }
+}
+.aColorGree{
+  color:#999;
 }
 </style>
