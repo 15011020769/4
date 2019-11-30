@@ -1,7 +1,8 @@
 <template>
   <div class="CLA">
-    <div class="big-title"></div>
+    <div class="big-title">云审计</div>
     <el-menu default-active="2" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose" background-color="#545c64" text-color="#fff" active-text-color="#ffd04b" :router="true">
+      
       <el-menu-item index="CloudAudit">
         <span slot="title">操作记录</span>
       </el-menu-item>
