@@ -171,14 +171,13 @@ export default {
         Version: "2019-01-16",
         RoleName: this.inputRoleName,
         Description: this.inputRoleDesc,
-        policyDocument: {"version":"2.0","statement":[{"action":"name/sts:AssumeRole","effect":"allow","principal":{"qcs":["qcs::cam::uin/100011921910:root"]}}]}
+        PolicyDocument: {"version":"2.0","statement":[{"action":"name/sts:AssumeRole","effect":"allow","principal":{"qcs":["qcs::cam::uin/100011921910:root"]}}]}
       };
       let url = "cam2/CreateRole";
       this.axios.post(url, params).then(data => {
-        debugger;
         this.policiesData = data.Response.RoleId;
-        this.$message("创建角色成功");
-      });
+        
+       });
     },
     //获取角色详情
     roleDetail() {

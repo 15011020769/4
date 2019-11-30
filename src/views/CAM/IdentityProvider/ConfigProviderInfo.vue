@@ -14,21 +14,22 @@
         </el-form-item>
         <el-form-item label="备注" prop="remark">
             <el-col :span="14">
-                <el-input size="mini" type="textarea" v-model="addModel.remark"></el-input>
+                <el-input size="mini" type="text" v-model="addModel.remark"></el-input>
             </el-col>
         </el-form-item>
         <el-form-item label="元数据文档" prop="metadataDocument">
-                <!-- <el-col :span="40"> -->
             <el-upload size="mini"
-            accept="text/xml, application/xml"
+                accept="text/xml, application/xml"
                 class="upload-demo"
                 action=""
                 :on-change="handleChange">
-                    <div style="float:left"><el-input type="file" :disabled="true" v-model="addModel.metadataDocument"></el-input></div>
-                <div style="float:right"><el-button size="mini" >选择文件</el-button></div>
+                <el-col :span="21">
+                 <div style="display:inline-block; width:100%; padding-right:10px;"><el-input :disabled="true" v-model="addModel.metadataDocument"></el-input></div>
+                </el-col>
+                <el-col :span="2">
+                 <div style="display:inline-block"><el-button size="mini" >选择文件</el-button></div>
+                </el-col>
             </el-upload>
-            
-              <!-- </el-col> -->
         </el-form-item>
       </el-form>
     </div>
