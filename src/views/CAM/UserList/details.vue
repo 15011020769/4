@@ -601,7 +601,7 @@ export default {
     };
     let url = "cam2/ListPolicies";
     this.axios.post(url, params).then(data => {
-      this.tableDatas = data.Response.List;
+       this.tableDatas = data.Response.List;
     });
     let teamParams = {
       Action: "ListGroups",
