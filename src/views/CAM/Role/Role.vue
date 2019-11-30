@@ -40,14 +40,12 @@
             </div>
             <div>
               <el-pagination
-                @size-change="handleSizeChange"
-                @current-change="handleCurrentChange"
-                :current-page.sync="currentPage2"
-                :page-sizes="[5, 10, 15, 20]"
-                :page-size="5"
-                layout="total, sizes, prev, pager, next, jumper"
-                :total="total"
-              ></el-pagination>
+              @size-change="sizeChange"
+              @current-change="pageChange"
+              :current-page="Page+1"
+              layout="total, sizes, prev, pager, next, jumper"
+              :total="total"
+            ></el-pagination>
             </div>
           </div>
         </div>
@@ -80,7 +78,8 @@ export default {
       loading: true,
       tableData: [],
        // 分页
-      currentPage2: 1,
+      Page:1,
+      size:10,
       total: 0,
       create_dialogVisible:false
     };
@@ -93,8 +92,8 @@ export default {
       let params = {
         Action: "DescribeRoleList",
         Version: "2019-01-16",
-        Page: "1",
-        Rp: "5"
+        Page:1,
+        Rp:this.size
       };
       if (this.searchValue != null && this.searchValue != "") {
         params["keyword"] = this.searchValue;
@@ -169,11 +168,14 @@ export default {
     handleClick(scope) {
       this.$router.push("/RoleDetail");
     },
-    handleSizeChange (val) {
-      console.log(`每页 ${val} 条`)
+    pageChange(e) {
+      this.page = e
+      this.init()
     },
-    handleCurrentChange (val) {
-      console.log(`当前页: ${val}`)
+    sizeChange(e) {
+      this.page = 0
+      this.size = e
+      this.init()
     },
     handleClick_user() {
       this.dialogVisible = true;

@@ -49,6 +49,7 @@
               </p>
               <div class="config_table">
                 <el-table
+                  v-loading="loading"
                   :data="policysData"
                   height="300"
                   border
@@ -213,6 +214,7 @@ export default {
       popover_visible: false,
       inputValue: '-',
       input_Value: '',
+      loading: true,
       input_show: false
     }
   },
@@ -238,7 +240,6 @@ export default {
     attachPolicy() {
       this.$refs.userTransfer.attachPolicy()
       this.dialogVisible = false
-      debugger
       this.getAttachPolicys() // 重新加载策略关联实体列表
     },
     // 获取策略关联的实体列表
@@ -262,6 +263,7 @@ export default {
         console.log(res)
         // RelatedType 关联类型。1 用户关联 ； 2 用户组关联
         this.policysData = res.Response.List
+        this.loading = false
       })
     },
     // 解除策略绑定实体

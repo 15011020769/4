@@ -10,7 +10,7 @@
                     ref="multipleOption"
                     :data="policiesData"
                     size = "small"
-                    height="45vh"
+                    :height="tableHeight"
                     tooltip-effect="dark"
                     style="width: 100%"
                     @row-click="selectedRow"
@@ -43,7 +43,7 @@
                   :data="policiesSelectedData"
                   tooltip-effect="dark"
                   size = "small"
-                  height="50vh"
+                  :height="tableHeight"
                   style="width: 100%">
                   <el-table-column prop="PolicyName" label="策略名"  show-overflow-tooltip>
                     <template slot-scope="scope">
@@ -81,6 +81,7 @@
     },
     data() {
       return {
+        tableHeight:300,
         policiesData: [],
         policiesSelectedData: [],
         totalNum: '',
@@ -91,6 +92,12 @@
     },
     mounted() {
         this.init()
+        console.log(window.innerHeight)
+        console.log(this.$refs.topictable.$el)
+        console.log(this.$refs.topictable.$el.offsetTop)
+        this.tableHeight =
+          window.innerHeight - this.$refs.topictable.$el.offsetTop - 50;
+        console.log(this.tableHeight)
     },
     methods: {
         init() {

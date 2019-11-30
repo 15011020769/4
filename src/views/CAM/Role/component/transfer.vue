@@ -6,22 +6,16 @@
         <el-input
           size="mini"
           v-model="strategyValue"
-          style="width:85%"
+          style="width:100%"
           @keyup.enter.native="tableloadmore"
         />
-        <el-button
-          size="mini"
-          class="suo"
-          icon="el-icon-search"
-          show-overflow-tooltip
-          @click="tableloadmore"
-        ></el-button>
+        <i size="mini" class="el-icon-search fier" show-overflow-tooltip @click="tableloadmore" ></i>
         <el-table
           class="table-left"
           ref="multipleOption"
           :data="policiesData"
           size="small"
-          height="300"
+          :height="tableHeight"
           tooltip-effect="dark"
           style="width: 100%"
           @row-click="selectedRow"
@@ -60,13 +54,14 @@
                 </el-dropdown-menu>
               </el-dropdown>
             </template> 
-            
           </el-table-column>
         </el-table>
       </div>
-      <div class="abs">
-        <div>&nbsp;</div>
-      </div>
+      <div class="direction">
+                    <div class="direction-icon">
+                      <i class="iconfont">&#xe603;</i>
+                    </div>
+                  </div>
       <div class="container-left">
         <span>{{$t('CAM.CAM.Role.hasChosen')}}（共条）</span>
         <el-table
@@ -75,7 +70,7 @@
           :data="policiesSelectedData"
           tooltip-effect="dark"
           size="small"
-          height="300"
+          :height="tableHeight"
           style="width: 100%"
         >
           <el-table-column
@@ -146,6 +141,7 @@ export default {
   },
   data() {
     return {
+      tableHeight:300,
       policiesData: [],
       policiesSelectedData: [],
       strategyValue: [],
@@ -174,6 +170,12 @@ export default {
   mounted() {
     var command='';
     this.tableloadmore(command);
+    console.log(window.innerHeight)
+        console.log(this.$refs.topictable.$el)
+        console.log(this.$refs.topictable.$el.offsetTop)
+        this.tableHeight =
+          window.innerHeight - this.$refs.topictable.$el.offsetTop - 50;
+        console.log(this.tableHeight)
   },
   methods: {
     tableloadmore(command) {
@@ -252,15 +254,37 @@ export default {
       line-height: 16px;
       color: #666;
     }
-    .abs {
-      display: inline-block;
-      width: 100px;
-      height: 300px;
+    .direction{
+      display: table-cell;
+      width: 38px;
       text-align: center;
+      vertical-align: middle;
+    }
+    .direction-icon{
+      width: 16px;
+      height: 16px;
+      display: inline-block;
+      vertical-align: middle;
+      background-repeat: no-repeat;
+      background-position: inherit;
+      font-size: 0;
+    }
+    .el-input--mini .el-input__inner{
+      position: relative;
+    }
+    .fier{
+      cursor:pointer;
+      font-size: 130%;
+      color: #888;
+      position: absolute;
+      right: 2%;
+      top: 6%;
     }
     .container-left {
-      width: 44%;
-      display: inline-block;
+      width: 48%;
+      display: table-cell;
+      position: relative;
+      vertical-align: top;
     }
   }
 }

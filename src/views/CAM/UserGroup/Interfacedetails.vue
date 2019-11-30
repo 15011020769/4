@@ -206,7 +206,7 @@
                           ref="multipleOptionUser"
                           :data="userData"
                           size = "small"
-                          height="46vh"
+                          :height="tableHeight"
                           tooltip-effect="dark"
                           style="width: 100%"
                           @row-click="selectedRow"
@@ -234,7 +234,7 @@
                       :data="userSelData"
                       tooltip-effect="dark"
                       size = "small"
-                      height="50vh"
+                      :height="tableHeight"
                       style="width: 100%">
                       <el-table-column prop="Name" label="用户"  show-overflow-tooltip> </el-table-column>
                       <el-table-column label="用户类型"  width="100">
@@ -285,6 +285,7 @@
 export default {
   data() {
     return {
+      tableHeight: 300,
       flag: true,
       activeName: "first",
       dialog: false,
@@ -314,6 +315,12 @@ export default {
   mounted() {
     this.groupId = this.$route.query.GroupId
     this.init()
+    console.log(window.innerHeight)
+    console.log(this.$refs.topictable.$el)
+    console.log(this.$refs.topictable.$el.offsetTop)
+    this.tableHeight =
+      window.innerHeight - this.$refs.topictable.$el.offsetTop - 50;
+    console.log(this.tableHeight)
   },
   methods: {
     // 初始化时，获取用户组信息

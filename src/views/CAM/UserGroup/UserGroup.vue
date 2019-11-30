@@ -74,15 +74,13 @@
           <span style="font-size:12px;color:#888">已选 0 项，共 3 项</span>
         </div>
         <div>
-          <el-pagination
-            @size-change="handleSizeChange"
-            @current-change="handleCurrentChange"
-            :current-page.sync="currentPage"
-            :page-sizes="[10, 20, 30, 40]"
-            :page-size="10"
-            layout="sizes, prev, pager, next"
-            :total="40"
-          ></el-pagination>
+        <el-pagination
+        @size-change="sizeChange"
+        @current-change="pageChange"
+        :current-page="Page+1"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="total"
+      ></el-pagination>
         </div>
       </div>
     </div>
@@ -97,7 +95,7 @@
                 ref="multipleOption"
                 :data="userData"
                 size = "small"
-                height="55vh"
+                :height="tableHeight"
                 tooltip-effect="dark"
                 style="width: 100%;"
                 @row-click="selectedRow"
@@ -125,7 +123,7 @@
                 :data="userSelData"
                 tooltip-effect="dark"
                 size = "small"
-                height="60vh"
+                :height="tableHeight"
                 style="width: 100%;">
                 <el-table-column prop="Name" label="用户"  show-overflow-tooltip> </el-table-column>
                 <el-table-column label="用户类型"  width="100">
@@ -159,6 +157,7 @@
 export default {
   data() {
     return {
+      tableHeight: 300,
 		  form: {
         name: "",
         region: "",
@@ -177,6 +176,10 @@ export default {
       tableData: [],
       search: '',
       totalNum: 0,
+        // 分页
+      Page:0,
+      size:10,
+      total: 0,
       selNum: 0,
       btnVisible: true,
       selectedGroupId: 0,
@@ -191,7 +194,9 @@ export default {
     init() {
       let params = {
         Action: 'ListGroups',
-        Version: '2019-01-16'
+        Version: '2019-01-16',
+        Page:this.page,
+        Rp:this.size
       }
       if(this.searchValue != null && this.searchValue != ''){
         params["Keyword"] = this.searchValue
@@ -200,6 +205,8 @@ export default {
       this.axios.post(url, params).then(res => {
         if(res != '') {
           this.tableData = res.Response.GroupInfo
+          debugger
+          this.total = res.Response.TotalNum
           this.loading = false
         }else{
           this.loading = false
@@ -215,12 +222,6 @@ export default {
       if(rowId != undefined && rowId != '') {
         this.selectedGroupId = rowId
       }
-      // let url = "cam/ListSubAccounts"//获取子用户信息
-      // let params = {
-      //   Version: "2017-03-12",
-      //   'filterGroups':'',
-      //   Region: this.$cookie.get("regionv2")
-      // }
       let url = "cam2/ListUsers" // 拉取子用户
       let params = {
         Action: 'ListUsers',
@@ -326,14 +327,23 @@ export default {
       this.loading = true
       this.init()
     },
-    handleSelectionChange(val) {
+    pageChange(e) {
+      this.page = e
+      this.init()
+    },
+    sizeChange(e) {
+      this.page = 0
+      this.size = e
+      this.init()
+    },
+  /*   handleSelectionChange(val) {
       if(val != '') {
         this.btnVisible = false
         this.selectedGroupId = val[0].GroupId
       }else {
         this.btnVisible = true
       }
-    },
+    }, */
     handleClose() {
       this.dialogVisible = false
     },
@@ -364,18 +374,6 @@ export default {
           GroupId: groupId
         }
       });
-    },
-    handleSizeChange() {
-
-    },
-    handleCurrentChange() {
-
-    },
-    currentPage2() {
-
-    },
-    currentPage() {
-
     }
   }
 }

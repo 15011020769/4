@@ -61,7 +61,7 @@
           <div class="content_table">
             <el-table
               :data="policiesSelectedData"
-              height="300"
+              :height="tableHeight"
               border
               style="width: 100%"
               :row-style="{height:0}"
@@ -96,6 +96,7 @@ export default {
   },
   data () {
     return {
+      tableHeight:300,
       active: 1,
       inputRoleDesc: '',
       inputRoleName: '',
@@ -184,6 +185,14 @@ export default {
         }
       ]
     }
+  },
+  mounted() {
+    console.log(window.innerHeight)
+        console.log(this.$refs.topictable.$el)
+        console.log(this.$refs.topictable.$el.offsetTop)
+        this.tableHeight =
+          window.innerHeight - this.$refs.topictable.$el.offsetTop - 50;
+        console.log(this.tableHeight)
   },
   methods: {
     back () {
@@ -283,6 +292,9 @@ export default {
       margin: 0 auto;
       padding: 20px;
       background: #fff;
+      .el-steps--simple{
+        background-color:#fff;   
+      }
       .step {
         border-bottom: 1px solid #ddd;
         padding-bottom: 20px;
