@@ -53,7 +53,7 @@
         :data="tableData"
         tooltip-effect="dark"
         style="width: 100%; border:1px solid #ddd;padding-top: 8px;" 
-        @selection-change="handleSelectionChange">
+         @selection-change="handleSelectionChange">
         <el-table-column prop="GroupId" type="selection" width="28"></el-table-column>
        <el-table-column prop="GroupName" :label="$t('CAM.CAM.userGroup.colNmae')" show-overflow-tooltip>
           &lt;!&ndash;<template slot-scope="scope">

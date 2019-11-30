@@ -131,8 +131,38 @@
               </h3>
               <div class="subscribe">
                 <div class="btns">
-                  <el-button size="mini" @click="dialogVi = true">{{$t('CAM.CAM.userDetails.news')}}</el-button>
+                  <!-- <el-button  @click="dialogVi = true">{{$t('CAM.CAM.userDetails.news')}}</el-button> -->
+                  <el-button class="bntsButton" @click="dialogVi = true">订阅消息</el-button>
+                  <el-button class="deletebntsButton" @click="deleteUsers">删除用户</el-button>
                 </div>
+                <el-dialog
+                  title="删除用户"
+                  :visible.sync="dialogDeleteUser"
+                  width="50%"
+                  :before-close="handleClose"
+                >
+                  <p>以下用户存在删除前置处理项 禁用并删除 API 密钥：</p>
+                  <div class="explainDelet">
+                    <p>需要您注意的是， API 密钥删除后无法恢复，请您确认清楚再进行删除。用户被删除后，该用户无法登录腾讯云以及接收消息通知，同时会解除关联权限。</p>
+                  </div>
+                  <template>
+                    <el-table style="width: 100%">
+                      <el-table-column label="用户名" width="180">
+                        <template slot-scope="scope">{{scope.row.Name}}</template>
+                      </el-table-column>
+                      <el-table-column prop="name" label="账户ID" width="180"></el-table-column>
+                      <el-table-column prop="address" label="密钥ID"></el-table-column>
+                      <el-table-column prop="address" label="创建时间"></el-table-column>
+                      <el-table-column prop="address" label="状态"></el-table-column>
+                      <el-table-column prop="address" label="操作"></el-table-column>
+                    </el-table>
+                  </template>
+                  <span slot="footer" class="dialog-footer">
+                    <el-button @click="dialogVisible = false">取 消</el-button>
+                    <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+                  </span>
+                </el-dialog>
+
                 <el-dialog
                   :title="$t('CAM.CAM.userDetails.news')"
                   :visible.sync="dialogVi"
@@ -152,7 +182,7 @@
                       <label>{{$t('CAM.CAM.userDetails.testPerson')}}</label>
                     </div>
                     <div class="number">
-                      <p>100011241184_123456789</p>
+                      <p>{{content.Name}}</p>
                     </div>
                   </div>
                   <div class="subs">
@@ -239,10 +269,21 @@
                 <p>关联策略以获取策略包含的操作权限。解除策略将失去策略包含的操作权限。特别的，解除随组关联类型的策略是通过将用户从关联该策略的用户组中移出。</p>
               </div>
               <el-button class="clButton" type="primary" size="small" @click="newUser">关联策略</el-button>
-              <el-button class="clButton" type="primary" size="small" disabled="true">解除策略</el-button>
+              <el-button
+                class="clButton"
+                type="primary"
+                size="small"
+                :disabled="bntVisible"
+                @click="dialogVisibleDeleteMore = true"
+              >解除策略</el-button>
 
-              <el-table :data="tableDatas" style="width: 96%; margin: 0 auto;" height="500">
-                <el-table-column type="selection" width="55" v-if="show"></el-table-column>
+              <el-table
+                :data="tableDatas"
+                @selection-change="handleSelectionChange"
+                style="width: 96%; margin: 0 auto;"
+                height="500"
+              >
+                <el-table-column prop="GroupId" type="selection" width="55" v-if="show"></el-table-column>
                 <el-table-column label="策略名" prop="PolicyName"></el-table-column>
 
                 <el-table-column label="关联类型" prop="ServiceType"></el-table-column>
@@ -254,40 +295,111 @@
                 <el-table-column label="关联时间" prop="AddTime"></el-table-column>
                 <el-table-column prop="oper" label="操作" width="140">
                   <template slot-scope="scope">
-                    <el-button
-                      @click.native.prevent="deleteRow(scope.$index, tableData)"
-                      type="text"
-                      size="small"
-                    >解除</el-button>
+                    <el-button @click="deleteThisRow" type="text" size="small">解除</el-button>
                   </template>
                 </el-table-column>
               </el-table>
             </el-tab-pane>
 
+            <el-dialog
+              title="批量解除策略"
+              :visible.sync="dialogVisibleDeleteMore"
+              width="30%"
+              :before-close="handleClose"
+            >
+              <span>解除策略将失去策略包含的操作权限。特别的，解除随组关联类型的策略是通过将用户从关联该策略的用户组中移出。</span>
+              <span slot="footer" class="dialog-footer">
+                <el-button @click="dialogVisibleDeleteMore = false">取 消</el-button>
+                <el-button type="primary" @click="dialogVisibleDeleteMore = false">确 定</el-button>
+              </span>
+            </el-dialog>
+
+            <el-dialog
+              title="解除策略"
+              :visible.sync="dialogVisibleDetete"
+              width="30%"
+              :before-close="handleClose"
+            >
+              <span>是否确定为该用户解除此策略?解除后该用户无法获得该策略所描述的相关权限</span>
+              <span slot="footer" class="dialog-footer">
+                <el-button @click="dialogVisibleDetete = false">取 消</el-button>
+                <el-button type="primary" @click="dialogVisibleDetete = false">确 定</el-button>
+              </span>
+            </el-dialog>
+
             <el-tab-pane label="组(1)" name="second">
               <el-button class="clButton" type="primary" size="small" @click="addTeam">加入到组</el-button>
-              <el-button class="clButton" type="primary" size="small" disabled="true">移出组</el-button>
-              <el-table :data="teamTableData" style="width: 96%; margin: 0 auto;" height="500px">
-                <el-table-column type="selection" width="55" v-if="show"></el-table-column>
+              <el-button
+                class="clButton"
+                type="primary"
+                size="small"
+                :disabled="bntVisible"
+                @click="dialogVisibleRemove=true"
+              >移出组</el-button>
+              <el-table
+                :data="teamTableData"
+                @selection-change="handleSelectionChange"
+                style="width: 96%; margin: 0 auto;"
+                height="500px"
+              >
+                <el-table-column prop="GroupId" type="selection" width="55" v-if="show"></el-table-column>
                 <el-table-column label="组名称" prop="GroupName"></el-table-column>
                 <el-table-column label="关联策略" prop="CreateTime"></el-table-column>
                 <el-table-column label="备注" prop="Remark"></el-table-column>
-                <el-table-column label="操作"></el-table-column>
+                <el-table-column fixed="right" label="操作" width="120">
+                  <template slot-scope="scope">
+                    <el-button @click="dialogVisibleRemove=true" type="text" size="small">移除</el-button>
+                  </template>
+                </el-table-column>
               </el-table>
             </el-tab-pane>
+
+            <el-dialog
+              title="移出组"
+              :visible.sync="dialogVisibleRemove"
+              width="30%"
+              :before-close="handleClose"
+            >
+              <span>确定删除用户组？移出后将无法接收到该组的短信、邮件通知</span>
+              <span slot="footer" class="dialog-footer">
+                <el-button @click="dialogVisibleRemove = false">取 消</el-button>
+                <el-button type="primary" @click="dialogVisibleRemove = false">确 定</el-button>
+              </span>
+            </el-dialog>
 
             <el-tab-pane label="安全" name="third">
               <el-collapse v-model="activeNames" @change="handleChange">
                 <el-collapse-item title="身份安全" name="1">
-                  <div><span style="color:#666">登录保护: </span><span style="color:red">未开启保护</span></div>
-                  <div><span style="color:#666">操作保护: </span><span style="color:red">未开启保护</span></div>
-                  <div><span style="color:#666">MFA设备: </span><span style="color:red">未绑定MFA设备</span></div>
+                  <div>
+                    <span style="color:#666">登录保护:</span>
+                    <span style="color:red">未开启保护</span>
+                  </div>
+                  <div>
+                    <span style="color:#666">操作保护:</span>
+                    <span style="color:red">未开启保护</span>
+                  </div>
+                  <div>
+                    <span style="color:#666">MFA设备:</span>
+                    <span style="color:red">未绑定MFA设备</span>
+                  </div>
                 </el-collapse-item>
                 <el-collapse-item title="访问安全" name="2">
-                  <div><span style="color:#666">控制台访问管理: </span><span style="color:red">已启用</span></div>
-                  <div><span style="color:#666">控制台登录链接: </span><span style="color:red">未开启保护</span></div>
-                  <div><span style="color:#666">上次访问: </span><span style="color:red">-</span></div>
-                  <div><span style="color:#666">上次敏感操作: </span><span style="color:red">查看详情</span></div>
+                  <div>
+                    <span style="color:#666">控制台访问管理:</span>
+                    <span style="color:red">已启用</span>
+                  </div>
+                  <div>
+                    <span style="color:#666">控制台登录链接:</span>
+                    <span style="color:red">未开启保护</span>
+                  </div>
+                  <div>
+                    <span style="color:#666">上次访问:</span>
+                    <span style="color:red">-</span>
+                  </div>
+                  <div>
+                    <span style="color:#666">上次敏感操作:</span>
+                    <span style="color:red">查看详情</span>
+                  </div>
                 </el-collapse-item>
               </el-collapse>
             </el-tab-pane>
@@ -314,12 +426,19 @@ export default {
   },
   data() {
     return {
-      activeNames: ['1'],
+      deleteUserList: [],
+      dialogDeleteUser: false,
+      dialogVisibleRemove: false,
+      dialogVisibleDeleteMore: false,
+      selectedGroupId: 0,
+      bntVisible: true,
+      dialogVisibleDetete: false,
+      activeNames: ["1"],
       teamTableData: [],
       show: true,
       disabled: false,
       tableDatas: [],
-      content: {},
+      content: [],
       checked: true,
       dialogVi: false,
       showHeader: false,
@@ -398,10 +517,27 @@ export default {
     };
   },
   methods: {
+    deleteUsers() {
+      this.dialogDeleteUser = true;
+    },
+    deleteMore() {
+      console.log(12);
+    },
+    handleSelectionChange(val) {
+      if (val != "") {
+        this.bntVisible = false;
+        this.selectedGroupId = val[0].GroupId;
+      } else {
+        this.bntVisible = true;
+      }
+    },
+    deleteThisRow() {
+      this.dialogVisibleDetete = true;
+    },
     newUser() {
       this.$router.push({ name: "addPolicyToUser" });
     },
-    addTeam(){
+    addTeam() {
       this.$router.push({ name: "addTeamUser" });
     },
     init() {
@@ -453,9 +589,9 @@ export default {
     backoff() {
       this.$router.push({ path: "UserList" });
     },
-     handleChange(val) {
-        console.log(val);
-      }
+    handleChange(val) {
+      console.log(val);
+    }
   },
   created() {
     this.content = this.$route.query.content;
@@ -466,7 +602,6 @@ export default {
     let url = "cam2/ListPolicies";
     this.axios.post(url, params).then(data => {
       this.tableDatas = data.Response.List;
-      console.log(data);
     });
     let teamParams = {
       Action: "ListGroups",
@@ -475,6 +610,14 @@ export default {
     let teamUrl = "cam2/ListGroups";
     this.axios.post(teamUrl, teamParams).then(data => {
       this.teamTableData = data.Response.GroupInfo;
+    });
+
+    let removeUser = {
+      Action: "RemoveUserFromGroup",
+      Version: "2019-01-16"
+    };
+    let removeUrl = "cam2/RemoveUserFromGroup";
+    this.axios.post(removeUrl, removeUser).then(data => {
       console.log(data);
     });
   }
@@ -498,6 +641,22 @@ export default {
   background: #e5f0ff;
   position: relative;
   box-sizing: border-box;
+}
+.explainDelet {
+  width: 100%;
+  font-size: 12px;
+  padding: 10px 30px 10px 20px;
+  vertical-align: middle;
+  color: #003b80;
+  border: 1px solid #97c7ff;
+  border-radius: 2px;
+  background: #e5f0ff;
+  position: relative;
+  box-sizing: border-box;
+  margin-top: 15px;
+  color: #c07400;
+  border-color: #ffd18b;
+  background-color: #fff4e3;
 }
 .aaa {
   padding: 0 !important;
@@ -539,6 +698,14 @@ export default {
     }
     .btns {
       text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      .deletebntsButton {
+        margin-left: -1px;
+        margin-top: 10px;
+      }
     }
     .tag {
       font-size: 12px;

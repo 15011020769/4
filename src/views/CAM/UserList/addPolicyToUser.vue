@@ -83,7 +83,13 @@
               <div class="explain">
                 <p>仅复用现有用户的直接关联策略，不复用现有用户因加入用户组而获得的随组关联策略。</p>
               </div>
-              <el-button class="clButton" type="primary" size="small" style="margin-left:2%">新建自定义策略</el-button>
+              <el-button
+                class="clButton"
+                type="primary"
+                size="small"
+                style="margin-left:2%"
+                @click="gotoCl"
+              >新建自定义策略</el-button>
               <el-input
                 v-model="bindVlue"
                 style="width:25%;margin-left:60%;margin-top:10px;"
@@ -134,9 +140,9 @@
       <div v-show="active==2">
         <template>
           <el-table :data="newTableData" style="width: 96%; margin: 0 auto;">
-              <el-table-column type="selection" width="55"></el-table-column>
-              <el-table-column label="策略名" ></el-table-column>
-              <el-table-column label="描述" ></el-table-column>
+            <el-table-column type="selection" width="55"></el-table-column>
+            <el-table-column label="策略名"></el-table-column>
+            <el-table-column label="描述"></el-table-column>
           </el-table>
         </template>
       </div>
@@ -200,6 +206,9 @@ export default {
     };
   },
   methods: {
+    gotoCl() {
+      this.$router.push({ name: "Strategy" });
+    },
     init() {
       let params = {
         Action: "ListGroups",
