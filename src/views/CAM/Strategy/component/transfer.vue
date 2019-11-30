@@ -2,7 +2,7 @@
   <div class="Cam">
     <div class="container">
       <div class="container-left">
-        <p>关联用户（共{{totalNum}}条）</p>
+        <p>关联用户</p>
         <el-input size="mini" v-model="search" style="width:85%" @keyup.enter.native="toQuery"/>
         <el-button size="mini" class="suo" icon="el-icon-search" @click="toQuery"></el-button>
         <el-table
@@ -33,7 +33,7 @@
                   <el-dropdown-item
                     v-for="item in table_options2"
                     :key="item.value"
-                    :command="item.label"
+                    :command="item"
                   >{{item.label}}</el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
@@ -53,25 +53,25 @@
         <el-table
           class="table-left"
           ref="multipleSelected"
-          :data="policiesSelectedData"
+          :data="transfer_data_right"
           tooltip-effect="dark"
           size="small"
           height="300"
           style="width: 100%"
         >
-          <el-table-column prop="policyName" label="用户组/用户名" show-overflow-tooltip>
-            <template slot-scope="scope">
-              <p>{{scope.row.policyName}}</p>
-              <p>{{scope.row.description}}</p>
-            </template>
+          <el-table-column prop="name" label="用户组/用户名" show-overflow-tooltip>
           </el-table-column>
           <el-table-column prop="type" label="类型" width="100">
+            <template slot-scope="scope">
+              <p v-show="scope.row.type == 'user'">用户</p>
+              <p v-show="scope.row.type == 'group'">用户组</p>
+            </template>
           </el-table-column>
           <el-table-column :label="$t('CAM.CAM.userGroup.colHandle')" width="50">
             &lt;!&ndash;
             <template slot-scope="scope">
               <el-button
-                @click.native.prevent="deleteRow(scope.$index, policiesSelectedData)"
+                @click.native.prevent="deleteRow(scope.$index, transfer_data_right)"
                 type="text"
                 size="small"
               >x</el-button>
@@ -86,8 +86,7 @@
 <script>
 export default {
   props: {
-    // policiesSelectedData: () => []
-    // policiesSelectedData: Array
+    PolicyId: Number
   },
   data() {
     return {
@@ -95,13 +94,15 @@ export default {
       transfer_data: [{}],
       // 选定的用户列表
       transfer_data_right: [],
-      
-      policiesSelectedData: [],
+      transferUserData: [],
+      transferGroupData: [],
+      commandObj: {},
       totalNum: "",
       search: "",
       rp: 20,
       page: 1,
       tableTitle: "切换成用户组",
+      handoverFlag: false,
       table_options2: [
         {
           value: "user",
@@ -115,16 +116,23 @@ export default {
     }
   },
   created() {
+    this.transfer_data_right = []
     this.getList()
   },
   methods: {
     getList () {
-      console.log('method getData')
-      this.transfer_data.splice(0, this.transfer_data.length)
-      this.transfer_data_right.splice(0, this.transfer_data_right.length)
-      // 1.查询用户列表
+      //系统默认加载用户list
+      this.getUserList()
+    },
+    // 1.查询用户列表
+    getUserList() {
+      this.commandObj = { value: "user", label: "用户" }
+      console.log('getUserList*******************start*******************');
+      console.log(this.transfer_data_right);
+      this.transfer_data = []
       let paramsUser = {
-        Version: '2019-01-16',
+        Action: 'ListUsers',
+        Version: '2019-01-16'
       }
       this.$axios.post('cam2/ListUsers', paramsUser).then(res => {
         for(let i in res.Response.Data) {
@@ -135,8 +143,16 @@ export default {
           this.transfer_data.push(str)
         }
       })
-      // 2.查询用户组列表ListGroups
+      console.log(this.transfer_data_right);
+      console.log('getUserList*******************end*******************');
+    },
+    // 2.查询用户组列表ListGroups
+    getGroupList() {
+      console.log('getGroupList==========start=====');
+      console.log(this.transfer_data_right);
+      this.transfer_data = []
       let paramsGroup = {
+        Action: 'ListGroups',
         Version: '2019-01-16',
       }
       this.$axios.post('cam2/ListGroups', paramsGroup).then(res => {
@@ -148,22 +164,48 @@ export default {
           this.transfer_data.push(str)
         }
       })
-      // 3.查询策略关联的实体列表
-      // let params2 = {
-      //   Version: '2019-01-16',
-      //   PolicyId: policy.PolicyId
-      // }
-      // this.$axios.post('cam2/ListEntitiesForPolicy', params2).then(res  => {
-      //   console.log(res)
-      // })
+      console.log(this.transfer_data_right);
+      console.log('getGroupList==========end======');
     },
     handleCommand(command) {
-      console.log(command);
-      this.tableTitle = command;
+      debugger
+      this.handoverFlag = true
+      this.commandObj = command
+      console.log('handleCommand+++start+++++++++++');
+      console.log(this.transfer_data_right);
+      this.tableTitle = command.label;
+      if(command!= '' && command.value === 'user'){
+        this.getUserList()
+      }
+      if(command!= '' && command.value === 'group'){
+        this.getGroupList()
+      }
+      console.log('handleCommand+++end+++++++++++');
     },
     handleSelectionChange(val) {
+      debugger
+      console.log('-------handleSelectionChange---------start-------------------------');
+      console.log(this.transfer_data_right);
+      if(this.commandObj.value != '' && this.commandObj.value === 'user'){
+        this.transferUserData = val
+      }
+      if(this.commandObj.value != '' && this.commandObj.value === 'group'){
+        this.transferGroupData = val
+      }
+      if(this.transferUserData != ''){
+        this.transfer_data_right.push(this.transferUserData)
+      }
+      if(this.transferGroupData != ''){
+        this.transfer_data_right.push(this.transferGroupData)
+      }
+      // if(this.handoverFlag === false){
+      //   this.transfer_data_right = val;
+      // }
       // 给右边table框赋值，只需在此处赋值即可，selectedRow方法中不写，因为单独点击复选框，只有此方法有效。
-      this.policiesSelectedData = val;
+      // this.transfer_data_right = val;
+      console.log(this.transfer_data_right);
+      console.log('--------handleSelectionChange--------end-------------------------');
+      this.handoverFlag = false
     },
     selectedRow(row, column, event) {
       // 设置选中或者取消状态
@@ -176,8 +218,52 @@ export default {
     toQuery() {
       this.init();
     },
-    getDaata() {
-      return this.policiesSelectedData;
+    getUserSelData() {
+      return this.transfer_data_right;
+    },
+    // 关联用户/用户组
+    attachPolicy() {
+      let _this = this
+      let transfer_data_right = this.transfer_data_right
+      console.log(transfer_data_right)
+      let policyId = this.PolicyId //获取策略ID,父页面传递参数。
+      if(policyId != undefined && policyId != '') {
+        for(let i=0; i < transfer_data_right.length; i++) {
+          let obj = transfer_data_right[i]
+          if(obj != '' && obj.type === 'user') {
+            // 定义策略添加到用户params；系统接口是单条绑定，多条数据需要循环调用接口，params只能作为局部参数存在，多条数据循环时，参数会出现后一条数据会覆盖上一条数据，
+            let paramsUser = {
+              Action: 'AttachUserPolicy',
+              Version: '2019-01-16',
+              PolicyId: policyId,
+              AttachUin: obj.id
+            }
+            _this.attachUserPolicy(paramsUser)
+          }
+          if(obj != '' && obj.type === 'group') {
+            // 定义策略添加到用户组params
+            let paramsGroup = {
+              Action: 'AttachGroupPolicy',
+              Version: '2019-01-16',
+              PolicyId: policyId,
+              AttachGroupId: obj.id
+            }
+            _this.attachGroupPolicy(paramsGroup)
+          }
+        }
+      }
+    },
+    // 绑定策略到用户组
+    attachGroupPolicy(params) {
+      this.$axios.post('cam2/AttachGroupPolicy', params).then(res  => {
+        console.log(res)
+      })
+    },
+    // 绑定策略到用户
+    attachUserPolicy(params) {
+      this.$axios.post('cam2/AttachUserPolicy', params).then(res  => {
+        console.log(res)
+      })
     }
   }
 };

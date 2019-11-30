@@ -135,7 +135,10 @@ module.exports = {
       desc:'描述',
       goBack:'返回',
       toStep:'下一步',
-      complete:'完成'
+      complete:'完成',
+      customPolicy:'自定義策略',
+      defaultPolicy:'預設策略',
+      all:'全部'
 
 
     }

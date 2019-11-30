@@ -100,7 +100,7 @@
     <el-dialog title :visible.sync="dialogVisible" width="72%">
       <h3 style="color:#000;margin-bottom:20px;">关联用户/用户组</h3>
       <div class="dialog_div">
-        <transfer v-if="transferFlag"></transfer>
+        <transfer v-if="transferFlag" ref="userTransfer" :PolicyId="policyId"></transfer>
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button size="mini" @click="dialogVisible = false">取 消</el-button>
@@ -211,35 +211,21 @@ export default {
     },
     // 关联用户/用户组
     attachPolicy(){
-      if(this.transfer_data_right.length > 0) {
-        for(let i=0; i < this.transfer_data_right.length; i++) {
-          this.attachUserPolicy(this.policyId, this.transfer_data_right[i])
-        }
-      }
+      this.$refs.userTransfer.attachPolicy()
       this.dialogVisible = false
     },
-    // 绑定策略到用户组
-    attachGroupPolicy(val1, val2) {
-      let params = {
-        Version: '2019-01-16',
-        PolicyId: val1,
-        AttachGroupId: val2
-      }
-      this.$axios.post('cam2/AttachGroupPolicy', params).then(res  => {
-        console.log(res)
-      })
-    },
-    // 绑定策略到用户
-    attachUserPolicy(val1, val2) {
-      let params = {
-        Version: '2019-01-16',
-        PolicyId: val1,
-        AttachUin: val2
-      }
-      this.$axios.post('cam2/AttachUserPolicy', params).then(res  => {
-        console.log(res)
-      })
-    },
+    // // 绑定策略到用户组
+    // attachGroupPolicy(params) {
+    //   this.$axios.post('cam2/AttachGroupPolicy', params).then(res  => {
+    //     console.log(res)
+    //   })
+    // },
+    // // 绑定策略到用户
+    // attachUserPolicy(params) {
+    //   this.$axios.post('cam2/AttachUserPolicy', params).then(res  => {
+    //     console.log(res)
+    //   })
+    // },
     // table标题栏选择项
     handleCommand(command) {
       console.log(command);

@@ -3,14 +3,14 @@
         <div class="container">
             <div class="container-left">
               <p>选择策略（共{{totalNum}}条）</p>
-              <el-input size="mini" v-model="search"  style="width:100%"  @keyup.enter.native="toQuery"/>
+              <el-input size="mini" custom-class="dialogStyle" v-model="search"  style="width:100%"  @keyup.enter.native="toQuery"/>
               <i class="el-icon-search ifier" @click="toQuery"></i>
               <el-table
                 class="table-left"
                     ref="multipleOption"
                     :data="policiesData"
                     size = "small"
-                    height="55vh"
+                    height="45vh"
                     tooltip-effect="dark"
                     style="width: 100%"
                     @row-click="selectedRow"
@@ -43,7 +43,7 @@
                   :data="policiesSelectedData"
                   tooltip-effect="dark"
                   size = "small"
-                  height="60vh"
+                  height="50vh"
                   style="width: 100%">
                   <el-table-column prop="PolicyName" label="策略名"  show-overflow-tooltip>
                     <template slot-scope="scope">

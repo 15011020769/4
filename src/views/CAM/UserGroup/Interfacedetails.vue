@@ -78,7 +78,7 @@
               </div>
               <!-- 关联策略弹出框 start -->
               
-              <el-dialog title="关联策略" :visible.sync="dialogVisible" width="75%" :before-close="handleClosePolicies">
+              <el-dialog title="关联策略" custom-class="dialogStyle" :visible.sync="dialogVisible" width="75%" :before-close="handleClosePolicies">
                 <div class="container">
                   <div class="container-left">
                     <span>选择策略 （共{{totalNumPolicies}}条）</span>
@@ -91,7 +91,7 @@
                       ref="multipleOptionPolicies"
                       :data="policiesAllData"
                       size = "small"
-                      height="45vh"
+                      height="46vh"
                       tooltip-effect="dark"
                       style="width: 100%"
                       @row-click="selectedRowPolicies"
@@ -192,7 +192,8 @@
                 title="添加用户"
                 :visible.sync="dialogUser"
                 width="75%"
-                :before-close="handleCloseUser" >
+                :before-close="handleCloseUser" 
+                custom-class="dialogStyle">
                 <div class="container">
                   <div class="container-left">
                     <p>选择添加的用户（共{{totalNumUser}}条）</p>
@@ -205,7 +206,7 @@
                           ref="multipleOptionUser"
                           :data="userData"
                           size = "small"
-                          height="45vh"
+                          height="46vh"
                           tooltip-effect="dark"
                           style="width: 100%"
                           @row-click="selectedRow"
@@ -659,7 +660,7 @@ export default {
   }
 };
 </script>
-<style lang="scss" scoped>
+<style lang="scss">
 .Cam {
   .top {
     height: 45px;
@@ -738,12 +739,6 @@ export default {
     height: 50px;
   }
   .container {
-    width: 96%;
-    height: 270px;
-    min-height: 360px;
-    margin: 10px auto 0;
-    background: #fff;
-    padding: 20px;
     p.title,
     p.explain {
       text-align: center;
@@ -808,6 +803,9 @@ export default {
       background-repeat: no-repeat;
       background-position: inherit;
       font-size: 0;
+    }
+    .dialogStyle>.el-dialog__body{
+      padding: 10px 20px 20px;
     }
 }
 </style>

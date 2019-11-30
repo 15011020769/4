@@ -87,7 +87,7 @@
       </div>
     </div>
     <template>
-      <el-dialog :title="$t('CAM.CAM.userGroup.addTitle')"  :visible.sync="dialogVisible" :before-close="handleClose" width="70%"> 
+      <el-dialog :title="$t('CAM.CAM.userGroup.addTitle')" custom-class="dialogStyle" :visible.sync="dialogVisible" :before-close="handleClose" width="70%"> 
 				<div class="container-left">
           <p>选择添加的用户（共{{totalNum}}条）</p>
           <el-input size="mini" v-model="search"  style="width:100%"  @keyup.enter.native="toQuery"/>
@@ -540,6 +540,9 @@ export default {
       margin-left: auto;
       margin-right: auto;
       margin-bottom: 20px;
+    }
+    .dialogStyle>.el-dialog__body{
+      padding: 10px 20px 20px;
     }
   }
 </style>
