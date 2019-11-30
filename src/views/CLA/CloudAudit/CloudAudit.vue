@@ -250,7 +250,7 @@ export default {
       this.axios.post(YJS_LIST, params).then(({ data }) => {
         this.tableData = data.Events
 
-        // console.log(this.tableData)
+        console.log(this.tableData)
         this.loading = false
         if (this.tableData.length === 0) {
           this.Show = false
