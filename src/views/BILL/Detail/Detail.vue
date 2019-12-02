@@ -1,13 +1,16 @@
 <template>
   <div class="mod-role">
-    <span style="font-size: 16px; font-weight: 700; line-height:3;">{{$t('BILL.BILL.Detail.title')}}</span>
-    <el-date-picker v-model="dataForm.month" type="month" value-format="yyyy-MM" size="small" @change="getDataList()" style="padding-left: 5px;">
-    </el-date-picker>
-    <span style="padding-left: 10px; font-size: 12px;">{{$t('BILL.BILL.Detail.note')}}</span>
-    <el-form :inline="true" :model="dataForm" class="demo-form-inline" @keyup.enter.native="getDataList()">
+    <div class="mod">
+      <span class="mod-mar" style="font-size: 16px; font-weight: 700; line-height:3;">{{$t('BILL.BILL.Detail.title')}}</span>
+      <el-date-picker v-model="dataForm.month" type="month" value-format="yyyy-MM" size="small" @change="getDataList()" style="padding-left: 5px;">
+      </el-date-picker>
+      <span style="padding-left: 10px; font-size: 12px;">{{$t('BILL.BILL.Detail.note')}}</span>
+    </div>
+    <div class="mod-from">
+      <el-form :inline="true" :model="dataForm" class="demo-form-inline" @keyup.enter.native="getDataList()">
       <el-form-item>
         <el-select v-model="dataForm.businessCodeName" value-key="code" :placeholder="$t('BILL.BILL.Detail.allProduct')" @change="getChildInfo()" clearable size="small">
-          <el-option v-for="item in getProductList" :key="item.code" :label="item.nameTw" :value="item">
+          <el-option v-for="item in getProductList" :key="item.code" :label="item.nameTw" :value="item" >
           </el-option>
         </el-select>
         <el-select v-model="dataForm.productCodeName" value-key="code" :placeholder="reminder1()" @change="getComponentInfo()" clearable size="small">
@@ -36,7 +39,7 @@
         </el-select>
         <el-checkbox v-model="dataForm.checked" style="padding-left: 15px;" @change="getDataList()">{{$t('BILL.BILL.Detail.filter')}}</el-checkbox>
       </el-form-item>
-      <el-form-item>
+      <!-- <el-form-item>
         <span style="font-size: 14px;">{{$t('BILL.BILL.Detail.allCast')}}：</span>
         <span style="font-size: 16px; color: #006eff;">{{dataForm.allCoat}} 元</span>
         <span style="font-size: 14px;"> = {{$t('BILL.BILL.Detail.cashPayment')}} {{dataForm.cashPayment}} 元 + {{$t('BILL.BILL.Detail.freePayment')}} {{dataForm.freePayment}} 元 + {{$t('BILL.BILL.Detail.voucherPayment')}} {{dataForm.voucherPayment}} 元</span>
@@ -50,9 +53,30 @@
       <el-form-item style="float: right;">
         <el-input :placeholder="$t('BILL.BILL.Detail.resourceId')" clearable v-model="dataForm.resourceId" size="small">
         </el-input>
-      </el-form-item>
+      </el-form-item> -->
     </el-form>
-    <el-table :data="dataList" border style="width: 100%" v-loading="dataListLoading" size="small">
+    </div>
+    <div class="mod-table">
+      <div class="mod-box">
+        <div class="mod-left">
+          <span style="font-size: 14px;">{{$t('BILL.BILL.Detail.allCast')}}：</span>
+          <span style="font-size: 16px; color: #006eff;">{{dataForm.allCoat}} 元</span>
+          <span style="font-size: 14px;"> = {{$t('BILL.BILL.Detail.cashPayment')}} {{dataForm.cashPayment}} 元 + {{$t('BILL.BILL.Detail.freePayment')}} {{dataForm.freePayment}} 元 + {{$t('BILL.BILL.Detail.voucherPayment')}} {{dataForm.voucherPayment}} 元</span>
+        </div>
+        <div class="mod-right">
+        <div style="float: right;">
+          <el-button type="primary" icon="el-icon-download" @click="download" size="small"></el-button>
+        </div>
+        <div style="float: right; padding-right:5px;">
+          <el-button type="primary" @click="search()" size="small">{{$t('BILL.BILL.Detail.search')}}</el-button>
+        </div>
+        <div style="float: right; padding-right:5px;">
+          <el-input :placeholder="$t('BILL.BILL.Detail.resourceId')" clearable v-model="dataForm.resourceId" size="small">
+          </el-input>
+        </div>
+      </div>
+      </div>
+      <el-table :data="dataList" border style="width: 100%" v-loading="dataListLoading" size="small">
       <el-table-column prop="resourceId" header-align="center" align="center" width="160" fixed :label="$t('BILL.BILL.Detail.resourceId')">
       </el-table-column>
       <el-table-column prop="businessCodeName" header-align="center" align="center" width="160" fixed :label="$t('BILL.BILL.Detail.productName')">
@@ -120,8 +144,12 @@
       <el-table-column prop="month" header-align="center" align="center" width="120" :label="$t('BILL.BILL.Detail.month')">
       </el-table-column>
     </el-table>
-    <el-pagination @size-change="sizeChangeHandle" @current-change="currentChangeHandle" :current-page="pageIndex" :page-sizes="[10, 20, 50, 100]" :page-size="pageSize" :total="totalPage" layout="total, sizes, prev, pager, next, jumper" style="float: right;">
-    </el-pagination>
+    <div class="pagination">
+        <el-pagination @size-change="sizeChangeHandle" @current-change="currentChangeHandle" :current-page="pageIndex" :page-sizes="[10, 20, 50, 100]" :page-size="pageSize" :total="totalPage" layout="total, sizes, prev, pager, next, jumper" style="width:100%; text-align:right;">
+        </el-pagination>
+    </div>
+        
+    </div>
     <iframe ref="iframe" src="" style="display:none"></iframe>
   </div>
 </template>
@@ -158,7 +186,7 @@ export default {
       getComponentList: [],
       pageIndex: 1,
       pageSize: 10,
-      totalPage: 3,
+      totalPage: 0,
       dataListLoading: false
     }
   },
@@ -404,3 +432,57 @@ export default {
   }
 }
 </script>
+<style lang="scss">
+  .mod{
+    color: #000;
+    height: 45px;
+    line-height: 45px;
+    margin-bottom: 20px;
+    padding: 0 20px;
+    background: #fff;
+    font-size: 16px;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    // display: flex;
+    -webkit-box-pack: justify;
+    -ms-flex-pack: justify;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    .mod-mar{
+      margin-right: 20px;
+    }
+  }
+  .mod-from{
+      width: 96%;
+      margin: 0 auto;
+    }
+  .mod-table{
+   width: 96%;
+      padding: 20px;
+      background-color: #fff;
+      margin: 0 auto;
+    .pagination{
+    background: rgb(255, 255, 255);
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    line-height: 30px;
+    }
+    .mod-box{
+      display: table;
+      width: 100%;
+      padding-bottom: 10px;
+      background: #fff;
+      .mod-left, .mod-right{
+      display: table-cell;
+    vertical-align: middle;
+    }
+    }
+  }
+  .el-form-item__content .el-select {
+    margin-right: 10px;
+  }
+  .el-select .el-input{
+    width: 200px;
+  }
+</style>

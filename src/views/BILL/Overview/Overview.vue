@@ -1,10 +1,12 @@
 <template>
   <div id="Overview">
-    <span style="font-size: 16px; font-weight: 700; line-height:3;">{{$t('BILL.BILL.Overview.title')}}</span>
-    <el-date-picker v-model="month" type="month" value-format="yyyy-MM" size="small" @change="getDataChar()" style="padding-left: 5px;">
-    </el-date-picker>
-    <span style="padding-left: 10px; font-size: 12px;">{{$t('BILL.BILL.Overview.note')}}</span>
-    <el-card>
+    <div class="ovew">
+      <span class="bill" style="font-size: 16px; font-weight: 700; line-height:3;">{{$t('BILL.BILL.Overview.title')}}</span>
+      <el-date-picker v-model="month" type="month" value-format="yyyy-MM" size="small" @change="getDataChar()" style="padding-left: 5px;">
+      </el-date-picker>
+      <span style="padding-left: 10px; font-size: 12px;">{{$t('BILL.BILL.Overview.note')}}</span>
+    </div>
+    <el-card class="ovew-echar">
       <el-row :gutter="20">
         <el-col :span="18">
           <span style="font-size: 14px; font-weight: 700; line-height:1">{{$t('BILL.BILL.Overview.costTrend')}}</span>
@@ -94,12 +96,10 @@
                 </template>
               </el-table-column>
             </el-table>
-            <el-pagination @size-change="sizeChangeHandle" @current-change="currentChangeHandle" :current-page="pageIndex" :page-sizes="[10, 20, 50, 100]" :page-size="pageSize" :total="totalPage1" layout="total, sizes, prev, pager, next, jumper" style="float: right;">
-            </el-pagination>
           </el-tab-pane>
           <el-tab-pane :label="$t('BILL.BILL.Overview.projectSum')" name="second" style="width:100%">
             <div id="main3" style="float: left; width: 1067px; height: 300px"></div>
-            <el-table :data="dataList2" row-key="id" :tree-props="{children: 'children'}"  v-loading="dataListLoading" style="width: 100%; margin-bottom: 20px;">
+            <el-table :data="dataList2" row-key="id" :tree-props="{children: 'children'}"  v-loading="dataListLoading" style="width: 100%;">
               <el-table-column prop="project_name" :label="$t('BILL.BILL.Overview.projectName')" ></el-table-column>
               <el-table-column prop="cashAmount" align="right" :label="$t('BILL.BILL.Overview.cashAmount')">
                 <template slot-scope="scope">
@@ -134,9 +134,11 @@
                 </template>
               </el-table-column>
             </el-table>
+          </el-tab-pane>
+          <div class="paging">
             <el-pagination @size-change="sizeChangeHandle" @current-change="currentChangeHandle" :current-page="pageIndex" :page-sizes="[10, 20, 50, 100]" :page-size="pageSize" :total="totalPage2" layout="total, sizes, prev, pager, next, jumper" style="float: right;">
             </el-pagination>
-          </el-tab-pane>
+          </div>
         </el-tabs>
       </div>
     </el-card>
@@ -687,6 +689,38 @@ export default {
 </script>
 
 <style lang="scss">
+
+  .el-card{
+    width: 96%;
+    margin: 0 auto;
+  }  
+  .bill{
+    margin-right:20px; 
+  }
+  .paging{
+    width: 100%;
+    height: 30px;
+    background: rgb(255, 255, 255);
+    padding: 10px;
+    /* display: flex; */
+    justify-content: space-between;
+    line-height: 30px;
+  }
+  .ovew{
+    color: #000;
+    height: 45px;
+    line-height: 45px;
+    margin-bottom: 20px;
+    padding: 0 20px;
+    background: #fff;
+    font-size: 16px;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    -webkit-box-pack: justify;
+    -ms-flex-pack: justify;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
  .el-table__expand-icon {
    float: left
  }

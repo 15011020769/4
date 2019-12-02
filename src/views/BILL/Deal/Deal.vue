@@ -3,22 +3,24 @@
     <div class="top">
       <span class="title-left">{{$t('BILL.BILL.Deal.title')}}</span>
     </div>
-    <el-form :inline="true" :model="dataForm" class="demo-form-inline" @keyup.enter.native="getDataList()">
-      <el-form-item>
-        <el-input :placeholder="$t('BILL.BILL.Deal.projectId')" clearable v-model="dataForm.projectId" size="small">
-        </el-input>
-      </el-form-item>
-      <el-form-item>
-        <el-input :placeholder="$t('BILL.BILL.Deal.orderId')" clearable v-model="dataForm.orderId" size="small">
-        </el-input>
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" @click="search()" size="small">搜索</el-button>
-      </el-form-item>
-      <el-form-item style="float: right;">
-        <el-button type="primary" icon="el-icon-download" @click="download" size="small"></el-button>
-      </el-form-item>
-    </el-form>
+    <div class="cam-form">
+        <el-form :inline="true" :model="dataForm" class="demo-form-inline" @keyup.enter.native="getDataList()">
+          <!-- <el-form-item>
+            <el-input :placeholder="$t('BILL.BILL.Deal.projectId')" clearable v-model="dataForm.projectId" size="small">
+            </el-input>
+          </el-form-item> -->
+          <el-form-item>
+            <el-input :placeholder="$t('BILL.BILL.Deal.orderId')" clearable v-model="dataForm.orderId" size="small">
+            </el-input>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" @click="search()" size="small">搜索</el-button>
+          </el-form-item>
+          <el-form-item style="float: right;">
+            <el-button type="primary" icon="el-icon-download" @click="download" size="small"></el-button>
+          </el-form-item>
+        </el-form>
+    </div>
     <div class="cam-box">
       <el-table :data="dataList" border style="width: 100%" v-loading="dataListLoading" size="small">
         <el-table-column prop="orderId" header-align="center" align="center" width="150" :label="$t('BILL.BILL.Deal.orderId')">
@@ -55,8 +57,11 @@
           </template>
         </el-table-column>
       </el-table>
-      <el-pagination @size-change="sizeChangeHandle" @current-change="currentChangeHandle" :current-page="pageIndex" :page-sizes="[10, 20, 50, 100]" :page-size="pageSize" :total="totalPage" layout="total, sizes, prev, pager, next, jumper" style="float: right;">
+      <div style="background:#fff;padding:10px;height:10vh;justify-content: space-between;line-height:10px;">
+        <el-pagination @size-change="sizeChangeHandle" @current-change="currentChangeHandle" :current-page="pageIndex" :page-sizes="[10, 20, 50, 100]" :page-size="pageSize" :total="totalPage" layout="total, sizes, prev, pager, next, jumper" style="float: right;">
       </el-pagination>
+      </div>
+      
     </div>
     
     <!-- 弹窗, 详情 -->
@@ -76,7 +81,7 @@ export default {
       dataList: [],
       pageIndex: 1,
       pageSize: 10,
-      totalPage: 3,
+      totalPage: 0,
       dataListLoading: false
     }
   },
@@ -199,8 +204,16 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
+#CCN .el-container .el-main{
+  padding:0 !important;
+}
   .Cam {
+    .cam-form{
+      width: 96%;
+      padding:0;
+      margin: 0 auto;
+    }
     .top {
       height: 45px;
       line-height: 45px;
