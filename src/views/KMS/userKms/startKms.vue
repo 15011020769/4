@@ -1,26 +1,25 @@
 <template>
   <div>
-    <el-dialog class="dialogModel" :title='contentDialog[2]=="启用轮换"?"启用密钥轮换":"禁用密钥轮换"' :visible.sync="disableDialog" width="30%" :before-close="handleClose">
+    <el-dialog class="dialogModel" :title='contentDialog[2]=="启用密钥"?"启用密钥服务":"禁用密钥服务"' :visible.sync="disableDialog" width="30%" :before-close="handleClose">
       <div>
-        <p v-if="contentDialog[2]=='启用轮换'?true:false" class="titleTip">启用后，选中的密钥将每年自动轮换一次。</p>
-        <p v-if="contentDialog[2]=='禁用轮换'?true:false" class="titleTip">禁用后，选中的密钥将停止每年自动轮换。</p>
-        <p class="lookDetails">您已选<span class="fontweight">1个密钥服务</span><a @click="detailsIsshow"> 查看详情</a></p>
+        <p v-if="contentDialog[2]=='启用密钥'?true:false" class="titleTip">启用选中的密钥服务？</p>
+        <p v-if="contentDialog[2]=='禁用密钥'?true:false" class="titleTip">禁用选中的密钥服务？</p>
+        <p class="lookDetails">您已选<span class="fontweight"><span>1</span>个密钥服务</span><a @click="detailsIsshow"> 查看详情</a></p>
         <table class="listShow" v-if="detailIsShow">
           <tbody>
             <tr>
               <td class="listShowNum">1</td>
               <td class="listShowNick">{{contentDialog[0]}}</td>
-              <td class="listShowId">{{contentDialog[1]}}</td>
-              <td v-if="contentDialog[2]=='启用轮换'?true:false" class="listShowIsable">可启用</td>
-              <td v-if="contentDialog[2]=='禁用轮换'?true:false" class="listShowIsable">可禁用</td>
+              <td v-if="contentDialog[2]=='启用密钥'?true:false" class="listShowIsable">可启用</td>
+              <td v-if="contentDialog[2]=='禁用密钥'?true:false" class="listShowIsable">可禁用</td>
             </tr>
           </tbody>
         </table>
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button @click="handleClose">取 消</el-button>
-        <el-button v-if="contentDialog[2]=='启用轮换'?true:false" type="primary" @click="startSure">确 定</el-button>
-        <el-button v-if="contentDialog[2]=='禁用轮换'?true:false" type="primary" @click="topSure">确 定</el-button>
+        <el-button v-if="contentDialog[2]=='启用密钥'?true:false" type="primary" @click="startKmsSure">确 定</el-button>
+        <el-button v-if="contentDialog[2]=='禁用密钥'?true:false" type="primary" @click="stopKmsSure">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -64,14 +63,14 @@ export default {
       }
     },
     //启动密钥轮换确定按钮
-    startSure(){
+    startKmsSure(){
       this.thisShow=false;
-      this.$emit('startSure',this.thisShow);
+      this.$emit('startKmsSure',this.thisShow);
     },
     //禁用密钥轮换确定按钮
-    topSure(){
+    stopKmsSure(){
       this.thisShow=false;
-      this.$emit('stopSure',this.thisShow);
+      this.$emit('stopKmsSure',this.thisShow);
     }
   }
 }

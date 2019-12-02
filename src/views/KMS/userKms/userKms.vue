@@ -44,7 +44,11 @@
         <div class="tableList">
           <el-table ref="multipleTable" :data="tableDataBegin.slice((currentPage-1)*pageSize,currentPage*pageSize)" tooltip-effect="dark" style="width: 100%" 
           @selection-change="handleSelectionChange">
-            <el-table-column type="selection" width="55"></el-table-column>
+            <el-table-column type="selection" width="55">
+              <template slot-scope="scope">
+                <el-checkbox v-model="scope.row.checked" @click="checkedIsTrue"></el-checkbox>
+              </template>
+            </el-table-column>
             <el-table-column prop="KeyId" label="密钥ID/密钥名称">
               <template slot-scope="scope">
                 <a href="#" @click="todoDetails(scope.row)">{{scope.row.KeyId}}</a><br />
@@ -72,22 +76,55 @@
                 @click="startChange(scope.row,$event)">启用轮换</a>
                 <span class="spanLine">|</span>
                 <a href="#" class="aColorGree" :style="scope.row.KeyState=='PendingDelete'||scope.row.KeyState=='PendingImport'||changeStatus=='启用轮换'?'pointer-events:none':'color:#006eff'" 
-                @click="stopChange">禁用轮换</a>
-                <stopChange :isShow="doalogModelBox"/>
+                @click="startChange(scope.row,$event)">禁用轮换</a>
               </template>
             </el-table-column>
             <el-table-column prop="action" label="操作" class="action">
               <template slot-scope="scope">
-                <a href="#" class="aColorGree" :style="scope.row.KeyState=='Enabled'||scope.row.KeyState=='PendingDelete'||scope.row.KeyState=='PendingImport'?'pointer-events:none':'color:#006eff'">启用密钥</a>
+                <a href="#" class="aColorGree" :style="scope.row.KeyState=='Enabled'||scope.row.KeyState=='PendingDelete'||scope.row.KeyState=='PendingImport'?'pointer-events:none':'color:#006eff'"
+                @click="startKms(scope.row,$event)">启用密钥</a>
                 <span class="spanLine">|</span>
-                <a href="#" class="aColorGree" :style="scope.row.KeyState=='Disabled'||scope.row.KeyState=='PendingDelete'||scope.row.KeyState=='PendingImport'?'pointer-events:none':'color:#006eff'">禁用密钥</a><br />
-                <a href="#" class="aColorGree" :style="scope.row.KeyState=='PendingDelete'?'pointer-events:none':'color:#006eff'">计划删除</a>
+                <a href="#" class="aColorGree" :style="scope.row.KeyState=='Disabled'||scope.row.KeyState=='PendingDelete'||scope.row.KeyState=='PendingImport'?'pointer-events:none':'color:#006eff'"
+                @click="startKms(scope.row,$event)">禁用密钥</a><br />
+                <a href="#" class="aColorGree" :style="scope.row.KeyState=='PendingDelete'?'pointer-events:none':'color:#006eff'"
+                @click="openDelete(scope.row,$event)">计划删除</a>
                 <span class="spanLine">|</span>
-                <a href="#" class="aColorGree" :style="scope.row.KeyState=='PendingDelete'?'color:#006eff':'pointer-events:none'">取消删除</a>
+                <a href="#" class="aColorGree" :style="scope.row.KeyState=='PendingDelete'?'color:#006eff':'pointer-events:none'"
+                @click="openDelete(scope.row,$event)">取消删除</a>
               </template>
             </el-table-column>
           </el-table>
+          <stopChange 
+          :isShow="dialogModelChange" 
+          :content="doalogModelBox"
+           @parentByClick="childrenShow" 
+           @startSure="startSure"
+           @stopSure="stopSure"/>
+           <startKms 
+          :isShow="dialogModelKms" 
+          :content="doalogModelBox1"
+           @parentByClick="childrenShow1"
+           @startKmsSure="startKmsSure"
+           @stopKmsSure="stopKmsSure"/>
+           <openDelete 
+          :isShow="dialogModelDelete" 
+          :content="doalogModelBox2"
+           @parentByClick="childrenShow2"
+           @openDeleteSure="openDeleteSure"
+           @closeDeleteSure="closeDeleteSure"/>
         </div>
+        <el-dialog
+          class="dialogModel"
+          title="计划删除密钥"
+          :visible.sync="dialogModelOpenDelete"
+          width="30%"
+          :before-close="handleCloseOpenDelete">
+          <p class="deleteOpen">请先对密钥进行禁用操作！</p>
+          <span slot="footer" class="dialog-footer">
+            <el-button @click="dialogModelOpenDelete = false">取 消</el-button>
+            <el-button type="primary" @click="dialogModelOpenDelete = false">确 定</el-button>
+          </span>
+        </el-dialog>
         <div class="tabListPage">
           <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage" :page-sizes="[10, 20, 30, 50]" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper" :total="totalItems"></el-pagination>
         </div>
@@ -97,6 +134,8 @@
 </template>
 <script>
 import stopChange from './stopChange'
+import startKms from './startKms'
+import openDelete from './openDelete'
 export default {
   data() {
     return {
@@ -132,11 +171,19 @@ export default {
       isHaveDisable:true,// 启用密钥 是否有已禁用
       isHaveEnable:true,// 禁用密钥 是否有已启用
       changeStatus:'启用轮换',//轮换状态默认为启用轮换
-      doalogModelBox:{},//启用框
+      doalogModelBox:[],//启用轮换内容框
+      doalogModelBox1:[],//启用密钥内容框
+      doalogModelBox2:[],//计划删除框
+      dialogModelChange:false,//是否启用轮换弹框
+      dialogModelKms:false,//是否启用密钥弹框
+      dialogModelDelete:false,//是否计划删除
+      dialogModelOpenDelete:false,//计划删除如果是已启用时候的弹框
     }
   },
   components:{
     stopChange:stopChange,
+    startKms:startKms,
+    openDelete:openDelete
   },
   filters: {
      
@@ -147,18 +194,19 @@ export default {
   methods: {
     //判断是否有已禁用，已启用
     handleSelectionChange(val) {
-      console.log(val)
-     //var  _this = this;
       this.multipleSelection = val;
-      this.multipleSelection.map(item => {
-        console.log(item)
-        if(item.KeyState == "Enabled"){
-           this.isHaveEnable=false;
-           return;
-        }else if(item.KeyState == "Disabled"){
-          this.isHaveDisable=false;
-        }
-      })
+      // this.multipleSelection.map(item => {
+      //   console.log(item)
+      //   if(item.KeyState == "Enabled"){
+      //      this.isHaveEnable=false;
+      //   }else if(item.KeyState == "Disabled"){
+      //     this.isHaveDisable=false;
+      //   }
+      // })
+    },
+    ////判断是否选中checkbox
+    checkedIsTrue(e){
+      console.log(e)
     },
     handerChange(){
       console.log(111)
@@ -251,6 +299,10 @@ export default {
     handleClose() {
       this.dialogVisible = false;
     },
+    //计划删除如果是已启用时候的弹框关闭按钮
+    handleCloseOpenDelete(){
+      this.dialogModelOpenDelete=false;
+    },
     //新建确定按钮
     sureNewCreate() {
       let params = {
@@ -312,18 +364,63 @@ export default {
     },
     //启用轮换
     startChange(scopeRow,e){
-      console.log(e.target.innerHTML);
-      console.log(scopeRow);
-      let params={
-        dialogModelChange:false,
-        nickName:scopeRow.Alias,
-        nickId:scopeRow.KeyId
-      }
+      this.dialogModelChange=true;
+      let params=[scopeRow.Alias,scopeRow.KeyId,e.target.innerHTML]
       this.doalogModelBox=params;
     },
-    //禁用轮换
-    stopChange(e){
-      console.log(e)
+    //是否启动密钥服务
+    startKms(scopeRow,e){
+      this.dialogModelKms=true;
+      let params=[scopeRow.Alias,scopeRow.KeyId,e.target.innerHTML]
+      this.doalogModelBox1=params;
+    },
+    //是否计划删除
+    openDelete(scopeRow,e){
+      console.log(scopeRow)
+      if(scopeRow.KeyState=="Enabled"){
+        this.dialogModelOpenDelete=true;
+      }else{
+        this.dialogModelDelete=true;
+        let params=[scopeRow.Alias,scopeRow.KeyState,e.target.innerHTML]
+        this.doalogModelBox2=params;
+      }
+    },
+    //轮换弹框消失
+    childrenShow(trueOrFalse){
+      this.dialogModelChange=trueOrFalse
+    },
+    //启动轮换确定按钮
+    startSure(sureShow){
+      this.dialogModelChange=sureShow
+    },
+    //禁用轮换确定按钮
+    stopSure(sureShow){
+      console.log("禁用")
+      this.dialogModelChange=sureShow
+    },
+    //轮换弹框消失
+    childrenShow1(trueOrFalse){
+      this.dialogModelKms=trueOrFalse
+    },
+    //启用密钥确定按钮
+    startKmsSure(sureShow){
+      this.dialogModelKms=sureShow
+    },
+    //禁用密钥确定按钮
+    stopKmsSure(sureShow){
+      this.dialogModelKms=sureShow
+    },
+    //计划删除弹框消失
+    childrenShow2(trueOrFalse){
+      this.dialogModelDelete=trueOrFalse
+    },
+    //计划删除确定按钮
+    openDeleteSure(deleteShow){
+      this.dialogModelDelete=deleteShow
+    },
+    //取消删除确定按钮
+    closeDeleteSure(deleteShow){
+      this.dialogModelDelete=deleteShow
     }
   }
 }
@@ -451,6 +548,11 @@ export default {
     font-size: 12px;
     color: #888;
     line-height: 22px;
+  }
+  p.deleteOpen{
+    font-size:14px;
+    font-weight:600;
+    color:#000;
   }
   .el-dialog__title {
     font-weight: 600;
