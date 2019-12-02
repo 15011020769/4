@@ -2,13 +2,13 @@
   <div class="Cam">
     <div class="top">
       <span class="title-left">{{$t('BILL.BILL.Deal.title')}}</span>
+      <el-select v-model="dataForm.projectId" :placeholder="$t('BILL.BILL.Detail.allProduct')" @change="getProjectListInfo()" clearable size="small" style="padding-left: 25px;">
+        <el-option v-for="item in getprejectList" :key="item.projectId" :label="item.projectName" :value="item.projectId" >
+        </el-option>
+      </el-select>
     </div>
     <div class="cam-form">
         <el-form :inline="true" :model="dataForm" class="demo-form-inline" @keyup.enter.native="getDataList()">
-          <!-- <el-form-item>
-            <el-input :placeholder="$t('BILL.BILL.Deal.projectId')" clearable v-model="dataForm.projectId" size="small">
-            </el-input>
-          </el-form-item> -->
           <el-form-item>
             <el-input :placeholder="$t('BILL.BILL.Deal.orderId')" clearable v-model="dataForm.orderId" size="small">
             </el-input>
@@ -61,9 +61,7 @@
         <el-pagination @size-change="sizeChangeHandle" @current-change="currentChangeHandle" :current-page="pageIndex" :page-sizes="[10, 20, 50, 100]" :page-size="pageSize" :total="totalPage" layout="total, sizes, prev, pager, next, jumper" style="float: right;">
       </el-pagination>
       </div>
-      
     </div>
-    
     <!-- 弹窗, 详情 -->
     <Detail ref="Detail"></Detail>
   </div>
@@ -79,6 +77,8 @@ export default {
         orderId: ''
       },
       dataList: [],
+      getprejectList: [],
+      projectName: '',
       pageIndex: 1,
       pageSize: 10,
       totalPage: 0,
@@ -90,11 +90,11 @@ export default {
   },
   mounted () {
     this.getDataList()
+    this.getProjectListInfo()
   },
   methods: {
     // 获取数据列表
     getDataList () {
-      console.log(process.env.VUE_APP_adminUrl)
       var params = {
         'page': this.pageIndex,
         'limit': this.pageSize,
@@ -103,7 +103,6 @@ export default {
         'orderOwner': this.$cookie.get('uin')
       }
       this.$axios.post(`${process.env.VUE_APP_adminUrl}taifucloud/torderdetails/list`, params).then(data => {
-        console.log('获取列表成功')
         if (data && data.code === 0) {
           this.dataList = data.page.list
           this.totalPage = data.page.totalCount
@@ -113,6 +112,20 @@ export default {
         }
         this.dataListLoading = false
       })
+    },
+    // 获取项目名称
+    getProjectListInfo () {
+      var params = {
+        'allList': 0
+      }
+      this.$axios.post(`${process.env.VUE_APP_serverUrl}account/DescribeProject`, params).then(data => {
+        if (data && data.code === 0) {
+          this.getprejectList = data.data
+        } else {
+          this.getprejectList = []
+        }
+      })
+      this.getDataList()
     },
     // 搜索
     search () {
@@ -164,7 +177,8 @@ export default {
         'orderOwner': this.$cookie.get('uin')
       }
       this.$axios.post(`${process.env.VUE_APP_adminUrl}taifucloud/torderdetails/exportList`, params, { responseType: 'blob' }).then(res => {
-        const content = res
+       console.info(res);
+       const content = res
         const blob = new Blob([content])
         const fileName = '订单明细.csv'
         if ('download' in document.createElement('a')) {
@@ -221,7 +235,7 @@ export default {
       padding: 0 20px;
       background: #fff;
       .title-left {
-        font-size: 14px;
+        font-size: 16px;
         font-weight: bolder;
       }
     }

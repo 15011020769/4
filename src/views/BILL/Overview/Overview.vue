@@ -2,7 +2,7 @@
   <div id="Overview">
     <div class="ovew">
       <span class="bill" style="font-size: 16px; font-weight: 700; line-height:3;">{{$t('BILL.BILL.Overview.title')}}</span>
-      <el-date-picker v-model="month" type="month" value-format="yyyy-MM" size="small" @change="getDataChar()" style="padding-left: 5px;">
+      <el-date-picker v-model="month" type="month" value-format="yyyy-MM-dd" size="small" @change="getDataChar()" style="padding-left: 5px;">
       </el-date-picker>
       <span style="padding-left: 10px; font-size: 12px;">{{$t('BILL.BILL.Overview.note')}}</span>
     </div>
@@ -15,7 +15,7 @@
             <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" size="mini">
             </el-option>
           </el-select>
-          <el-button-group style="float: right;">
+          <el-button-group style="float: right; padding-right:5px;">
             <el-button @click="initChartBar('half')" size="small">{{$t('BILL.BILL.Overview.half')}}</el-button>
             <el-button @click="initChartBar('year')" size="small">{{$t('BILL.BILL.Overview.year')}}</el-button>
           </el-button-group>

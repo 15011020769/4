@@ -2,12 +2,12 @@
   <div class="mod-role">
     <div class="mod">
       <span class="mod-mar" style="font-size: 16px; font-weight: 700; line-height:3;">{{$t('BILL.BILL.Detail.title')}}</span>
-      <el-date-picker v-model="dataForm.month" type="month" value-format="yyyy-MM" size="small" @change="getDataList()" style="padding-left: 5px;">
+      <el-date-picker v-model="dataForm.month" type="month" value-format="yyyy-MM" size="small" @change="getMonth(dataForm.month)" style="padding-left: 5px;">
       </el-date-picker>
       <span style="padding-left: 10px; font-size: 12px;">{{$t('BILL.BILL.Detail.note')}}</span>
     </div>
     <div class="mod-from">
-      <el-form :inline="true" :model="dataForm" class="demo-form-inline" @keyup.enter.native="getDataList()">
+      <el-form :inline="true" :model="dataForm" class="demo-form-inline">
       <el-form-item>
         <el-select v-model="dataForm.businessCodeName" value-key="code" :placeholder="$t('BILL.BILL.Detail.allProduct')" @change="getChildInfo()" clearable size="small">
           <el-option v-for="item in getProductList" :key="item.code" :label="item.nameTw" :value="item" >
@@ -37,7 +37,7 @@
           <el-option v-for="item in getActionTypeList" :key="item.actionTypeName" :label="item.actionTypeName" :value="item.actionTypeName">
           </el-option>
         </el-select>
-        <el-checkbox v-model="dataForm.checked" style="padding-left: 15px;" @change="getDataList()">{{$t('BILL.BILL.Detail.filter')}}</el-checkbox>
+        <el-checkbox v-model="dataForm.checked" style="padding-left: 15px;" @change="getCharge()">{{$t('BILL.BILL.Detail.filter')}}</el-checkbox>
       </el-form-item>
       <!-- <el-form-item>
         <span style="font-size: 14px;">{{$t('BILL.BILL.Detail.allCast')}}：</span>
@@ -171,10 +171,10 @@ export default {
         realCost: '',
         month: '',
         checked: false,
-        allCoat: '100',
-        cashPayment: '70',
-        freePayment: '20',
-        voucherPayment: '10'
+        allCoat: '0',
+        cashPayment: '0',
+        freePayment: '0',
+        voucherPayment: '0'
       },
       dataList: [],
       getProductList: [],
@@ -231,12 +231,23 @@ export default {
         }
         this.dataListLoading = false
       })
+      this.cost()
+    },
+    // 下拉月份
+    getMonth (mon) {
+      this.dataForm.month = mon
+      this.getDataList()
+      this.getProjectInfo()
+      this.getRegionInfo()
+      this.getPayModeInfo()
+      this.getActionTypeInfo()
     },
     // 搜索
     search () {
       this.pageIndex = 1
       this.pageSize = 10
       this.getDataList()
+      this.cost()
     },
     // 总费用计算
     cost () {
@@ -258,6 +269,7 @@ export default {
       this.$axios.post(`${process.env.VUE_APP_adminUrl}taifucloud/tbilldetails/getPayAmount`, params).then(data => {
         if (data.payAmount != null && data.code === 0) {
           this.dataForm.allCoat = data.payAmount.totalAmount
+          console.log(this.dataForm.allCoat)
           this.dataForm.cashPayment = data.payAmount.cashAmount
           this.dataForm.freePayment = data.payAmount.incentiveAmount
           this.dataForm.voucherPayment = data.payAmount.voucherAmount
@@ -412,6 +424,13 @@ export default {
       this.$axios.post(`${process.env.VUE_APP_adminUrl}taifucloud/tbilldetails/actionTypeList`, params).then((res) => {
         this.getActionTypeList = res.actionTypeList
       })
+      this.getDataList()
+      this.cost()
+    },
+    // 0元费用
+    getCharge () {
+      this.pageIndex = 1
+      this.pageSize = 10
       this.getDataList()
       this.cost()
     },
