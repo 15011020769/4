@@ -66,7 +66,7 @@ export default {
     return {
       value1: "",
       input3: "",
-      isDisabled: false, // 创建按钮
+      isDisabled: true, // 创建按钮
       visible: false,
       tableData: [], // 列表数据
       loading: true
@@ -74,6 +74,7 @@ export default {
   },
   created() {
     this.getData();
+    this.listNum();
   },
   methods: {
     // 详情页跳转
@@ -82,6 +83,20 @@ export default {
         path: "/DetailAudit",
         query: {
           AuditName: rows.name
+        }
+      });
+    },
+    listNum() {
+      const params = {
+        Version: "2019-03-19",
+        Region: "ap-guangzhou"
+      };
+      this.axios.post("cloudaudit2/InquireAuditCredit", params).then(res => {
+        if (res.Response.AuditAmount < 1) {
+          this.isDisabled = true;
+        }
+        else{
+          this.isDisabled = false;
         }
       });
     },
@@ -97,12 +112,8 @@ export default {
         Region: "ap-guangzhou"
       };
       this.axios.post("cloudaudit/ListAudits", params).then(({ data }) => {
-        console.log(data);
         this.tableData = data.auditLists;
         this.loading = false;
-        if (this.tableData.length >= 1) {
-          this.isDisabled = true;
-        }
       });
     }
   }
