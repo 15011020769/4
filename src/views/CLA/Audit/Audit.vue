@@ -10,7 +10,10 @@
           <a href="JavaScript:;">跟踪集使用指南。</a>
         </p>
         <p>
-          <span>2. 当您的跟踪集为正常状态时，跟踪集会将您账号下的操作日志记录，存储到跟踪集配置的存储桶中；当您的跟踪集为关闭状态，操作日志不会存储到对应的存储桶。</span>
+          <span>
+            2.
+            当您的跟踪集为正常状态时，跟踪集会将您账号下的操作日志记录，存储到跟踪集配置的存储桶中；当您的跟踪集为关闭状态，操作日志不会存储到对应的存储桶。
+          </span>
         </p>
         <p>
           <span>3. 因为记录跟踪日志，所产生的COS存储费用，将依据COS标准计费进行收取，</span>
@@ -20,31 +23,34 @@
       <div class="btn">
         <el-button :plain="true" v-if="!isDisabled" @click="Create()">创建</el-button>
         <div class="over" v-if="isDisabled">
-          <el-button :plain="true" disabled>创建</el-button>
+          <el-button class="btn-dis" disabled>创建</el-button>
           <p>目前只支持创建一个跟踪集</p>
         </div>
       </div>
       <div class="tables">
-        <el-table :data="tableData" style="width: 100%" @click="a">
+        <el-table :data="tableData" style="width: 100%" v-loading="loading">
           <template slot="empty">暂无跟踪集</template>
-          <el-table-column width="27"></el-table-column>
-          <el-table-column prop="name" label="名称" width="225">
+          <el-table-column prop="name" label="名称">
             <template slot-scope="scope">
-              <el-button @click="handleClick(scope.row)" type="text">{{ scope.row.name }}</el-button>
+              <el-button @click="handleClick(scope.row)" type="text">
+                {{
+                scope.row.name
+                }}
+              </el-button>
             </template>
           </el-table-column>
-          <el-table-column prop="isMultiRegionAudit" label="全部区域" width="225">
+          <el-table-column prop="isMultiRegionAudit" label="全部区域">
             <template slot-scope="scope">
-              <div v-if="scope.row.isMultiRegionAudit==1">是</div>
-              <div v-if="scope.row.isMultiRegionAudit==0">否</div>
+              <div v-if="scope.row.isMultiRegionAudit == 1">是</div>
+              <div v-if="scope.row.isMultiRegionAudit == 0">否</div>
             </template>
           </el-table-column>
-          <el-table-column prop="bucketName" label="COS 存储桶" width="225"></el-table-column>
-          <el-table-column prop="prefix" label="日志文件前缀" width="225"></el-table-column>
+          <el-table-column prop="bucketName" label="COS 存储桶"></el-table-column>
+          <el-table-column prop="prefix" label="日志文件前缀"></el-table-column>
           <el-table-column prop="status" label="状态">
             <template slot-scope="scope">
-              <div v-if="scope.row.status==0" class="close_color">关闭</div>
-              <div v-if="scope.row.status==1" class="off_color">开启</div>
+              <div v-if="scope.row.status == 0" class="close_color">关闭</div>
+              <div v-if="scope.row.status == 1" class="off_color">开启</div>
             </template>
           </el-table-column>
         </el-table>
@@ -54,42 +60,64 @@
 </template>
 
 <script>
-import { GZJ_LIST } from '@/constants'
+import { GZJ_LIST } from "@/constants";
 export default {
-  data () {
+  data() {
     return {
-      value1: '',
-      isDisabled: false, // 创建按钮
+      value1: "",
+      input3: "",
+      isDisabled: true, // 创建按钮
       visible: false,
-      tableData: [] // 列表数据
-    }
+      tableData: [], // 列表数据
+      loading: true
+    };
   },
-  created () {
-    this.axios.post(GZJ_LIST).then(({ data }) => {
-      this.tableData = data.auditLists
-      if (this.tableData.length >= 1) {
-        this.isDisabled = true
-      }
-    })
+  created() {
+    this.getData();
+    this.listNum();
   },
   methods: {
     // 详情页跳转
-    handleClick (rows) {
+    handleClick(rows) {
       this.$router.push({
-        path: '/cloudaudit-tranking/DetailList-tranking',
+        path: "/DetailAudit",
         query: {
-          auditNameList: rows.name
+          AuditName: rows.name
         }
-      })
+      });
+    },
+    listNum() {
+      const params = {
+        Version: "2019-03-19",
+        Region: "ap-guangzhou"
+      };
+      this.axios.post("cloudaudit2/InquireAuditCredit", params).then(res => {
+        if (res.Response.AuditAmount < 1) {
+          this.isDisabled = true;
+        }
+        else{
+          this.isDisabled = false;
+        }
+      });
     },
     // 创建
-    Create () {
+    Create() {
       this.$router.push({
-        path: '/cloudaudit-tranking/Create-tranking'
-      })
+        path: "/NewAudit"
+      });
+    },
+    getData() {
+      let params = {
+        Version: "2019-03-19",
+        Region: "ap-guangzhou"
+      };
+      this.axios.post("cloudaudit/ListAudits", params).then(({ data }) => {
+        this.tableData = data.auditLists;
+        this.loading = false;
+      });
     }
   }
-}
+};
 </script>
 
 <style scoped lang="scss">
@@ -99,6 +127,8 @@ export default {
   h1 {
     padding-left: 20px;
     line-height: 50px;
+    font-size: 16px;
+    font-weight: 700;
   }
 }
 .tea-content__body {
@@ -116,6 +146,9 @@ export default {
     margin-left: auto;
     margin-right: auto;
     margin-bottom: 20px;
+    p {
+      line-height: 20px;
+    }
   }
 }
 .btn {
@@ -153,21 +186,29 @@ export default {
     color: #fff;
     border: 1px solid #0063e5;
   }
+  .btn-dis {
+    border-color: #ddd;
+    background-color: #fff;
+    color: #bbb;
+    cursor: not-allowed;
+  }
 }
 .tables {
   margin-top: 10px;
+  .el-table {
+    font-size: 12px;
+  }
   .el-table th > .cell {
     font-size: 12px;
   }
-  .el-table td {
-    font-size: 12px;
-  }
+
   .el-table .cell {
     height: 23px;
   }
   .el-button--text {
     height: 23px;
     line-height: 0px;
+    font-size: 12px;
   }
   .el-table td:nth-of-type(2) {
     color: #006eff;

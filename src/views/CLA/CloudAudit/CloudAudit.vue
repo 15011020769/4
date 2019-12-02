@@ -11,15 +11,15 @@
       <div class="search">
         <div class="search_dropdown">
           <el-input placeholder="请输入内容" v-model="input3" class="input-with-select">
-            <el-select class="childSelect" slot="prepend" placeholder="只读" v-model="value">
+            <el-select class="childSelect" slot="prepend"  v-model="value">
               <el-option
-                v-for="(item,index) in options"
+                v-for="(item,index) in this.options"
                 :key="index"
-                :label="item.label"
-                :value="item.value"
+                :label="item.Label"
+                :value="item.Value"
               ></el-option>
             </el-select>
-            <el-button slot="append" icon="el-icon-search"></el-button>
+            <el-button slot="append" icon="el-icon-search" @click="seach()"></el-button>
           </el-input>
         </div>
         <div class="date">
@@ -44,7 +44,7 @@
               <template>
                 <div style="width:80px;" class="daochu">
                   <a href="javascript:;">导出为CSV</a>
-                  <br>
+                  <br />
                   <a href="javascript:;">导出为JSON</a>
                 </div>
               </template>
@@ -123,9 +123,9 @@
               </el-form>
             </template>
           </el-table-column>
-          <el-table-column label="事件时间" width="163" prop="EventTime"></el-table-column>
-          <el-table-column label="用户名" width="163" prop="Username"></el-table-column>
-          <el-table-column label="事件名称" width="324">
+          <el-table-column label="事件时间"  prop="EventTime"></el-table-column>
+          <el-table-column label="用户名"  prop="Username"></el-table-column>
+          <el-table-column label="事件名称" >
             <template slot-scope="scope">
               <div>
                 {{scope.row.EventName}}
@@ -135,7 +135,7 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column label="资源类型" width="162">
+          <el-table-column label="资源类型" >
             <template slot-scope="scope">
               <div>
                 {{scope.row.Resources.ResourceType}}
@@ -208,42 +208,10 @@ export default {
           }
         ]
       },
-      options: [
-        {
-          value: '1',
-          label: '只读'
-        },
-        {
-          value: '2',
-          label: '访问秘钥'
-        },
-        {
-          value: '3',
-          label: '请求ID'
-        },
-        {
-          value: '4',
-          label: '事件ID'
-        },
-        {
-          value: '5',
-          label: '时间名称'
-        },
-        {
-          value: '6',
-          label: '资源名称'
-        },
-        {
-          value: '7',
-          label: '资源类型'
-        },
-        {
-          value: '8',
-          label: '用户名称'
-        }
-      ],
-      value: '1',
-      tableData: ''
+      options: [], // 下拉框数据
+      value: '',
+      input3: '',
+      tableData: []
     }
   },
   created () {
@@ -251,10 +219,11 @@ export default {
     this.axios
       .post(YJS_GETATTRIBUTEKEY, {
         Version: '2019-03-19',
-        WebsiteType: 'zh'
+        Region: 'ap-guangzhou'
       })
       .then(data => {
-        console.log(data)
+        this.options = data.Response.AttributeKeyDetails
+        console.log(this.options)
       })
   },
   methods: {
@@ -265,6 +234,10 @@ export default {
       let lw = new Date(myDate - 1000 * 60 * 60 * 24 * 30).getTime() / 1000
       this.oldTime = parseFloat(lw).toFixed()
       let params = {
+        // Action:'LookUpEvents',
+        Version: '2019-03-19',
+        Region: 'ap-taipei',
+        StartTime: this.oldTime, // 开始时间
         EndTime: this.nowtime, // 结束时间1558108799
         LookupAttributes: [
           {
@@ -272,14 +245,14 @@ export default {
             AttributeValue: 'false'
           }
         ],
-        MaxResults: this.MaxResults,
-        StartTime: this.oldTime // 开始时间
+        MaxResults: this.MaxResults
       }
       this.axios.post(YJS_LIST, params).then(({ data }) => {
         this.tableData = data.Events
-        // console.log(this.tableData)
+
+        console.log(this.tableData)
         this.loading = false
-        if (this.tableData.length == 0) {
+        if (this.tableData.length === 0) {
           this.Show = false
         } else {
           this.Show = true
@@ -290,6 +263,8 @@ export default {
       let startTime = new Date(this.value1[0]).getTime() / 1000
       let endTime = new Date(this.value1[1]).getTime() / 1000
       let params = {
+        Version: '2019-03-19',
+        Region: 'ap-taipei',
         EndTime: endTime,
         LookupAttributes: [
           {
@@ -344,7 +319,49 @@ export default {
   }
 }
 </script>
-
+<style lang="scss" >
+.search_dropdown {
+  width: 485px;
+  .el-select {
+    .el-input__inner {
+      width: 130px;
+    }
+  }
+  .el-input__inner {
+    width: 300px;
+    margin-left: -1px;
+  }
+  .el-input-group__prepend {
+    border-radius: 0px;
+    width: 105px;
+    height: 28px;
+    background: #f2f2f2;
+    border: 1px solid rgb(221, 221, 221);
+  }
+  .el-input-group__append {
+    width: 0px;
+    height: 0px;
+    padding: 0px;
+    border: 0px;
+  }
+  .el-input-group__append button.el-button {
+    padding: 0px;
+    margin-left: -85px;
+    padding: 6px 7px;
+  }
+}
+.date {
+  .el-date-editor {
+    .el-icon-date {
+      margin-bottom: 8px;
+    }
+  }
+  .el-range-separator {
+    padding: 0;
+    margin-bottom: 8px;
+  }
+}
+</style>
 <style lang="scss" scoped >
 .title_top {
   height: 50px;
@@ -352,6 +369,8 @@ export default {
   h1 {
     padding-left: 20px;
     line-height: 50px;
+    font-size: 16px;
+    font-weight: 700;
   }
 }
 .tea-content__body {
@@ -376,31 +395,6 @@ export default {
   display: flex;
   .search_dropdown {
     width: 485px;
-    .el-input-group__prepend {
-      border-radius: 0px;
-      width: 105px;
-      height: 28px;
-      background: #f2f2f2;
-      border: 1px solid rgb(221, 221, 221);
-    }
-    .el-input-group__prepend .el-input {
-      border: 0px;
-    }
-    .el-input-group > .el-input__inner {
-      width: 300px;
-      margin-left: -1px;
-    }
-    .el-input-group__append {
-      width: 0px;
-      height: 0px;
-      padding: 0px;
-      border: 0px;
-    }
-    .el-input-group__append button.el-button {
-      padding: 0px;
-      margin-left: -76px;
-      padding: 6px 7px;
-    }
   }
   .search_text {
     .el-input__inner {
@@ -428,7 +422,7 @@ export default {
     cursor: pointer;
   }
   .date {
-    margin-left: -24px;
+    margin-left: -30px;
   }
   .el-date-editor--daterange.el-input__inner {
     width: 287px;
@@ -438,7 +432,7 @@ export default {
   }
   .updates_download {
     display: flex;
-    width: 350px;
+    width: 375px;
     justify-content: flex-end;
     .updates {
       margin-right: 5px;
@@ -450,7 +444,7 @@ export default {
         background: transparent;
         border: 0px;
       }
-      .el-popper[x-placement^="bottom"] {
+      .el-popper[x-placement^='bottom'] {
         width: 100px !important;
       }
     }
@@ -471,6 +465,7 @@ export default {
 }
 .tab-list {
   margin-top: 10px;
+  font-size: 12px;
   .demo-table-expand {
     font-size: 0;
   }
@@ -578,7 +573,7 @@ export default {
   }
 }
 
-[class^="el-icon-"] {
+[class^='el-icon-'] {
   margin-top: 2px;
   cursor: pointer;
 }

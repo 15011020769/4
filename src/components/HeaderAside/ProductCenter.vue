@@ -1,189 +1,101 @@
 <template>
   <div>
-    <!-- 导航详情栏 -->
     <div class="pro-box">
       <div class="nav-main">
-        <el-autocomplete popper-class="my-autocomplete"
-          v-model="state"
-          :fetch-suggestions="querySearch"
-          placeholder="请输入内容"
-          @select="handleSelect">
-          <i class="el-icon-edit el-input__icon"
-            slot="suffix"
-            @click="handleIconClick">
-          </i>
-          <template slot-scope="{ item }">
-            <div class="name"><a @click="go(item.url)">{{ item.value }}</a></div>
-
-          </template>
-        </el-autocomplete>
+        <div class="box-top">
+          <input type="text" placeholder="通過名稱/關鍵字查找產品（例如：雲伺服器、資料庫等）">
+          <i class="el-icon-search"></i>
+        </div>
 
         <div class="box-content">
-          <div class="box-one">
-
+          <div class="item">
             <ul>
-              <li class="li-title">计算</li>
-              <li>
-                <a @click="go('cvm')">云服务器 CVM</a>
-              </li>
-              <li>
-                <a @click="go('cbs')">云硬盘 CBS</a>
-              </li>
-              <li>
-                <a @click="go('as')">弹性伸缩 AS</a>
-              </li>
-              <li>
-                <a @click="go('tke')">容器服务 TKE</a>
-              </li>
+              <li class="li-title">{{$t("COM.COM.calculate")}}</li>
+              <li class="li-sub" @click="go('../CVM/index.html#/cloudHost')">{{$t("COM.COM.cvm")}}</li>
+              <li class="li-sub" @click="go('../CVM/index.html#/cloudDisk')">{{$t("COM.COM.cbs")}}</li>
+              <li @click="testFun">{{$t("COM.COM.as")}}</li>
+              <li class="li-sub" @click="go('../AS/index.html#/flexGroup')">{{$t("COM.COM.tke")}}</li>
             </ul>
             <ul>
-              <li class="li-title">存储</li>
-              <li>
-                <a @click="go('cos')">对象存储 COS</a>
-              </li>
-              <li>
-                <a @click="go('cfs')">文件存储 CFS</a>
-              </li>
-              <li>
-                <a @click="go('cls')">日志服务 CLS</a>
-              </li>
+              <li class="li-title">{{$t("COM.COM.tool")}}</li>
+              <li @click="testFun">{{$t("COM.COM.cm")}}</li>
+              <li @click="testFun">{{$t("COM.COM.cloudAudit")}}</li>
+              <li @click="testFun">{{$t("COM.COM.cam")}}</li>
+            </ul>
+            <ul>
+              <li class="li-title">{{$t("COM.COM.server")}}</li>
+              <li @click="testFun">{{$t("COM.COM.vod")}}</li>
+              <li @click="testFun">{{$t("COM.COM.live")}}</li>
             </ul>
           </div>
-          <div class="box-two">
-
+          <div class="item">
             <ul>
-              <li class="li-title">数据库</li>
-              <li>
-                <a @click="go('sql')">云数据库MySQL</a>
-              </li>
-              <li>
-                <a @click="go('redis')">云数据库Redis</a>
-              </li>
-              <li>
-                <a @click="go('sqlserver')">云数据库SQLServer</a>
-              </li>
-              <li>
-                <a @click="go('es')">Elasticsearch Service</a>
-              </li>
-              <li>
-                <a @click="go('tdsql')">分布式数据库TDSQL</a>
-              </li>
-              <li>
-                <a @click="go('postsql')">云数据库PostgreSQL</a>
-              </li>
-              <li>
-                <a @click="go('mongodb')">云数据库MongoDB</a>
-              </li>
-              <li>
-                <a @click="go('dts')">数据传输服务DTS</a>
-              </li>
-
+              <li class="li-title">{{$t("COM.COM.safe")}}</li>
+              <li @click="testFun">{{$t("COM.COM.yunjing")}}</li>
+              <li @click="testFun">{{$t("COM.COM.ddos")}}</li>
+              <li @click="testFun">{{$t("COM.COM.waf")}}</li>
+              <li @click="testFun">{{$t("COM.COM.bgp")}}</li>
+              <li @click="testFun">{{$t("COM.COM.kms")}}</li>
+            </ul>
+            <ul>
+              <li class="li-title">{{$t("COM.COM.database")}}</li>
+              <li class="li-sub" @click="go('../MYSQL/index.html#/instancesList')">{{$t("COM.COM.database")}}MySQL</li>
+              <li class="li-sub" @click="go('../Redis/index.html#/exampleList')">{{$t("COM.COM.database")}}Redis</li>
+            </ul>
+            <ul>
+              <li class="li-title">{{$t("COM.COM.middleware")}}</li>
+              <li @click="testFun">{{$t("COM.COM.ckafka")}}</li>
             </ul>
           </div>
-          <div class="three">
-
+          <div class="item">
             <ul>
-              <li class="li-title">网络</li>
-              <li>
-                <a @click="go('clb')">负载均衡CLB</a>
-              </li>
-              <li>
-                <a @click="go('vpc')">私有网络VPC</a>
-              </li>
-              <li>
-                <a @click="go('vpn')">VPN连接</a>
-              </li>
-              <li>
-                <a @click="go('nat')">NAT网关</a>
-              </li>
-              <li>
-                <a @click="go('conn')">对等连接PC</a>
-              </li>
-              <li>
-                <a @click="go('dc')">专线接入DC</a>
-              </li>
+              <li class="li-title">{{$t("COM.COM.net")}}</li>
+              <li class="li-sub" @click="go('../CLB/index.html#/LB')">{{$t("COM.COM.clb")}}</li>
+              <li class="li-sub" @click="go('../DC/index.html#/lineAisle')">{{$t("COM.COM.dc")}}</li>
+              <li class="li-sub" @click="go('../VPC/index.html#/priNetwork')">{{$t("COM.COM.vpc")}}</li>
+              <li class="li-sub" @click="go('../VPC/index.html#/elaCard')">{{$t("COM.COM.eni")}}</li>
+              <li class="li-sub" @click="go('../VPC/index.html#/natGateway')">{{$t("COM.COM.nat")}}</li>
+              <li class="li-sub" @click="go('../VPC/index.html#/vpnGateway')">{{$t("COM.COM.vpn")}}</li>
+              <li class="li-sub" @click="go('../CVM/index.html#/elasticityIp')">{{$t("COM.COM.eip")}}</li>
+              <li class="li-sub" @click="go('../CCN/index.html#/ccnPage')">{{$t("COM.COM.ccn")}}</li>
             </ul>
             <ul>
-              <li class="li-title">基础通信</li>
-              <li>
-                <a @click="go('mes')">短信</a>
-              </li>
-            </ul>
-
-          </div>
-          <div class="four">
-            <ul>
-              <li class="li-title">安全</li>
-              <li>
-                <a @click="go('ip')">DDoS防护</a>
-              </li>
-              <li>
-                <a @click="go('waf')">网站管家</a>
-              </li>
-              <li>
-                <a @click="go('mirror')">云主机(云镜)</a>
-              </li>
-
-            </ul>
-            <ul>
-              <li class="li-title">CDN与加速</li>
-              <li>
-                <a @click="go('scd')">静态内容加速SCD</a>
-              </li>
-              <li>
-                <a @click="go('dsa')">动态加速网络DSA</a>
-              </li>
-              <li>
-                <a @click="go('gcd')">海外加速GCD</a>
-              </li>
-              <li>
-                <a @click="go('gaap')">全球应用加速GAAP</a>
-              </li>
-            </ul>
-
-          </div>
-          <div class="five">
-
-            <ul>
-              <li class="li-title">互联网中间件</li>
-
-              <li>
-                <a @click="go('ckafka')">消息队列CKAFKA</a>
-              </li>
-            </ul>
-
-            <ul>
-              <li class="li-title">视频服务</li>
-              <li>
-                <a @click="go('vod')">云点播</a>
-              </li>
-            </ul>
-
-            <ul>
-              <li class="li-title">营销风控</li>
-              <li>
-                <a @click="go('aa')">活动防刷AA</a>
-              </li>
+              <li class="li-title">{{$t("COM.COM.cosTitle")}}</li>
+              <li @click="testFun">{{$t("COM.COM.cos")}}</li>
             </ul>
           </div>
-
+          <div class="item">
+            <ul>
+              <li class="li-title">{{$t("COM.COM.cdnTitle")}}</li>
+              <li @click="testFun">CDN</li>
+              <li @click="testFun">{{$t("COM.COM.dsa")}}</li>
+              <li @click="testFun">{{$t("COM.COM.gaap")}}</li>
+            </ul>
+            <ul>
+              <li class="li-title">Serveless</li>
+              <li @click="testFun">{{$t("COM.COM.scf")}}</li>
+            </ul>
+            <ul>
+              <li class="li-title">{{$t("COM.COM.pro")}}</li>
+              <li class="li-sub" @click="go('../PRO/index.html#/proManage')">{{$t("COM.COM.pro")}}</li>
+            </ul>
+          </div>
         </div>
       </div>
     </div>
-
   </div>
 </template>
 
 <script>
 export default {
-  data () {
+  data() {
     return {
       restaurants: [],
       state: ''
     }
   },
   methods: {
-    querySearch (queryString, cb) {
+    querySearch(queryString, cb) {
       var restaurants = this.restaurants
       var results = queryString
         ? restaurants.filter(this.createFilter(queryString))
@@ -191,14 +103,14 @@ export default {
       // 调用 callback 返回建议列表的数据
       cb(results)
     },
-    createFilter (queryString) {
+    createFilter(queryString) {
       return restaurant => {
         return (
           restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) > -1
         )
       }
     },
-    loadAll () {
+    loadAll() {
       return [
         {
           value: '云服务器 CVM',
@@ -354,74 +266,110 @@ export default {
         }
       ]
     },
-    handleSelect (item) {
+    handleSelect(item) {
       this.$emit('childByValue', 'ok')
       this.$router.push({
         name: item.url
       })
     },
-    handleIconClick (ev) {
+    handleIconClick(ev) {
       console.log(ev)
     },
-    go (url) {
+    go(url) {
       this.$emit('childByValue', 'ok')
-      this.$router.push({
-        name: url
-      })
+      window.location.href = url
+    },
+
+    testFun() {
+      // 内测中，敬请期待！
+      this.$message('內測中，敬請期待！');
     }
   },
-  mounted () {
+  mounted() {
     this.restaurants = this.loadAll()
   }
 }
 </script>
 <style lang="scss" scoped>
-.my-autocomplete {
-  li {
-    line-height: normal;
-    padding: 7px;
-
-    .name {
-      text-overflow: ellipsis;
-      overflow: hidden;
-    }
-    .addr {
-      font-size: 12px;
-      color: #b4b4b4;
-    }
-
-    .highlighted .addr {
-      color: #ddd;
-    }
-  }
-}
 .pro-box {
-  height: 460px;
-}
-.box-content {
-  display: flex;
-  div {
-    padding: 0 60px;
-    ul {
-      .li-title {
-        font-size: 16px;
-        margin: 20px 0;
-        font-weight: bold;
+  padding: 44px 50px;
+  .my-autocomplete {
+    li {
+      line-height: normal;
+      padding: 7px;
+
+      .name {
+        text-overflow: ellipsis;
+        overflow: hidden;
       }
-      li {
-        text-align: left;
-        height: 30px;
-        a {
+      .addr {
+        font-size: 12px;
+        color: #b4b4b4;
+      }
+
+      .highlighted .addr {
+        color: #ddd;
+      }
+    }
+  }
+  .box-top {
+    text-align: left;
+    font-size: 14px;
+    input {
+      box-sizing: border-box;
+      width: 70%;
+      height: 28px;
+      line-height: 28px;
+      border: 1px solid #484848;
+      background-color: #2c303a;
+      outline: 0;
+      color: #fff;
+      padding-left: 10px;
+    }
+
+    .el-icon-search {
+      position: absolute;
+      height: 28px;
+      width: 28px;
+      line-height: 26px;
+      padding-left: 5px;
+      border: 1px solid #484848;
+      border-left: none;
+      top: 44px;
+    }
+  }
+  .box-content {
+    display: flex;
+    margin-top: 40px;
+    .item {
+      width: 180px;
+      float: left;
+      ul {
+        margin-bottom: 20px;
+        li:not(:first-child) {
+          text-align: left;
+          font-size: 12px;
+          line-height: 25px;
+          color: #888;
           cursor: pointer;
-          color: #000000;
         }
-        a:hover {
-          color: #facd02;
+        .li-title {
+          font-size: 14px;
+          color: rgb(238, 227, 227);
+          /* font-weight: 500; */
+          padding-bottom: 5px;
+          cursor: default;
+          line-height: 20px;
+          text-align: left;
+        }
+        .li-sub {
+          color: #3d91ff !important;
         }
       }
     }
   }
 }
+
 .el-autocomplete {
   display: block;
   margin: 0 60px;

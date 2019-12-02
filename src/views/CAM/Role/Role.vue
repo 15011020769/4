@@ -1,0 +1,286 @@
+<template>
+  <div class="Cam">
+    <div class="top">
+      <p>{{$t('CAM.CAM.Role.title')}}</p>
+    </div>
+    <div class="container">
+      <div class="container-text">
+        <h4 style="margin-bottom:10px;">{{$t('CAM.CAM.Role.roleTitle1')}}</h4>
+        <p>{{$t('CAM.CAM.Role.roleTitle2')}}</p>
+      </div>
+      <div class="container_table">
+        <p>
+          <el-button type="primary" size="small" @click="created_user">{{$t('CAM.CAM.Role.addBtn')}}</el-button>
+        </p>
+        <div class="table">
+          <el-table
+            :data="tableData"
+            v-loading="loading"
+            height="450"
+            border
+            style="width: 100%"
+            :row-style="{height:0}"
+            :cell-style="{padding:'10px'}"
+            :header-cell-style="{height:'20px',padding:'10px',fontSize:'12px'}"
+          >
+            <el-table-column prop="RoleName" :label="$t('CAM.CAM.Role.roleName')" width="180"></el-table-column>
+            <el-table-column prop="PolicyDocument.statement[0].principal.service[0]" :label="$t('CAM.CAM.Role.roleCarrier')" width="200"></el-table-column>
+            <el-table-column prop="Description" :label="$t('CAM.CAM.Role.roleDesc')"></el-table-column>
+            <el-table-column prop="oper" :label="$t('CAM.CAM.Role.colHandle')" width="100">
+              <template slot-scope="scope">
+                <el-button @click="delete_Role(scope.row.RoleId)" type="text" size="small">{{$t('CAM.CAM.Role.delBtn')}}</el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+          <div
+            style="background:#fff;padding:10px;display:flex;justify-content: space-between;line-height:30px"
+          >
+            <div>
+              <span style="font-size:12px;color:#888">已选 0 项，共 309 项</span>
+            </div>
+            <div>
+             <el-pagination
+              @size-change="sizeChange"
+              @current-change="pageChange"
+              :current-page="Page+1"
+              layout="total, sizes, prev, pager, next, jumper"
+              :total="total"
+            ></el-pagination>
+            </div>
+          </div>
+        </div>
+      </div>
+      <el-dialog :visible.sync="create_dialogVisible" width="30%" :before-close="handleClose">
+        <h3 slot="title">{{$t('CAM.CAM.Role.selectCarrier')}}</h3>
+        <div class="createItem" @click="toServe">
+          <i class="strategy-icon ps"></i>
+          <h3 style="color:#333;font-weight:400">{{$t('CAM.CAM.Role.tencentProductService')}}</h3>
+          <p>{{$t('CAM.CAM.Role.tencentProductServiceTitle')}}</p>
+        </div>
+        <div class="createItem" @click="toAccount">
+          <i class="strategy-icon ca"></i>
+          <h3 style="color:#333;font-weight:400">{{$t('CAM.CAM.Role.tencentCard')}}</h3>
+          <p>{{$t('CAM.CAM.Role.tencentCardTitle')}}</p>
+        </div>
+        <div class="createItem" @click="toProvider">
+          <i class="strategy-icon sf"></i>
+          <h3 style="color:#333;font-weight:400">{{$t('CAM.CAM.Role.identityProvider')}}</h3>
+          <p>{{$t('CAM.CAM.Role.identityProviderTitle')}}</p>
+        </div>
+      </el-dialog>
+    </div>
+  </div>
+</template>
+<script>
+export default {
+  data() {
+    return {
+      loading: true,
+      tableData: [],
+       // 分页
+      Page:0,
+      size:10,
+      total: 0,
+      create_dialogVisible:false
+    };
+  },
+  created() {
+    this.init();
+  },
+  methods: {
+    init() {
+      let params = {
+        Action: "DescribeRoleList",
+        Version: "2019-01-16",
+        Page:2,
+        Rp:this.size
+      };
+      if (this.searchValue != null && this.searchValue != "") {
+        params["keyword"] = this.searchValue;
+      }
+      let url = "cam2/DescribeRoleList";
+      this.axios
+        .post(url, params)
+        .then(data => {
+          debugger;
+          if (data === ""||data.Response.error=='undefined'||data.Response.List.length==0) {
+            this.loading = false;
+          } else {
+            this.loading = false;
+            data.Response.List.forEach(item => {
+              item.PolicyDocument = JSON.parse(item.PolicyDocument);
+              console.log(item.PolicyDocument);
+            });
+            this.tableData = data.Response.List;
+            var dataRole = JSON.parse(data.Response.List);
+          }
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    },
+    // 删除角色
+    delete_Role(RoleId) {
+      this.$confirm(
+        this.$t("CAM.CAM.Role.delHint"),
+        this.$t("CAM.CAM.Role.delTitle"),
+        {
+          confirmButtonText: this.$t("CAM.CAM.Role.delConfirmBtn"),
+          cancelButtonText: this.$t("CAM.CAM.Role.delCancelBtn"),
+          type: "warning"
+        }
+      )
+        .then(() => {
+          let url = "cam2/DeleteRole";
+          let params = {
+            Action: "DeleteRole",
+            Version: "2019-01-16",
+            RoleId: RoleId
+          };
+          this.axios
+            .post(url, params)
+            .then(data => {
+              if (data != null && data.Response.RequestId != "") {
+                this.$message({
+                  type: "success",
+                  message: this.$t("CAM.CAM.Role.delInfo") + "!"
+                });
+                this.init();
+                this.loading = false;
+              }
+            })
+            .catch(error => {
+              this.$message({ type: "success", message: error });
+              console.log(error);
+            });
+        })
+        .catch(() => {
+          // this.$message({ type: 'info', message: '已取消删除' })
+        });
+    },
+    created_user() {
+      console.log(1111)
+      this.create_dialogVisible = true;
+    },
+    handleClose() {
+      (this.dialogVisible = false), (this.create_dialogVisible = false);
+    },
+    handleCommand(command) {},
+    handleClick(scope) {
+      this.$router.push("/RoleDetail");
+    },
+    pageChange(e) {
+      this.page = e
+      this.init()
+    },
+    sizeChange(e) {
+      this.page = 0
+      this.size = e
+      this.init()
+    },
+    handleClick_user() {
+      this.dialogVisible = true;
+    },
+    toServe() {
+      this.$router.push("/createServe");
+    },
+    toAccount() {
+      this.$router.push("/createAccount");
+    },
+    toProvider() {
+      this.$router.push("/createProvider");
+    }
+  }
+};
+</script>
+<style lang="scss" scoped>
+.Cam {
+  .top {
+    color: #000;
+    padding: 20px;
+    background: #fff;
+    font-size: 16px;
+    font-weight: 700;
+    border-bottom: 1px solid #ddd;
+  }
+  .container {
+    max-width: 96%;
+    margin: 0 auto;
+    padding-top: 20px;
+    .container-text {
+      font-size: 12px;
+      line-height: inherit;
+      padding: 10px 30px 10px 20px;
+      vertical-align: middle;
+      color: #003b80;
+      border: 1px solid #97c7ff;
+      border-radius: 2px;
+      background: #e5f0ff;
+      position: relative;
+      box-sizing: border-box;
+      max-width: 1360px;
+      margin-bottom: 20px;
+    }
+    .table {
+      background-color: #fff;
+      margin-top: 20px;
+    }
+    .strategy-icon {
+      position: absolute;
+      left: 20px;
+      top: 50%;
+      margin-top: -16px;
+      width: 32px;
+      height: 32px;
+    }
+    .createItem {
+      display: block;
+      position: relative;
+      margin-bottom: 20px;
+      box-sizing: border-box;
+      min-height: 90px;
+      padding: 22px 50px 20px 70px;
+      background-color: #f0f4f7;
+      font-size: 14px;
+      line-height: 1.6;
+      color: #999;
+      transition: background-color 0.2s;
+      cursor: pointer;
+    }
+    .createItem:hover {
+      background-color: #e8f4ff;
+      text-decoration: none;
+    }
+    .createItem:after {
+      content: "";
+      position: absolute;
+      right: 20px;
+      top: 50%;
+      margin-top: -8px;
+      width: 10px;
+      height: 17px;
+      background-repeat: no-repeat;
+      background-image: url(../../../assets/CAM/images/cam.png);
+      background-position: -114px -62px;
+    }
+    .ps {
+      background-image: url(../../../assets/CAM/images/cam.svg);
+      background-position: 0.36% 53.7%;
+      background-size: 956.25% 943.75%;
+      background-repeat: no-repeat;
+    }
+    .ca {
+      background-image: url(../../../assets/CAM/images/cam.svg);
+      background-position: 12.770000000000001% 53.7%;
+      background-size: 956.25% 943.75%;
+      background-repeat: no-repeat;
+    }
+    .sf {
+      background-image: url(../../../assets/CAM/images/cam.svg);
+      background-position: 57.50999999999999% 23.330000000000002%;
+      background-size: 927.2727272727274% 943.75%;
+      background-repeat: no-repeat;
+    }
+  }
+}
+</style>

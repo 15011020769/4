@@ -1,0 +1,1092 @@
+<template>
+  <div class="Cam">
+    <div class="top">
+      <span class="title-left">{{$t('CAM.CAM.userList.userTitle')}}</span>
+      <span class="title-right">
+        <span>{{$t('CAM.CAM.userList.CAMUse')}}</span>
+        <i class="el-icon-share"></i>
+      </span>
+    </div>
+    <div class="explain">
+      <p>
+        <span>如何查看更多信息？</span>
+      </p>
+      <p>
+        <span>&nbsp;&nbsp;{{$t('CAM.CAM.userList.userTest')}}</span>
+      </p>
+      <p>
+        <span>&nbsp;&nbsp;&nbsp;{{$t('CAM.CAM.userList.userUp')}}</span>
+      </p>
+    </div>
+
+    <div class="cam_button">
+      <el-row class="cam-lt">
+        <el-button size="small" type="primary" @click="NewUser">{{$t('CAM.CAM.userList.addUser')}}</el-button>
+        <template>
+          <el-select
+            size="small"
+            v-model="value"
+            :placeholder="$t('CAM.CAM.userList.moreOperation')"
+            style="padding-left:20px;"
+          >
+            <el-option
+              v-for="item in options"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            ></el-option>
+          </el-select>
+        </template>
+      </el-row>
+
+      <div class="head-container">
+        <!-- 搜索 -->
+        <el-input
+          clearable
+          style="width: 300px;"
+          v-model="search"
+          :placeholder="$t('CAM.CAM.userList.searchPlaceholder')"
+        />
+
+        <i @click="list = true" class="el-icon-s-tools gear"></i>
+        <el-dialog title="自定义列表字段" :visible.sync="list" width="45%" :before-close="handleClose">
+          <div>
+            <div class="tip_box">
+              请选择您想显示的列表详细信息，根据您的分辨率
+              <span id="limitTip">，最多勾选6个字段，已勾选6个。</span>
+            </div>
+            <div>
+              <el-form ref="form" :model="form">
+                <el-form-item label>
+                  <el-checkbox-group v-model="form.type">
+                    <el-checkbox label="详情"></el-checkbox>
+                  </el-checkbox-group>
+                </el-form-item>
+                <el-form-item label>
+                  <el-checkbox-group v-model="form.type">
+                    <el-checkbox label="用户名称" name="type"></el-checkbox>
+                  </el-checkbox-group>
+                </el-form-item>
+                <el-form-item label>
+                  <el-checkbox-group v-model="form.type">
+                    <el-checkbox label="用户类型" name="type"></el-checkbox>
+                  </el-checkbox-group>
+                </el-form-item>
+                <el-form-item label>
+                  <el-checkbox-group v-model="form.type">
+                    <el-checkbox v-model="checked1" label="账号ID" name="type"></el-checkbox>
+                  </el-checkbox-group>
+                </el-form-item>
+                <el-form-item label>
+                  <el-checkbox-group v-model="form.type">
+                    <el-checkbox label="关联信息" name="type"></el-checkbox>
+                  </el-checkbox-group>
+                </el-form-item>
+                <el-form-item label>
+                  <el-checkbox-group v-model="form.type">
+                    <el-checkbox label="操作" name="type"></el-checkbox>
+                  </el-checkbox-group>
+                </el-form-item>
+              </el-form>
+            </div>
+          </div>
+          <span slot="footer" class="dialog-footer">
+            <el-button size="small" @click="list = false">取 消</el-button>
+            <el-button size="small" type="primary" @click="list = false">确 定</el-button>
+          </span>
+        </el-dialog>
+      </div>
+    </div>
+
+    <!-- 表格 -->
+    <el-table
+      :data="tableData.filter(data => !search || data.Name.toLowerCase().includes(search.toLowerCase()))"
+      style="width: 96%; margin: 0 auto;"
+    >
+      <el-table-column type="selection" width="55"></el-table-column>
+      <el-table-column type="expand" :label="$t('CAM.CAM.userList.userDetails')" width="50">
+        <template slot-scope="scope">
+          <el-form label-position="left" inline class="demo-table-expand" :model="form">
+            <el-form-item label="用户组:"></el-form-item>
+            <el-form-item label="用户名称:">{{scope.row.Name}}</el-form-item>
+            <el-form-item label="用户类型:">{{scope.row.Remark}}</el-form-item>
+            <el-form-item label="账号ID:">{{scope.row.Uin}}</el-form-item>
+            <el-form-item label="关联信息:"></el-form-item>
+            <el-form-item label="登录保护:">
+              <span style="color:red">未开启保护</span>
+            </el-form-item>
+            <el-form-item label="消息订阅:"></el-form-item>
+            <el-form-item label="操作保护:">
+              <span style="color:red">未开启保护</span>
+            </el-form-item>
+            <el-form-item label="控制台访问:">
+              <span style="color:green">启用</span>
+            </el-form-item>
+            <el-form-item label="MFA设备:">
+              <span style="color:red">未绑定MFA设备</span>
+            </el-form-item>
+            <el-form-item>
+              <el-link @click="details(scope.row)" type="primary">
+                <span>查看用户详情></span>
+              </el-link>
+            </el-form-item>
+          </el-form>
+        </template>
+      </el-table-column>
+
+      <el-table-column :label="$t('CAM.CAM.userList.userName')" prop="Name">
+        <template slot-scope="scope">
+          <el-link @click="details(scope.row)" type="primary">{{scope.row.Name}}</el-link>
+        </template>
+      </el-table-column>
+
+      <el-table-column :label="$t('CAM.CAM.userList.userType')" prop="Remark">
+        <template slot-scope="scope">{{scope.row.Remark}}</template>
+      </el-table-column>
+
+      <el-table-column :label="$t('CAM.CAM.userList.userId')" label="账号ID" prop="Uin">
+        <template slot-scope="scope">{{scope.row.Uin}}</template>
+      </el-table-column>
+
+      <el-table-column :label="$t('CAM.CAM.userList.userMessage')">
+        <template slot-scope="scope">
+          <i @click="details" class="el-icon-mobile mobile"></i>
+          <i @click="details" class="el-icon-message message"></i>
+        </template>
+      </el-table-column>
+      <el-table-column prop="oper" :label="$t('CAM.CAM.userList.userOperation')" width="140">
+        <template scope="scope">
+          <el-button @click="authorization=true" type="text">授权</el-button>
+          <span>|</span>
+          <el-dropdown :hide-on-click="false">
+            <span class="el-dropdown-link" style="color: #3E8EF7">
+              更多
+              <i class="el-icon-arrow-down el-icon--right"></i>
+            </span>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item>
+                <el-button type="text" style="color:#000" @click="dialogVisible= true">添加到组</el-button>
+              </el-dropdown-item>
+              <el-dropdown-item>
+                <el-button type="text" style="color:#000" @click="subscribe= true">订阅信息</el-button>
+              </el-dropdown-item>
+              <el-button
+                type="text"
+                style="color:#000;padding-left:20px;"
+                @click="todeleteShow(scope.row)"
+              >删除</el-button>
+            </el-dropdown-menu>
+          </el-dropdown>
+        </template>
+      </el-table-column>
+    </el-table>
+
+    <el-dialog title="提示" :visible.sync="deleteShow" width="30%" :before-close="CloseShow">
+      <span>确认删除这条用户信息吗?</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="deleteShow = false">取 消</el-button>
+        <el-button type="primary" @click="sureDelet">确 定</el-button>
+      </span>
+    </el-dialog>
+
+    <el-dialog title="添加到组" :visible.sync="authorization" width="74%" :before-close="handleClose">
+      <div class="container">
+        <div class="container-left">
+          <span>策略列表（共{{totalNum}}条）</span>
+          <div>
+            <el-input
+              v-model="ClsearchValue"
+              clearable
+              style="width:90%;"
+              @keyup.enter.native="toQueryCL"
+            />
+            <el-button class="suo" icon="el-icon-search" show-overflow-tooltip @click="toQueryCL"></el-button>
+          </div>
+
+          <el-table
+            class="table-left"
+            ref="multipleOption"
+            :data="policiesData"
+            height="300"
+            tooltip-effect="dark"
+            style="width: 100%; border:1px solid #ddd"
+            @row-click="selectedRow"
+            @selection-change="handleSelectionChange"
+          >
+            <el-input size="mini" style="width:40%" />
+            <el-button size="mini" class="suo" icon="el-icon-search" show-overflow-tooltip></el-button>
+            <el-table-column type="selection" prop="policyId" width></el-table-column>
+            <el-table-column prop="Description" label="策略名" width></el-table-column>
+            <el-table-column label="策略类型" prop="type" width>
+              <template slot-scope="scope">{{scope.row.type == '1'?'自定义策略':'预设策略'}}</template>
+            </el-table-column>
+          </el-table>
+        </div>
+
+        <div class="abs">
+          <div>&nbsp;</div>
+        </div>
+
+        <div class="container-left">
+          <span>已选择（共条）</span>
+          <el-table
+            class="table-left"
+            ref="multipleSelected"
+            :data="policiesSelectedData"
+            tooltip-effect="dark"
+            height="300"
+            style="width: 100%;border:1px solid #ddd"
+          >
+            <el-table-column prop="Description" label="策略名" width></el-table-column>
+            <el-table-column prop="type" label="策略类型" width>
+              <template slot-scope="scope">{{scope.row.type == '1'?'自定义策略':'预设策略'}}</template>
+            </el-table-column>
+            <el-table-column label="操作" show-overflow-tooltip>
+              &lt;!&ndash;
+              <template slot-scope="scope">
+                <el-button
+                  @click.native.prevent="deleteRow(scope.$index, policiesSelectedData)"
+                  type="text"
+                  size="small"
+                >移除</el-button>
+              </template>&ndash;&gt;
+            </el-table-column>
+          </el-table>
+        </div>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="authorization = false">确 定</el-button>
+        <el-button @click="authorization = false">取 消</el-button>
+      </span>
+    </el-dialog>
+    <!-- 自定义弹框 -->
+    <el-dialog title="添加到组" :visible.sync="dialogVisible" width="74%" :before-close="handleClose">
+      <div class="container">
+        <div class="container-left">
+          <span>用户组（共{{totalNum}}条）</span>
+          <div>
+            <el-input
+              v-model="UsersearchValue"
+              placeholder="搜索"
+              clearable
+              style="width:90%;"
+              @keyup.enter.native="toQueryUser"
+            />
+            <el-button class="suo" icon="el-icon-search" show-overflow-tooltip @click="toQueryUser"></el-button>
+          </div>
+
+          <el-table
+            class="table-left"
+            ref="multipleOption"
+            :data="policiesDatas"
+            height="300"
+            tooltip-effect="dark"
+            style="width: 100%; border:1px solid #ddd"
+            @row-click="selectedRow"
+            @selection-change="handleSelectionChange"
+          >
+            <el-input size="mini" style="width:40%" />
+            <el-button size="mini" class="suo" icon="el-icon-search" show-overflow-tooltip></el-button>
+            <el-table-column type="selection" prop="policyId" width></el-table-column>
+            <el-table-column prop="GroupName" label="用户名" width></el-table-column>
+          </el-table>
+        </div>
+
+        <div class="abs">
+          <div>&nbsp;</div>
+        </div>
+
+        <div class="container-left">
+          <span>已选择（共{{titles}}条）</span>
+          <el-table
+            class="table-left"
+            ref="multipleSelected"
+            :data="policiesSelectedData"
+            tooltip-effect="dark"
+            height="300"
+            style="width: 100%;border:1px solid #ddd"
+          >
+            <el-table-column type="selection" prop="policyId" width="55"></el-table-column>
+            <el-table-column label="用户组" width="120" prop="GroupName"></el-table-column>
+            <el-table-column label="操作" show-overflow-tooltip>
+              &lt;!&ndash;
+              <template slot-scope="scope">
+                <el-button
+                  @click.native.prevent="deleteRow(scope.$index, policiesSelectedData)"
+                  type="text"
+                  size="small"
+                >移除</el-button>
+              </template>&ndash;&gt;
+            </el-table-column>
+          </el-table>
+        </div>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button size="small" type="primary" @click="dialogVisible = false">确 定</el-button>
+        <el-button size="small" @click="dialogVisible = false">取 消</el-button>
+      </span>
+    </el-dialog>
+    <!-- 自定义弹框 -->
+    <el-dialog title="订阅信息" :visible.sync="subscribe" width="700px" :before-close="handleClose">
+      <div class="title">
+        <p class="title-p">
+          要管理不同消息类型的接收人及接收方式可以前往
+          <a href>
+            消息中心-消息订阅
+            <i class="external-link-icon"></i>
+          </a>
+        </p>
+      </div>
+      <div class="letter">
+        <div class="receive">
+          <label>消息接收人</label>
+        </div>
+        <div class="number">
+          <p>123123123123123</p>
+        </div>
+      </div>
+      <div class="subs">
+        <label>订阅消息类型</label>
+      </div>
+      <el-menu default-active="2" class="el-menu-vertical-demo" @close="handleClose">
+        <div class="tab-top">
+          <el-checkbox v-model="checked"></el-checkbox>
+          <span>全部</span>
+        </div>
+        <el-submenu index="1">
+          <template slot="title">
+            <el-checkbox v-model="checked"></el-checkbox>
+            <span>财务消息</span>
+          </template>
+          <el-menu-item-group>
+            <el-checkbox class="bor" v-model="checked2">
+              账户欠费通知
+              <span>站内信，邮件，短信，微信</span>
+            </el-checkbox>
+            <el-checkbox class="bor" v-model="checked2">
+              账户提现通知
+              <span>站内信，邮件，短信</span>
+            </el-checkbox>
+            <el-checkbox class="bor" v-model="checked2">
+              余额预警通知
+              <span>站内信，邮件，短信，微信</span>
+            </el-checkbox>
+            <el-checkbox class="bor" v-model="checked2">
+              账单出账通知
+              <span>站内信，邮件，短信</span>
+            </el-checkbox>
+          </el-menu-item-group>
+        </el-submenu>
+        <el-submenu index="2">
+          <template slot="title">
+            <el-checkbox v-model="checked"></el-checkbox>
+            <span>产品消息</span>
+          </template>
+          <el-menu-item-group>
+            <el-checkbox class="bor" v-model="checked2">
+              账户欠费通知
+              <span>站内信，邮件，短信，微信</span>
+            </el-checkbox>
+            <el-checkbox class="bor" v-model="checked2">
+              账户提现通知
+              <span>站内信，邮件，短信</span>
+            </el-checkbox>
+            <el-checkbox class="bor" v-model="checked2">
+              余额预警通知
+              <span>站内信，邮件，短信，微信</span>
+            </el-checkbox>
+            <el-checkbox class="bor" v-model="checked2">
+              账单出账通知
+              <span>站内信，邮件，短信</span>
+            </el-checkbox>
+          </el-menu-item-group>
+        </el-submenu>
+        <el-submenu index="3">
+          <template slot="title">
+            <el-checkbox v-model="checked"></el-checkbox>
+            <span>安全消息</span>
+          </template>
+          <el-menu-item-group>
+            <el-checkbox class="bor" v-model="checked2">
+              账户欠费通知
+              <span>站内信，邮件，短信，微信</span>
+            </el-checkbox>
+            <el-checkbox class="bor" v-model="checked2">
+              账户提现通知
+              <span>站内信，邮件，短信</span>
+            </el-checkbox>
+            <el-checkbox class="bor" v-model="checked2">
+              余额预警通知
+              <span>站内信，邮件，短信，微信</span>
+            </el-checkbox>
+            <el-checkbox class="bor" v-model="checked2">
+              账单出账通知
+              <span>站内信，邮件，短信</span>
+            </el-checkbox>
+          </el-menu-item-group>
+        </el-submenu>
+        <el-submenu index="4">
+          <template slot="title">
+            <el-checkbox v-model="checked"></el-checkbox>
+            <span>腾讯云动态</span>
+          </template>
+          <el-menu-item-group>
+            <el-checkbox class="bor" v-model="checked2">
+              账户欠费通知
+              <span>站内信，邮件，短信，微信</span>
+            </el-checkbox>
+            <el-checkbox class="bor" v-model="checked2">
+              账户提现通知
+              <span>站内信，邮件，短信</span>
+            </el-checkbox>
+            <el-checkbox class="bor" v-model="checked2">
+              余额预警通知
+              <span>站内信，邮件，短信，微信</span>
+            </el-checkbox>
+            <el-checkbox class="bor" v-model="checked2">
+              账单出账通知
+              <span>站内信，邮件，短信</span>
+            </el-checkbox>
+          </el-menu-item-group>
+        </el-submenu>
+        <el-submenu index="5">
+          <template slot="title">
+            <el-checkbox v-model="checked"></el-checkbox>
+            <span>运维消息</span>
+          </template>
+          <el-menu-item-group>
+            <el-checkbox class="bor" v-model="checked2">
+              账户欠费通知
+              <span>站内信，邮件，短信，微信</span>
+            </el-checkbox>
+            <el-checkbox class="bor" v-model="checked2">
+              账户提现通知
+              <span>站内信，邮件，短信</span>
+            </el-checkbox>
+            <el-checkbox class="bor" v-model="checked2">
+              余额预警通知
+              <span>站内信，邮件，短信，微信</span>
+            </el-checkbox>
+            <el-checkbox class="bor" v-model="checked2">
+              账单出账通知
+              <span>站内信，邮件，短信</span>
+            </el-checkbox>
+          </el-menu-item-group>
+        </el-submenu>
+      </el-menu>
+      <div slot="footer" class="dialog-footer">
+        <el-button size="small" type="primary" @click="subscribe = false">确 定</el-button>
+        <el-button size="small" @click="subscribe = false">取 消</el-button>
+      </div>
+    </el-dialog>
+    <div
+      style="width:96%; margin:0 auto; background:#fff;padding:10px;display:flex;justify-content: space-between;line-height:30px"
+    >
+      <div>
+        <span style="font-size:12px;color:#888">已选 0 项，共 3 项</span>
+      </div>
+      <div>
+        <el-pagination
+          :page-sizes="[10, 20, 30, 40]"
+          :page-size="10"
+          layout="sizes, prev, pager, next"
+          :total="40"
+        ></el-pagination>
+      </div>
+    </div>
+  </div>
+</template>
+<script>
+export default {
+  props: {
+    policiesSelectedData: [
+      {
+        policyId: String,
+        policyName: String,
+        description: String,
+        attachments: String,
+        createMode: String,
+        serviceType: String,
+        addTime: String,
+        type: String
+      }
+    ]
+  },
+  data() {
+    const generateData = _ => {
+      const data = [];
+      const cities = ["上海", "北京", "广州", "深圳", "南京", "西安", "成都"];
+      const pinyin = [
+        "shanghai",
+        "beijing",
+        "guangzhou",
+        "shenzhen",
+        "nanjing",
+        "xian",
+        "chengdu"
+      ];
+      cities.forEach((city, index) => {
+        data.push({
+          label: city,
+          key: index,
+          pinyin: pinyin[index]
+        });
+      });
+      return data;
+    };
+    return {
+      form: {
+        name: "yjy"
+      },
+      titles:'',
+      search: "",
+      deleteName: "",
+      selectName: "",
+      deleteShow: false,
+      UsersearchValue: [],
+      ClsearchValue: [],
+      searchValue: [],
+      policiesDatas: [],
+      policiesData: [],
+      totalNum: "",
+      list: false,
+      authorization: false,
+      data: generateData(),
+      val: [],
+      filterMethod(query, item) {
+        return item.pinyin.indexOf(query) > -1;
+      },
+      checked1: true,
+      checked2: true,
+      subscribe: false,
+      dialogVisible: false,
+      checked: true,
+      tableData: [
+        {
+          Name: ""
+        }
+      ],
+      options: [
+        {
+          value: "选项1",
+          label: "添加到组"
+        },
+        {
+          value: "选项2",
+          label: "删除"
+        }
+      ],
+      form: {
+        name: "",
+        region: "",
+        date1: "",
+        date2: "",
+        delivery: false,
+        type: [],
+        resource: "",
+        desc: ""
+      }
+    };
+  },
+  methods: {
+    change(e) {
+      this.$forceUpdate();
+    },
+    //删除子用户
+    todeleteShow(user) {
+      this.deleteName = user.Name;
+      this.deleteShow = true;
+    },
+    sureDelet() {
+      let params = {
+        Action: "DeleteUser",
+        Version: "2019-01-16",
+        Name: this.deleteName
+      };
+      let url = "cam2/DeleteUser";
+      this.axios.post(url, params).then(data => {
+        this.selectData();
+      });
+      this.deleteShow = false;
+    },
+    //策略搜索
+    CeInit() {
+      let params = {
+        Action: "ListPolicies",
+        Version: "2019-01-16"
+      };
+      if (this.ClsearchValue != null && this.ClsearchValue != "") {
+        params["Keyword"] = this.ClsearchValue;
+      }
+      let url = "cam2/ListPolicies";
+      this.axios.post(url, params).then(data => {
+        this.policiesData = data.Response.List;
+      });
+    },
+    toQueryCL() {
+      this.CeInit();
+    },
+    // 用户搜索
+    UserInit() {
+      let params = {
+        Action: "ListGroups",
+        Version: "2019-01-16"
+      };
+      if (this.UsersearchValue != null && this.UsersearchValue != "") {
+        params["Keyword"] = this.UsersearchValue;
+      }
+      let url = "cam2/ListGroups";
+      this.axios.post(url, params).then(data => {
+        this.policiesDatas = data.Response.GroupInfo;
+        this.titles = this.policiesDatas.length
+      });
+    },
+    toQueryUser() {
+      this.UserInit();
+    },
+    //查询
+    selectuser() {
+      let selectList = {
+        Action: "GetUser",
+        Version: "2019-01-16",
+        Name: this.selectName
+      };
+      let url = "cam2/GetUser";
+      this.axios.post(url, selectList).then(data => {
+        console.log(data);
+        this.tableData = data;
+      });
+    },
+
+    //用户列表
+    selectData() {
+      let userList = {
+        Action: "ListUsers",
+        Version: "2019-01-16"
+      };
+      let userListUrl = "cam2/ListUsers";
+      this.axios.post(userListUrl, userList).then(data => {
+        this.tableData = data.Response.Data;
+      });
+    },
+
+    change(e) {
+      this.$forceUpdate();
+    },
+    handleClose(done) {
+      this.$confirm("确认关闭？")
+        .then(_ => {
+          done();
+        })
+        .catch(_ => {});
+    },
+    NewUser() {
+      this.$router.push({ name: "custormCreate" });
+    },
+    changeLeftData(val) {
+      // console.log("change left data", val);
+      // console.log("this is value data:", this.value);
+      this.val = [...this.val, ...val];
+    },
+    details(val) {
+       console.log(val);
+      this.$router.push({
+        path: "/details",
+        query: {
+          content: val.Name
+        }
+      });
+     
+    },
+    handleSelectionChange(val) {
+      // 给右边table框赋值，只需在此处赋值即可，selectedRow方法中不写，因为单独点击复选框，只有此方法有效。
+      this.policiesSelectedData = val;
+    },
+    selectedRow(row, column, event) {
+      // 设置选中或者取消状态
+      this.$refs.multipleOption.toggleRowSelection(row);
+    },
+    deleteRow(index, rows) {
+      // 获取右边框中取消的行数据，将此行数据在右边框中的选中状态取消
+      this.$refs.multipleOption.toggleRowSelection(rows[index], false);
+    },
+    CloseShow(done) {
+      this.$confirm("确认关闭？")
+        .then(_ => {
+          done();
+        })
+        .catch(_ => {});
+    }
+  },
+  created() {
+    //获取授权数据
+    let params = {
+      Action: "ListPolicies",
+      Version: "2019-01-16"
+    };
+    let url = "cam2/ListPolicies";
+    this.axios
+      .post(url, params)
+      .then(data => {
+        this.policiesData = data.Response.List;
+        console.log(data);
+      })
+      .catch(error => {
+        console.log(error);
+      });
+
+    //策略绑定到用户
+    let More = {
+      Action: "ListGroups",
+      Version: "2019-01-16"
+    };
+    let moreUrl = "cam2/ListGroups";
+    this.axios
+      .post(moreUrl, More)
+      .then(data => {
+        this.policiesDatas = data.Response.GroupInfo;
+      })
+      .catch(error => {
+        console.log(error);
+      });
+
+    //获取用户列表
+    let userList = {
+      Action: "ListUsers",
+      Version: "2019-01-16"
+    };
+    let userListUrl = "cam2/ListUsers";
+    this.axios
+      .post(userListUrl, userList)
+      .then(data => {
+        this.tableData = data.Response.Data;
+        console.log(data);
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  }
+};
+</script>
+<style lang="scss" scoped>
+.el-transfer-city {
+  display: flex;
+  .city-left,
+  .city-right {
+    width: 400px;
+    padding: 8px;
+  }
+  .city-right {
+    margin-left: 15px;
+  }
+  .city-left-header,
+  .city-right-header {
+    height: 40px;
+    padding: 3px;
+    border: 1px solid #dcdfe6;
+    .el-input {
+      width: 300px;
+    }
+  }
+  .city-right-header {
+    display: flex;
+  }
+  .scrollbar-change {
+    height: 350px;
+    width: 100%;
+    background-color: #fff;
+    border-radius: 5px;
+  }
+  .el-scrollbar__wrap {
+    overflow-x: hidden;
+  }
+
+  .city-middle {
+    padding: 60px 20px;
+    .middle-left {
+      display: block;
+      margin-top: 10px;
+      margin-left: 0;
+    }
+    .middle-right {
+      display: block;
+      margin-right: 0;
+    }
+    .middle-left,
+    .middle-right {
+      width: 35px;
+      height: 35px;
+      border-radius: 50%;
+      padding: 0;
+    }
+  }
+  .left-select-all {
+    float: right;
+    margin: 10px 7px 0 0;
+  }
+  .clear-select-all {
+    float: right;
+    margin: 10px 7px 0 0;
+    font-size: 14px;
+    color: #0000ff;
+    cursor: pointer;
+  }
+  .el-radio-group {
+    font-size: 14px;
+    margin: 13px auto;
+    float: left;
+  }
+}
+.Cam {
+  .top {
+    height: 45px;
+    line-height: 45px;
+    margin-bottom: 20px;
+    padding: 0 20px;
+    background: #fff;
+    .title-left {
+      font-size: 14px;
+      font-weight: bolder;
+    }
+    .title-right {
+      float: right;
+      span:hover {
+        color: #006eff;
+        border-bottom: 1px solid #006eff;
+      }
+    }
+  }
+  .tip_box {
+    background: #e5f0ff;
+    padding: 8px 10px;
+    margin-bottom: 15px;
+    border-radius: 2px;
+    border: 1px solid #97c7ff;
+    line-height: 20px;
+    color: #003b80;
+  }
+  .demo-table-expand {
+    font-size: 0;
+  }
+  .demo-table-expand label {
+    width: 90px;
+    color: #99a9bf;
+  }
+  .demo-table-expand .el-form-item {
+    margin-right: 0;
+    margin-bottom: 0;
+    width: 50%;
+  }
+  .el-form-item {
+    margin-bottom: 0;
+  }
+  .content {
+    padding: 20px;
+    .operation {
+      margin-bottom: 10px;
+    }
+    .search {
+      overflow: hidden;
+      padding: 10px 0;
+      .search-left {
+        float: left;
+        .searchBox {
+          display: inline-block;
+        }
+      }
+      .search-right {
+        float: right;
+        margin-top: 10px;
+        :hover {
+          cursor: pointer;
+        }
+        i {
+          padding: 0 3px;
+        }
+      }
+    }
+    .cam-pag {
+      padding: 10px 0;
+      display: flex;
+      justify-content: flex-end;
+    }
+  }
+  .magnifier {
+    right: 30px;
+    top: 6px;
+    position: absolute;
+  }
+  .tc-15-search .tc-15-btn.search {
+    position: absolute;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    width: 28px !important;
+    right: 1px;
+    border: none;
+    height: 28px;
+    top: 1px;
+    z-index: 99;
+  }
+  .mobile {
+    font-size: 120%;
+    cursor: pointer;
+    margin-right: 10px;
+  }
+  .message {
+    cursor: pointer;
+    font-size: 120%;
+  }
+  .subs {
+    text-align: center;
+    padding-right: 20px;
+    float: left;
+  }
+  .explain {
+    width: 96%;
+    font-size: 12px;
+    padding: 10px 30px 10px 20px;
+    vertical-align: middle;
+    color: #003b80;
+    border: 1px solid #97c7ff;
+    border-radius: 2px;
+    background: #e5f0ff;
+    position: relative;
+    box-sizing: border-box;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .explain p {
+    line-height: 1.5;
+    margin-bottom: 8px;
+  }
+  .cam_button {
+    height: 40px;
+    width: 96%;
+    margin: 10px auto;
+  }
+  .cam-lt {
+    float: left;
+  }
+  .head-container {
+    position: relative;
+    float: right;
+  }
+  .head-container .gear {
+    cursor: pointer;
+    font-size: 140%;
+    color: #888888;
+    margin: 2px 0 0 5px;
+  }
+  .letter {
+    margin-bottom: 30px;
+    width: 100%;
+    margin-top: 20px;
+  }
+  .receive {
+    text-align: center;
+    display: inline-block;
+    padding-right: 34px;
+  }
+  .number {
+    display: inline-block;
+  }
+  .cam_button {
+    position: relative;
+  }
+  .suo {
+    position: absolute;
+  }
+  .title {
+    width: 100%;
+    font-size: 12px;
+    padding: 10px 30px 10px 20px;
+    vertical-align: middle;
+    color: #003b80;
+    border: 1px solid #97c7ff;
+    border-radius: 2px;
+    background: #e5f0ff;
+    position: relative;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .el-submenu {
+    width: 100%;
+    margin: 0 auto;
+    border: 1px solid #dddddd;
+    border-bottom: 0;
+  }
+  .el-menu {
+    display: inline-block;
+    height: 300px;
+    width: 500px;
+    overflow: auto;
+  }
+  .bor {
+    margin: 0;
+    width: 100%;
+    height: 30px;
+    line-height: 30px;
+    padding-left: 5%;
+    border-top: 1px solid #dddddd;
+  }
+  .block {
+    float: right;
+    margin-top: 10px;
+    padding-right: 20px;
+  }
+  .tab-top {
+    height: 56px;
+    line-height: 56px;
+    border: 1px solid #dddddd;
+    border-bottom: 0;
+    padding: 0 20px;
+  }
+  .btn {
+    margin-top: 20px;
+    text-align: center;
+  }
+  .container {
+    width: 96%;
+    height: 270px;
+    min-height: 360px;
+    margin: 10px auto 0;
+    background: #fff;
+    padding: 20px;
+    p.title,
+    p.explain {
+      text-align: center;
+      line-height: 20px;
+      font-size: 16px;
+      color: #000;
+      font-weight: 700;
+    }
+    p.explain {
+      font-size: 12px;
+      color: #ccc;
+      margin-top: 10px;
+      line-height: 16px;
+      color: #666;
+    }
+    .abs {
+      display: inline-block;
+      width: 100px;
+      height: 300px;
+      text-align: center;
+    }
+    .container-left {
+      position: relative;
+      width: 44%;
+      display: inline-block;
+    }
+    .ifier {
+      position: absolute;
+      font-size: 130%;
+      right: 2%;
+      top: 8%;
+    }
+  }
+}
+</style>
+

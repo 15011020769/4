@@ -30,7 +30,7 @@ export default {
     LeftAside
   },
   mounted () {
-    this.getProgectList()
+    //this.getProgectList()
     if (this.$cookie.get('regionv1') === undefined || this.$cookie.get('regionv1') === '' || this.$cookie.get('regionv1') === null) {
       this.$cookie.set('regionv1', 'gz')
       this.$cookie.set('regionv2', 'ap-guangzhou')
@@ -56,6 +56,9 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+#SCF >>> .el-aside {
+  background: #292b36 !important;
+}
 #SCF {
   height: 100%;
   .el-container {

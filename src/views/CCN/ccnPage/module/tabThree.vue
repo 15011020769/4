@@ -1,0 +1,449 @@
+<!--  -->
+<template>
+  <div class="tabThree">
+    <!-- 地域间带宽 -->
+    <div v-show="regionShow">
+      <span>限速方式：{{$t("CCN.CCN.tabs.tab3tit1")}}
+        <a @click="updateBandwidthLimitTypeVisible = true">{{$t("CCN.CCN.tabs.tab3tit2")}}</a>
+      </span>
+      <div class="table">
+        <div class="btn">
+          <el-button type="text" @click="toUpdateVisible2()">{{$t("CCN.CCN.tabs.tab3btn")}}</el-button>
+        </div>
+        <el-table :data="tableData" style="width: 100%">
+          <template slot="empty">{{$t("CCN.CCN.tabs.tab1no")}}</template>
+          <el-table-column prop="CcnRegionBandwidthLimit.Region" label="地域A" width>
+            <template slot-scope="scope">
+              <p class="edit">{{ scope.row.CcnRegionBandwidthLimit.Region }}</p>
+            </template>
+          </el-table-column>
+          <el-table-column prop="CcnRegionBandwidthLimit.DstRegion" label="地域B" width>
+            <template slot-scope="scope">
+              <p class="edit">{{ scope.row.CcnRegionBandwidthLimit.DstRegion }}</p>
+            </template>
+          </el-table-column>
+          <el-table-column prop="CcnRegionBandwidthLimit.BandwidthLimit" :label="$t('CCN.CCN.tabs.tab3tr2')" width>
+            <template slot-scope="scope">
+              <p class="edit">{{ scope.row.CcnRegionBandwidthLimit.BandwidthLimit }}</p>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+      <!--地域间-调整带宽模态窗 -->
+      <el-dialog title="" :visible.sync="updateVisible2" class="newDialog">
+        <div>
+          <table class="table-div">
+            <tr class="t-head">
+              <td>地域A</td>
+              <td>地域B</td>
+              <td>{{$t('CCN.CCN.tabs.tab3tr2')}}</td>
+              <td></td>
+            </tr>
+            <!-- <tr class="t-body" v-for="(item, index) in formArr"> -->
+              <!-- 注释掉‘添加’功能，即不能一次调整多个地域间带宽限速 -->
+              <td>
+                <el-select v-model="upLimits.Region" placeholder="请选择">
+                  <el-option
+                    v-for="item in regionSet"
+                    :key="item.Region"
+                    :label="item.RegionName"
+                    :value="item.Region"
+                  >
+                  </el-option>
+                </el-select>
+              </td>
+              <td>
+                <el-select v-model="upLimits.DstRegion" placeholder="请选择">
+                  <el-option
+                    v-for="item in regionSet"
+                    :key="item.Region"
+                    :label="item.RegionName"
+                    :value="item.Region"
+                  >
+                  </el-option>
+                </el-select>
+              </td>
+              <td>
+                <el-input v-model="upLimits.Limits">
+                  <template slot="append">Mbps</template>
+                </el-input>
+              </td>
+              <!-- <td>
+                <a v-on:click="removeRow(index)" v-show="index >= 0">
+                  <i class="el-icon-error"></i>
+                </a>
+              </td> -->
+              <!-- 注释掉‘删除’功能，即每次修改地域间带宽限速只允许编辑一条 -->
+            <!-- </tr> -->
+            <!-- <tr>
+              <td colspan="4" style="text-align: center;">
+                <a v-on:click="addRow()" v-show="formArr.length < 5">添加</a>
+              </td>
+            </tr> -->
+            <!-- 注释掉‘添加’功能，即不能一次调整多个地域间带宽限速 -->
+          </table>
+        </div>
+        <div slot="footer" class="dialog-footer">
+          <el-button type="primary" @click="updateLimits()">{{$t('CCN.CCN.total.sure')}}</el-button>
+          <el-button @click="updateVisible2 = false">取消</el-button>
+        </div>
+      </el-dialog>
+      <!-- 地域间-修改限速方式的模态窗 -->
+      <el-dialog
+        :title="$t('CCN.CCN.total.eWay')"
+        :visible.sync="updateBandwidthLimitTypeVisible"
+        class="formDialog"
+      >
+        <el-form :model="ccnPublic">
+          <el-form-item :label="$t('CCN.CCN.total.eWay1')">
+            <el-select v-model="ccnPublic.BandwidthLimitType" placeholder>
+              <!-- <el-option :label="$t('CCN.CCN.total.eWay2')" value="INTER_REGION_LIMIT"></el-option> -->
+              <el-option :label="$t('CCN.CCN.total.eWay3')" value="OUTER_REGION_LIMIT"></el-option>
+            </el-select>
+            <p class="edit-p">{{ $t('CCN.CCN.total.eWay4') }} <a href="">工單申請</a></p>
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="updateBandwidthLimitTypeVisible = false">取 消</el-button>
+          <el-button type="primary" @click="upBandwidthLimitType(ccnPublic)">{{
+            $t('CCN.CCN.total.sure')
+          }}</el-button>
+        </div>
+      </el-dialog>
+    </div>
+    <!-- 地域出带宽 -->
+    <div v-show="!regionShow">
+      <span>限速方式：{{$t("CCN.CCN.tabs.tab3tit")}} <a @click="updateBandwidthLimitTypeVisible2 = true">{{$t("CCN.CCN.tabs.tab3tit2")}}</a></span>
+      <div class="table">
+        <div class="btn">
+          <el-button type="text" @click="updateVisible = true">{{$t("CCN.CCN.tabs.tab3btn")}}</el-button>
+        </div>
+        <el-table :data="tableData" style="width: 100%">
+          <template slot="empty">{{$t("CCN.CCN.tabs.tab1no")}}</template>
+          <el-table-column prop="CcnRegionBandwidthLimit.Region" :label="$t('CCN.CCN.tabs.tab3tr1')" width>
+            <template slot-scope="scope">
+              <p class="edit">{{ scope.row.CcnRegionBandwidthLimit.Region }}</p>
+            </template>
+          </el-table-column>
+          <el-table-column prop="CcnRegionBandwidthLimit.BandwidthLimit" :label="$t('CCN.CCN.tabs.tab3tr2')" width>
+            <template slot-scope="scope">
+              <p class="edit">{{ scope.row.CcnRegionBandwidthLimit.BandwidthLimit }}</p>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+      <!--调整带宽限速模态窗 -->
+      <el-dialog title="" :visible.sync="updateVisible" class="updateDialog">
+        <div class="transfer">
+          <div class="left">
+            <span>{{$t('CCN.CCN.tabs.tab3btnD')}}</span>
+            <div class="region">
+              <el-select v-model="upLimits.Region" placeholder>
+                <el-option :label="$t('CCN.CCN.tabs.tab3R')" value="ap-taipei"></el-option>
+              </el-select>
+              <!-- <el-checkbox v-model="upLimits.Region">{{$t('CCN.CCN.tabs.tab3R')}}</el-checkbox> -->
+            </div>
+          </div>
+          <div class="icon">
+            <i class="el-icon-arrow-right"></i>
+          </div>
+          <div class="right">
+            <span>{{$t('CCN.CCN.tabs.tab3btnC')}}</span>
+            <div class="region">
+              <div class="t-head">
+                <div>{{$t('CCN.CCN.tabs.tab3tr1')}}</div>
+                <div>{{$t('CCN.CCN.tabs.tab3tr2')}}</div>
+              </div>
+              <div class="t-body">
+                <div>{{$t('CCN.CCN.tabs.tab3R')}}</div>
+                <div>
+                  <el-input v-model="upLimits.Limits" type="text"></el-input>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div slot="footer" class="dialog-footer">
+          <el-button type="primary" @click="updateLimits()">{{$t('CCN.CCN.total.sure')}}</el-button>
+          <el-button @click="updateVisible = false">取消</el-button>
+        </div>
+      </el-dialog>
+      <!-- 修改限速方式的模态窗 -->
+      <el-dialog
+        :title="$t('CCN.CCN.total.eWay')"
+        :visible.sync="updateBandwidthLimitTypeVisible2"
+        class="formDialog"
+      >
+        <el-form :model="ccnPublic">
+          <el-form-item :label="$t('CCN.CCN.total.eWay1')">
+            <el-select v-model="ccnPublic.BandwidthLimitType" placeholder>
+              <el-option :label="$t('CCN.CCN.total.eWay2')" value="INTER_REGION_LIMIT"></el-option>
+              <!-- <el-option :label="$t('CCN.CCN.total.eWay3')" value="OUTER_REGION_LIMIT"></el-option> -->
+            </el-select>
+            <p class="edit-p">{{ $t('CCN.CCN.total.eWay4') }} <a href="">工單申請</a></p>
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="updateBandwidthLimitTypeVisible2 = false">取 消</el-button>
+          <el-button type="primary" @click="upBandwidthLimitType(ccnPublic)">{{
+            $t('CCN.CCN.total.sure')
+          }}</el-button>
+        </div>
+      </el-dialog>
+    </div>
+  </div>
+</template>
+
+<script>
+import { log } from 'util'
+export default {
+  data () {
+    return {
+      ccnId: '',
+      regionShow: false,
+      tableData: [{}], // 带宽限速数据列表
+      ccnPublic: {},
+      regionSet: [{}], // 地域列表
+      upLimits: {
+        Region: '',
+        DstRegion: '',
+        Limits: ''
+      },
+      formLabelWidth: '100px',
+      // 调整带宽
+      formInfoObj: {
+        key: undefined
+      },
+      formArr: [],
+      // 变更限速模式的模态窗控制元素
+      updateVisible2: false,
+      updateVisible: false,
+      updateBandwidthLimitTypeVisible: false,
+      updateBandwidthLimitTypeVisible2: false,
+      // 穿梭框数据
+      checked: false
+    }
+  },
+  created () {
+    this.ccnId = this.$route.query.ccnId
+    this.BandwidthLimitType = this.$route.query.BandwidthLimitType
+    if (this.BandwidthLimitType == 'OUTER_REGION_LIMIT') { // 出口限速
+      this.regionShow = false
+    } else if (this.BandwidthLimitType == 'INTER_REGION_LIMIT') {
+      this.regionShow = true
+    }
+    this.formArr.push(this.formInfoObj)
+    this.getData()
+  },
+  methods: {
+    getData: function () {
+      var params = {
+        Version: '2017-03-12',
+        Region: 'ap-taipei',
+        CcnId: this.ccnId
+      }
+      // 查询-各地域出带宽限速（DescribeCcnRegionBandwidthLimits原API中给出接口）（GetCcnRegionBandwidthLimits腾讯云给出接口）
+      this.$axios.post('vpc2/GetCcnRegionBandwidthLimits', params).then(res => {
+        console.log(res)
+        this.tableData = res.Response.CcnBandwidthSet
+      })
+    },
+    // 修改限速方式弹窗
+    upBandwidthLimitType: function (ccnDetail) {
+      console.log(ccnDetail)
+      var params = {
+        Version: '2017-03-12',
+        Region: 'ap-taipei',
+        CcnId: this.ccnId,
+        BandwidthLimitType: ccnDetail.BandwidthLimitType
+      }
+      if (ccnDetail.BandwidthLimitType == 'OUTER_REGION_LIMIT') { // 改为出口限速
+        this.regionShow = false
+      } else if (ccnDetail.BandwidthLimitType == 'INTER_REGION_LIMIT') {
+        this.regionShow = true
+      }
+      this.$axios.post('vpc2/ModifyCcnRegionBandwidthLimitsType', params).then(res => {
+        console.log('修改成功')
+        this.getData()
+      })
+      this.updateBandwidthLimitTypeVisible = false
+      this.updateBandwidthLimitTypeVisible2 = false
+    },
+    // 生产一个新的obj对象
+    copyObj: function () {
+      var des = {
+        key: undefined
+      }
+      return des
+    },
+    // 新增一行
+    addRow: function () {
+      var des = this.copyObj()
+      this.formArr.push(des)
+    },
+    // 删除一行
+    removeRow: function (idx) {
+      this.formArr.splice(idx, 1)
+    },
+    // 修改地域间带宽限速-模态窗
+    toUpdateVisible2: function () {
+      var params = {
+        Version: '2017-03-12'
+      }
+      this.$axios.post('cvm2/DescribeRegions', params).then(res => {
+        console.log(res)
+        this.regionSet = res.Response.RegionSet
+      })
+      this.updateVisible2 = true
+    },
+    // 修改带宽限速
+    updateLimits: function () {
+      var params = {
+        Version: '2017-03-12',
+        Region: 'ap-taipei',
+        CcnId: this.ccnId,
+        'CcnRegionBandwidthLimits.0.Region': this.upLimits.Region,
+        'CcnRegionBandwidthLimits.0.BandwidthLimit': this.upLimits.Limits,
+        'CcnRegionBandwidthLimits.0.DstRegion': this.upLimits.DstRegion
+      }
+      this.$axios.post('vpc2/SetCcnRegionBandwidthLimits', params).then(res => {
+        console.log(params)
+        console.log('修改成功')
+        this.getData()
+      })
+      this.updateVisible = false
+      this.updateVisible2 = false
+    }
+  }
+}
+</script>
+<style lang="scss">
+.el-form-item {
+  .el-form-item__label {
+    text-align: left;
+  }
+  .el-input {
+    width: 120px;
+  }
+}
+</style>
+<style lang="scss" scoped>
+.tabThree {
+  span{
+    color: #000;
+  }
+  .table {
+    margin-top: 20px;
+    min-height: 450px;
+    padding: 20px 0 0 20px;
+    background: #fff;
+    .btn {
+      .el-button {
+        height: 30px;
+        background-color: #006eff;
+        color: #fff;
+        border: 1px solid #006eff;
+        line-height: 0px;
+        border-radius: 0px;
+        font-size: 12px !important;
+        padding: 10px 15px;
+      }
+      .el-button.is-plain:hover {
+        background-color: #0063e5;
+        color: #fff;
+        border: 1px solid #0063e5;
+      }
+    }
+    .close_color {
+      color: #e54545;
+    }
+    .off_color {
+      color: #0abf5b;
+    }
+  }
+  .newDialog {
+    .table-div {
+      width: 90%;
+      padding: 5px;
+      border: 1px solid #ddd;
+      tr {
+        width: 25%;
+        a {
+          text-align: center;
+        }
+      }
+      .t-head {
+        height: 45px;
+      }
+      .t-body {
+        height: 45px;
+        min-height: 200px;
+      }
+      .el-input {
+        margin-bottom: 5px;
+      }
+    }
+  }
+  .formDialog {
+    .edit-p {
+      color: #e54545;
+      line-height: 20px;
+      margin-left: 10%;
+    }
+  }
+  .updateDialog {
+    .transfer {
+      height: 260px;
+      .left {
+        float: left;
+        width: 45%;
+        .region {
+          min-height: 200px;
+          border: 1px solid #ddd;
+          padding: 5px;
+        }
+      }
+      .icon {
+        display: inline-block;
+        float: left;
+        margin-top: 20%;
+        font-size: 20px;
+        font-weight: bold;
+      }
+      .right {
+        width: 45%;
+        float: left;
+        .region {
+          min-height: 200px;
+          border: 1px solid #ddd;
+          padding: 5px;
+            .t-head {
+              display: flex;
+              padding: 0 5px;
+              div{
+                margin-right: 40px;
+              }
+            }
+            .t-body {
+             display: flex;
+              // min-height: 200px;
+              div{
+                margin-right: 20px;
+              }
+            }
+
+        }
+      }
+    }
+  }
+  .dialog-footer {
+    margin-top: 20px;
+    text-align: center;
+    .el-button {
+      height: 30px;
+      line-height: 6px;
+      border-radius: 0px;
+    }
+  }
+}
+</style>

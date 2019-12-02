@@ -1,14 +1,17 @@
 import Vue from 'vue'
-// import VueCookie from 'vue-cookie'
-import { Loading } from 'element-ui'
+import VueCookie from 'vue-cookie'
+import {
+  Loading
+} from 'element-ui'
 import axios from 'axios'
 
 const conf = {
-  baseURL: 'http://212.64.104.240:8868/product' || '',
+  baseURL: process.env.VUE_APP_serverUrl || '',
   timeout: 60 * 1000,
   loading: true,
   headers: {
-    uuid: '65f2654cfa2b4ad59ec034899ad5d580',
+    // uuid: VueCookie.get('uuid'),
+    uuid: '123456789',
     Pragma: 'no-cache',
     'Cache-Control': 'no-cache'
   }
@@ -42,12 +45,12 @@ Plugin.install = function (vue) {
   window.axios = instance
   Object.defineProperties(vue.prototype, {
     axios: {
-      get () {
+      get() {
         return instance
       }
     },
     $axios: {
-      get () {
+      get() {
         return instance
       }
     }

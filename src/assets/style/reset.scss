@@ -74,3 +74,42 @@ a:focus {
 .gray-c{
   color: gray;
 }
+.el-table{
+  font-size: 12px;
+}
+.el-dialog__wrapper {
+  ::v-deep .el-dialog__title {
+    font-weight: 700;
+    font-size: 14px;
+  }
+  ::v-deep .el-radio__label {
+    font-size: 12px;
+    width: 90px;
+    text-align: left;
+  }
+}
+.el-form {
+  ::v-deep .el-form-item__label {
+    font-size: 12px;
+    text-align: left;
+  }
+}
+.el-input {
+  ::v-deep .el-input__inner {
+    height: 30px;
+    width: 200px;
+  }
+}
+.el-select {
+  ::v-deep .el-input__inner {
+    height: 30px;
+  }
+}
+.dialog-footer {
+  text-align: center;
+  .el-button {
+    height: 30px;
+    line-height: 0;
+    border-radius: 0;
+  }
+}

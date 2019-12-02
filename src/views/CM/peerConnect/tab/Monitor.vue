@@ -112,11 +112,11 @@
 </template>
 
 <script>
-import XTimeX from '@/components/TimeXF'
-import echartLine from '@/components/echars-line'
-import { CVM_MONITOR } from '@/constants'
+import XTimeX from '@/components/TimeXF';
+import echartLine from '@/components/echars-line';
+import { All_MONITOR } from '@/constants';
 export default {
-  data () {
+  data() {
     return {
       ID: this.$route.query.id,
       period: '',
@@ -128,35 +128,35 @@ export default {
       totalPage: 0, // 表格数据数组长度
       tableData: [], // 获取列表数据
       timeData: [], // 折线图的x轴数据
-      jingData: []
-    }
+      jingData: [],
+    };
   },
   components: {
     echartLine,
-    XTimeX
+    XTimeX,
   },
-  created () {},
+  created() {},
   methods: {
-    GetDat (data) {
-      this.period = data[0]
-      this.timeData = data[1]
-      this.Start_End = data[2]
-      this.value = data[3]
+    GetDat(data) {
+      this.period = data[0];
+      this.timeData = data[1];
+      this.Start_End = data[2];
+      this.value = data[3];
       const metricNArr = [
         'inpkg',
         'inbandwidth',
         'outpkg',
         'outbandwidth',
-        'pkgdrop'
-      ]
-      this.tableData = []
+        'pkgdrop',
+      ];
+      this.tableData = [];
       for (let i = 0; i < metricNArr.length; i++) {
-        this.Obtain(metricNArr[i])
+        this.Obtain(metricNArr[i]);
       }
 
-      console.log(this.tableData)
+      console.log(this.tableData);
     },
-    Obtain (metricN) {
+    Obtain(metricN) {
       const param = {
         Region: this.$cookie.get('regionv1'),
         namespace: 'qce/pcx',
@@ -165,60 +165,60 @@ export default {
         'dimensions.0.value': this.ID,
         period: this.period,
         startTime: this.Start_End.StartTIme,
-        endTime: this.Start_End.EndTIme
-      }
-      this.axios.post(CVM_MONITOR, param).then((data) => {
-        this.tableData.push(data)
-      })
+        endTime: this.Start_End.EndTIme,
+      };
+      this.axios.post(All_MONITOR, param).then((data) => {
+        this.tableData.push(data);
+      });
     },
 
     // 模态框
-    Modality (Y) {
-      this.dialogVisible = true
-      this.opDiskData = Y
+    Modality(Y) {
+      this.dialogVisible = true;
+      this.opDiskData = Y;
     },
 
-    handleClose (done) {
-      done()
-    }
+    handleClose(done) {
+      done();
+    },
   },
   filters: {
-    UpName (value) {
+    UpName(value) {
       if (value === 'inpkg') {
-        return (value = '入包量')
+        return (value = '入包量');
       }
       if (value === 'inbandwidth') {
-        return (value = '网络入带宽')
+        return (value = '网络入带宽');
       }
       if (value === 'outpkg') {
-        return (value = '出包量')
+        return (value = '出包量');
       }
       if (value === 'outbandwidth') {
-        return (value = '出带宽使用率')
+        return (value = '出带宽使用率');
       }
       if (value === 'pkgdrop') {
-        return (value = '丢包率')
+        return (value = '丢包率');
       }
     },
-    UpTitle (value) {
+    UpTitle(value) {
       if (value === 'inpkg') {
-        return (value = '对等连接每秒入包量')
+        return (value = '对等连接每秒入包量');
       }
       if (value === 'inbandwidth') {
-        return (value = '对等连接入带宽')
+        return (value = '对等连接入带宽');
       }
       if (value === 'outpkg') {
-        return (value = '对等连接每秒出包量')
+        return (value = '对等连接每秒出包量');
       }
       if (value === 'outbandwidth') {
-        return (value = '对等连接出带宽使用率')
+        return (value = '对等连接出带宽使用率');
       }
       if (value === 'pkgdrop') {
-        return (value = '对等连接因带宽限制丢弃报文与总报文的比率')
+        return (value = '对等连接因带宽限制丢弃报文与总报文的比率');
       }
-    }
-  }
-}
+    },
+  },
+};
 </script>
 
 <style  scoped lang="scss">
@@ -245,7 +245,7 @@ export default {
         color: #cccccc;
         font-size: 10px;
       }
-      /deep/.el-input {
+       ::v-deep.el-input {
         width: 100px !important;
         border: none;
       }
@@ -281,7 +281,7 @@ export default {
 .dateheight {
   height: 34px;
 }
-/deep/.echart-wh {
+ ::v-deep.echart-wh {
   width: 1100px !important;
   height: 500px !important;
 }
@@ -295,7 +295,7 @@ export default {
       color: #cccccc;
       font-size: 10px;
     }
-    /deep/.el-input {
+     ::v-deep.el-input {
       width: 100px !important;
       border: none;
     }
@@ -304,10 +304,10 @@ export default {
 .box-table {
   width: 100%;
 }
-/deep/.i-font {
+ ::v-deep.i-font {
   font-size: 36px;
 }
-/deep/.el-button--small {
+ ::v-deep.el-button--small {
   font-size: 14px !important;
 }
 </style>
