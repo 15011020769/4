@@ -168,6 +168,11 @@ export default {
     };
     var CmqQueueName = (rule, value, callback) => {
       var reg = /^[a-zA-Z]([-a-zA-Z0-9]{0,64})$/;
+      if (this.ruleForm.IsEnableCmqNotify) {
+        if (!value) {
+          callback();
+        }
+      }
       setTimeout(() => {
         if (!reg.test(value)) {
           callback(
@@ -188,6 +193,7 @@ export default {
       select: {
         index: 0
       },
+      name: "111",
       btnLoad: false,
       BucketSelect: {
         name: ""

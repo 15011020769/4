@@ -165,7 +165,7 @@
             <div class="line lineVal"></div>
             <el-form-item class="button">
               <el-button type="primary" icon="el-icon-loading" v-show="btnLoad"></el-button>
-              <el-button type="primary" @click="submitForm1('detailData')" v-show="btnLoad">保存</el-button>
+              <el-button type="primary" @click="submitForm1('detailData')" v-show="!btnLoad">保存</el-button>
               <el-button @click="_cancel1">取消</el-button>
             </el-form-item>
           </div>
@@ -345,7 +345,12 @@ export default {
               this.inpShow1 = false;
               this.detailList();
             } else {
-              this.$message.error("更新失败");
+              if(res.Response.Error.Code){
+                this.$message.error(res.Response.Error.Code);
+              }
+              else{
+                this.$message.error("更新失败");
+              }
             }
             this.btnLoad = false;
           });
