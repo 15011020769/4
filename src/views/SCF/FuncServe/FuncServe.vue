@@ -131,18 +131,22 @@
         </div>
         <div class="mainTable">
           <el-table :data="tableDataBegin.slice((currentPage-1)*pageSize,currentPage*pageSize)">
-            <el-table-column prop="funName" label="函数名">
+            <el-table-column prop="FunctionName" label="函数名">
               <template slot-scope="scope">
-                <a href="#" @click="toDoDetail(scope.$index, scope.row)">{{scope.row.functionName}}</a>
+                <a href="#" @click="toDoDetail(scope.$index, scope.row)">{{scope.row.FunctionName}}</a>
               </template>
             </el-table-column>
-            <el-table-column prop="funStatus" label="函数状态"></el-table-column>
+            <el-table-column  label="函数状态">
+               <template slot-scope="scope">
+                <p>{{State[scope.row.Status]}}</p >
+              </template>
+            </el-table-column>
             <el-table-column prop="monitor" label="监控"></el-table-column>
-            <el-table-column prop="runtime" label="运行环境"></el-table-column>
-            <el-table-column prop="description" label="描述"></el-table-column>
-            <el-table-column prop="funTabs" label="标签" width="70px"></el-table-column>
-            <el-table-column prop="modTime" label="创建时间"></el-table-column>
-            <el-table-column prop="addTime" label="上次修改时间"></el-table-column>
+            <el-table-column prop="Runtime" label="运行环境"></el-table-column>
+            <el-table-column prop="Description" label="描述"></el-table-column>
+            <!--<el-table-column prop="funTabs" label="标签" width="70px"></el-table-column>-->
+            <el-table-column prop="AddTime" label="创建时间"></el-table-column>
+            <el-table-column prop="ModTime" label="上次修改时间"></el-table-column>
             <el-table-column prop="operate" label="操作" width="180">
               <template slot-scope="scope">
                 <el-button
@@ -297,7 +301,16 @@ export default {
       copyIndex2: "",
       filterConrent: "value2",
       showTips: false,
-      isbol: false
+      isbol: false,
+      State:{
+        Active:'正常',
+        Creating: '创建中...',
+        Updating:'更新中...',
+        Publishing: '发布中...',
+        UpdatingAndPublishing:'更新发布中...',
+        CreateFailed: '创建失败',
+        UpdateFailed:'更新失败'
+      }
     };
   },
   computed: {
@@ -352,11 +365,12 @@ export default {
       let params = {
         // Action: "ListFunctions",
         Version: "2018-04-16",
-        Region: this.$cookie.get("regionv2")
+        Region: "ap-guangzhou"
       };
-      this.$axios.post("scf/ListFunctions", params).then(res => {
+      this.$axios.post("scf2/ListFunctions", params).then(res => {
+        console.log(res.Response.Functions)
         // console.log(res.data.functions);
-        this.tableDataBegin = res.data.functions;
+        this.tableDataBegin = res.Response.Functions;
         //this.allData = this.tableDataBegin;
         //this.tableDataBegin = this.allData;
         // 将数据的长度赋值给totalItems
@@ -505,7 +519,7 @@ export default {
       let params = {
         Version: "2018-04-16",
         Region: this.$cookie.get("regionv2"),
-        FunctionName: this.copyIndex2.functionName,
+        FunctionName: this.copyIndex2.FunctionName,
         NewFunctionName: this.newname,
         Action: "CopyFunction"
       };
@@ -572,7 +586,7 @@ export default {
     spaceDelete(spaceIndex, spaceRow) {
       let params = {
         Version: "2018-04-16",
-        Region: "ap-taipei",
+        Region: "ap-guangzhou",
         Namespace: spaceRow.Name
       };
       this.$axios.post("scf2/DeleteNamespace", params).then(res => {
@@ -603,13 +617,10 @@ export default {
     },
     //跳转详情页点击事件
     toDoDetail(newIndex, newRow) {
-      console.log(newIndex);
-      console.log(this.tableDataBegin);
-      console.log(this.tableDataBegin[newIndex].functionName);
       this.$router.push({
         path: "/funSeverDetail",
         query: {
-          functionName: this.tableDataBegin[newIndex].functionName
+          functionName: this.tableDataBegin[newIndex].FunctionName
         }
       });
     },
@@ -728,6 +739,8 @@ export default {
   padding: 0 0 10px;
   .newCreate {
     float: left;
+    background-color: #2277da;
+    border-color: #1f6bc4;
   }
   .searchs {
     width: 450px;

@@ -16,6 +16,7 @@
               {{scope.row.MetricName | UpName(value)}}
               <el-popover placement="bottom-start" title="" width="200" trigger="hover">
                 <p>{{scope.row.MetricName | UpTitle(value)}}</p>
+                <span class="symbol">{{scope.row.symbol}}</span>
                 <i class="el-icon-warning" slot="reference"></i>
               </el-popover>
             </span>
@@ -94,7 +95,7 @@ import { All_MONITOR } from '@/constants'
 export default {
   data() {
     return {
-      functionName: this.$route.query.functionName,
+      functionName: this.$route.query.FunctionName,
         period: '',
         Start_End: [],
         value: 1,
@@ -136,6 +137,22 @@ export default {
           'ServerErrorPercentage',//平台错误率
           'Throttle	'//函数运行受限次数
         ];
+        const symbol = [
+          "%",
+          "-",
+          "MB",
+          "%",
+          "个",
+          "Mbps",
+          "Mbps",
+          "个/秒",
+          "个/秒",
+          "Mbps",
+          "Mbps",
+          "MB",
+          "个/秒",
+          "个/秒"
+        ];
         this.tableData = []
         for (let i = 0; i < metricNArr.length; i++) {
           this.Obtain(metricNArr[i]);
@@ -144,7 +161,7 @@ export default {
           this.getModality(this.MetricName)
         }
       },
-      Obtain(metricN) {
+      Obtain(metricN,symbol) {
         const param = {
           Version: '2018-07-24',
           Action: 'GetMonitorData',
@@ -157,7 +174,8 @@ export default {
           StartTime: this.Start_End.StartTIme,
           EndTime: this.Start_End.EndTIme,
         };
-        this.axios.post(All_MONITOR, param).then((data) => {
+        this.axios.post('monitor2/GetMonitorData', param).then((data) => {
+          data.Response.symbol = symbol;
           this.tableData.push(data.Response);
         });
       },
@@ -173,10 +191,20 @@ export default {
           StartTime: this.Start_End.StartTIme,
           EndTime: this.Start_End.EndTIme,
         };
-        console.log(param)
-        this.axios.post(All_MONITOR, param).then((data) => {
+        this.axios.post('monitor2/GetMonitorData', param).then((data) => {
           this.timeData = data.Response.DataPoints[0].Timestamps
           this.jingData = data.Response.DataPoints[0].Values
+        });
+      },
+      Basics(metricN) {
+        const param = {
+          Version: '2018-07-24',
+          Region: this.$cookie.get('regionv2'),
+          Namespace: 'QCE/SCF_V2',
+          MetricName: metricN,
+        };
+        this.axios.post(ALL_Basics, param).then((data) => {
+          console.log(data)
         });
       },
     handleClose(){
@@ -243,6 +271,9 @@ export default {
 };
 </script>
 <style lang="scss">
+.symbol {
+    color: #bbb;
+  }
 .dataChange{
   margin-right:12px!important;
   margin-left:12px!important;

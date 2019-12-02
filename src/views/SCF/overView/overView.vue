@@ -54,16 +54,17 @@
       <div class="modelchart">
         <h3>使用统计</h3>
         <div>
-          <el-select class="selectAddress" v-model="valueAddress" placeholder="请选择" filterable>
+         <!--<el-select class="selectAddress" v-model="valueAddress" placeholder="请选择" filterable>
             <el-option
               v-for="item in address"
               :key="item.value"
               :label="item.label"
               :value="item.value"
             ></el-option>
-          </el-select>
-
-          <el-button-group>
+          </el-select>-->
+          <el-input class="addressName" readonly="readonly" v-model="addressIpt"></el-input>
+          <XTimeX v-on:switchData="GetDat" :classsvalue='value'></XTimeX>
+         <!-- <el-button-group>
             <el-button @click="thisTime(1)">实时</el-button>
             <el-button @click="thisTime(2)">近24小时</el-button>
             <el-button @click="thisTime(3)">近七天</el-button>
@@ -87,7 +88,7 @@
                 :value="item.value"
               ></el-option>
             </el-select>
-          </span>
+          </span>-->
         </div>
         <div class="chartShowCon">
           <div class="chartShowTit">
@@ -97,18 +98,26 @@
                 <span>(次)</span>
               </el-button>
               <el-button @click="btnClick(2)" :class="{'addColor':type=='2'}">
+                外网出流量
+                <span>(KB)</span>
+              </el-button>
+              <el-button @click="btnClick(3)" :class="{'addColor':type=='3'}">
+                运行内存
+                <span>(MB)</span>
+              </el-button>
+              <el-button @click="btnClick(4)" :class="{'addColor':type=='4'}">
                 运行时间
                 <span>(ms)</span>
               </el-button>
-              <el-button @click="btnClick(3)" :class="{'addColor':type=='3'}">
+              <el-button @click="btnClick(5)" :class="{'addColor':type=='5'}">
                 错误次数
                 <span>(次)</span>
               </el-button>
-              <el-button @click="btnClick(4)" :class="{'addColor':type=='4'}">
+              <el-button @click="btnClick(6)" :class="{'addColor':type=='6'}">
                 并发执行个数
                 <span>(个)</span>
               </el-button>
-              <el-button @click="btnClick(5)" :class="{'addColor':type=='5'}">
+              <el-button @click="btnClick(7)" :class="{'addColor':type=='7'}">
                 受限次数
                 <span>(次)</span>
               </el-button>
@@ -134,8 +143,8 @@
               style="width: 100%"
               class="funDataTable"
             >
-              <el-table-column prop="funName" label="函数名"></el-table-column>
-              <el-table-column prop="nameSpace" label="命名空间"></el-table-column>
+              <el-table-column prop="FunctionName" label="函数名"></el-table-column>
+              <el-table-column prop="Namespace" label="命名空间"></el-table-column>
               <el-table-column prop="dataNum" label="数据指标"></el-table-column>
             </el-table>
           </div>
@@ -147,10 +156,13 @@
 
 <script>
 import echarts from "echarts";
-
+import XTimeX from '@/components/public/TimeXK';
+import { All_MONITOR } from '@/constants'
 export default {
   data() {
     return {
+      functionName: this.$route.query.FunctionName,
+      addressIpt: "中国台北",
       topList: {
         number: 0,
         thirdNum: 0
@@ -217,6 +229,9 @@ export default {
       charts: ""
     };
   },
+  components: {
+    XTimeX
+  },
   methods: {
     init() {
       let params = {
@@ -232,7 +247,7 @@ export default {
       if (functionName != "" && functionName != null) {
         params["FunctionName"] = functionName;
       }
-      let url = "scf2/GetFunction";
+      let url = "scf/GetFunction";
       this.axios
         .post(url, params)
         .then(res => {
@@ -244,6 +259,72 @@ export default {
           console.log(error);
         });
     },
+    GetDat(data) {
+        this.period = data[0];
+        this.Start_End = data[1];
+        this.value = data[2]
+        const metricNArr = [
+          'CPUUsage',
+          'CPULoadAvg',
+          'MemUsed',
+          'MemUsage',
+          'TcpCurrEstab',
+          'lanOuttraffic',
+          'lanIntraffic',
+          'lanOutpkg',
+          'lanInpkg',
+          'WanOuttraffic',
+          'WanIntraffic',
+          'AccOuttraffic',
+          'WanOutpkg',
+          'WanInpkg'
+        ];
+        this.tableData = []
+        for (let i = 0; i < metricNArr.length; i++) {
+          this.Obtain(metricNArr[i]);
+        }
+        if (this.MetricName) {
+          this.getModality(this.MetricName)
+        }
+      },
+      // 
+      Obtain(metricN) {
+        const param = {
+          Version: '2018-07-24',
+          Region: this.$cookie.get('regionv2'),
+          Namespace: 'QCE/SCF_V2',
+          MetricName: metricN,
+          'Instances.0.Dimensions.0.Name': 'InstanceId',
+          'Instances.0.Dimensions.0.Value': this.ID,
+          StartTime: this.Start_End.StartTIme,
+          EndTime: this.Start_End.EndTIme,
+        };
+        this.axios.post('monitor2/GetMonitorData', param).then((data) => {
+          this.tableData.push(data.Response);
+        });
+      },
+      getModality(MetricName) {
+        const param = {
+          Version: '2018-07-24',
+          Region: this.$cookie.get('regionv2'),
+          Namespace: 'QCE/SCF_V2',
+          MetricName: MetricName,
+          'Instances.0.Dimensions.0.Name': 'functionName',
+          'Instances.0.Dimensions.0.Value': this.functionName,
+          StartTime: this.Start_End.StartTIme,
+          EndTime: this.Start_End.EndTIme,
+        };
+        this.axios.post('monitor2/GetMonitorData', param).then((data) => {
+          this.timeData = data.Response.DataPoints[0].Timestamps
+          this.jingData = data.Response.DataPoints[0].Values
+        });
+      },
+      // 模态框
+      Modality(MetricName) {
+        this.MetricName = MetricName
+        this.dialogVisible = true;
+        this.getModality(this.MetricName)
+      },
     thisTime(thisTime) {
       var ipt1 = document.querySelector(".newDataTime input:nth-child(2)");
       var ipt2 = document.querySelector(".newDataTime input:nth-child(4)");
@@ -268,12 +349,16 @@ export default {
       if (clickNode == "1") {
         this.newData = "调用次数";
       } else if (clickNode == "2") {
+        this.newData = "外网出流量";
+      }else if (clickNode == "3") {
+        this.newData = "运行内存";
+      }else if (clickNode == "4") {
         this.newData = "运行时间";
-      } else if (clickNode == "3") {
-        this.newData = "错误次数";
-      } else if (clickNode == "4") {
-        this.newData = "并发执行个数";
       } else if (clickNode == "5") {
+        this.newData = "错误次数";
+      } else if (clickNode == "6") {
+        this.newData = "并发执行个数";
+      } else if (clickNode == "7") {
         this.newData = "受限次数";
       }
     },
@@ -320,6 +405,85 @@ export default {
       });
     }
   },
+    filters: {
+      UpName(value) {
+        if (value === 'lanOuttraffic') {
+          return (value = '内网出带宽');
+        }
+        if (value === 'lanIntraffic') {
+          return (value = '内网入带宽');
+        }
+        if (value === 'lanOutpkg') {
+          return (value = '内网出包量');
+        }
+        if (value === 'lanInpkg') {
+          return (value = '内网入包量');
+        }
+        if (value === 'WanOuttraffic') {
+          return (value = '外网出带宽');
+        }
+        if (value === 'WanIntraffic') {
+          return (value = '外网入带宽');
+        }
+        if (value === 'AccOuttraffic') {
+          return (value = '外网出流量');
+        }
+        if (value === 'WanOutpkg') {
+          return (value = '外网出包量');
+        }
+        if (value === 'WanInpkg') {
+          return (value = '外网入包量');
+        }
+        if (value === 'CPUUsage') {
+          return (value = 'CPU使用率');
+        }
+
+        if (value === 'CPULoadAvg') {
+          return (value = 'CPU平均负载');
+        }
+        if (value === 'MemUsed') {
+          return (value = '内存使用量');
+        }
+        if (value === 'MemUsage') {
+          return (value = '内存利用率');
+        }
+        if (value === 'TcpCurrEstab') {
+          return (value = 'TCP连接数');
+        }
+        if (value === '') {
+          return (value = '');
+        }
+      },
+      UpTitle(value) {
+        if (value === 'tcp_curr_estab') {
+          return (value = '处于 ESTABLISHED 状态的 TCP 连接数量，依赖监控组件安装采集');
+        }
+        if (value === 'cpu_usage') {
+          return (value = 'CPU利用率是通过CVM子机内部监控组件采集上报，数据更加精准');
+        }
+        if (value === 'cpu_loadavg') {
+          return (value = '1分钟内CPU平均负载，取 /proc/loadavg 第一列数据（windows操作系统无此指标），依赖监控组件安装采集');
+        }
+        if (value === 'mem_used') {
+          return (value = '使用的内存量，不包括系统缓存和缓存区占用内存，依赖监控组件安装采集');
+        }
+        if (value === 'mem_usage') {
+          return (value = '用户实际使用的内存量与总内存量之比，不包括缓冲区与系统缓存占用的内存');
+        }
+      },
+      UpTime(value) {
+
+        let timeArr = []
+        for (let i = 0; i < value.length; i++) {
+          let uptime = moment(value[i] * 1000).format(
+            'YYYY-MM-DD HH:mm:ss',
+          );
+          timeArr.push(uptime)
+        }
+
+        return timeArr
+      }
+    },
   mounted() {
     if (this.tableData == "") {
       document.querySelector(".chartTable").innerHTML = "暂无数据";
