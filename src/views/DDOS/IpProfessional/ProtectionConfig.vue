@@ -11,9 +11,7 @@
             <div class="mainContent">
               <div class="textAlignTop">
                 <el-select placeholder="要过滤的标签" v-model="filterConrent">
-                  <el-option label="IP" value="IP"></el-option>
-                  <el-option label="ID" value="ID"></el-option>
-                  <el-option label="服务包名称" value="serverBag"></el-option>
+                  <el-option v-for="(item, index) in options1" :label="item.label" :value="item.value" :key="index"></el-option>
                 </el-select>
                 <el-input
                   v-model="tableDataName"
@@ -24,18 +22,64 @@
               </div>
               <div class="mainTable">
                 <el-table :data="tableDataBegin.slice((currentPage-1)*pageSize,currentPage*pageSize)">
-                  <el-table-column prop="idOrName" label="ID/名称">
-                    <!-- <template slot-scope="scope">
-                      <a href="#" @click="toDoDetail(scope.$index, scope.row)">{{scope.row.idOrName}}</a>
-                    </template> -->
+                  <el-table-column prop="Record.Id" label="ID/名称">
+                    <template slot-scope="scope">
+                      <div v-for="(item, index) in scope.row.Record" :key="index">
+                        <div v-if="item.Key=='Id'">{{item.Value}}</div>
+                        <!-- <a v-if="item.Key=='Id'" href="#" @click="toDetail(scope.$index, scope.row)">{{item.Value}}</a> -->
+                      </div>
+                    </template>
                   </el-table-column>
-                  <el-table-column prop="ip" label="IP"></el-table-column>
-                  <el-table-column prop="origin" label="地区"></el-table-column>
-                  <el-table-column prop="saveStatus" label="防护状态"></el-table-column>
-                  <el-table-column prop="clean" label="清洗阈值"></el-table-column>
-                  <el-table-column prop="saveGarden" label="防护等级"></el-table-column>
-                  <el-table-column prop="BusinessScene" label="业务场景"></el-table-column>
-                  <el-table-column prop="advanced" label="高级防护策略"></el-table-column>
+                  <el-table-column prop="Record.GroupIpList" label="IP">
+                    <template slot-scope="scope">
+                      <div v-for="(item, index) in scope.row.Record" :key="index">
+                        <div v-if="item.Key=='GroupIpList'">{{item.Value}}</div>
+                      </div>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="origin" label="地区">
+                    <template slot-scope="scope">
+                      <div v-for="(item, index) in scope.row.Record" :key="index">
+                        <div v-if="item.Key=='Id'">-</div>
+                      </div>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="Record.DefendStatus" label="防护状态">
+                    <template slot-scope="scope">
+                      <div v-for="(item, index) in scope.row.Record" :key="index">
+                        <div v-if="item.Key=='DefendStatus' && item.Value == '1'">开启</div>
+                        <div v-else-if="item.Key=='DefendStatus' && item.Value != '1'">-</div>
+                      </div>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="Record.DdosThreshold" label="清洗阈值">
+                    <template slot-scope="scope">
+                      <div v-for="(item, index) in scope.row.Record" :key="index">
+                        <div v-if="item.Key=='DdosThreshold'">{{item.Value}}Mps</div>
+                      </div>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="saveGarden" label="防护等级">
+                    <template slot-scope="scope">
+                      <div v-for="(item, index) in scope.row.Record" :key="index">
+                        <div v-if="item.Key=='Id'">-</div>
+                      </div>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="BusinessScene" label="业务场景">
+                    <template slot-scope="scope">
+                      <div v-for="(item, index) in scope.row.Record" :key="index">
+                        <div v-if="item.Key=='Id'">-</div>
+                      </div>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="advanced" label="高级防护策略">
+                    <template slot-scope="scope">
+                      <div v-for="(item, index) in scope.row.Record" :key="index">
+                        <div v-if="item.Key=='Id'">-</div>
+                      </div>
+                    </template>
+                  </el-table-column>
                   <el-table-column prop="action" label="操作" width="180">
                     <template slot-scope="scope">
                       <el-button
@@ -48,98 +92,98 @@
                   <el-dialog
                     title="DDoS防护配置"
                     :visible.sync="changeModel"
-                    width="30%"
+                    width="40%"
                     :append-to-body="true"
                     :before-close="changeClose"
                   >
-                  <div class="modelCenterCon">
-                    <p>
-                      <span class="modelSpan1">防护状态</span>
-                      <span>
-                        <el-switch
-                          v-model="saveStatus"
-                          active-color="#006eff"
-                          inactive-color="#999">
-                        </el-switch>
-                      </span>
-                    </p>
-                    <p>
-                      <span class="modelSpan1">清洗阈值<i class="el-icon-info"></i></span>
-                      <span>
-                        <el-select v-model="cleanNum" class="setSelect">
-                          <el-option v-for="(item,index) in cleanNumOption" :label="item.label" :value="item.value" :key="index"></el-option>
-                        </el-select>
-                      </span>
-                    </p>
-                    <p>
-                      <span class="modelSpan1">防护等级<i class="el-icon-info"></i></span>
-                      <span>
-                        <a class="gardenChoose" :class="saveGarden==1?'seceltGarden':''" @click="clickGarden(1,'宽松')">宽松</a>
-                        <a class="gardenChoose" :class="saveGarden==2?'seceltGarden':''" @click="clickGarden(2,'正常')">正常</a>
-                        <a class="gardenChoose" :class="saveGarden==3?'seceltGarden':''" @click="clickGarden(3,'严格')">严格</a>
-                      </span>
-                      <el-dialog
-                        title="确认切换到严格模式？"
-                        :visible.sync="changeModelTip3"
-                        width="30%"
-                        :append-to-body="true"
-                        :before-close="changeCloseTip3"
-                      >
-                        <p>严格模式可能会影响业务，建议仅在正常模式透传攻击包影响业务时才使用。如果严格模式仍然无法解决透传影响业务的问题，请联系售后技术支持定制策略。</p>
-                        <span slot="footer" class="dialog-footer">
-                          <el-button @click="changeCloseTip3">取 消</el-button>
-                          <el-button type="primary" @click="changeSureTip3()">确 定</el-button>
+                    <div class="modelCenterCon">
+                      <p>
+                        <span class="modelSpan1">防护状态</span>
+                        <span>
+                          <el-switch
+                            v-model="servicePack.DefendStatus"
+                            active-color="#006eff"
+                            inactive-color="#999">
+                          </el-switch>
                         </span>
-                      </el-dialog>
-                      <el-dialog
-                        title="确认切换到正常模式？"
-                        :visible.sync="changeModelTip2"
-                        width="30%"
-                        :append-to-body="true"
-                        :before-close="changeCloseTip2"
-                      >
-                        <p>默认清洗模式，清洗策略不松不紧。</p>
-                        <span slot="footer" class="dialog-footer">
-                          <el-button @click="changeCloseTip2">取 消</el-button>
-                          <el-button type="primary" @click="changeSureTip2()">确 定</el-button>
+                      </p>
+                      <p>
+                        <span class="modelSpan1">清洗阈值<i class="el-icon-info"></i></span>
+                        <span>
+                          <el-select v-model="servicePack.DdosThreshold" class="setSelect">
+                            <el-option v-for="(item, index) in cleanNumOption" :label="item.label" :value="item.value" :key="index"></el-option>
+                          </el-select>
                         </span>
-                      </el-dialog>
-                      <el-dialog
-                        title="确认切换到宽松模式？"
-                        :visible.sync="changeModelTip1"
-                        width="30%"
-                        :append-to-body="true"
-                        :before-close="changeCloseTip1"
-                      >
-                        <p>宽松模式在遇到复杂攻击时可能会存在攻击透传，建议仅在正常模式存在误杀影响业务时使用。如果宽松模式仍然无法解决误杀问题，请联系售后技术支持进行策略定制。</p>
-                        <span slot="footer" class="dialog-footer">
-                          <el-button @click="changeCloseTip2">取 消</el-button>
-                          <el-button type="primary" @click="changeSureTip1()">确 定</el-button>
+                      </p>
+                      <p>
+                        <span class="modelSpan1">防护等级<i class="el-icon-info"></i></span>
+                        <span>
+                          <a class="gardenChoose" :class="saveGarden==1?'seceltGarden':''" @click="clickGarden(1,'宽松')">宽松</a>
+                          <a class="gardenChoose" :class="saveGarden==2?'seceltGarden':''" @click="clickGarden(2,'正常')">正常</a>
+                          <a class="gardenChoose" :class="saveGarden==3?'seceltGarden':''" @click="clickGarden(3,'严格')">严格</a>
                         </span>
-                      </el-dialog>
+                        <el-dialog
+                          title="确认切换到严格模式？"
+                          :visible.sync="changeModelTip3"
+                          width="30%"
+                          :append-to-body="true"
+                          :before-close="changeCloseTip3"
+                        >
+                          <p>严格模式可能会影响业务，建议仅在正常模式透传攻击包影响业务时才使用。如果严格模式仍然无法解决透传影响业务的问题，请联系售后技术支持定制策略。</p>
+                          <span slot="footer" class="dialog-footer">
+                            <el-button @click="changeCloseTip3">取 消</el-button>
+                            <el-button type="primary" @click="changeSureTip3()">确 定</el-button>
+                          </span>
+                        </el-dialog>
+                        <el-dialog
+                          title="确认切换到正常模式？"
+                          :visible.sync="changeModelTip2"
+                          width="30%"
+                          :append-to-body="true"
+                          :before-close="changeCloseTip2"
+                        >
+                          <p>默认清洗模式，清洗策略不松不紧。</p>
+                          <span slot="footer" class="dialog-footer">
+                            <el-button @click="changeCloseTip2">取 消</el-button>
+                            <el-button type="primary" @click="changeSureTip2()">确 定</el-button>
+                          </span>
+                        </el-dialog>
+                        <el-dialog
+                          title="确认切换到宽松模式？"
+                          :visible.sync="changeModelTip1"
+                          width="30%"
+                          :append-to-body="true"
+                          :before-close="changeCloseTip1"
+                        >
+                          <p>宽松模式在遇到复杂攻击时可能会存在攻击透传，建议仅在正常模式存在误杀影响业务时使用。如果宽松模式仍然无法解决误杀问题，请联系售后技术支持进行策略定制。</p>
+                          <span slot="footer" class="dialog-footer">
+                            <el-button @click="changeCloseTip2">取 消</el-button>
+                            <el-button type="primary" @click="changeSureTip1()">确 定</el-button>
+                          </span>
+                        </el-dialog>
 
-                    </p>
-                    <p>
-                      <span class="modelSpan1">高级策略</span>
-                      <span>
-                        <el-select v-model="topFun" class="setSelect">
-                          <el-option label="无" value="no"></el-option>
-                          <el-option label="erg" value="erg"></el-option>
-                        </el-select>
-                      </span>
-                    </p>
-                    <p>
-                      <span class="modelSpan1">DDoS共计告警阈值</span>
-                      <span>
-                        <el-select v-model="ddosWarning" class="setSelect" @change="selectChange1">
-                          <el-option label="未设置" value="no"></el-option>
-                          <el-option label="入流量宽带" value="erg"></el-option>
-                          <el-option label="清洗流量" value="erg"></el-option>
-                        </el-select>
-                        <span v-if="iptNummbps"><el-input v-model="iptmbpsText" class="intMbps"></el-input> Mbps</span>
-                      </span>
-                    </p>
-                  </div>
+                      </p>
+                      <p>
+                        <span class="modelSpan1">高级策略</span>
+                        <span>
+                          <el-select v-model="topFun" class="setSelect">
+                            <el-option label="无" value="no"></el-option>
+                            <el-option label="erg" value="erg"></el-option>
+                          </el-select>
+                        </span>
+                      </p>
+                      <p>
+                        <span class="modelSpan1">DDoS共计告警阈值</span>
+                        <span>
+                          <el-select v-model="ddosWarning" class="setSelect" @change="selectChange1">
+                            <el-option label="未设置" value="no"></el-option>
+                            <el-option label="入流量宽带" value="erg"></el-option>
+                            <el-option label="清洗流量" value="erg"></el-option>
+                          </el-select>
+                          <span v-if="iptNummbps"><el-input v-model="iptmbpsText" class="intMbps"></el-input> Mbps</span>
+                        </span>
+                      </p>
+                    </div>
                     <span slot="footer" class="dialog-footer">
                       <el-button @click="changeModelBtn">取 消</el-button>
                       <el-button type="primary" @click="changeSure()">确 定</el-button>
@@ -173,7 +217,7 @@
                 <el-table :data="tableDataBegin2">
                   <el-table-column prop="name" label="策略名称">
                     <template slot-scope="scope">
-                      <a href="#" @click="toDoDetail(scope.$index, scope.row)">{{scope.row.name}}</a>
+                      <a href="#" @click="toDetail(scope.$index, scope.row)">{{scope.row.name}}</a>
                     </template>
                   </el-table-column>
                   <el-table-column prop="resouseNum" label="绑定资源数量"></el-table-column>
@@ -260,6 +304,45 @@ import addNewTactics from './addNewTactics'
 export default {
   data() {
     return {
+      tableDataBegin: [],//DDoS攻击防护列表
+      changeModel: false,//修改框
+      options1: [
+        {label: 'IP', value: 'IP'},
+        {label: 'ID', value: 'ID'},
+        {label: '服务包名称', value: 'serverBag'}
+      ],
+      tableDataName: '',
+      tableDataTemp: [],
+      tableDataTemp2: [],
+      //修改框数据绑定
+      servicePack: {
+        DefendStatus:'',
+        DdosThreshold: '',
+      },
+      cleanNumOption:[
+        {label:'默认', value:'0'},
+        {label:'60Mbps', value:'60'},
+        {label:'80Mbps', value:'80'},
+        {label:'100Mbps', value:'100'},
+        {label:'150Mbps', value:'150'},
+        {label:'200Mbps', value:'0'},
+        {label:'250Mbps', value:'0'},
+        {label:'60Mbps', value:'0'},
+        {label:'300Mbps', value:'0'},
+        {label:'400Mbps', value:'0'},
+        {label:'500Mbps', value:'0'},
+        {label:'700Mbps', value:'0'},
+        {label:'1000Mbps', value:'0'}
+      ],
+      saveGarden:1,//防护等级
+      saveGardenText:'宽松',
+      topFun:'erg',//高级策略
+      ddosWarning:'清洗流量',//攻告警阈值
+      iptNummbps:false,//告警阈值输入框隐藏
+      iptmbpsText:'1000',
+      saveStatus:true,//防护状态
+      cleanNum:'100Mbps',//清洗阈值
+
       data: this.generateData(),
       valueThrou: [1],
       renderFunc(h, option) {
@@ -267,31 +350,14 @@ export default {
       },//穿梭框
       activeName:"first",
       filterConrent:"IP",
-      tableDataBegin: [],
       tableDataBegin2:[],
-      tableDataName: "",
-      tableDataEnd: [],
       currentPage: 1,
       pageSize: 10,
       totalItems: 0,
-      filterTableDataEnd: [],
       flag: false,
       multipleSelection: [],
       dialogVisible: false,
       dialogVisible1: false,//绑定资源弹框
-      filterConrent:"",
-      allData:[
-        {
-          idOrName:"net-00006y",
-          ip:"175.97.143.118",
-          origin:"中国台湾",
-          saveStatus:"关闭",
-          clean:"100Mbps",
-          saveGarden:"正常模式",
-          BusinessScene:"业务场景",
-          advanced:"erg"
-        }
-      ],
       allData2:[
         {
           name:"1",
@@ -305,175 +371,143 @@ export default {
       deleteIndex1: "",
       deleteBegin1: {},
       thisData:["1","2","3"],
-      changeModel:false,//修改框
       changeModelTip1:false,//修改模式提示弹框
       changeModelTip2:false,
       changeModelTip3:false,
-      //修改框数据绑定
-      saveStatus:true,//防护状态
-      cleanNum:'100Mbps',//清洗阈值
-      cleanNumOption:[
-        {
-          label:'默认',
-          value:0
-        },
-        {
-          label:'60Mbps',
-          value:0
-        },
-        {
-          label:'80Mbps',
-          value:0
-        },
-        {
-          label:'100Mbps',
-          value:0
-        },
-        {
-          label:'150Mbps',
-          value:0
-        },
-        {
-          label:'200Mbps',
-          value:0
-        },
-        {
-          label:'250Mbps',
-          value:0
-        },
-        {
-          label:'60Mbps',
-          value:0
-        },
-        {
-          label:'300Mbps',
-          value:0
-        },
-        {
-          label:'400Mbps',
-          value:0
-        },
-        {
-          label:'500Mbps',
-          value:0
-        },
-        {
-          label:'700Mbps',
-          value:0
-        },
-        {
-          label:'1000Mbps',
-          value:0
-        }
-      ],
-      saveGarden:1,//防护等级
-      saveGardenText:'宽松',
-      topFun:'erg',//高级策略
-      ddosWarning:'清洗流量',//攻告警阈值
-      iptNummbps:false,//告警阈值输入框隐藏
-      iptmbpsText:'1000'
     }
   },
   components:{
     addNewTactics:addNewTactics
   },
-  mounted() {
+  created() {
     this.getData();
-    this.getData2()
   },
   methods:{
-    handleClick(){},
-    //修改框关闭按钮
-    changeClose(){
-      this.changeModel=false;
-    },
     getData() {
-      var cookies = document.cookie;
-      var list = cookies.split(";");
-      for (var i = 0; i < list.length; i++) {
-        var arr = list[i].split("=");
-      }
-      let params = {
-        // Action: "ListFunctions",
-        Version: "2018-04-16",
-        Region: arr[1]
-      };
-      //this.$axios.post('', params).then(res => {
-        // console.log(res.data.functions);
-        //this.tableDataBegin = res.data.functions;
-        this.tableDataBegin = this.allData;
-        // 将数据的长度赋值给totalItems
-        this.totalItems = this.tableDataBegin.length;
-        if (this.totalItems > this.pageSize) {
-          for (let index = 0; index < this.pageSize; index++) {
-            this.tableDataEnd.push(this.tableDataBegin[index]);
-          }
-        } else {
-          this.tableDataEnd = this.tableDataBegin;
-        }
-      //});
+      this.describeResourceList()
+      this.describeDDoSPolicy()
     },
-    getData2() {
-      var cookies = document.cookie;
-      var list = cookies.split(";");
-      for (var i = 0; i < list.length; i++) {
-        var arr = list[i].split("=");
-      }
+    getDataCC() {
+
+    },
+    // 1.1.获取资源列表
+    describeResourceList() {
       let params = {
-        // Action: "ListFunctions",
-        Version: "2018-04-16",
-        Region: arr[1]
-      };
-      //this.$axios.post('', params).then(res => {
-        // console.log(res.data.functions);
-        //this.tableDataBegin = res.data.functions;
-        this.tableDataBegin2 = this.allData2;
-        // 将数据的长度赋值给totalItems
-        // this.totalItems = this.tableDataBegin.length;
-        // if (this.totalItems > this.pageSize) {
-        //   for (let index = 0; index < this.pageSize; index++) {
-        //     this.tableDataEnd.push(this.tableDataBegin[index]);
-        //   }
-        // } else {
-        //   this.tableDataEnd = this.tableDataBegin;
-        // }
-      //});
+        Version: '2018-07-09',
+        Business: 'net',
+      }
+      this.$axios.post('dayu2/DescribeResourceList', params).then(res => {
+        console.log(res)
+        this.tableDataBegin = res.Response.ServicePacks
+      })
+    },
+    // 1.2.获取DDoS高级策略
+    describeDDoSPolicy() {
+      let params = {
+        Version: '2018-07-09',
+        Business: 'net',
+      }
+      this.$axios.post('dayu2/DescribeDDoSPolicy', params).then(res => {
+        console.log(res)
+      })
+    },
+    // 2.2.
+
+    // 修改
+    changeRow(changeIndex,changeRow){
+      this.changeModel=true;
+      console.log(changeIndex, changeRow);
+      for (let i in changeRow.Record) {
+        switch (changeRow.Record[i].Key) {
+          case 'DefendStatus':
+            if (changeRow.Record[i].Value == '1') {
+              this.servicePack.DefendStatus = true
+            } else if (changeRow.Record[i].Value == '0') {
+              this.servicePack.DefendStatus = false
+            }
+            break;
+          case 'DdosThreshold':
+            this.servicePack.DdosThreshold = changeRow.Record[i].Value
+            break;
+        }
+      }
+      console.log(this.servicePack)
+      // if(changeRow.DefendStatus=='开启'){
+      //   this.DefendStatus=true
+      // }else{
+      //   this.DefendStatus=false;
+      // }
+      // this.cleanNum=changeRow.clean;
+      // if(changeRow.saveGarden=='正常模式'){
+      //   this.saveGardenText='正常';
+      //   this.saveGarden=2;
+      // }else if(changeRow.saveGarden=='宽松模式'){
+      //   this.saveGardenText='宽松';
+      //   this.saveGarden=1;
+      // }else if(changeRow.saveGarden=='严格模式'){
+      //   this.saveGardenText='严格';
+      //   this.saveGarden=3;
+      // }
+      // this.topFun=changeRow.advanced;
+      // //共计告警阈值
+      // if(this.ddosWarning=='未设置'){
+      //   this.iptNummbps=false;
+      // }else{
+      //   this.iptNummbps=true;;
+      // }
+      //this.ddosWarning=changeRow
     },
     // 搜索
     doFilter() {
-      console.log(this.filterConrent);
-      this.tableDataBegin = this.allData;
-      this.tableDataEnd = [];
-      //每次手动将数据置空,因为会出现多次点击搜索情况
-      this.filterTableDataEnd = [];
-      this.tableDataBegin.forEach((val, index) => {
-        if(this.filterConrent=="IP"){
-          console.log(typeof(val.ip))
-            if (val.ip==this.tableDataName) {
-              this.filterTableDataEnd.push(val);
-              this.tableDataBegin = this.filterTableDataEnd;
-            } else {
-              this.filterTableDataEnd.push();
-              this.tableDataBegin = this.filterTableDataEnd;
-            }
-        }else if(this.filterConrent=="ID"||this.filterConrent=="serverBag"){
-            if (val.idOrName==this.tableDataName) {
-              this.filterTableDataEnd.push(val);
-              this.tableDataBegin = this.filterTableDataEnd;
-            } else {
-              this.filterTableDataEnd.push();
-              this.tableDataBegin = this.filterTableDataEnd;
-            }
-        }
-      });
+      console.log(this.filterConrent, this.tableDataName);
+      this.describeResourceList()
+      if(this.tableDataName != '') {
+        this.tableDataTemp = []
+        this.tableDataBegin.forEach((val, index) => {
+          if (this.filterConrent=="IP") {
+            val.Record.forEach((val2, index) => {
+              if (val2.Key == 'GroupIpList' && val2.Value == this.tableDataName) {
+                this.tableDataTemp.push(val)
+              }
+            })
+          } else if (this.filterConrent=="ID"||this.filterConrent=="serverBag") {
+            val.Record.forEach((val2, index) => {
+              if (val2.Key == 'Id' && val2.Value == this.tableDataName) {
+                this.tableDataTemp.push(val)
+              }
+            })
+          }
+        })
+        setTimeout(() => {
+          this.tableDataBegin.splice(0, this.tableDataBegin.length)
+          this.tableDataBegin = this.tableDataTemp
+        }, 1000);
+      }
       //页面数据改变重新统计数据数量和当前页
       this.currentPage = 1;
-      this.totalItems = this.filterTableDataEnd.length;
+      this.totalItems = this.tableDataBegin.length;
       //渲染表格,根据值
-      this.currentChangePage(this.filterTableDataEnd);
-
+      this.currentChangePage(this.tableDataBegin);
       //页面初始化数据需要判断是否检索过
       this.flag = true;
+    },
+    // Tab页面切换
+    handleClick(tab, event) {
+      console.log(tab)
+      // this.describeResourceList() //获取资源列表的接口单独调用（因为日期变更不需要调用此接口）
+      if(tab.name == 'first') { //DDOS攻击防护
+        this.getData()
+      } else if(tab.name == 'second') { //CC防护
+        this.getDataCC()
+      } else if(tab.name == 'third') {  //DDOS高级防护策略
+        // this.getDataService()
+      }
+    },
+
+    toDetail() {},
+    //修改框关闭按钮
+    changeClose(){
+      this.changeModel=false;
     },
     openData() {},
     // 分页开始
@@ -487,18 +521,18 @@ export default {
       this.currentPage = val;
       //需要判断是否检索
       if (!this.flag) {
-        this.currentChangePage(this.tableDataEnd);
+        this.currentChangePage(this.tableDataTemp);
       } else {
-        this.currentChangePage(this.filterTableDataEnd);
+        this.currentChangePage(this.tableDataTemp2);
       }
     }, //组件自带监控当前页码
     currentChangePage(list) {
       let from = (this.currentPage - 1) * this.pageSize;
       let to = this.currentPage * this.pageSize;
-      this.tableDataEnd = [];
+      this.tableDataTemp = [];
       for (; from < to; from++) {
         if (list[from]) {
-          this.tableDataEnd.push(list[from]);
+          this.tableDataTemp.push(list[from]);
         }
       }
     },
@@ -572,35 +606,6 @@ export default {
         path: '/choose'
       })
     },
-    //修改
-    changeRow(changeIndex,changeRow){
-      this.changeModel=true;
-      console.log(changeRow);
-      if(changeRow.saveStatus=='开启'){
-        this.saveStatus=true
-      }else{
-        this.saveStatus=false;
-      }
-      this.cleanNum=changeRow.clean;
-      if(changeRow.saveGarden=='正常模式'){
-        this.saveGardenText='正常';
-        this.saveGarden=2;
-      }else if(changeRow.saveGarden=='宽松模式'){
-        this.saveGardenText='宽松';
-        this.saveGarden=1;
-      }else if(changeRow.saveGarden=='严格模式'){
-        this.saveGardenText='严格';
-        this.saveGarden=3;
-      }
-      this.topFun=changeRow.advanced;
-      //共计告警阈值
-      if(this.ddosWarning=='未设置'){
-        this.iptNummbps=false;
-      }else{
-        this.iptNummbps=true;;
-      }
-      //this.ddosWarning=changeRow
-    },
     selectChange1(){
       if(this.ddosWarning=='未设置'){
         this.iptNummbps=false;
@@ -610,6 +615,7 @@ export default {
     },
     //修改确定按钮
     changeSure(){
+      console.log(this.servicePack)
       this.changeModel=false;
     },
     //选择防护等级

@@ -84,8 +84,7 @@
         <div class="allConMainThreeTit">
           <div>攻击日志（30天内）</div>
           <div class="rightCon">
-            <!-- <a href="#" class="downloadTable" @click="exportExcel">下载表格</a> -->
-            <a href="#" class="downloadTable" @click="testMethod()">下载表格</a>
+            <a href="#" class="downloadTable" @click="exportExcel">下载表格</a>
             <el-input class="rightIptSearch" v-model="tableDataName" placeholder="请输入要查询的资产ID"/><el-button @click="doFilter" class="searcHBthn el-icon-search"></el-button>
           </div>
         </div>
@@ -153,8 +152,8 @@
   </div>
 </template>
 <script>
-// import FileSaver from 'file-saver'
-// import XLSX from 'xlsx'
+import FileSaver from 'file-saver'
+import XLSX from 'xlsx'
 export default {
   data() {
 		return {
@@ -331,7 +330,7 @@ export default {
         this.newData="受限次数"
       }
     },
-    getDataOld() {
+    getDataOld() {//前端页面人员写的，不懂
       var cookies = document.cookie;
       var list = cookies.split(";");
       for (var i = 0; i < list.length; i++) {
@@ -358,9 +357,6 @@ export default {
           this.tableDataEnd = this.tableDataBegin;
         }
       //});
-    },
-    testMethod: function () {
-      console.log()
     },
     // 搜索
     doFilter() {
