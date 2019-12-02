@@ -106,7 +106,7 @@ export default {
             center: true
           }).then(() => { }).catch(() => { })
         } else if (this.$cookie.get('userType') === '1') {
-          window.location.href = process.env.VUE_APP_sysUrl +  + url
+          window.location.href = process.env.VUE_APP_sysUrl + url
         }
       } else {
         window.location.href = process.env.VUE_APP_loginUrl
