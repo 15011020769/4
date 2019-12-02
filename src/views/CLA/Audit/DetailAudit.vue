@@ -450,7 +450,7 @@ export default {
       };
       this.axios.post(GZJ_DETAILIST, params).then(res => {
         this.detailData = res.Response;
-        this.detailData.IsCreateNewBucket = 1;
+        this.detailData.IsCreateNewBucket = 0;
         this.setChild = this.detailData.IsEnableCmqNotify;
         this.loading = false;
       });
