@@ -27,15 +27,25 @@
 						</el-dialog>
 						<p><span>ID</span><span>{{projectDetail.KeyId}}</span></p>
 						<p><span>状态</span><span :style="projectDetail.KeyState=='已启用'?'color:#000':'color:#ff9d00'">{{projectDetail.KeyState}}</span>
-                <a href="#" :style="projectDetail.KeyState=='已禁用' || projectDetail.KeyState=='待导入' || keyList.KeyState=='PendingDelete'?'display:none':'display:inline-block'">&nbsp;禁用密钥</a>
-                <a href="#" :style="projectDetail.KeyState=='已启用' || projectDetail.KeyState=='待导入' || keyList.KeyState=='PendingDelete'?'display:none':'display:inline-block'">&nbsp;启用密钥</a>
+                <a href="#" :style="projectDetail.KeyState=='已禁用' || projectDetail.KeyState=='待导入' || projectDetail.KeyState=='PendingDelete'?'display:none':'display:inline-block'">&nbsp;禁用密钥</a>
+                <a href="#" :style="projectDetail.KeyState=='已启用' || projectDetail.KeyState=='待导入' || projectDetail.KeyState=='PendingDelete'?'display:none':'display:inline-block'">&nbsp;启用密钥</a>
                 <a href="#" :style="projectDetail.KeyState=='已启用' || projectDetail.KeyState=='待导入' || projectDetail.KeyState=='已禁用'?'display:none':'display:inline-block'">&nbsp;取消删除</a>
             </p>
 						<p><span>地区</span><span>{{projectDetail.address}}</span></p>
 						<p><span>创建时间</span><span>{{projectDetail.CreateTime}}</span></p>
 						<p><span>创建者</span><span>{{keyList.Owner}}</span></p>
-						<p><span>轮换状态</span><span>{{projectDetail.CreateTime}}</span>
-            
+						<p><span>轮换状态</span>
+                <!-- <span>{{projectDetail.CreateTime}}</span> -->
+                <!-- <span :style="projectDetail.KeyState=='已禁用'?'display:none':'{display:inline-block;color: #ff9d00 ;}'">已禁用&nbsp;</span>
+                <span :style="projectDetail.KeyState=='待导入' || projectDetail.KeyState=='已启用' || projectDetail.KeyState=='PendingDelete'?'display:none':'{display:inline-block;}'">已启用</span>
+                <span :style=" projectDetail.KeyState=='待导入'?'display:none':'display:inline-block'">每年自动轮换&nbsp;</span>
+                <a href="#" :style=" projectDetail.KeyState=='待导入' ||  projectDetail.KeyState=='已禁用'?'display:none':'display:inline-block'">启用轮换&nbsp;</a>
+                <a href="#" :style=" projectDetail.KeyState=='待导入' || projectDetail.KeyState=='已启用'?'display:none':'display:inline-block'">禁用轮换</a> -->
+                <span :style="keyList.KeyRotationEnabled==true?'display:none':'{display:inline-block;color: #ff9d00 ;}'" >已禁用</span>
+                <span :style="projectDetail.KeyState=='待导入' || projectDetail.KeyState=='PendingDelete'?'display:none':'{display:inline-block;}'" v-if="keyList.KeyRotationEnabled">已启用</span>
+                <span :style=" projectDetail.KeyState=='待导入'?'display:none':'display:inline-block'">每年自动轮换&nbsp;</span>
+                <a href="#" v-if="!keyList.KeyRotationEnabled" :style=" projectDetail.KeyState=='待导入'?'display:none':'display:inline-block'" :class=" projectDetail.KeyState=='PendingDelete'?'atclor':''">启用轮换&nbsp;</a>
+                <a href="#" v-if="keyList.KeyRotationEnabled">禁用轮换</a>
             </p>
 						<p><span>描述信息</span><span>{{keyList.Description}}</span><i class="el-icon-edit" @click="newDescription"></i></p>
 						<el-dialog
@@ -158,12 +168,12 @@
 				<div class="projectDetailThree newClear">
 					<h2>在线工具<i class="el-icon-info"></i></h2>
 					<div class="btnBottom">
-						<button @click="changeBtnEncrypt(1)" :class="thisType=='1'?'bthBorderColor':''" :disabled='keyList.KeyState=="Disabled"||keyList.KeyState=="PendingDelete"?true:false'>加密</button>
-						<button @click="changeBtnEncrypt(2)" :class="thisType=='2'?'bthBorderColor':''" :disabled='keyList.KeyState=="Disabled"||keyList.KeyState=="PendingDelete"?true:false'>解密</button>
+						<button @click="changeBtnEncrypt(1)" :class="thisType=='1'?'bthBorderColor':''" :disabled='projectDetail.KeyState=="已禁用"||projectDetail.KeyState=="PendingDelete"?true:false'>加密</button>
+						<button @click="changeBtnEncrypt(2)" :class="thisType=='2'?'bthBorderColor':''" :disabled='projectDetail.KeyState=="已禁用"||projectDetail.KeyState=="PendingDelete"?true:false'>解密</button>
 					</div>
 					<div class="EncryptText newClear">
 						<div v-if="thisType=='1'||thisType=='0'?true:false">
-							<el-input :disabled='keyList.KeyState=="Disabled"||keyList.KeyState=="PendingDelete"?true:false' class="textareaIpt" v-model="Plaintext" type="textarea" placeholder="请输入明文" @input='changeTextarea1'></el-input>
+							<el-input :disabled='projectDetail.KeyState=="已禁用"||projectDetail.KeyState=="PendingDelete"?true:false' class="textareaIpt" v-model="Plaintext" type="textarea" placeholder="请输入明文" @input='changeTextarea1'></el-input>
 							<el-button @click="actionPlain" :disabled="disableTextarea" type="primary">执行</el-button>
 						</div>
 						<div v-if="thisType=='2'||thisType=='3'?true:false">
@@ -215,7 +225,8 @@ export default {
 	},
 	created(){
     this.projectDetail=JSON.parse(sessionStorage.getItem("projectId"));
-    // console.log(this.projectDetail)
+    this.projectDetail.KeyState=="已禁用"||this.projectDetail.KeyState=="PendingDelete"?this.thisType="0":3
+    console.log(this.projectDetail)
     let params = {
         Version: '2019-01-18',
         Region: 'ap-taipei',
@@ -223,8 +234,7 @@ export default {
       };
       this.$axios.post('kms2/DescribeKey', params).then(res => {     
         this.keyList=res.Response.KeyMetadata;
-        
-        this.keyList.KeyState=="Disabled"||this.keyList.KeyState=="PendingDelete"?this.thisType="0":3
+      
         // console.log(this.keyList)
        
       });
@@ -650,7 +660,7 @@ export default {
 			font-size:20px!important;
 			color:#999;
 			float:left;
-			margin:0 35px;
+			margin:0 3.6%;
 			width:auto!important;
 		}
 	}
@@ -778,5 +788,6 @@ export default {
 		padding-left:200px;
 	}
 }
-
+.atclor{color:#bbb;cursor: default;}
+.atclor:hover{color:#bbb;cursor: default;}
 </style>
