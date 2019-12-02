@@ -38,29 +38,39 @@
           </template>
         </el-table-column>
 
-        <el-table-column prop="">
+        <el-table-column prop>
           <template slot-scope="scope">
-            <p>Max:</p>
-            <p>--</p>
-
+            <p style="font-size:12px;color:#bbb;font-weight:600">Max:</p>
+            <template v-if="scope.row.DataPoints[0].Values.length!==0">
+              <span style="color:#333;font-weight:600;font-size: 12px;">{{scope.row.DataPoints[0].Values|CMMax}}</span>
+              <span style="color:#333;font-weight:600;font-size: 12px;">{{scope.row.symbol}}</span>
+            </template>
+            <template v-if="scope.row.DataPoints[0].Values.length==0">-</template>
+          </template>
+        </el-table-column>
+        <el-table-column prop>
+          <template slot-scope="scope">
+            <p style="font-size:12px;color:#bbb;font-weight:600">Min:</p>
+            <template v-if="scope.row.DataPoints[0].Values.length!==0">
+              <span style="color:#333;font-weight:600;font-size: 12px;">{{scope.row.DataPoints[0].Values|CMMin}}</span>
+              <span style="color:#333;font-weight:600;font-size: 12px;">{{scope.row.symbol}}</span>
+            </template>
+            <template v-if="scope.row.DataPoints[0].Values.length==0">-</template>
           </template>
         </el-table-column>
 
-        <el-table-column prop="">
+        <el-table-column prop>
           <template slot-scope="scope">
-            <p>Min:</p>
-            <p>--</p>
-
+            <p style="font-size:12px;color:#bbb;font-weight:600">Avg:</p>
+            <template v-if="scope.row.DataPoints[0].Values.length!==0">
+              <span style="color:#333;font-weight:600;font-size: 12px;">{{scope.row.DataPoints[0].Values|CMAvg}}</span>
+              <span style="color:#333;font-weight:600;font-size: 12px;">{{scope.row.symbol}}</span>
+            </template>
+            <template v-if="scope.row.DataPoints[0].Values.length==0">-</template>
           </template>
         </el-table-column>
 
-        <el-table-column prop="">
-          <template slot-scope="scope">
-            <p>Avg:</p>
-            <p>--</p>
 
-          </template>
-        </el-table-column>
 
         <el-table-column prop="">
           <template slot-scope="scope">
@@ -128,17 +138,17 @@
           'Inpkg',
           'Outpkg'
         ];
-        const symbol = ["个/分钟", "个/分钟", "Mbps", "Mbps","个/秒","个/秒"];
+        const symbol = ["个/分钟", "个/分钟", "Mbps", "Mbps", "个/秒", "个/秒"];
         this.tableData = []
         for (let i = 0; i < metricNArr.length; i++) {
-          this.Obtain(metricNArr[i],symbol[i]);
+          this.Obtain(metricNArr[i], symbol[i]);
         }
         if (this.MetricName) {
           this.getModality(this.MetricName)
         }
       },
       // 
-      Obtain(metricN,symbol) {
+      Obtain(metricN, symbol) {
         const param = {
           Version: '2018-07-24',
           Region: this.$cookie.get('regionv2'),
@@ -249,9 +259,10 @@
 </script>
 
 <style scoped lang="scss">
-.symbol {
-  color: #bbb;
-}
+  .symbol {
+    color: #bbb;
+  }
+
   .Monitor {
     background: #ffffff;
     margin-top: 20px;

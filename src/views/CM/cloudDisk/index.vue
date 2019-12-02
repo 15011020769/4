@@ -80,7 +80,7 @@
   export default {
     data() {
       return {
-        loadShow: true,
+        loadShow: false,
         searchOptions: [{
           value: 'disk-usage',
           label: '云盘类型'
@@ -204,10 +204,11 @@
 
 </script>
 <style scoped lang="scss">
-.CM-wrap{
-  width: 100%;
-  height: 100%;
-}
+  .CM-wrap {
+    width: 100%;
+    height: 100%;
+  }
+
   .green {
     color: green
   }

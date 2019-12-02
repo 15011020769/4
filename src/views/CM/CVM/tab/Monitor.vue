@@ -38,24 +38,36 @@
 
         <el-table-column prop>
           <template slot-scope="scope">
-            <p>Max:</p>
-            <p>--</p>
+            <p style="font-size:12px;color:#bbb;font-weight:600">Max:</p>
+            <template v-if="scope.row.DataPoints[0].Values.length!==0">
+              <span style="color:#333;font-weight:600;font-size: 12px;">{{scope.row.DataPoints[0].Values|CMMax}}</span>
+              <span style="color:#333;font-weight:600;font-size: 12px;">{{scope.row.symbol}}</span>
+            </template>
+            <template v-if="scope.row.DataPoints[0].Values.length==0">-</template>
+          </template>
+        </el-table-column>
+        <el-table-column prop>
+          <template slot-scope="scope">
+            <p style="font-size:12px;color:#bbb;font-weight:600">Min:</p>
+            <template v-if="scope.row.DataPoints[0].Values.length!==0">
+              <span style="color:#333;font-weight:600;font-size: 12px;">{{scope.row.DataPoints[0].Values|CMMin}}</span>
+              <span style="color:#333;font-weight:600;font-size: 12px;">{{scope.row.symbol}}</span>
+            </template>
+            <template v-if="scope.row.DataPoints[0].Values.length==0">-</template>
           </template>
         </el-table-column>
 
         <el-table-column prop>
           <template slot-scope="scope">
-            <p>Min:</p>
-            <p>--</p>
+            <p style="font-size:12px;color:#bbb;font-weight:600">Avg:</p>
+            <template v-if="scope.row.DataPoints[0].Values.length!==0">
+              <span style="color:#333;font-weight:600;font-size: 12px;">{{scope.row.DataPoints[0].Values|CMAvg}}</span>
+              <span style="color:#333;font-weight:600;font-size: 12px;">{{scope.row.symbol}}</span>
+            </template>
+            <template v-if="scope.row.DataPoints[0].Values.length==0">-</template>
           </template>
         </el-table-column>
 
-        <el-table-column prop>
-          <template slot-scope="scope">
-            <p>Avg:</p>
-            <p>--</p>
-          </template>
-        </el-table-column>
 
         <el-table-column prop>
           <template slot-scope="scope">
@@ -144,8 +156,11 @@
         ];
         this.tableData = [];
         for (let i = 0; i < metricNArr.length; i++) {
-          this.Obtain(metricNArr[i], symbol[i]);
-          this.Basics(metricNArr[i])
+          this.Obtain(metricNArr[i], symbol[i]); <<
+          << << < HEAD
+          this.Basics(metricNArr[i]) ===
+            === = >>>
+            >>> > zbb
           // this.tableData[i].symbol = symbol
         }
         if (this.MetricName) {
@@ -180,7 +195,8 @@
           "Instances.0.Dimensions.0.Value": this.ID,
           Period: this.period,
           StartTime: this.Start_End.StartTIme,
-          EndTime: this.Start_End.EndTIme
+          EndTime: this.Start_End.EndTIme <<
+            << << < HEAD
         };
         this.axios.post(All_MONITOR, param).then(data => {
           this.timeData = data.Response.DataPoints[0].Timestamps;
@@ -199,17 +215,29 @@
         });
       },
 
-      // 模态框
-      Modality(MetricName) {
-        this.MetricName = MetricName;
-        this.dialogVisible = true;
-        this.getModality(this.MetricName);
-      },
-      handleClose(done) {
-        done();
-      }
+      ===
+      === =
+    };
+    this.axios.post(All_MONITOR, param).then(data => {
+      this.timeData = data.Response.DataPoints[0].Timestamps;
+      this.jingData = data.Response.DataPoints[0].Values;
+    });
+  },
+
+
+  >>>
+  >>> > zbb
+  // 模态框
+  Modality(MetricName) {
+      this.MetricName = MetricName;
+      this.dialogVisible = true;
+      this.getModality(this.MetricName);
     },
-    filters: {
+    handleClose(done) {
+      done();
+    }
+  },
+  filters: {
       UpName(value) {
         if (value === "lanOuttraffic") {
           return (value = "内网出带宽");
@@ -273,7 +301,8 @@
         }
         if (value === "WanOuttraffic") {
           return (value =
-            "外网平均每秒出流量，最小粒度数据为10秒总流量/10秒 计算得出");
+            "外网平均每秒出流量，最小粒度数据为10秒总流量/10秒 计算得出"); <<
+          << << < HEAD
         }
         if (value === "WanIntraffic") {
           return (value = "外网平均每秒入流量");
@@ -294,33 +323,56 @@
         if (value === "CPULoadAvg") {
           return (value =
             "1分钟内CPU平均负载，取 /proc/loadavg 第一列数据（windows操作系统无此指标），依赖监控组件安装采集");
-        }
-        if (value === "MemUsed") {
-          return (value =
-            "使用的内存量，不包括系统缓存和缓存区占用内存，依赖监控组件安装采集");
-        }
-        if (value === "MemUsage") {
-          return (value =
-            "用户实际使用的内存量与总内存量之比，不包括缓冲区与系统缓存占用的内存");
-        }
-        if (value === "TcpCurrEstab") {
-          return (value =
-            "处于 ESTABLISHED 状态的 TCP 连接数量，依赖监控组件安装采集");
-        }
-        if (value === "") {
-          return (value = "");
-        }
-      },
-      UpTime(value) {
-        let timeArr = [];
-        for (let i = 0; i < value.length; i++) {
-          let uptime = moment(value[i] * 1000).format("YYYY-MM-DD HH:mm:ss");
-          timeArr.push(uptime);
-        }
-
-        return timeArr;
+        } ===
+        === =
       }
+      if (value === "WanIntraffic") {
+        return (value = "外网平均每秒入流量");
+      }
+      if (value === "AccOuttraffic") {
+        return (value = "外网网卡的平均每秒出流量");
+      }
+      if (value === "WanOutpkg") {
+        return (value = "外网平均每秒出包量");
+      }
+      if (value === "WanInpkg") {
+        return (value = "外网平均每秒入包量");
+      }
+      if (value === "CPUUsage") {
+        return (value =
+          "CPU利用率是通过CVM子机内部监控组件采集上报，数据更加精准");
+      }
+      if (value === "CPULoadAvg") {
+        return (value =
+          "1分钟内CPU平均负载，取 /proc/loadavg 第一列数据（windows操作系统无此指标），依赖监控组件安装采集");
+      } >>>
+      >>> > zbb
+      if (value === "MemUsed") {
+        return (value =
+          "使用的内存量，不包括系统缓存和缓存区占用内存，依赖监控组件安装采集");
+      }
+      if (value === "MemUsage") {
+        return (value =
+          "用户实际使用的内存量与总内存量之比，不包括缓冲区与系统缓存占用的内存");
+      }
+      if (value === "TcpCurrEstab") {
+        return (value =
+          "处于 ESTABLISHED 状态的 TCP 连接数量，依赖监控组件安装采集");
+      }
+      if (value === "") {
+        return (value = "");
+      }
+    },
+    UpTime(value) {
+      let timeArr = [];
+      for (let i = 0; i < value.length; i++) {
+        let uptime = moment(value[i] * 1000).format("YYYY-MM-DD HH:mm:ss");
+        timeArr.push(uptime);
+      }
+
+      return timeArr;
     }
+  }
   };
 
 </script>
