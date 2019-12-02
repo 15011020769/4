@@ -27,6 +27,8 @@
     "build:WAF": "vue-cli-service build --WAF",
     "serve:KMS": "vue-cli-service serve --KMS",
     "build:KMS": "vue-cli-service build --KMS",
+    "serve:TKE": "vue-cli-service serve --TKE",
+    "build:TKE": "vue-cli-service build --TKE",
     "qa": "npm run qa:CCN & npm run qa:BILL",
     "uat": "npm run uat:CCN & npm run uat:BILL",
     "lint": "vue-cli-service lint"
