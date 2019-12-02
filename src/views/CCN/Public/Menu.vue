@@ -1,7 +1,16 @@
 <template>
   <div class="CCN">
     <div class="big-title">{{$t('CCN.CCN.menu.title')}}</div>
-    <el-menu default-active="2" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose" background-color="#545c64" text-color="#fff" active-text-color="#ffd04b" :router="true">
+    <el-menu
+      default-active="2"
+      class="el-menu-vertical-demo"
+      @open="handleOpen"
+      @close="handleClose"
+      background-color="#292b36"
+      text-color="#fff"
+      active-text-color="#fff"
+      :router="true"
+    >
       <el-menu-item index="ccnPage">
         <span slot="title">{{$t('CCN.CCN.menu.title')}}</span>
       </el-menu-item>
@@ -11,32 +20,36 @@
 
 <script>
 export default {
-  data () {
+  data() {
     return {
-      activeIndex: '1',
-      activeIndex2: '1'
-    }
+      activeIndex: "1",
+      activeIndex2: "1"
+    };
   },
   methods: {
-    handleOpen (key, keyPath) {
-      console.log(key, keyPath)
+    handleOpen(key, keyPath) {
+      console.log(key, keyPath);
     },
-    handleClose (key, keyPath) {
-      console.log(key, keyPath)
+    handleClose(key, keyPath) {
+      console.log(key, keyPath);
     }
   }
-}
+};
 </script>
 
 <style lang="scss" scoped>
 .CCN {
-  ::v-deep .el-menu{
+  ::v-deep .el-menu {
     border-right: 0 !important;
   }
-  .big-title{
+  .big-title {
     font-size: 16px;
+    font-weight: bold;
     color: white;
     padding: 20px 0 15px 20px;
+    background: #292b36;
+    height: 45px;
+    margin: 10px 0;
   }
   .iconfont {
     margin-right: 5px;
@@ -47,6 +60,10 @@ export default {
   }
   ::v-deep .el-menu-item {
     padding-left: 20px !important;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    font-size: 14px;
   }
 }
 </style>

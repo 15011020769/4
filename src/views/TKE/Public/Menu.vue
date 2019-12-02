@@ -1,8 +1,16 @@
 <template>
   <div class="CLA">
     <div class="big-title">容器服务</div>
-    <el-menu default-active="2" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose"
-      background-color="#545c64" text-color="#fff" active-text-color="#ffd04b" :router="true">
+    <el-menu
+      default-active="2"
+      class="el-menu-vertical-demo"
+      @open="handleOpen"
+      @close="handleClose"
+      background-color="#292b36"
+      text-color="#fff"
+      active-text-color="#fff"
+      :router="true"
+    >
       <el-menu-item index="overview">
         <span slot="title">概览</span>
       </el-menu-item>
@@ -45,66 +53,72 @@
 </template>
 
 <script>
-  export default {
-    data() {
-      return {
-        activeName: '',
-        activeName1: '',
-        activeName2: '',
-        activeIndex: '1',
-        activeIndex2: '1'
-      }
+export default {
+  data() {
+    return {
+      activeName: "",
+      activeName1: "",
+      activeName2: "",
+      activeIndex: "1",
+      activeIndex2: "1"
+    };
+  },
+  methods: {
+    handleOpen(key, keyPath) {
+      // console.log(key, keyPath)
     },
-    methods: {
-      handleOpen(key, keyPath) {
-        // console.log(key, keyPath)
-      },
-      handleClose(key, keyPath) {
-        // console.log(key, keyPath)
-      }
+    handleClose(key, keyPath) {
+      // console.log(key, keyPath)
     }
   }
-
+};
 </script>
 
 <style lang="scss" scoped>
-  .CLA {
-    ::v-deep .el-menu {
-      border-right: 0 !important;
-    }
-
-    ::v-deep .el-collapse-item__content {
-      padding: 0;
-    }
-
-    ::v-deep .el-collapse-item__header {
-      padding: 0;
-      padding-left: 20px;
-      background-color: rgb(84, 92, 100);
-      color: white;
-    }
-
-    ::v-deep .el-collapse {
-      border: none;
-    }
-
-    .big-title {
-      font-size: 16px;
-      color: white;
-      padding: 20px 0 15px 20px;
-    }
-
-    .iconfont {
-      margin-right: 5px;
-      width: 24px;
-      text-align: center;
-      font-size: 16px;
-      vertical-align: middle;
-    }
-
-    ::v-deep .el-menu-item {
-      padding-left: 20px !important;
-    }
+.CLA {
+  ::v-deep .el-menu {
+    border-right: 0 !important;
   }
 
+  ::v-deep .el-collapse-item__content {
+    padding: 0;
+  }
+
+  ::v-deep .el-collapse-item__header {
+    padding: 0;
+    padding-left: 20px;
+    background-color: rgb(84, 92, 100);
+    color: white;
+  }
+
+  ::v-deep .el-collapse {
+    border: none;
+  }
+
+  .big-title {
+    font-size: 16px;
+    font-weight: bold;
+    color: white;
+    padding: 20px 0 15px 20px;
+    background: #292b36;
+    height: 45px;
+    margin: 10px 0;
+  }
+
+  .iconfont {
+    margin-right: 5px;
+    width: 24px;
+    text-align: center;
+    font-size: 16px;
+    vertical-align: middle;
+  }
+
+  ::v-deep .el-menu-item {
+    padding-left: 20px !important;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+  }
+}
 </style>

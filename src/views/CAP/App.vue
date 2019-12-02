@@ -57,6 +57,9 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+#CAP >>> .el-aside {
+  background: #292b36 !important;
+}
 #CAP {
   height: 100%;
   .el-container {

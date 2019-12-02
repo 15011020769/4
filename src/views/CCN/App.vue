@@ -56,6 +56,9 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+#CCN >>> .el-aside {
+  background: #292b36 !important;
+}
 #CCN {
   height: 100%;
   font-size: 12px;

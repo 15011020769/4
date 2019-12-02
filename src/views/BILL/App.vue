@@ -57,6 +57,9 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+#CCN >>> .el-aside {
+  background: #292b36 !important;
+}
 #CCN {
   height: 100%;
   .el-container {
@@ -65,13 +68,12 @@ export default {
       padding: 0 0 !important;
     }
     .el-aside {
-      background-color: #292b36;
+      background-color: rgb(84, 92, 100);
     }
     .el-main {
       padding: 0;
       background: #f2f2f2;
       height: 100%;
-      padding: 0 20px;
     }
   }
 }

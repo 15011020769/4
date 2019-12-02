@@ -56,6 +56,9 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+#SCF >>> .el-aside {
+  background: #292b36 !important;
+}
 #SCF {
   height: 100%;
   .el-container {

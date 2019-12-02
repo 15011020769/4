@@ -56,6 +56,9 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+#CLA >>> .el-aside {
+  background: #292b36 !important;
+}
 #CLA {
   height: 100%;
   .el-container {

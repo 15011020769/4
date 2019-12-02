@@ -56,6 +56,9 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+#WAF >>> .el-aside {
+  background: #292b36 !important;
+}
 #WAF {
   height: 100%;
   .el-container {

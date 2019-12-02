@@ -1,55 +1,16 @@
 <template>
   <div class="CLA">
     <div class="big-title">云监控</div>
-    <el-menu default-active="2" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose"
-      background-color="#545c64" text-color="#fff" active-text-color="#ffd04b" :router="true">
-      <!-- <el-menu-item index="overview">
-        <i class="iconfont">&#xe615;</i>
-        <span slot="title">监控概览</span>
-      </el-menu-item>
-      <el-menu-item index="Dashboard">
-        <i class="iconfont">&#xe615;</i>
-        <span slot="title">Dashboard</span>
-      </el-menu-item>
-      <el-menu-item index="Casegrouping">
-        <i class="iconfont">&#xe615;</i>
-        <span slot="title">实例分组</span>
-      </el-menu-item>
-      <el-menu-item index="History">
-        <i class="iconfont">&#xe615;</i>
-        <span slot="title">告警历史</span>
-      </el-menu-item>
-
-
-      <el-collapse v-model="activeName" accordion>
-      
-        <el-collapse-item name="1">
-          <template slot="title">
-            <i class="iconfont">&#xe615;</i>
-            告警配置
-          </template>
-          <el-menu-item index="Toconfigure">
-            <i class="iconfont">&#xe615;</i>
-            <span slot="title">告警配置</span>
-          </el-menu-item>
-        </el-collapse-item>
-
-      </el-collapse> -->
-      <!-- 
-    
-      <!-- <el-menu-item index="EventCenter">
-        <i class="iconfont">&#xe615;</i>
-        <span slot="title">事件中心</span>
-      </el-menu-item>
-      <el-menu-item index="Custom">
-        <i class="iconfont">&#xe615;</i>
-        <span slot="title">自定义监控</span>
-      </el-menu-item>
-
-      <el-menu-item index="flow">
-        <i class="iconfont">&#xe615;</i>
-        <span slot="title">流量监控</span>
-      </el-menu-item> -->
+    <el-menu
+      default-active="2"
+      class="el-menu-vertical-demo"
+      @open="handleOpen"
+      @close="handleClose"
+      background-color="#292b36"
+      text-color="#fff"
+      active-text-color="#fff"
+      :router="true"
+    >
       <el-menu-item index="CVM">
         <span slot="title">云服务器</span>
       </el-menu-item>
@@ -59,7 +20,6 @@
       <el-menu-item index="CLBload">
         <span slot="title">负载均衡-CLB</span>
       </el-menu-item>
-
 
       <el-submenu index="1">
         <template slot="title">
@@ -95,7 +55,6 @@
         </el-menu-item-group>
       </el-submenu>
 
-
       <el-submenu index="3">
         <template slot="title">
           <span>专线接入</span>
@@ -112,7 +71,7 @@
       <!-- <el-menu-item index="peerConnect">
         <i class="iconfont">&#xe679;</i>
         <span slot="title">对等连接</span>
-      </el-menu-item> -->
+      </el-menu-item>-->
 
       <el-menu-item index="objectStorage">
         <span slot="title">对象存储</span>
@@ -122,66 +81,73 @@
 </template>
 
 <script>
-  export default {
-    data() {
-      return {
-        activeName: '',
-        activeName1: '',
-        activeName2: '',
-        activeIndex: '1',
-        activeIndex2: '1'
-      }
+export default {
+  data() {
+    return {
+      activeName: "",
+      activeName1: "",
+      activeName2: "",
+      activeIndex: "1",
+      activeIndex2: "1"
+    };
+  },
+  methods: {
+    handleOpen(key, keyPath) {
+      // console.log(key, keyPath)
     },
-    methods: {
-      handleOpen(key, keyPath) {
-        // console.log(key, keyPath)
-      },
-      handleClose(key, keyPath) {
-        // console.log(key, keyPath)
-      }
+    handleClose(key, keyPath) {
+      // console.log(key, keyPath)
     }
   }
-
+};
 </script>
 
 <style lang="scss" scoped>
-  .CLA {
-    ::v-deep .el-menu {
-      border-right: 0 !important;
-    }
-
-    ::v-deep .el-collapse-item__content {
-      padding: 0;
-    }
-
-    ::v-deep .el-collapse-item__header {
-      padding: 0;
-      padding-left: 20px;
-      background-color: rgb(84, 92, 100);
-      color: white;
-    }
-
-    ::v-deep .el-collapse {
-      border: none;
-    }
-
-    .big-title {
-      font-size: 16px;
-      color: white;
-      padding: 20px 0 15px 20px;
-    }
-
-    .iconfont {
-      margin-right: 5px;
-      width: 24px;
-      text-align: center;
-      font-size: 16px;
-      vertical-align: middle;
-    }
-
-    ::v-deep .el-menu-item {
-      padding-left: 20px !important;
-    }
+.CLA {
+  ::v-deep .el-menu {
+    border-right: 0 !important;
   }
 
+  ::v-deep .el-collapse-item__content {
+    padding: 0;
+  }
+
+  ::v-deep .el-collapse-item__header {
+    padding: 0;
+    padding-left: 20px;
+    background-color: rgb(84, 92, 100);
+    color: white;
+  }
+
+  ::v-deep .el-collapse {
+    border: none;
+  }
+
+  .big-title {
+    font-size: 16px;
+    font-weight: bold;
+    color: white;
+    padding: 20px 0 15px 20px;
+    background: #292b36;
+    height: 45px;
+    margin: 10px 0;
+  }
+
+  .iconfont {
+    margin-right: 5px;
+    width: 24px;
+    text-align: center;
+    font-size: 16px;
+    vertical-align: middle;
+  }
+
+  ::v-deep .el-menu-item {
+    padding-left: 20px !important;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+  }
+  
+}
 </style>

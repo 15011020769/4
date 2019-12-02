@@ -56,6 +56,9 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+#DDOS >>> .el-aside {
+  background: #292b36 !important;
+}
 #DDOS {
   height: 100%;
   .el-container {

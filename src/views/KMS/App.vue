@@ -57,6 +57,9 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+#KMS >>> .el-aside {
+  background: #292b36 !important;
+}
 #KMS {
   height: 100%;
   .el-container {
