@@ -9,33 +9,45 @@
           <el-col :span="8">
             <div class="contPartOneData">
               <p>总配额数</p>
-              <p><span>3</span><span>次</span></p>
+              <p><span>{{unBlockStatis.Total}}</span><span>次</span></p>
             </div>
           </el-col>
           <el-col :span="8">
             <div class="contPartOneData">
               <p>当前已使用</p>
-              <p><span>0</span><span>次</span></p>
+              <p><span>{{unBlockStatis.Used}}</span><span>次</span></p>
             </div>
           </el-col>
           <el-col :span="8">
             <div class="contPartOneData contPartOneDataT">
               <p>当前未使用</p>
-              <p><span>3</span><span>次</span></p>
+              <p><span>{{unBlockStatis.Total - unBlockStatis.Used}}</span><span>次</span></p>
             </div>
           </el-col>
         </el-row>
       </div>
       <div class="contPartTwo">
-        <el-table :data="tableDataBegin">
-          <el-table-column prop="ip" label="IP">
+        <el-table :data="tableDatalist">
+          <el-table-column prop="Ip" label="IP">
             <template slot-scope="scope">
-              <a href="#" @click="toDoDetail(scope.$index, scope.row)">{{scope.row.ip}}</a>
+              <a href="#" @click="toDoDetail(scope.$index, scope.row)">{{scope.row.Ip}}</a>
             </template>
           </el-table-column>
-          <el-table-column prop="blockingTime" label="封堵时间"></el-table-column>
-          <el-table-column prop="unblockTime" label="预计解封时间"></el-table-column>
-          <el-table-column prop="status" label="状态"></el-table-column>
+          <el-table-column prop="blockingTime" label="封堵时间">
+            <template slot-scope="scope">
+              {{scope.row.BlockTime}}
+            </template>
+          </el-table-column>
+          <el-table-column prop="unblockTime" label="预计解封时间">
+            <template slot-scope="scope">
+              {{scope.row.UnBlockTime}}
+            </template>
+          </el-table-column>
+          <el-table-column prop="status" label="状态">
+            <template slot-scope="scope">
+              {{scope.row.Status}}
+            </template>
+          </el-table-column>
           <el-table-column prop="action" label="操作" width="180">
             <template slot-scope="scope">
               <el-button
@@ -54,46 +66,43 @@
 export default {
   data() {
     return {
-      tableDataBegin:[],
-      allData:[
-        {
-          ip:"10.1.1.212",
-          blockingTime:"2019-11-19 10:25:52",
-          unblockTime:"2019-11-20 10:25:52",
-          status:"状态"
-        }
-      ]
+      unBlockStatis: {
+        BeginTime: "",
+        EndTime: "",
+        RequestId: "",
+        Total: 0,
+        Used: 0
+      },
+      tableDatalist:[]
     }
   },
-  mounted() {
-    this.getData();
+  created() {
+    this.describeUnBlockStatis()//获取黑洞解封次数接口
+    this.describeIpBlockList() //获取IP封堵列表接口
   },
-  methods:{
-    getData() {
-      var cookies = document.cookie;
-      var list = cookies.split(";");
-      for (var i = 0; i < list.length; i++) {
-        var arr = list[i].split("=");
-      }
+  methods: {
+    //获取IP封堵列表接口
+    describeIpBlockList() {
       let params = {
-        // Action: "ListFunctions",
-        Version: "2018-04-16",
-        Region: arr[1]
-      };
-      //this.$axios.post('', params).then(res => {
-        // console.log(res.data.functions);
-        //this.tableDataBegin = res.data.functions;
-        this.tableDataBegin = this.allData;
-        // 将数据的长度赋值给totalItems
-        this.totalItems = this.tableDataBegin.length;
-        if (this.totalItems > this.pageSize) {
-          for (let index = 0; index < this.pageSize; index++) {
-            this.tableDataEnd.push(this.tableDataBegin[index]);
-          }
-        } else {
-          this.tableDataEnd = this.tableDataBegin;
-        }
-      //});
+        Version: '2018-07-09',
+      }
+      this.$axios.post('dayu2/DescribeIpBlockList', params).then(res => {
+        console.log(params)
+        console.log(res)
+        this.tableDatalist=res.Response.List
+      })
+    },
+
+    //获取黑洞解封次数接口
+    describeUnBlockStatis(){
+      let params = {
+        Version: '2018-07-09',
+      }
+      this.$axios.post('dayu2/DescribeUnBlockStatis', params).then(res => {
+        console.log(params)
+        console.log(res)
+        this.unBlockStatis = res.Response
+      })
     },
   }
 }

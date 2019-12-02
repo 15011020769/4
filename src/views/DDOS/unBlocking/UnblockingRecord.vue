@@ -6,7 +6,7 @@
     <div class="mainContentBlock">
       <div class="contPartOne">
         <el-date-picker
-          v-model="timeValue"
+          v-model="dateChoice1"
           type="datetimerange"
           range-separator="至"
           start-placeholder="开始日期"
@@ -14,15 +14,27 @@
         </el-date-picker>
       </div>
       <div class="contPartTwo">
-        <el-table :data="tableDataBegin.slice((currentPage-1)*pageSize,currentPage*pageSize)">
+        <el-table :data="IpUnBlockList.slice((currentPage-1)*pageSize,currentPage*pageSize)">
           <el-table-column prop="ip" label="IP">
             <template slot-scope="scope">
               <a href="#" @click="toDoDetail(scope.$index, scope.row)">{{scope.row.ip}}</a>
             </template>
           </el-table-column>
-          <el-table-column prop="blockingTime" label="封堵时间"></el-table-column>
-          <el-table-column prop="unblockTime" label="预计解封时间"></el-table-column>
-          <el-table-column prop="unblockType" label="解封操作类型"></el-table-column>
+          <el-table-column prop="blockingTime" label="封堵时间">
+            <template slot-scope="scope">
+              {{scope.row.BlockTime}}
+            </template>
+          </el-table-column>
+          <el-table-column prop="unblockTime" label="预计解封时间">
+            <template slot-scope="scope">
+              {{scope.row.UnBlockTime}}
+            </template>
+          </el-table-column>
+          <el-table-column prop="unblockType" label="解封操作类型">
+            <template slot-scope="scope">
+              {{scope.row.ActionType}}
+            </template>
+          </el-table-column>
         </el-table>
         <div class="tabListPage">
           <el-pagination
@@ -41,64 +53,65 @@
 </template>
 <script>
 export default {
-  data() {
-    return {
+  data(){
+    return{
       tableDataName: "",
       tableDataEnd: [],
       currentPage: 1,
       pageSize: 10,
       totalItems: 0,
-      filterTableDataEnd: [],
-      flag: false,
-      multipleSelection: [],
-      tableDataBegin:[],
-      allData:[
-        {
-          ip:"10.1.1.212",
-          blockingTime:"2019-11-19 10:25:52",
-          unblockTime:"2019-11-20 10:25:52",
-          unblockType:"解封操作类型"
-        }
-      ],
-      timeValue:""
+
+      timeValue:{},
+      // 日期区间：默认获取当前时间和前90天时间
+      EndTime: this.getDateString(new Date()),
+      BeginTime: this.getDateString(new Date(new Date().getTime() - 24*60*60*1000*90)),
+      // 日期选择
+      dateChoice1: {},
+      dateChoice2: {},
+      IpUnBlockList:[],
     }
   },
-  mounted() {
-    this.getData();
+  watch: {
+    'dateChoice1': function (value) {
+      console.log(this.getDateString(value[0]))
+      this.BeginTime = this.getDateString(value[0])
+      this.EndTime = this.getDateString(value[1])
+      this. describeIpUnBlockList()
+    },
+  },
+  created(){
+    this.describeIpUnBlockList();//获取IP解封记录
   },
   methods:{
-    getData() {
-      var cookies = document.cookie;
-      var list = cookies.split(";");
-      for (var i = 0; i < list.length; i++) {
-        var arr = list[i].split("=");
-      }
+    describeIpUnBlockList() {
       let params = {
-        // Action: "ListFunctions",
-        Version: "2018-04-16",
-        Region: arr[1]
-      };
-      //this.$axios.post('', params).then(res => {
-        // console.log(res.data.functions);
-        //this.tableDataBegin = res.data.functions;
-        this.tableDataBegin = this.allData;
-        // 将数据的长度赋值给totalItems
-        this.totalItems = this.tableDataBegin.length;
+        Version: '2018-07-09',
+        BeginTime:this.BeginTime,
+        EndTime:this.EndTime,
+      }
+      this.$axios.post('dayu2/DescribeIpUnBlockList', params).then(res => {
+        console.log(params)
+        console.log(res)
+        this.IpUnBlockList=res.Response.List 
+         // 将数据的长度赋值给totalItems
+        this.totalItems = this.IpUnBlockList.length;
         if (this.totalItems > this.pageSize) {
           for (let index = 0; index < this.pageSize; index++) {
             this.tableDataEnd.push(this.tableDataBegin[index]);
           }
         } else {
-          this.tableDataEnd = this.tableDataBegin;
+          this.tableDataEnd = this.IpUnBlockList;
         }
-      //});
+      })
     },
+
     handleSizeChange(val) {
       console.log(`每页 ${val} 条`);
       this.pageSize = val;
       this.handleCurrentChange(this.currentPage);
     },
-    handleCurrentChange(val) {
+
+     handleCurrentChange(val) {
       console.log(`当前页: ${val}`);
       this.currentPage = val;
       //需要判断是否检索
@@ -108,7 +121,8 @@ export default {
         this.currentChangePage(this.filterTableDataEnd);
       }
     }, //组件自带监控当前页码
-    currentChangePage(list) {
+
+     currentChangePage(list) {
       let from = (this.currentPage - 1) * this.pageSize;
       let to = this.currentPage * this.pageSize;
       this.tableDataEnd = [];
@@ -117,8 +131,13 @@ export default {
           this.tableDataEnd.push(list[from]);
         }
       }
-    }
-  }
+    },
+
+    // 时间格式化'yyyy-MM-dd hh:mm:ss'
+    getDateString(date) {
+      return date.toLocaleString('zh',{hour12:false, year: 'numeric',  month: '2-digit',  day: '2-digit',  hour: '2-digit',  minute: '2-digit',  second: '2-digit'}).replace(/\//g,'-');
+    },
+   },
 }
 </script>
 <style lang="scss">

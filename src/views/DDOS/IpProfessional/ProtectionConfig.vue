@@ -214,14 +214,19 @@
             <div class="mainContent">
               <div v-if="tableShow">
                 <el-button type="primary" @click="addNewTactics">添加新策略</el-button>
-                <el-table :data="tableDataBegin2">
-                  <el-table-column prop="name" label="策略名称">
+                <el-table :data="tableDataPolicy">
+                  <el-table-column prop="PolicyName" label="策略名称">
                     <template slot-scope="scope">
-                      <a href="#" @click="toDetail(scope.$index, scope.row)">{{scope.row.name}}</a>
+                      {{scope.row.PolicyName}}
+                      <!-- <a href="#" @click="toDetail(scope.$index, scope.row)">{{scope.row.PolicyName}}</a> -->
                     </template>
                   </el-table-column>
-                  <el-table-column prop="resouseNum" label="绑定资源数量"></el-table-column>
-                  <el-table-column prop="createTime" label="创建时间"></el-table-column>
+                  <el-table-column prop="Resources.length" label="绑定资源数量">
+                    <template slot-scope="scope">{{scope.row.Resources.length}}</template>
+                  </el-table-column>
+                  <el-table-column prop="CreateTime" label="创建时间">
+                    <template slot-scope="scope">{{scope.row.CreateTime}}</template>
+                  </el-table-column>
                   <el-table-column prop="action" label="操作" width="180">
                     <template slot-scope="scope">
                       <el-button
@@ -256,7 +261,7 @@
                       <el-dialog
                         title="绑定资源"
                         :visible.sync="dialogVisible1"
-                        width="40%"
+                        width="43%"
                         :before-close="handleClose1"
                       >
                         <div style="text-align: center">
@@ -267,7 +272,7 @@
                             :left-default-checked="[2, 3]"
                             :right-default-checked="[1]"
                             :render-content="renderFunc"
-                            :titles="['Source', 'Target']"
+                            :titles="['选择资源', '已选择']"
                             :button-texts="['到左边', '到右边']"
                             :format="{
                               noChecked: '${total}',
@@ -342,6 +347,8 @@ export default {
       iptmbpsText:'1000',
       saveStatus:true,//防护状态
       cleanNum:'100Mbps',//清洗阈值
+      resourceId: 'net-0000006y',
+      tableDataPolicy:[],//tab3,DDoS高级防护策略
 
       data: this.generateData(),
       valueThrou: [1],
@@ -350,7 +357,6 @@ export default {
       },//穿梭框
       activeName:"first",
       filterConrent:"IP",
-      tableDataBegin2:[],
       currentPage: 1,
       pageSize: 10,
       totalItems: 0,
@@ -388,7 +394,10 @@ export default {
       this.describeDDoSPolicy()
     },
     getDataCC() {
-
+      this.describeCCUrlAllow()
+    },
+    getDataDDoSPolicy() {
+      this.describeDDoSPolicy()
     },
     // 1.1.获取资源列表
     describeResourceList() {
@@ -409,9 +418,21 @@ export default {
       }
       this.$axios.post('dayu2/DescribeDDoSPolicy', params).then(res => {
         console.log(res)
+        this.tableDataPolicy = res.Response.DDosPolicyList
       })
     },
-    // 2.2.
+    // 2.1.获取CC的Url白名单
+    describeCCUrlAllow() {
+      let params = {
+        Version: '2018-07-09',
+        Business: 'net',
+        Id: this.resourceId,
+        'Type.0': 'white',
+      }
+      this.$axios.post('dayu2/DescribeCCUrlAllow', params).then(res => {
+        console.log(res)
+      })
+    },
 
     // 修改
     changeRow(changeIndex,changeRow){
@@ -500,7 +521,7 @@ export default {
       } else if(tab.name == 'second') { //CC防护
         this.getDataCC()
       } else if(tab.name == 'third') {  //DDOS高级防护策略
-        // this.getDataService()
+        this.getDataDDoSPolicy()
       }
     },
 
