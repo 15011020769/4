@@ -182,7 +182,7 @@
     </el-table>
 
     <el-dialog title="提示" :visible.sync="deleteShow" width="30%" :before-close="CloseShow">
-      <span>这是一段信息</span>
+      <span>确认删除这条用户信息吗?</span>
       <span slot="footer" class="dialog-footer">
         <el-button @click="deleteShow = false">取 消</el-button>
         <el-button type="primary" @click="sureDelet">确 定</el-button>
@@ -263,7 +263,7 @@
     <el-dialog title="添加到组" :visible.sync="dialogVisible" width="74%" :before-close="handleClose">
       <div class="container">
         <div class="container-left">
-          <span>策略列表（共{{totalNum}}条）</span>
+          <span>用户组（共{{totalNum}}条）</span>
           <div>
             <el-input
               v-model="UsersearchValue"
@@ -297,7 +297,7 @@
         </div>
 
         <div class="container-left">
-          <span>已选择（共条）</span>
+          <span>已选择（共{{titles}}条）</span>
           <el-table
             class="table-left"
             ref="multipleSelected"
@@ -322,7 +322,7 @@
         </div>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button size="small" type="primary" @click="dialogVisible">确 定</el-button>
+        <el-button size="small" type="primary" @click="dialogVisible = false">确 定</el-button>
         <el-button size="small" @click="dialogVisible = false">取 消</el-button>
       </span>
     </el-dialog>
@@ -538,6 +538,7 @@ export default {
       form: {
         name: "yjy"
       },
+      titles:'',
       search: "",
       deleteName: "",
       selectName: "",
@@ -637,6 +638,7 @@ export default {
       let url = "cam2/ListGroups";
       this.axios.post(url, params).then(data => {
         this.policiesDatas = data.Response.GroupInfo;
+        this.titles = this.policiesDatas.length
       });
     },
     toQueryUser() {
@@ -686,14 +688,15 @@ export default {
       // console.log("this is value data:", this.value);
       this.val = [...this.val, ...val];
     },
-    details(content) {
+    details(val) {
+       console.log(val);
       this.$router.push({
-        path: "details",
+        path: "/details",
         query: {
-          content: content
+          content: val.Name
         }
       });
-      console.log(content);
+     
     },
     handleSelectionChange(val) {
       // 给右边table框赋值，只需在此处赋值即可，selectedRow方法中不写，因为单独点击复选框，只有此方法有效。

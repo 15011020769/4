@@ -194,7 +194,6 @@ export default {
       radio3: "5",
       active: 1,
       value1: false,
-      value: "",
       tableData: [],
       ruleForm: {
         name: "",
@@ -286,6 +285,7 @@ export default {
     };
     let url = "cam2/ListGroups";
     this.axios.post(url, params).then(data => {
+      console.log(data)
       this.tableData = data.Response.GroupInfo;
     });
 

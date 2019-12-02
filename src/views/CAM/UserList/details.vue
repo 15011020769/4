@@ -24,7 +24,7 @@
             <div class="account">
               <div class="account-left">
                 <h3>
-                  <span>{{content.Name}}</span>
+                  <span>{{userData.Name}}</span>
                   <span class="tag">{{$t('CAM.CAM.userDetails.userNumb')}}</span>
                 </h3>
               </div>
@@ -79,14 +79,14 @@
                       {{$t('CAM.CAM.userDetails.numbId')}}
                       <i>*</i>
                     </label>
-                    <span>{{content.Uin}}</span>
+                    <span>{{userData.Uin}}</span>
                   </div>
                   <div class="content-remarks">
                     <label for>
                       {{$t('CAM.CAM.userDetails.rember')}}
                       <i>*</i>
                     </label>
-                    <span>{{content.Remark}}</span>
+                    <span>{{userData.Remark}}</span>
                   </div>
                 </div>
                 <div class="content-right">
@@ -95,14 +95,14 @@
                       {{$t('CAM.CAM.userDetails.phone')}}
                       <i>*</i>
                     </label>
-                    <span>+86-{{content.PhoneNum}}</span>
+                    <span>+86-{{userData.PhoneNum}}</span>
                   </div>
                   <div class="mailbox">
                     <label for>
                       {{$t('CAM.CAM.userDetails.email')}}
                       <i>*</i>
                     </label>
-                    <span>-{{content.Email}}</span>
+                    <span>-{{userData.Email}}</span>
                   </div>
                   <div class="wechat">
                     <label for>
@@ -264,7 +264,7 @@
       <div class="userlist">
         <template>
           <el-tabs v-model="activeName" @tab-click="handleClick">
-            <el-tab-pane label="权限(0)" name="first">
+            <el-tab-pane :label="titles" name="first">
               <div class="explain">
                 <p>关联策略以获取策略包含的操作权限。解除策略将失去策略包含的操作权限。特别的，解除随组关联类型的策略是通过将用户从关联该策略的用户组中移出。</p>
               </div>
@@ -274,7 +274,7 @@
                 type="primary"
                 size="small"
                 :disabled="bntVisible"
-                @click="dialogVisibleDeleteMore = true"
+                @click="dialogVisibleDeleteMore=true"
               >解除策略</el-button>
 
               <el-table
@@ -295,7 +295,11 @@
                 <el-table-column label="关联时间" prop="AddTime"></el-table-column>
                 <el-table-column prop="oper" label="操作" width="140">
                   <template slot-scope="scope">
-                    <el-button @click="deleteThisRow" type="text" size="small">解除</el-button>
+                    <el-button
+                      @click="deleteThisRow(scope.row.PolicyId)"
+                      type="text"
+                      size="small"
+                    >解除</el-button>
                   </template>
                 </el-table-column>
               </el-table>
@@ -310,7 +314,7 @@
               <span>解除策略将失去策略包含的操作权限。特别的，解除随组关联类型的策略是通过将用户从关联该策略的用户组中移出。</span>
               <span slot="footer" class="dialog-footer">
                 <el-button @click="dialogVisibleDeleteMore = false">取 消</el-button>
-                <el-button type="primary" @click="dialogVisibleDeleteMore = false">确 定</el-button>
+                <el-button type="primary" @click="delsure">确 定</el-button>
               </span>
             </el-dialog>
 
@@ -323,18 +327,18 @@
               <span>是否确定为该用户解除此策略?解除后该用户无法获得该策略所描述的相关权限</span>
               <span slot="footer" class="dialog-footer">
                 <el-button @click="dialogVisibleDetete = false">取 消</el-button>
-                <el-button type="primary" @click="dialogVisibleDetete = false">确 定</el-button>
+                <el-button type="primary">确 定</el-button>
               </span>
             </el-dialog>
 
-            <el-tab-pane label="组(1)" name="second">
+            <el-tab-pane :label="title" name="second">
               <el-button class="clButton" type="primary" size="small" @click="addTeam">加入到组</el-button>
               <el-button
                 class="clButton"
                 type="primary"
                 size="small"
                 :disabled="bntVisible"
-                @click="dialogVisibleRemove=true"
+                @click="delAll"
               >移出组</el-button>
               <el-table
                 :data="teamTableData"
@@ -348,7 +352,7 @@
                 <el-table-column label="备注" prop="Remark"></el-table-column>
                 <el-table-column fixed="right" label="操作" width="120">
                   <template slot-scope="scope">
-                    <el-button @click="dialogVisibleRemove=true" type="text" size="small">移除</el-button>
+                    <el-button @click="removeTeam(scope.row)" type="text" size="small">移除</el-button>
                   </template>
                 </el-table-column>
               </el-table>
@@ -363,7 +367,7 @@
               <span>确定删除用户组？移出后将无法接收到该组的短信、邮件通知</span>
               <span slot="footer" class="dialog-footer">
                 <el-button @click="dialogVisibleRemove = false">取 消</el-button>
-                <el-button type="primary" @click="dialogVisibleRemove = false">确 定</el-button>
+                <el-button type="primary" @click="delConfirm">确 定</el-button>
               </span>
             </el-dialog>
 
@@ -513,10 +517,57 @@ export default {
           shop: "",
           shopId: ""
         }
-      ]
+      ],
+      valArr: [],
+      title:'',
+      titles:'',
+      userData:[]
     };
   },
   methods: {
+    delsure(){
+      var delIndex = [];
+      this.valArr.forEach(item => {
+        delIndex.unshift(item.PolicyId);
+      });
+      delIndex.forEach(item => {
+       let params = {
+        Action: "DetachUserPolicy",
+        Version: "2019-01-16",
+        PolicyId: item,
+        DetachUin: this.userData.Uin
+      };
+      let url = "cam2/DetachUserPolicy";
+      this.axios.post(url, params).then(data => {
+        this._user();
+      });
+    });
+      this.dialogVisibleDeleteMore = false;
+    },
+    delConfirm() {
+      var delIndex = [];
+      this.valArr.forEach(item => {
+        delIndex.unshift(item.GroupId);
+      });
+      delIndex.forEach(item => {
+        let params = {
+          Action: "DeleteGroup",
+          Version: "2019-01-16",
+          GroupId: item
+        };
+        console.log(this.teamTableData);
+        let url = "cam2/DeleteGroup";
+        this.axios.post(url, params).then(data => {
+          console.log(params);
+          console.log(data);
+          this._remove();
+        });
+      });
+      this.dialogVisibleRemove = false;
+    },
+    delAll() {
+      this.dialogVisibleRemove = true;
+    },
     deleteUsers() {
       this.dialogDeleteUser = true;
     },
@@ -524,6 +575,7 @@ export default {
       console.log(12);
     },
     handleSelectionChange(val) {
+      this.valArr = val;
       if (val != "") {
         this.bntVisible = false;
         this.selectedGroupId = val[0].GroupId;
@@ -531,8 +583,32 @@ export default {
         this.bntVisible = true;
       }
     },
-    deleteThisRow() {
-      this.dialogVisibleDetete = true;
+    deleteThisRow(PolicyId) {
+      console.log(this.content);
+      let params = {
+        Action: "DetachUserPolicy",
+        Version: "2019-01-16",
+        PolicyId: PolicyId,
+        DetachUin: this.userData.Uin
+      };
+      let url = "cam2/DetachUserPolicy";
+      this.axios.post(url, params).then(data => {
+        this._user();
+      });
+    },
+    removeTeam(val) {
+      let params = {
+        Action: "DeleteGroup",
+        Version: "2019-01-16",
+        GroupId: val.GroupId
+      };
+      console.log(this.teamTableData);
+      let url = "cam2/DeleteGroup";
+      this.axios.post(url, params).then(data => {
+        console.log(params);
+        console.log(data);
+        this._remove();
+      });
     },
     newUser() {
       this.$router.push({ name: "addPolicyToUser" });
@@ -573,6 +649,17 @@ export default {
       });
       this.dialogVisible = false;
     },
+    deleteBind() {
+      this.dialogVisibleDeleteMore = false;
+      let params = {
+        Action: "DeletePolicy",
+        Version: "2019-01-16"
+      };
+      let url = "cam2/DeletePolicy";
+      this.axios.post(url, params).then(data => {
+        console.log(data);
+      });
+    },
     handleClose(done) {
       this.$confirm("确认关闭？")
         .then(_ => {
@@ -591,18 +678,64 @@ export default {
     },
     handleChange(val) {
       console.log(val);
+    },
+    _remove() {
+      let getUser = {
+        Action: "GetUser",
+        Version: "2019-01-16",
+        Name: this.$route.query.content
+      };
+      let urlgetUser = "cam2/GetUser";
+      this.axios
+        .post(urlgetUser, getUser)
+        .then(data => {
+          this.userData = data.Response;
+          console.log(this.userData);
+        })
+        .then(info => {
+          let params = {
+            Action: "ListGroupsForUser",
+            Version: "2019-01-16",
+            Uid: this.userData.Uid
+          };
+          console.log(params);
+          let url = "cam2/ListGroupsForUser";
+          this.axios.post(url, params).then(res => {
+            this.teamTableData = res.Response.GroupInfo;
+            this.title = '组('+res.Response.GroupInfo.length+')'
+          });
+        });
+    },
+    _user() {
+      //用户详情
+      let getUser = {
+        Action: "GetUser",
+        Version: "2019-01-16",
+        Name: this.$route.query.content
+      };
+      let urlgetUser = "cam2/GetUser";
+      this.axios.post(urlgetUser, getUser).then(data => {
+        this.userData = data.Response;
+        console.log(this.userData);
+        let params = {
+          Action: "ListAttachedUserPolicies",
+          Version: "2019-01-16",
+          TargetUin: this.userData.Uin
+        };
+        console.log(params);
+        let url = "cam2/ListAttachedUserPolicies";
+        this.axios.post(url, params).then(res => {
+          this.tableDatas = res.Response.List;
+          this.titles = '权限('+res.Response.List.length+')'
+        });
+      });
     }
   },
   created() {
-    this.content = this.$route.query.content;
-    let params = {
-      Action: "ListPolicies",
-      Version: "2019-01-16"
-    };
-    let url = "cam2/ListPolicies";
-    this.axios.post(url, params).then(data => {
-       this.tableDatas = data.Response.List;
-    });
+    // this.content = this.$route.query.content;
+    // console.log(this.content)
+    this._user();
+    this._remove();
     let teamParams = {
       Action: "ListGroups",
       Version: "2019-01-16"

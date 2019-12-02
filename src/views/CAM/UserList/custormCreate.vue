@@ -33,7 +33,6 @@
                 :data="tableData"
                 tooltip-effect="dark"
                 row-style="height:50px" :header-cell-style="{padding:'0'}" cell-style="padding:0" border style="width: 100%"
-                @selection-change="handleSelectionChange()"
               >
                 <el-table-column prop="name" :label="$t('CAM.CAM.userList.setName')">
                   <template slot-scope="scope">
@@ -200,7 +199,6 @@ export default {
 
   methods: {
     complete(){
-      console.log(this.tableData)
        let params = {
          Action:'AddUser',
          Version:'2019-01-16',

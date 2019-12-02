@@ -19,7 +19,6 @@
       <el-table
         :data="tableDatas"
         height="350"
-        @selection-change="handleSelectionChange"
         style="width: 100%; border:1px solid #ddd;padding-top: 8px;"
       >
         <el-table-column type="selection" width="55"></el-table-column>
@@ -45,10 +44,8 @@
       </div>
       <!-- 复用现有用户策略中的表格 -->
       <el-table
-        :data="tableData"
         height="350"
         highlight-current-row
-        @current-change="handleCurrentChange"
         style="width: 100%; border:1px solid #ddd;padding-top: 8px;"
       >
         <el-table-column type="selection" width="55"></el-table-column>
@@ -104,9 +101,7 @@
       </div>
       <!-- 添加至组获得随组权限中的表格 -->
       <el-table
-        :data="tableData"
         height="350"
-        @selection-change="handleSelectionChange"
         style="width: 100%; border:1px solid #ddd;padding-top: 8px;"
       >
         <el-table-column type="selection" width="55"></el-table-column>
