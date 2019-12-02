@@ -75,11 +75,37 @@
                 <el-input v-model="ruleForm.LogFilePrefix" placeholder="请输入日志文件前缀"></el-input>
               </el-form-item>
               <el-form-item label="发送CMQ通知" class="CMQ" required>
-                <el-radio-group v-model="ruleForm.IsEnableCmqNotify">
+                <el-radio-group v-model="ruleForm.IsEnableCmqNotify" @change="_cmqRadio">
                   <el-radio label="是"></el-radio>
                   <el-radio label="否"></el-radio>
                 </el-radio-group>
               </el-form-item>
+              <div class="set-child" v-show="setChild">
+                <el-form-item label="创建CMQ队列" class="CMQ" required>
+                  <el-radio-group v-model="cmqShow" @change="_cmqCretae">
+                    <el-radio :label="true">是</el-radio>
+                    <el-radio :label="false">否</el-radio>
+                  </el-radio-group>
+                </el-form-item>
+                <el-form-item label="CMQ队列名称" required class="select cmqSelect">
+                  <el-select v-model="cmqSelect.name" placeholder="请选择" @change="_cmqSelect">
+                    <el-option
+                      v-for="item in cmqSelect.options"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value"
+                    ></el-option>
+                  </el-select>
+                  <el-form-item
+                    label
+                    prop="CmqQueueName"
+                    class="seletInp"
+                    v-if="ruleForm.IsEnableCmqNotify"
+                  >
+                    <el-input v-model="ruleForm.CmqQueueName" placeholder="请输入CMQ队列名称"></el-input>
+                  </el-form-item>
+                </el-form-item>
+              </div>
             </div>
           </div>
           <div class="main-box" style="border:0;">
@@ -140,7 +166,24 @@ export default {
         }
       }, 1000);
     };
+    var CmqQueueName = (rule, value, callback) => {
+      var reg = /^[a-zA-Z]([-a-zA-Z0-9]{0,64})$/;
+      setTimeout(() => {
+        if (!reg.test(value)) {
+          callback(
+            new Error(
+              "不超过64个字符的字符串，必须以字母为首字符，剩余部分可以包含字母、数字和横划线(-)。"
+            )
+          );
+        } else {
+          callback();
+        }
+      }, 1000);
+    };
     return {
+      IsCreateNewQueue: 0,
+      cmqShow: false,
+      cmqSelect: { index: 0 },
       setShow: false,
       select: {
         index: 0
@@ -155,13 +198,16 @@ export default {
         IsCreateNewBucket: "是",
         CosBucketName: "",
         IsEnableCmqNotify: "否",
-        CosRegion: ""
+        CosRegion: "",
+        CmqQueueName: ""
       },
       rules: {
         LogFilePrefix: [{ validator: LogFilePrefix, trigger: "blur" }],
         AuditName: [{ validator: AuditName, trigger: "blur" }],
-        CosBucketName: [{ validator: CosBucketName, trigger: "blur" }]
+        CosBucketName: [{ validator: CosBucketName, trigger: "blur" }],
+        CmqQueueName: [{ validator: CmqQueueName, trigger: "blur" }]
       },
+      setChild: false,
       cosShow: false
     };
   },
@@ -169,6 +215,47 @@ export default {
     Header
   },
   methods: {
+    cmq() {
+      //	cmq地域
+      const params = {
+        Version: "2019-03-19",
+        Region: "ap-guangzhou"
+      };
+      this.axios.post("cloudaudit2/ListCmqEnableRegion", params).then(res => {
+        var data = res.Response.EnableRegions;
+        var arr = [];
+        data.forEach((item, index) => {
+          const obj = {
+            label: item.CmqRegionName,
+            value: index,
+            name: item.CmqRegion
+          };
+          arr.push(obj);
+        });
+        this.cmqSelect.options = arr;
+        this.cmqSelect.name = arr[0].label;
+      });
+    },
+    _cmqRadio() {
+      if (
+        this.ruleForm.IsEnableCmqNotify == "是" ||
+        this.ruleForm.IsEnableCmqNotify == 1
+      ) {
+        this.setChild = true;
+      } else {
+        this.setChild = false;
+      }
+    },
+    _cmqCretae() {
+      if (this.cmqShow) {
+        this.IsCreateNewQueue == 1;
+      } else {
+        this.IsCreateNewQueue == 0;
+      }
+    },
+    _cmqSelect() {
+      this.cmqSelect.index = this.cmqSelect.options[this.cmqSelect.name].value;
+    },
     _select() {
       this.select.index = this.select.options[this.select.name].value;
     },
@@ -201,6 +288,14 @@ export default {
           this.ruleForm.Version = "2019-03-19";
           this.ruleForm.Region = "ap-guangzhou";
           this.ruleForm.CosRegion = this.select.options[this.select.index].name;
+          if (this.ruleForm.IsEnableCmqNotify == 1) {
+            this.ruleForm["IsCreateNewQueue"] = this.IsCreateNewQueue;
+            this.ruleForm["CmqRegion"] = this.cmqSelect.options[
+              this.cmqSelect.index
+            ].name;
+          } else {
+            delete this.ruleForm.CmqQueueName;
+          }
           this.axios
             .post("cloudaudit2/CreateAudit", this.ruleForm)
             .then(res => {
@@ -238,6 +333,7 @@ export default {
     }
   },
   created() {
+    this.cmq();
     //BucketSelect
     this.axios.post(LIST_COSBUCKETS).then(res => {
       var data = res.data.cosBucketsList;

@@ -36,9 +36,9 @@
           <h2>管理事件</h2>
           <el-form-item label="管理事件" required>
             <el-radio-group v-model="detailData.ReadWriteAttribute" v-show="inpShow">
-              <el-radio label="3">全部</el-radio>
-              <el-radio label="1">只读</el-radio>
-              <el-radio label="2">只写</el-radio>
+              <el-radio :label="3">全部</el-radio>
+              <el-radio :label="1">只读</el-radio>
+              <el-radio :label="2">只写</el-radio>
             </el-radio-group>
             <p v-show="!inpShow">{{ReadWrite[detailData.ReadWriteAttribute]}}</p>
           </el-form-item>
@@ -72,7 +72,7 @@
             <el-form-item label="发送CMQ通知">
               <p>{{CmqNotify[detailData.IsEnableCmqNotify]}}</p>
             </el-form-item>
-            <el-form-item label="CMQ队列名称" class="cos" v-show="detailData.CmqRegion">
+            <el-form-item label="CMQ队列名称" class="cos" v-show="detailData.IsEnableCmqNotify">
               <p>
                 <span class="spn">地域：</span>
                 {{detailData.CmqRegion}}
@@ -86,8 +86,8 @@
           <div class="inp-box" v-show="inpShow1">
             <el-form-item label="创建新的cos存储桶" class="store">
               <el-radio-group v-model="detailData.IsCreateNewBucket" @change="_radio">
-                <el-radio label="1">是</el-radio>
-                <el-radio label="0">否</el-radio>
+                <el-radio :label="1">是</el-radio>
+                <el-radio :label="0">否</el-radio>
               </el-radio-group>
             </el-form-item>
             <el-form-item label="cos存储桶" required class="select">
@@ -128,8 +128,8 @@
               </el-form-item>
               <el-form-item label="发送CMQ通知" class="CMQ" required>
                 <el-radio-group v-model="detailData.IsEnableCmqNotify" @change="_cmqRadio">
-                  <el-radio label="1">是</el-radio>
-                  <el-radio label="0">否</el-radio>
+                  <el-radio :label="1">是</el-radio>
+                  <el-radio :label="0">否</el-radio>
                 </el-radio-group>
               </el-form-item>
               <div class="set-child" v-show="setChild">
@@ -148,7 +148,12 @@
                       :value="item.value"
                     ></el-option>
                   </el-select>
-                  <el-form-item label prop="CmqQueueName" class="seletInp">
+                  <el-form-item
+                    label
+                    prop="CmqQueueName"
+                    class="seletInp"
+                    v-if="detailData.IsEnableCmqNotify"
+                  >
                     <el-input v-model="detailData.CmqQueueName" placeholder="请输入CMQ队列名称"></el-input>
                   </el-form-item>
                 </el-form-item>
@@ -261,7 +266,11 @@ export default {
       setChild: false,
       cmqShow: false,
       cmqSelect: {},
-      IsCreateNewQueue: 0
+      IsCreateNewQueue: 0,
+      CmqQueueName1: "123",
+      cmqSelect: {
+        index: 0
+      }
     };
   },
   methods: {
@@ -309,22 +318,29 @@ export default {
             IsCreateNewBucket: this.detailData.IsCreateNewBucket,
             CosRegion: this.detailData.CosRegion,
             CosBucketName: this.detailData.CosBucketName,
-            IsEnableCmqNotify: this.detailData.IsEnableCmqNotify,
-            IsCreateNewQueue: this.IsCreateNewQueue,
-            CmqRegion: this.detailData.CmqRegion,
-            CmqQueueName: this.detailData.CmqQueueName
+            IsEnableCmqNotify: this.detailData.IsEnableCmqNotify
           };
-          console.log(this.detailData);
+          if (this.detailData.IsEnableCmqNotify == 1) {
+            params["CmqQueueName"] = this.detailData.CmqQueueName;
+            params["IsCreateNewQueue"] = this.IsCreateNewQueue;
+            params["CmqRegion"] = this.cmqSelect.options[
+              this.cmqSelect.index
+            ].name;
+          } else {
+            delete params.CmqQueueName;
+            delete params.CmqRegion;
+            delete params.IsCreateNewQueue;
+          }
           this.axios.post("cloudaudit2/UpdateAudit", params).then(res => {
-            console.log(res);
             if (res.Response.IsSuccess == 1) {
               this.$message({
                 message: "更新成功",
                 type: "success"
               });
               this.inpShow1 = false;
+              this.detailList();
             } else {
-              this.$message.error("更新失败");
+              this.$message.error(res.Error.Code);
             }
           });
         } else {
@@ -422,6 +438,8 @@ export default {
       };
       this.axios.post(GZJ_DETAILIST, params).then(res => {
         this.detailData = res.Response;
+        this.detailData.IsCreateNewBucket = 1;
+        this.setChild = this.detailData.IsEnableCmqNotify;
         this.loading = false;
       });
     },
@@ -441,7 +459,7 @@ export default {
     },
     _radio() {
       var val = this.detailData.IsCreateNewBucket;
-      if (val == "是") {
+      if (val == "1") {
         this.cosShow = false;
         this.detailData.CosBucketName = "";
         this.BucketSelect.name = "";
