@@ -14,9 +14,9 @@
       <el-menu-item index="deal">
         <span slot="title">订单管理</span>
       </el-menu-item>
-      <!-- <el-menu-item index="overview">
+      <el-menu-item index="overview">
         <span slot="title">账单概览</span>
-      </el-menu-item>-->
+      </el-menu-item>
       <el-menu-item index="detail">
         <span slot="title">账单明细</span>
       </el-menu-item>
