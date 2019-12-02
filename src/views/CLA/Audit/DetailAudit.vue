@@ -45,7 +45,8 @@
           <div class="btn-box" v-show="inpShow">
             <div class="line"></div>
             <el-form-item class="button">
-              <el-button type="primary" @click="submitForm">保存</el-button>
+              <el-button type="primary" icon="el-icon-loading" v-show="btnLoad1"></el-button>
+              <el-button type="primary" @click="submitForm" v-show="!btnLoad1">保存</el-button>
               <el-button @click="_cancel">取消</el-button>
             </el-form-item>
           </div>
@@ -163,7 +164,8 @@
           <div class="btn-box" v-show="inpShow1">
             <div class="line lineVal"></div>
             <el-form-item class="button">
-              <el-button type="primary" @click="submitForm1('detailData')">保存</el-button>
+              <el-button type="primary" icon="el-icon-loading" v-show="btnLoad"></el-button>
+              <el-button type="primary" @click="submitForm1('detailData')" v-show="btnLoad">保存</el-button>
               <el-button @click="_cancel1">取消</el-button>
             </el-form-item>
           </div>
@@ -246,6 +248,8 @@ export default {
       inpShow: false,
       inpShow1: false,
       dialogVisible: false,
+      btnLoad: false,
+      btnLoad1: false,
       ReadWrite: {
         3: "全部",
         2: "只写",
@@ -309,6 +313,7 @@ export default {
       this.dialogVisible = false;
     },
     submitForm1(formName) {
+      this.btnLoad = true;
       this.$refs[formName].validate(valid => {
         if (valid) {
           const params = {
@@ -340,11 +345,13 @@ export default {
               this.inpShow1 = false;
               this.detailList();
             } else {
-              this.$message.error(res.Error.Code);
+              this.$message.error("更新失败");
             }
+            this.btnLoad = false;
           });
         } else {
           return false;
+          this.btnLoad = false;
         }
       });
     },
@@ -471,6 +478,7 @@ export default {
       this.setShow = !this.setShow;
     },
     submitForm() {
+      this.btnLoad1 = true;
       const params = {
         Version: "2019-03-19",
         Region: "ap-guangzhou",
@@ -487,6 +495,8 @@ export default {
         } else {
           this.$message.error("更新失败");
         }
+        this.btnLoad1 = false;
+        this.detailList();
       });
     }
   },
