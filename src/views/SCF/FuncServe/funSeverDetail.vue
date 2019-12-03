@@ -863,7 +863,7 @@ export default {
         Action: "DescribeBaseMetrics",
         Namespace: "QCE/CVM"
       };
-      this.$axios.post("scf2/DescribeBaseMetrics", params).then(res => {
+      this.axios.post("scf2/DescribeBaseMetrics", params).then(res => {
         console.log(res, "table");
       });
     },
@@ -883,9 +883,8 @@ export default {
 
       };
       console.log(params);
-      let url = "monitor2/GetMonitorData";
       this.axios
-        .post(url, params)
+        .post(All_MONITOR, params)
         .then(res => {
           console.log(res.Response);
           this.tableData.push(data.Response);
