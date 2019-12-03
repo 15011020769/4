@@ -126,6 +126,7 @@
 
     },
     methods: {
+      //获取数据
       GetDat(data) {
         this.period = data[0];
         this.Start_End = data[1];
@@ -147,7 +148,7 @@
           this.getModality(this.MetricName)
         }
       },
-      // 
+      // 获取监控信息
       Obtain(metricN, symbol) {
         const param = {
           Version: '2018-07-24',
@@ -165,6 +166,7 @@
           this.tableData.push(data.Response);
         });
       },
+      //获取监控信息
       getModality(MetricName) {
         const param = {
           Version: '2018-07-24',
@@ -194,6 +196,7 @@
 
     },
     filters: {
+      //文字过滤
       UpName(value) {
         if (value === 'Connum') {
           return (value = '当前连接数');

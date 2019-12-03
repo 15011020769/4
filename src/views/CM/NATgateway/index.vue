@@ -26,7 +26,10 @@
         <el-table-column prop label="ID/主机名">
           <template slot-scope="scope">
             <p>
-              <a @click="jump(scope.row.NatGatewayId)" style="cursor:pointer;">{{scope.row.NatGatewayId}}</a>
+              <a
+                @click="jump(scope.row.NatGatewayId)"
+                style="cursor:pointer;"
+              >{{scope.row.NatGatewayId}}</a>
             </p>
             <p>{{scope.row.NatGatewayName}}</p>
           </template>
@@ -101,6 +104,7 @@ export default {
         1000: "大型"
       },
       searchValue: "",
+      //文字过滤
       instanceStatus: {
         PENDING: "创建中",
         LAUNCH_FAILED: "创建失败",
@@ -164,6 +168,7 @@ export default {
         this.GetTabularData();
       }
     },
+    //点击搜索按钮
     clicksearch(val) {
       this.searchInput = val;
       if (this.searchInput !== "" && this.searchValue !== "") {
@@ -197,6 +202,7 @@ export default {
         }
       });
     },
+    //分页
     handleSizeChange(val) {
       this.pagesize = val;
       this.currpage = 1;
@@ -206,6 +212,7 @@ export default {
       this.currpage = val;
       this.GetTabularData();
     },
+    //跳转
     jump(id) {
       this.$router.push({
         name: "NATdetails",
@@ -219,7 +226,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.CM-wrap{
+.CM-wrap {
   width: 100%;
   height: 100%;
 }

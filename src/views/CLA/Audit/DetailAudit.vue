@@ -178,10 +178,17 @@
 
 <script>
 import Header from "../Public/Head";
-import { GZJ_DETAILIST, LIST_COSBUCKETS } from "../../../constants";
+import {
+  GZJ_DETAILIST,
+  LIST_COSBUCKETS,
+  GZJ_DELETE,
+  GZJ_UPDATEAUDIT,
+  GZJ_REGION
+} from "../../../constants";
 export default {
   name: "detail-audit",
   data() {
+    //输入框正则验证
     var AuditName = (rule, value, callback) => {
       var reg = /^[a-zA-Z0-9_]{3,128}$/;
       setTimeout(() => {
@@ -236,20 +243,26 @@ export default {
       }, 1000);
     };
     return {
-      loading: true,
-      title: "",
-      detailData: {},
+      loading: true, //是否为加载中状态
+      title: "", //header的标题
+      detailData: {}, //页面信息
+      //输入框验证
       rules: {
         LogFilePrefix: [{ validator: LogFilePrefix, trigger: "blur" }],
         AuditName: [{ validator: AuditName, trigger: "blur" }],
         CosBucketName: [{ validator: CosBucketName, trigger: "blur" }],
         CmqQueueName: [{ validator: CmqQueueName, trigger: "blur" }]
       },
+      //第一部分编辑inp是否显示
       inpShow: false,
+      //第二部分编辑inp是否显示
       inpShow1: false,
+      //弹出框
       dialogVisible: false,
+      //按钮加载状态
       btnLoad: false,
       btnLoad1: false,
+      //文字过滤
       ReadWrite: {
         3: "全部",
         2: "只写",
@@ -259,35 +272,43 @@ export default {
         0: "否",
         1: "是"
       },
+      //Bucket下拉框
       BucketSelect: {
         name: ""
       },
+      //地域下拉框
       select: {
         index: 0
       },
+      //cos是否显示
       cosShow: false,
+      //高级设置是否显示
       setShow: true,
+      //高级设置下一部分是否显示
       setChild: false,
       cmqShow: false,
-      cmqSelect: {},
+      //是否新建
       IsCreateNewQueue: 0,
       CmqQueueName1: "123",
+      //cmq地域选择框
       cmqSelect: {
         index: 0
       }
     };
   },
   methods: {
+    //返回上一级页面
     _back() {
       this.$router.push("/Audit");
     },
+    //删除
     delFn() {
       let params = {
         AuditName: this.title,
         Version: "2019-03-19",
         Region: "ap-guangzhou"
       };
-      this.axios.post("cloudaudit2/DeleteAudit", params).then(data => {
+      this.axios.post(GZJ_DELETE, params).then(data => {
         if (data.Response.IsSuccess == 1) {
           this.$message({
             message: "删除成功",
@@ -299,9 +320,11 @@ export default {
         }
       });
     },
+    //弹出框显示
     del() {
       this.dialogVisible = true;
     },
+    //是否创建cmq
     _cmqCretae() {
       if (this.cmqShow) {
         this.IsCreateNewQueue == 1;
@@ -309,9 +332,11 @@ export default {
         this.IsCreateNewQueue == 0;
       }
     },
+    //点击取消按钮
     handleClose(done) {
       this.dialogVisible = false;
     },
+    //保存
     submitForm1(formName) {
       this.btnLoad = true;
       this.$refs[formName].validate(valid => {
@@ -336,7 +361,7 @@ export default {
             delete params.CmqRegion;
             delete params.IsCreateNewQueue;
           }
-          this.axios.post("cloudaudit2/UpdateAudit", params).then(res => {
+          this.axios.post(GZJ_UPDATEAUDIT, params).then(res => {
             if (res.Response.IsSuccess == 1) {
               this.$message({
                 message: "更新成功",
@@ -345,10 +370,9 @@ export default {
               this.inpShow1 = false;
               this.detailList();
             } else {
-              if(res.Response.Error.Code){
+              if (res.Response.Error.Code) {
                 this.$message.error(res.Response.Error.Code);
-              }
-              else{
+              } else {
                 this.$message.error("更新失败");
               }
             }
@@ -360,6 +384,7 @@ export default {
         }
       });
     },
+    //radio框发生变化
     _cmqRadio() {
       if (
         this.detailData.IsEnableCmqNotify == "是" ||
@@ -370,12 +395,15 @@ export default {
         this.setChild = false;
       }
     },
+    //cmq选择框发生变化
     _cmqSelect() {
       this.cmqSelect.index = this.cmqSelect.options[this.cmqSelect.name].value;
     },
+    //地域下拉框发生变化
     _select() {
       this.select.index = this.select.options[this.select.name].value;
     },
+    //Bucket下拉框发生变化
     _BucketSelect() {
       this.detailData.CosBucketName = this.BucketSelect.options[
         this.BucketSelect.name
@@ -387,7 +415,7 @@ export default {
         Version: "2019-03-19",
         Region: "ap-guangzhou"
       };
-      this.axios.post("cloudaudit2/ListCmqEnableRegion", params).then(res => {
+      this.axios.post(GZJ_REGION, params).then(res => {
         var data = res.Response.EnableRegions;
         var arr = [];
         data.forEach((item, index) => {
@@ -482,6 +510,7 @@ export default {
     _set() {
       this.setShow = !this.setShow;
     },
+    //更新事件
     submitForm() {
       this.btnLoad1 = true;
       const params = {
@@ -490,7 +519,7 @@ export default {
         AuditName: this.title,
         ReadWriteAttribute: this.detailData.ReadWriteAttribute
       };
-      this.axios.post("cloudaudit2/UpdateAudit", params).then(res => {
+      this.axios.post(GZJ_UPDATEAUDIT, params).then(res => {
         if (res.Response.IsSuccess == 1) {
           this.$message({
             message: "更新成功",

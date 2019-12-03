@@ -116,6 +116,7 @@
     },
     created() {},
     methods: {
+      //获取数据
       GetDat(data) {
         this.period = data[0];
         this.Start_End = data[1];
@@ -184,6 +185,7 @@
       }
     },
     filters: {
+      //文字过滤
       UpName(value) {
         if (value === "DiskReadIops") {
           return (value = "硬盘读 IOPS");

@@ -150,13 +150,13 @@
 
       <el-table-column :label="$t('CAM.CAM.userList.userMessage')">
         <template slot-scope="scope">
-          <i @click="details" class="el-icon-mobile mobile"></i>
-          <i @click="details" class="el-icon-message message"></i>
+          <i @click="details(scope.row)" class="el-icon-mobile mobile"></i>
+          <i @click="details(scope.row)" class="el-icon-message message"></i>
         </template>
       </el-table-column>
       <el-table-column prop="oper" :label="$t('CAM.CAM.userList.userOperation')" width="140">
         <template scope="scope">
-          <el-button @click="authorization=true" type="text">授权</el-button>
+          <el-button @click="getRow(scope.row.Uin)" type="text">授权</el-button>
           <span>|</span>
           <el-dropdown :hide-on-click="false">
             <span class="el-dropdown-link" style="color: #3E8EF7">
@@ -165,7 +165,7 @@
             </span>
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item>
-                <el-button type="text" style="color:#000" @click="dialogVisible= true">添加到组</el-button>
+                <el-button type="text" style="color:#000" @click="addUser(scope.row.Uid)">添加到组</el-button>
               </el-dropdown-item>
               <el-dropdown-item>
                 <el-button type="text" style="color:#000" @click="subscribe= true">订阅信息</el-button>
@@ -192,7 +192,7 @@
     <el-dialog title="添加到组" :visible.sync="authorization" width="74%" :before-close="handleClose">
       <div class="container">
         <div class="container-left">
-          <span>策略列表（共{{totalNum}}条）</span>
+          <span>策略列表</span>
           <div>
             <el-input
               v-model="ClsearchValue"
@@ -228,7 +228,7 @@
         </div>
 
         <div class="container-left">
-          <span>已选择（共条）</span>
+          <span>已选择</span>
           <el-table
             class="table-left"
             ref="multipleSelected"
@@ -255,7 +255,7 @@
         </div>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="authorization = false">确 定</el-button>
+        <el-button type="primary" @click="sureAddList">确 定</el-button>
         <el-button @click="authorization = false">取 消</el-button>
       </span>
     </el-dialog>
@@ -263,7 +263,7 @@
     <el-dialog title="添加到组" :visible.sync="dialogVisible" width="74%" :before-close="handleClose">
       <div class="container">
         <div class="container-left">
-          <span>用户组（共{{totalNum}}条）</span>
+          <span>用户组</span>
           <div>
             <el-input
               v-model="UsersearchValue"
@@ -297,7 +297,7 @@
         </div>
 
         <div class="container-left">
-          <span>已选择（共{{titles}}条）</span>
+          <span>已选择</span>
           <el-table
             class="table-left"
             ref="multipleSelected"
@@ -497,6 +497,14 @@
   </div>
 </template>
 <script>
+import {
+  USER_LIST,
+  POLICY_LIST,
+  USER_GROUP,
+  DELETE_USER,
+  QUERY_USER,
+  POLICY_USER
+} from "@/constants";
 export default {
   props: {
     policiesSelectedData: [
@@ -538,7 +546,7 @@ export default {
       form: {
         name: "yjy"
       },
-      titles:'',
+      titles: "",
       search: "",
       deleteName: "",
       selectName: "",
@@ -585,41 +593,70 @@ export default {
         type: [],
         resource: "",
         desc: ""
-      }
+      },
+      valArr: [],
+      Uin: "",
+      Uid: ""
     };
   },
   methods: {
+    //获取uid
+    addUser(uid) {
+      this.Uid = uid;
+      this.dialogVisible = true;
+    },
+    //获取uin
+    getRow(uin) {
+      this.Uin = uin;
+      this.authorization = true;
+    },
+    //添加数据到策略列表
+    sureAddList() {
+      var addIndex = [];
+      console.log(this.valArr);
+      this.valArr.forEach(item => {
+        addIndex.push(item);
+      });
+      addIndex.forEach(item => {
+        let params = {
+          Version: "2019-01-16",
+          PolicyId: item.PolicyId,
+          AttachUin: this.Uin
+        };
+        this.axios.post(POLICY_USER, params).then(data => {
+          console.log(data);
+        });
+      });
+      this.authorization = false;
+    },
     change(e) {
       this.$forceUpdate();
     },
-    //删除子用户
+    //获取每行用户的name
     todeleteShow(user) {
       this.deleteName = user.Name;
       this.deleteShow = true;
     },
+    //删除子用户
     sureDelet() {
       let params = {
-        Action: "DeleteUser",
         Version: "2019-01-16",
         Name: this.deleteName
       };
-      let url = "cam2/DeleteUser";
-      this.axios.post(url, params).then(data => {
+      this.axios.post(DELETE_USER, params).then(data => {
         this.selectData();
       });
       this.deleteShow = false;
     },
-    //策略搜索
+    //搜索策略数据
     CeInit() {
       let params = {
-        Action: "ListPolicies",
         Version: "2019-01-16"
       };
       if (this.ClsearchValue != null && this.ClsearchValue != "") {
         params["Keyword"] = this.ClsearchValue;
       }
-      let url = "cam2/ListPolicies";
-      this.axios.post(url, params).then(data => {
+      this.axios.post(POLICY_LIST, params).then(data => {
         this.policiesData = data.Response.List;
       });
     },
@@ -629,43 +666,37 @@ export default {
     // 用户搜索
     UserInit() {
       let params = {
-        Action: "ListGroups",
         Version: "2019-01-16"
       };
       if (this.UsersearchValue != null && this.UsersearchValue != "") {
         params["Keyword"] = this.UsersearchValue;
       }
-      let url = "cam2/ListGroups";
-      this.axios.post(url, params).then(data => {
+      this.axios.post(USER_GROUP, params).then(data => {
         this.policiesDatas = data.Response.GroupInfo;
-        this.titles = this.policiesDatas.length
+        this.titles = this.policiesDatas.length;
       });
     },
     toQueryUser() {
       this.UserInit();
     },
-    //查询
+    //查询子用户详情
     selectuser() {
       let selectList = {
-        Action: "GetUser",
         Version: "2019-01-16",
         Name: this.selectName
       };
-      let url = "cam2/GetUser";
-      this.axios.post(url, selectList).then(data => {
+      this.axios.post(QUERY_USER, selectList).then(data => {
         console.log(data);
         this.tableData = data;
       });
     },
 
-    //用户列表
+    //获取用户列表数据
     selectData() {
       let userList = {
-        Action: "ListUsers",
         Version: "2019-01-16"
       };
-      let userListUrl = "cam2/ListUsers";
-      this.axios.post(userListUrl, userList).then(data => {
+      this.axios.post(USER_LIST, userList).then(data => {
         this.tableData = data.Response.Data;
       });
     },
@@ -689,18 +720,18 @@ export default {
       this.val = [...this.val, ...val];
     },
     details(val) {
-       console.log(val);
+      console.log(val);
       this.$router.push({
         path: "/details",
         query: {
           content: val.Name
         }
       });
-     
     },
     handleSelectionChange(val) {
       // 给右边table框赋值，只需在此处赋值即可，selectedRow方法中不写，因为单独点击复选框，只有此方法有效。
       this.policiesSelectedData = val;
+      this.valArr = val;
     },
     selectedRow(row, column, event) {
       // 设置选中或者取消状态
@@ -719,52 +750,14 @@ export default {
     }
   },
   created() {
-    //获取授权数据
-    let params = {
-      Action: "ListPolicies",
-      Version: "2019-01-16"
-    };
-    let url = "cam2/ListPolicies";
-    this.axios
-      .post(url, params)
-      .then(data => {
-        this.policiesData = data.Response.List;
-        console.log(data);
-      })
-      .catch(error => {
-        console.log(error);
-      });
-
     //策略绑定到用户
-    let More = {
-      Action: "ListGroups",
-      Version: "2019-01-16"
-    };
-    let moreUrl = "cam2/ListGroups";
-    this.axios
-      .post(moreUrl, More)
-      .then(data => {
-        this.policiesDatas = data.Response.GroupInfo;
-      })
-      .catch(error => {
-        console.log(error);
-      });
+    this.UserInit();
 
-    //获取用户列表
-    let userList = {
-      Action: "ListUsers",
-      Version: "2019-01-16"
-    };
-    let userListUrl = "cam2/ListUsers";
-    this.axios
-      .post(userListUrl, userList)
-      .then(data => {
-        this.tableData = data.Response.Data;
-        console.log(data);
-      })
-      .catch(error => {
-        console.log(error);
-      });
+    //调用用获取列表数据方法,绑定数据到表格中
+    this.selectData();
+
+    //调用策略列表数据方法,绑定数据
+    this.CeInit();
   }
 };
 </script>

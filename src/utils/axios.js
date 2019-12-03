@@ -9,11 +9,13 @@ const conf = {
   baseURL: process.env.VUE_APP_serverUrl || '',
   timeout: 60 * 1000,
   loading: true,
+  withCredentials: true,
   headers: {
     uuid: VueCookie.get('uuid'),
     // uuid: '123456789',
-    Pragma: 'no-cache',
-    'Cache-Control': 'no-cache'
+    // Pragma: 'no-cache',
+    // 'Cache-Control': 'no-cache',
+    'Content-Type': 'application/json; charset=utf-8'
   }
 }
 

@@ -408,7 +408,7 @@
               </el-collapse>
             </el-tab-pane>
             <el-tab-pane label="API密钥" name="fourth">密钥</el-tab-pane>
-            <el-tab-pane label="小程序" name="fifth" v-yjy>小程序</el-tab-pane>
+            <el-tab-pane label="小程序" name="fifth">小程序</el-tab-pane>
           </el-tabs>
         </template>
       </div>
@@ -420,14 +420,17 @@
   </div>
 </template>
 <script>
+import {
+  REMOVEBIND_USER,
+  REMOVEGROUP_USER,
+  USER_LIST,
+  UPDATA_USER,
+  QUERY_USER,
+  RELATE_USER,
+  QUERY_POLICY,
+  USER_GROUP
+} from "@/constants";
 export default {
-  directives: {
-    yjy: {
-      inserted: function(el) {
-        console.log(111);
-      }
-    }
-  },
   data() {
     return {
       deleteUserList: [],
@@ -519,31 +522,31 @@ export default {
         }
       ],
       valArr: [],
-      title:'',
-      titles:'',
-      userData:[]
+      title: "",
+      titles: "",
+      userData: []
     };
   },
   methods: {
-    delsure(){
+    //批量解除绑定到用户
+    delsure() {
       var delIndex = [];
       this.valArr.forEach(item => {
         delIndex.unshift(item.PolicyId);
       });
       delIndex.forEach(item => {
-       let params = {
-        Action: "DetachUserPolicy",
-        Version: "2019-01-16",
-        PolicyId: item,
-        DetachUin: this.userData.Uin
-      };
-      let url = "cam2/DetachUserPolicy";
-      this.axios.post(url, params).then(data => {
-        this._user();
+        let params = {
+          Version: "2019-01-16",
+          PolicyId: item,
+          DetachUin: this.userData.Uin
+        };
+        this.axios.post(REMOVEBIND_USER, params).then(data => {
+          this._user();
+        });
       });
-    });
       this.dialogVisibleDeleteMore = false;
     },
+    //批量移出用户组
     delConfirm() {
       var delIndex = [];
       this.valArr.forEach(item => {
@@ -551,15 +554,10 @@ export default {
       });
       delIndex.forEach(item => {
         let params = {
-          Action: "DeleteGroup",
           Version: "2019-01-16",
           GroupId: item
         };
-        console.log(this.teamTableData);
-        let url = "cam2/DeleteGroup";
-        this.axios.post(url, params).then(data => {
-          console.log(params);
-          console.log(data);
+        this.axios.post(REMOVEGROUP_USER, params).then(data => {
           this._remove();
         });
       });
@@ -583,30 +581,25 @@ export default {
         this.bntVisible = true;
       }
     },
+    //解除单条数据
     deleteThisRow(PolicyId) {
       console.log(this.content);
       let params = {
-        Action: "DetachUserPolicy",
         Version: "2019-01-16",
         PolicyId: PolicyId,
         DetachUin: this.userData.Uin
       };
-      let url = "cam2/DetachUserPolicy";
-      this.axios.post(url, params).then(data => {
+      this.axios.post(REMOVEBIND_USER, params).then(data => {
         this._user();
       });
     },
+    //移出单条数据
     removeTeam(val) {
       let params = {
-        Action: "DeleteGroup",
         Version: "2019-01-16",
         GroupId: val.GroupId
       };
-      console.log(this.teamTableData);
-      let url = "cam2/DeleteGroup";
-      this.axios.post(url, params).then(data => {
-        console.log(params);
-        console.log(data);
+      this.axios.post(REMOVEGROUP_USER, params).then(data => {
         this._remove();
       });
     },
@@ -616,14 +609,13 @@ export default {
     addTeam() {
       this.$router.push({ name: "addTeamUser" });
     },
+    //初始化用户列表
     init() {
       let userList = {
-        Action: "ListUsers",
         Version: "2019-01-16"
       };
-      let userListUrl = "cam2/ListUsers";
       this.axios
-        .post(userListUrl, userList)
+        .post(USER_LIST, userList)
         .then(data => {
           this.tableData = data.Response.Data;
           console.log(data);
@@ -632,34 +624,21 @@ export default {
           console.log(error);
         });
     },
+    //编辑子用户
     sureUpdata() {
-      console.log("11");
       let params = {
-        Action: "UpdateUser",
         Version: "2019-01-16",
         Name: this.formLabelAlign.name,
         Email: this.formLabelAlign.email,
         PhoneNum: this.formLabelAlign.phone,
         Remark: this.formLabelAlign.region
       };
-      let url = "cam2/UpdateUser";
-      this.axios.post(url, params).then(data => {
-        console.log(data);
+      this.axios.post(UPDATA_USER, params).then(data => {
         this.init();
       });
       this.dialogVisible = false;
     },
-    deleteBind() {
-      this.dialogVisibleDeleteMore = false;
-      let params = {
-        Action: "DeletePolicy",
-        Version: "2019-01-16"
-      };
-      let url = "cam2/DeletePolicy";
-      this.axios.post(url, params).then(data => {
-        console.log(data);
-      });
-    },
+
     handleClose(done) {
       this.$confirm("确认关闭？")
         .then(_ => {
@@ -679,80 +658,52 @@ export default {
     handleChange(val) {
       console.log(val);
     },
+    //列出用户关联用户组数据
     _remove() {
       let getUser = {
-        Action: "GetUser",
         Version: "2019-01-16",
         Name: this.$route.query.content
       };
-      let urlgetUser = "cam2/GetUser";
       this.axios
-        .post(urlgetUser, getUser)
+        .post(QUERY_USER, getUser)
         .then(data => {
           this.userData = data.Response;
           console.log(this.userData);
         })
         .then(info => {
           let params = {
-            Action: "ListGroupsForUser",
             Version: "2019-01-16",
             Uid: this.userData.Uid
           };
-          console.log(params);
-          let url = "cam2/ListGroupsForUser";
-          this.axios.post(url, params).then(res => {
+          this.axios.post(RELATE_USER, params).then(res => {
             this.teamTableData = res.Response.GroupInfo;
-            this.title = '组('+res.Response.GroupInfo.length+')'
+            this.title = "组(" + res.Response.GroupInfo.length + ")";
           });
         });
     },
+    //列出用户绑定策略
     _user() {
-      //用户详情
       let getUser = {
-        Action: "GetUser",
         Version: "2019-01-16",
         Name: this.$route.query.content
       };
-      let urlgetUser = "cam2/GetUser";
-      this.axios.post(urlgetUser, getUser).then(data => {
+      this.axios.post(QUERY_USER, getUser).then(data => {
         this.userData = data.Response;
-        console.log(this.userData);
         let params = {
-          Action: "ListAttachedUserPolicies",
           Version: "2019-01-16",
           TargetUin: this.userData.Uin
         };
-        console.log(params);
-        let url = "cam2/ListAttachedUserPolicies";
-        this.axios.post(url, params).then(res => {
+        this.axios.post(QUERY_POLICY, params).then(res => {
           this.tableDatas = res.Response.List;
-          this.titles = '权限('+res.Response.List.length+')'
+          this.titles = "权限(" + res.Response.List.length + ")";
         });
       });
     }
   },
   created() {
-    // this.content = this.$route.query.content;
-    // console.log(this.content)
+    //调用方法
     this._user();
     this._remove();
-    let teamParams = {
-      Action: "ListGroups",
-      Version: "2019-01-16"
-    };
-    let teamUrl = "cam2/ListGroups";
-    this.axios.post(teamUrl, teamParams).then(data => {
-      this.teamTableData = data.Response.GroupInfo;
-    });
-
-    let removeUser = {
-      Action: "RemoveUserFromGroup",
-      Version: "2019-01-16"
-    };
-    let removeUrl = "cam2/RemoveUserFromGroup";
-    this.axios.post(removeUrl, removeUser).then(data => {
-      console.log(data);
-    });
   }
 };
 </script>

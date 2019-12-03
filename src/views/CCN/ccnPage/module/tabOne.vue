@@ -116,6 +116,7 @@
 </template>
 
 <script>
+import { CCN_ATTACHEDINSTANCES_LIST, DETACHCCN_INSTANCES, VPCS_LIST, DIRECTCONNECTGATEWAYS_LIST, ATTACHCCN_INSTANCES } from "@/constants"
 export default {
   data () {
     return {
@@ -184,7 +185,7 @@ export default {
         CcnId: this.ccnId
       }
       // 查询关联实例列表
-      this.$axios.post('vpc2/DescribeCcnAttachedInstances', params).then(res => {
+      this.axios.post(CCN_ATTACHEDINSTANCES_LIST, params).then(res => {
         console.log(res)
         this.tableData = res.Response.InstanceSet
         this.total = res.Response.TotalCount
@@ -208,7 +209,7 @@ export default {
         'Instances.0.InstanceRegion': this.instance.InstanceRegion,
         'Instances.0.InstanceType': this.instance.InstanceType
       }
-      this.$axios.post('vpc2/DetachCcnInstances', params).then(res => {
+      this.axios.post(DETACHCCN_INSTANCES, params).then(res => {
         this.getData()
       })
       this.dialogVisible = false
@@ -221,12 +222,12 @@ export default {
         Region: 'ap-taipei'
       }
       if (instanceType == 'VPC') { // 私有网络
-        this.$axios.post('vpc2/DescribeVpcs', params).then(res => {
+        this.axios.post(VPCS_LIST, params).then(res => {
           console.log(res)
           this.vpcs = res.Response.VpcSet
         })
       } else if (instanceType == 'DIRECTCONNECT') { // 专线网络
-        this.$axios.post('vpc2/DescribeDirectConnectGateways', params).then(res => {
+        this.axios.post(DIRECTCONNECTGATEWAYS_LIST, params).then(res => {
           console.log(res)
           this.vpcs = res.Response.DirectConnectGatewaySet
         })
@@ -244,7 +245,7 @@ export default {
         'Instances.0.InstanceType': ins.instanceType
       }
       console.log(params)
-      this.$axios.post('vpc2/AttachCcnInstances', params).then(res => {
+      this.axios.post(ATTACHCCN_INSTANCES, params).then(res => {
         console.log(res)
         this.getData()
       })

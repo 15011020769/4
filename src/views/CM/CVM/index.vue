@@ -95,7 +95,8 @@ import { ALL_CITY, CVM_LIST, ALL_PROJECT } from "@/constants";
 export default {
   data() {
     return {
-      loadShow: true,
+      loadShow: true,//加载是否显示
+      //搜索下拉框
       searchOptions: [
         {
           value: "project-id",
@@ -118,7 +119,9 @@ export default {
           label: "公网IP"
         }
       ],
+      //inp输入的值
       searchValue: "",
+      //文字过滤
       instanceStatus: {
         PENDING: "创建中",
         LAUNCH_FAILED: "创建失败",
@@ -135,6 +138,7 @@ export default {
         EXPIRED: "过期",
         PROTECTIVELY_ISOLATED: "隔离"
       },
+      //城市列表
       cities: [],
       selectedRegion: "ap-taipei", // 默认选中城市
       selectedCity: {}, // 切换城市

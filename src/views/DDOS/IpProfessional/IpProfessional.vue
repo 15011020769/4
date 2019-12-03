@@ -4,7 +4,6 @@
       <div class="ReportTit newClear">
         <h3 class="ReportTitH3">统计报表</h3>
         <el-button class="ReportTitBtn" type="primary" @click="newBuy">新购</el-button>
-        <!-- <el-button class="TestMethod" type="primary" @click="describeCCEvList()">Test接口</el-button> -->
       </div>
       <div>
         <el-tabs v-model="activeName" @tab-click="handleClick">
@@ -28,16 +27,6 @@
                     end-placeholder="结束日期">
                   </el-date-picker>
                 </div>
-                <!-- <el-date-picker
-                  v-model="dateChoice1"
-                  type="daterange"
-                  align="right"
-                  unlink-panels
-                  range-separator="至"
-                  start-placeholder="开始日期"
-                  end-placeholder="结束日期"
-                  :picker-options="pickerOptions">
-                </el-date-picker><br/> -->
                 <br/>
                 <el-select class="ddosAttackSelect1" v-model="inputId" @change="changeId" filterable placeholder="请输入要查询的ID或名称">
                   <el-option :label="inputId" :value="inputId"></el-option>
@@ -45,19 +34,14 @@
                 <el-select class="ddosAttackSelect1" v-model="timeBtnSelect2">
                   <el-option :label="timeBtnSelect2" :value="timeBtnSelect2"></el-option>
                 </el-select>
-                <!-- <el-input v-model="inputId" @change="changeId" class="mainConListOneIpt" placeholder="请输入要查询的ID或名称"/> -->
               </div>
               <div class="mainConListAll mainConListTwo">
                 <el-tabs class="tabsCard" v-model="activeName1" type="card" @tab-click="handleClick1">
                   <el-tab-pane label="攻击流量宽带" name="bps">
-                    <!-- <div> -->
                       <div id="myChart"></div>
-                    <!-- </div> -->
                   </el-tab-pane>
                   <el-tab-pane label="攻击包速率" name="pps">
-                    <!-- <div> -->
                       <div id="myChart2"></div>
-                    <!-- </div> -->
                   </el-tab-pane>
                 </el-tabs>
               </div>
@@ -101,18 +85,6 @@
                         type="text"
                         size="small"
                       >操作</el-button>
-                      <!-- <el-dialog
-                        :title="'您确定要删除'+scope.row.funName+'吗？'"
-                        :visible.sync="dialogVisible"
-                        width="30%"
-                        :before-close="handleClose"
-                      >
-                        <span>删除函数将永久删除函数代码及已绑定的触发器。是否确定删除此函数？</span>
-                        <span slot="footer" class="dialog-footer">
-                          <el-button @click="dialogVisible = false">取 消</el-button>
-                          <el-button type="primary" @click="sureDelete()">确 定</el-button>
-                        </span>
-                      </el-dialog> -->
                     </template>
                   </el-table-column>
                 </el-table>
@@ -134,17 +106,6 @@
           <el-tab-pane label="CC攻击防护" name="cc">
             <div class="mainConList">
               <div class="mainConListAll mainConListOne">
-                <!-- <el-date-picker
-                  v-model="dateChoice2"
-                  type="daterange"
-                  align="right"
-                  unlink-panels
-                  range-separator="至"
-                  start-placeholder="开始日期"
-                  end-placeholder="结束日期"
-                  :picker-options="pickerOptions">
-                </el-date-picker><br/>
-                <el-input v-model="inputIdCC" @change="changeIdCC" class="mainConListOneIpt" placeholder="请输入要查询的ID或名称"/> -->
                 <div class="newClear">
                   <el-button-group class="buttonGroupAll">
                     <el-button class="buttonGroup" @click="thisTime(1)">今天</el-button>
@@ -169,6 +130,32 @@
                 <el-select class="ddosAttackSelect1" v-model="ccTimeBtnSelect2">
                   <el-option :label="ccTimeBtnSelect2" :value="ccTimeBtnSelect2"></el-option>
                 </el-select>
+              </div>
+              <div class="mainConListAll">
+
+              </div>
+              <div class="mainConListAll">
+                <h3>CC攻击记录</h3>
+                <el-table :data="tableDataOfDescribeDDoSNetEvListcc.slice((currentPage-1)*pageSize,currentPage*pageSize)">
+                  <el-table-column prop="attackTime" label="攻击时间"></el-table-column>
+                  <el-table-column prop="attackDomin" label="被攻击域名"></el-table-column>
+                  <el-table-column prop="attackUrl" label="被攻击URI"></el-table-column>
+                  <el-table-column prop="allRequestTop" label="总请求峰值（QPS）"></el-table-column>
+                  <el-table-column prop="attackReqTop" label="攻击请求峰值（QPS）"></el-table-column>
+                  <el-table-column prop="attackResou" label="攻击源"></el-table-column>
+                </el-table>
+                <div class="tabListPage">
+                  <el-pagination
+                    @size-change="handleSizeChange"
+                    @current-change="handleCurrentChange"
+                    :current-page="currentPage"
+                    :page-sizes="[10, 20, 30, 50]"
+                    :page-size="pageSize"
+                    layout="total, sizes, prev, pager, next, jumper"
+                    :total="totalItems"
+                  >
+                  </el-pagination>
+                </div>
               </div>
             </div>
           </el-tab-pane>
@@ -277,12 +264,13 @@ export default {
       periodService: 300,//统计粒度，取值[300(5分钟)，3600(小时)，86400(天)]
       statistics: 'max',//统计方式，取值：max表示最大值；min表示最小值；avg表示均值；
       tableDataOfDescribeDDoSNetEvList: [], //DDoS攻击事件列表
+      tableDataOfDescribeDDoSNetEvListcc:[],//Cc攻击防护列表
       tableDataName: "",
       tableDataEnd: [],
-      currentPage: 1,
-      pageSize: 10,
-      totalItems: 0,
-      filterTableDataEnd: [],
+      currentPage: 1,//当前页
+      pageSize: 10,//每页长度
+      totalItems: 0,//总条数
+      filterTableDataEnd: [],//物理搜索
       flag: false,
       allData:[
         {
@@ -522,7 +510,7 @@ export default {
         //Limit: '',  //一页条数，填0表示不分页
         //Offset: ''  //页起始偏移，取值为(页码-1)*一页条数
       }
-      this.$axios.post('dayu2/DescribeDDoSNetEvList', params).then(res => {
+      this.axios.post('dayu2/DescribeDDoSNetEvList', params).then(res => {
         console.log(res)
         this.tableDataOfDescribeDDoSNetEvList = res.Response.Data
       })
@@ -765,7 +753,7 @@ export default {
     h3{
       line-height:52px;
       font-size:14px;
-      color:#888;
+      color:#000;
       font-weight:600;
     }
   }

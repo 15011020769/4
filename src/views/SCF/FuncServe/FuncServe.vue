@@ -232,6 +232,8 @@
   </div>
 </template>
 <script>
+
+import { ALL_CITY, SCF_LIST,NAME_SPACE_LIST,SCF_DEL,SCF_COPY,NAME_SPACE_CREAT,NAME_SPACE_UPD,NAME_SPACE_DEL } from "@/constants";
 export default {
   data() {
     return {
@@ -346,7 +348,7 @@ export default {
         Version: "2018-04-16",
         Region: "ap-taipei"
       };
-      this.$axios.post("scf2/ListNamespaces", params).then(res => {
+      this.axios.post(NAME_SPACE_LIST, params).then(res => {
         this.nameSpace = res.Response.Namespaces;
         this.modelNameSpace = res.Response.Namespaces;
         this.modelNameSpace.reverse();
@@ -356,6 +358,7 @@ export default {
         });
       });
     },
+    // 添加项目列表的表格数据
     getData() {
       var cookies = document.cookie;
       var list = cookies.split(";");
@@ -367,10 +370,11 @@ export default {
         Version: "2018-04-16",
         Region: "ap-guangzhou"
       };
-      this.$axios.post("scf2/ListFunctions", params).then(res => {
-        console.log(res.Response.Functions)
-        // console.log(res.data.functions);
+      // 获取表格数据
+      this.axios.post(SCF_LIST, params).then(res => {
+        //console.log(res.Response.Functions);
         this.tableDataBegin = res.Response.Functions;
+        console.log(res)
         //this.allData = this.tableDataBegin;
         //this.tableDataBegin = this.allData;
         // 将数据的长度赋值给totalItems
@@ -500,9 +504,8 @@ export default {
         FunctionName: this.deleteBegin.functionName
       };
       console.log(params.FunctionName);
-      this.$axios.post("scf2/DeleteFunction", params).then(res => {
-        console.log(res);
-        console.log("成功");
+      this.axios.post(SCF_DEL, params).then(res => {
+        //console.log(res);
         this.tableDataBegin.splice(this.deleteIndex, 1);
         this.totalItems -= 1;
         this.dialogVisible = false;
@@ -524,7 +527,7 @@ export default {
         Action: "CopyFunction"
       };
       console.log(this.copyIndex2);
-      this.$axios.post("scf2/CopyFunction", params).then(res => {
+      this.axios.post(SCF_COPY, params).then(res => {
         this.getData();
         this.dialogVisible2 = false;
       });
@@ -540,7 +543,7 @@ export default {
         Region: "ap-taipei"
       };
       //与库中数据数据对比，判断添加修改
-      this.$axios.post("scf2/ListNamespaces", paras).then(res => {
+      this.axios.post(NAME_SPACE_LIST, paras).then(res => {
         if (modelNameSpace.length > 1) {
           for (var i = 0; i < modelNameSpace.length; i++) {
             for (var w = 0; w < res.Response.Namespaces.length; w++) {
@@ -552,7 +555,7 @@ export default {
                   Namespace: modelNameSpace[i].Name,
                   Description: modelNameSpace[i].Description
                 };
-                this.$axios.post("scf2/CreateNamespace", params).then(res => {
+                this.axios.post(NAME_SPACE_CREAT, params).then(res => {
                   console.log(res);
                   console.log("添加");
                   this.dialogVisible3 = false;
@@ -568,7 +571,7 @@ export default {
                   Namespace: modelNameSpace[i].Name,
                   Description: modelNameSpace[i].Description
                 };
-                this.$axios.post("scf2/UpdateNamespace", params).then(res => {
+                this.axios.post(NAME_SPACE_UPD, params).then(res => {
                   console.log(res);
                   console.log("更新");
                   this.dialogVisible3 = false;
@@ -589,7 +592,7 @@ export default {
         Region: "ap-guangzhou",
         Namespace: spaceRow.Name
       };
-      this.$axios.post("scf2/DeleteNamespace", params).then(res => {
+      this.axios.post(NAME_SPACE_DEL, params).then(res => {
         console.log(res);
       });
       this.modelNameSpace.splice(spaceIndex, 1);
@@ -637,7 +640,7 @@ export default {
         Region: this.$cookie.get("regionv2"),
         Namespace: val
       };
-      this.$axios.post("scf/ListFunctions", params).then(res => {
+      this.axios.post(SCF_LIST, params).then(res => {
         // console.log(res.data.functions);
         this.tableDataBegin = res.data.functions;
         //this.allData = this.tableDataBegin;

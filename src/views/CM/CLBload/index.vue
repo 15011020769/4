@@ -74,32 +74,32 @@
   export default {
     data() {
       return {
-        loadShow: true,
+        loadShow: true,//加载是否显示
         searchOptions: [{
           value: 'LoadBalancerIds.0',
           label: '实例ID'
-        }],
-        searchValue: '',
+        }],//下拉框数据
+        searchValue: '',//下拉框默认选中的值
         instanceStatus: {
           0: '创建中',
           1: '正常',
-        },
+        },//文字过滤
         LoadBalancerType: {
           OPEN: '公网',
           INTERNAL: '内网',
-        },
-        cities: [],
+        },//文字过滤
+        cities: [],//城市列表
         selectedRegion: 'ap-taipei', // 默认选中城市
         selectedCity: {}, // 切换城市
-        searchInput: '',
+        searchInput: '',//输入框的值
         TbaleData: [], // 表格数据
         pagesize: 20, // 分页条数
         currpage: 1, // 当前页码
       };
     },
     created() {
-      this.GetCity();
-      this.GetTabularData();
+      this.GetCity();//获取城市
+      this.GetTabularData();//列表数据
     },
     components: {
       Cities,
@@ -126,12 +126,14 @@
       changeValue(val) {
         this.searchValue = val
       },
+      //搜索框的值
       changeinput(val) {
         this.searchInput = val
         if (this.searchInput === '') {
           this.GetTabularData()
         }
       },
+      //点击搜索按钮
       clicksearch(val) {
         this.searchInput = val
         if (this.searchInput !== '' && this.searchValue !== '') {
@@ -167,6 +169,7 @@
             }
           })
       },
+      //分页
       handleSizeChange(val) {
         this.pagesize = val
         this.currpage = 1
@@ -176,6 +179,7 @@
         this.currpage = val;
         this.GetTabularData()
       },
+      //跳转
       jump(id, vip) {
         this.$router.push({
           name: 'CLBloaddetails',
