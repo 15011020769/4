@@ -196,6 +196,7 @@
 
 <script>
 import { log } from 'util'
+import { GET_CCNREGIONBANDWIDTHLIMITS, MODIFYCCN_REGIONBANDWIDTHLIMITSTYPE, REGIONS_LIST, SET_CCNREGIONBANDWIDTHLIMITS } from "@/constants";
 export default {
   data () {
     return {
@@ -243,7 +244,7 @@ export default {
         CcnId: this.ccnId
       }
       // 查询-各地域出带宽限速（DescribeCcnRegionBandwidthLimits原API中给出接口）（GetCcnRegionBandwidthLimits腾讯云给出接口）
-      this.$axios.post('vpc2/GetCcnRegionBandwidthLimits', params).then(res => {
+      this.axios.post(GET_CCNREGIONBANDWIDTHLIMITS, params).then(res => {
         console.log(res)
         this.tableData = res.Response.CcnBandwidthSet
       })
@@ -262,7 +263,7 @@ export default {
       } else if (ccnDetail.BandwidthLimitType == 'INTER_REGION_LIMIT') {
         this.regionShow = true
       }
-      this.$axios.post('vpc2/ModifyCcnRegionBandwidthLimitsType', params).then(res => {
+      this.axios.post(MODIFYCCN_REGIONBANDWIDTHLIMITSTYPE, params).then(res => {
         console.log('修改成功')
         this.getData()
       })
@@ -290,7 +291,7 @@ export default {
       var params = {
         Version: '2017-03-12'
       }
-      this.$axios.post('cvm2/DescribeRegions', params).then(res => {
+      this.axios.post(REGIONS_LIST, params).then(res => {
         console.log(res)
         this.regionSet = res.Response.RegionSet
       })
@@ -306,7 +307,7 @@ export default {
         'CcnRegionBandwidthLimits.0.BandwidthLimit': this.upLimits.Limits,
         'CcnRegionBandwidthLimits.0.DstRegion': this.upLimits.DstRegion
       }
-      this.$axios.post('vpc2/SetCcnRegionBandwidthLimits', params).then(res => {
+      this.axios.post(SET_CCNREGIONBANDWIDTHLIMITS, params).then(res => {
         console.log(params)
         console.log('修改成功')
         this.getData()

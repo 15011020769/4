@@ -11,3 +11,8 @@ export * from './scf'
 export * from './cloudaudit'
 
 export * from './userlist'
+// 私有网络 云联网
+export * from './CCN'
+
+// 标签
+export * from './TAG'

@@ -40,6 +40,7 @@
 </template>
 
 <script>
+import { CCN_ROUTES, ENABLE_CCNROUTES, DISABLE_CCNROUTES } from "@/constants"
 export default {
   data () {
     return {
@@ -62,7 +63,7 @@ export default {
         CcnId: this.ccnId
       }
       // 查询-路由表
-      this.$axios.post('vpc2/DescribeCcnRoutes', params).then(res => {
+      this.axios.post(CCN_ROUTES, params).then(res => {
         console.log(res)
         this.tableData = res.Response.RouteSet
       })
@@ -76,11 +77,11 @@ export default {
       }
       console.log(route)
       if (route.Enabled) { // true启用
-        this.$axios.post('vpc2/EnableCcnRoutes', params).then(res => {
+        this.axios.post(ENABLE_CCNROUTES, params).then(res => {
           console.log(res)
         })
       } else { // false 禁用
-        this.$axios.post('vpc2/DisableCcnRoutes', params).then(res => {
+        this.axios.post('vpc2/DisableCcnRoutes', params).then(res => {
           console.log(res)
         })
       }

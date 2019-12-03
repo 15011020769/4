@@ -304,6 +304,8 @@
 </template>
 
 <script>
+import { CCN_LIST, VPCS_LIST, DIRECTCONNECTGATEWAYS_LIST, CCN_CREATE, ATTACHCCN_INSTANCES,
+        CCN_DELETE, MODIFYCCN_ATTRIBUTE, MODIFYCCN_REGIONBANDWIDTHLIMITSTYPE, MODIFYRESOURCE_TAGS } from "@/constants"
 export default {
   data () {
     return {
@@ -367,7 +369,7 @@ export default {
         Version: '2017-03-12',
         Region: 'ap-taipei'
       }
-      this.$axios.post('vpc2/DescribeCcns', params).then(res => {
+      this.axios.post(CCN_LIST, params).then(res => {
         console.log('获取ccn列表成功')
         this.tableData = res.Response.CcnSet
         this.total = res.Response.TotalCount
@@ -416,13 +418,13 @@ export default {
       }
       if (instanceType == 'VPC') {
         // 私有网络
-        this.$axios.post('vpc2/DescribeVpcs', params).then(res => {
+        this.axios.post(VPCS_LIST, params).then(res => {
           console.log(res)
           this.vpcs = res.Response.VpcSet
         })
       } else if (instanceType == 'DIRECTCONNECT') {
         // 专线网络
-        this.$axios.post('vpc2/DescribeDirectConnectGateways', params).then(res => {
+        this.axios.post(DIRECTCONNECTGATEWAYS_LIST, params).then(res => {
           console.log(res)
           this.vpcs = res.Response.DirectConnectGatewaySet
         })
@@ -440,7 +442,7 @@ export default {
         InstanceChargeType: form.InstanceChargeType,
         BandwidthLimitType: form.BandwidthLimitType
       }
-      this.$axios.post('vpc2/CreateCcn', params).then(res => {
+      this.axios.post(CCN_CREATE, params).then(res => {
         // console.log(res);
         // 关联实例
         var params2 = {
@@ -452,7 +454,7 @@ export default {
           'Instances.0.InstanceType': form.instanceType
         }
         console.log(params2)
-        this.$axios.post('vpc2/AttachCcnInstances', params2).then(res => {
+        this.axios.post(CCN_ATTACHCCNINSTANCES, params2).then(res => {
           console.log(res)
         })
         console.log('新建成功')
@@ -475,7 +477,7 @@ export default {
         Region: 'ap-taipei',
         CcnId: ccnDetail.CcnId
       }
-      this.$axios.post('vpc2/DeleteCcn', params).then(res => {
+      this.axios.post(CCN_DELETE, params).then(res => {
         // console.log(params);
         // console.log(res);
         console.log('删除成功')
@@ -503,7 +505,7 @@ export default {
         CcnName: ccnDetail.CcnName,
         CcnDescription: ccnDetail.CcnDescription
       }
-      this.$axios.post('vpc2/ModifyCcnAttribute', params).then(res => {
+      this.axios.post(MODIFYCCN_ATTRIBUTE, params).then(res => {
         console.log('修改成功')
         this.getData()
       })
@@ -523,7 +525,7 @@ export default {
         CcnId: ccnDetail.CcnId,
         BandwidthLimitType: ccnDetail.BandwidthLimitType
       }
-      this.$axios.post('vpc2/ModifyCcnRegionBandwidthLimitsType', params).then(res => {
+      this.axios.post(MODIFYCCN_REGIONBANDWIDTHLIMITSTYPE, params).then(res => {
         console.log('修改成功')
         this.getData()
       })
@@ -573,7 +575,7 @@ export default {
         }
       }
       console.log(params)
-      this.$axios.post('tag2/ModifyResourceTags', params).then(res => {
+      this.axios.post(MODIFYRESOURCE_TAGS, params).then(res => {
         console.log('修改成功')
         this.getData()
       })

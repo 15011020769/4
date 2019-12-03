@@ -21,6 +21,7 @@
 <script>
 import NavHeader from '@/components/HeaderAside/Header'
 import LeftAside from './Public/Menu'
+import { ALL_PROJECT } from "@/constants"
 export default {
   data () {
     return {}
@@ -40,7 +41,7 @@ export default {
     // 获取项目列表
     getProgectList () {
       var params = {}
-      this.axios.post('account/DescribeProject', params).then(data => {
+      this.axios.post(ALL_PROJECT, params).then(data => {
         let projectList = data.data
         let defaultPro = {
           projectId: 0,
