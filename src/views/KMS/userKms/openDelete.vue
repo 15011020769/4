@@ -7,7 +7,7 @@
         <span>2.密钥被彻底删除前3天，每天提示告警</span>
       </div>
       <div>
-        <span class="numberAdd">该密钥将于<el-input-number :min="7" size="small" v-model="thisNumber"></el-input-number>天后消失</span>
+        <span class="numberAdd">该密钥将于<el-input-number :min="7" :max="30" size="small" v-model="thisNumber"></el-input-number>天后消失</span>
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button @click="handleClose">取 消</el-button>
@@ -35,6 +35,7 @@
   </div>
 </template>
 <script>
+import { SCH_KMS,CEL_KMS } from "@/constants";
 export default {
   props:{
     isShow:Boolean,//判断弹框是否显示隐藏
@@ -45,6 +46,7 @@ export default {
       thisShow:'',
       thisContent:[],
       thisNumber:"7",//将于几天后消失
+      outTime:''
     }
   },
   computed:{
@@ -61,16 +63,47 @@ export default {
       this.thisShow=false;
       this.$emit('parentByClick',this.thisShow);
     },
-    //启动密钥轮换确定按钮
+    //计划删除密钥确定按钮
     openDeleteSure(){
       this.thisShow=false;
-      this.$emit('openDeleteSure',this.thisShow);
+      
+      let params = {
+        Version: '2019-01-18',
+        Region: 'ap-taipei',
+        KeyId: this.contentDialog[3],
+        PendingWindowInDays:this.thisNumber
+      };
+      this.axios.post(SCH_KMS, params).then(res => {
+        this.outTime= this.timestampToTime(res.Response.DeletionDate);
+        this.$emit('openDeleteSure',[this.thisShow,this.outTime]);
+        // console.log(this.timestampToTime(res.Response.DeletionDate));
+        this.$parent.getData();
+      });
     },
-    //禁用密钥轮换确定按钮
+    //取消删除密钥确定按钮
     closeDeleteSure(){
       this.thisShow=false;
       this.$emit('closeDeleteSure',this.thisShow);
-    }
+      let params = {
+        Version: '2019-01-18',
+        Region: 'ap-taipei',
+        KeyId: this.contentDialog[3],
+      };
+      this.axios.post(CEL_KMS, params).then(res => {
+        // console.log(res.Response);
+        this.$parent.getData();
+      });
+    },
+    timestampToTime(timestamp) {
+      var date = new Date(timestamp * 1000);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
+      var Y = date.getFullYear() + '-';
+      var M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '-';
+      var D = date.getDate() + ' ';
+      var h = date.getHours() + ':';
+      var m = date.getMinutes() + ':';
+      var s = date.getSeconds();
+      return Y + M + D + h + m + s;
+    },
   }
 }
 </script>

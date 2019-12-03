@@ -25,6 +25,7 @@
   </div>
 </template>
 <script>
+import { EnableKey,DisableKey } from "@/constants";
 export default {
   props:{
     isShow:Boolean,//判断弹框是否显示隐藏
@@ -47,7 +48,7 @@ export default {
     }
   },
   methods:{
-    //启动密钥轮换弹出框关闭事件
+    //启动密钥弹出框关闭事件
     handleClose(){
       this.thisShow=false;
       this.$emit('parentByClick',this.thisShow);
@@ -62,15 +63,38 @@ export default {
         this.flag=true;
       }
     },
-    //启动密钥轮换确定按钮
+    //启动密钥确定按钮
     startKmsSure(){
       this.thisShow=false;
       this.$emit('startKmsSure',this.thisShow);
+      let params = {
+        Version: '2019-01-18',
+        Region: 'ap-taipei',
+        KeyId: this.contentDialog[1]
+      };
+     
+      this.axios.post(EnableKey, params).then(res => {
+        console.log(res.Response);
+
+        this.$parent.getData();
+        // this.$parent.GetList();
+      });
     },
-    //禁用密钥轮换确定按钮
+    //禁用密钥确定按钮
     stopKmsSure(){
       this.thisShow=false;
       this.$emit('stopKmsSure',this.thisShow);
+      let params = {
+        Version: '2019-01-18',
+        Region: 'ap-taipei',
+        KeyId: this.contentDialog[1]
+      };
+      this.axios.post(DisableKey, params).then(res => {
+        
+        // console.log(res.Response);
+        this.$parent.getData();
+        // this.$parent.GetList();
+      });
     }
   }
 }
