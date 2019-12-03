@@ -90,6 +90,7 @@
   </div>
 </template>
 <script>
+
 export default {
   data() {
     return {
@@ -128,6 +129,7 @@ export default {
         path: "/createFun"
       });
     },
+
     //完成
     compileSucc() {
       let params = {
