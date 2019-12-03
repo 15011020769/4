@@ -139,12 +139,14 @@
       changeValue(val) {
         this.searchValue = val
       },
+      //inp发生变化
       changeinput(val) {
         this.searchInput = val
         if (this.searchInput === '') {
           this.GetTabularData()
         }
       },
+      //点击搜索按钮
       clicksearch(val) {
         this.searchInput = val
         if (this.searchInput !== '' && this.searchValue !== '') {
@@ -182,6 +184,7 @@
           })
 
       },
+      //分页
       handleSizeChange(val) {
         this.pagesize = val
         this.currpage = 1

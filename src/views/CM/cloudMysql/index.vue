@@ -94,14 +94,15 @@ import { ALL_CITY, MYSQL_LIST, ALL_PROJECT, OBJ_LIST } from "@/constants";
 export default {
   data() {
     return {
-      loadShow: true,
+      loadShow: true,//加载是否显示
       searchOptions: [
         {
           value: "InstanceIds.0",
           label: "实例 ID"
         }
-      ],
-      searchValue: "",
+      ],//下拉框
+      searchValue: "",//inp值
+      //文字过滤
       TaskStatusStatus: {
         0: "没有任务",
         1: "升级中",
@@ -179,6 +180,7 @@ export default {
         this.GetTabularData();
       }
     },
+    //点击搜索按钮
     clicksearch(val) {
       this.searchInput = val;
       if (this.searchInput !== "" && this.searchValue !== "") {
@@ -234,6 +236,7 @@ export default {
           });
         });
     },
+    //分页
     handleSizeChange(val) {
       this.pagesize = val;
       this.currpage = 1;
@@ -243,8 +246,8 @@ export default {
       this.currpage = val;
       this.GetTabularData();
     },
+    //跳转
     jump(id) {
-      console.log(id);
       this.$router.push({
         name: "CMMysqldetails",
         query: {

@@ -118,7 +118,7 @@ import { All_MONITOR } from '@/constants';
 export default {
   data() {
     return {
-      ID: this.$route.query.id,
+      ID: this.$route.query.id,//路由传递id
       period: '',
       Start_End: [],
       value: 1,
@@ -137,6 +137,7 @@ export default {
   },
   created() {},
   methods: {
+    //获取数据
     GetDat(data) {
       this.period = data[0];
       this.timeData = data[1];
@@ -153,8 +154,6 @@ export default {
       for (let i = 0; i < metricNArr.length; i++) {
         this.Obtain(metricNArr[i]);
       }
-
-      console.log(this.tableData);
     },
     Obtain(metricN) {
       const param = {
@@ -183,6 +182,7 @@ export default {
     },
   },
   filters: {
+    //文字过滤
     UpName(value) {
       if (value === 'inpkg') {
         return (value = '入包量');

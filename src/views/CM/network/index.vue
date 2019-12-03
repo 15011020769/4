@@ -67,7 +67,9 @@ import { ALL_CITY, NETIP_LIST, ALL_PROJECT } from "@/constants";
 export default {
   data() {
     return {
+      //加载是否显示
       loadShow: true,
+      //选择下拉框
       searchOptions: [
         {
           value: "address-id",
@@ -78,7 +80,9 @@ export default {
           label: "EIP-IP"
         }
       ],
+      //inp值
       searchValue: "",
+      //文字过滤
       instanceStatus: {
         PENDING: "创建中",
         LAUNCH_FAILED: "创建失败",
@@ -172,6 +176,7 @@ export default {
         }
       });
     },
+    //分页
     handleSizeChange(val) {
       this.pagesize = val;
       this.currpage = 1;
@@ -181,6 +186,7 @@ export default {
       this.currpage = val;
       this.GetTabularData();
     },
+    //跳转
     jump(id) {
       this.$router.push({
         name: "networkdetails",

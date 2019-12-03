@@ -85,7 +85,8 @@ import { ALL_CITY, VPN_LIST, ALL_PROJECT } from "@/constants";
 export default {
   data() {
     return {
-      loadShow: true,
+      loadShow: true,//加载是否显示
+      //下拉框
       searchOptions: [
         {
           value: "vpn-gateway-id",
@@ -96,6 +97,7 @@ export default {
           label: "名称"
         }
       ],
+      //文字过滤
       vpcConnState: {
         PENDING: "生产中",
         AVAILABLE: "运行中",
@@ -159,12 +161,14 @@ export default {
     changeValue(val) {
       this.searchValue = val;
     },
+    //inp输入值
     changeinput(val) {
       this.searchInput = val;
       if (this.searchInput === "") {
         this.GetTabularData();
       }
     },
+    //点击搜索
     clicksearch(val) {
       this.searchInput = val;
       if (this.searchInput !== "" && this.searchValue !== "") {
@@ -199,6 +203,7 @@ export default {
         }
       });
     },
+    //分页
     handleSizeChange(val) {
       this.pagesize = val;
       this.currpage = 1;
@@ -208,6 +213,7 @@ export default {
       this.currpage = val;
       this.GetTabularData();
     },
+    //跳转
     jump(id) {
       this.$router.push({
         name: "CMVPNdetails",

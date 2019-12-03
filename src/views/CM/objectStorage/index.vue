@@ -73,14 +73,18 @@ import { ALL_CITY, OBJ_LIST, CVM_PROJECT } from "@/constants";
 export default {
   data() {
     return {
+      //加载是否显示
       loadShow:true,
+      //搜索下拉框
       searchOptions: [
         {
           value: "bucket",
           label: "存储桶名称"
         }
       ],
+      //默认
       searchValue: "",
+      //文字过滤
       instanceStatus: {
         PENDING: "创建中",
         LAUNCH_FAILED: "创建失败",
@@ -139,12 +143,14 @@ export default {
     changeValue(val) {
       this.searchValue = val;
     },
+    //inp输入内容
     changeinput(val) {
       this.searchInput = val;
       if (this.searchInput === "") {
         this.GetTabularData();
       }
     },
+    //点击搜索按钮
     clicksearch(val) {
       this.searchInput = val;
       if (this.searchInput !== "" && this.searchValue !== "") {
@@ -156,22 +162,10 @@ export default {
     // 添加项目列表的表格数据
     GetTabularData() {
       const param = {
-        // Region: this.selectedRegion,
         Version: "2017-03-12"
-        // Offset: this.currpage * this.pagesize - this.pagesize,
-        // Limit: this.pagesize,
       };
-      // if (this.searchValue !== '' && this.searchInput !== '') {
-      //   param['Filters.0.Name'] = this.searchValue
-      //   param['Filters.0.Values.0'] = this.searchInput
-
-      // }
-      // const paramS = {
-      //   allList: 0,
-      // };
       // 获取表格数据
       this.axios.post(OBJ_LIST, param).then(data => {
-        // console.log(data)
         var self = this;
         if (this.searchValue !== "" && this.searchInput !== "") {
           self.TbaleData2.splice(0, self.TbaleData2.length);
@@ -186,35 +180,11 @@ export default {
         } else {
           this.TbaleData = data.Buckets.Bucket;
         }
-        // if (data.Response.Error == undefined) {
-
-        // } else {
-        //   this.$message.error(data.Response.Error.Message);
-        // }
         this.ProTableData = this.TbaleData;
         this.loadShow = false;
       });
-      // .then(() => {
-      //   // 获取项目列表
-      //   this.axios.post(CVM_PROJECT, paramS).then((data) => {
-      //     this.ProjectData = data.data;
-      //     for (let i = 0; i < this.TbaleData.length; i++) {
-
-      //       for (let j = 0; j < this.ProjectData.length; j++) {
-      //         if (
-      //           this.TbaleData[i].Placement.ProjectId == this.ProjectData[j].projectId
-      //         ) {
-      //           this.TbaleData[i].projectName = this.ProjectData[j].projectName;
-      //         }
-      //         if (this.TbaleData[i].Placement.ProjectId == 0) {
-      //           this.TbaleData[i].projectName = '默认项目';
-      //         }
-      //       }
-      //     }
-      //     this.ProTableData = this.TbaleData;
-      //   });
-      // });
     },
+    //分页
     handleSizeChange(val) {
       this.pagesize = val;
       this.currpage = 1;
@@ -224,8 +194,8 @@ export default {
       this.currpage = val;
       this.GetTabularData();
     },
+    //跳转
     jump(id) {
-      console.log(id);
       this.$router.push({
         name: "CMobjdetails",
         query: {

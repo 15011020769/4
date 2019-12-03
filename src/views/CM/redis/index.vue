@@ -90,7 +90,8 @@ import { ALL_CITY, REDIS_LIST, ALL_PROJECT } from "@/constants";
 export default {
   data() {
     return {
-      loadShow: true,
+      loadShow: true,//加载是否显示
+      //下拉框
       searchOptions: [
         {
           value: "InstanceId",
@@ -101,7 +102,8 @@ export default {
           label: "名称"
         }
       ],
-      searchValue: "",
+      searchValue: "",//默认选中的值
+      //文字过滤
       instanceStatus: {
         PENDING: "创建中",
         LAUNCH_FAILED: "创建失败",
@@ -159,12 +161,14 @@ export default {
     changeValue(val) {
       this.searchValue = val;
     },
+    //输入框输入内容
     changeinput(val) {
       this.searchInput = val;
       if (this.searchInput === "") {
         this.GetTabularData();
       }
     },
+    //点击搜索
     clicksearch(val) {
       this.searchInput = val;
       if (this.searchInput !== "" && this.searchValue !== "") {
@@ -221,6 +225,7 @@ export default {
           });
         });
     },
+    //分页
     handleSizeChange(val) {
       this.pagesize = val;
       this.currpage = 1;
@@ -230,6 +235,7 @@ export default {
       this.currpage = val;
       this.GetTabularData();
     },
+    //跳转
     jump(id) {
       this.$router.push({
         name: "Redisdetails",

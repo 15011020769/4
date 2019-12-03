@@ -159,6 +159,7 @@ export default {
         // console.log(this.TbaleData);
       });
     },
+    //分页
     handleSizeChange(val) {
       this.pagesize = val;
       this.GetTabularData();
@@ -167,6 +168,7 @@ export default {
       this.pageIndex = val;
       this.GetTabularData();
     },
+    //跳转
     jump(id) {
       this.$router.push({
         name: 'CMpeerdetails',

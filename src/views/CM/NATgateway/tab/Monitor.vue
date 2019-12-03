@@ -98,7 +98,7 @@
   export default {
     data() {
       return {
-        ID: this.$route.query.id,
+        ID: this.$route.query.id,//路由跳转id
         period: "",
         Start_End: [],
         value: 1,
@@ -120,6 +120,7 @@
       // ssss
     },
     methods: {
+      //获取数据
       GetDat(data) {
         this.period = data[0];
         this.Start_End = data[1];
@@ -186,6 +187,7 @@
       }
     },
     filters: {
+      //文字过滤
       UpName(value) {
         if (value === "Outbandwidth") {
           return (value = "外网出带宽");
