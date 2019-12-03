@@ -174,6 +174,7 @@
 </template>
 
 <script>
+import { USER_GROUP, CREATE_USER, POLICY_LIST } from "@/constants";
 export default {
   data() {
     return {
@@ -208,49 +209,47 @@ export default {
     gotoCl() {
       this.$router.push({ name: "Strategy" });
     },
+    //获取用户组列表
     init() {
       let params = {
-        Action: "ListGroups",
         Version: "2019-01-16"
       };
       if (this.searchValue != null && this.searchValue != "") {
         params["Keyword"] = this.searchValue;
       }
-      let url = "cam2/ListGroups";
-      this.axios.post(url, params).then(data => {
-        console.log(data);
+      this.axios.post(USER_GROUP, params).then(data => {
         this.tableData = data.Response.GroupInfo;
       });
     },
+    //对用户组列表进行搜索
     toQuery() {
       this.init();
     },
+    //新建用户组
     addSure() {
       let params = {
-        Action: "CreateGroup",
         Version: "2019-01-16",
         GroupName: this.ruleForm.name,
         Remark: this.ruleForm.desc
       };
-      let url = "cam2/CreateGroup";
-      this.axios.post(url, params).then(data => {
+      this.axios.post(CREATE_USER, params).then(data => {
         this.init();
       });
       this.dialogVisible = false;
     },
+    //策略列表
     bindValue() {
       let bindUser = {
-        Action: "ListPolicies",
         Version: "2019-01-16"
       };
       if (this.bindVlue != null && this.bindVlue != "") {
         bindUser["Keyword"] = this.bindVlue;
       }
-      let bindUrl = "cam2/ListPolicies";
-      this.axios.post(bindUrl, bindUser).then(data => {
+      this.axios.post(POLICY_LIST, bindUser).then(data => {
         this.bindData = data.Response.List;
       });
     },
+    //搜索策略列表
     bindQuery() {
       this.bindValue();
     },
@@ -279,24 +278,11 @@ export default {
     }
   },
   created() {
-    let params = {
-      Action: "ListGroups",
-      Version: "2019-01-16"
-    };
-    let url = "cam2/ListGroups";
-    this.axios.post(url, params).then(data => {
-      console.log(data)
-      this.tableData = data.Response.GroupInfo;
-    });
+    //获取用户组列表
+    this.init();
 
-    let bindUser = {
-      Action: "ListPolicies",
-      Version: "2019-01-16"
-    };
-    let bindUrl = "cam2/ListPolicies";
-    this.axios.post(bindUrl, bindUser).then(data => {
-      this.bindData = data.Response.List;
-    });
+    //获取策略列表
+    this.bindValue();
   }
 };
 </script>

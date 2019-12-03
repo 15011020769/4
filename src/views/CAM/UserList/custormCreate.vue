@@ -142,6 +142,7 @@
 <script>
 import Userprivileges from './Userprivileges'
 import Reviewinformation from './Reviewinformation'
+import { ADD_USER } from '@/constants'
 export default {
   components:{
     Userprivileges,
@@ -198,17 +199,16 @@ export default {
   },
 
   methods: {
+    //添加子用户
     complete(){
        let params = {
-         Action:'AddUser',
          Version:'2019-01-16',
          Name:this.tableData[0].name,
          PhoneNum:this.tableData[0].iphone,
          Remark:this.tableData[0].mailbox,
          Email:this.tableData[0].remarks
        }
-       let url = 'cam2/AddUser'
-       this.axios.post(url,params).then((data)=>{
+       this.axios.post(ADD_USER,params).then((data)=>{
            console.log(data)
        })
     },
