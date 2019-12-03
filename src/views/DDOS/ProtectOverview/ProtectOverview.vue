@@ -106,7 +106,7 @@
               <el-table-column prop="durationTime" label="持续时间"></el-table-column>
               <el-table-column prop="products" label="产品"></el-table-column>
               <el-table-column prop="assetName" label="资产名称"></el-table-column>
-              <el-table-column prop="assetType" label="资产类型"></el-table-column>
+              <el-table-column prop="assetType" label="资产类型" v-if="type==3?false:true"></el-table-column>
               <el-table-column prop="attackIp" label="IP"></el-table-column>
               <el-table-column prop="attackType" label="攻击类型" width="70px"></el-table-column>
               <el-table-column prop="attackMax" label="攻击最大宽带"></el-table-column>
