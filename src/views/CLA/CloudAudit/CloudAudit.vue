@@ -11,7 +11,7 @@
       <div class="search">
         <div class="search_dropdown">
           <el-input placeholder="请输入内容" v-model="input3" class="input-with-select">
-            <el-select class="childSelect" slot="prepend"  v-model="value">
+            <el-select class="childSelect" slot="prepend" v-model="value" @change="_select">
               <el-option
                 v-for="(item,index) in this.options"
                 :key="index"
@@ -39,24 +39,10 @@
           <div class="updates" @click="reload ()">
             <i class="el-icon-refresh"></i>
           </div>
-          <div class="download">
-            <el-popover placement="bottom" width="80" trigger="click">
-              <template>
-                <div style="width:80px;" class="daochu">
-                  <a href="javascript:;">导出为CSV</a>
-                  <br />
-                  <a href="javascript:;">导出为JSON</a>
-                </div>
-              </template>
-              <el-button slot="reference">
-                <i class="el-icon-download"></i>
-              </el-button>
-            </el-popover>
-          </div>
         </div>
       </div>
       <div class="tab-list">
-        <el-table :data="tableData" style="width: 100%" v-if="isRouterAlive">
+        <el-table :data="tableData" style="width: 100%" v-if="isRouterAlive" v-loading="vloading">
           <el-table-column type="expand" width="27">
             <template slot-scope="props">
               <el-form label-position="left" inline class="demo-table-expand">
@@ -123,9 +109,13 @@
               </el-form>
             </template>
           </el-table-column>
-          <el-table-column label="事件时间"  prop="EventTime"></el-table-column>
-          <el-table-column label="用户名"  prop="Username"></el-table-column>
-          <el-table-column label="事件名称" >
+          <el-table-column label="事件时间" prop="EventTime"></el-table-column>
+          <el-table-column label="用户名" prop="Username">
+            <template slot-scope="scope">
+              <p style="color:#006eff">{{scope.row.Username}}</p>
+            </template>
+          </el-table-column>
+          <el-table-column label="事件名称">
             <template slot-scope="scope">
               <div>
                 {{scope.row.EventName}}
@@ -135,7 +125,7 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column label="资源类型" >
+          <el-table-column label="资源类型">
             <template slot-scope="scope">
               <div>
                 {{scope.row.Resources.ResourceType}}
@@ -161,15 +151,15 @@
 </template>
 
 <script>
-import { YJS_LIST, YJS_GETATTRIBUTEKEY } from '@/constants'
+import { YJS_LIST, YJS_GETATTRIBUTEKEY } from "@/constants";
 export default {
-  data () {
+  data() {
     return {
-      value1: '', // 日历
-      startTime: '', //  搜索 --> 默认开始时间
-      endTime: '', //  搜索 --> 默认结束时间
-      nowtime: '', // 现在时间
-      oldTime: '', // 30天前时间
+      value1: "", // 日历
+      startTime: "", //  搜索 --> 默认开始时间
+      endTime: "", //  搜索 --> 默认结束时间
+      nowtime: "", // 现在时间
+      oldTime: "", // 30天前时间
       isRouterAlive: true,
       loading: false,
       Show: false, // 加载更多
@@ -177,147 +167,149 @@ export default {
       DownShow: true,
       MaxResults: 10,
       MaxResults1: 10,
+      vloading: true,
       pickerOptions: {
         shortcuts: [
           {
-            text: '最近一周',
-            onClick (picker) {
-              const end = new Date()
-              const start = new Date()
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
-              picker.$emit('pick', [start, end])
+            text: "最近一周",
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+              picker.$emit("pick", [start, end]);
             }
           },
           {
-            text: '最近一个月',
-            onClick (picker) {
-              const end = new Date()
-              const start = new Date()
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
-              picker.$emit('pick', [start, end])
+            text: "最近一个月",
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+              picker.$emit("pick", [start, end]);
             }
           },
           {
-            text: '最近三个月',
-            onClick (picker) {
-              const end = new Date()
-              const start = new Date()
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
-              picker.$emit('pick', [start, end])
+            text: "最近三个月",
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+              picker.$emit("pick", [start, end]);
             }
           }
         ]
       },
       options: [], // 下拉框数据
-      value: '',
-      input3: '',
+      value: "",
+      input3: "",
       tableData: []
-    }
+    };
   },
-  created () {
-    this.Loading()
+  created() {
+    let myDate = new Date();
+    let _nowtime = myDate.getTime() / 1000;
+    this.nowtime = parseFloat(_nowtime).toFixed(); // 现在当前时间
+    let lw = new Date(myDate - 1000 * 60 * 60 * 24 * 30).getTime() / 1000;
+    this.oldTime = parseFloat(lw).toFixed();
+    this.Loading();
     this.axios
       .post(YJS_GETATTRIBUTEKEY, {
-        Version: '2019-03-19',
-        Region: 'ap-guangzhou'
+        Version: "2019-03-19",
+        Region: "ap-guangzhou"
       })
       .then(data => {
-        this.options = data.Response.AttributeKeyDetails
-        console.log(this.options)
-      })
+        this.options = data.Response.AttributeKeyDetails;
+      });
   },
   methods: {
-    Loading () {
-      let myDate = new Date()
-      let _nowtime = myDate.getTime() / 1000
-      this.nowtime = parseFloat(_nowtime).toFixed() // 现在当前时间
-      let lw = new Date(myDate - 1000 * 60 * 60 * 24 * 30).getTime() / 1000
-      this.oldTime = parseFloat(lw).toFixed()
+    _select(val) {
+      this.AttributeKey = val;
+    },
+    Loading() {
       let params = {
-        // Action:'LookUpEvents',
-        Version: '2019-03-19',
-        Region: 'ap-taipei',
+        Version: "2019-03-19",
+        Region: "ap-taipei",
         StartTime: this.oldTime, // 开始时间
         EndTime: this.nowtime, // 结束时间1558108799
-        LookupAttributes: [
-          {
-            AttributeKey: 'ReadOnly',
-            AttributeValue: 'false'
-          }
-        ],
         MaxResults: this.MaxResults
-      }
-      this.axios.post(YJS_LIST, params).then(({ data }) => {
-        this.tableData = data.Events
-
-        console.log(this.tableData)
-        this.loading = false
-        if (this.tableData.length === 0) {
-          this.Show = false
-        } else {
-          this.Show = true
+      };
+      console.log(params);
+      this.axios.post(YJS_LIST, params).then(res => {
+        console.log(res);
+        if (res.codeDesc == "Success") {
+          this.tableData = res.data.Events;
+          this.vloading = false;
         }
-      })
+      });
     },
-    seach () {
-      let startTime = new Date(this.value1[0]).getTime() / 1000
-      let endTime = new Date(this.value1[1]).getTime() / 1000
+    seach() {
+      this.vloading = true;
+      let startTime = new Date(this.value1[0]).getTime() / 1000;
+      let endTime = new Date(this.value1[1]).getTime() / 1000;
       let params = {
-        Version: '2019-03-19',
-        Region: 'ap-taipei',
-        EndTime: endTime,
-        LookupAttributes: [
-          {
-            AttributeKey: 'ReadOnly',
-            AttributeValue: 'false'
-          }
-        ],
+        Version: "2019-03-19",
+        Region: "ap-taipei",
+        EndTime: endTime ? endTime : this.oldTime,
         MaxResults: this.MaxResults,
-        StartTime: startTime
-      }
+        StartTime: startTime ? startTime : this.nowtime
+      };
+      params["LookupAttributes.0.AttributeKey"] = this.AttributeKey;
+      params["LookupAttributes.0.AttributeValue"] = this.input3;
       this.axios.post(YJS_LIST, params).then(data => {
-        this.tableData = data.data.Events
-        if (this.tableData.length == 0 || this.tableData.length < 10) {
-          this.Show = false
+        console.log(data);
+        console.log(params);
+        if (data.codeDesc == "Success") {
+          this.tableData = data.data.Events;
+          this.vloading = false;
+        } else {
+          this.$message({
+            showClose: true,
+            message: data.message,
+            type: "error"
+          });
+          this.vloading = false;
         }
-      })
+        if (this.tableData.length == 0 || this.tableData.length < 10) {
+          this.Show = false;
+        }
+      });
     },
-    more () {
-      this.loading = true
-      this.MaxResults = this.MaxResults1 += 10
-      this.Loading()
-      let startTime = new Date(this.value1[0]).getTime() / 1000
+    more() {
+      this.loading = true;
+      this.MaxResults = this.MaxResults1 += 10;
+      this.Loading();
+      let startTime = new Date(this.value1[0]).getTime() / 1000;
       if (!startTime == NaN) {
-        this.seach()
+        this.seach();
       }
     },
     // 查看事件
-    LookShows () {
-      this.LookShow = true
+    LookShows() {
+      this.LookShow = true;
     },
     // 复制成功
-    onCopy (e) {
+    onCopy(e) {
       this.$message({
-        message: '复制成功',
-        type: 'success'
-      })
+        message: "复制成功",
+        type: "success"
+      });
     },
     // 复制失败
-    onError (e) {
+    onError(e) {
       this.$message({
-        message: '复制失败',
-        type: 'error'
-      })
+        message: "复制失败",
+        type: "error"
+      });
     },
-    reload () {
-      this.isRouterAlive = false
+    reload() {
+      this.isRouterAlive = false;
       this.$nextTick(() => {
-        this.isRouterAlive = true
-        this.seach()
-      })
+        this.isRouterAlive = true;
+        this.seach();
+      });
     }
   }
-}
+};
 </script>
 <style lang="scss" >
 .search_dropdown {
@@ -444,7 +436,7 @@ export default {
         background: transparent;
         border: 0px;
       }
-      .el-popper[x-placement^='bottom'] {
+      .el-popper[x-placement^="bottom"] {
         width: 100px !important;
       }
     }
@@ -458,6 +450,16 @@ export default {
   & > a:hover {
     text-decoration: underline;
   }
+}
+.demo-table-expand >>> .el-form-item__label {
+  font-size: 12px;
+  width: 80px;
+}
+.demo-table-expand >>> .el-form-item__content span {
+  font-size: 12px;
+}
+.demo-table-expand >>> .el-form-item__content a {
+  font-size: 12px;
 }
 .tab-list .demo-table-expand label {
   color: #888 !important;
@@ -573,7 +575,7 @@ export default {
   }
 }
 
-[class^='el-icon-'] {
+[class^="el-icon-"] {
   margin-top: 2px;
   cursor: pointer;
 }
