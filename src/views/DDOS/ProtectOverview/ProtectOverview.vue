@@ -153,6 +153,7 @@
 <script>
 import FileSaver from 'file-saver'
 import XLSX from 'xlsx'
+import { DDOS_SECINDEX } from "@/constants"
 export default {
   data() {
 		return {
@@ -260,7 +261,7 @@ export default {
       let params = {
         Version: '2018-07-09',
       }
-      this.$axios.post('dayu2/DescribeSecIndex', params).then(res => {
+      this.axios.post(DDOS_SECINDEX, params).then(res => {
         console.log(res)
         for(let i in this.attackData) {
           for(let j in res.Response.Data) {

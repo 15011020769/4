@@ -4,7 +4,6 @@
       <div class="ReportTit newClear">
         <h3 class="ReportTitH3">统计报表</h3>
         <el-button class="ReportTitBtn" type="primary" @click="newBuy">新购</el-button>
-        <!-- <el-button class="TestMethod" type="primary" @click="describeCCEvList()">Test接口</el-button> -->
       </div>
       <div>
         <el-tabs v-model="activeName" @tab-click="handleClick">
@@ -522,7 +521,7 @@ export default {
         //Limit: '',  //一页条数，填0表示不分页
         //Offset: ''  //页起始偏移，取值为(页码-1)*一页条数
       }
-      this.$axios.post('dayu2/DescribeDDoSNetEvList', params).then(res => {
+      this.axios.post('dayu2/DescribeDDoSNetEvList', params).then(res => {
         console.log(res)
         this.tableDataOfDescribeDDoSNetEvList = res.Response.Data
       })
