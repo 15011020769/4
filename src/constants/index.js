@@ -14,5 +14,8 @@ export * from './userlist'
 // 私有网络 云联网
 export * from './CCN'
 
+// DDOS防护
+export * from './DDOS'
+
 // 标签
 export * from './TAG'
