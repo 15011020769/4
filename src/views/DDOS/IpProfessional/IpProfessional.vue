@@ -10,8 +10,25 @@
         <el-tabs v-model="activeName" @tab-click="handleClick">
           <el-tab-pane label="DDoS攻击防护" name="ddos">
             <div class="mainConList">
-              <div class="mainConListAll mainConListOne">
-                <el-date-picker
+              <div class="mainConListAll mainConListOne newClear">
+                <div class="newClear">
+                  <el-button-group class="buttonGroupAll">
+                    <el-button class="buttonGroup" @click="thisTime(1)">今天</el-button>
+                    <el-button class="buttonGroup" @click="thisTime(2)">近7天</el-button>
+                    <el-button class="buttonGroup" @click="thisTime(3)">近15天</el-button>
+                    <el-button class="buttonGroup" @click="thisTime(4)">近30天</el-button>
+                    <el-button class="buttonGroup" @click="thisTime(5)">近半年</el-button>
+                  </el-button-group>
+                  <el-date-picker
+                    v-model="dateChoice1"
+                    type="daterange"
+                    class="newDataTime"
+                    range-separator="至"
+                    start-placeholder="开始日期"
+                    end-placeholder="结束日期">
+                  </el-date-picker>
+                </div>
+                <!-- <el-date-picker
                   v-model="dateChoice1"
                   type="daterange"
                   align="right"
@@ -20,25 +37,56 @@
                   start-placeholder="开始日期"
                   end-placeholder="结束日期"
                   :picker-options="pickerOptions">
-                </el-date-picker><br/>
-                <el-input v-model="inputId" @change="changeId" class="mainConListOneIpt" placeholder="请输入要查询的ID或名称"/>
+                </el-date-picker><br/> -->
+                <br/>
+                <el-select class="ddosAttackSelect1" v-model="inputId" @change="changeId" filterable placeholder="请输入要查询的ID或名称">
+                  <el-option :label="inputId" :value="inputId"></el-option>
+                </el-select>
+                <el-select class="ddosAttackSelect1" v-model="timeBtnSelect2">
+                  <el-option :label="timeBtnSelect2" :value="timeBtnSelect2"></el-option>
+                </el-select>
+                <!-- <el-input v-model="inputId" @change="changeId" class="mainConListOneIpt" placeholder="请输入要查询的ID或名称"/> -->
               </div>
               <div class="mainConListAll mainConListTwo">
                 <el-tabs class="tabsCard" v-model="activeName1" type="card" @tab-click="handleClick1">
                   <el-tab-pane label="攻击流量宽带" name="bps">
-                    <div>
-                      攻击流量宽带
-                    </div>
+                    <!-- <div> -->
+                      <div id="myChart"></div>
+                    <!-- </div> -->
                   </el-tab-pane>
                   <el-tab-pane label="攻击包速率" name="pps">
-                    <div>
-                      攻击包速率
-                    </div>
+                    <!-- <div> -->
+                      <div id="myChart2"></div>
+                    <!-- </div> -->
                   </el-tab-pane>
                 </el-tabs>
               </div>
               <div class="mainConListAll">
-
+                <div>
+                  <el-row>
+                    <el-col :span="8">
+                      <div class="colDivThree">
+                        <h1>攻击流量协议分布</h1>
+                        <p class="count">(单位：B)</p>
+                        <div class="dataList">暂无数据</div>
+                      </div>
+                    </el-col>
+                    <el-col :span="8">
+                      <div class="colDivThree">
+                        <h1>攻击包协议分布</h1>
+                        <p class="count">(单位：packet)</p>
+                        <div class="dataList">暂无数据</div>
+                      </div>
+                    </el-col>
+                    <el-col :span="8">
+                      <div class="colDivThree">
+                        <h1>攻击类型分布</h1>
+                        <p class="count">(单位：次)</p>
+                        <div class="dataList">暂无数据</div>
+                      </div>
+                    </el-col>
+                  </el-row>
+                </div>
               </div>
               <div class="mainConListAll mainConListFour">
                 <h3>DDoS攻击详情</h3>
@@ -86,7 +134,7 @@
           <el-tab-pane label="CC攻击防护" name="cc">
             <div class="mainConList">
               <div class="mainConListAll mainConListOne">
-                <el-date-picker
+                <!-- <el-date-picker
                   v-model="dateChoice2"
                   type="daterange"
                   align="right"
@@ -96,14 +144,38 @@
                   end-placeholder="结束日期"
                   :picker-options="pickerOptions">
                 </el-date-picker><br/>
-                <el-input v-model="inputIdCC" @change="changeIdCC" class="mainConListOneIpt" placeholder="请输入要查询的ID或名称"/>
+                <el-input v-model="inputIdCC" @change="changeIdCC" class="mainConListOneIpt" placeholder="请输入要查询的ID或名称"/> -->
+                <div class="newClear">
+                  <el-button-group class="buttonGroupAll">
+                    <el-button class="buttonGroup" @click="thisTime(1)">今天</el-button>
+                    <el-button class="buttonGroup" @click="thisTime(2)">近7天</el-button>
+                    <el-button class="buttonGroup" @click="thisTime(3)">近15天</el-button>
+                    <el-button class="buttonGroup" @click="thisTime(4)">近30天</el-button>
+                    <el-button class="buttonGroup" @click="thisTime(5)">近半年</el-button>
+                  </el-button-group>
+                  <el-date-picker
+                    v-model="dateChoice2"
+                    type="daterange"
+                    class="newDataTime"
+                    range-separator="至"
+                    start-placeholder="开始日期"
+                    end-placeholder="结束日期">
+                  </el-date-picker>
+                </div>
+                <br/>
+                <el-select class="ddosAttackSelect1" v-model="inputIdCC" @change="changeIdCC" filterable placeholder="请输入要查询的ID或名称">
+                  <el-option :label="inputIdCC" :value="inputIdCC"></el-option>
+                </el-select>
+                <el-select class="ddosAttackSelect1" v-model="ccTimeBtnSelect2">
+                  <el-option :label="ccTimeBtnSelect2" :value="ccTimeBtnSelect2"></el-option>
+                </el-select>
               </div>
             </div>
           </el-tab-pane>
           <el-tab-pane label="业务" name="service">
             <div class="mainConList">
               <div class="mainConListAll mainConListOne">
-                <el-date-picker
+                <!-- <el-date-picker
                   v-model="dateChoice3"
                   type="daterange"
                   align="right"
@@ -113,7 +185,31 @@
                   end-placeholder="结束日期"
                   :picker-options="pickerOptions">
                 </el-date-picker><br/>
-                <el-input v-model="inputIdService" @change="changeIdService" class="mainConListOneIpt" placeholder="请输入要查询的ID或名称"/>
+                <el-input v-model="inputIdService" @change="changeIdService" class="mainConListOneIpt" placeholder="请输入要查询的ID或名称"/> -->
+                <div class="newClear">
+                  <el-button-group class="buttonGroupAll">
+                    <el-button class="buttonGroup" @click="thisTime(1)">今天</el-button>
+                    <el-button class="buttonGroup" @click="thisTime(2)">近7天</el-button>
+                    <el-button class="buttonGroup" @click="thisTime(3)">近15天</el-button>
+                    <el-button class="buttonGroup" @click="thisTime(4)">近30天</el-button>
+                    <el-button class="buttonGroup" @click="thisTime(5)">近半年</el-button>
+                  </el-button-group>
+                  <el-date-picker
+                    v-model="dateChoice3"
+                    type="daterange"
+                    class="newDataTime"
+                    range-separator="至"
+                    start-placeholder="开始日期"
+                    end-placeholder="结束日期">
+                  </el-date-picker>
+                </div>
+                <br/>
+                <el-select class="ddosAttackSelect1" v-model="inputIdService" @change="changeIdService" filterable placeholder="请输入要查询的ID或名称">
+                  <el-option :label="inputIdCC" :value="inputIdCC"></el-option>
+                </el-select>
+                <el-select class="ddosAttackSelect1" v-model="ywTimeBtnSelect2">
+                  <el-option :label="ywTimeBtnSelect2" :value="ywTimeBtnSelect2"></el-option>
+                </el-select>
               </div>
               <div class="mainConListAll mainConListTwo">
                 <el-tabs class="tabsCard" v-model="activeName2" type="card" @tab-click="handleClick2">
@@ -137,6 +233,7 @@
   </div>
 </template>
 <script>
+import moment from 'moment';
 export default {
   data() {
     return {
@@ -179,49 +276,6 @@ export default {
       periodCC: 300,//统计粒度，取值[300(5分钟)，3600(小时)，86400(天)]
       periodService: 300,//统计粒度，取值[300(5分钟)，3600(小时)，86400(天)]
       statistics: 'max',//统计方式，取值：max表示最大值；min表示最小值；avg表示均值；
-      pickerOptions: {
-        shortcuts: [{
-          text: '今天',
-          onClick(picker) {
-            const end = new Date();
-            const start = new Date();
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 1);
-            picker.$emit('pick', [start, end]);
-          }
-        },{
-          text: '近7天',
-          onClick(picker) {
-            const end = new Date();
-            const start = new Date();
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
-            picker.$emit('pick', [start, end]);
-          }
-        }, {
-          text: '近15天',
-          onClick(picker) {
-            const end = new Date();
-            const start = new Date();
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 15);
-            picker.$emit('pick', [start, end]);
-          }
-        }, {
-          text: '近30天',
-          onClick(picker) {
-            const end = new Date();
-            const start = new Date();
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
-            picker.$emit('pick', [start, end]);
-          }
-        }, {
-          text: '近半年',
-          onClick(picker) {
-            const end = new Date();
-            const start = new Date();
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 30 * 6);
-            picker.$emit('pick', [start, end]);
-          }
-        }]
-      },
       tableDataOfDescribeDDoSNetEvList: [], //DDoS攻击事件列表
       tableDataName: "",
       tableDataEnd: [],
@@ -237,7 +291,10 @@ export default {
           attackType:"3",
           attackStatus:"4"
         }
-      ]
+      ],
+      timeBtnSelect2:"总览",//ddos时间按钮下面第二个下拉
+      ccTimeBtnSelect2:'177.52.89.23',//cc时间按钮下面第二个下拉
+      ywTimeBtnSelect2:'177.52.89.23',//业务 时间按钮下面第二个下拉
     }
   },
   watch: {
@@ -262,9 +319,130 @@ export default {
   },
   created() {
     this.describeResourceList() //获取资源列表的接口单独调用（因为日期变更不需要调用此接口）
-    this.getData()
+    this.getData();
+  },
+  mounted(){
+    this.drawLine();//图表展示
+    this.drawLine2();//图表展示
   },
   methods:{
+    //echarts图表
+    drawLine(){
+      // 基于准备好的dom，初始化echarts实例
+      this.$nextTick(_=>{
+        let myChart = this.$echarts.init(document.getElementById('myChart'))
+      // 绘制图表
+        myChart.setOption({
+          color:["rgb(124, 181, 236)"],
+          title: { text: '' },
+          tooltip: {},
+          xAxis: {
+              data: ["11-11","11-12","11-13","11-14","11-15","11-16"]
+          },
+          yAxis: {
+            axisLine:{     //y轴   
+              show:false
+            },
+            axisTick:{       //刻度线 
+              show:false
+            },
+            "splitLine": {     //网格线
+              "show": false
+            },
+            axisLabel:{
+              formatter:'{value}bps'
+            },
+            boundaryGap:true
+          },
+          series: [{
+              name: '总攻击流量',
+              type: 'line',
+              data: [0, 0, 0, 0, 0, 0],
+              itemStyle : {    
+                normal : {    
+                  lineStyle:{    
+                    color:'rgb(124, 181, 236)'
+                  }    
+                }    
+              },    
+          }],
+          legend:{
+            //默认横向布局，纵向布局值为'vertical'
+            orient: 'vertical',
+            x:'center',      //可设定图例在左、右、居中
+            y:'bottom',
+            icon: "line",//图例样式
+            textStyle: {
+              //文字样式
+              fontWeight: "bold"
+            },
+            lineStyle:{    
+              color:'rgb(124, 181, 236)'
+            } 
+          }
+        });
+      })
+    },
+    drawLine2(){
+      // 基于准备好的dom，初始化echarts实例
+      this.$nextTick(_=>{
+        let myChart2 = this.$echarts.init(document.getElementById('myChart2'))
+      // 绘制图表
+        myChart2.setOption({
+          color:["rgb(124, 181, 236)"],
+          title: { text: '' },
+          tooltip: {},
+          xAxis: {
+              data: ["11-11","11-12","11-13","11-14","11-15","11-16"]
+          },
+          yAxis: {
+            axisLine:{     //y轴   
+              show:false
+            },
+            axisTick:{       //刻度线 
+              show:false
+            },
+            "splitLine": {     //网格线
+              "show": false
+            },
+            axisLabel:{
+              formatter:'{value}bps'
+            },
+            boundaryGap:true
+          },
+          series: [{
+              name: '总攻击流量',
+              type: 'line',
+              data: [0, 0, 0, 0, 0, 0],
+              itemStyle : {    
+                normal : {    
+                  lineStyle:{    
+                    color:'rgb(124, 181, 236)'
+                  }    
+                }    
+              },    
+          }],
+          legend:{
+            //默认横向布局，纵向布局值为'vertical'
+            orient: 'vertical',
+            x:'center',      //可设定图例在左、右、居中
+            y:'bottom',
+            icon: "line",//图例样式
+            textStyle: {
+              //文字样式
+              fontWeight: "bold"
+            },
+            lineStyle:{    
+              color:'rgb(124, 181, 236)'
+            } 
+          }
+        });
+        myChart2.resize();
+        window.addEventListener("resize",function(){
+          myChart2.resize();
+        })
+      })
+    },
     getData() {
       this.describeDDoSNetTrend()
       for(let index in this.metricNames){
@@ -496,6 +674,30 @@ export default {
         path: '/choose'
       })
     },
+    //时间按钮
+    thisTime(thisTime) {
+      var ipt1 = document.querySelector(".newDataTime input:nth-child(2)");
+      var ipt2 = document.querySelector(".newDataTime input:nth-child(4)");
+      const end = new Date();
+      const start = new Date();
+      if (thisTime == "1") {
+        start.setTime(start.getTime() - 3600 * 1000);
+      } else if (thisTime == "2") {
+        start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+      } else if (thisTime == "3") {
+        start.setTime(start.getTime() - 3600 * 1000 * 24 * 15);
+      }else if (thisTime == "4") {
+        start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+      }else if (thisTime == "5") {
+        start.setTime(start.getTime() - 3600 * 1000 * 24 * 30 * 6);
+      }
+      //console.log(moment(new Date()).format('YYYY-MM-DD HH:mm:ss'),start)
+      ipt1.value = moment(start).format('YYYY-MM-DD');
+      ipt2.value = moment(end).format('YYYY-MM-DD');
+      //this.thisStart=moment(start).format('YYYY-MM-DD');
+      //this.thisEnd=moment(end).format('YYYY-MM-DD');
+      //this.$emit('timeNode1',[this.thisStart,this.thisEnd])
+    },
   }
 }
 
@@ -570,5 +772,48 @@ export default {
 }
 .tabListPage{
   text-align:right;
+}
+.ddosAttackSelect1{
+  width:180px;
+  margin-right:12px;
+  div.el-input{
+    width:180px;
+    input{
+      width:180px;
+      height:30px;
+      border-radius: 0;
+    }
+  }
+}
+.tabsCard{
+  .el-tabs__item{
+    height:30px;
+    line-height: 30px;
+  }
+}
+#myChart2{
+  width:100%;
+  height:380px;
+  margin:20px 0;
+}
+.colDivThree{
+  padding:20px;
+  text-align:center;
+  h1{
+    margin-bottom: 10px;
+    font-size: 16px;
+    font-weight: bold;
+  }
+  p.count{
+    color: #888 !important;
+    font-size: 12px;
+  }
+  .dataList{
+    text-align: center;
+    height: 100px;
+    padding-top: 44px;
+    color: #888 !important;
+    font-size: 12px;
+  }
 }
 </style>

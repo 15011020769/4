@@ -227,24 +227,24 @@ export default {
     },
     // 柱状图
     initChartBar (param) {
-      if (param == undefined || param == '') {
+      if (param === undefined || param === '') {
         this.yearvalue = 'half'
       } else {
         this.yearvalue = param
       }
-      this.$axios.post(`${process.env.VUE_APP_adminUrl}taifucloud/tbilldetails/costTrend?date=` + this.month + `&year=` + this.yearvalue + `&costType=` + this.value + `&uin=` + this.$cookie.get('uin')).then(data => {
+      this.$axios.post(`${process.env.VUE_APP_adminUrl}taifucloud/tbillproduct/costTrend?date=` + this.month + `&year=` + this.yearvalue + `&costType=` + this.value + `&uin=` + this.$cookie.get('uin')).then(data => {
         var list = data.chart
         const months = []
         var totalAmounts = []
         for (var i = 0; i < list.length; i++) {
           months.push(list[i].month)
-          if (this.value == 'total') {
+          if (this.value === 'total') {
             totalAmounts.push(list[i].totalAmount)
-          } else if (this.value == 'cash') {
+          } else if (this.value === 'cash') {
             totalAmounts.push(list[i].cashAmount)
-          } else if (this.value == 'incentive') {
+          } else if (this.value === 'incentive') {
             totalAmounts.push(list[i].incentiveAmount)
-          } else if (this.value == 'voucher') {
+          } else if (this.value === 'voucher') {
             totalAmounts.push(list[i].voucherAmount)
           }
         }
@@ -298,7 +298,7 @@ export default {
     },
     // 费用计算
     initCost () {
-      this.$axios.post(`${process.env.VUE_APP_adminUrl}taifucloud/tbilldetails/costTrend?date=` + this.month + `&year=` + this
+      this.$axios.post(`${process.env.VUE_APP_adminUrl}taifucloud/tbillproduct/costTrend?date=` + this.month + `&year=` + this
         .yearvalue + `&costType=` + this.value + `&uin=` + this.$cookie.get('uin')).then(data => {
         this.total = data.chart[data.chart.length - 1].totalAmount
         this.cash = data.chart[data.chart.length - 1].cashAmount
@@ -308,7 +308,7 @@ export default {
     },
     // 环状图
     initChart () {
-      this.$axios.post(`${process.env.VUE_APP_adminUrl}taifucloud/tbilldetails/productTotal?date=` + this.month + `&uin=` +
+      this.$axios.post(`${process.env.VUE_APP_adminUrl}taifucloud/tbillproduct/productTotal?date=` + this.month + `&uin=` +
         this.$cookie.get('uin')).then(data => {
         var list = data.chart
         var arr = []
@@ -340,7 +340,7 @@ export default {
               let tarValue = 0
               let _index = 0
               list.forEach((item, i) => {
-                if (item.business_code_name == name) {
+                if (item.business_code_name === name) {
                   _index = i
                   tarValue = item.totalAmount
                 }
@@ -390,7 +390,7 @@ export default {
     },
     // 表格1
     getDataList1 () {
-      this.$axios.post(`${process.env.VUE_APP_adminUrl}taifucloud/tbilldetails/productTotalList?date=` + this.month + `&uin=` +
+      this.$axios.post(`${process.env.VUE_APP_adminUrl}taifucloud/tbillproduct/productTotalList?date=` + this.month + `&uin=` +
         this.$cookie.get('uin') + `&pages=` + this.pageIndex + `&limit=` + this.pageSize).then(data => {
         // console.log('---' + data)
         if (data && data.code === 0) {
@@ -406,7 +406,7 @@ export default {
     },
     // 条形图
     initShadow () {
-      this.$axios.post(`${process.env.VUE_APP_adminUrl}taifucloud/tbilldetails/projectCol?date=` + this.month + `&uin=` +
+      this.$axios.post(`${process.env.VUE_APP_adminUrl}taifucloud/tbillproduct/projectCol?date=` + this.month + `&uin=` +
         this.$cookie.get('uin')).then(data => {
         var list = data.chart
         var projects = []
@@ -469,7 +469,7 @@ export default {
     },
     // 表格2
     getDataList2 () {
-      this.$axios.post(`${process.env.VUE_APP_adminUrl}taifucloud/tbilldetails/projectColList?date=` + this.month + `&uin=` +
+      this.$axios.post(`${process.env.VUE_APP_adminUrl}taifucloud/tbillproduct/projectColList?date=` + this.month + `&uin=` +
         this.$cookie.get('uin') + `&pages=` + this.pageIndex + `&limit=` + this.pageSize).then(data => {
         if (data && data.code === 0) {
           this.dataList2 = data.data.list
@@ -486,7 +486,7 @@ export default {
     initLine1 () {
       this.dataList1.forEach((row, index) => {
         const productName = row.business_code_name
-        this.$axios.post(`${process.env.VUE_APP_adminUrl}taifucloud/tbilldetails/getLineList?date=` + this.month + `&uin=` +
+        this.$axios.post(`${process.env.VUE_APP_adminUrl}taifucloud/tbillproduct/getLineList?date=` + this.month + `&uin=` +
          this.$cookie.get('uin') + `&businessCodeName=` + productName).then(data => {
           var list = data.chart
           var xMonth = []
@@ -551,7 +551,7 @@ export default {
       // console.log(this.dataList2)
       this.dataList2.forEach((row, index) => {
         const project = row.project_name
-        this.$axios.post(`${process.env.VUE_APP_adminUrl}taifucloud/tbilldetails/getLineList?date=` + this.month + `&uin=` +
+        this.$axios.post(`${process.env.VUE_APP_adminUrl}taifucloud/tbillproduct/getLineList?date=` + this.month + `&uin=` +
           this.$cookie.get('uin') + `&projectName=` + project).then(data => {
           var list = data.chart
           var xMonth = []
@@ -609,7 +609,7 @@ export default {
           })
           row.children.forEach((value, index) => {
             // console.log(row.id)
-            this.$axios.post(`${process.env.VUE_APP_adminUrl}taifucloud/tbilldetails/getLineList?date=` + this.month + `&uin=` +
+            this.$axios.post(`${process.env.VUE_APP_adminUrl}taifucloud/tbillproduct/getLineList?date=` + this.month + `&uin=` +
             this.$cookie.get('uin') + `&projectName=` + project + `&businessCodeName=` + value.project_name).then(data => {
               var list = data.chart
               var xMonth = []
@@ -693,9 +693,9 @@ export default {
   .el-card{
     width: 96%;
     margin: 0 auto;
-  }  
+  }
   .bill{
-    margin-right:20px; 
+    margin-right:20px;
   }
   .paging{
     width: 100%;

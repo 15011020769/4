@@ -17,7 +17,7 @@
         end-placeholder="结束日期">
       </el-date-picker>
     </div>
-    <div id="myChart">
+    <div id="myChart1">
 
     </div>
   </div>
@@ -62,9 +62,9 @@ export default {
     },
     drawLine(){
       // 基于准备好的dom，初始化echarts实例
-      let myChart = this.$echarts.init(document.getElementById('myChart'))
+      let myChart1 = this.$echarts.init(document.getElementById('myChart1'))
       // 绘制图表
-      myChart.setOption({
+      myChart1.setOption({
         color:["rgb(124, 181, 236)"],
         title: { text: '' },
         tooltip: {},
@@ -154,7 +154,7 @@ export default {
     line-height:24px;
   }
 }
-#myChart{
+#myChart1{
   width:100%;
   height:380px;
   margin:20px 0;
