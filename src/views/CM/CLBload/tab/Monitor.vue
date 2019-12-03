@@ -194,6 +194,7 @@
 
     },
     filters: {
+      //文字过滤
       UpName(value) {
         if (value === 'Connum') {
           return (value = '当前连接数');

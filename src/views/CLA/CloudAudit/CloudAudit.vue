@@ -19,7 +19,7 @@
                 :value="item.Value"
               ></el-option>
             </el-select>
-            <el-button slot="append" icon="el-icon-search" @click="seach()"></el-button>
+            <el-button slot="append" icon="el-icon-search" @click="seach()" class="btn"></el-button>
           </el-input>
         </div>
         <div class="date">
@@ -244,14 +244,18 @@ export default {
     },
     seach() {
       this.vloading = true;
-      let startTime = new Date(this.value1[0]).getTime() / 1000;
-      let endTime = new Date(this.value1[1]).getTime() / 1000;
+      let startTime = String(new Date(this.value1[0]).getTime() / 1000).split(
+        "."
+      )[0];
+      let endTime = String(new Date(this.value1[1]).getTime() / 1000).split(
+        "."
+      )[0];
       let params = {
         Version: "2019-03-19",
         Region: "ap-taipei",
-        EndTime: endTime ? endTime : this.oldTime,
+        EndTime: endTime == NaN ? endTime : this.nowtime,
         MaxResults: this.MaxResults,
-        StartTime: startTime ? startTime : this.nowtime
+        StartTime: startTime == NaN ? startTime : this.oldTime
       };
       params["LookupAttributes.0.AttributeKey"] = this.AttributeKey;
       params["LookupAttributes.0.AttributeValue"] = this.input3;
@@ -314,6 +318,13 @@ export default {
 <style lang="scss" >
 .search_dropdown {
   width: 485px;
+  .btn{
+    background: white !important;
+    position: absolute;
+    right: 50px;
+    top: 11px;
+    width: 40px;
+  }
   .el-select {
     .el-input__inner {
       width: 130px;
