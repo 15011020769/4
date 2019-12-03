@@ -91,11 +91,9 @@
         <div class="allConMainThreeCon">
           <div class="chartShowTit">
             <el-button-group>
-              <el-button @click="btnClick(1)" :class="{'addColor':type=='1'}">调用次数<span>(次)</span></el-button>
-              <el-button @click="btnClick(2)" :class="{'addColor':type=='2'}">运行时间<span>(ms)</span></el-button>
-              <el-button @click="btnClick(3)" :class="{'addColor':type=='3'}">错误次数<span>(次)</span></el-button>
-              <el-button @click="btnClick(4)" :class="{'addColor':type=='4'}">并发执行个数<span>(个)</span></el-button>
-              <el-button @click="btnClick(5)" :class="{'addColor':type=='5'}">受限次数<span>(次)</span></el-button>
+              <el-button @click="btnClick(1)" :class="{'addColor':type=='1'}">独享包</el-button>
+              <el-button @click="btnClick(2)" :class="{'addColor':type=='2'}">共享包</el-button>
+              <el-button @click="btnClick(3)" :class="{'addColor':type=='3'}">高防IP专业版</el-button>
             </el-button-group>
           </div>
           <div>
@@ -108,6 +106,7 @@
               <el-table-column prop="durationTime" label="持续时间"></el-table-column>
               <el-table-column prop="products" label="产品"></el-table-column>
               <el-table-column prop="assetName" label="资产名称"></el-table-column>
+              <el-table-column prop="assetType" label="资产类型"></el-table-column>
               <el-table-column prop="attackIp" label="IP"></el-table-column>
               <el-table-column prop="attackType" label="攻击类型" width="70px"></el-table-column>
               <el-table-column prop="attackMax" label="攻击最大宽带"></el-table-column>
@@ -219,6 +218,7 @@ export default {
         durationTime:"2",
         products:"3",
         assetName:"4",
+        assetType:"9",
         attackIp:"5",
         attackType:"6",
         attackMax:"7",
@@ -319,16 +319,17 @@ export default {
     btnClick(clickNode){
       this.type=clickNode;
       if(clickNode=="1"){
-        this.newData="调用次数"
+        this.newData="独享包"
       }else if(clickNode=="2"){
-        this.newData="运行时间"
+        this.newData="共享包"
       }else if(clickNode=="3"){
-        this.newData="错误次数"
-      }else if(clickNode=="4"){
-        this.newData="并发执行个数"
-      }else if(clickNode=="5"){
-        this.newData="受限次数"
+        this.newData="高防IP专业版"
       }
+      // else if(clickNode=="4"){
+      //   this.newData="并发执行个数"
+      // }else if(clickNode=="5"){
+      //   this.newData="受限次数"
+      // }
     },
     getDataOld() {//前端页面人员写的，不懂
       var cookies = document.cookie;
@@ -589,7 +590,6 @@ export default {
   }
   div:nth-child(2).rightCon{
     float:right;
-    width:25%;
     .downloadTable{
       float:left;
     }
@@ -636,7 +636,9 @@ export default {
       font-size:14px;
       color:#000;
       span{
-        font-weight: 100;
+        font-weight: 600;
+        font-size:14px;
+        color:#000;
       }
     }
   }

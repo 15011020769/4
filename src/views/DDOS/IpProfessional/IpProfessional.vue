@@ -63,7 +63,29 @@
               </div>
               <div class="mainConListAll">
                 <div>
-                  
+                  <el-row>
+                    <el-col :span="8">
+                      <div class="colDivThree">
+                        <h1>攻击流量协议分布</h1>
+                        <p class="count">(单位：B)</p>
+                        <div class="dataList">暂无数据</div>
+                      </div>
+                    </el-col>
+                    <el-col :span="8">
+                      <div class="colDivThree">
+                        <h1>攻击包协议分布</h1>
+                        <p class="count">(单位：packet)</p>
+                        <div class="dataList">暂无数据</div>
+                      </div>
+                    </el-col>
+                    <el-col :span="8">
+                      <div class="colDivThree">
+                        <h1>攻击类型分布</h1>
+                        <p class="count">(单位：次)</p>
+                        <div class="dataList">暂无数据</div>
+                      </div>
+                    </el-col>
+                  </el-row>
                 </div>
               </div>
               <div class="mainConListAll mainConListFour">
@@ -773,5 +795,25 @@ export default {
   width:100%;
   height:380px;
   margin:20px 0;
+}
+.colDivThree{
+  padding:20px;
+  text-align:center;
+  h1{
+    margin-bottom: 10px;
+    font-size: 16px;
+    font-weight: bold;
+  }
+  p.count{
+    color: #888 !important;
+    font-size: 12px;
+  }
+  .dataList{
+    text-align: center;
+    height: 100px;
+    padding-top: 44px;
+    color: #888 !important;
+    font-size: 12px;
+  }
 }
 </style>
