@@ -129,6 +129,19 @@ export default {
         path: "/createFun"
       });
     },
+    //添加子函数
+    compileSucc(){
+        let params = {
+          Version:'2018-04-16',
+          FunctionName:this.formShowable.funNameStep,
+          Runtime:this.formShowable.runMoentStep,
+          Description:this.formShowable.descStep,
+          Role:this.formShowable.runRole
+        }
+        this.axios.post(ADD_FUNC,params).then( res => {
+            console.log(res)
+        })
+    },
 
     //完成
     // compileSucc() {
