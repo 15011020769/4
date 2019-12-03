@@ -6,7 +6,7 @@ export * from './interface'
 export * from './tencent'
 export * from './CM'
 
-export * from './scf'
+export * from './SCF'
 
 export * from './cloudaudit'
 

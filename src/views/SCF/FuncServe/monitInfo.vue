@@ -90,8 +90,8 @@
 </template>
 <script>
  import XTimeX from '@/components/public/TimeXK';
-import echartLine from '@/components/echars-line'
-import { All_MONITOR } from '@/constants'
+import echartLine from '@/components/echars-line';
+import { All_MONITOR } from '@/constants';
 export default {
   data() {
     return {
@@ -174,7 +174,7 @@ export default {
           StartTime: this.Start_End.StartTIme,
           EndTime: this.Start_End.EndTIme,
         };
-        this.axios.post('monitor2/GetMonitorData', param).then((data) => {
+        this.axios.post(All_MONITOR, param).then((data) => {
           data.Response.symbol = symbol;
           this.tableData.push(data.Response);
         });
@@ -191,7 +191,7 @@ export default {
           StartTime: this.Start_End.StartTIme,
           EndTime: this.Start_End.EndTIme,
         };
-        this.axios.post('monitor2/GetMonitorData', param).then((data) => {
+        this.axios.post(All_MONITOR, param).then((data) => {
           this.timeData = data.Response.DataPoints[0].Timestamps
           this.jingData = data.Response.DataPoints[0].Values
         });

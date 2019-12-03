@@ -483,6 +483,7 @@ import triggerMode from "./triggerMode.vue";
 import funCode from "./funCode.vue";
 import runningLog from "./runningLog";
 import monitInfo from "./monitInfo";
+import { SCF_DETAILS,UPD_CONFIG,PUBLISH_VERSION,LIST_VERSION,DEL_TRIGGER } from '@/constants'
 export default {
   components: {
     triggerMode: triggerMode,
@@ -611,9 +612,8 @@ export default {
       if (functionName != "" && functionName != null) {
         params["FunctionName"] = functionName;
       }
-      let url = "scf2/GetFunction";
       this.axios
-        .post(url, params)
+        .post(SCF_DETAILS, params)
         .then(res => {
           let _this = this;
           this.functionData = res.Response;
@@ -648,9 +648,8 @@ export default {
         Timeout: this.functionData.Timeout //,
         // VpcConfig: this.functionData.VpcConfig // 参数传递有问题，暂时屏蔽
       };
-      let url = "scf2/UpdateFunctionConfiguration";
       this.axios
-        .post(url, params)
+        .post(UPD_CONFIG, params)
         .then(res => {
           console.log(res.Response);
           this.$message({ type: "success", message: "执行成功！" });
@@ -670,7 +669,7 @@ export default {
       if (functionName != "" && functionName != null) {
         params["FunctionName"] = functionName;
       }
-      this.$axios.post("scf2/GetFunction", params).then(res => {
+      this.axios.post(SCF_DETAILS, params).then(res => {
         console.log(res);
         this.triggerBoxList = res.Response.Triggers;
         for (let i = 0; i < this.triggerBoxList.length; i++) {
@@ -737,9 +736,8 @@ export default {
       if (functionName != "" && functionName != null) {
         params["FunctionName"] = functionName;
       }
-      let url = "scf2/PublishVersion";
       this.axios
-        .post(url, params)
+        .post(PUBLISH_VERSION, params)
         .then(res => {
           
         })
@@ -825,9 +823,8 @@ export default {
       if (functionName != "" && functionName != null) {
         params["FunctionName"] = functionName;
       }
-      let url = "scf2/ListVersionByFunction";
       this.axios
-        .post(url, params)
+        .post(LIST_VERSION, params)
         .then(res => {
           _this.logData = res.Response;
           console.log(_this.logData);
@@ -853,7 +850,7 @@ export default {
       if (functionName != "" && functionName != null) {
         params["FunctionName"] = functionName;
       }
-      this.$axios.post("scf2/DeleteTrigger", params).then(res => {
+      this.axios.post(DEL_TRIGGER, params).then(res => {
         console.log(res);
         console.log(this.$refs.mychild);
         this.$refs.mychild.getfunction();
