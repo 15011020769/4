@@ -2,7 +2,7 @@
   <div class="Cam">
     <div class="top">
       <span class="title-left">{{$t('BILL.BILL.Deal.title')}}</span>
-      <el-select v-model="dataForm.projectId" :placeholder="$t('BILL.BILL.Detail.allProduct')" @change="getProjectListInfo()" clearable size="small" style="padding-left: 25px;">
+      <el-select v-model="dataForm.projectId" :placeholder="$t('BILL.BILL.Detail.allProject')" @change="getProjectListInfo()" clearable size="small" style="padding-left: 25px;">
         <el-option v-for="item in getprejectList" :key="item.projectId" :label="item.projectName" :value="item.projectId" >
         </el-option>
       </el-select>
