@@ -90,7 +90,7 @@
   </div>
 </template>
 <script>
-
+import {ADD_FUNC} from '@/constants'
 export default {
   data() {
     return {
@@ -131,31 +131,31 @@ export default {
     },
 
     //完成
-    compileSucc() {
-      let params = {
-        Version: "2018-04-16",
-        Region: this.$cookie.get("regionv2"),
-        Action: "CreateFunction",
-        FunctionName: this.formShowable.funNameStep,
-        Code: {
-          ZipFile:
-            "UEsDBAoAAAAIABU0e0/2ybv3kQAAAOUAAAAIAAAAaW5kZXgucHltjbEOglAMRXe+4gYXnoqDkyFxd3ZxNIQWfebRR0pBP18ESRzs0qT3ntMV8nWOKpKXW4He6sPnkPimjWp4dFES4hpN6eV6L4UCa8YDi21HSIxf5ooE47TqxbL0zBX7gQlTqUCKzWTZUd+03YJ6oXHjiL1z+It/5bOgM82Wb+63fuIQIp5RA6VzoGy9ypJc5uQNUEsBAhQACgAAAAgAFTR7T/bJu/eRAAAA5QAAAAgAAAAAAAAAAAAAAAAAAAAAAGluZGV4LnB5UEsFBgAAAAABAAEANgAAALcAAAAAAA=="
-        },
-        Type: "Event",
-        UseGpu: "FALSE",
-        Runtime: "Python3.6",
-        Description: "helloworld 空白模板函数",
-        InstallDependency: "FALSE",
-        MemorySize: 128,
-        Namespace: "default"
-      };
-      this.$axios.post("scf2/CreateFunction", params).then(res => {
-        console.log(res);
-        this.$router.push({
-          path: "/FuncServe"
-        });
-      });
-    },
+    // compileSucc() {
+    //   let params = {
+    //     Version: "2018-04-16",
+    //     Region: this.$cookie.get("regionv2"),
+    //     Action: "CreateFunction",
+    //     FunctionName: this.formShowable.funNameStep,
+    //     Code: {
+    //       ZipFile:
+    //         "UEsDBAoAAAAIABU0e0/2ybv3kQAAAOUAAAAIAAAAaW5kZXgucHltjbEOglAMRXe+4gYXnoqDkyFxd3ZxNIQWfebRR0pBP18ESRzs0qT3ntMV8nWOKpKXW4He6sPnkPimjWp4dFES4hpN6eV6L4UCa8YDi21HSIxf5ooE47TqxbL0zBX7gQlTqUCKzWTZUd+03YJ6oXHjiL1z+It/5bOgM82Wb+63fuIQIp5RA6VzoGy9ypJc5uQNUEsBAhQACgAAAAgAFTR7T/bJu/eRAAAA5QAAAAgAAAAAAAAAAAAAAAAAAAAAAGluZGV4LnB5UEsFBgAAAAABAAEANgAAALcAAAAAAA=="
+    //     },
+    //     Type: "Event",
+    //     UseGpu: "FALSE",
+    //     Runtime: "Python3.6",
+    //     Description: "helloworld 空白模板函数",
+    //     InstallDependency: "FALSE",
+    //     MemorySize: 128,
+    //     Namespace: "default"
+    //   };
+    //   this.$axios.post("scf2/CreateFunction", params).then(res => {
+    //     console.log(res);
+    //     this.$router.push({
+    //       path: "/FuncServe"
+    //     });
+    //   });
+    // },
     list() {
       let params = {
         Version: "2017-03-12",

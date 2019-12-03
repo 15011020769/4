@@ -28,3 +28,4 @@ export const LIST_VERSION = 'scf2/ListVersionByFunction' //查询函数版本
 
 export const DEL_TRIGGER = 'scf2/DeleteTrigger' //查询函数版本
 
+export const ADD_FUNC = 'scf2/CreateFunction'
