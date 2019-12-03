@@ -15,27 +15,27 @@
 </template>
 
 <script>
-  export default {
-    data() {
-      return {
-        visible: false,
-        dataForm: {
-          orderId: '',
-          productInfo: ''
-        }
-      }
-    },
-    methods: {
-      init(row) {
-        this.visible = true
-        this.dataForm.orderId =  row.orderId
-        let productList =JSON.parse(row.productInfo)
-        var info="";
-        for (var i = 0; i < productList.length; i++) {
-          info += productList[i].Name + "：" + productList[i].Value + "\n";
-       }
-      this.dataForm.productInfo = info
+export default {
+  data () {
+    return {
+      visible: false,
+      dataForm: {
+        orderId: '',
+        productInfo: ''
       }
     }
+  },
+  methods: {
+    init (row) {
+      this.visible = true
+      this.dataForm.orderId = row.orderId
+      let productList = JSON.parse(row.productInfo)
+      var info = ''
+      for (var i = 0; i < productList.length; i++) {
+        info += productList[i].Name + '：' + productList[i].Value + '\n'
+      }
+      this.dataForm.productInfo = info
+    }
   }
+}
 </script>

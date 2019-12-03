@@ -39,21 +39,6 @@
         </el-select>
         <el-checkbox v-model="dataForm.checked" style="padding-left: 15px;" @change="getCharge()">{{$t('BILL.BILL.Detail.filter')}}</el-checkbox>
       </el-form-item>
-      <!-- <el-form-item>
-        <span style="font-size: 14px;">{{$t('BILL.BILL.Detail.allCast')}}：</span>
-        <span style="font-size: 16px; color: #006eff;">{{dataForm.allCoat}} 元</span>
-        <span style="font-size: 14px;"> = {{$t('BILL.BILL.Detail.cashPayment')}} {{dataForm.cashPayment}} 元 + {{$t('BILL.BILL.Detail.freePayment')}} {{dataForm.freePayment}} 元 + {{$t('BILL.BILL.Detail.voucherPayment')}} {{dataForm.voucherPayment}} 元</span>
-      </el-form-item>
-      <el-form-item style="float: right;">
-        <el-button type="primary" icon="el-icon-download" @click="download" size="small"></el-button>
-      </el-form-item>
-      <el-form-item style="float: right;">
-        <el-button type="primary" @click="search()" size="small">{{$t('BILL.BILL.Detail.search')}}</el-button>
-      </el-form-item>
-      <el-form-item style="float: right;">
-        <el-input :placeholder="$t('BILL.BILL.Detail.resourceId')" clearable v-model="dataForm.resourceId" size="small">
-        </el-input>
-      </el-form-item> -->
     </el-form>
     </div>
     <div class="mod-table">
@@ -148,7 +133,6 @@
         <el-pagination @size-change="sizeChangeHandle" @current-change="currentChangeHandle" :current-page="pageIndex" :page-sizes="[10, 20, 50, 100]" :page-size="pageSize" :total="totalPage" layout="total, sizes, prev, pager, next, jumper" style="width:100%; text-align:right;">
         </el-pagination>
     </div>
-        
     </div>
     <iframe ref="iframe" src="" style="display:none"></iframe>
   </div>
@@ -221,7 +205,7 @@ export default {
         'uin': this.$cookie.get('uin')
       }
       this.dataListLoading = true
-      this.$axios.post(`${process.env.VUE_APP_adminUrl}taifucloud/tbilldetails/list`, params).then(data => {
+      this.$axios.post(`${process.env.VUE_APP_adminUrl}taifucloud/tbillproduct/list`, params).then(data => {
         if (data && data.code === 0) {
           this.dataList = data.page.list
           this.totalPage = data.page.totalCount
@@ -266,10 +250,9 @@ export default {
         'ifDisZero': this.dataForm.checked,
         'uin': this.$cookie.get('uin')
       }
-      this.$axios.post(`${process.env.VUE_APP_adminUrl}taifucloud/tbilldetails/getPayAmount`, params).then(data => {
+      this.$axios.post(`${process.env.VUE_APP_adminUrl}taifucloud/tbillproduct/getPayAmount`, params).then(data => {
         if (data.payAmount != null && data.code === 0) {
           this.dataForm.allCoat = data.payAmount.totalAmount
-          console.log(this.dataForm.allCoat)
           this.dataForm.cashPayment = data.payAmount.cashAmount
           this.dataForm.freePayment = data.payAmount.incentiveAmount
           this.dataForm.voucherPayment = data.payAmount.voucherAmount
@@ -298,7 +281,7 @@ export default {
         'ifDisZero': this.dataForm.checked,
         'uin': this.$cookie.get('uin')
       }
-      this.$axios.post(`${process.env.VUE_APP_adminUrl}taifucloud/tbilldetails/exportList`, params, { responseType: 'blob' }).then(res => {
+      this.$axios.post(`${process.env.VUE_APP_adminUrl}taifucloud/tbillproduct/exportList`, params, { responseType: 'blob' }).then(res => {
         const content = res
         const blob = new Blob([content])
         const fileName = this.dataForm.month + '--账单明细.csv'
@@ -382,7 +365,7 @@ export default {
       var params = {
         'month': this.dataForm.month
       }
-      this.$axios.post(`${process.env.VUE_APP_adminUrl}taifucloud/tbilldetails/projectList`, params).then((res) => {
+      this.$axios.post(`${process.env.VUE_APP_adminUrl}taifucloud/tbillproduct/projectList`, params).then((res) => {
         this.getProjectList = res.projectList
       })
       this.getDataList()
@@ -395,7 +378,7 @@ export default {
       var params = {
         'month': this.dataForm.month
       }
-      this.$axios.post(`${process.env.VUE_APP_adminUrl}taifucloud/tbilldetails/regionList`, params).then((res) => {
+      this.$axios.post(`${process.env.VUE_APP_adminUrl}taifucloud/tbillproduct/regionList`, params).then((res) => {
         this.getRegionList = res.regionList
       })
       this.getDataList()
@@ -408,7 +391,7 @@ export default {
       var params = {
         'month': this.dataForm.month
       }
-      this.$axios.post(`${process.env.VUE_APP_adminUrl}taifucloud/tbilldetails/payModeList`, params).then((res) => {
+      this.$axios.post(`${process.env.VUE_APP_adminUrl}taifucloud/tbillproduct/payModeList`, params).then((res) => {
         this.getPayModeList = res.payModeList
       })
       this.getDataList()
@@ -421,7 +404,7 @@ export default {
       var params = {
         'month': this.dataForm.month
       }
-      this.$axios.post(`${process.env.VUE_APP_adminUrl}taifucloud/tbilldetails/actionTypeList`, params).then((res) => {
+      this.$axios.post(`${process.env.VUE_APP_adminUrl}taifucloud/tbillproduct/actionTypeList`, params).then((res) => {
         this.getActionTypeList = res.actionTypeList
       })
       this.getDataList()

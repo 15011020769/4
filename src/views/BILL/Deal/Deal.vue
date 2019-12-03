@@ -102,7 +102,7 @@ export default {
         'orderId': this.dataForm.orderId,
         'orderOwner': this.$cookie.get('uin')
       }
-      this.$axios.post(`${process.env.VUE_APP_adminUrl}taifucloud/torderdetails/list`, params).then(data => {
+      this.$axios.post(`${process.env.VUE_APP_adminUrl}taifucloud/torderproduct/list`, params).then(data => {
         if (data && data.code === 0) {
           this.dataList = data.page.list
           this.totalPage = data.page.totalCount
@@ -176,9 +176,8 @@ export default {
         'orderId': this.dataForm.orderId,
         'orderOwner': this.$cookie.get('uin')
       }
-      this.$axios.post(`${process.env.VUE_APP_adminUrl}taifucloud/torderdetails/exportList`, params, { responseType: 'blob' }).then(res => {
-       console.info(res);
-       const content = res
+      this.$axios.post(`${process.env.VUE_APP_adminUrl}taifucloud/torderproduct/exportList`, params, { responseType: 'blob' }).then(res => {
+        const content = res
         const blob = new Blob([content])
         const fileName = '订单明细.csv'
         if ('download' in document.createElement('a')) {
@@ -332,7 +331,7 @@ export default {
     .bor-box .num-item{
       text-indent: -10px;
       padding-left: 18px;
-      margin-bottom: 0; 
+      margin-bottom: 0;
     }
     .ifier {
       cursor:pointer;
