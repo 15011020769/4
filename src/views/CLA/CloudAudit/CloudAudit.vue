@@ -225,6 +225,7 @@ export default {
     _select(val) {
       this.AttributeKey = val;
     },
+    //列表数据
     Loading() {
       let params = {
         Version: "2019-03-19",
@@ -233,15 +234,14 @@ export default {
         EndTime: this.nowtime, // 结束时间1558108799
         MaxResults: this.MaxResults
       };
-      console.log(params);
       this.axios.post(YJS_LIST, params).then(res => {
-        console.log(res);
         if (res.codeDesc == "Success") {
           this.tableData = res.data.Events;
           this.vloading = false;
         }
       });
     },
+    //搜索
     seach() {
       this.vloading = true;
       let startTime = String(new Date(this.value1[0]).getTime() / 1000).split(
@@ -260,8 +260,6 @@ export default {
       params["LookupAttributes.0.AttributeKey"] = this.AttributeKey;
       params["LookupAttributes.0.AttributeValue"] = this.input3;
       this.axios.post(YJS_LIST, params).then(data => {
-        console.log(data);
-        console.log(params);
         if (data.codeDesc == "Success") {
           this.tableData = data.data.Events;
           this.vloading = false;
@@ -278,6 +276,7 @@ export default {
         }
       });
     },
+    //加载更多
     more() {
       this.loading = true;
       this.MaxResults = this.MaxResults1 += 10;

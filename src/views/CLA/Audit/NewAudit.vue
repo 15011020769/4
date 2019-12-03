@@ -123,10 +123,17 @@
 
 <script>
 import Header from "../Public/Head";
-import { LIST_COSBUCKETS, GZJ_LIST } from "../../../constants";
+import {
+  LIST_COSBUCKETS,
+  GZJ_LIST,
+  GZJ_REGION,
+  GZJ_CREATE,
+  GZJ_COS
+} from "../../../constants";
 export default {
   name: "new-audit",
   data() {
+    //正则验证
     var AuditName = (rule, value, callback) => {
       var reg = /^[a-zA-Z0-9_]{3,128}$/;
       setTimeout(() => {
@@ -186,18 +193,26 @@ export default {
       }, 1000);
     };
     return {
+      //是否创建新的桶
       IsCreateNewQueue: 0,
+      //是否创建cmq
       cmqShow: false,
+      //cmq下拉框
       cmqSelect: { index: 0 },
+      //高级设置是否显示
       setShow: false,
+      //选择框
       select: {
         index: 0
       },
       name: "111",
+      //btn加载状态
       btnLoad: false,
+      //Bucket下拉框
       BucketSelect: {
         name: ""
       },
+      //表单数据
       ruleForm: {
         AuditName: "",
         ReadWriteAttribute: "全部",
@@ -207,13 +222,16 @@ export default {
         CosRegion: "",
         CmqQueueName: ""
       },
+      //表单验证
       rules: {
         LogFilePrefix: [{ validator: LogFilePrefix, trigger: "blur" }],
         AuditName: [{ validator: AuditName, trigger: "blur" }],
         CosBucketName: [{ validator: CosBucketName, trigger: "blur" }],
         CmqQueueName: [{ validator: CmqQueueName, trigger: "blur" }]
       },
+      //高级设置是否显示
       setChild: false,
+      //cos是否显示
       cosShow: false
     };
   },
@@ -227,7 +245,7 @@ export default {
         Version: "2019-03-19",
         Region: "ap-guangzhou"
       };
-      this.axios.post("cloudaudit2/ListCmqEnableRegion", params).then(res => {
+      this.axios.post(GZJ_REGION, params).then(res => {
         var data = res.Response.EnableRegions;
         var arr = [];
         data.forEach((item, index) => {
@@ -242,6 +260,7 @@ export default {
         this.cmqSelect.name = arr[0].label;
       });
     },
+    //cmq单选变化
     _cmqRadio() {
       if (
         this.ruleForm.IsEnableCmqNotify == "是" ||
@@ -252,6 +271,7 @@ export default {
         this.setChild = false;
       }
     },
+    //创建cmq
     _cmqCretae() {
       if (this.cmqShow) {
         this.IsCreateNewQueue == 1;
@@ -259,6 +279,7 @@ export default {
         this.IsCreateNewQueue == 0;
       }
     },
+    //下拉框
     _cmqSelect() {
       this.cmqSelect.index = this.cmqSelect.options[this.cmqSelect.name].value;
     },
@@ -270,12 +291,14 @@ export default {
         this.BucketSelect.name
       ].label;
     },
+    //返回上一级
     _back() {
       this.$router.push("/Audit");
     },
     _set() {
       this.setShow = !this.setShow;
     },
+    //确认
     _onSubmit(formName) {
       this.btnLoad = true;
       this.$refs[formName].validate(valid => {
@@ -302,31 +325,30 @@ export default {
           } else {
             delete this.ruleForm.CmqQueueName;
           }
-          this.axios
-            .post("cloudaudit2/CreateAudit", this.ruleForm)
-            .then(res => {
-              console.log(res);
-              if (res.Response.IsSuccess == 1) {
-                this.$message({
-                  message: "创建成功",
-                  type: "success"
-                });
-                this.btnLoad = false;
-                this.$router.push("/Audit");
-              } else {
-                this.$message.error("创建失败");
-                this.btnLoad = false;
-              }
-            });
+          this.axios.post(GZJ_CREATE, this.ruleForm).then(res => {
+            if (res.Response.IsSuccess == 1) {
+              this.$message({
+                message: "创建成功",
+                type: "success"
+              });
+              this.btnLoad = false;
+              this.$router.push("/Audit");
+            } else {
+              this.$message.error("创建失败");
+              this.btnLoad = false;
+            }
+          });
         } else {
           this.btnLoad = false;
           return false;
         }
       });
     },
+    //取消
     _cancel() {
       this.$router.push("/Audit");
     },
+    //单选框发送变化
     _radio() {
       var val = this.ruleForm.IsCreateNewBucket;
       if (val == "是") {
@@ -360,7 +382,7 @@ export default {
       Region: "ap-guangzhou"
     };
     //	cos地域
-    this.axios.post("cloudaudit2/ListCosEnableRegion", params).then(res => {
+    this.axios.post(GZJ_COS, params).then(res => {
       var data = res.Response.EnableRegions;
       var arr = [];
       data.forEach((item, index) => {

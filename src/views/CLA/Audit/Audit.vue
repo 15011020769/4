@@ -86,6 +86,7 @@ export default {
         }
       });
     },
+    //查询用户可创建跟踪集数量
     listNum() {
       const params = {
         Version: "2019-03-19",
@@ -106,6 +107,7 @@ export default {
         path: "/NewAudit"
       });
     },
+    //获取列表数据
     getData() {
       let params = {
         Version: "2019-03-19",
