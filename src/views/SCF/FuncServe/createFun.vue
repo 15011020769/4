@@ -63,7 +63,7 @@
           <div v-if="clickTab">
             <el-form-item label="模板搜索">
               <el-input class="searchIpt" v-model="createFunTable.searchName"></el-input>
-              <el-button class="el-icon-search" @click="doFilter"></el-button>
+              <el-button class="btn" @click="doFilter" icon="el-icon-search"></el-button>
             </el-form-item>
             <div class="allFunList">
               <el-row>
@@ -101,11 +101,17 @@
                             </div>
                           </div>
                           <div class="detailBoxConTwo detailBoxC">
-                            <h2>输入参数<i class="el-icon-document-copy"></i></h2>
+                            <h2>
+                              输入参数
+                              <i class="el-icon-document-copy"></i>
+                            </h2>
                             <p>{}</p>
                           </div>
                           <div class="detailBoxConThree detailBoxC">
-                            <h2>输出参数<i class="el-icon-document-copy"></i></h2>
+                            <h2>
+                              输出参数
+                              <i class="el-icon-document-copy"></i>
+                            </h2>
                             <p>{}</p>
                           </div>
                           <div class="detailBoxConFour detailBoxC">
@@ -165,7 +171,6 @@
   </div>
 </template>
 <script>
-
 export default {
   data() {
     return {
@@ -320,12 +325,18 @@ export default {
               this.currentPage * this.pageSize
             );
             console.log(this.tableDataBegin1);
-            this.tableDataBegin1 = this.filterTableDataEnd.slice((this.currentPage-1)*this.pageSize,this.currentPage*this.pageSize);
+            this.tableDataBegin1 = this.filterTableDataEnd.slice(
+              (this.currentPage - 1) * this.pageSize,
+              this.currentPage * this.pageSize
+            );
             // console.log(this.tableDataBegin1)
           } else {
             this.filterTableDataEnd.push();
             this.tableDataBegin1 = this.filterTableDataEnd;
-            this.tableDataBegin1 = this.filterTableDataEnd.slice((this.currentPage-1)*this.pageSize,this.currentPage*this.pageSize);
+            this.tableDataBegin1 = this.filterTableDataEnd.slice(
+              (this.currentPage - 1) * this.pageSize,
+              this.currentPage * this.pageSize
+            );
           }
         }
       });
@@ -376,11 +387,16 @@ export default {
         (this.currentPage - 1) * this.pageSize,
         this.currentPage * this.pageSize
       );
-      if(this.createFunTable.searchName==""){
-        this.tableDataBegin1 = this.tableDataBegin.slice((this.currentPage-1)*this.pageSize,this.currentPage*this.pageSize);
-      }
-      else if(this.createFunTable.searchName!=""){
-        this.tableDataBegin1 = this.filterTableDataEnd.slice((this.currentPage-1)*this.pageSize,this.currentPage*this.pageSize);
+      if (this.createFunTable.searchName == "") {
+        this.tableDataBegin1 = this.tableDataBegin.slice(
+          (this.currentPage - 1) * this.pageSize,
+          this.currentPage * this.pageSize
+        );
+      } else if (this.createFunTable.searchName != "") {
+        this.tableDataBegin1 = this.filterTableDataEnd.slice(
+          (this.currentPage - 1) * this.pageSize,
+          this.currentPage * this.pageSize
+        );
       }
       //this.tableDataBegin1 = this.filterTableDataEnd.slice((this.currentPage-1)*this.pageSize,this.currentPage*this.pageSize);
       //需要判断是否检索
@@ -427,6 +443,21 @@ export default {
 };
 </script>
 <style lang="scss">
+.mainContForm input {
+  height: 30px !important;
+  line-height: 30px !important;
+  border-radius: 0 !important;
+}
+.btn {
+  height: 30px !important;
+  // line-height: 30px !important;
+  border-radius: 0 !important;
+  padding: 0 15px !important;
+  margin-left: -2px !important;
+}
+.mainContForm >>> .el-form-item__label {
+  text-align: left;
+}
 .newClear:after {
   display: block;
   content: "";
@@ -629,27 +660,27 @@ export default {
   min-height: 300px;
   .detailBoxC {
     border-bottom: 1px solid #eaeaea !important;
-    padding:20px 0!important;
-    h2{
-      font-size:14px;
-      font-weight:600;
-      color:#000;
-      margin-bottom:12px;
+    padding: 20px 0 !important;
+    h2 {
+      font-size: 14px;
+      font-weight: 600;
+      color: #000;
+      margin-bottom: 12px;
     }
-    .detailBoxCen{
-      p{
-        margin-bottom:20px;
-        font-size:12px;
-        span:nth-child(1){
-          color:#888;
+    .detailBoxCen {
+      p {
+        margin-bottom: 20px;
+        font-size: 12px;
+        span:nth-child(1) {
+          color: #888;
           display: inline-block;
-          width:46px;
+          width: 46px;
         }
       }
     }
   }
-  .detailBoxConFive{
-    border-bottom:0!important;
+  .detailBoxConFive {
+    border-bottom: 0 !important;
   }
 }
 </style>
