@@ -27,7 +27,7 @@
         height="550"
         style="width: 100%"
       >
-        <el-table-column prop label="ID/主机名 " width="150">
+        <el-table-column prop label="ID/主机名 " >
           <template slot-scope="scope">
             <p>
               <a
@@ -40,10 +40,14 @@
         </el-table-column>
         <el-table-column prop label="监控">
           <template slot-scope="scope">
-            <i class="el-icon-share"></i>
+            
+            <a
+                @click="jump(scope.row.VpnConnectionId)"
+                style="cursor:pointer;"
+              ><i class="el-icon-share"></i></a>
           </template>
         </el-table-column>
-        <el-table-column prop label="状态">
+        <el-table-column prop label="状态" >
           <template slot-scope="scope">
             <p
               :class="scope.row.State == 'PENDING' ? 'orange' : scope.row.State == 'AVAILABLE' ? 'green' : 'red'"
@@ -51,26 +55,26 @@
           </template>
         </el-table-column>
 
-        <el-table-column prop label="所属网络" width="150">
+        <el-table-column prop label="所属网络" >
           <template slot-scope="scope">
             <p style="color: #65a5f9;">{{scope.row.VpcId}}</p>
             <p>{{scope.row.VpcName}}</p>
           </template>
         </el-table-column>
-        <el-table-column prop label="VPN网关" width="150">
+        <el-table-column prop label="VPN网关" >
           <template slot-scope="scope">
             <p style="color: #65a5f9;">{{scope.row.VpnGatewayId}}</p>
             <p>{{scope.row.vpnGwName}}</p>
           </template>
         </el-table-column>
-        <el-table-column prop label="	对端网关" width="150">
+        <el-table-column prop label="	对端网关" >
           <template slot-scope="scope">
             <p style="color: #65a5f9;">{{scope.row.CustomerGatewayId}}</p>
             <p>{{scope.row.userGwName}}</p>
           </template>
         </el-table-column>
-        <el-table-column prop label="	健康状态"></el-table-column>
-        <el-table-column prop label="	告警策略数"></el-table-column>
+        <!-- <el-table-column prop label="	健康状态"></el-table-column>
+        <el-table-column prop label="	告警策略数"></el-table-column> -->
       </el-table>
       <div class="Right-style pagstyle">
         <el-pagination

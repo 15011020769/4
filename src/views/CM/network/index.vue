@@ -36,12 +36,23 @@
         </el-table-column>
         <el-table-column prop label="监控">
           <template slot-scope="scope">
-            <i class="el-icon-share"></i>
+            
+            <a @click="jump(scope.row.AddressIp)" style="cursor:pointer;"><i class="el-icon-share"></i></a>
           </template>
         </el-table-column>
         <el-table-column prop label="弹性IP地址">
           <template slot-scope="scope">
             <p>{{scope.row.AddressIp}}</p>
+          </template>
+        </el-table-column>
+        <el-table-column prop label="创建时间">
+          <template slot-scope="scope">
+            <p>{{scope.row.CreatedTime}}</p>
+          </template>
+        </el-table-column>
+        <el-table-column prop label="实例id">
+          <template slot-scope="scope">
+            <p>{{scope.row.InstanceId}}</p>
           </template>
         </el-table-column>
       </el-table>
@@ -169,6 +180,7 @@ export default {
       // 获取表格数据
       this.axios.post(NETIP_LIST, param).then(data => {
         if (data.Response.Error == undefined) {
+          console.log(data.Response.AddressSet)
           this.TbaleData = data.Response.AddressSet;
           this.loadShow = false;
         } else {

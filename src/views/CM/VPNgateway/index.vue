@@ -41,7 +41,9 @@
           </el-table-column>
           <el-table-column prop label="监控">
             <template slot-scope="scope">
-              <i class="el-icon-share"></i>
+              <a @click="jump(scope.row.VpnGatewayId)" style="cursor:pointer;">
+                <i class="el-icon-share"></i>
+              </a>
             </template>
           </el-table-column>
           <el-table-column prop label="状态">
@@ -58,9 +60,14 @@
               <p>{{ scope.row.vpnGwName}}</p>
             </template>
           </el-table-column>
-
+               <el-table-column prop label="创建时间">
+          <template slot-scope="scope">
+            <p>{{scope.row.CreatedTime}}</p>
+          </template>
+        </el-table-column>
+          <!-- 
           <el-table-column label="健康状态"></el-table-column>
-          <el-table-column prop label="告警策略数"></el-table-column>
+          <el-table-column prop label="告警策略数"></el-table-column>-->
         </el-table>
         <div class="Right-style pagstyle">
           <el-pagination
