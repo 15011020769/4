@@ -22,12 +22,19 @@
               <el-checkbox label="封堵中" name="type"></el-checkbox>
             </el-checkbox-group>
           </div>
-          <el-input v-model="tableDataName" class="searchs" placeholder="请输入要查询的内容"></el-input>
-          <el-button class="el-icon-search" @click="doFilter"></el-button>
+          <span v-if="listResouse=='resourceList'?true:false">
+            <el-input v-model="tableDataName" class="searchs" placeholder="输入ID/名称/IP搜索"></el-input>
+            <el-button class="el-icon-search" @click="doFilter"></el-button>
+          </span>
+          <span v-if="listResouse!='resourceList'?true:false">
+            <el-input v-model="tableDataName1" class="searchs" placeholder="输入域名/CNAME搜索"></el-input>
+            <el-button class="el-icon-search" @click="doFilter1"></el-button>
+          </span>
         </div>
         <div class="mainContent newClear">
           <div class="mainTable">
-            <el-table :data="ResourceList.slice((currentPage-1)*pageSize,currentPage*pageSize)">
+            <!-- 业务列表 -->
+            <el-table :data="tableDataBegin.slice((currentPage-1)*pageSize,currentPage*pageSize)" v-if="listResouse=='resourceList'?false:true">
               <el-table-column prop="canmeId" label="CNAME/ID">
                 <template slot-scope="scope">
                   <a href="#" @click="toDoDetail(scope.$index, scope.row)">{{scope.row.canmeId}}</a>
@@ -50,6 +57,30 @@
                 </template>
               </el-table-column>
             </el-table>
+            <!-- 资源列表 -->
+            <el-table :data="tableDataBegin1.slice((currentPage-1)*pageSize,currentPage*pageSize)" v-if="listResouse!='resourceList'?false:true">
+              <el-table-column prop="idOrName" label="ID/名称">
+                <template slot-scope="scope">
+                  <a href="#" @click="toDoDetailResouse(scope.row)">{{scope.row.idOrName}}</a><br/>
+                  <span>未命名</span>
+                </template>
+              </el-table-column>
+              <el-table-column prop="rulesNum" label="转发规则数(个)"></el-table-column>
+              <el-table-column prop="IpNume" label="防护IP数(个)"></el-table-column>
+              <el-table-column prop="origin" label="初始区域"></el-table-column>
+              <el-table-column prop="status" label="状态"></el-table-column>
+              <el-table-column prop="dataTime" label="到期时间"></el-table-column>
+              <el-table-column prop="action" label="操作" width="180">
+                <template slot-scope="scope">
+                  <el-button
+                    @click.native.prevent="deleteRow(scope.$index, scope.row)"
+                    type="text"
+                    size="small"
+                  >删除</el-button>
+                </template>
+              </el-table-column>
+            </el-table>
+            <resouseListModel :isShow="dialogResouseList" @closeListDetail="closeListDetail"/>
           </div>
           <div class="tabListPage">
             <el-pagination
@@ -70,12 +101,14 @@
 <script>
 
 import { RESOURCE_LIST, DDOSPOLICY_CONT, RULESETS_CONT } from "@/constants";
+import resouseListModel from './model/resouseListModel'
 export default {
   data() {
     return {
       activeName: "first",
-      tableDataBegin: [],
-      tableDataName: "",
+      tableDataBegin: [],//业务列表table
+      tableDataBegin1:[],//资源列表table
+      tableDataName: "",//资源列表搜索框
       tableDataEnd: [],
       ResourceList:[],
       DDosPolicyList:[],//定义DDoS高级策略接口返回的数据。
@@ -86,9 +119,8 @@ export default {
       filterTableDataEnd: [],
       flag: false,
       multipleSelection: [],
-      dialogVisible: false,
       filterConrent: "",
-      allData: [
+      allData: [//业务列表假数据
         {
           canmeId: "1",
           domain: "https",
@@ -101,17 +133,32 @@ export default {
           backSelf: '自动回切2'
         }
       ],
-      listResouse: 'resourceList',
-      runningStatus: [],
-      comingSoon: false
+      allData1:[
+        {
+          idOrName:'1231213',
+          rulesNum:'1',
+          IpNume:'456',
+          origin:'中国台湾',
+          status:'回收中',
+          dataTime:'已到期'
+        }
+      ],//资源列表假数据
+      listResouse: 'resourceList',//业务列表Or资源列表
+      runningStatus: [],//运行状态绑定
+      comingSoon: false,//是否即将过期
+      tableDataName1:'',//业务列表搜索框
+      dialogResouseList:false,//资产列表详情弹框
     };
+  },
+  components:{
+    resouseListModel:resouseListModel
   },
   watch: {
     'listResouse': function () {
       if (this.listResouse == 'resourceList') {
-        this.getData()
+        this.getData1()//资源列表
       } else if (this.listResouse != '') {
-        console.log('业务列表')
+        this.getData()//业务列表
       }
     }
   },
@@ -121,7 +168,7 @@ export default {
     this.describeRuleSets()//获取资源的规则数接口
   },
   mounted() {
-    this.getData();
+      this.getData1();
   },
   methods: {
     //获取DDoS高级策略接口
@@ -183,7 +230,7 @@ export default {
     },
 
     handleClick() {},
-    getData() { //默认查询 资源列表
+    getData() { //默认查询 业务列表
       var cookies = document.cookie;
       var list = cookies.split(";");
       for (var i = 0; i < list.length; i++) {
@@ -210,7 +257,35 @@ export default {
       //   }
       // });
     },
-    // 搜索
+    //默认查询 资源列表
+    getData1() { 
+      var cookies = document.cookie;
+      var list = cookies.split(";");
+      for (var i = 0; i < list.length; i++) {
+        var arr = list[i].split("=");
+      }
+      let params = {
+        Version: '2018-07-09',
+        // Region: '',
+        Business: 'net'
+      };
+      //this.$axios.post('dayu2/DescribeResourceList', params).then(res => {
+        //console.log(params)
+        //console.log(res)
+        // this.tableDataBegin = res.Response.ServicePacks;
+        this.tableDataBegin1 = this.allData1
+        // 将数据的长度赋值给totalItems
+        this.totalItems = this.tableDataBegin1.length;
+        if (this.totalItems > this.pageSize) {
+          for (let index = 0; index < this.pageSize; index++) {
+            this.tableDataEnd.push(this.tableDataBegin1[index]);
+          }
+        } else {
+          this.tableDataEnd = this.tableDataBegin1;
+        }
+      // });
+    },
+    // 业务列表搜索
     doFilter() {
       // console.log(this.filterConrent);
       // console.log(this.runningStatus) // 运行状态
@@ -236,7 +311,28 @@ export default {
       //页面初始化数据需要判断是否检索过
       this.flag = true;
     },
-    openData() {},
+    // 业务列表搜索
+    doFilter1() {
+      this.tableDataEnd = [];
+      //每次手动将数据置空,因为会出现多次点击搜索情况
+      this.filterTableDataEnd = [];
+      this.tableDataBegin.forEach((val, index) => {
+        if (val.canmeId == this.tableDataName1) {
+          this.filterTableDataEnd.push(val);
+          this.tableDataBegin1 = this.filterTableDataEnd;
+        } else {
+          this.filterTableDataEnd.push();
+          this.tableDataBegin1 = this.filterTableDataEnd;
+        }
+      });
+      //页面数据改变重新统计数据数量和当前页
+      this.currentPage = 1;
+      this.totalItems = this.filterTableDataEnd.length;
+      //渲染表格,根据值
+      this.currentChangePage(this.filterTableDataEnd);
+      //页面初始化数据需要判断是否检索过
+      this.flag = true;
+    },
     // 分页开始
     handleSizeChange(val) {
       console.log(`每页 ${val} 条`);
@@ -263,15 +359,24 @@ export default {
         }
       }
     },
+    //跳转新购页面
     newBuy(){
       this.$router.push({
         path: '/choose'
       })
     },
+    //资产列表详情
+    toDoDetailResouse(rowList){
+      this.dialogResouseList=true;
+    },
+    //关闭列表详情
+    closeListDetail(DetailShow){
+      this.dialogResouseList=DetailShow
+    }
   }
 };
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 .newClear:after {
   content: "";
   display: block;
@@ -348,5 +453,9 @@ export default {
       }
     }
   }
+}
+h1{
+  font-size:14px;
+  color:red;
 }
 </style>
