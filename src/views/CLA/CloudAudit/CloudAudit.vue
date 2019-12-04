@@ -105,14 +105,12 @@
             </template>
           </el-table-column>
           <el-table-column label="资源名称" prop="Resources.ResourceName"></el-table-column>
-          <p
-            v-if="Show"
-            slot="append"
-            style="text-align:center; line-height:80px;"
-            v-loading="loading"
-          >
-            <a href="javascript:;" @click="more()" class="blue01">点击加载更多</a>
-          </p>
+          <div v-if="Show" slot="append" style="line-height:40px;padding:0 20px;color:#006eff;">
+            <p v-show="!loading" @click="more()">点击加载更多</p>
+            <p v-show="loading"  style="width:100%;text-align:center;">
+              <i class="el-icon-loading"></i>加载中
+            </p>
+          </div>
         </el-table>
       </div>
     </div>
@@ -131,7 +129,7 @@ export default {
       oldTime: "", // 30天前时间
       isRouterAlive: true,
       loading: false,
-      Show: false, // 加载更多
+      Show: true, // 加载更多
       LookShow: false,
       DownShow: true,
       MaxResults: 10,
@@ -207,6 +205,7 @@ export default {
         if (res.codeDesc == "Success") {
           this.tableData = res.data.Events;
           this.vloading = false;
+          this.loading = false;
         }
       });
     },
