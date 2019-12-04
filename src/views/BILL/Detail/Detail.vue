@@ -434,7 +434,7 @@ export default {
   }
 }
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
   .mod{
     color: #000;
     height: 45px;

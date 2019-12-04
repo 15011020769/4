@@ -1,23 +1,20 @@
 <template>
   <div class="CCN">
     <div class="big-title">费用中心</div>
-    <el-menu
-      default-active="2"
-      class="el-menu-vertical-demo"
-      @open="handleOpen"
-      @close="handleClose"
-      background-color="#292b36"
-      text-color="#fff"
-      active-text-color="#fff"
+    <el-menu default-active="2" class="el-menu-vertical-demo" 
+      @select="handleSelect"
+      background-color="#292b36" 
+      text-color="#fff" 
+      active-text-color="#ffd04b" 
       :router="true"
     >
-      <el-menu-item index="deal">
+      <el-menu-item index="deal" :class="{'menu-active': activeMenu === 'deal'}">
         <span slot="title">订单管理</span>
       </el-menu-item>
-      <el-menu-item index="overview">
+      <el-menu-item index="overview" :class="{'menu-active': activeMenu === 'overview'}">
         <span slot="title">账单概览</span>
       </el-menu-item>
-      <el-menu-item index="detail">
+      <el-menu-item index="detail" :class="{'menu-active': activeMenu === 'detail'}">
         <span slot="title">账单明细</span>
       </el-menu-item>
     </el-menu>
@@ -28,16 +25,13 @@
 export default {
   data() {
     return {
-      activeIndex: "1",
-      activeIndex2: "1"
+      activeMenu: 'deal'        // 默认选中的菜单
     };
   },
   methods: {
-    handleOpen(key, keyPath) {
-      console.log(key, keyPath);
-    },
-    handleClose(key, keyPath) {
-      console.log(key, keyPath);
+    // 选中菜单点击事件
+    handleSelect(key, keyPath) {
+      this.activeMenu = key
     }
   }
 };
@@ -51,25 +45,24 @@ export default {
   .big-title {
     font-size: 16px;
     font-weight: bold;
-    color: white;
-    padding: 20px 0 15px 20px;
-    background: #292b36;
+    color: #fff;
+    margin: 10px 0;
+    padding-left: 30px;
+    display: block;
     height: 45px;
-    // margin: 10px 0;
-  }
-  .iconfont {
-    margin-right: 5px;
-    width: 24px;
-    text-align: center;
-    font-size: 16px;
-    vertical-align: middle;
+    line-height: 45px;
   }
   ::v-deep .el-menu-item {
-    padding-left: 20px !important;
+    padding-left: 30px !important;
+    display: block;
     height: 45px;
-    display: flex;
-    align-items: center;
+    line-height: 45px;
+    color: white !important;
     font-size: 14px;
+  }
+  .menu-active{
+    background-color: #20222c !important;
+    color: white;
   }
 }
 </style>

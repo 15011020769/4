@@ -20,7 +20,9 @@ module.exports = {
       handle: '操作',
       details: '詳情',
       productDetail: '產品詳情',
-      back: '返回'
+      back: '返回',
+      allProject: '全部項目',
+      defaultProject: '默認項目'
     },
     Detail: {
       title: '賬單明細',
