@@ -26,7 +26,7 @@
             <p><span>ID</span><span>{{projectDetail.KeyId}}</span></p>
             <p><span>状态</span><span :style="keyList.KeyState=='Enabled'?'color:#000':'color:#ff9d00'">
                 <!-- {{projectDetail.KeyState}} -->
-                {{projectDetail.KeyState=="PendingDelete"?'于'+timestampToTime(projectDetail.DeletionDate)+'彻底删除':filterState(keyList.KeyState)}}
+                {{keyList.KeyState=="PendingDelete"?'于'+timestampToTime(projectDetail.DeletionDate)+'彻底删除':filterState(keyList.KeyState)}}
               </span>&nbsp;
               <a href="#" :style="keyList.KeyState=='Disabled' || keyList.KeyState=='PendingImport' || keyList.KeyState=='PendingDelete'?'display:none':'display:inline-block'" @click="startKms(keyList,$event)" >禁用密钥</a>
               <a href="#" :style="keyList.KeyState=='Enabled' || keyList.KeyState=='PendingImport' || keyList.KeyState=='PendingDelete'?'display:none':'display:inline-block'" @click="startKms(keyList,$event)">启用密钥</a>
@@ -37,11 +37,11 @@
             <p><span>创建者</span><span>{{keyList.Owner}}</span></p>
             <p><span>轮换状态</span>
              
-              <span :style="projectDetail.KeyRotationEnabled==true?'display:none':'{display:inline-block;color: #ff9d00 ;}'">已禁用</span>
-              <span :style="projectDetail.KeyState=='待导入' || projectDetail.KeyState=='PendingDelete'?'display:none':'{display:inline-block;}'" v-if="projectDetail.KeyRotationEnabled">已启用</span>
+              <span :style="keyList.KeyRotationEnabled==true?'display:none':'{display:inline-block;color: #ff9d00 ;}'">已禁用</span>
+              <span :style="projectDetail.KeyState=='待导入' || keyList.KeyState=='PendingDelete'?'display:none':'{display:inline-block;}'" v-if="keyList.KeyRotationEnabled">已启用</span>
               <span :style=" projectDetail.KeyState=='待导入'?'display:none':'display:inline-block'">每年自动轮换&nbsp;</span>
-              <a href="#" v-if="!projectDetail.KeyRotationEnabled" :style=" projectDetail.KeyState=='待导入'?'display:none':'display:inline-block'" :class=" projectDetail.KeyState=='PendingDelete'?'atclor':''" @click="startChange(keyList,$event)">启用轮换</a>
-              <a href="#" v-if="projectDetail.KeyRotationEnabled" @click="startChange(keyList,$event)">禁用轮换</a>
+              <a href="#" v-if="!keyList.KeyRotationEnabled" :style=" projectDetail.KeyState=='待导入'?'display:none':'display:inline-block'" :class=" keyList.KeyState=='PendingDelete'?'atclor':''" @click="startChange(keyList,$event)">启用轮换</a>
+              <a href="#" v-if="keyList.KeyRotationEnabled" @click="startChange(keyList,$event)">禁用轮换</a>
             </p>
             <p><span>描述信息</span><span>{{keyList.Description}}</span><i class="el-icon-edit" @click="newDescription"></i></p>
             <el-dialog class="changeNameModel" title="修改密钥描述信息" :visible.sync="dialogModel2" width="30%" :before-close="handleClose2">
@@ -56,9 +56,9 @@
                 <el-button type="primary" @click="changeDescriptionSure">确 定</el-button>
               </span>
             </el-dialog>
-           <stopChange :isShow="dialogModelChange" :content="doalogModelBox" @parentByClick="childrenShow" @startSure="startSure" @stopSure="stopSure" />
-           <startKms :isShow="dialogModelKms" :content="doalogModelBox1" @parentByClick="childrenShow1" @startKmsSure="startKmsSure" @stopKmsSure="stopKmsSure" />
-           <openDelete :isShow="dialogModelDelete" :content="doalogModelBox2" @parentByClick="childrenShow2" @openDeleteSure="openDeleteSure" @closeDeleteSure="closeDeleteSure" />
+           <LstopChange :isShow="dialogModelChange" :content="doalogModelBox" @parentByClick="childrenShow" @startSure="startSure" @stopSure="stopSure" />
+           <LstartKms :isShow="dialogModelKms" :content="doalogModelBox1" @parentByClick="childrenShow1" @startKmsSure="startKmsSure" @stopKmsSure="stopKmsSure" />
+           <LopenDelete :isShow="dialogModelDelete" :content="doalogModelBox2" @parentByClick="childrenShow2" @openDeleteSure="openDeleteSure" @closeDeleteSure="closeDeleteSure" />
         </div>
         </div>
         <div class="projectDetailOne" v-if="keyList.KeyState == 'PendingImport'?keyStatus=true:keyStatus=false">
@@ -184,9 +184,9 @@
 </template>
 <script>
 import moment from 'moment'
-import stopChange from './stopChange'
-import startKms from './startKms'
-import openDelete from './openDelete'
+import LstopChange from './LstopChange'
+import LstartKms from './LstartKms'
+import LopenDelete from './LopenDelete'
 import { Des_KMS,UP_NAME,UP_DESC,Encrypt,Decrypt,GET_CMK,ImportKey} from "@/constants";
 export default {
   data() {
@@ -227,9 +227,9 @@ export default {
     }
   },
   components: {
-    stopChange: stopChange,
-    startKms: startKms,
-    openDelete: openDelete
+    LstopChange: LstopChange,
+    LstartKms: LstartKms,
+    LopenDelete: LopenDelete
   },
   created() {
     this.GetList()

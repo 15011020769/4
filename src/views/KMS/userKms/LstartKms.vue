@@ -75,7 +75,8 @@ export default {
      
       this.axios.post(EnableKey, params).then(res => {
         console.log(res.Response);
-        this.$parent.getData();
+        this.$parent.GetList();
+        
       });
     },
     //禁用密钥确定按钮
@@ -89,7 +90,7 @@ export default {
       };
       this.axios.post(DisableKey, params).then(res => {
         // console.log(res.Response);
-        this.$parent.getData();
+        this.$parent.GetList();
       });
     }
   }

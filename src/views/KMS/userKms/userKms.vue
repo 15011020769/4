@@ -8,7 +8,7 @@
       <div class="mainContBtn newClear">
         <div class="conLeftBtn">
           <el-button @click="dialogVisible = true">新建</el-button>
-          <el-button :disabled="isHaveDisable">启用密钥</el-button>
+          <el-button :disabled="isHaveDisable" @click="_btn">启用密钥</el-button>
           <!-- <el-button :disabled="false" v-if="!isHaveDisable">启用密钥</el-button> -->
           <el-button :disabled="isHaveEnable">禁用密钥</el-button>
           <!-- <el-button :disabled="false" v-if="!isHaveEnable">禁用密钥</el-button> -->
@@ -24,9 +24,9 @@
               <p>最长可输入1024个字符</p>
             </el-form-item>
             <el-form-item label="密钥材料来源">
-              <el-radio-group v-model="createForm.resource">
-                <el-radio label="KMS"></el-radio>
-                <el-radio label="外部"></el-radio>
+              <el-radio-group v-model="createForm.Type">
+                <el-radio label="KMS" ></el-radio>
+                <el-radio label="外部" ></el-radio>
               </el-radio-group>
             </el-form-item>
           </el-form>
@@ -44,9 +44,9 @@
         <div class="tableList">
           <el-table ref="multipleTable" :data="tableDataBegin.slice((currentPage-1)*pageSize,currentPage*pageSize)" tooltip-effect="dark" style="width: 100%" @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="55">
-              <template slot-scope="scope">
+              <!-- <template slot-scope="scope">
                 <el-checkbox v-model="scope.row.checked" @click="checkedIsTrue"></el-checkbox>
-              </template>
+              </template> -->
             </el-table-column>
             <el-table-column prop="KeyId" label="密钥ID/密钥名称">
               <template slot-scope="scope">
@@ -110,7 +110,7 @@
 import stopChange from './stopChange'
 import startKms from './startKms'
 import openDelete from './openDelete'
-import { KMS_LIST,NEW_KMS } from "@/constants";
+import { KMS_LIST, NEW_KMS } from "@/constants";
 export default {
   data() {
     return {
@@ -141,7 +141,8 @@ export default {
       createForm: {
         name: "",
         discription: "",
-        resource: ""
+        resource: "",
+        Type: ''
       },//
       isHaveDisable: true,// 启用密钥 是否有已禁用
       isHaveEnable: true,// 禁用密钥 是否有已启用
@@ -167,9 +168,17 @@ export default {
     this.getData();
   },
   methods: {
+    _btn() {
+      console.log(this.multipleSelection)
+    },
     //判断是否有已禁用，已启用
     handleSelectionChange(val) {
+      console.log(val)
       this.multipleSelection = val;
+      console.log(this.multipleSelection)
+      if (val.length != 0) {
+        this.isHaveDisable = false;
+      }
       // this.multipleSelection.map(item => {
       //   console.log(item)
       //   if(item.KeyState == "Enabled"){
@@ -288,9 +297,10 @@ export default {
         Region: 'ap-taipei',
         Alias: this.createForm.name,
         Description: this.createForm.discription,
+        Type: this.createForm.Type=="KMS"?1:2
       };
       this.axios.post(NEW_KMS, params).then(res => {
-        // console.log(res.Response);
+        console.log(res.Response);
         if (res.Response.Error !== undefined) {
           this.$message({
             showClose: true,
@@ -558,7 +568,7 @@ export default {
     border-radius: 0;
   }
   .el-textarea__inner {
-    width: 80%;
+    width: 80% !important;
     height: 100px;
     resize: none;
   }

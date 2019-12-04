@@ -77,8 +77,7 @@ export default {
         this.outTime= this.timestampToTime(res.Response.DeletionDate);
         this.$emit('openDeleteSure',[this.thisShow,this.outTime]);
         // console.log(this.timestampToTime(res.Response.DeletionDate));
-        this.$parent.getData();
-        
+        this.$parent.GetList();
       });
     },
     //取消删除密钥确定按钮
@@ -92,7 +91,7 @@ export default {
       };
       this.axios.post(CEL_KMS, params).then(res => {
         // console.log(res.Response);
-        this.$parent.getData();
+        this.$parent.GetList();
       });
     },
     timestampToTime(timestamp) {
