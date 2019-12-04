@@ -37,9 +37,10 @@
 
         <el-table-column prop label="监控">
           <template slot-scope="scope">
-            <a @click="jump(scope.row.NatGatewayId)" style="cursor:pointer;">
+            <!-- <a @click="jump(scope.row.NatGatewayId)" style="cursor:pointer;">
               <i class="el-icon-share"></i>
-            </a>
+            </a> -->
+             <div class="a" @click="jump(scope.row.NatGatewayId)"></div>
           </template>
         </el-table-column>
 
@@ -277,5 +278,14 @@ export default {
 
 .pagstyle {
   padding: 20px;
+}
+.a {
+  background-image: url("./../../../assets/CAM/images/cvm-20199061519.svg");
+  background-size: 350px 249px;
+  background-repeat: no-repeat;
+  background-position: -101px -101px;
+  height: 25px;
+  width: 16px;
+  cursor: pointer;
 }
 </style>
