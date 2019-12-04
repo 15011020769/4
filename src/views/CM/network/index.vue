@@ -36,8 +36,8 @@
         </el-table-column>
         <el-table-column prop label="监控">
           <template slot-scope="scope">
-            
-            <a @click="jump(scope.row.AddressIp)" style="cursor:pointer;"><i class="el-icon-share"></i></a>
+            <div class="a" @click="jump(scope.row.AddressIp)"></div>
+            <!-- <i @click="jump(scope.row.AddressIp)" style="cursor:pointer;"><i class="el-icon-share"></i></a> -->
           </template>
         </el-table-column>
         <el-table-column prop label="弹性IP地址">
@@ -258,5 +258,14 @@ export default {
 
 .pagstyle {
   padding: 20px;
+}
+.a {
+  background-image: url("./../../../assets/CAM/images/cvm-20199061519.svg");
+  background-size: 350px 249px;
+  background-repeat: no-repeat;
+  background-position: -101px -101px;
+  height: 25px;
+  width: 16px;
+  cursor: pointer;
 }
 </style>

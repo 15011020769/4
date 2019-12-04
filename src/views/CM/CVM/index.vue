@@ -23,11 +23,10 @@
         </el-table-column>
         <el-table-column prop label="监控">
           <template slot-scope="scope">
-            
-            <a
-                @click="jump(scope.row.InstanceId)"
-                style="cursor:pointer;"
-              ><i class="el-icon-share"></i></a>
+            <div class="a" @click="jump(scope.row.InstanceId)"></div>
+            <!-- <a @click="jump(scope.row.InstanceId)"  :style="note">
+              <img src="./../../../assets/CAM/images/cvm-20199061519.svg" style="width:160px;height:160px">
+            </a>-->
           </template>
         </el-table-column>
         <el-table-column prop label="状态">
@@ -56,7 +55,7 @@
             <p :class="scope.row.RestrictState==='NORMAL'?'green':scope.row.RestrictState==='EXPIRED'?'red':'orange'">
               {{RestrictState[scope.row.RestrictState]}}</p>
           </template>
-        </el-table-column> -->
+        </el-table-column>-->
       </el-table>
       <div class="Right-style pagstyle">
         <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
@@ -297,6 +296,20 @@
 
   .pagstyle {
     padding: 20px;
+  }
+
+  .pagstyle {
+    padding: 20px;
+  }
+
+  .a {
+    background-image: url("./../../../assets/CAM/images/cvm-20199061519.svg");
+    background-size: 350px 249px;
+    background-repeat: no-repeat;
+    background-position: -101px -101px;
+    height: 25px;
+    width: 16px;
+    cursor: pointer;
   }
 
 </style>
