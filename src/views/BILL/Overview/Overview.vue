@@ -104,7 +104,7 @@
           <el-tab-pane :label="$t('BILL.BILL.Overview.projectSum')" name="second" style="width:100%">
             <div id="main3" style="float: left; width: 1067px; height: 300px"></div>
             <el-table :data="dataList2" row-key="id" :tree-props="{children: 'children'}"  v-loading="dataListLoading" style="width: 100%;">
-              <el-table-column prop="project_name" :label="$t('BILL.BILL.Overview.projectName')" ></el-table-column>
+              <el-table-column prop="project_name" :label="$t('BILL.BILL.Overview.projectName')"></el-table-column>
               <el-table-column prop="cashAmount" align="right" :label="$t('BILL.BILL.Overview.cashAmount')">
                 <template slot-scope="scope">
                   <span>{{scope.row.cashAmount}}</span>
@@ -725,7 +725,7 @@ export default {
     justify-content: space-between;
     margin-bottom: 20px;
   }
- .el-table__expand-icon {
-   float: left
- }
+  ::v-deep .el-table__expand-icon{
+    display: inline-block !important;
+  }
 </style>

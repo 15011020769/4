@@ -22,7 +22,19 @@ module.exports = {
       productDetail: '产品详情',
       back: '返回',
       allProject: '全部项目',
-      defaultProject: '默认项目'
+      defaultProject: '默认项目',
+      noPay: '未支付',
+      paid: '已支付',
+      delivering: '发货中',
+      delivered: '已发货',
+      deliverFail: '发货失败',
+      refund: '已退款',
+      close: '已关单',
+      past: '订单过期',
+      orderInvalid: '订单已失效',
+      proInvalid: '产品已失效',
+      refuse: '代付拒绝',
+      paying: '支付中'
     },
     Detail: {
       title: '账单明细',
