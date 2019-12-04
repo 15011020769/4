@@ -10,17 +10,16 @@
       </div>
       <div class="search">
         <div class="search_dropdown">
-          <el-input placeholder="请输入内容" v-model="input3" class="input-with-select">
-            <el-select class="childSelect" slot="prepend" v-model="value" @change="_select">
-              <el-option
-                v-for="(item,index) in this.options"
-                :key="index"
-                :label="item.Label"
-                :value="item.Value"
-              ></el-option>
-            </el-select>
-            <el-button slot="append" icon="el-icon-search" @click="seach()" class="btn"></el-button>
-          </el-input>
+          <el-select class="childSelect" slot="prepend" v-model="value" @change="_select">
+            <el-option
+              v-for="(item,index) in this.options"
+              :key="index"
+              :label="item.Label"
+              :value="item.Value"
+            ></el-option>
+          </el-select>
+          <el-input placeholder="请输入内容" v-model="input3" class="inp"></el-input>
+          <el-button icon="el-icon-search" @click="seach()"></el-button>
         </div>
         <div class="date">
           <el-date-picker
@@ -317,7 +316,7 @@ export default {
 <style lang="scss" >
 .search_dropdown {
   width: 485px;
-  .btn{
+  .btn {
     background: white !important;
     position: absolute;
     right: 50px;
@@ -396,9 +395,31 @@ export default {
 .search {
   display: flex;
   .search_dropdown {
-    width: 485px;
+    display: flex;
   }
-  .search_text {
+  // .inp{
+  //   width: 200px;
+  // }
+  // .inp >>> .el-input__inner {
+  //   width: 200px;
+  // }
+  .search_dropdown >>> .el-input__inner {
+    height: 30px;
+    line-height: 30px;
+    border-radius: 0px;
+  }
+  .search_dropdown >>> .el-button {
+    height: 30px;
+    line-height: 30px;
+    border-radius: 0px;
+    padding-top: 0;
+    font-size: 12px;
+    margin-left: -20px;
+    position: relative;
+    z-index: 100;
+  }
+  .search_text,
+  .search_dropdown {
     .el-input__inner {
       height: 30px;
       line-height: 30px;
