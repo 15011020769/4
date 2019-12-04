@@ -79,7 +79,7 @@ module.exports = {
       title: '账单概览',
       note: '按扣费周期（按扣费时间统计生产月度账单）',
       costTrend: '费用趋势',
-      unit: '（单位：元）',
+      unit: '（单位：新台币）',
       half: '近半年',
       year: '近一年',
       statCycle: '统计周期',

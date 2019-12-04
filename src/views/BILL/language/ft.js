@@ -78,7 +78,7 @@ module.exports = {
       title: '賬單概覽',
       note: '按扣費周期（按扣費時間統計生產月度賬單）',
       costTrend: '費用趨勢',
-      unit: '（單位：元）',
+      unit: '（單位：新臺幣）',
       half: '近半年',
       year: '近壹年',
       statCycle: '統計周期',
