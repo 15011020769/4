@@ -27,13 +27,17 @@
         </div>
         <div class="mainContent newClear">
           <div class="mainTable">
-            <el-table :data="tableDataBegin.slice((currentPage-1)*pageSize,currentPage*pageSize)">
+            <el-table :data="ResourceList.slice((currentPage-1)*pageSize,currentPage*pageSize)">
               <el-table-column prop="canmeId" label="CNAME/ID">
                 <template slot-scope="scope">
                   <a href="#" @click="toDoDetail(scope.$index, scope.row)">{{scope.row.canmeId}}</a>
                 </template>
               </el-table-column>
-              <el-table-column prop="domain" label="域名"></el-table-column>
+              <el-table-column prop="domain" label="域名">
+                 <template slot-scope="scope">
+                   {{scope.row.BlockTime}}
+                </template>
+              </el-table-column>
               <el-table-column prop="nowIp" label="当前IP"></el-table-column>
               <el-table-column prop="backSelf" label="自动回切"></el-table-column>
               <el-table-column prop="action" label="操作" width="180">
@@ -64,6 +68,8 @@
   </div>
 </template>
 <script>
+
+import { RESOURCELIST_LIST, DDOSPOLICY_CONT, RULESETS_CONT } from "@/constants";
 export default {
   data() {
     return {
@@ -71,6 +77,9 @@ export default {
       tableDataBegin: [],
       tableDataName: "",
       tableDataEnd: [],
+      ResourceList:[],
+      DDosPolicyList:[],//定义DDoS高级策略接口返回的数据。
+      RuleSetsa:[],//获取资源的规则数接口
       currentPage: 1,
       pageSize: 10,
       totalItems: 0,
@@ -106,10 +115,73 @@ export default {
       }
     }
   },
+ created() {
+    this.describeResourceList()//获取资源列表接口
+    //this.describeDDoSPolicy()//获取DDoS高级策略接口
+    this.describeRuleSets()//获取资源的规则数接口
+  },
   mounted() {
     this.getData();
   },
   methods: {
+    //获取DDoS高级策略接口
+    describeDDoSPolicy(){
+      let params = {
+        Version: '2018-07-09',
+        Business:'net',
+      }
+      this.axios.post(DDOSPOLICY_CONT, params).then(res => {
+        //console.log(params)
+        console.log(res)
+        this.DDosPolicyList = res.Response.DDosPolicyList
+         console.log(this.DDosPolicyList);
+      })
+
+    },
+    //获取资源的规则数接口
+    describeRuleSets(){
+      let params = {
+        Version: '2018-07-09',
+        Business:'net',
+        "IdList.0":"net-0000006y",
+      }
+      this.axios.post(RULESETS_CONT, params).then(res => {
+        console.log(params)
+        console.log(res)
+        // this.RuleSetsa = res.Response.
+        // this.totalItems = this.RuleSetsa.length;
+        // if (this.totalItems > this.pageSize) {
+        //   for (let index = 0; index < this.pageSize; index++) {
+        //     this.tableDataEnd.push(this.RuleSetsa[index]);
+        //   }
+        // } else {
+        //   this.tableDataEnd = this.RuleSetsa;
+        // }
+      })
+
+    },
+    //获取资源列表接口
+    describeResourceList(){
+      let params = {
+        Version: '2018-07-09',
+        Business:'net',
+      }
+      this.axios.post(RESOURCELIST_LIST, params).then(res => {
+        console.log(params)
+        console.log(res)
+         this.ResourceList = res.Response
+        //  this.totalItems = this.ResourceList.length;
+        //  if (this.totalItems > this.pageSize) {
+        //    for (let index = 0; index < this.pageSize; index++) {
+        //      this.tableDataEnd.push(this.ResourceList[index]);
+        //    }
+        //  } else {
+        //    this.tableDataEnd = this.ResourceList;
+        //  }
+      })
+
+    },
+
     handleClick() {},
     getData() { //默认查询 资源列表
       var cookies = document.cookie;
@@ -122,21 +194,21 @@ export default {
         // Region: '',
         Business: 'net'
       };
-      this.$axios.post('dayu2/DescribeResourceList', params).then(res => {
-        console.log(params)
-        console.log(res)
-        // this.tableDataBegin = res.Response.ServicePacks;
-        this.tableDataBegin = this.allData
-        // 将数据的长度赋值给totalItems
-        this.totalItems = this.tableDataBegin.length;
-        if (this.totalItems > this.pageSize) {
-          for (let index = 0; index < this.pageSize; index++) {
-            this.tableDataEnd.push(this.tableDataBegin[index]);
-          }
-        } else {
-          this.tableDataEnd = this.tableDataBegin;
-        }
-      });
+      // this.$axios.post('dayu2/DescribeResourceList', params).then(res => {
+      //   console.log(params)
+      //   console.log(res)
+      //   // this.tableDataBegin = res.Response.ServicePacks;
+      //   this.tableDataBegin = this.allData
+      //   // 将数据的长度赋值给totalItems
+      //   this.totalItems = this.tableDataBegin.length;
+      //   if (this.totalItems > this.pageSize) {
+      //     for (let index = 0; index < this.pageSize; index++) {
+      //       this.tableDataEnd.push(this.tableDataBegin[index]);
+      //     }
+      //   } else {
+      //     this.tableDataEnd = this.tableDataBegin;
+      //   }
+      // });
     },
     // 搜索
     doFilter() {

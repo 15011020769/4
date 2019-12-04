@@ -52,6 +52,8 @@
   </div>
 </template>
 <script>
+
+import { IPUNBlOCKLIST_LIST } from "@/constants";
 export default {
   data(){
     return{
@@ -65,22 +67,22 @@ export default {
       // 日期区间：默认获取当前时间和前90天时间
       EndTime: this.getDateString(new Date()),
       BeginTime: this.getDateString(new Date(new Date().getTime() - 24*60*60*1000*90)),
-      // 日期选择
+       // 日期选择
       dateChoice1: {},
       dateChoice2: {},
       IpUnBlockList:[],
     }
   },
-  watch: {
+   watch: {
     'dateChoice1': function (value) {
       console.log(this.getDateString(value[0]))
       this.BeginTime = this.getDateString(value[0])
       this.EndTime = this.getDateString(value[1])
       this. describeIpUnBlockList()
     },
-  },
-  created(){
-    this.describeIpUnBlockList();//获取IP解封记录
+   },
+   created(){
+    this.describeIpUnBlockList();//获取IP解封记录接口
   },
   methods:{
     describeIpUnBlockList() {
@@ -89,7 +91,7 @@ export default {
         BeginTime:this.BeginTime,
         EndTime:this.EndTime,
       }
-      this.$axios.post('dayu2/DescribeIpUnBlockList', params).then(res => {
+      this.axios.post(IPUNBlOCKLIST_LIST, params).then(res => {
         console.log(params)
         console.log(res)
         this.IpUnBlockList=res.Response.List 

@@ -39,7 +39,7 @@
             </template>
           </el-table-column>
           <el-table-column prop="unblockTime" label="预计解封时间">
-            <template slot-scope="scope">
+         <template slot-scope="scope">
               {{scope.row.UnBlockTime}}
             </template>
           </el-table-column>
@@ -54,7 +54,7 @@
                 @click.native.prevent="deleteRow(scope.$index, scope.row)"
                 type="text"
                 size="small"
-              >删除</el-button>
+              > {{scope.row.ActionType}}</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -63,6 +63,8 @@
   </div>
 </template>
 <script>
+
+import { UNBlOCKSTATIS_NUM, IPBlOCKLIST_LIST } from "@/constants";
 export default {
   data() {
     return {
@@ -86,7 +88,7 @@ export default {
       let params = {
         Version: '2018-07-09',
       }
-      this.$axios.post('dayu2/DescribeIpBlockList', params).then(res => {
+      this.axios.post(IPBlOCKLIST_LIST, params).then(res => {
         console.log(params)
         console.log(res)
         this.tableDatalist=res.Response.List
@@ -98,7 +100,7 @@ export default {
       let params = {
         Version: '2018-07-09',
       }
-      this.$axios.post('dayu2/DescribeUnBlockStatis', params).then(res => {
+      this.axios.post(UNBlOCKSTATIS_NUM, params).then(res => {
         console.log(params)
         console.log(res)
         this.unBlockStatis = res.Response
