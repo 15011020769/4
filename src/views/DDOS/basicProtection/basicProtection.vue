@@ -11,18 +11,34 @@
     </div>
     <div class="basicProtCon">
       <div class="basicProtConSearch">
-        <el-input placeholder="请输入主机名/主机IP搜索" class="searchIpt" v-model="tableDataName"/><el-button @click="doFilter" class="el-icon-search"></el-button>
+        <el-input placeholder="请输入主机名/主机IP搜索" class="searchIpt" v-model="searchInputVal"/><el-button @click="doFilter" class="el-icon-search"></el-button>
       </div>
       <div>
         <el-table :data="tableDataBegin.slice((currentPage-1)*pageSize,currentPage*pageSize)">
-          <el-table-column prop="hostName" label="主机名">
+          <el-table-column prop="InstanceName" label="主机名">
             <template slot-scope="scope">
-              <a href="#" @click="toDoDetail(scope.$index, scope.row)">{{scope.row.hostName}}</a>
+              <a href="#" @click="toDoDetail(scope.$index, scope.row)">{{scope.row.InstanceName}}</a>
             </template>
           </el-table-column>
-          <el-table-column prop="hostIp" label="绑定IP"></el-table-column>
-          <el-table-column prop="hostType" label="主机类型"></el-table-column>
-          <el-table-column prop="safeStstus" label="安全状态"></el-table-column>
+          <el-table-column prop="IP" label="绑定IP">
+            <template slot-scope="scope">
+              <div v-if="scope.row.PublicIpAddresses != undefined">
+                {{scope.row.PublicIpAddresses[0]}}
+              </div>
+              <div v-else>-</div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="InstanceType" label="主机类型">
+            云主机
+            <!-- <template slot-scope="scope">{{scope.row.InstanceType}}</template> -->
+          </el-table-column>
+          <el-table-column prop="RestrictState" label="安全状态">
+            <template slot-scope="scope">
+              <div v-if="scope.row.RestrictState == 'NORMAL'">正常</div>
+              <div v-else-if="scope.row.RestrictState == 'EXPIRED'">过期</div>
+              <div v-else-if="scope.row.RestrictState == 'PROTECTIVELY_ISOLATED'">被安全隔离</div>
+            </template>
+          </el-table-column>
           <el-table-column prop="hostAction" label="操作" width="180">
             <template slot-scope="">
               <el-button
@@ -61,26 +77,26 @@
   </div>
 </template>
 <script>
+import { CVM_INSTANCES } from '@/constants'
 export default {
   data() {
     return {
       codeOrigin:"云服务器专区",
       taibei:"中国台北",
+      // 实例列表
       tableDataBegin: [],
-      tableDataName: "",
+      // 搜索框输入值
+      searchInputVal: '',
+      // 过滤刷新列表过程中使用
+      allData: [],  // 存储全部实例列表
       tableDataEnd: [],
+      filterTableDataEnd: [],
+      // 分页相关
       currentPage: 1,
       pageSize: 10,
       totalItems: 0,
-      filterTableDataEnd: [],
+      
       flag: false,
-      filterConrent:"",
-      allData:[{
-        hostName:"1",
-        hostIp:"2",
-        hostType:"3",
-        safeStstus:"4"
-      }],
       dialogVisible:false,
     }
   },
@@ -89,61 +105,50 @@ export default {
   },
   methods:{
     getData() {
-      var cookies = document.cookie;
-      var list = cookies.split(";");
-      for (var i = 0; i < list.length; i++) {
-        var arr = list[i].split("=");
-      }
-      console.log(arr[1]);
+      this.describeInstances()
+    },
+    // 1.1.查询实例列表
+    describeInstances() {
       let params = {
-        // Action: "ListFunctions",
-        Version: "2018-04-16",
-        Region: arr[1]
-      };
-      //this.$axios.post('scf/ListFunctions', params).then(res => {
-      //console.log(res.data);
-      //this.tableDataBegin = res.data.dataTable;
-      //this.allData = this.tableDataBegin;
-        this.tableDataBegin = this.allData;
-        // 将数据的长度赋值给totalItems
-        this.totalItems = this.tableDataBegin.length;
-        if (this.totalItems > this.pageSize) {
-          for (let index = 0; index < this.pageSize; index++) {
-            this.tableDataEnd.push(this.tableDataBegin[index]);
-          }
-        } else {
-          this.tableDataEnd = this.tableDataBegin;
-        }
-      //});
+        Version: "2017-03-12",
+        Region: 'ap-taipei'
+      }
+      this.axios.post(CVM_INSTANCES, params).then(res => {
+        console.log(res)
+        this.tableDataBegin = res.Response.InstanceSet
+        this.allData = res.Response.InstanceSet
+        this.totalItems = res.Response.TotalCount
+      })
     },
     // 搜索
     doFilter() {
-      console.log(this.filterConrent);
-      this.tableDataBegin = this.allData;
-      this.tableDataEnd = [];
-      //每次手动将数据置空,因为会出现多次点击搜索情况
-      this.filterTableDataEnd = [];
-      this.tableDataBegin.forEach((val, index) => {
-        if (val.hostName) {
-          if (val.hostName.indexOf(this.tableDataName) == 0||val.hostIp.indexOf(this.tableDataName) == 0) {
-            this.filterTableDataEnd.push(val);
-            this.tableDataBegin = this.filterTableDataEnd;
-          } else {
-            this.filterTableDataEnd.push();
-            this.tableDataBegin = this.filterTableDataEnd;
+      // console.log(this.searchInputVal)
+      if (this.searchInputVal != null && this.searchInputVal != ''){
+        //每次手动将数据置空,因为会出现多次点击搜索情况
+        this.tableDataBegin = new Array()
+        this.filterTableDataEnd = new Array()
+        this.allData.forEach((val, index) => {
+          let arr = val.PublicIpAddresses
+          if (val.InstanceName == this.searchInputVal) {
+            this.filterTableDataEnd.push(val)
+          } else if (arr != undefined && arr.indexOf(this.searchInputVal) > -1) {
+            this.filterTableDataEnd.push(val)
           }
-        }
-      });
+        })
+        this.tableDataBegin = this.filterTableDataEnd
+      } else {// 如果没有输入搜素内容
+        this.tableDataBegin = this.allData
+      }
+      
       //页面数据改变重新统计数据数量和当前页
       this.currentPage = 1;
-      this.totalItems = this.filterTableDataEnd.length;
+      this.totalItems = this.tableDataBegin.length;
       //渲染表格,根据值
-      this.currentChangePage(this.filterTableDataEnd);
-
+      this.currentChangePage(this.tableDataBegin);
       //页面初始化数据需要判断是否检索过
       this.flag = true;
     },
-    openData() {},
+    
     // 分页开始
     handleSizeChange(val) {
       console.log(`每页 ${val} 条`);
@@ -172,13 +177,15 @@ export default {
     },
     //跳转详情页
     toDoDetail(basicIndex,basicRow){
-      sessionStorage.setItem("basicName", this.tableDataBegin[basicIndex].hostName)
-      this.$router.push({
-        name: "basicProteDetail",
-        // params:{
-				// 	functionName:this.tableDataBegin[basicIndex].hostName
-				// }
-      });
+      // console.log(basicIndex, basicRow)
+      if(basicRow.PublicIpAddresses != undefined){
+        this.$router.push({
+          path: "/basicProteDetail",
+          query: {
+            instance: basicRow
+          }
+        });
+      }
     }
   }
 }

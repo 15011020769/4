@@ -133,7 +133,7 @@ export default {
       ],
       policyScope: 'All',
       input: "",
-      tableData: [{}],  //策略列表数据
+      tableData: [],  //策略列表数据
       selectedData: [], //选择要删除的
       table_options: [
         {

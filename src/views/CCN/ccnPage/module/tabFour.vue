@@ -47,7 +47,7 @@ export default {
       ccnId: '',
       visible2: false,
       value1: true,
-      tableData: [{}] // 列表数据
+      tableData: [] // 列表数据
     }
   },
   created () {

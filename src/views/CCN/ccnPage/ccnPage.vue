@@ -310,14 +310,14 @@ export default {
   data () {
     return {
       // ccn列表数据
-      tableData: [{}],
+      tableData: [],
       // 关联实例列表数据
-      // ccnAttachedInstances: [{}],
+      // ccnAttachedInstances: [],
       // 分页
       currentPage4: 1,
       total: 0,
       // 新建ccn模态窗需要的，根据私有网络/专线网络查询VPC列表
-      vpcs: [{}],
+      vpcs: [],
       // 新建ccn表单
       form: {
         CcnName: '',
@@ -342,8 +342,8 @@ export default {
       // ccn对象（公用）
       ccnPublic: {},
       // 标签对象
-      oldTags: [{}],
-      tags: [{}],
+      oldTags: [],
+      tags: [],
       ccnIdOfTag: '',
 
       dialogTableVisible: false, // 删除模态窗

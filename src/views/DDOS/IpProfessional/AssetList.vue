@@ -69,7 +69,7 @@
 </template>
 <script>
 
-import { RESOURCELIST_LIST, DDOSPOLICY_CONT, RULESETS_CONT } from "@/constants";
+import { RESOURCE_LIST, DDOSPOLICY_CONT, RULESETS_CONT } from "@/constants";
 export default {
   data() {
     return {
@@ -166,7 +166,7 @@ export default {
         Version: '2018-07-09',
         Business:'net',
       }
-      this.axios.post(RESOURCELIST_LIST, params).then(res => {
+      this.axios.post(RESOURCE_LIST, params).then(res => {
         console.log(params)
         console.log(res)
          this.ResourceList = res.Response

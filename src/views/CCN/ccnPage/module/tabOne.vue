@@ -123,7 +123,7 @@ export default {
       ccnId: '',
       newVisible: false,
       dialogVisible: false,
-      tableData: [{}], // 列表数据
+      tableData: [], // 列表数据
       // 解关联模态窗回显数据
       instance: {
         CcnId: '',
@@ -132,7 +132,7 @@ export default {
         InstanceType: ''
       },
       // 添加关联实例，根据私有网络/专线网络查询VPC列表
-      vpcs: [{}],
+      vpcs: [],
       // 添加关联实例表单
       form: {
         instanceType: '',

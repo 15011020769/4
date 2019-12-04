@@ -202,9 +202,9 @@ export default {
     return {
       ccnId: '',
       regionShow: false,
-      tableData: [{}], // 带宽限速数据列表
+      tableData: [], // 带宽限速数据列表
       ccnPublic: {},
-      regionSet: [{}], // 地域列表
+      regionSet: [], // 地域列表
       upLimits: {
         Region: '',
         DstRegion: '',
