@@ -75,36 +75,6 @@
                 <el-form-item label="用户名">
                   <span>{{ props.row.Username }}</span>
                 </el-form-item>
-                <el-form-item>
-                  <a href="javascript:;" @click="LookShows()">查看事件</a>
-                  <div class="event-box" v-if="LookShow">
-                    <div class="event-backdrop"></div>
-                    <div class="event-dialog">
-                      <div class="event-dialog-inner">
-                        <div class="event-dialog-header">
-                          <p>查看事件</p>
-                          <i class="el-icon-close" @click="LookShow = false"></i>
-                        </div>
-                        <div class="wxsmallcode-page publicCon">
-                          <div class="copyBox">
-                            <el-button
-                              class="ml10"
-                              type="text"
-                              size="medium"
-                              v-clipboard:copy="props.row.CloudAuditEvent"
-                              v-clipboard:success="onCopy"
-                              v-clipboard:error="onError"
-                              :plain="true"
-                            >复制代码</el-button>
-                            <p>
-                              <json-viewer :value=" JSON.parse(props.row.CloudAuditEvent)"></json-viewer>
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </el-form-item>
               </el-form>
             </template>
           </el-table-column>
