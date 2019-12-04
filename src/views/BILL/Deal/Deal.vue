@@ -46,8 +46,8 @@
           </el-table-column>
           <el-table-column prop="month" header-align="center" align="center" width="120" :label="$t('BILL.BILL.Deal.month')">
           </el-table-column>
-          <el-table-column prop="currency" header-align="center" align="center" width="120" :label="$t('BILL.BILL.Deal.currency')" :formatter="formatterCurrency">
-          </el-table-column>
+          <!-- <el-table-column prop="currency" header-align="center" align="center" width="120" :label="$t('BILL.BILL.Deal.currency')" :formatter="formatterCurrency">
+          </el-table-column> -->
           <el-table-column prop="createTime" header-align="center" align="center" width="160" :label="$t('BILL.BILL.Deal.createTime')">
           </el-table-column>
           <el-table-column fixed="right" header-align="center" align="center" width="180" label="操作">
@@ -148,40 +148,40 @@ export default {
     },
     formatterStatus(row, column, cellValue) {
       if (cellValue === '1') {
-        return '未支付'
+        return this.$t('BILL.BILL.Deal.noPay')
       } else if (cellValue === '2') {
-        return '已支付'
+        return this.$t('BILL.BILL.Deal.paid')
       } else if (cellValue === '3') {
-        return '发货中'
+        return this.$t('BILL.BILL.Deal.delivering')
       } else if (cellValue === '4') {
-        return '已发货'
+        return this.$t('BILL.BILL.Deal.delivered')
       } else if (cellValue === '5') {
-        return '发货失败'
+        return this.$t('BILL.BILL.Deal.deliverFail')
       } else if (cellValue === '6') {
-        return '已退款'
+        return this.$t('BILL.BILL.Deal.refund')
       } else if (cellValue === '7') {
-        return '已关单'
+        return this.$t('BILL.BILL.Deal.close')
       } else if (cellValue === '8') {
-        return '订单过期'
+        return this.$t('BILL.BILL.Deal.past')
       } else if (cellValue === '9') {
-        return '订单已失效'
+        return this.$t('BILL.BILL.Deal.orderInvalid')
       } else if (cellValue === '10') {
-        return '产品已失效'
+        return this.$t('BILL.BILL.Deal.proInvalid')
       } else if (cellValue === '11') {
-        return '代付拒绝'
+        return this.$t('BILL.BILL.Deal.refuse')
       } else if (cellValue === '12') {
-        return '支付中'
+        return this.$t('BILL.BILL.Deal.paying')
       }
     },
-    formatterCurrency(row, column, cellValue) {
-      if (cellValue === 'CNY') {
-        return '人民币'
-      } else if (cellValue === 'USD') {
-        return '美元'
-      } else if (cellValue === 'TWD') {
-        return '台币'
-      }
-    },
+    // formatterCurrency(row, column, cellValue) {
+    //   if (cellValue === 'CNY') {
+    //     return '人民币'
+    //   } else if (cellValue === 'USD') {
+    //     return '美元'
+    //   } else if (cellValue === 'TWD') {
+    //     return '台币'
+    //   }
+    // },
     // 下载
     download() {
       var params = {
