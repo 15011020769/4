@@ -2,9 +2,6 @@
   <div>
     <div class="topOverView">
       <span>概览</span>
-      <span>
-        <a href="#">函数服务帮助文档</a>
-      </span>
     </div>
     <div class="mainContainer">
       <div class="contentTop">
@@ -16,37 +13,36 @@
                 <span>{{topList.number}}</span>
                 <span>个</span>
               </p>
-              <p>异常函数{{topList.thirdNum}}个</p>
             </div>
           </el-col>
           <el-col :span="6">
             <div class="modelList">
               <p>本月调用数</p>
               <p>
-                <span>{{topList.number}}</span>
+                <span>{{topList.invokecount}}</span>
                 <span>次</span>
               </p>
-              <p>本月调用数{{topList.thirdNum}}次</p>
+              <p>昨日调用数{{topList.yinvokecount}}次</p>
             </div>
           </el-col>
           <el-col :span="6">
             <div class="modelList">
               <p>本月资源量</p>
               <p>
-                <span>{{topList.number}}</span>
+                <span>{{topList.gbs}}</span>
                 <span>GBs</span>
               </p>
-              <p>昨日资源量{{topList.thirdNum}}GBs</p>
+              <p>昨日资源量{{topList.ygbs}}GBs</p>
             </div>
           </el-col>
           <el-col :span="6">
             <div class="modelList">
               <p>本月出流量</p>
               <p>
-                <span>{{topList.number}}</span>
+                <span>{{topList.outflow}}</span>
                 <span>GB</span>
               </p>
-              <p>昨日出流量{{topList.thirdNum}}GB</p>
+              <p>昨日出流量{{topList.youtflow}}GB</p>
             </div>
           </el-col>
         </el-row>
@@ -157,20 +153,26 @@
 <script>
 import echarts from "echarts";
 import XTimeX from '@/components/public/TimeXK';
-import { All_MONITOR } from '@/constants'
+import { SCF_DETAILS,All_MONITOR,OVER_VIEW,USER_MONTH_USAGE,USER_YESTERDAY_USAGE } from '@/constants'
 export default {
   data() {
     return {
       functionName: this.$route.query.FunctionName,
       addressIpt: "中国台北",
       topList: {
-        number: 0,
-        thirdNum: 0
+        number: '',
+        gbs: '',
+        invokecount: '',
+        outflow: '',
+        number: '',
+        ygbs: '',
+        yinvokecount: '',
+        youtflow: '',
       },
       type: "1",
       value: "",
       valueAddress: "",
-      address: [
+     /* address: [
         {
           value: "1",
           label: "北京"
@@ -187,9 +189,9 @@ export default {
           value: "4",
           label: "北京"
         }
-      ],
+      ],*/
       newData: "调用次数",
-      selectTime: [
+     /* selectTime: [
         {
           value: "time1",
           label: "一分钟"
@@ -206,9 +208,10 @@ export default {
           value: "time4",
           label: "一天"
         }
-      ],
+      ],*/
       value2: "",
       changeColor: "",
+      //统计图下的列表
       tableData: [
         {
           funName: "函数名1",
@@ -233,32 +236,50 @@ export default {
     XTimeX
   },
   methods: {
-    init() {
+    //函数数量
+    GetOverView(){
       let params = {
-        Action: "GetFunction",
+        Action: "GetFunctionTotalNum",
         Version: "2018-04-16",
-        ShowCode: "TRUE",
-        Namespace: "default",
-        Qualifier: "$LATEST",
         Region: this.$cookie.get("regionv2")
       };
-      let functionName = this.$route.query.functionName;
-      // functionName = 'tttt'
-      if (functionName != "" && functionName != null) {
-        params["FunctionName"] = functionName;
-      }
-      let url = "scf/GetFunction";
       this.axios
-        .post(url, params)
+        .post(OVER_VIEW, params)
         .then(res => {
-          let _this = this;
-          this.functionData = res.Response;
-          let funcData = this.functionData;
+          this.topList.number=res.Response.FunctionTotalNum;
         })
-        .catch(error => {
-          console.log(error);
-        });
     },
+    //本月调用数、本月资源量、本月输出量
+    GetUserMonthUsage(){
+      let params = {
+        Action: "GetUserMonthUsage",
+        Version: "2018-04-16",
+        Region: this.$cookie.get("regionv2")
+      };
+      this.axios
+        .post(USER_MONTH_USAGE, params)
+        .then(res => {
+          this.topList.gbs=res.Response.Gbs;
+          this.topList.invokecount=res.Response.InvokeCount;
+          this.topList.outflow=res.Response.Outflow;
+        })
+    },
+    //本月调用数、本月资源量、本月输出量
+    GetUserYesterdayUsage(){
+      let params = {
+        Action: "GetUserYesterdayUsage",
+        Version: "2018-04-16",
+        Region: this.$cookie.get("regionv2")
+      };
+      this.axios
+        .post(USER_YESTERDAY_USAGE, params)
+        .then(res => {
+          this.topList.ygbs=res.Response.Gbs;
+          this.topList.yinvokecount=res.Response.InvokeCount;
+          this.topList.youtflow=res.Response.Outflow;
+        })
+    },
+    //
     GetDat(data) {
         this.period = data[0];
         this.Start_End = data[1];
@@ -325,7 +346,7 @@ export default {
         this.dialogVisible = true;
         this.getModality(this.MetricName)
       },
-    thisTime(thisTime) {
+    /*thisTime(thisTime) {
       var ipt1 = document.querySelector(".newDataTime input:nth-child(2)");
       var ipt2 = document.querySelector(".newDataTime input:nth-child(4)");
       const end = new Date();
@@ -343,7 +364,7 @@ export default {
       ipt2.value = end
         .toLocaleString("chinese", { hour12: false })
         .replace(/\//g, "-");
-    },
+    },*/
     btnClick(clickNode) {
       this.type = clickNode;
       if (clickNode == "1") {
@@ -489,7 +510,9 @@ export default {
       document.querySelector(".chartTable").innerHTML = "暂无数据";
     }
     this.initChart();
-    this.init()
+    this.GetOverView();
+    this.GetUserMonthUsage();
+    this.GetUserYesterdayUsage();
   }
 };
 </script>
