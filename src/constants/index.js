@@ -19,6 +19,6 @@ export * from './DDOS'
 
 // 标签
 export * from './TAG'
-export * from './cloudaudit'
+
 
 export * from './KMS' //用户密钥
