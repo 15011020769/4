@@ -7,5 +7,6 @@ module.exports = {
   'CLA': require('@/views/CLA/language/jt'),
   'CAP': require('@/views/CAP/language/jt'),
   'KMS': require('@/views/KMS/language/jt'),
-  'BILL': require('@/views/BILL/language/ft')
+  'BILL': require('@/views/BILL/language/ft'),
+  'CM': require('@/views/CM/language/jt')
 }
