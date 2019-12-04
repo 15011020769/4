@@ -75,7 +75,8 @@
         </el-table-column>
         <el-table-column prop="" label="监控">
           <template slot-scope="scope">
-            <i class="el-icon-share"></i>
+            
+            <a @click="jump(scope.row.DirectConnectTunnelId)" style="cursor:pointer;"><i class="el-icon-share"></i></a>
           </template>
         </el-table-column>
         <el-table-column prop="" label="状态">
@@ -90,8 +91,12 @@
             <p>{{scope.row.VpcId}} </p>
           </template>
         </el-table-column>
-
-        <el-table-column label="健康状态">
+     <el-table-column prop label="创建时间">
+          <template slot-scope="scope">
+            <p>{{scope.row.CreatedTime}}</p>
+          </template>
+        </el-table-column>
+        <!-- <el-table-column label="健康状态">
           <template slot-scope="scope">
             <p :class="scope.row.RestrictState==='NORMAL'?'green':scope.row.RestrictState==='EXPIRED'?'red':'orange'">
               {{RestrictState[scope.row.RestrictState]}}</p>
@@ -102,7 +107,7 @@
             <p :class="scope.row.RestrictState==='NORMAL'?'green':scope.row.RestrictState==='EXPIRED'?'red':'orange'">
               {{RestrictState[scope.row.RestrictState]}}</p>
           </template>
-        </el-table-column>
+        </el-table-column> -->
       </el-table>
       <div class="Right-style pagstyle">
         <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
@@ -223,8 +228,9 @@
         // 获取表格数据
         this.axios
           .post(Private_LIST, param)
-          .then((data) => {
+          .then((data) => {console.log()
             if (data.Response.Error == undefined) {
+              console.log(data.Response.DirectConnectTunnelSet)
               this.TbaleData = data.Response.DirectConnectTunnelSet;
             } else {
               this.$message.error(data.Response.Error.Message);

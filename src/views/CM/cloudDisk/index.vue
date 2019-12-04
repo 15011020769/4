@@ -23,7 +23,8 @@
         </el-table-column>
         <el-table-column prop="" label="监控">
           <template slot-scope="scope">
-            <i class="el-icon-share"></i>
+            <a @click="jump(scope.row.DiskId)" style="cursor:pointer;"><i class="el-icon-share"></i></a>
+            
           </template>
         </el-table-column>
         <el-table-column prop="" label="大小(GB)">
@@ -44,18 +45,18 @@
 
           </template>
         </el-table-column>
-        <el-table-column label="健康状态">
+        <!-- <el-table-column label="健康状态">
           <template slot-scope="scope">
 
           </template>
-        </el-table-column>
+        </el-table-column> -->
 
-
+<!-- 
         <el-table-column label="告警策略数">
           <template slot-scope="scope">
 
           </template>
-        </el-table-column>
+        </el-table-column> -->
       </el-table>
       <div class="Right-style pagstyle">
         <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"

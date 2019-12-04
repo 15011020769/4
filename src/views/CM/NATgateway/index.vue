@@ -26,7 +26,10 @@
         <el-table-column prop label="ID/主机名">
           <template slot-scope="scope">
             <p>
-              <a @click="jump(scope.row.NatGatewayId)" style="cursor:pointer;">{{scope.row.NatGatewayId}}</a>
+              <a
+                @click="jump(scope.row.NatGatewayId)"
+                style="cursor:pointer;"
+              >{{scope.row.NatGatewayId}}</a>
             </p>
             <p>{{scope.row.NatGatewayName}}</p>
           </template>
@@ -34,7 +37,9 @@
 
         <el-table-column prop label="监控">
           <template slot-scope="scope">
-            <i class="el-icon-share"></i>
+            <a @click="jump(scope.row.NatGatewayId)" style="cursor:pointer;">
+              <i class="el-icon-share"></i>
+            </a>
           </template>
         </el-table-column>
 
@@ -50,8 +55,13 @@
             <p></p>
           </template>
         </el-table-column>
-        <el-table-column label="健康状态"></el-table-column>
-        <el-table-column label="告警策略数"></el-table-column>
+        <el-table-column prop label="创建时间">
+          <template slot-scope="scope">
+            <p>{{scope.row.CreatedTime}}</p>
+          </template>
+        </el-table-column>
+        <!-- <el-table-column label="健康状态"></el-table-column>
+        <el-table-column label="告警策略数"></el-table-column>-->
       </el-table>
       <div class="Right-style pagstyle" style="display:flex;justify-content:flex-end;padding:20px;">
         <el-pagination
@@ -189,6 +199,7 @@ export default {
       };
       this.axios.post(NAT_LIST, param).then(data => {
         if (data.Response.Error == undefined) {
+          console.log(data.Response.NatGatewaySet);
           this.TbaleData = data.Response.NatGatewaySet;
           this.ProTableData = this.TbaleData;
           this.loadShow = false;
@@ -219,7 +230,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.CM-wrap{
+.CM-wrap {
   width: 100%;
   height: 100%;
 }

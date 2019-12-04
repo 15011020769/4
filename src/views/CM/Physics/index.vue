@@ -75,7 +75,8 @@
         </el-table-column>
         <el-table-column prop="" label="监控">
           <template slot-scope="scope">
-            <i class="el-icon-share"></i>
+            
+            <a @click="jump(scope.row.DirectConnectId)" style="cursor:pointer;"><i class="el-icon-share"></i></a>
           </template>
         </el-table-column>
         <el-table-column prop="" label="状态">
@@ -97,7 +98,7 @@
           </template>
         </el-table-column>
 
-        <el-table-column label="健康状态">
+        <!-- <el-table-column label="健康状态">
           <template slot-scope="scope">
             <p :class="scope.row.RestrictState==='NORMAL'?'green':scope.row.RestrictState==='EXPIRED'?'red':'orange'">
               {{RestrictState[scope.row.RestrictState]}}</p>
@@ -108,7 +109,7 @@
             <p :class="scope.row.RestrictState==='NORMAL'?'green':scope.row.RestrictState==='EXPIRED'?'red':'orange'">
               {{RestrictState[scope.row.RestrictState]}}</p>
           </template>
-        </el-table-column>
+        </el-table-column> -->
       </el-table>
       <div class="Right-style pagstyle">
         <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"

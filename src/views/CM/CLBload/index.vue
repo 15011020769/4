@@ -23,7 +23,8 @@
         </el-table-column>
         <el-table-column prop="" label="监控" width="80">
           <template slot-scope="scope">
-            <i class="el-icon-share"></i>
+            <a @click="jump(scope.row.LoadBalancerId,i)" style="cursor:pointer;"><i class="el-icon-share"></i></a>
+            
           </template>
         </el-table-column>
         <el-table-column prop="" label="状态">
