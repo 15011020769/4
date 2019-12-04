@@ -16,14 +16,24 @@
             <div class="mainContent">
               <div class="topCreateSelect">
                 <el-button class="newCreate" @click="newCreate">新建</el-button>
-                <el-select class="ddosAttackSelect1 ddosAttackSelect2" v-model="allImport">
-                  <el-option label="导入转发规则" value="1"></el-option>
-                  <el-option label="导入会话保持/健康检查" value="2" :disabled="true"></el-option>
-                </el-select>
-                <el-select class="ddosAttackSelect1 ddosAttackSelect2" v-model="allExport">
-                  <el-option label="导出转发规则" value="1"></el-option>
-                  <el-option label="导出会话保持/健康检查" value="2" :disabled="true"></el-option>
-                </el-select>
+                <el-dropdown trigger="click" class="ddosAttackSelect1 ddosAttackSelect2">
+                  <span class="el-dropdown-link">
+                    批量导入<i class="el-icon-caret-bottom el-icon--right"></i>
+                  </span>
+                  <el-dropdown-menu slot="dropdown">
+                    <el-dropdown-item @click.native="batchImport">导入转发规则</el-dropdown-item>
+                    <el-dropdown-item disabled>导入会话保持/健康检查</el-dropdown-item>
+                  </el-dropdown-menu>
+                </el-dropdown>
+                <el-dropdown trigger="click" class="ddosAttackSelect1 ddosAttackSelect2">
+                  <span class="el-dropdown-link">
+                    批量导入<i class="el-icon-caret-bottom el-icon--right"></i>
+                  </span>
+                  <el-dropdown-menu slot="dropdown">
+                    <el-dropdown-item @click.native="batchExport">导出转发规则</el-dropdown-item>
+                    <el-dropdown-item disabled>导出会话保持/健康检查</el-dropdown-item>
+                  </el-dropdown-menu>
+                </el-dropdown>
                 <el-button class="allDeleteBtn" :disabled="true">批量删除</el-button>
               </div>
               <el-table :data="tableDataBegin.slice((currentPage-1)*pageSize,currentPage*pageSize)" ref="multipleTable" @selection-change="handleSelectionChange">
@@ -61,6 +71,10 @@
             </div>
             <!-- 新建规则弹框 -->
             <newAddRules :isShow="dialogVisible" @addRulesSure="addRulesSure" @closeModel="closeModel"/>
+            <!-- 批量导入弹框 -->
+            <batchImport :isShow1="dialogVisible1" @batchImportSure="batchImportSure" @closeModelIpt="closeModelIpt"/>
+            <!-- 批量导出弹框 -->
+            <batchExport :isShow2="dialogVisible2" @batchExportSure="batchExportSure" @closeModelExp="closeModelExp"/>
           </el-tab-pane>
         </el-tabs>
       </div>
@@ -68,7 +82,9 @@
   </div>
 </template>
 <script>
-import newAddRules from './newAddRules'
+import newAddRules from './model/newAddRules'
+import batchImport from './model/batchImport'
+import batchExport from './model/batchExport'
 export default {
   data() {
     return {
@@ -84,10 +100,14 @@ export default {
       allImport:'批量导入',//批量导入
       allExport:'批量导出',//批量导出
       dialogVisible:false,//新建规则弹框
+      dialogVisible1:false,//批量导入弹框
+      dialogVisible2:false,//批量导出弹框
     }
   },
   components:{
-    newAddRules:newAddRules
+    newAddRules:newAddRules,
+    batchImport:batchImport,
+    batchExport:batchExport
   },
   mounted() {
     
@@ -144,6 +164,30 @@ export default {
     //弹框关闭按钮
     closeModel(isShowFalse){
       this.dialogVisible=isShowFalse
+    },
+    // 批量导入按钮
+    batchImport(){
+      this.dialogVisible1=true;
+    },
+    // 批量导入确定按钮
+    batchImportSure(isShowFalse){
+      this.dialogVisible1=isShowFalse
+    },
+    //批量导入弹框关闭按钮
+    closeModelIpt(isShowFalse){
+      this.dialogVisible1=isShowFalse
+    },
+    // 批量导出按钮
+    batchExport(){
+      this.dialogVisible2=true;
+    },
+    // 批量导出确定按钮
+    batchExportSure(isShowFalse){
+      this.dialogVisible2=isShowFalse
+    },
+    //批量导出弹框关闭按钮
+    closeModelExp(isShowFalse){
+      this.dialogVisible2=isShowFalse
     }
   }
 }
@@ -201,6 +245,10 @@ button.newCreate{
 }
 .ddosAttackSelect2{
   width:100px!important;
+  height: 30px;
+  border: 1px solid #ddd;
+  text-align: center;
+  line-height: 30px;
   div{
     width:100px!important;
     input{

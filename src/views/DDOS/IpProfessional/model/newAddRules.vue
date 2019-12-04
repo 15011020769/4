@@ -101,7 +101,7 @@ export default {
     //弹框确定按钮
     addRulesSure(){
       this.dialogVisible=false;
-      this.$emit("closeModel",this.dialogVisible)
+      this.$emit("addRulesSure",this.dialogVisible)
     },
     //弹框关闭按钮
     handleClose(){
@@ -128,8 +128,12 @@ export default {
 }
 .dialogModel{
   .el-dialog__header{
-    font-size:14px;
+    font-size:14px!important;
     font-weight:600;
+    .el-dialog__title{
+      font-size:14px!important;
+      font-weight:600;
+    }
   }
   .el-dialog__body{
     padding:10px 20px;
