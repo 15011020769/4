@@ -150,20 +150,19 @@ export default {
         "Duration",
         "Invocation",
         "Error",
-        "ConcurrentExecutions",
+        // "ConcurrentExecutions",//111
         "ConfigMem",
-        "FunctionErrorPercentage",
-        "Http2xx",
-        "Http432",
-        "Http433",
-        "Http434",
-        "Http4xx",
-        "Invocation",
-        "Mem",
+        // "FunctionErrorPercentage",//111
+        // "Http2xx",//111
+        // "Http432",//11
+        // "Http433",//11
+        // "Http434",//11
+        // "Http4xx",//11
+        // "Mem",//11
         "MemDuration",
         "OutFlow",
-        "ServerErrorPercentage",
-        "Syserr",
+        // "ServerErrorPercentage",//11
+        // "Syserr",//11
         "Throttle"
       ];
       const symbol = [
@@ -200,6 +199,8 @@ export default {
         MetricName: metricN,
         "Instances.0.Dimensions.0.Name": "functionName",
         "Instances.0.Dimensions.0.Value": this.ID,
+        "Instances.0.Dimensions.1.Name": "version",
+        "Instances.0.Dimensions.1.Value": this.ID,
         Period: this.period,
         StartTime: this.Start_End.StartTIme,
         EndTime: this.Start_End.EndTIme
