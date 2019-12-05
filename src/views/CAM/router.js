@@ -136,14 +136,6 @@ export default new Router({
     }
   },
   {
-    path: '/details', //用户详情
-    name: 'details',
-    component: () => import( /*webpackChunkName:"Cam"*/ './UserList/details.vue'),
-    meta: {
-      keepAlive: true
-    }
-  },
-  {
     path: '/adduser', //添加用户组
     name: 'adduser',
     component: () => import( /*webpackChunkName:"Cam"*/ './UserList/adduser.vue'),
