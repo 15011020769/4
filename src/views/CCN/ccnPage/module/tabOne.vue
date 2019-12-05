@@ -9,7 +9,7 @@
         <template slot="empty">{{$t("CCN.CCN.tabs.tab1no")}}</template>
         <el-table-column prop="InstanceId" :label="$t('CCN.CCN.tabs.tab1tr1')" width>
           <template slot-scope="scope">
-            <el-button @click="handleClick(scope.row)" type="text">{{ scope.row.InstanceId }}</el-button>
+            <a href="../CCN/index"  target="_blank">{{ scope.row.InstanceId }}</a>
             <p class="edit">{{ scope.row.InstanceName }}</p>
           </template>
         </el-table-column>
@@ -34,7 +34,7 @@
           </template>
         </el-table-column>
         <el-table-column prop="InstanceUin" :label="$t('CCN.CCN.tabs.tab1tr4')" width>
-          <template slot-scope="scope" >我的帐号</template>
+          <template slot-scope="" >我的帐号</template>
         </el-table-column>
         <el-table-column prop="AttachedTime" :label="$t('CCN.CCN.tabs.tab1tr5')" width>
           <template slot-scope="scope" >{{ scope.row.AttachedTime }}
@@ -65,7 +65,7 @@
             {{$t("CCN.CCN.tabs.tab1new1")}}
           </span>
           <div class="body-con">
-            <div class="tr-con" v-for="(item, index) in formArr">
+            <div class="tr-con" v-for="(item, index) in formArr" :key="index">
               <td>
                 <el-select v-model="form.instanceType" :placeholder="$t('CCN.CCN.tabs.tab1new2')">
                   <el-option label="私有网络" value="VPC"></el-option>
@@ -251,7 +251,7 @@ export default {
       })
       console.log('新建成功')
       this.newVisible = false
-    }
+    },
   }
 }
 </script>

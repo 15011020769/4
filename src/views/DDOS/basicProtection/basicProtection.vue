@@ -39,26 +39,13 @@
               <div v-else-if="scope.row.RestrictState == 'PROTECTIVELY_ISOLATED'">被安全隔离</div>
             </template>
           </el-table-column>
-          <el-table-column prop="hostAction" label="操作" width="180">
-            <template slot-scope="">
+          <!-- <el-table-column prop="" label="操作" width="180">
               <el-button
                 type="text"
                 size="small"
-              >操作</el-button>
-              <!-- <el-dialog
-                :title="'您确定要删除'+scope.row.funName+'吗？'"
-                :visible.sync="dialogVisible"
-                width="30%"
-                :before-close="handleClose"
-              >
-                <span>删除函数将永久删除函数代码及已绑定的触发器。是否确定删除此函数？</span>
-                <span slot="footer" class="dialog-footer">
-                  <el-button @click="dialogVisible = false">取 消</el-button>
-                  <el-button type="primary" @click="sureDelete()">确 定</el-button>
-                </span>
-              </el-dialog> -->
-            </template>
-          </el-table-column>
+                @click="buyBgp"
+              >升级防护</el-button>
+          </el-table-column> -->
         </el-table>
       </div>
       <div class="tabListPage">
@@ -148,6 +135,10 @@ export default {
       //页面初始化数据需要判断是否检索过
       this.flag = true;
     },
+    // 升级防护
+    // buyBgp() {
+    //   console.log('升级防护')
+    // },
     
     // 分页开始
     handleSizeChange(val) {

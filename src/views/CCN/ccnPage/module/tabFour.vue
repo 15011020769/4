@@ -2,7 +2,7 @@
 <template>
   <div class="tabFour">
     <div class="table">
-      <el-table :data="tableData" style="width: 100%">
+      <el-table :data="tableData.slice((currentPage-1)*pageSize,currentPage*pageSize)" style="width: 100%">
         <template slot="empty">{{$t('CCN.CCN.tabs.tab1no')}}</template>
         <el-table-column prop="DestinationCidrBlock" :label="$t('CCN.CCN.tabs.tab4tr1')" width></el-table-column>
         <el-table-column prop="Enabled" :label="$t('CCN.CCN.tabs.tab4tr2') " width>
@@ -14,9 +14,8 @@
         </el-table-column>
         <el-table-column prop="InstanceId" :label="$t('CCN.CCN.tabs.tab4tr3')" width>
           <template slot-scope="scope">
-            <el-button @click="handleClick(scope.row)" type="text">
-              {{ scope.row.InstanceId }}
-            </el-button>
+            <!-- <el-button @click="handleClick(scope.row)" type="text">{{ scope.row.InstanceId }}</el-button> -->
+            <a href="../CCN/index"  target="_blank">{{ scope.row.InstanceId }}</a>
             <p class="edit">{{ scope.row.InstanceName }}</p>
           </template>
         </el-table-column>
@@ -36,6 +35,18 @@
         </el-table-column>
       </el-table>
     </div>
+    <div class="tabListPage">
+      <el-pagination
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :current-page="currentPage"
+        :page-sizes="[10, 20, 30, 50]"
+        :page-size="pageSize"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="totalItems"
+      >
+      </el-pagination>
+    </div>
   </div>
 </template>
 
@@ -47,7 +58,11 @@ export default {
       ccnId: '',
       visible2: false,
       value1: true,
-      tableData: [] // 列表数据
+      tableData: [], // 列表数据
+      // 分页相关
+      currentPage: 1,
+      pageSize: 10,
+      totalItems: 0,
     }
   },
   created () {
@@ -66,6 +81,7 @@ export default {
       this.axios.post(CCN_ROUTES, params).then(res => {
         console.log(res)
         this.tableData = res.Response.RouteSet
+        this.totalItems = res.Response.TotalCount
       })
     },
     change: function (route) {
@@ -85,7 +101,17 @@ export default {
           console.log(res)
         })
       }
-    }
+    },
+    // 分页开始
+    handleSizeChange(val) {
+      console.log(`每页 ${val} 条`);
+      this.pageSize = val;
+      this.handleCurrentChange(this.currentPage);
+    },
+    handleCurrentChange(val) {
+      console.log(`当前页: ${val}`);
+      this.currentPage = val;
+    },
   }
 }
 </script>
@@ -132,6 +158,9 @@ export default {
       line-height: 6px;
       border-radius: 0px;
     }
+  }
+  .tabListPage{
+    text-align:right
   }
 }
 </style>

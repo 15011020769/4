@@ -280,9 +280,11 @@
           <td>{{ $t('CCN.CCN.total.edit2') }}</td>
           <td>{{ $t('CCN.CCN.total.edit3') }}</td>
         </tr>
-        <tr class="t-body" v-for="(item, index) in tags">
-          <td>
-            <!-- <input type="text" /> -->
+        <tr class="t-body" v-for="(item, index) in tags" :key="item">
+          <td v-if="item.Key != ''">
+            <el-input v-model="item.Key" autocomplete="off" class="inputKey" disabled="false"></el-input>
+          </td>
+          <td v-else-if="item.Key == ''">
             <el-input v-model="item.Key" autocomplete="off" class="inputKey"></el-input>
           </td>
           <td>

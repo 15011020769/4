@@ -31,11 +31,11 @@
                 <el-row class="allConMainOneRow">
                   <el-col :span="12" class="LeftConOne LeftConRow">
                     <p>清洗中</p>
-                    <p>0</p>
+                    <p>{{packDataBgpMultip[1].Value}}</p>
                   </el-col>
                   <el-col :span="12" class="LeftConOne LeftConRow">
                     <p>封堵中</p>
-                    <p>0</p>
+                    <p>{{packDataBgpMultip[2].Value}}</p>
                   </el-col>
                 </el-row>
               </div>
@@ -209,7 +209,7 @@ export default {
         {Key: 'ExpireingPackCount',Value: '0'},
         {Key: 'IsolatePackCount',Value: '0'}
       ],
-      packDataShield: [ // shield
+      packDataBgpMultip: [ // bgp-multip
         {Key: 'TotalPackCount',Value: '0'},
         {Key: 'AttackPackCount',Value: '0'},
         {Key: 'BlockPackCount',Value: '0'},
@@ -230,7 +230,7 @@ export default {
       // 攻击事件列表：bgp表示独享包；bgp-multip表示共享包；net表示高防IP专业版
       type:'bgp',
       // 下载名称
-      downloadName: '',
+      downloadName: '独享包攻击记录',
       // 查询输入字段（资源实例id）
       searchInputID: '',
 
@@ -259,7 +259,7 @@ export default {
             this.describePackIndex(this.packDataBgp)
             break;
           case 'bgp-multip':
-            this.describePackIndex(this.packDataShield)
+            this.describePackIndex(this.packDataBgpMultip)
             break;
         }
       }
@@ -337,11 +337,11 @@ export default {
     btnClick(param){
       this.type=param;
       if(param=="bgp"){
-        this.downloadName="独享包"
+        this.downloadName="独享包攻击记录"
       }else if(param=="bgp-multip"){
-        this.downloadName="共享包"
+        this.downloadName="共享包攻击记录"
       }else if(param=="net"){
-        this.downloadName="高防IP专业版"
+        this.downloadName="高防IP专业版攻击记录"
       }
       this.describeDDoSEvList()
     },
@@ -380,6 +380,7 @@ export default {
       }
     },
     exportExcel () {
+      console.log(this.downloadName)
       /* generate workbook object from table */
       var wb = XLSX.utils.table_to_book(document.querySelector('#exportTable'))
       /* get binary string as output */

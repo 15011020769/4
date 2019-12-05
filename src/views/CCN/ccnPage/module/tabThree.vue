@@ -10,7 +10,7 @@
         <div class="btn">
           <el-button type="text" @click="toUpdateVisible2()">{{$t("CCN.CCN.tabs.tab3btn")}}</el-button>
         </div>
-        <el-table :data="tableData" style="width: 100%">
+        <el-table :data="tableData.slice((currentPage-1)*pageSize,currentPage*pageSize)" style="width: 100%">
           <template slot="empty">{{$t("CCN.CCN.tabs.tab1no")}}</template>
           <el-table-column prop="CcnRegionBandwidthLimit.Region" label="地域A" width>
             <template slot-scope="scope">
@@ -28,6 +28,18 @@
             </template>
           </el-table-column>
         </el-table>
+      </div>
+      <div class="tabListPage">
+        <el-pagination
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page="currentPage"
+          :page-sizes="[10, 20, 30, 50]"
+          :page-size="pageSize"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="totalItems"
+        >
+        </el-pagination>
       </div>
       <!--地域间-调整带宽模态窗 -->
       <el-dialog title="" :visible.sync="updateVisible2" class="newDialog">
@@ -118,7 +130,7 @@
         <div class="btn">
           <el-button type="text" @click="updateVisible = true">{{$t("CCN.CCN.tabs.tab3btn")}}</el-button>
         </div>
-        <el-table :data="tableData" style="width: 100%">
+        <el-table :data="tableData.slice((currentPage-1)*pageSize,currentPage*pageSize)" style="width: 100%">
           <template slot="empty">{{$t("CCN.CCN.tabs.tab1no")}}</template>
           <el-table-column prop="CcnRegionBandwidthLimit.Region" :label="$t('CCN.CCN.tabs.tab3tr1')" width>
             <template slot-scope="scope">
@@ -131,6 +143,18 @@
             </template>
           </el-table-column>
         </el-table>
+      </div>
+      <div class="tabListPage">
+        <el-pagination
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page="currentPage"
+          :page-sizes="[10, 20, 30, 50]"
+          :page-size="pageSize"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="totalItems"
+        >
+        </el-pagination>
       </div>
       <!--调整带宽限速模态窗 -->
       <el-dialog title="" :visible.sync="updateVisible" class="updateDialog">
@@ -222,7 +246,11 @@ export default {
       updateBandwidthLimitTypeVisible: false,
       updateBandwidthLimitTypeVisible2: false,
       // 穿梭框数据
-      checked: false
+      checked: false,
+      // 分页相关
+      currentPage: 1,
+      pageSize: 10,
+      totalItems: 0,
     }
   },
   created () {
@@ -247,6 +275,7 @@ export default {
       this.axios.post(GET_CCNREGIONBANDWIDTHLIMITS, params).then(res => {
         console.log(res)
         this.tableData = res.Response.CcnBandwidthSet
+        this.totalItems = res.Response.TotalCount
       })
     },
     // 修改限速方式弹窗
@@ -314,7 +343,18 @@ export default {
       })
       this.updateVisible = false
       this.updateVisible2 = false
-    }
+    },
+
+    // 分页开始
+    handleSizeChange(val) {
+      console.log(`每页 ${val} 条`);
+      this.pageSize = val;
+      this.handleCurrentChange(this.currentPage);
+    },
+    handleCurrentChange(val) {
+      console.log(`当前页: ${val}`);
+      this.currentPage = val;
+    }, 
   }
 }
 </script>
@@ -445,6 +485,9 @@ export default {
       line-height: 6px;
       border-radius: 0px;
     }
+  }
+  .tabListPage{
+    text-align:right
   }
 }
 </style>
