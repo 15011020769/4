@@ -18,9 +18,9 @@
             </ul>
             <ul>
               <li class="li-title">{{$t("COM.COM.tool")}}</li>
-              <li @click="testFun">{{$t("COM.COM.cm")}}</li>
-              <li @click="testFun">{{$t("COM.COM.cloudAudit")}}</li>
-              <li @click="testFun">{{$t("COM.COM.cam")}}</li>
+              <li class="li-sub" @click="go('../CM/index.html#/CVM')">{{$t("COM.COM.cm")}}</li>
+              <li class="li-sub" @click="go('../CLA/index.html#/CloudAudit')">{{$t("COM.COM.cloudAudit")}}</li>
+              <li class="li-sub" @click="go('../CAM/index.html#/UserGroup')">{{$t("COM.COM.cam")}}</li>
             </ul>
             <ul>
               <li class="li-title">{{$t("COM.COM.server")}}</li>
@@ -31,11 +31,12 @@
           <div class="item">
             <ul>
               <li class="li-title">{{$t("COM.COM.safe")}}</li>
-              <li @click="testFun">{{$t("COM.COM.yunjing")}}</li>
-              <li @click="testFun">{{$t("COM.COM.ddos")}}</li>
+              <li class="li-sub" @click="go('../HS/index.html#/overview')">{{$t("COM.COM.yunjing")}}</li>
+              <li class="li-sub" @click="go('../CAP/index.html#/appId')">{{$t("COM.COM.ddos")}}</li>
               <li @click="testFun">{{$t("COM.COM.waf")}}</li>
-              <li @click="testFun">{{$t("COM.COM.bgp")}}</li>
-              <li @click="testFun">{{$t("COM.COM.kms")}}</li>
+              <li class="li-sub" @click="go('../DDOS/index.html#/ProtectOverview')">{{$t("COM.COM.ddos")}}</li>
+              <li class="li-sub" @click="go('../DDOS/index.html#/IpProfessional')">{{$t("COM.COM.bgp")}}</li>
+              <li class="li-sub" @click="go('../KMS/index.html#/userKms')">{{$t("COM.COM.kms")}}</li>
             </ul>
             <ul>
               <li class="li-title">{{$t("COM.COM.database")}}</li>
@@ -44,7 +45,7 @@
             </ul>
             <ul>
               <li class="li-title">{{$t("COM.COM.middleware")}}</li>
-              <li @click="testFun">{{$t("COM.COM.ckafka")}}</li>
+              <li class="li-sub" @click="go('../CKafka/index.html#/ckafka')">{{$t("COM.COM.ckafka")}}</li>
             </ul>
           </div>
           <div class="item">
@@ -61,7 +62,7 @@
             </ul>
             <ul>
               <li class="li-title">{{$t("COM.COM.cosTitle")}}</li>
-              <li @click="testFun">{{$t("COM.COM.cos")}}</li>
+              <li class="li-sub" @click="go('../COS/index.html#/bucket')">{{$t("COM.COM.cos")}}</li>
             </ul>
           </div>
           <div class="item">
@@ -73,7 +74,7 @@
             </ul>
             <ul>
               <li class="li-title">Serveless</li>
-              <li @click="testFun">{{$t("COM.COM.scf")}}</li>
+              <li class="li-sub" @click="go('../SCF/index.html#/overView')">{{$t("COM.COM.scf")}}</li>
             </ul>
             <ul>
               <li class="li-title">{{$t("COM.COM.pro")}}</li>
