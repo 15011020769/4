@@ -123,7 +123,6 @@
                   Version: '2019-01-16'
                 }
                 // 获取策略id
-                debugger
                 this.axios.post(urlPolicies, paramsurlPolicies).then(res => {
                 }).catch(error => {
                   console.log(error)

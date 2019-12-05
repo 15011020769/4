@@ -205,7 +205,6 @@ export default {
       this.axios.post(url, params).then(res => {
         if(res != '') {
           this.tableData = res.Response.GroupInfo
-          debugger
           this.total = res.Response.TotalNum
           this.loading = false
         }else{

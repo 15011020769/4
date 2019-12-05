@@ -3,12 +3,7 @@
     <div class="container">
       <div class="container-left">
         <p>{{$t('CAM.CAM.Role.policyList')}}（共{{totalNum}}条）</p>
-        <el-input
-          size="mini"
-          v-model="strategyValue"
-          style="width:100%"
-          @keyup.enter.native="tableloadmore"
-        />
+        <el-input size="mini" v-model="strategyValue" style="width:100%" @keyup.enter.native="tableloadmore"/>
         <i size="mini" class="el-icon-search fier" show-overflow-tooltip @click="tableloadmore" ></i>
         <el-table
           class="table-left"
@@ -20,14 +15,9 @@
           style="width: 100%"
           @row-click="selectedRow"
           @selection-change="handleSelectionChange"
-          v-tableloadmore="tableloadmore"
-        >
+          v-tableloadmore="tableloadmore" >
           <el-table-column type="selection" prop="policyId" width="28"></el-table-column>
-          <el-table-column
-            prop="Description"
-            :label="$t('CAM.CAM.Role.policyName')"
-            show-overflow-tooltip
-          >
+          <el-table-column prop="Description" :label="$t('CAM.CAM.Role.policyName')" show-overflow-tooltip>
             <template slot-scope="scope">
               <p>{{scope.row.PolicyName}}</p>
               <p>{{scope.row.Description}}</p>
@@ -49,7 +39,7 @@
                   <el-dropdown-item
                     v-for="item in table_options"
                     :key="item.value"
-                    :command="item.label"
+                    :command="item"
                   >{{item.label}}</el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
@@ -58,10 +48,10 @@
         </el-table>
       </div>
       <div class="direction">
-                    <div class="direction-icon">
-                      <i class="iconfont">&#xe603;</i>
-                    </div>
-                  </div>
+        <div class="direction-icon">
+          <i class="iconfont">&#xe603;</i>
+        </div>
+      </div>
       <div class="container-left">
         <span>{{$t('CAM.CAM.Role.hasChosen')}}（共条）</span>
         <el-table
@@ -93,11 +83,7 @@
           <el-table-column :label="$t('CAM.CAM.userGroup.colHandle')" width="50">
             &lt;!&ndash;
             <template slot-scope="scope">
-              <el-button
-                @click.native.prevent="deleteRow(scope.$index, policiesSelectedData)"
-                type="text"
-                size="small"
-              >x</el-button>
+              <el-button @click.native.prevent="deleteRow(scope.$index, policiesSelectedData)" type="text" size="small" >x</el-button>
             </template>&ndash;&gt;
           </el-table-column>
         </el-table>
@@ -108,6 +94,9 @@
 
 <script>
 export default {
+  props: {
+    roleId: String
+  },
   directives:{
      tableloadmore:{
        bind(el,binding) {
@@ -122,8 +111,7 @@ export default {
                 * ele.scrollHeight - ele.scrollTop === ele.clientHeight;
                 */
                   let sign = 80; // 定义默认的向上滚于乡下滚的边界
-                  const CONDITION = ((this.scrollHeight - this.scrollTop === this.clientHeight) && 
-                                  this.scrollTop > sign)// 注意: && this.scrollTop
+                  const CONDITION = ((this.scrollHeight - this.scrollTop === this.clientHeight) &&  this.scrollTop > sign)// 注意: && this.scrollTop
                   
                   if(this.scrollTop > sign) {
                       sign = this.scrollTop;
@@ -149,15 +137,15 @@ export default {
       search: "",
       table_options: [
         {
-          value: "3",
+          value: "All",
           label: this.$t('CAM.CAM.Role.all')
         },
         {
-          value: "2",
+          value: "QCS",
           label: this.$t('CAM.CAM.Role.defaultPolicy')
         },
         {
-          value: "1",
+          value: "Local",
           label: this.$t('CAM.CAM.Role.customPolicy')
         },
       ],
@@ -168,53 +156,46 @@ export default {
   },
  
   mounted() {
-    var command='';
-    this.tableloadmore(command);
-    console.log(window.innerHeight)
-        console.log(this.$refs.topictable.$el)
-        console.log(this.$refs.topictable.$el.offsetTop)
-        this.tableHeight =
-          window.innerHeight - this.$refs.topictable.$el.offsetTop - 50;
-        console.log(this.tableHeight)
+    var command = 'All' // 默认查询所有策略
+    this.tableloadmore(command)
+    // console.log(window.innerHeight)
+    // console.log(this.$refs.multipleOption.$el)
+    // console.log(this.$refs.multipleOption.$el.offsetTop)
+    this.tableHeight = window.innerHeight - this.$refs.multipleOption.$el.offsetTop - 50;
+    // console.log(this.tableHeight)
+    // console.log(this.roleId)
   },
   methods: {
+    // 获取策略方法
     tableloadmore(command) {
-        let params = {
+      let params = {
         Action: "ListPolicies",
         Version: "2019-01-16"
       };
-       if (this.strategyValue != null && this.strategyValue != "") {
+       if (this.strategyValue != undefined && this.strategyValue != "") {
         params["Keyword"] = this.strategyValue;
       }
-      if (command!='undefined'&&command!=null&&command!='') {
-        if(command===this.$t('CAM.CAM.Role.defaultPolicy')){
-          params["Scope"] = 'QCS';
-        }else if(command===this.$t('CAM.CAM.Role.customPolicy')){
-          params["Scope"] = 'Local';
-        }else{
-          params["Scope"] = 'All';
-        }
+      if (command != undefined && command != '') {
+         params["Scope"] = command
       }
       let url = "cam2/ListPolicies";
-      this.axios
-        .post(url, params)
-        .then(res => {
-          this.policiesData = res.Response.List;
-        })
-        .catch(error => {
-        });
+      this.axios.post(url, params).then(res => {
+        this.policiesData = res.Response.List;
+      }).catch(error => {
+      });
     },
+    // 策略类型切换
     handleCommand(command) {
       this.handoverFlag = true
-      this.commandObj = command
       this.tableTitle = command.label;
-      if(command!= '' || command != 'undefined'){
-        this.tableloadmore(command)
+      if(command.value != undefined || command.value != '') {
+        this.tableloadmore(command.value)
       }
     },
     handleSelectionChange(val) {
       // 给右边table框赋值，只需在此处赋值即可，selectedRow方法中不写，因为单独点击复选框，只有此方法有效。
       this.policiesSelectedData = val;
+      console.log(this.policiesSelectedData)
     },
     selectedRow(row, column, event) {
       // 设置选中或者取消状态
@@ -226,6 +207,28 @@ export default {
     },
     getData() {
       return this.policiesSelectedData;
+    },
+    attachRolePolicies() {
+      let _this = this
+      // 根据获取的角色ID创建角色策略
+      if(this.roleId != undefined && this.roleId != '' && this.policiesSelectedData != '') {
+        for(let i=0; i < _this.policiesSelectedData.length; i++) {
+          let obj = _this.policiesSelectedData[i]
+          let params = {
+            Action: 'AttachRolePolicy',
+            Version: '2019-01-16',
+            PolicyId: obj.PolicyId,
+            AttachRoleId: _this.roleId
+          }
+          _this.AttachRolePolicy(params)
+        }
+      }
+    },
+    // 绑定权限策略到角色
+    AttachRolePolicy(params) {
+      this.$axios.post('cam2/AttachRolePolicy', params).then(res  => {
+        console.log(res)
+      })
     }
   }
 };

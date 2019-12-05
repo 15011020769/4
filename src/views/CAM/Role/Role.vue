@@ -17,15 +17,28 @@
             :data="tableData"
             v-loading="loading"
             height="450"
-            border
             style="width: 100%"
             :row-style="{height:0}"
             :cell-style="{padding:'10px'}"
             :header-cell-style="{height:'20px',padding:'10px',fontSize:'12px'}"
           >
-            <el-table-column prop="RoleName" :label="$t('CAM.CAM.Role.roleName')" width="180"></el-table-column>
-            <el-table-column prop="PolicyDocument.statement[0].principal.service[0]" :label="$t('CAM.CAM.Role.roleCarrier')" width="200"></el-table-column>
-            <el-table-column prop="Description" :label="$t('CAM.CAM.Role.roleDesc')"></el-table-column>
+            <el-table-column prop="RoleName" :label="$t('CAM.CAM.Role.roleName')" width="180">
+              <template slot-scope="scope">
+                <el-button @click="handleClick(scope.row)" type="text" size="small">{{scope.row.RoleName}}</el-button>
+              </template>
+            </el-table-column>
+            <el-table-column prop="PolicyDocument" :label="$t('CAM.CAM.Role.roleCarrier')" show-overflow-tooltip>
+              <template slot-scope="scope">
+                  <span v-show="scope.row.PolicyDocument.len != undefined">
+                    <p>产品服务-{{scope.row.PolicyDocument.val}}</p>
+                    <p v-show="scope.row.PolicyDocument.len > 1">以及<el-button @click.native.prevent="handleClick(scope.row)" type="text" size="small">其他{{scope.row.PolicyDocument.len}}项</el-button></p>
+                  </span>
+                  <span v-show="scope.row.PolicyDocument.len === undefined">
+                    <p>云账号-{{scope.row.PolicyDocument.val}}</p>
+                  </span>
+              </template>
+            </el-table-column>
+            <el-table-column prop="Description" :label="$t('CAM.CAM.Role.roleDesc')" show-overflow-tooltip></el-table-column>
             <el-table-column prop="oper" :label="$t('CAM.CAM.Role.colHandle')" width="100">
               <template slot-scope="scope">
                 <el-button @click="delete_Role(scope.row.RoleId)" type="text" size="small">{{$t('CAM.CAM.Role.delBtn')}}</el-button>
@@ -36,7 +49,7 @@
             style="background:#fff;padding:10px;display:flex;justify-content: space-between;line-height:30px"
           >
             <div>
-              <span style="font-size:12px;color:#888">已选 0 项，共 309 项</span>
+              <span style="font-size:12px;color:#888">共 {{total}} 项</span>
             </div>
             <div>
              <el-pagination
@@ -78,7 +91,7 @@ export default {
       loading: true,
       tableData: [],
        // 分页
-      Page:0,
+      Page:1,
       size:10,
       total: 0,
       create_dialogVisible:false
@@ -89,75 +102,79 @@ export default {
   },
   methods: {
     init() {
+      
       let params = {
         Action: "DescribeRoleList",
         Version: "2019-01-16",
-        Page:2,
-        Rp:this.size
+        Page: this.Page,
+        Rp: this.size
       };
       if (this.searchValue != null && this.searchValue != "") {
         params["keyword"] = this.searchValue;
       }
       let url = "cam2/DescribeRoleList";
-      this.axios
-        .post(url, params)
-        .then(data => {
-          debugger;
-          if (data === ""||data.Response.error=='undefined'||data.Response.List.length==0) {
-            this.loading = false;
-          } else {
-            this.loading = false;
-            data.Response.List.forEach(item => {
-              item.PolicyDocument = JSON.parse(item.PolicyDocument);
-              console.log(item.PolicyDocument);
-            });
-            this.tableData = data.Response.List;
-            var dataRole = JSON.parse(data.Response.List);
-          }
-        })
-        .catch(error => {
-          console.log(error);
-        });
+      this.axios.post(url, params).then(data => {
+        if (data === ""||data.Response.error=='undefined'||data.Response.List.length==0) {
+          this.loading = false
+        } else {
+          let resData =  data.Response.List
+          this.loading = false
+          resData.forEach(item => {
+            let obj = {val: String, len: String}
+            let policyObj = JSON.parse(item.PolicyDocument)
+            if(policyObj.statement[0].principal.service != undefined){
+              if(typeof policyObj.statement[0].principal.service === 'object') {
+                policyObj.val = policyObj.statement[0].principal.service[0]
+              policyObj.len = policyObj.statement[0].principal.service.length -1
+              }
+              if(typeof policyObj.statement[0].principal.service === 'string') {
+                policyObj.val = policyObj.statement[0].principal.service
+                policyObj.len = 0
+              }
+            }
+            if(policyObj.statement[0].principal.qcs != undefined){
+              policyObj.val = policyObj.statement[0].principal.qcs[0]
+            }
+            item.PolicyDocument = policyObj
+          });
+          this.tableData = resData
+          // var dataRole = JSON.parse(data.Response.List);
+        }
+      }).catch(error => {
+        console.log(error);
+      });
     },
     // 删除角色
     delete_Role(RoleId) {
-      this.$confirm(
-        this.$t("CAM.CAM.Role.delHint"),
-        this.$t("CAM.CAM.Role.delTitle"),
-        {
-          confirmButtonText: this.$t("CAM.CAM.Role.delConfirmBtn"),
-          cancelButtonText: this.$t("CAM.CAM.Role.delCancelBtn"),
-          type: "warning"
-        }
-      )
-        .then(() => {
-          let url = "cam2/DeleteRole";
-          let params = {
-            Action: "DeleteRole",
-            Version: "2019-01-16",
-            RoleId: RoleId
-          };
-          this.axios
-            .post(url, params)
-            .then(data => {
-              if (data != null && data.Response.RequestId != "") {
-                this.$message({
-                  type: "success",
-                  message: this.$t("CAM.CAM.Role.delInfo") + "!"
-                });
-                this.init();
-                this.loading = false;
-              }
-            })
-            .catch(error => {
-              this.$message({ type: "success", message: error });
-              console.log(error);
+      this.$confirm(this.$t("CAM.CAM.Role.delHint"), this.$t("CAM.CAM.Role.delTitle"), {
+        confirmButtonText: this.$t("CAM.CAM.Role.delConfirmBtn"),
+        cancelButtonText: this.$t("CAM.CAM.Role.delCancelBtn"),
+        type: "warning"
+      }).then(() => {
+        let url = "cam2/DeleteRole";
+        let params = {
+          Action: "DeleteRole",
+          Version: "2019-01-16",
+          RoleId: RoleId
+        };
+        this.axios.post(url, params).then(data => {
+          if (data != null && data.Response.RequestId != "") {
+            this.$message({
+              type: "success",
+              message: this.$t("CAM.CAM.Role.delInfo") + "!"
             });
-        })
-        .catch(() => {
-          // this.$message({ type: 'info', message: '已取消删除' })
+            this.init();
+            this.loading = false;
+          }
+        }).catch(error => {
+          this.$message({ type: "success", message: error });
+          console.log(error);
         });
+      }).catch(() => {
+        // this.$message({ type: 'info', message: '已取消删除' })
+      });
     },
+    // 打开新增角色页面
     created_user() {
       console.log(1111)
       this.create_dialogVisible = true;
@@ -167,7 +184,8 @@ export default {
     },
     handleCommand(command) {},
     handleClick(scope) {
-      this.$router.push("/RoleDetail");
+      console.log(scope)
+      this.$router.push({ path: "/RoleDetail", query: { RoleId: scope.RoleId } });
     },
     pageChange(e) {
       this.page = e
