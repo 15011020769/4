@@ -12,6 +12,7 @@
       <el-menu-item index="10">{{$t("COM.COM.price")}}</el-menu-item>
       <!-- 文档中心 -->
       <el-menu-item index="3">{{$t("COM.COM.document")}}</el-menu-item>
+      <!-- 用户中心 -->
       <el-submenu v-if="loginStatus" index="6" class="right-item user-info">
         <template slot="title">{{$t("COM.COM.userCenter")}}</template>
         <!-- 费用中心 -->
@@ -23,12 +24,6 @@
         <!-- 退出 -->
         <el-menu-item index="6-3" class="count-li">{{$t("COM.COM.h")}}</el-menu-item>
       </el-submenu>
-      <!-- 免费注册 -->
-      <el-menu-item index="9" class="right-item" v-if="!loginStatus">{{$t("COM.COM.register")}}</el-menu-item>
-      <!-- 登录 -->
-      <el-menu-item index="7" class="right-item" v-if="!loginStatus">{{$t("COM.COM.login")}}</el-menu-item>
-      <!-- 控制台 -->
-      <el-menu-item index="8" class="right-item">{{$t("COM.COM.console")}}</el-menu-item>
     </el-menu>
 
     <transition name="hehe">
