@@ -120,6 +120,7 @@
   </div>
 </template>
 <script>
+import { SCF_DETAILS,CREAT_TRIGGER } from '@/constants'
 export default {
   data() {
     return {
@@ -164,7 +165,7 @@ export default {
       if (functionName != "" && functionName != null) {
         params["FunctionName"] = functionName;
       }
-      this.$axios.post("scf2/CreateTrigger", params).then(res => {
+      this.axios.post(CREAT_TRIGGER, params).then(res => {
         _this.getfunction();
         _this.formTriggerForm.tasksName = ""
         _this.formTriggerForm.writeIsTrue = ""
@@ -206,7 +207,7 @@ export default {
       if (functionName != "" && functionName != null) {
         params["FunctionName"] = functionName;
       }
-      this.$axios.post("scf2/GetFunction", params).then(res => {
+      this.axios.post(SCF_DETAILS, params).then(res => {
         console.log(res);
         this.triggerBoxList = res.Response.Triggers;
         for (let i = 0; i < this.triggerBoxList.length; i++) {

@@ -770,6 +770,7 @@ export default {
       width:180px;
       height:30px;
       border-radius: 0;
+      font-size:12px;
     }
   }
 }

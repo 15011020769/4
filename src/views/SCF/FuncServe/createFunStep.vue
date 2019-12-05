@@ -42,7 +42,7 @@
           <el-form-item label="运行角色" :required="true" class="labelLeft">
             <span slot="label">
               运行角色
-              <i class="el-icon-question"></i>
+              <!-- <i class="el-icon-question"></i> -->
             </span>
             <el-select v-model="formShowable.runRole" class="decsIptSelect">
               <el-option label="SCF默认运行角色" value="default"></el-option>
@@ -64,7 +64,7 @@
           <el-form-item label="执行方法" :required="true" class="labelLeft">
             <span slot="label">
               执行方法
-              <i class="el-icon-question"></i>
+              <!-- <i class="el-icon-question"></i> -->
             </span>
             <el-select v-model="formShowable.runFun" class="decsIptSelect" readonly="readonly">
               <el-option label="index.main_handler" value="default"></el-option>
@@ -73,7 +73,7 @@
           <el-form-item label="提交方法" :required="true" class="labelLeft">
             <span slot="label">
               提交方法
-              <i class="el-icon-question"></i>
+              <!-- <i class="el-icon-question"></i> -->
             </span>
             <el-select v-model="formShowable.tipFun" class="decsIptSelect" readonly="readonly">
               <el-option label="在线编辑" value="onlineEdit"></el-option>
@@ -90,7 +90,7 @@
   </div>
 </template>
 <script>
-import {ADD_FUNC} from '@/constants'
+import { ADD_FUNC } from "@/constants";
 export default {
   data() {
     return {
@@ -130,17 +130,17 @@ export default {
       });
     },
     //添加子函数
-    compileSucc(){
-        let params = {
-          Version:'2018-04-16',
-          FunctionName:this.formShowable.funNameStep,
-          Runtime:this.formShowable.runMoentStep,
-          Description:this.formShowable.descStep,
-          Role:this.formShowable.runRole
-        }
-        this.axios.post(ADD_FUNC,params).then( res => {
-            console.log(res)
-        })
+    compileSucc() {
+      let params = {
+        Version: "2018-04-16",
+        FunctionName: this.formShowable.funNameStep,
+        Runtime: this.formShowable.runMoentStep,
+        Description: this.formShowable.descStep,
+        Role: this.formShowable.runRole
+      };
+      this.axios.post(ADD_FUNC, params).then(res => {
+        console.log(res);
+      });
     },
 
     //完成
@@ -182,6 +182,22 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+.allConStep >>> .el-input {
+  width: 200px;
+}
+.allConStep >>> .el-textarea__inner{
+  border-radius: 0;
+  height: 100px;
+}
+.allConStep >>> .el-input__inner {
+  height: 30px !important;
+  line-height: 30px !important;
+  border-radius: 0 !important;
+}
+.allConStep >>> .el-form-item__label {
+  text-align: left;
+  width: 120px;
+}
 .newClear:after {
   display: block;
   content: "";

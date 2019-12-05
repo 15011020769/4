@@ -52,7 +52,12 @@
                 @click="toQuery"
                 style="margin-left:10px"
               ></el-button>
-              <el-table :data="tableData" style="width: 96%; margin: 0 auto;" height="300">
+              <el-table
+                :data="tableData"
+                style="width: 96%; margin: 0 auto;"
+                height="300"
+                @selection-change="handle"
+              >
                 <el-table-column type="selection" width="55"></el-table-column>
                 <el-table-column label="组名" prop="GroupName"></el-table-column>
                 <el-table-column label="备注" prop="Remark"></el-table-column>
@@ -102,7 +107,12 @@
                 style="margin-left:10px;margin-top:10px;"
                 @click="bindQuery"
               ></el-button>
-              <el-table :data="bindData" style="width: 96%; margin: 0 auto;" height="300">
+              <el-table
+                :data="bindData"
+                style="width: 96%; margin: 0 auto;"
+                height="300"
+                @selection-change="handle"
+              >
                 <el-table-column type="selection" width="55"></el-table-column>
                 <el-table-column label="策略名" prop="PolicyName"></el-table-column>
                 <el-table-column label="描述" prop="Description"></el-table-column>
@@ -138,13 +148,11 @@
       </el-dialog>
 
       <div v-show="active==2">
-        <template>
-          <el-table :data="newTableData" style="width: 96%; margin: 0 auto;">
-            <el-table-column type="selection" width="55"></el-table-column>
-            <el-table-column label="策略名"></el-table-column>
-            <el-table-column label="描述"></el-table-column>
-          </el-table>
-        </template>
+        <el-table :data="emptyData[0]" style="width: 96%; margin: 0 auto;">
+          <el-table-column type="selection" width="55"></el-table-column>
+          <el-table-column label="策略名" prop="PolicyName"></el-table-column>
+          <el-table-column label="描述" prop="Description"></el-table-column>
+        </el-table>
       </div>
       <div>
         <el-button
@@ -178,6 +186,8 @@ import { USER_GROUP, CREATE_USER, POLICY_LIST } from "@/constants";
 export default {
   data() {
     return {
+      getData: [],
+      emptyData: [],
       newTableData: [],
       bindVlue: [],
       bindData: [],
@@ -206,6 +216,30 @@ export default {
     };
   },
   methods: {
+    handle(val) {
+      console.log(val);
+      let checkArr = [];
+      checkArr.push(val);
+      this.emptyData = checkArr;
+      console.log(this.emptyData);
+    },
+    complete() {
+      var addIndex = [];
+      this.emptyData.forEach(item => {
+        addIndex.push(item);
+        console.log(item);
+      });
+      addIndex.forEach(item => {
+        let params = {
+          Version: "2019-01-16",
+          PolicyId: item.PolicyId,
+          AttachUin: this.emptyData.Uin
+        };
+        this.axios.post(POLICY_USER, params).then(data => {
+          console.log(data);
+        });
+      });
+    },
     gotoCl() {
       this.$router.push({ name: "Strategy" });
     },

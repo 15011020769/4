@@ -31,11 +31,11 @@
                 <el-row class="allConMainOneRow">
                   <el-col :span="12" class="LeftConOne LeftConRow">
                     <p>清洗中</p>
-                    <p>0</p>
+                    <p>{{packDataBgpMultip[1].Value}}</p>
                   </el-col>
                   <el-col :span="12" class="LeftConOne LeftConRow">
                     <p>封堵中</p>
-                    <p>0</p>
+                    <p>{{packDataBgpMultip[2].Value}}</p>
                   </el-col>
                 </el-row>
               </div>
@@ -51,13 +51,13 @@
               <div class="allConMainOneLeft allConMainTwoLeft">
                 <el-row class="productRow">
                   <el-col :span="12" class="productRow1"> 
-                    独享包 <span>0</span>
+                    独享包 <span>{{packDataBgp[0].Value}}</span>
                   </el-col>
                   <el-col :span="12" class="productRow2"> 
-                    <p><span></span><span>清洗中</span><span>0</span></p>
-                    <p><span></span><span>封堵中</span><span>0</span></p>
-                    <p><span></span><span>即将到期</span><span>0</span></p>
-                    <p><span></span><span>已到期</span><span>0</span></p>
+                    <p><span></span><span>清洗中</span><span>{{packDataBgp[1].Value}}</span></p>
+                    <p><span></span><span>封堵中</span><span>{{packDataBgp[2].Value}}</span></p>
+                    <p><span></span><span>即将到期</span><span>{{packDataBgp[4].Value}}</span></p>
+                    <p><span></span><span>已到期</span><span>{{packDataBgp[3].Value}}</span></p>
                   </el-col>
                 </el-row>
               </div>
@@ -85,34 +85,51 @@
           <div>攻击日志（30天内）</div>
           <div class="rightCon">
             <a href="#" class="downloadTable" @click="exportExcel">下载表格</a>
-            <el-input class="rightIptSearch" v-model="tableDataName" placeholder="请输入要查询的资产ID"/><el-button @click="doFilter" class="searcHBthn el-icon-search"></el-button>
+            <el-input class="rightIptSearch" v-model="searchInputID" placeholder="请输入要查询的资产ID"/><el-button @click="doFilter" class="searcHBthn el-icon-search"></el-button>
           </div>
         </div>
         <div class="allConMainThreeCon">
           <div class="chartShowTit">
             <el-button-group>
-              <el-button @click="btnClick(1)" :class="{'addColor':type=='1'}">独享包</el-button>
-              <el-button @click="btnClick(2)" :class="{'addColor':type=='2'}">共享包</el-button>
-              <el-button @click="btnClick(3)" :class="{'addColor':type=='3'}">高防IP专业版</el-button>
+              <el-button @click="btnClick('bgp')" :class="{'addColor':type=='bgp'}">独享包</el-button>
+              <el-button @click="btnClick('bgp-multip')" :class="{'addColor':type=='bgp-multip'}">共享包</el-button>
+              <el-button @click="btnClick('net')" :class="{'addColor':type=='net'}">高防IP专业版</el-button>
             </el-button-group>
           </div>
           <div>
             <el-table id="exportTable" :data="tableDataBegin.slice((currentPage-1)*pageSize,currentPage*pageSize)">
-              <el-table-column prop="attackTime" label="攻击时间">
-                <!-- <template slot-scope="scope">
-                  <a href="#" @click="toDoDetail(scope.$index, scope.row)">{{scope.row.funName}}</a>
-                </template> -->
+              <el-table-column prop="StartTime" label="攻击时间">
+                <template slot-scope="scope">
+                  {{scope.row.StartTime}}
+                  <!-- <a href="#" @click="toDoDetail(scope.$index, scope.row)">{{scope.row.funName}}</a> -->
+                </template>
               </el-table-column>
-              <el-table-column prop="durationTime" label="持续时间"></el-table-column>
-              <el-table-column prop="products" label="产品"></el-table-column>
-              <el-table-column prop="assetName" label="资产名称"></el-table-column>
-              <el-table-column prop="assetType" label="资产类型" v-if="type==3?false:true"></el-table-column>
-              <el-table-column prop="attackIp" label="IP"></el-table-column>
-              <el-table-column prop="attackType" label="攻击类型" width="70px"></el-table-column>
-              <el-table-column prop="attackMax" label="攻击最大宽带"></el-table-column>
-              <el-table-column prop="attackRate" label="攻击最大包速率"></el-table-column>
-              <el-table-column prop="stopStart" label="触发封禁" width="180">
-                <template slot-scope="">
+              <el-table-column prop="durationTime" label="持续时间">
+                <template slot-scope="scope">{{scope.row.EndTime - scope.row.StartTime}}</template>
+              </el-table-column>
+              <el-table-column prop="" label="产品">
+                <template slot-scope="scope">-</template>
+              </el-table-column>
+              <el-table-column prop="ResourceName" label="资产名称">
+                <template slot-scope="scope">{{scope.row.ResourceName}}</template>
+              </el-table-column>
+              <el-table-column prop="" label="资产类型" v-if="type=='net'?false:true">
+                <template slot-scope="scope">-</template>
+              </el-table-column>
+              <el-table-column prop="Vip" label="IP">
+                <template slot-scope="scope">{{scope.row.Vip}}</template>
+              </el-table-column>
+              <el-table-column prop="AttackType" label="攻击类型" width="70px">
+                <template slot-scope="scope">{{scope.row.AttackType}}</template>
+              </el-table-column>
+              <el-table-column prop="Mbps" label="攻击最大宽带">
+                <template slot-scope="scope">{{scope.row.Mbps}}</template>
+              </el-table-column>
+              <el-table-column prop="Pps" label="攻击最大包速率">
+                <template slot-scope="scope">{{scope.row.Pps}}</template>
+              </el-table-column>
+              <el-table-column prop="" label="触发封禁" width="180">
+                <template slot-scope="scope">
                   <el-button
                     type="text"
                     size="small"
@@ -153,7 +170,7 @@
 <script>
 import FileSaver from 'file-saver'
 import XLSX from 'xlsx'
-import { DDOS_SECINDEX } from "@/constants"
+import { DDOS_SECINDEX, DDOS_PACKINDEX, DDOS_EV_LIST } from "@/constants"
 export default {
   data() {
 		return {
@@ -166,8 +183,8 @@ export default {
         {Key: 'IpNum', Value:'0', desc: '统计的IP数据'}
       ],
       // 获取产品总览
-      packParams: ['bgpip', 'bgp', 'net', 'shield'],
-      business: 'net',// 产品代号
+      packParams: ['bgpip', 'bgp', 'net', 'bgp-multip'],
+      business: 'net',// 产品代号: bgpip表示高防IP；bgp表示独享包；bgp-multip表示共享包；net表示高防IP专业版
       packDataIP: [ // 高防IP专业版 net
         {Key: 'TotalPackCount',Value: '0'},
         {Key: 'AttackPackCount',Value: '0'},
@@ -192,7 +209,7 @@ export default {
         {Key: 'ExpireingPackCount',Value: '0'},
         {Key: 'IsolatePackCount',Value: '0'}
       ],
-      packDataShield: [ // shield
+      packDataBgpMultip: [ // bgp-multip
         {Key: 'TotalPackCount',Value: '0'},
         {Key: 'AttackPackCount',Value: '0'},
         {Key: 'BlockPackCount',Value: '0'},
@@ -200,34 +217,27 @@ export default {
         {Key: 'ExpireingPackCount',Value: '0'},
         {Key: 'IsolatePackCount',Value: '0'}
       ],
-      // 日期区间：默认获取当前时间和前一天时间
+      // 日期区间：30天
       endTime: this.getDateString(new Date()),
-      startTime: this.getDateString(new Date(new Date().getTime() - 24*60*60*1000)),
-
-      type:1,
+      startTime: this.getDateString(new Date(new Date().getTime() - 24*60*60*1000*30)),
+      // 攻击事件列表
       tableDataBegin: [],
-      tableDataName: "",
-      tableDataEnd: [],
+
+      // 分页相关
       currentPage: 1,
       pageSize: 10,
       totalItems: 0,
+      // 攻击事件列表：bgp表示独享包；bgp-multip表示共享包；net表示高防IP专业版
+      type:'bgp',
+      // 下载名称
+      downloadName: '独享包攻击记录',
+      // 查询输入字段（资源实例id）
+      searchInputID: '',
+
+      tableDataEnd: [],
       filterTableDataEnd: [],
       flag: false,
-      filterConrent:"",
-      allData:[{
-        attackTime:"1",
-        durationTime:"2",
-        products:"3",
-        assetName:"4",
-        assetType:"9",
-        attackIp:"5",
-        attackType:"6",
-        attackMax:"7",
-        attackRate:"8",
-
-      }],
       dialogVisible:false,
-      newData:"调用次数"
     }
   },
   created() {
@@ -238,7 +248,7 @@ export default {
       this.describeSecIndex()
       for(let i in this.packParams) {
         this.business = this.packParams[i]
-        switch (this.packParams[i]) {//['bgpip', 'bgp', 'net', 'shield']
+        switch (this.packParams[i]) {//[bgpip表示高防IP；bgp表示独享包；bgp-multip表示共享包；net表示高防IP专业版]
           case 'net':
             this.describePackIndex(this.packDataIP)
             break;
@@ -248,12 +258,12 @@ export default {
           case 'bgp':
             this.describePackIndex(this.packDataBgp)
             break;
-          case 'shield':
-            this.describePackIndex(this.packDataShield)
+          case 'bgp-multip':
+            this.describePackIndex(this.packDataBgpMultip)
             break;
         }
       }
-      this.describeInsurePacks()
+      // this.describeInsurePacks()
       this.describeDDoSEvList()
     },
     // 1.1.获取安全统计-本月
@@ -279,7 +289,7 @@ export default {
         Version: '2018-07-09',
         Business: this.business,
       }
-      this.$axios.post('dayu2/DescribePackIndex', params).then(res => {
+      this.axios.post(DDOS_PACKINDEX, params).then(res => {
         console.log(res)
         for(let i in packData) {
           for(let j in res.Response.Data) {
@@ -291,25 +301,32 @@ export default {
         }
       })
     },
-    // 1.3.获取保险包套餐列表
-    describeInsurePacks() {
-      let params = {
-        Version: '2018-07-09',
-      }
-      this.$axios.post('dayu2/DescribeInsurePacks', params).then(res => {
-        console.log(res)
-      })
-    },
-    // 1.4.获取DDoS攻击事件列表
+    // 获取保险包套餐列表
+    // describeInsurePacks() {
+    //   let params = {
+    //     Version: '2018-07-09',
+    //   }
+    //   this.axios.post('dayu2/DescribeInsurePacks', params).then(res => {
+    //     console.log(res)
+    //   })
+    // },
+    // 1.3.获取DDoS攻击事件列表
     describeDDoSEvList() {
       let params = {
         Version: '2018-07-09',
-        Business: 'bgp',//腾讯云用的bgp
+        Business: this.type,//[bgp表示独享包；bgp-multip表示共享包；net表示高防IP专业版]
         StartTime: this.startTime,
         EndTime: this.endTime,
+        Id: this.searchInputID
       }
-      this.$axios.post('dayu2/DescribeDDoSEvList', params).then(res => {
+      this.axios.post(DDOS_EV_LIST, params).then(res => {
         console.log(res)
+        if(!('Error' in res.Response)) {
+          this.tableDataBegin = res.Response.Data
+          this.totalItems = this.tableDataBegin.length
+        } else {
+          console.log(res.Response.Error)
+        }
       })
     },
     // 时间格式化'yyyy-MM-dd hh:mm:ss'
@@ -317,77 +334,25 @@ export default {
       return date.toLocaleString('zh',{hour12:false, year: 'numeric',  month: '2-digit',  day: '2-digit',  hour: '2-digit',  minute: '2-digit',  second: '2-digit'}).replace(/\//g,'-');
     },
     //下面tab切换表格
-    btnClick(clickNode){
-      this.type=clickNode;
-      if(clickNode=="1"){
-        this.newData="独享包"
-      }else if(clickNode=="2"){
-        this.newData="共享包"
-      }else if(clickNode=="3"){
-        this.newData="高防IP专业版"
+    btnClick(param){
+      this.type=param;
+      if(param=="bgp"){
+        this.downloadName="独享包攻击记录"
+      }else if(param=="bgp-multip"){
+        this.downloadName="共享包攻击记录"
+      }else if(param=="net"){
+        this.downloadName="高防IP专业版攻击记录"
       }
-      // else if(clickNode=="4"){
-      //   this.newData="并发执行个数"
-      // }else if(clickNode=="5"){
-      //   this.newData="受限次数"
-      // }
-    },
-    getDataOld() {//前端页面人员写的，不懂
-      var cookies = document.cookie;
-      var list = cookies.split(";");
-      for (var i = 0; i < list.length; i++) {
-        var arr = list[i].split("=");
-      }
-      console.log(arr[1]);
-      let params = {
-        // Action: "ListFunctions",
-        Version: "2018-04-16",
-        Region: arr[1]
-      };
-      //this.$axios.post('scf/ListFunctions', params).then(res => {
-      //console.log(res.data);
-      //this.tableDataBegin = res.data.dataTable;
-      //this.allData = this.tableDataBegin;
-        this.tableDataBegin = this.allData;
-        // 将数据的长度赋值给totalItems
-        this.totalItems = this.tableDataBegin.length;
-        if (this.totalItems > this.pageSize) {
-          for (let index = 0; index < this.pageSize; index++) {
-            this.tableDataEnd.push(this.tableDataBegin[index]);
-          }
-        } else {
-          this.tableDataEnd = this.tableDataBegin;
-        }
-      //});
+      this.describeDDoSEvList()
     },
     // 搜索
     doFilter() {
-      console.log(this.filterConrent);
-      this.tableDataBegin = this.allData;
-      this.tableDataEnd = [];
-      //每次手动将数据置空,因为会出现多次点击搜索情况
-      this.filterTableDataEnd = [];
-      this.tableDataBegin.forEach((val, index) => {
-        if (val.assetName) {
-          if (val.assetName.indexOf(this.tableDataName) == 0) {
-            this.filterTableDataEnd.push(val);
-            this.tableDataBegin = this.filterTableDataEnd;
-          } else {
-            this.filterTableDataEnd.push();
-            this.tableDataBegin = this.filterTableDataEnd;
-          }
-        }
-      });
-      //页面数据改变重新统计数据数量和当前页
+      console.log(this.searchInputID);
+      this.describeDDoSEvList()
+      // 重新定义当前页
       this.currentPage = 1;
-      this.totalItems = this.filterTableDataEnd.length;
-      //渲染表格,根据值
-      this.currentChangePage(this.filterTableDataEnd);
-
-      //页面初始化数据需要判断是否检索过
-      this.flag = true;
     },
-    openData() {},
+
     // 分页开始
     handleSizeChange(val) {
       console.log(`每页 ${val} 条`);
@@ -415,12 +380,13 @@ export default {
       }
     },
     exportExcel () {
+      console.log(this.downloadName)
       /* generate workbook object from table */
       var wb = XLSX.utils.table_to_book(document.querySelector('#exportTable'))
       /* get binary string as output */
       var wbout = XLSX.write(wb, { bookType: 'xlsx', bookSST: true, type: 'array' })
       try {
-        FileSaver.saveAs(new Blob([wbout], { type: 'application/octet-stream' }), this.newData+'.xlsx')
+        FileSaver.saveAs(new Blob([wbout], { type: 'application/octet-stream' }), this.downloadName+'.xlsx')
       } catch (e) { if (typeof console !== 'undefined') console.log(e, wbout) }
       return wbout
     },

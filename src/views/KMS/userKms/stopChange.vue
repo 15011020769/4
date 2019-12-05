@@ -26,6 +26,7 @@
   </div>
 </template>
 <script>
+import { END_KMS,DIS_KMS } from "@/constants";
 export default {
   props:{
     isShow:Boolean,//判断弹框是否显示隐藏
@@ -66,12 +67,38 @@ export default {
     //启动密钥轮换确定按钮
     startSure(){
       this.thisShow=false;
-      this.$emit('startSure',this.thisShow);
+      this.$emit('startSure',[this.thisShow]);
+      let params = {
+        Version: '2019-01-18',
+        Region: 'ap-taipei',
+        KeyId: this.contentDialog[1]
+      };
+      this.axios.post(END_KMS, params).then(res => {
+        console.log(res.Response);
+        this.$parent.getData();
+        //查询密钥轮换状态
+        // this.axios.post('kms2/GetKeyRotationStatus', params).then(res => {
+        //   console.log(res.Response);
+        //   this.$emit('startSure',[this.thisShow,res.Response.KeyRotationEnabled]);
+        //  });
+       
+      });
+      
     },
     //禁用密钥轮换确定按钮
     topSure(){
       this.thisShow=false;
       this.$emit('stopSure',this.thisShow);
+      let params = {
+        Version: '2019-01-18',
+        Region: 'ap-taipei',
+        KeyId: this.contentDialog[1]
+      };
+      this.axios.post(DIS_KMS, params).then(res => {
+        console.log(res.Response);
+        this.$parent.getData();
+       
+      });
     }
   }
 }

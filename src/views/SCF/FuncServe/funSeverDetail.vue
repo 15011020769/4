@@ -138,7 +138,7 @@
                         </span>
                         <el-input class="timeOutDate1" v-model="functionData.Timeout" placeholder></el-input>
                         <span>秒</span>
-                        <br>
+                        <br />
                         <p class="tipContent">时间范围：1-900秒</p>
                       </el-form-item>
                       <el-form-item label="描述" prop="Description">
@@ -251,7 +251,7 @@
                           </p>
                         </div>
                       </el-form-item>
-                      <el-form-item label="标签" prop="tagLists">
+                      <!--  <el-form-item label="标签" prop="tagLists">
                         <p>
                           <span></span>
                           <i class="el-icon-edit" @click="tagAddTagsBtn=true"></i>
@@ -269,9 +269,9 @@
                                 <template slot-scope="scope">
                                   <el-form :model="modelNameTags1[scope.$index]">
                                     <el-form-item prop="nameSpaceOne">
-                                      <!-- <span
+                                       <span
                                         v-if="modelNameTags[scope.$index].disableDelete"
-                                      >{{modelNameTags[scope.$index].nameSpaceOne}}</span>-->
+                                      >{{modelNameTags[scope.$index].nameSpaceOne}}</span>
                                       <el-input
                                         class="addTabsIpt"
                                         v-model="modelNameTags1[scope.$index].nameSpaceOne"
@@ -318,7 +318,7 @@
                             <el-button type="primary" @click="sureTabAdd1()">提交</el-button>
                           </span>
                         </div>
-                      </el-form-item>
+                      </el-form-item>-->
                     </el-form>
                     <span slot="footer" class="dialog-footer">
                       <el-button @click="dialogVisible2 = false">取 消</el-button>
@@ -333,7 +333,8 @@
                   </p>
                   <p>
                     <span>运行角色</span>
-                    <span>{{functionData.Role}}</span>
+                    <span v-show="functionData.Role">{{functionData.Role}}1</span>
+                    <span v-show="!functionData.Role">无运行角色</span>
                   </p>
                   <p>
                     <span>运行环境</span>
@@ -360,25 +361,25 @@
                   <p>
                     <span>环境变量</span>
                     <span v-show="functionData.environmentFlag"></span>
-                    <span v-show="functionData.environmentFlag">无环境变量</span>
+                    <span v-show="!functionData.environmentFlag">无环境变量</span>
                   </p>
                   <p>
                     <span>所属网络</span>
                     <span v-show="vpcConfigFlag">{{vpcConfigVpcId}}</span>
-                    <span v-show="!vpcConfigFlag">无VPC</span>
+                    <span v-show="vpcConfigFlag">无VPC</span>
                   </p>
                   <p>
                     <span>所属子网</span>
                     <span v-show="vpcConfigFlag">{{vpcConfigSubnetId}}</span>
-                    <span v-show="!vpcConfigFlag">无子网</span>
+                    <span v-show="vpcConfigFlag">无子网</span>
                   </p>
-                  <p>
+                  <!-- <p>
                     <span>标签</span>
                     <span>
                       <i class="el-icon-edit" @click="dialogVisible1 = true"></i>
                     </span>
-                  </p>
-                  <el-dialog
+                  </p>-->
+                  <!-- <el-dialog
                     title="您已经选择1个云资源"
                     :visible.sync="dialogVisible1"
                     width="800px"
@@ -441,29 +442,29 @@
                       <el-button @click="dialogVisible1 = false">取 消</el-button>
                       <el-button type="primary" @click="sureTabAdd()">提交</el-button>
                     </span>
-                  </el-dialog>
+                  </el-dialog>-->
                 </div>
               </div>
             </div>
           </el-tab-pane>
           <el-tab-pane label="函数代码" name="second">
             <div class="allConListMain">
-              <funCode/>
+              <funCode />
             </div>
           </el-tab-pane>
           <el-tab-pane label="触发方式" name="third">
             <div class="allConListMain">
-              <triggerMode ref="mychild" @childFn="childFn"/>
+              <triggerMode ref="mychild" @childFn="childFn" />
             </div>
           </el-tab-pane>
           <el-tab-pane label="运行日志" name="fouth">
             <div class="allConListMain">
-              <runningLog/>
+              <runningLog />
             </div>
           </el-tab-pane>
           <el-tab-pane label="监控信息" name="fifth">
             <div class="allConListMain">
-              <monitInfo/>
+              <monitInfo />
             </div>
           </el-tab-pane>
         </el-tabs>
@@ -483,7 +484,13 @@ import triggerMode from "./triggerMode.vue";
 import funCode from "./funCode.vue";
 import runningLog from "./runningLog";
 import monitInfo from "./monitInfo";
-import { SCF_DETAILS,UPD_CONFIG,PUBLISH_VERSION,LIST_VERSION,DEL_TRIGGER } from '@/constants'
+import {
+  SCF_DETAILS,
+  UPD_CONFIG,
+  PUBLISH_VERSION,
+  LIST_VERSION,
+  DEL_TRIGGER
+} from "@/constants";
 export default {
   components: {
     triggerMode: triggerMode,
@@ -597,7 +604,7 @@ export default {
     this.modelNameTags[0].disableDelete = true;
     this.init();
     this.searchVersion();
-    this.getModality()
+    this.getModality();
   },
   methods: {
     // 获取编辑详情
@@ -605,7 +612,7 @@ export default {
       let params = {
         Action: "GetFunction",
         Version: "2018-04-16",
-        Region: this.$cookie.get("regionv2")
+        Region: 'ap-guangzhou'//this.$cookie.get("regionv2")
       };
       let functionName = this.$route.query.functionName;
       // functionName = 'tttt'
@@ -617,6 +624,7 @@ export default {
         .then(res => {
           let _this = this;
           this.functionData = res.Response;
+          console.log(this.functionData);
           let funcData = this.functionData;
           if (funcData.FunctionName != undefined) {
             _this.VariablesArr = funcData.Environment.Variables;
@@ -627,7 +635,7 @@ export default {
             _this.environmentFlag = false;
             _this.vpcConfigFlag = false;
           }
-          console.log(this.functionData)
+          console.log(this.functionData);
         })
         .catch(error => {
           console.log(error);
@@ -662,7 +670,7 @@ export default {
     getfunction() {
       let params = {
         Version: "2018-04-16",
-        Region: this.$cookie.get("regionv2"),
+        Region: 'ap-guangzhou',//this.$cookie.get("regionv2"),
         Action: "GetFunction"
       };
       let functionName = this.$route.query.functionName;
@@ -677,8 +685,8 @@ export default {
         }
       });
     },
-    inpChange(val){
-      console.log(val)
+    inpChange(val) {
+      console.log(val);
     },
     handleClick(tab, event) {
       console.log(tab.index);
@@ -730,7 +738,7 @@ export default {
         Action: "PublishVersion",
         Version: "2018-04-16",
         Region: this.$cookie.get("regionv2"),
-        Description:this.publishVersion.descript
+        Description: this.publishVersion.descript
       };
       let functionName = this.$route.query.functionName;
       if (functionName != "" && functionName != null) {
@@ -738,9 +746,7 @@ export default {
       }
       this.axios
         .post(PUBLISH_VERSION, params)
-        .then(res => {
-          
-        })
+        .then(res => {})
         .catch(error => {
           console.log(error);
         });
@@ -856,19 +862,8 @@ export default {
         this.$refs.mychild.getfunction();
       });
     },
-    getTable() {
-      let params = {
-        Version: "2018-07-24",
-        Region: this.$cookie.get("regionv2"),
-        Action: "DescribeBaseMetrics",
-        Namespace: "QCE/CVM"
-      };
-      this.axios.post("scf2/DescribeBaseMetrics", params).then(res => {
-        console.log(res, "table");
-      });
-    },
     // 监控数据
-   getModality () {
+    getModality() {
       let params = {
         Version: "2018-07-24",
         Region: this.$cookie.get("regionv2"),
@@ -879,8 +874,7 @@ export default {
         "Instances.0.Dimensions.0.Name": "CcnId",
         "Instances.0.Dimensions.0.Value": this.$route.query.functionName,
         StartTime: this.Start_End.StartTIme,
-        EndTime: this.Start_End.EndTIme,
-
+        EndTime: this.Start_End.EndTIme
       };
       console.log(params);
       this.axios
@@ -924,10 +918,10 @@ export default {
         button {
           height: 36px;
           border: none;
-          span{
-            font-size:12px;
-            color:#000;
-            font-weight:500
+          span {
+            font-size: 12px;
+            color: #000;
+            font-weight: 500;
           }
         }
       }

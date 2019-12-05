@@ -236,36 +236,59 @@ export default {
     },
     //新建自定义角色创建
     complete() {
+      let _this = this
       if (!this.inputRoleName) {
         this.have = true;
         return;
       }
+      /**
+       * PolicyDocument参数示例：principal用于指定角色的授权对象。获取该参数可参阅 获取角色详情 输出参数RoleInfo
+        {
+          "version": "2.0",
+          "statement": [{
+            "action": "name/sts:AssumeRole",
+            "effect": "allow",
+            "principal": {
+              "service": ["cloudaudit.cloud.tencent.com", "cls.cloud.tencent.com"]
+            }
+          }]
+        }
+       */
       let params = {
         Action: "CreateRole",
         Version: "2019-01-16",
         RoleName: this.inputRoleName,
         Description: this.inputRoleDesc,
-        PolicyDocument: this.policiesSelectedData
+        PolicyDocument: '{"version":"2.0","statement":[{"action":"name/sts:AssumeRole","effect":"allow","principal":{"service":["cloudaudit.cloud.tencent.com","cls.cloud.tencent.com"]}}]}'
       };
       let url = "cam2/CreateRole";
       this.axios.post(url, params).then(data => {
-        debugger;
-        this.policiesData = data.Response.RoleId;
+        let roleId = data.Response.RoleId; // 获取创建的角色id
         this.$message("创建角色成功");
+        let policiesArray = this.policiesSelectedData // 获取权限策略
+        // 根据获取的角色ID创建角色策略
+        if(roleId != undefined && roleId != '' && policiesArray != '') {
+          for(let i=0; i < policiesArray.length; i++) {
+            let obj = policiesArray[i]
+            let params = {
+              Action: 'AttachRolePolicy',
+              Version: '2019-01-16',
+              PolicyId: obj.PolicyId,
+              AttachRoleId: roleId
+            }
+            _this.AttachRolePolicy(params)
+          }
+        }
+        this.back()
       });
     },
-    //获取角色详情
-    roleDetail() {
-      let params = {
-        Action: "GetRole",
-        Version: "2019-01-16"
-      };
-      let url = "cam2/GetRole";
-      this.axios.post(url, params).then(data => {
-        debugger;
-        this.policiesData = data.Response.PolicyDocument;
-      });
+    // 绑定权限策略到角色
+    AttachRolePolicy(params) {
+      this.$axios.post('cam2/AttachRolePolicy', params).then(res  => {
+        console.log(res)
+      })
     }
+    
   }
 }
 </script>

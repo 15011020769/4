@@ -23,12 +23,6 @@
       <span>
         <el-button class="setBtn" icon="el-icon-setting" @click="dialogVisible3 = true"></el-button>
       </span>
-      <span>
-        <a href="#">
-          函数服务帮助文档
-          <span class="el-icon-share"></span>
-        </a>
-      </span>
     </div>
     <el-dialog
       title="命名空间管理"
@@ -116,9 +110,8 @@
           <el-button size="small" type="primary" class="newCreate" @click="newCreateFun()">新建</el-button>
           <div class="searchRight">
             <el-select placeholder="要过滤的标签" v-model="filterConrent">
-              <el-option label="函数名称" value="value2"></el-option>
-              <el-option label="函数描述" value="value1"></el-option>
-              <el-option label="标签" value="value3"></el-option>
+              <el-option label="函数名称" value="SearchKey"></el-option>
+              <el-option label="函数描述" value="Description"></el-option>
             </el-select>
             <el-input
               v-model="tableDataName"
@@ -301,7 +294,7 @@ export default {
         }
       ],
       copyIndex2: "",
-      filterConrent: "value2",
+      filterConrent: "选择资源属性进行过滤",
       showTips: false,
       isbol: false,
       State:{
@@ -370,6 +363,9 @@ export default {
         Version: "2018-04-16",
         Region: "ap-guangzhou"
       };
+      if(this.filterConrent!=='选择资源属性进行过滤'&&this.tableDataName!==''){
+        params[this.filterConrent]=this.tableDataName
+      }
       // 获取表格数据
       this.axios.post(SCF_LIST, params).then(res => {
         //console.log(res.Response.Functions);
@@ -393,44 +389,40 @@ export default {
       console.log(this.filterConrent);
       // this.tableDataBegin = this.allData;
       this.tableDataEnd = [];
+     
+       if(this.filterConrent!=='选择资源属性进行过滤'&&this.tableDataName!==''){
+       this.getData()
+      }else{
+        alert('请输入搜索条件')
+      }
       //每次手动将数据置空,因为会出现多次点击搜索情况
       this.filterTableDataEnd = [];
       console.log(this.tableDataBegin);
       console.log(this.tableDataName);
-      this.tableDataBegin.forEach((val, index) => {
-        if (this.filterConrent == "value2") {
-          if (val.functionName) {
-            if (val.functionName.indexOf(this.tableDataName) !== -1) {
-              this.filterTableDataEnd.push(val);
-              this.tableDataBegin = this.filterTableDataEnd;
-            } else {
-              this.filterTableDataEnd.push();
-              this.tableDataBegin = this.filterTableDataEnd;
-            }
-          }
-          console.log(this.tableDataBegin);
-        } else if (this.filterConrent == "value1") {
-          if (val.description) {
-            if (val.description.indexOf(this.tableDataName) == 0) {
-              this.filterTableDataEnd.push(val);
-              this.tableDataBegin = this.filterTableDataEnd;
-            } else {
-              this.filterTableDataEnd.push();
-              this.tableDataBegin = this.filterTableDataEnd;
-            }
-          }
-        } else if (this.filterConrent == "value3") {
-          if (val.funTabs) {
-            if (val.funTabs.indexOf(this.tableDataName) == 0) {
-              this.filterTableDataEnd.push(val);
-              this.tableDataBegin = this.filterTableDataEnd;
-            } else {
-              this.filterTableDataEnd.push();
-              this.tableDataBegin = this.filterTableDataEnd;
-            }
-          }
-        }
-      });
+      // this.tableDataBegin.forEach((val, index) => {
+      //   if (this.filterConrent == "FunctionName") {
+      //     if (val.functionName) {
+      //       if (val.functionName.indexOf(this.tableDataName) !== -1) {
+      //         this.filterTableDataEnd.push(val);
+      //         this.tableDataBegin = this.filterTableDataEnd;
+      //       } else {
+      //         this.filterTableDataEnd.push();
+      //         this.tableDataBegin = this.filterTableDataEnd;
+      //       }
+      //     }
+      //     console.log(this.tableDataBegin);
+      //   } else if (this.filterConrent == "Description") {
+      //     if (val.description) {
+      //       if (val.description.indexOf(this.tableDataName) == 0) {
+      //         this.filterTableDataEnd.push(val);
+      //         this.tableDataBegin = this.filterTableDataEnd;
+      //       } else {
+      //         this.filterTableDataEnd.push();
+      //         this.tableDataBegin = this.filterTableDataEnd;
+      //       }
+      //     }
+      //   }
+      // });
       //页面数据改变重新统计数据数量和当前页
       this.currentPage = 1;
       this.totalItems = this.filterTableDataEnd.length;

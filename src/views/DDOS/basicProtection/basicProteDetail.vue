@@ -1,8 +1,8 @@
 <template>
   <div id="basicDetail">
     <div class="topTitBasic">
-      <i class="el-icon-back"></i>
-      <span>{{basicName}}</span>
+      <i class="el-icon-back" @click="Back()"></i>
+      <span>{{this.instance.InstanceName}}</span>
     </div>
     <div class="basicContent">
       <div class="basicCenter">
@@ -31,11 +31,11 @@
         <div class="basicCenterTwo">
           <el-tabs v-model="activeName" @tab-click="handleClick">
             <el-tab-pane label="DDoS攻击" name="first">
-              <ddosAttack/>
+              <ddosAttack :ddosAttack="instance"/>
             </el-tab-pane>
-            <el-tab-pane label="CC攻击" name="second">
+            <!-- <el-tab-pane label="CC攻击" name="second">
               <ccAttack/>
-            </el-tab-pane>
+            </el-tab-pane> -->
           </el-tabs>
         </div>
       </div>
@@ -48,6 +48,8 @@ import ccAttack from './ccAttack'
 export default {
   data(){
     return {
+      instance: {}, // 实例对象
+
       basicName:'',//详情页tit
       basicSwitch:true,//开关
       httpNumber:'150QPS',
@@ -113,10 +115,7 @@ export default {
     ccAttack:ccAttack
   },
   created(){
-    this.basicName=sessionStorage.getItem("basicName");
-  },
-  mounted(){
-    
+    this.instance = this.$route.query.instance;
   },
   methods:{
     handleClick(tab, event) {
@@ -130,6 +129,12 @@ export default {
     thisTime2(data){
       console.log(data);
       this.timeNodeQu2=data;
+    },
+    // 返回
+    Back () {
+      this.$router.push({
+        path: '/basicProtection'
+      })
     },
   }
 }

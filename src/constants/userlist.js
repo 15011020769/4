@@ -36,3 +36,6 @@ export const QUERY_POLICY = 'cam2/ListAttachedUserPolicies'
 
 //新建用户组
 export const CREATE_USER = 'cam2/CreateGroup'
+
+//用户添加到用户组
+export const ADD_USERTOGROUP = 'cam2/AddUserToGroup'

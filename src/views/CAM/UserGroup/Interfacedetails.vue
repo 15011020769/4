@@ -555,7 +555,6 @@ export default {
     },
     // 移除策略信息
     deletePolicies(policyId) {
-      debugger
       let groupId = parseInt(this.$route.query.GroupId)
       let params = {
         Action: 'DetachGroupPolicy',
@@ -603,7 +602,6 @@ export default {
         let paramsArr = []
         //目前系统接口只支持单个策略绑定到用户组，不支持多个，所以循环执行策略绑定用户组接口
         for(var i = 0; i < selArr.length; i++) {
-          debugger
           let policiesParams = {
             Action: 'AttachGroupPolicy',
             AttachGroupId: groupId,

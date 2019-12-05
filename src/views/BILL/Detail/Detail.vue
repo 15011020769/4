@@ -8,7 +8,7 @@
     </div>
     <div class="mod-from">
       <el-form :inline="true" :model="dataForm" class="demo-form-inline">
-      <el-form-item>
+      <el-form-item> 
         <el-select v-model="dataForm.businessCodeName" value-key="code" :placeholder="$t('BILL.BILL.Detail.allProduct')" @change="getChildInfo()" clearable size="small">
           <el-option v-for="item in getProductList" :key="item.code" :label="item.nameTw" :value="item" >
           </el-option>
@@ -434,7 +434,7 @@ export default {
   }
 }
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
   .mod{
     color: #000;
     height: 45px;
@@ -485,6 +485,6 @@ export default {
     margin-right: 10px;
   }
   .el-select .el-input{
-    width: 200px;
+    width: 200px !important;
   }
 </style>

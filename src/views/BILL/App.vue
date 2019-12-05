@@ -1,5 +1,5 @@
 <template>
-  <div id="CCN">
+  <div id="BILL">
     <el-container v-if="$route.meta.keepAlive">
       <el-header>
         <nav-header></nav-header>
@@ -57,10 +57,10 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-#CCN >>> .el-aside {
+#BILL >>> .el-aside {
   background: #292b36 !important;
 }
-#CCN {
+#BILL {
   height: 100%;
   .el-container {
     height: 100%;
@@ -71,9 +71,10 @@ export default {
       background-color: rgb(84, 92, 100);
     }
     .el-main {
-      padding: 0;
+      width: 100%;
       background: #f2f2f2;
-      height: 100%;
+      padding: 0 0;
+
     }
   }
 }

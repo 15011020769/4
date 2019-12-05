@@ -10,17 +10,16 @@
       </div>
       <div class="search">
         <div class="search_dropdown">
-          <el-input placeholder="请输入内容" v-model="input3" class="input-with-select">
-            <el-select class="childSelect" slot="prepend" v-model="value" @change="_select">
-              <el-option
-                v-for="(item,index) in this.options"
-                :key="index"
-                :label="item.Label"
-                :value="item.Value"
-              ></el-option>
-            </el-select>
-            <el-button slot="append" icon="el-icon-search" @click="seach()" class="btn"></el-button>
-          </el-input>
+          <el-select class="childSelect" slot="prepend" v-model="value" @change="_select">
+            <el-option
+              v-for="(item,index) in this.options"
+              :key="index"
+              :label="item.Label"
+              :value="item.Value"
+            ></el-option>
+          </el-select>
+          <el-input placeholder="请输入内容" v-model="input3" class="inp"></el-input>
+          <el-button icon="el-icon-search" @click="seach()"></el-button>
         </div>
         <div class="date">
           <el-date-picker
@@ -76,36 +75,6 @@
                 <el-form-item label="用户名">
                   <span>{{ props.row.Username }}</span>
                 </el-form-item>
-                <el-form-item>
-                  <a href="javascript:;" @click="LookShows()">查看事件</a>
-                  <div class="event-box" v-if="LookShow">
-                    <div class="event-backdrop"></div>
-                    <div class="event-dialog">
-                      <div class="event-dialog-inner">
-                        <div class="event-dialog-header">
-                          <p>查看事件</p>
-                          <i class="el-icon-close" @click="LookShow = false"></i>
-                        </div>
-                        <div class="wxsmallcode-page publicCon">
-                          <div class="copyBox">
-                            <el-button
-                              class="ml10"
-                              type="text"
-                              size="medium"
-                              v-clipboard:copy="props.row.CloudAuditEvent"
-                              v-clipboard:success="onCopy"
-                              v-clipboard:error="onError"
-                              :plain="true"
-                            >复制代码</el-button>
-                            <p>
-                              <json-viewer :value=" JSON.parse(props.row.CloudAuditEvent)"></json-viewer>
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </el-form-item>
               </el-form>
             </template>
           </el-table-column>
@@ -136,14 +105,12 @@
             </template>
           </el-table-column>
           <el-table-column label="资源名称" prop="Resources.ResourceName"></el-table-column>
-          <p
-            v-if="Show"
-            slot="append"
-            style="text-align:center; line-height:80px;"
-            v-loading="loading"
-          >
-            <a href="javascript:;" @click="more()" class="blue01">点击加载更多</a>
-          </p>
+          <div v-if="Show" slot="append" style="line-height:40px;padding:0 20px;color:#006eff;">
+            <p v-show="!loading" @click="more()">点击加载更多</p>
+            <p v-show="loading"  style="width:100%;text-align:center;">
+              <i class="el-icon-loading"></i>加载中
+            </p>
+          </div>
         </el-table>
       </div>
     </div>
@@ -162,7 +129,7 @@ export default {
       oldTime: "", // 30天前时间
       isRouterAlive: true,
       loading: false,
-      Show: false, // 加载更多
+      Show: true, // 加载更多
       LookShow: false,
       DownShow: true,
       MaxResults: 10,
@@ -238,6 +205,7 @@ export default {
         if (res.codeDesc == "Success") {
           this.tableData = res.data.Events;
           this.vloading = false;
+          this.loading = false;
         }
       });
     },
@@ -317,7 +285,7 @@ export default {
 <style lang="scss" >
 .search_dropdown {
   width: 485px;
-  .btn{
+  .btn {
     background: white !important;
     position: absolute;
     right: 50px;
@@ -396,9 +364,31 @@ export default {
 .search {
   display: flex;
   .search_dropdown {
-    width: 485px;
+    display: flex;
   }
-  .search_text {
+  // .inp{
+  //   width: 200px;
+  // }
+  // .inp >>> .el-input__inner {
+  //   width: 200px;
+  // }
+  .search_dropdown >>> .el-input__inner {
+    height: 30px;
+    line-height: 30px;
+    border-radius: 0px;
+  }
+  .search_dropdown >>> .el-button {
+    height: 30px;
+    line-height: 30px;
+    border-radius: 0px;
+    padding-top: 0;
+    font-size: 12px;
+    margin-left: -20px;
+    position: relative;
+    z-index: 100;
+  }
+  .search_text,
+  .search_dropdown {
     .el-input__inner {
       height: 30px;
       line-height: 30px;

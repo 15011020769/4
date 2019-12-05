@@ -146,10 +146,8 @@
                     <p>需要您注意的是， API 密钥删除后无法恢复，请您确认清楚再进行删除。用户被删除后，该用户无法登录腾讯云以及接收消息通知，同时会解除关联权限。</p>
                   </div>
                   <template>
-                    <el-table style="width: 100%">
-                      <el-table-column label="用户名" width="180">
-                        <template slot-scope="scope">{{scope.row.Name}}</template>
-                      </el-table-column>
+                    <el-table style="width: 100%" :data="userData">
+                      <el-table-column label="用户名" width="180"></el-table-column>
                       <el-table-column prop="name" label="账户ID" width="180"></el-table-column>
                       <el-table-column prop="address" label="密钥ID"></el-table-column>
                       <el-table-column prop="address" label="创建时间"></el-table-column>
@@ -158,11 +156,10 @@
                     </el-table>
                   </template>
                   <span slot="footer" class="dialog-footer">
-                    <el-button @click="dialogVisible = false">取 消</el-button>
-                    <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+                    <el-button @click="dialogDeleteUser = false">取 消</el-button>
+                    <el-button type="primary" @click="dialogDeleteUser = false">确 定</el-button>
                   </span>
                 </el-dialog>
-
                 <el-dialog
                   :title="$t('CAM.CAM.userDetails.news')"
                   :visible.sync="dialogVi"
@@ -446,7 +443,6 @@ export default {
       disabled: false,
       tableDatas: [],
       content: [],
-      checked: true,
       dialogVi: false,
       showHeader: false,
       dialogVisible: false,
@@ -461,70 +457,16 @@ export default {
         phone: "",
         email: ""
       },
-      options: [
-        {
-          value: "选项1",
-          label: "黄金糕"
-        },
-        {
-          value: "选项2",
-          label: "双皮奶"
-        },
-        {
-          value: "选项3",
-          label: "蚵仔煎"
-        },
-        {
-          value: "选项4",
-          label: "龙须面"
-        },
-        {
-          value: "选项5",
-          label: "北京烤鸭"
-        }
-      ],
-      tableData: [
-        {
-          id: "",
-          name: "",
-          category: "",
-          desc: "",
-          address: "",
-          shop: "",
-          shopId: ""
-        },
-        {
-          id: "",
-          name: "",
-          category: "",
-          desc: "",
-          address: "",
-          shop: "",
-          shopId: ""
-        },
-        {
-          id: "",
-          name: "",
-          category: "",
-          desc: "",
-          address: "",
-          shop: "",
-          shopId: ""
-        },
-        {
-          id: "",
-          name: "",
-          category: "",
-          desc: "",
-          address: "",
-          shop: "",
-          shopId: ""
-        }
-      ],
+      options: [],
+      tableData: [],
       valArr: [],
       title: "",
       titles: "",
-      userData: []
+      userData: [
+        {
+          Name: ""
+        }
+      ]
     };
   },
   methods: {

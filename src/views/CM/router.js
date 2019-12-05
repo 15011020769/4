@@ -11,7 +11,7 @@ export default new Router({
     },
     routes: [{
             path: '/',
-            redirect: '/overview'
+            redirect: '/CVM'
         },
         {
             path: '/CVM', // 云服务器

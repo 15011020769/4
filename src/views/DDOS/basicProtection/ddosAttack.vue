@@ -21,11 +21,23 @@
 
     </div>
     <div>
+      <h3>DDoS攻击记录</h3>
       <el-table :data="tableDataBegin.slice((currentPage-1)*pageSize,currentPage*pageSize)">
-        <el-table-column prop="attackTime" label="攻击时间"></el-table-column>
-        <el-table-column prop="durnTime" label="持续时间"></el-table-column>
-        <el-table-column prop="attackType" label="攻击类型"></el-table-column>
-        <el-table-column prop="attackStatus" label="攻击状态"></el-table-column>
+        <el-table-column prop="StartTime" label="攻击时间">
+          <template slot-scope="scope">{{scope.row.StartTime}}</template>
+        </el-table-column>
+        <el-table-column prop="durnTime" label="持续时间">
+          <template slot-scope="scope">{{scope.row.EndTime - scope.row.StartTime}}</template>
+        </el-table-column>
+        <el-table-column prop="AttackType" label="攻击类型">
+          <template slot-scope="scope">{{scope.row.AttackType}}</template>
+        </el-table-column>
+        <el-table-column prop="AttackStatus" label="攻击状态">
+          <template slot-scope="scope">
+              <div v-if="scope.row.AttackStatus == '0'">攻击中</div>
+              <div v-else-if="scope.row.AttackStatus == '1'">攻击结束</div>
+            </template>
+        </el-table-column>
       </el-table>
     </div>
     <div class="tabListPage">
@@ -42,33 +54,42 @@
   </div>
 </template>
 <script>
+
 import moment from 'moment';
+import { DDOS_EV_LIST, DDOS_TREND } from '@/constants'
 export default {
+  props:{
+    ddosAttack: Object // 实例对象
+  },
   data(){
     return {
-      timeValue:'',
-      thisStart:'',
-      thisEnd:"",
+      business: 'basic', //[bgp表示独享包；bgp-multip表示共享包；net表示高防IP专业版；basic表示DDoS基础防护]
+      metricName: 'bps', // 指标，取值[bps(攻击流量带宽，pps(攻击包速率))]
+      period: 3600, //统计粒度，取值[300(5分钟)，3600(小时)，86400(天)]
+      // 日期区间：今天
+      endTime: this.getDateString(new Date()),
+      startTime: this.getDateString(new Date(new Date(new Date().toLocaleDateString()).getTime())),
+      // 攻击事件列表
       tableDataBegin: [],
-      tableDataName: "",
-      tableDataEnd: [],
+      // 分页相关
       currentPage: 1,
       pageSize: 10,
       totalItems: 0,
+
+      timeValue: {},
+      thisStart:'',
+      thisEnd:"",
+      tableDataEnd: [],
       filterTableDataEnd: [],
       flag: false,
-      multipleSelection: [],
-      dialogVisible: false,
-      deleteIndex: "",
-      deleteBegin: {},
-      allData: [
-        {
-          attackTime: "2019-11-25 10:25：25",
-          durnTime: "25小时",
-          attackType: "攻击类型",
-          attackStatus: "攻击状态"
-        }
-      ],
+    }
+  },
+  watch: {
+    'timeValue': function (value) {
+      console.log(value, this.getDateString(value[0]))
+      // this.startTime = this.getDateString(value[0])
+      // this.endTime = this.getDateString(value[1])
+      // this.getData()
     }
   },
   created() {
@@ -78,6 +99,45 @@ export default {
     this.drawLine();
   },
   methods:{
+    getData() {
+      console.log(this.ddosAttack)
+      this.describeDDoSTrend()
+      this.describeDDoSEvList()
+    },
+    // 1.1.获取DDoS攻击指标数据
+    describeDDoSTrend() {
+      let params = {
+        Version: '2018-07-09',
+        Business: this.business,
+        Ip: this.ddosAttack.PublicIpAddresses[0],
+        MetricName: this.metricName,
+        Period: this.period,
+        StartTime: this.startTime,
+        EndTime: this.endTime,
+      }
+      this.axios.post(DDOS_TREND, params).then(res => {
+        console.log(res)
+      })
+    },
+    // 1.2.获取DDoS攻击事件列表
+    describeDDoSEvList() {
+      let params = {
+        Version: '2018-07-09',
+        Business: this.business,
+        StartTime: this.startTime,
+        EndTime: this.endTime,
+        'IpList.0': this.ddosAttack.PublicIpAddresses[0]
+      }
+      this.axios.post(DDOS_EV_LIST, params).then(res => {
+        console.log(res)
+        if(!('Error' in res.Response)) {
+          this.tableDataBegin = res.Response.Data
+          this.totalItems = this.tableDataBegin.length
+        } else {
+          console.log(res.Response.Error)
+        }
+      })
+    },
     //选择时间
     thisTime(thisTime) {
       var ipt1 = document.querySelector(".newDataTime input:nth-child(2)");
@@ -95,12 +155,8 @@ export default {
       }else if (thisTime == "5") {
         start.setTime(start.getTime() - 3600 * 1000 * 24 * 30 * 6);
       }
-      //console.log(moment(new Date()).format('YYYY-MM-DD HH:mm:ss'),start)
       ipt1.value = moment(start).format('YYYY-MM-DD');
       ipt2.value = moment(end).format('YYYY-MM-DD');
-      //this.thisStart=moment(start).format('YYYY-MM-DD');
-      //this.thisEnd=moment(end).format('YYYY-MM-DD');
-      //this.$emit('timeNode1',[this.thisStart,this.thisEnd])
     },
     drawLine(){
       // 基于准备好的dom，初始化echarts实例
@@ -156,32 +212,11 @@ export default {
         }
       });
     },
-    getData() {
-      var cookies = document.cookie;
-      var list = cookies.split(";");
-      for (var i = 0; i < list.length; i++) {
-        var arr = list[i].split("=");
-      }
-      let params = {
-        // Action: "ListFunctions",
-        Version: "2018-04-16",
-        Region: arr[1]
-      };
-      //this.$axios.post('scf/ListFunctions', params).then(res => {
-        // console.log(res.data.functions);
-        //this.tableDataBegin = res.data.functions;
-        this.tableDataBegin = this.allData;
-        // 将数据的长度赋值给totalItems
-        this.totalItems = this.tableDataBegin.length;
-        if (this.totalItems > this.pageSize) {
-          for (let index = 0; index < this.pageSize; index++) {
-            this.tableDataEnd.push(this.tableDataBegin[index]);
-          }
-        } else {
-          this.tableDataEnd = this.tableDataBegin;
-        }
-      //});
+    // 时间格式化'yyyy-MM-dd hh:mm:ss'
+    getDateString(date) {
+      return date.toLocaleString('zh',{hour12:false, year: 'numeric',  month: '2-digit',  day: '2-digit',  hour: '2-digit',  minute: '2-digit',  second: '2-digit'}).replace(/\//g,'-');
     },
+    
     handleSizeChange(val) {
       console.log(`每页 ${val} 条`);
       this.pageSize = val;

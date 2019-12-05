@@ -12,7 +12,7 @@
         active-text-color="#fff"
         :router="true"
       >
-        <el-menu-item index="UserList">
+        <el-menu-item index="UserListNew">
           <i class="iconfont"></i>
           <span slot="title">用户列表</span>
         </el-menu-item>

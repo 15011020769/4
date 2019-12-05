@@ -16,6 +16,11 @@ export * from './CCN'
 
 // DDOS防护
 export * from './DDOS'
+// 云服务
+export * from './CVM'
 
 // 标签
 export * from './TAG'
+
+
+export * from './KMS' //用户密钥

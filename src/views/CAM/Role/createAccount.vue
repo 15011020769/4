@@ -26,17 +26,15 @@
             </div>
             <div class="first_right">
               <p style="margin-bottom:30px">
-                <el-radio v-model="radio" label="1">{{$t('CAM.CAM.Role.currentMainAccount')}}</el-radio>
-                <el-radio v-model="radio" label="2">{{$t('CAM.CAM.Role.otherMainAccount')}}</el-radio>
+                <!-- <el-radio v-model="radio" label="1">{{$t('CAM.CAM.Role.currentMainAccount')}}</el-radio>
+                <el-radio v-model="radio" label="2">{{$t('CAM.CAM.Role.otherMainAccount')}}</el-radio> -->
+                <el-radio-group v-model="radioAccount" @change="changeAccount">
+                  <el-radio label="1">{{$t('CAM.CAM.Role.currentMainAccount')}}</el-radio>
+                  <el-radio label="2">{{$t('CAM.CAM.Role.otherMainAccount')}}</el-radio>
+                </el-radio-group>
               </p>
               <p>
-                <el-input
-                  v-model="input_num"
-                  placeholder="请输入内容"
-                  size="mini"
-                  disabled
-                  style="width:150px"
-                ></el-input>
+                <el-input v-model="input_num" placeholder="请输入内容" size="mini" :disabled="disabledAccount" style="width:150px" ></el-input>
               </p>
             </div>
           </div>
@@ -111,11 +109,12 @@ export default {
   data() {
     return {
       active: 1,
-      input_num: "10001921910",
+      input_num: "100011921910",
       inputRoleName: "",
       inputRoleDesc: "",
       have: false,
-      radio: "1",
+      radioAccount: "1",
+      disabledAccount: true,
       policiesData: [],
       policiesSelectedData: [],
       transfer_value: [],
@@ -134,7 +133,12 @@ export default {
       this.$router.push("/Role");
     },
     next() {
+      let _this = this
       if (this.active == 1) {
+        //其他主账号时需要校验账户
+        if(_this.radioAccount === '2') {
+          _this.checkAccount()
+        }
         this.active = this.active + 1;
       } else if (this.active == 2) {
         this.policiesSelectedData = this.$refs.tansferStep.getData();
@@ -153,44 +157,97 @@ export default {
     },
 
     leftCheck(val) {},
+    // 角色名称校验
     jsname() {
-      if (!this.inputName) {
+      if (!this.inputRoleName) {
         this.have = true;
       } else {
         this.have = false;
       }
     },
+    // 切换腾讯云主账号
+    changeAccount() {
+      if(this.radioAccount === '2') {
+        this.disabledAccount = false
+        this.input_num = ''
+      }else{
+        this.disabledAccount = true
+        this.input_num = '100011921910'
+      }
+    },
+    // 校验主账号，暂时没有发现接口先不校验；点击下一步或者光标离开输入框时校验。
+    checkAccount() {
+      // let url = "cam2/CheckAccount";
+      // let params = {
+      //   Action: "CheckAccount",
+      //   Version: "2019-01-16",
+      //   Uin: this.input_num
+      // };
+      // this.axios.post(url, params).then(res => {
+      //   if (res != '' && data.Response.data.IsExist != undefined && data.Response.data.IsExist === false) {
+      //     this.have = true;
+      //   } else {
+      //     this.have = false;
+      //   }
+      // }).catch(error => {
+      // });
+    },
     //新建自定义角色创建
     complete() {
+      let _this = this
       if (!this.inputRoleName) {
         this.have = true;
         return;
       }
+      /**
+       * PolicyDocument参数示例：principal用于指定角色的授权对象。获取该参数可参阅 获取角色详情 输出参数RoleInfo
+       * service是指定的
+        {
+          "version": "2.0",
+          "statement": [{
+            "action": "name/sts:AssumeRole",
+            "effect": "allow",
+            "principal": {
+              "qcs": ["qcs::cam::uin/100011921910:root"]
+            }
+          }]
+        }
+       */
       let params = {
         Action: "CreateRole",
         Version: "2019-01-16",
         RoleName: this.inputRoleName,
         Description: this.inputRoleDesc,
-        PolicyDocument: {"version":"2.0","statement":[{"action":"name/sts:AssumeRole","effect":"allow","principal":{"qcs":["qcs::cam::uin/100011921910:root"]}}]}
+        PolicyDocument: '{"version":"2.0","statement":[{"action":"name/sts:AssumeRole","effect":"allow","principal":{"qcs":["qcs::cam::uin/' + this.input_num + ':root"]}}]}'
       };
       let url = "cam2/CreateRole";
       this.axios.post(url, params).then(data => {
-        this.policiesData = data.Response.RoleId;
-        
-       });
-    },
-    //获取角色详情
-    roleDetail() {
-      let params = {
-        Action: "GetRole",
-        Version: "2019-01-16"
-      };
-      let url = "cam2/GetRole";
-      this.axios.post(url, params).then(data => {
-        debugger;
-        this.policiesData = data.Response.PolicyDocument;
+        let roleId = data.Response.RoleId; // 获取创建的角色id
+        this.$message("创建角色成功");
+        let policiesArray = this.policiesSelectedData // 获取权限策略
+        // 根据获取的角色ID创建角色策略
+        if(roleId != undefined && roleId != '' && policiesArray != '') {
+          for(let i=0; i < policiesArray.length; i++) {
+            let obj = policiesArray[i]
+            let params = {
+              Action: 'AttachRolePolicy',
+              Version: '2019-01-16',
+              PolicyId: obj.PolicyId,
+              AttachRoleId: roleId
+            }
+            _this.AttachRolePolicy(params)
+          }
+        }
+        this.back()
       });
+    },
+    // 绑定权限策略到角色
+    AttachRolePolicy(params) {
+      this.$axios.post('cam2/AttachRolePolicy', params).then(res  => {
+        console.log(res)
+      })
     }
+    
   }
 };
 </script>

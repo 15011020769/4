@@ -92,6 +92,7 @@
   </div>
 </template>
 <script>
+import { FUN_LOG } from "@/constants";
 export default {
   data() {
     return {
@@ -143,9 +144,8 @@ export default {
       if (functionName != "" && functionName != null) {
         params["FunctionName"] = functionName;
       }
-      let url = "scf2/GetFunctionLogs";
       this.axios
-        .post(url, params)
+        .post(FUN_LOG, params)
         .then(res => {
           _this.logData = res.Response;
           console.log(_this.logData);
@@ -193,9 +193,8 @@ export default {
       if (functionName != "" && functionName != null) {
         params["FunctionName"] = functionName;
       }
-      let url = "scf2/GetFunctionLogs";
       this.axios
-        .post(url, params)
+        .post(FUN_LOG, params)
         .then(res => {
           _this.logData = res.Response;
           console.log(_this.logData);

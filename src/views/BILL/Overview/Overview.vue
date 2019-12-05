@@ -65,22 +65,22 @@
               </el-table-column>
               <el-table-column prop="cashAmount" align="right" :label="$t('BILL.BILL.Overview.cashAmount')">
                 <template slot-scope="scope">
-                  <span>{{scope.row.cashAmount}} 元</span>
+                  <span>{{scope.row.cashAmount}}</span>
                 </template>
               </el-table-column>
               <el-table-column prop="incentiveAmount" align="right" :label="$t('BILL.BILL.Overview.incentiveAmount')">
                 <template slot-scope="scope">
-                  <span>{{scope.row.incentiveAmount}} 元</span>
+                  <span>{{scope.row.incentiveAmount}}</span>
                 </template>
               </el-table-column>
               <el-table-column prop="voucherAmount" align="right" :label="$t('BILL.BILL.Overview.voucherAmount')">
                 <template slot-scope="scope">
-                  <span>{{scope.row.voucherAmount}} 元</span>
+                  <span>{{scope.row.voucherAmount}}</span>
                 </template>
               </el-table-column>
               <el-table-column prop="totalAmount" align="right" :label="$t('BILL.BILL.Overview.totalAmount')">
                 <template slot-scope="scope">
-                  <span>{{scope.row.totalAmount}} 元</span>
+                  <span>{{scope.row.totalAmount}}</span>
                 </template>
               </el-table-column>
               <el-table-column prop="state" align="center" :label="$t('BILL.BILL.Overview.costTrend')">
@@ -96,29 +96,33 @@
                 </template>
               </el-table-column>
             </el-table>
+            <div class="paging">
+              <el-pagination @size-change="sizeChangeHandle" @current-change="currentChangeHandle" :current-page="pageIndex" :page-sizes="[10, 20, 50, 100]" :page-size="pageSize" :total="totalPage1" layout="total, sizes, prev, pager, next, jumper" style="float: right;">
+              </el-pagination>
+            </div>
           </el-tab-pane>
           <el-tab-pane :label="$t('BILL.BILL.Overview.projectSum')" name="second" style="width:100%">
             <div id="main3" style="float: left; width: 1067px; height: 300px"></div>
             <el-table :data="dataList2" row-key="id" :tree-props="{children: 'children'}"  v-loading="dataListLoading" style="width: 100%;">
-              <el-table-column prop="project_name" :label="$t('BILL.BILL.Overview.projectName')" ></el-table-column>
+              <el-table-column prop="project_name" :label="$t('BILL.BILL.Overview.projectName')"></el-table-column>
               <el-table-column prop="cashAmount" align="right" :label="$t('BILL.BILL.Overview.cashAmount')">
                 <template slot-scope="scope">
-                  <span>{{scope.row.cashAmount}} 元</span>
+                  <span>{{scope.row.cashAmount}}</span>
                 </template>
               </el-table-column>
               <el-table-column prop="incentiveAmount" align="right" :label="$t('BILL.BILL.Overview.incentiveAmount')">
                 <template slot-scope="scope">
-                  <span>{{scope.row.incentiveAmount}} 元</span>
+                  <span>{{scope.row.incentiveAmount}}</span>
                 </template>
               </el-table-column>
               <el-table-column prop="voucherAmount" align="right" :label="$t('BILL.BILL.Overview.voucherAmount')">
                 <template slot-scope="scope">
-                  <span>{{scope.row.voucherAmount}} 元</span>
+                  <span>{{scope.row.voucherAmount}}</span>
                 </template>
               </el-table-column>
               <el-table-column prop="totalAmount" align="right" :label="$t('BILL.BILL.Overview.totalAmount')">
                 <template slot-scope="scope">
-                  <span>{{scope.row.totalAmount}} 元</span>
+                  <span>{{scope.row.totalAmount}}</span>
                 </template>
               </el-table-column>
               <el-table-column prop="state" align="center" :label="$t('BILL.BILL.Overview.costTrend')">
@@ -134,11 +138,11 @@
                 </template>
               </el-table-column>
             </el-table>
+            <div class="paging">
+              <el-pagination @size-change="sizeChangeHandle" @current-change="currentChangeHandle" :current-page="pageIndex" :page-sizes="[10, 20, 50, 100]" :page-size="pageSize" :total="totalPage2" layout="total, sizes, prev, pager, next, jumper" style="float: right;">
+              </el-pagination>
+            </div>
           </el-tab-pane>
-          <div class="paging">
-            <el-pagination @size-change="sizeChangeHandle" @current-change="currentChangeHandle" :current-page="pageIndex" :page-sizes="[10, 20, 50, 100]" :page-size="pageSize" :total="totalPage2" layout="total, sizes, prev, pager, next, jumper" style="float: right;">
-            </el-pagination>
-          </div>
         </el-tabs>
       </div>
     </el-card>
@@ -363,7 +367,7 @@ export default {
               normal: {
                 show: true,
                 position: 'center',
-                formatter: '{active|总费用}' + '\n\r' + '{total|' + total.toFixed(2) + '}' + '{active|元}',
+                formatter: '{active|總費用}' + '\n\r' + '{total|' + total.toFixed(2) + '}' + '{active|圆}',
                 rich: {
                   total: {
                     fontSize: 20,
@@ -688,7 +692,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 
   .el-card{
     width: 96%;
@@ -721,7 +725,7 @@ export default {
     justify-content: space-between;
     margin-bottom: 20px;
   }
- .el-table__expand-icon {
-   float: left
- }
+  ::v-deep .el-table__expand-icon{
+    display: inline-block !important;
+  }
 </style>

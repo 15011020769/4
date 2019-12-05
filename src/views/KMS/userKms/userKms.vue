@@ -5,15 +5,30 @@
       <span class="taibeiCheck">{{thisAddress}}</span>
     </div>
     <div class="mainContent">
+      <KMSdialog
+        :dialogVisibleKMS="dialogVisibleKMS"
+        @_confirm="_confirm"
+        @_cancel="_cancel"
+        :KMStitle="KMStitle"
+        :KMStxt="KMStxt"
+        :KMSdata="KMSdata"
+        :state="state"
+      />
       <div class="mainContBtn newClear">
         <div class="conLeftBtn">
           <el-button @click="dialogVisible = true">新建</el-button>
-          <el-button :disabled="isHaveDisable">启用密钥</el-button>
+          <el-button @click="_enableBtn">启用密钥</el-button>
           <!-- <el-button :disabled="false" v-if="!isHaveDisable">启用密钥</el-button> -->
-          <el-button :disabled="isHaveEnable">禁用密钥</el-button>
+          <el-button @click="_disableBtn">禁用密钥</el-button>
           <!-- <el-button :disabled="false" v-if="!isHaveEnable">禁用密钥</el-button> -->
         </div>
-        <el-dialog class="dialogModel" title="新建密钥" :visible.sync="dialogVisible" width="30%" :before-close="handleClose">
+        <el-dialog
+          class="dialogModel"
+          title="新建密钥"
+          :visible.sync="dialogVisible"
+          width="30%"
+          :before-close="handleClose"
+        >
           <el-form :model="createForm" label-width="100px">
             <el-form-item label="密钥名称">
               <el-input v-model="createForm.name"></el-input>
@@ -24,7 +39,7 @@
               <p>最长可输入1024个字符</p>
             </el-form-item>
             <el-form-item label="密钥材料来源">
-              <el-radio-group v-model="createForm.resource">
+              <el-radio-group v-model="createForm.Type">
                 <el-radio label="KMS"></el-radio>
                 <el-radio label="外部"></el-radio>
               </el-radio-group>
@@ -42,22 +57,30 @@
       </div>
       <div class="tableCoontent">
         <div class="tableList">
-          <el-table ref="multipleTable" :data="tableDataBegin.slice((currentPage-1)*pageSize,currentPage*pageSize)" tooltip-effect="dark" style="width: 100%" 
-          @selection-change="handleSelectionChange">
+          <el-table
+            ref="multipleTable"
+            :data="tableDataBegin.slice((currentPage-1)*pageSize,currentPage*pageSize)"
+            tooltip-effect="dark"
+            style="width: 100%"
+            @selection-change="handleSelectionChange"
+          >
             <el-table-column type="selection" width="55">
-              <template slot-scope="scope">
+              <!-- <template slot-scope="scope">
                 <el-checkbox v-model="scope.row.checked" @click="checkedIsTrue"></el-checkbox>
-              </template>
+              </template>-->
             </el-table-column>
             <el-table-column prop="KeyId" label="密钥ID/密钥名称">
               <template slot-scope="scope">
-                <a href="#" @click="todoDetails(scope.row)">{{scope.row.KeyId}}</a><br />
+                <a href="#" @click="todoDetails(scope.row)">{{scope.row.KeyId}}</a>
+                <br />
                 <span>{{ scope.row.Alias}}</span>
               </template>
             </el-table-column>
             <el-table-column prop="KeyState" label="状态">
-              <template slot-scope="scope"> 
-                <span :style="scope.row.KeyState=='Disabled'||scope.row.KeyState=='PendingDelete'||scope.row.KeyState=='PendingImport'?'color:#ff9d00':'color:#000'">{{filterState(scope.row.KeyState)}}</span>
+              <template slot-scope="scope">
+                <span
+                  :style="scope.row.KeyState=='Disabled'||scope.row.KeyState=='PendingDelete'||scope.row.KeyState=='PendingImport'?'color:#ff9d00':'color:#000'"
+                >{{scope.row.KeyState=="PendingDelete"?'于'+timestampToTime(scope.row.DeletionDate)+'彻底删除':filterState(scope.row.KeyState)}}</span>
               </template>
             </el-table-column>
             <el-table-column prop="CreateTime" label="创建时间" show-overflow-tooltip>
@@ -66,59 +89,88 @@
               </template>
             </el-table-column>
             <el-table-column prop="Origin" label="密钥来源">
-              <template slot-scope="scope"> 
+              <template slot-scope="scope">
                 <span>{{filterKey(scope.row.Origin)}}</span>
               </template>
             </el-table-column>
             <el-table-column prop="kmsChange" label="密钥轮换">
               <template slot-scope="scope">
-                <a href="#" class="aColorGree" :style="scope.row.KeyState=='PendingDelete'||scope.row.KeyState=='PendingImport'||changeStatus!=='启用轮换'?'pointer-events:none':'color:#006eff'" 
-                @click="startChange(scope.row,$event)">启用轮换</a>
+                <a
+                  href="#"
+                  class="aColorGree"
+                  :style="scope.row.KeyState=='PendingDelete'||scope.row.KeyState=='PendingImport'||scope.row.KeyRotationEnabled==true?'pointer-events:none':'color:#006eff'"
+                  @click="startChange(scope.row,$event)"
+                >启用轮换</a>
                 <span class="spanLine">|</span>
-                <a href="#" class="aColorGree" :style="scope.row.KeyState=='PendingDelete'||scope.row.KeyState=='PendingImport'||changeStatus=='启用轮换'?'pointer-events:none':'color:#006eff'" 
-                @click="startChange(scope.row,$event)">禁用轮换</a>
+                <a
+                  href="#"
+                  class="aColorGree"
+                  :style="scope.row.KeyState=='PendingDelete'||scope.row.KeyState=='PendingImport'||scope.row.KeyRotationEnabled==false?'pointer-events:none':'color:#006eff'"
+                  @click="startChange(scope.row,$event)"
+                >禁用轮换</a>
               </template>
             </el-table-column>
             <el-table-column prop="action" label="操作" class="action">
               <template slot-scope="scope">
-                <a href="#" class="aColorGree" :style="scope.row.KeyState=='Enabled'||scope.row.KeyState=='PendingDelete'||scope.row.KeyState=='PendingImport'?'pointer-events:none':'color:#006eff'"
-                @click="startKms(scope.row,$event)">启用密钥</a>
+                <a
+                  href="#"
+                  class="aColorGree"
+                  :style="scope.row.KeyState=='Enabled'||scope.row.KeyState=='PendingDelete'||scope.row.KeyState=='PendingImport'?'pointer-events:none':'color:#006eff'"
+                  @click="startKms(scope.row,$event)"
+                >启用密钥</a>
                 <span class="spanLine">|</span>
-                <a href="#" class="aColorGree" :style="scope.row.KeyState=='Disabled'||scope.row.KeyState=='PendingDelete'||scope.row.KeyState=='PendingImport'?'pointer-events:none':'color:#006eff'"
-                @click="startKms(scope.row,$event)">禁用密钥</a><br />
-                <a href="#" class="aColorGree" :style="scope.row.KeyState=='PendingDelete'?'pointer-events:none':'color:#006eff'"
-                @click="openDelete(scope.row,$event)">计划删除</a>
+                <a
+                  href="#"
+                  class="aColorGree"
+                  :style="scope.row.KeyState=='Disabled'||scope.row.KeyState=='PendingDelete'||scope.row.KeyState=='PendingImport'?'pointer-events:none':'color:#006eff'"
+                  @click="startKms(scope.row,$event)"
+                >禁用密钥</a>
+                <br />
+                <a
+                  href="#"
+                  class="aColorGree"
+                  :style="scope.row.KeyState=='PendingDelete'?'pointer-events:none':'color:#006eff'"
+                  @click="openDelete(scope.row,$event)"
+                >计划删除</a>
                 <span class="spanLine">|</span>
-                <a href="#" class="aColorGree" :style="scope.row.KeyState=='PendingDelete'?'color:#006eff':'pointer-events:none'"
-                @click="openDelete(scope.row,$event)">取消删除</a>
+                <a
+                  href="#"
+                  class="aColorGree"
+                  :style="scope.row.KeyState=='PendingDelete'?'color:#006eff':'pointer-events:none'"
+                  @click="openDelete(scope.row,$event)"
+                >取消删除</a>
               </template>
             </el-table-column>
           </el-table>
-          <stopChange 
-          :isShow="dialogModelChange" 
-          :content="doalogModelBox"
-           @parentByClick="childrenShow" 
-           @startSure="startSure"
-           @stopSure="stopSure"/>
-           <startKms 
-          :isShow="dialogModelKms" 
-          :content="doalogModelBox1"
-           @parentByClick="childrenShow1"
-           @startKmsSure="startKmsSure"
-           @stopKmsSure="stopKmsSure"/>
-           <openDelete 
-          :isShow="dialogModelDelete" 
-          :content="doalogModelBox2"
-           @parentByClick="childrenShow2"
-           @openDeleteSure="openDeleteSure"
-           @closeDeleteSure="closeDeleteSure"/>
+          <stopChange
+            :isShow="dialogModelChange"
+            :content="doalogModelBox"
+            @parentByClick="childrenShow"
+            @startSure="startSure"
+            @stopSure="stopSure"
+          />
+          <startKms
+            :isShow="dialogModelKms"
+            :content="doalogModelBox1"
+            @parentByClick="childrenShow1"
+            @startKmsSure="startKmsSure"
+            @stopKmsSure="stopKmsSure"
+          />
+          <openDelete
+            :isShow="dialogModelDelete"
+            :content="doalogModelBox2"
+            @parentByClick="childrenShow2"
+            @openDeleteSure="openDeleteSure"
+            @closeDeleteSure="closeDeleteSure"
+          />
         </div>
         <el-dialog
           class="dialogModel"
           title="计划删除密钥"
           :visible.sync="dialogModelOpenDelete"
           width="30%"
-          :before-close="handleCloseOpenDelete">
+          :before-close="handleCloseOpenDelete"
+        >
           <p class="deleteOpen">请先对密钥进行禁用操作！</p>
           <span slot="footer" class="dialog-footer">
             <el-button @click="dialogModelOpenDelete = false">取 消</el-button>
@@ -126,20 +178,37 @@
           </span>
         </el-dialog>
         <div class="tabListPage">
-          <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage" :page-sizes="[10, 20, 30, 50]" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper" :total="totalItems"></el-pagination>
+          <el-pagination
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+            :current-page="currentPage"
+            :page-sizes="[10, 20, 30, 50]"
+            :page-size="pageSize"
+            layout="total, sizes, prev, pager, next, jumper"
+            :total="totalItems"
+          ></el-pagination>
         </div>
       </div>
     </div>
   </div>
 </template>
 <script>
-import stopChange from './stopChange'
-import startKms from './startKms'
-import openDelete from './openDelete'
+import stopChange from "./stopChange";
+import startKms from "./startKms";
+import openDelete from "./openDelete";
+import KMSdialog from "./KMSdialog";
+import { KMS_LIST, NEW_KMS, EnableKey, DisableKey } from "@/constants";
 export default {
   data() {
     return {
-      thisAddress: '中国台北',
+      thisAddress: "中国台北",
+      //kms弹出框
+      KMSchange: false,
+      dialogVisibleKMS: false,
+      KMStitle: "", //标题
+      KMStxt: "", //文字
+      KMSdata: [], //数据
+      state: "", //状态
       tableDataName: "",
       tableDataBegin: [],
       tableDataName: "",
@@ -153,48 +222,156 @@ export default {
       dialogVisible: false,
       deleteIndex: "",
       deleteBegin: {},
-      dialogVisible: false,//新建模态框
+      dialogVisible: false, //新建模态框
       allData: [
         {
-          KeyId:"1235468165",
-          Alias:"222",
-          KeyState:"已启用",
-          CreateTime:"5696523658",
-          Origin:"外部"
+          KeyId: "1235468165",
+          Alias: "222",
+          KeyState: "已启用",
+          CreateTime: "5696523658",
+          Origin: "外部"
         }
       ],
       createForm: {
         name: "",
         discription: "",
-        resource: ""
-      },//
-      isHaveDisable:true,// 启用密钥 是否有已禁用
-      isHaveEnable:true,// 禁用密钥 是否有已启用
-      changeStatus:'启用轮换',//轮换状态默认为启用轮换
-      doalogModelBox:[],//启用轮换内容框
-      doalogModelBox1:[],//启用密钥内容框
-      doalogModelBox2:[],//计划删除框
-      dialogModelChange:false,//是否启用轮换弹框
-      dialogModelKms:false,//是否启用密钥弹框
-      dialogModelDelete:false,//是否计划删除
-      dialogModelOpenDelete:false,//计划删除如果是已启用时候的弹框
-    }
+        resource: "",
+        Type: ""
+      }, //
+      isHaveDisable: true, // 启用密钥 是否有已禁用
+      isHaveEnable: true, // 禁用密钥 是否有已启用
+      changeStatus: "启用轮换", //轮换状态默认为启用轮换
+      doalogModelBox: [], //启用轮换内容框
+      doalogModelBox1: [], //启用密钥内容框
+      doalogModelBox2: [], //计划删除框
+      dialogModelChange: false, //是否启用轮换弹框
+      dialogModelKms: false, //是否启用密钥弹框
+      dialogModelDelete: false, //是否计划删除
+      dialogModelOpenDelete: false //计划删除如果是已启用时候的弹框
+    };
   },
-  components:{
-    stopChange:stopChange,
-    startKms:startKms,
-    openDelete:openDelete
+  components: {
+    stopChange: stopChange,
+    startKms: startKms,
+    openDelete: openDelete,
+    KMSdialog: KMSdialog
   },
-  filters: {
-     
-  },
+  filters: {},
   created() {
     this.getData();
   },
   methods: {
+    //取消
+    _cancel() {
+      this.dialogVisibleKMS = false;
+    },
+    //确定
+    _confirm() {
+      this.dialogVisibleKMS = false;
+      //启用
+      if (!this.KMSchange) {
+        this.arr.forEach(item => {
+          let params = {
+            Version: "2019-01-18",
+            Region: "ap-taipei",
+            KeyId: item.KeyId
+          };
+
+          this.axios.post(EnableKey, params).then(res => {
+            if (res.Response.RequestId) {
+              this.$message({
+                showClose: true,
+                message: "启用成功",
+                type: "success"
+              });
+            } else {
+              this.$message({
+                showClose: true,
+                message: "启用失败",
+                type: "error"
+              });
+            }
+          });
+        });
+      }
+      //禁用
+      else {
+        this.arr.forEach(item => {
+          let params = {
+            Version: "2019-01-18",
+            Region: "ap-taipei",
+            KeyId: item.KeyId
+          };
+
+          this.axios.post(DisableKey, params).then(res => {
+            if (res.Response.RequestId) {
+              this.$message({
+                showClose: true,
+                message: "禁用成功",
+                type: "success"
+              });
+            } else {
+              this.$message({
+                showClose: true,
+                message: "禁用失败",
+                type: "error"
+              });
+            }
+          });
+        });
+      }
+      this.getData();
+    },
+    //启用按钮
+    _enableBtn() {
+      var bool = false;
+      var arr = [];
+      this.multipleSelection.forEach(item => {
+        if (item.KeyState == "Disabled") {
+          bool = true;
+          arr.push(item);
+        }
+      });
+      this.arr = arr;
+      if (bool) {
+        this.KMStitle = "启用密钥服务";
+        this.KMStxt = "启用选中的密钥服务？";
+        this.KMSdata = arr;
+        this.dialogVisibleKMS = true;
+        this.KMSchange = false;
+        this.state = "可启用";
+      } else {
+        this.$message("暂未选中可启用的数据");
+      }
+    },
+    //禁用按钮
+    _disableBtn() {
+      var bool = false;
+      var arr = [];
+      this.multipleSelection.forEach(item => {
+        if (item.KeyState == "Enabled") {
+          bool = true;
+          arr.push(item);
+        }
+      });
+      this.arr = arr;
+      if (bool) {
+        this.KMStitle = "禁用密钥服务";
+        this.KMStxt = "禁用选中的密钥服务？";
+        this.KMSdata = arr;
+        this.dialogVisibleKMS = true;
+        this.KMSchange = true;
+        this.state = "可禁用";
+      } else {
+        this.$message("暂未选中可启用的数据");
+      }
+    },
     //判断是否有已禁用，已启用
     handleSelectionChange(val) {
       this.multipleSelection = val;
+      if (val.length != 0) {
+        this.isHaveDisable = false;
+      }
       // this.multipleSelection.map(item => {
       //   console.log(item)
       //   if(item.KeyState == "Enabled"){
@@ -205,11 +382,11 @@ export default {
       // })
     },
     ////判断是否选中checkbox
-    checkedIsTrue(e){
-      console.log(e)
+    checkedIsTrue(e) {
+      console.log(e);
     },
-    handerChange(){
-      console.log(111)
+    handerChange() {
+      console.log(111);
     },
     //获取主密钥列表
     getData() {
@@ -219,29 +396,31 @@ export default {
         var arr = list[i].split("=");
       }
       let params = {
-        Version: '2019-01-18',
-        Region: 'ap-taipei',
-
+        Version: "2019-01-18",
+        Region: "ap-taipei",
+        Limit:100
       };
-      // this.$axios.post('kms2/ListKeys', params).then(res => {
+      // this.axios.post('kms2/ListKeys', params).then(res => {
 
       // });
       //获取主密钥列表详情
-      this.$axios.post('kms2/ListKeyDetail', params).then(res => {
-            var DataList = res.Response.KeyMetadatas
-            this.tableDataBegin = DataList;
-            this.allData = DataList
-            // 将数据的长度赋值给totalItems
-            this.totalItems = this.tableDataBegin.length;
-            if (this.totalItems > this.pageSize) {
-              for (let index = 0; index < this.pageSize; index++) {
-                this.tableDataEnd.push(this.tableDataBegin[index]);
-              }
-            } else {
-              this.tableDataEnd = this.tableDataBegin;
-            }
-            
-         });
+      this.axios.post(KMS_LIST, params).then(res => {
+        var DataList = res.Response.KeyMetadatas;
+        this.tableDataBegin = DataList;
+        // let trip = JSON.parse(localStorage.getItem('trip'));
+        // this.tableDataBegin.push(trip.KeyRotationEnabled)
+        // console.log(this.tableDataBegin)
+        this.allData = DataList;
+        // 将数据的长度赋值给totalItems
+        this.totalItems = this.tableDataBegin.length;
+        if (this.totalItems > this.pageSize) {
+          for (let index = 0; index < this.pageSize; index++) {
+            this.tableDataEnd.push(this.tableDataBegin[index]);
+          }
+        } else {
+          this.tableDataEnd = this.tableDataBegin;
+        }
+      });
     },
     //搜索
     doFilter() {
@@ -252,7 +431,10 @@ export default {
       this.filterTableDataEnd = [];
       this.tableDataBegin.forEach((val, index) => {
         if (val.KeyId) {
-          if (val.KeyId.indexOf(this.tableDataName) == 0 || val.Alias.indexOf(this.tableDataName) == 0) {
+          if (
+            val.KeyId.indexOf(this.tableDataName) == 0 ||
+            val.Alias.indexOf(this.tableDataName) == 0
+          ) {
             this.filterTableDataEnd.push(val);
             this.tableDataBegin = this.filterTableDataEnd;
           } else {
@@ -300,130 +482,150 @@ export default {
       this.dialogVisible = false;
     },
     //计划删除如果是已启用时候的弹框关闭按钮
-    handleCloseOpenDelete(){
-      this.dialogModelOpenDelete=false;
+    handleCloseOpenDelete() {
+      this.dialogModelOpenDelete = false;
     },
     //新建确定按钮
     sureNewCreate() {
       let params = {
-        Version: '2019-01-18',
-        Region: 'ap-taipei',
-        Alias: this.createForm.name
+        Version: "2019-01-18",
+        Region: "ap-taipei",
+        Alias: this.createForm.name,
+        Description: this.createForm.discription,
+        Type: this.createForm.Type == "KMS" ? 1 : 2
       };
-      this.$axios.post('kms2/CreateKey', params).then(res => {
-        // console.log(res.Response);
-        this.getData()
-        this.dialogVisible = false
+      this.axios.post(NEW_KMS, params).then(res => {
+        console.log(res.Response);
+        if (res.Response.Error !== undefined) {
+          this.$message({
+            showClose: true,
+            message: "别名不符合规则",
+            type: "error"
+          });
+        }
+        this.getData();
+        this.dialogVisible = false;
       });
     },
     timestampToTime(timestamp) {
-      var date = new Date(timestamp * 1000);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
-      var Y = date.getFullYear() + '-';
-      var M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '-';
-      var D = date.getDate() + ' ';
-      var h = date.getHours() + ':';
-      var m = date.getMinutes() + ':';
+      var date = new Date(timestamp * 1000); //时间戳为10位需*1000，时间戳为13位的话不需乘1000
+      var Y = date.getFullYear() + "-";
+      var M =
+        (date.getMonth() + 1 < 10
+          ? "0" + (date.getMonth() + 1)
+          : date.getMonth() + 1) + "-";
+      var D = date.getDate() + " ";
+      var h = date.getHours() + ":";
+      var m = date.getMinutes() + ":";
       var s = date.getSeconds();
       return Y + M + D + h + m + s;
     },
     //状态处理
-    filterState(state){
-       if (state == 'Enabled') {
-          state = '已启用'
-        } else if (state == 'PendingImport') {
-          state = '待导入'
-        } else if (state == 'Disabled') {
-          state = '已禁用'
-        }
-        return state;
+    filterState(state) {
+      if (state == "Enabled") {
+        state = "已启用";
+      } else if (state == "PendingImport") {
+        state = "待导入";
+      } else if (state == "Disabled") {
+        state = "已禁用";
+      }
+      return state;
     },
     //状态处理
-    filterKey(state){
-       if (state == 'EXTERNAL') {
-          state = '外部'
-        } else if (state == 'TENCENT_KMS') {
-          state = 'KMS'
-        } 
-        return state;
+    filterKey(state) {
+      if (state == "EXTERNAL") {
+        state = "外部";
+      } else if (state == "TENCENT_KMS") {
+        state = "KMS";
+      }
+      return state;
     },
     //跳转详情页
-    todoDetails(projeatRow){
-      console.log(projeatRow)
-      let params={
-        Alias:projeatRow.Alias,
-        CreateTime:this.timestampToTime(projeatRow.CreateTime),
-        KeyId:projeatRow.KeyId,
-        KeyState:this.filterState(projeatRow.KeyState),
-        Origin:this.filterKey(projeatRow.Origin),
-        address:this.thisAddress
-      }
+    todoDetails(projeatRow) {
+      // console.log(projeatRow)
+      let params = {
+        Alias: projeatRow.Alias,
+        CreateTime: this.timestampToTime(projeatRow.CreateTime),
+        KeyId: projeatRow.KeyId,
+        KeyState: this.filterState(projeatRow.KeyState),
+        Origin: this.filterKey(projeatRow.Origin),
+        address: this.thisAddress,
+        KeyRotationEnabled: projeatRow.KeyRotationEnabled,
+        DeletionDate: projeatRow.DeletionDate
+      };
       sessionStorage.setItem("projectId", JSON.stringify(params));
       this.$router.push({
-        name:"userKmsDetails"
-      })
+        name: "userKmsDetails"
+      });
     },
     //启用轮换
-    startChange(scopeRow,e){
-      this.dialogModelChange=true;
-      let params=[scopeRow.Alias,scopeRow.KeyId,e.target.innerHTML]
-      this.doalogModelBox=params;
+    startChange(scopeRow, e) {
+      this.dialogModelChange = true;
+      let params = [scopeRow.Alias, scopeRow.KeyId, e.target.innerHTML];
+      this.doalogModelBox = params;
     },
     //是否启动密钥服务
-    startKms(scopeRow,e){
-      this.dialogModelKms=true;
-      let params=[scopeRow.Alias,scopeRow.KeyId,e.target.innerHTML]
-      this.doalogModelBox1=params;
+    startKms(scopeRow, e) {
+      this.dialogModelKms = true;
+      let params = [scopeRow.Alias, scopeRow.KeyId, e.target.innerHTML];
+      this.doalogModelBox1 = params;
     },
     //是否计划删除
-    openDelete(scopeRow,e){
-      console.log(scopeRow)
-      if(scopeRow.KeyState=="Enabled"){
-        this.dialogModelOpenDelete=true;
-      }else{
-        this.dialogModelDelete=true;
-        let params=[scopeRow.Alias,scopeRow.KeyState,e.target.innerHTML]
-        this.doalogModelBox2=params;
+    openDelete(scopeRow, e) {
+      // console.log(scopeRow)
+      if (scopeRow.KeyState == "Enabled") {
+        this.dialogModelOpenDelete = true;
+      } else {
+        this.dialogModelDelete = true;
+        let params = [
+          scopeRow.Alias,
+          "于" + this.timestampToTime(scopeRow.DeletionDate) + "彻底删除",
+          e.target.innerHTML,
+          scopeRow.KeyId
+        ];
+        this.doalogModelBox2 = params;
       }
     },
     //轮换弹框消失
-    childrenShow(trueOrFalse){
-      this.dialogModelChange=trueOrFalse
+    childrenShow(trueOrFalse) {
+      this.dialogModelChange = trueOrFalse;
     },
     //启动轮换确定按钮
-    startSure(sureShow){
-      this.dialogModelChange=sureShow
+    startSure(sureShow) {
+      this.dialogModelChange = sureShow[0];
     },
     //禁用轮换确定按钮
-    stopSure(sureShow){
-      console.log("禁用")
-      this.dialogModelChange=sureShow
+    stopSure(sureShow) {
+      this.dialogModelChange = sureShow;
     },
     //轮换弹框消失
-    childrenShow1(trueOrFalse){
-      this.dialogModelKms=trueOrFalse
+    childrenShow1(trueOrFalse) {
+      this.dialogModelKms = trueOrFalse;
     },
     //启用密钥确定按钮
-    startKmsSure(sureShow){
-      this.dialogModelKms=sureShow
+    startKmsSure(sureShow) {
+      this.dialogModelKms = sureShow;
     },
     //禁用密钥确定按钮
-    stopKmsSure(sureShow){
-      this.dialogModelKms=sureShow
+    stopKmsSure(sureShow) {
+      this.dialogModelKms = sureShow;
     },
     //计划删除弹框消失
-    childrenShow2(trueOrFalse){
-      this.dialogModelDelete=trueOrFalse
+    childrenShow2(trueOrFalse) {
+      this.dialogModelDelete = trueOrFalse;
     },
     //计划删除确定按钮
-    openDeleteSure(deleteShow){
-      this.dialogModelDelete=deleteShow
+    openDeleteSure(deleteShow) {
+      this.dialogModelDelete = deleteShow[0];
+      // console.log(deleteShow[1])
+      //this.outTime = deleteShow[1]
     },
     //取消删除确定按钮
-    closeDeleteSure(deleteShow){
-      this.dialogModelDelete=deleteShow
+    closeDeleteSure(deleteShow) {
+      this.dialogModelDelete = deleteShow;
     }
   }
-}
+};
 </script>
 <style lang="scss">
 .newClear:after {
@@ -525,9 +727,9 @@ export default {
   .tableList {
     width: 100%;
     min-height: 350px;
-    .spanLine{
-      margin:0 5px;
-      color:#bbb;
+    .spanLine {
+      margin: 0 5px;
+      color: #bbb;
     }
     table th:nth-child(7),
     table td:nth-child(7),
@@ -549,10 +751,10 @@ export default {
     color: #888;
     line-height: 22px;
   }
-  p.deleteOpen{
-    font-size:14px;
-    font-weight:600;
-    color:#000;
+  p.deleteOpen {
+    font-size: 14px;
+    font-weight: 600;
+    color: #000;
   }
   .el-dialog__title {
     font-weight: 600;
@@ -569,12 +771,25 @@ export default {
     border-radius: 0;
   }
   .el-textarea__inner {
-    width: 80%;
+    width: 80% !important;
     height: 100px;
     resize: none;
   }
 }
-.aColorGree{
-  color:#999;
+.aColorGree {
+  color: #999;
+}
+.atclor {
+  color: #bbb;
+  cursor: default;
+  pointer-events: none;
+}
+.atclor:hover {
+  color: #bbb;
+  cursor: default;
+  pointer-events: none;
+}
+.mcolor {
+  color: #006eff;
 }
 </style>

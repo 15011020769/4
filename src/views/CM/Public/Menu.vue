@@ -1,6 +1,6 @@
 <template>
   <div class="CLA">
-    <div class="big-title">云监控</div>
+    <div class="big-title">{{$t("CM.menu.title1")}}</div>
     <el-menu
       default-active="2"
       class="el-menu-vertical-demo"
@@ -12,59 +12,59 @@
       :router="true"
     >
       <el-menu-item index="CVM">
-        <span slot="title">云服务器</span>
+        <span slot="title">{{$t("CM.menu.title2")}}</span>
       </el-menu-item>
       <el-menu-item index="cloudDisk">
-        <span slot="title">块存储</span>
+        <span slot="title">{{$t("CM.menu.title3")}}</span>
       </el-menu-item>
       <el-menu-item index="CLBload">
-        <span slot="title">负载均衡-CLB</span>
+        <span slot="title">{{$t("CM.menu.title4")}}</span>
       </el-menu-item>
 
       <el-submenu index="1">
         <template slot="title">
-          <span>云数据库</span>
+          <span>{{$t("CM.menu.title5")}}</span>
         </template>
         <el-menu-item-group>
           <el-menu-item index="cloudMysql">
-            <span slot="title">MySQL</span>
+            <span slot="title">{{$t("CM.menu.title6")}}</span>
           </el-menu-item>
           <el-menu-item index="Redis">
-            <span slot="title">Redis</span>
+            <span slot="title">{{$t("CM.menu.title7")}}</span>
           </el-menu-item>
         </el-menu-item-group>
       </el-submenu>
 
       <el-submenu index="2">
         <template slot="title">
-          <span>私有网络</span>
+          <span>{{$t("CM.menu.title8")}}</span>
         </template>
         <el-menu-item-group>
           <el-menu-item index="NATgateway">
-            <span slot="title">NAT网关</span>
+            <span slot="title">{{$t("CM.menu.title9")}}</span>
           </el-menu-item>
           <el-menu-item index="VPNgateway">
-            <span slot="title">VPN网关</span>
+            <span slot="title">{{$t("CM.menu.title10")}}</span>
           </el-menu-item>
           <el-menu-item index="VPNchannel">
-            <span slot="title">VPN通道</span>
+            <span slot="title">{{$t("CM.menu.title11")}}</span>
           </el-menu-item>
           <el-menu-item index="networkIP">
-            <span slot="title">弹性公网IP</span>
+            <span slot="title">{{$t("CM.menu.title12")}}</span>
           </el-menu-item>
         </el-menu-item-group>
       </el-submenu>
 
       <el-submenu index="3">
         <template slot="title">
-          <span>专线接入</span>
+          <span>{{$t("CM.menu.title13")}}</span>
         </template>
         <el-menu-item-group>
           <el-menu-item index="Physics">
-            <span slot="title">物理专线</span>
+            <span slot="title">{{$t("CM.menu.title14")}}</span>
           </el-menu-item>
           <el-menu-item index="Private">
-            <span slot="title">专线通道</span>
+            <span slot="title">{{$t("CM.menu.title15")}}</span>
           </el-menu-item>
         </el-menu-item-group>
       </el-submenu>
@@ -74,7 +74,7 @@
       </el-menu-item>-->
 
       <el-menu-item index="objectStorage">
-        <span slot="title">对象存储</span>
+        <span slot="title">{{$t("CM.menu.title16")}}</span>
       </el-menu-item>
     </el-menu>
   </div>

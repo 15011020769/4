@@ -150,37 +150,39 @@ export default {
         "Duration",
         "Invocation",
         "Error",
-        "ConcurrentExecutions",
+        "ConcurrentExecutions", //111
         "ConfigMem",
-        "FunctionErrorPercentage",
-        "Http2xx",
-        "Http432",
-        "Http433",
-        "Http434",
-        "Http4xx",
-        "Invocation",
-        "Mem",
+        "FunctionErrorPercentage", //111
+        "Http2xx", //111
+        "Http432", //11
+        "Http433", //11
+        "Http434", //11
+        "Http4xx", //11
+        "Mem", //11
         "MemDuration",
         "OutFlow",
-        "ServerErrorPercentage",
-        "Syserr",
+        "ServerErrorPercentage", //11
+        "Syserr", //11
         "Throttle"
       ];
       const symbol = [
-        "%",
-        "-",
+        "毫秒(ms)",
+        "次",
+        "次",
+        "次",
         "MB",
-        "%",
-        "个",
-        "Mbps",
-        "Mbps",
-        "个/秒",
-        "个/秒",
-        "Mbps",
-        "Mbps",
+        "次",
+        "次",
+        "次",
+        "次",
+        "次",
+        "次",
         "MB",
-        "个/秒",
-        "个/秒"
+        "MB/ms",
+        "次",
+        "%",
+        "次",
+        "次"
       ];
       this.tableData = [];
       for (let i = 0; i < metricNArr.length; i++) {
@@ -200,6 +202,8 @@ export default {
         MetricName: metricN,
         "Instances.0.Dimensions.0.Name": "functionName",
         "Instances.0.Dimensions.0.Value": this.ID,
+        "Instances.0.Dimensions.1.Name": "version",
+        "Instances.0.Dimensions.1.Value": this.ID,
         Period: this.period,
         StartTime: this.Start_End.StartTIme,
         EndTime: this.Start_End.EndTIme
@@ -242,101 +246,120 @@ export default {
   filters: {
     //文字过滤
     UpName(value) {
-      if (value === "lanOuttraffic") {
-        return (value = "内网出带宽");
+      if (value === "Duration") {
+        return (value = "运行时间");
       }
-      if (value === "lanIntraffic") {
-        return (value = "内网入带宽");
+      if (value === "Invocation") {
+        return (value = "调用次数");
       }
-      if (value === "lanOutpkg") {
-        return (value = "内网出包量");
+      if (value === "Error") {
+        return (value = "调用错误次数");
       }
-      if (value === "lanInpkg") {
-        return (value = "内网入包量");
+      if (value === "ConcurrentExecutions") {
+        return (value = "并发执行次数");
       }
-      if (value === "WanOuttraffic") {
-        return (value = "外网出带宽");
+      if (value === "ConfigMem") {
+        return (value = "配置内存");
       }
-      if (value === "WanIntraffic") {
-        return (value = "外网入带宽");
+      if (value === "FunctionErrorPercentage") {
+        return (value = "函数错误率");
       }
-      if (value === "AccOuttraffic") {
-        return (value = "外网出流量");
+      if (value === "Http2xx") {
+        return (value = "正确调用次数");
       }
-      if (value === "WanOutpkg") {
-        return (value = "外网出包量");
+      if (value === "Http432") {
+        return (value = "资源超过限制");
       }
-      if (value === "WanInpkg") {
-        return (value = "外网入包量");
+      if (value === "Http433") {
+        return (value = "函数执行超时");
       }
-      if (value === "CPUUsage") {
-        return (value = "CPU使用率");
+      if (value === "Http434") {
+        return (value = "内存超过限制");
       }
 
-      if (value === "CPULoadAvg") {
-        return (value = "CPU平均负载");
+      if (value === "Http4xx") {
+        return (value = "函数错误次数");
       }
-      if (value === "MemUsed") {
-        return (value = "内存使用量");
+      if (value === "Invocation") {
+        return (value = "函数调用次数");
       }
-      if (value === "MemUsage") {
-        return (value = "内存利用率");
+      if (value === "Mem") {
+        return (value = "运行内存");
       }
-      if (value === "TcpCurrEstab") {
-        return (value = "TCP连接数");
+      if (value === "MemDuration") {
+        return (value = "时间内存");
+      }
+      if (value === "OutFlow") {
+        return (value = "外网出流量");
+      }
+      if (value === "ServerErrorPercentage") {
+        return (value = "平台错误率");
+      }
+      if (value === "Syserr") {
+        return (value = "系统内部错误次数");
+      }
+      if (value === "Throttle") {
+        return (value = "函数运行受限次数");
       }
       if (value === "") {
         return (value = "");
       }
     },
     UpTitle(value) {
-      if (value === "lanOuttraffic") {
-        return (value = "内网网卡的平均每秒出流量");
+      if (value === "Duration") {
+        return (value = "函数运行时间，按粒度（1分钟、5分钟）统计求平均值");
       }
-      if (value === "lanIntraffic") {
-        return (value = "内网网卡的平均每秒入流量");
+      if (value === "Invocation") {
+        return (value = "函数调用次数，按粒度（1分钟、5分钟）统计求和");
       }
-      if (value === "lanOutpkg") {
-        return (value = "内网网卡的平均每秒出包量");
+      if (value === "Error") {
+        return (value = "调用错误次数");
       }
-      if (value === "lanInpkg") {
-        return (value = "内网网卡的平均每秒入包量");
+      if (value === "ConcurrentExecutions") {
+        return (value = "并发执行次数");
       }
-      if (value === "WanOuttraffic") {
-        return (value =
-          "外网平均每秒出流量，最小粒度数据为10秒总流量/10秒 计算得出");
+      if (value === "ConfigMem") {
+        return (value = "配置内存");
       }
-      if (value === "WanIntraffic") {
-        return (value = "外网平均每秒入流量");
+      if (value === "FunctionErrorPercentage") {
+        return (value = "函数错误率");
       }
-      if (value === "AccOuttraffic") {
-        return (value = "外网网卡的平均每秒出流量");
+      if (value === "Http2xx") {
+        return (value = "正确调用次数");
       }
-      if (value === "WanOutpkg") {
-        return (value = "外网平均每秒出包量");
+      if (value === "Http432") {
+        return (value = "资源超过限制");
       }
-      if (value === "WanInpkg") {
-        return (value = "外网平均每秒入包量");
+      if (value === "Http433") {
+        return (value = "函数执行超时");
       }
-      if (value === "CPUUsage") {
-        return (value =
-          "CPU利用率是通过CVM子机内部监控组件采集上报，数据更加精准");
+      if (value === "Http434") {
+        return (value = "内存超过限制");
       }
-      if (value === "CPULoadAvg") {
-        return (value =
-          "1分钟内CPU平均负载，取 /proc/loadavg 第一列数据（windows操作系统无此指标），依赖监控组件安装采集");
+
+      if (value === "Http4xx") {
+        return (value = "函数运行错误次数，按粒度（1分钟、5分钟）统计求和");
       }
-      if (value === "MemUsed") {
-        return (value =
-          "使用的内存量，不包括系统缓存和缓存区占用内存，依赖监控组件安装采集");
+      if (value === "Invocation") {
+        return (value = "函数调用次数");
       }
-      if (value === "MemUsage") {
-        return (value =
-          "用户实际使用的内存量与总内存量之比，不包括缓冲区与系统缓存占用的内存");
+      if (value === "Mem") {
+        return (value = "运行内存");
       }
-      if (value === "TcpCurrEstab") {
-        return (value =
-          "处于 ESTABLISHED 状态的 TCP 连接数量，依赖监控组件安装采集");
+      if (value === "MemDuration") {
+        return (value = "时间内存");
+      }
+      if (value === "OutFlow") {
+        return (value = "外网出流量");
+      }
+      if (value === "ServerErrorPercentage") {
+        return (value = "平台错误率");
+      }
+      if (value === "Syserr") {
+        return (value = "系统内部错误次数");
+      }
+      if (value === "Throttle") {
+        return (value = "函数运行受限次数");
       }
       if (value === "") {
         return (value = "");

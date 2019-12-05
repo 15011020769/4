@@ -158,6 +158,7 @@
   </div>
 </template>
 <script>
+import { FUN_LOG,INVOKE,SCF_DETAILS } from '@/constants'
 export default {
   data() {
     return {
@@ -214,9 +215,8 @@ export default {
       if (functionName != "" && functionName != null) {
         params["FunctionName"] = functionName;
       }
-      let url = "scf2/GetFunction";
       this.axios
-        .post(url, params)
+        .post(SCF_DETAILS, params)
         .then(res => {
           let _this = this;
           this.functionData = res.Response;
@@ -241,9 +241,8 @@ export default {
       if (functionName != "" && functionName != null) {
         params["FunctionName"] = functionName;
       }
-      let url = "scf2/UpdateFunctionCode";
       this.axios
-        .post(url, params)
+        .post(UPD_FUN_CODE, params)
         .then(res => {})
         .catch(error => {
           console.log(error);
@@ -266,9 +265,8 @@ export default {
       if (functionName != "" && functionName != null) {
         params["FunctionName"] = functionName;
       }
-      let url = "scf2/Invoke";
       this.axios
-        .post(url, params)
+        .post(INVOKE, params)
         .then(res => {
           let _this = this;
           this.FunctionRequestId = res.Response.Result.FunctionRequestId;
@@ -284,9 +282,8 @@ export default {
           if (functionName != "" && functionName != null) {
             params["FunctionName"] = functionName;
           }
-          let url = "scf2/GetFunctionLogs";
           this.axios
-            .post(url, params)
+            .post(FUN_LOG, params)
             .then(res => {
               this.ResData = res.Response.Data;
               // 从腾讯云产品执行交易分析，如果日志为空从新查询，一般查询10多次日志就出来
