@@ -8,15 +8,18 @@
       <p>访问管理对您的敏感信息进行安全升级保护，您可以点击列表中【详情】列下拉按钮【▶】查看用户的身份安全状态、已加入组以及消息订阅等更多信息。您也可以点击用户名进入用户详细信息中查看或编辑。</p>
     </div>
     <div class="operation">
-      <button class="addUser">新增用户</button>
-      <!-- <el-select
-        size="mini"
-        placeholder="更多操作"
-        class="select"
-      >
-        <el-option size="mini">添加用户</el-option>
-        <el-option size="mini">删除</el-option>
-      </el-select> -->
+      <button class="addUser" @click="addUser">新增用户</button>
+     
+      <template>
+  <el-select v-model="value" placeholder="请选择" @change="select" class="select">
+    <el-option
+      v-for="item in options"
+      :key="item.value"
+      :label="item.label"
+      :value="item.value">
+    </el-option>
+  </el-select>
+</template>
       <el-input  placeholder="支持搜索用户名" size="small" class="inputSearch">
         <i slot="suffix" class="el-input__icon el-icon-search"></i>
       </el-input>
@@ -97,7 +100,24 @@ import { USER_LIST } from '@/constants';
 export default {
   data() {
     return {
-      tableData: []
+      tableData: [],
+        options: [{
+          value: '选项1',
+          label: '黄金糕'
+        }, {
+          value: '选项2',
+          label: '双皮奶'
+        }, {
+          value: '选项3',
+          label: '蚵仔煎'
+        }, {
+          value: '选项4',
+          label: '龙须面'
+        }, {
+          value: '选项5',
+          label: '北京烤鸭'
+        }],
+        value: ''
     };
   },
   methods: {
@@ -109,6 +129,13 @@ export default {
         this.tableData = data.Response.Data;
         console.log(data);
       });
+    },
+    //添加用户路由跳转
+    addUser(){
+        this.$router.push('/adduserNew')
+    },
+    select(){
+       console.log(this.value)
     }
   },
   created(){
