@@ -39,14 +39,22 @@ export default new Router({
       keepAlive: true
     }
   },
-  // {
-  //   path: '/UserList', // 用户列表
-  //   name: 'UserList',
-  //   component: () => import( /* webpackChunkName: "Cam" */ './UserList/UserList.vue'),
-  //   meta: {
-  //     keepAlive: true
-  //   }
-  // },
+  {
+    path: '/adduserlist',
+    name: 'adduserList',
+    component: () => import( /* webpackChunkName: "Cam" */ './UserListNew/addUser/adduserList'),
+    meta: {
+      keepAlive: true
+    }
+  },
+  {
+    path: '/UserList', // 用户列表
+    name: 'UserList',
+    component: () => import( /* webpackChunkName: "Cam" */ './UserList/UserList.vue'),
+    meta: {
+      keepAlive: true
+    }
+  },
   {
     path: '/addPolicyToUser', // 用户添加到策略
     name: 'addPolicyToUser',
