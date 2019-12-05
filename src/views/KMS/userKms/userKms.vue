@@ -397,7 +397,8 @@ export default {
       }
       let params = {
         Version: "2019-01-18",
-        Region: "ap-taipei"
+        Region: "ap-taipei",
+        Limit:100
       };
       // this.axios.post('kms2/ListKeys', params).then(res => {
 

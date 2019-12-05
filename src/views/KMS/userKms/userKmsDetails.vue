@@ -91,7 +91,7 @@
                           <el-option label="RSAES_OAEP_SHA_1" value="RSAES_OAEP_SHA_1"></el-option>
                           <el-option label="RSAES_OAEP_SHA_256" value="RSAES_OAEP_SHA_256"></el-option>
                         </el-select>
-                        <el-button>下载</el-button>
+                        <el-button @click="downloadTxt1">下载</el-button>
                       </span>
                     </div>
                   </div>
@@ -204,6 +204,8 @@ export default {
       Ciphertext: "",//请输入密文
       disableTextarea: true,//解密加密第二框
       downLoadText: '',//'执行加解密之后的下载框'
+      downLoadText1: '',//'执行加解密之后的下载框'
+      downLoadText2: '',//'执行加解密之后的下载框'
       thisSuanType: 'RSA_2048',//算法类型
       thisAddSuan: 'RSAES_PKCS1_V1_5',//加密算法
       thisStepOne: true,//第一步
@@ -429,6 +431,35 @@ export default {
     downloadTxt() {
       this.exportRaw(this.projectDetail.KeyId + '.txt', this.downLoadText)
     },
+
+    //密钥参数下载
+    downloadTxt1() {
+       let params = {
+        Version: '2019-01-18',
+        Region: 'ap-taipei',
+        KeyId: this.projectDetail.KeyId,
+        WrappingAlgorithm: this.thisAddSuan,
+        WrappingKeySpec: this.thisSuanType
+      };
+      this.axios.post(GET_CMK, params).then(res => {
+        this.GetParameters = res.Response
+        console.log(this.GetParameters)
+        this.downLoadText1 = this.GetParameters.ImportToken
+        this.downLoadText2 = this.GetParameters.PublicKey
+        this.exportRaw('ImportToken' + '.txt', this.downLoadText1)
+        this.exportRaw('wrappingKey' + '.txt', this.downLoadText2)
+        var README = ''
+        README+='算法类型：'+this.thisSuanType+'\n'+
+        '加密算法：'+this.thisAddSuan+'\n'+
+        '加密公钥文件：wrappingKey'+'\n'+
+        '导入令牌文件：ImportToken'+'\n'+
+        '密钥导入材料过期时间：'+this.timestampToTime(this.GetParameters.ParametersValidTo)
+        this.exportRaw('README' + '.txt', README)
+
+      })
+      
+    },
+
     //下载文件函数
     fakeClick(obj) {
       var ev = document.createEvent("MouseEvents");
@@ -448,19 +479,7 @@ export default {
     nextStepOne() {
       this.thisStepOne = false;
       this.thisStepThree = false;
-      let params = {
-        Version: '2019-01-18',
-        Region: 'ap-taipei',
-        KeyId: this.projectDetail.KeyId,
-        WrappingAlgorithm: this.thisAddSuan,
-        WrappingKeySpec: this.thisSuanType
-      };
-      console.log(params)
-      this.axios.post(GET_CMK, params).then(res => {
-        this.GetParameters = res.Response
-        console.log(this.GetParameters)
-        this.thisStepTwo = true;
-      })
+      this.thisStepTwo = true;
     },
     //第二步的下一步按钮\导入密钥按钮
     nextStepTwo() {
