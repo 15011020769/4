@@ -14,9 +14,13 @@
       <el-menu-item index="3">{{$t("COM.COM.document")}}</el-menu-item>
       <el-submenu v-if="loginStatus" index="6" class="right-item user-info">
         <template slot="title">{{$t("COM.COM.userCenter")}}</template>
+        <!-- 费用中心 -->
         <el-menu-item index="6-2" class="count-li">{{$t("COM.COM.bill")}}</el-menu-item>
+        <!-- 消息中心 -->
         <el-menu-item index="6-6" class="count-li">{{$t("COM.COM.info")}}</el-menu-item>
+        <!-- 返回 -->
         <el-menu-item index="6-4" class="count-li">{{$t("COM.COM.back")}}</el-menu-item>
+        <!-- 退出 -->
         <el-menu-item index="6-3" class="count-li">{{$t("COM.COM.h")}}</el-menu-item>
       </el-submenu>
       <!-- 免费注册 -->
@@ -60,7 +64,7 @@ export default {
   mounted() {
     this.loginStatus = !!this.$cookie.get('token')
     this.username = this.$cookie.get('username') || '我的工作台'
- 
+
   },
   methods: {
     Show() {
@@ -171,36 +175,26 @@ export default {
           type: 'warning'
         })
           .then(() => {
-            // 退出我们的系统
-            clearLoginInfo()
-            this.loginStatus = !!this.$cookie.get('token')
-            // 退出台湾的系统
-            // this.$http({
-            //   url: `${window.SITE_CONFIG['clientUrl']}taifucloud/account/manage/logoutActive`,
-            //   method: 'post',
-            //   params: this.$http.adornParams({
-            //     "QcloudUin": this.$cookie.get('uin'),
-            //     "SubAccountname": ""
-            //   })
-            // }).then(({ data }) => {
-            //   if (data.data.state) {
-            //     this.$router.push({
-            //       name: 'homepage'
-            //     })
-            //     this.$cookie.set('uin', this.getQueryString('uin'))
-            //     this.$cookie.set('uuid', this.getQueryString('token'))
-            //     this.$cookie.set('token', this.getQueryString('token'))
-            //     this.$cookie.set('userType', data.data.userType)
-            //   } else {
-            //     this.$message.error('登录失败，请重新登录');
-            //     setTimeout(() => {
-            //       window.location.href = window.SITE_CONFIG['loginUrl']
-            //     }, 1000);
-            //   }
-            // })
-            window.location.href = process.env.VUE_APP_loginUrl
+            let params = {
+              "QcloudUin": this.$cookie.get('uin')
+            }
+            this.axios
+              .post(`${process.env.VUE_APP_adminUrl}taifucloud/account/manage/logoutActive`, params)
+              .then(data => {
+                if (data.RetCode === '00') {
+                  // 退出我们的系统
+                  clearLoginInfo()
+                  this.loginStatus = !!this.$cookie.get('uuid')
+                  // 退出台湾的系统成功 跳转到登录
+                  window.location.href = process.env.VUE_APP_loginUrl
+                } else {
+                  this.$message.error('退出異常，請重試');
+                }
+              })
           })
-          .catch(() => { })
+          .catch(() => {
+            this.$message.error('退出異常，請重試');
+          })
       }
 
     }
