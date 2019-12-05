@@ -612,7 +612,7 @@ export default {
       let params = {
         Action: "GetFunction",
         Version: "2018-04-16",
-        Region: this.$cookie.get("regionv2")
+        Region: 'ap-guangzhou'//this.$cookie.get("regionv2")
       };
       let functionName = this.$route.query.functionName;
       // functionName = 'tttt'
@@ -670,7 +670,7 @@ export default {
     getfunction() {
       let params = {
         Version: "2018-04-16",
-        Region: this.$cookie.get("regionv2"),
+        Region: 'ap-guangzhou',//this.$cookie.get("regionv2"),
         Action: "GetFunction"
       };
       let functionName = this.$route.query.functionName;
