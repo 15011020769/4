@@ -32,7 +32,7 @@ export default new Router({
   },
   //新新建用户
   {
-    path: '/adduser',
+    path: '/adduserNew',
     name: 'adduser',
     component: () => import( /* webpackChunkName: "Cam" */ './UserListNew/addUser'),
     meta: {
