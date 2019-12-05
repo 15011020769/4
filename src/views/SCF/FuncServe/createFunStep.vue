@@ -78,6 +78,24 @@
             <div class="codeContent">{{formShowable.codeContent}}</div>
           </el-form-item>
         </el-form>
+        <div>
+          <p v-if="senior" class="senior" @click="_senior">
+            <i class="el-icon-arrow-down"></i>
+            高级配置
+          </p>
+          <p v-if="!senior" class="senior" @click="_senior">
+            <i class="el-icon-arrow-up"></i>
+            高级配置
+          </p>
+          <div v-if="!senior">
+            <div>
+              <p>环境变量</p>
+              <div></div>
+            </div>
+          </div>
+        </div>
+
+
       </div>
       <el-button class="prevStep" @click="prevStep">上一步</el-button>
       <el-button class="compileSucc" @click="compileSucc()">完成</el-button>
@@ -92,6 +110,7 @@
   export default {
     data() {
       return {
+        senior: true,
         DemoId: '',
         formShowable: {
           funNameStep: "",
@@ -130,6 +149,9 @@
           path: "/createFun"
         });
       },
+      _senior() {
+        this.senior = !this.senior
+      },
       GetTemplateDetail() { //获取函数模板详情
         let param = {
           Region: this.$cookie.get('regionv2'),
@@ -164,6 +186,11 @@
 
 </script>
 <style lang="scss" scoped>
+  .senior {
+    color: #006eff;
+    cursor: pointer;
+  }
+
   .allConStep>>>.el-input {
     width: 200px;
   }
