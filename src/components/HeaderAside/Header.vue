@@ -24,6 +24,8 @@
         <!-- 退出 -->
         <el-menu-item index="6-3" class="count-li">{{$t("COM.COM.h")}}</el-menu-item>
       </el-submenu>
+      <!-- 控制台 -->
+      <el-menu-item index="8" class="right-item">{{$t("COM.COM.console")}}</el-menu-item>
     </el-menu>
 
     <transition name="hehe">
