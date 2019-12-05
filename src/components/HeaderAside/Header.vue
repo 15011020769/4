@@ -13,7 +13,7 @@
       <!-- 文档中心 -->
       <el-menu-item index="3">{{$t("COM.COM.document")}}</el-menu-item>
       <!-- 用户中心 -->
-      <el-submenu v-if="loginStatus" index="6" class="right-item user-info">
+      <el-submenu index="6" class="right-item user-info">
         <template slot="title">{{$t("COM.COM.userCenter")}}</template>
         <!-- 费用中心 -->
         <el-menu-item index="6-2" class="count-li">{{$t("COM.COM.bill")}}</el-menu-item>
