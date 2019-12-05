@@ -22,23 +22,19 @@
     <div class="cam_button">
       <el-row class="cam-lt">
         <el-button size="small" type="primary" @click="NewUser">{{$t('CAM.CAM.userList.addUser')}}</el-button>
-        <template>
-          <el-select
-            size="small"
-            v-model="value"
-            :placeholder="$t('CAM.CAM.userList.moreOperation')"
-            style="padding-left:20px;"
-          >
-            <el-option
-              v-for="item in options"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            ></el-option>
-          </el-select>
-        </template>
+        <el-dropdown :hide-on-click="false" style="margin-left:20px;">
+          <span class="el-dropdown-link" style="color: #3E8EF7">
+            请选择
+            <i class="el-icon-arrow-down el-icon--right"></i>
+          </span>
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item>
+              <el-button type="text" style="color:#000" @click="dialogVisible=true">添加到组</el-button>
+            </el-dropdown-item>
+            <el-button type="text" style="color:#000;padding-left:20px;" @click="deleteMoreUser">删除</el-button>
+          </el-dropdown-menu>
+        </el-dropdown>
       </el-row>
-
       <div class="head-container">
         <!-- 搜索 -->
         <el-input
@@ -102,8 +98,9 @@
     <el-table
       :data="tableData.filter(data => !search || data.Name.toLowerCase().includes(search.toLowerCase()))"
       style="width: 96%; margin: 0 auto;"
+      @selection-change="handle"
     >
-      <el-table-column type="selection" width="55"></el-table-column>
+      <el-table-column prop="Uid" type="selection" width="55"></el-table-column>
       <el-table-column type="expand" :label="$t('CAM.CAM.userList.userDetails')" width="50">
         <template slot-scope="scope">
           <el-form label-position="left" inline class="demo-table-expand" :model="form">
@@ -322,7 +319,7 @@
         </div>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button size="small" type="primary" @click="dialogVisible = false">确 定</el-button>
+        <el-button size="small" type="primary" @click="sureAddUser">确 定</el-button>
         <el-button size="small" @click="dialogVisible = false">取 消</el-button>
       </span>
     </el-dialog>
@@ -480,17 +477,18 @@
       </div>
     </el-dialog>
     <div
-      style="width:96%; margin:0 auto; background:#fff;padding:10px;display:flex;justify-content: space-between;line-height:30px"
+      style="width:96%;margin:0 auto;background:#fff;padding:10px;display:flex;justify-content: space-between;line-height:30px"
     >
       <div>
         <span style="font-size:12px;color:#888">已选 0 项，共 3 项</span>
       </div>
       <div>
         <el-pagination
-          :page-sizes="[10, 20, 30, 40]"
-          :page-size="10"
-          layout="sizes, prev, pager, next"
-          :total="40"
+          @size-change="sizeChange"
+          @current-change="pageChange"
+          :current-page="Page+1"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="total"
         ></el-pagination>
       </div>
     </div>
@@ -503,7 +501,8 @@ import {
   USER_GROUP,
   DELETE_USER,
   QUERY_USER,
-  POLICY_USER
+  POLICY_USER,
+  ADD_USERTOGROUP
 } from "@/constants";
 export default {
   props: {
@@ -543,9 +542,6 @@ export default {
       return data;
     };
     return {
-      form: {
-        name: "yjy"
-      },
       titles: "",
       search: "",
       deleteName: "",
@@ -569,11 +565,7 @@ export default {
       subscribe: false,
       dialogVisible: false,
       checked: true,
-      tableData: [
-        {
-          Name: ""
-        }
-      ],
+      tableData: [],
       options: [
         {
           value: "选项1",
@@ -595,15 +587,67 @@ export default {
         desc: ""
       },
       valArr: [],
+      userVal: [],
       Uin: "",
-      Uid: ""
+      Uid: "",
+      Page: 0,
+      size: 10,
+      total: 0,
+      selNum: 0
     };
   },
   methods: {
+    handle(val) {
+      this.userVal = val;
+      console.log(val);
+    },
+    //获取每行用户的name
+    todeleteShow(user) {
+      this.deleteName = user.Name;
+      this.deleteShow = true;
+      console.log(user.Name);
+    },
+    //批量删除用户
+    deleteMoreUser() {
+      var delIndex = [];
+      this.userVal.forEach(item => {
+        delIndex.unshift(item.Name);
+      });
+      delIndex.forEach(item => {
+        let params = {
+          Version: "2019-01-16",
+          Name: this.tableData.Name
+        };
+        this.axios.post(DELETE_USER, params).then(data => {
+          console.log(data);
+          this.selectData();
+        });
+      });
+    },
+    addTeamss() {
+      console.log(123);
+    },
     //获取uid
     addUser(uid) {
       this.Uid = uid;
       this.dialogVisible = true;
+    },
+    sureAddUser() {
+      // addUser.forEach(item => {
+      //    let params = {
+      //      Version:"2019-01-16",
+      //    };
+      //    console.log(this.valArr)
+      //    for(let i=0; i<this.valArr.length; i++){
+      //     //  Info.0.Uid
+      //      params['Info.' + i + '.Uid'] = Uid
+      //      params['Info.' + i + '.GroupId'] = groupId
+      //    }
+      //    this.axios.post(ADD_USERTOGROUP,params).then(data=>{
+      //      console.log(data)
+      //    })
+      // })
+      this.dialogVisible = false;
     },
     //获取uin
     getRow(uin) {
@@ -616,6 +660,7 @@ export default {
       console.log(this.valArr);
       this.valArr.forEach(item => {
         addIndex.push(item);
+        console.log(item);
       });
       addIndex.forEach(item => {
         let params = {
@@ -631,11 +676,6 @@ export default {
     },
     change(e) {
       this.$forceUpdate();
-    },
-    //获取每行用户的name
-    todeleteShow(user) {
-      this.deleteName = user.Name;
-      this.deleteShow = true;
     },
     //删除子用户
     sureDelet() {
@@ -698,6 +738,7 @@ export default {
       };
       this.axios.post(USER_LIST, userList).then(data => {
         this.tableData = data.Response.Data;
+        console.log(data);
       });
     },
 
@@ -747,6 +788,15 @@ export default {
           done();
         })
         .catch(_ => {});
+    },
+    sizeChange(e) {
+      this.page = 0;
+      this.size = e;
+      this.init();
+    },
+    pageChange(e) {
+      this.page = e;
+      this.init();
     }
   },
   created() {

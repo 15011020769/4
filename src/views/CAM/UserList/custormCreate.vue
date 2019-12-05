@@ -2,9 +2,9 @@
   <div class="Cam">
     <div class="top">
       <i
-      @click="backoff"
-      class="el-icon-back"
-      style="padding-right: 10px;
+        @click="backoff"
+        class="el-icon-back"
+        style="padding-right: 10px;
       font-size: 130%;
       color: #006eff;
       font-weight: 900;
@@ -14,13 +14,20 @@
     </div>
     <div class="box-ctr">
       <div class="step">
-        <el-steps :active="active" direction="vertical" simple :space="200" style="margin-right: 44%"  finish-status="success">
+        <el-steps
+          :active="active"
+          direction="vertical"
+          simple
+          :space="200"
+          style="margin-right: 44%"
+          finish-status="success"
+        >
           <el-step :title="$t('CAM.CAM.userList.userInformation')"></el-step>
           <el-step :title="$t('CAM.CAM.userList.userPermissions')"></el-step>
           <el-step :title="$t('CAM.CAM.userList.userInfor')"></el-step>
         </el-steps>
       </div>
-      <div >
+      <div>
         <div class="tea-alert">
           <div class="tea-alert__info">{{$t('CAM.CAM.userList.userWhy')}}</div>
         </div>
@@ -32,29 +39,37 @@
                 ref="multipleTable"
                 :data="tableData"
                 tooltip-effect="dark"
-                row-style="height:50px" :header-cell-style="{padding:'0'}" cell-style="padding:0" border style="width: 100%"
+                row-style="height:50px"
+                :header-cell-style="{padding:'0'}"
+                cell-style="padding:0"
+                border
+                style="width: 100%"
               >
                 <el-table-column prop="name" :label="$t('CAM.CAM.userList.setName')">
                   <template slot-scope="scope">
                     <el-input size="mini" v-model="scope.row.name"></el-input>
                   </template>
                 </el-table-column>
-                <el-table-column :label="$t('CAM.CAM.userList.setNote')" show-overflow-tooltip prop="mailbox">
+                <el-table-column
+                  :label="$t('CAM.CAM.userList.setNote')"
+                  show-overflow-tooltip
+                  prop="mailbox"
+                >
                   <template slot-scope="scope">
                     <el-input size="mini" v-model="scope.row.mailbox"></el-input>
                   </template>
                 </el-table-column>
                 <el-table-column :label="$t('CAM.CAM.userList.setPhone')" width="380">
                   <template slot-scope="scope">
-                  <el-select size="mini" v-model="value" placeholder="请选择">
-                    <el-option
-                      v-for="item in options"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.value"
-                    ></el-option>
-                  </el-select>
-                  <el-input size="mini" class="hanlin wid" v-model="scope.row.iphone"></el-input>
+                    <el-select size="mini" v-model="value" placeholder="请选择">
+                      <el-option
+                        v-for="item in options"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value"
+                      ></el-option>
+                    </el-select>
+                    <el-input size="mini" class="hanlin wid" v-model="scope.row.iphone"></el-input>
                   </template>
                 </el-table-column>
                 <el-table-column prop="remarks" :label="$t('CAM.CAM.userList.setEmail')">
@@ -89,32 +104,55 @@
             <el-form-item v-if="checked1" label="控制台密码" prop="type">
               <div class="visits">
                 <template>
-                  <p><el-radio v-model="radio" label="1">自动生成密码</el-radio></p>
-                  <p><el-radio v-model="radio" label="2">自定义密码</el-radio></p>
-                  <p><el-input v-if="radio == 2" class="wid" size="small" placeholder="" v-model="input" show-password></el-input></p>
-                </template>         
+                  <p>
+                    <el-radio v-model="radio" label="1">自动生成密码</el-radio>
+                  </p>
+                  <p>
+                    <el-radio v-model="radio" label="2">自定义密码</el-radio>
+                  </p>
+                  <p>
+                    <el-input
+                      v-if="radio == 2"
+                      class="wid"
+                      size="small"
+                      placeholder
+                      v-model="input"
+                      show-password
+                    ></el-input>
+                  </p>
+                </template>
               </div>
             </el-form-item>
             <!-- 勾选复选框显示隐藏部分 -->
             <el-form-item v-if="checked1" label="需要重置密码" prop="type">
               <div class="visits">
-                  <p><el-checkbox v-model="checked2">用户必须在下次登录时重置密码</el-checkbox></p>
+                <p>
+                  <el-checkbox v-model="checked2">用户必须在下次登录时重置密码</el-checkbox>
+                </p>
               </div>
             </el-form-item>
             <el-form-item v-if="checked1" label="登录保护" prop="type">
               <div class="visits">
                 <template>
-                  <p><el-radio v-model="radio2" label="3">启用虚拟 MFA 设备校验</el-radio></p>
-                  <p><el-radio v-model="radio2" label="4">不开启</el-radio></p>
-                </template>         
+                  <p>
+                    <el-radio v-model="radio2" label="3">启用虚拟 MFA 设备校验</el-radio>
+                  </p>
+                  <p>
+                    <el-radio v-model="radio2" label="4">不开启</el-radio>
+                  </p>
+                </template>
               </div>
             </el-form-item>
             <el-form-item v-if="checked1" label="操作保护" prop="type">
               <div class="visits">
                 <template>
-                  <p><el-radio v-model="radio3" label="5">启用虚拟 MFA 设备校验</el-radio></p>
-                  <p><el-radio v-model="radio3" label="6">不开启</el-radio></p>
-                </template>        
+                  <p>
+                    <el-radio v-model="radio3" label="5">启用虚拟 MFA 设备校验</el-radio>
+                  </p>
+                  <p>
+                    <el-radio v-model="radio3" label="6">不开启</el-radio>
+                  </p>
+                </template>
               </div>
             </el-form-item>
           </el-form>
@@ -122,52 +160,70 @@
       </div>
       <div v-show="active==2">
         <template>
-          <Userprivileges/>
+          <Userprivileges />
         </template>
       </div>
       <div v-show="active==3">
         <template>
-          <Reviewinformation/>
+          <Reviewinformation />
         </template>
       </div>
       <div>
-        <el-button style="margin-top: 12px;" type="primary" size="medium" @click="prev()" v-if="active==2 || active==3">上一步</el-button>
-        <el-button style="margin-top: 12px;" type="primary" size="medium" @click="next()" v-if="active==0 || active==1 || active==2">下一步</el-button>
-        <el-button style="margin-top: 12px;" type="primary" size="medium" @click="complete()" v-if="active==3">完成</el-button>
+        <el-button
+          style="margin-top: 12px;"
+          type="primary"
+          size="medium"
+          @click="prev()"
+          v-if="active==2 || active==3"
+        >上一步</el-button>
+        <el-button
+          style="margin-top: 12px;"
+          type="primary"
+          size="medium"
+          @click="next()"
+          v-if="active==0 || active==1 || active==2"
+        >下一步</el-button>
+        <el-button
+          style="margin-top: 12px;"
+          type="primary"
+          size="medium"
+          @click="complete()"
+          v-if="active==3"
+        >完成</el-button>
       </div>
+    </div>
   </div>
-</div>
 </template>
 
 <script>
-import Userprivileges from './Userprivileges'
-import Reviewinformation from './Reviewinformation'
-import { ADD_USER } from '@/constants'
+import Userprivileges from "./Userprivileges";
+import Reviewinformation from "./Reviewinformation";
+import { ADD_USER } from "@/constants";
 export default {
-  components:{
+  components: {
     Userprivileges,
     Reviewinformation
   },
   data() {
     return {
-      show:false,
-      input: '',
-      inpsd:false,
+      show: false,
+      input: "",
+      inpsd: false,
       checked: false,
       checked1: false,
       checked2: true,
       checked3: true,
-      radio: '1',
-      radio2: '3',
-      radio3: '5',
+      radio: "1",
+      radio2: "3",
+      radio3: "5",
       active: 1,
       tableData: [
         {
           name: "",
           remarks: "",
           mailbox: "",
-          iphone:"",
-          value:""
+          iphone: "",
+          value: ""
         }
       ],
       value1: false,
@@ -195,26 +251,26 @@ export default {
         }
       ],
       value: ""
-    }
+    };
   },
 
   methods: {
     //添加子用户
-    complete(){
-       let params = {
-         Version:'2019-01-16',
-         Name:this.tableData[0].name,
-         PhoneNum:this.tableData[0].iphone,
-         Remark:this.tableData[0].mailbox,
-         Email:this.tableData[0].remarks
-       }
-       this.axios.post(ADD_USER,params).then((data)=>{
-           console.log(data)
-       })
+    complete() {
+      let params = {
+        Version: "2019-01-16",
+        Name: this.tableData[0].name,
+        PhoneNum: this.tableData[0].iphone,
+        Remark: this.tableData[0].mailbox,
+        Email: this.tableData[0].remarks
+      };
+      this.axios.post(ADD_USER, params).then(data => {
+        console.log(data);
+      });
     },
     prev() {
       --this.active;
-      if(this.active < 0) this.active = 0;
+      if (this.active < 0) this.active = 0;
     },
     next() {
       if (this.active++ > 3) this.active = 0;
@@ -232,13 +288,11 @@ export default {
     resetForm(formName) {
       this.$refs[formName].resetFields();
     },
-    backoff(){
+    backoff() {
       this.$router.push({ path: "UserList" });
     }
   },
-  created() {
-    
-  }
+  created() {}
 };
 </script>
 
@@ -266,7 +320,6 @@ export default {
     height: 59px;
     margin: 0px auto 20px;
     padding: 0px 0px 80px;
-    
   }
   .tea-alert {
     padding: 10px 30px 10px 20px;
@@ -319,11 +372,11 @@ export default {
     margin-left: 10px;
     width: 170px;
   }
-  .wids{
+  .wids {
     width: 120px;
     margin-right: 10px;
   }
-  .visits p{
+  .visits p {
     height: 20px;
     line-height: 6px;
     padding-left: 20px;
@@ -332,13 +385,13 @@ export default {
     color: #888;
     margin: 10px 0 10px 0;
   }
-  .el-steps--simple{
+  .el-steps--simple {
     background-color: #fff;
   }
-  .el-steps--simple{
-    padding:0 8px;
+  .el-steps--simple {
+    padding: 0 8px;
   }
-  .step{
+  .step {
     height: 45px;
     padding: 0;
   }
