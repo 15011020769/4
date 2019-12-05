@@ -117,7 +117,7 @@
           runMoentStep: "",
           descStep: "",
           runRole: "",
-          runFun: "index.main_handler",
+          runFun: "",
           tipFun: "在线编辑",
           codeContent: ""
         }
@@ -161,8 +161,9 @@
         this.axios
           .post(TEMPLATE_DETAIL, param)
           .then(data => {
+            let DataBeginDetail = JSON.parse(data.Response.DemoConfig)
+            this.formShowable.runFun = DataBeginDetail['serverless-cloud-function-application'].functions.handler
             this.formShowable.codeContent = data.Response.DemoCode
-
           })
       },
       //添加子函数

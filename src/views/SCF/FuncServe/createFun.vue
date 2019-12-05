@@ -236,7 +236,7 @@
 
             this.Detaildata = data.Response
             let DataBeginDetail = JSON.parse(data.Response.DemoConfig)
-            console.log(DataBeginDetail)
+
             this.DataBeginDetail = DataBeginDetail['serverless-cloud-function-application']
           }).then(() => {
             this.dialogVisible = true;
