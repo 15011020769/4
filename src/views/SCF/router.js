@@ -9,7 +9,7 @@ import funSeverDetail from './FuncServe/funSeverDetail'
 Vue.use(Router)
 
 export default new Router({
-  mode: 'history',
+  // mode: 'history',
   base: process.env.BASE_URL,
   redirect: {
     name: 'overView'
@@ -59,6 +59,6 @@ export default new Router({
         keepAlive: true
       }
     }
-    
+
   ]
 })

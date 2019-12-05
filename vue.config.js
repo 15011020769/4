@@ -1,25 +1,4 @@
 let product = {
-  CVM: {
-    entry: 'src/views/CVM/main.js', // page 的入口
-    template: 'src/public/index.html', // 模板来源
-    filename: 'index.html', // 在 dist/index.html 的输出
-    title: '台富云-云服务器', // 当使用 title 选项时，template 中的 title 标签需要是 <title><%= htmlWebpackPlugin.options.title %></title>
-    chunks: ['chunk-vendors', 'chunk-common', 'CVM'] // 在这个页面中包含的块，默认情况下会包含,提取出来的通用 chunk 和 vendor chunk。
-  },
-  TKE: {
-    entry: 'src/views/TKE/main.js', // page 的入口
-    template: 'src/public/index.html', // 模板来源
-    filename: 'index.html', // 在 dist/index.html 的输出
-    title: '台富云-容器服务', // 当使用 title 选项时，template 中的 title 标签需要是 <title><%= htmlWebpackPlugin.options.title %></title>
-    chunks: ['chunk-vendors', 'chunk-common', 'TKE'] // 在这个页面中包含的块，默认情况下会包含,提取出来的通用 chunk 和 vendor chunk。
-  },
-  MySQL: {
-    entry: 'src/views/MySQL/main.js',
-    template: 'src/public/index.html',
-    filename: 'index.html',
-    title: '台富云-关系型数据库',
-    chunks: ['chunk-vendors', 'chunk-common', 'MySQL']
-  },
   SCF: {
     entry: 'src/views/SCF/main.js', // page 的入口
     template: 'src/public/index.html', // 模板来源
@@ -89,7 +68,14 @@ let product = {
     filename: 'index.html',
     title: '台富云-密钥管理系统',
     chunks: ['chunk-vendors', 'chunk-common', 'KMS']
-  }
+  },
+  TKE: {
+    entry: 'src/views/TKE/main.js', // page 的入口
+    template: 'src/public/index.html', // 模板来源
+    filename: 'index.html', // 在 dist/index.html 的输出
+    title: '台富云-容器服务', // 当使用 title 选项时，template 中的 title 标签需要是 <title><%= htmlWebpackPlugin.options.title %></title>
+    chunks: ['chunk-vendors', 'chunk-common', 'TKE'] // 在这个页面中包含的块，默认情况下会包含,提取出来的通用 chunk 和 vendor chunk。
+  },
 }
 let page = {}
 let productName = process.argv[3].substring(2)// 获取执行哪个文件
@@ -101,6 +87,7 @@ module.exports = {
   filenameHashing: true, // 默认情况下，生成的静态资源在它们的文件名中包含了 hash 以便更好的控制缓存。如果你无法使用 Vue CLI 生成的 index HTML，你可以通过将这个选项设为 false 来关闭文件名哈希。
   pages: page,
   productionSourceMap: false, // 生产环境 sourceMap
+  lintOnSave: false,      // 禁用eslint
   devServer: {
     open: true, // 项目构建成功之后，自动弹出页面
     host: 'localhost', // 主机名，也可以127.0.0.0 || 做真机测试时候0.0.0.0
