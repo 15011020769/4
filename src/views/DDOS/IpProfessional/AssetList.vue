@@ -65,22 +65,35 @@
                   <span>未命名</span>
                 </template>
               </el-table-column>
-              <el-table-column prop="rulesNum" label="转发规则数(个)"></el-table-column>
+              <el-table-column prop="rulesNum" label="转发规则数(个)">
+                <template slot-scope="scope">
+                  <span>0<a href="#" @click="toAccest(scope.row)">设置</a></span>
+                </template>
+              </el-table-column>
               <el-table-column prop="IpNume" label="防护IP数(个)"></el-table-column>
               <el-table-column prop="origin" label="初始区域"></el-table-column>
               <el-table-column prop="status" label="状态"></el-table-column>
               <el-table-column prop="dataTime" label="到期时间"></el-table-column>
-              <el-table-column prop="action" label="操作" width="180">
+              <el-table-column prop="action" label="操作" width="230">
                 <template slot-scope="scope">
-                  <el-button
+                  <!-- <el-button
                     @click.native.prevent="deleteRow(scope.$index, scope.row)"
                     type="text"
                     size="small"
-                  >删除</el-button>
+                  >删除</el-button> -->
+                  <a class="marginRightA" href="#" @click="upgradeModel">升级</a>
+                  <a class="marginRightA" href="#" @click="RenewModel">续费</a>
+                  <a class="marginRightA" href="#">防护配置</a>
+                  <a class="marginRightA" href="#">查看报表</a>
                 </template>
               </el-table-column>
             </el-table>
+            <!-- 详情弹框 -->
             <resouseListModel :isShow="dialogResouseList" @closeListDetail="closeListDetail"/>
+            <!-- 升级弹框 -->
+            <upgradeModel :Upgrade="diaologUpgradeModel" @closeUpgradeModel="closeUpgradeModel"/>
+            <!-- 续费弹框 -->
+            <RenewModel :RenewShow="doalogRenewModel" @closeRenewModel="closeRenewModel"/>
           </div>
           <div class="tabListPage">
             <el-pagination
@@ -102,6 +115,8 @@
 
 import { RESOURCE_LIST, DDOSPOLICY_CONT, RULESETS_CONT } from "@/constants";
 import resouseListModel from './model/resouseListModel'
+import upgradeModel from './model/upgradeModel'
+import RenewModel from './model/RenewModel'
 export default {
   data() {
     return {
@@ -148,10 +163,14 @@ export default {
       comingSoon: false,//是否即将过期
       tableDataName1:'',//业务列表搜索框
       dialogResouseList:false,//资产列表详情弹框
+      diaologUpgradeModel:false,//升级弹框
+      doalogRenewModel:false,//续费弹框
     };
   },
   components:{
-    resouseListModel:resouseListModel
+    resouseListModel:resouseListModel,
+    upgradeModel:upgradeModel,
+    RenewModel:RenewModel
   },
   watch: {
     'listResouse': function () {
@@ -372,6 +391,28 @@ export default {
     //关闭列表详情
     closeListDetail(DetailShow){
       this.dialogResouseList=DetailShow
+    },
+    //转发规则个数设置按钮
+    toAccest(){
+      this.$router.push({
+        path: '/AccessConfig'
+      })
+    },
+    //升级按钮
+    upgradeModel(){
+      this.diaologUpgradeModel=true;
+    },
+    //升级弹框关闭按钮
+    closeUpgradeModel(isShow){
+      this.diaologUpgradeModel=isShow
+    },
+    //续费弹框
+    RenewModel(){
+      this.doalogRenewModel=true;
+    },
+    //续费弹框关闭按钮
+    closeRenewModel(isShow){
+      this.doalogRenewModel=isShow
     }
   }
 };
@@ -457,5 +498,8 @@ export default {
 h1{
   font-size:14px;
   color:red;
+}
+.marginRightA{
+  margin-right:10px;
 }
 </style>
