@@ -16,7 +16,7 @@ import pay from './buy/pay'
 Vue.use(Router)
 
 export default new Router({
-  mode: 'history',
+  // mode: 'history',
   base: process.env.BASE_URL,
   redirect: {
     name: 'ProtectOverview'
