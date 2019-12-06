@@ -88,9 +88,47 @@
             高级配置
           </p>
           <div v-if="!senior">
-            <div>
+            <div class="seniorbox">
               <p>环境变量</p>
-              <div></div>
+              <div>
+                <div class="Science borderNone">
+                  <p>Key</p>
+                  <p>Value</p>
+                </div>
+                <div class="Science borderNone" v-for="(item,index) in ScienceArr" :key="index">
+                  <p>
+                    <el-input v-model="item.Key" class="Scienceinput"></el-input>
+                  </p>
+                  <p>
+                    <el-input v-model="item.Value" class="Scienceinput"></el-input>
+                  </p>
+                  <p v-if="closeshow"><i class="el-icon-close closeScience" @click="CloseScience(index)"></i></p>
+                </div>
+                <div class="Science ">
+                  <p @click="AddScience" class="addScience">添加</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="seniorbox">
+              <p>网络配置</p>
+              <div>
+                <div class="Science">
+                  <p>
+                    <el-select v-model="Vpcvalue" placeholder="请选择vpc" @change="changeVpc">
+                      <el-option v-for="item in VpcOptions" :key="item.VpcId" :label="item.VpcName" :value="item.VpcId">
+                      </el-option>
+                    </el-select>
+                  </p>
+                  <p>
+                    <el-select v-model="Subnetvalue" placeholder="请选择子网">
+                      <el-option v-for="item in SubnetOptions" :key="item.SubnetId" :label="item.SubnetName"
+                        :value="item.SubnetId">
+                      </el-option>
+                    </el-select>
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -105,7 +143,9 @@
 <script>
   import {
     ADD_FUNC,
-    TEMPLATE_DETAIL
+    TEMPLATE_DETAIL,
+    VPCS_LIST,
+    SUBNET_LIST
   } from "@/constants";
   export default {
     data() {
@@ -120,7 +160,15 @@
           runFun: "",
           tipFun: "在线编辑",
           codeContent: ""
-        }
+        },
+        ScienceArr: [{}],
+        ScienceKey: '', //环境变量key
+        ScienceValue: '', //环境变量value
+        VpcOptions: [], //vpc列表
+        SubnetOptions: [], //子网列表
+        Vpcvalue: '', //vpc
+        Subnetvalue: '', //子网
+        closeshow: false //删除按钮控制
       };
     },
     computed: {
@@ -135,8 +183,27 @@
       if (this.DemoId) {
         this.GetTemplateDetail()
       }
+      this.GetVpcList()
     },
     methods: {
+      //环境添加
+      AddScience() {
+        this.ScienceArr.push({})
+        if (this.ScienceArr.length > 1) {
+          this.closeshow = true
+        } else {
+          this.closeshow = false
+        }
+      },
+      //环境删除
+      CloseScience(index) {
+        this.ScienceArr.splice(index, 1);
+        if (this.ScienceArr.length > 1) {
+          this.closeshow = true
+        } else {
+          this.closeshow = false
+        }
+      },
       //回去上一页
       backFunlist() {
         this.$router.push({
@@ -166,8 +233,41 @@
             this.formShowable.codeContent = data.Response.DemoCode
           })
       },
+      //获取vpc列表
+      GetVpcList() {
+        let param = {
+          Region: this.$cookie.get('regionv2'),
+          Version: "2017-03-12",
+        }
+        this.axios
+          .post(VPCS_LIST, param)
+          .then(data => {
+            this.VpcOptions = data.Response.VpcSet
+          })
+      },
+      //选择vpc
+      changeVpc() {
+        console.log()
+        this.GetSubnetList()
+      },
+      //获取子网列表
+      GetSubnetList() {
+        let param = {
+          Region: this.$cookie.get('regionv2'),
+          Version: "2017-03-12",
+          'Filters.0.Name': 'vpc-id',
+          'Filters.0.Values.0': this.Vpcvalue
+        }
+        this.axios
+          .post(SUBNET_LIST, param)
+          .then(data => {
+            this.SubnetOptions = data.Response.SubnetSet
+            console.log(data)
+          })
+      },
       //添加子函数
       compileSucc() {
+        console.log(this.ScienceArr)
         let params = {
           Version: "2018-04-16",
           Region: this.$cookie.get('regionv2'),
@@ -176,8 +276,15 @@
           Handler: this.formShowable.runFun,
           Runtime: this.formShowable.runMoentStep,
           Description: this.formShowable.descStep,
-          Role: this.formShowable.runRole
+          Role: this.formShowable.runRole,
+          // 'Environment.Variables.Key': this.ScienceArr.Key,
+          // 'Environment.Variables.Value': this.ScienceArr.Value
         };
+        if (this.Vpcvalue != '' && this.Subnetvalue != '') {
+          params['VpcConfig.VpcId'] = this.Vpcvalue
+          params['VpcConfig.SubnetId'] = this.Subnetvalue
+        }
+
         this.axios.post(ADD_FUNC, params).then(res => {
           console.log(res);
         });
@@ -187,6 +294,56 @@
 
 </script>
 <style lang="scss" scoped>
+  .seniorbox {
+    display: flex;
+    margin: 20px;
+
+    ::v-deep .el-input {
+      width: 170px !important;
+    }
+
+    .Science {
+      margin-left: 20px;
+      display: flex;
+      width: 415px;
+      height: 40px;
+      border: 0.5px solid #ccc;
+
+      p {
+        color: #ccc;
+        font-weight: bold;
+        flex: 1;
+        line-height: 40px;
+        padding-left: 15px;
+
+
+      }
+    }
+
+    .closeScience {
+      cursor: pointer;
+      font-size: 24px;
+      line-height: 40px;
+    }
+
+    .addScience {
+      cursor: pointer;
+    }
+
+    .borderNone {
+      border-bottom: none;
+
+
+
+      .Scienceinput {
+        width: 165px !important;
+      }
+    }
+
+
+  }
+
+
   .senior {
     color: #006eff;
     cursor: pointer;

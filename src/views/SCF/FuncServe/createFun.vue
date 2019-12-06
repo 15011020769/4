@@ -46,10 +46,10 @@
                 <p>模板函数</p>
                 <p>使用示例代码模板创建函数</p>
               </div>
-              <div class="tabBtnBox tabBtnTwo" :class="clickTab==false?'addBorderColor':''" @click="clickTab=false">
+              <!-- <div class="tabBtnBox tabBtnTwo" :class="clickTab==false?'addBorderColor':''" @click="clickTab=false">
                 <p>空白函数</p>
                 <p>使用helloworld示例创建空白函数</p>
-              </div>
+              </div> -->
             </div>
           </el-form-item>
           <div v-if="clickTab">
@@ -220,6 +220,8 @@
           .post(TEMPLATE_LIST, param)
           .then(data => {
             this.tableDataBegin = data.Response.Demos
+            this.DemoId = this.tableDataBegin[0].DemoId
+            this.isactive = 0
             this.totalItems = data.Response.TotalCount
           })
       },
@@ -251,7 +253,8 @@
         if (this.searchName !== '') {
           this.GetTemplateList()
         } else {
-          alert('请输入相关语言搜索')
+          this.$message('请输入相关语言搜索');
+
         }
       },
       // 分页开始
@@ -274,11 +277,16 @@
 
       },
       nextStep() {
+        if (this.DemoId === '') {
+          this.$message('请选择函数模板');
+
+        }
         window.sessionStorage.setItem("funNameSess", this.createFunTable.funName);
         window.sessionStorage.setItem("runMoent", this.createFunTable.runMoment);
         window.sessionStorage.setItem("DemoId", this.DemoId);
         if (this.createFunTable.funName == "") {
-          alert("函数名不能为空");
+
+          this.$message('函数名不能为空');
           return false;
         }
         this.$router.push({
