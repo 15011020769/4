@@ -62,7 +62,16 @@
     methods: {
         handleChange() {
 
-        }
+        },
+      create() {
+        // let params = {
+        //   name: this.addModel.providerName,
+        //   desc: this.addModel.remark,
+        //   SAMLMetadataDocument: ''
+        // }
+        // this.$axios.post('cam2/CreateSAMLProvider', params).then(res => {
+        // })
+      }
     }
   }
 </script>
@@ -92,6 +101,9 @@
     }
     .upload-demo{
         display: inline-block;
+    }
+    .el-input__inner{
+      width: 200px;
     }
   }
 

@@ -55,7 +55,9 @@
              <el-pagination
               @size-change="sizeChange"
               @current-change="pageChange"
-              :current-page="Page+1"
+              :current-page.sync="Page"
+              :page-sizes="[10, 20, 50, 100, 200]"
+              :page-size="rp"
               layout="total, sizes, prev, pager, next, jumper"
               :total="total"
             ></el-pagination>
@@ -91,8 +93,8 @@ export default {
       loading: true,
       tableData: [],
        // 分页
-      Page:1,
-      size:10,
+      Page: 1,
+      size: 10,
       total: 0,
       create_dialogVisible:false
     };
@@ -102,7 +104,6 @@ export default {
   },
   methods: {
     init() {
-      
       let params = {
         Action: "DescribeRoleList",
         Version: "2019-01-16",
@@ -138,6 +139,7 @@ export default {
             item.PolicyDocument = policyObj
           });
           this.tableData = resData
+          this.total = data.Response.TotalNum
           // var dataRole = JSON.parse(data.Response.List);
         }
       }).catch(error => {
@@ -192,7 +194,6 @@ export default {
       this.init()
     },
     sizeChange(e) {
-      this.page = 0
       this.size = e
       this.init()
     },

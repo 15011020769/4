@@ -16,20 +16,15 @@
           @row-click="selectedRow"
           @selection-change="handleSelectionChange"
           v-tableloadmore="tableloadmore" >
-          <el-table-column type="selection" prop="policyId" width="28"></el-table-column>
+          <el-table-column type="selection" prop="policyId" width="29"></el-table-column>
           <el-table-column prop="Description" :label="$t('CAM.CAM.Role.policyName')" show-overflow-tooltip>
             <template slot-scope="scope">
               <p>{{scope.row.PolicyName}}</p>
               <p>{{scope.row.Description}}</p>
             </template>
           </el-table-column>
-          <el-table-column prop="Type" :label="$t('CAM.CAM.Role.strategyType')" width="100">
-              <template slot-scope="scope">
-              <p v-show="scope.row.Type == 3">{{$t('CAM.CAM.Role.all')}}</p>
-              <p v-show="scope.row.Type == 2">{{$t('CAM.CAM.Role.defaultPolicy')}}</p>
-              <p v-show="scope.row.Type == 1">{{$t('CAM.CAM.Role.customPolicy')}}</p>
-            </template>  
-              <template slot="header" slot-scope="scope">
+          <el-table-column prop="Type" :label="$t('CAM.CAM.Role.strategyType')" width="130">
+            <template slot="header" slot-scope="scope">
               <el-dropdown trigger="click" @command="handleCommand" size="mini">
                 <span style="color:#909399">
                   {{ tableTitle }}
@@ -43,7 +38,12 @@
                   >{{item.label}}</el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
-            </template> 
+            </template>
+            <template slot-scope="scope">
+              <p v-show="scope.row.Type == 3">{{$t('CAM.CAM.Role.all')}}</p>
+              <p v-show="scope.row.Type == 2">{{$t('CAM.CAM.Role.defaultPolicy')}}</p>
+              <p v-show="scope.row.Type == 1">{{$t('CAM.CAM.Role.customPolicy')}}</p>
+            </template>  
           </el-table-column>
         </el-table>
       </div>
@@ -158,12 +158,7 @@ export default {
   mounted() {
     var command = 'All' // 默认查询所有策略
     this.tableloadmore(command)
-    // console.log(window.innerHeight)
-    // console.log(this.$refs.multipleOption.$el)
-    // console.log(this.$refs.multipleOption.$el.offsetTop)
     this.tableHeight = window.innerHeight - this.$refs.multipleOption.$el.offsetTop - 50;
-    // console.log(this.tableHeight)
-    // console.log(this.roleId)
   },
   methods: {
     // 获取策略方法
@@ -175,8 +170,9 @@ export default {
        if (this.strategyValue != undefined && this.strategyValue != "") {
         params["Keyword"] = this.strategyValue;
       }
-      if (command != undefined && command != '') {
-         params["Scope"] = command
+      // .value写此处，防止非策略类型切换传递其他值导致查询功能查询异常；这个查询方式使用的地方比较多，其他地方调用会传递与查询无关的参数值。
+      if (command.value != undefined && command.value != '') {
+         params["Scope"] = command.value
       }
       let url = "cam2/ListPolicies";
       this.axios.post(url, params).then(res => {
@@ -189,13 +185,12 @@ export default {
       this.handoverFlag = true
       this.tableTitle = command.label;
       if(command.value != undefined || command.value != '') {
-        this.tableloadmore(command.value)
+        this.tableloadmore(command)
       }
     },
     handleSelectionChange(val) {
       // 给右边table框赋值，只需在此处赋值即可，selectedRow方法中不写，因为单独点击复选框，只有此方法有效。
       this.policiesSelectedData = val;
-      console.log(this.policiesSelectedData)
     },
     selectedRow(row, column, event) {
       // 设置选中或者取消状态
@@ -227,7 +222,6 @@ export default {
     // 绑定权限策略到角色
     AttachRolePolicy(params) {
       this.$axios.post('cam2/AttachRolePolicy', params).then(res  => {
-        console.log(res)
       })
     }
   }
@@ -281,7 +275,7 @@ export default {
       color: #888;
       position: absolute;
       right: 2%;
-      top: 6%;
+      top: 8%;
     }
     .container-left {
       width: 48%;

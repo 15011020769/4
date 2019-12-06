@@ -123,11 +123,6 @@ export default {
     }
   },
   created() {
-    this.transfer_data_right = []
-    this.transferUserData = []
-    this.transferGroupData = []
-    this.transfer_data = []
-    this.transferArrayTemp = []
     this.getList()
   },
   mounted() {
@@ -147,6 +142,9 @@ export default {
         Action: 'ListUsers',
         Version: '2019-01-16'
       }
+      // if(this.search) {
+      //   paramsUser['Keyword'] = this.search
+      // }
       this.$axios.post('cam2/ListUsers', paramsUser).then(res => {
         this.transferArrayTemp = []
         for(let i = 0; i < res.Response.Data.length; i++){
@@ -197,6 +195,9 @@ export default {
       let paramsGroup = {
         Action: 'ListGroups',
         Version: '2019-01-16',
+      }
+      if(this.search != '') {
+        paramsGroup['Keyword'] = this.search
       }
       this.$axios.post('cam2/ListGroups', paramsGroup).then(res => {
         this.transferArrayTemp = []
@@ -355,7 +356,12 @@ export default {
       }
     },
     toQuery() {
-      this.init();
+      // if(this.commandObj.value != '' && this.commandObj.value === 'user'){
+      //   this.getUserList()
+      // }
+      if(this.commandObj.value != '' && this.commandObj.value === 'group'){
+        this.getGroupList()
+      }
     },
     getUserSelData() {
       return this.transfer_data_right;
@@ -403,6 +409,17 @@ export default {
       this.$axios.post('cam2/AttachUserPolicy', params).then(res  => {
         console.log(res)
       })
+    },
+    // 清空数据
+    clearData() {
+      this.transfer_data_right = []
+      this.transferUserData = []
+      this.transferGroupData = []
+      this.transfer_data = []
+      this.transferArrayTemp = []
+    },
+    getHandleFlag() {
+      return true
     }
   }
 };
