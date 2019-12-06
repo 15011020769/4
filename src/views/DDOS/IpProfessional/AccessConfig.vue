@@ -9,8 +9,8 @@
         <el-tabs v-model="activeName" @tab-click="handleClick">
           <el-tab-pane label="非网站业务" name="first">
             <div class="mainContent">
-              <el-select class="ddosAttackSelect1" v-model="assestSech" @change="assestSechChange" filterable placeholder="请输入要查询的ID或名称">
-                <el-option :label="assestSech" :value="assestSech"></el-option>
+              <el-select class="ddosAttackSelect1" v-model="resourceId" @change="resourceIdChange" filterable placeholder="请输入要查询的ID或名称">
+                <el-option :label="resourceId" :value="resourceId"></el-option>
               </el-select>
             </div>
             <div class="mainContent">
@@ -38,14 +38,36 @@
               </div>
               <el-table :data="tableDataBegin.slice((currentPage-1)*pageSize,currentPage*pageSize)" ref="multipleTable" @selection-change="handleSelectionChange">
                   <el-table-column type="selection" width="55"></el-table-column>
-                  <el-table-column prop="attackTime" label="业务域名"></el-table-column>
-                  <el-table-column prop="durnTime" label="转发协议/端口"></el-table-column>
-                  <el-table-column prop="attackType" label="源站端口"></el-table-column>
-                  <el-table-column prop="attackStatus" label="源站IP/域名"></el-table-column>
-                  <el-table-column prop="attackStatus" label="负载均衡方式"></el-table-column>
-                  <el-table-column prop="attackStatus" label="健康检查"></el-table-column>
-                  <el-table-column prop="attackStatus" label="会话保持"></el-table-column>
-                  <el-table-column prop="attackStatus" label="水印剥离状态"></el-table-column>
+                  <el-table-column prop="RuleName" label="业务域名">
+                    <template slot-scope="scope">{{scope.row.RuleName}}</template>
+                  </el-table-column>
+                  <el-table-column prop="VirtualPort" label="转发协议/端口">
+                    <template slot-scope="scope">{{scope.row.VirtualPort}}</template>
+                  </el-table-column>
+                  <el-table-column prop="SourcePort" label="源站端口">
+                    <template slot-scope="scope">{{scope.row.SourcePort}}</template>
+                  </el-table-column>
+                  <el-table-column prop="SourceList.Source" label="源站IP/域名">
+                    <template slot-scope="scope">{{scope.row.SourceList[0].Source}}</template>
+                  </el-table-column>
+                  <el-table-column prop="LbType" label="负载均衡方式">
+                    <template slot-scope="scope">
+                      <span v-if="scope.row.LbType == 1">加权轮询</span>
+                      <span v-else>{{scope.row.LbType}}</span>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="attackStatus" label="健康检查">
+                    <template slot-scope="scope">-</template>
+                  </el-table-column>
+                  <el-table-column prop="KeepEnable" label="会话保持">
+                    <template slot-scope="scope">
+                      <span v-if="scope.row.KeepEnable == 0">关闭</span>
+                      <span v-else-if="scope.row.KeepEnable == 1">开启</span>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="attackStatus" label="水印剥离状态">
+                    <template slot-scope="scope">-</template>
+                  </el-table-column>
                   <el-table-column prop="attackAction" label="操作" width="180">
                     <template slot-scope="">
                       <el-button
@@ -70,7 +92,7 @@
                 <p class="pContent">配置规则总数为 60 ，已用 0 ，可用 60</p>
             </div>
             <!-- 新建规则弹框 -->
-            <newAddRules :isShow="dialogVisible" @addRulesSure="addRulesSure" @closeModel="closeModel"/>
+            <newAddRules :isShow="dialogVisible" :resourceId='resourceId' @addRulesSure="addRulesSure" @closeModel="closeModel"/>
             <!-- 批量导入弹框 -->
             <batchImport :isShow1="dialogVisible1" @batchImportSure="batchImportSure" @closeModelIpt="closeModelIpt"/>
             <!-- 批量导出弹框 -->
@@ -85,12 +107,14 @@
 import newAddRules from './model/newAddRules'
 import batchImport from './model/batchImport'
 import batchExport from './model/batchExport'
+import { RESOURCE_LIST, L4_RULES, L4RULES_CREATE } from '@/constants'
 export default {
   data() {
     return {
+      resourceId: 'net-0000006y',//资源ID，输入要查询的ID或名称
+      tableDataBegin: [], //table绑定数据，L4规则列表
+
       activeName:"first",//tab
-      assestSech:'',//输入要查询的ID或名称
-      tableDataBegin: [],//table绑定数据
       tableDataEnd: [],
       currentPage: 1,//当前页
       pageSize: 10,//每页长度
@@ -109,19 +133,57 @@ export default {
     batchImport:batchImport,
     batchExport:batchExport
   },
-  mounted() {
-    
+  created() {
+    this.describeResourceList()
+    this.describleL4Rules()
   },
   methods:{
-    handleClick(){},
-    //跳转新购页面
-    newBuy(){
-      this.$router.push({
-        path: '/choose'
+    // 1.1.获取资源列表
+    describeResourceList(){
+      let params = {
+        Version: '2018-07-09',
+        Business:'net',
+      }
+      this.axios.post(RESOURCE_LIST, params).then(res => {
+        console.log(res)
       })
     },
+    // 1.2.获取L4转发规则
+    describleL4Rules() {
+      let params = {
+        Version: '2018-07-09',
+        Business:'net',
+        Id: this.resourceId
+      }
+      this.axios.post(L4_RULES, params).then(res => {
+        console.log(res)
+        this.tableDataBegin = res.Response.Rules
+      })
+    },
+    // // 1.3.添加L4转发规则
+    // CreateL4Rules() {
+    //   let params = {
+    //     Version: '2018-07-09',
+    //     Business:'net',
+    //     Id: this.resourceId
+    //   }
+      
+    //   this.axios.post(L4RULES_CREATE, params).then(res => {
+    //     console.log(res)
+    //     // this.tableDataBegin = res.Response.Rules
+    //   })
+    // },
+    // 跳转新购页面
+    newBuy(){
+      let routeUrl = this.$router.resolve({
+        path: "/choose"
+      })
+      window.open(routeUrl.href, '_blank')
+    },
+
     //请输入要查询的ID或名称
-    assestSechChange(){},
+    resourceIdChange(){},
+    handleClick(){},
     //分页开始
     handleSizeChange(val) {
       console.log(`每页 ${val} 条`);

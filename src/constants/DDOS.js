@@ -10,14 +10,18 @@ export const DDOS_EV_LIST = 'dayu2/DescribeDDoSEvList' // 获取DDoS攻击事件
 export const DDOS_TREND = 'dayu2/DescribeDDoSTrend' // 获取DDoS攻击指标数据
 
     // 自助解封
-export const UNBlOCKSTATIS_NUM = 'dayu2/DescribeUnBlockStatis' //获取黑洞解封次数接口
-export const IPBlOCKLIST_LIST = 'dayu2/DescribeIpBlockList' //获取IP封堵列表接口
-export const IPUNBlOCKLIST_LIST = 'dayu2/DescribeIpUnBlockList' //获取IP解封记录接口
-    // 高仿IP专业版-资产列表
-export const RESOURCE_LIST = 'dayu2/DescribeResourceList' //获取资源列表接口
-export const DDOSPOLICY_CONT = 'dayu2/DescribeDDoSPolicy' //获取DDoS高级策略接口
-export const RULESETS_CONT = 'dayu2/DescribeRuleSets' //获取资源的规则数接口
+export const UNBlOCKSTATIS_NUM = 'dayu2/DescribeUnBlockStatis' //获取黑洞解封次数
+export const IPBlOCKLIST_LIST = 'dayu2/DescribeIpBlockList' //获取IP封堵列表
+export const IPUNBlOCKLIST_LIST = 'dayu2/DescribeIpUnBlockList' //获取IP解封记录
+    // 高防IP专业版-资产列表
+export const RESOURCE_LIST = 'dayu2/DescribeResourceList' //获取资源列表
+export const DDOSPOLICY_CONT = 'dayu2/DescribeDDoSPolicy' //获取DDoS高级策略
+export const RULESETS_CONT = 'dayu2/DescribeRuleSets' //获取资源的规则数
 
+    // 高防IP专业版-接入配置
+export const L4_RULES = 'dayu2/DescribleL4Rules' // 获取L4转发规则
+
+export const L4RULES_CREATE = 'dayu2/CreateL4Rules' // 添加L4转发规则
 
 
 
