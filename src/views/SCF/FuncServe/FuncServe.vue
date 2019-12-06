@@ -492,8 +492,8 @@ export default {
       let params = {
         Action: "DeleteFunction",
         Version: "2018-04-16",
-        Region: this.$cookie.get("regionv2"),
-        FunctionName: this.deleteBegin.functionName
+        Region: 'ap-guangzhou',//this.$cookie.get("regionv2"),
+        FunctionName: this.deleteBegin.FunctionName
       };
       console.log(params.FunctionName);
       this.axios.post(SCF_DEL, params).then(res => {

@@ -11,7 +11,7 @@
             <el-form-item label="触发方式" :required="true">
               <span slot="label">
                 触发方式
-                <i class="el-icon-question"></i>
+                <!-- <i class="el-icon-question"></i> -->
               </span>
               <el-select v-model="formTriggerForm.triggerType" @change="chufatype" class="selectSetWidth">
                 <el-option label="定时触发" value="timer"></el-option>
@@ -24,7 +24,7 @@
             <el-form-item label="定时任务名称" :required="true">
               <span slot="label">
                 定时任务名称
-                <i class="el-icon-question"></i>
+                <!-- <i class="el-icon-question"></i> -->
               </span>
               <el-input
                 v-model="formTriggerForm.tasksName"
@@ -50,10 +50,10 @@
               <el-input v-model="formTriggerForm.cronlist" placeholder="0 */5 * * * * *"/>
               <span>Cron当前以 UTC +8 中国标准时间 （China Standard Time）运行，即北京时间。</span>
             </el-form-item>
-            <el-form-item label="填写入参">
+            <el-form-item label="附加信息">
               <span slot="label">
-                填写入参
-                <i class="el-icon-question"></i>
+                附加信息
+                <!-- <i class="el-icon-question"></i> -->
               </span>
               <el-select v-model="formTriggerForm.writeIsTrue" class="selectSetWidth">
                 <el-option label="是" value="true"></el-option>
