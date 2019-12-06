@@ -27,7 +27,7 @@
                 </el-dropdown>
                 <el-dropdown trigger="click" class="ddosAttackSelect1 ddosAttackSelect2">
                   <span class="el-dropdown-link">
-                    批量导入<i class="el-icon-caret-bottom el-icon--right"></i>
+                    批量导出<i class="el-icon-caret-bottom el-icon--right"></i>
                   </span>
                   <el-dropdown-menu slot="dropdown">
                     <el-dropdown-item @click.native="batchExport">导出转发规则</el-dropdown-item>
@@ -47,8 +47,12 @@
                   <el-table-column prop="SourcePort" label="源站端口">
                     <template slot-scope="scope">{{scope.row.SourcePort}}</template>
                   </el-table-column>
-                  <el-table-column prop="SourceList.Source" label="源站IP/域名">
-                    <template slot-scope="scope">{{scope.row.SourceList[0].Source}}</template>
+                  <el-table-column prop="SourceList" label="源站IP/域名">
+                    <template slot-scope="scope" >
+                      <span v-for="(item, index) in scope.row.SourceList" :key="index">
+                        {{scope.row.SourceList[index].Source}}({{scope.row.SourceList[index].Weight}});
+                      </span>
+                    </template>
                   </el-table-column>
                   <el-table-column prop="LbType" label="负载均衡方式">
                     <template slot-scope="scope">
@@ -56,17 +60,20 @@
                       <span v-else>{{scope.row.LbType}}</span>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="attackStatus" label="健康检查">
-                    <template slot-scope="scope">-</template>
+                  <el-table-column prop="" label="健康检查">
+                    <template slot-scope="scope">暂不支持</template>
                   </el-table-column>
                   <el-table-column prop="KeepEnable" label="会话保持">
-                    <template slot-scope="scope">
-                      <span v-if="scope.row.KeepEnable == 0">关闭</span>
-                      <span v-else-if="scope.row.KeepEnable == 1">开启</span>
+                    <template slot-scope="scope">暂不支持
+                      <!-- <span v-if="scope.row.KeepEnable == 0">关闭</span>
+                      <span v-else-if="scope.row.KeepEnable == 1">开启</span> -->
                     </template>
                   </el-table-column>
-                  <el-table-column prop="attackStatus" label="水印剥离状态">
-                    <template slot-scope="scope">-</template>
+                  <el-table-column prop="RemoveSwitch" label="水印剥离状态">
+                    <template slot-scope="scope">
+                      <span v-if="scope.row.RemoveSwitch == 0">关闭</span>
+                      <span v-else-if="scope.row.RemoveSwitch == 1">开启</span>
+                    </template>
                   </el-table-column>
                   <el-table-column prop="attackAction" label="操作" width="180">
                     <template slot-scope="">
@@ -89,14 +96,14 @@
                   >
                   </el-pagination>
                 </div>
-                <p class="pContent">配置规则总数为 60 ，已用 0 ，可用 60</p>
+                <p class="pContent">配置规则总数为 {{ruleTotalNum}} ，已用 {{usedNum}} ，可用 {{ruleTotalNum-usedNum}}</p>
             </div>
             <!-- 新建规则弹框 -->
             <newAddRules :isShow="dialogVisible" :resourceId='resourceId' @addRulesSure="addRulesSure" @closeModel="closeModel"/>
             <!-- 批量导入弹框 -->
-            <batchImport :isShow1="dialogVisible1" @batchImportSure="batchImportSure" @closeModelIpt="closeModelIpt"/>
+            <batchImport :isShow1="dialogVisible1" :resourceId='resourceId' @batchImportSure="batchImportSure" @closeModelIpt="closeModelIpt"/>
             <!-- 批量导出弹框 -->
-            <batchExport :isShow2="dialogVisible2" @batchExportSure="batchExportSure" @closeModelExp="closeModelExp"/>
+            <batchExport :isShow2="dialogVisible2" :exportText='exportText' @batchExportSure="batchExportSure" @closeModelExp="closeModelExp"/>
           </el-tab-pane>
         </el-tabs>
       </div>
@@ -107,25 +114,27 @@
 import newAddRules from './model/newAddRules'
 import batchImport from './model/batchImport'
 import batchExport from './model/batchExport'
-import { RESOURCE_LIST, L4_RULES, L4RULES_CREATE } from '@/constants'
+import { RESOURCE_LIST, L4_RULES } from '@/constants'
 export default {
   data() {
     return {
+      activeName:"first",//tab
       resourceId: 'net-0000006y',//资源ID，输入要查询的ID或名称
       tableDataBegin: [], //table绑定数据，L4规则列表
-
-      activeName:"first",//tab
-      tableDataEnd: [],
-      currentPage: 1,//当前页
-      pageSize: 10,//每页长度
-      totalItems: 0,//总长度
-      flag: false,
-      multipleTable:[],//table ref属性
-      allImport:'批量导入',//批量导入
-      allExport:'批量导出',//批量导出
       dialogVisible:false,//新建规则弹框
       dialogVisible1:false,//批量导入弹框
       dialogVisible2:false,//批量导出弹框
+      exportText: '',
+      // 分页
+      currentPage: 1,//当前页
+      pageSize: 10,//每页长度
+      totalItems: 0,//总长度
+      ruleTotalNum: 60,//配置规则总数
+      usedNum: 0,//已用
+      
+      tableDataEnd: [],
+      flag: false,
+      multipleTable:[],//table ref属性
     }
   },
   components:{
@@ -158,21 +167,10 @@ export default {
       this.axios.post(L4_RULES, params).then(res => {
         console.log(res)
         this.tableDataBegin = res.Response.Rules
+        this.totalItems = res.Response.Total
+        this.usedNum = res.Response.Total
       })
     },
-    // // 1.3.添加L4转发规则
-    // CreateL4Rules() {
-    //   let params = {
-    //     Version: '2018-07-09',
-    //     Business:'net',
-    //     Id: this.resourceId
-    //   }
-      
-    //   this.axios.post(L4RULES_CREATE, params).then(res => {
-    //     console.log(res)
-    //     // this.tableDataBegin = res.Response.Rules
-    //   })
-    // },
     // 跳转新购页面
     newBuy(){
       let routeUrl = this.$router.resolve({
@@ -241,6 +239,28 @@ export default {
     },
     // 批量导出按钮
     batchExport(){
+      let params = {
+        Version: '2018-07-09',
+        Business:'net',
+        Id: this.resourceId
+      }
+      this.axios.post(L4_RULES, params).then(res => {
+        console.log(res)//test.cn TCP 1666 1888 1.1.1.10 80,1.1.1.20 50
+        let str = ''
+        let arr = []
+        arr = res.Response.Rules
+        for(let i in arr){
+          str = str + arr[i].RuleName + ' ' + arr[i].Protocol + ' ' + arr[i].VirtualPort + ' ' + arr[i].SourcePort
+          for(let j in arr[i].SourceList){
+            if(j>0){
+              str = str + ','
+            }
+            str = str + ' ' + arr[i].SourceList[j].Source + ' ' + arr[i].SourceList[j].Weight
+          }
+          str = str + '\r\n'
+        }
+        this.exportText = str + ''
+      })
       this.dialogVisible2=true;
     },
     // 批量导出确定按钮

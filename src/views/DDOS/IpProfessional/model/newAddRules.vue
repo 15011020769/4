@@ -95,12 +95,12 @@ export default {
         VirtualPort: '',//转发端口
         SourcePort: '',//源站端口
         SourceType: 2,//回源方式，取值[1(域名回源)，2(IP回源)]
-        KeepTime: 300,//会话保持时间，单位秒
+        KeepTime: 0,//会话保持时间，单位秒
         // 回源列表SourceList
         IpResource: '',
         HttpResource: '',
         LbType: 1,//负载均衡方式，取值[1(加权轮询)，2(源IP hash)]
-        KeepEnable: 1,//会话保持开关，取值[0(会话保持关闭)，1(会话保持开启)]
+        KeepEnable: 0,//会话保持开关，取值[0(会话保持关闭)，1(会话保持开启)]
       dominShow: true,
     }
   },
@@ -139,6 +139,7 @@ export default {
         'Rules.0.SourceType': this.SourceType,
         'Rules.0.LbType': this.LbType,
         'Rules.0.KeepTime': this.KeepTime,
+        'Rules.0.KeepEnable': this.KeepEnable,
       }
       if(this.SourceType == 1) {//域名
         let arr = this.HttpResource.split(/[\s\n]/)
