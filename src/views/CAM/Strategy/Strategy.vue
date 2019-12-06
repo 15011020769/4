@@ -213,18 +213,6 @@ export default {
       this.$refs.userTransfer.attachPolicy()
       this.dialogVisible = false
     },
-    // // 绑定策略到用户组
-    // attachGroupPolicy(params) {
-    //   this.$axios.post('cam2/AttachGroupPolicy', params).then(res  => {
-    //     console.log(res)
-    //   })
-    // },
-    // // 绑定策略到用户
-    // attachUserPolicy(params) {
-    //   this.$axios.post('cam2/AttachUserPolicy', params).then(res  => {
-    //     console.log(res)
-    //   })
-    // },
     // table标题栏选择项
     handleCommand(command) {
       console.log(command);
