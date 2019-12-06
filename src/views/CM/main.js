@@ -25,10 +25,6 @@ for (let key in CMfilters) {
 
 
 Vue.config.productionTip = false
-    // Vue.component('City', City)
-    // Vue.component('search', search)
-    // Vue.component('Duration', Duration)
-    // Vue.component('DatePicker', DatePicker)
 Vue.use(ElementUI)
 Vue.use(VueCookie)
 
