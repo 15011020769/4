@@ -14,7 +14,7 @@ import City from '@/components/Tools/RegionBtn' // 公共组件城市列表
 import Duration from '@/components/Tools/Duration' // 购买时长组件
 import DatePicker from '@/components/Tools/DatePicker' // 日期选择器控件
 import filters from '@/filters/filters.js'
-import i18n from '@/language/i18n.js' // 引入i18n包
+import i18n from '@/language/i18n.js' // 引入i18n包
 // 引入基本模板
 const echarts = require('echarts/lib/echarts')
 // 引入折线图组件
@@ -34,9 +34,37 @@ Vue.component('DatePicker', DatePicker)
 Vue.use(ElementUI)
 Vue.use(VueCookie)
 
+//滚动到底部
+Vue.directive('loadmore', {
+  bind(el, binding) {
+    var p = 0;
+    var t = 0;
+    var down = true;
+    var selectWrap = el.querySelector('.el-table__body-wrapper')
+    selectWrap.addEventListener('scroll', function () {
+      //判断是否向下滚动
+      p = this.scrollTop;
+      // if ( t < p){down=true}else{down=false}
+      if (t < p) {
+        down = true;
+      } else {
+        down = false;
+      }
+      t = p;
+      //判断是否到底
+      const sign = 10;
+      const scrollDistance = this.scrollHeight - this.scrollTop - this.clientHeight
+      if (scrollDistance <= sign && down) {
+        binding.value()
+      }
+    })
+  }
+})
+
 new Vue({
   router,
   // store,
   i18n,
   render: h => h(App)
 }).$mount('#app')
+

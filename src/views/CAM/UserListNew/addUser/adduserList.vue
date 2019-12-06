@@ -69,11 +69,11 @@
               <el-checkbox-group v-model="ruleForm.type" @change="_visitType" class="check">
                 <el-checkbox label="0" name="type">
                   <span>编程访问</span>
-                  <span>启用SecretId和SecretKey，支持腾讯云API、SDK和其他开发工具访问</span>
+                  <span>启用SecretId和SecretKey，支持台富云API、SDK和其他开发工具访问</span>
                 </el-checkbox>
                 <el-checkbox label="1" name="type">
-                  <span>腾讯云控制台访问</span>
-                  <span>启用密码，允许用户登录到腾讯云控制台</span>
+                  <span>台富云控制台访问</span>
+                  <span>启用密码，允许用户登录到台富云控制台</span>
                 </el-checkbox>
               </el-checkbox-group>
             </el-form-item>
@@ -115,15 +115,23 @@
             :totalNum="totalNum"
             :tableData="tableData"
             :userData="userData"
+            :userNum="userNum"
             @handleSelectionChange="handleSelectionChange"
+            @acitiveName="_acitiveName"
+            @loadMore="_loadMore"
           />
         </div>
-        <div class="step4" v-show="active == 3">
-          <Step4 :name="this.ruleForm.Name" />
+        <div class="step4" v-if="active == 3">
+          <Step4
+            :name="this.ruleForm.Name"
+            :activeName="activeName"
+            :pwdType="ruleForm.pwdType"
+            :pwdRadio="ruleForm.pwdRadio"
+          />
         </div>
       </div>
       <div class="btn-box">
-        <el-button @click="_lastStep" v-show="this.active != 0">上一步</el-button>
+        <el-button @click="_lastStep" v-show="this.active == 0 || this.active == 1">上一步</el-button>
         <el-button type="primary" @click="_nextStep('ruleForm')">{{btnVal}}</el-button>
       </div>
     </div>
@@ -137,19 +145,22 @@ import {
   POLICY_LIST,
   USER_GROUP,
   POLICY_USER,
-  QUERY_USER
+  QUERY_USER,
+  ADD_USERTOGROUP
 } from "@/constants";
 import Step3 from "./Tab/Step3"; //步骤3
 import Step4 from "./Tab/Step4"; //步骤4
+
 export default {
   name: "adduserlist",
   data() {
     return {
+      activeName: "first",
       userData: [],
       totalNum: 0, //策略列表条数
       multipleSelection: [], //全选
       tableData: [],
-      active: 2,
+      active: 0,
       btnVal: "下一步",
       //选择类型
       type: [
@@ -157,13 +168,13 @@ export default {
           code: 1,
           title: "可访问资源并接收消息",
           txt:
-            "该用户可以登录控制台或通过 API 密钥访问您授予其权限的腾讯云资源，同时拥有接收消息等子账号的全部功能"
+            "该用户可以登录控制台或通过 API 密钥访问您授予其权限的台富云资源，同时拥有接收消息等子账号的全部功能"
         },
         {
           code: 0,
           title: "仅用于接收消息",
           txt:
-            "该用户仅可通过手机、邮箱接收腾讯云发送给您的消息通知，不可访问腾讯云"
+            "该用户仅可通过手机、邮箱接收台富云发送给您的消息通知，不可访问台富云"
         }
       ],
       //访问方式
@@ -171,8 +182,8 @@ export default {
       typeIndex: 0,
       pwdInp: false, //密码框
       ruleForm: {
-        loginRadio: "", //登录保护
-        processRadio: "", //操作保护
+        loginRadio: true, //登录保护
+        processRadio: true, //操作保护
         type: [],
         CountryCode: "",
         pwdType: [],
@@ -185,7 +196,12 @@ export default {
         Email: "" //邮箱
       },
       rules: {},
-      userData:{}//用户信息
+      userpolicyData: {},
+      policyPage: 1,
+      policyNum: 10,
+      userPage: 1,
+      userNums: 10,
+      userNum: 0
     };
   },
   components: {
@@ -198,29 +214,56 @@ export default {
     this._userList();
   },
   methods: {
+    _loadMore(val) {
+      if (val == "first") {
+        this.policyPage++;
+        this.policyNum = this.policyNum + 10;
+        this._getList();
+      } else if (val == "third") {
+        this.userPage++;
+        this.userNums = this.userNums + 10;
+        this._userList();
+      }
+    },
+    //绑定用户组
+    _userGroup(id) {
+      const params = {
+        Version: "2019-01-16",
+        "Info.0.Uid": this.userpolicyData.Uid,
+        "Info.0.GroupId": id
+      };
+      this.axios.post(ADD_USERTOGROUP, params).then(res => {});
+    },
+    //tab标签名称
+    _acitiveName(val) {
+      this.acitiveName = val;
+    },
     //获取用户信息
     _getUser() {
       const params = {
         Version: "2019-01-16",
-        Name: "xxx"
+        Name: this.ruleForm.Name
       };
       this.axios.post(QUERY_USER, params).then(res => {
-        this.userData = res.Response;
+        this.userpolicyData = res.Response;
       });
     },
     //绑定策略列表
     _policy(id) {
       const params = {
-        Version: "2019-01-16"
+        Version: "2019-01-16",
+        PolicyId: id,
+        AttachUin: this.userpolicyData.Uin
       };
       this.axios.post(POLICY_USER, params).then(res => {
-        console.log(res);
+        if (res.Response.RequestId) {
+          this.active = 3;
+        }
       });
     },
     //全选
     handleSelectionChange(val) {
       this.multipleSelection = val;
-      console.log(val);
     },
     _arrUser() {
       const params = {
@@ -234,18 +277,25 @@ export default {
         CountryCode: this.ruleForm.CountryCode,
         Email: this.ruleForm.Email
       };
-      this.axios.post(ADD_USER, params).then(res => {
-        if (res.Response.RequestId) {
-          this.active = 2;
-        } else {
-          this.$message.error(Response.Error.Message);
-        }
-      });
+      this.axios
+        .post(ADD_USER, params)
+        .then(res => {
+          if (res.Response.RequestId) {
+            this._getUser();
+            this.active = 2;
+          } else {
+            this.$message.error(Response.Error.Message);
+          }
+        })
+        .then(() => {
+          this._getUser();
+        });
     },
     //用户组列表
     _userList() {
       const params = {
-        Version: "2019-01-16"
+        Version: "2019-01-16",
+        Rp: this.userNums
       };
       this.axios.post(USER_GROUP, params).then(res => {
         this.userData = res.Response.GroupInfo;
@@ -255,7 +305,8 @@ export default {
     //策略列表
     _getList() {
       const params = {
-        Version: "2019-01-16"
+        Version: "2019-01-16",
+        Rp: this.policyNum
       };
       this.axios.post(POLICY_LIST, params).then(res => {
         this.tableData = res.Response.List;
@@ -291,6 +342,9 @@ export default {
     _nextStep(formName) {
       var num = this.active;
       var temp = 3;
+      if (this.btnVal == "完成") {
+        this.$router.push("/UserListNew");
+      }
       if (this.ruleForm.ConsoleLogin == 0) {
         var temp = 1;
       }
@@ -301,14 +355,26 @@ export default {
         this.btnVal = "完成";
       }
       if (this.active == 2) {
-        console.log(this.multipleSelection);
+        this.multipleSelection.forEach(item => {
+          //从策略列表中选取策略关联
+          if (this.activeName == "first") {
+            this._policy(item.PolicyId);
+          }
+          //复用现有用户策略
+          else if (this.activeName == "second") {
+          }
+          //添加至组获得随机权限
+          else if (this.activeName == "third") {
+            this._userGroup(item.GroupId);
+          }
+        });
       }
       if (this.active == 1) {
         if (!this.visitType) {
           if (!this.ruleForm.Name) {
             this.$message.error("用户名不能为空");
           } else if (this.ruleForm.type.length == 0) {
-            this.$message.error("编程访问和腾讯云控制台访问至少需要选择一个");
+            this.$message.error("编程访问和台富云控制台访问至少需要选择一个");
           } else {
             this._arrUser();
           }
@@ -317,7 +383,7 @@ export default {
           if (!this.ruleForm.Name) {
             this.$message.error("用户名不能为空");
           } else if (this.ruleForm.type.length == 0) {
-            this.$message.error("编程访问和腾讯云控制台访问至少需要选择一个");
+            this.$message.error("编程访问和台富云控制台访问至少需要选择一个");
           }
           if (!this.ruleForm.loginRadio) {
             this.$message.error("请设置登录保护");
@@ -330,7 +396,6 @@ export default {
       } else {
         this.active = num;
       }
-      console.log(this.ruleForm);
     },
     //上一步
     _lastStep() {

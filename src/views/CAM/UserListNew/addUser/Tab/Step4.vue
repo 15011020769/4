@@ -3,7 +3,7 @@
     <div class="explain">
       <p>请检查您设置的信息，访问管理将按照如下信息为您创建用户。</p>
     </div>
-    <div class="edit-main">
+    <div class="edit-main" v-loading="loading">
       <div class="edit-box">
         <h3>用户信息</h3>
         <table width="100%" boder="1" cellspacing="0" cellpadding="1">
@@ -25,25 +25,23 @@
               <td>{{userData.Remark ? userData.Remark : '-'}}</td>
               <td>{{userData.PhoneNum ? userData.PhoneNum : '-'}}</td>
               <td>{{userData.Email ? userData.Email : '-'}}</td>
+              <td class="edit" @click="_edit">编辑</td>
+            </tr>
+            <tr v-show="userInp">
+              <td>{{userData.Name}}</td>
+              <td>
+                <el-input v-model="form.Remark"></el-input>
+              </td>
+              <td>
+                <el-input v-model="form.PhoneNum"></el-input>
+              </td>
+              <td>
+                <el-input v-model="form.Email"></el-input>
+              </td>
               <td class="edit">
                 <span @click="_userConfirm">确定</span>
                 <span style="margin-left:5px;" @click="_userCancel">取消</span>
               </td>
-            </tr>
-            <tr v-show="userInp">
-              <td>
-                <el-input></el-input>
-              </td>
-              <td>
-                <el-input></el-input>
-              </td>
-              <td>
-                <el-input></el-input>
-              </td>
-              <td>
-                <el-input></el-input>
-              </td>
-              <td class="edit" @click="_edit">编辑</td>
             </tr>
           </tbody>
         </table>
@@ -52,19 +50,22 @@
         <h3>访问信息</h3>
         <el-form ref="form" label-width="100px">
           <el-form-item label="访问方式" required>
-            <p>编程访问，控制台访问</p>
+            <p v-show="userData.ConsoleLogin == 1">编程访问，控制台访问</p>
+            <p v-show="userData.ConsoleLogin == 0">无法登录控制台</p>
           </el-form-item>
           <el-form-item label="控制台密码类型">
-            <p>自动生成密码</p>
+            <p v-if="!pwdRadio">自动生成密码</p>
+            <p v-if="pwdRadio">自定义密码</p>
           </el-form-item>
           <el-form-item label="需要重置密码">
-            <p>是</p>
+            <p v-if="pwdType.length != 0">是</p>
+            <p v-if="pwdType.length == 0">否</p>
           </el-form-item>
         </el-form>
       </div>
       <div class="edit-box">
         <h3>权限信息</h3>
-        <el-table :data="policyData" style="width: 100%">
+        <el-table :data="policyData" style="width: 100%" v-if="activeName == 'first'">
           <el-table-column prop="PolicyName" label="策略名" width="220"></el-table-column>
           <el-table-column label="策略描述">
             <template slot-scope="scope">
@@ -73,12 +74,20 @@
           </el-table-column>
           <el-table-column label="操作" width="150">
             <template slot-scope="scope">
-              <p style="color:#006eff;cursor: pointer;">解除</p>
+              <p style="color:#006eff;cursor: pointer;" @click="_del(scope.row)">解除</p>
+            </template>
+          </el-table-column>
+        </el-table>
+        <el-table :data="userList" style="width: 100%" v-if="activeName == 'third'">
+          <el-table-column prop="GroupName" label="组名"></el-table-column>
+          <el-table-column label="操作" width="250">
+            <template slot-scope="scope">
+              <p style="color:#006eff;cursor: pointer;" @click="_del(scope.row)">解除</p>
             </template>
           </el-table-column>
         </el-table>
         <div class="page-box">
-          <span>共 {{policyData.length}} 项</span>
+          <span>共 {{num}} 项</span>
         </div>
       </div>
     </div>
@@ -86,17 +95,93 @@
 </template>
 
 <script>
-import { QUERY_USER, QUERY_POLICY } from "@/constants";
+import {
+  QUERY_USER,
+  QUERY_POLICY,
+  REMOVEBIND_USER,
+  RELATE_USER,
+  DEL_USERTOGROUP,
+  UPDATA_USER
+} from "@/constants";
 export default {
   name: "edit",
   data() {
     return {
+      loading: true, //加载
+      //表单
+      form: {},
+      num: 0,
+      userList: [],
       policyData: [], //策略列表
       userData: {}, //用户信息
       userInp: false //用户信息input
     };
   },
   methods: {
+    //用户组列表
+    _groupList() {
+      const params = {
+        Version: "2019-01-16",
+        Uid: this.userData.Uid
+      };
+      this.axios.post(RELATE_USER, params).then(res => {
+        this.userList = res.Response.GroupInfo;
+        this.num = res.Response.TotalNum;
+      });
+    },
+    //用户组解除绑定
+    _userDel(val) {
+      const params = {
+        Version: "2019-01-16",
+        "Info.0.Uid": this.userData.Uid,
+        "Info.0.GroupId": val.GroupId
+      };
+      this.axios.post(DEL_USERTOGROUP, params).then(res => {
+        if (res.Response.RequestId) {
+          this.$message("解除成功");
+        } else {
+          this.$message.error(Response.Error.Message);
+        }
+        this._getUser();
+      });
+    },
+    //策略解除绑定
+    _del(val) {
+      this.$confirm("此操作将解除绑定, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          if (this.activeName == "first") {
+            this._remove(val);
+          } else if (this.activeName == "third") {
+            this._userDel(val);
+          }
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除"
+          });
+        });
+    },
+    //策略解除绑定
+    _remove(val) {
+      const params = {
+        Version: "2019-01-16",
+        DetachUin: this.userData.Uin,
+        PolicyId: val.PolicyId
+      };
+      this.axios.post(REMOVEBIND_USER, params).then(res => {
+        if (res.Response.RequestId) {
+          this.$message("解除成功");
+        } else {
+          this.$message.error(Response.Error.Message);
+        }
+        this._getUser();
+      });
+    },
     //策略列表
     _tactics() {
       const params = {
@@ -104,7 +189,7 @@ export default {
         TargetUin: this.userData.Uin
       };
       this.axios.post(QUERY_POLICY, params).then(res => {
-        console.log(res);
+        this.num = res.Response.TotalNum;
         this.policyData = res.Response.List;
       });
     },
@@ -112,16 +197,22 @@ export default {
     _getUser() {
       const params = {
         Version: "2019-01-16",
-        Name: "xxx"
+        Name: this.name
+        // Name: "o3o"
       };
       this.axios
         .post(QUERY_USER, params)
         .then(res => {
           this.userData = res.Response;
-          console.log(res);
+          this.form = res.Response;
+          this.loading = false;
         })
         .then(() => {
-          this._tactics();
+          if (this.activeName == "first") {
+            this._tactics();
+          } else if (this.activeName == "third") {
+            this._groupList();
+          }
         });
     },
     //用户信息编辑
@@ -134,14 +225,32 @@ export default {
     },
     //用户信息确定
     _userConfirm() {
-      this.userInp = !this.userInp;
+      const params = {
+        Version: "2019-01-16",
+        Name: "o3o",
+        Remark: this.form.Remark,
+        PhoneNum: this.form.PhoneNum,
+        Email: this.form.Email
+      };
+      this.axios.post(UPDATA_USER, params).then(res => {
+        if (res.Response.RequestId) {
+          this._getUser();
+          this.$message("编辑成功");
+          this.userInp = !this.userInp;
+        } else {
+          this.$message.error("编辑失败");
+        }
+      });
     }
   },
   created() {
     this._getUser();
   },
   props: {
-    name: String
+    name: String,
+    activeName: String,
+    pwdType: Array,
+    pwdRadio: Boolean
   }
 };
 </script>
@@ -161,8 +270,15 @@ export default {
   .edit-main {
     padding-bottom: 20px;
     box-sizing: border-box;
-    
-    .page-box{
+
+    .omit {
+      // width: 170px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .page-box {
       padding: 15px 0;
       box-sizing: border-box;
       color: #666;
