@@ -3,7 +3,7 @@
     <div class="allContent">
       <div class="ReportTit newClear">
         <h3 class="ReportTitH3">高防IP专业版</h3>
-        <el-select v-model="listResouse">
+        <el-select v-model="listResouse" class="selectListResou">
           <el-option label="资源列表" value="resourceList"></el-option>
           <el-option label="业务列表" value="value2"></el-option>
         </el-select>
@@ -37,23 +37,29 @@
             <el-table :data="tableDataBegin.slice((currentPage-1)*pageSize,currentPage*pageSize)" v-if="listResouse=='resourceList'?false:true">
               <el-table-column prop="canmeId" label="CNAME/ID">
                 <template slot-scope="scope">
-                  <a href="#" @click="toDoDetail(scope.$index, scope.row)">{{scope.row.canmeId}}</a>
+                  <span>4fsf4sers.daymsf.com</span><br/>
+                  <a href="#" @click="toDoDetailYewu(scope.row)">{{scope.row.canmeId}}</a><br/>
                 </template>
               </el-table-column>
               <el-table-column prop="domain" label="域名">
                  <template slot-scope="scope">
-                   {{scope.row.BlockTime}}
+                   {{scope.row.domain}}<a href="#" @click="toAccest(scope.row)">设置</a>
                 </template>
               </el-table-column>
               <el-table-column prop="nowIp" label="当前IP"></el-table-column>
-              <el-table-column prop="backSelf" label="自动回切"></el-table-column>
+              <el-table-column prop="backSelf" label="自动回切">
+                <template slot-scope="scope">
+                  <el-switch
+                    v-model="scope.row.autoBack"
+                    active-color="#006eff"
+                    inactive-color="#999">
+                  </el-switch>
+                </template>
+              </el-table-column>
               <el-table-column prop="action" label="操作" width="180">
                 <template slot-scope="scope">
-                  <el-button
-                    @click.native.prevent="deleteRow(scope.$index, scope.row)"
-                    type="text"
-                    size="small"
-                  >删除</el-button>
+                  <a class="marginRightA" href="#" style="pointer-events:none;color:#999;">一键回切</a>
+                  <a class="marginRightA" href="#" @clcik="lookReportList(scope.row)">查看报表</a>
                 </template>
               </el-table-column>
             </el-table>
@@ -76,24 +82,23 @@
               <el-table-column prop="dataTime" label="到期时间"></el-table-column>
               <el-table-column prop="action" label="操作" width="230">
                 <template slot-scope="scope">
-                  <!-- <el-button
-                    @click.native.prevent="deleteRow(scope.$index, scope.row)"
-                    type="text"
-                    size="small"
-                  >删除</el-button> -->
                   <a class="marginRightA" href="#" @click="upgradeModel">升级</a>
                   <a class="marginRightA" href="#" @click="RenewModel">续费</a>
-                  <a class="marginRightA" href="#">防护配置</a>
-                  <a class="marginRightA" href="#">查看报表</a>
+                  <a class="marginRightA" href="#" @click="configModel">防护配置</a>
+                  <a class="marginRightA" href="#" @clcik="lookReportList(scope.row)">查看报表</a>
                 </template>
               </el-table-column>
             </el-table>
-            <!-- 详情弹框 -->
-            <resouseListModel :isShow="dialogResouseList" @closeListDetail="closeListDetail"/>
+            <!-- 资源列表详情弹框 -->
+            <resouseListModel :isShow="dialogResouseList"  @closeListDetail="closeListDetail"/>
             <!-- 升级弹框 -->
             <upgradeModel :Upgrade="diaologUpgradeModel" @closeUpgradeModel="closeUpgradeModel"/>
             <!-- 续费弹框 -->
             <RenewModel :RenewShow="doalogRenewModel" @closeRenewModel="closeRenewModel"/>
+            <!-- 防护配置弹框 -->
+            <ProtectConfigModel :configShow="dialogConfigModel" @closeConfigModel="closeConfigModel"/>
+            <!-- 业务列表详情弹框 -->
+            <yewuListModel :isShow="dialogYewuModel" @closeListDetailYw="closeListDetailYw"/>
           </div>
           <div class="tabListPage">
             <el-pagination
@@ -117,6 +122,9 @@ import { RESOURCE_LIST, DDOSPOLICY_CONT, RULESETS_CONT } from "@/constants";
 import resouseListModel from './model/resouseListModel'
 import upgradeModel from './model/upgradeModel'
 import RenewModel from './model/RenewModel'
+import ProtectConfigModel from './model/ProtectConfigModel'
+import yewuListModel from './model/yewuListModel'
+
 export default {
   data() {
     return {
@@ -140,12 +148,12 @@ export default {
           canmeId: "1",
           domain: "https",
           nowIp: "10.1.1.212",
-          backSelf: "自动回切"
+          autoBack: false
         },{
           canmeId: '2',
           domain: 'https2',
           nowIp: '1.1.1.2',
-          backSelf: '自动回切2'
+          autoBack:true
         }
       ],
       allData1:[
@@ -165,12 +173,18 @@ export default {
       dialogResouseList:false,//资产列表详情弹框
       diaologUpgradeModel:false,//升级弹框
       doalogRenewModel:false,//续费弹框
+      dialogConfigModel:false,//防护配置弹框
+      // autoBack:false,//是否自动回切开关
+      dialogYewuModel:false,//业务列表详情弹框
+      resouseOrYw:'',//判断是哪个列表
     };
   },
   components:{
     resouseListModel:resouseListModel,
     upgradeModel:upgradeModel,
-    RenewModel:RenewModel
+    RenewModel:RenewModel,
+    ProtectConfigModel,
+    yewuListModel:yewuListModel
   },
   watch: {
     'listResouse': function () {
@@ -260,21 +274,21 @@ export default {
         // Region: '',
         Business: 'net'
       };
-      // this.$axios.post('dayu2/DescribeResourceList', params).then(res => {
-      //   console.log(params)
-      //   console.log(res)
-      //   // this.tableDataBegin = res.Response.ServicePacks;
-      //   this.tableDataBegin = this.allData
-      //   // 将数据的长度赋值给totalItems
-      //   this.totalItems = this.tableDataBegin.length;
-      //   if (this.totalItems > this.pageSize) {
-      //     for (let index = 0; index < this.pageSize; index++) {
-      //       this.tableDataEnd.push(this.tableDataBegin[index]);
-      //     }
-      //   } else {
-      //     this.tableDataEnd = this.tableDataBegin;
-      //   }
-      // });
+      this.$axios.post('dayu2/DescribeResourceList', params).then(res => {
+        console.log(params)
+        console.log(res)
+        // this.tableDataBegin = res.Response.ServicePacks;
+        this.tableDataBegin = this.allData
+        // 将数据的长度赋值给totalItems
+        this.totalItems = this.tableDataBegin.length;
+        if (this.totalItems > this.pageSize) {
+          for (let index = 0; index < this.pageSize; index++) {
+            this.tableDataEnd.push(this.tableDataBegin[index]);
+          }
+        } else {
+          this.tableDataEnd = this.tableDataBegin;
+        }
+      });
     },
     //默认查询 资源列表
     getData1() { 
@@ -387,8 +401,10 @@ export default {
     //资产列表详情
     toDoDetailResouse(rowList){
       this.dialogResouseList=true;
+      this.resouseOrYw=this.listResouse;
+      console.log(this.resouseOrYw)
     },
-    //关闭列表详情
+    //关闭资源列表详情
     closeListDetail(DetailShow){
       this.dialogResouseList=DetailShow
     },
@@ -413,11 +429,33 @@ export default {
     //续费弹框关闭按钮
     closeRenewModel(isShow){
       this.doalogRenewModel=isShow
-    }
+    },
+    //防护配置点击按钮
+    configModel(){
+      this.dialogConfigModel=true;
+    },
+    //防护配置弹框关闭按钮
+    closeConfigModel(isShow){
+      this.dialogConfigModel=isShow;
+    },
+    //查看报表跳转页面
+    lookReportList(){
+      this.$router.push({
+        path: '/IpProfessional'
+      })
+    },
+    //业务列表详情
+    toDoDetailYewu(rowList){
+      this.dialogYewuModel=true;
+    },
+    //关闭业务列表详情
+    closeListDetailYw(DetailShow){
+      this.dialogYewuModel=DetailShow
+    },
   }
 };
 </script>
-<style lang="scss" scoped>
+<style lang="scss">
 .newClear:after {
   content: "";
   display: block;
@@ -474,32 +512,57 @@ export default {
       }
       .searchs{
         float:left;
+        height:30px;
+        input{
+          height:30px;
+          border-radius: 0;
+        }
       }
       .el-icon-search{
         float:left;
+        height:30px;
+        padding:0;
+        width:50px;
+        text-align:center;
+        line-height:30px;
+        border-radius: 0;
       }
       .addBgColor{
-        width:387px;
-        height:36px;
-        float:left;
-        margin-right:10px;
-        background-color:#fff;
-        margin-top:2px;
-        line-height:18px;
-        padding-top:10px;
-        padding-left:10px;
+        width: 387px;
+        height: 27px;
+        float: left;
+        margin-right: 10px;
+        background-color: #fff;
+        margin-top: 2px;
+        line-height: 18px;
+        padding-top: 4px;
+        padding-left: 10px;
         .el-checkbox+.el-checkbox{
           margin-left:10px;
         }
       }
     }
   }
-}
-h1{
-  font-size:14px;
-  color:red;
+  .mainTable{
+    min-height: 450px;
+    border-bottom:1px solid #ddd;
+  }
+  .tabListPage{
+    height: 50px;
+    padding-top: 16px;
+  }
 }
 .marginRightA{
   margin-right:10px;
+}
+.selectListResou{
+  height:30px;
+  div.el-input{
+    height:30px;
+    input.el-input__inner{
+      height:30px;
+      border-radius: 0;
+    }
+  }
 }
 </style>
