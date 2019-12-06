@@ -746,7 +746,9 @@ export default {
       }
       this.axios
         .post(PUBLISH_VERSION, params)
-        .then(res => {})
+        .then(res => {
+          this.init()
+        })
         .catch(error => {
           console.log(error);
         });

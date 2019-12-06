@@ -393,7 +393,7 @@ export default {
        if(this.filterConrent!=='选择资源属性进行过滤'&&this.tableDataName!==''){
        this.getData()
       }else{
-        alert('请输入搜索条件')
+        this.getData()
       }
       //每次手动将数据置空,因为会出现多次点击搜索情况
       this.filterTableDataEnd = [];
@@ -513,7 +513,7 @@ export default {
     sureCopy() {
       let params = {
         Version: "2018-04-16",
-        Region: this.$cookie.get("regionv2"),
+        Region: 'ap-guangzhou',//this.$cookie.get("regionv2"),
         FunctionName: this.copyIndex2.FunctionName,
         NewFunctionName: this.newname,
         Action: "CopyFunction"
