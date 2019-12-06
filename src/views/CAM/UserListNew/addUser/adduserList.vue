@@ -36,7 +36,7 @@
               <table width="100%" boder="1" cellspacing="0" cellpadding="1">
                 <thead>
                   <tr>
-                    <td>
+                    <td width="280">
                       用户名
                       <span style="color:#e54545;">*</span>
                     </td>
@@ -118,6 +118,9 @@
             @handleSelectionChange="handleSelectionChange"
           />
         </div>
+        <div class="step4" v-show="active == 3">
+          <Step4 :name="this.ruleForm.Name" />
+        </div>
       </div>
       <div class="btn-box">
         <el-button @click="_lastStep" v-show="this.active != 0">上一步</el-button>
@@ -129,8 +132,15 @@
 
 <script>
 import HeadCom from "../components/Head";
-import { ADD_USER, POLICY_LIST, USER_GROUP } from "@/constants";
-import Step3 from "./Tab/Step3";
+import {
+  ADD_USER,
+  POLICY_LIST,
+  USER_GROUP,
+  POLICY_USER,
+  QUERY_USER
+} from "@/constants";
+import Step3 from "./Tab/Step3"; //步骤3
+import Step4 from "./Tab/Step4"; //步骤4
 export default {
   name: "adduserlist",
   data() {
@@ -139,7 +149,7 @@ export default {
       totalNum: 0, //策略列表条数
       multipleSelection: [], //全选
       tableData: [],
-      active: 0,
+      active: 2,
       btnVal: "下一步",
       //选择类型
       type: [
@@ -174,18 +184,39 @@ export default {
         PhoneNum: "", //手机号
         Email: "" //邮箱
       },
-      rules: {}
+      rules: {},
+      userData:{}//用户信息
     };
   },
   components: {
     HeadCom,
-    Step3
+    Step3,
+    Step4
   },
   created() {
     this._getList();
     this._userList();
   },
   methods: {
+    //获取用户信息
+    _getUser() {
+      const params = {
+        Version: "2019-01-16",
+        Name: "xxx"
+      };
+      this.axios.post(QUERY_USER, params).then(res => {
+        this.userData = res.Response;
+      });
+    },
+    //绑定策略列表
+    _policy(id) {
+      const params = {
+        Version: "2019-01-16"
+      };
+      this.axios.post(POLICY_USER, params).then(res => {
+        console.log(res);
+      });
+    },
     //全选
     handleSelectionChange(val) {
       this.multipleSelection = val;
@@ -270,6 +301,7 @@ export default {
         this.btnVal = "完成";
       }
       if (this.active == 2) {
+        console.log(this.multipleSelection);
       }
       if (this.active == 1) {
         if (!this.visitType) {
