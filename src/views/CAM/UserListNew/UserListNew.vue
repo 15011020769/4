@@ -327,9 +327,13 @@ export default {
       this.$router.push("/adduserNew");
     },
     //点击跳转到详情页
-    detailsUser(){
+    detailsUser(val){
+      console.log(val)
         this.$router.push({
-          path:"/detailsUser"
+          path:"/detailsUser",
+          query:{
+            detailsData:val.Name
+          }
         })
     },
     //input弹框选择数据
