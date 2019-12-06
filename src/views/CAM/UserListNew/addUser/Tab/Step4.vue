@@ -227,20 +227,24 @@ export default {
     _userConfirm() {
       const params = {
         Version: "2019-01-16",
-        Name: "o3o",
+        Name: this.name,
         Remark: this.form.Remark,
         PhoneNum: this.form.PhoneNum,
         Email: this.form.Email
       };
-      this.axios.post(UPDATA_USER, params).then(res => {
-        if (res.Response.RequestId) {
+      this.axios
+        .post(UPDATA_USER, params)
+        .then(res => {
+          if (res.Response.RequestId) {
+            this.$message("编辑成功");
+            this.userInp = !this.userInp;
+          } else {
+            this.$message.error("编辑失败");
+          }
+        })
+        .then(() => {
           this._getUser();
-          this.$message("编辑成功");
-          this.userInp = !this.userInp;
-        } else {
-          this.$message.error("编辑失败");
-        }
-      });
+        });
     }
   },
   created() {
