@@ -335,8 +335,10 @@ export default {
     //input弹框选择数据
     select() {
       if (this.value == 0) {
-        // this.authorization=true
-        console.log("111");
+        this.authorization = true;
+        this.userGroupShow = true;
+        this.strategyShow = false;
+        this.userGroups();
       }
       if (this.value == 1) {
         this.flag = true;

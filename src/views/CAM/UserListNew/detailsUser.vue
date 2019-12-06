@@ -4,7 +4,7 @@
            <Headcom title="用户详情" :backShow='true' />
       </div>
       <div class="details">
-        
+            
       </div>
   </div>
 </template>
@@ -19,6 +19,6 @@ export default {
    }
 }
 </script>
-<style scoped>
+<style lang="scss" scoped>
 
 </style>
