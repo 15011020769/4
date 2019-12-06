@@ -32,7 +32,7 @@
             <ul>
               <li class="li-title">{{$t("COM.COM.safe")}}</li>
               <li class="li-sub" @click="go('../HS/index.html#/overview')">{{$t("COM.COM.yunjing")}}</li>
-              <li class="li-sub" @click="go('../CAP/index.html#/appId')">{{$t("COM.COM.ddos")}}</li>
+              <li class="li-sub" @click="go('../CAP/index.html#/appId')">{{$t("COM.COM.captcha")}}</li>
               <li @click="testFun">{{$t("COM.COM.waf")}}</li>
               <li class="li-sub" @click="go('../DDOS/index.html#/ProtectOverview')">{{$t("COM.COM.ddos")}}</li>
               <li class="li-sub" @click="go('../DDOS/index.html#/IpProfessional')">{{$t("COM.COM.bgp")}}</li>
