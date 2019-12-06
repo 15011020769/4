@@ -115,6 +115,8 @@ export default {
     ccAttack:ccAttack
   },
   created(){
+    // console.log(this.$route.query.instance)
+    localStorage.setItem("ddosAttack",this.$route.query.instance)
     this.instance = this.$route.query.instance;
   },
   methods:{

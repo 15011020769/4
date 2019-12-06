@@ -168,12 +168,12 @@ export default {
     },
     //跳转详情页
     toDoDetail(basicIndex,basicRow){
-      // console.log(basicIndex, basicRow)
+      // console.log(basicRow)
       if(basicRow.PublicIpAddresses != undefined){
         this.$router.push({
           path: "/basicProteDetail",
           query: {
-            instance: basicRow
+            instance: JSON.stringify(basicRow)
           }
         });
       }
