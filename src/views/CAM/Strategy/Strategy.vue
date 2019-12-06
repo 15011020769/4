@@ -37,7 +37,6 @@
           <el-table
             :data="tableData"
             height="610"
-            border
             style="width: 100%"
             :row-style="{height:0}"
             :cell-style="{padding:'5px 10px'}"
