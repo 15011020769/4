@@ -10,7 +10,7 @@ import '@/utils/axios'
 import VueCookie from 'vue-cookie'
 import '@/assets/iconfont/iconfont.css'
 import filters from '@/filters/filters.js'
-import i18n from '@/language/i18n.js'  // 引入i18n包
+import i18n from '@/language/i18n.js' // 引入i18n包
 // 引入基本模板
 const echarts = require('echarts/lib/echarts')
     // 引入折线图组件
@@ -53,22 +53,9 @@ Vue.directive('loadmore', {
     }
 })
 
-new Vue({ <<
-    <<
-    << < HEAD
+new Vue({
     router,
     // store,
     i18n,
     render: h => h(App)
 }).$mount('#app')
-
-===
-===
-=
-router,
-// store,
-i18n,
-render: h => h(App)
-}).$mount('#app') >>>
-    >>>
-    > 删除垃圾组件
