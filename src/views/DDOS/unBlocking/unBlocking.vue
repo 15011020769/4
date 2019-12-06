@@ -27,37 +27,39 @@
         </el-row>
       </div>
       <div class="contPartTwo">
-        <el-table :data="tableDatalist">
-          <el-table-column prop="Ip" label="IP">
-            <template slot-scope="scope">
-              <a href="#" @click="toDoDetail(scope.$index, scope.row)">{{scope.row.Ip}}</a>
-            </template>
-          </el-table-column>
-          <el-table-column prop="blockingTime" label="封堵时间">
-            <template slot-scope="scope">
-              {{scope.row.BlockTime}}
-            </template>
-          </el-table-column>
-          <el-table-column prop="unblockTime" label="预计解封时间">
-         <template slot-scope="scope">
-              {{scope.row.UnBlockTime}}
-            </template>
-          </el-table-column>
-          <el-table-column prop="status" label="状态">
-            <template slot-scope="scope">
-              {{scope.row.Status}}
-            </template>
-          </el-table-column>
-          <el-table-column prop="action" label="操作" width="180">
-            <template slot-scope="scope">
-              <el-button
-                @click.native.prevent="deleteRow(scope.$index, scope.row)"
-                type="text"
-                size="small"
-              > {{scope.row.ActionType}}</el-button>
-            </template>
-          </el-table-column>
-        </el-table>
+        <div class="tableContentUn">
+          <el-table :data="tableDatalist">
+            <el-table-column prop="Ip" label="IP">
+              <template slot-scope="scope">
+                <a href="#" @click="toDoDetail(scope.$index, scope.row)">{{scope.row.Ip}}</a>
+              </template>
+            </el-table-column>
+            <el-table-column prop="blockingTime" label="封堵时间">
+              <template slot-scope="scope">
+                {{scope.row.BlockTime}}
+              </template>
+            </el-table-column>
+            <el-table-column prop="unblockTime" label="预计解封时间">
+          <template slot-scope="scope">
+                {{scope.row.UnBlockTime}}
+              </template>
+            </el-table-column>
+            <el-table-column prop="status" label="状态">
+              <template slot-scope="scope">
+                {{scope.row.Status}}
+              </template>
+            </el-table-column>
+            <el-table-column prop="action" label="操作" width="180">
+              <template slot-scope="scope">
+                <el-button
+                  @click.native.prevent="deleteRow(scope.$index, scope.row)"
+                  type="text"
+                  size="small"
+                > {{scope.row.ActionType}}</el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+        </div>
       </div>
     </div>
   </div>
@@ -169,6 +171,9 @@ export default {
       border:1px solid #ddd;
       box-shadow: 0 2px 3px 0 rgba(0,0,0,.2);
       min-height:200px;
+      .tableContentUn{
+        min-height:450px;
+      }
     }
   }
 }

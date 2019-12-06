@@ -5,7 +5,7 @@
     </div>
     <div class="mainContentBlock">
       <div class="contPartOne">
-        <el-date-picker
+        <el-date-picker class="dateUnBlock"
           v-model="dateChoice1"
           type="datetimerange"
           range-separator="至"
@@ -14,28 +14,30 @@
         </el-date-picker>
       </div>
       <div class="contPartTwo">
-        <el-table :data="IpUnBlockList.slice((currentPage-1)*pageSize,currentPage*pageSize)">
-          <el-table-column prop="ip" label="IP">
-            <template slot-scope="scope">
-              <a href="#" @click="toDoDetail(scope.$index, scope.row)">{{scope.row.ip}}</a>
-            </template>
-          </el-table-column>
-          <el-table-column prop="blockingTime" label="封堵时间">
-            <template slot-scope="scope">
-              {{scope.row.BlockTime}}
-            </template>
-          </el-table-column>
-          <el-table-column prop="unblockTime" label="预计解封时间">
-            <template slot-scope="scope">
-              {{scope.row.UnBlockTime}}
-            </template>
-          </el-table-column>
-          <el-table-column prop="unblockType" label="解封操作类型">
-            <template slot-scope="scope">
-              {{scope.row.ActionType}}
-            </template>
-          </el-table-column>
-        </el-table>
+        <div class="tableContentUn">
+          <el-table :data="IpUnBlockList.slice((currentPage-1)*pageSize,currentPage*pageSize)">
+            <el-table-column prop="ip" label="IP">
+              <template slot-scope="scope">
+                <a href="#" @click="toDoDetail(scope.$index, scope.row)">{{scope.row.ip}}</a>
+              </template>
+            </el-table-column>
+            <el-table-column prop="blockingTime" label="封堵时间">
+              <template slot-scope="scope">
+                {{scope.row.BlockTime}}
+              </template>
+            </el-table-column>
+            <el-table-column prop="unblockTime" label="预计解封时间">
+              <template slot-scope="scope">
+                {{scope.row.UnBlockTime}}
+              </template>
+            </el-table-column>
+            <el-table-column prop="unblockType" label="解封操作类型">
+              <template slot-scope="scope">
+                {{scope.row.ActionType}}
+              </template>
+            </el-table-column>
+          </el-table>
+        </div>
         <div class="tabListPage">
           <el-pagination
             @size-change="handleSizeChange"
@@ -165,6 +167,22 @@ export default {
     .contPartOne{
       width:100%;
       padding: 0 20px 20px 0;
+      .dateUnBlock{
+        width:340px;
+        height:30px;
+        border-radius: 0;
+        line-height:30px;
+        input{
+          font-size:12px;
+        }
+        .el-range-separator{
+          line-height: 22px;
+          width: 10%;
+        }
+        .el-range__icon{
+          line-height: 26px;
+        }
+      }
     }
     .contPartTwo{
       width:100%;
@@ -176,5 +194,12 @@ export default {
     }
   }
 }
-
+.tableContentUn{
+  border-bottom: 1px solid #ddd;
+  min-height:450px;
+}
+.tabListPage{
+  height:50px;
+  padding-top:16px;
+}
 </style>

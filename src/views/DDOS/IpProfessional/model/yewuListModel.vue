@@ -20,7 +20,7 @@
               <div class="newClear"><span class="basicLabel">初始区域</span><span class="basicIpt">中国台湾</span></div>
               <div class="newClear"><span class="basicLabel">当前区域</span><span class="basicIpt">中国台湾</span></div>
               <div class="newClear"><span class="basicLabel">当前状态</span><span class="basicIpt">回收中</span></div>
-              <div class="newClear"><span class="basicLabel">标签</span><span class="basicIpt">无<i class="el-icon-edit" @click="addTags"></i></span></div>
+              <div class="newClear"><span class="basicLabel">标签</span><span class="basicIpt">无<i class="el-icon-edit" @click="addTagsYewu"></i></span></div>
             </div>
             <div class="editBtn" v-if="thisEditShow">
               <el-button class="editSure" @click="editSure">确定</el-button>
@@ -74,7 +74,7 @@
         </div>
         <a v-on:click="addRow(1)" class="">添加</a>
         <span class="footerBtn">
-          <el-button @click="addTagsSureResouse">确定</el-button>
+          <el-button @click="addTagsSureYewu">确定</el-button>
           <el-button @click="handleCloseTags">取消</el-button>
         </span>
       </el-dialog>
@@ -84,13 +84,10 @@
 <script>
 export default {
   props:{
-    isShow:Boolean,
-    yewuOrResouse:String
+    isShow:Boolean
   },
   computed:{
     resouseListShow(){
-      console.log(this.isShow);
-      this.dialogModel=this.isShow;
       return this.isShow
     }
   },
@@ -99,20 +96,22 @@ export default {
       dialogModel:'',//模态框
       thisEditShow:false,//点击编辑时展示的东西
       thisName:'123',//资源名称
-      listIsWhat:'',//是业务列表还是资源列表
       addTagsModel:false,//添加标签弹框
       tags:[
         {
-
+          
         }
       ]
     }
+  },
+  mounted(){
+    console.log(this.dialogModel)
   },
   methods:{
     //关闭按钮
     handleClose(){
       this.dialogModel=false;
-      this.$emit("closeListDetail",this.dialogModel)
+      this.$emit("closeListDetailYw",this.dialogModel)
     },
     //点击编辑按钮
     editBtn(){
@@ -123,13 +122,13 @@ export default {
       this.thisEditShow=false;
     },
     //标签编辑按钮
-    addTags(){
+    addTagsYewu(){
       this.addTagsModel=true;
       this.dialogModel=false;
-      this.$emit("closeListDetail",this.dialogModel);
+      this.$emit("closeListDetailYw",this.dialogModel);
     },
     //编辑标签确定按钮
-    addTagsSureResouse(){
+    addTagsSureYewu(){
       this.addTagsModel=false;
     },
     //编辑标签取消关闭按钮
@@ -230,71 +229,6 @@ export default {
     }
   }
 }
-.tableContent{
-  border:1px solid #ddd;
-  margin-bottom:10px;
-  min-height: 450px;
-  max-height: 450px;
-  overflow: auto;
-  .table-div1 {
-    width: 100%;
-    tr {
-      width: 30%;
-    }
-    .t-head1 {
-      height: 45px;
-      padding: 0 5px;
-      td{
-        border-bottom:1px solid #eaeaea;
-        padding-left:10px;
-      }
-    }
-    .t-body1 {
-      height: 45px;
-      min-height: 200px;
-      td{
-        // border-bottom:1px solid #eaeaea;
-        padding-left:10px;
-        .inputChange{
-          height:30px;
-          width:150px;
-          input{
-            height:30px;
-            width:150px;
-            border-radius: 0;
-          }
-        }
-        .inputChange1{
-          height:30px;
-          width:70px;
-          margin-bottom: 0;
-          margin-left:0;
-          input{
-            height:30px;
-            width:70px;
-            border-radius: 0;
-          }
-        }
-      }
-    }
-  } 
-}
-.footerBtn{
-  display:block;
-  margin-top:20px;
-  text-align:center;
-  button{
-    width:64px;
-    height:30px;
-    border-radius: 0;
-    padding:0;
-    line-height: 30px;
-    text-align:center;
-  }
-  button:nth-child(1){
-    background-color:#006eff;
-    color:#fff;
-  }
-} 
+  
   
 </style>
