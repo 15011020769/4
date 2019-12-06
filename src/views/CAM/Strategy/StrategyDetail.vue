@@ -102,22 +102,22 @@
                     </template>
                   </el-table-column>
                 </el-table>
-                <div style="background:#fff;padding:10px;display:flex;justify-content: space-between;line-height:30px">
-                  <div>
-                    <span style="font-size:12px;color:#888">已选 {{selTotal}} 项，共 {{total}} 项</span>
-                  </div>
-                  <div>
-                    <el-pagination
-                      @size-change="handleSizeChange"
-                      @current-change="handleCurrentChange"
-                      :current-page.sync="page"
-                      :page-sizes="[10, 20, 50, 100, 200]"
-                      :page-size="rp"
-                      layout="sizes, prev, pager, next"
-                      :total="total"
-                    ></el-pagination>
-                  </div>
-                </div>
+              </div>
+            </div>
+            <div style="background:#fff;padding:10px;display:flex;justify-content: space-between;line-height:30px">
+              <div>
+                <span style="font-size:12px;color:#888">已选 {{selTotal}} 项，共 {{total}} 项</span>
+              </div>
+              <div>
+                <el-pagination
+                  @size-change="handleSizeChange"
+                  @current-change="handleCurrentChange"
+                  :current-page.sync="page"
+                  :page-sizes="[10, 20, 50, 100, 200]"
+                  :page-size="rp"
+                  layout="sizes, prev, pager, next"
+                  :total="total"
+                ></el-pagination>
               </div>
             </div>
           </el-tab-pane>
@@ -253,6 +253,7 @@ export default {
     },
     // 获取策略关联的实体列表
     getAttachPolicys() {
+      this.selTotal = 0
       this.policysData = []
       let policyId = this.policy.PolicyId
       let url = 'cam2/ListEntitiesForPolicy'
@@ -334,10 +335,10 @@ export default {
       if (val != '') {
         this.policysSelData = val
         this.display = false
+        this.selTotal = val.length
       } else {
         this.display = true
       }
-      this.selTotal = this.policysSelData.length
     },
     handleClosePolicyRemove() {
       this.Relieve_dialogVisible = false

@@ -92,12 +92,7 @@
     },
     mounted() {
         this.init()
-        console.log(window.innerHeight)
-        console.log(this.$refs.topictable.$el)
-        console.log(this.$refs.topictable.$el.offsetTop)
-        this.tableHeight =
-          window.innerHeight - this.$refs.topictable.$el.offsetTop - 50;
-        console.log(this.tableHeight)
+        this.tableHeight = window.innerHeight - this.$refs.multipleOption.$el.offsetTop - 50;
     },
     methods: {
         init() {
@@ -114,7 +109,6 @@
             }
             let url = "cam2/ListPolicies"
             this.axios.post(url, params).then(res => {
-                console.log(res)
                 this.totalNum = res.Response.TotalNum
                 this.policiesData = res.Response.List
             }).catch(error => {

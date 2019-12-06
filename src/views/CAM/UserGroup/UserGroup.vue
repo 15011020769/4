@@ -54,8 +54,8 @@
         tooltip-effect="dark"
         style="width: 100%; border:1px solid #ddd;padding-top: 8px;" 
          @selection-change="handleSelectionChange">
-        <el-table-column prop="GroupId" type="selection" width="28"></el-table-column>
-       <el-table-column prop="GroupName" :label="$t('CAM.CAM.userGroup.colNmae')" show-overflow-tooltip>
+        <el-table-column prop="GroupId" type="selection" width="29"></el-table-column>
+        <el-table-column prop="GroupName" :label="$t('CAM.CAM.userGroup.colNmae')" show-overflow-tooltip>
           &lt;!&ndash;<template slot-scope="scope">
             <el-button @click="Interface(scope.row.GroupId)" size="mini" type="text">{{scope.row.GroupName}}</el-button>
           </template>&ndash;&gt;
@@ -71,16 +71,18 @@
       </el-table>
       <div style="background:#fff;padding:10px;display:flex;justify-content: space-between;line-height:30px">
         <div>
-          <span style="font-size:12px;color:#888">已选 0 项，共 3 项</span>
+          <span style="font-size:12px;color:#888">已选 {{selTotal}} 项，共 {{total}} 项</span>
         </div>
         <div>
         <el-pagination
-        @size-change="sizeChange"
-        @current-change="pageChange"
-        :current-page="Page+1"
-        layout="total, sizes, prev, pager, next, jumper"
-        :total="total"
-      ></el-pagination>
+          @size-change="sizeChange"
+          @current-change="pageChange"
+          :current-page.sync="Page"
+          :page-sizes="[10, 20, 50, 100, 200]"
+          :page-size="size"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="total"
+        ></el-pagination>
         </div>
       </div>
     </div>
@@ -88,8 +90,8 @@
       <el-dialog :title="$t('CAM.CAM.userGroup.addTitle')" custom-class="dialogStyle" :visible.sync="dialogVisible" :before-close="handleClose" width="70%"> 
 				<div class="container-left">
           <p>选择添加的用户（共{{totalNum}}条）</p>
-          <el-input size="mini" v-model="search"  style="width:100%"  @keyup.enter.native="toQuery"/>
-          <i size="mini" class="el-icon-search fier" @click="toQuery"></i>
+          <el-input size="mini" v-model="search"  style="width:100%"  @keyup.enter.native="toQueryUser"/>
+          <i size="mini" class="el-icon-search fier" @click="toQueryUser"></i>
           <el-table
             class="table-left"
                 ref="multipleOption"
@@ -153,7 +155,6 @@
 
 </template>
 <script>
-  // import addUserGroup from './addUserGroup'
 export default {
   data() {
     return {
@@ -171,15 +172,17 @@ export default {
       searchValue: '',
 	    gear: false,
       userData: [],
+      userAllData: [],
       userSelData: [],
       dialogVisible: false,
       tableData: [],
       search: '',
       totalNum: 0,
         // 分页
-      Page:0,
+      Page:1,
       size:10,
       total: 0,
+      selTotal: 0,
       selNum: 0,
       btnVisible: true,
       selectedGroupId: 0,
@@ -192,6 +195,7 @@ export default {
   methods: {
     // 初始化方法。
     init() {
+      this.selTotal = 0
       let params = {
         Action: 'ListGroups',
         Version: '2019-01-16',
@@ -217,7 +221,6 @@ export default {
     },
     // 打开添加用户页面
     addUserGroup(rowId) {
-      let _this = this
       if(rowId != undefined && rowId != '') {
         this.selectedGroupId = rowId
       }
@@ -228,40 +231,45 @@ export default {
       }
       this.axios.post(url, params).then(res => {
         this.userData = []
-        let userAllData = res.Response.Data
+        this.userAllData = res.Response.Data
         this.totalNum = this.userData.length
-        // 获取用户组管理用户
-        let owneruserData = []
-        let paramsGroup = {
-          Action: 'ListUsersForGroup',
-          GroupId: _this.selectedGroupId,
-          Version: '2019-01-16'
-        }
-        let urlGroup = "cam2/ListUsersForGroup"
-        this.axios.post(urlGroup, paramsGroup).then(resGroup => {
-          // 不直接将子用户信息赋予用户组选择框中,是避免页面出现 过滤后的子用户信息刷新覆盖初始信息
-          owneruserData = resGroup.Response.UserInfo
-          // 用户组拥有子用户，系统将拥有子用户从用户组添加框中去掉，避免重复选择
-          if(owneruserData != '') {
-            for(var i = 0; i < owneruserData.length; i++) {
-              let ownerObj = owneruserData[i]
-              for(var j = 0; j < userAllData.length; j++) {
-                let allObj = userAllData[j]
-                if(allObj.Uin === ownerObj.Uin){
-                  userAllData.splice(j,1)
-                }
-              }
-            }
-            _this.userData = userAllData
-          }else{
-            _this.userData = userAllData
-          }
-        }).catch(error => {
-          console.log(error)
-        })
+        this.getUsers()
         // 获取数据成功，打开dialog。
         this.dialogVisible = true
         // this.cancel()
+      }).catch(error => {
+        console.log(error)
+      })
+    },
+    // 用户组所属子用户查询
+    getUsers() {
+      let _this = this
+      // 获取用户组管理用户
+      let owneruserData = []
+      let paramsGroup = {
+        Action: 'ListUsersForGroup',
+        GroupId: this.selectedGroupId,
+        Version: '2019-01-16'
+      }
+      let urlGroup = "cam2/ListUsersForGroup"
+      this.axios.post(urlGroup, paramsGroup).then(resGroup => {
+        // 不直接将子用户信息赋予用户组选择框中,是避免页面出现 过滤后的子用户信息刷新覆盖初始信息
+        owneruserData = resGroup.Response.UserInfo
+        // 用户组拥有子用户，系统将拥有子用户从用户组添加框中去掉，避免重复选择
+        if(owneruserData != '') {
+          for(var i = 0; i < owneruserData.length; i++) {
+            let ownerObj = owneruserData[i]
+            for(var j = 0; j < _this.userAllData.length; j++) {
+              let allObj = _this.userAllData[j]
+              if(allObj.Uin === ownerObj.Uin){
+                _this.userAllData.splice(j,1)
+              }
+            }
+          }
+          _this.userData = _this.userAllData
+        }else{
+          _this.userData = _this.userAllData
+        }
       }).catch(error => {
         console.log(error)
       })
@@ -310,7 +318,7 @@ export default {
         let url = "cam2/AddUserToGroup"
         this.axios.post(url, params).then(data => {
           this.$message({ message: this.$t('CAM.CAM.userGroup.successInfo'), type: "success" })
-          _this.init() // 重新加载页面
+          this.init() // 重新加载页面
           // this.$emit("update")
           // this.cancel()
         }).catch(error => {
@@ -331,41 +339,54 @@ export default {
       this.init()
     },
     sizeChange(e) {
-      this.page = 0
       this.size = e
       this.init()
     },
-  /*   handleSelectionChange(val) {
+    // 首页表格选择状态处理
+    handleSelectionChange(val) {
       if(val != '') {
         this.btnVisible = false
         this.selectedGroupId = val[0].GroupId
+        this.selTotal = val.length
       }else {
         this.btnVisible = true
       }
-    }, */
+    },
+    // 关闭弹出框
     handleClose() {
       this.dialogVisible = false
     },
+    // 自定义弹出框
     handleCloseGear() {
       this.gear = false
     },
+    // 子用户选择方法
     handleSelectionChangeUser(val) {
       // 给右边table框赋值，只需在此处赋值即可，selectedRow方法中不写，因为单独点击复选框，只有此方法有效。
       this.userSelData = val
       this.selNum = this.userSelData.length
     },
+    // 子用户移除
     selectedRow(row, column, event) {
     // 设置选中或者取消状态
       this.$refs.multipleOption.toggleRowSelection(row)
     },
+    // 子用户单行移除
     deleteRow(index, rows) {
       // 获取右边框中取消的行数据，将此行数据在右边框中的选中状态取消
       this.$refs.multipleOption.toggleRowSelection(rows[index],false)
     },
+    // 用户组查询方法
     toQuery() {
       this.init()
     }, 
-    //测试接口详情
+    // 子用户穿梭框查询
+    toQueryUser() {
+      if(this.search != '') {
+
+      }
+    },
+    //用户组详情
     Interface(groupId){
       this.$router.push({
         name: "Interfacedetails",

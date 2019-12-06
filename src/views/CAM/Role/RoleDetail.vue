@@ -331,6 +331,7 @@ export default {
     },
     // 获取角色策略
     getRolePolicy() {
+      this.selTotalNum = 0
       let url = "cam2/ListAttachedRolePolicies";
       let paramsList = {
         Action: "ListAttachedRolePolicies",
@@ -343,7 +344,6 @@ export default {
         paramsList['PolicyType'] = this.rolePolicyType
       }
       this.axios.post(url, paramsList).then(res => {
-        this.selTotalNum = 0
         this.rolePolicies = res.Response.List
         this.TotalNum = res.Response.TotalNum
       }).catch(error => {
@@ -371,11 +371,11 @@ export default {
     handleSelectionChangePolicies (val) {
       if (val != '') {
         this.roleSelPolicies = val
+        this.selTotalNum = val.length
         this.displayPolicies = false
       } else {
         this.displayPolicies = true
       }
-      this.selTotalNum = this.roleSelPolicies.length
     },
     // 批量解除绑定到策略的实体
     relieveRolePolicies() {

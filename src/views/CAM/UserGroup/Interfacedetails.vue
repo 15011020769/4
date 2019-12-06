@@ -60,7 +60,8 @@
                 <el-table :data="policiesData" style="width: 100%; border:1px solid #ddd;">
                   <el-table-column label="策略名" show-overflow-tooltip>
                     <template slot-scope="scope">
-                      <p>{{scope.row.PolicyName}}</p>
+                      <!-- <p>{{scope.row.PolicyName}}</p> -->
+                      <el-button @click="policyDetail(scope.row)" size="mini" type="text">{{scope.row.PolicyName}}</el-button>
                       <p>{{scope.row.Remark}}</p>
                     </template>
                   </el-table-column>
@@ -76,8 +77,23 @@
                   </el-table-column>
                 </el-table>
               </div>
+              <div style="background:#fff;padding:10px;display:flex;justify-content: space-between;line-height:30px">
+                <div>
+                  <span style="font-size:12px;color:#888">共 {{totalPolicies}} 项</span>
+                </div>
+                <div class="block">
+                  <el-pagination
+                    @size-change="handleSizeChangePolicies"
+                    @current-change="handleCurrentChangePolicies"
+                    :current-page.sync="pagePolicies"
+                    :page-sizes="[10, 20, 50, 100, 200]"
+                    :page-size="rpPolicies"
+                    layout="total, sizes, prev, pager, next, jumper"
+                    :total="totalPolicies"
+                  ></el-pagination>
+                </div>
+              </div>
               <!-- 关联策略弹出框 start -->
-              
               <el-dialog title="关联策略" custom-class="dialogStyle" :visible.sync="dialogVisible" width="75%" :before-close="handleClosePolicies">
                 <div class="container">
                   <div class="container-left">
@@ -172,7 +188,11 @@
                   style="width: 100%; border:1px solid #ddd"
                   @selection-change="handleSelectionChangeUsers">
                   <el-table-column type="selection" width="55"></el-table-column>
-                  <el-table-column label="用户名称" prop="Name"></el-table-column>
+                  <el-table-column label="用户名称" prop="Name">
+                    <template slot-scope="scope">
+                      <el-button @click="userDetails(scope.row)" size="mini" type="text">{{scope.row.Name}}</el-button>
+                    </template>
+                  </el-table-column>
                   <el-table-column prop="CreateTime" label="创建时间">
                     <template slot-scope="scope">{{ scope.row.CreateTime }}</template>
                   </el-table-column>
@@ -186,6 +206,22 @@
                       </template>&ndash;&gt;
                     </el-table-column>
                   </el-table>
+              </div>
+              <div style="background:#fff;padding:10px;display:flex;justify-content: space-between;line-height:30px">
+                <div>
+                  <span style="font-size:12px;color:#888">共 {{totalUser}} 项</span>
+                </div>
+                <div class="block">
+                  <el-pagination
+                    @size-change="handleSizeChangeUser"
+                    @current-change="handleCurrentChangeUser"
+                    :current-page.sync="pageUser"
+                    :page-sizes="[10, 20, 50, 100, 200]"
+                    :page-size="rpUser"
+                    layout="total, sizes, prev, pager, next, jumper"
+                    :total="totalUser"
+                  ></el-pagination>
+                </div>
               </div>
               <!-- dialog 用户组弹出框  start -->
               <el-dialog
@@ -265,17 +301,6 @@
             <!-- tab 用户组用户信息页面 end -->
           </el-tabs>
         </template>
-        <div class="block">
-          <el-pagination
-            @size-change="handleSizeChange"
-            @current-change="handleCurrentChange"
-            :current-page="currentPage4"
-            :page-sizes="[10, 20, 30, 40]"
-            :page-size="10"
-            layout="total, sizes, prev, pager, next, jumper"
-            :total="40"
-          ></el-pagination>
-        </div>
       </div>
       <!-- 用户组详情下半部分页面 end -->
     </div>
@@ -298,13 +323,17 @@ export default {
       btnVisible: true,
       userLabel: '',
       policiesLable: '',
-      pagePolicies: 20,
-      rpPolicies: 1,
+      pagePolicies: 1,
+      rpPolicies: 10,
+      totalPolicies: 0,
       totalNumPolicies: 0,
       totalNumUser: 0,
       selNum: 0,
       userData: [],
       userSelData: [],
+      pageUser: 1,
+      rpUser: 10,
+      totalUser: 0,
       policiesSelectedData: [],
       policiesData: [],
       policiesAllData: [],
@@ -315,12 +344,7 @@ export default {
   mounted() {
     this.groupId = this.$route.query.GroupId
     this.init()
-    console.log(window.innerHeight)
-    console.log(this.$refs.topictable.$el)
-    console.log(this.$refs.topictable.$el.offsetTop)
-    this.tableHeight =
-      window.innerHeight - this.$refs.topictable.$el.offsetTop - 50;
-    console.log(this.tableHeight)
+    // this.tableHeight = window.innerHeight - this.$refs.multipleOptionPolicies.$el.offsetTop - 50;
   },
   methods: {
     // 初始化时，获取用户组信息
@@ -343,7 +367,6 @@ export default {
         this.groupData = res.Response
         this.owneruserData = res.Response.UserInfo
         this.userLabel = '用户（'+this.owneruserData.length+'）'
-        console.log(res)
       }).catch(error => {
         console.log(error)
       })
@@ -367,7 +390,7 @@ export default {
       }
       let url = "cam2/RemoveUserFromGroup"
       this.axios.post(url, params).then(data => {
-        this.selectUsers() // 重新加载页面
+        this.getUsers() // 重新加载页面
       }).catch(error => {
         console.log(error)
       })
@@ -396,23 +419,25 @@ export default {
       }
       let url = "cam2/UpdateGroup"
       this.axios.post(url, params).then(res => {
-        console.log(res)
         this.init()
       }).catch(error => {
           console.log(error)
       })
     },
     // 获取用户组所属子用户信息
-    selectUsers() {
+    getUsers() {
       let groupId = parseInt(this.$route.query.GroupId)
       let paramsGroup = {
         Action: 'ListUsersForGroup',
         GroupId: groupId,
+        Page: this.pageUser,
+        Rp: this.rpUser,
         Version: '2019-01-16'
       }
       let urlGroup = "cam2/ListUsersForGroup"
       this.axios.post(urlGroup, paramsGroup).then(resGroup => {
         this.owneruserData = resGroup.Response.UserInfo
+        this.totalUser = resGroup.Response.TotalNum
         // this.userLabel = '用户（'+this.owneruserData.length+'）'
       }).catch(error => {
         console.log(error)
@@ -514,20 +539,39 @@ export default {
       this.userSelData = val
       this.selNum = this.userSelData.length
     },
+    // 用户组子用户分页
+    handleCurrentChangeUser(e) {
+      this.pageUser = e
+      this.getUsers()
+    },
+    // 用户组子用户分页
+    handleSizeChangeUser(e) {
+      this.rpUser = e
+      this.getUsers()
+    },
+    userDetails(val) {
+      this.$router.push({
+        path:"/detailsUser",
+        query: {
+          content: val.Name
+        }
+      })
+    },
     // 查询用户关联策略信息
     selectGroupPolicies(){
       let groupId = parseInt(this.$route.query.GroupId)
       let params = {
         Action: 'ListAttachedGroupPolicies',
         Version: '2019-01-16',
+        Page: this.pagePolicies,
+        Rp: this.rpPolicies,
         TargetGroupId: groupId
       }
       let url = "cam2/ListAttachedGroupPolicies"
       this.axios.post(url, params).then(res => {
-        console.log(res)
         this.policiesData = res.Response.List
         this.policiesLable = '权限（' + this.policiesData.length + '）'
-        console.log(this.policiesData)
+        this.totalPolicies = res.Response.TotalNum
       }).catch(error => {
           console.log(error)
       })
@@ -546,7 +590,6 @@ export default {
       }
       let url = "cam2/ListPolicies"
       this.axios.post(url, params).then(res => {
-        console.log(res)
         this.totalNumPolicies = res.Response.TotalNum
         this.policiesAllData = res.Response.List
       }).catch(error => {
@@ -564,7 +607,6 @@ export default {
       }
       let url = "cam2/DetachGroupPolicy"
       this.axios.post(url, params).then(res => {
-        console.log(res)
         this.selectGroupPolicies()
       }).catch(error => {
           console.log(error)
@@ -621,20 +663,27 @@ export default {
         console.log(error)
       })
     },
+    // 跳转到策略详情页面
+    policyDetail(policy) {
+      this.$router.push({
+        path: '/StrategyDetail',
+        query: {
+          policy: policy
+        }
+      });
+    },
     backoff() {
       this.$router.push({ path: "UserGroup" });
     },
-    onSubmit() {
-      console.log("submit!");
-    },
     handleClick(tab, event) {
-      console.log(tab, event);
-    },
-    handleEdit(index, row) {
-      console.log(index, row);
-    },
-    handleDelete(index, row) {
-      console.log(index, row);
+      if(tab.name === 'first') {
+        this.pagePolicies = 1
+        this.selectGroupPolicies()
+      }
+      if(tab.name === 'second') {
+        this.pageUser
+        this.getUsers()
+      }
     },
     handleClosePolicies(done) {
       this.$confirm("确认关闭？")
@@ -650,17 +699,15 @@ export default {
         })
         .catch(_ => {});
     },
-    handleSelectionChange() {
-
+    // 用户组策略分页
+    handleCurrentChangePolicies(e) {
+      this.pagePolicies = e
+      this.selectGroupPolicies()
     },
-    handleCurrentChange() {
-
-    },
-    handleSizeChange() {
-
-    },
-    currentPage4() {
-
+    // 用户组策略分页
+    handleSizeChangePolicies(e) {
+      this.rpPolicies = e
+      this.selectGroupPolicies()
     }
   }
 };

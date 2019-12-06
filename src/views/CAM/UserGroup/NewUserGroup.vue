@@ -92,6 +92,7 @@
 
       },
       confirm() {
+        let _this = this
         if(this.active ==2) {
          this.$router.push({name: 'UserGroup'})
           // 创建用户组
@@ -106,7 +107,6 @@
             params["Remark"] = this.addModel.remark
           }
           let url = "cam2/CreateGroup"
-          let _this = this
           this.axios.post(url, params).then(res => {
             // 获取新创建的用户组ID
             let AttachGroupId = res.Response.GroupId
