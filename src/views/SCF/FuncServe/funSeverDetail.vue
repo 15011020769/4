@@ -19,7 +19,7 @@
             <div class="tabChange">
               <el-tabs class="allTabsModel" v-model="activeNameModel" @tab-click="handleClick1">
                 <el-tab-pane label="版本" name="firstModel">
-                  <div></div>
+                  <p v-for="(item,index) in versionArr" :key='index'>{{item}}</p>
                 </el-tab-pane>
                 <el-tab-pane label="别名" name="secondModel">
                   <div>暂无别名</div>
@@ -83,7 +83,7 @@
                       <el-form-item prop="Role" label="运行角色" :required="true">
                         <span slot="label">
                           运行角色
-                          <i class="el-icon-question"></i>
+                          <!-- <i class="el-icon-question"></i> -->
                         </span>
                         <el-select v-model="functionData.Role">
                           <el-option label="SCF默认运行角色" value="default"></el-option>
@@ -91,7 +91,7 @@
                         </el-select>
                         <p class="tipContent">
                           <span>此角色将用于授权函数运行时操作其他资源的权限。您可以</span>
-                          <a class="tipContentA">
+                          <a class="tipContentA" @click="creatRole">
                             新建角色
                             <span class="el-icon-share"></span>
                           </a>
@@ -108,7 +108,7 @@
                       <el-form-item prop="MemorySize" label="内存" :required="true" class="intoAll">
                         <span slot="label">
                           内存
-                          <i class="el-icon-question"></i>
+                          <!-- <i class="el-icon-question"></i> -->
                         </span>
                         <el-select v-model="functionData.MemorySize">
                           <el-option label="64MB" value="64"></el-option>
@@ -134,7 +134,7 @@
                       >
                         <span slot="label">
                           超时时间
-                          <i class="el-icon-question"></i>
+                          <!-- <i class="el-icon-question"></i> -->
                         </span>
                         <el-input class="timeOutDate1" v-model="functionData.Timeout" placeholder></el-input>
                         <span>秒</span>
@@ -144,7 +144,7 @@
                       <el-form-item label="描述" prop="Description">
                         <span slot="label">
                           描述
-                          <i class="el-icon-question"></i>
+                          <!-- <i class="el-icon-question"></i> -->
                         </span>
                         <el-input type="textarea" v-model="functionData.Description" placeholder></el-input>
                         <p class="tipContent">最大支持1000个英文字母、数字、空格、逗号、句号、中文</p>
@@ -152,7 +152,7 @@
                       <el-form-item label="环境变量" prop="variable">
                         <span slot="label">
                           环境变量
-                          <i class="el-icon-question"></i>
+                          <!-- <i class="el-icon-question"></i> -->
                         </span>
                         <el-table
                           :data="functionData.Environment.Variables"
@@ -207,7 +207,7 @@
                       <el-form-item label="内网访问" prop="VpcConfig">
                         <span slot="label">
                           内网访问
-                          <i class="el-icon-question"></i>
+                          <!-- <i class="el-icon-question"></i> -->
                         </span>
                         <el-switch
                           v-model="functionData.VpcConfig"
@@ -594,7 +594,8 @@ export default {
         ]
       },
       selectChangeOption: "",
-      selectChangeOption1: ""
+      selectChangeOption1: "",
+      versionArr:[]
     };
   },
   mounted() {
@@ -607,6 +608,9 @@ export default {
     this.getModality();
   },
   methods: {
+  creatRole(){
+    this.$router.push({ path:'../../CAM/Role/createProvider.vue'  })
+  },
     // 获取编辑详情
     init() {
       let params = {
@@ -737,7 +741,7 @@ export default {
       let params = {
         Action: "PublishVersion",
         Version: "2018-04-16",
-        Region: this.$cookie.get("regionv2"),
+        Region: 'ap-guangzhou',//this.$cookie.get("regionv2"),
         Description: this.publishVersion.descript
       };
       let functionName = this.$route.query.functionName;
@@ -825,7 +829,7 @@ export default {
       let params = {
         Action: "ListVersionByFunction",
         Version: "2018-04-16",
-        Region: this.$cookie.get("regionv2")
+        Region: 'ap-guangzhou'//this.$cookie.get("regionv2")
       };
       let functionName = this.$route.query.functionName;
       if (functionName != "" && functionName != null) {
@@ -834,8 +838,14 @@ export default {
       this.axios
         .post(LIST_VERSION, params)
         .then(res => {
-          _this.logData = res.Response;
-          console.log(_this.logData);
+          this.logData = res.Response.FunctionVersion;
+          var arr = []
+        for (let i = 0; i < this.logData.length; i++) {
+          // this.switch1[i] = true;
+          arr.push(this.logData[i])
+        }
+        this.versionArr = arr;
+        console.log(this.versionArr)
         })
         .catch(error => {
           console.log(error);

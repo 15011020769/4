@@ -1,6 +1,6 @@
 <template>
   <div class="SCF">
-    <div class="big-title">SCF</div>
+    <div class="big-title">云函数</div>
     <el-menu
       default-active="2"
       class="el-menu-vertical-demo"
