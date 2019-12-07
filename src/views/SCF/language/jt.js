@@ -2,7 +2,8 @@ module.exports = {
     SCF: {
         total: {
             title: '函数服务',
-            btn: 'Cloud Virtual Machine'
+            mmkj: '命名空间：',
+            
         }
     },
     COM: {

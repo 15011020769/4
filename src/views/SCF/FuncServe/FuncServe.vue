@@ -1,10 +1,10 @@
 <template>
   <div>
     <div class="topFun">
-      <span>函数服务</span>
+      <span>{{ $t('SCF.total.title') }}</span>
       <el-input class="addressName" readonly="readonly" v-model="addressIpt"></el-input>
       <div>
-        命名空间：
+        {{ $t('SCF.total.mmkj') }}
         <el-select
           class="nameSpace"
           v-model="nameSpaceValue"
@@ -361,7 +361,7 @@ export default {
       let params = {
         // Action: "ListFunctions",
         Version: "2018-04-16",
-        Region: 'ap-guangzhou'//this.$cookie.get("regionv2")"
+        Region: 'ap-guangzhou'//this.$cookie.get("regionv2")
       };
       if(this.filterConrent!=='选择资源属性进行过滤'&&this.tableDataName!==''){
         params[this.filterConrent]=this.tableDataName

@@ -251,6 +251,7 @@ export default {
     inpChange(val){
       this.disinput = val
     },
+    //函数代码运行函数
     testCode() {
       // ClientContext: '{↵  "key1": "test value 1",↵  "key2": "test value 2"↵}'
       let params = {
