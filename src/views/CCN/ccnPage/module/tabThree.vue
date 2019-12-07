@@ -3,15 +3,15 @@
   <div class="tabThree">
     <!-- 地域间带宽 -->
     <div v-show="regionShow">
-      <span>限速方式：{{$t("CCN.CCN.tabs.tab3tit1")}}
-        <a @click="updateBandwidthLimitTypeVisible = true">{{$t("CCN.CCN.tabs.tab3tit2")}}</a>
+      <span>限速方式：{{$t("CCN.tabs.tab3tit1")}}
+        <a @click="updateBandwidthLimitTypeVisible = true">{{$t("CCN.tabs.tab3tit2")}}</a>
       </span>
       <div class="table">
         <div class="btn">
-          <el-button type="text" @click="toUpdateVisible2()">{{$t("CCN.CCN.tabs.tab3btn")}}</el-button>
+          <el-button type="text" @click="toUpdateVisible2()">{{$t("CCN.tabs.tab3btn")}}</el-button>
         </div>
         <el-table :data="tableData.slice((currentPage-1)*pageSize,currentPage*pageSize)" style="width: 100%">
-          <template slot="empty">{{$t("CCN.CCN.tabs.tab1no")}}</template>
+          <template slot="empty">{{$t("CCN.tabs.tab1no")}}</template>
           <el-table-column prop="CcnRegionBandwidthLimit.Region" label="地域A" width>
             <template slot-scope="scope">
               <p class="edit">{{ scope.row.CcnRegionBandwidthLimit.Region }}</p>
@@ -22,7 +22,7 @@
               <p class="edit">{{ scope.row.CcnRegionBandwidthLimit.DstRegion }}</p>
             </template>
           </el-table-column>
-          <el-table-column prop="CcnRegionBandwidthLimit.BandwidthLimit" :label="$t('CCN.CCN.tabs.tab3tr2')" width>
+          <el-table-column prop="CcnRegionBandwidthLimit.BandwidthLimit" :label="$t('CCN.tabs.tab3tr2')" width>
             <template slot-scope="scope">
               <p class="edit">{{ scope.row.CcnRegionBandwidthLimit.BandwidthLimit }}</p>
             </template>
@@ -48,7 +48,7 @@
             <tr class="t-head">
               <td>地域A</td>
               <td>地域B</td>
-              <td>{{$t('CCN.CCN.tabs.tab3tr2')}}</td>
+              <td>{{$t('CCN.tabs.tab3tr2')}}</td>
               <td></td>
             </tr>
             <!-- <tr class="t-body" v-for="(item, index) in formArr"> -->
@@ -96,48 +96,48 @@
           </table>
         </div>
         <div slot="footer" class="dialog-footer">
-          <el-button type="primary" @click="updateLimits()">{{$t('CCN.CCN.total.sure')}}</el-button>
+          <el-button type="primary" @click="updateLimits()">{{$t('CCN.total.sure')}}</el-button>
           <el-button @click="updateVisible2 = false">取消</el-button>
         </div>
       </el-dialog>
       <!-- 地域间-修改限速方式的模态窗 -->
       <el-dialog
-        :title="$t('CCN.CCN.total.eWay')"
+        :title="$t('CCN.total.eWay')"
         :visible.sync="updateBandwidthLimitTypeVisible"
         class="formDialog"
       >
         <el-form :model="ccnPublic">
-          <el-form-item :label="$t('CCN.CCN.total.eWay1')">
+          <el-form-item :label="$t('CCN.total.eWay1')">
             <el-select v-model="ccnPublic.BandwidthLimitType" placeholder>
-              <!-- <el-option :label="$t('CCN.CCN.total.eWay2')" value="INTER_REGION_LIMIT"></el-option> -->
-              <el-option :label="$t('CCN.CCN.total.eWay3')" value="OUTER_REGION_LIMIT"></el-option>
+              <!-- <el-option :label="$t('CCN.total.eWay2')" value="INTER_REGION_LIMIT"></el-option> -->
+              <el-option :label="$t('CCN.total.eWay3')" value="OUTER_REGION_LIMIT"></el-option>
             </el-select>
-            <p class="edit-p">{{ $t('CCN.CCN.total.eWay4') }} <a href="">工單申請</a></p>
+            <p class="edit-p">{{ $t('CCN.total.eWay4') }} <a href="">工單申請</a></p>
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
           <el-button @click="updateBandwidthLimitTypeVisible = false">取 消</el-button>
           <el-button type="primary" @click="upBandwidthLimitType(ccnPublic)">{{
-            $t('CCN.CCN.total.sure')
+            $t('CCN.total.sure')
           }}</el-button>
         </div>
       </el-dialog>
     </div>
     <!-- 地域出带宽 -->
     <div v-show="!regionShow">
-      <span>限速方式：{{$t("CCN.CCN.tabs.tab3tit")}} <a @click="updateBandwidthLimitTypeVisible2 = true">{{$t("CCN.CCN.tabs.tab3tit2")}}</a></span>
+      <span>限速方式：{{$t("CCN.tabs.tab3tit")}} <a @click="updateBandwidthLimitTypeVisible2 = true">{{$t("CCN.tabs.tab3tit2")}}</a></span>
       <div class="table">
         <div class="btn">
-          <el-button type="text" @click="updateVisible = true">{{$t("CCN.CCN.tabs.tab3btn")}}</el-button>
+          <el-button type="text" @click="updateVisible = true">{{$t("CCN.tabs.tab3btn")}}</el-button>
         </div>
         <el-table :data="tableData.slice((currentPage-1)*pageSize,currentPage*pageSize)" style="width: 100%">
-          <template slot="empty">{{$t("CCN.CCN.tabs.tab1no")}}</template>
-          <el-table-column prop="CcnRegionBandwidthLimit.Region" :label="$t('CCN.CCN.tabs.tab3tr1')" width>
+          <template slot="empty">{{$t("CCN.tabs.tab1no")}}</template>
+          <el-table-column prop="CcnRegionBandwidthLimit.Region" :label="$t('CCN.tabs.tab3tr1')" width>
             <template slot-scope="scope">
               <p class="edit">{{ scope.row.CcnRegionBandwidthLimit.Region }}</p>
             </template>
           </el-table-column>
-          <el-table-column prop="CcnRegionBandwidthLimit.BandwidthLimit" :label="$t('CCN.CCN.tabs.tab3tr2')" width>
+          <el-table-column prop="CcnRegionBandwidthLimit.BandwidthLimit" :label="$t('CCN.tabs.tab3tr2')" width>
             <template slot-scope="scope">
               <p class="edit">{{ scope.row.CcnRegionBandwidthLimit.BandwidthLimit }}</p>
             </template>
@@ -160,26 +160,26 @@
       <el-dialog title="" :visible.sync="updateVisible" class="updateDialog">
         <div class="transfer">
           <div class="left">
-            <span>{{$t('CCN.CCN.tabs.tab3btnD')}}</span>
+            <span>{{$t('CCN.tabs.tab3btnD')}}</span>
             <div class="region">
               <el-select v-model="upLimits.Region" placeholder>
-                <el-option :label="$t('CCN.CCN.tabs.tab3R')" value="ap-taipei"></el-option>
+                <el-option :label="$t('CCN.tabs.tab3R')" value="ap-taipei"></el-option>
               </el-select>
-              <!-- <el-checkbox v-model="upLimits.Region">{{$t('CCN.CCN.tabs.tab3R')}}</el-checkbox> -->
+              <!-- <el-checkbox v-model="upLimits.Region">{{$t('CCN.tabs.tab3R')}}</el-checkbox> -->
             </div>
           </div>
           <div class="icon">
             <i class="el-icon-arrow-right"></i>
           </div>
           <div class="right">
-            <span>{{$t('CCN.CCN.tabs.tab3btnC')}}</span>
+            <span>{{$t('CCN.tabs.tab3btnC')}}</span>
             <div class="region">
               <div class="t-head">
-                <div>{{$t('CCN.CCN.tabs.tab3tr1')}}</div>
-                <div>{{$t('CCN.CCN.tabs.tab3tr2')}}</div>
+                <div>{{$t('CCN.tabs.tab3tr1')}}</div>
+                <div>{{$t('CCN.tabs.tab3tr2')}}</div>
               </div>
               <div class="t-body">
-                <div>{{$t('CCN.CCN.tabs.tab3R')}}</div>
+                <div>{{$t('CCN.tabs.tab3R')}}</div>
                 <div>
                   <el-input v-model="upLimits.Limits" type="text"></el-input>
                 </div>
@@ -188,29 +188,29 @@
           </div>
         </div>
         <div slot="footer" class="dialog-footer">
-          <el-button type="primary" @click="updateLimits()">{{$t('CCN.CCN.total.sure')}}</el-button>
+          <el-button type="primary" @click="updateLimits()">{{$t('CCN.total.sure')}}</el-button>
           <el-button @click="updateVisible = false">取消</el-button>
         </div>
       </el-dialog>
       <!-- 修改限速方式的模态窗 -->
       <el-dialog
-        :title="$t('CCN.CCN.total.eWay')"
+        :title="$t('CCN.total.eWay')"
         :visible.sync="updateBandwidthLimitTypeVisible2"
         class="formDialog"
       >
         <el-form :model="ccnPublic">
-          <el-form-item :label="$t('CCN.CCN.total.eWay1')">
+          <el-form-item :label="$t('CCN.total.eWay1')">
             <el-select v-model="ccnPublic.BandwidthLimitType" placeholder>
-              <el-option :label="$t('CCN.CCN.total.eWay2')" value="INTER_REGION_LIMIT"></el-option>
-              <!-- <el-option :label="$t('CCN.CCN.total.eWay3')" value="OUTER_REGION_LIMIT"></el-option> -->
+              <el-option :label="$t('CCN.total.eWay2')" value="INTER_REGION_LIMIT"></el-option>
+              <!-- <el-option :label="$t('CCN.total.eWay3')" value="OUTER_REGION_LIMIT"></el-option> -->
             </el-select>
-            <p class="edit-p">{{ $t('CCN.CCN.total.eWay4') }} <a href="">工單申請</a></p>
+            <p class="edit-p">{{ $t('CCN.total.eWay4') }} <a href="">工單申請</a></p>
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
           <el-button @click="updateBandwidthLimitTypeVisible2 = false">取 消</el-button>
           <el-button type="primary" @click="upBandwidthLimitType(ccnPublic)">{{
-            $t('CCN.CCN.total.sure')
+            $t('CCN.total.sure')
           }}</el-button>
         </div>
       </el-dialog>

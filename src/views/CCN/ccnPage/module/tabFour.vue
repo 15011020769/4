@@ -3,25 +3,25 @@
   <div class="tabFour">
     <div class="table">
       <el-table :data="tableData.slice((currentPage-1)*pageSize,currentPage*pageSize)" style="width: 100%">
-        <template slot="empty">{{$t('CCN.CCN.tabs.tab1no')}}</template>
-        <el-table-column prop="DestinationCidrBlock" :label="$t('CCN.CCN.tabs.tab4tr1')" width></el-table-column>
-        <el-table-column prop="Enabled" :label="$t('CCN.CCN.tabs.tab4tr2') " width>
+        <template slot="empty">{{$t('CCN.tabs.tab1no')}}</template>
+        <el-table-column prop="DestinationCidrBlock" :label="$t('CCN.tabs.tab4tr1')" width></el-table-column>
+        <el-table-column prop="Enabled" :label="$t('CCN.tabs.tab4tr2') " width>
           <template slot-scope="scope">
             <div v-if="scope.row.Enabled == true" class="off_color">有效</div>
             <!-- <div v-if="scope.row.Enabled == 0" class="close_color">关闭</div> -->
             <div v-else>关闭</div>
           </template>
         </el-table-column>
-        <el-table-column prop="InstanceId" :label="$t('CCN.CCN.tabs.tab4tr3')" width>
+        <el-table-column prop="InstanceId" :label="$t('CCN.tabs.tab4tr3')" width>
           <template slot-scope="scope">
             <!-- <el-button @click="handleClick(scope.row)" type="text">{{ scope.row.InstanceId }}</el-button> -->
             <a href="../CCN/index"  target="_blank">{{ scope.row.InstanceId }}</a>
             <p class="edit">{{ scope.row.InstanceName }}</p>
           </template>
         </el-table-column>
-        <el-table-column prop="InstanceRegion" :label="$t('CCN.CCN.tabs.tab4tr4')"></el-table-column>
-        <el-table-column prop="UpdateTime" :label="$t('CCN.CCN.tabs.tab4tr5')" width></el-table-column>
-        <el-table-column prop="operate" :label="$t('CCN.CCN.tabs.tab4tr6')" width>
+        <el-table-column prop="InstanceRegion" :label="$t('CCN.tabs.tab4tr4')"></el-table-column>
+        <el-table-column prop="UpdateTime" :label="$t('CCN.tabs.tab4tr5')" width></el-table-column>
+        <el-table-column prop="operate" :label="$t('CCN.tabs.tab4tr6')" width>
           <template slot-scope="scope">
             <!-- <el-switch v-model="value1"></el-switch> -->
             <el-switch
