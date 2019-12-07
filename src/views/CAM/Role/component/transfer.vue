@@ -2,7 +2,7 @@
   <div class="Cam">
     <div class="container">
       <div class="container-left">
-        <p>{{$t('CAM.CAM.Role.policyList')}}（共{{totalNum}}条）</p>
+        <p>{{$t('CAM..Role.policyList')}}（共{{totalNum}}条）</p>
         <el-input size="mini" v-model="strategyValue" style="width:100%" @keyup.enter.native="tableloadmore"/>
         <i size="mini" class="el-icon-search fier" show-overflow-tooltip @click="tableloadmore" ></i>
         <el-table
@@ -17,13 +17,13 @@
           @selection-change="handleSelectionChange"
           v-tableloadmore="tableloadmore" >
           <el-table-column type="selection" prop="policyId" width="29"></el-table-column>
-          <el-table-column prop="Description" :label="$t('CAM.CAM.Role.policyName')" show-overflow-tooltip>
+          <el-table-column prop="Description" :label="$t('CAM..Role.policyName')" show-overflow-tooltip>
             <template slot-scope="scope">
               <p>{{scope.row.PolicyName}}</p>
               <p>{{scope.row.Description}}</p>
             </template>
           </el-table-column>
-          <el-table-column prop="Type" :label="$t('CAM.CAM.Role.strategyType')" width="130">
+          <el-table-column prop="Type" :label="$t('CAM..Role.strategyType')" width="130">
             <template slot="header" slot-scope="scope">
               <el-dropdown trigger="click" @command="handleCommand" size="mini">
                 <span style="color:#909399">
@@ -40,9 +40,9 @@
               </el-dropdown>
             </template>
             <template slot-scope="scope">
-              <p v-show="scope.row.Type == 3">{{$t('CAM.CAM.Role.all')}}</p>
-              <p v-show="scope.row.Type == 2">{{$t('CAM.CAM.Role.defaultPolicy')}}</p>
-              <p v-show="scope.row.Type == 1">{{$t('CAM.CAM.Role.customPolicy')}}</p>
+              <p v-show="scope.row.Type == 3">{{$t('CAM..Role.all')}}</p>
+              <p v-show="scope.row.Type == 2">{{$t('CAM..Role.defaultPolicy')}}</p>
+              <p v-show="scope.row.Type == 1">{{$t('CAM..Role.customPolicy')}}</p>
             </template>  
           </el-table-column>
         </el-table>
@@ -53,7 +53,7 @@
         </div>
       </div>
       <div class="container-left">
-        <span>{{$t('CAM.CAM.Role.hasChosen')}}（共条）</span>
+        <span>{{$t('CAM..Role.hasChosen')}}（共条）</span>
         <el-table
           class="table-left"
           ref="multipleSelected"
@@ -65,7 +65,7 @@
         >
           <el-table-column
             prop="Description"
-            :label="$t('CAM.CAM.Role.strategy')"
+            :label="$t('CAM..Role.strategy')"
             show-overflow-tooltip
           >
             <template slot-scope="scope">
@@ -74,13 +74,13 @@
             </template>
           </el-table-column>
 
-          <el-table-column prop="Type" :label="$t('CAM.CAM.Role.strategyType')" width="100">
+          <el-table-column prop="Type" :label="$t('CAM..Role.strategyType')" width="100">
             <template slot-scope="scope">
-              <p v-show="scope.row.Type == 1">{{$t('CAM.CAM.Role.customPolicy')}}</p>
-              <p v-show="scope.row.Type == 2">{{$t('CAM.CAM.Role.defaultPolicy')}}</p>
+              <p v-show="scope.row.Type == 1">{{$t('CAM..Role.customPolicy')}}</p>
+              <p v-show="scope.row.Type == 2">{{$t('CAM..Role.defaultPolicy')}}</p>
             </template>
           </el-table-column>
-          <el-table-column :label="$t('CAM.CAM.userGroup.colHandle')" width="50">
+          <el-table-column :label="$t('CAM..userGroup.colHandle')" width="50">
             &lt;!&ndash;
             <template slot-scope="scope">
               <el-button @click.native.prevent="deleteRow(scope.$index, policiesSelectedData)" type="text" size="small" >x</el-button>
@@ -138,20 +138,20 @@ export default {
       table_options: [
         {
           value: "All",
-          label: this.$t('CAM.CAM.Role.all')
+          label: this.$t('CAM..Role.all')
         },
         {
           value: "QCS",
-          label: this.$t('CAM.CAM.Role.defaultPolicy')
+          label: this.$t('CAM..Role.defaultPolicy')
         },
         {
           value: "Local",
-          label: this.$t('CAM.CAM.Role.customPolicy')
+          label: this.$t('CAM..Role.customPolicy')
         },
       ],
       rp: 20,
       page: 1,
-      tableTitle: this.$t('CAM.CAM.Role.strategyType')
+      tableTitle: this.$t('CAM..Role.strategyType')
     };
   },
  
