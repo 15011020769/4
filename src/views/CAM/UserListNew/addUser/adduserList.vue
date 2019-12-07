@@ -349,8 +349,8 @@ export default {
     _getUser() {
       const params = {
         Version: "2019-01-16",
-        Name: "策略列表"
-        // Name: this.ruleForm.Name
+        // Name: "策略列表"
+        Name: this.ruleForm.Name
       };
       this.axios.post(QUERY_USER, params).then(res => {
         this.userpolicyData = res.Response;
@@ -364,7 +364,6 @@ export default {
         AttachUin: this.userpolicyData.Uin
       };
       this.axios.post(POLICY_USER, params).then(res => {
-        console.log(res)
         if (res.Response.RequestId) {
           this.active = 3;
         }
