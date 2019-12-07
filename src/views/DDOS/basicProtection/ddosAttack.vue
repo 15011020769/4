@@ -55,9 +55,9 @@
 import moment from "moment";
 import { DDOS_EV_LIST, DDOS_TREND } from "@/constants";
 export default {
-  props: {
-    ddosAttack: Object // 实例对象
-  },
+  // props: {
+  //   ddosAttack: {} // 实例对象
+  // },
   data() {
     return {
       business: "basic", //[bgp表示独享包；bgp-multip表示共享包；net表示高防IP专业版；basic表示DDoS基础防护]
@@ -75,7 +75,6 @@ export default {
       pageSize: 10,
       totalItems: 0,
       Period: 3600,
-      // ddosAttack:'',
       timeValue: {},
       thisStart: "",
       thisEnd: "",
@@ -100,10 +99,6 @@ export default {
       this.endTime = moment(this.timeValue[1]).format("YYYY-MM-DD HH:mm:ss"); //格式处理
       this.describeDDoSTrend(this.timey);
 
-      // console.log(value, this.getDateString(value[0]))
-      // this.startTime = this.getDateString(value[0])
-      // this.endTime = this.getDateString(value[1])
-      // this.getData()
     }
   },
   computed: {},
@@ -157,7 +152,7 @@ export default {
           this.tableDataBegin = res.Response.Data;
           this.totalItems = this.tableDataBegin.length;
         } else {
-          // console.log(res.Response.Error)
+          console.log(res.Response.Error)
         }
       });
     },
@@ -224,6 +219,7 @@ export default {
       // this.startTime = ipt1.value
       // this.endTime = ipt2.value
       this.describeDDoSTrend(this.timey);
+      this.describeDDoSEvList()
     },
 
     drawLine(y, date) {
