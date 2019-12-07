@@ -704,8 +704,9 @@ export default {
     //     if(MetricName =="inqps"){
     //       this.inqpsdata = res.Response.Data
     //     }else{
-    //         this.dropqps = res.Response.Data
+    //       this.dropqps = res.Response.Data
     //     }
+        
     //     this.drawLine3()
     //   });
     // },
