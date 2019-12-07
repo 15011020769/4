@@ -87,6 +87,7 @@ export default {
     this.describeIpUnBlockList();//获取IP解封记录接口
   },
   methods:{
+    // 获取IP解封记录
     describeIpUnBlockList() {
       let params = {
         Version: '2018-07-09',
@@ -98,7 +99,7 @@ export default {
         console.log(res)
         this.IpUnBlockList=res.Response.List 
          // 将数据的长度赋值给totalItems
-        this.totalItems = this.IpUnBlockList.length;
+        this.totalItems = res.Response.Total
         if (this.totalItems > this.pageSize) {
           for (let index = 0; index < this.pageSize; index++) {
             this.tableDataEnd.push(this.tableDataBegin[index]);

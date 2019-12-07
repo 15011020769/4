@@ -31,11 +31,11 @@
                 <el-row class="allConMainOneRow">
                   <el-col :span="12" class="LeftConOne LeftConRow">
                     <p>清洗中</p>
-                    <p>{{packDataBgpMultip[1].Value}}</p>
+                    <p>{{(+packDataIP[1].Value) + (+packDataBgp[1].Value)}}</p>
                   </el-col>
                   <el-col :span="12" class="LeftConOne LeftConRow">
                     <p>封堵中</p>
-                    <p>{{packDataBgpMultip[2].Value}}</p>
+                    <p>{{(+packDataIP[2].Value) + (+packDataBgp[2].Value)}}</p>
                   </el-col>
                 </el-row>
               </div>
@@ -176,46 +176,30 @@ export default {
 		return {
       // 安全统计-本月
       attackData: [
-        {Key: 'AttackIpCount', Value:'0', desc: '受攻击的IP数'},
-        {Key: 'AttackCount', Value:'0', desc: '攻击次数'},
-        {Key: 'BlockCount', Value:'0', desc: '封堵次数'},
-        {Key: 'MaxMbps', Value:'0', desc: '攻击峰值Mbps'},
-        {Key: 'IpNum', Value:'0', desc: '统计的IP数据'}
+        {Key: 'AttackIpCount', Value:0, desc: '受攻击的IP数'},
+        {Key: 'AttackCount', Value:0, desc: '攻击次数'},
+        {Key: 'BlockCount', Value:0, desc: '封堵次数'},
+        {Key: 'MaxMbps', Value:0, desc: '攻击峰值Mbps'},
+        {Key: 'IpNum', Value:0, desc: '统计的IP数据'}
       ],
       // 获取产品总览
-      packParams: ['bgpip', 'bgp', 'net', 'bgp-multip'],
+      packParams: ['bgp', 'net'],
       business: 'net',// 产品代号: bgpip表示高防IP；bgp表示独享包；bgp-multip表示共享包；net表示高防IP专业版
       packDataIP: [ // 高防IP专业版 net
-        {Key: 'TotalPackCount',Value: '0'},
-        {Key: 'AttackPackCount',Value: '0'},
-        {Key: 'BlockPackCount',Value: '0'},
-        {Key: 'ExpiredPackCount',Value: '0'},
-        {Key: 'ExpireingPackCount',Value: '0'},
-        {Key: 'IsolatePackCount',Value: '0'}
-      ],
-      packDataBgpip: [ // bgpip
-        {Key: 'TotalPackCount',Value: '0'},
-        {Key: 'AttackPackCount',Value: '0'},
-        {Key: 'BlockPackCount',Value: '0'},
-        {Key: 'ExpiredPackCount',Value: '0'},
-        {Key: 'ExpireingPackCount',Value: '0'},
-        {Key: 'IsolatePackCount',Value: '0'}
+        {Key: 'TotalPackCount',Value: 0},
+        {Key: 'AttackPackCount',Value: 0},
+        {Key: 'BlockPackCount',Value: 0},
+        {Key: 'ExpiredPackCount',Value: 0},
+        {Key: 'ExpireingPackCount',Value: 0},
+        {Key: 'IsolatePackCount',Value: 0}
       ],
       packDataBgp: [ // bgp
-        {Key: 'TotalPackCount',Value: '0'},
-        {Key: 'AttackPackCount',Value: '0'},
-        {Key: 'BlockPackCount',Value: '0'},
-        {Key: 'ExpiredPackCount',Value: '0'},
-        {Key: 'ExpireingPackCount',Value: '0'},
-        {Key: 'IsolatePackCount',Value: '0'}
-      ],
-      packDataBgpMultip: [ // bgp-multip
-        {Key: 'TotalPackCount',Value: '0'},
-        {Key: 'AttackPackCount',Value: '0'},
-        {Key: 'BlockPackCount',Value: '0'},
-        {Key: 'ExpiredPackCount',Value: '0'},
-        {Key: 'ExpireingPackCount',Value: '0'},
-        {Key: 'IsolatePackCount',Value: '0'}
+        {Key: 'TotalPackCount',Value: 0},
+        {Key: 'AttackPackCount',Value: 0},
+        {Key: 'BlockPackCount',Value: 0},
+        {Key: 'ExpiredPackCount',Value: 0},
+        {Key: 'ExpireingPackCount',Value: 0},
+        {Key: 'IsolatePackCount',Value: 0}
       ],
       // 日期区间：30天
       endTime: this.getDateString(new Date()),
@@ -252,14 +236,8 @@ export default {
           case 'net':
             this.describePackIndex(this.packDataIP)
             break;
-          case 'bgpip':
-            this.describePackIndex(this.packDataBgpip)
-            break;
           case 'bgp':
             this.describePackIndex(this.packDataBgp)
-            break;
-          case 'bgp-multip':
-            this.describePackIndex(this.packDataBgpMultip)
             break;
         }
       }
@@ -272,7 +250,6 @@ export default {
         Version: '2018-07-09',
       }
       this.axios.post(DDOS_SECINDEX, params).then(res => {
-        console.log(res)
         for(let i in this.attackData) {
           for(let j in res.Response.Data) {
             if (this.attackData[i].Key == res.Response.Data[j].Key) {
@@ -290,7 +267,6 @@ export default {
         Business: this.business,
       }
       this.axios.post(DDOS_PACKINDEX, params).then(res => {
-        console.log(res)
         for(let i in packData) {
           for(let j in res.Response.Data) {
             if (packData[i].Key == res.Response.Data[j].Key) {
@@ -301,15 +277,6 @@ export default {
         }
       })
     },
-    // 获取保险包套餐列表
-    // describeInsurePacks() {
-    //   let params = {
-    //     Version: '2018-07-09',
-    //   }
-    //   this.axios.post('dayu2/DescribeInsurePacks', params).then(res => {
-    //     console.log(res)
-    //   })
-    // },
     // 1.3.获取DDoS攻击事件列表
     describeDDoSEvList() {
       let params = {
@@ -320,7 +287,6 @@ export default {
         Id: this.searchInputID
       }
       this.axios.post(DDOS_EV_LIST, params).then(res => {
-        console.log(res)
         if(!('Error' in res.Response)) {
           this.tableDataBegin = res.Response.Data
           this.totalItems = this.tableDataBegin.length
@@ -347,7 +313,6 @@ export default {
     },
     // 搜索
     doFilter() {
-      console.log(this.searchInputID);
       this.describeDDoSEvList()
       // 重新定义当前页
       this.currentPage = 1;
@@ -380,7 +345,6 @@ export default {
       }
     },
     exportExcel () {
-      console.log(this.downloadName)
       /* generate workbook object from table */
       var wb = XLSX.utils.table_to_book(document.querySelector('#exportTable'))
       /* get binary string as output */
