@@ -179,11 +179,7 @@ export default {
       const start = new Date();
       if (thisTime == "1") {
         start.setTime(start.getTime() - 3600 * 1000);
-        var num =
-          end.getTime() -
-          new Date(
-            new Date(new Date().toLocaleDateString()).getTime()
-          ).getTime();
+        var num =end.getTime() -new Date(new Date(new Date().toLocaleDateString()).getTime()).getTime();
         var arr = [];
         for (var i = 0; i <= num / 3600000; i++) {
           var d = new Date(end.getTime() - 3600000 * i);
@@ -233,9 +229,9 @@ export default {
     drawLine(y, date) {
       var arr = [];
       for (let i in date) {
-        arr.unshift(date[i]); //属性
-        arr.splice(arr.length, 1);
+        arr.unshift(date[i]); //属性  
       }
+      arr.splice(arr.length, 1);
       // 基于准备好的dom，初始化echarts实例
       let myChart = this.$echarts.init(document.getElementById("myChart"));
       // 绘制图表
