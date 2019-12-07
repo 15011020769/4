@@ -146,7 +146,13 @@
                   <el-option :label="ccTimeBtnSelect2" :value="ccTimeBtnSelect2"></el-option>
                 </el-select>
               </div>
-              <div class="mainConListAll"></div>
+                <div class="mainConListAll mainConListTwo">
+           
+                  
+                    <div id="myChart3"></div>
+             
+            
+              </div>
               <div class="mainConListAll">
                 <h3>CC攻击记录</h3>
                 <el-table
@@ -287,7 +293,7 @@ export default {
       // outpkg表示出包速率；
       metricNameService2s: ["connum", "inactive_conn"],
       period: 3600, //统计粒度，取值[300(5分钟)，3600(小时)，86400(天)]
-      periodCC: 300, //统计粒度，取值[300(5分钟)，3600(小时)，86400(天)]
+      periodCC: 3600, //统计粒度，取值[300(5分钟)，3600(小时)，86400(天)]
       periodService: 300, //统计粒度，取值[300(5分钟)，3600(小时)，86400(天)]
       statistics: "max", //统计方式，取值：max表示最大值；min表示最小值；avg表示均值；
       tableDataOfDescribeDDoSNetEvList: [], //DDoS攻击事件列表
@@ -323,17 +329,32 @@ export default {
         arr.push(moment(d).format("MM-DD"));
       }
       this.timey = arr;
-      this.startTime = this.getDateString(value[0]);
-      this.endTime = this.getDateString(value[1]);
+      // this.startTime = this.getDateString(value[0]);
+      // this.endTime = this.getDateString(value[1]);
       this.startTime = moment(value[0]).format("YYYY-MM-DD HH:mm:ss"); //格式处理
       this.endTime = moment(value[1]).format("YYYY-MM-DD HH:mm:ss"); //格式处理
-      this.describeDDoSNetTrend(this.timey);
+      this.getData();
     },
     dateChoice2: function(value) {
       // console.log(this.getDateString(value[0]))
-      this.startTimeCC = this.getDateString(value[0]);
-      this.endTimeCC = this.getDateString(value[1]);
-      this.getDataCC();
+      // this.startTimeCC = this.getDateString(value[0]);
+      // this.endTimeCC = this.getDateString(value[1]);
+      // this.getDataCC();
+
+    this.period = 86400;
+      var num = value[1].getTime() - value[0].getTime(); //计算时间戳的差
+      var arr = [];
+      for (var i = 0; i <= num / 86400000; i++) {
+        //根据时间戳的差以及时间粒度计算出开始时间与结束时间之间有多少天/小时
+        var d = new Date(value[1].getTime() - 86400000 * i);
+        arr.push(moment(d).format("MM-DD"));
+      }
+      this.timey = arr;
+      console.log(this.timey)
+      this.startTimeCC = moment(value[0]).format("YYYY-MM-DD HH:mm:ss"); //格式处理
+      this.endTimeCC = moment(value[1]).format("YYYY-MM-DD HH:mm:ss"); //格式处理
+       this.getDataCC();
+
     },
     dateChoice3: function(value) {
       // console.log(this.getDateString(value[0]))
@@ -421,6 +442,11 @@ export default {
 
     drawLine2(y, date) {
       // 基于准备好的dom，初始化echarts实例
+       var arr = [];
+      for (let i in date) {
+        arr.unshift(date[i]); //属性
+      }
+      arr.splice(arr.length - 1, 1);
 
       let myChart2 = this.$echarts.init(document.getElementById("myChart2"));
       // 绘制图表
@@ -429,7 +455,7 @@ export default {
         title: { text: "" },
         tooltip: {},
         xAxis: {
-          data: date
+          data: arr
         },
         yAxis: {
           axisLine: {
@@ -483,6 +509,89 @@ export default {
         myChart2.resize();
       });
     },
+
+    drawLine3() {
+      // var arr = [];
+      // for (let i in date) {
+      //   arr.unshift(date[i]); //属性
+      // }
+      // arr.splice(arr.length - 1, 1);
+      // 基于准备好的dom，初始化echarts实例
+      let myChart3 = this.$echarts.init(document.getElementById("myChart3"));
+      // 绘制图表
+      myChart3.setOption({
+        color: ["rgb(124, 181, 236)"],
+        title: { text: "" },
+        tooltip: {},
+    //       legend: {
+    //     data:['总请求峰值','攻击请求峰值']
+    // },
+        xAxis: {
+          data: [1,2,3,4,5] //["12-05", "12-04", "12-03", "12-02", "12-01"]
+          // type : 'time',
+          // minInterval: 1
+        },
+        yAxis: {
+          axisLine: {
+            //y轴
+            show: false
+          },
+          axisTick: {
+            //刻度线
+            show: false
+          },
+          splitLine: {
+            //网格线
+            show: false
+          },
+          axisLabel: {
+            formatter: "{value}bps"
+          },
+          boundaryGap: true
+        },
+        series: [
+          {
+            name: "总请求峰值",
+            type: "line",
+            data: [12,3,4,5,6,4],
+            itemStyle: {
+              normal: {
+                lineStyle: {
+                  color: "rgb(124, 181, 236)"
+                }
+              }
+            }
+          },
+           {
+            name: "攻击请求峰值",
+            type: "line",
+            data: [1,35,9,1,1,4],
+            itemStyle: {
+              normal: {
+                lineStyle: {
+                  color: "#f40"
+                }
+              }
+            }
+          }
+        ],
+        legend: {
+          //默认横向布局，纵向布局值为'vertical'
+          orient: "vertical",
+          x: "center", //可设定图例在左、右、居中
+          y: "bottom",
+          icon: "line", //图例样式
+          textStyle: {
+            //文字样式
+            fontWeight: "bold"
+          },
+          lineStyle: {
+            color: "rgb(124, 181, 236)"
+          }
+        }
+      });
+    },
+    
     getData() {
       this.thisTime(1);
       for (let index in this.metricNames) {
@@ -532,7 +641,12 @@ export default {
         EndTime: this.endTime
       };
       this.$axios.post("dayu2/DescribeDDoSNetTrend", params).then(res => {
-        this.drawLine(res.Response.Data, date);
+        console.log(res)
+        if (this.metricName == "bps") {
+          this.drawLine(res.Response.Data, date);
+        } else {
+          this.drawLine2(res.Response.Data, date);
+        }
       });
     },
     // 1.2.获取高防IP专业版资源的DDoS攻击占比分析
@@ -547,7 +661,7 @@ export default {
         MetricName: this.metricName2 //指标，取值[traffic（攻击协议流量, 单位KB）, pkg（攻击协议报文数）, num（攻击事件次数）]
       };
       this.$axios.post("dayu2/DescribeDDoSNetCount", params).then(res => {
-        console.log(res)
+        // console.log(res)
       });
     },
     // 1.3.获取高防IP专业版资源的DDoS攻击事件列表
@@ -586,7 +700,13 @@ export default {
         EndTime: this.endTimeCC
       };
       this.$axios.post("dayu2/DescribeCCTrend", params).then(res => {
-        // console.log(res)
+        console.log(res)
+        if(MetricName =="inqps"){
+          this.inqpsdata = res.Response.Data
+        }else{
+            this.dropqps = res.Response.Data
+        }
+        this.drawLine3()
       });
     },
     // 2.2.获取 CC 攻击事件列表
@@ -673,9 +793,8 @@ export default {
     },
     // DDOS攻击防护-二级tab切换
     handleClick1(value) {
-      // console.log(value.name)
       this.metricName = value.name;
-      this.describeDDoSNetTrend();
+      this.thisTime(1);
     },
     // 业务-二级tab切换
     handleClick2(value) {
@@ -764,7 +883,7 @@ export default {
         ipt2.value = moment(end).format("YYYY-MM-DD HH:mm:ss");
         this.startTime = ipt1.value;
         this.endTime = ipt2.value;
-        this.Period = 86400;
+        this.period = 86400;
         this.timedone(end, start, 86400000);
         //ddos攻击-攻击流量带宽
       } else if (thisTime == "3") {
@@ -774,7 +893,7 @@ export default {
         ipt2.value = moment(end).format("YYYY-MM-DD HH:mm:ss");
         this.startTime = ipt1.value;
         this.endTime = ipt2.value;
-        this.Period = 86400;
+        this.period = 86400;
         this.timedone(end, start, 86400000);
         //ddos攻击-攻击流量带宽
       } else if (thisTime == "4") {
@@ -784,7 +903,7 @@ export default {
         ipt2.value = moment(end).format("YYYY-MM-DD HH:mm:ss");
         this.startTime = ipt1.value;
         this.endTime = ipt2.value;
-        this.Period = 86400;
+        this.period = 86400;
         this.timedone(end, start, 86400000);
         //ddos攻击-攻击流量带宽
       } else if (thisTime == "5") {
@@ -794,7 +913,7 @@ export default {
         ipt2.value = moment(end).format("YYYY-MM-DD HH:mm:ss");
         this.startTime = ipt1.value;
         this.endTime = ipt2.value;
-        this.Period = 86400;
+        this.period = 86400;
         this.timedone(end, start, 86400000);
         //ddos攻击-攻击流量带宽
       }
@@ -922,5 +1041,10 @@ export default {
     color: #888 !important;
     font-size: 12px;
   }
+}
+#myChart3 {
+  width: 100%;
+  height: 380px;
+  margin: 20px 0;
 }
 </style>
