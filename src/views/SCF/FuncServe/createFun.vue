@@ -30,7 +30,7 @@
             <p class="tipCon">2. 字母开头，支持 a-z，A-Z，0-9，-，_，且需要以数字或字母结尾</p>
           </el-form-item>
           <el-form-item label="运行环境">
-            <el-select v-model="createFunTable.runMoment">
+            <el-select v-model="createFunTable.runMoment" @change="changerunMoment">
               <el-option label="Python2.7" value="Python2.7"></el-option>
               <el-option label="Python3.6" value="Python3.6"></el-option>
               <el-option label="Nodejs6.10" value="Nodejs6.10"></el-option>
@@ -213,12 +213,19 @@
           path: "/FuncServe"
         });
       },
+      //选择环境重新获取模板
+      changerunMoment() {
+
+        this.GetTemplateList();
+      },
       GetTemplateList() { //获取函数模板列表
         let param = {
-          Region: 'ap-guangzhou',//this.$cookie.get('regionv2'),
+          Region: 'ap-guangzhou', //this.$cookie.get('regionv2'),
           Version: "2018-04-16",
           Offset: this.currentPage - 1,
-          Limit: this.pageSize
+          Limit: this.pageSize,
+          'SearchKey.0.Key': "Runtime",
+          'SearchKey.0.Value': this.createFunTable.runMoment
         }
         if (this.searchName !== '') {
           param['SearchKey.0.Key'] = 'Runtime'
@@ -237,7 +244,7 @@
 
       GetTemplateDetail() { //获取函数模板详情
         let param = {
-          Region: 'ap-guangzhou',//this.$cookie.get('regionv2'),
+          Region: 'ap-guangzhou', //this.$cookie.get('regionv2'),
           Version: "2018-04-16",
           DemoId: this.DemoId
         }
