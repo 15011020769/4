@@ -4,14 +4,14 @@
       <span class="el-icon-back" @click="backFunlist"></span>
       <span class="createFunTit">创建函数</span>
       <span class="docRight">
-        <a href="#">
+        <!-- <a href="#">
           命令行工具创建函数
           <span class="el-icon-share"></span>
         </a>
         <a href="#">
           VS Code创建函数
           <span class="el-icon-share"></span>
-        </a>
+        </a> -->
       </span>
     </div>
     <div class="mainContent">
@@ -31,13 +31,13 @@
           </el-form-item>
           <el-form-item label="运行环境">
             <el-select v-model="createFunTable.runMoment">
-              <el-option label="Python2.7" value="python1"></el-option>
-              <el-option label="Python3.6" value="python2"></el-option>
-              <el-option label="Nodejs6.10" value="node"></el-option>
-              <el-option label="PHP5" value="php1"></el-option>
-              <el-option label="PHP7" value="php2"></el-option>
-              <el-option label="Golang1" value="golang"></el-option>
-              <el-option label="Java8" value="java"></el-option>
+              <el-option label="Python2.7" value="Python2.7"></el-option>
+              <el-option label="Python3.6" value="Python3.6"></el-option>
+              <el-option label="Nodejs6.10" value="Nodejs6.10"></el-option>
+              <el-option label="PHP5" value="PHP5"></el-option>
+              <el-option label="PHP7" value="PHP7"></el-option>
+              <el-option label="Golang1" value="Golang1"></el-option>
+              <el-option label="Java8" value="Java8"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="创建环境">
@@ -129,12 +129,12 @@
                       </p>
                       <p class="funListDesc">
                         <span>描述</span>
-                        <span>{{item.Describe}}</span>
+                        <span class="funListDescspan">{{item.Describe}}</span>
                       </p>
-                      <p class="funListTags">
+                      <!-- <p class="funListTags">
                         <span>标签</span>
                         <span>{{item.Tags}}</span>
-                      </p>
+                      </p> -->
                       <p class="funListpublish">
                         <span>部署</span>
                         <span>{{item.Stars}}次</span>
@@ -312,6 +312,13 @@
 
 </script>
 <style lang="scss">
+  .funListDescspan{
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    width: 282px;
+    display: inline-block; 
+  }
   .mainContForm input {
     height: 30px !important;
     line-height: 30px !important;

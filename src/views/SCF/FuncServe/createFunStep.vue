@@ -4,14 +4,14 @@
       <span class="el-icon-back" @click="backFunlist"></span>
       <span class="createFunTit">创建函数</span>
       <span class="docRight">
-        <a href="#">
+        <!-- <a href="#">
           命令行工具创建函数
           <span class="el-icon-share"></span>
         </a>
         <a href="#">
           VS Code创建函数
           <span class="el-icon-share"></span>
-        </a>
+        </a> -->
       </span>
     </div>
     <div class="mainContent">
@@ -41,8 +41,8 @@
               <!-- <i class="el-icon-question"></i> -->
             </span>
             <el-select v-model="formShowable.runRole" class="decsIptSelect">
-              <el-option label="SCF默认运行角色" value="default"></el-option>
-              <el-option label="SCF_QcsRole" value="qsrole"></el-option>
+              <el-option label="SCF_QcsRole" value="SCF_QcsRole"></el-option>
+              <el-option label="QCS_SCFExcuteRole" value="QCS_SCFExcuteRole"></el-option>
             </el-select>
             <p class="tipContent">
               <span>此角色将用于授权函数运行时操作其他资源的权限。您可以</span>
@@ -267,7 +267,7 @@
       },
       //添加子函数
       compileSucc() {
-        console.log(this.ScienceArr)
+         console.log(this.ScienceArr.length)
         let params = {
           Version: "2018-04-16",
           Region: this.$cookie.get('regionv2'),
@@ -276,17 +276,25 @@
           Handler: this.formShowable.runFun,
           Runtime: this.formShowable.runMoentStep,
           Description: this.formShowable.descStep,
-          Role: this.formShowable.runRole,
-          // 'Environment.Variables.Key': this.ScienceArr.Key,
-          // 'Environment.Variables.Value': this.ScienceArr.Value
+          Role: this.formShowable.runRole
         };
         if (this.Vpcvalue != '' && this.Subnetvalue != '') {
           params['VpcConfig.VpcId'] = this.Vpcvalue
           params['VpcConfig.SubnetId'] = this.Subnetvalue
         }
+        for(let i in this.ScienceArr) {
+          params['Environment.Variables.'+i+'.Key'] = this.ScienceArr[i].Key,
+          params['Environment.Variables.'+i+'.Value'] = this.ScienceArr[i].Value
+        }
+        console.log(params);
 
         this.axios.post(ADD_FUNC, params).then(res => {
-          console.log(res);
+          this.$router.push({
+          path: "/funSeverDetail",
+          query:{
+              
+          }
+        });
         });
       },
     }

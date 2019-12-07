@@ -87,7 +87,7 @@
             </el-button-group>
           </div>
           <div class="chartCon" id="echartsShow" ref="chartY">
-            <el-table-column prop="DataPoints" width="550">
+            <!-- <el-table-column prop="DataPoints" width="550">
           <template slot-scope="scope">
             <p v-if="scope.row.DataPoints[0].Values.length==0">暂无数据</p>
             <div class="echart" v-if="scope.row.DataPoints[0].Values.length!=0">
@@ -101,7 +101,7 @@
               ></echart-line>
             </div>
           </template>
-        </el-table-column>
+        </el-table-column> -->
           </div>
           <div class="chartNum newClear">
             <span>函数{{newData}}TOP 10统计</span>
@@ -264,7 +264,7 @@ export default {
       Obtain(metricN) {
         const param = {
           Version: '2018-07-24',
-          Region: this.$cookie.get('regionv2'),
+          Region: 'ap-guangzhou',//this.$cookie.get('regionv2'),
           Namespace: 'QCE/SCF_V2',
           MetricName: metricN,
         "Instances.0.Dimensions.0.Name": "functionName",
@@ -276,7 +276,11 @@ export default {
         EndTime: this.Start_End.EndTIme
         };
         this.axios.post(All_MONITOR, param).then((data) => {
-          this.tableData.push(data.Response);
+          this.tableData = []
+          console.log(data)
+          this.tableData.push(data.Response.DataPoints[0].Values);
+          // console.log(this.tableData)
+
         });
       },
       getModality(MetricName) {
@@ -334,7 +338,7 @@ export default {
         this.Obtain(metricNArr)
       }
     },
-    /*initChart() {
+    initChart(date) {
       this.chart = echarts.init(document.getElementById("echartsShow"));
       // 把配置和数据放这里
       this.chart.setOption({
@@ -355,7 +359,7 @@ export default {
         xAxis: [
           {
             type: "category",
-            data: ["1", "2", "3", "4", "5", "6", "7"],
+            data: [1,2,3,4,5],
             axisTick: {
               alignWithLabel: true
             }
@@ -371,11 +375,11 @@ export default {
             name: "直接访问",
             type: "line",
             barWidth: "60%",
-            data: [50, 100, 120, 200, 300, 60, 70]
+            data: date
           }
         ]
       });
-    }*/
+    }
   },
     filters: {
       UpName(value) {
@@ -452,7 +456,7 @@ export default {
     if (this.tableData == "") {
       document.querySelector(".chartTable").innerHTML = "暂无数据";
     }
-    //this.initChart();
+    this.initChart(this.tableData);
     this.GetOverView();
     this.GetUserMonthUsage();
     this.GetUserYesterdayUsage();

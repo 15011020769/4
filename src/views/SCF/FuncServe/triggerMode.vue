@@ -153,7 +153,7 @@ export default {
       this.displayShow = false;
       let params = {
         Version: "2018-04-16",
-        Region: this.$cookie.get("regionv2"),
+        Region: 'ap-guangzhou',//this.$cookie.get("regionv2"),
         Action: "CreateTrigger",
         TriggerName: this.formTriggerForm.tasksName,
         Type: this.formTriggerForm.triggerType,
@@ -200,7 +200,7 @@ export default {
     getfunction() {
       let params = {
         Version: "2018-04-16",
-        Region: this.$cookie.get("regionv2"),
+        Region: 'ap-guangzhou',//this.$cookie.get("regionv2"),
         Action: "GetFunction"
       };
       let functionName = this.$route.query.functionName;

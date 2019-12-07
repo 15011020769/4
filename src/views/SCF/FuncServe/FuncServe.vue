@@ -581,7 +581,7 @@ export default {
     spaceDelete(spaceIndex, spaceRow) {
       let params = {
         Version: "2018-04-16",
-        Region: "ap-guangzhou",
+        Region: "ap-taipei",
         Namespace: spaceRow.Name
       };
       this.axios.post(NAME_SPACE_DEL, params).then(res => {
