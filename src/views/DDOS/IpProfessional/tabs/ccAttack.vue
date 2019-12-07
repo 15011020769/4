@@ -13,7 +13,7 @@
           <el-date-picker
             v-model="dateChoice2"
             type="daterange"
-            class="newDataTime"
+            class="newDataTime newDataTimetwo"
             range-separator="至"
             start-placeholder="开始日期"
             end-placeholder="结束日期"
@@ -107,7 +107,7 @@ export default {
       // this.endTimeCC = this.getDateString(value[1]);
       // this.getDataCC();
 
-    this.period = 86400;
+    this.periodCC = 86400;
       var num = value[1].getTime() - value[0].getTime(); //计算时间戳的差
       var arr = [];
       for (var i = 0; i <= num / 86400000; i++) {
@@ -131,33 +131,39 @@ export default {
       this.getDataCC();
     },
     getDataCC() {
-      for (let index in this.metricNameCCs) {
-        this.metricNameCC = this.metricNameCCs[index];
-        this.describeCCTrend();
-      }
+      this.every()
+      
       this.describeCCEvList();
     },
-    describeCCTrend() {
-      let params = {
-        Version: "2018-07-09",
-        Business: "net",
-        Id: this.inputIdCC,
-        Ip: "175.97.142.150", //资源的IP
-        MetricName: this.metricNameCC, //指标，取值[inqps(总请求峰值，dropqps(攻击请求峰值))]
-        Period: this.periodCC, //统计粒度，取值[300(5分钟)，3600(小时)，86400(天)]
-        StartTime: this.startTimeCC,
-        EndTime: this.endTimeCC
-      };
-      this.$axios.post("dayu2/DescribeCCTrend", params).then(res => {
-        console.log(res)
-        if(this.MetricName =="inqps"){
-          this.inqpsdata = res.Response.Data
-        }else{
-            this.dropqps = res.Response.Data
-        }
-        this.drawLine3()
-      });
+    every(){
+      for (let index in this.metricNameCCs) {
+        this.metricNameCC = this.metricNameCCs[index];
+        this.describeCCTrend(); 
+        // console.log(this.inqpsdata,this.dropqps)
+      }
+      
     },
+    // describeCCTrend() {
+    //   let params = {
+    //     Version: "2018-07-09",
+    //     Business: "net",
+    //     Id: this.inputIdCC,
+    //     Ip: "175.97.142.150", //资源的IP
+    //     MetricName: this.metricNameCC, //指标，取值[inqps(总请求峰值，dropqps(攻击请求峰值))]
+    //     Period: this.periodCC, //统计粒度，取值[300(5分钟)，3600(小时)，86400(天)]
+    //     StartTime: this.startTimeCC,
+    //     EndTime: this.endTimeCC
+    //   };
+    //   this.$axios.post("dayu2/DescribeCCTrend", params).then(res => {
+    //     console.log(res)
+    //     if(this.MetricName =="inqps"){
+    //       this.inqpsdata = res.Response.Data
+    //     }else{
+    //         this.dropqps = res.Response.Data
+    //     }
+    //     this.drawLine3()
+    //   });
+    // },
     //时间按钮
     //计算时间间隔
     timedone(end, start, p) {
@@ -209,17 +215,13 @@ export default {
     },
     //获取时间
     thisTime(thisTime) {
-      var ipt1 = document.querySelector(".newDataTime input:nth-child(2)");
-      var ipt2 = document.querySelector(".newDataTime input:nth-child(4)");
+      var ipt1 = document.querySelector(".newDataTimetwo input:nth-child(2)");
+      var ipt2 = document.querySelector(".newDataTimetwo input:nth-child(4)");
       const end = new Date();
       const start = new Date();
       if (thisTime == "1") {
         start.setTime(start.getTime() - 3600 * 1000);
-        var num =
-          end.getTime() -
-          new Date(
-            new Date(new Date().toLocaleDateString()).getTime()
-          ).getTime();
+        var num =end.getTime() -new Date(new Date(new Date().toLocaleDateString()).getTime()).getTime();
         var arr = [];
         for (var i = 0; i <= num / 3600000; i++) {
           var d = new Date(end.getTime() - 3600000 * i);
@@ -227,13 +229,15 @@ export default {
         }
         this.timey = arr;
       } else if (thisTime == "2") {
+        // console.log(this.inqpsdata,this.dropqps)
         //ddos攻击-攻击流量带宽
         start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+        console.log(moment(start).format("YYYY-MM-DD HH:mm:ss"))
         ipt1.value = moment(start).format("YYYY-MM-DD HH:mm:ss");
         ipt2.value = moment(end).format("YYYY-MM-DD HH:mm:ss");
-        this.startTime = ipt1.value;
-        this.endTime = ipt2.value;
-        this.period = 86400;
+        this.startTimeCC = ipt1.value;
+        this.endTimeCC = ipt2.value;
+        this.periodCC = 86400;
         this.timedone(end, start, 86400000);
         //ddos攻击-攻击流量带宽
       } else if (thisTime == "3") {
@@ -241,9 +245,9 @@ export default {
         start.setTime(start.getTime() - 3600 * 1000 * 24 * 15);
         ipt1.value = moment(start).format("YYYY-MM-DD HH:mm:ss");
         ipt2.value = moment(end).format("YYYY-MM-DD HH:mm:ss");
-        this.startTime = ipt1.value;
-        this.endTime = ipt2.value;
-        this.period = 86400;
+        this.startTimeCC = ipt1.value;
+        this.endTimeCC = ipt2.value;
+        this.periodCC = 86400;
         this.timedone(end, start, 86400000);
         //ddos攻击-攻击流量带宽
       } else if (thisTime == "4") {
@@ -251,9 +255,9 @@ export default {
         start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
         ipt1.value = moment(start).format("YYYY-MM-DD HH:mm:ss");
         ipt2.value = moment(end).format("YYYY-MM-DD HH:mm:ss");
-        this.startTime = ipt1.value;
-        this.endTime = ipt2.value;
-        this.period = 86400;
+        this.startTimeCC = ipt1.value;
+        this.endTimeCC = ipt2.value;
+        this.periodCC = 86400;
         this.timedone(end, start, 86400000);
         //ddos攻击-攻击流量带宽
       } else if (thisTime == "5") {
@@ -261,9 +265,9 @@ export default {
         start.setTime(start.getTime() - 3600 * 1000 * 24 * 30 * 6);
         ipt1.value = moment(start).format("YYYY-MM-DD HH:mm:ss");
         ipt2.value = moment(end).format("YYYY-MM-DD HH:mm:ss");
-        this.startTime = ipt1.value;
-        this.endTime = ipt2.value;
-        this.period = 86400;
+        this.startTimeCC = ipt1.value;
+        this.endTimeCC = ipt2.value;
+        this.periodCC = 86400;
         this.timedone(end, start, 86400000);
         //ddos攻击-攻击流量带宽
       }
@@ -272,27 +276,30 @@ export default {
       //this.thisEnd=moment(end).format('YYYY-MM-DD');
       //this.$emit('timeNode1',[this.thisStart,this.thisEnd])
       // this.getData(this.timey)
-      this.describeDDoSNetTrend(this.timey);
+      this.every();
     },
-    // 1.1.获取高防IP专业版资源的DDoS攻击指标数据
-    describeDDoSNetTrend(date) {
+  // 2.1.获取CC攻击指标数据
+    describeCCTrend(date) {
       let params = {
         Version: "2018-07-09",
-        // Region: '',
         Business: "net",
-        Id: this.inputId,
-        MetricName: this.metricName, //指标，取值[bps(攻击流量带宽，pps(攻击包速率))]
-        Period: this.period, //统计粒度，取值[300(5分钟)，3600(小时)，86400(天)]
-        StartTime: this.startTime,
-        EndTime: this.endTime
+        Id: this.inputIdCC,
+        Ip: "175.97.142.150", //资源的IP
+        MetricName: this.metricNameCC, //指标，取值[inqps(总请求峰值，dropqps(攻击请求峰值))]
+        Period: this.periodCC, //统计粒度，取值[300(5分钟)，3600(小时)，86400(天)]
+        StartTime: this.startTimeCC,
+        EndTime: this.endTimeCC
       };
-      this.$axios.post("dayu2/DescribeDDoSNetTrend", params).then(res => {
-        console.log(res)
-        if (this.metricName == "bps") {
-          this.drawLine(res.Response.Data, date);
-        } else {
-          this.drawLine2(res.Response.Data, date);
+      this.$axios.post("dayu2/DescribeCCTrend", params).then(res => {
+        if(res.Response.MetricName =="inqps"){         
+           this.inqpsdata = res.Response.Data
+            // console.log(this.inqpsdata)
+        }else{
+           this.dropqps = res.Response.Data
+            // console.log(this.dropqps)
         }
+        
+        // this.drawLine3()
       });
     },
     // 时间格式化'yyyy-MM-dd hh:mm:ss'
@@ -309,9 +316,102 @@ export default {
         })
         .replace(/\//g, "-");
     },
+    drawLine3() {
+      // var arr = [];
+      // for (let i in date) {
+      //   arr.unshift(date[i]); //属性
+      // }
+      // arr.splice(arr.length - 1, 1);
+      // 基于准备好的dom，初始化echarts实例
+      let myChart3 = this.$echarts.init(document.getElementById("myChart3"));
+      // 绘制图表
+      myChart3.setOption({
+        color: ["rgb(124, 181, 236)"],
+        title: { text: "" },
+        tooltip: {},
+    //       legend: {
+    //     data:['总请求峰值','攻击请求峰值']
+    // },
+        xAxis: {
+          data: [1,2,3,4,5] //["12-05", "12-04", "12-03", "12-02", "12-01"]
+          // type : 'time',
+          // minInterval: 1
+        },
+        yAxis: {
+          axisLine: {
+            //y轴
+            show: false
+          },
+          axisTick: {
+            //刻度线
+            show: false
+          },
+          splitLine: {
+            //网格线
+            show: false
+          },
+          axisLabel: {
+            formatter: "{value}bps"
+          },
+          boundaryGap: true
+        },
+        series: [
+          {
+            name: "总请求峰值",
+            type: "line",
+            data: [12,3,4,5,6,4],
+            itemStyle: {
+              normal: {
+                lineStyle: {
+                  color: "rgb(124, 181, 236)"
+                }
+              }
+            }
+          },
+           {
+            name: "攻击请求峰值",
+            type: "line",
+            data: [1,35,9,1,1,4],
+            itemStyle: {
+              normal: {
+                lineStyle: {
+                  color: "#f40"
+                }
+              }
+            }
+          }
+        ],
+        legend: {
+          //默认横向布局，纵向布局值为'vertical'
+          orient: "vertical",
+          x: "center", //可设定图例在左、右、居中
+          y: "bottom",
+          icon: "line", //图例样式
+          textStyle: {
+            //文字样式
+            fontWeight: "bold"
+          },
+          lineStyle: {
+            color: "rgb(124, 181, 236)"
+          }
+        }
+      });
+    },
   }
 }
 </script>
-<style lang="scss">
-
+<style lang="scss" scoped>
+.newDataTimeTwo {
+  float: left;
+  height: 30px !important;
+  border-radius: 0 !important;
+  margin-left: -1px;
+  span.el-range-separator {
+    line-height: 24px;
+    width: 8%;
+  }
+  i.el-range__icon {
+    line-height: 24px;
+  }
+}
 </style>

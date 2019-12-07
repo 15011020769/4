@@ -86,23 +86,7 @@
               </el-button>
             </el-button-group>
           </div>
-          <div class="chartCon" id="echartsShow" ref="chartY">
-            <!-- <el-table-column prop="DataPoints" width="550">
-          <template slot-scope="scope">
-            <p v-if="scope.row.DataPoints[0].Values.length==0">暂无数据</p>
-            <div class="echart" v-if="scope.row.DataPoints[0].Values.length!=0">
-              <echart-line
-                id="diskEchearrts-line"
-                :time="scope.row.DataPoints[0].Timestamps | UpTime"
-                :opData="scope.row.DataPoints[0].Values"
-                :scale="3"
-                :period="period"
-                :xdata="false"
-              ></echart-line>
-            </div>
-          </template>
-        </el-table-column> -->
-          </div>
+         
           <div class="chartNum newClear">
             <span>函数{{newData}}TOP 10统计</span>
             <span>
@@ -122,6 +106,23 @@
               style="width: 100%"
               class="funDataTable"
             >
+             <div class="chartCon" id="echartsShow" ref="chartY">
+            <el-table-column prop="DataPoints" width="550">
+          <template slot-scope="scope">
+            <p v-if="scope.row.DataPoints[0].Values.length==0">暂无数据</p>
+            <div class="echart" v-if="scope.row.DataPoints[0].Values.length!=0">
+              <echart-line
+                id="diskEchearrts-line"
+                :time="scope.row.DataPoints[0].Timestamps | UpTime"
+                :opData="scope.row.DataPoints[0].Values"
+                :scale="3"
+                :period="period"
+                :xdata="false"
+              ></echart-line>
+            </div>
+          </template>
+        </el-table-column>
+          </div>
               <el-table-column prop="FunctionName" label="函数名"></el-table-column>
               <el-table-column prop="Namespace" label="命名空间"></el-table-column>
               <el-table-column prop="dataNum" label="数据指标"></el-table-column>
@@ -134,8 +135,9 @@
 </template>
 
 <script>
-import echarts from "echarts";
-import XTimeX from '@/components/public/TimeXK';
+  import moment from "moment";
+  import XTimeX from "@/components/public/TimeX";
+  import echartLine from "@/components/public/echars-line";
 import { SCF_DETAILS,All_MONITOR,OVER_VIEW,USER_MONTH_USAGE,USER_YESTERDAY_USAGE } from '@/constants'
 export default {
   data() {
@@ -180,9 +182,18 @@ export default {
     };
   },
   components: {
-    XTimeX
+     echartLine,
+      XTimeX
   },
   methods: {
+     GetDat(data) {
+       console.log(data)
+        this.period = data[0];
+        this.Start_End = data[1];
+        this.value = data[2];
+      },
+
+
     //函数数量
     GetOverView(){
       let params = {
@@ -264,7 +275,7 @@ export default {
       Obtain(metricN) {
         const param = {
           Version: '2018-07-24',
-          Region: 'ap-guangzhou',//this.$cookie.get('regionv2'),
+          Region: this.$cookie.get('regionv2'),//'ap-guangzhou',
           Namespace: 'QCE/SCF_V2',
           MetricName: metricN,
         "Instances.0.Dimensions.0.Name": "functionName",
@@ -278,7 +289,7 @@ export default {
         this.axios.post(All_MONITOR, param).then((data) => {
           this.tableData = []
           console.log(data)
-          this.tableData.push(data.Response.DataPoints[0].Values);
+          // this.tableData.push(data.Response.DataPoints[0].Values);
           // console.log(this.tableData)
 
         });
@@ -338,48 +349,48 @@ export default {
         this.Obtain(metricNArr)
       }
     },
-    initChart(date) {
-      this.chart = echarts.init(document.getElementById("echartsShow"));
-      // 把配置和数据放这里
-      this.chart.setOption({
-        color: ["#3398DB"],
-        tooltip: {
-          trigger: "axis",
-          axisPointer: {
-            // 坐标轴指示器，坐标轴触发有效
-            type: "shadow"
-          }
-        },
-        grid: {
-          left: "3%",
-          right: "4%",
-          bottom: "3%",
-          containLabel: true
-        },
-        xAxis: [
-          {
-            type: "category",
-            data: [1,2,3,4,5],
-            axisTick: {
-              alignWithLabel: true
-            }
-          }
-        ],
-        yAxis: [
-          {
-            type: "value"
-          }
-        ],
-        series: [
-          {
-            name: "直接访问",
-            type: "line",
-            barWidth: "60%",
-            data: date
-          }
-        ]
-      });
-    }
+    // initChart(date) {
+    //   this.chart = echarts.init(document.getElementById("echartsShow"));
+    //   // 把配置和数据放这里
+    //   this.chart.setOption({
+    //     color: ["#3398DB"],
+    //     tooltip: {
+    //       trigger: "axis",
+    //       axisPointer: {
+    //         // 坐标轴指示器，坐标轴触发有效
+    //         type: "shadow"
+    //       }
+    //     },
+    //     grid: {
+    //       left: "3%",
+    //       right: "4%",
+    //       bottom: "3%",
+    //       containLabel: true
+    //     },
+    //     xAxis: [
+    //       {
+    //         type: "category",
+    //         data: [1,2,3,4,5],
+    //         axisTick: {
+    //           alignWithLabel: true
+    //         }
+    //       }
+    //     ],
+    //     yAxis: [
+    //       {
+    //         type: "value"
+    //       }
+    //     ],
+    //     series: [
+    //       {
+    //         name: "直接访问",
+    //         type: "line",
+    //         barWidth: "60%",
+    //         data: date
+    //       }
+    //     ]
+    //   });
+    // }
   },
     filters: {
       UpName(value) {
@@ -456,7 +467,7 @@ export default {
     if (this.tableData == "") {
       document.querySelector(".chartTable").innerHTML = "暂无数据";
     }
-    this.initChart(this.tableData);
+    // this.initChart(this.tableData);
     this.GetOverView();
     this.GetUserMonthUsage();
     this.GetUserYesterdayUsage();

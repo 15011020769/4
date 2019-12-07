@@ -34,12 +34,7 @@
         </el-select>
       </div>
       <div class="mainConListAll mainConListTwo">
-        <el-tabs
-          class="tabsCard"
-          v-model="activeName1"
-          type="card"
-          @tab-click="handleClick1"
-        >
+        <el-tabs class="tabsCard" v-model="activeName1" type="card" @tab-click="handleClick1">
           <el-tab-pane label="攻击流量宽带" name="bps">
             <div id="myChart"></div>
           </el-tab-pane>
@@ -108,18 +103,18 @@
 <script>
 import moment from "moment";
 export default {
-  data(){
-    return{
+  data() {
+    return {
       // 日期选择
-      dateChoice1: {},//选择日期
-      inputId: "net-0000006y",//下拉框ID
+      dateChoice1: {}, //选择日期
+      inputId: "net-0000006y", //下拉框ID
       timeBtnSelect2: "总览", //ddos时间按钮下面第二个下拉
       activeName1: "bps", //DDoS攻击防护-二级tab标识
       tableDataOfDescribeDDoSNetEvList: [], //DDoS攻击事件列表
       currentPage: 1, //当前页
       pageSize: 10, //每页长度
       totalItems: 0, //总条数
-      resourceId: "",// 根据Id查询
+      resourceId: "", // 根据Id查询
       metricName: "bps", //指标，取值[bps(攻击流量带宽，pps(攻击包速率))]
       // 日期区间：默认获取当前时间和前一天时间
       endTime: this.getDateString(new Date()),
@@ -135,10 +130,10 @@ export default {
         new Date(new Date().getTime() - 24 * 60 * 60 * 1000)
       ),
       tableDataEnd: [],
-      period: 3600, //统计粒度，取值[300(5分钟)，3600(小时)，86400(天)]
-    }
+      period: 3600 //统计粒度，取值[300(5分钟)，3600(小时)，86400(天)]
+    };
   },
-  watch:{
+  watch: {
     dateChoice1: function(value) {
       this.period = 86400;
       var num = value[1].getTime() - value[0].getTime(); //计算时间戳的差
@@ -154,220 +149,351 @@ export default {
       this.startTime = moment(value[0]).format("YYYY-MM-DD HH:mm:ss"); //格式处理
       this.endTime = moment(value[1]).format("YYYY-MM-DD HH:mm:ss"); //格式处理
       this.getData();
-    },
+    }
   },
   created() {
-      this.describeResourceList(); //获取资源列表的接口单独调用（因为日期变更不需要调用此接口）
+    this.describeResourceList(); //获取资源列表的接口单独调用（因为日期变更不需要调用此接口）
+    this.getData();
+  },
+  methods: {
+    // DDOS资源Id变化时，重新获取数据
+    changeId() {
+      this.resourceId = this.inputId;
+      this.describeResourceList();
       this.getData();
     },
-    methods:{
-      // DDOS资源Id变化时，重新获取数据
-      changeId() {
-        this.resourceId = this.inputId;
-        this.describeResourceList();
-        this.getData();
-      },
-      getData() {
-        this.thisTime(1);
-        for (let index in this.metricNames) {
-          this.metricName2 = this.metricNames[index];
-          this.describeDDoSNetCount();
+    getData() {
+      this.thisTime(1);
+      for (let index in this.metricNames) {
+        this.metricName2 = this.metricNames[index];
+        this.describeDDoSNetCount();
+      }
+      this.describeDDoSNetEvList();
+    },
+    // 1.3.获取高防IP专业版资源的DDoS攻击事件列表
+    describeDDoSNetEvList() {
+      let params = {
+        Version: "2018-07-09",
+        // Region: '',
+        Business: "net",
+        Id: this.inputId,
+        StartTime: this.startTime,
+        EndTime: this.endTime
+        //Limit: '',  //一页条数，填0表示不分页
+        //Offset: ''  //页起始偏移，取值为(页码-1)*一页条数
+      };
+      this.axios.post("dayu2/DescribeDDoSNetEvList", params).then(res => {
+        // console.log(res)
+        this.tableDataOfDescribeDDoSNetEvList = res.Response.Data;
+      });
+    },
+    // 1.2.获取高防IP专业版资源的DDoS攻击占比分析
+    describeDDoSNetCount() {
+      let params = {
+        Version: "2018-07-09",
+        // Region: '',
+        Business: "net",
+        Id: this.inputId,
+        StartTime: this.startTime,
+        EndTime: this.endTime,
+        MetricName: this.metricName2, //指标，取值[traffic（攻击协议流量, 单位KB）, pkg（攻击协议报文数）, num（攻击事件次数）]
+        metricName2: "traffic", //指标，取值[traffic（攻击协议流量, 单位KB）, pkg（攻击协议报文数）, num（攻击事件次数）]
+        metricNames: ["traffic", "pkg", "num"]
+      };
+      this.$axios.post("dayu2/DescribeDDoSNetCount", params).then(res => {
+        // console.log(res)
+      });
+    },
+    // 获取资源列表
+    describeResourceList(data) {
+      let params = {
+        Version: "2018-07-09",
+        Business: "net"
+      };
+      if (this.resourceId != "" && this.resourceId != null) {
+        params["IdList.0"] = this.resourceId;
+      }
+      this.$axios.post("dayu2/DescribeResourceList", params).then(res => {
+        // console.log(res)
+      });
+    },
+    // DDOS攻击防护-二级tab切换
+    handleClick1(value) {
+      this.metricName = value.name;
+      this.thisTime(1);
+    },
+    handleSizeChange(val) {
+      // console.log(`每页 ${val} 条`);
+      this.pageSize = val;
+      this.handleCurrentChange(this.currentPage);
+    },
+    handleCurrentChange(val) {
+      // console.log(`当前页: ${val}`);
+      this.currentPage = val;
+      //需要判断是否检索
+      if (!this.flag) {
+        this.currentChangePage(this.tableDataEnd);
+      } else {
+        this.currentChangePage(this.filterTableDataEnd);
+      }
+    }, //组件自带监控当前页码
+    currentChangePage(list) {
+      let from = (this.currentPage - 1) * this.pageSize;
+      let to = this.currentPage * this.pageSize;
+      this.tableDataEnd = [];
+      for (; from < to; from++) {
+        if (list[from]) {
+          this.tableDataEnd.push(list[from]);
         }
-        this.describeDDoSNetEvList();
-      },
-      // 1.3.获取高防IP专业版资源的DDoS攻击事件列表
-      describeDDoSNetEvList() {
-        let params = {
-          Version: "2018-07-09",
-          // Region: '',
-          Business: "net",
-          Id: this.inputId,
-          StartTime: this.startTime,
-          EndTime: this.endTime
-          //Limit: '',  //一页条数，填0表示不分页
-          //Offset: ''  //页起始偏移，取值为(页码-1)*一页条数
-        };
-        this.axios.post("dayu2/DescribeDDoSNetEvList", params).then(res => {
-          // console.log(res)
-          this.tableDataOfDescribeDDoSNetEvList = res.Response.Data;
-        });
-      },
-      // 1.2.获取高防IP专业版资源的DDoS攻击占比分析
-      describeDDoSNetCount() {
-        let params = {
-          Version: "2018-07-09",
-          // Region: '',
-          Business: "net",
-          Id: this.inputId,
-          StartTime: this.startTime,
-          EndTime: this.endTime,
-          MetricName: this.metricName2, //指标，取值[traffic（攻击协议流量, 单位KB）, pkg（攻击协议报文数）, num（攻击事件次数）]
-          metricName2: "traffic", //指标，取值[traffic（攻击协议流量, 单位KB）, pkg（攻击协议报文数）, num（攻击事件次数）]
-          metricNames: ["traffic", "pkg", "num"],
-        };
-        this.$axios.post("dayu2/DescribeDDoSNetCount", params).then(res => {
-          // console.log(res)
-        });
-      },
-      // 获取资源列表
-      describeResourceList(data) {
-        let params = {
-          Version: "2018-07-09",
-          Business: "net"
-        };
-        if (this.resourceId != "" && this.resourceId != null) {
-          params["IdList.0"] = this.resourceId;
-        }
-        this.$axios.post("dayu2/DescribeResourceList", params).then(res => {
-          // console.log(res)
-        });
-      },
-      // DDOS攻击防护-二级tab切换
-      handleClick1(value) {
-        this.metricName = value.name;
-        this.thisTime(1);
-      },
-      handleSizeChange(val) {
-        // console.log(`每页 ${val} 条`);
-        this.pageSize = val;
-        this.handleCurrentChange(this.currentPage);
-      },
-      handleCurrentChange(val) {
-        // console.log(`当前页: ${val}`);
-        this.currentPage = val;
-        //需要判断是否检索
-        if (!this.flag) {
-          this.currentChangePage(this.tableDataEnd);
-        } else {
-          this.currentChangePage(this.filterTableDataEnd);
-        }
-      }, //组件自带监控当前页码
-      currentChangePage(list) {
-        let from = (this.currentPage - 1) * this.pageSize;
-        let to = this.currentPage * this.pageSize;
-        this.tableDataEnd = [];
-        for (; from < to; from++) {
-          if (list[from]) {
-            this.tableDataEnd.push(list[from]);
-          }
-        }
-      },
-      //获取时间
-      thisTime(thisTime) {
-        var ipt1 = document.querySelector(".newDataTime input:nth-child(2)");
-        var ipt2 = document.querySelector(".newDataTime input:nth-child(4)");
-        const end = new Date();
-        const start = new Date();
-        if (thisTime == "1") {
-          start.setTime(start.getTime() - 3600 * 1000);
-          var num =
-            end.getTime() -
-            new Date(
-              new Date(new Date().toLocaleDateString()).getTime()
-            ).getTime();
-          var arr = [];
-          for (var i = 0; i <= num / 3600000; i++) {
-            var d = new Date(end.getTime() - 3600000 * i);
-            arr.push(moment(d).format("MM-DD HH:mm:ss"));
-          }
-          this.timey = arr;
-        } else if (thisTime == "2") {
-          //ddos攻击-攻击流量带宽
-          start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
-          ipt1.value = moment(start).format("YYYY-MM-DD HH:mm:ss");
-          ipt2.value = moment(end).format("YYYY-MM-DD HH:mm:ss");
-          this.startTime = ipt1.value;
-          this.endTime = ipt2.value;
-          this.period = 86400;
-          this.timedone(end, start, 86400000);
-          //ddos攻击-攻击流量带宽
-        } else if (thisTime == "3") {
-          //ddos攻击-攻击流量带宽
-          start.setTime(start.getTime() - 3600 * 1000 * 24 * 15);
-          ipt1.value = moment(start).format("YYYY-MM-DD HH:mm:ss");
-          ipt2.value = moment(end).format("YYYY-MM-DD HH:mm:ss");
-          this.startTime = ipt1.value;
-          this.endTime = ipt2.value;
-          this.period = 86400;
-          this.timedone(end, start, 86400000);
-          //ddos攻击-攻击流量带宽
-        } else if (thisTime == "4") {
-          //ddos攻击-攻击流量带宽
-          start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
-          ipt1.value = moment(start).format("YYYY-MM-DD HH:mm:ss");
-          ipt2.value = moment(end).format("YYYY-MM-DD HH:mm:ss");
-          this.startTime = ipt1.value;
-          this.endTime = ipt2.value;
-          this.period = 86400;
-          this.timedone(end, start, 86400000);
-          //ddos攻击-攻击流量带宽
-        } else if (thisTime == "5") {
-          //ddos攻击-攻击流量带宽
-          start.setTime(start.getTime() - 3600 * 1000 * 24 * 30 * 6);
-          ipt1.value = moment(start).format("YYYY-MM-DD HH:mm:ss");
-          ipt2.value = moment(end).format("YYYY-MM-DD HH:mm:ss");
-          this.startTime = ipt1.value;
-          this.endTime = ipt2.value;
-          this.period = 86400;
-          this.timedone(end, start, 86400000);
-          //ddos攻击-攻击流量带宽
-        }
-        //console.log(moment(new Date()).format('YYYY-MM-DD HH:mm:ss'),start
-        //this.thisStart=moment(start).format('YYYY-MM-DD');
-        //this.thisEnd=moment(end).format('YYYY-MM-DD');
-        //this.$emit('timeNode1',[this.thisStart,this.thisEnd])
-        // this.getData(this.timey)
-        this.describeDDoSNetTrend(this.timey);
-      },
-      //时间按钮
-      //计算时间间隔
-      timedone(end, start, p) {
-        var num = end.getTime() - start.getTime();
+      }
+    },
+    //获取时间
+    thisTime(thisTime) {
+      var ipt1 = document.querySelector(".newDataTime input:nth-child(2)");
+      var ipt2 = document.querySelector(".newDataTime input:nth-child(4)");
+      const end = new Date();
+      const start = new Date();
+      if (thisTime == "1") {
+
         var arr = [];
-        for (var i = 0; i <= num / p; i++) {
-          var d = new Date(end.getTime() - p * i);
-          arr.push(moment(d).format("MM-DD"));
+        for (var i = 0; i <= 86400000 / 3600000; i++) {
+          var d = new Date(end.getTime() - 3600000 * i);
+          arr.push(moment(d).format("MM-DD HH:mm:ss"));
         }
+         this.startTime = moment(new Date(end.getTime()-86400000)).format("YYYY-MM-DD HH:mm:ss");
+         this.endTime = moment(end).format("YYYY-MM-DD HH:mm:ss");
+         this.period = 3600;
         this.timey = arr;
-      },
-      // 1.1.获取高防IP专业版资源的DDoS攻击指标数据
-      describeDDoSNetTrend(date) {
-        let params = {
-          Version: "2018-07-09",
-          // Region: '',
-          Business: "net",
-          Id: this.inputId,
-          MetricName: this.metricName, //指标，取值[bps(攻击流量带宽，pps(攻击包速率))]
-          Period: this.period, //统计粒度，取值[300(5分钟)，3600(小时)，86400(天)]
-          StartTime: this.startTime,
-          EndTime: this.endTime
-        };
-        this.$axios.post("dayu2/DescribeDDoSNetTrend", params).then(res => {
-          console.log(res)
-          if (this.metricName == "bps") {
-            this.drawLine(res.Response.Data, date);
-          } else {
-            this.drawLine2(res.Response.Data, date);
+      } else if (thisTime == "2") {
+        //ddos攻击-攻击流量带宽
+        start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+        ipt1.value = moment(start).format("YYYY-MM-DD");
+        ipt2.value = moment(end).format("YYYY-MM-DD");
+        this.startTime = moment(start).format("YYYY-MM-DD HH:mm:ss");
+        this.endTime = moment(end).format("YYYY-MM-DD HH:mm:ss");
+        this.period = 86400;
+        this.timedone(end, start, 86400000);
+        //ddos攻击-攻击流量带宽
+      } else if (thisTime == "3") {
+        //ddos攻击-攻击流量带宽
+        start.setTime(start.getTime() - 3600 * 1000 * 24 * 15);
+        ipt1.value = moment(start).format("YYYY-MM-DD");
+        ipt2.value = moment(end).format("YYYY-MM-DD");
+        this.startTime = moment(start).format("YYYY-MM-DD HH:mm:ss");
+        this.endTime = moment(end).format("YYYY-MM-DD HH:mm:ss");
+        this.period = 86400;
+        this.timedone(end, start, 86400000);
+        //ddos攻击-攻击流量带宽
+      } else if (thisTime == "4") {
+        //ddos攻击-攻击流量带宽
+        start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+        ipt1.value = moment(start).format("YYYY-MM-DD");
+        ipt2.value = moment(end).format("YYYY-MM-DD");
+        this.startTime = moment(start).format("YYYY-MM-DD HH:mm:ss");
+        this.endTime = moment(end).format("YYYY-MM-DD HH:mm:ss");
+        this.period = 86400;
+        this.timedone(end, start, 86400000);
+        //ddos攻击-攻击流量带宽
+      } else if (thisTime == "5") {
+        //ddos攻击-攻击流量带宽
+        start.setTime(start.getTime() - 3600 * 1000 * 24 * 30 * 6);
+        ipt1.value = moment(start).format("YYYY-MM-DD");
+        ipt2.value = moment(end).format("YYYY-MM-DD");
+       this.startTime = moment(start).format("YYYY-MM-DD HH:mm:ss");
+        this.endTime = moment(end).format("YYYY-MM-DD HH:mm:ss");
+        this.period = 86400;
+        this.timedone(end, start, 86400000);
+        //ddos攻击-攻击流量带宽
+      }
+      //console.log(moment(new Date()).format('YYYY-MM-DD HH:mm:ss'),start
+      //this.thisStart=moment(start).format('YYYY-MM-DD');
+      //this.thisEnd=moment(end).format('YYYY-MM-DD');
+      //this.$emit('timeNode1',[this.thisStart,this.thisEnd])
+      // this.getData(this.timey)
+      this.describeDDoSNetTrend(this.timey);
+    },
+    //时间按钮
+    //计算时间间隔
+    timedone(end, start, p) {
+      var num = end.getTime() - start.getTime();
+      var arr = [];
+      for (var i = 0; i <= num / p; i++) {
+        var d = new Date(end.getTime() - p * i);
+        arr.push(moment(d).format("MM-DD"));
+      }
+      this.timey = arr;
+    },
+    // 1.1.获取高防IP专业版资源的DDoS攻击指标数据
+    describeDDoSNetTrend(date) {
+      let params = {
+        Version: "2018-07-09",
+        // Region: '',
+        Business: "net",
+        Id: this.inputId,
+        MetricName: this.metricName, //指标，取值[bps(攻击流量带宽，pps(攻击包速率))]
+        Period: this.period, //统计粒度，取值[300(5分钟)，3600(小时)，86400(天)]
+        StartTime: this.startTime,
+        EndTime: this.endTime
+      };
+      this.$axios.post("dayu2/DescribeDDoSNetTrend", params).then(res => {
+        if (this.metricName == "bps") {
+          this.drawLine(res.Response.Data, date);
+        } else {
+          this.drawLine2(res.Response.Data, date);
+        }
+      });
+    },
+    // 时间格式化'yyyy-MM-dd hh:mm:ss'
+    getDateString(date) {
+      return date
+        .toLocaleString("zh", {
+          hour12: false,
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit"
+        })
+        .replace(/\//g, "-");
+    },
+    drawLine(y, date) {
+      var arr = [];
+      for (let i in date) {
+        arr.unshift(date[i]); //属性
+      }
+      arr.splice(arr.length - 1, 1);
+      // 基于准备好的dom，初始化echarts实例
+      let myChart = this.$echarts.init(document.getElementById("myChart"));
+      // 绘制图表
+      myChart.setOption({
+        color: ["rgb(124, 181, 236)"],
+        title: { text: "" },
+        tooltip: {},
+        xAxis: {
+          data: arr //["12-05", "12-04", "12-03", "12-02", "12-01"]
+          // type : 'time',
+          // minInterval: 1
+        },
+        yAxis: {
+          axisLine: {
+            //y轴
+            show: false
+          },
+          axisTick: {
+            //刻度线
+            show: false
+          },
+          splitLine: {
+            //网格线
+            show: false
+          },
+          axisLabel: {
+            formatter: "{value}bps"
+          },
+          boundaryGap: true
+        },
+        series: [
+          {
+            name: "攻击流量宽带",
+            type: "line",
+            data: y,
+            itemStyle: {
+              normal: {
+                lineStyle: {
+                  color: "rgb(124, 181, 236)"
+                }
+              }
+            }
           }
-        });
-      },
-      // 时间格式化'yyyy-MM-dd hh:mm:ss'
-      getDateString(date) {
-        return date
-          .toLocaleString("zh", {
-            hour12: false,
-            year: "numeric",
-            month: "2-digit",
-            day: "2-digit",
-            hour: "2-digit",
-            minute: "2-digit",
-            second: "2-digit"
-          })
-          .replace(/\//g, "-");
-      },
-    }
-}
+        ],
+        legend: {
+          //默认横向布局，纵向布局值为'vertical'
+          orient: "vertical",
+          x: "center", //可设定图例在左、右、居中
+          y: "bottom",
+          icon: "line", //图例样式
+          textStyle: {
+            //文字样式
+            fontWeight: "bold"
+          },
+          lineStyle: {
+            color: "rgb(124, 181, 236)"
+          }
+        }
+      });
+    },
+    drawLine2(y, date) {
+      // 基于准备好的dom，初始化echarts实例
+       var arr = [];
+      for (let i in date) {
+        arr.unshift(date[i]); //属性
+      }
+      arr.splice(arr.length - 1, 1);
+
+      let myChart2 = this.$echarts.init(document.getElementById("myChart2"));
+      // 绘制图表
+      myChart2.setOption({
+        color: ["rgb(124, 181, 236)"],
+        title: { text: "" },
+        tooltip: {},
+        xAxis: {
+          data: arr
+        },
+        yAxis: {
+          axisLine: {
+            //y轴
+            show: false
+          },
+          axisTick: {
+            //刻度线
+            show: false
+          },
+          splitLine: {
+            //网格线
+            show: false
+          },
+          axisLabel: {
+            formatter: "{value}bps"
+          },
+          boundaryGap: true
+        },
+        series: [
+          {
+            name: "总攻击流量",
+            type: "line",
+            data: y,
+            itemStyle: {
+              normal: {
+                lineStyle: {
+                  color: "rgb(124, 181, 236)"
+                }
+              }
+            }
+          }
+        ],
+        legend: {
+          //默认横向布局，纵向布局值为'vertical'
+          orient: "vertical",
+          x: "center", //可设定图例在左、右、居中
+          y: "bottom",
+          icon: "line", //图例样式
+          textStyle: {
+            //文字样式
+            fontWeight: "bold"
+          },
+          lineStyle: {
+            color: "rgb(124, 181, 236)"
+          }
+        }
+      });
+      myChart2.resize();
+      window.addEventListener("resize", function() {
+        myChart2.resize();
+      });
+    },
+  }
+};
 </script>
 <style lang="scss">
-
 </style>

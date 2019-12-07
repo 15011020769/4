@@ -117,7 +117,6 @@ export default {
 
     getIp() {
       this.ddosAttack = JSON.parse(localStorage.getItem("ddosAttack"));
-      // console.log(this.ddosAttack)
     },
     // 1.1.获取DDoS攻击指标数据
     describeDDoSTrend(date) {
@@ -167,60 +166,74 @@ export default {
       this.timey = arr;
     },
     //选择时间
+
     thisTime(thisTime) {
       var ipt1 = document.querySelector(".newDataTime input:nth-child(2)");
       var ipt2 = document.querySelector(".newDataTime input:nth-child(4)");
       const end = new Date();
       const start = new Date();
       if (thisTime == "1") {
-        start.setTime(start.getTime() - 3600 * 1000);
-        var num =end.getTime() -new Date(new Date(new Date().toLocaleDateString()).getTime()).getTime();
+
         var arr = [];
-        for (var i = 0; i <= num / 3600000; i++) {
+        for (var i = 0; i <= 86400000 / 3600000; i++) {
           var d = new Date(end.getTime() - 3600000 * i);
           arr.push(moment(d).format("MM-DD HH:mm:ss"));
         }
+         this.startTime = moment(new Date(end.getTime()-86400000)).format("YYYY-MM-DD HH:mm:ss");
+         this.endTime = moment(end).format("YYYY-MM-DD HH:mm:ss");
+         this.period = 3600;
         this.timey = arr;
       } else if (thisTime == "2") {
+        //ddos攻击-攻击流量带宽
         start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
-        ipt1.value = moment(start).format("YYYY-MM-DD HH:mm:ss");
-        ipt2.value = moment(end).format("YYYY-MM-DD HH:mm:ss");
-        this.startTime = ipt1.value;
-        this.endTime = ipt2.value;
-        this.Period = 86400;
+        ipt1.value = moment(start).format("YYYY-MM-DD");
+        ipt2.value = moment(end).format("YYYY-MM-DD");
+        this.startTime = moment(start).format("YYYY-MM-DD HH:mm:ss");
+        this.endTime = moment(end).format("YYYY-MM-DD HH:mm:ss");
+        this.period = 86400;
         this.timedone(end, start, 86400000);
+        //ddos攻击-攻击流量带宽
       } else if (thisTime == "3") {
+        //ddos攻击-攻击流量带宽
         start.setTime(start.getTime() - 3600 * 1000 * 24 * 15);
-        ipt1.value = moment(start).format("YYYY-MM-DD HH:mm:ss");
-        ipt2.value = moment(end).format("YYYY-MM-DD HH:mm:ss");
-        this.startTime = ipt1.value;
-        this.endTime = ipt2.value;
-        this.Period = 86400;
+        ipt1.value = moment(start).format("YYYY-MM-DD");
+        ipt2.value = moment(end).format("YYYY-MM-DD");
+        this.startTime = moment(start).format("YYYY-MM-DD HH:mm:ss");
+        this.endTime = moment(end).format("YYYY-MM-DD HH:mm:ss");
+        this.period = 86400;
         this.timedone(end, start, 86400000);
+        //ddos攻击-攻击流量带宽
       } else if (thisTime == "4") {
+        //ddos攻击-攻击流量带宽
         start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
-        ipt1.value = moment(start).format("YYYY-MM-DD HH:mm:ss");
-        ipt2.value = moment(end).format("YYYY-MM-DD HH:mm:ss");
-        this.startTime = ipt1.value;
-        this.endTime = ipt2.value;
-        this.Period = 86400;
+        ipt1.value = moment(start).format("YYYY-MM-DD");
+        ipt2.value = moment(end).format("YYYY-MM-DD");
+        this.startTime = moment(start).format("YYYY-MM-DD HH:mm:ss");
+        this.endTime = moment(end).format("YYYY-MM-DD HH:mm:ss");
+        this.period = 86400;
         this.timedone(end, start, 86400000);
+        //ddos攻击-攻击流量带宽
       } else if (thisTime == "5") {
+        //ddos攻击-攻击流量带宽
         start.setTime(start.getTime() - 3600 * 1000 * 24 * 30 * 6);
-        ipt1.value = moment(start).format("YYYY-MM-DD HH:mm:ss");
-        ipt2.value = moment(end).format("YYYY-MM-DD HH:mm:ss");
-        this.startTime = ipt1.value;
-        this.endTime = ipt2.value;
-        this.Period = 86400;
+        ipt1.value = moment(start).format("YYYY-MM-DD");
+        ipt2.value = moment(end).format("YYYY-MM-DD");
+       this.startTime = moment(start).format("YYYY-MM-DD HH:mm:ss");
+        this.endTime = moment(end).format("YYYY-MM-DD HH:mm:ss");
+        this.period = 86400;
         this.timedone(end, start, 86400000);
+        //ddos攻击-攻击流量带宽
       }
-      // ipt1.value = moment(start).format('YYYY-MM-DD HH:mm:ss');
-      // ipt2.value = moment(end).format('YYYY-MM-DD HH:mm:ss');
-      // this.startTime = ipt1.value
-      // this.endTime = ipt2.value
+      //console.log(moment(new Date()).format('YYYY-MM-DD HH:mm:ss'),start
+      //this.thisStart=moment(start).format('YYYY-MM-DD');
+      //this.thisEnd=moment(end).format('YYYY-MM-DD');
+      //this.$emit('timeNode1',[this.thisStart,this.thisEnd])
+      // this.getData(this.timey)
       this.describeDDoSTrend(this.timey);
       this.describeDDoSEvList()
     },
+
+
 
     drawLine(y, date) {
       var arr = [];

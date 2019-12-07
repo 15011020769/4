@@ -1049,4 +1049,17 @@ export default {
   height: 380px;
   margin: 20px 0;
 }
+.newDataTimeTwo {
+  float: left;
+  height: 30px !important;
+  border-radius: 0 !important;
+  margin-left: -1px;
+  span.el-range-separator {
+    line-height: 24px;
+    width: 8%;
+  }
+  i.el-range__icon {
+    line-height: 24px;
+  }
+}
 </style>
