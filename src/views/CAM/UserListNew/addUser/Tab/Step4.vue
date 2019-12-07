@@ -68,7 +68,7 @@
         <el-table
           :data="policyData"
           style="width: 100%"
-          v-if="activeName == 'first'"
+          v-if="activeName == 'first' || activeName == 'second'"
           v-loading="tableloading"
           max-height="520"
         >
@@ -215,7 +215,9 @@ export default {
         Page: this.currpage,
         Rp: this.pagesize
       };
+      console.log(params);
       this.axios.post(QUERY_POLICY, params).then(res => {
+        console.log(res);
         this.num = res.Response.TotalNum;
         this.policyData = res.Response.List;
         this.tableloading = false;
@@ -235,7 +237,8 @@ export default {
           this.loading = false;
         })
         .then(() => {
-          if (this.activeName == "first") {
+          console.log(this.activeName);
+          if (this.activeName == "first" || this.activeName == "second") {
             this._tactics();
           } else if (this.activeName == "third") {
             this._groupList();

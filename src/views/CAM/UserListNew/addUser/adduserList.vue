@@ -126,6 +126,7 @@
             :tableData="tableData"
             :userData="userData"
             :userNum="userNum"
+            :userDatas="userDatas"
             @handleSelectionChange="handleSelectionChange"
             @acitiveName="_acitiveName"
             @loadMore="_loadMore"
@@ -133,6 +134,7 @@
             @_policyInp="_policyInp"
             @_userSearch="_userSearch"
             @_userInp="_userInp"
+            @_userRadio="_userRadio"
           />
         </div>
         <div class="step4" v-if="active == 3">
@@ -160,7 +162,10 @@ import {
   USER_GROUP,
   POLICY_USER,
   QUERY_USER,
-  ADD_USERTOGROUP
+  ADD_USERTOGROUP,
+  USER_LIST,
+  QUERY_POLICY,
+  GROUP_POLICY
 } from "@/constants";
 import Step3 from "./Tab/Step3"; //步骤3
 import Step4 from "./Tab/Step4"; //步骤4
@@ -185,7 +190,7 @@ export default {
     };
     return {
       activeName: "first",
-      userData: [],
+      userData: [], //用户组
       totalNum: 0, //策略列表条数
       multipleSelection: [], //全选
       tableData: [],
@@ -237,7 +242,9 @@ export default {
       userNum: 0,
       namereg: "",
       policyVal: "",
-      userVal: ""
+      userVal: "",
+      userUin: "",
+      userDatas: [] //用户
     };
   },
   components: {
@@ -248,8 +255,51 @@ export default {
   created() {
     this._getList();
     this._userList();
+    this.init();
   },
   methods: {
+    //复用现有用户策略
+    _userRadio(val) {
+      const params = {
+        Version: "2019-01-16",
+        Name: val
+        // Name: this.ruleForm.Name
+      };
+      this.axios
+        .post(QUERY_USER, params)
+        .then(res => {
+          this.userUin = res.Response.Uin;
+        })
+        //获取关联的策略
+        .then(data => {
+          const params = {
+            Version: "2019-01-16",
+            TargetUin: this.userUin
+          };
+          this.axios.post(QUERY_POLICY, params).then(res => {
+            this.multipleSelection = res.Response.List;
+          });
+        });
+    },
+    //初始化用户列表数据
+    init() {
+      let userList = {
+        Version: "2019-01-16"
+      };
+      this.axios.post(USER_LIST, userList).then(data => {
+        var json = data.Response.Data;
+        json.forEach(item => {
+          const params = {
+            Version: "2019-01-16",
+            TargetUin: item.Uin
+          };
+          this.axios.post(QUERY_POLICY, params).then(res => {
+            item.policy = res.Response.List;
+          });
+        });
+        this.userDatas = json;
+      });
+    },
     //用户列表搜索
     _userSearch(val) {
       this.userVal = val;
@@ -293,14 +343,14 @@ export default {
     },
     //tab标签名称
     _acitiveName(val) {
-      this.acitiveName = val;
+      this.activeName = val;
     },
     //获取用户信息
     _getUser() {
       const params = {
         Version: "2019-01-16",
-        // Name: "策略列表"
-        Name: this.ruleForm.Name
+        Name: "策略列表"
+        // Name: this.ruleForm.Name
       };
       this.axios.post(QUERY_USER, params).then(res => {
         this.userpolicyData = res.Response;
@@ -314,6 +364,7 @@ export default {
         AttachUin: this.userpolicyData.Uin
       };
       this.axios.post(POLICY_USER, params).then(res => {
+        console.log(res)
         if (res.Response.RequestId) {
           this.active = 3;
         }
@@ -359,6 +410,16 @@ export default {
       this.axios.post(USER_GROUP, params).then(res => {
         this.userData = res.Response.GroupInfo;
         this.userNum = res.Response.TotalNum;
+        var data = this.userData;
+        data.forEach(item => {
+          const params = {
+            Version: "2019-01-16",
+            TargetGroupId: item.GroupId
+          };
+          this.axios.post(GROUP_POLICY, params).then(res => {
+            item.policy = res.Response.List;
+          });
+        });
       });
     },
     //策略列表
@@ -424,6 +485,7 @@ export default {
           }
           //复用现有用户策略
           else if (this.activeName == "second") {
+            this._policy(item.PolicyId);
           }
           //添加至组获得随机权限
           else if (this.activeName == "third") {

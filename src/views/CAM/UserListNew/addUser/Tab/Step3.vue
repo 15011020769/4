@@ -16,7 +16,7 @@
         </h3>
         <el-table
           :data="tableData"
-          height="520"
+          max-height="520"
           style="width: 100%"
           @selection-change="handleSelectionChange"
           v-loadmore="debounce"
@@ -36,7 +36,38 @@
           </el-table-column>
         </el-table>
       </el-tab-pane>
-      <!-- <el-tab-pane label="复用现有用户策略" name="second">复用现有用户策略</el-tab-pane> -->
+      <el-tab-pane label="复用现有用户策略" name="second">
+        <h3>
+          用户列表
+          <span>（共{{userDatas.length}}条）</span>
+        </h3>
+        <el-radio-group v-model="radio" @change="_radio" style="width:100%;margin-top:-3px;">
+          <el-table max-height="520" :data="userDatas" @selection-change="handleSelectionChange">
+            <el-table-column label="用户">
+              <template slot-scope="scope">
+                <el-radio :label="scope.row.Name"></el-radio>
+              </template>
+            </el-table-column>
+            <el-table-column label="备注" prop="Remark">
+              <template slot-scope="scope">
+                <span v-show="scope.row.Remark">{{scope.row.Remark}}</span>
+                <span v-show="!scope.row.Remark">-</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="已关联策略">
+              <template slot-scope="scope" v-if="scope.row.policy">
+                <div v-show="scope.row.policy.length != 0" class="omit">
+                  <span v-for="(item,index) in scope.row.policy" :key="index">
+                    <font style="color:#3E8EF7;cursor: pointer;">{{item.PolicyName}}</font>
+                    {{index == scope.row.policy.length-1 ? '' : '、'}}
+                  </span>
+                </div>
+                <span v-show="scope.row.policy.length == 0">-</span>
+              </template>
+            </el-table-column>
+          </el-table>
+        </el-radio-group>
+      </el-tab-pane>
       <el-tab-pane label="添加至组获得随组权限" name="third">
         <h3>
           用户组列表
@@ -52,19 +83,29 @@
         </h3>
         <el-table
           :data="userData"
-          height="520"
+          max-height="520"
           style="width: 100%"
           @selection-change="handleSelectionChange"
           v-loadmore="debounce"
         >
           <el-table-column type="selection" width="55"></el-table-column>
-          <el-table-column prop="GroupName" label="组名" width="250"></el-table-column>
-          <el-table-column label="备注" width="280">
+          <el-table-column prop="GroupName" label="组名"></el-table-column>
+          <el-table-column label="备注">
             <template slot-scope="scope">
               <p class="omit">{{scope.row.Remark}}</p>
             </template>
           </el-table-column>
-          <el-table-column prop="Attachments" label="已关联策略"></el-table-column>
+          <el-table-column label="已关联策略">
+            <template slot-scope="scope">
+              <div v-show="scope.row.policy != undefined" class="omit">
+                <span v-for="(item,index) in scope.row.policy" :key="index">
+                  <font style="color:#3E8EF7;cursor: pointer;">{{item.PolicyName}}</font>
+                  {{index == scope.row.policy.length-1 ? '' : '、'}}
+                </span>
+              </div>
+              <span v-show="scope.row.policy == []">-</span>
+            </template>
+          </el-table-column>
         </el-table>
       </el-tab-pane>
     </el-tabs>
@@ -85,16 +126,22 @@ export default {
         1: "自定义策略",
         2: "预设策略"
       },
-      activeName: "first"
+      activeName: "first",
+      radio: ""
     };
   },
   props: {
     totalNum: Number,
     tableData: Array,
     userData: Array,
-    userNum: Number
+    userNum: Number,
+    userDatas: Array
   },
   methods: {
+    //用户
+    _radio() {
+      this.$emit("_userRadio", this.radio);
+    },
     //防抖
     debounce() {
       let that = this;
