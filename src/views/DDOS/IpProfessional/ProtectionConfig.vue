@@ -209,10 +209,13 @@
 import addNewTactics from './addNewTactics'
 import ProtectConfigModel from './model/ProtectConfigModel'
 import ccProtection from './tabs/ccProtection'//cc防护模块
+import { RESOURCE_LIST } from '@/constants'
 export default {
   data() {
     return {
       tableDataBegin: [],//DDoS攻击防护列表
+      // 过滤刷新列表过程中使用
+      allData: [],  // 存储全部实例列表
       changeModel: false,//修改框
       options1: [
         {label: 'IP', value: 'IP'},
@@ -267,7 +270,6 @@ export default {
   methods:{
     getData() {
       this.describeResourceList()
-      this.describeDDoSPolicy()
     },
     //写在子组件，需要传值
     getDataCC() {
@@ -282,9 +284,11 @@ export default {
         Version: '2018-07-09',
         Business: 'net',
       }
-      this.$axios.post('dayu2/DescribeResourceList', params).then(res => {
-        console.log(res)
+      this.axios.post(RESOURCE_LIST, params).then(res => {
+        // console.log(res)
         this.tableDataBegin = res.Response.ServicePacks
+        this.allData = res.Response.ServicePacks
+        this.totalItems = res.Response.Total
       })
     },
     // 1.2.获取DDoS高级策略
@@ -358,17 +362,18 @@ export default {
     // 搜索
     doFilter() {
       console.log(this.filterConrent, this.tableDataName);
-      this.describeResourceList()
-      if(this.tableDataName != '') {
-        this.tableDataTemp = []
-        this.tableDataBegin.forEach((val, index) => {
+      if (this.tableDataName != null && this.tableDataName != ''){
+        //每次手动将数据置空,因为会出现多次点击搜索情况
+        this.tableDataBegin = new Array()
+        this.tableDataTemp = new Array()
+        this.allData.forEach((val, index) => {
           if (this.filterConrent=="IP") {
             val.Record.forEach((val2, index) => {
-              if (val2.Key == 'GroupIpList' && val2.Value == this.tableDataName) {
+              if (val2.Key == 'GroupIpList' && this.tableDataName.indexOf(val2.Value) > -1) {
                 this.tableDataTemp.push(val)
               }
             })
-          } else if (this.filterConrent=="ID"||this.filterConrent=="serverBag") {
+          } else if (this.filterConrent=="ID") {
             val.Record.forEach((val2, index) => {
               if (val2.Key == 'Id' && val2.Value == this.tableDataName) {
                 this.tableDataTemp.push(val)
@@ -376,11 +381,11 @@ export default {
             })
           }
         })
-        setTimeout(() => {
-          this.tableDataBegin.splice(0, this.tableDataBegin.length)
-          this.tableDataBegin = this.tableDataTemp
-        }, 1000);
+        this.tableDataBegin = this.tableDataTemp
+      } else {// 如果没有输入搜素内容
+        this.tableDataBegin = this.allData
       }
+      this.totalItems = this.tableDataBegin.length
       //页面数据改变重新统计数据数量和当前页
       this.currentPage = 1;
       this.totalItems = this.tableDataBegin.length;
@@ -391,8 +396,6 @@ export default {
     },
     // Tab页面切换
     handleClick(tab, event) {
-      console.log(tab)
-      // this.describeResourceList() //获取资源列表的接口单独调用（因为日期变更不需要调用此接口）
       if(tab.name == 'first') { //DDOS攻击防护
         this.getData()
       } else if(tab.name == 'second') { //CC防护
@@ -500,9 +503,10 @@ export default {
     },
     //跳转新购页面
     newBuy(){
-      this.$router.push({
-        path: '/choose'
+      let routeUrl = this.$router.resolve({
+        path: "/choose"
       })
+      window.open(routeUrl.href, '_blank')
     },
     //修改弹框关闭按钮
     closeConfigModel(isShow){
