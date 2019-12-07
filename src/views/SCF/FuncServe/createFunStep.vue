@@ -270,7 +270,7 @@
          console.log(this.ScienceArr.length)
         let params = {
           Version: "2018-04-16",
-          Region: this.$cookie.get('regionv2'),
+          Region: 'ap-guangzhou',//this.$cookie.get('regionv2'),
           FunctionName: this.formShowable.funNameStep,
           'Code.DemoId': this.DemoId,
           Handler: this.formShowable.runFun,
@@ -292,7 +292,7 @@
           this.$router.push({
           path: "/funSeverDetail",
           query:{
-              
+              functionName: this.formShowable.funNameStep
           }
         });
         });

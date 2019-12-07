@@ -606,6 +606,7 @@ export default {
     this.init();
     this.searchVersion();
     this.getModality();
+    this.getfunction();
   },
   methods: {
   creatRole(){
