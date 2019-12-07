@@ -211,7 +211,7 @@ import moment from 'moment'
 import LstopChange from './LstopChange'
 import LstartKms from './LstartKms'
 import LopenDelete from './LopenDelete'
-import { Des_KMS, UP_NAME, UP_DESC, Encrypt, Decrypt, GET_CMK, ImportKey } from "@/constants";
+import { Des_KMS, UP_NAME, UP_DESC, Encrypt, Decrypt, GET_CMK, ImportKey,DEL_KMS } from "@/constants";
 export default {
   data() {
     return {
@@ -568,7 +568,7 @@ export default {
         Region: 'ap-taipei',
         KeyId: this.projectDetail.KeyId,
       };
-      this.axios.post('kms2/DeleteImportedKeyMaterial', params).then(res => {
+      this.axios.post(DEL_KMS, params).then(res => {
         // console.log(res)
         if (res.Response.Error !== undefined) {
           this.$message({
@@ -644,14 +644,6 @@ export default {
         state = '已禁用'
       }
       return state;
-    },
-    //过期时间处理
-    outTime(time){
-       if (time == '0') {
-          time='不过期'
-        } else {
-          time = Date.parse(moment(time).format('YYYY-MM-DD')) / 1000
-        }
     }
   }
 }

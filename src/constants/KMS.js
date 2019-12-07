@@ -14,3 +14,4 @@ export const END_KMS = 'kms2/EnableKeyRotation' //启动密钥轮换
 export const DIS_KMS = 'kms2/DisableKeyRotation' //禁用密钥轮换
 export const SCH_KMS = 'kms2/ScheduleKeyDeletion' //计划删除密钥
 export const CEL_KMS = 'kms2/CancelKeyDeletion' //取消删除密钥
+export const DEL_KMS = 'kms2/DeleteImportedKeyMaterial'//删除秘钥材料
