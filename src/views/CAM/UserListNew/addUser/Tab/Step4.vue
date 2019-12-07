@@ -70,6 +70,7 @@
           style="width: 100%"
           v-if="activeName == 'first'"
           v-loading="tableloading"
+          max-height="520"
         >
           <el-table-column prop="PolicyName" label="策略名" width="220"></el-table-column>
           <el-table-column label="策略描述">
@@ -88,6 +89,7 @@
           style="width: 100%"
           v-if="activeName == 'third'"
           v-loading="tableloading"
+          max-height="520"
         >
           <el-table-column prop="GroupName" label="组名"></el-table-column>
           <el-table-column label="操作" width="250">
@@ -96,8 +98,15 @@
             </template>
           </el-table-column>
         </el-table>
-        <div class="page-box">
-          <span>共 {{num}} 项</span>
+        <div class="page-box Right-style pagstyle">
+          <el-pagination
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+            :page-sizes="[20, 30, 40,50,100]"
+            :page-size="pagesize"
+            layout="total, sizes, prev, pager, next, jumper"
+            :total="num"
+          ></el-pagination>
         </div>
       </div>
     </div>
@@ -125,7 +134,9 @@ export default {
       userList: [],
       policyData: [], //策略列表
       userData: {}, //用户信息
-      userInp: false //用户信息input
+      userInp: false, //用户信息input
+      pagesize: 10, // 分页条数
+      currpage: 1 // 当前页码
     };
   },
   methods: {
@@ -133,7 +144,9 @@ export default {
     _groupList() {
       const params = {
         Version: "2019-01-16",
-        Uid: this.userData.Uid
+        Uid: this.userData.Uid,
+        Page: this.currpage,
+        Rp: this.pagesize
       };
       this.axios.post(RELATE_USER, params).then(res => {
         this.userList = res.Response.GroupInfo;
@@ -198,7 +211,9 @@ export default {
     _tactics() {
       const params = {
         Version: "2019-01-16",
-        TargetUin: this.userData.Uin
+        TargetUin: this.userData.Uin,
+        Page: this.currpage,
+        Rp: this.pagesize
       };
       this.axios.post(QUERY_POLICY, params).then(res => {
         this.num = res.Response.TotalNum;
@@ -211,7 +226,6 @@ export default {
       const params = {
         Version: "2019-01-16",
         Name: this.name
-        // Name: "o3o"
       };
       this.axios
         .post(QUERY_USER, params)
@@ -258,6 +272,24 @@ export default {
         .then(() => {
           this._getUser();
         });
+    },
+    //分页
+    handleSizeChange(val) {
+      this.pagesize = val;
+      this.currpage = 1;
+      if (this.activeName == "first") {
+        this._tactics();
+      } else if (this.activeName == "third") {
+        this._groupList();
+      }
+    },
+    handleCurrentChange(val) {
+      this.currpage = val;
+      if (this.activeName == "first") {
+        this._tactics();
+      } else if (this.activeName == "third") {
+        this._groupList();
+      }
     }
   },
   created() {
@@ -285,7 +317,6 @@ export default {
     }
   }
   .edit-main {
-    padding-bottom: 20px;
     box-sizing: border-box;
 
     .omit {
@@ -359,6 +390,15 @@ export default {
     p {
       line-height: 20px;
     }
+  }
+}
+.Right-style {
+  display: flex;
+  justify-content: flex-end;
+
+  .esach-inputL {
+    width: 300px;
+    margin-right: 20px;
   }
 }
 </style>

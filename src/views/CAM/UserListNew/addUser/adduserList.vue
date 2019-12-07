@@ -129,6 +129,10 @@
             @handleSelectionChange="handleSelectionChange"
             @acitiveName="_acitiveName"
             @loadMore="_loadMore"
+            @_policySearch="_policySearch"
+            @_policyInp="_policyInp"
+            @_userSearch="_userSearch"
+            @_userInp="_userInp"
           />
         </div>
         <div class="step4" v-if="active == 3">
@@ -185,7 +189,7 @@ export default {
       totalNum: 0, //策略列表条数
       multipleSelection: [], //全选
       tableData: [],
-      active: 1,
+      active: 0,
       btnVal: "下一步",
       pwdReg: true,
       //选择类型
@@ -231,7 +235,9 @@ export default {
       userPage: 1,
       userNums: 10,
       userNum: 0,
-      namereg: ""
+      namereg: "",
+      policyVal: "",
+      userVal: ""
     };
   },
   components: {
@@ -244,16 +250,36 @@ export default {
     this._userList();
   },
   methods: {
+    //用户列表搜索
+    _userSearch(val) {
+      this.userVal = val;
+      this._userList(val);
+    },
+    _userInp(val) {
+      if (val == "") {
+        this._userList();
+      }
+    },
+    //策略列表搜索
+    _policySearch(val) {
+      this.policyVal = val;
+      this._getList(val);
+    },
+    _policyInp(val) {
+      if (val == "") {
+        this._getList();
+      }
+    },
     //步骤三表格懒加载
     _loadMore(val) {
       if (val == "first") {
         this.policyPage++;
         this.policyNum = this.policyNum + 10;
-        this._getList();
+        this._getList(this.policyVal);
       } else if (val == "third") {
         this.userPage++;
         this.userNums = this.userNums + 10;
-        this._userList();
+        this._userList(this.userVal);
       }
     },
     //绑定用户组
@@ -273,6 +299,7 @@ export default {
     _getUser() {
       const params = {
         Version: "2019-01-16",
+        // Name: "策略列表"
         Name: this.ruleForm.Name
       };
       this.axios.post(QUERY_USER, params).then(res => {
@@ -321,22 +348,28 @@ export default {
       });
     },
     //用户组列表
-    _userList() {
+    _userList(val) {
       const params = {
         Version: "2019-01-16",
         Rp: this.userNums
       };
+      if (val) {
+        params["Keyword"] = val;
+      }
       this.axios.post(USER_GROUP, params).then(res => {
         this.userData = res.Response.GroupInfo;
         this.userNum = res.Response.TotalNum;
       });
     },
     //策略列表
-    _getList() {
+    _getList(val) {
       const params = {
         Version: "2019-01-16",
         Rp: this.policyNum
       };
+      if (val) {
+        params["Keyword"] = val;
+      }
       this.axios.post(POLICY_LIST, params).then(res => {
         this.tableData = res.Response.List;
         this.totalNum = res.Response.TotalNum;

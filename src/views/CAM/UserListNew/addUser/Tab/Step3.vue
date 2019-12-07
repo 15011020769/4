@@ -2,9 +2,17 @@
   <div class="wrap">
     <el-tabs v-model="activeName" @tab-click="handleClick">
       <el-tab-pane label="从策略列表中选取策略关联" name="first">
-        <h3 style="margin-bottom:10px;">
+        <h3>
           策略列表
           <span>（共{{totalNum}}条）</span>
+          <el-input
+            placeholder="请输入策略名称"
+            v-model="policyInp"
+            class="input-with-select"
+            @change="_policyInp"
+          >
+            <el-button slot="append" icon="el-icon-search" @click="_policySearch"></el-button>
+          </el-input>
         </h3>
         <el-table
           :data="tableData"
@@ -30,9 +38,17 @@
       </el-tab-pane>
       <!-- <el-tab-pane label="复用现有用户策略" name="second">复用现有用户策略</el-tab-pane> -->
       <el-tab-pane label="添加至组获得随组权限" name="third">
-        <h3 style="margin-bottom:10px;">
+        <h3>
           用户组列表
           <span>（共{{userNum}}条）</span>
+          <el-input
+            placeholder="请输入用户组名称"
+            v-model="userInp"
+            class="input-with-select"
+            @change="_userInp"
+          >
+            <el-button slot="append" icon="el-icon-search" @click="_userSearch"></el-button>
+          </el-input>
         </h3>
         <el-table
           :data="userData"
@@ -61,6 +77,8 @@ export default {
   name: "step3",
   data() {
     return {
+      policyInp: "",
+      userInp: "",
       multipleSelection: [],
       //策略类型转换
       tacticsType: {
@@ -77,6 +95,7 @@ export default {
     userNum: Number
   },
   methods: {
+    //防抖
     debounce() {
       let that = this;
       if (timer) {
@@ -87,12 +106,28 @@ export default {
         timer = undefined;
       }, 1000);
     },
+    //多选框
     handleSelectionChange(val) {
       this.multipleSelection = val;
       this.$emit("handleSelectionChange", val);
     },
+    //tab切换
     handleClick() {
       this.$emit("acitiveName", this.activeName);
+    },
+    //策略搜索
+    _policySearch() {
+      this.$emit("_policySearch", this.policyInp);
+    },
+    _policyInp() {
+      this.$emit("_policyInp", this.policyInp);
+    },
+    //用户组搜索
+    _userSearch() {
+      this.$emit("_userSearch", this.userInp);
+    },
+    _userInp() {
+      this.$emit("_userInp", this.userInp);
     }
   }
 };
@@ -104,5 +139,17 @@ export default {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+.input-with-select >>> .el-input-group__append {
+  border-radius: 0;
+  padding: 0 10px;
+}
+.input-with-select {
+  width: 220px;
+  float: right;
+}
+h3 {
+  margin-top: 5px;
+  margin-bottom: 20px;
 }
 </style>
