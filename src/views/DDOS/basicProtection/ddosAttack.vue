@@ -167,6 +167,7 @@ export default {
     },
     //选择时间
 
+
     thisTime(thisTime) {
       var ipt1 = document.querySelector(".newDataTime input:nth-child(2)");
       var ipt2 = document.querySelector(".newDataTime input:nth-child(4)");
