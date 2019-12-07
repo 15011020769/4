@@ -65,7 +65,12 @@
       </div>
       <div class="edit-box">
         <h3>权限信息</h3>
-        <el-table :data="policyData" style="width: 100%" v-if="activeName == 'first'">
+        <el-table
+          :data="policyData"
+          style="width: 100%"
+          v-if="activeName == 'first'"
+          v-loading="tableloading"
+        >
           <el-table-column prop="PolicyName" label="策略名" width="220"></el-table-column>
           <el-table-column label="策略描述">
             <template slot-scope="scope">
@@ -78,7 +83,12 @@
             </template>
           </el-table-column>
         </el-table>
-        <el-table :data="userList" style="width: 100%" v-if="activeName == 'third'">
+        <el-table
+          :data="userList"
+          style="width: 100%"
+          v-if="activeName == 'third'"
+          v-loading="tableloading"
+        >
           <el-table-column prop="GroupName" label="组名"></el-table-column>
           <el-table-column label="操作" width="250">
             <template slot-scope="scope">
@@ -108,6 +118,7 @@ export default {
   data() {
     return {
       loading: true, //加载
+      tableloading: true, //表格加载
       //表单
       form: {},
       num: 0,
@@ -127,6 +138,7 @@ export default {
       this.axios.post(RELATE_USER, params).then(res => {
         this.userList = res.Response.GroupInfo;
         this.num = res.Response.TotalNum;
+        this.tableloading = false;
       });
     },
     //用户组解除绑定
@@ -191,6 +203,7 @@ export default {
       this.axios.post(QUERY_POLICY, params).then(res => {
         this.num = res.Response.TotalNum;
         this.policyData = res.Response.List;
+        this.tableloading = false;
       });
     },
     //获取用户信息

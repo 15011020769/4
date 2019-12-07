@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import ccnPage from './ccnPage/ccnPage'
 Vue.use(Router)
 
 export default new Router({
@@ -17,7 +16,7 @@ export default new Router({
     {
       path: '/ccnPage', // ccn
       name: 'ccnPage',
-      component: ccnPage,
+      component: () => import(/* webpackChunkName: "ccnDetail" */ './ccnPage/ccnPage.vue'),
       meta: {
         keepAlive: true
       }

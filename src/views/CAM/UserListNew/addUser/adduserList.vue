@@ -83,14 +83,24 @@
                   <el-radio :label="false">自动生成密码</el-radio>
                   <el-radio :label="true">自定义密码</el-radio>
                 </el-radio-group>
-                <p v-show="pwdInp">
-                  <el-input
-                    v-model="ruleForm.Password"
-                    style="width:200px;"
-                    type="password"
-                    show-password
-                  ></el-input>
-                </p>
+                <div v-show="pwdInp">
+                  <el-form-item prop="Password" v-if="ruleForm.pwdRadio">
+                    <el-input
+                      v-model="ruleForm.Password"
+                      style="width:200px;"
+                      type="password"
+                      show-password
+                    ></el-input>
+                  </el-form-item>
+                  <el-form-item v-if="!ruleForm.pwdRadio">
+                    <el-input
+                      v-model="ruleForm.Password"
+                      style="width:200px;"
+                      type="password"
+                      show-password
+                    ></el-input>
+                  </el-form-item>
+                </div>
               </el-form-item>
               <el-form-item label="需要重置密码">
                 <el-checkbox :label="0" name="pwdType">用户必须在下次登录时重置密码</el-checkbox>
@@ -154,14 +164,30 @@ import Step4 from "./Tab/Step4"; //步骤4
 export default {
   name: "adduserlist",
   data() {
+    var Password = (rule, value, callback) => {
+      var reg = /^(?![0-9]+$)(?![a-z]+$)(?![A-Z]+$)(?!([^(0-9a-zA-Z)])+$)^.{8,}$/;
+      var _this = this;
+      setTimeout(() => {
+        if (!reg.test(value)) {
+          _this.pwdReg = false;
+          callback(
+            new Error("密码规则为8位以上同时包含大写小字母、数字和特殊字符")
+          );
+        } else {
+          _this.pwdReg = true;
+          callback();
+        }
+      });
+    };
     return {
       activeName: "first",
       userData: [],
       totalNum: 0, //策略列表条数
       multipleSelection: [], //全选
       tableData: [],
-      active: 0,
+      active: 1,
       btnVal: "下一步",
+      pwdReg: true,
       //选择类型
       type: [
         {
@@ -195,13 +221,17 @@ export default {
         PhoneNum: "", //手机号
         Email: "" //邮箱
       },
-      rules: {},
+      rules: {
+        Password: [{ validator: Password, trigger: "blur" }]
+      }, //规则
       userpolicyData: {},
+      //步骤三表格页数
       policyPage: 1,
       policyNum: 10,
       userPage: 1,
       userNums: 10,
-      userNum: 0
+      userNum: 0,
+      namereg: ""
     };
   },
   components: {
@@ -214,6 +244,7 @@ export default {
     this._userList();
   },
   methods: {
+    //步骤三表格懒加载
     _loadMore(val) {
       if (val == "first") {
         this.policyPage++;
@@ -265,31 +296,29 @@ export default {
     handleSelectionChange(val) {
       this.multipleSelection = val;
     },
+    //新建子用户
     _arrUser() {
       const params = {
         Version: "2019-01-16",
         Name: this.ruleForm.Name,
         Remark: this.ruleForm.Remark,
         ConsoleLogin: this.ruleForm.ConsoleLogin,
-        Password: this.ruleForm.Password,
+        Password: this.ruleForm.pwdRadio ? this.ruleForm.Password : "",
         NeedResetPassword: this.ruleForm.pwdType.includes(0) ? 1 : 0,
         PhoneNum: this.ruleForm.PhoneNum,
         CountryCode: this.ruleForm.CountryCode,
         Email: this.ruleForm.Email
       };
-      this.axios
-        .post(ADD_USER, params)
-        .then(res => {
-          if (res.Response.RequestId) {
+      this.axios.post(ADD_USER, params).then(res => {
+        if (res.Response.Error) {
+          this.$message.error(res.Response.Error.Message);
+        } else {
+          if (this.pwdReg) {
             this._getUser();
             this.active = 2;
-          } else {
-            this.$message.error(Response.Error.Message);
           }
-        })
-        .then(() => {
-          this._getUser();
-        });
+        }
+      });
     },
     //用户组列表
     _userList() {
@@ -384,10 +413,9 @@ export default {
             this.$message.error("用户名不能为空");
           } else if (this.ruleForm.type.length == 0) {
             this.$message.error("编程访问和台富云控制台访问至少需要选择一个");
-          }
-          if (!this.ruleForm.loginRadio) {
+          } else if (this.ruleForm.loginRadio === "") {
             this.$message.error("请设置登录保护");
-          } else if (!this.ruleForm.processRadio) {
+          } else if (this.ruleForm.processRadio === "") {
             this.$message.error("请设置操作保护");
           } else {
             this._arrUser();

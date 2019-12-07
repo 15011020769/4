@@ -1,7 +1,5 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import appId from './appId/appId'
-import appIdDetail from './appId/appIdDetail'
 Vue.use(Router)
 
 export default new Router({
@@ -18,7 +16,7 @@ export default new Router({
     {
       path: '/appId', // appId
       name: 'appId',
-      component: appId,
+      component: () => import(/* webpackChunkName: "appId" */ './appId/appId.vue'),
       meta: {
         keepAlive: true
       }
@@ -26,7 +24,7 @@ export default new Router({
     {
       path: '/appIdDetail', // appIdDetail
       name: 'appIdDetail',
-      component: appIdDetail,
+      component: () => import(/* webpackChunkName: "appId" */ './appId/appIdDetail.vue'),
       meta: {
         keepAlive: true
       }
