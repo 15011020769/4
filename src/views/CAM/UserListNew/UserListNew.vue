@@ -85,13 +85,13 @@
 
         <el-table-column label="关联信息">
           <template slot-scope="scope">
-            <i class="el-icon-mobile mobile"></i>
-            <i class="el-icon-message message"></i>
+            <i class="el-icon-mobile mobile"  @click="detailsUser(scope.row)"></i>
+            <i class="el-icon-message message"  @click="detailsUser(scope.row)"></i>
           </template>
         </el-table-column>
         <el-table-column label="操作" width="140">
           <template scope="scope">
-            <el-button type="text" @click="addRight">授权</el-button>
+            <el-button type="text" @click="addRight(scope.row.Uin)">授权</el-button>
             <span>|</span>
             <el-dropdown :hide-on-click="false">
               <span class="el-dropdown-link" style="color: #3E8EF7">
@@ -105,7 +105,7 @@
                 <el-dropdown-item>
                   <el-button type="text" style="color:#000">订阅信息</el-button>
                 </el-dropdown-item>
-                <el-button type="text" style="color:#000;padding-left:20px;" @click="deleteRow">删除</el-button>
+                <el-button type="text" style="color:#000;padding-left:20px;" @click="deleteRowData">删除</el-button>
               </el-dropdown-menu>
             </el-dropdown>
           </template>
@@ -236,7 +236,7 @@
         </div>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="authorization = false">确 定</el-button>
+        <el-button type="primary" @click="addUserList">确 定</el-button>
         <el-button @click="authorization = false">取 消</el-button>
       </span>
     </el-dialog>
@@ -244,7 +244,7 @@
   </div>
 </template>
 <script>
-import { USER_LIST, USER_GROUP, POLICY_LIST } from "@/constants";
+import { USER_LIST, USER_GROUP, POLICY_LIST, POLICY_USER } from "@/constants";
 import deleteDialog from "./deleteUser/index";
 export default {
   components: {
@@ -265,6 +265,7 @@ export default {
       strategyData: [], //存放策略数据
       searchStrategyValue: "", //搜素策略中的数据
       searchGroupValue: "", //搜索用户组中的数据
+      Uin:'',//点击授权获取当前行的uin
       options: [
         {
           value: 0,
@@ -349,7 +350,7 @@ export default {
       }
     },
     //点击删除弹框显示
-    deleteRow() {
+    deleteRowData() {
       this.flag = true;
     },
     //选框
@@ -366,12 +367,37 @@ export default {
       this.userGroups(); //调用初始化用户组数据
     },
     //点击授权
-    addRight() {
+    addRight(uin) {
+      this.Uin = uin;
       this.title = "关联策略";
       this.authorization = true;
       this.userGroupShow = false;
       this.strategyShow = true;
       this.strategy(); //调动初始化策略数据
+    },
+    //策略与用户组数据弹框确定按钮
+    addUserList(){
+      // userGroupSelect
+      if(this.title == '关联策略'){
+         var addPloicyId = [];
+         this.userGroupSelect.forEach(item => {
+           addPloicyId.push(item);
+         });
+         addPloicyId.forEach(item => {
+           let params = {
+              Version: "2019-01-16",
+              PolicyId: item.PolicyId,
+              AttachUin: this.Uin
+           }
+           this.axios.post(POLICY_USER,params).then(data => {
+             console.log(data)
+           })
+        });
+         this.authorization = false; 
+      }
+      if(this.title == '添加到组'){
+         console.log('22')
+      }
     },
     //点击弹框中的×号隐藏弹框
     handleClose() {

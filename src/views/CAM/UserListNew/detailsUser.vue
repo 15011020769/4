@@ -92,7 +92,7 @@
           <el-tab-pane label="组(0)" name="second">
             <el-button class="buttonCla" type="primary" size="small">加入到组</el-button>
             <el-button class="buttonCla" type="primary" size="small" :disabled="disabled" @click="removeMoreGroup">移出组</el-button>
-            <el-table ref="multipleTable" :data="groupData" style="width: 100%;">
+            <el-table ref="multipleTable" :data="groupData" style="width: 100%;" @selection-change="Select">
               <el-table-column type="selection"></el-table-column>
               <el-table-column label="组名称" prop="GroupName"></el-table-column>
               <el-table-column label="关联策略" prop="GroupId"></el-table-column>
@@ -116,7 +116,6 @@
       :visible.sync="StrategyLoading"
       width="30%"
       :before-close="handleClose"
-      @selection-change="Select"
     >
       <span v-if="showStrategyMore">解除策略将失去策略包含的操作权限。特别的，解除随组关联类型的策略是通过将用户从关联该策略的用户组中移出。</span>
       <span v-if="showStrategyRow">是否确定将该用户移出用户组来解除此随组关联策略？移出用户组后该用户将无法获得该策略所描述的相关权限。</span>
@@ -127,16 +126,15 @@
     </el-dialog>
     <!-- 用户 -->
     <el-dialog
-      title="用户组"
+      :title="groupTitle"
       :visible.sync="GroupLoading"
        width="30%"
       :before-close="handleClose"
     >
-      <span>用户</span>
-     
+      <span>移出后将无法接收到该组的短信、邮件通知</span>
       <span slot="footer" class="dialog-footer">
         <el-button @click="GroupLoading = false">取 消</el-button>
-        <el-button type="primary" >确 定</el-button>
+        <el-button type="primary" @click="removeGroupUser" >确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -147,7 +145,8 @@ import {
   QUERY_USER,
   QUERY_POLICY,
   RELATE_USER,
-  REMOVEBIND_USER
+  REMOVEBIND_USER,
+  REMOVEGROUP_USER
 } from "@/constants";
 export default {
   components: {
@@ -166,7 +165,8 @@ export default {
       showStrategyRow: false, //对批量与单条解除数据进行判断
       showStrategyMore: false, //对批量与单条解除数据进行判断
       valArr: [],//存放多选框选中数据
-      GroupLoading:false
+      GroupLoading:false,//用户组弹框
+      groupTitle:'' //用户组弹出框title
     };
   },
   methods: {
@@ -265,13 +265,50 @@ export default {
       this.showStrategyMore = true;
       this.showStrategyRow = false;
     },
+    //将用户移出用户组
+    removeGroupUser(){
+       if(this.groupTitle == '移出组'){
+          var groupId = [];
+          this.valArr.forEach(item => {
+            groupId.unshift(item.GroupId)
+          });
+          groupId.forEach(item => {
+             let params = {
+                Version: "2019-01-16",
+                GroupId: item
+              };
+             this.axios.post(REMOVEGROUP_USER, params).then(data => {
+                this.groupListData()
+              });
+          })
+          this.GroupLoading = false;
+       }
+       if(this.groupTitle == '确认移出'){
+          var removeGroupRow = [];
+          this.groupData.forEach(item => {
+             removeGroupRow.unshift(item.GroupId)
+          });
+          removeGroupRow.forEach(item => {
+             let params = {
+                Version: "2019-01-16",
+                GroupId: item
+              };
+             this.axios.post(REMOVEGROUP_USER, params).then(data => {
+                 console.log(data)
+              });
+          })
+          this.GroupLoading = false;
+       }
+    },
     //当前一行移出组
     removeGroup(){
-        this.GroupLoading = true
+        this.GroupLoading = true;
+        this.groupTitle = '确认移出'
     },
     //批量移出组
     removeMoreGroup(){
-        this.GroupLoading = true
+        this.GroupLoading = true;
+        this.groupTitle = '移出组'
     },
     //多选框
     Select(val) {
@@ -370,8 +407,9 @@ export default {
   padding: 0px 95px;
   box-sizing: border-box;
   .tableTab {
-    width: 100%;
     background: white;
+    width: 100%;
+    display: flex;
     padding: 25px;
     box-sizing: border-box;
     box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
