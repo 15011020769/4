@@ -90,7 +90,7 @@
             </el-table>
           </el-tab-pane>
           <el-tab-pane label="组(0)" name="second">
-            <el-button class="buttonCla" type="primary" size="small">加入到组</el-button>
+            <el-button class="buttonCla" type="primary" size="small"  @click="gotoPolicy">加入到组</el-button>
             <el-button class="buttonCla" type="primary" size="small" :disabled="disabled" @click="removeMoreGroup">移出组</el-button>
             <el-table ref="multipleTable" :data="groupData" style="width: 100%;" @selection-change="Select">
               <el-table-column type="selection"></el-table-column>
@@ -310,6 +310,10 @@ export default {
         this.GroupLoading = true;
         this.groupTitle = '移出组'
     },
+    //跳转到添加策略到用户页面
+    gotoPolicy(){
+       this.$router.push({path:"/addPolicyToUser"})
+    },
     //多选框
     Select(val) {
       this.disabled = false;
@@ -341,6 +345,7 @@ export default {
     background: white;
     padding: 10px 10px 20px 10px;
     box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
+    left: 0;
     .leftHead {
       width: 100%;
       background: white;
@@ -403,16 +408,17 @@ export default {
 }
 .tableWrap {
   width: 100%;
-  display: flex;
-  padding: 0px 95px;
-  box-sizing: border-box;
+  position: relative;
   .tableTab {
+    width: 89%;
     background: white;
-    width: 100%;
-    display: flex;
     padding: 25px;
     box-sizing: border-box;
     box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
+    position: absolute;
+    top: 0;
+    left: 0;
+    margin-left: 110px;
     .buttonCla {
       height: 35px;
       min-width: 24px;

@@ -31,6 +31,7 @@
     </div>
     <div class="tableBody">
       <el-table
+        height="550"
         style="width: 96%; margin: 0 auto;"
         :data="tableData"
         @selection-change="handleSelectionChange"
@@ -131,7 +132,6 @@
           </div>
 
           <el-table
-            class="table-left"
             ref="multipleOption"
             tooltip-effect="dark"
             height="400"
@@ -153,7 +153,6 @@
         <div class="container-left">
           <span>已选择</span>
           <el-table
-            class="table-left"
             ref="multipleSelected"
             tooltip-effect="dark"
             height="400"
@@ -195,7 +194,6 @@
 
           <el-table
             v-model="searchGroupValue"
-            class="table-left"
             ref="multipleOption"
             tooltip-effect="dark"
             height="400"
@@ -214,7 +212,6 @@
         <div class="container-left">
           <span>已选择</span>
           <el-table
-            class="table-left"
             ref="multipleSelected"
             tooltip-effect="dark"
             height="400"
@@ -501,7 +498,7 @@ export default {
     width: 70%;
     flex-direction: column;
     justify-content: center;
-    margin-left: 85px;
+    margin-left: 100px;
     .inputSearchCl {
       width: 80%;
     }

@@ -56,6 +56,15 @@ export default new Router({
         keepAlive: true
       }
     },
+    //新策略添加到用户
+    {
+       path:"/addPolicyToUser",
+       name:"addPolicyToUser",
+       component:() => import(/* webpackChunkName: "detailsUser" */ './UserListNew/module/addPolicyToUser'),
+       meta: {
+        keepAlive: true
+      }
+    },
     {
       path: '/UserList', // 用户列表
       name: 'UserList',

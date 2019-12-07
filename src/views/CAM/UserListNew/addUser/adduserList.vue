@@ -1,6 +1,6 @@
 <template>
   <div class="adduserlist-wrap">
-    <HeadCom title="新建子用户" :backShow="true" @_back="_back" />
+    <HeadCom title="新建子用户" :backShow="true"  />
     <div class="adduserlist-main">
       <el-steps :active="active" simple>
         <el-step title="选择类型"></el-step>
