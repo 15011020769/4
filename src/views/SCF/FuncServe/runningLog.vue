@@ -138,7 +138,7 @@ export default {
       let params = {
         Action: "GetFunctionLogs",
         Version: "2018-04-16",
-        Region: _this.$cookie.get("regionv2")
+        Region: 'ap-guangzhou',//_this.$cookie.get("regionv2")
       };
       let functionName = this.$route.query.functionName;
       if (functionName != "" && functionName != null) {
@@ -185,7 +185,7 @@ export default {
       let params = {
         Action: "GetFunctionLogs",
         Version: "2018-04-16",
-        Region: _this.$cookie.get("regionv2"),
+        Region: 'ap-guangzhou',//_this.$cookie.get("regionv2"),
         StartTime: this.formatDateTime(val[0].getTime()),
         EndTime: this.formatDateTime(val[1].getTime())
       };

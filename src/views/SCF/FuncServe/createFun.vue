@@ -34,10 +34,11 @@
               <el-option label="Python2.7" value="Python2.7"></el-option>
               <el-option label="Python3.6" value="Python3.6"></el-option>
               <el-option label="Nodejs6.10" value="Nodejs6.10"></el-option>
-              <el-option label="PHP5" value="PHP5"></el-option>
-              <el-option label="PHP7" value="PHP7"></el-option>
-              <el-option label="Golang1" value="Golang1"></el-option>
+              <el-option label="Nodejs8.9" value="Nodejs8.9"></el-option>
+              <el-option label="PHP5.6" value="PHP5.6"></el-option>
+              <el-option label="PHP7.2" value="PHP7.2"></el-option>
               <el-option label="Java8" value="Java8"></el-option>
+              <el-option label="Golang1" value="Golang1"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="创建环境">
@@ -214,7 +215,7 @@
       },
       GetTemplateList() { //获取函数模板列表
         let param = {
-          Region: this.$cookie.get('regionv2'),
+          Region: 'ap-guangzhou',//this.$cookie.get('regionv2'),
           Version: "2018-04-16",
           Offset: this.currentPage - 1,
           Limit: this.pageSize
@@ -236,7 +237,7 @@
 
       GetTemplateDetail() { //获取函数模板详情
         let param = {
-          Region: this.$cookie.get('regionv2'),
+          Region: 'ap-guangzhou',//this.$cookie.get('regionv2'),
           Version: "2018-04-16",
           DemoId: this.DemoId
         }

@@ -339,7 +339,7 @@ export default {
     getDModelNmaeSpace() {
       let params = {
         Version: "2018-04-16",
-        Region: "ap-taipei"
+        Region: 'ap-guangzhou'//this.$cookie.get("regionv2")
       };
       this.axios.post(NAME_SPACE_LIST, params).then(res => {
         this.nameSpace = res.Response.Namespaces;
@@ -361,7 +361,7 @@ export default {
       let params = {
         // Action: "ListFunctions",
         Version: "2018-04-16",
-        Region: "ap-guangzhou"
+        Region: 'ap-guangzhou'//this.$cookie.get("regionv2")"
       };
       if(this.filterConrent!=='选择资源属性进行过滤'&&this.tableDataName!==''){
         params[this.filterConrent]=this.tableDataName
@@ -532,7 +532,7 @@ export default {
       }
       let paras = {
         Version: "2018-04-16",
-        Region: "ap-taipei"
+        Region: 'ap-guangzhou'//this.$cookie.get("regionv2")
       };
       //与库中数据数据对比，判断添加修改
       this.axios.post(NAME_SPACE_LIST, paras).then(res => {
@@ -543,7 +543,7 @@ export default {
                 //添加
                 let params = {
                   Version: "2018-04-16",
-                  Region: "ap-taipei",
+                  Region: 'ap-guangzhou',//this.$cookie.get("regionv2"),
                   Namespace: modelNameSpace[i].Name,
                   Description: modelNameSpace[i].Description
                 };
@@ -559,7 +559,7 @@ export default {
                 //更新
                 let params = {
                   Version: "2018-04-16",
-                  Region: "ap-taipei",
+                  Region: 'ap-guangzhou',//this.$cookie.get("regionv2"),
                   Namespace: modelNameSpace[i].Name,
                   Description: modelNameSpace[i].Description
                 };
@@ -581,7 +581,7 @@ export default {
     spaceDelete(spaceIndex, spaceRow) {
       let params = {
         Version: "2018-04-16",
-        Region: "ap-taipei",
+        Region: 'ap-guangzhou',//this.$cookie.get("regionv2"),
         Namespace: spaceRow.Name
       };
       this.axios.post(NAME_SPACE_DEL, params).then(res => {
@@ -629,7 +629,7 @@ export default {
       let params = {
         // Action: "ListFunctions",
         Version: "2018-04-16",
-        Region: this.$cookie.get("regionv2"),
+        Region: 'ap-guangzhou',//this.$cookie.get("regionv2"),
         Namespace: val
       };
       this.axios.post(SCF_LIST, params).then(res => {

@@ -221,7 +221,7 @@
       },
       GetTemplateDetail() { //获取函数模板详情
         let param = {
-          Region: this.$cookie.get('regionv2'),
+          Region: 'ap-guangzhou',//this.$cookie.get('regionv2'),
           Version: "2018-04-16",
           DemoId: this.DemoId
         }
@@ -236,7 +236,7 @@
       //获取vpc列表
       GetVpcList() {
         let param = {
-          Region: this.$cookie.get('regionv2'),
+          Region: 'ap-guangzhou',//this.$cookie.get('regionv2'),
           Version: "2017-03-12",
         }
         this.axios
@@ -253,7 +253,7 @@
       //获取子网列表
       GetSubnetList() {
         let param = {
-          Region: this.$cookie.get('regionv2'),
+          Region: 'ap-guangzhou',//this.$cookie.get('regionv2'),
           Version: "2017-03-12",
           'Filters.0.Name': 'vpc-id',
           'Filters.0.Values.0': this.Vpcvalue
@@ -290,10 +290,10 @@
 
         this.axios.post(ADD_FUNC, params).then(res => {
           this.$router.push({
-          path: "/funSeverDetail",
-          query:{
-              functionName: this.formShowable.funNameStep
-          }
+          path: "/FuncServe",
+          // query:{
+          //     functionName: this.formShowable.funNameStep
+          // }
         });
         });
       },

@@ -19,7 +19,10 @@
             <div class="tabChange">
               <el-tabs class="allTabsModel" v-model="activeNameModel" @tab-click="handleClick1">
                 <el-tab-pane label="版本" name="firstModel">
-                  <p v-for="(item,index) in versionArr" :key='index'>{{item}}</p>
+                  <div>
+                    <p v-for="(item,index) in versionArr" :key='index'>{{item}}</p>
+                  </div>
+                  
                 </el-tab-pane>
                 <el-tab-pane label="别名" name="secondModel">
                   <div>暂无别名</div>
@@ -652,7 +655,7 @@ export default {
       let params = {
         Action: "UpdateFunctionConfiguration",
         Version: "2018-04-16",
-        Region: this.$cookie.get("regionv2"),
+        Region: 'ap-guangzhou',//this.$cookie.get("regionv2"),
         Description: this.functionData.Description,
         // Environment: this.functionData.Environment, // 参数传递有问题，暂时屏蔽
         FunctionName: this.functionData.FunctionName,
@@ -753,6 +756,7 @@ export default {
         .post(PUBLISH_VERSION, params)
         .then(res => {
           this.init()
+          this.searchVersion()
         })
         .catch(error => {
           console.log(error);
@@ -825,6 +829,7 @@ export default {
         this.publishNewVewsion = false;
       }
     },
+    //查看函数新版本
     searchVersion() {
       let _this = this;
       let params = {
@@ -860,7 +865,7 @@ export default {
       this.centerDialogVisible = false;
       let params = {
         Version: "2018-04-16",
-        Region: this.$cookie.get("regionv2"),
+        Region: 'ap-guangzhou',//this.$cookie.get("regionv2"),
         Action: "DeleteTrigger",
         TriggerName: this.childData.TriggerName,
         Type: this.childData.Type
@@ -879,7 +884,7 @@ export default {
     getModality() {
       let params = {
         Version: "2018-07-24",
-        Region: this.$cookie.get("regionv2"),
+        Region: 'ap-guangzhou',//this.$cookie.get("regionv2"),
         Action: "GetMonitorData",
         Namespace: "QCE/VBC",
         MetricName: "RegionInPkg",
