@@ -36,13 +36,13 @@
                 </el-dropdown>
                 <el-button class="allDeleteBtn" :disabled="true">批量删除</el-button>
               </div>
-              <el-table :data="tableDataBegin.slice((currentPage-1)*pageSize,currentPage*pageSize)" ref="multipleTable" @selection-change="handleSelectionChange">
+              <el-table class="tableListA" :data="tableDataBegin.slice((currentPage-1)*pageSize,currentPage*pageSize)" ref="multipleTable" @selection-change="handleSelectionChange">
                   <el-table-column type="selection" width="55"></el-table-column>
                   <el-table-column prop="RuleName" label="业务域名">
                     <template slot-scope="scope">{{scope.row.RuleName}}</template>
                   </el-table-column>
                   <el-table-column prop="VirtualPort" label="转发协议/端口">
-                    <template slot-scope="scope">{{scope.row.VirtualPort}}</template>
+                    <template slot-scope="scope">{{scope.row.Protocol}}/{{scope.row.VirtualPort}}</template>
                   </el-table-column>
                   <el-table-column prop="SourcePort" label="源站端口">
                     <template slot-scope="scope">{{scope.row.SourcePort}}</template>
@@ -76,11 +76,10 @@
                     </template>
                   </el-table-column>
                   <el-table-column prop="attackAction" label="操作" width="180">
-                    <template slot-scope="">
-                      <el-button
-                        type="text"
-                        size="small"
-                      >操作</el-button>
+                    <template slot-scope="scope">
+                      <el-button type="text" size="small" @click="editAccess(scope.row)">编辑</el-button>
+                      <el-button type="text" size="small" @click="copyAccess(scope.row)">复制</el-button>
+                      <el-button type="text" size="small" @click="deleteAccess(scope.row)">删除</el-button>
                     </template>
                   </el-table-column>
                 </el-table>
@@ -104,6 +103,22 @@
             <batchImport :isShow1="dialogVisible1" :resourceId='resourceId' @batchImportSure="batchImportSure" @closeModelIpt="closeModelIpt"/>
             <!-- 批量导出弹框 -->
             <batchExport :isShow2="dialogVisible2" :exportText='exportText' @batchExportSure="batchExportSure" @closeModelExp="closeModelExp"/>
+            <!-- 编辑弹框 -->
+            <accessConfigEdit :isShow3="dialogVisible3" @closeEditModel="closeEditModel"/>
+            <!-- 复制弹框 -->
+            <accessConfigCopy :isShow4="dialogVisible4" @closeCopyModel="closeCopyModel"/>
+            <!-- 删除弹框 -->
+            <el-dialog class="dialogModel"
+              title="添加转发规则"
+              :visible.sync="dialogDelete"
+              width="30%"
+              :before-close="handleCloseDelete">
+              <p>确定删除该条转发规则？</p>
+              <span class="footerBtn">
+                <el-button @click="deleteSure">确定</el-button>
+                <el-button @click="dialogDelete=false">取消</el-button>
+              </span>
+            </el-dialog>
           </el-tab-pane>
         </el-tabs>
       </div>
@@ -114,6 +129,8 @@
 import newAddRules from './model/newAddRules'
 import batchImport from './model/batchImport'
 import batchExport from './model/batchExport'
+import accessConfigEdit from './model/accessConfigEdit'
+import accessConfigCopy from './model/accessConfigCopy'
 import { RESOURCE_LIST, L4_RULES } from '@/constants'
 export default {
   data() {
@@ -135,12 +152,17 @@ export default {
       tableDataEnd: [],
       flag: false,
       multipleTable:[],//table ref属性
+      dialogVisible3:false,//编辑弹框
+      dialogVisible4:false,//复制弹框
+      dialogDelete:false,//删除弹框
     }
   },
   components:{
     newAddRules:newAddRules,
     batchImport:batchImport,
-    batchExport:batchExport
+    batchExport:batchExport,
+    accessConfigEdit:accessConfigEdit,//编辑弹框
+    accessConfigCopy:accessConfigCopy,//复制弹框
   },
   created() {
     this.describeResourceList()
@@ -270,6 +292,37 @@ export default {
     //批量导出弹框关闭按钮
     closeModelExp(isShowFalse){
       this.dialogVisible2=isShowFalse
+    },
+    //编辑列表按钮
+    editAccess(scopeRow){
+      console.log(scopeRow)//这块可以做数据回显，拿到的是那一行的数据
+      this.dialogVisible3=true;
+    },
+    //关闭编辑弹框
+    closeEditModel(isShow){
+      this.dialogVisible3=isShow;
+    },
+    //复制列表按钮
+    copyAccess(scopeRow){
+      console.log(scopeRow)//这块可以做数据回显，拿到的是那一行的数据
+      this.dialogVisible4=true;
+    },
+    //关闭复制弹框
+    closeCopyModel(isShow){
+      this.dialogVisible4=isShow;
+    },
+    //删除按钮
+    deleteAccess(scopeRow){
+      this.dialogDelete=true;
+    },
+    //关闭删除弹框
+    handleCloseDelete(){
+      this.dialogDelete=false;
+    },
+    //删除确定按钮
+    deleteSure(){
+      this.dialogDelete=false;
+      // this.tableDataBegin.splice("")
     }
   }
 }
@@ -351,5 +404,8 @@ button.allDeleteBtn{
 .pContent{
   font-size:12px;
   color:#999;
+}
+.tableListA{
+  min-height:450px;
 }
 </style>

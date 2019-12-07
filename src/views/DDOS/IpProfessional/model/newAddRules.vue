@@ -90,17 +90,17 @@ export default {
     return{
       dialogVisible:'',//弹框
       // 添加L4规则参数
-        RuleName: '',//业务域名
-        Protocol: 'TCP',//转发协议，取值[TCP, UDP]
-        VirtualPort: '',//转发端口
-        SourcePort: '',//源站端口
-        SourceType: 2,//回源方式，取值[1(域名回源)，2(IP回源)]
-        KeepTime: 0,//会话保持时间，单位秒
-        // 回源列表SourceList
-        IpResource: '',
-        HttpResource: '',
-        LbType: 1,//负载均衡方式，取值[1(加权轮询)，2(源IP hash)]
-        KeepEnable: 0,//会话保持开关，取值[0(会话保持关闭)，1(会话保持开启)]
+      RuleName: '',//业务域名
+      Protocol: 'TCP',//转发协议，取值[TCP, UDP]
+      VirtualPort: '',//转发端口
+      SourcePort: '',//源站端口
+      SourceType: 2,//回源方式，取值[1(域名回源)，2(IP回源)]
+      KeepTime: 0,//会话保持时间，单位秒
+      // 回源列表SourceList
+      IpResource: '',
+      HttpResource: '',
+      LbType: 1,//负载均衡方式，取值[1(加权轮询)，2(源IP hash)]
+      KeepEnable: 0,//会话保持开关，取值[0(会话保持关闭)，1(会话保持开启)]
       dominShow: true,
     }
   },
