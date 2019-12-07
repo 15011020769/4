@@ -4,51 +4,59 @@
   "private": true,
   "scripts": {
     "serve:SCF": "vue-cli-service serve --SCF",
-    "build:SCF": "vue-cli-service build --SCF",
     "qa:SCF": "vue-cli-service build --SCF --mode qa",
     "uat:SCF": "vue-cli-service build --SCF --mode uat",
+    "build:SCF": "vue-cli-service build --SCF",
 
     "serve:CLA": "vue-cli-service serve --CLA",
-    "build:CLA": "vue-cli-service build --CLA",
     "qa:CLA": "vue-cli-service build --CLA --mode qa",
     "uat:CLA": "vue-cli-service build --CLA --mode uat",
+    "build:CLA": "vue-cli-service build --CLA",
 
     "serve:CM": "vue-cli-service serve --CM",
-    "build:CM": "vue-cli-service build --CM",
     "qa:CM": "vue-cli-service build --CM --mode qa",
     "uat:CM": "vue-cli-service build --CM --mode uat",
+    "build:CM": "vue-cli-service build --CM",
 
     "serve:CAM": "vue-cli-service serve --CAM",
+    "qa:CAM": "vue-cli-service build --CAM --mode qa",
+    "uat:CAM": "vue-cli-service build --CAM --mode uat",
     "build:CAM": "vue-cli-service build --CAM",
 
     "serve:CCN": "vue-cli-service serve --CCN",
-    "build:CCN": "vue-cli-service build --CCN",
     "qa:CCN": "vue-cli-service build --CCN --mode qa",
     "uat:CCN": "vue-cli-service build --CCN --mode uat",
+    "build:CCN": "vue-cli-service build --CCN",
 
     "serve:CAP": "vue-cli-service serve --CAP",
+    "qa:CAP": "vue-cli-service build --CAP --mode qa",
+    "uat:CAP": "vue-cli-service build --CAP --mode uat",
     "build:CAP": "vue-cli-service build --CAP",
 
     "serve:DDOS": "vue-cli-service serve --DDOS",
+    "qa:DDOS": "vue-cli-service build --DDOS --mode qa",
+    "uat:DDOS": "vue-cli-service build --DDOS --mode uat",
     "build:DDOS": "vue-cli-service build --DDOS",
     
     "serve:BILL": "vue-cli-service serve --BILL",
-    "build:BILL": "vue-cli-service build --BILL",
     "qa:BILL": "vue-cli-service build --BILL --mode qa",
     "uat:BILL": "vue-cli-service build --BILL --mode uat",
-
-    "serve:WAF": "vue-cli-service serve --WAF",
-    "build:WAF": "vue-cli-service build --WAF",
+    "build:BILL": "vue-cli-service build --BILL",
 
     "serve:KMS": "vue-cli-service serve --KMS",
+    "qa:KMS": "vue-cli-service build --KMS --mode qa",
+    "uat:KMS": "vue-cli-service build --KMS --mode uat",
     "build:KMS": "vue-cli-service build --KMS",
 
     "serve:TKE": "vue-cli-service serve --TKE",
     "build:TKE": "vue-cli-service build --TKE",
 
-    "qa": "npm run qa:CCN & npm run qa:BILL & npm run qa:SCF & npm run qa:CLA & npm run qa:CM",
+    "serve:WAF": "vue-cli-service serve --WAF",
+    "build:WAF": "vue-cli-service build --WAF",
 
-    "uat": "npm run uat:CCN & npm run uat:BILL",
+    "qa": "npm run qa:SCF & npm run qa:CLA & npm run qa:CM & npm run qa:CAM & npm run qa:CCN & npm run qa:CAP & npm run qa:DDOS & npm run qa:BILL & npm run qa:KMS",
+
+    "uat": "npm run uat:SCF & npm run uat:CLA & npm run uat:CM & npm run uat:CAM & npm run uat:CCN & npm run uat:CAP & npm run uat:DDOS & npm run uat:BILL & npm run uat:KMS",
 
     "lint": "vue-cli-service lint"
   },

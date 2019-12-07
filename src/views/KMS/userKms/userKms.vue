@@ -5,15 +5,7 @@
       <span class="taibeiCheck">{{thisAddress}}</span>
     </div>
     <div class="mainContent">
-      <KMSdialog
-        :dialogVisibleKMS="dialogVisibleKMS"
-        @_confirm="_confirm"
-        @_cancel="_cancel"
-        :KMStitle="KMStitle"
-        :KMStxt="KMStxt"
-        :KMSdata="KMSdata"
-        :state="state"
-      />
+      <KMSdialog :dialogVisibleKMS="dialogVisibleKMS" @_confirm="_confirm" @_cancel="_cancel" :KMStitle="KMStitle" :KMStxt="KMStxt" :KMSdata="KMSdata" :state="state" />
       <div class="mainContBtn newClear">
         <div class="conLeftBtn">
           <el-button @click="dialogVisible = true">新建</el-button>
@@ -22,13 +14,7 @@
           <el-button @click="_disableBtn">禁用密钥</el-button>
           <!-- <el-button :disabled="false" v-if="!isHaveEnable">禁用密钥</el-button> -->
         </div>
-        <el-dialog
-          class="dialogModel"
-          title="新建密钥"
-          :visible.sync="dialogVisible"
-          width="30%"
-          :before-close="handleClose"
-        >
+        <el-dialog class="dialogModel" title="新建密钥" :visible.sync="dialogVisible" width="30%" :before-close="handleClose">
           <el-form :model="createForm" label-width="100px">
             <el-form-item label="密钥名称">
               <el-input v-model="createForm.name"></el-input>
@@ -57,13 +43,7 @@
       </div>
       <div class="tableCoontent">
         <div class="tableList">
-          <el-table
-            ref="multipleTable"
-            :data="tableDataBegin.slice((currentPage-1)*pageSize,currentPage*pageSize)"
-            tooltip-effect="dark"
-            style="width: 100%"
-            @selection-change="handleSelectionChange"
-          >
+          <el-table ref="multipleTable" :data="tableDataBegin.slice((currentPage-1)*pageSize,currentPage*pageSize)" tooltip-effect="dark" style="width: 100%" @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="55">
               <!-- <template slot-scope="scope">
                 <el-checkbox v-model="scope.row.checked" @click="checkedIsTrue"></el-checkbox>
@@ -78,9 +58,7 @@
             </el-table-column>
             <el-table-column prop="KeyState" label="状态">
               <template slot-scope="scope">
-                <span
-                  :style="scope.row.KeyState=='Disabled'||scope.row.KeyState=='PendingDelete'||scope.row.KeyState=='PendingImport'?'color:#ff9d00':'color:#000'"
-                >{{scope.row.KeyState=="PendingDelete"?'于'+timestampToTime(scope.row.DeletionDate)+'彻底删除':filterState(scope.row.KeyState)}}</span>
+                <span :style="scope.row.KeyState=='Disabled'||scope.row.KeyState=='PendingDelete'||scope.row.KeyState=='PendingImport'?'color:#ff9d00':'color:#000'">{{scope.row.KeyState=="PendingDelete"?'于'+timestampToTime(scope.row.DeletionDate)+'彻底删除':filterState(scope.row.KeyState)}}</span>
               </template>
             </el-table-column>
             <el-table-column prop="CreateTime" label="创建时间" show-overflow-tooltip>
@@ -95,82 +73,28 @@
             </el-table-column>
             <el-table-column prop="kmsChange" label="密钥轮换">
               <template slot-scope="scope">
-                <a
-                  href="#"
-                  class="aColorGree"
-                  :style="scope.row.KeyState=='PendingDelete'||scope.row.KeyState=='PendingImport'||scope.row.KeyRotationEnabled==true?'pointer-events:none':'color:#006eff'"
-                  @click="startChange(scope.row,$event)"
-                >启用轮换</a>
+                <a href="#" class="aColorGree" :style="scope.row.KeyState=='PendingDelete'||scope.row.KeyState=='PendingImport'||scope.row.Origin=='EXTERNAL'||scope.row.KeyRotationEnabled==true?'pointer-events:none':'color:#006eff'" @click="startChange(scope.row,$event)">启用轮换</a>
                 <span class="spanLine">|</span>
-                <a
-                  href="#"
-                  class="aColorGree"
-                  :style="scope.row.KeyState=='PendingDelete'||scope.row.KeyState=='PendingImport'||scope.row.KeyRotationEnabled==false?'pointer-events:none':'color:#006eff'"
-                  @click="startChange(scope.row,$event)"
-                >禁用轮换</a>
+                <a href="#" class="aColorGree" :style="scope.row.KeyState=='PendingDelete'||scope.row.KeyState=='PendingImport'||scope.row.KeyRotationEnabled==false?'pointer-events:none':'color:#006eff'" @click="startChange(scope.row,$event)">禁用轮换</a>
               </template>
             </el-table-column>
             <el-table-column prop="action" label="操作" class="action">
               <template slot-scope="scope">
-                <a
-                  href="#"
-                  class="aColorGree"
-                  :style="scope.row.KeyState=='Enabled'||scope.row.KeyState=='PendingDelete'||scope.row.KeyState=='PendingImport'?'pointer-events:none':'color:#006eff'"
-                  @click="startKms(scope.row,$event)"
-                >启用密钥</a>
+                <a href="#" class="aColorGree" :style="scope.row.KeyState=='Enabled'||scope.row.KeyState=='PendingDelete'||scope.row.KeyState=='PendingImport'?'pointer-events:none':'color:#006eff'" @click="startKms(scope.row,$event)">启用密钥</a>
                 <span class="spanLine">|</span>
-                <a
-                  href="#"
-                  class="aColorGree"
-                  :style="scope.row.KeyState=='Disabled'||scope.row.KeyState=='PendingDelete'||scope.row.KeyState=='PendingImport'?'pointer-events:none':'color:#006eff'"
-                  @click="startKms(scope.row,$event)"
-                >禁用密钥</a>
+                <a href="#" class="aColorGree" :style="scope.row.KeyState=='Disabled'||scope.row.KeyState=='PendingDelete'||scope.row.KeyState=='PendingImport'?'pointer-events:none':'color:#006eff'" @click="startKms(scope.row,$event)">禁用密钥</a>
                 <br />
-                <a
-                  href="#"
-                  class="aColorGree"
-                  :style="scope.row.KeyState=='PendingDelete'?'pointer-events:none':'color:#006eff'"
-                  @click="openDelete(scope.row,$event)"
-                >计划删除</a>
+                <a href="#" class="aColorGree" :style="scope.row.KeyState=='PendingDelete'?'pointer-events:none':'color:#006eff'" @click="openDelete(scope.row,$event)">计划删除</a>
                 <span class="spanLine">|</span>
-                <a
-                  href="#"
-                  class="aColorGree"
-                  :style="scope.row.KeyState=='PendingDelete'?'color:#006eff':'pointer-events:none'"
-                  @click="openDelete(scope.row,$event)"
-                >取消删除</a>
+                <a href="#" class="aColorGree" :style="scope.row.KeyState=='PendingDelete'?'color:#006eff':'pointer-events:none'" @click="openDelete(scope.row,$event)">取消删除</a>
               </template>
             </el-table-column>
           </el-table>
-          <stopChange
-            :isShow="dialogModelChange"
-            :content="doalogModelBox"
-            @parentByClick="childrenShow"
-            @startSure="startSure"
-            @stopSure="stopSure"
-          />
-          <startKms
-            :isShow="dialogModelKms"
-            :content="doalogModelBox1"
-            @parentByClick="childrenShow1"
-            @startKmsSure="startKmsSure"
-            @stopKmsSure="stopKmsSure"
-          />
-          <openDelete
-            :isShow="dialogModelDelete"
-            :content="doalogModelBox2"
-            @parentByClick="childrenShow2"
-            @openDeleteSure="openDeleteSure"
-            @closeDeleteSure="closeDeleteSure"
-          />
+          <stopChange :isShow="dialogModelChange" :content="doalogModelBox" @parentByClick="childrenShow" @startSure="startSure" @stopSure="stopSure" />
+          <startKms :isShow="dialogModelKms" :content="doalogModelBox1" @parentByClick="childrenShow1" @startKmsSure="startKmsSure" @stopKmsSure="stopKmsSure" />
+          <openDelete :isShow="dialogModelDelete" :content="doalogModelBox2" @parentByClick="childrenShow2" @openDeleteSure="openDeleteSure" @closeDeleteSure="closeDeleteSure" />
         </div>
-        <el-dialog
-          class="dialogModel"
-          title="计划删除密钥"
-          :visible.sync="dialogModelOpenDelete"
-          width="30%"
-          :before-close="handleCloseOpenDelete"
-        >
+        <el-dialog class="dialogModel" title="计划删除密钥" :visible.sync="dialogModelOpenDelete" width="30%" :before-close="handleCloseOpenDelete">
           <p class="deleteOpen">请先对密钥进行禁用操作！</p>
           <span slot="footer" class="dialog-footer">
             <el-button @click="dialogModelOpenDelete = false">取 消</el-button>
@@ -178,15 +102,7 @@
           </span>
         </el-dialog>
         <div class="tabListPage">
-          <el-pagination
-            @size-change="handleSizeChange"
-            @current-change="handleCurrentChange"
-            :current-page="currentPage"
-            :page-sizes="[10, 20, 30, 50]"
-            :page-size="pageSize"
-            layout="total, sizes, prev, pager, next, jumper"
-            :total="totalItems"
-          ></el-pagination>
+          <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage" :page-sizes="[10, 20, 30, 50]" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper" :total="totalItems"></el-pagination>
         </div>
       </div>
     </div>
@@ -383,10 +299,10 @@ export default {
     },
     ////判断是否选中checkbox
     checkedIsTrue(e) {
-      console.log(e);
+      // console.log(e);
     },
     handerChange() {
-      console.log(111);
+      // console.log(111);
     },
     //获取主密钥列表
     getData() {
@@ -398,7 +314,7 @@ export default {
       let params = {
         Version: "2019-01-18",
         Region: "ap-taipei",
-        Limit:100
+        Limit: 100
       };
       // this.axios.post('kms2/ListKeys', params).then(res => {
 
@@ -424,7 +340,7 @@ export default {
     },
     //搜索
     doFilter() {
-      console.log(this.filterConrent);
+      // console.log(this.filterConrent);
       this.tableDataBegin = this.allData;
       //this.tableDataEnd = [];
       //每次手动将数据置空,因为会出现多次点击搜索情况
@@ -454,12 +370,12 @@ export default {
     },
     // 分页开始
     handleSizeChange(val) {
-      console.log(`每页 ${val} 条`);
+      // console.log(`每页 ${val} 条`);
       this.pageSize = val;
       this.handleCurrentChange(this.currentPage);
     },
     handleCurrentChange(val) {
-      console.log(`当前页: ${val}`);
+      // console.log(`当前页: ${val}`);
       this.currentPage = val;
       //需要判断是否检索
       if (!this.flag) {
@@ -495,7 +411,7 @@ export default {
         Type: this.createForm.Type == "KMS" ? 1 : 2
       };
       this.axios.post(NEW_KMS, params).then(res => {
-        console.log(res.Response);
+        // console.log(res.Response);
         if (res.Response.Error !== undefined) {
           this.$message({
             showClose: true,

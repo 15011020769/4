@@ -9,8 +9,8 @@
         <el-tabs v-model="activeName" @tab-click="handleClick">
           <el-tab-pane label="非网站业务" name="first">
             <div class="mainContent">
-              <el-select class="ddosAttackSelect1" v-model="assestSech" @change="assestSechChange" filterable placeholder="请输入要查询的ID或名称">
-                <el-option :label="assestSech" :value="assestSech"></el-option>
+              <el-select class="ddosAttackSelect1" v-model="resourceId" @change="resourceIdChange" filterable placeholder="请输入要查询的ID或名称">
+                <el-option :label="resourceId" :value="resourceId"></el-option>
               </el-select>
             </div>
             <div class="mainContent">
@@ -27,7 +27,7 @@
                 </el-dropdown>
                 <el-dropdown trigger="click" class="ddosAttackSelect1 ddosAttackSelect2">
                   <span class="el-dropdown-link">
-                    批量导入<i class="el-icon-caret-bottom el-icon--right"></i>
+                    批量导出<i class="el-icon-caret-bottom el-icon--right"></i>
                   </span>
                   <el-dropdown-menu slot="dropdown">
                     <el-dropdown-item @click.native="batchExport">导出转发规则</el-dropdown-item>
@@ -36,22 +36,50 @@
                 </el-dropdown>
                 <el-button class="allDeleteBtn" :disabled="true">批量删除</el-button>
               </div>
-              <el-table :data="tableDataBegin.slice((currentPage-1)*pageSize,currentPage*pageSize)" ref="multipleTable" @selection-change="handleSelectionChange">
+              <el-table class="tableListA" :data="tableDataBegin.slice((currentPage-1)*pageSize,currentPage*pageSize)" ref="multipleTable" @selection-change="handleSelectionChange">
                   <el-table-column type="selection" width="55"></el-table-column>
-                  <el-table-column prop="attackTime" label="业务域名"></el-table-column>
-                  <el-table-column prop="durnTime" label="转发协议/端口"></el-table-column>
-                  <el-table-column prop="attackType" label="源站端口"></el-table-column>
-                  <el-table-column prop="attackStatus" label="源站IP/域名"></el-table-column>
-                  <el-table-column prop="attackStatus" label="负载均衡方式"></el-table-column>
-                  <el-table-column prop="attackStatus" label="健康检查"></el-table-column>
-                  <el-table-column prop="attackStatus" label="会话保持"></el-table-column>
-                  <el-table-column prop="attackStatus" label="水印剥离状态"></el-table-column>
+                  <el-table-column prop="RuleName" label="业务域名">
+                    <template slot-scope="scope">{{scope.row.RuleName}}</template>
+                  </el-table-column>
+                  <el-table-column prop="VirtualPort" label="转发协议/端口">
+                    <template slot-scope="scope">{{scope.row.Protocol}}/{{scope.row.VirtualPort}}</template>
+                  </el-table-column>
+                  <el-table-column prop="SourcePort" label="源站端口">
+                    <template slot-scope="scope">{{scope.row.SourcePort}}</template>
+                  </el-table-column>
+                  <el-table-column prop="SourceList" label="源站IP/域名">
+                    <template slot-scope="scope" >
+                      <span v-for="(item, index) in scope.row.SourceList" :key="index">
+                        {{scope.row.SourceList[index].Source}}({{scope.row.SourceList[index].Weight}});
+                      </span>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="LbType" label="负载均衡方式">
+                    <template slot-scope="scope">
+                      <span v-if="scope.row.LbType == 1">加权轮询</span>
+                      <span v-else>{{scope.row.LbType}}</span>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="" label="健康检查">
+                    <template slot-scope="scope">暂不支持</template>
+                  </el-table-column>
+                  <el-table-column prop="KeepEnable" label="会话保持">
+                    <template slot-scope="scope">暂不支持
+                      <!-- <span v-if="scope.row.KeepEnable == 0">关闭</span>
+                      <span v-else-if="scope.row.KeepEnable == 1">开启</span> -->
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="RemoveSwitch" label="水印剥离状态">
+                    <template slot-scope="scope">
+                      <span v-if="scope.row.RemoveSwitch == 0">关闭</span>
+                      <span v-else-if="scope.row.RemoveSwitch == 1">开启</span>
+                    </template>
+                  </el-table-column>
                   <el-table-column prop="attackAction" label="操作" width="180">
-                    <template slot-scope="">
-                      <el-button
-                        type="text"
-                        size="small"
-                      >操作</el-button>
+                    <template slot-scope="scope">
+                      <el-button type="text" size="small" @click="editAccess(scope.row)">编辑</el-button>
+                      <el-button type="text" size="small" @click="copyAccess(scope.row)">复制</el-button>
+                      <el-button type="text" size="small" @click="deleteAccess(scope.row)">删除</el-button>
                     </template>
                   </el-table-column>
                 </el-table>
@@ -67,14 +95,30 @@
                   >
                   </el-pagination>
                 </div>
-                <p class="pContent">配置规则总数为 60 ，已用 0 ，可用 60</p>
+                <p class="pContent">配置规则总数为 {{ruleTotalNum}} ，已用 {{usedNum}} ，可用 {{ruleTotalNum-usedNum}}</p>
             </div>
             <!-- 新建规则弹框 -->
-            <newAddRules :isShow="dialogVisible" @addRulesSure="addRulesSure" @closeModel="closeModel"/>
+            <newAddRules :isShow="dialogVisible" :resourceId='resourceId' @addRulesSure="addRulesSure" @closeModel="closeModel"/>
             <!-- 批量导入弹框 -->
-            <batchImport :isShow1="dialogVisible1" @batchImportSure="batchImportSure" @closeModelIpt="closeModelIpt"/>
+            <batchImport :isShow1="dialogVisible1" :resourceId='resourceId' @batchImportSure="batchImportSure" @closeModelIpt="closeModelIpt"/>
             <!-- 批量导出弹框 -->
-            <batchExport :isShow2="dialogVisible2" @batchExportSure="batchExportSure" @closeModelExp="closeModelExp"/>
+            <batchExport :isShow2="dialogVisible2" :exportText='exportText' @batchExportSure="batchExportSure" @closeModelExp="closeModelExp"/>
+            <!-- 编辑弹框 -->
+            <accessConfigEdit :isShow3="dialogVisible3" @closeEditModel="closeEditModel"/>
+            <!-- 复制弹框 -->
+            <accessConfigCopy :isShow4="dialogVisible4" @closeCopyModel="closeCopyModel"/>
+            <!-- 删除弹框 -->
+            <el-dialog class="dialogModel"
+              title="添加转发规则"
+              :visible.sync="dialogDelete"
+              width="30%"
+              :before-close="handleCloseDelete">
+              <p>确定删除该条转发规则？</p>
+              <span class="footerBtn">
+                <el-button @click="deleteSure">确定</el-button>
+                <el-button @click="dialogDelete=false">取消</el-button>
+              </span>
+            </el-dialog>
           </el-tab-pane>
         </el-tabs>
       </div>
@@ -85,43 +129,81 @@
 import newAddRules from './model/newAddRules'
 import batchImport from './model/batchImport'
 import batchExport from './model/batchExport'
+import accessConfigEdit from './model/accessConfigEdit'
+import accessConfigCopy from './model/accessConfigCopy'
+import { RESOURCE_LIST, L4_RULES } from '@/constants'
 export default {
   data() {
     return {
       activeName:"first",//tab
-      assestSech:'',//输入要查询的ID或名称
-      tableDataBegin: [],//table绑定数据
-      tableDataEnd: [],
-      currentPage: 1,//当前页
-      pageSize: 10,//每页长度
-      totalItems: 0,//总长度
-      flag: false,
-      multipleTable:[],//table ref属性
-      allImport:'批量导入',//批量导入
-      allExport:'批量导出',//批量导出
+      resourceId: 'net-0000006y',//资源ID，输入要查询的ID或名称
+      tableDataBegin: [], //table绑定数据，L4规则列表
       dialogVisible:false,//新建规则弹框
       dialogVisible1:false,//批量导入弹框
       dialogVisible2:false,//批量导出弹框
+      exportText: '',
+      // 分页
+      currentPage: 1,//当前页
+      pageSize: 10,//每页长度
+      totalItems: 0,//总长度
+      ruleTotalNum: 60,//配置规则总数
+      usedNum: 0,//已用
+      
+      tableDataEnd: [],
+      flag: false,
+      multipleTable:[],//table ref属性
+      dialogVisible3:false,//编辑弹框
+      dialogVisible4:false,//复制弹框
+      dialogDelete:false,//删除弹框
     }
   },
   components:{
     newAddRules:newAddRules,
     batchImport:batchImport,
-    batchExport:batchExport
+    batchExport:batchExport,
+    accessConfigEdit:accessConfigEdit,//编辑弹框
+    accessConfigCopy:accessConfigCopy,//复制弹框
   },
-  mounted() {
-    
+  created() {
+    this.describeResourceList()
+    this.describleL4Rules()
   },
   methods:{
-    handleClick(){},
-    //跳转新购页面
-    newBuy(){
-      this.$router.push({
-        path: '/choose'
+    // 1.1.获取资源列表
+    describeResourceList(){
+      let params = {
+        Version: '2018-07-09',
+        Business:'net',
+      }
+      this.axios.post(RESOURCE_LIST, params).then(res => {
+        console.log(res)
       })
     },
+    // 1.2.获取L4转发规则
+    describleL4Rules() {
+      let params = {
+        Version: '2018-07-09',
+        Business:'net',
+        Id: this.resourceId
+      }
+      this.axios.post(L4_RULES, params).then(res => {
+        console.log(res)
+        this.tableDataBegin = res.Response.Rules
+        this.totalItems = res.Response.Total
+        this.usedNum = res.Response.Total
+      })
+    },
+    // 跳转新购页面
+    newBuy(){
+      let routeUrl = this.$router.resolve({
+        path: "/choose"
+      })
+      window.open(routeUrl.href, '_blank')
+    },
+
     //请输入要查询的ID或名称
-    assestSechChange(){},
+    resourceIdChange(){},
+    handleClick(){},
     //分页开始
     handleSizeChange(val) {
       console.log(`每页 ${val} 条`);
@@ -179,6 +261,28 @@ export default {
     },
     // 批量导出按钮
     batchExport(){
+      let params = {
+        Version: '2018-07-09',
+        Business:'net',
+        Id: this.resourceId
+      }
+      this.axios.post(L4_RULES, params).then(res => {
+        console.log(res)//test.cn TCP 1666 1888 1.1.1.10 80,1.1.1.20 50
+        let str = ''
+        let arr = []
+        arr = res.Response.Rules
+        for(let i in arr){
+          str = str + arr[i].RuleName + ' ' + arr[i].Protocol + ' ' + arr[i].VirtualPort + ' ' + arr[i].SourcePort
+          for(let j in arr[i].SourceList){
+            if(j>0){
+              str = str + ','
+            }
+            str = str + ' ' + arr[i].SourceList[j].Source + ' ' + arr[i].SourceList[j].Weight
+          }
+          str = str + '\r\n'
+        }
+        this.exportText = str + ''
+      })
       this.dialogVisible2=true;
     },
     // 批量导出确定按钮
@@ -188,6 +292,37 @@ export default {
     //批量导出弹框关闭按钮
     closeModelExp(isShowFalse){
       this.dialogVisible2=isShowFalse
+    },
+    //编辑列表按钮
+    editAccess(scopeRow){
+      console.log(scopeRow)//这块可以做数据回显，拿到的是那一行的数据
+      this.dialogVisible3=true;
+    },
+    //关闭编辑弹框
+    closeEditModel(isShow){
+      this.dialogVisible3=isShow;
+    },
+    //复制列表按钮
+    copyAccess(scopeRow){
+      console.log(scopeRow)//这块可以做数据回显，拿到的是那一行的数据
+      this.dialogVisible4=true;
+    },
+    //关闭复制弹框
+    closeCopyModel(isShow){
+      this.dialogVisible4=isShow;
+    },
+    //删除按钮
+    deleteAccess(scopeRow){
+      this.dialogDelete=true;
+    },
+    //关闭删除弹框
+    handleCloseDelete(){
+      this.dialogDelete=false;
+    },
+    //删除确定按钮
+    deleteSure(){
+      this.dialogDelete=false;
+      // this.tableDataBegin.splice("")
     }
   }
 }
@@ -269,5 +404,8 @@ button.allDeleteBtn{
 .pContent{
   font-size:12px;
   color:#999;
+}
+.tableListA{
+  min-height:450px;
 }
 </style>

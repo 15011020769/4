@@ -1,6 +1,6 @@
 <template>
   <div class="CCN">
-    <div class="big-title">{{$t('CCN.CCN.menu.title')}}</div>
+    <div class="big-title">{{$t('CCN.menu.title')}}</div>
     <el-menu
       default-active="2"
       class="el-menu-vertical-demo"
@@ -12,7 +12,7 @@
       :router="true"
     >
       <el-menu-item index="ccnPage">
-        <span slot="title">{{$t('CCN.CCN.menu.title')}}</span>
+        <span slot="title">{{$t('CCN.menu.title')}}</span>
       </el-menu-item>
     </el-menu>
   </div>

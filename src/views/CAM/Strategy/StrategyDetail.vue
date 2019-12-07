@@ -52,7 +52,6 @@
                   v-loading="loading"
                   :data="policysData"
                   height="300"
-                  border
                   @selection-change="handleSelectionChange"
                   :row-style="{height:0}"
                   :cell-style="{padding:'5px 10px'}"
@@ -103,22 +102,22 @@
                     </template>
                   </el-table-column>
                 </el-table>
-                <div style="background:#fff;padding:10px;display:flex;justify-content: space-between;line-height:30px">
-                  <div>
-                    <span style="font-size:12px;color:#888">已选 0 项，共 309 项</span>
-                  </div>
-                  <div>
-                    <el-pagination
-                      @size-change="handleSizeChange"
-                      @current-change="handleCurrentChange"
-                      :current-page.sync="currentPage2"
-                      :page-sizes="[100, 200, 300, 400]"
-                      :page-size="100"
-                      layout="sizes, prev, pager, next"
-                      :total="1000"
-                    ></el-pagination>
-                  </div>
-                </div>
+              </div>
+            </div>
+            <div style="background:#fff;padding:10px;display:flex;justify-content: space-between;line-height:30px">
+              <div>
+                <span style="font-size:12px;color:#888">已选 {{selTotal}} 项，共 {{total}} 项</span>
+              </div>
+              <div>
+                <el-pagination
+                  @size-change="handleSizeChange"
+                  @current-change="handleCurrentChange"
+                  :current-page.sync="page"
+                  :page-sizes="[10, 20, 50, 100, 200]"
+                  :page-size="rp"
+                  layout="sizes, prev, pager, next"
+                  :total="total"
+                ></el-pagination>
               </div>
             </div>
           </el-tab-pane>
@@ -153,7 +152,7 @@
           <p>解除后，以上策略关联的用户或用户组将失去对应的权限。</p>
         </div>
         <p style="text-align:center">
-          <el-button @click="Relieve_dialogVisible = false" size="small">取 消</el-button>
+          <el-button @click="handleClosePolicyRemove" size="small">取 消</el-button>
           <el-button type="primary" @click="removePolicysEntity" size="small">确 定</el-button>
         </p>
       </el-dialog>
@@ -194,32 +193,21 @@ export default {
       currentPage4: 4,
       dialogVisible: false,
       Relieve_dialogVisible: false,
-      transfer_value: [],
-      transfer_data: [
-        {
-          value: 1,
-          desc: '备选项1'
-        },
-        {
-          value: 2,
-          desc: '备选项2'
-        },
-        {
-          value: 3,
-          desc: '备选项3'
-        }
-      ],
       display: true,
       isShow: false,
       popover_visible: false,
       inputValue: '-',
       input_Value: '',
       loading: true,
-      input_show: false
+      input_show: false,
+      page: 1,
+      rp: 10,
+      total: 0,
+      selTotal:0,
+      handleFlag: false
     }
   },
   created() {
-    console.log(this.$route.query.policy)
     this.policy = this.$route.query.policy
     this.getAttachPolicys()
   },
@@ -227,29 +215,53 @@ export default {
     // 打开 关联用户/用户组 页面
     Relation_user () {
       this.dialogVisible = true
+      if(this.handleFlag){
+        this.$refs.userTransfer.getList() //dialog关闭再打开，created()mounted()方法不执行，所以需要再此处执行初始化方法
+      }
     },
     // 关闭 关联用户/用户组 页面
     handleClosePolicy() {
       this.dialogVisible = false
+      this.handleFlag = this.$refs.userTransfer.getHandleFlag()
     },
     // 关联用户/用户组 跳转用户、用户组页面连接方法
     handleClickPolicies(obj) {
-
+      if(obj.RelatedType != undefined && obj.RelatedType === 1){
+        this.$router.push({
+          path: "/details",
+          query: {
+            content: obj.Name
+          }
+      });
+      }
+      if(obj.RelatedType != undefined && obj.RelatedType === 2){
+        this.$router.push({
+          name: "Interfacedetails",
+          query:{
+            GroupId: obj.Id
+          }
+        });
+      }
     },
     // 策略添加用户/用户组
     attachPolicy() {
       this.$refs.userTransfer.attachPolicy()
       this.dialogVisible = false
       this.getAttachPolicys() // 重新加载策略关联实体列表
+      this.$refs.userTransfer.clearData() // 添加完毕时清空数组。
+      this.handleFlag = this.$refs.userTransfer.getHandleFlag()
     },
     // 获取策略关联的实体列表
     getAttachPolicys() {
+      this.selTotal = 0
       this.policysData = []
       let policyId = this.policy.PolicyId
       let url = 'cam2/ListEntitiesForPolicy'
       let params = {
         Action: 'ListEntitiesForPolicy',
         Version: '2019-01-16',
+        Page: this.page,
+        Rp: this.rp,
         PolicyId: policyId
       }
       let entityFilter = this.entityFilter
@@ -260,9 +272,9 @@ export default {
         params['EntityFilter'] = 'User|Group'
       }
       this.$axios.post(url, params).then(res => {
-        console.log(res)
         // RelatedType 关联类型。1 用户关联 ； 2 用户组关联
         this.policysData = res.Response.List
+        this.total = res.Response.TotalNum
         this.loading = false
       })
     },
@@ -292,7 +304,6 @@ export default {
     removeUserPolicy(params) {
       let url = "cam2/DetachUserPolicy"
       this.axios.post(url, params).then(res => {
-        console.log(res)
         this.getAttachPolicys() // 重新加载
       }).catch(error => {
           console.log(error)
@@ -302,7 +313,6 @@ export default {
     removeGroupPolicy(params) {
       let url = "cam2/DetachGroupPolicy"
       this.axios.post(url, params).then(res => {
-        console.log(res)
         this.getAttachPolicys() // 重新加载
       }).catch(error => {
           console.log(error)
@@ -325,6 +335,7 @@ export default {
       if (val != '') {
         this.policysSelData = val
         this.display = false
+        this.selTotal = val.length
       } else {
         this.display = true
       }
@@ -346,8 +357,14 @@ export default {
       // 重新查询策略关联实体
       this.getAttachPolicys()
     },
-    handleSizeChange () {},
-    handleCurrentChange () {},
+    handleSizeChange (val) {
+      this.rp = val
+      this.getAttachPolicys()
+    },
+    handleCurrentChange (val) {
+      this.page = val
+      this.getAttachPolicys()
+    },
     handleClose () {},
     look_detail () {
       this.isShow = !this.isShow

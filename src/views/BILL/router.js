@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import deal from './Deal/Deal'
 Vue.use(Router)
 
 export default new Router({
@@ -17,7 +16,7 @@ export default new Router({
     {
       path: '/deal',          // 订单管理
       name: 'deal',
-      component: deal,
+      component: () => import(/* webpackChunkName: "deal" */ './Deal/Deal.vue'),
       meta: {
         keepAlive: true
       }

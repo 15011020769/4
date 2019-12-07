@@ -1,15 +1,10 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import userKms from './userKms/userKms'
-import userKmsDetails from './userKms/userKmsDetails'
-import cloudsKms from './cloudsKms/cloudsKms'
-
-
 
 Vue.use(Router)
 
 export default new Router({
-  mode: 'history',
+  // mode: 'history',
   base: process.env.BASE_URL,
   redirect: {
     name: 'userKms'
@@ -22,7 +17,7 @@ export default new Router({
     {
       path: '/userKms', // 用户密钥
       name: 'userKms',
-      component: userKms,
+      component: () => import ('./userKms/userKms.vue'),
       meta: {
         keepAlive: true
       }
@@ -30,7 +25,7 @@ export default new Router({
     {
       path: '/userKmsDetails', // 用户密钥详情页
       name: 'userKmsDetails',
-      component: userKmsDetails,
+      component: () => import ('./userKms/userKmsDetails.vue'),
       meta: {
         keepAlive: true
       }
@@ -38,7 +33,7 @@ export default new Router({
     {
       path: '/cloudsKms', // 用户密钥
       name: 'cloudsKms',
-      component: cloudsKms,
+      component: () => import ('./cloudsKms/cloudsKms'),
       meta: {
         keepAlive: true
       }

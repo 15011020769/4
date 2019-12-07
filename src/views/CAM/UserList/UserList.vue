@@ -1,9 +1,9 @@
 <template>
   <div class="Cam">
     <div class="top">
-      <span class="title-left">{{$t('CAM.CAM.userList.userTitle')}}</span>
+      <span class="title-left">{{$t('CAM.userList.userTitle')}}</span>
       <span class="title-right">
-        <span>{{$t('CAM.CAM.userList.CAMUse')}}</span>
+        <span>{{$t('CAM.userList.CAMUse')}}</span>
         <i class="el-icon-share"></i>
       </span>
     </div>
@@ -12,16 +12,16 @@
         <span>如何查看更多信息？</span>
       </p>
       <p>
-        <span>&nbsp;&nbsp;{{$t('CAM.CAM.userList.userTest')}}</span>
+        <span>&nbsp;&nbsp;{{$t('CAM.userList.userTest')}}</span>
       </p>
       <p>
-        <span>&nbsp;&nbsp;&nbsp;{{$t('CAM.CAM.userList.userUp')}}</span>
+        <span>&nbsp;&nbsp;&nbsp;{{$t('CAM.userList.userUp')}}</span>
       </p>
     </div>
 
     <div class="cam_button">
       <el-row class="cam-lt">
-        <el-button size="small" type="primary" @click="NewUser">{{$t('CAM.CAM.userList.addUser')}}</el-button>
+        <el-button size="small" type="primary" @click="NewUser">{{$t('CAM.userList.addUser')}}</el-button>
         <el-dropdown :hide-on-click="false" style="margin-left:20px;">
           <span class="el-dropdown-link" style="color: #3E8EF7">
             请选择
@@ -37,12 +37,8 @@
       </el-row>
       <div class="head-container">
         <!-- 搜索 -->
-        <el-input
-          clearable
-          style="width: 300px;"
-          v-model="search"
-          :placeholder="$t('CAM.CAM.userList.searchPlaceholder')"
-        />
+        <el-input clearable style="width: 300px;" v-model="search"
+          :placeholder="$t('CAM.userList.searchPlaceholder')" />
 
         <i @click="list = true" class="el-icon-s-tools gear"></i>
         <el-dialog title="自定义列表字段" :visible.sync="list" width="45%" :before-close="handleClose">
@@ -95,13 +91,10 @@
     </div>
 
     <!-- 表格 -->
-    <el-table
-      :data="tableData.filter(data => !search || data.Name.toLowerCase().includes(search.toLowerCase()))"
-      style="width: 96%; margin: 0 auto;"
-      @selection-change="handle"
-    >
+    <el-table :data="tableData.filter(data => !search || data.Name.toLowerCase().includes(search.toLowerCase()))"
+      style="width: 96%; margin: 0 auto;" @selection-change="handle">
       <el-table-column prop="Uid" type="selection" width="55"></el-table-column>
-      <el-table-column type="expand" :label="$t('CAM.CAM.userList.userDetails')" width="50">
+      <el-table-column type="expand" :label="$t('CAM.userList.userDetails')" width="50">
         <template slot-scope="scope">
           <el-form label-position="left" inline class="demo-table-expand" :model="form">
             <el-form-item label="用户组:"></el-form-item>
@@ -131,27 +124,27 @@
         </template>
       </el-table-column>
 
-      <el-table-column :label="$t('CAM.CAM.userList.userName')" prop="Name">
+      <el-table-column :label="$t('CAM.userList.userName')" prop="Name">
         <template slot-scope="scope">
           <el-link @click="details(scope.row)" type="primary">{{scope.row.Name}}</el-link>
         </template>
       </el-table-column>
 
-      <el-table-column :label="$t('CAM.CAM.userList.userType')" prop="Remark">
+      <el-table-column :label="$t('CAM.userList.userType')" prop="Remark">
         <template slot-scope="scope">{{scope.row.Remark}}</template>
       </el-table-column>
 
-      <el-table-column :label="$t('CAM.CAM.userList.userId')" label="账号ID" prop="Uin">
+      <el-table-column :label="$t('CAM.userList.userId')" label="账号ID" prop="Uin">
         <template slot-scope="scope">{{scope.row.Uin}}</template>
       </el-table-column>
 
-      <el-table-column :label="$t('CAM.CAM.userList.userMessage')">
+      <el-table-column :label="$t('CAM.userList.userMessage')">
         <template slot-scope="scope">
           <i @click="details(scope.row)" class="el-icon-mobile mobile"></i>
           <i @click="details(scope.row)" class="el-icon-message message"></i>
         </template>
       </el-table-column>
-      <el-table-column prop="oper" :label="$t('CAM.CAM.userList.userOperation')" width="140">
+      <el-table-column prop="oper" :label="$t('CAM.userList.userOperation')" width="140">
         <template scope="scope">
           <el-button @click="getRow(scope.row.Uin)" type="text">授权</el-button>
           <span>|</span>
@@ -167,11 +160,8 @@
               <el-dropdown-item>
                 <el-button type="text" style="color:#000" @click="subscribe= true">订阅信息</el-button>
               </el-dropdown-item>
-              <el-button
-                type="text"
-                style="color:#000;padding-left:20px;"
-                @click="todeleteShow(scope.row)"
-              >删除</el-button>
+              <el-button type="text" style="color:#000;padding-left:20px;" @click="todeleteShow(scope.row)">删除
+              </el-button>
             </el-dropdown-menu>
           </el-dropdown>
         </template>
@@ -191,25 +181,13 @@
         <div class="container-left">
           <span>策略列表</span>
           <div>
-            <el-input
-              v-model="ClsearchValue"
-              clearable
-              style="width:90%;"
-              @keyup.enter.native="toQueryCL"
-            />
+            <el-input v-model="ClsearchValue" clearable style="width:90%;" @keyup.enter.native="toQueryCL" />
             <el-button class="suo" icon="el-icon-search" show-overflow-tooltip @click="toQueryCL"></el-button>
           </div>
 
-          <el-table
-            class="table-left"
-            ref="multipleOption"
-            :data="policiesData"
-            height="300"
-            tooltip-effect="dark"
-            style="width: 100%; border:1px solid #ddd"
-            @row-click="selectedRow"
-            @selection-change="handleSelectionChange"
-          >
+          <el-table class="table-left" ref="multipleOption" :data="policiesData" height="300" tooltip-effect="dark"
+            style="width: 100%; border:1px solid #ddd" @row-click="selectedRow"
+            @selection-change="handleSelectionChange">
             <el-input size="mini" style="width:40%" />
             <el-button size="mini" class="suo" icon="el-icon-search" show-overflow-tooltip></el-button>
             <el-table-column type="selection" prop="policyId" width></el-table-column>
@@ -226,14 +204,8 @@
 
         <div class="container-left">
           <span>已选择</span>
-          <el-table
-            class="table-left"
-            ref="multipleSelected"
-            :data="policiesSelectedData"
-            tooltip-effect="dark"
-            height="300"
-            style="width: 100%;border:1px solid #ddd"
-          >
+          <el-table class="table-left" ref="multipleSelected" :data="policiesSelectedData" tooltip-effect="dark"
+            height="300" style="width: 100%;border:1px solid #ddd">
             <el-table-column prop="Description" label="策略名" width></el-table-column>
             <el-table-column prop="type" label="策略类型" width>
               <template slot-scope="scope">{{scope.row.type == '1'?'自定义策略':'预设策略'}}</template>
@@ -241,11 +213,8 @@
             <el-table-column label="操作" show-overflow-tooltip>
               &lt;!&ndash;
               <template slot-scope="scope">
-                <el-button
-                  @click.native.prevent="deleteRow(scope.$index, policiesSelectedData)"
-                  type="text"
-                  size="small"
-                >移除</el-button>
+                <el-button @click.native.prevent="deleteRow(scope.$index, policiesSelectedData)" type="text"
+                  size="small">移除</el-button>
               </template>&ndash;&gt;
             </el-table-column>
           </el-table>
@@ -262,26 +231,14 @@
         <div class="container-left">
           <span>用户组</span>
           <div>
-            <el-input
-              v-model="UsersearchValue"
-              placeholder="搜索"
-              clearable
-              style="width:90%;"
-              @keyup.enter.native="toQueryUser"
-            />
+            <el-input v-model="UsersearchValue" placeholder="搜索" clearable style="width:90%;"
+              @keyup.enter.native="toQueryUser" />
             <el-button class="suo" icon="el-icon-search" show-overflow-tooltip @click="toQueryUser"></el-button>
           </div>
 
-          <el-table
-            class="table-left"
-            ref="multipleOption"
-            :data="policiesDatas"
-            height="300"
-            tooltip-effect="dark"
-            style="width: 100%; border:1px solid #ddd"
-            @row-click="selectedRow"
-            @selection-change="handleSelectionChange"
-          >
+          <el-table class="table-left" ref="multipleOption" :data="policiesDatas" height="300" tooltip-effect="dark"
+            style="width: 100%; border:1px solid #ddd" @row-click="selectedRow"
+            @selection-change="handleSelectionChange">
             <el-input size="mini" style="width:40%" />
             <el-button size="mini" class="suo" icon="el-icon-search" show-overflow-tooltip></el-button>
             <el-table-column type="selection" prop="policyId" width></el-table-column>
@@ -295,24 +252,15 @@
 
         <div class="container-left">
           <span>已选择</span>
-          <el-table
-            class="table-left"
-            ref="multipleSelected"
-            :data="policiesSelectedData"
-            tooltip-effect="dark"
-            height="300"
-            style="width: 100%;border:1px solid #ddd"
-          >
+          <el-table class="table-left" ref="multipleSelected" :data="policiesSelectedData" tooltip-effect="dark"
+            height="300" style="width: 100%;border:1px solid #ddd">
             <el-table-column type="selection" prop="policyId" width="55"></el-table-column>
             <el-table-column label="用户组" width="120" prop="GroupName"></el-table-column>
             <el-table-column label="操作" show-overflow-tooltip>
               &lt;!&ndash;
               <template slot-scope="scope">
-                <el-button
-                  @click.native.prevent="deleteRow(scope.$index, policiesSelectedData)"
-                  type="text"
-                  size="small"
-                >移除</el-button>
+                <el-button @click.native.prevent="deleteRow(scope.$index, policiesSelectedData)" type="text"
+                  size="small">移除</el-button>
               </template>&ndash;&gt;
             </el-table-column>
           </el-table>
@@ -477,37 +425,30 @@
       </div>
     </el-dialog>
     <div
-      style="width:96%;margin:0 auto;background:#fff;padding:10px;display:flex;justify-content: space-between;line-height:30px"
-    >
+      style="width:96%;margin:0 auto;background:#fff;padding:10px;display:flex;justify-content: space-between;line-height:30px">
       <div>
         <span style="font-size:12px;color:#888">已选 0 项，共 3 项</span>
       </div>
       <div>
-        <el-pagination
-          @size-change="sizeChange"
-          @current-change="pageChange"
-          :current-page="Page+1"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="total"
-        ></el-pagination>
+        <el-pagination @size-change="sizeChange" @current-change="pageChange" :current-page="Page+1"
+          layout="total, sizes, prev, pager, next, jumper" :total="total"></el-pagination>
       </div>
     </div>
   </div>
 </template>
 <script>
-import {
-  USER_LIST,
-  POLICY_LIST,
-  USER_GROUP,
-  DELETE_USER,
-  QUERY_USER,
-  POLICY_USER,
-  ADD_USERTOGROUP
-} from "@/constants";
-export default {
-  props: {
-    policiesSelectedData: [
-      {
+  import {
+    USER_LIST,
+    POLICY_LIST,
+    USER_GROUP,
+    DELETE_USER,
+    QUERY_USER,
+    POLICY_USER,
+    ADD_USERTOGROUP
+  } from "@/constants";
+  export default {
+    props: {
+      policiesSelectedData: [{
         policyId: String,
         policyName: String,
         description: String,
@@ -516,620 +457,681 @@ export default {
         serviceType: String,
         addTime: String,
         type: String
-      }
-    ]
-  },
-  data() {
-    const generateData = _ => {
-      const data = [];
-      const cities = ["上海", "北京", "广州", "深圳", "南京", "西安", "成都"];
-      const pinyin = [
-        "shanghai",
-        "beijing",
-        "guangzhou",
-        "shenzhen",
-        "nanjing",
-        "xian",
-        "chengdu"
-      ];
-      cities.forEach((city, index) => {
-        data.push({
-          label: city,
-          key: index,
-          pinyin: pinyin[index]
+      }]
+    },
+    data() {
+      const generateData = _ => {
+        const data = [];
+        const cities = ["上海", "北京", "广州", "深圳", "南京", "西安", "成都"];
+        const pinyin = [
+          "shanghai",
+          "beijing",
+          "guangzhou",
+          "shenzhen",
+          "nanjing",
+          "xian",
+          "chengdu"
+        ];
+        cities.forEach((city, index) => {
+          data.push({
+            label: city,
+            key: index,
+            pinyin: pinyin[index]
+          });
         });
-      });
-      return data;
-    };
-    return {
-      titles: "",
-      search: "",
-      deleteName: "",
-      selectName: "",
-      deleteShow: false,
-      UsersearchValue: [],
-      ClsearchValue: [],
-      searchValue: [],
-      policiesDatas: [],
-      policiesData: [],
-      totalNum: "",
-      list: false,
-      authorization: false,
-      data: generateData(),
-      val: [],
-      filterMethod(query, item) {
-        return item.pinyin.indexOf(query) > -1;
-      },
-      checked1: true,
-      checked2: true,
-      subscribe: false,
-      dialogVisible: false,
-      checked: true,
-      tableData: [],
-      options: [
-        {
-          value: "选项1",
-          label: "添加到组"
+        return data;
+      };
+      return {
+        titles: "",
+        search: "",
+        deleteName: "",
+        selectName: "",
+        deleteShow: false,
+        UsersearchValue: [],
+        ClsearchValue: [],
+        searchValue: [],
+        policiesDatas: [],
+        policiesData: [],
+        totalNum: "",
+        list: false,
+        authorization: false,
+        data: generateData(),
+        val: [],
+        filterMethod(query, item) {
+          return item.pinyin.indexOf(query) > -1;
         },
-        {
-          value: "选项2",
-          label: "删除"
-        }
-      ],
-      form: {
-        name: "",
-        region: "",
-        date1: "",
-        date2: "",
-        delivery: false,
-        type: [],
-        resource: "",
-        desc: ""
+        checked1: true,
+        checked2: true,
+        subscribe: false,
+        dialogVisible: false,
+        checked: true,
+        tableData: [],
+        options: [{
+            value: "选项1",
+            label: "添加到组"
+          },
+          {
+            value: "选项2",
+            label: "删除"
+          }
+        ],
+        form: {
+          name: "",
+          region: "",
+          date1: "",
+          date2: "",
+          delivery: false,
+          type: [],
+          resource: "",
+          desc: ""
+        },
+        valArr: [],
+        userVal: [],
+        Uin: "",
+        Uid: "",
+        Page: 0,
+        size: 10,
+        total: 0,
+        selNum: 0
+      };
+    },
+    methods: {
+      handle(val) {
+        this.userVal = val;
+        console.log(val);
       },
-      valArr: [],
-      userVal: [],
-      Uin: "",
-      Uid: "",
-      Page: 0,
-      size: 10,
-      total: 0,
-      selNum: 0
-    };
-  },
-  methods: {
-    handle(val) {
-      this.userVal = val;
-      console.log(val);
-    },
-    //获取每行用户的name
-    todeleteShow(user) {
-      this.deleteName = user.Name;
-      this.deleteShow = true;
-      console.log(user.Name);
-    },
-    //批量删除用户
-    deleteMoreUser() {
-      var delIndex = [];
-      this.userVal.forEach(item => {
-        delIndex.unshift(item.Name);
-      });
-      delIndex.forEach(item => {
+      //获取每行用户的name
+      todeleteShow(user) {
+        this.deleteName = user.Name;
+        this.deleteShow = true;
+        console.log(user.Name);
+      },
+      //批量删除用户
+      deleteMoreUser() {
+        var delIndex = [];
+        this.userVal.forEach(item => {
+          delIndex.unshift(item.Name);
+        });
+        delIndex.forEach(item => {
+          let params = {
+            Version: "2019-01-16",
+            Name: this.tableData.Name
+          };
+          this.axios.post(DELETE_USER, params).then(data => {
+            console.log(data);
+            this.selectData();
+          });
+        });
+      },
+      addTeamss() {
+        console.log(123);
+      },
+      //获取uid
+      addUser(uid) {
+        this.Uid = uid;
+        this.dialogVisible = true;
+      },
+      sureAddUser() {
+        // addUser.forEach(item => {
+        //    let params = {
+        //      Version:"2019-01-16",
+        //    };
+        //    console.log(this.valArr)
+        //    for(let i=0; i<this.valArr.length; i++){
+        //     //  Info.0.Uid
+        //      params['Info.' + i + '.Uid'] = Uid
+        //      params['Info.' + i + '.GroupId'] = groupId
+        //    }
+        //    this.axios.post(ADD_USERTOGROUP,params).then(data=>{
+        //      console.log(data)
+        //    })
+        // })
+        this.dialogVisible = false;
+      },
+      //获取uin
+      getRow(uin) {
+        this.Uin = uin;
+        this.authorization = true;
+      },
+      //添加数据到策略列表
+      sureAddList() {
+        var addIndex = [];
+        console.log(this.valArr);
+        this.valArr.forEach(item => {
+          addIndex.push(item);
+          console.log(item);
+        });
+        addIndex.forEach(item => {
+          let params = {
+            Version: "2019-01-16",
+            PolicyId: item.PolicyId,
+            AttachUin: this.Uin
+          };
+          this.axios.post(POLICY_USER, params).then(data => {
+            console.log(data);
+          });
+        });
+        this.authorization = false;
+      },
+      change(e) {
+        this.$forceUpdate();
+      },
+      //删除子用户
+      sureDelet() {
         let params = {
           Version: "2019-01-16",
-          Name: this.tableData.Name
+          Name: this.deleteName
         };
         this.axios.post(DELETE_USER, params).then(data => {
-          console.log(data);
           this.selectData();
         });
-      });
-    },
-    addTeamss() {
-      console.log(123);
-    },
-    //获取uid
-    addUser(uid) {
-      this.Uid = uid;
-      this.dialogVisible = true;
-    },
-    sureAddUser() {
-      // addUser.forEach(item => {
-      //    let params = {
-      //      Version:"2019-01-16",
-      //    };
-      //    console.log(this.valArr)
-      //    for(let i=0; i<this.valArr.length; i++){
-      //     //  Info.0.Uid
-      //      params['Info.' + i + '.Uid'] = Uid
-      //      params['Info.' + i + '.GroupId'] = groupId
-      //    }
-      //    this.axios.post(ADD_USERTOGROUP,params).then(data=>{
-      //      console.log(data)
-      //    })
-      // })
-      this.dialogVisible = false;
-    },
-    //获取uin
-    getRow(uin) {
-      this.Uin = uin;
-      this.authorization = true;
-    },
-    //添加数据到策略列表
-    sureAddList() {
-      var addIndex = [];
-      console.log(this.valArr);
-      this.valArr.forEach(item => {
-        addIndex.push(item);
-        console.log(item);
-      });
-      addIndex.forEach(item => {
+        this.deleteShow = false;
+      },
+      //搜索策略数据
+      CeInit() {
         let params = {
-          Version: "2019-01-16",
-          PolicyId: item.PolicyId,
-          AttachUin: this.Uin
+          Version: "2019-01-16"
         };
-        this.axios.post(POLICY_USER, params).then(data => {
+        if (this.ClsearchValue != null && this.ClsearchValue != "") {
+          params["Keyword"] = this.ClsearchValue;
+        }
+        this.axios.post(POLICY_LIST, params).then(data => {
+          this.policiesData = data.Response.List;
+        });
+      },
+      toQueryCL() {
+        this.CeInit();
+      },
+      // 用户搜索
+      UserInit() {
+        let params = {
+          Version: "2019-01-16"
+        };
+        if (this.UsersearchValue != null && this.UsersearchValue != "") {
+          params["Keyword"] = this.UsersearchValue;
+        }
+        this.axios.post(USER_GROUP, params).then(data => {
+          this.policiesDatas = data.Response.GroupInfo;
+          this.titles = this.policiesDatas.length;
+        });
+      },
+      toQueryUser() {
+        this.UserInit();
+      },
+      //查询子用户详情
+      selectuser() {
+        let selectList = {
+          Version: "2019-01-16",
+          Name: this.selectName
+        };
+        this.axios.post(QUERY_USER, selectList).then(data => {
+          console.log(data);
+          this.tableData = data;
+        });
+      },
+
+      //获取用户列表数据
+      selectData() {
+        let userList = {
+          Version: "2019-01-16"
+        };
+        this.axios.post(USER_LIST, userList).then(data => {
+          this.tableData = data.Response.Data;
           console.log(data);
         });
-      });
-      this.authorization = false;
-    },
-    change(e) {
-      this.$forceUpdate();
-    },
-    //删除子用户
-    sureDelet() {
-      let params = {
-        Version: "2019-01-16",
-        Name: this.deleteName
-      };
-      this.axios.post(DELETE_USER, params).then(data => {
-        this.selectData();
-      });
-      this.deleteShow = false;
-    },
-    //搜索策略数据
-    CeInit() {
-      let params = {
-        Version: "2019-01-16"
-      };
-      if (this.ClsearchValue != null && this.ClsearchValue != "") {
-        params["Keyword"] = this.ClsearchValue;
+      },
+
+      change(e) {
+        this.$forceUpdate();
+      },
+      handleClose(done) {
+        this.$confirm("确认关闭？")
+          .then(_ => {
+            done();
+          })
+          .catch(_ => {});
+      },
+      NewUser() {
+        this.$router.push({
+          name: "custormCreate"
+        });
+      },
+      changeLeftData(val) {
+        // console.log("change left data", val);
+        // console.log("this is value data:", this.value);
+        this.val = [...this.val, ...val];
+      },
+      details(val) {
+        console.log(val);
+        this.$router.push({
+          path: "/details",
+          query: {
+            content: val.Name
+          }
+        });
+      },
+      handleSelectionChange(val) {
+        // 给右边table框赋值，只需在此处赋值即可，selectedRow方法中不写，因为单独点击复选框，只有此方法有效。
+        this.policiesSelectedData = val;
+        this.valArr = val;
+      },
+      selectedRow(row, column, event) {
+        // 设置选中或者取消状态
+        this.$refs.multipleOption.toggleRowSelection(row);
+      },
+      deleteRow(index, rows) {
+        // 获取右边框中取消的行数据，将此行数据在右边框中的选中状态取消
+        this.$refs.multipleOption.toggleRowSelection(rows[index], false);
+      },
+      CloseShow(done) {
+        this.$confirm("确认关闭？")
+          .then(_ => {
+            done();
+          })
+          .catch(_ => {});
+      },
+      sizeChange(e) {
+        this.page = 0;
+        this.size = e;
+        this.init();
+      },
+      pageChange(e) {
+        this.page = e;
+        this.init();
       }
-      this.axios.post(POLICY_LIST, params).then(data => {
-        this.policiesData = data.Response.List;
-      });
     },
-    toQueryCL() {
-      this.CeInit();
-    },
-    // 用户搜索
-    UserInit() {
-      let params = {
-        Version: "2019-01-16"
-      };
-      if (this.UsersearchValue != null && this.UsersearchValue != "") {
-        params["Keyword"] = this.UsersearchValue;
-      }
-      this.axios.post(USER_GROUP, params).then(data => {
-        this.policiesDatas = data.Response.GroupInfo;
-        this.titles = this.policiesDatas.length;
-      });
-    },
-    toQueryUser() {
+    created() {
+      //策略绑定到用户
       this.UserInit();
-    },
-    //查询子用户详情
-    selectuser() {
-      let selectList = {
-        Version: "2019-01-16",
-        Name: this.selectName
-      };
-      this.axios.post(QUERY_USER, selectList).then(data => {
-        console.log(data);
-        this.tableData = data;
-      });
-    },
 
-    //获取用户列表数据
-    selectData() {
-      let userList = {
-        Version: "2019-01-16"
-      };
-      this.axios.post(USER_LIST, userList).then(data => {
-        this.tableData = data.Response.Data;
-        console.log(data);
-      });
-    },
+      //调用用获取列表数据方法,绑定数据到表格中
+      this.selectData();
 
-    change(e) {
-      this.$forceUpdate();
-    },
-    handleClose(done) {
-      this.$confirm("确认关闭？")
-        .then(_ => {
-          done();
-        })
-        .catch(_ => {});
-    },
-    NewUser() {
-      this.$router.push({ name: "custormCreate" });
-    },
-    changeLeftData(val) {
-      // console.log("change left data", val);
-      // console.log("this is value data:", this.value);
-      this.val = [...this.val, ...val];
-    },
-    details(val) {
-      console.log(val);
-      this.$router.push({
-        path: "/details",
-        query: {
-          content: val.Name
-        }
-      });
-    },
-    handleSelectionChange(val) {
-      // 给右边table框赋值，只需在此处赋值即可，selectedRow方法中不写，因为单独点击复选框，只有此方法有效。
-      this.policiesSelectedData = val;
-      this.valArr = val;
-    },
-    selectedRow(row, column, event) {
-      // 设置选中或者取消状态
-      this.$refs.multipleOption.toggleRowSelection(row);
-    },
-    deleteRow(index, rows) {
-      // 获取右边框中取消的行数据，将此行数据在右边框中的选中状态取消
-      this.$refs.multipleOption.toggleRowSelection(rows[index], false);
-    },
-    CloseShow(done) {
-      this.$confirm("确认关闭？")
-        .then(_ => {
-          done();
-        })
-        .catch(_ => {});
-    },
-    sizeChange(e) {
-      this.page = 0;
-      this.size = e;
-      this.init();
-    },
-    pageChange(e) {
-      this.page = e;
-      this.init();
+      //调用策略列表数据方法,绑定数据
+      this.CeInit();
     }
-  },
-  created() {
-    //策略绑定到用户
-    this.UserInit();
+  };
 
-    //调用用获取列表数据方法,绑定数据到表格中
-    this.selectData();
-
-    //调用策略列表数据方法,绑定数据
-    this.CeInit();
-  }
-};
 </script>
 <style lang="scss" scoped>
-.el-transfer-city {
-  display: flex;
-  .city-left,
-  .city-right {
-    width: 400px;
-    padding: 8px;
-  }
-  .city-right {
-    margin-left: 15px;
-  }
-  .city-left-header,
-  .city-right-header {
-    height: 40px;
-    padding: 3px;
-    border: 1px solid #dcdfe6;
-    .el-input {
-      width: 300px;
-    }
-  }
-  .city-right-header {
+  .el-transfer-city {
     display: flex;
-  }
-  .scrollbar-change {
-    height: 350px;
-    width: 100%;
-    background-color: #fff;
-    border-radius: 5px;
-  }
-  .el-scrollbar__wrap {
-    overflow-x: hidden;
-  }
 
-  .city-middle {
-    padding: 60px 20px;
-    .middle-left {
-      display: block;
-      margin-top: 10px;
-      margin-left: 0;
+    .city-left,
+    .city-right {
+      width: 400px;
+      padding: 8px;
     }
-    .middle-right {
-      display: block;
-      margin-right: 0;
+
+    .city-right {
+      margin-left: 15px;
     }
-    .middle-left,
-    .middle-right {
-      width: 35px;
-      height: 35px;
-      border-radius: 50%;
-      padding: 0;
-    }
-  }
-  .left-select-all {
-    float: right;
-    margin: 10px 7px 0 0;
-  }
-  .clear-select-all {
-    float: right;
-    margin: 10px 7px 0 0;
-    font-size: 14px;
-    color: #0000ff;
-    cursor: pointer;
-  }
-  .el-radio-group {
-    font-size: 14px;
-    margin: 13px auto;
-    float: left;
-  }
-}
-.Cam {
-  .top {
-    height: 45px;
-    line-height: 45px;
-    margin-bottom: 20px;
-    padding: 0 20px;
-    background: #fff;
-    .title-left {
-      font-size: 14px;
-      font-weight: bolder;
-    }
-    .title-right {
-      float: right;
-      span:hover {
-        color: #006eff;
-        border-bottom: 1px solid #006eff;
+
+    .city-left-header,
+    .city-right-header {
+      height: 40px;
+      padding: 3px;
+      border: 1px solid #dcdfe6;
+
+      .el-input {
+        width: 300px;
       }
     }
-  }
-  .tip_box {
-    background: #e5f0ff;
-    padding: 8px 10px;
-    margin-bottom: 15px;
-    border-radius: 2px;
-    border: 1px solid #97c7ff;
-    line-height: 20px;
-    color: #003b80;
-  }
-  .demo-table-expand {
-    font-size: 0;
-  }
-  .demo-table-expand label {
-    width: 90px;
-    color: #99a9bf;
-  }
-  .demo-table-expand .el-form-item {
-    margin-right: 0;
-    margin-bottom: 0;
-    width: 50%;
-  }
-  .el-form-item {
-    margin-bottom: 0;
-  }
-  .content {
-    padding: 20px;
-    .operation {
-      margin-bottom: 10px;
-    }
-    .search {
-      overflow: hidden;
-      padding: 10px 0;
-      .search-left {
-        float: left;
-        .searchBox {
-          display: inline-block;
-        }
-      }
-      .search-right {
-        float: right;
-        margin-top: 10px;
-        :hover {
-          cursor: pointer;
-        }
-        i {
-          padding: 0 3px;
-        }
-      }
-    }
-    .cam-pag {
-      padding: 10px 0;
+
+    .city-right-header {
       display: flex;
-      justify-content: flex-end;
     }
-  }
-  .magnifier {
-    right: 30px;
-    top: 6px;
-    position: absolute;
-  }
-  .tc-15-search .tc-15-btn.search {
-    position: absolute;
-    border-top-left-radius: 0;
-    border-bottom-left-radius: 0;
-    width: 28px !important;
-    right: 1px;
-    border: none;
-    height: 28px;
-    top: 1px;
-    z-index: 99;
-  }
-  .mobile {
-    font-size: 120%;
-    cursor: pointer;
-    margin-right: 10px;
-  }
-  .message {
-    cursor: pointer;
-    font-size: 120%;
-  }
-  .subs {
-    text-align: center;
-    padding-right: 20px;
-    float: left;
-  }
-  .explain {
-    width: 96%;
-    font-size: 12px;
-    padding: 10px 30px 10px 20px;
-    vertical-align: middle;
-    color: #003b80;
-    border: 1px solid #97c7ff;
-    border-radius: 2px;
-    background: #e5f0ff;
-    position: relative;
-    box-sizing: border-box;
-    margin-left: auto;
-    margin-right: auto;
-  }
-  .explain p {
-    line-height: 1.5;
-    margin-bottom: 8px;
-  }
-  .cam_button {
-    height: 40px;
-    width: 96%;
-    margin: 10px auto;
-  }
-  .cam-lt {
-    float: left;
-  }
-  .head-container {
-    position: relative;
-    float: right;
-  }
-  .head-container .gear {
-    cursor: pointer;
-    font-size: 140%;
-    color: #888888;
-    margin: 2px 0 0 5px;
-  }
-  .letter {
-    margin-bottom: 30px;
-    width: 100%;
-    margin-top: 20px;
-  }
-  .receive {
-    text-align: center;
-    display: inline-block;
-    padding-right: 34px;
-  }
-  .number {
-    display: inline-block;
-  }
-  .cam_button {
-    position: relative;
-  }
-  .suo {
-    position: absolute;
-  }
-  .title {
-    width: 100%;
-    font-size: 12px;
-    padding: 10px 30px 10px 20px;
-    vertical-align: middle;
-    color: #003b80;
-    border: 1px solid #97c7ff;
-    border-radius: 2px;
-    background: #e5f0ff;
-    position: relative;
-    -webkit-box-sizing: border-box;
-    box-sizing: border-box;
-    margin-left: auto;
-    margin-right: auto;
-  }
-  .el-submenu {
-    width: 100%;
-    margin: 0 auto;
-    border: 1px solid #dddddd;
-    border-bottom: 0;
-  }
-  .el-menu {
-    display: inline-block;
-    height: 300px;
-    width: 500px;
-    overflow: auto;
-  }
-  .bor {
-    margin: 0;
-    width: 100%;
-    height: 30px;
-    line-height: 30px;
-    padding-left: 5%;
-    border-top: 1px solid #dddddd;
-  }
-  .block {
-    float: right;
-    margin-top: 10px;
-    padding-right: 20px;
-  }
-  .tab-top {
-    height: 56px;
-    line-height: 56px;
-    border: 1px solid #dddddd;
-    border-bottom: 0;
-    padding: 0 20px;
-  }
-  .btn {
-    margin-top: 20px;
-    text-align: center;
-  }
-  .container {
-    width: 96%;
-    height: 270px;
-    min-height: 360px;
-    margin: 10px auto 0;
-    background: #fff;
-    padding: 20px;
-    p.title,
-    p.explain {
-      text-align: center;
-      line-height: 20px;
-      font-size: 16px;
-      color: #000;
-      font-weight: 700;
-    }
-    p.explain {
-      font-size: 12px;
-      color: #ccc;
-      margin-top: 10px;
-      line-height: 16px;
-      color: #666;
-    }
-    .abs {
-      display: inline-block;
-      width: 100px;
-      height: 300px;
-      text-align: center;
-    }
-    .container-left {
-      position: relative;
-      width: 44%;
-      display: inline-block;
-    }
-    .ifier {
-      position: absolute;
-      font-size: 130%;
-      right: 2%;
-      top: 8%;
-    }
-  }
-}
-</style>
 
+    .scrollbar-change {
+      height: 350px;
+      width: 100%;
+      background-color: #fff;
+      border-radius: 5px;
+    }
+
+    .el-scrollbar__wrap {
+      overflow-x: hidden;
+    }
+
+    .city-middle {
+      padding: 60px 20px;
+
+      .middle-left {
+        display: block;
+        margin-top: 10px;
+        margin-left: 0;
+      }
+
+      .middle-right {
+        display: block;
+        margin-right: 0;
+      }
+
+      .middle-left,
+      .middle-right {
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        padding: 0;
+      }
+    }
+
+    .left-select-all {
+      float: right;
+      margin: 10px 7px 0 0;
+    }
+
+    .clear-select-all {
+      float: right;
+      margin: 10px 7px 0 0;
+      font-size: 14px;
+      color: #0000ff;
+      cursor: pointer;
+    }
+
+    .el-radio-group {
+      font-size: 14px;
+      margin: 13px auto;
+      float: left;
+    }
+  }
+
+  .Cam {
+    .top {
+      height: 45px;
+      line-height: 45px;
+      margin-bottom: 20px;
+      padding: 0 20px;
+      background: #fff;
+
+      .title-left {
+        font-size: 14px;
+        font-weight: bolder;
+      }
+
+      .title-right {
+        float: right;
+
+        span:hover {
+          color: #006eff;
+          border-bottom: 1px solid #006eff;
+        }
+      }
+    }
+
+    .tip_box {
+      background: #e5f0ff;
+      padding: 8px 10px;
+      margin-bottom: 15px;
+      border-radius: 2px;
+      border: 1px solid #97c7ff;
+      line-height: 20px;
+      color: #003b80;
+    }
+
+    .demo-table-expand {
+      font-size: 0;
+    }
+
+    .demo-table-expand label {
+      width: 90px;
+      color: #99a9bf;
+    }
+
+    .demo-table-expand .el-form-item {
+      margin-right: 0;
+      margin-bottom: 0;
+      width: 50%;
+    }
+
+    .el-form-item {
+      margin-bottom: 0;
+    }
+
+    .content {
+      padding: 20px;
+
+      .operation {
+        margin-bottom: 10px;
+      }
+
+      .search {
+        overflow: hidden;
+        padding: 10px 0;
+
+        .search-left {
+          float: left;
+
+          .searchBox {
+            display: inline-block;
+          }
+        }
+
+        .search-right {
+          float: right;
+          margin-top: 10px;
+
+          :hover {
+            cursor: pointer;
+          }
+
+          i {
+            padding: 0 3px;
+          }
+        }
+      }
+
+      .cam-pag {
+        padding: 10px 0;
+        display: flex;
+        justify-content: flex-end;
+      }
+    }
+
+    .magnifier {
+      right: 30px;
+      top: 6px;
+      position: absolute;
+    }
+
+    .tc-15-search .tc-15-btn.search {
+      position: absolute;
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+      width: 28px !important;
+      right: 1px;
+      border: none;
+      height: 28px;
+      top: 1px;
+      z-index: 99;
+    }
+
+    .mobile {
+      font-size: 120%;
+      cursor: pointer;
+      margin-right: 10px;
+    }
+
+    .message {
+      cursor: pointer;
+      font-size: 120%;
+    }
+
+    .subs {
+      text-align: center;
+      padding-right: 20px;
+      float: left;
+    }
+
+    .explain {
+      width: 96%;
+      font-size: 12px;
+      padding: 10px 30px 10px 20px;
+      vertical-align: middle;
+      color: #003b80;
+      border: 1px solid #97c7ff;
+      border-radius: 2px;
+      background: #e5f0ff;
+      position: relative;
+      box-sizing: border-box;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .explain p {
+      line-height: 1.5;
+      margin-bottom: 8px;
+    }
+
+    .cam_button {
+      height: 40px;
+      width: 96%;
+      margin: 10px auto;
+    }
+
+    .cam-lt {
+      float: left;
+    }
+
+    .head-container {
+      position: relative;
+      float: right;
+    }
+
+    .head-container .gear {
+      cursor: pointer;
+      font-size: 140%;
+      color: #888888;
+      margin: 2px 0 0 5px;
+    }
+
+    .letter {
+      margin-bottom: 30px;
+      width: 100%;
+      margin-top: 20px;
+    }
+
+    .receive {
+      text-align: center;
+      display: inline-block;
+      padding-right: 34px;
+    }
+
+    .number {
+      display: inline-block;
+    }
+
+    .cam_button {
+      position: relative;
+    }
+
+    .suo {
+      position: absolute;
+    }
+
+    .title {
+      width: 100%;
+      font-size: 12px;
+      padding: 10px 30px 10px 20px;
+      vertical-align: middle;
+      color: #003b80;
+      border: 1px solid #97c7ff;
+      border-radius: 2px;
+      background: #e5f0ff;
+      position: relative;
+      -webkit-box-sizing: border-box;
+      box-sizing: border-box;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .el-submenu {
+      width: 100%;
+      margin: 0 auto;
+      border: 1px solid #dddddd;
+      border-bottom: 0;
+    }
+
+    .el-menu {
+      display: inline-block;
+      height: 300px;
+      width: 500px;
+      overflow: auto;
+    }
+
+    .bor {
+      margin: 0;
+      width: 100%;
+      height: 30px;
+      line-height: 30px;
+      padding-left: 5%;
+      border-top: 1px solid #dddddd;
+    }
+
+    .block {
+      float: right;
+      margin-top: 10px;
+      padding-right: 20px;
+    }
+
+    .tab-top {
+      height: 56px;
+      line-height: 56px;
+      border: 1px solid #dddddd;
+      border-bottom: 0;
+      padding: 0 20px;
+    }
+
+    .btn {
+      margin-top: 20px;
+      text-align: center;
+    }
+
+    .container {
+      width: 96%;
+      height: 270px;
+      min-height: 360px;
+      margin: 10px auto 0;
+      background: #fff;
+      padding: 20px;
+
+      p.title,
+      p.explain {
+        text-align: center;
+        line-height: 20px;
+        font-size: 16px;
+        color: #000;
+        font-weight: 700;
+      }
+
+      p.explain {
+        font-size: 12px;
+        color: #ccc;
+        margin-top: 10px;
+        line-height: 16px;
+        color: #666;
+      }
+
+      .abs {
+        display: inline-block;
+        width: 100px;
+        height: 300px;
+        text-align: center;
+      }
+
+      .container-left {
+        position: relative;
+        width: 44%;
+        display: inline-block;
+      }
+
+      .ifier {
+        position: absolute;
+        font-size: 130%;
+        right: 2%;
+        top: 8%;
+      }
+    }
+  }
+
+</style>

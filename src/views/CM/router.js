@@ -4,7 +4,7 @@ import Router from 'vue-router'
 Vue.use(Router)
 
 export default new Router({
-    mode: 'history',
+    // mode: 'history',
     base: process.env.BASE_URL,
     redirect: {
         name: 'CVM'
@@ -53,7 +53,7 @@ export default new Router({
             path: '/CLBload', // 负载均衡
             name: 'CLBload',
             component: () =>
-                import ( /* webpackChunkName: "CVM" */ './CLBload/index.vue'),
+                import ( /* webpackChunkName: "CLBload" */ './CLBload/index.vue'),
             meta: {
                 keepAlive: true
             }
@@ -62,7 +62,7 @@ export default new Router({
             path: '/CLBloaddetails', // 负载均衡详情监控
             name: 'CLBloaddetails',
             component: () =>
-                import ( /* webpackChunkName: "CVM" */ './CLBload/details.vue'),
+                import ( /* webpackChunkName: "CLBload" */ './CLBload/details.vue'),
             meta: {
                 keepAlive: true
             }
@@ -94,7 +94,7 @@ export default new Router({
             path: '/Redis', // redis
             name: 'Redis',
             component: () =>
-                import ( /* webpackChunkName: "CVM" */ './redis/index.vue'),
+                import ( /* webpackChunkName: "Redis" */ './redis/index.vue'),
             meta: {
                 keepAlive: true
             }
@@ -103,7 +103,7 @@ export default new Router({
             path: '/Redisdetails', //  redis详情监控
             name: 'Redisdetails',
             component: () =>
-                import ( /* webpackChunkName: "CVM" */ './redis/details.vue'),
+                import ( /* webpackChunkName: "Redis" */ './redis/details.vue'),
             meta: {
                 keepAlive: true
             }
@@ -112,7 +112,7 @@ export default new Router({
             path: '/networkIP', // 弹性公网IP
             name: 'networkIP',
             component: () =>
-                import ( /* webpackChunkName: "CVM" */ './network/index.vue'),
+                import ( /* webpackChunkName: "networkIP" */ './network/index.vue'),
             meta: {
                 keepAlive: true
             }
@@ -121,7 +121,7 @@ export default new Router({
             path: '/networkdetails', //  弹性公网IP详情监控
             name: 'networkdetails',
             component: () =>
-                import ( /* webpackChunkName: "CVM" */ './network/details.vue'),
+                import ( /* webpackChunkName: "networkIP" */ './network/details.vue'),
             meta: {
                 keepAlive: true
             }
@@ -132,7 +132,7 @@ export default new Router({
             path: '/Private', // 专线通道
             name: 'Private',
             component: () =>
-                import ( /* webpackChunkName: "CVM" */ './Private/index.vue'),
+                import ( /* webpackChunkName: "Private" */ './Private/index.vue'),
             meta: {
                 keepAlive: true
             }
@@ -141,7 +141,7 @@ export default new Router({
             path: '/Privatedetails', //  专线通道详情监控
             name: 'Privatedetails',
             component: () =>
-                import ( /* webpackChunkName: "CVM" */ './Private/details.vue'),
+                import ( /* webpackChunkName: "Private" */ './Private/details.vue'),
             meta: {
                 keepAlive: true
             }
@@ -150,7 +150,7 @@ export default new Router({
             path: '/Physics', // 物理专线
             name: 'Physics',
             component: () =>
-                import ( /* webpackChunkName: "CVM" */ './Physics/index.vue'),
+                import ( /* webpackChunkName: "Physics" */ './Physics/index.vue'),
             meta: {
                 keepAlive: true
             }
@@ -159,7 +159,7 @@ export default new Router({
             path: '/Physicsdetails', //  物理专线详情监控
             name: 'Physicsdetails',
             component: () =>
-                import ( /* webpackChunkName: "CVM" */ './Physics/details.vue'),
+                import ( /* webpackChunkName: "Physics" */ './Physics/details.vue'),
             meta: {
                 keepAlive: true
             }
@@ -259,7 +259,7 @@ export default new Router({
             path: '/overview', // 监控概览
             name: 'overview',
             component: () =>
-                import ( /* webpackChunkName: "objectStorage" */ './overview/overview.vue'),
+                import ( /* webpackChunkName: "overview" */ './overview/overview.vue'),
             meta: {
                 keepAlive: true
             }
@@ -269,7 +269,7 @@ export default new Router({
             path: '/Template', //  触发条件模板
             name: 'Template',
             component: () =>
-                import ( /* webpackChunkName: "objectStorage" */ './Template/Template.vue'),
+                import ( /* webpackChunkName: "Template" */ './Template/Template.vue'),
             meta: {
                 keepAlive: true
             }
@@ -279,7 +279,7 @@ export default new Router({
             path: '/Toconfigure', //     告警配置
             name: 'Toconfigure',
             component: () =>
-                import ( /* webpackChunkName: "objectStorage" */ './Toconfigure/Toconfigure.vue'),
+                import ( /* webpackChunkName: "Toconfigure" */ './Toconfigure/Toconfigure.vue'),
             meta: {
                 keepAlive: true
             }
@@ -289,7 +289,7 @@ export default new Router({
             path: '/History', //       告警历史
             name: 'History',
             component: () =>
-                import ( /* webpackChunkName: "objectStorage" */ './History/History.vue'),
+                import ( /* webpackChunkName: "History" */ './History/History.vue'),
             meta: {
                 keepAlive: true
             }
@@ -299,7 +299,7 @@ export default new Router({
             path: '/flow', //       流量监控
             name: 'flow',
             component: () =>
-                import ( /* webpackChunkName: "objectStorage" */ './flow/flow.vue'),
+                import ( /* webpackChunkName: "flow" */ './flow/flow.vue'),
             meta: {
                 keepAlive: true
             }
@@ -309,7 +309,7 @@ export default new Router({
             path: '/EventCenter', //       事件中心
             name: 'EventCenter',
             component: () =>
-                import ( /* webpackChunkName: "objectStorage" */ './EventCenter/EventCenter.vue'),
+                import ( /* webpackChunkName: "EventCenter" */ './EventCenter/EventCenter.vue'),
             meta: {
                 keepAlive: true
             }
@@ -319,7 +319,7 @@ export default new Router({
             path: '/Dashboard', //       Dashboard
             name: 'Dashboard',
             component: () =>
-                import ( /* webpackChunkName: "objectStorage" */ './Dashboard/Dashboard.vue'),
+                import ( /* webpackChunkName: "Dashboard" */ './Dashboard/Dashboard.vue'),
             meta: {
                 keepAlive: true
             }
@@ -329,7 +329,7 @@ export default new Router({
             path: '/Custom', //       自定义监控
             name: 'Custom',
             component: () =>
-                import ( /* webpackChunkName: "objectStorage" */ './Custom/Custom.vue'),
+                import ( /* webpackChunkName: "Custom" */ './Custom/Custom.vue'),
             meta: {
                 keepAlive: true
             }
@@ -339,7 +339,7 @@ export default new Router({
             path: '/Casegrouping', //           实例分组
             name: 'Casegrouping',
             component: () =>
-                import ( /* webpackChunkName: "objectStorage" */ './Casegrouping/Casegrouping.vue'),
+                import ( /* webpackChunkName: "Casegrouping" */ './Casegrouping/Casegrouping.vue'),
             meta: {
                 keepAlive: true
             }

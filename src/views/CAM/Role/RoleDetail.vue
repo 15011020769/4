@@ -48,14 +48,11 @@
                 @selection-change="handleSelectionChangePolicies"
                 :data="rolePolicies"
                 height="300"
-                :row-style="{height:0}"
-                :cell-style="{padding:'5px 10px'}"
-                :header-cell-style="{height:'20px',padding:'0px 10px'}"
                 style="width: 100%" >
                 <el-table-column type="selection" width="29"></el-table-column>
                 <el-table-column prop="PolicyName" label="策略名">
                   <template slot-scope="scope">
-                    <el-button @click="first_handleClick(scope)" type="text" size="small" >{{scope.row.PolicyName}}</el-button>
+                    <el-button @click="first_handleClick(scope.row)" type="text" size="small" >{{scope.row.PolicyName}}</el-button>
                   </template>
                 </el-table-column>
                 <el-table-column align="center">
@@ -69,7 +66,7 @@
                         <el-dropdown-item
                           v-for="item in optionPolicies"
                           :key="item.value"
-                          :command="item.label"
+                          :command="item"
                         >{{item.label}}</el-dropdown-item>
                       </el-dropdown-menu>
                     </el-dropdown>
@@ -100,7 +97,7 @@
                     @size-change="handleSizeChange"
                     @current-change="handleCurrentChange"
                     :current-page.sync="currentPage2"
-                    :page-sizes="[10, 20, 50, 100, 200, 300, 400]"
+                    :page-sizes="[10, 20, 50, 100, 200]"
                     :page-size="rpPolicies"
                     layout="sizes, prev, pager, next"
                     :total="TotalNum"
@@ -270,7 +267,7 @@ export default {
           label: '自定义策略'
         },
         {
-          value: '表示',
+          value: 'QCS',
           label: '预设策略'
         }
       ],
@@ -285,13 +282,13 @@ export default {
       selTotalNum: 0,
       roleServeCarrier: [],
       checkedRoleServeCarrier: [],
-      Relievesure_dialogVisible: false
+      Relievesure_dialogVisible: false,
+      rolePolicyType: ''
 
     }
   },
   mounted() {
     this.roleId = this.$route.query.RoleId
-    console.log(this.roleId)
     this.init()
   },
   methods: {
@@ -328,13 +325,13 @@ export default {
           _this.roleCarrier.push(PolicyDocument.statement[0].principal.service)
           resInfo.PolicyDocument = PolicyDocument.statement[0].principal.service
         }
-        console.log(_this.roleCarrier)
         this.roleInfo = resInfo
       }).catch(error => {
       });
     },
     // 获取角色策略
     getRolePolicy() {
+      this.selTotalNum = 0
       let url = "cam2/ListAttachedRolePolicies";
       let paramsList = {
         Action: "ListAttachedRolePolicies",
@@ -342,9 +339,11 @@ export default {
         Page: this.pagePolicies,
         Rp: this.rpPolicies,
         RoleId: this.roleId
-      };
+      }
+      if(this.rolePolicyType != '') {
+        paramsList['PolicyType'] = this.rolePolicyType
+      }
       this.axios.post(url, paramsList).then(res => {
-        this.selTotalNum = 0
         this.rolePolicies = res.Response.List
         this.TotalNum = res.Response.TotalNum
       }).catch(error => {
@@ -364,21 +363,19 @@ export default {
     relievePolicy(paramsRelieve) {
       let url = "cam2/DetachRolePolicy"
       this.axios.post(url, paramsRelieve).then(res => {
-        console.log(res)
         this.getRolePolicy() // 重新加载
       }).catch(error => {
-          console.log(error)
       })
     },
     // 批量解除策略按钮启禁用
     handleSelectionChangePolicies (val) {
       if (val != '') {
         this.roleSelPolicies = val
+        this.selTotalNum = val.length
         this.displayPolicies = false
       } else {
         this.displayPolicies = true
       }
-      this.selTotalNum = this.roleSelPolicies.length
     },
     // 批量解除绑定到策略的实体
     relieveRolePolicies() {
@@ -427,12 +424,21 @@ export default {
     // 关联角色策略
     attachRolePolicies() {
       this.$refs.transferPolicies.attachRolePolicies()
-      setTimeout(this.getRolePolicy(), 1000)
       this.dialogVisiblePolicies = false
+      this.getRolePolicy()
     },
     // 关闭关联策略dialog
     handleClosePolicy() {
       this.dialogVisiblePolicies = false
+    },
+    first_handleClick(obj) {
+      debugger
+      this.$router.push({
+        path: '/StrategyDetail',
+        query: {
+          policy: obj
+        }
+      });
     },
     icon_click () {
       this.input_show = true
@@ -487,8 +493,11 @@ export default {
     Relieve_user () {
       this.Relieve_dialogVisible = true
     },
+    // 详情页面，角色策略列表策略类型切换查询
     handleCommand (command) {
-      this.tableTitle = command
+      this.tableTitle = command.label
+      this.rolePolicyType = command.value
+      this.getRolePolicy()
     },
     // 每页条数
     handleSizeChange (val) {

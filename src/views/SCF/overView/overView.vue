@@ -50,41 +50,8 @@
       <div class="modelchart">
         <h3>使用统计</h3>
         <div>
-         <!--<el-select class="selectAddress" v-model="valueAddress" placeholder="请选择" filterable>
-            <el-option
-              v-for="item in address"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            ></el-option>
-          </el-select>-->
           <el-input class="addressName" readonly="readonly" v-model="addressIpt"></el-input>
           <XTimeX v-on:switchData="GetDat" :classsvalue='value'></XTimeX>
-         <!-- <el-button-group>
-            <el-button @click="thisTime(1)">实时</el-button>
-            <el-button @click="thisTime(2)">近24小时</el-button>
-            <el-button @click="thisTime(3)">近七天</el-button>
-          </el-button-group>
-          <el-date-picker
-            class="newDataTime"
-            v-model="value2"
-            type="datetimerange"
-            range-separator="至"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期"
-            align="right"
-          ></el-date-picker>
-          <span>
-            粒度：
-            <el-select class="selectTime" v-model="value" placeholder="请选择" filterable>
-              <el-option
-                v-for="item in selectTime"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-              ></el-option>
-            </el-select>
-          </span>-->
         </div>
         <div class="chartShowCon">
           <div class="chartShowTit">
@@ -119,7 +86,7 @@
               </el-button>
             </el-button-group>
           </div>
-          <div class="chartCon" id="echartsShow" ref="chartY"></div>
+         
           <div class="chartNum newClear">
             <span>函数{{newData}}TOP 10统计</span>
             <span>
@@ -139,6 +106,23 @@
               style="width: 100%"
               class="funDataTable"
             >
+             <div class="chartCon" id="echartsShow" ref="chartY">
+            <el-table-column prop="DataPoints" width="550">
+          <template slot-scope="scope">
+            <p v-if="scope.row.DataPoints[0].Values.length==0">暂无数据</p>
+            <div class="echart" v-if="scope.row.DataPoints[0].Values.length!=0">
+              <echart-line
+                id="diskEchearrts-line"
+                :time="scope.row.DataPoints[0].Timestamps | UpTime"
+                :opData="scope.row.DataPoints[0].Values"
+                :scale="3"
+                :period="period"
+                :xdata="false"
+              ></echart-line>
+            </div>
+          </template>
+        </el-table-column>
+          </div>
               <el-table-column prop="FunctionName" label="函数名"></el-table-column>
               <el-table-column prop="Namespace" label="命名空间"></el-table-column>
               <el-table-column prop="dataNum" label="数据指标"></el-table-column>
@@ -151,8 +135,9 @@
 </template>
 
 <script>
-import echarts from "echarts";
-import XTimeX from '@/components/public/TimeXK';
+  import moment from "moment";
+  import XTimeX from "@/components/public/TimeX";
+  import echartLine from "@/components/public/echars-line";
 import { SCF_DETAILS,All_MONITOR,OVER_VIEW,USER_MONTH_USAGE,USER_YESTERDAY_USAGE } from '@/constants'
 export default {
   data() {
@@ -172,43 +157,7 @@ export default {
       type: "1",
       value: "",
       valueAddress: "",
-     /* address: [
-        {
-          value: "1",
-          label: "北京"
-        },
-        {
-          value: "2",
-          label: "北京"
-        },
-        {
-          value: "3",
-          label: "北京"
-        },
-        {
-          value: "4",
-          label: "北京"
-        }
-      ],*/
       newData: "调用次数",
-     /* selectTime: [
-        {
-          value: "time1",
-          label: "一分钟"
-        },
-        {
-          value: "time2",
-          label: "五分钟"
-        },
-        {
-          value: "time3",
-          label: "一小时"
-        },
-        {
-          value: "time4",
-          label: "一天"
-        }
-      ],*/
       value2: "",
       changeColor: "",
       //统计图下的列表
@@ -233,9 +182,18 @@ export default {
     };
   },
   components: {
-    XTimeX
+     echartLine,
+      XTimeX
   },
   methods: {
+     GetDat(data) {
+       console.log(data)
+        this.period = data[0];
+        this.Start_End = data[1];
+        this.value = data[2];
+      },
+
+
     //函数数量
     GetOverView(){
       let params = {
@@ -264,7 +222,7 @@ export default {
           this.topList.outflow=res.Response.Outflow;
         })
     },
-    //本月调用数、本月资源量、本月输出量
+    //昨日用户使用
     GetUserYesterdayUsage(){
       let params = {
         Action: "GetUserYesterdayUsage",
@@ -279,31 +237,36 @@ export default {
           this.topList.youtflow=res.Response.Outflow;
         })
     },
-    //
+    //获取数据
     GetDat(data) {
         this.period = data[0];
         this.Start_End = data[1];
         this.value = data[2]
-        const metricNArr = [
-          'CPUUsage',
-          'CPULoadAvg',
-          'MemUsed',
-          'MemUsage',
-          'TcpCurrEstab',
-          'lanOuttraffic',
-          'lanIntraffic',
-          'lanOutpkg',
-          'lanInpkg',
-          'WanOuttraffic',
-          'WanIntraffic',
-          'AccOuttraffic',
-          'WanOutpkg',
-          'WanInpkg'
-        ];
+        let metricNArr = '';
+        // const metricNArr = [
+        //   "Duration",
+        // "Invocation",
+        // "Error",
+        // "ConcurrentExecutions", //111
+        // "ConfigMem",
+        // "FunctionErrorPercentage", //111
+        // "Http2xx", //111
+        // "Http432", //11
+        // "Http433", //11
+        // "Http434", //11
+        // "Http4xx", //11
+        // "Mem", //11
+        // "MemDuration",
+        // "OutFlow",
+        // "ServerErrorPercentage", //11
+        // "Syserr", //11
+        // "Throttle"
+        // ];
         this.tableData = []
-        for (let i = 0; i < metricNArr.length; i++) {
-          this.Obtain(metricNArr[i]);
-        }
+        // for (let i = 0; i < metricNArr.length; i++) {
+        //   this.Obtain(metricNArr[i]);
+        // }
+        
         if (this.MetricName) {
           this.getModality(this.MetricName)
         }
@@ -312,16 +275,23 @@ export default {
       Obtain(metricN) {
         const param = {
           Version: '2018-07-24',
-          Region: this.$cookie.get('regionv2'),
+          Region: this.$cookie.get('regionv2'),//'ap-guangzhou',
           Namespace: 'QCE/SCF_V2',
           MetricName: metricN,
-          'Instances.0.Dimensions.0.Name': 'InstanceId',
-          'Instances.0.Dimensions.0.Value': this.ID,
-          StartTime: this.Start_End.StartTIme,
-          EndTime: this.Start_End.EndTIme,
+        "Instances.0.Dimensions.0.Name": "functionName",
+        "Instances.0.Dimensions.0.Value": this.ID,
+        "Instances.0.Dimensions.1.Name": "version",
+        "Instances.0.Dimensions.1.Value": this.ID,
+        Period: this.period,
+        StartTime: this.Start_End.StartTIme,
+        EndTime: this.Start_End.EndTIme
         };
-        this.axios.post('monitor2/GetMonitorData', param).then((data) => {
-          this.tableData.push(data.Response);
+        this.axios.post(All_MONITOR, param).then((data) => {
+          this.tableData = []
+          console.log(data)
+          // this.tableData.push(data.Response.DataPoints[0].Values);
+          // console.log(this.tableData)
+
         });
       },
       getModality(MetricName) {
@@ -330,14 +300,15 @@ export default {
           Region: this.$cookie.get('regionv2'),
           Namespace: 'QCE/SCF_V2',
           MetricName: MetricName,
-          'Instances.0.Dimensions.0.Name': 'functionName',
-          'Instances.0.Dimensions.0.Value': this.functionName,
-          StartTime: this.Start_End.StartTIme,
-          EndTime: this.Start_End.EndTIme,
+        "Instances.0.Dimensions.0.Name": "functionName",
+        "Instances.0.Dimensions.0.Value": this.ID,
+        Period: this.period,
+        StartTime: this.Start_End.StartTIme,
+        EndTime: this.Start_End.EndTIme
         };
-        this.axios.post('monitor2/GetMonitorData', param).then((data) => {
-          this.timeData = data.Response.DataPoints[0].Timestamps
-          this.jingData = data.Response.DataPoints[0].Values
+        this.axios.post(All_MONITOR, param).then((data) => {
+          this.timeData = data.Response.DataPoints[0].Timestamps;
+          this.jingData = data.Response.DataPoints[0].Values;
         });
       },
       // 模态框
@@ -346,151 +317,138 @@ export default {
         this.dialogVisible = true;
         this.getModality(this.MetricName)
       },
-    /*thisTime(thisTime) {
-      var ipt1 = document.querySelector(".newDataTime input:nth-child(2)");
-      var ipt2 = document.querySelector(".newDataTime input:nth-child(4)");
-      const end = new Date();
-      const start = new Date();
-      if (thisTime == "1") {
-        start.setTime(start.getTime() - 3600 * 1000);
-      } else if (thisTime == "2") {
-        start.setTime(start.getTime() - 3600 * 1000 * 24);
-      } else if (thisTime == "3") {
-        start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
-      }
-      ipt1.value = start
-        .toLocaleString("chinese", { hour12: false })
-        .replace(/\//g, "-");
-      ipt2.value = end
-        .toLocaleString("chinese", { hour12: false })
-        .replace(/\//g, "-");
-    },*/
     btnClick(clickNode) {
       this.type = clickNode;
       if (clickNode == "1") {
         this.newData = "调用次数";
+        var metricNArr='Invocation'
+        this.Obtain(metricNArr)
       } else if (clickNode == "2") {
         this.newData = "外网出流量";
+        var metricNArr='OutFlow'
+        this.Obtain(metricNArr)
       }else if (clickNode == "3") {
         this.newData = "运行内存";
+        var metricNArr='Mem'
+        this.Obtain(metricNArr)
       }else if (clickNode == "4") {
         this.newData = "运行时间";
+        var metricNArr='Duration'
+        this.Obtain(metricNArr)
       } else if (clickNode == "5") {
         this.newData = "错误次数";
+        var metricNArr='Error'
+        this.Obtain(metricNArr)
       } else if (clickNode == "6") {
         this.newData = "并发执行个数";
+        var metricNArr='ConcurrentExecutions'
+        this.Obtain(metricNArr)
       } else if (clickNode == "7") {
         this.newData = "受限次数";
+        var metricNArr='Throttle'
+        this.Obtain(metricNArr)
       }
     },
-    initChart() {
-      this.chart = echarts.init(document.getElementById("echartsShow"));
-      // 把配置和数据放这里
-      this.chart.setOption({
-        color: ["#3398DB"],
-        tooltip: {
-          trigger: "axis",
-          axisPointer: {
-            // 坐标轴指示器，坐标轴触发有效
-            type: "shadow"
-          }
-        },
-        grid: {
-          left: "3%",
-          right: "4%",
-          bottom: "3%",
-          containLabel: true
-        },
-        xAxis: [
-          {
-            type: "category",
-            data: ["1", "2", "3", "4", "5", "6", "7"],
-            axisTick: {
-              alignWithLabel: true
-            }
-          }
-        ],
-        yAxis: [
-          {
-            type: "value"
-          }
-        ],
-        series: [
-          {
-            name: "直接访问",
-            type: "line",
-            barWidth: "60%",
-            data: [50, 100, 120, 200, 300, 60, 70]
-          }
-        ]
-      });
-    }
+    // initChart(date) {
+    //   this.chart = echarts.init(document.getElementById("echartsShow"));
+    //   // 把配置和数据放这里
+    //   this.chart.setOption({
+    //     color: ["#3398DB"],
+    //     tooltip: {
+    //       trigger: "axis",
+    //       axisPointer: {
+    //         // 坐标轴指示器，坐标轴触发有效
+    //         type: "shadow"
+    //       }
+    //     },
+    //     grid: {
+    //       left: "3%",
+    //       right: "4%",
+    //       bottom: "3%",
+    //       containLabel: true
+    //     },
+    //     xAxis: [
+    //       {
+    //         type: "category",
+    //         data: [1,2,3,4,5],
+    //         axisTick: {
+    //           alignWithLabel: true
+    //         }
+    //       }
+    //     ],
+    //     yAxis: [
+    //       {
+    //         type: "value"
+    //       }
+    //     ],
+    //     series: [
+    //       {
+    //         name: "直接访问",
+    //         type: "line",
+    //         barWidth: "60%",
+    //         data: date
+    //       }
+    //     ]
+    //   });
+    // }
   },
     filters: {
       UpName(value) {
-        if (value === 'lanOuttraffic') {
-          return (value = '内网出带宽');
-        }
-        if (value === 'lanIntraffic') {
-          return (value = '内网入带宽');
-        }
-        if (value === 'lanOutpkg') {
-          return (value = '内网出包量');
-        }
-        if (value === 'lanInpkg') {
-          return (value = '内网入包量');
-        }
-        if (value === 'WanOuttraffic') {
-          return (value = '外网出带宽');
-        }
-        if (value === 'WanIntraffic') {
-          return (value = '外网入带宽');
-        }
-        if (value === 'AccOuttraffic') {
-          return (value = '外网出流量');
-        }
-        if (value === 'WanOutpkg') {
-          return (value = '外网出包量');
-        }
-        if (value === 'WanInpkg') {
-          return (value = '外网入包量');
-        }
-        if (value === 'CPUUsage') {
-          return (value = 'CPU使用率');
-        }
+        if (value === "Duration") {
+        return (value = "运行时间");
+      }
+      if (value === "Invocation") {
+        return (value = "调用次数");
+      }
+      if (value === "Error") {
+        return (value = "调用错误次数");
+      }
+      if (value === "ConcurrentExecutions") {
+        return (value = "并发执行次数");
+      }
+      if (value === "ConfigMem") {
+        return (value = "配置内存");
+      }
+      if (value === "FunctionErrorPercentage") {
+        return (value = "函数错误率");
+      }
+      if (value === "Http2xx") {
+        return (value = "正确调用次数");
+      }
+      if (value === "Http432") {
+        return (value = "资源超过限制");
+      }
+      if (value === "Http433") {
+        return (value = "函数执行超时");
+      }
+      if (value === "Http434") {
+        return (value = "内存超过限制");
+      }
 
-        if (value === 'CPULoadAvg') {
-          return (value = 'CPU平均负载');
-        }
-        if (value === 'MemUsed') {
-          return (value = '内存使用量');
-        }
-        if (value === 'MemUsage') {
-          return (value = '内存利用率');
-        }
-        if (value === 'TcpCurrEstab') {
-          return (value = 'TCP连接数');
-        }
-        if (value === '') {
-          return (value = '');
-        }
-      },
-      UpTitle(value) {
-        if (value === 'tcp_curr_estab') {
-          return (value = '处于 ESTABLISHED 状态的 TCP 连接数量，依赖监控组件安装采集');
-        }
-        if (value === 'cpu_usage') {
-          return (value = 'CPU利用率是通过CVM子机内部监控组件采集上报，数据更加精准');
-        }
-        if (value === 'cpu_loadavg') {
-          return (value = '1分钟内CPU平均负载，取 /proc/loadavg 第一列数据（windows操作系统无此指标），依赖监控组件安装采集');
-        }
-        if (value === 'mem_used') {
-          return (value = '使用的内存量，不包括系统缓存和缓存区占用内存，依赖监控组件安装采集');
-        }
-        if (value === 'mem_usage') {
-          return (value = '用户实际使用的内存量与总内存量之比，不包括缓冲区与系统缓存占用的内存');
-        }
+      if (value === "Http4xx") {
+        return (value = "函数错误次数");
+      }
+      if (value === "Invocation") {
+        return (value = "函数调用次数");
+      }
+      if (value === "Mem") {
+        return (value = "运行内存");
+      }
+      if (value === "MemDuration") {
+        return (value = "时间内存");
+      }
+      if (value === "OutFlow") {
+        return (value = "外网出流量");
+      }
+      if (value === "ServerErrorPercentage") {
+        return (value = "平台错误率");
+      }
+      if (value === "Syserr") {
+        return (value = "系统内部错误次数");
+      }
+      if (value === "Throttle") {
+        return (value = "函数运行受限次数");
+      }
       },
       UpTime(value) {
 
@@ -509,7 +467,7 @@ export default {
     if (this.tableData == "") {
       document.querySelector(".chartTable").innerHTML = "暂无数据";
     }
-    this.initChart();
+    // this.initChart(this.tableData);
     this.GetOverView();
     this.GetUserMonthUsage();
     this.GetUserYesterdayUsage();

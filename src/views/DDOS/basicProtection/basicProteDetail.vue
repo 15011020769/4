@@ -8,7 +8,7 @@
       <div class="basicCenter">
         <div class="basicCenterOne">
           <p><span class="pOne">黑洞触发阈值</span><span>2 Gbps(当触发黑洞会使云主机服务中断2小时)</span></p>
-          <p>
+          <!-- <p>
             <span class="pOne">CC防护</span>
             <span>
               <el-switch
@@ -26,7 +26,7 @@
               </el-select>
             </span>
             <span>当http请求数超过设定值时，触发CC防护。</span>
-          </p>
+          </p> -->
         </div>
         <div class="basicCenterTwo">
           <el-tabs v-model="activeName" @tab-click="handleClick">
@@ -115,7 +115,9 @@ export default {
     ccAttack:ccAttack
   },
   created(){
-    this.instance = this.$route.query.instance;
+    localStorage.setItem("ddosAttack",this.$route.query.instance)
+    this.instance = JSON.parse(this.$route.query.instance);
+    console.log(this.instance)
   },
   methods:{
     handleClick(tab, event) {

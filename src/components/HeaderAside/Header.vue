@@ -6,26 +6,26 @@
       </el-menu-item>
       <el-menu-item index="2" @mouseenter.native="Show">
         <!-- 产品中心 -->
-        <div>{{$t("COM.COM.center")}}</div>
+        <div>{{$t("COM.center")}}</div>
       </el-menu-item>
       <!-- 定价 -->
-      <el-menu-item index="10">{{$t("COM.COM.price")}}</el-menu-item>
+      <el-menu-item index="10">{{$t("COM.price")}}</el-menu-item>
       <!-- 文档中心 -->
-      <el-menu-item index="3">{{$t("COM.COM.document")}}</el-menu-item>
+      <el-menu-item index="3">{{$t("COM.document")}}</el-menu-item>
       <!-- 用户中心 -->
       <el-submenu index="6" class="right-item user-info">
-        <template slot="title">{{$t("COM.COM.userCenter")}}</template>
+        <template slot="title">{{$t("COM.userCenter")}}</template>
         <!-- 费用中心 -->
-        <el-menu-item index="6-2" class="count-li">{{$t("COM.COM.bill")}}</el-menu-item>
+        <el-menu-item index="6-2" class="count-li">{{$t("COM.bill")}}</el-menu-item>
         <!-- 消息中心 -->
-        <el-menu-item index="6-6" class="count-li">{{$t("COM.COM.info")}}</el-menu-item>
+        <el-menu-item index="6-6" class="count-li">{{$t("COM.info")}}</el-menu-item>
         <!-- 返回 -->
-        <el-menu-item index="6-4" class="count-li">{{$t("COM.COM.back")}}</el-menu-item>
+        <el-menu-item index="6-4" class="count-li">{{$t("COM.back")}}</el-menu-item>
         <!-- 退出 -->
-        <el-menu-item index="6-3" class="count-li">{{$t("COM.COM.h")}}</el-menu-item>
+        <el-menu-item index="6-3" class="count-li">{{$t("COM.h")}}</el-menu-item>
       </el-submenu>
       <!-- 控制台 -->
-      <el-menu-item index="8" class="right-item">{{$t("COM.COM.console")}}</el-menu-item>
+      <el-menu-item index="8" class="right-item">{{$t("COM.console")}}</el-menu-item>
     </el-menu>
 
     <transition name="hehe">
@@ -37,7 +37,9 @@
 </template>
 
 <script>
-import { clearLoginInfo } from '@/utils'
+import {
+  clearLoginInfo
+} from '@/utils'
 import productCenter from './ProductCenter'
 export default {
   data() {
@@ -157,14 +159,25 @@ export default {
 
       // 返回
       if (key === '6-4') {
-        // 内测中，敬请期待！
-        this.$message('内测中，敬请期待！');
+        let params = {
+          "QcloudUin": this.$cookie.get('uin')
+        }
+        this.axios
+          .post(`${process.env.VUE_APP_adminUrl}ttaifucloud/account/manage/forword`, params)
+          .then(data => {
+            console.log(data)
+            if (data.Data.RetCode === '00') {
+              window.location.href = data.Data.url
+            } else {
+              this.$message.error('返回異常，請重試');
+            }
+          })
       }
 
       // 退出
       if (key === '6-3') {
         // '确定进行[退出]操作?', '提示'
-        this.$confirm(this.$t("COM.COM.hintContent"), this.$t("COM.COM.hintTitle"), {
+        this.$confirm(this.$t("COM.hintContent"), this.$t("COM.hintTitle"), {
           // 确定
           confirmButtonText: '確定',
           // 取消
@@ -197,6 +210,7 @@ export default {
     }
   }
 }
+
 </script>
 
 <style lang="scss" scoped>
@@ -221,9 +235,11 @@ export default {
       border: 0;
     }
   }
+
   ::v-deep .is-active {
     border-bottom: 0 solid #fff !important;
   }
+
   .logo {
     width: 230px;
     text-align: left;
@@ -238,6 +254,7 @@ export default {
     &:hover {
       background-color: #2c303a !important;
     }
+
     &:focus {
       border-bottom: 0;
     }
@@ -251,11 +268,13 @@ export default {
     ::v-deep .el-submenu__title {
       margin-right: 20px !important;
       border-bottom: 0 solid #fff !important;
+
       &:hover {
         background-color: rgb(61, 65, 75) !important;
       }
     }
   }
+
   .PRO-style {
     width: 68%;
     height: 470px;
@@ -269,13 +288,16 @@ export default {
     left: 200px;
   }
 }
+
 .count-li {
   text-align: left;
   padding-left: 20px !important;
+
   &:hover {
     background-color: #3d414b !important;
   }
 }
+
 .span-read {
   display: inline-block;
   height: 16px;
@@ -294,6 +316,7 @@ export default {
 .el-menu--popup {
   min-width: 138px !important;
 }
+
 .el-menu--horizontal {
   border-bottom: 0 solid #fff !important;
 }

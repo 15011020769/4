@@ -28,7 +28,7 @@
                 <!-- {{projectDetail.KeyState}} -->
                 {{keyList.KeyState=="PendingDelete"?'于'+timestampToTime(projectDetail.DeletionDate)+'彻底删除':filterState(keyList.KeyState)}}
               </span>&nbsp;
-              <a href="#" :style="keyList.KeyState=='Disabled' || keyList.KeyState=='PendingImport' || keyList.KeyState=='PendingDelete'?'display:none':'display:inline-block'" @click="startKms(keyList,$event)" >禁用密钥</a>
+              <a href="#" :style="keyList.KeyState=='Disabled' || keyList.KeyState=='PendingImport' || keyList.KeyState=='PendingDelete'?'display:none':'display:inline-block'" @click="startKms(keyList,$event)">禁用密钥</a>
               <a href="#" :style="keyList.KeyState=='Enabled' || keyList.KeyState=='PendingImport' || keyList.KeyState=='PendingDelete'?'display:none':'display:inline-block'" @click="startKms(keyList,$event)">启用密钥</a>
               <a href="#" :style="keyList.KeyState=='Enabled' || keyList.KeyState=='PendingImport' || keyList.KeyState=='Disabled'?'display:none':'display:inline-block'" @click="openDelete(keyList,$event)">取消删除</a>
             </p>
@@ -36,11 +36,11 @@
             <p><span>创建时间</span><span>{{projectDetail.CreateTime}}</span></p>
             <p><span>创建者</span><span>{{keyList.Owner}}</span></p>
             <p><span>轮换状态</span>
-             
+
               <span :style="keyList.KeyRotationEnabled==true?'display:none':'{display:inline-block;color: #ff9d00 ;}'">已禁用</span>
               <span :style="projectDetail.KeyState=='待导入' || keyList.KeyState=='PendingDelete'?'display:none':'{display:inline-block;}'" v-if="keyList.KeyRotationEnabled">已启用</span>
               <span :style=" projectDetail.KeyState=='待导入'?'display:none':'display:inline-block'">每年自动轮换&nbsp;</span>
-              <a href="#" v-if="!keyList.KeyRotationEnabled" :style=" projectDetail.KeyState=='待导入'?'display:none':'display:inline-block'" :class=" keyList.KeyState=='PendingDelete'?'atclor':''" @click="startChange(keyList,$event)">启用轮换</a>
+              <a href="#" v-if="!keyList.KeyRotationEnabled" :style=" projectDetail.KeyState=='待导入'?'display:none':'display:inline-block'" :class=" keyList.KeyState=='PendingDelete' || keyList.Origin == 'EXTERNAL'?'atclor':''" @click="startChange(keyList,$event)">启用轮换</a>
               <a href="#" v-if="keyList.KeyRotationEnabled" @click="startChange(keyList,$event)">禁用轮换</a>
             </p>
             <p><span>描述信息</span><span>{{keyList.Description}}</span><i class="el-icon-edit" @click="newDescription"></i></p>
@@ -56,16 +56,20 @@
                 <el-button type="primary" @click="changeDescriptionSure">确 定</el-button>
               </span>
             </el-dialog>
-           <LstopChange :isShow="dialogModelChange" :content="doalogModelBox" @parentByClick="childrenShow" @startSure="startSure" @stopSure="stopSure" />
-           <LstartKms :isShow="dialogModelKms" :content="doalogModelBox1" @parentByClick="childrenShow1" @startKmsSure="startKmsSure" @stopKmsSure="stopKmsSure" />
-           <LopenDelete :isShow="dialogModelDelete" :content="doalogModelBox2" @parentByClick="childrenShow2" @openDeleteSure="openDeleteSure" @closeDeleteSure="closeDeleteSure" />
+            <LstopChange :isShow="dialogModelChange" :content="doalogModelBox" @parentByClick="childrenShow" @startSure="startSure" @stopSure="stopSure" />
+            <LstartKms :isShow="dialogModelKms" :content="doalogModelBox1" @parentByClick="childrenShow1" @startKmsSure="startKmsSure" @stopKmsSure="stopKmsSure" />
+            <LopenDelete :isShow="dialogModelDelete" :content="doalogModelBox2" @parentByClick="childrenShow2" @openDeleteSure="openDeleteSure" @closeDeleteSure="closeDeleteSure" />
+          </div>
         </div>
-        </div>
-        <div class="projectDetailOne" v-if="keyList.KeyState == 'PendingImport'?keyStatus=true:keyStatus=false">
+        <div class="projectDetailOne" v-if="keyList.Origin == 'EXTERNAL'|| ishowkms==false?keyStatus=true:keyStatus=false">
           <h2>密钥材料</h2>
           <div class="detailList">
             <p><span>密钥来源</span><span>{{projectDetail.Origin}}</span></p>
-            <p><span>密钥材料</span><span><a href="#" @click="dialogModel3=true">导入密钥材料</a></span></p>
+            <p v-if='keyList.KeyState=="PendingImport"?true:false'><span>密钥材料</span><span><a href="#" @click="dialogModel3=true">导入密钥材料</a></span></p>
+            <div v-if='keyList.KeyState=="Enabled"||keyList.KeyState=="Disabled" ||keyList.KeyState=="PendingDelete"?true:false'>
+              <p><span>密钥材料</span><span><a href="#" :class=" keyList.KeyState=='PendingDelete' || keyList.KeyState=='Disabled'?'atclor':''" @click="dialogModel3=true" >重新导入</a>&nbsp;&nbsp;&nbsp;<a href="#" :class=" keyList.KeyState=='PendingDelete'?'atclor':''" @click="dialogModel4=true">删除密钥材料</a></span></p>
+              <p><span>过期时间</span><span><span style="color: #000;width: auto;">{{timestampToTime(keyList.ValidTo)}}</span></span></p>
+            </div>
             <el-dialog class="changeNameModel" title="导入密钥材料" :visible.sync="dialogModel3" width="30%" :before-close="handleClose3">
               <div class="dialogModelConT">
                 <div class="TopStepDownload" v-if="thisStepOne">
@@ -111,7 +115,7 @@
                   <div class="labelCheckTwo newClear">
                     <div class="newClear">
                       <span class="labelCheckText">加密密钥材料</span>
-                      <span><input class="choseFileText" type="text" v-model="PlaintextRead" placeholder="还未选择文件" readonly /><a href="#" class="chooseFile"><span>选择文件</span><input type="file" @change="PlaintextReadHande"></a></span>
+                      <span><input class="choseFileText" type="text" v-model="PlaintextRead" placeholder="还未选择文件" readonly /><a href="#" class="chooseFile"><span>选择文件</span><input type="file" @change="PlaintextReadHande" ref="inputer"></a></span>
                     </div>
                     <div class="newClear">
                       <span class="labelCheckText">导入令牌</span>
@@ -144,15 +148,36 @@
                     <p class="stepOne step"><span class="stepCir">3</span><span class="stepText">导入状态</span></p>
                   </div>
                   <div class="labelCheckTwo newClear">
-
+                    <p v-if="ishowkms" style="text-align: center;padding: 50px;"><i class="el-icon-circle-check iconys"></i>秘钥成功导入</p>
+                    <p v-if="!ishowkms" style="text-align: center;padding: 50px;"><i class="el-icon-circle-close iconys"></i>秘钥导入失败，请返回上一步重试！</p>
                   </div>
                   <div class="botBtn">
                     <el-button type="primary" @click="prevTwo">上一步</el-button>
-                    <!-- <el-button @click="stepSure" :disabled="true">确定</el-button> -->
+                    <el-button @click="dialogModel3=false" :disabled="!ishowkms==false?false:true">确定</el-button>
                   </div>
                 </div>
               </div>
             </el-dialog>
+
+            <el-dialog class="changeNameModel" title="删除密钥材料" :visible.sync="dialogModel4" width="30%" :before-close="handleClose4">
+              <div class="dialogModelConT">
+                <div class="TopStepDownload" v-if="thisStepOne">
+
+                  <div class="tipBlue">
+                    温馨提示：密钥材料将从KMS中删除，请确保您已经保管该密钥材料副本！
+                  </div>
+                  <div class="labelCheck newClear">
+                    <div class="newClear">确定删除该密钥材料么？</div>
+
+                  </div>
+                  <div class="botBtn">
+                    <el-button @click="dialogModel4 = false">取 消</el-button>
+                    <el-button type="primary" @click="deletekms">确定</el-button>
+                  </div>
+                </div>
+              </div>
+            </el-dialog>
+
           </div>
         </div>
         <div class="projectDetailThree newClear">
@@ -176,8 +201,7 @@
             </div>
           </div>
         </div>
-        
-          
+
       </div>
     </div>
   </div>
@@ -187,7 +211,7 @@ import moment from 'moment'
 import LstopChange from './LstopChange'
 import LstartKms from './LstartKms'
 import LopenDelete from './LopenDelete'
-import { Des_KMS,UP_NAME,UP_DESC,Encrypt,Decrypt,GET_CMK,ImportKey} from "@/constants";
+import { Des_KMS, UP_NAME, UP_DESC, Encrypt, Decrypt, GET_CMK, ImportKey,DEL_KMS } from "@/constants";
 export default {
   data() {
     return {
@@ -197,6 +221,7 @@ export default {
       dialogModel1: false,//修改名称模态框
       dialogModel2: false,//修改描述模态框
       dialogModel3: false,//导入密钥材料模态框
+      dialogModel4: false,//导入密钥材料模态框
       changeName: '',//新的名称
       descriptionNew: "",//新的描述
       thisType: 1,
@@ -226,6 +251,10 @@ export default {
       dialogModelKms: false,//是否启用密钥弹框
       dialogModelDelete: false,//是否计划删除
       dialogModelOpenDelete: false,//计划删除如果是已启用时候的弹框
+      ishowkms: true,//密钥材料显示
+      EncryptedKeyMaterial1: '',//加密秘钥材料参数
+      ImportToken1: '',//导入令牌参数
+
     }
   },
   components: {
@@ -234,10 +263,10 @@ export default {
     LopenDelete: LopenDelete
   },
   created() {
-    this.GetList()
+    this.GetList();
   },
   methods: {
-    GetList(){
+    GetList() {
       this.projectDetail = JSON.parse(sessionStorage.getItem("projectId"));
       this.projectDetail.KeyState == "已禁用" || this.projectDetail.KeyState == "PendingDelete" ? this.thisType = "0" : 3
       // console.log(this.projectDetail)
@@ -248,7 +277,6 @@ export default {
       };
       this.axios.post(Des_KMS, params).then(res => {
         this.keyList = res.Response.KeyMetadata;
-        console.log(this.keyList)
       });
     },
     //修改名称关闭按钮
@@ -262,6 +290,10 @@ export default {
     //导入密钥材料关闭按钮
     handleClose3() {
       this.dialogModel3 = false;
+    },
+    //删除密钥材料
+    handleClose4() {
+      this.dialogModel4 = false;
     },
     //修改名称按钮
     changeNameHand() {
@@ -288,11 +320,10 @@ export default {
       this.dialogModelKms = true;
       let params = [scopeRow.Alias, scopeRow.KeyId, e.target.innerHTML]
       this.doalogModelBox1 = params;
-      console.log(this.doalogModelBox1)
     },
     //是否计划删除
     openDelete(scopeRow, e) {
-     
+
       if (scopeRow.KeyState == "Enabled") {
         this.dialogModelOpenDelete = true;
       } else {
@@ -332,8 +363,6 @@ export default {
     //计划删除确定按钮
     openDeleteSure(deleteShow) {
       this.dialogModelDelete = deleteShow[0]
-      // console.log(deleteShow[1])
-      //this.outTime = deleteShow[1]
     },
     //取消删除确定按钮
     closeDeleteSure(deleteShow) {
@@ -342,7 +371,6 @@ export default {
     //修改密钥名称确定按钮
     changeNameSure() {
       let params = {
-        Action: "UpdateAlias",
         Version: '2019-01-18',
         Region: 'ap-taipei',
         Alias: this.changeName,
@@ -356,14 +384,12 @@ export default {
     //修改密钥描述确定按钮
     changeDescriptionSure() {
       let params = {
-        // Action:"UpdateKeyDescription",
         Version: '2019-01-18',
         Region: 'ap-taipei',
         Description: this.descriptionNew,
         KeyId: this.projectDetail.KeyId
       };
       this.axios.post(UP_DESC, params).then(res => {
-        // console.log(res)
         this.keyList.Description = this.descriptionNew;
         this.dialogModel2 = false;
       })
@@ -434,32 +460,64 @@ export default {
 
     //密钥参数下载
     downloadTxt1() {
-       let params = {
+      let params = {
         Version: '2019-01-18',
         Region: 'ap-taipei',
         KeyId: this.projectDetail.KeyId,
         WrappingAlgorithm: this.thisAddSuan,
         WrappingKeySpec: this.thisSuanType
       };
+      //获取导入主密钥（CMK）材料的参数
       this.axios.post(GET_CMK, params).then(res => {
         this.GetParameters = res.Response
-        console.log(this.GetParameters)
         this.downLoadText1 = this.GetParameters.ImportToken
         this.downLoadText2 = this.GetParameters.PublicKey
         this.exportRaw('ImportToken' + '.txt', this.downLoadText1)
-        this.exportRaw('wrappingKey' + '.txt', this.downLoadText2)
+        this.exportRaw('public_key' + '.base64', this.downLoadText2)
         var README = ''
-        README+='算法类型：'+this.thisSuanType+'\n'+
-        '加密算法：'+this.thisAddSuan+'\n'+
-        '加密公钥文件：wrappingKey'+'\n'+
-        '导入令牌文件：ImportToken'+'\n'+
-        '密钥导入材料过期时间：'+this.timestampToTime(this.GetParameters.ParametersValidTo)
+        README += '算法类型：' + this.thisSuanType + '\n' +
+          '加密算法：' + this.thisAddSuan + '\n' +
+          '加密公钥文件：public_key' + '\n' +
+          '导入令牌文件：ImportToken' + '\n' +
+          '密钥导入材料过期时间：' + this.timestampToTime(this.GetParameters.ParametersValidTo)
         this.exportRaw('README' + '.txt', README)
-
       })
-      
-    },
 
+    },
+     //第二步的下一步按钮\导入密钥按钮
+    nextStepTwo() {
+      this.thisStepOne = false;
+      this.thisStepTwo = false;
+      let params = {
+        Version: '2019-01-18',
+        Region: 'ap-taipei',
+        EncryptedKeyMaterial: sessionStorage.getItem("EncryptedKeyMaterial1"),
+        ImportToken: sessionStorage.getItem("ImportToken1"),
+        KeyId: this.projectDetail.KeyId,
+        ValidTo:this.selectTime
+      };
+
+      if (this.selectTime == '0') {
+        params['ValidTo'] = '0'
+      } else {
+        params['ValidTo'] = Date.parse(moment(this.selectTime).format('YYYY-MM-DD')) / 1000
+      }
+      this.axios.post(ImportKey, params).then(res => {
+        if (res.Response.Error !== undefined) {
+          this.$message({
+            showClose: true,
+            message: res.Response.Error.Message,
+            type: 'error'
+          });
+           this.ishowkms = false
+        }else{
+          this.ishowkms = true
+          this.keyStatus = true
+          this.GetList();
+        }
+      })
+      this.thisStepThree = true;
+    },
     //下载文件函数
     fakeClick(obj) {
       var ev = document.createEvent("MouseEvents");
@@ -480,31 +538,6 @@ export default {
       this.thisStepOne = false;
       this.thisStepThree = false;
       this.thisStepTwo = true;
-    },
-    //第二步的下一步按钮\导入密钥按钮
-    nextStepTwo() {
-
-      this.thisStepOne = false;
-      this.thisStepTwo = false;
-      let params = {
-        Version: '2019-01-18',
-        Region: 'ap-taipei',
-        EncryptedKeyMaterial: this.GetParameters.PublicKey,
-        ImportToken: this.GetParameters.ImportToken,
-        KeyId: this.GetParameters.KeyId,
-        // ValidTo:this.selectTime
-      };
-      if (this.selectTime == '0') {
-        params['ValidTo'] = '0'
-      } else {
-        params['ValidTo'] = Date.parse(moment(this.selectTime).format('YYYY-MM-DD')) / 1000
-      }
-      console.log(params)
-      this.axios.post(ImportKey, params).then(res => {
-        console.log(res)
-
-      })
-      this.thisStepThree = true;
     },
     //第二步的上一步按钮
     prevOne() {
@@ -528,27 +561,80 @@ export default {
         this.selectTime = '0'
       }
     },
+    // 删除秘钥材料
+    deletekms() {
+       let params = {
+        Version: '2019-01-18',
+        Region: 'ap-taipei',
+        KeyId: this.projectDetail.KeyId,
+      };
+      this.axios.post(DEL_KMS, params).then(res => {
+        // console.log(res)
+        if (res.Response.Error !== undefined) {
+          this.$message({
+            showClose: true,
+            message: res.Response.Error.Message,
+            type: 'error'
+          });
+        }
+        this.dialogModel4 = false;
+        this.GetList();
+      })
+    },
     //加密密钥材料change
     PlaintextReadHande(e) {
       this.PlaintextRead = e.target.files[0].name;
-      //console.log(e.target.files[0].name)
+      const selectedFile = e.target.files[0];
+      // 读取文件名
+      const name = selectedFile.name
+      // 读取文件大小
+      const size = selectedFile.size
+      // FileReader对象，h5提供的异步api，可以读取文件中的数据。
+      const reader = new FileReader()
+      // readAsText是个异步操作，只有等到onload时才能显示数据。
+      reader.readAsText(selectedFile)
+      reader.onload = function () {
+        //当读取完成后回调这个函数,然后此时文件的内容存储到了result中,直接操作即可
+        this.EncryptedKeyMaterial1 = this.result
+        sessionStorage.setItem("EncryptedKeyMaterial1", this.result)
+        console.log(this.EncryptedKeyMaterial1)
+      }
     },
+
     //导入令牌change
     exportChange(e) {
       this.exportRead = e.target.files[0].name;
+      const selectedFile = e.target.files[0]
+      const reader = new FileReader()
+      // 文件内容载入完毕之后的回调。
+      reader.onload = function (e) {
+        this.ImportToken1 = e.target.result
+        sessionStorage.setItem("ImportToken1", e.target.result)
+      }
+      reader.readAsText(selectedFile)
     },
     //时间
     timestampToTime(timestamp) {
-      var date = new Date(timestamp * 1000);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
-      var Y = date.getFullYear() + '-';
-      var M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '-';
-      var D = date.getDate() + ' ';
-      var h = date.getHours() + ':';
-      var m = date.getMinutes() + ':';
-      var s = date.getSeconds();
-      return Y + M + D + h + m + s;
+      if (timestamp == '0') {
+          return '不过期'
+        } else {
+          let date = new Date(timestamp * 1000);
+          let y = date.getFullYear();
+          let MM = date.getMonth() + 1;
+          MM = MM < 10 ? ('0' + MM) : MM;
+          let d = date.getDate();
+          d = d < 10 ? ('0' + d) : d;
+          let h = date.getHours();
+          h = h < 10 ? ('0' + h) : h;
+          let m = date.getMinutes();
+          m = m < 10 ? ('0' + m) : m;
+          let s = date.getSeconds();
+          s = s < 10 ? ('0' + s) : s;
+          return y + '-' + MM + '-' + d + ' ' + h + ':' + m + ':' + s;
+        }
+      
     },
-     //状态处理
+    //状态处理
     filterState(state) {
       if (state == 'Enabled') {
         state = '已启用'
@@ -558,7 +644,7 @@ export default {
         state = '已禁用'
       }
       return state;
-    },
+    }
   }
 }
 </script>
@@ -909,5 +995,10 @@ export default {
 .atclor:hover {
   color: #bbb;
   cursor: default;
+}
+.iconys{
+    font-size: 24px;
+    vertical-align: bottom !important;
+    margin-right: 4px;
 }
 </style>

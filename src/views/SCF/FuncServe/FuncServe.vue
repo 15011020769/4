@@ -1,10 +1,10 @@
 <template>
   <div>
     <div class="topFun">
-      <span>函数服务</span>
+      <span>{{ $t('SCF.total.title') }}</span>
       <el-input class="addressName" readonly="readonly" v-model="addressIpt"></el-input>
       <div>
-        命名空间：
+        {{ $t('SCF.total.mmkj') }}
         <el-select
           class="nameSpace"
           v-model="nameSpaceValue"
@@ -339,7 +339,7 @@ export default {
     getDModelNmaeSpace() {
       let params = {
         Version: "2018-04-16",
-        Region: "ap-taipei"
+        Region: 'ap-guangzhou'//this.$cookie.get("regionv2")
       };
       this.axios.post(NAME_SPACE_LIST, params).then(res => {
         this.nameSpace = res.Response.Namespaces;
@@ -361,7 +361,7 @@ export default {
       let params = {
         // Action: "ListFunctions",
         Version: "2018-04-16",
-        Region: "ap-guangzhou"
+        Region: 'ap-guangzhou'//this.$cookie.get("regionv2")
       };
       if(this.filterConrent!=='选择资源属性进行过滤'&&this.tableDataName!==''){
         params[this.filterConrent]=this.tableDataName
@@ -393,7 +393,7 @@ export default {
        if(this.filterConrent!=='选择资源属性进行过滤'&&this.tableDataName!==''){
        this.getData()
       }else{
-        alert('请输入搜索条件')
+        this.getData()
       }
       //每次手动将数据置空,因为会出现多次点击搜索情况
       this.filterTableDataEnd = [];
@@ -492,8 +492,8 @@ export default {
       let params = {
         Action: "DeleteFunction",
         Version: "2018-04-16",
-        Region: this.$cookie.get("regionv2"),
-        FunctionName: this.deleteBegin.functionName
+        Region: 'ap-guangzhou',//this.$cookie.get("regionv2"),
+        FunctionName: this.deleteBegin.FunctionName
       };
       console.log(params.FunctionName);
       this.axios.post(SCF_DEL, params).then(res => {
@@ -513,7 +513,7 @@ export default {
     sureCopy() {
       let params = {
         Version: "2018-04-16",
-        Region: this.$cookie.get("regionv2"),
+        Region: 'ap-guangzhou',//this.$cookie.get("regionv2"),
         FunctionName: this.copyIndex2.FunctionName,
         NewFunctionName: this.newname,
         Action: "CopyFunction"
@@ -532,7 +532,7 @@ export default {
       }
       let paras = {
         Version: "2018-04-16",
-        Region: "ap-taipei"
+        Region: 'ap-guangzhou'//this.$cookie.get("regionv2")
       };
       //与库中数据数据对比，判断添加修改
       this.axios.post(NAME_SPACE_LIST, paras).then(res => {
@@ -543,7 +543,7 @@ export default {
                 //添加
                 let params = {
                   Version: "2018-04-16",
-                  Region: "ap-taipei",
+                  Region: 'ap-guangzhou',//this.$cookie.get("regionv2"),
                   Namespace: modelNameSpace[i].Name,
                   Description: modelNameSpace[i].Description
                 };
@@ -559,7 +559,7 @@ export default {
                 //更新
                 let params = {
                   Version: "2018-04-16",
-                  Region: "ap-taipei",
+                  Region: 'ap-guangzhou',//this.$cookie.get("regionv2"),
                   Namespace: modelNameSpace[i].Name,
                   Description: modelNameSpace[i].Description
                 };
@@ -581,7 +581,7 @@ export default {
     spaceDelete(spaceIndex, spaceRow) {
       let params = {
         Version: "2018-04-16",
-        Region: "ap-guangzhou",
+        Region: 'ap-guangzhou',//this.$cookie.get("regionv2"),
         Namespace: spaceRow.Name
       };
       this.axios.post(NAME_SPACE_DEL, params).then(res => {
@@ -629,7 +629,7 @@ export default {
       let params = {
         // Action: "ListFunctions",
         Version: "2018-04-16",
-        Region: this.$cookie.get("regionv2"),
+        Region: 'ap-guangzhou',//this.$cookie.get("regionv2"),
         Namespace: val
       };
       this.axios.post(SCF_LIST, params).then(res => {

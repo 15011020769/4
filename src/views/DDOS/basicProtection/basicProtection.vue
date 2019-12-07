@@ -109,7 +109,6 @@ export default {
     },
     // 搜索
     doFilter() {
-      // console.log(this.searchInputVal)
       if (this.searchInputVal != null && this.searchInputVal != ''){
         //每次手动将数据置空,因为会出现多次点击搜索情况
         this.tableDataBegin = new Array()
@@ -168,12 +167,11 @@ export default {
     },
     //跳转详情页
     toDoDetail(basicIndex,basicRow){
-      // console.log(basicIndex, basicRow)
       if(basicRow.PublicIpAddresses != undefined){
         this.$router.push({
           path: "/basicProteDetail",
           query: {
-            instance: basicRow
+            instance: JSON.stringify(basicRow)
           }
         });
       }

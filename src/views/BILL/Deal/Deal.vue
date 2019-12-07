@@ -1,8 +1,8 @@
 <template>
   <div class="Deal">
     <div class="top">
-      <span class="title-left">{{$t('BILL.BILL.Deal.title')}}</span>
-      <el-select v-model="dataForm.projectId" :placeholder="$t('BILL.BILL.Detail.allProject')" @change="getProjectListInfo()" clearable size="small" style="padding-left: 25px;">
+      <span class="title-left">{{$t('BILL.Deal.title')}}</span>
+      <el-select v-model="dataForm.projectId" :placeholder="$t('BILL.Detail.allProject')" @change="getProjectListInfo()" clearable size="small" style="padding-left: 25px;">
         <el-option v-for="item in getprojectList" :key="item.projectId" :label="item.projectName" :value="item.projectId">
         </el-option>
       </el-select>
@@ -10,49 +10,53 @@
     <div class="deal-content">
       <div class="deal-form">
         <el-form :inline="true" :model="dataForm" class="demo-form-inline" @keyup.enter.native="getDataList()">
-          <el-form-item>
-            <el-input :placeholder="$t('BILL.BILL.Deal.orderId')" clearable v-model="dataForm.orderId">
+          <el-form-item class="item-1">
+            <el-date-picker size="small" v-model="dataForm.date" type="daterange" align="right" unlink-panels range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" :picker-options="pickerOptions">
+            </el-date-picker>
+          </el-form-item>
+          <el-form-item class="item-3">
+            <el-button type="primary" icon="el-icon-download" @click="download" size="small" plain></el-button>
+          </el-form-item>
+          <el-form-item class="item-2">
+            <el-input :placeholder="$t('BILL.Deal.orderId')" size="small" clearable v-model="dataForm.orderId">
               <el-button type="primary" slot="append" icon="el-icon-search" @click="search()"></el-button>
             </el-input>
-          </el-form-item>
-          <el-form-item style="float: right;">
-            <el-button type="primary" icon="el-icon-download" @click="download" size="small" plain></el-button>
           </el-form-item>
         </el-form>
       </div>
       <div class="deal-box">
         <el-table :data="dataList" class="table-content" v-loading="dataListLoading">
-          <el-table-column prop="orderId" header-align="center" align="center" width="150" :label="$t('BILL.BILL.Deal.orderId')">
+          <el-table-column prop="orderId" header-align="center" align="center" width="150" :label="$t('BILL.Deal.orderId')">
           </el-table-column>
-          <el-table-column prop="status" header-align="center" align="center" width="120" :label="$t('BILL.BILL.Deal.status')" :formatter="formatterStatus">
+          <el-table-column prop="status" header-align="center" align="center" width="120" :label="$t('BILL.Deal.status')" :formatter="formatterStatus">
           </el-table-column>
-          <el-table-column prop="projectId" header-align="center" align="center" width="120" :label="$t('BILL.BILL.Deal.projectId')">
+          <el-table-column prop="projectName" header-align="center" align="center" width="120" :label="$t('BILL.Deal.projectId')">
           </el-table-column>
-          <el-table-column prop="goodsCategoryId" header-align="center" align="center" width="120" :label="$t('BILL.BILL.Deal.goodsCategoryId')">
+          <el-table-column prop="goodsCategoryId" header-align="center" align="center" width="120" :label="$t('BILL.Deal.goodsCategoryId')">
           </el-table-column>
-          <el-table-column prop="realTotalCost" header-align="center" align="center" width="150" :label="$t('BILL.BILL.Deal.realTotalCost')">
+          <el-table-column prop="realTotalCost" header-align="center" align="center" width="150" :label="$t('BILL.Deal.realTotalCost')">
           </el-table-column>
-          <el-table-column prop="voucherDecline" header-align="center" align="center" width="150" :label="$t('BILL.BILL.Deal.voucherDecline')">
+          <el-table-column prop="voucherDecline" header-align="center" align="center" width="150" :label="$t('BILL.Deal.voucherDecline')">
           </el-table-column>
-          <el-table-column prop="policy" header-align="center" align="center" width="120" :label="$t('BILL.BILL.Deal.policy')">
+          <el-table-column prop="policy" header-align="center" align="center" width="120" :label="$t('BILL.Deal.policy')">
           </el-table-column>
-          <el-table-column prop="price" header-align="center" align="center" width="120" :label="$t('BILL.BILL.Deal.price')">
+          <el-table-column prop="price" header-align="center" align="center" width="120" :label="$t('BILL.Deal.price')">
           </el-table-column>
-          <el-table-column prop="totalCost" header-align="center" align="center" width="120" :label="$t('BILL.BILL.Deal.totalCost')">
+          <el-table-column prop="totalCost" header-align="center" align="center" width="120" :label="$t('BILL.Deal.totalCost')">
           </el-table-column>
-          <el-table-column prop="usdCost" header-align="center" align="center" width="120" :label="$t('BILL.BILL.Deal.usdCost')">
+          <el-table-column prop="usdCost" header-align="center" align="center" width="120" :label="$t('BILL.Deal.usdCost')">
           </el-table-column>
-          <el-table-column prop="ntCost" header-align="center" align="center" width="120" :label="$t('BILL.BILL.Deal.ntCost')">
+          <el-table-column prop="ntCost" header-align="center" align="center" width="120" :label="$t('BILL.Deal.ntCost')">
           </el-table-column>
-          <el-table-column prop="month" header-align="center" align="center" width="120" :label="$t('BILL.BILL.Deal.month')">
+          <el-table-column prop="month" header-align="center" align="center" width="120" :label="$t('BILL.Deal.month')">
           </el-table-column>
-          <!-- <el-table-column prop="currency" header-align="center" align="center" width="120" :label="$t('BILL.BILL.Deal.currency')" :formatter="formatterCurrency">
+          <!-- <el-table-column prop="currency" header-align="center" align="center" width="120" :label="$t('BILL.Deal.currency')" :formatter="formatterCurrency">
           </el-table-column> -->
-          <el-table-column prop="createTime" header-align="center" align="center" width="160" :label="$t('BILL.BILL.Deal.createTime')">
+          <el-table-column prop="createTime" header-align="center" align="center" width="160" :label="$t('BILL.Deal.createTime')">
           </el-table-column>
           <el-table-column fixed="right" header-align="center" align="center" width="180" label="操作">
             <template slot-scope="scope">
-              <el-button type="text" size="small" @click="detailHandle(scope.row)">{{$t('BILL.BILL.Deal.details')}}</el-button>
+              <el-button type="text" size="small" @click="detailHandle(scope.row)">{{$t('BILL.Deal.details')}}</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -69,28 +73,55 @@
 
 <script>
 import Detail from './Dealdetail'
+import { PROJECT_LIST, BILL_LIST } from '@/constants/BILL.js'     // 获取接口
 export default {
   data() {
     return {
-      dataForm: {
+      dataForm: {       // 搜索控件
         projectId: '',
-        orderId: ''
+        orderId: '',
+        date: ''       // 时间
       },
-      dataList: [],
+      dataList: [],    // 列表数组
       getprojectList: [],   // 项目列表
-      projectName: '',
       pageIndex: 1,
       pageSize: 10,
       totalPage: 0,
-      dataListLoading: false
+      dataListLoading: true,
+      pickerOptions: {
+        shortcuts: [{
+          text: '最近一周',
+          onClick(picker) {
+            const end = new Date();
+            const start = new Date();
+            start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+            picker.$emit('pick', [start, end]);
+          }
+        }, {
+          text: '最近一个月',
+          onClick(picker) {
+            const end = new Date();
+            const start = new Date();
+            start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+            picker.$emit('pick', [start, end]);
+          }
+        }, {
+          text: '最近三个月',
+          onClick(picker) {
+            const end = new Date();
+            const start = new Date();
+            start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+            picker.$emit('pick', [start, end]);
+          }
+        }]
+      }
     }
   },
   components: {
     Detail
   },
   mounted() {
-    this.getDataList()
-    this.getProjectListInfo()
+    this.getProjectListInfo()     // 获取项目列表
   },
   methods: {
     // 获取项目名称
@@ -98,25 +129,26 @@ export default {
       // 配置默认的项目，这个接口不返回默认项目
       var defaultProject = [{
         projectId: '',
-        projectInfo: this.$t('BILL.BILL.Deal.allProject'),
-        projectName: this.$t('BILL.BILL.Deal.allProject')
+        projectInfo: this.$t('BILL.Deal.allProject'),
+        projectName: this.$t('BILL.Deal.allProject')
       }, {
         projectId: 0,
-        projectInfo: this.$t('BILL.BILL.Deal.defaultProject'),
-        projectName: this.$t('BILL.BILL.Deal.defaultProject')
+        projectInfo: this.$t('BILL.Deal.defaultProject'),
+        projectName: this.$t('BILL.Deal.defaultProject')
       }]
       var params = {
         'allList': 0
       }
-      this.axios.post(`${process.env.VUE_APP_serverUrl}account/DescribeProject`, params).then(data => {
+      this.axios.post(`${process.env.VUE_APP_serverUrl + PROJECT_LIST}`, params).then(data => {
         if (data && data.code === 0) {
           let projectArr = data.data
           this.getprojectList = defaultProject.concat(projectArr)
+          this.getDataList()      // 获取项目成功之后 获取订单列表
         } else {
           this.getprojectList = []
         }
       })
-      this.getDataList()
+      
     },
 
     // 获取数据列表
@@ -128,15 +160,25 @@ export default {
         'orderId': this.dataForm.orderId,
         'orderOwner': this.$cookie.get('uin')
       }
-      this.axios.post(`${process.env.VUE_APP_adminUrl}taifucloud/torderproduct/list`, params).then(data => {
+      this.axios.post(`${process.env.VUE_APP_adminUrl + BILL_LIST}`, params).then(data => {
         if (data && data.code === 0) {
-          this.dataList = data.page.list
+          this.dataList = []
+          let dataArr = data.page.list
           this.totalPage = data.page.totalCount
+          // 根据项目id获取name
+          dataArr.map((item1) => {
+            this.getprojectList.map((item2) => {
+              if(String(item1.projectId) === String(item2.projectId)){
+                item1.projectName = item2.projectName
+                this.dataList.push(item1)
+              }
+            })
+          })
+          this.dataListLoading = false
         } else {
           this.dataList = []
           this.totalPage = 0
         }
-        this.dataListLoading = false
       })
     },
 
@@ -148,29 +190,29 @@ export default {
     },
     formatterStatus(row, column, cellValue) {
       if (cellValue === '1') {
-        return this.$t('BILL.BILL.Deal.noPay')
+        return this.$t('BILL.Deal.noPay')
       } else if (cellValue === '2') {
-        return this.$t('BILL.BILL.Deal.paid')
+        return this.$t('BILL.Deal.paid')
       } else if (cellValue === '3') {
-        return this.$t('BILL.BILL.Deal.delivering')
+        return this.$t('BILL.Deal.delivering')
       } else if (cellValue === '4') {
-        return this.$t('BILL.BILL.Deal.delivered')
+        return this.$t('BILL.Deal.delivered')
       } else if (cellValue === '5') {
-        return this.$t('BILL.BILL.Deal.deliverFail')
+        return this.$t('BILL.Deal.deliverFail')
       } else if (cellValue === '6') {
-        return this.$t('BILL.BILL.Deal.refund')
+        return this.$t('BILL.Deal.refund')
       } else if (cellValue === '7') {
-        return this.$t('BILL.BILL.Deal.close')
+        return this.$t('BILL.Deal.close')
       } else if (cellValue === '8') {
-        return this.$t('BILL.BILL.Deal.past')
+        return this.$t('BILL.Deal.past')
       } else if (cellValue === '9') {
-        return this.$t('BILL.BILL.Deal.orderInvalid')
+        return this.$t('BILL.Deal.orderInvalid')
       } else if (cellValue === '10') {
-        return this.$t('BILL.BILL.Deal.proInvalid')
+        return this.$t('BILL.Deal.proInvalid')
       } else if (cellValue === '11') {
-        return this.$t('BILL.BILL.Deal.refuse')
+        return this.$t('BILL.Deal.refuse')
       } else if (cellValue === '12') {
-        return this.$t('BILL.BILL.Deal.paying')
+        return this.$t('BILL.Deal.paying')
       }
     },
     // formatterCurrency(row, column, cellValue) {
@@ -221,6 +263,7 @@ export default {
       this.pageIndex = val
       this.getDataList()
     },
+    // 点击详情
     detailHandle(rowData) {
       this.$nextTick(() => {
         this.$refs.Detail.init(rowData)
@@ -246,14 +289,15 @@ export default {
   .deal-content {
     padding: 0 20px;
     .deal-form {
-      float: right;
+      .item-1 {
+        float: left;
+      }
+      .item-2,
+      .item-3 {
+        float: right;
+      }
       ::v-deep .el-form-item {
         margin-bottom: 10px;
-      }
-      .el-input-group {
-        ::v-deep .el-input__inner {
-          height: 32px !important;
-        }
       }
     }
     .deal-box {
@@ -261,13 +305,13 @@ export default {
       min-height: 520px;
       clear: both;
       margin-bottom: 20px;
-      .table-content{
+      .table-content {
         min-height: 450px;
       }
-      .table-page{
+      .table-page {
         width: 100%;
         height: 70px;
-        .el-pagination{
+        .el-pagination {
           padding-top: 22px;
         }
       }

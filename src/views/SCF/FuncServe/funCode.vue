@@ -208,7 +208,7 @@ export default {
         ShowCode: "TRUE",
         Namespace: "default",
         Qualifier: "$LATEST",
-        Region: this.$cookie.get("regionv2")
+        Region: 'ap-guangzhou'//this.$cookie.get("regionv2")
       };
       let functionName = this.$route.query.functionName;
       // functionName = 'tttt'
@@ -233,7 +233,7 @@ export default {
       let params = {
         Action: "UpdateFunctionCode",
         Version: "2018-04-16",
-        Region: this.$cookie.get("regionv2"),
+        Region: 'ap-guangzhou',//this.$cookie.get("regionv2"),
         Handler: "index.main_handler"
       };
       let functionName = this.$route.query.functionName;
@@ -251,6 +251,7 @@ export default {
     inpChange(val){
       this.disinput = val
     },
+    //函数代码运行函数
     testCode() {
       // ClientContext: '{↵  "key1": "test value 1",↵  "key2": "test value 2"↵}'
       let params = {
@@ -259,7 +260,7 @@ export default {
         Namespace: "default",
         InvocationType: "Event",
         Qualifier: "$LATEST",
-        Region: this.$cookie.get("regionv2")
+        Region: 'ap-guangzhou',//this.$cookie.get("regionv2")
       };
       let functionName = this.$route.query.functionName;
       if (functionName != "" && functionName != null) {

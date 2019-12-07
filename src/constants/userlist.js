@@ -39,3 +39,9 @@ export const CREATE_USER = 'cam2/CreateGroup'
 
 //用户添加到用户组
 export const ADD_USERTOGROUP = 'cam2/AddUserToGroup'
+
+//用户组删除用户
+export const DEL_USERTOGROUP = 'cam2/RemoveUserFromGroup'
+
+//用户组关联的策略列表
+export const GROUP_POLICY = 'cam2/ListAttachedGroupPolicies'

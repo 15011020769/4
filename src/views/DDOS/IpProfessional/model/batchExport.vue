@@ -2,19 +2,18 @@
   <div>
     <div>
       <el-dialog class="dialogModel"
-        title="批量导入"
+        title="批量导出"
         :visible.sync="getIsShow2"
         width="30%"
         :before-close="handleClose">
         <div class="importAll exportAll newClear">
           <span class="importLabel">规则</span>
           <span class="importIpt">
-            <el-input type="textarea" v-model="ExportRules"/>
+            <el-input type="textarea" v-model="exportText"/>
           </span>
         </div>
         <span slot="footer" class="dialog-footer">
           <el-button @click="handleClose">关闭</el-button>
-          <!-- <el-button type="primary" @click="batchExportSure">确 定</el-button> -->
         </span>
       </el-dialog>
     </div>
@@ -23,7 +22,8 @@
 <script>
 export default {
   props:{
-    isShow2:Boolean,
+    isShow2: Boolean,
+    exportText: String,
   },
   computed:{
     getIsShow2(){

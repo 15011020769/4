@@ -28,8 +28,8 @@
             <el-button plain size="small" @click="handleDelete()">删除</el-button>
           </div>
           <div>
-            <el-input v-model="input" placeholder="支持搜索策略名称/描述/备注" size="small">
-              <i slot="suffix" class="el-input__icon el-icon-search"></i>
+            <el-input v-model="searchValue" placeholder="支持搜索策略名称/描述/备注" size="small" @keyup.enter.native="changePolicyScope">
+              <i slot="suffix" class="el-input__icon el-icon-search" @click="changePolicyScope"></i>
             </el-input>
           </div>
         </div>
@@ -37,7 +37,6 @@
           <el-table
             :data="tableData"
             height="610"
-            border
             style="width: 100%"
             :row-style="{height:0}"
             :cell-style="{padding:'5px 10px'}"
@@ -86,11 +85,11 @@
             <el-pagination
               @size-change="handleSizeChange"
               @current-change="handleCurrentChange"
-              :current-page.sync=currentPage
-              :page-sizes="[10, 20, 30, 40, 50, 60, 70, 80, 90, 100]"
-              :page-size=pageSize
+              :current-page.sync="currentPage"
+              :page-sizes="[10, 20, 50, 100, 200]"
+              :page-size="pageSize"
               layout="sizes, prev, pager, next"
-              :total=total
+              :total="total"
             ></el-pagination>
           </div>
         </div>
@@ -132,7 +131,7 @@ export default {
         }
       ],
       policyScope: 'All',
-      input: "",
+      searchValue: "",
       tableData: [],  //策略列表数据
       selectedData: [], //选择要删除的
       table_options: [
@@ -154,10 +153,10 @@ export default {
       dialogVisible: false,
       policyId: '', // 策略Id
       transferFlag: false,  //模态框强制刷新flag
-      pageSize: 20,
+      pageSize: 10,
       choiceNum: 0,
       total: 0,
-      currentPage: 1,
+      currentPage: 1
     };
   },
   created() {
@@ -167,22 +166,22 @@ export default {
     // 初始化策略列表数据（默认全部策略）
     getData () {
       var params = {
+        Action: 'ListPolicies',
         Version: '2019-01-16',
-        // Region: 'ap-taipei',
-        // Rp: '',
-        // Page: '',
-        Scope: this.policyScope,
+        Rp: this.pageSize,
+        Page: this.currentPage,
+        Scope: this.policyScope
         // Keyword: ''
       }
+      if(this.searchValue != '') {
+        params['Keyword'] = this.searchValue
+      }
       this.$axios.post('cam2/ListPolicies', params).then(res => {
-        console.log('获取策略列表成功')
-        console.log(res)
         this.tableData = res.Response.List
         this.total = res.Response.TotalNum
       })
     },
     changePolicyScope () {
-      console.log(this.policyScope)
       this.getData()
     },
     // 跳转到详情页面
@@ -214,18 +213,6 @@ export default {
       this.$refs.userTransfer.attachPolicy()
       this.dialogVisible = false
     },
-    // // 绑定策略到用户组
-    // attachGroupPolicy(params) {
-    //   this.$axios.post('cam2/AttachGroupPolicy', params).then(res  => {
-    //     console.log(res)
-    //   })
-    // },
-    // // 绑定策略到用户
-    // attachUserPolicy(params) {
-    //   this.$axios.post('cam2/AttachUserPolicy', params).then(res  => {
-    //     console.log(res)
-    //   })
-    // },
     // table标题栏选择项
     handleCommand(command) {
       console.log(command);
@@ -233,7 +220,7 @@ export default {
     },
     // 选择策略
     handleSelectionChange(data) {
-      this.selectedData = data;
+      this.selectedData = data
       this.choiceNum = data.length
     },
     // 批量删除策略
@@ -256,12 +243,12 @@ export default {
     },
     // page操作
     handleSizeChange(val) {
-      console.log(val)
       this.pageSize = val
+      this.getData()
     },
     handleCurrentChange(val) {
-      console.log(val)
       this.currentPage = val
+      this.getData()
     }
   }
 };
@@ -310,7 +297,7 @@ export default {
         background: #e5f0ff;
         position: relative;
         box-sizing: border-box;
-        max-width: 96%;
+        max-width: 100%;
         margin-bottom: 20px;
       }
       .table_opare {
@@ -322,6 +309,12 @@ export default {
         text-align: center;
       }
     }
+  }
+  .el-input__inner{
+    width: 200px;
+  }
+  .el-input__icon{
+    cursor:pointer;
   }
 }
 </style>

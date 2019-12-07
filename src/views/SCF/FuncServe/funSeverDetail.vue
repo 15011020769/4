@@ -19,7 +19,9 @@
             <div class="tabChange">
               <el-tabs class="allTabsModel" v-model="activeNameModel" @tab-click="handleClick1">
                 <el-tab-pane label="版本" name="firstModel">
-                  <div></div>
+                  <div>
+                    <p v-for="(item,index) in versionArr" :key="index">{{item}}</p>
+                  </div>
                 </el-tab-pane>
                 <el-tab-pane label="别名" name="secondModel">
                   <div>暂无别名</div>
@@ -83,15 +85,15 @@
                       <el-form-item prop="Role" label="运行角色" :required="true">
                         <span slot="label">
                           运行角色
-                          <i class="el-icon-question"></i>
+                          <!-- <i class="el-icon-question"></i> -->
                         </span>
                         <el-select v-model="functionData.Role">
-                          <el-option label="SCF默认运行角色" value="default"></el-option>
-                          <el-option label="SCF_QcsRole" value="qsrole"></el-option>
+                          <el-option label="SCF_QcsRole" value="SCF_QcsRole"></el-option>
+                          <el-option label="QCS_SCFExcuteRole" value="QCS_SCFExcuteRole"></el-option>
                         </el-select>
-                        <p class="tipContent">
+                        <!-- <p class="tipContent">
                           <span>此角色将用于授权函数运行时操作其他资源的权限。您可以</span>
-                          <a class="tipContentA">
+                          <a class="tipContentA" @click="creatRole">
                             新建角色
                             <span class="el-icon-share"></span>
                           </a>
@@ -100,7 +102,7 @@
                             修改权限
                             <span class="el-icon-share"></span>
                           </a>
-                        </p>
+                        </p> -->
                       </el-form-item>
                       <el-form-item prop="Runtime" label="运行环境">
                         <span>{{functionData.Runtime}}</span>
@@ -108,7 +110,7 @@
                       <el-form-item prop="MemorySize" label="内存" :required="true" class="intoAll">
                         <span slot="label">
                           内存
-                          <i class="el-icon-question"></i>
+                          <!-- <i class="el-icon-question"></i> -->
                         </span>
                         <el-select v-model="functionData.MemorySize">
                           <el-option label="64MB" value="64"></el-option>
@@ -134,7 +136,7 @@
                       >
                         <span slot="label">
                           超时时间
-                          <i class="el-icon-question"></i>
+                          <!-- <i class="el-icon-question"></i> -->
                         </span>
                         <el-input class="timeOutDate1" v-model="functionData.Timeout" placeholder></el-input>
                         <span>秒</span>
@@ -144,70 +146,42 @@
                       <el-form-item label="描述" prop="Description">
                         <span slot="label">
                           描述
-                          <i class="el-icon-question"></i>
+                          <!-- <i class="el-icon-question"></i> -->
                         </span>
                         <el-input type="textarea" v-model="functionData.Description" placeholder></el-input>
                         <p class="tipContent">最大支持1000个英文字母、数字、空格、逗号、句号、中文</p>
                       </el-form-item>
-                      <el-form-item label="环境变量" prop="variable">
-                        <span slot="label">
-                          环境变量
-                          <i class="el-icon-question"></i>
-                        </span>
-                        <el-table
-                          :data="functionData.Environment.Variables"
-                          size="small"
-                          border
-                          element-loading-text="Loading"
-                          highlight-current-row
-                        >
-                          <el-table-column label="key">
-                            <template slot-scope="scope">
-                              <el-form :model="functionData.Environment.Variables[scope.$index]">
-                                <el-form-item prop="nameSpaceOne">
-                                  <el-input
-                                    v-show="true"
-                                    v-model="functionData.Environment.Variables[scope.$index].key"
-                                    placeholder
-                                  />
-                                </el-form-item>
-                              </el-form>
-                            </template>
-                          </el-table-column>
-                          <el-table-column label="value">
-                            <template slot-scope="scope">
-                              <el-form
-                                ref="scope.row"
-                                :model="functionData.Environment.Variables[scope.$index]"
-                              >
-                                <el-form-item prop="nameSpaceTwo">
-                                  <el-input
-                                    v-model="functionData.Environment.Variables[scope.$index].value"
-                                    placeholder
-                                  />
-                                </el-form-item>
-                              </el-form>
-                            </template>
-                          </el-table-column>
-                          <el-table-column label="delete">
-                            <template slot-scope="scope">
-                              <el-form ref="scope.row">
-                                <el-form-item>
-                                  <el-button
-                                    class="modelDelete"
-                                    @click="spaceDelete1(scope.$index,scope.row)"
-                                  >delete</el-button>
-                                </el-form-item>
-                              </el-form>
-                            </template>
-                          </el-table-column>
-                        </el-table>
-                        <a @click="addvariable">添加环境变量</a>
-                      </el-form-item>
+                      <div class="seniorbox">
+                        <p>环境变量</p>
+                        <div>
+                          <div class="Science borderNone">
+                            <p>Key</p>
+                            <p>Value</p>
+                          </div>
+                          <div
+                            class="Science borderNone"
+                            v-for="(item,index) in ScienceArr"
+                            :key="index"
+                          >
+                            <p>
+                              <el-input v-model="item.Key" class="Scienceinput"></el-input>
+                            </p>
+                            <p>
+                              <el-input v-model="item.Value" class="Scienceinput"></el-input>
+                            </p>
+                            <p v-if="closeshow">
+                              <i class="el-icon-close closeScience" @click="CloseScience(index)"></i>
+                            </p>
+                          </div>
+                          <div class="Science">
+                            <p @click="AddScience" class="addScience">添加</p>
+                          </div>
+                        </div>
+                      </div>
                       <el-form-item label="内网访问" prop="VpcConfig">
                         <span slot="label">
                           内网访问
-                          <i class="el-icon-question"></i>
+                          <!-- <i class="el-icon-question"></i> -->
                         </span>
                         <el-switch
                           v-model="functionData.VpcConfig"
@@ -237,7 +211,7 @@
                               :key="item"
                             ></el-option>
                           </el-select>
-                          <p class="tipContent">
+                          <!-- <p class="tipContent">
                             <span>如现有的网络不合适，您可以去控制台</span>
                             <a class="tipContentA">
                               新建私有网络
@@ -248,7 +222,7 @@
                               新建子网
                               <span class="el-icon-share"></span>
                             </a>
-                          </p>
+                          </p> -->
                         </div>
                       </el-form-item>
                       <!--  <el-form-item label="标签" prop="tagLists">
@@ -360,8 +334,9 @@
                   </p>
                   <p>
                     <span>环境变量</span>
-                    <span v-show="functionData.environmentFlag"></span>
-                    <span v-show="!functionData.environmentFlag">无环境变量</span>
+                    <span v-show="functionData.Environment">
+                      {{functionData.Environment.Variables[0].Key}}={{functionData.Environment.Variables[0].Value}}</span>
+                    <span v-show="!functionData.Environment">无环境变量</span>
                   </p>
                   <p>
                     <span>所属网络</span>
@@ -500,6 +475,7 @@ export default {
   },
   data() {
     return {
+      ScienceArr: [{}],
       funNameTit: "",
       activeName: "first",
       activeNameModel: "firstModel",
@@ -594,7 +570,8 @@ export default {
         ]
       },
       selectChangeOption: "",
-      selectChangeOption1: ""
+      selectChangeOption1: "",
+      versionArr: []
     };
   },
   mounted() {
@@ -605,8 +582,30 @@ export default {
     this.init();
     this.searchVersion();
     this.getModality();
+    this.getfunction();
   },
   methods: {
+    //环境添加
+    AddScience() {
+      this.ScienceArr.push({});
+      if (this.ScienceArr.length > 1) {
+        this.closeshow = true;
+      } else {
+        this.closeshow = false;
+      }
+    },
+    //环境删除
+    CloseScience(index) {
+      this.ScienceArr.splice(index, 1);
+      if (this.ScienceArr.length > 1) {
+        this.closeshow = true;
+      } else {
+        this.closeshow = false;
+      }
+    },
+    creatRole() {
+      this.$router.push({ path: "../../CAM/Role/createProvider.vue" });
+    },
     // 获取编辑详情
     init() {
       let params = {
@@ -635,7 +634,7 @@ export default {
             _this.environmentFlag = false;
             _this.vpcConfigFlag = false;
           }
-          console.log(this.functionData);
+          console.log(this.functionData.Environment.Variables[0].Key);
         })
         .catch(error => {
           console.log(error);
@@ -647,20 +646,23 @@ export default {
       let params = {
         Action: "UpdateFunctionConfiguration",
         Version: "2018-04-16",
-        Region: this.$cookie.get("regionv2"),
+        Region: "ap-guangzhou", //this.$cookie.get("regionv2"),
         Description: this.functionData.Description,
-        // Environment: this.functionData.Environment, // 参数传递有问题，暂时屏蔽
         FunctionName: this.functionData.FunctionName,
         MemorySize: this.functionData.MemorySize,
         Role: this.functionData.Role,
         Timeout: this.functionData.Timeout //,
-        // VpcConfig: this.functionData.VpcConfig // 参数传递有问题，暂时屏蔽
       };
+      for(let i in this.ScienceArr) {
+          params['Environment.Variables.'+i+'.Key'] = this.ScienceArr[i].Key,
+          params['Environment.Variables.'+i+'.Value'] = this.ScienceArr[i].Value
+        }
       this.axios
         .post(UPD_CONFIG, params)
         .then(res => {
           console.log(res.Response);
           this.$message({ type: "success", message: "执行成功！" });
+          this.getfunction();
           this.dialogVisible2 = false;
         })
         .catch(error => {
@@ -670,7 +672,7 @@ export default {
     getfunction() {
       let params = {
         Version: "2018-04-16",
-        Region: 'ap-guangzhou',//this.$cookie.get("regionv2"),
+        Region: "ap-guangzhou", //this.$cookie.get("regionv2"),
         Action: "GetFunction"
       };
       let functionName = this.$route.query.functionName;
@@ -678,7 +680,6 @@ export default {
         params["FunctionName"] = functionName;
       }
       this.axios.post(SCF_DETAILS, params).then(res => {
-        console.log(res);
         this.triggerBoxList = res.Response.Triggers;
         for (let i = 0; i < this.triggerBoxList.length; i++) {
           this.switch1[i] = true;
@@ -737,7 +738,7 @@ export default {
       let params = {
         Action: "PublishVersion",
         Version: "2018-04-16",
-        Region: this.$cookie.get("regionv2"),
+        Region: "ap-guangzhou", //this.$cookie.get("regionv2"),
         Description: this.publishVersion.descript
       };
       let functionName = this.$route.query.functionName;
@@ -746,7 +747,10 @@ export default {
       }
       this.axios
         .post(PUBLISH_VERSION, params)
-        .then(res => {})
+        .then(res => {
+          this.init();
+          this.searchVersion();
+        })
         .catch(error => {
           console.log(error);
         });
@@ -818,12 +822,13 @@ export default {
         this.publishNewVewsion = false;
       }
     },
+    //查看函数新版本
     searchVersion() {
       let _this = this;
       let params = {
         Action: "ListVersionByFunction",
         Version: "2018-04-16",
-        Region: this.$cookie.get("regionv2")
+        Region: "ap-guangzhou" //this.$cookie.get("regionv2")
       };
       let functionName = this.$route.query.functionName;
       if (functionName != "" && functionName != null) {
@@ -832,8 +837,14 @@ export default {
       this.axios
         .post(LIST_VERSION, params)
         .then(res => {
-          _this.logData = res.Response;
-          console.log(_this.logData);
+          this.logData = res.Response.FunctionVersion;
+          var arr = [];
+          for (let i = 0; i < this.logData.length; i++) {
+            // this.switch1[i] = true;
+            arr.push(this.logData[i]);
+          }
+          this.versionArr = arr;
+          console.log(this.versionArr);
         })
         .catch(error => {
           console.log(error);
@@ -847,7 +858,7 @@ export default {
       this.centerDialogVisible = false;
       let params = {
         Version: "2018-04-16",
-        Region: this.$cookie.get("regionv2"),
+        Region: "ap-guangzhou", //this.$cookie.get("regionv2"),
         Action: "DeleteTrigger",
         TriggerName: this.childData.TriggerName,
         Type: this.childData.Type
@@ -866,7 +877,7 @@ export default {
     getModality() {
       let params = {
         Version: "2018-07-24",
-        Region: this.$cookie.get("regionv2"),
+        Region: "ap-guangzhou", //this.$cookie.get("regionv2"),
         Action: "GetMonitorData",
         Namespace: "QCE/VBC",
         MetricName: "RegionInPkg",
@@ -891,6 +902,48 @@ export default {
 };
 </script>
 <style lang="scss">
+.seniorbox {
+  display: flex;
+  margin: 20px;
+
+  ::v-deep .el-input {
+    width: 170px !important;
+  }
+
+  .Science {
+    margin-left: 20px;
+    display: flex;
+    width: 415px;
+    height: 40px;
+    border: 0.5px solid #ccc;
+
+    p {
+      color: #ccc;
+      font-weight: bold;
+      flex: 1;
+      line-height: 40px;
+      padding-left: 15px;
+    }
+  }
+
+  .closeScience {
+    cursor: pointer;
+    font-size: 24px;
+    line-height: 40px;
+  }
+
+  .addScience {
+    cursor: pointer;
+  }
+
+  .borderNone {
+    border-bottom: none;
+
+    .Scienceinput {
+      width: 165px !important;
+    }
+  }
+}
 .newClear:after {
   display: block;
   content: "";
