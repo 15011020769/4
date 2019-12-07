@@ -131,10 +131,13 @@
                         <span>描述</span>
                         <span class="funListDescspan">{{item.Describe}}</span>
                       </p>
-                      <!-- <p class="funListTags">
+                      <p class="funListTags">
                         <span>标签</span>
-                        <span>{{item.Tags}}</span>
-                      </p> -->
+                        <span v-for="(i, index) in UpTags(item.Tags)" :key="index">
+                          <el-tag type="info" size="mini">{{i}}</el-tag>
+                        </span>
+
+                      </p>
                       <p class="funListpublish">
                         <span>部署</span>
                         <span>{{item.Stars}}次</span>
@@ -200,6 +203,10 @@
       this.GetTemplateList();
     },
     methods: {
+      UpTags(value) {
+        var tagArr = value.split("|");
+        return tagArr
+      },
       backFunlist() {
         this.$router.push({
           path: "/FuncServe"
@@ -219,6 +226,7 @@
         this.axios
           .post(TEMPLATE_LIST, param)
           .then(data => {
+            console.log(data)
             this.tableDataBegin = data.Response.Demos
             this.DemoId = this.tableDataBegin[0].DemoId
             this.isactive = 0
@@ -235,7 +243,6 @@
         this.axios
           .post(TEMPLATE_DETAIL, param)
           .then(data => {
-
             this.Detaildata = data.Response
             let DataBeginDetail = JSON.parse(data.Response.DemoConfig)
 
@@ -307,18 +314,24 @@
           })
           .catch(_ => {});
       }
+    },
+    filters: {
+      //文字过滤
+
+
     }
-  };
+  }
 
 </script>
 <style lang="scss">
-  .funListDescspan{
+  .funListDescspan {
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
     width: 282px;
-    display: inline-block; 
+    display: inline-block;
   }
+
   .mainContForm input {
     height: 30px !important;
     line-height: 30px !important;
