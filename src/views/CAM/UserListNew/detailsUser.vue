@@ -61,7 +61,7 @@
             <div class="explain">
               <p>关联策略以获取策略包含的操作权限。解除策略将失去策略包含的操作权限。特别的，解除随组关联类型的策略是通过将用户从关联该策略的用户组中移出。</p>
             </div>
-            <el-button class="buttonCla" type="primary" size="small">关联策略</el-button>
+            <el-button class="buttonCla" type="primary" size="small"  @click="gotoPolicy">关联策略</el-button>
             <el-button
               class="buttonCla"
               type="primary"
@@ -90,7 +90,7 @@
             </el-table>
           </el-tab-pane>
           <el-tab-pane label="组(0)" name="second">
-            <el-button class="buttonCla" type="primary" size="small"  @click="gotoPolicy">加入到组</el-button>
+            <el-button class="buttonCla" type="primary" size="small" >加入到组</el-button>
             <el-button class="buttonCla" type="primary" size="small" :disabled="disabled" @click="removeMoreGroup">移出组</el-button>
             <el-table ref="multipleTable" :data="groupData" style="width: 100%;" @selection-change="Select">
               <el-table-column type="selection"></el-table-column>
@@ -379,7 +379,7 @@ export default {
   .details-right {
     width: 15%;
     background: skyblue;
-    margin-left: 50px;
+    margin-left: 45px;
     display: flex;
     flex-direction: column;
     box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
@@ -410,7 +410,7 @@ export default {
   width: 100%;
   position: relative;
   .tableTab {
-    width: 89%;
+    width: 88%;
     background: white;
     padding: 25px;
     box-sizing: border-box;
@@ -418,7 +418,7 @@ export default {
     position: absolute;
     top: 0;
     left: 0;
-    margin-left: 110px;
+    margin-left: 100px;
     .buttonCla {
       height: 35px;
       min-width: 24px;
