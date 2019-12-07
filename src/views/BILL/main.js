@@ -16,15 +16,15 @@ require('echarts/lib/chart/line')   // 引入折线图组件
 require('echarts/lib/component/tooltip')  // 引入提示框和title组件，图例
 Vue.prototype.$echarts = echarts
 for (let key in filters) {
-    Vue.filter(key, filters[key])
+  Vue.filter(key, filters[key])
 }
 
 Vue.config.productionTip = false
 Vue.use(ElementUI)
 Vue.use(VueCookie)
 new Vue({
-    router,
-    i18n,
-    // store,
-    render: h => h(App)
+  router,
+  i18n,
+  // store,
+  render: h => h(App)
 }).$mount('#app')
