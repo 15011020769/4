@@ -107,10 +107,9 @@
             </div>
           </el-tab-pane>
           <el-tab-pane label="CC防护" name="second">
-            <div class="mainContent">
-              <el-input class="mainConListOneIpt" placeholder="请输入要查询的ID或名称"/>
+            <div>
+              <ccProtection/>
             </div>
-            <div class="mainContent"></div>
           </el-tab-pane>
           <el-tab-pane label="DDoS高级防护策略" name="third">
             <div class="mainContent">
@@ -209,6 +208,7 @@
 <script>
 import addNewTactics from './addNewTactics'
 import ProtectConfigModel from './model/ProtectConfigModel'
+import ccProtection from './tabs/ccProtection'//cc防护模块
 export default {
   data() {
     return {
@@ -229,12 +229,12 @@ export default {
       renderFunc(h, option) {
         return <span>{ option.key } </span>;
       },//穿梭框
-      activeName:"first",
+      activeName:"first",//tab页
       filterConrent:"IP",
-      currentPage: 1,
-      pageSize: 10,
-      totalItems: 0,
-      flag: false,
+      currentPage: 1,//当前页
+      pageSize: 10,//每页数量
+      totalItems: 0,//总数量
+      flag: false,//定义一个开关
       multipleSelection: [],
       dialogVisible: false,
       dialogVisible1: false,//绑定资源弹框
@@ -258,7 +258,8 @@ export default {
   },
   components:{
     addNewTactics:addNewTactics,
-    changeModel:ProtectConfigModel
+    changeModel:ProtectConfigModel,
+    ccProtection:ccProtection,//cc防护模块
   },
   created() {
     this.getData();
@@ -268,6 +269,7 @@ export default {
       this.describeResourceList()
       this.describeDDoSPolicy()
     },
+    //写在子组件，需要传值
     getDataCC() {
       this.describeCCUrlAllow()
     },
@@ -296,7 +298,7 @@ export default {
         this.tableDataPolicy = res.Response.DDosPolicyList
       })
     },
-    // 2.1.获取CC的Url白名单
+    // 2.1.获取CC的Url白名单（cc防护改为写在子组件中，需要传值）
     describeCCUrlAllow() {
       let params = {
         Version: '2018-07-09',
