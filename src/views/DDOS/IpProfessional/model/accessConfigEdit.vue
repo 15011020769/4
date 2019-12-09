@@ -10,13 +10,13 @@
           <div class="ruleList newClear">
             <span class="ruleListLabel">业务域名</span>
             <span class="ruleListIpt">
-              <el-input v-model="RuleName"></el-input><p>注意：域名信息用于规则说明，不用作转发规则匹配</p>
+              <el-input v-model="EnidData.RuleName"></el-input><p>注意：域名信息用于规则说明，不用作转发规则匹配</p>
             </span>
           </div>
           <div class="ruleList newClear">
             <span class="ruleListLabel">转发协议</span>
             <span class="ruleListIpt">
-              <el-select v-model="Protocol" class="forwardHttp">
+              <el-select v-model="EnidData.Protocol" class="forwardHttp">
                 <el-option label="TCP" value="TCP"></el-option>
                 <el-option label="UDP" value="UDP"></el-option>
               </el-select>
@@ -25,28 +25,28 @@
           <div class="ruleList newClear">
             <span class="ruleListLabel">转发端口</span>
             <span class="ruleListIpt">
-              <el-input v-model="VirtualPort"></el-input>
+              <el-input v-model="EnidData.VirtualPort"></el-input>
             </span>
           </div>
           <div class="ruleList newClear">
             <span class="ruleListLabel">源站端口</span>
             <span class="ruleListIpt">
-              <el-input v-model="SourcePort"></el-input>
+              <el-input v-model="EnidData.SourcePort"></el-input>
             </span>
           </div>
           <div class="ruleList newClear">
             <span class="ruleListLabel">回源方式</span>
             <span class="ruleListIpt">
               <el-button-group>
-                <el-button class="BackResouse" @click="BackResouse(2)" :style="SourceType==2?'color:#006eff;border:1px solid #006eff':''">IP回源</el-button>
-                <el-button class="BackResouse" @click="BackResouse(1)" :style="SourceType==1?'color:#006eff;border:1px solid #006eff':''" :disabled="true">域名回源</el-button>
+                <el-button class="BackResouse" @click="BackResouse(2)" :style="EnidData.SourceType==2?'color:#006eff;border:1px solid #006eff':''">IP回源</el-button>
+                <el-button class="BackResouse" @click="BackResouse(1)" :style="EnidData.SourceType==1?'color:#006eff;border:1px solid #006eff':''" :disabled="true">域名回源</el-button>
               </el-button-group>
             </span>
           </div>
           <div class="ruleList newClear">
             <span class="ruleListLabel">负载均衡方式</span>
             <span class="ruleListIpt">
-              <el-button class="BackResouse" :style="LbType==1?'color:#006eff;border:1px solid #006eff':''">加权轮询</el-button>
+              <el-button class="BackResouse" :style="EnidData.LbType==1?'color:#006eff;border:1px solid #006eff':''">加权轮询</el-button>
             </span>
           </div>
           <div class="ruleList newClear" v-if="dominShow">
@@ -78,20 +78,23 @@ export default {
   props:{
     isShow3:Boolean,
     resourceId: String,
+    
   },
   data(){
     return{
       dialogVisible:'',//弹框状态
-      RuleName: 'da.com',//业务域名
+      RuleName: '',//业务域名
       Protocol: 'TCP',//转发协议，取值[TCP, UDP]
-      VirtualPort: '23',//转发端口
-      SourcePort: '23',//源站端口
+      VirtualPort: '',//转发端口
+      SourcePort: '',//源站端口
       SourceType: 2,//回源方式，取值[1(域名回源)，2(IP回源)]
       KeepTime: 0,//会话保持时间，单位秒
-      LbType:1,//负载均衡方式
+      LbType: 1,//负载均衡方式，取值[1(加权轮询)，2(源IP hash)]
+      KeepEnable: 0,//会话保持开关，取值[0(会话保持关闭)，1(会话保持开启)]
       dominShow:true,//源站IP + 权重/源站域名
-      IpResource:'10.1.2.12',//源站IP + 权重 绑定数据
+      IpResource:'',//源站IP + 权重 绑定数据
       HttpResource:'',//源站域名
+      EnidData:'',
     }
   },
   computed:{
@@ -105,14 +108,75 @@ export default {
       this.dialogVisible=false;
       this.$emit("closeEditModel",this.dialogVisible)
     },
+    init(scopeRow){
+      this.EnidData = scopeRow
+      if(this.EnidData.SourceType == 1) {//域名
+         this.dominShow=false;
+        for(let i=0; i<scopeRow.SourceList.length; i++) {
+          this.HttpResource=scopeRow.SourceList[i].Source+ '\ '+scopeRow.SourceList[i].Weight+ '\n'
+        }
+      } else if(this.EnidData.SourceType == 2) {//IP
+        this.dominShow=true;
+        // console.log(scopeRow.SourceList)
+        for(let i=0; i<scopeRow.SourceList.length; i++) {
+          this.IpResource=scopeRow.SourceList[i].Source+ '\ '+scopeRow.SourceList[i].Weight+ '\n'
+          console.log(this.IpResource)
+          
+        }
+      }
+    },
     //编辑确定按钮
     editSure(){
       this.dialogVisible=false;
       this.$emit("closeEditModel",this.dialogVisible)
+      let params = {
+        Version: '2018-07-09',
+        Business:'net',
+        Id: 'net-0000006y',
+        'Rule.RuleId':this.EnidData.RuleId,
+        'Rule.RuleName':this.EnidData.RuleName,
+        'Rule.Protocol':this.EnidData.Protocol,
+        'Rule.VirtualPort':this.EnidData.VirtualPort,
+        'Rule.SourcePort':this.EnidData.SourcePort,
+        'Rule.SourceType':this.EnidData.SourceType,
+        'Rule.LbType':this.EnidData.LbType,
+        'Rule.KeepTime':this.EnidData.KeepTime,
+        // 'Rule.SourceList.0.Source':'10.1.1.10',
+        // 'Rule.SourceList.0.Weight':'10'
+      }
+      if(this.EnidData.SourceType == 1) {//域名
+        let arr = this.EnidData.SourceList
+        for(let i=0; i<arr.length; i++) {
+          params['Rule.SourceList.'+i+'.Source'] = arr[i].Source
+          params['Rule.SourceList.'+i+'.Weight'] = arr[i].Weight
+        }
+      } else if(this.EnidData.SourceType == 2) {//IP
+        let arr = this.EnidData.SourceList
+        for(let i=0; i<arr.length; i++) {
+          params['Rule.SourceList.'+i+'.Source'] = arr[i].Source
+          params['Rule.SourceList.'+i+'.Weight'] = arr[i].Weight
+        }
+      }
+      this.axios.post('dayu2/ModifyL4Rules', params).then(res => {
+        // console.log(res)
+        if (res.Response.Error !== undefined) {
+          this.$message({
+            showClose: true,
+            message: res.Response.Error.Message,
+            type: 'error'
+          });
+        }else{
+          this.$message({
+            showClose: true,
+            message: '修改成功',
+            type: 'success'
+          });
+        }
+      })
     },
     //回源方式点击按钮
     BackResouse(thisType){
-      this.SourceType = thisType;
+      this.EnidData.SourceType = thisType;
       if(thisType=="2"){
         this.dominShow=true;
         //这块需要提示会员方式不可以修改

@@ -79,7 +79,7 @@
                     <template slot-scope="scope">
                       <el-button type="text" size="small" @click="editAccess(scope.row)">编辑</el-button>
                       <el-button type="text" size="small" @click="copyAccess(scope.row)">复制</el-button>
-                      <el-button type="text" size="small" @click="deleteAccess(scope.row)">删除</el-button>
+                      <el-button type="text" size="small" @click="deleteAccess(scope.row,scope.$index)">删除</el-button>
                     </template>
                   </el-table-column>
                 </el-table>
@@ -104,9 +104,9 @@
             <!-- 批量导出弹框 -->
             <batchExport :isShow2="dialogVisible2" :exportText='exportText' @batchExportSure="batchExportSure" @closeModelExp="closeModelExp"/>
             <!-- 编辑弹框 -->
-            <accessConfigEdit :isShow3="dialogVisible3" @closeEditModel="closeEditModel"/>
+            <accessConfigEdit :isShow3="dialogVisible3" @closeEditModel="closeEditModel" ref="addOrUpdate" />
             <!-- 复制弹框 -->
-            <accessConfigCopy :isShow4="dialogVisible4" @closeCopyModel="closeCopyModel"/>
+            <accessConfigCopy :isShow4="dialogVisible4" @closeCopyModel="closeCopyModel" ref="addOrUpdate1"/>
             <!-- 删除弹框 -->
             <el-dialog class="dialogModel"
               title="添加转发规则"
@@ -155,6 +155,7 @@ export default {
       dialogVisible3:false,//编辑弹框
       dialogVisible4:false,//复制弹框
       dialogDelete:false,//删除弹框
+      deleteIndex:''
     }
   },
   components:{
@@ -168,6 +169,12 @@ export default {
     this.describeResourceList()
     this.describleL4Rules()
   },
+  //父页面获取L4转发规则的方法
+  provide(){
+    return{
+        describleL4Rules:this.describleL4Rules
+    }
+  },
   methods:{
     // 1.1.获取资源列表
     describeResourceList(){
@@ -176,7 +183,7 @@ export default {
         Business:'net',
       }
       this.axios.post(RESOURCE_LIST, params).then(res => {
-        console.log(res)
+        // console.log(res)
       })
     },
     // 1.2.获取L4转发规则
@@ -187,7 +194,7 @@ export default {
         Id: this.resourceId
       }
       this.axios.post(L4_RULES, params).then(res => {
-        console.log(res)
+        // console.log(res)
         this.tableDataBegin = res.Response.Rules
         this.totalItems = res.Response.Total
         this.usedNum = res.Response.Total
@@ -206,12 +213,12 @@ export default {
     handleClick(){},
     //分页开始
     handleSizeChange(val) {
-      console.log(`每页 ${val} 条`);
+      // console.log(`每页 ${val} 条`);
       this.pageSize = val;
       this.handleCurrentChange(this.currentPage);
     },
     handleCurrentChange(val) {
-      console.log(`当前页: ${val}`);
+      // console.log(`当前页: ${val}`);
       this.currentPage = val;
       //需要判断是否检索
       if (!this.flag) {
@@ -240,7 +247,7 @@ export default {
     },
     //新建规则弹框确定按钮
     addRulesSure(isShowFalse){
-      console.log(isShowFalse)
+      // console.log(isShowFalse)
       this.dialogVisible=isShowFalse
     },
     //弹框关闭按钮
@@ -295,7 +302,11 @@ export default {
     },
     //编辑列表按钮
     editAccess(scopeRow){
-      console.log(scopeRow)//这块可以做数据回显，拿到的是那一行的数据
+      // console.log(scopeRow)//这块可以做数据回显，拿到的是那一行的数据  
+      this.$nextTick(() => {
+        this.$refs.addOrUpdate.init(scopeRow)
+      })
+
       this.dialogVisible3=true;
     },
     //关闭编辑弹框
@@ -306,14 +317,18 @@ export default {
     copyAccess(scopeRow){
       console.log(scopeRow)//这块可以做数据回显，拿到的是那一行的数据
       this.dialogVisible4=true;
+      this.$nextTick(() => {
+        this.$refs.addOrUpdate1.init(scopeRow)
+      })
     },
     //关闭复制弹框
     closeCopyModel(isShow){
       this.dialogVisible4=isShow;
     },
     //删除按钮
-    deleteAccess(scopeRow){
+    deleteAccess(scopeRow,index){
       this.dialogDelete=true;
+      this.deleteIndex = index
     },
     //关闭删除弹框
     handleCloseDelete(){
@@ -322,6 +337,31 @@ export default {
     //删除确定按钮
     deleteSure(){
       this.dialogDelete=false;
+      let params = {
+        Version: '2018-07-09',
+        Business:'net',
+        Id: this.resourceId,
+        'RuleIdList.0':this.tableDataBegin[this.deleteIndex].RuleId
+      }
+      // console.log(this.deleteIndex)
+      // params['RuleIdList.'+0] = this.tableDataBegin[this.deleteIndex].RuleId
+      this.axios.post('dayu2/DeleteL4Rules', params).then(res => {
+        // console.log(res)
+        if (res.Response.Error !== undefined) {
+          this.$message({
+            showClose: true,
+            message: res.Response.Error.Message,
+            type: 'error'
+          });
+        }else{
+          this.$message({
+            showClose: true,
+            message: '删除成功',
+            type: 'success'
+          });
+           this.describleL4Rules()
+        }
+      })
       // this.tableDataBegin.splice("")
     }
   }
