@@ -54,60 +54,71 @@
         </div>
       </div>
     </div>
-      <div class="tableTab">
-        <el-tabs v-model="activeName" @tab-click="handleClick">
-          <el-tab-pane label="权限(0)" name="first">
-            <div class="explain">
-              <p>关联策略以获取策略包含的操作权限。解除策略将失去策略包含的操作权限。特别的，解除随组关联类型的策略是通过将用户从关联该策略的用户组中移出。</p>
-            </div>
-            <el-button class="buttonCla" type="primary" size="small"  @click="gotoPolicy">关联策略</el-button>
-            <el-button
-              class="buttonCla"
-              type="primary"
-              size="small"
-              :disabled="disabled"
-              @click="delMoreStrateg"
-            >解除策略</el-button>
-            <el-table
-              ref="multipleTable"
-              :data="StrategyData"
-              style="width: 100%;"
-              @selection-change="Select"
-            >
-              <el-table-column type="selection" width="55"></el-table-column>
-              <el-table-column label="策略名" prop="PolicyName"></el-table-column>
-              <el-table-column label="关联类型" prop="CreateMode"></el-table-column>
-              <el-table-column label="策略类型" prop="Type">
-                <template slot-scope="scope">{{scope.row.Type == '1'?'自定义策略':'预设策略'}}</template>
-              </el-table-column>
-              <el-table-column label="关联时间" prop="AddTime"></el-table-column>
-              <el-table-column fixed="right" label="操作">
-                <template slot-scope="scope">
-                  <el-button type="text" size="small" @click="deleteStrage(scope.row.PolicyId)">解除</el-button>
-                </template>
-              </el-table-column>
-            </el-table>
-          </el-tab-pane>
-          <el-tab-pane label="组(0)" name="second">
-            <el-button class="buttonCla" type="primary" size="small" @click="addGroupUser">加入到组</el-button>
-            <el-button class="buttonCla" type="primary" size="small" :disabled="disabled" @click="removeMoreGroup">移出组</el-button>
-            <el-table ref="multipleTable" :data="groupData" style="width: 100%;" @selection-change="Select">
-              <el-table-column type="selection"></el-table-column>
-              <el-table-column label="组名称" prop="GroupName"></el-table-column>
-              <el-table-column label="关联策略" prop="GroupId"></el-table-column>
-              <el-table-column label="备注" prop="Remark"></el-table-column>
-              <el-table-column fixed="right" label="操作">
-                <template>
-                  <el-button type="text" size="small" @click="removeGroup">移出组</el-button>
-                </template>
-              </el-table-column>
-            </el-table>
-          </el-tab-pane>
-          <el-tab-pane label="安全" name="third">角色管理</el-tab-pane>
-          <el-tab-pane label="API密钥" name="fourth">定时任务补偿</el-tab-pane>
-          <el-tab-pane label="小程序" name="fifth">程序</el-tab-pane>
-        </el-tabs>
-      </div>
+    <div class="tableTab">
+      <el-tabs v-model="activeName" @tab-click="handleClick">
+        <el-tab-pane label="权限(0)" name="first">
+          <div class="explain">
+            <p>关联策略以获取策略包含的操作权限。解除策略将失去策略包含的操作权限。特别的，解除随组关联类型的策略是通过将用户从关联该策略的用户组中移出。</p>
+          </div>
+          <el-button class="buttonCla" type="primary" size="small" @click="gotoPolicy">关联策略</el-button>
+          <el-button
+            class="buttonCla"
+            type="primary"
+            size="small"
+            :disabled="disabled"
+            @click="delMoreStrateg"
+          >解除策略</el-button>
+          <el-table
+            ref="multipleTable"
+            :data="StrategyData"
+            style="width: 100%;"
+            @selection-change="Select"
+          >
+            <el-table-column type="selection" width="55"></el-table-column>
+            <el-table-column label="策略名" prop="PolicyName"></el-table-column>
+            <el-table-column label="关联类型" prop="CreateMode"></el-table-column>
+            <el-table-column label="策略类型" prop="Type">
+              <template slot-scope="scope">{{scope.row.Type == '1'?'自定义策略':'预设策略'}}</template>
+            </el-table-column>
+            <el-table-column label="关联时间" prop="AddTime"></el-table-column>
+            <el-table-column fixed="right" label="操作">
+              <template slot-scope="scope">
+                <el-button type="text" size="small" @click="deleteStrage(scope.row.PolicyId)">解除</el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+        </el-tab-pane>
+        <el-tab-pane label="组(0)" name="second">
+          <el-button class="buttonCla" type="primary" size="small" @click="addGroupUser">加入到组</el-button>
+          <el-button
+            class="buttonCla"
+            type="primary"
+            size="small"
+            :disabled="disabled"
+            @click="removeMoreGroup"
+          >移出组</el-button>
+          <el-table
+            ref="multipleTable"
+            :data="groupData"
+            style="width: 100%;"
+            @selection-change="Select"
+          >
+            <el-table-column type="selection"></el-table-column>
+            <el-table-column label="组名称" prop="GroupName"></el-table-column>
+            <el-table-column label="关联策略" prop="GroupId"></el-table-column>
+            <el-table-column label="备注" prop="Remark"></el-table-column>
+            <el-table-column fixed="right" label="操作">
+              <template>
+                <el-button type="text" size="small" @click="removeGroup(item.GroupId)">移出组</el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+        </el-tab-pane>
+        <el-tab-pane label="安全" name="third">角色管理</el-tab-pane>
+        <el-tab-pane label="API密钥" name="fourth">定时任务补偿</el-tab-pane>
+        <el-tab-pane label="小程序" name="fifth">程序</el-tab-pane>
+      </el-tabs>
+    </div>
     <!-- 策略 -->
     <el-dialog
       :title="StrategyTitle"
@@ -126,13 +137,13 @@
     <el-dialog
       :title="groupTitle"
       :visible.sync="GroupLoading"
-       width="30%"
+      width="30%"
       :before-close="handleClose"
     >
       <span>移出后将无法接收到该组的短信、邮件通知</span>
       <span slot="footer" class="dialog-footer">
         <el-button @click="GroupLoading = false">取 消</el-button>
-        <el-button type="primary" @click="removeGroupUser" >确 定</el-button>
+        <el-button type="primary" @click="removeGroupUser">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -162,9 +173,9 @@ export default {
       StrategyTitle: "", //弹出框title
       showStrategyRow: false, //对批量与单条解除数据进行判断
       showStrategyMore: false, //对批量与单条解除数据进行判断
-      valArr: [],//存放多选框选中数据
-      GroupLoading:false,//用户组弹框
-      groupTitle:'' //用户组弹出框title
+      valArr: [], //存放多选框选中数据
+      GroupLoading: false, //用户组弹框
+      groupTitle: "" //用户组弹出框title
     };
   },
   methods: {
@@ -232,25 +243,21 @@ export default {
         this.StrategyLoading = false;
       }
       if (this.StrategyTitle == "解除策略") {
-        var removeRow = [];
-        this.StrategyData.forEach(item => {
-          removeRow.unshift(item.PolicyId);
-        });
-        removeRow.forEach(item => {
-          let params = {
-            Version: "2019-01-16",
-            PolicyId: item,
-            DetachUin: this.userData.Uin
-          };
-          this.axios.post(REMOVEBIND_USER, params).then(data => {
-            this.ploicyData();
-          });
+        let params = {
+          Version: "2019-01-16",
+          PolicyId: this.PolicyId,
+          DetachUin: this.userData.Uin
+        };
+        this.axios.post(REMOVEBIND_USER, params).then(data => {
+          console.log(data)
+          this.ploicyData();
         });
         this.StrategyLoading = false;
       }
     },
     //解除当前行策略
     deleteStrage(PolicyId) {
+      this.PolicyId = PolicyId;
       this.StrategyLoading = true;
       this.StrategyTitle = "解除策略";
       this.showStrategyMore = false;
@@ -264,68 +271,68 @@ export default {
       this.showStrategyRow = false;
     },
     //将用户移出用户组
-    removeGroupUser(){
-       if(this.groupTitle == '移出组'){
-          var groupId = [];
-          this.valArr.forEach(item => {
-            groupId.unshift(item.GroupId)
+    removeGroupUser() {
+      if (this.groupTitle == "移出组") {
+        var groupId = [];
+        this.valArr.forEach(item => {
+          groupId.unshift(item.GroupId);
+        });
+        groupId.forEach(item => {
+          let params = {
+            Version: "2019-01-16",
+            GroupId: item
+          };
+          this.axios.post(REMOVEGROUP_USER, params).then(data => {
+            this.groupListData();
           });
-          groupId.forEach(item => {
-             let params = {
-                Version: "2019-01-16",
-                GroupId: item
-              };
-             this.axios.post(REMOVEGROUP_USER, params).then(data => {
-                this.groupListData()
-              });
-          })
-          this.GroupLoading = false;
-       }
-       if(this.groupTitle == '确认移出'){
-          var removeGroupRow = [];
-          this.groupData.forEach(item => {
-             removeGroupRow.unshift(item.GroupId)
+        });
+        this.GroupLoading = false;
+      }
+      if (this.groupTitle == "确认移出") {
+        var removeGroupRow = [];
+        this.groupData.forEach(item => {
+          removeGroupRow.unshift(item.GroupId);
+        });
+        removeGroupRow.forEach(item => {
+          let params = {
+            Version: "2019-01-16",
+            GroupId: item
+          };
+          this.axios.post(REMOVEGROUP_USER, params).then(data => {
+            console.log(data);
           });
-          removeGroupRow.forEach(item => {
-             let params = {
-                Version: "2019-01-16",
-                GroupId: item
-              };
-             this.axios.post(REMOVEGROUP_USER, params).then(data => {
-                 console.log(data)
-              });
-          })
-          this.GroupLoading = false;
-       }
+        });
+        this.GroupLoading = false;
+      }
     },
     //当前一行移出组
-    removeGroup(){
-        this.GroupLoading = true;
-        this.groupTitle = '确认移出'
+    removeGroup(val) {
+      console.log(val);
+      this.GroupLoading = true;
+      this.groupTitle = "确认移出";
     },
     //批量移出组
-    removeMoreGroup(){
-        this.GroupLoading = true;
-        this.groupTitle = '移出组'
+    removeMoreGroup() {
+      this.GroupLoading = true;
+      this.groupTitle = "移出组";
     },
     //跳转到添加策略到用户页面
-    gotoPolicy(){
-       this.$router.push({
-         path:"/addPolicyToUser",
-         query: {
-            Uin:this.userData.Uin
-         }
-        })
+    gotoPolicy() {
+      this.$router.push({
+        path: "/addPolicyToUser",
+        query: {
+          Uin: this.userData.Uin
+        }
+      });
     },
     //跳转加入到用户组页面
-    addGroupUser(data){
-      console.log(data)
-       this.$router.push({
-         path:'/addGroup',
-         query:{
-            Uid:data.Uid
-         }
-       })
+    addGroupUser(data) {
+      this.$router.push({
+        path: "/addGroup",
+        query: {
+          Uid: this.userData.Uid
+        }
+      });
     },
     //多选框
     Select(val) {
@@ -419,38 +426,37 @@ export default {
     }
   }
 }
-  .tableTab {
-    width: 88%;
-    background: white;
-    padding: 25px;
-    box-sizing: border-box;
-    box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
-    top: 0;
-    left: 0;
-    margin-left: 100px;
-    .buttonCla {
-      height: 35px;
-      min-width: 24px;
-      padding: 0 20px;
-      background-color: #006eff;
-      color: #fff;
-      border: 1px solid #006eff;
-      text-align: center;
-      margin-bottom: 10px;
-    }
+.tableTab {
+  width: 88%;
+  background: white;
+  padding: 25px;
+  box-sizing: border-box;
+  box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
+  margin-left: 100px;
+  margin: 0 auto;
+  .buttonCla {
+    height: 35px;
+    min-width: 24px;
+    padding: 0 20px;
+    background-color: #006eff;
+    color: #fff;
+    border: 1px solid #006eff;
+    text-align: center;
+    margin-bottom: 10px;
   }
-  .explain {
-    width: 100%;
-    margin: 0 auto;
-    font-size: 12px;
-    padding: 10px 30px 10px 20px;
-    color: #003b80;
-    border: 1px solid #97c7ff;
-    background: #e5f0ff;
-    box-sizing: border-box;
-    margin-bottom: 20px;
-    p {
-      line-height: 20px;
-    }
+}
+.explain {
+  width: 100%;
+  margin: 0 auto;
+  font-size: 12px;
+  padding: 10px 30px 10px 20px;
+  color: #003b80;
+  border: 1px solid #97c7ff;
+  background: #e5f0ff;
+  box-sizing: border-box;
+  margin-bottom: 20px;
+  p {
+    line-height: 20px;
   }
+}
 </style>

@@ -151,20 +151,26 @@ export default {
     },
     complete(){
        var addGroup = [];
-       this.userNewGroup.forEach(item => {
+       this.userNewGroup[0].forEach(item => {
           addGroup.push(item)
        })
+       console.log(addGroup)
        addGroup.forEach(item => {
-           let params = {
+           this.addUserGroup(item.GroupId)
+       })
+       this.$router.go(-1)
+    },
+    addUserGroup(val){
+      console.log(this.$route.query.Uid)
+      let params = {
                 Version: "2019-01-16",
                 "Info.0.Uid": this.$route.query.Uid,
-                "Info.0.GroupId": item.GroupId
+                "Info.0.GroupId":val
             };
+            console.log(params)
              this.axios.post(ADD_USERTOGROUP, params).then(res => {
                console.log(res)
              });
-       })
-       this.$router.go(-1)
     },
     prev() {
       --this.active;
