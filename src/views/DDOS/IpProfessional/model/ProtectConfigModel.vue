@@ -22,7 +22,7 @@
           <p>
             <span class="modelSpan1">清洗阈值<i class="el-icon-info"></i></span>
             <span>
-              <el-select v-model="servicePack.DdosThreshold" class="setSelect">
+              <el-select v-model="servicePack.DdosThreshold" class="setSelectM">
                 <el-option v-for="(item, index) in cleanNumOption" :label="item.label" :value="item.value" :key="index"></el-option>
               </el-select>
             </span>
@@ -78,7 +78,7 @@
           <p>
             <span class="modelSpan1">高级策略</span>
             <span>
-              <el-select v-model="topFun" class="setSelect">
+              <el-select v-model="topFun" class="setSelectM">
                 <el-option label="无" value="no"></el-option>
                 <el-option label="erg" value="erg"></el-option>
               </el-select>
@@ -87,7 +87,7 @@
           <p>
             <span class="modelSpan1">DDoS共计告警阈值</span>
             <span>
-              <el-select v-model="ddosWarning" class="setSelect" @change="selectChange1">
+              <el-select v-model="ddosWarning" class="setSelectM" @change="selectChange1">
                 <el-option label="未设置" value="no"></el-option>
                 <el-option label="入流量宽带" value="into"></el-option>
                 <el-option label="清洗流量" value="clean"></el-option>

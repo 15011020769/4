@@ -4,61 +4,67 @@
       <span>DDoS基础防护</span>
       <el-select v-model="codeOrigin" placeholder="" class="codeOrigin">
         <el-option label="云服务器专区" value="codeOrigin1"></el-option>
+        <el-option label="负载均衡专区" value="codeOrigin2"></el-option>
+        <el-option label="NAT服务器专区" value="codeOrigin3"></el-option>
+        <el-option label="互联网通道" value="codeOrigin4"></el-option>
       </el-select>
-      <el-select v-model="taibei" placeholder=""  class="codeOrigin">
+      <el-input value="台湾台北" class="taibeiCheck" :readonly="true"></el-input>
+      <!-- <el-select v-model="taibei" placeholder=""  class="codeOrigin">
         <el-option label="中国台北" value="taibei"></el-option>
-      </el-select>
+      </el-select> -->
     </div>
     <div class="basicProtCon">
       <div class="basicProtConSearch">
         <el-input placeholder="请输入主机名/主机IP搜索" class="searchIpt" v-model="searchInputVal"/><el-button @click="doFilter" class="el-icon-search"></el-button>
       </div>
-      <div>
-        <el-table :data="tableDataBegin.slice((currentPage-1)*pageSize,currentPage*pageSize)">
-          <el-table-column prop="InstanceName" label="主机名">
-            <template slot-scope="scope">
-              <a href="#" @click="toDoDetail(scope.$index, scope.row)">{{scope.row.InstanceName}}</a>
-            </template>
-          </el-table-column>
-          <el-table-column prop="IP" label="绑定IP">
-            <template slot-scope="scope">
-              <div v-if="scope.row.PublicIpAddresses != undefined">
-                {{scope.row.PublicIpAddresses[0]}}
-              </div>
-              <div v-else>-</div>
-            </template>
-          </el-table-column>
-          <el-table-column prop="InstanceType" label="主机类型">
-            云主机
-            <!-- <template slot-scope="scope">{{scope.row.InstanceType}}</template> -->
-          </el-table-column>
-          <el-table-column prop="RestrictState" label="安全状态">
-            <template slot-scope="scope">
-              <div v-if="scope.row.RestrictState == 'NORMAL'">正常</div>
-              <div v-else-if="scope.row.RestrictState == 'EXPIRED'">过期</div>
-              <div v-else-if="scope.row.RestrictState == 'PROTECTIVELY_ISOLATED'">被安全隔离</div>
-            </template>
-          </el-table-column>
-          <!-- <el-table-column prop="" label="操作" width="180">
-              <el-button
-                type="text"
-                size="small"
-                @click="buyBgp"
-              >升级防护</el-button>
-          </el-table-column> -->
-        </el-table>
-      </div>
-      <div class="tabListPage">
-        <el-pagination
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-          :current-page="currentPage"
-          :page-sizes="[10, 20, 30, 50]"
-          :page-size="pageSize"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="totalItems"
-        >
-        </el-pagination>
+      <div class="tableBasic">
+        <div class="tableBasicCon">
+          <el-table :data="tableDataBegin.slice((currentPage-1)*pageSize,currentPage*pageSize)">
+            <el-table-column prop="InstanceName" label="主机名">
+              <template slot-scope="scope">
+                <a href="#" @click="toDoDetail(scope.$index, scope.row)">{{scope.row.InstanceName}}</a>
+              </template>
+            </el-table-column>
+            <el-table-column prop="IP" label="绑定IP">
+              <template slot-scope="scope">
+                <div v-if="scope.row.PublicIpAddresses != undefined">
+                  {{scope.row.PublicIpAddresses[0]}}
+                </div>
+                <div v-else>-</div>
+              </template>
+            </el-table-column>
+            <el-table-column prop="InstanceType" label="主机类型">
+              云主机
+              <!-- <template slot-scope="scope">{{scope.row.InstanceType}}</template> -->
+            </el-table-column>
+            <el-table-column prop="RestrictState" label="安全状态">
+              <template slot-scope="scope">
+                <div v-if="scope.row.RestrictState == 'NORMAL'">正常</div>
+                <div v-else-if="scope.row.RestrictState == 'EXPIRED'">过期</div>
+                <div v-else-if="scope.row.RestrictState == 'PROTECTIVELY_ISOLATED'">被安全隔离</div>
+              </template>
+            </el-table-column>
+            <!-- <el-table-column prop="" label="操作" width="180">
+                <el-button
+                  type="text"
+                  size="small"
+                  @click="buyBgp"
+                >升级防护</el-button>
+            </el-table-column> -->
+          </el-table>
+        </div>
+        <div class="tabListPage">
+          <el-pagination
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+            :current-page="currentPage"
+            :page-sizes="[10, 20, 30, 50]"
+            :page-size="pageSize"
+            layout="total, sizes, prev, pager, next, jumper"
+            :total="totalItems"
+          >
+          </el-pagination>
+        </div>
       </div>
     </div>
   </div>
@@ -69,7 +75,7 @@ export default {
   data() {
     return {
       codeOrigin:"云服务器专区",
-      taibei:"中国台北",
+      taibei:"台灣台北",
       // 实例列表
       tableDataBegin: [],
       // 搜索框输入值
@@ -198,10 +204,22 @@ export default {
     margin-right:38px;
   }
   .codeOrigin{
-    margin-right:38px;
     border:0;
     input{
       border:0;
+    }
+  }
+  .taibeiCheck{
+    width:100px;
+    height:30px;
+    line-height:30px;
+    input{
+      width:100px;
+      height:30px;
+      line-height: 30px;
+      border:1px solid #006eff;
+      color:#006eff;
+      border-radius: 0;
     }
   }
 }
@@ -213,10 +231,32 @@ export default {
     margin-bottom:20px;
     .searchIpt{
       width:300px;
+      height:30px;
+      input{
+        width:100%;
+        height:30px;
+        border-radius: 0;
+        padding-top:2px;
+      }
+    }
+    .el-icon-search{
+      width:50px;
+      border-radius: 0;
+      height:30px;
+      padding:0;
+      text-align:center;
+      line-height: 30px;
+    }
+  }
+  .tableBasic{
+    background-color:#fff;
+    .tableBasicCon{
+      min-height:450px;
     }
   }
 }
 .tabListPage{
-  text-align:right
+  text-align:right;
+  padding-top:8px!important;
 }
 </style>

@@ -565,4 +565,20 @@ export default {
     }
   }
 }
+.setSelectM{
+    width:178px;
+    height:30px;
+    div{
+      width:178px;
+      height:30px;
+    }
+    input{
+      width: 178px;
+      height: 30px;
+      border-radius: 0;
+    }
+    .el-input__suffix{
+      right:0;
+    }
+  }
 </style>

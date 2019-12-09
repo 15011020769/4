@@ -1,7 +1,7 @@
 module.exports = {
     DDOS: {
         total: {
-            title: '函數服務',
+            address: '台灣台北',
             btn: 'Cloud Virtual Machine'
         },
 

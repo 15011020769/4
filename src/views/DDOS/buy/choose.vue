@@ -16,7 +16,7 @@
                 </div>
                 <div class="checkListRight">
                   <div>
-                    <span class="address spanList" :class="type1=='1'?'seceltList':''" @click="checkAddress(1,'中国台湾')">中国台湾</span>
+                    <span class="address spanList" :class="type1=='1'?'seceltList':''" @click="checkAddress(1,'台湾台北')">台湾台北</span>
                   </div>
                 </div>
               </div>
@@ -167,7 +167,7 @@ export default {
       ElasticPeak:["无","30Gbps","40Gbps","50Gbps","60Gbps","70Gbps","80Gbps","90Gbps","100Gbps","120Gbps","150Gbps","200Gbps","250Gbps","300Gbps","400Gbps","30Gbps","6000Gbps","900Gbps","1.2Tbps","1.7Tbps"],
       checked:false,//自动续费 否
       type1:1,
-      checked1:'中国台北',//地域
+      checked1:'台灣台北',//地域
       flag:true,
       type2:1,
       checked2:'20Gbps',//保底防护峰值
