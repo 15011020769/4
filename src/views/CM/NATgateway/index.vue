@@ -39,8 +39,8 @@
           <template slot-scope="scope">
             <!-- <a @click="jump(scope.row.NatGatewayId)" style="cursor:pointer;">
               <i class="el-icon-share"></i>
-            </a> -->
-             <div class="a" @click="jump(scope.row.NatGatewayId)"></div>
+            </a>-->
+            <div class="a" @click="jump(scope.row.NatGatewayId)"></div>
           </template>
         </el-table-column>
 
@@ -285,10 +285,10 @@ export default {
 }
 .a {
   background-image: url("./../../../assets/CAM/images/cvm-20199061519.svg");
-  background-size: 350px 249px;
+  background-size: 267px 176px;
   background-repeat: no-repeat;
-  background-position: -101px -101px;
-  height: 25px;
+  background-position: -47px -71px;
+  height: 15px;
   width: 16px;
   cursor: pointer;
 }

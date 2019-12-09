@@ -180,7 +180,7 @@ export default {
       // 获取表格数据
       this.axios.post(NETIP_LIST, param).then(data => {
         if (data.Response.Error == undefined) {
-          console.log(data.Response.AddressSet)
+          console.log(data.Response.AddressSet);
           this.TbaleData = data.Response.AddressSet;
           this.loadShow = false;
         } else {
@@ -261,10 +261,10 @@ export default {
 }
 .a {
   background-image: url("./../../../assets/CAM/images/cvm-20199061519.svg");
-  background-size: 350px 249px;
+  background-size: 267px 176px;
   background-repeat: no-repeat;
-  background-position: -101px -101px;
-  height: 25px;
+  background-position: -47px -71px;
+  height: 15px;
   width: 16px;
   cursor: pointer;
 }

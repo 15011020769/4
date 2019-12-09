@@ -75,7 +75,7 @@ export default {
   data() {
     return {
       //加载是否显示
-      loadShow:true,
+      loadShow: true,
       //搜索下拉框
       searchOptions: [
         {
@@ -209,7 +209,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.CM-wrap{
+.CM-wrap {
   width: 100%;
   height: 100%;
 }
@@ -259,10 +259,10 @@ export default {
 }
 .a {
   background-image: url("./../../../assets/CAM/images/cvm-20199061519.svg");
-  background-size: 350px 249px;
+  background-size: 267px 176px;
   background-repeat: no-repeat;
-  background-position: -101px -101px;
-  height: 25px;
+  background-position: -47px -71px;
+  height: 15px;
   width: 16px;
   cursor: pointer;
 }

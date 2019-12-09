@@ -42,7 +42,7 @@
           <template slot-scope="scope">
             <!-- <a @click="jump(scope.row.InstanceId)" style="cursor:pointer;">
               <i class="el-icon-share"></i>
-            </a> -->
+            </a>-->
             <div class="a" @click="jump(scope.row.InstanceId)"></div>
           </template>
         </el-table-column>
@@ -97,7 +97,7 @@ import { ALL_CITY, REDIS_LIST, ALL_PROJECT } from "@/constants";
 export default {
   data() {
     return {
-      loadShow: true,//加载是否显示
+      loadShow: true, //加载是否显示
       //下拉框
       searchOptions: [
         {
@@ -109,7 +109,7 @@ export default {
           label: "名称"
         }
       ],
-      searchValue: "",//默认选中的值
+      searchValue: "", //默认选中的值
       //文字过滤
       instanceStatus: {
         PENDING: "创建中",
@@ -305,10 +305,10 @@ export default {
 }
 .a {
   background-image: url("./../../../assets/CAM/images/cvm-20199061519.svg");
-  background-size: 350px 249px;
+  background-size: 267px 176px;
   background-repeat: no-repeat;
-  background-position: -101px -101px;
-  height: 25px;
+  background-position: -47px -71px;
+  height: 15px;
   width: 16px;
   cursor: pointer;
 }
