@@ -388,13 +388,13 @@ export default {
         NeedResetPassword: this.ruleForm.pwdType.includes(0) ? 1 : 0,
         PhoneNum: this.ruleForm.PhoneNum,
         CountryCode: this.ruleForm.CountryCode,
-        Email: this.ruleForm.Email
+        Email: this.ruleForm.Email,
+        UseApi: 1
       };
       this.axios
         .post(ADD_USER, params)
         .then(res => {
           this.taifuAIP = res.Response;
-          console.log(this.taifuAIP)
           if (res.Response.Error) {
             this.$message.error(res.Response.Error.Message);
           } else {
