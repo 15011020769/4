@@ -178,7 +178,7 @@ export default {
         type: "warning"
       })
         .then(() => {
-          if (this.activeName == "first") {
+          if (this.activeName == "first" || this.activeName == "second") {
             this._remove(val);
           } else if (this.activeName == "third") {
             this._userDel(val);
