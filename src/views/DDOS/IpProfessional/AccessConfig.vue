@@ -274,7 +274,7 @@ export default {
         Id: this.resourceId
       }
       this.axios.post(L4_RULES, params).then(res => {
-        console.log(res)//test.cn TCP 1666 1888 1.1.1.10 80,1.1.1.20 50
+        // console.log(res)//test.cn TCP 1666 1888 1.1.1.10 80,1.1.1.20 50
         let str = ''
         let arr = []
         arr = res.Response.Rules
@@ -315,7 +315,7 @@ export default {
     },
     //复制列表按钮
     copyAccess(scopeRow){
-      console.log(scopeRow)//这块可以做数据回显，拿到的是那一行的数据
+      // console.log(scopeRow)//这块可以做数据回显，拿到的是那一行的数据
       this.dialogVisible4=true;
       this.$nextTick(() => {
         this.$refs.addOrUpdate1.init(scopeRow)

@@ -52,7 +52,7 @@
           <div class="ruleList newClear" v-if="dominShow">
             <span class="ruleListLabel">源站IP + 权重</span>
             <span class="ruleListIpt">
-              <el-input type="textarea" class="resoureStation" v-model="IpResource"/>
+              <el-input type="textarea" class="resoureStation" v-model="IPData"/>
               <p>	
 请输入源站IP + 权重，中间由空格分隔，例如：1.1.1.1 50。用回车分隔多个源站IP + 权重，最多支持20个</p>
             </span>
@@ -60,7 +60,7 @@
           <div class="ruleList newClear" v-if="!dominShow">
             <span class="ruleListLabel">源站域名</span>
             <span class="ruleListIpt">
-              <el-input type="textarea" class="resoureStation" v-model="HttpResource"/>
+              <el-input type="textarea" class="resoureStation" v-model="HttpData"/>
               <p>请输入源站域名，用回车分隔多个源站域名，最多支持20个</p>
             </span>
           </div>
@@ -95,7 +95,9 @@ export default {
       dominShow:true,//源站IP + 权重/源站域名
       IpResource:'',//源站IP + 权重 绑定数据
       HttpResource:'',//源站域名
-      EnidData:''
+      EnidData:'',//获取某一条数据
+      IPData:'',//源站IP + 权重获取数据
+      HttpData:''//源站域名获取数据
     }
   },
   computed:{
@@ -112,17 +114,18 @@ export default {
       init(scopeRow){
       this.EnidData = scopeRow
       if(this.EnidData.SourceType == 1) {//域名
+         this.HttpData='';
          this.dominShow=false;
         for(let i=0; i<scopeRow.SourceList.length; i++) {
           this.HttpResource=scopeRow.SourceList[i].Source+ '\ '+scopeRow.SourceList[i].Weight+ '\n'
+          this.HttpData = this.HttpData.concat(this.HttpResource)
         }
       } else if(this.EnidData.SourceType == 2) {//IP
+        this.IPData='';
         this.dominShow=true;
-        // console.log(scopeRow.SourceList)
         for(let i=0; i<scopeRow.SourceList.length; i++) {
           this.IpResource=scopeRow.SourceList[i].Source+ '\ '+scopeRow.SourceList[i].Weight+ '\n'
-          // console.log(this.IpResource)
-          
+           this.IPData = this.IPData.concat(this.IpResource)
         }
       }
     },
