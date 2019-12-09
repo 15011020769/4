@@ -74,6 +74,7 @@
   </div>
 </template>
 <script>
+import { ENID_CREATE} from '@/constants'
 export default {
   props:{
     isShow3:Boolean,
@@ -157,7 +158,7 @@ export default {
           params['Rule.SourceList.'+i+'.Weight'] = arr[i].Weight
         }
       }
-      this.axios.post('dayu2/ModifyL4Rules', params).then(res => {
+      this.axios.post(ENID_CREATE, params).then(res => {
         // console.log(res)
         if (res.Response.Error !== undefined) {
           this.$message({

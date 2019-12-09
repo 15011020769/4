@@ -131,7 +131,7 @@ import batchImport from './model/batchImport'
 import batchExport from './model/batchExport'
 import accessConfigEdit from './model/accessConfigEdit'
 import accessConfigCopy from './model/accessConfigCopy'
-import { RESOURCE_LIST, L4_RULES } from '@/constants'
+import { RESOURCE_LIST, L4_RULES ,L4DEL_CREATE} from '@/constants'
 export default {
   data() {
     return {
@@ -345,7 +345,7 @@ export default {
       }
       // console.log(this.deleteIndex)
       // params['RuleIdList.'+0] = this.tableDataBegin[this.deleteIndex].RuleId
-      this.axios.post('dayu2/DeleteL4Rules', params).then(res => {
+      this.axios.post(L4DEL_CREATE, params).then(res => {
         // console.log(res)
         if (res.Response.Error !== undefined) {
           this.$message({

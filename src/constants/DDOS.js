@@ -22,6 +22,8 @@ export const RULESETS_CONT = 'dayu2/DescribeRuleSets' //获取资源的规则数
 export const L4_RULES = 'dayu2/DescribleL4Rules' // 获取L4转发规则
 
 export const L4RULES_CREATE = 'dayu2/CreateL4Rules' // 添加L4转发规则
+export const L4DEL_CREATE = 'dayu2/DeleteL4Rules'// 删除L4转发规则
+export const ENID_CREATE = 'dayu2/ModifyL4Rules'  // 编辑L4转发规则
 
 
 
