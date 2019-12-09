@@ -1,6 +1,6 @@
 <template>
   <div class="adduserlist-wrap">
-    <HeadCom title="新建子用户" :backShow="true"  @_back="_back"/>
+    <HeadCom title="新建子用户" :backShow="true" @_back="_back" />
     <div class="adduserlist-main">
       <el-steps :active="active" simple>
         <el-step title="选择类型"></el-step>
@@ -390,16 +390,38 @@ export default {
         CountryCode: this.ruleForm.CountryCode,
         Email: this.ruleForm.Email
       };
-      this.axios.post(ADD_USER, params).then(res => {
-        if (res.Response.Error) {
-          this.$message.error(res.Response.Error.Message);
-        } else {
-          if (this.pwdReg) {
-            this._getUser();
-            this.active = 2;
+      this.axios
+        .post(ADD_USER, params)
+        .then(res => {
+          this.taifuAIP = res.Response;
+          console.log(this.taifuAIP)
+          if (res.Response.Error) {
+            this.$message.error(res.Response.Error.Message);
+          } else {
+            if (this.pwdReg) {
+              this._getUser();
+              this.active = 2;
+            }
           }
-        }
-      });
+        })
+        .then(() => {
+          const params = {
+            Password: this.ruleForm.Password,
+            QcloudUin: this.taifuAIP.Uin,
+            SecretId: this.taifuAIP.SecretId,
+            SecretKey: this.taifuAIP.SecretKey,
+            SubAccountUin: this.taifuAIP.Uin,
+            SubAccountname: this.taifuAIP.Name
+          };
+          this.axios
+            .post(
+              "http://tfc.dhycloud.com/adminapi/admin/taifucloud/account-sub/manage/register",
+              params
+            )
+            .then(res => {
+              console.log(res);
+            });
+        });
     },
     //用户组列表
     _userList(val) {
