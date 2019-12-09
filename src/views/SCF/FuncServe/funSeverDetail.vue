@@ -334,19 +334,20 @@
                   </p>
                   <p>
                     <span>环境变量</span>
-                    <span v-show="functionData.Environment">
-                      {{functionData.Environment.Variables[0].Key}}={{functionData.Environment.Variables[0].Value}}</span>
-                    <span v-show="!functionData.Environment">无环境变量</span>
+                    <span v-show="environmentFlag">
+                      {{environmentKey}}={{environmentValue}}
+                      <!-- {{functionData.Environment.Variables[0].Key}}={{functionData.Environment.Variables[0].Value}} --></span>
+                    <span v-show="!environmentFlag">无环境变量</span>
                   </p>
                   <p>
                     <span>所属网络</span>
                     <span v-show="vpcConfigFlag">{{vpcConfigVpcId}}</span>
-                    <span v-show="vpcConfigFlag">无VPC</span>
+                    <span v-show="!vpcConfigFlag">无VPC</span>
                   </p>
                   <p>
                     <span>所属子网</span>
                     <span v-show="vpcConfigFlag">{{vpcConfigSubnetId}}</span>
-                    <span v-show="vpcConfigFlag">无子网</span>
+                    <span v-show="!vpcConfigFlag">无子网</span>
                   </p>
                   <!-- <p>
                     <span>标签</span>
@@ -507,8 +508,6 @@ export default {
           disableDelete: false
         }
       ],
-      options: [],
-      options1: [],
       functionData: {
         Environment: {
           Variables: ""
@@ -516,7 +515,8 @@ export default {
       },
       environmentFlag: true,
       vpcConfigFlag: true,
-      VariablesArr: [],
+      environmentKey:[],
+      environmentValue:[],
       vpcConfigVpcId: "",
       vpcConfigSubnetId: "",
       childData: {},
@@ -625,14 +625,21 @@ export default {
           this.functionData = res.Response;
           console.log(this.functionData);
           let funcData = this.functionData;
-          if (funcData.FunctionName != undefined) {
-            _this.VariablesArr = funcData.Environment.Variables;
-            console.log(_this.VariablesArr);
+          if (funcData.VpcConfig.SubnetId != '') {
             _this.vpcConfigVpcId = funcData.VpcConfig.VpcId;
             _this.vpcConfigSubnetId = funcData.VpcConfig.SubnetId;
           } else {
-            _this.environmentFlag = false;
             _this.vpcConfigFlag = false;
+          }
+          
+          if(funcData.Environment.Variables.length != 0){
+            console.log(funcData.Environment.Variables.length)
+            for(let i=0;i<=funcData.Environment.Variables.length; i++){
+            _this.environmentKey=funcData.Environment.Variables[i].Key;
+            _this.environmentValue=funcData.Environment.Variables[i].Value;
+            }
+          }else{
+            _this.environmentFlag = false;
           }
           console.log(this.functionData.Environment.Variables[0].Key);
         })

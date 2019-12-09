@@ -4,7 +4,7 @@
       <span>{{ $t('SCF.total.title') }}</span>
       <el-input class="addressName" readonly="readonly" v-model="addressIpt"></el-input>
       <div>
-        {{ $t('SCF.total.mmkj') }}
+        {{ $t('SCF.total.mmkj') }}：
         <el-select
           class="nameSpace"
           v-model="nameSpaceValue"
@@ -25,13 +25,13 @@
       </span>
     </div>
     <el-dialog
-      title="命名空间管理"
+      :title="$t('SCF.total.mmkjgl')"
       :visible.sync="dialogVisible3"
       width="800px"
       :before-close="handleClose3"
     >
       <div class="regionTit">
-        所属地域
+        {{ $t('SCF.total.ssdy') }}
         <span>{{addressIpt}}</span>
       </div>
       <div>
@@ -41,7 +41,7 @@
           element-loading-text="Loading"
           highlight-current-row
         >
-          <el-table-column label="命名空间">
+          <el-table-column :label="$t('SCF.total.mmkj')">
             <template slot-scope="scope">
               <el-form :model="modelNameSpace[scope.$index]">
                 <el-form-item prop="Name">
@@ -57,14 +57,14 @@
                     v-if="!modelNameSpace[scope.$index].disableDelete"
                     :class="{'errActive':isbol}"
                   >
-                    <p class="modelNameSpace">1. 最多60个字符，最少2个字符</p>
-                    <p class="modelNameSpace">2. 字母开头，支持 a-z，A-Z，0-9，-，_，且需要以数字或字母结尾</p>
+                    <p class="modelNameSpace">{{ $t('SCF.total.ts1') }}</p>
+                    <p class="modelNameSpace">{{ $t('SCF.total.ts2') }}</p>
                   </div>
                 </el-form-item>
               </el-form>
             </template>
           </el-table-column>
-          <el-table-column label="描述">
+          <el-table-column :label="$t('SCF.total.ms')">
             <template slot-scope="scope">
               <el-form ref="scope.row" :model="modelNameSpace[scope.$index]">
                 <el-form-item prop="Description">
@@ -77,7 +77,7 @@
               </el-form>
             </template>
           </el-table-column>
-          <el-table-column label="操作">
+          <el-table-column :label="$t('SCF.total.cz')">
             <template slot-scope="scope">
               <el-form ref="scope.row">
                 <el-form-item>
@@ -86,7 +86,7 @@
                     v-if="modelNameSpace[scope.$index].disableDelete && scope.$index != 0"
                     class="modelDelete"
                     @click="spaceDelete(scope.$index,scope.row)"
-                  >删除</el-button>
+                  >{{ $t('SCF.total.sc') }}</el-button>
                 </el-form-item>
               </el-form>
             </template>
@@ -95,28 +95,28 @@
       </div>
       <div>
         <span @click="addNewNameSpace">
-          <a href="#" v-if="!showTips">新增命名空间({{this.modelNameSpace.length}}/5)</a>
-          <span v-if="showTips">新增命名空间（共5个命名空间，已满额）</span>
+          <a href="#" v-if="!showTips">{{ $t('SCF.total.xzmmkj') }}({{this.modelNameSpace.length}}/5)</a>
+          <span v-if="showTips">{{ $t('SCF.total.xzmmkj') }}{{ $t('SCF.total.me') }}</span>
         </span>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible3 = false">取 消</el-button>
-        <el-button type="primary" @click="sureNameSpaceMag(modelNameSpace)">提交</el-button>
+        <el-button @click="dialogVisible3 = false">{{ $t('SCF.total.qx') }}</el-button>
+        <el-button type="primary" @click="sureNameSpaceMag(modelNameSpace)">{{ $t('SCF.total.tj') }}</el-button>
       </span>
     </el-dialog>
     <div class="mainContainer">
       <div class="mainCon">
         <div class="tableTit newClear">
-          <el-button size="small" type="primary" class="newCreate" @click="newCreateFun()">新建</el-button>
+          <el-button size="small" type="primary" class="newCreate" @click="newCreateFun()">{{ $t('SCF.total.xj') }}</el-button>
           <div class="searchRight">
-            <el-select placeholder="要过滤的标签" v-model="filterConrent">
-              <el-option label="函数名称" value="SearchKey"></el-option>
-              <el-option label="函数描述" value="Description"></el-option>
+            <el-select :placeholder="$t('SCF.total.glbq')" v-model="filterConrent">
+              <el-option :label="$t('SCF.total.hsmc')" value="SearchKey"></el-option>
+              <el-option :label="$t('SCF.total.hsms')" value="Description"></el-option>
             </el-select>
             <el-input
               v-model="tableDataName"
               class="searchs"
-              placeholder="请输入搜索内容"
+              :placeholder="$t('SCF.total.ssnr')"
               @change="iptChange"
             ></el-input>
             <el-button class="el-icon-search" @click="doFilter"></el-button>
@@ -124,85 +124,87 @@
         </div>
         <div class="mainTable">
           <el-table :data="tableDataBegin.slice((currentPage-1)*pageSize,currentPage*pageSize)">
-            <el-table-column prop="FunctionName" label="函数名">
+            <el-table-column prop="FunctionName" :label="$t('SCF.total.hsm')">
               <template slot-scope="scope">
                 <a href="#" @click="toDoDetail(scope.$index, scope.row)">{{scope.row.FunctionName}}</a>
               </template>
             </el-table-column>
-            <el-table-column  label="函数状态">
+            <el-table-column  :label="$t('SCF.total.hszt')">
                <template slot-scope="scope">
                 <p>{{State[scope.row.Status]}}</p >
               </template>
             </el-table-column>
-            <el-table-column prop="monitor" label="监控"></el-table-column>
-            <el-table-column prop="Runtime" label="运行环境"></el-table-column>
-            <el-table-column prop="Description" label="描述"></el-table-column>
+            <el-table-column prop="monitor" :label="$t('SCF.total.jk')"></el-table-column>
+            <el-table-column prop="Runtime" :label="$t('SCF.total.yxhj')"></el-table-column>
+            <el-table-column prop="Description" :label="$t('SCF.total.ms')"></el-table-column>
             <!--<el-table-column prop="funTabs" label="标签" width="70px"></el-table-column>-->
-            <el-table-column prop="AddTime" label="创建时间"></el-table-column>
-            <el-table-column prop="ModTime" label="上次修改时间"></el-table-column>
-            <el-table-column prop="operate" label="操作" width="180">
+            <el-table-column prop="AddTime" :label="$t('SCF.total.cjsj')"></el-table-column>
+            <el-table-column prop="ModTime" :label="$t('SCF.total.xgsj')"></el-table-column>
+            <el-table-column prop="operate" :label="$t('SCF.total.cz')" width="180">
               <template slot-scope="scope">
                 <el-button
                   @click.native.prevent="deleteRow(scope.$index, scope.row)"
                   type="text"
                   size="small"
-                >删除</el-button>
+                >{{ $t('SCF.total.sc') }}</el-button>
                 <el-dialog
-                  :title="'您确定要删除'+scope.row.funName+'吗？'"
+                  :title="$t('SCF.total.qdsc')"
                   :visible.sync="dialogVisible"
                   width="30%"
                   :before-close="handleClose"
                 >
-                  <span>删除函数将永久删除函数代码及已绑定的触发器。是否确定删除此函数？</span>
+                <!--+scope.row.funName+$t('SCF.total.m')-->
+                  <span>{{ $t('SCF.total.scqd') }}</span>
                   <span slot="footer" class="dialog-footer">
-                    <el-button @click="dialogVisible = false">取 消</el-button>
-                    <el-button type="primary" @click="sureDelete()">确 定</el-button>
+                    <el-button @click="dialogVisible = false">{{ $t('SCF.total.qx') }}</el-button>
+                    <el-button type="primary" @click="sureDelete()">{{ $t('SCF.total.qd') }}</el-button>
                   </span>
                 </el-dialog>
-                <el-button type="text" size="small" @click="handelCopy(scope.$index, scope.row)">复制</el-button>
+                <el-button type="text" size="small" @click="handelCopy(scope.$index, scope.row)">{{ $t('SCF.total.fz') }}</el-button>
                 <el-dialog
-                  title="函数复制"
+                  :title="$t('SCF.total.hsfz')"
                   :visible.sync="dialogVisible2"
                   width="38%"
                   :before-close="handleClose2"
                 >
                   <el-form ref="form" :model="copyForm" label-width="80px">
-                    <el-form-item label="所属地域" :required="true">
-                      <el-select v-model="addressIpt">
+                    <el-form-item :label="$t('SCF.total.ssdy')" :required="true">
+                      <!-- <el-select v-model="addressIpt">
                         <el-option label="北京" value="beijing"></el-option>
                         <el-option label="台北" value="taibei"></el-option>
-                      </el-select>
+                      </el-select> -->
+                      <el-button  value='ap-taipei'>{{ $t('SCF.total.zgtb') }}</el-button>
                     </el-form-item>
-                    <el-form-item label="命名空间" :required="true">
+                    <el-form-item :label="$t('SCF.total.mmkj')" :required="true">
                       <el-select v-model="nameSpaceValue">
                         <el-option label="fun1()" value="1"></el-option>
                         <el-option label="default()" value="2"></el-option>
                       </el-select>
                     </el-form-item>
-                    <el-form-item label="函数名称" :required="true">
+                    <el-form-item :label="$t('SCF.total.hsmc')" :required="true">
                       <el-input v-model="newname" label-width="80px" @blur="inpBlur"></el-input>
-                      <p class="tipBot">1. 最多60个字符，最少2个字符</p>
-                      <p class="tipBot">2. 字母开头，支持 a-z，A-Z，0-9，-，_，且需要以数字或字母结尾</p>
+                      <p class="tipBot">{{ $t('SCF.total.ts1') }}</p>
+                      <p class="tipBot">{{ $t('SCF.total.ts2') }}</p>
                     </el-form-item>
-                    <el-form-item label="复制内容" :required="true">
+                    <el-form-item :label="$t('SCF.total.fznr')" :required="true">
                       <el-checkbox-group v-model="copyForm.copyCont">
-                        <el-checkbox label="函数代码" name="copyCont"></el-checkbox>
-                        <el-checkbox label="函数配置" name="copyCont"></el-checkbox>
+                        <el-checkbox :label="$t('SCF.total.hsdm')" name="copyCont"></el-checkbox>
+                        <el-checkbox :label="$t('SCF.total.hspz')" name="copyCont"></el-checkbox>
                       </el-checkbox-group>
                     </el-form-item>
-                    <el-form-item label="覆盖目标函数">
+                    <el-form-item :label="$t('SCF.total.fghs')">
                       <el-checkbox-group v-model="copyForm.coverFun">
-                        <el-checkbox label="函数代码" name="coverFun"></el-checkbox>
+                        <el-checkbox :label="$t('SCF.total.hsdm')" name="coverFun"></el-checkbox>
                       </el-checkbox-group>
                     </el-form-item>
-                    <el-form-item label="描述">
+                    <el-form-item :label="$t('SCF.total.ms')">
                       <el-input type="textarea" v-model="scope.row.description"></el-input>
-                      <span class="tipDecs">最大支持1000个英文字母、数字、空格、逗号、句号、中文</span>
+                      <span class="tipDecs">{{ $t('SCF.total.zc') }}</span>
                     </el-form-item>
                   </el-form>
                   <span slot="footer" class="dialog-footer">
-                    <el-button @click="dialogVisible2 = false">取 消</el-button>
-                    <el-button type="primary" @click="sureCopy()">确 定</el-button>
+                    <el-button @click="dialogVisible2 = false">{{ $t('SCF.total.qx') }}</el-button>
+                    <el-button type="primary" @click="sureCopy()">{{ $t('SCF.total.qd') }}</el-button>
                   </span>
                 </el-dialog>
               </template>
@@ -233,28 +235,6 @@ export default {
       nameSpaceValue: [{}],
       nameSpace: [{}],
       addressIpt: "中国台北",
-      tableData: [
-        {
-          date: "1",
-          name: "赵",
-          address: "上海市普陀区金沙江路 1518 弄"
-        },
-        {
-          date: "2",
-          name: "钱",
-          address: "上海市普陀区金沙江路 1517 弄"
-        },
-        {
-          date: "2",
-          name: "孙",
-          address: "上海市普陀区金沙江路 1519 弄"
-        },
-        {
-          date: "4",
-          name: "李",
-          address: "上海市普陀区金沙江路 1516 弄"
-        }
-      ],
       showTables: [],
       search: "",
       newname: "",
