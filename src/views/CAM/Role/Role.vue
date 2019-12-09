@@ -1,8 +1,6 @@
 <template>
   <div class="Cam">
-    <div class="top">
-      <p>{{$t('CAM.Role.title')}}</p>
-    </div>
+    <HeadCom title="角色" />
     <div class="container">
       <div class="container-text">
         <h4 style="margin-bottom:10px;">{{$t('CAM.Role.roleTitle1')}}</h4>
@@ -13,20 +11,39 @@
           <el-button type="primary" size="small" @click="created_user">{{$t('CAM.Role.addBtn')}}</el-button>
         </p>
         <div class="table">
-          <el-table :data="tableData" v-loading="loading" height="450" style="width: 100%" :row-style="{height:0}"
-            :cell-style="{padding:'10px'}" :header-cell-style="{height:'20px',padding:'10px',fontSize:'12px'}">
+          <el-table
+            :data="tableData"
+            v-loading="loading"
+            height="450"
+            style="width: 100%"
+            :row-style="{height:0}"
+            :cell-style="{padding:'10px'}"
+            :header-cell-style="{height:'20px',padding:'10px',fontSize:'12px'}"
+          >
             <el-table-column prop="RoleName" :label="$t('CAM.Role.roleName')" width="180">
               <template slot-scope="scope">
-                <el-button @click="handleClick(scope.row)" type="text" size="small">{{scope.row.RoleName}}</el-button>
+                <el-button
+                  @click="handleClick(scope.row)"
+                  type="text"
+                  size="small"
+                >{{scope.row.RoleName}}</el-button>
               </template>
             </el-table-column>
-            <el-table-column prop="PolicyDocument" :label="$t('CAM.Role.roleCarrier')" show-overflow-tooltip>
+            <el-table-column
+              prop="PolicyDocument"
+              :label="$t('CAM.Role.roleCarrier')"
+              show-overflow-tooltip
+            >
               <template slot-scope="scope">
                 <span v-show="scope.row.PolicyDocument.len != undefined">
                   <p>产品服务-{{scope.row.PolicyDocument.val}}</p>
-                  <p v-show="scope.row.PolicyDocument.len > 1">以及<el-button
-                      @click.native.prevent="handleClick(scope.row)" type="text" size="small">
-                      其他{{scope.row.PolicyDocument.len}}项</el-button>
+                  <p v-show="scope.row.PolicyDocument.len > 1">
+                    以及
+                    <el-button
+                      @click.native.prevent="handleClick(scope.row)"
+                      type="text"
+                      size="small"
+                    >其他{{scope.row.PolicyDocument.len}}项</el-button>
                   </p>
                 </span>
                 <span v-show="scope.row.PolicyDocument.len === undefined">
@@ -34,23 +51,37 @@
                 </span>
               </template>
             </el-table-column>
-            <el-table-column prop="Description" :label="$t('CAM.Role.roleDesc')" show-overflow-tooltip>
-            </el-table-column>
+            <el-table-column
+              prop="Description"
+              :label="$t('CAM.Role.roleDesc')"
+              show-overflow-tooltip
+            ></el-table-column>
             <el-table-column prop="oper" :label="$t('CAM.Role.colHandle')" width="100">
               <template slot-scope="scope">
-                <el-button @click="delete_Role(scope.row.RoleId)" type="text" size="small">{{$t('CAM.Role.delBtn')}}
-                </el-button>
+                <el-button
+                  @click="delete_Role(scope.row.RoleId)"
+                  type="text"
+                  size="small"
+                >{{$t('CAM.Role.delBtn')}}</el-button>
               </template>
             </el-table-column>
           </el-table>
-          <div style="background:#fff;padding:10px;display:flex;justify-content: space-between;line-height:30px">
+          <div
+            style="background:#fff;padding:10px;display:flex;justify-content: space-between;line-height:30px"
+          >
             <div>
               <span style="font-size:12px;color:#888">共 {{total}} 项</span>
             </div>
             <div>
-              <el-pagination @size-change="sizeChange" @current-change="pageChange" :current-page.sync="Page"
-                :page-sizes="[10, 20, 50, 100, 200]" :page-size="size" layout="total, sizes, prev, pager, next, jumper"
-                :total="total"></el-pagination>
+              <el-pagination
+                @size-change="sizeChange"
+                @current-change="pageChange"
+                :current-page.sync="Page"
+                :page-sizes="[10, 20, 50, 100, 200]"
+                :page-size="size"
+                layout="total, sizes, prev, pager, next, jumper"
+                :total="total"
+              ></el-pagination>
             </div>
           </div>
         </div>
@@ -77,242 +108,261 @@
   </div>
 </template>
 <script>
-  export default {
-    data() {
-      return {
-        loading: true,
-        tableData: [],
-        // 分页
-        Page: 1,
-        size: 10,
-        total: 0,
-        create_dialogVisible: false
+import HeadCom from "../UserListNew/components/Head";
+export default {
+  data() {
+    return {
+      loading: true,
+      tableData: [],
+      // 分页
+      Page: 1,
+      size: 10,
+      total: 0,
+      create_dialogVisible: false
+    };
+  },
+  components: {
+    HeadCom
+  },
+  created() {
+    this.init();
+  },
+  methods: {
+    init() {
+      let params = {
+        Action: "DescribeRoleList",
+        Version: "2019-01-16",
+        Page: this.Page,
+        Rp: this.size
       };
-    },
-    created() {
-      this.init();
-    },
-    methods: {
-      init() {
-        let params = {
-          Action: "DescribeRoleList",
-          Version: "2019-01-16",
-          Page: this.Page,
-          Rp: this.size
-        };
-        if (this.searchValue != null && this.searchValue != "") {
-          params["keyword"] = this.searchValue;
-        }
-        let url = "cam2/DescribeRoleList";
-        this.axios.post(url, params).then(data => {
-          if (data === "" || data.Response.error == 'undefined' || data.Response.List.length == 0) {
-            this.loading = false
+      if (this.searchValue != null && this.searchValue != "") {
+        params["keyword"] = this.searchValue;
+      }
+      let url = "cam2/DescribeRoleList";
+      this.axios
+        .post(url, params)
+        .then(data => {
+          if (
+            data === "" ||
+            data.Response.error == "undefined" ||
+            data.Response.List.length == 0
+          ) {
+            this.loading = false;
           } else {
-            let resData = data.Response.List
-            this.loading = false
+            let resData = data.Response.List;
+            this.loading = false;
             resData.forEach(item => {
               let obj = {
                 val: String,
                 len: String
-              }
-              let policyObj = JSON.parse(item.PolicyDocument)
+              };
+              let policyObj = JSON.parse(item.PolicyDocument);
               if (policyObj.statement[0].principal.service != undefined) {
-                if (typeof policyObj.statement[0].principal.service === 'object') {
-                  policyObj.val = policyObj.statement[0].principal.service[0]
-                  policyObj.len = policyObj.statement[0].principal.service.length - 1
+                if (
+                  typeof policyObj.statement[0].principal.service === "object"
+                ) {
+                  policyObj.val = policyObj.statement[0].principal.service[0];
+                  policyObj.len =
+                    policyObj.statement[0].principal.service.length - 1;
                 }
-                if (typeof policyObj.statement[0].principal.service === 'string') {
-                  policyObj.val = policyObj.statement[0].principal.service
-                  policyObj.len = 0
+                if (
+                  typeof policyObj.statement[0].principal.service === "string"
+                ) {
+                  policyObj.val = policyObj.statement[0].principal.service;
+                  policyObj.len = 0;
                 }
               }
               if (policyObj.statement[0].principal.qcs != undefined) {
-                policyObj.val = policyObj.statement[0].principal.qcs[0]
+                policyObj.val = policyObj.statement[0].principal.qcs[0];
               }
-              item.PolicyDocument = policyObj
+              item.PolicyDocument = policyObj;
             });
-            this.tableData = resData
-            this.total = data.Response.TotalNum
+            this.tableData = resData;
+            this.total = data.Response.TotalNum;
             // var dataRole = JSON.parse(data.Response.List);
           }
-        }).catch(error => {
+        })
+        .catch(error => {
           console.log(error);
         });
-      },
-      // 删除角色
-      delete_Role(RoleId) {
-        this.$confirm(this.$t("CAM.Role.delHint"), this.$t("CAM.Role.delTitle"), {
-          confirmButtonText: this.$t("CAM.Role.delConfirmBtn"),
-          cancelButtonText: this.$t("CAM.Role.delCancelBtn"),
-          type: "warning"
-        }).then(() => {
+    },
+    // 删除角色
+    delete_Role(RoleId) {
+      this.$confirm(this.$t("CAM.Role.delHint"), this.$t("CAM.Role.delTitle"), {
+        confirmButtonText: this.$t("CAM.Role.delConfirmBtn"),
+        cancelButtonText: this.$t("CAM.Role.delCancelBtn"),
+        type: "warning"
+      })
+        .then(() => {
           let url = "cam2/DeleteRole";
           let params = {
             Action: "DeleteRole",
             Version: "2019-01-16",
             RoleId: RoleId
           };
-          this.axios.post(url, params).then(data => {
-            if (data != null && data.Response.RequestId != "") {
+          this.axios
+            .post(url, params)
+            .then(data => {
+              if (data != null && data.Response.RequestId != "") {
+                this.$message({
+                  type: "success",
+                  message: this.$t("CAM.Role.delInfo") + "!"
+                });
+                this.init();
+                this.loading = false;
+              }
+            })
+            .catch(error => {
               this.$message({
                 type: "success",
-                message: this.$t("CAM.Role.delInfo") + "!"
+                message: error
               });
-              this.init();
-              this.loading = false;
-            }
-          }).catch(error => {
-            this.$message({
-              type: "success",
-              message: error
+              console.log(error);
             });
-            console.log(error);
-          });
-        }).catch(() => {
+        })
+        .catch(() => {
           // this.$message({ type: 'info', message: '已取消删除' })
         });
-      },
-      // 打开新增角色页面
-      created_user() {
-        console.log(1111)
-        this.create_dialogVisible = true;
-      },
-      handleClose() {
-        (this.dialogVisible = false), (this.create_dialogVisible = false);
-      },
-      handleCommand(command) {},
-      handleClick(scope) {
-        console.log(scope)
-        this.$router.push({
-          path: "/RoleDetail",
-          query: {
-            RoleId: scope.RoleId
-          }
-        });
-      },
-      pageChange(e) {
-        this.page = e
-        this.init()
-      },
-      sizeChange(e) {
-        this.size = e
-        this.init()
-      },
-      handleClick_user() {
-        this.dialogVisible = true;
-      },
-      toServe() {
-        this.$router.push("/createServe");
-      },
-      toAccount() {
-        this.$router.push("/createAccount");
-      },
-      toProvider() {
-        this.$router.push("/createProvider");
-      }
-    }
-  };
-
-</script>
-<style lang="scss" scoped>
-  .Cam {
-    .top {
-      color: #000;
-      padding: 20px;
-      background: #fff;
-      font-size: 16px;
-      font-weight: 700;
-      border-bottom: 1px solid #ddd;
-    }
-
-    .container {
-      max-width: 96%;
-      margin: 0 auto;
-      padding-top: 20px;
-
-      .container-text {
-        font-size: 12px;
-        line-height: inherit;
-        padding: 10px 30px 10px 20px;
-        vertical-align: middle;
-        color: #003b80;
-        border: 1px solid #97c7ff;
-        border-radius: 2px;
-        background: #e5f0ff;
-        position: relative;
-        box-sizing: border-box;
-        max-width: 1360px;
-        margin-bottom: 20px;
-      }
-
-      .table {
-        background-color: #fff;
-        margin-top: 20px;
-      }
-
-      .strategy-icon {
-        position: absolute;
-        left: 20px;
-        top: 50%;
-        margin-top: -16px;
-        width: 32px;
-        height: 32px;
-      }
-
-      .createItem {
-        display: block;
-        position: relative;
-        margin-bottom: 20px;
-        box-sizing: border-box;
-        min-height: 90px;
-        padding: 22px 50px 20px 70px;
-        background-color: #f0f4f7;
-        font-size: 14px;
-        line-height: 1.6;
-        color: #999;
-        transition: background-color 0.2s;
-        cursor: pointer;
-      }
-
-      .createItem:hover {
-        background-color: #e8f4ff;
-        text-decoration: none;
-      }
-
-      .createItem:after {
-        content: "";
-        position: absolute;
-        right: 20px;
-        top: 50%;
-        margin-top: -8px;
-        width: 10px;
-        height: 17px;
-        background-repeat: no-repeat;
-        background-image: url(../../../assets/CAM/images/cam.png);
-        background-position: -114px -62px;
-      }
-
-      .ps {
-        background-image: url(../../../assets/CAM/images/cam.svg);
-        background-position: 0.36% 53.7%;
-        background-size: 956.25% 943.75%;
-        background-repeat: no-repeat;
-      }
-
-      .ca {
-        background-image: url(../../../assets/CAM/images/cam.svg);
-        background-position: 12.770000000000001% 53.7%;
-        background-size: 956.25% 943.75%;
-        background-repeat: no-repeat;
-      }
-
-      .sf {
-        background-image: url(../../../assets/CAM/images/cam.svg);
-        background-position: 57.50999999999999% 23.330000000000002%;
-        background-size: 927.2727272727274% 943.75%;
-        background-repeat: no-repeat;
-      }
+    },
+    // 打开新增角色页面
+    created_user() {
+      console.log(1111);
+      this.create_dialogVisible = true;
+    },
+    handleClose() {
+      (this.dialogVisible = false), (this.create_dialogVisible = false);
+    },
+    handleCommand(command) {},
+    handleClick(scope) {
+      console.log(scope);
+      this.$router.push({
+        path: "/RoleDetail",
+        query: {
+          RoleId: scope.RoleId
+        }
+      });
+    },
+    pageChange(e) {
+      this.page = e;
+      this.init();
+    },
+    sizeChange(e) {
+      this.size = e;
+      this.init();
+    },
+    handleClick_user() {
+      this.dialogVisible = true;
+    },
+    toServe() {
+      this.$router.push("/createServe");
+    },
+    toAccount() {
+      this.$router.push("/createAccount");
+    },
+    toProvider() {
+      this.$router.push("/createProvider");
     }
   }
+};
+</script>
+<style lang="scss" scoped>
+.Cam {
+  .top {
+    color: #000;
+    padding: 20px;
+    background: #fff;
+    font-size: 16px;
+    font-weight: 700;
+    border-bottom: 1px solid #ddd;
+  }
 
+  .container {
+    max-width: 96%;
+    margin: 0 auto;
+    padding-top: 20px;
+
+    .container-text {
+      font-size: 12px;
+      line-height: inherit;
+      padding: 10px 30px 10px 20px;
+      vertical-align: middle;
+      color: #003b80;
+      border: 1px solid #97c7ff;
+      border-radius: 2px;
+      background: #e5f0ff;
+      position: relative;
+      box-sizing: border-box;
+      max-width: 1360px;
+      margin-bottom: 20px;
+    }
+
+    .table {
+      background-color: #fff;
+      margin-top: 20px;
+    }
+
+    .strategy-icon {
+      position: absolute;
+      left: 20px;
+      top: 50%;
+      margin-top: -16px;
+      width: 32px;
+      height: 32px;
+    }
+
+    .createItem {
+      display: block;
+      position: relative;
+      margin-bottom: 20px;
+      box-sizing: border-box;
+      min-height: 90px;
+      padding: 22px 50px 20px 70px;
+      background-color: #f0f4f7;
+      font-size: 14px;
+      line-height: 1.6;
+      color: #999;
+      transition: background-color 0.2s;
+      cursor: pointer;
+    }
+
+    .createItem:hover {
+      background-color: #e8f4ff;
+      text-decoration: none;
+    }
+
+    .createItem:after {
+      content: "";
+      position: absolute;
+      right: 20px;
+      top: 50%;
+      margin-top: -8px;
+      width: 10px;
+      height: 17px;
+      background-repeat: no-repeat;
+      background-image: url(../../../assets/CAM/images/cam.png);
+      background-position: -114px -62px;
+    }
+
+    .ps {
+      background-image: url(../../../assets/CAM/images/cam.svg);
+      background-position: 0.36% 53.7%;
+      background-size: 956.25% 943.75%;
+      background-repeat: no-repeat;
+    }
+
+    .ca {
+      background-image: url(../../../assets/CAM/images/cam.svg);
+      background-position: 12.770000000000001% 53.7%;
+      background-size: 956.25% 943.75%;
+      background-repeat: no-repeat;
+    }
+
+    .sf {
+      background-image: url(../../../assets/CAM/images/cam.svg);
+      background-position: 57.50999999999999% 23.330000000000002%;
+      background-size: 927.2727272727274% 943.75%;
+      background-repeat: no-repeat;
+    }
+  }
+}
 </style>

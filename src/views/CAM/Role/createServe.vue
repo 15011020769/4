@@ -1,18 +1,17 @@
 <template>
   <div class="createServe">
-    <div class="top">
-      <img
-        style="width:20px;cursor: pointer;"
-        @click="back"
-        src="../../../assets/CAM/images/left.png"
-        alt
-      >
-      <span class="top_text">新建自定义角色</span>
-    </div>
+    <HeadCom title="新建自定义角色" :backShow="true" @_back="_back"/>
+    
     <div class="container">
       <div class="contant">
         <div class="step">
-          <el-steps :active="active" direction="vertical" simple :space="200" finish-status="success">
+          <el-steps
+            :active="active"
+            direction="vertical"
+            simple
+            :space="200"
+            finish-status="success"
+          >
             <el-step title="输入角色载体信息"></el-step>
             <el-step title="配置角色策略"></el-step>
             <el-step title="审阅"></el-step>
@@ -71,10 +70,10 @@
               <el-table-column prop="PolicyName" label="策略名称"></el-table-column>
               <el-table-column prop="Description" label="描述"></el-table-column>
               <el-table-column prop="Type" label="策略类型">
-                <template slot-scope="scope">
-                      <p v-show="scope.row.Type == 1">自定义策略</p >
-                      <p v-show="scope.row.Type == 2">预设策略</p >
-                    </template>
+                <template slot-scope="scope">
+                  <p v-show="scope.row.Type == 1">自定义策略</p>
+                  <p v-show="scope.row.Type == 2">预设策略</p>
+                </template>
               </el-table-column>
             </el-table>
           </div>
@@ -89,154 +88,160 @@
   </div>
 </template>
 <script>
-import transfer from './component/transfer'
+import HeadCom from "../UserListNew/components/Head";
+import transfer from "./component/transfer";
 export default {
   components: {
-    transfer
+    transfer,
+    HeadCom
   },
-  data () {
+  data() {
     return {
-      tableHeight:300,
+      tableHeight: 300,
       active: 1,
-      inputRoleDesc: '',
-      inputRoleName: '',
+      inputRoleDesc: "",
+      inputRoleName: "",
       have: false,
       policiesSelectedData: [],
       checkedCities: [],
       cities: [
-        '宙斯盾安全防护',
-        'API网关',
-        '弹性伸缩',
-        '腾讯区块链开发平台',
-        '对象存储批量处理',
-        '蓝鲸平台',
-        '黑石物理服务器1.0',
-        '商业流程服务',
-        '容器服务',
-        '云数据库 MySQL',
-        '内容分发网络',
-        '文件存储',
-        '云防火墙',
-        '数据万象',
-        '消息队列 CKafka',
-        '负载均衡',
-        '云审计',
-        '云端开发环境',
-        '日志服务',
-        'CODING DevOps',
-        '对象存储',
-        '云服务器',
-        '腾讯云开发者平台',
-        '数据集成',
-        '数据安全治理中心',
-        '数据传输服务',
-        '弹性MapReduce',
-        '人脸识别',
-        '身份管理服务',
-        '物联网通信',
-        '加速物联网套件',
-        '开发者实验室',
-        '云直播',
-        '云数据库 MariaDB',
-        '小游戏联机对战引擎',
-        '云数据库 MongoDB',
-        '视频处理',
-        '迁移服务平台',
-        '媒体转码服务',
-        '网络资产风险监测系统',
-        '小程序云主机',
-        '云函数',
-        '流计算Oceanus',
-        '云数据仓库套件-Sparkling',
-        '安全运营中心',
-        '云开发',
-        '数据库中间件',
-        '腾讯智能钛',
-        '智能钛机器学习加速器',
-        '智能钛弹性模型服务',
-        '智能钛机器学习平台',
-        '智能钛自动机器学习',
-        '腾讯微服务平台',
-        '客服支持平台',
-        '微Mall',
-        '腾讯优Mall',
-        '织云'
+        "宙斯盾安全防护",
+        "API网关",
+        "弹性伸缩",
+        "腾讯区块链开发平台",
+        "对象存储批量处理",
+        "蓝鲸平台",
+        "黑石物理服务器1.0",
+        "商业流程服务",
+        "容器服务",
+        "云数据库 MySQL",
+        "内容分发网络",
+        "文件存储",
+        "云防火墙",
+        "数据万象",
+        "消息队列 CKafka",
+        "负载均衡",
+        "云审计",
+        "云端开发环境",
+        "日志服务",
+        "CODING DevOps",
+        "对象存储",
+        "云服务器",
+        "腾讯云开发者平台",
+        "数据集成",
+        "数据安全治理中心",
+        "数据传输服务",
+        "弹性MapReduce",
+        "人脸识别",
+        "身份管理服务",
+        "物联网通信",
+        "加速物联网套件",
+        "开发者实验室",
+        "云直播",
+        "云数据库 MariaDB",
+        "小游戏联机对战引擎",
+        "云数据库 MongoDB",
+        "视频处理",
+        "迁移服务平台",
+        "媒体转码服务",
+        "网络资产风险监测系统",
+        "小程序云主机",
+        "云函数",
+        "流计算Oceanus",
+        "云数据仓库套件-Sparkling",
+        "安全运营中心",
+        "云开发",
+        "数据库中间件",
+        "腾讯智能钛",
+        "智能钛机器学习加速器",
+        "智能钛弹性模型服务",
+        "智能钛机器学习平台",
+        "智能钛自动机器学习",
+        "腾讯微服务平台",
+        "客服支持平台",
+        "微Mall",
+        "腾讯优Mall",
+        "织云"
       ],
       transfer_value: [],
       transfer_data: [
         {
           value: 1,
-          desc: '备选项1'
+          desc: "备选项1"
         },
         {
           value: 2,
-          desc: '备选项2'
+          desc: "备选项2"
         },
         {
           value: 3,
-          desc: '备选项3'
+          desc: "备选项3"
         }
       ],
       tableData: [
         {
-          date: 'QCloudFinanceFullAccess',
-          name: '该策略允许您管理账户内财务相关的内容，例如：付款、开票。',
-          address: '预设策略'
+          date: "QCloudFinanceFullAccess",
+          name: "该策略允许您管理账户内财务相关的内容，例如：付款、开票。",
+          address: "预设策略"
         }
       ]
-    }
+    };
   },
   mounted() {
-    console.log(window.innerHeight)
-        console.log(this.$refs.topictable.$el)
-        console.log(this.$refs.topictable.$el.offsetTop)
-        this.tableHeight =
-          window.innerHeight - this.$refs.topictable.$el.offsetTop - 50;
-        console.log(this.tableHeight)
+    console.log(window.innerHeight);
+    console.log(this.$refs.topictable.$el);
+    console.log(this.$refs.topictable.$el.offsetTop);
+    this.tableHeight =
+      window.innerHeight - this.$refs.topictable.$el.offsetTop - 50;
+    console.log(this.tableHeight);
   },
   methods: {
-    back () {
-      this.$router.push('/Role')
+    //返回上一级
+    _back() {
+      this.$router.go(-1);
     },
-    next () {
+    back() {
+      this.$router.push("/Role");
+    },
+    next() {
       if (this.active === 1) {
         if (this.checkedCities.length === 0) {
-          this.$message('请至少选择一个服务')
-          return
+          this.$message("请至少选择一个服务");
+          return;
         }
         if (this.active === 3) {
-          return
+          return;
         }
-        this.active = this.active + 1
+        this.active = this.active + 1;
       } else if (this.active === 2) {
         if (this.active === 3) {
-          return
+          return;
         }
-        this.policiesSelectedData = this.$refs.tansferStep.getData()
-        console.log(this.policiesSelectedData)
-        this.active = this.active + 1
+        this.policiesSelectedData = this.$refs.tansferStep.getData();
+        console.log(this.policiesSelectedData);
+        this.active = this.active + 1;
       }
     },
-    reTurn () {
+    reTurn() {
       if (this.active === 1) {
-        return
+        return;
       }
-      this.active = this.active - 1
+      this.active = this.active - 1;
     },
-    handleCheckedCitiesChange (val) {
-      console.log(val)
+    handleCheckedCitiesChange(val) {
+      console.log(val);
     },
-    leftCheck (val) {},
-    jsname () {
+    leftCheck(val) {},
+    jsname() {
       if (!this.inputRoleName) {
-        this.have = true
+        this.have = true;
       } else {
-        this.have = false
+        this.have = false;
       }
     },
     //新建自定义角色创建
     complete() {
-      let _this = this
+      let _this = this;
       if (!this.inputRoleName) {
         this.have = true;
         return;
@@ -259,38 +264,38 @@ export default {
         Version: "2019-01-16",
         RoleName: this.inputRoleName,
         Description: this.inputRoleDesc,
-        PolicyDocument: '{"version":"2.0","statement":[{"action":"name/sts:AssumeRole","effect":"allow","principal":{"service":["cloudaudit.cloud.tencent.com","cls.cloud.tencent.com"]}}]}'
+        PolicyDocument:
+          '{"version":"2.0","statement":[{"action":"name/sts:AssumeRole","effect":"allow","principal":{"service":["cloudaudit.cloud.tencent.com","cls.cloud.tencent.com"]}}]}'
       };
       let url = "cam2/CreateRole";
       this.axios.post(url, params).then(data => {
         let roleId = data.Response.RoleId; // 获取创建的角色id
         this.$message("创建角色成功");
-        let policiesArray = this.policiesSelectedData // 获取权限策略
+        let policiesArray = this.policiesSelectedData; // 获取权限策略
         // 根据获取的角色ID创建角色策略
-        if(roleId != undefined && roleId != '' && policiesArray != '') {
-          for(let i=0; i < policiesArray.length; i++) {
-            let obj = policiesArray[i]
+        if (roleId != undefined && roleId != "" && policiesArray != "") {
+          for (let i = 0; i < policiesArray.length; i++) {
+            let obj = policiesArray[i];
             let params = {
-              Action: 'AttachRolePolicy',
-              Version: '2019-01-16',
+              Action: "AttachRolePolicy",
+              Version: "2019-01-16",
               PolicyId: obj.PolicyId,
               AttachRoleId: roleId
-            }
-            _this.AttachRolePolicy(params)
+            };
+            _this.AttachRolePolicy(params);
           }
         }
-        this.back()
+        this.back();
       });
     },
     // 绑定权限策略到角色
     AttachRolePolicy(params) {
-      this.$axios.post('cam2/AttachRolePolicy', params).then(res  => {
-        console.log(res)
-      })
+      this.$axios.post("cam2/AttachRolePolicy", params).then(res => {
+        console.log(res);
+      });
     }
-    
   }
-}
+};
 </script>
 <style lang="scss" scoped>
 .createServe {
@@ -315,8 +320,8 @@ export default {
       margin: 0 auto;
       padding: 20px;
       background: #fff;
-      .el-steps--simple{
-        background-color:#fff;   
+      .el-steps--simple {
+        background-color: #fff;
       }
       .step {
         border-bottom: 1px solid #ddd;

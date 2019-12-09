@@ -1,14 +1,6 @@
 <template>
   <div class="createProvider">
-    <div class="top">
-      <img
-        style="width:20px;cursor: pointer;"
-        @click="back"
-        src="../../../assets/CAM/images/left.png"
-        alt
-      >
-      <span class="top_text">新建自定义角色</span>
-    </div>
+    <HeadCom title="新建自定义角色" :backShow="true" @_back="_back" />
     <div class="container">
       <div class="contant">
         <div class="step">
@@ -70,13 +62,15 @@
                       <el-input v-model="input" placeholder="请输入内容" size="mini"></el-input>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="address" label="">
+                  <el-table-column prop="address" label>
                     <template slot-scope="scope">
-                     <a href="JavaScript:;" @click="detele(scope)">删除</a>
+                      <a href="JavaScript:;" @click="detele(scope)">删除</a>
                     </template>
                   </el-table-column>
                 </el-table>
-                <p style="margin-top:20px"><el-button size="small" @click="add_use">新增使用条件</el-button></p>
+                <p style="margin-top:20px">
+                  <el-button size="small" @click="add_use">新增使用条件</el-button>
+                </p>
               </div>
             </div>
           </div>
@@ -127,6 +121,7 @@
   </div>
 </template>
 <script>
+import HeadCom from "../UserListNew/components/Head";
 export default {
   data() {
     return {
@@ -163,7 +158,14 @@ export default {
       tableData: []
     };
   },
+  components:{
+    HeadCom
+  },
   methods: {
+    //返回上一级
+    _back() {
+      this.$router.go(-1);
+    },
     back() {
       this.$router.push("/Role");
     },
@@ -205,13 +207,13 @@ export default {
       }
       this.$message("创建角色成功");
     },
-    add_use(){
-      let obj = {}
-      this.tableData.push(obj)
+    add_use() {
+      let obj = {};
+      this.tableData.push(obj);
     },
-    detele(val){
-      console.log(val.$index)
-      this.tableData.splice(val.$index,1)
+    detele(val) {
+      console.log(val.$index);
+      this.tableData.splice(val.$index, 1);
     }
   }
 };
@@ -219,7 +221,7 @@ export default {
 <style lang="scss" scoped>
 .createProvider {
   .top {
-   padding: 0 20px;
+    padding: 0 20px;
     background-color: #fff;
     margin-bottom: 20px;
     color: #000;

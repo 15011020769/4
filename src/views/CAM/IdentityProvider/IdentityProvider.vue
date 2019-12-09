@@ -1,8 +1,6 @@
 <template>
   <div class="Cam">
-    <div class="top">
-      <span class="title-left">身份提供者</span>
-    </div>
+    <HeadCom title="身份提供者" />
     <div class="cam_button">
       <el-row class="cam-lt">
         <el-button type="primary" size="small" @click="NewUser">新建供应商</el-button>
@@ -51,6 +49,7 @@
   </div>
 </template>
 <script>
+import HeadCom from "../UserListNew/components/Head";
 export default {
   data() {
     return {
@@ -61,6 +60,9 @@ export default {
   },
   mounted() {
     this.init();
+  },
+  components: {
+    HeadCom
   },
   methods: {
     // 初始化方法。
