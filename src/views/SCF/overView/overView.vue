@@ -151,7 +151,7 @@ export default {
   data() {
     return {
       funlistname: [],
-      funlistid: [],
+      funlistversion: [],
       functionName: this.$route.query.FunctionName,
       addressIpt: "中国台北",
       topList: {
@@ -235,10 +235,10 @@ export default {
     },
     //获取数据
     GetDat(data) {
-      console.log(datas);
-      this.period = data[0];
-      this.Start_End = data[1];
-      this.value = data[2];
+      // // console.log(datas);
+      // this.period = data[0];
+      // this.Start_End = data[1];
+      // this.value = data[2];
 
       this.tableData = [];
       // for (let i = 0; i < metricNArr.length; i++) {
@@ -253,17 +253,17 @@ export default {
         Namespace: "QCE/SCF_V2",
         MetricName: metricN,
         "Instances.0.Dimensions.0.Name": "functionName",
-        "Instances.0.Dimensions.0.Value": this.ID,
+        "Instances.0.Dimensions.0.Value": this.funlistname,
         "Instances.0.Dimensions.1.Name": "version",
-        "Instances.0.Dimensions.1.Value": this.ID,
+        "Instances.0.Dimensions.1.Value": this.funlistversion,
         Period: this.period,
-        StartTime: this.Start_End.StartTIme,
-        EndTime: this.Start_End.EndTIme
+        // StartTime: this.Start_End.StartTIme,
+        // EndTime: this.Start_End.EndTIme
       };
       this.axios.post(All_MONITOR, param).then(data => {
         this.tableData = [];
         console.log(data);
-        // this.tableData.push(data.Response.DataPoints[0].Values);
+        this.tableData.push(data.Response.DataPoints[0].Values);
         // console.log(this.tableData)
       });
     },
@@ -308,30 +308,28 @@ export default {
         Region: this.$cookie.get("regionv2") //'ap-guangzhou',
       };
       this.axios.post(SCF_LIST, param).then(data => {
-
         data.Response.Functions.forEach(function(elem, index) {
           vm.funlistname.push(elem.FunctionName);
-          // vm.funlistid.push(elem.FunctionId);
         });
+        vm.typee()
 
 
-        vm.funlistname.forEach(function(elem) {
-          var param = {
-            Action: "ListVersionByFunction",
-            Version: "2018-04-16",
-            Region: 'ap-guangzhou', //'ap-guangzhou',
-          };
-          param['FunctionName'] = elem
-          vm.Version()
-        });
+
       });
     },
-
-
-
-    Version() {
-      this.axios.post(LIST_VERSION, param).then(data => {
-        console.log(data)
+    typee() {
+      var vm = this;
+      var listname = this.funlistname
+      listname.forEach(function(elem) {   
+        var param = {
+          Action: "ListVersionByFunction",
+          Version: "2018-04-16",
+          Region: "ap-guangzhou", //'ap-guangzhou',
+        };
+        param["FunctionName"] = elem
+        vm.axios.post(LIST_VERSION, param).then(data => {
+          vm.funlistversion.push(data.Response.FunctionVersion[0])     
+        });
       });
     }
   },
@@ -405,6 +403,7 @@ export default {
   },
   mounted() {
     this.list();
+    
     if (this.tableData == "") {
       document.querySelector(".chartTable").innerHTML = "暂无数据";
     }
