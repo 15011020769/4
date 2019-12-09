@@ -25,15 +25,21 @@
         ></el-option>
       </el-select>
 
-      <el-input placeholder="支持搜索用户名" size="small" class="inputSearch">
-        <i slot="suffix" class="el-input__icon el-icon-search"></i>
+      <el-input
+        placeholder="支持搜索用户名"
+        size="small"
+        class="inputSearch"
+        v-model="inpVal"
+        @change="userInpSearch"
+      >
+        <i slot="suffix" class="el-input__icon el-icon-search" @click="userSearch"></i>
       </el-input>
     </div>
     <div class="tableBody">
       <el-table
-        height="550"
+        height="520"
         style="width: 96%; margin: 0 auto;"
-        :data="tableData"
+        :data="tableData.slice((currpage - 1) * pagesize, currpage * pagesize)"
         @selection-change="handleSelectionChange"
       >
         <el-table-column type="selection" width="55"></el-table-column>
@@ -116,6 +122,16 @@
           </template>
         </el-table-column>
       </el-table>
+      <div class="page-box Right-style pagstyle">
+        <el-pagination
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :page-sizes="[20, 30, 40,50,100]"
+          :page-size="pagesize"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="tableData.length"
+        ></el-pagination>
+      </div>
     </div>
 
     <!-- 添加用户组弹框 -->
@@ -242,38 +258,48 @@
       </span>
     </el-dialog>
     <!-- <deleteDialog :dialogDeleteUser="flag" @suerClose="suerClose" @confirm="confirm" /> -->
-     <el-dialog
-                  :title="delTitle"
-                  :visible.sync="dialogDeleteUser"
-                  width="50%"
-                  :before-close="deleteRowHandl"
-                >
-                  <p>以下用户存在删除前置处理项 禁用并删除 API 密钥：</p>
-                  <div class="explainDelet">
-                    <p>需要您注意的是， API 密钥删除后无法恢复，请您确认清楚再进行删除。用户被删除后，该用户无法登录腾讯云以及接收消息通知，同时会解除关联权限。</p>
-                  </div>
-                  <template>
-                    <el-table style="width: 100%" :data="delNewData">
-                      <el-table-column label="用户名" width="180" prop="Name"></el-table-column>
-                      <el-table-column prop="Uid" label="账户ID" width="180"></el-table-column>
-                      <el-table-column  label="密钥ID"></el-table-column>
-                      <el-table-column  label="创建时间"></el-table-column>
-                      <el-table-column  label="状态"></el-table-column>
-                      <el-table-column  label="操作"></el-table-column>
-                    </el-table>
-                  </template>
-                  <span slot="footer" class="dialog-footer">
-                    <el-button @click="dialogDeleteUser = false">取 消</el-button>
-                    <el-button type="primary" @click="dialogDeleteUser = false">确 定</el-button>
-                  </span>
-      </el-dialog>
+    <el-dialog
+      :title="delTitle"
+      :visible.sync="dialogDeleteUser"
+      width="50%"
+      :before-close="deleteRowHandl"
+    >
+      <p>以下用户存在删除前置处理项 禁用并删除 API 密钥：</p>
+      <div class="explainDelet">
+        <p>需要您注意的是， API 密钥删除后无法恢复，请您确认清楚再进行删除。用户被删除后，该用户无法登录腾讯云以及接收消息通知，同时会解除关联权限。</p>
+      </div>
+      <template>
+        <el-table style="width: 100%" :data="delNewData">
+          <el-table-column label="用户名" width="180" prop="Name"></el-table-column>
+          <el-table-column prop="Uid" label="账户ID" width="180"></el-table-column>
+          <el-table-column label="密钥ID"></el-table-column>
+          <el-table-column label="创建时间"></el-table-column>
+          <el-table-column label="状态"></el-table-column>
+          <el-table-column label="操作"></el-table-column>
+        </el-table>
+      </template>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogDeleteUser = false">取 消</el-button>
+        <el-button type="primary" @click="dialogDeleteUser = false">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 <script>
-import { USER_LIST, USER_GROUP, POLICY_LIST, POLICY_USER,ADD_USERTOGROUP } from "@/constants";
+import {
+  USER_LIST,
+  USER_GROUP,
+  POLICY_LIST,
+  POLICY_USER,
+  ADD_USERTOGROUP
+} from "@/constants";
+import deleteDialog from "./deleteUser/index";
 export default {
   data() {
     return {
+      json: [],
+      inpVal: "", //搜索
+      flag: false, //删除弹框组件
       form: {}, //点击详情,form获取详情数据
       tableData: [], //用户列表数组
       inputShow: true, //select框禁用值
@@ -287,11 +313,12 @@ export default {
       searchStrategyValue: "", //搜素策略中的数据
       searchGroupValue: "", //搜索用户组中的数据
       Uin: "", //点击授权获取当前行的uin
-      Uid:"",
-      deletDatas:[],
-      dialogDeleteUser:false,
-      delTitle:"",
-      delNewData:[],
+      Uid: "",
+      deletDatas: [],
+      dialogDeleteUser: false,
+      delTitle: "",
+      delNewData: [],
+      deletDatas: [],
       options: [
         {
           value: 0,
@@ -302,17 +329,44 @@ export default {
           label: "删除"
         }
       ],
+      pagesize: 10, // 分页条数
+      currpage: 1, // 当前页码
       value: "" //更多操作多选值
     };
   },
   methods: {
-    delUserRow(val){
-       this.delTitle = "删除用户";
-       this.dialogDeleteUser = true;
-       let newdelData = []
-       newdelData.push(val)
-       this.delNewData = newdelData;
-       console.log(val)
+    delUserRow(val) {
+      this.delTitle = "删除用户";
+      this.dialogDeleteUser = true;
+      let newdelData = [];
+      newdelData.push(val);
+      this.delNewData = newdelData;
+      console.log(val);
+    },
+    //搜索
+    userSearch() {
+      var arr = [];
+      this.tableData.forEach(item => {
+        if (item.Name.includes(this.inpVal)) {
+          arr.push(item);
+        }
+      });
+      this.tableData = arr;
+    },
+    userInpSearch() {
+      if (this.inpVal == "") {
+        this.tableData = this.json;
+      }
+    },
+    //分页
+    handleSizeChange(val) {
+      this.pagesize = val;
+      this.currpage = 1;
+      this.init();
+    },
+    handleCurrentChange(val) {
+      this.currpage = val;
+      this.init();
     },
     //初始化用户列表数据
     init() {
@@ -321,7 +375,7 @@ export default {
       };
       this.axios.post(USER_LIST, userList).then(data => {
         this.tableData = data.Response.Data;
-        console.log(data);
+        this.json = data.Response.Data;
       });
     },
     //初始化策略数据
@@ -380,14 +434,14 @@ export default {
         this.userGroups();
       }
       if (this.value == 1) {
-       this.dialogDeleteUser = true
+        this.dialogDeleteUser = true;
       }
     },
     //点击删除弹框显示
     deleteRowData(data) {
       this.flag = true;
-      let deletData = []
-      deletData.push(data)
+      let deletData = [];
+      deletData.push(data);
       this.deletDatas = deletData;
     },
     //选框
@@ -398,7 +452,7 @@ export default {
     //点击添加到组事件
     addRroup(uid) {
       this.Uid = uid;
-      console.log(this.Uid)
+      console.log(this.Uid);
       this.title = "添加到组";
       this.authorization = true;
       this.userGroupShow = true;
@@ -435,26 +489,26 @@ export default {
         this.authorization = false;
       }
       if (this.title == "添加到组") {
-         var addGroupId = [];
-         this.userGroupSelect.forEach(item => {
-            addGroupId.push(item)
-            console.log(item)
-         })
-         addGroupId.forEach(item => {
-             let params = {
-                Version: "2019-01-16",
-                "Info.0.Uid": this.Uid,
-                "Info.0.GroupId": item.GroupId
-            };
-             this.axios.post(ADD_USERTOGROUP, params).then(res => {
-               console.log(res)
-             });
-         })
+        var addGroupId = [];
+        this.userGroupSelect.forEach(item => {
+          addGroupId.push(item);
+          console.log(item);
+        });
+        addGroupId.forEach(item => {
+          let params = {
+            Version: "2019-01-16",
+            "Info.0.Uid": this.Uid,
+            "Info.0.GroupId": item.GroupId
+          };
+          this.axios.post(ADD_USERTOGROUP, params).then(res => {
+            console.log(res);
+          });
+        });
         this.authorization = false;
       }
     },
-    deleteRowHandl(){
-       this.dialogDeleteUser = false;
+    deleteRowHandl() {
+      this.dialogDeleteUser = false;
     },
     //点击弹框中的×号隐藏弹框
     handleClose() {
@@ -493,6 +547,20 @@ export default {
       padding-left: 20px;
       line-height: 45px;
     }
+  }
+  .Right-style {
+    display: flex;
+    justify-content: flex-end;
+
+    .esach-inputL {
+      width: 300px;
+      margin-right: 20px;
+    }
+  }
+  .page-box {
+    padding: 20px;
+    padding-right: 30px;
+    box-sizing: border-box;
   }
   .explain {
     width: 96%;
@@ -571,7 +639,7 @@ export default {
     flex-direction: column;
   }
 }
-   .explainDelet {
+.explainDelet {
   width: 100%;
   font-size: 12px;
   padding: 10px 30px 10px 20px;
