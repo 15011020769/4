@@ -406,7 +406,7 @@ export default {
         })
         .then(() => {
           const params = {
-            Password: this.ruleForm.Password,
+            Password: this.taifuAIP.Password,
             QcloudUin: this.taifuAIP.Uin,
             SecretId: this.taifuAIP.SecretId,
             SecretKey: this.taifuAIP.SecretKey,
