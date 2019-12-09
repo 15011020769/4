@@ -54,7 +54,6 @@
         </div>
       </div>
     </div>
-    <div class="tableWrap">
       <div class="tableTab">
         <el-tabs v-model="activeName" @tab-click="handleClick">
           <el-tab-pane label="权限(0)" name="first">
@@ -90,7 +89,7 @@
             </el-table>
           </el-tab-pane>
           <el-tab-pane label="组(0)" name="second">
-            <el-button class="buttonCla" type="primary" size="small" >加入到组</el-button>
+            <el-button class="buttonCla" type="primary" size="small" @click="addGroupUser">加入到组</el-button>
             <el-button class="buttonCla" type="primary" size="small" :disabled="disabled" @click="removeMoreGroup">移出组</el-button>
             <el-table ref="multipleTable" :data="groupData" style="width: 100%;" @selection-change="Select">
               <el-table-column type="selection"></el-table-column>
@@ -109,7 +108,6 @@
           <el-tab-pane label="小程序" name="fifth">程序</el-tab-pane>
         </el-tabs>
       </div>
-    </div>
     <!-- 策略 -->
     <el-dialog
       :title="StrategyTitle"
@@ -312,7 +310,22 @@ export default {
     },
     //跳转到添加策略到用户页面
     gotoPolicy(){
-       this.$router.push({path:"/addPolicyToUser"})
+       this.$router.push({
+         path:"/addPolicyToUser",
+         query: {
+            Uin:this.userData.Uin
+         }
+        })
+    },
+    //跳转加入到用户组页面
+    addGroupUser(data){
+      console.log(data)
+       this.$router.push({
+         path:'/addGroup',
+         query:{
+            Uid:data.Uid
+         }
+       })
     },
     //多选框
     Select(val) {
@@ -406,16 +419,12 @@ export default {
     }
   }
 }
-.tableWrap {
-  width: 100%;
-  position: relative;
   .tableTab {
     width: 88%;
     background: white;
     padding: 25px;
     box-sizing: border-box;
     box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
-    position: absolute;
     top: 0;
     left: 0;
     margin-left: 100px;
@@ -444,5 +453,4 @@ export default {
       line-height: 20px;
     }
   }
-}
 </style>

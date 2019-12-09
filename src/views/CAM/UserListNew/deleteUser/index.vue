@@ -22,7 +22,7 @@
                   </template>
                   <span slot="footer" class="dialog-footer">
                     <el-button @click="handleClose">取 消</el-button>
-                    <el-button type="primary" @click="dialogDeleteUser = false">确 定</el-button>
+                    <el-button type="primary" @click="confirm">确 定</el-button>
                   </span>
       </el-dialog>
   </div>
@@ -38,7 +38,10 @@ export default {
    },
    methods:{
       handleClose(){
-        this.dialogDeleteUser=false
+        this.$emit('suerClose')
+      },
+      confirm(){
+         this.$emit('confirm')
       }
    }
 }

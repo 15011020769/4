@@ -86,8 +86,8 @@
 
         <el-table-column label="关联信息">
           <template slot-scope="scope">
-            <i class="el-icon-mobile mobile"  @click="detailsUser(scope.row)"></i>
-            <i class="el-icon-message message"  @click="detailsUser(scope.row)"></i>
+            <i class="el-icon-mobile mobile" @click="detailsUser(scope.row)"></i>
+            <i class="el-icon-message message" @click="detailsUser(scope.row)"></i>
           </template>
         </el-table-column>
         <el-table-column label="操作" width="140">
@@ -101,12 +101,16 @@
               </span>
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item>
-                  <el-button type="text" style="color:#000" @click="addRroup">添加到组</el-button>
+                  <el-button type="text" style="color:#000" @click="addRroup(scope.row.Uid)">添加到组</el-button>
                 </el-dropdown-item>
                 <el-dropdown-item>
                   <el-button type="text" style="color:#000">订阅信息</el-button>
                 </el-dropdown-item>
-                <el-button type="text" style="color:#000;padding-left:20px;" @click="deleteRowData">删除</el-button>
+                <el-button
+                  type="text"
+                  style="color:#000;padding-left:20px;"
+                  @click="deleteRowData(scope.row)"
+                >删除</el-button>
               </el-dropdown-menu>
             </el-dropdown>
           </template>
@@ -237,11 +241,11 @@
         <el-button @click="authorization = false">取 消</el-button>
       </span>
     </el-dialog>
-    <deleteDialog :dialogDeleteUser="flag" />
+    <deleteDialog :dialogDeleteUser="flag" @suerClose="suerClose" @confirm="confirm" />
   </div>
 </template>
 <script>
-import { USER_LIST, USER_GROUP, POLICY_LIST, POLICY_USER } from "@/constants";
+import { USER_LIST, USER_GROUP, POLICY_LIST, POLICY_USER,ADD_USERTOGROUP } from "@/constants";
 import deleteDialog from "./deleteUser/index";
 export default {
   components: {
@@ -262,7 +266,9 @@ export default {
       strategyData: [], //存放策略数据
       searchStrategyValue: "", //搜素策略中的数据
       searchGroupValue: "", //搜索用户组中的数据
-      Uin:'',//点击授权获取当前行的uin
+      Uin: "", //点击授权获取当前行的uin
+      Uid:"",
+      deletDatas:[],
       options: [
         {
           value: 0,
@@ -286,6 +292,12 @@ export default {
         this.tableData = data.Response.Data;
         console.log(data);
       });
+    },
+    suerClose() {
+      this.flag = false;
+    },
+    confirm() {
+      this.flag = false;
     },
     //初始化策略数据
     strategy() {
@@ -325,14 +337,14 @@ export default {
       this.$router.push("/adduserNew");
     },
     //点击跳转到详情页
-    detailsUser(val){
-      console.log(val)
-        this.$router.push({
-          path:"/detailsUser",
-          query:{
-            detailsData:val.Name
-          }
-        })
+    detailsUser(val) {
+      console.log(val);
+      this.$router.push({
+        path: "/detailsUser",
+        query: {
+          detailsData: val.Name
+        }
+      });
     },
     //input弹框选择数据
     select() {
@@ -347,8 +359,11 @@ export default {
       }
     },
     //点击删除弹框显示
-    deleteRowData() {
+    deleteRowData(data) {
       this.flag = true;
+      let deletData = []
+      deletData.push(data)
+      this.deletDatas = deletData;
     },
     //选框
     handleSelectionChange(val) {
@@ -356,7 +371,9 @@ export default {
       this.inputShow = false;
     },
     //点击添加到组事件
-    addRroup() {
+    addRroup(uid) {
+      this.Uid = uid;
+      console.log(this.Uid)
       this.title = "添加到组";
       this.authorization = true;
       this.userGroupShow = true;
@@ -373,27 +390,42 @@ export default {
       this.strategy(); //调动初始化策略数据
     },
     //策略与用户组数据弹框确定按钮
-    addUserList(){
+    addUserList() {
       // userGroupSelect
-      if(this.title == '关联策略'){
-         var addPloicyId = [];
-         this.userGroupSelect.forEach(item => {
-           addPloicyId.push(item);
-         });
-         addPloicyId.forEach(item => {
-           let params = {
-              Version: "2019-01-16",
-              PolicyId: item.PolicyId,
-              AttachUin: this.Uin
-           }
-           this.axios.post(POLICY_USER,params).then(data => {
-             console.log(data)
-           })
+      if (this.title == "关联策略") {
+        var addPloicyId = [];
+        this.userGroupSelect.forEach(item => {
+          addPloicyId.push(item);
         });
-         this.authorization = false; 
+        addPloicyId.forEach(item => {
+          let params = {
+            Version: "2019-01-16",
+            PolicyId: item.PolicyId,
+            AttachUin: this.Uin
+          };
+          this.axios.post(POLICY_USER, params).then(data => {
+            console.log(data);
+          });
+        });
+        this.authorization = false;
       }
-      if(this.title == '添加到组'){
-         console.log('22')
+      if (this.title == "添加到组") {
+         var addGroupId = [];
+         this.userGroupSelect.forEach(item => {
+            addGroupId.push(item)
+            console.log(item)
+         })
+         addGroupId.forEach(item => {
+             let params = {
+                Version: "2019-01-16",
+                "Info.0.Uid": this.Uid,
+                "Info.0.GroupId": item.GroupId
+            };
+             this.axios.post(ADD_USERTOGROUP, params).then(res => {
+               console.log(res)
+             });
+         })
+        this.authorization = false;
       }
     },
     //点击弹框中的×号隐藏弹框
