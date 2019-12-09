@@ -144,11 +144,12 @@ export default {
         arr.push(moment(d).format("MM-DD"));
       }
       this.timey = arr;
+      
       // this.startTime = this.getDateString(value[0]);
       // this.endTime = this.getDateString(value[1]);
       this.startTime = moment(value[0]).format("YYYY-MM-DD HH:mm:ss"); //格式处理
       this.endTime = moment(value[1]).format("YYYY-MM-DD HH:mm:ss"); //格式处理
-      this.getData();
+      this.describeDDoSNetTrend(this.timey)
     }
   },
 

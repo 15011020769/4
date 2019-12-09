@@ -81,7 +81,7 @@ export default {
       // this.endTimeService = this.getDateString(value[1]);
       // this.getDataService();
 
-      this.period = 86400;
+      this.periodService = 86400;
       var num = value[1].getTime() - value[0].getTime(); //计算时间戳的差
       var arr = [];
       for (var i = 0; i <= num / 86400000; i++) {
@@ -92,7 +92,7 @@ export default {
       this.timey = arr;
       this.startTimeService = moment(value[0]).format("YYYY-MM-DD HH:mm:ss"); //格式处理
       this.endTimeService = moment(value[1]).format("YYYY-MM-DD HH:mm:ss"); //格式处理
-      // console.log(this.startTimeService,this.endTimeService)
+      this.describeTransmitStatis();
     }
   },
 
@@ -181,10 +181,10 @@ export default {
         this.OutDataList = res.Response.OutDataList;
         if (this.metricNameService == "traffic") {
           this.drawLine4(this.timey, this.InDataList, this.OutDataList);
-          console.log(1)
+   
         } else if (this.metricNameService == "pkg") {
           this.drawLine5(this.timey, this.InDataList, this.OutDataList);
-          console.log(2)
+
         }
       });
     },

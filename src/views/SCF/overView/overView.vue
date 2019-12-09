@@ -253,9 +253,9 @@ export default {
         Namespace: "QCE/SCF_V2",
         MetricName: metricN,
         "Instances.0.Dimensions.0.Name": "functionName",
-        "Instances.0.Dimensions.0.Value": this.funlistname[0],
+        "Instances.0.Dimensions.0.Value": this.funlistname,
         "Instances.0.Dimensions.1.Name": "version",
-        "Instances.0.Dimensions.1.Value": this.funlistversion[0],
+        "Instances.0.Dimensions.1.Value": this.funlistversion,
         Period: this.period,
         StartTime: this.Start_End.StartTIme,
         EndTime: this.Start_End.EndTIme
