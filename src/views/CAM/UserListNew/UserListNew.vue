@@ -109,7 +109,7 @@
                 <el-button
                   type="text"
                   style="color:#000;padding-left:20px;"
-                  @click="deleteRowData(scope.row)"
+                  @click="dialogDeleteUser = true"
                 >删除</el-button>
               </el-dropdown-menu>
             </el-dropdown>
@@ -241,19 +241,43 @@
         <el-button @click="authorization = false">取 消</el-button>
       </span>
     </el-dialog>
-    <deleteDialog :dialogDeleteUser="flag" @suerClose="suerClose" @confirm="confirm" />
+    <!-- <deleteDialog :dialogDeleteUser="flag" @suerClose="suerClose" @confirm="confirm" /> -->
+     <el-dialog
+                  title="删除用户"
+                  :visible.sync="dialogDeleteUser"
+                  width="50%"
+                  :before-close="deleteRowHandl"
+                >
+                  <p>以下用户存在删除前置处理项 禁用并删除 API 密钥：</p>
+                  <div class="explainDelet">
+                    <p>需要您注意的是， API 密钥删除后无法恢复，请您确认清楚再进行删除。用户被删除后，该用户无法登录腾讯云以及接收消息通知，同时会解除关联权限。</p>
+                  </div>
+                  <template>
+                    <el-table style="width: 100%" >
+                      <el-table-column label="用户名" width="180"></el-table-column>
+                      <el-table-column prop="name" label="账户ID" width="180"></el-table-column>
+                      <el-table-column prop="address" label="密钥ID"></el-table-column>
+                      <el-table-column prop="address" label="创建时间"></el-table-column>
+                      <el-table-column prop="address" label="状态"></el-table-column>
+                      <el-table-column prop="address" label="操作"></el-table-column>
+                    </el-table>
+                  </template>
+                  <span slot="footer" class="dialog-footer">
+                    <el-button @click="dialogDeleteUser = false">取 消</el-button>
+                    <el-button type="primary" @click="dialogDeleteUser = false">确 定</el-button>
+                  </span>
+      </el-dialog>
   </div>
 </template>
 <script>
 import { USER_LIST, USER_GROUP, POLICY_LIST, POLICY_USER,ADD_USERTOGROUP } from "@/constants";
-import deleteDialog from "./deleteUser/index";
+// import deleteDialog from "./deleteUser/index";
 export default {
-  components: {
-    deleteDialog
-  },
+  // components: {
+  //   deleteDialog
+  // },
   data() {
     return {
-      flag: false, //删除弹框组件
       form: {}, //点击详情,form获取详情数据
       tableData: [], //用户列表数组
       inputShow: true, //select框禁用值
@@ -269,6 +293,7 @@ export default {
       Uin: "", //点击授权获取当前行的uin
       Uid:"",
       deletDatas:[],
+      dialogDeleteUser:false,
       options: [
         {
           value: 0,
@@ -292,12 +317,6 @@ export default {
         this.tableData = data.Response.Data;
         console.log(data);
       });
-    },
-    suerClose() {
-      this.flag = false;
-    },
-    confirm() {
-      this.flag = false;
     },
     //初始化策略数据
     strategy() {
@@ -355,7 +374,7 @@ export default {
         this.userGroups();
       }
       if (this.value == 1) {
-        this.flag = true;
+       this.dialogDeleteUser = true
       }
     },
     //点击删除弹框显示
@@ -427,6 +446,9 @@ export default {
          })
         this.authorization = false;
       }
+    },
+    deleteRowHandl(){
+       this.dialogDeleteUser = false;
     },
     //点击弹框中的×号隐藏弹框
     handleClose() {
@@ -542,5 +564,21 @@ export default {
     justify-content: center;
     flex-direction: column;
   }
+}
+   .explainDelet {
+  width: 100%;
+  font-size: 12px;
+  padding: 10px 30px 10px 20px;
+  vertical-align: middle;
+  color: #003b80;
+  border: 1px solid #97c7ff;
+  border-radius: 2px;
+  background: #e5f0ff;
+  position: relative;
+  box-sizing: border-box;
+  margin-top: 15px;
+  color: #c07400;
+  border-color: #ffd18b;
+  background-color: #fff4e3;
 }
 </style>
