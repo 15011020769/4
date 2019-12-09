@@ -68,6 +68,11 @@
   } from 'os';
   export default {
     name: "app",
+    data() {
+      return {
+
+      }
+    },
     components: {
       SecondStep,
       HeadCom
@@ -102,20 +107,16 @@
     },
     methods: {
       handleChange(file) {
-
-
         this.addModel.metadataDocument = file.name
-        console.log(file)
-
-
-
-
-
-
-        // return (new XMLSerializer()).serializeToString(file);
-
-
-
+        var reader = new FileReader();
+        reader.onload = function (e) {
+          let textxml = e.currentTarget.result
+          var encode = encodeURI(textxml);
+          // 对编码的字符串转化base64
+          var base64 = btoa(encode);
+          localStorage.setItem('base64', base64)
+        };
+        reader.readAsText(file.raw);
       },
       //返回上一级
       _back() {
