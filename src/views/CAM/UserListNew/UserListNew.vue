@@ -109,7 +109,7 @@
                 <el-button
                   type="text"
                   style="color:#000;padding-left:20px;"
-                  @click="dialogDeleteUser = true"
+                  @click="delUserRow(scope.row)"
                 >删除</el-button>
               </el-dropdown-menu>
             </el-dropdown>
@@ -243,7 +243,7 @@
     </el-dialog>
     <!-- <deleteDialog :dialogDeleteUser="flag" @suerClose="suerClose" @confirm="confirm" /> -->
      <el-dialog
-                  title="删除用户"
+                  :title="delTitle"
                   :visible.sync="dialogDeleteUser"
                   width="50%"
                   :before-close="deleteRowHandl"
@@ -253,13 +253,13 @@
                     <p>需要您注意的是， API 密钥删除后无法恢复，请您确认清楚再进行删除。用户被删除后，该用户无法登录腾讯云以及接收消息通知，同时会解除关联权限。</p>
                   </div>
                   <template>
-                    <el-table style="width: 100%" >
-                      <el-table-column label="用户名" width="180"></el-table-column>
-                      <el-table-column prop="name" label="账户ID" width="180"></el-table-column>
-                      <el-table-column prop="address" label="密钥ID"></el-table-column>
-                      <el-table-column prop="address" label="创建时间"></el-table-column>
-                      <el-table-column prop="address" label="状态"></el-table-column>
-                      <el-table-column prop="address" label="操作"></el-table-column>
+                    <el-table style="width: 100%" :data="delNewData">
+                      <el-table-column label="用户名" width="180" prop="Name"></el-table-column>
+                      <el-table-column prop="Uid" label="账户ID" width="180"></el-table-column>
+                      <el-table-column  label="密钥ID"></el-table-column>
+                      <el-table-column  label="创建时间"></el-table-column>
+                      <el-table-column  label="状态"></el-table-column>
+                      <el-table-column  label="操作"></el-table-column>
                     </el-table>
                   </template>
                   <span slot="footer" class="dialog-footer">
@@ -271,11 +271,7 @@
 </template>
 <script>
 import { USER_LIST, USER_GROUP, POLICY_LIST, POLICY_USER,ADD_USERTOGROUP } from "@/constants";
-// import deleteDialog from "./deleteUser/index";
 export default {
-  // components: {
-  //   deleteDialog
-  // },
   data() {
     return {
       form: {}, //点击详情,form获取详情数据
@@ -294,6 +290,8 @@ export default {
       Uid:"",
       deletDatas:[],
       dialogDeleteUser:false,
+      delTitle:"",
+      delNewData:[],
       options: [
         {
           value: 0,
@@ -308,6 +306,14 @@ export default {
     };
   },
   methods: {
+    delUserRow(val){
+       this.delTitle = "删除用户";
+       this.dialogDeleteUser = true;
+       let newdelData = []
+       newdelData.push(val)
+       this.delNewData = newdelData;
+       console.log(val)
+    },
     //初始化用户列表数据
     init() {
       let userList = {
