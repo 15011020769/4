@@ -12,7 +12,7 @@
         height="450"
         v-loading="loading"
         ref="multipleTable"
-        :data="tableData"
+        :data="tableData.slice((currpage - 1) * pagesize, currpage * pagesize)"
         tooltip-effect="dark"
         style="width: 100%; border:1px solid #ddd;padding-top: 8px;"
       >
@@ -37,11 +37,10 @@
           <el-pagination
             @size-change="handleSizeChange"
             @current-change="handleCurrentChange"
-            :current-page.sync="currentPage2"
-            :page-sizes="[10, 20, 30, 40]"
-            :page-size="10"
-            layout="sizes, prev, pager, next"
-            :total="40"
+            :page-sizes="[20, 30, 40,50,100]"
+            :page-size="pagesize"
+            layout="total, sizes, prev, pager, next, jumper"
+            :total="tableData.length"
           ></el-pagination>
         </div>
       </div>
@@ -55,7 +54,9 @@ export default {
     return {
       tableData: [],
       total: 0,
-      loading: true
+      loading: true,
+      pagesize: 10, // 分页条数
+      currpage: 1 // 当前页码
     };
   },
   mounted() {
@@ -65,6 +66,16 @@ export default {
     HeadCom
   },
   methods: {
+    //分页
+    handleSizeChange(val) {
+      this.pagesize = val;
+      this.currpage = 1;
+      this.init();
+    },
+    handleCurrentChange(val) {
+      this.currpage = val;
+      this.init();
+    },
     // 初始化方法。
     init() {
       let params = {
