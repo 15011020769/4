@@ -31,58 +31,59 @@
 </template>
 
 <script>
-import { GET_SAML } from "@/constants";
-export default {
-  props: {
-    name: String
-  },
-  data() {
-    return {
-      rules: {},
-      form: {
-        providerType: "",
-        providerName: "",
-        remark: "",
-        metadataDocument: ""
-      }
-    };
-  },
-  methods: {},
-  created() {
-    const params = {
-      Version: "2019-01-16",
-      Name: this.name
-    };
-    this.axios.post(GET_SAML, params).then(res => {
-      console.log(res);
-    });
-  }
-};
+  import {
+    GET_SAML
+  } from "@/constants";
+  export default {
+    props: {
+      name: String
+    },
+    data() {
+      return {
+        rules: {},
+        form: {
+          providerType: "",
+          providerName: "",
+          remark: "",
+          metadataDocument: ""
+        }
+      };
+    },
+    methods: {},
+    created() {
+
+    }
+  };
+
 </script>
 <style lang="scss" scoped>
-.Cam {
-  .container {
-    width: 96%;
-    // margin:0 auto;
-    background: #fff;
-    padding: 20px;
-    p.title,
-    p.explain {
-      line-height: 20px;
-      font-size: 16px;
-      color: #000;
-      font-weight: 700;
-    }
-    p.explain {
-      font-size: 12px;
-      color: #ccc;
-      margin-top: 10px;
-      line-height: 16px;
-      color: #666;
-    }
-    .container-mar {
-      margin: 0;
+  .Cam {
+    .container {
+      width: 96%;
+      // margin:0 auto;
+      background: #fff;
+      padding: 20px;
+
+      p.title,
+      p.explain {
+        line-height: 20px;
+        font-size: 16px;
+        color: #000;
+        font-weight: 700;
+      }
+
+      p.explain {
+        font-size: 12px;
+        color: #ccc;
+        margin-top: 10px;
+        line-height: 16px;
+        color: #666;
+      }
+
+      .container-mar {
+        margin: 0;
+      }
     }
   }
-}
+
 </style>
