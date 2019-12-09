@@ -108,7 +108,7 @@
           </el-tab-pane>
           <el-tab-pane label="CC防护" name="second">
             <div>
-              <ccProtection/>
+              <ccProtection :ccProtectSele='resourceId'/>
             </div>
           </el-tab-pane>
           <el-tab-pane label="DDoS高级防护策略" name="third">
@@ -209,10 +209,11 @@
 import addNewTactics from './addNewTactics'
 import ProtectConfigModel from './model/ProtectConfigModel'
 import ccProtection from './tabs/ccProtection'//cc防护模块
-import { RESOURCE_LIST } from '@/constants'
+import { RESOURCE_LIST, DDOSPOLICY_CONT } from '@/constants'
 export default {
   data() {
     return {
+      resourceId: 'net-0000006y',//资源ID
       tableDataBegin: [],//DDoS攻击防护列表
       // 过滤刷新列表过程中使用
       allData: [],  // 存储全部实例列表
@@ -265,19 +266,10 @@ export default {
     ccProtection:ccProtection,//cc防护模块
   },
   created() {
-    this.getData();
+    this.describeResourceList();
+    this.describeDDoSPolicy()
   },
   methods:{
-    getData() {
-      this.describeResourceList()
-    },
-    //写在子组件，需要传值
-    getDataCC() {
-      this.describeCCUrlAllow()
-    },
-    getDataDDoSPolicy() {
-      this.describeDDoSPolicy()
-    },
     // 1.1.获取资源列表
     describeResourceList() {
       let params = {
@@ -297,21 +289,9 @@ export default {
         Version: '2018-07-09',
         Business: 'net',
       }
-      this.$axios.post('dayu2/DescribeDDoSPolicy', params).then(res => {
+      this.axios.post(DDOSPOLICY_CONT, params).then(res => {
         console.log(res)
         this.tableDataPolicy = res.Response.DDosPolicyList
-      })
-    },
-    // 2.1.获取CC的Url白名单（cc防护改为写在子组件中，需要传值）
-    describeCCUrlAllow() {
-      let params = {
-        Version: '2018-07-09',
-        Business: 'net',
-        Id: this.resourceId,
-        'Type.0': 'white',
-      }
-      this.$axios.post('dayu2/DescribeCCUrlAllow', params).then(res => {
-        console.log(res)
       })
     },
 
@@ -397,11 +377,11 @@ export default {
     // Tab页面切换
     handleClick(tab, event) {
       if(tab.name == 'first') { //DDOS攻击防护
-        this.getData()
+        this.describeResourceList()
       } else if(tab.name == 'second') { //CC防护
-        this.getDataCC()
+        // console.log('second')
       } else if(tab.name == 'third') {  //DDOS高级防护策略
-        this.getDataDDoSPolicy()
+        this.describeDDoSPolicy()
       }
     },
 

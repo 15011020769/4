@@ -25,6 +25,9 @@ export const L4RULES_CREATE = 'dayu2/CreateL4Rules' // 添加L4转发规则
 export const L4DEL_CREATE = 'dayu2/DeleteL4Rules'// 删除L4转发规则
 export const ENID_CREATE = 'dayu2/ModifyL4Rules'  // 编辑L4转发规则
 
-
-
+    // 高防IP专业版-防护配置
+export const CC_URLALLOW = 'dayu2/DescribeCCUrlAllow' //获取CC的Url白名单
+export const CC_THRESHOLD = 'dayu2/ModifyCCThreshold' //修改CC的防护阈值
+export const CC_SELFDEFINEPOLICY_CREATE = 'dayu2/CreateCCSelfDefinePolicy' //创建CC自定义策略
+export const CC_IPALLOWDENY = 'dayu2/DescribeCCIpAllowDeny' //获取CC的IP黑白名单
 

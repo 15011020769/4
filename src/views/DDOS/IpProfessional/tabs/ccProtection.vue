@@ -52,25 +52,23 @@
       <addAccessControl/>
     </div>
     <div>
-      <addIpList/>
+      <addIpList :resourceId='ccProtectSele' :ccUrlWhiteList='ccUrlWhiteList'/>
     </div>
   </div>
 </template>
 <script>
 import addAccessControl from './addAccessControl'
 import addIpList from './addIpList'
+import { RESOURCE_LIST, CC_THRESHOLD, CC_URLALLOW, DDOSPOLICY_CONT, CC_SELFDEFINEPOLICY_CREATE } from '@/constants'
 export default {
+  props: {
+    ccProtectSele:'',//第一部分下拉 资源ID
+  },
   data(){
     return{
-      ccProtectSele:'',//第一部分下拉
-      options:[
-        {
-          value:'1',
-          label:'000006y-12'
-        }
-      ],//下拉内容
+      options:[],//下拉内容
       switchState:true,//防护状态
-      httpRequestNum:'350 QPS',//http请求阈值
+      httpRequestNum: 350,//http请求阈值
       httpOptions:[
         {
           value:50,
@@ -138,11 +136,96 @@ export default {
         },
       ],//http请求阈值数据
       httpCcNum:1000,//HTTP CC攻击告警阈值
+      // ccPolicy: {}, //创建CC自定义策略对象
+      ccUrlWhiteList: [], //CC的Url白名单
     }
   },
   components:{
     addAccessControl:addAccessControl,//访问策略控制表格
     addIpList:addIpList,//添加IP表格
+  },
+  created() {
+    this.getData()
+  },
+  watch: {
+    switchState: function(value) {
+      console.log(value, this.switchState)
+      this.modifyCCThreshold()
+      this.describeResourceList()
+      this.describeCCUrlAllow()
+    },
+    httpRequestNum: function(value) {
+      console.log(value)
+      this.modifyCCThreshold()
+      this.describeResourceList()
+      this.describeCCUrlAllow()
+    }
+  },
+  methods:{
+    getData() {
+      this.describeResourceList()
+      this.describeCCUrlAllow()
+    },
+    // 1.1.获取资源列表
+    describeResourceList() {
+      let params = {
+        Version: '2018-07-09',
+        Business: 'net',
+        'IdList.0': this.ccProtectSele,
+      }
+      this.axios.post(RESOURCE_LIST, params).then(res => {
+        console.log(params,res)
+      })
+    },
+    // 1.2.获取CC的Url白名单
+    describeCCUrlAllow() {
+      let params = {
+        Version: '2018-07-09',
+        Business: 'net',
+        Id: this.ccProtectSele,
+        'Type.0': 'white',
+      }
+      this.axios.post(CC_URLALLOW, params).then(res => {
+        console.log(res)
+        // this.ccUrlWhiteList = res.Response
+      })
+    },
+    // 1.3.修改CC的防护阈值
+    modifyCCThreshold() {
+      let params = {
+        Version: '2018-07-09',
+        Business: 'net',
+        Id: this.ccProtectSele,
+        Protocol: this.switchState?'http':'',
+        Threshold: this.switchState?this.httpRequestNum:0
+      }
+      this.axios.post(CC_THRESHOLD, params).then(res => {
+        console.log(params,res)
+      })
+    },
+    // 1.4.创建CC自定义策略(未调用)
+    createCCSelfDefinePolicy() {
+      let params = {
+        Version: '2018-07-09',
+        Business: 'net',
+        Id: this.ccProtectSele,
+        'Policy.Name': 'test',
+        'Policy.Smode': 'speedlimit'
+      }
+      this.axios.post(CC_SELFDEFINEPOLICY_CREATE, params).then(res => {
+        console.log(res)
+      })
+    },
+    // 1.5.获取DDoS高级策略(未调用)
+    describeDDoSPolicy() {
+      let params = {
+        Version: '2018-07-09',
+        Business: 'net',
+      }
+      this.axios.post(DDOSPOLICY_CONT, params).then(res => {
+        console.log(res)
+      })
+    },
   }
 }
 </script>

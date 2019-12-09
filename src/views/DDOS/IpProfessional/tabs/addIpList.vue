@@ -9,9 +9,9 @@
         </el-button-group>
       </div>
       <div>
-        <urlWhitelist v-if="thisType==1?true:false"/>
-        <ipWhitelist v-if="thisType==2?true:false"/>
-        <ipBlacklist v-if="thisType==3?true:false"/>
+        <urlWhitelist :resourceId='resourceId' :ccUrlWhiteList='ccUrlWhiteList' v-if="thisType==1?true:false"/>
+        <ipWhitelist :resourceId='resourceId' v-if="thisType==2?true:false"/>
+        <ipBlacklist :resourceId='resourceId' v-if="thisType==3?true:false"/>
       </div>
     </div>
   </div>
@@ -21,6 +21,10 @@ import urlWhitelist from './components/urlWhitelist'
 import ipWhitelist from './components/ipWhitelist'
 import ipBlacklist from './components/ipBlacklist'
 export default {
+  props: {
+    resourceId:'',//资源ID
+    ccUrlWhiteList: [], //CC的Url白名单
+  },
   data(){
     return{
       thisType:1,//默认选择URl白名单

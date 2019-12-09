@@ -7,7 +7,7 @@
         <el-button class="importBtn" @click="exportBtn">批量导出</el-button>
         <el-button :disabled="true">删除</el-button>
         <span class="addTip">最多可以添加50条URL</span>
-        <el-radio label="HTTP" v-model="radioHttp" value="1" class="httpRadio"></el-radio>
+        <el-radio label="HTTP" v-model="radioHttp" value="1" class="httpRadio" @click="httpClick"></el-radio>
       </div>
       <div class="urlWhitelistTable">
         <div class="tableListUrl">
@@ -44,6 +44,10 @@ import addUrlModel from './model/addUrlModel'
 import importUrl from './model/importUrl'
 import exportUrl from './model/exportUrl'
 export default {
+  props: {
+    resourceId:'',//资源ID
+    ccUrlWhiteList: [], //CC的Url白名单
+  },
   data(){
     return{
       tableDataBegin: [],//表格数据
@@ -60,7 +64,8 @@ export default {
           doMin:'111'
         }
       ],
-      radioHttp:'HTTP',//默认HTTP
+      radioHttp:'http',//默认HTTP
+      httpFlag: false,
       dialogModel1:false,//添加URL弹出框
       dialogModel2:false,//批量导入URl弹出框
       dialogModel3:false,//批量导出URl弹出框
@@ -71,6 +76,9 @@ export default {
     importUrl:importUrl,
     exportUrl:exportUrl
   },
+  created() {
+    this.tableDataBegin = this.ccUrlWhiteList
+  },
   methods:{
     //全选
     handleSelectionChange(val){
@@ -78,21 +86,27 @@ export default {
     },
     // 获取数据
     getData() {
-      //this.axios.get('', {}).then((res) => {
-        // console.log(res.data.tableData);
-        //this.tableDataBegin = res.data.tableData;
-        this.allData = this.tableDataBegin;
-        console.log(this.tableDataBegin)
-        // 将数据的长度赋值给totalItems
-        this.totalItems = this.tableDataBegin.length;
-        if (this.totalItems > this.pageSize) {
-          for (let index = 0; index < this.pageSize; index++) {
-            this.tableDataEnd.push(this.tableDataBegin[index]);
-          }
-        } else {
-          this.tableDataEnd = this.tableDataBegin;
-        }
-      // })
+      
+    },
+    // 1.1.获取CC的Url白名单
+    describeCCUrlAllow() {
+      let params = {
+        Version: '2018-07-09',
+        Business: 'net',
+        Id: this.resourceId,
+        Protocol: this.httpFlag?'http':'',
+        'Type.0': 'white',
+      }
+      this.axios.post(CC_URLALLOW, params).then(res => {
+        console.log(res)
+        // this.tableDataBegin = res.Response
+      })
+      this.httpFlag = false
+    },
+    // 
+    httpClick() {
+      this.httpFlag = true
+      this.describeCCUrlAllow()
     },
     // 分页开始
     handleSizeChange(val) {

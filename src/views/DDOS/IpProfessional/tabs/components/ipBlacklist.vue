@@ -43,7 +43,11 @@
 import addIpBlackModel from './model/addIpBlackModel'
 import importIpBlack from './model/importIpBlack'
 import exportIpBlack from './model/exportIpBlack'
+import { CC_IPALLOWDENY } from '@/constants'
 export default {
+  props: {
+    resourceId:'',//资源ID
+  },
   data(){
     return{
       tableDataBegin: [],//表格数据
@@ -71,6 +75,9 @@ export default {
     importIpBlack:importIpBlack,
     exportIpBlack:exportIpBlack
   },
+  created() {
+    this.describeCCIpAllowDeny()
+  },
   methods:{
     //全选
     handleSelectionChange(val){
@@ -78,21 +85,20 @@ export default {
     },
     // 获取数据
     getData() {
-      //this.axios.get('', {}).then((res) => {
-        // console.log(res.data.tableData);
-        //this.tableDataBegin = res.data.tableData;
-        this.allData = this.tableDataBegin;
-        console.log(this.tableDataBegin)
-        // 将数据的长度赋值给totalItems
-        this.totalItems = this.tableDataBegin.length;
-        if (this.totalItems > this.pageSize) {
-          for (let index = 0; index < this.pageSize; index++) {
-            this.tableDataEnd.push(this.tableDataBegin[index]);
-          }
-        } else {
-          this.tableDataEnd = this.tableDataBegin;
-        }
-      // })
+      
+    },
+    // 获取CC的IP黑白名单
+    describeCCIpAllowDeny() {
+      let params = {
+        Version: '2018-07-09',
+        Business: 'net',
+        Id: this.resourceId,
+        'Type.0': 'black',
+      }
+      this.axios.post(CC_IPALLOWDENY, params).then(res => {
+        console.log(res)
+        // this.tableDataBegin = res.Response
+      })
     },
     // 分页开始
     handleSizeChange(val) {
