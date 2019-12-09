@@ -183,6 +183,30 @@ export default new Router({
             }
         },
         {
+            path: '/PrivateGateway', // 专线网关
+            name: 'NATgateway',
+            component: () =>
+                import ( /* webpackChunkName: "PrivateGateway" */ './PrivateGateway/index.vue'),
+            meta: {
+                keepAlive: true
+            }
+        },
+        {
+            path: '/PrivateGatewaydetails', // 专线网关详情
+            name: 'NATdetails',
+            component: () =>
+                import ( /* webpackChunkName: "PrivateGatewaydetails" */ './PrivateGateway/details.vue'),
+            meta: {
+                keepAlive: true
+            }
+        },
+
+
+
+
+
+
+        {
             path: '/peerConnect', // 对等链接
             name: 'peerConnect',
             component: () =>
