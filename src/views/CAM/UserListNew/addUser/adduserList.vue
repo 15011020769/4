@@ -1,6 +1,6 @@
 <template>
   <div class="adduserlist-wrap">
-    <HeadCom title="新建子用户" :backShow="true"  />
+    <HeadCom title="新建子用户" :backShow="true"  @_back="_back"/>
     <div class="adduserlist-main">
       <el-steps :active="active" simple>
         <el-step title="选择类型"></el-step>
@@ -258,6 +258,10 @@ export default {
     this.init();
   },
   methods: {
+    //返回上一级
+    _back() {
+      this.$router.go(-1);
+    },
     //复用现有用户策略
     _userRadio(val) {
       const params = {
