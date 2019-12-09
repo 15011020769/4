@@ -13,51 +13,51 @@
           </span>
           <div class="selectDrowBox" v-if="trueOrFalse">
             <div>
-              <el-input v-model="searchIpt" placeholder="请输入别名或版本的名称进行搜索"></el-input>
+              <el-input v-model="searchIpt" :placeholder="$t('SCF.total.qsrbm')"></el-input>
               <el-button class="el-icon-search"></el-button>
             </div>
             <div class="tabChange">
               <el-tabs class="allTabsModel" v-model="activeNameModel" @tab-click="handleClick1">
-                <el-tab-pane label="版本" name="firstModel">
+                <el-tab-pane :label="$t('SCF.total.bb')" name="firstModel">
                   <div>
                     <p v-for="(item,index) in versionArr" :key="index">{{item}}</p>
                   </div>
                 </el-tab-pane>
-                <el-tab-pane label="别名" name="secondModel">
-                  <div>暂无别名</div>
+                <el-tab-pane :label="$t('SCF.total.bm')" name="secondModel">
+                  <div>{{ $t('SCF.total.zwbm') }}</div>
                 </el-tab-pane>
               </el-tabs>
             </div>
           </div>
           <el-select
             v-model="action"
-            palceholder="操作"
+            :palceholder="$t('SCF.total.cz')"
             class="action"
             @change="publishNewVewsionHander"
           >
-            <el-option label="发布新版本" value="action1"></el-option>
+            <el-option :label="$t('SCF.total.fbxbb')" value="action1"></el-option>
 
             <el-dialog
-              title="发布版本"
+              :title="$t('SCF.total.fbbb')"
               :visible.sync="publishNewVewsion"
               width="30%"
               :append-to-body="true"
               :before-close="handleClosePublish"
             >
               <el-form :model="publishVersion" label-width="100px">
-                <el-form-item label="函数名称">{{funNameTit}}</el-form-item>
-                <el-form-item label="描述" :required="true">
+                <el-form-item :label="$t('SCF.total.hsmc')">{{funNameTit}}</el-form-item>
+                <el-form-item :label="$t('SCF.total.ms')" :required="true">
                   <el-input
                     v-model="publishVersion.descript"
                     type="textarea"
-                    placeholder="请输入版本的描述"
+                    :placeholder="$t('SCF.total.qsrms')"
                   />
-                  <span>最大支持1000个英文字母、数字、空格、逗号、句号、中文</span>
+                  <span>{{ $t('SCF.total.zc') }}</span>
                 </el-form-item>
               </el-form>
               <span slot="footer" class="dialog-footer">
-                <el-button @click="publishNewVewsion = false">取 消</el-button>
-                <el-button type="primary" @click="surePublish">确 定</el-button>
+                <el-button @click="publishNewVewsion = false">{{ $t('SCF.total.qx') }}</el-button>
+                <el-button type="primary" @click="surePublish">{{ $t('SCF.total.qd') }}</el-button>
               </span>
             </el-dialog>
             <el-option label="新建别名" value="action2"></el-option>
@@ -66,7 +66,7 @@
       </div>
       <div class="appIdListCon">
         <el-tabs class="allTabs" v-model="activeName" @tab-click="handleClick">
-          <el-tab-pane label="函数配置" name="first">
+          <el-tab-pane :label="$t('SCF.total.hspz')" name="first">
             <div class="allConListMain">
               <div class="allConListMainOne">
                 <div class="allConListMainTit newClear">
@@ -302,52 +302,52 @@
                 </div>
                 <div class="allConListMainCon">
                   <p>
-                    <span>函数名称</span>
+                    <span>{{ $t('SCF.total.hsmc') }}</span>
                     <span>{{functionData.FunctionName}}</span>
                   </p>
                   <p>
-                    <span>运行角色</span>
+                    <span>{{ $t('SCF.total.yxjs') }}</span>
                     <span v-show="functionData.Role">{{functionData.Role}}1</span>
-                    <span v-show="!functionData.Role">无运行角色</span>
+                    <span v-show="!functionData.Role">{{ $t('SCF.total.wyxjs') }}</span>
                   </p>
                   <p>
-                    <span>运行环境</span>
+                    <span>{{ $t('SCF.total.yxhj') }}</span>
                     <span>{{functionData.Runtime}}</span>
                   </p>
                   <p>
-                    <span>内存</span>
+                    <span>{{ $t('SCF.total.nc') }}</span>
                     <span v-show="functionData.MemorySize">{{functionData.MemorySize}}MB</span>
                     <span v-show="!functionData.MemorySize">0MB</span>
                   </p>
                   <p>
-                    <span>超时时间</span>
+                    <span>{{ $t('SCF.total.cssj') }}</span>
                     <span v-show="functionData.Timeout">{{functionData.Timeout}}秒</span>
                     <span v-show="!functionData.Timeout">0秒</span>
                   </p>
                   <p>
-                    <span>描述</span>
+                    <span>{{ $t('SCF.total.ms') }}</span>
                     <span>{{functionData.Description}}</span>
                   </p>
                   <p>
-                    <span>修改时间</span>
+                    <span>{{ $t('SCF.total.xgsj2') }}</span>
                     <span>{{functionData.ModTime}}</span>
                   </p>
                   <p>
-                    <span>环境变量</span>
+                    <span>{{ $t('SCF.total.hjbl') }}</span>
                     <span v-show="environmentFlag">
                       {{environmentKey}}={{environmentValue}}
                       <!-- {{functionData.Environment.Variables[0].Key}}={{functionData.Environment.Variables[0].Value}} --></span>
-                    <span v-show="!environmentFlag">无环境变量</span>
+                    <span v-show="!environmentFlag">{{ $t('SCF.total.whjbl') }}</span>
                   </p>
                   <p>
-                    <span>所属网络</span>
+                    <span>{{ $t('SCF.total.sswl') }}</span>
                     <span v-show="vpcConfigFlag">{{vpcConfigVpcId}}</span>
-                    <span v-show="!vpcConfigFlag">无VPC</span>
+                    <span v-show="!vpcConfigFlag">{{ $t('SCF.total.w') }}</span>
                   </p>
                   <p>
-                    <span>所属子网</span>
+                    <span>{{ $t('SCF.total.sszw') }}</span>
                     <span v-show="vpcConfigFlag">{{vpcConfigSubnetId}}</span>
-                    <span v-show="!vpcConfigFlag">无子网</span>
+                    <span v-show="!vpcConfigFlag">{{ $t('SCF.total.wzw') }}</span>
                   </p>
                   <!-- <p>
                     <span>标签</span>
@@ -423,33 +423,33 @@
               </div>
             </div>
           </el-tab-pane>
-          <el-tab-pane label="函数代码" name="second">
+          <el-tab-pane :label="$t('SCF.total.hsdm')" name="second">
             <div class="allConListMain">
               <funCode />
             </div>
           </el-tab-pane>
-          <el-tab-pane label="触发方式" name="third">
+          <el-tab-pane :label="$t('SCF.total.cffs')" name="third">
             <div class="allConListMain">
               <triggerMode ref="mychild" @childFn="childFn" />
             </div>
           </el-tab-pane>
-          <el-tab-pane label="运行日志" name="fouth">
+          <el-tab-pane :label="$t('SCF.total.yxrz')" name="fouth">
             <div class="allConListMain">
               <runningLog />
             </div>
           </el-tab-pane>
-          <el-tab-pane label="监控信息" name="fifth">
+          <el-tab-pane :label="$t('SCF.total.jkxx')" name="fifth">
             <div class="allConListMain">
               <monitInfo />
             </div>
           </el-tab-pane>
         </el-tabs>
       </div>
-      <el-dialog title="提示" :visible.sync="centerDialogVisible" width="30%">
-        <h3 slot="title">您确定要删除该触发器吗？</h3>
+      <el-dialog :title="$t('SCF.total.ts')" :visible.sync="centerDialogVisible" width="30%">
+        <h3 slot="title">{{ $t('SCF.total.qdsccfq') }}</h3>
         <span slot="footer" class="dialog-footer">
-          <el-button @click="centerDialogVisible = false">取 消</el-button>
-          <el-button type="primary" @click="detele()">确 定</el-button>
+          <el-button @click="centerDialogVisible = false">{{ $t('SCF.total.qx') }}</el-button>
+          <el-button type="primary" @click="detele()">{{ $t('SCF.total.qd') }}</el-button>
         </span>
       </el-dialog>
     </div>

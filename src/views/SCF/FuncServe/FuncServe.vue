@@ -234,7 +234,7 @@ export default {
     return {
       nameSpaceValue: [{}],
       nameSpace: [{}],
-      addressIpt: "中国台北",
+      addressIpt: "台灣台北",
       showTables: [],
       search: "",
       newname: "",

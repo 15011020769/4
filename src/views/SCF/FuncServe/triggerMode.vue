@@ -3,77 +3,77 @@
     <div class="contentMain">
       <div class="contentMainList">
         <div class="addTriggerBtn">
-          <p @click="addTriggerBtn" style="cursor:pointer">添加触发方式</p>
+          <p @click="addTriggerBtn" style="cursor:pointer">{{ $t('SCF.total.tjcffs') }}</p>
         </div>
         <div class="addTriggerBox" v-if="displayShow">
-          <h3 @click="addTriggerBtn" style="cursor:pointer">添加触发方式</h3>
+          <h3 @click="addTriggerBtn" style="cursor:pointer">{{ $t('SCF.total.tjcffs') }}</h3>
           <el-form :model="formTriggerForm" label-width="130px">
-            <el-form-item label="触发方式" :required="true">
+            <el-form-item :label="$t('SCF.total.cffs')" :required="true">
               <span slot="label">
-                触发方式
+                {{ $t('SCF.total.cffs') }}
                 <!-- <i class="el-icon-question"></i> -->
               </span>
               <el-select v-model="formTriggerForm.triggerType" @change="chufatype" class="selectSetWidth">
-                <el-option label="定时触发" value="timer"></el-option>
-                <el-option label="COS触发" value="cos"></el-option>
-                <el-option label="CMQ主题订阅触发" value="cmq"></el-option>
-                <el-option label="Ckafka触发" value="ckafka"></el-option>
-                <el-option label="API网关触发器" value="apiwg"></el-option>
+                <el-option :label="$t('SCF.total.dscf')" value="timer"></el-option>
+                <el-option :label="$t('SCF.total.coscf')" value="cos"></el-option>
+                <el-option :label="$t('SCF.total.ztdycf')" value="cmq"></el-option>
+                <el-option :label="$t('SCF.total.cfkcf')" value="ckafka"></el-option>
+                <el-option :label="$t('SCF.total.wgcf')" value="apiwg"></el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label="定时任务名称" :required="true">
+            <el-form-item :label="$t('SCF.total.dsrwmc')" :required="true">
               <span slot="label">
-                定时任务名称
+                {{ $t('SCF.total.dsrwmc') }}
                 <!-- <i class="el-icon-question"></i> -->
               </span>
               <el-input
                 v-model="formTriggerForm.tasksName"
                 class="inputSetWidth"
-                placeholder="请输入定时任务名称"
+                :placeholder="$t('SCF.total.srdsrwmc')"
               />
             </el-form-item>
-            <el-form-item label="触发周期" :required="true">
+            <el-form-item :label="$t('SCF.total.cfzq')" :required="true">
               <el-select
                 v-model="formTriggerForm.triggerTime"
                 @change="triggerChange"
                 class="selectSetWidth"
               >
-                <el-option label="每1分钟（每分钟0秒执行一次）" value="type1"></el-option>
-                <el-option label="每5分钟（每5分钟的0秒执行一次）" value="type2"></el-option>
-                <el-option label="每半小时（每小时的0分和30分执行）" value="type3"></el-option>
-                <el-option label="每1小时（每小时0分执行一次）" value="type4"></el-option>
-                <el-option label="每1天（每天0点0分执行一次）" value="type5"></el-option>
-                <el-option label="自定义触发周期" value></el-option>
+                <el-option :label="$t('SCF.total.mfz')" value="type1"></el-option>
+                <el-option :label="$t('SCF.total.mwfz')" value="type2"></el-option>
+                <el-option :label="$t('SCF.total.mbxs')" value="type3"></el-option>
+                <el-option :label="$t('SCF.total.mxs')" value="type4"></el-option>
+                <el-option :label="$t('SCF.total.mt')" value="type5"></el-option>
+                <el-option :label="$t('SCF.total.zdtcfzq')" value></el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label="Cron表达式" v-if="triggerShow">
+            <el-form-item :label="$t('SCF.total.bds')" v-if="triggerShow">
               <el-input v-model="formTriggerForm.cronlist" placeholder="0 */5 * * * * *"/>
-              <span>Cron当前以 UTC +8 中国标准时间 （China Standard Time）运行，即北京时间。</span>
+              <span>{{ $t('SCF.total.bdsts') }}</span>
             </el-form-item>
-            <el-form-item label="附加信息">
+            <el-form-item :label="$t('SCF.total.fjxx')">
               <span slot="label">
-                附加信息
+                {{ $t('SCF.total.fjxx') }}
                 <!-- <i class="el-icon-question"></i> -->
               </span>
               <el-select v-model="formTriggerForm.writeIsTrue" class="selectSetWidth">
-                <el-option label="是" value="true"></el-option>
-                <el-option label="否" value="false"></el-option>
+                <el-option :label="$t('SCF.total.s')" value="true"></el-option>
+                <el-option :label="$t('SCF.total.f')" value="false"></el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label="立即启用">
+            <el-form-item :label="$t('SCF.total.ljqy')">
               <el-checkbox class="inputSetWidth" type="checkbox" v-model="formTriggerForm.nowStart"></el-checkbox>
               <br>
-              <span>勾选后定时触发器将立即开启（于下个配置周期触发）</span>
+              <span>{{ $t('SCF.total.zqcf') }}</span>
             </el-form-item>
           </el-form>
           <div class="triggerBtnBot">
-            <el-button type="primary" @click="saveTrigger">保存</el-button>
-            <el-button @click="displayShow=false">取消</el-button>
+            <el-button type="primary" @click="saveTrigger">{{ $t('SCF.total.bc') }}</el-button>
+            <el-button @click="displayShow=false">{{ $t('SCF.total.qx') }}</el-button>
           </div>
         </div>
         <div class="timerListShow" v-for="(item,index) in triggerBoxList" :key="item.name">
           <div class="newClear">
-            <span class="timerListTit">定时触发</span>
+            <span class="timerListTit">{{ $t('SCF.total.dscf') }}</span>
             <div class="btnAll">
               <el-switch
                 v-model="switch1[index]"
@@ -86,31 +86,31 @@
           </div>
           <div class="newListShow">
             <p>
-              <span>名称</span>
+              <span>{{ $t('SCF.total.mc') }}</span>
               <span>{{item.TriggerName}}</span>
             </p>
             <p v-if='item.TriggerDesc == "{\"cron\":\"0 */1 * * * * *\"}"'>
-              <span>触发器周期</span>
-              <span>每1分钟（每分钟0秒执行一次）</span>
+              <span>{{ $t('SCF.total.cfqzq') }}</span>
+              <span>{{ $t('SCF.total.mfz') }}</span>
             </p>
             <p v-if='item.TriggerDesc == "{\"cron\":\"0 */5 * * * * *\"}"'>
-              <span>触发器周期</span>
-              <span>每5分钟（每5分钟的0秒执行一次）</span>
+              <span>{{ $t('SCF.total.cfqzq') }}</span>
+              <span>{{ $t('SCF.total.mwfz') }}</span>
             </p>
             <p v-if='item.TriggerDesc == "{\"cron\":\"0 */30 * * * * *\"}"'>
-              <span>触发器周期</span>
-              <span>每半小时（每小时的0分和30分执行）</span>
+              <span>{{ $t('SCF.total.cfqzq') }}</span>
+              <span>{{ $t('SCF.total.mbxs') }}</span>
             </p>
             <p v-if='item.TriggerDesc == "{\"cron\":\"0 0 */1 * * * *\"}"'>
-              <span>触发器周期</span>
-              <span>每1小时（每小时0分执行一次）</span>
+              <span>{{ $t('SCF.total.cfqzq') }}</span>
+              <span>{{ $t('SCF.total.mxs') }}</span>
             </p>
             <p v-if='item.TriggerDesc == "{\"cron\":\"0 0 0 */1 * * *\"}"'>
-              <span>触发器周期</span>
-              <span>每1天（每天0点0分执行一次）</span>
+              <span>{{ $t('SCF.total.cfqzq') }}</span>
+              <span>{{ $t('SCF.total.mt') }}</span>
             </p>
             <p>
-              <span>cron表达式</span>
+              <span>{{ $t('SCF.total.bds') }}</span>
               <span>{{item.TriggerDesc}}</span>
             </p>
           </div>
