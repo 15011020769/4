@@ -37,7 +37,7 @@
     </div>
     <div class="tableBody">
       <el-table
-        height="520"
+        height="450"
         style="width: 96%; margin: 0 auto;"
         :data="tableData.slice((currpage - 1) * pagesize, currpage * pagesize)"
         @selection-change="handleSelectionChange"
@@ -110,7 +110,7 @@
                   <el-button type="text" style="color:#000" @click="addRroup(scope.row.Uid)">添加到组</el-button>
                 </el-dropdown-item>
                 <el-dropdown-item>
-                  <el-button type="text" style="color:#000">订阅信息</el-button>
+                  <el-button type="text" style="color:#000" @click="bindMesg">订阅信息</el-button>
                 </el-dropdown-item>
                 <el-button
                   type="text"
@@ -268,21 +268,36 @@
       <div class="explainDelet">
         <p>需要您注意的是， API 密钥删除后无法恢复，请您确认清楚再进行删除。用户被删除后，该用户无法登录腾讯云以及接收消息通知，同时会解除关联权限。</p>
       </div>
-      <template>
-        <el-table style="width: 100%" :data="delNewData">
-          <el-table-column label="用户名" width="180" prop="Name"></el-table-column>
-          <el-table-column prop="Uid" label="账户ID" width="180"></el-table-column>
-          <el-table-column label="密钥ID"></el-table-column>
-          <el-table-column label="创建时间"></el-table-column>
-          <el-table-column label="状态"></el-table-column>
-          <el-table-column label="操作"></el-table-column>
-        </el-table>
-      </template>
+      <div v-if="delRowShow">
+        <template>
+          <el-table style="width: 100%" :data="delNewData">
+            <el-table-column label="用户名" width="180" prop="Name"></el-table-column>
+            <el-table-column prop="Uid" label="账户ID" width="180"></el-table-column>
+            <el-table-column label="密钥ID"></el-table-column>
+            <el-table-column label="创建时间"></el-table-column>
+            <el-table-column label="状态"></el-table-column>
+            <el-table-column label="操作"></el-table-column>
+          </el-table>
+        </template>
+      </div>
+      <div v-if="delMoreShow">
+        <template>
+          <el-table style="width: 100%" :data="deletMoreDatas[0]">
+            <el-table-column label="用户名" width="180" prop="Name"></el-table-column>
+            <el-table-column prop="Uid" label="账户ID" width="180"></el-table-column>
+            <el-table-column label="密钥ID"></el-table-column>
+            <el-table-column label="创建时间"></el-table-column>
+            <el-table-column label="状态"></el-table-column>
+            <el-table-column label="操作"></el-table-column>
+          </el-table>
+        </template>
+      </div>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogDeleteUser = false">取 消</el-button>
-        <el-button type="primary" @click="dialogDeleteUser = false">确 定</el-button>
+        <el-button type="primary" @click="suerDelUser">确 定</el-button>
       </span>
     </el-dialog>
+       <Subscribe :subscribe="flag" @suerClose="suerClose" @confirm="confirm" />
   </div>
 </template>
 <script>
@@ -291,10 +306,14 @@ import {
   USER_GROUP,
   POLICY_LIST,
   POLICY_USER,
-  ADD_USERTOGROUP
+  ADD_USERTOGROUP,
+  DELETE_USER
 } from "@/constants";
-import deleteDialog from "./deleteUser/index";
+import Subscribe from './components/subscribeNew'
 export default {
+  components:{
+    Subscribe
+  },
   data() {
     return {
       json: [],
@@ -318,7 +337,12 @@ export default {
       dialogDeleteUser: false,
       delTitle: "",
       delNewData: [],
-      deletDatas: [],
+      deletMoreDatas: [],
+      delRowShow: false,
+      delMoreShow: false,
+      deleteName: "",
+      selectData: [],
+      delUin:"",
       options: [
         {
           value: 0,
@@ -335,7 +359,44 @@ export default {
     };
   },
   methods: {
+    suerDelUser() {
+      if (this.delTitle == "删除用户") {
+        let params = {
+          Version: "2019-01-16",
+          Name: this.deleteName
+        };
+        this.axios.post(DELETE_USER, params).then((data)=> {
+          console.log(data)
+        }).then(()=>{
+           let delparams = {
+            QcloudUin:this.delUin,
+            SubAccountname:this.deleteName
+          }
+          this.axios.post('http://tfc.dhycloud.com/adminapi/admin/taifucloud/account-sub/manage/delete',delparams).then(res=>{
+              console.log(res)
+          })
+        })
+        this.dialogDeleteUser = false;
+      }
+      if (this.delTitle == "批量删除") {
+        var removeIndex = [];
+        this.selectData.forEach(item => {
+          removeIndex.unshift(item.Name);
+        });
+        removeIndex.forEach(item => {
+          let params = {
+            Version: "2019-01-16",
+            Name: item
+          };
+          this.axios.post(DELETE_USER, params).then(data => {
+            this.init();
+          });
+        });
+        this.dialogDeleteUser = false;
+      }
+    },
     delUserRow(val) {
+      this.delUin = val.Uin
       this.delTitle = "删除用户";
       this.dialogDeleteUser = true;
       let newdelData = [];
@@ -367,6 +428,9 @@ export default {
     handleCurrentChange(val) {
       this.currpage = val;
       this.init();
+      this.delRowShow = true;
+      this.delMoreShow = false;
+      this.deleteName = val.Name;
     },
     //初始化用户列表数据
     init() {
@@ -388,7 +452,6 @@ export default {
       }
       this.axios.post(POLICY_LIST, params).then(res => {
         this.strategyData = res.Response.List;
-        console.log(res);
       });
     },
     //点击搜索策略数据
@@ -435,6 +498,9 @@ export default {
       }
       if (this.value == 1) {
         this.dialogDeleteUser = true;
+        this.delTitle = "批量删除";
+        this.delRowShow = false;
+        this.delMoreShow = true;
       }
     },
     //点击删除弹框显示
@@ -446,8 +512,11 @@ export default {
     },
     //选框
     handleSelectionChange(val) {
-      console.log(val);
+      this.selectData = val;
       this.inputShow = false;
+      let delMoreData = [];
+      delMoreData.push(val);
+      this.deletMoreDatas = delMoreData;
     },
     //点击添加到组事件
     addRroup(uid) {
@@ -525,7 +594,16 @@ export default {
     handleSelection(val) {
       // 给右边table框赋值，只需在此处赋值即可，selectedRow方法中不写，因为单独点击复选框，只有此方法有效。
       this.userGroupSelect = val;
-    }
+    },
+    suerClose(){
+       this.flag = false
+    },
+    confirm(){
+        this.flag = false;
+    },
+    bindMesg(){
+       this.flag = true
+    },
   },
   created() {
     this.init(); //获取用户列表数据

@@ -13,25 +13,21 @@
           ></el-option>
         </el-select>
       </div>
-      <div class="top-right">
-        <span class="right-text">
-          <a href>CAM策略使用说明</a>
-        </span>
-        <i class="el-icon-share"></i>
-      </div>
     </div>
-    <div class="container">
+    <div class="strage-wrap">
       <div class="contant">
         <p class="contant_top">用户或者用户组与策略关联后，即可获得策略所描述的操作权限。</p>
         <div class="table_opare">
           <div>
             <el-button plain size="small" @click="handleDelete()">删除</el-button>
           </div>
-          <div>
-            <el-input v-model="searchValue" placeholder="支持搜索策略名称/描述/备注" size="small" @keyup.enter.native="changePolicyScope">
-              <i slot="suffix" class="el-input__icon el-icon-search" @click="changePolicyScope"></i>
-            </el-input>
-          </div>
+          <!-- <el-input placeholder="支持搜索用户名" size="small" class="inputSearch">
+            <i slot="suffix" class="el-input__icon el-icon-search"></i>
+          </el-input> -->
+          
+           <el-input style="width:20%" placeholder="支持搜索策略名称/描述/备注" size="small"  v-model="searchValue"  @keyup.enter.native="changePolicyScope">
+                       <i slot="suffix" class="el-input__icon el-icon-search"  @click="changePolicyScope"></i>
+           </el-input>
         </div>
         <div class="table">
           <el-table
@@ -282,7 +278,7 @@ export default {
       }
     }
   }
-  .container {
+  .strage-wrap {
     .contant {
       max-width: 96%;
       margin: 0 auto;

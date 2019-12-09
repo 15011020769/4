@@ -96,11 +96,9 @@
                 <div class="container">
                   <div class="container-left">
                     <span>选择策略 （共{{totalNumPolicies}}条）</span>
-                    <div>
-                      <el-input size="mini" v-model="searchPolicies" style="width:100%"
-                        @keyup.enter.native="toQueryPolicies" />
-                      <i size="mini" class="el-icon-search fier" show-overflow-tooltip @click="toQueryPolicies"></i>
-                    </div>
+                    <el-input placeholder="支持搜索用户名" size="small"  v-model="searchPolicies" style="width:100%" @keyup.enter.native="toQueryPolicies">
+                       <i slot="suffix" class="el-input__icon el-icon-search" @click="toQueryPolicies"></i>
+                    </el-input>
                     <el-table class="table-left" ref="multipleOptionPolicies" :data="policiesAllData" size="small"
                       height="46vh" tooltip-effect="dark" style="width: 100%" @row-click="selectedRowPolicies"
                       @selection-change="handleSelectionChangePolicies">
@@ -124,7 +122,7 @@
                       <i class="iconfont">&#xe603;</i>
                     </div>
                   </div>
-                  <div class="container-left">
+                  <div class="container-right">
                     <span>已选择（共条）</span>
                     <el-table class="table-left" ref="multipleSelected" :data="policiesSelectedData"
                       tooltip-effect="dark" size="small" height="50vh" style="width: 100%">
@@ -203,10 +201,9 @@
                 <div class="container">
                   <div class="container-left">
                     <p>选择添加的用户（共{{totalNumUser}}条）</p>
-                    <div>
-                      <el-input size="mini" v-model="searchUser" style="width:100%" @keyup.enter.native="toQueryUser" />
-                      <i size="mini" class="el-icon-search fier" show-overflow-tooltip @click="toQueryUser"></i>
-                    </div>
+                    <el-input placeholder="支持搜索用户名" size="small"  v-model="searchUser" style="width:100%" @keyup.enter.native="toQueryUser">
+                       <i slot="suffix" class="el-input__icon el-icon-search" @click="toQueryUser"></i>
+                    </el-input>
                     <el-table class="table-left" ref="multipleOptionUser" :data="userData" size="small"
                       :height="tableHeight" tooltip-effect="dark" style="width: 100%" @row-click="selectedRow"
                       @selection-change="handleSelectionChangeUser">
@@ -225,7 +222,7 @@
                       <i class="iconfont">&#xe603;</i>
                     </div>
                   </div>
-                  <div class="container-left">
+                  <div class="container-right">
                     <span>已选择（{{selNum}}）</span>
                     <el-table class="table-left" ref="multipleSelected" :data="userSelData" tooltip-effect="dark"
                       size="small" :height="tableHeight" style="width: 100%">
@@ -640,19 +637,11 @@
           this.getUsers()
         }
       },
-      handleClosePolicies(done) {
-        this.$confirm("确认关闭？")
-          .then(_ => {
-            done();
-          })
-          .catch(_ => {});
+      handleClosePolicies() {
+         this.dialogVisible = false;
       },
-      handleCloseUser(done) {
-        this.$confirm("确认关闭？")
-          .then(_ => {
-            done();
-          })
-          .catch(_ => {});
+      handleCloseUser() {
+        this.dialogUser = false;
       },
       // 用户组策略分页
       handleCurrentChangePolicies(e) {
@@ -668,34 +657,29 @@
   };
 
 </script>
-<style lang="scss">
+<style lang="scss" >
   .Cam {
     .top {
       height: 45px;
       line-height: 45px;
       padding: 0 20px;
       background: #fff;
-
       .title-left {
         font-size: 14px;
         font-weight: bolder;
       }
-
       .title-right {
         float: right;
-
         span:hover {
           color: #006eff;
           border-bottom: 1px solid #006eff;
         }
       }
     }
-
     .Interface {
       background-color: #f2f2f2;
       padding: 20px;
     }
-
     .Interface-top {
       font-size: 12px;
       width: 100%;
@@ -705,7 +689,6 @@
       background: #fff;
       margin-bottom: 20px;
     }
-
     .upper-side {
       height: 30px;
     }
@@ -739,7 +722,6 @@
       font-size: 12px;
       line-height: inherit;
     }
-
     .app-cam-alert {
       padding: 10px 30px 10px 20px;
       vertical-align: middle;
@@ -753,16 +735,17 @@
       margin-right: auto;
       margin-bottom: 20px;
     }
-
     .btn {
       display: flex;
       width: 100%;
       align-items: center;
       height: 50px;
     }
-
     .container {
-
+         width: 100%;
+         display: flex;
+         justify-content: center;
+         align-items: center;
       p.title,
       p.explain {
         text-align: center;
@@ -781,10 +764,18 @@
       }
 
       .container-left {
-        width: 48%;
-        display: table-cell;
-        position: relative;
-        vertical-align: top;
+        display: flex;
+        flex-direction: column;
+        width:45%;
+        height: 600px;
+        justify-content: center;
+      }
+      .container-right{
+        display: flex;
+        width:45%;
+        height: 600px;
+        flex-direction: column;
+        justify-content: center;
       }
     }
 
@@ -814,14 +805,14 @@
       margin-left: 10px;
     }
 
-    .fier {
-      cursor: pointer;
-      font-size: 130%;
-      color: #888;
-      position: absolute;
-      right: 2%;
-      top: 8%;
-    }
+    // .fier {
+    //   cursor: pointer;
+    //   font-size: 130%;
+    //   color: #888;
+    //   position: absolute;
+    //   right: 2%;
+    //   top: 8%;
+    // }
 
     .direction {
       display: table-cell;

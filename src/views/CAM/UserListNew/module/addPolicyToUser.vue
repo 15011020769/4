@@ -256,7 +256,7 @@ export default {
       if (this.active++ > 3) this.active = 0;
     },
     complete(){
-    this.multipleSelection.forEach(item => {
+        this.multipleSelection.forEach(item => {
         //从策略列表中选取策略关联
         if (this.activeName == "first") {
           this._policy(item.PolicyId);

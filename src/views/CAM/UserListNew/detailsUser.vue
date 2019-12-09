@@ -7,7 +7,9 @@
       <div class="details-left">
         <div class="leftHead" style="display:flex">
           <p style="flex:1">{{userData.Name}}</p>
-          <p style="width:30px;">修改</p>
+          <p style="width:30px;">
+            <el-link @click="editGroup" class="edit" type="primary">编辑</el-link>
+          </p>
         </div>
         <div class="leftBody">
           <div class="bodyLeft" style="flex:1;">
@@ -49,8 +51,8 @@
           <p>快捷操作</p>
         </div>
         <div class="rightBody">
-          <el-button size="small">订阅消息</el-button>
-          <el-button size="small" class="delete">删除用户</el-button>
+          <el-button size="small" @click="bindMesg" >订阅消息</el-button>
+          <el-button size="small" class="delete" @click="deleteUser">删除用户</el-button>
         </div>
       </div>
     </div>
@@ -108,8 +110,8 @@
             <el-table-column label="关联策略" prop="GroupId"></el-table-column>
             <el-table-column label="备注" prop="Remark"></el-table-column>
             <el-table-column fixed="right" label="操作">
-              <template>
-                <el-button type="text" size="small" @click="removeGroup(item.GroupId)">移出组</el-button>
+              <template slot-scope="scope">
+                <el-button type="text" size="small" @click="removeGroup(scope.row)">移出组</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -146,6 +148,46 @@
         <el-button type="primary" @click="removeGroupUser">确 定</el-button>
       </span>
     </el-dialog>
+
+    <!-- 删除用户 -->
+    <el-dialog
+  title="删除用户"
+  :visible.sync="delDialog"
+  width="30%"
+  :before-close="handleClose">
+  <span>您将永久删除以下用户，删除的用户数据无法恢复。您确定要删除以下用户？</span>
+  <span slot="footer" class="dialog-footer">
+    <el-button @click="delDialog = false">取 消</el-button>
+    <el-button type="primary" @click="userDelete">确 定</el-button>
+  </span>
+</el-dialog>
+   
+   <!-- 编辑 -->
+    <el-dialog
+  title="编辑子用户"
+  :visible.sync="updataUser"
+  width="30%"
+  :before-close="handleClose">
+    <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
+         <el-form-item label="用户名" prop="Name" style="width:75%;text-align:center">
+              <el-input v-model="ruleForm.Name" :disabled="true"></el-input>
+          </el-form-item>
+          <el-form-item label="备注" prop="Remark"  style="width:75%;text-align:center">
+              <el-input v-model="ruleForm.Remark"></el-input>
+          </el-form-item>
+          <el-form-item label="手机" prop="PhoneNum"  style="width:75%;text-align:center">
+              <el-input v-model="ruleForm.PhoneNum"></el-input>
+          </el-form-item>
+          <el-form-item label="邮箱" prop="Email"  style="width:75%;text-align:center">
+              <el-input v-model="ruleForm.Email"></el-input>
+          </el-form-item>
+     </el-form>
+  <span slot="footer" class="dialog-footer">
+    <el-button @click="updataUser = false">取 消</el-button>
+    <el-button type="primary" @click="sureUpdata">确 定</el-button>
+  </span>
+</el-dialog>
+ <Subscribe :subscribe="flag" @suerClose="suerClose" @confirm="confirm" />
   </div>
 </template>
 <script>
@@ -155,11 +197,17 @@ import {
   QUERY_POLICY,
   RELATE_USER,
   REMOVEBIND_USER,
-  REMOVEGROUP_USER
+  REMOVEGROUP_USER,
+  DELETE_USER,
+  USER_LIST,
+  UPDATA_USER
 } from "@/constants";
+import Subscribe from './components/subscribeNew'
+import { parse } from 'path';
 export default {
   components: {
-    Headcom //头部组件
+    Headcom, //头部组件
+    Subscribe
   },
   data() {
     return {
@@ -175,10 +223,71 @@ export default {
       showStrategyMore: false, //对批量与单条解除数据进行判断
       valArr: [], //存放多选框选中数据
       GroupLoading: false, //用户组弹框
-      groupTitle: "" //用户组弹出框title
+      groupTitle: "" ,//用户组弹出框title
+      GroupId:"",
+      delDialog:false,
+      updataUser:false,
+       flag:false,
+       ruleForm: {
+          Name: '',
+          Remark:'',
+          PhoneNum:'',
+          Email:''
+      },
+      rules: {
+          name: [
+            { required: true, message: '请输入活动名称', trigger: 'blur' },
+            { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
+          ]
+      }
     };
   },
   methods: {
+    sureUpdata(){
+       let params = {
+          Version: "2019-01-16",
+          Name: this.ruleForm.Name,
+          Remark: this.ruleForm.Remark,
+          PhoneNum: this.ruleForm.PhoneNum,
+          Email: this.ruleForm.Email
+       }
+       this.axios.post(UPDATA_USER,params).then(res => {
+         if (res.Response.RequestId) {
+            this.$message("编辑成功");
+          } else {
+            this.$message.error("编辑失败");
+          }
+       })
+       this.updataUser = false;
+    },
+    editGroup(){
+      this.ruleForm = this.userData
+      console.log(this.ruleForm)
+      this.updataUser = true;
+    },
+    userDelete(){
+      let params = {
+          Version: "2019-01-16",
+          Name: this.userData.Name
+        };
+        this.axios.post(DELETE_USER, params).then(data => {
+            console.log(data)
+        }).then(()=>{
+           let delparams = {
+            QcloudUin:this.delUin,
+            SubAccountname:this.deleteName
+          }
+          this.axios.post('http://tfc.dhycloud.com/adminapi/admin/taifucloud/account-sub/manage/delete',delparams).then(res=>{
+              console.log(res)
+          })
+        })
+      this.delDialog = false;
+      this.$router.go(-1)
+    },
+    deleteUser(){
+       console.log(this.userData)
+       this.delDialog = true;
+    },
     //获取用户详情数据
     init() {
       let params = {
@@ -205,6 +314,13 @@ export default {
           this.StrategyData = res.Response.List;
         });
       });
+    },
+    //初始化用户列表
+    userLists() {
+      let userList = {
+        Version: "2019-01-16"
+      };
+      this.axios.post(USER_LIST, userList).then(data => {});
     },
     //获取每一个子用户下的用户组
     groupListData() {
@@ -289,25 +405,20 @@ export default {
         this.GroupLoading = false;
       }
       if (this.groupTitle == "确认移出") {
-        var removeGroupRow = [];
-        this.groupData.forEach(item => {
-          removeGroupRow.unshift(item.GroupId);
-        });
-        removeGroupRow.forEach(item => {
-          let params = {
+           let params = {
             Version: "2019-01-16",
-            GroupId: item
+            GroupId: this.GroupId
           };
           this.axios.post(REMOVEGROUP_USER, params).then(data => {
-            console.log(data);
+            this.groupListData();
           });
-        });
         this.GroupLoading = false;
       }
     },
     //当前一行移出组
     removeGroup(val) {
-      console.log(val);
+      console.log(val.GroupId);
+      this.GroupId = val.GroupId;
       this.GroupLoading = true;
       this.groupTitle = "确认移出";
     },
@@ -344,7 +455,18 @@ export default {
     },
     handleClose(done) {
       this.StrategyLoading = false;
-    }
+      this.delDialog = false;
+      this.updataUser = false;
+    },
+     suerClose(){
+       this.flag = false
+    },
+    confirm(){
+        this.flag = false;
+    },
+    bindMesg(){
+       this.flag = true
+    },
   },
   created() {
     this.init(); //获取当前用户的详情
@@ -371,12 +493,12 @@ export default {
       background: white;
       padding: 10px 10px 10px 10px;
       box-sizing: border-box;
+      
     }
     .leftBody {
       flex: 1;
       display: flex;
       background: white;
-
       .bodyLeft {
         padding: 10px;
         box-sizing: border-box;
