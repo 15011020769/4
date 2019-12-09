@@ -151,10 +151,18 @@ export default {
       this.getData();
     }
   },
+
+
+  //初始化生命周期
   created() {
     this.describeResourceList(); //获取资源列表的接口单独调用（因为日期变更不需要调用此接口）
     this.getData();
   },
+
+
+
+
+  
   methods: {
     // DDOS资源Id变化时，重新获取数据
     changeId() {
@@ -430,7 +438,7 @@ export default {
         arr.unshift(date[i]); //属性
       }
       arr.splice(arr.length - 1, 1);
-
+          console.log(arr)
       let myChart2 = this.$echarts.init(document.getElementById("myChart2"));
       // 绘制图表
       myChart2.setOption({

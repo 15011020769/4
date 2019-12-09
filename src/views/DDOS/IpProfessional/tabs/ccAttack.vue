@@ -116,12 +116,17 @@ export default {
         arr.push(moment(d).format("MM-DD"));
       }
       this.timey = arr;
-      console.log(this.timey)
+     
       this.startTimeCC = moment(value[0]).format("YYYY-MM-DD HH:mm:ss"); //格式处理
       this.endTimeCC = moment(value[1]).format("YYYY-MM-DD HH:mm:ss"); //格式处理
-       this.getDataCC();
+      //  console.log(this.startTimeCC,this.endTimeCC)
+       this.every();
 
     },
+  },
+
+  created() {
+    this.thisTime(1)
   },
   methods:{
     // CC资源Id变化时，重新获取数据
@@ -131,8 +136,7 @@ export default {
       this.getDataCC();
     },
     getDataCC() {
-      this.every()
-      
+      this.thisTime(1)
       this.describeCCEvList();
     },
     every(){
@@ -141,40 +145,8 @@ export default {
         this.describeCCTrend(); 
         // console.log(this.inqpsdata,this.dropqps)
       }
-      
-    },
-    // describeCCTrend() {
-    //   let params = {
-    //     Version: "2018-07-09",
-    //     Business: "net",
-    //     Id: this.inputIdCC,
-    //     Ip: "175.97.142.150", //资源的IP
-    //     MetricName: this.metricNameCC, //指标，取值[inqps(总请求峰值，dropqps(攻击请求峰值))]
-    //     Period: this.periodCC, //统计粒度，取值[300(5分钟)，3600(小时)，86400(天)]
-    //     StartTime: this.startTimeCC,
-    //     EndTime: this.endTimeCC
-    //   };
-    //   this.$axios.post("dayu2/DescribeCCTrend", params).then(res => {
-    //     console.log(res)
-    //     if(this.MetricName =="inqps"){
-    //       this.inqpsdata = res.Response.Data
-    //     }else{
-    //         this.dropqps = res.Response.Data
-    //     }
-    //     this.drawLine3()
-    //   });
-    // },
-    //时间按钮
-    //计算时间间隔
-    timedone(end, start, p) {
-      var num = end.getTime() - start.getTime();
-      var arr = [];
-      for (var i = 0; i <= num / p; i++) {
-        var d = new Date(end.getTime() - p * i);
-        arr.push(moment(d).format("MM-DD"));
-      }
-      this.timey = arr;
-    },
+      this.drawLine3(this.timey,this.inqpsdata,this.dropqps)
+    },  
     // 2.2.获取 CC 攻击事件列表
     describeCCEvList() {
       let params = {
@@ -213,6 +185,18 @@ export default {
         }
       }
     },
+
+      //计算时间间隔
+    timedone(end, start, p) {
+      var num = end.getTime() - start.getTime();
+      var arr = [];
+      for (var i = 0; i <= num / p; i++) {
+        var d = new Date(end.getTime() - p * i);
+        arr.push(moment(d).format("MM-DD"));
+      }
+      // console.log(arr)
+      this.timey = arr;
+    },
     //获取时间
     thisTime(thisTime) {
       var ipt1 = document.querySelector(".newDataTimetwo input:nth-child(2)");
@@ -220,19 +204,21 @@ export default {
       const end = new Date();
       const start = new Date();
       if (thisTime == "1") {
+        this.periodCC = 3600
         start.setTime(start.getTime() - 3600 * 1000);
         var num =end.getTime() -new Date(new Date(new Date().toLocaleDateString()).getTime()).getTime();
         var arr = [];
-        for (var i = 0; i <= num / 3600000; i++) {
+        for (var i = 0; i <= 86400000 / 3600000; i++) {
           var d = new Date(end.getTime() - 3600000 * i);
           arr.push(moment(d).format("MM-DD HH:mm:ss"));
         }
+        this.startTimeCC = moment(new Date(end.getTime()-86400000)).format("YYYY-MM-DD HH:mm:ss");
+         this.endTimeCC = moment(end).format("YYYY-MM-DD HH:mm:ss");
         this.timey = arr;
       } else if (thisTime == "2") {
         // console.log(this.inqpsdata,this.dropqps)
         //ddos攻击-攻击流量带宽
         start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
-        console.log(moment(start).format("YYYY-MM-DD HH:mm:ss"))
         ipt1.value = moment(start).format("YYYY-MM-DD HH:mm:ss");
         ipt2.value = moment(end).format("YYYY-MM-DD HH:mm:ss");
         this.startTimeCC = ipt1.value;
@@ -248,6 +234,7 @@ export default {
         this.startTimeCC = ipt1.value;
         this.endTimeCC = ipt2.value;
         this.periodCC = 86400;
+        
         this.timedone(end, start, 86400000);
         //ddos攻击-攻击流量带宽
       } else if (thisTime == "4") {
@@ -259,6 +246,7 @@ export default {
         this.endTimeCC = ipt2.value;
         this.periodCC = 86400;
         this.timedone(end, start, 86400000);
+        // console.log(end,start)
         //ddos攻击-攻击流量带宽
       } else if (thisTime == "5") {
         //ddos攻击-攻击流量带宽
@@ -293,13 +281,11 @@ export default {
       this.$axios.post("dayu2/DescribeCCTrend", params).then(res => {
         if(res.Response.MetricName =="inqps"){         
            this.inqpsdata = res.Response.Data
-            // console.log(this.inqpsdata)
         }else{
            this.dropqps = res.Response.Data
-            // console.log(this.dropqps)
         }
         
-        // this.drawLine3()
+        
       });
     },
     // 时间格式化'yyyy-MM-dd hh:mm:ss'
@@ -316,12 +302,13 @@ export default {
         })
         .replace(/\//g, "-");
     },
-    drawLine3() {
-      // var arr = [];
-      // for (let i in date) {
-      //   arr.unshift(date[i]); //属性
-      // }
-      // arr.splice(arr.length - 1, 1);
+    drawLine3(time,data1,data2) {
+      var arr = [];
+      for (let i in time) {
+        arr.unshift(time[i]); //属性
+      }
+      arr.splice(arr.length - 1, 1);
+      // console.log(arr)
       // 基于准备好的dom，初始化echarts实例
       let myChart3 = this.$echarts.init(document.getElementById("myChart3"));
       // 绘制图表
@@ -333,7 +320,7 @@ export default {
     //     data:['总请求峰值','攻击请求峰值']
     // },
         xAxis: {
-          data: [1,2,3,4,5] //["12-05", "12-04", "12-03", "12-02", "12-01"]
+          data: arr //["12-05", "12-04", "12-03", "12-02", "12-01"]
           // type : 'time',
           // minInterval: 1
         },
@@ -359,7 +346,7 @@ export default {
           {
             name: "总请求峰值",
             type: "line",
-            data: [12,3,4,5,6,4],
+            data: data1,
             itemStyle: {
               normal: {
                 lineStyle: {
@@ -371,7 +358,7 @@ export default {
            {
             name: "攻击请求峰值",
             type: "line",
-            data: [1,35,9,1,1,4],
+            data: data2,
             itemStyle: {
               normal: {
                 lineStyle: {
@@ -395,6 +382,10 @@ export default {
             color: "rgb(124, 181, 236)"
           }
         }
+      });
+       myChart3.resize();
+      window.addEventListener("resize", function() {
+        myChart3.resize();
       });
     },
   }

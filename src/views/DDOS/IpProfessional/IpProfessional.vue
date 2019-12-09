@@ -789,7 +789,7 @@ export default {
         this.$refs.ccAttack.getDataCC();
       } else if (tab.name == "service") {
         //业务
-        console.log(this.$refs.servers.getDataService())
+        // console.log(this.$refs.servers.getDataService())
         this.$refs.servers.getDataService();
       }
     },
@@ -1049,7 +1049,30 @@ export default {
   height: 380px;
   margin: 20px 0;
 }
+#myChart4 {
+  width: 100%;
+  height: 380px;
+  margin: 20px 0;
+}
+#myChart5 {
+  width: 100%;
+  height: 380px;
+  margin: 20px 0;
+}
 .newDataTimeTwo {
+  float: left;
+  height: 30px !important;
+  border-radius: 0 !important;
+  margin-left: -1px;
+  span.el-range-separator {
+    line-height: 24px;
+    width: 8%;
+  }
+  i.el-range__icon {
+    line-height: 24px;
+  }
+}
+.newDataTimethree {
   float: left;
   height: 30px !important;
   border-radius: 0 !important;

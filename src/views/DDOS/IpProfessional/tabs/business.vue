@@ -13,7 +13,7 @@
           <el-date-picker
             v-model="dateChoice3"
             type="daterange"
-            class="newDataTime"
+            class="newDataTime newDataTimethree"
             range-separator="至"
             start-placeholder="开始日期"
             end-placeholder="结束日期"
@@ -34,17 +34,12 @@
         </el-select>
       </div>
       <div class="mainConListAll mainConListTwo">
-        <el-tabs
-          class="tabsCard"
-          v-model="activeName2"
-          type="card"
-          @tab-click="handleClick2"
-        >
-          <el-tab-pane label="攻击流量宽带" name="traffic">
-            <div>攻击流量宽带</div>
+        <el-tabs class="tabsCard" v-model="activeName1" type="card" @tab-click="handleClick2">
+          <el-tab-pane label="业务流量宽带" name="traffic">
+            <div id="myChart4"></div>
           </el-tab-pane>
-          <el-tab-pane label="攻击包速率" name="pkg">
-            <div>攻击包速率</div>
+          <el-tab-pane label="业务包速率" name="pkg">
+            <div id="myChart5"></div>
           </el-tab-pane>
         </el-tabs>
       </div>
@@ -54,8 +49,8 @@
 <script>
 import moment from "moment";
 export default {
-  data(){
-    return{
+  data() {
+    return {
       activeName2: "traffic", //业务-二级tab标识
       inputIdService: "net-0000006y",
       metricNameService: "traffic", //指标名，取值：traffic表示流量带宽，pkg表示包速率
@@ -69,21 +64,45 @@ export default {
       // inpkg表示入包速率；
       // outpkg表示出包速率；
       metricNameService2s: ["connum", "inactive_conn"],
-      ywTimeBtnSelect2: "177.52.89.23",//业务 时间按钮下面第二个下拉
-      inputIdService: "net-0000006y",
-      dateChoice3: {},//日期选择
-      periodService: 300, //统计粒度，取值[300(5分钟)，3600(小时)，86400(天)]
-    }
+      ywTimeBtnSelect2: "177.52.89.23", //业务 时间按钮下面第二个下拉
+
+      dateChoice3: {}, //日期选择
+      periodService: 3600, //统计粒度，取值[300(5分钟)，3600(小时)，86400(天)]
+      endTimeService: this.getDateString(new Date()),
+      startTimeService: this.getDateString(
+        new Date(new Date().getTime() - 24 * 60 * 60 * 1000)
+      )
+    };
   },
-  watch:{
+  watch: {
     dateChoice3: function(value) {
       // console.log(this.getDateString(value[0]))
-      this.startTimeService = this.getDateString(value[0]);
-      this.endTimeService = this.getDateString(value[1]);
-      this.getDataService();
+      // this.startTimeService = this.getDateString(value[0]);
+      // this.endTimeService = this.getDateString(value[1]);
+      // this.getDataService();
+
+      this.period = 86400;
+      var num = value[1].getTime() - value[0].getTime(); //计算时间戳的差
+      var arr = [];
+      for (var i = 0; i <= num / 86400000; i++) {
+        //根据时间戳的差以及时间粒度计算出开始时间与结束时间之间有多少天/小时
+        var d = new Date(value[1].getTime() - 86400000 * i);
+        arr.push(moment(d).format("MM-DD"));
+      }
+      this.timey = arr;
+      this.startTimeService = moment(value[0]).format("YYYY-MM-DD HH:mm:ss"); //格式处理
+      this.endTimeService = moment(value[1]).format("YYYY-MM-DD HH:mm:ss"); //格式处理
+      // console.log(this.startTimeService,this.endTimeService)
     }
   },
-  methods:{
+
+  created() {
+    this.gettableshow();
+  },
+  methods: {
+    gettableshow() {
+      this.thisTime(1);
+    },
     getDataService() {
       this.describleL4Rules();
       this.describeTransmitStatis();
@@ -142,7 +161,7 @@ export default {
     },
     // 业务-二级tab切换
     handleClick2(value) {
-      // console.log(value.name)
+      console.log(value.name);
       this.metricNameService = value.name;
       this.describeTransmitStatis();
     },
@@ -158,7 +177,15 @@ export default {
         EndTime: this.endTimeService
       };
       this.$axios.post("dayu2/DescribeTransmitStatis", params).then(res => {
-        // console.log(res)
+        this.InDataList = res.Response.InDataList;
+        this.OutDataList = res.Response.OutDataList;
+        if (this.metricNameService == "traffic") {
+          this.drawLine4(this.timey, this.InDataList, this.OutDataList);
+          console.log(1)
+        } else if (this.metricNameService == "pkg") {
+          this.drawLine5(this.timey, this.InDataList, this.OutDataList);
+          console.log(2)
+        }
       });
     },
     // 业务资源id变化时，重新获取数据
@@ -181,12 +208,12 @@ export default {
       });
     },
     thisTime(thisTime) {
-      var ipt1 = document.querySelector(".newDataTime input:nth-child(2)");
-      var ipt2 = document.querySelector(".newDataTime input:nth-child(4)");
+      var ipt1 = document.querySelector(".newDataTimethree input:nth-child(2)");
+      var ipt2 = document.querySelector(".newDataTimethree input:nth-child(4)");
       const end = new Date();
       const start = new Date();
       if (thisTime == "1") {
-        console.log(111)
+        this.periodService = 3600;
         start.setTime(start.getTime() - 3600 * 1000);
         var num =
           end.getTime() -
@@ -194,19 +221,24 @@ export default {
             new Date(new Date().toLocaleDateString()).getTime()
           ).getTime();
         var arr = [];
-        for (var i = 0; i <= num / 3600000; i++) {
+        for (var i = 0; i <= 86400000 / 3600000; i++) {
           var d = new Date(end.getTime() - 3600000 * i);
           arr.push(moment(d).format("MM-DD HH:mm:ss"));
         }
+        this.startTimeService = moment(
+          new Date(end.getTime() - 86400000)
+        ).format("YYYY-MM-DD HH:mm:ss");
+        this.endTimeService = moment(end).format("YYYY-MM-DD HH:mm:ss");
         this.timey = arr;
       } else if (thisTime == "2") {
+        // console.log(this.inqpsdata,this.dropqps)
         //ddos攻击-攻击流量带宽
         start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
         ipt1.value = moment(start).format("YYYY-MM-DD HH:mm:ss");
         ipt2.value = moment(end).format("YYYY-MM-DD HH:mm:ss");
-        this.startTime = ipt1.value;
-        this.endTime = ipt2.value;
-        this.period = 86400;
+        this.startTimeService = ipt1.value;
+        this.endTimeService = ipt2.value;
+        this.periodService = 86400;
         this.timedone(end, start, 86400000);
         //ddos攻击-攻击流量带宽
       } else if (thisTime == "3") {
@@ -214,9 +246,10 @@ export default {
         start.setTime(start.getTime() - 3600 * 1000 * 24 * 15);
         ipt1.value = moment(start).format("YYYY-MM-DD HH:mm:ss");
         ipt2.value = moment(end).format("YYYY-MM-DD HH:mm:ss");
-        this.startTime = ipt1.value;
-        this.endTime = ipt2.value;
-        this.period = 86400;
+        this.startTimeService = ipt1.value;
+        this.endTimeService = ipt2.value;
+        this.periodService = 86400;
+
         this.timedone(end, start, 86400000);
         //ddos攻击-攻击流量带宽
       } else if (thisTime == "4") {
@@ -224,50 +257,25 @@ export default {
         start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
         ipt1.value = moment(start).format("YYYY-MM-DD HH:mm:ss");
         ipt2.value = moment(end).format("YYYY-MM-DD HH:mm:ss");
-        this.startTime = ipt1.value;
-        this.endTime = ipt2.value;
-        this.period = 86400;
+        this.startTimeService = ipt1.value;
+        this.endTimeService = ipt2.value;
+        this.periodService = 86400;
         this.timedone(end, start, 86400000);
+        // console.log(end,start)
         //ddos攻击-攻击流量带宽
       } else if (thisTime == "5") {
         //ddos攻击-攻击流量带宽
         start.setTime(start.getTime() - 3600 * 1000 * 24 * 30 * 6);
         ipt1.value = moment(start).format("YYYY-MM-DD HH:mm:ss");
         ipt2.value = moment(end).format("YYYY-MM-DD HH:mm:ss");
-        this.startTime = ipt1.value;
-        this.endTime = ipt2.value;
-        this.period = 86400;
+        this.startTimeService = ipt1.value;
+        this.endTimeService = ipt2.value;
+        this.periodService = 86400;
         this.timedone(end, start, 86400000);
-        //ddos攻击-攻击流量带宽
       }
-      //console.log(moment(new Date()).format('YYYY-MM-DD HH:mm:ss'),start
-      //this.thisStart=moment(start).format('YYYY-MM-DD');
-      //this.thisEnd=moment(end).format('YYYY-MM-DD');
-      //this.$emit('timeNode1',[this.thisStart,this.thisEnd])
-      // this.getData(this.timey)
-      this.describeDDoSNetTrend(this.timey);
+      this.describeTransmitStatis();
     },
-    // 1.1.获取高防IP专业版资源的DDoS攻击指标数据
-    describeDDoSNetTrend(date) {
-      let params = {
-        Version: "2018-07-09",
-        // Region: '',
-        Business: "net",
-        Id: this.inputId,
-        MetricName: this.metricName, //指标，取值[bps(攻击流量带宽，pps(攻击包速率))]
-        Period: this.period, //统计粒度，取值[300(5分钟)，3600(小时)，86400(天)]
-        StartTime: this.startTime,
-        EndTime: this.endTime
-      };
-      this.$axios.post("dayu2/DescribeDDoSNetTrend", params).then(res => {
-        console.log(res)
-        if (this.metricName == "bps") {
-          this.drawLine(res.Response.Data, date);
-        } else {
-          this.drawLine2(res.Response.Data, date);
-        }
-      });
-    },
+
     //计算时间间隔
     timedone(end, start, p) {
       var num = end.getTime() - start.getTime();
@@ -278,9 +286,182 @@ export default {
       }
       this.timey = arr;
     },
+
+    drawLine4(time, data1, data2) {
+      var arr = [];
+      for (let i in time) {
+        arr.unshift(time[i]); //属性
+      }
+      arr.splice(arr.length - 1, 1);
+      // console.log(arr)
+      // 基于准备好的dom，初始化echarts实例
+      let myChart4 = this.$echarts.init(document.getElementById("myChart4"));
+      // 绘制图表
+      myChart4.setOption({
+        color: ["rgb(124, 181, 236)"],
+        title: { text: "" },
+        tooltip: {},
+        //       legend: {
+        //     data:['总请求峰值','攻击请求峰值']
+        // },
+        xAxis: {
+          data: arr //["12-05", "12-04", "12-03", "12-02", "12-01"]
+          // type : 'time',
+          // minInterval: 1
+        },
+        yAxis: {
+          axisLine: {
+            //y轴
+            show: false
+          },
+          axisTick: {
+            //刻度线
+            show: false
+          },
+          splitLine: {
+            //网格线
+            show: false
+          },
+          axisLabel: {
+            formatter: "{value}bps"
+          },
+          boundaryGap: true
+        },
+        series: [
+          {
+            name: "入流量带宽峰值",
+            type: "line",
+            data: data1,
+            itemStyle: {
+              normal: {
+                lineStyle: {
+                  color: "rgb(124, 181, 236)"
+                }
+              }
+            }
+          },
+          {
+            name: "出流量带宽峰值",
+            type: "line",
+            data: data2,
+            itemStyle: {
+              normal: {
+                lineStyle: {
+                  color: "#f40"
+                }
+              }
+            }
+          }
+        ],
+        legend: {
+          //默认横向布局，纵向布局值为'vertical'
+          orient: "vertical",
+          x: "center", //可设定图例在左、右、居中
+          y: "bottom",
+          icon: "line", //图例样式
+          textStyle: {
+            //文字样式
+            fontWeight: "bold"
+          },
+          lineStyle: {
+            color: "rgb(124, 181, 236)"
+          }
+        }
+      });
+      myChart4.resize();
+      window.addEventListener("resize", function() {
+        myChart4.resize();
+      });
+    },
+
+    drawLine5(time, data1, data2) {
+      var arr = [];
+      for (let i in time) {
+        arr.unshift(time[i]); //属性
+      }
+      arr.splice(arr.length - 1, 1);
+      // console.log(arr)
+      // 基于准备好的dom，初始化echarts实例
+      let myChart5 = this.$echarts.init(document.getElementById("myChart5"));
+      // 绘制图表
+      myChart5.setOption({
+        color: ["rgb(124, 181, 236)"],
+        title: { text: "" },
+        tooltip: {},
+        //       legend: {
+        //     data:['总请求峰值','攻击请求峰值']
+        // },
+        xAxis: {
+          data: arr //["12-05", "12-04", "12-03", "12-02", "12-01"]
+          // type : 'time',
+          // minInterval: 1
+        },
+        yAxis: {
+          axisLine: {
+            //y轴
+            show: false
+          },
+          axisTick: {
+            //刻度线
+            show: false
+          },
+          splitLine: {
+            //网格线
+            show: false
+          },
+          axisLabel: {
+            formatter: "{value}bps"
+          },
+          boundaryGap: true
+        },
+        series: [
+          {
+            name: "入流量带宽峰值",
+            type: "line",
+            data: data1,
+            itemStyle: {
+              normal: {
+                lineStyle: {
+                  color: "rgb(124, 181, 236)"
+                }
+              }
+            }
+          },
+          {
+            name: "出流量带宽峰值",
+            type: "line",
+            data: data2,
+            itemStyle: {
+              normal: {
+                lineStyle: {
+                  color: "#f40"
+                }
+              }
+            }
+          }
+        ],
+        legend: {
+          //默认横向布局，纵向布局值为'vertical'
+          orient: "vertical",
+          x: "center", //可设定图例在左、右、居中
+          y: "bottom",
+          icon: "line", //图例样式
+          textStyle: {
+            //文字样式
+            fontWeight: "bold"
+          },
+          lineStyle: {
+            color: "rgb(124, 181, 236)"
+          }
+        }
+      });
+      myChart5.resize();
+      window.addEventListener("resize", function() {
+        myChart5.resize();
+      });
+    }
   }
-}
+};
 </script>
 <style lang="scss">
-
 </style>

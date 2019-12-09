@@ -136,7 +136,7 @@
 
 <script>
 import moment from "moment";
-import XTimeX from "@/components/public/TimeX";
+import XTimeX from "@/components/public/TimeXK";
 import echartLine from "@/components/public/echars-line";
 import {
   SCF_DETAILS,
@@ -235,15 +235,15 @@ export default {
     },
     //获取数据
     GetDat(data) {
-      // // console.log(datas);
-      // this.period = data[0];
-      // this.Start_End = data[1];
-      // this.value = data[2];
+      console.log(data);
+      this.period = data[0];
+      this.Start_End = data[1];
+      this.value = data[2];
 
       this.tableData = [];
       // for (let i = 0; i < metricNArr.length; i++) {
       //   this.Obtain(metricNArr[i]);
-      // }
+      // }s
     },
     //
     Obtain(metricN) {
@@ -253,13 +253,14 @@ export default {
         Namespace: "QCE/SCF_V2",
         MetricName: metricN,
         "Instances.0.Dimensions.0.Name": "functionName",
-        "Instances.0.Dimensions.0.Value": this.funlistname,
+        "Instances.0.Dimensions.0.Value": this.funlistname[0],
         "Instances.0.Dimensions.1.Name": "version",
-        "Instances.0.Dimensions.1.Value": this.funlistversion,
+        "Instances.0.Dimensions.1.Value": this.funlistversion[0],
         Period: this.period,
-        // StartTime: this.Start_End.StartTIme,
-        // EndTime: this.Start_End.EndTIme
+        StartTime: this.Start_End.StartTIme,
+        EndTime: this.Start_End.EndTIme
       };
+      console.log(param)
       this.axios.post(All_MONITOR, param).then(data => {
         this.tableData = [];
         console.log(data);
