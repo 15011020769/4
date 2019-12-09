@@ -26,6 +26,8 @@ export const Physics_LIST = 'dc2/DescribeDirectConnects' // 列表
 export const Private_LIST = 'dc2/DescribeDirectConnectTunnels' // 列表
     // VPN网关
 export const VPN_LIST = 'vpc2/DescribeVpnGateways' // 列表
+    //专线网关
+export const DCG_LIST = 'vpc2/DescribeDirectConnectGateways' // 列表
 
 // vpn 通道
 export const VPNTD_LIST = 'vpc2/DescribeVpnConnections' // 列表

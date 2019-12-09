@@ -89,7 +89,7 @@
 
 <script>
   import moment from "moment";
-  import XTimeX from "@/components/public/TimeX";
+  import XTimeX from "@/components/public/TimeXK";
   import echartLine from "@/components/public/echars-line";
   import {
     All_MONITOR,
@@ -124,36 +124,17 @@
         this.Start_End = data[1];
         this.value = data[2];
         const metricNArr = [
-          "CPUUsage",
-          "CPULoadAvg",
-          "MemUsed",
-          "MemUsage",
-          "TcpCurrEstab",
-          "lanOuttraffic",
-          "lanIntraffic",
-          "lanOutpkg",
-          "lanInpkg",
-          "WanOuttraffic",
-          "WanIntraffic",
-          "AccOuttraffic",
-          "WanOutpkg",
-          "WanInpkg"
+          "Outbandwidth",
+          "Inbandwidth",
+          "Outpkg",
+          "Inpkg",
+
         ];
         const symbol = [
-          "%",
-          "-",
-          "MB",
-          "%",
-          "个",
           "Mbps",
           "Mbps",
           "个/秒",
           "个/秒",
-          "Mbps",
-          "Mbps",
-          "MB",
-          "个/秒",
-          "个/秒"
         ];
         this.tableData = [];
         for (let i = 0; i < metricNArr.length; i++) {
@@ -169,15 +150,16 @@
         const param = {
           Version: "2018-07-24",
           Region: this.$cookie.get("regionv2"),
-          Namespace: "QCE/CVM",
+          Namespace: "QCE/DCG",
           MetricName: metricN,
-          "Instances.0.Dimensions.0.Name": "InstanceId",
+          "Instances.0.Dimensions.0.Name": "directConnectGatewayId",
           "Instances.0.Dimensions.0.Value": this.ID,
           Period: this.period,
           StartTime: this.Start_End.StartTIme,
           EndTime: this.Start_End.EndTIme
         };
         this.axios.post(All_MONITOR, param).then(data => {
+          console.log(data)
           data.Response.symbol = symbol;
           this.tableData.push(data.Response);
         });
@@ -214,101 +196,17 @@
     filters: {
       //文字过滤
       UpName(value) {
-        if (value === "lanOuttraffic") {
-          return (value = "内网出带宽");
-        }
-        if (value === "lanIntraffic") {
-          return (value = "内网入带宽");
-        }
-        if (value === "lanOutpkg") {
-          return (value = "内网出包量");
-        }
-        if (value === "lanInpkg") {
-          return (value = "内网入包量");
-        }
-        if (value === "WanOuttraffic") {
+        if (value === "Outbandwidth") {
           return (value = "外网出带宽");
         }
-        if (value === "WanIntraffic") {
+        if (value === "Inbandwidth") {
           return (value = "外网入带宽");
         }
-        if (value === "AccOuttraffic") {
-          return (value = "外网出流量");
+        if (value === "Outpkg") {
+          return (value = "出包量");
         }
-        if (value === "WanOutpkg") {
-          return (value = "外网出包量");
-        }
-        if (value === "WanInpkg") {
-          return (value = "外网入包量");
-        }
-        if (value === "CPUUsage") {
-          return (value = "CPU使用率");
-        }
-
-        if (value === "CPULoadAvg") {
-          return (value = "CPU平均负载");
-        }
-        if (value === "MemUsed") {
-          return (value = "内存使用量");
-        }
-        if (value === "MemUsage") {
-          return (value = "内存利用率");
-        }
-        if (value === "TcpCurrEstab") {
-          return (value = "TCP连接数");
-        }
-        if (value === "") {
-          return (value = "");
-        }
-      },
-      UpTitle(value) {
-        if (value === "lanOuttraffic") {
-          return (value = "内网网卡的平均每秒出流量");
-        }
-        if (value === "lanIntraffic") {
-          return (value = "内网网卡的平均每秒入流量");
-        }
-        if (value === "lanOutpkg") {
-          return (value = "内网网卡的平均每秒出包量");
-        }
-        if (value === "lanInpkg") {
-          return (value = "内网网卡的平均每秒入包量");
-        }
-        if (value === "WanOuttraffic") {
-          return (value =
-            "外网平均每秒出流量，最小粒度数据为10秒总流量/10秒 计算得出");
-        }
-        if (value === "WanIntraffic") {
-          return (value = "外网平均每秒入流量");
-        }
-        if (value === "AccOuttraffic") {
-          return (value = "外网网卡的平均每秒出流量");
-        }
-        if (value === "WanOutpkg") {
-          return (value = "外网平均每秒出包量");
-        }
-        if (value === "WanInpkg") {
-          return (value = "外网平均每秒入包量");
-        }
-        if (value === "CPUUsage") {
-          return (value =
-            "CPU利用率是通过CVM子机内部监控组件采集上报，数据更加精准");
-        }
-        if (value === "CPULoadAvg") {
-          return (value =
-            "1分钟内CPU平均负载，取 /proc/loadavg 第一列数据（windows操作系统无此指标），依赖监控组件安装采集");
-        }
-        if (value === "MemUsed") {
-          return (value =
-            "使用的内存量，不包括系统缓存和缓存区占用内存，依赖监控组件安装采集");
-        }
-        if (value === "MemUsage") {
-          return (value =
-            "用户实际使用的内存量与总内存量之比，不包括缓冲区与系统缓存占用的内存");
-        }
-        if (value === "TcpCurrEstab") {
-          return (value =
-            "处于 ESTABLISHED 状态的 TCP 连接数量，依赖监控组件安装采集");
+        if (value === "Inpkg") {
+          return (value = "入包量");
         }
         if (value === "") {
           return (value = "");

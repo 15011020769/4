@@ -184,7 +184,7 @@ export default new Router({
         },
         {
             path: '/PrivateGateway', // 专线网关
-            name: 'NATgateway',
+            name: 'PrivateGateway',
             component: () =>
                 import ( /* webpackChunkName: "PrivateGateway" */ './PrivateGateway/index.vue'),
             meta: {
@@ -193,7 +193,7 @@ export default new Router({
         },
         {
             path: '/PrivateGatewaydetails', // 专线网关详情
-            name: 'NATdetails',
+            name: 'PrivateGatewaydetails',
             component: () =>
                 import ( /* webpackChunkName: "PrivateGatewaydetails" */ './PrivateGateway/details.vue'),
             meta: {
