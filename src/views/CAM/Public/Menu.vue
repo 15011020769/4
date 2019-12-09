@@ -1,7 +1,7 @@
 <template>
   <div class="contant">
     <div class="CAM">
-      <!-- <div class="big-title">CAM</div> -->
+      <div class="big-title">访问管理</div>
       <el-menu
         default-active="2"
         class="el-menu-vertical-demo"
@@ -77,12 +77,15 @@ export default {
 //   height:100%;
 //   background-color:#000;
 // }
+.CAM{
+  background: rgb(41, 43, 54) !important;
+}
 .big-title {
   font-size: 16px;
   font-weight: bold;
   color: white;
   padding: 20px 0 15px 20px;
-  background: #292b36;
+  background: rgb(41, 43, 54);
   height: 45px;
   margin: 10px 0;
 }
@@ -92,7 +95,6 @@ export default {
 }
 .CAM {
   background: #000;
-  height: 100%;
   overflow-x: hidden;
   overflow-y: auto;
 }
@@ -120,22 +122,5 @@ export default {
     align-items: center;
     font-size: 14px;
   }
-}
-.CAM::-webkit-scrollbar {
-  /*滚动条整体样式*/
-  width: 8px; /*高宽分别对应横竖滚动条的尺寸*/
-  height: 100%;
-  border-radius: 19px;
-}
-.CAM::-webkit-scrollbar-thumb {
-  /*滚动条里面小方块*/
-  border-radius: 19px;
-  background: rgb(255, 208, 75);
-}
-.CAM::-webkit-scrollbar-track {
-  /*滚动条里面轨道*/
-  border-radius: 19px;
-  background: rgb(255, 208, 75);
-  opacity: 0.1;
 }
 </style>
