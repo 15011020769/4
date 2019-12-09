@@ -178,21 +178,22 @@
         chartRing: null,
         chartShadow: null,
         charLine1: null,
-        activeName: 'first',
-        dataList1: [],
-        dataList2: [],
-        month: '',
-        value: '',
-        yearvalue: 'half',
-        total: 0,
-        cash: '',
-        incentive: '',
-        voucher: '',
+        charLine2: null,
+        activeName: 'first',        // 标签页参数
+        dataList1: [],              // 按产品汇总表格接口返回的数据
+        dataList2: [],              // 按项目（组）汇总表格接口返回的数据
+        month: '',                  // 账单月份
+        value: '',                  // 费用下拉框组件中的值
+        yearvalue: 'half',          // 半年、一年过滤参数
+        total: 0,                   // 费用计算-总费用
+        cash: '',                   // 费用计算-现金支付
+        incentive: '',              // 费用计算-赠送金支付
+        voucher: '',                // 费用计算-代金券支付
         dataListLoading: false,
         pageIndex: 1,
         pageSize: 10,
-        totalPage1: 1,
-        totalPage2: 1,
+        totalPage1: 1,              // 按产品汇总-表格的总条数
+        totalPage2: 1,              // 按项目（租）汇总-表格的总条数
         options: [{
           value: 'total',
           label: this.$t('BILL.Overview.totalAmount')
@@ -237,13 +238,13 @@
       }
     },
     methods: {
-      // 每页数
+      // 按产品汇总-表格每页数
       sizeChangeHandle(val) {
         this.pageSize = val
         this.pageIndex = 1
         this.getDataList1()
       },
-      // 当前页
+      // 按产品汇总-表格当前页
       currentChangeHandle(val) {
         this.pageIndex = val
         this.getDataList1()
@@ -331,7 +332,7 @@
           this.voucher = data.chart[data.chart.length - 1].voucherAmount
         })
       },
-      // 环状图
+      // 按产品汇总-环状图
       initChart() {
         this.$axios.post(`${process.env.VUE_APP_adminUrl}taifucloud/tbillproduct/productTotal?date=` + this.month +
           `&uin=` +
@@ -414,7 +415,7 @@
           })
         })
       },
-      // 表格1
+      // 按产品汇总-表格
       getDataList1() {
         this.$axios.post(`${process.env.VUE_APP_adminUrl}taifucloud/tbillproduct/productTotalList?date=` + this.month +
           `&uin=` +
@@ -431,7 +432,7 @@
           this.dataListLoading = false
         })
       },
-      // 条形图
+      // 按项目（组）汇总-条形图
       initShadow() {
         this.$axios.post(`${process.env.VUE_APP_adminUrl}taifucloud/tbillproduct/projectCol?date=` + this.month +
           `&uin=` +
@@ -495,7 +496,7 @@
           })
         })
       },
-      // 表格2
+      // 按项目（组）汇总-表格
       getDataList2() {
         this.$axios.post(`${process.env.VUE_APP_adminUrl}taifucloud/tbillproduct/projectColList?date=` + this.month +
           `&uin=` +
@@ -511,7 +512,7 @@
           this.dataListLoading = false
         })
       },
-      // 折线图1
+      // 按产品汇总-表格后面的折线图
       initLine1() {
         this.dataList1.forEach((row, index) => {
           const productName = row.business_code_name
@@ -575,7 +576,7 @@
           })
         })
       },
-      // 折线图2
+      // 按项目（组）汇总-表格后面的折线图
       initLine2() {
         // console.log(this.dataList2)
         this.dataList2.forEach((row, index) => {
@@ -700,9 +701,11 @@
           })
         })
       },
+      // 费用下拉框触发事件
       changeSelect() {
         this.initChartBar()
       },
+      // 修改月份时重新加载以下接口数据
       getDataChar() {
         this.initChartBar()
         this.initChart()
@@ -712,6 +715,7 @@
         this.getDataList2()
       }
     },
+    // 默认下拉框显示第一个数据
     created() {
       this.value = this.options[0].value
     }
