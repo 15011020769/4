@@ -83,8 +83,17 @@
         activeName1: "",
         activeName2: "",
         activeIndex: "1",
-        activeIndex2: "1"
+        activeIndex2: "1",
+        routeName: ''
       };
+    },
+    watch: {
+      $route(val) {
+        this.routeName = val
+      }
+    },
+    created() {
+
     },
     methods: {
       handleOpen(key, keyPath) {
