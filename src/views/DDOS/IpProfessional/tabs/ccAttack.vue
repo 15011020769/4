@@ -124,6 +124,7 @@ export default {
       this.endTimeCC = moment(value[1]).format("YYYY-MM-DD HH:mm:ss"); //格式处理
       //  console.log(this.startTimeCC,this.endTimeCC)
        this.every();
+       this.describeCCEvList();
 
     },
   },
@@ -134,7 +135,8 @@ export default {
   // },
   created() {
     this.$nextTick(function () {
-      this.thisTime(1)
+      // this.thisTime(1)
+      this.getDataCC()
     })
   },
   methods:{
@@ -154,7 +156,8 @@ export default {
         this.describeCCTrend(); 
         // console.log(this.inqpsdata,this.dropqps)
       }
-      this.drawLine3(this.timey,this.inqpsdata,this.dropqps)
+      setTimeout( this.drawLine3(this.timey,this.inqpsdata,this.dropqps),1000)
+     
     },  
     // 2.2.获取 CC 攻击事件列表
     describeCCEvList() {
@@ -274,9 +277,10 @@ export default {
       //this.$emit('timeNode1',[this.thisStart,this.thisEnd])
       // this.getData(this.timey)
       this.every();
+       this.describeCCEvList();
     },
   // 2.1.获取CC攻击指标数据
-    describeCCTrend(date) {
+    describeCCTrend() {
       let params = {
         Version: "2018-07-09",
         Business: "net",
