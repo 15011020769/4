@@ -87,6 +87,13 @@ module.exports = {
             wllx: '網路類型',
             sswl: '所屬網路',
             cjsj: '創建時間',
+        },
+        cloudDisk: {
+            yyp: '雲硬碟',
+            mc: 'ID/名稱',
+            dx: '大小(GB)',
+            yplx: '硬碟類型',
+            glyzj: '關聯雲主機ID/名稱',
         }
 
     },
