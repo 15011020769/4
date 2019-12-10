@@ -164,7 +164,7 @@ export default {
         }
         this.axios
           .post(`${process.env.VUE_APP_adminUrl}ttaifucloud/account/manage/forword`, params)
-          .then(data => {
+          .then(({ data }) => {
             console.log(data)
             if (data.Data.RetCode === '00') {
               window.location.href = data.Data.url
@@ -190,7 +190,7 @@ export default {
             }
             this.axios
               .post(`${process.env.VUE_APP_adminUrl}taifucloud/account/manage/logoutActive`, params)
-              .then(data => {
+              .then(({ data }) => {
                 if (data.RetCode === '00') {
                   // 退出我们的系统
                   clearLoginInfo()
