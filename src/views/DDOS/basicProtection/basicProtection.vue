@@ -70,7 +70,7 @@
   </div>
 </template>
 <script>
-import { CVM_INSTANCES } from '@/constants'
+import { CVM_INSTANCES, CLB_LIST } from '@/constants'
 export default {
   data() {
     return {
@@ -101,6 +101,36 @@ export default {
       this.describeInstances()
     },
     // 1.1.查询实例列表
+    describeInstances() {
+      let params = {
+        Version: "2017-03-12",
+        Region: 'ap-taipei'
+      }
+      this.axios.post(CVM_INSTANCES, params).then(res => {
+        console.log(res)
+        this.tableDataBegin = res.Response.InstanceSet
+        this.allData = res.Response.InstanceSet
+        this.totalItems = res.Response.TotalCount
+      })
+    },
+    // 1.2.查询负载均衡实例列表
+    describeLoadBalancers() {
+      let params = {
+        Version: "2018-03-17",
+        Region: 'ap-taipei'
+      }
+      this.axios.post(CLB_LIST, params).then(res => {
+        console.log(res)
+        if (res.Response.Error == undefined) {
+          this.tableDataBegin = res.Response.LoadBalancerSet
+          this.allData = res.Response.LoadBalancerSet
+          this.totalItems = this.tableDataBegin.length
+        } else {
+          this.$message.error(res.Response.Error.Message);
+        }
+      })
+    },
+    // 1.3.查询实例列表
     describeInstances() {
       let params = {
         Version: "2017-03-12",
