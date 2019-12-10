@@ -3,9 +3,15 @@
     <div class="container">
       <div class="container-left">
         <p style="margin-bottom:20px">选择策略（共{{totalNum}}条）</p>
-        <el-input size="mini" custom-class="dialogStyle" v-model="search" style="width:100%"
+        <!-- <el-input size="mini" custom-class="dialogStyle" v-model="search" style="width:100%"
           @keyup.enter.native="toQuery" />
-        <i class="el-icon-search ifier" @click="toQuery"></i>
+        <i class="el-icon-search ifier" @click="toQuery"></i> -->
+        <el-input
+         size="mini" custom-class="dialogStyle" v-model="search" style="width:100%"
+          @keyup.enter.native="toQuery"
+      >
+        <i slot="suffix" class="el-input__icon el-icon-search" @click="toQuery"></i>
+      </el-input>
         <el-table class="table-left" ref="multipleOption" :data="policiesData" size="small" :height="tableHeight"
           tooltip-effect="dark" style="width: 100%" @row-click="selectedRow" @selection-change="handleSelectionChange">
           <el-table-column type="selection" prop="PolicyId" width="29"> </el-table-column>

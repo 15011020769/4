@@ -130,7 +130,7 @@
         </div>
       </div>
       </div>
-  </div>
+    </div>
 
     <!-- 添加用户组弹框 -->
     <el-dialog :title="title" :visible.sync="authorization" width="60%" :before-close="handleClose">

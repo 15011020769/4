@@ -118,7 +118,8 @@ export default {
       Page: 1,
       size: 10,
       total: 0,
-      create_dialogVisible: false
+      create_dialogVisible: false,
+      value:''
     };
   },
   components: {

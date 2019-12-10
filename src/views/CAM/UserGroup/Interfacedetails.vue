@@ -657,7 +657,7 @@
   };
 
 </script>
-<style lang="scss" >
+<style lang="scss" scope>
   .Cam {
     .top {
       height: 45px;

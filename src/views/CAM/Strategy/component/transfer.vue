@@ -3,9 +3,7 @@
     <div class="container">
       <div class="container-left">
         <p>关联用户</p>
-        <!-- <el-input size="mini" v-model="search" style="width:100%" @keyup.enter.native="toQuery" />
-        <i class="el-icon-search ifier" @click="toQuery"></i> -->
-          <el-input placeholder="支持搜索用户名" size="small"  v-model="searchPolicies" style="width:100%" @keyup.enter.native="toQuery">
+          <el-input placeholder="支持搜索用户名" size="small"  v-model="search" style="width:100%" @keyup.enter.native="toQuery">
               <i slot="suffix" class="el-input__icon el-icon-search" @click="toQuery"></i>
           </el-input>
           <el-table class="table-left" ref="multipleOption" :data="transfer_data" size="small" :height="tableHeight"
@@ -76,7 +74,7 @@
       return {
         tableHeight: 300,
         //  用户/用户组列表
-        transfer_data: [{}],
+        transfer_data: [],
         // 选定的用户列表
         transfer_data_right: [],
         transferUserData: [],
