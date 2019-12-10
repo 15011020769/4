@@ -4,10 +4,10 @@
     <XTimeX v-on:switchData="GetDat" :classsvalue="value"></XTimeX>
     <div class="box-dis p-style">
       <p>
-        <i class="el-icon-info"></i>注释：Max、Min和Avg数值统计为当前折线图内所有点的最大值、最小值和平均值
+        <i class="el-icon-info"></i>{{ $t('CVM.clBload.zs') }}
       </p>
       <p>
-        <el-button type="text">导出数据</el-button>
+        <el-button type="text">{{ $t('CVM.clBload.dcsj') }}</el-button>
       </p>
     </div>
     <div class="box-table">
@@ -28,7 +28,7 @@
 
         <el-table-column prop="DataPoints" width="550">
           <template slot-scope="scope">
-            <p v-if="scope.row.DataPoints[0].Values.length==0">暂无数据</p>
+            <p v-if="scope.row.DataPoints[0].Values.length==0">{{ $t('CVM.clBload.zwsj') }}</p>
             <div class="echart" v-if="scope.row.DataPoints[0].Values.length!=0">
               <echart-line id="diskEchearrts-line" :time="scope.row.DataPoints[0].Timestamps | UpTime"
                 :opData="scope.row.DataPoints[0].Values" :scale="3" :period="period" :xdata="false"></echart-line>
@@ -77,7 +77,7 @@
         </el-table-column>
       </el-table>
       <!-- 模态框 -->
-      <el-dialog title="集群健康状态" :visible.sync="dialogVisible" width="60%" :before-close="handleClose">
+      <el-dialog :title="$t('CVM.clBload.jqjkzt')" :visible.sync="dialogVisible" width="60%" :before-close="handleClose">
         <XTimeX v-on:switchData="GetDat" :classsvalue="value"></XTimeX>
         <echart-line id="diskEchearrts-line" class="echart-wh" :time="timeData | UpTime" :opData="jingData"
           :period="period" :xdata="true"></echart-line>
@@ -130,7 +130,7 @@
           "DiskSvctm",
           "DiskUtil"
         ];
-        const symbol = ["次数", "KB/s", "次数", "KB/s", "ms", "ms", "%"];
+        const symbol = ["次數", "KB/s", "次數", "KB/s", "ms", "ms", "%"];
         this.tableData = [];
         for (let i = 0; i < metricNArr.length; i++) {
           this.Obtain(metricNArr[i], symbol[i]);
@@ -188,25 +188,25 @@
       //文字过滤
       UpName(value) {
         if (value === "DiskReadIops") {
-          return (value = "硬盘读 IOPS");
+          return (value = "硬碟讀 IOPS");
         }
         if (value === "DiskReadTraffic") {
-          return (value = "硬盘读流量");
+          return (value = "硬碟讀流量");
         }
         if (value === "DiskWriteIops") {
-          return (value = "硬盘写 IOPS	");
+          return (value = "硬碟寫 IOPS	");
         }
         if (value === "DiskWriteTraffic") {
-          return (value = "硬盘写流量");
+          return (value = "硬碟寫流量");
         }
         if (value === "DiskAwait") {
-          return (value = "硬盘 IO 等待时间");
+          return (value = "硬碟 IO 等待時間");
         }
         if (value === "DiskSvctm") {
-          return (value = "硬盘 IO 服务时间");
+          return (value = "硬碟 IO 服務時間");
         }
         if (value === "DiskUtil") {
-          return (value = "硬盘 IO 繁忙比率");
+          return (value = "硬碟 IO 繁忙比率");
         }
         if (value === "") {
           return (value = "");
@@ -214,25 +214,25 @@
       },
       UpTitle(value) {
         if (value === "DiskReadIops") {
-          return (value = "硬盘平均每秒读次数");
+          return (value = "硬碟平均每秒讀次數");
         }
         if (value === "DiskReadTraffic") {
-          return (value = "平均每秒从硬盘读到内存的数据量");
+          return (value = "平均每秒從硬碟讀到內存的數據量");
         }
         if (value === "DiskWriteIops") {
-          return (value = "硬盘平均每秒写次数");
+          return (value = "硬碟平均每秒寫次數");
         }
         if (value === "DiskWriteTraffic") {
-          return (value = "平均每秒从内存写到硬盘的数据量");
+          return (value = "平均每秒從內存寫到硬碟的數據量");
         }
         if (value === "DiskAwait") {
-          return (value = "硬盘I/O平均每次操作的等待时间");
+          return (value = "硬碟I/O平均每次操作的等待時間");
         }
         if (value === "DiskSvctm") {
-          return (value = "硬盘平均每次I/O操作所花的时间");
+          return (value = "硬碟平均每次I/O操作所花的時間");
         }
         if (value === "DiskUtil") {
-          return (value = "硬盘有IO操作的时间与总时间的百分比");
+          return (value = "硬碟有IO操作的時間與總時間的百分比");
         }
         if (value === "") {
           return (value = "");

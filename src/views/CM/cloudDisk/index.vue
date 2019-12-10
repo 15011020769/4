@@ -2,7 +2,7 @@
   <div class="CM-wrap">
     <Loading :show="loadShow" />
     <!-- 城市按钮 -->
-    <div class="CVM-title">云硬盘</div>
+    <div class="CVM-title">{{ $t('CVM.cloudDisk.yyp') }}</div>
     <div class="tool">
       <Cities
         :cities="cities"
@@ -27,7 +27,7 @@
         height="550"
         style="width: 100%"
       >
-        <el-table-column prop label="ID/名称">
+        <el-table-column prop :label="$t('CVM.cloudDisk.mc')">
           <template slot-scope="scope">
             <p>
               <a @click="jump(scope.row.DiskId)" style="cursor:pointer;">{{scope.row.DiskId}}</a>
@@ -35,23 +35,23 @@
             {{ scope.row.DiskName}}
           </template>
         </el-table-column>
-        <el-table-column prop label="监控">
+        <el-table-column prop :label="$t('CVM.clBload.jk')">
           <template slot-scope="scope">
             <!-- <i @click="jump(scope.row.DiskId)" style="cursor:pointer;"><i class="el-icon-share"></i></a> -->
             <div class="a" @click="jump(scope.row.DiskId)"></div>
           </template>
         </el-table-column>
-        <el-table-column prop label="大小(GB)">
+        <el-table-column prop :label="$t('CVM.cloudDisk.dx')">
           <template slot-scope="scope">{{scope.row.DiskSize}}</template>
         </el-table-column>
 
-        <el-table-column prop label="硬盘类型">
+        <el-table-column prop :label="$t('CVM.cloudDisk.yplx')">
           <template slot-scope="scope">
             <p>{{DiskType[scope.row.DiskType]}}</p>
             <p>{{DiskUsage[scope.row.DiskUsage]}}</p>
           </template>
         </el-table-column>
-        <el-table-column prop label="关联云主机ID/名称">
+        <el-table-column prop :label="$t('CVM.cloudDisk.glyzj')">
           <template slot-scope="scope">
             <p>{{scope.row.InstanceId}}</p>
           </template>
@@ -95,29 +95,29 @@ export default {
       searchOptions: [
         {
           value: "disk-usage",
-          label: "云盘类型"
+          label: "雲盤類型"
         },
         {
           value: "disk-id",
-          label: "云硬盘ID"
+          label: "雲硬碟ID"
         },
         {
           value: "disk-name",
-          label: "云盘名称"
+          label: "雲盤名稱"
         }
       ],
       searchValue: "",
       DiskUsage: {
-        SYSTEM_DISK: "系统盘",
-        DATA_DISK: "数据盘"
+        SYSTEM_DISK: "系統盤",
+        DATA_DISK: "數據盤"
       },
       cities: [],
       selectedRegion: "ap-taipei", // 默认选中城市
       selectedCity: {}, // 切换城市
       DiskType: {
-        CLOUD_BASIC: "普通云硬盘",
-        CLOUD_PREMIUM: "高性能云硬盘",
-        CLOUD_SSD: "SSD云硬盘"
+        CLOUD_BASIC: "普通雲硬碟",
+        CLOUD_PREMIUM: "高性能雲硬碟",
+        CLOUD_SSD: "SSD雲硬碟"
       },
       searchInput: "",
       TbaleData: [], // 表格数据
@@ -167,7 +167,7 @@ export default {
       if (this.searchInput !== "" && this.searchValue !== "") {
         this.GetTabularData();
       } else {
-        this.$message.error("请输入正确搜索信息");
+        this.$message.error("請輸入正確搜索信息");
       }
     },
     // 添加项目列表的表格数据

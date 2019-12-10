@@ -87,6 +87,13 @@ module.exports = {
             wllx: '网络类型',
             sswl: '所属网络',
             cjsj: '创建时间',
+        },
+        cloudDisk: {
+            yyp: '云硬盘',
+            mc: 'ID/名称',
+            dx: '大小(GB)',
+            yplx: '硬盘类型',
+            glyzj: '关联云主机ID/名称',
         }
     },
     COM: require('@/components/language/jt'),
