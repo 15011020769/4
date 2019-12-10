@@ -32,7 +32,7 @@
           <i class="iconfont"></i>
           <span slot="title">身份提供商</span>
         </el-menu-item>
-        <el-submenu index="2">
+        <!-- <el-submenu index="2">
           <template slot="title">
             <i class="iconfont"></i>
             <span>访问密钥</span>
@@ -47,7 +47,7 @@
               <span slot="title">项目密钥管理</span>
             </el-menu-item>
           </el-menu-item-group>
-        </el-submenu>
+        </el-submenu> -->
       </el-menu>
     </div>
   </div>

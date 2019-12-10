@@ -10,13 +10,7 @@
     <div class="operation">
       <button class="addUser" @click="addUser">新增用户</button>
 
-      <el-select
-        v-model="value"
-        placeholder="请选择"
-        @change="select"
-        class="select"
-        :disabled="inputShow"
-      >
+      <el-select v-model="value" placeholder="请选择" @change="select" class="select">
         <el-option
           v-for="item in options"
           :key="item.value"
@@ -297,7 +291,7 @@
         <el-button type="primary" @click="suerDelUser">确 定</el-button>
       </span>
     </el-dialog>
-       <Subscribe :subscribe="flag" @suerClose="suerClose" @confirm="confirm" />
+    <Subscribe :subscribe="flag" @suerClose="suerClose" @confirm="confirm" />
   </div>
 </template>
 <script>
@@ -309,9 +303,9 @@ import {
   ADD_USERTOGROUP,
   DELETE_USER
 } from "@/constants";
-import Subscribe from './components/subscribeNew'
+import Subscribe from "./components/subscribeNew";
 export default {
-  components:{
+  components: {
     Subscribe
   },
   data() {
@@ -342,7 +336,7 @@ export default {
       delMoreShow: false,
       deleteName: "",
       selectData: [],
-      delUin:"",
+      delUin: "",
       options: [
         {
           value: 0,
@@ -365,17 +359,25 @@ export default {
           Version: "2019-01-16",
           Name: this.deleteName
         };
-        this.axios.post(DELETE_USER, params).then((data)=> {
-          console.log(data)
-        }).then(()=>{
-           let delparams = {
-            QcloudUin:this.delUin,
-            SubAccountname:this.deleteName
-          }
-          this.axios.post('http://tfc.dhycloud.com/adminapi/admin/taifucloud/account-sub/manage/delete',delparams).then(res=>{
-              console.log(res)
+        this.axios
+          .post(DELETE_USER, params)
+          .then(data => {
+            console.log(data);
           })
-        })
+          .then(() => {
+            let delparams = {
+              QcloudUin: this.delUin,
+              SubAccountname: this.deleteName
+            };
+            this.axios
+              .post(
+                "http://tfc.dhycloud.com/adminapi/admin/taifucloud/account-sub/manage/delete",
+                delparams
+              )
+              .then(res => {
+                console.log(res);
+              });
+          });
         this.dialogDeleteUser = false;
       }
       if (this.delTitle == "批量删除") {
@@ -396,7 +398,7 @@ export default {
       }
     },
     delUserRow(val) {
-      this.delUin = val.Uin
+      this.delUin = val.Uin;
       this.delTitle = "删除用户";
       this.dialogDeleteUser = true;
       let newdelData = [];
@@ -490,17 +492,21 @@ export default {
     },
     //input弹框选择数据
     select() {
-      if (this.value == 0) {
-        this.authorization = true;
-        this.userGroupShow = true;
-        this.strategyShow = false;
-        this.userGroups();
-      }
-      if (this.value == 1) {
-        this.dialogDeleteUser = true;
-        this.delTitle = "批量删除";
-        this.delRowShow = false;
-        this.delMoreShow = true;
+      if (this.selectData.length != 0) {
+        if (this.value == 0) {
+          this.authorization = true;
+          this.userGroupShow = true;
+          this.strategyShow = false;
+          this.userGroups();
+        }
+        if (this.value == 1) {
+          this.dialogDeleteUser = true;
+          this.delTitle = "批量删除";
+          this.delRowShow = false;
+          this.delMoreShow = true;
+        }
+      } else {
+        this.$message("请选择数据");
       }
     },
     //点击删除弹框显示
@@ -595,15 +601,15 @@ export default {
       // 给右边table框赋值，只需在此处赋值即可，selectedRow方法中不写，因为单独点击复选框，只有此方法有效。
       this.userGroupSelect = val;
     },
-    suerClose(){
-       this.flag = false
+    suerClose() {
+      this.flag = false;
     },
-    confirm(){
-        this.flag = false;
+    confirm() {
+      this.flag = false;
     },
-    bindMesg(){
-       this.flag = true
-    },
+    bindMesg() {
+      this.flag = true;
+    }
   },
   created() {
     this.init(); //获取用户列表数据
