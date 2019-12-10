@@ -100,25 +100,13 @@ export default {
       //搜索下拉框
       searchOptions: [
         {
-          value: "project-id",
-          label: "项目ID"
+          value: "direct-connect-gateway-id",
+          label: "ID"
         },
         {
-          value: "instance-id",
-          label: "实例ID"
+          value: "direct-connect-gateway-name",
+          label: "网关名称"
         },
-        {
-          value: "instance-name",
-          label: "实例名称"
-        },
-        {
-          value: "private-ip-address",
-          label: "内网IP"
-        },
-        {
-          value: "public-ip-address ",
-          label: "公网IP"
-        }
       ],
       //inp输入的值
       searchValue: "",
@@ -170,6 +158,7 @@ export default {
     //选择搜索条件
     changeValue(val) {
       this.searchValue = val;
+      // console.log(this.searchValue)
     },
     changeinput(val) {
       this.searchInput = val;
@@ -181,7 +170,11 @@ export default {
       this.searchInput = val;
       if (this.searchInput !== "" && this.searchValue !== "") {
         this.GetTabularData();
-      } else {
+      }else if(this.searchInput !== "" || this.searchValue !== "") {
+        this.GetTabularData();
+        this.$message.error("请输入正确搜索信息");
+      }
+      else {
         this.$message.error("请输入正确搜索信息");
       }
     },
@@ -197,18 +190,15 @@ export default {
         param["Filters.0.Name"] = this.searchValue;
         param["Filters.0.Values.0"] = this.searchInput;
       }
-      const paramS = {
-        allList: 0
-      };
       // 获取表格数据
       this.axios
         .post(DCG_LIST, param)
         .then(data => {
           if (data.Response.Error == undefined) {
-            console.log(data)
             this.ProTableData = data.Response.DirectConnectGatewaySet;
           } else {
             this.$message.error(data.Response.Error.Message);
+            // this.ProTableData = []
           }
           this.loadShow = false;
         })

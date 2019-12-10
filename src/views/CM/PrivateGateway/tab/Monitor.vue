@@ -19,7 +19,7 @@
               {{scope.row.MetricName | UpName(value)}}
               <span class="symbol">{{scope.row.symbol}}</span>
               <el-popover placement="bottom-start" title width="200" trigger="hover">
-                <p>{{scope.row.MetricName | UpTitle(value)}}</p>
+                <p>{{scope.row.MetricName | UpName(value)}}</p>
                 <i class="el-icon-warning" slot="reference"></i>
               </el-popover>
             </span>
@@ -159,7 +159,7 @@
           EndTime: this.Start_End.EndTIme
         };
         this.axios.post(All_MONITOR, param).then(data => {
-          console.log(data)
+          // console.log(data)
           data.Response.symbol = symbol;
           this.tableData.push(data.Response);
         });
@@ -168,15 +168,16 @@
         const param = {
           Version: "2018-07-24",
           Region: this.$cookie.get("regionv2"),
-          Namespace: "QCE/CVM",
+          Namespace: "QCE/DCG",
           MetricName: MetricName,
-          "Instances.0.Dimensions.0.Name": "InstanceId",
+          "Instances.0.Dimensions.0.Name": "directConnectGatewayId",
           "Instances.0.Dimensions.0.Value": this.ID,
           Period: this.period,
           StartTime: this.Start_End.StartTIme,
           EndTime: this.Start_End.EndTIme
         };
         this.axios.post(All_MONITOR, param).then(data => {
+          console.log(data)
           this.timeData = data.Response.DataPoints[0].Timestamps;
           this.jingData = data.Response.DataPoints[0].Values;
         });
