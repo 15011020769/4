@@ -14,7 +14,7 @@
       <el-form :inline="true" :model="dataForm" class="demo-form-inline">
         <el-form-item>
           <!-- 产品 -->
-          <el-select v-model="dataForm.businessCode" value-key="code" :placeholder="$t('BILL.Detail.allProduct')" @change="getDataList()" clearable size="small">
+          <el-select v-model="dataForm.businessCode" value-key="code" :placeholder="$t('BILL.Detail.allProduct')" @change="productClick()" clearable size="small">
             <el-option v-for="item in getProductList" :key="item.businessCode" :label="item.businessCodeName" :value="item.businessCode">
             </el-option>
           </el-select>
@@ -29,7 +29,7 @@
             </el-option>
           </el-select> -->
           <!-- 项目 -->
-          <el-select v-model="dataForm.projectName" :placeholder="$t('BILL.Detail.allProject')" @change="getDataList()" clearable size="small">
+          <el-select v-model="dataForm.projectName" :placeholder="$t('BILL.Detail.allProject')" @change="projectClick()" clearable size="small">
             <el-option v-for="item in getProjectList" :key="item.projectName" :label="item.projectName" :value="item.projectName">
             </el-option>
           </el-select>
@@ -39,12 +39,12 @@
             </el-option>
           </el-select> -->
           <!-- 计费模式 -->
-          <el-select v-model="dataForm.payModeName" :placeholder="$t('BILL.Detail.allpayMode')" @change="getDataList()" clearable size="small">
+          <el-select v-model="dataForm.payModeName" :placeholder="$t('BILL.Detail.allpayMode')" @change="payClick()" clearable size="small">
             <el-option v-for="item in getPayModeList" :key="item.payModeName" :label="item.payModeName" :value="item.payModeName">
             </el-option>
           </el-select>
           <!-- 交易类型 -->
-          <el-select v-model="dataForm.actionTypeName" :placeholder="$t('BILL.Detail.allActionType')" @change="getDataList()" clearable size="small">
+          <el-select v-model="dataForm.actionTypeName" :placeholder="$t('BILL.Detail.allActionType')" @change="actionTypeClick()" clearable size="small">
             <el-option v-for="item in getActionTypeList" :key="item.actionTypeName" :label="item.actionTypeName" :value="item.actionTypeName">
             </el-option>
           </el-select>
@@ -187,18 +187,13 @@ export default {
     this.getProjectInfo()     // 获取项目列表
     this.getPayModeInfo()     // 获取计费模式列表
     this.getActionTypeInfo()  // 获取交易类型列表
-    this.getDataList()        // 获取数据列表
-
-    // this.cost()
-
-    // this.getRegionInfo()
-    // this.getPayModeInfo()
-    // 
+    this.getDataList()        // 获取数据列表 
   },
   methods: {
 
     // 点击下拉月份
     getMonth(mon) {
+      this.pageIndex = 1
       this.dataForm.month = mon           // 2019-11
       this.getDataList()                  // 获取账单列表
     },
@@ -214,6 +209,12 @@ export default {
       })
     },
 
+    // 点击产品
+    productClick() {
+      this.pageIndex = 1
+      this.getDataList()        // 获取数据列表
+    },
+
     // 获取项目列表
     getProjectInfo() {
       var params = {
@@ -223,6 +224,12 @@ export default {
       this.axios.post(`${process.env.VUE_APP_adminUrl + ADMIN_PROJECT}`, params).then((res) => {
         this.getProjectList = res.projectList
       })
+    },
+
+    // 点击项目
+    projectClick() {
+      this.pageIndex = 1
+      this.getDataList()        // 获取数据列表
     },
 
     // 获取计费模式列表
@@ -235,6 +242,12 @@ export default {
       })
     },
 
+    // 点击计费模式
+    payClick() {
+      this.pageIndex = 1
+      this.getDataList()        // 获取数据列表
+    },
+
     // 获取交易类型列表
     getActionTypeInfo() {
       var params = {
@@ -244,6 +257,12 @@ export default {
         res) => {
         this.getActionTypeList = res.actionTypeList
       })
+    },
+
+    // 点击交易类型
+    actionTypeClick() {
+      this.pageIndex = 1
+      this.getDataList()        // 获取数据列表
     },
 
     // 获取数据列表
@@ -272,23 +291,19 @@ export default {
         }
         this.dataListLoading = false
       })
-      // this.cost()
     },
 
     // 点击每页select显示的条数
     sizeChangeHandle(val) {
-      console.log(val)
       this.pageSize = val
       this.pageIndex = 1
       this.getDataList()
-      // this.cost()
     },
+
     // 点击页码
     currentChangeHandle(val) {
-      // console.log(val)
       this.pageIndex = val
       this.getDataList()
-      // this.cost()
     },
 
     // 搜索
@@ -296,8 +311,8 @@ export default {
       this.pageIndex = 1
       this.pageSize = 10
       this.getDataList()
-      this.cost()
     },
+
     // 总费用计算
     cost() {
       var params = {
@@ -312,7 +327,6 @@ export default {
       }
       this.axios.post(`${process.env.VUE_APP_adminUrl + GET_PAY_AMOUNT}`, params).then(data => {
         if (data.payAmount != null && data.code === 0) {
-          console.log(data.payAmount.totalAmount)
           this.dataForm.allCoat = data.payAmount.totalAmount
         } else {
           this.dataForm.allCoat = 0
@@ -322,7 +336,7 @@ export default {
         }
       })
     },
-    
+
     // 下载
     download() {
       var params = {
@@ -357,6 +371,13 @@ export default {
           navigator.msSaveBlob(blob, fileName)
         }
       })
+    },
+
+    // 0元费用
+    getCharge() {
+      this.pageIndex = 1
+      this.pageSize = 10
+      this.getDataList()
     },
 
 
@@ -397,14 +418,6 @@ export default {
     //   this.cost()
     // },
 
-
-    // 0元费用
-    getCharge() {
-      this.pageIndex = 1
-      this.pageSize = 10
-      this.getDataList()
-      this.cost()
-    },
     // reminder1() {
     //   if (this.dataForm.businessCodeName.code) {
     //     return this.$t('BILL.Detail.label1')

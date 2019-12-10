@@ -16,22 +16,23 @@
           <span style="font-size: 14px; font-weight: 700; line-height:1">{{$t('BILL.Overview.costTrend')}}</span>
           <span style="font-size: 12px; color: #888;  margin-left: 5px; line-height:1">{{$t('BILL.Overview.unit')}}</span>
           <el-button-group style="float: right; padding-right:5px;">
-            <el-button @click="initChartBar('half')" size="small">{{$t('BILL.Overview.half')}}</el-button>
-            <el-button @click="initChartBar('year')" size="small">{{$t('BILL.Overview.year')}}</el-button>
+            <el-button @click="initChartBar('half')" :class="{'btn-active': yearvalue === 'half'}" size="small">{{$t('BILL.Overview.half')}}</el-button>
+            <el-button @click="initChartBar('year')" :class="{'btn-active': yearvalue === 'year'}" size="small">{{$t('BILL.Overview.year')}}</el-button>
           </el-button-group>
-          <div id="J_chartBarBox" class="chart-box" style="height: 250px;"></div>
+          <div id="J_chartBarBox" class="chart-box" style="height: 300px;"></div>
         </el-col>
       </el-row>
     </el-card>
 
     <br>
 
-    <el-card>
-      <span style="font-size: 14px; font-weight: 700; line-height:1">{{this.month.split('-')[0]}}年{{this.month.split('-')[1]}}月{{$t('BILL.Overview.billSum')}}</span>
-      <span style="font-size: 12px; color: #888;  margin-left: 5px; line-height:1">{{$t('BILL.Overview.unit')}}</span>
+    <!-- 账单汇总 -->
+    <el-card class="table-card">
+      <span class="span-1">{{this.month.split('-')[0]}}年{{this.month.split('-')[1]}}月{{$t('BILL.Overview.billSum')}}</span>
+      <span class="span-2">{{$t('BILL.Overview.unit')}}</span>
       <div><br></div>
       <div>
-        <el-tabs v-model="activeName" type="card">
+        <el-tabs v-model="activeName" type="card" @tab-click="handleClick">
 
           <!-- 按产品汇总 -->
           <el-tab-pane :label="$t('BILL.Overview.productSum')" name="first">
@@ -39,27 +40,11 @@
             <el-table :data="dataList1" v-loading="dataListLoading" style="width: 100%;">
               <el-table-column prop="business_code_name" :label="$t('BILL.Overview.businessCodeName')">
               </el-table-column>
-              <el-table-column prop="cashAmount" align="right" :label="$t('BILL.Overview.cashAmount')">
-                <template slot-scope="scope">
-                  <span>{{scope.row.cashAmount}}</span>
-                </template>
+              <el-table-column prop="totalAmount" align="center" :label="$t('BILL.Overview.cashAmount')">
               </el-table-column>
-              <!-- <el-table-column prop="incentiveAmount" align="right" :label="$t('BILL.Overview.incentiveAmount')">
-                <template slot-scope="scope">
-                  <span>{{scope.row.incentiveAmount}}</span>
-                </template>
+              <el-table-column prop="totalAmount" align="center" :label="$t('BILL.Overview.totalAmount')">
               </el-table-column>
-              <el-table-column prop="voucherAmount" align="right" :label="$t('BILL.Overview.voucherAmount')">
-                <template slot-scope="scope">
-                  <span>{{scope.row.voucherAmount}}</span>
-                </template>
-              </el-table-column> -->
-              <el-table-column prop="totalAmount" align="right" :label="$t('BILL.Overview.totalAmount')">
-                <template slot-scope="scope">
-                  <span>{{scope.row.totalAmount}}</span>
-                </template>
-              </el-table-column>
-              <el-table-column prop="state" align="center" :label="$t('BILL.Overview.costTrend')">
+              <el-table-column prop="state" align="center" width="100" :label="$t('BILL.Overview.costTrend')">
                 <template slot-scope="scope">
                   <div slot="reference">
                     <el-popover placement="left" width="700" ref="popover" trigger="hover">
@@ -105,7 +90,7 @@
                   <span>{{scope.row.totalAmount}}</span>
                 </template>
               </el-table-column>
-              <el-table-column prop="state" align="center" :label="$t('BILL.Overview.costTrend')">
+              <el-table-column prop="state" align="center" width="100" :label="$t('BILL.Overview.costTrend')">
                 <template slot-scope="scope">
                   <div slot="reference">
                     <el-popover placement="left" width="700" ref="popover" trigger="hover">
@@ -147,9 +132,9 @@ export default {
       dataList1: [],              // 按产品汇总表格接口返回的数据
       dataList2: [],              // 按项目（组）汇总表格接口返回的数据
       month: moment(new Date()).format('YYYY-MM'),                  // 账单月份
-      value: '',                  // 费用下拉框组件中的值
+      value: 'total',                  // 费用下拉框组件中的值
       yearvalue: 'half',          // 半年、一年过滤参数
-      total: 0,                   // 费用计算-总费用
+      total: 0,                   // 费用计算-總費用
       cash: '',                   // 费用计算-现金支付
       incentive: '',              // 费用计算-赠送金支付
       voucher: '',                // 费用计算-代金券支付
@@ -158,32 +143,12 @@ export default {
       pageSize: 10,
       totalPage1: 1,              // 按产品汇总-表格的总条数
       totalPage2: 1,              // 按项目（租）汇总-表格的总条数
-      options: [{
-        value: 'total',
-        label: this.$t('BILL.Overview.totalAmount')
-      }, {
-        value: 'cash',
-        label: this.$t('BILL.Overview.cashAmount')
-      }, {
-        value: 'incentive',
-        label: this.$t('BILL.Overview.incentiveAmount')
-      }, {
-        value: 'voucher',
-        label: this.$t('BILL.Overview.voucherAmount')
-      }]
     }
   },
   mounted() {
     this.initChartBar()     // 获取费用趋势
     this.initChart()        // 按产品汇总-环状图
-    this.getDataList1()  // 按产品汇总-表格
-    this.initShadow()     // 按项目（组）汇总-条形图
-    this.getDataList2()   // 按项目（组）汇总-表格
-    // this.initCost()
-
-
-
-    // this.initLine2()
+    this.getDataList1()     // 按产品汇总-表格
   },
   activated() {
     if (this.chartBar) {
@@ -203,26 +168,20 @@ export default {
     }
   },
   methods: {
-    // 按产品汇总-表格每页数
-    sizeChangeHandle(val) {
-      this.pageSize = val
-      this.pageIndex = 1
-      this.getDataList1()
-    },
-    // 按产品汇总-表格当前页
-    currentChangeHandle(val) {
-      this.pageIndex = val
-      this.getDataList1()
+    // 修改月份时重新加载以下接口数据
+    getDataChar() {
+      this.initChartBar()     // 获取费用趋势
+      this.initChart()        // 按产品汇总-环状图
+      this.getDataList1()     // 按产品汇总-表格
     },
 
     // 获取费用趋势 柱状图
-    initChartBar(param) {
-      if (param === undefined || param === '') {
+    initChartBar(val) {
+      if (val === undefined || val === '') {
         this.yearvalue = 'half'
       } else {
-        this.yearvalue = param
+        this.yearvalue = val
       }
-
       let params = {
         date: this.month,
         year: this.yearvalue,
@@ -237,12 +196,6 @@ export default {
           months.push(list[i].month)
           if (this.value === 'total') {
             totalAmounts.push(list[i].totalAmount)
-          } else if (this.value === 'cash') {
-            totalAmounts.push(list[i].cashAmount)
-          } else if (this.value === 'incentive') {
-            totalAmounts.push(list[i].incentiveAmount)
-          } else if (this.value === 'voucher') {
-            totalAmounts.push(list[i].voucherAmount)
           }
         }
         var option = {
@@ -294,16 +247,15 @@ export default {
       })
     },
 
-    // 费用计算
-    initCost() {
-      this.axios.post(`${process.env.VUE_APP_adminUrl}taifucloud/tbillproduct/costTrend?date=` + this.month +
-        `&year=` + this
-          .yearvalue + `&costType=` + this.value + `&uin=` + this.$cookie.get('uin')).then(data => {
-            this.total = data.chart[data.chart.length - 1].totalAmount
-            this.cash = data.chart[data.chart.length - 1].cashAmount
-            this.incentive = data.chart[data.chart.length - 1].incentiveAmount
-            this.voucher = data.chart[data.chart.length - 1].voucherAmount
-          })
+    // 点击产品 项目tab 触发
+    handleClick(tab, event) {
+      if (tab.name === 'second') {
+        this.pageIndex = 1
+        this.initShadow()       // 按项目（组）汇总-条形图
+        this.getDataList2()     // 按项目（组）汇总-表格
+      }else if(tab.name === 'first'){
+        this.pageIndex = 1
+      }
     },
 
     // 按产品汇总-环状图
@@ -366,7 +318,7 @@ export default {
               normal: {
                 show: true,
                 position: 'center',
-                formatter: '{active|總費用}' + '\n\r' + '{total|' + total.toFixed(2) + '}' + '{active|圆}',
+                formatter: '{active|總費用}' + '\n\r' + '{total|' + total.toFixed(2) + '}',
                 rich: {
                   total: {
                     fontSize: 20,
@@ -411,8 +363,6 @@ export default {
           this.dataList1 = []
           this.totalPage1 = 0
         }
-
-
       })
     },
 
@@ -437,13 +387,13 @@ export default {
           }
           var option = {
             title: {
-              text: productName + '的费用趋势'
+              text: productName + '的費用趨勢'
             },
             tooltip: {
               trigger: 'axis'
             },
             legend: {
-              data: ['总费用', '现金支付'],
+              data: ['總費用'],
               x: 'right'
             },
             grid: {
@@ -461,16 +411,10 @@ export default {
               type: 'value'
             },
             series: [{
-              name: '总费用',
+              name: '總費用',
               type: 'line',
-              stack: '总量',
+              stack: '總量',
               data: yTotalAmounts
-            },
-            {
-              name: '现金支付',
-              type: 'line',
-              stack: '总量',
-              data: yCastAmounts
             }
             ]
           }
@@ -594,13 +538,13 @@ export default {
           }
           var option = {
             title: {
-              text: project + '的费用趋势'
+              text: project + '的費用趨勢'
             },
             tooltip: {
               trigger: 'axis'
             },
             legend: {
-              data: ['总费用', '现金支付'],
+              data: ['總費用'],
               x: 'right'
             },
             grid: {
@@ -618,16 +562,10 @@ export default {
               type: 'value'
             },
             series: [{
-              name: '总费用',
+              name: '總費用',
               type: 'line',
-              stack: '总量',
+              stack: '總量',
               data: yTotalAmounts
-            },
-            {
-              name: '现金支付',
-              type: 'line',
-              stack: '总量',
-              data: yCastAmounts
             }
             ]
           }
@@ -656,13 +594,13 @@ export default {
               }
               var option = {
                 title: {
-                  text: value.project_name + '的费用趋势'
+                  text: value.project_name + '的費用趨勢'
                 },
                 tooltip: {
                   trigger: 'axis'
                 },
                 legend: {
-                  data: ['总费用', '现金支付'],
+                  data: ['總費用'],
                   x: 'right'
                 },
                 grid: {
@@ -680,16 +618,10 @@ export default {
                   type: 'value'
                 },
                 series: [{
-                  name: '总费用',
+                  name: '總費用',
                   type: 'line',
-                  stack: '总量',
+                  stack: '總量',
                   data: yTotalAmounts
-                },
-                {
-                  name: '现金支付',
-                  type: 'line',
-                  stack: '总量',
-                  data: yCastAmounts
                 }
                 ]
               }
@@ -704,21 +636,20 @@ export default {
       })
     },
 
-    // 修改月份时重新加载以下接口数据
-    getDataChar() {
-      this.initChartBar()
-      this.initChart()
-      this.initShadow()
-      this.initCost()
+    // 按产品/项目汇总-表格每页数
+    sizeChangeHandle(val) {
+      this.pageSize = val
+      this.pageIndex = 1
       this.getDataList1()
-      this.getDataList2()
+    },
+
+    // 按产品/项目汇总-表格当前页
+    currentChangeHandle(val) {
+      this.pageIndex = val
+      this.getDataList1()
     }
-  },
-  
-  // 默认下拉框显示第一个数据
-  created() {
-    this.value = this.options[0].value
   }
+
 }
 
 </script>
@@ -737,6 +668,25 @@ export default {
   }
 }
 
+.ovew-echar {
+  margin: 0 20px;
+}
+
+.table-card {
+  margin: 0 20px 30px 20px;
+  .span-1 {
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1;
+  }
+  .span-2 {
+    font-size: 12px;
+    color: #888;
+    margin-left: 5px;
+    line-height: 1;
+  }
+}
+
 .paging {
   width: 100%;
   height: 30px;
@@ -749,5 +699,14 @@ export default {
 
 ::v-deep .el-table__expand-icon {
   display: inline-block !important;
+}
+.btn-active {
+  border-color: #71a9e0;
+  background: #d8ebff;
+  color: #2277da;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+  z-index: 1;
 }
 </style>
