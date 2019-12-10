@@ -54,7 +54,7 @@
     "serve:WAF": "vue-cli-service serve --WAF",
     "build:WAF": "vue-cli-service build --WAF",
 
-    "qa": "npm run qa:SCF & npm run qa:CLA & npm run qa:CM & npm run qa:CAM & npm run qa:CCN & npm run qa:CAP & npm run qa:DDOS & npm run qa:BILL & npm run qa:KMS",
+    "qa": "npm run qa:CCN & npm run qa:BILL",
 
     "uat": "npm run uat:SCF & npm run uat:CLA & npm run uat:CM & npm run uat:CAM & npm run uat:CCN & npm run uat:CAP & npm run uat:DDOS & npm run uat:BILL & npm run uat:KMS",
 
