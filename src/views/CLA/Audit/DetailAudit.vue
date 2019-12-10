@@ -3,11 +3,11 @@
     <Header :title="title" :backShow="true" @_back="_back" />
     <!-- 弹出框 -->
     <el-dialog :visible.sync="dialogVisible" width="40%" :before-close="handleClose">
-      <p class="dialog">确认删除当前所选跟踪集？</p>
-      <p>删除后，该跟踪集下的所有配置将会被清空，且无法恢复。</p>
+      <p class="dialog">{{ $t('CLA.total.qrsc') }}</p>
+      <p>{{ $t('CLA.total.sch') }}</p>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="delFn">确 定</el-button>
+        <el-button @click="dialogVisible = false">{{ $t('CLA.total.qx') }}</el-button>
+        <el-button type="primary" @click="delFn">{{ $t('CLA.total.qd') }}</el-button>
       </span>
     </el-dialog>
     <el-form
@@ -21,24 +21,24 @@
     >
       <div class="detil-audit-main">
         <div class="detil-audit-box">
-          <h2>基础信息</h2>
-          <el-form-item label="跟踪集名称" prop="AuditName" required>
+          <h2>{{ $t('CLA.total.jcxx') }}</h2>
+          <el-form-item :label="$t('CLA.total.gzjmc')" prop="AuditName" required>
             <p>{{detailData.AuditName}}</p>
           </el-form-item>
-          <el-form-item label="跟踪所有区域">
-            <p style="font-size:12px;">是</p>
+          <el-form-item :label="$t('CLA.total.gzqy')">
+            <p style="font-size:12px;">{{ $t('CLA.total.s') }}</p>
           </el-form-item>
         </div>
       </div>
       <div class="detil-audit-main">
         <div class="detil-audit-box">
-          <span class="edit" @click="_edit" v-show="!inpShow">编辑</span>
-          <h2>管理事件</h2>
-          <el-form-item label="管理事件" required>
+          <span class="edit" @click="_edit" v-show="!inpShow">{{ $t('CLA.total.bj') }}</span>
+          <h2>{{ $t('CLA.total.glsj') }}</h2>
+          <el-form-item :label="$t('CLA.total.glsj')" required>
             <el-radio-group v-model="detailData.ReadWriteAttribute" v-show="inpShow">
-              <el-radio :label="3">全部</el-radio>
-              <el-radio :label="1">只读</el-radio>
-              <el-radio :label="2">只写</el-radio>
+              <el-radio :label="3">{{ $t('CLA.total.qb') }}</el-radio>
+              <el-radio :label="1">{{ $t('CLA.total.zd') }}</el-radio>
+              <el-radio :label="2">{{ $t('CLA.total.zx') }}</el-radio>
             </el-radio-group>
             <p v-show="!inpShow">{{ReadWrite[detailData.ReadWriteAttribute]}}</p>
           </el-form-item>
@@ -46,53 +46,53 @@
             <div class="line"></div>
             <el-form-item class="button">
               <el-button type="primary" icon="el-icon-loading" v-show="btnLoad1"></el-button>
-              <el-button type="primary" @click="submitForm" v-show="!btnLoad1">保存</el-button>
-              <el-button @click="_cancel">取消</el-button>
+              <el-button type="primary" @click="submitForm" v-show="!btnLoad1">{{ $t('CLA.total.bc') }}</el-button>
+              <el-button @click="_cancel">{{ $t('CLA.total.qx') }}</el-button>
             </el-form-item>
           </div>
         </div>
       </div>
       <div class="detil-audit-main">
         <div class="detil-audit-box">
-          <span class="edit" @click="_edit1" v-show="!inpShow1">编辑</span>
-          <h2>存储位置</h2>
+          <span class="edit" @click="_edit1" v-show="!inpShow1">{{ $t('CLA.total.bj') }}</span>
+          <h2>{{ $t('CLA.total.ccwz') }}</h2>
           <div class="info-box" v-show="!inpShow1">
-            <el-form-item label="cos存储桶" class="cos">
+            <el-form-item :label="$t('CLA.total.coscct')" class="cos">
               <p>
-                <span class="spn">地域：</span>
+                <span class="spn">{{ $t('CLA.total.dy') }}：</span>
                 {{detailData.CosRegion}}
               </p>
               <p>
-                <span class="spn">名称：</span>
+                <span class="spn">{{ $t('CLA.total.mc') }}：</span>
                 {{detailData.CosBucketName}}
               </p>
             </el-form-item>
-            <el-form-item label="日志文件前缀">
+            <el-form-item :label="$t('CLA.total.rzwjqz')">
               <p>{{detailData.LogFilePrefix}}</p>
             </el-form-item>
-            <el-form-item label="发送CMQ通知">
+            <el-form-item :label="$t('CLA.total.fstz')">
               <p>{{CmqNotify[detailData.IsEnableCmqNotify]}}</p>
             </el-form-item>
-            <el-form-item label="CMQ队列名称" class="cos" v-show="detailData.IsEnableCmqNotify">
+            <el-form-item :label="$t('CLA.total.dlmc')" class="cos" v-show="detailData.IsEnableCmqNotify">
               <p>
-                <span class="spn">地域：</span>
+                <span class="spn">{{ $t('CLA.total.dy') }}：</span>
                 {{detailData.CmqRegion}}
               </p>
               <p>
-                <span class="spn">名称：</span>
+                <span class="spn">{{ $t('CLA.total.mc') }}：</span>
                 {{detailData.CmqQueueName}}
               </p>
             </el-form-item>
           </div>
           <div class="inp-box" v-show="inpShow1">
-            <el-form-item label="创建新的cos存储桶" class="store">
+            <el-form-item :label="$t('CLA.total.cjcct')" class="store">
               <el-radio-group v-model="detailData.IsCreateNewBucket" @change="_radio">
-                <el-radio :label="1">是</el-radio>
-                <el-radio :label="0">否</el-radio>
+                <el-radio :label="1">{{ $t('CLA.total.s') }}</el-radio>
+                <el-radio :label="0">{{ $t('CLA.total.f') }}</el-radio>
               </el-radio-group>
             </el-form-item>
-            <el-form-item label="cos存储桶" required class="select">
-              <el-select v-model="select.name" placeholder="请选择" @change="_select">
+            <el-form-item :label="$t('CLA.total.coscct')" required class="select">
+              <el-select v-model="select.name" :placeholder="$t('CLA.total.qxz')" @change="_select">
                 <el-option
                   v-for="item in select.options"
                   :key="item.value"
@@ -101,7 +101,7 @@
                 ></el-option>
               </el-select>
               <el-form-item label prop="CosBucketName" class="seletInp" v-show="!cosShow">
-                <el-input v-model="detailData.CosBucketName" placeholder="请输入Bucket名称"></el-input>
+                <el-input v-model="detailData.CosBucketName" :placeholder="$t('CLA.total.qsrmc')"></el-input>
               </el-form-item>
               <el-select
                 v-model="BucketSelect.name"
@@ -118,30 +118,30 @@
               </el-select>
             </el-form-item>
             <p class="addTxt">
-              添加
-              <span @click="_set">高级设置</span>
+              {{ $t('CLA.total.tj') }}
+              <span @click="_set">{{ $t('CLA.total.gjsz') }}</span>
               <i class="el-icon-caret-right" v-show="!setShow"></i>
               <i class="el-icon-caret-bottom" v-show="setShow"></i>
             </p>
             <div class="set-box" v-show="setShow">
-              <el-form-item label="日志文件前缀" prop="LogFilePrefix">
-                <el-input v-model="detailData.LogFilePrefix" placeholder="请输入日志文件前缀"></el-input>
+              <el-form-item :label="$t('CLA.total.rzwjqz')" prop="LogFilePrefix">
+                <el-input v-model="detailData.LogFilePrefix" :placeholder="$t('CLA.total.qsrrzwjqz')"></el-input>
               </el-form-item>
-              <el-form-item label="发送CMQ通知" class="CMQ" required>
+              <el-form-item :label="$t('CLA.total.fstz')" class="CMQ" required>
                 <el-radio-group v-model="detailData.IsEnableCmqNotify" @change="_cmqRadio">
-                  <el-radio :label="1">是</el-radio>
-                  <el-radio :label="0">否</el-radio>
+                  <el-radio :label="1">{{ $t('CLA.total.s') }}</el-radio>
+                  <el-radio :label="0">{{ $t('CLA.total.f') }}</el-radio>
                 </el-radio-group>
               </el-form-item>
               <div class="set-child" v-show="setChild">
-                <el-form-item label="创建CMQ队列" class="CMQ" required>
+                <el-form-item :label="$t('CLA.total.cjdl')" class="CMQ" required>
                   <el-radio-group v-model="cmqShow" @change="_cmqCretae">
-                    <el-radio :label="true">是</el-radio>
-                    <el-radio :label="false">否</el-radio>
+                    <el-radio :label="true">{{ $t('CLA.total.s') }}</el-radio>
+                    <el-radio :label="false">{{ $t('CLA.total.f') }}</el-radio>
                   </el-radio-group>
                 </el-form-item>
-                <el-form-item label="CMQ队列名称" required class="select cmqSelect">
-                  <el-select v-model="cmqSelect.name" placeholder="请选择" @change="_cmqSelect">
+                <el-form-item :label="$t('CLA.total.dlmc')" required class="select cmqSelect">
+                  <el-select v-model="cmqSelect.name" :placeholder="$t('CLA.total.qxz')" @change="_cmqSelect">
                     <el-option
                       v-for="item in cmqSelect.options"
                       :key="item.value"
@@ -155,7 +155,7 @@
                     class="seletInp"
                     v-if="detailData.IsEnableCmqNotify"
                   >
-                    <el-input v-model="detailData.CmqQueueName" placeholder="请输入CMQ队列名称"></el-input>
+                    <el-input v-model="detailData.CmqQueueName" :placeholder="$t('CLA.total.qsrdlmc')"></el-input>
                   </el-form-item>
                 </el-form-item>
               </div>
@@ -165,14 +165,14 @@
             <div class="line lineVal"></div>
             <el-form-item class="button">
               <el-button type="primary" icon="el-icon-loading" v-show="btnLoad"></el-button>
-              <el-button type="primary" @click="submitForm1('detailData')" v-show="!btnLoad">保存</el-button>
-              <el-button @click="_cancel1">取消</el-button>
+              <el-button type="primary" @click="submitForm1('detailData')" v-show="!btnLoad">{{ $t('CLA.total.bc') }}</el-button>
+              <el-button @click="_cancel1">{{ $t('CLA.total.qx') }}</el-button>
             </el-form-item>
           </div>
         </div>
       </div>
     </el-form>
-    <el-button type="primary" @click="del">删除跟踪集</el-button>
+    <el-button type="primary" @click="del">{{ $t('CLA.total.scgzj') }}</el-button>
   </div>
 </template>
 
@@ -194,7 +194,7 @@ export default {
       setTimeout(() => {
         if (!reg.test(value)) {
           callback(
-            new Error("仅支持大小写字母、数字、以及_的组合，3-128个字符。")
+            new Error("僅支持大小寫字母、數字、以及_的組合，3-128個字元。")
           );
         } else {
           callback();
@@ -208,7 +208,7 @@ export default {
       }
       setTimeout(() => {
         if (!reg.test(value)) {
-          callback(new Error("仅支持字母和数字的组合，3-40个字符。"));
+          callback(new Error("僅支持字母和數字的組合，3-40個字元。"));
         } else {
           callback();
         }
@@ -220,7 +220,7 @@ export default {
         if (!reg.test(value)) {
           callback(
             new Error(
-              '仅支持小写字母、数字以及中划线" - "的组合，不能超过40字符。'
+              '僅支持小寫字母、數字以及中劃線\" - \"的組合，不能超過40字元。'
             )
           );
         } else {
@@ -234,7 +234,7 @@ export default {
         if (!reg.test(value)) {
           callback(
             new Error(
-              "不超过64个字符的字符串，必须以字母为首字符，剩余部分可以包含字母、数字和横划线(-)。"
+              "不超過64個字元的字元串，必須以字母為首字元，剩餘部分可以包含字母、數字和橫劃線(-)。"
             )
           );
         } else {
@@ -265,8 +265,8 @@ export default {
       //文字过滤
       ReadWrite: {
         3: "全部",
-        2: "只写",
-        1: "只读"
+        2: "只寫",
+        1: "只讀"
       },
       CmqNotify: {
         0: "否",
@@ -311,12 +311,12 @@ export default {
       this.axios.post(GZJ_DELETE, params).then(data => {
         if (data.Response.IsSuccess == 1) {
           this.$message({
-            message: "删除成功",
+            message: "刪除成功",
             type: "success"
           });
           this.$router.push("/Audit");
         } else {
-          this.$message.error("删除失败");
+          this.$message.error("刪除失敗");
         }
       });
     },
@@ -373,7 +373,7 @@ export default {
               if (res.Response.Error.Code) {
                 this.$message.error(res.Response.Error.Code);
               } else {
-                this.$message.error("更新失败");
+                this.$message.error("更新失敗");
               }
             }
             this.btnLoad = false;
@@ -527,7 +527,7 @@ export default {
           });
           this.inpShow = false;
         } else {
-          this.$message.error("更新失败");
+          this.$message.error("更新失敗");
         }
         this.btnLoad1 = false;
         this.detailList();

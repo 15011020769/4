@@ -1,56 +1,55 @@
 <template>
   <div>
     <div class="title_top">
-      <h1>历史记录导出</h1>
+      <h1>{{ $t('CLA.total.lsjldc') }}</h1>
     </div>
     <div class="tea-content__body">
       <div class="explain">
-        <p>温馨提示：</p>
+        <p>{{ $t('CLA.total.wxts') }}：</p>
         <p>
-          <span>1. 历史数据导出为离线操作，导出成功后将通过邮件和短信下发确认投递通知，请确保</span>
-          <a href="JavaScript:;">联系方式</a>
-          <span>无误。</span>
+          <span>{{ $t('CLA.total.lsjlts') }}</span>
+          <!-- <a href="JavaScript:;">联系方式</a> -->
+          <span>{{ $t('CLA.total.ww') }}</span>
         </p>
         <p>
           <span
-            >2. 已导出的数据系统仅支持保存 5 个工作日，请尽快投递至 cos
-            存储桶，超过有效期未处理则视作丢弃。</span
+            >{{ $t('CLA.total.lsjlts2') }}</span
           >
         </p>
         <p>
-          <span>3. 导出的数据投递至 cos 中所产生的存储费用，将依据 COS 标准计费进行收取，</span>
-          <a href="JavaScript:;">查看COS计费详情。</a>
+          <span>{{ $t('CLA.total.lsjlts3') }}</span>
+          <!-- <a href="JavaScript:;">查看COS计费详情。</a> -->
         </p>
       </div>
       <div class="btn">
-        <el-button :plain="true" type="text" @click="dialogVisible = true">申请导出</el-button>
+        <el-button :plain="true" type="text" @click="dialogVisible = true">{{ $t('CLA.total.sqdc') }}</el-button>
       </div>
       <div class="tables">
         <el-table :data="tableData" style="width: 100%">
-          <template slot="empty">暂无历史导出记录</template>
-          <el-table-column prop="name" label="数据导出范围">
+          <template slot="empty">{{ $t('CLA.total.zwlsdcjl') }}</template>
+          <el-table-column prop="name" :label="$t('CLA.total.sjdcfw')">
             <template slot-scope="scope">
               {{ scope.row.name }}
             </template>
           </el-table-column>
-          <el-table-column prop="" label="数据大小">
+          <el-table-column prop="" :label="$t('CLA.total.sjdx')">
             <template slot-scope="scope"> {{ scope.row.size }} MB </template>
           </el-table-column>
-          <el-table-column prop="" label="数据有效期">
+          <el-table-column prop="" :label="$t('CLA.total.sjyxq')">
             <template slot-scope="scope"> {{ scope.row.time }} 天 </template>
           </el-table-column>
-          <el-table-column prop="status" label="状态">
+          <el-table-column prop="status" :label="$t('CLA.total.zt')">
             <template slot-scope="scope">
               <div v-if="scope.row.status == 0">
-                <i class="el-icon-time close_color"></i> 待投递
+                <i class="el-icon-time close_color"></i> {{ $t('CLA.total.dtd') }}
               </div>
-              <div v-if="scope.row.status == 1"><i class="el-icon-time off_color"></i>投递</div>
+              <div v-if="scope.row.status == 1"><i class="el-icon-time off_color"></i>{{ $t('CLA.total.td') }}</div>
             </template>
           </el-table-column>
-          <el-table-column prop="dataTime" label="数据申请时间"></el-table-column>
-          <el-table-column prop label="操作">
-            <el-button type="text" @click="sendVisible = true">投递至 cos</el-button>
-            <el-button type="text" @click="discardVisible = true">丢弃数据</el-button>
+          <el-table-column prop="dataTime" :label="$t('CLA.total.sjsqsj')"></el-table-column>
+          <el-table-column prop :label="$t('CLA.total.cz')">
+            <el-button type="text" @click="sendVisible = true">{{ $t('CLA.total.tdz') }} cos</el-button>
+            <el-button type="text" @click="discardVisible = true">{{ $t('CLA.total.dqsj') }}</el-button>
           </el-table-column>
         </el-table>
         <!-- 分页 -->
@@ -68,72 +67,71 @@
     </div>
     <!-- 导出模态框 -->
     <el-dialog
-      title="导出条件"
+      :title="$t('CLA.total.dctj')"
       :visible.sync="dialogVisible"
       width="50%"
       :before-close="handleClose"
     >
       <el-form :model="form">
-        <el-form-item label="时间范围">
+        <el-form-item :label="$t('CLA.total.sjfw')">
           <el-radio-group v-model="form.radio2">
-            <el-radio :label="0">最近一个月</el-radio>
-            <el-radio :label="1">最近六个月</el-radio>
-            <el-radio :label="2">自定义时间</el-radio>
+            <el-radio :label="0">{{ $t('CLA.total.zjygy') }}</el-radio>
+            <el-radio :label="1">{{ $t('CLA.total.zjlgy') }}</el-radio>
+            <el-radio :label="2">{{ $t('CLA.total.zdysj') }}</el-radio>
           </el-radio-group>
         </el-form-item>
       </el-form>
-      <el-dialog width="30%" title="操作提示" :visible.sync="innerVisible" append-to-body>
+      <el-dialog width="30%" :title="$t('CLA.total.czts')" :visible.sync="innerVisible" append-to-body>
         <p>
-          1.
-          历史数据导出为离线操作，导出成功后将通过邮件和短信下发确认投递通知，请确保联系方式无误。
+         {{ $t('CLA.total.dcts') }} 
         </p>
         <p>
-          2. 导出数据投递至 cos 所产生的存储费用，将依据 COS 标准计费进行收取，查看 COS 计费详情。
+         {{ $t('CLA.total.dcts2') }} 
         </p>
-        <el-radio v-model="radioIn">上述信息我已知晓</el-radio>
+        <el-radio v-model="radioIn">{{ $t('CLA.total.wyzx') }}</el-radio>
         <div slot="footer" class="dialog-footer">
-          <el-button type="primary" @click="innerVisible = false">确定</el-button>
-          <el-button @click="innerVisible = false">取 消</el-button>
+          <el-button type="primary" @click="innerVisible = false">{{ $t('CLA.total.qd') }}</el-button>
+          <el-button @click="innerVisible = false">{{ $t('CLA.total.qx') }}</el-button>
         </div>
       </el-dialog>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="innerVisible = true">确定</el-button>
-        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="innerVisible = true">{{ $t('CLA.total.qd') }}</el-button>
+        <el-button @click="dialogVisible = false">{{ $t('CLA.total.qx') }}</el-button>
       </div>
     </el-dialog>
     <!-- 投递cos模态窗 -->
-    <el-dialog title="投递至 COS" :visible.sync="sendVisible" class="formDialog">
+    <el-dialog :title="$t('CLA.total.costd')" :visible.sync="sendVisible" class="formDialog">
       <el-form :model="sendCos">
-        <el-form-item label="cos存储桶">
+        <el-form-item :label="$t('CLA.total.coscct')">
           <el-radio-group v-model="sendCos.isCreate">
-            <el-radio label="PT">是</el-radio>
-            <el-radio label="AU">否</el-radio>
+            <el-radio label="PT">{{ $t('CLA.total.s') }}</el-radio>
+            <el-radio label="AU">{{ $t('CLA.total.f') }}</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="cos存储桶">
+        <el-form-item :label="$t('CLA.total.coscct')">
           <el-select v-model="sendCos.region" placeholder="">
-            <el-option label="中国台北" value="taibei"></el-option>
+            <el-option :label="$t('CLA.total.zgtb')" value="taibei"></el-option>
           </el-select>
-          <el-input v-model="sendCos.input" placeholder="请输入内容"></el-input>
-          <p class="edit-p">仅支持小写字母、数字以及中划线"-"的组合，不能超过40字符。</p>
+          <el-input v-model="sendCos.input" :placeholder="$t('CLA.total.qsrnr')"></el-input>
+          <p class="edit-p">{{ $t('CLA.total.cxtj') }}</p>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="sendVisible = false">取 消</el-button>
-        <el-button type="primary">确定</el-button>
+        <el-button @click="sendVisible = false">{{ $t('CLA.total.qx') }}</el-button>
+        <el-button type="primary">{{ $t('CLA.total.qd') }}</el-button>
       </div>
     </el-dialog>
     <!-- 丢弃数据的模态窗 -->
     <el-dialog
-      title="您确定要丢弃数据？"
+      :title="$t('CLA.total.qddqsj')"
       :visible.sync="discardVisible"
       width="30%"
       :before-close="handleClose"
     >
-      <span>丢弃数据将不可恢复</span>
+      <span>{{ $t('CLA.total.dqsjh') }}</span>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="discardVisible = false">取 消</el-button>
-        <el-button type="primary" @click="discardVisible = false">确 定</el-button>
+        <el-button @click="discardVisible = false">{{ $t('CLA.total.qx') }}</el-button>
+        <el-button type="primary" @click="discardVisible = false">{{ $t('CLA.total.qd') }}</el-button>
       </div>
     </el-dialog>
   </div>
@@ -173,17 +171,17 @@ export default {
   methods: {
     // 模态框的关闭
     handleClose (done) {
-      this.$confirm('确认关闭？')
+      this.$confirm('確認關閉？')
         .then(_ => {
           done()
         })
         .catch(_ => {})
     },
     handleSizeChange (val) {
-      console.log(`每页 ${val} 条`)
+      console.log(`每頁 ${val} 條`)
     },
     handleCurrentChange (val) {
-      console.log(`当前页: ${val}`)
+      console.log(`當前頁: ${val}`)
     }
   }
 }
