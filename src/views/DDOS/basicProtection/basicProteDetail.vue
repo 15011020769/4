@@ -2,7 +2,7 @@
   <div id="basicDetail">
     <div class="topTitBasic">
       <i class="el-icon-back" @click="Back()"></i>
-      <span>{{this.instance.InstanceName}}</span>
+      <span>{{this.instance.Name}}</span>
     </div>
     <div class="basicContent">
       <div class="basicCenter">
@@ -117,7 +117,6 @@ export default {
   created(){
     localStorage.setItem("ddosAttack",this.$route.query.instance)
     this.instance = JSON.parse(this.$route.query.instance);
-    console.log(this.instance)
   },
   methods:{
     handleClick(tab, event) {

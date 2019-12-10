@@ -55,9 +55,6 @@
 import moment from "moment";
 import { DDOS_EV_LIST, DDOS_TREND } from "@/constants";
 export default {
-  // props: {
-  //   ddosAttack: {} // 实例对象
-  // },
   data() {
     return {
       business: "basic", //[bgp表示独享包；bgp-multip表示共享包；net表示高防IP专业版；basic表示DDoS基础防护]
@@ -123,7 +120,7 @@ export default {
       let params = {
         Version: "2018-07-09",
         Business: this.business,
-        Ip: this.ddosAttack.PublicIpAddresses[0],
+        Ip: this.ddosAttack.Ip,
         MetricName: this.metricName,
         Period: this.period,
         StartTime: this.startTime,
@@ -143,7 +140,7 @@ export default {
         Business: this.business,
         StartTime: this.startTime,
         EndTime: this.endTime,
-        "IpList.0": this.ddosAttack.PublicIpAddresses[0]
+        "IpList.0": this.ddosAttack.Ip
       };
       this.axios.post(DDOS_EV_LIST, params).then(res => {
         // console.log(res)
@@ -166,8 +163,6 @@ export default {
       this.timey = arr;
     },
     //选择时间
-
-
     thisTime(thisTime) {
       var ipt1 = document.querySelector(".newDataTime input:nth-child(2)");
       var ipt2 = document.querySelector(".newDataTime input:nth-child(4)");
