@@ -1,26 +1,26 @@
 <template>
   <div>
     <div class="topConTit">
-      <span class="titFont">密钥列表</span>
+      <span class="titFont">{{$t('KMS.total.kmsList')}}</span>
       <span class="taibeiCheck">{{thisAddress}}</span>
     </div>
     <div class="mainContent">
       <KMSdialog :dialogVisibleKMS="dialogVisibleKMS" @_confirm="_confirm" @_cancel="_cancel" :KMStitle="KMStitle" :KMStxt="KMStxt" :KMSdata="KMSdata" :state="state" />
       <div class="mainContBtn newClear">
         <div class="conLeftBtn">
-          <el-button @click="dialogVisible = true">新建</el-button>
-          <el-button @click="_enableBtn">启用密钥</el-button>
+          <el-button @click="dialogVisible = true">{{$t('KMS.total.newCreate')}}</el-button>
+          <el-button @click="_enableBtn">{{$t('KMS.total.startKms')}}</el-button>
           <!-- <el-button :disabled="false" v-if="!isHaveDisable">启用密钥</el-button> -->
-          <el-button @click="_disableBtn">禁用密钥</el-button>
+          <el-button @click="_disableBtn">{{$t('KMS.total.stopKms')}}</el-button>
           <!-- <el-button :disabled="false" v-if="!isHaveEnable">禁用密钥</el-button> -->
         </div>
-        <el-dialog class="dialogModel" title="新建密钥" :visible.sync="dialogVisible" width="30%" :before-close="handleClose">
+        <el-dialog class="dialogModel" :title="$t('KMS.total.newCreateKms')" :visible.sync="dialogVisible" width="30%" :before-close="handleClose">
           <el-form :model="createForm" label-width="100px">
-            <el-form-item label="密钥名称">
+            <el-form-item :label="$t('KMS.total.kmsName')">
               <el-input v-model="createForm.name"></el-input>
-              <p>最长可输入60个字符，不可为空，请使用字母、数字及字符“_”和“-”，首字符必须为字母或者数字，且不能用 KMS- 开头。</p>
+              <p>{{$t('KMS.total.tip1')}}</p>
             </el-form-item>
-            <el-form-item label="描述信息">
+            <el-form-item :label="$t('KMS.total.descriptInfo')">
               <el-input v-model="createForm.discription" type="textarea" />
               <p>最长可输入1024个字符</p>
             </el-form-item>
@@ -135,7 +135,6 @@ export default {
       filterTableDataEnd: [],
       flag: false,
       multipleSelection: [],
-      dialogVisible: false,
       deleteIndex: "",
       deleteBegin: {},
       dialogVisible: false, //新建模态框
@@ -175,6 +174,9 @@ export default {
   filters: {},
   created() {
     this.getData();
+  },
+  mounted(){
+    console.log(KMS_LIST)
   },
   methods: {
     //取消
@@ -322,10 +324,11 @@ export default {
       //获取主密钥列表详情
       this.axios.post(KMS_LIST, params).then(res => {
         var DataList = res.Response.KeyMetadatas;
+        console.log(res)
         this.tableDataBegin = DataList;
         // let trip = JSON.parse(localStorage.getItem('trip'));
         // this.tableDataBegin.push(trip.KeyRotationEnabled)
-        // console.log(this.tableDataBegin)
+        console.log(this.tableDataBegin)
         this.allData = DataList;
         // 将数据的长度赋值给totalItems
         this.totalItems = this.tableDataBegin.length;
