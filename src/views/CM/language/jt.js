@@ -18,6 +18,7 @@ module.exports = {
         x16: '对象存储'
     },
     CVM: {
+        slfz: '实例分组',
         title: '云服务器',
         errorTxt: '请输入正确搜索信息',
         table: {
@@ -65,6 +66,27 @@ module.exports = {
             NORMAL: "健康",
             EXPIRED: "过期",
             PROTECTIVELY_ISOLATED: "隔离"
+        },
+        clBload: {
+            zs: '注释：Max、Min和Avg数值统计为当前折线图内所有点的最大值、最小值和平均值',
+            dcsj: '导出数据',
+            zwsj: '暂无数据',
+            jqjkzt: '集群健康状态',
+            clm: '策略名',
+            cllx: '策略类型',
+            cftj: '触发条件',
+            zjxg: '最近修改',
+            glslz: '关联实例组',
+            cz: '操作',
+            jk: '监控',
+            gjcl: '告警策略',
+            fhlb: '返回列表',
+            fzjh: '负载均衡CLB',
+            zjm: 'ID/主机名',
+            zt: '状态',
+            wllx: '网络类型',
+            sswl: '所属网络',
+            cjsj: '创建时间',
         }
     },
     COM: require('@/components/language/jt'),

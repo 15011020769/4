@@ -2,7 +2,7 @@
   <div class="CM-wrap">
     <Loading :show="loadShow" />
     <!-- 城市按钮 -->
-    <div class="CVM-title">负载均衡CLB</div>
+    <div class="CVM-title">{{ $t('CVM.clBload.fzjh') }}</div>
     <div class="tool">
       <Cities
         :cities="cities"
@@ -27,7 +27,7 @@
         height="550"
         style="width: 100%"
       >
-        <el-table-column prop label="ID/主机名 " width="120">
+        <el-table-column prop :label="$t('CVM.clBload.zjm') " width="120">
           <template slot-scope="scope">
             <p v-for="i in scope.row.LoadBalancerVips">
               <a
@@ -38,13 +38,13 @@
             {{ scope.row.LoadBalancerName}}
           </template>
         </el-table-column>
-        <el-table-column prop label="监控" width="80">
+        <el-table-column prop :label="$t('CVM.clBload.jk')" width="80">
           <template slot-scope="scope">
             <div class="a" @click="jump(scope.row.LoadBalancerId,i)"></div>
             <!-- <i @click="jump(scope.row.LoadBalancerId,i)" style="cursor:pointer;"><i class="el-icon-share"></i></a> -->
           </template>
         </el-table-column>
-        <el-table-column prop label="状态">
+        <el-table-column prop :label="$t('CVM.clBload.zt')">
           <template slot-scope="scope">
             <p :class="scope.row.Status=='1'?'green':'orange'">{{instanceStatus[scope.row.Status]}}</p>
           </template>
@@ -55,12 +55,12 @@
             <p v-for="i in scope.row.LoadBalancerVips">{{i}}</p>
           </template>
         </el-table-column>
-        <el-table-column prop label="网络类型">
+        <el-table-column prop :label="$t('CVM.clBload.wllx')">
           <template slot-scope="scope">{{LoadBalancerType[scope.row.LoadBalancerType]}}</template>
         </el-table-column>
 
-        <el-table-column prop="VpcId" label="所属网络"></el-table-column>
-        <el-table-column prop="CreateTime" label="创建时间"></el-table-column>
+        <el-table-column prop="VpcId" :label="$t('CVM.clBload.sswl')"></el-table-column>
+        <el-table-column prop="CreateTime" :label="$t('CVM.clBload.cjsj')"></el-table-column>
       </el-table>
       <div class="Right-style pagstyle">
         <el-pagination
@@ -88,17 +88,17 @@ export default {
       searchOptions: [
         {
           value: "LoadBalancerIds.0",
-          label: "实例ID"
+          label: "實例ID"
         }
       ], //下拉框数据
       searchValue: "", //下拉框默认选中的值
       instanceStatus: {
-        0: "创建中",
+        0: "創建中",
         1: "正常"
       }, //文字过滤
       LoadBalancerType: {
-        OPEN: "公网",
-        INTERNAL: "内网"
+        OPEN: "公網",
+        INTERNAL: "內網"
       }, //文字过滤
       cities: [], //城市列表
       selectedRegion: "ap-taipei", // 默认选中城市
@@ -151,7 +151,7 @@ export default {
       if (this.searchInput !== "" && this.searchValue !== "") {
         this.GetTabularData();
       } else {
-        this.$message.error("请输入正确搜索信息");
+        this.$message.error("請輸入正確搜索信息");
       }
     },
     // 添加项目列表的表格数据

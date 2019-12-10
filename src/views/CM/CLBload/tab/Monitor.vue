@@ -4,9 +4,9 @@
     <!-- 时间粒度搜素 -->
     <XTimeX v-on:switchData="GetDat" :classsvalue='value'></XTimeX>
     <div class='box-dis p-style'>
-      <p><i class="el-icon-info"></i>注释：Max、Min和Avg数值统计为当前折线图内所有点的最大值、最小值和平均值</p>
+      <p><i class="el-icon-info"></i>{{ $t('CVM.clBload.zs') }}</p>
       <p>
-        <el-button type="text">导出数据</el-button>
+        <el-button type="text">{{ $t('CVM.clBload.dcsj') }}</el-button>
       </p>
     </div>
     <div class='box-table'>
@@ -28,7 +28,7 @@
 
         <el-table-column prop="DataPoints" width="550">
           <template slot-scope="scope">
-            <p v-if="scope.row.DataPoints[0].Values.length==0"> 暂无数据</p>
+            <p v-if="scope.row.DataPoints[0].Values.length==0"> {{ $t('CVM.clBload.zwsj') }}</p>
             <div class='echart' v-if="scope.row.DataPoints[0].Values.length!=0">
               <echart-line id="diskEchearrts-line" :time='scope.row.DataPoints[0].Timestamps | UpTime'
                 :opData='scope.row.DataPoints[0].Values' :scale=3 :period=period :xdata=false>
@@ -82,7 +82,7 @@
 
       </el-table>
       <!-- 模态框 -->
-      <el-dialog title="集群健康状态" :visible.sync="dialogVisible" width="60%" :before-close="handleClose">
+      <el-dialog :title="$t('CVM.clBload.jqjkzt')" :visible.sync="dialogVisible" width="60%" :before-close="handleClose">
         <XTimeX v-on:switchData="GetDat" :classsvalue='value'></XTimeX>
         <echart-line id="diskEchearrts-line" class="echart-wh" :time='timeData | UpTime' :opData='jingData'
           :period=period :xdata=true>
@@ -139,7 +139,7 @@
           'Inpkg',
           'Outpkg'
         ];
-        const symbol = ["个/分钟", "个/分钟", "Mbps", "Mbps", "个/秒", "个/秒"];
+        const symbol = ["個/分鐘", "個/分鐘", "Mbps", "Mbps", "個/秒", "個/秒"];
         this.tableData = []
         for (let i = 0; i < metricNArr.length; i++) {
           this.Obtain(metricNArr[i], symbol[i]);
@@ -199,10 +199,10 @@
       //文字过滤
       UpName(value) {
         if (value === 'Connum') {
-          return (value = '当前连接数');
+          return (value = '當前連接數');
         }
         if (value === 'NewConn') {
-          return (value = '新增连接数');
+          return (value = '新增連接數');
         }
         if (value === 'Intraffic') {
           return (value = '入流量');
@@ -223,10 +223,10 @@
       },
       UpTitle(value) {
         if (value === 'Connum') {
-          return (value = '当前连接数');
+          return (value = '當前連接數');
         }
         if (value === 'NewConn') {
-          return (value = '新增连接数');
+          return (value = '新增連接數');
         }
         if (value === 'Intraffic') {
           return (value = '入流量');

@@ -1,5 +1,5 @@
 <template>
   <div>
-    实例分组
+    {{ $t('CVM.slfz') }}
   </div>
 </template>

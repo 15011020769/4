@@ -18,6 +18,7 @@ module.exports = {
         title16: '對象存儲'
     },
     CVM: {
+        slfz: '實例分組',
         title: '雲伺服器',
         errorTxt: '請輸入正確搜索信息',
         table: {
@@ -66,6 +67,27 @@ module.exports = {
             EXPIRED: "過期",
             PROTECTIVELY_ISOLATED: "隔離"
         },
+        clBload: {
+            zs: '注釋：Max、Min和Avg數值統計為當前折線圖內所有點的最大值、最小值和平均值',
+            dcsj: '導出數據',
+            zwsj: '暫無數據',
+            jqjkzt: '集群健康狀態',
+            clm: '策略名',
+            cllx: '策略類型',
+            cftj: '觸發條件',
+            zjxg: '最近修改',
+            glslz: '關聯實例組',
+            cz: '操作',
+            jk: '監控',
+            gjcl: '告警策略',
+            fhlb: '返回列表',
+            fzjh: '負載均衡CLB',
+            zjm: 'ID/主機名',
+            zt: '狀態',
+            wllx: '網路類型',
+            sswl: '所屬網路',
+            cjsj: '創建時間',
+        }
 
     },
     COM: require('@/components/language/ft'),
