@@ -1,17 +1,21 @@
 <template>
   <div class="mod-role">
+
+    <!-- title 月份 -->
     <div class="mod">
-      <span class="mod-mar" style="font-size: 16px; font-weight: 700; line-height:3;">{{$t('BILL.Detail.title')}}</span>
-      <el-date-picker v-model="dataForm.month" type="month" value-format="yyyy-MM" size="small" @change="getMonth(dataForm.month)" style="padding-left: 5px;">
+      <span class="mod-mar">{{$t('BILL.Detail.title')}}</span>
+      <el-date-picker v-model="dataForm.month" type="month" value-format="yyyy-MM" size="small" @change="getMonth(dataForm.month)" style="padding-left: 10px;">
       </el-date-picker>
-      <span style="padding-left: 10px; font-size: 12px;">{{$t('BILL.Detail.note')}}</span>
+      <span class="span-1">{{$t('BILL.Detail.note')}}</span>
     </div>
+
+    <!-- 下拉选择 -->
     <div class="mod-from">
       <el-form :inline="true" :model="dataForm" class="demo-form-inline">
         <el-form-item>
           <!-- 产品 -->
-          <el-select v-model="dataForm.businessCodeName" value-key="code" :placeholder="$t('BILL.Detail.allProduct')" @change="getChildInfo()" clearable size="small">
-            <el-option v-for="item in getProductList" :key="item.code" :label="item.nameTw" :value="item">
+          <el-select v-model="dataForm.businessCode" value-key="code" :placeholder="$t('BILL.Detail.allProduct')" @change="getDataList()" clearable size="small">
+            <el-option v-for="item in getProductList" :key="item.businessCode" :label="item.businessCodeName" :value="item.businessCode">
             </el-option>
           </el-select>
           <!-- 子产品 -->
@@ -25,7 +29,7 @@
             </el-option>
           </el-select> -->
           <!-- 项目 -->
-          <el-select v-model="dataForm.projectName" :placeholder="$t('BILL.Detail.allProject')" @change="getProjectInfo()" clearable size="small">
+          <el-select v-model="dataForm.projectName" :placeholder="$t('BILL.Detail.allProject')" @change="getDataList()" clearable size="small">
             <el-option v-for="item in getProjectList" :key="item.projectName" :label="item.projectName" :value="item.projectName">
             </el-option>
           </el-select>
@@ -35,46 +39,46 @@
             </el-option>
           </el-select> -->
           <!-- 计费模式 -->
-          <el-select v-model="dataForm.payModeName" :placeholder="$t('BILL.Detail.allpayMode')" @change="getPayModeInfo()" clearable size="small">
+          <el-select v-model="dataForm.payModeName" :placeholder="$t('BILL.Detail.allpayMode')" @change="getDataList()" clearable size="small">
             <el-option v-for="item in getPayModeList" :key="item.payModeName" :label="item.payModeName" :value="item.payModeName">
             </el-option>
           </el-select>
           <!-- 交易类型 -->
-          <el-select v-model="dataForm.actionTypeName" :placeholder="$t('BILL.Detail.allActionType')" @change="getActionTypeInfo()" clearable size="small">
+          <el-select v-model="dataForm.actionTypeName" :placeholder="$t('BILL.Detail.allActionType')" @change="getDataList()" clearable size="small">
             <el-option v-for="item in getActionTypeList" :key="item.actionTypeName" :label="item.actionTypeName" :value="item.actionTypeName">
             </el-option>
           </el-select>
           <el-checkbox v-model="dataForm.checked" style="padding-left: 15px;" @change="getCharge()">
-            {{$t('BILL.Detail.filter')}}</el-checkbox>
+            {{$t('BILL.Detail.filter')}}
+          </el-checkbox>
         </el-form-item>
       </el-form>
     </div>
-    <div class="mod-table">
-      <div class="mod-box">
-        <div class="mod-left">
-          <span style="font-size: 14px;">{{$t('BILL.Detail.allCast')}}：</span>
-          <span style="font-size: 16px; color: #006eff;">{{dataForm.allCoat}} 元</span>
-          <span style="font-size: 14px;"> = {{$t('BILL.Detail.cashPayment')}} {{dataForm.cashPayment}} 元 +
-            {{$t('BILL.Detail.freePayment')}} {{dataForm.freePayment}} 元 + {{$t('BILL.Detail.voucherPayment')}}
-            {{dataForm.voucherPayment}} 元</span>
+
+    <!-- 费用计算 -->
+    <div class="mod-box">
+      <div class="mod-left">
+        <span style="font-size: 14px;">{{$t('BILL.Detail.allCast')}}: </span>
+        <span style="font-size: 16px; color: #006eff;">NT$ {{dataForm.allCoat}}</span>
+      </div>
+      <div class="mod-right">
+        <div style="float: right;">
+          <el-button type="primary" icon="el-icon-download" @click="download" size="small" plain></el-button>
         </div>
-        <div class="mod-right">
-          <div style="float: right;">
-            <el-button type="primary" icon="el-icon-download" @click="download" size="small"></el-button>
-          </div>
-          <div style="float: right; padding-right:5px;">
-            <el-button type="primary" @click="search()" size="small">{{$t('BILL.Detail.search')}}</el-button>
-          </div>
-          <div style="float: right; padding-right:5px;">
-            <el-input :placeholder="$t('BILL.Detail.resourceId')" clearable v-model="dataForm.resourceId" size="small">
-            </el-input>
-          </div>
+        <div style="float: right; padding-right:5px;">
+          <el-input :placeholder="$t('BILL.Detail.resourceId')" clearable v-model="dataForm.resourceId" size="small">
+            <el-button type="primary" @click="search()" slot="append" icon="el-icon-search" size="small"></el-button>
+          </el-input>
         </div>
       </div>
-      <el-table :data="dataList" border style="width: 100%" v-loading="dataListLoading" size="small">
-        <el-table-column prop="resourceId" header-align="center" align="center" width="160" fixed :label="$t('BILL.Detail.resourceId')">
+    </div>
+
+    <!-- 表格 -->
+    <div class="mod-table">
+      <el-table :data="dataList" class="table-content" style="width: 100%" v-loading="dataListLoading" size="small">
+        <el-table-column prop="resourceId" header-align="center" align="center" width="140" fixed :label="$t('BILL.Detail.resourceId')">
         </el-table-column>
-        <el-table-column prop="businessCodeName" header-align="center" align="center" width="160" fixed :label="$t('BILL.Detail.productName')">
+        <el-table-column prop="businessCodeName" header-align="center" align="center" width="140" fixed :label="$t('BILL.Detail.productName')">
         </el-table-column>
         <el-table-column prop="payModeName" header-align="center" align="center" width="120" :label="$t('BILL.Detail.payMode')">
         </el-table-column>
@@ -139,44 +143,38 @@
         <el-table-column prop="month" header-align="center" align="center" width="120" :label="$t('BILL.Detail.month')">
         </el-table-column>
       </el-table>
-      <div class="pagination">
+      <div class="table-page">
         <el-pagination @size-change="sizeChangeHandle" @current-change="currentChangeHandle" :current-page="pageIndex" :page-sizes="[10, 20, 50, 100]" :page-size="pageSize" :total="totalPage" layout="total, sizes, prev, pager, next, jumper" style="width:100%; text-align:right;">
         </el-pagination>
       </div>
     </div>
-    <iframe ref="iframe" src="" style="display:none"></iframe>
   </div>
 </template>
 
 <script>
 import moment from 'moment'
+import { PRODUCT_LIST, ADMIN_PROJECT, PAY_MODEL_LIST, ACTION_TYPE_LIST, BILL_LIST, GET_PAY_AMOUNT, EXPORTLIST } from '@/constants/BILL.js'     // 获取接口
 export default {
   data() {
     return {
       dataForm: {
-        businessCodeName: {},
-        productCodeName: '',
-        componentCodeName: '',
-        projectName: '',
-        regionName: '',
-        payModeName: '',
-        actionTypeName: '',
-        resourceId: '',
+        month: moment(new Date()).format('YYYY-MM'),                // 默认月份
+        businessCode: '',                         // 选中的产品代码
+        projectName: '',          // 项目名称
+        payModeName: '',          // 计费模式
+        actionTypeName: '',       // 交易类型
+        resourceId: '',           // 资源实例id
         realCost: '',
-        month: '',
         checked: false,
-        allCoat: '0',
-        cashPayment: '0',
-        freePayment: '0',
-        voucherPayment: '0'
+        allCoat: '0',             // 总费用
       },
       dataList: [],
-      getProductList: [],
+      getProductList: [],       // 产品列表
       getChildList: [],
-      getProjectList: [],
+      getProjectList: [],       // 项目列表
       getRegionList: [],
-      getPayModeList: [],
-      getActionTypeList: [],
+      getPayModeList: [],       // 获取计费模式
+      getActionTypeList: [],    // 获取交易类型
       getComponentList: [],
       pageIndex: 1,
       pageSize: 10,
@@ -185,57 +183,114 @@ export default {
     }
   },
   mounted() {
-    this.dataForm.month = moment(new Date()).format('YYYY-MM')
-    this.getProductInfo()
-    this.getDataList()
-    this.cost()
-    this.getProjectInfo()
-    this.getRegionInfo()
-    this.getPayModeInfo()
-    this.getActionTypeInfo()
+    this.getProductInfo()     // 获取产品列表
+    this.getProjectInfo()     // 获取项目列表
+    this.getPayModeInfo()     // 获取计费模式列表
+    this.getActionTypeInfo()  // 获取交易类型列表
+    this.getDataList()        // 获取数据列表
+
+    // this.cost()
+
+    // this.getRegionInfo()
+    // this.getPayModeInfo()
+    // 
   },
   methods: {
+
+    // 点击下拉月份
+    getMonth(mon) {
+      this.dataForm.month = mon           // 2019-11
+      this.getDataList()                  // 获取账单列表
+    },
+
+    // 获取产品列表
+    getProductInfo() {
+      var params = {
+        'uin': this.$cookie.get('uin'),
+        'month': this.dataForm.month,
+      }
+      this.axios.post(`${process.env.VUE_APP_adminUrl + PRODUCT_LIST}`, params).then((res) => {
+        this.getProductList = res.productList
+      })
+    },
+
+    // 获取项目列表
+    getProjectInfo() {
+      var params = {
+        'month': this.dataForm.month,
+        'uin': this.$cookie.get('uin'),
+      }
+      this.axios.post(`${process.env.VUE_APP_adminUrl + ADMIN_PROJECT}`, params).then((res) => {
+        this.getProjectList = res.projectList
+      })
+    },
+
+    // 获取计费模式列表
+    getPayModeInfo() {
+      var params = {
+        'month': this.dataForm.month
+      }
+      this.axios.post(`${process.env.VUE_APP_adminUrl + PAY_MODEL_LIST}`, params).then((res) => {
+        this.getPayModeList = res.payModeList
+      })
+    },
+
+    // 获取交易类型列表
+    getActionTypeInfo() {
+      var params = {
+        'month': this.dataForm.month
+      }
+      this.axios.post(`${process.env.VUE_APP_adminUrl + ACTION_TYPE_LIST}`, params).then((
+        res) => {
+        this.getActionTypeList = res.actionTypeList
+      })
+    },
+
     // 获取数据列表
     getDataList() {
       var params = {
         'page': this.pageIndex,
         'limit': this.pageSize,
-        'businessCodeName': this.dataForm.businessCodeName.nameTw,
-        'productCodeName': this.dataForm.productCodeName.nameTw,
-        'itemCodeName': this.dataForm.componentCodeName,
+        'uin': this.$cookie.get('uin'),
+        'month': this.dataForm.month,
+        'businessCode': this.dataForm.businessCode,
         'projectName': this.dataForm.projectName,
-        'regionName': this.dataForm.regionName,
         'payModeName': this.dataForm.payModeName,
         'actionTypeName': this.dataForm.actionTypeName,
         'resourceId': this.dataForm.resourceId,
-        'resourceName': this.dataForm.resourceId,
-        'realCost': this.dataForm.realCost,
-        'month': this.dataForm.month,
         'ifDisZero': this.dataForm.checked,
-        'uin': this.$cookie.get('uin')
       }
       this.dataListLoading = true
-      this.$axios.post(`${process.env.VUE_APP_adminUrl}taifucloud/tbillproduct/list`, params).then(data => {
+      this.axios.post(`${process.env.VUE_APP_adminUrl + BILL_LIST}`, params).then(data => {
         if (data && data.code === 0) {
           this.dataList = data.page.list
           this.totalPage = data.page.totalCount
+          this.cost()     // 查询完数据之后 获取总费用
         } else {
           this.dataList = []
           this.totalPage = 0
         }
         this.dataListLoading = false
       })
-      this.cost()
+      // this.cost()
     },
-    // 下拉月份
-    getMonth(mon) {
-      this.dataForm.month = mon
+
+    // 点击每页select显示的条数
+    sizeChangeHandle(val) {
+      console.log(val)
+      this.pageSize = val
+      this.pageIndex = 1
       this.getDataList()
-      this.getProjectInfo()
-      this.getRegionInfo()
-      this.getPayModeInfo()
-      this.getActionTypeInfo()
+      // this.cost()
     },
+    // 点击页码
+    currentChangeHandle(val) {
+      // console.log(val)
+      this.pageIndex = val
+      this.getDataList()
+      // this.cost()
+    },
+
     // 搜索
     search() {
       this.pageIndex = 1
@@ -246,26 +301,19 @@ export default {
     // 总费用计算
     cost() {
       var params = {
-        'businessCodeName': this.dataForm.businessCodeName.nameTw,
-        'productCodeName': this.dataForm.productCodeName.nameTw,
-        'itemCodeName': this.dataForm.componentCodeName,
+        'uin': this.$cookie.get('uin'),
+        'month': this.dataForm.month,
+        'businessCode': this.dataForm.businessCode,
         'projectName': this.dataForm.projectName,
-        'regionName': this.dataForm.regionName,
         'payModeName': this.dataForm.payModeName,
         'actionTypeName': this.dataForm.actionTypeName,
         'resourceId': this.dataForm.resourceId,
-        'resourceName': this.dataForm.resourceId,
-        'realCost': this.dataForm.realCost,
-        'month': this.dataForm.month,
         'ifDisZero': this.dataForm.checked,
-        'uin': this.$cookie.get('uin')
       }
-      this.$axios.post(`${process.env.VUE_APP_adminUrl}taifucloud/tbillproduct/getPayAmount`, params).then(data => {
+      this.axios.post(`${process.env.VUE_APP_adminUrl + GET_PAY_AMOUNT}`, params).then(data => {
         if (data.payAmount != null && data.code === 0) {
+          console.log(data.payAmount.totalAmount)
           this.dataForm.allCoat = data.payAmount.totalAmount
-          this.dataForm.cashPayment = data.payAmount.cashAmount
-          this.dataForm.freePayment = data.payAmount.incentiveAmount
-          this.dataForm.voucherPayment = data.payAmount.voucherAmount
         } else {
           this.dataForm.allCoat = 0
           this.dataForm.cashPayment = 0
@@ -274,29 +322,25 @@ export default {
         }
       })
     },
+    
     // 下载
     download() {
       var params = {
-        'businessCodeName': this.dataForm.businessCodeName.nameTw,
-        'productCodeName': this.dataForm.productCodeName.nameTw,
-        'itemCodeName': this.dataForm.componentCodeName,
+        'uin': this.$cookie.get('uin'),
+        'month': this.dataForm.month,
+        'businessCode': this.dataForm.businessCode,
         'projectName': this.dataForm.projectName,
-        'regionName': this.dataForm.regionName,
         'payModeName': this.dataForm.payModeName,
         'actionTypeName': this.dataForm.actionTypeName,
         'resourceId': this.dataForm.resourceId,
-        'resourceName': this.dataForm.resourceId,
-        'realCost': this.dataForm.realCost,
-        'month': this.dataForm.month,
         'ifDisZero': this.dataForm.checked,
-        'uin': this.$cookie.get('uin')
       }
-      this.$axios.post(`${process.env.VUE_APP_adminUrl}taifucloud/tbillproduct/exportList`, params, {
+      this.axios.post(`${process.env.VUE_APP_adminUrl + EXPORTLIST}`, params, {
         responseType: 'blob'
       }).then(res => {
         const content = res
         const blob = new Blob([content])
-        const fileName = this.dataForm.month + '--账单明细.csv'
+        const fileName = this.dataForm.month + '--賬單明細.csv'
         if ('download' in document.createElement('a')) {
           // 非IE下载
           const elink = document.createElement('a')
@@ -314,115 +358,46 @@ export default {
         }
       })
     },
-    // 每页数
-    sizeChangeHandle(val) {
-      this.pageSize = val
-      this.pageIndex = 1
-      this.getDataList()
-      this.cost()
-    },
-    // 当前页
-    currentChangeHandle(val) {
-      this.pageIndex = val
-      this.getDataList()
-      this.cost()
-    },
-    // 获取产品列表
-    getProductInfo() {
-      var params = {}
-      this.$axios.post(`${process.env.VUE_APP_adminUrl}taifucloud/cloud-product/getProduct`, params).then((res) => {
-        this.getProductList = res.list
-      })
-    },
+
+
     // 获取子产品列表
-    getChildInfo() {
-      this.pageIndex = 1
-      this.pageSize = 10
-      this.dataForm.productCodeName = ''
-      this.dataForm.componentCodeName = ''
-      var params = {
-        'parentCode': this.dataForm.businessCodeName.code
-      }
-      this.$axios.post(`${process.env.VUE_APP_adminUrl}taifucloud/cloud-product/getProduct`, params).then((res) => {
-        this.getChildList = res.list
-      })
-      this.getComponentList = []
-      this.getDataList()
-      this.cost()
-    },
+    // getChildInfo() {
+    //   this.pageIndex = 1
+    //   this.pageSize = 10
+    //   this.dataForm.productCodeName = ''
+    //   this.dataForm.componentCodeName = ''
+    //   var params = {
+    //     'parentCode': this.dataForm.businessCodeName.code
+    //   }
+    //   this.axios.post(`${process.env.VUE_APP_adminUrl}taifucloud/cloud-product/getProduct`, params).then((res) => {
+    //     this.getChildList = res.list
+    //   })
+    //   this.getComponentList = []
+    //   this.getDataList()
+    //   this.cost()
+    // },
     // 获取组件列表
-    getComponentInfo() {
-      this.pageIndex = 1
-      this.pageSize = 10
-      this.dataForm.componentCodeName = ''
-      var params = {
-        'projectCode': this.dataForm.productCodeName.code
-      }
-      this.$axios.post(`${process.env.VUE_APP_adminUrl}taifucloud/tcloudsubgroup/getSubByParent`, params).then((
-        res) => {
-        this.getComponentList = res.list
-      })
-      this.getDataList()
-      this.cost()
-    },
+    // getComponentInfo() {
+    //   this.pageIndex = 1
+    //   this.pageSize = 10
+    //   this.dataForm.componentCodeName = ''
+    //   var params = {
+    //     'projectCode': this.dataForm.productCodeName.code
+    //   }
+    //   this.axios.post(`${process.env.VUE_APP_adminUrl}taifucloud/tcloudsubgroup/getSubByParent`, params).then((
+    //     res) => {
+    //     this.getComponentList = res.list
+    //   })
+    //   this.getDataList()
+    //   this.cost()
+    // },
     // 改变组件选项，刷新datagrid和费用项
-    getInfo() {
-      this.getDataList()
-      this.cost()
-    },
-    // 获取项目列表
-    getProjectInfo() {
-      this.pageIndex = 1
-      this.pageSize = 10
-      var params = {
-        'month': this.dataForm.month
-      }
-      this.$axios.post(`${process.env.VUE_APP_adminUrl}taifucloud/tbillproduct/projectList`, params).then((res) => {
-        this.getProjectList = res.projectList
-      })
-      this.getDataList()
-      this.cost()
-    },
-    // 获取区域列表
-    getRegionInfo() {
-      this.pageIndex = 1
-      this.pageSize = 10
-      var params = {
-        'month': this.dataForm.month
-      }
-      this.$axios.post(`${process.env.VUE_APP_adminUrl}taifucloud/tbillproduct/regionList`, params).then((res) => {
-        this.getRegionList = res.regionList
-      })
-      this.getDataList()
-      this.cost()
-    },
-    // 获取计费模式列表
-    getPayModeInfo() {
-      this.pageIndex = 1
-      this.pageSize = 10
-      var params = {
-        'month': this.dataForm.month
-      }
-      this.$axios.post(`${process.env.VUE_APP_adminUrl}taifucloud/tbillproduct/payModeList`, params).then((res) => {
-        this.getPayModeList = res.payModeList
-      })
-      this.getDataList()
-      this.cost()
-    },
-    // 获取交易类型列表
-    getActionTypeInfo() {
-      this.pageIndex = 1
-      this.pageSize = 10
-      var params = {
-        'month': this.dataForm.month
-      }
-      this.$axios.post(`${process.env.VUE_APP_adminUrl}taifucloud/tbillproduct/actionTypeList`, params).then((
-        res) => {
-        this.getActionTypeList = res.actionTypeList
-      })
-      this.getDataList()
-      this.cost()
-    },
+    // getInfo() {
+    //   this.getDataList()
+    //   this.cost()
+    // },
+
+
     // 0元费用
     getCharge() {
       this.pageIndex = 1
@@ -430,20 +405,20 @@ export default {
       this.getDataList()
       this.cost()
     },
-    reminder1() {
-      if (this.dataForm.businessCodeName.code) {
-        return this.$t('BILL.Detail.label1')
-      } else {
-        return this.$t('BILL.Detail.label2')
-      }
-    },
-    reminder2() {
-      if (this.dataForm.productCodeName.code) {
-        return this.$t('BILL.Detail.label3')
-      } else {
-        return this.$t('BILL.Detail.label4')
-      }
-    }
+    // reminder1() {
+    //   if (this.dataForm.businessCodeName.code) {
+    //     return this.$t('BILL.Detail.label1')
+    //   } else {
+    //     return this.$t('BILL.Detail.label2')
+    //   }
+    // },
+    // reminder2() {
+    //   if (this.dataForm.productCodeName.code) {
+    //     return this.$t('BILL.Detail.label3')
+    //   } else {
+    //     return this.$t('BILL.Detail.label4')
+    //   }
+    // }
   }
 }
 
@@ -451,35 +426,57 @@ export default {
 <style lang="scss" scoped>
 .mod {
   color: #000;
-  height: 45px;
-  line-height: 45px;
+  height: 50px;
+  line-height: 50px;
   margin-bottom: 20px;
   padding: 0 20px;
   background: #fff;
   font-size: 16px;
-  display: -webkit-box;
-  display: -ms-flexbox;
-  // display: flex;
-  -webkit-box-pack: justify;
-  -ms-flex-pack: justify;
-  justify-content: space-between;
-  margin-bottom: 20px;
-
-  .mod-mar {
-    margin-right: 20px;
+  .span-1 {
+    padding-left: 10px;
+    font-size: 12px;
   }
 }
 
 .mod-from {
-  width: 96%;
-  margin: 0 auto;
+  padding: 0 20px;
+  ::v-deep .el-form-item {
+    margin-bottom: 12px;
+  }
+}
+
+.mod-box {
+  padding: 0 20px;
+  margin-bottom: 10px;
+  width: 100%;
+  height: 40px;
+  line-height: 40px;
+  .mod-left {
+    float: left;
+  }
+  .mod-right {
+    float: right;
+    vertical-align: middle;
+  }
 }
 
 .mod-table {
-  width: 96%;
-  padding: 20px;
+  margin: 0 20px;
   background-color: #fff;
-  margin: 0 auto;
+  min-height: 520px;
+  clear: both;
+  margin-bottom: 20px;
+
+  .table-content {
+    min-height: 450px;
+  }
+  .table-page {
+    width: 100%;
+    height: 70px;
+    .el-pagination {
+      padding-top: 22px;
+    }
+  }
 
   .pagination {
     background: rgb(255, 255, 255);
@@ -494,12 +491,6 @@ export default {
     width: 100%;
     padding-bottom: 10px;
     background: #fff;
-
-    .mod-left,
-    .mod-right {
-      display: table-cell;
-      vertical-align: middle;
-    }
   }
 }
 

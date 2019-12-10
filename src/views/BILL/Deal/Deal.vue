@@ -73,7 +73,7 @@
 
 <script>
 import Detail from './Dealdetail'
-import { PROJECT_LIST, BILL_LIST } from '@/constants/BILL.js'     // 获取接口
+import { PROJECT_LIST, ORDER_LIST } from '@/constants/BILL.js'     // 获取接口
 export default {
   data() {
     return {
@@ -160,7 +160,7 @@ export default {
         'orderId': this.dataForm.orderId,
         'orderOwner': this.$cookie.get('uin')
       }
-      this.axios.post(`${process.env.VUE_APP_adminUrl + BILL_LIST}`, params).then(data => {
+      this.axios.post(`${process.env.VUE_APP_adminUrl + ORDER_LIST}`, params).then(data => {
         if (data && data.code === 0) {
           this.dataList = []
           let dataArr = data.page.list
