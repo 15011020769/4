@@ -4,72 +4,81 @@
       <span>DDoS基础防护</span>
       <el-select v-model="codeOrigin" placeholder="" class="codeOrigin">
         <el-option label="云服务器专区" value="codeOrigin1"></el-option>
+        <el-option label="负载均衡专区" value="codeOrigin2"></el-option>
+        <el-option label="NAT服务器专区" value="codeOrigin3"></el-option>
+        <el-option label="互联网通道" value="codeOrigin4"></el-option>
       </el-select>
-      <el-select v-model="taibei" placeholder=""  class="codeOrigin">
+      <el-input value="台湾台北" class="taibeiCheck" :readonly="true"></el-input>
+      <!-- <el-select v-model="taibei" placeholder=""  class="codeOrigin">
         <el-option label="中国台北" value="taibei"></el-option>
-      </el-select>
+      </el-select> -->
     </div>
     <div class="basicProtCon">
       <div class="basicProtConSearch">
         <el-input placeholder="请输入主机名/主机IP搜索" class="searchIpt" v-model="searchInputVal"/><el-button @click="doFilter" class="el-icon-search"></el-button>
       </div>
-      <div>
-        <el-table :data="tableDataBegin.slice((currentPage-1)*pageSize,currentPage*pageSize)">
-          <el-table-column prop="InstanceName" label="主机名">
-            <template slot-scope="scope">
-              <a href="#" @click="toDoDetail(scope.$index, scope.row)">{{scope.row.InstanceName}}</a>
-            </template>
-          </el-table-column>
-          <el-table-column prop="IP" label="绑定IP">
-            <template slot-scope="scope">
-              <div v-if="scope.row.PublicIpAddresses != undefined">
-                {{scope.row.PublicIpAddresses[0]}}
-              </div>
-              <div v-else>-</div>
-            </template>
-          </el-table-column>
-          <el-table-column prop="InstanceType" label="主机类型">
-            云主机
-            <!-- <template slot-scope="scope">{{scope.row.InstanceType}}</template> -->
-          </el-table-column>
-          <el-table-column prop="RestrictState" label="安全状态">
-            <template slot-scope="scope">
-              <div v-if="scope.row.RestrictState == 'NORMAL'">正常</div>
-              <div v-else-if="scope.row.RestrictState == 'EXPIRED'">过期</div>
-              <div v-else-if="scope.row.RestrictState == 'PROTECTIVELY_ISOLATED'">被安全隔离</div>
-            </template>
-          </el-table-column>
-          <!-- <el-table-column prop="" label="操作" width="180">
-              <el-button
-                type="text"
-                size="small"
-                @click="buyBgp"
-              >升级防护</el-button>
-          </el-table-column> -->
-        </el-table>
-      </div>
-      <div class="tabListPage">
-        <el-pagination
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-          :current-page="currentPage"
-          :page-sizes="[10, 20, 30, 50]"
-          :page-size="pageSize"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="totalItems"
-        >
-        </el-pagination>
+      <div class="tableBasic">
+        <div class="tableBasicCon">
+          <el-table :data="tableDataBegin.slice((currentPage-1)*pageSize,currentPage*pageSize)">
+            <el-table-column prop="Name" label="主机名">
+              <template slot-scope="scope">
+                <a href="#" @click="toDoDetail(scope.$index, scope.row)">{{scope.row.Name}}</a>
+              </template>
+            </el-table-column>
+            <el-table-column prop="IP" label="绑定IP">
+              <template slot-scope="scope">
+                <div v-if="scope.row.Ip != undefined">{{scope.row.Ip}}</div>
+                <div v-else>-</div>
+              </template>
+            </el-table-column>
+            <el-table-column prop="InstanceType" label="主机类型">
+              云主机
+              <!-- <template slot-scope="scope">{{scope.row.InstanceType}}</template> -->
+            </el-table-column>
+            <el-table-column prop="Status" label="安全状态">
+              <template slot-scope="scope">
+                <div v-if="scope.row.Status == 'NORMAL' | scope.row.Status == '1'">正常</div>
+                <div v-else-if="scope.row.Status == 'EXPIRED'">过期</div>
+                <div v-else-if="scope.row.Status == 'PROTECTIVELY_ISOLATED'">被安全隔离</div>
+                <div v-else-if="scope.row.Status == 'PENDING'">生产中</div>
+                <div v-else-if="scope.row.Status == 'DELETING'">删除中</div>
+                <div v-else-if="scope.row.Status == 'AVAILABLE'">运行中</div>
+                <div v-else-if="scope.row.Status == 'UPDATING'">升级中</div>
+                <div v-else-if="scope.row.Status == 'FAILED'">失败</div>
+              </template>
+            </el-table-column>
+            <!-- <el-table-column prop="" label="操作" width="180">
+                <el-button
+                  type="text"
+                  size="small"
+                  @click="buyBgp"
+                >升级防护</el-button>
+            </el-table-column> -->
+          </el-table>
+        </div>
+        <div class="tabListPage">
+          <el-pagination
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+            :current-page="currentPage"
+            :page-sizes="[10, 20, 30, 50]"
+            :page-size="pageSize"
+            layout="total, sizes, prev, pager, next, jumper"
+            :total="totalItems"
+          >
+          </el-pagination>
+        </div>
       </div>
     </div>
   </div>
 </template>
 <script>
-import { CVM_INSTANCES } from '@/constants'
+import { CVM_INSTANCES, CLB_LIST, NAT_LIST } from '@/constants'
 export default {
   data() {
     return {
-      codeOrigin:"云服务器专区",
-      taibei:"中国台北",
+      codeOrigin:"codeOrigin1",
+      taibei:"台灣台北",
       // 实例列表
       tableDataBegin: [],
       // 搜索框输入值
@@ -90,6 +99,22 @@ export default {
   created() {
     this.getData();
   },
+  watch: {
+    codeOrigin: function() {
+      this.currentPage=1;
+      this.allData.splice(0, this.allData.length)
+      if(this.codeOrigin == 'codeOrigin1') {
+        this.describeInstances()
+      } else if(this.codeOrigin == 'codeOrigin2') {
+        this.describeLoadBalancers()
+      } else if(this.codeOrigin == 'codeOrigin3') {
+        this.describeNatGateway()
+      } else if(this.codeOrigin == 'codeOrigin4') {
+        this.tableDataBegin = this.allData
+        this.totalItems = 0
+      }
+    }
+  },
   methods:{
     getData() {
       this.describeInstances()
@@ -101,10 +126,66 @@ export default {
         Region: 'ap-taipei'
       }
       this.axios.post(CVM_INSTANCES, params).then(res => {
-        console.log(res)
-        this.tableDataBegin = res.Response.InstanceSet
-        this.allData = res.Response.InstanceSet
-        this.totalItems = res.Response.TotalCount
+        if (res.Response.Error == undefined) {
+          for(let i in res.Response.InstanceSet) {
+            let ins = {Id: '', Name: '', Ip: '', Status: ''}
+            ins.Id = res.Response.InstanceSet[i].InstanceId
+            ins.Name = res.Response.InstanceSet[i].InstanceName
+            ins.Ip = res.Response.InstanceSet[i].PublicIpAddresses[0]
+            ins.Status = res.Response.InstanceSet[i].RestrictState
+            this.allData.push(ins)
+          }
+          this.tableDataBegin = this.allData;
+          this.totalItems = this.tableDataBegin.length
+        } else {
+          this.$message.error(res.Response.Error.Message);
+        }
+      })
+    },
+    // 1.2.查询负载均衡实例列表
+    describeLoadBalancers() {
+      let params = {
+        Version: "2018-03-17",
+        Region: 'ap-taipei'
+      }
+      this.axios.post(CLB_LIST, params).then(res => {
+        if (res.Response.Error == undefined) {
+          for(let i in res.Response.LoadBalancerSet) {
+            let ins = {Id: '', Name: '', Ip: '', Status: ''}
+            ins.Id = res.Response.LoadBalancerSet[i].LoadBalancerId
+            ins.Name = res.Response.LoadBalancerSet[i].LoadBalancerName
+            ins.Ip = res.Response.LoadBalancerSet[i].LoadBalancerVips[0]
+            ins.Status = res.Response.LoadBalancerSet[i].Status
+            this.allData.push(ins)
+          }
+          this.tableDataBegin = this.allData
+          this.totalItems = this.tableDataBegin.length
+        } else {
+          this.$message.error(res.Response.Error.Message);
+        }
+      })
+    },
+    // 1.3.查询NAT网关/查询NET服务器专区实例列表
+    describeNatGateway() {
+      let params = {
+        Version: "2017-03-12",
+        Region: 'ap-taipei'
+      }
+      this.axios.post(NAT_LIST, params).then(res => {
+        if (res.Response.Error == undefined) {
+          for(let i in res.Response.NatGatewaySet) {
+            let ins = {Id: '', Name: '', Ip: '', Status: ''}
+            ins.Id = res.Response.NatGatewaySet[i].NatGatewayId
+            ins.Name = res.Response.NatGatewaySet[i].NatGatewayName
+            ins.Ip = res.Response.NatGatewaySet[i].PublicIpAddressSet[0].PublicIpAddress
+            ins.Status = res.Response.NatGatewaySet[i].State
+            this.allData.push(ins)
+          }
+          this.tableDataBegin = this.allData
+          this.totalItems = this.tableDataBegin.length
+        } else {
+          this.$message.error(res.Response.Error.Message);
+        }
       })
     },
     // 搜索
@@ -114,10 +195,9 @@ export default {
         this.tableDataBegin = new Array()
         this.filterTableDataEnd = new Array()
         this.allData.forEach((val, index) => {
-          let arr = val.PublicIpAddresses
-          if (val.InstanceName == this.searchInputVal) {
+          if (val.Name == this.searchInputVal) {
             this.filterTableDataEnd.push(val)
-          } else if (arr != undefined && arr.indexOf(this.searchInputVal) > -1) {
+          } else if (arr.Ip == this.searchInputVal) {
             this.filterTableDataEnd.push(val)
           }
         })
@@ -167,14 +247,12 @@ export default {
     },
     //跳转详情页
     toDoDetail(basicIndex,basicRow){
-      if(basicRow.PublicIpAddresses != undefined){
-        this.$router.push({
-          path: "/basicProteDetail",
-          query: {
-            instance: JSON.stringify(basicRow)
-          }
-        });
-      }
+      this.$router.push({
+        path: "/basicProteDetail",
+        query: {
+          instance: JSON.stringify(basicRow)
+        }
+      })
     }
   }
 }
@@ -198,10 +276,22 @@ export default {
     margin-right:38px;
   }
   .codeOrigin{
-    margin-right:38px;
     border:0;
     input{
       border:0;
+    }
+  }
+  .taibeiCheck{
+    width:100px;
+    height:30px;
+    line-height:30px;
+    input{
+      width:100px;
+      height:30px;
+      line-height: 30px;
+      border:1px solid #006eff;
+      color:#006eff;
+      border-radius: 0;
     }
   }
 }
@@ -213,10 +303,32 @@ export default {
     margin-bottom:20px;
     .searchIpt{
       width:300px;
+      height:30px;
+      input{
+        width:100%;
+        height:30px;
+        border-radius: 0;
+        padding-top:2px;
+      }
+    }
+    .el-icon-search{
+      width:50px;
+      border-radius: 0;
+      height:30px;
+      padding:0;
+      text-align:center;
+      line-height: 30px;
+    }
+  }
+  .tableBasic{
+    background-color:#fff;
+    .tableBasicCon{
+      min-height:450px;
     }
   }
 }
 .tabListPage{
-  text-align:right
+  text-align:right;
+  padding-top:8px!important;
 }
 </style>

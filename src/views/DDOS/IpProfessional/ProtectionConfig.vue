@@ -7,10 +7,10 @@
       </div>
       <div>
         <el-tabs v-model="activeName" @tab-click="handleClick">
-          <el-tab-pane label="DDoS攻击防护" name="first">
+          <el-tab-pane label="DDoS防护" name="first">
             <div class="mainContent">
-              <div class="textAlignTop">
-                <el-select placeholder="要过滤的标签" v-model="filterConrent">
+              <div class="textAlignTop newClear">
+                <el-select class="checkListSelect" placeholder="要过滤的标签" v-model="filterConrent">
                   <el-option v-for="(item, index) in options1" :label="item.label" :value="item.value" :key="index"></el-option>
                 </el-select>
                 <el-input
@@ -108,14 +108,15 @@
           </el-tab-pane>
           <el-tab-pane label="CC防护" name="second">
             <div>
-              <ccProtection/>
+              <ccProtection :ccProtectSele='resourceId'/>
             </div>
           </el-tab-pane>
           <el-tab-pane label="DDoS高级防护策略" name="third">
             <div class="mainContent">
               <div v-if="tableShow">
-                <el-button type="primary" @click="addNewTactics">添加新策略</el-button>
-                <el-table :data="tableDataPolicy">
+                <el-button class="addNewT" type="primary" @click="addNewTactics">添加新策略</el-button>
+                <div class="minTable">
+                  <el-table :data="tableDataPolicy">
                   <el-table-column prop="PolicyName" label="策略名称">
                     <template slot-scope="scope">
                       {{scope.row.PolicyName}}
@@ -194,6 +195,7 @@
                     </template>
                   </el-table-column>
                 </el-table>
+                </div>
               </div>
               <div v-if="!tableShow">
                 <addNewTactics :isShow="tableShow" @closePage="closePageAdd"/>
@@ -209,10 +211,11 @@
 import addNewTactics from './addNewTactics'
 import ProtectConfigModel from './model/ProtectConfigModel'
 import ccProtection from './tabs/ccProtection'//cc防护模块
-import { RESOURCE_LIST } from '@/constants'
+import { RESOURCE_LIST, DDOSPOLICY_CONT } from '@/constants'
 export default {
   data() {
     return {
+      resourceId: 'net-0000006y',//资源ID
       tableDataBegin: [],//DDoS攻击防护列表
       // 过滤刷新列表过程中使用
       allData: [],  // 存储全部实例列表
@@ -265,19 +268,10 @@ export default {
     ccProtection:ccProtection,//cc防护模块
   },
   created() {
-    this.getData();
+    this.describeResourceList();
+    this.describeDDoSPolicy()
   },
   methods:{
-    getData() {
-      this.describeResourceList()
-    },
-    //写在子组件，需要传值
-    getDataCC() {
-      this.describeCCUrlAllow()
-    },
-    getDataDDoSPolicy() {
-      this.describeDDoSPolicy()
-    },
     // 1.1.获取资源列表
     describeResourceList() {
       let params = {
@@ -297,21 +291,9 @@ export default {
         Version: '2018-07-09',
         Business: 'net',
       }
-      this.$axios.post('dayu2/DescribeDDoSPolicy', params).then(res => {
+      this.axios.post(DDOSPOLICY_CONT, params).then(res => {
         console.log(res)
         this.tableDataPolicy = res.Response.DDosPolicyList
-      })
-    },
-    // 2.1.获取CC的Url白名单（cc防护改为写在子组件中，需要传值）
-    describeCCUrlAllow() {
-      let params = {
-        Version: '2018-07-09',
-        Business: 'net',
-        Id: this.resourceId,
-        'Type.0': 'white',
-      }
-      this.$axios.post('dayu2/DescribeCCUrlAllow', params).then(res => {
-        console.log(res)
       })
     },
 
@@ -397,11 +379,11 @@ export default {
     // Tab页面切换
     handleClick(tab, event) {
       if(tab.name == 'first') { //DDOS攻击防护
-        this.getData()
+        this.describeResourceList()
       } else if(tab.name == 'second') { //CC防护
-        this.getDataCC()
+        // console.log('second')
       } else if(tab.name == 'third') {  //DDOS高级防护策略
-        this.getDataDDoSPolicy()
+        this.describeDDoSPolicy()
       }
     },
 
@@ -517,7 +499,7 @@ export default {
 }
 </script>
 <style lang="scss">
-.newClear{
+.newClear:after{
   content:"";
   display: block;
   clear:both;
@@ -551,14 +533,48 @@ export default {
   .textAlignTop{
     width:100%;
     text-align:right;
+    .checkListSelect{
+      height:30px;
+      width:100px;
+      div{
+        height:30px;
+        width:100px;
+        input{
+          height:30px;
+          width:100px;
+          border-radius: 0;
+        }
+      }
+    }
+  }
+  .addNewT{
+    height:30px;
+    border-radius: 0;
+    line-height:30px;
+    padding: 0 20px;
+  }
+  .minTable{
+    min-height:450px;
   }
 }
 .searchs{
   width:200px!important;
+  height:30px;
   margin-bottom:20px;
   input{
+    height:30px;
+    border-radius: 0;
     width:200px;
   }
+}
+button.el-icon-search{
+  width:50px;
+  height:30px;
+  padding:0;
+  line-height:30px;
+  text-align:center;
+  border-radius: 0;
+  float:right;
 }
 .mainConListOneIpt{
   width:200px;
@@ -635,5 +651,8 @@ export default {
     height:30px;
     border-radius: 0;
   }
+}
+.mainTable{
+  min-height:450px;
 }
 </style>

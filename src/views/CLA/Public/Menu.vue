@@ -1,6 +1,6 @@
 <template>
   <div class="CLA">
-    <div class="big-title">云审计</div>
+    <div class="big-title">{{ $t('CLA.total.ysj') }}</div>
     <el-menu
       default-active="2"
       class="el-menu-vertical-demo"
@@ -12,13 +12,13 @@
       :router="true"
     >
       <el-menu-item index="CloudAudit">
-        <span slot="title">操作记录</span>
+        <span slot="title">{{ $t('CLA.total.czjl') }}</span>
       </el-menu-item>
       <el-menu-item index="Audit">
-        <span slot="title">跟踪集</span>
+        <span slot="title">{{ $t('CLA.total.gzj') }}</span>
       </el-menu-item>
       <el-menu-item index="History">
-        <span slot="title">历史记录导出</span>
+        <span slot="title">{{ $t('CLA.total.lsjldc') }}</span>
       </el-menu-item>
     </el-menu>
   </div>

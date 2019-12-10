@@ -2,10 +2,16 @@
   <div class="Cam">
     <div class="container">
       <div class="container-left">
-        <p>选择策略（共{{totalNum}}条）</p>
-        <el-input size="mini" custom-class="dialogStyle" v-model="search" style="width:100%"
+        <p style="margin-bottom:20px">选择策略（共{{totalNum}}条）</p>
+        <!-- <el-input size="mini" custom-class="dialogStyle" v-model="search" style="width:100%"
           @keyup.enter.native="toQuery" />
-        <i class="el-icon-search ifier" @click="toQuery"></i>
+        <i class="el-icon-search ifier" @click="toQuery"></i> -->
+        <el-input
+         size="mini" custom-class="dialogStyle" v-model="search" style="width:100%"
+          @keyup.enter.native="toQuery"
+      >
+        <i slot="suffix" class="el-input__icon el-icon-search" @click="toQuery"></i>
+      </el-input>
         <el-table class="table-left" ref="multipleOption" :data="policiesData" size="small" :height="tableHeight"
           tooltip-effect="dark" style="width: 100%" @row-click="selectedRow" @selection-change="handleSelectionChange">
           <el-table-column type="selection" prop="PolicyId" width="29"> </el-table-column>
@@ -29,7 +35,7 @@
         </div>
       </div>
       <div class="container-left">
-        <span>已选择（共条）</span>
+        <span style="margin-bottom:20px">已选择（共条）</span>
         <el-table class="table-left" ref="multipleSelected" :data="policiesSelectedData" tooltip-effect="dark"
           size="small" :height="tableHeight" style="width: 100%">
           <el-table-column prop="PolicyName" label="策略名" show-overflow-tooltip>
@@ -124,13 +130,12 @@
 <style lang="scss" scoped>
   .Cam {
     .container {
-      width: 96%;
-      height: 270px;
-      min-height: 360px;
-      margin: 10px auto 0;
-      background: #fff;
-      padding: 20px;
-
+         width: 100%;
+         display: flex;
+         justify-content: center;
+         align-items: center;
+         padding: 15px;
+         box-sizing: border-box;
       p.title,
       p.explain {
         text-align: center;
@@ -173,10 +178,22 @@
       }
 
       .container-left {
-        width: 48%;
-        display: table-cell;
-        position: relative;
-        vertical-align: top;
+        display: flex;
+        flex-direction: column;
+        width:45%;
+        height: 600px;
+        justify-content: center;
+        padding: 15px;
+        box-sizing: border-box;
+      }
+      .container-right{
+        display: flex;
+        width:45%;
+        height: 600px;
+        flex-direction: column;
+        justify-content: center;
+        padding: 15px;
+        box-sizing: border-box;
       }
     }
   }

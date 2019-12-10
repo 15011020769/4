@@ -387,62 +387,63 @@
         </el-dialog>
       </div>
       <div class="bottomBtn">
-        <el-button type="primary">确定</el-button>
+        <el-button type="primary" @click="createDDoSPolicy">确定</el-button>
         <el-button @click="closeAddPage">取消</el-button>
       </div>
     </div>
   </div>
 </template>
 <script>
+import { DDOS_POLICY_CREATE } from '@/constants'
 export default {
   props:['isShow'],
   data(){
     return{
+      tacticsName:"",// 策略名称
       tags:[
         {
-          protocol:"111",
-          tortType:"111",
-          beginPort:"111",
-          endPort:"111"
+          protocol:"TCP",
+          tortType:"目的端口",
+          beginPort:"",
+          endPort:""
         }
       ],
       tags1:[
         {
-          protocol:"111",
-          beginProtYarm:"111",
-          endProtYarm:"111",
-          beginMudi:"111",
-          endMudi:"111",
-          minBag:"111",
-          maxBag:"111",
-          detectionLoad:"111",
-          regText:"111",
-          floatOffset:"111",
-          checkingDeep:"111",
-          isInclude:"111",
-          string:"111",
-          strategy:"111"
+          protocol:"TCP",
+          beginProtYarm:"",
+          endProtYarm:"",
+          beginMudi:"",
+          endMudi:"",
+          minBag:"0",
+          maxBag:"0",
+          detectionLoad:"destPort",
+          regText:"destPort",
+          floatOffset:"0",
+          checkingDeep:"1",
+          isInclude:"destPort",
+          string:"",
+          strategy:"destPort"
         }
       ],
       tags3:[
         {
-          protocol:"111",
-          speedLimit:"111"
+          protocol:"ICPM",
+          speedLimit:"0"
         }
       ],
       tags4:[
         {
-          beginPort:"111",
-          endPort:"111"
+          beginPort:"",
+          endPort:""
         }
       ],
       tags5:[
         {
-          beginPort:"111",
-          endPort:"111"
+          beginPort:"",
+          endPort:""
         }
       ],
-      tacticsName:"",
       tableDataName1:"",
       tableDataBegin1: [],
       tableDataBegin2:[],
@@ -485,61 +486,59 @@ export default {
     }
   },
   mounted() {
-    this.getData1();
+    this.getData();
     console.log(this.radios12)
   },
+  watch: {
+    DdisableProtocol: function(value) {
+      console.log(value, this.DdisableProtocol)
+    }
+  },
   methods:{
+    // 添加DDoS高级策略
+    createDDoSPolicy() {
+      let params = {
+        Version: '2018-07-09',
+        Business: 'net',
+        // DropOptions.N 协议禁用，必须填写且数组长度必须为1
+        'DropOptions.0.DropTcp': 0,
+        'DropOptions.0.DropUdp': 0,
+        'DropOptions.0.DropIcmp': 1,
+        'DropOptions.0.DropOther': 1,
+        'DropOptions.0.DropAbroad': 1,
+        'DropOptions.0.CheckSyncConn': 1,
+        Name: '',
+        // PortLimits.N 端口禁用，当没有禁用端口时填空数组
+        'PortLimit.0.Protocol': '', //协议，取值范围[tcp,udp,icmp,all]
+        'PortLimit.0.DPortStart': '', //开始目的端口，取值范围[0,65535]
+        'PortLimit.0.DPortEnd': '', //结束目的端口，取值范围[0,65535]，要求大于等于开始目的端口
+        // IpAllowDenys.N IP黑白名单，当没有IP黑白名单时填空数组
+        'IpAllowDenys.0.Ip': '',
+        'IpAllowDenys.0.Type': '',
+        // PacketFilters.N 报文过滤，当没有报文过滤时填空数组
+        //'PacketFilters.0.': '',
+        // WaterPrint.N 水印策略参数，当没有启用水印功能时填空数组，最多只能传一条水印策略（即数组大小不超过1）
+        //'WaterPrint.0.': '',
+      }
+      this.axios.post(DDOS_POLICY_CREATE, params).then(res => {
+        console.log(params, res)
+      })
+    },
     handleClose(done) {
       this.dialogVisible=false;
     },
-    getData1() {
-      var cookies = document.cookie;
-      var list = cookies.split(";");
-      for (var i = 0; i < list.length; i++) {
-        var arr = list[i].split("=");
-      }
-      let params = {
-        // Action: "ListFunctions",
-        Version: "2018-04-16",
-        Region: arr[1]
-      };
-      //this.$axios.post('', params).then(res => {
-        // console.log(res.data.functions);
-        //this.tableDataBegin = res.data.functions;
-        this.tableDataBegin1 = this.allData1;
-        // 将数据的长度赋值给totalItems
-        this.totalItems = this.tableDataBegin1.length;
-        if (this.totalItems > this.pageSize) {
-          for (let index = 0; index < this.pageSize; index++) {
-            this.tableDataEnd.push(this.tableDataBegin[index]);
-          }
-        } else {
-          this.tableDataEnd = this.tableDataBegin1;
-        }
-      //});
+    getData() {
+      
     },
     // 搜索
     doFilter() {
       console.log(this.filterConrent);
-      this.tableDataBegin1 = this.allData1;
-      this.tableDataEnd = [];
-      //每次手动将数据置空,因为会出现多次点击搜索情况
-      this.filterTableDataEnd = [];
-      this.tableDataBegin1.forEach((val, index) => {
-        if (val.address==this.tableDataName1) {
-          this.filterTableDataEnd.push(val);
-          this.tableDataBegin1 = this.filterTableDataEnd;
-        } else {
-          this.filterTableDataEnd.push();
-          this.tableDataBegin1 = this.filterTableDataEnd;
-        }
-      });
+      // TODO
       //页面数据改变重新统计数据数量和当前页
       this.currentPage = 1;
       this.totalItems = this.filterTableDataEnd.length;
       //渲染表格,根据值
       this.currentChangePage(this.filterTableDataEnd);
-
       //页面初始化数据需要判断是否检索过
       this.flag = true;
     },

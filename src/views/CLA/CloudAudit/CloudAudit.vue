@@ -1,12 +1,12 @@
 <template>
   <div>
     <div class="title_top">
-      <h1>操作记录</h1>
+      <h1>{{ $t('CLA.total.czjl') }}</h1>
     </div>
     <div class="tea-content__body">
       <div class="explain">
-        <span>以下列表包括了过去 30 天内 API 活动的支持服务。您可以使用可用属性来筛选列表，同时您可以选择一个事件来查看更多的事件细节。</span>
-        <a href="javascript:;">访问旧版操作日志</a>
+        <span>{{ $t('CLA.total.czjlts') }}</span>
+        <!-- <a href="javascript:;">访问旧版操作日志</a> -->
       </div>
       <div class="search">
         <div class="search_dropdown">
@@ -18,7 +18,7 @@
               :value="item.Value"
             ></el-option>
           </el-select>
-          <el-input placeholder="请输入内容" v-model="input3" class="inp"></el-input>
+          <el-input :placeholder="$t('CLA.total.qsrnr')" v-model="input3" class="inp"></el-input>
           <el-button icon="el-icon-search" @click="seach()"></el-button>
         </div>
         <div class="date">
@@ -27,9 +27,9 @@
             type="daterange"
             align="right"
             unlink-panels
-            range-separator="至"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期"
+            :range-separator="$t('CLA.total.z')"
+            :start-placeholder="$t('CLA.total.ksrq')"
+            :end-placeholder="$t('CLA.total.jsrq')"
             :picker-options="pickerOptions"
             @change="seach()"
           ></el-date-picker>
@@ -45,46 +45,46 @@
           <el-table-column type="expand" width="27">
             <template slot-scope="props">
               <el-form label-position="left" inline class="demo-table-expand">
-                <el-form-item label="访问密钥">
+                <el-form-item :label="$t('CLA.total.fwmy')">
                   <span>{{ props.row.SecretId }}</span>
                 </el-form-item>
-                <el-form-item label="区域">
+                <el-form-item :label="$t('CLA.total.qy')">
                   <span>{{ props.row.EventRegion }}</span>
                 </el-form-item>
-                <el-form-item label="错误码">
+                <el-form-item :label="$t('CLA.total.cwm')">
                   <span>{{ props.row.ErrorCode }}</span>
                 </el-form-item>
-                <el-form-item label="事件 ID">
+                <el-form-item :label="$t('CLA.total.sj')">
                   <span>{{ props.row.EventId }}</span>
                 </el-form-item>
-                <el-form-item label="事件名称">
+                <el-form-item :label="$t('CLA.total.sjmc')">
                   <span>{{ props.row.EventName }}</span>
                 </el-form-item>
-                <el-form-item label="事件源">
+                <el-form-item :label="$t('CLA.total.sjy')">
                   <span>{{ props.row.EventSource }}</span>
                 </el-form-item>
-                <el-form-item label="事件时间">
+                <el-form-item :label="$t('CLA.total.sjsj')">
                   <span>{{ props.row.EventTime }}</span>
                 </el-form-item>
-                <el-form-item label="请求 ID">
+                <el-form-item :label="$t('CLA.total.qq')">
                   <span>{{ props.row.RequestID }}</span>
                 </el-form-item>
-                <el-form-item label="源 IP 地址">
+                <el-form-item :label="$t('CLA.total.ydz')">
                   <span>{{ props.row.SourceIPAddress }}</span>
                 </el-form-item>
-                <el-form-item label="用户名">
+                <el-form-item :label="$t('CLA.total.yhm')">
                   <span>{{ props.row.Username }}</span>
                 </el-form-item>
               </el-form>
             </template>
           </el-table-column>
-          <el-table-column label="事件时间" prop="EventTime"></el-table-column>
-          <el-table-column label="用户名" prop="Username">
+          <el-table-column :label="$t('CLA.total.sjsj')" prop="EventTime"></el-table-column>
+          <el-table-column :label="$t('CLA.total.yhm')" prop="Username">
             <template slot-scope="scope">
               <p style="color:#006eff">{{scope.row.Username}}</p>
             </template>
           </el-table-column>
-          <el-table-column label="事件名称">
+          <el-table-column :label="$t('CLA.total.sjmc')">
             <template slot-scope="scope">
               <div>
                 {{scope.row.EventName}}
@@ -94,7 +94,7 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column label="资源类型">
+          <el-table-column :label="$t('CLA.total.zylx')">
             <template slot-scope="scope">
               <div>
                 {{scope.row.Resources.ResourceType}}
@@ -104,11 +104,11 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column label="资源名称" prop="Resources.ResourceName"></el-table-column>
+          <el-table-column :label="$t('CLA.total.zymc')" prop="Resources.ResourceName"></el-table-column>
           <div v-if="Show" slot="append" style="line-height:40px;padding:0 20px;color:#006eff;">
-            <p v-show="!loading" @click="more()">点击加载更多</p>
+            <p v-show="!loading" @click="more()">{{ $t('CLA.total.djjz') }}</p>
             <p v-show="loading"  style="width:100%;text-align:center;">
-              <i class="el-icon-loading"></i>加载中
+              <i class="el-icon-loading"></i>{{ $t('CLA.total.jzz') }}
             </p>
           </div>
         </el-table>
@@ -147,7 +147,7 @@ export default {
             }
           },
           {
-            text: "最近一个月",
+            text: "最近一個月",
             onClick(picker) {
               const end = new Date();
               const start = new Date();
@@ -156,7 +156,7 @@ export default {
             }
           },
           {
-            text: "最近三个月",
+            text: "最近三個月",
             onClick(picker) {
               const end = new Date();
               const start = new Date();
@@ -261,14 +261,14 @@ export default {
     // 复制成功
     onCopy(e) {
       this.$message({
-        message: "复制成功",
+        message: "複製成功",
         type: "success"
       });
     },
     // 复制失败
     onError(e) {
       this.$message({
-        message: "复制失败",
+        message: "複製失敗",
         type: "error"
       });
     },

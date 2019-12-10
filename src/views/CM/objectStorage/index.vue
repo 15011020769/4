@@ -36,7 +36,8 @@
         </el-table-column>
         <el-table-column prop label="监控">
           <template slot-scope="scope">
-            <i class="el-icon-share"></i>
+            <!-- <i @click="jump(scope.row.Name)" style="cursor:pointer;"><i class="el-icon-share"></i></a> -->
+            <div class="a" @click="jump(scope.row.Name)"></div>
           </template>
         </el-table-column>
         <el-table-column prop label="地域">
@@ -74,7 +75,7 @@ export default {
   data() {
     return {
       //加载是否显示
-      loadShow:true,
+      loadShow: true,
       //搜索下拉框
       searchOptions: [
         {
@@ -208,7 +209,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.CM-wrap{
+.CM-wrap {
   width: 100%;
   height: 100%;
 }
@@ -255,5 +256,14 @@ export default {
 
 .pagstyle {
   padding: 20px;
+}
+.a {
+  background-image: url("./../../../assets/CAM/images/cvm-20199061519.svg");
+  background-size: 267px 176px;
+  background-repeat: no-repeat;
+  background-position: -47px -71px;
+  height: 15px;
+  width: 16px;
+  cursor: pointer;
 }
 </style>

@@ -37,7 +37,10 @@
 
         <el-table-column prop label="监控">
           <template slot-scope="scope">
-            <i class="el-icon-share"></i>
+            <!-- <a @click="jump(scope.row.NatGatewayId)" style="cursor:pointer;">
+              <i class="el-icon-share"></i>
+            </a>-->
+            <div class="a" @click="jump(scope.row.NatGatewayId)"></div>
           </template>
         </el-table-column>
 
@@ -53,8 +56,13 @@
             <p></p>
           </template>
         </el-table-column>
-        <el-table-column label="健康状态"></el-table-column>
-        <el-table-column label="告警策略数"></el-table-column>
+        <el-table-column prop label="创建时间">
+          <template slot-scope="scope">
+            <p>{{scope.row.CreatedTime}}</p>
+          </template>
+        </el-table-column>
+        <!-- <el-table-column label="健康状态"></el-table-column>
+        <el-table-column label="告警策略数"></el-table-column>-->
       </el-table>
       <div class="Right-style pagstyle" style="display:flex;justify-content:flex-end;padding:20px;">
         <el-pagination
@@ -194,6 +202,7 @@ export default {
       };
       this.axios.post(NAT_LIST, param).then(data => {
         if (data.Response.Error == undefined) {
+          console.log(data.Response.NatGatewaySet);
           this.TbaleData = data.Response.NatGatewaySet;
           this.ProTableData = this.TbaleData;
           this.loadShow = false;
@@ -273,5 +282,14 @@ export default {
 
 .pagstyle {
   padding: 20px;
+}
+.a {
+  background-image: url("./../../../assets/CAM/images/cvm-20199061519.svg");
+  background-size: 267px 176px;
+  background-repeat: no-repeat;
+  background-position: -47px -71px;
+  height: 15px;
+  width: 16px;
+  cursor: pointer;
 }
 </style>

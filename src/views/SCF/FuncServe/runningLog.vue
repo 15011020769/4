@@ -3,33 +3,33 @@
     <div class="contentMain">
       <div class="topChoseTime newClear">
         <el-select v-model="logStatus" class="chooseSelect">
-          <el-option label="全部日志" value="allLog"></el-option>
-          <el-option label="调用成功" value="successLog"></el-option>
-          <el-option label="调用失败" value="errorLog"></el-option>
+          <el-option :label="$t('SCF.total.qbrz')" value="allLog"></el-option>
+          <el-option :label="$t('SCF.total.dycg')" value="successLog"></el-option>
+          <el-option :label="$t('SCF.total.dysb')" value="errorLog"></el-option>
         </el-select>
         <el-button-group class="bthGroup">
-          <el-button @click="thisTime(1)">实时</el-button>
-          <el-button @click="thisTime(2)">近24小时</el-button>
+          <el-button @click="thisTime(1)">{{ $t('SCF.total.ss') }}</el-button>
+          <el-button @click="thisTime(2)">{{ $t('SCF.total.jxs') }}</el-button>
         </el-button-group>
         <el-date-picker
           v-model="value1"
           type="datetimerange"
-          range-separator="至"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
+          :range-separator="$t('SCF.total.z')"
+          :start-placeholder="$t('SCF.total.ksrq')"
+          :end-placeholder="$t('SCF.total.jsrq')"
           class="timeNode"
           @change="sureDate"
         ></el-date-picker>
-        <el-button type="primary" @click="reset" size="small">重置</el-button>
+        <el-button type="primary" @click="reset" size="small">{{ $t('SCF.total.czhi') }}</el-button>
         <div class="topFloatRight">
-          <el-input v-model="iptSearch" placeholder="请输入requestID" class="rigthSearch"/>
+          <el-input v-model="iptSearch" :placeholder="$t('SCF.total.qsrid')" class="rigthSearch"/>
           <el-button class="el-icon-search"></el-button>
         </div>
       </div>
       <div class="bottomContent newClear">
         <div class="leftConList">
           <ul>
-            <p v-if="logList.length == 0" class="text-weak">暂无日志信息</p>
+            <p v-if="logList.length == 0" class="text-weak">{{ $t('SCF.total.zwrzxx') }}</p>
             <li
               v-for="(item,index) in logList"
               :key="item.id"
@@ -42,47 +42,47 @@
           </ul>
         </div>
         <div class="RightShow" v-if="logData && logData.Data&&logData.Data.length != 0">
-          <p>请求ID：{{logData.Data[logIndex].RequestId}}</p>
+          <p>{{ $t('SCF.total.qqid') }}：{{logData.Data[logIndex].RequestId}}</p>
           <div class="timeCenterShow">
-            <span>时间：</span>
+            <span>{{ $t('SCF.total.sj') }}：</span>
             <span class="marginColor">{{logData.Data[logIndex].StartTime}}</span>
-            <span>运行时间：</span>
+            <span>{{ $t('SCF.total.yxsj') }}：</span>
             <span class="marginColor">{{logData.Data[logIndex].Duration}}</span>
-            <span>计费时间:{{logData.Data[logIndex].BillDuration}}</span>
+            <span>{{ $t('SCF.total.jfsj') }}:{{logData.Data[logIndex].BillDuration}}</span>
             <span class="marginColor">ms</span>
-            <span>占用内存</span>
+            <span>{{ $t('SCF.total.zync') }}</span>
             <span class="marginColor">{{logData.Data[logIndex].MemUsage}}mb</span>
           </div>
           <div class="logAndData">
             <div class="dataContent">
-              <h1>返回数据：</h1>
+              <h1>{{ $t('SCF.total.fhsj') }}：</h1>
               <p>{{logData.Data[logIndex].RetMsg}}</p>
             </div>
             <div class="logContent">
-              <h1>日志：</h1>
+              <h1>{{ $t('SCF.total.rz') }}：</h1>
               <div class="logCodeCont" v-html="logData.Data[logIndex].Log"></div>
             </div>
           </div>
         </div>
         <div class="RightShow" v-if="logData.Data.length == 0">
-          <p>请求ID：</p>
+          <p>{{ $t('SCF.total.qqid') }}：</p>
           <div class="timeCenterShow">
-            <span>时间：</span>
+            <span>{{ $t('SCF.total.sj') }}：</span>
             <span class="marginColor"></span>
-            <span>运行时间：</span>
+            <span>{{ $t('SCF.total.yxsj') }}：</span>
             <span class="marginColor"></span>
-            <span>计费时间:</span>
+            <span>{{ $t('SCF.total.jfsj') }}:</span>
             <span class="marginColor">ms</span>
-            <span>占用内存</span>
+            <span>{{ $t('SCF.total.zync') }}</span>
             <span class="marginColor">mb</span>
           </div>
           <div class="logAndData">
             <div class="dataContent">
-              <h1>返回数据：</h1>
+              <h1>{{ $t('SCF.total.fhsj') }}：</h1>
               <p></p>
             </div>
             <div class="logContent">
-              <h1>日志：</h1>
+              <h1>{{ $t('SCF.total.rz') }}：</h1>
               <div class="logCodeCont"></div>
             </div>
           </div>

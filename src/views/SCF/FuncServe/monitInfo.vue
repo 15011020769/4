@@ -4,10 +4,10 @@
     <XTimeX v-on:switchData="GetDat" :classsvalue="value"></XTimeX>
     <div class="box-dis p-style">
       <p>
-        <i class="el-icon-info"></i>注释：Max、Min和Avg数值统计为当前折线图内所有点的最大值、最小值和平均值
+        <i class="el-icon-info"></i>{{ $t('SCF.total.zs') }}
       </p>
       <p>
-        <el-button type="text">导出数据</el-button>
+        <el-button type="text">{{ $t('SCF.total.dcsj') }}</el-button>
       </p>
     </div>
     <div class="box-table">
@@ -28,7 +28,7 @@
 
         <el-table-column prop="DataPoints" width="550">
           <template slot-scope="scope">
-            <p v-if="scope.row.DataPoints[0].Values.length==0">暂无数据</p>
+            <p v-if="scope.row.DataPoints[0].Values.length==0">{{ $t('SCF.total.zwsj') }}</p>
             <div class="echart" v-if="scope.row.DataPoints[0].Values.length!=0">
               <echart-line
                 id="diskEchearrts-line"
@@ -94,7 +94,7 @@
       </el-table>
       <!-- 模态框 -->
       <el-dialog
-        title="集群健康状态"
+        :title="$t('SCF.total.jqjkzt')"
         :visible.sync="dialogVisible"
         width="60%"
         :before-close="handleClose"

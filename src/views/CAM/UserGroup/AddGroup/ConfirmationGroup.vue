@@ -1,14 +1,14 @@
 <template>
     <div class="Cam">
         <div class="container">
-            <el-form label-width="100px">
+            <!-- <el-form label-width="100px">
                 <el-form-item class="container-mar" label="用户组名称">
                     <span>{{addModel.groupName}}</span>
                 </el-form-item>
                 <el-form-item class="container-mar" label="备注">
                     <span>{{addModel.remark}}</span>
                 </el-form-item>
-            </el-form>
+            </el-form> -->
             <el-table
                   class="table-left"
                   :data="policiesSelectedData"

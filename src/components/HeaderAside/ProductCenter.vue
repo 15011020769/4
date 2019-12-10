@@ -18,9 +18,9 @@
             </ul>
             <ul>
               <li class="li-title">{{$t("COM.tool")}}</li>
-              <li @click="testFun">{{$t("COM.cm")}}</li>
-              <li @click="testFun">{{$t("COM.cloudAudit")}}</li>
-              <li @click="testFun">{{$t("COM.cam")}}</li>
+              <li class="li-sub" @click="go('../CM/index.html#/CVM')">{{$t("COM.cm")}}</li>
+              <li class="li-sub" @click="go('../CLA/index.html#/CloudAudit')">{{$t("COM.cloudAudit")}}</li>
+              <li class="li-sub" @click="go('../CAM/index.html#/UserGroup')">{{$t("COM.cam")}}</li>
             </ul>
             <ul>
               <li class="li-title">{{$t("COM.server")}}</li>
@@ -31,11 +31,12 @@
           <div class="item">
             <ul>
               <li class="li-title">{{$t("COM.safe")}}</li>
-              <li @click="testFun">{{$t("COM.yunjing")}}</li>
-              <li @click="testFun">{{$t("COM.ddos")}}</li>
+              <li class="li-sub" @click="go('../HS/index.html#/overview')">{{$t("COM.yunjing")}}</li>
+              <li class="li-sub" @click="go('../CAP/index.html#/appId')">{{$t("COM.captcha")}}</li>
               <li @click="testFun">{{$t("COM.waf")}}</li>
-              <li @click="testFun">{{$t("COM.bgp")}}</li>
-              <li @click="testFun">{{$t("COM.kms")}}</li>
+              <li class="li-sub" @click="go('../DDOS/index.html#/ProtectOverview')">{{$t("COM.ddos")}}</li>
+              <li class="li-sub" @click="go('../DDOS/index.html#/IpProfessional')">{{$t("COM.bgp")}}</li>
+              <li class="li-sub" @click="go('../KMS/index.html#/userKms')">{{$t("COM.kms")}}</li>
             </ul>
             <ul>
               <li class="li-title">{{$t("COM.database")}}</li>
@@ -44,7 +45,7 @@
             </ul>
             <ul>
               <li class="li-title">{{$t("COM.middleware")}}</li>
-              <li @click="testFun">{{$t("COM.ckafka")}}</li>
+              <li class="li-sub" @click="go('../CKafka/index.html#/ckafka')">{{$t("COM.ckafka")}}</li>
             </ul>
           </div>
           <div class="item">
@@ -61,7 +62,7 @@
             </ul>
             <ul>
               <li class="li-title">{{$t("COM.cosTitle")}}</li>
-              <li @click="testFun">{{$t("COM.cos")}}</li>
+              <li class="li-sub" @click="go('../COS/index.html#/bucket')">{{$t("COM.cos")}}</li>
             </ul>
           </div>
           <div class="item">
@@ -73,7 +74,7 @@
             </ul>
             <ul>
               <li class="li-title">Serveless</li>
-              <li @click="testFun">{{$t("COM.scf")}}</li>
+              <li class="li-sub" @click="go('../SCF/index.html#/overView')">{{$t("COM.scf")}}</li>
             </ul>
             <ul>
               <li class="li-title">{{$t("COM.pro")}}</li>

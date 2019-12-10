@@ -41,7 +41,8 @@
         </el-table-column>
         <el-table-column prop label="监控">
           <template slot-scope="scope">
-            <i class="el-icon-share"></i>
+            <div class="a" @click="jump(scope.row.DirectConnectTunnelId)"></div>
+            <!-- <i @click="jump(scope.row.DirectConnectTunnelId)" style="cursor:pointer;"><i class="el-icon-share"></i></a> -->
           </template>
         </el-table-column>
         <el-table-column prop label="状态">
@@ -57,8 +58,12 @@
             <p>{{scope.row.VpcId}}</p>
           </template>
         </el-table-column>
-
-        <el-table-column label="健康状态">
+        <el-table-column prop label="创建时间">
+          <template slot-scope="scope">
+            <p>{{scope.row.CreatedTime}}</p>
+          </template>
+        </el-table-column>
+        <!-- <el-table-column label="健康状态">
           <template slot-scope="scope">
             <p
               :class="scope.row.RestrictState==='NORMAL'?'green':scope.row.RestrictState==='EXPIRED'?'red':'orange'"
@@ -71,7 +76,7 @@
               :class="scope.row.RestrictState==='NORMAL'?'green':scope.row.RestrictState==='EXPIRED'?'red':'orange'"
             >{{RestrictState[scope.row.RestrictState]}}</p>
           </template>
-        </el-table-column>
+        </el-table-column>-->
       </el-table>
       <div class="Right-style pagstyle">
         <el-pagination
@@ -104,7 +109,7 @@ export default {
           label: "通道ID"
         }
       ],
-      searchValue: "",//inp值
+      searchValue: "", //inp值
       //文字过滤
       instanceStatus: {
         AVAILABLE: "就绪或者已连接",
@@ -205,7 +210,34 @@ export default {
         this.loadShow = false;
       });
     },
-    //分页
+    // 添加项目列表的表格数据
+    GetTabularData() {
+      const param = {
+        Region: this.selectedRegion,
+        Version: "2018-04-10",
+        Offset: this.currpage * this.pagesize - this.pagesize,
+        Limit: this.pagesize
+      };
+      if (this.searchValue !== "" && this.searchInput !== "") {
+        param["Filters.0.Name"] = "direct-connect-tunnel-id";
+        param["Filters.0.Values.0"] = this.searchInput;
+      }
+      const paramS = {
+        allList: 0
+      };
+      // 获取表格数据
+      this.axios.post(Private_LIST, param).then(data => {
+        console.log();
+        if (data.Response.Error == undefined) {
+          console.log(data.Response.DirectConnectTunnelSet);
+          this.TbaleData = data.Response.DirectConnectTunnelSet;
+        } else {
+          this.$message.error(data.Response.Error.Message);
+        }
+        this.ProTableData = this.TbaleData;
+        this.loadShow = false;
+      });
+    },
     handleSizeChange(val) {
       this.pagesize = val;
       this.currpage = 1;
@@ -215,7 +247,6 @@ export default {
       this.currpage = val;
       this.GetTabularData();
     },
-    //跳转
     jump(id) {
       this.$router.push({
         name: "Privatedetails",
@@ -224,6 +255,25 @@ export default {
         }
       });
     }
+  },
+  //分页
+  handleSizeChange(val) {
+    this.pagesize = val;
+    this.currpage = 1;
+    this.GetTabularData();
+  },
+  handleCurrentChange(val) {
+    this.currpage = val;
+    this.GetTabularData();
+  },
+  //跳转
+  jump(id) {
+    this.$router.push({
+      name: "Privatedetails",
+      query: {
+        id
+      }
+    });
   }
 };
 </script>
@@ -233,6 +283,7 @@ export default {
   width: 100%;
   height: 100%;
 }
+
 .green {
   color: green;
 }
@@ -276,5 +327,15 @@ export default {
 
 .pagstyle {
   padding: 20px;
+}
+
+.a {
+  background-image: url("./../../../assets/CAM/images/cvm-20199061519.svg");
+  background-size: 267px 176px;
+  background-repeat: no-repeat;
+  background-position: -47px -71px;
+  height: 15px;
+  width: 16px;
+  cursor: pointer;
 }
 </style>

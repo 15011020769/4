@@ -40,12 +40,18 @@
         </el-table-column>
         <el-table-column prop label="监控">
           <template slot-scope="scope">
-            <i class="el-icon-share"></i>
+            <div class="a" @click="jump(scope.row.InstanceId)"></div>
+            <!-- <a
+                @click="jump(scope.row.InstanceId)"
+                style="cursor:pointer;"
+            ><i class="el-icon-share"></i></a>-->
           </template>
         </el-table-column>
         <el-table-column prop label="状态">
           <template slot-scope="scope">
-            <p :class="scope.row.Status===1?'green':scope.row.Status===5?'red':'orange'">{{RestrictState[scope.row.Status]}}</p>
+            <p
+              :class="scope.row.Status===1?'green':scope.row.Status===5?'red':'orange'"
+            >{{RestrictState[scope.row.Status]}}</p>
           </template>
         </el-table-column>
         <el-table-column prop label="内网IP/端口">
@@ -94,14 +100,14 @@ import { ALL_CITY, MYSQL_LIST, ALL_PROJECT, OBJ_LIST } from "@/constants";
 export default {
   data() {
     return {
-      loadShow: true,//加载是否显示
+      loadShow: true, //加载是否显示
       searchOptions: [
         {
           value: "InstanceIds.0",
           label: "实例 ID"
         }
-      ],//下拉框
-      searchValue: "",//inp值
+      ], //下拉框
+      searchValue: "", //inp值
       //文字过滤
       TaskStatusStatus: {
         0: "没有任务",
@@ -224,7 +230,9 @@ export default {
                 if (
                   this.TbaleData[i].ProjectId == this.ProjectData[j].projectId
                 ) {
-                  this.TbaleData[i].projectName = this.ProjectData[j].projectName;
+                  this.TbaleData[i].projectName = this.ProjectData[
+                    j
+                  ].projectName;
                 }
                 if (this.TbaleData[i].ProjectId == 0) {
                   this.TbaleData[i].projectName = "默认项目";
@@ -260,7 +268,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.CM-wrap{
+.CM-wrap {
   width: 100%;
   height: 100%;
 }
@@ -307,5 +315,14 @@ export default {
 
 .pagstyle {
   padding: 20px;
+}
+.a {
+  background-image: url("./../../../assets/CAM/images/cvm-20199061519.svg");
+  background-size: 267px 176px;
+  background-repeat: no-repeat;
+  background-position: -47px -71px;
+  height: 15px;
+  width: 16px;
+  cursor: pointer;
 }
 </style>

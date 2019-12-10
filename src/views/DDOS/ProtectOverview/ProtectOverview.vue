@@ -96,7 +96,7 @@
               <el-button @click="btnClick('net')" :class="{'addColor':type=='net'}">高防IP专业版</el-button>
             </el-button-group>
           </div>
-          <div>
+          <div class="tableOverView">
             <el-table id="exportTable" :data="tableDataBegin.slice((currentPage-1)*pageSize,currentPage*pageSize)">
               <el-table-column prop="StartTime" label="攻击时间">
                 <template slot-scope="scope">
@@ -527,10 +527,21 @@ export default {
     .rightIptSearch{
       float:left;
       width:300px;
+      height:30px;
+      margin-left:10px;
+      input{
+        width:100%;
+        height:30px;
+        border-radius: 0;
+      }
     }
     .searcHBthn{
       float:left;
-      margin-top:10px;
+      margin-top:15px;
+      padding:0 16px;
+      height:30px;
+      line-height:30px;
+      border-radius: 0;
     }
   }
 }
@@ -574,7 +585,12 @@ export default {
     }
   }
 }
+.tableOverView{
+  min-height:450px;
+}
 .tabListPage{
   text-align:right;
+  padding-top:8px;
+  border-top:1px solid #ddd;
 }
 </style>

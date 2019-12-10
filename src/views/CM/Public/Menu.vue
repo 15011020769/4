@@ -44,6 +44,9 @@
           <el-menu-item index="networkIP">
             <span slot="title">{{$t("menu.title12")}}</span>
           </el-menu-item>
+          <el-menu-item index="PrivateGateway">
+            <span slot="title">专线网关</span>
+          </el-menu-item>
         </el-menu-item-group>
       </el-submenu>
 
@@ -80,8 +83,17 @@
         activeName1: "",
         activeName2: "",
         activeIndex: "1",
-        activeIndex2: "1"
+        activeIndex2: "1",
+        routeName: ''
       };
+    },
+    watch: {
+      $route(val) {
+        this.routeName = val
+      }
+    },
+    created() {
+
     },
     methods: {
       handleOpen(key, keyPath) {

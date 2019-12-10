@@ -76,6 +76,8 @@
 <script>
 import { L4RULES_CREATE } from '@/constants'
 export default {
+    //子页面调用L4转发规则的方法
+  inject:['describleL4Rules'],
   props:{
     isShow:Boolean,
     resourceId: String,
@@ -107,7 +109,7 @@ export default {
   methods:{
     //弹框确定按钮
     addRulesSure(){
-      console.log('create')
+      // console.log('create')
       this.createL4Rules()
       this.dialogVisible=false;
       this.$emit("addRulesSure",this.dialogVisible)
@@ -154,12 +156,21 @@ export default {
           params['Rules.0.SourceList.'+i+'.Weight'] = arr[i*2 + 1]
         }
       }
-      console.log(params)
+      // console.log(params)
       this.axios.post(L4RULES_CREATE, params).then(res => {
-        if('Success' in res.Response) {
-          alert(res.Response.Success.Message)
-        } else if('Error' in res.Response) {
-          console.log(res.Response.Error)
+        if (res.Response.Error !== undefined) {
+          this.$message({
+            showClose: true,
+            message: res.Response.Error.Message,
+            type: 'error'
+          });
+        }else{
+          this.$message({
+            showClose: true,
+            message: '新建成功',
+            type: 'success'
+          });
+          this.describleL4Rules()
         }
       })
     },

@@ -1,6 +1,6 @@
 <template>
   <div class="kms">
-    <div class="big-title">密钥管理系统</div>
+    <div class="big-title">{{ $t('KMS.total.title') }}</div>
     <el-menu
       default-active="2"
       class="el-menu-vertical-demo"
@@ -12,11 +12,11 @@
       :router="true"
     >
       <el-menu-item index="userKms">
-        <span slot="title">用户密钥</span>
+        <span slot="title">{{ $t('KMS.total.subMenu') }}</span>
       </el-menu-item>
-      <el-menu-item index="cloudsKms">
+      <!-- <el-menu-item index="cloudsKms">
         <span slot="title">云产品密钥</span>
-      </el-menu-item>
+      </el-menu-item> -->
     </el-menu>
   </div>
 </template>

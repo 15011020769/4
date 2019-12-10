@@ -1,6 +1,6 @@
 <template>
   <div class="newAudit-wrap">
-    <Header :backShow="true" title="创建跟踪集" @_back="_back" />
+    <Header :backShow="true" :title="$t('CLA.total.cjgzj')" @_back="_back" />
     <div class="newAudit-main">
       <div class="newAudit-box">
         <el-form
@@ -12,34 +12,34 @@
           class="demo-ruleForm"
         >
           <div class="main-box">
-            <h2>基础信息</h2>
-            <el-form-item label="跟踪集名称" prop="AuditName" required>
+            <h2>{{ $t('CLA.total.jcxx') }}</h2>
+            <el-form-item :label="$t('CLA.total.gzjmc')" prop="AuditName" required>
               <el-input v-model="ruleForm.AuditName"></el-input>
             </el-form-item>
-            <el-form-item label="跟踪所有区域">
-              <p style="font-size:12px;">是</p>
+            <el-form-item :label="$t('CLA.total.gzqy')">
+              <p style="font-size:12px;">{{ $t('CLA.total.s') }}</p>
             </el-form-item>
           </div>
           <div class="main-box">
-            <h2>管理事件</h2>
-            <el-form-item label="管理事件" required>
+            <h2>{{ $t('CLA.total.glsj') }}</h2>
+            <el-form-item :label="$t('CLA.total.glsj')" required>
               <el-radio-group v-model="ruleForm.ReadWriteAttribute">
-                <el-radio label="全部"></el-radio>
-                <el-radio label="只读"></el-radio>
-                <el-radio label="只写"></el-radio>
+                <el-radio :label="$t('CLA.total.qb')"></el-radio>
+                <el-radio :label="$t('CLA.total.zd')"></el-radio>
+                <el-radio :label="$t('CLA.total.zx')"></el-radio>
               </el-radio-group>
             </el-form-item>
           </div>
           <div class="main-box">
-            <h2>存储位置</h2>
-            <el-form-item label="创建新的cos存储桶" class="store">
+            <h2>{{ $t('CLA.total.ccwz') }}</h2>
+            <el-form-item :label="$t('CLA.total.cjcct')" class="store">
               <el-radio-group v-model="ruleForm.IsCreateNewBucket" @change="_radio">
-                <el-radio label="是"></el-radio>
-                <el-radio label="否"></el-radio>
+                <el-radio :label="$t('CLA.total.s')"></el-radio>
+                <el-radio :label="$t('CLA.total.f')"></el-radio>
               </el-radio-group>
             </el-form-item>
-            <el-form-item label="cos存储桶" required class="select">
-              <el-select v-model="select.name" placeholder="请选择" @change="_select">
+            <el-form-item :label="$t('CLA.total.coscct')" required class="select">
+              <el-select v-model="select.name" :placeholder="$t('CLA.total.qxz')" @change="_select">
                 <el-option
                   v-for="item in select.options"
                   :key="item.value"
@@ -48,7 +48,7 @@
                 ></el-option>
               </el-select>
               <el-form-item label prop="CosBucketName" class="seletInp" v-show="!cosShow">
-                <el-input v-model="ruleForm.CosBucketName" placeholder="请输入Bucket名称"></el-input>
+                <el-input v-model="ruleForm.CosBucketName" :placeholder="$t('CLA.total.qsrmc')"></el-input>
               </el-form-item>
               <el-select
                 v-model="BucketSelect.name"
@@ -65,30 +65,30 @@
               </el-select>
             </el-form-item>
             <p class="addTxt">
-              添加
-              <span @click="_set">高级设置</span>
+              {{ $t('CLA.total.tj') }}
+              <span @click="_set">{{ $t('CLA.total.gjsz') }}</span>
               <i class="el-icon-caret-right" v-show="!setShow"></i>
               <i class="el-icon-caret-bottom" v-show="setShow"></i>
             </p>
             <div class="set-box" v-show="setShow">
-              <el-form-item label="日志文件前缀" prop="LogFilePrefix">
-                <el-input v-model="ruleForm.LogFilePrefix" placeholder="请输入日志文件前缀"></el-input>
+              <el-form-item :label="$t('CLA.total.rzwjqz')" prop="LogFilePrefix">
+                <el-input v-model="ruleForm.LogFilePrefix" :placeholder="$t('CLA.total.qsrrzwjqz')"></el-input>
               </el-form-item>
-              <el-form-item label="发送CMQ通知" class="CMQ" required>
+              <el-form-item :label="$t('CLA.total.fstz')" class="CMQ" required>
                 <el-radio-group v-model="ruleForm.IsEnableCmqNotify" @change="_cmqRadio">
-                  <el-radio label="是"></el-radio>
-                  <el-radio label="否"></el-radio>
+                  <el-radio :label="$t('CLA.total.s')"></el-radio>
+                  <el-radio :label="$t('CLA.total.f')"></el-radio>
                 </el-radio-group>
               </el-form-item>
               <div class="set-child" v-show="setChild">
-                <el-form-item label="创建CMQ队列" class="CMQ" required>
+                <el-form-item :label="$t('CLA.total.cjdl')" class="CMQ" required>
                   <el-radio-group v-model="cmqShow" @change="_cmqCretae">
-                    <el-radio :label="true">是</el-radio>
-                    <el-radio :label="false">否</el-radio>
+                    <el-radio :label="true">{{ $t('CLA.total.s') }}</el-radio>
+                    <el-radio :label="false">{{ $t('CLA.total.f') }}</el-radio>
                   </el-radio-group>
                 </el-form-item>
-                <el-form-item label="CMQ队列名称" required class="select cmqSelect">
-                  <el-select v-model="cmqSelect.name" placeholder="请选择" @change="_cmqSelect">
+                <el-form-item :label="$t('CLA.total.dlmc')" required class="select cmqSelect">
+                  <el-select v-model="cmqSelect.name" :placeholder="$t('CLA.total.qxz')" @change="_cmqSelect">
                     <el-option
                       v-for="item in cmqSelect.options"
                       :key="item.value"
@@ -102,7 +102,7 @@
                     class="seletInp"
                     v-if="ruleForm.IsEnableCmqNotify"
                   >
-                    <el-input v-model="ruleForm.CmqQueueName" placeholder="请输入CMQ队列名称"></el-input>
+                    <el-input v-model="ruleForm.CmqQueueName" :placeholder="$t('CLA.total.qsrdlmc')"></el-input>
                   </el-form-item>
                 </el-form-item>
               </div>
@@ -110,8 +110,8 @@
           </div>
           <div class="main-box" style="border:0;">
             <el-form-item>
-              <el-button @click="_cancel">取消</el-button>
-              <el-button type="primary" @click="_onSubmit('ruleForm')" v-show="!btnLoad">立即创建</el-button>
+              <el-button @click="_cancel">{{ $t('CLA.total.qx') }}</el-button>
+              <el-button type="primary" @click="_onSubmit('ruleForm')" v-show="!btnLoad">{{ $t('CLA.total.ljcj') }}</el-button>
               <el-button type="primary" icon="el-icon-loading" v-show="btnLoad"></el-button>
             </el-form-item>
           </div>
@@ -139,7 +139,7 @@ export default {
       setTimeout(() => {
         if (!reg.test(value)) {
           callback(
-            new Error("仅支持大小写字母、数字、以及_的组合，3-128个字符。")
+            new Error("僅支持大小寫字母、數字、以及_的組合，3-128個字元。")
           );
         } else {
           callback();
@@ -153,7 +153,7 @@ export default {
       }
       setTimeout(() => {
         if (!reg.test(value)) {
-          callback(new Error("仅支持字母和数字的组合，3-40个字符。"));
+          callback(new Error("僅支持字母和數字的組合，3-40個字元。"));
         } else {
           callback();
         }
@@ -165,7 +165,7 @@ export default {
         if (!reg.test(value)) {
           callback(
             new Error(
-              '仅支持小写字母、数字以及中划线" - "的组合，不能超过40字符。'
+              '僅支持小寫字母、數字以及中劃線\" - \"的組合，不能超過40字元。'
             )
           );
         } else {
@@ -184,7 +184,7 @@ export default {
         if (!reg.test(value)) {
           callback(
             new Error(
-              "不超过64个字符的字符串，必须以字母为首字符，剩余部分可以包含字母、数字和横划线(-)。"
+              "不超過64個字元的字元串，必須以字母為首字元，剩餘部分可以包含字母、數字和橫劃線(-)。"
             )
           );
         } else {
@@ -309,9 +309,9 @@ export default {
           this.ruleForm.IsCreateNewBucket == "是"
             ? (this.ruleForm.IsCreateNewBucket = 1)
             : (this.ruleForm.IsCreateNewBucket = 0);
-          this.ruleForm.ReadWriteAttribute == "只读"
+          this.ruleForm.ReadWriteAttribute == "只讀"
             ? (this.ruleForm.ReadWriteAttribute = 1)
-            : this.ruleForm.ReadWriteAttribute == "只写"
+            : this.ruleForm.ReadWriteAttribute == "只寫"
             ? (this.ruleForm.ReadWriteAttribute = 2)
             : (this.ruleForm.ReadWriteAttribute = 3);
           this.ruleForm.Version = "2019-03-19";
@@ -328,13 +328,13 @@ export default {
           this.axios.post(GZJ_CREATE, this.ruleForm).then(res => {
             if (res.Response.IsSuccess == 1) {
               this.$message({
-                message: "创建成功",
+                message: "創建成功",
                 type: "success"
               });
               this.btnLoad = false;
               this.$router.push("/Audit");
             } else {
-              this.$message.error("创建失败");
+              this.$message.error("創建失敗");
               this.btnLoad = false;
             }
           });

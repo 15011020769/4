@@ -27,7 +27,7 @@
         height="550"
         style="width: 100%"
       >
-        <el-table-column prop label="ID/主机名 " width="150">
+        <el-table-column prop label="ID/主机名 ">
           <template slot-scope="scope">
             <p>
               <a
@@ -40,7 +40,11 @@
         </el-table-column>
         <el-table-column prop label="监控">
           <template slot-scope="scope">
-            <i class="el-icon-share"></i>
+            <div class="a" @click="jump(scope.row.VpnConnectionId)"></div>
+            <!-- <a
+                @click="jump(scope.row.VpnConnectionId)"
+                style="cursor:pointer;"
+            ><i class="el-icon-share"></i></a>-->
           </template>
         </el-table-column>
         <el-table-column prop label="状态">
@@ -51,26 +55,26 @@
           </template>
         </el-table-column>
 
-        <el-table-column prop label="所属网络" width="150">
+        <el-table-column prop label="所属网络">
           <template slot-scope="scope">
             <p style="color: #65a5f9;">{{scope.row.VpcId}}</p>
             <p>{{scope.row.VpcName}}</p>
           </template>
         </el-table-column>
-        <el-table-column prop label="VPN网关" width="150">
+        <el-table-column prop label="VPN网关">
           <template slot-scope="scope">
             <p style="color: #65a5f9;">{{scope.row.VpnGatewayId}}</p>
             <p>{{scope.row.vpnGwName}}</p>
           </template>
         </el-table-column>
-        <el-table-column prop label="	对端网关" width="150">
+        <el-table-column prop label="	对端网关">
           <template slot-scope="scope">
             <p style="color: #65a5f9;">{{scope.row.CustomerGatewayId}}</p>
             <p>{{scope.row.userGwName}}</p>
           </template>
         </el-table-column>
-        <el-table-column prop label="	健康状态"></el-table-column>
-        <el-table-column prop label="	告警策略数"></el-table-column>
+        <!-- <el-table-column prop label="	健康状态"></el-table-column>
+        <el-table-column prop label="	告警策略数"></el-table-column>-->
       </el-table>
       <div class="Right-style pagstyle">
         <el-pagination
@@ -94,7 +98,7 @@ import { ALL_CITY, VPNTD_LIST, ALL_PROJECT } from "@/constants";
 export default {
   data() {
     return {
-      loadShow: true,//加载是否显示
+      loadShow: true, //加载是否显示
       //下拉框
       searchOptions: [
         {
@@ -236,7 +240,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.CM-wrap{
+.CM-wrap {
   width: 100%;
   height: 100%;
 }
@@ -283,5 +287,14 @@ export default {
 
 .pagstyle {
   padding: 20px;
+}
+.a {
+  background-image: url("./../../../assets/CAM/images/cvm-20199061519.svg");
+  background-size: 267px 176px;
+  background-repeat: no-repeat;
+  background-position: -47px -71px;
+  height: 15px;
+  width: 16px;
+  cursor: pointer;
 }
 </style>

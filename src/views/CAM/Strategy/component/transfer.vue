@@ -3,9 +3,10 @@
     <div class="container">
       <div class="container-left">
         <p>关联用户</p>
-        <el-input size="mini" v-model="search" style="width:100%" @keyup.enter.native="toQuery" />
-        <i class="el-icon-search ifier" @click="toQuery"></i>
-        <el-table class="table-left" ref="multipleOption" :data="transfer_data" size="small" :height="tableHeight"
+          <el-input placeholder="支持搜索用户名" size="small"  v-model="search" style="width:100%" @keyup.enter.native="toQuery">
+              <i slot="suffix" class="el-input__icon el-icon-search" @click="toQuery"></i>
+          </el-input>
+          <el-table class="table-left" ref="multipleOption" :data="transfer_data" size="small" :height="tableHeight"
           tooltip-effect="dark" v-loading="loading" style="width: 100%" @row-click="selectedRow"
           @selection-change="handleSelectionChange">
           <el-table-column type="selection" prop="id" width="28"></el-table-column>
@@ -39,7 +40,7 @@
           <i class="iconfont">&#xe603;</i>
         </div>
       </div>
-      <div class="container-left">
+      <div class="container-right">
         <span>已选择（共条）</span>
         <el-table class="table-left" ref="multipleSelected" :data="transfer_data_right" tooltip-effect="dark"
           size="small" :height="tableHeight" style="width: 100%">
@@ -73,7 +74,7 @@
       return {
         tableHeight: 300,
         //  用户/用户组列表
-        transfer_data: [{}],
+        transfer_data: [],
         // 选定的用户列表
         transfer_data_right: [],
         transferUserData: [],
@@ -408,12 +409,10 @@
 <style lang="scss" scoped>
   .Cam {
     .container {
-      width: 96%;
-      height: 270px;
-      min-height: 360px;
-      margin: 10px auto 0;
-      background: #fff;
-      padding: 20px;
+         width: 100%;
+         display: flex;
+         justify-content: center;
+         align-items: center;
 
       p.title,
       p.explain {
@@ -432,11 +431,19 @@
         color: #666;
       }
 
-      .container-left {
-        width: 48%;
-        display: table-cell;
-        position: relative;
-        vertical-align: top;
+       .container-left {
+        display: flex;
+        flex-direction: column;
+        width:45%;
+        height: 500px;
+        justify-content: center;
+      }
+      .container-right{
+        display: flex;
+        width:45%;
+        height: 500px;
+        flex-direction: column;
+        justify-content: center;
       }
 
       .ifier {

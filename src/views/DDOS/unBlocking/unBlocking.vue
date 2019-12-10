@@ -173,6 +173,7 @@ export default {
       min-height:200px;
       .tableContentUn{
         min-height:450px;
+        border-bottom:none;
       }
     }
   }

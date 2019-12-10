@@ -1,5 +1,7 @@
 <template>
   <div class="Deal">
+
+    <!-- title -->
     <div class="top">
       <span class="title-left">{{$t('BILL.Deal.title')}}</span>
       <el-select v-model="dataForm.projectId" :placeholder="$t('BILL.Detail.allProject')" @change="getProjectListInfo()" clearable size="small" style="padding-left: 25px;">
@@ -7,11 +9,13 @@
         </el-option>
       </el-select>
     </div>
+
+    <!-- 搜索 -->
     <div class="deal-content">
       <div class="deal-form">
         <el-form :inline="true" :model="dataForm" class="demo-form-inline" @keyup.enter.native="getDataList()">
           <el-form-item class="item-1">
-            <el-date-picker size="small" v-model="dataForm.date" type="daterange" align="right" unlink-panels range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" :picker-options="pickerOptions">
+            <el-date-picker size="small" v-model="dataForm.date" @change="dataPick" type="daterange" align="right" unlink-panels range-separator="至" start-placeholder="開始日期" end-placeholder="結束日期" :picker-options="pickerOptions">
             </el-date-picker>
           </el-form-item>
           <el-form-item class="item-3">
@@ -24,6 +28,8 @@
           </el-form-item>
         </el-form>
       </div>
+
+      <!-- table -->
       <div class="deal-box">
         <el-table :data="dataList" class="table-content" v-loading="dataListLoading">
           <el-table-column prop="orderId" header-align="center" align="center" width="150" :label="$t('BILL.Deal.orderId')">
@@ -32,7 +38,7 @@
           </el-table-column>
           <el-table-column prop="projectName" header-align="center" align="center" width="120" :label="$t('BILL.Deal.projectId')">
           </el-table-column>
-          <el-table-column prop="goodsCategoryId" header-align="center" align="center" width="120" :label="$t('BILL.Deal.goodsCategoryId')">
+          <el-table-column prop="productName" header-align="center" align="center" width="120" :label="$t('BILL.Deal.goodsCategoryId')">
           </el-table-column>
           <el-table-column prop="realTotalCost" header-align="center" align="center" width="150" :label="$t('BILL.Deal.realTotalCost')">
           </el-table-column>
@@ -73,16 +79,16 @@
 
 <script>
 import Detail from './Dealdetail'
-import { PROJECT_LIST, BILL_LIST } from '@/constants/BILL.js'     // 获取接口
+import { PROJECT_LIST, ORDER_LIST } from '@/constants/BILL.js'     // 获取接口
 export default {
   data() {
     return {
       dataForm: {       // 搜索控件
-        projectId: '',
-        orderId: '',
-        date: ''       // 时间
+        projectId: '',  // 项目id
+        orderId: '',    // 订单id
+        date: ''        // 时间
       },
-      dataList: [],    // 列表数组
+      dataList: [],         // 列表数组
       getprojectList: [],   // 项目列表
       pageIndex: 1,
       pageSize: 10,
@@ -143,12 +149,19 @@ export default {
         if (data && data.code === 0) {
           let projectArr = data.data
           this.getprojectList = defaultProject.concat(projectArr)
+          this.pageIndex = 1
           this.getDataList()      // 获取项目成功之后 获取订单列表
         } else {
           this.getprojectList = []
         }
       })
       
+    },
+
+    // 点击日期获取数据
+    dataPick(){
+      this.pageIndex = 1
+      this.getDataList()
     },
 
     // 获取数据列表
@@ -158,9 +171,11 @@ export default {
         'limit': this.pageSize,
         'projectId': this.dataForm.projectId,
         'orderId': this.dataForm.orderId,
-        'orderOwner': this.$cookie.get('uin')
+        'orderOwner': this.$cookie.get('uin'),
+        'beginDate': this.dataForm.date[0],
+        'endDate': this.dataForm.date[1]
       }
-      this.axios.post(`${process.env.VUE_APP_adminUrl + BILL_LIST}`, params).then(data => {
+      this.axios.post(`${process.env.VUE_APP_adminUrl + ORDER_LIST}`, params).then(data => {
         if (data && data.code === 0) {
           this.dataList = []
           let dataArr = data.page.list
@@ -185,9 +200,10 @@ export default {
     // 搜索
     search() {
       this.pageIndex = 1
-      this.pageSize = 10
       this.getDataList()
     },
+
+    // 过滤订单状态
     formatterStatus(row, column, cellValue) {
       if (cellValue === '1') {
         return this.$t('BILL.Deal.noPay')
@@ -215,15 +231,7 @@ export default {
         return this.$t('BILL.Deal.paying')
       }
     },
-    // formatterCurrency(row, column, cellValue) {
-    //   if (cellValue === 'CNY') {
-    //     return '人民币'
-    //   } else if (cellValue === 'USD') {
-    //     return '美元'
-    //   } else if (cellValue === 'TWD') {
-    //     return '台币'
-    //   }
-    // },
+
     // 下载
     download() {
       var params = {
@@ -252,17 +260,20 @@ export default {
         }
       })
     },
+
     // 每页数
     sizeChangeHandle(val) {
       this.pageSize = val
       this.pageIndex = 1
       this.getDataList()
     },
+
     // 当前页
     currentChangeHandle(val) {
       this.pageIndex = val
       this.getDataList()
     },
+    
     // 点击详情
     detailHandle(rowData) {
       this.$nextTick(() => {

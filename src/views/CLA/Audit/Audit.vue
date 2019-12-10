@@ -1,36 +1,35 @@
 <template>
   <div>
     <div class="title_top">
-      <h1>跟踪集</h1>
+      <h1>{{ $t('CLA.total.gzj') }}</h1>
     </div>
     <div class="tea-content__body">
       <div class="explain">
         <p>
-          <span>1. 在公测阶段，只能创建一个跟踪集，</span>
-          <a href="JavaScript:;">跟踪集使用指南。</a>
+          <span>{{ $t('CLA.total.ts1') }}</span>
+          <!-- <a href="JavaScript:;">跟踪集使用指南。</a> -->
         </p>
         <p>
           <span>
-            2.
-            当您的跟踪集为正常状态时，跟踪集会将您账号下的操作日志记录，存储到跟踪集配置的存储桶中；当您的跟踪集为关闭状态，操作日志不会存储到对应的存储桶。
+           {{ $t('CLA.total.ts2') }} 
           </span>
         </p>
         <p>
-          <span>3. 因为记录跟踪日志，所产生的COS存储费用，将依据COS标准计费进行收取，</span>
-          <a href="JavaScript:;">查看COS计费详情。</a>
+          <span>{{ $t('CLA.total.ts3') }}</span>
+          <!-- <a href="JavaScript:;">查看COS计费详情。</a> -->
         </p>
       </div>
       <div class="btn">
-        <el-button :plain="true" v-if="!isDisabled" @click="Create()">创建</el-button>
+        <el-button :plain="true" v-if="!isDisabled" @click="Create()">{{ $t('CLA.total.cj') }}</el-button>
         <div class="over" v-if="isDisabled">
-          <el-button class="btn-dis" disabled>创建</el-button>
-          <p>目前只支持创建一个跟踪集</p>
+          <el-button class="btn-dis" disabled>{{ $t('CLA.total.cj') }}</el-button>
+          <p>{{ $t('CLA.total.zccj') }}</p>
         </div>
       </div>
       <div class="tables">
         <el-table :data="tableData" style="width: 100%" v-loading="loading">
-          <template slot="empty">暂无跟踪集</template>
-          <el-table-column prop="name" label="名称">
+          <template slot="empty">{{ $t('CLA.total.zwgzj') }}</template>
+          <el-table-column prop="name" :label="$t('CLA.total.mc')">
             <template slot-scope="scope">
               <el-button @click="handleClick(scope.row)" type="text">
                 {{
@@ -39,18 +38,18 @@
               </el-button>
             </template>
           </el-table-column>
-          <el-table-column prop="isMultiRegionAudit" label="全部区域">
+          <el-table-column prop="isMultiRegionAudit" :label="$t('CLA.total.qbqy')">
             <template slot-scope="scope">
-              <div v-if="scope.row.isMultiRegionAudit == 1">是</div>
-              <div v-if="scope.row.isMultiRegionAudit == 0">否</div>
+              <div v-if="scope.row.isMultiRegionAudit == 1">{{ $t('CLA.total.s') }}</div>
+              <div v-if="scope.row.isMultiRegionAudit == 0">{{ $t('CLA.total.f') }}</div>
             </template>
           </el-table-column>
-          <el-table-column prop="bucketName" label="COS 存储桶"></el-table-column>
-          <el-table-column prop="prefix" label="日志文件前缀"></el-table-column>
-          <el-table-column prop="status" label="状态">
+          <el-table-column prop="bucketName" :label="$t('CLA.total.coscct')"></el-table-column>
+          <el-table-column prop="prefix" :label="$t('CLA.total.rzwjqz')"></el-table-column>
+          <el-table-column prop="status" :label="$t('CLA.total.zt')">
             <template slot-scope="scope">
-              <div v-if="scope.row.status == 0" class="close_color">关闭</div>
-              <div v-if="scope.row.status == 1" class="off_color">开启</div>
+              <div v-if="scope.row.status == 0" class="close_color">{{ $t('CLA.total.gb') }}</div>
+              <div v-if="scope.row.status == 1" class="off_color">{{ $t('CLA.total.kq') }}</div>
             </template>
           </el-table-column>
         </el-table>

@@ -40,7 +40,10 @@
         </el-table-column>
         <el-table-column prop label="监控">
           <template slot-scope="scope">
-            <i class="el-icon-share"></i>
+            <!-- <a @click="jump(scope.row.InstanceId)" style="cursor:pointer;">
+              <i class="el-icon-share"></i>
+            </a>-->
+            <div class="a" @click="jump(scope.row.InstanceId)"></div>
           </template>
         </el-table-column>
         <el-table-column prop label="状态">
@@ -48,13 +51,17 @@
             <p>{{scope.row.InstanceTitle}}</p>
           </template>
         </el-table-column>
-
+        <el-table-column prop label="创建时间">
+          <template slot-scope="scope">
+            <p>{{scope.row.Createtime}}</p>
+          </template>
+        </el-table-column>
         <el-table-column prop label="规格">
           <template slot-scope="scope">
             <p>VPC 网络</p>
           </template>
         </el-table-column>
-        <el-table-column prop label="内网地址">
+        <!-- <el-table-column prop label="内网地址">
           <template slot-scope="scope">
             <p v-for="i in scope.row.PrivateIpAddresses">{{i}}(内网)</p>
             <p v-for="i in scope.row.PublicIpAddresses">{{i}}</p>
@@ -66,7 +73,7 @@
               :class="scope.row.RestrictState==='NORMAL'?'green':scope.row.RestrictState==='EXPIRED'?'red':'orange'"
             >{{RestrictState[scope.row.RestrictState]}}</p>
           </template>
-        </el-table-column>
+        </el-table-column>-->
       </el-table>
       <div class="Right-style pagstyle">
         <el-pagination
@@ -90,7 +97,7 @@ import { ALL_CITY, REDIS_LIST, ALL_PROJECT } from "@/constants";
 export default {
   data() {
     return {
-      loadShow: true,//加载是否显示
+      loadShow: true, //加载是否显示
       //下拉框
       searchOptions: [
         {
@@ -102,7 +109,7 @@ export default {
           label: "名称"
         }
       ],
-      searchValue: "",//默认选中的值
+      searchValue: "", //默认选中的值
       //文字过滤
       instanceStatus: {
         PENDING: "创建中",
@@ -208,8 +215,7 @@ export default {
             for (let i = 0; i < this.TbaleData.length; i++) {
               for (let j = 0; j < this.ProjectData.length; j++) {
                 if (
-                  this.TbaleData[i].ProjectId ==
-                  this.ProjectData[j].projectId
+                  this.TbaleData[i].ProjectId == this.ProjectData[j].projectId
                 ) {
                   this.TbaleData[i].projectName = this.ProjectData[
                     j
@@ -249,7 +255,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.CM-wrap{
+.CM-wrap {
   width: 100%;
   height: 100%;
 }
@@ -296,5 +302,14 @@ export default {
 
 .pagstyle {
   padding: 20px;
+}
+.a {
+  background-image: url("./../../../assets/CAM/images/cvm-20199061519.svg");
+  background-size: 267px 176px;
+  background-repeat: no-repeat;
+  background-position: -47px -71px;
+  height: 15px;
+  width: 16px;
+  cursor: pointer;
 }
 </style>

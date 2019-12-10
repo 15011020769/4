@@ -2,9 +2,14 @@
   <div class="Cam">
     <div class="container">
       <div class="container-left">
-        <p>{{$t('CAM..Role.policyList')}}（共{{totalNum}}条）</p>
-        <el-input size="mini" v-model="strategyValue" style="width:100%" @keyup.enter.native="tableloadmore"/>
-        <i size="mini" class="el-icon-search fier" show-overflow-tooltip @click="tableloadmore" ></i>
+        <p>策略</p>
+         <el-input
+          size="mini" v-model="strategyValue" style="width:100%" @keyup.enter.native="tableloadmore"
+        >
+          <i slot="suffix" class="el-input__icon el-icon-search" @click="tableloadmore"></i>
+        </el-input>
+        <!-- <el-input size="mini" v-model="strategyValue" style="width:100%" @keyup.enter.native="tableloadmore"/>
+        <i size="mini" class="el-icon-search fier" show-overflow-tooltip @click="tableloadmore" ></i> -->
         <el-table
           class="table-left"
           ref="multipleOption"
@@ -17,13 +22,13 @@
           @selection-change="handleSelectionChange"
           v-tableloadmore="tableloadmore" >
           <el-table-column type="selection" prop="policyId" width="29"></el-table-column>
-          <el-table-column prop="Description" :label="$t('CAM..Role.policyName')" show-overflow-tooltip>
+          <el-table-column prop="Description" label="策略名" show-overflow-tooltip>
             <template slot-scope="scope">
               <p>{{scope.row.PolicyName}}</p>
               <p>{{scope.row.Description}}</p>
             </template>
           </el-table-column>
-          <el-table-column prop="Type" :label="$t('CAM..Role.strategyType')" width="130">
+          <el-table-column prop="Type" label="策略类型" width="130">
             <template slot="header" slot-scope="scope">
               <el-dropdown trigger="click" @command="handleCommand" size="mini">
                 <span style="color:#909399">
@@ -40,9 +45,8 @@
               </el-dropdown>
             </template>
             <template slot-scope="scope">
-              <p v-show="scope.row.Type == 3">{{$t('CAM..Role.all')}}</p>
-              <p v-show="scope.row.Type == 2">{{$t('CAM..Role.defaultPolicy')}}</p>
-              <p v-show="scope.row.Type == 1">{{$t('CAM..Role.customPolicy')}}</p>
+              <p v-show="scope.row.Type == 2">预设策略</p>
+              <p v-show="scope.row.Type == 1">自定义策略</p>
             </template>  
           </el-table-column>
         </el-table>
@@ -52,8 +56,8 @@
           <i class="iconfont">&#xe603;</i>
         </div>
       </div>
-      <div class="container-left">
-        <span>{{$t('CAM..Role.hasChosen')}}（共条）</span>
+      <div class="container-right">
+        <span>已选策略</span>
         <el-table
           class="table-left"
           ref="multipleSelected"
@@ -65,7 +69,7 @@
         >
           <el-table-column
             prop="Description"
-            :label="$t('CAM..Role.strategy')"
+            label="策略名"
             show-overflow-tooltip
           >
             <template slot-scope="scope">
@@ -74,13 +78,13 @@
             </template>
           </el-table-column>
 
-          <el-table-column prop="Type" :label="$t('CAM..Role.strategyType')" width="100">
+          <el-table-column prop="Type" label="策略类型" width="100">
             <template slot-scope="scope">
-              <p v-show="scope.row.Type == 1">{{$t('CAM..Role.customPolicy')}}</p>
-              <p v-show="scope.row.Type == 2">{{$t('CAM..Role.defaultPolicy')}}</p>
+              <p v-show="scope.row.Type == 1">自定义策略</p>
+              <p v-show="scope.row.Type == 2">预设策略</p>
             </template>
           </el-table-column>
-          <el-table-column :label="$t('CAM..userGroup.colHandle')" width="50">
+          <el-table-column  width="50">
             &lt;!&ndash;
             <template slot-scope="scope">
               <el-button @click.native.prevent="deleteRow(scope.$index, policiesSelectedData)" type="text" size="small" >x</el-button>
@@ -132,26 +136,26 @@ export default {
       tableHeight:300,
       policiesData: [],
       policiesSelectedData: [],
-      strategyValue: [],
+      strategyValue: "",
       totalNum: "",
       search: "",
       table_options: [
         {
           value: "All",
-          label: this.$t('CAM..Role.all')
+          label: "全部策略"
         },
         {
           value: "QCS",
-          label: this.$t('CAM..Role.defaultPolicy')
+          label: "预设策略"
         },
         {
           value: "Local",
-          label: this.$t('CAM..Role.customPolicy')
+          label: "自定义策略"
         },
       ],
       rp: 20,
       page: 1,
-      tableTitle: this.$t('CAM..Role.strategyType')
+      tableTitle: "策略类型"
     };
   },
  
@@ -230,12 +234,10 @@ export default {
 <style lang="scss" scoped>
 .Cam {
   .container {
-    width: 96%;
-    height: 270px;
-    min-height: 360px;
-    margin: 10px auto 0;
-    background: #fff;
-    padding: 20px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     p.title,
     p.explain {
       text-align: center;
@@ -277,12 +279,20 @@ export default {
       right: 2%;
       top: 8%;
     }
-    .container-left {
-      width: 48%;
-      display: table-cell;
-      position: relative;
-      vertical-align: top;
-    }
+     .container-left {
+    display: flex;
+    flex-direction: column;
+    width: 45%;
+    height: 600px;
+    justify-content: center;
+  }
+  .container-right {
+    display: flex;
+    width: 45%;
+    height: 600px;
+    flex-direction: column;
+    justify-content: center;
+  }
   }
 }
 </style>

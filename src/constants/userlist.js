@@ -45,3 +45,9 @@ export const DEL_USERTOGROUP = 'cam2/RemoveUserFromGroup'
 
 //用户组关联的策略列表
 export const GROUP_POLICY = 'cam2/ListAttachedGroupPolicies'
+
+//创建SAML身份提供商
+export const CREATE_SAML = 'cam2/CreateSAMLProvider'
+
+//查询SAML身份提供商
+export const GET_SAML = 'cam2/GetSAMLProvider'

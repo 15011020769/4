@@ -65,6 +65,15 @@ export default new Router({
         keepAlive: true
       }
     },
+    //新用户添加到用户组
+    {
+      path:"/addGroup",
+      name:"addGroup",
+      component:() => import(/* webpackChunkName: "detailsUser" */ './UserListNew/module/addGroup'),
+      meta: {
+       keepAlive: true
+     }
+   },
     {
       path: '/UserList', // 用户列表
       name: 'UserList',

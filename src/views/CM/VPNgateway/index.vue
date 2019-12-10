@@ -41,7 +41,10 @@
           </el-table-column>
           <el-table-column prop label="监控">
             <template slot-scope="scope">
-              <i class="el-icon-share"></i>
+              <div class="a" @click="jump(scope.row.VpnGatewayId)"></div>
+              <!-- <a @click="jump(scope.row.VpnGatewayId)" style="cursor:pointer;">
+                <i class="el-icon-share"></i>
+              </a>-->
             </template>
           </el-table-column>
           <el-table-column prop label="状态">
@@ -58,9 +61,14 @@
               <p>{{ scope.row.vpnGwName}}</p>
             </template>
           </el-table-column>
-
+          <el-table-column prop label="创建时间">
+            <template slot-scope="scope">
+              <p>{{scope.row.CreatedTime}}</p>
+            </template>
+          </el-table-column>
+          <!-- 
           <el-table-column label="健康状态"></el-table-column>
-          <el-table-column prop label="告警策略数"></el-table-column>
+          <el-table-column prop label="告警策略数"></el-table-column>-->
         </el-table>
         <div class="Right-style pagstyle">
           <el-pagination
@@ -85,7 +93,7 @@ import { ALL_CITY, VPN_LIST, ALL_PROJECT } from "@/constants";
 export default {
   data() {
     return {
-      loadShow: true,//加载是否显示
+      loadShow: true, //加载是否显示
       //下拉框
       searchOptions: [
         {
@@ -280,5 +288,14 @@ export default {
 
 .pagstyle {
   padding: 20px;
+}
+.a {
+  background-image: url("./../../../assets/CAM/images/cvm-20199061519.svg");
+  background-size: 267px 176px;
+  background-repeat: no-repeat;
+  background-position: -47px -71px;
+  height: 15px;
+  width: 16px;
+  cursor: pointer;
 }
 </style>

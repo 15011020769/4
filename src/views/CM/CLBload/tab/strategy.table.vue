@@ -5,32 +5,32 @@
       style="width: 100%">
       <el-table-column
         prop="date"
-        label="策略名"
+        :label="$t('CVM.clBload.clm')"
       >
       </el-table-column>
       <el-table-column
         prop="name"
-        label="策略类型"
+        :label="$t('CVM.clBload.cllx')"
         >
       </el-table-column>
       <el-table-column
         prop="address"
-        label="触发条件">
+        :label="$t('CVM.clBload.cftj')">
       </el-table-column>
 
        <el-table-column
         prop="address"
-        label="最近修改">
+        :label="$t('CVM.clBload.zjxg')">
       </el-table-column>
 
        <el-table-column
         prop="address"
-        label="关联实例组">
+        :label="$t('CVM.clBload.glslz')">
       </el-table-column>
 
        <el-table-column
         prop="address"
-        label="操作">
+        :label="$t('CVM.clBload.cz')">
       </el-table-column>
 
     </el-table>
@@ -72,14 +72,14 @@ export default {
   },
   methods: {
     sizeChangeHandle(val) {
-      console.log(`每页 ${val} 条`)
+      console.log(`每頁 ${val} 條`)
       this.pageSize = val
       this.pageIndex = 1
       this.getDataList()
     },
     // 当前页
     currentChangeHandle(val) {
-      console.log(`当前页: ${val}`)
+      console.log(`當前頁: ${val}`)
       this.pageIndex = val
       this.getDataList()
     },

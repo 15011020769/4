@@ -1,13 +1,7 @@
 <template>
   <div class="CCN">
     <div class="big-title">费用中心</div>
-    <el-menu default-active="2" class="el-menu-vertical-demo" 
-      @select="handleSelect"
-      background-color="#292b36" 
-      text-color="#fff" 
-      active-text-color="#ffd04b" 
-      :router="true"
-    >
+    <el-menu default-active="2" class="el-menu-vertical-demo" @select="handleSelect" background-color="#292b36" text-color="#fff" active-text-color="#ffd04b" :router="true">
       <el-menu-item index="deal" :class="{'menu-active': activeMenu === 'deal'}">
         <span slot="title">订单管理</span>
       </el-menu-item>
@@ -25,13 +19,15 @@
 export default {
   data() {
     return {
-      activeMenu: 'deal'        // 默认选中的菜单
+      activeMenu: localStorage.getItem('activeMenu') ? localStorage.getItem('activeMenu') : 'deal'        // 默认选中的菜单
     };
   },
+ 
   methods: {
     // 选中菜单点击事件
     handleSelect(key, keyPath) {
       this.activeMenu = key
+      localStorage.setItem('activeMenu', this.activeMenu)
     }
   }
 };
@@ -60,7 +56,7 @@ export default {
     color: white !important;
     font-size: 14px;
   }
-  .menu-active{
+  .menu-active {
     background-color: #20222c !important;
     color: white;
   }
