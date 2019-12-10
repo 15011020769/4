@@ -131,18 +131,18 @@ export default {
       })
     },
     // 1.3.查询实例列表
-    describeInstances() {
-      let params = {
-        Version: "2017-03-12",
-        Region: 'ap-taipei'
-      }
-      this.axios.post(CVM_INSTANCES, params).then(res => {
-        console.log(res)
-        this.tableDataBegin = res.Response.InstanceSet
-        this.allData = res.Response.InstanceSet
-        this.totalItems = res.Response.TotalCount
-      })
-    },
+    // describeInstances() {
+    //   let params = {
+    //     Version: "2017-03-12",
+    //     Region: 'ap-taipei'
+    //   }
+    //   this.axios.post(CVM_INSTANCES, params).then(res => {
+    //     console.log(res)
+    //     this.tableDataBegin = res.Response.InstanceSet
+    //     this.allData = res.Response.InstanceSet
+    //     this.totalItems = res.Response.TotalCount
+    //   })
+    // },
     // 搜索
     doFilter() {
       if (this.searchInputVal != null && this.searchInputVal != ''){
