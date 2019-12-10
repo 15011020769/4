@@ -1,7 +1,7 @@
 <template>
   <div class="wrap">
     <div class="head">
-      <Headcom title="用户详情" :backShow="true" />
+      <Headcom title="用户详情" :backShow="true" @_back="back" />
     </div>
     <div class="details">
       <div class="details-left">
@@ -58,7 +58,7 @@
     </div>
     <div class="tableTab">
       <el-tabs v-model="activeName" @tab-click="handleClick">
-        <el-tab-pane label="权限(0)" name="first">
+        <el-tab-pane :label="totalNum" name="first">
           <div class="explain">
             <p>关联策略以获取策略包含的操作权限。解除策略将失去策略包含的操作权限。特别的，解除随组关联类型的策略是通过将用户从关联该策略的用户组中移出。</p>
           </div>
@@ -74,6 +74,7 @@
             ref="multipleTable"
             :data="StrategyData"
             style="width: 100%;"
+            height="300"
             @selection-change="Select"
           >
             <el-table-column type="selection" width="55"></el-table-column>
@@ -90,7 +91,7 @@
             </el-table-column>
           </el-table>
         </el-tab-pane>
-        <el-tab-pane label="组(0)" name="second">
+        <el-tab-pane :label="groupNum" name="second">
           <el-button class="buttonCla" type="primary" size="small" @click="addGroupUser">加入到组</el-button>
           <el-button
             class="buttonCla"
@@ -103,6 +104,7 @@
             ref="multipleTable"
             :data="groupData"
             style="width: 100%;"
+            height="300"
             @selection-change="Select"
           >
             <el-table-column type="selection"></el-table-column>
@@ -227,6 +229,8 @@ export default {
       GroupId:"",
       delDialog:false,
       updataUser:false,
+      totalNum:"",//策略列表条数
+      groupNum:"",//用户组列表条数
        flag:false,
        ruleForm: {
           Name: '',
@@ -282,7 +286,6 @@ export default {
           })
         })
       this.delDialog = false;
-      this.$router.go(-1)
     },
     deleteUser(){
        console.log(this.userData)
@@ -312,6 +315,7 @@ export default {
         };
         this.axios.post(QUERY_POLICY, ploicyParams).then(res => {
           this.StrategyData = res.Response.List;
+          this.totalNum = "权限(" + res.Response.List.length + ")";
         });
       });
     },
@@ -336,6 +340,7 @@ export default {
         };
         this.axios.post(RELATE_USER, groupParams).then(res => {
           this.groupData = res.Response.GroupInfo;
+          this.groupNum = "组(" + this.groupData.length + ")";
         });
       });
     },
@@ -467,6 +472,9 @@ export default {
     bindMesg(){
        this.flag = true
     },
+    back(){
+      this.$router.go(-1)
+    }
   },
   created() {
     this.init(); //获取当前用户的详情
@@ -480,8 +488,8 @@ export default {
   width: 100%;
   display: flex;
   justify-content: center;
-  padding: 40px;
-  box-sizing: border-box;
+  padding-top: 40px;
+  padding-bottom:40px;
   .details-left {
     width: 75%;
     background: white;
@@ -521,7 +529,7 @@ export default {
   .details-right {
     width: 15%;
     background: skyblue;
-    margin-left: 45px;
+    margin-left: 46px;
     display: flex;
     flex-direction: column;
     box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
@@ -549,12 +557,11 @@ export default {
   }
 }
 .tableTab {
-  width: 88%;
+  width: 93%;
   background: white;
   padding: 25px;
   box-sizing: border-box;
   box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
-  margin-left: 100px;
   margin: 0 auto;
   .buttonCla {
     height: 35px;
@@ -581,4 +588,5 @@ export default {
     line-height: 20px;
   }
 }
+
 </style>

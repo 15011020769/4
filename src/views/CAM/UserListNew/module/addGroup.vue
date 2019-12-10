@@ -1,7 +1,7 @@
 <template>
   <div class="wrap">
     <div class="head">
-      <Headcom title="添加到用户组" :backShow="true" />
+      <Headcom title="添加到用户组" :backShow="true"  @_back="back" />
     </div>
     <div class="policyToUser">
       <div class="step">
@@ -197,7 +197,10 @@ export default {
     },
      deleteRow(index, rows) {
         rows.splice(index, 1);
-      }
+      },
+      back(){
+      this.$router.go(-1)
+    }
   },
   created(){
     this.userGroups()
@@ -246,7 +249,8 @@ export default {
   }
 }
 }
-
-
-
+.step >>> .el-steps {
+  background: white;
+  padding-bottom: 25px;
+}
 </style>

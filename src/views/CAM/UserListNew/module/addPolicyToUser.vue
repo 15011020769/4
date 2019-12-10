@@ -1,7 +1,7 @@
 <template>
   <div class="wrap">
     <div class="head">
-      <Headcom title="添加策略列表" :backShow="true" />
+      <Headcom title="添加策略列表" :backShow="true" @_back="back" />
     </div>
     <div class="policyToUser">
       <div class="step">
@@ -273,6 +273,9 @@ export default {
         }
       });
       this.$router.go(-1)
+    },
+    back(){
+      this.$router.go(-1)
     }
   },
   created() {
@@ -302,5 +305,9 @@ export default {
   .button{
     width: 100%;
   }
+}
+.step >>> .el-steps {
+  background: white;
+  padding-bottom: 25px;
 }
 </style>

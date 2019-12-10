@@ -129,7 +129,8 @@
           ></el-pagination>
         </div>
       </div>
-    </div>
+      </div>
+  </div>
 
     <!-- 添加用户组弹框 -->
     <el-dialog :title="title" :visible.sync="authorization" width="60%" :before-close="handleClose">
@@ -296,7 +297,7 @@
         <el-button type="primary" @click="suerDelUser">确 定</el-button>
       </span>
     </el-dialog>
-    <Subscribe :subscribe="flag" @suerClose="suerClose" @confirm="confirm" />
+    <Subscribe :subscribe="flag" @suerClose="suerClose"  @confirm="confirm" />
   </div>
 </template>
 <script>
