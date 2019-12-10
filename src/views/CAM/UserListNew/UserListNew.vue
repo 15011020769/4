@@ -129,7 +129,6 @@
           ></el-pagination>
         </div>
       </div>
-      </div>
     </div>
 
     <!-- 添加用户组弹框 -->
@@ -297,7 +296,9 @@
         <el-button type="primary" @click="suerDelUser">确 定</el-button>
       </span>
     </el-dialog>
+   
     <Subscribe :subscribe="flag" @suerClose="suerClose"  @confirm="confirm" />
+    
   </div>
 </template>
 <script>
