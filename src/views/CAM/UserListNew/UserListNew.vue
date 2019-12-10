@@ -8,11 +8,12 @@
       <p>访问管理对您的敏感信息进行安全升级保护，您可以点击列表中【详情】列下拉按钮【▶】查看用户的身份安全状态、已加入组以及消息订阅等更多信息。您也可以点击用户名进入用户详细信息中查看或编辑。</p>
     </div>
     <div class="operation">
-      <button class="addUser" @click="addUser">新增用户</button>
-
-      <el-select v-model="value" placeholder="请选择" @change="select" class="select">
+      <!-- <button class="addUser" @click="addUser">新增用户</button> -->
+     <el-button type="primary" class="addUser" size="small" @click="addUser">新增用户</el-button>
+  
+     <el-select v-model="value" size="small" placeholder="请选择" @change="select" class="select">
         <el-option
-          v-for="item in options"
+          v-for="item in options"
           :key="item.value"
           :label="item.label"
           :value="item.value"
@@ -30,101 +31,103 @@
       </el-input>
     </div>
     <div class="tableBody">
-      <el-table
-        height="450"
-        style="width: 96%; margin: 0 auto;"
-        :data="tableData.slice((currpage - 1) * pagesize, currpage * pagesize)"
-        @selection-change="handleSelectionChange"
-      >
-        <el-table-column type="selection" width="55"></el-table-column>
-        <el-table-column type="expand" label="详情" width="50">
-          <template slot-scope="scope">
-            <div class="form">
-              <el-form label-position="left" inline class="demo-table-expand" v-model="form">
-                <div class="detialsUser">
-                  <el-form-item label="用户组:"></el-form-item>
-                  <el-form-item label="用户名称:" class="Name">{{scope.row.Name}}</el-form-item>
-                  <el-form-item label="用户类型:">{{scope.row.Remark}}</el-form-item>
-                </div>
-                <div class="detialsUser">
-                  <el-form-item label="账号ID:">{{scope.row.Uin}}</el-form-item>
-                  <el-form-item label="关联信息:"></el-form-item>
-                  <el-form-item label="登录保护:">
-                    <span style="color:red" class="s1">未开启保护</span>
-                  </el-form-item>
-                </div>
+      <div class="wrapTwo">
+        <el-table
+          height="500"
+          :data="tableData.slice((currpage - 1) * pagesize, currpage * pagesize)"
+          @selection-change="handleSelectionChange"
+           v-loading="loading"
+        >
+          <el-table-column type="selection" width="55"></el-table-column>
+          <el-table-column type="expand" label="详情" width="50">
+            <template slot-scope="scope">
+              <div class="form">
+                <el-form label-position="left" inline class="demo-table-expand" v-model="form">
+                  <div class="detialsUser">
+                    <el-form-item label="用户组:"></el-form-item>
+                    <el-form-item label="用户名称:" class="Name">{{scope.row.Name}}</el-form-item>
+                    <el-form-item label="用户类型:">{{scope.row.Remark}}</el-form-item>
+                  </div>
+                  <div class="detialsUser">
+                    <el-form-item label="账号ID:">{{scope.row.Uin}}</el-form-item>
+                    <el-form-item label="关联信息:"></el-form-item>
+                    <el-form-item label="登录保护:">
+                      <span style="color:red" class="s1">未开启保护</span>
+                    </el-form-item>
+                  </div>
 
-                <div class="detialsUser">
-                  <el-form-item label="消息订阅:"></el-form-item>
-                  <el-form-item label="操作保护:">
-                    <span style="color:red">未开启保护</span>
-                  </el-form-item>
-                  <el-form-item label="控制台访问:">
-                    <span style="color:green">启用</span>
-                  </el-form-item>
-                </div>
+                  <div class="detialsUser">
+                    <el-form-item label="消息订阅:"></el-form-item>
+                    <el-form-item label="操作保护:">
+                      <span style="color:red">未开启保护</span>
+                    </el-form-item>
+                    <el-form-item label="控制台访问:">
+                      <span style="color:green">启用</span>
+                    </el-form-item>
+                  </div>
 
-                <div class="detialsUser">
-                  <el-form-item label="MFA设备:">
-                    <span style="color:red">未绑定MFA设备</span>
-                  </el-form-item>
-                </div>
-              </el-form>
-            </div>
-          </template>
-        </el-table-column>
+                  <div class="detialsUser">
+                    <el-form-item label="MFA设备:">
+                      <span style="color:red">未绑定MFA设备</span>
+                    </el-form-item>
+                  </div>
+                </el-form>
+              </div>
+            </template>
+          </el-table-column>
 
-        <el-table-column label="用户名称" prop="Name">
-          <template slot-scope="scope">
-            <el-link @click="detailsUser(scope.row)" type="primary">{{scope.row.Name}}</el-link>
-          </template>
-        </el-table-column>
+          <el-table-column label="用户名称" prop="Name">
+            <template slot-scope="scope">
+              <el-link @click="detailsUser(scope.row)" type="primary">{{scope.row.Name}}</el-link>
+            </template>
+          </el-table-column>
 
-        <el-table-column label="用户类型" prop="Remark"></el-table-column>
+          <el-table-column label="用户类型" prop="Remark"></el-table-column>
 
-        <el-table-column label="账号ID" prop="Uin"></el-table-column>
+          <el-table-column label="账号ID" prop="Uin"></el-table-column>
 
-        <el-table-column label="关联信息">
-          <template slot-scope="scope">
-            <i class="el-icon-mobile mobile" @click="detailsUser(scope.row)"></i>
-            <i class="el-icon-message message" @click="detailsUser(scope.row)"></i>
-          </template>
-        </el-table-column>
-        <el-table-column label="操作" width="140">
-          <template scope="scope">
-            <el-button type="text" @click="addRight(scope.row.Uin)">授权</el-button>
-            <span>|</span>
-            <el-dropdown :hide-on-click="false">
-              <span class="el-dropdown-link" style="color: #3E8EF7">
-                更多
-                <i class="el-icon-arrow-down el-icon--right"></i>
-              </span>
-              <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item>
-                  <el-button type="text" style="color:#000" @click="addRroup(scope.row.Uid)">添加到组</el-button>
-                </el-dropdown-item>
-                <el-dropdown-item>
-                  <el-button type="text" style="color:#000" @click="bindMesg">订阅信息</el-button>
-                </el-dropdown-item>
-                <el-button
-                  type="text"
-                  style="color:#000;padding-left:20px;"
-                  @click="delUserRow(scope.row)"
-                >删除</el-button>
-              </el-dropdown-menu>
-            </el-dropdown>
-          </template>
-        </el-table-column>
-      </el-table>
-      <div class="page-box Right-style pagstyle">
-        <el-pagination
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-          :page-sizes="[20, 30, 40,50,100]"
-          :page-size="pagesize"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="tableData.length"
-        ></el-pagination>
+          <el-table-column label="关联信息">
+            <template slot-scope="scope">
+              <i class="el-icon-mobile mobile" @click="detailsUser(scope.row)"></i>
+              <i class="el-icon-message message" @click="detailsUser(scope.row)"></i>
+            </template>
+          </el-table-column>
+          <el-table-column label="操作" width="140">
+            <template scope="scope">
+              <el-button type="text" @click="addRight(scope.row.Uin)">授权</el-button>
+              <span>|</span>
+              <el-dropdown :hide-on-click="false">
+                <span class="el-dropdown-link" style="color: #3E8EF7">
+                  更多
+                  <i class="el-icon-arrow-down el-icon--right"></i>
+                </span>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item>
+                    <el-button type="text" style="color:#000" @click="addRroup(scope.row.Uid)">添加到组</el-button>
+                  </el-dropdown-item>
+                  <el-dropdown-item>
+                    <el-button type="text" style="color:#000" @click="bindMesg">订阅信息</el-button>
+                  </el-dropdown-item>
+                  <el-button
+                    type="text"
+                    style="color:#000;padding-left:20px;"
+                    @click="delUserRow(scope.row)"
+                  >删除</el-button>
+                </el-dropdown-menu>
+              </el-dropdown>
+            </template>
+          </el-table-column>
+        </el-table>
+        <div class="page-box Right-style pagstyle">
+          <el-pagination
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+            :page-sizes="[20, 30, 40,50,100]"
+            :page-size="pagesize"
+            layout="total, sizes, prev, pager, next, jumper"
+            :total="tableData.length"
+          ></el-pagination>
+        </div>
       </div>
     </div>
 
@@ -146,6 +149,7 @@
           </div>
 
           <el-table
+            v-loading="loading"
             ref="multipleOption"
             tooltip-effect="dark"
             height="400"
@@ -215,6 +219,7 @@
             @row-click="selectedRow"
             @selection-change="handleSelection"
             :data="userGroup"
+             v-loading="loading"
           >
             <el-input size="mini" style="width:20%" />
             <el-button size="mini" class="suo" icon="el-icon-search" show-overflow-tooltip></el-button>
@@ -276,7 +281,7 @@
       </div>
       <div v-if="delMoreShow">
         <template>
-          <el-table style="width: 100%" :data="deletMoreDatas[0]">
+          <el-table style="width: 100%" :data="JSON.parse(delData)">
             <el-table-column label="用户名" width="180" prop="Name"></el-table-column>
             <el-table-column prop="Uid" label="账户ID" width="180"></el-table-column>
             <el-table-column label="密钥ID"></el-table-column>
@@ -331,12 +336,14 @@ export default {
       dialogDeleteUser: false,
       delTitle: "",
       delNewData: [],
-      deletMoreDatas: [],
       delRowShow: false,
       delMoreShow: false,
       deleteName: "",
+      deleteRowName: "",
       selectData: [],
+      deleteMoreUser: [],
       delUin: "",
+      loading:true,
       options: [
         {
           value: 0,
@@ -354,20 +361,22 @@ export default {
   },
   methods: {
     suerDelUser() {
+      console.log(this.delTitle == "批量删除")
       if (this.delTitle == "删除用户") {
         let params = {
           Version: "2019-01-16",
-          Name: this.deleteName
+          Name: this.deleteRowName
         };
         this.axios
           .post(DELETE_USER, params)
           .then(data => {
             console.log(data);
+            this.init();
           })
           .then(() => {
             let delparams = {
               QcloudUin: this.delUin,
-              SubAccountname: this.deleteName
+              SubAccountname: this.deleteRowName
             };
             this.axios
               .post(
@@ -385,12 +394,14 @@ export default {
         this.selectData.forEach(item => {
           removeIndex.unshift(item.Name);
         });
+        console.log(this.delData)
         removeIndex.forEach(item => {
           let params = {
             Version: "2019-01-16",
             Name: item
           };
           this.axios.post(DELETE_USER, params).then(data => {
+            console.log(data);
             this.init();
           });
         });
@@ -399,12 +410,14 @@ export default {
     },
     delUserRow(val) {
       this.delUin = val.Uin;
+      this.deleteRowName = val.Name;
       this.delTitle = "删除用户";
       this.dialogDeleteUser = true;
       let newdelData = [];
       newdelData.push(val);
       this.delNewData = newdelData;
-      console.log(val);
+      this.delRowShow = true;
+      this.delMoreShow = false;
     },
     //搜索
     userSearch() {
@@ -440,8 +453,18 @@ export default {
         Version: "2019-01-16"
       };
       this.axios.post(USER_LIST, userList).then(data => {
-        this.tableData = data.Response.Data;
-        this.json = data.Response.Data;
+        if(data != ""){
+          this.loading = false;
+          this.tableData = data.Response.Data;
+          this.json = data.Response.Data;       
+        }else{
+          this.loading = false;
+            this.$message({
+              type: "info",
+              message: "无响应数据！"
+            });
+        }
+       
       });
     },
     //初始化策略数据
@@ -453,7 +476,16 @@ export default {
         params["Keyword"] = this.searchStrategyValue;
       }
       this.axios.post(POLICY_LIST, params).then(res => {
-        this.strategyData = res.Response.List;
+        if(res != ""){
+          this.loading = false;
+          this.strategyData = res.Response.List;     
+        }else{
+          this.loading = false;
+            this.$message({
+              type: "info",
+              message: "无响应数据！"
+            });
+        }
       });
     },
     //点击搜索策略数据
@@ -469,7 +501,16 @@ export default {
         params["Keyword"] = this.searchGroupValue;
       }
       this.axios.post(USER_GROUP, params).then(res => {
-        this.userGroup = res.Response.GroupInfo;
+        if(res != ""){
+          this.loading = false;
+          this.userGroup = res.Response.GroupInfo; 
+        }else{
+          this.loading = false;
+            this.$message({
+              type: "info",
+              message: "无响应数据！"
+            });
+        }
       });
     },
     //搜索用户组数据
@@ -520,9 +561,8 @@ export default {
     handleSelectionChange(val) {
       this.selectData = val;
       this.inputShow = false;
-      let delMoreData = [];
-      delMoreData.push(val);
-      this.deletMoreDatas = delMoreData;
+      this.delData = JSON.stringify(val)
+      console.log(this.selectData)
     },
     //点击添加到组事件
     addRroup(uid) {
@@ -576,8 +616,7 @@ export default {
             "Info.0.GroupId": item.GroupId
           };
           this.axios.post(ADD_USERTOGROUP, params).then(res => {
-            console.log(res);
-          });
+           });
         });
         this.authorization = false;
       }
@@ -667,7 +706,7 @@ export default {
     width: 100%;
     margin-bottom: 20px;
     .addUser {
-      height: 35px;
+      height: 32px;
       min-width: 24px;
       padding: 0 20px;
       background-color: #006eff;
@@ -679,7 +718,7 @@ export default {
       outline: 0;
       box-sizing: border-box;
       text-decoration: none;
-      margin-left: 35px;
+      margin-left: 33px;
     }
     .select {
       height: 10px;
@@ -695,6 +734,12 @@ export default {
   }
   .tableBody {
     width: 100%;
+    .wrapTwo {
+      width: 96%;
+      margin: 0 auto;
+      height: 570px;
+      background: white;
+    }
     .detialsUser {
       width: 20%;
       float: left;
