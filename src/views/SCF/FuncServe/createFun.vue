@@ -2,7 +2,7 @@
   <div>
     <div class="topCreateFun">
       <span class="el-icon-back" @click="backFunlist"></span>
-      <span class="createFunTit">创建函数</span>
+      <span class="createFunTit">{{ $t('SCF.total.cjhs') }}</span>
       <span class="docRight">
         <!-- <a href="#">
           命令行工具创建函数
@@ -17,19 +17,19 @@
     <div class="mainContent">
       <div class="stepOneTopTit newClear">
         <span>1</span>
-        <span>基础信息</span>
+        <span>{{ $t('SCF.total.jcxx') }}</span>
         <span>></span>
         <span>2</span>
-        <span>函数配置</span>
+        <span>{{ $t('SCF.total.hspz') }}</span>
       </div>
       <div class="mainContForm">
         <el-form :model="createFunTable" label-width="80px">
-          <el-form-item label="函数名称" :required="true">
+          <el-form-item :label="$t('SCF.total.hsmc')" :required="true">
             <el-input class="funNameIpt" v-model="createFunTable.funName"></el-input>
-            <p class="tipCon">1. 最多60个字符，最少2个字符</p>
-            <p class="tipCon">2. 字母开头，支持 a-z，A-Z，0-9，-，_，且需要以数字或字母结尾</p>
+            <p class="tipCon">{{ $t('SCF.total.ts1') }}</p>
+            <p class="tipCon">{{ $t('SCF.total.ts2') }}</p>
           </el-form-item>
-          <el-form-item label="运行环境">
+          <el-form-item :label="$t('SCF.total.yxhj')">
             <el-select v-model="createFunTable.runMoment" @change="changerunMoment">
               <el-option label="Python2.7" value="Python2.7"></el-option>
               <el-option label="Python3.6" value="Python3.6"></el-option>
@@ -41,15 +41,15 @@
               <el-option label="Golang1" value="Golang1"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="创建环境">
+          <el-form-item :label="$t('SCF.total.cjhj')">
             <div class="tabBtn">
               <div
                 class="tabBtnBox tabBtnOne"
                 :class="clickTab==true?'addBorderColor':''"
                 @click="clickTab=true"
               >
-                <p>模板函数</p>
-                <p>使用示例代码模板创建函数</p>
+                <p>{{ $t('SCF.total.mbhs') }}</p>
+                <p>{{ $t('SCF.total.symbcjhs') }}</p>
               </div>
               <!-- <div class="tabBtnBox tabBtnTwo" :class="clickTab==false?'addBorderColor':''" @click="clickTab=false">
                 <p>空白函数</p>
@@ -58,7 +58,7 @@
             </div>
           </el-form-item>
           <div v-if="clickTab">
-            <el-form-item label="模板搜索">
+            <el-form-item :label="$t('SCF.total.mbss')">
               <el-input class="searchIpt" v-model="searchName"></el-input>
               <el-button class="btn" @click="doFilter" icon="el-icon-search"></el-button>
             </el-form-item>
@@ -72,9 +72,9 @@
                   >
                     <div class="funListBoxConTit newClear">
                       <span class="titNew">{{item.Name}}</span>
-                      <a class="lookDetail" @click="lookFunDetails(item.DemoId)">查看详情</a>
+                      <a class="lookDetail" @click="lookFunDetails(item.DemoId)">{{ $t('SCF.total.ckxq') }}</a>
                       <el-dialog
-                        title="模板详情"
+                        :title="$t('SCF.total.mbxq')"
                         :visible.sync="dialogVisible"
                         width="30%"
                         :before-close="handleClose"
@@ -82,46 +82,46 @@
                       >
                         <div class="detailBoxCon">
                           <div class="detailBoxConOne detailBoxC">
-                            <h2>基础信息</h2>
+                            <h2>{{ $t('SCF.total.jcxx') }}</h2>
                             <div class="detailBoxCen">
                               <p>
-                                <span class="leftWidth">名称</span>
+                                <span class="leftWidth">{{ $t('SCF.total.mc') }}</span>
                                 <span>{{DataBeginDetail.application.Chinese.name}}</span>
                               </p>
                               <p>
-                                <span class="leftWidth">语言</span>
+                                <span class="leftWidth">{{ $t('SCF.total.yy') }}</span>
                                 <span>{{DataBeginDetail.functions.runtime}}</span>
                               </p>
                               <p>
-                                <span class="leftWidth">描述</span>
+                                <span class="leftWidth">{{ $t('SCF.total.ms') }}</span>
                                 <span>{{DataBeginDetail.functions.description}}</span>
                               </p>
                               <p>
-                                <span class="leftWidth">作者</span>
+                                <span class="leftWidth">{{ $t('SCF.total.zz') }}</span>
                                 <span>{{DataBeginDetail.application.Chinese.author.name}}</span>
                               </p>
                             </div>
                           </div>
                           <div class="detailBoxConTwo detailBoxC">
                             <h2>
-                              输入参数
+                              {{ $t('SCF.total.srcs') }}
                               <i class="el-icon-document-copy"></i>
                             </h2>
                             <p>{{DataBeginDetail.application.input_parameters}}</p>
                           </div>
                           <div class="detailBoxConThree detailBoxC">
                             <h2>
-                              输出参数
+                              {{ $t('SCF.total.sccs') }}
                               <i class="el-icon-document-copy"></i>
                             </h2>
                             <p>{{DataBeginDetail.application.output_parameters}}</p>
                           </div>
                           <div class="detailBoxConFour detailBoxC">
-                            <h2>注意事项</h2>
-                            <p>无</p>
+                            <h2>{{ $t('SCF.total.zysx') }}</h2>
+                            <p>{{ $t('SCF.total.wu') }}</p>
                           </div>
                           <div class="detailBoxConFour detailBoxC">
-                            <h2>证书</h2>
+                            <h2>{{ $t('SCF.total.zshu') }}</h2>
                             <p>{{DataBeginDetail.application.Chinese.license.content}}</p>
                           </div>
                           <div class="detailBoxConFive detailBoxC">
@@ -130,28 +130,28 @@
                           </div>
                         </div>
                         <span slot="footer" class="dialog-footer">
-                          <el-button @click="dialogVisible = false">关闭</el-button>
+                          <el-button @click="dialogVisible = false">{{ $t('SCF.total.gb') }}</el-button>
                           <!-- <el-button type="primary" @click="">提交</el-button> -->
                         </span>
                       </el-dialog>
                     </div>
                     <div class="funListBoxConP">
                       <p class="funListLangu">
-                        <span>语言</span>
+                        <span>{{ $t('SCF.total.yy') }}</span>
                         <span>{{item.Runtime}}</span>
                       </p>
                       <p class="funListDesc">
-                        <span style="width:40px;">描述</span>
+                        <span style="width:40px;">{{ $t('SCF.total.ms') }}</span>
                         <span class="funListDescspan">{{item.Describe}}</span>
                       </p>
                       <p class="funListTags">
-                        <span>标签</span>
+                        <span>{{ $t('SCF.total.bq') }}</span>
                         <span v-for="(i, index) in UpTags(item.Tags)" :key="index">
                           <el-tag type="info" size="mini">{{i}}</el-tag>
                         </span>
                       </p>
                       <p class="funListpublish">
-                        <span>部署</span>
+                        <span>{{ $t('SCF.total.bs') }}</span>
                         <span>{{item.Stars}}次</span>
                       </p>
                     </div>
@@ -174,7 +174,7 @@
         </el-form>
       </div>
 
-      <el-button class="nextStep" @click="nextStep">下一步</el-button>
+      <el-button class="nextStep" @click="nextStep">{{ $t('SCF.total.xyb') }}</el-button>
     </div>
   </div>
 </template>
@@ -283,7 +283,7 @@ export default {
       if (this.searchName !== "") {
         this.GetTemplateList();
       } else {
-        this.$message("请输入相关语言搜索");
+        this.$message('請輸入相關語言搜索');
       }
     },
     // 分页开始
@@ -303,13 +303,13 @@ export default {
     currentChangePage(list) {},
     nextStep() {
       if (this.DemoId === "") {
-        this.$message("请选择函数模板");
+        this.$message('請選擇函數模板');
       }
       window.sessionStorage.setItem("funNameSess", this.createFunTable.funName);
       window.sessionStorage.setItem("runMoent", this.createFunTable.runMoment);
       window.sessionStorage.setItem("DemoId", this.DemoId);
       if (this.createFunTable.funName == "") {
-        this.$message("函数名不能为空");
+        this.$message('函數名不能為空');
         return false;
       }
       this.$router.push({
@@ -321,7 +321,7 @@ export default {
       this.GetTemplateDetail();
     },
     handleClose(done) {
-      this.$confirm("确认关闭？")
+      this.$confirm('確認關閉？')
         .then(_ => {
           done();
         })

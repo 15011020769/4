@@ -274,17 +274,17 @@ export default {
         }
       ],
       copyIndex2: "",
-      filterConrent: "选择资源属性进行过滤",
+      filterConrent: "選擇資源屬性進行過濾",
       showTips: false,
       isbol: false,
       State:{
         Active:'正常',
-        Creating: '创建中...',
+        Creating: '創建中...',
         Updating:'更新中...',
-        Publishing: '发布中...',
-        UpdatingAndPublishing:'更新发布中...',
-        CreateFailed: '创建失败',
-        UpdateFailed:'更新失败'
+        Publishing: '發布中...',
+        UpdatingAndPublishing:'更新發布中...',
+        CreateFailed: '創建失敗',
+        UpdateFailed:'更新失敗'
       }
     };
   },

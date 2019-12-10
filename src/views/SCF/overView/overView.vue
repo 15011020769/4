@@ -1,14 +1,14 @@
 <template>
   <div>
     <div class="topOverView">
-      <span>概览</span>
+      <span>{{ $t('SCF.total.gl') }}</span>
     </div>
     <div class="mainContainer">
       <div class="contentTop">
         <el-row>
           <el-col :span="6">
             <div class="modelList">
-              <p>函数数量</p>
+              <p>{{ $t('SCF.total.hssl') }}</p>
               <p>
                 <span>{{topList.number}}</span>
                 <span>个</span>
@@ -17,82 +17,82 @@
           </el-col>
           <el-col :span="6">
             <div class="modelList">
-              <p>本月调用数</p>
+              <p>{{ $t('SCF.total.bydys') }}</p>
               <p>
                 <span>{{topList.invokecount}}</span>
                 <span>次</span>
               </p>
-              <p>昨日调用数{{topList.yinvokecount}}次</p>
+              <p>{{ $t('SCF.total.zrdys') }}{{topList.yinvokecount}}次</p>
             </div>
           </el-col>
           <el-col :span="6">
             <div class="modelList">
-              <p>本月资源量</p>
+              <p>{{ $t('SCF.total.byzyl') }}</p>
               <p>
                 <span>{{topList.gbs}}</span>
                 <span>GBs</span>
               </p>
-              <p>昨日资源量{{topList.ygbs}}GBs</p>
+              <p>{{ $t('SCF.total.zrzyl') }}{{topList.ygbs}}GBs</p>
             </div>
           </el-col>
           <el-col :span="6">
             <div class="modelList">
-              <p>本月出流量</p>
+              <p>{{ $t('SCF.total.bycll') }}</p>
               <p>
                 <span>{{topList.outflow}}</span>
                 <span>GB</span>
               </p>
-              <p>昨日出流量{{topList.youtflow}}GB</p>
+              <p>{{ $t('SCF.total.zrcll') }}{{topList.youtflow}}GB</p>
             </div>
           </el-col>
         </el-row>
       </div>
       <div class="modelchart">
-        <h3>使用统计</h3>
+        <h3>{{ $t('SCF.total.sytj') }}</h3>
         <div>
-          <el-input class="addressName" readonly="readonly" v-model="addressIpt"></el-input>
+          <el-button class="addressName" readonly="readonly" v-model="addressIpt">{{ $t('SCF.total.zgtb') }}</el-button>
           <XTimeX v-on:switchData="GetDat" :classsvalue="value"></XTimeX>
         </div>
         <div class="chartShowCon">
           <div class="chartShowTit">
             <el-button-group>
               <el-button @click="btnClick(1)" :class="{'addColor':type=='1'}">
-                调用次数
+                {{ $t('SCF.total.dycs') }}
                 <span>(次)</span>
               </el-button>
               <el-button @click="btnClick(2)" :class="{'addColor':type=='2'}">
-                外网出流量
+                {{ $t('SCF.total.wwcll') }}
                 <span>(KB)</span>
               </el-button>
               <el-button @click="btnClick(3)" :class="{'addColor':type=='3'}">
-                运行内存
+                {{ $t('SCF.total.yxnc') }}
                 <span>(MB)</span>
               </el-button>
               <el-button @click="btnClick(4)" :class="{'addColor':type=='4'}">
-                运行时间
+                {{ $t('SCF.total.yxsj') }}
                 <span>(ms)</span>
               </el-button>
               <el-button @click="btnClick(5)" :class="{'addColor':type=='5'}">
-                错误次数
+                {{ $t('SCF.total.cwcs') }}
                 <span>(次)</span>
               </el-button>
               <el-button @click="btnClick(6)" :class="{'addColor':type=='6'}">
-                并发执行个数
+                {{ $t('SCF.total.bfzxgs') }}
                 <span>(个)</span>
               </el-button>
               <el-button @click="btnClick(7)" :class="{'addColor':type=='7'}">
-                受限次数
+                {{ $t('SCF.total.sxcs') }}
                 <span>(次)</span>
               </el-button>
             </el-button-group>
           </div>
 
-          <div class="chartNum newClear">
-            <span>函数{{newData}}TOP 10统计</span>
+          <!-- <div class="chartNum newClear">
+            <span>{{ $t('SCF.total.zwbm') }}函数{{newData}}TOP 10统计</span>
             <span>
-              <a>刷新</a>
+              <a>{{ $t('SCF.total.zwbm') }}刷新</a>
             </span>
-          </div>
+          </div> -->
           <div class="chartTable">
             <!-- <el-table :data="tableData"  ref="multipleTable" class="funDataTable">
             <el-table-column prop="funName" label="函数名"></el-table-column>
@@ -109,7 +109,7 @@
               <div class="chartCon" id="echartsShow" ref="chartY">
                 <el-table-column prop="DataPoints" width="550">
                   <template slot-scope="scope">
-                    <p v-if="scope.row.DataPoints[0].Values.length==0">暂无数据</p>
+                    <p v-if="scope.row.DataPoints[0].Values.length==0">{{ $t('SCF.total.zwsj') }}</p>
                     <div class="echart" v-if="scope.row.DataPoints[0].Values.length!=0">
                       <echart-line
                         id="diskEchearrts-line"
@@ -153,7 +153,7 @@ export default {
       funlistname: [],
       funlistversion: [],
       functionName: this.$route.query.FunctionName,
-      addressIpt: "中国台北",
+      addressIpt: "台灣台北",
       topList: {
         number: "",
         gbs: "",

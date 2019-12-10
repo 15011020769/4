@@ -1,4 +1,9 @@
 module.exports = {
+    CLA: {
+        total: {
+
+        }
+    },
     COM: {
         calculate: '計算',
         cvm: '雲伺服器',

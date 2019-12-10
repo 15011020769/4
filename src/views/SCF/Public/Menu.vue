@@ -1,6 +1,6 @@
 <template>
   <div class="SCF">
-    <div class="big-title">云函数</div>
+    <div class="big-title">{{ $t('SCF.total.yhs') }}</div>
     <el-menu
       default-active="2"
       class="el-menu-vertical-demo"
@@ -13,11 +13,11 @@
     >
       <el-menu-item index="OverView">
         <i class="iconfont">&#xe615;</i>
-        <span slot="title">概览</span>
+        <span slot="title">{{ $t('SCF.total.gl') }}</span>
       </el-menu-item>
       <el-menu-item index="FuncServe">
         <i class="iconfont">&#xe679;</i>
-        <span slot="title">函数服务</span>
+        <span slot="title">{{ $t('SCF.total.hsfw') }}</span>
       </el-menu-item>
     </el-menu>
   </div>
