@@ -45,8 +45,8 @@ import importUrl from './model/importUrl'
 import exportUrl from './model/exportUrl'
 export default {
   props: {
-    resourceId:'',//资源ID
-    ccUrlWhiteList: [], //CC的Url白名单
+    resourceId:String,//资源ID
+    ccUrlWhiteList: Array, //CC的Url白名单
   },
   data(){
     return{

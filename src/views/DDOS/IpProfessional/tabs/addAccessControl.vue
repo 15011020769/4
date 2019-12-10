@@ -2,7 +2,7 @@
   <div id="addAccessControl">
     <div class="ccProtectPartThree">
       <div class="partThreeTop newClear">
-        <el-button class="addAccessBtn">添加访问控制策略</el-button>
+        <el-button class="addAccessBtn" @click="addAccessModel">添加访问控制策略</el-button>
         <span class="topTipAdd">基于HTTP字段进行访问控制或者基于源IP进行访问限速,最多可以添加5条策略</span>
         <span class="floatRightSearch">
           <el-input class="searchIpt" placeholder="请输入要查找的策略名称" v-model="tableDataName"></el-input><el-button @click="doFilter" class="el-icon-search"></el-button>
@@ -42,9 +42,11 @@
 			  </div>
       </div>
     </div>
+    <addAccessModel :isShow="addAccessContModel" @closeDialogModel="closeDialogModel" @addAccessContSure="addAccessContSure"/>
   </div>
 </template>
 <script>
+import addAccessModel from '../model/addAccessContModel'
 export default {
   data(){
     return{
@@ -55,6 +57,7 @@ export default {
       pageSize: 10,//每页长度
       totalItems: 0,//总数
       filterTableDataEnd: [],//过滤后的数组
+      addAccessContModel:false,//添加访问控制策略弹框
       flag: false,
       allData:[
         {
@@ -69,6 +72,9 @@ export default {
         }
       ]
     }
+  },
+  components:{
+    addAccessModel:addAccessModel
   },
   // computed:{
   //   getData1(){
@@ -140,6 +146,18 @@ export default {
           this.tableDataEnd.push(list[from]);
         }
       }
+    },
+    //添加访问控制策略弹框
+    addAccessModel(){
+      this.addAccessContModel=true;
+    },
+    //添加访问控制策略弹框关闭按钮
+    closeDialogModel(isShow){
+      this.addAccessContModel=isShow;
+    },
+    //添加访问控制策略确定按钮
+    addAccessContSure(isShow){
+      this.addAccessContModel=isShow;
     }
   }
 }

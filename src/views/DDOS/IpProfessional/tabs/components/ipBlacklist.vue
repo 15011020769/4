@@ -46,7 +46,7 @@ import exportIpBlack from './model/exportIpBlack'
 import { CC_IPALLOWDENY } from '@/constants'
 export default {
   props: {
-    resourceId:'',//资源ID
+    resourceId:String,//资源ID
   },
   data(){
     return{

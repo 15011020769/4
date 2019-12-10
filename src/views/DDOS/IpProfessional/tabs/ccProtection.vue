@@ -62,7 +62,7 @@ import addIpList from './addIpList'
 import { RESOURCE_LIST, CC_THRESHOLD, CC_URLALLOW, DDOSPOLICY_CONT, CC_SELFDEFINEPOLICY_CREATE } from '@/constants'
 export default {
   props: {
-    ccProtectSele:'',//第一部分下拉 资源ID
+    ccProtectSele:String,//第一部分下拉 资源ID
   },
   data(){
     return{
