@@ -166,7 +166,7 @@ export default {
           .post(`${process.env.VUE_APP_adminUrl}ttaifucloud/account/manage/forword`, params)
           .then(({ data }) => {
             console.log(data)
-            if (data.Data.RetCode === '00') {
+            if (data.RetCode === '00') {
               window.location.href = data.Data.url
             } else {
               this.$message.error('返回異常，請重試');
