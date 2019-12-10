@@ -34,7 +34,7 @@
         </el-select>
       </div>
       <div class="mainConListAll mainConListTwo">
-        <el-tabs class="tabsCard" v-model="activeName1" type="card" @tab-click="handleClick2">
+        <el-tabs class="tabsCard" v-model="activeName2" type="card" @tab-click="handleClick2">
           <el-tab-pane label="业务流量宽带" name="traffic">
             <div id="myChart4"></div>
           </el-tab-pane>

@@ -72,7 +72,8 @@
       </div>
       <div class="mainConListAll mainConListFour">
         <h3>DDoS攻击详情</h3>
-        <el-table
+        <div class="ddosTableMin">
+          <el-table
           :data="tableDataOfDescribeDDoSNetEvList.slice((currentPage-1)*pageSize,currentPage*pageSize)"
         >
           <el-table-column prop="attackTime" label="攻击时间"></el-table-column>
@@ -85,6 +86,8 @@
             </template>
           </el-table-column>
         </el-table>
+        </div>
+        
         <div class="tabListPage">
           <el-pagination
             @size-change="handleSizeChange"
@@ -505,4 +508,7 @@ export default {
 };
 </script>
 <style lang="scss">
+.ddosTableMin{
+  min-height:450px;
+}
 </style>

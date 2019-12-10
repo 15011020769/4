@@ -36,13 +36,14 @@
         <div class="mainConListAll mainConListTwo">
     
           
-            <div id="myChart3"></div>
+            <div id="myChart3" ref="chart"></div>
       
     
       </div>
       <div class="mainConListAll">
         <h3>CC攻击记录</h3>
-        <el-table
+        <div class="ddosTableMin">
+          <el-table
           :data="tableDataOfDescribeDDoSNetEvListcc.slice((currentPage-1)*pageSize,currentPage*pageSize)"
         >
           <el-table-column prop="attackTime" label="攻击时间"></el-table-column>
@@ -52,6 +53,8 @@
           <el-table-column prop="attackReqTop" label="攻击请求峰值（QPS）"></el-table-column>
           <el-table-column prop="attackResou" label="攻击源"></el-table-column>
         </el-table>
+        </div>
+        
         <div class="tabListPage">
           <el-pagination
             @size-change="handleSizeChange"
@@ -124,9 +127,15 @@ export default {
 
     },
   },
-
+  // mounted(){
+  //   this.$nextTick(function () {
+  //     this.thisTime(1)
+  //   })
+  // },
   created() {
-    this.thisTime(1)
+    this.$nextTick(function () {
+      this.thisTime(1)
+    })
   },
   methods:{
     // CC资源Id变化时，重新获取数据
@@ -310,7 +319,7 @@ export default {
       arr.splice(arr.length - 1, 1);
       // console.log(arr)
       // 基于准备好的dom，初始化echarts实例
-      let myChart3 = this.$echarts.init(document.getElementById("myChart3"));
+      let myChart3 = this.$echarts.init(this.$refs.chart);
       // 绘制图表
       myChart3.setOption({
         color: ["rgb(124, 181, 236)"],
