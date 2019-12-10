@@ -10,74 +10,74 @@
         <div class="box-content">
           <div class="item">
             <ul>
-              <li class="li-title">{{$t("COM.COM.calculate")}}</li>
-              <li class="li-sub" @click="go('../CVM/index.html#/cloudHost')">{{$t("COM.COM.cvm")}}</li>
-              <li class="li-sub" @click="go('../CVM/index.html#/cloudDisk')">{{$t("COM.COM.cbs")}}</li>
-              <li @click="testFun">{{$t("COM.COM.as")}}</li>
-              <li class="li-sub" @click="go('../AS/index.html#/flexGroup')">{{$t("COM.COM.tke")}}</li>
+              <li class="li-title">{{$t("COM.calculate")}}</li>
+              <li class="li-sub" @click="go('../CVM/index.html#/cloudHost')">{{$t("COM.cvm")}}</li>
+              <li class="li-sub" @click="go('../CVM/index.html#/cloudDisk')">{{$t("COM.cbs")}}</li>
+              <li @click="testFun">{{$t("COM.as")}}</li>
+              <li class="li-sub" @click="go('../AS/index.html#/flexGroup')">{{$t("COM.tke")}}</li>
             </ul>
             <ul>
-              <li class="li-title">{{$t("COM.COM.tool")}}</li>
-              <li @click="testFun">{{$t("COM.COM.cm")}}</li>
-              <li @click="testFun">{{$t("COM.COM.cloudAudit")}}</li>
-              <li @click="testFun">{{$t("COM.COM.cam")}}</li>
+              <li class="li-title">{{$t("COM.tool")}}</li>
+              <li @click="testFun">{{$t("COM.cm")}}</li>
+              <li @click="testFun">{{$t("COM.cloudAudit")}}</li>
+              <li @click="testFun">{{$t("COM.cam")}}</li>
             </ul>
             <ul>
-              <li class="li-title">{{$t("COM.COM.server")}}</li>
-              <li @click="testFun">{{$t("COM.COM.vod")}}</li>
-              <li @click="testFun">{{$t("COM.COM.live")}}</li>
-            </ul>
-          </div>
-          <div class="item">
-            <ul>
-              <li class="li-title">{{$t("COM.COM.safe")}}</li>
-              <li @click="testFun">{{$t("COM.COM.yunjing")}}</li>
-              <li @click="testFun">{{$t("COM.COM.ddos")}}</li>
-              <li @click="testFun">{{$t("COM.COM.waf")}}</li>
-              <li @click="testFun">{{$t("COM.COM.bgp")}}</li>
-              <li @click="testFun">{{$t("COM.COM.kms")}}</li>
-            </ul>
-            <ul>
-              <li class="li-title">{{$t("COM.COM.database")}}</li>
-              <li class="li-sub" @click="go('../MYSQL/index.html#/instancesList')">{{$t("COM.COM.database")}}MySQL</li>
-              <li class="li-sub" @click="go('../Redis/index.html#/exampleList')">{{$t("COM.COM.database")}}Redis</li>
-            </ul>
-            <ul>
-              <li class="li-title">{{$t("COM.COM.middleware")}}</li>
-              <li @click="testFun">{{$t("COM.COM.ckafka")}}</li>
+              <li class="li-title">{{$t("COM.server")}}</li>
+              <li @click="testFun">{{$t("COM.vod")}}</li>
+              <li @click="testFun">{{$t("COM.live")}}</li>
             </ul>
           </div>
           <div class="item">
             <ul>
-              <li class="li-title">{{$t("COM.COM.net")}}</li>
-              <li class="li-sub" @click="go('../CLB/index.html#/LB')">{{$t("COM.COM.clb")}}</li>
-              <li class="li-sub" @click="go('../DC/index.html#/lineAisle')">{{$t("COM.COM.dc")}}</li>
-              <li class="li-sub" @click="go('../VPC/index.html#/priNetwork')">{{$t("COM.COM.vpc")}}</li>
-              <li class="li-sub" @click="go('../VPC/index.html#/elaCard')">{{$t("COM.COM.eni")}}</li>
-              <li class="li-sub" @click="go('../VPC/index.html#/natGateway')">{{$t("COM.COM.nat")}}</li>
-              <li class="li-sub" @click="go('../VPC/index.html#/vpnGateway')">{{$t("COM.COM.vpn")}}</li>
-              <li class="li-sub" @click="go('../CVM/index.html#/elasticityIp')">{{$t("COM.COM.eip")}}</li>
-              <li class="li-sub" @click="go('../CCN/index.html#/ccnPage')">{{$t("COM.COM.ccn")}}</li>
+              <li class="li-title">{{$t("COM.safe")}}</li>
+              <li @click="testFun">{{$t("COM.yunjing")}}</li>
+              <li @click="testFun">{{$t("COM.ddos")}}</li>
+              <li @click="testFun">{{$t("COM.waf")}}</li>
+              <li @click="testFun">{{$t("COM.bgp")}}</li>
+              <li @click="testFun">{{$t("COM.kms")}}</li>
             </ul>
             <ul>
-              <li class="li-title">{{$t("COM.COM.cosTitle")}}</li>
-              <li @click="testFun">{{$t("COM.COM.cos")}}</li>
+              <li class="li-title">{{$t("COM.database")}}</li>
+              <li class="li-sub" @click="go('../MYSQL/index.html#/instancesList')">{{$t("COM.database")}}MySQL</li>
+              <li class="li-sub" @click="go('../Redis/index.html#/exampleList')">{{$t("COM.database")}}Redis</li>
+            </ul>
+            <ul>
+              <li class="li-title">{{$t("COM.middleware")}}</li>
+              <li @click="testFun">{{$t("COM.ckafka")}}</li>
             </ul>
           </div>
           <div class="item">
             <ul>
-              <li class="li-title">{{$t("COM.COM.cdnTitle")}}</li>
+              <li class="li-title">{{$t("COM.net")}}</li>
+              <li class="li-sub" @click="go('../CLB/index.html#/LB')">{{$t("COM.clb")}}</li>
+              <li class="li-sub" @click="go('../DC/index.html#/lineAisle')">{{$t("COM.dc")}}</li>
+              <li class="li-sub" @click="go('../VPC/index.html#/priNetwork')">{{$t("COM.vpc")}}</li>
+              <li class="li-sub" @click="go('../VPC/index.html#/elaCard')">{{$t("COM.eni")}}</li>
+              <li class="li-sub" @click="go('../VPC/index.html#/natGateway')">{{$t("COM.nat")}}</li>
+              <li class="li-sub" @click="go('../VPC/index.html#/vpnGateway')">{{$t("COM.vpn")}}</li>
+              <li class="li-sub" @click="go('../CVM/index.html#/elasticityIp')">{{$t("COM.eip")}}</li>
+              <li class="li-sub" @click="go('../CCN/index.html#/ccnPage')">{{$t("COM.ccn")}}</li>
+            </ul>
+            <ul>
+              <li class="li-title">{{$t("COM.cosTitle")}}</li>
+              <li @click="testFun">{{$t("COM.cos")}}</li>
+            </ul>
+          </div>
+          <div class="item">
+            <ul>
+              <li class="li-title">{{$t("COM.cdnTitle")}}</li>
               <li @click="testFun">CDN</li>
-              <li @click="testFun">{{$t("COM.COM.dsa")}}</li>
-              <li @click="testFun">{{$t("COM.COM.gaap")}}</li>
+              <li @click="testFun">{{$t("COM.dsa")}}</li>
+              <li @click="testFun">{{$t("COM.gaap")}}</li>
             </ul>
             <ul>
               <li class="li-title">Serveless</li>
-              <li @click="testFun">{{$t("COM.COM.scf")}}</li>
+              <li @click="testFun">{{$t("COM.scf")}}</li>
             </ul>
             <ul>
-              <li class="li-title">{{$t("COM.COM.pro")}}</li>
-              <li class="li-sub" @click="go('../PRO/index.html#/proManage')">{{$t("COM.COM.pro")}}</li>
+              <li class="li-title">{{$t("COM.pro")}}</li>
+              <li class="li-sub" @click="go('../PRO/index.html#/proManage')">{{$t("COM.pro")}}</li>
             </ul>
           </div>
         </div>
