@@ -140,9 +140,9 @@
           <el-input
             placeholder="支持搜索用户名"
             size="small"
-            v-model="search"
+            v-model="inpVal"
             style="width:100%"
-            @keyup.enter.native="toQueryUser"
+            @change="_inpVal"
           >
             <i slot="suffix" class="el-input__icon el-icon-search" @click="toQueryUser"></i>
           </el-input>
@@ -212,6 +212,7 @@
 export default {
   data() {
     return {
+      inpVal: "",
       tableHeight: 300,
       form: {
         name: "",
@@ -247,6 +248,11 @@ export default {
     this.init();
   },
   methods: {
+    _inpVal() {
+      if (this.inpVal == "") {
+        this.userData = this.json;
+      }
+    },
     // 初始化方法。
     init() {
       this.selTotal = 0;
@@ -332,8 +338,10 @@ export default {
               }
             }
             _this.userData = _this.userAllData;
+            _this.json = _this.userData;
           } else {
             _this.userData = _this.userAllData;
+            _this.json = _this.userData;
           }
         })
         .catch(error => {
@@ -471,8 +479,13 @@ export default {
     },
     // 子用户穿梭框查询
     toQueryUser() {
-      if (this.search != "") {
-      }
+      var arr = [];
+      this.userData.forEach(item => {
+        if (item.Name.includes(this.inpVal)) {
+          arr.push(item);
+        }
+      });
+      this.userData = arr;
     },
     //用户组详情
     Interface(groupId) {
