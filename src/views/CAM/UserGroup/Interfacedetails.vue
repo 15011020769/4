@@ -95,8 +95,8 @@
                 :before-close="handleClosePolicies">
                 <div class="container">
                   <div class="container-left">
-                    <span>{{$t('CAM.userList.choosepolicy')}} （共{{totalNumPolicies}}条）</span>
-                    <el-input :placeholder="$t('CAM.userList.searchUserName')" size="small"  v-model="searchPolicies" style="width:100%" @keyup.enter.native="toQueryPolicies">
+                    <span>策略列表 （共{{totalNumPolicies}}条）</span>
+                    <el-input placeholder="搜索" size="small"  v-model="searchPolicies" style="width:100%" @keyup.enter.native="toQueryPolicies">
                        <i slot="suffix" class="el-input__icon el-icon-search" @click="toQueryPolicies"></i>
                     </el-input>
                     <el-table class="table-left" ref="multipleOptionPolicies" :data="policiesAllData" size="small"
@@ -159,14 +159,14 @@
             <!-- tab 用户组用户信息页面 start -->
             <el-tab-pane :label="userLabel" name="second">
               <div class="addbtn">
-                <el-button @click="openUser" size="small" type="primary">{{$t('CAM.userList.createBtn')}}</el-button>
-                <el-button size="small" :disabled="btnVisible" @click="deleteUser">{{$t('CAM.userList.removeUser')}}</el-button>
+                <el-button @click="openUser" size="small" type="primary">添加</el-button>
+                <el-button size="small" :disabled="btnVisible" @click="deleteUser">移除</el-button>
               </div>
               <div>
                 <el-table ref="multipleTable" :data="owneruserData" tooltip-effect="dark"
                   style="width: 100%; border:1px solid #ddd" @selection-change="handleSelectionChangeUsers">
                   <el-table-column type="selection" width="55"></el-table-column>
-                  <el-table-column :label="$t('CAM.userGroup.userName')" prop="Name">
+                  <el-table-column label="用户组名" prop="Name">
                     <template slot-scope="scope">
                       <el-button @click="userDetails(scope.row)" size="mini" type="text">{{scope.row.Name}}</el-button>
                     </template>
@@ -200,8 +200,8 @@
                 custom-class="dialogStyle">
                 <div class="container">
                   <div class="container-left">
-                    <p>{{$t('CAM.userGroup.selection')}}{{totalNumUser}}条）</p>
-                    <el-input :placeholder="$t('CAM.userGroup.searchUser')" size="small"  v-model="searchUser" style="width:100%" @keyup.enter.native="toQueryUser">
+                    <p>{{$t('CAM.userGroup.selection')}}({{totalNumUser}}条）</p>
+                    <el-input  size="small"  v-model="searchUser" style="width:100%" @keyup.enter.native="toQueryUser">
                        <i slot="suffix" class="el-input__icon el-icon-search" @click="toQueryUser"></i>
                     </el-input>
                     <el-table class="table-left" ref="multipleOptionUser" :data="userData" size="small"
@@ -210,7 +210,7 @@
                       <el-table-column type="selection" prop="Uin" width="28"> </el-table-column>
                       <el-table-column prop="Name" :label="$t('CAM.userGroup.user')" show-overflow-tooltip>
                       </el-table-column>
-                      <el-table-column :label="$t('CAM.userGroup.userChose')" width="100">
+                      <el-table-column label="用户类型" width="100">
                         <template slot-scope="scope">
                           <p>{{$t('CAM.userGroup.childUser')}}</p>
                         </template>

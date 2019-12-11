@@ -159,7 +159,7 @@
           >
             <el-table-column type="selection" prop="Uin" width="28"></el-table-column>
             <el-table-column prop="Name"  :label="$t('CAM.userGroup.user')" show-overflow-tooltip></el-table-column>
-            <el-table-column   :label="$t('CAM.userGroup.userChose')" width="100">
+            <el-table-column   label="用户类型" width="100">
               <template slot-scope="scope">
                 <p>{{$t('CAM.userGroup.childUser')}}</p>
               </template>
@@ -183,7 +183,7 @@
             style="width: 100%"
           >
             <el-table-column prop="Name" :label="$t('CAM.userGroup.user')" show-overflow-tooltip></el-table-column>
-            <el-table-column :label="$t('CAM.userGroup.userChose')" width="100">
+            <el-table-column label="用户类型" width="100">
               <template slot-scope="scope">
                 <p>{{$t('CAM.userGroup.userChose')}}</p>
               </template>

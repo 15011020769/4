@@ -35,7 +35,7 @@
         </div>
       </div>
       <div class="container-left">
-        <span style="margin-bottom:20px">已选择（共条）</span>
+        <span style="margin-bottom:20px">已选择</span>
         <el-table class="table-left" ref="multipleSelected" :data="policiesSelectedData" tooltip-effect="dark"
           size="small" :height="tableHeight" style="width: 100%">
           <el-table-column prop="PolicyName" :label="$t('CAM.userList.strategyNames')" show-overflow-tooltip>

@@ -16,7 +16,7 @@
               <td width="170">{{$t('CAM.userList.userRemark')}}</td>
               <td width="200">{{$t('CAM.userList.userPhone')}}</td>
               <td width="200">{{$t('CAM.userList.userEmail')}}</td>
-              <td>>{{$t('CAM.userList.colHandle')}}</td>
+              <td>操作</td>
             </tr>
           </thead>
           <tbody>
@@ -78,7 +78,7 @@
               <p class="omit">{{scope.row.Remark}}</p>
             </template>
           </el-table-column>
-          <el-table-column :label="$t('CAM.userList.userCz')" width="150">
+          <el-table-column label="操作" width="150">
             <template slot-scope="scope">
               <p style="color:#006eff;cursor: pointer;" @click="_del(scope.row)">{{$t('CAM.userList.Remove')}}</p>
             </template>

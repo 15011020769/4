@@ -39,7 +39,7 @@
             :header-cell-style="{height:'20px',padding:'0px 10px'}"
             @selection-change="handleSelectionChange"
           >
-            <el-table-column type="selection" width="60"></el-table-column>
+            <el-table-column type="selection" width="60" v-if="this.policyScope!='QCS'"></el-table-column>
             <el-table-column prop="PolicyName" label="策略名" width="150">
               <template slot-scope="scope">
                 <el-button @click="handleClick(scope.row)" type="text" size="small">{{scope.row.PolicyName}}</el-button>
