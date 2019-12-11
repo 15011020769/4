@@ -1,8 +1,10 @@
 <template>
   <div class="CM-wrap">
     <Loading :show="loadShow" />
+
     <!-- 城市按钮 -->
     <div class="CVM-title">{{$t("CVM.title")}}</div>
+
     <div class="tool">
       <Cities
         :cities="cities"
@@ -19,10 +21,15 @@
         @changeinput="changeinput"
         @clicksearch="clicksearch"
       ></SEARCH>
+      <el-tooltip class="tooltip" effect="dark" content="导出表格" placement="top">
+        <i class="el-icon-download" @click="exportExcel" style="font-size:20px;"></i>
+      </el-tooltip>
     </div>
+
     <!-- 表格 -->
     <div class="Table-SY">
       <el-table
+        id="exportTable"
         :data="ProTableData.slice((currpage - 1) * pagesize, currpage * pagesize)"
         height="550"
         style="width: 100%"
@@ -90,6 +97,8 @@
 </template>
 
 <script>
+import FileSaver from "file-saver";
+import XLSX from "xlsx";
 import Cities from "@/components/public/CITY";
 import SEARCH from "@/components/public/SEARCH";
 import Loading from "@/components/public/Loading";
@@ -163,6 +172,26 @@ export default {
     Loading
   },
   methods: {
+    //导出表格
+    exportExcel() {
+      /* generate workbook object from table */
+      var wb = XLSX.utils.table_to_book(document.querySelector("#exportTable"));
+      /* get binary string as output */
+      var wbout = XLSX.write(wb, {
+        bookType: "xlsx",
+        bookSST: true,
+        type: "array"
+      });
+      try {
+        FileSaver.saveAs(
+          new Blob([wbout], { type: "application/octet-stream" }),
+          this.$t("CVM.title") + ".xlsx"
+        );
+      } catch (e) {
+        if (typeof console !== "undefined") console.log(e, wbout);
+      }
+      return wbout;
+    },
     // 获取城市列表
     GetCity() {
       this.axios.get(ALL_CITY).then(data => {
@@ -267,6 +296,16 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.tooltip {
+  float: left;
+  padding: 0 20px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  margin-left: -340px;
+  margin-top: -4px;
+  cursor: pointer;
+}
 .CM-wrap {
   width: 100%;
   height: 100%;

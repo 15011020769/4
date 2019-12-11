@@ -19,6 +19,9 @@
         @changeinput="changeinput"
         @clicksearch="clicksearch"
       ></SEARCH>
+      <el-tooltip class="tooltip" effect="dark" content="导出表格" placement="top">
+        <i class="el-icon-download" @click="exportExcel" style="font-size:20px;"></i>
+      </el-tooltip>
     </div>
     <!-- 表格 -->
     <div class="Table-SY">
@@ -26,6 +29,7 @@
         :data="ProTableData.slice((currpage - 1) * pagesize, currpage * pagesize)"
         height="550"
         style="width: 100%"
+        id="exportTable"
       >
         <el-table-column prop label="ID/名称 ">
           <template slot-scope="scope">
@@ -61,7 +65,7 @@
         </el-table-column>
         <el-table-column prop label="网关类型">
           <template slot-scope="scope">
-      <p>{{instanceStatus[scope.row.GatewayType]}}</p>
+            <p>{{instanceStatus[scope.row.GatewayType]}}</p>
           </template>
         </el-table-column>
 
@@ -89,6 +93,8 @@
 </template>
 
 <script>
+import FileSaver from "file-saver";
+import XLSX from "xlsx";
 import Cities from "@/components/public/CITY";
 import SEARCH from "@/components/public/SEARCH";
 import Loading from "@/components/public/Loading";
@@ -106,15 +112,14 @@ export default {
         {
           value: "direct-connect-gateway-name",
           label: "网关名称"
-        },
+        }
       ],
       //inp输入的值
       searchValue: "",
       //文字过滤
       instanceStatus: {
         NORMAL: "标准型",
-        NAT: "NAT型",
-
+        NAT: "NAT型"
       },
 
       //城市列表
@@ -140,6 +145,26 @@ export default {
     Loading
   },
   methods: {
+    //导出表格
+    exportExcel() {
+      /* generate workbook object from table */
+      var wb = XLSX.utils.table_to_book(document.querySelector("#exportTable"));
+      /* get binary string as output */
+      var wbout = XLSX.write(wb, {
+        bookType: "xlsx",
+        bookSST: true,
+        type: "array"
+      });
+      try {
+        FileSaver.saveAs(
+          new Blob([wbout], { type: "application/octet-stream" }),
+          "專線網關" + ".xlsx"
+        );
+      } catch (e) {
+        if (typeof console !== "undefined") console.log(e, wbout);
+      }
+      return wbout;
+    },
     // 获取城市列表
     GetCity() {
       this.axios.get(ALL_CITY).then(data => {
@@ -170,11 +195,10 @@ export default {
       this.searchInput = val;
       if (this.searchInput !== "" && this.searchValue !== "") {
         this.GetTabularData();
-      }else if(this.searchInput !== "" || this.searchValue !== "") {
+      } else if (this.searchInput !== "" || this.searchValue !== "") {
         this.GetTabularData();
         this.$message.error("请输入正确搜索信息");
-      }
-      else {
+      } else {
         this.$message.error("请输入正确搜索信息");
       }
     },
@@ -191,17 +215,15 @@ export default {
         param["Filters.0.Values.0"] = this.searchInput;
       }
       // 获取表格数据
-      this.axios
-        .post(DCG_LIST, param)
-        .then(data => {
-          if (data.Response.Error == undefined) {
-            this.ProTableData = data.Response.DirectConnectGatewaySet;
-          } else {
-            this.$message.error(data.Response.Error.Message);
-            // this.ProTableData = []
-          }
-          this.loadShow = false;
-        })
+      this.axios.post(DCG_LIST, param).then(data => {
+        if (data.Response.Error == undefined) {
+          this.ProTableData = data.Response.DirectConnectGatewaySet;
+        } else {
+          this.$message.error(data.Response.Error.Message);
+          // this.ProTableData = []
+        }
+        this.loadShow = false;
+      });
     },
     handleSizeChange(val) {
       this.pagesize = val;
