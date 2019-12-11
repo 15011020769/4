@@ -1,11 +1,11 @@
 <template>
   <div class="wrap">
     <div class="top">
-      <span class="title-left">用户列表</span>
+      <span class="title-left">{{$t('CAM.userList.listTitle')}}</span>
     </div>
     <div class="explain">
-      <p style="font-weight:bold">如何查看更多信息?</p>
-      <p>访问管理对您的敏感信息进行安全升级保护，您可以点击列表中【详情】列下拉按钮【▶】查看用户的身份安全状态、已加入组以及消息订阅等更多信息。您也可以点击用户名进入用户详细信息中查看或编辑。</p>
+      <p style="font-weight:bold">{{$t('CAM.userList.listText')}}</p>
+      <p>{{$t('CAM.userList.listContext')}}</p>
     </div>
     <div class="operation">
       <!-- <button class="addUser" @click="addUser">新增用户</button> -->
@@ -14,7 +14,7 @@
       <el-button type="primary" class="addUser" size="small" @click="deleteMoreUsers">批量删除</el-button>
 
       <el-input
-        placeholder="支持搜索用户名"
+        :placeholder="$t('CAM.userList.searchUser')"
         size="small"
         class="inputSearch"
         v-model="inpVal"
@@ -32,24 +32,22 @@
           v-loading="loading"
         >
           <el-table-column type="selection" width="55"></el-table-column>
-          <el-table-column type="expand" label="详情" width="50">
+          <el-table-column type="expand" :label="$t('CAM.userList.userDetils')" width="50">
             <template slot-scope="scope">
               <div class="form">
                 <el-form label-position="left" inline class="demo-table-expand" v-model="form">
+                  
                   <div class="detialsUser">
-                    <el-form-item label="用户组:"></el-form-item>
-                    <el-form-item label="用户名称:" class="Name">{{scope.row.Name}}</el-form-item>
-                    <el-form-item label="用户类型:">{{scope.row.Remark}}</el-form-item>
+                    <el-form-item :label="$t('CAM.userList.userId')">{{scope.row.Uin}}</el-form-item>
+                    <el-form-item :label="$t('CAM.userList.userChose')">{{scope.row.Remark}}</el-form-item>
                   </div>
                   <div class="detialsUser">
-                    <el-form-item label="账号ID:">{{scope.row.Uin}}</el-form-item>
-                    <el-form-item label="关联信息:"></el-form-item>
-                    <el-form-item label="登录保护:">
-                      <span style="color:red" class="s1">未开启保护</span>
-                    </el-form-item>
+                    <el-form-item
+                      :label="$t('CAM.userList.userName')"
+                      class="Name"
+                    >{{scope.row.Name}}</el-form-item>
                   </div>
-
-                  <div class="detialsUser">
+                  <!-- <div class="detialsUser">
                     <el-form-item label="消息订阅:"></el-form-item>
                     <el-form-item label="操作保护:">
                       <span style="color:red">未开启保护</span>
@@ -63,23 +61,23 @@
                     <el-form-item label="MFA设备:">
                       <span style="color:red">未绑定MFA设备</span>
                     </el-form-item>
-                  </div>
+                  </div>-->
                 </el-form>
               </div>
             </template>
           </el-table-column>
 
-          <el-table-column label="用户名称" prop="Name">
+          <el-table-column :label="$t('CAM.userList.userName')" prop="Name">
             <template slot-scope="scope">
               <el-link @click="detailsUser(scope.row)" type="primary">{{scope.row.Name}}</el-link>
             </template>
           </el-table-column>
 
-          <el-table-column label="用户类型" prop="Remark"></el-table-column>
+          <el-table-column :label="$t('CAM.userList.userChose')" prop="Remark"></el-table-column>
 
-          <el-table-column label="账号ID" prop="Uin"></el-table-column>
+          <el-table-column :label="$t('CAM.userList.userId')" prop="Uin"></el-table-column>
 
-          <el-table-column label="关联信息">
+          <el-table-column :label="$t('CAM.userList.userText')">
             <template slot-scope="scope">
               <i class="el-icon-mobile mobile" @click="detailsUser(scope.row)"></i>
               <i class="el-icon-message message" @click="detailsUser(scope.row)"></i>
@@ -87,7 +85,7 @@
           </el-table-column>
           <el-table-column label="操作" width="140">
             <template scope="scope">
-              <el-button type="text" @click="addRight(scope.row.Uin)">授权</el-button>
+              <el-button type="text" @click="addRight(scope.row.Uin)">{{$t('CAM.userList.userStrage')}}</el-button>
               <span>|</span>
               <el-dropdown :hide-on-click="false">
                 <span class="el-dropdown-link" style="color: #3E8EF7">
@@ -524,9 +522,10 @@ export default {
       this.deletDatas = deletData;
     },
     //选框
-    handleSelectionChange(val) {
+    Select(val) {
       this.selectData = val;
       this.inputShow = false;
+      console.log(val)
       // this.delData = JSON.stringify(val)
       // console.log(this.selectData)
     },

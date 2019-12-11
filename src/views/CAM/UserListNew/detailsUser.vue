@@ -466,6 +466,7 @@ export default {
     //多选框
     Select(val) {
       // this.disabled = false;
+      console.log(val)
       this.valArr = val;
       if(val != ""){
         this.disabled = false;
