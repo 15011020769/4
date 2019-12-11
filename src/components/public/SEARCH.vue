@@ -4,10 +4,10 @@
       <el-option v-for="item in searchOptions" :key="item.value" :label="item.label" :value="item.value">
       </el-option>
     </el-select>
-    <el-input placeholder="请输入IP或主机名" v-model="searchinput" size='small' class="input-with-select esach-inputL"
+    <el-input placeholder="请输入搜索内容" v-model="searchinput" size='small' class="input-with-select esach-inputL"
       @input="changeinput">
     </el-input>
-    <el-button  @click="clicksearch(searchinput)" icon="el-icon-search" class="btn-style" size='small' ></el-button>
+    <el-button @click="clicksearch(searchinput)" icon="el-icon-search" class="btn-style" size='small'></el-button>
   </div>
 </template>
 <script>
@@ -34,7 +34,7 @@
       }
     },
     methods: {
-       //选择搜索条件
+      //选择搜索条件
       changeValue(val) {
         this.$emit('changeValue', val)
       },
@@ -43,7 +43,7 @@
         this.$emit('changeinput', val)
       },
       //点击按钮获取value
-       clicksearch(val) {
+      clicksearch(val) {
         this.$emit('clicksearch', val)
       }
     },
@@ -53,10 +53,12 @@
 <style lang="scss" scoped>
   .search-style {
     display: flex;
+
     .esach-inputL {
       width: 300px;
     }
-    .btn-style{
+
+    .btn-style {
       height: 32px;
     }
   }
