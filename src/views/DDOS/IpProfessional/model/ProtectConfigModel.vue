@@ -176,13 +176,8 @@ export default {
         Business: "net",
       };
       this.axios.post('dayu2/DescribeDDoSPolicy', params).then(res => {
-<<<<<<< HEAD
-        console.log(res);
-        
-=======
         // console.log(res.Response);
         this.topFun = res.Response.DDosPolicyList[0].PolicyName
->>>>>>> DDOS防护状态
       });
     },
     // 获取DDoS防护状态
