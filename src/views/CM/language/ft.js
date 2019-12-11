@@ -19,6 +19,7 @@ module.exports = {
     },
     CVM: {
         slfz: '實例分組',
+        zdyjk: '自定義監控',
         title: '雲伺服器',
         errorTxt: '請輸入正確搜索信息',
         table: {
@@ -94,6 +95,11 @@ module.exports = {
             dx: '大小(GB)',
             yplx: '硬碟類型',
             glyzj: '關聯雲主機ID/名稱',
+        },
+        cloudMysql: {
+           nw: '內網IP/埠',
+           lx: '類型',
+           wl: 'VPC 網路',
         }
 
     },

@@ -19,6 +19,7 @@ module.exports = {
     },
     CVM: {
         slfz: '实例分组',
+        zdyjk: '自定义监控',
         title: '云服务器',
         errorTxt: '请输入正确搜索信息',
         table: {
@@ -94,6 +95,11 @@ module.exports = {
             dx: '大小(GB)',
             yplx: '硬盘类型',
             glyzj: '关联云主机ID/名称',
+        },
+        cloudMysql: {
+           nw: '内网IP/端口',
+           lx: '类型',
+           wl: 'VPC 网络',
         }
     },
     COM: require('@/components/language/jt'),

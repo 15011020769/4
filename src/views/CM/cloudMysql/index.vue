@@ -27,7 +27,7 @@
         height="550"
         style="width: 100%"
       >
-        <el-table-column prop label="ID/名称">
+        <el-table-column prop :label="$t('CVM.cloudDisk.mc')">
           <template slot-scope="scope">
             <p>
               <a
@@ -38,7 +38,7 @@
             <p>{{ scope.row.InstanceName}}</p>
           </template>
         </el-table-column>
-        <el-table-column prop label="监控">
+        <el-table-column prop :label="$t('CVM.clBload.jk')">
           <template slot-scope="scope">
             <div class="a" @click="jump(scope.row.InstanceId)"></div>
             <!-- <a
@@ -47,32 +47,32 @@
             ><i class="el-icon-share"></i></a>-->
           </template>
         </el-table-column>
-        <el-table-column prop label="状态">
+        <el-table-column prop :label="$t('CVM.clBload.zt')">
           <template slot-scope="scope">
             <p
               :class="scope.row.Status===1?'green':scope.row.Status===5?'red':'orange'"
             >{{RestrictState[scope.row.Status]}}</p>
           </template>
         </el-table-column>
-        <el-table-column prop label="内网IP/端口">
+        <el-table-column prop :label="$t('CVM.cloudMysql.nw')">
           <template slot-scope="scope">
             <p>{{scope.row.Vip}}/{{scope.row.Vport}}</p>
           </template>
         </el-table-column>
 
-        <el-table-column prop label="网络类型">
+        <el-table-column prop :label="$t('CVM.clBload.wllx')">
           <template slot-scope="scope">
-            <p>VPC 网络</p>
+            <p>{{ $t('CVM.cloudMysql.wl') }}</p>
           </template>
         </el-table-column>
 
-        <el-table-column prop label="类型">
+        <el-table-column prop :label="$t('CVM.cloudMysql.lx')">
           <template slot-scope="scope">
             <p>{{InstanceTypeState[scope.row.InstanceType]}}</p>
           </template>
         </el-table-column>
 
-        <el-table-column prop="projectName" label="所属项目">
+        <el-table-column prop="projectName" :label="$t('CVM.table.x6')">
           <template slot-scope="scope">
             <p>{{scope.row.projectName}}</p>
           </template>
@@ -104,40 +104,40 @@ export default {
       searchOptions: [
         {
           value: "InstanceIds.0",
-          label: "实例 ID"
+          label: "實例 ID"
         }
       ], //下拉框
       searchValue: "", //inp值
       //文字过滤
       TaskStatusStatus: {
-        0: "没有任务",
-        1: "升级中",
-        2: "数据导入中",
-        3: "开放Slave中",
-        4: "外网访问开通中",
-        5: "批量操作执行中",
-        6: "回档中",
-        7: "外网访问关闭中",
-        8: "密码修改中",
-        9: "实例名修改中",
-        10: "重启中",
-        12: "自建迁移中",
-        13: "删除库表中",
-        14: "灾备实例创建同步中",
-        15: "升级待切换",
-        16: "升级切换中",
-        17: "升级切换完成"
+        0: "沒有任務",
+        1: "升級中",
+        2: "數據導入中",
+        3: "開放Slave中",
+        4: "外網訪問開通中",
+        5: "批量操作執行中",
+        6: "回檔中",
+        7: "外網訪問關閉中",
+        8: "密碼修改中",
+        9: "實例名修改中",
+        10: "重啟中",
+        12: "自建遷移中",
+        13: "刪除庫表中",
+        14: "災備實例創建同步中",
+        15: "升級待切換",
+        16: "升級切換中",
+        17: "升級切換完成"
       },
       RestrictState: {
-        0: "创建中",
-        1: "运行中",
-        4: "隔离中",
-        5: "已隔离"
+        0: "創建中",
+        1: "運行中",
+        4: "隔離中",
+        5: "已隔離"
       },
       InstanceTypeState: {
-        1: "主实例",
-        2: "灾备实例",
-        3: "只读实例"
+        1: "主實例",
+        2: "災備實例",
+        3: "只讀實例"
       },
       cities: [],
       selectedRegion: "ap-taipei", // 默认选中城市
@@ -192,7 +192,7 @@ export default {
       if (this.searchInput !== "" && this.searchValue !== "") {
         this.GetTabularData();
       } else {
-        this.$message.error("请输入正确搜索信息");
+        this.$message.error("請輸入正確搜索信息");
       }
     },
     // 添加项目列表的表格数据
@@ -235,7 +235,7 @@ export default {
                   ].projectName;
                 }
                 if (this.TbaleData[i].ProjectId == 0) {
-                  this.TbaleData[i].projectName = "默认项目";
+                  this.TbaleData[i].projectName = "默認項目";
                 }
               }
             }
