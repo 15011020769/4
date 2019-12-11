@@ -22,6 +22,13 @@ module.exports = {
         zdyjk: '自定义监控',
         nwang: '内网',
         title: '云服务器',
+        sjzx: '事件中心',
+        lljk: '流量监控',
+        gjls: '告警历史',
+        jkgl: '监控概览',
+        zxwg: '专线网关',
+        cftjmb: '触发条件模板',
+        gjpz: '告警配置',
         errorTxt: '请输入正确搜索信息',
         table: {
             x1: 'ID/主机名',

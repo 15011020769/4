@@ -1,5 +1,5 @@
 <template>
   <div>
-    触发条件模板
+    {{$t("CVM.cftjmb")}}
   </div>
 </template>

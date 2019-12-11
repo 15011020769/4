@@ -45,7 +45,7 @@
             <span slot="title">{{$t("menu.title12")}}</span>
           </el-menu-item>
           <el-menu-item index="PrivateGateway">
-            <span slot="title">专线网关</span>
+            <span slot="title">{{$t("CVM.zxwg")}}</span>
           </el-menu-item>
         </el-menu-item-group>
       </el-submenu>

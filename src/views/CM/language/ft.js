@@ -22,6 +22,13 @@ module.exports = {
         zdyjk: '自定義監控',
         nwang: '內網',
         title: '雲伺服器',
+        sjzx: '事件中心',
+        lljk: '流量監控',
+        gjls: '告警歷史',
+        jkgl: '監控概覽',
+        zxwg: '專線網關',
+        cftjmb: '觸發條件模板',
+        gjpz: '告警配置',
         errorTxt: '請輸入正確搜索信息',
         table: {
             x1: 'ID/主機名',

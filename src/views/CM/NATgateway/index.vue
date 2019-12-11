@@ -2,7 +2,7 @@
   <div class="CM-wrap">
     <Loading :show="loadShow" />
     <!-- 城市按钮 -->
-    <div class="CVM-title">NAT网关</div>
+    <div class="CVM-title">{{ $t('CVM.menu.x9') }}</div>
     <div class="tool">
       <Cities
         :cities="cities"
@@ -23,7 +23,7 @@
     <!-- 表格 -->
     <div class="Table-SY">
       <el-table :data="TbaleData" height="550" style="width: 100%">
-        <el-table-column prop label="ID/主机名">
+        <el-table-column prop :label="$t('CVM.clBload.zjm')">
           <template slot-scope="scope">
             <p>
               <a
@@ -35,7 +35,7 @@
           </template>
         </el-table-column>
 
-        <el-table-column prop label="监控">
+        <el-table-column prop :label="$t('CVM.clBload.jk')">
           <template slot-scope="scope">
             <!-- <a @click="jump(scope.row.NatGatewayId)" style="cursor:pointer;">
               <i class="el-icon-share"></i>
@@ -44,19 +44,19 @@
           </template>
         </el-table-column>
 
-        <el-table-column prop label="状态">
+        <el-table-column prop :label="$t('CVM.clBload.zt')">
           <template slot-scope="scope">
             <p :class="scope.row.State == 'FAILED' ? 'red' :' green'">{{natStatu[scope.row.State]}}</p>
           </template>
         </el-table-column>
 
-        <el-table-column prop label="私有网络">
+        <el-table-column prop :label="$t('CVM.menu.x8')">
           <template slot-scope="scope">
             <a href>{{scope.row.VpcId}}</a>
             <p></p>
           </template>
         </el-table-column>
-        <el-table-column prop label="创建时间">
+        <el-table-column prop :label="$t('CVM.clBload.cjsj')">
           <template slot-scope="scope">
             <p>{{scope.row.CreatedTime}}</p>
           </template>
@@ -95,16 +95,16 @@ export default {
         },
         {
           value: "nat-gateway-name",
-          label: "名称"
+          label: "名稱"
         }
       ],
       // 列表数据处理
       natStatu: {
-        PENDING: "生产中",
-        DELETING: "删除中",
-        AVAILABLE: "运行中",
-        UPDATING: "升级中",
-        FAILED: "失败"
+        PENDING: "生產中",
+        DELETING: "刪除中",
+        AVAILABLE: "運行中",
+        UPDATING: "升級中",
+        FAILED: "失敗"
       },
       natConnStatu: {
         100: "小型",
@@ -114,20 +114,20 @@ export default {
       searchValue: "",
       //文字过滤
       instanceStatus: {
-        PENDING: "创建中",
-        LAUNCH_FAILED: "创建失败",
-        RUNNING: "运行中",
-        STOPPED: "已关机",
-        STARTING: "开机中",
-        STOPPING: "关机中",
-        REBOOTING: "重启中",
+        PENDING: "創建中",
+        LAUNCH_FAILED: "創建失敗",
+        RUNNING: "運行中",
+        STOPPED: "已關機",
+        STARTING: "開機中",
+        STOPPING: "關機中",
+        REBOOTING: "重啟中",
         SHUTDOWN: "待回收",
-        TERMINATING: "销毁中"
+        TERMINATING: "銷毀中"
       },
       RestrictState: {
         NORMAL: "健康",
-        EXPIRED: "过期",
-        PROTECTIVELY_ISOLATED: "隔离"
+        EXPIRED: "過期",
+        PROTECTIVELY_ISOLATED: "隔離"
       },
       cities: [],
       selectedRegion: "ap-taipei", // 默认选中城市
@@ -182,7 +182,7 @@ export default {
       if (this.searchInput !== "" && this.searchValue !== "") {
         this.GetTabularData();
       } else {
-        this.$message.error("请输入正确搜索信息");
+        this.$message.error("請輸入正確搜索信息");
       }
     },
     // 获取表格数据

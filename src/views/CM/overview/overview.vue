@@ -1,5 +1,5 @@
 <template>
   <div>
-    监控概览
+    {{ $t('CVM.jkgl') }}
   </div>
 </template>
