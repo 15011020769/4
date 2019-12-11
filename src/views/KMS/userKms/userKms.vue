@@ -22,22 +22,22 @@
             </el-form-item>
             <el-form-item :label="$t('KMS.total.descriptInfo')">
               <el-input v-model="createForm.discription" type="textarea" />
-              <p>最长可输入1024个字符</p>
+              <p>{{$t('KMS.total.tip2')}}</p>
             </el-form-item>
-            <el-form-item label="密钥材料来源">
+            <el-form-item :label="$t('KMS.total.tip2')">
               <el-radio-group v-model="createForm.Type">
                 <el-radio label="KMS"></el-radio>
-                <el-radio label="外部"></el-radio>
+                <el-radio :label="$t('KMS.total.oulCon')"></el-radio>
               </el-radio-group>
             </el-form-item>
           </el-form>
           <span slot="footer" class="dialog-footer">
-            <el-button @click="dialogVisible = false">取 消</el-button>
-            <el-button type="primary" @click="sureNewCreate">确 定</el-button>
+            <el-button @click="dialogVisible = false">{{$t('KMS.total.modelClose')}}</el-button>
+            <el-button type="primary" @click="sureNewCreate">{{$t('KMS.total.modelSure')}}</el-button>
           </span>
         </el-dialog>
         <div class="conRightSearch">
-          <el-input class="iptSearch" placeholder="支持密钥ID、名称搜索" v-model="tableDataName"></el-input>
+          <el-input class="iptSearch" :placeholder="$t('KMS.total.placeholder1')" v-model="tableDataName"></el-input>
           <button class="el-icon-search" @click="doFilter"></button>
         </div>
       </div>
@@ -49,44 +49,44 @@
                 <el-checkbox v-model="scope.row.checked" @click="checkedIsTrue"></el-checkbox>
               </template>-->
             </el-table-column>
-            <el-table-column prop="KeyId" label="密钥ID/密钥名称">
+            <el-table-column prop="KeyId" :label="$t('KMS.total.label1')">
               <template slot-scope="scope">
                 <a href="#" @click="todoDetails(scope.row)">{{scope.row.KeyId}}</a>
                 <br />
                 <span>{{ scope.row.Alias}}</span>
               </template>
             </el-table-column>
-            <el-table-column prop="KeyState" label="状态">
+            <el-table-column prop="KeyState" :label="$t('KMS.total.status')">
               <template slot-scope="scope">
-                <span :style="scope.row.KeyState=='Disabled'||scope.row.KeyState=='PendingDelete'||scope.row.KeyState=='PendingImport'?'color:#ff9d00':'color:#000'">{{scope.row.KeyState=="PendingDelete"?'于'+timestampToTime(scope.row.DeletionDate)+'彻底删除':filterState(scope.row.KeyState)}}</span>
+                <span :style="scope.row.KeyState=='Disabled'||scope.row.KeyState=='PendingDelete'||scope.row.KeyState=='PendingImport'?'color:#ff9d00':'color:#000'">{{scope.row.KeyState=="PendingDelete"?'於'+timestampToTime(scope.row.DeletionDate)+'徹底刪除':filterState(scope.row.KeyState)}}</span>
               </template>
             </el-table-column>
-            <el-table-column prop="CreateTime" label="创建时间" show-overflow-tooltip>
+            <el-table-column prop="CreateTime" :label="$t('KMS.total.createTime')" show-overflow-tooltip>
               <template slot-scope="scope">
                 <span>{{timestampToTime(scope.row.CreateTime)}}</span>
               </template>
             </el-table-column>
-            <el-table-column prop="Origin" label="密钥来源">
+            <el-table-column prop="Origin" :label="$t('KMS.total.kmsOrigin')">
               <template slot-scope="scope">
                 <span>{{filterKey(scope.row.Origin)}}</span>
               </template>
             </el-table-column>
-            <el-table-column prop="kmsChange" label="密钥轮换">
+            <el-table-column prop="kmsChange" :label="$t('KMS.total.kmsChange')">
               <template slot-scope="scope">
-                <a href="#" class="aColorGree" :style="scope.row.KeyState=='PendingDelete'||scope.row.KeyState=='PendingImport'||scope.row.Origin=='EXTERNAL'||scope.row.KeyRotationEnabled==true?'pointer-events:none':'color:#006eff'" @click="startChange(scope.row,$event)">启用轮换</a>
+                <a href="#" class="aColorGree" :style="scope.row.KeyState=='PendingDelete'||scope.row.KeyState=='PendingImport'||scope.row.Origin=='EXTERNAL'||scope.row.KeyRotationEnabled==true?'pointer-events:none':'color:#006eff'" @click="startChange(scope.row,$event)">{{$t('KMS.total.startChange')}}</a>
                 <span class="spanLine">|</span>
-                <a href="#" class="aColorGree" :style="scope.row.KeyState=='PendingDelete'||scope.row.KeyState=='PendingImport'||scope.row.KeyRotationEnabled==false?'pointer-events:none':'color:#006eff'" @click="startChange(scope.row,$event)">禁用轮换</a>
+                <a href="#" class="aColorGree" :style="scope.row.KeyState=='PendingDelete'||scope.row.KeyState=='PendingImport'||scope.row.KeyRotationEnabled==false?'pointer-events:none':'color:#006eff'" @click="startChange(scope.row,$event)">{{$t('KMS.total.stopChange')}}</a>
               </template>
             </el-table-column>
-            <el-table-column prop="action" label="操作" class="action">
+            <el-table-column prop="action" :label="$t('KMS.total.action')" class="action">
               <template slot-scope="scope">
-                <a href="#" class="aColorGree" :style="scope.row.KeyState=='Enabled'||scope.row.KeyState=='PendingDelete'||scope.row.KeyState=='PendingImport'?'pointer-events:none':'color:#006eff'" @click="startKms(scope.row,$event)">启用密钥</a>
+                <a href="#" class="aColorGree" :style="scope.row.KeyState=='Enabled'||scope.row.KeyState=='PendingDelete'||scope.row.KeyState=='PendingImport'?'pointer-events:none':'color:#006eff'" @click="startKms(scope.row,$event)">{{$t('KMS.total.startKms')}}</a>
                 <span class="spanLine">|</span>
-                <a href="#" class="aColorGree" :style="scope.row.KeyState=='Disabled'||scope.row.KeyState=='PendingDelete'||scope.row.KeyState=='PendingImport'?'pointer-events:none':'color:#006eff'" @click="startKms(scope.row,$event)">禁用密钥</a>
+                <a href="#" class="aColorGree" :style="scope.row.KeyState=='Disabled'||scope.row.KeyState=='PendingDelete'||scope.row.KeyState=='PendingImport'?'pointer-events:none':'color:#006eff'" @click="startKms(scope.row,$event)">{{$t('KMS.total.stopKms')}}</a>
                 <br />
-                <a href="#" class="aColorGree" :style="scope.row.KeyState=='PendingDelete'?'pointer-events:none':'color:#006eff'" @click="openDelete(scope.row,$event)">计划删除</a>
+                <a href="#" class="aColorGree" :style="scope.row.KeyState=='PendingDelete'?'pointer-events:none':'color:#006eff'" @click="openDelete(scope.row,$event)">{{$t('KMS.total.planDelete')}}</a>
                 <span class="spanLine">|</span>
-                <a href="#" class="aColorGree" :style="scope.row.KeyState=='PendingDelete'?'color:#006eff':'pointer-events:none'" @click="openDelete(scope.row,$event)">取消删除</a>
+                <a href="#" class="aColorGree" :style="scope.row.KeyState=='PendingDelete'?'color:#006eff':'pointer-events:none'" @click="openDelete(scope.row,$event)">{{$t('KMS.total.closeDelete')}}</a>
               </template>
             </el-table-column>
           </el-table>
@@ -94,11 +94,11 @@
           <startKms :isShow="dialogModelKms" :content="doalogModelBox1" @parentByClick="childrenShow1" @startKmsSure="startKmsSure" @stopKmsSure="stopKmsSure" />
           <openDelete :isShow="dialogModelDelete" :content="doalogModelBox2" @parentByClick="childrenShow2" @openDeleteSure="openDeleteSure" @closeDeleteSure="closeDeleteSure" />
         </div>
-        <el-dialog class="dialogModel" title="计划删除密钥" :visible.sync="dialogModelOpenDelete" width="30%" :before-close="handleCloseOpenDelete">
-          <p class="deleteOpen">请先对密钥进行禁用操作！</p>
+        <el-dialog class="dialogModel" :title="$t('KMS.total.planDeleteKms')" :visible.sync="dialogModelOpenDelete" width="30%" :before-close="handleCloseOpenDelete">
+          <p class="deleteOpen">{{$t('KMS.total.tip3')}}</p>
           <span slot="footer" class="dialog-footer">
-            <el-button @click="dialogModelOpenDelete = false">取 消</el-button>
-            <el-button type="primary" @click="dialogModelOpenDelete = false">确 定</el-button>
+            <el-button @click="dialogModelOpenDelete = false">{{$t('KMS.total.modelClose')}}</el-button>
+            <el-button type="primary" @click="dialogModelOpenDelete = false">{{$t('KMS.total.modelSure')}}</el-button>
           </span>
         </el-dialog>
         <div class="tabListPage">
@@ -117,7 +117,7 @@ import { KMS_LIST, NEW_KMS, EnableKey, DisableKey } from "@/constants";
 export default {
   data() {
     return {
-      thisAddress: "中国台北",
+      thisAddress: "台灣台北",
       //kms弹出框
       KMSchange: false,
       dialogVisibleKMS: false,
@@ -155,7 +155,7 @@ export default {
       }, //
       isHaveDisable: true, // 启用密钥 是否有已禁用
       isHaveEnable: true, // 禁用密钥 是否有已启用
-      changeStatus: "启用轮换", //轮换状态默认为启用轮换
+      changeStatus: "啟用輪換", //轮换状态默认为启用轮换
       doalogModelBox: [], //启用轮换内容框
       doalogModelBox1: [], //启用密钥内容框
       doalogModelBox2: [], //计划删除框
@@ -199,13 +199,13 @@ export default {
             if (res.Response.RequestId) {
               this.$message({
                 showClose: true,
-                message: "启用成功",
+                message: "啟用成功",
                 type: "success"
               });
             } else {
               this.$message({
                 showClose: true,
-                message: "启用失败",
+                message: "啟用失敗",
                 type: "error"
               });
             }
@@ -231,7 +231,7 @@ export default {
             } else {
               this.$message({
                 showClose: true,
-                message: "禁用失败",
+                message: "禁用失敗",
                 type: "error"
               });
             }
@@ -252,14 +252,14 @@ export default {
       });
       this.arr = arr;
       if (bool) {
-        this.KMStitle = "启用密钥服务";
-        this.KMStxt = "启用选中的密钥服务？";
+        this.KMStitle = "啟用密鑰服務";
+        this.KMStxt = "啟用選中的密鑰服務？";
         this.KMSdata = arr;
         this.dialogVisibleKMS = true;
         this.KMSchange = false;
-        this.state = "可启用";
+        this.state = "可啟用";
       } else {
-        this.$message("暂未选中可启用的数据");
+        this.$message("暫未選中可啟用的數據");
       }
     },
     //禁用按钮
@@ -274,14 +274,14 @@ export default {
       });
       this.arr = arr;
       if (bool) {
-        this.KMStitle = "禁用密钥服务";
-        this.KMStxt = "禁用选中的密钥服务？";
+        this.KMStitle = "禁用密鑰服務";
+        this.KMStxt = "禁用選中的密鑰服務？";
         this.KMSdata = arr;
         this.dialogVisibleKMS = true;
         this.KMSchange = true;
         this.state = "可禁用";
       } else {
-        this.$message("暂未选中可启用的数据");
+        this.$message("暫未選中可啟用的數據");
       }
     },
     //判断是否有已禁用，已启用
@@ -418,7 +418,7 @@ export default {
         if (res.Response.Error !== undefined) {
           this.$message({
             showClose: true,
-            message: "别名不符合规则",
+            message: "別名不符合規則",
             type: "error"
           });
         }
@@ -442,9 +442,9 @@ export default {
     //状态处理
     filterState(state) {
       if (state == "Enabled") {
-        state = "已启用";
+        state = "已啟用";
       } else if (state == "PendingImport") {
-        state = "待导入";
+        state = "待導入";
       } else if (state == "Disabled") {
         state = "已禁用";
       }
@@ -498,7 +498,7 @@ export default {
         this.dialogModelDelete = true;
         let params = [
           scopeRow.Alias,
-          "于" + this.timestampToTime(scopeRow.DeletionDate) + "彻底删除",
+          "於" + this.timestampToTime(scopeRow.DeletionDate) + "徹底刪除",
           e.target.innerHTML,
           scopeRow.KeyId
         ];
