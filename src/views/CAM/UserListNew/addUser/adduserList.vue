@@ -420,7 +420,7 @@ export default {
         .then(() => {
           const params = {
             Password: this.taifuAIP.Password,
-            QcloudUin: this.getCookie("uuid"), //uin
+            QcloudUin: this.getCookie("uin"), //uin
             SecretId: this.taifuAIP.SecretId,
             SecretKey: this.taifuAIP.SecretKey,
             SubAccountUin: this.taifuAIP.Uin,
