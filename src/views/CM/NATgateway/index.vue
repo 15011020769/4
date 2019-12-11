@@ -2,7 +2,7 @@
   <div class="CM-wrap">
     <Loading :show="loadShow" />
     <!-- 城市按钮 -->
-    <div class="CVM-title">{{ $t('CVM.menu.x9') }}</div>
+    <div class="CVM-title">{{ $t('CVM.clBload.wg') }}</div>
     <div class="tool">
       <Cities
         :cities="cities"
@@ -51,7 +51,7 @@
           </template>
         </el-table-column>
 
-        <el-table-column prop :label="$t('CVM.menu.x8')">
+        <el-table-column prop :label="$t('CVM.clBload.sywl')">
           <template slot-scope="scope">
             <a href>{{scope.row.VpcId}}</a>
             <p></p>

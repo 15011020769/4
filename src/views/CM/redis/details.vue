@@ -5,7 +5,7 @@
         <router-link to="/Redis">
           <li>
             <i class="el-icon-back"></i>
-            <span>返回列表</span>
+            <span>{{ $t('CVM.clBload.fhlb') }}</span>
             <font class="line"></font>
           </li>
         </router-link>
@@ -16,7 +16,7 @@
       </ul>
       <div class="datails-tab">
         <el-tabs v-model="activeName" @tab-click="handleClick">
-          <el-tab-pane label="监控" name="first">
+          <el-tab-pane :label="$t('CVM.clBload.jk')" name="first">
             <Monitor />
           </el-tab-pane>
           <!-- <el-tab-pane label="告警策略" name="second">

@@ -2,7 +2,7 @@
   <div class="CM-wrap">
     <Loading :show="loadShow" />
     <!-- 城市按钮 -->
-    <div class="CVM-title">专线网关</div>
+    <div class="CVM-title">{{ $t('CVM.zxwg') }}</div>
     <div class="tool">
       <Cities
         :cities="cities"
@@ -29,7 +29,7 @@
         style="width: 100%"
         id="exportTable"
       >
-        <el-table-column prop label="ID/名称 ">
+        <el-table-column prop l:label="$t('CVM.cloudDisk.mc')" >
           <template slot-scope="scope">
             <p>
               <a
@@ -40,7 +40,7 @@
             {{ scope.row.DirectConnectGatewayName}}
           </template>
         </el-table-column>
-        <el-table-column prop label="监控">
+        <el-table-column prop :label="$t('CVM.clBload.jk')">
           <template slot-scope="scope">
             <div class="a" @click="jump(scope.row.DirectConnectGatewayName)"></div>
             <!-- <a @click="jump(scope.row.InstanceId)"  :style="note">
@@ -48,7 +48,7 @@
             </a>-->
           </template>
         </el-table-column>
-        <el-table-column prop label="所属网络">
+        <el-table-column prop :label="$t('CVM.clBload.sswl')">
           <template slot-scope="scope">
             <p
               :class="scope.row.InstanceState==='RUNNING'?'green':scope.row.InstanceState==='STOPPED'?'red':'orange'"
@@ -56,12 +56,12 @@
           </template>
         </el-table-column>
 
-        <el-table-column prop label="创建时间">
+        <el-table-column prop :label="$t('CVM.clBload.cjsj')">
           <template slot-scope="scope">
             <p>{{scope.row.CreateTime}}</p>
           </template>
         </el-table-column>
-        <el-table-column prop label="网关类型">
+        <el-table-column prop :label="$t('CVM.clBload.wglx')">
           <template slot-scope="scope">
             <p>{{instanceStatus[scope.row.GatewayType]}}</p>
           </template>
@@ -109,15 +109,16 @@ export default {
         },
         {
           value: "direct-connect-gateway-name",
-          label: "网关名称"
-        }
+          label: "網關名稱"
+        },
       ],
       //inp输入的值
       searchValue: "",
       //文字过滤
       instanceStatus: {
-        NORMAL: "标准型",
-        NAT: "NAT型"
+        NORMAL: "標準型",
+        NAT: "NAT型",
+
       },
 
       //城市列表
@@ -198,6 +199,7 @@ export default {
         this.$message.error("请输入正确搜索信息");
       } else {
         this.$message.error("请输入正确搜索信息");
+       
       }
     },
     // 添加项目列表的表格数据

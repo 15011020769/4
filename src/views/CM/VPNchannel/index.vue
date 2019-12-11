@@ -2,7 +2,7 @@
   <div class="CM-wrap">
     <Loading :show="loadShow" />
     <!-- 城市按钮 -->
-    <div class="CVM-title">VPN通道</div>
+    <div class="CVM-title">{{ $t('CVM.td') }}</div>
     <div class="tool">
       <Cities
         :cities="cities"
@@ -29,7 +29,7 @@
         id="exportTable"
         style="width: 100%"
       >
-        <el-table-column prop label="ID/主机名 ">
+        <el-table-column prop :label="$t('CVM.clBload.zjm') ">
           <template slot-scope="scope">
             <p>
               <a
@@ -40,7 +40,7 @@
             {{ scope.row.VpnConnectionName}}
           </template>
         </el-table-column>
-        <el-table-column prop label="监控">
+        <el-table-column prop :label="$t('CVM.clBload.jk')">
           <template slot-scope="scope">
             <div class="a" @click="jump(scope.row.VpnConnectionId)"></div>
             <!-- <a
@@ -49,7 +49,7 @@
             ><i class="el-icon-share"></i></a>-->
           </template>
         </el-table-column>
-        <el-table-column prop label="状态">
+        <el-table-column prop :label="$t('CVM.clBload.zt')">
           <template slot-scope="scope">
             <p
               :class="scope.row.State == 'PENDING' ? 'orange' : scope.row.State == 'AVAILABLE' ? 'green' : 'red'"
@@ -57,19 +57,19 @@
           </template>
         </el-table-column>
 
-        <el-table-column prop label="所属网络">
+        <el-table-column prop :label="$t('CVM.clBload.sswl')">
           <template slot-scope="scope">
             <p style="color: #65a5f9;">{{scope.row.VpcId}}</p>
             <p>{{scope.row.VpcName}}</p>
           </template>
         </el-table-column>
-        <el-table-column prop label="VPN网关">
+        <el-table-column prop :label="$t('CVM.vpnwg')">
           <template slot-scope="scope">
             <p style="color: #65a5f9;">{{scope.row.VpnGatewayId}}</p>
             <p>{{scope.row.vpnGwName}}</p>
           </template>
         </el-table-column>
-        <el-table-column prop label="	对端网关">
+        <el-table-column prop :label="$t('CVM.clBload.ddwg')	">
           <template slot-scope="scope">
             <p style="color: #65a5f9;">{{scope.row.CustomerGatewayId}}</p>
             <p>{{scope.row.userGwName}}</p>
@@ -112,31 +112,31 @@ export default {
         },
         {
           value: "vpn-connection-name",
-          label: "名称"
+          label: "名稱"
         }
       ],
       searchValue: "",
       //文字过滤
       instanceStatus: {
-        PENDING: "创建中",
-        LAUNCH_FAILED: "创建失败",
-        RUNNING: "运行中",
-        STOPPED: "已关机",
-        STARTING: "开机中",
-        STOPPING: "关机中",
-        REBOOTING: "重启中",
+        PENDING: "創建中",
+        LAUNCH_FAILED: "創建失敗",
+        RUNNING: "運行中",
+        STOPPED: "已關機",
+        STARTING: "開機中",
+        STOPPING: "關機中",
+        REBOOTING: "重啟中",
         SHUTDOWN: "待回收",
-        TERMINATING: "销毁中"
+        TERMINATING: "銷毀中"
       },
       RestrictState: {
         NORMAL: "健康",
-        EXPIRED: "过期",
-        PROTECTIVELY_ISOLATED: "隔离"
+        EXPIRED: "過期",
+        PROTECTIVELY_ISOLATED: "隔離"
       },
       vpcConnState: {
-        PENDING: "生产中",
-        AVAILABLE: "运行中",
-        DELETING: "删除中"
+        PENDING: "生產中",
+        AVAILABLE: "運行中",
+        DELETING: "刪除中"
       },
       cities: [],
       selectedRegion: "ap-taipei", // 默认选中城市
@@ -212,7 +212,7 @@ export default {
       if (this.searchInput !== "" && this.searchValue !== "") {
         this.GetTabularData();
       } else {
-        this.$message.error("请输入正确搜索信息");
+        this.$message.error("請輸入正確搜索信息");
       }
     },
     // 添加项目列表的表格数据

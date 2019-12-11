@@ -29,7 +29,7 @@
         style="width: 100%"
         id="exportTable"
       >
-        <el-table-column prop label="ID/主机名 ">
+        <el-table-column prop :label="$t('CVM.clBload.zjm') ">
           <template slot-scope="scope">
             <p>
               <a
@@ -40,7 +40,7 @@
             {{ scope.row.InstanceName}}
           </template>
         </el-table-column>
-        <el-table-column prop label="监控">
+        <el-table-column prop :label="$t('CVM.clBload.jk')">
           <template slot-scope="scope">
             <!-- <a @click="jump(scope.row.InstanceId)" style="cursor:pointer;">
               <i class="el-icon-share"></i>
@@ -48,19 +48,19 @@
             <div class="a" @click="jump(scope.row.InstanceId)"></div>
           </template>
         </el-table-column>
-        <el-table-column prop label="状态">
+        <el-table-column prop :label="$t('CVM.clBload.zt')">
           <template slot-scope="scope">
             <p>{{scope.row.InstanceTitle}}</p>
           </template>
         </el-table-column>
-        <el-table-column prop label="创建时间">
+        <el-table-column prop :label="$t('CVM.clBload.cjsj')">
           <template slot-scope="scope">
             <p>{{scope.row.Createtime}}</p>
           </template>
         </el-table-column>
-        <el-table-column prop label="规格">
+        <el-table-column prop :label="$t('CVM.clBload.gg')">
           <template slot-scope="scope">
-            <p>VPC 网络</p>
+            <p>{{ $t('CVM.cloudMysql.wl') }}</p>
           </template>
         </el-table-column>
         <!-- <el-table-column prop label="内网地址">
@@ -110,26 +110,26 @@ export default {
         },
         {
           value: "InstanceName",
-          label: "名称"
+          label: "名稱"
         }
       ],
       searchValue: "", //默认选中的值
       //文字过滤
       instanceStatus: {
-        PENDING: "创建中",
-        LAUNCH_FAILED: "创建失败",
-        RUNNING: "运行中",
-        STOPPED: "已关机",
-        STARTING: "开机中",
-        STOPPING: "关机中",
-        REBOOTING: "重启中",
+        PENDING: "創建中",
+        LAUNCH_FAILED: "創建失敗",
+        RUNNING: "運行中",
+        STOPPED: "已關機",
+        STARTING: "開機中",
+        STOPPING: "關機中",
+        REBOOTING: "重啟中",
         SHUTDOWN: "待回收",
-        TERMINATING: "销毁中"
+        TERMINATING: "銷毀中"
       },
       RestrictState: {
         NORMAL: "健康",
-        EXPIRED: "过期",
-        PROTECTIVELY_ISOLATED: "隔离"
+        EXPIRED: "過期",
+        PROTECTIVELY_ISOLATED: "隔離"
       },
       cities: [],
       selectedRegion: "ap-taipei", // 默认选中城市
@@ -207,7 +207,7 @@ export default {
         this.loadShow = true;
         this.GetTabularData();
       } else {
-        this.$message.error("请输入正确搜索信息");
+        this.$message.error("請輸入正確搜索信息");
       }
     },
     // 添加项目列表的表格数据

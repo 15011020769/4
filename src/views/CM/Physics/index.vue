@@ -2,7 +2,7 @@
   <div class="CM-wrap">
     <Loading :show="loadShow" />
     <!-- 城市按钮 -->
-    <div class="CVM-title">专线接入-物理专线</div>
+    <div class="CVM-title">{{ $t('CVM.wlzx') }}</div>
     <div class="tool">
       <Cities
         :cities="cities"
@@ -30,7 +30,7 @@
         style="width: 100%"
         id="exportTable"
       >
-        <el-table-column prop label="ID/主机名 ">
+        <el-table-column prop :label="$t('CVM.clBload.zjm') ">
           <template slot-scope="scope">
             <p>
               <a
@@ -41,13 +41,13 @@
             {{ scope.row.DirectConnectName}}
           </template>
         </el-table-column>
-        <el-table-column prop label="监控">
+        <el-table-column prop :label="$t('CVM.clBload.jk')">
           <template slot-scope="scope">
             <div class="a" @click="jump(scope.row.DirectConnectId)"></div>
             <!-- <i @click="jump(scope.row.DirectConnectId)" style="cursor:pointer;"><i class="el-icon-share"></i></a> -->
           </template>
         </el-table-column>
-        <el-table-column prop label="状态">
+        <el-table-column prop :label="$t('CVM.clBload.zt')">
           <template slot-scope="scope">
             <p
               :class="scope.row.State==='RUNNING'?'green':scope.row.InstanceState==='STOPPED'?'red':'orange'"
@@ -55,13 +55,13 @@
           </template>
         </el-table-column>
 
-        <el-table-column prop label="带宽">
+        <el-table-column prop :label="$t('CVM.Physics.dk')">
           <template slot-scope="scope">
             <p>{{scope.row.Bandwidth}}</p>
           </template>
         </el-table-column>
 
-        <el-table-column prop="projectName" label="所在地">
+        <el-table-column prop="projectName" :label="$t('CVM.Physics.szd')">
           <template slot-scope="scope">
             <p>{{scope.row.Location}}</p>
           </template>
@@ -112,26 +112,26 @@ export default {
       searchOptions: [
         {
           value: "DirectConnectId",
-          label: "专线ID"
+          label: "專線ID"
         }
       ],
       searchValue: "",
       //文字过滤
       instanceStatus: {
-        PENDING: "申请中",
-        REJECTED: "申请驳回",
+        PENDING: "申請中",
+        REJECTED: "申請駁回",
         TOPAY: "待付款",
         PAID: "已付款",
-        ALLOCATED: "建设中",
-        AVAILABLE: "已开通",
-        DELETING: "删除中",
+        ALLOCATED: "建設中",
+        AVAILABLE: "已開通",
+        DELETING: "刪除中",
         DELETED: "待回收",
-        TERMINATING: "销毁中"
+        TERMINATING: "銷毀中"
       },
       RestrictState: {
         NORMAL: "健康",
-        EXPIRED: "过期",
-        PROTECTIVELY_ISOLATED: "隔离"
+        EXPIRED: "過期",
+        PROTECTIVELY_ISOLATED: "隔離"
       },
       cities: [],
       selectedRegion: "ap-taipei", // 默认选中城市
@@ -207,7 +207,7 @@ export default {
       if (this.searchInput !== "" && this.searchValue !== "") {
         this.GetTabularData();
       } else {
-        this.$message.error("请输入正确搜索信息");
+        this.$message.error("請輸入正確搜索信息");
       }
     },
     // 添加项目列表的表格数据

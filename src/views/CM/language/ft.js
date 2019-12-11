@@ -29,6 +29,12 @@ module.exports = {
         zxwg: '專線網關',
         cftjmb: '觸發條件模板',
         gjpz: '告警配置',
+        dxcc: '對象存儲',
+        ddlj: '對等連接',
+        wlzx: '專線接入-物理專線',
+        zxtd: '專線接入-專線通道',
+        td: 'VPN通道',
+        vpnwg: 'VPN網關',
         errorTxt: '請輸入正確搜索信息',
         table: {
             x1: 'ID/主機名',
@@ -96,6 +102,14 @@ module.exports = {
             wllx: '網路類型',
             sswl: '所屬網路',
             cjsj: '創建時間',
+            txdz: '彈性IP地址',
+            slid: '實例id',
+            wg: 'NAT網關',
+            sywl: '私有網路',
+            txgw: '彈性公網IP',
+            wglc: '網關類型',
+            gg: '規格',
+            ddwg: '對端網關',
         },
         cloudDisk: {
             yyp: '雲硬碟',
@@ -108,6 +122,22 @@ module.exports = {
            nw: '內網IP/埠',
            lx: '類型',
            wl: 'VPC 網路',
+        },
+        objectStorage: {
+            dy: '地域',
+            bkmc: 'Bucket名稱',
+        },
+        peerConnect: {
+            qsrzjm: '請輸入IP或主機名',
+            bdsywl: '本端私有網路',
+            ddsywl: '對端私有網路',
+            dksx: '帶寬上限',
+            wsx: '無上限',
+        },
+        Physics: {
+            dk: '帶寬',
+            szd: '所在地',
+            tdmc: '通道ID/名稱',
         }
 
     },

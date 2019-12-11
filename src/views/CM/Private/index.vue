@@ -2,7 +2,7 @@
   <div class="CM-wrap">
     <Loading :show="loadShow" />
     <!-- 城市按钮 -->
-    <div class="CVM-title">专线接入-专线通道</div>
+    <div class="CVM-title">{{ $t('CVM.zxtd') }}</div>
     <div class="tool">
       <Cities
         :cities="cities"
@@ -30,7 +30,7 @@
         style="width: 100%"
         id="exportTable"
       >
-        <el-table-column prop label="通道ID/名称 ">
+        <el-table-column prop :label="$t('CVM.Physics.tdmc') ">
           <template slot-scope="scope">
             <p>
               <a
@@ -41,13 +41,13 @@
             {{ scope.row.DirectConnectTunnelName}}
           </template>
         </el-table-column>
-        <el-table-column prop label="监控">
+        <el-table-column prop :label="$t('CVM.clBload.jk')">
           <template slot-scope="scope">
             <div class="a" @click="jump(scope.row.DirectConnectTunnelId)"></div>
             <!-- <i @click="jump(scope.row.DirectConnectTunnelId)" style="cursor:pointer;"><i class="el-icon-share"></i></a> -->
           </template>
         </el-table-column>
-        <el-table-column prop label="状态">
+        <el-table-column prop :label="$t('CVM.clBload.zt')">
           <template slot-scope="scope">
             <p
               :class="scope.row.State==='RUNNING'?'green':scope.row.InstanceState==='STOPPED'?'red':'orange'"
@@ -55,12 +55,12 @@
           </template>
         </el-table-column>
 
-        <el-table-column prop label="私有网络">
+        <el-table-column prop :label="$t('CVM.clBload.sywl')">
           <template slot-scope="scope">
             <p>{{scope.row.VpcId}}</p>
           </template>
         </el-table-column>
-        <el-table-column prop label="创建时间">
+        <el-table-column prop :label="$t('CVM.clBload.cjsj')">
           <template slot-scope="scope">
             <p>{{scope.row.CreatedTime}}</p>
           </template>
@@ -116,20 +116,20 @@ export default {
       searchValue: "", //inp值
       //文字过滤
       instanceStatus: {
-        AVAILABLE: "就绪或者已连接",
-        PENDING: "申请中",
+        AVAILABLE: "就緒或者已連接",
+        PENDING: "申請中",
         ALLOCATING: "配置中",
         ALLOCATED: "配置完成",
         ALTERING: "修改中",
-        DELETING: "删除中",
-        DELETED: "删除完成",
+        DELETING: "刪除中",
+        DELETED: "刪除完成",
         COMFIRMING: "待接受",
-        REJECTED: "拒绝"
+        REJECTED: "拒絕"
       },
       RestrictState: {
         NORMAL: "健康",
-        EXPIRED: "过期",
-        PROTECTIVELY_ISOLATED: "隔离"
+        EXPIRED: "過期",
+        PROTECTIVELY_ISOLATED: "隔離"
       },
       cities: [],
       selectedRegion: "ap-taipei", // 默认选中城市
@@ -205,7 +205,7 @@ export default {
       if (this.searchInput !== "" && this.searchValue !== "") {
         this.GetTabularData();
       } else {
-        this.$message.error("请输入正确搜索信息");
+        this.$message.error("請輸入正確搜索信息");
       }
     },
     // 添加项目列表的表格数据

@@ -2,7 +2,7 @@
   <div class="CM-wrap">
     <Loading :show="loadShow" />
     <!-- 城市按钮 -->
-    <div class="CVM-title">对象存储</div>
+    <div class="CVM-title">{{ $t('CVM.dxcc') }}</div>
     <div class="tool">
       <Cities
         :cities="cities"
@@ -29,26 +29,26 @@
         id="exportTable"
         style="width: 100%"
       >
-        <el-table-column prop label="Bucket名称">
+        <el-table-column prop :label="$t('CVM.objectStorage.bkmc')">
           <template slot-scope="scope">
             <p>
               <a @click="jump(scope.row.Name)" style="cursor:pointer;">{{scope.row.Name}}</a>
             </p>
           </template>
         </el-table-column>
-        <el-table-column prop label="监控">
+        <el-table-column prop :label="$t('CVM.clBload.jk')">
           <template slot-scope="scope">
             <!-- <i @click="jump(scope.row.Name)" style="cursor:pointer;"><i class="el-icon-share"></i></a> -->
             <div class="a" @click="jump(scope.row.Name)"></div>
           </template>
         </el-table-column>
-        <el-table-column prop label="地域">
+        <el-table-column prop :label="$t('CVM.objectStorage.dy')">
           <template slot-scope="scope">
             <p>{{scope.row.zone.zone}}</p>
           </template>
         </el-table-column>
 
-        <el-table-column prop label="创建时间">
+        <el-table-column prop :label="$t('CVM.clBload.cjsj')">
           <template slot-scope="scope">
             <p>{{scope.row.CreationDate}}</p>
           </template>
@@ -91,20 +91,20 @@ export default {
       searchValue: "",
       //文字过滤
       instanceStatus: {
-        PENDING: "创建中",
-        LAUNCH_FAILED: "创建失败",
-        RUNNING: "运行中",
-        STOPPED: "已关机",
-        STARTING: "开机中",
-        STOPPING: "关机中",
-        REBOOTING: "重启中",
+        PENDING: "創建中",
+        LAUNCH_FAILED: "創建失敗",
+        RUNNING: "運行中",
+        STOPPED: "已關機",
+        STARTING: "開機中",
+        STOPPING: "關機中",
+        REBOOTING: "重啟中",
         SHUTDOWN: "待回收",
-        TERMINATING: "销毁中"
+        TERMINATING: "銷毀中"
       },
       RestrictState: {
         NORMAL: "健康",
-        EXPIRED: "过期",
-        PROTECTIVELY_ISOLATED: "隔离"
+        EXPIRED: "過期",
+        PROTECTIVELY_ISOLATED: "隔離"
       },
       cities: [],
       selectedRegion: "ap-taipei", // 默认选中城市
@@ -181,7 +181,7 @@ export default {
       if (this.searchInput !== "" && this.searchValue !== "") {
         this.GetTabularData();
       } else {
-        this.$message.error("请输入正确搜索信息");
+        this.$message.error("請輸入正確搜索信息");
       }
     },
     // 添加项目列表的表格数据
