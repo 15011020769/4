@@ -60,7 +60,7 @@
                 <el-button type="primary" @click="surePublish">{{ $t('SCF.total.qd') }}</el-button>
               </span>
             </el-dialog>
-            <el-option label="新建别名" value="action2"></el-option>
+            <el-option :label="$t('SCF.total.xjbm')" value="action2"></el-option>
           </el-select>
         </span>
       </div>
@@ -70,21 +70,21 @@
             <div class="allConListMain">
               <div class="allConListMainOne">
                 <div class="allConListMainTit newClear">
-                  <h3>函数配置</h3>
-                  <a href="#" @click="dialogVisible2=true">编辑</a>
+                  <h3>{{ $t('SCF.total.hspz') }}</h3>
+                  <a href="#" @click="dialogVisible2=true">{{ $t('SCF.total.bj') }}</a>
                   <el-dialog
-                    title="编辑函数配置"
+                    :title="$t('SCF.total.bjpz')"
                     :visible.sync="dialogVisible2"
                     width="800px"
                     :before-close="handleClose2"
                   >
                     <el-form :model="functionData" label-width="100px">
-                      <el-form-item prop="FunctionName" label="函数名称">
+                      <el-form-item prop="FunctionName" :label="$t('SCF.total.hsmc')">
                         <span>{{functionData.FunctionName}}</span>
                       </el-form-item>
-                      <el-form-item prop="Role" label="运行角色" :required="true">
+                      <el-form-item prop="Role" :label="$t('SCF.total.yxjs')" :required="true">
                         <span slot="label">
-                          运行角色
+                          {{ $t('SCF.total.yxjs') }}
                           <!-- <i class="el-icon-question"></i> -->
                         </span>
                         <el-select v-model="functionData.Role">
@@ -104,12 +104,12 @@
                           </a>
                         </p> -->
                       </el-form-item>
-                      <el-form-item prop="Runtime" label="运行环境">
+                      <el-form-item prop="Runtime" :label="$t('SCF.total.yxhj')">
                         <span>{{functionData.Runtime}}</span>
                       </el-form-item>
-                      <el-form-item prop="MemorySize" label="内存" :required="true" class="intoAll">
+                      <el-form-item prop="MemorySize" :label="$t('SCF.total.nc')" :required="true" class="intoAll">
                         <span slot="label">
-                          内存
+                          {{ $t('SCF.total.nc') }}
                           <!-- <i class="el-icon-question"></i> -->
                         </span>
                         <el-select v-model="functionData.MemorySize">
@@ -130,29 +130,29 @@
                       </el-form-item>
                       <el-form-item
                         prop="Timeout"
-                        label="超时时间"
+                        :label="$t('SCF.total.cssj')"
                         :required="true"
                         class="timeOutDate newClear"
                       >
                         <span slot="label">
-                          超时时间
+                          {{ $t('SCF.total.cssj') }}
                           <!-- <i class="el-icon-question"></i> -->
                         </span>
                         <el-input class="timeOutDate1" v-model="functionData.Timeout" placeholder></el-input>
                         <span>秒</span>
                         <br />
-                        <p class="tipContent">时间范围：1-900秒</p>
+                        <p class="tipContent">{{ $t('SCF.total.sjfw') }}</p>
                       </el-form-item>
-                      <el-form-item label="描述" prop="Description">
+                      <el-form-item :label="$t('SCF.total.ms')" prop="Description">
                         <span slot="label">
-                          描述
+                          {{ $t('SCF.total.ms') }}
                           <!-- <i class="el-icon-question"></i> -->
                         </span>
                         <el-input type="textarea" v-model="functionData.Description" placeholder></el-input>
-                        <p class="tipContent">最大支持1000个英文字母、数字、空格、逗号、句号、中文</p>
+                        <p class="tipContent">{{ $t('SCF.total.zc') }}</p>
                       </el-form-item>
                       <div class="seniorbox">
-                        <p>环境变量</p>
+                        <p>{{ $t('SCF.total.hjbl') }}</p>
                         <div>
                           <div class="Science borderNone">
                             <p>Key</p>
@@ -174,13 +174,13 @@
                             </p>
                           </div>
                           <div class="Science">
-                            <p @click="AddScience" class="addScience">添加</p>
+                            <p @click="AddScience" class="addScience">{{ $t('SCF.total.tj') }}</p>
                           </div>
                         </div>
                       </div>
-                      <el-form-item label="内网访问" prop="VpcConfig">
+                      <el-form-item :label="$t('SCF.total.nwfw')" prop="VpcConfig">
                         <span slot="label">
-                          内网访问
+                          {{ $t('SCF.total.nwfw') }}
                           <!-- <i class="el-icon-question"></i> -->
                         </span>
                         <el-switch
@@ -295,8 +295,8 @@
                       </el-form-item>-->
                     </el-form>
                     <span slot="footer" class="dialog-footer">
-                      <el-button @click="dialogVisible2 = false">取 消</el-button>
-                      <el-button type="primary" @click="saveConfig()">保存</el-button>
+                      <el-button @click="dialogVisible2 = false">{{ $t('SCF.total.qx') }}</el-button>
+                      <el-button type="primary" @click="saveConfig()">{{ $t('SCF.total.bc') }}</el-button>
                     </span>
                   </el-dialog>
                 </div>
@@ -337,7 +337,8 @@
                     <span v-show="environmentFlag">
                       {{environmentKey}}={{environmentValue}}
                       <!-- {{functionData.Environment.Variables[0].Key}}={{functionData.Environment.Variables[0].Value}} --></span>
-                    <span v-show="!environmentFlag">{{ $t('SCF.total.whjbl') }}</span>
+                    <span v-show="!environmentFlag">
+                      {{ $t('SCF.total.whjbl') }}</span>
                   </p>
                   <p>
                     <span>{{ $t('SCF.total.sswl') }}</span>
