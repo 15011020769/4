@@ -91,6 +91,7 @@
   </div>
 </template>
 <script>
+import { GET_ID, GET_SPolicy ,GET_Status,CLAEN_SHOLD,Modify_Level,SET_SHOLD,Modify_Status} from '@/constants'
 export default {
   props: {
     configShow: Boolean
@@ -153,7 +154,7 @@ export default {
   },
   created() {
     this.GetID()  //获取ID
-    this.GETStatus() // 获取DDoS防护状态
+    // this.GETStatus() // 获取DDoS防护状态
     //  this.GETSPolicy() // 获取DDoS高级策略
   },
   methods: {
@@ -163,7 +164,7 @@ export default {
         Version: "2018-07-09",
         Business: "net",
       };
-      this.axios.post('dayu2/DescribeResIpList', params).then(res => {
+      this.axios.post(GET_ID, params).then(res => {
         // console.log(res.Response)
         this.resourceId = res.Response.Resource[0].Id
         this.GETStatus() // 获取DDoS防护状态
@@ -175,7 +176,7 @@ export default {
         Version: "2018-07-09",
         Business: "net",
       };
-      this.axios.post('dayu2/DescribeDDoSPolicy', params).then(res => {
+      this.axios.post(GET_SPolicy, params).then(res => {
         // console.log(res.Response);
         this.topFun = res.Response.DDosPolicyList[0].PolicyName
       });
@@ -187,7 +188,7 @@ export default {
         Business: "net",
         Id: this.resourceId,
       };
-      this.axios.post('dayu2/DescribeDDoSDefendStatus', params).then(res => {
+      this.axios.post(GET_Status, params).then(res => {
         // console.log(res.Response);
         this.ShowFlag = res.Response.ShowFlag
         if (res.Response.DefendStatus == 0) {
@@ -248,7 +249,7 @@ export default {
         Id: this.resourceId,
         Threshold: value
       };
-      this.axios.post('dayu2/ModifyDDoSThreshold', params).then(res => {
+      this.axios.post(CLAEN_SHOLD, params).then(res => {
         if (res.Response.Error !== undefined) {
           this.$message({
             showClose: true,
@@ -288,7 +289,7 @@ export default {
         Method: 'set',
         DDoSLevel: this.tabMode
       };
-      this.axios.post('dayu2/ModifyDDoSLevel', params).then(res => {
+      this.axios.post(Modify_Level, params).then(res => {
         if (res.Response.Error !== undefined) {
           this.$message({
             showClose: true,
@@ -326,7 +327,7 @@ export default {
         AlarmType: this.AlarmType,
         AlarmThreshold: this.iptmbpsText
       };
-      this.axios.post('dayu2/CreateBasicDDoSAlarmThreshold', params).then(res => {
+      this.axios.post(SET_SHOLD, params).then(res => {
         // console.log(res);
         if (res.Response.Error !== undefined) {
           this.$message({
@@ -352,7 +353,7 @@ export default {
         Hour: value,
         Id: this.resourceId,
       };
-      this.axios.post('dayu2/ModifyDDoSDefendStatus', params).then(res => {
+      this.axios.post(Modify_Status, params).then(res => {
         // console.log(res);
         this.changeModelTip4 = false;
         this.servicePack.DefendStatus = true;
@@ -368,7 +369,7 @@ export default {
         Hour: 1,
         Id: this.resourceId,
       };
-      this.axios.post('dayu2/ModifyDDoSDefendStatus', params).then(res => {
+      this.axios.post(Modify_Status, params).then(res => {
         // console.log(res);
         this.changeModelTip4 = false;
         this.servicePack.DefendStatus = true;

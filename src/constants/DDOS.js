@@ -32,3 +32,12 @@ export const DDOS_POLICY_CREATE = 'dayu2/CreateDDoSPolicy' // 添加DDoS高级�
 export const DDOS_POLICY_DELETE = 'dayu2/DeleteDDoSPolicy' // 删除DDoS高级策略
 export const DDOS_POLICY_MODIFY = 'dayu2/ModifyDDoSPolicy' // 修改DDoS高级策略
 
+export const INSTANCENAME_CONT = 'dayu2/CreateInstanceName' //资源实例重命名接口
+export const GET_ID = 'dayu2/DescribeResIpList' //获取资源的IP列表
+export const GET_SPolicy = 'dayu2/DescribeDDoSPolicy' // 获取DDoS高级策略
+export const GET_Status = 'dayu2/DescribeDDoSDefendStatus' // 获取DDoS防护状态
+export const CLAEN_SHOLD = 'dayu2/ModifyDDoSThreshold' //修改DDoS清洗阈值
+export const Modify_Level = 'dayu2/ModifyDDoSLevel' //修改DDoSIP防护等级
+export const SET_SHOLD = 'dayu2/CreateBasicDDoSAlarmThreshold' //设置基础防护的DDoS告警阈值
+export const Modify_Status = 'dayu2/ModifyDDoSDefendStatus' //修改DDoS防护状态
+
