@@ -152,7 +152,7 @@
                         <p class="deleteCont">确定删除该条高级策略(erg)？</p>
                         <span slot="footer" class="dialog-footer">
                           <el-button @click="dialogVisible = false">取 消</el-button>
-                          <el-button type="primary" @click="sureDelete()">确 定</el-button>
+                          <el-button type="primary" @click="deleteDDoSPolicy()">确 定</el-button>
                         </span>
                       </el-dialog>
                       <el-button
@@ -181,9 +181,7 @@
                               hasChecked: '${checked}/${total}'
                             }"
                             @change="handleChange"
-                            :data="data">
-                            <el-button class="transfer-footer" slot="left-footer" size="small">操作</el-button>
-                            <el-button class="transfer-footer" slot="right-footer" size="small">操作</el-button>
+                            :data="resData">
                           </el-transfer>
                         </div>
                         
@@ -198,7 +196,7 @@
                 </div>
               </div>
               <div v-if="!tableShow">
-                <addNewTactics :isShow="tableShow" @closePage="closePageAdd"/>
+                <addNewTactics :policy='policy' :isShow="tableShow" @closePage="closePageAdd"/>
               </div>
             </div>
           </el-tab-pane>
@@ -211,7 +209,7 @@
 import addNewTactics from './addNewTactics'
 import ProtectConfigModel from './model/ProtectConfigModel'
 import ccProtection from './tabs/ccProtection'//cc防护模块
-import { RESOURCE_LIST, DDOSPOLICY_CONT } from '@/constants'
+import { RESOURCE_LIST, DDOSPOLICY_CONT, DDOS_POLICY_DELETE } from '@/constants'
 export default {
   data() {
     return {
@@ -229,8 +227,8 @@ export default {
       tableDataTemp: [],
       tableDataTemp2: [],
       tableDataPolicy:[],//tab3,DDoS高级防护策略
-
-      data: this.generateData(),
+      policy: {},//配置高级防护策略的对象
+      resData: this.generateData(),
       valueThrou: [1],
       renderFunc(h, option) {
         return <span>{ option.key } </span>;
@@ -244,13 +242,6 @@ export default {
       multipleSelection: [],
       dialogVisible: false,
       dialogVisible1: false,//绑定资源弹框
-      allData2:[
-        {
-          name:"1",
-          resouseNum:"8",
-          createTime:"2019-11-19 10:52:25"
-        }
-      ],
       tableShow:true,
       deleteIndex: "",
       deleteBegin: {},
@@ -300,46 +291,7 @@ export default {
     // 修改
     changeRow(changeIndex,changeRow){
       this.changeModel=true;
-      // console.log(changeIndex, changeRow);
-      // for (let i in changeRow.Record) {
-      //   switch (changeRow.Record[i].Key) {
-      //     case 'DefendStatus':
-      //       if (changeRow.Record[i].Value == '1') {
-      //         this.servicePack.DefendStatus = true
-      //       } else if (changeRow.Record[i].Value == '0') {
-      //         this.servicePack.DefendStatus = false
-      //       }
-      //       break;
-      //     case 'DdosThreshold':
-      //       this.servicePack.DdosThreshold = changeRow.Record[i].Value
-      //       break;
-      //   }
-      // }
       console.log(this.servicePack)
-      // if(changeRow.DefendStatus=='开启'){
-      //   this.DefendStatus=true
-      // }else{
-      //   this.DefendStatus=false;
-      // }
-      // this.cleanNum=changeRow.clean;
-      // if(changeRow.saveGarden=='正常模式'){
-      //   this.saveGardenText='正常';
-      //   this.saveGarden=2;
-      // }else if(changeRow.saveGarden=='宽松模式'){
-      //   this.saveGardenText='宽松';
-      //   this.saveGarden=1;
-      // }else if(changeRow.saveGarden=='严格模式'){
-      //   this.saveGardenText='严格';
-      //   this.saveGarden=3;
-      // }
-      // this.topFun=changeRow.advanced;
-      // //共计告警阈值
-      // if(this.ddosWarning=='未设置'){
-      //   this.iptNummbps=false;
-      // }else{
-      //   this.iptNummbps=true;;
-      // }
-      //this.ddosWarning=changeRow
     },
     // 搜索
     doFilter() {
@@ -419,9 +371,6 @@ export default {
         }
       }
     },
-    addNewTactics(){
-      this.tableShow=false;
-    },
     handleClose(){
       this.dialogVisible=false;
     },
@@ -437,23 +386,27 @@ export default {
       this.dialogVisible = true;
     },
     //删除函数的确定按钮，调用删除接口
-    sureDelete() {
+    deleteDDoSPolicy() {
       let params = {
-        Version: "2018-04-16",
-        Region: "ap-taipei",
-        FunctionName: this.deleteBegin.functionName
+        Version: "2018-07-09",
+        Business: "net",
+        PolicyId: this.deleteBegin.PolicyId
       };
-      console.log(params.FunctionName);
-      //this.$axios.post("", params).then(res => {
+      console.log(params.PolicyId);
+      this.axios.post(DDOS_POLICY_DELETE, params).then(res => {
         //console.log(res);
-        //console.log("成功");
-        this.tableDataBegin.splice(this.deleteIndex, 1);
-        this.totalItems -= 1;
+        this.describeDDoSPolicy()
         this.dialogVisible = false;
-      //});
+      });
+    },
+    // 添加高级防护策略
+    addNewTactics(){
+      this.policy = {}
+      this.tableShow=false;
     },
     //点击表格操作配置按钮
-    configListCon(configIndex,configCon){
+    configListCon(configIndex, val){
+      this.policy = val
       this.tableShow=false;
     },
     //绑定资源按钮
@@ -476,7 +429,7 @@ export default {
       console.log(value, direction, movedKeys);
     },
     generateData(){
-      const data = [{key:"1"},{key:"2"}];
+      const data = [];
       // console.log(thisData)
       // for (let i =0; i < this.thisData.length; i++) {
       //   data.push(this.thisData[i]);

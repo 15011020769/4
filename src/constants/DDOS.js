@@ -29,6 +29,6 @@ export const CC_THRESHOLD = 'dayu2/ModifyCCThreshold' //修改CC的防护阈值
 export const CC_SELFDEFINEPOLICY_CREATE = 'dayu2/CreateCCSelfDefinePolicy' //创建CC自定义策略
 export const CC_IPALLOWDENY = 'dayu2/DescribeCCIpAllowDeny' //获取CC的IP黑白名单
 export const DDOS_POLICY_CREATE = 'dayu2/CreateDDoSPolicy' // 添加DDoS高级策略
-
-
+export const DDOS_POLICY_DELETE = 'dayu2/DeleteDDoSPolicy' // 删除DDoS高级策略
+export const DDOS_POLICY_MODIFY = 'dayu2/ModifyDDoSPolicy' // 修改DDoS高级策略
 

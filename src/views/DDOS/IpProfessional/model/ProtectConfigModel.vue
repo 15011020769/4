@@ -184,7 +184,7 @@ export default {
         Business: "net",
       };
       this.axios.post('dayu2/DescribeDDoSPolicy', params).then(res => {
-        console.log(res.Response.DDosPolicyList[0].PolicyName);
+        console.log(res);
         
       });
     
