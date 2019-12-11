@@ -13,18 +13,6 @@
         @changeCity="changeCity"
       />
       <!-- 搜索 -->
-      <<<<<<< HEAD
-      <SEARCH
-        :searchOptions="searchOptions"
-        :searchValue="searchValue"
-        @changeValue="changeValue"
-        :searchInput="searchInput"
-        @changeinput="changeinput"
-        @clicksearch="clicksearch"
-      ></SEARCH>
-      <el-tooltip class="tooltip" effect="dark" content="导出表格" placement="top">
-        <i class="el-icon-download" @click="exportExcel" style="font-size:20px;"></i>
-      </el-tooltip>=======
       <SEARCH
         :searchOptions="searchOptions"
         :searchValue="searchValue"
@@ -33,7 +21,7 @@
         @changeinput="changeinput"
         @clicksearch="clicksearch"
         @exportExcel="exportExcel"
-      ></SEARCH>>>>>>>> CM搜索、导出表格优化
+      ></SEARCH>
     </div>
 
     <!-- 表格 -->
@@ -136,7 +124,7 @@ export default {
           label: "內網IP"
         },
         {
-          value: "public-ip-address",
+          value: "public-ip-address ",
           label: "公網IP"
         }
       ],
@@ -176,105 +164,132 @@ export default {
     this.GetCity();
     this.GetTabularData();
   },
-  //选择搜索条件
-  changeValue(val) {
-    this.searchValue = val;
+  components: {
+    Cities,
+    SEARCH,
+    Loading
   },
-  changeinput(val) {
-    this.searchInput = val;
-    if (this.searchInput === "") {
+  methods: {
+    //导出表格
+    exportExcel() {
+      /* generate workbook object from table */
+      var wb = XLSX.utils.table_to_book(document.querySelector("#exportTable"));
+      /* get binary string as output */
+      var wbout = XLSX.write(wb, {
+        bookType: "xlsx",
+        bookSST: true,
+        type: "array"
+      });
+      try {
+        FileSaver.saveAs(
+          new Blob([wbout], { type: "application/octet-stream" }),
+          this.$t("CVM.title") + ".xlsx"
+        );
+      } catch (e) {
+        if (typeof console !== "undefined") console.log(e, wbout);
+      }
+      return wbout;
+    },
+    // 获取城市列表
+    GetCity() {
+      this.axios.get(ALL_CITY).then(data => {
+        this.cities = data.data;
+        this.selectedRegion = data.data[0].Region;
+        this.selectedCity = data.data[0];
+        this.$cookie.set("regionv2", this.selectedCity.Region);
+      });
+    },
+    // 切换城市
+    changeCity(city) {
+      this.selectedCity = city;
+      this.$cookie.set("regionv2", city.Region);
+      this.GetTabularData();
+    },
+    //选择搜索条件
+    changeValue(val) {
+      this.searchValue = val;
+    },
+    changeinput(val) {
+      this.searchInput = val;
+      if (this.searchInput === "") {
+        this.GetTabularData();
+      }
+    },
+    clicksearch(val) {
+      this.searchInput = val;
+      if (this.searchInput !== "" && this.searchValue !== "") {
+        this.GetTabularData();
+      } else {
+        this.$message.error("請輸入正確搜索信息");
+      }
+    },
+    // 添加项目列表的表格数据
+    GetTabularData() {
       this.loadShow = true;
-      this.GetTabularData();
-    }
-  },
-  clicksearch(val) {
-    this.searchInput = val;
-    if (this.searchInput !== "" && this.searchValue !== "") {
-      this.loadShow = true;
-      this.GetTabularData();
-    }
-  },
-  //选择搜索条件
-  changeValue(val) {
-    this.searchValue = val;
-  },
-  changeinput(val) {
-    this.searchInput = val;
-    if (this.searchInput === "") {
-      this.GetTabularData();
-    }
-  },
-  clicksearch(val) {
-    this.searchInput = val;
-    if (this.searchInput !== "" && this.searchValue !== "") {
-      this.GetTabularData();
-    } else {
-      this.$message.error("請輸入正確搜索信息");
-    }
-  },
-  // 添加项目列表的表格数据
-  GetTabularData() {
-    const param = {
-      Region: this.selectedRegion,
-      Version: "2017-03-12",
-      Offset: this.currpage * this.pagesize - this.pagesize,
-      Limit: this.pagesize
-    };
-    if (this.searchValue !== "" && this.searchInput !== "") {
-      param["Filters.0.Name"] = this.searchValue;
-      param["Filters.0.Values.0"] = this.searchInput;
-    }
-    const paramS = {
-      allList: 0
-    };
-    // 获取表格数据
-    this.axios
-      .post(CVM_LIST, param)
-      .then(data => {
-        if (data.Response.Error == undefined) {
-          this.TbaleData = data.Response.InstanceSet;
-        } else {
-          this.$message.error(data.Response.Error.Message);
-        }
-      })
-      .then(() => {
-        // 获取项目列表
-        this.axios.post(ALL_PROJECT, paramS).then(data => {
-          this.ProjectData = data.data;
-          for (let i = 0; i < this.TbaleData.length; i++) {
-            for (let j = 0; j < this.ProjectData.length; j++) {
-              if (
-                this.TbaleData[i].Placement.ProjectId ==
-                this.ProjectData[j].projectId
-              ) {
-                this.TbaleData[i].projectName = this.ProjectData[j].projectName;
-              }
-              if (this.TbaleData[i].Placement.ProjectId == 0) {
-                this.TbaleData[i].projectName = "默認項目";
+      const param = {
+        Region: this.selectedRegion,
+        Version: "2017-03-12",
+        Offset: this.currpage * this.pagesize - this.pagesize,
+        Limit: this.pagesize
+      };
+      if (this.searchValue !== "" && this.searchInput !== "") {
+        param["Filters.0.Name"] = this.searchValue;
+        param["Filters.0.Values.0"] = this.searchInput;
+      }
+      const paramS = {
+        allList: 0
+      };
+      // 获取表格数据
+      this.axios
+        .post(CVM_LIST, param)
+        .then(data => {
+          if (data.Response.Error == undefined) {
+            this.TbaleData = data.Response.InstanceSet;
+          } else {
+            this.$message.error(data.Response.Error.Message);
+          }
+        })
+        .then(() => {
+          // 获取项目列表
+          this.axios.post(ALL_PROJECT, paramS).then(data => {
+            this.ProjectData = data.data;
+            for (let i = 0; i < this.TbaleData.length; i++) {
+              for (let j = 0; j < this.ProjectData.length; j++) {
+                if (
+                  this.TbaleData[i].Placement.ProjectId ==
+                  this.ProjectData[j].projectId
+                ) {
+                  this.TbaleData[i].projectName = this.ProjectData[
+                    j
+                  ].projectName;
+                }
+                if (this.TbaleData[i].Placement.ProjectId == 0) {
+                  this.TbaleData[i].projectName = "默認項目";
+                }
               }
             }
-          }
-          this.ProTableData = this.TbaleData;
-          this.loadShow = false;
+            this.ProTableData = this.TbaleData;
+            this.loadShow = false;
+          });
         });
+    },
+    handleSizeChange(val) {
+      this.pagesize = val;
+      this.currpage = 1;
+      this.GetTabularData();
+    },
+    handleCurrentChange(val) {
+      this.currpage = val;
+      this.GetTabularData();
+    },
+    jump(id) {
+      this.$router.push({
+        name: "CMCVMdetails",
+        query: {
+          id
+        }
       });
-  },
-  handleSizeChange(val) {
-    this.pagesize = val;
-    this.currpage = 1;
-    this.GetTabularData();
-  },
-  handleCurrentChange(val) {
-    this.currpage = val;
-    this.GetTabularData();
-  },
-  jump(id) {
-    this.$router.push({
-      name: "CMCVMdetails",
-      query: {
-        id
-      }
-    });
+    }
   }
 };
 </script>
@@ -290,12 +305,6 @@ export default {
   margin-top: -4px;
   cursor: pointer;
 }
-
-.CM-wrap {
-  width: 100%;
-  height: 100%;
-}
-
 .CM-wrap {
   width: 100%;
   height: 100%;
@@ -317,7 +326,19 @@ export default {
   display: flex;
   justify-content: space-between;
   margin: 20px 20px 0 20px;
-  align-items: center;
+}
+
+.CVM-title {
+  background: #fff;
+  line-height: 60px;
+  font-weight: bold;
+  padding-left: 20px;
+  font-size: 16px;
+}
+
+.Right-style {
+  display: flex;
+  justify-content: flex-end;
 
   .esach-inputL {
     width: 300px;

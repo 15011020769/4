@@ -418,11 +418,12 @@ export default {
           arr.push(item);
         }
       });
-      this.tableData = arr;
+      console.log(arr)
+      this.tableData1 = arr;
     },
     userInpSearch() {
       if (this.inpVal == "") {
-        this.tableData = this.json;
+        this.tableData1 = this.json;
       }
     },
     //分页
