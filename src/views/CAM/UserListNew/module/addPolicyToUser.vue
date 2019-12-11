@@ -35,10 +35,21 @@
         />
       </div>
       <div v-show="active==2">
-        <el-table :data="arrDataPush[0]" style="width: 96%; margin: 0 auto;">
-          <el-table-column type="selection" width="55"></el-table-column>
+        <el-table
+          :data="multipleSelection"
+          style="width: 96%; margin: 0 auto;"
+          v-show="activeName != 'third'"
+        >
           <el-table-column label="策略名" prop="PolicyName"></el-table-column>
           <el-table-column label="描述" prop="Description"></el-table-column>
+        </el-table>
+        <el-table
+          :data="multipleSelection"
+          style="width: 96%; margin: 0 auto;"
+          v-show="activeName == 'third'"
+        >
+          <el-table-column label="组名" prop="GroupName"></el-table-column>
+          <el-table-column label="备注" prop="Remark"></el-table-column>
         </el-table>
       </div>
       <div class="button">
@@ -96,8 +107,8 @@ export default {
       userDatas: [],
       multipleSelection: [],
       activeName: "first",
-      emptyData:[],
-      arrDataPush:[]
+      emptyData: [],
+      arrDataPush: []
     };
   },
   methods: {
@@ -183,13 +194,9 @@ export default {
     //全选
     handleSelectionChange(val) {
       this.multipleSelection = val;
-      let arrData = [];
-      arrData.push(val);
-      this.arrDataPush = arrData;
     },
     //tab标签名称
     _acitiveName(val) {
-      console.log(val)
       this.activeName = val;
     },
     //步骤三表格懒加载
@@ -231,9 +238,7 @@ export default {
         "Info.0.Uid": this.$route.query.Uin,
         "Info.0.GroupId": id
       };
-      this.axios.post(ADD_USERTOGROUP, params).then(res => {
-        console.log(res)
-      });
+      this.axios.post(ADD_USERTOGROUP, params).then(res => {});
     },
     _policy(id) {
       const params = {
@@ -241,12 +246,7 @@ export default {
         PolicyId: id,
         AttachUin: this.$route.query.Uin
       };
-      this.axios.post(POLICY_USER, params).then(res => {
-        console.log(res);
-        if (res.Response.RequestId) {
-          this.active = 3;
-        }
-      });
+      this.axios.post(POLICY_USER, params).then(res => {});
     },
     prev() {
       --this.active;
@@ -255,27 +255,25 @@ export default {
     next() {
       if (this.active++ > 3) this.active = 0;
     },
-    complete(){
-        this.multipleSelection.forEach(item => {
+    complete() {
+      this.multipleSelection.forEach(item => {
         //从策略列表中选取策略关联
         if (this.activeName == "first") {
           this._policy(item.PolicyId);
         }
         //复用现有用户策略
-        else if (this.activeName == "second") {
-          console.log(2)
+        if (this.activeName == "second") {
           this._policy(item.PolicyId);
         }
         //添加至组获得随机权限
-        else if (this.activeName == "third") {
+        if (this.activeName == "third") {
           this._userGroup(item.GroupId);
-          console.log(3)
         }
       });
-      this.$router.go(-1)
+      this.$router.go(-1);
     },
-    back(){
-      this.$router.go(-1)
+    back() {
+      this.$router.go(-1);
     }
   },
   created() {
@@ -296,13 +294,13 @@ export default {
   flex-direction: column;
   padding: 20px;
   box-sizing: border-box;
-  .step{
+  .step {
     width: 100%;
   }
-  .table{
+  .table {
     flex: 1;
   }
-  .button{
+  .button {
     width: 100%;
   }
 }
