@@ -9,10 +9,9 @@
     </div>
     <div class="operation">
       <!-- <button class="addUser" @click="addUser">新增用户</button> -->
-     <el-button type="primary" class="addUser" size="small" @click="addUser">新增用户</el-button>
-     <el-button type="primary" class="addUser" size="small" @click="addMoreUser">批量添加用户</el-button>
-     <el-button type="primary" class="addUser" size="small" @click="deleteMoreUsers">批量删除</el-button>
-     
+      <el-button type="primary" class="addUser" size="small" @click="addUser">新增用户</el-button>
+      <el-button type="primary" class="addUser" size="small" @click="addMoreUser">批量添加用户</el-button>
+      <el-button type="primary" class="addUser" size="small" @click="deleteMoreUsers">批量删除</el-button>
 
       <el-input
         placeholder="支持搜索用户名"
@@ -26,12 +25,11 @@
     </div>
     <div class="tableBody">
       <div class="wrapTwo">
-         
         <el-table
           height="500"
           :data="tableData.slice((currpage - 1) * pagesize, currpage * pagesize)"
           @selection-change="handleSelectionChange"
-           v-loading="loading"
+          v-loading="loading"
         >
           <el-table-column type="selection" width="55"></el-table-column>
           <el-table-column type="expand" label="详情" width="50">
@@ -214,7 +212,7 @@
             @row-click="selectedRow"
             @selection-change="handleSelection"
             :data="userGroup"
-             v-loading="loading"
+            v-loading="loading"
           >
             <el-input size="mini" style="width:20%" />
             <el-button size="mini" class="suo" icon="el-icon-search" show-overflow-tooltip></el-button>
@@ -291,21 +289,16 @@
         <el-button type="primary" @click="suerDelUser">确 定</el-button>
       </span>
     </el-dialog>
- <!-- 批量删除 -->
-    <el-dialog
-  title="批量删除"
-  :visible.sync="dialogVisible"
-  width="30%"
-  :before-close="handleClose">
-  <span>确定批量删除用户?</span>
-  <span slot="footer" class="dialog-footer">
-    <el-button @click="dialogVisible = false">取 消</el-button>
-    <el-button type="primary" @click="removeDeleteUser">确 定</el-button>
-  </span>
-</el-dialog>
-   
+    <!-- 批量删除 -->
+    <el-dialog title="批量删除" :visible.sync="dialogVisible" width="30%" :before-close="handleClose">
+      <span>确定批量删除用户?</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="removeDeleteUser">确 定</el-button>
+      </span>
+    </el-dialog>
+
     <!-- <Subscribe :subscribe="flag" @suerClose="suerClose"  @confirm="confirm" /> -->
-    
   </div>
 </template>
 <script>
@@ -324,7 +317,7 @@ export default {
   },
   data() {
     return {
-      dialogVisible:false,
+      dialogVisible: false,
       json: [],
       inpVal: "", //搜索
       flag: false, //删除弹框组件
@@ -353,20 +346,24 @@ export default {
       selectData: [],
       deleteMoreUser: [],
       delUin: "",
-      loading:true,
+      loading: true,
       pagesize: 10, // 分页条数
       currpage: 1, // 当前页码
       value: "" //更多操作多选值
     };
   },
   methods: {
-    deleteMoreUsers(){
-       this.dialogVisible=true;
+    deleteMoreUsers() {
+      if (this.selectData.length != 0) {
+        this.dialogVisible = true;
+      } else {
+        this.$message("请选中数据");
+      }
     },
-    removeDeleteUser(){
-       this.selectData.forEach(item => {
-          console.log(item)
-       })
+    removeDeleteUser() {
+      this.selectData.forEach(item => {
+        console.log(item);
+      });
     },
     suerDelUser() {
       if (this.delTitle == "删除用户") {
@@ -442,18 +439,17 @@ export default {
         Version: "2019-01-16"
       };
       this.axios.post(USER_LIST, userList).then(data => {
-        if(data != ""){
+        if (data != "") {
           this.loading = false;
           this.tableData = data.Response.Data;
-          this.json = data.Response.Data;       
-        }else{
+          this.json = data.Response.Data;
+        } else {
           this.loading = false;
-            this.$message({
-              type: "info",
-              message: "无响应数据！"
-            });
+          this.$message({
+            type: "info",
+            message: "无响应数据！"
+          });
         }
-       
       });
     },
     //初始化策略数据
@@ -465,15 +461,15 @@ export default {
         params["Keyword"] = this.searchStrategyValue;
       }
       this.axios.post(POLICY_LIST, params).then(res => {
-        if(res != ""){
+        if (res != "") {
           this.loading = false;
-          this.strategyData = res.Response.List;     
-        }else{
+          this.strategyData = res.Response.List;
+        } else {
           this.loading = false;
-            this.$message({
-              type: "info",
-              message: "无响应数据！"
-            });
+          this.$message({
+            type: "info",
+            message: "无响应数据！"
+          });
         }
       });
     },
@@ -490,15 +486,15 @@ export default {
         params["Keyword"] = this.searchGroupValue;
       }
       this.axios.post(USER_GROUP, params).then(res => {
-        if(res != ""){
+        if (res != "") {
           this.loading = false;
-          this.userGroup = res.Response.GroupInfo; 
-        }else{
+          this.userGroup = res.Response.GroupInfo;
+        } else {
           this.loading = false;
-            this.$message({
-              type: "info",
-              message: "无响应数据！"
-            });
+          this.$message({
+            type: "info",
+            message: "无响应数据！"
+          });
         }
       });
     },
@@ -585,18 +581,21 @@ export default {
             "Info.0.Uid": this.Uid,
             "Info.0.GroupId": item.GroupId
           };
-          this.axios.post(ADD_USERTOGROUP, params).then(res => {
-           });
+          this.axios.post(ADD_USERTOGROUP, params).then(res => {});
         });
         this.authorization = false;
       }
     },
     //批量添加按钮
-     addMoreUser(){
-          this.title = "添加到组";
-          this.authorization = true;
-          this.userGroupShow = true;
-          this.strategyShow = false;
+    addMoreUser() {
+      if (this.selectData.length != 0) {
+        this.title = "添加到组";
+        this.authorization = true;
+        this.userGroupShow = true;
+        this.strategyShow = false;
+      } else {
+        this.$message("请选择数据");
+      }
     },
     deleteRowHandl() {
       this.dialogDeleteUser = false;
@@ -624,10 +623,10 @@ export default {
     //   this.flag = false;
     // },
     bindMesg() {
-       this.$message({
-              type: "info",
-              message: "内测中..."
-        });
+      this.$message({
+        type: "info",
+        message: "内测中..."
+      });
     }
   },
   created() {
