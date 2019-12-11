@@ -57,7 +57,7 @@
       </div>
     </div>
     <div class="tableTab">
-      <el-tabs v-model="activeName" @tab-click="handleClick">
+      <el-tabs v-model="activeName" @tab-click="handleClick"  v-loading="loading">
         <el-tab-pane :label="totalNum" name="first">
           <div class="explain">
             <p>关联策略以获取策略包含的操作权限。解除策略将失去策略包含的操作权限。特别的，解除随组关联类型的策略是通过将用户从关联该策略的用户组中移出。</p>
@@ -189,7 +189,7 @@
     <el-button type="primary" @click="sureUpdata">确 定</el-button>
   </span>
 </el-dialog>
- <Subscribe :subscribe="flag" @suerClose="suerClose" @confirm="confirm" />
+ <!-- <Subscribe :subscribe="flag" @suerClose="suerClose" @confirm="confirm" /> -->
   </div>
 </template>
 <script>
@@ -204,12 +204,12 @@ import {
   USER_LIST,
   UPDATA_USER
 } from "@/constants";
-import Subscribe from './components/subscribeNew'
+// import Subscribe from './components/subscribeNew'
 import { parse } from 'path';
 export default {
   components: {
     Headcom, //头部组件
-    Subscribe
+    // Subscribe
   },
   data() {
     return {
@@ -231,7 +231,8 @@ export default {
       updataUser:false,
       totalNum:"",//策略列表条数
       groupNum:"",//用户组列表条数
-       flag:false,
+      // flag:false,
+      loading:true,
        ruleForm: {
           Name: '',
           Remark:'',
@@ -247,6 +248,7 @@ export default {
     };
   },
   methods: {
+    //编辑用户
     sureUpdata(){
        let params = {
           Version: "2019-01-16",
@@ -269,6 +271,7 @@ export default {
       console.log(this.ruleForm)
       this.updataUser = true;
     },
+    //删除子用户
     userDelete(){
       let params = {
           Version: "2019-01-16",
@@ -314,8 +317,18 @@ export default {
           TargetUin: this.userData.Uin
         };
         this.axios.post(QUERY_POLICY, ploicyParams).then(res => {
-          this.StrategyData = res.Response.List;
-          this.totalNum = "权限(" + res.Response.List.length + ")";
+          if(res != ""){
+              this.loading = false
+              this.StrategyData = res.Response.List;
+              this.totalNum = "权限(" + res.Response.List.length + ")";
+          }else{
+            this.loading = false;
+            this.$message({
+              type: "info",
+              message: "无响应数据！"
+            });
+          }
+          
         });
       });
     },
@@ -452,8 +465,13 @@ export default {
     },
     //多选框
     Select(val) {
-      this.disabled = false;
+      // this.disabled = false;
       this.valArr = val;
+      if(val != ""){
+        this.disabled = false;
+      }else{
+        this.disabled = true;
+      }
     },
     handleClick(tab, event) {
       console.log(tab, event);
@@ -463,14 +481,17 @@ export default {
       this.delDialog = false;
       this.updataUser = false;
     },
-     suerClose(){
-       this.flag = false
-    },
-    confirm(){
-        this.flag = false;
-    },
+    //  suerClose(){
+    //    this.flag = false
+    // },
+    // confirm(){
+    //     this.flag = false;
+    // },
     bindMesg(){
-       this.flag = true
+       this.$message({
+              type: "info",
+              message: "内测中..."
+        });
     },
     back(){
       this.$router.go(-1)

@@ -10,15 +10,9 @@
     <div class="operation">
       <!-- <button class="addUser" @click="addUser">新增用户</button> -->
      <el-button type="primary" class="addUser" size="small" @click="addUser">新增用户</el-button>
-  
-     <el-select v-model="value" size="small" placeholder="请选择" @change="select" class="select">
-        <el-option
-          v-for="item in options"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value"
-        ></el-option>
-      </el-select>
+     <el-button type="primary" class="addUser" size="small" @click="addMoreUser">批量添加用户</el-button>
+     <el-button type="primary" class="addUser" size="small" @click="deleteMoreUsers">批量删除</el-button>
+     
 
       <el-input
         placeholder="支持搜索用户名"
@@ -32,6 +26,7 @@
     </div>
     <div class="tableBody">
       <div class="wrapTwo">
+         
         <el-table
           height="500"
           :data="tableData.slice((currpage - 1) * pagesize, currpage * pagesize)"
@@ -296,8 +291,20 @@
         <el-button type="primary" @click="suerDelUser">确 定</el-button>
       </span>
     </el-dialog>
+ <!-- 批量删除 -->
+    <el-dialog
+  title="批量删除"
+  :visible.sync="dialogVisible"
+  width="30%"
+  :before-close="handleClose">
+  <span>确定批量删除用户?</span>
+  <span slot="footer" class="dialog-footer">
+    <el-button @click="dialogVisible = false">取 消</el-button>
+    <el-button type="primary" @click="removeDeleteUser">确 定</el-button>
+  </span>
+</el-dialog>
    
-    <Subscribe :subscribe="flag" @suerClose="suerClose"  @confirm="confirm" />
+    <!-- <Subscribe :subscribe="flag" @suerClose="suerClose"  @confirm="confirm" /> -->
     
   </div>
 </template>
@@ -317,6 +324,7 @@ export default {
   },
   data() {
     return {
+      dialogVisible:false,
       json: [],
       inpVal: "", //搜索
       flag: false, //删除弹框组件
@@ -346,24 +354,21 @@ export default {
       deleteMoreUser: [],
       delUin: "",
       loading:true,
-      options: [
-        {
-          value: 0,
-          label: "添加用户"
-        },
-        {
-          value: 1,
-          label: "删除"
-        }
-      ],
       pagesize: 10, // 分页条数
       currpage: 1, // 当前页码
       value: "" //更多操作多选值
     };
   },
   methods: {
+    deleteMoreUsers(){
+       this.dialogVisible=true;
+    },
+    removeDeleteUser(){
+       this.selectData.forEach(item => {
+          console.log(item)
+       })
+    },
     suerDelUser() {
-      console.log(this.delTitle == "批量删除")
       if (this.delTitle == "删除用户") {
         let params = {
           Version: "2019-01-16",
@@ -389,24 +394,6 @@ export default {
                 console.log(res);
               });
           });
-        this.dialogDeleteUser = false;
-      }
-      if (this.delTitle == "批量删除") {
-        var removeIndex = [];
-        this.selectData.forEach(item => {
-          removeIndex.unshift(item.Name);
-        });
-        console.log(this.delData)
-        removeIndex.forEach(item => {
-          let params = {
-            Version: "2019-01-16",
-            Name: item
-          };
-          this.axios.post(DELETE_USER, params).then(data => {
-            console.log(data);
-            this.init();
-          });
-        });
         this.dialogDeleteUser = false;
       }
     },
@@ -533,25 +520,6 @@ export default {
         }
       });
     },
-    //input弹框选择数据
-    select() {
-      if (this.selectData.length != 0) {
-        if (this.value == 0) {
-          this.authorization = true;
-          this.userGroupShow = true;
-          this.strategyShow = false;
-          this.userGroups();
-        }
-        if (this.value == 1) {
-          this.dialogDeleteUser = true;
-          this.delTitle = "批量删除";
-          this.delRowShow = false;
-          this.delMoreShow = true;
-        }
-      } else {
-        this.$message("请选择数据");
-      }
-    },
     //点击删除弹框显示
     deleteRowData(data) {
       this.flag = true;
@@ -563,8 +531,8 @@ export default {
     handleSelectionChange(val) {
       this.selectData = val;
       this.inputShow = false;
-      this.delData = JSON.stringify(val)
-      console.log(this.selectData)
+      // this.delData = JSON.stringify(val)
+      // console.log(this.selectData)
     },
     //点击添加到组事件
     addRroup(uid) {
@@ -623,6 +591,13 @@ export default {
         this.authorization = false;
       }
     },
+    //批量添加按钮
+     addMoreUser(){
+          this.title = "添加到组";
+          this.authorization = true;
+          this.userGroupShow = true;
+          this.strategyShow = false;
+    },
     deleteRowHandl() {
       this.dialogDeleteUser = false;
     },
@@ -642,14 +617,17 @@ export default {
       // 给右边table框赋值，只需在此处赋值即可，selectedRow方法中不写，因为单独点击复选框，只有此方法有效。
       this.userGroupSelect = val;
     },
-    suerClose() {
-      this.flag = false;
-    },
-    confirm() {
-      this.flag = false;
-    },
+    // suerClose() {
+    //   this.flag = false;
+    // },
+    // confirm() {
+    //   this.flag = false;
+    // },
     bindMesg() {
-      this.flag = true;
+       this.$message({
+              type: "info",
+              message: "内测中..."
+        });
     }
   },
   created() {

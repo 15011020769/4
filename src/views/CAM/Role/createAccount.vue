@@ -284,10 +284,6 @@ export default {
       padding: 20px;
       background: #fff;
 
-      .step {
-        border-bottom: 1px solid #ddd;
-        padding-bottom: 20px;
-      }
 
       .contant_flex {
         display: flex;
@@ -344,5 +340,9 @@ export default {
       padding-left: 50px;
     }
   }
+  .step >>> .el-steps {
+  background: white;
+  padding-bottom: 25px;
+}
 }
 </style>

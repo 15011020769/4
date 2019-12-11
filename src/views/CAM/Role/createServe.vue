@@ -323,10 +323,6 @@ export default {
       .el-steps--simple {
         background-color: #fff;
       }
-      .step {
-        border-bottom: 1px solid #ddd;
-        padding-bottom: 20px;
-      }
       .contant_flex {
         display: flex;
         padding-top: 20px;
@@ -362,6 +358,9 @@ export default {
         }
       }
     }
+  }
+  .step{
+    margin-bottom: 20px;
   }
 }
 </style>
