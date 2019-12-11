@@ -19,10 +19,8 @@
         :searchInput="searchInput"
         @changeinput="changeinput"
         @clicksearch="clicksearch"
+        @exportExcel="exportExcel"
       ></SEARCH>
-      <el-tooltip class="tooltip" effect="dark" content="导出表格" placement="top">
-        <i class="el-icon-download" @click="exportExcel" style="font-size:20px;"></i>
-      </el-tooltip>
     </div>
     <!-- 表格 -->
     <div class="Table-SY">
@@ -185,6 +183,7 @@ export default {
     changeinput(val) {
       this.searchInput = val;
       if (this.searchInput === "") {
+        this.loadShow = true;
         this.GetTabularData();
       }
     },
@@ -192,6 +191,7 @@ export default {
     clicksearch(val) {
       this.searchInput = val;
       if (this.searchInput !== "" && this.searchValue !== "") {
+        this.loadShow = true;
         this.GetTabularData();
       } else {
         this.$message.error("請輸入正確搜索信息");

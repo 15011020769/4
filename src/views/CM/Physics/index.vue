@@ -18,10 +18,8 @@
         :searchInput="searchInput"
         @changeinput="changeinput"
         @clicksearch="clicksearch"
+        @exportExcel="exportExcel"
       ></SEARCH>
-      <el-tooltip class="tooltip" effect="dark" content="导出表格" placement="top">
-        <i class="el-icon-download" @click="exportExcel" style="font-size:20px;"></i>
-      </el-tooltip>
     </div>
     <!-- 表格 -->
 
@@ -214,6 +212,7 @@ export default {
     },
     // 添加项目列表的表格数据
     GetTabularData() {
+      this.loadShow = true;
       const param = {
         Region: this.selectedRegion,
         Version: "2018-04-10",
