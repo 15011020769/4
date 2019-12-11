@@ -1,25 +1,25 @@
 <template>
   <div>
-    <el-dialog class="dialogModel" :title='contentDialog[2]=="启用密钥"?"启用密钥服务":"禁用密钥服务"' :visible.sync="disableDialog" width="30%" :before-close="handleClose">
+    <el-dialog class="dialogModel" :title='contentDialog[2]=="啟用密鑰"?"啟用密鑰服務":"禁用密鑰服務"' :visible.sync="disableDialog" width="30%" :before-close="handleClose">
       <div>
-        <p v-if="contentDialog[2]=='启用密钥'?true:false" class="titleTip">启用选中的密钥服务？</p>
-        <p v-if="contentDialog[2]=='禁用密钥'?true:false" class="titleTip">禁用选中的密钥服务？</p>
-        <p class="lookDetails">您已选<span class="fontweight"><span>1</span>个密钥服务</span><a @click="detailsIsshow"> 查看详情</a></p>
+        <p v-if="contentDialog[2]=='啟用密鑰'?true:false" class="titleTip">{{$t('KMS.total.question1')}}</p>
+        <p v-if="contentDialog[2]=='禁用密鑰'?true:false" class="titleTip">{{$t('KMS.total.question2')}}</p>
+        <p class="lookDetails">{{$t('KMS.total.chooseAl')}}<span class="fontweight">{{$t('KMS.total.oneKmsSer')}}</span><a @click="detailsIsshow"> {{$t('KMS.total.lookDetail')}}</a></p>
         <table class="listShow" v-if="detailIsShow">
           <tbody>
             <tr>
               <td class="listShowNum">1</td>
               <td class="listShowNick">{{contentDialog[0]}}</td>
-              <td v-if="contentDialog[2]=='启用密钥'?true:false" class="listShowIsable">可启用</td>
-              <td v-if="contentDialog[2]=='禁用密钥'?true:false" class="listShowIsable">可禁用</td>
+              <td v-if="contentDialog[2]=='啟用密鑰'?true:false" class="listShowIsable">{{$t('KMS.total.canStart')}}</td>
+              <td v-if="contentDialog[2]=='禁用密鑰'?true:false" class="listShowIsable">{{$t('KMS.total.canStop')}}</td>
             </tr>
           </tbody>
         </table>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="handleClose">取 消</el-button>
-        <el-button v-if="contentDialog[2]=='启用密钥'?true:false" type="primary" @click="startKmsSure">确 定</el-button>
-        <el-button v-if="contentDialog[2]=='禁用密钥'?true:false" type="primary" @click="stopKmsSure">确 定</el-button>
+        <el-button @click="handleClose">{{$t('KMS.total.modelClose')}}</el-button>
+        <el-button v-if="contentDialog[2]=='啟用密鑰'?true:false" type="primary" @click="startKmsSure">{{$t('KMS.total.modelSure')}}</el-button>
+        <el-button v-if="contentDialog[2]=='禁用密鑰'?true:false" type="primary" @click="stopKmsSure">{{$t('KMS.total.modelSure')}}</el-button>
       </span>
     </el-dialog>
   </div>

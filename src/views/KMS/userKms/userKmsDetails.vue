@@ -189,11 +189,11 @@
           <div class="EncryptText newClear">
             <div v-if="thisType=='1'||thisType=='0'?true:false">
               <el-input :disabled='projectDetail.KeyState=="已禁用"||projectDetail.KeyState=="PendingDelete"?true:false' class="textareaIpt" v-model="Plaintext" type="textarea" :placeholder="$t('KMS.total.placeholder2')" @input='changeTextarea1'></el-input>
-              <el-button @click="actionPlain" :disabled="disableTextarea" type="primary">{{$t('KMS.total.action')}}</el-button>
+              <el-button @click="actionPlain" :disabled="disableTextarea" type="primary">{{$t('KMS.total.action1')}}</el-button>
             </div>
             <div v-if="thisType=='2'||thisType=='3'?true:false">
               <el-input class="textareaIpt" v-model="Ciphertext" type="textarea" :placeholder="$t('KMS.total.enterText')" @input='changeTextarea1'></el-input>
-              <el-button @click="actionCipher" :disabled="disableTextarea" type="primary">{{$t('KMS.total.action')}}</el-button>
+              <el-button @click="actionCipher" :disabled="disableTextarea" type="primary">{{$t('KMS.total.action1')}}</el-button>
             </div>
             <div>
               <el-input class="textareaIpt" :disabled="true" type="textarea" v-model="downLoadText"></el-input>
@@ -649,7 +649,7 @@ export default {
 }
 </script>
 <style lang="scss">
-.newClear {
+.newClear:after {
   display: block;
   content: "";
   clear: both;
@@ -758,7 +758,7 @@ export default {
   div {
     margin-bottom: 20px;
     width: 100%;
-    span:nth-child(1).dialogText {
+    span:nth-child(1) {
       font-size: 12px;
       color: #888;
       display: inline-block;

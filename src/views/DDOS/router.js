@@ -1,16 +1,16 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import ProtectOverview from './ProtectOverview/ProtectOverview'
-import basicProtection from './basicProtection/basicProtection'
-import basicProteDetail from './basicProtection/basicProteDetail'
-import IpProfessional from './IpProfessional/IpProfessional'
-import ProtectionConfig from './IpProfessional/ProtectionConfig'
-import AccessConfig from './IpProfessional/AccessConfig'
-import AssetList from './IpProfessional/AssetList'
-import unBlocking from './unBlocking/unBlocking'
-import UnblockingRecord from './unBlocking/UnblockingRecord'
-import choose from './buy/choose'
-import pay from './buy/pay'
+// import ProtectOverview from './ProtectOverview/ProtectOverview'
+// import basicProtection from './basicProtection/basicProtection'
+// import basicProteDetail from './basicProtection/basicProteDetail'
+// import IpProfessional from './IpProfessional/IpProfessional'
+// import ProtectionConfig from './IpProfessional/ProtectionConfig'
+// import AccessConfig from './IpProfessional/AccessConfig'
+// import AssetList from './IpProfessional/AssetList'
+// import unBlocking from './unBlocking/unBlocking'
+// import UnblockingRecord from './unBlocking/UnblockingRecord'
+// import choose from './buy/choose'
+// import pay from './buy/pay'
 
 
 Vue.use(Router)
@@ -29,7 +29,8 @@ export default new Router({
     {
       path: '/ProtectOverview', // 防护概览
       name: 'ProtectOverview',
-      component: ProtectOverview,
+      component:() =>
+        import (/* webpackChunkName: "ProtectOverview" */'./ProtectOverview/ProtectOverview'),
       meta: {
         keepAlive: true,
         leftNav:true
@@ -38,7 +39,8 @@ export default new Router({
     {
       path: '/basicProtection', // 基础防护
       name: 'basicProtection',
-      component: basicProtection,
+      component: () =>
+        import (/* webpackChunkName: "basicProtection" */'./basicProtection/basicProtection'),
       meta: {
         keepAlive: true,
         leftNav:true
@@ -47,7 +49,8 @@ export default new Router({
     {
       path: '/basicProteDetail', // 基础防护详情
       name: 'basicProteDetail',
-      component: basicProteDetail,
+      component:  () =>
+        import (/* webpackChunkName: "basicProteDetail" */'./basicProtection/basicProteDetail'),
       meta: {
         keepAlive: true,
         leftNav:true
@@ -56,7 +59,8 @@ export default new Router({
     {
       path: '/IpProfessional', // 统计报表
       name: 'IpProfessional',
-      component: IpProfessional,
+      component: () =>
+        import (/* webpackChunkName: "IpProfessional" */'./IpProfessional/IpProfessional'),
       meta: {
         keepAlive: true,
         leftNav:true
@@ -65,7 +69,8 @@ export default new Router({
     {
       path: '/ProtectionConfig', // 防护配置
       name: 'ProtectionConfig',
-      component: ProtectionConfig,
+      component: () =>
+        import (/* webpackChunkName: "ProtectionConfig" */'./IpProfessional/ProtectionConfig'),
       meta: {
         keepAlive: true,
         leftNav:true
@@ -74,7 +79,8 @@ export default new Router({
     {
       path: '/AccessConfig', // 接入配置
       name: 'AccessConfig',
-      component: AccessConfig,
+      component: () =>
+        import (/* webpackChunkName: "AccessConfig" */'./IpProfessional/AccessConfig'),
       meta: {
         keepAlive: true,
         leftNav:true
@@ -83,7 +89,8 @@ export default new Router({
     {
       path: '/AssetList', // 资产列表
       name: 'AssetList',
-      component: AssetList,
+      component: () =>
+        import (/* webpackChunkName: "AssetList" */'./IpProfessional/AssetList'),
       meta: {
         keepAlive: true,
         leftNav:true
@@ -92,7 +99,8 @@ export default new Router({
     {
       path: '/unBlocking', // 解封操作
       name: 'unBlocking',
-      component: unBlocking,
+      component: () =>
+        import (/* webpackChunkName: "unBlocking" */'./unBlocking/unBlocking'),
       meta: {
         keepAlive: true,
         leftNav:true
@@ -101,7 +109,8 @@ export default new Router({
     {
       path: '/UnblockingRecord', // 解封操作记录
       name: 'UnblockingRecord',
-      component: UnblockingRecord,
+      component: () =>
+        import (/* webpackChunkName: "UnblockingRecord" */'./unBlocking/UnblockingRecord'),
       meta: {
         keepAlive: true,
         leftNav:true
@@ -110,7 +119,8 @@ export default new Router({
     {
       path: '/choose', // 新购
       name: 'choose',
-      component: choose,
+      component: () =>
+        import (/* webpackChunkName: "choose" */'./buy/choose'),
       meta: {
         keepAlive: true,
         leftNav:false
@@ -119,7 +129,8 @@ export default new Router({
     {
       path: '/pay', // 支付
       name: 'pay',
-      component: pay,
+      component: () =>
+        import (/* webpackChunkName: "pay" */'./buy/pay'),
       meta: {
         keepAlive: true,
         leftNav:false

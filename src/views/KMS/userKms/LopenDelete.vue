@@ -1,22 +1,22 @@
 <template>
   <div>
-    <el-dialog class="dialogModel" title="计划删除密钥" v-if="contentDialog[2]=='计划删除'?true:false" :visible.sync="disableDialog" width="30%" :before-close="handleClose">
+    <el-dialog class="dialogModel" :title="$t('KMS.total.planDeleteKms')" v-if="contentDialog[2]=='計劃刪除'?true:false" :visible.sync="disableDialog" width="30%" :before-close="handleClose">
       <div class="openDeleteTip">
-        <span>温馨提示：计划删除天数可选范围为7-30天。密钥删除后将无法恢复，此密钥下的所有加密数据也将无法解密。为避免误删除行为，KMS服务将对以下操作进行自动告警:</span>
-        <span>1.密钥被彻底删除前，对尝试调用此密钥的行为进行提示告警</span>
-        <span>2.密钥被彻底删除前3天，每天提示告警</span>
+        <span>{{$t('KMS.total.tip18')}}</span>
+        <span>{{$t('KMS.total.tip19')}}</span>
+        <span>{{$t('KMS.total.tip20')}}</span>
       </div>
       <div>
-        <span class="numberAdd">该密钥将于<el-input-number :min="7" :max="30" size="small" v-model="thisNumber"></el-input-number>天后消失</span>
+        <span class="numberAdd">{{$t('KMS.total.kmswill')}}<el-input-number :min="7" :max="30" size="small" v-model="thisNumber"></el-input-number>{{$t('KMS.total.dayDisplay')}}</span>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="handleClose">取 消</el-button>
-        <el-button type="primary" @click="openDeleteSure">确 定</el-button>
+        <el-button @click="handleClose">{{$t('KMS.total.modelClose')}}</el-button>
+        <el-button type="primary" @click="openDeleteSure">{{$t('KMS.total.modelSure')}}</el-button>
       </span>
     </el-dialog>
-    <el-dialog class="dialogModel" title="取消删除密钥" v-if="contentDialog[2]=='取消删除'?true:false" :visible.sync="disableDialog" width="30%" :before-close="handleClose">
+    <el-dialog class="dialogModel" :title="$t('KMS.total.closeDeleteKms')" v-if="contentDialog[2]=='取消刪除'?true:false" :visible.sync="disableDialog" width="30%" :before-close="handleClose">
       <div class="closeDelete">
-        <p class="closeDeleteTxt">取消删除选中的密钥服务? 确认取消删除后，密钥重置为“已禁用”状态</p>
+        <p class="closeDeleteTxt">{{$t('KMS.total.tip21')}}</p>
       </div>
       <table class="listShowDelete">
         <tbody>
@@ -28,8 +28,8 @@
         </tbody>
       </table>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="handleClose">取 消</el-button>
-        <el-button type="primary" @click="closeDeleteSure">确 定</el-button>
+        <el-button @click="handleClose">{{$t('KMS.total.modelClose')}}</el-button>
+        <el-button type="primary" @click="closeDeleteSure">{{$t('KMS.total.modelSure')}}</el-button>
       </span>
     </el-dialog>
   </div>

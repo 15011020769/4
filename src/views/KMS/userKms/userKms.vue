@@ -24,7 +24,7 @@
               <el-input v-model="createForm.discription" type="textarea" />
               <p>{{$t('KMS.total.tip2')}}</p>
             </el-form-item>
-            <el-form-item :label="$t('KMS.total.tip2')">
+            <el-form-item :label="$t('KMS.total.kmsMOrigin')">
               <el-radio-group v-model="createForm.Type">
                 <el-radio label="KMS"></el-radio>
                 <el-radio :label="$t('KMS.total.oulCon')"></el-radio>
