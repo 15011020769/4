@@ -53,7 +53,7 @@
         </el-form>
       </div>
       <div v-if="active==1">
-        <SecondStep :form="addModel"/>
+        <SecondStep :form="addModel" />
       </div>
       <br />
       <br />
@@ -153,13 +153,22 @@ export default {
           };
           console.log(params);
           this.axios.post(CREATE_SAML, params).then(res => {
+            console.log(res)
+            if (res.Response.Error.Code) {
+              this.$message.error(res.Response.Error.Code);
+            } else {
+              this.$message({
+                message: "添加成功",
+                type: "success"
+              });
+              const addModel = this.addModel;
+              if (this.active++ > 1) {
+                this.active = 0;
+                this.form = this.addModel;
+              }
+            }
             console.log(res);
           });
-          const addModel = this.addModel;
-          if (this.active++ > 1) {
-            this.active = 0;
-            this.form = this.addModel;
-          }
         } else {
           return false;
         }
