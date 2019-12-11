@@ -6,9 +6,9 @@
       <p>
         <i class="el-icon-info"></i>{{ $t('CVM.clBload.zs') }}
       </p>
-      <p>
+      <!-- <p>
         <el-button type="text">{{ $t('CVM.clBload.dcsj') }}</el-button>
-      </p>
+      </p> -->
     </div>
     <div class="box-table">
       <!-- 表格 -->
