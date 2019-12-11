@@ -20,6 +20,7 @@ module.exports = {
     CVM: {
         slfz: '實例分組',
         zdyjk: '自定義監控',
+        nwang: '內網',
         title: '雲伺服器',
         errorTxt: '請輸入正確搜索信息',
         table: {
