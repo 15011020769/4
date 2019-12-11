@@ -2,8 +2,8 @@
   <div class="Cam">
     <div class="top">
       <div class="top-left">
-        <span class="top-text">策略</span>
-        <el-select size="mini" v-model="policyScope" placeholder="全部策略" @change="changePolicyScope">
+        <span class="top-text">{{$t('CAM.Role.strategy')}}</span>
+        <el-select size="mini" v-model="policyScope" :placeholder="$t('CAM.Role.allRol')" @change="changePolicyScope">
           <el-option
             v-for="item in options"
             :key="item.value"
@@ -16,7 +16,7 @@
     </div>
     <div class="strage-wrap">
       <div class="contant">
-        <p class="contant_top">用户或者用户组与策略关联后，即可获得策略所描述的操作权限。</p>
+        <p class="contant_top">{{$t('CAM.Role.rolTitle')}}</p>
         <div class="table_opare">
           <div>
             <el-button plain size="small" @click="handleDelete()">删除</el-button>

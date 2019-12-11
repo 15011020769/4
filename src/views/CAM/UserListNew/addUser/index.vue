@@ -1,18 +1,18 @@
 <template>
   <div class="addUser-wrap">
-    <HeadCom title="新增用户" :backShow="true" @_back="_back" />
+    <HeadCom :title="$t('CAM.userList.listAdduser')" :backShow="true" @_back="_back" />
     <div class="explain">
       <p>
-        消息接收人创建流程已移至
-        <a href="#" style="color:#006eff;">自定义创建</a> 中，请选择类型为「仅用于接收消息」进行消息接收人的创建
+        {{$t('CAM.userList.mesgPeople')}}
+        <a href="#" style="color:#006eff;"> {{$t('CAM.userList.selfCreate')}}</a>{{$t('CAM.userList.selfCreates')}}
       </p>
     </div>
     <div class="adduser-main">
       <div class="user">
         <i class="el-icon-user"></i>
-        <h3>添加一位子用户，允许其访问您的云上资源</h3>
+        <h3>{{$t('CAM.userList.addEvery')}}</h3>
         <span @click="_goTo">
-          <i class="el-icon-edit"></i>自定义创建
+          <i class="el-icon-edit"></i>{{$t('CAM.userList.selfCreate')}}
         </span>
       </div>
     </div>

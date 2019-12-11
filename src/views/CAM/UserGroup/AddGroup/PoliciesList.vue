@@ -2,7 +2,7 @@
   <div class="Cam">
     <div class="container">
       <div class="container-left">
-        <p style="margin-bottom:20px">选择策略（共{{totalNum}}条）</p>
+        <p style="margin-bottom:20px">選擇策略（共{{totalNum}}条）</p>
         <!-- <el-input size="mini" custom-class="dialogStyle" v-model="search" style="width:100%"
           @keyup.enter.native="toQuery" />
         <i class="el-icon-search ifier" @click="toQuery"></i> -->
@@ -15,16 +15,16 @@
         <el-table class="table-left" ref="multipleOption" :data="policiesData" size="small" :height="tableHeight"
           tooltip-effect="dark" style="width: 100%" @row-click="selectedRow" @selection-change="handleSelectionChange">
           <el-table-column type="selection" prop="PolicyId" width="29"> </el-table-column>
-          <el-table-column prop="PolicyName" label="策略名" show-overflow-tooltip>
+          <el-table-column prop="PolicyName" :label="$t('CAM.userList.strategyNames')" show-overflow-tooltip>
             <template slot-scope="scope">
               <p>{{scope.row.PolicyName}}</p>
               <p>{{scope.row.Description}}</p>
             </template>
           </el-table-column>
-          <el-table-column prop="Type" label="策略类型" width="100">
+          <el-table-column prop="Type"  :label="$t('CAM.userList.clType')" width="100">
             <template slot-scope="scope">
-              <p v-show="scope.row.Type == 1">自定义策略</p>
-              <p v-show="scope.row.Type == 2">预设策略</p>
+              <p v-show="scope.row.Type == 1">{{$t('CAM.userList.strategySelf')}}</p>
+              <p v-show="scope.row.Type == 2">{{$t('CAM.userList.ysStrategy')}}</p>
             </template>
           </el-table-column>
         </el-table>
@@ -38,16 +38,16 @@
         <span style="margin-bottom:20px">已选择（共条）</span>
         <el-table class="table-left" ref="multipleSelected" :data="policiesSelectedData" tooltip-effect="dark"
           size="small" :height="tableHeight" style="width: 100%">
-          <el-table-column prop="PolicyName" label="策略名" show-overflow-tooltip>
+          <el-table-column prop="PolicyName" :label="$t('CAM.userList.strategyNames')" show-overflow-tooltip>
             <template slot-scope="scope">
               <p>{{scope.row.PolicyName}}</p>
               <p>{{scope.row.Description}}</p>
             </template>
           </el-table-column>
-          <el-table-column prop="Type" label="策略类型" width="100">
+          <el-table-column prop="Type" :label="$t('CAM.userList.clType')" width="100">
             <template slot-scope="scope">
-              <p v-show="scope.row.Type == 1">自定义策略</p>
-              <p v-show="scope.row.Type == 2">预设策略</p>
+              <p v-show="scope.row.Type == 1">{{$t('CAM.userList.strategySelf')}}</p>
+              <p v-show="scope.row.Type == 2">{{$t('CAM.userList.ysStrategy')}}</p>
             </template>
           </el-table-column>
           <el-table-column :label="$t('CAM.userGroup.colHandle')" width="50">

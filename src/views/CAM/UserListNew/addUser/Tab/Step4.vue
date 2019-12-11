@@ -1,22 +1,22 @@
 <template>
   <div class="edit-wrap">
     <div class="explain">
-      <p>请检查您设置的信息，访问管理将按照如下信息为您创建用户。</p>
+      <p>{{$t('CAM.userList.heckYourSelf')}}</p>
     </div>
     <div class="edit-main" v-loading="loading">
       <div class="edit-box">
-        <h3>用户信息</h3>
+        <h3>{{$t('CAM.userList.userMessage')}}</h3>
         <table width="100%" boder="1" cellspacing="0" cellpadding="1">
           <thead>
             <tr>
               <td width="280">
-                用户名
+                {{$t('CAM.userList.userName')}}
                 <span style="color:#e54545;">*</span>
               </td>
-              <td width="170">备注</td>
-              <td width="200">手机</td>
-              <td width="200">邮箱</td>
-              <td>操作</td>
+              <td width="170">{{$t('CAM.userList.userRemark')}}</td>
+              <td width="200">{{$t('CAM.userList.userPhone')}}</td>
+              <td width="200">{{$t('CAM.userList.userEmail')}}</td>
+              <td>>{{$t('CAM.userList.colHandle')}}</td>
             </tr>
           </thead>
           <tbody>
@@ -25,7 +25,7 @@
               <td>{{userData.Remark ? userData.Remark : '-'}}</td>
               <td>{{userData.PhoneNum ? userData.PhoneNum : '-'}}</td>
               <td>{{userData.Email ? userData.Email : '-'}}</td>
-              <td class="edit" @click="_edit">编辑</td>
+              <td class="edit" @click="_edit">{{$t('CAM.userList.updataUser')}}</td>
             </tr>
             <tr v-show="userInp">
               <td>{{userData.Name}}</td>
@@ -39,32 +39,32 @@
                 <el-input v-model="form.Email"></el-input>
               </td>
               <td class="edit">
-                <span @click="_userConfirm">确定</span>
-                <span style="margin-left:5px;" @click="_userCancel">取消</span>
+                <span @click="_userConfirm">{{$t('CAM.userList.suerAdd')}}</span>
+                <span style="margin-left:5px;" @click="_userCancel">{{$t('CAM.userList.handClose')}}</span>
               </td>
             </tr>
           </tbody>
         </table>
       </div>
       <div class="edit-box">
-        <h3>访问信息</h3>
+        <h3>{{$t('CAM.userList.askMesg')}}</h3>
         <el-form ref="form" label-width="100px">
-          <el-form-item label="访问方式" required>
-            <p v-show="userData.ConsoleLogin == 1">编程访问，控制台访问</p>
-            <p v-show="userData.ConsoleLogin == 0">无法登录控制台</p>
+          <el-form-item :label="$t('CAM.userList.askWay')" required>
+            <p v-show="userData.ConsoleLogin == 1">{{$t('CAM.userList.consoleAsk')}}</p>
+            <p v-show="userData.ConsoleLogin == 0">{{$t('CAM.userList.noWayAsk')}}</p>
           </el-form-item>
-          <el-form-item label="控制台密码类型">
-            <p v-if="!pwdRadio">自动生成密码</p>
-            <p v-if="pwdRadio">自定义密码</p>
+          <el-form-item :label="$t('CAM.userList.passType')">
+            <p v-if="!pwdRadio">{{$t('CAM.userList.generation')}}</p>
+            <p v-if="pwdRadio">{{$t('CAM.userList.Custom')}}</p>
           </el-form-item>
-          <el-form-item label="需要重置密码">
+          <el-form-item :label="$t('CAM.userList.resetPassword')">
             <p v-if="pwdType.length != 0">是</p>
             <p v-if="pwdType.length == 0">否</p>
           </el-form-item>
         </el-form>
       </div>
       <div class="edit-box">
-        <h3>权限信息</h3>
+        <h3>{{$t('CAM.userList.policyMesg')}}</h3>
         <el-table
           :data="policyData"
           style="width: 100%"
@@ -72,15 +72,15 @@
           v-loading="tableloading"
           max-height="520"
         >
-          <el-table-column prop="PolicyName" label="策略名" width="220"></el-table-column>
-          <el-table-column label="策略描述">
+          <el-table-column prop="PolicyName" :label="$t('CAM.userList.strategyNames')" width="220"></el-table-column>
+          <el-table-column :label="$t('CAM.userList.policyMS')">
             <template slot-scope="scope">
               <p class="omit">{{scope.row.Remark}}</p>
             </template>
           </el-table-column>
-          <el-table-column label="操作" width="150">
+          <el-table-column :label="$t('CAM.userList.userCz')" width="150">
             <template slot-scope="scope">
-              <p style="color:#006eff;cursor: pointer;" @click="_del(scope.row)">解除</p>
+              <p style="color:#006eff;cursor: pointer;" @click="_del(scope.row)">{{$t('CAM.userList.Remove')}}</p>
             </template>
           </el-table-column>
         </el-table>
@@ -91,10 +91,10 @@
           v-loading="tableloading"
           max-height="520"
         >
-          <el-table-column prop="GroupName" label="组名"></el-table-column>
-          <el-table-column label="操作" width="250">
+          <el-table-column prop="GroupName" :label="$t('CAM.userList.colNmae')"></el-table-column>
+          <el-table-column :label="$t('CAM.userList.userCz')" width="250">
             <template slot-scope="scope">
-              <p style="color:#006eff;cursor: pointer;" @click="_del(scope.row)">解除</p>
+              <p style="color:#006eff;cursor: pointer;" @click="_del(scope.row)">{{$t('CAM.userList.Remove')}}</p>
             </template>
           </el-table-column>
         </el-table>

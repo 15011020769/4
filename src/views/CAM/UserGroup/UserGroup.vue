@@ -31,31 +31,31 @@
           <i slot="suffix" class="el-input__icon el-icon-search" @click="toQuery"></i>
         </el-input>
 
-        <el-dialog title="自定义列表字段" :visible.sync="gear" width="45%" :before-close="handleCloseGear">
+        <el-dialog :title="$t('CAM.userGroup.fields')" :visible.sync="gear" width="45%" :before-close="handleCloseGear">
           <div class="app-cam-alert">
-            <div class="app-cam-alert__info">请选择您想显示的列表详细信息</div>
+            <div class="app-cam-alert__info">{{$t('CAM.userGroup.chooseMesg')}}</div>
           </div>
           <el-form ref="form" :model="form">
             <el-form-item>
               <el-checkbox-group v-model="form.type">
                 <p>
-                  <el-checkbox disabled label="用户组名称" name="type"></el-checkbox>
+                  <el-checkbox disabled :label="$t('CAM.userGroup.colNmae')" name="type"></el-checkbox>
                 </p>
                 <p>
-                  <el-checkbox label="备注" name="type"></el-checkbox>
+                  <el-checkbox :label="$t('CAM.userGroup.colRemark')" name="type"></el-checkbox>
                 </p>
                 <p>
-                  <el-checkbox label="创建时间" name="type"></el-checkbox>
+                  <el-checkbox :label="$t('CAM.userGroup.colCreTime')" name="type"></el-checkbox>
                 </p>
                 <p>
-                  <el-checkbox disabled label="操作" name="type"></el-checkbox>
+                  <el-checkbox disabled :label="$t('CAM.userGroup.colHandle')" name="type"></el-checkbox>
                 </p>
               </el-checkbox-group>
             </el-form-item>
           </el-form>
           <div slot="footer" class="dialog-footer">
-            <el-button size="small" type="primary" @click="gear = false">确 定</el-button>
-            <el-button size="small" @click="gear = false">取 消</el-button>
+            <el-button size="small" type="primary" @click="gear = false">{{$t('CAM.userGroup.delConfirmBtn')}}</el-button>
+            <el-button size="small" @click="gear = false">{{$t('CAM.userGroup.delCancelBtn')}}</el-button>
           </div>
         </el-dialog>
       </div>
@@ -128,7 +128,7 @@
     </div>
     <!-- dialog 用户组弹出框  start -->
     <el-dialog
-      title="添加用户"
+      :title="$t('CAM.userGroup.createBtn')"
       :visible.sync="dialogVisible"
       width="75%"
       :before-close="handleClose"
@@ -136,9 +136,9 @@
     >
       <div class="container">
         <div class="container-left">
-          <p>选择添加的用户（共{{totalNum}}条）</p>
+          <p>{{$t('CAM.userGroup.selection')}}（共{{totalNum}}条）</p>
           <el-input
-            placeholder="支持搜索用户名"
+            :placeholder="$t('CAM.userGroup.searchUser')"
             size="small"
             v-model="inpVal"
             style="width:100%"
@@ -158,10 +158,10 @@
             @selection-change="handleSelectionChangeUser"
           >
             <el-table-column type="selection" prop="Uin" width="28"></el-table-column>
-            <el-table-column prop="Name" label="用户" show-overflow-tooltip></el-table-column>
-            <el-table-column label="用户类型" width="100">
+            <el-table-column prop="Name"  :label="$t('CAM.userGroup.user')" show-overflow-tooltip></el-table-column>
+            <el-table-column   :label="$t('CAM.userGroup.userChose')" width="100">
               <template slot-scope="scope">
-                <p>子用户</p>
+                <p>{{$t('CAM.userGroup.childUser')}}</p>
               </template>
             </el-table-column>
           </el-table>
@@ -182,10 +182,10 @@
             :height="tableHeight"
             style="width: 100%"
           >
-            <el-table-column prop="Name" label="用户" show-overflow-tooltip></el-table-column>
-            <el-table-column label="用户类型" width="100">
+            <el-table-column prop="Name" :label="$t('CAM.userGroup.user')" show-overflow-tooltip></el-table-column>
+            <el-table-column :label="$t('CAM.userGroup.userChose')" width="100">
               <template slot-scope="scope">
-                <p>用户类型</p>
+                <p>{{$t('CAM.userGroup.userChose')}}</p>
               </template>
             </el-table-column>
             <el-table-column :label="$t('CAM.userGroup.colHandle')" width="50">

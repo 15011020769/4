@@ -1,7 +1,7 @@
 <template>
   <div class="wrap">
     <div class="head">
-      <Headcom title="添加策略列表" :backShow="true" @_back="back" />
+      <Headcom :title="$t('CAM.userList.addUsertoStrag')" :backShow="true" @_back="back" />
     </div>
     <div class="policyToUser">
       <div class="step">
@@ -13,8 +13,8 @@
           style="margin-right: 50%"
           finish-status="success"
         >
-          <el-step title="设置用权限"></el-step>
-          <el-step title="审阅用户权限"></el-step>
+          <el-step :title="$t('CAM.userList.permissions')"></el-step>
+          <el-step :title="$t('CAM.userList.review')"></el-step>
         </el-steps>
       </div>
       <div v-show="active==1" class="table">
@@ -40,16 +40,16 @@
           style="width: 96%; margin: 0 auto;"
           v-show="activeName != 'third'"
         >
-          <el-table-column label="策略名" prop="PolicyName"></el-table-column>
-          <el-table-column label="描述" prop="Description"></el-table-column>
+          <el-table-column :label="$t('CAM.userList.strategyNames')" prop="PolicyName"></el-table-column>
+          <el-table-column :label="$t('CAM.userList.descs')" prop="Description"></el-table-column>
         </el-table>
         <el-table
           :data="multipleSelection"
           style="width: 96%; margin: 0 auto;"
           v-show="activeName == 'third'"
         >
-          <el-table-column label="组名" prop="GroupName"></el-table-column>
-          <el-table-column label="备注" prop="Remark"></el-table-column>
+          <el-table-column :label="$t('CAM.userList.GroupName')" prop="GroupName"></el-table-column>
+          <el-table-column :label="$t('CAM.userList.userRemark')" prop="Remark"></el-table-column>
         </el-table>
       </div>
       <div class="button">
@@ -59,21 +59,21 @@
           size="medium"
           @click="prev()"
           v-if="active==1 || active==2"
-        >上一步</el-button>
+        >{{$t('CAM.userList.prev')}}</el-button>
         <el-button
           style="margin-top:70px;"
           type="primary"
           size="medium"
           @click="next()"
           v-if="active==0 || active==1"
-        >下一步</el-button>
+        >{{$t('CAM.userList.next')}}</el-button>
         <el-button
           style="margin-top:70px;"
           type="primary"
           size="medium"
           @click="complete()"
           v-if="active==2"
-        >完成</el-button>
+        >{{$t('CAM.userList.complete')}}</el-button>
       </div>
     </div>
   </div>
