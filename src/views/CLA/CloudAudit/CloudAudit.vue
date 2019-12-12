@@ -223,19 +223,27 @@ export default {
     //搜索
     seach() {
       this.vloading = true;
-      let startTime = String(new Date(this.value1[0]).getTime() / 1000).split(
-        "."
-      )[0];
-      let endTime = String(new Date(this.value1[1]).getTime() / 1000).split(
-        "."
-      )[0];
+      let startTime = null;
+      let endTime = null;
+      if (this.value1) {
+        let startTime = String(new Date(this.value1[0]).getTime() / 1000).split(
+          "."
+        )[0];
+        let endTime = String(new Date(this.value1[1]).getTime() / 1000).split(
+          "."
+        )[0];
+      }
       let params = {
         Version: "2019-03-19",
         Region: "ap-taipei",
-        EndTime: endTime != NaN ? endTime : this.nowtime,
+        EndTime: this.nowtime,
         MaxResults: this.MaxResults,
-        StartTime: startTime != NaN ? startTime : this.oldTime
+        StartTime: this.oldTime
       };
+      if (endTime) {
+        params["EndTime"] = endTime;
+        params["StartTime"] = startTime;
+      }
       params["LookupAttributes.0.AttributeKey"] = this.AttributeKey;
       params["LookupAttributes.0.AttributeValue"] = this.input3;
       this.axios.post(YJS_LIST, params).then(data => {
