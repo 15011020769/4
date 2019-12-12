@@ -10,7 +10,7 @@
           <h2>{{$t('KMS.total.kmsInfo')}}</h2>
           <div class="detailList">
             <p><span>{{$t('KMS.total.name')}}</span><span>{{keyList.Alias}}</span><i class="el-icon-edit" @click="changeNameHand"></i></p>
-            <el-dialog class="changeNameModel" :title="$t('KMS.total.changeKmsName')" :visible.sync="dialogModel1" width="30%" :before-close="handleClose1">
+            <el-dialog class="changeNameModel" :title="$t('KMS.total.changeKmsName')" :visible.sync="dialogModel1" width="50%" :before-close="handleClose1">
               <div class="dialogModelCon newClear">
                 <div class="newClear"><span class="dialogText">{{$t('KMS.total.oldName')}}</span><span>{{keyList.Alias}}</span></div>
                 <div class="newClear"><span class="dialogText">{{$t('KMS.total.newName')}}</span><span>
@@ -183,12 +183,12 @@
         <div class="projectDetailThree newClear">
           <h2>{{$t('KMS.total.onlineTool')}}<i class="el-icon-info"></i></h2>
           <div class="btnBottom">
-            <button @click="changeBtnEncrypt(1)" :class="thisType=='1'?'bthBorderColor':''" :disabled='projectDetail.KeyState==$t('KMS.total.alredayStop')||projectDetail.KeyState=="PendingDelete"?true:false'>{{$t('KMS.total.encryption')}}</button>
-            <button @click="changeBtnEncrypt(2)" :class="thisType=='2'?'bthBorderColor':''" :disabled='projectDetail.KeyState==$t('KMS.total.alredayStop')||projectDetail.KeyState=="PendingDelete"?true:false'>{{$t('KMS.total.Decrypt')}}</button>
+            <button @click="changeBtnEncrypt(1)" :class="thisType=='1'?'bthBorderColor':''" :disabled='projectDetail.KeyState==$t("KMS.total.alredayStop")||projectDetail.KeyState=="PendingDelete"?true:false'>{{$t('KMS.total.encryption')}}</button>
+            <button @click="changeBtnEncrypt(2)" :class="thisType=='2'?'bthBorderColor':''" :disabled='projectDetail.KeyState==$t("KMS.total.alredayStop")||projectDetail.KeyState=="PendingDelete"?true:false'>{{$t('KMS.total.Decrypt')}}</button>
           </div>
           <div class="EncryptText newClear">
             <div v-if="thisType=='1'||thisType=='0'?true:false">
-              <el-input :disabled='projectDetail.KeyState==$t('KMS.total.alredayStop')||projectDetail.KeyState=="PendingDelete"?true:false' class="textareaIpt" v-model="Plaintext" type="textarea" :placeholder="$t('KMS.total.placeholder2')" @input='changeTextarea1'></el-input>
+              <el-input :disabled='projectDetail.KeyState==$t("KMS.total.alredayStop")||projectDetail.KeyState=="PendingDelete"?true:false' class="textareaIpt" v-model="Plaintext" type="textarea" :placeholder="$t('KMS.total.placeholder2')" @input='changeTextarea1'></el-input>
               <el-button @click="actionPlain" :disabled="disableTextarea" type="primary">{{$t('KMS.total.action1')}}</el-button>
             </div>
             <div v-if="thisType=='2'||thisType=='3'?true:false">
@@ -776,6 +776,7 @@ export default {
         input {
           width: 200px;
           height: 30px;
+          line-height: 30px;
           border-radius: 0;
         }
       }
@@ -891,6 +892,7 @@ export default {
           input {
             width: 170px;
             height: 30px;
+            line-height: 30px;
             border-radius: 0;
           }
         }
@@ -957,6 +959,7 @@ export default {
           input {
             width: 100px;
             height: 30px;
+            line-height: 30px;
             border-radius: 0;
             font-size: 12px;
           }
@@ -977,6 +980,7 @@ export default {
       input {
         width: 120px;
         height: 30px;
+        line-height: 30px;
         border-radius: 0;
       }
       .el-input__icon {

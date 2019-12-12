@@ -115,6 +115,7 @@ module.exports= {
             yu:'于',
             allDelete:'彻底删除',
             noTimeout:'不过期',
+            chooseFile:'选择文件'
         }
 
     },

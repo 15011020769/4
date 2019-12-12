@@ -114,6 +114,7 @@ module.exports = {
       yu:'於',
       allDelete:'徹底刪除',
       noTimeout:'不過期',
+      chooseFile:'選擇文件'
     }
   },
   COM: require('@/components/language/ft'),

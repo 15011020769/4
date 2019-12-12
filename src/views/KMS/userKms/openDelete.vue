@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-dialog class="dialogModel" :title="$t('KMS.total.planDeleteKms')" v-if="contentDialog[2]==$t('KMS.total.planDelete')?true:false" :visible.sync="disableDialog" width="30%" :before-close="handleClose">
+    <el-dialog class="dialogModel" :title="$t('KMS.total.planDeleteKms')" v-if="contentDialog[2]==$t('KMS.total.planDelete')?true:false" :visible.sync="disableDialog" width="50%" :before-close="handleClose">
       <div class="openDeleteTip">
         <span>{{$t('KMS.total.tip12')}}</span>
         <span>{{$t('KMS.total.tip13')}}</span>

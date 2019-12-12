@@ -14,7 +14,7 @@
           <el-button @click="_disableBtn">{{$t('KMS.total.stopKms')}}</el-button>
           <!-- <el-button :disabled="false" v-if="!isHaveEnable">禁用密钥</el-button> -->
         </div>
-        <el-dialog class="dialogModel" :title="$t('KMS.total.newCreateKms')" :visible.sync="dialogVisible" width="30%" :before-close="handleClose">
+        <el-dialog class="dialogModel" :title="$t('KMS.total.newCreateKms')" :visible.sync="dialogVisible" width="50%" :before-close="handleClose">
           <el-form :model="createForm" label-width="100px">
             <el-form-item :label="$t('KMS.total.kmsName')">
               <el-input v-model="createForm.name"></el-input>
@@ -688,6 +688,7 @@ export default {
   .el-input__inner {
     width: 180px;
     height: 30px;
+    line-height: 30px;
     border-radius: 0;
   }
   .el-textarea__inner {

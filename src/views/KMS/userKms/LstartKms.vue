@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-dialog class="dialogModel" :title='contentDialog[2]=="啟用密鑰"?"啟用密鑰服務":"禁用密鑰服務"' :visible.sync="disableDialog" width="30%" :before-close="handleClose">
+    <el-dialog class="dialogModel" :title='contentDialog[2]=="啟用密鑰"?"啟用密鑰服務":"禁用密鑰服務"' :visible.sync="disableDialog" width="50%" :before-close="handleClose">
       <div>
         <p v-if="contentDialog[2]=='啟用密鑰'?true:false" class="titleTip">{{$t('KMS.total.question1')}}</p>
         <p v-if="contentDialog[2]=='禁用密鑰'?true:false" class="titleTip">{{$t('KMS.total.question2')}}</p>
