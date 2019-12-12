@@ -111,7 +111,9 @@ module.exports = {
       noStartData:'暫未選中可啟用的數據',
       noRules:'別名不符合規則',
       willImport:'待導入',
-      
+      yu:'於',
+      allDelete:'徹底刪除',
+      noTimeout:'不過期',
     }
   },
   COM: require('@/components/language/ft'),
