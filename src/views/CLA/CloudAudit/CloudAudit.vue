@@ -225,11 +225,11 @@ export default {
       this.vloading = true;
       let startTime = null;
       let endTime = null;
-      if (this.value1) {
-        let startTime = String(new Date(this.value1[0]).getTime() / 1000).split(
+      if (this.value1 != null) {
+        startTime = String(new Date(this.value1[0]).getTime() / 1000).split(
           "."
         )[0];
-        let endTime = String(new Date(this.value1[1]).getTime() / 1000).split(
+        endTime = String(new Date(this.value1[1]).getTime() / 1000).split(
           "."
         )[0];
       }
