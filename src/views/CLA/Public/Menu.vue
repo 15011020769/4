@@ -17,9 +17,9 @@
       <el-menu-item index="Audit">
         <span slot="title">{{ $t('CLA.total.gzj') }}</span>
       </el-menu-item>
-      <el-menu-item index="History">
+      <!-- <el-menu-item index="History">
         <span slot="title">{{ $t('CLA.total.lsjldc') }}</span>
-      </el-menu-item>
+      </el-menu-item> -->
     </el-menu>
   </div>
 </template>

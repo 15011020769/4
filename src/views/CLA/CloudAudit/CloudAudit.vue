@@ -18,7 +18,12 @@
               :value="item.Value"
             ></el-option>
           </el-select>
-          <el-input :placeholder="$t('CLA.total.qsrnr')" v-model="input3" class="inp"></el-input>
+          <el-input
+            :placeholder="$t('CLA.total.qsrnr')"
+            v-model="input3"
+            class="inp"
+            @change="_inpChange"
+          ></el-input>
           <el-button icon="el-icon-search" @click="seach()"></el-button>
         </div>
         <div class="date">
@@ -107,8 +112,9 @@
           <el-table-column :label="$t('CLA.total.zymc')" prop="Resources.ResourceName"></el-table-column>
           <div v-if="Show" slot="append" style="line-height:40px;padding:0 20px;color:#006eff;">
             <p v-show="!loading" @click="more()">{{ $t('CLA.total.djjz') }}</p>
-            <p v-show="loading"  style="width:100%;text-align:center;">
-              <i class="el-icon-loading"></i>{{ $t('CLA.total.jzz') }}
+            <p v-show="loading" style="width:100%;text-align:center;">
+              <i class="el-icon-loading"></i>
+              {{ $t('CLA.total.jzz') }}
             </p>
           </div>
         </el-table>
@@ -189,6 +195,11 @@ export default {
       });
   },
   methods: {
+    _inpChange() {
+      if (this.input3 == "") {
+        this.seach();
+      }
+    },
     _select(val) {
       this.AttributeKey = val;
     },

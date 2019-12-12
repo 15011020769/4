@@ -17,10 +17,10 @@ export const GZJ_DETAILIST = 'cloudaudit2/DescribeAudit'
 export const GZJ_DELETE = 'cloudaudit2/DeleteAudit'
 
 // 云审计--关闭日志采集
-export const GZJ_STOPLOGGING = 'cloudaudit/StopLogging'
+export const GZJ_STOPLOGGING = 'cloudaudit2/StopLogging'
 
 // 云审计--开启日志采集
-export const GZJ_STRATLOGGING = 'cloudaudit/StartLogging'
+export const GZJ_STRATLOGGING = 'cloudaudit2/StartLogging'
 
 // 云审计--编辑跟踪集
 export const GZJ_UPDATEAUDIT = 'cloudaudit2/UpdateAudit'
