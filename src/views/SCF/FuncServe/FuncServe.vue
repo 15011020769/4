@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="wrap">
     <div class="topFun">
       <span>{{ $t('SCF.total.title') }}</span>
       <el-input class="addressName" readonly="readonly" v-model="addressIpt"></el-input>
@@ -20,9 +20,9 @@
           ></el-option>
         </el-select>
       </div>
-      <span>
+      <div style="display:flex;align-items:center;height:100%;">
         <el-button class="setBtn" icon="el-icon-setting" @click="dialogVisible3 = true"></el-button>
-      </span>
+      </div>
     </div>
     <el-dialog
       :title="$t('SCF.total.mmkjgl')"
@@ -131,7 +131,11 @@
           </div>
         </div>
         <div class="mainTable">
-          <el-table :data="tableDataBegin.slice((currentPage-1)*pageSize,currentPage*pageSize)" v-loading='loading'>
+          <el-table
+            :data="tableDataBegin.slice((currentPage-1)*pageSize,currentPage*pageSize)"
+            v-loading="loading"
+            height="450"
+          >
             <el-table-column prop="FunctionName" :label="$t('SCF.total.hsm')">
               <template slot-scope="scope">
                 <a href="#" @click="toDoDetail(scope.$index, scope.row)">{{scope.row.FunctionName}}</a>
@@ -406,32 +410,6 @@ export default {
       }
       //每次手动将数据置空,因为会出现多次点击搜索情况
       this.filterTableDataEnd = [];
-      console.log(this.tableDataBegin);
-      console.log(this.tableDataName);
-      // this.tableDataBegin.forEach((val, index) => {
-      //   if (this.filterConrent == "FunctionName") {
-      //     if (val.functionName) {
-      //       if (val.functionName.indexOf(this.tableDataName) !== -1) {
-      //         this.filterTableDataEnd.push(val);
-      //         this.tableDataBegin = this.filterTableDataEnd;
-      //       } else {
-      //         this.filterTableDataEnd.push();
-      //         this.tableDataBegin = this.filterTableDataEnd;
-      //       }
-      //     }
-      //     console.log(this.tableDataBegin);
-      //   } else if (this.filterConrent == "Description") {
-      //     if (val.description) {
-      //       if (val.description.indexOf(this.tableDataName) == 0) {
-      //         this.filterTableDataEnd.push(val);
-      //         this.tableDataBegin = this.filterTableDataEnd;
-      //       } else {
-      //         this.filterTableDataEnd.push();
-      //         this.tableDataBegin = this.filterTableDataEnd;
-      //       }
-      //     }
-      //   }
-      // });
       //页面数据改变重新统计数据数量和当前页
       this.currentPage = 1;
       this.totalItems = this.filterTableDataEnd.length;
@@ -660,7 +638,17 @@ export default {
   }
 };
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
+.wrap >>> input,
+.wrap >>> button {
+  height: 30px;
+  border-radius: 0;
+  font-size: 12px;
+}
+.wrap >>> button{
+  padding: 0 15px;
+  box-sizing: border-box;
+}
 .newClear:after {
   display: block;
   content: "";
@@ -764,7 +752,13 @@ export default {
   box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
 }
 .tabListPage {
-  text-align: right;
+  background: white;
+  height: 70px;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  box-sizing: border-box;
+  justify-content: flex-end;
 }
 .tipBot {
   color: #888;

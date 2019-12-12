@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <div class="appIdTit" v-loading="loading">
+  <div class="wrap">
+    <div class="appIdTit">
       <div class="topTit newClear">
         <span>
           <i class="el-icon-back" @click="returnBack"></i>
@@ -91,18 +91,6 @@
                           <el-option label="SCF_QcsRole" value="SCF_QcsRole"></el-option>
                           <el-option label="QCS_SCFExcuteRole" value="QCS_SCFExcuteRole"></el-option>
                         </el-select>
-                        <!-- <p class="tipContent">
-                          <span>此角色将用于授权函数运行时操作其他资源的权限。您可以</span>
-                          <a class="tipContentA" @click="creatRole">
-                            新建角色
-                            <span class="el-icon-share"></span>
-                          </a>
-                          <span>或对角色</span>
-                          <a class="tipContentA">
-                            修改权限
-                            <span class="el-icon-share"></span>
-                          </a>
-                        </p>-->
                       </el-form-item>
                       <el-form-item prop="Runtime" :label="$t('SCF.total.yxhj')">
                         <span>{{functionData.Runtime}}</span>
@@ -216,88 +204,8 @@
                               :key="item"
                             ></el-option>
                           </el-select>
-                          <!-- <p class="tipContent">
-                            <span>如现有的网络不合适，您可以去控制台</span>
-                            <a class="tipContentA">
-                              新建私有网络
-                              <span class="el-icon-share"></span>
-                            </a>
-                            <span>或</span>
-                            <a class="tipContentA">
-                              新建子网
-                              <span class="el-icon-share"></span>
-                            </a>
-                          </p>-->
                         </div>
                       </el-form-item>
-                      <!--  <el-form-item label="标签" prop="tagLists">
-                        <p>
-                          <span></span>
-                          <i class="el-icon-edit" @click="tagAddTagsBtn=true"></i>
-                        </p>
-                        <div title="您已经选择1个云资源" v-if="tagAddTagsBtn" width="800px">
-                          <div>
-                            <span>新增标签</span>
-                            <el-table
-                              :data="modelNameTags1"
-                              size="small"
-                              element-loading-text="Loading"
-                              highlight-current-row
-                            >
-                              <el-table-column label="标签键">
-                                <template slot-scope="scope">
-                                  <el-form :model="modelNameTags1[scope.$index]">
-                                    <el-form-item prop="nameSpaceOne">
-                                       <span
-                                        v-if="modelNameTags[scope.$index].disableDelete"
-                                      >{{modelNameTags[scope.$index].nameSpaceOne}}</span>
-                                      <el-input
-                                        class="addTabsIpt"
-                                        v-model="modelNameTags1[scope.$index].nameSpaceOne"
-                                        placeholder="添加标签键"
-                                      />
-                                    </el-form-item>
-                                  </el-form>
-                                </template>
-                              </el-table-column>
-                              <el-table-column label="标签值">
-                                <template slot-scope="scope">
-                                  <el-form ref="scope.row" :model="modelNameTags1[scope.$index]">
-                                    <el-form-item prop="nameSpaceTwo">
-                                      <el-input
-                                        class="addTabsIpt"
-                                        v-model="modelNameTags1[scope.$index].nameSpaceTwo"
-                                        placeholder
-                                      />
-                                    </el-form-item>
-                                  </el-form>
-                                </template>
-                              </el-table-column>
-                              <el-table-column label="删除">
-                                <template slot-scope="scope">
-                                  <el-form ref="scope.row">
-                                    <el-form-item>
-                                      <el-button
-                                        class="modelDelete"
-                                        @click="spaceDelete1(scope.$index,scope.row)"
-                                      >删除</el-button>
-                                    </el-form-item>
-                                  </el-form>
-                                </template>
-                              </el-table-column>
-                            </el-table>
-                          </div>
-                          <div>
-                            <span @click="addTabs1">
-                              <a href="#">添加</a>
-                            </span>
-                          </div>
-                          <span slot="footer" class="dialog-footer">
-                            <el-button @click="tagAddTagsBtn = false">取 消</el-button>
-                            <el-button type="primary" @click="sureTabAdd1()">提交</el-button>
-                          </span>
-                        </div>
-                      </el-form-item>-->
                     </el-form>
                     <span slot="footer" class="dialog-footer">
                       <el-button @click="dialogVisible2 = false">{{ $t('SCF.total.qx') }}</el-button>
@@ -305,7 +213,7 @@
                     </span>
                   </el-dialog>
                 </div>
-                <div class="allConListMainCon">
+                <div class="allConListMainCon" v-loading="loading">
                   <p>
                     <span>{{ $t('SCF.total.hsmc') }}</span>
                     <span>{{functionData.FunctionName}}</span>
@@ -355,76 +263,6 @@
                     <span v-show="vpcConfigFlag">{{vpcConfigSubnetId}}</span>
                     <span v-show="!vpcConfigFlag">{{ $t('SCF.total.wzw') }}</span>
                   </p>
-                  <!-- <p>
-                    <span>标签</span>
-                    <span>
-                      <i class="el-icon-edit" @click="dialogVisible1 = true"></i>
-                    </span>
-                  </p>-->
-                  <!-- <el-dialog
-                    title="您已经选择1个云资源"
-                    :visible.sync="dialogVisible1"
-                    width="800px"
-                    :before-close="handleClose1"
-                  >
-                    <div>
-                      <span>编辑已有标签</span>
-                      <el-table
-                        :data="modelNameTags"
-                        size="small"
-                        element-loading-text="Loading"
-                        highlight-current-row
-                      >
-                        <el-table-column label="标签键">
-                          <template slot-scope="scope">
-                            <el-form :model="modelNameTags[scope.$index]">
-                              <el-form-item prop="nameSpaceOne">
-                                <el-input
-                                  class="addTabsIpt"
-                                  v-model="modelNameTags[scope.$index].nameSpaceOne"
-                                  placeholder
-                                />
-                              </el-form-item>
-                            </el-form>
-                          </template>
-                        </el-table-column>
-                        <el-table-column label="标签值">
-                          <template slot-scope="scope">
-                            <el-form ref="scope.row" :model="modelNameTags[scope.$index]">
-                              <el-form-item prop="nameSpaceTwo">
-                                <el-input
-                                  class="addTabsIpt"
-                                  v-model="modelNameTags[scope.$index].nameSpaceTwo"
-                                  placeholder
-                                />
-                              </el-form-item>
-                            </el-form>
-                          </template>
-                        </el-table-column>
-                        <el-table-column label="删除">
-                          <template slot-scope="scope">
-                            <el-form ref="scope.row">
-                              <el-form-item>
-                                <el-button
-                                  class="modelDelete"
-                                  @click="spaceDelete(scope.$index,scope.row)"
-                                >删除</el-button>
-                              </el-form-item>
-                            </el-form>
-                          </template>
-                        </el-table-column>
-                      </el-table>
-                    </div>
-                    <div>
-                      <span @click="addTabs">
-                        <a href="#">添加</a>
-                      </span>
-                    </div>
-                    <span slot="footer" class="dialog-footer">
-                      <el-button @click="dialogVisible1 = false">取 消</el-button>
-                      <el-button type="primary" @click="sureTabAdd()">提交</el-button>
-                    </span>
-                  </el-dialog>-->
                 </div>
               </div>
             </div>
@@ -630,7 +468,7 @@ export default {
         .then(res => {
           let _this = this;
           this.functionData = res.Response;
-          console.log(this.functionData);
+          this.loading = false;
           let funcData = this.functionData;
           if (funcData.VpcConfig.SubnetId != "") {
             _this.vpcConfigVpcId = funcData.VpcConfig.VpcId;
@@ -640,7 +478,6 @@ export default {
           }
 
           if (funcData.Environment.Variables.length != 0) {
-            console.log(funcData.Environment.Variables.length);
             for (let i = 0; i <= funcData.Environment.Variables.length; i++) {
               _this.environmentKey = funcData.Environment.Variables[i].Key;
               _this.environmentValue = funcData.Environment.Variables[i].Value;
@@ -648,7 +485,6 @@ export default {
           } else {
             _this.environmentFlag = false;
           }
-          console.log(this.functionData.Environment.Variables[0].Key);
         })
         .catch(error => {
           console.log(error);
@@ -678,7 +514,6 @@ export default {
       this.axios
         .post(UPD_CONFIG, params)
         .then(res => {
-          console.log(res.Response);
           this.$message({ type: "success", message: "执行成功！" });
           this.getfunction();
           this.dialogVisible2 = false;
@@ -919,7 +754,34 @@ export default {
   }
 };
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
+// .appIdTit >>> .el-tabs__nav-wrap {
+//   width: 100%;
+//   background: white;
+//   position: relative;
+//   top: -5px;
+// }
+// .appIdTit >>> .el-input__inner,
+// .appIdTit >>> .selectDrow,
+// .appIdTit >>> button {
+//   height: 30px !important;
+//   border-radius: 0 !important;
+//   font-size: 12px;
+//   line-height: 30px !important;
+// }
+// .selectDrow {
+//   overflow: hidden;
+//   background: transparent;
+// }
+// .appIdTit >>> button {
+//   padding: 0 15px;
+//   box-sizing: border-box;
+// }
+// .selectDrowBox {
+//   padding: 5px;
+//   box-sizing: border-box;
+//   text-align: center;
+// }
 .seniorbox {
   display: flex;
   margin: 20px;
@@ -1041,6 +903,7 @@ export default {
   margin-right: 12px;
 }
 .allTabs {
+  width: 100%;
   margin-top: -6px;
   .allConListMain {
     padding: 8px 0;
@@ -1112,6 +975,10 @@ export default {
   span {
     float: left;
   }
+}
+.topTit >>> .el-input .el-input__inner {
+  height: 30px !important;
+  border-radius: 0;
 }
 </style>
 
