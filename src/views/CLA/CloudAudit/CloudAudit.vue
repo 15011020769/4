@@ -295,12 +295,10 @@ export default {
   .el-select {
     .el-input__inner {
       width: 130px;
-      line-height: 30px;
     }
   }
   .el-input__inner {
     width: 300px;
-    line-height: 30px;
     margin-left: -1px;
   }
   .el-input-group__prepend {
@@ -420,7 +418,6 @@ export default {
   }
   .el-date-editor--daterange.el-input__inner {
     width: 287px;
-    line-height: 30px;
   }
   .el-date-editor .el-range__close-icon {
     line-height: 24px;
@@ -585,7 +582,6 @@ export default {
 
 .date .el-input__inner {
   height: 30px;
-  line-height: 30px;
   border-radius: 0;
 }
 .date .el-date-editor .el-range-separator {
@@ -596,7 +592,6 @@ export default {
 }
 .search_dropdown .el-input__inner {
   height: 30px;
-  line-height: 30px;
   border-radius: 0;
 }
 .search_dropdown .el-select .el-input .el-select__caret {
