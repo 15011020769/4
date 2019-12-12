@@ -6,20 +6,25 @@
         :visible.sync="resouseListShow"
         width="40%"
         :before-close="handleClose">
-        <div class="contentDetail">
+        <div class="contentDetail" >
           <div class="contentDetailTop">
             <h2>基础信息<a href="#" @click="editBtn">编辑</a></h2>
             <div class="basicInfo newClear">
-              <div class="newClear"><span class="basicLabel">资源ID</span><span class="basicIpt">net-0000006y</span></div>
-              <div class="newClear">
+              <div class="newClear" v-for="(item,index) in EnidData.Record" v-if="item.Key=='Id'">
+                <span class="basicLabel" >资源ID</span>
+                <span class="basicIpt" >{{item.Value}}</span> 
+                </div>
+              <div class="newClear" v-for="(item,index) in EnidData.Record" v-if="item.Key=='Name'">
                 <span class="basicLabel">资源名称</span>
-                <span class="basicIpt" v-if="!thisEditShow">{{thisName}}</span>
-                <span><el-input class="resouseName" v-model="thisName" v-if="thisEditShow"></el-input></span>
+                <span class="basicIpt" v-if="!thisEditShow">{{item.Value}}
+                </span>
+                <span><el-input class="resouseName" v-model="thisName" v-if="thisEditShow"  ></el-input>
+                </span>
               </div>
-              <div class="newClear"><span class="basicLabel">CNAME</span><span class="basicIpt">	4f7a7511.dayugslb.com</span></div>
-              <div class="newClear"><span class="basicLabel">初始区域</span><span class="basicIpt">中国台湾</span></div>
-              <div class="newClear"><span class="basicLabel">当前区域</span><span class="basicIpt">中国台湾</span></div>
-              <div class="newClear"><span class="basicLabel">当前状态</span><span class="basicIpt">回收中</span></div>
+              <div class="newClear" v-for="(item,index) in EnidData.Record" v-if="item.Key=='CName'"><span class="basicLabel">CNAME</span><span class="basicIpt">{{item.Value}}</span></div>
+              <div class="newClear" v-for="(item,index) in EnidData.Record" v-if="item.Key=='OriginRegion'"><span class="basicLabel">初始区域</span><span class="basicIpt">{{item.Value}}</span></div>
+              <div class="newClear" v-for="(item,index) in EnidData.Record" v-if="item.Key=='OriginRegion'"><span class="basicLabel">当前区域</span><span class="basicIpt">{{item.Value}}</span></div>
+              <div class="newClear"  v-for="(item,index) in EnidData.Record" v-if="item.Key=='Status'" ><span class="basicLabel">当前状态</span><span class="basicIpt">{{item.Value}}</span></div>
               <div class="newClear"><span class="basicLabel">标签</span><span class="basicIpt">无<i class="el-icon-edit" @click="addTags"></i></span></div>
             </div>
             <div class="editBtn" v-if="thisEditShow">
@@ -30,17 +35,17 @@
           <div class="contentDetailBot contentDetailTop">
             <h2>防护信息</h2>
             <div class="basicInfo newClear">
-              <div class="newClear"><span class="basicLabel">保底防护峰值</span><span class="basicIpt">20Gbps</span></div>
-              <div class="newClear"><span class="basicLabel">弹性防护峰值</span><span class="basicIpt">未开启</span></div>
-              <div class="newClear"><span class="basicLabel">CC防护峰值</span><span class="basicIpt">40000QPS</span></div>
-              <div class="newClear">
+              <div class="newClear" v-for="(item,index) in EnidData.Record" v-if="item.Key=='RuleLimit'"><span class="basicLabel">保底防护峰值</span><span class="basicIpt">{{item.Value}}Gbps</span></div>
+              <div class="newClear"v-for="(item,index) in EnidData.Record" v-if="item.Key=='DDoSAI'"><span class="basicLabel">弹性防护峰值</span><span class="basicIpt">{{item.Value}}</span></div>
+              <div class="newClear" v-for="(item,index) in EnidData.Record" v-if="item.Key=='CCMax'"><span class="basicLabel">CC防护峰值</span><span class="basicIpt">{{item.Value}}QPS</span></div>
+              <div class="newClear" v-for="(item,index) in EnidData.Record" v-if="item.Key=='GroupIpList'" >
                 <span class="basicLabel">IP资源</span>
                 <span class="basicIpt">
-                  <span>175.97.142.150(中国台湾BGP)</span><br/>
-                  <span>175.97.142.150(中国台湾BGP)</span>
+                  <span>{{item.Value}}</span><br/>
+      s
                 </span>
               </div>
-              <div class="newClear"><span class="basicLabel">到期时间</span><span class="basicIpt">2019-11-29 12：53：35</span></div>
+              <div class="newClear"  v-for="(item,index) in EnidData.Record" v-if="item.Key=='Expire'"><span class="basicLabel">到期时间</span><span class="basicIpt">{{item.Value}}</span></div>
               <div class="newClear"><span class="basicLabel">回源IP段</span><span class="basicIpt">175.97.142.0/24</span></div>
             </div>
           </div>
@@ -82,157 +87,190 @@
   </div>
 </template>
 <script>
+import { RESOURCE_LIST, DDOSPOLICY_CONT, RULESETS_CONT,INSTANCENAME_CONT} from "@/constants";
 export default {
-  props:{
-    isShow:Boolean,
-    yewuOrResouse:String
+  props: {
+    isShow: Boolean,
+    yewuOrResouse: String
   },
-  computed:{
-    resouseListShow(){
+  computed: {
+    resouseListShow() {
       console.log(this.isShow);
-      this.dialogModel=this.isShow;
-      return this.isShow
+      this.dialogModel = this.isShow;
+      return this.isShow;
     }
   },
-  data(){
-    return{
-      dialogModel:'',//模态框
-      thisEditShow:false,//点击编辑时展示的东西
-      thisName:'123',//资源名称
-      listIsWhat:'',//是业务列表还是资源列表
-      addTagsModel:false,//添加标签弹框
-      tags:[
-        {
+  data() {
+    return {
+      tableDataBegin: [], //业务列表table
+      tableDataEnd: [],
+      resourceList: [], //资源列表table
+      resourceId:'',//ID
+      dialogModel: "", //模态框
+      thisEditShow: false, //点击编辑时展示的东西
+      thisName: "", //资源名称
+      listIsWhat: "", //是业务列表还是资源列表
+      addTagsModel: false, //添加标签弹框
+      EnidData: [],
+      tags: [{}]
+    };
+  },
+  created() {
 
-        }
-      ]
-    }
   },
-  methods:{
+  methods: {
+    init(scopeRow) {
+      this.EnidData = scopeRow;
+      console.log(scopeRow)
+      for(let i = 0;i<this.EnidData.Record.length;i++){
+         if(this.EnidData.Record[i].Key=='Id'){
+          this.resourceId = this.EnidData.Record[i].Value
+          // console.log(this.resourceId)
+        }else if(this.EnidData.Record[i].Key=='Name'){
+          this.thisName = this.EnidData.Record[i].Value
+          // console.log(this.Name)
+        }
+      }
+      console.log(this.EnidData);
+    },
+    
+
     //关闭按钮
-    handleClose(){
-      this.dialogModel=false;
-      this.$emit("closeListDetail",this.dialogModel)
+    handleClose() {
+      this.dialogModel = false;
+      this.$emit("closeListDetail", this.dialogModel);
     },
     //点击编辑按钮
-    editBtn(){
-      this.thisEditShow=true;
+    editBtn() {
+      this.thisEditShow = true;
     },
     //编辑确定按钮
-    editSure(){
-      this.thisEditShow=false;
+    editSure() {
+       let params = {
+        Version: "2018-07-09",
+        Business: "net",
+        Id:this.resourceId,
+        Name:this.thisName
+      };
+      this.axios.post(INSTANCENAME_CONT, params).then(res => {
+        console.log(res);
+        this.dialogModel = false;
+        this.$emit("closeListDetail", this.dialogModel);
+        this.$parent.describeResourceList();
+      });
+      
     },
     //标签编辑按钮
-    addTags(){
-      this.addTagsModel=true;
-      this.dialogModel=false;
-      this.$emit("closeListDetail",this.dialogModel);
+    addTags() {
+      this.addTagsModel = true;
+      this.dialogModel = false;
+      this.$emit("closeListDetail", this.dialogModel);
     },
     //编辑标签确定按钮
-    addTagsSureResouse(){
-      this.addTagsModel=false;
+    addTagsSureResouse() {
+      this.addTagsModel = false;
     },
     //编辑标签取消关闭按钮
-    handleCloseTags(){
-      this.addTagsModel=false;
+    handleCloseTags() {
+      this.addTagsModel = false;
     },
-    copyObj: function () {
+    copyObj: function() {
       var des = {
-        tagsKey:"",
-        tagsValue:""
-      }
-      return des
+        tagsKey: "",
+        tagsValue: ""
+      };
+      return des;
     },
     //新增一行
-    addRow: function (type) {
-      var des = this.copyObj()
-      this.tags.push(des)
+    addRow: function(type) {
+      var des = this.copyObj();
+      this.tags.push(des);
     },
     // 删除一行
-    removeRow: function (idx,typeNode) {
-      this.tags.splice(idx, 1)
+    removeRow: function(idx, typeNode) {
+      this.tags.splice(idx, 1);
     }
   }
-}
+};
 </script>
 <style lang="scss">
-#IPprofessionalDetail{
-  .newClear:after{
-    display:block;
-    content:'';
-    clear:both;
+#IPprofessionalDetail {
+  .newClear:after {
+    display: block;
+    content: "";
+    clear: both;
   }
-  .contentDetailTop{
-    h2{
-      font-size:14px;
-      font-weight:600;
-      margin-bottom:14px;
+  .contentDetailTop {
+    h2 {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 14px;
     }
-    .basicInfo{
-      div{
-        margin-bottom:14px;
-        font-size:12px;
-        span:nth-child(1).basicLabel{
-          float:left;
-          width:70px;
-          color:#999;
+    .basicInfo {
+      div {
+        margin-bottom: 14px;
+        font-size: 12px;
+        span:nth-child(1).basicLabel {
+          float: left;
+          width: 70px;
+          color: #999;
         }
-        span:nth-child(2).basicIpt{
-          float:left;
-          width:calc(100% - 70px);
-          color:#444;
+        span:nth-child(2).basicIpt {
+          float: left;
+          width: calc(100% - 70px);
+          color: #444;
         }
-        .resouseName{
-          width:180px;
-          height:30px;
-          input{
-            width:180px;
-            height:30px;
+        .resouseName {
+          width: 180px;
+          height: 30px;
+          input {
+            width: 180px;
+            height: 30px;
             border-radius: 0;
           }
         }
       }
     }
-    .editBtn{
-      text-align:center;
-      button{
-        height:30px;
+    .editBtn {
+      text-align: center;
+      button {
+        height: 30px;
         border-radius: 0;
-        padding:0 20px;
-        line-height:30px;
+        padding: 0 20px;
+        line-height: 30px;
       }
-      button.editSure{
-        color:#fff;
-        background-color:#006eff;
+      button.editSure {
+        color: #fff;
+        background-color: #006eff;
       }
     }
   }
-  .contentDetailBot{
-    h2{
-      font-size:14px;
-      font-weight:600;
+  .contentDetailBot {
+    h2 {
+      font-size: 14px;
+      font-weight: 600;
     }
-    span:nth-child(1).basicLabel{
-      width:90px!important;
+    span:nth-child(1).basicLabel {
+      width: 90px !important;
     }
-    span:nth-child(2).basicIpt{
-      width:calc(100% - 90px)!important;
+    span:nth-child(2).basicIpt {
+      width: calc(100% - 90px) !important;
     }
   }
-  .modelDetail{
-    .el-dialog__header{
-      font-size:14px;
-      font-weight:600;
-      .el-dialog__title{
-        font-size:14px;
-        font-weight:600;
+  .modelDetail {
+    .el-dialog__header {
+      font-size: 14px;
+      font-weight: 600;
+      .el-dialog__title {
+        font-size: 14px;
+        font-weight: 600;
       }
     }
   }
 }
-.tableContent{
-  border:1px solid #ddd;
-  margin-bottom:10px;
+.tableContent {
+  border: 1px solid #ddd;
+  margin-bottom: 10px;
   min-height: 450px;
   max-height: 450px;
   overflow: auto;
@@ -244,57 +282,56 @@ export default {
     .t-head1 {
       height: 45px;
       padding: 0 5px;
-      td{
-        border-bottom:1px solid #eaeaea;
-        padding-left:10px;
+      td {
+        border-bottom: 1px solid #eaeaea;
+        padding-left: 10px;
       }
     }
     .t-body1 {
       height: 45px;
       min-height: 200px;
-      td{
+      td {
         // border-bottom:1px solid #eaeaea;
-        padding-left:10px;
-        .inputChange{
-          height:30px;
-          width:150px;
-          input{
-            height:30px;
-            width:150px;
+        padding-left: 10px;
+        .inputChange {
+          height: 30px;
+          width: 150px;
+          input {
+            height: 30px;
+            width: 150px;
             border-radius: 0;
           }
         }
-        .inputChange1{
-          height:30px;
-          width:70px;
+        .inputChange1 {
+          height: 30px;
+          width: 70px;
           margin-bottom: 0;
-          margin-left:0;
-          input{
-            height:30px;
-            width:70px;
+          margin-left: 0;
+          input {
+            height: 30px;
+            width: 70px;
             border-radius: 0;
           }
         }
       }
     }
-  } 
+  }
 }
-.footerBtn{
-  display:block;
-  margin-top:20px;
-  text-align:center;
-  button{
-    width:64px;
-    height:30px;
+.footerBtn {
+  display: block;
+  margin-top: 20px;
+  text-align: center;
+  button {
+    width: 64px;
+    height: 30px;
     border-radius: 0;
-    padding:0;
+    padding: 0;
     line-height: 30px;
-    text-align:center;
+    text-align: center;
   }
-  button:nth-child(1){
-    background-color:#006eff;
-    color:#fff;
+  button:nth-child(1) {
+    background-color: #006eff;
+    color: #fff;
   }
-} 
-  
+}
 </style>
