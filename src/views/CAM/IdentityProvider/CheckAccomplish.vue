@@ -1,7 +1,7 @@
 <template>
-  <div class="Cam">
-    <div class="container">
-      <el-form :model="form" :rules="rules" size="mini" ref="form" label-width="100px">
+  <div class="Cam" style="width:100%;">
+    <div class="container" style="width:100%;">
+      <el-form :model="form" :rules="rules" size="mini" ref="form" label-width="100px" style="width:100%;">
         <el-form-item label="供应商类型" prop="providerType">
           <el-col :span="10">
             <el-radio size="mini" v-model="form.providerType" label="SAML">SAML</el-radio>
