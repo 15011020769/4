@@ -155,7 +155,7 @@ export default {
       }, //
       isHaveDisable: true, // 启用密钥 是否有已禁用
       isHaveEnable: true, // 禁用密钥 是否有已启用
-      changeStatus: "啟用輪換", //轮换状态默认为启用轮换
+      changeStatus: this.$t('KMS.total.startChange'), //轮换状态默认为启用轮换
       doalogModelBox: [], //启用轮换内容框
       doalogModelBox1: [], //启用密钥内容框
       doalogModelBox2: [], //计划删除框
@@ -199,13 +199,13 @@ export default {
             if (res.Response.RequestId) {
               this.$message({
                 showClose: true,
-                message: "啟用成功",
+                message: this.$t('KMS.total.startSuccess'),
                 type: "success"
               });
             } else {
               this.$message({
                 showClose: true,
-                message: "啟用失敗",
+                message: this.$t('KMS.total.startError'),
                 type: "error"
               });
             }
@@ -225,13 +225,13 @@ export default {
             if (res.Response.RequestId) {
               this.$message({
                 showClose: true,
-                message: "禁用成功",
+                message: this.$t('KMS.total.stopSuccess'),
                 type: "success"
               });
             } else {
               this.$message({
                 showClose: true,
-                message: "禁用失敗",
+                message: this.$t('KMS.total.stopError'),
                 type: "error"
               });
             }
@@ -252,14 +252,14 @@ export default {
       });
       this.arr = arr;
       if (bool) {
-        this.KMStitle = "啟用密鑰服務";
-        this.KMStxt = "啟用選中的密鑰服務？";
+        this.KMStitle =this.$t('KMS.total.startKmsServer');
+        this.KMStxt = this.$t('KMS.total.question1');
         this.KMSdata = arr;
         this.dialogVisibleKMS = true;
         this.KMSchange = false;
-        this.state = "可啟用";
+        this.state = this.$t('KMS.total.canStart');
       } else {
-        this.$message("暫未選中可啟用的數據");
+        this.$message(this.$t('KMS.total.noStartData'));
       }
     },
     //禁用按钮
@@ -274,14 +274,14 @@ export default {
       });
       this.arr = arr;
       if (bool) {
-        this.KMStitle = "禁用密鑰服務";
-        this.KMStxt = "禁用選中的密鑰服務？";
+        this.KMStitle = this.$t('KMS.total.stopKmsServer');
+        this.KMStxt = this.$t('KMS.total.question2');
         this.KMSdata = arr;
         this.dialogVisibleKMS = true;
         this.KMSchange = true;
-        this.state = "可禁用";
+        this.state = this.$t('KMS.total.canStop');
       } else {
-        this.$message("暫未選中可啟用的數據");
+        this.$message(this.$t('KMS.total.noStartData'));
       }
     },
     //判断是否有已禁用，已启用
@@ -418,7 +418,7 @@ export default {
         if (res.Response.Error !== undefined) {
           this.$message({
             showClose: true,
-            message: "別名不符合規則",
+            message: this.$t('KMS.total.noRules'),
             type: "error"
           });
         }
@@ -442,18 +442,18 @@ export default {
     //状态处理
     filterState(state) {
       if (state == "Enabled") {
-        state = "已啟用";
+        state = this.$t('KMS.total.alredayStart');
       } else if (state == "PendingImport") {
-        state = "待導入";
+        state = this.$t('KMS.total.willImport');
       } else if (state == "Disabled") {
-        state = "已禁用";
+        state = this.$t('KMS.total.alredayStop');
       }
       return state;
     },
     //状态处理
     filterKey(state) {
       if (state == "EXTERNAL") {
-        state = "外部";
+        state = this.$t('KMS.total.oulCon');
       } else if (state == "TENCENT_KMS") {
         state = "KMS";
       }
@@ -498,7 +498,7 @@ export default {
         this.dialogModelDelete = true;
         let params = [
           scopeRow.Alias,
-          "於" + this.timestampToTime(scopeRow.DeletionDate) + "徹底刪除",
+          this.$t('KMS.total.yu') + this.timestampToTime(scopeRow.DeletionDate) + this.$t('KMS.total.allDelete'),
           e.target.innerHTML,
           scopeRow.KeyId
         ];

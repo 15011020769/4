@@ -26,7 +26,7 @@
             <p><span>ID</span><span>{{projectDetail.KeyId}}</span></p>
             <p><span>{{$t('KMS.total.status')}}</span><span :style="keyList.KeyState=='Enabled'?'color:#000':'color:#ff9d00'">
                 <!-- {{projectDetail.KeyState}} -->
-                {{keyList.KeyState=="PendingDelete"?'於'+timestampToTime(projectDetail.DeletionDate)+'徹底刪除':filterState(keyList.KeyState)}}
+                {{keyList.KeyState=="PendingDelete"?$t('KMS.total.yu')+timestampToTime(projectDetail.DeletionDate)+$t('KMS.total.allDelete'):filterState(keyList.KeyState)}}
               </span>&nbsp;
               <a href="#" :style="keyList.KeyState=='Disabled' || keyList.KeyState=='PendingImport' || keyList.KeyState=='PendingDelete'?'display:none':'display:inline-block'" @click="startKms(keyList,$event)">{{$t('KMS.total.stopKms')}}</a>
               <a href="#" :style="keyList.KeyState=='Enabled' || keyList.KeyState=='PendingImport' || keyList.KeyState=='PendingDelete'?'display:none':'display:inline-block'" @click="startKms(keyList,$event)">{{$t('KMS.total.startKms')}}</a>
@@ -38,9 +38,9 @@
             <p><span>{{$t('KMS.total.changeStatus')}}</span>
 
               <span :style="keyList.KeyRotationEnabled==true?'display:none':'{display:inline-block;color: #ff9d00 ;}'">{{$t('KMS.total.alredayStop')}}</span>
-              <span :style="projectDetail.KeyState=='待導入' || keyList.KeyState=='PendingDelete'?'display:none':'{display:inline-block;}'" v-if="keyList.KeyRotationEnabled">{{$t('KMS.total.alredayStart')}}</span>
-              <span :style=" projectDetail.KeyState=='待導入'?'display:none':'display:inline-block'">{{$t('KMS.total.autoChange')}}&nbsp;</span>
-              <a href="#" v-if="!keyList.KeyRotationEnabled" :style=" projectDetail.KeyState=='待導入'?'display:none':'display:inline-block'" :class=" keyList.KeyState=='PendingDelete' || keyList.Origin == 'EXTERNAL'?'atclor':''" @click="startChange(keyList,$event)">{{$t('KMS.total.startChange')}}</a>
+              <span :style="projectDetail.KeyState==$t('KMS.total.willImport') || keyList.KeyState=='PendingDelete'?'display:none':'{display:inline-block;}'" v-if="keyList.KeyRotationEnabled">{{$t('KMS.total.alredayStart')}}</span>
+              <span :style=" projectDetail.KeyState==$t('KMS.total.willImport')?'display:none':'display:inline-block'">{{$t('KMS.total.autoChange')}}&nbsp;</span>
+              <a href="#" v-if="!keyList.KeyRotationEnabled" :style=" projectDetail.KeyState==$t('KMS.total.willImport')?'display:none':'display:inline-block'" :class=" keyList.KeyState=='PendingDelete' || keyList.Origin == 'EXTERNAL'?'atclor':''" @click="startChange(keyList,$event)">{{$t('KMS.total.startChange')}}</a>
               <a href="#" v-if="keyList.KeyRotationEnabled" @click="startChange(keyList,$event)">{{$t('KMS.total.stopChange')}}</a>
             </p>
             <p><span>{{$t('KMS.total.descriptInfo')}}</span><span>{{keyList.Description}}</span><i class="el-icon-edit" @click="newDescription"></i></p>
@@ -183,12 +183,12 @@
         <div class="projectDetailThree newClear">
           <h2>{{$t('KMS.total.onlineTool')}}<i class="el-icon-info"></i></h2>
           <div class="btnBottom">
-            <button @click="changeBtnEncrypt(1)" :class="thisType=='1'?'bthBorderColor':''" :disabled='projectDetail.KeyState=="已禁用"||projectDetail.KeyState=="PendingDelete"?true:false'>{{$t('KMS.total.encryption')}}</button>
-            <button @click="changeBtnEncrypt(2)" :class="thisType=='2'?'bthBorderColor':''" :disabled='projectDetail.KeyState=="已禁用"||projectDetail.KeyState=="PendingDelete"?true:false'>{{$t('KMS.total.Decrypt')}}</button>
+            <button @click="changeBtnEncrypt(1)" :class="thisType=='1'?'bthBorderColor':''" :disabled='projectDetail.KeyState==$t('KMS.total.alredayStop')||projectDetail.KeyState=="PendingDelete"?true:false'>{{$t('KMS.total.encryption')}}</button>
+            <button @click="changeBtnEncrypt(2)" :class="thisType=='2'?'bthBorderColor':''" :disabled='projectDetail.KeyState==$t('KMS.total.alredayStop')||projectDetail.KeyState=="PendingDelete"?true:false'>{{$t('KMS.total.Decrypt')}}</button>
           </div>
           <div class="EncryptText newClear">
             <div v-if="thisType=='1'||thisType=='0'?true:false">
-              <el-input :disabled='projectDetail.KeyState=="已禁用"||projectDetail.KeyState=="PendingDelete"?true:false' class="textareaIpt" v-model="Plaintext" type="textarea" :placeholder="$t('KMS.total.placeholder2')" @input='changeTextarea1'></el-input>
+              <el-input :disabled='projectDetail.KeyState==$t('KMS.total.alredayStop')||projectDetail.KeyState=="PendingDelete"?true:false' class="textareaIpt" v-model="Plaintext" type="textarea" :placeholder="$t('KMS.total.placeholder2')" @input='changeTextarea1'></el-input>
               <el-button @click="actionPlain" :disabled="disableTextarea" type="primary">{{$t('KMS.total.action1')}}</el-button>
             </div>
             <div v-if="thisType=='2'||thisType=='3'?true:false">
@@ -268,7 +268,7 @@ export default {
   methods: {
     GetList() {
       this.projectDetail = JSON.parse(sessionStorage.getItem("projectId"));
-      this.projectDetail.KeyState == "已禁用" || this.projectDetail.KeyState == "PendingDelete" ? this.thisType = "0" : 3
+      this.projectDetail.KeyState == this.$t('KMS.total.alredayStop') || this.projectDetail.KeyState == "PendingDelete" ? this.thisType = "0" : 3
       // console.log(this.projectDetail)
       let params = {
         Version: '2019-01-18',
@@ -328,7 +328,7 @@ export default {
         this.dialogModelOpenDelete = true;
       } else {
         this.dialogModelDelete = true;
-        let params = [scopeRow.Alias, '於' + this.timestampToTime(scopeRow.DeletionDate) + '徹底刪除', e.target.innerHTML, scopeRow.KeyId]
+        let params = [scopeRow.Alias, this.$t('KMS.total.yu') + this.timestampToTime(scopeRow.DeletionDate) + this.$t('KMS.total.allDelete'), e.target.innerHTML, scopeRow.KeyId]
         this.doalogModelBox2 = params;
       }
     },
@@ -616,7 +616,7 @@ export default {
     //时间
     timestampToTime(timestamp) {
       if (timestamp == '0') {
-          return '不過期'
+          return this.$t('KMS.total.noTimeout')
         } else {
           let date = new Date(timestamp * 1000);
           let y = date.getFullYear();
@@ -637,11 +637,11 @@ export default {
     //状态处理
     filterState(state) {
       if (state == 'Enabled') {
-        state = '已啟用'
+        state = this.$t('KMS.total.alredayStart')
       } else if (state == 'PendingImport') {
-        state = '待導入'
+        state = this.$t('KMS.total.willImport')
       } else if (state == 'Disabled') {
-        state = '已禁用'
+        state = this.$t('KMS.total.alredayStop')
       }
       return state;
     }

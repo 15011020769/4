@@ -487,7 +487,11 @@ export default {
     }
   }
   .tabListPage{
-    text-align:right
+    text-align:right;
+    background-color:#fff;
+    border-top:1px solid #ddd;
+    padding-top:8px;
+    height:50px;
   }
 }
 </style>

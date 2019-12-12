@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-dialog class="dialogModel" :title="$t('KMS.total.planDeleteKms')" v-if="contentDialog[2]=='計劃刪除'?true:false" :visible.sync="disableDialog" width="30%" :before-close="handleClose">
+    <el-dialog class="dialogModel" :title="$t('KMS.total.planDeleteKms')" v-if="contentDialog[2]==$t('KMS.total.planDelete')?true:false" :visible.sync="disableDialog" width="30%" :before-close="handleClose">
       <div class="openDeleteTip">
         <span>{{$t('KMS.total.tip12')}}</span>
         <span>{{$t('KMS.total.tip13')}}</span>
@@ -14,7 +14,7 @@
         <el-button type="primary" @click="openDeleteSure">{{$t('KMS.total.modelSure')}}</el-button>
       </span>
     </el-dialog>
-    <el-dialog class="dialogModel" :title="$t('KMS.total.closeDeleteKms')" v-if="contentDialog[2]=='取消刪除'?true:false" :visible.sync="disableDialog" width="30%" :before-close="handleClose">
+    <el-dialog class="dialogModel" :title="$t('KMS.total.closeDeleteKms')" v-if="contentDialog[2]==$t('KMS.total.closeDelete')?true:false" :visible.sync="disableDialog" width="30%" :before-close="handleClose">
       <div class="closeDelete">
         <p class="closeDeleteTxt">{{$t('KMS.total.tip15')}}</p>
       </div>

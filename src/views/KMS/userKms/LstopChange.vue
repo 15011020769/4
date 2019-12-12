@@ -1,9 +1,9 @@
 <template>
   <div>
-    <el-dialog class="dialogModel" :title='contentDialog[2]=="啟用輪換"?"啟用密鑰輪換":"禁用密鑰輪換"' :visible.sync="disableDialog" width="30%" :before-close="handleClose">
+    <el-dialog class="dialogModel" :title='contentDialog[2]==$t('KMS.total.startChange')?$t('KMS.total.startKmsChange'):$t('KMS.total.stopKmsChange')' :visible.sync="disableDialog" width="30%" :before-close="handleClose">
       <div>
-        <p v-if="contentDialog[2]=='啟用輪換'?true:false" class="titleTip">{{$t('KMS.total.tip16')}}</p>
-        <p v-if="contentDialog[2]=='禁用輪換'?true:false" class="titleTip">{{$t('KMS.total.tip17')}}</p>
+        <p v-if="contentDialog[2]==$t('KMS.total.startChange')?true:false" class="titleTip">{{$t('KMS.total.tip16')}}</p>
+        <p v-if="contentDialog[2]==$t('KMS.total.stopChange')?true:false" class="titleTip">{{$t('KMS.total.tip17')}}</p>
         <p class="lookDetails">{{$t('KMS.total.chooseAl')}}<span class="fontweight">{{$t('KMS.total.oneKmsSer')}}</span><a @click="detailsIsshow"> {{$t('KMS.total.lookDetail')}}</a></p>
         <table class="listShow" v-if="detailIsShow">
           <tbody>
@@ -11,16 +11,16 @@
               <td class="listShowNum">1</td>
               <td class="listShowNick">{{contentDialog[0]}}</td>
               <td class="listShowId">{{contentDialog[1]}}</td>
-              <td v-if="contentDialog[2]=='啟用輪換'?true:false" class="listShowIsable">{{$t('KMS.total.canStart')}}</td>
-              <td v-if="contentDialog[2]=='禁用輪換'?true:false" class="listShowIsable">{{$t('KMS.total.canStop')}}</td>
+              <td v-if="contentDialog[2]==$t('KMS.total.startChange')?true:false" class="listShowIsable">{{$t('KMS.total.canStart')}}</td>
+              <td v-if="contentDialog[2]==$t('KMS.total.stopChange')?true:false" class="listShowIsable">{{$t('KMS.total.canStop')}}</td>
             </tr>
           </tbody>
         </table>
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button @click="handleClose">{{$t('KMS.total.modelClose')}}</el-button>
-        <el-button v-if="contentDialog[2]=='啟用輪換'?true:false" type="primary" @click="startSure">{{$t('KMS.total.modelSure')}}</el-button>
-        <el-button v-if="contentDialog[2]=='禁用輪換'?true:false" type="primary" @click="topSure">{{$t('KMS.total.modelSure')}}</el-button>
+        <el-button v-if="contentDialog[2]==$t('KMS.total.startChange')?true:false" type="primary" @click="startSure">{{$t('KMS.total.modelSure')}}</el-button>
+        <el-button v-if="contentDialog[2]==$t('KMS.total.stopChange')?true:false" type="primary" @click="topSure">{{$t('KMS.total.modelSure')}}</el-button>
       </span>
     </el-dialog>
   </div>

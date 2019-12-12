@@ -9,7 +9,7 @@
       </div>
     </div>
     <div class="tables">
-      <el-table :data="tableData" style="width: 100%">
+      <el-table class="tableCon" :data="tableData" style="width: 100%">
         <template slot="empty">{{ $t('CCN.total.tdno') }}</template>
         <el-table-column prop="CcnId" :label="$t('CCN.total.tr1')" width="130">
           <template slot-scope="scope">
@@ -99,6 +99,8 @@
         </el-table-column>
       </el-table>
       <!-- 分页 -->
+      <div class="pageList">
+
       <el-pagination
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
@@ -108,6 +110,7 @@
         layout="total, sizes, prev, pager, next, jumper"
         :total="total"
       ></el-pagination>
+      </div>
     </div>
     <!-- 删除的模态窗 -->
     <el-dialog :title="$t('CCN.total.del')" :visible.sync="dialogTableVisible">
@@ -646,8 +649,10 @@ export default {
 .tables {
   margin-top: 10px;
   margin: 0 20px;
+  background-color:#fff;
   .el-table {
     font-size: 12px;
+    min-height:450px;
   }
   .el-table td .cell,
   .el-table td > .cell > div,
@@ -712,6 +717,11 @@ export default {
     .el-icon-edit {
       display: inline-block;
     }
+  }
+  .pageList{
+    height:50px;
+    background-color:#fff;
+    padding-top:8px;
   }
 }
 .newDialog {

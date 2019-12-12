@@ -99,7 +99,19 @@ module.exports = {
       tip19:'1.密鑰被徹底刪除前，對嘗試調用此密鑰的行為進行提示告警',
       tip20:'2.密鑰被徹底刪除前3天，每天提示告警',
       tip21:'取消刪除選中的密鑰服務? 確認取消刪除後，密鑰重置為「已禁用」狀態',
-      kmsMOrigin:'密鑰材料來源'
+      kmsMOrigin:'密鑰材料來源',
+      startKmsChange:'啟用密鑰輪換',
+      stopKmsChange:'禁用密鑰輪換',
+      startKmsServer:'啟用密鑰服務',
+      stopKmsServer:'禁用密鑰服務',
+      startSuccess:'啟用成功',
+      startError:'啟用失敗',
+      stopSuccess:'禁用成功',
+      stopError:'禁用失敗',
+      noStartData:'暫未選中可啟用的數據',
+      noRules:'別名不符合規則',
+      willImport:'待導入',
+      
     }
   },
   COM: require('@/components/language/ft'),

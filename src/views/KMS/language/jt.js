@@ -100,7 +100,22 @@ module.exports= {
             tip19:'1.密钥被彻底删除前，对尝试调用此密钥的行为进行提示告警',
             tip20:'2.密钥被彻底删除前3天，每天提示告警',
             tip21:'取消删除选中的密钥服务? 确认取消删除后，密钥重置为“已禁用”状态',
-            kmsMOrigin:'密钥材料来源'
+            kmsMOrigin:'密钥材料来源',
+            startKmsChange:'启用密钥轮换',
+            stopKmsChange:'禁用密钥轮换',
+            startKmsServer:'启用密钥服务',
+            stopKmsServer:'禁用密钥服务',
+            startSuccess:'启用成功',
+            startError:'启用失败',
+            stopSuccess:'禁用成功',
+            stopError:'禁用失败',
+            noStartData:'暂未选中可启用的数据',
+            noRules:'别名不符合规则',
+            willImport:'待导入',
+            yu:'于',
+            allDelete:'彻底删除',
+            noTimeout:'不过期',
+            
         }
 
     },
