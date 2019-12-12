@@ -1,6 +1,6 @@
 <template>
   <div class="CM-wrap">
-    <Loading :show="loadShow" />
+    <!-- <Loading :show="loadShow" /> -->
     <!-- 城市按钮 -->
     <div class="CVM-title">{{ $t('CVM.clBload.wg') }}</div>
     <div class="tool">
@@ -23,7 +23,13 @@
     </div>
     <!-- 表格 -->
     <div class="Table-SY">
-      <el-table :data="TbaleData" height="550" style="width: 100%" id="exportTable">
+      <el-table
+        :data="TbaleData"
+        height="550"
+        style="width: 100%"
+        id="exportTable"
+        v-loading="loadShow"
+      >
         <el-table-column prop :label="$t('CVM.clBload.zjm')">
           <template slot-scope="scope">
             <p>

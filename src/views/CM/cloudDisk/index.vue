@@ -1,6 +1,6 @@
 <template>
   <div class="CM-wrap">
-    <Loading :show="loadShow" />
+    <!-- <Loading :show="loadShow" /> -->
     <!-- 城市按钮 -->
     <div class="CVM-title">{{ $t('CVM.cloudDisk.yyp') }}</div>
     <div class="tool">
@@ -29,6 +29,7 @@
         height="550"
         style="width: 100%"
         id="exportTable"
+        v-loading="loadShow"
       >
         <el-table-column prop :label="$t('CVM.cloudDisk.mc')">
           <template slot-scope="scope">
@@ -96,7 +97,7 @@ import { ALL_CITY, DISK_LIST, ALL_PROJECT } from "@/constants";
 export default {
   data() {
     return {
-      loadShow: false,
+      loadShow: true,
       searchOptions: [
         {
           value: "disk-usage",

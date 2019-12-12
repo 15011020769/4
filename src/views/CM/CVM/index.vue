@@ -1,6 +1,6 @@
 <template>
   <div class="CM-wrap">
-    <Loading :show="loadShow" />
+    <!-- <Loading :show="loadShow" /> -->
 
     <!-- 城市按钮 -->
     <div class="CVM-title">{{$t("CVM.title")}}</div>
@@ -31,6 +31,7 @@
         :data="ProTableData.slice((currpage - 1) * pagesize, currpage * pagesize)"
         height="550"
         style="width: 100%"
+        v-loading="loadShow"
       >
         <el-table-column prop :label="$t('CVM.clBload.zjm') ">
           <template slot-scope="scope">

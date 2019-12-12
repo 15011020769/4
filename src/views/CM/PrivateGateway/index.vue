@@ -1,6 +1,6 @@
 <template>
   <div class="CM-wrap">
-    <Loading :show="loadShow" />
+    <!-- <Loading :show="loadShow" /> -->
     <!-- 城市按钮 -->
     <div class="CVM-title">{{ $t('CVM.zxwg') }}</div>
     <div class="tool">
@@ -28,6 +28,7 @@
         height="550"
         style="width: 100%"
         id="exportTable"
+        v-loading="loadShow"
       >
         <el-table-column prop l:label="$t('CVM.cloudDisk.mc')" >
           <template slot-scope="scope">

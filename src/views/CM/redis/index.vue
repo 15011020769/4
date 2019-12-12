@@ -1,6 +1,6 @@
 <template>
   <div class="CM-wrap">
-    <Loading :show="loadShow" />
+    <!-- <Loading :show="loadShow" /> -->
     <!-- 城市按钮 -->
     <div class="CVM-title">Redis</div>
     <div class="tool">
@@ -28,6 +28,7 @@
         height="550"
         style="width: 100%"
         id="exportTable"
+        v-loading="loadShow"
       >
         <el-table-column prop :label="$t('CVM.clBload.zjm') ">
           <template slot-scope="scope">
