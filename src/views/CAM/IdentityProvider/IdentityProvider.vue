@@ -49,6 +49,7 @@
 </template>
 <script>
 import HeadCom from "../UserListNew/components/Head";
+import { LIST_Providers } from "@/constants";
 export default {
   data() {
     return {
@@ -79,12 +80,10 @@ export default {
     // 初始化方法。
     init() {
       let params = {
-        Action: "ListSAMLProviders",
         Version: "2019-01-16"
       };
-      let url = "cam2/ListSAMLProviders";
       this.axios
-        .post(url, params)
+        .post(LIST_Providers, params)
         .then(data => {
           this.tableData = data.Response.SAMLProviderSet;
           this.loading = false;

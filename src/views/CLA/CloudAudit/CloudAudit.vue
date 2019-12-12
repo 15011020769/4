@@ -212,6 +212,15 @@ export default {
         EndTime: this.nowtime, // 结束时间1558108799
         MaxResults: this.MaxResults
       };
+      if (this.endTime != "") {
+        params["EndTime"] = this.endTime;
+        params["StartTime"] = this.startTime;
+      }
+      if (this.input3 != "") {
+        params["LookupAttributes.0.AttributeKey"] = this.AttributeKey;
+        params["LookupAttributes.0.AttributeValue"] = this.input3;
+      }
+
       this.axios.post(YJS_LIST, params).then(res => {
         if (res.codeDesc == "Success") {
           this.tableData = res.data.Events;
@@ -232,6 +241,8 @@ export default {
         endTime = String(new Date(this.value1[1]).getTime() / 1000).split(
           "."
         )[0];
+        this.startTime = startTime;
+        this.endTime = endTime;
       }
       let params = {
         Version: "2019-03-19",
