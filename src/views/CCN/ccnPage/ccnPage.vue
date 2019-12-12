@@ -592,6 +592,7 @@ export default {
 <style lang="scss">
 .el-input__inner {
   height: 30px;
+  line-height: 30px;
 }
 .el-form-item__label {
   text-align: left;
@@ -795,11 +796,13 @@ export default {
   ::v-deep .el-input__inner {
     height: 30px;
     width: 200px;
+    line-height: 30px;
   }
 }
 .el-select {
   ::v-deep .el-input__inner {
     height: 30px;
+    line-height: 30px;
   }
 }
 .dialog-footer {

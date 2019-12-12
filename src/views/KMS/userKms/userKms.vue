@@ -608,6 +608,7 @@ export default {
           border-radius: 0;
           font-size: 12px;
           height: 30px;
+          line-height: 30px;
           border-right: 0;
           :focus {
             border: none;

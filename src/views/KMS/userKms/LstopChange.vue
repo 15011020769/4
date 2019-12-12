@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-dialog class="dialogModel" :title='contentDialog[2]==$t('KMS.total.startChange')?$t('KMS.total.startKmsChange'):$t('KMS.total.stopKmsChange')' :visible.sync="disableDialog" width="30%" :before-close="handleClose">
+    <el-dialog class="dialogModel" :title='contentDialog[2]==$t('KMS.total.startChange')?123:456' :visible.sync="disableDialog" width="30%" :before-close="handleClose">
       <div>
         <p v-if="contentDialog[2]==$t('KMS.total.startChange')?true:false" class="titleTip">{{$t('KMS.total.tip16')}}</p>
         <p v-if="contentDialog[2]==$t('KMS.total.stopChange')?true:false" class="titleTip">{{$t('KMS.total.tip17')}}</p>
