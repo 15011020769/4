@@ -271,13 +271,13 @@ export default {
         this.timedone(end, start, 86400000);
         //ddos攻击-攻击流量带宽
       }
-      //console.log(moment(new Date()).format('YYYY-MM-DD HH:mm:ss'),start
-      //this.thisStart=moment(start).format('YYYY-MM-DD');
-      //this.thisEnd=moment(end).format('YYYY-MM-DD');
-      //this.$emit('timeNode1',[this.thisStart,this.thisEnd])
-      // this.getData(this.timey)
-      this.every();
-       this.describeCCEvList();
+      var vm = this
+      setTimeout(function(){
+
+      vm.every();
+       vm.describeCCEvList();
+      },500)
+
     },
   // 2.1.获取CC攻击指标数据
     describeCCTrend() {
