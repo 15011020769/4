@@ -320,11 +320,13 @@ export default {
   ::v-deep .el-input__inner {
     height: 30px;
     width: 200px;
+    line-height: 30px
   }
 }
 .el-select {
   ::v-deep .el-input__inner {
     height: 30px;
+    line-height: 30px
   }
 }
 .dialog-footer {
