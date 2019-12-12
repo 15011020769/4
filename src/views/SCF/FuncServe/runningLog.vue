@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="contentMain">
-      <div class="topChoseTime newClear">
+      <div class="topChoseTime newClear" style="display:flex;">
         <el-select v-model="logStatus" class="chooseSelect">
           <el-option :label="$t('SCF.total.qbrz')" value="allLog"></el-option>
           <el-option :label="$t('SCF.total.dycg')" value="successLog"></el-option>
@@ -20,8 +20,8 @@
           class="timeNode"
           @change="sureDate"
         ></el-date-picker>
-        <el-button type="primary" @click="reset" size="small">{{ $t('SCF.total.czhi') }}</el-button>
-        <div class="topFloatRight">
+        <el-button type="primary" @click="reset">{{ $t('SCF.total.czhi') }}</el-button>
+        <div class="topFloatRight" style="margin-left:10px;margin-top:-1px;">
           <el-input v-model="iptSearch" :placeholder="$t('SCF.total.qsrid')" class="rigthSearch"/>
           <el-button class="el-icon-search"></el-button>
         </div>

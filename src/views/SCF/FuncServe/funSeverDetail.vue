@@ -12,7 +12,7 @@
             <i class="el-icon-caret-bottom"></i>
           </span>
           <div class="selectDrowBox" v-if="trueOrFalse">
-            <div>
+            <div style="position:relative;z-index:100;display:flex;align-items:center;">
               <el-input v-model="searchIpt" :placeholder="$t('SCF.total.qsrbm')"></el-input>
               <el-button class="el-icon-search"></el-button>
             </div>
@@ -755,33 +755,38 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-// .appIdTit >>> .el-tabs__nav-wrap {
-//   width: 100%;
-//   background: white;
-//   position: relative;
-//   top: -5px;
-// }
-// .appIdTit >>> .el-input__inner,
-// .appIdTit >>> .selectDrow,
-// .appIdTit >>> button {
-//   height: 30px !important;
-//   border-radius: 0 !important;
-//   font-size: 12px;
-//   line-height: 30px !important;
-// }
-// .selectDrow {
-//   overflow: hidden;
-//   background: transparent;
-// }
-// .appIdTit >>> button {
-//   padding: 0 15px;
-//   box-sizing: border-box;
-// }
-// .selectDrowBox {
-//   padding: 5px;
-//   box-sizing: border-box;
-//   text-align: center;
-// }
+.appIdTit >>> .el-tabs__nav-wrap {
+  width: 100%;
+  background: white;
+  position: relative;
+  top: -5px;
+}
+.appIdTit >>> .el-select,
+.appIdTit >>> .el-input,
+.appIdTit >>> .el-select .el-input__inner {
+  width: 100px;
+}
+.appIdTit >>> .el-input__inner,
+.appIdTit >>> .selectDrow,
+.appIdTit >>> button {
+  height: 30px !important;
+  border-radius: 0 !important;
+  font-size: 12px;
+  line-height: 30px !important;
+}
+.selectDrow {
+  overflow: hidden;
+  background: transparent;
+}
+.appIdTit >>> button {
+  padding: 0 15px;
+  box-sizing: border-box;
+}
+.selectDrowBox {
+  padding: 10px;
+  box-sizing: border-box;
+  text-align: center;
+}
 .seniorbox {
   display: flex;
   margin: 20px;

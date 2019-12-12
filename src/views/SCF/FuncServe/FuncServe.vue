@@ -639,6 +639,11 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+.wrap >>> .el-select,
+.wrap >>> .el-input,
+.wrap >>> .el-select .el-input__inner {
+  width: 180px;
+}
 .wrap >>> input,
 .wrap >>> button {
   height: 30px;
