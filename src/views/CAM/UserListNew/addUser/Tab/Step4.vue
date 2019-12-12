@@ -91,7 +91,7 @@
           v-loading="tableloading"
           max-height="520"
         >
-          <el-table-column prop="GroupName" :label="$t('CAM.userList.colNmae')"></el-table-column>
+          <el-table-column prop="GroupName" label="用戶組名稱"></el-table-column>
           <el-table-column :label="$t('CAM.userList.userCz')" width="250">
             <template slot-scope="scope">
               <p style="color:#006eff;cursor: pointer;" @click="_del(scope.row)">{{$t('CAM.userList.Remove')}}</p>

@@ -278,7 +278,7 @@ export default {
   }
 
   .container {
-    max-width: 96%;
+    width: 96%;
     margin: 0 auto;
     padding-top: 20px;
 

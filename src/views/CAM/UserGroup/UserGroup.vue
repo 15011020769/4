@@ -138,7 +138,6 @@
         <div class="container-left">
           <p>{{$t('CAM.userGroup.selection')}}（共{{totalNum}}条）</p>
           <el-input
-            :placeholder="$t('CAM.userGroup.searchUser')"
             size="small"
             v-model="inpVal"
             style="width:100%"
