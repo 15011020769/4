@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="appIdTit">
+    <div class="appIdTit" v-loading="loading">
       <div class="topTit newClear">
         <span>
           <i class="el-icon-back" @click="returnBack"></i>
@@ -102,12 +102,17 @@
                             修改权限
                             <span class="el-icon-share"></span>
                           </a>
-                        </p> -->
+                        </p>-->
                       </el-form-item>
                       <el-form-item prop="Runtime" :label="$t('SCF.total.yxhj')">
                         <span>{{functionData.Runtime}}</span>
                       </el-form-item>
-                      <el-form-item prop="MemorySize" :label="$t('SCF.total.nc')" :required="true" class="intoAll">
+                      <el-form-item
+                        prop="MemorySize"
+                        :label="$t('SCF.total.nc')"
+                        :required="true"
+                        class="intoAll"
+                      >
                         <span slot="label">
                           {{ $t('SCF.total.nc') }}
                           <!-- <i class="el-icon-question"></i> -->
@@ -222,7 +227,7 @@
                               新建子网
                               <span class="el-icon-share"></span>
                             </a>
-                          </p> -->
+                          </p>-->
                         </div>
                       </el-form-item>
                       <!--  <el-form-item label="标签" prop="tagLists">
@@ -336,9 +341,9 @@
                     <span>{{ $t('SCF.total.hjbl') }}</span>
                     <span v-show="environmentFlag">
                       {{environmentKey}}={{environmentValue}}
-                      <!-- {{functionData.Environment.Variables[0].Key}}={{functionData.Environment.Variables[0].Value}} --></span>
-                    <span v-show="!environmentFlag">
-                      {{ $t('SCF.total.whjbl') }}</span>
+                      <!-- {{functionData.Environment.Variables[0].Key}}={{functionData.Environment.Variables[0].Value}} -->
+                    </span>
+                    <span v-show="!environmentFlag">{{ $t('SCF.total.whjbl') }}</span>
                   </p>
                   <p>
                     <span>{{ $t('SCF.total.sswl') }}</span>
@@ -477,6 +482,7 @@ export default {
   },
   data() {
     return {
+      loading: true,
       ScienceArr: [{}],
       funNameTit: "",
       activeName: "first",
@@ -516,8 +522,8 @@ export default {
       },
       environmentFlag: true,
       vpcConfigFlag: true,
-      environmentKey:[],
-      environmentValue:[],
+      environmentKey: [],
+      environmentValue: [],
       vpcConfigVpcId: "",
       vpcConfigSubnetId: "",
       childData: {},
@@ -612,7 +618,7 @@ export default {
       let params = {
         Action: "GetFunction",
         Version: "2018-04-16",
-        Region: 'ap-guangzhou'//this.$cookie.get("regionv2")
+        Region: "ap-guangzhou" //this.$cookie.get("regionv2")
       };
       let functionName = this.$route.query.functionName;
       // functionName = 'tttt'
@@ -626,20 +632,20 @@ export default {
           this.functionData = res.Response;
           console.log(this.functionData);
           let funcData = this.functionData;
-          if (funcData.VpcConfig.SubnetId != '') {
+          if (funcData.VpcConfig.SubnetId != "") {
             _this.vpcConfigVpcId = funcData.VpcConfig.VpcId;
             _this.vpcConfigSubnetId = funcData.VpcConfig.SubnetId;
           } else {
             _this.vpcConfigFlag = false;
           }
-          
-          if(funcData.Environment.Variables.length != 0){
-            console.log(funcData.Environment.Variables.length)
-            for(let i=0;i<=funcData.Environment.Variables.length; i++){
-            _this.environmentKey=funcData.Environment.Variables[i].Key;
-            _this.environmentValue=funcData.Environment.Variables[i].Value;
+
+          if (funcData.Environment.Variables.length != 0) {
+            console.log(funcData.Environment.Variables.length);
+            for (let i = 0; i <= funcData.Environment.Variables.length; i++) {
+              _this.environmentKey = funcData.Environment.Variables[i].Key;
+              _this.environmentValue = funcData.Environment.Variables[i].Value;
             }
-          }else{
+          } else {
             _this.environmentFlag = false;
           }
           console.log(this.functionData.Environment.Variables[0].Key);
@@ -661,10 +667,14 @@ export default {
         Role: this.functionData.Role,
         Timeout: this.functionData.Timeout //,
       };
-      for(let i in this.ScienceArr) {
-          params['Environment.Variables.'+i+'.Key'] = this.ScienceArr[i].Key,
-          params['Environment.Variables.'+i+'.Value'] = this.ScienceArr[i].Value
-        }
+      for (let i in this.ScienceArr) {
+        (params["Environment.Variables." + i + ".Key"] = this.ScienceArr[
+          i
+        ].Key),
+          (params["Environment.Variables." + i + ".Value"] = this.ScienceArr[
+            i
+          ].Value);
+      }
       this.axios
         .post(UPD_CONFIG, params)
         .then(res => {

@@ -232,9 +232,9 @@ export default {
       let params = {
         Version: "2019-03-19",
         Region: "ap-taipei",
-        EndTime: endTime == NaN ? endTime : this.nowtime,
+        EndTime: endTime != NaN ? endTime : this.nowtime,
         MaxResults: this.MaxResults,
-        StartTime: startTime == NaN ? startTime : this.oldTime
+        StartTime: startTime != NaN ? startTime : this.oldTime
       };
       params["LookupAttributes.0.AttributeKey"] = this.AttributeKey;
       params["LookupAttributes.0.AttributeValue"] = this.input3;
