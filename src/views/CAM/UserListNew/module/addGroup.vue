@@ -143,6 +143,7 @@ export default {
         params["Keyword"] = this.searchGroupValue;
       }
       this.axios.post(USER_GROUP, params).then(res => {
+        console.log(res)
         this.userGroup = res.Response.GroupInfo;
       });
     },

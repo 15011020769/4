@@ -4,7 +4,7 @@
       <div class="container-left">
         <p>策略</p>
          <el-input
-          size="mini" v-model="strategyValue" style="width:100%" @keyup.enter.native="tableloadmore"
+          size="mini" v-model="strategyValue" style="width:100%;margin-top:10px;" @keyup.enter.native="tableloadmore"
         >
           <i slot="suffix" class="el-input__icon el-icon-search" @click="tableloadmore"></i>
         </el-input>

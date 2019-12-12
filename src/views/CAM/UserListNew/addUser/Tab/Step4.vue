@@ -40,7 +40,7 @@
               </td>
               <td class="edit">
                 <span @click="_userConfirm">{{$t('CAM.userList.suerAdd')}}</span>
-                <span style="margin-left:5px;" @click="_userCancel">{{$t('CAM.userList.handClose')}}</span>
+                <!-- <span style="margin-left:5px;" @click="_userCancel">{{$t('CAM.userList.handClose')}}</span> -->
               </td>
             </tr>
           </tbody>
@@ -247,9 +247,9 @@ export default {
       this.userInp = !this.userInp;
     },
     //用户信息取消
-    _userCancel() {
-      this.userInp = !this.userInp;
-    },
+    // _userCancel() {
+    //   this.userInp = !this.userInp;
+    // },
     //用户信息确定
     _userConfirm() {
       const params = {

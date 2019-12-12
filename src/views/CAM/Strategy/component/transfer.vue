@@ -2,20 +2,20 @@
   <div class="Cam">
     <div class="container">
       <div class="container-left">
-        <p>关联用户</p>
-          <el-input placeholder="支持搜索用户名" size="small"  v-model="search" style="width:100%" @keyup.enter.native="toQuery">
+        <p>{{$t('CAM.userList.listTitle')}}</p>
+          <el-input :placeholder="$t('CAM.strategy.inputContent')" size="small"  v-model="search" style="width:100%" @keyup.enter.native="toQuery">
               <i slot="suffix" class="el-input__icon el-icon-search" @click="toQuery"></i>
           </el-input>
           <el-table class="table-left" ref="multipleOption" :data="transfer_data" size="small" :height="tableHeight"
           tooltip-effect="dark" v-loading="loading" style="width: 100%" @row-click="selectedRow"
           @selection-change="handleSelectionChange">
           <el-table-column type="selection" prop="id" width="28"></el-table-column>
-          <el-table-column prop="name" label="用户" show-overflow-tooltip>
+          <el-table-column prop="name" :label="$t('CAM.userGroup.user')" show-overflow-tooltip>
             <template slot-scope="scope">
               <p>{{scope.row.name}}</p>
             </template>
           </el-table-column>
-          <el-table-column prop="type" label="切换成用户组" width="200">
+          <el-table-column prop="type" :label="$t('CAM.strategy.switch')" width="200">
             <template slot="header">
               <el-dropdown trigger="click" @command="handleCommand" size="mini">
                 <span style="color:#909399">
@@ -29,8 +29,8 @@
               </el-dropdown>
             </template>
             <template slot-scope="scope">
-              <div v-if="scope.row.type == 'user'">用户</div>
-              <div v-else-if="scope.row.type == 'group'">用户组</div>
+              <div v-if="scope.row.type == 'user'">{{$t('CAM.userGroup.user')}}</div>
+              <div v-else-if="scope.row.type == 'group'">{{$t('CAM.userList.userGroup')}}</div>
             </template>
           </el-table-column>
         </el-table>
@@ -41,15 +41,15 @@
         </div>
       </div>
       <div class="container-right">
-        <span>已选择（共条）</span>
+        <span>{{$t('CAM.userList.choose')}}</span>
         <el-table class="table-left" ref="multipleSelected" :data="transfer_data_right" tooltip-effect="dark"
           size="small" :height="tableHeight" style="width: 100%">
-          <el-table-column prop="name" label="用户组/用户名" show-overflow-tooltip>
+          <el-table-column prop="name" :label="$t('CAM.strategy.nameAndGroup')" show-overflow-tooltip>
           </el-table-column>
-          <el-table-column prop="type" label="类型" width="100">
+          <el-table-column prop="type" :label="$t('CAM.strategy.type')" width="100">
             <template slot-scope="scope">
-              <p v-show="scope.row.type == 'user'">用户</p>
-              <p v-show="scope.row.type == 'group'">用户组</p>
+              <p v-show="scope.row.type == 'user'">{{$t('CAM.userGroup.user')}}</p>
+              <p v-show="scope.row.type == 'group'">{{$t('CAM.userGroup.title')}}</p>
             </template>
           </el-table-column>
           <el-table-column :label="$t('CAM.userGroup.colHandle')" width="50">
@@ -123,10 +123,13 @@
           Action: 'ListUsers',
           Version: '2019-01-16'
         }
-        // if(this.search) {
-        //   paramsUser['Keyword'] = this.search
-        // }
-        this.$axios.post('cam2/ListUsers', paramsUser).then(res => {
+      //   if (this.search != null && this.search != "") {
+      //   paramsUser["Keyword"] = this.search;
+      // }
+      if (this.search != '') {
+          paramsUser['Keyword'] = this.search
+        }
+        this.axios.post('cam2/ListUsers', paramsUser).then(res => {
           this.transferArrayTemp = []
           for (let i = 0; i < res.Response.Data.length; i++) {
             // for(let i in res.Response.Data) {
@@ -177,10 +180,13 @@
           Action: 'ListGroups',
           Version: '2019-01-16',
         }
-        if (this.search != '') {
-          paramsGroup['Keyword'] = this.search
-        }
-        this.$axios.post('cam2/ListGroups', paramsGroup).then(res => {
+        // if (this.search != '') {
+        //   paramsGroup['Keyword'] = this.search
+        // }
+         if (this.search != null && this.search != "") {
+        paramsGroup["Keyword"] = this.search;
+      }
+        this.axios.post('cam2/ListGroups', paramsGroup).then(res => {
           this.transferArrayTemp = []
           for (let i = 0; i < res.Response.GroupInfo.length; i++) {
             // for(let i in res.Response.GroupInfo) { //不用使用此方式，vue在if判断中会出现.id找不到异常，但是实际console.log()却可以打印出id的值。
@@ -337,9 +343,11 @@
         }
       },
       toQuery() {
+        //如果为用户 进行搜索
         // if(this.commandObj.value != '' && this.commandObj.value === 'user'){
         //   this.getUserList()
         // }
+        // 如果为用户组 进行搜索
         if (this.commandObj.value != '' && this.commandObj.value === 'group') {
           this.getGroupList()
         }
@@ -381,13 +389,13 @@
       },
       // 绑定策略到用户组
       attachGroupPolicy(params) {
-        this.$axios.post('cam2/AttachGroupPolicy', params).then(res => {
+        this.axios.post('cam2/AttachGroupPolicy', params).then(res => {
           console.log(res)
         })
       },
       // 绑定策略到用户
       attachUserPolicy(params) {
-        this.$axios.post('cam2/AttachUserPolicy', params).then(res => {
+        this.axios.post('cam2/AttachUserPolicy', params).then(res => {
           console.log(res)
         })
       },

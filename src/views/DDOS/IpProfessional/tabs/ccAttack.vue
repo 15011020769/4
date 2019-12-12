@@ -168,7 +168,7 @@ export default {
         EndTime: this.endTimeCC,
         Id: this.inputIdCC
       };
-      this.$axios.post("dayu2/DescribeCCEvList", params).then(res => {
+      this.axios.post("dayu2/DescribeCCEvList", params).then(res => {
         // console.log(res)
       });
     },
@@ -291,7 +291,7 @@ export default {
         StartTime: this.startTimeCC,
         EndTime: this.endTimeCC
       };
-      this.$axios.post("dayu2/DescribeCCTrend", params).then(res => {
+      this.axios.post("dayu2/DescribeCCTrend", params).then(res => {
         if(res.Response.MetricName =="inqps"){         
            this.inqpsdata = res.Response.Data
         }else{

@@ -51,3 +51,7 @@ export const CREATE_SAML = 'cam2/CreateSAMLProvider'
 
 //查询SAML身份提供商
 export const GET_SAML = 'cam2/GetSAMLProvider'
+
+export const GROUP_USERS = 'cam2/ListUsersForGroup'
+export const DELE_GROUP = 'cam2/DeleteGroup'
+export const ADD_GROUPTOLIST = 'cam2/AddUserToGroup'

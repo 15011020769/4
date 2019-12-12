@@ -249,7 +249,7 @@
     </el-dialog>
     <!-- <deleteDialog :dialogDeleteUser="flag" @suerClose="suerClose" @confirm="confirm" /> -->
     <el-dialog
-      :title="delTitle"
+      title="删除用户"
       :visible.sync="dialogDeleteUser"
       width="50%"
       :before-close="deleteRowHandl"
@@ -324,7 +324,6 @@ export default {
       Uid: "",
       deletDatas: [],
       dialogDeleteUser: false,
-      delTitle: "",
       delNewData: [],
       deleteName: "",
       deleteRowName: "",
@@ -373,7 +372,7 @@ export default {
       // console.log(this.selectCheckData)
     },
     suerDelUser() {
-      if (this.delTitle == "删除用户") {
+      console.log(11)
         let params = {
           Version: "2019-01-16",
           Name: this.deleteRowName
@@ -399,12 +398,10 @@ export default {
               });
           });
         this.dialogDeleteUser = false;
-      }
     },
     delUserRow(val) {
       this.delUin = val.Uin;
       this.deleteRowName = val.Name;
-      this.delTitle = "删除用户";
       this.dialogDeleteUser = true;
       let newdelData = [];
       newdelData.push(val);

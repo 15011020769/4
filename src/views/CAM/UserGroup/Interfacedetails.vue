@@ -15,7 +15,7 @@
         </div>
         <!-- 用户组详情页面 start -->
         <div v-show="flag==true">
-          <el-form ref="form" :model="groupData" label-width="80px">
+          <el-form ref="form" :model="groupData" label-width="90px">
             <el-form-item :label="$t('CAM.userGroup.colNmae')">
               <span>{{groupData.GroupName}}</span>
             </el-form-item>
@@ -166,7 +166,7 @@
                 <el-table ref="multipleTable" :data="owneruserData" tooltip-effect="dark"
                   style="width: 100%; border:1px solid #ddd" @selection-change="handleSelectionChangeUsers">
                   <el-table-column type="selection" width="55"></el-table-column>
-                  <el-table-column label="用户组名" prop="Name">
+                  <el-table-column label="用戶組名稱" prop="Name">
                     <template slot-scope="scope">
                       <el-button @click="userDetails(scope.row)" size="mini" type="text">{{scope.row.Name}}</el-button>
                     </template>
@@ -196,7 +196,7 @@
                 </div>
               </div>
               <!-- dialog 用户组弹出框  start -->
-              <el-dialog title="添加用户" :visible.sync="dialogUser" width="75%" :before-close="handleCloseUser"
+              <el-dialog title="添加用戶" :visible.sync="dialogUser" width="75%" :before-close="handleCloseUser"
                 custom-class="dialogStyle">
                 <div class="container">
                   <div class="container-left">
@@ -210,7 +210,7 @@
                       <el-table-column type="selection" prop="Uin" width="28"> </el-table-column>
                       <el-table-column prop="Name" :label="$t('CAM.userGroup.user')" show-overflow-tooltip>
                       </el-table-column>
-                      <el-table-column label="用户类型" width="100">
+                      <el-table-column label="用戶類型" width="100">
                         <template slot-scope="scope">
                           <p>{{$t('CAM.userGroup.childUser')}}</p>
                         </template>

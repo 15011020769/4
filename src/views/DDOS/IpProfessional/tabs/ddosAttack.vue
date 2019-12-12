@@ -212,7 +212,7 @@ export default {
         MetricName: this.metricName2 //指标，取值[traffic（攻击协议流量, 单位KB）, pkg（攻击协议报文数）, num（攻击事件次数）]
         // metricName2: "traffic",
       };
-      this.$axios.post("dayu2/DescribeDDoSNetCount", params).then(res => {
+      this.axios.post("dayu2/DescribeDDoSNetCount", params).then(res => {
         // console.log(res)
         if (this.metricName2 == "traffic") {
           this.traffictable = res.data;
@@ -235,7 +235,7 @@ export default {
         StartTime: this.startTime,
         EndTime: this.endTime
       };
-      this.$axios.post("dayu2/DescribeDDoSNetTrend", params).then(res => {
+      this.axios.post("dayu2/DescribeDDoSNetTrend", params).then(res => {
         if (this.metricName == "bps") {
           this.drawLine(res.Response.Data, date);
         } else {
@@ -252,7 +252,7 @@ export default {
       if (this.resourceId != "" && this.resourceId != null) {
         params["IdList.0"] = this.resourceId;
       }
-      this.$axios.post("dayu2/DescribeResourceList", params).then(res => {
+      this.axios.post("dayu2/DescribeResourceList", params).then(res => {
         // console.log(res)
       });
     },

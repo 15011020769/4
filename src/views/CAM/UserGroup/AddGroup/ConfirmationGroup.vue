@@ -51,7 +51,7 @@
   .Cam {
   .container {
     width:96%;
-    // margin:0 auto;
+    margin:0 auto;
     background: #fff;
     padding:20px;
     p.title,p.explain{

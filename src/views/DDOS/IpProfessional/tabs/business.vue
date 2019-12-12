@@ -118,7 +118,7 @@ export default {
         Business: "net",
         Id: this.inputIdService
       };
-      this.$axios.post("dayu2/DescribleL4Rules", params).then(res => {
+      this.axios.post("dayu2/DescribleL4Rules", params).then(res => {
         // console.log(res)
       });
     },
@@ -135,7 +135,7 @@ export default {
         EndTime: this.endTimeService,
         Statistics: this.statistics //统计方式，取值：max表示最大值；min表示最小值；avg表示均值；
       };
-      this.$axios.post("dayu2/DescribeBaradData", params).then(res => {
+      this.axios.post("dayu2/DescribeBaradData", params).then(res => {
         // console.log(res)
       });
     },
@@ -176,7 +176,7 @@ export default {
         StartTime: this.startTimeService,
         EndTime: this.endTimeService
       };
-      this.$axios.post("dayu2/DescribeTransmitStatis", params).then(res => {
+      this.axios.post("dayu2/DescribeTransmitStatis", params).then(res => {
         this.InDataList = res.Response.InDataList;
         this.OutDataList = res.Response.OutDataList;
         if (this.metricNameService == "traffic") {
@@ -203,7 +203,7 @@ export default {
       if (this.resourceId != "" && this.resourceId != null) {
         params["IdList.0"] = this.resourceId;
       }
-      this.$axios.post("dayu2/DescribeResourceList", params).then(res => {
+      this.axios.post("dayu2/DescribeResourceList", params).then(res => {
         // console.log(res)
       });
     },

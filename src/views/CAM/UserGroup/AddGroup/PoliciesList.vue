@@ -34,7 +34,7 @@
           <i class="iconfont">&#xe603;</i>
         </div>
       </div>
-      <div class="container-left">
+      <div class="container-right">
         <span style="margin-bottom:20px">已选择</span>
         <el-table class="table-left" ref="multipleSelected" :data="policiesSelectedData" tooltip-effect="dark"
           size="small" :height="tableHeight" style="width: 100%">
@@ -134,8 +134,6 @@
          display: flex;
          justify-content: center;
          align-items: center;
-         padding: 15px;
-         box-sizing: border-box;
       p.title,
       p.explain {
         text-align: center;

@@ -19,13 +19,13 @@
         <p class="contant_top">{{$t('CAM.Role.rolTitle')}}</p>
         <div class="table_opare">
           <div>
-            <el-button plain size="small" @click="handleDelete()">删除</el-button>
+            <el-button plain size="small" @click="handleDelete()">{{$t('CAM.userList.userDel')}}</el-button>
           </div>
           <!-- <el-input placeholder="支持搜索用户名" size="small" class="inputSearch">
             <i slot="suffix" class="el-input__icon el-icon-search"></i>
           </el-input> -->
           
-           <el-input style="width:20%" placeholder="支持搜索策略名称/描述/备注" size="small"  v-model="searchValue"  @keyup.enter.native="changePolicyScope">
+           <el-input style="width:20%" :placeholder="$t('CAM.Role.searchRole')" size="small"  v-model="searchValue"  @keyup.enter.native="changePolicyScope">
                        <i slot="suffix" class="el-input__icon el-icon-search"  @click="changePolicyScope"></i>
            </el-input>
         </div>
@@ -40,7 +40,7 @@
             @selection-change="handleSelectionChange"
           >
             <el-table-column type="selection" width="60" v-if="this.policyScope!='QCS'"></el-table-column>
-            <el-table-column prop="PolicyName" label="策略名" width="150">
+            <el-table-column prop="PolicyName":label="$t('CAM.userList.strategyNames')" width="150">
               <template slot-scope="scope">
                 <el-button @click="handleClick(scope.row)" type="text" size="small">{{scope.row.PolicyName}}</el-button>
               </template>
@@ -66,7 +66,7 @@
             </el-table-column>
             <el-table-column prop="operate" label="操作" width="150">
               <template slot-scope="scope">
-                <el-button @click="handleClick_user(scope.row)" type="text" size="small">关联用户/组</el-button>
+                <el-button @click="handleClick_user(scope.row)" type="text" size="small">{{$t('CAM.strategy.straGroup')}}</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -75,7 +75,7 @@
           style="background:#fff;padding:10px;display:flex;justify-content: space-between;line-height:30px"
         >
           <div>
-            <span style="font-size:12px;color:#888">已选 {{choiceNum}} 项，共 {{total}} 项</span>
+            <span style="font-size:12px;color:#888">{{$t('CAM.strategy.chooseStra')}} {{choiceNum}} 项，共 {{total}} 项</span>
           </div>
           <div>
             <el-pagination
@@ -93,7 +93,7 @@
     </div>
     <!-- 关联用户/用户组 模态窗 -->
     <el-dialog title :visible.sync="dialogVisible" width="72%">
-      <h3 style="color:#000;margin-bottom:20px;">关联用户/用户组</h3>
+      <h3 style="color:#000;margin-bottom:20px;">{{$t('CAM.strategy.straGroup')}}</h3>
       <div class="dialog_div">
         <transfer v-if="transferFlag" ref="userTransfer" :PolicyId="policyId"></transfer>
       </div>
@@ -172,7 +172,7 @@ export default {
       if(this.searchValue != '') {
         params['Keyword'] = this.searchValue
       }
-      this.$axios.post('cam2/ListPolicies', params).then(res => {
+      this.axios.post('cam2/ListPolicies', params).then(res => {
         this.tableData = res.Response.List
         this.total = res.Response.TotalNum
       })
@@ -231,7 +231,7 @@ export default {
           params[str] = item.PolicyId
         })
       }
-       this.$axios.post('cam2/DeletePolicy', params).then(res  => {
+       this.axios.post('cam2/DeletePolicy', params).then(res  => {
          console.log(res)
        })
       this.selectedData.splice(0, this.selectedData.length)

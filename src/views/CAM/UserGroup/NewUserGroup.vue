@@ -21,7 +21,8 @@
           <el-step :title="$t('CAM.userGroup.createCheck')"></el-step>
         </el-steps>
       </div>
-      <div v-show="active==1" style="width:100%;">
+      <div class="table">
+          <div v-show="active==1" style="width:100%;">
         <FirstStep ref="firstStep" :addModel="addModel" />
       </div>
       <div v-show="active==2">
@@ -30,6 +31,8 @@
       <div v-show="active==3">
         <ThirdlyStep :addModel="addModel" :policiesSelectedData="policiesSelectedData" />
       </div>
+      </div>
+      
 
       <div class="button">
         <el-button
@@ -193,7 +196,6 @@ export default {
     margin: 0 auto;
     box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
     margin-top: 20px;
-    display: flex;
     flex-direction: column;
     padding: 20px;
     box-sizing: border-box;
@@ -246,7 +248,9 @@ export default {
       }
     }
   }
-
+   .table{
+       flex: 1;
+   }
   .cam_button {
     width: 96%;
     margin: 10px auto;

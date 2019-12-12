@@ -34,8 +34,7 @@
 <style lang="scss" scoped>
   .Cam {
   .container {
-    width:50%;
-    min-height: 200px;
+    width:100%;
     background: #fff;
     padding:20px;
  
@@ -43,7 +42,7 @@
       width: 20%;
     }
     .el-textarea{
-      width: 50%;
+      width: 30%;
     }
   }
 

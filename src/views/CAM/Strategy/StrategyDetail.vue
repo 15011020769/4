@@ -14,17 +14,17 @@
         <p class="baseInfo_title">基本信息</p>
         <div class="baseInfo_flex">
           <div class="baseInfo_left">
-            <p class="baseInfo_cl item">策略</p>
-            <p class="baseInfo_ms item">描述</p>
-            <p class="baseInfo_mark item">备注</p>
-            <p class="baseInfo_type item">策略类型</p>
-            <p class="baseInfo_time item">创建时间</p>
+            <p class="baseInfo_cl item">{{$t('CAM.Role.strategy')}}</p>
+            <p class="baseInfo_ms item">{{$t('CAM.userList.descs')}}</p>
+            <p class="baseInfo_mark item">{{$t('CAM.userGroup.colRemark')}}</p>
+            <p class="baseInfo_type item">{{$t('CAM.Role.strategyType')}}</p>
+            <p class="baseInfo_time item">{{$t('CAM.userList.createTime')}}</p>
           </div>
           <div class="baseInfo_right">
             <p class="baseInfo_cl item">{{policy.PolicyName}}</p>
             <p class="baseInfo_ms item">{{policy.Description}}</p>
             <p class="baseInfo_mark item">
-              <el-input v-if="input_show" v-model="input_Value" size="mini" style="width:150px" placeholder="请输入内容" > </el-input>
+              <el-input v-if="input_show" v-model="input_Value" size="mini" style="width:150px" :placeholder="$t('CAM.strategy.inputContent')" > </el-input>
               <a v-if="input_show" @click="input_sure" style="margin-left:10px" href="javascript:;" >确定</a>
               <a v-if="input_show" @click="input_cancel" style="margin-left:10px" href="javascript:;" >取消</a>
               <span v-if="!input_show">{{inputValue}}</span>
@@ -37,15 +37,15 @@
       </div>
       <div class="tabs">
         <el-tabs v-model="activeName" @tab-click="handleClick">
-          <el-tab-pane label="策略语法" name="first">
+          <el-tab-pane :label="$t('CAM.strategy.starLangu')" name="first">
             <div class="markdown"></div>
           </el-tab-pane>
           <!-- tab 策略详情页面，关联用户组tab  start -->
-          <el-tab-pane label="关联用户/组" name="second">
+          <el-tab-pane :label="$t('CAM.strategy.straGroup')" name="second">
             <div class="config">
               <p style="margin:10px">
-                <el-button type="primary" @click="Relation_user" size="small">关联用户/用户组</el-button>
-                <el-button type="primary" @click="Relieve_user" size="small" :disabled="display">解除用户/用户组</el-button>
+                <el-button type="primary" @click="Relation_user" size="small">{{$t('CAM.strategy.straGroup')}}</el-button>
+                <el-button type="primary" @click="Relieve_user" size="small" :disabled="display">{{$t('CAM.strategy.outBindUser')}}</el-button>
               </p>
               <div class="config_table">
                 <el-table
@@ -58,7 +58,7 @@
                   :header-cell-style="{height:'20px',padding:'0px 10px'}"
                   style="width: 100%">
                   <el-table-column type="selection" width="60"></el-table-column>
-                  <el-table-column prop="date" label="关联用户/组">
+                  <el-table-column prop="date" :label="$t('CAM.strategy.straGroup')">
                     <template slot-scope="scope">
                       <el-button @click="handleClickPolicies(scope.row)" type="text" size="small" >{{scope.row.Name}}</el-button>
                     </template>
@@ -80,8 +80,8 @@
                       </el-dropdown>
                     </template>
                     <template slot-scope="scope">
-                      <p v-show="scope.row.RelatedType == '1'">用户关联</p>
-                      <p v-show="scope.row.RelatedType == '2'">用户组关联</p>
+                      <p v-show="scope.row.RelatedType == '1'">{{$t('CAM.strategy.userBind')}}</p>
+                      <p v-show="scope.row.RelatedType == '2'">{{$t('CAM.strategy.userGroupBind')}}</p>
                     </template>
                   </el-table-column>
                   <el-table-column prop="address" label="操作">
@@ -91,13 +91,13 @@
                         title
                         width="400"
                         v-model="popover_visible">
-                        <p>解除此用户<span v-show="scope.row.RelatedType == '2'">组</span>后，将不具备该策略对应的权限，是否确认？</p>
+                        <p>{{$t('CAM.strategy.outBind')}}<span v-show="scope.row.RelatedType == '2'">{{$t('CAM.strategy.team')}}</span>{{$t('CAM.strategy.straTitle')}}</p>
                         <div style="text-align: right; margin: 0">
                           <el-button size="mini" type="text" @click="popover_visible = false">取消</el-button>
-                          <el-button type="primary" size="mini" @click="popover_visible = false" >确定解除</el-button>
+                          <el-button type="primary" size="mini" @click="popover_visible = false" >{{$t('CAM.strategy.sureOubind')}}</el-button>
                         </div>
                         <!-- <el-button size="mini" type="text" @click="popover_visible = true" slot="reference">解除用户<span v-show="scope.row.RelatedType == '2'">组</span></el-button> -->
-                        <el-button size="mini" type="text" @click="removePolicyEntity(scope.row)" slot="reference">解除用户<span v-show="scope.row.RelatedType == '2'">组</span></el-button>
+                        <el-button size="mini" type="text" @click="removePolicyEntity(scope.row)" slot="reference">{{$t('CAM.strategy.sureOubind')}}<span v-show="scope.row.RelatedType == '2'">{{$t('CAM.strategy.team')}}</span></el-button>
                       </el-popover>
                     </template>
                   </el-table-column>
@@ -106,7 +106,7 @@
             </div>
             <div style="background:#fff;padding:10px;display:flex;justify-content: space-between;line-height:30px">
               <div>
-                <span style="font-size:12px;color:#888">已选 {{selTotal}} 项，共 {{total}} 项</span>
+                <span style="font-size:12px;color:#888">{{$t('CAM.strategy.chooseStra')}} {{selTotal}} 项，共 {{total}} 项</span>
               </div>
               <div>
                 <el-pagination
@@ -126,34 +126,34 @@
       </div>
       <!-- dialog关联用户组弹框页面 start -->
       <el-dialog :visible.sync="dialogVisible" width="72%" :before-close="handleClosePolicy">
-        <p class="dialog">关联用户/用户组</p>
+        <p class="dialog">{{$t('CAM.strategy.straGroup')}}</p>
         <div>
          <transfer ref="userTransfer" :PolicyId="policy.PolicyId"></transfer>
         </div>
         <p style="text-align:center;margin-top:20px">
           <el-button @click="dialogVisible = false" size="small">取 消</el-button>
-          <el-button type="primary" @click="attachPolicy" size="small">确 定</el-button>
+          <el-button type="primary" @click="attachPolicy" size="small">{{$t('CAM.strategy.suerStr')}}</el-button>
         </p>
       </el-dialog>
       <!-- dialog关联用户组弹框页面 end -->
       <el-dialog :visible.sync="Relieve_dialogVisible" width="30%" :before-close="handleClosePolicyRemove">
-        <p class="dialog">解除用户/组</p>
+        <p class="dialog">{{$t('CAM.strategy.outBindUser')}}</p>
         <div style="margin:15px 0">
           <p>
-            已选择1个用户/组，
-            <a href="javascript:;" @click="look_detail">查看详情</a>
+            {{$t('CAM.strategy.overChoose')}}，
+            <a href="javascript:;" @click="look_detail">{{$t('CAM.strategy.lookDetils')}}</a>
             <i v-if="!isShow" class="el-icon-caret-bottom"></i>
             <i v-if="isShow" class="el-icon-caret-top"></i>
           </p>
           <div v-if="isShow" class="box">
             <p class="list" v-for="item in policysSelData" :key="item">{{item.Name}}</p>
           </div>
-          <h3 style="margin-top:15px">确认是否解除？</h3>
-          <p>解除后，以上策略关联的用户或用户组将失去对应的权限。</p>
+          <h3 style="margin-top:15px">{{$t('CAM.strategy.okDel')}}？</h3>
+          <p>{{$t('CAM.strategy.removeStra')}}</p>
         </div>
         <p style="text-align:center">
           <el-button @click="handleClosePolicyRemove" size="small">取 消</el-button>
-          <el-button type="primary" @click="removePolicysEntity" size="small">确 定</el-button>
+          <el-button type="primary" @click="removePolicysEntity" size="small">{{$t('CAM.strategy.suerStr')}}</el-button>
         </p>
       </el-dialog>
     </div>
@@ -271,7 +271,7 @@ export default {
       }else{
         params['EntityFilter'] = 'User|Group'
       }
-      this.$axios.post(url, params).then(res => {
+      this.axios.post(url, params).then(res => {
         // RelatedType 关联类型。1 用户关联 ； 2 用户组关联
         this.policysData = res.Response.List
         this.total = res.Response.TotalNum
