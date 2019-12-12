@@ -129,7 +129,7 @@ module.exports = {
       placeholder: '支持搜索用戶組名稱',
       addTitle: '添加用戶',
       selection: '選擇添加的用戶',
-      selected: '已選擇',
+      Star: '已選擇',
       selSearch: '請輸入用戶名稱搜索',
       selConfirmBtn: '確 定',
       selCancelBtn: '取 消',
@@ -214,7 +214,14 @@ module.exports = {
       cancelAll:'撤銷所有會話',
       Risk:'風險提醒',
       notUsed:'該角色為您授權的服務角色，擅自更改角色內容（角色關聯策略或者角色載體）可能導致您授權的服務無法正確使用該角色。',
-      Unblock:'解除用戶/組'
+      Unblock:'解除用戶/組',
+      createServe:'新建自定義角色',
+      Enter:'輸入角色載體信息',
+      Configuring:'配置角色策略',
+      reviewCheck:'審閱',
+      support:'支持角色的服務',
+      empty:'角色名稱不能為空',
+      selectedStar:'已選策略'
     },
     strategy:{
       straGroup:'關聯用戶/組',
@@ -236,7 +243,8 @@ module.exports = {
       strUsers:'關聯用戶',
       switch:'切換成用戶組',
       nameAndGroup:"用戶組/用戶名",
-      type:'類型'
+      type:'類型',
+      serveRole:'服務'
     }
   },
   COM: require('@/components/language/ft'),

@@ -200,8 +200,8 @@ module.exports = {
             goBack: '返回',
             toStep: '下一步',
             complete: '完成',
-            customPolicy: '自定義策略',
-            defaultPolicy: '預設策略',
+            customPolicy: '自定义策略',
+            defaultPolicy: '预设策略',
             all: '全部',
             allRol: '全部策略',
             rolTitle: '用户或者用户组与策略关联后，即可获得策略所描述的操作权限。',
@@ -217,7 +217,15 @@ module.exports = {
             cancelAll:'撤销所有会话',
             Risk:'风险提醒',
             notUsed:'该角色为您授权的服务角色，擅自更改角色内容（角色关联策略或者角色载体）可能导致您授权的服务无法正确使用该角色。',
-            Unblock:'解除用户/组'
+            Unblock:'解除用户/组',
+            createServe:'新建自定义角色',
+            Enter:'输入角色载体信息',
+            Configuring:'配置角色策略',
+            reviewCheck:'审阅',
+            support:'支持角色的服务',
+            empty:'角色名称不能为空',
+            serveRole:'服务',
+            selectedStar:'已选策略'
         },
         strategy:{
             straGroup:'关联用户/组',
@@ -239,7 +247,8 @@ module.exports = {
             strUsers:'关联用户',
             switch:'切换成用户组',
             nameAndGroup:"用户组/用户名",
-            type:'类型'
+            type:'类型',
+            
         }
     },
     COM: require('@/components/language/jt'),

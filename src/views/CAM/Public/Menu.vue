@@ -14,23 +14,23 @@
       >
         <el-menu-item index="UserListNew">
           <i class="iconfont"></i>
-          <span slot="title">用户列表</span>
+          <span slot="title">{{$t('CAM.userList.listTitle')}}</span>
         </el-menu-item>
         <el-menu-item index="UserGroup">
           <i class="iconfont"></i>
-          <span slot="title">用户组</span>
+          <span slot="title">{{$t('CAM.userList.userGroup')}}</span>
         </el-menu-item>
         <el-menu-item index="Strategy">
           <i class="iconfont"></i>
-          <span slot="title">策略</span>
+          <span slot="title">{{$t('CAM.Role.strategy')}}</span>
         </el-menu-item>
         <el-menu-item index="Role">
           <i class="iconfont"></i>
-          <span slot="title">角色</span>
+          <span slot="title">{{$t('CAM.Role.title')}}</span>
         </el-menu-item>
         <el-menu-item index="IdentityProvider">
           <i class="iconfont"></i>
-          <span slot="title">身份提供商</span>
+          <span slot="title">{{$t('CAM.Role.identityProvider')}}</span>
         </el-menu-item>
         <!-- <el-submenu index="2">
           <template slot="title">
