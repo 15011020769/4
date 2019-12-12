@@ -8,7 +8,7 @@
         :before-close="handleClose">
         <div class="createRulesForm">
           <div class="ruleList newClear">
-            <span class="ruleListLabel">业务域名</span>
+            <span class="ruleListLabel">业务域名{{getResourceId}}</span>
             <span class="ruleListIpt">
               <el-input v-model="EnidData.RuleName"></el-input><p>注意：域名信息用于规则说明，不用作转发规则匹配</p>
             </span>
@@ -104,6 +104,9 @@ export default {
     getIsShow(){
       this.dialogVisible=this.isShow3
       return this.isShow3
+    },
+    getResourceId(){
+      return this.resourceId
     }
   },
   methods:{
@@ -138,7 +141,7 @@ export default {
       let params = {
         Version: '2018-07-09',
         Business:'net',
-        Id: 'net-0000006y',
+        Id: this.getResourceId,
         'Rule.RuleId':this.EnidData.RuleId,
         'Rule.RuleName':this.EnidData.RuleName,
         'Rule.Protocol':this.EnidData.Protocol,
@@ -149,6 +152,7 @@ export default {
         'Rule.KeepTime':this.EnidData.KeepTime,
       
       }
+     
       if(this.EnidData.SourceType == 1) {//域名
         let arr = this.EnidData.SourceList
         for(let i=0; i<arr.length; i++) {

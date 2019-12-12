@@ -102,11 +102,11 @@
             <!-- 批量导入弹框 -->
             <batchImport :isShow1="dialogVisible1" :resourceId='resourceId' @batchImportSure="batchImportSure" @closeModelIpt="closeModelIpt"/>
             <!-- 批量导出弹框 -->
-            <batchExport :isShow2="dialogVisible2" :exportText='exportText' @batchExportSure="batchExportSure" @closeModelExp="closeModelExp"/>
+            <batchExport :isShow2="dialogVisible2" :resourceId='resourceId' :exportText='exportText' @batchExportSure="batchExportSure" @closeModelExp="closeModelExp"/>
             <!-- 编辑弹框 -->
-            <accessConfigEdit :isShow3="dialogVisible3" @closeEditModel="closeEditModel" ref="addOrUpdate" />
+            <accessConfigEdit :isShow3="dialogVisible3" :resourceId='resourceId' @closeEditModel="closeEditModel" ref="addOrUpdate" />
             <!-- 复制弹框 -->
-            <accessConfigCopy :isShow4="dialogVisible4" @closeCopyModel="closeCopyModel" ref="addOrUpdate1"/>
+            <accessConfigCopy :isShow4="dialogVisible4" :resourceId='resourceId' @closeCopyModel="closeCopyModel" ref="addOrUpdate1"/>
             <!-- 删除弹框 -->
             <el-dialog class="dialogModel"
               title="添加转发规则"
@@ -131,12 +131,12 @@ import batchImport from './model/batchImport'
 import batchExport from './model/batchExport'
 import accessConfigEdit from './model/accessConfigEdit'
 import accessConfigCopy from './model/accessConfigCopy'
-import { RESOURCE_LIST, L4_RULES ,L4DEL_CREATE} from '@/constants'
+import { RESOURCE_LIST, L4_RULES ,L4DEL_CREATE,GET_ID} from '@/constants'
 export default {
   data() {
     return {
       activeName:"first",//tab
-      resourceId: 'net-0000006y',//资源ID，输入要查询的ID或名称
+      resourceId: '',//资源ID，输入要查询的ID或名称
       tableDataBegin: [], //table绑定数据，L4规则列表
       dialogVisible:false,//新建规则弹框
       dialogVisible1:false,//批量导入弹框
@@ -167,7 +167,8 @@ export default {
   },
   created() {
     this.describeResourceList()
-    this.describleL4Rules()
+    // this.describleL4Rules()
+    this.GetID() //获取资源的IP列表
   },
   //父页面获取L4转发规则的方法
   provide(){
@@ -199,6 +200,20 @@ export default {
         this.totalItems = res.Response.Total
         this.usedNum = res.Response.Total
       })
+    },
+    //获取资源的IP列表
+    GetID() {
+      let params = {
+        Version: "2018-07-09",
+        Business: "net",
+      };
+      this.axios.post(GET_ID, params).then(res => {
+        let IpList = res.Response.Resource
+        for(let i = 0 ; i < IpList.length;i++){
+            this.resourceId = IpList[i].Id
+            this.describleL4Rules()
+        }
+      });
     },
     // 跳转新购页面
     newBuy(){

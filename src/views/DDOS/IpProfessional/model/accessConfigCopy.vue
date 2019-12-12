@@ -104,6 +104,9 @@ export default {
     getIsShow(){
       this.dialogVisible=this.isShow4
       return this.isShow4
+    },
+    getResourceId(){
+      return this.resourceId
     }
   },
   methods:{
@@ -136,7 +139,7 @@ export default {
       let params = {
         Version: '2018-07-09',
         Business:'net',
-        Id: 'net-0000006y',
+        Id: this.getResourceId,
         'Rules.0.RuleName': this.EnidData.RuleName,
         'Rules.0.Protocol': this.EnidData.Protocol,
         'Rules.0.VirtualPort': this.EnidData.VirtualPort,
