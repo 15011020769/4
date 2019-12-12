@@ -82,6 +82,10 @@ let productName = process.argv[3].substring(2)// 获取执行哪个文件
 page[productName] = product[productName]
 
 module.exports = {
+  transpileDependencies: [
+    'vue-echarts',
+    'resize-detector',
+  ],
   publicPath: './', // 官方要求修改路径在这里做更改，默认是根目录下，可以自行配置
   outputDir: 'dist/' + productName, // 标识是打包哪个文件
   filenameHashing: true, // 默认情况下，生成的静态资源在它们的文件名中包含了 hash 以便更好的控制缓存。如果你无法使用 Vue CLI 生成的 index HTML，你可以通过将这个选项设为 false 来关闭文件名哈希。
