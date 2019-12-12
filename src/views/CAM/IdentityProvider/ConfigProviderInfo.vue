@@ -2,22 +2,22 @@
   <div class="Cam">
     <div class="container">
       <el-form :model="addModel" :rules="rules" size="mini" ref="addModel" label-width="100px">
-        <el-form-item label="供应商类型" prop="providerType">
+        <el-form-item :label="$t('CAM.strategy.supplier')" prop="providerType">
           <el-col :span="14">
             <el-radio size="mini" v-model="addModel.providerType" label="SAML">SAML</el-radio>
           </el-col>
         </el-form-item>
-        <el-form-item label="供应商名称" prop="providerName">
+        <el-form-item :label="$t('CAM.strategy.supplierName')" prop="providerName">
           <el-col :span="14">
             <el-input size="mini" ref="providerNameRules" v-model="addModel.providerName"></el-input>
           </el-col>
         </el-form-item>
-        <el-form-item label="备注" prop="remark">
+        <el-form-item :label="$t('CAM.userGroup.colRemark')" prop="remark">
           <el-col :span="14">
             <el-input size="mini" type="text" v-model="addModel.remark"></el-input>
           </el-col>
         </el-form-item>
-        <el-form-item label="元数据文档" prop="metadataDocument">
+        <el-form-item :label="$t('CAM.strategy.dataFile')" prop="metadataDocument">
           <el-upload
             size="mini"
             accept="text/xml, application/xml"
@@ -32,7 +32,7 @@
             </el-col>
             <el-col :span="2">
               <div style="display:inline-block">
-                <el-button size="mini">选择文件</el-button>
+                <el-button size="mini">{{$t('CAM.strategy.chooseFile')}}</el-button>
               </div>
             </el-col>
           </el-upload>

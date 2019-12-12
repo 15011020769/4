@@ -160,6 +160,7 @@
   </div>
 </template>
 <script>
+import {REMOVEBIND_USER,LIST_ENPOLICY,DETACH_POLICY} from '@/constants'
 import transfer from './component/transfer'
 export default {
   components: {
@@ -256,9 +257,7 @@ export default {
       this.selTotal = 0
       this.policysData = []
       let policyId = this.policy.PolicyId
-      let url = 'cam2/ListEntitiesForPolicy'
       let params = {
-        Action: 'ListEntitiesForPolicy',
         Version: '2019-01-16',
         Page: this.page,
         Rp: this.rp,
@@ -271,11 +270,12 @@ export default {
       }else{
         params['EntityFilter'] = 'User|Group'
       }
-      this.axios.post(url, params).then(res => {
+      this.axios.post(LIST_ENPOLICY, params).then(res => {
         // RelatedType 关联类型。1 用户关联 ； 2 用户组关联
         this.policysData = res.Response.List
         this.total = res.Response.TotalNum
         this.loading = false
+        console.log(res)
       })
     },
     // 解除策略绑定实体
@@ -302,8 +302,7 @@ export default {
     },
     // 解除绑定到用户的策略
     removeUserPolicy(params) {
-      let url = "cam2/DetachUserPolicy"
-      this.axios.post(url, params).then(res => {
+      this.axios.post(REMOVEBIND_USER, params).then(res => {
         this.getAttachPolicys() // 重新加载
       }).catch(error => {
           console.log(error)
@@ -311,8 +310,7 @@ export default {
     },
     // 解除绑定到用户组的策略
     removeGroupPolicy(params) {
-      let url = "cam2/DetachGroupPolicy"
-      this.axios.post(url, params).then(res => {
+      this.axios.post(DETACH_POLICY, params).then(res => {
         this.getAttachPolicys() // 重新加载
       }).catch(error => {
           console.log(error)

@@ -2,24 +2,24 @@
   <div class="Cam" style="width:100%;">
     <div class="container" style="width:100%;">
       <el-form :model="form" :rules="rules" size="mini" ref="form" label-width="100px" style="width:100%;">
-        <el-form-item label="供应商类型" prop="providerType">
+        <el-form-item :label="$t('CAM.strategy.supplier')" prop="providerType">
           <el-col :span="10">
             <el-radio size="mini" v-model="form.providerType" label="SAML">SAML</el-radio>
           </el-col>
         </el-form-item>
-        <el-form-item label="供应商名称" prop="providerName">
+        <el-form-item :label="$t('CAM.strategy.supplierName')" prop="providerName">
           <el-col :span="10">
             <p>{{form.providerName}}</p>
             <!-- <el-input size="mini" ref="providerNameRules" v-model="form.providerName"></el-input> -->
           </el-col>
         </el-form-item>
-        <el-form-item label="备注" prop="remark">
+        <el-form-item :label="$t('CAM.userGroup.colRemark')" prop="remark">
           <el-col :span="10">
             <p>{{form.remark}}</p>
             <!-- <el-input size="mini" type="textarea" v-model="form.remark"></el-input> -->
           </el-col>
         </el-form-item>
-        <el-form-item label="元数据文档" prop="metadataDocument">
+        <el-form-item :label="$t('CAM.strategy.dataFile')" prop="metadataDocument">
           <el-col :span="10">
             <p>{{form.metadataDocument}}</p>
             <!-- <el-input size="mini" v-model="form.metadataDocument"></el-input> -->

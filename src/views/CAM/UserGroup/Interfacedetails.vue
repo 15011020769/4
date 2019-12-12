@@ -223,7 +223,7 @@
                     </div>
                   </div>
                   <div class="container-right">
-                    <span>{{$t('CAM.userGroup.selected')}}（{{selNum}}）</span>
+                    <span>{{$t('CAM.userGroup.Star')}}（{{selNum}}）</span>
                     <el-table class="table-left" ref="multipleSelected" :data="userSelData" tooltip-effect="dark"
                       size="small" :height="tableHeight" style="width: 100%">
                       <el-table-column prop="Name" :label="$t('CAM.userGroup.user')" show-overflow-tooltip> </el-table-column>

@@ -244,7 +244,18 @@ module.exports = {
       switch:'切換成用戶組',
       nameAndGroup:"用戶組/用戶名",
       type:'類型',
-      serveRole:'服務'
+      serveRole:'服務',
+      identity:'新建身份提供商',
+      Configuration:'配置提供商信息',
+      completes:'審閱並完成',
+      supplier:'供應商類型',
+      supplierName:'供應商名稱',
+      dataFile:'元數據文檔',
+      chooseFile:"選擇文件",
+      newAdd:'新建供應商',
+      peopleName:'提供商名稱',
+      peopleType:'提供商類型',
+      lastCreateTime:'最後更新時間'
     }
   },
   COM: require('@/components/language/ft'),

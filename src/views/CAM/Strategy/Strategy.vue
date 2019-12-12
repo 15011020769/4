@@ -106,6 +106,7 @@
 </template>
 <script>
 import transfer from './component/transfer'
+import {POLICY_LIST,DELETE_POLICY} from '@/constants'
 export default {
   components: {
     transfer,
@@ -162,7 +163,6 @@ export default {
     // 初始化策略列表数据（默认全部策略）
     getData () {
       var params = {
-        Action: 'ListPolicies',
         Version: '2019-01-16',
         Rp: this.pageSize,
         Page: this.currentPage,
@@ -172,9 +172,10 @@ export default {
       if(this.searchValue != '') {
         params['Keyword'] = this.searchValue
       }
-      this.axios.post('cam2/ListPolicies', params).then(res => {
+      this.axios.post(POLICY_LIST, params).then(res => {
         this.tableData = res.Response.List
         this.total = res.Response.TotalNum
+        console.log(res)
       })
     },
     changePolicyScope () {
@@ -231,7 +232,7 @@ export default {
           params[str] = item.PolicyId
         })
       }
-       this.axios.post('cam2/DeletePolicy', params).then(res  => {
+       this.axios.post(DELETE_POLICY, params).then(res  => {
          console.log(res)
        })
       this.selectedData.splice(0, this.selectedData.length)

@@ -66,7 +66,7 @@ module.exports = {
             descs: '描述',
             prev: '上一步',
             next: '下一步',
-            complete: '完成',
+            s: '完成',
             chooseStrage: '从策略列表中选取策略关联',
             searchStarge: '请输入策略名称',
             useNum: '引用次数',
@@ -248,7 +248,17 @@ module.exports = {
             switch:'切换成用户组',
             nameAndGroup:"用户组/用户名",
             type:'类型',
-            
+            identity:'新建身份提供商',
+            Configuration:'配置提供商信息',
+            completes:'审阅并完成',
+            supplier:'供应商类型',
+            supplierName:'供应商名称',
+            dataFile:'元数据文档',
+            chooseFile:"选择文件",
+            newAdd:'新建供应商',
+            eopleName:'提供商名称',
+            peopleType:'提供商类型',
+            lastCreateTime:'最后更新时间'
         }
     },
     COM: require('@/components/language/jt'),

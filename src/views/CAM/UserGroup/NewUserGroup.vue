@@ -64,6 +64,7 @@
 import FirstStep from "./AddGroup/AddUserGroup.vue";
 import SecondStep from "./AddGroup/PoliciesList";
 import ThirdlyStep from "./AddGroup/ConfirmationGroup";
+import {CREATE_USER,ATTACH_GROUP} from '@/constants'
 export default {
   name: "app",
   components: {
@@ -116,7 +117,6 @@ export default {
         });
         // 创建用户组
         let params = {
-          Action: "CreateGroup",
           Version: "2019-01-16"
         };
         if (this.addModel.groupName != null && this.addModel.groupName != "") {
@@ -125,27 +125,24 @@ export default {
         if (this.addModel.remark != null && this.addModel.remark != "") {
           params["Remark"] = this.addModel.remark;
         }
-        let url = "cam2/CreateGroup";
         this.axios
-          .post(url, params)
+          .post(CREATE_USER, params)
           .then(res => {
             // 获取新创建的用户组ID
             let AttachGroupId = res.Response.GroupId;
             let selArr = _this.policiesSelectedData;
             // 绑定策略到用户组
             if (AttachGroupId != "" && selArr != "") {
-              let urlPolicies = "cam2/AttachGroupPolicy";
               //目前系统接口只支持单个策略绑定到用户组，不支持多个，所以循环执行绑定方法
               for (var i = 0; i < selArr.length; i++) {
                 let paramsurlPolicies = {
-                  Action: "AttachGroupPolicy",
                   AttachGroupId: AttachGroupId,
                   PolicyId: selArr[i].PolicyId,
                   Version: "2019-01-16"
                 };
                 // 获取策略id
                 this.axios
-                  .post(urlPolicies, paramsurlPolicies)
+                  .post(ATTACH_GROUP, paramsurlPolicies)
                   .then(res => {
                     console.log(res)
                   })

@@ -10,7 +10,7 @@ export * from './scf'
 
 export * from './CLA'
 
-export * from './userlist'
+export * from './CAM'
     // 私有网络 云联网
 export * from './CCN'
 

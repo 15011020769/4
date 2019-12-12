@@ -64,6 +64,7 @@
 </template>
 
 <script>
+  import {POLICY_LIST} from '@/constants'
   export default {
     props: {
       // policiesSelectedData: () => []
@@ -87,7 +88,6 @@
     methods: {
       init() {
         let params = {
-          Action: 'ListPolicies',
           Version: '2019-01-16'
           // ,
           // rp: this.rp,
@@ -97,10 +97,10 @@
         if (this.search != null && this.search != '') {
           params['Keyword'] = this.search
         }
-        let url = "cam2/ListPolicies"
-        this.axios.post(url, params).then(res => {
+        this.axios.post(POLICY_LIST, params).then(res => {
           this.totalNum = res.Response.TotalNum
           this.policiesData = res.Response.List
+          console.log(res)
         }).catch(error => {
           console.log(error)
         })
