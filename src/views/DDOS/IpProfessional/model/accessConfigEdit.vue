@@ -8,7 +8,7 @@
         :before-close="handleClose">
         <div class="createRulesForm">
           <div class="ruleList newClear">
-            <span class="ruleListLabel">业务域名{{getResourceId}}</span>
+            <span class="ruleListLabel">业务域名</span>
             <span class="ruleListIpt">
               <el-input v-model="EnidData.RuleName"></el-input><p>注意：域名信息用于规则说明，不用作转发规则匹配</p>
             </span>

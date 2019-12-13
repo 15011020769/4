@@ -30,7 +30,7 @@
           <el-option :label="inputIdCC" :value="inputIdCC"></el-option>
         </el-select>
         <el-select class="ddosAttackSelect1" v-model="ccTimeBtnSelect2">
-          <el-option :label="ccTimeBtnSelect2" :value="ccTimeBtnSelect2"></el-option>
+          <el-option v-for="item in IpList" :value="item"></el-option>
         </el-select>
       </div>
         <div class="mainConListAll mainConListTwo">
@@ -71,11 +71,13 @@
   </div>
 </template>
 <script>
+import { GET_ID} from '@/constants'
 import moment from "moment";
 export default {
   data(){
     return{
-      inputIdCC: "net-0000006y",
+      inputIdCC: "",
+      IpList:'',
       metricName: "bps", //指标，取值[bps(攻击流量带宽，pps(攻击包速率))]
       metricNameCC: "inqps", //指标，取值[inqps(总请求峰值，dropqps(攻击请求峰值))]
       metricNameCCs: ["inqps", "dropqps"],
@@ -84,7 +86,7 @@ export default {
       currentPage: 1, //当前页
       pageSize: 10, //每页长度
       totalItems: 0, //总条数
-      ccTimeBtnSelect2: "177.52.89.23", //cc时间按钮下面第二个下拉
+      ccTimeBtnSelect2: "总览", //cc时间按钮下面第二个下拉
       dateChoice2: {},//日期选择
       // 日期区间：默认获取当前时间和前一天时间
       endTime: this.getDateString(new Date()),
@@ -137,9 +139,25 @@ export default {
     this.$nextTick(function () {
       // this.thisTime(1)
       this.getDataCC()
+      this.GetID()
     })
   },
   methods:{
+    //获取资源的IP列表
+    GetID() {
+      let params = {
+        Version: "2018-07-09",
+        Business: "net",
+      };
+      this.axios.post(GET_ID, params).then(res => {
+        let IpList = res.Response.Resource
+        // console.log(IpList)
+        for(let i = 0 ; i < IpList.length;i++){
+            this.inputIdCC = IpList[i].Id
+            this.IpList = IpList[i].IpList
+        }
+      });
+    },
     // CC资源Id变化时，重新获取数据
     changeIdCC() {
       this.resourceId = this.inputIdCC;

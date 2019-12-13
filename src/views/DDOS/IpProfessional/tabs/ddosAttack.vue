@@ -30,7 +30,7 @@
           <el-option :label="inputId" :value="inputId"></el-option>
         </el-select>
         <el-select class="ddosAttackSelect1" v-model="timeBtnSelect2">
-          <el-option :label="timeBtnSelect2" :value="timeBtnSelect2"></el-option>
+          <el-option v-for="item in IpList" :value="item"></el-option>
         </el-select>
       </div>
       <div class="mainConListAll mainConListTwo">
@@ -104,13 +104,15 @@
   </div>
 </template>
 <script>
+import { GET_ID} from '@/constants'
 import moment from "moment";
 export default {
   data() {
     return {
       // 日期选择
       dateChoice1: {}, //选择日期
-      inputId: "net-00000010", //下拉框ID
+      IpList:'',
+      inputId: "", //下拉框ID
       timeBtnSelect2: "总览", //ddos时间按钮下面第二个下拉
       activeName1: "bps", //DDoS攻击防护-二级tab标识
       tableDataOfDescribeDDoSNetEvList: [], //DDoS攻击事件列表
@@ -166,9 +168,25 @@ export default {
   created() {
     this.describeResourceList(); //获取资源列表的接口单独调用（因为日期变更不需要调用此接口）
     this.getData();
+    this.GetID()
   },
 
   methods: {
+    //获取资源的IP列表
+    GetID() {
+      let params = {
+        Version: "2018-07-09",
+        Business: "net",
+      };
+      this.axios.post(GET_ID, params).then(res => {
+        let IpList = res.Response.Resource
+        console.log(IpList)
+        for(let i = 0 ; i < IpList.length;i++){
+            this.inputId = IpList[i].Id
+            this.IpList = IpList[i].IpList
+        }
+      });
+    },
     // DDOS资源Id变化时，重新获取数据
     changeId() {
       this.resourceId = this.inputId;

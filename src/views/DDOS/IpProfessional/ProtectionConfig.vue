@@ -213,7 +213,7 @@ import { RESOURCE_LIST, DDOSPOLICY_CONT, DDOS_POLICY_DELETE } from '@/constants'
 export default {
   data() {
     return {
-      resourceId: 'net-0000006y',//资源ID
+      resourceId: '',//资源ID
       tableDataBegin: [],//DDoS攻击防护列表
       // 过滤刷新列表过程中使用
       allData: [],  // 存储全部实例列表
@@ -272,6 +272,15 @@ export default {
       this.axios.post(RESOURCE_LIST, params).then(res => {
         // console.log(res)
         this.tableDataBegin = res.Response.ServicePacks
+        for(let i = 0 ; i<this.tableDataBegin.length;i++){
+          let list = this.tableDataBegin[i]
+          list.Record.forEach((value, index) => {
+              if (value.Key == 'Id') {
+                // console.log(value.Value)
+                this.resourceId = value.Value
+              }
+          })
+        }
         this.allData = res.Response.ServicePacks
         this.totalItems = res.Response.Total
       })
@@ -283,7 +292,7 @@ export default {
         Business: 'net',
       }
       this.axios.post(DDOSPOLICY_CONT, params).then(res => {
-        console.log(res)
+        // console.log(res)
         this.tableDataPolicy = res.Response.DDosPolicyList
       })
     },
@@ -291,11 +300,11 @@ export default {
     // 修改
     changeRow(changeIndex,changeRow){
       this.changeModel=true;
-      console.log(this.servicePack)
+      // console.log(this.servicePack)
     },
     // 搜索
     doFilter() {
-      console.log(this.filterConrent, this.tableDataName);
+      // console.log(this.filterConrent, this.tableDataName);
       if (this.tableDataName != null && this.tableDataName != ''){
         //每次手动将数据置空,因为会出现多次点击搜索情况
         this.tableDataBegin = new Array()
@@ -347,12 +356,12 @@ export default {
     openData() {},
     // 分页开始
     handleSizeChange(val) {
-      console.log(`每页 ${val} 条`);
+      // console.log(`每页 ${val} 条`);
       this.pageSize = val;
       this.handleCurrentChange(this.currentPage);
     },
     handleCurrentChange(val) {
-      console.log(`当前页: ${val}`);
+      // console.log(`当前页: ${val}`);
       this.currentPage = val;
       //需要判断是否检索
       if (!this.flag) {
@@ -380,7 +389,7 @@ export default {
     },
     //点击删除函数按钮
     deleteRow(index, dataBegin) {
-      console.log(index, dataBegin);
+      // console.log(index, dataBegin);
       this.deleteIndex = index;
       this.deleteBegin = dataBegin;
       this.dialogVisible = true;
@@ -392,7 +401,7 @@ export default {
         Business: "net",
         PolicyId: this.deleteBegin.PolicyId
       };
-      console.log(params.PolicyId);
+      // console.log(params.PolicyId);
       this.axios.post(DDOS_POLICY_DELETE, params).then(res => {
         //console.log(res);
         this.describeDDoSPolicy()
@@ -421,12 +430,12 @@ export default {
     },
     //接收子组件的方法，并让子组件消失父组件显示
     closePageAdd(obj){
-      console.log(obj)
+      // console.log(obj)
       this.tableShow=true;
     },
     //穿梭框事件
     handleChange(value, direction, movedKeys) {
-      console.log(value, direction, movedKeys);
+      // console.log(value, direction, movedKeys);
     },
     generateData(){
       const data = [];
@@ -445,7 +454,7 @@ export default {
     },
     //修改弹框关闭按钮
     closeConfigModel(isShow){
-      console.log(isShow)
+      // console.log(isShow)
       this.changeModel=isShow;
     }
   }

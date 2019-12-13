@@ -30,7 +30,7 @@
           <el-option :label="inputIdService" :value="inputIdService"></el-option>
         </el-select>
         <el-select class="ddosAttackSelect1" v-model="ywTimeBtnSelect2">
-          <el-option :label="ywTimeBtnSelect2" :value="ywTimeBtnSelect2"></el-option>
+          <el-option v-for="item in IpList" :value="item"></el-option>
         </el-select>
       </div>
       <div class="mainConListAll mainConListTwo">
@@ -47,12 +47,14 @@
   </div>
 </template>
 <script>
+import { GET_ID} from '@/constants'
 import moment from "moment";
 export default {
   data() {
     return {
       activeName2: "traffic", //业务-二级tab标识
-      inputIdService: "net-0000006y",
+      IpList:'',
+      inputIdService: "",
       metricNameService: "traffic", //指标名，取值：traffic表示流量带宽，pkg表示包速率
       metricNameServices: ["traffic", "pkg"],
       metricNameService2: "connum", //指标名，取值：（通过腾讯云获取的值connum/inactive_conn），以下为API给出
@@ -64,7 +66,7 @@ export default {
       // inpkg表示入包速率；
       // outpkg表示出包速率；
       metricNameService2s: ["connum", "inactive_conn"],
-      ywTimeBtnSelect2: "177.52.89.23", //业务 时间按钮下面第二个下拉
+      ywTimeBtnSelect2: "总览", //业务 时间按钮下面第二个下拉
 
       dateChoice3: {}, //日期选择
       periodService: 3600, //统计粒度，取值[300(5分钟)，3600(小时)，86400(天)]
@@ -98,6 +100,7 @@ export default {
 
   created() {
     this.gettableshow();
+    this.GetID()
   },
   methods: {
     gettableshow() {
@@ -110,6 +113,21 @@ export default {
         this.metricNameService2 = this.metricNameService2s[index];
         this.describeBaradData();
       }
+    },
+     //获取资源的IP列表
+    GetID() {
+      let params = {
+        Version: "2018-07-09",
+        Business: "net",
+      };
+      this.axios.post(GET_ID, params).then(res => {
+        let IpList = res.Response.Resource
+        // console.log(IpList)
+        for(let i = 0 ; i < IpList.length;i++){
+            this.inputIdService = IpList[i].Id
+            this.IpList = IpList[i].IpList
+        }
+      });
     },
     // 3.1.获取L4转发规则
     describleL4Rules() {
