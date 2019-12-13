@@ -2,16 +2,23 @@
   <div>
     <div class="basicProtTit">
       <span>DDoS基础防护</span>
-      <el-select v-model="codeOrigin" placeholder="" class="codeOrigin">
-        <el-option label="云服务器专区" value="codeOrigin1"></el-option>
-        <el-option label="负载均衡专区" value="codeOrigin2"></el-option>
-        <el-option label="NAT服务器专区" value="codeOrigin3"></el-option>
-        <el-option label="互联网通道" value="codeOrigin4"></el-option>
+      <el-select v-model="selectedSubarea" placeholder="" class="codeOrigin">
+        <el-option
+          v-for="item in subareas"
+          :key="item.subarea"
+          :label="item.lable"
+          :value="item.subarea">
+        </el-option>
       </el-select>
-      <el-input value="台湾台北" class="taibeiCheck" :readonly="true"></el-input>
-      <!-- <el-select v-model="taibei" placeholder=""  class="codeOrigin">
-        <el-option label="中国台北" value="taibei"></el-option>
-      </el-select> -->
+      <el-select v-model="selectedRegion" placeholder="">
+        <el-option
+          v-for="item in cities"
+          :key="item.Region"
+          :label="item.lable"
+          :value="item.Region"
+          @click="changeCity(item)">
+        </el-option>
+      </el-select>
     </div>
     <div class="basicProtCon">
       <div class="basicProtConSearch">
@@ -73,12 +80,22 @@
   </div>
 </template>
 <script>
-import { CVM_INSTANCES, CLB_LIST, NAT_LIST } from '@/constants'
+import { CVM_INSTANCES, CLB_LIST, NAT_LIST, ALL_CITY } from '@/constants'
 export default {
   data() {
     return {
-      codeOrigin:"codeOrigin1",
-      taibei:"台灣台北",
+      // 专区选择
+      selectedSubarea: "cvm",
+      subareas: [
+        {subarea: 'cvm', lable: "云服务器专区"},
+        {subarea: 'clb', lable: "负载均衡专区"},
+        {subarea: 'nat', lable: "NAT服务器专区"},
+        {subarea: 'net', lable: "互联网通道"},
+      ],
+      // 地域选择
+      selectedCity: {},
+      selectedRegion: 'ap-taipei',
+      cities: [],
       // 实例列表
       tableDataBegin: [],
       // 搜索框输入值
@@ -91,41 +108,42 @@ export default {
       currentPage: 1,
       pageSize: 10,
       totalItems: 0,
-      
       flag: false,
-      dialogVisible:false,
     }
   },
   created() {
+    this.getCity();
     this.getData();
   },
   watch: {
-    codeOrigin: function() {
-      this.currentPage=1;
-      this.allData.splice(0, this.allData.length)
-      if(this.codeOrigin == 'codeOrigin1') {
-        this.describeInstances()
-      } else if(this.codeOrigin == 'codeOrigin2') {
-        this.describeLoadBalancers()
-      } else if(this.codeOrigin == 'codeOrigin3') {
-        this.describeNatGateway()
-      } else if(this.codeOrigin == 'codeOrigin4') {
-        this.tableDataBegin = this.allData
-        this.totalItems = 0
-      }
+    selectedSubarea: function() {
+      this.getData();
     }
   },
   methods:{
     getData() {
-      this.describeInstances()
+      this.currentPage=1;
+      this.allData.splice(0, this.allData.length)
+      if(this.selectedSubarea == 'cvm') {
+        this.describeInstances()
+      } else if(this.selectedSubarea == 'clb') {
+        this.describeLoadBalancers()
+      } else if(this.selectedSubarea == 'nat') {
+        this.describeNatGateway()
+      } else if(this.selectedSubarea == 'net') {
+        this.$message('此服务功能暂未实现！');
+        this.tableDataBegin = this.allData
+        this.totalItems = 0
+      }
     },
     // 1.1.查询实例列表
     describeInstances() {
       let params = {
         Version: "2017-03-12",
-        Region: 'ap-taipei'
+        Region: this.selectedRegion,
       }
       this.axios.post(CVM_INSTANCES, params).then(res => {
+        console.log(params, res)
         if (res.Response.Error == undefined) {
           for(let i in res.Response.InstanceSet) {
             let ins = {Id: '', Name: '', Ip: '', Status: ''}
@@ -146,7 +164,7 @@ export default {
     describeLoadBalancers() {
       let params = {
         Version: "2018-03-17",
-        Region: 'ap-taipei'
+        Region: this.selectedRegion
       }
       this.axios.post(CLB_LIST, params).then(res => {
         if (res.Response.Error == undefined) {
@@ -169,7 +187,7 @@ export default {
     describeNatGateway() {
       let params = {
         Version: "2017-03-12",
-        Region: 'ap-taipei'
+        Region: this.selectedRegion,
       }
       this.axios.post(NAT_LIST, params).then(res => {
         if (res.Response.Error == undefined) {
@@ -213,6 +231,21 @@ export default {
       this.currentChangePage(this.tableDataBegin);
       //页面初始化数据需要判断是否检索过
       this.flag = true;
+    },
+    // 获取城市列表
+    getCity() {
+      this.axios.get(ALL_CITY).then(data => {
+        this.cities = data.data;
+        this.selectedRegion = data.data[0].Region;
+        this.selectedCity = data.data[0];
+        this.$cookie.set("regionv2", this.selectedCity.Region);
+      });
+    },
+    // 切换城市
+    changeCity(city) {
+      this.selectedCity = city;
+      this.$cookie.set("regionv2", city.Region);
+      this.getData();
     },
     // 升级防护
     // buyBgp() {
@@ -279,6 +312,7 @@ export default {
     border:0;
     input{
       border:0;
+      width: 220px;
     }
   }
   .taibeiCheck{
