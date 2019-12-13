@@ -654,6 +654,8 @@ export default {
     border-radius: 0;
     height: 30px;
     padding-left: 5px;
+    line-height: 30px;
+    padding-top: 0;
   }
   .detil-audit-box >>> .el-radio__label {
     font-size: 12px;

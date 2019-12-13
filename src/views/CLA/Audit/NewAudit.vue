@@ -473,6 +473,7 @@ export default {
         height: 30px;
         padding-left: 5px;
         line-height: 30px;
+        padding-top: 0;
       }
       .main-box >>> .el-radio__label {
         font-size: 12px;

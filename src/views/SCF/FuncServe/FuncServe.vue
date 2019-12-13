@@ -1,6 +1,6 @@
 <template>
   <div class="wrap">
-    <div class="topFun">
+    <div class="topFun" style="display:flex;">
       <span>{{ $t('SCF.total.title') }}</span>
       <el-input class="addressName" readonly="readonly" v-model="addressIpt"></el-input>
       <div>
@@ -649,8 +649,10 @@ export default {
   height: 30px;
   border-radius: 0;
   font-size: 12px;
+  line-height: 30px;
+  padding-top: 0 !important;
 }
-.wrap >>> button{
+.wrap >>> button {
   padding: 0 15px;
   box-sizing: border-box;
 }

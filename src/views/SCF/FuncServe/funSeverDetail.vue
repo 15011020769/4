@@ -773,6 +773,7 @@ export default {
   border-radius: 0 !important;
   font-size: 12px;
   line-height: 30px !important;
+  padding-top: 0 !important;
 }
 .selectDrow {
   overflow: hidden;
