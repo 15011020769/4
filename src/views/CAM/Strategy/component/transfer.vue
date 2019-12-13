@@ -66,6 +66,7 @@
 </template>
 
 <script>
+import {USER_LIST,USER_GROUP,ATTACH_GROUP,POLICY_USER} from '@/constants'
   export default {
     props: {
       PolicyId: Number
@@ -120,7 +121,6 @@
         }
         this.transfer_data = []
         let paramsUser = {
-          Action: 'ListUsers',
           Version: '2019-01-16'
         }
       //   if (this.search != null && this.search != "") {
@@ -129,7 +129,7 @@
       if (this.search != '') {
           paramsUser['Keyword'] = this.search
         }
-        this.axios.post('cam2/ListUsers', paramsUser).then(res => {
+        this.axios.post(USER_LIST, paramsUser).then(res => {
           this.transferArrayTemp = []
           for (let i = 0; i < res.Response.Data.length; i++) {
             // for(let i in res.Response.Data) {
@@ -177,7 +177,6 @@
         let _this = this
         this.transfer_data = []
         let paramsGroup = {
-          Action: 'ListGroups',
           Version: '2019-01-16',
         }
         // if (this.search != '') {
@@ -186,7 +185,7 @@
          if (this.search != null && this.search != "") {
         paramsGroup["Keyword"] = this.search;
       }
-        this.axios.post('cam2/ListGroups', paramsGroup).then(res => {
+        this.axios.post(USER_GROUP, paramsGroup).then(res => {
           this.transferArrayTemp = []
           for (let i = 0; i < res.Response.GroupInfo.length; i++) {
             // for(let i in res.Response.GroupInfo) { //不用使用此方式，vue在if判断中会出现.id找不到异常，但是实际console.log()却可以打印出id的值。
@@ -377,7 +376,6 @@
             if (obj != '' && obj.type === 'group') {
               // 定义策略添加到用户组params
               let paramsGroup = {
-                Action: 'AttachGroupPolicy',
                 Version: '2019-01-16',
                 PolicyId: policyId,
                 AttachGroupId: obj.id
@@ -389,13 +387,13 @@
       },
       // 绑定策略到用户组
       attachGroupPolicy(params) {
-        this.axios.post('cam2/AttachGroupPolicy', params).then(res => {
+        this.axios.post(ATTACH_GROUP, params).then(res => {
           console.log(res)
         })
       },
       // 绑定策略到用户
       attachUserPolicy(params) {
-        this.axios.post('cam2/AttachUserPolicy', params).then(res => {
+        this.axios.post(POLICY_USER, params).then(res => {
           console.log(res)
         })
       },

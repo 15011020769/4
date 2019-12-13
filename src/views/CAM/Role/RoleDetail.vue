@@ -10,7 +10,7 @@
             <p class="baseInfo_ms item">RoleArn</p>
             <p class="baseInfo_mark item">角色ID</p>
             <p class="baseInfo_type item">角色描述</p>
-            <p class="baseInfo_time item">{{$t('CAM.Role.roleName')}}</p>
+            <p class="baseInfo_time item">{{$t('CAM.userList.createTime')}}</p>
           </div>
           <div class="baseInfo_right">
             <p class="baseInfo_cl item">{{roleInfo.RoleName}}</p>
@@ -286,6 +286,7 @@
 <script>
 import transfer from "./component/transfer";
 import HeadCom from "../UserListNew/components/Head";
+import {GET_ROLE,LIST_ATTACHE,DEACH_ROLE,UPDATE_ROLE,UPDATE_ASSUME} from '@/constants'
 export default {
   components: {
     transfer,
@@ -373,14 +374,12 @@ export default {
     // 获取角色详情
     getRoleDetail() {
       let _this = this;
-      let url = "cam2/GetRole";
       let paramsInfo = {
-        Action: "GetRole",
         Version: "2019-01-16",
         RoleId: this.roleId
       };
       this.axios
-        .post(url, paramsInfo)
+        .post(GET_ROLE, paramsInfo)
         .then(res => {
           let resInfo = res.Response.RoleInfo;
           let PolicyDocument = JSON.parse(resInfo.PolicyDocument);
@@ -417,9 +416,7 @@ export default {
     // 获取角色策略
     getRolePolicy() {
       this.selTotalNum = 0;
-      let url = "cam2/ListAttachedRolePolicies";
       let paramsList = {
-        Action: "ListAttachedRolePolicies",
         Version: "2019-01-16",
         Page: this.pagePolicies,
         Rp: this.rpPolicies,
@@ -429,7 +426,7 @@ export default {
         paramsList["PolicyType"] = this.rolePolicyType;
       }
       this.axios
-        .post(url, paramsList)
+        .post(LIST_ATTACHE, paramsList)
         .then(res => {
           this.rolePolicies = res.Response.List;
           this.TotalNum = res.Response.TotalNum;
@@ -439,7 +436,6 @@ export default {
     // 解除角色策略
     relieveRolePolicy(scope) {
       let paramsDel = {
-        Action: "DetachRolePolicy",
         Version: "2019-01-16",
         PolicyId: scope.PolicyId,
         DetachRoleId: this.roleId
@@ -448,9 +444,8 @@ export default {
     },
     // 解除角色绑定的策略
     relievePolicy(paramsRelieve) {
-      let url = "cam2/DetachRolePolicy";
       this.axios
-        .post(url, paramsRelieve)
+        .post(DEACH_ROLE, paramsRelieve)
         .then(res => {
           this.getRolePolicy(); // 重新加载
         })
@@ -477,15 +472,13 @@ export default {
     },
     // 修改角色描述信息
     updateRoleDescription() {
-      let url = "cam2/UpdateRoleDescription";
       let paramsUpdate = {
-        Action: "UpdateRoleDescription",
         Version: "2019-01-16",
         Description: this.roleInfo.Description,
         RoleId: this.roleId
       };
       this.axios
-        .post(url, paramsUpdate)
+        .post(UPDATE_ROLE, paramsUpdate)
         .then(res => {
           this.getRoleDetail(); //重新加载
         })
@@ -494,7 +487,6 @@ export default {
     // 修改角色信任策略
     updateRolePolicy(index, rows) {
       this.roleCarrier.splice(index, 1); // 从数组中删除要移除的数据
-      let url = "cam2/UpdateAssumeRolePolicy";
       let policyDocument = JSON.parse(
         '{"version":"2.0","statement":[{"action":"name/sts:AssumeRole","effect":"allow","principal":{"service":[]}}]}'
       );
@@ -502,13 +494,12 @@ export default {
         this.roleCarrier
       );
       let paramsPolicy = {
-        Action: "UpdateAssumeRolePolicy",
         Version: "2019-01-16",
         PolicyDocument: policyDocument,
         RoleId: this.roleId
       };
       this.axios
-        .post(url, paramsPolicy)
+        .post(UPDATE_ASSUME, paramsPolicy)
         .then(res => {
           this.getRoleDetail(); //重新加载
         })

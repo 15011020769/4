@@ -65,3 +65,12 @@ export const DETACH_POLICY = 'cam2/DetachGroupPolicy'
 //策略
 export const LIST_ENPOLICY = 'cam2/ListEntitiesForPolicy'
 export const DELETE_POLICY = 'cam2/DeletePolicy'
+
+//角色
+export const GET_ROLE = 'cam2/GetRole'
+export const LIST_ATTACHE = 'cam2/ListAttachedRolePolicies'
+export const DEACH_ROLE = 'cam2/DetachRolePolicy'
+export const UPDATE_ROLE = 'cam2/UpdateRoleDescription'
+export const UPDATE_ASSUME = 'cam2/UpdateAssumeRolePolicy'
+export const DESCRIB_ROLE = 'cam2/DescribeRoleList'
+export const DELETE_ROLE= 'cam2/DeleteRole'

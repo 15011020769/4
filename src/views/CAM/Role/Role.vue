@@ -109,6 +109,7 @@
 </template>
 <script>
 import HeadCom from "../UserListNew/components/Head";
+import {DESCRIB_ROLE,DELETE_ROLE} from '@/constants'
 export default {
   data() {
     return {
@@ -131,7 +132,6 @@ export default {
   methods: {
     init() {
       let params = {
-        Action: "DescribeRoleList",
         Version: "2019-01-16",
         Page: this.Page,
         Rp: this.size
@@ -139,9 +139,8 @@ export default {
       if (this.searchValue != null && this.searchValue != "") {
         params["keyword"] = this.searchValue;
       }
-      let url = "cam2/DescribeRoleList";
       this.axios
-        .post(url, params)
+        .post(DESCRIB_ROLE, params)
         .then(data => {
           if (
             data === "" ||
@@ -195,14 +194,12 @@ export default {
         type: "warning"
       })
         .then(() => {
-          let url = "cam2/DeleteRole";
           let params = {
-            Action: "DeleteRole",
             Version: "2019-01-16",
             RoleId: RoleId
           };
           this.axios
-            .post(url, params)
+            .post(DELETE_ROLE, params)
             .then(data => {
               if (data != null && data.Response.RequestId != "") {
                 this.$message({
