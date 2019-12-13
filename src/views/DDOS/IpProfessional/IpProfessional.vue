@@ -1,77 +1,45 @@
 <template>
-  <div>
+  <div class="wrap">
+    <HeaderCom title="统计报表" />
     <div class="statistReportTit">
-      <div class="ReportTit newClear">
+      <!-- <div class="ReportTit newClear">
         <h3 class="ReportTitH3">统计报表</h3>
         <el-button class="ReportTitBtn" type="primary" @click="newBuy">新购</el-button>
-      </div>
-      <div>
-        <el-tabs v-model="activeName" @tab-click="handleClick">
-          <el-tab-pane label="DDoS攻击防护" name="ddos">
-            <ddosAttack ref="ddosAttack"/>
-          </el-tab-pane>
-          <el-tab-pane label="CC攻击防护" name="cc">
-            <ccAttack ref="ccAttack"/>
-          </el-tab-pane>
-          <el-tab-pane label="业务" name="service">
-            <business ref="servers"/>
-          </el-tab-pane>
-        </el-tabs>
-      </div>
+      </div>-->
+      <el-tabs v-model="activeName" @tab-click="handleClick">
+        <el-tab-pane label="DDoS攻击防护" name="ddos">
+          <ddosAttack ref="ddosAttack" />
+        </el-tab-pane>
+        <el-tab-pane label="CC攻击防护" name="cc">
+          <ccAttack ref="ccAttack" />
+        </el-tab-pane>
+        <el-tab-pane label="业务" name="service">
+          <business ref="servers" />
+        </el-tab-pane>
+      </el-tabs>
     </div>
   </div>
 </template>
 <script>
+import HeaderCom from "../../CLA/Public/Head";
 import moment from "moment";
-import ddosAttack from './tabs/ddosAttack'
-import ccAttack from './tabs/ccAttack'
-import business from './tabs/business'
+import ddosAttack from "./tabs/ddosAttack";
+import ccAttack from "./tabs/ccAttack";
+import business from "./tabs/business";
 export default {
   data() {
     return {
-      activeName: "ddos", //一级tab标识
+      activeName: "ddos" //一级tab标识
     };
   },
-  components:{
-    ddosAttack:ddosAttack,
-    ccAttack:ccAttack,
-    business:business
+  components: {
+    ddosAttack: ddosAttack,
+    ccAttack: ccAttack,
+    business: business,
+    HeaderCom: HeaderCom
   },
-  watch: {
-    
-  },
-  // created() {
-  //   this.describeResourceList(); //获取资源列表的接口单独调用（因为日期变更不需要调用此接口）
-  //   this.getData();
-  // },
-  // mounted() {
-  //   this.drawLine(); //图表展示
-  //   this.drawLine2(); //图表展示
-  // },
+  watch: {},
   methods: {
-    // getData() {
-    //   this.thisTime(1);
-    //   for (let index in this.metricNames) {
-    //     this.metricName2 = this.metricNames[index];
-    //     this.describeDDoSNetCount();
-    //   }
-    //   this.describeDDoSNetEvList();
-    // },
-    // getDataCC() {
-    //   for (let index in this.metricNameCCs) {
-    //     this.metricNameCC = this.metricNameCCs[index];
-    //     this.describeCCTrend();
-    //   }
-    //   this.describeCCEvList();
-    // },
-    // getDataService() {
-    //   this.describleL4Rules();
-    //   this.describeTransmitStatis();
-    //   for (let index in this.metricNameService2s) {
-    //     this.metricNameService2 = this.metricNameService2s[index];
-    //     this.describeBaradData();
-    //   }
-    // },
     // 获取资源列表
     describeResourceList(data) {
       let params = {
@@ -85,7 +53,7 @@ export default {
         // console.log(res)
       });
     },
-    
+
     // tab页面切换
     handleClick(tab, event) {
       this.$refs.servers.describeResourceList(); //获取资源列表的接口单独调用（因为日期变更不需要调用此接口）
@@ -107,16 +75,6 @@ export default {
       });
     },
     //时间按钮
-    // //计算时间间隔
-    // timedone(end, start, p) {
-    //   var num = end.getTime() - start.getTime();
-    //   var arr = [];
-    //   for (var i = 0; i <= num / p; i++) {
-    //     var d = new Date(end.getTime() - p * i);
-    //     arr.push(moment(d).format("MM-DD"));
-    //   }
-    //   this.timey = arr;
-    // },
 
     thisTime(thisTime) {
       var ipt1 = document.querySelector(".newDataTime input:nth-child(2)");
@@ -177,18 +135,19 @@ export default {
         this.timedone(end, start, 86400000);
         //ddos攻击-攻击流量带宽
       }
-      //console.log(moment(new Date()).format('YYYY-MM-DD HH:mm:ss'),start
-      //this.thisStart=moment(start).format('YYYY-MM-DD');
-      //this.thisEnd=moment(end).format('YYYY-MM-DD');
-      //this.$emit('timeNode1',[this.thisStart,this.thisEnd])
-      // this.getData(this.timey)
       this.describeDDoSNetTrend(this.timey);
     }
   }
 };
 </script>
-<style lang="scss">
-.newClear:after {
+<style lang="scss" scoped>
+.wrap >>> .el-input__inner {
+  height: 30px;
+  line-height: 30px;
+  padding-top: 0;
+  border-radius: 0;
+}
+.newClear {
   content: "";
   display: block;
   clear: both;
