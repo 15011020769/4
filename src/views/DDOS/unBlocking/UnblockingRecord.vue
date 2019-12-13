@@ -145,7 +145,7 @@ export default {
    },
 }
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 .newClear:after{
   content:"";
   clear:both;
@@ -176,11 +176,11 @@ export default {
         input{
           font-size:12px;
         }
-        .el-range-separator{
+        ::v-deep .el-range-separator{
           line-height: 22px;
           width: 10%;
         }
-        .el-range__icon{
+        ::v-deep .el-range__icon{
           line-height: 26px;
         }
       }
@@ -202,5 +202,6 @@ export default {
 .tabListPage{
   height:50px;
   padding-top:16px;
+  text-align:right;
 }
 </style>

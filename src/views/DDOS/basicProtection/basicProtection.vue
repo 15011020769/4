@@ -292,7 +292,7 @@ export default {
   }
 }
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 .newClear:after{
   display: block;
   clear: both;
@@ -312,16 +312,17 @@ export default {
   }
   .codeOrigin{
     border:0;
-    input{
+    margin-right:20px;
+    ::v-deep input{
       border:0;
-      width: 220px;
+      width: 150px;
     }
   }
-  .taibeiCheck{
+  .taiwan{
     width:100px;
     height:30px;
     line-height:30px;
-    input{
+    ::v-deep input{
       width:100px;
       height:30px;
       line-height: 30px;
@@ -342,7 +343,7 @@ export default {
       width:300px;
       float:left;
       height:30px;
-      input{
+      ::v-deep input{
         width:100%;
         height:30px;
         border-radius: 0;
@@ -372,21 +373,5 @@ export default {
   border-top:1px solid #ddd;
   padding-top:8px!important;
 }
-.taiwan{
-  width:150px;
-  height:30px;
-  div{
-    width:150px;
-    height:30px;
-    input{
-      width:100%;
-      height:30px;
-      line-height:30px;
-      border-radius: 0;
-    }
-    .el-input__suffix{
-      margin-right:-35px;
-    }
-  }
-}
+
 </style>

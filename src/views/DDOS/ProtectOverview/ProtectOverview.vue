@@ -358,7 +358,7 @@ export default {
 }
 
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 .newClear:after {
   display: block;
   clear: both;
@@ -529,7 +529,7 @@ export default {
       width:300px;
       height:30px;
       margin-left:10px;
-      input{
+      ::v-deep input{
         width:100%;
         height:30px;
         border-radius: 0;

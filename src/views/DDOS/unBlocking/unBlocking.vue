@@ -4,7 +4,7 @@
       解封操作
     </div>
     <div class="mainContentBlock">
-      <div class="contPartOne">
+      <div class="contPartOne newClear">
         <el-row>
           <el-col :span="8">
             <div class="contPartOneData">
@@ -111,7 +111,7 @@ export default {
   }
 }
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 .newClear:after{
   content:"";
   clear:both;
