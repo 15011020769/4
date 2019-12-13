@@ -90,6 +90,7 @@
 <script>
 import HeadCom from "../UserListNew/components/Head";
 import transfer from "./component/transfer";
+import {CREATE_ROLE,ATTACH_ROLE} from '@/constants'
 export default {
   components: {
     transfer,
@@ -260,15 +261,13 @@ export default {
         }
        */
       let params = {
-        Action: "CreateRole",
         Version: "2019-01-16",
         RoleName: this.inputRoleName,
         Description: this.inputRoleDesc,
         PolicyDocument:
           '{"version":"2.0","statement":[{"action":"name/sts:AssumeRole","effect":"allow","principal":{"service":["cloudaudit.cloud.tencent.com","cls.cloud.tencent.com"]}}]}'
       };
-      let url = "cam2/CreateRole";
-      this.axios.post(url, params).then(data => {
+      this.axios.post(CREATE_ROLE, params).then(data => {
         let roleId = data.Response.RoleId; // 获取创建的角色id
         this.$message("创建角色成功");
         let policiesArray = this.policiesSelectedData; // 获取权限策略
@@ -290,7 +289,7 @@ export default {
     },
     // 绑定权限策略到角色
     AttachRolePolicy(params) {
-      this.$axios.post("cam2/AttachRolePolicy", params).then(res => {
+      this.$axios.post(ATTACH_ROLE, params).then(res => {
         console.log(res);
       });
     }

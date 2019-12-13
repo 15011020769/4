@@ -97,6 +97,7 @@
 </template>
 
 <script>
+import {POLICY_LIST,ATTACH_ROLE} from '@/constants'
 export default {
   props: {
     roleId: String
@@ -168,7 +169,6 @@ export default {
     // 获取策略方法
     tableloadmore(command) {
       let params = {
-        Action: "ListPolicies",
         Version: "2019-01-16"
       };
        if (this.strategyValue != undefined && this.strategyValue != "") {
@@ -178,8 +178,7 @@ export default {
       if (command.value != undefined && command.value != '') {
          params["Scope"] = command.value
       }
-      let url = "cam2/ListPolicies";
-      this.axios.post(url, params).then(res => {
+      this.axios.post(POLICY_LIST, params).then(res => {
         this.policiesData = res.Response.List;
       }).catch(error => {
       });
@@ -225,7 +224,7 @@ export default {
     },
     // 绑定权限策略到角色
     AttachRolePolicy(params) {
-      this.$axios.post('cam2/AttachRolePolicy', params).then(res  => {
+      this.$axios.post(ATTACH_ROLE, params).then(res  => {
       })
     }
   }

@@ -167,7 +167,7 @@
           >
             <el-table-column type="selection" prop="Uin" width="28"></el-table-column>
             <el-table-column prop="Name"  :label="$t('CAM.userGroup.user')" show-overflow-tooltip></el-table-column>
-            <el-table-column   label="用户类型" width="100">
+            <el-table-column   :label="$t('CAM.userList.userChose')" width="100">
               <template slot-scope="scope">
                 <p>{{$t('CAM.userGroup.childUser')}}</p>
               </template>
@@ -180,7 +180,7 @@
           </div>
         </div>
         <div class="container-right">
-          <span>已选择（{{selNum}}）</span>
+          <span>{{$t('CAM.userGroup.Star')}}（{{selNum}}）</span>
           <el-table
             class="table-left"
             ref="multipleSelected"
@@ -191,7 +191,7 @@
             style="width: 100%"
           >
             <el-table-column prop="Name" :label="$t('CAM.userGroup.user')" show-overflow-tooltip></el-table-column>
-            <el-table-column label="用戶類型" width="100">
+            <el-table-column :label="$t('CAM.userList.userChose')" width="100">
               <template slot-scope="scope">
                 <p>{{$t('CAM.userList.userChose')}}</p>
               </template>
@@ -211,7 +211,7 @@
       </div>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="addUser">确 定</el-button>
+        <el-button type="primary" @click="addUser">{{$t('CAM.userList.suerAdd')}}</el-button>
       </div>
     </el-dialog>
   </div>
