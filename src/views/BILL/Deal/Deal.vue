@@ -19,7 +19,7 @@
             </el-date-picker>
           </el-form-item>
           <el-form-item class="item-3">
-            <el-button type="primary" icon="el-icon-download" @click="download" size="small" plain></el-button>
+            <el-button type="primary" icon="el-icon-download" @click="download" size="small" plain v-loading="downloadLoading"></el-button>
           </el-form-item>
           <el-form-item class="item-2">
             <el-input :placeholder="$t('BILL.Deal.orderId')" size="small" clearable v-model="dataForm.orderId">
@@ -94,6 +94,7 @@ export default {
       pageSize: 10,
       totalPage: 0,
       dataListLoading: true,
+      downloadLoading: false,
       pickerOptions: {
         shortcuts: [{
           text: '最近一周',
@@ -239,6 +240,7 @@ export default {
         'orderId': this.dataForm.orderId,
         'orderOwner': this.$cookie.get('uin')
       }
+      this.downloadLoading = true
       this.axios.post(`${process.env.VUE_APP_adminUrl}taifucloud/torderproduct/exportList`, params, { responseType: 'blob' }).then(res => {
         const content = res
         const blob = new Blob([content])
@@ -258,6 +260,7 @@ export default {
           // IE10+下载
           navigator.msSaveBlob(blob, fileName)
         }
+        this.downloadLoading = false
       })
     },
 
