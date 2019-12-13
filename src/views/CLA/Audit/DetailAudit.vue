@@ -41,7 +41,7 @@
         </div>
       </div>
       <div class="detil-audit-main">
-        <div class="detil-audit-box">
+        <div class="detil-audit-box" v-loading='boxloading'>
           <span class="edit" @click="_edit" v-show="!inpShow">{{ $t('CLA.total.bj') }}</span>
           <h2>{{ $t('CLA.total.glsj') }}</h2>
           <el-form-item :label="$t('CLA.total.glsj')" required>
@@ -67,7 +67,7 @@
         </div>
       </div>
       <div class="detil-audit-main">
-        <div class="detil-audit-box">
+        <div class="detil-audit-box" v-loading='boxloading1'>
           <span class="edit" @click="_edit1" v-show="!inpShow1">{{ $t('CLA.total.bj') }}</span>
           <h2>{{ $t('CLA.total.ccwz') }}</h2>
           <div class="info-box" v-show="!inpShow1">
@@ -277,6 +277,8 @@ export default {
       }, 1000);
     };
     return {
+      boxloading:false,
+      boxloading1:false,
       loading: true, //是否为加载中状态
       title: "", //header的标题
       detailData: {}, //页面信息
@@ -535,6 +537,8 @@ export default {
         this.detailData.IsCreateNewBucket = 0;
         this.setChild = this.detailData.IsEnableCmqNotify;
         this.loading = false;
+        this.boxloading1 = false;
+        this.boxloading = false;
       });
     },
     //编辑
@@ -546,9 +550,13 @@ export default {
     },
     //取消
     _cancel() {
+      this.boxloading = true;
+      this.detailList();
       this.inpShow = false;
     },
     _cancel1() {
+      this.boxloading1 = true;
+      this.detailList();
       this.inpShow1 = false;
     },
     _radio() {
@@ -604,6 +612,9 @@ export default {
 </script>
 
 <style scoped lang='scss'>
+.detail-audit >>> .el-loading-mask{
+  background: white !important;
+}
 .detail-audit >>> button {
   font-size: 12px;
   height: 30px;

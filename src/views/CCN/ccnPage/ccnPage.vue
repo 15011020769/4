@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="wrap">
     <div class="title_top">
       <h1>{{ $t('CCN.total.title') }}</h1>
     </div>
@@ -222,7 +222,7 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="updateNameVisible = false">取 消</el-button>
+        <el-button @click="cancel1">取 消</el-button>
         <el-button type="primary" @click="modifyCcn(ccnPublic)">
           {{
           $t('CCN.total.sure')
@@ -242,7 +242,7 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="updateDesVisible = false">取 消</el-button>
+        <el-button @click="cancel">取 消</el-button>
         <el-button type="primary" @click="modifyCcn(ccnPublic)">
           {{
           $t('CCN.total.sure')
@@ -383,6 +383,16 @@ export default {
     this.getData();
   },
   methods: {
+    //取消修改姓名
+    cancel1() {
+      this.getData();
+      this.updateNameVisible = false;
+    },
+    //取消修改备注
+    cancel() {
+      this.getData();
+      this.updateDesVisible = false;
+    },
     // 初始化CCN列表数据（包括关联实例列表数据）
     getData() {
       this.tableload = true;
@@ -616,16 +626,17 @@ export default {
   }
 };
 </script>
-<style lang="scss">
-.el-input__inner {
+<style scoped lang="scss">
+.wrap >>> .el-loading-mask {
+  background: white !important;
+}
+.wrap >>> .el-input__inner {
   height: 30px;
   line-height: 30px;
 }
-.el-form-item__label {
+.wrap >>> .el-form-item__label {
   text-align: left;
 }
-</style>
-<style scoped lang="scss">
 .title_top {
   height: 50px;
   background: #fff;
