@@ -54,7 +54,7 @@
               <p class="jscontent">
                 <el-input v-model="inputRoleDesc" placeholder size="mini"></el-input>
               </p>
-              <p class="jscontent text">{{$t('CAM.Role.serveRole')}}-mps.cloud.tencent.com</p>
+              <p class="jscontent text">服务 -mps.cloud.tencent.com</p>
             </div>
           </div>
           <div class="content_table">
