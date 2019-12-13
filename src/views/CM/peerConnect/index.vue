@@ -75,7 +75,7 @@
 <script>
   import Cities from "@/components/public/CITY";
   import {
-    DISK_CITY,
+    ALL_CITY,
     PEE_LIST
   } from '@/constants';
   export default {
@@ -112,14 +112,12 @@
     methods: {
       // 获取城市列表
       GetCity() {
-        this.axios.get(`${DISK_CITY}?product=MONITOR`).then((data) => {
-          this.cities = data.data;
-          this.selectedRegion = data.data[0].Region;
-          this.selectedCity = data.data[0];
-          this.$cookie.set('regionv1', this.selectedCity.regionCode);
-          this.$cookie.set('regionv2', this.selectedCity.Region);
-          this.GetTabularData();
-        });
+        this.axios.get(ALL_CITY).then(data => {
+        this.cities = data.data;
+        this.selectedRegion = data.data[0].Region;
+        this.selectedCity = data.data[0];
+        this.$cookie.set("regionv2", this.selectedCity.Region);
+      });
       },
       // 切换城市
       changeCity(city) {
