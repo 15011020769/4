@@ -193,7 +193,7 @@
             <el-table-column prop="Name" :label="$t('CAM.userGroup.user')" show-overflow-tooltip></el-table-column>
             <el-table-column label="用戶類型" width="100">
               <template slot-scope="scope">
-                <p>{{$t('CAM.userGroup.userChose')}}</p>
+                <p>{{$t('CAM.userList.userChose')}}</p>
               </template>
             </el-table-column>
             <el-table-column :label="$t('CAM.userGroup.colHandle')" width="50">

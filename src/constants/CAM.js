@@ -56,9 +56,7 @@ export const GET_SAML = 'cam2/GetSAMLProvider'
 export const GROUP_USERS = 'cam2/ListUsersForGroup'
 export const DELE_GROUP = 'cam2/DeleteGroup'
 export const ADD_GROUPTOLIST = 'cam2/AddUserToGroup'
-<<<<<<< HEAD:src/constants/userlist.js
 export const LIST_Providers = 'cam2/ListSAMLProviders'
-=======
 export const ATTACH_GROUP = 'cam2/AttachGroupPolicy'
 export const GET_GROUP = 'cam2/GetGroup'
 export const UPDATA_GROUP = 'cam2/UpdateGroup'
@@ -67,4 +65,3 @@ export const DETACH_POLICY = 'cam2/DetachGroupPolicy'
 //策略
 export const LIST_ENPOLICY = 'cam2/ListEntitiesForPolicy'
 export const DELETE_POLICY = 'cam2/DeletePolicy'
->>>>>>> CAM外部接口调用:src/constants/CAM.js
