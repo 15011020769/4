@@ -1,26 +1,26 @@
 <template>
   <div id="unBlocking">
     <div class="contentTit">
-      解封操作
+       {{$t('DDOS.UnlockOperation.Unlock')}}
     </div>
     <div class="mainContentBlock">
       <div class="contPartOne newClear">
         <el-row>
           <el-col :span="8">
             <div class="contPartOneData">
-              <p>总配额数</p>
+              <p>{{$t('DDOS.UnlockOperation.totalNum')}}</p>
               <p><span>{{unBlockStatis.Total}}</span><span>次</span></p>
             </div>
           </el-col>
           <el-col :span="8">
             <div class="contPartOneData">
-              <p>当前已使用</p>
+              <p>{{$t('DDOS.UnlockOperation.CurrentlyUse')}}</p>
               <p><span>{{unBlockStatis.Used}}</span><span>次</span></p>
             </div>
           </el-col>
           <el-col :span="8">
             <div class="contPartOneData contPartOneDataT">
-              <p>当前未使用</p>
+              <p>{{$t('DDOS.UnlockOperation.NotUse')}}</p>
               <p><span>{{unBlockStatis.Total - unBlockStatis.Used}}</span><span>次</span></p>
             </div>
           </el-col>
@@ -34,22 +34,22 @@
                 <a href="#" @click="toDoDetail(scope.$index, scope.row)">{{scope.row.Ip}}</a>
               </template>
             </el-table-column>
-            <el-table-column prop="blockingTime" label="封堵时间">
+            <el-table-column prop="blockingTime" :label="$t('DDOS.UnlockOperation.BlockingTime')">
               <template slot-scope="scope">
                 {{scope.row.BlockTime}}
               </template>
             </el-table-column>
-            <el-table-column prop="unblockTime" label="预计解封时间">
+            <el-table-column prop="unblockTime" :label="$t('DDOS.UnlockOperation.EstimatedTime')">
           <template slot-scope="scope">
                 {{scope.row.UnBlockTime}}
               </template>
             </el-table-column>
-            <el-table-column prop="status" label="状态">
+            <el-table-column prop="status" :label="$t('DDOS.UnlockOperation.Unlockstate')">
               <template slot-scope="scope">
                 {{scope.row.Status}}
               </template>
             </el-table-column>
-            <el-table-column prop="action" label="操作" width="180">
+            <el-table-column prop="action" :label="$t('DDOS.UnlockOperation.UnlockOpera')" width="180">
               <template slot-scope="scope">
                 <el-button
                   @click.native.prevent="deleteRow(scope.$index, scope.row)"

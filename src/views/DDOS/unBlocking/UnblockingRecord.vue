@@ -1,7 +1,7 @@
 <template>
   <div id="unBlockingRecord">
     <div class="contentTit">
-      解封操作记录
+      {{$t('DDOS.UnsealCode.UnsealName')}}
     </div>
     <div class="mainContentBlock">
       <div class="contPartOne">
@@ -9,8 +9,8 @@
           v-model="dateChoice1"
           type="datetimerange"
           range-separator="至"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期">
+          :start-placeholder="$t('DDOS.UnsealCode.beginDate')"
+          :end-placeholder="$t('DDOS.UnsealCode.overDate')">
         </el-date-picker>
       </div>
       <div class="contPartTwo">
@@ -21,17 +21,17 @@
                 <a href="#" @click="toDoDetail(scope.$index, scope.row)">{{scope.row.ip}}</a>
               </template>
             </el-table-column>
-            <el-table-column prop="blockingTime" label="封堵时间">
+            <el-table-column prop="blockingTime" :label="$t('DDOS.UnlockOperation.BlockingTime')">
               <template slot-scope="scope">
                 {{scope.row.BlockTime}}
               </template>
             </el-table-column>
-            <el-table-column prop="unblockTime" label="预计解封时间">
+            <el-table-column prop="unblockTime" :label="$t('DDOS.UnlockOperation.EstimatedTime')">
               <template slot-scope="scope">
                 {{scope.row.UnBlockTime}}
               </template>
             </el-table-column>
-            <el-table-column prop="unblockType" label="解封操作类型">
+            <el-table-column prop="unblockType" :label="$t('DDOS.UnsealCode.UnsealingType')">
               <template slot-scope="scope">
                 {{scope.row.ActionType}}
               </template>

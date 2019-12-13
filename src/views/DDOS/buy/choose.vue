@@ -1,7 +1,7 @@
 <template>
   <div class="wrap">
     <div class="topTit">
-      <div class="topTitCenterR">高防IP专业版</div>
+      <div class="topTitCenterR">{{$t('DDOS.Protective.professionalEdition')}}</div>
     </div>
     <div class="contentMain">
       <div class="contentMainCenter newClear">
@@ -9,7 +9,7 @@
           <ul>
             <li>
               <div class="checkList newClear">
-                <div class="checkListLeft">地域</div>
+                <div class="checkListLeft">{{$t('DDOS.choose.regional')}}</div>
                 <div class="checkListRight">
                   <div>
                     <span
@@ -23,7 +23,7 @@
             </li>
             <li>
               <div class="checkList newClear">
-                <div class="checkListLeft">保底防护峰值</div>
+                <div class="checkListLeft">{{$t('DDOS.choose.MinimumProtection')}}</div>
                 <div class="checkListRight">
                   <div>
                     <span
@@ -42,7 +42,7 @@
                 </div>
               </div>
               <div class="checkList newClear">
-                <div class="checkListLeft">CC防护峰值</div>
+                <div class="checkListLeft">{{$t('DDOS.choose.CCMinimum')}}</div>
                 <div class="checkListRight">
                   <span class="textList">{{ccText}}</span>
                 </div>
@@ -50,7 +50,7 @@
             </li>
             <li>
               <div class="checkList newClear">
-                <div class="checkListLeft">弹性防护峰值</div>
+                <div class="checkListLeft">{{$t('DDOS.choose.ElasticProtection')}}</div>
                 <div class="checkListRight">
                   <div>
                     <span
@@ -71,13 +71,13 @@
                   <div class="tipList">
                     <p
                       class="tipListOne"
-                    >运营商骨干线路故障或其他运营商策略等不确定因素，可能会造成未达到弹性上限发生封禁。如果发生未达开通的弹性峰值上限产生封禁的情况，免除当日弹性防护费用。</p>
-                    <p class="tipListTwo">购买后，弹性防护不可修改。</p>
+                    >{{$t('DDOS.choose.chooseTitle')}}</p>
+                    <p class="tipListTwo">{{$t('DDOS.choose.chooseTitles')}}</p>
                   </div>
                 </div>
               </div>
               <div class="checkList newClear">
-                <div class="checkListLeft">业务规格</div>
+                <div class="checkListLeft">{{$t('DDOS.choose.BusinessMetrics')}}</div>
                 <div class="checkListRight">
                   <div>
                     <span
@@ -112,8 +112,8 @@
                     >2Gbps</span>
                   </div>
                   <div class="tipList">
-                    <p class="tipListThree">腾讯云为您免费赠送100M的业务带宽，如不够用，请及时升级业务带宽。</p>
-                    <p class="tipListThree">业务带宽: {{checked4}}</p>
+                    <p class="tipListThree">{{$t('DDOS.choose.toBychoose')}}</p>
+                    <p class="tipListThree">{{$t('DDOS.choose.bandwidth')}}: {{checked4}}</p>
                     <p class="tipListThree">HTTP: {{checkChange1}}QPS</p>
                     <p class="tipListThree">HTTPS: {{checkChange2}}QPS</p>
                   </div>
@@ -122,7 +122,7 @@
             </li>
             <li>
               <div class="checkList newClear">
-                <div class="checkListLeft">购买时长</div>
+                <div class="checkListLeft">{{$t('DDOS.choose.byTime')}}</div>
                 <div class="checkListRight">
                   <div>
                     <span
@@ -162,7 +162,7 @@
                       </span>
                     </el-tooltip>
                     <el-tooltip placement="top" effect="light">
-                      <div slot="content">6个月以上享88折</div>
+                      <div slot="content">{{$t('DDOS.choose.months')}}</div>
                       <span
                         class="spanList"
                         :class="type5==7?'seceltList':''"
@@ -231,41 +231,41 @@
                 </div>
               </div>
               <div class="checkList newClear">
-                <div class="checkListLeft">自动续费</div>
+                <div class="checkListLeft">{{$t('DDOS.choose.renewalMoney')}}</div>
                 <div class="checkListRight">
-                  <el-checkbox v-model="checked" @change="checkedOrNo"></el-checkbox>账户余额足够时，设备到期后按月自动续费
+                  <el-checkbox v-model="checked" @change="checkedOrNo"></el-checkbox>{{$t('DDOS.choose.accountMoney')}}
                 </div>
               </div>
             </li>
           </ul>
         </div>
         <div class="rightContent" :class="searchBarFixed == true ? 'isFixed' :''">
-          <h1>当前配置</h1>
+          <h1>{{$t('DDOS.choose.configuration')}}</h1>
           <div class="allConList">
             <p>
-              <span>地域</span>
+              <span>{{$t('DDOS.choose.regional')}}</span>
               <span>{{checked1}}</span>
             </p>
             <p>
-              <span>保底防护峰值</span>
+              <span>{{$t('DDOS.choose.MinimumProtection')}}</span>
               <span>{{Gbps[GbpsIndex].name}}Gbps</span>
               <!-- <span>{{checked2}}</span> -->
             </p>
             <p>
-              <span>CC防护峰值</span>
+              <span>{{$t('DDOS.choose.CCMinimum')}}</span>
               <span>{{ccText}}</span>
             </p>
             <p v-if="saveShow">
-              <span>弹性防护</span>
-              <span>未开启</span>
+              <span>{{$t('DDOS.choose.ElasticVal')}}</span>
+              <span>{{$t('DDOS.choose.doNotOpen')}}</span>
             </p>
             <p v-if="!saveShow">
-              <span>弹性防护峰值</span>
+              <span>{{$t('DDOS.choose.ElasticProtection')}}</span>
               <span>{{Gbps[GbpsIndex].child[GbpsChildIndex]}}Gbps</span>
               <!-- <span>{{checked3}}</span> -->
             </p>
             <p>
-              <span>业务带宽</span>
+              <span>{{$t('DDOS.choose.bandwidth')}}</span>
               <span>{{checked4}}</span>
             </p>
             <p>
@@ -277,16 +277,16 @@
               <span>{{checkChange2}}</span>
             </p>
             <p>
-              <span>购买时长</span>
+              <span>{{$t('DDOS.choose.byTime')}}</span>
               <span>{{checked5}}</span>
             </p>
             <p>
-              <span>自动续费</span>
+              <span>{{$t('DDOS.choose.renewalMoney')}}</span>
               <span>{{checkOrNull}}</span>
             </p>
           </div>
           <div class="allMoney">
-            <span>总计费用</span>
+            <span>{{$t('DDOS.choose.sumMoney')}}</span>
             <p>{{allMoney}}元</p>
             <button class="payBtn" @click="payPage">立即支付</button>
           </div>
