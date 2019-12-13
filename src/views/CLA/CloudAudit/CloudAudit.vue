@@ -251,7 +251,7 @@ export default {
         MaxResults: this.MaxResults,
         StartTime: this.oldTime
       };
-      if (endTime) {
+      if (this.value1) {
         params["EndTime"] = endTime;
         params["StartTime"] = startTime;
       }
