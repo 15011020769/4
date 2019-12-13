@@ -3,7 +3,7 @@
     <div>
       <el-dialog title="DDoS防护配置" :visible.sync="configIsShow" width="40%" :append-to-body="true" :before-close="handleClose">
         <div class="modelCenterCon">
-          <p>
+          <p class="newClear">
             <span class="modelSpan1">防护状态</span>
             <span @click="outOk()">
               <el-switch v-model="servicePack.DefendStatus" active-color="#006eff" inactive-color="#999">
@@ -11,7 +11,7 @@
             </span>
           </p>
           <div v-if="ShowFlag=='0'?true:false">
-            <p>
+            <p class="newClear">
               <span class="modelSpan1">清洗阈值<i class="el-icon-info"></i></span>
               <span>
                 <el-select v-model="servicePack.DdosThreshold" class="setSelectM" @change="cleanThreshold">
@@ -19,9 +19,9 @@
                 </el-select>
               </span>
             </p>
-            <p>
+            <p class="newClear">
               <span class="modelSpan1">防护等级<i class="el-icon-info"></i></span>
-              <span>
+              <span class="modelSpan2">
                 <a class="gardenChoose" :class="saveGarden==1?'seceltGarden':''" @click="clickGarden(1,'宽松')">宽松</a>
                 <a class="gardenChoose" :class="saveGarden==2?'seceltGarden':''" @click="clickGarden(2,'正常')">正常</a>
                 <a class="gardenChoose" :class="saveGarden==3?'seceltGarden':''" @click="clickGarden(3,'严格')">严格</a>
@@ -62,18 +62,18 @@
               </el-dialog>
 
             </p>
-            <p>
+            <p class="newClear">
               <span class="modelSpan1">高级策略</span>
-              <span>
+              <span class="modelSpan2">
                 <el-select v-model="topFun" class="setSelectM">
                   <el-option label="无" value="no"></el-option>
                   <el-option label="erg" value="erg"></el-option>
                 </el-select>
               </span>
             </p>
-            <p>
+            <p class="newClear">
               <span class="modelSpan1">DDoS攻击告警阈值</span>
-              <span>
+              <span class="modelSpan2">
                 <el-select v-model="ddosWarning" class="setSelectM" @change="selectChange1">
                   <el-option label="未设置" value="no"></el-option>
                   <el-option label="入流量宽带" value="into"></el-option>
@@ -393,7 +393,7 @@ export default {
           margin-left: 6px;
         }
       }
-      span:nth-child(2) {
+      span:nth-child(2).modelSpan2 {
         .gardenChoose {
           padding: 0 20px;
           color: #000;

@@ -10,7 +10,7 @@
           :value="item.subarea">
         </el-option>
       </el-select>
-      <el-select v-model="selectedRegion" placeholder="">
+      <el-select v-model="selectedRegion" placeholder="" class="taiwan"> 
         <el-option
           v-for="item in cities"
           :key="item.Region"
@@ -21,8 +21,10 @@
       </el-select>
     </div>
     <div class="basicProtCon">
-      <div class="basicProtConSearch">
-        <el-input placeholder="请输入主机名/主机IP搜索" class="searchIpt" v-model="searchInputVal"/><el-button @click="doFilter" class="el-icon-search"></el-button>
+      <div class="newClear">
+        <div class="basicProtConSearch newClear">
+          <el-input placeholder="请输入主机名/主机IP搜索" class="searchIpt" v-model="searchInputVal"/><el-button @click="doFilter" class="el-icon-search"></el-button>
+        </div>
       </div>
       <div class="tableBasic">
         <div class="tableBasicCon">
@@ -335,18 +337,21 @@ export default {
   .basicProtConSearch{
     text-align:right;
     margin-bottom:20px;
+    float:right;
     .searchIpt{
       width:300px;
+      float:left;
       height:30px;
       input{
         width:100%;
         height:30px;
         border-radius: 0;
-        padding-top:2px;
+        line-height: 30px;
       }
     }
     .el-icon-search{
       width:50px;
+      float:left;
       border-radius: 0;
       height:30px;
       padding:0;
@@ -363,6 +368,25 @@ export default {
 }
 .tabListPage{
   text-align:right;
+  height:50px;
+  border-top:1px solid #ddd;
   padding-top:8px!important;
+}
+.taiwan{
+  width:150px;
+  height:30px;
+  div{
+    width:150px;
+    height:30px;
+    input{
+      width:100%;
+      height:30px;
+      line-height:30px;
+      border-radius: 0;
+    }
+    .el-input__suffix{
+      margin-right:-35px;
+    }
+  }
 }
 </style>

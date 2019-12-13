@@ -482,4 +482,26 @@ export default {
 };
 </script>
 <style lang="scss">
+.buttonGroupAll{
+  float:left;
+  button{
+    height:30px;
+    line-height: 30px;
+    padding:0 16px;
+    border-radius: 0;
+  }
+}
+.newDataTime{
+  float:left;
+  height:30px;
+  line-height: 30px;
+  border-radius: 0;
+  .el-input__icon{
+    line-height:26px;
+  }
+  .el-range-separator{
+    line-height: 26px;
+    width:7%;
+  }
+}
 </style>

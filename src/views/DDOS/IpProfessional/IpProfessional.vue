@@ -188,7 +188,7 @@ export default {
 };
 </script>
 <style lang="scss">
-.newClear {
+.newClear:after {
   content: "";
   display: block;
   clear: both;

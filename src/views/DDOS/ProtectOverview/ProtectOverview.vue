@@ -533,11 +533,12 @@ export default {
         width:100%;
         height:30px;
         border-radius: 0;
+        line-height: 30px;
       }
     }
     .searcHBthn{
       float:left;
-      margin-top:15px;
+      margin-top:14px;
       padding:0 16px;
       height:30px;
       line-height:30px;
@@ -589,6 +590,7 @@ export default {
   min-height:450px;
 }
 .tabListPage{
+  height:50px;
   text-align:right;
   padding-top:8px;
   border-top:1px solid #ddd;
