@@ -1,0 +1,60 @@
+<template>
+  <div id="saveOverView">
+    <div class="topTitle">
+      <div class="topTitleT">
+        安全概览
+      </div>
+      <el-tabs v-model="activeName" @tab-click="handleClick" class="tabList">
+        <el-tab-pane label="攻击概览" name="first">
+          <attackOverview/>
+        </el-tab-pane>
+        <el-tab-pane label="业务概览" name="second">
+          
+        </el-tab-pane>
+        <el-tab-pane label="访问日志" name="third">
+          
+        </el-tab-pane>
+      </el-tabs>
+    </div>
+  </div>
+</template>
+<script>
+import attackOverview from './tab/attackOverview'
+export default {
+  data(){
+    return{
+      activeName:'first'
+    }
+  },
+  components:{
+    attackOverview:attackOverview,//攻击概览
+  },
+  methods:{
+    //tab切换点击事件
+    handleClick(tab, event){
+      // console.log(tab, event)
+    }
+  }
+}
+</script>
+<style lang="scss" scoped>
+#saveOverView{
+  .topTitle{
+    .topTitleT{
+      height:50px;
+      padding:0 20px;
+      line-height: 50px;
+      background-color:#fff;
+      font-size:16px;
+      font-weight: 600;
+      color:#000;
+   }
+   .tabList{
+     ::v-deep .el-tabs__header{
+       background-color:#fff;
+       padding:0 20px;
+     }
+   }
+  }
+}
+</style>

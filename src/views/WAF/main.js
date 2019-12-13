@@ -27,7 +27,7 @@ Vue.use(VueCookie)
 
 new Vue({
     router,
-    i18n
+    i18n,
     // store,
     render: h => h(App)
 }).$mount('#app')

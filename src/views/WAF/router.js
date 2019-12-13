@@ -7,12 +7,44 @@ export default new Router({
   // mode: 'history',
   base: process.env.BASE_URL,
   redirect: {
-    name: 'ipSearch'
+    name: 'saveOverView'
   },
   routes: [
     {
       path: '/',
-      redirect: '/ipSearch'
+      redirect: '/saveOverView'
+    },
+    {
+      path: '/saveOverView', // 安全概览
+      name: 'saveOverView',
+      component: () => import(/* webpackChunkName: "ipMan" */ './saveOverView/saveOverView.vue'),
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
+      path: '/protectionSettings', // 防护设置
+      name: 'protectionSettings',
+      component: () => import(/* webpackChunkName: "ipMan" */ './webFirewall/protectionSettings.vue'),
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
+      path: '/attackDetails', // 攻击详情
+      name: 'attackDetails',
+      component: () => import(/* webpackChunkName: "ipMan" */ './webFirewall/attackDetails.vue'),
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
+      path: '/hijackDetection', // DNS劫持检测
+      name: 'hijackDetection',
+      component: () => import(/* webpackChunkName: "ipMan" */ './safetyInspection/hijackDetection.vue'),
+      meta: {
+        keepAlive: true
+      }
     },
     {
       path: '/ipSearch', // ip管理
@@ -22,6 +54,8 @@ export default new Router({
         keepAlive: true
       }
     },
+    
+    
     {
       path: '/ipStatus', // ip 状态
       name: 'ipStatus',
