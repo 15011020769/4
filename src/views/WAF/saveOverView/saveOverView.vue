@@ -9,10 +9,10 @@
           <attackOverview/>
         </el-tab-pane>
         <el-tab-pane label="业务概览" name="second">
-          
+          <businessOverview/>
         </el-tab-pane>
         <el-tab-pane label="访问日志" name="third">
-          
+          <accessLog/>
         </el-tab-pane>
       </el-tabs>
     </div>
@@ -20,6 +20,8 @@
 </template>
 <script>
 import attackOverview from './tab/attackOverview'
+import businessOverview from './tab/businessOverview'
+import accessLog from './tab/accessLog'
 export default {
   data(){
     return{
@@ -28,6 +30,8 @@ export default {
   },
   components:{
     attackOverview:attackOverview,//攻击概览
+    businessOverview:businessOverview,//业务概览
+    accessLog:accessLog,//访问日志
   },
   methods:{
     //tab切换点击事件

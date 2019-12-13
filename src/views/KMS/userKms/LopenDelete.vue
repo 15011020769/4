@@ -107,18 +107,18 @@ export default {
   }
 }
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 .newClear:after{
   display: inline-block;
   content:'';
   clear:both;
 }
 .dialogModel{
-  .el-dialog__header{
+  ::v-deep .el-dialog__header{
     font-size:14px;
     font-weight:600;
   }
-  .el-dialog__body{
+  ::v-deep .el-dialog__body{
     padding:10px 20px;
   }
   .titleTip{
@@ -173,7 +173,7 @@ export default {
     font-size: 14px;
   }
 }
-.numberAdd .el-input__inner{
+.numberAdd ::v-deep .el-input__inner{
   width:130px!important;
 }
 .closeDelete{

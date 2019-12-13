@@ -648,7 +648,7 @@ export default {
   }
 }
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 .newClear:after {
   display: block;
   content: "";
@@ -732,7 +732,7 @@ export default {
           margin-right: 30px;
           text-align: right;
           width: 330px;
-          textarea {
+          ::v-deep textarea {
             width: 330px;
             height: 100px;
             border-radius: 0;
@@ -748,7 +748,7 @@ export default {
       }
     }
     .btnBottom {
-      button {
+      ::v-deep button {
         background-color: #fff;
       }
     }
@@ -773,7 +773,7 @@ export default {
       .newName {
         width: 200px;
         height: 30px;
-        input {
+        ::v-deep input {
           width: 200px;
           height: 30px;
           line-height: 30px;
@@ -781,7 +781,7 @@ export default {
         }
       }
       .newDescription {
-        textarea {
+        ::v-deep textarea {
           width: 330px;
           height: 100px;
           resize: none;
@@ -796,13 +796,13 @@ export default {
   }
 }
 .changeNameModel {
-  .el-dialog__title {
+  ::v-deep .el-dialog__title {
     font-size: 14px;
     font-weight: 600;
   }
 }
 .dialogModelConT {
-  button {
+  ::v-deep button {
     width: 70px;
     height: 30px;
     border-radius: 0;
@@ -889,7 +889,7 @@ export default {
         div {
           width: 170px;
           height: 30px;
-          input {
+          ::v-deep input {
             width: 170px;
             height: 30px;
             line-height: 30px;
@@ -897,7 +897,7 @@ export default {
           }
         }
       }
-      button {
+      ::v-deep button {
         height: 30px;
         border-radius: 0;
         display: inline-block;
@@ -941,7 +941,7 @@ export default {
         top: 9px;
         margin-left: 10px;
         font-size: 12px;
-        input {
+        ::v-deep input {
           opacity: 0;
           filter: alpha(opacity=0);
           position: absolute;
@@ -956,7 +956,7 @@ export default {
         div {
           width: 100px;
           height: 30px;
-          input {
+          ::v-deep input {
             width: 100px;
             height: 30px;
             line-height: 30px;
@@ -977,7 +977,7 @@ export default {
       width: 120px;
       height: 30px;
       margin-left: 12px;
-      input {
+      ::v-deep input {
         width: 120px;
         height: 30px;
         line-height: 30px;

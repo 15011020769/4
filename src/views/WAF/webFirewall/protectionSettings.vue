@@ -1,7 +1,10 @@
 <template>
   <div>
-    <div>
-      防护设置
+    <div class="topTitle">
+
+    </div>
+    <div class="protectionCon">
+      
     </div>
   </div>
 </template>
@@ -15,5 +18,12 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-
+.newClear:after{
+  content:'';
+  display:inline-block;
+  clear:both;
+}
+.protectionCon{
+  
+}
 </style>

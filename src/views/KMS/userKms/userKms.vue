@@ -546,7 +546,7 @@ export default {
   }
 };
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 .newClear:after {
   display: block;
   content: "";
@@ -603,7 +603,7 @@ export default {
         border-radius: 0;
         height: 30px;
         float: left;
-        input.el-input__inner {
+        ::v-deep input.el-input__inner {
           width: 160px;
           border-radius: 0;
           font-size: 12px;
@@ -676,22 +676,22 @@ export default {
     font-weight: 600;
     color: #000;
   }
-  .el-dialog__title {
+  ::v-deep .el-dialog__title {
     font-weight: 600;
     font-size: 14px;
   }
-  .el-form-item__label {
+  ::v-deep .el-form-item__label {
     font-size: 12px;
     color: #888;
     text-align: left;
   }
-  .el-input__inner {
+  ::v-deep .el-input__inner {
     width: 180px;
     height: 30px;
     line-height: 30px;
     border-radius: 0;
   }
-  .el-textarea__inner {
+  ::v-deep .el-textarea__inner {
     width: 80% !important;
     height: 100px;
     resize: none;
