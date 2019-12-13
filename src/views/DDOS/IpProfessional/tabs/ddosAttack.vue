@@ -1,7 +1,10 @@
 <template>
-  <div>
+  <div class="child">
     <div class="mainConList">
-      <div class="mainConListAll mainConListOne newClear">
+      <div
+        class="mainConListAll mainConListOne newClear"
+        style="display: flex;flex-direction: column;"
+      >
         <div class="newClear">
           <el-button-group class="buttonGroupAll">
             <el-button class="buttonGroup" @click="thisTime(1)">今天</el-button>
@@ -19,19 +22,21 @@
             end-placeholder="结束日期"
           ></el-date-picker>
         </div>
-        <br />
-        <el-select
-          class="ddosAttackSelect1"
-          v-model="inputId"
-          @change="changeId"
-          filterable
-          placeholder="请输入要查询的ID或名称"
-        >
-          <el-option :label="inputId" :value="inputId"></el-option>
-        </el-select>
-        <el-select class="ddosAttackSelect1" v-model="timeBtnSelect2">
-          <el-option v-for="item in IpList" :value="item"></el-option>
-        </el-select>
+        <div style="margin-top:12px;">
+          <el-select
+            class="ddosAttackSelect1"
+            v-model="inputId"
+            @change="changeId"
+            filterable
+            placeholder="请输入要查询的ID或名称"
+            style="margin-right:10px;"
+          >
+            <el-option :label="inputId" :value="inputId"></el-option>
+          </el-select>
+          <el-select class="ddosAttackSelect1" v-model="timeBtnSelect2">
+            <el-option v-for="item in IpList" :value="item"></el-option>
+          </el-select>
+        </div>
       </div>
       <div class="mainConListAll mainConListTwo">
         <el-tabs class="tabsCard" v-model="activeName1" type="card" @tab-click="handleClick1">
@@ -104,14 +109,14 @@
   </div>
 </template>
 <script>
-import { GET_ID} from '@/constants'
+import { GET_ID } from "@/constants";
 import moment from "moment";
 export default {
   data() {
     return {
       // 日期选择
       dateChoice1: {}, //选择日期
-      IpList:'',
+      IpList: "",
       inputId: "", //下拉框ID
       timeBtnSelect2: "总览", //ddos时间按钮下面第二个下拉
       activeName1: "bps", //DDoS攻击防护-二级tab标识
@@ -156,7 +161,7 @@ export default {
       this.startTime = moment(value[0]).format("YYYY-MM-DD HH:mm:ss"); //格式处理
       this.endTime = moment(value[1]).format("YYYY-MM-DD HH:mm:ss"); //格式处理
       this.describeDDoSNetTrend(this.timey);
-      this.describeDDoSNetEvList()
+      this.describeDDoSNetEvList();
       for (let index in this.metricNames) {
         this.metricName2 = this.metricNames[index];
         this.describeDDoSNetCount();
@@ -168,7 +173,7 @@ export default {
   created() {
     this.describeResourceList(); //获取资源列表的接口单独调用（因为日期变更不需要调用此接口）
     this.getData();
-    this.GetID()
+    this.GetID();
   },
 
   methods: {
@@ -176,14 +181,14 @@ export default {
     GetID() {
       let params = {
         Version: "2018-07-09",
-        Business: "net",
+        Business: "net"
       };
       this.axios.post(GET_ID, params).then(res => {
-        let IpList = res.Response.Resource
-        console.log(IpList)
-        for(let i = 0 ; i < IpList.length;i++){
-            this.inputId = IpList[i].Id
-            this.IpList = IpList[i].IpList
+        let IpList = res.Response.Resource;
+        console.log(IpList);
+        for (let i = 0; i < IpList.length; i++) {
+          this.inputId = IpList[i].Id;
+          this.IpList = IpList[i].IpList;
         }
       });
     },
@@ -364,11 +369,11 @@ export default {
         //ddos攻击-攻击流量带宽
       }
       this.describeDDoSNetTrend(this.timey);
-       for (let index in this.metricNames) {
+      for (let index in this.metricNames) {
         this.metricName2 = this.metricNames[index];
         this.describeDDoSNetCount();
       }
-      this.describeDDoSNetEvList()
+      this.describeDDoSNetEvList();
     },
     //时间按钮
     //计算时间间隔
@@ -535,30 +540,62 @@ export default {
   }
 };
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
+.child >>> .el-tabs__nav-wrap{
+  padding: 0 !important;
+}
+.child >>> .el-tabs__item,
+.child >>> .is-active {
+  border-bottom: 1px #f2f2f2 solid !important;
+  border-radius: 0 !important;
+}
+.newClear {
+  display: flex;
+}
+.child {
+  width: 100%;
+  padding: 20px;
+  box-sizing: border-box;
+}
+.mainConListAll {
+  background: white;
+  padding: 20px;
+  box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
+  box-sizing: border-box;
+  margin-bottom: 20px;
+}
 .ddosTableMin {
   min-height: 450px;
 }
-.buttonGroupAll{
-  float:left;
-  button{
-    height:30px;
+.buttonGroupAll {
+  float: left;
+  button {
+    height: 30px;
     line-height: 30px;
-    padding:0 16px;
+    padding: 0 16px;
     border-radius: 0;
   }
 }
-.newDataTime{
-  float:left;
-  height:30px;
+.newDataTime {
+  float: left;
+  height: 30px;
   line-height: 30px;
   border-radius: 0;
-  .el-input__icon{
-    line-height:26px;
-  }
-  .el-range-separator{
+  .el-input__icon {
     line-height: 26px;
-    width:7%;
+  }
+  .el-range-separator {
+    line-height: 26px;
+    width: 7%;
+  }
+}
+.colDivThree{
+  h1{
+    font-size: 16px;
+  }
+  h1,p,div{
+    text-align: center;
+    line-height: 40px;
   }
 }
 </style>

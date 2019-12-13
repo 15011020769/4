@@ -1,5 +1,5 @@
 <template>
-  <div id="ipConfigFourth">
+  <div id="ipConfigFourth" class="wrap">
     <div class="allContent">
       <div class="ReportTit newClear">
         <h3 class="ReportTitH3">高防IP专业版</h3>
@@ -7,11 +7,11 @@
           <el-option label="资源列表" value="resourceList"></el-option>
           <el-option label="业务列表" value="value2"></el-option>
         </el-select>
-        <el-button class="ReportTitBtn" type="primary" @click="newBuy">新购</el-button>
+        <!-- <el-button class="ReportTitBtn" type="primary" @click="newBuy">新购</el-button> -->
       </div>
       <div class="mainContentCenter">
-        <div class="textAlignTop newClear">
-          <div class="addBgColor"> 
+        <div class="textAlignTop newClear" style="padding:20px;width:100%;">
+          <div class="addBgColor" style="display:flex;"> 
             <el-checkbox-group v-model="comingSoon" class="checkOne">
               <el-checkbox label="即将过期" name="comingSoon"></el-checkbox>
             </el-checkbox-group>
@@ -22,11 +22,11 @@
               <el-checkbox label="封堵中" name="type" value="3"></el-checkbox>
             </el-checkbox-group>
           </div>
-          <span v-if="listResouse=='resourceList'?true:false">
+          <span v-if="listResouse=='resourceList'?true:false" style="float:right;">
             <el-input v-model="tableDataName" class="searchs" placeholder="输入ID/名称/IP搜索"></el-input>
             <el-button class="el-icon-search" @click="doFilter"></el-button>
           </span>
-          <span v-if="listResouse!='resourceList'?true:false">
+          <span v-if="listResouse!='resourceList'?true:false" style="float:right;">
             <el-input v-model="tableDataName1" class="searchs" placeholder="输入域名/CNAME搜索"></el-input>
             <el-button class="el-icon-search" @click="doFilter1"></el-button>
           </span>
@@ -447,6 +447,17 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+.wrap >>> .el-tabs__nav-wrap{
+  background: white;
+  padding: 0 15px;
+  box-sizing: border-box;
+}
+.wrap >>> .el-input__inner {
+  height: 30px;
+  line-height: 30px;
+  padding-top: 0;
+  border-radius: 0;
+}
 .newClear:after {
   content: "";
   display: block;

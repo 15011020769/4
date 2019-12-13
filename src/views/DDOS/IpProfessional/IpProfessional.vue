@@ -1,11 +1,7 @@
 <template>
   <div class="wrap">
-    <HeaderCom title="统计报表" />
-    <div class="statistReportTit">
-      <!-- <div class="ReportTit newClear">
-        <h3 class="ReportTitH3">统计报表</h3>
-        <el-button class="ReportTitBtn" type="primary" @click="newBuy">新购</el-button>
-      </div>-->
+    <div class="header">
+      <HeaderCom title="统计报表" />
       <el-tabs v-model="activeName" @tab-click="handleClick">
         <el-tab-pane label="DDoS攻击防护" name="ddos">
           <ddosAttack ref="ddosAttack" />
@@ -141,6 +137,11 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+.wrap >>> .el-tabs__nav-wrap{
+  background: white;
+  padding: 0 15px;
+  box-sizing: border-box;
+}
 .wrap >>> .el-input__inner {
   height: 30px;
   line-height: 30px;

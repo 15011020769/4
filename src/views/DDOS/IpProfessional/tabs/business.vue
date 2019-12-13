@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="child">
     <div class="mainConList">
       <div class="mainConListAll mainConListOne">
         <div class="newClear">
@@ -26,6 +26,7 @@
           @change="changeIdService"
           filterable
           placeholder="请输入要查询的ID或名称"
+          style="margin-right:10px;"
         >
           <el-option :label="inputIdService" :value="inputIdService"></el-option>
         </el-select>
@@ -481,7 +482,30 @@ export default {
   }
 };
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
+.child >>> .el-tabs__nav-wrap {
+  padding: 0 !important;
+}
+.child >>> .el-tabs__item,
+.child >>> .is-active {
+  border-bottom: 1px #f2f2f2 solid !important;
+  border-radius: 0 !important;
+}
+.newClear {
+  display: flex;
+}
+.child {
+  width: 100%;
+  padding: 20px;
+  box-sizing: border-box;
+}
+.mainConListAll {
+  background: white;
+  padding: 20px;
+  box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
+  box-sizing: border-box;
+  margin-bottom: 20px;
+}
 .buttonGroupAll{
   float:left;
   button{
