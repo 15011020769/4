@@ -432,7 +432,7 @@ export default {
   border-radius: 0 !important;
 }
 .child >>> .el-button {
-  // height: 30px !important;
+  height: 30px !important;
   line-height: 30px !important;
   border-radius: 0 !important;
   padding-top: 0;
