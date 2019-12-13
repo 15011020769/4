@@ -98,5 +98,10 @@ module.exports = {
     port: 8081, // 端口号，默认8080
     https: false, // 协议
     hotOnly: false // 没啥效果，热模块，webpack已经做好了
+  },
+  chainWebpack: config => {
+    config.performance
+      .maxEntrypointSize(400000)
+      .maxAssetSize(400000)
   }
 }
