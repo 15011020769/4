@@ -62,7 +62,7 @@
 
         <el-table-column prop :label="$t('CVM.clBload.wllx')">
           <template slot-scope="scope">
-            <p>VPC 网络</p>
+            <p>{{$t("CVM.cloudMysql.wl")}}</p>
           </template>
         </el-table-column>
         <el-table-column prop :label="$t('CVM.table.x5')">
