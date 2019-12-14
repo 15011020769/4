@@ -90,8 +90,10 @@ export default {
     };
   },
   mounted () {
-    
-    this.initCharts()
+    var _this=this;
+    setTimeout(function(){
+      _this.initCharts()
+    },1000)
 　},
   methods: {
     //时间点击事件
