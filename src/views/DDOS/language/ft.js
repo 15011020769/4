@@ -202,7 +202,7 @@ module.exports = {
       WarmPort: '溫馨提示：規則數，保底防護峰值、業務帶寬升級後不支持降級，如需幫忙請聯繫客服',
       upgradeMoney: '升級費用',
       EorrorLog: "Error: 伺服器開了個小差，請稍後重試,請稍候再試",
-      justUpgrade: '立即升級'，
+      justUpgrade: '立即升級',
       area: '台灣台北'
     }
   },
