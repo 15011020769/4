@@ -1,178 +1,182 @@
 <template>
-  <div class="wrap">
-    <HeaderCom title="防护配置" />
-    <el-tabs v-model="activeName" @tab-click="handleClick">
-      <el-tab-pane label="DDoS防护" name="first" style="padding:0 20px;">
-        <div class="mainContent">
-          <div class="textAlignTop newClear">
-            <el-select class="checkListSelect" placeholder="要过滤的标签" v-model="filterConrent">
-              <el-option
-                v-for="(item, index) in options1"
-                :label="item.label"
-                :value="item.value"
-                :key="index"
-              ></el-option>
-            </el-select>
-            <el-input v-model="tableDataName" class="searchs" placeholder="请输入要查询的内容"></el-input>
-            <el-button class="el-icon-search" @click="doFilter"></el-button>
-          </div>
-          <div class="mainTable">
-            <el-table :data="tableDataBegin.slice((currentPage-1)*pageSize,currentPage*pageSize)">
-              <el-table-column prop="Record.Id" label="ID/名称">
-                <template slot-scope="scope">
-                  <div v-for="(item, index) in scope.row.Record" :key="index">
-                    <div v-if="item.Key=='Id'">{{item.Value}}</div>
-                    <!-- <a v-if="item.Key=='Id'" href="#" @click="toDetail(scope.$index, scope.row)">{{item.Value}}</a> -->
-                  </div>
-                </template>
-              </el-table-column>
-              <el-table-column prop="Record.GroupIpList" label="IP">
-                <template slot-scope="scope">
-                  <div v-for="(item, index) in scope.row.Record" :key="index">
-                    <div v-if="item.Key=='GroupIpList'">{{item.Value}}</div>
-                  </div>
-                </template>
-              </el-table-column>
-              <el-table-column prop="origin" label="地区">
-                <template slot-scope="scope">
-                  <div v-for="(item, index) in scope.row.Record" :key="index">
-                    <div v-if="item.Key=='Id'">-</div>
-                  </div>
-                </template>
-              </el-table-column>
-              <el-table-column prop="Record.DefendStatus" label="防护状态">
-                <template slot-scope="scope">
-                  <div v-for="(item, index) in scope.row.Record" :key="index">
-                    <div v-if="item.Key=='DefendStatus' && item.Value == '1'">开启</div>
-                    <div v-else-if="item.Key=='DefendStatus' && item.Value != '1'">-</div>
-                  </div>
-                </template>
-              </el-table-column>
-              <el-table-column prop="Record.DdosThreshold" label="清洗阈值">
-                <template slot-scope="scope">
-                  <div v-for="(item, index) in scope.row.Record" :key="index">
-                    <div v-if="item.Key=='DdosThreshold'">{{item.Value}}Mps</div>
-                  </div>
-                </template>
-              </el-table-column>
-              <el-table-column prop="saveGarden" label="防护等级">
-                <template slot-scope="scope">
-                  <div v-for="(item, index) in scope.row.Record" :key="index">
-                    <div v-if="item.Key=='Id'">-</div>
-                  </div>
-                </template>
-              </el-table-column>
-              <el-table-column prop="BusinessScene" label="业务场景">
-                <template slot-scope="scope">
-                  <div v-for="(item, index) in scope.row.Record" :key="index">
-                    <div v-if="item.Key=='Id'">-</div>
-                  </div>
-                </template>
-              </el-table-column>
-              <el-table-column prop="advanced" label="高级防护策略">
-                <template slot-scope="scope">
-                  <div v-for="(item, index) in scope.row.Record" :key="index">
-                    <div v-if="item.Key=='Id'">-</div>
-                  </div>
-                </template>
-              </el-table-column>
-              <el-table-column prop="action" label="操作" width="180">
-                <template slot-scope="scope">
-                  <el-button @click="changeRow(scope.$index, scope.row)" type="text" size="small">修改</el-button>
-                </template>
-              </el-table-column>
-              <!-- 修改弹框 -->
-              <changeModel :configShow="changeModel" @closeConfigModel="closeConfigModel" />
-            </el-table>
-          </div>
-          <div class="tabListPage">
-            <el-pagination
-              @size-change="handleSizeChange"
-              @current-change="handleCurrentChange"
-              :current-page="currentPage"
-              :page-sizes="[10, 20, 30, 50]"
-              :page-size="pageSize"
-              layout="total, sizes, prev, pager, next, jumper"
-              :total="totalItems"
-            ></el-pagination>
-          </div>
-        </div>
-      </el-tab-pane>
-      <el-tab-pane label="CC防护" name="second">
-        <div style="padding:0 20px;">
-          <ccProtection :ccProtectSele="resourceId" />
-        </div>
-      </el-tab-pane>
-      <el-tab-pane label="DDoS高级防护策略" name="third">
-        <div class="mainContent">
-          <div v-if="tableShow" style="background:white;">
-            <el-button class="addNewT" type="primary" @click="addNewTactics">添加新策略</el-button>
-            <div class="minTable">
-              <el-table :data="tableDataPolicy">
-                <el-table-column prop="PolicyName" label="策略名称">
-                  <template slot-scope="scope">
-                    {{scope.row.PolicyName}}
-                    <!-- <a href="#" @click="toDetail(scope.$index, scope.row)">{{scope.row.PolicyName}}</a> -->
-                  </template>
-                </el-table-column>
-                <el-table-column prop="Resources.length" label="绑定资源数量">
-                  <template slot-scope="scope">{{scope.row.Resources.length}}</template>
-                </el-table-column>
-                <el-table-column prop="CreateTime" label="创建时间">
-                  <template slot-scope="scope">{{scope.row.CreateTime}}</template>
-                </el-table-column>
-                <el-table-column prop="action" label="操作" width="180">
-                  <template slot-scope="scope">
-                    <el-button
-                      @click="configListCon(scope.$index, scope.row)"
-                      type="text"
-                      size="small"
-                    >配置</el-button>
-                    <el-button
-                      @click.native.prevent="deleteRow(scope.$index, scope.row)"
-                      type="text"
-                      size="small"
-                    >删除</el-button>
-                    <el-dialog
-                      title="删除高级策略"
-                      :visible.sync="dialogVisible"
-                      width="30%"
-                      :before-close="handleClose"
-                    >
-                      <h1 class="deleteTit">
-                        <i class="el-icon-warning"></i>确定删除该政策么？
-                      </h1>
-                      <p
-                        class="deleteCont"
-                      >删除策略后，该防护策略将从列表中永久删除，不可恢复。若您已开启UDP水印剥离开关，则策略会同步关闭UDP水印剥离开关。</p>
-                      <p class="deleteCont">确定删除该条高级策略(erg)？</p>
-                      <span slot="footer" class="dialog-footer">
-                        <el-button @click="dialogVisible = false">取 消</el-button>
-                        <el-button type="primary" @click="deleteDDoSPolicy()">确 定</el-button>
-                      </span>
-                    </el-dialog>
-                    <el-button
-                      @click="bindingResource(scope.$index, scope.row)"
-                      type="text"
-                      size="small"
-                    >绑定资源</el-button>
-                    <el-dialog
-                      title="绑定资源"
-                      :visible.sync="dialogVisible1"
-                      width="43%"
-                      :before-close="handleClose1"
-                    >
-                      <div style="text-align: center">
-                        <el-transfer
-                          style="text-align: left; display: inline-block"
-                          v-model="valueThrou"
-                          filterable
-                          :left-default-checked="[2, 3]"
-                          :right-default-checked="[1]"
-                          :render-content="renderFunc"
-                          :titles="['选择资源', '已选择']"
-                          :button-texts="['到左边', '到右边']"
-                          :format="{
+  <div>
+    <div class="statistReportTit">
+      <div class="ReportTit newClear">
+        <h3 class="ReportTitH3">{{$t('DDOS.Proteccon_figura.Proteccon_title')}}</h3>
+        <el-button class="ReportTitBtn" type="primary" @click="newBuy">{{$t('DDOS.Statistical_forms.new_bug')}}</el-button>
+      </div>
+      <div>
+        <el-tabs v-model="activeName" @tab-click="handleClick">
+          <el-tab-pane :label="$t('DDOS.Proteccon_figura.DDosprotection')" name="first">
+            <div class="mainContent">
+              <div class="textAlignTop newClear">
+                <el-select class="checkListSelect" placeholder="要过滤的标签" v-model="filterConrent">
+                  <el-option v-for="(item, index) in options1" :label="item.label" :value="item.value" :key="index"></el-option>
+                </el-select>
+                <el-input
+                  v-model="tableDataName"
+                  class="searchs"
+                  placeholder="请输入要查询的内容"
+                ></el-input>
+                <el-button class="el-icon-search" @click="doFilter"></el-button>
+              </div>
+              <div class="mainTable">
+                <el-table :data="tableDataBegin.slice((currentPage-1)*pageSize,currentPage*pageSize)">
+                  <el-table-column prop="Record.Id" :label="$t('DDOS.Proteccon_figura.Id_name')">
+                    <template slot-scope="scope">
+                      <div v-for="(item, index) in scope.row.Record" :key="index">
+                        <div v-if="item.Key=='Id'">{{item.Value}}</div>
+                        <!-- <a v-if="item.Key=='Id'" href="#" @click="toDetail(scope.$index, scope.row)">{{item.Value}}</a> -->
+                      </div>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="Record.GroupIpList" label="IP">
+                    <template slot-scope="scope">
+                      <div v-for="(item, index) in scope.row.Record" :key="index">
+                        <div v-if="item.Key=='GroupIpList'">{{item.Value}}</div>
+                      </div>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="origin" :label="$t('DDOS.Proteccon_figura.region')">
+                    <template slot-scope="scope">
+                      <div v-for="(item, index) in scope.row.Record" :key="index">
+                        <div v-if="item.Key=='Id'">-</div>
+                      </div>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="Record.DefendStatus" :label="$t('DDOS.Proteccon_figura.Protection_state')">
+                    <template slot-scope="scope">
+                      <div v-for="(item, index) in scope.row.Record" :key="index">
+                        <div v-if="item.Key=='DefendStatus' && item.Value == '1'">开启</div>
+                        <div v-else-if="item.Key=='DefendStatus' && item.Value != '1'">-</div>
+                      </div>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="Record.DdosThreshold" label="清洗阈值">
+                    <template slot-scope="scope">
+                      <div v-for="(item, index) in scope.row.Record" :key="index">
+                        <div v-if="item.Key=='DdosThreshold'">{{item.Value}}Mps</div>
+                      </div>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="saveGarden" :label="$t('DDOS.Proteccon_figura.Protection_level')">
+                    <template slot-scope="scope">
+                      <div v-for="(item, index) in scope.row.Record" :key="index">
+                        <div v-if="item.Key=='Id'">-</div>
+                      </div>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="BusinessScene" :label="$t('DDOS.Proteccon_figura.Business_scenario')">
+                    <template slot-scope="scope">
+                      <div v-for="(item, index) in scope.row.Record" :key="index">
+                        <div v-if="item.Key=='Id'">-</div>
+                      </div>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="advanced" :label="$t('DDOS.Proteccon_figura.Advanced_strategy')">
+                    <template slot-scope="scope">
+                      <div v-for="(item, index) in scope.row.Record" :key="index">
+                        <div v-if="item.Key=='Id'">-</div>
+                      </div>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="action" label="操作" width="180">
+                    <template slot-scope="scope">
+                      <el-button
+                        @click="changeRow(scope.$index, scope.row)"
+                        type="text"
+                        size="small"
+                      >修改</el-button>
+                    </template>
+                  </el-table-column>
+                  <!-- 修改弹框 -->
+                  <changeModel :configShow="changeModel" @closeConfigModel="closeConfigModel"/>
+                </el-table>
+              </div>
+              <div class="tabListPage">
+                <el-pagination
+                  @size-change="handleSizeChange"
+                  @current-change="handleCurrentChange"
+                  :current-page="currentPage"
+                  :page-sizes="[10, 20, 30, 50]"
+                  :page-size="pageSize"
+                  layout="total, sizes, prev, pager, next, jumper"
+                  :total="totalItems"
+                ></el-pagination>
+              </div>
+            </div>
+          </el-tab-pane>
+          <el-tab-pane :label="$t('DDOS.Proteccon_figura.CC_protection')" name="second">
+            <div>
+              <ccProtection :ccProtectSele='resourceId'/>
+            </div>
+          </el-tab-pane>
+          <el-tab-pane :label="$t('DDOS.Proteccon_figura.Advanced_strategys')" name="third">
+            <div class="mainContent">
+              <div v-if="tableShow">
+                <el-button class="addNewT" type="primary" @click="addNewTactics">添加新策略</el-button>
+                <div class="minTable">
+                  <el-table :data="tableDataPolicy">
+                  <el-table-column prop="PolicyName" :label="$t('DDOS.Proteccon_figura.Policy_name')">
+                    <template slot-scope="scope">
+                      {{scope.row.PolicyName}}
+                      <!-- <a href="#" @click="toDetail(scope.$index, scope.row)">{{scope.row.PolicyName}}</a> -->
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="Resources.length" :label="$t('DDOS.Proteccon_figura.Number_resources')">
+                    <template slot-scope="scope">{{scope.row.Resources.length}}</template>
+                  </el-table-column>
+                  <el-table-column prop="CreateTime" :label="$t('DDOS.Proteccon_figura.Creation_time')">
+                    <template slot-scope="scope">{{scope.row.CreateTime}}</template>
+                  </el-table-column>
+                  <el-table-column prop="action" label="操作" width="180">
+                    <template slot-scope="scope">
+                      <el-button
+                        @click="configListCon(scope.$index, scope.row)"
+                        type="text"
+                        size="small"
+                      >配置</el-button>
+                      <el-button
+                        @click.native.prevent="deleteRow(scope.$index, scope.row)"
+                        type="text"
+                        size="small"
+                      >删除</el-button>
+                      <el-dialog
+                        title="删除高级策略"
+                        :visible.sync="dialogVisible"
+                        width="30%"
+                        :before-close="handleClose"
+                      >
+                        <h1 class="deleteTit"><i class="el-icon-warning"></i>确定删除该政策么？</h1>
+                        <p class="deleteCont">删除策略后，该防护策略将从列表中永久删除，不可恢复。若您已开启UDP水印剥离开关，则策略会同步关闭UDP水印剥离开关。</p>
+                        <p class="deleteCont">确定删除该条高级策略(erg)？</p>
+                        <span slot="footer" class="dialog-footer">
+                          <el-button @click="dialogVisible = false">取 消</el-button>
+                          <el-button type="primary" @click="deleteDDoSPolicy()">确 定</el-button>
+                        </span>
+                      </el-dialog>
+                      <el-button
+                        @click="bindingResource(scope.$index, scope.row)"
+                        type="text"
+                        size="small"
+                      >绑定资源</el-button>
+                      <el-dialog
+                        title="绑定资源"
+                        :visible.sync="dialogVisible1"
+                        width="43%"
+                        :before-close="handleClose1"
+                      >
+                        <div style="text-align: center">
+                          <el-transfer
+                            style="text-align: left; display: inline-block"
+                            v-model="valueThrou"
+                            filterable
+                            :left-default-checked="[2, 3]"
+                            :right-default-checked="[1]"
+                            :render-content="renderFunc"
+                            :titles="['选择资源', '已选择']"
+                            :button-texts="['到左边', '到右边']"
+                            :format="{
                               noChecked: '${total}',
                               hasChecked: '${checked}/${total}'
                             }"

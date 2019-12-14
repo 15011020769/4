@@ -3,9 +3,9 @@
     <div class="ccProtectPartFour">
       <div class="topBtnList">
         <el-button-group class="btnGroup">
-          <el-button @click="checkListBtn(1)" :style="thisType==1?'color:#006eff;border:1px solid #006eff;':''">URL白名单</el-button>
-          <el-button @click="checkListBtn(2)" :style="thisType==2?'color:#006eff;border:1px solid #006eff;':''">IP白名单</el-button>
-          <el-button @click="checkListBtn(3)" :style="thisType==3?'color:#006eff;border:1px solid #006eff;':''">IP黑名单</el-button>
+          <el-button @click="checkListBtn(1)" :style="thisType==1?'color:#006eff;border:1px solid #006eff;':''">{{$t('DDOS.Proteccon_figura.URL_whitelist')}}</el-button>
+          <el-button @click="checkListBtn(2)" :style="thisType==2?'color:#006eff;border:1px solid #006eff;':''">{{$t('DDOS.Proteccon_figura.IP_whitelist')}}</el-button>
+          <el-button @click="checkListBtn(3)" :style="thisType==3?'color:#006eff;border:1px solid #006eff;':''">{{$t('DDOS.Proteccon_figura.IP_blacklist')}}</el-button>
         </el-button-group>
       </div>
       <div>

@@ -31,25 +31,25 @@
           <el-option :label="inputIdCC" :value="inputIdCC"></el-option>
         </el-select>
         <el-select class="ddosAttackSelect1" v-model="ccTimeBtnSelect2">
-          <el-option v-for="item in IpList" :value="item"></el-option>
+          <el-option v-for="(item,index) in IpList" :value="item" :key="index"></el-option>
         </el-select>
       </div>
       <div class="mainConListAll mainConListTwo">
         <div id="myChart3" ref="chart"></div>
       </div>
       <div class="mainConListAll">
-        <h3>CC攻击记录</h3>
+        <h3>{{$t('DDOS.Statistical_forms.CC_attack_record')}}</h3>
         <div class="ddosTableMin">
           <el-table
-            :data="tableDataOfDescribeDDoSNetEvListcc.slice((currentPage-1)*pageSize,currentPage*pageSize)"
-          >
-            <el-table-column prop="attackTime" label="攻击时间"></el-table-column>
-            <el-table-column prop="attackDomin" label="被攻击域名"></el-table-column>
-            <el-table-column prop="attackUrl" label="被攻击URI"></el-table-column>
-            <el-table-column prop="allRequestTop" label="总请求峰值（QPS）"></el-table-column>
-            <el-table-column prop="attackReqTop" label="攻击请求峰值（QPS）"></el-table-column>
-            <el-table-column prop="attackResou" label="攻击源"></el-table-column>
-          </el-table>
+          :data="tableDataOfDescribeDDoSNetEvListcc.slice((currentPage-1)*pageSize,currentPage*pageSize)"
+        >
+          <el-table-column prop="attackTime" :label="$t('DDOS.Statistical_forms.Attack_time')"></el-table-column>
+          <el-table-column prop="attackDomin" :label="$t('DDOS.Statistical_forms.Domainunder_attack')"></el-table-column>
+          <el-table-column prop="attackUrl" :label="$t('DDOS.Statistical_forms.Attacked_URI')"></el-table-column>
+          <el-table-column prop="allRequestTop" :label="$t('DDOS.Statistical_forms.request_peak')"></el-table-column>
+          <el-table-column prop="attackReqTop" :label="$t('DDOS.Statistical_forms.Attack_peak')"></el-table-column>
+          <el-table-column prop="attackResou" :label="$t('DDOS.Statistical_forms.Attack_source')"></el-table-column>
+        </el-table>
         </div>
 
         <div class="tabListPage">

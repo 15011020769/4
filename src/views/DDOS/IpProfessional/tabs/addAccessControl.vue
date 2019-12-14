@@ -2,8 +2,8 @@
   <div id="addAccessControl">
     <div class="ccProtectPartThree">
       <div class="partThreeTop newClear">
-        <el-button class="addAccessBtn" @click="addAccessModel">添加访问控制策略</el-button>
-        <span class="topTipAdd">基于HTTP字段进行访问控制或者基于源IP进行访问限速,最多可以添加5条策略</span>
+        <el-button class="addAccessBtn" @click="addAccessModel">{{$t('DDOS.Proteccon_figura.Add_access')}}</el-button>
+        <span class="topTipAdd">{{$t('DDOS.Proteccon_figura.add_access')}}</span>
         <span class="floatRightSearch">
           <el-input class="searchIpt" placeholder="请输入要查找的策略名称" v-model="tableDataName"></el-input><el-button @click="doFilter" class="el-icon-search"></el-button>
         </span>
@@ -11,21 +11,21 @@
       <div class="tableList">
         <div class="tableConControl">
           <el-table :data="tableDataBegin.slice((currentPage-1)*pageSize,currentPage*pageSize)" style="width: 100%;margin: 18px 0 20px;">
-            <el-table-column prop="accessName" label="策略名称" width="">
+            <el-table-column prop="accessName" :label="$t('DDOS.Proteccon_figura.Policy_name')" width="">
             </el-table-column>
-            <el-table-column prop="protocol" label="协议" width="">
+            <el-table-column prop="protocol" :label="$t('DDOS.Proteccon_figura.Agreement')" width="">
             </el-table-column>
-            <el-table-column prop="protentIp" label="防护IP">
+            <el-table-column prop="protentIp" :label="$t('DDOS.Proteccon_figura.Protection_IP')">
             </el-table-column>
             <el-table-column prop="doMin" label="域名">
             </el-table-column>
-            <el-table-column prop="MatchCondition" label="匹配条件">
+            <el-table-column prop="MatchCondition" :label="$t('DDOS.Proteccon_figura.Matching_condition')">
             </el-table-column>
-            <el-table-column prop="MatchAction" label="匹配动作">
+            <el-table-column prop="MatchAction" :label="$t('DDOS.Proteccon_figura.Matching_action')">
             </el-table-column>
-            <el-table-column prop="createTime" label="创建时间">
+            <el-table-column prop="createTime" :label="$t('DDOS.Proteccon_figura.Creation_time')">
             </el-table-column>
-            <el-table-column prop="nowState" label="当前状态">
+            <el-table-column prop="nowState" :label="$t('DDOS.Proteccon_figura.Current_state')">
             </el-table-column>
             <el-table-column prop="action" label="操作" width="180">
               <template slot-scope="scope">

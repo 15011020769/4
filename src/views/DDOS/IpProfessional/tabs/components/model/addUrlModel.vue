@@ -8,7 +8,7 @@
         :before-close="handleClose">
         <div class="newClear">
           <div class="httpCheck newClear">
-            <span class="checkSpan1">协议</span>
+            <span class="checkSpan1">{{$t('DDOS.Proteccon_figura.Agreement')}}</span>
             <span class="checkSpan2">
               <el-radio-group v-model="httpCheck">
                 <el-radio label="HTTP"></el-radio>
@@ -17,7 +17,7 @@
             </span>
           </div>
           <div class="blueTip">
-            请填写URL地址，确定后URL将加入防护白名单，总共支持添加50条URL。
+            {{$t('DDOS.Proteccon_figura.IP_address')}}
           </div>
           <div class="addUrlBox">
             <h3>URL地址</h3>
@@ -32,7 +32,7 @@
                     <el-input class="inputChange" placeholder="请输入URL" v-model="item.urlAddress" autocomplete="off"></el-input>
                   </td>
                   <td>
-                    <a v-on:click="removeRow(index)" v-show="index >= 0">删除</a>
+                    <a v-on:click="removeRow(index)" v-show="index >= 0">{{$t('DDOS.Proteccon_figura.Delete')}}</a>
                   </td>
                 </tr>
               </table>
@@ -42,7 +42,7 @@
         </div>
         <span slot="footer" class="dialog-footer">
           <el-button @click="handleClose">取 消</el-button>
-          <el-button type="primary" @click="addUrlSure">确 定</el-button>
+          <el-button type="primary" @click="addUrlSure">{{$t('DDOS.Proteccon_figura.Determination')}}</el-button>
         </span>
       </el-dialog>
     </div>

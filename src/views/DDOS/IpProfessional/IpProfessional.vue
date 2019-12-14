@@ -1,18 +1,23 @@
 <template>
-  <div class="wrap">
-    <div class="header">
-      <HeaderCom title="统计报表" />
-      <el-tabs v-model="activeName" @tab-click="handleClick">
-        <el-tab-pane label="DDoS攻击防护" name="ddos">
-          <ddosAttack ref="ddosAttack" />
-        </el-tab-pane>
-        <el-tab-pane label="CC攻击防护" name="cc">
-          <ccAttack ref="ccAttack" />
-        </el-tab-pane>
-        <el-tab-pane label="业务" name="service">
-          <business ref="servers" />
-        </el-tab-pane>
-      </el-tabs>
+  <div>
+    <div class="statistReportTit">
+      <div class="ReportTit newClear">
+        <h3 class="ReportTitH3">{{$t('DDOS.Statistical_forms.form_title')}}</h3>
+        <el-button class="ReportTitBtn" type="primary" @click="newBuy">{{$t('DDOS.Statistical_forms.new_bug')}}</el-button>
+      </div>
+      <div>
+        <el-tabs v-model="activeName" @tab-click="handleClick">
+          <el-tab-pane :label="$t('DDOS.Statistical_forms.DDoS_Protection')" name="ddos">
+            <ddosAttack ref="ddosAttack"/>
+          </el-tab-pane>
+          <el-tab-pane :label="$t('DDOS.Statistical_forms.CC_attack_protection')" name="cc">
+            <ccAttack ref="ccAttack"/>
+          </el-tab-pane>
+          <el-tab-pane :label="$t('DDOS.Statistical_forms.business')" name="service">
+            <business ref="servers"/>
+          </el-tab-pane>
+        </el-tabs>
+      </div>
     </div>
   </div>
 </template>

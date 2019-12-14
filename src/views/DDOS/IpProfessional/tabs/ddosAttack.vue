@@ -7,8 +7,8 @@
       >
         <div class="newClear">
           <el-button-group class="buttonGroupAll">
-            <el-button class="buttonGroup" @click="thisTime(1)">今天</el-button>
-            <el-button class="buttonGroup" @click="thisTime(2)">近7天</el-button>
+            <el-button class="buttonGroup" @click="thisTime(1)">{{$t('DDOS.Statistical_forms.Today')}}</el-button>
+            <el-button class="buttonGroup" @click="thisTime(2)">{{$t('DDOS.Statistical_forms.Nearly_sedays')}}</el-button>
             <el-button class="buttonGroup" @click="thisTime(3)">近15天</el-button>
             <el-button class="buttonGroup" @click="thisTime(4)">近30天</el-button>
             <el-button class="buttonGroup" @click="thisTime(5)">近半年</el-button>
@@ -40,10 +40,10 @@
       </div>
       <div class="mainConListAll mainConListTwo">
         <el-tabs class="tabsCard" v-model="activeName1" type="card" @tab-click="handleClick1">
-          <el-tab-pane label="攻击流量宽带" name="bps">
+          <el-tab-pane :label="$t('DDOS.Statistical_forms.Overview_broadband')" name="bps">
             <div id="myChart"></div>
           </el-tab-pane>
-          <el-tab-pane label="攻击包速率" name="pps">
+          <el-tab-pane :label="$t('DDOS.Statistical_forms.Attack_rate')" name="pps">
             <div id="myChart2"></div>
           </el-tab-pane>
         </el-tabs>
@@ -53,38 +53,38 @@
           <el-row>
             <el-col :span="8">
               <div class="colDivThree">
-                <h1>攻击流量协议分布</h1>
-                <p class="count">(单位：B)</p>
-                <div class="dataList">暂无数据</div>
+                <h1>{{$t('DDOS.Statistical_forms.Attack_distribution')}}</h1>
+                <p class="count">({{$t('DDOS.Statistical_forms.SettingB')}})</p>
+                <div class="dataList">{{$t('DDOS.Statistical_forms.Nodate')}}</div>
               </div>
             </el-col>
             <el-col :span="8">
               <div class="colDivThree">
-                <h1>攻击包协议分布</h1>
-                <p class="count">(单位：packet)</p>
-                <div class="dataList">暂无数据</div>
+                <h1>{{$t('DDOS.Statistical_forms.Attack_pp_distribution')}}</h1>
+                <p class="count">({{$t('DDOS.Statistical_forms.Unit_packe')}})</p>
+                <div class="dataList">{{$t('DDOS.Statistical_forms.Nodate')}}</div>
               </div>
             </el-col>
             <el-col :span="8">
               <div class="colDivThree">
-                <h1>攻击类型分布</h1>
-                <p class="count">(单位：次)</p>
-                <div class="dataList">暂无数据</div>
+                <h1>{{$t('DDOS.Statistical_forms.Attack_typedistribution')}}</h1>
+                <p class="count">({{$t('DDOS.Statistical_forms.Unit_Times')}})</p>
+                <div class="dataList">{{$t('DDOS.Statistical_forms.Nodate')}}</div>
               </div>
             </el-col>
           </el-row>
         </div>
       </div>
       <div class="mainConListAll mainConListFour">
-        <h3>DDoS攻击详情</h3>
+        <h3>{{$t('DDOS.Statistical_forms.DDoS_details')}}</h3>
         <div class="ddosTableMin">
           <el-table
             :data="tableDataOfDescribeDDoSNetEvList.slice((currentPage-1)*pageSize,currentPage*pageSize)"
           >
-            <el-table-column prop="attackTime" label="攻击时间"></el-table-column>
-            <el-table-column prop="durnTime" label="持续时间"></el-table-column>
-            <el-table-column prop="attackType" label="攻击类型"></el-table-column>
-            <el-table-column prop="attackStatus" label="攻击状态"></el-table-column>
+            <el-table-column prop="attackTime" :label="$t('DDOS.Statistical_forms.Attack_time')"></el-table-column>
+            <el-table-column prop="durnTime" :label="$t('DDOS.Statistical_forms.Duration')"></el-table-column>
+            <el-table-column prop="attackType" :label="$t('DDOS.Statistical_forms.Type_ofattack')"></el-table-column>
+            <el-table-column prop="attackStatus" :label="$t('DDOS.Statistical_forms.Attack_state')"></el-table-column>
             <el-table-column prop="attackAction" label="操作" width="180">
               <template slot-scope>
                 <el-button type="text" size="small">操作</el-button>

@@ -36,10 +36,10 @@
       </div>
       <div class="mainConListAll mainConListTwo">
         <el-tabs class="tabsCard" v-model="activeName2" type="card" @tab-click="handleClick2">
-          <el-tab-pane label="业务流量宽带" name="traffic">
+          <el-tab-pane :label="$t('DDOS.Statistical_forms.Traffic_broadband')" name="traffic">
             <div id="myChart4"></div>
           </el-tab-pane>
-          <el-tab-pane label="业务包速率" name="pkg">
+          <el-tab-pane :label="$t('DDOS.Statistical_forms.Packet_rate')" name="pkg">
             <div id="myChart5"></div>
           </el-tab-pane>
         </el-tabs>
