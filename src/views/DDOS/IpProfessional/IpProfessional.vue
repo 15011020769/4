@@ -19,9 +19,12 @@
 <script>
 import HeaderCom from "../../CLA/Public/Head";
 import moment from "moment";
-import ddosAttack from "./tabs/ddosAttack";
-import ccAttack from "./tabs/ccAttack";
-import business from "./tabs/business";
+// import ddosAttack from "./tabs/ddosAttack";
+// import ccAttack from "./tabs/ccAttack";
+// import business from "./tabs/business";
+require(["./tabs/ddosAttack"], resolve)
+require(["./tabs/ccAttack"], resolve)
+require(["./tabs/business"], resolve)
 export default {
   data() {
     return {

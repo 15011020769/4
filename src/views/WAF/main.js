@@ -15,9 +15,9 @@ import i18n from './language/i18n.js' // 引入i18n包
 // const echarts = require('echarts/lib/echarts')
 // require("echarts/lib/component/legend")
     // 引入折线图组件
-require('echarts/lib/chart/line')
+// require('echarts/lib/chart/line')
     // 引入提示框和title组件，图例
-require('echarts/lib/component/tooltip')
+// require('echarts/lib/component/tooltip')
 Vue.prototype.$echarts = echarts
 for (let key in filters) {
     Vue.filter(key, filters[key])

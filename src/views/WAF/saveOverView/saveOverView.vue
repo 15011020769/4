@@ -6,13 +6,13 @@
       </div>
       <el-tabs v-model="activeName" @tab-click="handleClick" class="tabList">
         <el-tab-pane label="攻击概览" name="first">
-          <attackOverview/>
+          <attackOverview v-if="isChildUpdate1"/>
         </el-tab-pane>
         <el-tab-pane label="业务概览" name="second">
-          <businessOverview/>
+          <businessOverview v-if="isChildUpdate2"/>
         </el-tab-pane>
         <el-tab-pane label="访问日志" name="third">
-          <accessLog/>
+          <accessLog v-if="isChildUpdate3"/>
         </el-tab-pane>
       </el-tabs>
     </div>
@@ -25,7 +25,10 @@ import accessLog from './tab/accessLog'
 export default {
   data(){
     return{
-      activeName:'first'
+      activeName:'first',
+       isChildUpdate1:true,
+      isChildUpdate2:false,
+      isChildUpdate3:false
     }
   },
   components:{
@@ -37,6 +40,19 @@ export default {
     //tab切换点击事件
     handleClick(tab, event){
       // console.log(tab, event)
+       if(tab.name == "first") {
+                this.isChildUpdate1 = true;
+                this.isChildUpdate2 = false;
+                this.isChildUpdate3 = false;
+            } else if(tab.name == "second") {
+                this.isChildUpdate1 = false;
+                this.isChildUpdate2 = true;
+                this.isChildUpdate3 = false;
+            }else{
+              this.isChildUpdate1 = false;
+                this.isChildUpdate2 = false;
+                this.isChildUpdate3 = true;
+            }
     }
   }
 }

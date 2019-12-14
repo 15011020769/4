@@ -90,8 +90,8 @@ export default {
     };
   },
   mounted () {
-    var _this=this;
-    setTimeout(_this.initCharts(),1000)
+    
+    this.initCharts()
 　},
   methods: {
     //时间点击事件
@@ -117,7 +117,7 @@ export default {
     //图表
     initCharts() {
       let myChart = this.$echarts.init(this.$refs.chart);
-      console.log(this.$refs.chart); // 绘制图表
+      // console.log(this.$refs.chart); // 绘制图表
       myChart.setOption({
         color: ["rgb(124, 181, 236)"],
         title: { text: "" },
@@ -187,10 +187,10 @@ export default {
           }
         }
       });
-      myChart3.resize();
-      window.addEventListener("resize", function() {
-        myChart3.resize();
-      });
+      // myChart.resize();
+      // window.addEventListener("resize", function() {
+      //   myChart.resize();
+      // });
     }
   }
 };

@@ -115,9 +115,9 @@ export default {
     },
     //图表
     initCharts() {
-      let myChart = this.$echarts.init(this.$refs.chart);
-      console.log(this.$refs.chart); // 绘制图表
-      myChart.setOption({
+      let myChart2 = this.$echarts.init(this.$refs.chart);
+      // console.log(myChart2)
+      myChart2.setOption({
         color: ["rgb(124, 181, 236)"],
         title: { text: "" },
         tooltip: {},
@@ -184,11 +184,17 @@ export default {
           lineStyle: {
             color: "#000"
           }
-        }
+        },
+       
       });
-    }
+    //     myChart2.resize();
+    //      window.addEventListener("resize", function() {
+    //       //  alert(111)
+    //     myChart2.resize();
+    // });
   }
-};
+  }
+}
 </script>
 <style lang="scss" scoped>
 .wrapperContent {
