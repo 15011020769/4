@@ -272,6 +272,7 @@ module.exports = {
       Determination: '確 定',
       Shut_down: '關閉',
       Uptoadded: '最多可以添加50條IP',
+      Add_newpolicy:'添加新策略',
     }
   },
   COM: require('@/components/language/ft')

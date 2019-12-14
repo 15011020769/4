@@ -2,7 +2,7 @@
   <div class="wrap">
     <HeaderCom title="防护配置" />
     <el-tabs v-model="activeName" @tab-click="handleClick">
-      <el-tab-pane label="DDoS防护" name="first" style="padding:0 20px;">
+      <el-tab-pane :label="$t('DDOS.Statistical_forms.DDoS_Protection')" name="first" style="padding:0 20px;">
         <div class="mainContent">
           <div class="textAlignTop newClear">
             <el-select class="checkListSelect" placeholder="要过滤的标签" v-model="filterConrent">
@@ -14,7 +14,7 @@
           </div>
           <div class="mainTable">
             <el-table :data="tableDataBegin.slice((currentPage-1)*pageSize,currentPage*pageSize)">
-              <el-table-column prop="Record.Id" label="ID/名称">
+              <el-table-column prop="Record.Id" :label="$t('DDOS.Proteccon_figura.Id_name')">
                 <template slot-scope="scope">
                   <div v-for="(item, index) in scope.row.Record" :key="index">
                     <div v-if="item.Key=='Id'">{{item.Value}}</div>
@@ -29,14 +29,14 @@
                   </div>
                 </template>
               </el-table-column>
-              <el-table-column prop="origin" label="地区">
+              <el-table-column prop="origin" :label="$t('DDOS.Proteccon_figura.region')">
                 <template slot-scope="scope">
                   <div v-for="(item, index) in scope.row.Record" :key="index">
                     <div v-if="item.Key=='Id'">-</div>
                   </div>
                 </template>
               </el-table-column>
-              <el-table-column prop="Record.DefendStatus" label="防护状态">
+              <el-table-column prop="Record.DefendStatus" :label="$t('DDOS.Proteccon_figura.Protection_state')">
                 <template slot-scope="scope">
                   <div v-for="(item, index) in scope.row.Record" :key="index">
                     <div v-if="item.Key=='DefendStatus' && item.Value == '1'">开启</div>
@@ -51,21 +51,21 @@
                   </div>
                 </template>
               </el-table-column>
-              <el-table-column prop="saveGarden" label="防护等级">
+              <el-table-column prop="saveGarden" :label="$t('DDOS.Proteccon_figura.Protection_level')">
                 <template slot-scope="scope">
                   <div v-for="(item, index) in scope.row.Record" :key="index">
                     <div v-if="item.Key=='Id'">-</div>
                   </div>
                 </template>
               </el-table-column>
-              <el-table-column prop="BusinessScene" label="业务场景">
+              <el-table-column prop="BusinessScene" :label="$t('DDOS.Proteccon_figura.Business_scenario')">
                 <template slot-scope="scope">
                   <div v-for="(item, index) in scope.row.Record" :key="index">
                     <div v-if="item.Key=='Id'">-</div>
                   </div>
                 </template>
               </el-table-column>
-              <el-table-column prop="advanced" label="高级防护策略">
+              <el-table-column prop="advanced" :label="$t('DDOS.Proteccon_figura.Advanced_strategy')">
                 <template slot-scope="scope">
                   <div v-for="(item, index) in scope.row.Record" :key="index">
                     <div v-if="item.Key=='Id'">-</div>
@@ -88,33 +88,33 @@
           </div>
         </div>
       </el-tab-pane>
-      <el-tab-pane label="CC防护" name="second">
+      <el-tab-pane :label="$t('DDOS.Proteccon_figura.CC_protection')" name="second">
         <div style="padding:0 20px;">
           <ccProtection :ccProtectSele="resourceId" />
         </div>
       </el-tab-pane>
-      <el-tab-pane label="DDoS高级防护策略" name="third">
+      <el-tab-pane :label="$t('DDOS.Proteccon_figura.Advanced_strategys')" name="third">
         <div class="mainContent">
           <div v-if="tableShow" style="background:white;">
-            <el-button class="addNewT" type="primary" @click="addNewTactics">添加新策略</el-button>
+            <el-button class="addNewT" type="primary" @click="addNewTactics">{{$t('DDOS.Proteccon_figura.Add_newpolicy')}}</el-button>
             <div class="minTable">
               <el-table :data="tableDataPolicy">
-                <el-table-column prop="PolicyName" label="策略名称">
+                <el-table-column prop="PolicyName" :label="$t('DDOS.Proteccon_figura.Policy_name')">
                   <template slot-scope="scope">
                     {{scope.row.PolicyName}}
                     <!-- <a href="#" @click="toDetail(scope.$index, scope.row)">{{scope.row.PolicyName}}</a> -->
                   </template>
                 </el-table-column>
-                <el-table-column prop="Resources.length" label="绑定资源数量">
+                <el-table-column prop="Resources.length" :label="$t('DDOS.Proteccon_figura.Number_resources')">
                   <template slot-scope="scope">{{scope.row.Resources.length}}</template>
                 </el-table-column>
-                <el-table-column prop="CreateTime" label="创建时间">
+                <el-table-column prop="CreateTime" :label="$t('DDOS.Proteccon_figura.Creation_time')">
                   <template slot-scope="scope">{{scope.row.CreateTime}}</template>
                 </el-table-column>
                 <el-table-column prop="action" label="操作" width="180">
                   <template slot-scope="scope">
                     <el-button @click="configListCon(scope.$index, scope.row)" type="text" size="small">配置</el-button>
-                    <el-button @click.native.prevent="deleteRow(scope.$index, scope.row)" type="text" size="small">删除
+                    <el-button @click.native.prevent="deleteRow(scope.$index, scope.row)" type="text" size="small">{{$t('DDOS.Proteccon_figura.Delete')}}
                     </el-button>
                     <el-dialog title="删除高级策略" :visible.sync="dialogVisible" width="30%" :before-close="handleClose">
                       <h1 class="deleteTit">
