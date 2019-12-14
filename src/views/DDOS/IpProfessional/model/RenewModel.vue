@@ -2,17 +2,17 @@
   <div id="renewModel">
     <div>
       <el-dialog class="modelDetail"
-        title="续费"
+        :title="$t('DDOS.protectCon.renewalPrice')"
         :visible.sync="renewShowModel"
         width="50%"
         :before-close="handleClose">
         <div class="newClear renewList">
           <div class="newClear">
-            <p>ID/名称</p>
+            <p>{{$t('DDOS.AssetList.AssetListName')}}</p>
             <p>net-0000006y/789</p>
           </div>
           <div class="newClear">
-            <p>续费时长</p>
+            <p>{{$t('DDOS.protectCon.renewalTime')}}</p>
             <p>
               <span :class="renew==1?'active':''" @click="checkListrenew(1,'60')">1月</span>
               <span :class="renew==2?'active':''" @click="checkListrenew(2,'60')">2月</span>
@@ -30,12 +30,12 @@
             </p>
           </div>
           <div class="newClear">
-            <p>总计费用</p>
+            <p>{{$t('DDOS.protectCon.renewalPriceSum')}}</p>
             <p class="allMoney"><i class="money">{{money}}</i>元</p>
           </div>
         </div>
         <span class="bottomBtnU">
-          <el-button class="nowPay">立即续费</el-button>
+          <el-button class="nowPay">{{$t('DDOS.protectCon.justBuy')}}</el-button>
           <el-button @click="handleClose">取消</el-button>
         </span>
       </el-dialog>

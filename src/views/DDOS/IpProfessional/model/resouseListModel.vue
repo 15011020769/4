@@ -8,38 +8,38 @@
         :before-close="handleClose">
         <div class="contentDetail" >
           <div class="contentDetailTop">
-            <h2>基础信息<a href="#" @click="editBtn">编辑</a></h2>
+            <h2>{{$t('DDOS.protectCon.BasicText')}}<a href="#" @click="editBtn">{{$t('DDOS.AccesstoCon.AccUpdate')}}</a></h2>
             <div class="basicInfo newClear">
               <div class="newClear" v-for="(item,index) in EnidData.Record" v-if="item.Key=='Id'">
-                <span class="basicLabel" >资源ID</span>
+                <span class="basicLabel" >{{$t('DDOS.protectCon.ResourceId')}}</span>
                 <span class="basicIpt" >{{item.Value}}</span> 
                 </div>
               <div class="newClear" v-for="(item,index) in EnidData.Record" v-if="item.Key=='Name'">
-                <span class="basicLabel">资源名称</span>
+                <span class="basicLabel">{{$t('DDOS.protectCon.ResourceName')}}</span>
                 <span class="basicIpt" v-if="!thisEditShow">{{item.Value}}
                 </span>
                 <span><el-input class="resouseName" v-model="thisName" v-if="thisEditShow"  ></el-input>
                 </span>
               </div>
               <div class="newClear" v-for="(item,index) in EnidData.Record" v-if="item.Key=='CName'"><span class="basicLabel">CNAME</span><span class="basicIpt">{{item.Value}}</span></div>
-              <div class="newClear" v-for="(item,index) in EnidData.Record" v-if="item.Key=='OriginRegion'"><span class="basicLabel">初始区域</span><span class="basicIpt">{{item.Value}}</span></div>
-              <div class="newClear" v-for="(item,index) in EnidData.Record" v-if="item.Key=='OriginRegion'"><span class="basicLabel">当前区域</span><span class="basicIpt">{{item.Value}}</span></div>
-              <div class="newClear"  v-for="(item,index) in EnidData.Record" v-if="item.Key=='Status'" ><span class="basicLabel">当前状态</span><span class="basicIpt">{{item.Value}}</span></div>
-              <div class="newClear"><span class="basicLabel">标签</span><span class="basicIpt">无<i class="el-icon-edit" @click="addTags"></i></span></div>
+              <div class="newClear" v-for="(item,index) in EnidData.Record" v-if="item.Key=='OriginRegion'"><span class="basicLabel">{{$t('DDOS.protectCon.initialREgion')}}</span><span class="basicIpt">{{item.Value}}</span></div>
+              <div class="newClear" v-for="(item,index) in EnidData.Record" v-if="item.Key=='OriginRegion'"><span class="basicLabel">{{$t('DDOS.protectCon.currentRegion')}}</span><span class="basicIpt">{{item.Value}}</span></div>
+              <div class="newClear"  v-for="(item,index) in EnidData.Record" v-if="item.Key=='Status'" ><span class="basicLabel">{{$t('DDOS.protectCon.currentstates')}}</span><span class="basicIpt">{{item.Value}}</span></div>
+              <div class="newClear"><span class="basicLabel">{{$t('DDOS.protectCon.label')}}</span><span class="basicIpt">无<i class="el-icon-edit" @click="addTags"></i></span></div>
             </div>
             <div class="editBtn" v-if="thisEditShow">
-              <el-button class="editSure" @click="editSure">确定</el-button>
+              <el-button class="editSure" @click="editSure">{{$t('DDOS.AccesstoCon.ImSure')}}</el-button>
               <el-button @click="thisEditShow=false">取消</el-button>
             </div>
           </div>
           <div class="contentDetailBot contentDetailTop">
-            <h2>防护信息</h2>
+            <h2>{{$t('DDOS.protectCon.ProtectionCon')}}</h2>
             <div class="basicInfo newClear">
-              <div class="newClear" v-for="(item,index) in EnidData.Record" v-if="item.Key=='RuleLimit'"><span class="basicLabel">保底防护峰值</span><span class="basicIpt">{{item.Value}}Gbps</span></div>
-              <div class="newClear"v-for="(item,index) in EnidData.Record" v-if="item.Key=='DDoSAI'"><span class="basicLabel">弹性防护峰值</span><span class="basicIpt">{{item.Value}}</span></div>
-              <div class="newClear" v-for="(item,index) in EnidData.Record" v-if="item.Key=='CCMax'"><span class="basicLabel">CC防护峰值</span><span class="basicIpt">{{item.Value}}QPS</span></div>
+              <div class="newClear" v-for="(item,index) in EnidData.Record" v-if="item.Key=='RuleLimit'"><span class="basicLabel">{{$t('DDOS.choose.MinimumProtection')}}</span><span class="basicIpt">{{item.Value}}Gbps</span></div>
+              <div class="newClear"v-for="(item,index) in EnidData.Record" v-if="item.Key=='DDoSAI'"><span class="basicLabel">{{$t('DDOS.choose.ElasticProtection')}}</span><span class="basicIpt">{{item.Value}}</span></div>
+              <div class="newClear" v-for="(item,index) in EnidData.Record" v-if="item.Key=='CCMax'"><span class="basicLabel">{{$t('DDOS.choose.CCMinimum')}}</span><span class="basicIpt">{{item.Value}}QPS</span></div>
               <div class="newClear" v-for="(item,index) in EnidData.Record" v-if="item.Key=='GroupIpList'" >
-                <span class="basicLabel">IP资源</span>
+                <span class="basicLabel">{{$t('DDOS.protectCon.IpResour')}}</span>
                 <span class="basicIpt">
                   <span>{{item.Value}}</span><br/>
       s
@@ -59,8 +59,8 @@
         <div class="tableContent">
           <table class="table-div1">
             <tr class="t-head1">
-              <td>标签键</td>
-              <td>标签值</td>
+              <td>{{$t('DDOS.protectCon.labelKey')}}</td>
+              <td>{{$t('DDOS.protectCon.labelValue')}}</td>
               <td>操作</td>
             </tr>
             <tr class="t-body1" v-for="(item, index) in tags" :key="index">
@@ -72,14 +72,14 @@
                 <el-input class="inputChange" v-model="item.endPort" autocomplete="off"></el-input>
               </td>
               <td>
-                <a v-on:click="removeRow(index,1)" v-show="index >= 0">删除</a>
+                <a v-on:click="removeRow(index,1)" v-show="index >= 0">{{$t('DDOS.AccesstoCon.AccDel')}}</a>
               </td>
             </tr>
           </table>
         </div>
         <a v-on:click="addRow(1)" class="">添加</a>
         <span class="footerBtn">
-          <el-button @click="addTagsSureResouse">确定</el-button>
+          <el-button @click="addTagsSureResouse">{{$t('DDOS.AccesstoCon.ImSure')}}</el-button>
           <el-button @click="handleCloseTags">取消</el-button>
         </span>
       </el-dialog>

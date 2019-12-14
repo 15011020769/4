@@ -69,9 +69,7 @@
                     >{{item}}</span>-->
                   </div>
                   <div class="tipList">
-                    <p
-                      class="tipListOne"
-                    >{{$t('DDOS.choose.chooseTitle')}}</p>
+                    <p class="tipListOne">{{$t('DDOS.choose.chooseTitle')}}</p>
                     <p class="tipListTwo">{{$t('DDOS.choose.chooseTitles')}}</p>
                   </div>
                 </div>
@@ -233,7 +231,8 @@
               <div class="checkList newClear">
                 <div class="checkListLeft">{{$t('DDOS.choose.renewalMoney')}}</div>
                 <div class="checkListRight">
-                  <el-checkbox v-model="checked" @change="checkedOrNo"></el-checkbox>{{$t('DDOS.choose.accountMoney')}}
+                  <el-checkbox v-model="checked" @change="checkedOrNo"></el-checkbox>
+                  {{$t('DDOS.choose.accountMoney')}}
                 </div>
               </div>
             </li>

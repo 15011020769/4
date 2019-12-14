@@ -1,10 +1,10 @@
 <template>
   <div id="configModel">
     <div>
-      <el-dialog title="DDoS防护配置" :visible.sync="configIsShow" width="40%" :append-to-body="true" :before-close="handleClose">
+      <el-dialog :title="$t('DDOS.protectCon.ProtectionName')" :visible.sync="configIsShow" width="40%" :append-to-body="true" :before-close="handleClose">
         <div class="modelCenterCon">
           <p class="newClear">
-            <span class="modelSpan1">防护状态</span>
+            <span class="modelSpan1">{{$t('DDOS.protectCon.protectionStatus')}}</span>
             <span @click="outOk()">
               <el-switch v-model="servicePack.DefendStatus" active-color="#006eff" inactive-color="#999">
               </el-switch>
@@ -12,7 +12,7 @@
           </p>
           <div v-if="ShowFlag=='0'?true:false">
             <p class="newClear">
-              <span class="modelSpan1">清洗阈值<i class="el-icon-info"></i></span>
+              <span class="modelSpan1">{{$t('DDOS.protectCon.CleaningShold')}}<i class="el-icon-info"></i></span>
               <span>
                 <el-select v-model="servicePack.DdosThreshold" class="setSelectM" @change="cleanThreshold">
                   <el-option v-for="(item, index) in cleanNumOption" :label="item.label" :value="item.value" :key="index"></el-option>
@@ -20,36 +20,36 @@
               </span>
             </p>
             <p class="newClear">
-              <span class="modelSpan1">防护等级<i class="el-icon-info"></i></span>
+              <span class="modelSpan1">{{$t('DDOS.protectCon.ProtectionGrade')}}<i class="el-icon-info"></i></span>
               <span class="modelSpan2">
-                <a class="gardenChoose" :class="saveGarden==1?'seceltGarden':''" @click="clickGarden(1,'宽松')">宽松</a>
+                <a class="gardenChoose" :class="saveGarden==1?'seceltGarden':''" @click="clickGarden(1,'宽松')">{{$t('DDOS.protectCon.loose')}}</a>
                 <a class="gardenChoose" :class="saveGarden==2?'seceltGarden':''" @click="clickGarden(2,'正常')">正常</a>
-                <a class="gardenChoose" :class="saveGarden==3?'seceltGarden':''" @click="clickGarden(3,'严格')">严格</a>
+                <a class="gardenChoose" :class="saveGarden==3?'seceltGarden':''" @click="clickGarden(3,'严格')">{{$t('DDOS.protectCon.strict')}}</a>
               </span>
-              <el-dialog title="确认切换到严格模式？" :visible.sync="changeModelTip3" width="30%" :append-to-body="true" :before-close="changeCloseTip3">
-                <p>严格模式可能会影响业务，建议仅在正常模式透传攻击包影响业务时才使用。如果严格模式仍然无法解决透传影响业务的问题，请联系售后技术支持定制策略。</p>
+              <el-dialog :title="$t('DDOS.protectCon.toggStrtic')" :visible.sync="changeModelTip3" width="30%" :append-to-body="true" :before-close="changeCloseTip3">
+                <p>{{$t('DDOS.protectCon.strticTitle')}}</p>
                 <span slot="footer" class="dialog-footer">
                   <el-button @click="changeCloseTip3">取 消</el-button>
-                  <el-button type="primary" @click="changeSureTip1()">确 定</el-button>
+                  <el-button type="primary" @click="changeSureTip1()">{{$t('DDOS.accessCopy.domainSure')}}</el-button>
                 </span>
               </el-dialog>
-              <el-dialog title="确认切换到正常模式？" :visible.sync="changeModelTip2" width="30%" :append-to-body="true" :before-close="changeCloseTip2">
-                <p>默认清洗模式，清洗策略不松不紧。</p>
+              <el-dialog :title="$t('DDOS.protectCon.toggNormal')" :visible.sync="changeModelTip2" width="30%" :append-to-body="true" :before-close="changeCloseTip2">
+                <p>{{$t('DDOS.protectCon.NormalTitle')}}</p>
                 <span slot="footer" class="dialog-footer">
                   <el-button @click="changeCloseTip2">取 消</el-button>
-                  <el-button type="primary" @click="changeSureTip1()">确 定</el-button>
+                  <el-button type="primary" @click="changeSureTip1()">{{$t('DDOS.accessCopy.domainSure')}}</el-button>
                 </span>
               </el-dialog>
-              <el-dialog title="确认切换到宽松模式？" :visible.sync="changeModelTip1" width="30%" :append-to-body="true" :before-close="changeCloseTip1">
-                <p>宽松模式在遇到复杂攻击时可能会存在攻击透传，建议仅在正常模式存在误杀影响业务时使用。如果宽松模式仍然无法解决误杀问题，请联系售后技术支持进行策略定制。</p>
+              <el-dialog :title="$t('DDOS.protectCon.toggloose')" :visible.sync="changeModelTip1" width="30%" :append-to-body="true" :before-close="changeCloseTip1">
+                <p>{{$t('DDOS.protectCon.togglooseTitle')}}</p>
                 <span slot="footer" class="dialog-footer">
                   <el-button @click="changeCloseTip1">取 消</el-button>
-                  <el-button type="primary" @click="changeSureTip1()">确 定</el-button>
+                  <el-button type="primary" @click="changeSureTip1()">{{$t('DDOS.accessCopy.domainSure')}}</el-button>
                 </span>
               </el-dialog>
-              <el-dialog title="关闭防护确认" :visible.sync="changeModelTip4" width="30%" :append-to-body="true" :before-close="changeCloseTip4">
-                <p class="outOk">目前只能临时关闭防护1-6小时，超时后防护会自动恢复，攻击超过100wpps或2Gbps时防护会自动恢复。</p>
-                <span class="modelSpan1">请设置关闭防护时长：</span>
+              <el-dialog :title="$t('DDOS.protectCon.CloseConfirm')" :visible.sync="changeModelTip4" width="30%" :append-to-body="true" :before-close="changeCloseTip4">
+                <p class="outOk">{{$t('DDOS.protectCon.CloseConfirmTitle')}}</p>
+                <span class="modelSpan1">{{$t('DDOS.protectCon.setTime')}}</span>
                 <span>
                   <el-select v-model="servicePack.cleanTime" class="setSelectM">
                     <el-option v-for="(item, index) in cleanTime" :label="item.label" :value="item.value" :key="index"></el-option>
@@ -57,27 +57,27 @@
                 </span>
                 <span slot="footer" class="dialog-footer">
                   <el-button @click="changeCloseTip4">取 消</el-button>
-                  <el-button type="primary" @click="changeSureTip4(servicePack.cleanTime)">确 定</el-button>
+                  <el-button type="primary" @click="changeSureTip4(servicePack.cleanTime)">{{$t('DDOS.accessCopy.domainSure')}}</el-button>
                 </span>
               </el-dialog>
 
             </p>
             <p class="newClear">
-              <span class="modelSpan1">高级策略</span>
+              <span class="modelSpan1">{{$t('DDOS.protectCon.AdvancedStra')}}</span>
               <span class="modelSpan2">
                 <el-select v-model="topFun" class="setSelectM">
-                  <el-option label="无" value="no"></el-option>
+                  <el-option :label="$t('DDOS.protectCon.noHave')" value="no"></el-option>
                   <el-option label="erg" value="erg"></el-option>
                 </el-select>
               </span>
             </p>
             <p class="newClear">
-              <span class="modelSpan1">DDoS攻击告警阈值</span>
+              <span class="modelSpan1">{{$t('DDOS.protectCon.configValue')}}</span>
               <span class="modelSpan2">
                 <el-select v-model="ddosWarning" class="setSelectM" @change="selectChange1">
-                  <el-option label="未设置" value="no"></el-option>
-                  <el-option label="入流量宽带" value="into"></el-option>
-                  <el-option label="清洗流量" value="clean"></el-option>
+                  <el-option :label="$t('DDOS.protectCon.NotSet')" value="no"></el-option>
+                  <el-option :label="$t('DDOS.protectCon.Incoming')" value="into"></el-option>
+                  <el-option :label="$t('DDOS.protectCon.CleaningFlow')" value="clean"></el-option>
                 </el-select>
                 <span v-if="iptNummbps">
                   <el-input v-model="iptmbpsText" class="intMbps" @input="CreateBasic"></el-input> Mbps

@@ -2,18 +2,18 @@
   <div>
     <div>
       <el-dialog class="dialogModel"
-        title="批量导出"
+        :title="$t('DDOS.AccesstoCon.BulkOut')"
         :visible.sync="getIsShow2"
         width="30%"
         :before-close="handleClose">
         <div class="importAll exportAll newClear">
-          <span class="importLabel">规则</span>
+          <span class="importLabel">{{$t('DDOS.accessCopy.raleAcc')}}</span>
           <span class="importIpt">
             <el-input type="textarea" v-model="exportText"/>
           </span>
         </div>
         <span slot="footer" class="dialog-footer">
-          <el-button @click="handleClose">关闭</el-button>
+          <el-button @click="handleClose">{{$t('DDOS.AccesstoCon.AccClose')}}</el-button>
         </span>
       </el-dialog>
     </div>

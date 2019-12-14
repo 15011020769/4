@@ -2,25 +2,25 @@
   <div>
     <div>
       <el-dialog class="dialogModel"
-        title="批量导入"
+        :title="$t('DDOS.AccesstoCon.BulkImport')"
         :visible.sync="getIsShow1"
         width="30%"
         :before-close="handleClose">
         <div class="importAll">
-          <span class="importLabel">规则</span>
+          <span class="importLabel">{{$t('DDOS.accessCopy.raleAcc')}}</span>
           <span class="importIpt">
             <el-input type="textarea" v-model="importRules"/>
-            <p class="margibBot">示例：业务域名只能全部省略或全部导入</p>
-            <p>有业务域名:</p>
+            <p class="margibBot">{{$t('DDOS.accessCopy.importTitle')}}</p>
+            <p>{{$t('DDOS.accessCopy.TextBiness')}}:</p>
             <p>dayu.com TCP 1234 4321 1.1.1.1 10或dayu.com TCP 1234 4321 a.com</p>
-            <p>省略业务域名:</p>
+            <p>{{$t('DDOS.accessCopy.noTextBin')}}:</p>
             <p class="margibBot">TCP 1234 4321 1.1.1.1 10或TCP 1234 4321 a.com</p>
-            <p class="margibBot">注意：粘贴内容从左至右依次为业务域名(选填)、协议、转发端口、源站端口、回源IP和权重（或回源域名），中间由空格分隔。一行只能填写一条转发规则。</p>
+            <p class="margibBot">{{$t('DDOS.accessCopy.binessTitle')}}</p>
           </span>
         </div>
         <span slot="footer" class="dialog-footer">
           <el-button @click="handleClose">取 消</el-button>
-          <el-button type="primary" @click="batchImportSure">确 定</el-button>
+          <el-button type="primary" @click="batchImportSure">{{$t('DDOS.accessCopy.domainSure')}}</el-button>
         </span>
       </el-dialog>
     </div>

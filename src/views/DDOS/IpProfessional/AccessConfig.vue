@@ -3,42 +3,42 @@
     <HeaderCom title="接入配置" />
     <el-tabs v-model="activeName" @tab-click="handleClick">
       <div class="box" style="padding:0 20px;">
-        <el-tab-pane label="非网站业务" name="first">
+        <el-tab-pane :label="$t('DDOS.AccesstoCon.NonWebsite')" name="first">
           <div class="mainContent">
             <el-select
               class="ddosAttackSelect1"
               v-model="resourceId"
               @change="resourceIdChange"
               filterable
-              placeholder="请输入要查询的ID或名称"
+              :placeholder="$t('DDOS.AccesstoCon.searchAccess')"
             >
               <el-option :label="resourceId" :value="resourceId"></el-option>
             </el-select>
           </div>
           <div class="mainContent">
             <div class="topCreateSelect">
-              <el-button class="newCreate" @click="newCreate">新建</el-button>
+              <el-button class="newCreate" @click="newCreate">{{$t('DDOS.AccesstoCon.addNewAccess')}}</el-button>
               <el-dropdown trigger="click" class="ddosAttackSelect1 ddosAttackSelect2">
                 <span class="el-dropdown-link">
-                  批量导入
+                  {{$t('DDOS.AccesstoCon.BulkImport')}}
                   <i class="el-icon-caret-bottom el-icon--right"></i>
                 </span>
                 <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item @click.native="batchImport">导入转发规则</el-dropdown-item>
-                  <el-dropdown-item disabled>导入会话保持/健康检查</el-dropdown-item>
+                  <el-dropdown-item @click.native="batchImport">{{$t('DDOS.AccesstoCon.Importforward')}}</el-dropdown-item>
+                  <el-dropdown-item disabled>{{$t('DDOS.AccesstoCon.ImportTitle')}}</el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
               <el-dropdown trigger="click" class="ddosAttackSelect1 ddosAttackSelect2">
                 <span class="el-dropdown-link">
-                  批量导出
+                  {{$t('DDOS.AccesstoCon.BulkOut')}}
                   <i class="el-icon-caret-bottom el-icon--right"></i>
                 </span>
                 <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item @click.native="batchExport">导出转发规则</el-dropdown-item>
-                  <el-dropdown-item disabled>导出会话保持/健康检查</el-dropdown-item>
+                  <el-dropdown-item @click.native="batchExport">{{$t('DDOS.AccesstoCon.ImportforwardOut')}}</el-dropdown-item>
+                  <el-dropdown-item disabled>{{$t('DDOS.AccesstoCon.ImportTitleIn')}}</el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
-              <el-button class="allDeleteBtn" :disabled="true">批量删除</el-button>
+              <el-button class="allDeleteBtn" :disabled="true">{{$t('DDOS.AccesstoCon.delMoreAcc')}}</el-button>
             </div>
             <el-table
               class="tableListA"
@@ -47,10 +47,10 @@
               @selection-change="handleSelectionChange"
             >
               <el-table-column type="selection" width="55"></el-table-column>
-              <el-table-column prop="RuleName" label="业务域名">
+              <el-table-column prop="RuleName" :label="$t('DDOS.AccesstoCon.businessDoma')">
                 <template slot-scope="scope">{{scope.row.RuleName}}</template>
               </el-table-column>
-              <el-table-column prop="VirtualPort" label="转发协议/端口">
+              <el-table-column prop="VirtualPort" :label="$t('DDOS.AccesstoCon.ForwardPort')">
                 <template slot-scope="scope">{{scope.row.Protocol}}/{{scope.row.VirtualPort}}</template>
               </el-table-column>
               <el-table-column prop="SourcePort" label="源站端口">
@@ -64,37 +64,37 @@
                   >{{scope.row.SourceList[index].Source}}({{scope.row.SourceList[index].Weight}});</span>
                 </template>
               </el-table-column>
-              <el-table-column prop="LbType" label="负载均衡方式">
+              <el-table-column prop="LbType" :label="$t('DDOS.AccesstoCon.LoadBalancing')">
                 <template slot-scope="scope">
-                  <span v-if="scope.row.LbType == 1">加权轮询</span>
+                  <span v-if="scope.row.LbType == 1">{{$t('DDOS.AccesstoCon.WeightedPoll')}}</span>
                   <span v-else>{{scope.row.LbType}}</span>
                 </template>
               </el-table-column>
-              <el-table-column prop label="健康检查">
-                <template slot-scope="scope">暂不支持</template>
+              <el-table-column prop :label="$t('DDOS.AccesstoCon.HealthCheck')">
+                <template slot-scope="scope">{{$t('DDOS.AccesstoCon.Temporary')}}</template>
               </el-table-column>
-              <el-table-column prop="KeepEnable" label="会话保持">
+              <el-table-column prop="KeepEnable" :label="$t('DDOS.AccesstoCon.KeepSession')">
                 <template slot-scope="scope">
-                  暂不支持
+                  {{$t('DDOS.AccesstoCon.Temporary')}}
                   <!-- <span v-if="scope.row.KeepEnable == 0">关闭</span>
                   <span v-else-if="scope.row.KeepEnable == 1">开启</span>-->
                 </template>
               </el-table-column>
-              <el-table-column prop="RemoveSwitch" label="水印剥离状态">
+              <el-table-column prop="RemoveSwitch" :label="$t('DDOS.AccesstoCon.WatermarkState')">
                 <template slot-scope="scope">
-                  <span v-if="scope.row.RemoveSwitch == 0">关闭</span>
-                  <span v-else-if="scope.row.RemoveSwitch == 1">开启</span>
+                  <span v-if="scope.row.RemoveSwitch == 0">{{$t('DDOS.AccesstoCon.AccClose')}}</span>
+                  <span v-else-if="scope.row.RemoveSwitch == 1">{{$t('DDOS.AccesstoCon.AccOpen')}}</span>
                 </template>
               </el-table-column>
               <el-table-column prop="attackAction" label="操作" width="180">
                 <template slot-scope="scope">
-                  <el-button type="text" size="small" @click="editAccess(scope.row)">编辑</el-button>
-                  <el-button type="text" size="small" @click="copyAccess(scope.row)">复制</el-button>
+                  <el-button type="text" size="small" @click="editAccess(scope.row)">{{$t('DDOS.AccesstoCon.AccUpdate')}}</el-button>
+                  <el-button type="text" size="small" @click="copyAccess(scope.row)">{{$t('DDOS.AccesstoCon.AccClone')}}</el-button>
                   <el-button
                     type="text"
                     size="small"
                     @click="deleteAccess(scope.row,scope.$index)"
-                  >删除</el-button>
+                  >{{$t('DDOS.AccesstoCon.AccDel')}}</el-button>
                 </template>
               </el-table-column>
             </el-table>
@@ -111,7 +111,7 @@
             </div>
             <p
               class="pContent"
-            >配置规则总数为 {{ruleTotalNum}} ，已用 {{usedNum}} ，可用 {{ruleTotalNum-usedNum}}</p>
+            >{{$t('DDOS.AccesstoCon.AccSum')}} {{ruleTotalNum}} ，已用 {{usedNum}} ，可用 {{ruleTotalNum-usedNum}}</p>
           </div>
           <!-- 新建规则弹框 -->
           <newAddRules
@@ -152,14 +152,14 @@
           <!-- 删除弹框 -->
           <el-dialog
             class="dialogModel"
-            title="添加转发规则"
+            :title="$t('DDOS.AccesstoCon.addAcc')"
             :visible.sync="dialogDelete"
             width="30%"
             :before-close="handleCloseDelete"
           >
-            <p>确定删除该条转发规则？</p>
+            <p>{{$t('DDOS.AccesstoCon.AccSureSel')}}</p>
             <span class="footerBtn">
-              <el-button @click="deleteSure">确定</el-button>
+              <el-button @click="deleteSure">{{$t('DDOS.AccesstoCon.ImSure')}}</el-button>
               <el-button @click="dialogDelete=false">取消</el-button>
             </span>
           </el-dialog>

@@ -2,10 +2,10 @@
   <div id="ipConfigFourth" class="wrap">
     <div class="allContent">
       <div class="ReportTit newClear">
-        <h3 class="ReportTitH3">高防IP专业版</h3>
+        <h3 class="ReportTitH3">{{$t('DDOS.Protective.professionalEdition')}}</h3>
         <el-select v-model="listResouse" class="selectListResou">
-          <el-option label="资源列表" value="resourceList"></el-option>
-          <el-option label="业务列表" value="value2"></el-option>
+          <el-option :label="$t('DDOS.AssetList.resourceList')" value="resourceList"></el-option>
+          <el-option :label="$t('DDOS.AssetList.businessList')" value="value2"></el-option>
         </el-select>
         <!-- <el-button class="ReportTitBtn" type="primary" @click="newBuy">新购</el-button> -->
       </div>
@@ -13,21 +13,21 @@
         <div class="textAlignTop newClear" style="padding:20px;width:100%;">
           <div class="addBgColor" style="display:flex;"> 
             <el-checkbox-group v-model="comingSoon" class="checkOne">
-              <el-checkbox label="即将过期" name="comingSoon"></el-checkbox>
+              <el-checkbox :label="$t('DDOS.AssetList.willExpire')" name="comingSoon"></el-checkbox>
             </el-checkbox-group>
-            <span class="runningStatusText">运行状态:</span>
+            <span class="runningStatusText">{{$t('DDOS.AssetList.RunningState')}}:</span>
             <el-checkbox-group v-model="runningStatus"  class="checkTwo">
-              <el-checkbox label="运行中" name="type" value="1"></el-checkbox>
-              <el-checkbox label="清洗中" name="type" value="2"></el-checkbox>
-              <el-checkbox label="封堵中" name="type" value="3"></el-checkbox>
+              <el-checkbox :label="$t('DDOS.AssetList.Running')" name="type" value="1"></el-checkbox>
+              <el-checkbox :label="$t('DDOS.Protective.Protectivewash')" name="type" value="2"></el-checkbox>
+              <el-checkbox :label="$t('DDOS.Protective.blockIng')" name="type" value="3"></el-checkbox>
             </el-checkbox-group>
           </div>
           <span v-if="listResouse=='resourceList'?true:false" style="float:right;">
-            <el-input v-model="tableDataName" class="searchs" placeholder="输入ID/名称/IP搜索"></el-input>
+            <el-input v-model="tableDataName" class="searchs" :placeholder="$t('DDOS.AssetList.searchAssetList')"></el-input>
             <el-button class="el-icon-search" @click="doFilter"></el-button>
           </span>
           <span v-if="listResouse!='resourceList'?true:false" style="float:right;">
-            <el-input v-model="tableDataName1" class="searchs" placeholder="输入域名/CNAME搜索"></el-input>
+            <el-input v-model="tableDataName1" class="searchs" :placeholder="$t('DDOS.AssetList.searchAssetListS')"></el-input>
             <el-button class="el-icon-search" @click="doFilter1"></el-button>
           </span>
         </div>
@@ -52,12 +52,12 @@
 
 
               </el-table-column>
-              <el-table-column prop="domain" label="域名">
+              <el-table-column prop="domain" :label="$t('DDOS.AssetList.domainName')">
                  <template slot-scope="scope">
-                   {{scope.row.domain}}<a href="#" @click="toAccest(scope.row)">设置</a>
+                   {{scope.row.domain}}<a href="#" @click="toAccest(scope.row)">{{$t('DDOS.AssetList.AssetListSet')}}</a>
                 </template>
               </el-table-column>
-              <el-table-column prop="nowIp" label="当前IP">
+              <el-table-column prop="nowIp" :label="$t('DDOS.AssetList.currentIp')">
 
                <template slot-scope="scope" >
                       <span v-for="(item,index) in scope.row.Record" >
@@ -69,7 +69,7 @@
 
 
               </el-table-column>
-              <el-table-column prop="backSelf" label="自动回切">
+              <el-table-column prop="backSelf" :label="$t('DDOS.AssetList.AutomaticBack')">
                 <template slot-scope="scope">
                   <el-switch
                     v-model="scope.row.autoBack"
@@ -80,14 +80,14 @@
               </el-table-column>
               <el-table-column prop="action" label="操作" width="180">
                 <template slot-scope="scope">
-                  <a class="marginRightA" href="#" style="pointer-events:none;color:#999;">一键回切</a>
-                  <a class="marginRightA" href="#" @clcik="lookReportList(scope.row)">查看报表</a>
+                  <a class="marginRightA" href="#" style="pointer-events:none;color:#999;">{{$t('DDOS.AssetList.keyBack')}}</a>
+                  <a class="marginRightA" href="#" @clcik="lookReportList(scope.row)">{{$t('DDOS.AssetList.CheckReport')}}</a>
                 </template>
               </el-table-column>
             </el-table>
             <!-- 资源列表 -->
             <el-table :data="resourceList.slice((currentPage-1)*pageSize,currentPage*pageSize)" v-if="listResouse!='resourceList'?false:true">
-                <el-table-column prop="Record" label="ID/名称">
+                <el-table-column prop="Record" :label="$t('DDOS.AssetList.AssetListName')">
                     <template slot-scope="scope" >
                       <span v-for="(item,index) in scope.row.Record" >
                         <a v-if="item.Key=='Id' || item.Key=='Name'" @click="toDoDetailResouse(scope.row)">{{item.Value}}<br>{{item.Name}}</a>
@@ -101,7 +101,7 @@
                   <span>{{scope.row.Name}}</span>
                 </template>
               </el-table-column> -->
-              <el-table-column prop="Record" label="转发规则数(个)">
+              <el-table-column prop="Record" :label="$t('DDOS.AssetList.Forwarding')">
                 <template slot-scope="scope">
                   <span v-for="(item,index) in scope.row.Record" >
                         <a v-if="item.Key=='ReturnHour'" @click="toAccest(scope.row)">{{item.Value}}</a>
@@ -109,7 +109,7 @@
                   <!-- <span>0<a href="#" @click="toAccest(scope.row)">设置</a></span> -->
                 </template>
               </el-table-column>
-              <el-table-column prop="Record" label="防护IP数(个)">
+              <el-table-column prop="Record" :label="$t('DDOS.AssetList.protectionNum')">
                       <template slot-scope="scope" >
                       <span v-for="(item,index) in scope.row.Record" >
                         <a v-if="item.Key=='GroupIpList'">{{index}}</a>
@@ -118,7 +118,7 @@
 
                 
               </el-table-column>
-              <el-table-column prop="origin" label="初始区域">
+              <el-table-column prop="origin" :label="$t('DDOS.AssetList.initialRegio')">
             <template slot-scope="scope">
                   <span v-for="(item,index) in scope.row.Record" >
                         <a v-if="item.Key=='OriginRegion'">{{item.Value}}</a>
@@ -138,7 +138,7 @@
 
 
               </el-table-column>
-              <el-table-column prop="dataTime" label="到期时间">
+              <el-table-column prop="dataTime" :label="$t('DDOS.AssetList.DueTime')">
 
                 <template slot-scope="scope">
                   <span v-for="(item,index) in scope.row.Record" >
@@ -150,10 +150,10 @@
               </el-table-column>
               <el-table-column prop="action" label="操作" width="230">
                 <template slot-scope="scope">
-                  <a class="marginRightA" href="#" @click="upgradeModel">升级</a>
-                  <a class="marginRightA" href="#" @click="RenewModel">续费</a>
-                  <a class="marginRightA" href="#" @click="configModel">防护配置</a>
-                  <a class="marginRightA" href="#" @clcik="lookReportList(scope.row)">查看报表</a>
+                  <a class="marginRightA" href="#" @click="upgradeModel">{{$t('DDOS.AssetList.upgrade')}}</a>
+                  <a class="marginRightA" href="#" @click="RenewModel">{{$t('DDOS.AssetList.renewal')}}</a>
+                  <a class="marginRightA" href="#" @click="configModel">{{$t('DDOS.AssetList.ProtectionConfig')}}</a>
+                  <a class="marginRightA" href="#" @clcik="lookReportList(scope.row)">{{$t('DDOS.AssetList.CheckReport')}}</a>
                 </template>
               </el-table-column>
             </el-table>
