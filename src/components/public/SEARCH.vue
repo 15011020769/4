@@ -1,6 +1,6 @@
 <template>
   <div class="search-style">
-    <el-select v-model="searchvalue" placeholder="请选择" @change="changeValue" size="small">
+    <el-select v-model="searchvalue" placeholder="請選擇" @change="changeValue" size="small">
       <el-option
         v-for="item in searchOptions"
         :key="item.value"
@@ -9,7 +9,7 @@
       ></el-option>
     </el-select>
     <el-input
-      placeholder="请输入IP或主机名"
+      placeholder="請輸入IP或主機名"
       v-model="searchinput"
       size="small"
       class="input-with-select esach-inputL"
@@ -21,7 +21,7 @@
       class="btn-style"
       size="small"
     ></el-button>
-    <el-tooltip class="tooltip" effect="dark" content="导出表格" placement="top">
+    <el-tooltip class="tooltip" effect="dark" content="導出表格" placement="top">
       <el-button @click="exportExcel" icon="el-icon-download" size="small" style="height:32px"></el-button>
     </el-tooltip>
   </div>

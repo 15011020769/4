@@ -7,43 +7,43 @@
       <div class='btn-style'>
         <el-row>
           <el-button-group>
-            <el-button size="small" @click="TimeChoice(1)" :type="classsvalue == 1 ? 'primary' : ''">实时</el-button>
-            <el-button size="small" @click="TimeChoice(1*24)" :type="classsvalue == 1*24 ? 'primary' : ''">近24小时
+            <el-button size="small" @click="TimeChoice(1)" :type="classsvalue == 1 ? 'primary' : ''">實時</el-button>
+            <el-button size="small" @click="TimeChoice(1*24)" :type="classsvalue == 1*24 ? 'primary' : ''">近24小時
             </el-button>
             <el-button size="small" @click="TimeChoice(1*24*7)" :type="classsvalue == 1*24*7 ? 'primary' : ''">近7天
             </el-button>
             <el-popover placement="bottom" width="400" trigger="manual" v-model="visible">
               <p class='p-dis'>
-                <span>从</span>
-                <el-date-picker class="width-date" v-model="datevalueStart" type="date" placeholder="选择日期">
+                <span>從</span>
+                <el-date-picker class="width-date" v-model="datevalueStart" type="date" placeholder="選擇日期">
                 </el-date-picker>
-                <el-time-picker class="width-date" v-model="timevalueStart" placeholder="任意时间点">
+                <el-time-picker class="width-date" v-model="timevalueStart" placeholder="任意時間點">
                 </el-time-picker>
               </p>
               <p class='p-dis'>
                 <span>至</span>
-                <el-date-picker class="width-date" v-model="datevalueEnd" type="date" placeholder="选择日期">
+                <el-date-picker class="width-date" v-model="datevalueEnd" type="date" placeholder="選擇日期">
                 </el-date-picker>
-                <el-time-picker class="width-date" v-model="timevalueEnd" placeholder="任意时间点">
+                <el-time-picker class="width-date" v-model="timevalueEnd" placeholder="任意時間點">
                 </el-time-picker>
               </p>
               <el-row class='margin-row'>
-                <el-button size="mini" type="primary" @click="Sure">确定</el-button>
+                <el-button size="mini" type="primary" @click="Sure">確定</el-button>
                 <el-button size="mini" @click="visible = false">取消</el-button>
               </el-row>
-              <el-button size="small" v-if="datetim" icon="el-icon-search" @click="SelectionTime" slot="reference">选择日期
+              <el-button size="small" v-if="datetim" icon="el-icon-search" @click="SelectionTime" slot="reference">選擇日期
               </el-button>
             </el-popover>
             <el-date-picker v-if="datetime" v-model="datetimeval" type="datetimerange" range-separator="至"
-              start-placeholder="开始日期" end-placeholder="结束日期" :clearable='false' class="dateheight"
+              start-placeholder="開始日期" end-placeholder="結束日期" :clearable='false' class="dateheight"
               @change="ReSelection">
             </el-date-picker>
 
           </el-button-group>
         </el-row>
         <div class="drop">
-          <span style="margin-right:15px">时间粒度:</span>
-          <el-select v-model="value" placeholder="请选择" @change="switchData()" size="small">
+          <span style="margin-right:15px">時間粒度:</span>
+          <el-select v-model="value" placeholder="請選擇" @change="switchData()" size="small">
             <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
             </el-option>
           </el-select>
@@ -75,11 +75,11 @@
 
           {
             value: '60',
-            label: '1分钟',
+            label: '1分鐘',
           },
           {
             value: '300',
-            label: '5分钟',
+            label: '5分鐘',
           },
         ],
         value: '60', // 粒度选择值
@@ -107,11 +107,11 @@
           this.value = '60';
           this.options = [{
               value: '60',
-              label: '1分钟'
+              label: '1分鐘'
             },
             {
               value: '300',
-              label: '5分钟'
+              label: '5分鐘'
             },
           ];
           const Time = moment(new Date()).format('YYYY-MM-DD HH:mm:ss'); //获取当前时间
@@ -126,15 +126,15 @@
           this.value = '60';
           this.options = [{
               value: '60',
-              label: '1分钟'
+              label: '1分鐘'
             },
             {
               value: '300',
-              label: '5分钟'
+              label: '5分鐘'
             },
             {
               value: '3600',
-              label: '1小时'
+              label: '1小時'
             },
             {
               value: '86400',
@@ -153,7 +153,7 @@
           this.value = '3600';
           this.options = [{
               value: '3600',
-              label: '1小时'
+              label: '1小時'
             },
             {
               value: '86400',
@@ -230,11 +230,11 @@
           this.value = '60';
           this.options = [{
               value: '60',
-              label: '1分钟'
+              label: '1分鐘'
             },
             {
               value: '300',
-              label: '5分钟'
+              label: '5分鐘'
             },
           ];
         } else if (endTime - startTime <= 86400) {
@@ -243,15 +243,15 @@
           this.value = '60';
           this.options = [{
               value: '60',
-              label: '1分钟'
+              label: '1分鐘'
             },
             {
               value: '300',
-              label: '5分钟'
+              label: '5分鐘'
             },
             {
               value: '3600',
-              label: '1小时'
+              label: '1小時'
             },
             {
               value: '86400',
@@ -264,7 +264,7 @@
           this.value = '3600';
           this.options = [{
               value: '3600',
-              label: '1小时'
+              label: '1小時'
             },
             {
               value: '86400',
