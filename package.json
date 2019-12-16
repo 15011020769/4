@@ -1,107 +1,107 @@
 {
-    "name": "vue-cli3",
-    "version": "0.1.0",
-    "private": true,
-    "scripts": {
-        "serve:SCF": "vue-cli-service serve --SCF",
-        "qa:SCF": "vue-cli-service build --SCF --mode qa",
-        "uat:SCF": "vue-cli-service build --SCF --mode uat",
-        "build:SCF": "vue-cli-service build --SCF",
-        "serve:CLA": "vue-cli-service serve --CLA",
-        "qa:CLA": "vue-cli-service build --CLA --mode qa",
-        "uat:CLA": "vue-cli-service build --CLA --mode uat",
-        "build:CLA": "vue-cli-service build --CLA",
-        "serve:CM": "vue-cli-service serve --CM",
-        "qa:CM": "vue-cli-service build --CM --mode qa",
-        "uat:CM": "vue-cli-service build --CM --mode uat",
-        "build:CM": "vue-cli-service build --CM",
-        "serve:CAM": "vue-cli-service serve --CAM",
-        "qa:CAM": "vue-cli-service build --CAM --mode qa",
-        "uat:CAM": "vue-cli-service build --CAM --mode uat",
-        "build:CAM": "vue-cli-service build --CAM",
-        "serve:CCN": "vue-cli-service serve --CCN",
-        "qa:CCN": "vue-cli-service build --CCN --mode qa",
-        "uat:CCN": "vue-cli-service build --CCN --mode uat",
-        "build:CCN": "vue-cli-service build --CCN",
-        "serve:CAP": "vue-cli-service serve --CAP",
-        "qa:CAP": "vue-cli-service build --CAP --mode qa",
-        "uat:CAP": "vue-cli-service build --CAP --mode uat",
-        "build:CAP": "vue-cli-service build --CAP",
-        "serve:DDOS": "vue-cli-service serve --DDOS",
-        "qa:DDOS": "vue-cli-service build --DDOS --mode qa",
-        "uat:DDOS": "vue-cli-service build --DDOS --mode uat",
-        "build:DDOS": "vue-cli-service build --DDOS",
-        "serve:BILL": "vue-cli-service serve --BILL",
-        "qa:BILL": "vue-cli-service build --BILL --mode qa",
-        "uat:BILL": "vue-cli-service build --BILL --mode uat",
-        "build:BILL": "vue-cli-service build --BILL",
-        "serve:KMS": "vue-cli-service serve --KMS",
-        "qa:KMS": "vue-cli-service build --KMS --mode qa",
-        "uat:KMS": "vue-cli-service build --KMS --mode uat",
-        "build:KMS": "vue-cli-service build --KMS",
-        "serve:TKE": "vue-cli-service serve --TKE",
-        "build:TKE": "vue-cli-service build --TKE",
-        "serve:WAF": "vue-cli-service serve --WAF",
-        "build:WAF": "vue-cli-service build --WAF",
-        "serve:MGC": "vue-cli-service serve --MGC",
-        "build:MGC": "vue-cli-service build --MGC",
-        "serve:CSS": "vue-cli-service serve --CSS",
-        "build:CSS": "vue-cli-service build --CSS",
-        "qa": "npm run qa:SCF & npm run qa:CLA & npm run qa:CM & npm run qa:CAM & npm run qa:CCN & npm run qa:CAP & npm run qa:DDOS & npm run qa:BILL & npm run qa:KMS",
-        "uat": "npm run uat:SCF & npm run uat:CLA & npm run uat:CM & npm run uat:CAM & npm run uat:CCN & npm run uat:CAP & npm run uat:DDOS & npm run uat:BILL & npm run uat:KMS",
-        "lint": "vue-cli-service lint"
+  "name": "vue-cli3",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "serve:SCF": "vue-cli-service serve --SCF",
+    "qa:SCF": "vue-cli-service build --SCF --mode qa",
+    "uat:SCF": "vue-cli-service build --SCF --mode uat",
+    "build:SCF": "vue-cli-service build --SCF",
+    "serve:CLA": "vue-cli-service serve --CLA",
+    "qa:CLA": "vue-cli-service build --CLA --mode qa",
+    "uat:CLA": "vue-cli-service build --CLA --mode uat",
+    "build:CLA": "vue-cli-service build --CLA",
+    "serve:CM": "vue-cli-service serve --CM",
+    "qa:CM": "vue-cli-service build --CM --mode qa",
+    "uat:CM": "vue-cli-service build --CM --mode uat",
+    "build:CM": "vue-cli-service build --CM",
+    "serve:CAM": "vue-cli-service serve --CAM",
+    "qa:CAM": "vue-cli-service build --CAM --mode qa",
+    "uat:CAM": "vue-cli-service build --CAM --mode uat",
+    "build:CAM": "vue-cli-service build --CAM",
+    "serve:CCN": "vue-cli-service serve --CCN",
+    "qa:CCN": "vue-cli-service build --CCN --mode qa",
+    "uat:CCN": "vue-cli-service build --CCN --mode uat",
+    "build:CCN": "vue-cli-service build --CCN",
+    "serve:CAP": "vue-cli-service serve --CAP",
+    "qa:CAP": "vue-cli-service build --CAP --mode qa",
+    "uat:CAP": "vue-cli-service build --CAP --mode uat",
+    "build:CAP": "vue-cli-service build --CAP",
+    "serve:DDOS": "vue-cli-service serve --DDOS",
+    "qa:DDOS": "vue-cli-service build --DDOS --mode qa",
+    "uat:DDOS": "vue-cli-service build --DDOS --mode uat",
+    "build:DDOS": "vue-cli-service build --DDOS",
+    "serve:BILL": "vue-cli-service serve --BILL",
+    "qa:BILL": "vue-cli-service build --BILL --mode qa",
+    "uat:BILL": "vue-cli-service build --BILL --mode uat",
+    "build:BILL": "vue-cli-service build --BILL",
+    "serve:KMS": "vue-cli-service serve --KMS",
+    "qa:KMS": "vue-cli-service build --KMS --mode qa",
+    "uat:KMS": "vue-cli-service build --KMS --mode uat",
+    "build:KMS": "vue-cli-service build --KMS",
+    "serve:TKE": "vue-cli-service serve --TKE",
+    "build:TKE": "vue-cli-service build --TKE",
+    "serve:WAF": "vue-cli-service serve --WAF",
+    "build:WAF": "vue-cli-service build --WAF",
+    "serve:MGC": "vue-cli-service serve --MGC",
+    "build:MGC": "vue-cli-service build --MGC",
+    "serve:CSS": "vue-cli-service serve --CSS",
+    "build:CSS": "vue-cli-service build --CSS",
+    "qa": "npm run qa:SCF & npm run qa:CLA & npm run qa:CM & npm run qa:CAM & npm run qa:CCN & npm run qa:CAP & npm run qa:DDOS & npm run qa:BILL & npm run qa:KMS",
+    "uat": "npm run uat:SCF & npm run uat:CLA & npm run uat:CM & npm run uat:CAM & npm run uat:CCN & npm run uat:CAP & npm run uat:DDOS & npm run uat:BILL & npm run uat:KMS",
+    "lint": "vue-cli-service lint"
+  },
+  "dependencies": {
+    "axios": "^0.19.0",
+    "core-js": "^2.6.5",
+    "echarts": "^4.5.0",
+    "element-ui": "^2.10.1",
+    "file-saver": "^2.0.2",
+    "moment": "^2.24.0",
+    "resize-detector": "^0.2.0",
+    "vue": "^2.6.10",
+    "vue-cookie": "^1.1.4",
+    "vue-echarts": "^4.1.0",
+    "vue-router": "^3.0.3",
+    "vuex": "^3.0.1",
+    "xlsx": "^0.15.3"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "^3.6.0",
+    "@vue/cli-plugin-eslint": "^3.6.0",
+    "@vue/cli-service": "^3.6.0",
+    "@vue/eslint-config-standard": "^4.0.0",
+    "babel-eslint": "^10.0.1",
+    "eslint": "^5.16.0",
+    "eslint-plugin-vue": "^5.0.0",
+    "node-sass": "^4.13.0",
+    "sass": "^1.18.0",
+    "sass-loader": "^7.3.1",
+    "vue-i18n": "^8.15.0",
+    "vue-template-compiler": "^2.5.21"
+  },
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "node": true
     },
-    "dependencies": {
-        "axios": "^0.19.0",
-        "core-js": "^2.6.5",
-        "echarts": "^4.5.0",
-        "element-ui": "^2.10.1",
-        "file-saver": "^2.0.2",
-        "moment": "^2.24.0",
-        "resize-detector": "^0.2.0",
-        "vue": "^2.6.10",
-        "vue-cookie": "^1.1.4",
-        "vue-echarts": "^4.1.0",
-        "vue-router": "^3.0.3",
-        "vuex": "^3.0.1",
-        "xlsx": "^0.15.3"
-    },
-    "devDependencies": {
-        "@vue/cli-plugin-babel": "^3.6.0",
-        "@vue/cli-plugin-eslint": "^3.6.0",
-        "@vue/cli-service": "^3.6.0",
-        "@vue/eslint-config-standard": "^4.0.0",
-        "babel-eslint": "^10.0.1",
-        "eslint": "^5.16.0",
-        "eslint-plugin-vue": "^5.0.0",
-        "node-sass": "^4.13.0",
-        "sass": "^1.18.0",
-        "sass-loader": "^7.3.1",
-        "vue-i18n": "^8.15.0",
-        "vue-template-compiler": "^2.5.21"
-    },
-    "eslintConfig": {
-        "root": true,
-        "env": {
-            "node": true
-        },
-        "extends": [
-            "plugin:vue/essential",
-            "@vue/standard"
-        ],
-        "rules": {},
-        "parserOptions": {
-            "parser": "babel-eslint"
-        }
-    },
-    "postcss": {
-        "plugins": {
-            "autoprefixer": {}
-        }
-    },
-    "browserslist": [
-        "> 1%",
-        "last 2 versions",
-        "not ie <= 8"
-    ]
+    "extends": [
+      "plugin:vue/essential",
+      "@vue/standard"
+    ],
+    "rules": {},
+    "parserOptions": {
+      "parser": "babel-eslint"
+    }
+  },
+  "postcss": {
+    "plugins": {
+      "autoprefixer": {}
+    }
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not ie <= 8"
+  ]
 }
