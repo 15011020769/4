@@ -532,4 +532,10 @@ button.allDeleteBtn {
 .tableListA {
   min-height: 450px;
 }
+.tabListPage{
+  height:50px;
+  border-top:1px solid #ddd;
+  padding-top:8px;
+  text-align:right;
+}
 </style>

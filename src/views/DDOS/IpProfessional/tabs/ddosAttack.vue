@@ -554,6 +554,13 @@ export default {
   content:'';
   clear:both;
 }
+::v-deep .el-range__icon{
+  line-height: 26px;
+}
+::v-deep .el-range-separator{
+  line-height: 26px;
+  width:7%;
+}
 .child {
   width: 100%;
   padding: 20px;

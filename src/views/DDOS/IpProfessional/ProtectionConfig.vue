@@ -93,7 +93,7 @@
           <ccProtection :ccProtectSele="resourceId" />
         </div>
       </el-tab-pane>
-      <el-tab-pane :label="$t('DDOS.Proteccon_figura.Advanced_strategys')" name="third">
+      <el-tab-pane :label="$t('DDOS.Proteccon_figura.Advanced_strategys')" name="third" style="padding:0 20px;">
         <div class="mainContent">
           <div v-if="tableShow" style="background:white;">
             <el-button class="addNewT" type="primary" @click="addNewTactics">{{$t('DDOS.Proteccon_figura.Add_newpolicy')}}</el-button>
@@ -198,7 +198,7 @@
         renderFunc(h, option) {
           return <span > {
             option.key
-          } < /span>;
+          } </span>;
         }, //穿梭框
         activeName: "first", //tab页
         filterConrent: "IP",
@@ -485,7 +485,6 @@
     box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
     border: 1px solid #ddd;
     margin-bottom: 20px;
-
     .textAlignTop {
       width: 100%;
       text-align: right;
@@ -635,5 +634,13 @@
   .mainTable {
     min-height: 450px;
   }
-
+.header{
+  border-bottom:none!important;
+}
+.tabListPage{
+  height:50px;
+  padding-top:8px;
+  border-top:1px solid #ddd;
+  text-align:right;
+}
 </style>

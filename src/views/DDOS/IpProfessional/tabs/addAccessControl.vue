@@ -214,6 +214,7 @@ export default {
         height:50px;
         border-top:1px solid #ddd;
         padding-top:8px;
+        text-align:right;
       }
     }
   }

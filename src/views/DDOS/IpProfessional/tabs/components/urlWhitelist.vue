@@ -205,6 +205,7 @@ export default {
       height:50px;
       padding-top:8px;
       border-top:1px solid #ddd;
+      text-align: right;
     }
   }
   .httpCheck{

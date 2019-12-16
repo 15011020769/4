@@ -141,6 +141,7 @@ export default {
       box-shadow: 0 2px 3px 0 rgba(0,0,0,.2);
       background-color:#fff;
       .contPartOneData{
+        text-align:center;
         p:nth-child(1){
           font-size: 12px;
           color:#888;

@@ -452,17 +452,42 @@ export default {
   box-sizing: border-box;
   margin-bottom: 20px;
 }
-.newDataTimeTwo {
+::v-deep .el-range-editor.el-input__inner{
+  height:30px;
+  line-height: 30px;
+}
+::v-deep .el-range__icon{
+  line-height: 26px;
+}
+::v-deep .el-range-separator{
+  line-height: 26px;
+  width:7%;
+}
+::v-deep .newDataTimeTwo {
   float: left;
   height: 30px !important;
   border-radius: 0 !important;
   margin-left: -1px;
-  span.el-range-separator {
-    line-height: 24px;
-    width: 8%;
+}
+::v-deep input.el-input__inner{
+  height:30px;
+  border-radius: 0;
+  line-height: 30px;
+}
+.ddosAttackSelect1{
+  height:30px;
+  line-height: 30px;
+  ::v-deep div.el-input{
+    height:30px;
   }
-  i.el-range__icon {
-    line-height: 24px;
-  }
+}
+.ddosTableMin{
+  min-height:450px;
+}
+.tabListPage{
+  height:50px;
+  padding-top:8px;
+  border-top:1px solid #ddd;
+  text-align:right;
 }
 </style>

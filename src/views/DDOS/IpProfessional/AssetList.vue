@@ -10,7 +10,7 @@
         <!-- <el-button class="ReportTitBtn" type="primary" @click="newBuy">新购</el-button> -->
       </div>
       <div class="mainContentCenter">
-        <div class="textAlignTop newClear" style="padding:20px;width:100%;">
+        <div class="textAlignTop newClear">
           <div class="addBgColor" style="display:flex;"> 
             <el-checkbox-group v-model="comingSoon" class="checkOne">
               <el-checkbox :label="$t('DDOS.AssetList.willExpire')" name="comingSoon"></el-checkbox>
@@ -31,6 +31,7 @@
             <el-button class="el-icon-search" @click="doFilter1"></el-button>
           </span>
         </div>
+        <div class="newClear"></div>
         <div class="mainContent newClear">
           <div class="mainTable">
             <!-- 业务列表 -->
@@ -498,7 +499,7 @@ export default {
       }
     }
     .textAlignTop {
-      width: 648px;
+      width: 670px;
       float: right;
       text-align: right;
       margin-bottom:20px;
@@ -606,5 +607,8 @@ export default {
 }
 .mainContent {
   background-color:#fff;
+}
+.tabListPage{
+  text-align:right;
 }
 </style>

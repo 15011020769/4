@@ -528,4 +528,33 @@ export default {
     width:7%;
   }
 }
+::v-deep .el-range-editor.el-input__inner{
+  height:30px;
+  line-height: 30px;
+}
+::v-deep .el-range__icon{
+  line-height: 26px;
+}
+::v-deep .el-range-separator{
+  line-height: 26px;
+  width:7%;
+}
+::v-deep .newDataTimeTwo {
+  float: left;
+  height: 30px !important;
+  border-radius: 0 !important;
+  margin-left: -1px;
+}
+::v-deep input.el-input__inner{
+  height:30px;
+  border-radius: 0;
+  line-height: 30px;
+}
+.ddosAttackSelect1{
+  height:30px;
+  line-height: 30px;
+  ::v-deep div.el-input{
+    height:30px;
+  }
+}
 </style>
