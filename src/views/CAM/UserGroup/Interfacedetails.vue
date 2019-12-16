@@ -3,26 +3,26 @@
     <div class="top">
       <i @click="backoff" class="el-icon-back"
         style="padding-right: 10px; font-size: 130%; color: #006eff; font-weight: 900; cursor:pointer;"></i>
-      <span class="title-left">测试接口组</span>
+      <span class="title-left">{{$t('CAM.userGroup.testApi')}}</span>
     </div>
     <!-- 内容 -->
     <div class="Interface">
       <!-- 用户组详情上半部分页面 start -->
       <div class="Interface-top">
         <div class="upper-side">
-          <h3 class="information">组信息</h3>
-          <el-link @click="editGroup" class="edit" type="primary">编辑</el-link>
+          <h3 class="information">{{$t('CAM.userGroup.groupTest')}}</h3>
+          <el-link @click="editGroup" class="edit" type="primary">{{$t('CAM.userList.updataUser')}}</el-link>
         </div>
         <!-- 用户组详情页面 start -->
         <div v-show="flag==true">
-          <el-form ref="form" :model="groupData" label-width="80px">
-            <el-form-item label="用户组名">
+          <el-form ref="form" :model="groupData" label-width="90px">
+            <el-form-item :label="$t('CAM.userGroup.colNmae')">
               <span>{{groupData.GroupName}}</span>
             </el-form-item>
-            <el-form-item label="备注">
+            <el-form-item :label="$t('CAM.userGroup.colRemark')">
               <span>{{groupData.Remark}}</span>
             </el-form-item>
-            <el-form-item label="创建时间">
+            <el-form-item :label="$t('CAM.userGroup.colCreTime')">
               <span>{{groupData.CreateTime}}</span>
             </el-form-item>
           </el-form>
@@ -31,11 +31,11 @@
         <!-- 用户组编辑页面 start -->
         <div v-show="flag==false">
           <el-form ref="form" :model="groupData" label-width="80px">
-            <el-form-item label="用户组名">
-              <el-input size="small" v-model="groupData.GroupName">测试接口组</el-input><i
+            <el-form-item :label="$t('CAM.userGroup.colNmae')">
+              <el-input size="small" v-model="groupData.GroupName">{{$t('CAM.userGroup.testApi')}}</el-input><i
                 class="el-icon-circle-check mark"></i>
             </el-form-item>
-            <el-form-item label="备注">
+            <el-form-item :label="$t('CAM.userGroup.colRemark')">
               <el-input size="small" v-model="groupData.Remark"></el-input><i class="el-icon-circle-check mark"></i>
             </el-form-item>
             <el-form-item label>
@@ -53,14 +53,14 @@
           <el-tabs v-model="activeName" @tab-click="handleClick">
             <el-tab-pane :label="policiesLable" name="first">
               <div class="app-cam-alert">
-                <div class="app-cam-alert__info">策略被关联后，该用户组内的所有用户都将获得策略所描述的权限</div>
+                <div class="app-cam-alert__info">{{$t('CAM.userGroup.polictTitle')}}</div>
               </div>
               <div class="btn">
-                <el-button type="primary" @click="openPolicies" size="small">关联策略</el-button>
+                <el-button type="primary" @click="openPolicies" size="small">{{$t('CAM.userGroup.getPolicy')}}</el-button>
               </div>
               <div>
                 <el-table :data="policiesData" style="width: 100%; border:1px solid #ddd;">
-                  <el-table-column label="策略名" show-overflow-tooltip>
+                  <el-table-column :label="$t('CAM.userList.strategyNames')" show-overflow-tooltip>
                     <template slot-scope="scope">
                       <!-- <p>{{scope.row.PolicyName}}</p> -->
                       <el-button @click="policyDetail(scope.row)" size="mini" type="text">{{scope.row.PolicyName}}
@@ -68,12 +68,12 @@
                       <p>{{scope.row.Remark}}</p>
                     </template>
                   </el-table-column>
-                  <el-table-column label="关联时间" show-overflow-tooltip>
+                  <el-table-column :label="$t('CAM.userList.AssociationTime')" show-overflow-tooltip>
                     <template slot-scope="scope">
                       <span>{{ scope.row.AddTime }}</span>
                     </template>
                   </el-table-column>
-                  <el-table-column label="操作" show-overflow-tooltip>
+                  <el-table-column :label="$t('CAM.userGroup.colHandle')" show-overflow-tooltip>
                     <template slot-scope="scope">
                       <el-link type="primary" @click="deletePolicies(scope.row.PolicyId)">解除</el-link>
                     </template>
@@ -91,28 +91,28 @@
                 </div>
               </div>
               <!-- 关联策略弹出框 start -->
-              <el-dialog title="关联策略" custom-class="dialogStyle" :visible.sync="dialogVisible" width="75%"
+              <el-dialog :title="$t('CAM.userList.RelatedPolicies')" custom-class="dialogStyle" :visible.sync="dialogVisible" width="75%"
                 :before-close="handleClosePolicies">
                 <div class="container">
                   <div class="container-left">
-                    <span>选择策略 （共{{totalNumPolicies}}条）</span>
-                    <el-input placeholder="支持搜索用户名" size="small"  v-model="searchPolicies" style="width:100%" @keyup.enter.native="toQueryPolicies">
+                    <span>{{$t('CAM.userList.strategyTitle')}} （共{{totalNumPolicies}}条）</span>
+                    <el-input placeholder="搜索" size="small"  v-model="searchPolicies" style="width:100%" @keyup.enter.native="toQueryPolicies">
                        <i slot="suffix" class="el-input__icon el-icon-search" @click="toQueryPolicies"></i>
                     </el-input>
                     <el-table class="table-left" ref="multipleOptionPolicies" :data="policiesAllData" size="small"
                       height="46vh" tooltip-effect="dark" style="width: 100%" @row-click="selectedRowPolicies"
                       @selection-change="handleSelectionChangePolicies">
                       <el-table-column type="selection" prop="PolicyId" width="29"> </el-table-column>
-                      <el-table-column prop="PolicyName" label="策略名" show-overflow-tooltip>
+                      <el-table-column prop="PolicyName" :label="$t('CAM.userList.strategyNames')" show-overflow-tooltip>
                         <template slot-scope="scope">
                           <p>{{scope.row.PolicyName}}</p>
                           <p>{{scope.row.Description}}</p>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="Type" label="策略类型" width="100">
+                      <el-table-column prop="Type" :label="$t('CAM.userList.strategyChose')" width="100">
                         <template slot-scope="scope">
-                          <p v-show="scope.row.Type == 1">自定义策略</p>
-                          <p v-show="scope.row.Type == 2">预设策略</p>
+                          <p v-show="scope.row.Type == 1">{{$t('CAM.userList.strategySelf')}}</p>
+                          <p v-show="scope.row.Type == 2">{{$t('CAM.userList.ysStrategy')}}</p>
                         </template>
                       </el-table-column>
                     </el-table>
@@ -123,19 +123,19 @@
                     </div>
                   </div>
                   <div class="container-right">
-                    <span>已选择（共条）</span>
+                    <span>{{$t('CAM.userList.choose')}}</span>
                     <el-table class="table-left" ref="multipleSelected" :data="policiesSelectedData"
                       tooltip-effect="dark" size="small" height="50vh" style="width: 100%">
-                      <el-table-column prop="PolicyName" label="策略名" show-overflow-tooltip>
+                      <el-table-column prop="PolicyName":label="$t('CAM.userList.strategyNames')" show-overflow-tooltip>
                         <template slot-scope="scope">
                           <p>{{scope.row.PolicyName}}</p>
                           <p>{{scope.row.Description}}</p>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="Type" label="策略类型" width="100">
+                      <el-table-column prop="Type" :label="$t('CAM.userList.strategyChose')" width="100">
                         <template slot-scope="scope">
-                          <p v-show="scope.row.Type == 1">自定义策略</p>
-                          <p v-show="scope.row.Type == 2">预设策略</p>
+                          <p v-show="scope.row.Type == 1">{{$t('CAM.userList.strategySelf')}}</p>
+                          <p v-show="scope.row.Type == 2">{{$t('CAM.userList.ysStrategy')}}</p>
                         </template>
                       </el-table-column>
                       <el-table-column :label="$t('CAM.userGroup.colHandle')" width="50">
@@ -150,7 +150,7 @@
                   </div>
                 </div>
                 <div slot="footer" class="dialog-footer">
-                  <el-button type="primary" @click="addPoliciesToGroup">确 定</el-button>
+                  <el-button type="primary" @click="addPoliciesToGroup">{{$t('CAM.userList.suerAdd')}}</el-button>
                   <el-button @click="dialogVisible = false">取 消</el-button>
                 </div>
               </el-dialog>
@@ -159,27 +159,27 @@
             <!-- tab 用户组用户信息页面 start -->
             <el-tab-pane :label="userLabel" name="second">
               <div class="addbtn">
-                <el-button @click="openUser" size="small" type="primary">添加用户</el-button>
-                <el-button size="small" :disabled="btnVisible" @click="deleteUser">移除用户</el-button>
+                <el-button @click="openUser" size="small" type="primary">添加</el-button>
+                <el-button size="small" :disabled="btnVisible" @click="deleteUser">移除</el-button>
               </div>
               <div>
                 <el-table ref="multipleTable" :data="owneruserData" tooltip-effect="dark"
                   style="width: 100%; border:1px solid #ddd" @selection-change="handleSelectionChangeUsers">
                   <el-table-column type="selection" width="55"></el-table-column>
-                  <el-table-column label="用户名称" prop="Name">
+                  <el-table-column  :label="$t('CAM.userGroup.colNmae')" prop="Name">
                     <template slot-scope="scope">
                       <el-button @click="userDetails(scope.row)" size="mini" type="text">{{scope.row.Name}}</el-button>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="CreateTime" label="创建时间">
+                  <el-table-column prop="CreateTime" :label="$t('CAM.userList.createTime')">
                     <template slot-scope="scope">{{ scope.row.CreateTime }}</template>
                   </el-table-column>
-                  <el-table-column prop="address" label="备注" show-overflow-tooltip>
+                  <el-table-column prop="address" :label="$t('CAM.userList.userRemark')" show-overflow-tooltip>
                     <template slot-scope="scope">{{ scope.row.remarks }}</template>
                   </el-table-column>
                   <el-table-column label="操作">
                     &lt;!&ndash;<template slot-scope="scope">
-                      <el-button @click.native.prevent="deleteRow(scope.row.Uid)" type="text" size="small">移出该组
+                      <el-button @click.native.prevent="deleteRow(scope.row.Uid)" type="text" size="small">{{$t('CAM.userGroup.removeGrop')}}
                       </el-button>
                     </template>&ndash;&gt;
                   </el-table-column>
@@ -196,23 +196,23 @@
                 </div>
               </div>
               <!-- dialog 用户组弹出框  start -->
-              <el-dialog title="添加用户" :visible.sync="dialogUser" width="75%" :before-close="handleCloseUser"
+              <el-dialog title="添加用戶" :visible.sync="dialogUser" width="75%" :before-close="handleCloseUser"
                 custom-class="dialogStyle">
                 <div class="container">
                   <div class="container-left">
-                    <p>选择添加的用户（共{{totalNumUser}}条）</p>
-                    <el-input placeholder="支持搜索用户名" size="small"  v-model="searchUser" style="width:100%" @keyup.enter.native="toQueryUser">
+                    <p>{{$t('CAM.userGroup.selection')}}({{totalNumUser}}条）</p>
+                    <el-input  size="small"  v-model="searchUser" style="width:100%" @keyup.enter.native="toQueryUser">
                        <i slot="suffix" class="el-input__icon el-icon-search" @click="toQueryUser"></i>
                     </el-input>
                     <el-table class="table-left" ref="multipleOptionUser" :data="userData" size="small"
                       :height="tableHeight" tooltip-effect="dark" style="width: 100%" @row-click="selectedRow"
                       @selection-change="handleSelectionChangeUser">
                       <el-table-column type="selection" prop="Uin" width="28"> </el-table-column>
-                      <el-table-column prop="Name" label="用户" show-overflow-tooltip>
+                      <el-table-column prop="Name" :label="$t('CAM.userGroup.user')" show-overflow-tooltip>
                       </el-table-column>
-                      <el-table-column label="用户类型" width="100">
+                      <el-table-column :label="$t('CAM.userList.userChose')" width="100">
                         <template slot-scope="scope">
-                          <p>子用户</p>
+                          <p>{{$t('CAM.userGroup.childUser')}}</p>
                         </template>
                       </el-table-column>
                     </el-table>
@@ -223,18 +223,18 @@
                     </div>
                   </div>
                   <div class="container-right">
-                    <span>已选择（{{selNum}}）</span>
+                    <span>{{$t('CAM.userGroup.Star')}}（{{selNum}}）</span>
                     <el-table class="table-left" ref="multipleSelected" :data="userSelData" tooltip-effect="dark"
                       size="small" :height="tableHeight" style="width: 100%">
-                      <el-table-column prop="Name" label="用户" show-overflow-tooltip> </el-table-column>
-                      <el-table-column label="用户类型" width="100">
+                      <el-table-column prop="Name" :label="$t('CAM.userGroup.user')" show-overflow-tooltip> </el-table-column>
+                      <el-table-column :label="$t('CAM.userList.userChose')" width="100">
                         <template slot-scope="scope">
-                          <p>用户类型</p>
+                          <p>{{$t('CAM.userList.userChose')}}</p>
                         </template>
                       </el-table-column>
                       <el-table-column :label="$t('CAM.userGroup.colHandle')" width="50">
                         &lt;!&ndash;<template slot-scope="scope">
-                          <el-button @click.native.prevent="deleteRow(scope.$index, userSelData)" type="text"
+                          <el-button @click.native.prevent="deleteRows(scope.$index, userSelData)" type="text"
                             size="small">
                             x
                           </el-button>
@@ -245,7 +245,7 @@
                 </div>
                 <div slot="footer" class="dialog-footer">
                   <el-button @click="dialogUser = false">取 消</el-button>
-                  <el-button type="primary" @click="addUserToGroup">确 定</el-button>
+                  <el-button type="primary" @click="addUserToGroup">{{$t('CAM.userList.suerAdd')}}</el-button>
                 </div>
               </el-dialog>
               <!-- dialog 用户组弹出框 end -->
@@ -259,6 +259,7 @@
   </div>
 </template>
 <script>
+import {GET_GROUP,DEL_USERTOGROUP,UPDATA_GROUP,GROUP_USERS,USER_LIST,GROUP_POLICY,ADD_GROUPTOLIST,POLICY_LIST,DETACH_POLICY,ATTACH_GROUP} from '@/constants'
   export default {
     data() {
       return {
@@ -307,15 +308,13 @@
       // 查询用户组详情
       selectGroup() {
         let params = {
-          Action: "GetGroup",
           Version: "2019-01-16"
         };
         let groupId = this.$route.query.GroupId
         if (groupId != '' && groupId != null) {
           params['GroupId'] = groupId
         }
-        let url = "cam2/GetGroup"
-        this.axios.post(url, params).then(res => {
+        this.axios.post(GET_GROUP, params).then(res => {
           this.groupData = res.Response
           this.owneruserData = res.Response.UserInfo
           this.userLabel = '用户（' + this.owneruserData.length + '）'
@@ -326,7 +325,6 @@
       // 删除用户
       deleteUser(uid) {
         let params = {
-          Action: "RemoveUserFromGroup",
           Version: "2019-01-16"
         };
         let groupId = parseInt(this.$route.query.GroupId)
@@ -340,8 +338,7 @@
           params['Info.0.Uid'] = uid
           params['Info.0.GroupId'] = groupId
         }
-        let url = "cam2/RemoveUserFromGroup"
-        this.axios.post(url, params).then(data => {
+        this.axios.post(DEL_USERTOGROUP, params).then(data => {
           this.getUsers() // 重新加载页面
         }).catch(error => {
           console.log(error)
@@ -357,7 +354,6 @@
         this.flag = !this.flag;
         let groupId = parseInt(this.$route.query.GroupId)
         let params = {
-          Action: 'UpdateGroup',
           Version: '2019-01-16',
           GroupId: groupId
         }
@@ -367,8 +363,7 @@
         if (this.groupData.Remark != '') {
           params['Remark'] = this.groupData.Remark
         }
-        let url = "cam2/UpdateGroup"
-        this.axios.post(url, params).then(res => {
+        this.axios.post(UPDATA_GROUP, params).then(res => {
           this.init()
         }).catch(error => {
           console.log(error)
@@ -378,14 +373,12 @@
       getUsers() {
         let groupId = parseInt(this.$route.query.GroupId)
         let paramsGroup = {
-          Action: 'ListUsersForGroup',
           GroupId: groupId,
           Page: this.pageUser,
           Rp: this.rpUser,
           Version: '2019-01-16'
         }
-        let urlGroup = "cam2/ListUsersForGroup"
-        this.axios.post(urlGroup, paramsGroup).then(resGroup => {
+        this.axios.post(GROUP_USERS, paramsGroup).then(resGroup => {
           this.owneruserData = resGroup.Response.UserInfo
           this.totalUser = resGroup.Response.TotalNum
           // this.userLabel = '用户（'+this.owneruserData.length+'）'
@@ -399,23 +392,19 @@
         this.userData = []
         let groupId = parseInt(this.$route.query.GroupId)
         let _this = this
-        let url = "cam2/ListUsers" // 拉取子用户
         let params = {
-          Action: 'ListUsers',
           Version: "2019-01-16"
         }
-        this.axios.post(url, params).then(res => {
+        this.axios.post(USER_LIST, params).then(res => {
           this.userData = []
           let userAllData = res.Response.Data
           // 获取用户组管理用户
           let selUserData = []
           let paramsGroup = {
-            Action: 'ListUsersForGroup',
             GroupId: groupId,
             Version: '2019-01-16'
           }
-          let urlGroup = "cam2/ListUsersForGroup"
-          this.axios.post(urlGroup, paramsGroup).then(resGroup => {
+          this.axios.post(GROUP_USERS, paramsGroup).then(resGroup => {
             // 不直接将子用户信息赋予用户组选择框中,是避免页面出现 过滤后的子用户信息刷新覆盖初始信息
             selUserData = resGroup.Response.UserInfo
             // 用户组拥有子用户，系统将拥有子用户从用户组添加框中去掉，避免重复选择
@@ -448,15 +437,13 @@
         let value = this.userSelData
         if (value != '') {
           let params = {
-            Action: 'AddUserToGroup',
             Version: "2019-01-16"
           }
           for (var i = 0; i < value.length; i++) {
             params['Info.' + i + '.Uid'] = value[i].Uid
             params['Info.' + i + '.GroupId'] = groupId
           }
-          let url = "cam2/AddUserToGroup"
-          this.axios.post(url, params).then(data => {
+          this.axios.post(ADD_GROUPTOLIST, params).then(data => {
             this.init() // 重新加载页面
           }).catch(error => {
             console.log(error)
@@ -511,14 +498,12 @@
       selectGroupPolicies() {
         let groupId = parseInt(this.$route.query.GroupId)
         let params = {
-          Action: 'ListAttachedGroupPolicies',
           Version: '2019-01-16',
           Page: this.pagePolicies,
           Rp: this.rpPolicies,
           TargetGroupId: groupId
         }
-        let url = "cam2/ListAttachedGroupPolicies"
-        this.axios.post(url, params).then(res => {
+        this.axios.post(GROUP_POLICY, params).then(res => {
           this.policiesData = res.Response.List
           this.policiesLable = '权限（' + this.policiesData.length + '）'
           this.totalPolicies = res.Response.TotalNum
@@ -529,7 +514,6 @@
       // 查询所有策略信息
       selectAllPolicies() {
         let params = {
-          Action: 'ListPolicies',
           // Rp: this.rpPolicies,
           // Page: this.pagePolicies,
           Version: '2019-01-16'
@@ -538,8 +522,7 @@
         if (this.searchPolicies != null && this.searchPolicies != '') {
           params['Keyword'] = this.searchPolicies
         }
-        let url = "cam2/ListPolicies"
-        this.axios.post(url, params).then(res => {
+        this.axios.post(POLICY_LIST, params).then(res => {
           this.totalNumPolicies = res.Response.TotalNum
           this.policiesAllData = res.Response.List
         }).catch(error => {
@@ -550,13 +533,11 @@
       deletePolicies(policyId) {
         let groupId = parseInt(this.$route.query.GroupId)
         let params = {
-          Action: 'DetachGroupPolicy',
           Version: '2019-01-16',
           PolicyId: policyId,
           DetachGroupId: groupId
         }
-        let url = "cam2/DetachGroupPolicy"
-        this.axios.post(url, params).then(res => {
+        this.axios.post(DETACH_POLICY, params).then(res => {
           this.selectGroupPolicies()
         }).catch(error => {
           console.log(error)
@@ -575,9 +556,12 @@
         // 设置选中或者取消状态
         this.$refs.multipleOptionPolicies.toggleRowSelection(row)
       },
-      deleteRowPolicies() {
+      deleteRowPolicies(index, rows) {
         // 获取右边框中取消的行数据，将此行数据在右边框中的选中状态取消
         this.$refs.multipleOptionPolicies.toggleRowSelection(rows[index], false)
+      },
+      deleteRows(index, rows){
+         this.$refs.multipleOptionUser.toggleRowSelection(rows[index], false)
       },
       // 按条件查询策略信息
       toQueryPolicies() {
@@ -606,8 +590,7 @@
       },
       // 添加策略信息
       addPolicies(params) {
-        let url = "cam2/AttachGroupPolicy"
-        this.axios.post(url, params).then(res => {
+        this.axios.post(ATTACH_GROUP, params).then(res => {
           this.selectGroupPolicies()
         }).catch(error => {
           console.log(error)

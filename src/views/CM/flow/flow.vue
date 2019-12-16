@@ -1,5 +1,5 @@
 <template>
   <div>
-    流量监控
+    {{ $t('CVM.lljk') }}
   </div>
 </template>

@@ -159,8 +159,15 @@ export default {
 
       // 返回
       if (key === '6-4') {
-        let params = {
-          "QcloudUin": this.$cookie.get('uin')
+        if (this.$cookie.get('subAccountName') && this.$cookie.get('subAccountName') !== '') {
+          var params = {
+            'QcloudUin': this.$cookie.get('uin'),
+            'SubAccountname': this.$cookie.get('subAccountName')
+          }
+        } else {
+          var params = {
+            'QcloudUin': this.$cookie.get('uin'),
+          }
         }
         this.axios
           .post(`${process.env.VUE_APP_adminUrl}ttaifucloud/account/manage/forword`, params)
@@ -185,28 +192,57 @@ export default {
           type: 'warning'
         })
           .then(() => {
-            let params = {
-              "QcloudUin": this.$cookie.get('uin')
+            if (this.$cookie.get('subAccountName') && this.$cookie.get('subAccountName') !== '') {
+              this.subAccount()       // 子账号退出
+            } else {
+              this.mainAccount()      // 主账号退出
             }
-            this.axios
-              .post(`${process.env.VUE_APP_adminUrl}taifucloud/account/manage/logoutActive`, params)
-              .then(({ data }) => {
-                if (data.RetCode === '00') {
-                  // 退出我们的系统
-                  clearLoginInfo()
-                  this.loginStatus = !!this.$cookie.get('uuid')
-                  // 退出台湾的系统成功 跳转到登录
-                  window.location.href = process.env.VUE_APP_loginUrl
-                } else {
-                  this.$message.error('退出異常，請重試');
-                }
-              })
           })
           .catch(() => {
             this.$message.error('退出異常，請重試');
           })
       }
+    },
 
+    // 主账号退出
+    mainAccount() {
+      let params = {
+        "QcloudUin": this.$cookie.get('uin')
+      }
+      this.axios
+        .post(`${process.env.VUE_APP_adminUrl}taifucloud/account/manage/logoutActive`, params)
+        .then(({ data }) => {
+          if (data.RetCode === '00') {
+            // 退出我们的系统
+            clearLoginInfo()
+            this.loginStatus = !!this.$cookie.get('uuid')
+            // 退出台湾的系统成功 跳转到登录
+            window.location.href = process.env.VUE_APP_loginUrl
+          } else {
+            this.$message.error('退出異常，請重試');
+          }
+        })
+    },
+
+    // 子账号退出
+    subAccount() {
+      let params = {
+        "QcloudUin": this.$cookie.get('uin'),
+        'SubAccountname': this.$cookie.get('subAccountName')
+      }
+      this.axios
+        .post(`${process.env.VUE_APP_adminUrl}taifucloud/account-sub/manage/logoutActive`, params)
+        .then(({ data }) => {
+          if (data.RetCode === '00') {
+            // 退出我们的系统
+            clearLoginInfo()
+            this.loginStatus = !!this.$cookie.get('uuid')
+            // 退出台湾的系统成功 跳转到登录
+            window.location.href = process.env.VUE_APP_loginUrl
+          } else {
+            this.$message.error('退出異常，請重試');
+          }
+        })
     }
   }
 }

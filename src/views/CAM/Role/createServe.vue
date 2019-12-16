@@ -1,6 +1,6 @@
 <template>
   <div class="createServe">
-    <HeadCom title="新建自定义角色" :backShow="true" @_back="_back"/>
+    <HeadCom :title="$t('CAM.Role.createServe')" :backShow="true" @_back="_back"/>
     
     <div class="container">
       <div class="contant">
@@ -12,14 +12,14 @@
             :space="200"
             finish-status="success"
           >
-            <el-step title="输入角色载体信息"></el-step>
-            <el-step title="配置角色策略"></el-step>
-            <el-step title="审阅"></el-step>
+            <el-step :title="$t('CAM.Role.Enter')"></el-step>
+            <el-step :title="$t('CAM.Role.Configuring')"></el-step>
+            <el-step :title="$t('CAM.Role.reviewCheck')"></el-step>
           </el-steps>
         </div>
         <div v-if="active == 1" class="contant_flex">
           <div class="flex_left">
-            <p style="margin-top:5px;text-overflow:ellipsis;white-space:nowrap">支持角色的服务*</p>
+            <p style="margin-top:5px;text-overflow:ellipsis;white-space:nowrap">{{$t('CAM.Role.support')}}*</p>
           </div>
           <div class="flex_right">
             <el-checkbox-group
@@ -42,19 +42,19 @@
         <div class="shenyue" v-if="active == 3">
           <div class="content_flex">
             <div class="content_left">
-              <p class="juese">角色名称*</p>
-              <p class="juese" style="margin-top:55px">角色描述</p>
-              <p class="juese">角色载体</p>
+              <p class="juese">{{$t('CAM.Role.roleName')}}*</p>
+              <p class="juese" style="margin-top:55px">{{$t('CAM.Role.roleDesc')}}</p>
+              <p class="juese">{{$t('CAM.Role.roleCarrier')}}</p>
             </div>
             <div class="content_right">
               <div class="jscontent" style="height:50px">
-                <el-input v-model="inputRoleName" placeholder="请输入角色名称" size="mini" @blur="jsname"></el-input>
-                <p v-if="have" style="font-size:12px;color:#E1504A;padding-top:10px">角色名称不能为空</p>
+                <el-input v-model="inputRoleName" :placeholder="$t('CAM.Role.inputRoleName')" size="mini" @blur="jsname"></el-input>
+                <p v-if="have" style="font-size:12px;color:#E1504A;padding-top:10px">{{$t('CAM.Role.empty')}}</p>
               </div>
               <p class="jscontent">
                 <el-input v-model="inputRoleDesc" placeholder size="mini"></el-input>
               </p>
-              <p class="jscontent text">服务-mps.cloud.tencent.com</p>
+              <p class="jscontent text">服务 -mps.cloud.tencent.com</p>
             </div>
           </div>
           <div class="content_table">
@@ -67,12 +67,12 @@
               :cell-style="{padding:'5px 10px'}"
               :header-cell-style="{height:'20px',padding:'0px 10px'}"
             >
-              <el-table-column prop="PolicyName" label="策略名称"></el-table-column>
-              <el-table-column prop="Description" label="描述"></el-table-column>
-              <el-table-column prop="Type" label="策略类型">
+              <el-table-column prop="PolicyName" :label="$t('CAM.Role.strategyName')"></el-table-column>
+              <el-table-column prop="Description" :label="$t('CAM.Role.desc')"></el-table-column>
+              <el-table-column prop="Type" :label="$t('CAM.Role.strategyType')">
                 <template slot-scope="scope">
-                  <p v-show="scope.row.Type == 1">自定义策略</p>
-                  <p v-show="scope.row.Type == 2">预设策略</p>
+                  <p v-show="scope.row.Type == 1">{{$t('CAM.Role.customPolicy')}}</p>
+                  <p v-show="scope.row.Type == 2">{{$t('CAM.Role.defaultPolicy')}}</p>
                 </template>
               </el-table-column>
             </el-table>
@@ -90,6 +90,7 @@
 <script>
 import HeadCom from "../UserListNew/components/Head";
 import transfer from "./component/transfer";
+import {CREATE_ROLE,ATTACH_ROLE} from '@/constants'
 export default {
   components: {
     transfer,
@@ -260,15 +261,13 @@ export default {
         }
        */
       let params = {
-        Action: "CreateRole",
         Version: "2019-01-16",
         RoleName: this.inputRoleName,
         Description: this.inputRoleDesc,
         PolicyDocument:
           '{"version":"2.0","statement":[{"action":"name/sts:AssumeRole","effect":"allow","principal":{"service":["cloudaudit.cloud.tencent.com","cls.cloud.tencent.com"]}}]}'
       };
-      let url = "cam2/CreateRole";
-      this.axios.post(url, params).then(data => {
+      this.axios.post(CREATE_ROLE, params).then(data => {
         let roleId = data.Response.RoleId; // 获取创建的角色id
         this.$message("创建角色成功");
         let policiesArray = this.policiesSelectedData; // 获取权限策略
@@ -290,7 +289,7 @@ export default {
     },
     // 绑定权限策略到角色
     AttachRolePolicy(params) {
-      this.$axios.post("cam2/AttachRolePolicy", params).then(res => {
+      this.$axios.post(ATTACH_ROLE, params).then(res => {
         console.log(res);
       });
     }
@@ -322,10 +321,6 @@ export default {
       background: #fff;
       .el-steps--simple {
         background-color: #fff;
-      }
-      .step {
-        border-bottom: 1px solid #ddd;
-        padding-bottom: 20px;
       }
       .contant_flex {
         display: flex;
@@ -362,6 +357,9 @@ export default {
         }
       }
     }
+  }
+  .step{
+    margin-bottom: 20px;
   }
 }
 </style>

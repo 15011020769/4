@@ -69,10 +69,14 @@
                     class="allFunListBoxCon"
                     :class="isactive==index ?'addBorderCla':''"
                     @click="mouseHandel(index,item.DemoId)"
+                    style="display:flex;flex-direction:column;"
                   >
                     <div class="funListBoxConTit newClear">
                       <span class="titNew">{{item.Name}}</span>
-                      <a class="lookDetail" @click="lookFunDetails(item.DemoId)">{{ $t('SCF.total.ckxq') }}</a>
+                      <a
+                        class="lookDetail"
+                        @click="lookFunDetails(item.DemoId)"
+                      >{{ $t('SCF.total.ckxq') }}</a>
                       <el-dialog
                         :title="$t('SCF.total.mbxq')"
                         :visible.sync="dialogVisible"
@@ -135,7 +139,7 @@
                         </span>
                       </el-dialog>
                     </div>
-                    <div class="funListBoxConP">
+                    <div class="funListBoxConP" style="flex:1;">
                       <p class="funListLangu">
                         <span>{{ $t('SCF.total.yy') }}</span>
                         <span>{{item.Runtime}}</span>
@@ -283,7 +287,7 @@ export default {
       if (this.searchName !== "") {
         this.GetTemplateList();
       } else {
-        this.$message('請輸入相關語言搜索');
+        this.$message("請輸入相關語言搜索");
       }
     },
     // 分页开始
@@ -303,13 +307,13 @@ export default {
     currentChangePage(list) {},
     nextStep() {
       if (this.DemoId === "") {
-        this.$message('請選擇函數模板');
+        this.$message("請選擇函數模板");
       }
       window.sessionStorage.setItem("funNameSess", this.createFunTable.funName);
       window.sessionStorage.setItem("runMoent", this.createFunTable.runMoment);
       window.sessionStorage.setItem("DemoId", this.DemoId);
       if (this.createFunTable.funName == "") {
-        this.$message('函數名不能為空');
+        this.$message("函數名不能為空");
         return false;
       }
       this.$router.push({
@@ -321,7 +325,7 @@ export default {
       this.GetTemplateDetail();
     },
     handleClose(done) {
-      this.$confirm('確認關閉？')
+      this.$confirm("確認關閉？")
         .then(_ => {
           done();
         })

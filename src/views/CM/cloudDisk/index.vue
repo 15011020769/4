@@ -1,6 +1,6 @@
 <template>
   <div class="CM-wrap">
-    <Loading :show="loadShow" />
+    <!-- <Loading :show="loadShow" /> -->
     <!-- 城市按钮 -->
     <div class="CVM-title">{{ $t('CVM.cloudDisk.yyp') }}</div>
     <div class="tool">
@@ -10,6 +10,7 @@
         :Cityvalue.sync="selectedRegion"
         @changeCity="changeCity"
       />
+
       <!-- 搜索 -->
       <SEARCH
         :searchOptions="searchOptions"
@@ -18,6 +19,7 @@
         :searchInput="searchInput"
         @changeinput="changeinput"
         @clicksearch="clicksearch"
+        @exportExcel="exportExcel"
       ></SEARCH>
     </div>
     <!-- 表格 -->
@@ -26,6 +28,8 @@
         :data="TbaleData.slice((currpage - 1) * pagesize, currpage * pagesize)"
         height="550"
         style="width: 100%"
+        id="exportTable"
+        v-loading="loadShow"
       >
         <el-table-column prop :label="$t('CVM.cloudDisk.mc')">
           <template slot-scope="scope">
@@ -84,6 +88,8 @@
 </template>
 
 <script>
+import FileSaver from "file-saver";
+import XLSX from "xlsx";
 import Cities from "@/components/public/CITY";
 import SEARCH from "@/components/public/SEARCH";
 import Loading from "@/components/public/Loading";
@@ -91,7 +97,7 @@ import { ALL_CITY, DISK_LIST, ALL_PROJECT } from "@/constants";
 export default {
   data() {
     return {
-      loadShow: false,
+      loadShow: true,
       searchOptions: [
         {
           value: "disk-usage",
@@ -135,6 +141,26 @@ export default {
     Loading
   },
   methods: {
+    //导出表格
+    exportExcel() {
+      /* generate workbook object from table */
+      var wb = XLSX.utils.table_to_book(document.querySelector("#exportTable"));
+      /* get binary string as output */
+      var wbout = XLSX.write(wb, {
+        bookType: "xlsx",
+        bookSST: true,
+        type: "array"
+      });
+      try {
+        FileSaver.saveAs(
+          new Blob([wbout], { type: "application/octet-stream" }),
+          this.$t("CVM.cloudDisk.yyp") + ".xlsx"
+        );
+      } catch (e) {
+        if (typeof console !== "undefined") console.log(e, wbout);
+      }
+      return wbout;
+    },
     // 获取城市列表
     GetCity() {
       this.axios.get(ALL_CITY).then(data => {
@@ -158,6 +184,7 @@ export default {
     changeinput(val) {
       this.searchInput = val;
       if (this.searchInput === "") {
+        this.loadShow = true;
         this.GetTabularData();
       }
     },
@@ -165,6 +192,7 @@ export default {
     clicksearch(val) {
       this.searchInput = val;
       if (this.searchInput !== "" && this.searchValue !== "") {
+        this.loadShow = true;
         this.GetTabularData();
       } else {
         this.$message.error("請輸入正確搜索信息");
@@ -217,6 +245,16 @@ export default {
 };
 </script>
 <style scoped lang="scss">
+.tooltip {
+  float: left;
+  padding: 0 20px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  margin-left: -340px;
+  margin-top: -4px;
+  cursor: pointer;
+}
 .CM-wrap {
   width: 100%;
   height: 100%;

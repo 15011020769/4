@@ -76,12 +76,30 @@ let product = {
     title: '台富云-容器服务', // 当使用 title 选项时，template 中的 title 标签需要是 <title><%= htmlWebpackPlugin.options.title %></title>
     chunks: ['chunk-vendors', 'chunk-common', 'TKE'] // 在这个页面中包含的块，默认情况下会包含,提取出来的通用 chunk 和 vendor chunk。
   },
+  MGC: {
+    entry: 'src/views/MGC/main.js', // page 的入口
+    template: 'src/public/index.html', // 模板来源
+    filename: 'index.html', // 在 dist/index.html 的输出
+    title: '台富云-消息中心', // 当使用 title 选项时，template 中的 title 标签需要是 <title><%= htmlWebpackPlugin.options.title %></title>
+    chunks: ['chunk-vendors', 'chunk-common', 'MGC'] // 在这个页面中包含的块，默认情况下会包含,提取出来的通用 chunk 和 vendor chunk。
+  },
+  CSS: {
+    entry: 'src/views/CSS/main.js', // page 的入口
+    template: 'src/public/index.html', // 模板来源
+    filename: 'index.html', // 在 dist/index.html 的输出
+    title: '台富云-云直播', // 当使用 title 选项时，template 中的 title 标签需要是 <title><%= htmlWebpackPlugin.options.title %></title>
+    chunks: ['chunk-vendors', 'chunk-common', 'CSS'] // 在这个页面中包含的块，默认情况下会包含,提取出来的通用 chunk 和 vendor chunk。
+  }
 }
 let page = {}
 let productName = process.argv[3].substring(2)// 获取执行哪个文件
 page[productName] = product[productName]
 
 module.exports = {
+  transpileDependencies: [
+    'vue-echarts',
+    'resize-detector',
+  ],
   publicPath: './', // 官方要求修改路径在这里做更改，默认是根目录下，可以自行配置
   outputDir: 'dist/' + productName, // 标识是打包哪个文件
   filenameHashing: true, // 默认情况下，生成的静态资源在它们的文件名中包含了 hash 以便更好的控制缓存。如果你无法使用 Vue CLI 生成的 index HTML，你可以通过将这个选项设为 false 来关闭文件名哈希。
@@ -94,5 +112,10 @@ module.exports = {
     port: 8081, // 端口号，默认8080
     https: false, // 协议
     hotOnly: false // 没啥效果，热模块，webpack已经做好了
+  },
+  chainWebpack: config => {
+    config.performance
+      .maxEntrypointSize(40000000)
+      .maxAssetSize(40000000)
   }
 }

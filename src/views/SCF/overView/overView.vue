@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="wrap">
     <div class="topOverView">
       <span>{{ $t('SCF.total.gl') }}</span>
     </div>
@@ -417,6 +417,22 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.wrap >>> .btn-style{
+  margin-left: 0;
+}
+.wrap >>> input,
+.wrap >>> button {
+  height: 30px;
+  border-radius: 0;
+  font-size: 12px;
+}
+.wrap >>> button{
+  padding: 0 15px;
+  box-sizing: border-box;
+}
+.chartShowCon >>> button{
+  background: transparent;
+}
 .newClear:after {
   display: block;
   content: "";

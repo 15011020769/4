@@ -6,10 +6,10 @@
         <h4 style="margin-bottom:10px;">{{$t('CAM.Role.roleTitle1')}}</h4>
         <p>{{$t('CAM.Role.roleTitle2')}}</p>
       </div>
+      <div class="opration">
+          <el-button type="primary" size="small" @click="created_user">{{$t('CAM.Role.addBtn')}}</el-button>  </p>
+      </div>
       <div class="container_table">
-        <p>
-          <el-button type="primary" size="small" @click="created_user">{{$t('CAM.Role.addBtn')}}</el-button>
-        </p>
         <div class="table">
           <el-table
             :data="tableData"
@@ -36,18 +36,18 @@
             >
               <template slot-scope="scope">
                 <span v-show="scope.row.PolicyDocument.len != undefined">
-                  <p>产品服务-{{scope.row.PolicyDocument.val}}</p>
+                  <p>{{$t('CAM.Role.service')}}-{{scope.row.PolicyDocument.val}}</p>
                   <p v-show="scope.row.PolicyDocument.len > 1">
                     以及
                     <el-button
                       @click.native.prevent="handleClick(scope.row)"
                       type="text"
                       size="small"
-                    >其他{{scope.row.PolicyDocument.len}}项</el-button>
+                    >其他{{scope.row.PolicyDocument.len}}{{$t('CAM.Role.item')}}</el-button>
                   </p>
                 </span>
                 <span v-show="scope.row.PolicyDocument.len === undefined">
-                  <p>云账号-{{scope.row.PolicyDocument.val}}</p>
+                  <p>{{$t('CAM.Role.account')}}-{{scope.row.PolicyDocument.val}}</p>
                 </span>
               </template>
             </el-table-column>
@@ -109,6 +109,7 @@
 </template>
 <script>
 import HeadCom from "../UserListNew/components/Head";
+import {DESCRIB_ROLE,DELETE_ROLE} from '@/constants'
 export default {
   data() {
     return {
@@ -131,7 +132,6 @@ export default {
   methods: {
     init() {
       let params = {
-        Action: "DescribeRoleList",
         Version: "2019-01-16",
         Page: this.Page,
         Rp: this.size
@@ -139,9 +139,8 @@ export default {
       if (this.searchValue != null && this.searchValue != "") {
         params["keyword"] = this.searchValue;
       }
-      let url = "cam2/DescribeRoleList";
       this.axios
-        .post(url, params)
+        .post(DESCRIB_ROLE, params)
         .then(data => {
           if (
             data === "" ||
@@ -195,14 +194,12 @@ export default {
         type: "warning"
       })
         .then(() => {
-          let url = "cam2/DeleteRole";
           let params = {
-            Action: "DeleteRole",
             Version: "2019-01-16",
             RoleId: RoleId
           };
           this.axios
-            .post(url, params)
+            .post(DELETE_ROLE, params)
             .then(data => {
               if (data != null && data.Response.RequestId != "") {
                 this.$message({
@@ -258,10 +255,18 @@ export default {
       this.$router.push("/createServe");
     },
     toAccount() {
-      this.$router.push("/createAccount");
+      // this.$router.push("/createAccount");
+      this.$message({
+        type: "info",
+        message: "内测中..."
+      });
     },
     toProvider() {
-      this.$router.push("/createProvider");
+      // this.$router.push("/createProvider");
+       this.$message({
+        type: "info",
+        message: "内测中..."
+      });
     }
   }
 };
@@ -278,13 +283,15 @@ export default {
   }
 
   .container {
-    max-width: 96%;
+    width: 100%;
+    display: flex;
     margin: 0 auto;
-    padding-top: 20px;
-
+    padding: 20px ;
+    flex-direction: column;
     .container-text {
+      width: 100%;
+      margin: 0 auto;
       font-size: 12px;
-      line-height: inherit;
       padding: 10px 30px 10px 20px;
       vertical-align: middle;
       color: #003b80;
@@ -293,7 +300,6 @@ export default {
       background: #e5f0ff;
       position: relative;
       box-sizing: border-box;
-      max-width: 1360px;
       margin-bottom: 20px;
     }
 
@@ -365,5 +371,11 @@ export default {
       background-repeat: no-repeat;
     }
   }
+}
+.opration{
+  width: 100%;
+}
+.container_table{
+  width: 100%;
 }
 </style>

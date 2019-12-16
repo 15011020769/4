@@ -1,11 +1,15 @@
 <template>
   <div class="myMirror-wrap">
-    我的镜像
+    <HeadCom title="我的镜像"></HeadCom>
   </div>
 </template>
 
 <script>
+import HeadCom from "@/components/public/Head";
 export default {
+  components: {
+    HeadCom
+  },
   name:'myMirror',
   data(){
     return{

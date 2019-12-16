@@ -18,7 +18,12 @@
               :value="item.Value"
             ></el-option>
           </el-select>
-          <el-input :placeholder="$t('CLA.total.qsrnr')" v-model="input3" class="inp"></el-input>
+          <el-input
+            :placeholder="$t('CLA.total.qsrnr')"
+            v-model="input3"
+            class="inp"
+            @change="_inpChange"
+          ></el-input>
           <el-button icon="el-icon-search" @click="seach()"></el-button>
         </div>
         <div class="date">
@@ -107,8 +112,9 @@
           <el-table-column :label="$t('CLA.total.zymc')" prop="Resources.ResourceName"></el-table-column>
           <div v-if="Show" slot="append" style="line-height:40px;padding:0 20px;color:#006eff;">
             <p v-show="!loading" @click="more()">{{ $t('CLA.total.djjz') }}</p>
-            <p v-show="loading"  style="width:100%;text-align:center;">
-              <i class="el-icon-loading"></i>{{ $t('CLA.total.jzz') }}
+            <p v-show="loading" style="width:100%;text-align:center;">
+              <i class="el-icon-loading"></i>
+              {{ $t('CLA.total.jzz') }}
             </p>
           </div>
         </el-table>
@@ -189,6 +195,11 @@ export default {
       });
   },
   methods: {
+    _inpChange() {
+      if (this.input3 == "") {
+        this.seach();
+      }
+    },
     _select(val) {
       this.AttributeKey = val;
     },
@@ -201,6 +212,15 @@ export default {
         EndTime: this.nowtime, // 结束时间1558108799
         MaxResults: this.MaxResults
       };
+      if (this.endTime != "") {
+        params["EndTime"] = this.endTime;
+        params["StartTime"] = this.startTime;
+      }
+      if (this.input3 != "") {
+        params["LookupAttributes.0.AttributeKey"] = this.AttributeKey;
+        params["LookupAttributes.0.AttributeValue"] = this.input3;
+      }
+
       this.axios.post(YJS_LIST, params).then(res => {
         if (res.codeDesc == "Success") {
           this.tableData = res.data.Events;
@@ -212,19 +232,29 @@ export default {
     //搜索
     seach() {
       this.vloading = true;
-      let startTime = String(new Date(this.value1[0]).getTime() / 1000).split(
-        "."
-      )[0];
-      let endTime = String(new Date(this.value1[1]).getTime() / 1000).split(
-        "."
-      )[0];
+      let startTime = null;
+      let endTime = null;
+      if (this.value1 != null) {
+        startTime = String(new Date(this.value1[0]).getTime() / 1000).split(
+          "."
+        )[0];
+        endTime = String(new Date(this.value1[1]).getTime() / 1000).split(
+          "."
+        )[0];
+        this.startTime = startTime;
+        this.endTime = endTime;
+      }
       let params = {
         Version: "2019-03-19",
         Region: "ap-taipei",
-        EndTime: endTime == NaN ? endTime : this.nowtime,
+        EndTime: this.nowtime,
         MaxResults: this.MaxResults,
-        StartTime: startTime == NaN ? startTime : this.oldTime
+        StartTime: this.oldTime
       };
+      if (this.value1) {
+        params["EndTime"] = endTime;
+        params["StartTime"] = startTime;
+      }
       params["LookupAttributes.0.AttributeKey"] = this.AttributeKey;
       params["LookupAttributes.0.AttributeValue"] = this.input3;
       this.axios.post(YJS_LIST, params).then(data => {

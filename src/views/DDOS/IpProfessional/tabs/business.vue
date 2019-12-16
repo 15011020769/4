@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="child">
     <div class="mainConList">
       <div class="mainConListAll mainConListOne">
         <div class="newClear">
@@ -26,19 +26,20 @@
           @change="changeIdService"
           filterable
           placeholder="请输入要查询的ID或名称"
+          style="margin-right:10px;"
         >
           <el-option :label="inputIdService" :value="inputIdService"></el-option>
         </el-select>
         <el-select class="ddosAttackSelect1" v-model="ywTimeBtnSelect2">
-          <el-option :label="ywTimeBtnSelect2" :value="ywTimeBtnSelect2"></el-option>
+          <el-option v-for="item in IpList" :value="item"></el-option>
         </el-select>
       </div>
       <div class="mainConListAll mainConListTwo">
         <el-tabs class="tabsCard" v-model="activeName2" type="card" @tab-click="handleClick2">
-          <el-tab-pane label="业务流量宽带" name="traffic">
+          <el-tab-pane :label="$t('DDOS.Statistical_forms.Traffic_broadband')" name="traffic">
             <div id="myChart4"></div>
           </el-tab-pane>
-          <el-tab-pane label="业务包速率" name="pkg">
+          <el-tab-pane :label="$t('DDOS.Statistical_forms.Packet_rate')" name="pkg">
             <div id="myChart5"></div>
           </el-tab-pane>
         </el-tabs>
@@ -47,12 +48,14 @@
   </div>
 </template>
 <script>
+import { GET_ID} from '@/constants'
 import moment from "moment";
 export default {
   data() {
     return {
       activeName2: "traffic", //业务-二级tab标识
-      inputIdService: "net-0000006y",
+      IpList:'',
+      inputIdService: "",
       metricNameService: "traffic", //指标名，取值：traffic表示流量带宽，pkg表示包速率
       metricNameServices: ["traffic", "pkg"],
       metricNameService2: "connum", //指标名，取值：（通过腾讯云获取的值connum/inactive_conn），以下为API给出
@@ -64,7 +67,7 @@ export default {
       // inpkg表示入包速率；
       // outpkg表示出包速率；
       metricNameService2s: ["connum", "inactive_conn"],
-      ywTimeBtnSelect2: "177.52.89.23", //业务 时间按钮下面第二个下拉
+      ywTimeBtnSelect2: "总览", //业务 时间按钮下面第二个下拉
 
       dateChoice3: {}, //日期选择
       periodService: 3600, //统计粒度，取值[300(5分钟)，3600(小时)，86400(天)]
@@ -98,6 +101,7 @@ export default {
 
   created() {
     this.gettableshow();
+    this.GetID()
   },
   methods: {
     gettableshow() {
@@ -111,6 +115,21 @@ export default {
         this.describeBaradData();
       }
     },
+     //获取资源的IP列表
+    GetID() {
+      let params = {
+        Version: "2018-07-09",
+        Business: "net",
+      };
+      this.axios.post(GET_ID, params).then(res => {
+        let IpList = res.Response.Resource
+        // console.log(IpList)
+        for(let i = 0 ; i < IpList.length;i++){
+            this.inputIdService = IpList[i].Id
+            this.IpList = IpList[i].IpList
+        }
+      });
+    },
     // 3.1.获取L4转发规则
     describleL4Rules() {
       let params = {
@@ -118,7 +137,7 @@ export default {
         Business: "net",
         Id: this.inputIdService
       };
-      this.$axios.post("dayu2/DescribleL4Rules", params).then(res => {
+      this.axios.post("dayu2/DescribleL4Rules", params).then(res => {
         // console.log(res)
       });
     },
@@ -135,7 +154,7 @@ export default {
         EndTime: this.endTimeService,
         Statistics: this.statistics //统计方式，取值：max表示最大值；min表示最小值；avg表示均值；
       };
-      this.$axios.post("dayu2/DescribeBaradData", params).then(res => {
+      this.axios.post("dayu2/DescribeBaradData", params).then(res => {
         // console.log(res)
       });
     },
@@ -176,7 +195,7 @@ export default {
         StartTime: this.startTimeService,
         EndTime: this.endTimeService
       };
-      this.$axios.post("dayu2/DescribeTransmitStatis", params).then(res => {
+      this.axios.post("dayu2/DescribeTransmitStatis", params).then(res => {
         this.InDataList = res.Response.InDataList;
         this.OutDataList = res.Response.OutDataList;
         if (this.metricNameService == "traffic") {
@@ -203,7 +222,7 @@ export default {
       if (this.resourceId != "" && this.resourceId != null) {
         params["IdList.0"] = this.resourceId;
       }
-      this.$axios.post("dayu2/DescribeResourceList", params).then(res => {
+      this.axios.post("dayu2/DescribeResourceList", params).then(res => {
         // console.log(res)
       });
     },
@@ -463,5 +482,79 @@ export default {
   }
 };
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
+.child >>> .el-tabs__nav-wrap {
+  padding: 0 !important;
+}
+.child >>> .el-tabs__item,
+.child >>> .is-active {
+  border-bottom: 1px #f2f2f2 solid !important;
+  border-radius: 0 !important;
+}
+.newClear {
+  display: flex;
+}
+.child {
+  width: 100%;
+  padding: 20px;
+  box-sizing: border-box;
+}
+.mainConListAll {
+  background: white;
+  padding: 20px;
+  box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
+  box-sizing: border-box;
+  margin-bottom: 20px;
+}
+.buttonGroupAll{
+  float:left;
+  button{
+    height:30px;
+    line-height: 30px;
+    padding:0 16px;
+    border-radius: 0;
+  }
+}
+.newDataTime{
+  float:left;
+  height:30px;
+  line-height: 30px;
+  border-radius: 0;
+  .el-input__icon{
+    line-height:26px;
+  }
+  .el-range-separator{
+    line-height: 26px;
+    width:7%;
+  }
+}
+::v-deep .el-range-editor.el-input__inner{
+  height:30px;
+  line-height: 30px;
+}
+::v-deep .el-range__icon{
+  line-height: 26px;
+}
+::v-deep .el-range-separator{
+  line-height: 26px;
+  width:7%;
+}
+::v-deep .newDataTimeTwo {
+  float: left;
+  height: 30px !important;
+  border-radius: 0 !important;
+  margin-left: -1px;
+}
+::v-deep input.el-input__inner{
+  height:30px;
+  border-radius: 0;
+  line-height: 30px;
+}
+.ddosAttackSelect1{
+  height:30px;
+  line-height: 30px;
+  ::v-deep div.el-input{
+    height:30px;
+  }
+}
 </style>

@@ -1,22 +1,23 @@
 <template>
-  <div id='id'
-    style="width:500px; height:120px;"
-    ref="chart">
-
+  <div class="wrap">
+    <el-tooltip class="item" effect="dark" content="導出圖片" placement="top">
+      <i class="el-icon-download" @click="exportImg"></i>
+    </el-tooltip>
+    <div id="id" ref="chart"></div>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'echart-line',
+  name: "echart-line",
   props: {
     id: String,
-    time: [Array,String,Number],
+    time: [Array, String, Number],
     opData: Array,
     // title: Array,
     scale: Number,
     xdata: Boolean,
-    period: String,
+    period: String
   },
   mounted() {
     this.init();
@@ -25,15 +26,30 @@ export default {
     time: {
       handler() {
         this.init();
-      },
+      }
     },
     opData: {
       handler() {
         this.init();
-      },
-    },
+      }
+    }
   },
   methods: {
+    //导出图片
+    exportImg() {
+      var myChart = this.$echarts.init(document.getElementById("id"));
+
+      var i = myChart.getDataURL({
+        type: "png",
+        backgroundColor: "white"
+        // 导出的图片分辨率比例，默认为 1。
+        //pixelRatio: number,
+      });
+      var $a = document.createElement("a");
+      $a.setAttribute("href", i);
+      $a.setAttribute("download", "image.png");
+      $a.click();
+    },
     init() {
       const period = this.period;
       const chartView = this.$refs.chart;
@@ -41,15 +57,15 @@ export default {
       myChart.setOption({
         tooltip: {
           enterable: true,
-          trigger: 'axis',
+          trigger: "axis",
           axisPointer: {
-            type: 'line',
+            type: "line",
             lineStyle: {
-              width: 1,
+              width: 1
             },
             label: {
-              backgroundColor: '#6a7985',
-            },
+              backgroundColor: "#6a7985"
+            }
           },
 
           formatter(params) {
@@ -58,86 +74,85 @@ export default {
             relVal += `粒度：${period}</br>`;
 
             return relVal;
-          },
+          }
         },
         toolbox: {
           feature: {
-            saveAsImage: {
-              show: true,
-            },
-          },
+            show: true,
+            saveAsImage: { show: true }
+          }
         },
         legend: {
           // data: this.title,
-          y: 'bottom',
+          y: "bottom"
         },
         grid: {
           x: 25,
           y: 45,
           x2: 5,
           y2: 20,
-          borderWidth: 1,
+          borderWidth: 1
         },
         xAxis: [
           {
-            type: 'category',
+            type: "category",
             boundaryGap: false,
             data: this.time,
             axisTick: {
               // 决定是否显示坐标刻度
               alignWithLabel: true,
-              show: this.xdata,
+              show: this.xdata
             },
             axisLabel: {
               // 决定是否显示数据
-              show: this.xdata,
+              show: this.xdata
             },
             splitLine: {
-              show: false,
+              show: false
             },
             axisLine: {
               // y轴显示
-              show: this.xdata,
-            },
-          },
+              show: this.xdata
+            }
+          }
         ],
         yAxis: [
           {
             splitLine: {
               // 网格线
-              show: false,
+              show: false
             },
             axisLine: {
               // X轴显示
-              show: false,
+              show: false
             },
-            type: 'value',
-            splitNumber: this.scale,
-          },
+            type: "value",
+            splitNumber: this.scale
+          }
         ],
 
         series: [
           {
             labelLine: {
               normal: {
-                show: false,
-              },
+                show: false
+              }
             },
-            type: 'line', // 设置图表主题
+            type: "line", // 设置图表主题
             data: this.opData,
-            symbol: 'none',
+            symbol: "none",
             itemStyle: {
               normal: {
-                color: '#2072d9',
+                color: "#2072d9",
                 lineStyle: {
-                  color: '#2072d9',
-                },
-              },
-            },
-          },
-        ],
+                  color: "#2072d9"
+                }
+              }
+            }
+          }
+        ]
       });
-      window.addEventListener('resize', () => {
+      window.addEventListener("resize", () => {
         myChart.resize();
       });
     },
@@ -145,10 +160,20 @@ export default {
       if (this.myChart) {
         this.myChart.clear();
       }
-    },
-  },
+    }
+  }
 };
 </script>
 
-<style>
+<style lang="scss" scoped>
+i {
+  float: right;
+  font-size: 15px;
+  margin-top: 12px;
+  cursor: pointer;
+}
+#id {
+  width: 500px;
+  height: 120px;
+}
 </style>

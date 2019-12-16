@@ -1,6 +1,16 @@
 <template>
   <div class="detail-audit">
-    <Header :title="title" :backShow="true" @_back="_back" />
+    <div class="header">
+      <i class="el-icon-back" @click="_back"></i>
+      {{title}}
+      <el-switch
+        v-model="value"
+        inactive-text="开启日志记录"
+        style="float:right;margin-top:5px;"
+        @change="_switch"
+      ></el-switch>
+    </div>
+
     <!-- 弹出框 -->
     <el-dialog :visible.sync="dialogVisible" width="40%" :before-close="handleClose">
       <p class="dialog">{{ $t('CLA.total.qrsc') }}</p>
@@ -31,7 +41,7 @@
         </div>
       </div>
       <div class="detil-audit-main">
-        <div class="detil-audit-box">
+        <div class="detil-audit-box" v-loading='boxloading'>
           <span class="edit" @click="_edit" v-show="!inpShow">{{ $t('CLA.total.bj') }}</span>
           <h2>{{ $t('CLA.total.glsj') }}</h2>
           <el-form-item :label="$t('CLA.total.glsj')" required>
@@ -46,14 +56,18 @@
             <div class="line"></div>
             <el-form-item class="button">
               <el-button type="primary" icon="el-icon-loading" v-show="btnLoad1"></el-button>
-              <el-button type="primary" @click="submitForm" v-show="!btnLoad1">{{ $t('CLA.total.bc') }}</el-button>
+              <el-button
+                type="primary"
+                @click="submitForm"
+                v-show="!btnLoad1"
+              >{{ $t('CLA.total.bc') }}</el-button>
               <el-button @click="_cancel">{{ $t('CLA.total.qx') }}</el-button>
             </el-form-item>
           </div>
         </div>
       </div>
       <div class="detil-audit-main">
-        <div class="detil-audit-box">
+        <div class="detil-audit-box" v-loading='boxloading1'>
           <span class="edit" @click="_edit1" v-show="!inpShow1">{{ $t('CLA.total.bj') }}</span>
           <h2>{{ $t('CLA.total.ccwz') }}</h2>
           <div class="info-box" v-show="!inpShow1">
@@ -73,7 +87,11 @@
             <el-form-item :label="$t('CLA.total.fstz')">
               <p>{{CmqNotify[detailData.IsEnableCmqNotify]}}</p>
             </el-form-item>
-            <el-form-item :label="$t('CLA.total.dlmc')" class="cos" v-show="detailData.IsEnableCmqNotify">
+            <el-form-item
+              :label="$t('CLA.total.dlmc')"
+              class="cos"
+              v-show="detailData.IsEnableCmqNotify"
+            >
               <p>
                 <span class="spn">{{ $t('CLA.total.dy') }}：</span>
                 {{detailData.CmqRegion}}
@@ -125,7 +143,10 @@
             </p>
             <div class="set-box" v-show="setShow">
               <el-form-item :label="$t('CLA.total.rzwjqz')" prop="LogFilePrefix">
-                <el-input v-model="detailData.LogFilePrefix" :placeholder="$t('CLA.total.qsrrzwjqz')"></el-input>
+                <el-input
+                  v-model="detailData.LogFilePrefix"
+                  :placeholder="$t('CLA.total.qsrrzwjqz')"
+                ></el-input>
               </el-form-item>
               <el-form-item :label="$t('CLA.total.fstz')" class="CMQ" required>
                 <el-radio-group v-model="detailData.IsEnableCmqNotify" @change="_cmqRadio">
@@ -141,7 +162,11 @@
                   </el-radio-group>
                 </el-form-item>
                 <el-form-item :label="$t('CLA.total.dlmc')" required class="select cmqSelect">
-                  <el-select v-model="cmqSelect.name" :placeholder="$t('CLA.total.qxz')" @change="_cmqSelect">
+                  <el-select
+                    v-model="cmqSelect.name"
+                    :placeholder="$t('CLA.total.qxz')"
+                    @change="_cmqSelect"
+                  >
                     <el-option
                       v-for="item in cmqSelect.options"
                       :key="item.value"
@@ -155,7 +180,10 @@
                     class="seletInp"
                     v-if="detailData.IsEnableCmqNotify"
                   >
-                    <el-input v-model="detailData.CmqQueueName" :placeholder="$t('CLA.total.qsrdlmc')"></el-input>
+                    <el-input
+                      v-model="detailData.CmqQueueName"
+                      :placeholder="$t('CLA.total.qsrdlmc')"
+                    ></el-input>
                   </el-form-item>
                 </el-form-item>
               </div>
@@ -165,7 +193,11 @@
             <div class="line lineVal"></div>
             <el-form-item class="button">
               <el-button type="primary" icon="el-icon-loading" v-show="btnLoad"></el-button>
-              <el-button type="primary" @click="submitForm1('detailData')" v-show="!btnLoad">{{ $t('CLA.total.bc') }}</el-button>
+              <el-button
+                type="primary"
+                @click="submitForm1('detailData')"
+                v-show="!btnLoad"
+              >{{ $t('CLA.total.bc') }}</el-button>
               <el-button @click="_cancel1">{{ $t('CLA.total.qx') }}</el-button>
             </el-form-item>
           </div>
@@ -183,7 +215,9 @@ import {
   LIST_COSBUCKETS,
   GZJ_DELETE,
   GZJ_UPDATEAUDIT,
-  GZJ_REGION
+  GZJ_REGION,
+  GZJ_STRATLOGGING,
+  GZJ_STOPLOGGING
 } from "../../../constants";
 export default {
   name: "detail-audit",
@@ -220,7 +254,7 @@ export default {
         if (!reg.test(value)) {
           callback(
             new Error(
-              '僅支持小寫字母、數字以及中劃線\" - \"的組合，不能超過40字元。'
+              '僅支持小寫字母、數字以及中劃線" - "的組合，不能超過40字元。'
             )
           );
         } else {
@@ -243,6 +277,8 @@ export default {
       }, 1000);
     };
     return {
+      boxloading:false,
+      boxloading1:false,
       loading: true, //是否为加载中状态
       title: "", //header的标题
       detailData: {}, //页面信息
@@ -293,10 +329,30 @@ export default {
       //cmq地域选择框
       cmqSelect: {
         index: 0
-      }
+      },
+      value: true
     };
   },
   methods: {
+    //日志采集
+    _switch() {
+      //开启
+      if (this.value) {
+        const params = {
+          Name: this.title,
+          Version: "2019-03-19"
+        };
+        this.axios.post(GZJ_STRATLOGGING, params).then(res => {});
+      }
+      //关闭
+      else {
+        const params = {
+          Name: this.title,
+          Version: "2019-03-19"
+        };
+        this.axios.post(GZJ_STOPLOGGING, params).then(res => {});
+      }
+    },
     //返回上一级页面
     _back() {
       this.$router.push("/Audit");
@@ -481,6 +537,8 @@ export default {
         this.detailData.IsCreateNewBucket = 0;
         this.setChild = this.detailData.IsEnableCmqNotify;
         this.loading = false;
+        this.boxloading1 = false;
+        this.boxloading = false;
       });
     },
     //编辑
@@ -492,9 +550,13 @@ export default {
     },
     //取消
     _cancel() {
+      this.boxloading = true;
+      this.detailList();
       this.inpShow = false;
     },
     _cancel1() {
+      this.boxloading1 = true;
+      this.detailList();
       this.inpShow1 = false;
     },
     _radio() {
@@ -550,6 +612,9 @@ export default {
 </script>
 
 <style scoped lang='scss'>
+.detail-audit >>> .el-loading-mask{
+  background: white !important;
+}
 .detail-audit >>> button {
   font-size: 12px;
   height: 30px;
@@ -561,6 +626,28 @@ export default {
   margin: 20px;
 }
 .detail-audit {
+  .header {
+    background: white;
+    padding: 10px 15px;
+    border-bottom: 1px solid #ddd;
+    width: 100%;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 30px;
+
+    i {
+      color: #006eff;
+      font-size: 16px;
+      margin-right: 12px;
+      font-weight: bold;
+      padding: 5px;
+      box-sizing: border-box;
+      cursor: pointer;
+    }
+    i:hover {
+      background: #f2f2f2;
+    }
+  }
   .dialog {
     font-size: 18px;
     font-weight: bold;
@@ -578,6 +665,8 @@ export default {
     border-radius: 0;
     height: 30px;
     padding-left: 5px;
+    line-height: 30px;
+    padding-top: 0;
   }
   .detil-audit-box >>> .el-radio__label {
     font-size: 12px;

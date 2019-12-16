@@ -1,12 +1,12 @@
 <template>
   <div class="adduserlist-wrap">
-    <HeadCom title="新建子用户" :backShow="true" @_back="_back" />
+    <HeadCom :title="$t('CAM.userList.createUser')" :backShow="true" @_back="_back" />
     <div class="adduserlist-main">
       <el-steps :active="active" simple>
-        <el-step title="选择类型"></el-step>
-        <el-step title="填写用户信息"></el-step>
-        <el-step title="设置用户权限" v-if="this.ruleForm.ConsoleLogin == 1"></el-step>
-        <el-step title="审阅信息和权限" v-if="this.ruleForm.ConsoleLogin == 1"></el-step>
+        <el-step :title="$t('CAM.userList.chooserType')"></el-step>
+        <el-step :title="$t('CAM.userList.userMesgs')"></el-step>
+        <el-step :title="$t('CAM.userList.setStrage')" v-if="this.ruleForm.ConsoleLogin == 1"></el-step>
+        <el-step :title="$t('CAM.userList.userMesg')" v-if="this.ruleForm.ConsoleLogin == 1"></el-step>
       </el-steps>
       <div class="main">
         <el-form
@@ -17,7 +17,7 @@
           class="demo-ruleForm"
         >
           <div class="step1" v-show="active == 0">
-            <el-form-item label="选择类型" required>
+            <el-form-item :label="$t('CAM.userList.chooserType')" required>
               <div
                 :class="index == typeIndex ? 'type-box active' : 'type-box'"
                 v-for="(item,index) in type"
@@ -32,17 +32,17 @@
             </el-form-item>
           </div>
           <div class="step2" v-show="active == 1">
-            <el-form-item label="设置用户信息">
+            <el-form-item :label="$t('CAM.userList.setUserMesg')">
               <table width="100%" boder="1" cellspacing="0" cellpadding="1">
                 <thead>
                   <tr>
                     <td width="280">
-                      用户名
+                      {{$t('CAM.userList.userName')}}
                       <span style="color:#e54545;">*</span>
                     </td>
-                    <td width="170">备注</td>
-                    <td width="200">手机</td>
-                    <td width="200">邮箱</td>
+                    <td width="170"> {{$t('CAM.userList.userRemark')}}</td>
+                    <td width="200"> {{$t('CAM.userList.userPhone')}}</td>
+                    <td width="200"> {{$t('CAM.userList.userWeChat')}}</td>
                   </tr>
                 </thead>
                 <tbody>
@@ -65,23 +65,23 @@
                 </tbody>
               </table>
             </el-form-item>
-            <el-form-item label="访问方式" required>
+            <el-form-item :label="$t('CAM.userList.askWay')" required>
               <el-checkbox-group v-model="ruleForm.type" @change="_visitType" class="check">
                 <el-checkbox label="0" name="type">
-                  <span>编程访问</span>
-                  <span>启用SecretId和SecretKey，支持台富云API、SDK和其他开发工具访问</span>
+                  <span>{{$t('CAM.userList.Programmatic')}}</span>
+                  <span>{{$t('CAM.userList.prigMesg')}}</span>
                 </el-checkbox>
                 <el-checkbox label="1" name="type">
-                  <span>台富云控制台访问</span>
-                  <span>启用密码，允许用户登录到台富云控制台</span>
+                  <span>{{$t('CAM.userList.access')}}</span>
+                  <span>{{$t('CAM.userList.password')}}</span>
                 </el-checkbox>
               </el-checkbox-group>
             </el-form-item>
             <div class="new-set" v-show="this.visitType">
-              <el-form-item label="控制台密码" required>
+              <el-form-item :label="$t('CAM.userList.ConsolePassword')" required>
                 <el-radio-group v-model="ruleForm.pwdRadio" @change="_pwdRadio">
-                  <el-radio :label="false">自动生成密码</el-radio>
-                  <el-radio :label="true">自定义密码</el-radio>
+                  <el-radio :label="false">{{$t('CAM.userList.generation')}}</el-radio>
+                  <el-radio :label="true">{{$t('CAM.userList.Custom')}}</el-radio>
                 </el-radio-group>
                 <div v-show="pwdInp">
                   <el-form-item prop="Password" v-if="ruleForm.pwdRadio">
@@ -102,19 +102,19 @@
                   </el-form-item>
                 </div>
               </el-form-item>
-              <el-form-item label="需要重置密码">
-                <el-checkbox :label="0" name="pwdType">用户必须在下次登录时重置密码</el-checkbox>
+              <el-form-item :label="$t('CAM.userList.resetPassword')">
+                <el-checkbox :label="0" name="pwdType">{{$t('CAM.userList.passAgin')}}</el-checkbox>
               </el-form-item>
-              <el-form-item label="登录保护" required>
+              <el-form-item :label="$t('CAM.userList.protect')" required>
                 <el-radio-group v-model="ruleForm.loginRadio">
-                  <el-radio :label="true">启用虚拟 MFA 设备校验</el-radio>
-                  <el-radio :label="false">不开启</el-radio>
+                  <el-radio :label="true">{{$t('CAM.userList.open')}}</el-radio>
+                  <el-radio :label="false">{{$t('CAM.userList.doOpne')}}</el-radio>
                 </el-radio-group>
               </el-form-item>
-              <el-form-item label="操作保护" required>
+              <el-form-item :label="$t('CAM.userList.Operation')" required>
                 <el-radio-group v-model="ruleForm.processRadio">
-                  <el-radio :label="true">启用虚拟 MFA 设备校验</el-radio>
-                  <el-radio :label="false">不开启</el-radio>
+                  <el-radio :label="true">{{$t('CAM.userList.open')}}</el-radio>
+                  <el-radio :label="false">{{$t('CAM.userList.doOpne')}}</el-radio>
                 </el-radio-group>
               </el-form-item>
             </div>
@@ -258,6 +258,19 @@ export default {
     this.init();
   },
   methods: {
+    //获取cookir
+    getCookie(name) {
+      var strcookie = document.cookie; //获取cookie字符串
+      var arrcookie = strcookie.split("; "); //分割
+      //遍历匹配
+      for (var i = 0; i < arrcookie.length; i++) {
+        var arr = arrcookie[i].split("=");
+        if (arr[0] == name) {
+          return arr[1];
+        }
+      }
+      return "";
+    },
     //返回上一级
     _back() {
       this.$router.go(-1);
@@ -407,7 +420,7 @@ export default {
         .then(() => {
           const params = {
             Password: this.taifuAIP.Password,
-            QcloudUin: this.taifuAIP.Uin,
+            QcloudUin: this.getCookie("uin"), //uin
             SecretId: this.taifuAIP.SecretId,
             SecretKey: this.taifuAIP.SecretKey,
             SubAccountUin: this.taifuAIP.Uin,

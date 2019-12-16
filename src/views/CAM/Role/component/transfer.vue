@@ -4,7 +4,7 @@
       <div class="container-left">
         <p>策略</p>
          <el-input
-          size="mini" v-model="strategyValue" style="width:100%" @keyup.enter.native="tableloadmore"
+          size="mini" v-model="strategyValue" style="width:100%;margin-top:10px;" @keyup.enter.native="tableloadmore"
         >
           <i slot="suffix" class="el-input__icon el-icon-search" @click="tableloadmore"></i>
         </el-input>
@@ -22,13 +22,13 @@
           @selection-change="handleSelectionChange"
           v-tableloadmore="tableloadmore" >
           <el-table-column type="selection" prop="policyId" width="29"></el-table-column>
-          <el-table-column prop="Description" label="策略名" show-overflow-tooltip>
+          <el-table-column prop="Description" :label="$t('CAM.Role.strategyName')" show-overflow-tooltip>
             <template slot-scope="scope">
               <p>{{scope.row.PolicyName}}</p>
               <p>{{scope.row.Description}}</p>
             </template>
           </el-table-column>
-          <el-table-column prop="Type" label="策略类型" width="130">
+          <el-table-column prop="Type" :label="$t('CAM.Role.strategyType')" width="130">
             <template slot="header" slot-scope="scope">
               <el-dropdown trigger="click" @command="handleCommand" size="mini">
                 <span style="color:#909399">
@@ -45,8 +45,8 @@
               </el-dropdown>
             </template>
             <template slot-scope="scope">
-              <p v-show="scope.row.Type == 2">预设策略</p>
-              <p v-show="scope.row.Type == 1">自定义策略</p>
+              <p v-show="scope.row.Type == 2">{{$t('CAM.Role.customPolicy')}}</p>
+              <p v-show="scope.row.Type == 1">{{$t('CAM.Role.defaultPolicy')}}</p>
             </template>  
           </el-table-column>
         </el-table>
@@ -57,7 +57,7 @@
         </div>
       </div>
       <div class="container-right">
-        <span>已选策略</span>
+        <span>{{$t('CAM.Role.selectedStar')}}</span>
         <el-table
           class="table-left"
           ref="multipleSelected"
@@ -69,7 +69,7 @@
         >
           <el-table-column
             prop="Description"
-            label="策略名"
+            :label="$t('CAM.Role.policyName')"
             show-overflow-tooltip
           >
             <template slot-scope="scope">
@@ -78,10 +78,10 @@
             </template>
           </el-table-column>
 
-          <el-table-column prop="Type" label="策略类型" width="100">
+          <el-table-column prop="Type"  :label="$t('CAM.Role.strategyType')" width="100">
             <template slot-scope="scope">
-              <p v-show="scope.row.Type == 1">自定义策略</p>
-              <p v-show="scope.row.Type == 2">预设策略</p>
+              <p v-show="scope.row.Type == 1">{{$t('CAM.Role.customPolicy')}}</p>
+              <p v-show="scope.row.Type == 2">{{$t('CAM.Role.defaultPolicy')}}</p>
             </template>
           </el-table-column>
           <el-table-column  width="50">
@@ -97,6 +97,7 @@
 </template>
 
 <script>
+import {POLICY_LIST,ATTACH_ROLE} from '@/constants'
 export default {
   props: {
     roleId: String
@@ -168,7 +169,6 @@ export default {
     // 获取策略方法
     tableloadmore(command) {
       let params = {
-        Action: "ListPolicies",
         Version: "2019-01-16"
       };
        if (this.strategyValue != undefined && this.strategyValue != "") {
@@ -178,8 +178,7 @@ export default {
       if (command.value != undefined && command.value != '') {
          params["Scope"] = command.value
       }
-      let url = "cam2/ListPolicies";
-      this.axios.post(url, params).then(res => {
+      this.axios.post(POLICY_LIST, params).then(res => {
         this.policiesData = res.Response.List;
       }).catch(error => {
       });
@@ -225,7 +224,7 @@ export default {
     },
     // 绑定权限策略到角色
     AttachRolePolicy(params) {
-      this.$axios.post('cam2/AttachRolePolicy', params).then(res  => {
+      this.$axios.post(ATTACH_ROLE, params).then(res  => {
       })
     }
   }

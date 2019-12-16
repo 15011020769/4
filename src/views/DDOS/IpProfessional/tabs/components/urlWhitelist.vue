@@ -3,10 +3,10 @@
     <div class="urlWhitelist">
       <div class="urlWhitelistBtn newClear">
         <el-button class="addUrlBtn" @click="addUrlModel">添加URL</el-button>
-        <el-button class="exportBtn" @click="importBtn">批量导入</el-button>
-        <el-button class="importBtn" @click="exportBtn">批量导出</el-button>
-        <el-button :disabled="true">删除</el-button>
-        <span class="addTip">最多可以添加50条URL</span>
+        <el-button class="exportBtn" @click="importBtn">{{$t('DDOS.Proteccon_figura.Batch_import')}}</el-button>
+        <el-button class="importBtn" @click="exportBtn">{{$t('DDOS.Proteccon_figura.Batch_export')}}</el-button>
+        <el-button :disabled="true">{{$t('DDOS.Proteccon_figura.Delete')}}</el-button>
+        <span class="addTip">{{$t('DDOS.Proteccon_figura.Upadded')}}</span>
         <el-radio label="HTTP" v-model="radioHttp" value="1" class="httpRadio" @click="httpClick"></el-radio>
       </div>
       <div class="urlWhitelistTable">
@@ -15,7 +15,7 @@
             <el-table-column type="selection" width="55"></el-table-column>
             <el-table-column prop="URL" label="URL" width="">
             </el-table-column>
-            <el-table-column prop="protocol" label="协议">
+            <el-table-column prop="protocol" :label="$t('DDOS.Proteccon_figura.Agreement')">
             </el-table-column>
             <el-table-column prop="doMin" label="域名">
             </el-table-column>
@@ -205,6 +205,7 @@ export default {
       height:50px;
       padding-top:8px;
       border-top:1px solid #ddd;
+      text-align: right;
     }
   }
   .httpCheck{

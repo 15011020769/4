@@ -1,25 +1,25 @@
 <template>
   <div>
-    <div class="overviewTit">防护概览</div>
+    <div class="overviewTit">{{$t('DDOS.Protective.ProtectiveName')}}</div>
     <div class="allConMain">
       <div class="allConMainOne">
-        <div class="allConMainOneTit">概览</div>
+        <div class="allConMainOneTit">{{$t('DDOS.Protective.Protectiveoverview')}}</div>
         <div class="allConMainOneCon">
           <el-row :gutter="20">
             <el-col :span="12">
               <div class="allConMainOneLeft">
-                <h3>安全统计（本月）</h3>
+                <h3>{{$t('DDOS.Protective.Protectivesecurity')}}</h3>
                 <el-row class="allConMainOneRow">
                   <el-col :span="8" class="LeftConOne LeftConRow" >
-                    <p>攻击次数</p>
+                    <p>{{$t('DDOS.Protective.ProtectiveAttack')}}</p>
                     <p>{{attackData[1].Value}}</p>
                   </el-col>
                   <el-col :span="8" class="LeftConTwo LeftConRow">
-                    <p>封堵次数</p>
+                    <p>{{$t('DDOS.Protective.ProtectiveSeal')}}</p>
                     <p>{{attackData[2].Value}}</p>
                   </el-col>
                   <el-col :span="8" class="LeftConThree LeftConRow">
-                    <p>攻击峰值</p>
+                    <p>{{$t('DDOS.Protective.Protectivepeak')}}</p>
                     <p>{{attackData[3].Value}}<span>Mbps</span></p>
                   </el-col>
                 </el-row>
@@ -27,14 +27,14 @@
             </el-col>
             <el-col :span="12">
               <div class="allConMainOneLeft">
-                <h3>当前安全状态</h3>
+                <h3>{{$t('DDOS.Protective.CurrentState')}}</h3>
                 <el-row class="allConMainOneRow">
                   <el-col :span="12" class="LeftConOne LeftConRow">
-                    <p>清洗中</p>
+                    <p>{{$t('DDOS.Protective.Protectivewash')}}</p>
                     <p>{{(+packDataIP[1].Value) + (+packDataBgp[1].Value)}}</p>
                   </el-col>
                   <el-col :span="12" class="LeftConOne LeftConRow">
-                    <p>封堵中</p>
+                    <p>{{$t('DDOS.Protective.blockIng')}}</p>
                     <p>{{(+packDataIP[2].Value) + (+packDataBgp[2].Value)}}</p>
                   </el-col>
                 </el-row>
@@ -44,20 +44,20 @@
         </div>
       </div>
       <div class="allConMainTwo allConMainOne">
-        <div class="allConMainTwoTit allConMainOneTit">我的产品</div>
+        <div class="allConMainTwoTit allConMainOneTit">{{$t('DDOS.Protective.myProduct')}}</div>
         <div class="allConMainOneCon allConMainTwoCon">
           <el-row :gutter="20">
             <el-col :span="12">
               <div class="allConMainOneLeft allConMainTwoLeft">
                 <el-row class="productRow">
                   <el-col :span="12" class="productRow1"> 
-                    独享包 <span>{{packDataBgp[0].Value}}</span>
+                    {{$t('DDOS.Protective.ProtectiveExclusive')}} <span>{{packDataBgp[0].Value}}</span>
                   </el-col>
                   <el-col :span="12" class="productRow2"> 
-                    <p><span></span><span>清洗中</span><span>{{packDataBgp[1].Value}}</span></p>
-                    <p><span></span><span>封堵中</span><span>{{packDataBgp[2].Value}}</span></p>
-                    <p><span></span><span>即将到期</span><span>{{packDataBgp[4].Value}}</span></p>
-                    <p><span></span><span>已到期</span><span>{{packDataBgp[3].Value}}</span></p>
+                    <p><span></span><span>{{$t('DDOS.Protective.Protectivewash')}}</span><span>{{packDataBgp[1].Value}}</span></p>
+                    <p><span></span><span>{{$t('DDOS.Protective.blockIng')}}</span><span>{{packDataBgp[2].Value}}</span></p>
+                    <p><span></span><span>{{$t('DDOS.Protective.aboutExpire')}}</span><span>{{packDataBgp[4].Value}}</span></p>
+                    <p><span></span><span>{{$t('DDOS.Protective.Expiring')}}</span><span>{{packDataBgp[3].Value}}</span></p>
                   </el-col>
                 </el-row>
               </div>
@@ -66,13 +66,13 @@
               <div class="allConMainOneRight allConMainTwoRight allConMainTwoLeft">
                 <el-row class="productRow">
                   <el-col :span="12" class="productRow1"> 
-                    高防IP专业版 <span>{{packDataIP[0].Value}}</span>
+                    {{$t('DDOS.Protective.professionalEdition')}} <span>{{packDataIP[0].Value}}</span>
                   </el-col>
                   <el-col :span="12" class="productRow2"> 
-                    <p><span></span><span>清洗中</span><span>{{packDataIP[1].Value}}</span></p>
-                    <p><span></span><span>封堵中</span><span>{{packDataIP[2].Value}}</span></p>
-                    <p><span></span><span>即将到期</span><span>{{packDataIP[4].Value}}</span></p>
-                    <p><span></span><span>已到期</span><span>{{packDataIP[3].Value}}</span></p>
+                    <p><span></span><span>{{$t('DDOS.Protective.Protectivewash')}}</span><span>{{packDataIP[1].Value}}</span></p>
+                    <p><span></span><span>{{$t('DDOS.Protective.blockIng')}}</span><span>{{packDataIP[2].Value}}</span></p>
+                    <p><span></span><span>{{$t('DDOS.Protective.aboutExpire')}}</span><span>{{packDataIP[4].Value}}</span></p>
+                    <p><span></span><span>{{$t('DDOS.Protective.Expiring')}}</span><span>{{packDataIP[3].Value}}</span></p>
                   </el-col>
                 </el-row>
               </div>
@@ -82,58 +82,58 @@
       </div>
       <div class="allConMainThree">
         <div class="allConMainThreeTit">
-          <div>攻击日志（30天内）</div>
+          <div>{{$t('DDOS.Protective.AttackLog')}}</div>
           <div class="rightCon">
-            <a href="#" class="downloadTable" @click="exportExcel">下载表格</a>
-            <el-input class="rightIptSearch" v-model="searchInputID" placeholder="请输入要查询的资产ID"/><el-button @click="doFilter" class="searcHBthn el-icon-search"></el-button>
+            <a href="#" class="downloadTable" @click="exportExcel">{{$t('DDOS.Protective.DownTable')}}</a>
+            <el-input class="rightIptSearch" v-model="searchInputID" :placeholder="$t('DDOS.Protective.pleaSearchVal')"/><el-button @click="doFilter" class="searcHBthn el-icon-search"></el-button>
           </div>
         </div>
         <div class="allConMainThreeCon">
           <div class="chartShowTit">
             <el-button-group>
-              <el-button @click="btnClick('bgp')" :class="{'addColor':type=='bgp'}">独享包</el-button>
-              <el-button @click="btnClick('bgp-multip')" :class="{'addColor':type=='bgp-multip'}">共享包</el-button>
-              <el-button @click="btnClick('net')" :class="{'addColor':type=='net'}">高防IP专业版</el-button>
+              <el-button @click="btnClick('bgp')" :class="{'addColor':type=='bgp'}">{{$t('DDOS.Protective.ProtectiveExclusive')}}</el-button>
+              <el-button @click="btnClick('bgp-multip')" :class="{'addColor':type=='bgp-multip'}">{{$t('DDOS.Protective.shareExclusive')}}</el-button>
+              <el-button @click="btnClick('net')" :class="{'addColor':type=='net'}">{{$t('DDOS.Protective.professionalEdition')}}</el-button>
             </el-button-group>
           </div>
           <div class="tableOverView">
             <el-table id="exportTable" :data="tableDataBegin.slice((currentPage-1)*pageSize,currentPage*pageSize)">
-              <el-table-column prop="StartTime" label="攻击时间">
+              <el-table-column prop="StartTime" :label="$t('DDOS.Protective.AgainstTime')">
                 <template slot-scope="scope">
                   {{scope.row.StartTime}}
                   <!-- <a href="#" @click="toDoDetail(scope.$index, scope.row)">{{scope.row.funName}}</a> -->
                 </template>
               </el-table-column>
-              <el-table-column prop="durationTime" label="持续时间">
+              <el-table-column prop="durationTime" :label="$t('DDOS.Protective.durationTime')">
                 <template slot-scope="scope">{{scope.row.EndTime - scope.row.StartTime}}</template>
               </el-table-column>
-              <el-table-column prop="" label="产品">
+              <el-table-column prop="" :label="$t('DDOS.Protective.productName')">
                 <template slot-scope="scope">-</template>
               </el-table-column>
-              <el-table-column prop="ResourceName" label="资产名称">
+              <el-table-column prop="ResourceName" :label="$t('DDOS.Protective.AssetName')">
                 <template slot-scope="scope">{{scope.row.ResourceName}}</template>
               </el-table-column>
-              <el-table-column prop="" label="资产类型" v-if="type=='net'?false:true">
+              <el-table-column prop="" :label="$t('DDOS.Protective.AssetType')" v-if="type=='net'?false:true">
                 <template slot-scope="scope">-</template>
               </el-table-column>
               <el-table-column prop="Vip" label="IP">
                 <template slot-scope="scope">{{scope.row.Vip}}</template>
               </el-table-column>
-              <el-table-column prop="AttackType" label="攻击类型" width="70px">
+              <el-table-column prop="AttackType" :label="$t('DDOS.Protective.AgainstType')" width="70px">
                 <template slot-scope="scope">{{scope.row.AttackType}}</template>
               </el-table-column>
-              <el-table-column prop="Mbps" label="攻击最大宽带">
+              <el-table-column prop="Mbps" :label="$t('DDOS.Protective.AgainstBandwidth')">
                 <template slot-scope="scope">{{scope.row.Mbps}}</template>
               </el-table-column>
-              <el-table-column prop="Pps" label="攻击最大包速率">
+              <el-table-column prop="Pps" :label="$t('DDOS.Protective.AgainstMaximum')">
                 <template slot-scope="scope">{{scope.row.Pps}}</template>
               </el-table-column>
-              <el-table-column prop="" label="触发封禁" width="180">
+              <el-table-column prop="" :label="$t('DDOS.Protective.TriggerBanned')" width="180">
                 <template slot-scope="scope">
                   <el-button
                     type="text"
                     size="small"
-                  >触发封禁</el-button>
+                  >{{$t('DDOS.Protective.TriggerBanned')}}</el-button>
                   <!-- <el-dialog
                     :title="'您确定要删除'+scope.row.funName+'吗？'"
                     :visible.sync="dialogVisible"
@@ -358,7 +358,7 @@ export default {
 }
 
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 .newClear:after {
   display: block;
   clear: both;
@@ -529,15 +529,16 @@ export default {
       width:300px;
       height:30px;
       margin-left:10px;
-      input{
+      ::v-deep input{
         width:100%;
         height:30px;
         border-radius: 0;
+        line-height: 30px;
       }
     }
     .searcHBthn{
       float:left;
-      margin-top:15px;
+      margin-top:14px;
       padding:0 16px;
       height:30px;
       line-height:30px;
@@ -589,6 +590,7 @@ export default {
   min-height:450px;
 }
 .tabListPage{
+  height:50px;
   text-align:right;
   padding-top:8px;
   border-top:1px solid #ddd;

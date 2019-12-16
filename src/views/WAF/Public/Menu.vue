@@ -1,6 +1,6 @@
 <template>
   <div class="CLA">
-    <div class="big-title"></div>
+    <div class="big-title">Web 应用防火墙</div>
     <el-menu
       default-active="2"
       class="el-menu-vertical-demo"
@@ -11,6 +11,25 @@
       active-text-color="#fff"
       :router="true"
     >
+    
+      <el-menu-item index="saveOverView">安全概览</el-menu-item>
+      <el-submenu index="webFirewall">
+        <template slot="title">
+          <span>web应用防火墙</span>
+        </template>
+        <el-menu-item-group>
+          <el-menu-item class="selectMenu" index="protectionSettings">防护设置</el-menu-item>
+          <el-menu-item class="selectMenu" index="attackDetails">攻击详情</el-menu-item>
+        </el-menu-item-group>
+      </el-submenu>
+      <el-submenu index="saveOverView">
+        <template slot="title">
+          <span>web安全检测</span>
+        </template>
+        <el-menu-item-group>
+          <el-menu-item class="selectMenu" index="hijackDetection">DNS劫持检测</el-menu-item>
+        </el-menu-item-group>
+      </el-submenu>
       <el-submenu index="ipMan">
         <template slot="title">
           <span>IP管理</span>
@@ -81,6 +100,9 @@ export default {
     display: flex;
     align-items: center;
     font-size: 14px;
+  }
+  .selectMenu{
+    padding-left: 40px!important;
   }
 }
 </style>

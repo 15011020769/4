@@ -5,10 +5,10 @@
         <b>{{KMStxt}}</b>
       </p>
       <p>
-        您已选
-        <b>{{KMSdata.length}}个密钥服务</b>
+        {{$t('KMS.total.chooseAl')}}
+        <b>{{KMSdata.length}}{{$t('KMS.total.kmsserver')}}</b>
         <span style="color:#006eff;" @click="_list">
-          查看详情
+          {{$t('KMS.total.lookDetail')}}
           <i class="el-icon-caret-bottom" v-show="!listBol"></i>
           <i class="el-icon-caret-top" v-show="listBol"></i>
         </span>
@@ -21,8 +21,8 @@
         </div>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="_cancel">取 消</el-button>
-        <el-button type="primary" @click="_confirm">确 定</el-button>
+        <el-button @click="_cancel">{{$t('KMS.total.modelClose')}}</el-button>
+        <el-button type="primary" @click="_confirm">{{$t('KMS.total.modelSure')}}</el-button>
       </span>
     </el-dialog>
   </div>

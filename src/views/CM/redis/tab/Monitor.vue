@@ -4,11 +4,11 @@
     <XTimeX v-on:switchData="GetDat" :classsvalue="value"></XTimeX>
     <div class="box-dis p-style">
       <p>
-        <i class="el-icon-info"></i>注释：Max、Min和Avg数值统计为当前折线图内所有点的最大值、最小值和平均值
+        <i class="el-icon-info"></i>{{ $t('CVM.clBload.zs') }}
       </p>
-      <p>
+      <!-- <p>
         <el-button type="text">导出数据</el-button>
-      </p>
+      </p> -->
     </div>
     <div class="box-table">
       <!-- 表格 -->
@@ -28,7 +28,7 @@
 
         <el-table-column prop="DataPoints" width="550">
           <template slot-scope="scope">
-            <p v-if="scope.row.DataPoints[0].Values.length==0">暂无数据</p>
+            <p v-if="scope.row.DataPoints[0].Values.length==0">{{ $t('CVM.clBload.zwsj') }}</p>
             <div class="echart" v-if="scope.row.DataPoints[0].Values.length!=0">
               <echart-line id="diskEchearrts-line" :time="scope.row.DataPoints[0].Timestamps | UpTime"
                 :opData="scope.row.DataPoints[0].Values" :scale="3" :period="period" :xdata="false"></echart-line>
@@ -77,7 +77,7 @@
         </el-table-column>
       </el-table>
       <!-- 模态框 -->
-      <el-dialog title="集群健康状态" :visible.sync="dialogVisible" width="60%" :before-close="handleClose">
+      <el-dialog :title="$t('CVM.clBload.jqjkzt')" :visible.sync="dialogVisible" width="60%" :before-close="handleClose">
         <XTimeX v-on:switchData="GetDat" :classsvalue="value"></XTimeX>
         <echart-line id="diskEchearrts-line" class="echart-wh" :time="timeData | UpTime" :opData="jingData"
           :period="period" :xdata="true"></echart-line>
@@ -171,10 +171,10 @@
           "次/分钟",
           "次/分钟",
           "次/秒钟",
-          "个",
+          "個",
           "%",
           "Mb/分钟",
-          "个",
+          "個",
           "Mb/分钟",
           "次/分钟",
           "次/分钟",
@@ -246,80 +246,80 @@
           return (value = "cache命中率");
         }
         if (value === "CmdstatGet") {
-          return (value = "get命令数");
+          return (value = "get命令數");
         }
         if (value === "CmdstatGetbit") {
-          return (value = "getbit命令数");
+          return (value = "getbit命令數");
         }
         if (value === "CmdstatGetrange") {
-          return (value = "getrange命令数");
+          return (value = "getrange命令數");
         }
         if (value === "CmdstatHget") {
-          return (value = "hget命令数");
+          return (value = "hget命令數");
         }
         if (value === "CmdstatHgetall") {
-          return (value = "hgetall命令数");
+          return (value = "hgetall命令數");
         }
         if (value === "CmdstatHmget") {
-          return (value = "hmget命令数");
+          return (value = "hmget命令數");
         }
         if (value === "CmdstatHmset") {
-          return (value = "hmset命令数");
+          return (value = "hmset命令數");
         }
         if (value === "CmdstatHset") {
-          return (value = "hset命令数");
+          return (value = "hset命令數");
         }
         if (value === "CmdstatHsetnx") {
-          return (value = "hsetnx命令数");
+          return (value = "hsetnx命令數");
         }
         if (value === "CmdstatLset") {
-          return (value = "lset命令数");
+          return (value = "lset命令數");
         }
 
         if (value === "CmdstatMget") {
-          return (value = "mget命令数");
+          return (value = "mget命令數");
         }
         if (value === "CmdstatMset") {
-          return (value = "mset命令数");
+          return (value = "mset命令數");
         }
         if (value === "CmdstatMsetnx") {
-          return (value = "msetnx命令数");
+          return (value = "msetnx命令數");
         }
         if (value === "CmdstatSet") {
-          return (value = "set命令数");
+          return (value = "set命令數");
         }
         if (value === "CmdstatSetbit") {
-          return (value = "setbit命令数");
+          return (value = "setbit命令數");
         }
         if (value === "CmdstatSetex") {
-          return (value = "setex命令数");
+          return (value = "setex命令數");
         }
         if (value === "CmdstatSetrange") {
-          return (value = "setrange命令数");
+          return (value = "setrange命令數");
         }
         if (value === "Qps") {
-          return (value = "每秒执行命令数");
+          return (value = "每秒執行命令數");
         }
         if (value === "Connections") {
-          return (value = "连接数");
+          return (value = "連接數");
         }
         if (value === "CpuUs") {
           return (value = "cpu利用率");
         }
         if (value === "InFlow") {
-          return (value = "内网入流量");
+          return (value = "内網入流量");
         }
         if (value === "Keys") {
-          return (value = "key总数");
+          return (value = "key總數");
         }
         if (value === "OutFlow") {
-          return (value = "内网出流量");
+          return (value = "內網出流量");
         }
         if (value === "StatGet") {
-          return (value = "所有get命令数");
+          return (value = "所有get命令數");
         }
         if (value === "StatSet") {
-          return (value = "所有set命令数");
+          return (value = "所有set命令數");
         }
         if (value === "Storage") {
           return (value = "已使用容量");
@@ -334,91 +334,91 @@
       UpTitle(value) {
         if (value === "CacheHitRatio") {
           return (value =
-            "1分钟取内取 keyspace_misses、keyspace_hits通过如下计算 （1- keyspace_misses/keyspace_hits）* 100% 得出。不再维护该指标");
+            "1分鐘取內取 keyspace_misses、keyspace_hits通過如下計算 （1- keyspace_misses/keyspace_hits）* 100% 得出。不再維護該指標");
         }
         if (value === "CmdstatGet") {
-          return (value = "1分钟内 get 命令请求数");
+          return (value = "1分鐘内 get 命令請求數");
         }
         if (value === "CmdstatGetbit") {
-          return (value = "	1分钟内 getbit 命令请求数");
+          return (value = "	1分鐘内 getbit 命令請求數");
         }
         if (value === "CmdstatGetrange") {
-          return (value = "1分钟内 getrange 命令请求数");
+          return (value = "1分鐘内 getrange 命令請求數");
         }
         if (value === "CmdstatHget") {
-          return (value = "1分钟内 hget 命令请求数");
+          return (value = "1分鐘内 hget 命令請求數");
         }
         if (value === "CmdstatHgetall") {
-          return (value = "1分钟内 hgetall 命令请求数");
+          return (value = "1分鐘内 hgetall 命令請求數");
         }
         if (value === "CmdstatHmget") {
-          return (value = "	1分钟内 hmget 命令请求数");
+          return (value = "	1分鐘内 hmget 命令請求數");
         }
         if (value === "CmdstatHmset") {
-          return (value = "	1分钟内 hmset 命令请求数");
+          return (value = "	1分鐘内 hmset 命令請求數");
         }
         if (value === "CmdstatHset") {
-          return (value = "1分钟内 hset 命令请求数");
+          return (value = "1分鐘内 hset 命令請求數");
         }
         if (value === "CmdstatHsetnx") {
-          return (value = "	1分钟内 hsetnx 命令请求数");
+          return (value = "	1分鐘内 hsetnx 命令請求數");
         }
         if (value === "CmdstatLset") {
-          return (value = "	1分钟内 lset 命令请求数");
+          return (value = "	1分鐘内 lset 命令請求數");
         }
 
         if (value === "CmdstatMget") {
-          return (value = "	1分钟内 mget 命令请求数");
+          return (value = "	1分鐘内 mget 命令請求數");
         }
         if (value === "CmdstatMset") {
-          return (value = "	1分钟内 mset 命令请求数");
+          return (value = "	1分鐘内 mset 命令請求數");
         }
         if (value === "CmdstatMsetnx") {
-          return (value = "1分钟内 msetnx 命令请求数");
+          return (value = "1分鐘内 msetnx 命令請求數");
         }
         if (value === "CmdstatSet") {
-          return (value = "	1分钟内 set 命令请求数");
+          return (value = "	1分鐘内 set 命令請求數");
         }
         if (value === "CmdstatSetbit") {
-          return (value = "1分钟内 setbit 命令请求数");
+          return (value = "1分鐘内 setbit 命令請求數");
         }
         if (value === "CmdstatSetex") {
-          return (value = "	1分钟内 setex 命令请求数");
+          return (value = "	1分鐘内 setex 命令請求數");
         }
         if (value === "CmdstatSetrange") {
-          return (value = "1分钟内 setrange 命令请求数");
+          return (value = "1分鐘内 setrange 命令請求數");
         }
         if (value === "Qps") {
-          return (value = "1分钟内命令总数除以60");
+          return (value = "1分鐘內命令總數除以60");
         }
         if (value === "Connections") {
-          return (value = "	1分钟内连接数总和");
+          return (value = "	1分鐘內連接數總和");
         }
         if (value === "CpuUs") {
-          return (value = "CPU处于非空闲状态的百分比，取 /proc/stat数据计算得出");
+          return (value = "CPU處於非空閑狀態的百分比，取 /proc/stat數據計算得出");
         }
         if (value === "InFlow") {
-          return (value = "1分钟内入流量总和v");
+          return (value = "1分鐘內入流量總和v");
         }
         if (value === "Keys") {
-          return (value = "1分钟内key数量的最大值");
+          return (value = "1分鐘內key數量的最大值");
         }
         if (value === "OutFlow") {
-          return (value = "1分钟内出流量总和");
+          return (value = "1分鐘內出流量總和");
         }
         if (value === "StatGet") {
           return (value =
-            "	1分钟内 get, hget, hgetall, hmget, mget, getbit, getrange 命令请求数");
+            "	1分鐘内 get, hget, hgetall, hmget, mget, getbit, getrange 命令請求數");
         }
         if (value === "StatSet") {
           return (value =
-            "1分钟内 set, hset, hmset, hsetnx, lset, mset, msetnx, setbit, setex, setrange, setnx 命令请求数");
+            "1分鐘內 set, hset, hmset, hsetnx, lset, mset, msetnx, setbit, setex, setrange, setnx 命令請求數");
         }
         if (value === "Storage") {
-          return (value = "	1分钟内已使用容量的最大值");
+          return (value = "	1分鐘內已使用容量的最大值");
         }
         if (value === "StorageUs") {
-          return (value = "1分钟内已使用容量的百分比最大值");
+          return (value = "1分鐘內已使用容量的百分比最大值");
         }
         if (value === "") {
           return (value = "");

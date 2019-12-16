@@ -13,8 +13,8 @@
               <li class="li-title">{{$t("COM.calculate")}}</li>
               <li class="li-sub" @click="go('../CVM/index.html#/cloudHost')">{{$t("COM.cvm")}}</li>
               <li class="li-sub" @click="go('../CVM/index.html#/cloudDisk')">{{$t("COM.cbs")}}</li>
-              <li @click="testFun">{{$t("COM.as")}}</li>
-              <li class="li-sub" @click="go('../AS/index.html#/flexGroup')">{{$t("COM.tke")}}</li>
+              <li class="li-sub" @click="go('../AS/index.html#/flexGroup')">{{$t("COM.as")}}</li>
+              <li @click="testFun">{{$t("COM.tke")}}</li>
             </ul>
             <ul>
               <li class="li-title">{{$t("COM.tool")}}</li>

@@ -20,7 +20,7 @@
         <!-- 搜索 
         -->
 
-        <el-input
+        <!-- <el-input
           size="small"
           v-model="searchValue"
           clearable
@@ -29,33 +29,42 @@
           @keyup.enter.native="toQuery"
         >
           <i slot="suffix" class="el-input__icon el-icon-search" @click="toQuery"></i>
-        </el-input>
+        </el-input> -->
 
-        <el-dialog title="自定义列表字段" :visible.sync="gear" width="45%" :before-close="handleCloseGear">
+        <el-input  size="small"
+          v-model="searchValue"
+          clearable
+          :placeholder="$t('CAM.userGroup.placeholder')"
+          style="width: 300px;"
+          @keyup.enter.native="toQuery">
+                       <i slot="suffix" class="el-input__icon el-icon-search" @click="toQuery"></i>
+           </el-input>
+
+        <el-dialog :title="$t('CAM.userGroup.fields')" :visible.sync="gear" width="45%" :before-close="handleCloseGear">
           <div class="app-cam-alert">
-            <div class="app-cam-alert__info">请选择您想显示的列表详细信息</div>
+            <div class="app-cam-alert__info">{{$t('CAM.userGroup.chooseMesg')}}</div>
           </div>
           <el-form ref="form" :model="form">
             <el-form-item>
               <el-checkbox-group v-model="form.type">
                 <p>
-                  <el-checkbox disabled label="用户组名称" name="type"></el-checkbox>
+                  <el-checkbox disabled :label="$t('CAM.userGroup.colNmae')" name="type"></el-checkbox>
                 </p>
                 <p>
-                  <el-checkbox label="备注" name="type"></el-checkbox>
+                  <el-checkbox :label="$t('CAM.userGroup.colRemark')" name="type"></el-checkbox>
                 </p>
                 <p>
-                  <el-checkbox label="创建时间" name="type"></el-checkbox>
+                  <el-checkbox :label="$t('CAM.userGroup.colCreTime')" name="type"></el-checkbox>
                 </p>
                 <p>
-                  <el-checkbox disabled label="操作" name="type"></el-checkbox>
+                  <el-checkbox disabled :label="$t('CAM.userGroup.colHandle')" name="type"></el-checkbox>
                 </p>
               </el-checkbox-group>
             </el-form-item>
           </el-form>
           <div slot="footer" class="dialog-footer">
-            <el-button size="small" type="primary" @click="gear = false">确 定</el-button>
-            <el-button size="small" @click="gear = false">取 消</el-button>
+            <el-button size="small" type="primary" @click="gear = false">{{$t('CAM.userGroup.delConfirmBtn')}}</el-button>
+            <el-button size="small" @click="gear = false">{{$t('CAM.userGroup.delCancelBtn')}}</el-button>
           </div>
         </el-dialog>
       </div>
@@ -128,7 +137,7 @@
     </div>
     <!-- dialog 用户组弹出框  start -->
     <el-dialog
-      title="添加用户"
+      :title="$t('CAM.userGroup.createBtn')"
       :visible.sync="dialogVisible"
       width="75%"
       :before-close="handleClose"
@@ -136,13 +145,12 @@
     >
       <div class="container">
         <div class="container-left">
-          <p>选择添加的用户（共{{totalNum}}条）</p>
+          <p>{{$t('CAM.userGroup.selection')}}（共{{totalNum}}条）</p>
           <el-input
-            placeholder="支持搜索用户名"
             size="small"
-            v-model="search"
+            v-model="inpVal"
             style="width:100%"
-            @keyup.enter.native="toQueryUser"
+            @change="_inpVal"
           >
             <i slot="suffix" class="el-input__icon el-icon-search" @click="toQueryUser"></i>
           </el-input>
@@ -158,10 +166,10 @@
             @selection-change="handleSelectionChangeUser"
           >
             <el-table-column type="selection" prop="Uin" width="28"></el-table-column>
-            <el-table-column prop="Name" label="用户" show-overflow-tooltip></el-table-column>
-            <el-table-column label="用户类型" width="100">
+            <el-table-column prop="Name"  :label="$t('CAM.userGroup.user')" show-overflow-tooltip></el-table-column>
+            <el-table-column   :label="$t('CAM.userList.userChose')" width="100">
               <template slot-scope="scope">
-                <p>子用户</p>
+                <p>{{$t('CAM.userGroup.childUser')}}</p>
               </template>
             </el-table-column>
           </el-table>
@@ -172,7 +180,7 @@
           </div>
         </div>
         <div class="container-right">
-          <span>已选择（{{selNum}}）</span>
+          <span>{{$t('CAM.userGroup.Star')}}（{{selNum}}）</span>
           <el-table
             class="table-left"
             ref="multipleSelected"
@@ -182,10 +190,10 @@
             :height="tableHeight"
             style="width: 100%"
           >
-            <el-table-column prop="Name" label="用户" show-overflow-tooltip></el-table-column>
-            <el-table-column label="用户类型" width="100">
+            <el-table-column prop="Name" :label="$t('CAM.userGroup.user')" show-overflow-tooltip></el-table-column>
+            <el-table-column :label="$t('CAM.userList.userChose')" width="100">
               <template slot-scope="scope">
-                <p>用户类型</p>
+                <p>{{$t('CAM.userList.userChose')}}</p>
               </template>
             </el-table-column>
             <el-table-column :label="$t('CAM.userGroup.colHandle')" width="50">
@@ -203,15 +211,17 @@
       </div>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="addUser">确 定</el-button>
+        <el-button type="primary" @click="addUser">{{$t('CAM.userList.suerAdd')}}</el-button>
       </div>
     </el-dialog>
   </div>
 </template>
 <script>
+import {USER_GROUP,USER_LIST,GROUP_USERS,DELE_GROUP,ADD_GROUPTOLIST} from '@/constants'
 export default {
   data() {
     return {
+      inpVal: "",
       tableHeight: 300,
       form: {
         name: "",
@@ -247,11 +257,15 @@ export default {
     this.init();
   },
   methods: {
+    _inpVal() {
+      if (this.inpVal == "") {
+        this.userData = this.json;
+      }
+    },
     // 初始化方法。
     init() {
       this.selTotal = 0;
       let params = {
-        Action: "ListGroups",
         Version: "2019-01-16",
         Page: this.page,
         Rp: this.size
@@ -259,9 +273,8 @@ export default {
       if (this.searchValue != null && this.searchValue != "") {
         params["Keyword"] = this.searchValue;
       }
-      let url = "cam2/ListGroups";
       this.axios
-        .post(url, params)
+        .post(USER_GROUP, params)
         .then(res => {
           if (res != "") {
             this.tableData = res.Response.GroupInfo;
@@ -284,13 +297,11 @@ export default {
       if (rowId != undefined && rowId != "") {
         this.selectedGroupId = rowId;
       }
-      let url = "cam2/ListUsers"; // 拉取子用户
       let params = {
-        Action: "ListUsers",
         Version: "2019-01-16"
       };
       this.axios
-        .post(url, params)
+        .post(USER_LIST, params)
         .then(res => {
           this.userData = [];
           this.userAllData = res.Response.Data;
@@ -310,13 +321,11 @@ export default {
       // 获取用户组管理用户
       let owneruserData = [];
       let paramsGroup = {
-        Action: "ListUsersForGroup",
         GroupId: this.selectedGroupId,
         Version: "2019-01-16"
       };
-      let urlGroup = "cam2/ListUsersForGroup";
       this.axios
-        .post(urlGroup, paramsGroup)
+        .post(GROUP_USERS, paramsGroup)
         .then(resGroup => {
           // 不直接将子用户信息赋予用户组选择框中,是避免页面出现 过滤后的子用户信息刷新覆盖初始信息
           owneruserData = resGroup.Response.UserInfo;
@@ -332,8 +341,10 @@ export default {
               }
             }
             _this.userData = _this.userAllData;
+            _this.json = _this.userData;
           } else {
             _this.userData = _this.userAllData;
+            _this.json = _this.userData;
           }
         })
         .catch(error => {
@@ -353,14 +364,12 @@ export default {
         }
       )
         .then(() => {
-          let url = "cam2/DeleteGroup";
           let params = {
-            Action: "DeleteGroup",
             Version: "2019-01-16",
             GroupId: groupId
           };
           this.axios
-            .post(url, params)
+            .post(DELE_GROUP, params)
             .then(data => {
               if (data != null && data.codeDesc === "Success") {
                 this.$message({
@@ -389,16 +398,14 @@ export default {
       let value = this.userSelData;
       if (value != "") {
         let params = {
-          Action: "AddUserToGroup",
           Version: "2019-01-16"
         };
         for (var i = 0; i < value.length; i++) {
           params["Info." + i + ".Uid"] = value[i].Uid;
           params["Info." + i + ".GroupId"] = GroupId;
         }
-        let url = "cam2/AddUserToGroup";
         this.axios
-          .post(url, params)
+          .post(ADD_GROUPTOLIST, params)
           .then(data => {
             this.$message({
               message: this.$t("CAM.userGroup.successInfo"),
@@ -471,8 +478,13 @@ export default {
     },
     // 子用户穿梭框查询
     toQueryUser() {
-      if (this.search != "") {
-      }
+      var arr = [];
+      this.userData.forEach(item => {
+        if (item.Name.includes(this.inpVal)) {
+          arr.push(item);
+        }
+      });
+      this.userData = arr;
     },
     //用户组详情
     Interface(groupId) {

@@ -11,7 +11,7 @@
         </div>
         <span slot="footer" class="dialog-footer">
           <el-button @click="handleClose">取 消</el-button>
-          <el-button type="primary" @click="importIpBlackSure">确 定</el-button>
+          <el-button type="primary" @click="importIpBlackSure">{{$t('DDOS.Proteccon_figura.Determination')}}</el-button>
         </span>
       </el-dialog>
     </div>

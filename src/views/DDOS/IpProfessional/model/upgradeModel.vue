@@ -2,34 +2,34 @@
   <div id="diaologUpgradeModel">
     <div>
       <el-dialog class="modelDetail"
-        title="升级"
+        :title="$t('DDOS.protectCon.upgrade')"
         :visible.sync="diaologUpgradeModel"
         width="50%"
         :before-close="handleClose">
         <div class="newClear upgradeList">
           <div class="newClear">
-            <p>ID/名称</p>
+            <p>{{$t('DDOS.AssetList.AssetListName')}}</p>
             <p>net-0000006y/789</p>
           </div>
           <div class="newClear">
-            <p>当前保底防护峰值</p>
+            <p>{{$t('DDOS.protectCon.CurrentMpeck')}}</p>
             <p>20Gbps</p>
           </div>
           <div class="newClear">
-            <p>过期时间</p>
+            <p>{{$t('DDOS.protectCon.ExpirationTime')}}</p>
             <p>2019-11-29 12：53：35</p>
           </div>
           <div class="newClear">
-            <p>升级保底防护</p>
+            <p>{{$t('DDOS.protectCon.upgradeMpeck')}}</p>
             <p>
               <span :class="type1==1?'active':''" @click="checkListSave(1,'20Gbps')">20Gbps</span>
               <span :class="type1==2?'active':''" @click="checkListSave(2,'20Gbps')">30Gbps</span>
               <span :class="type1==3?'active':''" @click="checkListSave(3,'20Gbps')">50Gbps</span><br/>
-              <a class="changeNum">cc防护峰值：{{thisChnageNum}}</a>
+              <a class="changeNum">{{$t('DDOS.choose.CCMinimum')}}：{{thisChnageNum}}</a>
             </p>
           </div>
           <div class="newClear">
-            <p>升级业务宽带</p>
+            <p>{{$t('DDOS.protectCon.upgradeFord')}}</p>
             <p>
               <span :class="type2==1?'active':''" @click="checkListBusiness(1,'50Mb')">50Mb</span>
               <span :class="type2==2?'active':''" @click="checkListBusiness(2,'100Mb')">100Mb</span>
@@ -40,7 +40,7 @@
             </p>
           </div>
           <div class="newClear">
-            <p>升级转发规则数</p>
+            <p>{{$t('DDOS.protectCon.upgradeRoleNum')}}</p>
             <p>
               <span :class="type3==1?'active':''" @click="checkListNum(1,'60')">60</span>
               <span :class="type3==2?'active':''" @click="checkListNum(2,'70')">70</span>
@@ -55,18 +55,18 @@
           </div>
         </div>
         <div class="upGradeTip" v-if="tipShow">
-          温馨提示：规则数，保底防护峰值、业务带宽升级后不支持降级，如需帮忙请联系客服
+         {{$t('DDOS.protectCon.WarmPort')}}
           <i class="el-icon-close" @click="thisTipShow"></i>
         </div>
         <div class="upGradeMoney newClear">
-          <p>升级费用</p>
+          <p>{{$t('DDOS.protectCon.upgradeMoney')}}</p>
           <p>
             <span>63300000</span>
-            <span class="errorTip" v-if="errorShow">Error: 服务器开了个小差，请稍后重试,请稍候再试</span>
+            <span class="errorTip" v-if="errorShow">{{$t('DDOS.protectCon.EorrorLog')}}</span>
           </p>
         </div>
         <span class="bottomBtnU">
-          <el-button :disabled="true">立即升级</el-button>
+          <el-button :disabled="true">{{$t('DDOS.protectCon.justUpgrade')}}</el-button>
           <el-button @click="handleClose">取消</el-button>
         </span>
       </el-dialog>

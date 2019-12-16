@@ -1,19 +1,19 @@
 <template>
   <div>
     <!-- 城市按钮 -->
-    <div class="CVM-title">对等连接</div>
+    <div class="CVM-title">{{ $t('CVM.ddlj') }}</div>
     <Cities :cities="cities" :value.sync="selectedRegion" @changeCity="changeCity" class="city" />
 
     <!-- 搜索 -->
     <div class="Right-style">
-      <el-input placeholder="请输入IP或主机名" v-model="search" size='small ' class="input-with-select esach-inputL">
+      <el-input :placeholder="$t('CVM.peerConnect.qsrzjm')" v-model="search" size='small ' class="input-with-select esach-inputL">
         <el-button slot="append" @click="btnsearch()" icon="el-icon-search"></el-button>
       </el-input>
     </div>
     <!-- 表格 -->
     <div class="Table-SY">
       <el-table :data="TbaleData" height="550" style="width: 100%">
-        <el-table-column prop="" label="ID/主机名">
+        <el-table-column prop="" :label="$t('CVM.clBload.zjm')">
           <template slot-scope="scope">
             <p>
               <a @click="jump(scope.row.peeringConnectionId)"
@@ -23,7 +23,7 @@
           </template>
         </el-table-column>
 
-        <el-table-column prop="" label="监控">
+        <el-table-column prop="" :label="$t('CVM.clBload.jk')">
           <template slot-scope="scope">
             <p style="font-size:26px;">
               <a @click="jump(scope.row.peeringConnectionId)" style="cursor:pointer;">
@@ -34,28 +34,28 @@
           </template>
         </el-table-column>
 
-        <el-table-column prop="" label="状态">
+        <el-table-column prop="" :label="$t('CVM.clBload.zt')">
           <template slot-scope="scope">
             <p style="color: #06c290"> {{peerStatue[scope.row.state]}}</p>
           </template>
         </el-table-column>
 
-        <el-table-column prop="" label="本端私有网络">
+        <el-table-column prop="" :label="$t('CVM.peerConnect.bdsywl')">
           <template slot-scope="scope">
             <a href="">{{scope.row.unVpcId}}</a>
 
           </template>
         </el-table-column>
-        <el-table-column prop="" label="对端私有网络">
+        <el-table-column prop="" :label="$t('CVM.peerConnect.ddsywl')">
           <template slot-scope="scope">
             <a href="">{{scope.row.unPeerVpcId}}</a>
 
           </template>
         </el-table-column>
-        <el-table-column prop="" label="带宽上限">
+        <el-table-column prop="" :label="$t('CVM.peerConnect.dksx')">
           <template slot-scope="scope">
             <p>
-              <span v-if="scope.row.bandwidth == 0">无上限</span>
+              <span v-if="scope.row.bandwidth == 0">{{ $t('CVM.peerConnect.wsx') }}</span>
               <span v-if="scope.row.bandwidth != 0">{{scope.row.bandwidth}}Mbps</span>
             </p>
           </template>
@@ -75,7 +75,7 @@
 <script>
   import Cities from "@/components/public/CITY";
   import {
-    DISK_CITY,
+    ALL_CITY,
     PEE_LIST
   } from '@/constants';
   export default {
@@ -91,11 +91,11 @@
         totalCount: '', // 条数
         // 列表数据处理
         peerStatue: {
-          0: '申请中',
-          1: '连接成功',
-          2: '已过期',
-          3: '对端已拒绝',
-          4: '对端已删除',
+          0: '申請中',
+          1: '連接成功',
+          2: '已過期',
+          3: '對端已拒絕',
+          4: '對端已刪除',
         },
       };
     },
@@ -112,14 +112,12 @@
     methods: {
       // 获取城市列表
       GetCity() {
-        this.axios.get(`${DISK_CITY}?product=MONITOR`).then((data) => {
-          this.cities = data.data;
-          this.selectedRegion = data.data[0].Region;
-          this.selectedCity = data.data[0];
-          this.$cookie.set('regionv1', this.selectedCity.regionCode);
-          this.$cookie.set('regionv2', this.selectedCity.Region);
-          this.GetTabularData();
-        });
+        this.axios.get(ALL_CITY).then(data => {
+        this.cities = data.data;
+        this.selectedRegion = data.data[0].Region;
+        this.selectedCity = data.data[0];
+        this.$cookie.set("regionv2", this.selectedCity.Region);
+      });
       },
       // 切换城市
       changeCity(city) {

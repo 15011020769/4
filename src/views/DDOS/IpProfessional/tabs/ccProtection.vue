@@ -11,10 +11,10 @@
       </el-select>
     </div>
     <div class="ccProtectPartTwo">
-      <h2>HTTP CC防护</h2>
+      <h2>{{$t('DDOS.Proteccon_figura.HTTP_protection')}}</h2>
       <div class="partTwoIpt">
         <div class="newClear">
-          <p class="partTwoPO">防护状态</p>
+          <p class="partTwoPO">{{$t('DDOS.Proteccon_figura.Protection_state')}}</p>
           <p class="partTwoPT">
             <el-switch
             class="switch"
@@ -22,7 +22,7 @@
               active-color="#006eff"
               inactive-color="#bbb">
             </el-switch>
-            <span class="switchTip">对于敏感业务，可将业务URL添加到URL白名单，对该业务不做CC攻击检测和防护</span>
+            <span class="switchTip">{{$t('DDOS.Proteccon_figura.Sensitive_services')}}</span>
           </p>
         </div>
         <div class="newClear" v-if="switchState==true?true:false">
@@ -36,7 +36,7 @@
                 :value="item.value">
               </el-option>
             </el-select>
-            <span class="marginLeftSpan">当http请求数超过设定值时，触发CC防护。</span>
+            <span class="marginLeftSpan">{{$t('DDOS.Proteccon_figura.numbe_HTTP')}}</span>
           </p>
         </div>
         <div class="newClear" v-if="switchState==true?true:false">
@@ -44,7 +44,7 @@
           <p class="partTwoPT">
             <el-input v-model="httpCcNum" class="partTwoPTIpt"></el-input><span class="marginLeftSpan">QPS</span>
           </p>
-          <span class="botTop">CC分级防护仅对通过接入网站业务的域名进行生效。</span>
+          <span class="botTop">{{$t('DDOS.Proteccon_figura.CC_classified')}}</span>
         </div>
       </div>
     </div>
@@ -316,6 +316,28 @@ export default {
   .el-input__inner{
     border-radius: 0!important;
     height:30px!important;
+  }
+  .buttonGroupAll{
+    float:left;
+    button{
+      height:30px;
+      line-height: 30px;
+      padding:0 16px;
+      border-radius: 0;
+    }
+  }
+  .newDataTime{
+    float:left;
+    height:30px;
+    line-height: 30px;
+    border-radius: 0;
+    .el-input__icon{
+      line-height:26px;
+    }
+    .el-range-separator{
+      line-height: 26px;
+      width:7%;
+    }
   }
 }
 </style>

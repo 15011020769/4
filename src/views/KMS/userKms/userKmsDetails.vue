@@ -7,53 +7,53 @@
     <div class="projectDetailCon">
       <div class="projectDetailCenter">
         <div class="projectDetailOne">
-          <h2>密钥信息</h2>
+          <h2>{{$t('KMS.total.kmsInfo')}}</h2>
           <div class="detailList">
-            <p><span>名称</span><span>{{keyList.Alias}}</span><i class="el-icon-edit" @click="changeNameHand"></i></p>
-            <el-dialog class="changeNameModel" title="修改密钥名称" :visible.sync="dialogModel1" width="30%" :before-close="handleClose1">
+            <p><span>{{$t('KMS.total.name')}}</span><span>{{keyList.Alias}}</span><i class="el-icon-edit" @click="changeNameHand"></i></p>
+            <el-dialog class="changeNameModel" :title="$t('KMS.total.changeKmsName')" :visible.sync="dialogModel1" width="50%" :before-close="handleClose1">
               <div class="dialogModelCon newClear">
-                <div class="newClear"><span class="dialogText">原名称</span><span>{{keyList.Alias}}</span></div>
-                <div class="newClear"><span class="dialogText">新名称</span><span>
+                <div class="newClear"><span class="dialogText">{{$t('KMS.total.oldName')}}</span><span>{{keyList.Alias}}</span></div>
+                <div class="newClear"><span class="dialogText">{{$t('KMS.total.newName')}}</span><span>
                     <el-input v-model="changeName" class="newName"></el-input>
-                    <p class="tipP">最长可输入60个字符，不可为空，请使用字母、数字及字符“_”和“-”，首字符必须为字母或者数字，且不能用 KMS- 开头。</p>
+                    <p class="tipP">{{$t('KMS.total.tip4')}}</p>
                   </span></div>
               </div>
               <span slot="footer" class="dialog-footer">
-                <el-button @click="dialogModel1 = false">取 消</el-button>
-                <el-button type="primary" @click="changeNameSure">确 定</el-button>
+                <el-button @click="dialogModel1 = false">{{$t('KMS.total.modelClose')}}</el-button>
+                <el-button type="primary" @click="changeNameSure">{{$t('KMS.total.modelSure')}}</el-button>
               </span>
             </el-dialog>
             <p><span>ID</span><span>{{projectDetail.KeyId}}</span></p>
-            <p><span>状态</span><span :style="keyList.KeyState=='Enabled'?'color:#000':'color:#ff9d00'">
+            <p><span>{{$t('KMS.total.status')}}</span><span :style="keyList.KeyState=='Enabled'?'color:#000':'color:#ff9d00'">
                 <!-- {{projectDetail.KeyState}} -->
-                {{keyList.KeyState=="PendingDelete"?'于'+timestampToTime(projectDetail.DeletionDate)+'彻底删除':filterState(keyList.KeyState)}}
+                {{keyList.KeyState=="PendingDelete"?$t('KMS.total.yu')+timestampToTime(projectDetail.DeletionDate)+$t('KMS.total.allDelete'):filterState(keyList.KeyState)}}
               </span>&nbsp;
-              <a href="#" :style="keyList.KeyState=='Disabled' || keyList.KeyState=='PendingImport' || keyList.KeyState=='PendingDelete'?'display:none':'display:inline-block'" @click="startKms(keyList,$event)">禁用密钥</a>
-              <a href="#" :style="keyList.KeyState=='Enabled' || keyList.KeyState=='PendingImport' || keyList.KeyState=='PendingDelete'?'display:none':'display:inline-block'" @click="startKms(keyList,$event)">启用密钥</a>
-              <a href="#" :style="keyList.KeyState=='Enabled' || keyList.KeyState=='PendingImport' || keyList.KeyState=='Disabled'?'display:none':'display:inline-block'" @click="openDelete(keyList,$event)">取消删除</a>
+              <a href="#" :style="keyList.KeyState=='Disabled' || keyList.KeyState=='PendingImport' || keyList.KeyState=='PendingDelete'?'display:none':'display:inline-block'" @click="startKms(keyList,$event)">{{$t('KMS.total.stopKms')}}</a>
+              <a href="#" :style="keyList.KeyState=='Enabled' || keyList.KeyState=='PendingImport' || keyList.KeyState=='PendingDelete'?'display:none':'display:inline-block'" @click="startKms(keyList,$event)">{{$t('KMS.total.startKms')}}</a>
+              <a href="#" :style="keyList.KeyState=='Enabled' || keyList.KeyState=='PendingImport' || keyList.KeyState=='Disabled'?'display:none':'display:inline-block'" @click="openDelete(keyList,$event)">{{$t('KMS.total.closeDelete')}}</a>
             </p>
-            <p><span>地区</span><span>{{projectDetail.address}}</span></p>
-            <p><span>创建时间</span><span>{{projectDetail.CreateTime}}</span></p>
-            <p><span>创建者</span><span>{{keyList.Owner}}</span></p>
-            <p><span>轮换状态</span>
+            <p><span>{{$t('KMS.total.address')}}</span><span>{{projectDetail.address}}</span></p>
+            <p><span>{{$t('KMS.total.createTime')}}</span><span>{{projectDetail.CreateTime}}</span></p>
+            <p><span>{{$t('KMS.total.createUser')}}</span><span>{{keyList.Owner}}</span></p>
+            <p><span>{{$t('KMS.total.changeStatus')}}</span>
 
-              <span :style="keyList.KeyRotationEnabled==true?'display:none':'{display:inline-block;color: #ff9d00 ;}'">已禁用</span>
-              <span :style="projectDetail.KeyState=='待导入' || keyList.KeyState=='PendingDelete'?'display:none':'{display:inline-block;}'" v-if="keyList.KeyRotationEnabled">已启用</span>
-              <span :style=" projectDetail.KeyState=='待导入'?'display:none':'display:inline-block'">每年自动轮换&nbsp;</span>
-              <a href="#" v-if="!keyList.KeyRotationEnabled" :style=" projectDetail.KeyState=='待导入'?'display:none':'display:inline-block'" :class=" keyList.KeyState=='PendingDelete' || keyList.Origin == 'EXTERNAL'?'atclor':''" @click="startChange(keyList,$event)">启用轮换</a>
-              <a href="#" v-if="keyList.KeyRotationEnabled" @click="startChange(keyList,$event)">禁用轮换</a>
+              <span :style="keyList.KeyRotationEnabled==true?'display:none':'{display:inline-block;color: #ff9d00 ;}'">{{$t('KMS.total.alredayStop')}}</span>
+              <span :style="projectDetail.KeyState==$t('KMS.total.willImport') || keyList.KeyState=='PendingDelete'?'display:none':'{display:inline-block;}'" v-if="keyList.KeyRotationEnabled">{{$t('KMS.total.alredayStart')}}</span>
+              <span :style=" projectDetail.KeyState==$t('KMS.total.willImport')?'display:none':'display:inline-block'">{{$t('KMS.total.autoChange')}}&nbsp;</span>
+              <a href="#" v-if="!keyList.KeyRotationEnabled" :style=" projectDetail.KeyState==$t('KMS.total.willImport')?'display:none':'display:inline-block'" :class=" keyList.KeyState=='PendingDelete' || keyList.Origin == 'EXTERNAL'?'atclor':''" @click="startChange(keyList,$event)">{{$t('KMS.total.startChange')}}</a>
+              <a href="#" v-if="keyList.KeyRotationEnabled" @click="startChange(keyList,$event)">{{$t('KMS.total.stopChange')}}</a>
             </p>
-            <p><span>描述信息</span><span>{{keyList.Description}}</span><i class="el-icon-edit" @click="newDescription"></i></p>
-            <el-dialog class="changeNameModel" title="修改密钥描述信息" :visible.sync="dialogModel2" width="30%" :before-close="handleClose2">
+            <p><span>{{$t('KMS.total.descriptInfo')}}</span><span>{{keyList.Description}}</span><i class="el-icon-edit" @click="newDescription"></i></p>
+            <el-dialog class="changeNameModel" :title="$t('KMS.total.changeKmsInfo')" :visible.sync="dialogModel2" width="30%" :before-close="handleClose2">
               <div class="dialogModelCon">
-                <div class="newClear"><span>原描述信息</span><span>{{keyList.Description}}</span></div>
-                <div class="newClear"><span>新描述信息</span><span>
+                <div class="newClear"><span>{{$t('KMS.total.oldDescript')}}</span><span>{{keyList.Description}}</span></div>
+                <div class="newClear"><span>{{$t('KMS.total.newDescript')}}</span><span>
                     <el-input type="textarea" v-model="descriptionNew" class="newDescription"></el-input>
                   </span></div>
               </div>
               <span slot="footer" class="dialog-footer">
-                <el-button @click="dialogModel2 = false">取 消</el-button>
-                <el-button type="primary" @click="changeDescriptionSure">确 定</el-button>
+                <el-button @click="dialogModel2 = false">{{$t('KMS.total.modelClose')}}</el-button>
+                <el-button type="primary" @click="changeDescriptionSure">{{$t('KMS.total.modelSure')}}</el-button>
               </span>
             </el-dialog>
             <LstopChange :isShow="dialogModelChange" :content="doalogModelBox" @parentByClick="childrenShow" @startSure="startSure" @stopSure="stopSure" />
@@ -62,117 +62,117 @@
           </div>
         </div>
         <div class="projectDetailOne" v-if="keyList.Origin == 'EXTERNAL'|| ishowkms==false?keyStatus=true:keyStatus=false">
-          <h2>密钥材料</h2>
+          <h2>{{$t('KMS.total.kmsMaterial')}}</h2>
           <div class="detailList">
-            <p><span>密钥来源</span><span>{{projectDetail.Origin}}</span></p>
-            <p v-if='keyList.KeyState=="PendingImport"?true:false'><span>密钥材料</span><span><a href="#" @click="dialogModel3=true">导入密钥材料</a></span></p>
+            <p><span>{{$t('KMS.total.kmsOrigin')}}</span><span>{{projectDetail.Origin}}</span></p>
+            <p v-if='keyList.KeyState=="PendingImport"?true:false'><span>{{$t('KMS.total.kmsMaterial')}}</span><span><a href="#" @click="dialogModel3=true">{{$t('KMS.total.importKmsM')}}</a></span></p>
             <div v-if='keyList.KeyState=="Enabled"||keyList.KeyState=="Disabled" ||keyList.KeyState=="PendingDelete"?true:false'>
-              <p><span>密钥材料</span><span><a href="#" :class=" keyList.KeyState=='PendingDelete' || keyList.KeyState=='Disabled'?'atclor':''" @click="dialogModel3=true" >重新导入</a>&nbsp;&nbsp;&nbsp;<a href="#" :class=" keyList.KeyState=='PendingDelete'?'atclor':''" @click="dialogModel4=true">删除密钥材料</a></span></p>
-              <p><span>过期时间</span><span><span style="color: #000;width: auto;">{{timestampToTime(keyList.ValidTo)}}</span></span></p>
+              <p><span>{{$t('KMS.total.kmsMaterial')}}</span><span><a href="#" :class=" keyList.KeyState=='PendingDelete' || keyList.KeyState=='Disabled'?'atclor':''" @click="dialogModel3=true" >{{$t('KMS.total.reImport')}}</a>&nbsp;&nbsp;&nbsp;<a href="#" :class=" keyList.KeyState=='PendingDelete'?'atclor':''" @click="dialogModel4=true">{{$t('KMS.total.deleteKmsM')}}</a></span></p>
+              <p><span>{{$t('KMS.total.outTime')}}</span><span><span style="color: #000;width: auto;">{{timestampToTime(keyList.ValidTo)}}</span></span></p>
             </div>
-            <el-dialog class="changeNameModel" title="导入密钥材料" :visible.sync="dialogModel3" width="30%" :before-close="handleClose3">
+            <el-dialog class="changeNameModel" :title="$t('KMS.total.importKmsM')" :visible.sync="dialogModel3" width="30%" :before-close="handleClose3">
               <div class="dialogModelConT">
                 <div class="TopStepDownload" v-if="thisStepOne">
                   <div class="topStepOne newClear">
-                    <p class="stepOne step"><span class="stepCir">1</span><span class="stepText">密钥参数下载</span></p>
+                    <p class="stepOne step"><span class="stepCir">1</span><span class="stepText">{{$t('KMS.total.kmsParamsDownload')}}</span></p>
                     <span class="rightArrow">></span>
-                    <p class="step"><span class="stepCir">2</span><span class="stepText">密钥导入</span></p>
+                    <p class="step"><span class="stepCir">2</span><span class="stepText">{{$t('KMS.total.kmsImport')}}</span></p>
                     <span class="rightArrow">></span>
-                    <p class="step"><span class="stepCir">3</span><span class="stepText">导入状态</span></p>
+                    <p class="step"><span class="stepCir">3</span><span class="stepText">{{$t('KMS.total.importStatus')}}</span></p>
                   </div>
                   <div class="tipBlue">
-                    温馨提示：密钥材料需要通过加密公钥加密后才可以导入，请选择一个用于加密密钥材料的算法，生成的密钥导入参数将在24小时后过期，请及时下载！
+                    {{$t('KMS.total.tip5')}}
                   </div>
                   <div class="labelCheck newClear">
-                    <div class="newClear"><span class="labelCheckText">算法类型</span><span>
+                    <div class="newClear"><span class="labelCheckText">{{$t('KMS.total.algorithmType')}}</span><span>
                         <el-radio v-model="thisSuanType" label="RSA_2048"></el-radio>
                       </span></div>
                     <div class="newClear">
-                      <span class="labelCheckText">加密算法</span>
+                      <span class="labelCheckText">{{$t('KMS.total.EncryptionAlgorithm')}}</span>
                       <span>
                         <el-select class="selectSuan" v-model="thisAddSuan">
                           <el-option label="RSAES_PKCS1_V1_5" value="RSAES_PKCS1_V1_5"></el-option>
                           <el-option label="RSAES_OAEP_SHA_1" value="RSAES_OAEP_SHA_1"></el-option>
                           <el-option label="RSAES_OAEP_SHA_256" value="RSAES_OAEP_SHA_256"></el-option>
                         </el-select>
-                        <el-button @click="downloadTxt1">下载</el-button>
+                        <el-button @click="downloadTxt1">{{$t('KMS.total.downLoad')}}</el-button>
                       </span>
                     </div>
                   </div>
                   <div class="botBtn">
-                    <el-button @click="dialogModel3 = false">取 消</el-button>
-                    <el-button type="primary" @click="nextStepOne">下一步</el-button>
+                    <el-button @click="dialogModel3 = false">{{$t('KMS.total.modelClose')}}</el-button>
+                    <el-button type="primary" @click="nextStepOne">{{$t('KMS.total.next')}}</el-button>
                   </div>
                 </div>
                 <div class="TopStepDownload" v-if="thisStepTwo">
                   <div class="topStepOne newClear">
-                    <p class="stepTwo step"><span class="stepCir"><i class="el-icon-check"></i></span><span class="stepText">密钥参数下载</span></p>
+                    <p class="stepTwo step"><span class="stepCir"><i class="el-icon-check"></i></span><span class="stepText">{{$t('KMS.total.kmsParamsDownload')}}</span></p>
                     <span class="rightArrow">></span>
-                    <p class="stepOne step"><span class="stepCir">2</span><span class="stepText">密钥导入</span></p>
+                    <p class="stepOne step"><span class="stepCir">2</span><span class="stepText">{{$t('KMS.total.kmsImport')}}</span></p>
                     <span class="rightArrow">></span>
-                    <p class="step"><span class="stepCir">3</span><span class="stepText">导入状态</span></p>
+                    <p class="step"><span class="stepCir">3</span><span class="stepText">{{$t('KMS.total.importStatus')}}</span></p>
                   </div>
                   <div class="labelCheckTwo newClear">
                     <div class="newClear">
-                      <span class="labelCheckText">加密密钥材料</span>
-                      <span><input class="choseFileText" type="text" v-model="PlaintextRead" placeholder="还未选择文件" readonly /><a href="#" class="chooseFile"><span>选择文件</span><input type="file" @change="PlaintextReadHande" ref="inputer"></a></span>
+                      <span class="labelCheckText">{{$t('KMS.total.CryptographicKeyMaterial')}}</span>
+                      <span><input class="choseFileText" type="text" v-model="PlaintextRead" :placeholder="$t('KMS.total.nofileChoose')" readonly /><a href="#" class="chooseFile"><span>{{$t('KMS.total.chooseFile')}}</span><input type="file" @change="PlaintextReadHande" ref="inputer"></a></span>
                     </div>
                     <div class="newClear">
-                      <span class="labelCheckText">导入令牌</span>
-                      <span><input class="choseFileText" v-model="exportRead" type="text" placeholder="还未选择文件" readonly /><a href="#" class="chooseFile"><span>选择文件</span><input type="file" @change="exportChange"></a></span>
+                      <span class="labelCheckText">{{$t('KMS.total.ImportToken')}}</span>
+                      <span><input class="choseFileText" v-model="exportRead" type="text" :placeholder="$t('KMS.total.nofileChoose')" readonly /><a href="#" class="chooseFile"><span>{{$t('KMS.total.chooseFile')}}</span><input type="file" @change="exportChange"></a></span>
                     </div>
                     <div class="newClear">
-                      <span class="labelCheckText">密钥材料过期时间</span>
+                      <span class="labelCheckText">{{$t('KMS.total.kmsMoutTime')}}</span>
                       <span>
                         <el-select class="selectSuanTwo" v-model="outTimeSet" @change="timeOutChange">
-                          <el-option label="永不过期" value="forver"></el-option>
-                          <el-option label="设置过期时间" value="setTime"></el-option>
+                          <el-option :label="$t('KMS.total.foverNoTime')" value="forver"></el-option>
+                          <el-option :label="$t('KMS.total.setTimeOut')" value="setTime"></el-option>
                         </el-select>
-                        <el-date-picker v-if="isSettimeOut" v-model="selectTime" type="date" placeholder="选择日期" class="setTimeOutTime">
+                        <el-date-picker v-if="isSettimeOut" v-model="selectTime" type="date" :placeholder="$t('KMS.total.chooseTime')" class="setTimeOutTime">
                         </el-date-picker><br />
-                        <span class="tipStep">若您已订阅产品信息，您将在密钥材料过期前三天收到告警信息</span>
+                        <span class="tipStep">{{$t('KMS.total.tip6')}}</span>
                       </span>
                     </div>
                   </div>
                   <div class="botBtn">
-                    <el-button type="primary" @click="prevOne">上一步</el-button>
-                    <el-button @click="nextStepTwo" :disabled="PlaintextRead==''||exportRead==''?true:false">导入密钥</el-button>
+                    <el-button type="primary" @click="prevOne">{{$t('KMS.total.prev')}}</el-button>
+                    <el-button @click="nextStepTwo" :disabled="PlaintextRead==''||exportRead==''?true:false">{{$t('KMS.total.impoetKms')}}</el-button>
                   </div>
                 </div>
                 <div class="TopStepDownload" v-if="thisStepThree">
                   <div class="topStepOne newClear">
-                    <p class="stepTwo step"><span class="stepCir"><i class="el-icon-check"></i></span><span class="stepText">密钥参数下载</span></p>
+                    <p class="stepTwo step"><span class="stepCir"><i class="el-icon-check"></i></span><span class="stepText">{{$t('KMS.total.kmsParamsDownload')}}</span></p>
                     <span class="rightArrow">></span>
-                    <p class="stepTwo step"><span class="stepCir"><i class="el-icon-check"></i></span><span class="stepText">密钥导入</span></p>
+                    <p class="stepTwo step"><span class="stepCir"><i class="el-icon-check"></i></span><span class="stepText">{{$t('KMS.total.kmsImport')}}</span></p>
                     <span class="rightArrow">></span>
-                    <p class="stepOne step"><span class="stepCir">3</span><span class="stepText">导入状态</span></p>
+                    <p class="stepOne step"><span class="stepCir">3</span><span class="stepText">{{$t('KMS.total.importStatus')}}</span></p>
                   </div>
                   <div class="labelCheckTwo newClear">
-                    <p v-if="ishowkms" style="text-align: center;padding: 50px;"><i class="el-icon-circle-check iconys"></i>秘钥成功导入</p>
-                    <p v-if="!ishowkms" style="text-align: center;padding: 50px;"><i class="el-icon-circle-close iconys"></i>秘钥导入失败，请返回上一步重试！</p>
+                    <p v-if="ishowkms" style="text-align: center;padding: 50px;"><i class="el-icon-circle-check iconys"></i>{{$t('KMS.total.kmsImportSuccess')}}</p>
+                    <p v-if="!ishowkms" style="text-align: center;padding: 50px;"><i class="el-icon-circle-close iconys"></i>{{$t('KMS.total.tip7')}}</p>
                   </div>
                   <div class="botBtn">
-                    <el-button type="primary" @click="prevTwo">上一步</el-button>
-                    <el-button @click="dialogModel3=false" :disabled="!ishowkms==false?false:true">确定</el-button>
+                    <el-button type="primary" @click="prevTwo">{{$t('KMS.total.prev')}}</el-button>
+                    <el-button @click="dialogModel3=false" :disabled="!ishowkms==false?false:true">{{$t('KMS.total.modelSure')}}</el-button>
                   </div>
                 </div>
               </div>
             </el-dialog>
 
-            <el-dialog class="changeNameModel" title="删除密钥材料" :visible.sync="dialogModel4" width="30%" :before-close="handleClose4">
+            <el-dialog class="changeNameModel" :title="$t('KMS.total.deleteKmsM')" :visible.sync="dialogModel4" width="30%" :before-close="handleClose4">
               <div class="dialogModelConT">
                 <div class="TopStepDownload" v-if="thisStepOne">
 
                   <div class="tipBlue">
-                    温馨提示：密钥材料将从KMS中删除，请确保您已经保管该密钥材料副本！
+                    {{$t('KMS.total.tip8')}}
                   </div>
                   <div class="labelCheck newClear">
-                    <div class="newClear">确定删除该密钥材料么？</div>
+                    <div class="newClear">{{$t('KMS.total.tip9')}}</div>
 
                   </div>
                   <div class="botBtn">
-                    <el-button @click="dialogModel4 = false">取 消</el-button>
-                    <el-button type="primary" @click="deletekms">确定</el-button>
+                    <el-button @click="dialogModel4 = false">{{$t('KMS.total.modelClose')}}</el-button>
+                    <el-button type="primary" @click="deletekms">{{$t('KMS.total.modelSure')}}</el-button>
                   </div>
                 </div>
               </div>
@@ -181,23 +181,23 @@
           </div>
         </div>
         <div class="projectDetailThree newClear">
-          <h2>在线工具<i class="el-icon-info"></i></h2>
+          <h2>{{$t('KMS.total.onlineTool')}}<i class="el-icon-info"></i></h2>
           <div class="btnBottom">
-            <button @click="changeBtnEncrypt(1)" :class="thisType=='1'?'bthBorderColor':''" :disabled='projectDetail.KeyState=="已禁用"||projectDetail.KeyState=="PendingDelete"?true:false'>加密</button>
-            <button @click="changeBtnEncrypt(2)" :class="thisType=='2'?'bthBorderColor':''" :disabled='projectDetail.KeyState=="已禁用"||projectDetail.KeyState=="PendingDelete"?true:false'>解密</button>
+            <button @click="changeBtnEncrypt(1)" :class="thisType=='1'?'bthBorderColor':''" :disabled='projectDetail.KeyState==$t("KMS.total.alredayStop")||projectDetail.KeyState=="PendingDelete"?true:false'>{{$t('KMS.total.encryption')}}</button>
+            <button @click="changeBtnEncrypt(2)" :class="thisType=='2'?'bthBorderColor':''" :disabled='projectDetail.KeyState==$t("KMS.total.alredayStop")||projectDetail.KeyState=="PendingDelete"?true:false'>{{$t('KMS.total.Decrypt')}}</button>
           </div>
           <div class="EncryptText newClear">
             <div v-if="thisType=='1'||thisType=='0'?true:false">
-              <el-input :disabled='projectDetail.KeyState=="已禁用"||projectDetail.KeyState=="PendingDelete"?true:false' class="textareaIpt" v-model="Plaintext" type="textarea" placeholder="请输入明文" @input='changeTextarea1'></el-input>
-              <el-button @click="actionPlain" :disabled="disableTextarea" type="primary">执行</el-button>
+              <el-input :disabled='projectDetail.KeyState==$t("KMS.total.alredayStop")||projectDetail.KeyState=="PendingDelete"?true:false' class="textareaIpt" v-model="Plaintext" type="textarea" :placeholder="$t('KMS.total.placeholder2')" @input='changeTextarea1'></el-input>
+              <el-button @click="actionPlain" :disabled="disableTextarea" type="primary">{{$t('KMS.total.action1')}}</el-button>
             </div>
             <div v-if="thisType=='2'||thisType=='3'?true:false">
-              <el-input class="textareaIpt" v-model="Ciphertext" type="textarea" placeholder="请输入密文" @input='changeTextarea1'></el-input>
-              <el-button @click="actionCipher" :disabled="disableTextarea" type="primary">执行</el-button>
+              <el-input class="textareaIpt" v-model="Ciphertext" type="textarea" :placeholder="$t('KMS.total.enterText')" @input='changeTextarea1'></el-input>
+              <el-button @click="actionCipher" :disabled="disableTextarea" type="primary">{{$t('KMS.total.action1')}}</el-button>
             </div>
             <div>
               <el-input class="textareaIpt" :disabled="true" type="textarea" v-model="downLoadText"></el-input>
-              <el-button :disabled="downLoadText==''?true:false" type="primary" @click="downloadTxt">下载</el-button>
+              <el-button :disabled="downLoadText==''?true:false" type="primary" @click="downloadTxt">{{$t('KMS.total.downLoad')}}</el-button>
             </div>
           </div>
         </div>
@@ -268,7 +268,7 @@ export default {
   methods: {
     GetList() {
       this.projectDetail = JSON.parse(sessionStorage.getItem("projectId"));
-      this.projectDetail.KeyState == "已禁用" || this.projectDetail.KeyState == "PendingDelete" ? this.thisType = "0" : 3
+      this.projectDetail.KeyState == this.$t('KMS.total.alredayStop') || this.projectDetail.KeyState == "PendingDelete" ? this.thisType = "0" : 3
       // console.log(this.projectDetail)
       let params = {
         Version: '2019-01-18',
@@ -328,7 +328,7 @@ export default {
         this.dialogModelOpenDelete = true;
       } else {
         this.dialogModelDelete = true;
-        let params = [scopeRow.Alias, '于' + this.timestampToTime(scopeRow.DeletionDate) + '彻底删除', e.target.innerHTML, scopeRow.KeyId]
+        let params = [scopeRow.Alias, this.$t('KMS.total.yu') + this.timestampToTime(scopeRow.DeletionDate) + this.$t('KMS.total.allDelete'), e.target.innerHTML, scopeRow.KeyId]
         this.doalogModelBox2 = params;
       }
     },
@@ -475,11 +475,11 @@ export default {
         this.exportRaw('ImportToken' + '.txt', this.downLoadText1)
         this.exportRaw('public_key' + '.base64', this.downLoadText2)
         var README = ''
-        README += '算法类型：' + this.thisSuanType + '\n' +
-          '加密算法：' + this.thisAddSuan + '\n' +
-          '加密公钥文件：public_key' + '\n' +
-          '导入令牌文件：ImportToken' + '\n' +
-          '密钥导入材料过期时间：' + this.timestampToTime(this.GetParameters.ParametersValidTo)
+        README += '演算法類型：' + this.thisSuanType + '\n' +
+          '加密演算法：' + this.thisAddSuan + '\n' +
+          '加密公鑰文件：public_key' + '\n' +
+          '導入令牌文件：ImportToken' + '\n' +
+          '密鑰導入材料過期時間：' + this.timestampToTime(this.GetParameters.ParametersValidTo)
         this.exportRaw('README' + '.txt', README)
       })
 
@@ -616,7 +616,7 @@ export default {
     //时间
     timestampToTime(timestamp) {
       if (timestamp == '0') {
-          return '不过期'
+          return this.$t('KMS.total.noTimeout')
         } else {
           let date = new Date(timestamp * 1000);
           let y = date.getFullYear();
@@ -637,19 +637,19 @@ export default {
     //状态处理
     filterState(state) {
       if (state == 'Enabled') {
-        state = '已启用'
+        state = this.$t('KMS.total.alredayStart')
       } else if (state == 'PendingImport') {
-        state = '待导入'
+        state = this.$t('KMS.total.willImport')
       } else if (state == 'Disabled') {
-        state = '已禁用'
+        state = this.$t('KMS.total.alredayStop')
       }
       return state;
     }
   }
 }
 </script>
-<style lang="scss">
-.newClear {
+<style lang="scss" scoped>
+.newClear:after {
   display: block;
   content: "";
   clear: both;
@@ -732,7 +732,7 @@ export default {
           margin-right: 30px;
           text-align: right;
           width: 330px;
-          textarea {
+          ::v-deep textarea {
             width: 330px;
             height: 100px;
             border-radius: 0;
@@ -748,7 +748,7 @@ export default {
       }
     }
     .btnBottom {
-      button {
+      ::v-deep button {
         background-color: #fff;
       }
     }
@@ -758,7 +758,7 @@ export default {
   div {
     margin-bottom: 20px;
     width: 100%;
-    span:nth-child(1).dialogText {
+    span:nth-child(1) {
       font-size: 12px;
       color: #888;
       display: inline-block;
@@ -773,14 +773,15 @@ export default {
       .newName {
         width: 200px;
         height: 30px;
-        input {
+        ::v-deep input {
           width: 200px;
           height: 30px;
+          line-height: 30px;
           border-radius: 0;
         }
       }
       .newDescription {
-        textarea {
+        ::v-deep textarea {
           width: 330px;
           height: 100px;
           resize: none;
@@ -795,13 +796,13 @@ export default {
   }
 }
 .changeNameModel {
-  .el-dialog__title {
+  ::v-deep .el-dialog__title {
     font-size: 14px;
     font-weight: 600;
   }
 }
 .dialogModelConT {
-  button {
+  ::v-deep button {
     width: 70px;
     height: 30px;
     border-radius: 0;
@@ -888,14 +889,15 @@ export default {
         div {
           width: 170px;
           height: 30px;
-          input {
+          ::v-deep input {
             width: 170px;
             height: 30px;
+            line-height: 30px;
             border-radius: 0;
           }
         }
       }
-      button {
+      ::v-deep button {
         height: 30px;
         border-radius: 0;
         display: inline-block;
@@ -939,7 +941,7 @@ export default {
         top: 9px;
         margin-left: 10px;
         font-size: 12px;
-        input {
+        ::v-deep input {
           opacity: 0;
           filter: alpha(opacity=0);
           position: absolute;
@@ -954,9 +956,10 @@ export default {
         div {
           width: 100px;
           height: 30px;
-          input {
+          ::v-deep input {
             width: 100px;
             height: 30px;
+            line-height: 30px;
             border-radius: 0;
             font-size: 12px;
           }
@@ -974,9 +977,10 @@ export default {
       width: 120px;
       height: 30px;
       margin-left: 12px;
-      input {
+      ::v-deep input {
         width: 120px;
         height: 30px;
+        line-height: 30px;
         border-radius: 0;
       }
       .el-input__icon {

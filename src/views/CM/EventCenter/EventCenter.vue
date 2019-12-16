@@ -1,5 +1,5 @@
 <template>
   <div>
-    事件中心
+    {{ $t('CVM.sjzx') }}
   </div>
 </template>

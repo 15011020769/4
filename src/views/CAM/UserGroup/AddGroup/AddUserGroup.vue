@@ -2,10 +2,10 @@
   <div class="Cam">
     <div class="container">
       <el-form :model="addModel" :rules="rules" ref="addModel">
-        <el-form-item label="用户组名称" prop="groupName" label-width="100px">
+        <el-form-item :label="$t('CAM.userGroup.colNmae')" prop="groupName" label-width="100px">
           <el-input size="mini" ref="groupNameRules" v-model="addModel.groupName"></el-input>
         </el-form-item>
-        <el-form-item label="备注" prop="remark" label-width="100px">
+        <el-form-item :label="$t('CAM.userGroup.colRemark')" prop="remark" label-width="100px">
           <el-input size="mini" type="textarea" v-model="addModel.remark"></el-input>
         </el-form-item>
       </el-form>
@@ -34,8 +34,7 @@
 <style lang="scss" scoped>
   .Cam {
   .container {
-    width:50%;
-    min-height: 200px;
+    width:100%;
     background: #fff;
     padding:20px;
  
@@ -43,7 +42,7 @@
       width: 20%;
     }
     .el-textarea{
-      width: 50%;
+      width: 30%;
     }
   }
 

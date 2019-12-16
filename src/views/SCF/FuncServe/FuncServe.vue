@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <div class="topFun">
+  <div class="wrap">
+    <div class="topFun" style="display:flex;">
       <span>{{ $t('SCF.total.title') }}</span>
       <el-input class="addressName" readonly="readonly" v-model="addressIpt"></el-input>
       <div>
@@ -20,9 +20,9 @@
           ></el-option>
         </el-select>
       </div>
-      <span>
+      <div style="display:flex;align-items:center;height:100%;">
         <el-button class="setBtn" icon="el-icon-setting" @click="dialogVisible3 = true"></el-button>
-      </span>
+      </div>
     </div>
     <el-dialog
       :title="$t('SCF.total.mmkjgl')"
@@ -95,7 +95,10 @@
       </div>
       <div>
         <span @click="addNewNameSpace">
-          <a href="#" v-if="!showTips">{{ $t('SCF.total.xzmmkj') }}({{this.modelNameSpace.length}}/5)</a>
+          <a
+            href="#"
+            v-if="!showTips"
+          >{{ $t('SCF.total.xzmmkj') }}({{this.modelNameSpace.length}}/5)</a>
           <span v-if="showTips">{{ $t('SCF.total.xzmmkj') }}{{ $t('SCF.total.me') }}</span>
         </span>
       </div>
@@ -107,7 +110,12 @@
     <div class="mainContainer">
       <div class="mainCon">
         <div class="tableTit newClear">
-          <el-button size="small" type="primary" class="newCreate" @click="newCreateFun()">{{ $t('SCF.total.xj') }}</el-button>
+          <el-button
+            size="small"
+            type="primary"
+            class="newCreate"
+            @click="newCreateFun()"
+          >{{ $t('SCF.total.xj') }}</el-button>
           <div class="searchRight">
             <el-select :placeholder="$t('SCF.total.glbq')" v-model="filterConrent">
               <el-option :label="$t('SCF.total.hsmc')" value="SearchKey"></el-option>
@@ -123,16 +131,20 @@
           </div>
         </div>
         <div class="mainTable">
-          <el-table :data="tableDataBegin.slice((currentPage-1)*pageSize,currentPage*pageSize)">
+          <el-table
+            :data="tableDataBegin.slice((currentPage-1)*pageSize,currentPage*pageSize)"
+            v-loading="loading"
+            height="450"
+          >
             <el-table-column prop="FunctionName" :label="$t('SCF.total.hsm')">
               <template slot-scope="scope">
                 <a href="#" @click="toDoDetail(scope.$index, scope.row)">{{scope.row.FunctionName}}</a>
               </template>
             </el-table-column>
-            <el-table-column  :label="$t('SCF.total.hszt')">
-               <template slot-scope="scope">
-                <p>{{State[scope.row.Status]}}</p >
-              </template>
+            <el-table-column :label="$t('SCF.total.hszt')">
+              <template slot-scope="scope">
+                <p>{{State[scope.row.Status]}}</p>
+              </template>
             </el-table-column>
             <el-table-column prop="monitor" :label="$t('SCF.total.jk')"></el-table-column>
             <el-table-column prop="Runtime" :label="$t('SCF.total.yxhj')"></el-table-column>
@@ -153,14 +165,18 @@
                   width="30%"
                   :before-close="handleClose"
                 >
-                <!--+scope.row.funName+$t('SCF.total.m')-->
+                  <!--+scope.row.funName+$t('SCF.total.m')-->
                   <span>{{ $t('SCF.total.scqd') }}</span>
                   <span slot="footer" class="dialog-footer">
                     <el-button @click="dialogVisible = false">{{ $t('SCF.total.qx') }}</el-button>
                     <el-button type="primary" @click="sureDelete()">{{ $t('SCF.total.qd') }}</el-button>
                   </span>
                 </el-dialog>
-                <el-button type="text" size="small" @click="handelCopy(scope.$index, scope.row)">{{ $t('SCF.total.fz') }}</el-button>
+                <el-button
+                  type="text"
+                  size="small"
+                  @click="handelCopy(scope.$index, scope.row)"
+                >{{ $t('SCF.total.fz') }}</el-button>
                 <el-dialog
                   :title="$t('SCF.total.hsfz')"
                   :visible.sync="dialogVisible2"
@@ -172,8 +188,8 @@
                       <!-- <el-select v-model="addressIpt">
                         <el-option label="北京" value="beijing"></el-option>
                         <el-option label="台北" value="taibei"></el-option>
-                      </el-select> -->
-                      <el-button  value='ap-taipei'>{{ $t('SCF.total.zgtb') }}</el-button>
+                      </el-select>-->
+                      <el-button value="ap-taipei">{{ $t('SCF.total.zgtb') }}</el-button>
                     </el-form-item>
                     <el-form-item :label="$t('SCF.total.mmkj')" :required="true">
                       <el-select v-model="nameSpaceValue">
@@ -227,11 +243,20 @@
   </div>
 </template>
 <script>
-
-import { ALL_CITY, SCF_LIST,NAME_SPACE_LIST,SCF_DEL,SCF_COPY,NAME_SPACE_CREAT,NAME_SPACE_UPD,NAME_SPACE_DEL } from "@/constants";
+import {
+  ALL_CITY,
+  SCF_LIST,
+  NAME_SPACE_LIST,
+  SCF_DEL,
+  SCF_COPY,
+  NAME_SPACE_CREAT,
+  NAME_SPACE_UPD,
+  NAME_SPACE_DEL
+} from "@/constants";
 export default {
   data() {
     return {
+      loading: true,
       nameSpaceValue: [{}],
       nameSpace: [{}],
       addressIpt: "台灣台北",
@@ -277,14 +302,14 @@ export default {
       filterConrent: "選擇資源屬性進行過濾",
       showTips: false,
       isbol: false,
-      State:{
-        Active:'正常',
-        Creating: '創建中...',
-        Updating:'更新中...',
-        Publishing: '發布中...',
-        UpdatingAndPublishing:'更新發布中...',
-        CreateFailed: '創建失敗',
-        UpdateFailed:'更新失敗'
+      State: {
+        Active: "正常",
+        Creating: "創建中...",
+        Updating: "更新中...",
+        Publishing: "發布中...",
+        UpdatingAndPublishing: "更新發布中...",
+        CreateFailed: "創建失敗",
+        UpdateFailed: "更新失敗"
       }
     };
   },
@@ -319,7 +344,7 @@ export default {
     getDModelNmaeSpace() {
       let params = {
         Version: "2018-04-16",
-        Region: 'ap-guangzhou'//this.$cookie.get("regionv2")
+        Region: "ap-guangzhou" //this.$cookie.get("regionv2")
       };
       this.axios.post(NAME_SPACE_LIST, params).then(res => {
         this.nameSpace = res.Response.Namespaces;
@@ -333,6 +358,7 @@ export default {
     },
     // 添加项目列表的表格数据
     getData() {
+      this.loading = true;
       var cookies = document.cookie;
       var list = cookies.split(";");
       for (var i = 0; i < list.length; i++) {
@@ -341,16 +367,20 @@ export default {
       let params = {
         // Action: "ListFunctions",
         Version: "2018-04-16",
-        Region: 'ap-guangzhou'//this.$cookie.get("regionv2")
+        Region: "ap-guangzhou" //this.$cookie.get("regionv2")
       };
-      if(this.filterConrent!=='选择资源属性进行过滤'&&this.tableDataName!==''){
-        params[this.filterConrent]=this.tableDataName
+      if (
+        this.filterConrent !== "选择资源属性进行过滤" &&
+        this.tableDataName !== ""
+      ) {
+        params[this.filterConrent] = this.tableDataName;
       }
       // 获取表格数据
       this.axios.post(SCF_LIST, params).then(res => {
         //console.log(res.Response.Functions);
         this.tableDataBegin = res.Response.Functions;
-        console.log(res)
+        this.loading = false;
+        console.log(res);
         //this.allData = this.tableDataBegin;
         //this.tableDataBegin = this.allData;
         // 将数据的长度赋值给totalItems
@@ -369,40 +399,17 @@ export default {
       console.log(this.filterConrent);
       // this.tableDataBegin = this.allData;
       this.tableDataEnd = [];
-     
-       if(this.filterConrent!=='选择资源属性进行过滤'&&this.tableDataName!==''){
-       this.getData()
-      }else{
-        this.getData()
+
+      if (
+        this.filterConrent !== "选择资源属性进行过滤" &&
+        this.tableDataName !== ""
+      ) {
+        this.getData();
+      } else {
+        this.getData();
       }
       //每次手动将数据置空,因为会出现多次点击搜索情况
       this.filterTableDataEnd = [];
-      console.log(this.tableDataBegin);
-      console.log(this.tableDataName);
-      // this.tableDataBegin.forEach((val, index) => {
-      //   if (this.filterConrent == "FunctionName") {
-      //     if (val.functionName) {
-      //       if (val.functionName.indexOf(this.tableDataName) !== -1) {
-      //         this.filterTableDataEnd.push(val);
-      //         this.tableDataBegin = this.filterTableDataEnd;
-      //       } else {
-      //         this.filterTableDataEnd.push();
-      //         this.tableDataBegin = this.filterTableDataEnd;
-      //       }
-      //     }
-      //     console.log(this.tableDataBegin);
-      //   } else if (this.filterConrent == "Description") {
-      //     if (val.description) {
-      //       if (val.description.indexOf(this.tableDataName) == 0) {
-      //         this.filterTableDataEnd.push(val);
-      //         this.tableDataBegin = this.filterTableDataEnd;
-      //       } else {
-      //         this.filterTableDataEnd.push();
-      //         this.tableDataBegin = this.filterTableDataEnd;
-      //       }
-      //     }
-      //   }
-      // });
       //页面数据改变重新统计数据数量和当前页
       this.currentPage = 1;
       this.totalItems = this.filterTableDataEnd.length;
@@ -472,7 +479,7 @@ export default {
       let params = {
         Action: "DeleteFunction",
         Version: "2018-04-16",
-        Region: 'ap-guangzhou',//this.$cookie.get("regionv2"),
+        Region: "ap-guangzhou", //this.$cookie.get("regionv2"),
         FunctionName: this.deleteBegin.FunctionName
       };
       console.log(params.FunctionName);
@@ -493,7 +500,7 @@ export default {
     sureCopy() {
       let params = {
         Version: "2018-04-16",
-        Region: 'ap-guangzhou',//this.$cookie.get("regionv2"),
+        Region: "ap-guangzhou", //this.$cookie.get("regionv2"),
         FunctionName: this.copyIndex2.FunctionName,
         NewFunctionName: this.newname,
         Action: "CopyFunction"
@@ -512,7 +519,7 @@ export default {
       }
       let paras = {
         Version: "2018-04-16",
-        Region: 'ap-guangzhou'//this.$cookie.get("regionv2")
+        Region: "ap-guangzhou" //this.$cookie.get("regionv2")
       };
       //与库中数据数据对比，判断添加修改
       this.axios.post(NAME_SPACE_LIST, paras).then(res => {
@@ -523,7 +530,7 @@ export default {
                 //添加
                 let params = {
                   Version: "2018-04-16",
-                  Region: 'ap-guangzhou',//this.$cookie.get("regionv2"),
+                  Region: "ap-guangzhou", //this.$cookie.get("regionv2"),
                   Namespace: modelNameSpace[i].Name,
                   Description: modelNameSpace[i].Description
                 };
@@ -539,7 +546,7 @@ export default {
                 //更新
                 let params = {
                   Version: "2018-04-16",
-                  Region: 'ap-guangzhou',//this.$cookie.get("regionv2"),
+                  Region: "ap-guangzhou", //this.$cookie.get("regionv2"),
                   Namespace: modelNameSpace[i].Name,
                   Description: modelNameSpace[i].Description
                 };
@@ -561,7 +568,7 @@ export default {
     spaceDelete(spaceIndex, spaceRow) {
       let params = {
         Version: "2018-04-16",
-        Region: 'ap-guangzhou',//this.$cookie.get("regionv2"),
+        Region: "ap-guangzhou", //this.$cookie.get("regionv2"),
         Namespace: spaceRow.Name
       };
       this.axios.post(NAME_SPACE_DEL, params).then(res => {
@@ -609,7 +616,7 @@ export default {
       let params = {
         // Action: "ListFunctions",
         Version: "2018-04-16",
-        Region: 'ap-guangzhou',//this.$cookie.get("regionv2"),
+        Region: "ap-guangzhou", //this.$cookie.get("regionv2"),
         Namespace: val
       };
       this.axios.post(SCF_LIST, params).then(res => {
@@ -631,7 +638,24 @@ export default {
   }
 };
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
+.wrap >>> .el-select,
+.wrap >>> .el-input,
+.wrap >>> .el-select .el-input__inner {
+  width: 180px;
+}
+.wrap >>> input,
+.wrap >>> button {
+  height: 30px;
+  border-radius: 0;
+  font-size: 12px;
+  line-height: 30px;
+  padding-top: 0 !important;
+}
+.wrap >>> button {
+  padding: 0 15px;
+  box-sizing: border-box;
+}
 .newClear:after {
   display: block;
   content: "";
@@ -735,7 +759,13 @@ export default {
   box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
 }
 .tabListPage {
-  text-align: right;
+  background: white;
+  height: 70px;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  box-sizing: border-box;
+  justify-content: flex-end;
 }
 .tipBot {
   color: #888;

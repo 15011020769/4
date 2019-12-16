@@ -223,15 +223,20 @@ export default {
       }
       if (instanceType == 'VPC') { // 私有网络
         this.axios.post(VPCS_LIST, params).then(res => {
-          console.log(res)
           this.vpcs = res.Response.VpcSet
         })
       } else if (instanceType == 'DIRECTCONNECT') { // 专线网络
         this.axios.post(DIRECTCONNECTGATEWAYS_LIST, params).then(res => {
-          console.log(res)
           this.vpcs = res.Response.DirectConnectGatewaySet
         })
       }
+      // 过滤已存在的实例数据(需要等待上面的接口调用完成再执行)
+      setTimeout(() => {
+        this.vpcs = this.vpcs.filter(item => {
+          let vpcIdList= this.tableData.map(v => v.InstanceId)
+          return !vpcIdList.includes(item.VpcId)
+        })
+      }, 1000);
     },
     // 新增关联实例
     attCcnIns: function (ins) {

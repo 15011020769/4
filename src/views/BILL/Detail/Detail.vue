@@ -63,7 +63,7 @@
       </div>
       <div class="mod-right">
         <div style="float: right;">
-          <el-button type="primary" icon="el-icon-download" @click="download" size="small" plain></el-button>
+          <el-button type="primary" icon="el-icon-download" @click="download" size="small" plain v-loading="downloadLoading"></el-button>
         </div>
         <div style="float: right; padding-right:5px;">
           <el-input :placeholder="$t('BILL.Detail.resourceId')" clearable v-model="dataForm.resourceId" size="small">
@@ -179,7 +179,8 @@ export default {
       pageIndex: 1,
       pageSize: 10,
       totalPage: 0,
-      dataListLoading: false
+      dataListLoading: false,
+      downloadLoading: false
     }
   },
   mounted() {
@@ -349,6 +350,7 @@ export default {
         'resourceId': this.dataForm.resourceId,
         'ifDisZero': this.dataForm.checked,
       }
+      this.downloadLoading = true
       this.axios.post(`${process.env.VUE_APP_adminUrl + EXPORTLIST}`, params, {
         responseType: 'blob'
       }).then(res => {
@@ -370,6 +372,7 @@ export default {
           // IE10+下载
           navigator.msSaveBlob(blob, fileName)
         }
+        this.downloadLoading = false
       })
     },
 

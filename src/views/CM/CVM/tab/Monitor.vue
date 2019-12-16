@@ -4,11 +4,11 @@
     <XTimeX v-on:switchData="GetDat" :classsvalue="value"></XTimeX>
     <div class="box-dis p-style">
       <p>
-        <i class="el-icon-info"></i>注释：Max、Min和Avg数值统计为当前折线图内所有点的最大值、最小值和平均值
+        <i class="el-icon-info"></i>{{ $t('CVM.clBload.zs') }}
       </p>
-      <p>
-        <el-button type="text">导出数据</el-button>
-      </p>
+      <!-- <p>
+        <el-button type="text">{{ $t('CVM.clBload.dcsj') }}</el-button>
+      </p> -->
     </div>
     <div class="box-table">
       <!-- 表格 -->
@@ -28,7 +28,7 @@
 
         <el-table-column prop="DataPoints" width="550">
           <template slot-scope="scope">
-            <p v-if="scope.row.DataPoints[0].Values.length==0">暂无数据</p>
+            <p v-if="scope.row.DataPoints[0].Values.length==0">{{ $t('CVM.clBload.zwsj') }}</p>
             <div class="echart" v-if="scope.row.DataPoints[0].Values.length!=0">
               <echart-line id="diskEchearrts-line" :time="scope.row.DataPoints[0].Timestamps | UpTime"
                 :opData="scope.row.DataPoints[0].Values" :scale="3" :period="period" :xdata="false"></echart-line>
@@ -78,7 +78,7 @@
         </el-table-column>
       </el-table>
       <!-- 模态框 -->
-      <el-dialog title="集群健康状态" :visible.sync="dialogVisible" width="60%" :before-close="handleClose">
+      <el-dialog :title="$t('CVM.clBload.jqjkzt')" :visible.sync="dialogVisible" width="60%" :before-close="handleClose">
         <XTimeX v-on:switchData="GetDat" :classsvalue="value"></XTimeX>
         <echart-line id="diskEchearrts-line" class="echart-wh" :time="timeData | UpTime" :opData="jingData"
           :period="period" :xdata="true"></echart-line>
@@ -144,16 +144,16 @@
           "-",
           "MB",
           "%",
-          "个",
+          "個",
           "Mbps",
           "Mbps",
-          "个/秒",
-          "个/秒",
+          "個/秒",
+          "個/秒",
           "Mbps",
           "Mbps",
           "MB",
-          "个/秒",
-          "个/秒"
+          "個/秒",
+          "個/秒"
         ];
         this.tableData = [];
         for (let i = 0; i < metricNArr.length; i++) {
@@ -215,38 +215,38 @@
       //文字过滤
       UpName(value) {
         if (value === "lanOuttraffic") {
-          return (value = "内网出带宽");
+          return (value = "內網出帶寬");
         }
         if (value === "lanIntraffic") {
-          return (value = "内网入带宽");
+          return (value = "內網入帶寬");
         }
         if (value === "lanOutpkg") {
-          return (value = "内网出包量");
+          return (value = "內網出包量");
         }
         if (value === "lanInpkg") {
-          return (value = "内网入包量");
+          return (value = "內網入包量");
         }
         if (value === "WanOuttraffic") {
-          return (value = "外网出带宽");
+          return (value = "外網出帶寬");
         }
         if (value === "WanIntraffic") {
-          return (value = "外网入带宽");
+          return (value = "外網入帶寬");
         }
         if (value === "AccOuttraffic") {
-          return (value = "外网出流量");
+          return (value = "外網出流量");
         }
         if (value === "WanOutpkg") {
-          return (value = "外网出包量");
+          return (value = "外網出包量");
         }
         if (value === "WanInpkg") {
-          return (value = "外网入包量");
+          return (value = "外網入包量");
         }
         if (value === "CPUUsage") {
           return (value = "CPU使用率");
         }
 
         if (value === "CPULoadAvg") {
-          return (value = "CPU平均负载");
+          return (value = "CPU平均負載");
         }
         if (value === "MemUsed") {
           return (value = "内存使用量");
@@ -255,7 +255,7 @@
           return (value = "内存利用率");
         }
         if (value === "TcpCurrEstab") {
-          return (value = "TCP连接数");
+          return (value = "TCP連接數");
         }
         if (value === "") {
           return (value = "");
@@ -263,52 +263,52 @@
       },
       UpTitle(value) {
         if (value === "lanOuttraffic") {
-          return (value = "内网网卡的平均每秒出流量");
+          return (value = "內網網卡的平均每秒出流量");
         }
         if (value === "lanIntraffic") {
-          return (value = "内网网卡的平均每秒入流量");
+          return (value = "內網網卡的平均每秒入流量");
         }
         if (value === "lanOutpkg") {
-          return (value = "内网网卡的平均每秒出包量");
+          return (value = "內網網卡的平均每秒出包量");
         }
         if (value === "lanInpkg") {
-          return (value = "内网网卡的平均每秒入包量");
+          return (value = "內網網卡的平均每秒入包量");
         }
         if (value === "WanOuttraffic") {
           return (value =
-            "外网平均每秒出流量，最小粒度数据为10秒总流量/10秒 计算得出");
+            "外網平均每秒出流量，最小粒度數據為10秒總流量/10秒 計算得出");
         }
         if (value === "WanIntraffic") {
-          return (value = "外网平均每秒入流量");
+          return (value = "外網平均每秒入流量");
         }
         if (value === "AccOuttraffic") {
-          return (value = "外网网卡的平均每秒出流量");
+          return (value = "外網網卡的平均每秒出流量");
         }
         if (value === "WanOutpkg") {
-          return (value = "外网平均每秒出包量");
+          return (value = "外網平均每秒出包量");
         }
         if (value === "WanInpkg") {
-          return (value = "外网平均每秒入包量");
+          return (value = "外網平均每秒入包量");
         }
         if (value === "CPUUsage") {
           return (value =
-            "CPU利用率是通过CVM子机内部监控组件采集上报，数据更加精准");
+            "CPU利用率是通過CVM子機內部監控組件採集上報，數據更加精準");
         }
         if (value === "CPULoadAvg") {
           return (value =
-            "1分钟内CPU平均负载，取 /proc/loadavg 第一列数据（windows操作系统无此指标），依赖监控组件安装采集");
+            "1分鐘內CPU平均負載，取 /proc/loadavg 第一列數據（windows操作系統無此指標），依賴監控組件安裝採集");
         }
         if (value === "MemUsed") {
           return (value =
-            "使用的内存量，不包括系统缓存和缓存区占用内存，依赖监控组件安装采集");
+            "使用的內存量，不包括系統緩存和緩存區佔用內存，依賴監控組件安裝採集");
         }
         if (value === "MemUsage") {
           return (value =
-            "用户实际使用的内存量与总内存量之比，不包括缓冲区与系统缓存占用的内存");
+            "用戶實際使用的內存量與總內存量之比，不包括緩衝區與系統緩存佔用的內存");
         }
         if (value === "TcpCurrEstab") {
           return (value =
-            "处于 ESTABLISHED 状态的 TCP 连接数量，依赖监控组件安装采集");
+            "處於 ESTABLISHED 狀態的 TCP 連接數量，依賴監控組件安裝採集");
         }
         if (value === "") {
           return (value = "");

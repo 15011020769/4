@@ -1,75 +1,71 @@
 <template>
   <div class="wrap">
     <div class="head">
-      <Headcom title="用户详情" :backShow="true" @_back="back" />
+      <Headcom :title="$t('CAM.userList.userDetil')" :backShow="true" @_back="back" />
     </div>
     <div class="details">
       <div class="details-left">
         <div class="leftHead" style="display:flex">
           <p style="flex:1">{{userData.Name}}</p>
           <p style="width:30px;">
-            <el-link @click="editGroup" class="edit" type="primary">编辑</el-link>
+            <el-link @click="editGroup" class="edit" type="primary">{{$t('CAM.userList.updataUser')}}</el-link>
           </p>
         </div>
         <div class="leftBody">
           <div class="bodyLeft" style="flex:1;">
             <p>
-              <span style="color:#666">账号ID</span>
+              <span style="color:#666">{{$t('CAM.userList.userId')}}</span>
               <span style="padding-left:30px;">{{userData.Uin}}</span>
             </p>
             <p>
-              <span style="color:#666">备注</span>
+              <span style="color:#666">{{$t('CAM.userList.userRemark')}}</span>
               <span style="padding-left:30px;">{{userData.Remark}}</span>
             </p>
             <p>
-              <span style="color:#666">访问方式</span>
+              <span style="color:#666">{{$t('CAM.userList.userWay')}}</span>
               <span style="padding-left:30px;">{{userData.ConsoleLogin}}</span>
             </p>
           </div>
           <div class="bodyRight" style="flex:1">
             <p>
-              <span style="color:#666">手机</span>
+              <span style="color:#666">{{$t('CAM.userList.userPhone')}}</span>
               <span style="padding-left:30px;">{{userData.PhoneNum}}</span>
             </p>
             <p>
-              <span style="color:#666">邮箱</span>
+              <span style="color:#666">{{$t('CAM.userList.userEmail')}}</span>
               <span style="padding-left:30px;">{{userData.Email}}</span>
             </p>
             <p>
-              <span style="color:#666">微信</span>
+              <span style="color:#666">{{$t('CAM.userList.userWeChat')}}</span>
               <span style="padding-left:30px;">-</span>
-            </p>
-            <p>
-              <span style="color:#666">是否允许微信接收通知</span>
-              <span style="padding-left:30px;">否</span>
             </p>
           </div>
         </div>
       </div>
       <div class="details-right">
         <div class="rightHead">
-          <p>快捷操作</p>
+          <p>{{$t('CAM.userList.fastToDo')}}</p>
         </div>
         <div class="rightBody">
-          <el-button size="small" @click="bindMesg" >订阅消息</el-button>
-          <el-button size="small" class="delete" @click="deleteUser">删除用户</el-button>
+          <el-button size="small" @click="bindMesg" >{{$t('CAM.userList.userdep')}}</el-button>
+          <el-button size="small" class="delete" @click="deleteUser">{{$t('CAM.userList.userDel')}}</el-button>
         </div>
       </div>
     </div>
     <div class="tableTab">
-      <el-tabs v-model="activeName" @tab-click="handleClick">
+      <el-tabs v-model="activeName" @tab-click="handleClick"  v-loading="loading">
         <el-tab-pane :label="totalNum" name="first">
           <div class="explain">
-            <p>关联策略以获取策略包含的操作权限。解除策略将失去策略包含的操作权限。特别的，解除随组关联类型的策略是通过将用户从关联该策略的用户组中移出。</p>
+            <p>{{$t('CAM.userList.strategyTitles')}}</p>
           </div>
-          <el-button class="buttonCla" type="primary" size="small" @click="gotoPolicy">关联策略</el-button>
+          <el-button class="buttonCla" type="primary" size="small" @click="gotoPolicy">{{$t('CAM.userList.RelatedPolicies')}}</el-button>
           <el-button
             class="buttonCla"
             type="primary"
             size="small"
             :disabled="disabled"
             @click="delMoreStrateg"
-          >解除策略</el-button>
+          >{{$t('CAM.userList.RemoveStrategy')}}</el-button>
           <el-table
             ref="multipleTable"
             :data="StrategyData"
@@ -78,28 +74,28 @@
             @selection-change="Select"
           >
             <el-table-column type="selection" width="55"></el-table-column>
-            <el-table-column label="策略名" prop="PolicyName"></el-table-column>
-            <el-table-column label="关联类型" prop="CreateMode"></el-table-column>
-            <el-table-column label="策略类型" prop="Type">
+            <el-table-column :label="$t('CAM.userList.strategyNames')" prop="PolicyName"></el-table-column>
+            <el-table-column :label="$t('CAM.userList.AssociationTypes')" prop="CreateMode"></el-table-column>
+            <el-table-column :label="$t('CAM.userList.strategyChose')"  prop="Type">
               <template slot-scope="scope">{{scope.row.Type == '1'?'自定义策略':'预设策略'}}</template>
             </el-table-column>
-            <el-table-column label="关联时间" prop="AddTime"></el-table-column>
-            <el-table-column fixed="right" label="操作">
+            <el-table-column :label="$t('CAM.userList.AssociationTime')" prop="AddTime"></el-table-column>
+            <el-table-column fixed="right" :label="$t('CAM.userList.userCz')">
               <template slot-scope="scope">
-                <el-button type="text" size="small" @click="deleteStrage(scope.row.PolicyId)">解除</el-button>
+                <el-button type="text" size="small" @click="deleteStrage(scope.row.PolicyId)">{{$t('CAM.userList.Remove')}}</el-button>
               </template>
             </el-table-column>
           </el-table>
         </el-tab-pane>
         <el-tab-pane :label="groupNum" name="second">
-          <el-button class="buttonCla" type="primary" size="small" @click="addGroupUser">加入到组</el-button>
+          <el-button class="buttonCla" type="primary" size="small" @click="addGroupUser">{{$t('CAM.userList.userAddGroup')}}</el-button>
           <el-button
             class="buttonCla"
             type="primary"
             size="small"
             :disabled="disabled"
             @click="removeMoreGroup"
-          >移出组</el-button>
+          >{{$t('CAM.userList.RemoveGroups')}}</el-button>
           <el-table
             ref="multipleTable"
             :data="groupData"
@@ -108,19 +104,19 @@
             @selection-change="Select"
           >
             <el-table-column type="selection"></el-table-column>
-            <el-table-column label="组名称" prop="GroupName"></el-table-column>
-            <el-table-column label="关联策略" prop="GroupId"></el-table-column>
-            <el-table-column label="备注" prop="Remark"></el-table-column>
-            <el-table-column fixed="right" label="操作">
+            <el-table-column :label="$t('CAM.userList.GroupName')" prop="GroupName"></el-table-column>
+            <el-table-column :label="$t('CAM.userList.RelatedPolicies')" prop="GroupId"></el-table-column>
+            <el-table-column :label="$t('CAM.userList.userRemark')" prop="Remark"></el-table-column>
+            <el-table-column fixed="right" :label="$t('CAM.userList.userCz')">
               <template slot-scope="scope">
-                <el-button type="text" size="small" @click="removeGroup(scope.row)">移出组</el-button>
+                <el-button type="text" size="small" @click="removeGroup(scope.row)">{{$t('CAM.userList.RemoveGroups')}}</el-button>
               </template>
             </el-table-column>
           </el-table>
         </el-tab-pane>
-        <el-tab-pane label="安全" name="third">角色管理</el-tab-pane>
-        <el-tab-pane label="API密钥" name="fourth">定时任务补偿</el-tab-pane>
-        <el-tab-pane label="小程序" name="fifth">程序</el-tab-pane>
+        <el-tab-pane label="安全" name="third">{{$t('CAM.userList.RoleManagement')}}</el-tab-pane>
+        <el-tab-pane label="API密钥" name="fourth">{{$t('CAM.userList.compensation')}}</el-tab-pane>
+        <el-tab-pane label="小程序" name="fifth">{{$t('CAM.userList.program')}}</el-tab-pane>
       </el-tabs>
     </div>
     <!-- 策略 -->
@@ -130,11 +126,11 @@
       width="30%"
       :before-close="handleClose"
     >
-      <span v-if="showStrategyMore">解除策略将失去策略包含的操作权限。特别的，解除随组关联类型的策略是通过将用户从关联该策略的用户组中移出。</span>
-      <span v-if="showStrategyRow">是否确定将该用户移出用户组来解除此随组关联策略？移出用户组后该用户将无法获得该策略所描述的相关权限。</span>
+      <span v-if="showStrategyMore">{{$t('CAM.userList.StrategyExplain')}}</span>
+      <span v-if="showStrategyRow">{{$t('CAM.userList.StrategyExplains')}}</span>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="StrategyLoading = false">取 消</el-button>
-        <el-button type="primary" @click="moveStrategy">确 定</el-button>
+        <el-button @click="StrategyLoading = false">{{$t('CAM.userList.handClose')}}</el-button>
+        <el-button type="primary" @click="moveStrategy">{{$t('CAM.userList.suerAdd')}}</el-button>
       </span>
     </el-dialog>
     <!-- 用户 -->
@@ -144,10 +140,10 @@
       width="30%"
       :before-close="handleClose"
     >
-      <span>移出后将无法接收到该组的短信、邮件通知</span>
+      <span>{{$t('CAM.userList.delRowUser')}}</span>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="GroupLoading = false">取 消</el-button>
-        <el-button type="primary" @click="removeGroupUser">确 定</el-button>
+        <el-button @click="GroupLoading = false">{{$t('CAM.userList.handClose')}}</el-button>
+        <el-button type="primary" @click="removeGroupUser">{{$t('CAM.userList.suerAdd')}}</el-button>
       </span>
     </el-dialog>
 
@@ -157,39 +153,39 @@
   :visible.sync="delDialog"
   width="30%"
   :before-close="handleClose">
-  <span>您将永久删除以下用户，删除的用户数据无法恢复。您确定要删除以下用户？</span>
+  <span>{{$t('CAM.userList.delUserTitle')}}</span>
   <span slot="footer" class="dialog-footer">
-    <el-button @click="delDialog = false">取 消</el-button>
-    <el-button type="primary" @click="userDelete">确 定</el-button>
+    <el-button @click="delDialog = false">{{$t('CAM.userList.handClose')}}</el-button>
+    <el-button type="primary" @click="userDelete">{{$t('CAM.userList.suerAdd')}}</el-button>
   </span>
 </el-dialog>
    
    <!-- 编辑 -->
     <el-dialog
-  title="编辑子用户"
+  :title="$t('CAM.userList.upDataUsers')"
   :visible.sync="updataUser"
   width="30%"
   :before-close="handleClose">
     <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
-         <el-form-item label="用户名" prop="Name" style="width:75%;text-align:center">
+         <el-form-item :label="$t('CAM.userList.userName')" prop="Name" style="width:75%;text-align:center">
               <el-input v-model="ruleForm.Name" :disabled="true"></el-input>
           </el-form-item>
-          <el-form-item label="备注" prop="Remark"  style="width:75%;text-align:center">
+          <el-form-item :label="$t('CAM.userList.userRemark')" prop="Remark"  style="width:75%;text-align:center">
               <el-input v-model="ruleForm.Remark"></el-input>
           </el-form-item>
-          <el-form-item label="手机" prop="PhoneNum"  style="width:75%;text-align:center">
+          <el-form-item :label="$t('CAM.userList.userPhone')" prop="PhoneNum"  style="width:75%;text-align:center">
               <el-input v-model="ruleForm.PhoneNum"></el-input>
           </el-form-item>
-          <el-form-item label="邮箱" prop="Email"  style="width:75%;text-align:center">
+          <el-form-item :label="$t('CAM.userList.userEmail')" prop="Email"  style="width:75%;text-align:center">
               <el-input v-model="ruleForm.Email"></el-input>
           </el-form-item>
      </el-form>
   <span slot="footer" class="dialog-footer">
-    <el-button @click="updataUser = false">取 消</el-button>
-    <el-button type="primary" @click="sureUpdata">确 定</el-button>
+    <el-button @click="updataUser = false">{{$t('CAM.userList.handClose')}}</el-button>
+    <el-button type="primary" @click="sureUpdata">{{$t('CAM.userList.suerAdd')}}</el-button>
   </span>
 </el-dialog>
- <Subscribe :subscribe="flag" @suerClose="suerClose" @confirm="confirm" />
+ <!-- <Subscribe :subscribe="flag" @suerClose="suerClose" @confirm="confirm" /> -->
   </div>
 </template>
 <script>
@@ -204,12 +200,12 @@ import {
   USER_LIST,
   UPDATA_USER
 } from "@/constants";
-import Subscribe from './components/subscribeNew'
+// import Subscribe from './components/subscribeNew'
 import { parse } from 'path';
 export default {
   components: {
     Headcom, //头部组件
-    Subscribe
+    // Subscribe
   },
   data() {
     return {
@@ -231,7 +227,8 @@ export default {
       updataUser:false,
       totalNum:"",//策略列表条数
       groupNum:"",//用户组列表条数
-       flag:false,
+      // flag:false,
+      loading:true,
        ruleForm: {
           Name: '',
           Remark:'',
@@ -247,6 +244,7 @@ export default {
     };
   },
   methods: {
+    //编辑用户
     sureUpdata(){
        let params = {
           Version: "2019-01-16",
@@ -269,6 +267,7 @@ export default {
       console.log(this.ruleForm)
       this.updataUser = true;
     },
+    //删除子用户
     userDelete(){
       let params = {
           Version: "2019-01-16",
@@ -314,8 +313,18 @@ export default {
           TargetUin: this.userData.Uin
         };
         this.axios.post(QUERY_POLICY, ploicyParams).then(res => {
-          this.StrategyData = res.Response.List;
-          this.totalNum = "权限(" + res.Response.List.length + ")";
+          if(res != ""){
+              this.loading = false
+              this.StrategyData = res.Response.List;
+              this.totalNum = "权限(" + res.Response.List.length + ")";
+          }else{
+            this.loading = false;
+            this.$message({
+              type: "info",
+              message: "无响应数据！"
+            });
+          }
+          
         });
       });
     },
@@ -452,8 +461,14 @@ export default {
     },
     //多选框
     Select(val) {
-      this.disabled = false;
+      // this.disabled = false;
+      console.log(val)
       this.valArr = val;
+      if(val != ""){
+        this.disabled = false;
+      }else{
+        this.disabled = true;
+      }
     },
     handleClick(tab, event) {
       console.log(tab, event);
@@ -463,14 +478,17 @@ export default {
       this.delDialog = false;
       this.updataUser = false;
     },
-     suerClose(){
-       this.flag = false
-    },
-    confirm(){
-        this.flag = false;
-    },
+    //  suerClose(){
+    //    this.flag = false
+    // },
+    // confirm(){
+    //     this.flag = false;
+    // },
     bindMesg(){
-       this.flag = true
+       this.$message({
+              type: "info",
+              message: "内测中..."
+        });
     },
     back(){
       this.$router.go(-1)

@@ -2,7 +2,7 @@
   <div>
     <div class="topCreateFunStep">
       <span class="el-icon-back" @click="backFunlist"></span>
-      <span class="createFunTit">创建函数</span>
+      <span class="createFunTit">{{ $t('SCF.total.cjhs') }}</span>
       <span class="docRight">
         <!-- <a href="#">
           命令行工具创建函数
@@ -17,27 +17,27 @@
     <div class="mainContent">
       <div class="stepOneTopTit newClear">
         <span>1</span>
-        <span>基础信息</span>
+        <span>{{ $t('SCF.total.jcxx') }}</span>
         <span>></span>
         <span>2</span>
-        <span>函数配置</span>
+        <span>{{ $t('SCF.total.hspz') }}</span>
       </div>
       <div class="allConStep">
         <el-form :model="formShowable" label-width="100px">
-          <el-form-item label="函数名" class="labelLeft">
+          <el-form-item :label="$t('SCF.total.hsm')" class="labelLeft">
             <span>{{formShowable.funNameStep}}</span>
           </el-form-item>
-          <el-form-item label="运行环境" class="labelLeft">
+          <el-form-item :label="$t('SCF.total.yxhj')" class="labelLeft">
             <span>{{formShowable.runMoentStep}}</span>
           </el-form-item>
-          <el-form-item label="描述" class="labelLeft">
-            <el-input class="decsIpt" type="textarea" v-model="formShowable.descStep" placeholder="helloworld 空白模板函数">
+          <el-form-item :label="$t('SCF.total.ms')" class="labelLeft">
+            <el-input class="decsIpt" type="textarea" v-model="formShowable.descStep" :placeholder="$t('SCF.total.msmr')">
             </el-input>
-            <p class="tipContent">最大支持1000个英文字母、数字、空格、逗号、句号、中文</p>
+            <p class="tipContent">{{ $t('SCF.total.zc') }}</p>
           </el-form-item>
-          <el-form-item label="运行角色" :required="true" class="labelLeft">
+          <el-form-item :label="$t('SCF.total.yxjs')" :required="true" class="labelLeft">
             <span slot="label">
-              运行角色
+              {{ $t('SCF.total.yxjs') }}
               <!-- <i class="el-icon-question"></i> -->
             </span>
             <el-select v-model="formShowable.runRole" class="decsIptSelect">
@@ -45,33 +45,33 @@
               <el-option label="QCS_SCFExcuteRole" value="QCS_SCFExcuteRole"></el-option>
             </el-select>
             <p class="tipContent">
-              <span>此角色将用于授权函数运行时操作其他资源的权限。您可以</span>
+              <span>{{ $t('SCF.total.jssq') }}</span>
               <a>
-                新建角色
+                {{ $t('SCF.total.xjjs') }}
                 <span class="el-icon-share"></span>
               </a>
-              <span>或对角色</span>
+              <span>{{ $t('SCF.total.djs') }}</span>
               <a>
-                修改权限
+                {{ $t('SCF.total.xgqx') }}
                 <span class="el-icon-share"></span>
               </a>
             </p>
           </el-form-item>
-          <el-form-item label="执行方法" :required="true" class="labelLeft">
+          <el-form-item :label="$t('SCF.total.zxff')" :required="true" class="labelLeft">
             <span slot="label">
-              执行方法
+              {{ $t('SCF.total.zxff') }}
 
             </span>
             <el-input placeholder="index.main_handler" v-model="formShowable.runFun" disabled>
             </el-input>
           </el-form-item>
-          <el-form-item label="提交方法" :required="true" class="labelLeft">
+          <el-form-item :label="$t('SCF.total.tjff')" :required="true" class="labelLeft">
             <span slot="label">
-              提交方法
+              {{ $t('SCF.total.tjff') }}
 
             </span>
             <el-select v-model="formShowable.tipFun" class="decsIptSelect" readonly="readonly">
-              <el-option label="在线编辑" value="onlineEdit"></el-option>
+              <el-option :label="$t('SCF.total.zxbj')" value="onlineEdit"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label>
@@ -81,15 +81,15 @@
         <div>
           <p v-if="senior" class="senior" @click="_senior">
             <i class="el-icon-arrow-down"></i>
-            高级配置
+            {{ $t('SCF.total.gjpz') }}
           </p>
           <p v-if="!senior" class="senior" @click="_senior">
             <i class="el-icon-arrow-up"></i>
-            高级配置
+            {{ $t('SCF.total.gjpz') }}
           </p>
           <div v-if="!senior">
             <div class="seniorbox">
-              <p>环境变量</p>
+              <p>{{ $t('SCF.total.hjbl') }}</p>
               <div>
                 <div class="Science borderNone">
                   <p>Key</p>
@@ -105,23 +105,23 @@
                   <p v-if="closeshow"><i class="el-icon-close closeScience" @click="CloseScience(index)"></i></p>
                 </div>
                 <div class="Science ">
-                  <p @click="AddScience" class="addScience">添加</p>
+                  <p @click="AddScience" class="addScience">{{ $t('SCF.total.tj') }}</p>
                 </div>
               </div>
             </div>
 
             <div class="seniorbox">
-              <p>网络配置</p>
+              <p>{{ $t('SCF.total.wlpz') }}</p>
               <div>
                 <div class="Science">
                   <p>
-                    <el-select v-model="Vpcvalue" placeholder="请选择vpc" @change="changeVpc">
+                    <el-select v-model="Vpcvalue" :placeholder="$t('SCF.total.xzvpc')" @change="changeVpc">
                       <el-option v-for="item in VpcOptions" :key="item.VpcId" :label="item.VpcName" :value="item.VpcId">
                       </el-option>
                     </el-select>
                   </p>
                   <p>
-                    <el-select v-model="Subnetvalue" placeholder="请选择子网">
+                    <el-select v-model="Subnetvalue" :placeholder="$t('SCF.total.xzzw')">
                       <el-option v-for="item in SubnetOptions" :key="item.SubnetId" :label="item.SubnetName"
                         :value="item.SubnetId">
                       </el-option>
@@ -135,8 +135,8 @@
 
 
       </div>
-      <el-button class="prevStep" @click="prevStep">上一步</el-button>
-      <el-button class="compileSucc" @click="compileSucc()">完成</el-button>
+      <el-button class="prevStep" @click="prevStep">{{ $t('SCF.total.syb') }}</el-button>
+      <el-button class="compileSucc" @click="compileSucc()">{{ $t('SCF.total.wc') }}</el-button>
     </div>
   </div>
 </template>

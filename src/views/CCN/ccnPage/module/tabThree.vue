@@ -108,7 +108,7 @@
       >
         <el-form :model="ccnPublic">
           <el-form-item :label="$t('CCN.total.eWay1')">
-            <el-select v-model="ccnPublic.BandwidthLimitType" placeholder>
+            <el-select v-model="ccnPublic.BandwidthLimitType" :placeholder="$t('CCN.total.eWay3')">
               <!-- <el-option :label="$t('CCN.total.eWay2')" value="INTER_REGION_LIMIT"></el-option> -->
               <el-option :label="$t('CCN.total.eWay3')" value="OUTER_REGION_LIMIT"></el-option>
             </el-select>
@@ -192,7 +192,7 @@
           <el-button @click="updateVisible = false">取消</el-button>
         </div>
       </el-dialog>
-      <!-- 修改限速方式的模态窗 -->
+      <!-- 地域出 修改限速方式的模态窗 -->
       <el-dialog
         :title="$t('CCN.total.eWay')"
         :visible.sync="updateBandwidthLimitTypeVisible2"
@@ -200,7 +200,7 @@
       >
         <el-form :model="ccnPublic">
           <el-form-item :label="$t('CCN.total.eWay1')">
-            <el-select v-model="ccnPublic.BandwidthLimitType" placeholder>
+            <el-select v-model="ccnPublic.BandwidthLimitType" :placeholder="$t('CCN.total.eWay2')">
               <el-option :label="$t('CCN.total.eWay2')" value="INTER_REGION_LIMIT"></el-option>
               <!-- <el-option :label="$t('CCN.total.eWay3')" value="OUTER_REGION_LIMIT"></el-option> -->
             </el-select>
@@ -296,6 +296,7 @@ export default {
         console.log('修改成功')
         this.getData()
       })
+      this.ccnPublic = {}
       this.updateBandwidthLimitTypeVisible = false
       this.updateBandwidthLimitTypeVisible2 = false
     },
@@ -487,7 +488,11 @@ export default {
     }
   }
   .tabListPage{
-    text-align:right
+    text-align:right;
+    background-color:#fff;
+    border-top:1px solid #ddd;
+    padding-top:8px;
+    height:50px;
   }
 }
 </style>

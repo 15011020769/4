@@ -1,12 +1,12 @@
 <template>
   <div class="wrap">
     <el-tabs v-model="activeName" @tab-click="handleClick">
-      <el-tab-pane label="从策略列表中选取策略关联" name="first">
+      <el-tab-pane :label="$t('CAM.userList.chooseStrage')" name="first">
         <h3>
-          策略列表
+          {{$t('CAM.userList.strategyTitle')}}
           <span>（共{{totalNum}}条）</span>
           <el-input
-            placeholder="请输入策略名称"
+            :placeholder="$t('CAM.userList.searchStarge')"
             v-model="policyInp"
             class="input-with-select"
             @change="_policyInp"
@@ -22,39 +22,39 @@
           v-loadmore="debounce"
         >
           <el-table-column type="selection" width="55"></el-table-column>
-          <el-table-column prop="PolicyName" label="策略名" width="250"></el-table-column>
-          <el-table-column label="描述" width="280">
+          <el-table-column prop="PolicyName" :label="$t('CAM.userList.strategyNames')" width="250"></el-table-column>
+          <el-table-column :label="$t('CAM.userList.descs')" width="280">
             <template slot-scope="scope">
               <p class="omit">{{scope.row.Description}}</p>
             </template>
           </el-table-column>
-          <el-table-column prop="Attachments" label="引用次数"></el-table-column>
-          <el-table-column prop="Type" label="策略类型">
+          <el-table-column prop="Attachments" :label="$t('CAM.userList.useNum')"></el-table-column>
+          <el-table-column prop="Type" :label="$t('CAM.userList.clType')">
             <template slot-scope="scope">
               <p>{{tacticsType[scope.row.Type]}}</p>
             </template>
           </el-table-column>
         </el-table>
       </el-tab-pane>
-      <el-tab-pane label="复用现有用户策略" name="second">
+      <el-tab-pane :label="$t('CAM.userList.userPolicies')" name="second">
         <h3>
-          用户列表
+         {{$t('CAM.userList.listTitle')}}
           <span>（共{{userDatas.length}}条）</span>
         </h3>
         <el-radio-group v-model="radio" @change="_radio" style="width:100%;margin-top:-3px;">
           <el-table max-height="520" :data="userDatas" @selection-change="handleSelectionChange">
-            <el-table-column label="用户">
+            <el-table-column :label="$t('CAM.userList.userName')">
               <template slot-scope="scope">
                 <el-radio :label="scope.row.Name"></el-radio>
               </template>
             </el-table-column>
-            <el-table-column label="备注" prop="Remark">
+            <el-table-column :label="$t('CAM.userList.userRemark')" prop="Remark">
               <template slot-scope="scope">
                 <span v-show="scope.row.Remark">{{scope.row.Remark}}</span>
                 <span v-show="!scope.row.Remark">-</span>
               </template>
             </el-table-column>
-            <el-table-column label="已关联策略">
+            <el-table-column :label="$t('CAM.userList.RelatedPolicies')">
               <template slot-scope="scope" v-if="scope.row.policy">
                 <div v-show="scope.row.policy.length != 0" class="omit">
                   <span v-for="(item,index) in scope.row.policy" :key="index">
@@ -68,12 +68,12 @@
           </el-table>
         </el-radio-group>
       </el-tab-pane>
-      <el-tab-pane label="添加至组获得随组权限" name="third">
+      <el-tab-pane :label="$t('CAM.userList.userToGroup')" name="third">
         <h3>
-          用户组列表
+          {{$t('CAM.userList.userGropList')}}
           <span>（共{{userNum}}条）</span>
           <el-input
-            placeholder="请输入用户组名称"
+            :placeholder="$t('CAM.userList.searchUserGroup')"
             v-model="userInp"
             class="input-with-select"
             @change="_userInp"
@@ -89,13 +89,13 @@
           v-loadmore="debounce"
         >
           <el-table-column type="selection" width="55"></el-table-column>
-          <el-table-column prop="GroupName" label="组名"></el-table-column>
-          <el-table-column label="备注">
+          <el-table-column prop="GroupName"  :label="$t('CAM.userList.userName')"></el-table-column>
+          <el-table-column  :label="$t('CAM.userList.userRemark')">
             <template slot-scope="scope">
               <p class="omit">{{scope.row.Remark}}</p>
             </template>
           </el-table-column>
-          <el-table-column label="已关联策略">
+          <el-table-column :label="$t('CAM.userList.RelatedPolicies')">
             <template slot-scope="scope">
               <div v-show="scope.row.policy != undefined" class="omit">
                 <span v-for="(item,index) in scope.row.policy" :key="index">

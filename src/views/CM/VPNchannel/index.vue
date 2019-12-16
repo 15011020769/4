@@ -1,8 +1,8 @@
 <template>
   <div class="CM-wrap">
-    <Loading :show="loadShow" />
+    <!-- <Loading :show="loadShow" /> -->
     <!-- 城市按钮 -->
-    <div class="CVM-title">VPN通道</div>
+    <div class="CVM-title">{{ $t('CVM.td') }}</div>
     <div class="tool">
       <Cities
         :cities="cities"
@@ -18,6 +18,7 @@
         :searchInput="searchInput"
         @changeinput="changeinput"
         @clicksearch="clicksearch"
+        @exportExcel="exportExcel"
       ></SEARCH>
     </div>
     <!-- 表格 -->
@@ -25,9 +26,11 @@
       <el-table
         :data="ProTableData.slice((currpage - 1) * pagesize, currpage * pagesize)"
         height="550"
+        id="exportTable"
         style="width: 100%"
+        v-loading="loadShow"
       >
-        <el-table-column prop label="ID/主机名 ">
+        <el-table-column prop :label="$t('CVM.clBload.zjm') ">
           <template slot-scope="scope">
             <p>
               <a
@@ -38,7 +41,7 @@
             {{ scope.row.VpnConnectionName}}
           </template>
         </el-table-column>
-        <el-table-column prop label="监控">
+        <el-table-column prop :label="$t('CVM.clBload.jk')">
           <template slot-scope="scope">
             <div class="a" @click="jump(scope.row.VpnConnectionId)"></div>
             <!-- <a
@@ -47,7 +50,7 @@
             ><i class="el-icon-share"></i></a>-->
           </template>
         </el-table-column>
-        <el-table-column prop label="状态">
+        <el-table-column prop :label="$t('CVM.clBload.zt')">
           <template slot-scope="scope">
             <p
               :class="scope.row.State == 'PENDING' ? 'orange' : scope.row.State == 'AVAILABLE' ? 'green' : 'red'"
@@ -55,19 +58,19 @@
           </template>
         </el-table-column>
 
-        <el-table-column prop label="所属网络">
+        <el-table-column prop :label="$t('CVM.clBload.sswl')">
           <template slot-scope="scope">
             <p style="color: #65a5f9;">{{scope.row.VpcId}}</p>
             <p>{{scope.row.VpcName}}</p>
           </template>
         </el-table-column>
-        <el-table-column prop label="VPN网关">
+        <el-table-column prop :label="$t('CVM.vpnwg')">
           <template slot-scope="scope">
             <p style="color: #65a5f9;">{{scope.row.VpnGatewayId}}</p>
             <p>{{scope.row.vpnGwName}}</p>
           </template>
         </el-table-column>
-        <el-table-column prop label="	对端网关">
+        <el-table-column prop :label="$t('CVM.clBload.ddwg')	">
           <template slot-scope="scope">
             <p style="color: #65a5f9;">{{scope.row.CustomerGatewayId}}</p>
             <p>{{scope.row.userGwName}}</p>
@@ -91,6 +94,9 @@
 </template>
 
 <script>
+import FileSaver from "file-saver";
+import XLSX from "xlsx";
+
 import Cities from "@/components/public/CITY";
 import SEARCH from "@/components/public/SEARCH";
 import Loading from "@/components/public/Loading";
@@ -107,31 +113,31 @@ export default {
         },
         {
           value: "vpn-connection-name",
-          label: "名称"
+          label: "名稱"
         }
       ],
       searchValue: "",
       //文字过滤
       instanceStatus: {
-        PENDING: "创建中",
-        LAUNCH_FAILED: "创建失败",
-        RUNNING: "运行中",
-        STOPPED: "已关机",
-        STARTING: "开机中",
-        STOPPING: "关机中",
-        REBOOTING: "重启中",
+        PENDING: "創建中",
+        LAUNCH_FAILED: "創建失敗",
+        RUNNING: "運行中",
+        STOPPED: "已關機",
+        STARTING: "開機中",
+        STOPPING: "關機中",
+        REBOOTING: "重啟中",
         SHUTDOWN: "待回收",
-        TERMINATING: "销毁中"
+        TERMINATING: "銷毀中"
       },
       RestrictState: {
         NORMAL: "健康",
-        EXPIRED: "过期",
-        PROTECTIVELY_ISOLATED: "隔离"
+        EXPIRED: "過期",
+        PROTECTIVELY_ISOLATED: "隔離"
       },
       vpcConnState: {
-        PENDING: "生产中",
-        AVAILABLE: "运行中",
-        DELETING: "删除中"
+        PENDING: "生產中",
+        AVAILABLE: "運行中",
+        DELETING: "刪除中"
       },
       cities: [],
       selectedRegion: "ap-taipei", // 默认选中城市
@@ -155,6 +161,26 @@ export default {
     Loading
   },
   methods: {
+    //导出表格
+    exportExcel() {
+      /* generate workbook object from table */
+      var wb = XLSX.utils.table_to_book(document.querySelector("#exportTable"));
+      /* get binary string as output */
+      var wbout = XLSX.write(wb, {
+        bookType: "xlsx",
+        bookSST: true,
+        type: "array"
+      });
+      try {
+        FileSaver.saveAs(
+          new Blob([wbout], { type: "application/octet-stream" }),
+          "VPN通道" + ".xlsx"
+        );
+      } catch (e) {
+        if (typeof console !== "undefined") console.log(e, wbout);
+      }
+      return wbout;
+    },
     // 获取城市列表
     GetCity() {
       this.axios.get(ALL_CITY).then(data => {
@@ -187,11 +213,12 @@ export default {
       if (this.searchInput !== "" && this.searchValue !== "") {
         this.GetTabularData();
       } else {
-        this.$message.error("请输入正确搜索信息");
+        this.$message.error("請輸入正確搜索信息");
       }
     },
     // 添加项目列表的表格数据
     GetTabularData() {
+      this.loadShow = true;
       const param = {
         Region: this.selectedRegion,
         Version: "2017-03-12",
@@ -240,6 +267,16 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.tooltip {
+  float: left;
+  padding: 0 20px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  margin-left: -340px;
+  margin-top: -4px;
+  cursor: pointer;
+}
 .CM-wrap {
   width: 100%;
   height: 100%;

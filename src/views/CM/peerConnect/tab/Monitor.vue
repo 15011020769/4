@@ -5,9 +5,9 @@
     <XTimeX v-on:qiehuan="GetDat" :classsvalue='value'></XTimeX>
 
     <div class='box-dis p-style'>
-      <p><i class="el-icon-info"></i>注释：Max、Min和Avg数值统计为当前折线图内所有点的最大值、最小值和平均值</p>
+      <p><i class="el-icon-info"></i>{{ $t('CVM.clBload.zs') }}</p>
       <p>
-        <el-button type="text">导出数据</el-button>
+        <el-button type="text">{{ $t('CVM.clBload.dcsj') }}</el-button>
       </p>
     </div>
     <div class='box-table'>
@@ -29,7 +29,7 @@
 
         <el-table-column prop="dataPoints" width="600">
           <template slot-scope="scope">
-            <p v-if="scope.row.dataPoints[0]===null"> 暂无数据</p>
+            <p v-if="scope.row.dataPoints[0]===null"> {{ $t('CVM.clBload.zwsj') }}</p>
             <div class='echart' v-if="scope.row.dataPoints[0]!==null">
               <echart-line id="diskEchearrts-line" :time='timeData' :opData='scope.row.dataPoints' :unit='diskUnit'
                 :title="diskTitle" :period=period :scale=3 :xdata=false>
@@ -73,7 +73,7 @@
 
       </el-table>
       <!-- 模态框 -->
-      <el-dialog title="集群健康状态" :visible.sync="dialogVisible" width="60%" :before-close="handleClose">
+      <el-dialog :title="$t('CVM.clBload.jqjkzt')" :visible.sync="dialogVisible" width="60%" :before-close="handleClose">
         <XTimeX v-on:qiehuan="GetDat" :classsvalue='value'></XTimeX>
         <echart-line id="diskEchearrts-line" class="echart-wh" :time='timeData' :opData='opDiskData' :unit='diskUnit'
           :title="diskTitle" :period=period :xdata=true>
@@ -165,13 +165,13 @@
           return (value = '入包量');
         }
         if (value === 'inbandwidth') {
-          return (value = '网络入带宽');
+          return (value = '網路入帶寬');
         }
         if (value === 'outpkg') {
           return (value = '出包量');
         }
         if (value === 'outbandwidth') {
-          return (value = '出带宽使用率');
+          return (value = '出帶寬使用率');
         }
         if (value === 'pkgdrop') {
           return (value = '丢包率');
@@ -179,19 +179,19 @@
       },
       UpTitle(value) {
         if (value === 'inpkg') {
-          return (value = '对等连接每秒入包量');
+          return (value = '對等連接每秒入包量');
         }
         if (value === 'inbandwidth') {
-          return (value = '对等连接入带宽');
+          return (value = '對等連接入帶寬');
         }
         if (value === 'outpkg') {
-          return (value = '对等连接每秒出包量');
+          return (value = '對等連接每秒出包量');
         }
         if (value === 'outbandwidth') {
-          return (value = '对等连接出带宽使用率');
+          return (value = '對等連接出帶寬使用率');
         }
         if (value === 'pkgdrop') {
-          return (value = '对等连接因带宽限制丢弃报文与总报文的比率');
+          return (value = '對等連接因帶寬限制丟棄報文與總報文的比率');
         }
       },
     },

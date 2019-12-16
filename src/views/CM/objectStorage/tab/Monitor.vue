@@ -4,11 +4,11 @@
     <XTimeX v-on:switchData="GetDat" :classsvalue="value"></XTimeX>
     <div class="box-dis p-style">
       <p>
-        <i class="el-icon-info"></i>注释：Max、Min和Avg数值统计为当前折线图内所有点的最大值、最小值和平均值
+        <i class="el-icon-info"></i>{{ $t('CVM.clBload.zs') }}
       </p>
-      <p>
+      <!-- <p>
         <el-button type="text">导出数据</el-button>
-      </p>
+      </p> -->
     </div>
     <div class="box-table">
       <!-- 表格 -->
@@ -28,7 +28,7 @@
 
         <el-table-column prop="DataPoints" width="550">
           <template slot-scope="scope">
-            <p v-if="scope.row.DataPoints[0].Values.length==0">暂无数据</p>
+            <p v-if="scope.row.DataPoints[0].Values.length==0">{{ $t('CVM.clBload.zwsj') }}</p>
             <div class="echart" v-if="scope.row.DataPoints[0].Values.length!=0">
               <echart-line id="diskEchearrts-line" :time="scope.row.DataPoints[0].Timestamps | UpTime"
                 :opData="scope.row.DataPoints[0].Values" :scale="3" :period="period" :xdata="false"></echart-line>
@@ -78,7 +78,7 @@
         </el-table-column>
       </el-table>
       <!-- 模态框 -->
-      <el-dialog title="集群健康状态" :visible.sync="dialogVisible" width="60%" :before-close="handleClose">
+      <el-dialog :title="$t('CVM.clBload.jqjkzt')" :visible.sync="dialogVisible" width="60%" :before-close="handleClose">
         <XTimeX v-on:switchData="GetDat" :classsvalue="value"></XTimeX>
         <echart-line id="diskEchearrts-line" class="echart-wh" :time="timeData | UpTime" :opData="jingData"
           :period="period" :xdata="true"></echart-line>
@@ -214,56 +214,56 @@
       //文字过滤
       UpName(value) {
         if (value === "StdStorage") {
-          return (value = "标准存储-存储空间");
+          return (value = "標準存儲-存儲空間");
         }
         if (value === "SiaStorage") {
-          return (value = "低频存储-存储空间");
+          return (value = "低頻存儲-存儲空間");
         }
         if (value === "NelStorage") {
-          return (value = "近线存储-存储空间");
+          return (value = "近線存儲-存儲空間");
         }
         if (value === "ArcStorage") {
-          return (value = "归档存储-存储空间");
+          return (value = "歸檔存儲-存儲空間");
         }
         if (value === "InternetTraffic") {
-          return (value = "	外网流量");
+          return (value = "	外網流量");
         }
         if (value === "InternalTraffic") {
-          return (value = "	内网流量");
+          return (value = "	內網流量");
         }
         if (value === "CdnOriginTraffic") {
           return (value = "CDN 回源流量");
         }
         if (value === "InboundTraffic") {
-          return (value = "上传流量");
+          return (value = "上傳流量");
         }
         if (value === "StdRetrieval") {
-          return (value = "标准数据读取");
+          return (value = "標準數據讀取");
         }
         if (value === "IaRetrieval") {
-          return (value = "低频数据读取");
+          return (value = "低頻數據讀取");
         }
 
         if (value === "NlRetrieval") {
-          return (value = "	近线数据读取");
+          return (value = "	近線數據讀取");
         }
         if (value === "StdReadRequests") {
-          return (value = "标准存储读请求");
+          return (value = "標準存儲讀請求");
         }
         if (value === "StdWriteRequests") {
-          return (value = "标准存储写请求");
+          return (value = "標準存儲寫請求");
         }
         if (value === "IaReadRequests") {
-          return (value = "	低频存储读请求");
+          return (value = "	低頻存儲讀請求");
         }
         if (value === "IaWriteRequests") {
-          return (value = "	低频存储写请求");
+          return (value = "	低頻存儲寫請求");
         }
         if (value === "NlReadRequests") {
-          return (value = "	近线存储读请求");
+          return (value = "	近線存儲讀請求");
         }
         if (value === "NlWriteRequests") {
-          return (value = "近线存储写请求");
+          return (value = "近線存儲寫請求");
         }
         if (value === "") {
           return (value = "");
@@ -272,23 +272,23 @@
       UpTitle(value) {
         if (value === "tcp_curr_estab") {
           return (value =
-            "处于 ESTABLISHED 状态的 TCP 连接数量，依赖监控组件安装采集");
+            "處於 ESTABLISHED 狀態的 TCP 連接數量，依賴監控組件安裝採集");
         }
         if (value === "cpu_usage") {
           return (value =
-            "CPU利用率是通过CVM子机内部监控组件采集上报，数据更加精准");
+            "CPU利用率是通過CVM子機內部監控組件採集上報，數據更加精準");
         }
         if (value === "cpu_loadavg") {
           return (value =
-            "1分钟内CPU平均负载，取 /proc/loadavg 第一列数据（windows操作系统无此指标），依赖监控组件安装采集");
+            "1分鐘內CPU平均負載，取 /proc/loadavg 第一列數據（windows操作系統無此指標），依賴監控組件安裝採集");
         }
         if (value === "mem_used") {
           return (value =
-            "使用的内存量，不包括系统缓存和缓存区占用内存，依赖监控组件安装采集");
+            "使用的內存量，不包括系統緩存和緩存區佔用內存，依賴監控組件安裝採集");
         }
         if (value === "mem_usage") {
           return (value =
-            "用户实际使用的内存量与总内存量之比，不包括缓冲区与系统缓存占用的内存");
+            "用戶實際使用的內存量與總內存量之比，不包括緩衝區與系統緩存佔用的內存");
         }
       },
       UpTime(value) {

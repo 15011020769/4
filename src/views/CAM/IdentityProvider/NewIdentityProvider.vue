@@ -6,30 +6,30 @@
         :space="160"
         :active="active"
         simple
-        style="background: #fff; padding-top: 20px;margin-right: 450px;padding-left: 10px;"
+        style="background: #fff; padding-top: 20px;padding-left: 10px;width:100%;"
       >
         <el-step title="配置提供商信息"></el-step>
-        <el-step title="审阅并完成"></el-step>
+        <el-step :title="$t('CAM.strategy.completes')"></el-step>
       </el-steps>
       <hr style="margin-top:10px;" />
-      <div v-show="active==0">
+      <div v-show="active==0" style="width:100%;">
         <el-form :model="addModel" :rules="rules" size="mini" ref="ruleForm" label-width="100px">
-          <el-form-item label="供应商类型" prop="providerType">
+          <el-form-item :label="$t('CAM.strategy.supplier')" prop="providerType">
             <el-col :span="14">
               <el-radio size="mini" v-model="addModel.providerType" label="SAML">SAML</el-radio>
             </el-col>
           </el-form-item>
-          <el-form-item label="供应商名称" prop="providerName">
+          <el-form-item :label="$t('CAM.strategy.supplierName')" prop="providerName">
             <el-col :span="14">
               <el-input size="mini" ref="providerNameRules" v-model="addModel.providerName"></el-input>
             </el-col>
           </el-form-item>
-          <el-form-item label="备注" prop="remark">
+          <el-form-item :label="$t('CAM.userList.userRemark')" prop="remark">
             <el-col :span="14">
               <el-input size="mini" type="text" v-model="addModel.remark"></el-input>
             </el-col>
           </el-form-item>
-          <el-form-item label="元数据文档" prop="metadataDocument">
+          <el-form-item :label="$t('CAM.strategy.dataFile')" prop="metadataDocument">
             <el-upload
               size="mini"
               accept="text/xml, application/xml"
@@ -45,28 +45,28 @@
               </el-col>
               <el-col :span="2">
                 <div style="display:inline-block">
-                  <el-button size="mini">选择文件</el-button>
+                  <el-button size="mini">{{$t('CAM.strategy.chooseFile')}}</el-button>
                 </div>
               </el-col>
             </el-upload>
           </el-form-item>
         </el-form>
       </div>
-      <div v-if="active==1">
-        <SecondStep :form="addModel"/>
+      <div v-if="active==1" style="width:100%;">
+        <SecondStep :form="addModel" />
       </div>
-      <br />
-      <br />
-      <el-button v-show="active>0" size="small" type="primary" @click="step">上一步</el-button>
-      <el-button
-        v-show="active<1"
-        size="small"
-        type="primary"
-        style="margin-top: 12px;"
-        @click="next('ruleForm')"
-      >下一步</el-button>
-      <!-- <el-button v-show="active==1" type="primary" @click="step">返回</el-button> -->
-      <el-button v-show="active==1" size="small" type="primary" @click="confirm">确认</el-button>
+      <div style="width:100%">
+        <el-button v-show="active>0" size="small" type="primary" @click="step">上一步</el-button>
+        <el-button
+          v-show="active<1"
+          size="small"
+          type="primary"
+          style="margin-top: 12px;"
+          @click="next('ruleForm')"
+        >下一步</el-button>
+        <!-- <el-button v-show="active==1" type="primary" @click="step">返回</el-button> -->
+        <el-button v-show="active==1" size="small" type="primary" @click="confirm">确认</el-button>
+      </div>
     </div>
   </div>
 </template>
@@ -154,12 +154,21 @@ export default {
           console.log(params);
           this.axios.post(CREATE_SAML, params).then(res => {
             console.log(res);
+            if (res.Response.Error.Code) {
+              this.$message.error(res.Response.Error.Code);
+            } else {
+              this.$message({
+                message: "添加成功",
+                type: "success"
+              });
+              const addModel = this.addModel;
+              if (this.active++ > 1) {
+                this.active = 0;
+                this.form = this.addModel;
+              }
+            }
+            console.log(res);
           });
-          const addModel = this.addModel;
-          if (this.active++ > 1) {
-            this.active = 0;
-            this.form = this.addModel;
-          }
         } else {
           return false;
         }
@@ -228,7 +237,9 @@ export default {
   .container >>> .el-input {
     width: 200px;
   }
-
+  .container >>> .el-form-item {
+    margin-bottom: 12px;
+  }
   .container >>> .el-input__inner {
     padding-left: 5px;
     border-radius: 0;
@@ -243,9 +254,13 @@ export default {
     // min-height: 500px;
     margin: 0 auto;
     background: #fff;
-    padding: 10px 40px;
+    padding: 20px 40px;
+    padding-bottom: 30px;
     margin-top: 20px;
     box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
 
     hr {
       padding: 0;

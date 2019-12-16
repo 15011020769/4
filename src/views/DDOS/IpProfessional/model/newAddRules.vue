@@ -2,19 +2,19 @@
   <div>
     <div>
       <el-dialog class="dialogModel"
-        title="添加转发规则"
+         :title="$t('DDOS.AccesstoCon.addAcc')"
         :visible.sync="getIsShow"
         width="30%"
         :before-close="handleClose">
         <div class="createRulesForm">
           <div class="ruleList newClear">
-            <span class="ruleListLabel">业务域名</span>
+            <span class="ruleListLabel">{{$t('DDOS.AccesstoCon.businessDoma')}}</span>
             <span class="ruleListIpt">
-              <el-input v-model="RuleName"></el-input><p>注意：域名信息用于规则说明，不用作转发规则匹配</p>
+              <el-input v-model="RuleName"></el-input><p>{{$t('DDOS.accessCopy.accessCopyTitle')}}</p>
             </span>
           </div>
           <div class="ruleList newClear">
-            <span class="ruleListLabel">转发协议</span>
+            <span class="ruleListLabel">{{$t('DDOS.accessCopy.ForwardingPro')}}</span>
             <span class="ruleListIpt">
               <el-select v-model="Protocol" class="forwardHttp">
                 <el-option label="TCP" value="TCP"></el-option>
@@ -23,7 +23,7 @@
             </span>
           </div>
           <div class="ruleList newClear">
-            <span class="ruleListLabel">转发端口</span>
+            <span class="ruleListLabel">{{$t('DDOS.accessCopy.ForwardingExcit')}}</span>
             <span class="ruleListIpt">
               <el-input v-model="VirtualPort"></el-input>
             </span>
@@ -44,30 +44,30 @@
             </span>
           </div>
           <div class="ruleList newClear">
-            <span class="ruleListLabel">负载均衡方式</span>
+            <span class="ruleListLabel">{{$t('DDOS.AccesstoCon.LoadBalancing')}}</span>
             <span class="ruleListIpt">
-              <el-button class="BackResouse" :style="LbType==1?'color:#006eff;border:1px solid #006eff':''">加权轮询</el-button>
+              <el-button class="BackResouse" :style="LbType==1?'color:#006eff;border:1px solid #006eff':''">{{$t('DDOS.AccesstoCon.WeightedPoll')}}</el-button>
             </span>
           </div>
           <div class="ruleList newClear" v-if="dominShow">
-            <span class="ruleListLabel">源站IP + 权重</span>
+            <span class="ruleListLabel">{{$t('DDOS.accessCopy.SourceIp')}}</span>
             <span class="ruleListIpt">
               <el-input type="textarea" class="resoureStation" v-model="IpResource"/>
               <p>	
-请输入源站IP + 权重，中间由空格分隔，例如：1.1.1.1 50。用回车分隔多个源站IP + 权重，最多支持20个</p>
+{{$t('DDOS.accessCopy.SoutceTitle')}}</p>
             </span>
           </div>
           <div class="ruleList newClear" v-if="!dominShow">
             <span class="ruleListLabel">源站域名</span>
             <span class="ruleListIpt">
               <el-input type="textarea" class="resoureStation" v-model="HttpResource"/>
-              <p>请输入源站域名，用回车分隔多个源站域名，最多支持20个</p>
+              <p>{{$t('DDOS.accessCopy.domainTitle')}}</p>
             </span>
           </div>
         </div>
         <span slot="footer" class="dialog-footer">
           <el-button @click="handleClose">取 消</el-button>
-          <el-button type="primary" @click="addRulesSure">确 定</el-button>
+          <el-button type="primary" @click="addRulesSure">{{$t('DDOS.accessCopy.domainSure')}}</el-button>
         </span>
       </el-dialog>
     </div>

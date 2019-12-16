@@ -8,7 +8,7 @@
      </ul>
      <div class='datails-tab'>
        <el-tabs v-model="activeName" @tab-click="handleClick">
-        <el-tab-pane label="监控" name="first"><Monitor/></el-tab-pane>
+        <el-tab-pane :label="$t('CVM.clBload.jk')" name="first"><Monitor/></el-tab-pane>
       </el-tabs>
      </div>
     </div>

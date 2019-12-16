@@ -101,6 +101,7 @@
 <script>
 import transfer from "./component/transfer";
 import HeadCom from "../UserListNew/components/Head";
+import {CREATE_ROLE,ATTACH_ROLE} from '@/constants'
 export default {
   components: {
     transfer,
@@ -218,7 +219,6 @@ export default {
           }
          */
       let params = {
-        Action: "CreateRole",
         Version: "2019-01-16",
         RoleName: this.inputRoleName,
         Description: this.inputRoleDesc,
@@ -227,8 +227,7 @@ export default {
           this.input_num +
           ':root"]}}]}'
       };
-      let url = "cam2/CreateRole";
-      this.axios.post(url, params).then(data => {
+      this.axios.post(CREATE_ROLE, params).then(data => {
         let roleId = data.Response.RoleId; // 获取创建的角色id
         this.$message("创建角色成功");
         let policiesArray = this.policiesSelectedData; // 获取权限策略
@@ -250,7 +249,7 @@ export default {
     },
     // 绑定权限策略到角色
     AttachRolePolicy(params) {
-      this.$axios.post("cam2/AttachRolePolicy", params).then(res => {
+      this.$axios.post(ATTACH_ROLE, params).then(res => {
         console.log(res);
       });
     }
@@ -284,10 +283,6 @@ export default {
       padding: 20px;
       background: #fff;
 
-      .step {
-        border-bottom: 1px solid #ddd;
-        padding-bottom: 20px;
-      }
 
       .contant_flex {
         display: flex;
@@ -344,5 +339,9 @@ export default {
       padding-left: 50px;
     }
   }
+  .step >>> .el-steps {
+  background: white;
+  padding-bottom: 25px;
+}
 }
 </style>

@@ -88,7 +88,11 @@
                   </el-radio-group>
                 </el-form-item>
                 <el-form-item :label="$t('CLA.total.dlmc')" required class="select cmqSelect">
-                  <el-select v-model="cmqSelect.name" :placeholder="$t('CLA.total.qxz')" @change="_cmqSelect">
+                  <el-select
+                    v-model="cmqSelect.name"
+                    :placeholder="$t('CLA.total.qxz')"
+                    @change="_cmqSelect"
+                  >
                     <el-option
                       v-for="item in cmqSelect.options"
                       :key="item.value"
@@ -102,7 +106,10 @@
                     class="seletInp"
                     v-if="ruleForm.IsEnableCmqNotify"
                   >
-                    <el-input v-model="ruleForm.CmqQueueName" :placeholder="$t('CLA.total.qsrdlmc')"></el-input>
+                    <el-input
+                      v-model="ruleForm.CmqQueueName"
+                      :placeholder="$t('CLA.total.qsrdlmc')"
+                    ></el-input>
                   </el-form-item>
                 </el-form-item>
               </div>
@@ -111,7 +118,11 @@
           <div class="main-box" style="border:0;">
             <el-form-item>
               <el-button @click="_cancel">{{ $t('CLA.total.qx') }}</el-button>
-              <el-button type="primary" @click="_onSubmit('ruleForm')" v-show="!btnLoad">{{ $t('CLA.total.ljcj') }}</el-button>
+              <el-button
+                type="primary"
+                @click="_onSubmit('ruleForm')"
+                v-show="!btnLoad"
+              >{{ $t('CLA.total.ljcj') }}</el-button>
               <el-button type="primary" icon="el-icon-loading" v-show="btnLoad"></el-button>
             </el-form-item>
           </div>
@@ -165,7 +176,7 @@ export default {
         if (!reg.test(value)) {
           callback(
             new Error(
-              '僅支持小寫字母、數字以及中劃線\" - \"的組合，不能超過40字元。'
+              '僅支持小寫字母、數字以及中劃線" - "的組合，不能超過40字元。'
             )
           );
         } else {
@@ -364,6 +375,9 @@ export default {
     this.cmq();
     //BucketSelect
     this.axios.post(LIST_COSBUCKETS).then(res => {
+      if (res.message) {
+        this.$message(res.message);
+      }
       var data = res.data.cosBucketsList;
       var arr = [];
       data.forEach((item, index) => {
@@ -458,6 +472,8 @@ export default {
         border-radius: 0;
         height: 30px;
         padding-left: 5px;
+        line-height: 30px;
+        padding-top: 0;
       }
       .main-box >>> .el-radio__label {
         font-size: 12px;

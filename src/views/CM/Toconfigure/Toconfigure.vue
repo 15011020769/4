@@ -1,5 +1,5 @@
 <template>
   <div>
-    告警配置
+    {{$t("CVM.gjpz")}}
   </div>
 </template>

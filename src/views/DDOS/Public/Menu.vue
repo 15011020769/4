@@ -1,6 +1,6 @@
 <template>
   <div class="DDOS">
-    <div class="big-title">DDoS</div>
+    <div class="big-title">DDoS防护</div>
     <!-- <el-menu default-active="2" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose" background-color="#545c64" text-color="#fff" active-text-color="#ffd04b" :router="true">
       <el-menu-item index="appId">
         <i class="iconfont">&#xe615;</i>

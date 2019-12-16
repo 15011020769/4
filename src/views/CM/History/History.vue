@@ -1,5 +1,5 @@
 <template>
   <div>
-    告警历史
+    {{ $t('CVM.gjls') }}
   </div>
 </template>

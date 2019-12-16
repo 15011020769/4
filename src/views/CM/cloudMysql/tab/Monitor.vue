@@ -4,11 +4,11 @@
     <XTimeX v-on:switchData="GetDat" :classsvalue="value"></XTimeX>
     <div class="box-dis p-style">
       <p>
-        <i class="el-icon-info"></i>注释：Max、Min和Avg数值统计为当前折线图内所有点的最大值、最小值和平均值
+        <i class="el-icon-info"></i>{{ $t('CVM.clBload.zs') }}
       </p>
-      <p>
-        <el-button type="text">导出数据</el-button>
-      </p>
+      <!-- <p>
+        <el-button type="text">{{ $t('CVM.clBload.dcsj') }}</el-button>
+      </p> -->
     </div>
     <div class="box-table">
       <!-- 表格 -->
@@ -28,7 +28,7 @@
 
         <el-table-column prop="DataPoints" width="600">
           <template slot-scope="scope">
-            <p v-if="scope.row.DataPoints[0].Values.length==0">暂无数据</p>
+            <p v-if="scope.row.DataPoints[0].Values.length==0">{{ $t('CVM.clBload.zwsj') }}</p>
             <div class="echart" v-if="scope.row.DataPoints[0].Values.length!=0">
               <echart-line id="diskEchearrts-line" :time="scope.row.DataPoints[0].Timestamps | UpTime"
                 :opData="scope.row.DataPoints[0].Values" :scale="3" :period="period" :xdata="false"></echart-line>
@@ -79,7 +79,7 @@
         </el-table-column>
       </el-table>
       <!-- 模态框 -->
-      <el-dialog title="集群健康状态" :visible.sync="dialogVisible" width="60%" :before-close="handleClose">
+      <el-dialog :title="$t('CVM.clBload.jqjkzt')" :visible.sync="dialogVisible" width="60%" :before-close="handleClose">
         <XTimeX v-on:switchData="GetDat" :classsvalue="value"></XTimeX>
         <echart-line id="diskEchearrts-line" class="echart-wh" :time="timeData | UpTime" :opData="jingData"
           :period="period" :xdata="true"></echart-line>
@@ -206,8 +206,8 @@
           "Byte/秒",
           "次/秒",
           "次/秒",
-          "个",
-          "个",
+          "個",
+          "個",
           "%",
           "次/分",
           "次/秒",
@@ -225,20 +225,20 @@
           "次/秒",
           "次/秒",
           "次/秒",
-          "个",
+          "個",
           "%",
           "%",
           "次/秒",
           "次/秒",
-          "个",
-          "个",
+          "個",
+          "個",
           "次/秒",
           "次/秒",
           "次/秒",
           "次/秒",
           "次/秒",
-          "个",
-          "个",
+          "個",
+          "個",
           "次/秒",
           "次/秒",
           "次/秒",
@@ -251,15 +251,15 @@
           "次/秒",
           "毫秒",
           "次/秒",
-          "个",
-          "个",
+          "個",
+          "個",
           "次/秒",
           "次/秒",
           "次/秒",
           "次/秒",
-          "个",
-          "个",
-          "个",
+          "個",
+          "個",
+          "個",
           "MB",
           "-",
           "-",
@@ -331,148 +331,148 @@
           return (value = "内存利用率");
         }
         if (value === "MemoryUse") {
-          return (value = "内存占用");
+          return (value = "內存佔用");
         }
         if (value === "VolumeRate") {
-          return (value = "磁盘使用率");
+          return (value = "磁碟使用率");
         }
         if (value === "RealCapacity") {
-          return (value = "磁盘使用空间（仅包含数据空间使用量）");
+          return (value = "磁碟使用空間（僅包含數據空間使用量）");
         }
         if (value === "Capacity") {
-          return (value = "	磁盘占用空间（包含数据及日志空间使用量）");
+          return (value = "	磁碟佔用空間（包含數據及日誌空間使用量）");
         }
         if (value === "BytesSent") {
-          return (value = "内网出流量");
+          return (value = "内網出流量");
         }
         if (value === "BytesReceived") {
-          return (value = "	内网入流量");
+          return (value = "	内網入流量");
         }
         if (value === "QPS") {
-          return (value = "每秒执行操作数");
+          return (value = "每秒執行操作數");
         }
         if (value === "TPS") {
-          return (value = "每秒执行事务数");
+          return (value = "每秒執行事務數");
         }
         if (value === "MaxConnections") {
-          return (value = "最大连接数");
+          return (value = "最大連接數");
         }
         if (value === "ThreadsConnected") {
-          return (value = "当前打开连接数");
+          return (value = "當前打開連接數");
         }
         if (value === "ConnectionUseRate") {
-          return (value = "连接数利用率");
+          return (value = "連接數利用率");
         }
         if (value === "SlowQueries") {
-          return (value = "慢查询数");
+          return (value = "慢查詢數");
         }
         if (value === "SelectScan") {
-          return (value = "全表扫描数");
+          return (value = "全表掃描數");
         }
         if (value === "SelectCount") {
-          return (value = "查询数");
+          return (value = "查詢數");
         }
         if (value === "ComUpdate") {
-          return (value = "更新数");
+          return (value = "更新數");
         }
         if (value === "ComDelete") {
-          return (value = "删除数");
+          return (value = "刪除數");
         }
         if (value === "ComInsert") {
-          return (value = "插入数");
+          return (value = "插入數");
         }
         if (value === "ComReplace") {
-          return (value = "覆盖数");
+          return (value = "覆蓋數");
         }
         if (value === "Queries") {
-          return (value = "总请求数");
+          return (value = "總請求數");
         }
         if (value === "QueryRate") {
-          return (value = "查询使用率");
+          return (value = "查詢使用率");
         }
         if (value === "CreatedTmpTables") {
-          return (value = "临时表数量");
+          return (value = "臨時表數量");
         }
         if (value === "TableLocksWaited") {
-          return (value = "等待表锁次数");
+          return (value = "等待表鎖次數");
         }
         if (value === "InnodbCacheUseRate") {
-          return (value = "innodb缓存使用率");
+          return (value = "innodb緩存使用率");
         }
         if (value === "InnodbCacheHitRate") {
-          return (value = "innodb缓存命中率");
+          return (value = "innodb緩存命中率");
         }
         if (value === "InnodbOsFileReads") {
-          return (value = "innodb读磁盘数量");
+          return (value = "innodb讀磁碟數量");
         }
         if (value === "InnodbOsFileWrites") {
-          return (value = "innodb写磁盘数量");
+          return (value = "innodb寫磁碟數量");
         }
         if (value === "InnodbOsFsyncs") {
-          return (value = "innodb fsync数量");
+          return (value = "innodb fsync數量");
         }
         if (value === "InnodbNumOpenFiles") {
-          return (value = "当前InnoDB打开表的数量");
+          return (value = "當前InnoDB打開表的數量");
         }
         if (value === "KeyCacheUseRate") {
-          return (value = "myisam缓存使用率");
+          return (value = "myisam緩存使用率");
         }
         if (value === "KeyCacheHitRate") {
-          return (value = "myisam缓存命中率");
+          return (value = "myisam緩存命中率");
         }
         if (value === "ComCommit") {
-          return (value = "提交数");
+          return (value = "提交數");
         }
         if (value === "ComRollback") {
-          return (value = "回滚数");
+          return (value = "回滾數");
         }
         if (value === "ThreadsCreated") {
-          return (value = "已创建的线程数");
+          return (value = "已創建的線程數");
         }
         if (value === "ThreadsRunning") {
-          return (value = "运行的线程数");
+          return (value = "運行的線程數");
         }
         if (value === "CreatedTmpDiskTables") {
-          return (value = "磁盘临时表数量");
+          return (value = "磁碟臨時表數量");
         }
         if (value === "CreatedTmpFiles") {
-          return (value = "临时文件数量");
+          return (value = "臨時文件數量");
         }
         if (value === "HandlerReadRndNext") {
-          return (value = "读下一行请求数");
+          return (value = "讀下一行請求數");
         }
         if (value === "HandlerRollback") {
-          return (value = "内部回滚数");
+          return (value = "內部回滾數");
         }
         if (value === "HandlerCommit") {
-          return (value = "内部提交数");
+          return (value = "內部提交數");
         }
         if (value === "InnodbBufferPoolPagesFree") {
-          return (value = "InnoDB空页数");
+          return (value = "InnoDB空頁數");
         }
         if (value === "InnodbBufferPoolPagesTotal") {
-          return (value = "InnoDB总页数");
+          return (value = "InnoDB總頁數");
         }
         if (value === "InnodbBufferPoolReadRequests") {
-          return (value = "InnoDB逻辑读");
+          return (value = "InnoDB邏輯讀");
         }
         if (value === "InnodbBufferPoolReads") {
-          return (value = "InnoDB物理读");
+          return (value = "InnoDB物理讀");
         }
         if (value === "InnodbDataReads") {
-          return (value = "InnoDB总读取量");
+          return (value = "InnoDB總讀取量");
         }
         if (value === "InnodbDataRead") {
-          return (value = "InnoDB读取量");
+          return (value = "InnoDB讀取量");
         }
         if (value === "InnodbDataWrites") {
-          return (value = "	InnoDB总写入量");
+          return (value = "	InnoDB總寫入量");
         }
         if (value === "InnodbDataWritten") {
-          return (value = "InnoDB写入量");
+          return (value = "InnoDB寫入量");
         }
         if (value === "InnodbRowsDeleted") {
-          return (value = "InnoDB行删除量");
+          return (value = "InnoDB行刪除量");
         }
         if (value === "InnodbRowsInserted") {
           return (value = "InnoDB行插入量");
@@ -481,52 +481,52 @@
           return (value = "InnoDB行更新量");
         }
         if (value === "InnodbRowsRead") {
-          return (value = "	InnoDB行读取量");
+          return (value = "	InnoDB行讀取量");
         }
         if (value === "InnodbRowLockTimeAvg") {
-          return (value = "InnoDB平均获取行锁时间");
+          return (value = "InnoDB平均獲取行鎖時間");
         }
         if (value === "InnodbRowLockWaits") {
-          return (value = "InnoDB等待行锁次数");
+          return (value = "InnoDB等待行鎖次數");
         }
         if (value === "KeyBlocksUnused") {
-          return (value = "键缓存内未使用的块数量");
+          return (value = "鍵緩存內未使用的塊數量");
         }
         if (value === "KeyBlocksUsed") {
-          return (value = "	键缓存内使用的块数量");
+          return (value = "	鍵緩存內使用的塊數量");
         }
         if (value === "KeyReadRequests") {
-          return (value = "键缓存读取数据块次数");
+          return (value = "鍵緩存讀取數據塊次數");
         }
         if (value === "KeyReads") {
-          return (value = "硬盘读取数据块次数");
+          return (value = "硬碟讀取數據塊次數");
         }
         if (value === "KeyWriteRequests") {
-          return (value = "数据块写入键缓冲次数");
+          return (value = "數據塊寫入鍵緩衝次數");
         }
         if (value === "KeyWrites") {
-          return (value = "数据块写入磁盘次数");
+          return (value = "數據塊寫入磁碟次數");
         }
         if (value === "OpenedTables") {
-          return (value = "已经打开的表数");
+          return (value = "已經打開的表數");
         }
         if (value === "TableLocksImmediate") {
-          return (value = "立即释放的表锁数");
+          return (value = "立即釋放的表鎖數");
         }
         if (value === "OpenFiles") {
-          return (value = "打开文件总数");
+          return (value = "打開文件總數");
         }
         if (value === "LogCapacity") {
-          return (value = "日志使用量");
+          return (value = "日誌使用量");
         }
         if (value === "SlaveIoRunning") {
-          return (value = "IO线程状态");
+          return (value = "IO線程狀態");
         }
         if (value === "SlaveSqlRunning") {
-          return (value = "SQL线程状态");
+          return (value = "SQL線程狀態");
         }
         if (value === "MasterSlaveSyncDistance") {
-          return (value = "主从延迟距离");
+          return (value = "主從延遲距離");
         }
         if (value === "SecondsBehindMaster") {
           return (value = "SlaveSqlRunning");

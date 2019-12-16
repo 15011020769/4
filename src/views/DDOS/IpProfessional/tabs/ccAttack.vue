@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="child">
     <div class="mainConList">
       <div class="mainConListAll mainConListOne">
         <div class="newClear">
@@ -26,35 +26,32 @@
           @change="changeIdCC"
           filterable
           placeholder="请输入要查询的ID或名称"
+          style="margin-right:10px;"
         >
           <el-option :label="inputIdCC" :value="inputIdCC"></el-option>
         </el-select>
         <el-select class="ddosAttackSelect1" v-model="ccTimeBtnSelect2">
-          <el-option :label="ccTimeBtnSelect2" :value="ccTimeBtnSelect2"></el-option>
+          <el-option v-for="(item,index) in IpList" :value="item" :key="index"></el-option>
         </el-select>
       </div>
-        <div class="mainConListAll mainConListTwo">
-    
-          
-            <div id="myChart3" ref="chart"></div>
-      
-    
+      <div class="mainConListAll mainConListTwo">
+        <div id="myChart3" ref="chart"></div>
       </div>
       <div class="mainConListAll">
-        <h3>CC攻击记录</h3>
+        <h3>{{$t('DDOS.Statistical_forms.CC_attack_record')}}</h3>
         <div class="ddosTableMin">
           <el-table
           :data="tableDataOfDescribeDDoSNetEvListcc.slice((currentPage-1)*pageSize,currentPage*pageSize)"
         >
-          <el-table-column prop="attackTime" label="攻击时间"></el-table-column>
-          <el-table-column prop="attackDomin" label="被攻击域名"></el-table-column>
-          <el-table-column prop="attackUrl" label="被攻击URI"></el-table-column>
-          <el-table-column prop="allRequestTop" label="总请求峰值（QPS）"></el-table-column>
-          <el-table-column prop="attackReqTop" label="攻击请求峰值（QPS）"></el-table-column>
-          <el-table-column prop="attackResou" label="攻击源"></el-table-column>
+          <el-table-column prop="attackTime" :label="$t('DDOS.Statistical_forms.Attack_time')"></el-table-column>
+          <el-table-column prop="attackDomin" :label="$t('DDOS.Statistical_forms.Domainunder_attack')"></el-table-column>
+          <el-table-column prop="attackUrl" :label="$t('DDOS.Statistical_forms.Attacked_URI')"></el-table-column>
+          <el-table-column prop="allRequestTop" :label="$t('DDOS.Statistical_forms.request_peak')"></el-table-column>
+          <el-table-column prop="attackReqTop" :label="$t('DDOS.Statistical_forms.Attack_peak')"></el-table-column>
+          <el-table-column prop="attackResou" :label="$t('DDOS.Statistical_forms.Attack_source')"></el-table-column>
         </el-table>
         </div>
-        
+
         <div class="tabListPage">
           <el-pagination
             @size-change="handleSizeChange"
@@ -71,11 +68,13 @@
   </div>
 </template>
 <script>
+import { GET_ID } from "@/constants";
 import moment from "moment";
 export default {
-  data(){
-    return{
-      inputIdCC: "net-0000006y",
+  data() {
+    return {
+      inputIdCC: "",
+      IpList: "",
       metricName: "bps", //指标，取值[bps(攻击流量带宽，pps(攻击包速率))]
       metricNameCC: "inqps", //指标，取值[inqps(总请求峰值，dropqps(攻击请求峰值))]
       metricNameCCs: ["inqps", "dropqps"],
@@ -84,8 +83,8 @@ export default {
       currentPage: 1, //当前页
       pageSize: 10, //每页长度
       totalItems: 0, //总条数
-      ccTimeBtnSelect2: "177.52.89.23", //cc时间按钮下面第二个下拉
-      dateChoice2: {},//日期选择
+      ccTimeBtnSelect2: "总览", //cc时间按钮下面第二个下拉
+      dateChoice2: {}, //日期选择
       // 日期区间：默认获取当前时间和前一天时间
       endTime: this.getDateString(new Date()),
       startTime: this.getDateString(
@@ -100,17 +99,17 @@ export default {
         new Date(new Date().getTime() - 24 * 60 * 60 * 1000)
       ),
       tableDataEnd: [],
-      periodCC: 3600, //统计粒度，取值[300(5分钟)，3600(小时)，86400(天)]
-    }
+      periodCC: 3600 //统计粒度，取值[300(5分钟)，3600(小时)，86400(天)]
+    };
   },
-  watch:{
+  watch: {
     dateChoice2: function(value) {
       // console.log(this.getDateString(value[0]))
       // this.startTimeCC = this.getDateString(value[0]);
       // this.endTimeCC = this.getDateString(value[1]);
       // this.getDataCC();
 
-    this.periodCC = 86400;
+      this.periodCC = 86400;
       var num = value[1].getTime() - value[0].getTime(); //计算时间戳的差
       var arr = [];
       for (var i = 0; i <= num / 86400000; i++) {
@@ -119,14 +118,13 @@ export default {
         arr.push(moment(d).format("MM-DD"));
       }
       this.timey = arr;
-     
+
       this.startTimeCC = moment(value[0]).format("YYYY-MM-DD HH:mm:ss"); //格式处理
       this.endTimeCC = moment(value[1]).format("YYYY-MM-DD HH:mm:ss"); //格式处理
       //  console.log(this.startTimeCC,this.endTimeCC)
-       this.every();
-       this.describeCCEvList();
-
-    },
+      this.every();
+      this.describeCCEvList();
+    }
   },
   // mounted(){
   //   this.$nextTick(function () {
@@ -134,12 +132,28 @@ export default {
   //   })
   // },
   created() {
-    this.$nextTick(function () {
+    this.$nextTick(function() {
       // this.thisTime(1)
-      this.getDataCC()
-    })
+      this.getDataCC();
+      this.GetID();
+    });
   },
-  methods:{
+  methods: {
+    //获取资源的IP列表
+    GetID() {
+      let params = {
+        Version: "2018-07-09",
+        Business: "net"
+      };
+      this.axios.post(GET_ID, params).then(res => {
+        let IpList = res.Response.Resource;
+        // console.log(IpList)
+        for (let i = 0; i < IpList.length; i++) {
+          this.inputIdCC = IpList[i].Id;
+          this.IpList = IpList[i].IpList;
+        }
+      });
+    },
     // CC资源Id变化时，重新获取数据
     changeIdCC() {
       this.resourceId = this.inputIdCC;
@@ -147,18 +161,20 @@ export default {
       this.getDataCC();
     },
     getDataCC() {
-      this.thisTime(1)
+      this.thisTime(1);
       this.describeCCEvList();
     },
-    every(){
+    every() {
       for (let index in this.metricNameCCs) {
         this.metricNameCC = this.metricNameCCs[index];
-        this.describeCCTrend(); 
+        this.describeCCTrend();
         // console.log(this.inqpsdata,this.dropqps)
       }
-      setTimeout( this.drawLine3(this.timey,this.inqpsdata,this.dropqps),1000)
-     
-    },  
+      setTimeout(
+        this.drawLine3(this.timey, this.inqpsdata, this.dropqps),
+        1000
+      );
+    },
     // 2.2.获取 CC 攻击事件列表
     describeCCEvList() {
       let params = {
@@ -168,7 +184,7 @@ export default {
         EndTime: this.endTimeCC,
         Id: this.inputIdCC
       };
-      this.$axios.post("dayu2/DescribeCCEvList", params).then(res => {
+      this.axios.post("dayu2/DescribeCCEvList", params).then(res => {
         // console.log(res)
       });
     },
@@ -198,7 +214,7 @@ export default {
       }
     },
 
-      //计算时间间隔
+    //计算时间间隔
     timedone(end, start, p) {
       var num = end.getTime() - start.getTime();
       var arr = [];
@@ -216,16 +232,22 @@ export default {
       const end = new Date();
       const start = new Date();
       if (thisTime == "1") {
-        this.periodCC = 3600
+        this.periodCC = 3600;
         start.setTime(start.getTime() - 3600 * 1000);
-        var num =end.getTime() -new Date(new Date(new Date().toLocaleDateString()).getTime()).getTime();
+        var num =
+          end.getTime() -
+          new Date(
+            new Date(new Date().toLocaleDateString()).getTime()
+          ).getTime();
         var arr = [];
         for (var i = 0; i <= 86400000 / 3600000; i++) {
           var d = new Date(end.getTime() - 3600000 * i);
           arr.push(moment(d).format("MM-DD HH:mm:ss"));
         }
-        this.startTimeCC = moment(new Date(end.getTime()-86400000)).format("YYYY-MM-DD HH:mm:ss");
-         this.endTimeCC = moment(end).format("YYYY-MM-DD HH:mm:ss");
+        this.startTimeCC = moment(new Date(end.getTime() - 86400000)).format(
+          "YYYY-MM-DD HH:mm:ss"
+        );
+        this.endTimeCC = moment(end).format("YYYY-MM-DD HH:mm:ss");
         this.timey = arr;
       } else if (thisTime == "2") {
         // console.log(this.inqpsdata,this.dropqps)
@@ -246,7 +268,7 @@ export default {
         this.startTimeCC = ipt1.value;
         this.endTimeCC = ipt2.value;
         this.periodCC = 86400;
-        
+
         this.timedone(end, start, 86400000);
         //ddos攻击-攻击流量带宽
       } else if (thisTime == "4") {
@@ -271,15 +293,13 @@ export default {
         this.timedone(end, start, 86400000);
         //ddos攻击-攻击流量带宽
       }
-      //console.log(moment(new Date()).format('YYYY-MM-DD HH:mm:ss'),start
-      //this.thisStart=moment(start).format('YYYY-MM-DD');
-      //this.thisEnd=moment(end).format('YYYY-MM-DD');
-      //this.$emit('timeNode1',[this.thisStart,this.thisEnd])
-      // this.getData(this.timey)
-      this.every();
-       this.describeCCEvList();
+      var vm = this;
+      setTimeout(function() {
+        vm.every();
+        vm.describeCCEvList();
+      }, 500);
     },
-  // 2.1.获取CC攻击指标数据
+    // 2.1.获取CC攻击指标数据
     describeCCTrend() {
       let params = {
         Version: "2018-07-09",
@@ -291,14 +311,12 @@ export default {
         StartTime: this.startTimeCC,
         EndTime: this.endTimeCC
       };
-      this.$axios.post("dayu2/DescribeCCTrend", params).then(res => {
-        if(res.Response.MetricName =="inqps"){         
-           this.inqpsdata = res.Response.Data
-        }else{
-           this.dropqps = res.Response.Data
+      this.axios.post("dayu2/DescribeCCTrend", params).then(res => {
+        if (res.Response.MetricName == "inqps") {
+          this.inqpsdata = res.Response.Data;
+        } else {
+          this.dropqps = res.Response.Data;
         }
-        
-        
       });
     },
     // 时间格式化'yyyy-MM-dd hh:mm:ss'
@@ -315,7 +333,7 @@ export default {
         })
         .replace(/\//g, "-");
     },
-    drawLine3(time,data1,data2) {
+    drawLine3(time, data1, data2) {
       var arr = [];
       for (let i in time) {
         arr.unshift(time[i]); //属性
@@ -329,9 +347,9 @@ export default {
         color: ["rgb(124, 181, 236)"],
         title: { text: "" },
         tooltip: {},
-    //       legend: {
-    //     data:['总请求峰值','攻击请求峰值']
-    // },
+        //       legend: {
+        //     data:['总请求峰值','攻击请求峰值']
+        // },
         xAxis: {
           data: arr //["12-05", "12-04", "12-03", "12-02", "12-01"]
           // type : 'time',
@@ -368,7 +386,7 @@ export default {
               }
             }
           },
-           {
+          {
             name: "攻击请求峰值",
             type: "line",
             data: data2,
@@ -396,26 +414,80 @@ export default {
           }
         }
       });
-       myChart3.resize();
+      myChart3.resize();
       window.addEventListener("resize", function() {
         myChart3.resize();
       });
-    },
+    }
   }
-}
+};
 </script>
 <style lang="scss" scoped>
-.newDataTimeTwo {
+.child >>> .el-tabs__nav-wrap {
+  padding: 0 !important;
+}
+.child >>> .el-tabs__item,
+.child >>> .is-active {
+  border-bottom: 1px #f2f2f2 solid !important;
+  border-radius: 0 !important;
+}
+.child >>> .el-button {
+  height: 30px !important;
+  line-height: 30px !important;
+  border-radius: 0 !important;
+  padding-top: 0;
+}
+.newClear {
+  display: flex;
+}
+.child {
+  width: 100%;
+  padding: 20px;
+  box-sizing: border-box;
+}
+.mainConListAll {
+  background: white;
+  padding: 20px;
+  box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
+  box-sizing: border-box;
+  margin-bottom: 20px;
+}
+::v-deep .el-range-editor.el-input__inner{
+  height:30px;
+  line-height: 30px;
+}
+::v-deep .el-range__icon{
+  line-height: 26px;
+}
+::v-deep .el-range-separator{
+  line-height: 26px;
+  width:7%;
+}
+::v-deep .newDataTimeTwo {
   float: left;
   height: 30px !important;
   border-radius: 0 !important;
   margin-left: -1px;
-  span.el-range-separator {
-    line-height: 24px;
-    width: 8%;
+}
+::v-deep input.el-input__inner{
+  height:30px;
+  border-radius: 0;
+  line-height: 30px;
+}
+.ddosAttackSelect1{
+  height:30px;
+  line-height: 30px;
+  ::v-deep div.el-input{
+    height:30px;
   }
-  i.el-range__icon {
-    line-height: 24px;
-  }
+}
+.ddosTableMin{
+  min-height:450px;
+}
+.tabListPage{
+  height:50px;
+  padding-top:8px;
+  border-top:1px solid #ddd;
+  text-align:right;
 }
 </style>

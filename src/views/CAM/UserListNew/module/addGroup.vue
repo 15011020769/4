@@ -1,7 +1,7 @@
 <template>
   <div class="wrap">
     <div class="head">
-      <Headcom title="添加到用户组" :backShow="true"  @_back="back" />
+      <Headcom :title="$t('CAM.userList.userAddGroup')" :backShow="true"  @_back="back" />
     </div>
     <div class="policyToUser">
       <div class="step">
@@ -13,18 +13,18 @@
           style="margin-right: 50%"
           finish-status="success"
         >
-          <el-step title="设置用户组"></el-step>
-          <el-step title="审阅用户组"></el-step>
+          <el-step :title="$t('CAM.userList.setGroup')"></el-step>
+          <el-step :title="$t('CAM.userList.reviewUserGroup')"></el-step>
         </el-steps>
       </div>
       <div v-show="active==1" class="table">
         <div class="container" >
         <div class="container-right">
-          <span>用户列表</span>
+          <span>{{$t('CAM.userList.listTitle')}}</span>
           <div style="margin-top:10px;">
             <el-input
               v-model="searchGroupValue"
-              placeholder="搜索"
+              :placeholder="$t('CAM.userList.search')"
               size="small"
               class="inputSearchCl"
               @keyup.enter.native="searchGroup"
@@ -46,12 +46,12 @@
             <el-input size="mini" style="width:20%" />
             <el-button size="mini" class="suo" icon="el-icon-search" show-overflow-tooltip></el-button>
             <el-table-column type="selection" width></el-table-column>
-            <el-table-column label="用户组" prop="GroupName"></el-table-column>
+            <el-table-column :label="$t('CAM.userList.userGroup')" prop="GroupName"></el-table-column>
           </el-table>
         </div>
 
         <div class="container-left">
-          <span>已选择</span>
+          <span>{{$t('CAM.userList.choose')}}</span>
           <el-table
             ref="multipleSelected"
             tooltip-effect="dark"
@@ -59,15 +59,15 @@
             style="width: 80%;border:1px solid #ddd;margin-top:10px;"
             :data="userGroupSelect"
           >
-            <el-table-column label="用户组" prop="GroupName"></el-table-column>
-            <el-table-column label="操作" show-overflow-tooltip>
+            <el-table-column :label="$t('CAM.userList.userGroup')"  prop="GroupName"></el-table-column>
+            <el-table-column :label="$t('CAM.userList.userCz')" show-overflow-tooltip>
               &lt;!&ndash;
               <template slot-scope="scope">
                 <el-button
                   @click.native.prevent="deleteRow(scope.$index,userGroupSelect)"
                   type="text"
                   size="small"
-                >移除</el-button>
+                >{{$t('CAM.userList.userRemove')}}</el-button>
               </template>&ndash;&gt;
             </el-table-column>
           </el-table>
@@ -76,16 +76,16 @@
       </div>
       <div v-show="active==2">
         <el-table style="width: 96%; margin: 0 auto;" :data="userNewGroup[0]">
-          <el-table-column label="用户组名" prop="GroupName"></el-table-column>
+          <el-table-column :label="$t('CAM.userList.userGroup')" prop="GroupName"></el-table-column>
            <el-table-column
       fixed="right"
-      label="操作">
+     :label="$t('CAM.userList.userCz')">
       <template slot-scope="scope">
         <el-button
           @click.native.prevent="deleteRow(scope.$index, userNewGroup[0])"
           type="text"
           size="small">
-          移除
+          {{$t('CAM.userList.userRemove')}}
         </el-button>
       </template>
     </el-table-column>
@@ -143,6 +143,7 @@ export default {
         params["Keyword"] = this.searchGroupValue;
       }
       this.axios.post(USER_GROUP, params).then(res => {
+        console.log(res)
         this.userGroup = res.Response.GroupInfo;
       });
     },
@@ -214,7 +215,6 @@ export default {
   margin: 0 auto;
   box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
   margin-top: 20px;
-  display: flex;
   flex-direction: column;
   padding: 20px;
   box-sizing: border-box;

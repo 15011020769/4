@@ -1,11 +1,20 @@
 <template>
-  <div>
+  <div class="child">
     <div class="mainConList">
-      <div class="mainConListAll mainConListOne newClear">
+      <div
+        class="mainConListAll mainConListOne newClear"
+        style="display: flex;flex-direction: column;"
+      >
         <div class="newClear">
           <el-button-group class="buttonGroupAll">
-            <el-button class="buttonGroup" @click="thisTime(1)">今天</el-button>
-            <el-button class="buttonGroup" @click="thisTime(2)">近7天</el-button>
+            <el-button
+              class="buttonGroup"
+              @click="thisTime(1)"
+            >{{$t('DDOS.Statistical_forms.Today')}}</el-button>
+            <el-button
+              class="buttonGroup"
+              @click="thisTime(2)"
+            >{{$t('DDOS.Statistical_forms.Nearly_sedays')}}</el-button>
             <el-button class="buttonGroup" @click="thisTime(3)">近15天</el-button>
             <el-button class="buttonGroup" @click="thisTime(4)">近30天</el-button>
             <el-button class="buttonGroup" @click="thisTime(5)">近半年</el-button>
@@ -19,26 +28,28 @@
             end-placeholder="结束日期"
           ></el-date-picker>
         </div>
-        <br />
-        <el-select
-          class="ddosAttackSelect1"
-          v-model="inputId"
-          @change="changeId"
-          filterable
-          placeholder="请输入要查询的ID或名称"
-        >
-          <el-option :label="inputId" :value="inputId"></el-option>
-        </el-select>
-        <el-select class="ddosAttackSelect1" v-model="timeBtnSelect2">
-          <el-option :label="timeBtnSelect2" :value="timeBtnSelect2"></el-option>
-        </el-select>
+        <div style="margin-top:12px;">
+          <el-select
+            class="ddosAttackSelect1"
+            v-model="inputId"
+            @change="changeId"
+            filterable
+            placeholder="请输入要查询的ID或名称"
+            style="margin-right:10px;"
+          >
+            <el-option :label="inputId" :value="inputId"></el-option>
+          </el-select>
+          <el-select class="ddosAttackSelect1" v-model="timeBtnSelect2">
+            <el-option v-for="item in IpList" :value="item"></el-option>
+          </el-select>
+        </div>
       </div>
       <div class="mainConListAll mainConListTwo">
         <el-tabs class="tabsCard" v-model="activeName1" type="card" @tab-click="handleClick1">
-          <el-tab-pane label="攻击流量宽带" name="bps">
+          <el-tab-pane :label="$t('DDOS.Statistical_forms.Overview_broadband')" name="bps">
             <div id="myChart"></div>
           </el-tab-pane>
-          <el-tab-pane label="攻击包速率" name="pps">
+          <el-tab-pane :label="$t('DDOS.Statistical_forms.Attack_rate')" name="pps">
             <div id="myChart2"></div>
           </el-tab-pane>
         </el-tabs>
@@ -48,38 +59,40 @@
           <el-row>
             <el-col :span="8">
               <div class="colDivThree">
-                <h1>攻击流量协议分布</h1>
-                <p class="count">(单位：B)</p>
-                <div class="dataList">暂无数据</div>
+                <h1>{{$t('DDOS.Statistical_forms.Attack_distribution')}}</h1>
+                <p class="count">({{$t('DDOS.Statistical_forms.SettingB')}})</p>
+                <div class="dataList">{{$t('DDOS.Statistical_forms.Nodate')}}</div>
               </div>
             </el-col>
             <el-col :span="8">
               <div class="colDivThree">
-                <h1>攻击包协议分布</h1>
-                <p class="count">(单位：packet)</p>
-                <div class="dataList">暂无数据</div>
+                <h1>{{$t('DDOS.Statistical_forms.Attack_pp_distribution')}}</h1>
+                <p class="count">({{$t('DDOS.Statistical_forms.Unit_packe')}})</p>
+                <div class="dataList">{{$t('DDOS.Statistical_forms.Nodate')}}</div>
               </div>
             </el-col>
             <el-col :span="8">
               <div class="colDivThree">
-                <h1>攻击类型分布</h1>
-                <p class="count">(单位：次)</p>
-                <div class="dataList">暂无数据</div>
+                <h1>{{$t('DDOS.Statistical_forms.Attack_typedistribution')}}</h1>
+                <p class="count">({{$t('DDOS.Statistical_forms.Unit_Times')}})</p>
+                <div class="dataList">{{$t('DDOS.Statistical_forms.Nodate')}}</div>
               </div>
             </el-col>
           </el-row>
         </div>
       </div>
       <div class="mainConListAll mainConListFour">
-        <h3>DDoS攻击详情</h3>
+        <h3>{{$t('DDOS.Statistical_forms.DDoS_details')}}</h3>
         <div class="ddosTableMin">
           <el-table
+            height="450"
+            v-loading="loading"
             :data="tableDataOfDescribeDDoSNetEvList.slice((currentPage-1)*pageSize,currentPage*pageSize)"
           >
-            <el-table-column prop="attackTime" label="攻击时间"></el-table-column>
-            <el-table-column prop="durnTime" label="持续时间"></el-table-column>
-            <el-table-column prop="attackType" label="攻击类型"></el-table-column>
-            <el-table-column prop="attackStatus" label="攻击状态"></el-table-column>
+            <el-table-column prop="attackTime" :label="$t('DDOS.Statistical_forms.Attack_time')"></el-table-column>
+            <el-table-column prop="durnTime" :label="$t('DDOS.Statistical_forms.Duration')"></el-table-column>
+            <el-table-column prop="attackType" :label="$t('DDOS.Statistical_forms.Type_ofattack')"></el-table-column>
+            <el-table-column prop="attackStatus" :label="$t('DDOS.Statistical_forms.Attack_state')"></el-table-column>
             <el-table-column prop="attackAction" label="操作" width="180">
               <template slot-scope>
                 <el-button type="text" size="small">操作</el-button>
@@ -104,13 +117,16 @@
   </div>
 </template>
 <script>
+import { GET_ID } from "@/constants";
 import moment from "moment";
 export default {
   data() {
     return {
+      loading: true,
       // 日期选择
       dateChoice1: {}, //选择日期
-      inputId: "net-00000010", //下拉框ID
+      IpList: "",
+      inputId: "", //下拉框ID
       timeBtnSelect2: "总览", //ddos时间按钮下面第二个下拉
       activeName1: "bps", //DDoS攻击防护-二级tab标识
       tableDataOfDescribeDDoSNetEvList: [], //DDoS攻击事件列表
@@ -154,7 +170,7 @@ export default {
       this.startTime = moment(value[0]).format("YYYY-MM-DD HH:mm:ss"); //格式处理
       this.endTime = moment(value[1]).format("YYYY-MM-DD HH:mm:ss"); //格式处理
       this.describeDDoSNetTrend(this.timey);
-      this.describeDDoSNetEvList()
+      this.describeDDoSNetEvList();
       for (let index in this.metricNames) {
         this.metricName2 = this.metricNames[index];
         this.describeDDoSNetCount();
@@ -166,9 +182,25 @@ export default {
   created() {
     this.describeResourceList(); //获取资源列表的接口单独调用（因为日期变更不需要调用此接口）
     this.getData();
+    this.GetID();
   },
 
   methods: {
+    //获取资源的IP列表
+    GetID() {
+      let params = {
+        Version: "2018-07-09",
+        Business: "net"
+      };
+      this.axios.post(GET_ID, params).then(res => {
+        let IpList = res.Response.Resource;
+        console.log(IpList);
+        for (let i = 0; i < IpList.length; i++) {
+          this.inputId = IpList[i].Id;
+          this.IpList = IpList[i].IpList;
+        }
+      });
+    },
     // DDOS资源Id变化时，重新获取数据
     changeId() {
       this.resourceId = this.inputId;
@@ -198,6 +230,7 @@ export default {
       this.axios.post("dayu2/DescribeDDoSNetEvList", params).then(res => {
         // console.log(res)
         this.tableDataOfDescribeDDoSNetEvList = res.Response.Data;
+        this.loading = false;
       });
     },
     // 1.2.获取高防IP专业版资源的DDoS攻击占比分析
@@ -212,7 +245,7 @@ export default {
         MetricName: this.metricName2 //指标，取值[traffic（攻击协议流量, 单位KB）, pkg（攻击协议报文数）, num（攻击事件次数）]
         // metricName2: "traffic",
       };
-      this.$axios.post("dayu2/DescribeDDoSNetCount", params).then(res => {
+      this.axios.post("dayu2/DescribeDDoSNetCount", params).then(res => {
         // console.log(res)
         if (this.metricName2 == "traffic") {
           this.traffictable = res.data;
@@ -235,7 +268,7 @@ export default {
         StartTime: this.startTime,
         EndTime: this.endTime
       };
-      this.$axios.post("dayu2/DescribeDDoSNetTrend", params).then(res => {
+      this.axios.post("dayu2/DescribeDDoSNetTrend", params).then(res => {
         if (this.metricName == "bps") {
           this.drawLine(res.Response.Data, date);
         } else {
@@ -252,7 +285,7 @@ export default {
       if (this.resourceId != "" && this.resourceId != null) {
         params["IdList.0"] = this.resourceId;
       }
-      this.$axios.post("dayu2/DescribeResourceList", params).then(res => {
+      this.axios.post("dayu2/DescribeResourceList", params).then(res => {
         // console.log(res)
       });
     },
@@ -346,11 +379,11 @@ export default {
         //ddos攻击-攻击流量带宽
       }
       this.describeDDoSNetTrend(this.timey);
-       for (let index in this.metricNames) {
+      for (let index in this.metricNames) {
         this.metricName2 = this.metricNames[index];
         this.describeDDoSNetCount();
       }
-      this.describeDDoSNetEvList()
+      this.describeDDoSNetEvList();
     },
     //时间按钮
     //计算时间间隔
@@ -385,6 +418,7 @@ export default {
       }
       arr.splice(arr.length - 1, 1);
       // 基于准备好的dom，初始化echarts实例
+      // console.log(arr)
       let myChart = this.$echarts.init(document.getElementById("myChart"));
       // 绘制图表
       myChart.setOption({
@@ -516,8 +550,101 @@ export default {
   }
 };
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
+.child >>> .el-tabs__nav-wrap {
+  padding: 0 !important;
+}
+.child >>> .el-tabs__item,
+.child >>> .is-active {
+  border-bottom: 1px #f2f2f2 solid !important;
+  border-radius: 0 !important;
+}
+.newClear:after {
+  display: block;
+  content: "";
+  clear: both;
+}
+::v-deep .el-range__icon {
+  line-height: 26px;
+}
+::v-deep .el-range-separator {
+  line-height: 26px;
+  width: 7%;
+}
+.child {
+  width: 100%;
+  padding: 20px;
+  box-sizing: border-box;
+}
+.mainConListAll {
+  background: white;
+  padding: 20px;
+  box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
+  box-sizing: border-box;
+  margin-bottom: 20px;
+}
 .ddosTableMin {
   min-height: 450px;
+}
+.buttonGroupAll {
+  float: left;
+  button {
+    height: 30px;
+    line-height: 30px;
+    padding: 0 16px;
+    border-radius: 0;
+  }
+}
+.newDataTime {
+  float: left;
+  height: 30px;
+  line-height: 30px;
+  border-radius: 0;
+  .el-input__icon {
+    line-height: 26px;
+  }
+  .el-range-separator {
+    line-height: 26px;
+    width: 7%;
+  }
+}
+.colDivThree {
+  h1 {
+    font-size: 16px;
+  }
+  h1,
+  p,
+  div {
+    text-align: center;
+    line-height: 40px;
+  }
+}
+.ddosAttackSelect1 {
+  width: 180px;
+  margin-right: 12px;
+  height: 30px;
+  ::v-deep div.el-input {
+    width: 180px;
+    height: 30px;
+    ::v-deep .el-input__inner {
+      width: 180px;
+      height: 30px;
+      line-height: 30px;
+      border-radius: 0;
+      font-size: 12px;
+    }
+  }
+}
+::v-deep .el-input__inner {
+  height: 30px;
+  line-height: 30px;
+  border-radius: 0;
+  font-size: 12px;
+}
+.tabListPage {
+  height: 50px;
+  text-align: right;
+  border-top: 1px solid #ddd;
+  padding-top: 8px;
 }
 </style>

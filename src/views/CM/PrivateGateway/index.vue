@@ -1,8 +1,8 @@
 <template>
   <div class="CM-wrap">
-    <Loading :show="loadShow" />
+    <!-- <Loading :show="loadShow" /> -->
     <!-- 城市按钮 -->
-    <div class="CVM-title">专线网关</div>
+    <div class="CVM-title">{{ $t('CVM.zxwg') }}</div>
     <div class="tool">
       <Cities
         :cities="cities"
@@ -18,6 +18,7 @@
         :searchInput="searchInput"
         @changeinput="changeinput"
         @clicksearch="clicksearch"
+        @exportExcel="exportExcel"
       ></SEARCH>
     </div>
     <!-- 表格 -->
@@ -26,8 +27,10 @@
         :data="ProTableData.slice((currpage - 1) * pagesize, currpage * pagesize)"
         height="550"
         style="width: 100%"
+        id="exportTable"
+        v-loading="loadShow"
       >
-        <el-table-column prop label="ID/名称 ">
+        <el-table-column prop l:label="$t('CVM.cloudDisk.mc')" >
           <template slot-scope="scope">
             <p>
               <a
@@ -38,7 +41,7 @@
             {{ scope.row.DirectConnectGatewayName}}
           </template>
         </el-table-column>
-        <el-table-column prop label="监控">
+        <el-table-column prop :label="$t('CVM.clBload.jk')">
           <template slot-scope="scope">
             <div class="a" @click="jump(scope.row.DirectConnectGatewayName)"></div>
             <!-- <a @click="jump(scope.row.InstanceId)"  :style="note">
@@ -46,7 +49,7 @@
             </a>-->
           </template>
         </el-table-column>
-        <el-table-column prop label="所属网络">
+        <el-table-column prop :label="$t('CVM.clBload.sswl')">
           <template slot-scope="scope">
             <p
               :class="scope.row.InstanceState==='RUNNING'?'green':scope.row.InstanceState==='STOPPED'?'red':'orange'"
@@ -54,14 +57,14 @@
           </template>
         </el-table-column>
 
-        <el-table-column prop label="创建时间">
+        <el-table-column prop :label="$t('CVM.clBload.cjsj')">
           <template slot-scope="scope">
             <p>{{scope.row.CreateTime}}</p>
           </template>
         </el-table-column>
-        <el-table-column prop label="网关类型">
+        <el-table-column prop :label="$t('CVM.clBload.wglx')">
           <template slot-scope="scope">
-      <p>{{instanceStatus[scope.row.GatewayType]}}</p>
+            <p>{{instanceStatus[scope.row.GatewayType]}}</p>
           </template>
         </el-table-column>
 
@@ -89,6 +92,8 @@
 </template>
 
 <script>
+import FileSaver from "file-saver";
+import XLSX from "xlsx";
 import Cities from "@/components/public/CITY";
 import SEARCH from "@/components/public/SEARCH";
 import Loading from "@/components/public/Loading";
@@ -105,14 +110,14 @@ export default {
         },
         {
           value: "direct-connect-gateway-name",
-          label: "网关名称"
+          label: "網關名稱"
         },
       ],
       //inp输入的值
       searchValue: "",
       //文字过滤
       instanceStatus: {
-        NORMAL: "标准型",
+        NORMAL: "標準型",
         NAT: "NAT型",
 
       },
@@ -140,6 +145,26 @@ export default {
     Loading
   },
   methods: {
+    //导出表格
+    exportExcel() {
+      /* generate workbook object from table */
+      var wb = XLSX.utils.table_to_book(document.querySelector("#exportTable"));
+      /* get binary string as output */
+      var wbout = XLSX.write(wb, {
+        bookType: "xlsx",
+        bookSST: true,
+        type: "array"
+      });
+      try {
+        FileSaver.saveAs(
+          new Blob([wbout], { type: "application/octet-stream" }),
+          "專線網關" + ".xlsx"
+        );
+      } catch (e) {
+        if (typeof console !== "undefined") console.log(e, wbout);
+      }
+      return wbout;
+    },
     // 获取城市列表
     GetCity() {
       this.axios.get(ALL_CITY).then(data => {
@@ -170,16 +195,17 @@ export default {
       this.searchInput = val;
       if (this.searchInput !== "" && this.searchValue !== "") {
         this.GetTabularData();
-      }else if(this.searchInput !== "" || this.searchValue !== "") {
+      } else if (this.searchInput !== "" || this.searchValue !== "") {
         this.GetTabularData();
         this.$message.error("请输入正确搜索信息");
-      }
-      else {
+      } else {
         this.$message.error("请输入正确搜索信息");
+       
       }
     },
     // 添加项目列表的表格数据
     GetTabularData() {
+      this.loadShow = true;
       const param = {
         Region: this.selectedRegion,
         Version: "2017-03-12",
@@ -191,17 +217,15 @@ export default {
         param["Filters.0.Values.0"] = this.searchInput;
       }
       // 获取表格数据
-      this.axios
-        .post(DCG_LIST, param)
-        .then(data => {
-          if (data.Response.Error == undefined) {
-            this.ProTableData = data.Response.DirectConnectGatewaySet;
-          } else {
-            this.$message.error(data.Response.Error.Message);
-            // this.ProTableData = []
-          }
-          this.loadShow = false;
-        })
+      this.axios.post(DCG_LIST, param).then(data => {
+        if (data.Response.Error == undefined) {
+          this.ProTableData = data.Response.DirectConnectGatewaySet;
+        } else {
+          this.$message.error(data.Response.Error.Message);
+          // this.ProTableData = []
+        }
+        this.loadShow = false;
+      });
     },
     handleSizeChange(val) {
       this.pagesize = val;

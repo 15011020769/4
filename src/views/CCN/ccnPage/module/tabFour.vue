@@ -23,13 +23,14 @@
         <el-table-column prop="UpdateTime" :label="$t('CCN.tabs.tab4tr5')" width></el-table-column>
         <el-table-column prop="operate" :label="$t('CCN.tabs.tab4tr6')" width>
           <template slot-scope="scope">
-            <!-- <el-switch v-model="value1"></el-switch> -->
             <el-switch
               style="display: block;"
               v-model="scope.row.Enabled"
-              @change="change(scope.row)"
               active-color="#13ce66"
-              inactive-color="#888">
+              inactive-color="#888"
+              disabled
+              @click.native="switchClick(scope.$index, scope.row)"
+            >
             </el-switch>
           </template>
         </el-table-column>
@@ -52,6 +53,7 @@
 
 <script>
 import { CCN_ROUTES, ENABLE_CCNROUTES, DISABLE_CCNROUTES } from "@/constants"
+import { timeout } from 'q'
 export default {
   data () {
     return {
@@ -66,7 +68,7 @@ export default {
     }
   },
   created () {
-    console.log(this.$route.query)
+    // console.log(this.$route.query)
     this.ccnId = this.$route.query.ccnId
     this.getData()
   },
@@ -79,37 +81,53 @@ export default {
       }
       // 查询-路由表
       this.axios.post(CCN_ROUTES, params).then(res => {
-        console.log(res)
+        // console.log(res)
         this.tableData = res.Response.RouteSet
         this.totalItems = res.Response.TotalCount
       })
     },
-    change: function (route) {
+    // 启用路由 询问按钮
+    switchClick: function (index, route) {
+      let str = route.Enabled?'关闭':'启用'
+      this.$confirm('是否确认'+ str + '路由？', '系统提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        callback: async action => {
+          if (action == 'confirm') {
+            this.setRouteEnabled(route)
+          }
+        }
+      })
+    },
+    // 设置路由状态
+    setRouteEnabled(route) {
       var params = {
         Version: '2017-03-12',
         Region: 'ap-taipei',
         CcnId: this.ccnId,
         'RouteIds.0': route.RouteId
       }
-      console.log(route)
-      if (route.Enabled) { // true启用
+      if (!route.Enabled) { // true启用
         this.axios.post(ENABLE_CCNROUTES, params).then(res => {
-          console.log(res)
+          // console.log(res)
         })
       } else { // false 禁用
-        this.axios.post('vpc2/DisableCcnRoutes', params).then(res => {
-          console.log(res)
+        this.axios.post(DISABLE_CCNROUTES, params).then(res => {
+          // console.log(res)
         })
       }
+      setTimeout(() => {
+        this.getData()
+      }, 1000); 
     },
     // 分页开始
     handleSizeChange(val) {
-      console.log(`每页 ${val} 条`);
+      // console.log(`每页 ${val} 条`);
       this.pageSize = val;
       this.handleCurrentChange(this.currentPage);
     },
     handleCurrentChange(val) {
-      console.log(`当前页: ${val}`);
+      // console.log(`当前页: ${val}`);
       this.currentPage = val;
     },
   }
@@ -160,7 +178,11 @@ export default {
     }
   }
   .tabListPage{
-    text-align:right
+    text-align:right;
+    background-color:#fff;
+    border-top:1px solid #ddd;
+    padding-top:8px;
+    height:50px;
   }
 }
 </style>

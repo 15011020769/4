@@ -3,7 +3,7 @@
     <HeadCom title="身份提供者" />
     <div class="cam_button">
       <el-row class="cam-lt">
-        <el-button type="primary" size="small" @click="NewUser">新建供应商</el-button>
+        <el-button type="primary" size="small" @click="NewUser">{{$t('CAM.strategy.newAdd')}}</el-button>
       </el-row>
     </div>
     <!-- 表格 -->
@@ -16,10 +16,10 @@
         tooltip-effect="dark"
         style="width: 100%; border:1px solid #ddd;padding-top: 8px;"
       >
-        <el-table-column prop="name" label="提供商名称" show-overflow-tooltip></el-table-column>
-        <el-table-column prop="description" label="提供商类型" show-overflow-tooltip></el-table-column>
-        <el-table-column prop="createTime" label="创建时间" show-overflow-tooltip></el-table-column>
-        <el-table-column prop="modifyTime" label="最后更新时间" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="name" :label="$t('CAM.strategy.peopleName')" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="description" :label="$t('CAM.strategy.peopleType')" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="createTime" :label="$t('CAM.userList.createTime')" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="modifyTime" :label="$t('CAM.strategy.lastCreateTime')" show-overflow-tooltip></el-table-column>
         <el-table-column label="操作" show-overflow-tooltip>
           <!-- &lt;!&ndash;<template slot-scope="scope">
           <el-button size="mini" type="text" ></el-button>
@@ -31,7 +31,7 @@
         style="background:#fff;padding:10px;display:flex;justify-content: space-between;line-height:30px"
       >
         <div>
-          <span style="font-size:12px;color:#888">已选 0 项，共 0 项</span>
+          <span style="font-size:12px;color:#888">{{$t('CAM.strategy.chooseStra')}} 0 项，共 0 项</span>
         </div>
         <div>
           <el-pagination
@@ -49,6 +49,7 @@
 </template>
 <script>
 import HeadCom from "../UserListNew/components/Head";
+import { LIST_Providers } from "@/constants";
 export default {
   data() {
     return {
@@ -79,12 +80,10 @@ export default {
     // 初始化方法。
     init() {
       let params = {
-        Action: "ListSAMLProviders",
         Version: "2019-01-16"
       };
-      let url = "cam2/ListSAMLProviders";
       this.axios
-        .post(url, params)
+        .post(LIST_Providers, params)
         .then(data => {
           this.tableData = data.Response.SAMLProviderSet;
           this.loading = false;

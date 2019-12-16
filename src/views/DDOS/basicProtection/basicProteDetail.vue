@@ -49,8 +49,6 @@ export default {
   data(){
     return {
       instance: {}, // 实例对象
-
-      basicName:'',//详情页tit
       basicSwitch:true,//开关
       httpNumber:'150QPS',
       httpRequestNum:[

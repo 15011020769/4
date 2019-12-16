@@ -1,27 +1,20 @@
 <template>
   <div class="wrap">
     <div class="top">
-      <span class="title-left">用户列表</span>
+      <span class="title-left">{{$t('CAM.userList.listTitle')}}</span>
     </div>
     <div class="explain">
-      <p style="font-weight:bold">如何查看更多信息?</p>
-      <p>访问管理对您的敏感信息进行安全升级保护，您可以点击列表中【详情】列下拉按钮【▶】查看用户的身份安全状态、已加入组以及消息订阅等更多信息。您也可以点击用户名进入用户详细信息中查看或编辑。</p>
+      <p style="font-weight:bold">{{$t('CAM.userList.listText')}}</p>
+      <p>{{$t('CAM.userList.listContext')}}</p>
     </div>
     <div class="operation">
       <!-- <button class="addUser" @click="addUser">新增用户</button> -->
-     <el-button type="primary" class="addUser" size="small" @click="addUser">新增用户</el-button>
-  
-     <el-select v-model="value" size="small" placeholder="请选择" @change="select" class="select">
-        <el-option
-          v-for="item in options"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value"
-        ></el-option>
-      </el-select>
+      <el-button type="primary" class="addUser" size="small" @click="addUser">{{$t('CAM.userList.listAdduser')}}</el-button>
+      <!-- <el-button type="primary" class="addUser" size="small" @click="addMoreUser">{{$t('CAM.userList.listAddMoreuser')}}</el-button> -->
+      <el-button type="primary" class="addUser" size="small" @click="deleteMoreUsers">{{$t('CAM.userList.listdeleteuser')}}</el-button>
 
       <el-input
-        placeholder="支持搜索用户名"
+        :placeholder="$t('CAM.userList.searchUser')"
         size="small"
         class="inputSearch"
         v-model="inpVal"
@@ -34,29 +27,27 @@
       <div class="wrapTwo">
         <el-table
           height="500"
-          :data="tableData.slice((currpage - 1) * pagesize, currpage * pagesize)"
-          @selection-change="handleSelectionChange"
-           v-loading="loading"
+          :data="tableData1"
+          @selection-change="selectDataChange"
+          v-loading="loading"
         >
           <el-table-column type="selection" width="55"></el-table-column>
-          <el-table-column type="expand" label="详情" width="50">
+          <el-table-column type="expand" :label="$t('CAM.userList.userDetils')" width="50">
             <template slot-scope="scope">
               <div class="form">
                 <el-form label-position="left" inline class="demo-table-expand" v-model="form">
+                  
                   <div class="detialsUser">
-                    <el-form-item label="用户组:"></el-form-item>
-                    <el-form-item label="用户名称:" class="Name">{{scope.row.Name}}</el-form-item>
-                    <el-form-item label="用户类型:">{{scope.row.Remark}}</el-form-item>
+                    <el-form-item :label="$t('CAM.userList.userId')">{{scope.row.Uin}}</el-form-item>
+                    <el-form-item :label="$t('CAM.userList.userChose')">{{scope.row.Remark}}</el-form-item>
                   </div>
                   <div class="detialsUser">
-                    <el-form-item label="账号ID:">{{scope.row.Uin}}</el-form-item>
-                    <el-form-item label="关联信息:"></el-form-item>
-                    <el-form-item label="登录保护:">
-                      <span style="color:red" class="s1">未开启保护</span>
-                    </el-form-item>
+                    <el-form-item
+                      :label="$t('CAM.userList.userName')"
+                      class="Name"
+                    >{{scope.row.Name}}</el-form-item>
                   </div>
-
-                  <div class="detialsUser">
+                  <!-- <div class="detialsUser">
                     <el-form-item label="消息订阅:"></el-form-item>
                     <el-form-item label="操作保护:">
                       <span style="color:red">未开启保护</span>
@@ -70,23 +61,23 @@
                     <el-form-item label="MFA设备:">
                       <span style="color:red">未绑定MFA设备</span>
                     </el-form-item>
-                  </div>
+                  </div>-->
                 </el-form>
               </div>
             </template>
           </el-table-column>
 
-          <el-table-column label="用户名称" prop="Name">
+          <el-table-column :label="$t('CAM.userList.userName')" prop="Name">
             <template slot-scope="scope">
               <el-link @click="detailsUser(scope.row)" type="primary">{{scope.row.Name}}</el-link>
             </template>
           </el-table-column>
 
-          <el-table-column label="用户类型" prop="Remark"></el-table-column>
+          <el-table-column :label="$t('CAM.userList.userChose')" prop="Remark"></el-table-column>
 
-          <el-table-column label="账号ID" prop="Uin"></el-table-column>
+          <el-table-column :label="$t('CAM.userList.userId')" prop="Uin"></el-table-column>
 
-          <el-table-column label="关联信息">
+          <el-table-column :label="$t('CAM.userList.userText')">
             <template slot-scope="scope">
               <i class="el-icon-mobile mobile" @click="detailsUser(scope.row)"></i>
               <i class="el-icon-message message" @click="detailsUser(scope.row)"></i>
@@ -94,25 +85,25 @@
           </el-table-column>
           <el-table-column label="操作" width="140">
             <template scope="scope">
-              <el-button type="text" @click="addRight(scope.row.Uin)">授权</el-button>
+              <el-button type="text" @click="addRight(scope.row.Uin)">{{$t('CAM.userList.userStrage')}}</el-button>
               <span>|</span>
               <el-dropdown :hide-on-click="false">
                 <span class="el-dropdown-link" style="color: #3E8EF7">
-                  更多
+                  {{$t('CAM.userList.userMore')}}
                   <i class="el-icon-arrow-down el-icon--right"></i>
                 </span>
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item>
-                    <el-button type="text" style="color:#000" @click="addRroup(scope.row.Uid)">添加到组</el-button>
+                    <el-button type="text" style="color:#000" @click="addRroup(scope.row.Uid)">{{$t('CAM.userList.userAddGroup')}}</el-button>
                   </el-dropdown-item>
                   <el-dropdown-item>
-                    <el-button type="text" style="color:#000" @click="bindMesg">订阅信息</el-button>
+                    <el-button type="text" style="color:#000" @click="bindMesg">{{$t('CAM.userList.userdep')}}</el-button>
                   </el-dropdown-item>
                   <el-button
                     type="text"
                     style="color:#000;padding-left:20px;"
                     @click="delUserRow(scope.row)"
-                  >删除</el-button>
+                  >{{$t('CAM.userList.userDel')}}</el-button>
                 </el-dropdown-menu>
               </el-dropdown>
             </template>
@@ -135,11 +126,11 @@
     <el-dialog :title="title" :visible.sync="authorization" width="60%" :before-close="handleClose">
       <div class="container" v-if="strategyShow">
         <div class="container-right">
-          <span>策略列表</span>
+          <span>{{$t('CAM.userList.strategyTitle')}}</span>
           <div>
             <el-input
               v-model="searchStrategyValue"
-              placeholder="搜索"
+              :placeholder="$t('CAM.userList.search')"
               size="small"
               class="inputSearchCl"
               @keyup.enter.native="searchStrategy"
@@ -161,15 +152,15 @@
             <el-input size="mini" style="width:20%" />
             <el-button size="mini" class="suo" icon="el-icon-search" show-overflow-tooltip></el-button>
             <el-table-column type="selection" width></el-table-column>
-            <el-table-column label="策略名" prop="Description"></el-table-column>
-            <el-table-column label="策略类型" prop="Type">
+            <el-table-column :label="$t('CAM.userList.strategyNames')" prop="Description"></el-table-column>
+            <el-table-column :label="$t('CAM.userList.strategyChose')" prop="Type">
               <template slot-scope="scope">{{scope.row.Type == '1'?'自定义策略':'预设策略'}}</template>
             </el-table-column>
           </el-table>
         </div>
 
         <div class="container-left">
-          <span>已选择</span>
+          <span>{{$t('CAM.userList.choose')}}</span>
           <el-table
             ref="multipleSelected"
             tooltip-effect="dark"
@@ -177,18 +168,18 @@
             style="width: 80%;border:1px solid #ddd"
             :data="userGroupSelect"
           >
-            <el-table-column label="策略名" prop="Description"></el-table-column>
-            <el-table-column label="策略类型" prop="Type">
+            <el-table-column :label="$t('CAM.userList.strategyNames')" prop="Description"></el-table-column>
+            <el-table-column :label="$t('CAM.userList.strategyChose')" prop="Type">
               <template slot-scope="scope">{{scope.row.Type == '1'?'自定义策略':'预设策略'}}</template>
             </el-table-column>
-            <el-table-column label="操作" show-overflow-tooltip>
+            <el-table-column :label="$t('CAM.userList.userCz')" show-overflow-tooltip>
               &lt;!&ndash;
               <template slot-scope="scope">
                 <el-button
                   @click.native.prevent="deleteRow(scope.$index,userGroupSelect)"
                   type="text"
                   size="small"
-                >移除</el-button>
+                >{{$t('CAM.userList.userRemove')}}</el-button>
               </template>&ndash;&gt;
             </el-table-column>
           </el-table>
@@ -197,11 +188,11 @@
 
       <div class="container" v-if="userGroupShow">
         <div class="container-right">
-          <span>用户列表</span>
+          <span>{{$t('CAM.userList.listTitle')}}</span>
           <div>
             <el-input
               v-model="searchGroupValue"
-              placeholder="搜索"
+              :placeholder="$t('CAM.userList.search')"
               size="small"
               class="inputSearchCl"
               @keyup.enter.native="searchGroup"
@@ -219,17 +210,17 @@
             @row-click="selectedRow"
             @selection-change="handleSelection"
             :data="userGroup"
-             v-loading="loading"
+            v-loading="loading"
           >
             <el-input size="mini" style="width:20%" />
             <el-button size="mini" class="suo" icon="el-icon-search" show-overflow-tooltip></el-button>
             <el-table-column type="selection" width></el-table-column>
-            <el-table-column label="用户组" prop="GroupName"></el-table-column>
+            <el-table-column :label="$t('CAM.userList.userGroup')" prop="GroupName"></el-table-column>
           </el-table>
         </div>
 
         <div class="container-left">
-          <span>已选择</span>
+          <span>{{$t('CAM.userList.choose')}}</span>
           <el-table
             ref="multipleSelected"
             tooltip-effect="dark"
@@ -237,68 +228,63 @@
             style="width: 80%;border:1px solid #ddd"
             :data="userGroupSelect"
           >
-            <el-table-column label="用户组" prop="GroupName"></el-table-column>
-            <el-table-column label="操作" show-overflow-tooltip>
+            <el-table-column :label="$t('CAM.userList.userGroup')" prop="GroupName"></el-table-column>
+            <el-table-column :label="$t('CAM.userList.userCz')" show-overflow-tooltip>
               &lt;!&ndash;
               <template slot-scope="scope">
                 <el-button
                   @click.native.prevent="deleteRow(scope.$index,userGroupSelect)"
                   type="text"
                   size="small"
-                >移除</el-button>
+                >{{$t('CAM.userList.userRemove')}}</el-button>
               </template>&ndash;&gt;
             </el-table-column>
           </el-table>
         </div>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="addUserList">确 定</el-button>
-        <el-button @click="authorization = false">取 消</el-button>
+        <el-button type="primary" @click="addUserList">{{$t('CAM.userList.suerAdd')}}</el-button>
+        <el-button @click="authorization = false">{{$t('CAM.userList.handClose')}}</el-button>
       </span>
     </el-dialog>
     <!-- <deleteDialog :dialogDeleteUser="flag" @suerClose="suerClose" @confirm="confirm" /> -->
     <el-dialog
-      :title="delTitle"
+      title="删除用户"
       :visible.sync="dialogDeleteUser"
       width="50%"
       :before-close="deleteRowHandl"
     >
-      <p>以下用户存在删除前置处理项 禁用并删除 API 密钥：</p>
+      <p>{{$t('CAM.userList.removeText')}}</p>
       <div class="explainDelet">
-        <p>需要您注意的是， API 密钥删除后无法恢复，请您确认清楚再进行删除。用户被删除后，该用户无法登录腾讯云以及接收消息通知，同时会解除关联权限。</p>
+        <p>{{$t('CAM.userList.removeContext')}}</p>
       </div>
-      <div v-if="delRowShow">
+      <div>
         <template>
           <el-table style="width: 100%" :data="delNewData">
-            <el-table-column label="用户名" width="180" prop="Name"></el-table-column>
-            <el-table-column prop="Uid" label="账户ID" width="180"></el-table-column>
-            <el-table-column label="密钥ID"></el-table-column>
-            <el-table-column label="创建时间"></el-table-column>
-            <el-table-column label="状态"></el-table-column>
-            <el-table-column label="操作"></el-table-column>
-          </el-table>
-        </template>
-      </div>
-      <div v-if="delMoreShow">
-        <template>
-          <el-table style="width: 100%" :data="JSON.parse(delData)">
-            <el-table-column label="用户名" width="180" prop="Name"></el-table-column>
-            <el-table-column prop="Uid" label="账户ID" width="180"></el-table-column>
-            <el-table-column label="密钥ID"></el-table-column>
-            <el-table-column label="创建时间"></el-table-column>
-            <el-table-column label="状态"></el-table-column>
-            <el-table-column label="操作"></el-table-column>
+            <el-table-column :label="$t('CAM.userList.userName')" width="180" prop="Name"></el-table-column>
+            <el-table-column prop="Uid" :label="$t('CAM.userList.userId')" width="180"></el-table-column>
+            <el-table-column :label="$t('CAM.userList.myId')"></el-table-column>
+            <el-table-column :label="$t('CAM.userList.createTime')"></el-table-column>
+            <el-table-column :label="$t('CAM.userList.userZt')"></el-table-column>
+            <el-table-column :label="$t('CAM.userList.userCz')"></el-table-column>
           </el-table>
         </template>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogDeleteUser = false">取 消</el-button>
-        <el-button type="primary" @click="suerDelUser">确 定</el-button>
+        <el-button @click="dialogDeleteUser = false">{{$t('CAM.userList.handClose')}}</el-button>
+        <el-button type="primary" @click="suerDelUser">{{$t('CAM.userList.suerAdd')}}</el-button>
       </span>
     </el-dialog>
-   
-    <Subscribe :subscribe="flag" @suerClose="suerClose"  @confirm="confirm" />
-    
+    <!-- 批量删除 -->
+    <el-dialog :title="$t('CAM.userList.removeMore')" :visible.sync="dialogVisible" width="30%" :before-close="handleCloses">
+      <span>{{$t('CAM.userList.suerRemove')}}</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">{{$t('CAM.userList.handClose')}}</el-button>
+        <el-button type="primary" @click="removeDeleteUser">{{$t('CAM.userList.suerAdd')}}</el-button>
+      </span>
+    </el-dialog>
+
+    <!-- <Subscribe :subscribe="flag" @suerClose="suerClose"  @confirm="confirm" /> -->
   </div>
 </template>
 <script>
@@ -317,11 +303,13 @@ export default {
   },
   data() {
     return {
+      dialogVisible: false,
       json: [],
       inpVal: "", //搜索
       flag: false, //删除弹框组件
       form: {}, //点击详情,form获取详情数据
       tableData: [], //用户列表数组
+      tableData1:[],
       inputShow: true, //select框禁用值
       authorization: false, //添加用户弹框
       title: "", //判断是添加策略还是添加到用户组
@@ -336,35 +324,55 @@ export default {
       Uid: "",
       deletDatas: [],
       dialogDeleteUser: false,
-      delTitle: "",
       delNewData: [],
-      delRowShow: false,
-      delMoreShow: false,
       deleteName: "",
       deleteRowName: "",
       selectData: [],
       deleteMoreUser: [],
+      selectCheckData:[],
       delUin: "",
-      loading:true,
-      options: [
-        {
-          value: 0,
-          label: "添加用户"
-        },
-        {
-          value: 1,
-          label: "删除"
-        }
-      ],
+      loading: true,
       pagesize: 10, // 分页条数
       currpage: 1, // 当前页码
       value: "" //更多操作多选值
     };
   },
   methods: {
+    deleteMoreUsers() {
+      console.log(this.selectData)
+      if (this.selectData.length != 0) {
+        this.dialogVisible = true;
+      } else {
+        this.$message("请选中数据");
+      }
+    },
+    removeDeleteUser() {
+      var checkIndex = [];
+      this.selectData.forEach(item => {
+        checkIndex.unshift(item)
+      });
+      checkIndex.forEach(item => {
+         let params = {
+           Version: "2019-01-16",
+           Name:item.Name
+         }
+         this.axios.post(DELETE_USER,params).then(res=>{
+           this.init()
+         })
+      })
+      this.dialogVisible = false;
+    },
+    //选框
+    selectDataChange(value) {
+      this.selectData = value;
+      this.inputShow = false;
+      // var checkData = []
+      // checkData.push(val)
+      // this.selectCheckData = checkData
+      // console.log(this.selectCheckData)
+    },
     suerDelUser() {
-      console.log(this.delTitle == "批量删除")
-      if (this.delTitle == "删除用户") {
+      console.log(11)
         let params = {
           Version: "2019-01-16",
           Name: this.deleteRowName
@@ -390,36 +398,14 @@ export default {
               });
           });
         this.dialogDeleteUser = false;
-      }
-      if (this.delTitle == "批量删除") {
-        var removeIndex = [];
-        this.selectData.forEach(item => {
-          removeIndex.unshift(item.Name);
-        });
-        console.log(this.delData)
-        removeIndex.forEach(item => {
-          let params = {
-            Version: "2019-01-16",
-            Name: item
-          };
-          this.axios.post(DELETE_USER, params).then(data => {
-            console.log(data);
-            this.init();
-          });
-        });
-        this.dialogDeleteUser = false;
-      }
     },
     delUserRow(val) {
       this.delUin = val.Uin;
       this.deleteRowName = val.Name;
-      this.delTitle = "删除用户";
       this.dialogDeleteUser = true;
       let newdelData = [];
       newdelData.push(val);
       this.delNewData = newdelData;
-      this.delRowShow = true;
-      this.delMoreShow = false;
     },
     //搜索
     userSearch() {
@@ -429,25 +415,27 @@ export default {
           arr.push(item);
         }
       });
-      this.tableData = arr;
+      console.log(arr)
+      this.tableData1 = arr;
     },
     userInpSearch() {
       if (this.inpVal == "") {
-        this.tableData = this.json;
+        this.tableData1 = this.json;
       }
     },
     //分页
     handleSizeChange(val) {
       this.pagesize = val;
       this.currpage = 1;
-      this.init();
+      // this.init();
+      this.tableData1 = this.tableData.slice((this.currpage - 1) * this.pagesize, this.currpage * this.pagesize)
     },
     handleCurrentChange(val) {
       this.currpage = val;
-      this.init();
+      // this.init();
       this.delRowShow = true;
-      this.delMoreShow = false;
       this.deleteName = val.Name;
+      this.tableData1 = this.tableData.slice((this.currpage - 1) * this.pagesize, this.currpage * this.pagesize)
     },
     //初始化用户列表数据
     init() {
@@ -455,18 +443,18 @@ export default {
         Version: "2019-01-16"
       };
       this.axios.post(USER_LIST, userList).then(data => {
-        if(data != ""){
+        if (data != "") {
           this.loading = false;
           this.tableData = data.Response.Data;
-          this.json = data.Response.Data;       
-        }else{
+          this.json = data.Response.Data;
+      this.tableData1 = this.tableData.slice((this.currpage - 1) * this.pagesize, this.currpage * this.pagesize)
+        } else {
           this.loading = false;
-            this.$message({
-              type: "info",
-              message: "无响应数据！"
-            });
+          this.$message({
+            type: "info",
+            message: "无响应数据！"
+          });
         }
-       
       });
     },
     //初始化策略数据
@@ -478,15 +466,15 @@ export default {
         params["Keyword"] = this.searchStrategyValue;
       }
       this.axios.post(POLICY_LIST, params).then(res => {
-        if(res != ""){
+        if (res != "") {
           this.loading = false;
-          this.strategyData = res.Response.List;     
-        }else{
+          this.strategyData = res.Response.List;
+        } else {
           this.loading = false;
-            this.$message({
-              type: "info",
-              message: "无响应数据！"
-            });
+          this.$message({
+            type: "info",
+            message: "无响应数据！"
+          });
         }
       });
     },
@@ -503,15 +491,15 @@ export default {
         params["Keyword"] = this.searchGroupValue;
       }
       this.axios.post(USER_GROUP, params).then(res => {
-        if(res != ""){
+        if (res != "") {
           this.loading = false;
-          this.userGroup = res.Response.GroupInfo; 
-        }else{
+          this.userGroup = res.Response.GroupInfo;
+        } else {
           this.loading = false;
-            this.$message({
-              type: "info",
-              message: "无响应数据！"
-            });
+          this.$message({
+            type: "info",
+            message: "无响应数据！"
+          });
         }
       });
     },
@@ -533,25 +521,6 @@ export default {
         }
       });
     },
-    //input弹框选择数据
-    select() {
-      if (this.selectData.length != 0) {
-        if (this.value == 0) {
-          this.authorization = true;
-          this.userGroupShow = true;
-          this.strategyShow = false;
-          this.userGroups();
-        }
-        if (this.value == 1) {
-          this.dialogDeleteUser = true;
-          this.delTitle = "批量删除";
-          this.delRowShow = false;
-          this.delMoreShow = true;
-        }
-      } else {
-        this.$message("请选择数据");
-      }
-    },
     //点击删除弹框显示
     deleteRowData(data) {
       this.flag = true;
@@ -559,13 +528,7 @@ export default {
       deletData.push(data);
       this.deletDatas = deletData;
     },
-    //选框
-    handleSelectionChange(val) {
-      this.selectData = val;
-      this.inputShow = false;
-      this.delData = JSON.stringify(val)
-      console.log(this.selectData)
-    },
+  
     //点击添加到组事件
     addRroup(uid) {
       this.Uid = uid;
@@ -617,12 +580,22 @@ export default {
             "Info.0.Uid": this.Uid,
             "Info.0.GroupId": item.GroupId
           };
-          this.axios.post(ADD_USERTOGROUP, params).then(res => {
-           });
+          this.axios.post(ADD_USERTOGROUP, params).then(res => {});
         });
         this.authorization = false;
       }
     },
+    //批量添加按钮
+    // addMoreUser() {
+    //   if (this.selectData.length != 0) {
+    //     this.title = "添加到组";
+    //     this.authorization = true;
+    //     this.userGroupShow = true;
+    //     this.strategyShow = false;
+    //   } else {
+    //     this.$message("请选择数据");
+    //   }
+    // },
     deleteRowHandl() {
       this.dialogDeleteUser = false;
     },
@@ -642,14 +615,20 @@ export default {
       // 给右边table框赋值，只需在此处赋值即可，selectedRow方法中不写，因为单独点击复选框，只有此方法有效。
       this.userGroupSelect = val;
     },
-    suerClose() {
-      this.flag = false;
-    },
-    confirm() {
-      this.flag = false;
-    },
+    // suerClose() {
+    //   this.flag = false;
+    // },
+    // confirm() {
+    //   this.flag = false;
+    // },
     bindMesg() {
-      this.flag = true;
+      this.$message({
+        type: "info",
+        message: "内测中..."
+      });
+    },
+    handleCloses(){
+      this.dialogVisible = false
     }
   },
   created() {
