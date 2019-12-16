@@ -133,7 +133,7 @@ export default {
       } else if(this.selectedSubarea == 'nat') {
         this.describeNatGateway()
       } else if(this.selectedSubarea == 'net') {
-        this.$message('此服务功能暂未实现！');
+        this.$message('此服务功能暂未开通！');
         this.tableDataBegin = this.allData
         this.totalItems = 0
       }
