@@ -15,7 +15,7 @@
         <span slot="title">站内信</span>
       </el-menu-item>
       <el-menu-item index="newsFeeds">
-        <span slot="title">消息订阅</span>
+        <span slot="title">通知公告</span>
       </el-menu-item>
     </el-menu>
   </div>
