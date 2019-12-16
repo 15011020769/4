@@ -17,14 +17,21 @@
           </div>
           <div class="mainContent">
             <div class="topCreateSelect">
-              <el-button class="newCreate" @click="newCreate">{{$t('DDOS.AccesstoCon.addNewAccess')}}</el-button>
+              <el-button
+                class="newCreate"
+                @click="newCreate"
+              >{{$t('DDOS.AccesstoCon.addNewAccess')}}</el-button>
               <el-dropdown trigger="click" class="ddosAttackSelect1 ddosAttackSelect2">
                 <span class="el-dropdown-link">
                   {{$t('DDOS.AccesstoCon.BulkImport')}}
-                  <i class="el-icon-caret-bottom el-icon--right"></i>
+                  <i
+                    class="el-icon-caret-bottom el-icon--right"
+                  ></i>
                 </span>
                 <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item @click.native="batchImport">{{$t('DDOS.AccesstoCon.Importforward')}}</el-dropdown-item>
+                  <el-dropdown-item
+                    @click.native="batchImport"
+                  >{{$t('DDOS.AccesstoCon.Importforward')}}</el-dropdown-item>
                   <el-dropdown-item disabled>{{$t('DDOS.AccesstoCon.ImportTitle')}}</el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
@@ -34,7 +41,9 @@
                   <i class="el-icon-caret-bottom el-icon--right"></i>
                 </span>
                 <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item @click.native="batchExport">{{$t('DDOS.AccesstoCon.ImportforwardOut')}}</el-dropdown-item>
+                  <el-dropdown-item
+                    @click.native="batchExport"
+                  >{{$t('DDOS.AccesstoCon.ImportforwardOut')}}</el-dropdown-item>
                   <el-dropdown-item disabled>{{$t('DDOS.AccesstoCon.ImportTitleIn')}}</el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
@@ -45,6 +54,7 @@
               :data="tableDataBegin.slice((currentPage-1)*pageSize,currentPage*pageSize)"
               ref="multipleTable"
               @selection-change="handleSelectionChange"
+              v-loading="loading"
             >
               <el-table-column type="selection" width="55"></el-table-column>
               <el-table-column prop="RuleName" :label="$t('DDOS.AccesstoCon.businessDoma')">
@@ -88,8 +98,16 @@
               </el-table-column>
               <el-table-column prop="attackAction" label="操作" width="180">
                 <template slot-scope="scope">
-                  <el-button type="text" size="small" @click="editAccess(scope.row)">{{$t('DDOS.AccesstoCon.AccUpdate')}}</el-button>
-                  <el-button type="text" size="small" @click="copyAccess(scope.row)">{{$t('DDOS.AccesstoCon.AccClone')}}</el-button>
+                  <el-button
+                    type="text"
+                    size="small"
+                    @click="editAccess(scope.row)"
+                  >{{$t('DDOS.AccesstoCon.AccUpdate')}}</el-button>
+                  <el-button
+                    type="text"
+                    size="small"
+                    @click="copyAccess(scope.row)"
+                  >{{$t('DDOS.AccesstoCon.AccClone')}}</el-button>
                   <el-button
                     type="text"
                     size="small"
@@ -179,6 +197,7 @@ import { RESOURCE_LIST, L4_RULES, L4DEL_CREATE, GET_ID } from "@/constants";
 export default {
   data() {
     return {
+      loading: true,
       activeName: "first", //tab
       resourceId: "", //资源ID，输入要查询的ID或名称
       tableDataBegin: [], //table绑定数据，L4规则列表
@@ -244,6 +263,7 @@ export default {
         this.tableDataBegin = res.Response.Rules;
         this.totalItems = res.Response.Total;
         this.usedNum = res.Response.Total;
+        this.loading = false;
       });
     },
     //获取资源的IP列表
@@ -532,10 +552,10 @@ button.allDeleteBtn {
 .tableListA {
   min-height: 450px;
 }
-.tabListPage{
-  height:50px;
-  border-top:1px solid #ddd;
-  padding-top:8px;
-  text-align:right;
+.tabListPage {
+  height: 50px;
+  border-top: 1px solid #ddd;
+  padding-top: 8px;
+  text-align: right;
 }
 </style>

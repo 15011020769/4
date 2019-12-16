@@ -7,8 +7,14 @@
       >
         <div class="newClear">
           <el-button-group class="buttonGroupAll">
-            <el-button class="buttonGroup" @click="thisTime(1)">{{$t('DDOS.Statistical_forms.Today')}}</el-button>
-            <el-button class="buttonGroup" @click="thisTime(2)">{{$t('DDOS.Statistical_forms.Nearly_sedays')}}</el-button>
+            <el-button
+              class="buttonGroup"
+              @click="thisTime(1)"
+            >{{$t('DDOS.Statistical_forms.Today')}}</el-button>
+            <el-button
+              class="buttonGroup"
+              @click="thisTime(2)"
+            >{{$t('DDOS.Statistical_forms.Nearly_sedays')}}</el-button>
             <el-button class="buttonGroup" @click="thisTime(3)">近15天</el-button>
             <el-button class="buttonGroup" @click="thisTime(4)">近30天</el-button>
             <el-button class="buttonGroup" @click="thisTime(5)">近半年</el-button>
@@ -79,6 +85,8 @@
         <h3>{{$t('DDOS.Statistical_forms.DDoS_details')}}</h3>
         <div class="ddosTableMin">
           <el-table
+            height="450"
+            v-loading="loading"
             :data="tableDataOfDescribeDDoSNetEvList.slice((currentPage-1)*pageSize,currentPage*pageSize)"
           >
             <el-table-column prop="attackTime" :label="$t('DDOS.Statistical_forms.Attack_time')"></el-table-column>
@@ -114,6 +122,7 @@ import moment from "moment";
 export default {
   data() {
     return {
+      loading: true,
       // 日期选择
       dateChoice1: {}, //选择日期
       IpList: "",
@@ -221,6 +230,7 @@ export default {
       this.axios.post("dayu2/DescribeDDoSNetEvList", params).then(res => {
         // console.log(res)
         this.tableDataOfDescribeDDoSNetEvList = res.Response.Data;
+        this.loading = false;
       });
     },
     // 1.2.获取高防IP专业版资源的DDoS攻击占比分析
@@ -541,7 +551,7 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-.child >>> .el-tabs__nav-wrap{
+.child >>> .el-tabs__nav-wrap {
   padding: 0 !important;
 }
 .child >>> .el-tabs__item,
@@ -551,15 +561,15 @@ export default {
 }
 .newClear:after {
   display: block;
-  content:'';
-  clear:both;
+  content: "";
+  clear: both;
 }
-::v-deep .el-range__icon{
+::v-deep .el-range__icon {
   line-height: 26px;
 }
-::v-deep .el-range-separator{
+::v-deep .el-range-separator {
   line-height: 26px;
-  width:7%;
+  width: 7%;
 }
 .child {
   width: 100%;
@@ -598,41 +608,43 @@ export default {
     width: 7%;
   }
 }
-.colDivThree{
-  h1{
+.colDivThree {
+  h1 {
     font-size: 16px;
   }
-  h1,p,div{
+  h1,
+  p,
+  div {
     text-align: center;
     line-height: 40px;
   }
 }
 .ddosAttackSelect1 {
+  width: 180px;
+  margin-right: 12px;
+  height: 30px;
+  ::v-deep div.el-input {
     width: 180px;
-    margin-right: 12px;
-    height:30px;
-    ::v-deep div.el-input {
+    height: 30px;
+    ::v-deep .el-input__inner {
       width: 180px;
-      height:30px;
-      ::v-deep .el-input__inner {
-        width: 180px;
-        height: 30px;
-        line-height:30px;
-        border-radius: 0;
-        font-size: 12px;
-      }
+      height: 30px;
+      line-height: 30px;
+      border-radius: 0;
+      font-size: 12px;
     }
   }
-  ::v-deep .el-input__inner {
-    height: 30px;
-    line-height:30px;
-    border-radius: 0;
-    font-size: 12px;
-  }
-  .tabListPage{
-    height:50px;
-    text-align:right;
-    border-top:1px solid #ddd;
-    padding-top:8px;
-  }
+}
+::v-deep .el-input__inner {
+  height: 30px;
+  line-height: 30px;
+  border-radius: 0;
+  font-size: 12px;
+}
+.tabListPage {
+  height: 50px;
+  text-align: right;
+  border-top: 1px solid #ddd;
+  padding-top: 8px;
+}
 </style>

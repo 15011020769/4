@@ -37,7 +37,7 @@
             <!-- 业务列表 -->
 
 
-            <el-table :data="resourceList.slice((currentPage-1)*pageSize,currentPage*pageSize)" v-if="listResouse=='resourceList'?false:true">
+            <el-table :data="resourceList.slice((currentPage-1)*pageSize,currentPage*pageSize)" v-if="listResouse=='resourceList'?false:true" v-loading='loading'>
               <el-table-column prop="Record" label="CNAME/ID">
 
               <template slot-scope="scope" >
@@ -59,16 +59,9 @@
                 </template>
               </el-table-column>
               <el-table-column prop="nowIp" :label="$t('DDOS.AssetList.currentIp')">
-
-               <template slot-scope="scope" >
-                      <span v-for="(item,index) in scope.row.Record" >
-                        <a v-if="item.Key=='GroupIpList'" @click="toDoDetailResouse(scope.row)">{{item.Value}}<br></a>
-                      </span>
-                    </template>
-                  </el-table-column>
-
-
-
+                <template slot-scope="scope">
+                  <span v-for="(item,index) in scope.row.Record"><a v-if="item.Key=='GroupIpList'" @click="toDoDetailResouse(scope.row)">{{item.Value}}<br></a></span>
+                </template>
               </el-table-column>
               <el-table-column prop="backSelf" :label="$t('DDOS.AssetList.AutomaticBack')">
                 <template slot-scope="scope">
@@ -87,7 +80,7 @@
               </el-table-column>
             </el-table>
             <!-- 资源列表 -->
-            <el-table :data="resourceList.slice((currentPage-1)*pageSize,currentPage*pageSize)" v-if="listResouse!='resourceList'?false:true">
+            <el-table :data="resourceList.slice((currentPage-1)*pageSize,currentPage*pageSize)" v-if="listResouse!='resourceList'?false:true" v-loding='loading'>
                 <el-table-column prop="Record" :label="$t('DDOS.AssetList.AssetListName')">
                     <template slot-scope="scope" >
                       <span v-for="(item,index) in scope.row.Record" >
@@ -196,6 +189,7 @@ import yewuListModel from "./model/yewuListModel";
 export default {
   data() {
     return {
+      loading:true,
       activeName: "first",
       tableDataBegin: [], //业务列表table
       tableDataBegin1: [], //资源列表table
@@ -325,6 +319,7 @@ export default {
         } else {
           this.tableDataEnd = this.resourceList;
         }
+        this.loading = false;
       });
     },
 
