@@ -2,6 +2,7 @@
   <div class="header">
     <i class="el-icon-back" v-show="backShow" @click="back"></i>
     {{title}}
+    <slot></slot>
   </div>
 </template>
 
