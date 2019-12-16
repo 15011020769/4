@@ -73,7 +73,7 @@
               <li @click="testFun">{{$t("COM.gaap")}}</li>
             </ul>
             <ul>
-              <li class="li-title">Serveless</li>
+              <li class="li-title">Serverless</li>
               <li class="li-sub" @click="go('../SCF/index.html#/overView')">{{$t("COM.scf")}}</li>
             </ul>
             <ul>
