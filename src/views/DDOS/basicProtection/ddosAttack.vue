@@ -111,7 +111,6 @@ export default {
       this.thisTime(1);
       this.describeDDoSEvList();
     },
-
     getIp() {
       this.ddosAttack = JSON.parse(localStorage.getItem("ddosAttack"));
     },
@@ -120,7 +119,7 @@ export default {
       let params = {
         Version: "2018-07-09",
         Business: this.business,
-        Ip: this.ddosAttack.Ip,
+        Ip: this.ddosAttack['Ip.0'],
         MetricName: this.metricName,
         Period: this.period,
         StartTime: this.startTime,
@@ -140,7 +139,7 @@ export default {
         Business: this.business,
         StartTime: this.startTime,
         EndTime: this.endTime,
-        "IpList.0": this.ddosAttack.Ip
+        "IpList.0": this.ddosAttack['Ip.0']
       };
       this.axios.post(DDOS_EV_LIST, params).then(res => {
         // console.log(res)

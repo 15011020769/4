@@ -327,12 +327,38 @@ export default {
     },
     //跳转详情页
     toDoDetail(basicRow) {
-      this.$router.push({
-        path: "/basicProteDetail",
-        query: {
-          instance: JSON.stringify(basicRow)
+      let insTemp = {}
+      // 判断专区类型，转换传参对象
+      if (this.selectedSubarea == 'cvm') {
+        insTemp['Id'] = basicRow.InstanceId
+        insTemp['Name'] = basicRow.InstanceName
+        for (let i in basicRow.PublicIpAddresses) {
+          insTemp['Ip.' + i] = basicRow.PublicIpAddresses[i]
         }
-      });
+      } else if (this.selectedSubarea == 'clb') {
+        insTemp['Id'] = basicRow.LoadBalancerId
+        insTemp['Name'] = basicRow.LoadBalancerName
+        for (let i in basicRow.LoadBalancerVips) {
+          insTemp['Ip.' + i] = basicRow.LoadBalancerVips[i]
+        }
+      } else if (this.selectedSubarea == 'nat') {
+        insTemp['Id'] = basicRow.NatGatewayId
+        insTemp['Name'] = basicRow.NatGatewayName
+        for (let i in basicRow.PublicIpAddressSet) {
+          insTemp['Ip.' + i] = basicRow.PublicIpAddressSet[i].PublicIpAddress
+        }
+      }
+      // 判断IP地址
+      if (insTemp['Ip.0'] == null | insTemp['Ip.0'] == '') {
+        // console.log('No Ip')
+      } else {
+        this.$router.push({
+          path: "/basicProteDetail",
+          query: {
+            instance: JSON.stringify(insTemp)
+          }
+        });
+      }
     }
   }
 };
