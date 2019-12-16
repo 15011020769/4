@@ -160,7 +160,7 @@
     border-radius: 0;
   }
 
-  .newClear {
+  .newClear:after {
     content: "";
     display: block;
     clear: both;

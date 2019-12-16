@@ -59,7 +59,12 @@ export default {
     },
     //立即购买按钮
     buyImmediate(){
+      this.dialogModel=false;
       this.$emit("buyDominPacModelClose",this.dialogModel)
+    },
+    //监测数量改变、
+    handleChange(){
+
     }
   }
 }

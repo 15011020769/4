@@ -549,8 +549,10 @@ export default {
   border-bottom: 1px #f2f2f2 solid !important;
   border-radius: 0 !important;
 }
-.newClear {
-  display: flex;
+.newClear:after {
+  display: block;
+  content:'';
+  clear:both;
 }
 .child {
   width: 100%;
@@ -598,4 +600,32 @@ export default {
     line-height: 40px;
   }
 }
+.ddosAttackSelect1 {
+    width: 180px;
+    margin-right: 12px;
+    height:30px;
+    ::v-deep div.el-input {
+      width: 180px;
+      height:30px;
+      ::v-deep .el-input__inner {
+        width: 180px;
+        height: 30px;
+        line-height:30px;
+        border-radius: 0;
+        font-size: 12px;
+      }
+    }
+  }
+  ::v-deep .el-input__inner {
+    height: 30px;
+    line-height:30px;
+    border-radius: 0;
+    font-size: 12px;
+  }
+  .tabListPage{
+    height:50px;
+    text-align:right;
+    border-top:1px solid #ddd;
+    padding-top:8px;
+  }
 </style>

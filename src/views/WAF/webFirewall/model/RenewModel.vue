@@ -49,7 +49,7 @@
           </div>
         </div>
         <span slot="footer" class="dialog-footer">
-          <el-button class="buyImmediate" @click="buyImmediate">立即续费</el-button>
+          <el-button class="buyImmediate" @click="renewImmediate">立即续费</el-button>
           <el-button @click="handleClose">取 消</el-button>
         </span>
       </el-dialog>
