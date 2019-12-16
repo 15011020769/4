@@ -31,38 +31,57 @@
           <el-table :data="tableDataBegin.slice((currentPage-1)*pageSize,currentPage*pageSize)">
             <el-table-column prop="Name" label="主机名">
               <template slot-scope="scope">
-                <a href="#" @click="toDoDetail(scope.$index, scope.row)">{{scope.row.Name}}</a>
+                <a href="#" v-if="selectedSubarea=='cvm'" @click="toDoDetail(scope.row)">{{scope.row.InstanceName}}</a>
+                <a href="#" v-else-if="selectedSubarea=='clb'" @click="toDoDetail(scope.row)">{{scope.row.LoadBalancerName}}</a>
+                <a href="#" v-else-if="selectedSubarea=='nat'" @click="toDoDetail(scope.row)">{{scope.row.NatGatewayName}}</a>
               </template>
             </el-table-column>
             <el-table-column prop="IP" label="绑定IP">
               <template slot-scope="scope">
-                <div v-if="scope.row.Ip != undefined">{{scope.row.Ip}}</div>
-                <div v-else>-</div>
+                <div v-if="selectedSubarea=='cvm'">
+                  <span v-for="item in scope.row.PublicIpAddresses" :key="item">{{item}}</span>
+                </div>
+                <div v-else-if="selectedSubarea=='clb'">
+                  <span v-for="item in scope.row.LoadBalancerVips" :key="item">{{item}}</span>
+                </div>
+                <div v-else-if="selectedSubarea=='nat'">
+                  <span v-for="item in scope.row.PublicIpAddressSet" :key="item">{{item.PublicIpAddress}}</span>
+                </div>
               </template>
             </el-table-column>
             <el-table-column prop="InstanceType" label="主机类型">
-              云主机
-              <!-- <template slot-scope="scope">{{scope.row.InstanceType}}</template> -->
+              <span v-if="selectedSubarea=='cvm'">云主机</span>
+              <span v-else-if="selectedSubarea=='clb'">负载均衡</span>
+              <span v-else-if="selectedSubarea=='nat'">NAT</span>
+              <span v-else-if="selectedSubarea=='net'">互联网</span>
             </el-table-column>
             <el-table-column prop="Status" label="安全状态">
               <template slot-scope="scope">
-                <div v-if="scope.row.Status == 'NORMAL' | scope.row.Status == '1'">正常</div>
-                <div v-else-if="scope.row.Status == 'EXPIRED'">过期</div>
-                <div v-else-if="scope.row.Status == 'PROTECTIVELY_ISOLATED'">被安全隔离</div>
-                <div v-else-if="scope.row.Status == 'PENDING'">生产中</div>
-                <div v-else-if="scope.row.Status == 'DELETING'">删除中</div>
-                <div v-else-if="scope.row.Status == 'AVAILABLE'">运行中</div>
-                <div v-else-if="scope.row.Status == 'UPDATING'">升级中</div>
-                <div v-else-if="scope.row.Status == 'FAILED'">失败</div>
+                <div v-if="selectedSubarea=='cvm'">
+                  <span v-if="scope.row.InstanceState == 'PENDING'">创建中</span>
+                  <span v-else-if="scope.row.InstanceState == 'LAUNCH_FAILED'">创建失败</span>
+                  <span v-else-if="scope.row.InstanceState == 'RUNNING'">运行中</span>
+                  <span v-else-if="scope.row.InstanceState == 'STOPPED'">关机</span>
+                  <span v-else-if="scope.row.InstanceState == 'STARTING'">开机中</span>
+                  <span v-else-if="scope.row.InstanceState == 'STOPPING'">关机中</span>
+                  <span v-else-if="scope.row.InstanceState == 'REBOOTING'">重启中</span>
+                  <span v-else-if="scope.row.InstanceState == 'SHUTDOWN'">停止待销毁</span>
+                  <span v-else-if="scope.row.InstanceState == 'TERMINATING'">销毁中</span>
+                </div>
+                <div v-else-if="selectedSubarea=='clb'">
+                  <span v-if="scope.row.Status == '0'">创建中</span>
+                  <span v-else-if="scope.row.Status == '1'">正常运行</span>
+                </div>
+                <div v-else-if="selectedSubarea=='nat'">
+                  <span v-if="scope.row.State == 'PENDING'">生产中</span>
+                  <span v-else-if="scope.row.State == 'DELETING'">删除中</span>
+                  <span v-else-if="scope.row.State == 'AVAILABLE'">运行中</span>
+                  <span v-else-if="scope.row.State == 'UPDATING'">升级中</span>
+                  <span v-else-if="scope.row.State == 'FAILED'">失败</span>
+                </div>
               </template>
             </el-table-column>
-            <!-- <el-table-column prop="" label="操作" width="180">
-                <el-button
-                  type="text"
-                  size="small"
-                  @click="buyBgp"
-                >升级防护</el-button>
-            </el-table-column> -->
+            <!-- 操作：升级防护 跳转页面为BGP高防包，不涉及此功能 -->
           </el-table>
         </div>
         <div class="tabListPage">
@@ -145,18 +164,11 @@ export default {
         Region: this.selectedRegion,
       }
       this.axios.post(CVM_INSTANCES, params).then(res => {
-        console.log(params, res)
+        // console.log(params, res)
         if (res.Response.Error == undefined) {
-          for(let i in res.Response.InstanceSet) {
-            let ins = {Id: '', Name: '', Ip: '', Status: ''}
-            ins.Id = res.Response.InstanceSet[i].InstanceId
-            ins.Name = res.Response.InstanceSet[i].InstanceName
-            ins.Ip = res.Response.InstanceSet[i].PublicIpAddresses[0]
-            ins.Status = res.Response.InstanceSet[i].RestrictState
-            this.allData.push(ins)
-          }
-          this.tableDataBegin = this.allData;
-          this.totalItems = this.tableDataBegin.length
+          this.allData = res.Response.InstanceSet
+          this.tableDataBegin = res.Response.InstanceSet
+          this.totalItems = res.Response.TotalCount
         } else {
           this.$message.error(res.Response.Error.Message);
         }
@@ -169,17 +181,11 @@ export default {
         Region: this.selectedRegion
       }
       this.axios.post(CLB_LIST, params).then(res => {
+        // console.log(params, res)
         if (res.Response.Error == undefined) {
-          for(let i in res.Response.LoadBalancerSet) {
-            let ins = {Id: '', Name: '', Ip: '', Status: ''}
-            ins.Id = res.Response.LoadBalancerSet[i].LoadBalancerId
-            ins.Name = res.Response.LoadBalancerSet[i].LoadBalancerName
-            ins.Ip = res.Response.LoadBalancerSet[i].LoadBalancerVips[0]
-            ins.Status = res.Response.LoadBalancerSet[i].Status
-            this.allData.push(ins)
-          }
-          this.tableDataBegin = this.allData
-          this.totalItems = this.tableDataBegin.length
+          this.allData = res.Response.LoadBalancerSet
+          this.tableDataBegin = res.Response.LoadBalancerSet
+          this.totalItems = res.Response.TotalCount
         } else {
           this.$message.error(res.Response.Error.Message);
         }
@@ -192,17 +198,11 @@ export default {
         Region: this.selectedRegion,
       }
       this.axios.post(NAT_LIST, params).then(res => {
+        // console.log(params, res)
         if (res.Response.Error == undefined) {
-          for(let i in res.Response.NatGatewaySet) {
-            let ins = {Id: '', Name: '', Ip: '', Status: ''}
-            ins.Id = res.Response.NatGatewaySet[i].NatGatewayId
-            ins.Name = res.Response.NatGatewaySet[i].NatGatewayName
-            ins.Ip = res.Response.NatGatewaySet[i].PublicIpAddressSet[0].PublicIpAddress
-            ins.Status = res.Response.NatGatewaySet[i].State
-            this.allData.push(ins)
-          }
-          this.tableDataBegin = this.allData
-          this.totalItems = this.tableDataBegin.length
+          this.allData = res.Response.NatGatewaySet
+          this.tableDataBegin = res.Response.NatGatewaySet
+          this.totalItems = res.Response.TotalCount
         } else {
           this.$message.error(res.Response.Error.Message);
         }
@@ -215,10 +215,30 @@ export default {
         this.tableDataBegin = new Array()
         this.filterTableDataEnd = new Array()
         this.allData.forEach((val, index) => {
-          if (val.Name == this.searchInputVal) {
-            this.filterTableDataEnd.push(val)
-          } else if (arr.Ip == this.searchInputVal) {
-            this.filterTableDataEnd.push(val)
+          if(this.selectedSubarea == 'cvm') {
+            if (val.InstanceName == this.searchInputVal) {
+              this.filterTableDataEnd.push(val)
+            } else if (this.searchInputVal.indexOf(val.PublicIpAddresses)>-1) {
+              this.filterTableDataEnd.push(val)
+            }
+          } else if(this.selectedSubarea == 'clb') {
+            if (val.LoadBalancerName == this.searchInputVal) {
+              this.filterTableDataEnd.push(val)
+            } else if (this.searchInputVal.indexOf(val.LoadBalancerVips)>-1) {
+              this.filterTableDataEnd.push(val)
+            }
+          } else if(this.selectedSubarea == 'nat') {
+            if (val.NatGatewayName == this.searchInputVal) {
+              this.filterTableDataEnd.push(val)
+            }
+            for (let i in val.PublicIpAddressSet) {
+              if (this.searchInputVal == val.PublicIpAddressSet[i].PublicIpAddress){
+                this.filterTableDataEnd.push(val)
+                break
+              }
+            }
+          } else if(this.selectedSubarea == 'net') {
+            // 未找到接口
           }
         })
         this.tableDataBegin = this.filterTableDataEnd
@@ -249,19 +269,15 @@ export default {
       this.$cookie.set("regionv2", city.Region);
       this.getData();
     },
-    // 升级防护
-    // buyBgp() {
-    //   console.log('升级防护')
-    // },
     
     // 分页开始
     handleSizeChange(val) {
-      console.log(`每页 ${val} 条`);
+      // console.log(`每页 ${val} 条`);
       this.pageSize = val;
       this.handleCurrentChange(this.currentPage);
     },
     handleCurrentChange(val) {
-      console.log(`当前页: ${val}`);
+      // console.log(`当前页: ${val}`);
       this.currentPage = val;
       //需要判断是否检索
       if (!this.flag) {
@@ -281,7 +297,7 @@ export default {
       }
     },
     //跳转详情页
-    toDoDetail(basicIndex,basicRow){
+    toDoDetail(basicRow){
       this.$router.push({
         path: "/basicProteDetail",
         query: {
