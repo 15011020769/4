@@ -58,22 +58,22 @@ export default new Router({
     },
     //新策略添加到用户
     {
-       path:"/addPolicyToUser",
-       name:"addPolicyToUser",
-       component:() => import(/* webpackChunkName: "detailsUser" */ './UserListNew/module/addPolicyToUser'),
-       meta: {
+      path: "/addPolicyToUser",
+      name: "addPolicyToUser",
+      component: () => import( /* webpackChunkName: "detailsUser" */ './UserListNew/module/addPolicyToUser'),
+      meta: {
         keepAlive: true
       }
     },
     //新用户添加到用户组
     {
-      path:"/addGroup",
-      name:"addGroup",
-      component:() => import(/* webpackChunkName: "detailsUser" */ './UserListNew/module/addGroup'),
+      path: "/addGroup",
+      name: "addGroup",
+      component: () => import( /* webpackChunkName: "detailsUser" */ './UserListNew/module/addGroup'),
       meta: {
-       keepAlive: true
-     }
-   },
+        keepAlive: true
+      }
+    },
     {
       path: '/UserList', // 用户列表
       name: 'UserList',
