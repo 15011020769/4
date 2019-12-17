@@ -25,14 +25,14 @@
             <i slot="suffix" class="el-input__icon el-icon-search"></i>
           </el-input> -->
           
-           <el-input style="width:20%" :placeholder="$t('CAM.Role.searchRole')" size="small"  v-model="searchValue"  @keyup.enter.native="changePolicyScope">
-                       <i slot="suffix" class="el-input__icon el-icon-search"  @click="changePolicyScope"></i>
+           <el-input style="width:20%" :placeholder="$t('CAM.Role.searchRole')" size="small"  v-model="searchValue" @keyup.enter.native="toQuery">
+                       <i slot="suffix" class="el-input__icon el-icon-search"   @click="toQuery"></i>
            </el-input>
         </div>
         <div class="table">
           <el-table
-            :data="tableData"
-            height="610"
+            :data="tableData.slice((currpage - 1) * pagesize, currpage * pagesize)"
+            height="450"
             style="width: 100%"
             :row-style="{height:0}"
             :cell-style="{padding:'5px 10px'}"
@@ -70,25 +70,14 @@
               </template>
             </el-table-column>
           </el-table>
+           <div class="Right-style pagstyle">
+        <span class='pagtotal'>共&nbsp;{{TotalCount}}&nbsp;页</span>
+        <el-pagination :page-size="pagesize" :pager-count="7" layout="prev, pager, next"
+          @current-change="handleCurrentChange" :total="TotalCount">1
+        </el-pagination>
+      </div>
         </div>
-        <div
-          style="background:#fff;padding:10px;display:flex;justify-content: space-between;line-height:30px"
-        >
-          <div>
-            <span style="font-size:12px;color:#888">{{$t('CAM.strategy.chooseStra')}} {{choiceNum}} 项，共 {{total}} 项</span>
-          </div>
-          <div>
-            <el-pagination
-              @size-change="handleSizeChange"
-              @current-change="handleCurrentChange"
-              :current-page.sync="currentPage"
-              :page-sizes="[10, 20, 50, 100, 200]"
-              :page-size="pageSize"
-              layout="sizes, prev, pager, next"
-              :total="total"
-            ></el-pagination>
-          </div>
-        </div>
+        
       </div>
     </div>
     <!-- 关联用户/用户组 模态窗 -->
@@ -153,13 +142,17 @@ export default {
       pageSize: 10,
       choiceNum: 0,
       total: 0,
-      currentPage: 1
+      currentPage: 1,
+      TotalCount:0,
+      pagesize: 10, 
+      currpage: 1 
     };
   },
   created() {
     this.getData()
   },
   methods: {
+    
     // 初始化策略列表数据（默认全部策略）
     getData () {
       var params = {
@@ -174,7 +167,7 @@ export default {
       }
       this.axios.post(POLICY_LIST, params).then(res => {
         this.tableData = res.Response.List
-        this.total = res.Response.TotalNum
+        this.TotalCount = res.Response.TotalNum
         console.log(res)
       })
     },
@@ -238,11 +231,11 @@ export default {
       this.selectedData.splice(0, this.selectedData.length)
       this.getData()
     },
-    // page操作
-    handleSizeChange(val) {
-      this.pageSize = val
-      this.getData()
+    toQuery(){
+      this.currpage = 1;
+      this.getData();
     },
+    // page操作
     handleCurrentChange(val) {
       this.currentPage = val
       this.getData()
@@ -251,6 +244,21 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+.Right-style{
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+  background: white;
+}
+.pagstyle {
+  padding: 5px;
+  .pagtotal {
+      font-size: 13px;
+      font-weight: 400;
+      color: #565656;
+      line-height: 32px;
+    }
+}
 .Cam {
   height: 100%;
   .top {
