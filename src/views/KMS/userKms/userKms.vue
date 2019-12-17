@@ -43,7 +43,7 @@
       </div>
       <div class="tableCoontent">
         <div class="tableList">
-          <el-table ref="multipleTable" :data="tableDataBegin.slice((currentPage-1)*pageSize,currentPage*pageSize)" tooltip-effect="dark" style="width: 100%" @selection-change="handleSelectionChange">
+          <el-table ref="multipleTable" :data="tableDataBegin.slice((currpage - 1) * pagesize, currpage * pagesize)" tooltip-effect="dark" style="width: 100%" @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="55">
               <!-- <template slot-scope="scope">
                 <el-checkbox v-model="scope.row.checked" @click="checkedIsTrue"></el-checkbox>
@@ -101,9 +101,15 @@
             <el-button type="primary" @click="dialogModelOpenDelete = false">{{$t('KMS.total.modelSure')}}</el-button>
           </span>
         </el-dialog>
-        <div class="tabListPage">
+        <!-- <div class="tabListPage">
           <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage" :page-sizes="[10, 20, 30, 50]" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper" :total="totalItems"></el-pagination>
-        </div>
+        </div> -->
+           <div class="Right-style pagstyle">
+            <span class='pagtotal'>共&nbsp;{{TotalCount}}&nbsp;页</span>
+            <el-pagination :page-size="pagesize" :pager-count="7" layout="prev, pager, next"
+              @current-change="handleCurrentChange" :total="TotalCount">1
+            </el-pagination>
+         </div>
       </div>
     </div>
   </div>
@@ -117,6 +123,9 @@ import { KMS_LIST, NEW_KMS, EnableKey, DisableKey } from "@/constants";
 export default {
   data() {
     return {
+      TotalCount:0,
+      pagesize: 10,
+      currpage: 1,
       thisAddress: "台灣台北",
       //kms弹出框
       KMSchange: false,
@@ -179,6 +188,10 @@ export default {
     console.log(KMS_LIST)
   },
   methods: {
+    handleCurrentChange(val){
+       this.currpage = val;
+       this.getData();
+    },
     //取消
     _cancel() {
       this.dialogVisibleKMS = false;
@@ -324,6 +337,7 @@ export default {
       //获取主密钥列表详情
       this.axios.post(KMS_LIST, params).then(res => {
         var DataList = res.Response.KeyMetadatas;
+        this.TotalCount = res.Response.TotalCount
         console.log(res)
         this.tableDataBegin = DataList;
         // let trip = JSON.parse(localStorage.getItem('trip'));
@@ -363,7 +377,7 @@ export default {
         }
       });
       //页面数据改变重新统计数据数量和当前页
-      this.currentPage = 1;
+      this.currpage = 1;
       this.totalItems = this.filterTableDataEnd.length;
       //渲染表格,根据值
       this.currentChangePage(this.filterTableDataEnd);
@@ -371,22 +385,7 @@ export default {
       //页面初始化数据需要判断是否检索过
       this.flag = true;
     },
-    // 分页开始
-    handleSizeChange(val) {
-      // console.log(`每页 ${val} 条`);
-      this.pageSize = val;
-      this.handleCurrentChange(this.currentPage);
-    },
-    handleCurrentChange(val) {
-      // console.log(`当前页: ${val}`);
-      this.currentPage = val;
-      //需要判断是否检索
-      if (!this.flag) {
-        this.currentChangePage(this.tableDataEnd);
-      } else {
-        this.currentChangePage(this.filterTableDataEnd);
-      }
-    }, //组件自带监控当前页码
+     //组件自带监控当前页码
     currentChangePage(list) {
       let from = (this.currentPage - 1) * this.pageSize;
       let to = this.currentPage * this.pageSize;
@@ -547,6 +546,22 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+  .Right-style {
+    display: flex;
+    width: 100%;
+    background: white;
+    justify-content: flex-end;
+    }
+      .pagstyle {
+    padding: 20px;
+
+    .pagtotal {
+      font-size: 13px;
+      font-weight: 400;
+      color: #565656;
+      line-height: 32px;
+    }
+  }
 .newClear:after {
   display: block;
   content: "";
