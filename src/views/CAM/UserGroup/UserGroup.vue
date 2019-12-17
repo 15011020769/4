@@ -359,7 +359,6 @@ export default {
     },
     // 删除用户组
     delUserGroup(groupId) {
-      let _this = this;
       this.$confirm(
         this.$t("CAM.userGroup.delHint"),
         this.$t("CAM.userGroup.delTitle"),
@@ -377,18 +376,16 @@ export default {
           this.axios
             .post(DELE_GROUP, params)
             .then(data => {
-              if (data != null && data.codeDesc === "Success") {
                 this.$message({
-                  type: "success",
-                  message: this.$t("CAM.userGroup.delInfo") + "!"
-                });
-                _this.init(); // 重新加载页面
-              }
+                type: "success",
+                message: '删除成功'
+              });
+                this.init()
             })
             .catch(error => {
               this.$message({
-                type: "success",
-                message: error
+                type: "error",
+                message: "删除失败"
               });
               console.log(error);
             });

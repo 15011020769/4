@@ -217,6 +217,10 @@
           :label="$t('CAM.userList.userEmail')"
           prop="Email"
           style="width:75%;text-align:center"
+          :rules="[
+      { required: true, message: '请输入邮箱地址', trigger: 'blur' },
+      { type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }
+    ]"
         >
           <el-input v-model="ruleForm.Email"></el-input>
         </el-form-item>
@@ -639,7 +643,6 @@ export default {
 .tableTab {
   padding: 25px;
   box-sizing: border-box;
-  box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
   margin: 0 auto;
   .buttonCla {
     height: 35px;

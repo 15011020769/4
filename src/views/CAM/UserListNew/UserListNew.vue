@@ -387,7 +387,7 @@ export default {
       this.axios
         .post(DELETE_USER, params)
         .then(data => {
-          this.init();
+            this.init();
         })
         .then(() => {
           let delparams = {
@@ -402,7 +402,12 @@ export default {
             .then(res => {
               console.log(res);
             });
-        });
+        }).catch(error => {
+          this.$message({
+                type: "error",
+                message: '删除失败'
+           });
+        })
       this.dialogDeleteUser = false;
     },
     delUserRow(val) {
