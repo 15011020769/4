@@ -68,17 +68,17 @@
             <div class="tr-con" v-for="(item, index) in formArr" :key="index">
               <td>
                 <el-select v-model="form.instanceType" :placeholder="$t('CCN.tabs.tab1new2')">
-                  <el-option label="私有网络" value="VPC"></el-option>
-                  <el-option label="专线网关" value="DIRECTCONNECT"></el-option>
+                  <el-option :label="$t('CCN.total.vpc1')" value="VPC"></el-option>
+                  <el-option :label="$t('CCN.total.vpc2')" value="DIRECTCONNECT"></el-option>
                 </el-select>
               </td>
               <td>
                 <el-select v-model="form.instanceRegion" :placeholder="$t('CCN.tabs.tab1new4')">
-                  <el-option label="港澳台地区(台湾台北)" value="ap-taipei"></el-option>
+                  <el-option :label="$t('CCN.total.region')" value="ap-taipei"></el-option>
                 </el-select>
               </td>
               <td>
-                <el-select v-model="form.instanceId" :placeholder="$t('CCN.tabs.select')">
+                <el-select v-model="form.instanceId" :placeholder="$t('CCN.tabs.select')" :no-data-text="$t('CCN.total.tdno')">
                   <el-option
                     v-for="(item2,index2) in vpcs"
                     :key="index2"
