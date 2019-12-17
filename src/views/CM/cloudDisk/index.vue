@@ -98,7 +98,7 @@
         searchInput: "",
         TbaleData: [], // 表格数据
         TotalCount: 0,
-        pagesize: 10, // 分页条数
+        pagesize: 2, // 分页条数
         currpage: 1 // 当前页码
       };
     },
@@ -156,6 +156,7 @@
       //inp发生变化
       changeinput(val) {
         this.searchInput = val;
+        this.currpage = 1;
         if (this.searchInput === "") {
           this.loadShow = true;
           this.GetTabularData();
@@ -164,6 +165,7 @@
       //点击搜索按钮
       clicksearch(val) {
         this.searchInput = val;
+        this.currpage = 1;
         if (this.searchInput !== "" && this.searchValue !== "") {
           this.loadShow = true;
           this.GetTabularData();

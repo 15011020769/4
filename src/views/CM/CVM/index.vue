@@ -209,10 +209,12 @@ export default {
     changeinput(val) {
       this.searchInput = val;
       if (this.searchInput === "") {
+        this.currpage = 1;
         this.GetTabularData();
       }
     },
     clicksearch(val) {
+      this.currpage = 1;
       this.searchInput = val;
       if (this.searchInput !== "" && this.searchValue !== "") {
         this.GetTabularData();

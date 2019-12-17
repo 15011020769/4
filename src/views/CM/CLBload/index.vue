@@ -147,6 +147,7 @@
       //搜索框的值
       changeinput(val) {
         this.searchInput = val;
+        this.currpage = 1;
         if (this.searchInput === "") {
           this.loadShow = true;
           this.GetTabularData();
@@ -155,6 +156,7 @@
       //点击搜索按钮
       clicksearch(val) {
         this.searchInput = val;
+        this.currpage = 1;
         if (this.searchInput !== "" && this.searchValue !== "") {
           this.loadShow = true;
           this.GetTabularData();

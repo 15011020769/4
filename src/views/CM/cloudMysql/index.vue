@@ -59,7 +59,7 @@
       <div class="Right-style pagstyle">
         <span class='pagtotal'>共&nbsp;{{TotalCount}}&nbsp;{{$t("CVM.strip")}}</span>
         <el-pagination :page-size="pagesize" :pager-count="7" layout="prev, pager, next"
-          @current-change="handleCurrentChange" :total="TotalCount">
+          @current-change="handleCurrentChange" :total="TotalCount">1
         </el-pagination>
       </div>
     </div>
@@ -184,6 +184,7 @@
       },
       changeinput(val) {
         this.searchInput = val;
+        this.currpage = 1;
         if (this.searchInput === "") {
           this.loadShow = true;
           this.GetTabularData();
@@ -192,6 +193,7 @@
       //点击搜索按钮
       clicksearch(val) {
         this.searchInput = val;
+        this.currpage = 1;
         if (this.searchInput !== "" && this.searchValue !== "") {
           this.loadShow = true;
           this.GetTabularData();
