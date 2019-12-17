@@ -110,15 +110,17 @@ export default {
 ::v-deep .el-dialog__footer{
   text-align:center;
 }
-::v-deep button.upgradeImmediately{
-  background-color:#ff9700;
-  color:#fff;
-  border:none;
-}
+
 ::v-deep button{
   height:30px;
   line-height:30px;
   border-radius: 0;
+  border:1px solid #ddd!important;
+}
+::v-deep button.upgradeImmediately{
+  background-color:#ff9700;
+  color:#fff;
+  border:none;
 }
 .packageType{
   div:nth-child(1).packpageLabel{
@@ -139,7 +141,7 @@ export default {
       font-size:12px;
     }
     .addBoderC{
-      border:1px solid #006eff;
+      border:1px solid #006eff!important;
       color:#006eff;
     }
   }
