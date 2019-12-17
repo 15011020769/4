@@ -266,19 +266,27 @@ export default {
     },
     //
     Obtain(metricN) {
-      const param = {
+      let param = {
         Version: "2018-07-24",
         Region: this.$cookie.get("regionv2"), //'ap-guangzhou',
         Namespace: "QCE/SCF_V2",
         MetricName: metricN,
-        "Instances.0.Dimensions.0.Name": "functionName",
-        "Instances.0.Dimensions.0.Value": this.funlistname,
-        "Instances.0.Dimensions.1.Name": "version",
-        "Instances.0.Dimensions.1.Value": this.funlistversion,
+        // "Instances.0.Dimensions.0.Name": "functionName",
+        // "Instances.0.Dimensions.0.Value": this.funlistname,
+        // "Instances.0.Dimensions.1.Name": "version",
+        // "Instances.0.Dimensions.1.Value": this.funlistversion,
         Period: this.period,
         StartTime: this.Start_End.StartTIme,
         EndTime: this.Start_End.EndTIme
       };
+      this.funlistname.forEach(function(elem){
+        param["Instances.0.Dimensions.0.Name"] = "functionName";
+        param[ "Instances.0.Dimensions.0.Value"] = elem
+      })
+      this.funlistversion.forEach(function(elem){
+         param["Instances.0.Dimensions.1.Name"] = "version";
+        param[ "Instances.0.Dimensions.1.Value"] = elem
+      })
       // console.log(param);
       this.axios.post(All_MONITOR, param).then(data => {
         this.tableData = [];
