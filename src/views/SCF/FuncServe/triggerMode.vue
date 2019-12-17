@@ -129,7 +129,7 @@ export default {
       formTriggerForm: {
         triggerType: "timer",
         tasksName: "",
-        triggerTime: "每5分钟（每5分钟的0秒执行一次）",
+        triggerTime: "每5分鐘（每5分鐘的0秒执行一次）",
         cronlist: "",
         writeIsTrue: "",
         nowStart: ""
@@ -170,7 +170,7 @@ export default {
         _this.formTriggerForm.tasksName = ""
         _this.formTriggerForm.writeIsTrue = ""
         _this.formTriggerForm.triggerType = "timer"
-        _this.formTriggerForm.triggerTime = "每5分钟（每5分钟的0秒执行一次）"
+        _this.formTriggerForm.triggerTime = "每5分鐘（每5分鐘的0秒执行一次）"
       });
     },
     //监测select变化

@@ -59,7 +59,7 @@ export default {
     return {
       business: "basic", //[bgp表示独享包；bgp-multip表示共享包；net表示高防IP专业版；basic表示DDoS基础防护]
       metricName: "bps", // 指标，取值[bps(攻击流量带宽，pps(攻击包速率))]
-      // period: 600, //统计粒度，取值[300(5分钟)，3600(小时)，86400(天)]
+      // period: 600, //统计粒度，取值[300(5分鐘)，3600(小时)，86400(天)]
       // 日期区间：今天
       endTime: this.getDateString(new Date()),
       startTime: this.getDateString(

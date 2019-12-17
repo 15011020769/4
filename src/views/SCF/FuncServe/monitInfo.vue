@@ -307,10 +307,10 @@ export default {
     },
     UpTitle(value) {
       if (value === "Duration") {
-        return (value = "函数运行时间，按粒度（1分钟、5分钟）统计求平均值");
+        return (value = "函数运行时间，按粒度（1分鐘、5分鐘）统计求平均值");
       }
       if (value === "Invocation") {
-        return (value = "函数调用次数，按粒度（1分钟、5分钟）统计求和");
+        return (value = "函数调用次数，按粒度（1分鐘、5分鐘）统计求和");
       }
       if (value === "Error") {
         return (value = "调用错误次数");
@@ -338,7 +338,7 @@ export default {
       }
 
       if (value === "Http4xx") {
-        return (value = "函数运行错误次数，按粒度（1分钟、5分钟）统计求和");
+        return (value = "函数运行错误次数，按粒度（1分鐘、5分鐘）统计求和");
       }
       if (value === "Invocation") {
         return (value = "函数调用次数");

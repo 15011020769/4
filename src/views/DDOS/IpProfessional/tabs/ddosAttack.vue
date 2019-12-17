@@ -150,7 +150,7 @@ export default {
       //   new Date(new Date().getTime() - 24 * 60 * 60 * 1000)
       // ),
       tableDataEnd: [],
-      period: 3600 //统计粒度，取值[300(5分钟)，3600(小时)，86400(天)]
+      period: 3600 //统计粒度，取值[300(5分鐘)，3600(小时)，86400(天)]
     };
   },
   watch: {
@@ -264,7 +264,7 @@ export default {
         Business: "net",
         Id: this.inputId,
         MetricName: this.metricName, //指标，取值[bps(攻击流量带宽，pps(攻击包速率))]
-        Period: this.period, //统计粒度，取值[300(5分钟)，3600(小时)，86400(天)]
+        Period: this.period, //统计粒度，取值[300(5分鐘)，3600(小时)，86400(天)]
         StartTime: this.startTime,
         EndTime: this.endTime
       };

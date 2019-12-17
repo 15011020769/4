@@ -70,7 +70,7 @@ export default {
       ywTimeBtnSelect2: "总览", //业务 时间按钮下面第二个下拉
 
       dateChoice3: {}, //日期选择
-      periodService: 3600, //统计粒度，取值[300(5分钟)，3600(小时)，86400(天)]
+      periodService: 3600, //统计粒度，取值[300(5分鐘)，3600(小时)，86400(天)]
       endTimeService: this.getDateString(new Date()),
       startTimeService: this.getDateString(
         new Date(new Date().getTime() - 24 * 60 * 60 * 1000)
@@ -149,7 +149,7 @@ export default {
         Id: this.inputIdService,
         Ip: "175.97.142.150", //资源的IP
         MetricName: this.metricNameService2,
-        Period: this.periodService, //统计粒度，取值[300(5分钟)，3600(小时)，86400(天)]
+        Period: this.periodService, //统计粒度，取值[300(5分鐘)，3600(小时)，86400(天)]
         StartTime: this.startTimeService,
         EndTime: this.endTimeService,
         Statistics: this.statistics //统计方式，取值：max表示最大值；min表示最小值；avg表示均值；
@@ -191,7 +191,7 @@ export default {
         Business: "net",
         Id: this.inputIdService,
         MetricName: this.metricNameService, //指标名，取值：traffic表示流量带宽，pkg表示包速率
-        Period: this.periodService, //统计粒度，取值[300(5分钟)，3600(小时)，86400(天)]
+        Period: this.periodService, //统计粒度，取值[300(5分鐘)，3600(小时)，86400(天)]
         StartTime: this.startTimeService,
         EndTime: this.endTimeService
       };

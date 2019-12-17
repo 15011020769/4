@@ -264,7 +264,7 @@ export default {
       }
       if (value === "CPULoadAvg") {
         return (value =
-          "1分钟内CPU平均负载，取 /proc/loadavg 第一列数据（windows操作系统无此指标），依赖监控组件安装采集");
+          "1分鐘内CPU平均负载，取 /proc/loadavg 第一列数据（windows操作系统无此指标），依赖监控组件安装采集");
       }
       if (value === "MemUsed") {
         return (value =

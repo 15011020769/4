@@ -141,7 +141,7 @@ module.exports = {
       agreement: '协议',
       speedModelTitle: '请慎用限速模式，该模式访问控制策略只能添加一条',
       ipAsk: '每个源IP的访问速率',
-      askTime: '次/分钟',
+      askTime: '次/分鐘',
       equalTo: '不等于',
       noEqua: '等于',
       when: '时',
