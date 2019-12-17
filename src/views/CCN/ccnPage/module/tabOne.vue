@@ -74,7 +74,7 @@
               </td>
               <td>
                 <el-select v-model="form.instanceRegion" :placeholder="$t('CCN.tabs.tab1new4')">
-                  <el-option label="港澳台地区(中国台北)" value="ap-taipei"></el-option>
+                  <el-option label="港澳台地区(台湾台北)" value="ap-taipei"></el-option>
                 </el-select>
               </td>
               <td>

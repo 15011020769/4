@@ -52,7 +52,7 @@
 export default {
   data(){
     return {
-      thisAddress:'中国台北',
+      thisAddress:'台湾台北',
       tableDataName:"",
       tableDataBegin: [],
       tableDataName: "",

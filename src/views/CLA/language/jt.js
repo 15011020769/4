@@ -94,7 +94,7 @@ module.exports = {
             sjfw: '时间范围',
             czts: '操作提示',
             costd: '投递至 COS',
-            zgtb: '中国台北',
+            zgtb: '台湾台北',
             qddqsj: '您确定要丢弃数据？',
             ysj: '云审计',
         }
