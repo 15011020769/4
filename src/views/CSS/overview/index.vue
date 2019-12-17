@@ -192,6 +192,7 @@ export default {
       background: #e5f0ff;
       padding: 10px 30px 10px 20px;
       margin-bottom: 10px;
+      border-radius: 2px;
 
       p {
         line-height: 18px;
