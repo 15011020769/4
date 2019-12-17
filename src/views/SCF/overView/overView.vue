@@ -430,7 +430,7 @@ export default {
     this.list();
 
     if (this.tableData == "") {
-      document.querySelector(".chartTable").innerHTML = "暂无数据";
+      document.querySelector(".chartTable").innerHTML = "暫無數據";
     }
     // this.initChart(this.tableData);
     this.GetOverView();
