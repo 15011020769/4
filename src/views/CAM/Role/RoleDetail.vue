@@ -53,7 +53,11 @@
           <!-- tab 角色策略 start -->
           <el-tab-pane :label="$t('CAM.Role.Authorized')" name="first">
             <p style="margin:10px">
-              <el-button type="primary" @click="relationPolicies" size="small">{{$t('CAM.userList.RelatedPolicies')}}</el-button>
+              <el-button
+                type="primary"
+                @click="relationPolicies"
+                size="small"
+              >{{$t('CAM.userList.RelatedPolicies')}}</el-button>
               <el-button
                 type="primary"
                 @click="relieveRolePolicies"
@@ -67,6 +71,7 @@
                 :data="rolePolicies"
                 height="300"
                 style="width: 100%"
+                v-loading="loading"
               >
                 <el-table-column type="selection" width="29"></el-table-column>
                 <el-table-column prop="PolicyName" label="策略名">
@@ -119,7 +124,9 @@
                 style="background:#fff;padding:10px;display:flex;justify-content: space-between;line-height:30px"
               >
                 <div>
-                  <span style="font-size:12px;color:#888">{{$t('CAM.userList.choose')}} {{selTotalNum}} 项，共 {{TotalNum}} 项</span>
+                  <span
+                    style="font-size:12px;color:#888"
+                  >{{$t('CAM.userList.choose')}} {{selTotalNum}} 项，共 {{TotalNum}} 项</span>
                 </div>
                 <div>
                   <el-pagination
@@ -140,7 +147,11 @@
           <el-tab-pane :label="$t('CAM.Role.roleCarrier')" name="second">
             <div class="config">
               <p style="margin:10px">
-                <el-button type="primary" @click="Relation_user" size="small">{{$t('CAM.Role.Management')}}</el-button>
+                <el-button
+                  type="primary"
+                  @click="Relation_user"
+                  size="small"
+                >{{$t('CAM.Role.Management')}}</el-button>
               </p>
               <div class="config_table">
                 <el-table
@@ -177,7 +188,9 @@
                   style="background:#fff;padding:10px;display:flex;justify-content: space-between;line-height:30px"
                 >
                   <div>
-                    <span style="font-size:12px;color:#888">{{$t('CAM.userList.choose')}} {{selTotalNum}} 项，共 {{TotalNum}} 项</span>
+                    <span
+                      style="font-size:12px;color:#888"
+                    >{{$t('CAM.userList.choose')}} {{selTotalNum}} 项，共 {{TotalNum}} 项</span>
                   </div>
                   <div>
                     <el-pagination
@@ -252,7 +265,10 @@
         <div style="margin:15px 0">
           <p>
             {{$t('CAM.strategy.overChoose')}}
-            <a href="javascript:;" @click="look_detail"> {{$t('CAM.strategy.lookDetils')}}</a>
+            <a
+              href="javascript:;"
+              @click="look_detail"
+            >{{$t('CAM.strategy.lookDetils')}}</a>
             <i v-if="!isShow" class="el-icon-caret-bottom"></i>
             <i v-if="isShow" class="el-icon-caret-top"></i>
           </p>
@@ -264,7 +280,11 @@
         </div>
         <p style="text-align:center">
           <el-button @click="Relieve_dialogVisible = false" size="small">取 消</el-button>
-          <el-button type="primary" @click="Relieve_dialogVisible = false" size="small">{{$t('CAM.userGroup.delConfirmBtn')}}</el-button>
+          <el-button
+            type="primary"
+            @click="Relieve_dialogVisible = false"
+            size="small"
+          >{{$t('CAM.userGroup.delConfirmBtn')}}</el-button>
         </p>
       </el-dialog>
       <el-dialog
@@ -276,17 +296,26 @@
         <transfer ref="transferPolicies" :roleId="roleId"></transfer>
         <p style="text-align:center;margin-top:30px">
           <el-button @click="dialogVisiblePolicies = false" size="small">取 消</el-button>
-          <el-button type="primary" @click="attachRolePolicies" size="small">{{$t('CAM.userGroup.delConfirmBtn')}}</el-button>
+          <el-button
+            type="primary"
+            @click="attachRolePolicies"
+            size="small"
+          >{{$t('CAM.userGroup.delConfirmBtn')}}</el-button>
         </p>
       </el-dialog>
     </div>
-    
   </div>
 </template>
 <script>
 import transfer from "./component/transfer";
 import HeadCom from "../UserListNew/components/Head";
-import {GET_ROLE,LIST_ATTACHE,DEACH_ROLE,UPDATE_ROLE,UPDATE_ASSUME} from '@/constants'
+import {
+  GET_ROLE,
+  LIST_ATTACHE,
+  DEACH_ROLE,
+  UPDATE_ROLE,
+  UPDATE_ASSUME
+} from "@/constants";
 export default {
   components: {
     transfer,
@@ -354,7 +383,7 @@ export default {
       roleServeCarrier: [],
       checkedRoleServeCarrier: [],
       Relievesure_dialogVisible: false,
-      rolePolicyType: ""
+      rolePolicyType: "",
     };
   },
   mounted() {
@@ -413,6 +442,7 @@ export default {
         })
         .catch(error => {});
     },
+
     // 获取角色策略
     getRolePolicy() {
       this.selTotalNum = 0;
@@ -427,10 +457,11 @@ export default {
       }
       this.axios
         .post(LIST_ATTACHE, paramsList)
-        .then(res => {
-          this.rolePolicies = res.Response.List;
-          this.TotalNum = res.Response.TotalNum;
-        })
+        .then(res => { 
+            this.rolePolicies = res.Response.List;
+            this.TotalNum = res.Response.TotalNum;
+            console.log(res,this.rolePolicies)
+          })
         .catch(error => {});
     },
     // 解除角色策略
@@ -514,7 +545,7 @@ export default {
       this.$refs.transferPolicies.attachRolePolicies();
       this.dialogVisiblePolicies = false;
       this.getRolePolicy();
-    },
+   },
     // 关闭关联策略dialog
     handleClosePolicy() {
       this.dialogVisiblePolicies = false;
