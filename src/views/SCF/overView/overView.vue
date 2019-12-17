@@ -279,13 +279,13 @@ export default {
         StartTime: this.Start_End.StartTIme,
         EndTime: this.Start_End.EndTIme
       };
-      this.funlistname.forEach(function(elem){
-        param["Instances.0.Dimensions.0.Name"] = "functionName";
-        param[ "Instances.0.Dimensions.0.Value"] = elem
+      this.funlistname.forEach(function(elem,index){
+        param["Instances."+index+".Dimensions.0.Name"] = "functionName";
+        param[ "Instances."+index+".Dimensions.0.Value"] = elem
       })
-      this.funlistversion.forEach(function(elem){
-         param["Instances.0.Dimensions.1.Name"] = "version";
-        param[ "Instances.0.Dimensions.1.Value"] = elem
+      this.funlistversion.forEach(function(elem,index){
+         param["Instances."+index+".Dimensions.1.Name"] = "version";
+        param[ "Instances."+index+".Dimensions.1.Value"] = elem
       })
       // console.log(param);
       this.axios.post(All_MONITOR, param).then(data => {
