@@ -1,6 +1,6 @@
 module.exports = {
     CAM: {
-        strip: '页',
+        strip: '条',
         userList: {
             listTitle: '用户列表',
             listText: '如何查看更多信息?',

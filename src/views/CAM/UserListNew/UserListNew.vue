@@ -38,7 +38,7 @@
     <div class="tableBody">
       <div class="wrapTwo">
         <el-table
-          height="500"
+          height="450"
           :data="tableData1"
           @selection-change="selectDataChange"
           v-loading="loading"
@@ -116,7 +116,7 @@
             </template>
           </el-table-column>
         </el-table>
-        <div class="Right-style pagstyle">
+        <div class="Right-style pagstyle" style="height:70px;">
           <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;{{$t("CAM.strip")}}</span>
           <el-pagination
             :page-size="pagesize"
@@ -728,7 +728,7 @@ export default {
     .wrapTwo {
       width: 96%;
       margin: 0 auto;
-      height: 570px;
+      height: 520px;
       background: white;
     }
     .detialsUser {
