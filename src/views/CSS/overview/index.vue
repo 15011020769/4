@@ -63,80 +63,97 @@
           </dl>
         </div>
       </div>
-      <div class="main-box">
-        <el-date-picker
-          v-model="value2"
-          align="right"
-          type="date"
-          placeholder="选择日期"
-          :picker-options="pickerOptions"
-        ></el-date-picker>
+      <div class="box">
+        <el-button type="primary" v-show="!btnload">{{region}}</el-button>
+        <el-button v-show="btnload" icon="el-icon-loading" type="primary"></el-button>
+        <TimeX v-on:switchData="GetDat" :classsvalue="value" style="margin-left:20px;"></TimeX>
       </div>
+      <el-tabs v-model="activeName" @tab-click="handleClick" style="margin-top:10px;">
+        <el-tab-pane label="带宽趋势" name="first">带宽趋势</el-tab-pane>
+        <el-tab-pane label="流量趋势" name="second">流量趋势</el-tab-pane>
+      </el-tabs>
     </div>
   </div>
 </template>
 
 <script>
 import HeaderCom from "@/components/public/Head";
+import TimeX from "@/components/public/TimeX";
+import { ALL_CITY } from "@/constants";
 export default {
   name: "overview",
   data() {
     return {
-      pickerOptions: {
-        disabledDate(time) {
-          return time.getTime() > Date.now();
-        },
-        shortcuts: [
-          {
-            text: "今天",
-            onClick(picker) {
-              picker.$emit("pick", new Date());
-            }
-          },
-          {
-            text: "昨天",
-            onClick(picker) {
-              const date = new Date();
-              date.setTime(date.getTime() - 3600 * 1000 * 24);
-              picker.$emit("pick", date);
-            }
-          },
-          {
-            text: "一周前",
-            onClick(picker) {
-              const date = new Date();
-              date.setTime(date.getTime() - 3600 * 1000 * 24 * 7);
-              picker.$emit("pick", date);
-            }
-          }
-        ]
-      },
-      value2: ""
+      value: "",
+      activeName: "second",
+      region: "",
+      btnload: true
     };
   },
   components: {
-    HeaderCom
+    HeaderCom,
+    TimeX
+  },
+  created() {
+    this._region();
+  },
+  methods: {
+    handleClick(tab, event) {
+      console.log(tab, event);
+    },
+    GetDat() {},
+    //获取地域
+    _region() {
+      this.axios.post(ALL_CITY).then(res => {
+        this.region = res.data[0].zone;
+        this.btnload = false;
+      });
+    }
   }
 };
 </script>
 
 <style lang="scss" scoped>
-.overview-wrap >>> .el-input__inner{
+.overview-wrap >>> .el-button {
+  height: 30px;
+  line-height: 30px;
+  padding-top: 0;
+  font-size: 12px !important;
+  border-radius: 0;
+}
+.overview-wrap >>> .box-dis {
+  margin: 0;
+}
+.overview-wrap >>> .el-tab-pane {
+  background: white;
+  padding: 20px;
+  box-sizing: border-box;
+}
+.overview-wrap >>> .el-input__inner {
   height: 30px;
   line-height: 30px;
   padding-top: 0;
   border-radius: 0;
   font-size: 12px;
   position: relative;
-
-  .el-input__icon{
-    margin-top: -6px !important;
-  }
+}
+.overview-wrap >>> .btn-style {
+  margin-left: 0;
+}
+.overview-wrap >>> .LocaP {
+  margin-left: 10px;
+  display: flex;
+  align-items: center;
 }
 .overview-wrap {
   .overview-main {
     padding: 20px;
     box-sizing: border-box;
+
+    .box {
+      display: flex;
+      align-items: center;
+    }
 
     .main-box {
       background-color: #fff;
