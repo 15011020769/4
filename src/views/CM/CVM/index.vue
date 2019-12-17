@@ -15,8 +15,7 @@
 
     <!-- 表格 -->
     <div class="Table-SY">
-      <el-table id="exportTable" :data="ProTableData.slice((currpage - 1) * pagesize, currpage * pagesize)" height="550"
-        style="width: 100%" v-loading="loadShow">
+      <el-table id="exportTable" :data="ProTableData" height="550" style="width: 100%" v-loading="loadShow">
         <el-table-column prop :label="$t('CVM.clBload.zjm') ">
           <template slot-scope="scope">
             <p>
@@ -53,18 +52,11 @@
         </el-table-column>
 
         <el-table-column prop="projectName" :label="$t('CVM.table.x6')"></el-table-column>
-
-        <!-- <el-table-column label="健康状态">
-          <template slot-scope="scope">
-            <p :class="scope.row.RestrictState==='NORMAL'?'green':scope.row.RestrictState==='EXPIRED'?'red':'orange'">
-              {{RestrictState[scope.row.RestrictState]}}</p>
-          </template>
-        </el-table-column>-->
       </el-table>
       <div class="Right-style pagstyle">
-        <span class='pagtotal'>共&nbsp;{{ProTableData.length}}&nbsp;条</span>
-        <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
-          :page-sizes="[20, 30, 40,50,100]" :page-size="pagesize" layout="sizes, prev, pager, next, jumper">
+        <span class='pagtotal'>共&nbsp;{{TotalCount}}&nbsp;{{$t("CVM.strip")}}</span>
+        <el-pagination :page-size="pagesize" :pager-count="7" layout="prev, pager, next"
+          @current-change="handleCurrentChange" :total="TotalCount">
         </el-pagination>
       </div>
     </div>
@@ -136,7 +128,8 @@
         TbaleData: [], // 表格数据
         ProjectData: [], // 项目列表数据
         ProTableData: [], // 添加完项目列表的表格数据
-        pagesize: 20, // 分页条数
+        TotalCount: 0, //总条数
+        pagesize: 10, // 分页条数
         currpage: 1 // 当前页码
       };
     },
@@ -207,6 +200,7 @@
       },
       // 添加项目列表的表格数据
       GetTabularData() {
+        console.log('currpage' + this.currpage, 'pagesize' + this.pagesize)
         this.loadShow = true;
         const param = {
           Region: this.selectedRegion,
@@ -227,6 +221,7 @@
           .then(data => {
             if (data.Response.Error == undefined) {
               this.TbaleData = data.Response.InstanceSet;
+              this.TotalCount = data.Response.TotalCount
             } else {
               this.$message.error(data.Response.Error.Message);
             }
@@ -255,11 +250,7 @@
             });
           });
       },
-      handleSizeChange(val) {
-        this.pagesize = val;
-        this.currpage = 1;
-        this.GetTabularData();
-      },
+
       handleCurrentChange(val) {
         this.currpage = val;
         this.GetTabularData();
