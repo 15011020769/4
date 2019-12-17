@@ -71,15 +71,14 @@
         <!-- <el-table-column label="健康状态"></el-table-column>
         <el-table-column label="告警策略数"></el-table-column>-->
       </el-table>
-      <div class="Right-style pagstyle" style="display:flex;justify-content:flex-end;padding:20px;">
+      <div class="Right-style pagstyle">
+        <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;{{$t("CVM.strip")}}</span>
         <el-pagination
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-          :current-page="currpage"
-          :page-sizes="[10, 20, 30, 40,50]"
           :page-size="pagesize"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="TbaleData.length"
+          :pager-count="7"
+          layout="prev, pager, next"
+          @current-change="handleCurrentChange"
+          :total="TotalCount"
         ></el-pagination>
       </div>
     </div>
@@ -146,7 +145,8 @@ export default {
       TbaleData: [], // 表格数据
       ProjectData: [], // 项目列表数据
       ProTableData: [], // 添加完项目列表的表格数据
-      pagesize: 20, // 分页条数
+      TotalCount: 0, //总条数
+      pagesize: 10, // 分页条数
       currpage: 1 // 当前页码
     };
   },
@@ -202,6 +202,7 @@ export default {
     changeinput(val) {
       this.searchInput = val;
       if (this.searchInput === "") {
+        this.currpage = 1;
         this.GetTabularData();
       }
     },
@@ -209,6 +210,7 @@ export default {
     clicksearch(val) {
       this.searchInput = val;
       if (this.searchInput !== "" && this.searchValue !== "") {
+        this.currpage = 1;
         this.GetTabularData();
       } else {
         this.$message.error("請輸入正確搜索信息");
@@ -231,10 +233,11 @@ export default {
         allList: 0
       };
       this.axios.post(NAT_LIST, param).then(data => {
+        console.log(data)
         if (data.Response.Error == undefined) {
-          console.log(data.Response.NatGatewaySet);
           this.TbaleData = data.Response.NatGatewaySet;
           this.ProTableData = this.TbaleData;
+          this.TotalCount = data.Response.TotalCount;
           this.loadShow = false;
         } else {
           this.$message.error(data.Response.Error.Message);
@@ -242,19 +245,13 @@ export default {
       });
     },
     //分页
-    handleSizeChange(val) {
-      this.pagesize = val;
-      this.currpage = 1;
-      this.GetTabularData();
-    },
     handleCurrentChange(val) {
       this.currpage = val;
       this.GetTabularData();
     },
-    //跳转
     jump(id) {
       this.$router.push({
-        name: "NATdetails",
+        name: "CMCVMdetails",
         query: {
           id
         }
@@ -265,6 +262,16 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.pagstyle {
+  padding: 20px;
+
+  .pagtotal {
+    font-size: 13px;
+    font-weight: 400;
+    color: #565656;
+    line-height: 32px;
+  }
+}
 .tooltip {
   float: left;
   padding: 0 20px;

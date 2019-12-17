@@ -2,7 +2,7 @@
   <div class="CM-wrap">
     <!-- <Loading :show="loadShow" /> -->
     <!-- 城市按钮 -->
-    <div class="CVM-title">{{ $t('CVM.clBload.txgw') }}</div>
+    <div class="CVM-title" style="font-size:16px;">{{ $t('CVM.clBload.txgw') }}</div>
     <div class="tool">
       <Cities
         :cities="cities"
@@ -24,7 +24,7 @@
     <!-- 表格 -->
     <div class="Table-SY">
       <el-table
-        :data="TbaleData.slice((currpage - 1) * pagesize, currpage * pagesize)"
+        :data="TbaleData"
         height="550"
         style="width: 100%"
         id="exportTable"
@@ -60,13 +60,13 @@
         </el-table-column>
       </el-table>
       <div class="Right-style pagstyle">
+        <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;{{$t("CVM.strip")}}</span>
         <el-pagination
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-          :page-sizes="[20, 30, 40,50,100]"
           :page-size="pagesize"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="TbaleData.length"
+          :pager-count="7"
+          layout="prev, pager, next"
+          @current-change="handleCurrentChange"
+          :total="TotalCount"
         ></el-pagination>
       </div>
     </div>
@@ -121,7 +121,8 @@ export default {
       selectedCity: {}, // 切换城市
       searchInput: "",
       TbaleData: [], // 表格数据
-      pagesize: 20, // 分页条数
+      TotalCount: 0, //总条数
+      pagesize: 10, // 分页条数
       currpage: 1 // 当前页码
     };
   },
@@ -177,12 +178,14 @@ export default {
     changeinput(val) {
       this.searchInput = val;
       if (this.searchInput === "") {
+        this.currpage = 1;
         this.GetTabularData();
       }
     },
     clicksearch(val) {
       this.searchInput = val;
       if (this.searchInput !== "" && this.searchValue !== "") {
+        this.currpage = 1;
         this.GetTabularData();
       } else {
         this.$message.error("請輸入正確搜索信息");
@@ -209,6 +212,7 @@ export default {
         if (data.Response.Error == undefined) {
           console.log(data.Response.AddressSet);
           this.TbaleData = data.Response.AddressSet;
+          this.TotalCount = data.Response.TotalCount;
           this.loadShow = false;
         } else {
           this.$message.error(data.Response.Error.Message);
@@ -239,6 +243,16 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.pagstyle {
+  padding: 20px;
+
+  .pagtotal {
+    font-size: 13px;
+    font-weight: 400;
+    color: #565656;
+    line-height: 32px;
+  }
+}
 .tooltip {
   float: left;
   padding: 0 20px;

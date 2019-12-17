@@ -25,7 +25,7 @@
       <!-- 表格 -->
       <div class="Table-SY">
         <el-table
-          :data="ProTableData.slice((currpage - 1) * pagesize, currpage * pagesize)"
+          :data="ProTableData"
           height="550"
           id="exportTable"
           style="width: 100%;"
@@ -74,13 +74,13 @@
           <el-table-column prop label="告警策略数"></el-table-column>-->
         </el-table>
         <div class="Right-style pagstyle">
+          <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;{{$t("CVM.strip")}}</span>
           <el-pagination
-            @size-change="handleSizeChange"
-            @current-change="handleCurrentChange"
-            :page-sizes="[20, 30, 40,50,100]"
             :page-size="pagesize"
-            layout="total, sizes, prev, pager, next, jumper"
-            :total="ProTableData.length"
+            :pager-count="7"
+            layout="prev, pager, next"
+            @current-change="handleCurrentChange"
+            :total="TotalCount"
           ></el-pagination>
         </div>
       </div>
@@ -141,7 +141,8 @@ export default {
       TbaleData: [], // 表格数据
       ProjectData: [], // 项目列表数据
       ProTableData: [], // 添加完项目列表的表格数据
-      pagesize: 20, // 分页条数
+      TotalCount: 0, //总条数
+      pagesize: 10, // 分页条数
       currpage: 1 // 当前页码
     };
   },
@@ -199,6 +200,7 @@ export default {
     changeinput(val) {
       this.searchInput = val;
       if (this.searchInput === "") {
+        this.currpage = 1;
         this.GetTabularData();
       }
     },
@@ -206,6 +208,7 @@ export default {
     clicksearch(val) {
       this.searchInput = val;
       if (this.searchInput !== "" && this.searchValue !== "") {
+        this.currpage = 1;
         this.GetTabularData();
       } else {
         this.$message.error("請輸入正確搜索信息");
@@ -232,6 +235,7 @@ export default {
         if (data.Response.Error == undefined) {
           this.TbaleData = data.Response.VpnGatewaySet;
           this.ProTableData = this.TbaleData;
+          this.TotalCount = data.Response.TotalCount;
           this.loadShow = false;
         } else {
           this.$message.error(data.Response.Error.Message);
@@ -261,6 +265,16 @@ export default {
 };
 </script>
 <style scoped lang="scss">
+.pagstyle {
+  padding: 20px;
+
+  .pagtotal {
+    font-size: 13px;
+    font-weight: 400;
+    color: #565656;
+    line-height: 32px;
+  }
+}
 .tooltip {
   float: left;
   padding: 0 20px;
