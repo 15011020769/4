@@ -337,10 +337,6 @@
     }
   }
 
-  .pagstyle {
-    padding: 20px;
-  }
-
   .a {
     background-image: url("./../../../assets/CAM/images/cvm-20199061519.svg");
     background-size: 267px 176px;
