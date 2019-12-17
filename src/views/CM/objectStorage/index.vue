@@ -81,7 +81,7 @@ export default {
       searchOptions: [
         {
           value: "bucket",
-          label: "存储桶名称"
+          label: "存儲桶名稱"
         }
       ],
       //默认
