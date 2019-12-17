@@ -4,10 +4,10 @@
     <XTimeX v-on:switchData="GetDat" :classsvalue="value"></XTimeX>
     <div class="box-dis p-style">
       <p>
-        <i class="el-icon-info"></i>注释：Max、Min和Avg数值统计为当前折线图内所有点的最大值、最小值和平均值
+        <i class="el-icon-info"></i>{{$t('CCN.tabs.tipN1')}}
       </p>
       <p>
-        <el-button type="text">导出数据</el-button>
+        <el-button type="text">{{$t('CCN.tabs.exportDta')}}</el-button>
       </p>
     </div>
     <div class="box-table">
@@ -28,7 +28,7 @@
 
         <el-table-column prop="DataPoints" width="550">
           <template slot-scope="scope">
-            <p v-if="scope.row.DataPoints[0].Values.length==0">暂无数据</p>
+            <p v-if="scope.row.DataPoints[0].Values.length==0">{{$t('CCN.tabs.nodata')}}</p>
             <div class="echart" v-if="scope.row.DataPoints[0].Values.length!=0">
               <echart-line
                 id="diskEchearrts-line"
@@ -77,7 +77,7 @@
       </el-table>
       <!-- 模态框 -->
       <el-dialog
-        title="集群健康状态"
+        :title="$t('CCN.tabs.title1')"
         :visible.sync="dialogVisible"
         width="60%"
         :before-close="handleClose"
@@ -139,12 +139,12 @@ export default {
         "InBandwidth"
       ];
       const symbol = [
-        "个/秒",
-        "个/秒",
+        "個/秒",
+        "個/秒",
         "	Mbps",
         "Mbsp",
-        "个/秒",
-        "个/秒",
+        "個/秒",
+        "個/秒",
         "Mbps",
         "Mbps",
       ];
@@ -205,78 +205,78 @@ export default {
   filters: {
     UpName(value) {
       if (value === "RegionOutPkg") {
-        return (value = "单地域总出包量");
+        return (value = "單地域總出包量");
       }
       if (value === "RegionInPkg") {
-        return (value = "单地域总入包量");
+        return (value = "單地域總入包量");
       }
       if (value === "RegionOutBandwidth") {
-        return (value = "	单地域总出带宽");
+        return (value = "	單地域總出帶寬");
       }
       if (value === "RegionInBandwidth") {
-        return (value = "单地域总入带宽");
+        return (value = "單地域總入帶寬");
       }
       if (value === "OutPkg") {
-        return (value = "地域间出包量");
+        return (value = "地域間出包量");
       }
       if (value === "InPkg") {
-        return (value = "	地域间入包量");
+        return (value = "	地域間入包量");
       }
       if (value === "OutBandwidth") {
-        return (value = "地域间出带宽");
+        return (value = "地域間出帶寬");
       }
       if (value === "InBandwidth") {
-        return (value = "地域间入带宽");
+        return (value = "地域間入帶寬");
       }
     },
     UpTitle(value) {
       if (value === "lanOuttraffic") {
-        return (value = "内网网卡的平均每秒出流量");
+        return (value = "內網網卡的平均每秒出流量");
       }
       if (value === "lanIntraffic") {
-        return (value = "内网网卡的平均每秒入流量");
+        return (value = "內網網卡的平均每秒入流量");
       }
       if (value === "lanOutpkg") {
-        return (value = "内网网卡的平均每秒出包量");
+        return (value = "內網網卡的平均每秒出包量");
       }
       if (value === "lanInpkg") {
-        return (value = "内网网卡的平均每秒入包量");
+        return (value = "內網網卡的平均每秒入包量");
       }
       if (value === "WanOuttraffic") {
         return (value =
-          "外网平均每秒出流量，最小粒度数据为10秒总流量/10秒 计算得出");
+          "外網平均每秒出流量，最小粒度數據為10秒總流量/10秒 計算得出");
       }
       if (value === "WanIntraffic") {
-        return (value = "外网平均每秒入流量");
+        return (value = "外網平均每秒入流量");
       }
       if (value === "AccOuttraffic") {
-        return (value = "外网网卡的平均每秒出流量");
+        return (value = "外網網卡的平均每秒出流量");
       }
       if (value === "WanOutpkg") {
-        return (value = "外网平均每秒出包量");
+        return (value = "外網平均每秒出包量");
       }
       if (value === "WanInpkg") {
-        return (value = "外网平均每秒入包量");
+        return (value = "外網平均每秒入包量");
       }
       if (value === "CPUUsage") {
         return (value =
-          "CPU利用率是通过CVM子机内部监控组件采集上报，数据更加精准");
+          "CPU利用率是通過CVM子機內部監控組件採集上報，數據更加精準");
       }
       if (value === "CPULoadAvg") {
         return (value =
-          "1分鐘内CPU平均负载，取 /proc/loadavg 第一列数据（windows操作系统无此指标），依赖监控组件安装采集");
+          "1分鐘內CPU平均負載，取 /proc/loadavg 第一列數據（windows操作系統無此指標），依賴監控組件安裝採集");
       }
       if (value === "MemUsed") {
         return (value =
-          "使用的内存量，不包括系统缓存和缓存区占用内存，依赖监控组件安装采集");
+          "使用的內存量，不包括系統緩存和緩存區佔用內存，依賴監控組件安裝採集");
       }
       if (value === "MemUsage") {
         return (value =
-          "用户实际使用的内存量与总内存量之比，不包括缓冲区与系统缓存占用的内存");
+          "用戶實際使用的內存量與總內存量之比，不包括緩衝區與系統緩存佔用的內存");
       }
       if (value === "TcpCurrEstab") {
         return (value =
-          "处于 ESTABLISHED 状态的 TCP 连接数量，依赖监控组件安装采集");
+          "處於 ESTABLISHED 狀態的 TCP 連接數量，依賴監控組件安裝採集");
       }
       if (value === "") {
         return (value = "");

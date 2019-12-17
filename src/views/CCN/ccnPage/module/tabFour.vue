@@ -2,14 +2,14 @@
 <template>
   <div class="tabFour">
     <div class="table">
-      <el-table :data="tableData.slice((currentPage-1)*pageSize,currentPage*pageSize)" style="width: 100%">
+      <el-table :data="tableData.slice((currentPage-1)*pageSize,currentPage*pageSize)" style="width: 100%" v-loading="loadShow">
         <template slot="empty">{{$t('CCN.tabs.tab1no')}}</template>
         <el-table-column prop="DestinationCidrBlock" :label="$t('CCN.tabs.tab4tr1')" width></el-table-column>
         <el-table-column prop="Enabled" :label="$t('CCN.tabs.tab4tr2') " width>
           <template slot-scope="scope">
             <div v-if="scope.row.Enabled == true" class="off_color">有效</div>
             <!-- <div v-if="scope.row.Enabled == 0" class="close_color">关闭</div> -->
-            <div v-else>关闭</div>
+            <div v-else>{{$t('CCN.total.newClose')}}newClose</div>
           </template>
         </el-table-column>
         <el-table-column prop="InstanceId" :label="$t('CCN.tabs.tab4tr3')" width>
@@ -36,7 +36,7 @@
         </el-table-column>
       </el-table>
     </div>
-    <div class="tabListPage">
+    <!-- <div class="tabListPage">
       <el-pagination
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
@@ -47,6 +47,15 @@
         :total="totalItems"
       >
       </el-pagination>
+    </div> -->
+    <div class="Right-style pagstyle tabListPage">
+      <span class="pagtotal">{{$t('CCN.total.gongN')}}&nbsp;{{totalItems}}&nbsp;{{$t('CCN.total.tioaN')}}</span>
+      <el-pagination
+        :page-size="pageSize"
+        layout="prev, pager, next"
+        @current-change="handleCurrentChange"
+        :total="totalItems"
+      ></el-pagination>
     </div>
   </div>
 </template>
@@ -65,6 +74,8 @@ export default {
       currentPage: 1,
       pageSize: 10,
       totalItems: 0,
+      currpage: 1, // 当前页码
+      loadShow:false,
     }
   },
   created () {
@@ -74,6 +85,7 @@ export default {
   },
   methods: {
     getData: function () {
+      this.loadShow=true;
       var params = {
         Version: '2017-03-12',
         Region: 'ap-taipei',
@@ -83,7 +95,8 @@ export default {
       this.axios.post(CCN_ROUTES, params).then(res => {
         // console.log(res)
         this.tableData = res.Response.RouteSet
-        this.totalItems = res.Response.TotalCount
+        this.totalItems = res.Response.TotalCount;
+        this.loadShow=false;
       })
     },
     // 启用路由 询问按钮
@@ -130,6 +143,7 @@ export default {
       // console.log(`当前页: ${val}`);
       this.currentPage = val;
     },
+    
   }
 }
 </script>
@@ -183,6 +197,26 @@ export default {
     border-top:1px solid #ddd;
     padding-top:8px;
     height:50px;
+  }
+}
+.Right-style {
+  display: flex;
+  justify-content: flex-end;
+
+  .esach-inputL {
+    width: 300px;
+    margin-right: 20px;
+  }
+}
+.pagstyle {
+  padding: 20px;
+  border-top: 1px solid #ddd;
+  background-color: #fff;
+  .pagtotal {
+    font-size: 13px;
+    font-weight: 400;
+    color: #565656;
+    line-height: 32px;
   }
 }
 </style>
