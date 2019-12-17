@@ -66,8 +66,8 @@
               </template>
             </el-table-column>
           </el-table>
-          <div class="Right-style pagstyle">
-        <span class='pagtotal'>共&nbsp;{{TotalCount}}&nbsp;条</span>
+          <div class="Right-style pagstyle" style="height:70px;display:flex;align-items:center;">
+        <span class='pagtotal'>共&nbsp;{{TotalCount}}&nbsp;{{$t("CAM.strip")}}</span>
         <el-pagination :page-size="pagesize" :pager-count="7" layout="prev, pager, next"
           @current-change="handleCurrentChange" :total="TotalCount">
         </el-pagination>
