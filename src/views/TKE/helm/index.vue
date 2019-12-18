@@ -81,9 +81,6 @@ export default {
     width: 100%;
     padding: 0px 20px 0 20px;
     box-sizing: border-box;
-    //  .table{
-    //    w
-    //  }
   }
 }
 </style>

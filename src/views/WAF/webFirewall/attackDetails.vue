@@ -1,19 +1,58 @@
 <template>
   <div>
-    <div>
+    <div class="topTitle">
       攻击详情
+    </div>
+    <div class="tabList">
+      <el-tabs v-model="attackLog" @tab-click="handleClick">
+        <el-tab-pane label="日志查询" name="first">
+          <logQuery/>
+        </el-tab-pane>
+        <el-tab-pane label="下载任务" name="second">
+          
+        </el-tab-pane>
+      </el-tabs>
     </div>
   </div>
 </template>
 <script>
+import logQuery from './tab/logQuery'
 export default {
   data(){
     return{
-
+      attackLog:'first',//tab
+    }
+  },
+  components:{
+    logQuery:logQuery
+  },
+  methods:{
+    //tab切换
+    handleClick(tab, event) {
+      console.log(tab, event);
     }
   }
 }
 </script>
 <style lang="scss" scoped>
-
+.newClear:after{
+  display:block;
+  content:'';
+  clear:both;
+}
+.topTitle{
+  width:100%;
+  height:50px;
+  line-height:50px;
+  font-size:16px;
+  font-weight: 600;
+  padding:0 20px;
+  background-color:#fff;
+}
+.tabList{
+  height:40px;
+  padding:0 20px;
+  background-color:#fff;
+  border-bottom:1px solid #ddd;
+}
 </style>

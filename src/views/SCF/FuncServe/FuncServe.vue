@@ -132,7 +132,7 @@
         </div>
         <div class="mainTable">
           <el-table
-            :data="tableDataBegin.slice((currentPage-1)*pageSize,currentPage*pageSize)"
+            :data="tableDataBegin.slice((currpage - 1) * pagesize, currpage * pagesize)"
             v-loading="loading"
             height="450"
           >
@@ -227,7 +227,7 @@
             </el-table-column>
           </el-table>
         </div>
-        <div class="tabListPage">
+        <!-- <div class="tabListPage">
           <el-pagination
             @size-change="handleSizeChange"
             @current-change="handleCurrentChange"
@@ -237,7 +237,13 @@
             layout="total, sizes, prev, pager, next, jumper"
             :total="totalItems"
           ></el-pagination>
-        </div>
+        </div> -->
+        <div class="Right-style pagstyle">
+        <span class='pagtotal'>共&nbsp;{{TotalCount}}&nbsp;条</span>
+        <el-pagination :page-size="pagesize" :pager-count="7" layout="prev, pager, next"
+          @current-change="handleCurrentChange" :total="TotalCount">
+        </el-pagination>
+      </div>
       </div>
     </div>
   </div>
@@ -256,6 +262,9 @@ import {
 export default {
   data() {
     return {
+      TotalCount:0,
+      pagesize: 10,
+      currpage: 1,
       loading: true,
       nameSpaceValue: [{}],
       nameSpace: [{}],
@@ -269,7 +278,6 @@ export default {
       tableDataName: "",
       tableDataEnd: [],
       currentPage: 1,
-      pageSize: 10,
       totalItems: 0,
       filterTableDataEnd: [],
       flag: false,
@@ -379,12 +387,12 @@ export default {
       this.axios.post(SCF_LIST, params).then(res => {
         //console.log(res.Response.Functions);
         this.tableDataBegin = res.Response.Functions;
+        this.TotalCount = res.Response.TotalCount
+        console.log(res)
         this.loading = false;
-        console.log(res);
         //this.allData = this.tableDataBegin;
         //this.tableDataBegin = this.allData;
         // 将数据的长度赋值给totalItems
-        this.totalItems = this.tableDataBegin.length;
         if (this.totalItems > this.pageSize) {
           for (let index = 0; index < this.pageSize; index++) {
             this.tableDataEnd.push(this.tableDataBegin[index]);
@@ -397,6 +405,7 @@ export default {
     // 搜索
     doFilter() {
       console.log(this.filterConrent);
+      this.currpage = 1;
       // this.tableDataBegin = this.allData;
       this.tableDataEnd = [];
 
@@ -411,31 +420,35 @@ export default {
       //每次手动将数据置空,因为会出现多次点击搜索情况
       this.filterTableDataEnd = [];
       //页面数据改变重新统计数据数量和当前页
-      this.currentPage = 1;
       this.totalItems = this.filterTableDataEnd.length;
       //渲染表格,根据值
       this.currentChangePage(this.filterTableDataEnd);
-
       //页面初始化数据需要判断是否检索过
       this.flag = true;
     },
     openData() {},
+
     // 分页开始
-    handleSizeChange(val) {
-      console.log(`每页 ${val} 条`);
-      this.pageSize = val;
-      this.handleCurrentChange(this.currentPage);
-    },
-    handleCurrentChange(val) {
-      console.log(`当前页: ${val}`);
-      this.currentPage = val;
-      //需要判断是否检索
-      if (!this.flag) {
-        this.currentChangePage(this.tableDataEnd);
-      } else {
-        this.currentChangePage(this.filterTableDataEnd);
-      }
-    }, //组件自带监控当前页码
+      handleCurrentChange(val) {
+        this.currpage = val;
+        this.getData();
+      },
+    // handleSizeChange(val) {
+    //   console.log(`每页 ${val} 条`);
+    //   this.pageSize = val;
+    //   this.handleCurrentChange(this.currentPage);
+    // },
+    // handleCurrentChange(val) {
+    //   console.log(`当前页: ${val}`);
+    //   this.currentPage = val;
+    //   //需要判断是否检索
+    //   if (!this.flag) {
+    //     this.currentChangePage(this.tableDataEnd);
+    //   } else {
+    //     this.currentChangePage(this.filterTableDataEnd);
+    //   }
+    // }, 
+    //组件自带监控当前页码
     currentChangePage(list) {
       let from = (this.currentPage - 1) * this.pageSize;
       let to = this.currentPage * this.pageSize;
@@ -579,6 +592,7 @@ export default {
     iptChange() {
       if (this.tableDataName == "") {
         this.getData();
+        this.currpage = 1;
       }
     },
     newCreateFun() {
@@ -639,6 +653,21 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+.Right-style {
+    display: flex;
+    background: white;
+    width: 100%;
+    justify-content: flex-end;}
+  .pagstyle {
+    padding: 20px;
+
+    .pagtotal {
+      font-size: 13px;
+      font-weight: 400;
+      color: #565656;
+      line-height: 32px;
+    }
+  }
 .wrap >>> .el-select,
 .wrap >>> .el-input,
 .wrap >>> .el-select .el-input__inner {

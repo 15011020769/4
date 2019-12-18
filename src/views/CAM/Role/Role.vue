@@ -12,7 +12,7 @@
       <div class="container_table">
         <div class="table">
           <el-table
-            :data="tableData"
+            :data="tableData.slice((currpage - 1) * pagesize, currpage * pagesize)"
             v-loading="loading"
             height="450"
             style="width: 100%"
@@ -66,24 +66,12 @@
               </template>
             </el-table-column>
           </el-table>
-          <div
-            style="background:#fff;padding:10px;display:flex;justify-content: space-between;line-height:30px"
-          >
-            <div>
-              <span style="font-size:12px;color:#888">共 {{total}} 项</span>
-            </div>
-            <div>
-              <el-pagination
-                @size-change="sizeChange"
-                @current-change="pageChange"
-                :current-page.sync="Page"
-                :page-sizes="[10, 20, 50, 100, 200]"
-                :page-size="size"
-                layout="total, sizes, prev, pager, next, jumper"
-                :total="total"
-              ></el-pagination>
-            </div>
-          </div>
+          <div class="Right-style pagstyle" style="height:70px;display:flex;align-items:center;">
+        <span class='pagtotal'>共&nbsp;{{TotalCount}}&nbsp;{{$t("CAM.strip")}}</span>
+        <el-pagination :page-size="pagesize" :pager-count="7" layout="prev, pager, next"
+          @current-change="handleCurrentChange" :total="TotalCount">
+        </el-pagination>
+      </div>
         </div>
       </div>
       <el-dialog :visible.sync="create_dialogVisible" width="30%" :before-close="handleClose">
@@ -119,8 +107,11 @@ export default {
       Page: 1,
       size: 10,
       total: 0,
+      TotalCount:0,
+      pagesize:10,
+      currpage:1,
       create_dialogVisible: false,
-      value:''
+      value:'',
     };
   },
   components: {
@@ -150,6 +141,8 @@ export default {
             this.loading = false;
           } else {
             let resData = data.Response.List;
+            this.TotalCount = data.Response.TotalNum
+            console.log(data)
             this.loading = false;
             resData.forEach(item => {
               let obj = {
@@ -254,6 +247,10 @@ export default {
     toServe() {
       this.$router.push("/createServe");
     },
+    handleCurrentChange(val) {
+      this.currpage = val;
+      this. init();
+    },
     toAccount() {
       // this.$router.push("/createAccount");
       this.$message({
@@ -272,6 +269,19 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+.Right-style{
+  display: flex;
+  justify-content: flex-end;
+}
+.pagstyle {
+  padding: 5px;
+  .pagtotal {
+      font-size: 13px;
+      font-weight: 400;
+      color: #565656;
+      line-height: 32px;
+    }
+}
 .Cam {
   .top {
     color: #000;

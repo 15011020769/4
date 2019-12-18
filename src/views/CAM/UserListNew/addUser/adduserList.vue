@@ -1,7 +1,7 @@
 <template>
   <div class="adduserlist-wrap">
     <HeadCom :title="$t('CAM.userList.createUser')" :backShow="true" @_back="_back" />
-    <div class="adduserlist-main">
+    <div class="adduserlist-main" v-loading="loading">
       <el-steps :active="active" simple>
         <el-step :title="$t('CAM.userList.chooserType')"></el-step>
         <el-step :title="$t('CAM.userList.userMesgs')"></el-step>
@@ -40,9 +40,9 @@
                       {{$t('CAM.userList.userName')}}
                       <span style="color:#e54545;">*</span>
                     </td>
-                    <td width="170"> {{$t('CAM.userList.userRemark')}}</td>
-                    <td width="200"> {{$t('CAM.userList.userPhone')}}</td>
-                    <td width="200"> {{$t('CAM.userList.userWeChat')}}</td>
+                    <td width="170">{{$t('CAM.userList.userRemark')}}</td>
+                    <td width="200">{{$t('CAM.userList.userPhone')}}</td>
+                    <td width="200">{{$t('CAM.userList.userEmail')}}</td>
                   </tr>
                 </thead>
                 <tbody>
@@ -189,6 +189,7 @@ export default {
       });
     };
     return {
+      loading: false,
       activeName: "first",
       userData: [], //用户组
       totalNum: 0, //策略列表条数
@@ -392,6 +393,7 @@ export default {
     },
     //新建子用户
     _arrUser() {
+      this.loading = true;
       const params = {
         Version: "2019-01-16",
         Name: this.ruleForm.Name,
@@ -408,6 +410,7 @@ export default {
         .post(ADD_USER, params)
         .then(res => {
           this.taifuAIP = res.Response;
+          console.log(res)
           if (res.Response.Error) {
             this.$message.error(res.Response.Error.Message);
           } else {
@@ -416,6 +419,7 @@ export default {
               this.active = 2;
             }
           }
+          this.loading = false;
         })
         .then(() => {
           const params = {
@@ -516,6 +520,7 @@ export default {
         this.btnVal = "完成";
       }
       if (this.active == 2) {
+        console.log(this.multipleSelection)
         this.multipleSelection.forEach(item => {
           //从策略列表中选取策略关联
           if (this.activeName == "first") {

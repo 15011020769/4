@@ -2,9 +2,6 @@
   <div class="Cam">
     <div class="top">
       <span class="title-left">{{$t('CAM.userGroup.title')}}</span>
-      <!-- <span class="title-right">
-        <span>CAM用户组使用说明<i class="el-icon-share"></i></span>
-      </span>-->
     </div>
     <div class="cam_button">
       <el-row class="cam-lt">
@@ -17,30 +14,23 @@
         >{{$t('CAM.userGroup.createBtn')}}</el-button>
       </el-row>
       <div class="head-container">
-        <!-- 搜索 
-        -->
-
-        <!-- <el-input
+        <el-input
           size="small"
           v-model="searchValue"
           clearable
           :placeholder="$t('CAM.userGroup.placeholder')"
           style="width: 300px;"
-          @keyup.enter.native="toQuery"
+          @change="toQuery"
         >
           <i slot="suffix" class="el-input__icon el-icon-search" @click="toQuery"></i>
-        </el-input> -->
+        </el-input>
 
-        <el-input  size="small"
-          v-model="searchValue"
-          clearable
-          :placeholder="$t('CAM.userGroup.placeholder')"
-          style="width: 300px;"
-          @keyup.enter.native="toQuery">
-                       <i slot="suffix" class="el-input__icon el-icon-search" @click="toQuery"></i>
-           </el-input>
-
-        <el-dialog :title="$t('CAM.userGroup.fields')" :visible.sync="gear" width="45%" :before-close="handleCloseGear">
+        <el-dialog
+          :title="$t('CAM.userGroup.fields')"
+          :visible.sync="gear"
+          width="45%"
+          :before-close="handleCloseGear"
+        >
           <div class="app-cam-alert">
             <div class="app-cam-alert__info">{{$t('CAM.userGroup.chooseMesg')}}</div>
           </div>
@@ -63,20 +53,25 @@
             </el-form-item>
           </el-form>
           <div slot="footer" class="dialog-footer">
-            <el-button size="small" type="primary" @click="gear = false">{{$t('CAM.userGroup.delConfirmBtn')}}</el-button>
+            <el-button
+              size="small"
+              type="primary"
+              @click="gear = false"
+            >{{$t('CAM.userGroup.delConfirmBtn')}}</el-button>
             <el-button size="small" @click="gear = false">{{$t('CAM.userGroup.delCancelBtn')}}</el-button>
           </div>
         </el-dialog>
       </div>
     </div>
     <!-- 表格 -->
-    <div class="cam-box">
+    <div class="cam-box" style="height:520px;padding:0;margin-bottom:20px;">
       <el-table
         v-loading="loading"
         ref="multipleTable"
         :data="tableData"
         tooltip-effect="dark"
-        style="width: 100%; border:1px solid #ddd;padding-top: 8px;"
+        style="width: 100%;"
+        height="450"
         @selection-change="handleSelectionChange"
       >
         <el-table-column prop="GroupId" type="selection" width="29"></el-table-column>
@@ -117,20 +112,17 @@
         </el-table-column>
       </el-table>
       <div
+        class="Right-style pagstyle"
         style="background:#fff;padding:10px;display:flex;justify-content: space-between;line-height:30px"
       >
-        <div>
-          <span style="font-size:12px;color:#888">已选 {{selTotal}} 项，共 {{total}} 项</span>
-        </div>
-        <div>
+        <div style="flex:1;display:flex;justify-content: flex-end;">
+          <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;{{$t("CAM.strip")}}</span>
           <el-pagination
-            @size-change="sizeChange"
-            @current-change="pageChange"
-            :current-page.sync="Page"
-            :page-sizes="[10, 20, 50, 100, 200]"
-            :page-size="size"
-            layout="total, sizes, prev, pager, next, jumper"
-            :total="total"
+            :page-size="pagesize"
+            :pager-count="7"
+            layout="prev, pager, next"
+            @current-change="handleCurrentChange"
+            :total="TotalCount"
           ></el-pagination>
         </div>
       </div>
@@ -146,12 +138,7 @@
       <div class="container">
         <div class="container-left">
           <p>{{$t('CAM.userGroup.selection')}}（共{{totalNum}}条）</p>
-          <el-input
-            size="small"
-            v-model="inpVal"
-            style="width:100%"
-            @change="_inpVal"
-          >
+          <el-input size="small" v-model="inpVal" style="width:100%" @change="_inpVal">
             <i slot="suffix" class="el-input__icon el-icon-search" @click="toQueryUser"></i>
           </el-input>
           <el-table
@@ -166,8 +153,8 @@
             @selection-change="handleSelectionChangeUser"
           >
             <el-table-column type="selection" prop="Uin" width="28"></el-table-column>
-            <el-table-column prop="Name"  :label="$t('CAM.userGroup.user')" show-overflow-tooltip></el-table-column>
-            <el-table-column   :label="$t('CAM.userList.userChose')" width="100">
+            <el-table-column prop="Name" :label="$t('CAM.userGroup.user')" show-overflow-tooltip></el-table-column>
+            <el-table-column :label="$t('CAM.userList.userChose')" width="100">
               <template slot-scope="scope">
                 <p>{{$t('CAM.userGroup.childUser')}}</p>
               </template>
@@ -217,7 +204,13 @@
   </div>
 </template>
 <script>
-import {USER_GROUP,USER_LIST,GROUP_USERS,DELE_GROUP,ADD_GROUPTOLIST} from '@/constants'
+import {
+  USER_GROUP,
+  USER_LIST,
+  GROUP_USERS,
+  DELE_GROUP,
+  ADD_GROUPTOLIST
+} from "@/constants";
 export default {
   data() {
     return {
@@ -250,25 +243,36 @@ export default {
       selNum: 0,
       btnVisible: true,
       selectedGroupId: 0,
-      loading: true
+      loading: true,
+      TotalCount: 0, //总条数
+      pagesize: 10, // 分页条数
+      currpage: 1 // 当前页码
     };
   },
   mounted() {
     this.init();
   },
   methods: {
+    // page操作
+    handleCurrentChange(val) {
+      this.currpage = val;
+      this.init();
+    },
     _inpVal() {
       if (this.inpVal == "") {
         this.userData = this.json;
+        this.currpage = 1;
+        this.init();
       }
     },
     // 初始化方法。
     init() {
+      this.loading = true;
       this.selTotal = 0;
       let params = {
         Version: "2019-01-16",
-        Page: this.page,
-        Rp: this.size
+        Page: this.currpage,
+        Rp: this.pagesize
       };
       if (this.searchValue != null && this.searchValue != "") {
         params["Keyword"] = this.searchValue;
@@ -279,6 +283,7 @@ export default {
           if (res != "") {
             this.tableData = res.Response.GroupInfo;
             this.total = res.Response.TotalNum;
+            this.TotalCount = res.Response.TotalNum;
             this.loading = false;
           } else {
             this.loading = false;
@@ -353,7 +358,6 @@ export default {
     },
     // 删除用户组
     delUserGroup(groupId) {
-      let _this = this;
       this.$confirm(
         this.$t("CAM.userGroup.delHint"),
         this.$t("CAM.userGroup.delTitle"),
@@ -371,18 +375,16 @@ export default {
           this.axios
             .post(DELE_GROUP, params)
             .then(data => {
-              if (data != null && data.codeDesc === "Success") {
                 this.$message({
-                  type: "success",
-                  message: this.$t("CAM.userGroup.delInfo") + "!"
-                });
-                _this.init(); // 重新加载页面
-              }
+                type: "success",
+                message: '删除成功'
+              });
+                this.init()
             })
             .catch(error => {
               this.$message({
-                type: "success",
-                message: error
+                type: "error",
+                message: "删除失败"
               });
               console.log(error);
             });
@@ -411,7 +413,7 @@ export default {
               message: this.$t("CAM.userGroup.successInfo"),
               type: "success"
             });
-            this.init(); // 重新加载页面
+            this.init()
             // this.$emit("update")
             // this.cancel()
           })
@@ -424,11 +426,6 @@ export default {
       this.$router.push({
         name: "NewUserGroup"
       });
-    },
-    // 查询方法
-    toQuery() {
-      this.loading = true;
-      this.init();
     },
     pageChange(e) {
       this.page = e;
@@ -474,6 +471,7 @@ export default {
     },
     // 用户组查询方法
     toQuery() {
+      this.currpage = 1;
       this.init();
     },
     // 子用户穿梭框查询
@@ -499,16 +497,29 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+.pagstyle {
+  padding: 20px;
+  height: 70px;
+  display: flex;
+  align-items: center;
+
+  .pagtotal {
+    font-size: 13px;
+    font-weight: 400;
+    color: #565656;
+    line-height: 32px;
+  }
+}
 .Cam {
   .top {
-    height: 45px;
-    line-height: 45px;
+    height: 50px;
+    line-height: 50px;
     margin-bottom: 20px;
     padding: 0 20px;
     background: #fff;
 
     .title-left {
-      font-size: 14px;
+      font-size: 16px;
       font-weight: bolder;
     }
 

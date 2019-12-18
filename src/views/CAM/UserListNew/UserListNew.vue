@@ -1,17 +1,28 @@
 <template>
   <div class="wrap">
     <div class="top">
-      <span class="title-left">{{$t('CAM.userList.listTitle')}}</span>
+      <span class="title-left" style="font-size:16px;">{{$t('CAM.userList.listTitle')}}</span>
     </div>
     <div class="explain">
       <p style="font-weight:bold">{{$t('CAM.userList.listText')}}</p>
       <p>{{$t('CAM.userList.listContext')}}</p>
     </div>
-    <div class="operation">
+    <div class="operation" style="width:96%;margin: 0 auto;margin-bottom:20px;">
       <!-- <button class="addUser" @click="addUser">新增用户</button> -->
-      <el-button type="primary" class="addUser" size="small" @click="addUser">{{$t('CAM.userList.listAdduser')}}</el-button>
+      <el-button
+        type="primary"
+        class="addUser"
+        size="small"
+        @click="addUser"
+        style="margin-left:0;"
+      >{{$t('CAM.userList.listAdduser')}}</el-button>
       <!-- <el-button type="primary" class="addUser" size="small" @click="addMoreUser">{{$t('CAM.userList.listAddMoreuser')}}</el-button> -->
-      <el-button type="primary" class="addUser" size="small" @click="deleteMoreUsers">{{$t('CAM.userList.listdeleteuser')}}</el-button>
+      <el-button
+        type="primary"
+        class="addUser"
+        size="small"
+        @click="deleteMoreUsers"
+      >{{$t('CAM.userList.listdeleteuser')}}</el-button>
 
       <el-input
         :placeholder="$t('CAM.userList.searchUser')"
@@ -19,6 +30,7 @@
         class="inputSearch"
         v-model="inpVal"
         @change="userInpSearch"
+        style="margin-right:0;"
       >
         <i slot="suffix" class="el-input__icon el-icon-search" @click="userSearch"></i>
       </el-input>
@@ -26,7 +38,7 @@
     <div class="tableBody">
       <div class="wrapTwo">
         <el-table
-          height="500"
+          height="450"
           :data="tableData1"
           @selection-change="selectDataChange"
           v-loading="loading"
@@ -36,7 +48,6 @@
             <template slot-scope="scope">
               <div class="form">
                 <el-form label-position="left" inline class="demo-table-expand" v-model="form">
-                  
                   <div class="detialsUser">
                     <el-form-item :label="$t('CAM.userList.userId')">{{scope.row.Uin}}</el-form-item>
                     <el-form-item :label="$t('CAM.userList.userChose')">{{scope.row.Remark}}</el-form-item>
@@ -47,21 +58,6 @@
                       class="Name"
                     >{{scope.row.Name}}</el-form-item>
                   </div>
-                  <!-- <div class="detialsUser">
-                    <el-form-item label="消息订阅:"></el-form-item>
-                    <el-form-item label="操作保护:">
-                      <span style="color:red">未开启保护</span>
-                    </el-form-item>
-                    <el-form-item label="控制台访问:">
-                      <span style="color:green">启用</span>
-                    </el-form-item>
-                  </div>
-
-                  <div class="detialsUser">
-                    <el-form-item label="MFA设备:">
-                      <span style="color:red">未绑定MFA设备</span>
-                    </el-form-item>
-                  </div>-->
                 </el-form>
               </div>
             </template>
@@ -85,7 +81,10 @@
           </el-table-column>
           <el-table-column label="操作" width="140">
             <template scope="scope">
-              <el-button type="text" @click="addRight(scope.row.Uin)">{{$t('CAM.userList.userStrage')}}</el-button>
+              <el-button
+                type="text"
+                @click="addRight(scope.row.Uin)"
+              >{{$t('CAM.userList.userStrage')}}</el-button>
               <span>|</span>
               <el-dropdown :hide-on-click="false">
                 <span class="el-dropdown-link" style="color: #3E8EF7">
@@ -94,10 +93,18 @@
                 </span>
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item>
-                    <el-button type="text" style="color:#000" @click="addRroup(scope.row.Uid)">{{$t('CAM.userList.userAddGroup')}}</el-button>
+                    <el-button
+                      type="text"
+                      style="color:#000"
+                      @click="addRroup(scope.row.Uid)"
+                    >{{$t('CAM.userList.userAddGroup')}}</el-button>
                   </el-dropdown-item>
                   <el-dropdown-item>
-                    <el-button type="text" style="color:#000" @click="bindMesg">{{$t('CAM.userList.userdep')}}</el-button>
+                    <el-button
+                      type="text"
+                      style="color:#000"
+                      @click="bindMesg"
+                    >{{$t('CAM.userList.userdep')}}</el-button>
                   </el-dropdown-item>
                   <el-button
                     type="text"
@@ -109,14 +116,14 @@
             </template>
           </el-table-column>
         </el-table>
-        <div class="page-box Right-style pagstyle">
+        <div class="Right-style pagstyle" style="height:70px;">
+          <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;{{$t("CAM.strip")}}</span>
           <el-pagination
-            @size-change="handleSizeChange"
-            @current-change="handleCurrentChange"
-            :page-sizes="[20, 30, 40,50,100]"
             :page-size="pagesize"
-            layout="total, sizes, prev, pager, next, jumper"
-            :total="tableData.length"
+            :pager-count="7"
+            layout="prev, pager, next"
+            @current-change="handleCurrentChange"
+            :total="TotalCount"
           ></el-pagination>
         </div>
       </div>
@@ -125,7 +132,8 @@
     <!-- 添加用户组弹框 -->
     <el-dialog :title="title" :visible.sync="authorization" width="60%" :before-close="handleClose">
       <div class="container" v-if="strategyShow">
-        <div class="container-right">
+        <transfer :multipleSelection="multipleSelection" @_multipleSelection="_multipleSelection" />
+        <!-- <div class="container-right">
           <span>{{$t('CAM.userList.strategyTitle')}}</span>
           <div>
             <el-input
@@ -183,7 +191,7 @@
               </template>&ndash;&gt;
             </el-table-column>
           </el-table>
-        </div>
+        </div>-->
       </div>
 
       <div class="container" v-if="userGroupShow">
@@ -276,7 +284,12 @@
       </span>
     </el-dialog>
     <!-- 批量删除 -->
-    <el-dialog :title="$t('CAM.userList.removeMore')" :visible.sync="dialogVisible" width="30%" :before-close="handleCloses">
+    <el-dialog
+      :title="$t('CAM.userList.removeMore')"
+      :visible.sync="dialogVisible"
+      width="30%"
+      :before-close="handleCloses"
+    >
       <span>{{$t('CAM.userList.suerRemove')}}</span>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">{{$t('CAM.userList.handClose')}}</el-button>
@@ -297,19 +310,22 @@ import {
   DELETE_USER
 } from "@/constants";
 import Subscribe from "./components/subscribeNew";
+import transfer from "../Role/component/transfer";
 export default {
   components: {
-    Subscribe
+    Subscribe,
+    transfer
   },
   data() {
     return {
+      multipleSelection: [],
       dialogVisible: false,
       json: [],
       inpVal: "", //搜索
       flag: false, //删除弹框组件
       form: {}, //点击详情,form获取详情数据
       tableData: [], //用户列表数组
-      tableData1:[],
+      tableData1: [],
       inputShow: true, //select框禁用值
       authorization: false, //添加用户弹框
       title: "", //判断是添加策略还是添加到用户组
@@ -329,17 +345,20 @@ export default {
       deleteRowName: "",
       selectData: [],
       deleteMoreUser: [],
-      selectCheckData:[],
+      selectCheckData: [],
       delUin: "",
       loading: true,
+      TotalCount: 0, //总条数
       pagesize: 10, // 分页条数
       currpage: 1, // 当前页码
       value: "" //更多操作多选值
     };
   },
   methods: {
+    _multipleSelection(val) {
+      this.multipleSelection = val;
+    },
     deleteMoreUsers() {
-      console.log(this.selectData)
       if (this.selectData.length != 0) {
         this.dialogVisible = true;
       } else {
@@ -349,55 +368,55 @@ export default {
     removeDeleteUser() {
       var checkIndex = [];
       this.selectData.forEach(item => {
-        checkIndex.unshift(item)
+        checkIndex.unshift(item);
       });
       checkIndex.forEach(item => {
-         let params = {
-           Version: "2019-01-16",
-           Name:item.Name
-         }
-         this.axios.post(DELETE_USER,params).then(res=>{
-           this.init()
-         })
-      })
+        let params = {
+          Version: "2019-01-16",
+          Name: item.Name
+        };
+        this.axios.post(DELETE_USER, params).then(res => {
+          this.init();
+        });
+      });
       this.dialogVisible = false;
     },
     //选框
     selectDataChange(value) {
       this.selectData = value;
       this.inputShow = false;
-      // var checkData = []
-      // checkData.push(val)
-      // this.selectCheckData = checkData
-      // console.log(this.selectCheckData)
     },
     suerDelUser() {
-      console.log(11)
-        let params = {
-          Version: "2019-01-16",
-          Name: this.deleteRowName
-        };
-        this.axios
-          .post(DELETE_USER, params)
-          .then(data => {
-            console.log(data);
-            this.init();
-          })
-          .then(() => {
-            let delparams = {
-              QcloudUin: this.delUin,
-              SubAccountname: this.deleteRowName
-            };
-            this.axios
-              .post(
-                "http://tfc.dhycloud.com/adminapi/admin/taifucloud/account-sub/manage/delete",
-                delparams
-              )
-              .then(res => {
-                console.log(res);
-              });
+      let params = {
+        Version: "2019-01-16",
+        Name: this.deleteRowName
+      };
+      this.axios
+        .post(DELETE_USER, params)
+        .then(data => {
+          this.init();
+        })
+        .then(() => {
+          let delparams = {
+            QcloudUin: this.delUin,
+            SubAccountname: this.deleteRowName
+          };
+          this.axios
+            .post(
+              "http://tfc.dhycloud.com/adminapi/admin/taifucloud/account-sub/manage/delete",
+              delparams
+            )
+            .then(res => {
+              console.log(res);
+            });
+        })
+        .catch(error => {
+          this.$message({
+            type: "error",
+            message: "删除失败"
           });
-        this.dialogDeleteUser = false;
+        });
+      this.dialogDeleteUser = false;
     },
     delUserRow(val) {
       this.delUin = val.Uin;
@@ -409,18 +428,21 @@ export default {
     },
     //搜索
     userSearch() {
+      this.loading = true;
       var arr = [];
       this.tableData.forEach(item => {
         if (item.Name.includes(this.inpVal)) {
           arr.push(item);
         }
       });
-      console.log(arr)
       this.tableData1 = arr;
+      this.TotalCount = arr.length;
+      this.loading = false;
     },
     userInpSearch() {
       if (this.inpVal == "") {
         this.tableData1 = this.json;
+        this.TotalCount = this.json.length;
       }
     },
     //分页
@@ -428,33 +450,36 @@ export default {
       this.pagesize = val;
       this.currpage = 1;
       // this.init();
-      this.tableData1 = this.tableData.slice((this.currpage - 1) * this.pagesize, this.currpage * this.pagesize)
+      this.tableData1 = this.tableData.slice(
+        (this.currpage - 1) * this.pagesize,
+        this.currpage * this.pagesize
+      );
     },
     handleCurrentChange(val) {
       this.currpage = val;
       // this.init();
       this.delRowShow = true;
       this.deleteName = val.Name;
-      this.tableData1 = this.tableData.slice((this.currpage - 1) * this.pagesize, this.currpage * this.pagesize)
+      this.tableData1 = this.tableData.slice(
+        (this.currpage - 1) * this.pagesize,
+        this.currpage * this.pagesize
+      );
     },
     //初始化用户列表数据
     init() {
+      this.loading = true;
       let userList = {
         Version: "2019-01-16"
       };
       this.axios.post(USER_LIST, userList).then(data => {
-        if (data != "") {
-          this.loading = false;
-          this.tableData = data.Response.Data;
-          this.json = data.Response.Data;
-      this.tableData1 = this.tableData.slice((this.currpage - 1) * this.pagesize, this.currpage * this.pagesize)
-        } else {
-          this.loading = false;
-          this.$message({
-            type: "info",
-            message: "无响应数据！"
-          });
-        }
+        this.loading = false;
+        this.tableData = data.Response.Data;
+        this.json = data.Response.Data;
+        this.tableData1 = this.tableData.slice(
+          (this.currpage - 1) * this.pagesize,
+          this.currpage * this.pagesize
+        );
+        this.TotalCount = this.json.length;
       });
     },
     //初始化策略数据
@@ -469,6 +494,7 @@ export default {
         if (res != "") {
           this.loading = false;
           this.strategyData = res.Response.List;
+          this.TotalCount = this.strategyData.length;
         } else {
           this.loading = false;
           this.$message({
@@ -513,7 +539,6 @@ export default {
     },
     //点击跳转到详情页
     detailsUser(val) {
-      console.log(val);
       this.$router.push({
         path: "/detailsUser",
         query: {
@@ -528,11 +553,10 @@ export default {
       deletData.push(data);
       this.deletDatas = deletData;
     },
-  
+
     //点击添加到组事件
     addRroup(uid) {
       this.Uid = uid;
-      console.log(this.Uid);
       this.title = "添加到组";
       this.authorization = true;
       this.userGroupShow = true;
@@ -553,7 +577,7 @@ export default {
       // userGroupSelect
       if (this.title == "关联策略") {
         var addPloicyId = [];
-        this.userGroupSelect.forEach(item => {
+        this.multipleSelection.forEach(item => {
           addPloicyId.push(item);
         });
         addPloicyId.forEach(item => {
@@ -563,7 +587,8 @@ export default {
             AttachUin: this.Uin
           };
           this.axios.post(POLICY_USER, params).then(data => {
-            console.log(data);
+            this.init();
+            this.$message("授权成功");
           });
         });
         this.authorization = false;
@@ -572,7 +597,6 @@ export default {
         var addGroupId = [];
         this.userGroupSelect.forEach(item => {
           addGroupId.push(item);
-          console.log(item);
         });
         addGroupId.forEach(item => {
           let params = {
@@ -585,17 +609,6 @@ export default {
         this.authorization = false;
       }
     },
-    //批量添加按钮
-    // addMoreUser() {
-    //   if (this.selectData.length != 0) {
-    //     this.title = "添加到组";
-    //     this.authorization = true;
-    //     this.userGroupShow = true;
-    //     this.strategyShow = false;
-    //   } else {
-    //     this.$message("请选择数据");
-    //   }
-    // },
     deleteRowHandl() {
       this.dialogDeleteUser = false;
     },
@@ -615,20 +628,14 @@ export default {
       // 给右边table框赋值，只需在此处赋值即可，selectedRow方法中不写，因为单独点击复选框，只有此方法有效。
       this.userGroupSelect = val;
     },
-    // suerClose() {
-    //   this.flag = false;
-    // },
-    // confirm() {
-    //   this.flag = false;
-    // },
     bindMesg() {
       this.$message({
         type: "info",
         message: "内测中..."
       });
     },
-    handleCloses(){
-      this.dialogVisible = false
+    handleCloses() {
+      this.dialogVisible = false;
     }
   },
   created() {
@@ -640,16 +647,27 @@ export default {
 .wrap {
   width: 100%;
   background-color: #f2f2f2 !important;
+
+  .pagstyle {
+    padding: 20px;
+
+    .pagtotal {
+      font-size: 13px;
+      font-weight: 400;
+      color: #565656;
+      line-height: 32px;
+    }
+  }
   .top {
     width: 100%;
-    height: 45px;
+    height: 50px;
     background-color: #fff;
     margin-bottom: 20px;
     .title-left {
       font-size: 14px;
       font-weight: bolder;
       padding-left: 20px;
-      line-height: 45px;
+      line-height: 50px;
     }
   }
   .Right-style {
@@ -718,7 +736,7 @@ export default {
     .wrapTwo {
       width: 96%;
       margin: 0 auto;
-      height: 570px;
+      height: 520px;
       background: white;
     }
     .detialsUser {

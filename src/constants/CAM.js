@@ -29,6 +29,7 @@ export const DETACH_POLICY = 'cam2/DetachGroupPolicy'
 //策略
 export const LIST_ENPOLICY = 'cam2/ListEntitiesForPolicy'
 export const DELETE_POLICY = 'cam2/DeletePolicy'
+export const GET_POLICY = 'cam2/GetPolicy'
 
 //角色
 export const GET_ROLE = 'cam2/GetRole'
@@ -40,3 +41,4 @@ export const DESCRIB_ROLE = 'cam2/DescribeRoleList'
 export const DELETE_ROLE = 'cam2/DeleteRole'
 export const CREATE_ROLE = 'cam2/CreateRole'
 export const ATTACH_ROLE = 'cam2/AttachRolePolicy'
+

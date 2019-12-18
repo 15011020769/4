@@ -5,36 +5,37 @@
       <el-button type="text" @click="newVisible = true">{{$t("CCN.tabs.tab1new")}}</el-button>
     </div>
     <div class="table">
-      <el-table :data="tableData" style="width: 100%">
+      <el-table :data="tableData" style="width: 100%" v-loading="loadShow">
         <template slot="empty">{{$t("CCN.tabs.tab1no")}}</template>
         <el-table-column prop="InstanceId" :label="$t('CCN.tabs.tab1tr1')" width>
           <template slot-scope="scope">
-            <a href="../CCN/index"  target="_blank">{{ scope.row.InstanceId }}</a>
+            <!-- <a href="../CCN/index"  target="_blank">{{ scope.row.InstanceId }}</a> -->
+            <a href="#">{{ scope.row.InstanceId }}</a>
             <p class="edit">{{ scope.row.InstanceName }}</p>
           </template>
         </el-table-column>
         <el-table-column prop="State" :label="$t('CCN.tabs.tab1tr2')" width>
           <template slot-scope="scope">
-            <div v-if="scope.row.State=='ACTIVE'" class="off_color">已连接</div>
-            <div v-else-if="scope.row.State=='PENDING'" class="off_color">申请中</div>
-            <div v-else-if="scope.row.State=='EXPIRED'" class="close_color">已过期</div>
-            <div v-else-if="scope.row.State=='REJECTED'" class="close_color">已拒绝</div>
-            <div v-else-if="scope.row.State=='DELETED'" class="close_color">已删除</div>
-            <div v-else-if="scope.row.State=='FAILED'" class="close_color">失败的（2小时后将异步强制解关联）</div>
-            <div v-else-if="scope.row.State=='ATTACHING'" class="off_color">关联中</div>
-            <div v-else-if="scope.row.State=='DETACHING'" class="off_color">解关联中</div>
-            <div v-else-if="scope.row.State=='DETACHFAILED'" class="close_color">解关联失败（2小时后将异步强制解关联）</div>
+            <div v-if="scope.row.State=='ACTIVE'" class="off_color">{{$t('CCN.tabs.hasCon')}}</div>
+            <div v-else-if="scope.row.State=='PENDING'" class="off_color">{{$t('CCN.tabs.hasAp')}}</div>
+            <div v-else-if="scope.row.State=='EXPIRED'" class="close_color">{{$t('CCN.tabs.hasOu')}}</div>
+            <div v-else-if="scope.row.State=='REJECTED'" class="close_color">{{$t('CCN.tabs.hasJ')}}</div>
+            <div v-else-if="scope.row.State=='DELETED'" class="close_color">{{$t('CCN.tabs.hasDel')}}</div>
+            <div v-else-if="scope.row.State=='FAILED'" class="close_color">{{$t('CCN.tabs.error1')}}</div>
+            <div v-else-if="scope.row.State=='ATTACHING'" class="off_color">{{$t('CCN.tabs.con1')}}</div>
+            <div v-else-if="scope.row.State=='DETACHING'" class="off_color">{{$t('CCN.tabs.uncon1')}}</div>
+            <div v-else-if="scope.row.State=='DETACHFAILED'" class="close_color">{{$t('CCN.tabs.unconer')}}</div>
             <!-- <div v-else-if="scope.row.State==''" class="off_color"></div> -->
           </template>
         </el-table-column>
         <el-table-column prop="InstanceType" :label="$t('CCN.tabs.tab1tr3')" width>
           <template slot-scope="scope">
-            <div v-if="scope.row.InstanceType=='VPC'">私有网络</div>
-            <div v-else-if="scope.row.InstanceType=='DIRECTCONNECT'">专线网关</div>
+            <div v-if="scope.row.InstanceType=='VPC'">{{$t('CCN.tabs.sywl')}}</div>
+            <div v-else-if="scope.row.InstanceType=='DIRECTCONNECT'">{{$t('CCN.tabs.zxwl')}}</div>
           </template>
         </el-table-column>
         <el-table-column prop="InstanceUin" :label="$t('CCN.tabs.tab1tr4')" width>
-          <template slot-scope="" >我的帐号</template>
+          <template slot-scope="" >{{$t('CCN.tabs.myId')}}</template>
         </el-table-column>
         <el-table-column prop="AttachedTime" :label="$t('CCN.tabs.tab1tr5')" width>
           <template slot-scope="scope" >{{ scope.row.AttachedTime }}
@@ -42,17 +43,17 @@
         </el-table-column>
         <el-table-column prop="InstanceRegion" :label="$t('CCN.tabs.tab1tr6')" width>
           <template slot-scope="scope" >
-            <div v-if="scope.row.InstanceRegion=='ap-guangzhou'">广州</div>
-            <div v-else-if="scope.row.InstanceRegion=='ap-taipei'">台北</div>
-            <div v-else-if="scope.row.InstanceRegion=='ap-chengdu'">成都</div>
-            <div v-else-if="scope.row.InstanceRegion=='ap-beijing'">北京</div>
-            <div v-else-if="scope.row.InstanceRegion=='ap-shanghai'">上海</div>
+            <div v-if="scope.row.InstanceRegion=='ap-guangzhou'">{{$t('CCN.tabs.gz')}}</div>
+            <div v-else-if="scope.row.InstanceRegion=='ap-taipei'">{{$t('CCN.tabs.twtb')}}</div>
+            <div v-else-if="scope.row.InstanceRegion=='ap-chengdu'">{{$t('CCN.tabs.cd')}}</div>
+            <div v-else-if="scope.row.InstanceRegion=='ap-beijing'">{{$t('CCN.tabs.bj')}}</div>
+            <div v-else-if="scope.row.InstanceRegion=='ap-shanghai'">{{$t('CCN.tabs.sh')}}</div>
             <div v-else>{{ scope.row.InstanceRegion }}</div>
           </template>
         </el-table-column>
         <el-table-column prop="operate" :label="$t('CCN.tabs.tab1tr7')" width>
           <template slot-scope="scope">
-            <el-button type="text" @click="delCcnIns(scope.row)">解关联</el-button>
+            <el-button type="text" @click="delCcnIns(scope.row)">{{$t('CCN.tabs.unc')}}</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -68,17 +69,17 @@
             <div class="tr-con" v-for="(item, index) in formArr" :key="index">
               <td>
                 <el-select v-model="form.instanceType" :placeholder="$t('CCN.tabs.tab1new2')">
-                  <el-option label="私有网络" value="VPC"></el-option>
-                  <el-option label="专线网关" value="DIRECTCONNECT"></el-option>
+                  <el-option :label="$t('CCN.total.vpc1')" value="VPC"></el-option>
+                  <el-option :label="$t('CCN.total.vpc2')" value="DIRECTCONNECT"></el-option>
                 </el-select>
               </td>
               <td>
                 <el-select v-model="form.instanceRegion" :placeholder="$t('CCN.tabs.tab1new4')">
-                  <el-option label="港澳台地区(中国台北)" value="ap-taipei"></el-option>
+                  <el-option :label="$t('CCN.total.region')" value="ap-taipei"></el-option>
                 </el-select>
               </td>
               <td>
-                <el-select v-model="form.instanceId" :placeholder="$t('CCN.tabs.select')">
+                <el-select v-model="form.instanceId" :placeholder="$t('CCN.tabs.select')" :no-data-text="$t('CCN.total.tdno')">
                   <el-option
                     v-for="(item2,index2) in vpcs"
                     :key="index2"
@@ -145,7 +146,8 @@ export default {
       formInfoObj: {
         key: undefined
       },
-      formArr: []
+      formArr: [],
+      loadShow:false,
     }
   },
   watch: {
@@ -179,6 +181,7 @@ export default {
     },
     // 初始化数据
     getData: function () {
+      this.loadShow=true;
       var params = {
         Version: '2017-03-12',
         Region: 'ap-taipei',
@@ -189,6 +192,7 @@ export default {
         console.log(res)
         this.tableData = res.Response.InstanceSet
         this.total = res.Response.TotalCount
+        this.loadShow=false;
       })
     },
     // 解除关联模态窗-回显数据

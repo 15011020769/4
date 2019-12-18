@@ -10,7 +10,7 @@
         <div class="btn">
           <el-button type="text" @click="toUpdateVisible2()">{{$t("CCN.tabs.tab3btn")}}</el-button>
         </div>
-        <el-table :data="tableData.slice((currentPage-1)*pageSize,currentPage*pageSize)" style="width: 100%">
+        <el-table :data="tableData.slice((currentPage-1)*pageSize,currentPage*pageSize)" style="width: 100%"  v-loading="loadShow">
           <template slot="empty">{{$t("CCN.tabs.tab1no")}}</template>
           <el-table-column prop="CcnRegionBandwidthLimit.Region" label="地域A" width>
             <template slot-scope="scope">
@@ -29,7 +29,7 @@
           </el-table-column>
         </el-table>
       </div>
-      <div class="tabListPage">
+      <!-- <div class="tabListPage">
         <el-pagination
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
@@ -40,6 +40,15 @@
           :total="totalItems"
         >
         </el-pagination>
+      </div> -->
+      <div class="Right-style pagstyle">
+        <span class="pagtotal">{{$t('CCN.total.gongN')}}&nbsp;{{totalItems}}&nbsp;{{$t('CCN.total.tioaN')}}</span>
+        <el-pagination
+          :page-size="pageSize"
+          layout="prev, pager, next"
+          @current-change="handleCurrentChange"
+          :total="totalItems"
+        ></el-pagination>
       </div>
       <!--地域间-调整带宽模态窗 -->
       <el-dialog title="" :visible.sync="updateVisible2" class="newDialog">
@@ -54,7 +63,7 @@
             <!-- <tr class="t-body" v-for="(item, index) in formArr"> -->
               <!-- 注释掉‘添加’功能，即不能一次调整多个地域间带宽限速 -->
               <td>
-                <el-select v-model="upLimits.Region" placeholder="请选择">
+                <el-select v-model="upLimits.Region" :placeholder="$t('CCN.tabs.placeh1')">
                   <el-option
                     v-for="item in regionSet"
                     :key="item.Region"
@@ -65,7 +74,7 @@
                 </el-select>
               </td>
               <td>
-                <el-select v-model="upLimits.DstRegion" placeholder="请选择">
+                <el-select v-model="upLimits.DstRegion" :placeholder="$t('CCN.tabs.placeh1')">
                   <el-option
                     v-for="item in regionSet"
                     :key="item.Region"
@@ -130,7 +139,7 @@
         <div class="btn">
           <el-button type="text" @click="updateVisible = true">{{$t("CCN.tabs.tab3btn")}}</el-button>
         </div>
-        <el-table :data="tableData.slice((currentPage-1)*pageSize,currentPage*pageSize)" style="width: 100%">
+        <el-table :data="tableData.slice((currentPage-1)*pageSize,currentPage*pageSize)" style="width: 100%"  v-loading="loadShow">
           <template slot="empty">{{$t("CCN.tabs.tab1no")}}</template>
           <el-table-column prop="CcnRegionBandwidthLimit.Region" :label="$t('CCN.tabs.tab3tr1')" width>
             <template slot-scope="scope">
@@ -144,7 +153,7 @@
           </el-table-column>
         </el-table>
       </div>
-      <div class="tabListPage">
+      <!-- <div class="tabListPage">
         <el-pagination
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
@@ -155,6 +164,15 @@
           :total="totalItems"
         >
         </el-pagination>
+      </div> -->
+      <div class="Right-style pagstyle">
+        <span class="pagtotal">{{$t('CCN.total.gongN')}}&nbsp;{{totalItems}}&nbsp;{{$t('CCN.total.tioaN')}}</span>
+        <el-pagination
+          :page-size="pageSize"
+          layout="prev, pager, next"
+          @current-change="handleCurrentChange"
+          :total="totalItems"
+        ></el-pagination>
       </div>
       <!--调整带宽限速模态窗 -->
       <el-dialog title="" :visible.sync="updateVisible" class="updateDialog">
@@ -249,8 +267,10 @@ export default {
       checked: false,
       // 分页相关
       currentPage: 1,
-      pageSize: 10,
       totalItems: 0,
+      pageSize: 10, // 分页条数
+      currpage: 1, // 当前页码
+      loadShow:false,
     }
   },
   created () {
@@ -266,16 +286,20 @@ export default {
   },
   methods: {
     getData: function () {
+      this.loadShow=true;
       var params = {
         Version: '2017-03-12',
         Region: 'ap-taipei',
-        CcnId: this.ccnId
+        CcnId: this.ccnId,
+        // Offset: this.currpage * this.pagesize - this.pagesize,
+        // Limit: this.pagesize
       }
       // 查询-各地域出带宽限速（DescribeCcnRegionBandwidthLimits原API中给出接口）（GetCcnRegionBandwidthLimits腾讯云给出接口）
       this.axios.post(GET_CCNREGIONBANDWIDTHLIMITS, params).then(res => {
         console.log(res)
         this.tableData = res.Response.CcnBandwidthSet
-        this.totalItems = res.Response.TotalCount
+        this.totalItems = res.Response.TotalCount;
+        this.loadShow=false;
       })
     },
     // 修改限速方式弹窗
@@ -356,6 +380,11 @@ export default {
       console.log(`当前页: ${val}`);
       this.currentPage = val;
     }, 
+    //分页
+    // handleCurrentChange(val) {
+    //   this.currpage = val;
+    //   this.getData();
+    // },
   }
 }
 </script>
@@ -493,6 +522,26 @@ export default {
     border-top:1px solid #ddd;
     padding-top:8px;
     height:50px;
+  }
+}
+.Right-style {
+  display: flex;
+  justify-content: flex-end;
+
+  .esach-inputL {
+    width: 300px;
+    margin-right: 20px;
+  }
+}
+.pagstyle {
+  padding: 20px;
+  border-top: 1px solid #ddd;
+  background-color: #fff;
+  .pagtotal {
+    font-size: 13px;
+    font-weight: 400;
+    color: #565656;
+    line-height: 32px;
   }
 }
 </style>

@@ -39,6 +39,23 @@ export default new Router({
       }
     },
     {
+      path: '/toProtectSet', // 攻击详情防护配置页面
+      name: 'toProtectSet',
+      component: () => import(/* webpackChunkName: "ipMan" */ './webFirewall/components/toProtectSet.vue'),
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
+      path: '/editDominList', // 攻击详情编辑页面
+      name: 'editDominList',
+      component: () => import(/* webpackChunkName: "ipMan" */ './webFirewall/components/editDominList.vue'),
+      meta: {
+        keepAlive: true
+      }
+    },
+    
+    {
       path: '/hijackDetection', // DNS劫持检测
       name: 'hijackDetection',
       component: () => import(/* webpackChunkName: "ipMan" */ './safetyInspection/hijackDetection.vue'),

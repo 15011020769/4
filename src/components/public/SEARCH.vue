@@ -9,7 +9,7 @@
       ></el-option>
     </el-select>
     <el-input
-      placeholder="請輸入IP或主機名"
+      placeholder="請輸入搜索內容"
       v-model="searchinput"
       size="small"
       class="input-with-select esach-inputL"
@@ -22,7 +22,7 @@
       size="small"
     ></el-button>
     <el-tooltip class="tooltip" effect="dark" content="導出表格" placement="top">
-      <el-button @click="exportExcel" icon="el-icon-download" size="small" style="height:32px"></el-button>
+      <el-button @click="exportExcel" icon="el-icon-download"></el-button>
     </el-tooltip>
   </div>
 </template>
@@ -73,11 +73,20 @@ export default {
 <style lang="scss" scoped>
 .search-style {
   display: flex;
+
   .esach-inputL {
     width: 300px;
   }
+
   .btn-style {
     height: 32px;
   }
+}
+.search-style >>> .el-input__inner,
+.search-style >>> .el-button {
+  height: 30px !important;
+  line-height: 30px;
+  border-radius: 0;
+  padding-top: 0;
 }
 </style>

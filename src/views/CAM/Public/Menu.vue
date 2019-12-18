@@ -95,8 +95,6 @@ export default {
 }
 .CAM {
   background: #000;
-  overflow-x: hidden;
-  overflow-y: auto;
 }
 .CLA {
   ::v-deep .el-menu {

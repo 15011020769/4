@@ -50,7 +50,11 @@
       <div class="modelchart">
         <h3>{{ $t('SCF.total.sytj') }}</h3>
         <div>
-          <el-button class="addressName" readonly="readonly" v-model="addressIpt">{{ $t('SCF.total.zgtb') }}</el-button>
+          <el-button
+            class="addressName"
+            readonly="readonly"
+            v-model="addressIpt"
+          >{{ $t('SCF.total.zgtb') }}</el-button>
           <XTimeX v-on:switchData="GetDat" :classsvalue="value"></XTimeX>
         </div>
         <div class="chartShowCon">
@@ -92,7 +96,7 @@
             <span>
               <a>{{ $t('SCF.total.zwbm') }}刷新</a>
             </span>
-          </div> -->
+          </div>-->
           <div class="chartTable">
             <!-- <el-table :data="tableData"  ref="multipleTable" class="funDataTable">
             <el-table-column prop="funName" label="函数名"></el-table-column>
@@ -106,7 +110,7 @@
               style="width: 100%"
               class="funDataTable"
             >
-              <div class="chartCon" id="echartsShow" ref="chartY">
+              <!-- <div class="chartCon" id="echartsShow" ref="chartY">
                 <el-table-column prop="DataPoints" width="550">
                   <template slot-scope="scope">
                     <p v-if="scope.row.DataPoints[0].Values.length==0">{{ $t('SCF.total.zwsj') }}</p>
@@ -122,7 +126,22 @@
                     </div>
                   </template>
                 </el-table-column>
-              </div>
+              </div>-->
+              <el-table-column prop="DataPoints" width="550">
+                <template slot-scope="scope">
+                  <p v-if="scope.row.DataPoints[0].Values.length==0">{{ $t('CVM.clBload.zwsj') }}</p>
+                  <div class="echart" v-if="scope.row.DataPoints[0].Values.length!=0">
+                    <echart-line
+                      id="diskEchearrts-line"
+                      :time="scope.row.DataPoints[0].Timestamps | UpTime"
+                      :opData="scope.row.DataPoints[0].Values"
+                      :scale="3"
+                      :period="period"
+                      :xdata="false"
+                    ></echart-line>
+                  </div>
+                </template>
+              </el-table-column>
               <el-table-column prop="FunctionName" label="函数名"></el-table-column>
               <el-table-column prop="Namespace" label="命名空间"></el-table-column>
               <el-table-column prop="dataNum" label="数据指标"></el-table-column>
@@ -247,24 +266,32 @@ export default {
     },
     //
     Obtain(metricN) {
-      const param = {
+      let param = {
         Version: "2018-07-24",
         Region: this.$cookie.get("regionv2"), //'ap-guangzhou',
         Namespace: "QCE/SCF_V2",
         MetricName: metricN,
-        "Instances.0.Dimensions.0.Name": "functionName",
-        "Instances.0.Dimensions.0.Value": this.funlistname,
-        "Instances.0.Dimensions.1.Name": "version",
-        "Instances.0.Dimensions.1.Value": this.funlistversion,
+        // "Instances.0.Dimensions.0.Name": "functionName",
+        // "Instances.0.Dimensions.0.Value": this.funlistname,
+        // "Instances.0.Dimensions.1.Name": "version",
+        // "Instances.0.Dimensions.1.Value": this.funlistversion,
         Period: this.period,
         StartTime: this.Start_End.StartTIme,
         EndTime: this.Start_End.EndTIme
       };
-      console.log(param)
+      this.funlistname.forEach(function(elem,index){
+        param["Instances."+index+".Dimensions.0.Name"] = "functionName";
+        param[ "Instances."+index+".Dimensions.0.Value"] = elem
+      })
+      this.funlistversion.forEach(function(elem,index){
+         param["Instances."+index+".Dimensions.1.Name"] = "version";
+        param[ "Instances."+index+".Dimensions.1.Value"] = elem
+      })
+      // console.log(param);
       this.axios.post(All_MONITOR, param).then(data => {
         this.tableData = [];
-        console.log(data);
-        this.tableData.push(data.Response.DataPoints[0].Values);
+        // console.log(data);
+        this.tableData.push(data.Response);
         // console.log(this.tableData)
       });
     },
@@ -312,24 +339,21 @@ export default {
         data.Response.Functions.forEach(function(elem, index) {
           vm.funlistname.push(elem.FunctionName);
         });
-        vm.typee()
-
-
-
+        vm.typee();
       });
     },
     typee() {
       var vm = this;
-      var listname = this.funlistname
-      listname.forEach(function(elem) {   
+      var listname = this.funlistname;
+      listname.forEach(function(elem) {
         var param = {
           Action: "ListVersionByFunction",
           Version: "2018-04-16",
-          Region: "ap-guangzhou", //'ap-guangzhou',
+          Region: "ap-guangzhou" //'ap-guangzhou',
         };
-        param["FunctionName"] = elem
+        param["FunctionName"] = elem;
         vm.axios.post(LIST_VERSION, param).then(data => {
-          vm.funlistversion.push(data.Response.FunctionVersion[0])     
+          vm.funlistversion.push(data.Response.FunctionVersion[0]);
         });
       });
     }
@@ -404,9 +428,9 @@ export default {
   },
   mounted() {
     this.list();
-    
+
     if (this.tableData == "") {
-      document.querySelector(".chartTable").innerHTML = "暂无数据";
+      document.querySelector(".chartTable").innerHTML = "暫無數據";
     }
     // this.initChart(this.tableData);
     this.GetOverView();
@@ -417,7 +441,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.wrap >>> .btn-style{
+.wrap >>> .btn-style {
   margin-left: 0;
 }
 .wrap >>> input,
@@ -426,11 +450,11 @@ export default {
   border-radius: 0;
   font-size: 12px;
 }
-.wrap >>> button{
+.wrap >>> button {
   padding: 0 15px;
   box-sizing: border-box;
 }
-.chartShowCon >>> button{
+.chartShowCon >>> button {
   background: transparent;
 }
 .newClear:after {

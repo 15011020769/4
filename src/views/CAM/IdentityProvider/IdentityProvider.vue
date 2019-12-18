@@ -1,25 +1,37 @@
 <template>
   <div class="Cam">
     <HeadCom title="身份提供者" />
-    <div class="cam_button">
+    <div class="cam_button" style="margin-top:20px;">
       <el-row class="cam-lt">
         <el-button type="primary" size="small" @click="NewUser">{{$t('CAM.strategy.newAdd')}}</el-button>
       </el-row>
     </div>
     <!-- 表格 -->
-    <div class="cam-box">
+    <div class="cam-box" style="height:520px;padding:0;margin-bottom:20px;">
       <el-table
         height="450"
         v-loading="loading"
         ref="multipleTable"
         :data="tableData.slice((currpage - 1) * pagesize, currpage * pagesize)"
         tooltip-effect="dark"
-        style="width: 100%; border:1px solid #ddd;padding-top: 8px;"
+        style="width: 100%;"
       >
         <el-table-column prop="name" :label="$t('CAM.strategy.peopleName')" show-overflow-tooltip></el-table-column>
-        <el-table-column prop="description" :label="$t('CAM.strategy.peopleType')" show-overflow-tooltip></el-table-column>
-        <el-table-column prop="createTime" :label="$t('CAM.userList.createTime')" show-overflow-tooltip></el-table-column>
-        <el-table-column prop="modifyTime" :label="$t('CAM.strategy.lastCreateTime')" show-overflow-tooltip></el-table-column>
+        <el-table-column
+          prop="description"
+          :label="$t('CAM.strategy.peopleType')"
+          show-overflow-tooltip
+        ></el-table-column>
+        <el-table-column
+          prop="createTime"
+          :label="$t('CAM.userList.createTime')"
+          show-overflow-tooltip
+        ></el-table-column>
+        <el-table-column
+          prop="modifyTime"
+          :label="$t('CAM.strategy.lastCreateTime')"
+          show-overflow-tooltip
+        ></el-table-column>
         <el-table-column label="操作" show-overflow-tooltip>
           <!-- &lt;!&ndash;<template slot-scope="scope">
           <el-button size="mini" type="text" ></el-button>
@@ -27,22 +39,15 @@
           </template>&ndash;&gt;-->
         </el-table-column>
       </el-table>
-      <div
-        style="background:#fff;padding:10px;display:flex;justify-content: space-between;line-height:30px"
-      >
-        <div>
-          <span style="font-size:12px;color:#888">{{$t('CAM.strategy.chooseStra')}} 0 项，共 0 项</span>
-        </div>
-        <div>
-          <el-pagination
-            @size-change="handleSizeChange"
-            @current-change="handleCurrentChange"
-            :page-sizes="[20, 30, 40,50,100]"
-            :page-size="pagesize"
-            layout="total, sizes, prev, pager, next, jumper"
-            :total="tableData.length"
-          ></el-pagination>
-        </div>
+      <div class="Right-style pagstyle" style="height:70px;display:flex;align-items:center;">
+        <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;{{$t("CAM.strip")}}</span>
+        <el-pagination
+          :page-size="pagesize"
+          :pager-count="7"
+          layout="prev, pager, next"
+          @current-change="handleCurrentChange"
+          :total="TotalCount"
+        ></el-pagination>
       </div>
     </div>
   </div>
@@ -56,6 +61,7 @@ export default {
       tableData: [],
       total: 0,
       loading: true,
+      TotalCount: 0,
       pagesize: 10, // 分页条数
       currpage: 1 // 当前页码
     };
@@ -68,11 +74,7 @@ export default {
   },
   methods: {
     //分页
-    handleSizeChange(val) {
-      this.pagesize = val;
-      this.currpage = 1;
-      this.init();
-    },
+
     handleCurrentChange(val) {
       this.currpage = val;
       this.init();
@@ -85,7 +87,9 @@ export default {
       this.axios
         .post(LIST_Providers, params)
         .then(data => {
+          console.log(data);
           this.tableData = data.Response.SAMLProviderSet;
+          this.TotalCount = data.Response.TotalCount;
           this.loading = false;
         })
         .catch(error => {
@@ -147,6 +151,28 @@ export default {
       padding: 10px 0;
       display: flex;
       justify-content: flex-end;
+    }
+  }
+  .pagstyle {
+    padding: 20px;
+    .pagtotal {
+      font-size: 13px;
+      font-weight: 400;
+      color: #565656;
+      line-height: 32px;
+    }
+  }
+  .Right-style {
+    display: flex;
+    justify-content: flex-end;
+  }
+  .pagstyle {
+    padding: 5px;
+    .pagtotal {
+      font-size: 13px;
+      font-weight: 400;
+      color: #565656;
+      line-height: 32px;
     }
   }
   .abs {

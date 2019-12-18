@@ -5,7 +5,7 @@
       {{title}}
       <el-switch
         v-model="value"
-        inactive-text="开启日志记录"
+        inactive-text="開啟日誌記錄"
         style="float:right;margin-top:5px;"
         @change="_switch"
       ></el-switch>

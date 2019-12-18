@@ -24,13 +24,13 @@
     <!-- 表格 -->
     <div class="Table-SY">
       <el-table
-        :data="ProTableData.slice((currpage - 1) * pagesize, currpage * pagesize)"
+        :data="ProTableData"
         height="550"
         style="width: 100%"
         id="exportTable"
         v-loading="loadShow"
       >
-        <el-table-column prop l:label="$t('CVM.cloudDisk.mc')" >
+        <el-table-column prop :label="$t('CVM.cloudDisk.mc')">
           <template slot-scope="scope">
             <p>
               <a
@@ -62,7 +62,7 @@
             <p>{{scope.row.CreateTime}}</p>
           </template>
         </el-table-column>
-        <el-table-column prop :label="$t('CVM.clBload.wglx')">
+        <el-table-column prop :label="$t('CVM.clBload.wglc')">
           <template slot-scope="scope">
             <p>{{instanceStatus[scope.row.GatewayType]}}</p>
           </template>
@@ -78,13 +78,13 @@
         </el-table-column>-->
       </el-table>
       <div class="Right-style pagstyle">
+        <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;{{$t("CVM.strip")}}</span>
         <el-pagination
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-          :page-sizes="[20, 30, 40,50,100]"
           :page-size="pagesize"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="ProTableData.length"
+          :pager-count="7"
+          layout="prev, pager, next"
+          @current-change="handleCurrentChange"
+          :total="TotalCount"
         ></el-pagination>
       </div>
     </div>
@@ -111,15 +111,14 @@ export default {
         {
           value: "direct-connect-gateway-name",
           label: "網關名稱"
-        },
+        }
       ],
       //inp输入的值
       searchValue: "",
       //文字过滤
       instanceStatus: {
         NORMAL: "標準型",
-        NAT: "NAT型",
-
+        NAT: "NAT型"
       },
 
       //城市列表
@@ -131,7 +130,8 @@ export default {
       TbaleData: [], // 表格数据
       ProjectData: [], // 项目列表数据
       ProTableData: [], // 添加完项目列表的表格数据
-      pagesize: 20, // 分页条数
+      TotalCount: 0, //总条数
+      pagesize: 10, // 分页条数
       currpage: 1 // 当前页码
     };
   },
@@ -188,19 +188,21 @@ export default {
     changeinput(val) {
       this.searchInput = val;
       if (this.searchInput === "") {
+        this.currpage = 1;
         this.GetTabularData();
       }
     },
     clicksearch(val) {
       this.searchInput = val;
       if (this.searchInput !== "" && this.searchValue !== "") {
+        this.currpage = 1;
         this.GetTabularData();
       } else if (this.searchInput !== "" || this.searchValue !== "") {
+        this.currpage = 1;
         this.GetTabularData();
         this.$message.error("请输入正确搜索信息");
       } else {
         this.$message.error("请输入正确搜索信息");
-       
       }
     },
     // 添加项目列表的表格数据
@@ -220,6 +222,7 @@ export default {
       this.axios.post(DCG_LIST, param).then(data => {
         if (data.Response.Error == undefined) {
           this.ProTableData = data.Response.DirectConnectGatewaySet;
+          this.TotalCount = data.Response.TotalCount;
         } else {
           this.$message.error(data.Response.Error.Message);
           // this.ProTableData = []
@@ -249,6 +252,16 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.pagstyle {
+  padding: 20px;
+
+  .pagtotal {
+    font-size: 13px;
+    font-weight: 400;
+    color: #565656;
+    line-height: 32px;
+  }
+}
 .CM-wrap {
   width: 100%;
   height: 100%;

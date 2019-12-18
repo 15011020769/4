@@ -81,14 +81,16 @@
                 </el-table>
               </div>
               <div style="background:#fff;padding:10px;display:flex;justify-content: space-between;line-height:30px">
-                <div>
-                  <span style="font-size:12px;color:#888">共 {{totalPolicies}} 项</span>
-                </div>
-                <div class="block">
-                  <el-pagination @size-change="handleSizeChangePolicies" @current-change="handleCurrentChangePolicies"
-                    :current-page.sync="pagePolicies" :page-sizes="[10, 20, 50, 100, 200]" :page-size="rpPolicies"
-                    layout="total, sizes, prev, pager, next, jumper" :total="totalPolicies"></el-pagination>
-                </div>
+                 <div style="flex:1;display:flex;justify-content: flex-end;">
+          <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;{{$t("CAM.strip")}}</span>
+          <el-pagination
+            :page-size="pagesize"
+            :pager-count="7"
+            layout="prev, pager, next"
+            @current-change="handleCurrentChange"
+            :total="TotalCount"
+          ></el-pagination>
+        </div>
               </div>
               <!-- 关联策略弹出框 start -->
               <el-dialog :title="$t('CAM.userList.RelatedPolicies')" custom-class="dialogStyle" :visible.sync="dialogVisible" width="75%"
@@ -163,7 +165,7 @@
                 <el-button size="small" :disabled="btnVisible" @click="deleteUser">移除</el-button>
               </div>
               <div>
-                <el-table ref="multipleTable" :data="owneruserData" tooltip-effect="dark"
+                <el-table ref="multipleTable" :data="owneruserData.slice((currpages - 1) * pagesizes, currpages * pagesizes)" tooltip-effect="dark"
                   style="width: 100%; border:1px solid #ddd" @selection-change="handleSelectionChangeUsers">
                   <el-table-column type="selection" width="55"></el-table-column>
                   <el-table-column  :label="$t('CAM.userGroup.colNmae')" prop="Name">
@@ -186,14 +188,16 @@
                 </el-table>
               </div>
               <div style="background:#fff;padding:10px;display:flex;justify-content: space-between;line-height:30px">
-                <div>
-                  <span style="font-size:12px;color:#888">共 {{totalUser}} 项</span>
-                </div>
-                <div class="block">
-                  <el-pagination @size-change="handleSizeChangeUser" @current-change="handleCurrentChangeUser"
-                    :current-page.sync="pageUser" :page-sizes="[10, 20, 50, 100, 200]" :page-size="rpUser"
-                    layout="total, sizes, prev, pager, next, jumper" :total="totalUser"></el-pagination>
-                </div>
+                     <div style="flex:1;display:flex;justify-content: flex-end;">
+          <span class="pagtotal">共&nbsp;{{TotalCounts}}&nbsp;{{$t("CAM.strip")}}</span>
+          <el-pagination
+            :page-size="pagesizes"
+            :pager-count="7"
+            layout="prev, pager, next"
+            @current-change="handleCurrentChanges"
+            :total="TotalCounts"
+          ></el-pagination>
+        </div>
               </div>
               <!-- dialog 用户组弹出框  start -->
               <el-dialog title="添加用戶" :visible.sync="dialogUser" width="75%" :before-close="handleCloseUser"
@@ -263,6 +267,12 @@ import {GET_GROUP,DEL_USERTOGROUP,UPDATA_GROUP,GROUP_USERS,USER_LIST,GROUP_POLIC
   export default {
     data() {
       return {
+        TotalCount: 0, //总条数
+        pagesize: 10, // 分页条数
+        currpage: 1 ,// 当前页码
+        TotalCounts:10,
+        pagesizes:10,
+        currpages:1,
         tableHeight: 300,
         flag: true,
         activeName: "first",
@@ -300,6 +310,14 @@ import {GET_GROUP,DEL_USERTOGROUP,UPDATA_GROUP,GROUP_USERS,USER_LIST,GROUP_POLIC
       // this.tableHeight = window.innerHeight - this.$refs.multipleOptionPolicies.$el.offsetTop - 50;
     },
     methods: {
+      handleCurrentChange(val){
+       this.currpage = val;
+       this.selectGroupPolicies();
+      },
+      handleCurrentChanges(val){
+        this.currpages = val;
+        this.selectGroup()
+      },
       // 初始化时，获取用户组信息
       init() {
         this.selectGroupPolicies()
@@ -315,8 +333,10 @@ import {GET_GROUP,DEL_USERTOGROUP,UPDATA_GROUP,GROUP_USERS,USER_LIST,GROUP_POLIC
           params['GroupId'] = groupId
         }
         this.axios.post(GET_GROUP, params).then(res => {
+          console.log()
           this.groupData = res.Response
           this.owneruserData = res.Response.UserInfo
+          this.TotalCounts = this.owneruserData.length
           this.userLabel = '用户（' + this.owneruserData.length + '）'
         }).catch(error => {
           console.log(error)
@@ -499,14 +519,14 @@ import {GET_GROUP,DEL_USERTOGROUP,UPDATA_GROUP,GROUP_USERS,USER_LIST,GROUP_POLIC
         let groupId = parseInt(this.$route.query.GroupId)
         let params = {
           Version: '2019-01-16',
-          Page: this.pagePolicies,
-          Rp: this.rpPolicies,
+          Page: this.currpage,
+          Rp: this.pagesize,
           TargetGroupId: groupId
         }
         this.axios.post(GROUP_POLICY, params).then(res => {
           this.policiesData = res.Response.List
           this.policiesLable = '权限（' + this.policiesData.length + '）'
-          this.totalPolicies = res.Response.TotalNum
+          this.TotalCount = res.Response.TotalNum
         }).catch(error => {
           console.log(error)
         })

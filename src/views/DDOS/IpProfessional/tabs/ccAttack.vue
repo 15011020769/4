@@ -99,7 +99,7 @@ export default {
         new Date(new Date().getTime() - 24 * 60 * 60 * 1000)
       ),
       tableDataEnd: [],
-      periodCC: 3600 //统计粒度，取值[300(5分钟)，3600(小时)，86400(天)]
+      periodCC: 3600 //统计粒度，取值[300(5分鐘)，3600(小时)，86400(天)]
     };
   },
   watch: {
@@ -307,7 +307,7 @@ export default {
         Id: this.inputIdCC,
         Ip: "175.97.142.150", //资源的IP
         MetricName: this.metricNameCC, //指标，取值[inqps(总请求峰值，dropqps(攻击请求峰值))]
-        Period: this.periodCC, //统计粒度，取值[300(5分钟)，3600(小时)，86400(天)]
+        Period: this.periodCC, //统计粒度，取值[300(5分鐘)，3600(小时)，86400(天)]
         StartTime: this.startTimeCC,
         EndTime: this.endTimeCC
       };

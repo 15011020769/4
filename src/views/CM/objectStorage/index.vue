@@ -56,14 +56,10 @@
         </el-table-column>
       </el-table>
       <div class="Right-style pagstyle">
-        <el-pagination
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-          :page-sizes="[20, 30, 40,50,100]"
-          :page-size="pagesize"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="ProTableData.length"
-        ></el-pagination>
+        <span class='pagtotal'>共&nbsp;{{TotalCount}}&nbsp;{{$t("CVM.strip")}}</span>
+        <el-pagination :page-size="pagesize" :pager-count="7" layout="prev, pager, next"
+          @current-change="handleCurrentChange" :total="TotalCount">1
+        </el-pagination>
       </div>
     </div>
   </div>
@@ -85,7 +81,7 @@ export default {
       searchOptions: [
         {
           value: "bucket",
-          label: "存储桶名称"
+          label: "存儲桶名稱"
         }
       ],
       //默认
@@ -116,7 +112,8 @@ export default {
       TbaleData2: [], // 表格数据
       ProjectData: [], // 项目列表数据
       ProTableData: [], // 添加完项目列表的表格数据
-      pagesize: 20, // 分页条数
+      TotalCount: 0,
+      pagesize: 10, // 分页条数
       currpage: 1 // 当前页码
     };
   },
@@ -174,6 +171,7 @@ export default {
       this.searchInput = val;
       if (this.searchInput === "") {
         this.GetTabularData();
+        this.currpage = 1;
       }
     },
     //点击搜索按钮
@@ -181,6 +179,7 @@ export default {
       this.searchInput = val;
       if (this.searchInput !== "" && this.searchValue !== "") {
         this.GetTabularData();
+        this.currpage = 1;
       } else {
         this.$message.error("請輸入正確搜索信息");
       }
@@ -193,6 +192,7 @@ export default {
       };
       // 获取表格数据
       this.axios.post(OBJ_LIST, param).then(data => {
+        console.log(data)
         var self = this;
         if (this.searchValue !== "" && this.searchInput !== "") {
           self.TbaleData2.splice(0, self.TbaleData2.length);
@@ -206,17 +206,13 @@ export default {
           });
         } else {
           this.TbaleData = data.Buckets.Bucket;
+          this.TotalCount = data.Buckets.Bucket.length;
         }
         this.ProTableData = this.TbaleData;
         this.loadShow = false;
       });
     },
     //分页
-    handleSizeChange(val) {
-      this.pagesize = val;
-      this.currpage = 1;
-      this.GetTabularData();
-    },
     handleCurrentChange(val) {
       this.currpage = val;
       this.GetTabularData();
@@ -293,6 +289,12 @@ export default {
 
 .pagstyle {
   padding: 20px;
+  .pagtotal {
+      font-size: 13px;
+      font-weight: 400;
+      color: #565656;
+      line-height: 32px;
+    }
 }
 .a {
   background-image: url("./../../../assets/CAM/images/cvm-20199061519.svg");

@@ -79,7 +79,8 @@
         </el-table-column>
       </el-table>
       <!-- 模态框 -->
-      <el-dialog :title="$t('CVM.clBload.jqjkzt')" :visible.sync="dialogVisible" width="60%" :before-close="handleClose">
+      <el-dialog :title="$t('CVM.clBload.jqjkzt')" :visible.sync="dialogVisible" width="60%"
+        :before-close="handleClose">
         <XTimeX v-on:switchData="GetDat" :classsvalue="value"></XTimeX>
         <echart-line id="diskEchearrts-line" class="echart-wh" :time="timeData | UpTime" :opData="jingData"
           :period="period" :xdata="true"></echart-line>
@@ -98,7 +99,7 @@
   export default {
     data() {
       return {
-        ID: this.$route.query.id,//路由跳转id
+        ID: this.$route.query.id, //路由跳转id
         period: "",
         Start_End: [],
         value: 1,
@@ -117,7 +118,7 @@
       XTimeX
     },
     created() {
-      // ssss
+
     },
     methods: {
       //获取数据

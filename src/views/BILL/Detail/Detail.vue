@@ -63,7 +63,7 @@
       </div>
       <div class="mod-right">
         <div style="float: right;">
-          <el-button type="primary" icon="el-icon-download" @click="download" size="small" plain v-loading="downloadLoading"></el-button>
+          <el-button type="primary" icon="el-icon-download" @click="download" size="small" plain :loading="downloadLoading"></el-button>
         </div>
         <div style="float: right; padding-right:5px;">
           <el-input :placeholder="$t('BILL.Detail.resourceId')" clearable v-model="dataForm.resourceId" size="small">
@@ -76,6 +76,7 @@
     <!-- 表格 -->
     <div class="mod-table">
       <el-table :data="dataList" class="table-content" style="width: 100%" v-loading="dataListLoading" size="small">
+        <template slot="empty">{{$t('BILL.Overview.none')}}</template>
         <el-table-column prop="resourceId" header-align="center" align="center" width="140" fixed :label="$t('BILL.Detail.resourceId')">
         </el-table-column>
         <el-table-column prop="businessCodeName" header-align="center" align="center" width="140" fixed :label="$t('BILL.Detail.productName')">
@@ -106,9 +107,9 @@
         </el-table-column>
         <el-table-column prop="itemCodeName" header-align="center" align="center" width="150" :label="$t('BILL.Detail.itemCodeName')">
         </el-table-column>
-        <el-table-column prop="singlePrice" header-align="center" align="center" width="120" :label="$t('BILL.Detail.singlePrice')">
+        <el-table-column prop="single" header-align="center" align="center" width="120" :label="$t('BILL.Detail.single')">
         </el-table-column>
-        <el-table-column prop="specifiedPrice" header-align="center" align="center" width="120" :label="$t('BILL.Detail.specifiedPrice')">
+        <el-table-column prop="specifiedbak" header-align="center" align="center" width="120" :label="$t('BILL.Detail.specifiedbak')">
         </el-table-column>
         <el-table-column prop="priceUnit" header-align="center" align="center" width="120" :label="$t('BILL.Detail.priceUnit')">
         </el-table-column>
@@ -120,33 +121,43 @@
         </el-table-column>
         <el-table-column prop="timeUnitName" header-align="center" align="center" width="120" :label="$t('BILL.Detail.timeUnitName')">
         </el-table-column>
-        <el-table-column prop="cost" header-align="center" align="center" width="120" :label="$t('BILL.Detail.cost')">
+        <el-table-column prop="costbak" header-align="center" align="center" width="120" :label="$t('BILL.Detail.costbak')">
         </el-table-column>
-        <el-table-column prop="qcloudDiscount" header-align="center" align="center" width="120" :label="$t('BILL.Detail.qcloudDiscount')">
+        <el-table-column prop="qcloudbak" header-align="center" align="center" width="120" :label="$t('BILL.Detail.qcloudbak')">
         </el-table-column>
-        <el-table-column prop="tfcDiscount" header-align="center" align="center" width="120" :label="$t('BILL.Detail.tfcDiscount')">
+        <el-table-column prop="tfcbak" header-align="center" align="center" width="120" :label="$t('BILL.Detail.tfcbak')">
         </el-table-column>
         <el-table-column prop="reduceType" header-align="center" align="center" width="120" :label="$t('BILL.Detail.reduceType')">
         </el-table-column>
-        <el-table-column prop="realCost" header-align="center" align="center" width="120" :label="$t('BILL.Detail.realCost')">
+        <el-table-column prop="realbak" header-align="center" align="center" width="120" :label="$t('BILL.Detail.realbak')">
         </el-table-column>
-        <el-table-column prop="voucherPayAmount" header-align="center" align="center" width="120" :label="$t('BILL.Detail.voucherPayAmount')">
+        <el-table-column prop="voucherPaybak" header-align="center" align="center" width="120" :label="$t('BILL.Detail.voucherPaybak')">
         </el-table-column>
-        <el-table-column prop="cashPayAmount" header-align="center" align="center" width="120" :label="$t('BILL.Detail.cashPayAmount')">
+        <el-table-column prop="cash" header-align="center" align="center" width="120" :label="$t('BILL.Detail.cash')">
         </el-table-column>
-        <el-table-column prop="incentivePayAmount" header-align="center" align="center" width="140" :label="$t('BILL.Detail.incentivePayAmount')">
+        <el-table-column prop="incentivePaybak" header-align="center" align="center" width="140" :label="$t('BILL.Detail.incentivePaybak')">
         </el-table-column>
-        <el-table-column prop="usdExpenditure" header-align="center" align="center" width="120" :label="$t('BILL.Detail.usdExpenditure')">
+        <el-table-column prop="usdExpendbak" header-align="center" align="center" width="120" :label="$t('BILL.Detail.usdExpendbak')">
         </el-table-column>
-        <el-table-column prop="ntExpenditure" header-align="center" align="center" width="120" :label="$t('BILL.Detail.ntExpenditure')">
+        <el-table-column prop="ntExpendbak" header-align="center" align="center" width="120" :label="$t('BILL.Detail.ntExpendbak')">
         </el-table-column>
         <el-table-column prop="month" header-align="center" align="center" width="120" :label="$t('BILL.Detail.month')">
         </el-table-column>
       </el-table>
-      <div class="table-page">
+      <!-- <div class="table-page">
         <el-pagination @size-change="sizeChangeHandle" @current-change="currentChangeHandle" :current-page="pageIndex" :page-sizes="[10, 20, 50, 100]" :page-size="pageSize" :total="totalPage" layout="total, sizes, prev, pager, next, jumper" style="width:100%; text-align:right;">
         </el-pagination>
-      </div>
+      </div> -->
+      <div class="Right-style pagstyle" style="height:70px;display:flex;align-items:center;">
+          <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;條</span>
+          <el-pagination
+            :page-size="pagesize"
+            :pager-count="7"
+            layout="prev, pager, next"
+            @current-change="handleCurrentChange"
+            :total="TotalCount"
+          ></el-pagination>
+        </div>
     </div>
   </div>
 </template>
@@ -168,6 +179,9 @@ export default {
         checked: false,
         allCoat: '0',             // 总费用
       },
+      TotalCount: 0,
+      pagesize: 10,
+      currpage: 1,
       dataList: [],
       getProductList: [],       // 产品列表
       getChildList: [],
@@ -176,9 +190,6 @@ export default {
       getPayModeList: [],       // 获取计费模式
       getActionTypeList: [],    // 获取交易类型
       getComponentList: [],
-      pageIndex: 1,
-      pageSize: 10,
-      totalPage: 0,
       dataListLoading: false,
       downloadLoading: false
     }
@@ -192,9 +203,14 @@ export default {
   },
   methods: {
 
+     handleCurrentChange(val){
+      this.currpage = val;
+      this.getDataList()
+    },
+
     // 点击下拉月份
     getMonth(mon) {
-      this.pageIndex = 1
+      this.currpage = 1
       this.dataForm.month = mon           // 2019-11
       this.getDataList()                  // 获取账单列表
     },
@@ -212,7 +228,7 @@ export default {
 
     // 点击产品
     productClick() {
-      this.pageIndex = 1
+      this.currpage = 1
       this.getDataList()        // 获取数据列表
     },
 
@@ -229,7 +245,7 @@ export default {
 
     // 点击项目
     projectClick() {
-      this.pageIndex = 1
+      this.currpage = 1
       this.getDataList()        // 获取数据列表
     },
 
@@ -245,7 +261,7 @@ export default {
 
     // 点击计费模式
     payClick() {
-      this.pageIndex = 1
+      this.currpage = 1
       this.getDataList()        // 获取数据列表
     },
 
@@ -262,15 +278,15 @@ export default {
 
     // 点击交易类型
     actionTypeClick() {
-      this.pageIndex = 1
+      this.currpage = 1
       this.getDataList()        // 获取数据列表
     },
 
     // 获取数据列表
     getDataList() {
       var params = {
-        'page': this.pageIndex,
-        'limit': this.pageSize,
+        'page': this.currpage,
+        'limit': this.pagesize,
         'uin': this.$cookie.get('uin'),
         'month': this.dataForm.month,
         'businessCode': this.dataForm.businessCode,
@@ -284,11 +300,11 @@ export default {
       this.axios.post(`${process.env.VUE_APP_adminUrl + BILL_LIST}`, params).then(data => {
         if (data && data.code === 0) {
           this.dataList = data.page.list
-          this.totalPage = data.page.totalCount
+          this.TotalCount = data.page.totalCount
           this.cost()     // 查询完数据之后 获取总费用
         } else {
           this.dataList = []
-          this.totalPage = 0
+          this.TotalCount = 0
         }
         this.dataListLoading = false
       })
@@ -296,21 +312,21 @@ export default {
 
     // 点击每页select显示的条数
     sizeChangeHandle(val) {
-      this.pageSize = val
-      this.pageIndex = 1
+      this.pagesize = val
+      this.currpage = 1
       this.getDataList()
     },
 
     // 点击页码
     currentChangeHandle(val) {
-      this.pageIndex = val
+      this.currpage = val
       this.getDataList()
     },
 
     // 搜索
     search() {
-      this.pageIndex = 1
-      this.pageSize = 10
+      this.currpage = 1
+      this.pagesize = 10
       this.getDataList()
     },
 
@@ -328,7 +344,8 @@ export default {
       }
       this.axios.post(`${process.env.VUE_APP_adminUrl + GET_PAY_AMOUNT}`, params).then(data => {
         if (data.payAmount != null && data.code === 0) {
-          this.dataForm.allCoat = data.payAmount.totalAmount
+          var costs=data.payAmount.totalAmount.toFixed(2)
+          this.dataForm.allCoat = costs
         } else {
           this.dataForm.allCoat = 0
           this.dataForm.cashPayment = 0
@@ -378,8 +395,8 @@ export default {
 
     // 0元费用
     getCharge() {
-      this.pageIndex = 1
-      this.pageSize = 10
+      this.currpage = 1
+      this.pagesize = 10
       this.getDataList()
     },
 
@@ -516,5 +533,19 @@ export default {
 
 .el-select .el-input {
   width: 200px !important;
+}
+.Right-style{
+  display: flex;
+  width: 100%;
+  justify-content: flex-end;
+}
+.pagstyle{
+  padding: 5px;
+  .pagtotal{
+    font-size: 13px;
+    font-weight: 400;
+    color: #565656;
+    line-height: 32px;
+  }
 }
 </style>

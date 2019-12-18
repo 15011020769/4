@@ -80,7 +80,10 @@
           </el-table-column>
           <el-table-column label="操作" width="150">
             <template slot-scope="scope">
-              <p style="color:#006eff;cursor: pointer;" @click="_del(scope.row)">{{$t('CAM.userList.Remove')}}</p>
+              <p
+                style="color:#006eff;cursor: pointer;"
+                @click="_del(scope.row)"
+              >{{$t('CAM.userList.Remove')}}</p>
             </template>
           </el-table-column>
         </el-table>
@@ -94,18 +97,21 @@
           <el-table-column prop="GroupName" label="用戶組名稱"></el-table-column>
           <el-table-column :label="$t('CAM.userList.userCz')" width="250">
             <template slot-scope="scope">
-              <p style="color:#006eff;cursor: pointer;" @click="_del(scope.row)">{{$t('CAM.userList.Remove')}}</p>
+              <p
+                style="color:#006eff;cursor: pointer;"
+                @click="_del(scope.row)"
+              >{{$t('CAM.userList.Remove')}}</p>
             </template>
           </el-table-column>
         </el-table>
-        <div class="page-box Right-style pagstyle">
+        <div class="Right-style pagstyle">
+          <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;{{$t("CAM.strip")}}</span>
           <el-pagination
-            @size-change="handleSizeChange"
-            @current-change="handleCurrentChange"
-            :page-sizes="[20, 30, 40,50,100]"
             :page-size="pagesize"
-            layout="total, sizes, prev, pager, next, jumper"
-            :total="num"
+            :pager-count="7"
+            layout="prev, pager, next"
+            @current-change="handleCurrentChange"
+            :total="TotalCount"
           ></el-pagination>
         </div>
       </div>
@@ -135,6 +141,7 @@ export default {
       policyData: [], //策略列表
       userData: {}, //用户信息
       userInp: false, //用户信息input
+      TotalCount: 0, //总条数
       pagesize: 10, // 分页条数
       currpage: 1 // 当前页码
     };
@@ -142,6 +149,7 @@ export default {
   methods: {
     //用户组列表
     _groupList() {
+      this.tableloading = true;
       const params = {
         Version: "2019-01-16",
         Uid: this.userData.Uid,
@@ -151,6 +159,7 @@ export default {
       this.axios.post(RELATE_USER, params).then(res => {
         this.userList = res.Response.GroupInfo;
         this.num = res.Response.TotalNum;
+        this.TotalCount = res.Response.TotalNum;
         this.tableloading = false;
       });
     },
@@ -209,6 +218,7 @@ export default {
     },
     //策略列表
     _tactics() {
+      this.tableloading = true;
       const params = {
         Version: "2019-01-16",
         TargetUin: this.userData.Uin,
@@ -217,6 +227,7 @@ export default {
       };
       this.axios.post(QUERY_POLICY, params).then(res => {
         this.num = res.Response.TotalNum;
+        this.TotalCount = res.Response.TotalNum;
         this.policyData = res.Response.List;
         this.tableloading = false;
       });
@@ -305,6 +316,16 @@ export default {
 </script>
 
 <style scoped lang='scss'>
+.pagstyle {
+  padding: 20px;
+
+  .pagtotal {
+    font-size: 13px;
+    font-weight: 400;
+    color: #565656;
+    line-height: 32px;
+  }
+}
 .edit-wrap {
   width: 100%;
   height: 100%;

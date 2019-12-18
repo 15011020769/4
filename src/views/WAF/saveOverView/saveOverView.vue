@@ -39,7 +39,7 @@ export default {
   methods:{
     //tab切换点击事件
     handleClick(tab, event){
-      console.log(tab, event)
+      console.log(tab, event) 
        if(tab.name == "first") {
                 this.isChildUpdate1 = true;
                 this.isChildUpdate2 = false;

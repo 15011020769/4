@@ -28,8 +28,8 @@
             <div class="informationList">
               <p><span>域名</span><span>0个 (每个域名包包含10个域名防护，仅支持1个一级域名)<a href="#" class="blueHref" @click="buyDominPackBtn">购买域名包</a></span></p>
               <p><span>已使用域名</span><span>2/20个</span></p>
-              <p><span>安全日志服务包</span><span><a class="orangeHref">0个</a>（一个包包含1T日志服务存储容量），<a href="#" class="blueHref"> 立即购买</a></span></p>
-              <p><span>QPS扩展包</span><span>当前QPS峰值 <a class="greenHref">0</a>当前套餐QPS <a class="orangeHref">2500</a>，<a href="#" class="blueHref">立即购买</a></span></p>
+              <p><span>安全日志服务包</span><span><a class="orangeHref">0个</a>（一个包包含1T日志服务存储容量），<a href="#" class="blueHref" @click="buyLogBack"> 立即购买</a></span></p>
+              <p><span>QPS扩展包</span><span>当前QPS峰值 <a class="greenHref">0</a>当前套餐QPS <a class="orangeHref">2500</a>，<a href="#" class="blueHref" @click="qpsBack">立即购买</a></span></p>
             </div>
           </el-col>
         </el-row>
@@ -41,6 +41,8 @@
     <packageUpgradeModel :isShow="packageUpModelShow" @packageUpModelClose="packageUpModelClose"/>
     <buyDominPack :isShow="buyDominModelShow" @buyDominPacModelClose="buyDominPacModelClose"/>
     <RenewModel :isShow="RenewModelShow" @renewModelClose="renewModelClose"/>
+    <buyLogBackModel :isShow="buyLogBackModel" @closeLogBackModel="closeLogBackModel"/>
+    <qpsBackModel :isShow="qpsBackModel" @closeqpsModel="closeqpsModel"/>
   </div>
 </template>
 <script>
@@ -48,6 +50,8 @@ import packageUpgradeModel from './model/packageUpgradeModel'
 import buyDominPack from './model/buyDominPack'
 import RenewModel from './model/RenewModel'
 import dominList from './components/dominList'
+import buyLogBackModel from './model/buyLogBackModel'
+import qpsBackModel from './model/qpsBackModel'
 export default {
   data(){
     return{
@@ -55,6 +59,8 @@ export default {
       packageUpModelShow:false,//套餐升级按钮弹框
       buyDominModelShow:false,//购买域名包
       RenewModelShow:false,//续费
+      buyLogBackModel:false,//安全日志服务包
+      qpsBackModel:false,//qps扩展包
     }
   },
   components:{
@@ -62,6 +68,8 @@ export default {
     buyDominPack:buyDominPack,//购买域名包
     RenewModel:RenewModel,//续费
     dominList:dominList,//域名列表模块
+    buyLogBackModel:buyLogBackModel,//安全日志服务包
+    qpsBackModel:qpsBackModel,//qps扩展包
   },
   methods:{
     //升级按钮
@@ -87,6 +95,22 @@ export default {
     //续费关闭按钮
     renewModelClose(isShow){
       this.RenewModelShow=isShow;
+    },
+    //购买安全日志服务包
+    buyLogBack(){
+      this.buyLogBackModel=true;
+    },
+    //关闭安全日志服务包
+    closeLogBackModel(isShow){
+      this.buyLogBackModel=isShow;
+    },
+    //购买qpsBack
+    qpsBack(){
+      this.qpsBackModel=true;
+    },
+    //关闭qps
+    closeqpsModel(isShow){
+      this.qpsBackModel=isShow;
     }
   }
 }

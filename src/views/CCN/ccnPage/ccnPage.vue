@@ -5,7 +5,7 @@
     </div>
     <div class="tea-content__body">
       <div class="btn">
-        <el-button type="text" @click="dialogFormVisible = true">新建</el-button>
+        <el-button type="text" @click="dialogFormVisible = true">{{$t('CCN.total.newCreate')}}</el-button>
       </div>
     </div>
     <div class="tables">
@@ -24,17 +24,17 @@
         </el-table-column>
         <el-table-column prop="State" :label="$t('CCN.total.tr2')">
           <template slot-scope="scope">
-            <div v-if="scope.row.State == 'AVAILABLE'" class="off_color">运行中</div>
-            <div v-else-if="scope.row.State == 'ISOLATED'" class="close_color">隔离中（欠费停服）</div>
-            <div v-else class="close_color">关闭</div>
+            <div v-if="scope.row.State == 'AVAILABLE'" class="off_color">{{$t('CCN.total.newCreate')}}</div>
+            <div v-else-if="scope.row.State == 'ISOLATED'" class="close_color">{{$t('CCN.total.glz')}}</div>
+            <div v-else class="close_color">{{$t('CCN.total.newClose')}}</div>
           </template>
         </el-table-column>
         <el-table-column prop="QosLevel" :label="$t('CCN.total.tr3')">
           <template slot-scope="scope">
-            <div v-if="scope.row.QosLevel == 'PT'">白金</div>
-            <div v-else-if="scope.row.QosLevel == 'AU'">金</div>
-            <div v-else-if="scope.row.QosLevel == 'AG'">银</div>
-            <div v-else>金</div>
+            <div v-if="scope.row.QosLevel == 'PT'">{{$t('CCN.total.bjnew')}}</div>
+            <div v-else-if="scope.row.QosLevel == 'AU'">{{$t('CCN.total.jinnew')}}</div>
+            <div v-else-if="scope.row.QosLevel == 'AG'">{{$t('CCN.total.yinnew')}}</div>
+            <div v-else>{{$t('CCN.total.jinnew')}}</div>
           </template>
         </el-table-column>
         <el-table-column prop="InstanceCount" :label="$t('CCN.total.tr4')">
@@ -58,16 +58,16 @@
         </el-table-column>
         <el-table-column prop="InstanceChargeType" :label="$t('CCN.total.tr6')">
           <template slot-scope="scope">
-            <div v-if="scope.row.InstanceChargeType == 'POSTPAID'">月95后付费</div>
+            <div v-if="scope.row.InstanceChargeType == 'POSTPAID'">{{$t('CCN.total.mouthPay')}}</div>
             <!-- <div v-else-if="scope.row.InstanceChargeType=='PREPAID'">预付费</div> -->
-            <div v-else>月95后付费</div>
+            <div v-else>{{$t('CCN.total.mouthPay')}}</div>
           </template>
         </el-table-column>
         <el-table-column prop="BandwidthLimitType" :label="$t('CCN.total.tr7')">
           <template slot-scope="scope">
-            <div class="edit" v-if="scope.row.BandwidthLimitType == 'OUTER_REGION_LIMIT'">地域出口限速</div>
-            <div class="edit" v-else-if="scope.row.BandwidthLimitType == 'INTER_REGION_LIMIT'">地域间限速</div>
-            <div class="edit" v-else>地域出口限速</div>
+            <div class="edit" v-if="scope.row.BandwidthLimitType == 'OUTER_REGION_LIMIT'">{{$t('CCN.total.addressS')}}</div>
+            <div class="edit" v-else-if="scope.row.BandwidthLimitType == 'INTER_REGION_LIMIT'">{{$t('CCN.total.addressJS')}}</div>
+            <div class="edit" v-else>{{$t('CCN.total.addressS')}}</div>
             <i type="text" @click="updateBandwidthLimitType(scope.row)">
               <i class="el-icon-edit"></i>
             </i>
@@ -97,14 +97,21 @@
         </el-table-column>
       </el-table>
       <!-- 分页 -->
-      <div class="pageList">
-        <el-pagination
+      <!-- <el-pagination
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
           :current-page="currentPage4"
           :page-sizes="[10, 15, 20, 25, 30, 35, 40]"
           :page-size="10"
           layout="total, sizes, prev, pager, next, jumper"
+          :total="total"
+        ></el-pagination>-->
+      <div class="Right-style pagstyle">
+        <span class="pagtotal">{{$t('CCN.total.gongN')}}&nbsp;{{total}}&nbsp;{{$t('CCN.total.tioaN')}}</span>
+        <el-pagination
+          :page-size="pagesize"
+          layout="prev, pager, next"
+          @current-change="handleCurrentChange"
           :total="total"
         ></el-pagination>
       </div>
@@ -116,9 +123,9 @@
         <el-table-column property="CcnName" :label="$t('CCN.total.del1')" width="200"></el-table-column>
         <el-table-column property="State" :label="$t('CCN.total.del2')">
           <template slot-scope="scope">
-            <div v-if="scope.row.State == 'AVAILABLE'" class="off_color">运行中</div>
-            <div v-else-if="scope.row.State == 'ISOLATED'" class="close_color">隔离中（欠费停服）</div>
-            <div v-else class="close_color">关闭</div>
+            <div v-if="scope.row.State == 'AVAILABLE'" class="off_color">{{$t('CCN.total.run')}}</div>
+            <div v-else-if="scope.row.State == 'ISOLATED'" class="close_color">{{$t('CCN.total.glz')}}</div>
+            <div v-else class="close_color">{{$t('CCN.tabs.tab1newc')}}</div>
           </template>
         </el-table-column>
         <el-table-column property="InstanceCount" :label="$t('CCN.total.del3')">
@@ -371,7 +378,9 @@ export default {
       updateNameVisible: false, // 修改名称模态窗
       updateDesVisible: false, // 修改备注模态窗
       updateBandwidthLimitTypeVisible: false, // 修改限速方式模态窗
-      dialogTagVisible: false // 编辑模态窗
+      dialogTagVisible: false, // 编辑模态窗
+      pagesize: 10, // 分页条数
+      currpage: 1 // 当前页码
     };
   },
   watch: {
@@ -398,10 +407,12 @@ export default {
       this.tableload = true;
       var params = {
         Version: "2017-03-12",
-        Region: "ap-taipei"
+        Region: "ap-taipei",
+        Offset: this.currpage * this.pagesize - this.pagesize,
+        Limit: this.pagesize
       };
       this.axios.post(CCN_LIST, params).then(res => {
-        console.log("获取ccn列表成功");
+        console.log("獲取ccn列表成功");
         this.tableData = res.Response.CcnSet;
         this.total = res.Response.TotalCount;
         this.tableload = false;
@@ -418,11 +429,10 @@ export default {
         }
       });
     },
-    handleSizeChange(val) {
-      console.log(`每页 ${val} 条`);
-    },
+    //分页
     handleCurrentChange(val) {
-      console.log(`当前页: ${val}`);
+      this.currpage = val;
+      this.getData();
     },
     // 生产一个新的obj对象
     copyObj: function() {
@@ -761,6 +771,28 @@ export default {
     height: 50px;
     background-color: #fff;
     padding-top: 8px;
+    .pagtotal {
+      float: right;
+    }
+  }
+}
+.Right-style {
+  display: flex;
+  justify-content: flex-end;
+
+  .esach-inputL {
+    width: 300px;
+    margin-right: 20px;
+  }
+}
+.pagstyle {
+  padding: 20px;
+
+  .pagtotal {
+    font-size: 13px;
+    font-weight: 400;
+    color: #565656;
+    line-height: 32px;
   }
 }
 .newDialog {
