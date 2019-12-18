@@ -154,7 +154,7 @@
               </p>
               <div class="config_table">
                 <el-table
-                  :data="roleCarrier"
+                  :data="roleCarrier.slice((currpages - 1) * pagesizes, currpages * pagesizes)"
                   height="300"
                   :row-style="{height:0}"
                   :cell-style="{padding:'5px 10px'}"
@@ -413,8 +413,10 @@ export default {
       this.axios
         .post(GET_ROLE, paramsInfo)
         .then(res => {
+          console.log(res);
           let resInfo = res.Response.RoleInfo;
           let PolicyDocument = JSON.parse(resInfo.PolicyDocument);
+          this.TotalCounts = PolicyDocument.statement[0].principal.service.length
           if (typeof PolicyDocument.statement[0].principal.qcs === "object") {
             _this.roleCarrier = PolicyDocument.statement[0].principal.qcs;
             resInfo.PolicyDocument =
@@ -680,6 +682,10 @@ export default {
       this.pagePolicies = val;
       this.currpage = val;
       this.getRolePolicy();
+    },
+    handleCurrentChanges(val){
+      this.currpages = val
+      this.getRoleDetail()
     },
     handleClose() {},
     look_detail() {

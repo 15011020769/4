@@ -138,25 +138,18 @@
                 </el-table>
               </div>
             </div>
-            <div
-              style="background:#fff;padding:10px;display:flex;justify-content: space-between;line-height:30px"
-            >
-              <div>
-                <span
-                  style="font-size:12px;color:#888"
-                >{{$t('CAM.strategy.chooseStra')}} {{selTotal}} 项，共 {{total}} 项</span>
-              </div>
-              <div>
-                <el-pagination
-                  @size-change="handleSizeChange"
-                  @current-change="handleCurrentChange"
-                  :current-page.sync="page"
-                  :page-sizes="[10, 20, 50, 100, 200]"
-                  :page-size="rp"
-                  layout="sizes, prev, pager, next"
-                  :total="total"
-                ></el-pagination>
-              </div>
+            <div style="background:#fff;padding:10px;display:flex;justify-content: space-between;line-height:30px">
+              
+             <div style="flex:1;display:flex;justify-content: flex-end;">
+          <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;{{$t("CAM.strip")}}</span>
+          <el-pagination
+            :page-size="pagesize"
+            :pager-count="7"
+            layout="prev, pager, next"
+            @current-change="handleCurrentChange"
+            :total="TotalCount"
+          ></el-pagination>
+        </div>
             </div>
           </el-tab-pane>
           <!-- tab 策略详情页面，关联用户组tab  end -->
@@ -227,7 +220,9 @@ export default {
   },
   data() {
     return {
-      infoLoad: true,
+      TotalCount: 0, //总条数
+      pagesize: 10, // 分页条数
+      currpage: 1 ,// 当前页码
       activeName: "first",
       policy: {},
       policysData: [],
@@ -281,6 +276,10 @@ export default {
     this.getAttachPolicys();
   },
   methods: {
+    handleCurrentChange(val){
+       this.currpage = val;
+       this.getAttachPolicys();
+    },
     // 打开 关联用户/用户组 页面
     Relation_user() {
       this.dialogVisible = true;
@@ -327,9 +326,9 @@ export default {
       this.policysData = [];
       let policyId = this.$route.query.policy;
       let params = {
-        Version: "2019-01-16",
-        Page: this.page,
-        Rp: this.rp,
+        Version: '2019-01-16',
+        Page: this.currpage,
+        Rp: this.pagesize,
         PolicyId: policyId
       };
       let entityFilter = this.entityFilter;
@@ -341,11 +340,11 @@ export default {
       }
       this.axios.post(LIST_ENPOLICY, params).then(res => {
         // RelatedType 关联类型。1 用户关联 ； 2 用户组关联
-        this.policysData = res.Response.List;
-        this.total = res.Response.TotalNum;
-        this.loading = false;
-        console.log(res);
-      });
+        this.policysData = res.Response.List
+        this.TotalCount= res.Response.TotalNum
+        this.loading = false
+        console.log(res)
+      })
     },
     // 解除策略绑定实体
     removePolicyEntity(obj) {

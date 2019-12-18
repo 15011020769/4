@@ -115,7 +115,6 @@
         class="Right-style pagstyle"
         style="background:#fff;padding:10px;display:flex;justify-content: space-between;line-height:30px"
       >
-        <span style="font-size:12px;color:#888;">已选 {{selTotal}} 项，共 {{total}} 项</span>
         <div style="flex:1;display:flex;justify-content: flex-end;">
           <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;{{$t("CAM.strip")}}</span>
           <el-pagination
