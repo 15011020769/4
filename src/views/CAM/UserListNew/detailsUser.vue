@@ -83,7 +83,11 @@
             @selection-change="Select"
           >
             <el-table-column type="selection" width="55"></el-table-column>
-            <el-table-column :label="$t('CAM.userList.strategyNames')" prop="PolicyName"></el-table-column>
+            <el-table-column :label="$t('CAM.userList.strategyNames')" prop="PolicyName">
+              <template slot-scope="scope">
+                <el-link @click="handleClicks(scope.row)" type="primary">{{scope.row.PolicyName}}</el-link>
+              </template>
+            </el-table-column>
             <el-table-column :label="$t('CAM.userList.AssociationTypes')" prop="CreateMode"></el-table-column>
             <el-table-column :label="$t('CAM.userList.strategyChose')" prop="Type">
               <template slot-scope="scope">{{scope.row.Type == '1'?'自定义策略':'预设策略'}}</template>
@@ -122,7 +126,11 @@
             @selection-change="Select"
           >
             <el-table-column type="selection"></el-table-column>
-            <el-table-column :label="$t('CAM.userList.GroupName')" prop="GroupName"></el-table-column>
+            <el-table-column :label="$t('CAM.userList.GroupName')" prop="GroupName">
+              <template slot-scope="scope">
+                <el-link @click="Interface(scope.row)" type="primary">{{scope.row.GroupName}}</el-link>
+              </template>
+            </el-table-column>
             <el-table-column :label="$t('CAM.userList.RelatedPolicies')" prop="GroupId"></el-table-column>
             <el-table-column :label="$t('CAM.userList.userRemark')" prop="Remark"></el-table-column>
             <el-table-column fixed="right" :label="$t('CAM.userList.userCz')">
@@ -138,7 +146,7 @@
         </el-tab-pane>
         <!-- <el-tab-pane label="安全" name="third">{{$t('CAM.userList.RoleManagement')}}</el-tab-pane>
         <el-tab-pane label="API密钥" name="fourth">{{$t('CAM.userList.compensation')}}</el-tab-pane>
-        <el-tab-pane label="小程序" name="fifth">{{$t('CAM.userList.program')}}</el-tab-pane> -->
+        <el-tab-pane label="小程序" name="fifth">{{$t('CAM.userList.program')}}</el-tab-pane>-->
       </el-tabs>
     </div>
     <!-- 策略 -->
@@ -187,7 +195,6 @@
     >
       <el-form
         :model="ruleForm"
-        :rules="rules"
         ref="ruleForm"
         label-width="100px"
         class="demo-ruleForm"
@@ -211,18 +218,14 @@
           prop="PhoneNum"
           style="width:75%;text-align:center"
         >
-          <el-input v-model="ruleForm.PhoneNum"></el-input>
+          <el-input v-model="ruleForm.PhoneNum" @change="tel"></el-input>
         </el-form-item>
         <el-form-item
           :label="$t('CAM.userList.userEmail')"
           prop="Email"
           style="width:75%;text-align:center"
-          :rules="[
-      { required: true, message: '请输入邮箱地址', trigger: 'blur' },
-      { type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }
-    ]"
         >
-          <el-input v-model="ruleForm.Email"></el-input>
+          <el-input v-model="ruleForm.Email" @change="email"></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -283,36 +286,70 @@ export default {
         Remark: "",
         PhoneNum: "",
         Email: ""
-      },
-      rules: {
-        name: [
-          { required: true, message: "请输入活动名称", trigger: "blur" },
-          { min: 3, max: 5, message: "长度在 3 到 5 个字符", trigger: "blur" }
-        ]
       }
     };
   },
   methods: {
+    //对手机号进行判断
+    tel: function() {
+      var phone = /^1[345789]\d{9}$/;
+      if (!phone.test(this.ruleForm.PhoneNum)) {
+        // alert("请输入正确的手机号");
+        this.$message({
+          type: "error",
+          message: "请输入正确的手机号!"
+        });
+      }
+    },
+    //对邮箱进行判断
+    email: function() {
+      var email = /^[A-Za-z\d]+([-_.][A-Za-z\d]+)*@([A-Za-z\d]+[-.])+[A-Za-z\d]{2,4}$/;
+      if (!email.test(this.ruleForm.Email)) {
+        this.$message({
+          type: "error",
+          message: "请输入正确的邮箱!"
+        });
+      }
+    },
     //编辑用户
     sureUpdata() {
-      let params = {
-        Version: "2019-01-16",
-        Name: this.ruleForm.Name,
-        Remark: this.ruleForm.Remark,
-        PhoneNum: this.ruleForm.PhoneNum,
-        Email: this.ruleForm.Email
-      };
-      this.axios.post(UPDATA_USER, params).then(res => {
-        if (res.Response.RequestId) {
-          this.$message("编辑成功");
-        } else {
-          this.$message.error("编辑失败");
+      var phone = /^1[345789]\d{9}$/;
+      var email = /^[A-Za-z\d]+([-_.][A-Za-z\d]+)*@([A-Za-z\d]+[-.])+[A-Za-z\d]{2,4}$/;
+      if (
+        !phone.test(this.ruleForm.PhoneNum) ||
+        !email.test(this.ruleForm.Email)
+      ) {
+        this.$message.error("编辑失败,手机号或邮箱输入有误！");
+        this.updataUser = true;
+      } else {
+        let params = {
+          Version: "2019-01-16",
+          Name: this.ruleForm.Name,
+          Remark: this.ruleForm.Remark,
+          PhoneNum: this.ruleForm.PhoneNum,
+          Email: this.ruleForm.Email
+        };
+        this.axios.post(UPDATA_USER, params).then(res => {
+          this.init()
+        });
+        this.$message("编辑成功");
+        this.updataUser = false;
+      }
+    },
+    handleClicks(policy) {
+      console.log(policy);
+      this.$router.push({
+        path: "/StrategyDetail",
+        query: {
+          policy: policy
         }
       });
-      this.updataUser = false;
     },
     editGroup() {
-      this.ruleForm = this.userData;
+      this.ruleForm.Name = this.userData.Name;
+      this.ruleForm.Remark = this.userData.Remark;
+      this.ruleForm.PhoneNum = this.userData.PhoneNum;
+      this.ruleForm.Email = this.userData.Email;
       console.log(this.ruleForm);
       this.updataUser = true;
     },
@@ -496,6 +533,15 @@ export default {
     removeMoreGroup() {
       this.GroupLoading = true;
       this.groupTitle = "移出组";
+    },
+    //用户组详情
+    Interface(groupId) {
+      this.$router.push({
+        name: "Interfacedetails",
+        query: {
+          GroupId: groupId
+        }
+      });
     },
     //跳转到添加策略到用户页面
     gotoPolicy() {

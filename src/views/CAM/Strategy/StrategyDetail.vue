@@ -7,7 +7,7 @@
         src="../../../assets/CAM/images/left.png"
         alt
       >
-      <span class="top_text">AdministratorAccess</span>
+      <span class="top_text">策略详情</span>
     </div>
     <div class="container">
       <div class="baseInfo">
