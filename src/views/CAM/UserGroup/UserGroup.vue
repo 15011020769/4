@@ -513,14 +513,14 @@ export default {
 }
 .Cam {
   .top {
-    height: 45px;
-    line-height: 45px;
+    height: 50px;
+    line-height: 50px;
     margin-bottom: 20px;
     padding: 0 20px;
     background: #fff;
 
     .title-left {
-      font-size: 14px;
+      font-size: 16px;
       font-weight: bolder;
     }
 

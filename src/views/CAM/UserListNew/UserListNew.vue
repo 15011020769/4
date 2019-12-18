@@ -1,7 +1,7 @@
 <template>
   <div class="wrap">
     <div class="top">
-      <span class="title-left">{{$t('CAM.userList.listTitle')}}</span>
+      <span class="title-left" style="font-size:16px;">{{$t('CAM.userList.listTitle')}}</span>
     </div>
     <div class="explain">
       <p style="font-weight:bold">{{$t('CAM.userList.listText')}}</p>
@@ -649,14 +649,14 @@ export default {
   }
   .top {
     width: 100%;
-    height: 45px;
+    height: 50px;
     background-color: #fff;
     margin-bottom: 20px;
     .title-left {
       font-size: 14px;
       font-weight: bolder;
       padding-left: 20px;
-      line-height: 45px;
+      line-height: 50px;
     }
   }
   .Right-style {

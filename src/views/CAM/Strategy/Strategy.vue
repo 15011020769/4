@@ -24,11 +24,11 @@
         <p class="contant_top">{{$t('CAM.Role.rolTitle')}}</p>
         <div class="table_opare">
           <div>
-            <el-button plain size="small" @click="handleDelete()">{{$t('CAM.userList.userDel')}}</el-button>
+            <!-- <el-button plain size="small" @click="handleDelete()">{{$t('CAM.userList.userDel')}}</el-button> -->
           </div>
 
           <el-input
-            style="width:20%"
+            style="width:30%"
             :placeholder="$t('CAM.Role.searchRole')"
             size="small"
             v-model="searchValue"
@@ -44,7 +44,6 @@
             style="width: 100%"
             :row-style="{height:0}"
             :cell-style="{padding:'5px 10px'}"
-            :header-cell-style="{height:'20px',padding:'0px 10px'}"
             @selection-change="handleSelectionChange"
             v-loading="loading"
           >
@@ -185,11 +184,10 @@ export default {
     },
     // 跳转到详情页面
     handleClick(policy) {
-      console.log(policy)
       this.$router.push({
         path: "/StrategyDetail",
         query: {
-          policy: policy
+          policy: policy.PolicyId
         }
       });
     },
@@ -271,8 +269,8 @@ export default {
   height: 100%;
   .top {
     color: #000;
-    height: 45px;
-    line-height: 45px;
+    height: 50px;
+    line-height: 50px;
     margin-bottom: 20px;
     padding: 0 20px;
     background: #fff;

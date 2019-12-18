@@ -193,12 +193,7 @@
       width="30%"
       :before-close="handleClose"
     >
-      <el-form
-        :model="ruleForm"
-        ref="ruleForm"
-        label-width="100px"
-        class="demo-ruleForm"
-      >
+      <el-form :model="ruleForm" ref="ruleForm" label-width="100px" class="demo-ruleForm">
         <el-form-item
           :label="$t('CAM.userList.userName')"
           prop="Name"
@@ -330,18 +325,17 @@ export default {
           Email: this.ruleForm.Email
         };
         this.axios.post(UPDATA_USER, params).then(res => {
-          this.init()
+          this.init();
         });
         this.$message("编辑成功");
         this.updataUser = false;
       }
     },
     handleClicks(policy) {
-      console.log(policy);
       this.$router.push({
         path: "/StrategyDetail",
         query: {
-          policy: policy
+          policy: policy.PolicyId
         }
       });
     },
@@ -350,7 +344,6 @@ export default {
       this.ruleForm.Remark = this.userData.Remark;
       this.ruleForm.PhoneNum = this.userData.PhoneNum;
       this.ruleForm.Email = this.userData.Email;
-      console.log(this.ruleForm);
       this.updataUser = true;
     },
     //删除子用户

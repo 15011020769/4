@@ -591,11 +591,10 @@ export default {
       this.dialogVisiblePolicies = false;
     },
     first_handleClick(obj) {
-      debugger;
       this.$router.push({
         path: "/StrategyDetail",
         query: {
-          policy: obj
+          policy: obj.PolicyId
         }
       });
     },
