@@ -103,7 +103,7 @@ module.exports = {
             tab3btn: '調整帶寬限速',
             tab3btnD: '添加地域出口限速',
             tab3btnC: '已選擇',
-            tab3R: '中國臺北',
+            tab3R: '台灣台北',
             tab4: '路由表',
             tab4tr1: '目的端',
             tab4tr2: '狀態',
