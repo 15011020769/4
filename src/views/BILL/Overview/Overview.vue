@@ -60,9 +60,19 @@
                 </template>
               </el-table-column>
             </el-table>
-            <div class="paging">
+            <!-- <div class="paging">
               <el-pagination @size-change="sizeChangeHandle" @current-change="currentChangeHandle" :current-page="pageIndex" :page-sizes="[10, 20, 50, 100]" :page-size="pageSize" :total="totalPage1" layout="total, sizes, prev, pager, next, jumper" style="float: right;">
               </el-pagination>
+            </div> -->
+            <div class="Right-style pagstyle" style="height:70px;display:flex;align-items:center;">
+              <span class="pagtotal">共&nbsp;{{totalPage1}}&nbsp;條</span>
+              <el-pagination
+                :page-size="pageSize"
+                :pager-count="7"
+                layout="prev, pager, next"
+                @current-change="currentChangeHandle"
+                :total="totalPage1"
+              ></el-pagination>
             </div>
           </el-tab-pane>
 
@@ -107,9 +117,19 @@
                 </template>
               </el-table-column>
             </el-table>
-            <div class="paging">
+            <!-- <div class="paging">
               <el-pagination @size-change="sizeChangeHandle" @current-change="currentChangeHandle" :current-page="pageIndex" :page-sizes="[10, 20, 50, 100]" :page-size="pageSize" :total="totalPage2" layout="total, sizes, prev, pager, next, jumper" style="float: right;">
               </el-pagination>
+            </div> -->
+            <div class="Right-style pagstyle" style="height:70px;display:flex;align-items:center;">
+              <span class="pagtotal">共&nbsp;{{totalPage2}}&nbsp;條</span>
+              <el-pagination
+                :page-size="pageSize"
+                :pager-count="7"
+                layout="prev, pager, next"
+                @current-change="currentChangeHandle"
+                :total="totalPage1"
+              ></el-pagination>
             </div>
           </el-tab-pane>
         </el-tabs>
@@ -657,6 +677,20 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.Right-style{
+  display: flex;
+  width: 100%;
+  justify-content: flex-end;
+}
+.pagstyle{
+  padding: 5px;
+  .pagtotal{
+    font-size: 13px;
+    font-weight: 400;
+    color: #565656;
+    line-height: 32px;
+  }
+}
 .ovew {
   color: #000;
   height: 50px;
