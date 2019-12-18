@@ -89,7 +89,7 @@
 </template>
 <script>
 import HeadCom from "../UserListNew/components/Head";
-import transfer from "./component/transfer";
+import transfer from "./component/transfer1";
 import {CREATE_ROLE,ATTACH_ROLE} from '@/constants'
 export default {
   components: {
@@ -187,14 +187,6 @@ export default {
         }
       ]
     };
-  },
-  mounted() {
-    console.log(window.innerHeight);
-    console.log(this.$refs.topictable.$el);
-    console.log(this.$refs.topictable.$el.offsetTop);
-    this.tableHeight =
-      window.innerHeight - this.$refs.topictable.$el.offsetTop - 50;
-    console.log(this.tableHeight);
   },
   methods: {
     //返回上一级

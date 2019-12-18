@@ -1,7 +1,7 @@
 <template>
   <div class="Cam" id="app">
     <HeadCom title="新建身份提供商" :backShow="true" @_back="_back" />
-    <div class="container">
+    <div class="container" v-loading="loading">
       <el-steps
         :space="160"
         :active="active"
@@ -86,6 +86,7 @@ export default {
   },
   data() {
     return {
+      loading: false,
       form: {},
       active: 0,
       addModel: {
@@ -95,6 +96,13 @@ export default {
         metadataDocument: ""
       },
       rules: {
+        remark: [
+          {
+            required: true,
+            message: "请输入描述",
+            trigger: "blur"
+          }
+        ],
         providerType: [
           {
             required: true,
@@ -144,18 +152,18 @@ export default {
     next(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          console.log(this.addModel);
+          this.loading = true;
           const params = {
             Version: "2019-01-16",
             Name: this.addModel.providerName,
             Description: this.addModel.remark,
             SAMLMetadataDocument: localStorage.getItem("base64")
           };
-          console.log(params);
           this.axios.post(CREATE_SAML, params).then(res => {
-            console.log(res);
-            if (res.Response.Error.Code) {
-              this.$message.error(res.Response.Error.Code);
+            if (
+              res.Response.Error.Code == "InvalidParameterValue.MetadataError"
+            ) {
+              this.$message.error("元數據錯誤解析元數據錯誤");
             } else {
               this.$message({
                 message: "添加成功",
@@ -167,7 +175,7 @@ export default {
                 this.form = this.addModel;
               }
             }
-            console.log(res);
+            this.loading = false;
           });
         } else {
           return false;

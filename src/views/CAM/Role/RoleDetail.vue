@@ -2,21 +2,24 @@
   <div class="RoleDetail" v-loading="loading">
     <HeadCom :title="roleInfo.RoleName" :backShow="true" @_back="_back" />
     <div class="container">
-      <div class="baseInfo">
+      <div class="baseInfo" v-loading="infoLoad">
         <p class="baseInfo_title">角色信息</p>
         <div class="baseInfo_flex">
-          <div class="baseInfo_left" style="width:5%;">
-            <p class="baseInfo_cl item">角色名称</p>
-            <p class="baseInfo_ms item">RoleArn</p>
-            <p class="baseInfo_mark item">角色ID</p>
-            <p class="baseInfo_type item">角色描述</p>
-            <p class="baseInfo_time item">{{$t('CAM.userList.createTime')}}</p>
-          </div>
-          <div class="baseInfo_right">
-            <p class="baseInfo_cl item">{{roleInfo.RoleName}}</p>
-            <p class="baseInfo_ms item">{{roleInfo.PolicyDocument}}</p>
-            <p class="baseInfo_type item">{{roleInfo.RoleId}}</p>
-            <p class="baseInfo_mark item">
+          <p>
+            <span class="spns">角色名称</span>
+            <span>{{roleInfo.RoleName}}</span>
+          </p>
+          <p>
+            <span class="spns">RoleArn</span>
+            <span>{{roleInfo.PolicyDocument}}</span>
+          </p>
+          <p>
+            <span class="spns">角色ID</span>
+            <span>{{roleInfo.RoleId}}</span>
+          </p>
+          <p>
+            <span class="spns">角色描述</span>
+            <span style="display:block;flex:1;margin-top:-3px;">
               <el-input
                 v-if="input_show"
                 v-model="roleInfo.Description"
@@ -36,16 +39,19 @@
                 style="margin-left:10px"
                 href="javascript:;"
               >取消</a>
-              <span v-if="!input_show">{{roleInfo.Description}}</span>
+              <span v-if="!input_show" style="line-height:20px;">{{roleInfo.Description}}</span>
               <i
                 v-if="!input_show"
                 @click="icon_click"
                 style="cursor: pointer;"
                 class="el-icon-edit item"
               ></i>
-            </p>
-            <p class="baseInfo_time item">{{roleInfo.AddTime}}</p>
-          </div>
+            </span>
+          </p>
+          <p>
+            <span class="spns">{{$t('CAM.userList.createTime')}}</span>
+            <span>{{roleInfo.AddTime}}</span>
+          </p>
         </div>
       </div>
       <div class="tabs">
@@ -120,25 +126,18 @@
                   </template>
                 </el-table-column>
               </el-table>
-              <div
-                style="background:#fff;padding:10px;display:flex;justify-content: space-between;line-height:30px"
-              >
-                <div>
-                  <span
-                    style="font-size:12px;color:#888"
-                  >{{$t('CAM.userList.choose')}} {{selTotalNum}} 项，共 {{TotalNum}} 项</span>
-                </div>
-                <div>
-                  <el-pagination
-                    @size-change="handleSizeChange"
-                    @current-change="handleCurrentChange"
-                    :current-page.sync="currentPage2"
-                    :page-sizes="[10, 20, 50, 100, 200]"
-                    :page-size="rpPolicies"
-                    layout="sizes, prev, pager, next"
-                    :total="TotalNum"
-                  ></el-pagination>
-                </div>
+              <div class="Right-style pagstyle">
+                <span
+                  style="font-size:12px;color:#888;margin-right:20px;"
+                >{{$t('CAM.userList.choose')}} {{selTotalNum}} 项，共 {{TotalNum}} 项</span>
+                <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;{{$t("CAM.strip")}}</span>
+                <el-pagination
+                  :page-size="pagesize"
+                  :pager-count="7"
+                  layout="prev, pager, next"
+                  @current-change="handleCurrentChange"
+                  :total="TotalCount"
+                ></el-pagination>
               </div>
             </div>
           </el-tab-pane>
@@ -184,25 +183,18 @@
                     </template>
                   </el-table-column>
                 </el-table>
-                <div
-                  style="background:#fff;padding:10px;display:flex;justify-content: space-between;line-height:30px"
-                >
-                  <div>
-                    <span
-                      style="font-size:12px;color:#888"
-                    >{{$t('CAM.userList.choose')}} {{selTotalNum}} 项，共 {{TotalNum}} 项</span>
-                  </div>
-                  <div>
-                    <el-pagination
-                      @size-change="handleSizeChange"
-                      @current-change="handleCurrentChange"
-                      :current-page.sync="currentPage2"
-                      :page-sizes="[100, 200, 300, 400]"
-                      :page-size="20"
-                      layout="sizes, prev, pager, next"
-                      :total="TotalNum"
-                    ></el-pagination>
-                  </div>
+                <div class="Right-style pagstyle">
+                  <span
+                    style="font-size:12px;color:#888;margin-right:20px;"
+                  >{{$t('CAM.userList.choose')}} {{selTotalNum}} 项，共 {{TotalNum}} 项</span>
+                  <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;{{$t("CAM.strip")}}</span>
+                  <el-pagination
+                    :page-size="pagesize"
+                    :pager-count="7"
+                    layout="prev, pager, next"
+                    @current-change="handleCurrentChange"
+                    :total="TotalCount"
+                  ></el-pagination>
                 </div>
               </div>
             </div>
@@ -293,7 +285,7 @@
         :before-close="handleClosePolicy"
       >
         <p class="dialog" slot="title">{{$t('CAM.userGroup.createRelevance')}}</p>
-        <transfer ref="transferPolicies" :roleId="roleId"></transfer>
+        <transfer @_multipleSelection="_multipleSelection" :multipleSelection="multipleSelection"></transfer>
         <p style="text-align:center;margin-top:30px">
           <el-button @click="dialogVisiblePolicies = false" size="small">取 消</el-button>
           <el-button
@@ -314,7 +306,8 @@ import {
   LIST_ATTACHE,
   DEACH_ROLE,
   UPDATE_ROLE,
-  UPDATE_ASSUME
+  UPDATE_ASSUME,
+  ATTACH_ROLE
 } from "@/constants";
 export default {
   components: {
@@ -323,6 +316,10 @@ export default {
   },
   data() {
     return {
+      TotalCount: 0, //总条数
+      pagesize: 10, // 分页条数
+      currpage: 1, // 当前页码
+      infoLoad: true,
       loading: true,
       title: "",
       activeName: "first",
@@ -384,6 +381,7 @@ export default {
       checkedRoleServeCarrier: [],
       Relievesure_dialogVisible: false,
       rolePolicyType: "",
+      multipleSelection: []
     };
   },
   mounted() {
@@ -391,6 +389,9 @@ export default {
     this.init();
   },
   methods: {
+    _multipleSelection(val) {
+      this.multipleSelection = val;
+    },
     //返回上一级
     _back() {
       this.$router.go(-1);
@@ -402,6 +403,8 @@ export default {
     },
     // 获取角色详情
     getRoleDetail() {
+      this.loading = true;
+      this.infoLoad = true;
       let _this = this;
       let paramsInfo = {
         Version: "2019-01-16",
@@ -439,17 +442,19 @@ export default {
           }
           this.roleInfo = resInfo;
           this.loading = false;
+          this.infoLoad = false;
         })
         .catch(error => {});
     },
 
     // 获取角色策略
     getRolePolicy() {
+      this.loading = true;
       this.selTotalNum = 0;
       let paramsList = {
         Version: "2019-01-16",
-        Page: this.pagePolicies,
-        Rp: this.rpPolicies,
+        Page: this.currpage,
+        Rp: this.pagesize,
         RoleId: this.roleId
       };
       if (this.rolePolicyType != "") {
@@ -457,11 +462,12 @@ export default {
       }
       this.axios
         .post(LIST_ATTACHE, paramsList)
-        .then(res => { 
-            this.rolePolicies = res.Response.List;
-            this.TotalNum = res.Response.TotalNum;
-            console.log(res,this.rolePolicies)
-          })
+        .then(res => {
+          this.rolePolicies = res.Response.List;
+          this.TotalNum = res.Response.TotalNum;
+          this.TotalCount = res.Response.TotalNum;
+          this.loading = false;
+        })
         .catch(error => {});
     },
     // 解除角色策略
@@ -478,6 +484,12 @@ export default {
       this.axios
         .post(DEACH_ROLE, paramsRelieve)
         .then(res => {
+          if (res.Response.RequestId) {
+            this.$message({
+              message: "解绑成功",
+              type: "success"
+            });
+          }
           this.getRolePolicy(); // 重新加载
         })
         .catch(error => {});
@@ -494,12 +506,16 @@ export default {
     },
     // 批量解除绑定到策略的实体
     relieveRolePolicies() {
-      let arrs = this.roleSelPolicies;
-      for (let i = 0; i < arrs.length; i++) {
-        let obj = arrs[i];
-        this.relieveRolePolicy(obj);
+      if (this.roleSelPolicies.length > 3) {
+        this.$message("每次最多可以选中3条");
+      } else {
+        let arrs = this.roleSelPolicies;
+        for (let i = 0; i < arrs.length; i++) {
+          let obj = arrs[i];
+          this.relieveRolePolicy(obj);
+        }
+        this.displayPolicies = false;
       }
-      this.displayPolicies = false;
     },
     // 修改角色描述信息
     updateRoleDescription() {
@@ -540,12 +556,36 @@ export default {
     relationPolicies() {
       this.dialogVisiblePolicies = true;
     },
+    attachPolicy(val) {
+      const params = {
+        Version: "2019-01-16",
+        PolicyId: val,
+        AttachRoleId: this.$route.query.RoleId
+      };
+      this.axios.post(ATTACH_ROLE, params).then(res => {
+        console.log(res);
+      });
+    },
     // 关联角色策略
     attachRolePolicies() {
-      this.$refs.transferPolicies.attachRolePolicies();
-      this.dialogVisiblePolicies = false;
-      this.getRolePolicy();
-   },
+      if (this.multipleSelection.length > 3) {
+        this.$message("每次最多可以选中三条");
+      } else {
+        this.multipleSelection.forEach(item => {
+          this.attachPolicy(item.PolicyId);
+        });
+        this.dialogVisiblePolicies = false;
+        this.loading = true;
+        // this.multipleSelection = [];
+        setTimeout(() => {
+          this.getRolePolicy();
+          this.$message({
+            message: "关联成功",
+            type: "success"
+          });
+        }, 3000);
+      }
+    },
     // 关闭关联策略dialog
     handleClosePolicy() {
       this.dialogVisiblePolicies = false;
@@ -564,10 +604,12 @@ export default {
       this.input_Value = this.inputValue;
     },
     input_cancel() {
+      this.getRoleDetail();
       this.input_show = false;
     },
     input_sure() {
       this.input_show = false;
+      this.loading = true;
       this.updateRoleDescription();
     },
     handleCloseSessionHint() {
@@ -581,25 +623,37 @@ export default {
     },
     // 撤销所有会话
     cancelAllSession() {
-      // let url = "cam2/UpdatePolicy";
-      // let policyDocument = JSON.parse('{"version":"2.0","statement":[{"action":"name/sts:AssumeRole","effect":"allow","principal":{"service":[]}}]}')
-      // policyDocument.statement[0].principal.service = policyDocument.statement[0].principal.service.concat(this.roleCarrier)
-      // let paramsPolicy = {
-      //   Action: "UpdatePolicy",
-      //   Version: "2019-01-16",
-      //   PolicyDocument: policyDocument,
-      //   RoleId: this.roleId
-      // };
-      // this.axios.post(url, paramsPolicy).then(res => {
-      //   this.getRoleDetail() //重新加载
-      // }).catch(error => {
-      // });
+      let url = "cam2/UpdatePolicy";
+      let policyDocument = JSON.parse(
+        '{"version":"2.0","statement":[{"action":"name/sts:AssumeRole","effect":"allow","principal":{"service":[]}}]}'
+      );
+      policyDocument.statement[0].principal.service = policyDocument.statement[0].principal.service.concat(
+        this.roleCarrier
+      );
+      let paramsPolicy = {
+        Action: "UpdatePolicy",
+        Version: "2019-01-16",
+        PolicyDocument: policyDocument,
+        RoleId: this.roleId
+      };
+      this.axios
+        .post(url, paramsPolicy)
+        .then(res => {
+          this.getRoleDetail(); //重新加载
+        })
+        .catch(error => {});
     },
     handleClick() {},
     isRelieve() {},
     // 管理载体
     Relation_user() {
-      this.dialogVisible = true;
+      this.$router.push({
+        path: "/carrier",
+        query: {
+          id: this.$route.query.RoleId
+        }
+      });
+      // this.dialogVisible = true;
       // let carriers = JSON.parse(this.getCarriers()).Responce.data
       // for(let i = 0; i < carriers.length; i++) {
       //   let obj = carriers[i]
@@ -625,6 +679,7 @@ export default {
     // 当前页
     handleCurrentChange(val) {
       this.pagePolicies = val;
+      this.currpage = val;
       this.getRolePolicy();
     },
     handleClose() {},
@@ -641,6 +696,27 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+.RoleDetail >>> .el-loading-mask {
+  background: #fff;
+}
+.spns {
+  width: 80px;
+  display: inline-block;
+}
+.pagstyle {
+  padding: 20px;
+  height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+
+  .pagtotal {
+    font-size: 13px;
+    font-weight: 400;
+    color: #565656;
+    line-height: 32px;
+  }
+}
 .RoleDetail {
   .top {
     padding: 0 20px;
@@ -678,6 +754,12 @@ export default {
       .baseInfo_flex {
         display: flex;
         color: #888;
+        flex-direction: column;
+
+        p {
+          margin-bottom: 14px;
+          display: flex;
+        }
         .item {
           padding-bottom: 20px;
         }
