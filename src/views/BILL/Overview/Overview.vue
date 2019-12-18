@@ -38,6 +38,7 @@
           <el-tab-pane :label="$t('BILL.Overview.productSum')" name="first">
             <div id="main2" style="float:left; width:1067px; height: 300px"></div>
             <el-table :data="dataList1" v-loading="dataListLoading" style="width: 100%;">
+              <template slot="empty">{{$t('BILL.Overview.none')}}</template>
               <el-table-column prop="business_code_name" :label="$t('BILL.Overview.businessCodeName')">
               </el-table-column>
               <el-table-column prop="totalAmount" align="center" :label="$t('BILL.Overview.cashAmount')">
@@ -69,6 +70,7 @@
           <el-tab-pane :label="$t('BILL.Overview.projectSum')" name="second" style="width:100%">
             <div id="main3" style="float: left; width: 1067px; height: 300px"></div>
             <el-table :data="dataList2" row-key="id" :tree-props="{children: 'children'}" v-loading="dataListLoading" style="width: 100%;">
+              <template slot="empty">{{$t('BILL.Overview.none')}}</template>
               <el-table-column prop="project_name" :label="$t('BILL.Overview.projectName')"></el-table-column>
               <el-table-column prop="cashAmount" align="right" :label="$t('BILL.Overview.cashAmount')">
                 <template slot-scope="scope">
