@@ -4,7 +4,7 @@
       <Headcom :title="$t('CAM.userList.userDetil')" :backShow="true" @_back="back" />
     </div>
     <div class="details">
-      <div class="details-left">
+      <div class="details-left" v-loading="infoLoad">
         <div class="leftHead" style="display:flex">
           <p style="flex:1">{{userData.Name}}</p>
           <p style="width:30px;">
@@ -252,6 +252,7 @@ export default {
   },
   data() {
     return {
+      infoLoad: true,
       ConsoleLogin: {
         1: "可以登录控制台",
         2: "无法登录控制台"
@@ -371,6 +372,8 @@ export default {
               console.log(res);
             });
         });
+      this.ploicyData(); //获取策略数据
+      this.groupListData();
       this.delDialog = false;
     },
     deleteUser() {
@@ -379,16 +382,19 @@ export default {
     },
     //获取用户详情数据
     init() {
+      this.infoLoad = true;
       let params = {
         Version: "2019-01-16",
         Name: this.$route.query.detailsData
       };
       this.axios.post(QUERY_USER, params).then(res => {
         this.userData = res.Response;
+        this.infoLoad = false;
       });
     },
     //获取每一个用户下的权限
     ploicyData() {
+      this.loading = true;
       let params = {
         Version: "2019-01-16",
         Name: this.$route.query.detailsData
