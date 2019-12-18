@@ -464,7 +464,6 @@ export default {
         Version: "2019-01-16"
       };
       this.axios.post(USER_LIST, userList).then(data => {
-        if (data != "") {
           this.loading = false;
           this.tableData = data.Response.Data;
           this.json = data.Response.Data;
@@ -473,14 +472,7 @@ export default {
             this.currpage * this.pagesize
           );
           this.TotalCount = this.json.length;
-        } else {
-          this.loading = false;
-          this.$message({
-            type: "info",
-            message: "无响应数据！"
-          });
-        }
-      });
+       });
     },
     //初始化策略数据
     strategy() {

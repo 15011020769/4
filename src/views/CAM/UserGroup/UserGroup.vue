@@ -414,7 +414,7 @@ export default {
               message: this.$t("CAM.userGroup.successInfo"),
               type: "success"
             });
-            this.init(); // 重新加载页面
+            this.init()
             // this.$emit("update")
             // this.cancel()
           })

@@ -26,9 +26,6 @@
           <div>
             <el-button plain size="small" @click="handleDelete()">{{$t('CAM.userList.userDel')}}</el-button>
           </div>
-          <!-- <el-input placeholder="支持搜索用户名" size="small" class="inputSearch">
-            <i slot="suffix" class="el-input__icon el-icon-search"></i>
-          </el-input>-->
 
           <el-input
             style="width:20%"
@@ -66,24 +63,7 @@
               </template>
             </el-table-column>
             <el-table-column prop="Description" label="描述"></el-table-column>
-            <el-table-column align="center" width="150">
-              <template slot="header" slot-scope="scope">
-                <el-dropdown trigger="click" @command="handleCommand" size="mini">
-                  <span style="color:#909399">
-                    {{ tableTitle }}
-                    <i class="el-icon-arrow-down el-icon--right"></i>
-                  </span>
-                  <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item
-                      v-for="item in table_options"
-                      :key="item.value"
-                      :command="item.label"
-                    >{{item.label}}</el-dropdown-item>
-                  </el-dropdown-menu>
-                </el-dropdown>
-              </template>
-              <template slot-scope="scope">{{scope.row.ServiceType}}</template>
-            </el-table-column>
+            <el-table-column prop="ServiceType" label="服务类型" width="150"></el-table-column>
             <el-table-column prop="operate" label="操作" width="150">
               <template slot-scope="scope">
                 <el-button
@@ -194,6 +174,7 @@ export default {
         params["Keyword"] = this.searchValue;
       }
       this.axios.post(POLICY_LIST, params).then(res => {
+        console.log(res)
         this.tableData = res.Response.List;
         this.TotalCount = res.Response.TotalNum;
         this.loading = false;
@@ -204,7 +185,7 @@ export default {
     },
     // 跳转到详情页面
     handleClick(policy) {
-      // console.log(policy);
+      console.log(policy)
       this.$router.push({
         path: "/StrategyDetail",
         query: {

@@ -37,11 +37,11 @@
       </div>
       <div class="tabs">
         <el-tabs v-model="activeName" @tab-click="handleClick">
-          <el-tab-pane :label="$t('CAM.strategy.starLangu')" name="first">
+          <!-- <el-tab-pane :label="$t('CAM.strategy.starLangu')" name="first">
             <div class="markdown"></div>
-          </el-tab-pane>
+          </el-tab-pane> -->
           <!-- tab 策略详情页面，关联用户组tab  start -->
-          <el-tab-pane :label="$t('CAM.strategy.straGroup')" name="second">
+          <el-tab-pane :label="$t('CAM.strategy.straGroup')" name="first">
             <div class="config">
               <p style="margin:10px">
                 <el-button type="primary" @click="Relation_user" size="small">{{$t('CAM.strategy.straGroup')}}</el-button>
@@ -86,19 +86,10 @@
                   </el-table-column>
                   <el-table-column prop="address" label="操作">
                     <template slot-scope='scope'>
-                      <el-popover
-                        placement="top"
-                        title
-                        width="400"
-                        v-model="popover_visible">
-                        <p>{{$t('CAM.strategy.outBind')}}<span v-show="scope.row.RelatedType == '2'">{{$t('CAM.strategy.team')}}</span>{{$t('CAM.strategy.straTitle')}}</p>
-                        <div style="text-align: right; margin: 0">
-                          <el-button size="mini" type="text" @click="popover_visible = false">取消</el-button>
-                          <el-button type="primary" size="mini" @click="popover_visible = false" >{{$t('CAM.strategy.sureOubind')}}</el-button>
-                        </div>
+                      
                         <!-- <el-button size="mini" type="text" @click="popover_visible = true" slot="reference">解除用户<span v-show="scope.row.RelatedType == '2'">组</span></el-button> -->
                         <el-button size="mini" type="text" @click="removePolicyEntity(scope.row)" slot="reference">{{$t('CAM.strategy.sureOubind')}}<span v-show="scope.row.RelatedType == '2'">{{$t('CAM.strategy.team')}}</span></el-button>
-                      </el-popover>
+                      
                     </template>
                   </el-table-column>
                 </el-table>
