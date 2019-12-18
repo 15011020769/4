@@ -170,7 +170,7 @@ export default {
           }
         }
         this.axios
-          .post(`${process.env.VUE_APP_adminUrl}ttaifucloud/account/manage/forword`, params)
+          .post(`${process.env.VUE_APP_adminUrl}taifucloud/account/manage/forword`, params)
           .then(({ data }) => {
             console.log(data)
             if (data.RetCode === '00') {
