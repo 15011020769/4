@@ -1,6 +1,6 @@
 <template>
   <div class="wrap">
-    <div class="main">
+    <div class="main" style="background:white;">
       <div class="left">
         <p class="title">
           <b style="font-size:13px;">策略列表</b>

@@ -132,7 +132,8 @@
     <!-- 添加用户组弹框 -->
     <el-dialog :title="title" :visible.sync="authorization" width="60%" :before-close="handleClose">
       <div class="container" v-if="strategyShow">
-        <div class="container-right">
+        <transfer :multipleSelection="multipleSelection" @_multipleSelection="_multipleSelection" />
+        <!-- <div class="container-right">
           <span>{{$t('CAM.userList.strategyTitle')}}</span>
           <div>
             <el-input
@@ -190,7 +191,7 @@
               </template>&ndash;&gt;
             </el-table-column>
           </el-table>
-        </div>
+        </div>-->
       </div>
 
       <div class="container" v-if="userGroupShow">
@@ -309,12 +310,15 @@ import {
   DELETE_USER
 } from "@/constants";
 import Subscribe from "./components/subscribeNew";
+import transfer from "../Role/component/transfer";
 export default {
   components: {
-    Subscribe
+    Subscribe,
+    transfer
   },
   data() {
     return {
+      multipleSelection: [],
       dialogVisible: false,
       json: [],
       inpVal: "", //搜索
@@ -351,6 +355,9 @@ export default {
     };
   },
   methods: {
+    _multipleSelection(val) {
+      this.multipleSelection = val;
+    },
     deleteMoreUsers() {
       if (this.selectData.length != 0) {
         this.dialogVisible = true;
@@ -387,7 +394,7 @@ export default {
       this.axios
         .post(DELETE_USER, params)
         .then(data => {
-            this.init();
+          this.init();
         })
         .then(() => {
           let delparams = {
@@ -402,12 +409,13 @@ export default {
             .then(res => {
               console.log(res);
             });
-        }).catch(error => {
-          this.$message({
-                type: "error",
-                message: '删除失败'
-           });
         })
+        .catch(error => {
+          this.$message({
+            type: "error",
+            message: "删除失败"
+          });
+        });
       this.dialogDeleteUser = false;
     },
     delUserRow(val) {
@@ -464,15 +472,15 @@ export default {
         Version: "2019-01-16"
       };
       this.axios.post(USER_LIST, userList).then(data => {
-          this.loading = false;
-          this.tableData = data.Response.Data;
-          this.json = data.Response.Data;
-          this.tableData1 = this.tableData.slice(
-            (this.currpage - 1) * this.pagesize,
-            this.currpage * this.pagesize
-          );
-          this.TotalCount = this.json.length;
-       });
+        this.loading = false;
+        this.tableData = data.Response.Data;
+        this.json = data.Response.Data;
+        this.tableData1 = this.tableData.slice(
+          (this.currpage - 1) * this.pagesize,
+          this.currpage * this.pagesize
+        );
+        this.TotalCount = this.json.length;
+      });
     },
     //初始化策略数据
     strategy() {
@@ -569,7 +577,7 @@ export default {
       // userGroupSelect
       if (this.title == "关联策略") {
         var addPloicyId = [];
-        this.userGroupSelect.forEach(item => {
+        this.multipleSelection.forEach(item => {
           addPloicyId.push(item);
         });
         addPloicyId.forEach(item => {
@@ -578,7 +586,10 @@ export default {
             PolicyId: item.PolicyId,
             AttachUin: this.Uin
           };
-          this.axios.post(POLICY_USER, params).then(data => {});
+          this.axios.post(POLICY_USER, params).then(data => {
+            this.init();
+            this.$message("授权成功");
+          });
         });
         this.authorization = false;
       }
