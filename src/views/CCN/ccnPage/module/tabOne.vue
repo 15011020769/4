@@ -9,7 +9,8 @@
         <template slot="empty">{{$t("CCN.tabs.tab1no")}}</template>
         <el-table-column prop="InstanceId" :label="$t('CCN.tabs.tab1tr1')" width>
           <template slot-scope="scope">
-            <a href="../CCN/index"  target="_blank">{{ scope.row.InstanceId }}</a>
+            <!-- <a href="../CCN/index"  target="_blank">{{ scope.row.InstanceId }}</a> -->
+            <a href="#">{{ scope.row.InstanceId }}</a>
             <p class="edit">{{ scope.row.InstanceName }}</p>
           </template>
         </el-table-column>
