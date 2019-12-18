@@ -7,7 +7,7 @@ export default new Router({
   // mode: 'history',
   base: process.env.BASE_URL,
   redirect: {
-    name: 'CloudAudit'
+    name: 'UserGroup'
   },
   routes: [{
     path: '/',
