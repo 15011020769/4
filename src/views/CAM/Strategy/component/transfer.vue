@@ -70,7 +70,7 @@
   } from "@/constants";
   export default {
     props: {
-      PolicyId: String
+      PolicyId: [String, Number]
     },
     data() {
       return {
