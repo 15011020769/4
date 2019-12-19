@@ -47,7 +47,6 @@
             @selection-change="handleSelectionChange"
             v-loading="loading"
           >
-            <el-table-column type="selection" width="60" v-if="this.policyScope!='QCS'"></el-table-column>
             <el-table-column
               prop="PolicyName"
               :label="$t('CAM.userList.strategyNames')"

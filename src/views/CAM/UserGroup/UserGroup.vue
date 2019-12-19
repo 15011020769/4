@@ -74,7 +74,7 @@
         height="450"
         @selection-change="handleSelectionChange"
       >
-        <el-table-column prop="GroupId" type="selection" width="29"></el-table-column>
+        <!-- <el-table-column prop="GroupId" type="selection" width="29"></el-table-column> -->
         <el-table-column
           prop="GroupName"
           :label="$t('CAM.userGroup.colNmae')"
