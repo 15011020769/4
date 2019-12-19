@@ -21,18 +21,17 @@
           <el-step :title="$t('CAM.userGroup.createCheck')"></el-step>
         </el-steps>
       </div>
-      <div class="table">
-          <div v-show="active==1" style="width:100%;">
-        <FirstStep ref="firstStep" :addModel="addModel" />
+      <div class="table" v-loading="loading">
+        <div v-show="active==1" style="width:100%;">
+          <FirstStep ref="firstStep" :addModel="addModel" />
+        </div>
+        <div v-show="active==2">
+          <SecondStep ref="secondStep" />
+        </div>
+        <div v-show="active==3">
+          <ThirdlyStep :addModel="addModel" :policiesSelectedData="policiesSelectedData" />
+        </div>
       </div>
-      <div v-show="active==2">
-        <SecondStep ref="secondStep" />
-      </div>
-      <div v-show="active==3">
-        <ThirdlyStep :addModel="addModel" :policiesSelectedData="policiesSelectedData" />
-      </div>
-      </div>
-      
 
       <div class="button">
         <el-button
@@ -64,7 +63,7 @@
 import FirstStep from "./AddGroup/AddUserGroup.vue";
 import SecondStep from "./AddGroup/PoliciesList";
 import ThirdlyStep from "./AddGroup/ConfirmationGroup";
-import {CREATE_USER,ATTACH_GROUP} from '@/constants'
+import { CREATE_USER, ATTACH_GROUP } from "@/constants";
 export default {
   name: "app",
   components: {
@@ -74,6 +73,7 @@ export default {
   },
   data() {
     return {
+      loading: false,
       active: 1,
       addModel: {
         groupName: "",
@@ -89,12 +89,16 @@ export default {
       });
     },
     next() {
-      if(this.active==2){
-        this.policiesSelectedData = this.$refs.secondStep.getDaata();
-      }
-      const addModel = this.addModel;
-      if (this.active++ > 2) {
-        this.active = 0;
+      if (this.addModel.groupName != "") {
+        if (this.active == 2) {
+          this.policiesSelectedData = this.$refs.secondStep.getDaata();
+        }
+        const addModel = this.addModel;
+        if (this.active++ > 2) {
+          this.active = 0;
+        }
+      } else {
+        this.$message("请输入用户组名称");
       }
     },
     step() {
@@ -110,11 +114,9 @@ export default {
     //   if (this.active++ > 3) this.active = 0;
     // },
     complete() {
+      this.loading = true;
       let _this = this;
       if (this.active == 3) {
-        this.$router.push({
-          name: "UserGroup"
-        });
         // 创建用户组
         let params = {
           Version: "2019-01-16"
@@ -144,15 +146,19 @@ export default {
                 this.axios
                   .post(ATTACH_GROUP, paramsurlPolicies)
                   .then(res => {
-                    console.log(res)
+                    console.log(res);
                   })
                   .catch(error => {
                     console.log(error);
                   });
               }
             }
+            setTimeout(() => {
+              this.$router.push({
+                name: "UserGroup"
+              });
+            }, 3000);
             // 添加返回值回显，如用户组名称重复
-            this.loading = false;
           })
           .catch(error => {
             console.log(error);
@@ -245,9 +251,9 @@ export default {
       }
     }
   }
-   .table{
-       flex: 1;
-   }
+  .table {
+    flex: 1;
+  }
   .cam_button {
     width: 96%;
     margin: 10px auto;

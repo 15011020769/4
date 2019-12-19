@@ -6,12 +6,12 @@
     <div class="cam_button">
       <el-row class="cam-lt">
         <el-button type="primary" size="small" @click="NewUser">{{$t('CAM.userGroup.addBtn')}}</el-button>
-        <el-button
+        <!-- <el-button
           size="small"
           type="primary"
           :disabled="btnVisible"
           @click="addUserGroup()"
-        >{{$t('CAM.userGroup.createBtn')}}</el-button>
+        >{{$t('CAM.userGroup.createBtn')}}</el-button> -->
       </el-row>
       <div class="head-container">
         <el-input
