@@ -524,6 +524,7 @@ export default {
           };
           this.axios.post(REMOVEBIND_USER, params).then(data => {
             this.ploicyData();
+            this.$message("批量解除成功");
           });
         });
         this.StrategyLoading = false;
@@ -537,6 +538,7 @@ export default {
         this.axios.post(REMOVEBIND_USER, params).then(data => {
           console.log(data);
           this.ploicyData();
+          this.$message("解除成功");
         });
         this.StrategyLoading = false;
       }
