@@ -315,50 +315,53 @@ export default {
     //对手机号进行判断
     tel: function() {
       var phone = /^1[345789]\d{9}$/;
-      if (!phone.test(this.ruleForm.PhoneNum)) {
-        // alert("请输入正确的手机号");
-        this.$message({
-          type: "error",
-          message: "请输入正确的手机号!"
-        });
+      if(this.ruleForm.PhoneNum != ''){
+          if (!phone.test(this.ruleForm.PhoneNum)) {
+            this.$message({
+              type: "error",
+              message: "请输入正确的手机号!"
+            });
+          }
       }
     },
     //对邮箱进行判断
     email: function() {
       var email = /^[A-Za-z\d]+([-_.][A-Za-z\d]+)*@([A-Za-z\d]+[-.])+[A-Za-z\d]{2,4}$/;
-      if (!email.test(this.ruleForm.Email)) {
-        this.$message({
-          type: "error",
-          message: "请输入正确的邮箱!"
-        });
+      if(this.ruleForm.Email != ''){
+          if (!email.test(this.ruleForm.Email)) {
+            this.$message({
+              type: "error",
+              message: "请输入正确的邮箱!"
+            });
+          }
       }
+     
     },
     
     //编辑用户
     sureUpdata() {
       var phone = /^1[345789]\d{9}$/;
       var email = /^[A-Za-z\d]+([-_.][A-Za-z\d]+)*@([A-Za-z\d]+[-.])+[A-Za-z\d]{2,4}$/;
-      if (
-        !phone.test(this.ruleForm.PhoneNum) ||
-        !email.test(this.ruleForm.Email)
-      ) {
-        this.$message.error("编辑失败,手机号或邮箱输入有误！");
-        this.updataUser = true;
-      } else {
-        let params = {
-          Version: "2019-01-16",
-          Name: this.ruleForm.Name,
-          Remark: this.ruleForm.Remark,
-          PhoneNum: this.ruleForm.PhoneNum,
-          Email: this.ruleForm.Email
-        };
-        this.axios.post(UPDATA_USER, params).then(res => {
-          this.init();
-        });
-        this.$message("编辑成功");
-        this.updataUser = false;
-      }
-    },
+      if(this.ruleForm.PhoneNum != '' && this.ruleForm.Email != ''){
+            if (!phone.test(this.ruleForm.PhoneNum) || !email.test(this.ruleForm.Email) ) {
+              this.$message.error("编辑失败,手机号或邮箱输入有误！");
+              this.updataUser = true; 
+            } else {
+                 let params = {
+                Version: "2019-01-16",
+                Name: this.ruleForm.Name,
+                Remark: this.ruleForm.Remark,
+                PhoneNum: this.ruleForm.PhoneNum,
+                Email: this.ruleForm.Email
+                 };
+              this.axios.post(UPDATA_USER, params).then(res => {
+                      this.init();
+              });
+              this.$message("编辑成功");
+              this.updataUser = false;
+          }
+       }
+},
     handleClicks(policy) {
       this.$router.push({
         path: "/StrategyDetail",
