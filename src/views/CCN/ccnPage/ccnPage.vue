@@ -24,8 +24,14 @@
         </el-table-column>
         <el-table-column prop="State" :label="$t('CCN.total.tr2')">
           <template slot-scope="scope">
-            <div v-if="scope.row.State == 'AVAILABLE'" class="off_color">{{$t('CCN.total.newCreate')}}</div>
-            <div v-else-if="scope.row.State == 'ISOLATED'" class="close_color">{{$t('CCN.total.glz')}}</div>
+            <div
+              v-if="scope.row.State == 'AVAILABLE'"
+              class="off_color"
+            >{{$t('CCN.total.newCreate')}}</div>
+            <div
+              v-else-if="scope.row.State == 'ISOLATED'"
+              class="close_color"
+            >{{$t('CCN.total.glz')}}</div>
             <div v-else class="close_color">{{$t('CCN.total.newClose')}}</div>
           </template>
         </el-table-column>
@@ -65,8 +71,14 @@
         </el-table-column>
         <el-table-column prop="BandwidthLimitType" :label="$t('CCN.total.tr7')">
           <template slot-scope="scope">
-            <div class="edit" v-if="scope.row.BandwidthLimitType == 'OUTER_REGION_LIMIT'">{{$t('CCN.total.addressS')}}</div>
-            <div class="edit" v-else-if="scope.row.BandwidthLimitType == 'INTER_REGION_LIMIT'">{{$t('CCN.total.addressJS')}}</div>
+            <div
+              class="edit"
+              v-if="scope.row.BandwidthLimitType == 'OUTER_REGION_LIMIT'"
+            >{{$t('CCN.total.addressS')}}</div>
+            <div
+              class="edit"
+              v-else-if="scope.row.BandwidthLimitType == 'INTER_REGION_LIMIT'"
+            >{{$t('CCN.total.addressJS')}}</div>
             <div class="edit" v-else>{{$t('CCN.total.addressS')}}</div>
             <i type="text" @click="updateBandwidthLimitType(scope.row)">
               <i class="el-icon-edit"></i>
@@ -105,9 +117,11 @@
           :page-size="10"
           layout="total, sizes, prev, pager, next, jumper"
           :total="total"
-        ></el-pagination>-->
+      ></el-pagination>-->
       <div class="Right-style pagstyle">
-        <span class="pagtotal">{{$t('CCN.total.gongN')}}&nbsp;{{total}}&nbsp;{{$t('CCN.total.tioaN')}}</span>
+        <span
+          class="pagtotal"
+        >{{$t('CCN.total.gongN')}}&nbsp;{{total}}&nbsp;{{$t('CCN.total.tioaN')}}</span>
         <el-pagination
           :page-size="pagesize"
           layout="prev, pager, next"
@@ -124,7 +138,10 @@
         <el-table-column property="State" :label="$t('CCN.total.del2')">
           <template slot-scope="scope">
             <div v-if="scope.row.State == 'AVAILABLE'" class="off_color">{{$t('CCN.total.run')}}</div>
-            <div v-else-if="scope.row.State == 'ISOLATED'" class="close_color">{{$t('CCN.total.glz')}}</div>
+            <div
+              v-else-if="scope.row.State == 'ISOLATED'"
+              class="close_color"
+            >{{$t('CCN.total.glz')}}</div>
             <div v-else class="close_color">{{$t('CCN.tabs.tab1newc')}}</div>
           </template>
         </el-table-column>
@@ -453,7 +470,6 @@ export default {
     },
     // 查询instanceId
     getInstanceIds: function(instanceType) {
-      console.log(instanceType);
       var params = {
         Version: "2017-03-12",
         Region: "ap-taipei"
@@ -461,13 +477,11 @@ export default {
       if (instanceType == "VPC") {
         // 私有网络
         this.axios.post(VPCS_LIST, params).then(res => {
-          console.log(res);
           this.vpcs = res.Response.VpcSet;
         });
       } else if (instanceType == "DIRECTCONNECT") {
         // 专线网络
         this.axios.post(DIRECTCONNECTGATEWAYS_LIST, params).then(res => {
-          console.log(res);
           this.vpcs = res.Response.DirectConnectGatewaySet;
         });
       }
@@ -485,7 +499,7 @@ export default {
         BandwidthLimitType: form.BandwidthLimitType
       };
       this.axios.post(CCN_CREATE, params).then(res => {
-        if (res.Response.Error) {
+        if (res.Response.Error != undefined) {
           this.$message(res.Response.Error.Message);
           this.creatloading = false;
         } else {
