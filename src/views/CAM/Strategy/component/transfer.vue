@@ -70,7 +70,7 @@
   } from "@/constants";
   export default {
     props: {
-      PolicyId: Number
+      PolicyId: String
     },
     data() {
       return {
@@ -109,6 +109,8 @@
       // 1.查询用户列表
       getUserList() {
         let _this = this;
+        _this.loading = true;
+        _this.transfer_data = []
         _this.commandObj = {
           value: "user",
           label: "用户"
@@ -130,7 +132,8 @@
       // 2.查询用户组列表ListGroups
       getGroupList() {
         let _this = this;
-        _this.clearData()
+        _this.loading = true;
+        _this.transfer_data = []
         let paramsGroup = {
           Version: "2019-01-16"
         };
@@ -143,11 +146,10 @@
             item.name = item.GroupName
             item.id = item.GroupId
           });
-          this.loading = false;
+          _this.loading = false;
         });
       },
       handleCommand(command) {
-        console.log(command)
         // 设置切换状态，穿梭框左侧数据重新加载时，handleSelectionChange方法中val参数是空，但实际情况在切换前，会有存在的数据，所以不能将数据置空
         this.handoverFlag = true;
         // 获取选择状态对象
@@ -162,12 +164,6 @@
       },
       handleSelectionChange(val) {
         let _this = this;
-        /**
-         * 注：此方法内容虽然与下面方法内容相当，但是两个方法不能合并。否则会出现穿梭框右边列表选中的值丢失
-         * （如：选中的用户数据，在切换到用户组选中数据时会把用户数据覆盖掉
-         *
-         * 当前选择为用户时，将用户选中的数据和用户组选中的数据合并到一起在穿梭框右侧显示
-         * */
         if (this.commandObj.value != "" && this.commandObj.value === "user") {
           // 正常的数据选择操作时取选中数据的值，用户、用户组按钮切换时不取值
           if (!_this.handoverFlag) {
@@ -190,12 +186,6 @@
             _this.transferArrayFlag = false;
           }
         }
-        /**
-         * 注：此方法内容虽然与上面方法内容相当，但是两个方法不能合并。否则会出现穿梭框右边列表选中的值丢失
-         * （如：选中的用户数据，在切换到用户组选中数据时会把用户数据覆盖掉
-         *
-         * 当前选择为用户组时，将用户选中的数据和用户组选中的数据合并到一起在穿梭框右侧显示
-         * */
         if (this.commandObj.value != "" && this.commandObj.value === "group") {
           // 正常的数据选择操作时取选中数据的值，用户、用户组按钮切换时不取值
           if (!_this.handoverFlag) {
@@ -275,29 +265,17 @@
         }
       },
       toQuery() {
-        // var search = this.search;
-        // if (search) {
-        //   this.searchData = this.products.filter(function (product) {
-        //     console.log(product)
-        //     return Object.keys(product).some(function (key) {
-        //       console.log(key)
-        //       return String(product[key]).toLowerCase().indexOf(search) > -1
-        //     })
-        //   })
-        // }
 
 
-      },
-      getUserSelData() {
-        return this.transfer_data_right;
       },
       // 关联用户/用户组
       attachPolicy() {
         let _this = this;
         let transfer_data_right = this.transfer_data_right;
-        console.log(transfer_data_right);
+        // console.log(transfer_data_right);
         let policyId = this.PolicyId; //获取策略ID,父页面传递参数。
         if (policyId != undefined && policyId != "") {
+          console.log('hhhhhhhh')
           for (let i = 0; i < transfer_data_right.length; i++) {
             let obj = transfer_data_right[i];
             if (obj != "" && obj.type === "user") {
@@ -336,12 +314,11 @@
       },
       // 清空数据
       clearData() {
-        this.transfer_data = []
-        // this.transfer_data_right = [];
-        // this.transferUserData = [];
-        // this.transferGroupData = [];
-        // this.transfer_data = [];
-        // this.transferArrayTemp = [];
+        this.transfer_data_right = [];
+        this.transferUserData = [];
+        this.transferGroupData = [];
+        this.transfer_data = [];
+        this.transferArrayTemp = [];
 
       },
       getHandleFlag() {
