@@ -9,7 +9,7 @@
           <logQuery/>
         </el-tab-pane>
         <el-tab-pane label="下载任务" name="second">
-          
+          <downloadTask/>
         </el-tab-pane>
       </el-tabs>
     </div>
@@ -17,6 +17,7 @@
 </template>
 <script>
 import logQuery from './tab/logQuery'
+import downloadTask from './tab/downloadTask'
 export default {
   data(){
     return{
@@ -24,7 +25,8 @@ export default {
     }
   },
   components:{
-    logQuery:logQuery
+    logQuery:logQuery,//日志查询
+    downloadTask:downloadTask,//下载任务
   },
   methods:{
     //tab切换
