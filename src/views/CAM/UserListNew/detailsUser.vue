@@ -356,7 +356,7 @@ export default {
       this.axios
         .post(DELETE_USER, params)
         .then(data => {
-          console.log(data);
+          this.$router.push("/UserListNew");
         })
         .then(() => {
           let delparams = {
@@ -377,7 +377,6 @@ export default {
       this.delDialog = false;
     },
     deleteUser() {
-      console.log(this.userData);
       this.delDialog = true;
     },
     //获取用户详情数据
