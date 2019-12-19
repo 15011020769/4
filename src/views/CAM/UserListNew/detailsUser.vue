@@ -261,7 +261,8 @@ import {
   REMOVEGROUP_USER,
   DELETE_USER,
   USER_LIST,
-  UPDATA_USER
+  UPDATA_USER,
+  DEL_USERTOGROUP
 } from "@/constants";
 // import Subscribe from './components/subscribeNew'
 import { parse } from "path";
@@ -563,26 +564,24 @@ export default {
           groupId.unshift(item.GroupId);
         });
         groupId.forEach(item => {
-          let params = {
-            Version: "2019-01-16",
-            GroupId: item
-          };
-          this.axios.post(REMOVEGROUP_USER, params).then(data => {
-            this.groupListData();
-          });
+          this.delGroup(item);
         });
         this.GroupLoading = false;
       }
       if (this.groupTitle == "确认移出") {
-        let params = {
-          Version: "2019-01-16",
-          GroupId: this.GroupId
-        };
-        this.axios.post(REMOVEGROUP_USER, params).then(data => {
-          this.groupListData();
-        });
+        this.delGroup(this.GroupId);
         this.GroupLoading = false;
       }
+    },
+    delGroup(val) {
+      let params = {
+        Version: "2019-01-16",
+        "Info.0.Uid": this.userData.Uid,
+        "Info.0.GroupId": val
+      };
+      this.axios.post(DEL_USERTOGROUP, params).then(data => {
+        this.groupListData();
+      });
     },
     //当前一行移出组
     removeGroup(val) {
