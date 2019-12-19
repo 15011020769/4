@@ -1,5 +1,5 @@
 <template>
-  <div class="Cam">
+  <div class="Cam" >
     <div class="top">
       <i
         @click="backoff"

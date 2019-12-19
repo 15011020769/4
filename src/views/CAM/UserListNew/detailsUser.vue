@@ -102,7 +102,17 @@
                 >{{$t('CAM.userList.Remove')}}</el-button>
               </template>
             </el-table-column>
-          </el-table>
+           </el-table>
+            <div class="Right-style pagstyle">
+                <span class="pagtotal">共&nbsp;{{TotalCounts}}&nbsp;{{$t("CAM.strip")}}</span>
+                <el-pagination
+                  :page-size="pagesizes"
+                  :pager-count="7"
+                  layout="prev, pager, next"
+                  @current-change="handleCurrentChanges"
+                  :total="TotalCounts"
+                ></el-pagination>
+          </div>
         </el-tab-pane>
         <el-tab-pane :label="groupNum" name="second">
           <el-button
@@ -143,6 +153,16 @@
               </template>
             </el-table-column>
           </el-table>
+          <div class="Right-style pagstyle">
+                <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;{{$t("CAM.strip")}}</span>
+                <el-pagination
+                  :page-size="pagesize"
+                  :pager-count="7"
+                  layout="prev, pager, next"
+                  @current-change="handleCurrentChange"
+                  :total="TotalCount"
+                ></el-pagination>
+          </div>
         </el-tab-pane>
         <!-- <el-tab-pane label="安全" name="third">{{$t('CAM.userList.RoleManagement')}}</el-tab-pane>
         <el-tab-pane label="API密钥" name="fourth">{{$t('CAM.userList.compensation')}}</el-tab-pane>
@@ -252,6 +272,12 @@ export default {
   },
   data() {
     return {
+      TotalCount:0,
+      pagesize:10,
+      currpage:1,
+      TotalCounts:0,
+      pagesizes:10,
+      currpages:1,
       infoLoad: true,
       ConsoleLogin: {
         1: "可以登录控制台",
@@ -307,6 +333,7 @@ export default {
         });
       }
     },
+    
     //编辑用户
     sureUpdata() {
       var phone = /^1[345789]\d{9}$/;
@@ -402,12 +429,14 @@ export default {
         this.userData = res.Response;
         let ploicyParams = {
           Version: "2019-01-16",
-          TargetUin: this.userData.Uin
+          TargetUin: this.userData.Uin,
         };
         this.axios.post(QUERY_POLICY, ploicyParams).then(res => {
           if (res != "") {
+            console.log(res)
             this.loading = false;
-            this.StrategyData = res.Response.List;
+            this.StrategyData = res.Response.List.slice((this.currpages - 1) * this.pagesizes, this.currpages * this.pagesizes);
+            this.TotalCounts = res.Response.List.length
             this.totalNum = "权限(" + res.Response.List.length + ")";
           } else {
             this.loading = false;
@@ -418,6 +447,10 @@ export default {
           }
         });
       });
+    },
+   handleCurrentChanges(val){
+        this.currpages = val;
+        this.ploicyData()
     },
     //初始化用户列表
     userLists() {
@@ -436,13 +469,20 @@ export default {
         this.userData = res.Response;
         let groupParams = {
           Version: "2019-01-16",
-          Uid: this.userData.Uid
+          Uid: this.userData.Uid,
         };
         this.axios.post(RELATE_USER, groupParams).then(res => {
-          this.groupData = res.Response.GroupInfo;
-          this.groupNum = "组(" + this.groupData.length + ")";
+          console.log(res)
+          this.TotalCount = res.Response.GroupInfo.length;
+          console.log(res.Response.GroupInfo.length)
+          this.groupData = res.Response.GroupInfo.slice((this.currpage - 1) * this.pagesize, this.currpage * this.pagesize);
+          this.groupNum = "组(" + res.Response.GroupInfo.length+ ")";
         });
       });
+    },
+    handleCurrentChange(val){
+        this.currpage = val;
+        this.groupListData()
     },
     //确定解除策略
     moveStrategy() {
@@ -592,7 +632,7 @@ export default {
     },
     back() {
       this.$router.go(-1);
-    }
+    },
   },
   created() {
     this.init(); //获取当前用户的详情
@@ -602,6 +642,20 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+  .Right-style {
+    display: flex;
+    justify-content: flex-end;
+  }
+   .pagstyle {
+    padding: 20px;
+
+    .pagtotal {
+      font-size: 13px;
+      font-weight: 400;
+      color: #565656;
+      line-height: 32px;
+    }
+  }
 .tabs {
   background: white;
   padding: 0 20px;

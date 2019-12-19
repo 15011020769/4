@@ -448,7 +448,6 @@ export default {
         })
         .catch(error => {});
     },
-
     // 获取角色策略
     getRolePolicy() {
       this.loading = true;
