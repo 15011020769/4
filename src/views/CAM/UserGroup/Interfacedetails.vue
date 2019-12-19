@@ -1,5 +1,5 @@
 <template>
-  <div class="Cam" >
+  <div class="Cam">
     <div class="top">
       <i
         @click="backoff"
@@ -610,7 +610,7 @@ export default {
         .post(GROUP_POLICY, params)
         .then(res => {
           this.policiesData = res.Response.List;
-          this.policiesLable = "权限（" + this.policiesData.length + "）";
+          this.policiesLable = "权限（" + res.Response.TotalNum + "）";
           this.TotalCount = res.Response.TotalNum;
           this.loading = false;
         })
@@ -685,12 +685,15 @@ export default {
       this.multipleSelection.forEach(item => {
         this.addPolicies(item.PolicyId);
       });
-      this.selectGroupPolicies();
-      this.$message({
-        message: "绑定成功",
-        type: "success"
-      });
       this.dialogVisible = false;
+      this.loading = true;
+      setTimeout(() => {
+        this.selectGroupPolicies();
+        this.$message({
+          message: "绑定成功",
+          type: "success"
+        });
+      }, 2000);
     },
     // 添加策略信息
     addPolicies(val) {
