@@ -319,7 +319,6 @@
         this.transferGroupData = [];
         this.transfer_data = [];
         this.transferArrayTemp = [];
-
       },
       getHandleFlag() {
         return true;
