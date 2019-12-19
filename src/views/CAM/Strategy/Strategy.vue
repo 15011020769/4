@@ -173,7 +173,7 @@ export default {
         params["Keyword"] = this.searchValue;
       }
       this.axios.post(POLICY_LIST, params).then(res => {
-        console.log(res)
+        console.log(res);
         this.tableData = res.Response.List;
         this.TotalCount = res.Response.TotalNum;
         this.loading = false;
@@ -208,6 +208,8 @@ export default {
     // 关联用户/用户组
     attachPolicy() {
       this.$refs.userTransfer.attachPolicy();
+      this.getData();
+      this.$message("关联成功");
       this.dialogVisible = false;
     },
     // table标题栏选择项

@@ -137,7 +137,7 @@
     >
       <div class="container">
         <div class="container-left">
-          <p>{{$t('CAM.userGroup.selection')}}（共{{totalNum}}条）</p>
+          <p>{{$t('CAM.userGroup.selection')}}（共{{userData.length}}条）</p>
           <el-input size="small" v-model="inpVal" style="width:100%" @change="_inpVal">
             <i slot="suffix" class="el-input__icon el-icon-search" @click="toQueryUser"></i>
           </el-input>
