@@ -482,6 +482,7 @@ export default {
     },
     //获取每一个子用户下的用户组
     groupListData() {
+      this.loading = true;
       let params = {
         Version: "2019-01-16",
         Name: this.$route.query.detailsData
@@ -493,14 +494,13 @@ export default {
           Uid: this.userData.Uid
         };
         this.axios.post(RELATE_USER, groupParams).then(res => {
-          console.log(res);
           this.TotalCount = res.Response.GroupInfo.length;
-          console.log(res.Response.GroupInfo.length);
           this.groupData = res.Response.GroupInfo.slice(
             (this.currpage - 1) * this.pagesize,
             this.currpage * this.pagesize
           );
           this.groupNum = "组(" + res.Response.GroupInfo.length + ")";
+          this.loading = false;
         });
       });
     },
