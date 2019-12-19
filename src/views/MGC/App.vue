@@ -20,6 +20,7 @@
 <script>
 import NavHeader from "@/components/HeaderAside/Header";
 import LeftAside from "./Public/Menu";
+import { ALL_CITY } from "@/constants";
 export default {
   data() {
     return {};
@@ -29,17 +30,17 @@ export default {
     LeftAside
   },
   mounted() {
-    // this.getProgectList()
-    if (
-      this.$cookie.get("regionv1") === undefined ||
-      this.$cookie.get("regionv1") === "" ||
-      this.$cookie.get("regionv1") === null
-    ) {
-      this.$cookie.set("regionv1", "gz");
-      this.$cookie.set("regionv2", "ap-guangzhou");
-    }
+    this.GetCity();
   },
   methods: {
+    // 获取城市列表
+    GetCity() {
+      this.axios.get(ALL_CITY).then(data => {
+        let city = data.data[0];
+        this.$cookie.set("regionv1", city.regionCode);
+        this.$cookie.set("regionv2", city.Region);
+      });
+    },
     // 获取项目列表
     getProgectList() {
       var params = {};

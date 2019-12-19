@@ -10,9 +10,7 @@
           <!-- <a href="JavaScript:;">跟踪集使用指南。</a> -->
         </p>
         <p>
-          <span>
-           {{ $t('CLA.total.ts2') }} 
-          </span>
+          <span>{{ $t('CLA.total.ts2') }}</span>
         </p>
         <p>
           <span>{{ $t('CLA.total.ts3') }}</span>
@@ -59,7 +57,8 @@
 </template>
 
 <script>
-import { GZJ_LIST } from "@/constants";
+import VueCookie from "vue-cookie";
+import { GZJ_LIST, GZJ_NUM } from "@/constants";
 export default {
   data() {
     return {
@@ -89,13 +88,13 @@ export default {
     listNum() {
       const params = {
         Version: "2019-03-19",
+        // Region: VueCookie.get("regionv2"),
         Region: "ap-guangzhou"
       };
-      this.axios.post("cloudaudit2/InquireAuditCredit", params).then(res => {
+      this.axios.post(GZJ_NUM, params).then(res => {
         if (res.Response.AuditAmount < 1) {
           this.isDisabled = true;
-        }
-        else{
+        } else {
           this.isDisabled = false;
         }
       });
@@ -110,9 +109,9 @@ export default {
     getData() {
       let params = {
         Version: "2019-03-19",
-        Region: "ap-guangzhou"
+        Region: VueCookie.get("regionv2")
       };
-      this.axios.post("cloudaudit/ListAudits", params).then(({ data }) => {
+      this.axios.post(GZJ_LIST, params).then(({ data }) => {
         this.tableData = data.auditLists;
         this.loading = false;
       });
