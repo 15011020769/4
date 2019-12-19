@@ -651,6 +651,7 @@ export default {
         .post(DETACH_POLICY, params)
         .then(res => {
           this.selectGroupPolicies();
+          this.$message('移除成功')
         })
         .catch(error => {
           console.log(error);
@@ -705,7 +706,9 @@ export default {
       };
       this.axios
         .post(ATTACH_GROUP, policiesParams)
-        .then(res => {})
+        .then(res => {
+          this.$message('添加成功')
+        })
         .catch(error => {
           this.$message.error(error);
         });

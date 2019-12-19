@@ -583,6 +583,7 @@ export default {
       };
       this.axios.post(DEL_USERTOGROUP, params).then(data => {
         this.groupListData();
+        this.$message('移出成功')
       });
     },
     //当前一行移出组
@@ -643,12 +644,6 @@ export default {
       this.delDialog = false;
       this.updataUser = false;
     },
-    //  suerClose(){
-    //    this.flag = false
-    // },
-    // confirm(){
-    //     this.flag = false;
-    // },
     bindMesg() {
       this.$message({
         type: "info",
