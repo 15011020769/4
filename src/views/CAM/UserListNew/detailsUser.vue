@@ -102,16 +102,16 @@
                 >{{$t('CAM.userList.Remove')}}</el-button>
               </template>
             </el-table-column>
-           </el-table>
-            <div class="Right-style pagstyle">
-                <span class="pagtotal">共&nbsp;{{TotalCounts}}&nbsp;{{$t("CAM.strip")}}</span>
-                <el-pagination
-                  :page-size="pagesizes"
-                  :pager-count="7"
-                  layout="prev, pager, next"
-                  @current-change="handleCurrentChanges"
-                  :total="TotalCounts"
-                ></el-pagination>
+          </el-table>
+          <div class="Right-style pagstyle">
+            <span class="pagtotal">共&nbsp;{{TotalCounts}}&nbsp;{{$t("CAM.strip")}}</span>
+            <el-pagination
+              :page-size="pagesizes"
+              :pager-count="7"
+              layout="prev, pager, next"
+              @current-change="handleCurrentChanges"
+              :total="TotalCounts"
+            ></el-pagination>
           </div>
         </el-tab-pane>
         <el-tab-pane :label="groupNum" name="second">
@@ -154,14 +154,14 @@
             </el-table-column>
           </el-table>
           <div class="Right-style pagstyle">
-                <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;{{$t("CAM.strip")}}</span>
-                <el-pagination
-                  :page-size="pagesize"
-                  :pager-count="7"
-                  layout="prev, pager, next"
-                  @current-change="handleCurrentChange"
-                  :total="TotalCount"
-                ></el-pagination>
+            <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;{{$t("CAM.strip")}}</span>
+            <el-pagination
+              :page-size="pagesize"
+              :pager-count="7"
+              layout="prev, pager, next"
+              @current-change="handleCurrentChange"
+              :total="TotalCount"
+            ></el-pagination>
           </div>
         </el-tab-pane>
         <!-- <el-tab-pane label="安全" name="third">{{$t('CAM.userList.RoleManagement')}}</el-tab-pane>
@@ -272,12 +272,12 @@ export default {
   },
   data() {
     return {
-      TotalCount:0,
-      pagesize:10,
-      currpage:1,
-      TotalCounts:0,
-      pagesizes:10,
-      currpages:1,
+      TotalCount: 0,
+      pagesize: 10,
+      currpage: 1,
+      TotalCounts: 0,
+      pagesizes: 10,
+      currpages: 1,
       infoLoad: true,
       ConsoleLogin: {
         1: "可以登录控制台",
@@ -315,53 +315,68 @@ export default {
     //对手机号进行判断
     tel: function() {
       var phone = /^1[345789]\d{9}$/;
-      if(this.ruleForm.PhoneNum != ''){
-          if (!phone.test(this.ruleForm.PhoneNum)) {
-            this.$message({
-              type: "error",
-              message: "请输入正确的手机号!"
-            });
-          }
+      if (this.ruleForm.PhoneNum != "") {
+        if (!phone.test(this.ruleForm.PhoneNum)) {
+          this.$message({
+            type: "error",
+            message: "请输入正确的手机号!"
+          });
+        }
       }
     },
     //对邮箱进行判断
     email: function() {
       var email = /^[A-Za-z\d]+([-_.][A-Za-z\d]+)*@([A-Za-z\d]+[-.])+[A-Za-z\d]{2,4}$/;
-      if(this.ruleForm.Email != ''){
-          if (!email.test(this.ruleForm.Email)) {
-            this.$message({
-              type: "error",
-              message: "请输入正确的邮箱!"
-            });
-          }
+      if (this.ruleForm.Email != "") {
+        if (!email.test(this.ruleForm.Email)) {
+          this.$message({
+            type: "error",
+            message: "请输入正确的邮箱!"
+          });
+        }
       }
-     
     },
-    
+
     //编辑用户
     sureUpdata() {
       var phone = /^1[345789]\d{9}$/;
       var email = /^[A-Za-z\d]+([-_.][A-Za-z\d]+)*@([A-Za-z\d]+[-.])+[A-Za-z\d]{2,4}$/;
-      if(this.ruleForm.PhoneNum != '' && this.ruleForm.Email != ''){
-            if (!phone.test(this.ruleForm.PhoneNum) || !email.test(this.ruleForm.Email) ) {
-              this.$message.error("编辑失败,手机号或邮箱输入有误！");
-              this.updataUser = true; 
-            } else {
-                 let params = {
-                Version: "2019-01-16",
-                Name: this.ruleForm.Name,
-                Remark: this.ruleForm.Remark,
-                PhoneNum: this.ruleForm.PhoneNum,
-                Email: this.ruleForm.Email
-                 };
-              this.axios.post(UPDATA_USER, params).then(res => {
-                      this.init();
-              });
-              this.$message("编辑成功");
-              this.updataUser = false;
-          }
-       }
-},
+      if (this.ruleForm.PhoneNum != "" && this.ruleForm.Email != "") {
+        if (
+          !phone.test(this.ruleForm.PhoneNum) ||
+          !email.test(this.ruleForm.Email)
+        ) {
+          this.$message.error("编辑失败,手机号或邮箱输入有误！");
+          this.updataUser = true;
+        } else {
+          let params = {
+            Version: "2019-01-16",
+            Name: this.ruleForm.Name,
+            Remark: this.ruleForm.Remark,
+            PhoneNum: this.ruleForm.PhoneNum,
+            Email: this.ruleForm.Email
+          };
+          this.axios.post(UPDATA_USER, params).then(res => {
+            this.init();
+          });
+          this.$message("编辑成功");
+          this.updataUser = false;
+        }
+      } else {
+        let params = {
+          Version: "2019-01-16",
+          Name: this.ruleForm.Name,
+          Remark: this.ruleForm.Remark,
+          PhoneNum: this.ruleForm.PhoneNum,
+          Email: this.ruleForm.Email
+        };
+        this.axios.post(UPDATA_USER, params).then(res => {
+          this.init();
+        });
+        this.$message("编辑成功");
+        this.updataUser = false;
+      }
+    },
     handleClicks(policy) {
       this.$router.push({
         path: "/StrategyDetail",
@@ -432,14 +447,17 @@ export default {
         this.userData = res.Response;
         let ploicyParams = {
           Version: "2019-01-16",
-          TargetUin: this.userData.Uin,
+          TargetUin: this.userData.Uin
         };
         this.axios.post(QUERY_POLICY, ploicyParams).then(res => {
           if (res != "") {
-            console.log(res)
+            console.log(res);
             this.loading = false;
-            this.StrategyData = res.Response.List.slice((this.currpages - 1) * this.pagesizes, this.currpages * this.pagesizes);
-            this.TotalCounts = res.Response.List.length
+            this.StrategyData = res.Response.List.slice(
+              (this.currpages - 1) * this.pagesizes,
+              this.currpages * this.pagesizes
+            );
+            this.TotalCounts = res.Response.List.length;
             this.totalNum = "权限(" + res.Response.List.length + ")";
           } else {
             this.loading = false;
@@ -451,9 +469,9 @@ export default {
         });
       });
     },
-   handleCurrentChanges(val){
-        this.currpages = val;
-        this.ploicyData()
+    handleCurrentChanges(val) {
+      this.currpages = val;
+      this.ploicyData();
     },
     //初始化用户列表
     userLists() {
@@ -472,20 +490,23 @@ export default {
         this.userData = res.Response;
         let groupParams = {
           Version: "2019-01-16",
-          Uid: this.userData.Uid,
+          Uid: this.userData.Uid
         };
         this.axios.post(RELATE_USER, groupParams).then(res => {
-          console.log(res)
+          console.log(res);
           this.TotalCount = res.Response.GroupInfo.length;
-          console.log(res.Response.GroupInfo.length)
-          this.groupData = res.Response.GroupInfo.slice((this.currpage - 1) * this.pagesize, this.currpage * this.pagesize);
-          this.groupNum = "组(" + res.Response.GroupInfo.length+ ")";
+          console.log(res.Response.GroupInfo.length);
+          this.groupData = res.Response.GroupInfo.slice(
+            (this.currpage - 1) * this.pagesize,
+            this.currpage * this.pagesize
+          );
+          this.groupNum = "组(" + res.Response.GroupInfo.length + ")";
         });
       });
     },
-    handleCurrentChange(val){
-        this.currpage = val;
-        this.groupListData()
+    handleCurrentChange(val) {
+      this.currpage = val;
+      this.groupListData();
     },
     //确定解除策略
     moveStrategy() {
@@ -635,7 +656,7 @@ export default {
     },
     back() {
       this.$router.go(-1);
-    },
+    }
   },
   created() {
     this.init(); //获取当前用户的详情
@@ -645,20 +666,20 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-  .Right-style {
-    display: flex;
-    justify-content: flex-end;
-  }
-   .pagstyle {
-    padding: 20px;
+.Right-style {
+  display: flex;
+  justify-content: flex-end;
+}
+.pagstyle {
+  padding: 20px;
 
-    .pagtotal {
-      font-size: 13px;
-      font-weight: 400;
-      color: #565656;
-      line-height: 32px;
-    }
+  .pagtotal {
+    font-size: 13px;
+    font-weight: 400;
+    color: #565656;
+    line-height: 32px;
   }
+}
 .tabs {
   background: white;
   padding: 0 20px;

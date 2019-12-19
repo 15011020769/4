@@ -154,7 +154,7 @@
               </p>
               <div class="config_table">
                 <el-table
-                  :data="roleCarrier.slice((currpages - 1) * pagesizes, currpages * pagesizes)"
+                  :data="roleCarrier.slice((currpage - 1) * pagesize, currpage * pagesize)"
                   height="300"
                   :row-style="{height:0}"
                   :cell-style="{padding:'5px 10px'}"
@@ -681,10 +681,6 @@ export default {
       this.pagePolicies = val;
       this.currpage = val;
       this.getRolePolicy();
-    },
-    handleCurrentChanges(val){
-      this.currpages = val
-      this.getRoleDetail()
     },
     handleClose() {},
     look_detail() {

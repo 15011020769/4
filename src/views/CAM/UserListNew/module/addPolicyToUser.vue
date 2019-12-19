@@ -10,8 +10,6 @@
           direction="vertical"
           simple
           :space="200"
-          style="margin-right: 50%"
-          finish-status="success"
         >
           <el-step :title="$t('CAM.userList.permissions')"></el-step>
           <el-step :title="$t('CAM.userList.review')"></el-step>
@@ -58,7 +56,7 @@
           type="primary"
           size="medium"
           @click="prev()"
-          v-if="active==1 || active==2"
+          v-if="active==2"
         >{{$t('CAM.userList.prev')}}</el-button>
         <el-button
           style="margin-top:70px;"

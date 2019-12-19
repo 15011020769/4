@@ -39,7 +39,7 @@
           type="primary"
           size="medium"
           @click="prev()"
-          v-if="active==1 || active==2 || active==3"
+          v-if="active==2 || active==3"
         >上一步</el-button>
         <el-button
           style="margin-top:70px;"
