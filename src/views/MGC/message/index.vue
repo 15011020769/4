@@ -17,7 +17,12 @@
             <el-button>全部标记为已读</el-button>
           </div>
           <div class="message-btns btnStyle">
-            <el-button v-for="(item,index) in btnData" :key="index" :class="btnIndex == index ? 'btn-active' : ''" @click="btnClick(index)">{{item}}</el-button>
+            <el-button
+              v-for="(item,index) in btnData"
+              :key="index"
+              :class="btnIndex == index ? 'btn-active' : ''"
+              @click="btnClick(index)"
+            >{{item}}</el-button>
           </div>
         </div>
         <div class="message-funRight">
@@ -30,10 +35,12 @@
         </div>
       </div>
       <div class="meaasge-table">
-        <el-table :data="tableData" style="width: 100%" height="450">
-          <el-table-column prop="date" label="日期" width="180"></el-table-column>
-          <el-table-column prop="name" label="姓名" width="180"></el-table-column>
-          <el-table-column prop="address" label="地址"></el-table-column>
+        <el-table :data="tableData" style="width: 100%" height="450" @selection-change="handleSelectionChange">
+          <el-table-column type="selection" width="55"></el-table-column>
+          <el-table-column label="消息内容" width="180"></el-table-column>
+          <el-table-column label="接收时间" width="180"></el-table-column>
+          <el-table-column label="消息类型"></el-table-column>
+          <el-table-column label="消息子类型"></el-table-column>
         </el-table>
         <div class="page">
           <el-pagination
@@ -76,7 +83,18 @@ export default {
   components: {
     HeaderCom
   },
+  created(){
+     this.init()
+  },
   methods: {
+    // init(){
+    //    let params = {
+    //      searchForm:this.tableData
+    //    };
+    //    this.axios.post("http://tfc.dhycloud.com/adminapi/admin/taifucloud/inmail/list",params).then(res=>{
+    //      console.log(res)
+    //    })
+    // },
     //分页
     handleSizeChange(val) {
       this.pagesize = val;
@@ -86,8 +104,12 @@ export default {
       this.currpage = val;
     },
     //点击按钮
-    btnClick(index){
+    btnClick(index) {
       this.btnIndex = index;
+    },
+    //多选框
+    handleSelectionChange(){
+
     }
   }
 };
