@@ -25,6 +25,7 @@
   </div>
 </template>
 <script>
+import VueCookie from "vue-cookie";
 import { EnableKey,DisableKey } from "@/constants";
 export default {
   props:{
@@ -36,7 +37,7 @@ export default {
       thisShow:'',
       thisContent:[],
       detailIsShow:false,//详情显示隐藏
-      flag:true,
+      flag:true
     }
   },
   computed:{
@@ -69,12 +70,11 @@ export default {
       this.$emit('startKmsSure',this.thisShow);
       let params = {
         Version: '2019-01-18',
-        Region: 'ap-taipei',
+        Region: VueCookie.get("regionv2"),
         KeyId: this.contentDialog[1]
       };
      
       this.axios.post(EnableKey, params).then(res => {
-        console.log(res.Response);
         this.$parent.GetList();
         
       });
@@ -85,11 +85,10 @@ export default {
       this.$emit('stopKmsSure',this.thisShow);
       let params = {
         Version: '2019-01-18',
-        Region: 'ap-taipei',
+        Region: VueCookie.get("regionv2"),
         KeyId: this.contentDialog[1]
       };
       this.axios.post(DisableKey, params).then(res => {
-        // console.log(res.Response);
         this.$parent.GetList();
       });
     }

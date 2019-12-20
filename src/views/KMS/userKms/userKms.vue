@@ -5,16 +5,28 @@
       <span class="taibeiCheck">{{thisAddress}}</span>
     </div>
     <div class="mainContent">
-      <KMSdialog :dialogVisibleKMS="dialogVisibleKMS" @_confirm="_confirm" @_cancel="_cancel" :KMStitle="KMStitle" :KMStxt="KMStxt" :KMSdata="KMSdata" :state="state" />
+      <KMSdialog
+        :dialogVisibleKMS="dialogVisibleKMS"
+        @_confirm="_confirm"
+        @_cancel="_cancel"
+        :KMStitle="KMStitle"
+        :KMStxt="KMStxt"
+        :KMSdata="KMSdata"
+        :state="state"
+      />
       <div class="mainContBtn newClear">
         <div class="conLeftBtn">
           <el-button @click="dialogVisible = true">{{$t('KMS.total.newCreate')}}</el-button>
           <el-button @click="_enableBtn">{{$t('KMS.total.startKms')}}</el-button>
-          <!-- <el-button :disabled="false" v-if="!isHaveDisable">启用密钥</el-button> -->
           <el-button @click="_disableBtn">{{$t('KMS.total.stopKms')}}</el-button>
-          <!-- <el-button :disabled="false" v-if="!isHaveEnable">禁用密钥</el-button> -->
         </div>
-        <el-dialog class="dialogModel" :title="$t('KMS.total.newCreateKms')" :visible.sync="dialogVisible" width="50%" :before-close="handleClose">
+        <el-dialog
+          class="dialogModel"
+          :title="$t('KMS.total.newCreateKms')"
+          :visible.sync="dialogVisible"
+          width="50%"
+          :before-close="handleClose"
+        >
           <el-form :model="createForm" label-width="100px">
             <el-form-item :label="$t('KMS.total.kmsName')">
               <el-input v-model="createForm.name"></el-input>
@@ -37,18 +49,27 @@
           </span>
         </el-dialog>
         <div class="conRightSearch">
-          <el-input class="iptSearch" :placeholder="$t('KMS.total.placeholder1')" v-model="tableDataName"></el-input>
+          <el-input
+            class="iptSearch"
+            :placeholder="$t('KMS.total.placeholder1')"
+            v-model="tableDataName"
+            @change="inpVal"
+          ></el-input>
           <button class="el-icon-search" @click="doFilter"></button>
         </div>
       </div>
       <div class="tableCoontent">
         <div class="tableList">
-          <el-table ref="multipleTable" :data="tableDataBegin.slice((currpage - 1) * pagesize, currpage * pagesize)" tooltip-effect="dark" style="width: 100%" @selection-change="handleSelectionChange">
-            <el-table-column type="selection" width="55">
-              <!-- <template slot-scope="scope">
-                <el-checkbox v-model="scope.row.checked" @click="checkedIsTrue"></el-checkbox>
-              </template>-->
-            </el-table-column>
+          <el-table
+            ref="multipleTable"
+            :data="tableDataBegin.slice((currpage - 1) * pagesize, currpage * pagesize)"
+            tooltip-effect="dark"
+            style="width: 100%"
+            @selection-change="handleSelectionChange"
+            height="450"
+            v-loading="loading"
+          >
+            <el-table-column type="selection" width="55"></el-table-column>
             <el-table-column prop="KeyId" :label="$t('KMS.total.label1')">
               <template slot-scope="scope">
                 <a href="#" @click="todoDetails(scope.row)">{{scope.row.KeyId}}</a>
@@ -58,10 +79,16 @@
             </el-table-column>
             <el-table-column prop="KeyState" :label="$t('KMS.total.status')">
               <template slot-scope="scope">
-                <span :style="scope.row.KeyState=='Disabled'||scope.row.KeyState=='PendingDelete'||scope.row.KeyState=='PendingImport'?'color:#ff9d00':'color:#000'">{{scope.row.KeyState=="PendingDelete"?'於'+timestampToTime(scope.row.DeletionDate)+'徹底刪除':filterState(scope.row.KeyState)}}</span>
+                <span
+                  :style="scope.row.KeyState=='Disabled'||scope.row.KeyState=='PendingDelete'||scope.row.KeyState=='PendingImport'?'color:#ff9d00':'color:#000'"
+                >{{scope.row.KeyState=="PendingDelete"?'於'+timestampToTime(scope.row.DeletionDate)+'徹底刪除':filterState(scope.row.KeyState)}}</span>
               </template>
             </el-table-column>
-            <el-table-column prop="CreateTime" :label="$t('KMS.total.createTime')" show-overflow-tooltip>
+            <el-table-column
+              prop="CreateTime"
+              :label="$t('KMS.total.createTime')"
+              show-overflow-tooltip
+            >
               <template slot-scope="scope">
                 <span>{{timestampToTime(scope.row.CreateTime)}}</span>
               </template>
@@ -73,43 +100,101 @@
             </el-table-column>
             <el-table-column prop="kmsChange" :label="$t('KMS.total.kmsChange')">
               <template slot-scope="scope">
-                <a href="#" class="aColorGree" :style="scope.row.KeyState=='PendingDelete'||scope.row.KeyState=='PendingImport'||scope.row.Origin=='EXTERNAL'||scope.row.KeyRotationEnabled==true?'pointer-events:none':'color:#006eff'" @click="startChange(scope.row,$event)">{{$t('KMS.total.startChange')}}</a>
+                <a
+                  href="#"
+                  class="aColorGree"
+                  :style="scope.row.KeyState=='PendingDelete'||scope.row.KeyState=='PendingImport'||scope.row.Origin=='EXTERNAL'||scope.row.KeyRotationEnabled==true?'pointer-events:none':'color:#006eff'"
+                  @click="startChange(scope.row,$event)"
+                >{{$t('KMS.total.startChange')}}</a>
                 <span class="spanLine">|</span>
-                <a href="#" class="aColorGree" :style="scope.row.KeyState=='PendingDelete'||scope.row.KeyState=='PendingImport'||scope.row.KeyRotationEnabled==false?'pointer-events:none':'color:#006eff'" @click="startChange(scope.row,$event)">{{$t('KMS.total.stopChange')}}</a>
+                <a
+                  href="#"
+                  class="aColorGree"
+                  :style="scope.row.KeyState=='PendingDelete'||scope.row.KeyState=='PendingImport'||scope.row.KeyRotationEnabled==false?'pointer-events:none':'color:#006eff'"
+                  @click="startChange(scope.row,$event)"
+                >{{$t('KMS.total.stopChange')}}</a>
               </template>
             </el-table-column>
             <el-table-column prop="action" :label="$t('KMS.total.action')" class="action">
               <template slot-scope="scope">
-                <a href="#" class="aColorGree" :style="scope.row.KeyState=='Enabled'||scope.row.KeyState=='PendingDelete'||scope.row.KeyState=='PendingImport'?'pointer-events:none':'color:#006eff'" @click="startKms(scope.row,$event)">{{$t('KMS.total.startKms')}}</a>
+                <a
+                  href="#"
+                  class="aColorGree"
+                  :style="scope.row.KeyState=='Enabled'||scope.row.KeyState=='PendingDelete'||scope.row.KeyState=='PendingImport'?'pointer-events:none':'color:#006eff'"
+                  @click="startKms(scope.row,$event)"
+                >{{$t('KMS.total.startKms')}}</a>
                 <span class="spanLine">|</span>
-                <a href="#" class="aColorGree" :style="scope.row.KeyState=='Disabled'||scope.row.KeyState=='PendingDelete'||scope.row.KeyState=='PendingImport'?'pointer-events:none':'color:#006eff'" @click="startKms(scope.row,$event)">{{$t('KMS.total.stopKms')}}</a>
+                <a
+                  href="#"
+                  class="aColorGree"
+                  :style="scope.row.KeyState=='Disabled'||scope.row.KeyState=='PendingDelete'||scope.row.KeyState=='PendingImport'?'pointer-events:none':'color:#006eff'"
+                  @click="startKms(scope.row,$event)"
+                >{{$t('KMS.total.stopKms')}}</a>
                 <br />
-                <a href="#" class="aColorGree" :style="scope.row.KeyState=='PendingDelete'?'pointer-events:none':'color:#006eff'" @click="openDelete(scope.row,$event)">{{$t('KMS.total.planDelete')}}</a>
+                <a
+                  href="#"
+                  class="aColorGree"
+                  :style="scope.row.KeyState=='PendingDelete'?'pointer-events:none':'color:#006eff'"
+                  @click="openDelete(scope.row,$event)"
+                >{{$t('KMS.total.planDelete')}}</a>
                 <span class="spanLine">|</span>
-                <a href="#" class="aColorGree" :style="scope.row.KeyState=='PendingDelete'?'color:#006eff':'pointer-events:none'" @click="openDelete(scope.row,$event)">{{$t('KMS.total.closeDelete')}}</a>
+                <a
+                  href="#"
+                  class="aColorGree"
+                  :style="scope.row.KeyState=='PendingDelete'?'color:#006eff':'pointer-events:none'"
+                  @click="openDelete(scope.row,$event)"
+                >{{$t('KMS.total.closeDelete')}}</a>
               </template>
             </el-table-column>
           </el-table>
-          <stopChange :isShow="dialogModelChange" :content="doalogModelBox" @parentByClick="childrenShow" @startSure="startSure" @stopSure="stopSure" />
-          <startKms :isShow="dialogModelKms" :content="doalogModelBox1" @parentByClick="childrenShow1" @startKmsSure="startKmsSure" @stopKmsSure="stopKmsSure" />
-          <openDelete :isShow="dialogModelDelete" :content="doalogModelBox2" @parentByClick="childrenShow2" @openDeleteSure="openDeleteSure" @closeDeleteSure="closeDeleteSure" />
+          <stopChange
+            :isShow="dialogModelChange"
+            :content="doalogModelBox"
+            @parentByClick="childrenShow"
+            @startSure="startSure"
+            @stopSure="stopSure"
+          />
+          <startKms
+            :isShow="dialogModelKms"
+            :content="doalogModelBox1"
+            @parentByClick="childrenShow1"
+            @startKmsSure="startKmsSure"
+            @stopKmsSure="stopKmsSure"
+          />
+          <openDelete
+            :isShow="dialogModelDelete"
+            :content="doalogModelBox2"
+            @parentByClick="childrenShow2"
+            @openDeleteSure="openDeleteSure"
+            @closeDeleteSure="closeDeleteSure"
+          />
         </div>
-        <el-dialog class="dialogModel" :title="$t('KMS.total.planDeleteKms')" :visible.sync="dialogModelOpenDelete" width="30%" :before-close="handleCloseOpenDelete">
+        <el-dialog
+          class="dialogModel"
+          :title="$t('KMS.total.planDeleteKms')"
+          :visible.sync="dialogModelOpenDelete"
+          width="30%"
+          :before-close="handleCloseOpenDelete"
+        >
           <p class="deleteOpen">{{$t('KMS.total.tip3')}}</p>
           <span slot="footer" class="dialog-footer">
             <el-button @click="dialogModelOpenDelete = false">{{$t('KMS.total.modelClose')}}</el-button>
-            <el-button type="primary" @click="dialogModelOpenDelete = false">{{$t('KMS.total.modelSure')}}</el-button>
+            <el-button
+              type="primary"
+              @click="dialogModelOpenDelete = false"
+            >{{$t('KMS.total.modelSure')}}</el-button>
           </span>
         </el-dialog>
-        <!-- <div class="tabListPage">
-          <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage" :page-sizes="[10, 20, 30, 50]" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper" :total="totalItems"></el-pagination>
-        </div> -->
-           <div class="Right-style pagstyle">
-            <span class='pagtotal'>共&nbsp;{{TotalCount}}&nbsp;页</span>
-            <el-pagination :page-size="pagesize" :pager-count="7" layout="prev, pager, next"
-              @current-change="handleCurrentChange" :total="TotalCount">1
-            </el-pagination>
-         </div>
+        <div class="Right-style pagstyle">
+          <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;条</span>
+          <el-pagination
+            :page-size="pagesize"
+            :pager-count="7"
+            layout="prev, pager, next"
+            @current-change="handleCurrentChange"
+            :total="TotalCount"
+          >1</el-pagination>
+        </div>
       </div>
     </div>
   </div>
@@ -119,11 +204,19 @@ import stopChange from "./stopChange";
 import startKms from "./startKms";
 import openDelete from "./openDelete";
 import KMSdialog from "./KMSdialog";
-import { KMS_LIST, NEW_KMS, EnableKey, DisableKey } from "@/constants";
+import {
+  KMS_LIST,
+  NEW_KMS,
+  EnableKey,
+  DisableKey,
+  ALL_CITY
+} from "@/constants";
+import VueCookie from "vue-cookie";
 export default {
   data() {
     return {
-      TotalCount:0,
+      loading: true,
+      TotalCount: 0,
       pagesize: 10,
       currpage: 1,
       thisAddress: "台灣台北",
@@ -164,7 +257,7 @@ export default {
       }, //
       isHaveDisable: true, // 启用密钥 是否有已禁用
       isHaveEnable: true, // 禁用密钥 是否有已启用
-      changeStatus: this.$t('KMS.total.startChange'), //轮换状态默认为启用轮换
+      changeStatus: this.$t("KMS.total.startChange"), //轮换状态默认为启用轮换
       doalogModelBox: [], //启用轮换内容框
       doalogModelBox1: [], //启用密钥内容框
       doalogModelBox2: [], //计划删除框
@@ -183,14 +276,22 @@ export default {
   filters: {},
   created() {
     this.getData();
-  },
-  mounted(){
-    console.log(KMS_LIST)
+    this.getCity();
   },
   methods: {
-    handleCurrentChange(val){
-       this.currpage = val;
-       this.getData();
+    getCity() {
+      this.axios.post(ALL_CITY).then(res => {
+        this.thisAddress = res.data[0].zone;
+      });
+    },
+    inpVal() {
+      if (this.tableDataName == "") {
+        this.getData();
+      }
+    },
+    handleCurrentChange(val) {
+      this.currpage = val;
+      this.getData();
     },
     //取消
     _cancel() {
@@ -198,27 +299,27 @@ export default {
     },
     //确定
     _confirm() {
+      this.loading = true;
       this.dialogVisibleKMS = false;
       //启用
       if (!this.KMSchange) {
         this.arr.forEach(item => {
           let params = {
             Version: "2019-01-18",
-            Region: "ap-taipei",
+            Region: VueCookie.get("regionv2"),
             KeyId: item.KeyId
           };
-
           this.axios.post(EnableKey, params).then(res => {
-            if (res.Response.RequestId) {
+            if (res.Response.Error == undefined) {
               this.$message({
                 showClose: true,
-                message: this.$t('KMS.total.startSuccess'),
+                message: this.$t("KMS.total.startSuccess"),
                 type: "success"
               });
             } else {
               this.$message({
                 showClose: true,
-                message: this.$t('KMS.total.startError'),
+                message: res.Response.Error,
                 type: "error"
               });
             }
@@ -230,28 +331,30 @@ export default {
         this.arr.forEach(item => {
           let params = {
             Version: "2019-01-18",
-            Region: "ap-taipei",
+            Region: VueCookie.get("regionv2"),
             KeyId: item.KeyId
           };
 
           this.axios.post(DisableKey, params).then(res => {
-            if (res.Response.RequestId) {
+            if (res.Response.Error == undefined) {
               this.$message({
                 showClose: true,
-                message: this.$t('KMS.total.stopSuccess'),
+                message: this.$t("KMS.total.stopSuccess"),
                 type: "success"
               });
             } else {
               this.$message({
                 showClose: true,
-                message: this.$t('KMS.total.stopError'),
+                message: res.Response.Error,
                 type: "error"
               });
             }
           });
         });
       }
-      this.getData();
+      setTimeout(() => {
+        this.getData();
+      }, 2000);
     },
     //启用按钮
     _enableBtn() {
@@ -265,14 +368,14 @@ export default {
       });
       this.arr = arr;
       if (bool) {
-        this.KMStitle =this.$t('KMS.total.startKmsServer');
-        this.KMStxt = this.$t('KMS.total.question1');
+        this.KMStitle = this.$t("KMS.total.startKmsServer");
+        this.KMStxt = this.$t("KMS.total.question1");
         this.KMSdata = arr;
         this.dialogVisibleKMS = true;
         this.KMSchange = false;
-        this.state = this.$t('KMS.total.canStart');
+        this.state = this.$t("KMS.total.canStart");
       } else {
-        this.$message(this.$t('KMS.total.noStartData'));
+        this.$message(this.$t("KMS.total.noStartData"));
       }
     },
     //禁用按钮
@@ -287,14 +390,14 @@ export default {
       });
       this.arr = arr;
       if (bool) {
-        this.KMStitle = this.$t('KMS.total.stopKmsServer');
-        this.KMStxt = this.$t('KMS.total.question2');
+        this.KMStitle = this.$t("KMS.total.stopKmsServer");
+        this.KMStxt = this.$t("KMS.total.question2");
         this.KMSdata = arr;
         this.dialogVisibleKMS = true;
         this.KMSchange = true;
-        this.state = this.$t('KMS.total.canStop');
+        this.state = this.$t("KMS.total.canStop");
       } else {
-        this.$message(this.$t('KMS.total.noStartData'));
+        this.$message(this.$t("KMS.total.noStartData"));
       }
     },
     //判断是否有已禁用，已启用
@@ -303,24 +406,10 @@ export default {
       if (val.length != 0) {
         this.isHaveDisable = false;
       }
-      // this.multipleSelection.map(item => {
-      //   console.log(item)
-      //   if(item.KeyState == "Enabled"){
-      //      this.isHaveEnable=false;
-      //   }else if(item.KeyState == "Disabled"){
-      //     this.isHaveDisable=false;
-      //   }
-      // })
-    },
-    ////判断是否选中checkbox
-    checkedIsTrue(e) {
-      // console.log(e);
-    },
-    handerChange() {
-      // console.log(111);
     },
     //获取主密钥列表
     getData() {
+      this.loading = true;
       var cookies = document.cookie;
       var list = cookies.split(";");
       for (var i = 0; i < list.length; i++) {
@@ -328,21 +417,14 @@ export default {
       }
       let params = {
         Version: "2019-01-18",
-        Region: "ap-taipei",
+        Region: VueCookie.get("regionv2"),
         Limit: 100
       };
-      // this.axios.post('kms2/ListKeys', params).then(res => {
-
-      // });
       //获取主密钥列表详情
       this.axios.post(KMS_LIST, params).then(res => {
         var DataList = res.Response.KeyMetadatas;
-        this.TotalCount = res.Response.TotalCount
-        console.log(res)
+        this.TotalCount = res.Response.TotalCount;
         this.tableDataBegin = DataList;
-        // let trip = JSON.parse(localStorage.getItem('trip'));
-        // this.tableDataBegin.push(trip.KeyRotationEnabled)
-        console.log(this.tableDataBegin)
         this.allData = DataList;
         // 将数据的长度赋值给totalItems
         this.totalItems = this.tableDataBegin.length;
@@ -353,13 +435,12 @@ export default {
         } else {
           this.tableDataEnd = this.tableDataBegin;
         }
+        this.loading = false;
       });
     },
     //搜索
     doFilter() {
-      // console.log(this.filterConrent);
       this.tableDataBegin = this.allData;
-      //this.tableDataEnd = [];
       //每次手动将数据置空,因为会出现多次点击搜索情况
       this.filterTableDataEnd = [];
       this.tableDataBegin.forEach((val, index) => {
@@ -370,9 +451,11 @@ export default {
           ) {
             this.filterTableDataEnd.push(val);
             this.tableDataBegin = this.filterTableDataEnd;
+            this.TotalCount = this.tableDataBegin.length;
           } else {
             this.filterTableDataEnd.push();
             this.tableDataBegin = this.filterTableDataEnd;
+            this.TotalCount = this.tableDataBegin.length;
           }
         }
       });
@@ -385,7 +468,7 @@ export default {
       //页面初始化数据需要判断是否检索过
       this.flag = true;
     },
-     //组件自带监控当前页码
+    //组件自带监控当前页码
     currentChangePage(list) {
       let from = (this.currentPage - 1) * this.pageSize;
       let to = this.currentPage * this.pageSize;
@@ -407,18 +490,23 @@ export default {
     sureNewCreate() {
       let params = {
         Version: "2019-01-18",
-        Region: "ap-taipei",
+        Region: VueCookie.get("regionv2"),
         Alias: this.createForm.name,
         Description: this.createForm.discription,
         Type: this.createForm.Type == "KMS" ? 1 : 2
       };
       this.axios.post(NEW_KMS, params).then(res => {
-        // console.log(res.Response);
         if (res.Response.Error !== undefined) {
           this.$message({
             showClose: true,
-            message: this.$t('KMS.total.noRules'),
+            message: this.$t("KMS.total.noRules"),
             type: "error"
+          });
+        } else {
+          this.$message({
+            showClose: true,
+            message: "新建成功",
+            type: "success"
           });
         }
         this.getData();
@@ -441,18 +529,18 @@ export default {
     //状态处理
     filterState(state) {
       if (state == "Enabled") {
-        state = this.$t('KMS.total.alredayStart');
+        state = this.$t("KMS.total.alredayStart");
       } else if (state == "PendingImport") {
-        state = this.$t('KMS.total.willImport');
+        state = this.$t("KMS.total.willImport");
       } else if (state == "Disabled") {
-        state = this.$t('KMS.total.alredayStop');
+        state = this.$t("KMS.total.alredayStop");
       }
       return state;
     },
     //状态处理
     filterKey(state) {
       if (state == "EXTERNAL") {
-        state = this.$t('KMS.total.oulCon');
+        state = this.$t("KMS.total.oulCon");
       } else if (state == "TENCENT_KMS") {
         state = "KMS";
       }
@@ -490,14 +578,15 @@ export default {
     },
     //是否计划删除
     openDelete(scopeRow, e) {
-      // console.log(scopeRow)
       if (scopeRow.KeyState == "Enabled") {
         this.dialogModelOpenDelete = true;
       } else {
         this.dialogModelDelete = true;
         let params = [
           scopeRow.Alias,
-          this.$t('KMS.total.yu') + this.timestampToTime(scopeRow.DeletionDate) + this.$t('KMS.total.allDelete'),
+          this.$t("KMS.total.yu") +
+            this.timestampToTime(scopeRow.DeletionDate) +
+            this.$t("KMS.total.allDelete"),
           e.target.innerHTML,
           scopeRow.KeyId
         ];
@@ -535,8 +624,6 @@ export default {
     //计划删除确定按钮
     openDeleteSure(deleteShow) {
       this.dialogModelDelete = deleteShow[0];
-      // console.log(deleteShow[1])
-      //this.outTime = deleteShow[1]
     },
     //取消删除确定按钮
     closeDeleteSure(deleteShow) {
@@ -546,22 +633,22 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-  .Right-style {
-    display: flex;
-    width: 100%;
-    background: white;
-    justify-content: flex-end;
-    }
-      .pagstyle {
-    padding: 20px;
+.Right-style {
+  display: flex;
+  width: 100%;
+  background: white;
+  justify-content: flex-end;
+}
+.pagstyle {
+  padding: 20px;
 
-    .pagtotal {
-      font-size: 13px;
-      font-weight: 400;
-      color: #565656;
-      line-height: 32px;
-    }
+  .pagtotal {
+    font-size: 13px;
+    font-weight: 400;
+    color: #565656;
+    line-height: 32px;
   }
+}
 .newClear:after {
   display: block;
   content: "";
