@@ -119,6 +119,7 @@
 </template>
 
 <script>
+import VueCookie from "vue-cookie";
 import {
   CCN_ATTACHEDINSTANCES_LIST,
   DETACHCCN_INSTANCES,
@@ -145,7 +146,7 @@ export default {
       // 添加关联实例表单
       form: {
         instanceType: "",
-        instanceRegion: "ap-taipei",
+        instanceRegion: VueCookie.get("regionv2"),
         instanceId: ""
       },
       value: "",
@@ -191,7 +192,7 @@ export default {
       this.loadShow = true;
       var params = {
         Version: "2017-03-12",
-        Region: "ap-taipei",
+        Region: VueCookie.get("regionv2"),
         CcnId: this.ccnId
       };
       // 查询关联实例列表
@@ -212,7 +213,7 @@ export default {
     doDelCcnIns: function() {
       var params = {
         Version: "2017-03-12",
-        Region: "ap-taipei",
+        Region: VueCookie.get("regionv2"),
         CcnId: this.instance.CcnId,
         "Instances.0.InstanceId": this.instance.InstanceId,
         "Instances.0.InstanceRegion": this.instance.InstanceRegion,
@@ -227,7 +228,7 @@ export default {
     getInstanceIds: function(instanceType) {
       var params = {
         Version: "2017-03-12",
-        Region: "ap-taipei"
+        Region: VueCookie.get("regionv2")
       };
       if (instanceType == "VPC") {
         // 私有网络
@@ -259,7 +260,7 @@ export default {
         // 关联实例
         var params = {
           Version: "2017-03-12",
-          Region: "ap-taipei",
+          Region: VueCookie.get("regionv2"),
           CcnId: this.ccnId,
           "Instances.0.InstanceId": ins.instanceId,
           "Instances.0.InstanceRegion": ins.instanceRegion,
@@ -279,7 +280,7 @@ export default {
         this.newVisible = false;
         this.form = {
           instanceType: "",
-          instanceRegion: "ap-taipei",
+          instanceRegion: VueCookie.get("regionv2"),
           instanceId: ""
         };
       }

@@ -56,6 +56,7 @@
 <script>
 import { CCN_ROUTES, ENABLE_CCNROUTES, DISABLE_CCNROUTES } from "@/constants";
 import { timeout } from "q";
+import VueCookie from "vue-cookie";
 export default {
   data() {
     return {
@@ -80,7 +81,7 @@ export default {
       this.loadShow = true;
       var params = {
         Version: "2017-03-12",
-        Region: "ap-taipei",
+        Region: VueCookie.get("regionv2"),
         CcnId: this.ccnId
       };
       // 查询-路由表
@@ -107,7 +108,7 @@ export default {
     setRouteEnabled(route) {
       var params = {
         Version: "2017-03-12",
-        Region: "ap-taipei",
+        Region: VueCookie.get("regionv2"),
         CcnId: this.ccnId,
         "RouteIds.0": route.RouteId
       };

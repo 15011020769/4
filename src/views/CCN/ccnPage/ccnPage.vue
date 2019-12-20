@@ -204,7 +204,7 @@
             <!-- <el-option label="黑石私有网络" value="BMVPC"></el-option> -->
           </el-select>
           <el-select v-model="form.instanceRegion" :placeholder="$t('CCN.total.region')">
-            <el-option :label="$t('CCN.total.region')" :value="VueCookie.get("regionv2")"></el-option>
+            <el-option :label="$t('CCN.total.region')" value="ap-taipei"></el-option>
           </el-select>
           <el-select v-model="form.instanceId" :placeholder="$t('CCN.total.select')">
             <el-option
@@ -561,11 +561,11 @@ export default {
       };
       this.axios.post(MODIFYCCN_ATTRIBUTE, params).then(res => {
         this.$message({
-          message: '修改成功',
-          type: 'success'
+          message: "修改成功",
+          type: "success"
         });
-        if(res.Response.Error != undefined){
-          this.$message.error('修改失败');
+        if (res.Response.Error != undefined) {
+          this.$message.error("修改失败");
         }
         this.getData();
       });
@@ -587,11 +587,11 @@ export default {
       };
       this.axios.post(MODIFYCCN_REGIONBANDWIDTHLIMITSTYPE, params).then(res => {
         this.$message({
-          message: '修改成功',
-          type: 'success'
+          message: "修改成功",
+          type: "success"
         });
-        if(res.Response.Error != undefined){
-          this.$message.error('修改失败');
+        if (res.Response.Error != undefined) {
+          this.$message.error("修改失败");
         }
         this.getData();
       });
@@ -642,11 +642,11 @@ export default {
       }
       this.axios.post(MODIFYRESOURCE_TAGS, params).then(res => {
         this.$message({
-          message: '修改成功',
-          type: 'success'
+          message: "修改成功",
+          type: "success"
         });
-        if(res.Response.Error != undefined){
-          this.$message.error('修改失败');
+        if (res.Response.Error != undefined) {
+          this.$message.error("修改失败");
         }
         this.getData();
       });

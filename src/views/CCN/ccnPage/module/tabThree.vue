@@ -253,6 +253,7 @@
 </template>
 
 <script>
+import VueCookie from "vue-cookie";
 import { log } from "util";
 import {
   GET_CCNREGIONBANDWIDTHLIMITS,
@@ -311,7 +312,7 @@ export default {
       this.loadShow = true;
       var params = {
         Version: "2017-03-12",
-        Region: "ap-taipei",
+        Region: VueCookie.get("regionv2"),
         CcnId: this.ccnId
       };
       // 查询-各地域出带宽限速（DescribeCcnRegionBandwidthLimits原API中给出接口）（GetCcnRegionBandwidthLimits腾讯云给出接口）
@@ -325,7 +326,7 @@ export default {
     upBandwidthLimitType: function(ccnDetail) {
       var params = {
         Version: "2017-03-12",
-        Region: "ap-taipei",
+        Region: VueCookie.get("regionv2"),
         CcnId: this.ccnId,
         BandwidthLimitType: ccnDetail.BandwidthLimitType
       };
@@ -336,14 +337,6 @@ export default {
         this.regionShow = true;
       }
       this.axios.post(MODIFYCCN_REGIONBANDWIDTHLIMITSTYPE, params).then(res => {
-        if (res.Response.Error == undefined) {
-          this.$message({
-            message: "修改成功",
-            type: "success"
-          });
-        } else {
-          this.$message.error(res.Response.Error.Message);
-        }
         this.getData();
       });
       this.ccnPublic = {};
@@ -380,13 +373,21 @@ export default {
     updateLimits: function() {
       var params = {
         Version: "2017-03-12",
-        Region: "ap-taipei",
+        Region: VueCookie.get("regionv2"),
         CcnId: this.ccnId,
         "CcnRegionBandwidthLimits.0.Region": this.upLimits.Region,
         "CcnRegionBandwidthLimits.0.BandwidthLimit": this.upLimits.Limits,
         "CcnRegionBandwidthLimits.0.DstRegion": this.upLimits.DstRegion
       };
       this.axios.post(SET_CCNREGIONBANDWIDTHLIMITS, params).then(res => {
+        if (res.Response.Error == undefined) {
+          this.$message({
+            message: "修改成功",
+            type: "success"
+          });
+        } else {
+          this.$message.error(res.Response.Error.Message);
+        }
         this.getData();
       });
       this.updateVisible = false;
