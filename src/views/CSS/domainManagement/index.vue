@@ -11,79 +11,254 @@
       </div>
       <div class="domainTitleBnt">
         <div class="bntWrap" style="flex:1">
-          <el-button type="primary" :disabled="disabled">添加接收人</el-button>
-          <el-button type="primary" :disabled="disabled">移除接收人</el-button>
+          <el-button type="primary" @click="addDomin">添加域名</el-button>
+          <el-button type="primary" @click="editTags">编辑标签</el-button>
         </div>
 
         <div class="input" style="width:300px;">
-          <el-input placeholder="输入部分域名搜索" size="small" class="inputSearch" style="width:90%;">
-            <i slot="suffix" class="el-input__icon el-icon-search"></i>
+          <el-input v-model="tableDataName" placeholder="输入部分域名搜索" size="small" class="inputSearch" style="width:90%;">
+            <i slot="suffix" class="el-input__icon el-icon-search" @click="doFilter"></i>
           </el-input>
-          <svg
-            t="1576486867236"
-            class="icon"
-            viewBox="0 0 1024 1024"
-            version="1.1"
-            xmlns="http://www.w3.org/2000/svg"
-            p-id="2180"
-            width="200"
-            height="200"
-            style="width:30px;height:30px;float:right;"
-          >
-            <path
-              d="M512 269.922592l0 121.038704 161.384597-161.384597L512 68.191078l0 121.038704c-178.330548 0-322.770218 144.43967-322.770218 322.770218 0 63.343677 18.559705 122.047684 50.02944 171.874509l58.905598-58.905598c-17.953907-33.689287-28.242228-72.018244-28.242228-112.969934C269.922592 378.251833 378.251833 269.922592 512 269.922592zM784.740778 340.124468l-58.905598 58.905598c17.953907 33.689287 28.242228 72.018244 28.242228 112.969934 0 133.748167-108.329241 242.077408-242.077408 242.077408L512 633.038704 350.614379 794.423301l161.384597 161.384597L511.998977 834.770218c178.330548 0 322.770218-144.43967 322.770218-322.770218C834.770218 448.656323 816.210513 389.952316 784.740778 340.124468z"
-              p-id="2181"
-            />
-          </svg>
+          <i class="el-icon-refresh"></i>
         </div>
       </div>
       <div class="domainTable">
         <div class="tableWrap">
-          <template>
-            <el-table :data="tableData" style="width: 100%" height="450">
-              <el-table-column  label="域名" width="180"></el-table-column>
-              <el-table-column  label="CNAME" width="180"></el-table-column>
-              <el-table-column  label="类型"></el-table-column>
-              <el-table-column  label="状态" width="180"></el-table-column>
-              <el-table-column  label="开始时间" width="180"></el-table-column>
-              <el-table-column  label="过期时间"></el-table-column>
-              <el-table-column  label="操作"></el-table-column>
-            </el-table>
-          </template>
-  
-  <div class="page-box Right-style pagstyle">
+          <el-table
+            :data="tableDataBegin.slice((currentPage-1)*pageSize,currentPage*pageSize)"
+            ref="multipleTable"
+            tooltip-effect="dark"
+            @selection-change="handleSelectionChange"
+            > 
+            <el-table-column
+              type="selection"
+              width="55">
+            </el-table-column>
+            <el-table-column prop="domin" label="域名" width>
+              <template slot-scope="scope">
+                <a href="#">{{scope.row.domin}}</a>
+              </template>
+            </el-table-column>
+            <el-table-column prop="cname" label="CNAME" width></el-table-column>
+            <el-table-column prop="type" label="类型"></el-table-column>
+            <el-table-column prop="status" label="状态"></el-table-column>
+            <el-table-column prop="startTime" label="开始时间"></el-table-column>
+            <el-table-column prop="outTime" label="过期时间"></el-table-column>
+            <el-table-column prop="action" label="操作" width="180">
+              <template slot-scope="scope">
+                <el-button type="text" size="small">管理</el-button>
+                <el-button type="text" size="small" @click="startBtn(scope.$index, scope.row)">启用</el-button>
+                <el-button type="text" size="small" @click="stopBtn(scope.$index, scope.row)">禁用</el-button>
+                <el-button
+                  @click.native.prevent="deleteRow(scope.$index, scope.row)"
+                  type="text"
+                  size="small"
+                >删除</el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+        </div>
+        <div class="tabListPage">
           <el-pagination
             @size-change="handleSizeChange"
             @current-change="handleCurrentChange"
-            :page-sizes="[20, 30, 40,50,100]"
-            :page-size="pagesize"
+            :current-page="currentPage"
+            :page-sizes="[10, 20, 30, 50]"
+            :page-size="pageSize"
             layout="total, sizes, prev, pager, next, jumper"
-            :total="tableData.length"
+            :total="totalItems"
           ></el-pagination>
-    </div>
-          
         </div>
       </div>
+      <addModel :isShow="addModel" @closeAddModel="closeAddModel"/>
+      <stopModel :isShow="stopDominArr" @closeStopDominModel="closeStopDominModel"/>
+      <deleteModel :isShow="deleteDominArr" @closedeleteDominModel="closedeleteDominModel"/>
+      <editTagsModel :isShow="editTagsModel" @closeEditTagsModel="closeEditTagsModel"/>
     </div>
   </div>
 </template>
 
 <script>
 import HeadCom from "@/components/public/Head";
+import addModel from './model/addModel'
+import stopModel from './model/stopModel'
+import deleteModel from './model/deleteModel'
+import editTagsModel from './model/editTagsModel'
 export default {
   components: {
-    HeadCom
+    HeadCom,
+    addModel:addModel,//添加域名弹框
+    stopModel:stopModel,//禁用弹框
+    deleteModel:deleteModel,//删除弹框
+    editTagsModel:editTagsModel,//编辑标签
   },
   name: "domainManagement",
   data() {
     return {
-      tableData: []
+      tableDataBegin: [
+        {
+          domin:'www.text.cn',
+          cname:'www.txet.cn.lifbdj.fsdfkjb.fdks',
+          type:'播放域名',
+          status:'已启用',
+          startTime:'2019-12-20 15：10:06',
+          outTime:''
+        }
+      ],//表格数据
+      tableDataName: "",//搜索框值
+      tableDataEnd: [],//定义一个空数组
+      currentPage: 1,//当前页数
+      pageSize: 10,//每页长度
+      totalItems: 0,//总数量
+      filterTableDataEnd: [],//过滤之后的数组
+      flag: false,//定义一个开关
+      checkArr:[],//被选中选项
+      addModel:false,//添加域名弹框
+      stopModel:false,//禁用弹框
+      stopDominArr:[],//禁用数组传值
+      deleteDominArr:[],//删除域名数组传值
+      deleteModel:false,//删除弹框
+      editTagsModel:false,//编辑标签弹框
     };
+  },
+  mounted(){
+    this.getData();
+  },
+  methods:{
+    //checkbox框选择事件
+    handleSelectionChange(val){
+      console.log(val);
+      this.checkArr=val;
+    },
+    // 获取数据
+    getData() {
+      // this.axios.get('/src/assets/demo.json', {}).then((res) => {
+        // console.log(res.data.tableData);
+        // this.tableDataBegin = res.data.tableData;
+        this.allData = this.tableDataBegin;
+        // 将数据的长度赋值给totalItems
+        this.totalItems = this.tableDataBegin.length;
+        if (this.totalItems > this.pageSize) {
+          for (let index = 0; index < this.pageSize; index++) {
+            this.tableDataEnd.push(this.tableDataBegin[index]);
+          }
+        } else {
+          this.tableDataEnd = this.tableDataBegin;
+        }
+      // })
+    },
+    // 搜索
+    doFilter() {
+      this.tableDataBegin = this.allData;
+      this.tableDataEnd = []
+        //每次手动将数据置空,因为会出现多次点击搜索情况
+      this.filterTableDataEnd = []
+      this.tableDataBegin.forEach((val, index) => {
+        if (val.domin) {
+          if (val.domin.indexOf(this.tableDataName) == 0 ) {
+            this.filterTableDataEnd.push(val);
+            this.tableDataBegin = this.filterTableDataEnd;
+          } else {
+            this.filterTableDataEnd.push();
+            this.tableDataBegin = this.filterTableDataEnd;
+          }
+        };
+      });
+      //页面数据改变重新统计数据数量和当前页
+      this.currentPage = 1
+      this.totalItems = this.filterTableDataEnd.length
+        //渲染表格,根据值
+      this.currentChangePage(this.filterTableDataEnd);
+      //页面初始化数据需要判断是否检索过
+      this.flag = true;
+
+    },
+    // 分页开始
+    handleSizeChange(val) {
+      console.log(`每页 ${val} 条`);
+      this.pageSize = val;
+      this.handleCurrentChange(this.currentPage);
+    },
+    handleCurrentChange(val) {
+      console.log(`当前页: ${val}`);
+      this.currentPage = val;
+      //需要判断是否检索
+      if (!this.flag) {
+        this.currentChangePage(this.tableDataEnd)
+      } else {
+        this.currentChangePage(this.filterTableDataEnd)
+      }
+    }, //组件自带监控当前页码
+    currentChangePage(list) {
+      let from = (this.currentPage - 1) * this.pageSize;
+      let to = this.currentPage * this.pageSize;
+      this.tableDataEnd = [];
+      for (; from < to; from++) {
+        if (list[from]) {
+          this.tableDataEnd.push(list[from]);
+        }
+      }
+    },
+    //禁用按钮
+    stopBtn(index,row){
+      this.stopModel=true;
+      this.stopDominArr.push(this.stopModel);
+      this.stopDominArr.push(row.domin);
+      // =[this.stopModel,row.domin]
+    },
+    //关闭禁用域名弹框
+    closeStopDominModel(isShow){
+      console.log(isShow)
+      this.stopModel=isShow;
+    },
+    //删除按钮
+    deleteRow(index,row){
+      this.deleteModel=true;
+      this.deleteDominArr.push(this.deleteModel);
+      this.deleteDominArr.push(row.domin);
+    },
+    //关闭删除弹框
+    closedeleteDominModel(isShow){
+      this.deleteModel=isShow;
+    },
+    //编辑标签
+    editTags(){
+      if(this.checkArr.length==0){
+        this.$message({
+          showClose: true,
+          message: '没有选择域名'
+        });
+        return false
+      }else{
+        this.editTagsModel=true;
+      }
+    },
+    //关闭编辑标签弹框
+    closeEditTagsModel(isShow){
+      this.editTagsModel=isShow;
+    },
+    //添加域名
+    addDomin(){
+      this.addModel=true;
+    },
+    //关闭添加域名弹框
+    closeAddModel(isShow){
+      this.addModel=isShow;
+    },
+    //启用按钮
+    startBtn(){
+
+    }
   }
 };
 </script>
 
 <style lang="scss" scoped>
+.newClear:after {
+  display: block;
+  content: "";
+  clear: both;
+}
 .domainManagement-wrap >>> .el-button {
   height: 30px;
   line-height: 30px;
@@ -121,23 +296,33 @@ export default {
     width: 100%;
     .tableWrap {
       width: 100%;
+      min-height: 450px;
       background: white;
-       .Right-style {
-    display: flex;
-    justify-content: flex-end;
+      .Right-style {
+        display: flex;
+        justify-content: flex-end;
 
-    .esach-inputL {
-      width: 300px;
-      margin-right: 20px;
-    }
-  }
+        .esach-inputL {
+          width: 300px;
+          margin-right: 20px;
+        }
+      }
       .page-box {
-    padding: 20px;
-    padding-right: 30px;
-    box-sizing: border-box;
-  }
+        padding: 20px;
+        padding-right: 30px;
+        box-sizing: border-box;
+      }
     }
-    
+  }
+  .el-icon-refresh {
+    font-size: 20px;
+  }
+  .tabListPage{
+    height:50px;
+    padding-top:8px;
+    border-top:1px solid #ddd;
+    text-align:right;
+    background-color:#fff;
   }
 }
 </style>
