@@ -40,21 +40,6 @@ export default {
         this.$cookie.set("regionv1", city.regionCode);
         this.$cookie.set("regionv2", city.Region);
       });
-    },
-    // 获取项目列表
-    getProgectList() {
-      var params = {};
-      this.axios.post(ALL_PROJECT, params).then(data => {
-        let projectList = data.data;
-        let defaultPro = {
-          projectId: 0,
-          projectInfo: "默认项目",
-          projectName: "默认项目"
-        };
-        projectList.unshift(defaultPro);
-        // localStorage存储对象或者数据，必须先转成字符串JSON.stringify存储，在用JSON.parse进行解析
-        localStorage.setItem("projectList", JSON.stringify(projectList));
-      });
     }
   }
 };

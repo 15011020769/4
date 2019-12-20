@@ -2,7 +2,11 @@
 <template>
   <div class="tabFour">
     <div class="table">
-      <el-table :data="tableData.slice((currentPage-1)*pageSize,currentPage*pageSize)" style="width: 100%" v-loading="loadShow">
+      <el-table
+        :data="tableData.slice((currentPage-1)*pageSize,currentPage*pageSize)"
+        style="width: 100%"
+        v-loading="loadShow"
+      >
         <template slot="empty">{{$t('CCN.tabs.tab1no')}}</template>
         <el-table-column prop="DestinationCidrBlock" :label="$t('CCN.tabs.tab4tr1')" width></el-table-column>
         <el-table-column prop="Enabled" :label="$t('CCN.tabs.tab4tr2') " width>
@@ -15,7 +19,7 @@
         <el-table-column prop="InstanceId" :label="$t('CCN.tabs.tab4tr3')" width>
           <template slot-scope="scope">
             <!-- <el-button @click="handleClick(scope.row)" type="text">{{ scope.row.InstanceId }}</el-button> -->
-            <a href="../CCN/index"  target="_blank">{{ scope.row.InstanceId }}</a>
+            <a href="../CCN/index" target="_blank">{{ scope.row.InstanceId }}</a>
             <p class="edit">{{ scope.row.InstanceName }}</p>
           </template>
         </el-table-column>
@@ -30,26 +34,15 @@
               inactive-color="#888"
               disabled
               @click.native="switchClick(scope.$index, scope.row)"
-            >
-            </el-switch>
+            ></el-switch>
           </template>
         </el-table-column>
       </el-table>
     </div>
-    <!-- <div class="tabListPage">
-      <el-pagination
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-        :current-page="currentPage"
-        :page-sizes="[10, 20, 30, 50]"
-        :page-size="pageSize"
-        layout="total, sizes, prev, pager, next, jumper"
-        :total="totalItems"
-      >
-      </el-pagination>
-    </div> -->
     <div class="Right-style pagstyle tabListPage">
-      <span class="pagtotal">{{$t('CCN.total.gongN')}}&nbsp;{{totalItems}}&nbsp;{{$t('CCN.total.tioaN')}}</span>
+      <span
+        class="pagtotal"
+      >{{$t('CCN.total.gongN')}}&nbsp;{{totalItems}}&nbsp;{{$t('CCN.total.tioaN')}}</span>
       <el-pagination
         :page-size="pageSize"
         layout="prev, pager, next"
@@ -61,12 +54,12 @@
 </template>
 
 <script>
-import { CCN_ROUTES, ENABLE_CCNROUTES, DISABLE_CCNROUTES } from "@/constants"
-import { timeout } from 'q'
+import { CCN_ROUTES, ENABLE_CCNROUTES, DISABLE_CCNROUTES } from "@/constants";
+import { timeout } from "q";
 export default {
-  data () {
+  data() {
     return {
-      ccnId: '',
+      ccnId: "",
       visible2: false,
       value1: true,
       tableData: [], // 列表数据
@@ -75,83 +68,76 @@ export default {
       pageSize: 10,
       totalItems: 0,
       currpage: 1, // 当前页码
-      loadShow:false,
-    }
+      loadShow: false
+    };
   },
-  created () {
-    // console.log(this.$route.query)
-    this.ccnId = this.$route.query.ccnId
-    this.getData()
+  created() {
+    this.ccnId = this.$route.query.ccnId;
+    this.getData();
   },
   methods: {
-    getData: function () {
-      this.loadShow=true;
+    getData: function() {
+      this.loadShow = true;
       var params = {
-        Version: '2017-03-12',
-        Region: 'ap-taipei',
+        Version: "2017-03-12",
+        Region: "ap-taipei",
         CcnId: this.ccnId
-      }
+      };
       // 查询-路由表
       this.axios.post(CCN_ROUTES, params).then(res => {
-        // console.log(res)
-        this.tableData = res.Response.RouteSet
+        this.tableData = res.Response.RouteSet;
         this.totalItems = res.Response.TotalCount;
-        this.loadShow=false;
-      })
+        this.loadShow = false;
+      });
     },
     // 启用路由 询问按钮
-    switchClick: function (index, route) {
-      let str = route.Enabled?'关闭':'启用'
-      this.$confirm('是否确认'+ str + '路由？', '系统提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
+    switchClick: function(index, route) {
+      let str = route.Enabled ? "关闭" : "启用";
+      this.$confirm("是否确认" + str + "路由？", "系统提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
         callback: async action => {
-          if (action == 'confirm') {
-            this.setRouteEnabled(route)
+          if (action == "confirm") {
+            this.setRouteEnabled(route);
           }
         }
-      })
+      });
     },
     // 设置路由状态
     setRouteEnabled(route) {
       var params = {
-        Version: '2017-03-12',
-        Region: 'ap-taipei',
+        Version: "2017-03-12",
+        Region: "ap-taipei",
         CcnId: this.ccnId,
-        'RouteIds.0': route.RouteId
-      }
-      if (!route.Enabled) { // true启用
-        this.axios.post(ENABLE_CCNROUTES, params).then(res => {
-          // console.log(res)
-        })
-      } else { // false 禁用
-        this.axios.post(DISABLE_CCNROUTES, params).then(res => {
-          // console.log(res)
-        })
+        "RouteIds.0": route.RouteId
+      };
+      if (!route.Enabled) {
+        // true启用
+        this.axios.post(ENABLE_CCNROUTES, params).then(res => {});
+      } else {
+        // false 禁用
+        this.axios.post(DISABLE_CCNROUTES, params).then(res => {});
       }
       setTimeout(() => {
-        this.getData()
-      }, 1000); 
+        this.getData();
+      }, 1000);
     },
     // 分页开始
     handleSizeChange(val) {
-      // console.log(`每页 ${val} 条`);
       this.pageSize = val;
       this.handleCurrentChange(this.currentPage);
     },
     handleCurrentChange(val) {
-      // console.log(`当前页: ${val}`);
       this.currentPage = val;
-    },
-    
+    }
   }
-}
+};
 </script>
 <style lang="scss">
 .el-table {
   .cell {
     font-size: 12px;
-    .el-button{
+    .el-button {
       font-size: 12px;
       padding: 0;
     }
@@ -191,12 +177,12 @@ export default {
       border-radius: 0px;
     }
   }
-  .tabListPage{
-    text-align:right;
-    background-color:#fff;
-    border-top:1px solid #ddd;
-    padding-top:8px;
-    height:50px;
+  .tabListPage {
+    text-align: right;
+    background-color: #fff;
+    border-top: 1px solid #ddd;
+    padding-top: 8px;
+    height: 50px;
   }
 }
 .Right-style {
