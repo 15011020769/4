@@ -307,6 +307,7 @@ export default {
   methods: {
     // 1.1.获取资源列表
     describeResourceList() {
+      this.loading = true;
       let params = {
         Version: "2018-07-09",
         Business: "net"
@@ -323,10 +324,12 @@ export default {
         }
         this.allData = res.Response.ServicePacks;
         this.totalItems = res.Response.Total;
+        this.loading = false;
       });
     },
     // 1.2.获取DDoS高级策略
     describeDDoSPolicy() {
+      this.loading = true;
       let params = {
         Version: "2018-07-09",
         Business: "net"
@@ -485,6 +488,7 @@ export default {
     //修改弹框关闭按钮
     closeConfigModel(isShow) {
       this.changeModel = isShow;
+      this.describeResourceList();
     }
   }
 };

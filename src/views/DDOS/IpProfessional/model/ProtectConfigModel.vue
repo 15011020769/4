@@ -1,66 +1,142 @@
 <template>
   <div id="configModel">
-    <div>
-      <el-dialog :title="$t('DDOS.protectCon.ProtectionName')" :visible.sync="configIsShow" width="40%" :append-to-body="true" :before-close="handleClose">
+    <div class="wrap">
+      <el-dialog
+        :title="$t('DDOS.protectCon.ProtectionName')"
+        :visible.sync="configIsShow"
+        width="40%"
+        :append-to-body="true"
+        :before-close="handleClose"
+      >
         <div class="modelCenterCon">
           <p class="newClear">
             <span class="modelSpan1">{{$t('DDOS.protectCon.protectionStatus')}}</span>
             <span @click="outOk()">
-              <el-switch v-model="servicePack.DefendStatus" active-color="#006eff" inactive-color="#999">
-              </el-switch>
+              <el-switch
+                v-model="servicePack.DefendStatus"
+                active-color="#006eff"
+                inactive-color="#999"
+              ></el-switch>
             </span>
           </p>
           <div v-if="ShowFlag=='0'?true:false">
             <p class="newClear">
-              <span class="modelSpan1">{{$t('DDOS.protectCon.CleaningShold')}}<i class="el-icon-info"></i></span>
+              <span class="modelSpan1">
+                {{$t('DDOS.protectCon.CleaningShold')}}
+                <i class="el-icon-info"></i>
+              </span>
               <span>
-                <el-select v-model="servicePack.DdosThreshold" class="setSelectM" @change="cleanThreshold">
-                  <el-option v-for="(item, index) in cleanNumOption" :label="item.label" :value="item.value" :key="index"></el-option>
+                <el-select
+                  v-model="servicePack.DdosThreshold"
+                  class="setSelectM"
+                  @change="cleanThreshold"
+                >
+                  <el-option
+                    v-for="(item, index) in cleanNumOption"
+                    :label="item.label"
+                    :value="item.value"
+                    :key="index"
+                  ></el-option>
                 </el-select>
               </span>
             </p>
             <p class="newClear">
-              <span class="modelSpan1">{{$t('DDOS.protectCon.ProtectionGrade')}}<i class="el-icon-info"></i></span>
-              <span class="modelSpan2">
-                <a class="gardenChoose" :class="saveGarden==1?'seceltGarden':''" @click="clickGarden(1,'宽松')">{{$t('DDOS.protectCon.loose')}}</a>
-                <a class="gardenChoose" :class="saveGarden==2?'seceltGarden':''" @click="clickGarden(2,'正常')">正常</a>
-                <a class="gardenChoose" :class="saveGarden==3?'seceltGarden':''" @click="clickGarden(3,'严格')">{{$t('DDOS.protectCon.strict')}}</a>
+              <span class="modelSpan1">
+                {{$t('DDOS.protectCon.ProtectionGrade')}}
+                <i class="el-icon-info"></i>
               </span>
-              <el-dialog :title="$t('DDOS.protectCon.toggStrtic')" :visible.sync="changeModelTip3" width="30%" :append-to-body="true" :before-close="changeCloseTip3">
+              <span class="modelSpan2">
+                <a
+                  class="gardenChoose"
+                  :class="saveGarden==1?'seceltGarden':''"
+                  @click="clickGarden(1,'宽松')"
+                >{{$t('DDOS.protectCon.loose')}}</a>
+                <a
+                  class="gardenChoose"
+                  :class="saveGarden==2?'seceltGarden':''"
+                  @click="clickGarden(2,'正常')"
+                >正常</a>
+                <a
+                  class="gardenChoose"
+                  :class="saveGarden==3?'seceltGarden':''"
+                  @click="clickGarden(3,'严格')"
+                >{{$t('DDOS.protectCon.strict')}}</a>
+              </span>
+              <el-dialog
+                :title="$t('DDOS.protectCon.toggStrtic')"
+                :visible.sync="changeModelTip3"
+                width="30%"
+                :append-to-body="true"
+                :before-close="changeCloseTip3"
+              >
                 <p>{{$t('DDOS.protectCon.strticTitle')}}</p>
                 <span slot="footer" class="dialog-footer">
                   <el-button @click="changeCloseTip3">取 消</el-button>
-                  <el-button type="primary" @click="changeSureTip1()">{{$t('DDOS.accessCopy.domainSure')}}</el-button>
+                  <el-button
+                    type="primary"
+                    @click="changeSureTip1()"
+                  >{{$t('DDOS.accessCopy.domainSure')}}</el-button>
                 </span>
               </el-dialog>
-              <el-dialog :title="$t('DDOS.protectCon.toggNormal')" :visible.sync="changeModelTip2" width="30%" :append-to-body="true" :before-close="changeCloseTip2">
+              <el-dialog
+                :title="$t('DDOS.protectCon.toggNormal')"
+                :visible.sync="changeModelTip2"
+                width="30%"
+                :append-to-body="true"
+                :before-close="changeCloseTip2"
+              >
                 <p>{{$t('DDOS.protectCon.NormalTitle')}}</p>
                 <span slot="footer" class="dialog-footer">
                   <el-button @click="changeCloseTip2">取 消</el-button>
-                  <el-button type="primary" @click="changeSureTip1()">{{$t('DDOS.accessCopy.domainSure')}}</el-button>
+                  <el-button
+                    type="primary"
+                    @click="changeSureTip1()"
+                  >{{$t('DDOS.accessCopy.domainSure')}}</el-button>
                 </span>
               </el-dialog>
-              <el-dialog :title="$t('DDOS.protectCon.toggloose')" :visible.sync="changeModelTip1" width="30%" :append-to-body="true" :before-close="changeCloseTip1">
+              <el-dialog
+                :title="$t('DDOS.protectCon.toggloose')"
+                :visible.sync="changeModelTip1"
+                width="30%"
+                :append-to-body="true"
+                :before-close="changeCloseTip1"
+              >
                 <p>{{$t('DDOS.protectCon.togglooseTitle')}}</p>
                 <span slot="footer" class="dialog-footer">
                   <el-button @click="changeCloseTip1">取 消</el-button>
-                  <el-button type="primary" @click="changeSureTip1()">{{$t('DDOS.accessCopy.domainSure')}}</el-button>
+                  <el-button
+                    type="primary"
+                    @click="changeSureTip1()"
+                  >{{$t('DDOS.accessCopy.domainSure')}}</el-button>
                 </span>
               </el-dialog>
-              <el-dialog :title="$t('DDOS.protectCon.CloseConfirm')" :visible.sync="changeModelTip4" width="30%" :append-to-body="true" :before-close="changeCloseTip4">
+              <el-dialog
+                :title="$t('DDOS.protectCon.CloseConfirm')"
+                :visible.sync="changeModelTip4"
+                width="30%"
+                :append-to-body="true"
+                :before-close="changeCloseTip4"
+              >
                 <p class="outOk">{{$t('DDOS.protectCon.CloseConfirmTitle')}}</p>
                 <span class="modelSpan1">{{$t('DDOS.protectCon.setTime')}}</span>
                 <span>
                   <el-select v-model="servicePack.cleanTime" class="setSelectM">
-                    <el-option v-for="(item, index) in cleanTime" :label="item.label" :value="item.value" :key="index"></el-option>
+                    <el-option
+                      v-for="(item, index) in cleanTime"
+                      :label="item.label"
+                      :value="item.value"
+                      :key="index"
+                    ></el-option>
                   </el-select>
                 </span>
                 <span slot="footer" class="dialog-footer">
                   <el-button @click="changeCloseTip4">取 消</el-button>
-                  <el-button type="primary" @click="changeSureTip4(servicePack.cleanTime)">{{$t('DDOS.accessCopy.domainSure')}}</el-button>
+                  <el-button
+                    type="primary"
+                    @click="changeSureTip4(servicePack.cleanTime)"
+                  >{{$t('DDOS.accessCopy.domainSure')}}</el-button>
                 </span>
               </el-dialog>
-
             </p>
             <p class="newClear">
               <span class="modelSpan1">{{$t('DDOS.protectCon.AdvancedStra')}}</span>
@@ -80,7 +156,7 @@
                   <el-option :label="$t('DDOS.protectCon.CleaningFlow')" value="clean"></el-option>
                 </el-select>
                 <span v-if="iptNummbps">
-                  <el-input v-model="iptmbpsText" class="intMbps" @input="CreateBasic"></el-input> Mbps
+                  <el-input v-model="iptmbpsText" class="intMbps" @input="CreateBasic"></el-input>Mbps
                 </span>
               </span>
             </p>
@@ -91,94 +167,97 @@
   </div>
 </template>
 <script>
-import { GET_ID, GET_SPolicy ,GET_Status,CLAEN_SHOLD,Modify_Level,SET_SHOLD,Modify_Status} from '@/constants'
+import {
+  GET_ID,
+  GET_SPolicy,
+  GET_Status,
+  CLAEN_SHOLD,
+  Modify_Level,
+  SET_SHOLD,
+  Modify_Status
+} from "@/constants";
 export default {
   props: {
     configShow: Boolean
   },
   data() {
     return {
-      modelIsShow: '',//模态框
+      modelIsShow: "", //模态框
       servicePack: {
-        DefendStatus: '',
-        DdosThreshold: '',
-        cleanTime: ''
-      },//修改框数据绑定
+        DefendStatus: "",
+        DdosThreshold: "",
+        cleanTime: ""
+      }, //修改框数据绑定
       cleanNumOption: [
-        { label: '默认', value: '0' },
-        { label: '60Mbps', value: '60' },
-        { label: '80Mbps', value: '80' },
-        { label: '100Mbps', value: '100' },
-        { label: '150Mbps', value: '150' },
-        { label: '200Mbps', value: '200' },
-        { label: '250Mbps', value: '250' },
-        { label: '300Mbps', value: '300' },
-        { label: '400Mbps', value: '400' },
-        { label: '500Mbps', value: '500' },
-        { label: '700Mbps', value: '700' },
-        { label: '1000Mbps', value: '1000' },
-      ],//阈值
+        { label: "默认", value: "0" },
+        { label: "60Mbps", value: "60" },
+        { label: "80Mbps", value: "80" },
+        { label: "100Mbps", value: "100" },
+        { label: "150Mbps", value: "150" },
+        { label: "200Mbps", value: "200" },
+        { label: "250Mbps", value: "250" },
+        { label: "300Mbps", value: "300" },
+        { label: "400Mbps", value: "400" },
+        { label: "500Mbps", value: "500" },
+        { label: "700Mbps", value: "700" },
+        { label: "1000Mbps", value: "1000" }
+      ], //阈值
       cleanTime: [
-        { label: '1小时', value: '1' },
-        { label: '2小时', value: '2' },
-        { label: '3小时', value: '3' },
-        { label: '4小时', value: '4' },
-        { label: '5小时', value: '5' },
-        { label: '6小时', value: '6' },
+        { label: "1小时", value: "1" },
+        { label: "2小时", value: "2" },
+        { label: "3小时", value: "3" },
+        { label: "4小时", value: "4" },
+        { label: "5小时", value: "5" },
+        { label: "6小时", value: "6" }
       ],
-      saveGarden: '',//防护等级
-      saveGardenText: '宽松',
-      topFun: '',//高级策略
-      ddosWarning: 'no',//攻告警阈值
-      iptNummbps: false,//告警阈值输入框隐藏
-      iptmbpsText: '1000',
-      saveStatus: true,//防护状态
-      resourceId: '',
-      tableDataPolicy: [],//tab3,DDoS高级防护策略
-      changeModelTip1: false,//修改模式提示弹框
+      saveGarden: "", //防护等级
+      saveGardenText: "宽松",
+      topFun: "", //高级策略
+      ddosWarning: "no", //攻告警阈值
+      iptNummbps: false, //告警阈值输入框隐藏
+      iptmbpsText: "1000",
+      saveStatus: true, //防护状态
+      resourceId: "",
+      tableDataPolicy: [], //tab3,DDoS高级防护策略
+      changeModelTip1: false, //修改模式提示弹框
       changeModelTip2: false,
       changeModelTip3: false,
       changeModelTip4: false,
-      tabMode: '',//防护等级
-      AlarmType: '',//告警阈值类型，1-入流量，2-清洗流量
-      ShowFlag: '', //控制台功能展示字段，为1表示控制台功能展示，为0表示控制台功能隐藏
-      UndefendExpire: '', //防护临时关闭的过期时间
-      Status: '',
-    }
+      tabMode: "", //防护等级
+      AlarmType: "", //告警阈值类型，1-入流量，2-清洗流量
+      ShowFlag: "", //控制台功能展示字段，为1表示控制台功能展示，为0表示控制台功能隐藏
+      UndefendExpire: "", //防护临时关闭的过期时间
+      Status: ""
+    };
   },
   computed: {
     configIsShow() {
-      return this.configShow
-    },
-
+      return this.configShow;
+    }
   },
   created() {
-    this.GetID()  //获取ID
-    // this.GETStatus() // 获取DDoS防护状态
-    //  this.GETSPolicy() // 获取DDoS高级策略
+    this.GetID(); //获取ID
   },
   methods: {
     //获取ID
     GetID() {
       let params = {
         Version: "2018-07-09",
-        Business: "net",
+        Business: "net"
       };
       this.axios.post(GET_ID, params).then(res => {
-        // console.log(res.Response)
-        this.resourceId = res.Response.Resource[0].Id
-        this.GETStatus() // 获取DDoS防护状态
+        this.resourceId = res.Response.Resource[0].Id;
+        this.GETStatus(); // 获取DDoS防护状态
       });
     },
     // 获取DDoS高级策略
     GETSPolicy() {
       let params = {
         Version: "2018-07-09",
-        Business: "net",
+        Business: "net"
       };
       this.axios.post(GET_SPolicy, params).then(res => {
-        // console.log(res.Response);
-        this.topFun = res.Response.DDosPolicyList[0].PolicyName
+        this.topFun = res.Response.DDosPolicyList[0].PolicyName;
       });
     },
     // 获取DDoS防护状态
@@ -186,32 +265,31 @@ export default {
       let params = {
         Version: "2018-07-09",
         Business: "net",
-        Id: this.resourceId,
+        Id: this.resourceId
       };
       this.axios.post(GET_Status, params).then(res => {
-        // console.log(res.Response);
-        this.ShowFlag = res.Response.ShowFlag
+        this.ShowFlag = res.Response.ShowFlag;
         if (res.Response.DefendStatus == 0) {
-          this.servicePack.DefendStatus = false
+          this.servicePack.DefendStatus = false;
         }
       });
     },
     //弹框关闭按钮
     handleClose() {
       this.modelIsShow = false;
-      this.$emit("closeConfigModel", this.modelIsShow)
+      this.$emit("closeConfigModel", this.modelIsShow);
     },
     selectChange1() {
-      if (this.ddosWarning == 'no') {
+      if (this.ddosWarning == "no") {
         this.iptNummbps = false;
-      } else if (this.ddosWarning == 'into') {
-        this.iptNummbps = true;;
-        this.AlarmType = 1
-        this.CreateBasic()
+      } else if (this.ddosWarning == "into") {
+        this.iptNummbps = true;
+        this.AlarmType = 1;
+        this.CreateBasic();
       } else {
-        this.iptNummbps = true;;
-        this.AlarmType = 2
-        this.CreateBasic()
+        this.iptNummbps = true;
+        this.AlarmType = 2;
+        this.CreateBasic();
       }
     },
     //选择防护等级
@@ -219,26 +297,24 @@ export default {
       this.changeModel = false;
       if (typeNum == 3) {
         this.changeModelTip3 = true;
-        this.tabMode = 'high'
+        this.tabMode = "high";
       } else if (typeNum == 2) {
         this.changeModelTip2 = true;
-        this.tabMode = 'middle'
+        this.tabMode = "middle";
       } else if (typeNum == 1) {
         this.changeModelTip1 = true;
-        this.tabMode = 'low'
+        this.tabMode = "low";
       }
     },
     //防护状态按钮
     outOk() {
       if (this.servicePack.DefendStatus == false) {
         this.changeModelTip4 = true;
-        this.Status = 0
-        // this.modelIsShow=false;
-        // this.$emit("closeConfigModel",this.modelIsShow)
+        this.Status = 0;
       } else {
         this.changeModelTip4 = false;
         this.Status = 1;
-        this.startSureTip()
+        this.startSureTip();
       }
     },
     //修改DDoS清洗阈值
@@ -254,14 +330,14 @@ export default {
           this.$message({
             showClose: true,
             message: res.Response.Error.Message,
-            type: 'error'
+            type: "error"
           });
         } else {
           this.$message({
             showClose: true,
-            message: '修改成功',
-            type: 'success'
-          })
+            message: "修改成功",
+            type: "success"
+          });
         }
       });
     },
@@ -277,8 +353,6 @@ export default {
     changeCloseTip4() {
       this.changeModelTip4 = false;
       this.servicePack.DefendStatus = true;
-      // this.modelIsShow=true;
-      // this.$emit("closeConfigModel",this.modelIsShow)
     },
     //修改DDoSIP防护等级
     changeSureTip1() {
@@ -286,7 +360,7 @@ export default {
         Version: "2018-07-09",
         Business: "net",
         Id: this.resourceId,
-        Method: 'set',
+        Method: "set",
         DDoSLevel: this.tabMode
       };
       this.axios.post(Modify_Level, params).then(res => {
@@ -294,26 +368,26 @@ export default {
           this.$message({
             showClose: true,
             message: res.Response.Error.Message,
-            type: 'error'
+            type: "error"
           });
         } else {
           this.$message({
             showClose: true,
-            message: '修改成功',
-            type: 'success'
-          })
+            message: "修改成功",
+            type: "success"
+          });
         }
-        if (this.tabMode == 'low') {
+        if (this.tabMode == "low") {
           this.saveGarden = 1;
-          this.saveGardenText = '宽松'
-          this.changeModelTip1 = false
-        } else if (this.tabMode == 'middle') {
+          this.saveGardenText = "宽松";
+          this.changeModelTip1 = false;
+        } else if (this.tabMode == "middle") {
           this.saveGarden = 2;
-          this.saveGardenText = '正常'
+          this.saveGardenText = "正常";
           this.changeModelTip2 = false;
         } else {
           this.saveGarden = 3;
-          this.saveGardenText = '严格'
+          this.saveGardenText = "严格";
           this.changeModelTip3 = false;
         }
       });
@@ -322,8 +396,8 @@ export default {
     CreateBasic() {
       let params = {
         Version: "2018-07-09",
-        Business: 'basic',
-        Method: 'set',
+        Business: "basic",
+        Method: "set",
         AlarmType: this.AlarmType,
         AlarmThreshold: this.iptmbpsText
       };
@@ -333,14 +407,14 @@ export default {
           this.$message({
             showClose: true,
             message: res.Response.Error.Message,
-            type: 'error'
+            type: "error"
           });
         } else {
           this.$message({
             showClose: true,
-            message: '修改成功',
-            type: 'success'
-          })
+            message: "修改成功",
+            type: "success"
+          });
         }
       });
     },
@@ -348,38 +422,51 @@ export default {
     changeSureTip4(value) {
       let params = {
         Version: "2018-07-09",
-        Business: 'net',
+        Business: "net",
         Status: this.Status,
         Hour: value,
-        Id: this.resourceId,
+        Id: this.resourceId
       };
       this.axios.post(Modify_Status, params).then(res => {
-        // console.log(res);
         this.changeModelTip4 = false;
         this.servicePack.DefendStatus = true;
-        this.GETStatus() // 获取DDoS防护状态
+        this.GETStatus(); // 获取DDoS防护状态
       });
     },
     // 开闭防护确认按钮
     startSureTip() {
       let params = {
         Version: "2018-07-09",
-        Business: 'net',
+        Business: "net",
         Status: this.Status,
         Hour: 1,
-        Id: this.resourceId,
+        Id: this.resourceId
       };
       this.axios.post(Modify_Status, params).then(res => {
-        // console.log(res);
         this.changeModelTip4 = false;
         this.servicePack.DefendStatus = true;
-        this.GETStatus() // 获取DDoS防护状态
+        this.GETStatus(); // 获取DDoS防护状态
       });
     }
   }
-}
+};
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
+.newClear {
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+
+  .modelSpan1 {
+    width: 120px;
+  }
+  .newClear >>> .el-input__inner {
+    height: 30px !important;
+    line-height: 30px !important;
+    padding-top: 0 !important;
+    border-radius: 0 !important;
+  }
+}
 #configModel {
   .modelCenterCon {
     p {

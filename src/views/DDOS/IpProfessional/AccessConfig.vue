@@ -84,11 +84,7 @@
                 <template slot-scope="scope">{{$t('DDOS.AccesstoCon.Temporary')}}</template>
               </el-table-column>
               <el-table-column prop="KeepEnable" :label="$t('DDOS.AccesstoCon.KeepSession')">
-                <template slot-scope="scope">
-                  {{$t('DDOS.AccesstoCon.Temporary')}}
-                  <!-- <span v-if="scope.row.KeepEnable == 0">关闭</span>
-                  <span v-else-if="scope.row.KeepEnable == 1">开启</span>-->
-                </template>
+                <template slot-scope="scope">{{$t('DDOS.AccesstoCon.Temporary')}}</template>
               </el-table-column>
               <el-table-column prop="RemoveSwitch" :label="$t('DDOS.AccesstoCon.WatermarkState')">
                 <template slot-scope="scope">
@@ -116,20 +112,20 @@
                 </template>
               </el-table-column>
             </el-table>
-            <div class="tabListPage">
+            <div class="Right-style pagstyle" style="display:flex;align-items:center;">
+              <p
+                class="pContent"
+                style="margin-right:20px;"
+              >{{$t('DDOS.AccesstoCon.AccSum')}} {{ruleTotalNum}} ，已用 {{usedNum}} ，可用 {{ruleTotalNum-usedNum}}</p>
+              <span class="pagtotal">共&nbsp;{{totalItems}}&nbsp;条</span>
               <el-pagination
-                @size-change="handleSizeChange"
-                @current-change="handleCurrentChange"
-                :current-page="currentPage"
-                :page-sizes="[10, 20, 30, 50]"
                 :page-size="pageSize"
-                layout="total, sizes, prev, pager, next, jumper"
+                :pager-count="7"
+                layout="prev, pager, next"
+                @current-change="handleCurrentChange"
                 :total="totalItems"
               ></el-pagination>
             </div>
-            <p
-              class="pContent"
-            >{{$t('DDOS.AccesstoCon.AccSum')}} {{ruleTotalNum}} ，已用 {{usedNum}} ，可用 {{ruleTotalNum-usedNum}}</p>
           </div>
           <!-- 新建规则弹框 -->
           <newAddRules
@@ -231,7 +227,6 @@ export default {
   },
   created() {
     this.describeResourceList();
-    // this.describleL4Rules()
     this.GetID(); //获取资源的IP列表
   },
   //父页面获取L4转发规则的方法
@@ -259,7 +254,6 @@ export default {
         Id: this.resourceId
       };
       this.axios.post(L4_RULES, params).then(res => {
-        // console.log(res)
         this.tableDataBegin = res.Response.Rules;
         this.totalItems = res.Response.Total;
         this.usedNum = res.Response.Total;
@@ -293,12 +287,10 @@ export default {
     handleClick() {},
     //分页开始
     handleSizeChange(val) {
-      // console.log(`每页 ${val} 条`);
       this.pageSize = val;
       this.handleCurrentChange(this.currentPage);
     },
     handleCurrentChange(val) {
-      // console.log(`当前页: ${val}`);
       this.currentPage = val;
       //需要判断是否检索
       if (!this.flag) {
@@ -327,7 +319,6 @@ export default {
     },
     //新建规则弹框确定按钮
     addRulesSure(isShowFalse) {
-      // console.log(isShowFalse)
       this.dialogVisible = isShowFalse;
     },
     //弹框关闭按钮
@@ -354,7 +345,6 @@ export default {
         Id: this.resourceId
       };
       this.axios.post(L4_RULES, params).then(res => {
-        // console.log(res)//test.cn TCP 1666 1888 1.1.1.10 80,1.1.1.20 50
         let str = "";
         let arr = [];
         arr = res.Response.Rules;
@@ -408,7 +398,6 @@ export default {
     },
     //复制列表按钮
     copyAccess(scopeRow) {
-      // console.log(scopeRow)//这块可以做数据回显，拿到的是那一行的数据
       this.dialogVisible4 = true;
       this.$nextTick(() => {
         this.$refs.addOrUpdate1.init(scopeRow);
@@ -436,8 +425,6 @@ export default {
         Id: this.resourceId,
         "RuleIdList.0": this.tableDataBegin[this.deleteIndex].RuleId
       };
-      // console.log(this.deleteIndex)
-      // params['RuleIdList.'+0] = this.tableDataBegin[this.deleteIndex].RuleId
       this.axios.post(L4DEL_CREATE, params).then(res => {
         // console.log(res)
         if (res.Response.Error !== undefined) {
@@ -455,12 +442,30 @@ export default {
           this.describleL4Rules();
         }
       });
-      // this.tableDataBegin.splice("")
     }
   }
 };
 </script>
 <style lang="scss" scoped>
+.Right-style {
+  display: flex;
+  justify-content: flex-end;
+
+  .esach-inputL {
+    width: 300px;
+    margin-right: 20px;
+  }
+}
+.pagstyle {
+  padding: 20px;
+
+  .pagtotal {
+    font-size: 13px;
+    font-weight: 400;
+    color: #565656;
+    line-height: 32px;
+  }
+}
 .wrap >>> .el-tabs__nav-wrap {
   background: white;
   padding: 0 15px;

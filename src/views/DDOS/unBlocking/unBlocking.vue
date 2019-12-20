@@ -35,7 +35,7 @@
       </div>
       <div class="contPartTwo">
         <div class="tableContentUn">
-          <el-table :data="tableDatalist" v-loading="loading">
+          <el-table :data="tableDatalist" v-loading="loading" height="450">
             <el-table-column prop="Ip" label="IP">
               <template slot-scope="scope">
                 <a href="#" @click="toDoDetail(scope.$index, scope.row)">{{scope.row.Ip}}</a>
@@ -64,6 +64,7 @@
               </template>
             </el-table-column>
           </el-table>
+          
         </div>
       </div>
     </div>
@@ -96,8 +97,6 @@ export default {
         Version: "2018-07-09"
       };
       this.axios.post(IPBlOCKLIST_LIST, params).then(res => {
-        console.log(params);
-        console.log(res);
         this.tableDatalist = res.Response.List;
         this.loading = false;
       });
@@ -109,8 +108,6 @@ export default {
         Version: "2018-07-09"
       };
       this.axios.post(UNBlOCKSTATIS_NUM, params).then(res => {
-        console.log(params);
-        console.log(res);
         this.unBlockStatis = res.Response;
       });
     }

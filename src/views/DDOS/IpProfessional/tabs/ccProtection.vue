@@ -73,6 +73,7 @@ export default {
   },
   data() {
     return {
+      loading: true,
       options: [], //下拉内容
       switchState: true, //防护状态
       httpRequestNum: 350, //http请求阈值
@@ -156,13 +157,11 @@ export default {
   },
   watch: {
     switchState: function(value) {
-      console.log(value, this.switchState);
       this.modifyCCThreshold();
       this.describeResourceList();
       this.describeCCUrlAllow();
     },
     httpRequestNum: function(value) {
-      console.log(value);
       this.modifyCCThreshold();
       this.describeResourceList();
       this.describeCCUrlAllow();
