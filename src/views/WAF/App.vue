@@ -5,7 +5,7 @@
         <nav-header></nav-header>
       </el-header>
       <el-container height="100%">
-        <el-aside width="200px" height="100%">
+        <el-aside width="200px" height="100%" v-if="$route.meta.leftNav">
           <left-aside></left-aside>
         </el-aside>
         <el-main>

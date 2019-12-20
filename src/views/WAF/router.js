@@ -7,19 +7,20 @@ export default new Router({
   // mode: 'history',
   base: process.env.BASE_URL,
   redirect: {
-    name: 'saveOverView'
+    name: 'toBuy'
   },
   routes: [
     {
       path: '/',
-      redirect: '/saveOverView'
+      redirect: '/toBuy'
     },
     {
       path: '/saveOverView', // 安全概览
       name: 'saveOverView',
       component: () => import(/* webpackChunkName: "ipMan" */ './saveOverView/saveOverView.vue'),
       meta: {
-        keepAlive: true
+        keepAlive: true,
+        leftNav:true
       }
     },
     {
@@ -27,7 +28,8 @@ export default new Router({
       name: 'protectionSettings',
       component: () => import(/* webpackChunkName: "ipMan" */ './webFirewall/protectionSettings.vue'),
       meta: {
-        keepAlive: true
+        keepAlive: true,
+        leftNav:true
       }
     },
     {
@@ -35,7 +37,8 @@ export default new Router({
       name: 'attackDetails',
       component: () => import(/* webpackChunkName: "ipMan" */ './webFirewall/attackDetails.vue'),
       meta: {
-        keepAlive: true
+        keepAlive: true,
+        leftNav:true
       }
     },
     {
@@ -43,7 +46,8 @@ export default new Router({
       name: 'toProtectSet',
       component: () => import(/* webpackChunkName: "ipMan" */ './webFirewall/components/toProtectSet.vue'),
       meta: {
-        keepAlive: true
+        keepAlive: true,
+        leftNav:true
       }
     },
     {
@@ -51,7 +55,8 @@ export default new Router({
       name: 'editDominList',
       component: () => import(/* webpackChunkName: "ipMan" */ './webFirewall/components/editDominList.vue'),
       meta: {
-        keepAlive: true
+        keepAlive: true,
+        leftNav:true
       }
     },
     
@@ -60,7 +65,8 @@ export default new Router({
       name: 'hijackDetection',
       component: () => import(/* webpackChunkName: "ipMan" */ './safetyInspection/hijackDetection.vue'),
       meta: {
-        keepAlive: true
+        keepAlive: true,
+        leftNav:true
       }
     },
     {
@@ -68,7 +74,8 @@ export default new Router({
       name: 'ipSearch',
       component: () => import(/* webpackChunkName: "ipMan" */ './ipMan/ipSearch.vue'),
       meta: {
-        keepAlive: true
+        keepAlive: true,
+        leftNav:true
       }
     },
     
@@ -78,7 +85,8 @@ export default new Router({
       name: 'ipStatus',
       component: () => import(/* webpackChunkName: "ipMan" */ './ipMan/ipStatus.vue'),
       meta: {
-        keepAlive: true
+        keepAlive: true,
+        leftNav:true
       }
     },
     {
@@ -86,14 +94,16 @@ export default new Router({
       name: 'ipList',
       component: () => import(/* webpackChunkName: "ipMan" */ './ipMan/ipList.vue'),
       meta: {
-        keepAlive: true
+        keepAlive: true,
+        leftNav:true
       }
     },
     {
       path: '/botMan', // bot管理
       name: 'botMan',
       meta: {
-        keepAlive: true
+        keepAlive: true,
+        leftNav:true
       }
     },
     {
@@ -101,7 +111,8 @@ export default new Router({
       name: 'botOverview',
       component: () => import(/* webpackChunkName: "ipMan" */ './botMan/botOverview.vue'),
       meta: {
-        keepAlive: true
+        keepAlive: true,
+        leftNav:true
       }
     },
     {
@@ -109,7 +120,8 @@ export default new Router({
       name: 'botSetting',
       component: () => import(/* webpackChunkName: "ipMan" */ './botMan/botSetting.vue'),
       meta: {
-        keepAlive: true
+        keepAlive: true,
+        leftNav:true
       }
     },
     {
@@ -117,7 +129,35 @@ export default new Router({
       name: 'botDetail',
       component: () => import(/* webpackChunkName: "ipMan" */ './botMan/botDetail.vue'),
       meta: {
-        keepAlive: true
+        keepAlive: true,
+        leftNav:true
+      }
+    },
+    {
+      path: '/toBuy', // bot详情
+      name: 'toBuy',
+      component: () => import(/* webpackChunkName: "ipMan" */ './buy/toBuy.vue'),
+      meta: {
+        keepAlive: true,
+        leftNav:true
+      }
+    },
+    {
+      path: '/choose', // bot详情
+      name: 'choose',
+      component: () => import(/* webpackChunkName: "ipMan" */ './buy/choose.vue'),
+      meta: {
+        keepAlive: true,
+        leftNav:false
+      }
+    },
+    {
+      path: '/pay', // bot详情
+      name: 'pay',
+      component: () => import(/* webpackChunkName: "ipMan" */ './buy/pay.vue'),
+      meta: {
+        keepAlive: true,
+        leftNav:false
       }
     }
   ]
