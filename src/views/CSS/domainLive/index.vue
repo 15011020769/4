@@ -51,7 +51,7 @@
       </el-table>
     </div>
     <div>
-      <AdddomainLive :AddDialogVisible='DialogVisible' @handleCancel='handleCancel' />
+      <AdddomainLive :AddDialogVisible='DialogVisible' @AddhandleCancel='AddhandleCancel' />
     </div>
 
   </div>
@@ -109,7 +109,7 @@
       _Addto() {
         this.DialogVisible = true
       },
-      handleCancel(val) {
+      AddhandleCancel(val) {
         this.DialogVisible = val
       }
 
