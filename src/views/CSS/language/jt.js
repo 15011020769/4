@@ -1,6 +1,6 @@
 module.exports = {
-    TME: {
+  CSS: {
 
-    },
-    COM: require('@/components/language/jt'),
+  },
+  COM: require('@/components/language/jt'),
 }
