@@ -24,8 +24,14 @@
         </el-table-column>
         <el-table-column prop="State" :label="$t('CCN.total.tr2')">
           <template slot-scope="scope">
-            <div v-if="scope.row.State == 'AVAILABLE'" class="off_color">{{$t('CCN.total.newCreate')}}</div>
-            <div v-else-if="scope.row.State == 'ISOLATED'" class="close_color">{{$t('CCN.total.glz')}}</div>
+            <div
+              v-if="scope.row.State == 'AVAILABLE'"
+              class="off_color"
+            >{{$t('CCN.total.newCreate')}}</div>
+            <div
+              v-else-if="scope.row.State == 'ISOLATED'"
+              class="close_color"
+            >{{$t('CCN.total.glz')}}</div>
             <div v-else class="close_color">{{$t('CCN.total.newClose')}}</div>
           </template>
         </el-table-column>
@@ -65,8 +71,14 @@
         </el-table-column>
         <el-table-column prop="BandwidthLimitType" :label="$t('CCN.total.tr7')">
           <template slot-scope="scope">
-            <div class="edit" v-if="scope.row.BandwidthLimitType == 'OUTER_REGION_LIMIT'">{{$t('CCN.total.addressS')}}</div>
-            <div class="edit" v-else-if="scope.row.BandwidthLimitType == 'INTER_REGION_LIMIT'">{{$t('CCN.total.addressJS')}}</div>
+            <div
+              class="edit"
+              v-if="scope.row.BandwidthLimitType == 'OUTER_REGION_LIMIT'"
+            >{{$t('CCN.total.addressS')}}</div>
+            <div
+              class="edit"
+              v-else-if="scope.row.BandwidthLimitType == 'INTER_REGION_LIMIT'"
+            >{{$t('CCN.total.addressJS')}}</div>
             <div class="edit" v-else>{{$t('CCN.total.addressS')}}</div>
             <i type="text" @click="updateBandwidthLimitType(scope.row)">
               <i class="el-icon-edit"></i>
@@ -97,17 +109,10 @@
         </el-table-column>
       </el-table>
       <!-- 分页 -->
-      <!-- <el-pagination
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-          :current-page="currentPage4"
-          :page-sizes="[10, 15, 20, 25, 30, 35, 40]"
-          :page-size="10"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="total"
-        ></el-pagination>-->
       <div class="Right-style pagstyle">
-        <span class="pagtotal">{{$t('CCN.total.gongN')}}&nbsp;{{total}}&nbsp;{{$t('CCN.total.tioaN')}}</span>
+        <span
+          class="pagtotal"
+        >{{$t('CCN.total.gongN')}}&nbsp;{{total}}&nbsp;{{$t('CCN.total.tioaN')}}</span>
         <el-pagination
           :page-size="pagesize"
           layout="prev, pager, next"
@@ -124,7 +129,10 @@
         <el-table-column property="State" :label="$t('CCN.total.del2')">
           <template slot-scope="scope">
             <div v-if="scope.row.State == 'AVAILABLE'" class="off_color">{{$t('CCN.total.run')}}</div>
-            <div v-else-if="scope.row.State == 'ISOLATED'" class="close_color">{{$t('CCN.total.glz')}}</div>
+            <div
+              v-else-if="scope.row.State == 'ISOLATED'"
+              class="close_color"
+            >{{$t('CCN.total.glz')}}</div>
             <div v-else class="close_color">{{$t('CCN.tabs.tab1newc')}}</div>
           </template>
         </el-table-column>
@@ -330,6 +338,7 @@ import {
   MODIFYCCN_REGIONBANDWIDTHLIMITSTYPE,
   MODIFYRESOURCE_TAGS
 } from "@/constants";
+import VueCookie from "vue-cookie";
 export default {
   data() {
     return {
@@ -353,7 +362,7 @@ export default {
         CcnDescription: "",
         QosLevel: "AU",
         instanceType: "",
-        instanceRegion: "ap-taipei",
+        instanceRegion: VueCookie.get("regionv2"),
         instanceId: ""
       },
       formLabelWidth: "120px",
@@ -407,12 +416,11 @@ export default {
       this.tableload = true;
       var params = {
         Version: "2017-03-12",
-        Region: "ap-taipei",
+        Region: VueCookie.get("regionv2"),
         Offset: this.currpage * this.pagesize - this.pagesize,
         Limit: this.pagesize
       };
       this.axios.post(CCN_LIST, params).then(res => {
-        console.log("獲取ccn列表成功");
         this.tableData = res.Response.CcnSet;
         this.total = res.Response.TotalCount;
         this.tableload = false;
@@ -453,21 +461,18 @@ export default {
     },
     // 查询instanceId
     getInstanceIds: function(instanceType) {
-      console.log(instanceType);
       var params = {
         Version: "2017-03-12",
-        Region: "ap-taipei"
+        Region: VueCookie.get("regionv2")
       };
       if (instanceType == "VPC") {
         // 私有网络
         this.axios.post(VPCS_LIST, params).then(res => {
-          console.log(res);
           this.vpcs = res.Response.VpcSet;
         });
       } else if (instanceType == "DIRECTCONNECT") {
         // 专线网络
         this.axios.post(DIRECTCONNECTGATEWAYS_LIST, params).then(res => {
-          console.log(res);
           this.vpcs = res.Response.DirectConnectGatewaySet;
         });
       }
@@ -477,7 +482,7 @@ export default {
       this.creatloading = true;
       var params = {
         Version: "2017-03-12",
-        Region: "ap-taipei",
+        Region: VueCookie.get("regionv2"),
         CcnName: form.CcnName,
         CcnDescription: form.CcnDescription,
         QosLevel: form.QosLevel,
@@ -485,7 +490,7 @@ export default {
         BandwidthLimitType: form.BandwidthLimitType
       };
       this.axios.post(CCN_CREATE, params).then(res => {
-        if (res.Response.Error) {
+        if (res.Response.Error != undefined) {
           this.$message(res.Response.Error.Message);
           this.creatloading = false;
         } else {
@@ -500,7 +505,7 @@ export default {
           // 关联实例
           var params2 = {
             Version: "2017-03-12",
-            Region: "ap-taipei",
+            Region: VueCookie.get("regionv2"),
             CcnId: res.Response.Ccn.CcnId,
             "Instances.0.InstanceId": form.instanceId,
             "Instances.0.InstanceRegion": form.instanceRegion,
@@ -524,10 +529,9 @@ export default {
     },
     delCcn: function(ccnDetail) {
       this.delload = true;
-      // console.log(ccnDetail);
       var params = {
         Version: "2017-03-12",
-        Region: "ap-taipei",
+        Region: VueCookie.get("regionv2"),
         CcnId: ccnDetail.CcnId
       };
       this.axios.post(CCN_DELETE, params).then(res => {
@@ -548,16 +552,21 @@ export default {
     },
     // 修改ccn公用方法
     modifyCcn: function(ccnDetail) {
-      // console.log(ccnDetail);
       var params = {
         Version: "2017-03-12",
-        Region: "ap-taipei",
+        Region: VueCookie.get("regionv2"),
         CcnId: ccnDetail.CcnId,
         CcnName: ccnDetail.CcnName,
         CcnDescription: ccnDetail.CcnDescription
       };
       this.axios.post(MODIFYCCN_ATTRIBUTE, params).then(res => {
-        console.log("修改成功");
+        this.$message({
+          message: "修改成功",
+          type: "success"
+        });
+        if (res.Response.Error != undefined) {
+          this.$message.error("修改失败");
+        }
         this.getData();
       });
       this.updateNameVisible = false;
@@ -572,19 +581,24 @@ export default {
       console.log(ccnDetail);
       var params = {
         Version: "2017-03-12",
-        Region: "ap-taipei",
+        Region: VueCookie.get("regionv2"),
         CcnId: ccnDetail.CcnId,
         BandwidthLimitType: ccnDetail.BandwidthLimitType
       };
       this.axios.post(MODIFYCCN_REGIONBANDWIDTHLIMITSTYPE, params).then(res => {
-        console.log("修改成功");
+        this.$message({
+          message: "修改成功",
+          type: "success"
+        });
+        if (res.Response.Error != undefined) {
+          this.$message.error("修改失败");
+        }
         this.getData();
       });
       this.updateBandwidthLimitTypeVisible = false;
     },
     // 进入编辑标签模态窗
     toTags: function(ccnDetail) {
-      console.log(ccnDetail);
       this.ccnIdOfTag = ccnDetail.CcnId;
       this.oldTags = JSON.parse(JSON.stringify(ccnDetail.TagSet));
       this.tags = ccnDetail.TagSet;
@@ -594,7 +608,7 @@ export default {
     upTags: function(tagss) {
       var params = {
         Version: "2018-08-13",
-        Region: "ap-taipei",
+        Region: VueCookie.get("regionv2"),
         Resource:
           "qcs::vpc:ap-guangzhou:uin/100011921910:ccn/" + this.ccnIdOfTag
       };
@@ -626,9 +640,14 @@ export default {
           addCount++;
         }
       }
-      console.log(params);
       this.axios.post(MODIFYRESOURCE_TAGS, params).then(res => {
-        console.log("修改成功");
+        this.$message({
+          message: "修改成功",
+          type: "success"
+        });
+        if (res.Response.Error != undefined) {
+          this.$message.error("修改失败");
+        }
         this.getData();
       });
       this.dialogTagVisible = false;

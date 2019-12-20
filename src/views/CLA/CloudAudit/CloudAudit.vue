@@ -125,6 +125,7 @@
 
 <script>
 import { YJS_LIST, YJS_GETATTRIBUTEKEY } from "@/constants";
+import VueCookie from "vue-cookie";
 export default {
   data() {
     return {
@@ -188,7 +189,8 @@ export default {
     this.axios
       .post(YJS_GETATTRIBUTEKEY, {
         Version: "2019-03-19",
-        Region: "ap-guangzhou"
+        // Region: VueCookie.get("regionv2"),
+        Region: 'ap-guangzhou'
       })
       .then(data => {
         this.options = data.Response.AttributeKeyDetails;
@@ -207,7 +209,7 @@ export default {
     Loading() {
       let params = {
         Version: "2019-03-19",
-        Region: "ap-taipei",
+        Region: VueCookie.get("regionv2"),
         StartTime: this.oldTime, // 开始时间
         EndTime: this.nowtime, // 结束时间1558108799
         MaxResults: this.MaxResults
@@ -246,7 +248,7 @@ export default {
       }
       let params = {
         Version: "2019-03-19",
-        Region: "ap-taipei",
+        Region: VueCookie.get("regionv2"),
         EndTime: this.nowtime,
         MaxResults: this.MaxResults,
         StartTime: this.oldTime

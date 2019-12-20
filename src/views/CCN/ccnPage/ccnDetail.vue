@@ -53,9 +53,6 @@ export default {
         path: '/ccnPage'
       })
     },
-    // handleClick (tab, event) {
-    //   console.log(tab, event)
-    // },
     handleClick (val) {
       this.showIndex = val
     }

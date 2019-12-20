@@ -63,7 +63,7 @@
             <template slot-scope="scope">
               <el-popover
                 placement="bottom"
-                width="160"
+                width="280"
                 v-model="deleteVisible">
                 <div class="prpoDialog">
                   <h1>确定删除此域名？</h1>

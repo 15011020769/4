@@ -23,12 +23,28 @@ export default new Router({
       }
     },
     {
+      path: '/mesgdetils', // 站内信详情
+      name: 'mesgdetils',
+      component: () => import(/* webpackChunkName: "message" */ './message/mesgdetils.vue'),
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
       path: '/newsFeeds', // 概览
       name: 'newsFeeds',
       component: () => import(/* webpackChunkName: "newsFeeds" */ './newsFeeds/index.vue'),
       meta: {
         keepAlive: true
       }
-    }
+    },
+    {
+      path: '/newsdetils', // 通知公告详情
+      name: 'newsdetils',
+      component: () => import(/* webpackChunkName: "newsFeeds" */ './newsFeeds/newsdetils.vue'),
+      meta: {
+        keepAlive: true
+      }
+    },
   ]
 })

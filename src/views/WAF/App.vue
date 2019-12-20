@@ -5,8 +5,7 @@
         <nav-header></nav-header>
       </el-header>
       <el-container height="100%">
-        <el-aside width="200px"
-          height="100%">
+        <el-aside width="200px" height="100%" v-if="$route.meta.leftNav">
           <left-aside></left-aside>
         </el-aside>
         <el-main>
@@ -19,41 +18,46 @@
 </template>
 
 <script>
-import NavHeader from '@/components/HeaderAside/Header'
-import LeftAside from './Public/Menu'
+import NavHeader from "@/components/HeaderAside/Header";
+import LeftAside from "./Public/Menu";
+import { ALL_CITY } from "@/constants";
 export default {
-  data () {
-    return {}
+  data() {
+    return {};
   },
   components: {
     NavHeader,
     LeftAside
   },
-  mounted () {
-    // this.getProgectList()
-    if (this.$cookie.get('regionv1') === undefined || this.$cookie.get('regionv1') === '' || this.$cookie.get('regionv1') === null) {
-      this.$cookie.set('regionv1', 'gz')
-      this.$cookie.set('regionv2', 'ap-guangzhou')
-    }
+  mounted() {
+    this.GetCity();
   },
   methods: {
+    // 获取城市列表
+    GetCity() {
+      this.axios.get(ALL_CITY).then(data => {
+        let city = data.data[0];
+        this.$cookie.set("regionv1", city.regionCode);
+        this.$cookie.set("regionv2", city.Region);
+      });
+    },
     // 获取项目列表
-    getProgectList () {
-      var params = {}
-      this.axios.post('account/DescribeProject', params).then(data => {
-        let projectList = data.data
+    getProgectList() {
+      var params = {};
+      this.axios.post("account/DescribeProject", params).then(data => {
+        let projectList = data.data;
         let defaultPro = {
           projectId: 0,
-          projectInfo: '默认项目',
-          projectName: '默认项目'
-        }
-        projectList.unshift(defaultPro)
+          projectInfo: "默认项目",
+          projectName: "默认项目"
+        };
+        projectList.unshift(defaultPro);
         // localStorage存储对象或者数据，必须先转成字符串JSON.stringify存储，在用JSON.parse进行解析
-        localStorage.setItem('projectList', JSON.stringify(projectList))
-      })
+        localStorage.setItem("projectList", JSON.stringify(projectList));
+      });
     }
   }
-}
+};
 </script>
 <style lang="scss" scoped>
 #WAF >>> .el-aside {

@@ -60,13 +60,42 @@
           <el-input class="inputIpt" v-model="celueId" placeholder="输入策略ID"></el-input>
           <el-input class="inputIpt" v-model="attackIP" placeholder="输入攻击源IP"></el-input>
           <el-button class="selectBtn">查询</el-button>
-          <i class="el-icon-download"></i>
+          <i class="el-icon-download" @click="createDownTask"></i>
         </div>
       </div>
+      <div class="tableCon">
+        <div class="topSet newClear">
+          <i class="el-icon-setting"></i>
+        </div>
+        <div class="tableMian">
+          <el-table :data="tableDataBegin.slice((currentPage-1)*pageSize,currentPage*pageSize)">
+            <el-table-column prop="num" label="序号" width=""></el-table-column>
+            <el-table-column prop="attackUrl" label="被攻击网址" width=""></el-table-column>
+            <el-table-column prop="AttackIP" label="攻击源IP"></el-table-column>
+            <el-table-column prop="attackType" label="攻击类型"></el-table-column>
+            <el-table-column prop="methedId" label="策略ID"></el-table-column>
+            <el-table-column prop="methedName" label="策略名称"></el-table-column>
+            <el-table-column prop="attackCon" label="攻击内容"></el-table-column>
+            <el-table-column prop="attackTime" label="攻击时间"></el-table-column>
+            <el-table-column prop="actionRun" label="执行动作"></el-table-column>
+            <el-table-column prop="gardenW" label="风险等级"></el-table-column>
+            <el-table-column prop="action" label="操作" width="180">
+              <template slot-scope="">
+                <el-button type="text" size="small">查看</el-button>
+                <!-- <el-button type="text" size="small" @click="handelEdit(scope.$index, scope.row)">编辑</el-button>
+                <el-button @click.native.prevent="deleteRow(scope.$index, tableDataBegin)" type="text" size="small" style="color: red;">移除</el-button> -->
+              </template>
+            </el-table-column>
+          </el-table>
+        </div>
+      </div>
+      <createDownTaskModel :isShow="createDownTaskModel" @closeCreateTaskModel="closeCreateTaskModel"/>
     </div>
   </div>
 </template>
 <script>
+import moment from "moment";
+import createDownTaskModel from '../model/createDownTaskModel'
 export default {
   data(){
     return{
@@ -210,12 +239,60 @@ export default {
       ],
       celueId:'',//策略ID
       attackIP:'',//攻击源IP
+      tableDataBegin:[
+        {
+          num:'1',
+          attackUrl:'1',
+          AttackIP:'1',
+          attackType:'1',
+          methedId:'1',
+          methedName:'1',
+          attackCon:'1',
+          attackTime:'1',
+          actionRun:'1',
+          gardenW:'1',
+        }
+      ],//表格数据
+      currentPage:1,//当前页
+      pageSize:10,//每页长度
+      createDownTaskModel:false,//创建下载任务弹框
     }
+  },
+  components:{
+    createDownTaskModel:createDownTaskModel
   },
   methods:{
     //时间选择按钮
     choseDate(thisType){
       this.thisType=thisType;
+      var ipt1 = document.querySelector(".dataTime input:nth-child(2)");
+      var ipt2 = document.querySelector(".dataTime input:nth-child(4)");
+      const end = new Date();
+      const start = new Date();
+      if (thisType == "1") {
+        start.setTime(start.getTime() - 3600 * 1000);
+      } else if (thisType == "2") {
+        start.setTime(start.getTime() - 3600 * 1000 * 6);
+      } else if (thisType == "3") {
+        start.setTime(start.getTime() - 3600 * 1000 * 24);
+      }else if (thisType == "4") {
+        start.setTime(start.getTime() - 3600 * 1000 * 24 * 2);
+        end.setTime(end.getTime() - 3600 * 1000 * 24);
+      }else if (thisType == "5") {
+        start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+      }
+      ipt1.value = moment(start).format("YYYY-MM-DD HH:mm:ss");
+      ipt2.value = moment(end).format("YYYY-MM-DD HH:mm:ss");
+      this.startTime = moment(start).format("YYYY-MM-DD HH:mm:ss");
+      this.endTime = moment(end).format("YYYY-MM-DD HH:mm:ss");
+    },
+    //创建下载任务
+    createDownTask(){
+      this.createDownTaskModel=true;
+    },
+    //关闭下载任务弹框
+    closeCreateTaskModel(isShow){
+      this.createDownTaskModel=false;
     }
   }
 }
@@ -296,5 +373,27 @@ export default {
 .el-icon-download{
   float:right;
   font-size:20px;
+}
+.tableCon{
+  width:100%;
+  min-height:200px;
+  background-color:#fff;
+  box-shadow: 0 2px 3px 0 rgba(0,0,0,.2);
+  padding: 20px 0;
+  margin:20px 0;
+  border:1px solid #ddd;
+}
+.topSet{
+  text-align:right;
+  padding-bottom:20px;
+  padding-right:20px;
+  border-bottom:1px solid #ddd;
+  .el-icon-setting{
+    font-size:18px;
+    float:right;
+  }
+}
+.tableMian{
+  min-height: 450px;
 }
 </style>

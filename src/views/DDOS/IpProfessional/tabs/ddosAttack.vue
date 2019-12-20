@@ -1,6 +1,6 @@
 <template>
   <div class="child">
-    <div class="mainConList">
+    <div class="mainConList" v-loading="loading">
       <div
         class="mainConListAll mainConListOne newClear"
         style="display: flex;flex-direction: column;"
@@ -86,7 +86,6 @@
         <div class="ddosTableMin">
           <el-table
             height="450"
-            v-loading="loading"
             :data="tableDataOfDescribeDDoSNetEvList.slice((currentPage-1)*pageSize,currentPage*pageSize)"
           >
             <el-table-column prop="attackTime" :label="$t('DDOS.Statistical_forms.Attack_time')"></el-table-column>
@@ -101,14 +100,13 @@
           </el-table>
         </div>
 
-        <div class="tabListPage">
+        <div class="Right-style pagstyle">
+          <span class="pagtotal">共&nbsp;{{totalItems}}&nbsp;条</span>
           <el-pagination
-            @size-change="handleSizeChange"
-            @current-change="handleCurrentChange"
-            :current-page="currentPage"
-            :page-sizes="[10, 20, 30, 50]"
             :page-size="pageSize"
-            layout="total, sizes, prev, pager, next, jumper"
+            :pager-count="7"
+            layout="prev, pager, next"
+            @current-change="handleCurrentChange"
             :total="totalItems"
           ></el-pagination>
         </div>
@@ -117,7 +115,13 @@
   </div>
 </template>
 <script>
-import { GET_ID } from "@/constants";
+import {
+  GET_ID,
+  DDOS_EVENT,
+  DDOS_ATTACK,
+  DDOS_DATA,
+  RESOURCE_LIST
+} from "@/constants";
 import moment from "moment";
 export default {
   data() {
@@ -141,14 +145,6 @@ export default {
       startTime: this.getDateString(
         new Date(new Date().getTime() - 24 * 60 * 60 * 1000)
       ),
-      // endTimeCC: this.getDateString(new Date()),
-      // startTimeCC: this.getDateString(
-      //   new Date(new Date().getTime() - 24 * 60 * 60 * 1000)
-      // ),
-      // endTimeService: this.getDateString(new Date()),
-      // startTimeService: this.getDateString(
-      //   new Date(new Date().getTime() - 24 * 60 * 60 * 1000)
-      // ),
       tableDataEnd: [],
       period: 3600 //统计粒度，取值[300(5分鐘)，3600(小时)，86400(天)]
     };
@@ -164,9 +160,6 @@ export default {
         arr.push(moment(d).format("MM-DD"));
       }
       this.timey = arr;
-
-      // this.startTime = this.getDateString(value[0]);
-      // this.endTime = this.getDateString(value[1]);
       this.startTime = moment(value[0]).format("YYYY-MM-DD HH:mm:ss"); //格式处理
       this.endTime = moment(value[1]).format("YYYY-MM-DD HH:mm:ss"); //格式处理
       this.describeDDoSNetTrend(this.timey);
@@ -194,7 +187,6 @@ export default {
       };
       this.axios.post(GET_ID, params).then(res => {
         let IpList = res.Response.Resource;
-        console.log(IpList);
         for (let i = 0; i < IpList.length; i++) {
           this.inputId = IpList[i].Id;
           this.IpList = IpList[i].IpList;
@@ -209,14 +201,10 @@ export default {
     },
     getData() {
       this.thisTime(1);
-      // for (let index in this.metricNames) {
-      //   this.metricName2 = this.metricNames[index];
-      //   this.describeDDoSNetCount();
-      // }
-      // this.describeDDoSNetEvList();
     },
     // 1.3.获取高防IP专业版资源的DDoS攻击事件列表
     describeDDoSNetEvList() {
+      this.loading = true;
       let params = {
         Version: "2018-07-09",
         // Region: '',
@@ -227,8 +215,7 @@ export default {
         //Limit: '',  //一页条数，填0表示不分页
         //Offset: ''  //页起始偏移，取值为(页码-1)*一页条数
       };
-      this.axios.post("dayu2/DescribeDDoSNetEvList", params).then(res => {
-        // console.log(res)
+      this.axios.post(DDOS_EVENT, params).then(res => {
         this.tableDataOfDescribeDDoSNetEvList = res.Response.Data;
         this.loading = false;
       });
@@ -245,8 +232,7 @@ export default {
         MetricName: this.metricName2 //指标，取值[traffic（攻击协议流量, 单位KB）, pkg（攻击协议报文数）, num（攻击事件次数）]
         // metricName2: "traffic",
       };
-      this.axios.post("dayu2/DescribeDDoSNetCount", params).then(res => {
-        // console.log(res)
+      this.axios.post(DDOS_ATTACK, params).then(res => {
         if (this.metricName2 == "traffic") {
           this.traffictable = res.data;
         } else if (this.metricName2 == "pkg") {
@@ -268,7 +254,7 @@ export default {
         StartTime: this.startTime,
         EndTime: this.endTime
       };
-      this.axios.post("dayu2/DescribeDDoSNetTrend", params).then(res => {
+      this.axios.post(DDOS_DATA, params).then(res => {
         if (this.metricName == "bps") {
           this.drawLine(res.Response.Data, date);
         } else {
@@ -285,7 +271,7 @@ export default {
       if (this.resourceId != "" && this.resourceId != null) {
         params["IdList.0"] = this.resourceId;
       }
-      this.axios.post("dayu2/DescribeResourceList", params).then(res => {
+      this.axios.post(RESOURCE_LIST, params).then(res => {
         // console.log(res)
       });
     },
@@ -551,6 +537,25 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+.Right-style {
+  display: flex;
+  justify-content: flex-end;
+
+  .esach-inputL {
+    width: 300px;
+    margin-right: 20px;
+  }
+}
+.pagstyle {
+  padding: 20px;
+
+  .pagtotal {
+    font-size: 13px;
+    font-weight: 400;
+    color: #565656;
+    line-height: 32px;
+  }
+}
 .child >>> .el-tabs__nav-wrap {
   padding: 0 !important;
 }

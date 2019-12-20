@@ -37,7 +37,7 @@
             <!-- 业务列表 -->
 
 
-            <el-table :data="resourceList.slice((currentPage-1)*pageSize,currentPage*pageSize)" v-if="listResouse=='resourceList'?false:true" v-loading='loading'>
+            <el-table :data="resourceList.slice((currentPage-1)*pageSize,currentPage*pageSize)" v-if="listResouse=='resourceList'?false:true" v-loading='loading' height="450">
               <el-table-column prop="Record" label="CNAME/ID">
 
               <template slot-scope="scope" >
@@ -46,12 +46,6 @@
                       </span>
                     </template>
                   </el-table-column>
-                <!-- <template slot-scope="scope">
-                  <span>4fsf4sers.daymsf.com</span><br/>
-                  <a href="#" @click="toDoDetailYewu(scope.row)">{{scope.row.canmeId}}</a><br/>
-                </template> -->
-
-
               </el-table-column>
               <el-table-column prop="domain" :label="$t('DDOS.AssetList.domainName')">
                  <template slot-scope="scope">
@@ -80,7 +74,7 @@
               </el-table-column>
             </el-table>
             <!-- 资源列表 -->
-            <el-table :data="resourceList.slice((currentPage-1)*pageSize,currentPage*pageSize)" v-if="listResouse!='resourceList'?false:true" v-loding='loading'>
+            <el-table :data="resourceList.slice((currentPage-1)*pageSize,currentPage*pageSize)" v-if="listResouse!='resourceList'?false:true" v-loading='loading'>
                 <el-table-column prop="Record" :label="$t('DDOS.AssetList.AssetListName')">
                     <template slot-scope="scope" >
                       <span v-for="(item,index) in scope.row.Record" >
@@ -162,14 +156,13 @@
             <!-- 业务列表详情弹框 -->
             <yewuListModel :isShow="dialogYewuModel" @closeListDetailYw="closeListDetailYw"/>
           </div>
-          <div class="tabListPage">
+          <div class="Right-style pagstyle">
+            <span class="pagtotal">共&nbsp;{{totalItems}}&nbsp;条</span>
             <el-pagination
-              @size-change="handleSizeChange"
-              @current-change="handleCurrentChange"
-              :current-page="currentPage"
-              :page-sizes="[10, 20, 30, 50]"
               :page-size="pageSize"
-              layout="total, sizes, prev, pager, next, jumper"
+              :pager-count="7"
+              layout="prev, pager, next"
+              @current-change="handleCurrentChange"
               :total="totalItems"
             ></el-pagination>
           </div>
@@ -240,9 +233,6 @@ export default {
     //this.describeDDoSPolicy()//获取DDoS高级策略接口
     // this.describeRuleSets(); //获取资源的规则数接口
   },
-  // mounted() {
-  //   this.getData1();
-  // },
   methods: {
     //获取DDoS高级策略接口
     describeDDoSPolicy() {
@@ -251,10 +241,7 @@ export default {
         Business: "net"
       };
       this.axios.post(DDOSPOLICY_CONT, params).then(res => {
-        //console.log(params)
-        console.log(res);
         this.DDosPolicyList = res.Response.DDosPolicyList;
-        console.log(this.DDosPolicyList);
       });
     },
     //获取资源的规则数接口
@@ -272,12 +259,12 @@ export default {
       };
 
       this.axios.post(RULESETS_CONT, params).then(res => {
-        console.log(params);
-        console.log(res);
+        
       });
     },
     //获取资源列表接口
     describeResourceList() {
+      this.loading = true;
       let params = {
         Version: "2018-07-09",
         Business: "net",
@@ -298,18 +285,8 @@ export default {
           }
         }
         // 1.2 输入框参数
-
-
-
-      }else if(this.comingSoon==true){
-
-      }else if(this.tableDataName!=null){
-
-
       }
-      
       this.axios.post(RESOURCE_LIST, params).then(res => {
-        console.log(params, res);
         this.resourceList = res.Response.ServicePacks;
         this.totalItems = this.resourceList.length;
         if (this.totalItems > this.pageSize) {
@@ -352,12 +329,10 @@ export default {
     },
     // 分页开始
     handleSizeChange(val) {
-      console.log(`每页 ${val} 条`);
       this.pageSize = val;
       this.handleCurrentChange(this.currentPage);
     },
     handleCurrentChange(val) {
-      console.log(`当前页: ${val}`);
       this.currentPage = val;
       //需要判断是否检索
       if (!this.flag) {
@@ -385,8 +360,6 @@ export default {
     //资产列表详情
     toDoDetailResouse(scopeRow) {
       this.dialogResouseList = true;
-      // this.resouseOrYw = this.listResouse;
-      console.log(scopeRow);
       this.$nextTick(() => {
         this.$refs.addOrUpdate.init(scopeRow);
       });
@@ -443,6 +416,25 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+.Right-style {
+  display: flex;
+  justify-content: flex-end;
+
+  .esach-inputL {
+    width: 300px;
+    margin-right: 20px;
+  }
+}
+.pagstyle {
+  padding: 20px;
+
+  .pagtotal {
+    font-size: 13px;
+    font-weight: 400;
+    color: #565656;
+    line-height: 32px;
+  }
+}
 .wrap >>> .el-tabs__nav-wrap{
   background: white;
   padding: 0 15px;

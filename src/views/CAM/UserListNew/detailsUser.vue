@@ -103,6 +103,16 @@
               </template>
             </el-table-column>
           </el-table>
+          <div class="Right-style pagstyle">
+            <span class="pagtotal">共&nbsp;{{TotalCounts}}&nbsp;{{$t("CAM.strip")}}</span>
+            <el-pagination
+              :page-size="pagesizes"
+              :pager-count="7"
+              layout="prev, pager, next"
+              @current-change="handleCurrentChanges"
+              :total="TotalCounts"
+            ></el-pagination>
+          </div>
         </el-tab-pane>
         <el-tab-pane :label="groupNum" name="second">
           <el-button
@@ -143,6 +153,16 @@
               </template>
             </el-table-column>
           </el-table>
+          <div class="Right-style pagstyle">
+            <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;{{$t("CAM.strip")}}</span>
+            <el-pagination
+              :page-size="pagesize"
+              :pager-count="7"
+              layout="prev, pager, next"
+              @current-change="handleCurrentChange"
+              :total="TotalCount"
+            ></el-pagination>
+          </div>
         </el-tab-pane>
         <!-- <el-tab-pane label="安全" name="third">{{$t('CAM.userList.RoleManagement')}}</el-tab-pane>
         <el-tab-pane label="API密钥" name="fourth">{{$t('CAM.userList.compensation')}}</el-tab-pane>
@@ -241,7 +261,8 @@ import {
   REMOVEGROUP_USER,
   DELETE_USER,
   USER_LIST,
-  UPDATA_USER
+  UPDATA_USER,
+  DEL_USERTOGROUP
 } from "@/constants";
 // import Subscribe from './components/subscribeNew'
 import { parse } from "path";
@@ -252,6 +273,12 @@ export default {
   },
   data() {
     return {
+      TotalCount: 0,
+      pagesize: 10,
+      currpage: 1,
+      TotalCounts: 0,
+      pagesizes: 10,
+      currpages: 1,
       infoLoad: true,
       ConsoleLogin: {
         1: "可以登录控制台",
@@ -289,34 +316,53 @@ export default {
     //对手机号进行判断
     tel: function() {
       var phone = /^1[345789]\d{9}$/;
-      if (!phone.test(this.ruleForm.PhoneNum)) {
-        // alert("请输入正确的手机号");
-        this.$message({
-          type: "error",
-          message: "请输入正确的手机号!"
-        });
+      if (this.ruleForm.PhoneNum != "") {
+        if (!phone.test(this.ruleForm.PhoneNum)) {
+          this.$message({
+            type: "error",
+            message: "请输入正确的手机号!"
+          });
+        }
       }
     },
     //对邮箱进行判断
     email: function() {
       var email = /^[A-Za-z\d]+([-_.][A-Za-z\d]+)*@([A-Za-z\d]+[-.])+[A-Za-z\d]{2,4}$/;
-      if (!email.test(this.ruleForm.Email)) {
-        this.$message({
-          type: "error",
-          message: "请输入正确的邮箱!"
-        });
+      if (this.ruleForm.Email != "") {
+        if (!email.test(this.ruleForm.Email)) {
+          this.$message({
+            type: "error",
+            message: "请输入正确的邮箱!"
+          });
+        }
       }
     },
+
     //编辑用户
     sureUpdata() {
       var phone = /^1[345789]\d{9}$/;
       var email = /^[A-Za-z\d]+([-_.][A-Za-z\d]+)*@([A-Za-z\d]+[-.])+[A-Za-z\d]{2,4}$/;
-      if (
-        !phone.test(this.ruleForm.PhoneNum) ||
-        !email.test(this.ruleForm.Email)
-      ) {
-        this.$message.error("编辑失败,手机号或邮箱输入有误！");
-        this.updataUser = true;
+      if (this.ruleForm.PhoneNum != "" && this.ruleForm.Email != "") {
+        if (
+          !phone.test(this.ruleForm.PhoneNum) ||
+          !email.test(this.ruleForm.Email)
+        ) {
+          this.$message.error("编辑失败,手机号或邮箱输入有误！");
+          this.updataUser = true;
+        } else {
+          let params = {
+            Version: "2019-01-16",
+            Name: this.ruleForm.Name,
+            Remark: this.ruleForm.Remark,
+            PhoneNum: this.ruleForm.PhoneNum,
+            Email: this.ruleForm.Email
+          };
+          this.axios.post(UPDATA_USER, params).then(res => {
+            this.init();
+          });
+          this.$message("编辑成功");
+          this.updataUser = false;
+        }
       } else {
         let params = {
           Version: "2019-01-16",
@@ -356,7 +402,7 @@ export default {
       this.axios
         .post(DELETE_USER, params)
         .then(data => {
-          console.log(data);
+          this.$router.push("/UserListNew");
         })
         .then(() => {
           let delparams = {
@@ -377,7 +423,6 @@ export default {
       this.delDialog = false;
     },
     deleteUser() {
-      console.log(this.userData);
       this.delDialog = true;
     },
     //获取用户详情数据
@@ -407,8 +452,13 @@ export default {
         };
         this.axios.post(QUERY_POLICY, ploicyParams).then(res => {
           if (res != "") {
+            console.log(res);
             this.loading = false;
-            this.StrategyData = res.Response.List;
+            this.StrategyData = res.Response.List.slice(
+              (this.currpages - 1) * this.pagesizes,
+              this.currpages * this.pagesizes
+            );
+            this.TotalCounts = res.Response.List.length;
             this.totalNum = "权限(" + res.Response.List.length + ")";
           } else {
             this.loading = false;
@@ -420,6 +470,10 @@ export default {
         });
       });
     },
+    handleCurrentChanges(val) {
+      this.currpages = val;
+      this.ploicyData();
+    },
     //初始化用户列表
     userLists() {
       let userList = {
@@ -429,6 +483,7 @@ export default {
     },
     //获取每一个子用户下的用户组
     groupListData() {
+      this.loading = true;
       let params = {
         Version: "2019-01-16",
         Name: this.$route.query.detailsData
@@ -440,10 +495,19 @@ export default {
           Uid: this.userData.Uid
         };
         this.axios.post(RELATE_USER, groupParams).then(res => {
-          this.groupData = res.Response.GroupInfo;
-          this.groupNum = "组(" + this.groupData.length + ")";
+          this.TotalCount = res.Response.GroupInfo.length;
+          this.groupData = res.Response.GroupInfo.slice(
+            (this.currpage - 1) * this.pagesize,
+            this.currpage * this.pagesize
+          );
+          this.groupNum = "组(" + res.Response.GroupInfo.length + ")";
+          this.loading = false;
         });
       });
+    },
+    handleCurrentChange(val) {
+      this.currpage = val;
+      this.groupListData();
     },
     //确定解除策略
     moveStrategy() {
@@ -460,6 +524,7 @@ export default {
           };
           this.axios.post(REMOVEBIND_USER, params).then(data => {
             this.ploicyData();
+            this.$message("批量解除成功");
           });
         });
         this.StrategyLoading = false;
@@ -473,6 +538,7 @@ export default {
         this.axios.post(REMOVEBIND_USER, params).then(data => {
           console.log(data);
           this.ploicyData();
+          this.$message("解除成功");
         });
         this.StrategyLoading = false;
       }
@@ -500,26 +566,25 @@ export default {
           groupId.unshift(item.GroupId);
         });
         groupId.forEach(item => {
-          let params = {
-            Version: "2019-01-16",
-            GroupId: item
-          };
-          this.axios.post(REMOVEGROUP_USER, params).then(data => {
-            this.groupListData();
-          });
+          this.delGroup(item);
         });
         this.GroupLoading = false;
       }
       if (this.groupTitle == "确认移出") {
-        let params = {
-          Version: "2019-01-16",
-          GroupId: this.GroupId
-        };
-        this.axios.post(REMOVEGROUP_USER, params).then(data => {
-          this.groupListData();
-        });
+        this.delGroup(this.GroupId);
         this.GroupLoading = false;
       }
+    },
+    delGroup(val) {
+      let params = {
+        Version: "2019-01-16",
+        "Info.0.Uid": this.userData.Uid,
+        "Info.0.GroupId": val
+      };
+      this.axios.post(DEL_USERTOGROUP, params).then(data => {
+        this.groupListData();
+        this.$message('移出成功')
+      });
     },
     //当前一行移出组
     removeGroup(val) {
@@ -579,12 +644,6 @@ export default {
       this.delDialog = false;
       this.updataUser = false;
     },
-    //  suerClose(){
-    //    this.flag = false
-    // },
-    // confirm(){
-    //     this.flag = false;
-    // },
     bindMesg() {
       this.$message({
         type: "info",
@@ -603,6 +662,20 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+.Right-style {
+  display: flex;
+  justify-content: flex-end;
+}
+.pagstyle {
+  padding: 20px;
+
+  .pagtotal {
+    font-size: 13px;
+    font-weight: 400;
+    color: #565656;
+    line-height: 32px;
+  }
+}
 .tabs {
   background: white;
   padding: 0 20px;

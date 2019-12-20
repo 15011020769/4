@@ -7,8 +7,8 @@
           &nbsp;(共{{num}}条)
         </p>
         <div class="left-main border">
-          <div class="seek">
-            <el-input v-model="input" placeholder="请输入内容" @change="_inpVal"></el-input>
+          <div class="seek" style="width:100%;">
+            <el-input v-model="input" placeholder="请输入内容" @change="_inpVal" style="width:100%;"></el-input>
             <p>
               <i class="el-icon-search" @click="_serach"></i>
             </p>

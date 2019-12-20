@@ -1,6 +1,6 @@
 <template>
   <div class="child">
-    <div class="mainConList">
+    <div class="mainConList" v-loading="loading">
       <div class="mainConListAll mainConListOne">
         <div class="newClear">
           <el-button-group class="buttonGroupAll">
@@ -48,13 +48,14 @@
   </div>
 </template>
 <script>
-import { GET_ID} from '@/constants'
+import { GET_ID, RESOURCE_LIST, STATIC_LIST } from "@/constants";
 import moment from "moment";
 export default {
   data() {
     return {
+      loading: true,
       activeName2: "traffic", //业务-二级tab标识
-      IpList:'',
+      IpList: "",
       inputIdService: "",
       metricNameService: "traffic", //指标名，取值：traffic表示流量带宽，pkg表示包速率
       metricNameServices: ["traffic", "pkg"],
@@ -79,11 +80,6 @@ export default {
   },
   watch: {
     dateChoice3: function(value) {
-      // console.log(this.getDateString(value[0]))
-      // this.startTimeService = this.getDateString(value[0]);
-      // this.endTimeService = this.getDateString(value[1]);
-      // this.getDataService();
-
       this.periodService = 86400;
       var num = value[1].getTime() - value[0].getTime(); //计算时间戳的差
       var arr = [];
@@ -101,7 +97,7 @@ export default {
 
   created() {
     this.gettableshow();
-    this.GetID()
+    this.GetID();
   },
   methods: {
     gettableshow() {
@@ -115,18 +111,19 @@ export default {
         this.describeBaradData();
       }
     },
-     //获取资源的IP列表
+    //获取资源的IP列表
     GetID() {
+      this.loading = true;
       let params = {
         Version: "2018-07-09",
-        Business: "net",
+        Business: "net"
       };
       this.axios.post(GET_ID, params).then(res => {
-        let IpList = res.Response.Resource
-        // console.log(IpList)
-        for(let i = 0 ; i < IpList.length;i++){
-            this.inputIdService = IpList[i].Id
-            this.IpList = IpList[i].IpList
+        let IpList = res.Response.Resource;
+        for (let i = 0; i < IpList.length; i++) {
+          this.inputIdService = IpList[i].Id;
+          this.IpList = IpList[i].IpList;
+          this.loading = false;
         }
       });
     },
@@ -180,12 +177,12 @@ export default {
     },
     // 业务-二级tab切换
     handleClick2(value) {
-      console.log(value.name);
       this.metricNameService = value.name;
       this.describeTransmitStatis();
     },
     // 3.2.获取业务转发统计数据
     describeTransmitStatis() {
+      this.loading = true;
       let params = {
         Version: "2018-07-09",
         Business: "net",
@@ -195,16 +192,15 @@ export default {
         StartTime: this.startTimeService,
         EndTime: this.endTimeService
       };
-      this.axios.post("dayu2/DescribeTransmitStatis", params).then(res => {
+      this.axios.post(STATIC_LIST, params).then(res => {
         this.InDataList = res.Response.InDataList;
         this.OutDataList = res.Response.OutDataList;
         if (this.metricNameService == "traffic") {
           this.drawLine4(this.timey, this.InDataList, this.OutDataList);
-   
         } else if (this.metricNameService == "pkg") {
           this.drawLine5(this.timey, this.InDataList, this.OutDataList);
-
         }
+        this.loading = false;
       });
     },
     // 业务资源id变化时，重新获取数据
@@ -222,7 +218,7 @@ export default {
       if (this.resourceId != "" && this.resourceId != null) {
         params["IdList.0"] = this.resourceId;
       }
-      this.axios.post("dayu2/DescribeResourceList", params).then(res => {
+      this.axios.post(RESOURCE_LIST, params).then(res => {
         // console.log(res)
       });
     },
@@ -312,7 +308,6 @@ export default {
         arr.unshift(time[i]); //属性
       }
       arr.splice(arr.length - 1, 1);
-      // console.log(arr)
       // 基于准备好的dom，初始化echarts实例
       let myChart4 = this.$echarts.init(document.getElementById("myChart4"));
       // 绘制图表
@@ -399,7 +394,6 @@ export default {
         arr.unshift(time[i]); //属性
       }
       arr.splice(arr.length - 1, 1);
-      // console.log(arr)
       // 基于准备好的dom，初始化echarts实例
       let myChart5 = this.$echarts.init(document.getElementById("myChart5"));
       // 绘制图表
@@ -506,38 +500,38 @@ export default {
   box-sizing: border-box;
   margin-bottom: 20px;
 }
-.buttonGroupAll{
-  float:left;
-  button{
-    height:30px;
+.buttonGroupAll {
+  float: left;
+  button {
+    height: 30px;
     line-height: 30px;
-    padding:0 16px;
+    padding: 0 16px;
     border-radius: 0;
   }
 }
-.newDataTime{
-  float:left;
-  height:30px;
+.newDataTime {
+  float: left;
+  height: 30px;
   line-height: 30px;
   border-radius: 0;
-  .el-input__icon{
-    line-height:26px;
-  }
-  .el-range-separator{
+  .el-input__icon {
     line-height: 26px;
-    width:7%;
+  }
+  .el-range-separator {
+    line-height: 26px;
+    width: 7%;
   }
 }
-::v-deep .el-range-editor.el-input__inner{
-  height:30px;
+::v-deep .el-range-editor.el-input__inner {
+  height: 30px;
   line-height: 30px;
 }
-::v-deep .el-range__icon{
+::v-deep .el-range__icon {
   line-height: 26px;
 }
-::v-deep .el-range-separator{
+::v-deep .el-range-separator {
   line-height: 26px;
-  width:7%;
+  width: 7%;
 }
 ::v-deep .newDataTimeTwo {
   float: left;
@@ -545,16 +539,16 @@ export default {
   border-radius: 0 !important;
   margin-left: -1px;
 }
-::v-deep input.el-input__inner{
-  height:30px;
+::v-deep input.el-input__inner {
+  height: 30px;
   border-radius: 0;
   line-height: 30px;
 }
-.ddosAttackSelect1{
-  height:30px;
+.ddosAttackSelect1 {
+  height: 30px;
   line-height: 30px;
-  ::v-deep div.el-input{
-    height:30px;
+  ::v-deep div.el-input {
+    height: 30px;
   }
 }
 </style>

@@ -35,6 +35,7 @@
   </div>
 </template>
 <script>
+import VueCookie from "vue-cookie";
 import { SCH_KMS,CEL_KMS } from "@/constants";
 export default {
   props:{
@@ -69,14 +70,13 @@ export default {
       
       let params = {
         Version: '2019-01-18',
-        Region: 'ap-taipei',
+        Region: VueCookie.get("regionv2"),
         KeyId: this.contentDialog[3],
         PendingWindowInDays:this.thisNumber
       };
       this.axios.post(SCH_KMS, params).then(res => {
         this.outTime= this.timestampToTime(res.Response.DeletionDate);
         this.$emit('openDeleteSure',[this.thisShow,this.outTime]);
-        // console.log(this.timestampToTime(res.Response.DeletionDate));
         this.$parent.getData();
         
       });
@@ -87,11 +87,10 @@ export default {
       this.$emit('closeDeleteSure',this.thisShow);
       let params = {
         Version: '2019-01-18',
-        Region: 'ap-taipei',
+        Region: VueCookie.get("regionv2"),
         KeyId: this.contentDialog[3],
       };
       this.axios.post(CEL_KMS, params).then(res => {
-        // console.log(res.Response);
         this.$parent.getData();
       });
     },

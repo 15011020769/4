@@ -1,0 +1,184 @@
+<template>
+  <div>
+    <div class="wrapper">
+      <div class="topTip">创建成功的日志下载任务，只保留7天；7天后日志文件将会删除，请及时下载。</div>
+      <div class="taskListCon">
+        <el-table :data="tableDataBegin.slice((currentPage-1)*pageSize,currentPage*pageSize)">
+          <el-table-column prop="num" label="序号" width></el-table-column>
+          <el-table-column prop="taskName" label="任务名称" width></el-table-column>
+          <el-table-column prop="domin" label="域名"></el-table-column>
+          <el-table-column prop="logNum" label="日志条目数"></el-table-column>
+          <el-table-column prop="createTime" label="创建时间"></el-table-column>
+          <el-table-column prop="outTime" label="过期时间"></el-table-column>
+          <el-table-column prop="status" label="状态"></el-table-column>
+          <el-table-column prop="action" label="操作" width="180">
+            <template slot-scope="scope">
+              <el-button type="text" :disabled="true" size="small" @click="downLoad(scope.$index, scope.row)">下载</el-button>
+              <!-- <el-button @click.native.prevent="deleteRow(scope.$index, tableDataBegin)" type="text" size="small">移除</el-button> -->
+              <el-popover
+                ref="popovers"
+                placement="bottom"
+                width="280"
+                :value="deleteVisible">
+                <div class="prpoDialog">
+                  <h1>确定删除此域名？</h1>
+                  <p>删除后源站IP将会遭受恶意攻击的威胁。</p>
+                </div>
+                <div style="text-align: right; margin: 0">
+                  <el-button size="mini" type="text" @click="deleteVisible = false">取消</el-button>
+                  <el-button type="primary" size="mini" @click="deleteVisibleSure(scope.$index)">确定</el-button>
+                </div>
+                <el-button slot="reference" style="color:#3E8EF7;" class="deleteBtn">删除</el-button>
+              </el-popover>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+      <div class="Right-style pagstyle tabListPage">
+        <span class="pagtotal">共&nbsp;{{totalItems}}&nbsp;条</span>
+        <el-pagination
+          :page-size="pageSize"
+          layout="prev, pager, next"
+          @current-change="handleCurrentChange"
+          :total="totalItems"
+        ></el-pagination>
+      </div>
+    </div>
+  </div>
+</template>
+<script>
+export default {
+  data() {
+    return {
+      tableDataBegin: [
+        {
+          num: "1",
+          taskName: "1",
+          domin: "1",
+          logNum: "1",
+          createTime: "1",
+          outTime: "1",
+          status: "1"
+        },
+        {
+          num: "1",
+          taskName: "1",
+          domin: "1",
+          logNum: "1",
+          createTime: "1",
+          outTime: "1",
+          status: "1"
+        },
+        {
+          num: "1",
+          taskName: "1",
+          domin: "1",
+          logNum: "1",
+          createTime: "1",
+          outTime: "1",
+          status: "1"
+        }
+      ], //表格数据
+      currentPage: 1, //当前页
+      pageSize: 10, //每页长度
+      totalItems: 0, //总长度
+      deleteVisible:false,
+    };
+  },
+  mounted() {
+    this.getData();
+  },
+  methods: {
+    //获取数据
+    getData() {
+      this.totalItems = this.tableDataBegin.length;
+    },
+    // 分页开始
+    handleSizeChange(val) {
+      // console.log(`每页 ${val} 条`);
+      this.pageSize = val;
+      this.handleCurrentChange(this.currentPage);
+    },
+    handleCurrentChange(val) {
+      // console.log(`当前页: ${val}`);
+      this.currentPage = val;
+    },
+    //下载按钮
+    downLoad() {},
+    //删除确定按钮
+    deleteVisibleSure(index){
+      console.log(this.$refs['popovers'])
+      console.log(this.deleteVisible)
+      // this.$refs['popovers'].addEventListener('click', function(e) {
+        this.deleteVisible=false;
+      // })
+    },
+    
+  }
+};
+</script>
+<style lang="scss" scoped>
+.newClear:after {
+  display: block;
+  content: "";
+  clear: both;
+}
+.topTip {
+  font-size: 12px;
+  line-height: inherit;
+  padding: 10px 30px 10px 20px;
+  vertical-align: middle;
+  color: #003b80;
+  border: 1px solid #97c7ff;
+  background: #e5f0ff;
+}
+.taskListCon {
+  min-height: 450px;
+  background-color: #fff;
+  margin-top: 20px;
+}
+.tabListPage {
+  text-align: right;
+  background-color: #fff;
+  border-top: 1px solid #ddd;
+  padding-top: 8px;
+  height: 50px;
+}
+
+.Right-style {
+  display: flex;
+  justify-content: flex-end;
+
+  .esach-inputL {
+    width: 300px;
+    margin-right: 20px;
+  }
+}
+.pagstyle {
+  // padding: 20px;
+  border-top: 1px solid #ddd;
+  background-color: #fff;
+  .pagtotal {
+    font-size: 13px;
+    font-weight: 400;
+    color: #565656;
+    line-height: 32px;
+  }
+}
+.prpoDialog {
+  text-align: center;
+  h1 {
+    margin: 15px 0;
+    font-size: 14px;
+    color: #000;
+    font-weight: 600;
+  }
+  p {
+    font-size: 12px;
+  }
+}
+.deleteBtn{
+  border:none;
+  font-size:12px;
+}
+</style>

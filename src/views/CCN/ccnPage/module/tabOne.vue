@@ -4,13 +4,13 @@
     <div class="btn">
       <el-button type="text" @click="newVisible = true">{{$t("CCN.tabs.tab1new")}}</el-button>
     </div>
-    <div class="table">
-      <el-table :data="tableData" style="width: 100%" v-loading="loadShow">
+    <div class="table" style="margin-bottom:20px;">
+      <el-table :data="tableData" style="width: 100%" v-loading="loadShow" height="450">
         <template slot="empty">{{$t("CCN.tabs.tab1no")}}</template>
         <el-table-column prop="InstanceId" :label="$t('CCN.tabs.tab1tr1')" width>
           <template slot-scope="scope">
             <!-- <a href="../CCN/index"  target="_blank">{{ scope.row.InstanceId }}</a> -->
-            <a href="#">{{ scope.row.InstanceId }}</a>
+            <a href="javascript:void(0);">{{ scope.row.InstanceId }}</a>
             <p class="edit">{{ scope.row.InstanceName }}</p>
           </template>
         </el-table-column>
@@ -20,11 +20,20 @@
             <div v-else-if="scope.row.State=='PENDING'" class="off_color">{{$t('CCN.tabs.hasAp')}}</div>
             <div v-else-if="scope.row.State=='EXPIRED'" class="close_color">{{$t('CCN.tabs.hasOu')}}</div>
             <div v-else-if="scope.row.State=='REJECTED'" class="close_color">{{$t('CCN.tabs.hasJ')}}</div>
-            <div v-else-if="scope.row.State=='DELETED'" class="close_color">{{$t('CCN.tabs.hasDel')}}</div>
+            <div
+              v-else-if="scope.row.State=='DELETED'"
+              class="close_color"
+            >{{$t('CCN.tabs.hasDel')}}</div>
             <div v-else-if="scope.row.State=='FAILED'" class="close_color">{{$t('CCN.tabs.error1')}}</div>
             <div v-else-if="scope.row.State=='ATTACHING'" class="off_color">{{$t('CCN.tabs.con1')}}</div>
-            <div v-else-if="scope.row.State=='DETACHING'" class="off_color">{{$t('CCN.tabs.uncon1')}}</div>
-            <div v-else-if="scope.row.State=='DETACHFAILED'" class="close_color">{{$t('CCN.tabs.unconer')}}</div>
+            <div
+              v-else-if="scope.row.State=='DETACHING'"
+              class="off_color"
+            >{{$t('CCN.tabs.uncon1')}}</div>
+            <div
+              v-else-if="scope.row.State=='DETACHFAILED'"
+              class="close_color"
+            >{{$t('CCN.tabs.unconer')}}</div>
             <!-- <div v-else-if="scope.row.State==''" class="off_color"></div> -->
           </template>
         </el-table-column>
@@ -35,14 +44,13 @@
           </template>
         </el-table-column>
         <el-table-column prop="InstanceUin" :label="$t('CCN.tabs.tab1tr4')" width>
-          <template slot-scope="" >{{$t('CCN.tabs.myId')}}</template>
+          <template slot-scope>{{$t('CCN.tabs.myId')}}</template>
         </el-table-column>
         <el-table-column prop="AttachedTime" :label="$t('CCN.tabs.tab1tr5')" width>
-          <template slot-scope="scope" >{{ scope.row.AttachedTime }}
-          </template>
+          <template slot-scope="scope">{{ scope.row.AttachedTime }}</template>
         </el-table-column>
         <el-table-column prop="InstanceRegion" :label="$t('CCN.tabs.tab1tr6')" width>
-          <template slot-scope="scope" >
+          <template slot-scope="scope">
             <div v-if="scope.row.InstanceRegion=='ap-guangzhou'">{{$t('CCN.tabs.gz')}}</div>
             <div v-else-if="scope.row.InstanceRegion=='ap-taipei'">{{$t('CCN.tabs.twtb')}}</div>
             <div v-else-if="scope.row.InstanceRegion=='ap-chengdu'">{{$t('CCN.tabs.cd')}}</div>
@@ -62,9 +70,7 @@
     <el-dialog :title="$t('CCN.tabs.tab1')" :visible.sync="newVisible" class="newDialog">
       <el-form :model="form">
         <div>
-          <span>
-            {{$t("CCN.tabs.tab1new1")}}
-          </span>
+          <span>{{$t("CCN.tabs.tab1new1")}}</span>
           <div class="body-con">
             <div class="tr-con" v-for="(item, index) in formArr" :key="index">
               <td>
@@ -79,7 +85,11 @@
                 </el-select>
               </td>
               <td>
-                <el-select v-model="form.instanceId" :placeholder="$t('CCN.tabs.select')" :no-data-text="$t('CCN.total.tdno')">
+                <el-select
+                  v-model="form.instanceId"
+                  :placeholder="$t('CCN.tabs.select')"
+                  :no-data-text="$t('CCN.total.tdno')"
+                >
                   <el-option
                     v-for="(item2,index2) in vpcs"
                     :key="index2"
@@ -88,11 +98,7 @@
                   ></el-option>
                 </el-select>
               </td>
-              <!-- <td>
-                <a v-on:click="removeRow(index);" v-show="index >= 0">{{$t("CCN.total.td3")}}</a>
-              </td> -->
             </div>
-            <!-- <a v-on:click="addRow()" v-show="formArr.length < 5">添加</a> -->
           </div>
         </div>
       </el-form>
@@ -102,11 +108,7 @@
       </div>
     </el-dialog>
     <!-- 解除关联模态窗 -->
-    <el-dialog
-      :title="$t('CCN.tabs.tab1del')"
-      :visible.sync="dialogVisible"
-      width="40%"
-    >
+    <el-dialog :title="$t('CCN.tabs.tab1del')" :visible.sync="dialogVisible" width="40%">
       <span>{{$t('CCN.tabs.tab1del1')}}</span>
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="doDelCcnIns()">{{$t('CCN.total.sure')}}</el-button>
@@ -117,152 +119,174 @@
 </template>
 
 <script>
-import { CCN_ATTACHEDINSTANCES_LIST, DETACHCCN_INSTANCES, VPCS_LIST, DIRECTCONNECTGATEWAYS_LIST, ATTACHCCN_INSTANCES } from "@/constants"
+import VueCookie from "vue-cookie";
+import {
+  CCN_ATTACHEDINSTANCES_LIST,
+  DETACHCCN_INSTANCES,
+  VPCS_LIST,
+  DIRECTCONNECTGATEWAYS_LIST,
+  ATTACHCCN_INSTANCES
+} from "@/constants";
 export default {
-  data () {
+  data() {
     return {
-      ccnId: '',
+      ccnId: "",
       newVisible: false,
       dialogVisible: false,
       tableData: [], // 列表数据
       // 解关联模态窗回显数据
       instance: {
-        CcnId: '',
-        InstanceId: '',
-        InstanceRegion: '',
-        InstanceType: ''
+        CcnId: "",
+        InstanceId: "",
+        InstanceRegion: "",
+        InstanceType: ""
       },
       // 添加关联实例，根据私有网络/专线网络查询VPC列表
       vpcs: [],
       // 添加关联实例表单
       form: {
-        instanceType: '',
-        instanceRegion: 'ap-taipei',
-        instanceId: ''
+        instanceType: "",
+        instanceRegion: VueCookie.get("regionv2"),
+        instanceId: ""
       },
-      value: '',
-      input: '',
+      value: "",
+      input: "",
 
       formInfoObj: {
         key: undefined
       },
       formArr: [],
-      loadShow:false,
-    }
+      loadShow: false
+    };
   },
   watch: {
-    'form.instanceType': function (value) {
+    "form.instanceType": function(value) {
       // console.log(value)
-      this.getInstanceIds(value)
+      this.getInstanceIds(value);
     }
   },
-  created () {
-    console.log(this.$route.query)
-    this.ccnId = this.$route.query.ccnId
-    this.getData()
-    this.formArr.push(this.formInfoObj)
+  created() {
+    this.ccnId = this.$route.query.ccnId;
+    this.getData();
+    this.formArr.push(this.formInfoObj);
   },
   methods: {
     // 生产一个新的obj对象
-    copyObj: function () {
+    copyObj: function() {
       var des = {
         key: undefined
-      }
-      return des
+      };
+      return des;
     },
     // 新增一行
-    addRow: function () {
-      var des = this.copyObj()
-      this.formArr.push(des)
+    addRow: function() {
+      var des = this.copyObj();
+      this.formArr.push(des);
     },
     // 删除一行
-    removeRow: function (idx) {
-      this.formArr.splice(idx, 1)
+    removeRow: function(idx) {
+      this.formArr.splice(idx, 1);
     },
     // 初始化数据
-    getData: function () {
-      this.loadShow=true;
+    getData: function() {
+      this.loadShow = true;
       var params = {
-        Version: '2017-03-12',
-        Region: 'ap-taipei',
+        Version: "2017-03-12",
+        Region: VueCookie.get("regionv2"),
         CcnId: this.ccnId
-      }
+      };
       // 查询关联实例列表
       this.axios.post(CCN_ATTACHEDINSTANCES_LIST, params).then(res => {
-        console.log(res)
-        this.tableData = res.Response.InstanceSet
-        this.total = res.Response.TotalCount
-        this.loadShow=false;
-      })
+        this.tableData = res.Response.InstanceSet;
+        this.total = res.Response.TotalCount;
+        this.loadShow = false;
+      });
     },
     // 解除关联模态窗-回显数据
-    delCcnIns: function (ins) {
-      this.instance.CcnId = ins.CcnId
-      this.instance.InstanceId = ins.InstanceId
-      this.instance.InstanceRegion = ins.InstanceRegion
-      this.instance.InstanceType = ins.InstanceType
-      console.log(this.instance)
-      this.dialogVisible = true
+    delCcnIns: function(ins) {
+      this.instance.CcnId = ins.CcnId;
+      this.instance.InstanceId = ins.InstanceId;
+      this.instance.InstanceRegion = ins.InstanceRegion;
+      this.instance.InstanceType = ins.InstanceType;
+      this.dialogVisible = true;
     },
-    doDelCcnIns: function () {
+    doDelCcnIns: function() {
       var params = {
-        Version: '2017-03-12',
-        Region: 'ap-taipei',
+        Version: "2017-03-12",
+        Region: VueCookie.get("regionv2"),
         CcnId: this.instance.CcnId,
-        'Instances.0.InstanceId': this.instance.InstanceId,
-        'Instances.0.InstanceRegion': this.instance.InstanceRegion,
-        'Instances.0.InstanceType': this.instance.InstanceType
-      }
+        "Instances.0.InstanceId": this.instance.InstanceId,
+        "Instances.0.InstanceRegion": this.instance.InstanceRegion,
+        "Instances.0.InstanceType": this.instance.InstanceType
+      };
       this.axios.post(DETACHCCN_INSTANCES, params).then(res => {
-        this.getData()
-      })
-      this.dialogVisible = false
+        this.getData();
+      });
+      this.dialogVisible = false;
     },
     // 查询instanceId
-    getInstanceIds: function (instanceType) {
-      console.log(instanceType)
+    getInstanceIds: function(instanceType) {
       var params = {
-        Version: '2017-03-12',
-        Region: 'ap-taipei'
-      }
-      if (instanceType == 'VPC') { // 私有网络
+        Version: "2017-03-12",
+        Region: VueCookie.get("regionv2")
+      };
+      if (instanceType == "VPC") {
+        // 私有网络
         this.axios.post(VPCS_LIST, params).then(res => {
-          this.vpcs = res.Response.VpcSet
-        })
-      } else if (instanceType == 'DIRECTCONNECT') { // 专线网络
+          this.vpcs = res.Response.VpcSet;
+        });
+      } else if (instanceType == "DIRECTCONNECT") {
+        // 专线网络
         this.axios.post(DIRECTCONNECTGATEWAYS_LIST, params).then(res => {
-          this.vpcs = res.Response.DirectConnectGatewaySet
-        })
+          this.vpcs = res.Response.DirectConnectGatewaySet;
+        });
       }
       // 过滤已存在的实例数据(需要等待上面的接口调用完成再执行)
       setTimeout(() => {
         this.vpcs = this.vpcs.filter(item => {
-          let vpcIdList= this.tableData.map(v => v.InstanceId)
-          return !vpcIdList.includes(item.VpcId)
-        })
+          let vpcIdList = this.tableData.map(v => v.InstanceId);
+          return !vpcIdList.includes(item.VpcId);
+        });
       }, 1000);
     },
     // 新增关联实例
-    attCcnIns: function (ins) {
-      // 关联实例
-      var params = {
-        Version: '2017-03-12',
-        Region: 'ap-taipei',
-        CcnId: this.ccnId,
-        'Instances.0.InstanceId': ins.instanceId,
-        'Instances.0.InstanceRegion': ins.instanceRegion,
-        'Instances.0.InstanceType': ins.instanceType
+    attCcnIns: function(ins) {
+      if (!ins.instanceType) {
+        this.$message("请选择私有网络");
+      } else if (!ins.instanceId) {
+        this.$message("请选择VPC");
+      } else {
+        this.loading = true;
+        // 关联实例
+        var params = {
+          Version: "2017-03-12",
+          Region: VueCookie.get("regionv2"),
+          CcnId: this.ccnId,
+          "Instances.0.InstanceId": ins.instanceId,
+          "Instances.0.InstanceRegion": ins.instanceRegion,
+          "Instances.0.InstanceType": ins.instanceType
+        };
+        this.axios.post(ATTACHCCN_INSTANCES, params).then(res => {
+          if (res.Response.Error == undefined) {
+            this.$message({
+              message: "新增成功",
+              type: "success"
+            });
+          } else {
+            this.$message.error(res.Response.Error.Message);
+          }
+          this.getData();
+        });
+        this.newVisible = false;
+        this.form = {
+          instanceType: "",
+          instanceRegion: VueCookie.get("regionv2"),
+          instanceId: ""
+        };
       }
-      console.log(params)
-      this.axios.post(ATTACHCCN_INSTANCES, params).then(res => {
-        console.log(res)
-        this.getData()
-      })
-      console.log('新建成功')
-      this.newVisible = false
-    },
+    }
   }
-}
+};
 </script>
 <style lang="scss">
 .el-select {
@@ -294,8 +318,8 @@ export default {
     margin-top: 10px;
     min-height: 450px;
     background: #fff;
-    .cell{
-      .el-button{
+    .cell {
+      .el-button {
         padding: 0;
       }
     }

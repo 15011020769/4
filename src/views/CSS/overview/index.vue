@@ -79,7 +79,7 @@
 <script>
 import HeaderCom from "@/components/public/Head";
 import TimeX from "@/components/public/TimeX";
-import { ALL_CITY } from "@/constants";
+import { ALL_CITY, LIVE_DESCRIBE_BILLBANDWIDTHANDFLUXLIST } from "@/constants";
 export default {
   name: "overview",
   data() {
@@ -96,6 +96,7 @@ export default {
   },
   created() {
     this._region();
+    this.describeBillBandwidthAndFluxList();
   },
   methods: {
     handleClick(tab, event) {
@@ -108,6 +109,22 @@ export default {
         this.region = res.data[0].zone;
         this.btnload = false;
       });
+    },
+    //直播计费带宽和流量数据查询
+    describeBillBandwidthAndFluxList() {
+      let params = {
+        Version: '2018-08-01',
+        StartTime: '2019-12-20 00:00:00',
+        EndTime: '2019-12-20 10:56:40',
+        Granularity: 60,
+        //数据粒度，支持如下粒度(默认值：5)：
+        //5：5分钟粒度，（跨度不支持超过1天）
+        //60：1小时粒度（跨度不支持超过一个月）
+        //1440：天粒度（跨度不支持超过一个月）
+      }
+      this.axios.post(LIVE_DESCRIBE_BILLBANDWIDTHANDFLUXLIST, params).then(res => {
+        console.log(res)
+      })
     }
   }
 };

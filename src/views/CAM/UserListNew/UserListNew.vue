@@ -604,7 +604,10 @@ export default {
             "Info.0.Uid": this.Uid,
             "Info.0.GroupId": item.GroupId
           };
-          this.axios.post(ADD_USERTOGROUP, params).then(res => {});
+          this.axios.post(ADD_USERTOGROUP, params).then(res => {
+            this.$message("添加成功");
+            this.init()
+          });
         });
         this.authorization = false;
       }

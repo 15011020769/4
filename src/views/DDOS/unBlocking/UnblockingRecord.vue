@@ -34,14 +34,13 @@
             </el-table-column>
           </el-table>
         </div>
-        <div class="tabListPage">
+        <div class="Right-style pagstyle">
+          <span class="pagtotal">共&nbsp;{{totalItems}}&nbsp;条</span>
           <el-pagination
-            @size-change="handleSizeChange"
-            @current-change="handleCurrentChange"
-            :current-page="currentPage"
-            :page-sizes="[10, 20, 30, 50]"
             :page-size="pageSize"
-            layout="total, sizes, prev, pager, next, jumper"
+            :pager-count="7"
+            layout="prev, pager, next"
+            @current-change="handleCurrentChange"
             :total="totalItems"
           ></el-pagination>
         </div>
@@ -75,7 +74,6 @@ export default {
   },
   watch: {
     dateChoice1: function(value) {
-      console.log(this.getDateString(value[0]));
       this.BeginTime = this.getDateString(value[0]);
       this.EndTime = this.getDateString(value[1]);
       this.describeIpUnBlockList();
@@ -87,14 +85,13 @@ export default {
   methods: {
     // 获取IP解封记录
     describeIpUnBlockList() {
+      this.loading = true;
       let params = {
         Version: "2018-07-09",
         BeginTime: this.BeginTime,
         EndTime: this.EndTime
       };
       this.axios.post(IPUNBlOCKLIST_LIST, params).then(res => {
-        console.log(params);
-        console.log(res);
         this.IpUnBlockList = res.Response.List;
         // 将数据的长度赋值给totalItems
         this.totalItems = res.Response.Total;
@@ -110,13 +107,11 @@ export default {
     },
 
     handleSizeChange(val) {
-      console.log(`每页 ${val} 条`);
       this.pageSize = val;
       this.handleCurrentChange(this.currentPage);
     },
 
     handleCurrentChange(val) {
-      console.log(`当前页: ${val}`);
       this.currentPage = val;
       //需要判断是否检索
       if (!this.flag) {
@@ -155,6 +150,25 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+.Right-style {
+  display: flex;
+  justify-content: flex-end;
+
+  .esach-inputL {
+    width: 300px;
+    margin-right: 20px;
+  }
+}
+.pagstyle {
+  padding: 20px;
+
+  .pagtotal {
+    font-size: 13px;
+    font-weight: 400;
+    color: #565656;
+    line-height: 32px;
+  }
+}
 .newClear:after {
   content: "";
   clear: both;

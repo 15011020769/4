@@ -33,3 +33,6 @@ export const GZJ_REGION = 'cloudaudit2/ListCmqEnableRegion'
 
 //云审计--cos地域
 export const GZJ_COS = 'cloudaudit2/ListCosEnableRegion'
+
+//云审计--查询用户可创建跟踪集数量
+export const GZJ_NUM= 'cloudaudit2/InquireAuditCredit'

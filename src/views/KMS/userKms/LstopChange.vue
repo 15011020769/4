@@ -26,6 +26,7 @@
   </div>
 </template>
 <script>
+import VueCookie from "vue-cookie";
 import { END_KMS,DIS_KMS } from "@/constants";
 export default {
   props:{
@@ -70,19 +71,11 @@ export default {
       this.$emit('startSure',[this.thisShow]);
       let params = {
         Version: '2019-01-18',
-        Region: 'ap-taipei',
+        Region: VueCookie.get("regionv2"),
         KeyId: this.contentDialog[1]
       };
       this.axios.post(END_KMS, params).then(res => {
-        console.log(res.Response);
-        // this.$parent.getData();
         this.$parent.GetList();
-        //查询密钥轮换状态
-        // this.axios.post('kms2/GetKeyRotationStatus', params).then(res => {
-        //   console.log(res.Response);
-        //   this.$emit('startSure',[this.thisShow,res.Response.KeyRotationEnabled]);
-        //  });
-       
       });
       
     },
@@ -92,11 +85,10 @@ export default {
       this.$emit('stopSure',this.thisShow);
       let params = {
         Version: '2019-01-18',
-        Region: 'ap-taipei',
+        Region: VueCookie.get("regionv2"),
         KeyId: this.contentDialog[1]
       };
       this.axios.post(DIS_KMS, params).then(res => {
-        console.log(res.Response);
         this.$parent.GetList();
        
       });

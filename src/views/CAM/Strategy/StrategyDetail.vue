@@ -80,7 +80,7 @@
               <div class="config_table">
                 <el-table
                   v-loading="loading"
-                  :data="policysData"
+                  :data="policysData.slice((currpage - 1) * 10, currpage * 10)"
                   height="300"
                   @selection-change="handleSelectionChange"
                   :row-style="{height:0}"
@@ -138,18 +138,19 @@
                 </el-table>
               </div>
             </div>
-            <div style="background:#fff;padding:10px;display:flex;justify-content: space-between;line-height:30px">
-              
-             <div style="flex:1;display:flex;justify-content: flex-end;">
-          <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;{{$t("CAM.strip")}}</span>
-          <el-pagination
-            :page-size="pagesize"
-            :pager-count="7"
-            layout="prev, pager, next"
-            @current-change="handleCurrentChange"
-            :total="TotalCount"
-          ></el-pagination>
-        </div>
+            <div
+              style="background:#fff;padding:10px;display:flex;justify-content: space-between;line-height:30px"
+            >
+              <div style="flex:1;display:flex;justify-content: flex-end;">
+                <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;{{$t("CAM.strip")}}</span>
+                <el-pagination
+                  :page-size="pagesize"
+                  :pager-count="7"
+                  layout="prev, pager, next"
+                  @current-change="handleCurrentChange"
+                  :total="policysData.length"
+                ></el-pagination>
+              </div>
             </div>
           </el-tab-pane>
           <!-- tab 策略详情页面，关联用户组tab  end -->
@@ -159,7 +160,7 @@
       <el-dialog :visible.sync="dialogVisible" width="72%" :before-close="handleClosePolicy">
         <p class="dialog">{{$t('CAM.strategy.straGroup')}}</p>
         <div>
-          <transfer ref="userTransfer" :PolicyId="policy.PolicyId"></transfer>
+          <transfer ref="userTransfer" :PolicyId="policyID"></transfer>
         </div>
         <p style="text-align:center;margin-top:20px">
           <el-button @click="dialogVisible = false" size="small">取 消</el-button>
@@ -222,9 +223,10 @@ export default {
     return {
       TotalCount: 0, //总条数
       pagesize: 10, // 分页条数
-      currpage: 1 ,// 当前页码
+      currpage: 1, // 当前页码
       activeName: "first",
-      policy: {},
+      policyID: this.$route.query.policy,
+      policy: {}, //详情数据
       policysData: [],
       policysSelData: [],
       table_options: [
@@ -267,7 +269,7 @@ export default {
     this.infoLoad = true;
     const params = {
       Version: "2019-01-16",
-      PolicyId: this.$route.query.policy
+      PolicyId: this.policyID
     };
     this.axios.post(GET_POLICY, params).then(res => {
       this.policy = res.Response;
@@ -276,9 +278,9 @@ export default {
     this.getAttachPolicys();
   },
   methods: {
-    handleCurrentChange(val){
-       this.currpage = val;
-       this.getAttachPolicys();
+    handleCurrentChange(val) {
+      this.currpage = val;
+      // this.getAttachPolicys();
     },
     // 打开 关联用户/用户组 页面
     Relation_user() {
@@ -313,23 +315,30 @@ export default {
     },
     // 策略添加用户/用户组
     attachPolicy() {
-      console.log(this.policysSelData);
       this.$refs.userTransfer.attachPolicy();
       this.dialogVisible = false;
-      this.getAttachPolicys(); // 重新加载策略关联实体列表
+      // 重新加载策略关联实体列表
       this.$refs.userTransfer.clearData(); // 添加完毕时清空数组。
       this.handleFlag = this.$refs.userTransfer.getHandleFlag();
+      this.loading = true;
+      setTimeout(() => {
+        this.getAttachPolicys();
+        this.$message({
+          message: "关联成功",
+          type: "success"
+        });
+      }, 3000);
     },
     // 获取策略关联的实体列表
     getAttachPolicys() {
+      this.loading = true;
       this.selTotal = 0;
       this.policysData = [];
-      let policyId = this.$route.query.policy;
       let params = {
-        Version: '2019-01-16',
-        Page: this.currpage,
-        Rp: this.pagesize,
-        PolicyId: policyId
+        Version: "2019-01-16",
+        Page: 1,
+        Rp: 100,
+        PolicyId: this.policyID
       };
       let entityFilter = this.entityFilter;
       //'All' 表示获取所有实体类型，'User' 表示只获取子账号，'Group' 表示只获取用户组，'Role' 表示只获取角色，默认取 'All'
@@ -339,21 +348,20 @@ export default {
         params["EntityFilter"] = "User|Group";
       }
       this.axios.post(LIST_ENPOLICY, params).then(res => {
+        console.log(res);
         // RelatedType 关联类型。1 用户关联 ； 2 用户组关联
-        this.policysData = res.Response.List
-        this.TotalCount= res.Response.TotalNum
-        this.loading = false
-        console.log(res)
-      })
+        this.policysData = res.Response.List;
+        this.TotalCount = res.Response.TotalNum;
+        this.loading = false;
+      });
     },
     // 解除策略绑定实体
     removePolicyEntity(obj) {
-      let policyId = this.policy.PolicyId;
       if (obj != "" && obj.RelatedType === 1) {
         let paramsUser = {
           Action: "DetachUserPolicy",
           Version: "2019-01-16",
-          PolicyId: policyId,
+          PolicyId: this.policyID,
           DetachUin: obj.Uin
         };
         this.removeUserPolicy(paramsUser);
@@ -362,7 +370,7 @@ export default {
         let paramsGroup = {
           Action: "DetachGroupPolicy",
           Version: "2019-01-16",
-          PolicyId: policyId,
+          PolicyId: this.policyID,
           DetachGroupId: obj.Id
         };
         this.removeGroupPolicy(paramsGroup);
@@ -433,10 +441,6 @@ export default {
       this.rp = val;
       this.getAttachPolicys();
     },
-    handleCurrentChange(val) {
-      this.page = val;
-      this.getAttachPolicys();
-    },
     handleClose() {},
     look_detail() {
       this.isShow = !this.isShow;
@@ -469,6 +473,7 @@ export default {
     line-height: 45px;
     margin-bottom: 20px;
     font-size: 16px;
+
     .top_text {
       font-size: 16px;
       font-weight: 700;
@@ -476,13 +481,16 @@ export default {
       margin-left: 20px;
     }
   }
+
   .container {
     max-width: 96%;
     margin: 0 auto;
+
     .baseInfo {
       padding: 20px;
       background: #fff;
       margin-bottom: 20px;
+
       .baseInfo_title {
         font-size: 14px;
         color: #000;
@@ -492,15 +500,19 @@ export default {
         margin-bottom: 11px;
         height: 30px;
       }
+
       .baseInfo_flex {
         display: flex;
         color: #888;
+
         .item {
           padding-bottom: 20px;
         }
+
         .baseInfo_right {
           padding-left: 20px;
         }
+
         .baseInfo_left {
           .baseInfo_mark {
             padding-bottom: 40px;
@@ -508,30 +520,36 @@ export default {
         }
       }
     }
+
     .tabs {
       background: #fff;
       padding: 20px;
+
       .markdown {
         width: 725px;
         height: 300px;
         background-color: #ddd;
       }
     }
+
     .dialog {
       color: #000;
       font-weight: 700;
       line-height: 26px;
       font-size: 14px;
     }
+
     .box {
       height: 125px;
       width: 360px;
       overflow: auto;
       border: 1px solid #ccc;
+
       .list {
         padding-left: 10px;
         cursor: pointer;
       }
+
       .list:hover {
         background: #f4f4f4;
       }

@@ -4,7 +4,7 @@
       <i class="el-icon-back" @click="returnList"></i>
       <span>{{projectDetail.KeyId}}</span>
     </div>
-    <div class="projectDetailCon">
+    <div class="projectDetailCon" v-loading='loading'>
       <div class="projectDetailCenter">
         <div class="projectDetailOne">
           <h2>{{$t('KMS.total.kmsInfo')}}</h2>
@@ -207,6 +207,7 @@
   </div>
 </template>
 <script>
+import VueCookie from "vue-cookie";
 import moment from 'moment'
 import LstopChange from './LstopChange'
 import LstartKms from './LstartKms'
@@ -215,6 +216,7 @@ import { Des_KMS, UP_NAME, UP_DESC, Encrypt, Decrypt, GET_CMK, ImportKey,DEL_KMS
 export default {
   data() {
     return {
+      loading:true,
       projectDetail: {},
       createUser: "",
       discription: "",
@@ -267,16 +269,17 @@ export default {
   },
   methods: {
     GetList() {
+      this.loading = true;
       this.projectDetail = JSON.parse(sessionStorage.getItem("projectId"));
       this.projectDetail.KeyState == this.$t('KMS.total.alredayStop') || this.projectDetail.KeyState == "PendingDelete" ? this.thisType = "0" : 3
-      // console.log(this.projectDetail)
       let params = {
         Version: '2019-01-18',
-        Region: 'ap-taipei',
+        Region: VueCookie.get("regionv2"),
         KeyId: this.projectDetail.KeyId
       };
       this.axios.post(Des_KMS, params).then(res => {
         this.keyList = res.Response.KeyMetadata;
+        this.loading = false;
       });
     },
     //修改名称关闭按钮
@@ -372,7 +375,7 @@ export default {
     changeNameSure() {
       let params = {
         Version: '2019-01-18',
-        Region: 'ap-taipei',
+        Region: VueCookie.get("regionv2"),
         Alias: this.changeName,
         KeyId: this.projectDetail.KeyId
       };
@@ -385,7 +388,7 @@ export default {
     changeDescriptionSure() {
       let params = {
         Version: '2019-01-18',
-        Region: 'ap-taipei',
+        Region: VueCookie.get("regionv2"),
         Description: this.descriptionNew,
         KeyId: this.projectDetail.KeyId
       };
@@ -403,12 +406,11 @@ export default {
       let params = {
         Action: "Encrypt",
         Version: '2019-01-18',
-        Region: 'ap-taipei',
+        Region: VueCookie.get("regionv2"),
         Plaintext: this.Plaintext,
         KeyId: this.projectDetail.KeyId
       };
       this.axios.post(Encrypt, params).then(res => {
-        // console.log(res.Response.Error.Message);
         if (res.Response.Error !== undefined) {
           this.$message({
             showClose: true,
@@ -424,11 +426,10 @@ export default {
       let params = {
         Action: "Decrypt",
         Version: '2019-01-18',
-        Region: 'ap-taipei',
+        Region: VueCookie.get("regionv2"),
         CiphertextBlob: this.Ciphertext
       };
       this.axios.post(Decrypt, params).then(res => {
-        // console.log(res)
         if (res.Response.Error !== undefined) {
           this.$message({
             showClose: true,
@@ -462,7 +463,7 @@ export default {
     downloadTxt1() {
       let params = {
         Version: '2019-01-18',
-        Region: 'ap-taipei',
+        Region: VueCookie.get("regionv2"),
         KeyId: this.projectDetail.KeyId,
         WrappingAlgorithm: this.thisAddSuan,
         WrappingKeySpec: this.thisSuanType
@@ -490,7 +491,7 @@ export default {
       this.thisStepTwo = false;
       let params = {
         Version: '2019-01-18',
-        Region: 'ap-taipei',
+        Region: VueCookie.get("regionv2"),
         EncryptedKeyMaterial: sessionStorage.getItem("EncryptedKeyMaterial1"),
         ImportToken: sessionStorage.getItem("ImportToken1"),
         KeyId: this.projectDetail.KeyId,
@@ -565,11 +566,10 @@ export default {
     deletekms() {
        let params = {
         Version: '2019-01-18',
-        Region: 'ap-taipei',
+        Region: VueCookie.get("regionv2"),
         KeyId: this.projectDetail.KeyId,
       };
       this.axios.post(DEL_KMS, params).then(res => {
-        // console.log(res)
         if (res.Response.Error !== undefined) {
           this.$message({
             showClose: true,
@@ -597,7 +597,6 @@ export default {
         //当读取完成后回调这个函数,然后此时文件的内容存储到了result中,直接操作即可
         this.EncryptedKeyMaterial1 = this.result
         sessionStorage.setItem("EncryptedKeyMaterial1", this.result)
-        console.log(this.EncryptedKeyMaterial1)
       }
     },
 

@@ -6,12 +6,12 @@
     <div class="cam_button">
       <el-row class="cam-lt">
         <el-button type="primary" size="small" @click="NewUser">{{$t('CAM.userGroup.addBtn')}}</el-button>
-        <el-button
+        <!-- <el-button
           size="small"
           type="primary"
           :disabled="btnVisible"
           @click="addUserGroup()"
-        >{{$t('CAM.userGroup.createBtn')}}</el-button>
+        >{{$t('CAM.userGroup.createBtn')}}</el-button> -->
       </el-row>
       <div class="head-container">
         <el-input
@@ -74,7 +74,7 @@
         height="450"
         @selection-change="handleSelectionChange"
       >
-        <el-table-column prop="GroupId" type="selection" width="29"></el-table-column>
+        <!-- <el-table-column prop="GroupId" type="selection" width="29"></el-table-column> -->
         <el-table-column
           prop="GroupName"
           :label="$t('CAM.userGroup.colNmae')"
@@ -137,7 +137,7 @@
     >
       <div class="container">
         <div class="container-left">
-          <p>{{$t('CAM.userGroup.selection')}}（共{{totalNum}}条）</p>
+          <p>{{$t('CAM.userGroup.selection')}}（共{{userData.length}}条）</p>
           <el-input size="small" v-model="inpVal" style="width:100%" @change="_inpVal">
             <i slot="suffix" class="el-input__icon el-icon-search" @click="toQueryUser"></i>
           </el-input>

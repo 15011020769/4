@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-loading='loading'>
     <div class="newClear">
       <el-button-group class="buttonGroupAll">
         <el-button class="buttonGroup" @click="thisTime(1)">今天</el-button>
@@ -20,7 +20,10 @@
     <div id="myChart"></div>
     <div>
       <h3>DDoS攻击记录</h3>
-      <el-table :data="tableDataBegin.slice((currentPage-1)*pageSize,currentPage*pageSize)">
+      <el-table
+        :data="tableDataBegin.slice((currentPage-1)*pageSize,currentPage*pageSize)"
+        height="450"
+      >
         <el-table-column prop="StartTime" label="攻击时间">
           <template slot-scope="scope">{{scope.row.StartTime}}</template>
         </el-table-column>
@@ -38,14 +41,13 @@
         </el-table-column>
       </el-table>
     </div>
-    <div class="tabListPage">
+    <div class="Right-style pagstyle">
+      <span class="pagtotal">共&nbsp;{{totalItems}}&nbsp;条</span>
       <el-pagination
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-        :current-page="currentPage"
-        :page-sizes="[10, 20, 30, 50]"
         :page-size="pageSize"
-        layout="total, sizes, prev, pager, next, jumper"
+        :pager-count="7"
+        layout="prev, pager, next"
+        @current-change="handleCurrentChange"
         :total="totalItems"
       ></el-pagination>
     </div>
@@ -57,6 +59,7 @@ import { DDOS_EV_LIST, DDOS_TREND } from "@/constants";
 export default {
   data() {
     return {
+      loading: true,
       business: "basic", //[bgp表示独享包；bgp-multip表示共享包；net表示高防IP专业版；basic表示DDoS基础防护]
       metricName: "bps", // 指标，取值[bps(攻击流量带宽，pps(攻击包速率))]
       // period: 600, //统计粒度，取值[300(5分鐘)，3600(小时)，86400(天)]
@@ -95,7 +98,6 @@ export default {
       this.startTime = moment(this.timeValue[0]).format("YYYY-MM-DD HH:mm:ss"); //格式处理
       this.endTime = moment(this.timeValue[1]).format("YYYY-MM-DD HH:mm:ss"); //格式处理
       this.describeDDoSTrend(this.timey);
-
     }
   },
   computed: {},
@@ -119,7 +121,7 @@ export default {
       let params = {
         Version: "2018-07-09",
         Business: this.business,
-        Ip: this.ddosAttack['Ip.0'],
+        Ip: this.ddosAttack["Ip.0"],
         MetricName: this.metricName,
         Period: this.period,
         StartTime: this.startTime,
@@ -134,12 +136,13 @@ export default {
 
     // 1.2.获取DDoS攻击事件列表
     describeDDoSEvList() {
+      this.loading = true;
       let params = {
         Version: "2018-07-09",
         Business: this.business,
         StartTime: this.startTime,
         EndTime: this.endTime,
-        "IpList.0": this.ddosAttack['Ip.0']
+        "IpList.0": this.ddosAttack["Ip.0"]
       };
       this.axios.post(DDOS_EV_LIST, params).then(res => {
         // console.log(res)
@@ -147,8 +150,9 @@ export default {
           this.tableDataBegin = res.Response.Data;
           this.totalItems = this.tableDataBegin.length;
         } else {
-          console.log(res.Response.Error)
+          console.log(res.Response.Error);
         }
+        this.loading = false;
       });
     },
 
@@ -168,15 +172,16 @@ export default {
       const end = new Date();
       const start = new Date();
       if (thisTime == "1") {
-
         var arr = [];
         for (var i = 0; i <= 86400000 / 3600000; i++) {
           var d = new Date(end.getTime() - 3600000 * i);
           arr.push(moment(d).format("MM-DD HH:mm:ss"));
         }
-         this.startTime = moment(new Date(end.getTime()-86400000)).format("YYYY-MM-DD HH:mm:ss");
-         this.endTime = moment(end).format("YYYY-MM-DD HH:mm:ss");
-         this.period = 3600;
+        this.startTime = moment(new Date(end.getTime() - 86400000)).format(
+          "YYYY-MM-DD HH:mm:ss"
+        );
+        this.endTime = moment(end).format("YYYY-MM-DD HH:mm:ss");
+        this.period = 3600;
         this.timey = arr;
       } else if (thisTime == "2") {
         //ddos攻击-攻击流量带宽
@@ -213,29 +218,22 @@ export default {
         start.setTime(start.getTime() - 3600 * 1000 * 24 * 30 * 6);
         ipt1.value = moment(start).format("YYYY-MM-DD");
         ipt2.value = moment(end).format("YYYY-MM-DD");
-       this.startTime = moment(start).format("YYYY-MM-DD HH:mm:ss");
+        this.startTime = moment(start).format("YYYY-MM-DD HH:mm:ss");
         this.endTime = moment(end).format("YYYY-MM-DD HH:mm:ss");
         this.period = 86400;
         this.timedone(end, start, 86400000);
         //ddos攻击-攻击流量带宽
       }
-      //console.log(moment(new Date()).format('YYYY-MM-DD HH:mm:ss'),start
-      //this.thisStart=moment(start).format('YYYY-MM-DD');
-      //this.thisEnd=moment(end).format('YYYY-MM-DD');
-      //this.$emit('timeNode1',[this.thisStart,this.thisEnd])
-      // this.getData(this.timey)
       this.describeDDoSTrend(this.timey);
-      this.describeDDoSEvList()
+      this.describeDDoSEvList();
     },
-
-
 
     drawLine(y, date) {
       var arr = [];
       for (let i in date) {
-        arr.unshift(date[i]); //属性  
+        arr.unshift(date[i]); //属性
       }
-      arr.splice(arr.length-1, 1);
+      arr.splice(arr.length - 1, 1);
       // 基于准备好的dom，初始化echarts实例
       let myChart = this.$echarts.init(document.getElementById("myChart"));
       // 绘制图表
@@ -244,9 +242,7 @@ export default {
         title: { text: "" },
         tooltip: {},
         xAxis: {
-          data: arr //["12-05", "12-04", "12-03", "12-02", "12-01"]
-          // type : 'time',
-          // minInterval: 1
+          data: arr
         },
         yAxis: {
           axisLine: {
@@ -312,12 +308,10 @@ export default {
     },
 
     handleSizeChange(val) {
-      // console.log(`每页 ${val} 条`);
       this.pageSize = val;
       this.handleCurrentChange(this.currentPage);
     },
     handleCurrentChange(val) {
-      // console.log(`当前页: ${val}`);
       this.currentPage = val;
       //需要判断是否检索
       if (!this.flag) {
@@ -340,6 +334,25 @@ export default {
 };
 </script>
 <style lang="scss">
+.Right-style {
+  display: flex;
+  justify-content: flex-end;
+
+  .esach-inputL {
+    width: 300px;
+    margin-right: 20px;
+  }
+}
+.pagstyle {
+  padding: 20px;
+
+  .pagtotal {
+    font-size: 13px;
+    font-weight: 400;
+    color: #565656;
+    line-height: 32px;
+  }
+}
 .newClear:after {
   clear: both;
   display: block;
