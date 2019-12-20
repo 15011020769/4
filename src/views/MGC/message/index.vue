@@ -3,7 +3,7 @@
     <div class="message-header">
       <HeaderCom title="站内信">
         <p>
-          （共127封，其中124封未读，
+          （共{{this.TotalCount}}封，其中{{this.TotalCount}}封未读，
           <span>仅查看未读消息</span>）
         </p>
       </HeaderCom>
@@ -12,9 +12,9 @@
       <div class="message-fun">
         <div class="message-funLeft">
           <div class="message-btns">
-            <el-button>删除</el-button>
+            <el-button @click="delMesg">删除</el-button>
             <el-button>标记为已读</el-button>
-            <el-button>全部标记为已读</el-button>
+            <el-button @click="AllRead">全部标记为已读</el-button>
           </div>
           <div class="message-btns btnStyle">
             <el-button
@@ -27,9 +27,9 @@
         </div>
         <div class="message-funRight">
           <div class="search">
-            <el-input v-model="input" placeholder="请输入内容"></el-input>
+            <el-input v-model="inputVal" placeholder="请输入内容" @change="tableInpVal"></el-input>
             <span>
-              <i class="el-icon-search"></i>
+              <i class="el-icon-search" @click="tableSearch"></i>
             </span>
           </div>
         </div>
@@ -37,23 +37,51 @@
       <div class="meaasge-table">
         <el-table :data="tableData" style="width: 100%" height="450" @selection-change="handleSelectionChange">
           <el-table-column type="selection" width="55"></el-table-column>
-          <el-table-column label="消息内容" width="180"></el-table-column>
-          <el-table-column label="接收时间" width="180"></el-table-column>
-          <el-table-column label="消息类型"></el-table-column>
-          <el-table-column label="消息子类型"></el-table-column>
+          <el-table-column prop="title" label="消息内容" width="180">
+              <template slot-scope="scope">
+                <el-link @click="detailsMesg(scope.row)" type="primary">{{scope.row.title}}</el-link>
+             </template>
+          </el-table-column>
+          <el-table-column prop="updateTime" label="接收时间" width="180"></el-table-column>
+          <el-table-column prop="statusLabel" label="消息类型"></el-table-column>
+          <el-table-column prop="channelLabel" label="消息子类型"></el-table-column>
         </el-table>
-        <div class="page">
+        <div class="Right-style pagstyle" style="height:70px;">
+          <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;条</span>
           <el-pagination
-            @size-change="handleSizeChange"
-            @current-change="handleCurrentChange"
-            :page-sizes="[20, 30, 40,50,100]"
             :page-size="pagesize"
-            layout="total, sizes, prev, pager, next, jumper"
-            :total="tableData.length"
+            :pager-count="7"
+            layout="prev, pager, next"
+            @current-change="handleCurrentChange"
+            :total="TotalCount"
           ></el-pagination>
         </div>
       </div>
     </div>
+    <!-- 删除对话框 -->
+    <el-dialog
+  title="删除"
+  :visible.sync="dialogVisible"
+  width="30%"
+  :before-close="handleClose">
+  <span>删除后消息将无法恢复，您确定要删除吗？</span>
+  <span slot="footer" class="dialog-footer">
+    <el-button @click="dialogVisible = false">取 消</el-button>
+    <el-button type="primary" @click="confirmDel">确 定</el-button>
+  </span>
+</el-dialog>
+ <!-- 全部改为已读状态弹框 -->
+ <el-dialog
+  title="确认标记所有已读"
+  :visible.sync="MessageDialog"
+  width="30%"
+  :before-close="handleCloseMsg">
+  <span>确认标记所有消息为已读吗？</span>
+  <span slot="footer" class="dialog-footer">
+    <el-button @click="MessageDialog = false">取 消</el-button>
+    <el-button type="primary" @click="updataMesg">确 定</el-button>
+  </span>
+</el-dialog>
   </div>
 </template>
 
@@ -63,6 +91,11 @@ export default {
   name: "message",
   data() {
     return {
+      dialogVisible:false,//删除弹框
+      MessageDialog:false,//消息弹框
+      TotalCount:0,//分页
+      pagesize:10,//分页条数
+      currpage:1,//当前页码
       btnIndex: 0, //按钮默认选中
       //按钮数据
       btnData: [
@@ -74,10 +107,10 @@ export default {
         "其他消息",
         "财务消息"
       ],
-      pagesize: 20, // 分页条数
-      currpage: 1, // 当前页码
-      input: "", //搜索输入的内容
-      tableData: [] //表格数据
+      inputVal: "", //搜索输入的内容
+      tableData: [], //表格数据
+      getData:[],//获取选中时的数据
+      json:[], //搜索数据
     };
   },
   components: {
@@ -87,35 +120,130 @@ export default {
      this.init()
   },
   methods: {
-    // init(){
-    //    let params = {
-    //      searchForm:this.tableData
-    //    };
-    //    this.axios.post("http://tfc.dhycloud.com/adminapi/admin/taifucloud/inmail/list",params).then(res=>{
-    //      console.log(res)
-    //    })
-    // },
-    //分页
-    handleSizeChange(val) {
-      this.pagesize = val;
-      this.currpage = 1;
+    //初始化数据
+    init(){
+       let params = {
+        //  searchForm:this.tableData,
+         limit:this.pagesize,
+         page:this.currpage
+       };
+       this.axios.post(`${process.env.VUE_APP_adminUrl}`+"/taifucloud/inmail/list",params).then(res => {
+           console.log(res)
+           this.tableData = res.data.list
+           this.json = res.data.list
+           this.TotalCount = res.data.totalCount
+       })
     },
+    //批量删除弹框点击确定删除
+    confirmDel(){
+        var delIndex = [];
+        this.getData.forEach(item => {
+           delIndex.unshift(item)
+        })
+        delIndex.forEach(item => {
+          let params = [item.id]
+          
+          console.log(params)
+          // debugger
+           this.axios.delete(`${process.env.VUE_APP_adminUrl}`+"/taifucloud/inmail/delete",{data: params}).then(res=>{
+          console.log(params)
+             console.log(res)
+           })
+        })
+        this.dialogVisible = false;
+    },
+    //搜索input框
+    tableInpVal(val){
+    if(this.inputVal == ""){
+         this.tableData = this.json
+         this.TotalCount = this.json.length
+       }
+    },
+    //搜索按钮
+    tableSearch(){
+      var arr = [];
+      this.tableData.forEach(item => {
+         if(item.title.includes(this.inputVal)){
+              arr.push(item)
+         }
+      })
+      this.tableData = arr
+      this.TotalCount = arr.length
+      console.log(this.tableData)
+    },
+    //批量删除消息弹框
+    delMesg(){
+      if(this.getData.length != 0){
+          this.dialogVisible = true
+      }else{
+         this.$message("请选择数据")
+      }
+    },
+    //全部标记为已读显示弹框
+    AllRead(){
+     this.MessageDialog = true
+    },
+    //确定全部标记为已读
+    updataMesg(){
+         this.tableData.forEach(item => {
+         console.log(item.qcloudUin)
+         let params = {
+           ids:item.qcloudUin
+         }
+        this.axios.put(`${process.env.VUE_APP_adminUrl}`+"/taifucloud/inmail/status/modify",params).then(res=>{
+             console.log(res)
+         })
+       })
+    },
+    //跳转详情
+    detailsMesg(val){
+     this.$router.push({
+        path: "/mesgdetils",
+        query: {
+          detailsData: val.id
+        }
+      });
+    },
+    //分页
     handleCurrentChange(val) {
       this.currpage = val;
+      this.init()
     },
     //点击按钮
     btnClick(index) {
       this.btnIndex = index;
     },
     //多选框
-    handleSelectionChange(){
-
+    handleSelectionChange(val){
+       this.getData = val;
+    },
+    //删除弹框x
+    handleClose(){
+      this.dialogVisible = false;
+    },
+    //改变未读状态弹框
+    handleCloseMsg(){
+       this.MessageDialog = false;
     }
   }
 };
 </script>
 
 <style lang="scss" scoped>
+ .Right-style {
+    display: flex;
+    justify-content: flex-end;
+  }
+ .pagstyle {
+    padding: 20px;
+
+    .pagtotal {
+      font-size: 13px;
+      font-weight: 400;
+      color: #565656;
+      line-height: 32px;
+    }
+  }
 .message-wrap >>> .el-button,
 .message-wrap >>> .el-input__inner {
   height: 30px;
