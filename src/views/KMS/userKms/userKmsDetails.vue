@@ -4,7 +4,7 @@
       <i class="el-icon-back" @click="returnList"></i>
       <span>{{projectDetail.KeyId}}</span>
     </div>
-    <div class="projectDetailCon">
+    <div class="projectDetailCon" v-loading='loading'>
       <div class="projectDetailCenter">
         <div class="projectDetailOne">
           <h2>{{$t('KMS.total.kmsInfo')}}</h2>
@@ -216,6 +216,7 @@ import { Des_KMS, UP_NAME, UP_DESC, Encrypt, Decrypt, GET_CMK, ImportKey,DEL_KMS
 export default {
   data() {
     return {
+      loading:true,
       projectDetail: {},
       createUser: "",
       discription: "",
@@ -268,6 +269,7 @@ export default {
   },
   methods: {
     GetList() {
+      this.loading = true;
       this.projectDetail = JSON.parse(sessionStorage.getItem("projectId"));
       this.projectDetail.KeyState == this.$t('KMS.total.alredayStop') || this.projectDetail.KeyState == "PendingDelete" ? this.thisType = "0" : 3
       let params = {
@@ -277,6 +279,7 @@ export default {
       };
       this.axios.post(Des_KMS, params).then(res => {
         this.keyList = res.Response.KeyMetadata;
+        this.loading = false;
       });
     },
     //修改名称关闭按钮

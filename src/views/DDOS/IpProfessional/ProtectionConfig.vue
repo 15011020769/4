@@ -21,7 +21,10 @@
             <el-button class="el-icon-search" @click="doFilter"></el-button>
           </div>
           <div class="mainTable">
-            <el-table :data="tableDataBegin.slice((currentPage-1)*pageSize,currentPage*pageSize)" v-loading='loading'>
+            <el-table
+              :data="tableDataBegin.slice((currentPage-1)*pageSize,currentPage*pageSize)"
+              v-loading="loading"
+            >
               <el-table-column prop="Record.Id" :label="$t('DDOS.Proteccon_figura.Id_name')">
                 <template slot-scope="scope">
                   <div v-for="(item, index) in scope.row.Record" :key="index">
@@ -101,14 +104,13 @@
               <changeModel :configShow="changeModel" @closeConfigModel="closeConfigModel" />
             </el-table>
           </div>
-          <div class="tabListPage">
+          <div class="Right-style pagstyle">
+            <span class="pagtotal">共&nbsp;{{totalItems}}&nbsp;条</span>
             <el-pagination
-              @size-change="handleSizeChange"
-              @current-change="handleCurrentChange"
-              :current-page="currentPage"
-              :page-sizes="[10, 20, 30, 50]"
               :page-size="pageSize"
-              layout="total, sizes, prev, pager, next, jumper"
+              :pager-count="7"
+              layout="prev, pager, next"
+              @current-change="handleCurrentChange"
               :total="totalItems"
             ></el-pagination>
           </div>
@@ -310,13 +312,11 @@ export default {
         Business: "net"
       };
       this.axios.post(RESOURCE_LIST, params).then(res => {
-        // console.log(res)
         this.tableDataBegin = res.Response.ServicePacks;
         for (let i = 0; i < this.tableDataBegin.length; i++) {
           let list = this.tableDataBegin[i];
           list.Record.forEach((value, index) => {
             if (value.Key == "Id") {
-              // console.log(value.Value)
               this.resourceId = value.Value;
             }
           });
@@ -332,7 +332,6 @@ export default {
         Business: "net"
       };
       this.axios.post(DDOSPOLICY_CONT, params).then(res => {
-        // console.log(res)
         this.tableDataPolicy = res.Response.DDosPolicyList;
         this.loading = false;
       });
@@ -341,7 +340,6 @@ export default {
     // 修改
     changeRow(changeIndex, changeRow) {
       this.changeModel = true;
-      // console.log(this.servicePack)
     },
     // 搜索
     doFilter() {
@@ -389,7 +387,6 @@ export default {
         this.describeResourceList();
       } else if (tab.name == "second") {
         //CC防护
-        // console.log('second')
       } else if (tab.name == "third") {
         //DDOS高级防护策略
         this.describeDDoSPolicy();
@@ -397,19 +394,13 @@ export default {
     },
 
     toDetail() {},
-    //修改框关闭按钮
-    // changeClose(){
-    //   this.changeModel=false;
-    // },
     openData() {},
     // 分页开始
     handleSizeChange(val) {
-      // console.log(`每页 ${val} 条`);
       this.pageSize = val;
       this.handleCurrentChange(this.currentPage);
     },
     handleCurrentChange(val) {
-      // console.log(`当前页: ${val}`);
       this.currentPage = val;
       //需要判断是否检索
       if (!this.flag) {
@@ -437,7 +428,6 @@ export default {
     },
     //点击删除函数按钮
     deleteRow(index, dataBegin) {
-      // console.log(index, dataBegin);
       this.deleteIndex = index;
       this.deleteBegin = dataBegin;
       this.dialogVisible = true;
@@ -449,9 +439,7 @@ export default {
         Business: "net",
         PolicyId: this.deleteBegin.PolicyId
       };
-      // console.log(params.PolicyId);
       this.axios.post(DDOS_POLICY_DELETE, params).then(res => {
-        //console.log(res);
         this.describeDDoSPolicy();
         this.dialogVisible = false;
       });
@@ -482,15 +470,9 @@ export default {
       this.tableShow = true;
     },
     //穿梭框事件
-    handleChange(value, direction, movedKeys) {
-      // console.log(value, direction, movedKeys);
-    },
+    handleChange(value, direction, movedKeys) {},
     generateData() {
       const data = [];
-      // console.log(thisData)
-      // for (let i =0; i < this.thisData.length; i++) {
-      //   data.push(this.thisData[i]);
-      // }
       return data;
     },
     //跳转新购页面
@@ -502,7 +484,6 @@ export default {
     },
     //修改弹框关闭按钮
     closeConfigModel(isShow) {
-      // console.log(isShow)
       this.changeModel = isShow;
     }
   }
@@ -626,7 +607,25 @@ button.el-icon-search {
   margin-right: 15px;
   vertical-align: middle;
 }
+.Right-style {
+  display: flex;
+  justify-content: flex-end;
 
+  .esach-inputL {
+    width: 300px;
+    margin-right: 20px;
+  }
+}
+.pagstyle {
+  padding: 20px;
+
+  .pagtotal {
+    font-size: 13px;
+    font-weight: 400;
+    color: #565656;
+    line-height: 32px;
+  }
+}
 .deleteTit {
   font-size: 18px;
   color: #000;

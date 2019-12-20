@@ -41,3 +41,9 @@ export const Modify_Level = 'dayu2/ModifyDDoSLevel' //修改DDoSIP防护等级
 export const SET_SHOLD = 'dayu2/CreateBasicDDoSAlarmThreshold' //设置基础防护的DDoS告警阈值
 export const Modify_Status = 'dayu2/ModifyDDoSDefendStatus' //修改DDoS防护状态
 
+export const DDOS_EVENT = 'dayu2/DescribeDDoSNetEvList' //获取高防IP专业版资源的DDoS攻击事件列表
+export const DDOS_ATTACK = 'dayu2/DescribeDDoSNetCount' //获取高防IP专业版资源的DDoS攻击占比分析
+export const DDOS_DATA = 'dayu2/DescribeDDoSNetTrend' //获取高防IP专业版资源的DDoS攻击指标数据
+export const CC_LIST = 'dayu2/DescribeCCEvList' //获取 CC 攻击事件列表
+export const CC_DATA = 'dayu2/DescribeCCTrend' //获取CC攻击指标数据
+export const STATIC_LIST = 'dayu2/DescribeTransmitStatis' //获取业务转发统计数据

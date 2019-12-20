@@ -23,7 +23,12 @@
     <div class="basicProtCon">
       <div class="newClear">
         <div class="basicProtConSearch newClear">
-          <el-input placeholder="请输入主机名/主机IP搜索" class="searchIpt" v-model="searchInputVal" />
+          <el-input
+            placeholder="请输入主机名/主机IP搜索"
+            class="searchIpt"
+            v-model="searchInputVal"
+            @change="inpVal"
+          />
           <el-button @click="doFilter" class="el-icon-search"></el-button>
         </div>
       </div>
@@ -56,15 +61,15 @@
             <el-table-column prop="IP" label="绑定IP">
               <template slot-scope="scope">
                 <div v-if="selectedSubarea=='cvm'">
-                  <span v-for="item in scope.row.PublicIpAddresses" :key="item">{{item}}</span>
+                  <span v-for="(item,index) in scope.row.PublicIpAddresses" :key="index">{{item}}</span>
                 </div>
                 <div v-else-if="selectedSubarea=='clb'">
-                  <span v-for="item in scope.row.LoadBalancerVips" :key="item">{{item}}</span>
+                  <span v-for="(item,index) in scope.row.LoadBalancerVips" :key="index">{{item}}</span>
                 </div>
                 <div v-else-if="selectedSubarea=='nat'">
                   <span
-                    v-for="item in scope.row.PublicIpAddressSet"
-                    :key="item"
+                    v-for="(item,index) in scope.row.PublicIpAddressSet"
+                    :key="index"
                   >{{item.PublicIpAddress}}</span>
                 </div>
               </template>
@@ -104,14 +109,13 @@
             <!-- 操作：升级防护 跳转页面为BGP高防包，不涉及此功能 -->
           </el-table>
         </div>
-        <div class="tabListPage">
+        <div class="Right-style pagstyle">
+          <span class="pagtotal">共&nbsp;{{totalItems}}&nbsp;条</span>
           <el-pagination
-            @size-change="handleSizeChange"
-            @current-change="handleCurrentChange"
-            :current-page="currentPage"
-            :page-sizes="[10, 20, 30, 50]"
             :page-size="pageSize"
-            layout="total, sizes, prev, pager, next, jumper"
+            :pager-count="7"
+            layout="prev, pager, next"
+            @current-change="handleCurrentChange"
             :total="totalItems"
           ></el-pagination>
         </div>
@@ -162,6 +166,11 @@ export default {
     }
   },
   methods: {
+    inpVal() {
+      if (this.searchInputVal == "") {
+        this.getData();
+      }
+    },
     getData() {
       this.currentPage = 1;
       this.allData.splice(0, this.allData.length);
@@ -185,7 +194,6 @@ export default {
         Region: this.selectedRegion
       };
       this.axios.post(CVM_INSTANCES, params).then(res => {
-        // console.log(params, res)
         if (res.Response.Error == undefined) {
           this.allData = res.Response.InstanceSet;
           this.tableDataBegin = res.Response.InstanceSet;
@@ -198,12 +206,12 @@ export default {
     },
     // 1.2.查询负载均衡实例列表
     describeLoadBalancers() {
+      this.loading = true;
       let params = {
         Version: "2018-03-17",
         Region: this.selectedRegion
       };
       this.axios.post(CLB_LIST, params).then(res => {
-        // console.log(params, res)
         if (res.Response.Error == undefined) {
           this.allData = res.Response.LoadBalancerSet;
           this.tableDataBegin = res.Response.LoadBalancerSet;
@@ -211,16 +219,17 @@ export default {
         } else {
           this.$message.error(res.Response.Error.Message);
         }
+        this.loading = false;
       });
     },
     // 1.3.查询NAT网关/查询NET服务器专区实例列表
     describeNatGateway() {
+      this.loading = true;
       let params = {
         Version: "2017-03-12",
         Region: this.selectedRegion
       };
       this.axios.post(NAT_LIST, params).then(res => {
-        // console.log(params, res)
         if (res.Response.Error == undefined) {
           this.allData = res.Response.NatGatewaySet;
           this.tableDataBegin = res.Response.NatGatewaySet;
@@ -228,6 +237,7 @@ export default {
         } else {
           this.$message.error(res.Response.Error.Message);
         }
+        this.loading = false;
       });
     },
     // 搜索
@@ -298,7 +308,6 @@ export default {
       this.$cookie.set("regionv2", city.Region);
       this.getData();
     },
-
     // 分页开始
     handleSizeChange(val) {
       // console.log(`每页 ${val} 条`);
@@ -327,30 +336,29 @@ export default {
     },
     //跳转详情页
     toDoDetail(basicRow) {
-      let insTemp = {}
+      let insTemp = {};
       // 判断专区类型，转换传参对象
-      if (this.selectedSubarea == 'cvm') {
-        insTemp['Id'] = basicRow.InstanceId
-        insTemp['Name'] = basicRow.InstanceName
+      if (this.selectedSubarea == "cvm") {
+        insTemp["Id"] = basicRow.InstanceId;
+        insTemp["Name"] = basicRow.InstanceName;
         for (let i in basicRow.PublicIpAddresses) {
-          insTemp['Ip.' + i] = basicRow.PublicIpAddresses[i]
+          insTemp["Ip." + i] = basicRow.PublicIpAddresses[i];
         }
-      } else if (this.selectedSubarea == 'clb') {
-        insTemp['Id'] = basicRow.LoadBalancerId
-        insTemp['Name'] = basicRow.LoadBalancerName
+      } else if (this.selectedSubarea == "clb") {
+        insTemp["Id"] = basicRow.LoadBalancerId;
+        insTemp["Name"] = basicRow.LoadBalancerName;
         for (let i in basicRow.LoadBalancerVips) {
-          insTemp['Ip.' + i] = basicRow.LoadBalancerVips[i]
+          insTemp["Ip." + i] = basicRow.LoadBalancerVips[i];
         }
-      } else if (this.selectedSubarea == 'nat') {
-        insTemp['Id'] = basicRow.NatGatewayId
-        insTemp['Name'] = basicRow.NatGatewayName
+      } else if (this.selectedSubarea == "nat") {
+        insTemp["Id"] = basicRow.NatGatewayId;
+        insTemp["Name"] = basicRow.NatGatewayName;
         for (let i in basicRow.PublicIpAddressSet) {
-          insTemp['Ip.' + i] = basicRow.PublicIpAddressSet[i].PublicIpAddress
+          insTemp["Ip." + i] = basicRow.PublicIpAddressSet[i].PublicIpAddress;
         }
       }
       // 判断IP地址
-      if (insTemp['Ip.0'] == null | insTemp['Ip.0'] == '') {
-        // console.log('No Ip')
+      if ((insTemp["Ip.0"] == null) | (insTemp["Ip.0"] == "")) {
       } else {
         this.$router.push({
           path: "/basicProteDetail",
@@ -364,6 +372,25 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+.Right-style {
+  display: flex;
+  justify-content: flex-end;
+
+  .esach-inputL {
+    width: 300px;
+    margin-right: 20px;
+  }
+}
+.pagstyle {
+  padding: 20px;
+
+  .pagtotal {
+    font-size: 13px;
+    font-weight: 400;
+    color: #565656;
+    line-height: 32px;
+  }
+}
 .newClear:after {
   display: block;
   clear: both;
