@@ -58,6 +58,7 @@
     methods: {
       //获取数据
       GetDat(data) {
+        console.log(data)
         this.Start_End = data[0];
         this.value = data[1];
         this.getDATA()

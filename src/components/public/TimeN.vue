@@ -4,10 +4,12 @@
     <div class="btn-style">
       <el-row>
         <el-button-group>
-          <el-button size="small" @click="TimeChoice(1)" :type="classsvalue == 1 ? 'primary' : ''">實時</el-button>
-          <el-button size="small" @click="TimeChoice(1*24)" :type="classsvalue == 1*24 ? 'primary' : ''">近24小時
+          <el-button size="small" @click="TimeChoice(1)" :type="classsvalue == 1 ? 'primary' : ''">今天</el-button>
+          <el-button size="small" @click="TimeChoice(1*24)" :type="classsvalue == 1*24 ? 'primary' : ''">昨天
           </el-button>
           <el-button size="small" @click="TimeChoice(1*24*7)" :type="classsvalue == 1*24*7 ? 'primary' : ''">近7天
+          </el-button>
+          <el-button size="small" @click="TimeChoice(1*24*30)" :type="classsvalue == 1*24*30? 'primary' : ''">近30天
           </el-button>
           <el-popover placement="bottom" width="400" trigger="manual" v-model="visible">
             <p class="p-dis">
@@ -73,35 +75,46 @@
         this.classvalue = time;
         this.Initialization();
         if (time === 1) {
-          const KTime = moment(new Date()).format("YYYY/MM/DD HH:mm:ss"); //获取当前时间
+          //今天
+          const KTime = moment(new Date()).format("YYYY/MM/DD 00:00:00"); //获取当前时间
           const ETime = moment(new Date()).format("YYYY-MM-DD HH:mm:ss"); //获取当前时间
-          const startTime = new Date(KTime).getTime();
-          // 1小时前
-          const noehoursago = moment(startTime - 3600000).format(
-            "YYYY-MM-DD HH:mm:ss"
-          ); //获取1小时前的时间
-          this.Start_End.StartTIme = noehoursago;
+          this.Start_End.StartTIme = KTime;
           this.Start_End.EndTIme = ETime;
         } else if (time === 1 * 24) {
+          //昨天
           const KTime = moment(new Date()).format("YYYY/MM/DD HH:mm:ss"); //获取当前时间
-          const ETime = moment(new Date()).format("YYYY-MM-DD HH:mm:ss"); //获取当前时间
           const startTime = new Date(KTime).getTime();
-          // 1小时前
-          const noehoursago = moment(startTime - 86400000).format(
-            "YYYY-MM-DD HH:mm:ss"
+          // 
+          const noeago = moment(startTime - 86400000).format(
+            "YYYY-MM-DD 00:00:00"
           ); //获取1天前的时间
-          this.Start_End.StartTIme = noehoursago;
-          this.Start_End.EndTIme = ETime;
+          const noenow = moment(startTime - 86400000).format(
+            "YYYY-MM-DD 23:59:59"
+          ); //获取1天前的时间
+          this.Start_End.StartTIme = noeago;
+          this.Start_End.EndTIme = noenow;
         } else if (time === 1 * 24 * 7) {
           const KTime = moment(new Date()).format("YYYY/MM/DD HH:mm:ss"); //获取当前时间
-          const ETime = moment(new Date()).format("YYYY-MM-DD HH:mm:ss"); //获取当前时间
           const startTime = new Date(KTime).getTime();
-          // 1小时前
-          const noehoursago = moment(startTime - 604800000).format(
-            "YYYY-MM-DD HH:mm:ss"
+          const zhouago = moment(startTime - 518400000).format(
+            "YYYY-MM-DD 00:00:00"
           ); //获取1周前的时间
-          this.Start_End.StartTIme = noehoursago;
-          this.Start_End.EndTIme = ETime;
+          const zhounow = moment(startTime).format(
+            "YYYY-MM-DD 23:59:59"
+          );
+          this.Start_End.StartTIme = zhouago;
+          this.Start_End.EndTIme = zhounow;
+        } else if (time === 1 * 24 * 30) {
+          const KTime = moment(new Date()).format("YYYY/MM/DD HH:mm:ss"); //获取当前时间
+          const startTime = new Date(KTime).getTime();
+          const yueago = moment(startTime - 2505600000).format(
+            "YYYY-MM-DD 00:00:00"
+          ); //获取1周前的时间
+          const yuenow = moment(startTime).format(
+            "YYYY-MM-DD 23:59:59"
+          );
+          this.Start_End.StartTIme = yueago;
+          this.Start_End.EndTIme = yuenow;
         }
         this.$emit("switchData", [this.Start_End, this.classvalue]);
       },
