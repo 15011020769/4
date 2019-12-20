@@ -75,9 +75,9 @@ export const Attribute = {
   'DATA_DISK': '数据盘'
 }
 export const Toconfigure = {
-  'CLOUD_BASIC': '普通云硬盘',
-  'CLOUD_PREMIUM': '高性能云硬盘',
-  'CLOUD_SSD': 'SSD云硬盘'
+  'CLOUD_BASIC': '普通雲硬盘',
+  'CLOUD_PREMIUM': '高性能雲硬盘',
+  'CLOUD_SSD': 'SSD雲硬盘'
 }
 export const Billingmodel = {
   'PREPAID': '包年包月',
@@ -182,9 +182,9 @@ export const INST_TYPEA = {
 }
 //系统盘
 export const DISK_TYPE = {
-  "CLOUD_BASIC": "普通云硬盘",
-  "CLOUD_PREMIUM": "高性能云硬盘",
-  "CLOUD_SSD": "SSD云硬盘"
+  "CLOUD_BASIC": "普通雲硬盘",
+  "CLOUD_PREMIUM": "高性能雲硬盘",
+  "CLOUD_SSD": "SSD雲硬盘"
 }
 // 安全组
 export const SAFETY_GROUP_PROJECT = {

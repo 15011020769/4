@@ -136,7 +136,7 @@
                   <el-radio label="否"></el-radio>
                   <el-radio label="是"></el-radio>
                 </el-radio-group>
-                <p class="tipG">是否已使用了高防、CDN、云加速等代理？</p>
+                <p class="tipG">是否已使用了高防、CDN、雲加速等代理？</p>
               </div>
             </div>
             <div class="newClear labelLsit">

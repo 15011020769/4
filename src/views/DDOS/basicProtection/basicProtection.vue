@@ -75,7 +75,7 @@
               </template>
             </el-table-column>
             <el-table-column prop="InstanceType" label="主机类型">
-              <span v-if="selectedSubarea=='cvm'">云主机</span>
+              <span v-if="selectedSubarea=='cvm'">雲主机</span>
               <span v-else-if="selectedSubarea=='clb'">负载均衡</span>
               <span v-else-if="selectedSubarea=='nat'">NAT</span>
               <span v-else-if="selectedSubarea=='net'">互联网</span>
@@ -132,7 +132,7 @@ export default {
       // 专区选择
       selectedSubarea: "cvm",
       subareas: [
-        { subarea: "cvm", lable: "云服务器专区" },
+        { subarea: "cvm", lable: "雲服务器专区" },
         { subarea: "clb", lable: "负载均衡专区" },
         { subarea: "nat", lable: "NAT服务器专区" },
         { subarea: "net", lable: "互联网通道" }

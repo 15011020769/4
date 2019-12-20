@@ -204,13 +204,13 @@ export default {
           code: 1,
           title: "可访问资源并接收消息",
           txt:
-            "该用户可以登录控制台或通过 API 密钥访问您授予其权限的台富云资源，同时拥有接收消息等子账号的全部功能"
+            "该用户可以登录控制台或通过 API 密钥访问您授予其权限的台富雲资源，同时拥有接收消息等子账号的全部功能"
         },
         {
           code: 0,
           title: "仅用于接收消息",
           txt:
-            "该用户仅可通过手机、邮箱接收台富云发送给您的消息通知，不可访问台富云"
+            "该用户仅可通过手机、邮箱接收台富雲发送给您的消息通知，不可访问台富雲"
         }
       ],
       //访问方式
@@ -541,7 +541,7 @@ export default {
           if (!this.ruleForm.Name) {
             this.$message.error("用户名不能为空");
           } else if (this.ruleForm.type.length == 0) {
-            this.$message.error("编程访问和台富云控制台访问至少需要选择一个");
+            this.$message.error("编程访问和台富雲控制台访问至少需要选择一个");
           } else {
             this._arrUser();
           }
@@ -550,7 +550,7 @@ export default {
           if (!this.ruleForm.Name) {
             this.$message.error("用户名不能为空");
           } else if (this.ruleForm.type.length == 0) {
-            this.$message.error("编程访问和台富云控制台访问至少需要选择一个");
+            this.$message.error("编程访问和台富雲控制台访问至少需要选择一个");
           } else if (this.ruleForm.loginRadio === "") {
             this.$message.error("请设置登录保护");
           } else if (this.ruleForm.processRadio === "") {

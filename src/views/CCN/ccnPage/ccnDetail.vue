@@ -1,4 +1,4 @@
-<!-- 云联网详情 -->
+<!-- 雲联网详情 -->
 <template>
   <div>
     <div class="title_top">

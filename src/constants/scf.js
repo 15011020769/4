@@ -1,8 +1,8 @@
-// // 云监控接口封装
+// // 雲监控接口封装
 export const ALL_CITY = 'pub/zoneAll' // 区域列表
 export const All_MONITOR = 'monitor2/GetMonitorData' // 监控接口
 
-// // 无服务器云函数
+// // 无服务器雲函数
 //获取函数列表
 export const SCF_LIST = 'scf2/ListFunctions' //列表
 

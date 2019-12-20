@@ -229,7 +229,7 @@ export default {
     saveCode() {
       // 点击保存，首先执行uploads，然后重新执行GetFunction，查询信息，
       // 查询模板GetTempCosInfo，根据返回的ObjectPath模板路径，执行UpdateFunctionCode
-      //UpdateFunctionCode //更新云函数代码
+      //UpdateFunctionCode //更新雲函数代码
       let params = {
         Action: "UpdateFunctionCode",
         Version: "2018-04-16",
@@ -287,7 +287,7 @@ export default {
             .post(FUN_LOG, params)
             .then(res => {
               this.ResData = res.Response.Data;
-              // 从腾讯云产品执行交易分析，如果日志为空从新查询，一般查询10多次日志就出来
+              // 从腾讯雲产品执行交易分析，如果日志为空从新查询，一般查询10多次日志就出来
             })
             .catch(error => {
               console.log(error);

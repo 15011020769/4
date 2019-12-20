@@ -173,17 +173,17 @@
               <div
                 class="tea-form__text"
                 style="color: rgb(153, 153, 153); padding: 5px 0px 0px 20px; font-size: 12px;"
-              >启用SecretId和SecretKey，支持腾讯云API、SDK和其他开发工具访问</div>
+              >启用SecretId和SecretKey，支持腾讯雲API、SDK和其他开发工具访问</div>
             </div>
             <div style="padding-bottom: 10px;">
               <label class="tea-form-check">
                 <input readonly type="checkbox" class="tea-checkbox" />
-                <span class="tea-form-check__label">腾讯云控制台访问</span>
+                <span class="tea-form-check__label">腾讯雲控制台访问</span>
               </label>
               <div
                 class="tea-form__text"
                 style="color: rgb(153, 153, 153); padding: 5px 0px 0px 20px; font-size: 12px;"
-              >启用密码，允许用户登录到腾讯云控制台</div>
+              >启用密码，允许用户登录到腾讯雲控制台</div>
             </div>
           </div>
         </div>

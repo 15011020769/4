@@ -60,7 +60,7 @@
         <el-dialog title="请选择需要生成密钥的项目" :visible.sync="dialogHint" :before-close="handleClose" width="40%"> 
           <div class="explain" style="margin-bottom: 20px;margin-left: 0px;">
             <p>
-              <span style="color:red;">项目密钥暂不支持在云 API 上分项目管理资源</span>
+              <span style="color:red;">项目密钥暂不支持在雲 API 上分项目管理资源</span>
             </p>
           </div>
           <el-form ref="addModel" label-width="100px">
@@ -69,7 +69,7 @@
                   <el-radio label="1" >默认项目</el-radio>
                 </p>
                 <p>
-                  <el-radio label="2" >东华云计算有限公司1</el-radio>
+                  <el-radio label="2" >东华雲计算有限公司1</el-radio>
                 </p>
                 <p>
                   <el-radio label="3" >taifuyun</el-radio>
@@ -93,7 +93,7 @@
         <el-dialog title="通知" :visible.sync="notificationHint" :before-close="notificationHintClose" width="40%"> 
           <p style="font-size:10px;">您已成功创建项目密钥。</p>
           <p style="color:red;font-size:10px;">
-            项目密钥不支持访问腾讯云 API 。如需访问云 API ，请前往 <a href="https://console.cloud.tencent.com/cam/capi" target="_blank">API 密钥管理<i class="el-icon-share"></i></a> 生成API密钥。
+            项目密钥不支持访问腾讯雲 API 。如需访问雲 API ，请前往 <a href="https://console.cloud.tencent.com/cam/capi" target="_blank">API 密钥管理<i class="el-icon-share"></i></a> 生成API密钥。
           </p>
           <br/>
           <br/>
@@ -107,7 +107,7 @@
       <div>
         <el-dialog title="高风险提示" :visible.sync="highRiskHint" :before-close="highRisClose" width="40%"> 
           <p style="font-size:10px;">
-            您正在使用主账号访问云API密钥管理页面，使用密钥通过云API可以无限制地访问您的腾讯云资源。 云API密钥泄露可能造成您的云上资产损失，强烈建议您登录子用户账户操作并使用子用户密钥访问云API。
+            您正在使用主账号访问雲API密钥管理页面，使用密钥通过雲API可以无限制地访问您的腾讯雲资源。 雲API密钥泄露可能造成您的雲上资产损失，强烈建议您登录子用户账户操作并使用子用户密钥访问雲API。
           </p>
           <p style="font-size:10px;">
             <el-checkbox v-model="checked">不再显示此信息</el-checkbox>
@@ -172,7 +172,7 @@ export default {
       console.log(this.addModel)
       this.dialogHint = false
       this.notificationHint = true
-      // this.$alert('<p style="font-size:12px;">您已成功创建项目密钥。</p><p style="color:red;font-size:12px;">项目密钥不支持访问腾讯云 API 。如需访问云 API ，请前往 <a>API 密钥管理</a> 生成API密钥。</p>', '通知', {
+      // this.$alert('<p style="font-size:12px;">您已成功创建项目密钥。</p><p style="color:red;font-size:12px;">项目密钥不支持访问腾讯雲 API 。如需访问雲 API ，请前往 <a>API 密钥管理</a> 生成API密钥。</p>', '通知', {
       //   dangerouslyUseHTMLString: true
       // });
     },

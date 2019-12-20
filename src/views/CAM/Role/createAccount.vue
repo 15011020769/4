@@ -170,7 +170,7 @@ export default {
         this.have = false;
       }
     },
-    // 切换腾讯云主账号
+    // 切换腾讯雲主账号
     changeAccount() {
       if (this.radioAccount === "2") {
         this.disabledAccount = false;

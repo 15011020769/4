@@ -106,7 +106,7 @@ module.exports = {
       sszw: '所属子网',
       wzw: '无子网',
       qdsccfq: '您确定要删除该触发器吗？',
-      yhs: '云函数',
+      yhs: '雲函数',
       gl: '概览',
       hsfw: '函数服务',
       hssl: '函数数量',

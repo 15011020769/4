@@ -5,7 +5,7 @@
         <el-col :span="12">
           <el-radio-group v-model="addModel" size="mini">
             <el-radio label="1" border>默认项目</el-radio>
-            <el-radio label="2" border>东华云计算有限公司</el-radio>
+            <el-radio label="2" border>东华雲计算有限公司</el-radio>
             <el-radio label="3" border>taifuyun</el-radio>
             <el-radio label="4" border>test</el-radio>
           </el-radio-group>

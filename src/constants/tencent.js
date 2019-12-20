@@ -3,9 +3,9 @@
 export const DISK_TYPE = {
   LOCAL_BASIC: '本地硬盘',
   LOCAL_SSD: '本地SSD硬盘',
-  CLOUD_BASIC: '普通云硬盘',
-  CLOUD_PREMIUM: '高性能云硬盘',
-  CLOUD_SSD: 'SSD云硬盘',
+  CLOUD_BASIC: '普通雲硬盘',
+  CLOUD_PREMIUM: '高性能雲硬盘',
+  CLOUD_SSD: 'SSD雲硬盘',
 }
 // 节点规格
 export const NODE_TYPE = {

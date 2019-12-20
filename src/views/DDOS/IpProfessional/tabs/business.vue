@@ -59,7 +59,7 @@ export default {
       inputIdService: "",
       metricNameService: "traffic", //指标名，取值：traffic表示流量带宽，pkg表示包速率
       metricNameServices: ["traffic", "pkg"],
-      metricNameService2: "connum", //指标名，取值：（通过腾讯云获取的值connum/inactive_conn），以下为API给出
+      metricNameService2: "connum", //指标名，取值：（通过腾讯雲获取的值connum/inactive_conn），以下为API给出
       //connum表示总TCP连接数（新建TCP连接数与活跃TCP连接数的和）；
       // new_conn表示新建TCP连接数；
       // intraffic表示入流量；

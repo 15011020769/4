@@ -1,5 +1,5 @@
 // // 私有网络
-    // 云联网
+    // 雲联网
 export const CCN_LIST = 'vpc2/DescribeCcns' // CCN列表数据
 export const CCN_CREATE = 'vpc2/CreateCcn' // 创建CCN
 export const CCN_DELETE = 'vpc2/DeleteCcn' // 删除CCN
@@ -14,7 +14,7 @@ export const MODIFYCCN_ATTRIBUTE = 'vpc2/ModifyCcnAttribute' // 修改CCN公用�
 
 export const MODIFYCCN_REGIONBANDWIDTHLIMITSTYPE = 'vpc2/ModifyCcnRegionBandwidthLimitsType' // 修改限速方式
 
-    // 云联网-详情
+    // 雲联网-详情
 export const CCN_ATTACHEDINSTANCES_LIST = 'vpc2/DescribeCcnAttachedInstances' //  查询关联实例列表
 
 export const DETACHCCN_INSTANCES = 'vpc2/DetachCcnInstances' // 解除关联

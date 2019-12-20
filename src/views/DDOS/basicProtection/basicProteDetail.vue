@@ -9,7 +9,7 @@
         <div class="basicCenterOne">
           <p>
             <span class="pOne">黑洞触发阈值</span>
-            <span>2 Gbps(当触发黑洞会使云主机服务中断2小时)</span>
+            <span>2 Gbps(当触发黑洞会使雲主机服务中断2小时)</span>
           </p>
           <!-- <p>
             <span class="pOne">CC防护</span>

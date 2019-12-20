@@ -33,7 +33,7 @@
           <el-table-column prop="address" label="kubernetes版本"></el-table-column>
           <el-table-column prop="address" label="类型/状态"></el-table-column>
           <el-table-column prop="address" label="节点数"></el-table-column>
-          <el-table-column prop="address" label="台富云标签"></el-table-column>
+          <el-table-column prop="address" label="台富雲标签"></el-table-column>
           <el-table-column prop="address" label="操作"></el-table-column>
         </el-table>
         <div class="page">

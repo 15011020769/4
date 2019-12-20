@@ -14,7 +14,7 @@ export default new Router({
     redirect: '/CVM'
   },
   {
-    path: '/CVM', // 云服务器
+    path: '/CVM', // 雲服务器
     name: 'CVM',
     component: () =>
       import( /* webpackChunkName: "CVM" */ './CVM/index.vue'),
@@ -23,7 +23,7 @@ export default new Router({
     }
   },
   {
-    path: '/CMCVMdetails', // 云服务器详情监控
+    path: '/CMCVMdetails', // 雲服务器详情监控
     name: 'CMCVMdetails',
     component: () =>
       import( /* webpackChunkName: "CVM" */ './CVM/details.vue'),
@@ -32,7 +32,7 @@ export default new Router({
     }
   },
   {
-    path: '/cloudDisk', // 云硬盘
+    path: '/cloudDisk', // 雲硬盘
     name: 'cloudDisk',
     component: () =>
       import( /* webpackChunkName: "cloudDisk" */ './cloudDisk/index.vue'),
@@ -41,7 +41,7 @@ export default new Router({
     }
   },
   {
-    path: '/Diskdetails', // 云硬盘详情
+    path: '/Diskdetails', // 雲硬盘详情
     name: 'Diskdetails',
     component: () =>
       import( /* webpackChunkName: "cloudDisk" */ './cloudDisk/details.vue'),

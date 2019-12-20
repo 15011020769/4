@@ -28,7 +28,7 @@
                 <p class="pList">CC防护峰值QPS:150000；</p>
                 <p class="pList">支持一级域名个数:3；</p>
                 <p class="pList">支持二级域名个数:30；</p>
-                <p class="pList">业务带宽（云外/云内）: 30Mbps/200Mbps；</p>
+                <p class="pList">业务带宽（雲外/雲内）: 30Mbps/200Mbps；</p>
               </div>
               <div v-if="thisType=='2'?true:false">
                 <p class="pList">包含企业版版所有功能；</p>
@@ -42,7 +42,7 @@
                 <p class="pList">CC防护峰值QPS:500000；</p>
                 <p class="pList">支持一级域名个数:4；</p>
                 <p class="pList">支持二级域名个数:40；</p>
-                <p class="pList">业务带宽（云外/云内）: 50Mbps/200Mbps；</p>
+                <p class="pList">业务带宽（雲外/雲内）: 50Mbps/200Mbps；</p>
               </div>
             </div>
           </div>

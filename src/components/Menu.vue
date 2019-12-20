@@ -33,7 +33,7 @@
         navActionB: 'Elasticsearch Service',
         navActionC: 'Elasticsearch Service',
         expanders: [{
-            title: '云审计',
+            title: '雲审计',
             text: [{
                 title: '操作记录',
                 route: '/cloudaudit-operation',
@@ -45,7 +45,7 @@
             ],
           },
           {
-            title: '云函数',
+            title: '雲函数',
             text: [{
                 title: '概览',
                 route: '/scfoverView',
@@ -57,17 +57,17 @@
             ],
           },
           {
-            title: '云监控',
+            title: '雲监控',
             text: [{
-                title: '云服务器',
+                title: '雲服务器',
                 route: '/CMCVM',
               },
               {
-                title: '云数据库-Mysql',
+                title: '雲数据库-Mysql',
                 route: '/CMcloudMysql',
               },
               {
-                title: '云硬盘',
+                title: '雲硬盘',
                 route: '/CMcloudDisk',
               },
               {

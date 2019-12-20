@@ -315,7 +315,7 @@ export default {
         Region: VueCookie.get("regionv2"),
         CcnId: this.ccnId
       };
-      // 查询-各地域出带宽限速（DescribeCcnRegionBandwidthLimits原API中给出接口）（GetCcnRegionBandwidthLimits腾讯云给出接口）
+      // 查询-各地域出带宽限速（DescribeCcnRegionBandwidthLimits原API中给出接口）（GetCcnRegionBandwidthLimits腾讯雲给出接口）
       this.axios.post(GET_CCNREGIONBANDWIDTHLIMITS, params).then(res => {
         this.tableData = res.Response.CcnBandwidthSet;
         this.totalItems = res.Response.TotalCount;

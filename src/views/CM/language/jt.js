@@ -1,10 +1,10 @@
 module.exports = {
   menu: {
-    x1: '云监控',
-    x2: '云服务器',
+    x1: '雲监控',
+    x2: '雲服务器',
     x3: '块存储',
     x4: '负载均衡-CLB',
-    x5: '云数据库',
+    x5: '雲数据库',
     x6: 'MySQL',
     x7: 'Redis',
     x8: '私有网络',
@@ -22,7 +22,7 @@ module.exports = {
     slfz: '实例分组',
     zdyjk: '自定义监控',
     nwang: '内网',
-    title: '云服务器',
+    title: '雲服务器',
     sjzx: '事件中心',
     lljk: '流量监控',
     gjls: '告警历史',
@@ -113,11 +113,11 @@ module.exports = {
       ddwg: '对端网关',
     },
     cloudDisk: {
-      yyp: '云硬盘',
+      yyp: '雲硬盘',
       mc: 'ID/名称',
       dx: '大小(GB)',
       yplx: '硬盘类型',
-      glyzj: '关联云主机ID/名称',
+      glyzj: '关联雲主机ID/名称',
     },
     cloudMysql: {
       nw: '内网IP/端口',

@@ -3,91 +3,91 @@ let product = {
     entry: 'src/views/SCF/main.js', // page 的入口
     template: 'src/public/index.html', // 模板来源
     filename: 'index.html', // 在 dist/index.html 的输出
-    title: '台富云-云函数', // 当使用 title 选项时，template 中的 title 标签需要是 <title><%= htmlWebpackPlugin.options.title %></title>
+    title: '台富雲-雲函数', // 当使用 title 选项时，template 中的 title 标签需要是 <title><%= htmlWebpackPlugin.options.title %></title>
     chunks: ['chunk-vendors', 'chunk-common', 'SCF'] // 在这个页面中包含的块，默认情况下会包含,提取出来的通用 chunk 和 vendor chunk。
   },
   CLA: {
     entry: 'src/views/CLA/main.js',
     template: 'src/public/index.html',
     filename: 'index.html',
-    title: '台富云-云审计',
+    title: '台富雲-雲审计',
     chunks: ['chunk-vendors', 'chunk-common', 'CLA']
   },
   CM: {
     entry: 'src/views/CM/main.js',
     template: 'src/public/index.html',
     filename: 'index.html',
-    title: '台富云-云函数',
+    title: '台富雲-雲函数',
     chunks: ['chunk-vendors', 'chunk-common', 'CM']
   },
   CAM: {
     entry: 'src/views/CAM/main.js', // page 的入口
     template: 'src/public/index.html', // 模板来源
     filename: 'index.html', // 在 dist/index.html 的输出
-    title: '台富云-云服务器', // 当使用 title 选项时，template 中的 title 标签需要是 <title><%= htmlWebpackPlugin.options.title %></title>
+    title: '台富雲-雲服务器', // 当使用 title 选项时，template 中的 title 标签需要是 <title><%= htmlWebpackPlugin.options.title %></title>
     chunks: ['chunk-vendors', 'chunk-common', 'CAM']
   }, // 在这个页面中包含的块，默认情况下会包含,提取出来的通用 chunk 和 vendor chunk。
   CCN: {
     entry: 'src/views/CCN/main.js',
     template: 'src/public/index.html',
     filename: 'index.html',
-    title: '台富云-云联网',
+    title: '台富雲-雲联网',
     chunks: ['chunk-vendors', 'chunk-common', 'CCN']
   },
   CAP: {
     entry: 'src/views/CAP/main.js',
     template: 'src/public/index.html',
     filename: 'index.html',
-    title: '台富云-验证码',
+    title: '台富雲-验证码',
     chunks: ['chunk-vendors', 'chunk-common', 'CAP']
   },
   DDOS: {
     entry: 'src/views/DDOS/main.js',
     template: 'src/public/index.html',
     filename: 'index.html',
-    title: '台富云-DDoS防护',
+    title: '台富雲-DDoS防护',
     chunks: ['chunk-vendors', 'chunk-common', 'DDOS']
   },
   BILL: {
     entry: 'src/views/BILL/main.js',
     template: 'src/public/index.html',
     filename: 'index.html',
-    title: '台富云-费用中心',
+    title: '台富雲-费用中心',
     chunks: ['chunk-vendors', 'chunk-common', 'BILL']
   },
   WAF: {
     entry: 'src/views/WAF/main.js',
     template: 'src/public/index.html',
     filename: 'index.html',
-    title: '台富云-WEB应用防火墙',
+    title: '台富雲-WEB应用防火墙',
     chunks: ['chunk-vendors', 'chunk-common', 'WAF']
   },
   KMS: {
     entry: 'src/views/KMS/main.js',
     template: 'src/public/index.html',
     filename: 'index.html',
-    title: '台富云-密钥管理系统',
+    title: '台富雲-密钥管理系统',
     chunks: ['chunk-vendors', 'chunk-common', 'KMS']
   },
   TKE: {
     entry: 'src/views/TKE/main.js', // page 的入口
     template: 'src/public/index.html', // 模板来源
     filename: 'index.html', // 在 dist/index.html 的输出
-    title: '台富云-容器服务', // 当使用 title 选项时，template 中的 title 标签需要是 <title><%= htmlWebpackPlugin.options.title %></title>
+    title: '台富雲-容器服务', // 当使用 title 选项时，template 中的 title 标签需要是 <title><%= htmlWebpackPlugin.options.title %></title>
     chunks: ['chunk-vendors', 'chunk-common', 'TKE'] // 在这个页面中包含的块，默认情况下会包含,提取出来的通用 chunk 和 vendor chunk。
   },
   MGC: {
     entry: 'src/views/MGC/main.js', // page 的入口
     template: 'src/public/index.html', // 模板来源
     filename: 'index.html', // 在 dist/index.html 的输出
-    title: '台富云-消息中心', // 当使用 title 选项时，template 中的 title 标签需要是 <title><%= htmlWebpackPlugin.options.title %></title>
+    title: '台富雲-消息中心', // 当使用 title 选项时，template 中的 title 标签需要是 <title><%= htmlWebpackPlugin.options.title %></title>
     chunks: ['chunk-vendors', 'chunk-common', 'MGC'] // 在这个页面中包含的块，默认情况下会包含,提取出来的通用 chunk 和 vendor chunk。
   },
   CSS: {
     entry: 'src/views/CSS/main.js', // page 的入口
     template: 'src/public/index.html', // 模板来源
     filename: 'index.html', // 在 dist/index.html 的输出
-    title: '台富云-云直播', // 当使用 title 选项时，template 中的 title 标签需要是 <title><%= htmlWebpackPlugin.options.title %></title>
+    title: '台富雲-雲直播', // 当使用 title 选项时，template 中的 title 标签需要是 <title><%= htmlWebpackPlugin.options.title %></title>
     chunks: ['chunk-vendors', 'chunk-common', 'CSS'] // 在这个页面中包含的块，默认情况下会包含,提取出来的通用 chunk 和 vendor chunk。
   }
 }
