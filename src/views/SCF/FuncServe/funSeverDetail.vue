@@ -3,7 +3,7 @@
     <div class="appIdTit">
       <div class="topTit newClear">
         <span>
-          <i class="el-icon-back" @click="returnBack"></i>
+          <i class="el-icon-back" @click="returnBack" style="cursor: pointer;"></i>
           {{funNameTit}}
         </span>
         <span class="spanRight">
@@ -208,7 +208,7 @@
                       </el-form-item>
                     </el-form>
                     <span slot="footer" class="dialog-footer">
-                      <el-button @click="dialogVisible2 = false">{{ $t('SCF.total.qx') }}</el-button>
+                      <el-button @click="cancel">{{ $t('SCF.total.qx') }}</el-button>
                       <el-button type="primary" @click="saveConfig()">{{ $t('SCF.total.bc') }}</el-button>
                     </span>
                   </el-dialog>
@@ -432,6 +432,10 @@ export default {
     this.getfunction();
   },
   methods: {
+    cancel() {
+      this.init();
+      this.dialogVisible2 = false;
+    },
     //环境添加
     AddScience() {
       this.ScienceArr.push({});
@@ -455,6 +459,7 @@ export default {
     },
     // 获取编辑详情
     init() {
+      this.loading = true;
       let params = {
         Action: "GetFunction",
         Version: "2018-04-16",

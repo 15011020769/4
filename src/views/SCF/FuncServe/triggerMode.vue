@@ -1,6 +1,6 @@
 <template>
   <div class="tigger">
-    <div class="contentMain">
+    <div class="contentMain" v-loading="loading">
       <div class="contentMainList">
         <div class="addTriggerBtn">
           <p @click="addTriggerBtn" style="cursor:pointer">{{ $t('SCF.total.tjcffs') }}</p>
@@ -9,10 +9,12 @@
           <h3 @click="addTriggerBtn" style="cursor:pointer">{{ $t('SCF.total.tjcffs') }}</h3>
           <el-form :model="formTriggerForm" label-width="130px">
             <el-form-item :label="$t('SCF.total.cffs')" :required="true">
-              <span slot="label">
-                {{ $t('SCF.total.cffs') }}
-              </span>
-              <el-select v-model="formTriggerForm.triggerType" @change="chufatype" class="selectSetWidth">
+              <span slot="label">{{ $t('SCF.total.cffs') }}</span>
+              <el-select
+                v-model="formTriggerForm.triggerType"
+                @change="chufatype"
+                class="selectSetWidth"
+              >
                 <el-option :label="$t('SCF.total.dscf')" value="timer"></el-option>
                 <el-option :label="$t('SCF.total.coscf')" value="cos"></el-option>
                 <el-option :label="$t('SCF.total.ztdycf')" value="cmq"></el-option>
@@ -21,9 +23,7 @@
               </el-select>
             </el-form-item>
             <el-form-item :label="$t('SCF.total.dsrwmc')" :required="true">
-              <span slot="label">
-                {{ $t('SCF.total.dsrwmc') }}
-              </span>
+              <span slot="label">{{ $t('SCF.total.dsrwmc') }}</span>
               <el-input
                 v-model="formTriggerForm.tasksName"
                 class="inputSetWidth"
@@ -45,7 +45,7 @@
               </el-select>
             </el-form-item>
             <el-form-item :label="$t('SCF.total.bds')" v-if="triggerShow">
-              <el-input v-model="formTriggerForm.cronlist" placeholder="0 */5 * * * * *"/>
+              <el-input v-model="formTriggerForm.cronlist" placeholder="0 */5 * * * * *" />
               <span>{{ $t('SCF.total.bdsts') }}</span>
             </el-form-item>
             <el-form-item :label="$t('SCF.total.fjxx')">
@@ -60,7 +60,7 @@
             </el-form-item>
             <el-form-item :label="$t('SCF.total.ljqy')">
               <el-checkbox class="inputSetWidth" type="checkbox" v-model="formTriggerForm.nowStart"></el-checkbox>
-              <br>
+              <br />
               <span>{{ $t('SCF.total.zqcf') }}</span>
             </el-form-item>
           </el-form>
@@ -87,23 +87,23 @@
               <span>{{ $t('SCF.total.mc') }}</span>
               <span>{{item.TriggerName}}</span>
             </p>
-            <p v-if='item.TriggerDesc == "{\"cron\":\"0 */1 * * * * *\"}"'>
+            <p v-if="item.TriggerDesc == "{\"cron\":\"0 */1 * * * * *\"}"">
               <span>{{ $t('SCF.total.cfqzq') }}</span>
               <span>{{ $t('SCF.total.mfz') }}</span>
             </p>
-            <p v-if='item.TriggerDesc == "{\"cron\":\"0 */5 * * * * *\"}"'>
+            <p v-if="item.TriggerDesc == "{\"cron\":\"0 */5 * * * * *\"}"">
               <span>{{ $t('SCF.total.cfqzq') }}</span>
               <span>{{ $t('SCF.total.mwfz') }}</span>
             </p>
-            <p v-if='item.TriggerDesc == "{\"cron\":\"0 */30 * * * * *\"}"'>
+            <p v-if="item.TriggerDesc == "{\"cron\":\"0 */30 * * * * *\"}"">
               <span>{{ $t('SCF.total.cfqzq') }}</span>
               <span>{{ $t('SCF.total.mbxs') }}</span>
             </p>
-            <p v-if='item.TriggerDesc == "{\"cron\":\"0 0 */1 * * * *\"}"'>
+            <p v-if="item.TriggerDesc == "{\"cron\":\"0 0 */1 * * * *\"}"">
               <span>{{ $t('SCF.total.cfqzq') }}</span>
               <span>{{ $t('SCF.total.mxs') }}</span>
             </p>
-            <p v-if='item.TriggerDesc == "{\"cron\":\"0 0 0 */1 * * *\"}"'>
+            <p v-if="item.TriggerDesc == "{\"cron\":\"0 0 0 */1 * * *\"}"">
               <span>{{ $t('SCF.total.cfqzq') }}</span>
               <span>{{ $t('SCF.total.mt') }}</span>
             </p>
@@ -118,10 +118,11 @@
   </div>
 </template>
 <script>
-import { SCF_DETAILS,CREAT_TRIGGER } from '@/constants'
+import { SCF_DETAILS, CREAT_TRIGGER } from "@/constants";
 export default {
   data() {
     return {
+      loading: true,
       displayShow: false,
       triggerShow: false,
       formTriggerForm: {
@@ -151,7 +152,7 @@ export default {
       this.displayShow = false;
       let params = {
         Version: "2018-04-16",
-        Region: 'ap-guangzhou',//this.$cookie.get("regionv2"),
+        Region: "ap-guangzhou", //this.$cookie.get("regionv2"),
         Action: "CreateTrigger",
         TriggerName: this.formTriggerForm.tasksName,
         Type: this.formTriggerForm.triggerType,
@@ -164,10 +165,10 @@ export default {
       }
       this.axios.post(CREAT_TRIGGER, params).then(res => {
         _this.getfunction();
-        _this.formTriggerForm.tasksName = ""
-        _this.formTriggerForm.writeIsTrue = ""
-        _this.formTriggerForm.triggerType = "timer"
-        _this.formTriggerForm.triggerTime = "每5分鐘（每5分鐘的0秒执行一次）"
+        _this.formTriggerForm.tasksName = "";
+        _this.formTriggerForm.writeIsTrue = "";
+        _this.formTriggerForm.triggerType = "timer";
+        _this.formTriggerForm.triggerTime = "每5分鐘（每5分鐘的0秒执行一次）";
       });
     },
     //监测select变化
@@ -191,12 +192,13 @@ export default {
     },
     //删除触发器
     deleteTrigger(newIndex, newItem) {
-       this.$emit('childFn', newItem);
+      this.$emit("childFn", newItem);
     },
     getfunction() {
+      this.loading = true;
       let params = {
         Version: "2018-04-16",
-        Region: 'ap-guangzhou',//this.$cookie.get("regionv2"),
+        Region: "ap-guangzhou", //this.$cookie.get("regionv2"),
         Action: "GetFunction"
       };
       let functionName = this.$route.query.functionName;
@@ -208,10 +210,11 @@ export default {
         for (let i = 0; i < this.triggerBoxList.length; i++) {
           this.switch1[i] = true;
         }
+        this.loading = false;
       });
     },
     chufatype(val) {
-      this.formTriggerForm.triggerType = val
+      this.formTriggerForm.triggerType = val;
     }
   }
 };
