@@ -15,7 +15,7 @@
       </div>
     </div>
     <div class="tableStyle">
-      <el-table :data="tableData" height='450px'>
+      <el-table :data="tableData" height='450px' v-loading="loadShow">
         <el-table-column prop="Name" label="域名" width="250">
           <template slot-scope="scope">
             <p class="Adetails">
@@ -44,22 +44,40 @@
         <el-table-column prop="" label="操作">
           <template slot-scope="scope">
             <el-button type="text" size='mini'>管理</el-button>
-            <el-button type="text" size='mini'>禁用</el-button>
-            <el-button type="text" size='mini'>删除</el-button>
+            <el-button type="text" size='mini' @click="_progibitdomain(scope.row.Name)" v-if="scope.row.Status===1">禁用
+            </el-button>
+            <el-button type="text" size='mini' @click="_Enabledomain(scope.row.Name)" v-if="scope.row.Status===0">启用
+            </el-button>
+            <el-button type="text" size='mini' @click="_deldomain(scope.row.Name,scope.row.Type)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
     </div>
     <div>
-      <AdddomainLive :AddDialogVisible='DialogVisible' @AddhandleCancel='AddhandleCancel' />
+      <AdddomainLive :AddDialogVisible='AddDialogVisible' @AddhandleCancel='AddhandleCancel' />
     </div>
-
+    <div>
+      <DeldomainLive :DelDialogVisible='DelDialogVisible' :DomainType='DomainType' :DomainName='DomainName'
+        @DelhandleCancel='DelhandleCancel' />
+    </div>
+    <div>
+      <ProhibitdomLive :ProhibitDialogVisible='ProhibitDialogVisible' :DomainName='DomainName'
+        @ProhibithandleCancel='ProhibithandleCancel' />
+    </div>
+    <div>
+      <Enabledomain :EnableDialogVisible='EnableDialogVisible' :DomainName='DomainName'
+        @EnablehandleCancel='EnablehandleCancel' />
+    </div>
   </div>
 </template>
 
 <script>
   import Header from "@/components/public/Head";
-  import AdddomainLive from './model/Newlydomain'
+  import AdddomainLive from './model/Newlydomain' //添加域名
+  import DeldomainLive from './model/deletedomain' //删除域名
+  import ProhibitdomLive from './model/Prohibitdomain' //禁用域名
+  import Enabledomain from './model/Enabledomain' //启用域名
+
   import {
     DOMAIN_LIST
   } from "@/constants";
@@ -70,19 +88,28 @@
         tableData: [], //表格数据
         Region: this.$cookie.get("regionv2"),
         instanceStatus: {
-          0: "已停用",
+          0: "未启用",
           1: '已启用'
         },
         instanceType: {
           0: "推流域名",
           1: '播放域名'
         },
-        DialogVisible: false
+        AddDialogVisible: false, //添加域名模态框
+        DelDialogVisible: false, //删除域名模态框
+        ProhibitDialogVisible: false, //禁用域名模态框
+        EnableDialogVisible: false, //启用域名模态框
+        DomainName: '',
+        DomainType: '',
+        loadShow: true
       }
     },
     components: {
       Header,
-      AdddomainLive
+      AdddomainLive,
+      DeldomainLive,
+      ProhibitdomLive,
+      Enabledomain
     },
     created() {
       this.getDATA()
@@ -90,6 +117,7 @@
     methods: {
       //获取数据
       getDATA() {
+        this.loadShow = true
         const param = {
           Region: this.Region,
           Version: '2018-08-01',
@@ -99,7 +127,7 @@
         this.axios.post(DOMAIN_LIST, param).then(data => {
           if (data.Response.Error == undefined) {
             this.tableData = data.Response.DomainList
-            console.log(data)
+            this.loadShow = false
           } else {
             this.$message.error(data.Response.Error.Message);
           }
@@ -107,10 +135,39 @@
       },
       //添加慢直播域名
       _Addto() {
-        this.DialogVisible = true
+        this.AddDialogVisible = true
       },
+      //关闭添加域名模态框
       AddhandleCancel(val) {
-        this.DialogVisible = val
+        this.AddDialogVisible = val
+      },
+      //删除域名
+      _deldomain(val, value) {
+        this.DomainName = val
+        this.DomainType = value
+        this.DelDialogVisible = true
+      },
+      //关闭删除域名模态框
+      DelhandleCancel(val) {
+        this.DelDialogVisible = val
+      },
+      //禁用域名_Enabledomain
+      _progibitdomain(val) {
+        this.DomainName = val
+        this.ProhibitDialogVisible = true
+      },
+      //关闭禁用域名模态框
+      ProhibithandleCancel(val) {
+        this.ProhibitDialogVisible = val
+      },
+      //启用域名
+      _Enabledomain(val) {
+        this.DomainName = val
+        this.EnableDialogVisible = true
+      },
+      //关闭启用域名模态框
+      EnablehandleCancel(val) {
+        this.EnableDialogVisible = val
       }
 
 
@@ -126,7 +183,7 @@
     }
 
     .red {
-      color: red
+      color: #e54545
     }
 
     .Adetails {

@@ -91,7 +91,6 @@
             if (this.ruleForm.type == '1') {
               param['PlayType'] = this.ruleForm.region
             }
-            // 获取表格数据
             this.axios.post(ADD_DOMAIN, param).then(data => {
               if (data.Response.Error == undefined) {
                 this.$message({
@@ -99,6 +98,7 @@
                   type: 'success'
                 });
                 this.$emit('AddhandleCancel', false)
+                this.$parent.getDATA();
               } else {
                 this.$message.error(data.Response.Error.Message);
               }
