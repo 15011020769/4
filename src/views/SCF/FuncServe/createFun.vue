@@ -1,18 +1,9 @@
 <template>
-  <div>
+  <div class="wrap">
     <div class="topCreateFun">
       <span class="el-icon-back" @click="backFunlist"></span>
       <span class="createFunTit">{{ $t('SCF.total.cjhs') }}</span>
-      <span class="docRight">
-        <!-- <a href="#">
-          命令行工具创建函数
-          <span class="el-icon-share"></span>
-        </a>
-        <a href="#">
-          VS Code创建函数
-          <span class="el-icon-share"></span>
-        </a>-->
-      </span>
+      <span class="docRight"></span>
     </div>
     <div class="mainContent">
       <div class="stepOneTopTit newClear">
@@ -51,10 +42,6 @@
                 <p>{{ $t('SCF.total.mbhs') }}</p>
                 <p>{{ $t('SCF.total.symbcjhs') }}</p>
               </div>
-              <!-- <div class="tabBtnBox tabBtnTwo" :class="clickTab==false?'addBorderColor':''" @click="clickTab=false">
-                <p>空白函数</p>
-                <p>使用helloworld示例创建空白函数</p>
-              </div>-->
             </div>
           </el-form-item>
           <div v-if="clickTab">
@@ -62,7 +49,7 @@
               <el-input class="searchIpt" v-model="searchName"></el-input>
               <el-button class="btn" @click="doFilter" icon="el-icon-search"></el-button>
             </el-form-item>
-            <div class="allFunList">
+            <div class="allFunList" v-loading="loading">
               <el-row>
                 <el-col :span="8" v-for="(item,index) in tableDataBegin" :key="index">
                   <div
@@ -163,14 +150,13 @@
                 </el-col>
               </el-row>
             </div>
-            <div class="tabListPage">
+            <div class="Right-style pagstyle">
+              <span class="pagtotal">共&nbsp;{{totalItems}}&nbsp;条</span>
               <el-pagination
-                @size-change="handleSizeChange"
-                @current-change="handleCurrentChange"
-                :current-page="currentPage"
-                :page-sizes="[6, 9, 12, 15]"
                 :page-size="pageSize"
-                layout="total, sizes, prev, pager, next, jumper"
+                :pager-count="7"
+                layout="prev, pager, next"
+                @current-change="handleCurrentChange"
                 :total="totalItems"
               ></el-pagination>
             </div>
@@ -188,6 +174,7 @@ import { TEMPLATE_LIST, TEMPLATE_DETAIL } from "@/constants";
 export default {
   data() {
     return {
+      loading: true,
       index: "",
       active: 0,
       showHide: false,
@@ -236,6 +223,7 @@ export default {
       this.GetTemplateList();
     },
     GetTemplateList() {
+      this.loading = true;
       //获取函数模板列表
       let param = {
         Region: "ap-guangzhou", //this.$cookie.get('regionv2'),
@@ -250,11 +238,11 @@ export default {
         param["SearchKey.0.Value"] = this.searchName;
       }
       this.axios.post(TEMPLATE_LIST, param).then(data => {
-        console.log(data);
         this.tableDataBegin = data.Response.Demos;
         this.DemoId = this.tableDataBegin[0].DemoId;
         this.isactive = 0;
         this.totalItems = data.Response.TotalCount;
+        this.loading = false;
       });
     },
 
@@ -337,7 +325,33 @@ export default {
   }
 };
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
+.Right-style {
+  display: flex;
+  justify-content: flex-end;
+
+  .esach-inputL {
+    width: 300px;
+    margin-right: 20px;
+  }
+}
+.wrap >>> .el-input__inner,
+.wrap >>> .el-button {
+  height: 30px;
+  line-height: 30px;
+  border-radius: 0;
+  padding-top: 0;
+}
+.pagstyle {
+  padding: 20px;
+
+  .pagtotal {
+    font-size: 13px;
+    font-weight: 400;
+    color: #565656;
+    line-height: 32px;
+  }
+}
 .allFunListBoxCon {
   height: 320px;
 

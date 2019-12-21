@@ -148,7 +148,6 @@ export default {
         .post(FUN_LOG, params)
         .then(res => {
           _this.logData = res.Response;
-          console.log(_this.logData);
           res.Response.Data.forEach((element, index) => {
             let obj = {};
             obj.time = element.StartTime;

@@ -320,6 +320,8 @@ export default {
   },
   data() {
     return {
+      StartTIme: "",
+      closeshow: true,
       loading: true,
       ScienceArr: [{}],
       funNameTit: "",
@@ -459,7 +461,6 @@ export default {
         Region: "ap-guangzhou" //this.$cookie.get("regionv2")
       };
       let functionName = this.$route.query.functionName;
-      // functionName = 'tttt'
       if (functionName != "" && functionName != null) {
         params["FunctionName"] = functionName;
       }
@@ -487,7 +488,7 @@ export default {
           }
         })
         .catch(error => {
-          console.log(error);
+          this.$message.error(error);
         });
     },
     // 函数配置修改
@@ -519,7 +520,7 @@ export default {
           this.dialogVisible2 = false;
         })
         .catch(error => {
-          console.log(error);
+          this.$message.error(error);
         });
     },
     getfunction() {
@@ -539,12 +540,8 @@ export default {
         }
       });
     },
-    inpChange(val) {
-      console.log(val);
-    },
-    handleClick(tab, event) {
-      console.log(tab.index);
-    },
+    inpChange(val) {},
+    handleClick(tab, event) {},
     handleClick1() {},
     returnBack() {
       this.$router.push({
@@ -605,7 +602,7 @@ export default {
           this.searchVersion();
         })
         .catch(error => {
-          console.log(error);
+          this.$message.error(error);
         });
       this.publishNewVewsion = false;
     },
@@ -655,9 +652,7 @@ export default {
           b: "1"
         }
       ];
-      console.log(this.funReast.valueChangeSelect2);
       for (var val of this.funReast.valueChangeSelect2) {
-        console.log(val.a);
         if (eventNew == val.a) {
           tempCity.push({ label: val.b, value: val.b });
         }
@@ -668,7 +663,6 @@ export default {
       this.$forceUpdate();
     },
     publishNewVewsionHander() {
-      console.log(this.action);
       if (this.action == "action1") {
         this.publishNewVewsion = true;
       } else {
@@ -697,10 +691,9 @@ export default {
             arr.push(this.logData[i]);
           }
           this.versionArr = arr;
-          console.log(this.versionArr);
         })
         .catch(error => {
-          console.log(error);
+          this.$message.error(error);
         });
     },
     childFn(val) {
@@ -721,8 +714,6 @@ export default {
         params["FunctionName"] = functionName;
       }
       this.axios.post(DEL_TRIGGER, params).then(res => {
-        console.log(res);
-        console.log(this.$refs.mychild);
         this.$refs.mychild.getfunction();
       });
     },
@@ -740,21 +731,22 @@ export default {
         StartTime: this.Start_End.StartTIme,
         EndTime: this.Start_End.EndTIme
       };
-      console.log(params);
       this.axios
         .post(All_MONITOR, params)
         .then(res => {
-          console.log(res.Response);
           this.tableData.push(data.Response);
         })
         .catch(error => {
-          console.log(error);
+          this.$message.error(error);
         });
     }
   }
 };
 </script>
 <style lang="scss" scoped>
+.appIdTit >>> .el-loading-mask {
+  background: white;
+}
 .appIdTit >>> .el-tabs__nav-wrap {
   width: 100%;
   background: white;

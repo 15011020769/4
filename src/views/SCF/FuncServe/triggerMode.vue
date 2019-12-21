@@ -11,7 +11,6 @@
             <el-form-item :label="$t('SCF.total.cffs')" :required="true">
               <span slot="label">
                 {{ $t('SCF.total.cffs') }}
-                <!-- <i class="el-icon-question"></i> -->
               </span>
               <el-select v-model="formTriggerForm.triggerType" @change="chufatype" class="selectSetWidth">
                 <el-option :label="$t('SCF.total.dscf')" value="timer"></el-option>
@@ -24,7 +23,6 @@
             <el-form-item :label="$t('SCF.total.dsrwmc')" :required="true">
               <span slot="label">
                 {{ $t('SCF.total.dsrwmc') }}
-                <!-- <i class="el-icon-question"></i> -->
               </span>
               <el-input
                 v-model="formTriggerForm.tasksName"
@@ -159,7 +157,6 @@ export default {
         Type: this.formTriggerForm.triggerType,
         TriggerDesc: this.desc
       };
-      console.log(params);
       let functionName = this.$route.query.functionName;
       // functionName = 'tttt'
       if (functionName != "" && functionName != null) {
@@ -175,7 +172,6 @@ export default {
     },
     //监测select变化
     triggerChange(val) {
-      console.log(val);
       if (val === "type1") {
         this.desc = "0 */1 * * * * *";
       } else if (val === "type2") {
@@ -208,7 +204,6 @@ export default {
         params["FunctionName"] = functionName;
       }
       this.axios.post(SCF_DETAILS, params).then(res => {
-        console.log(res);
         this.triggerBoxList = res.Response.Triggers;
         for (let i = 0; i < this.triggerBoxList.length; i++) {
           this.switch1[i] = true;
