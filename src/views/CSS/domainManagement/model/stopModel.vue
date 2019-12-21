@@ -41,13 +41,13 @@ export default {
   methods:{
     //关闭弹框
     handleClose(){
-      this.dialogmodel=false;
-      this.$emit("closeStopDominModel",this.dialogmodel)
+      this.dialogmodel = false;
+      this.$emit("closeStopDominModel",false);
     },
-    //添加域名确定按钮
+    //禁用域名确定按钮
     stopDominSure(){
-      this.dialogmodel=false;
-      this.$emit("closeStopDominModel",this.dialogmodel)
+      this.dialogmodel = false;
+      this.$emit("closeStopDominModel",true);
     }
   }
 }
