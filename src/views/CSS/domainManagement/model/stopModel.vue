@@ -3,11 +3,11 @@
     <div>
       <el-dialog
         title="禁用域名"
-        :visible.sync="dialogmodel"
+        :visible.sync="addDominModel"
         width="45%"
         :before-close="handleClose">
         <div>
-          <span class="tip">确定禁用：{{addDominModel[1]}}?</span>
+          <span class="tip">确定禁用：{{getCon}}?</span>
         </div>
         <span slot="footer" class="dialog-footer">
           <el-button @click="handleClose">取 消</el-button>
@@ -20,13 +20,17 @@
 <script>
 export default {
   props:{
-    isShow:Array
+    isShow:Boolean,
+    con:String,
   },
   computed:{
     addDominModel(){
       // console.log(this.isShow);
-      this.dialogmodel=this.isShow[0]
+      this.dialogmodel=this.isShow
       return this.isShow
+    },
+    getCon(){
+      return this.con
     }
   },
   data(){

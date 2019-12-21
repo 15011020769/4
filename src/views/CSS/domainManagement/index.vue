@@ -71,8 +71,8 @@
         </div>
       </div>
       <addModel :isShow="addModel" @closeAddModel="closeAddModel"/>
-      <stopModel :isShow="stopDominArr" @closeStopDominModel="closeStopDominModel"/>
-      <deleteModel :isShow="deleteDominArr" @closedeleteDominModel="closedeleteDominModel"/>
+      <stopModel :isShow="stopModel" :con="stopDominArr" @closeStopDominModel="closeStopDominModel"/>
+      <deleteModel :isShow="deleteModel" :con="deleteDominArr" @closedeleteDominModel="closedeleteDominModel"/>
       <editTagsModel :isShow="editTagsModel" @closeEditTagsModel="closeEditTagsModel"/>
     </div>
   </div>
@@ -115,8 +115,8 @@ export default {
       checkArr:[],//被选中选项
       addModel:false,//添加域名弹框
       stopModel:false,//禁用弹框
-      stopDominArr:[],//禁用数组传值
-      deleteDominArr:[],//删除域名数组传值
+      stopDominArr:'',//禁用数组传值
+      deleteDominArr:'',//删除域名数组传值
       deleteModel:false,//删除弹框
       editTagsModel:false,//编辑标签弹框
     };
@@ -202,8 +202,7 @@ export default {
     //禁用按钮
     stopBtn(index,row){
       this.stopModel=true;
-      this.stopDominArr.push(this.stopModel);
-      this.stopDominArr.push(row.domin);
+      this.stopDominArr=row.domin;
       // =[this.stopModel,row.domin]
     },
     //关闭禁用域名弹框
@@ -214,8 +213,7 @@ export default {
     //删除按钮
     deleteRow(index,row){
       this.deleteModel=true;
-      this.deleteDominArr.push(this.deleteModel);
-      this.deleteDominArr.push(row.domin);
+      this.deleteDominArr=row.domin;
     },
     //关闭删除弹框
     closedeleteDominModel(isShow){
