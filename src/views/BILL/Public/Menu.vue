@@ -1,15 +1,15 @@
 <template>
   <div class="CCN">
-    <div class="big-title">费用中心</div>
+    <div class="big-title">{{$t('BILL.Deal.bigTitle')}}</div>
     <el-menu default-active="2" class="el-menu-vertical-demo" @select="handleSelect" background-color="#292b36" text-color="#fff" active-text-color="#ffd04b" :router="true">
       <el-menu-item index="deal" :class="{'menu-active': activeMenu === 'deal'}">
-        <span slot="title">订单管理</span>
+        <span slot="title">{{$t('BILL.Deal.title')}}</span>
       </el-menu-item>
       <el-menu-item index="overview" :class="{'menu-active': activeMenu === 'overview'}">
-        <span slot="title">账单概览</span>
+        <span slot="title">{{$t('BILL.Overview.title')}}</span>
       </el-menu-item>
       <el-menu-item index="detail" :class="{'menu-active': activeMenu === 'detail'}">
-        <span slot="title">账单明细</span>
+        <span slot="title">{{$t('BILL.Detail.title')}}</span>
       </el-menu-item>
     </el-menu>
   </div>

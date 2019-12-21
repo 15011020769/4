@@ -1,6 +1,7 @@
 module.exports = {
   BILL: {
     Deal: {
+      bigTitle: '费用中心',
       title: '订单管理',
       projectId: '项目ID',
       orderId: '订单编号',
