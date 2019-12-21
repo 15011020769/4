@@ -15,7 +15,7 @@
           <el-button type="primary" @click="editTags">编辑标签</el-button>
         </div>
 
-        <div class="input" style="width:300px;">
+        <div class="input">
           <el-input v-model="tableDataName" placeholder="输入部分域名搜索" size="small" class="inputSearch" style="width:90%;">
             <i slot="suffix" class="el-input__icon el-icon-search" @click="doFilter"></i>
           </el-input>
@@ -321,6 +321,10 @@ export default {
     border-top:1px solid #ddd;
     text-align:right;
     background-color:#fff;
+    ::v-deep .el-input__inner {
+      width: 100% !important;
+      height: 30px !important;
+    }
   }
 }
 </style>
