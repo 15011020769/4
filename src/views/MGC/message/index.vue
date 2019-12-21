@@ -1,5 +1,5 @@
 <template>
-  <div class="message-wrap">
+  <div class="message-wrap" v-loading="loading">
     <div class="message-header">
       <HeaderCom title="站内信">
         <p>
@@ -13,16 +13,15 @@
         <div class="message-funLeft">
           <div class="message-btns">
             <el-button @click="delMesg">删除</el-button>
-            <el-button>标记为已读</el-button>
+            <el-button @click="changeRead">标记为已读</el-button>
             <el-button @click="AllRead">全部标记为已读</el-button>
           </div>
           <div class="message-btns btnStyle">
-            <el-button
-              v-for="(item,index) in btnData"
-              :key="index"
-              :class="btnIndex == index ? 'btn-active' : ''"
-              @click="btnClick(index)"
-            >{{item}}</el-button>
+            <el-button @click="searchAll">全部</el-button>
+            <el-button @click="searchTitle">母云动态</el-button>
+            <el-button @click="searchText">运维消息</el-button>
+            <el-button @click="searchProduct">产品消息</el-button>
+            <el-button @click="searchMsgAq">安全消息</el-button>
           </div>
         </div>
         <div class="message-funRight">
@@ -43,7 +42,7 @@
              </template>
           </el-table-column>
           <el-table-column prop="updateTime" label="接收时间" width="180"></el-table-column>
-          <el-table-column prop="statusLabel" label="消息类型"></el-table-column>
+          <el-table-column prop="msgTypeLabel" label="消息类型"></el-table-column>
           <el-table-column prop="channelLabel" label="消息子类型"></el-table-column>
         </el-table>
         <div class="Right-style pagstyle" style="height:70px;">
@@ -91,6 +90,7 @@ export default {
   name: "message",
   data() {
     return {
+      loading:false,
       dialogVisible:false,//删除弹框
       MessageDialog:false,//消息弹框
       TotalCount:0,//分页
@@ -111,6 +111,7 @@ export default {
       tableData: [], //表格数据
       getData:[],//获取选中时的数据
       json:[], //搜索数据
+      tableAll:[]
     };
   },
   components: {
@@ -120,8 +121,9 @@ export default {
      this.init()
   },
   methods: {
-    //初始化数据
+   //初始化数据
     init(){
+      this.loading = true;
        let params = {
         //  searchForm:this.tableData,
          limit:this.pagesize,
@@ -130,8 +132,10 @@ export default {
        this.axios.post(`${process.env.VUE_APP_adminUrl}`+"/taifucloud/inmail/list",params).then(res => {
            console.log(res)
            this.tableData = res.data.list
+           this.tableAll = res.data.list
            this.json = res.data.list
            this.TotalCount = res.data.totalCount
+           this.loading = false
        })
     },
     //批量删除弹框点击确定删除
@@ -142,12 +146,10 @@ export default {
         })
         delIndex.forEach(item => {
           let params = [item.id]
-          
-          console.log(params)
-          // debugger
            this.axios.delete(`${process.env.VUE_APP_adminUrl}`+"/taifucloud/inmail/delete",{data: params}).then(res=>{
-          console.log(params)
+             this.$message('删除成功')
              console.log(res)
+             this.init()
            })
         })
         this.dialogVisible = false;
@@ -179,6 +181,25 @@ export default {
          this.$message("请选择数据")
       }
     },
+     //多选已读
+    changeRead(){
+      if(this.getData.length != 0){
+         var updata = []
+         this.getData.forEach(item => {
+            updata.push(item)
+         })
+         updata.forEach(item => {
+            let params = [item.qcloudUin]
+            this.axios.put(`${process.env.VUE_APP_adminUrl}`+"/taifucloud/inmail/status/modify",params).then(res=>{
+             this.init()
+             this.$message('标记成功')
+             console.log(res)
+            })
+         })
+     }else{
+         this.$message("请选择数据")
+      }
+    },
     //全部标记为已读显示弹框
     AllRead(){
      this.MessageDialog = true
@@ -187,13 +208,14 @@ export default {
     updataMesg(){
          this.tableData.forEach(item => {
          console.log(item.qcloudUin)
-         let params = {
-           ids:item.qcloudUin
-         }
+         let params = [item.qcloudUin]
         this.axios.put(`${process.env.VUE_APP_adminUrl}`+"/taifucloud/inmail/status/modify",params).then(res=>{
-             console.log(res)
+            this.init()
+            this.$message('标记成功')
+            console.log(res)
          })
        })
+       this.MessageDialog = false
     },
     //跳转详情
     detailsMesg(val){
@@ -203,6 +225,50 @@ export default {
           detailsData: val.id
         }
       });
+    },
+     //对关键字进行搜索
+     searchAll(){
+        this.init()
+     },
+    searchTitle(){
+       var arr = [];
+      this.tableAll.forEach(item => {
+         if(item.msgTypeLabel == "母雲動態"){
+              arr.push(item)
+         }
+      })
+      this.tableData = arr
+      this.TotalCount = arr.length
+    },
+    searchText(){
+      var arr = [];
+      this.tableAll.forEach(item => {
+         if(item.msgTypeLabel =='運維消息'){
+              arr.push(item)
+         }
+      })
+      this.tableData = arr
+      this.TotalCount = arr.length
+    },
+    searchProduct(){
+      var arr = [];
+      this.tableAll.forEach(item => {
+         if(item.msgTypeLabel =='產品消息'){
+              arr.push(item)
+         }
+      })
+      this.tableData = arr
+      this.TotalCount = arr.length
+    },
+    searchMsgAq(){
+      var arr = [];
+      this.tableAll.forEach(item => {
+         if(item.msgTypeLabel =='安全消息'){
+              arr.push(item)
+         }
+      })
+      this.tableData = arr
+      this.TotalCount = arr.length
     },
     //分页
     handleCurrentChange(val) {
