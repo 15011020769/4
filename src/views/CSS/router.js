@@ -159,6 +159,14 @@ export default new Router({
       }
     },
     {
+      path: '/domainLivedetails', // 域名管理详情
+      name: 'domainLivedetails',
+      component: () => import(/* webpackChunkName: "domainLive" */ './domainLive/details/index.vue'),
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
       path: '/configuration', // 模板配置
       name: 'configuration',
       component: () => import(/* webpackChunkName: "configuration" */ './configuration/index.vue'),

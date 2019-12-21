@@ -18,7 +18,7 @@
       <el-table :data="tableData" height='450px' v-loading="loadShow">
         <el-table-column prop="Name" label="域名" width="250">
           <template slot-scope="scope">
-            <p class="Adetails">
+            <p class="Adetails" @click="jump(scope.row.Name)">
               {{scope.row.Name}}
             </p>
           </template>
@@ -43,7 +43,7 @@
         </el-table-column>
         <el-table-column prop="" label="操作">
           <template slot-scope="scope">
-            <el-button type="text" size='mini'>管理</el-button>
+            <el-button type="text" size='mini' @click="jump(scope.row.Name)">管理</el-button>
             <el-button type="text" size='mini' @click="_progibitdomain(scope.row.Name)" v-if="scope.row.Status===1">禁用
             </el-button>
             <el-button type="text" size='mini' @click="_Enabledomain(scope.row.Name)" v-if="scope.row.Status===0">启用
@@ -168,6 +168,14 @@
       //关闭启用域名模态框
       EnablehandleCancel(val) {
         this.EnableDialogVisible = val
+      },
+      jump(name) {
+        this.$router.push({
+          name: "domainLivedetails",
+          query: {
+            name
+          }
+        });
       }
 
 
