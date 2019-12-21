@@ -1,7 +1,7 @@
 <template>
   <div>
     <div>
-      <el-dialog
+      <!-- <el-dialog
         title="选择域名类型"
         :visible.sync="addDominModel"
         width="45%"
@@ -16,34 +16,34 @@
           <el-button @click="handleClose">取 消</el-button>
           <el-button type="primary" @click="addDominSure">确 定</el-button>
         </span>
-      </el-dialog>
+      </el-dialog> -->
       <el-dialog
         title="添加域名"
-        :visible.sync="addDominModel2"
+        :visible.sync="addDominModel"
         width="45%"
-        :before-close="handleClose1">
+        :before-close="handleClose">
         <div class="newClear">
           <div class="newClear conList">
             <p>域名</p>
             <p>
-              <el-input class="ipt" placeholder="请填写域名，如：www.test.com"></el-input>
+              <el-input class="ipt" v-model="dominForm.DominName" placeholder="请填写域名，如：www.test.com"></el-input>
             </p>
           </div>
           <div class="newClear conList">
             <p>类型</p>
             <p>
-              <el-select v-model="typeDomin" @change="selectDomin" class="ipt">
-                <el-option label="播放域名" value="1"></el-option>
-                <el-option label="推流域名" value="2"></el-option>
+              <el-select v-model="dominForm.DomainType" @change="selectDominType" class="ipt">
+                <el-option label="推流域名" :value=0></el-option>
+                <el-option label="播放域名" :value=1></el-option>
               </el-select>
             </p>
           </div>
-          <div class="newClear conList" v-if="selectChange=='1'?true:false">
+          <div class="newClear conList" v-if="dominForm.DomainType==1?true:false">
             <p>加速区域</p>
             <p>
-              <el-select v-model="speedOrign" @change="speedAre" class="ipt">
-                <el-option label="中国大陆" value="1"></el-option>
-                <el-option label="全球加速" value="2"></el-option>
+              <el-select v-model="PlayType" @change="changePlayType" class="ipt">
+                <el-option label="中国大陆" :value="1"></el-option>
+                <el-option label="全球加速" :value="2"></el-option>
                 <el-option label="中国港澳台地区及海外地区" value="3"></el-option>
               </el-select>
             </p>
@@ -58,21 +58,8 @@
           </div>
         </div>
         <span slot="footer" class="dialog-footer">
-          <el-button @click="handleClose1">取 消</el-button>
-          <el-button type="primary" @click="addDominSure1">确 定</el-button>
-        </span>
-      </el-dialog>
-      <el-dialog
-        title="域名租赁-身份核验"
-        :visible.sync="addDominModel3"
-        width="45%"
-        :before-close="handleClose1">
-        <div>
-          123131313
-        </div>
-        <span slot="footer" class="dialog-footer">
-          <el-button @click="handleClose1">取 消</el-button>
-          <el-button type="primary" @click="addDominSure2">确 定</el-button>
+          <el-button @click="handleClose">取 消</el-button>
+          <el-button type="primary" @click="addDominSure">确 定</el-button>
         </span>
       </el-dialog>
     </div>
@@ -91,57 +78,61 @@ export default {
   data(){
     return{
       dialogmodel:'',//弹框
+      //添加域名表单
+      dominForm: {
+        DominName: '',
+        DomainType: 0,
+        region: '1'
+      },
+      PlayType: 1,
+      speedAre1:false,//监测加速区域select  全球
+      speedAre2:false,//监测加速区域select  境外
+
       checkDomin:'',//选择域名类型
       addDominModel2:false,//添加域名
       addDominModel3:false,
-      typeDomin:'播放域名',//域名类型
-      selectChange:'',//监测select改变的值
-      speedOrign:'',//加速区域
-      speedAre1:false,//监测加速区域select  全球
-      speedAre2:false,//监测加速区域select  全球
     }
   },
   methods:{
+    //初始化数据和显示标记
+    initData(){
+      this.dominForm = {
+        DominName: '',
+        DomainType: 0,
+        region: '1'
+      };
+      this.PlayType = 1;
+      this.changePlayType();
+      console.log(123);
+    },
     //关闭弹框
     handleClose(){
+      //TODO
+      this.initData();
       this.dialogmodel=false;
       this.$emit("closeAddModel",this.dialogmodel)
     },
     //添加域名确定按钮
     addDominSure(){
+      console.log(this.dominForm, this.PlayType);
+      //TODO
+      this.initData();
       this.dialogmodel=false;
       this.$emit("closeAddModel",this.dialogmodel);
-     if(this.checkDomin=='1'){
-        this.addDominModel2=true;
-        this.addDominModel3=false;
-      }else if(this.checkDomin=='2'){
-        // this.addDominModel2=false;
-        // this.addDominModel3=false;
-      }
-    },
-    //添加域名确定按钮
-    addDominSure1(){
-      this.addDominModel2=false;
-    },
-    addDominSure2(){
-      this.addDominModel3=false;
-    },
-    //关闭弹框
-    handleClose1(){
-      this.addDominModel2=false;
-      this.addDominModel3=false;
     },
     //域名类型change事件
-    selectDomin(){
-      console.log(this.typeDomin)
-      this.selectChange=this.typeDomin
+    selectDominType(){
+      console.log(this.dominForm.DomainType)
     },
     //加速区域change事件
-    speedAre(){
-      if(this.speedOrign=='2'){
+    changePlayType(){
+      if(this.PlayType=='1'){
+        this.speedAre1=false;
+        this.speedAre2=false;
+      }else if(this.PlayType=='2'){
         this.speedAre1=true;
         this.speedAre2=false;
-      }else if(this.speedOrign=='3'){
+      }else if(this.PlayType=='3'){
         this.speedAre2=true;
         this.speedAre1=false;
       }
@@ -161,6 +152,9 @@ export default {
 }
 ::v-deep .el-dialog__footer{
   text-align:center;
+}
+::v-deep .el-input{
+  width:100%;
 }
 .dominChos{
   font-size:12px;
@@ -189,6 +183,7 @@ export default {
 }
 ::v-deep input{
   height:30px;
+  width:100%!important;
   border-radius: 0;
 }
 .ipt{

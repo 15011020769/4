@@ -39,7 +39,10 @@
               </template>
             </el-table-column>
             <el-table-column prop="CurrentCName" label="CNAME" width>
-              <template slot-scope="scope">{{scope.row.CurrentCName}}</template>
+              <template slot-scope="scope">{{scope.row.TargetDomain}}
+                <!-- <span v-if="scope.row.Status==0">{{scope.row.TargetDomain}}</span>
+                <span v-if="scope.row.Status==1">{{scope.row.CurrentCName}}</span> -->
+              </template>
             </el-table-column>
             <el-table-column prop="Type" label="类型">
               <template slot-scope="scope">
@@ -88,7 +91,7 @@
       <addModel :isShow="addModel" @closeAddModel="closeAddModel" />
       <stopModel
         :isShow="stopModel"
-        :con="stopDominArr"
+        :con="DomainName"
         @closeStopDominModel="closeStopDominModel"
       />
       <deleteModel
@@ -107,7 +110,7 @@ import addModel from "./model/addModel";
 import stopModel from "./model/stopModel";
 import deleteModel from "./model/deleteModel";
 import editTagsModel from "./model/editTagsModel";
-import { DOMAIN_LIST, ADD_DOMAIN } from "@/constants";
+import { DOMAIN_LIST, ENABLE_DOMAIN, PROHIBIT_DOMAIN } from "@/constants";
 export default {
   components: {
     HeadCom,
@@ -130,7 +133,7 @@ export default {
       checkArr: [], //被选中选项
       addModel: false, //添加域名弹框
       stopModel: false, //禁用弹框
-      stopDominArr: "", //禁用域名传值
+      DomainName: "", //禁用域名传值
       deleteDominArr: "", //删除域名数组传值
       deleteModel: false, //删除弹框
       editTagsModel: false //编辑标签弹框
@@ -211,17 +214,49 @@ export default {
         }
       }
     },
-    //禁用按钮
+    //启用域名按钮
+    startBtn(index, row) {
+      this.DomainName = row.Name;
+      let params = {
+        Version: "2018-08-01",
+        DomainName: this.DomainName,
+      };
+      this.axios.post(ENABLE_DOMAIN, params).then(data => {
+        if (data.Response.Error == undefined) {
+          this.$message({
+            message: '启用域名成功',
+            type: 'success'
+          });
+          this.describeLiveDomains();//刷新列表页面
+        } else {
+          this.$message.error(data.Response.Error.Message);
+        }
+      });
+    },
+    //禁用域名按钮
     stopBtn(index, row) {
       this.stopModel = true;
-      this.stopDominArr = row.Name;
+      this.DomainName = row.Name;
     },
     //关闭禁用域名弹框
     closeStopDominModel(isShow) {
-      if(isShow) {//是否确认
+      if(isShow) {//是否确认禁用
         console.log(isShow);
-      } else {
-        console.log(isShow);
+        let param = {
+          Version: '2018-08-01',
+          DomainName: this.DomainName,
+        };
+        this.axios.post(PROHIBIT_DOMAIN, param).then(data => {
+          if (data.Response.Error == undefined) {
+            this.$message({
+              message: '禁用域名成功',
+              type: 'success'
+            });
+            this.describeLiveDomains();//刷新列表页面
+          } else {
+            this.$message.error(data.Response.Error.Message);
+          }
+        });
       }
       this.stopModel = false;
     },
@@ -258,8 +293,6 @@ export default {
     closeAddModel(isShow) {
       this.addModel = isShow;
     },
-    //启用按钮
-    startBtn() {}
   }
 };
 </script>
