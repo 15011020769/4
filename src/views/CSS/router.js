@@ -31,6 +31,14 @@ export default new Router({
       }
     },
     {
+      path: '/detail', // 域名管理
+      name: 'detail',
+      component: () => import(/* webpackChunkName: "domainManagement" */ './domainManagement/detail.vue'),
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
       path: '/streamManagement', // 流管理
       name: 'streamManagement',
       component: () => import(/* webpackChunkName: "streamManagement" */ './streamManagement/index.vue'),
