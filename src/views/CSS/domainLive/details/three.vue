@@ -37,7 +37,7 @@
         </el-table>
       </div>
     </div>
-    <el-dialog title="回调配置" :visible.sync="callbackVisble" width="50%" center>
+    <el-dialog title="回调配置" :visible.sync="callbackVisble" width="50%">
       <el-table :data="callBackList" style="width: 100%">
         <el-table-column width="30">
           <template slot-scope="scope">
@@ -56,11 +56,11 @@
       </el-table>
       <span slot="footer" class="dialog-footer">
         <el-button @click="callbackVisble = false">取 消</el-button>
-        <el-button type="primary" @click="callbackVisble = false">确 定</el-button>
+        <el-button type="primary" @click="_backRule">确 定</el-button>
       </span>
     </el-dialog>
 
-    <el-dialog title="录制配置" :visible.sync="cliveVisble" width="50%" center>
+    <el-dialog title="录制配置" :visible.sync="cliveVisble" width="50%">
       <el-table :data="RecordingList" style="width: 100%">
         <el-table-column width="30">
           <template slot-scope="scope">
@@ -83,7 +83,7 @@
       </el-table>
       <span slot="footer" class="dialog-footer">
         <el-button @click="cliveVisble = false">取 消</el-button>
-        <el-button type="primary" @click="cliveVisble = false">确 定</el-button>
+        <el-button type="primary" @click="_liveRule">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -95,7 +95,9 @@
     RULELIST_DELTILS,
     LIVELIST_DELTILS,
     SINGLECALLBACK_DELTILS,
-    SINGLELIVE_DELTILS
+    SINGLELIVE_DELTILS,
+    BACKRULE_DELTILS,
+    LIVERULE_DELTILS
   } from '@/constants'
   export default {
     data() {
@@ -106,6 +108,8 @@
         callBackTemplate: [], //回调配置
         RecordingTemplate: [], //录制配置
         callBackTemplateId: '',
+        callBackAppName: '',
+        liveAppName: '',
         liveTemplateId: '',
         callbackVisble: false,
         cliveVisble: false,
@@ -131,6 +135,7 @@
             callbackrule.forEach(item => {
               if (item.DomainName === this.name) {
                 this.callBackTemplateId = item.TemplateId
+                this.callBackAppName = item.AppName
                 let parms = {
                   Version: '2018-08-01',
                   TemplateId: this.callBackTemplateId
@@ -161,6 +166,7 @@
             liverule.forEach(item => {
               if (item.DomainName === this.name) {
                 this.liveTemplateId = item.TemplateId
+                this.liveAppName = item.AppName
                 let parms = {
                   Version: '2018-08-01',
                   TemplateId: this.liveTemplateId
@@ -245,12 +251,42 @@
         });
       },
       getCurrentRow(TemplateId) {
-        console.log(TemplateId)
         this.callbackrRadio = TemplateId
       },
       getCurrent(TemplateId) {
-        console.log(TemplateId)
         this.liveRadio = TemplateId
+      },
+      _backRule() {
+        const param = {
+          Version: '2018-08-01',
+          DomainName: this.name,
+          AppName: this.callBackAppName,
+          TemplateId: this.callBackTemplateId
+        };
+        this.axios.post(CALLBACK_DELTILS, param).then(data => {
+          if (data.Response.Error == undefined) {
+            console.log(data)
+          } else {
+            this.$message.error(data.Response.Error.Message);
+          }
+        });
+        this.callbackVisble = true
+      },
+      _liveRule() {
+        const param = {
+          Version: '2018-08-01',
+          DomainName: this.name,
+          AppName: this.liveAppName,
+          TemplateId: this.liveTemplateId
+        };
+        this.axios.post(LIVERULE_DELTILS, param).then(data => {
+          if (data.Response.Error == undefined) {
+            console.log(data)
+          } else {
+            this.$message.error(data.Response.Error.Message);
+          }
+        });
+        this.cliveVisble = true
       }
     },
   }

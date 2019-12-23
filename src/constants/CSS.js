@@ -35,6 +35,11 @@ export const SINGLECALLBACK_DELTILS = 'live2/DescribeLiveCallbackTemplate'
 export const LIVELIST_DELTILS = 'live2/DescribeLiveRecordRules'
 //获取单个录制模板
 export const SINGLELIVE_DELTILS = 'live2/DescribeLiveRecordTemplate'
+//创建回调规则
+export const BACKRULE_DELTILS = 'live2/CreateLiveCallbackRule'
+//创建录制规则
+export const LIVERULE_DELTILS = 'live2/CreateLiveRecordRule'
+
 
 
 
