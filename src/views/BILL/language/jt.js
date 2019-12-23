@@ -35,7 +35,10 @@ module.exports = {
       orderInvalid: '订单已失效',
       proInvalid: '产品已失效',
       refuse: '代付拒绝',
-      paying: '支付中'
+      paying: '支付中',
+      oneweek: '最近一周',
+      oneMonth: '最近一个月',
+      threeMonth: '最近三个月'
     },
     Detail: {
       title: '账单明细',

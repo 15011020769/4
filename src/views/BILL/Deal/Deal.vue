@@ -226,7 +226,7 @@ export default {
       pickerOptions: {
         shortcuts: [
           {
-            text: "最近一周",
+            text: this.$t('BILL.Deal.oneweek'),
             onClick(picker) {
               const end = new Date();
               const start = new Date();
@@ -235,7 +235,7 @@ export default {
             }
           },
           {
-            text: "最近一个月",
+            text: this.$t('BILL.Deal.oneMonth'),
             onClick(picker) {
               const end = new Date();
               const start = new Date();
@@ -244,7 +244,7 @@ export default {
             }
           },
           {
-            text: "最近三个月",
+            text: this.$t('BILL.Deal.threeMonth'),
             onClick(picker) {
               const end = new Date();
               const start = new Date();
