@@ -261,7 +261,7 @@
           Version: '2018-08-01',
           DomainName: this.name,
           AppName: this.callBackAppName,
-          TemplateId: this.callBackTemplateId
+          TemplateId: this.callbackrRadio
         };
         this.axios.post(CALLBACK_DELTILS, param).then(data => {
           if (data.Response.Error == undefined) {
@@ -270,23 +270,23 @@
             this.$message.error(data.Response.Error.Message);
           }
         });
-        this.callbackVisble = true
+        this.callbackVisble = false
       },
       _liveRule() {
         const param = {
           Version: '2018-08-01',
           DomainName: this.name,
           AppName: this.liveAppName,
-          TemplateId: this.liveTemplateId
+          TemplateId: this.liveRadio
         };
         this.axios.post(LIVERULE_DELTILS, param).then(data => {
           if (data.Response.Error == undefined) {
-            console.log(data)
+            this.cliveVisble = false
           } else {
             this.$message.error(data.Response.Error.Message);
           }
         });
-        this.cliveVisble = true
+
       }
     },
   }
