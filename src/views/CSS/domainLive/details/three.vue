@@ -203,10 +203,7 @@
           }
         })
       },
-
-
-
-
+      //获取回调配置列表
       GetCallbackList() {
         const param = {
           Version: '2018-08-01',
@@ -219,6 +216,7 @@
           }
         });
       },
+      //录制配置列表
       GetRecordingList() {
         const param = {
           Version: '2018-08-01',
@@ -250,9 +248,11 @@
           }
         });
       },
+      //回调单选框
       getCurrentRow(TemplateId) {
         this.callbackrRadio = TemplateId
       },
+      //录制单选框
       getCurrent(TemplateId) {
         this.liveRadio = TemplateId
       },
