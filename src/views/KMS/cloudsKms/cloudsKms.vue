@@ -26,7 +26,7 @@
                 <span>{{ scope.row.idName.name}}</span>
               </template>
             </el-table-column>
-            <el-table-column prop="yunProduct" label="云产品"></el-table-column>
+            <el-table-column prop="yunProduct" label="雲产品"></el-table-column>
             <el-table-column prop="kmsChange" label="密钥轮换">
               <a href="#">启用轮换</a><span class="spanLine">|</span><a href="#">禁用轮换</a>
             </el-table-column>
@@ -72,7 +72,7 @@ export default {
             id:"1",
             name:"2"
           },
-          yunProduct:"云产品",
+          yunProduct:"雲产品",
           createTime:"创建时间"
         }
       ],

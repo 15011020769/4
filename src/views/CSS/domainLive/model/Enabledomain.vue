@@ -1,31 +1,27 @@
 <template>
   <div class="Deldomain">
-    <el-dialog title="推流域名" :visible.sync="DelDialogVisible" :close-on-click-modal='false'
-      :close-on-press-escape='false' :before-close="DelhandleCancel">
-      <P>确定删除推流域名:{{DomainName}}</P>
+    <el-dialog title="推流域名" :visible.sync="EnableDialogVisible" :close-on-click-modal='false'
+      :close-on-press-escape='false' :before-close="EnablehandleCancel">
+      <P>确定启用推流域名:{{DomainName}}</P>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="DelhandleCancel">取 消</el-button>
-        <el-button type="primary" @click="Deldomain">确 定</el-button>
+        <el-button @click="EnablehandleCancel">取 消</el-button>
+        <el-button type="primary" @click="Enabledomain">确 定</el-button>
       </span>
     </el-dialog>
   </div>
 </template>
 <script>
   import {
-    DEL_DOMAIN
+    ENABLE_DOMAIN
   } from "@/constants";
   export default {
-    name: "Deldoma",
+    name: "Enabledomain",
     props: {
       DomainName: {
         required: false,
         type: String
       },
-      DomainType: {
-        required: false,
-        type: [String, Number]
-      },
-      DelDialogVisible: {
+      EnableDialogVisible: {
         required: false,
         type: Boolean
       },
@@ -36,22 +32,21 @@
       }
     },
     methods: {
-      DelhandleCancel() {
-        this.$emit('DelhandleCancel', false)
+      EnablehandleCancel() {
+        this.$emit('EnablehandleCancel', false)
       },
-      Deldomain() {
+      Enabledomain() {
         const param = {
           Version: '2018-08-01',
           DomainName: this.DomainName,
-          DomainType: this.DomainType,
         };
-        this.axios.post(DEL_DOMAIN, param).then(data => {
+        this.axios.post(ENABLE_DOMAIN, param).then(data => {
           if (data.Response.Error == undefined) {
             this.$message({
-              message: '删除域名成功',
+              message: '启用域名成功',
               type: 'success'
             });
-            this.$emit('DelhandleCancel', false)
+            this.$emit('EnablehandleCancel', false)
             this.$parent.getDATA();
           } else {
             this.$message.error(data.Response.Error.Message);

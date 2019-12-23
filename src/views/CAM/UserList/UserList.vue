@@ -373,7 +373,7 @@
         <el-submenu index="4">
           <template slot="title">
             <el-checkbox v-model="checked"></el-checkbox>
-            <span>腾讯云动态</span>
+            <span>腾讯雲动态</span>
           </template>
           <el-menu-item-group>
             <el-checkbox class="bor" v-model="checked2">

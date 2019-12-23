@@ -17,7 +17,7 @@
           <p class="sub-content">新建账号协助您</p>
           <ul>
            <li>
-             <span>可访问腾讯云</span>
+             <span>可访问腾讯雲</span>
             
             </li>
             <li>
@@ -42,7 +42,7 @@
           <p class="sub-content">添加现存账号协助您</p>
           <ul>
            <li>
-             <span>可访问腾讯云</span>
+             <span>可访问腾讯雲</span>
             </li>
             <li>
               <span>可接收消息通知</span>
@@ -59,7 +59,7 @@
           <p class="sub-content">仅用于接收消息通知</p>
           <ul>
            <li>
-             <span>不可访问腾讯云</span>
+             <span>不可访问腾讯雲</span>
             </li>
             <li>
               <span>可接收消息通知</span>

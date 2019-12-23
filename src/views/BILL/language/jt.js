@@ -1,6 +1,7 @@
 module.exports = {
   BILL: {
     Deal: {
+      bigTitle: '费用中心',
       title: '订单管理',
       projectId: '项目ID',
       orderId: '订单编号',
@@ -74,8 +75,8 @@ module.exports = {
       timeSpan: '使用时长',
       timeUnitName: '时长单位',
       costbak: '组件原价',
-      qcloudbak: '腾讯云折扣率',
-      tfcbak: '台富云折扣率',
+      qcloudbak: '腾讯雲折扣率',
+      tfcbak: '台富雲折扣率',
       reduceType: '优惠类型',
       realbak: '优惠后总价',
       voucherPaybak: '代金券支付金额',

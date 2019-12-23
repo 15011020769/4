@@ -219,7 +219,7 @@ export default new Router({
     }
   },
   {
-    path: '/createAccount', // 新建腾讯云账户
+    path: '/createAccount', // 新建腾讯雲账户
     name: 'createAccount',
     component: () => import( /* webpackChunkName: "Role" */ './Role/createAccount.vue'),
     meta: {

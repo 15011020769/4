@@ -15,7 +15,7 @@
         <span slot="title">{{ $t('KMS.total.subMenu') }}</span>
       </el-menu-item>
       <!-- <el-menu-item index="cloudsKms">
-        <span slot="title">云产品密钥</span>
+        <span slot="title">雲产品密钥</span>
       </el-menu-item> -->
     </el-menu>
   </div>

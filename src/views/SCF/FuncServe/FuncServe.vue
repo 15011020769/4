@@ -131,11 +131,7 @@
           </div>
         </div>
         <div class="mainTable">
-          <el-table
-            :data="tableDataBegin.slice((currpage - 1) * pagesize, currpage * pagesize)"
-            v-loading="loading"
-            height="450"
-          >
+          <el-table :data="tableDataBegin" v-loading="loading" height="450">
             <el-table-column prop="FunctionName" :label="$t('SCF.total.hsm')">
               <template slot-scope="scope">
                 <a href="#" @click="toDoDetail(scope.$index, scope.row)">{{scope.row.FunctionName}}</a>
@@ -227,23 +223,16 @@
             </el-table-column>
           </el-table>
         </div>
-        <!-- <div class="tabListPage">
-          <el-pagination
-            @size-change="handleSizeChange"
-            @current-change="handleCurrentChange"
-            :current-page="currentPage"
-            :page-sizes="[10, 20, 30, 50]"
-            :page-size="pageSize"
-            layout="total, sizes, prev, pager, next, jumper"
-            :total="totalItems"
-          ></el-pagination>
-        </div> -->
         <div class="Right-style pagstyle">
-        <span class='pagtotal'>共&nbsp;{{TotalCount}}&nbsp;条</span>
-        <el-pagination :page-size="pagesize" :pager-count="7" layout="prev, pager, next"
-          @current-change="handleCurrentChange" :total="TotalCount">
-        </el-pagination>
-      </div>
+          <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;条</span>
+          <el-pagination
+            :page-size="pagesize"
+            :pager-count="7"
+            layout="prev, pager, next"
+            @current-change="handleCurrentChange"
+            :total="TotalCount"
+          ></el-pagination>
+        </div>
       </div>
     </div>
   </div>
@@ -262,7 +251,7 @@ import {
 export default {
   data() {
     return {
-      TotalCount:0,
+      TotalCount: 0,
       pagesize: 10,
       currpage: 1,
       loading: true,
@@ -321,24 +310,15 @@ export default {
       }
     };
   },
-  computed: {
-    // 模糊搜索
-  },
   created() {
     this.getData();
     this.getDModelNmaeSpace();
-  },
-  mounted() {
-    //this.modelNameSpace[0].Name="default";
-    // this.modelNameSpace[0].Description="";
-    //this.modelNameSpace[0].disableDelete=true;
   },
   methods: {
     inpBlur(val) {
       if (val) {
         let reg = /^[a-zA-Z][a-zA-Z0-9_-]{2,59}$/;
         let bol = reg.test(val);
-        console.log(bol);
         if (!bol) {
           this.isbol = true;
         } else {
@@ -374,49 +354,26 @@ export default {
       }
       let params = {
         // Action: "ListFunctions",
+        Offset: this.currpage,
+        Limit: this.pagesize,
         Version: "2018-04-16",
         Region: "ap-guangzhou" //this.$cookie.get("regionv2")
       };
-      if (
-        this.filterConrent !== "选择资源属性进行过滤" &&
-        this.tableDataName !== ""
-      ) {
+      if (this.tableDataName !== "") {
         params[this.filterConrent] = this.tableDataName;
       }
       // 获取表格数据
       this.axios.post(SCF_LIST, params).then(res => {
-        //console.log(res.Response.Functions);
         this.tableDataBegin = res.Response.Functions;
-        this.TotalCount = res.Response.TotalCount
-        console.log(res)
+        this.TotalCount = res.Response.TotalCount;
         this.loading = false;
-        //this.allData = this.tableDataBegin;
-        //this.tableDataBegin = this.allData;
-        // 将数据的长度赋值给totalItems
-        if (this.totalItems > this.pageSize) {
-          for (let index = 0; index < this.pageSize; index++) {
-            this.tableDataEnd.push(this.tableDataBegin[index]);
-          }
-        } else {
-          this.tableDataEnd = this.tableDataBegin;
-        }
       });
     },
     // 搜索
     doFilter() {
-      console.log(this.filterConrent);
       this.currpage = 1;
-      // this.tableDataBegin = this.allData;
       this.tableDataEnd = [];
-
-      if (
-        this.filterConrent !== "选择资源属性进行过滤" &&
-        this.tableDataName !== ""
-      ) {
-        this.getData();
-      } else {
-        this.getData();
-      }
+      this.getData();
       //每次手动将数据置空,因为会出现多次点击搜索情况
       this.filterTableDataEnd = [];
       //页面数据改变重新统计数据数量和当前页
@@ -429,25 +386,10 @@ export default {
     openData() {},
 
     // 分页开始
-      handleCurrentChange(val) {
-        this.currpage = val;
-        this.getData();
-      },
-    // handleSizeChange(val) {
-    //   console.log(`每页 ${val} 条`);
-    //   this.pageSize = val;
-    //   this.handleCurrentChange(this.currentPage);
-    // },
-    // handleCurrentChange(val) {
-    //   console.log(`当前页: ${val}`);
-    //   this.currentPage = val;
-    //   //需要判断是否检索
-    //   if (!this.flag) {
-    //     this.currentChangePage(this.tableDataEnd);
-    //   } else {
-    //     this.currentChangePage(this.filterTableDataEnd);
-    //   }
-    // }, 
+    handleCurrentChange(val) {
+      this.currpage = val;
+      this.getData();
+    },
     //组件自带监控当前页码
     currentChangePage(list) {
       let from = (this.currentPage - 1) * this.pageSize;
@@ -482,7 +424,6 @@ export default {
     },
     //点击删除函数按钮
     deleteRow(index, dataBegin) {
-      console.log(index, dataBegin);
       this.deleteIndex = index;
       this.deleteBegin = dataBegin;
       this.dialogVisible = true;
@@ -495,17 +436,16 @@ export default {
         Region: "ap-guangzhou", //this.$cookie.get("regionv2"),
         FunctionName: this.deleteBegin.FunctionName
       };
-      console.log(params.FunctionName);
       this.axios.post(SCF_DEL, params).then(res => {
         //console.log(res);
         this.tableDataBegin.splice(this.deleteIndex, 1);
         this.totalItems -= 1;
         this.dialogVisible = false;
+        this.getData();
       });
     },
     //复制函数按钮点击
     handelCopy(copyIndex, copyRow) {
-      console.log(copyRow);
       this.copyIndex2 = copyRow;
       this.dialogVisible2 = true;
     },
@@ -518,7 +458,6 @@ export default {
         NewFunctionName: this.newname,
         Action: "CopyFunction"
       };
-      console.log(this.copyIndex2);
       this.axios.post(SCF_COPY, params).then(res => {
         this.getData();
         this.dialogVisible2 = false;
@@ -526,7 +465,6 @@ export default {
     },
     //命名空间管理的确定按钮
     sureNameSpaceMag(modelNameSpace) {
-      console.log(modelNameSpace);
       if (this.isbol) {
         return;
       }
@@ -548,8 +486,6 @@ export default {
                   Description: modelNameSpace[i].Description
                 };
                 this.axios.post(NAME_SPACE_CREAT, params).then(res => {
-                  console.log(res);
-                  console.log("添加");
                   this.dialogVisible3 = false;
                   this.getDModelNmaeSpace();
                 });
@@ -564,8 +500,6 @@ export default {
                   Description: modelNameSpace[i].Description
                 };
                 this.axios.post(NAME_SPACE_UPD, params).then(res => {
-                  console.log(res);
-                  console.log("更新");
                   this.dialogVisible3 = false;
                   this.getDModelNmaeSpace();
                 });
@@ -584,9 +518,7 @@ export default {
         Region: "ap-guangzhou", //this.$cookie.get("regionv2"),
         Namespace: spaceRow.Name
       };
-      this.axios.post(NAME_SPACE_DEL, params).then(res => {
-        console.log(res);
-      });
+      this.axios.post(NAME_SPACE_DEL, params).then(res => {});
       this.modelNameSpace.splice(spaceIndex, 1);
     },
     iptChange() {
@@ -621,7 +553,6 @@ export default {
       });
     },
     nameRoom(val) {
-      console.log(val);
       var cookies = document.cookie;
       var list = cookies.split(";");
       for (var i = 0; i < list.length; i++) {
@@ -634,10 +565,7 @@ export default {
         Namespace: val
       };
       this.axios.post(SCF_LIST, params).then(res => {
-        // console.log(res.data.functions);
         this.tableDataBegin = res.data.functions;
-        //this.allData = this.tableDataBegin;
-        //this.tableDataBegin = this.allData;
         // 将数据的长度赋值给totalItems
         this.totalItems = this.tableDataBegin.length;
         if (this.totalItems > this.pageSize) {
@@ -654,20 +582,21 @@ export default {
 </script>
 <style lang="scss" scoped>
 .Right-style {
-    display: flex;
-    background: white;
-    width: 100%;
-    justify-content: flex-end;}
-  .pagstyle {
-    padding: 20px;
+  display: flex;
+  background: white;
+  width: 100%;
+  justify-content: flex-end;
+}
+.pagstyle {
+  padding: 20px;
 
-    .pagtotal {
-      font-size: 13px;
-      font-weight: 400;
-      color: #565656;
-      line-height: 32px;
-    }
+  .pagtotal {
+    font-size: 13px;
+    font-weight: 400;
+    color: #565656;
+    line-height: 32px;
   }
+}
 .wrap >>> .el-select,
 .wrap >>> .el-input,
 .wrap >>> .el-select .el-input__inner {

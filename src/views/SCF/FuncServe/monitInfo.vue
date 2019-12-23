@@ -209,8 +209,6 @@ export default {
         EndTime: this.Start_End.EndTIme
       };
       this.axios.post(All_MONITOR, param).then(data => {
-        console.log(param);
-        console.log(data);
         data.Response.symbol = symbol;
         this.tableData.push(data.Response);
       });

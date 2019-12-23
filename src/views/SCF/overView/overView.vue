@@ -90,19 +90,7 @@
               </el-button>
             </el-button-group>
           </div>
-
-          <!-- <div class="chartNum newClear">
-            <span>{{ $t('SCF.total.zwbm') }}函数{{newData}}TOP 10统计</span>
-            <span>
-              <a>{{ $t('SCF.total.zwbm') }}刷新</a>
-            </span>
-          </div>-->
           <div class="chartTable">
-            <!-- <el-table :data="tableData"  ref="multipleTable" class="funDataTable">
-            <el-table-column prop="funName" label="函数名"></el-table-column>
-            <el-table-column prop="nameSpace" label="命名空间"></el-table-column>
-            <el-table-column prop="dataNum" label="数据指标"></el-table-column>
-            </el-table>-->
             <el-table
               ref="multipleTable"
               :data="tableData"
@@ -110,23 +98,6 @@
               style="width: 100%"
               class="funDataTable"
             >
-              <!-- <div class="chartCon" id="echartsShow" ref="chartY">
-                <el-table-column prop="DataPoints" width="550">
-                  <template slot-scope="scope">
-                    <p v-if="scope.row.DataPoints[0].Values.length==0">{{ $t('SCF.total.zwsj') }}</p>
-                    <div class="echart" v-if="scope.row.DataPoints[0].Values.length!=0">
-                      <echart-line
-                        id="diskEchearrts-line"
-                        :time="scope.row.DataPoints[0].Timestamps | UpTime"
-                        :opData="scope.row.DataPoints[0].Values"
-                        :scale="3"
-                        :period="period"
-                        :xdata="false"
-                      ></echart-line>
-                    </div>
-                  </template>
-                </el-table-column>
-              </div>-->
               <el-table-column prop="DataPoints" width="550">
                 <template slot-scope="scope">
                   <p v-if="scope.row.DataPoints[0].Values.length==0">{{ $t('CVM.clBload.zwsj') }}</p>
@@ -164,7 +135,8 @@ import {
   USER_MONTH_USAGE,
   USER_YESTERDAY_USAGE,
   SCF_LIST,
-  LIST_VERSION
+  LIST_VERSION,
+  ALL_CITY
 } from "@/constants";
 export default {
   data() {
@@ -214,7 +186,16 @@ export default {
     echartLine,
     XTimeX
   },
+  created() {
+    this.GetCity();
+  },
   methods: {
+    // 获取城市列表
+    GetCity() {
+      this.axios.get(ALL_CITY).then(data => {
+        this.addressIpt = data.data[0].zone;
+      });
+    },
     //函数数量
     GetOverView() {
       let params = {
@@ -254,15 +235,10 @@ export default {
     },
     //获取数据
     GetDat(data) {
-      console.log(data);
       this.period = data[0];
       this.Start_End = data[1];
       this.value = data[2];
-
       this.tableData = [];
-      // for (let i = 0; i < metricNArr.length; i++) {
-      //   this.Obtain(metricNArr[i]);
-      // }s
     },
     //
     Obtain(metricN) {
@@ -279,20 +255,17 @@ export default {
         StartTime: this.Start_End.StartTIme,
         EndTime: this.Start_End.EndTIme
       };
-      this.funlistname.forEach(function(elem,index){
-        param["Instances."+index+".Dimensions.0.Name"] = "functionName";
-        param[ "Instances."+index+".Dimensions.0.Value"] = elem
-      })
-      this.funlistversion.forEach(function(elem,index){
-         param["Instances."+index+".Dimensions.1.Name"] = "version";
-        param[ "Instances."+index+".Dimensions.1.Value"] = elem
-      })
-      // console.log(param);
+      this.funlistname.forEach(function(elem, index) {
+        param["Instances." + index + ".Dimensions.0.Name"] = "functionName";
+        param["Instances." + index + ".Dimensions.0.Value"] = elem;
+      });
+      this.funlistversion.forEach(function(elem, index) {
+        param["Instances." + index + ".Dimensions.1.Name"] = "version";
+        param["Instances." + index + ".Dimensions.1.Value"] = elem;
+      });
       this.axios.post(All_MONITOR, param).then(data => {
         this.tableData = [];
-        // console.log(data);
         this.tableData.push(data.Response);
-        // console.log(this.tableData)
       });
     },
 

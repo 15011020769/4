@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="contentMain">
+    <div class="contentMain" v-loading="loading">
       <div class="contentMainList">
         <div class="newClear">
           <el-form :model="funCodeForm" label-width="130px" class="formLeftInput newClear">
@@ -25,7 +25,7 @@
                 执行方法
                 <i class="el-icon-question"></i>
               </span>
-              <el-input v-model="functionData.Handler"/>
+              <el-input v-model="functionData.Handler" />
             </el-form-item>
             <el-form-item label="运行环境" class="floatLeftItem">
               <span>{{functionData.Runtime}}</span>
@@ -68,7 +68,7 @@
               >
                 <el-form label-width="130px" :model="configTestModel">
                   <el-form-item label="测试事件模板" :required="true">
-                    <el-input plcarholder="请输入模板名称" v-model="configTestModel.modelName"/>
+                    <el-input plcarholder="请输入模板名称" v-model="configTestModel.modelName" />
                     <p>1. 最多45个字符，最少2个字符</p>
                     <p>2. 字母开头，支持 a-z，A-Z，0-9，-，_，且需要以数字或字母结尾</p>
                   </el-form-item>
@@ -100,10 +100,22 @@
         <div class="tea-form" style="width: 100%;">
           <div class="tea-form" style="display:flex">
             <p style="padding-right:20px">函数代码</p>
-            <div >
+            <div>
               <div style="display:flex">
-                 <el-input v-model="disinput" placeholder="还未选择文件" style="margin-right:20px" size="small" disabled ></el-input>
-                 <el-input style="padding:0;width:90px" type="file" class="btnUp" size="small" @input='inpChange'></el-input>
+                <el-input
+                  v-model="disinput"
+                  placeholder="还未选择文件"
+                  style="margin-right:20px"
+                  size="small"
+                  disabled
+                ></el-input>
+                <el-input
+                  style="padding:0;width:90px"
+                  type="file"
+                  class="btnUp"
+                  size="small"
+                  @input="inpChange"
+                ></el-input>
               </div>
               <p style="margin-top:15px">请上传zip格式的代码包，最大支持50M（如果zip大于10M，仅显示入口文件）</p>
             </div>
@@ -142,13 +154,13 @@
               <h1>日志:</h1>
               <div>
                 START RequestId: 5a81551d-084b-11ea-a122-5254005dc76e
-                <br>Event RequestId: 5a81551d-084b-11ea-a122-5254005dc76e
-                <br>Start Hello World function
-                <br>Hello World
-                <br>value1 = test value 1
-                <br>value2 = test value 2
-                <br>END RequestId: 5a81551d-084b-11ea-a122-5254005dc76e
-                <br>Report RequestId: 5a81551d-084b-11ea-a122-5254005dc76e Duration:0.18ms Memory:128MB MaxMemoryUsed:10.0938MB
+                <br />Event RequestId: 5a81551d-084b-11ea-a122-5254005dc76e
+                <br />Start Hello World function
+                <br />Hello World
+                <br />value1 = test value 1
+                <br />value2 = test value 2
+                <br />END RequestId: 5a81551d-084b-11ea-a122-5254005dc76e
+                <br />Report RequestId: 5a81551d-084b-11ea-a122-5254005dc76e Duration:0.18ms Memory:128MB MaxMemoryUsed:10.0938MB
               </div>
             </div>
           </div>
@@ -158,10 +170,11 @@
   </div>
 </template>
 <script>
-import { FUN_LOG,INVOKE,SCF_DETAILS } from '@/constants'
+import { FUN_LOG, INVOKE, SCF_DETAILS } from "@/constants";
 export default {
   data() {
     return {
+      loading: true,
       functionData: [],
       FunctionRequestId: "",
       funCodeForm: {
@@ -169,7 +182,7 @@ export default {
         zxMethods: "index.main_handler",
         runMoment: "Python2.7"
       },
-      disinput:"",
+      disinput: "",
       downLoadZip: "",
       codeShow: true,
       modelList: "Hello World事件模板",
@@ -193,7 +206,7 @@ export default {
         cosBucket: "",
         cosObjFile: ""
       },
-      input:"",
+      input: ""
     };
   },
   mounted() {
@@ -202,13 +215,14 @@ export default {
   methods: {
     // 查询详情
     init() {
+      this.loading = true;
       let params = {
         Action: "GetFunction",
         Version: "2018-04-16",
         ShowCode: "TRUE",
         Namespace: "default",
         Qualifier: "$LATEST",
-        Region: 'ap-guangzhou'//this.$cookie.get("regionv2")
+        Region: "ap-guangzhou" //this.$cookie.get("regionv2")
       };
       let functionName = this.$route.query.functionName;
       // functionName = 'tttt'
@@ -221,6 +235,7 @@ export default {
           let _this = this;
           this.functionData = res.Response;
           let funcData = this.functionData;
+          this.loading = false;
         })
         .catch(error => {
           console.log(error);
@@ -229,11 +244,11 @@ export default {
     saveCode() {
       // 点击保存，首先执行uploads，然后重新执行GetFunction，查询信息，
       // 查询模板GetTempCosInfo，根据返回的ObjectPath模板路径，执行UpdateFunctionCode
-      //UpdateFunctionCode //更新云函数代码
+      //UpdateFunctionCode //更新雲函数代码
       let params = {
         Action: "UpdateFunctionCode",
         Version: "2018-04-16",
-        Region: 'ap-guangzhou',//this.$cookie.get("regionv2"),
+        Region: "ap-guangzhou", //this.$cookie.get("regionv2"),
         Handler: "index.main_handler"
       };
       let functionName = this.$route.query.functionName;
@@ -248,8 +263,8 @@ export default {
           console.log(error);
         });
     },
-    inpChange(val){
-      this.disinput = val
+    inpChange(val) {
+      this.disinput = val;
     },
     //函数代码运行函数
     testCode() {
@@ -260,7 +275,7 @@ export default {
         Namespace: "default",
         InvocationType: "Event",
         Qualifier: "$LATEST",
-        Region: 'ap-guangzhou',//this.$cookie.get("regionv2")
+        Region: "ap-guangzhou" //this.$cookie.get("regionv2")
       };
       let functionName = this.$route.query.functionName;
       if (functionName != "" && functionName != null) {
@@ -287,7 +302,7 @@ export default {
             .post(FUN_LOG, params)
             .then(res => {
               this.ResData = res.Response.Data;
-              // 从腾讯云产品执行交易分析，如果日志为空从新查询，一般查询10多次日志就出来
+              // 从腾讯雲产品执行交易分析，如果日志为空从新查询，一般查询10多次日志就出来
             })
             .catch(error => {
               console.log(error);
@@ -351,9 +366,16 @@ export default {
 }
 .codeShow {
   width: 100%;
-  min-height: 300px;
+  height: 300px;
   background-color: #fff;
   border: 1px solid #ddd;
+  overflow-y: scroll;
+  padding: 20px;
+  box-sizing: border-box;
+
+  span {
+    line-height: 30px;
+  }
 }
 .bottomBtn {
   padding: 20px 0;
@@ -480,16 +502,16 @@ export default {
   }
 }
 .tea-form {
-    display: table;
-    font-size: 12px;
-    line-height: 1.5;
+  display: table;
+  font-size: 12px;
+  line-height: 1.5;
 }
 .tea-form .tea-form {
-    background-color: #f2f2f2;
-    padding: 10px;
-    width:100%
+  background-color: #f2f2f2;
+  padding: 10px;
+  width: 100%;
 }
-.btnUp .el-input__inner{
-  padding:0;
+.btnUp .el-input__inner {
+  padding: 0;
 }
 </style>

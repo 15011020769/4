@@ -59,14 +59,14 @@ var filters = {
       }
     }
   },
-  Attributefilter: function (Attribute) { // 云硬盘属性
+  Attributefilter: function (Attribute) { // 雲硬盘属性
     for (let i in Attributes) {
       if (Attribute === i) {
         return Attributes[i]
       }
     }
   },
-  Toconfigurefilter: function (Toconfigure) { // 云硬盘配置
+  Toconfigurefilter: function (Toconfigure) { // 雲硬盘配置
     for (let i in Toconfigures) {
       if (Toconfigure === i) {
         return Toconfigures[i]

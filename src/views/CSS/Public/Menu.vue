@@ -1,6 +1,6 @@
 <template>
   <div class="CLA">
-    <div class="big-title">云直播</div>
+    <div class="big-title">雲直播</div>
     <el-menu
       default-active="2"
       class="el-menu-vertical-demo"

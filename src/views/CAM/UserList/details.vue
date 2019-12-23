@@ -123,7 +123,7 @@
                 <el-dialog title="删除用户" :visible.sync="dialogDeleteUser" width="50%" :before-close="handleClose">
                   <p>以下用户存在删除前置处理项 禁用并删除 API 密钥：</p>
                   <div class="explainDelet">
-                    <p>需要您注意的是， API 密钥删除后无法恢复，请您确认清楚再进行删除。用户被删除后，该用户无法登录腾讯云以及接收消息通知，同时会解除关联权限。</p>
+                    <p>需要您注意的是， API 密钥删除后无法恢复，请您确认清楚再进行删除。用户被删除后，该用户无法登录腾讯雲以及接收消息通知，同时会解除关联权限。</p>
                   </div>
                   <template>
                     <el-table style="width: 100%" :data="userData">

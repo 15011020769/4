@@ -29,7 +29,7 @@
           <el-table-column prop="proStatus" label="防护状态" width="">
             <template slot-scope="scope">
               <!-- <span href="#">{{scope.row.proStatus}}<i class="el-icon-info"></i></span> -->
-              <el-tooltip content="您目前使用了高防、CDN、云加速等代理" placement="right" effect="light">
+              <el-tooltip content="您目前使用了高防、CDN、雲加速等代理" placement="right" effect="light">
                 <el-button>{{scope.row.proStatus}}<i class="el-icon-info"></i></el-button>
               </el-tooltip>
             </template>

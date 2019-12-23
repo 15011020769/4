@@ -1,9 +1,9 @@
 module.exports = {
     CCN: {
         total: {
-            title: '云联网',
+            title: '雲联网',
             btn: '新建',
-            link: '云联网帮助文档',
+            link: '雲联网帮助文档',
             tr1: '名称/ID',
             tr2: '状态',
             tr3: '服务质量',
@@ -18,7 +18,7 @@ module.exports = {
             td3: '删除',
             tdno: '暂无数据',
             sure: '确定',
-            new: '新建云联网实例',
+            new: '新建雲联网实例',
             new1: '名称',
             new2: '计费模式',
             mode1: '预付费',
@@ -42,12 +42,12 @@ module.exports = {
             editname2: '名称',
             editdesc: '修改备注',
             editdesc1: '备注',
-            edit: '您已经选择1个云资源',
+            edit: '您已经选择1个雲资源',
             edit0: '新增标签',
             edit1: '标签键',
             edit2: '标签值',
             edit3: '删除',
-            del: '您确认要删除该云联网吗？',
+            del: '您确认要删除该雲联网吗？',
             del1: '名称 ',
             del2: '状态',
             del3: '关联实例',
@@ -65,8 +65,8 @@ module.exports = {
             tab1new3: '专线网关',
             tab1new4: '请选择',
             tab1newc: '关闭',
-            tab1del: '您确认要解除该实例与云联网的关联吗？',
-            tab1del1: '解除关联后，该实例与云联网内其他实例的连接将立刻中断，请您务必确认影响后再操作',
+            tab1del: '您确认要解除该实例与雲联网的关联吗？',
+            tab1del1: '解除关联后，该实例与雲联网内其他实例的连接将立刻中断，请您务必确认影响后再操作',
             tab1tr1: 'ID/名称',
             tab1tr2: '状态',
             tab1tr3: '实例类型',
@@ -98,7 +98,7 @@ module.exports = {
             tab4tr6: '启用路由'
         },
         menu: {
-            title: '云联网'
+            title: '雲联网'
         }
     },
     COM: require('@/components/language/jt'),

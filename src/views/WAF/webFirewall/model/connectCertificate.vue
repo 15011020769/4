@@ -10,12 +10,12 @@
           <div class="listLabel">证书来源</div>
           <div class="listIpt">
             <el-radio-group v-model="CertificateSource">
-              <el-radio label="腾讯云托管证书"></el-radio>
+              <el-radio label="腾讯雲托管证书"></el-radio>
               <el-radio label="自有证书"></el-radio>
             </el-radio-group>
           </div>
         </div>
-        <div v-if="CertificateSource=='腾讯云托管证书'?true:false">
+        <div v-if="CertificateSource=='腾讯雲托管证书'?true:false">
           <div class="newClear listP">
             <div class="listLabel">
               <span>证书</span>

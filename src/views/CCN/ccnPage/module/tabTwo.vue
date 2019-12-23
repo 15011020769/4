@@ -6,9 +6,9 @@
       <p>
         <i class="el-icon-info"></i>{{$t('CCN.tabs.tipN1')}}
       </p>
-      <p>
+      <!-- <p>
         <el-button type="text">{{$t('CCN.tabs.exportDta')}}</el-button>
-      </p>
+      </p> -->
     </div>
     <div class="box-table">
       <!-- 表格 -->
