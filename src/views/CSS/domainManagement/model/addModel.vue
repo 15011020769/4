@@ -66,6 +66,7 @@
   </div>
 </template>
 <script>
+import {ADD_DOMAIN} from  "@/constants";
 export default {
   props:{
     isShow:Boolean
@@ -103,7 +104,6 @@ export default {
       };
       this.PlayType = 1;
       this.changePlayType();
-      console.log(123);
     },
     //关闭弹框
     handleClose(){
@@ -114,11 +114,20 @@ export default {
     },
     //添加域名确定按钮
     addDominSure(){
-      console.log(this.dominForm, this.PlayType);
+      // console.log(this.dominForm, this.PlayType);
       //TODO
-      this.initData();
-      this.dialogmodel=false;
-      this.$emit("closeAddModel",this.dialogmodel);
+      let params = {
+        Version: "2018-08-01",
+        DomainName: this.dominForm.DominName,
+        DomainType:this.dominForm.DomainType,
+      };
+      this.axios.post(ADD_DOMAIN, params).then(data => {
+        console.log(data)
+        this.initData();
+        this.dialogmodel=false;
+        this.$emit("closeAddModel",this.dialogmodel);
+        this.$parent.describeLiveDomains();
+      });
     },
     //域名类型change事件
     selectDominType(){

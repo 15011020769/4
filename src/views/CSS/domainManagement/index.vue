@@ -32,10 +32,11 @@
             :data="tableDataBegin"
             ref="multipleTable"
             tooltip-effect="dark"
+            v-loading="loadShow"
           >
             <el-table-column prop="Name" label="域名" width>
               <template slot-scope="scope">
-                <a href="#">{{scope.row.Name}}</a>
+                <a href="#" @click="toDetail(scope.row)">{{scope.row.Name}}</a>
               </template>
             </el-table-column>
             <el-table-column prop="CurrentCName" label="CNAME" width>
@@ -134,9 +135,12 @@ export default {
       addModel: false, //添加域名弹框
       stopModel: false, //禁用弹框
       DomainName: "", //禁用域名传值
-      deleteDominArr: "", //删除域名数组传值
+      deleteDominArr: [], //删除域名数组传值
       deleteModel: false, //删除弹框
-      editTagsModel: false //编辑标签弹框
+      editTagsModel: false, //编辑标签弹框
+      loadShow:false,//加载
+      allData:[],//
+      typeNew:'',//类型
     };
   },
   mounted() {
@@ -146,6 +150,7 @@ export default {
   methods: {
     // 1.1.查询域名列表(支持分页查询)
     describeLiveDomains() {
+      this.loadShow=true;
       let params = {
         Version: "2018-08-01",
         PageSize: this.pageSize, //分页大小，范围：10~100。默认10
@@ -153,8 +158,10 @@ export default {
       };
       this.axios.post(DOMAIN_LIST, params).then(res => {
         console.log(res);
+        this.allData=res.Response.DomainList;
         this.tableDataBegin = res.Response.DomainList;
         this.totalItems = res.Response.AllCount;
+        this.loadShow=false;
         // if(false) {
         //   this.$message({
         //     message: '恭喜你，这是一条成功消息',
@@ -172,8 +179,8 @@ export default {
       //每次手动将数据置空,因为会出现多次点击搜索情况
       this.filterTableDataEnd = [];
       this.tableDataBegin.forEach((val, index) => {
-        if (val.domin) {
-          if (val.domin.indexOf(this.tableDataName) == 0) {
+        if (val.Name) {
+          if (val.Name.indexOf(this.tableDataName) == 0) {
             this.filterTableDataEnd.push(val);
             this.tableDataBegin = this.filterTableDataEnd;
           } else {
@@ -262,8 +269,11 @@ export default {
     },
     //删除按钮
     deleteRow(index, row) {
+      this.deleteDominArr=[];
       this.deleteModel = true;
-      this.deleteDominArr = row.domin;
+      this.deleteDominArr.push(row.Name);
+      this.deleteDominArr.push(row.Type);
+      console.log(this.deleteDominArr)
     },
     //关闭删除弹框
     closedeleteDominModel(isShow) {
@@ -293,6 +303,21 @@ export default {
     closeAddModel(isShow) {
       this.addModel = isShow;
     },
+    //跳转详情页
+    toDetail(row){
+      console.log(row);
+      if(row.Type=='1'){
+        this.$router.push({
+          name:'deletaPlay',
+          query:row
+        })
+      }else if(row.Type=='0'){
+        this.$router.push({
+          name:'detailPushStream',
+          query:row
+        })
+      }
+    }
   }
 };
 </script>

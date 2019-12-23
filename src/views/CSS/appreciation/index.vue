@@ -1,20 +1,170 @@
 <template>
   <div class="appreciation-wrap">
-    增值功能
+    <Header title="增值功能" />
+    <div class="seek">
+      <XTimeX v-on:switchData="GetDat" :classsvalue="value"></XTimeX>
+      <el-button style="margin-top:22.5px;margin-left:20px;">{{region}}</el-button>
+      <el-button style="margin-top:22.5px;margin-left:20px;" type="primary" @click="search">查询</el-button>
+    </div>
+    <div class="appreciation-main">
+      <div class="tab-box">
+        <dl
+          v-for="(item,index) in tab"
+          :key="index"
+          :class="tabIndex == index ? 'active' : ''"
+          @click="tabClick(index)"
+        >
+          <dt>{{item.name}}</dt>
+          <dd>0</dd>
+        </dl>
+      </div>
+      <div class="main">
+        <Tab1 :StartTIme="StartTIme" :EndTIme="EndTIme" v-if="tabIndex == 0" ref="tab1" />
+        <Tab2 :StartTIme="StartTIme" :EndTIme="EndTIme" v-if="tabIndex == 1" ref="tab2" />
+        <Tab3 :StartTIme="StartTIme" :EndTIme="EndTIme" v-if="tabIndex == 2" ref="tab3" />
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
+import moment from "moment";
+import Header from "@/components/public/Head";
+import XTimeX from "@/components/public/TimeN";
+import { ALL_CITY } from "@/constants";
+import Tab1 from "./tab/tab1";
+import Tab2 from "./tab/tab2";
+import Tab3 from "./tab/tab3";
 export default {
-  name:'appreciation',
-  data(){
-    return{
-
+  name: "appreciation",
+  data() {
+    return {
+      value: 1, //时间组件默认选中值
+      region: "台灣台北", //地域
+      tabIndex: 0, //tab默认选中值
+      //tab内容
+      tab: [
+        {
+          name: "截图累计值"
+        },
+        {
+          name: "转码总时长"
+        },
+        {
+          name: "录制峰值"
+        }
+      ],
+      StartTIme: moment(new Date()).format("YYYY-MM-DD 00:00:00"),
+      EndTIme: moment(new Date()).format("YYYY-MM-DD HH:mm:ss")
+    };
+  },
+  components: {
+    Header,
+    XTimeX,
+    Tab1,
+    Tab2,
+    Tab3
+  },
+  created() {
+    this.getCity();
+  },
+  methods: {
+    //查询
+    search() {
+      this.StartTIme = this.timeData[0].StartTIme;
+      this.EndTIme = this.timeData[0].EndTIme;
+      if (this.tabIndex == 0) {
+        this.$refs.tab1.init();
+      } else if (this.tabIndex == 1) {
+        this.$refs.tab2.init();
+      } else if (this.tabIndex == 2) {
+        this.$refs.tab3.init();
+      }
+    },
+    //时间组件返回的数据
+    GetDat(val) {
+      val[0].StartTIme = moment(val[0].StartTIme).format("YYYY-MM-DD HH:mm:ss");
+      this.value = val[1];
+      this.timeData = val;
+    },
+    //获取城市
+    getCity() {
+      this.axios.post(ALL_CITY).then(res => {
+        this.region = res.data[0].zone;
+      });
+    },
+    //tab切换
+    tabClick(index) {
+      this.tabIndex = index;
     }
   }
-}
+};
 </script>
 
 <style lang="scss" scoped>
+.appreciation-wrap >>> .el-button,
+.appreciation-wrap >>> .el-input__inner,
+.appreciation-wrap >>> .el-range-input {
+  height: 30px;
+  border-radius: 0;
+  line-height: 30px;
+  padding-top: 0;
+  overflow: hidden;
+}
+.appreciation-wrap >>> .el-range-input {
+  margin-top: 5px;
+}
+.appreciation-wrap {
+  .seek {
+    display: flex;
+    align-items: center;
+  }
+  .appreciation-main {
+    margin: 20px;
+    padding: 10px 0;
+    box-sizing: border-box;
+    background: white;
 
+    .main {
+      padding: 20px;
+      padding-bottom: 0;
+      box-sizing: border-box;
+    }
+
+    .tab-box {
+      display: flex;
+      dl {
+        flex: 1;
+        padding: 0 20px;
+        box-sizing: border-box;
+        border-right: 1px #ccc solid;
+
+        cursor: pointer;
+        dt {
+          font-size: 14px;
+          font-weight: bold;
+          border-top: 2px white solid;
+          padding-top: 20px;
+          box-sizing: border-box;
+        }
+
+        dd {
+          font-size: 34px;
+          margin-top: 15px;
+          padding-bottom: 20px;
+          box-sizing: border-box;
+        }
+      }
+      dl:nth-last-child(1) {
+        border-right: 0;
+      }
+      .active {
+        color: #006eff;
+        dt {
+          border-top: 2px #006eff solid;
+        }
+      }
+    }
+  }
+}
 </style>

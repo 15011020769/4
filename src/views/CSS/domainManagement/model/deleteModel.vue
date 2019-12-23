@@ -7,7 +7,7 @@
         width="45%"
         :before-close="handleClosede">
         <div>
-          <span class="tip">确定删除：{{addDominModel[1]}}?</span>
+          <span class="tip">确定删除：{{getCon[0]}}?</span>
         </div>
         <span slot="footer" class="dialog-footer">
           <el-button @click="handleClosede">取 消</el-button>
@@ -18,10 +18,11 @@
   </div>
 </template>
 <script>
+import {DEL_DOMAIN} from "@/constants";
 export default {
   props:{
     isShow:Boolean,
-    con:String
+    con:Array
   },
   computed:{
     addDominModel(){
@@ -44,8 +45,25 @@ export default {
       this.dialogmodel1=false;
       this.$emit("closedeleteDominModel",this.dialogmodel1)
     },
-    //添加域名确定按钮
+    //删除域名确定按钮
     deleteDominSure(){
+      const param = {
+        Version: '2018-08-01',
+        DomainName: this.getCon[0],
+        DomainType: this.getCon[1],
+      };
+      this.axios.post(DEL_DOMAIN, param).then(data => {
+        if (data.Response.Error == undefined) {
+          this.$message({
+            message: '删除域名成功',
+            type: 'success'
+          });
+          this.$emit('DelhandleCancel', false)
+          this.$parent.describeLiveDomains();
+        } else {
+          this.$message.error(data.Response.Error.Message);
+        }
+      });
       this.dialogmodel1=false;
       this.$emit("closedeleteDominModel",this.dialogmodel1)
     }

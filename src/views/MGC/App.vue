@@ -18,66 +18,49 @@
 </template>
 
 <script>
-import NavHeader from "@/components/HeaderAside/Header";
-import LeftAside from "./Public/Menu";
-import { ALL_CITY } from "@/constants";
-export default {
-  data() {
-    return {};
-  },
-  components: {
-    NavHeader,
-    LeftAside
-  },
-  mounted() {
-    this.GetCity();
-  },
-  methods: {
-    // 获取城市列表
-    GetCity() {
-      this.axios.get(ALL_CITY).then(data => {
-        let city = data.data[0];
-        this.$cookie.set("regionv1", city.regionCode);
-        this.$cookie.set("regionv2", city.Region);
-      });
+  import NavHeader from "@/components/HeaderAside/Header";
+  import LeftAside from "./Public/Menu";
+  import {
+    ALL_CITY
+  } from "@/constants";
+  export default {
+    data() {
+      return {};
     },
-    // 获取项目列表
-    getProgectList() {
-      var params = {};
-      this.axios.post("account/DescribeProject", params).then(data => {
-        let projectList = data.data;
-        let defaultPro = {
-          projectId: 0,
-          projectInfo: "默认项目",
-          projectName: "默认项目"
-        };
-        projectList.unshift(defaultPro);
-        // localStorage存储对象或者数据，必须先转成字符串JSON.stringify存储，在用JSON.parse进行解析
-        localStorage.setItem("projectList", JSON.stringify(projectList));
-      });
-    }
-  }
-};
+    components: {
+      NavHeader,
+      LeftAside
+    },
+    mounted() {},
+    methods: {}
+  };
+
 </script>
 <style lang="scss" scoped>
-#MGC >>> .el-aside {
-  background: #292b36 !important;
-}
-#MGC {
-  height: 100%;
-  .el-container {
+  #MGC>>>.el-aside {
+    background: #292b36 !important;
+  }
+
+  #MGC {
     height: 100%;
-    .el-header {
-      padding: 0 0 !important;
-    }
-    .el-aside {
-      background-color: rgb(84, 92, 100);
-    }
-    .el-main {
-      padding: 0;
-      background: #f2f2f2;
+
+    .el-container {
       height: 100%;
+
+      .el-header {
+        padding: 0 0 !important;
+      }
+
+      .el-aside {
+        background-color: rgb(84, 92, 100);
+      }
+
+      .el-main {
+        padding: 0;
+        background: #f2f2f2;
+        height: 100%;
+      }
     }
   }
-}
+
 </style>

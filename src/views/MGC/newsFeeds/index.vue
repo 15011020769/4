@@ -16,24 +16,18 @@
             @selection-change="handleSelectionChange"
           >
             <el-table-column type="selection" width="55"></el-table-column>
-            <el-table-column prop="title" label="消息类型" width="180">
+            <el-table-column prop="title" label="消息内容" >
                 <template slot-scope="scope">
-                   <el-link @click="detailsMesg(scope.row)" type="primary">{{scope.row.title}}</el-link>
+                   <el-link @click="detailsMesg(scope.row)" type="primary" class="edit">{{scope.row.title}}</el-link>
                 </template>
             </el-table-column>
-            <el-table-column prop="content" label="站内信" width="180"></el-table-column>
-            <el-table-column label="邮件">-</el-table-column>
-            <el-table-column label="短信" width="180">-</el-table-column>
-            <el-table-column label="微信" width="180">-</el-table-column>
-            <el-table-column label="企业微信">-</el-table-column>
-            <el-table-column label="语音" width="180">-</el-table-column>
-            <el-table-column label="接收人" width="180">-</el-table-column>
-            <el-table-column fixed="right" label="操作" width="120">
+            <el-table-column prop="sendTime" label="接收时间"></el-table-column>
+            <el-table-column prop="content" label="消息内容"></el-table-column>
+            <el-table-column label="操作" >
               <template slot-scope="scope">
                 <el-button
                   @click.native.prevent="deleteRow(scope.row)"
                   type="text"
-                  size="small"
                 >移除</el-button>
               </template>
             </el-table-column>
@@ -103,7 +97,6 @@ export default {
   methods: {
     //初始化表格数据
     init() {
-      this.loading = true
       let params = {
         searchForm: this.tableData,
         limit: this.pagesize,
@@ -233,6 +226,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.edit{
+  cursor: pointer; 
+}
 .newdFeeds-wrap >>> .el-button {
   height: 30px;
   line-height: 30px;
