@@ -36,13 +36,13 @@
       <div class="meaasge-table">
         <el-table :data="tableData" style="width: 100%" height="450" @selection-change="handleSelectionChange">
           <el-table-column type="selection" width="55"></el-table-column>
-          <el-table-column prop="title" label="消息内容" width="180">
-              <template slot-scope="scope">
-                <el-link @click="detailsMesg(scope.row)" type="primary">{{scope.row.title}}</el-link>
-             </template>
+          <el-table-column prop="title" label="消息内容">
+             <template slot-scope="scope">
+                <el-link @click="detailsMesg(scope.row)" class="edit" type="primary">{{scope.row.title}}</el-link>
+              </template>
           </el-table-column>
-          <el-table-column prop="updateTime" label="接收时间" width="180"></el-table-column>
-          <el-table-column prop="msgTypeLabel" label="消息类型"></el-table-column>
+          <el-table-column prop="sendTime" label="接收时间" ></el-table-column>
+          <el-table-column prop="msgTypeLabel" label="消息类型" ></el-table-column>
           <el-table-column prop="channelLabel" label="消息子类型"></el-table-column>
         </el-table>
         <div class="Right-style pagstyle" style="height:70px;">
@@ -306,6 +306,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.edit{
+  cursor: pointer; 
+}
  .Right-style {
     display: flex;
     justify-content: flex-end;
