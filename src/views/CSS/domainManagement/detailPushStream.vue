@@ -1,23 +1,23 @@
 <template>
-  <div>
+  <div v-loading="loadShow">
     <div class="topHead">
-      <i class="el-icon-back"></i>1345645646
+      <i class="el-icon-back" @click="returnBack"></i>{{this.$route.query.Name}}
     </div>
     <div class="conTabs">
       <el-tabs v-model="activeName" @tab-click="handleClick">
         <el-tab-pane label="基本信息" name="first">
           <div class="wrapper">
-            <BasicInfo/>
+            <BasicInfo :Con="allCon"/>
           </div>
         </el-tab-pane>
         <el-tab-pane label="推流配置" name="second">
           <div class="wrapper">
-
+            <pushStreamSet/>
           </div>
         </el-tab-pane>
         <el-tab-pane label="模板配置" name="third">
           <div class="wrapper">
-
+            <templateconfig/>
           </div>
         </el-tab-pane>
       </el-tabs>
@@ -26,18 +26,34 @@
 </template>
 <script>
 import BasicInfo from './tabs/BasicInfo'
+import pushStreamSet from './tabs/pushStreamSet'
+import templateconfig from './tabs/templateconfig'
 export default {
   data(){
     return{
-      activeName: 'first'
+      activeName: 'first',
+      loadShow:false,//加载
+      allCon:{},//详情内容
     }
   },
   components:{
-    BasicInfo:BasicInfo
+    BasicInfo:BasicInfo,
+    pushStreamSet:pushStreamSet,
+    templateconfig:templateconfig
+  },
+  mounted(){
+    console.log(this.$route.query)
+    this.allCon=this.$route.query;
   },
   methods: {
     handleClick(tab, event) {
       console.log(tab, event);
+    },
+    //返回列表页
+    returnBack(){
+      this.$router.push({
+        name:'domainManagement'
+      })
     }
   }
 }

@@ -31,9 +31,17 @@ export default new Router({
       }
     },
     {
-      path: '/detail', // 域名管理
-      name: 'detail',
-      component: () => import(/* webpackChunkName: "domainManagement" */ './domainManagement/detail.vue'),
+      path: '/detailPushStream', // 域名管理推流详情页
+      name: 'detailPushStream',
+      component: () => import(/* webpackChunkName: "detailPushStream" */ './domainManagement/detailPushStream.vue'),
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
+      path: '/detailPlay', // 域名管理播放详情页
+      name: 'detailPlay',
+      component: () => import(/* webpackChunkName: "detailPlay" */ './domainManagement/detailPlay.vue'),
       meta: {
         keepAlive: true
       }
