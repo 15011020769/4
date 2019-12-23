@@ -103,7 +103,6 @@ export default {
   methods: {
     //初始化表格数据
     init() {
-      this.loading = true
       let params = {
         searchForm: this.tableData,
         limit: this.pagesize,

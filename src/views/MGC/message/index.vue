@@ -4,7 +4,7 @@
       <HeaderCom title="站内信">
         <p>
           （共{{this.TotalCount}}封，其中{{this.TotalCount}}封未读，
-          <span>仅查看未读消息</span>）
+          <span @click="justRead">仅查看未读消息</span>）
         </p>
       </HeaderCom>
     </div>
@@ -123,7 +123,6 @@ export default {
   methods: {
    //初始化数据
     init(){
-      this.loading = true;
        let params = {
         //  searchForm:this.tableData,
          limit:this.pagesize,
@@ -226,12 +225,23 @@ export default {
         }
       });
     },
+    //查看未读信息
+    justRead(){
+      var arr = [];
+      this.tableAll.forEach(item => {
+         if(item.statusLabel == "未讀"){
+              arr.push(item)
+         }
+      })
+      this.tableData = arr
+      this.TotalCount = arr.length
+    },
      //对关键字进行搜索
      searchAll(){
         this.init()
      },
     searchTitle(){
-       var arr = [];
+      var arr = [];
       this.tableAll.forEach(item => {
          if(item.msgTypeLabel == "母雲動態"){
               arr.push(item)
