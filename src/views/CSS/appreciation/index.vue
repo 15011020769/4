@@ -19,9 +19,9 @@
         </dl>
       </div>
       <div class="main">
-        <Tab1 :StartTIme="StartTIme" :EndTIme="EndTIme" v-if="tabIndex == 0" />
-        <Tab2 :StartTIme="StartTIme" :EndTIme="EndTIme" v-if="tabIndex == 1" />
-        <Tab3 :StartTIme="StartTIme" :EndTIme="EndTIme" v-if="tabIndex == 2" />
+        <Tab1 :StartTIme="StartTIme" :EndTIme="EndTIme" v-if="tabIndex == 0" ref="tab1" />
+        <Tab2 :StartTIme="StartTIme" :EndTIme="EndTIme" v-if="tabIndex == 1" ref="tab2" />
+        <Tab3 :StartTIme="StartTIme" :EndTIme="EndTIme" v-if="tabIndex == 2" ref="tab3" />
       </div>
     </div>
   </div>
@@ -73,6 +73,13 @@ export default {
     search() {
       this.StartTIme = this.timeData[0].StartTIme;
       this.EndTIme = this.timeData[0].EndTIme;
+      if (this.tabIndex == 0) {
+        this.$refs.tab1.init();
+      } else if (this.tabIndex == 1) {
+        this.$refs.tab2.init();
+      } else if (this.tabIndex == 2) {
+        this.$refs.tab3.init();
+      }
     },
     //时间组件返回的数据
     GetDat(val) {
