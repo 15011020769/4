@@ -4,7 +4,7 @@
       带宽趋势
       <span style="color:#bbb;">(单位:Mbps)</span>
     </h3>
-    <Echart :xAxis="xAxis" :series="series" v-loading="loading"/>
+    <Echart :xAxis="xAxis" :series="series" v-loading="loading" />
     <div class="table">
       <el-table
         :data="tableData.slice((currpage - 1) * pagesize, currpage * pagesize)"
@@ -50,18 +50,9 @@ export default {
     Echart
   },
   props: {
-    StartTIme: {
-      type: String
-    },
-    EndTIme: {
-      type: String
-    }
-  },
-  watch: {
-    StartTIme(val) {
-      this.StartTIme = val;
-      this.init();
-    }
+    StartTIme: String,
+    EndTIme: String,
+    domain: Array
   },
   created() {
     this.init();
@@ -80,6 +71,11 @@ export default {
         StartTime: moment(this.StartTIme).format("YYYY-MM-DD HH:MM:SS"),
         EndTime: moment(this.EndTIme).format("YYYY-MM-DD HH:MM:SS")
       };
+      if (this.domain.length != 0) {
+        this.domain.forEach((item, index) => {
+          params["PlayDomains." + index] = item;
+        });
+      }
       var Granularity =
         moment(this.EndTIme).format("YYYYMMDD") -
         moment(this.StartTIme).format("YYYYMMDD");

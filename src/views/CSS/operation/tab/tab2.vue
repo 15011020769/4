@@ -51,18 +51,9 @@ export default {
     Echart
   },
   props: {
-    StartTIme: {
-      type: String
-    },
-    EndTIme: {
-      type: String
-    }
-  },
-  watch: {
-    StartTIme(val) {
-      this.StartTIme = val;
-      this.init();
-    }
+    StartTIme: String,
+    EndTIme: String,
+    domain: Array
   },
   created() {
     this.init();

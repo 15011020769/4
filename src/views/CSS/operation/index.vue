@@ -8,14 +8,14 @@
       <p>
         <span>选择域名</span>
         <el-select
-          v-model="domain"
+          v-model="damainValue"
           multiple
           collapse-tags
           style="margin-left: 10px;"
           placeholder="请选择"
         >
           <el-option
-            v-for="item in options"
+            v-for="item in domainsData"
             :key="item.value"
             :label="item.label"
             :value="item.value"
@@ -52,10 +52,34 @@
         </dl>
       </div>
       <div class="main">
-        <Tab1 :StartTIme="StartTIme" :EndTIme="EndTIme" v-if="tabIndex == 0" />
-        <Tab2 :StartTIme="StartTIme" :EndTIme="EndTIme" v-if="tabIndex == 1" />
-        <Tab3 :StartTIme="StartTIme" :EndTIme="EndTIme" v-if="tabIndex == 2" />
-        <Tab4 :StartTIme="StartTIme" :EndTIme="EndTIme" v-if="tabIndex == 3" />
+        <Tab1
+          :StartTIme="StartTIme"
+          :EndTIme="EndTIme"
+          v-if="tabIndex == 0"
+          :domain="domain"
+          ref="tab1"
+        />
+        <Tab2
+          :StartTIme="StartTIme"
+          :EndTIme="EndTIme"
+          v-if="tabIndex == 1"
+          :domain="domain"
+          ref="tab2"
+        />
+        <Tab3
+          :StartTIme="StartTIme"
+          :EndTIme="EndTIme"
+          v-if="tabIndex == 2"
+          :domain="domain"
+          ref="tab3"
+        />
+        <Tab4
+          :StartTIme="StartTIme"
+          :EndTIme="EndTIme"
+          v-if="tabIndex == 3"
+          :domain="domain"
+          ref="tab4"
+        />
       </div>
     </div>
   </div>
@@ -65,7 +89,7 @@
 import moment from "moment";
 import Header from "@/components/public/Head";
 import XTimeX from "@/components/public/TimeN";
-import { ALL_CITY } from "@/constants";
+import { ALL_CITY, DOMAIN_LIST } from "@/constants";
 import Tab1 from "./tab/tab1";
 import Tab2 from "./tab/tab2";
 import Tab3 from "./tab/tab3";
@@ -75,6 +99,7 @@ export default {
   data() {
     return {
       operator: "",
+      domainsData: [],
       options: [
         {
           value: "选项1",
@@ -97,7 +122,8 @@ export default {
           label: "北京烤鸭"
         }
       ],
-      domain: "",
+      damainValue: [],
+      domain: [],
       value: 1, //时间组件默认选中值
       region: "台灣台北", //地域
       tabIndex: 0, //tab默认选中值
@@ -134,12 +160,42 @@ export default {
   },
   created() {
     this.getCity();
+    this.getDomains();
   },
   methods: {
+    //域名列表
+    getDomains() {
+      const params = {
+        Version: "2018-08-01"
+      };
+      this.axios.post(DOMAIN_LIST, params).then(res => {
+        var arr = [];
+        res.Response.DomainList.forEach((item, index) => {
+          const data = {
+            value: index,
+            label: item.TargetDomain
+          };
+          arr.push(data);
+        });
+        this.domainsData = arr;
+      });
+    },
     //查询
     search() {
       this.StartTIme = this.timeData[0].StartTIme;
       this.EndTIme = this.timeData[0].EndTIme;
+      this.damainValue.forEach(item => {
+        this.domain.push(this.domainsData[item].label);
+      });
+      if (this.tabIndex == 0) {
+        this.$refs.tab1.init();
+      } else if (this.tabIndex == 1) {
+        this.$refs.tab2.init();
+      } else if (this.tabIndex == 2) {
+        this.$refs.tab3.init();
+      } else if (this.tabIndex == 3) {
+        this.$refs.tab4.init();
+      }
     },
     //时间组件返回的数据
     GetDat(val) {
@@ -170,6 +226,18 @@ export default {
   line-height: 30px;
   padding-top: 0;
   overflow: hidden;
+}
+.operation-wrap >>> .el-select__tags span:nth-child(1) {
+  display: flex;
+}
+.operation-wrap >>> .el-select__tags-text {
+  max-width: 50px;
+  overflow: hidden;
+  display: inline-block;
+}
+.operation-wrap >>> .el-tag {
+  display: flex;
+  align-items: center;
 }
 .operation-wrap >>> .el-range-input {
   margin-top: 5px;
