@@ -21,7 +21,8 @@
 </template>
 <script>
   import {
-    DOMAIN_DELTILS
+    DOMAIN_DELTILS,
+    FLOWKEY_DELTILS
   } from '@/constants'
   export default {
     data() {
@@ -43,11 +44,16 @@
           Version: '2018-08-01',
           DomainName: this.name
         };
-        // 获取表格数据
         this.axios.post(DOMAIN_DELTILS, param).then(data => {
           if (data.Response.Error == undefined) {
             this.details = data.Response.DomainInfo
-            console.log(this.details)
+          } else {
+            this.$message.error(data.Response.Error.Message);
+          }
+        });
+        this.axios.post(FLOWKEY_DELTILS, param).then(data => {
+          if (data.Response.Error == undefined) {
+            this.details.MasterAuthKey = data.Response.PushAuthKeyInfo.MasterAuthKey
           } else {
             this.$message.error(data.Response.Error.Message);
           }
