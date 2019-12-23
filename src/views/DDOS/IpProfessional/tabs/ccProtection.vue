@@ -1,12 +1,12 @@
 <template>
   <div id="ccProtection">
     <div class="ccProtectPartOne">
-      <el-select class="ccProtectSele" v-model="ccProtectSele" filterable placeholder="请选择">
+      <el-select class="ccResourceId" v-model="ccResourceId" filterable placeholder="请选择">
         <el-option
-          v-for="item in options"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value"
+          v-for="item in resourceIds"
+          :key="item"
+          :label="item"
+          :value="item"
         ></el-option>
       </el-select>
     </div>
@@ -50,10 +50,10 @@
       </div>
     </div>
     <div>
-      <addAccessControl />
+      <addAccessControl :ccResourceId="ccResourceId" />
     </div>
     <div>
-      <addIpList :resourceId="ccProtectSele" :ccUrlWhiteList="ccUrlWhiteList" />
+      <addIpList :resourceId="ccResourceId" :ccUrlWhiteList="ccUrlWhiteList" />
     </div>
   </div>
 </template>
@@ -65,16 +65,17 @@ import {
   CC_THRESHOLD,
   CC_URLALLOW,
   DDOSPOLICY_CONT,
-  CC_SELFDEFINEPOLICY_CREATE
+  CCSELFDEFINEPOLICY_CREATE
 } from "@/constants";
 export default {
   props: {
-    ccProtectSele: String //第一部分下拉 资源ID
+    // ccResourceId: String //第一部分下拉 资源ID
   },
   data() {
     return {
+      ccResourceId: '',
       loading: true,
-      options: [], //下拉内容
+      resourceIds: [], //下拉内容
       switchState: true, //防护状态
       httpRequestNum: 350, //http请求阈值
       httpOptions: [
@@ -169,15 +170,32 @@ export default {
   },
   methods: {
     getData() {
-      this.describeResourceList();
-      this.describeCCUrlAllow();
+      this.initResourceList();
+    },
+    // 1.0.初始化资源列表，获取resourceIds
+    initResourceList() {
+      let params = {
+        Version: "2018-07-09",
+        Business: "net"
+      };
+      this.axios.post(RESOURCE_LIST, params).then(res => {
+        for (let i = 0; i < res.Response.ServicePacks.length; i++) {
+          let list = res.Response.ServicePacks[i];
+          list.Record.forEach((value, index) => {
+            if (value.Key == "Id") {
+              this.resourceIds.push(value.Value);
+            }
+          });
+        }
+        this.ccResourceId = this.resourceIds[0];
+      });
     },
     // 1.1.获取资源列表
     describeResourceList() {
       let params = {
         Version: "2018-07-09",
         Business: "net",
-        "IdList.0": this.ccProtectSele
+        "IdList.0": this.ccResourceId
       };
       this.axios.post(RESOURCE_LIST, params).then(res => {
         console.log(params, res);
@@ -188,11 +206,11 @@ export default {
       let params = {
         Version: "2018-07-09",
         Business: "net",
-        Id: this.ccProtectSele,
+        Id: this.ccResourceId,
         "Type.0": "white"
       };
       this.axios.post(CC_URLALLOW, params).then(res => {
-        console.log(res);
+        // console.log(res);
         // this.ccUrlWhiteList = res.Response
       });
     },
@@ -201,7 +219,7 @@ export default {
       let params = {
         Version: "2018-07-09",
         Business: "net",
-        Id: this.ccProtectSele,
+        Id: this.ccResourceId,
         Protocol: this.switchState ? "http" : "",
         Threshold: this.switchState ? this.httpRequestNum : 0
       };
@@ -209,19 +227,7 @@ export default {
         console.log(params, res);
       });
     },
-    // 1.4.创建CC自定义策略(未调用)
-    createCCSelfDefinePolicy() {
-      let params = {
-        Version: "2018-07-09",
-        Business: "net",
-        Id: this.ccProtectSele,
-        "Policy.Name": "test",
-        "Policy.Smode": "speedlimit"
-      };
-      this.axios.post(CC_SELFDEFINEPOLICY_CREATE, params).then(res => {
-        console.log(res);
-      });
-    },
+    
     // 1.5.获取DDoS高级策略(未调用)
     describeDDoSPolicy() {
       let params = {

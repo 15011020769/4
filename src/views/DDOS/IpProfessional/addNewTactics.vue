@@ -80,7 +80,7 @@
             <td>{{$t('DDOS.Proteccon_figura.Agreement')}}</td>
             <td>端口类型</td>
             <td>{{$t('DDOS.Proteccon_figura.Start_portnumber')}}</td>
-            <td>{{$t('DDOS.Proteccon_figura.End_portnumbe')}}</td>s
+            <td>{{$t('DDOS.Proteccon_figura.End_portnumbe')}}</td>
             <td>操作</td>
           </tr>
           <tr class="t-body" v-for="(item, index) in tags" :key="index">
@@ -978,7 +978,7 @@ export default {
 }
 .inputChange1{
   height:30px;
-  width:80px!important;
+  width:66px!important;
   margin-left:12px;
   margin-bottom:10px;
   margin-right:6px;

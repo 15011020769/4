@@ -118,7 +118,7 @@
       </el-tab-pane>
       <el-tab-pane :label="$t('DDOS.Proteccon_figura.CC_protection')" name="second">
         <div style="padding:0 20px;">
-          <ccProtection :ccProtectSele="resourceId" />
+          <ccProtection />
         </div>
       </el-tab-pane>
       <el-tab-pane

@@ -8,76 +8,77 @@
         width="40%"
         :before-close="handleClose">
         <div>
-          <div class="topBlueAcc">
+          <div class="topBlueAcc" v-show="!editFlag">
             {{$t('DDOS.accessCopy.AddAskTitle')}}
           </div>
           <div class="formList">
             <div class="newClear">
               <p>{{$t('DDOS.accessCopy.strageName')}}</p>
               <p>
-                <el-input class="accessName" :placeholder="$t('DDOS.accessCopy.searchStarge')"></el-input>
+                <el-input class="accessName" :disabled="editFlag" v-model="policyForm.Name" :placeholder="$t('DDOS.accessCopy.searchStarge')"></el-input>
               </p>
             </div>
             <div class="newClear">
               <p>{{$t('DDOS.accessCopy.agreement')}}</p>
               <p>
-                <el-radio label="HTTP" v-model="accessRadio" value="HTTP"></el-radio>
+                <el-radio :disabled="editFlag" label="http" v-model="policyForm.Protocol" value="http">HTTP</el-radio>
               </p>
             </div>
             <div class="newClear">
               <p>模式</p>
               <p>
-                <el-radio-group v-model="modelCheck">
-                  <el-radio label="1">匹配模式</el-radio>
-                  <el-radio label="2">限速模式</el-radio>
+                <el-radio-group v-model="policyForm.Smode">
+                  <el-radio label="matching">匹配模式</el-radio>
+                  <el-radio label="speedlimit">限速模式</el-radio>
                 </el-radio-group><br/>
-                <span v-if="modelCheck=='1'?false:true" class="executionSpan">{{$t('DDOS.accessCopy.speedModelTitle')}}</span>
+                <span v-if="policyForm.Smode=='matching'?false:true" class="executionSpan">{{$t('DDOS.accessCopy.speedModelTitle')}}</span>
               </p>
             </div>
-            <div class="newClear" v-if="modelCheck=='1'?false:true">
+            <div class="newClear" v-if="policyForm.Smode=='matching'?false:true">
               <p>策略</p>
-              <p>{{$t('DDOS.accessCopy.ipAsk')}}<el-input class="xiansuNub" v-model="number"></el-input>{{$t('DDOS.accessCopy.askTime')}}</p>
+              <p>{{$t('DDOS.accessCopy.ipAsk')}}<el-input class="xiansuNub" v-model="policyForm.Frequency"></el-input>{{$t('DDOS.accessCopy.askTime')}}</p>
             </div>
-            <div class="newClear" v-if="modelCheck=='1'?true:false">
+            <div class="newClear" v-if="policyForm.Smode=='matching'?true:false">
               <p>策略</p>
               <p>
                 <table class="">
-                  <tr class="t-body" v-for="(item, index) in tags3" :key="index">
-                    <td>{{item.dang}}</td>
+                  <tr class="t-body" v-for="(item, index) in ruleList" :key="index">
+                    <td v-if="index==0">当</td>
+                    <td v-else>且当</td>
                     <td width="110px">
-                      <el-select v-model="item.hoseDomin" class="hoseDomin">
+                      <el-select v-model="item.Skey" class="hoseDomin">
                         <el-option label="host" value="host"></el-option>
-                        <el-option label="CGI" value="CGI"></el-option>
-                        <el-option label="user_agent" value="user_agent"></el-option>
+                        <el-option label="CGI" value="cgi"></el-option>
+                        <el-option label="user_agent" value="ua"></el-option>
                         <el-option label="referer" value="referer"></el-option>
                       </el-select>
                     </td>
                     <td width="90px">
-                      <el-select v-model="item.relese" class="relese">
-                        <el-option label="包含" value="contain"></el-option>
-                        <el-option :label="$t('DDOS.accessCopy.equalTo')" value="unequal"></el-option>
+                      <el-select v-model="item.Operator" class="relese">
+                        <el-option label="包含" value="include"></el-option>
+                        <el-option :label="$t('DDOS.accessCopy.equalTo')" value="not_include"></el-option>
                         <el-option :label="$t('DDOS.accessCopy.noEqua')" value="equal"></el-option>
                       </el-select>
                     </td>
                     <td width="150px">
-                      <el-input class="iptText"></el-input>{{$t('DDOS.accessCopy.when')}}
+                      <el-input class="iptText" v-model="item.Value"></el-input>{{$t('DDOS.accessCopy.when')}}
                     </td>
                     <td>
-                      <a v-on:click="removeRow(index,3)" v-show="index >= 0">{{item.delete}}</a>
+                      <a v-on:click="removeRow(index)" v-show="index > 0">删除</a>
                     </td>
                   </tr>
                 </table>
-                <a v-on:click="addRow(3,tags3.length)" v-if="tags3.length<'4'?true:false">+添加一行</a>
+                <a v-on:click="addRow()" v-if="ruleList.length<4?true:false">+添加一行</a>
               </p>
             </div>
-            <div class="newClear" v-if="modelCheck=='1'?true:false">
+            <div class="newClear" v-if="policyForm.Smode=='matching'?true:false">
               <p>{{$t('DDOS.accessCopy.perform')}}</p>
               <p>
-                <el-select v-model="execution">
-                  <el-option :label="$t('DDOS.accessCopy.intercept')" value='1'></el-option>
-                  <el-option :label="$t('DDOS.accessCopy.identification')" value="2"></el-option>
+                <el-select v-model="policyForm.ExeMode">
+                  <el-option :label="$t('DDOS.accessCopy.intercept')" value='alg'></el-option>
+                  <el-option :label="$t('DDOS.accessCopy.identification')" value="drop"></el-option>
                 </el-select>
-                <span class="executionSpan" v-if="execution=='2'?true:false">{{$t('DDOS.accessCopy.identificationTitle')}}</span>
+                <span class="executionSpan" v-if="policyForm.ExeMode=='drop'?true:false">{{$t('DDOS.accessCopy.identificationTitle')}}</span>
               </p>
             </div>
           </div>
@@ -91,25 +92,30 @@
   </div>
 </template>
 <script>
+import { CCSELFDEFINEPOLICY_CREATE, CCSELFDEFINEPOLICY_MODIFY } from "@/constants";
 export default {
   props:{
-    isShow:Boolean
+    isShow: Boolean,
+    ccResourceId: String, //资源ID
+    editCCPolicy: Object, //编辑对象
+    editFlag: Boolean,//是否是编辑
+    dateFlag: Date
   },
   data(){
     return{
-      dialogVisible:'',//弹框
-      accessRadio:'HTTP',//协议
-      modelCheck:'1',//模式
-      execution:'1',//执行
-      number:'0',//限速模式策略
-      tags3:[
+      policyForm: {
+        Protocol: 'http',//cc防护类型，取值[http，https]
+        Smode: 'matching',//匹配模式，取值[matching(匹配模式), speedlimit(限速模式)]
+        ExeMode: 'alg',//执行策略模式，拦截或者验证码，取值[alg（验证码）, drop（拦截）]
+      },//form表单对象
+      ruleList: [
         {
-          dang:'当',
-          hoseDomin:'host',
-          relese:'包含',
-          delete:''
+          Skey: 'host',//规则的key, 可以为host、cgi、ua、referer
+          Operator: 'include',//规则的条件，可以为include、not_include、equal
+          Value: '',//规则的值，长度小于31字节
         }
-      ],
+      ],//规则列表对象
+      dialogVisible:'',//弹框
     }
   },
   computed:{
@@ -118,43 +124,104 @@ export default {
       return this.isShow;
     }
   },
+  watch: {
+    dateFlag: function() {//监测时间戳，刷新每次进入此HTML的数据
+      if(this.editFlag) {
+        this.policyForm = JSON.parse(JSON.stringify(this.editCCPolicy));
+        this.ruleList = JSON.parse(JSON.stringify(this.editCCPolicy.RuleList));
+      } else {
+        this.initData();
+      }
+    }
+  },
   methods:{
+    initData() {
+      this.policyForm = { Protocol: 'http', Smode: 'matching', ExeMode: 'alg' };
+      this.ruleList = [{ key: 'host', Operator: 'include', Value: '' }];
+    },
+    // 1.1.创建CC自定义策略
+    createCCSelfDefinePolicy() {
+      let params = {
+        Version: "2018-07-09",
+        Business: "net",
+        Id: this.ccResourceId,
+        "Policy.Name": this.policyForm.Name,
+        "Policy.Smode": this.policyForm.Smode,//匹配模式，取值[matching(匹配模式), speedlimit(限速模式)]
+        "Policy.Protocol": this.policyForm.Protocol,//cc防护类型，取值[http，https]
+      };
+      //区分匹配模式
+      if(this.policyForm.Smode == 'matching') {
+        params["Policy.ExeMode"] = this.policyForm.ExeMode;
+        for(let i=0; i<this.ruleList.length; i++) {
+          params["Policy.RuleList."+i+".Skey"] = this.ruleList[i].Skey;
+          params["Policy.RuleList."+i+".Operator"] = this.ruleList[i].Operator;
+          params["Policy.RuleList."+i+".Value"] = this.ruleList[i].Value
+        }
+      } else if(this.policyForm.Smode == 'speedlimit') {
+        params["Policy.Frequency"] = this.policyForm.Frequency
+      }
+      this.axios.post(CCSELFDEFINEPOLICY_CREATE, params).then(res => {
+        console.log(params, res);
+      });
+    },
+    // 1.2.修改CC自定义策略
+    modifyCCSelfDefinePolicy() {
+      let params = {
+        Version: "2018-07-09",
+        Business: "net",
+        Id: this.ccResourceId,
+        SetId: this.editCCPolicy.SetId,
+        "Policy.Name": this.policyForm.Name,
+        "Policy.Smode": this.policyForm.Smode,//匹配模式，取值[matching(匹配模式), speedlimit(限速模式)]
+        "Policy.Protocol": this.policyForm.Protocol,//cc防护类型，取值[http，https]
+      };
+      //添加IpList
+      for(let i=0; i<this.policyForm.IpList.length; i++) {
+        params["Policy.IpList."+i] = this.policyForm.IpList[i];
+      }
+      //区分匹配模式
+      if(this.policyForm.Smode == 'matching') {
+        params["Policy.ExeMode"] = this.policyForm.ExeMode;
+        for(let i=0; i<this.ruleList.length; i++) {
+          params["Policy.RuleList."+i+".Skey"] = this.ruleList[i].Skey;
+          params["Policy.RuleList."+i+".Operator"] = this.ruleList[i].Operator;
+          params["Policy.RuleList."+i+".Value"] = this.ruleList[i].Value
+        }
+      } else if(this.policyForm.Smode == 'speedlimit') {
+        params["Policy.Frequency"] = this.policyForm.Frequency
+      }
+      this.axios.post(CCSELFDEFINEPOLICY_MODIFY, params).then(res => {
+        console.log(params, res);
+      });
+    },
     //弹框关闭按钮
     handleClose(){
       this.dialogVisible=false;
-      this.$emit("closeDialogModel",this.dialogVisible)
+      this.$emit("closeDialogModel",this.dialogVisible);
     },
-    //添加访问控制策略确定按钮
+    //确定按钮
     addAccessSureBtn(){
+      //判断是添加还是编辑
+      if(this.editFlag){//编辑
+        this.modifyCCSelfDefinePolicy();
+      } else {//添加
+        this.createCCSelfDefinePolicy();
+      }
       this.dialogVisible=false;
       this.$emit("addAccessContSure",this.dialogVisible)
     },
-    copyObj: function () {
-      var des = {
-        dang:'且当',
-        hoseDomin:"",
-        relese:"包含",
-        delete:'删除'
-      }
-      return des
-    },
     //新增一行
-    addRow: function (type,length) {
-      var des = this.copyObj();
-      if(length==1){
-        des.hoseDomin='CGI';
-        this.tags3.push(des)
-      }else if(length==2){
-        des.hoseDomin='user_agent';
-        this.tags3.push(des)
-      }else if(length==3){
-        des.hoseDomin='referer';
-        this.tags3.push(des)
+    addRow: function () {
+      let des = {
+        Skey: 'host',
+        Operator: 'include',
+        Value: '',
       }
+      this.ruleList.push(des)
     },
     // 删除一行
-    removeRow: function (idx,typeNode) {
-      this.tags3.splice(idx, 1);
+    removeRow: function (idx) {
+      this.ruleList.splice(idx, 1);
     }
   }
 }
