@@ -23,7 +23,11 @@
             <p class="edit">{{ scope.row.InstanceName }}</p>
           </template>
         </el-table-column>
-        <el-table-column prop="InstanceRegion" :label="$t('CCN.tabs.tab4tr4')"></el-table-column>
+        <el-table-column prop="InstanceRegion" :label="$t('CCN.tabs.tab4tr4')">
+          <template slot-scope="scope">
+            <span>{{region[scope.row.InstanceRegion]}}</span>
+          </template>
+        </el-table-column>
         <el-table-column prop="UpdateTime" :label="$t('CCN.tabs.tab4tr5')" width></el-table-column>
         <el-table-column prop="operate" :label="$t('CCN.tabs.tab4tr6')" width>
           <template slot-scope="scope">
@@ -69,7 +73,10 @@ export default {
       pageSize: 10,
       totalItems: 0,
       currpage: 1, // 当前页码
-      loadShow: false
+      loadShow: false,
+      region: {
+        "ap-taipei": "台灣台北"
+      }
     };
   },
   created() {

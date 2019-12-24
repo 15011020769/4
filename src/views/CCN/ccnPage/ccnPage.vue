@@ -206,7 +206,11 @@
           <el-select v-model="form.instanceRegion" :placeholder="$t('CCN.total.region')">
             <el-option :label="$t('CCN.total.region')" value="ap-taipei"></el-option>
           </el-select>
-          <el-select v-model="form.instanceId" :placeholder="$t('CCN.total.select')">
+          <el-select
+            v-model="form.instanceId"
+            :placeholder="$t('CCN.total.select')"
+            no-data-text="無數據"
+          >
             <el-option
               v-for="(item, index) in vpcs"
               :key="index"
