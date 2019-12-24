@@ -14,7 +14,7 @@
       <el-form :inline="true" :model="dataForm" class="demo-form-inline">
         <el-form-item>
           <!-- 产品 -->
-          <el-select v-model="dataForm.businessCode" value-key="code" :placeholder="$t('BILL.Detail.allProduct')" @change="productClick()" clearable size="small">
+          <el-select v-model="dataForm.businessCode" value-key="code" :placeholder="$t('BILL.Detail.allProduct')" :no-data-text="$t('BILL.Overview.none')" @change="productClick()" clearable size="small">
             <el-option v-for="item in getProductList" :key="item.businessCode" :label="item.businessCodeName" :value="item.businessCode">
             </el-option>
           </el-select>
@@ -29,7 +29,7 @@
             </el-option>
           </el-select> -->
           <!-- 项目 -->
-          <el-select v-model="dataForm.projectName" :placeholder="$t('BILL.Detail.allProject')" @change="projectClick()" clearable size="small">
+          <el-select v-model="dataForm.projectName" :placeholder="$t('BILL.Detail.allProject')" :no-data-text="$t('BILL.Overview.none')" @change="projectClick()" clearable size="small">
             <el-option v-for="item in getProjectList" :key="item.projectName" :label="item.projectName" :value="item.projectName">
             </el-option>
           </el-select>
@@ -39,12 +39,12 @@
             </el-option>
           </el-select> -->
           <!-- 计费模式 -->
-          <el-select v-model="dataForm.payModeName" :placeholder="$t('BILL.Detail.allpayMode')" @change="payClick()" clearable size="small">
+          <el-select v-model="dataForm.payModeName" :placeholder="$t('BILL.Detail.allpayMode')" :no-data-text="$t('BILL.Overview.none')" @change="payClick()" clearable size="small">
             <el-option v-for="item in getPayModeList" :key="item.payModeName" :label="item.payModeName" :value="item.payModeName">
             </el-option>
           </el-select>
           <!-- 交易类型 -->
-          <el-select v-model="dataForm.actionTypeName" :placeholder="$t('BILL.Detail.allActionType')" @change="actionTypeClick()" clearable size="small">
+          <el-select v-model="dataForm.actionTypeName" :placeholder="$t('BILL.Detail.allActionType')" :no-data-text="$t('BILL.Overview.none')" @change="actionTypeClick()" clearable size="small">
             <el-option v-for="item in getActionTypeList" :key="item.actionTypeName" :label="item.actionTypeName" :value="item.actionTypeName">
             </el-option>
           </el-select>

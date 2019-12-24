@@ -340,7 +340,7 @@ export default {
               normal: {
                 show: true,
                 position: 'center',
-                formatter: '{active|總費用}' + '\n\r' + '{total|' + total.toFixed(2) + '}',
+                formatter: '{active|總費用（含稅）}' + '\n\r' + '{total|' + total.toFixed(2) + '}',
                 rich: {
                   total: {
                     fontSize: 20,
