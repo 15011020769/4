@@ -2,7 +2,7 @@
   <div class="CM-wrap">
     <!-- <Loading :show="loadShow" /> -->
     <!-- 城市按钮 -->
-    <div class="CVM-title">{{ $t('CVM.clBload.fzjh') }}</div>111
+    <div class="CVM-title">{{ $t('CVM.clBload.fzjh') }}</div>
     <div class="tool">
       <Cities :cities="cities" class="city" :Cityvalue.sync="selectedRegion" @changeCity="changeCity" />
       <!-- 搜索 -->
