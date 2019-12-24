@@ -297,7 +297,7 @@
           <span class="spanStyleLabel">连接超时检测</span>
           <el-radio-group v-model="radios10" @change="thisNextShowRow(10)">
             <el-radio :label="$t('DDOS.Proteccon_figura.Shut_down')"></el-radio>
-            <el-radio:label="$t('DDOS.Proteccon_figura.Opening')"></el-radio>
+            <el-radio :label="$t('DDOS.Proteccon_figura.Opening')"></el-radio>
           </el-radio-group><span v-if="thisRadio10"><el-input class="inputChange1"></el-input>秒</span><br/>
           <span class="spanStyleLabel">异常空连接防护</span>
           <el-radio-group v-model="radios11">
@@ -476,24 +476,9 @@ export default {
       nameFlag: true,//名称是否可编辑 true:可编辑
       tags:[],
       tags1:[],
-      tags3:[
-        // {
-        //   protocol:"ICPM",
-        //   speedLimit:"0"
-        // }
-      ],
-      tags4:[
-        // {
-        //   beginPort:"",
-        //   endPort:""
-        // }
-      ],
-      tags5:[
-        // {
-        //   beginPort:"",
-        //   endPort:""
-        // }
-      ],
+      tags3:[],
+      tags4:[],
+      tags5:[],
       tableDataName1:"",
       IpBlackWhiteLists: [], //黑白名单数据
       tableDataBegin2:[],//水印防护
@@ -534,6 +519,7 @@ export default {
       dialogEdit:false,//编辑框
       blackWhiteEdit: '',//编辑黑白名单
       blackWhiteTextEdit: '',
+      policyTemp: {},//编辑用的暂存对象
     }
   },
   mounted() {
@@ -545,16 +531,17 @@ export default {
 
     } else { //配置
       console.log(this.policy)
-      this.tacticsName = this.policy.PolicyName
+      this.policyTemp = JSON.parse(JSON.stringify(this.policy));
+      this.tacticsName = this.policyTemp.PolicyName
       this.nameFlag = false
-      this.IpBlackWhiteLists = this.policy.IpBlackWhiteLists
-      this.DdisableProtocol.push(this.policy.DropOptions.DropTcp==0?'':'TCP')
-      this.DdisableProtocol.push(this.policy.DropOptions.DropUdp==0?'':'UDP')
-      this.DdisableProtocol.push(this.policy.DropOptions.DropIcmp==0?'':'ICMP')
-      this.DdisableProtocol.push(this.policy.DropOptions.DropOther==0?'':'其他协议')
-      this.tags = this.policy.PortLimits
-      this.tags1 = this.policy.PacketFilters
-      //this.tableDataBegin2 = this.policy.WaterPrint
+      this.IpBlackWhiteLists = this.policyTemp.IpBlackWhiteLists
+      this.DdisableProtocol.push(this.policyTemp.DropOptions.DropTcp==0?'':'TCP')
+      this.DdisableProtocol.push(this.policyTemp.DropOptions.DropUdp==0?'':'UDP')
+      this.DdisableProtocol.push(this.policyTemp.DropOptions.DropIcmp==0?'':'ICMP')
+      this.DdisableProtocol.push(this.policyTemp.DropOptions.DropOther==0?'':'其他协议')
+      this.tags = this.policyTemp.PortLimits
+      this.tags1 = this.policyTemp.PacketFilters
+      //this.tableDataBegin2 = this.policyTemp.WaterPrint
     }
   },
   methods:{
@@ -774,7 +761,7 @@ export default {
       this.dialogModelAddBw=false;
       let arr = this.blackWhiteText.split(/[\n]/)
       for(let i in arr) {
-        let temp = {strategy: this.blackWhite, address: arr[i]}
+        let temp = {Type: this.blackWhite, Ip: arr[i]}
         this.IpBlackWhiteLists.push(temp)
       }
       console.log(this.IpBlackWhiteLists)

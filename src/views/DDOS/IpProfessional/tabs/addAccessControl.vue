@@ -163,7 +163,7 @@ export default {
         Id: this.ccResourceId
       };
       this.axios.post(CCSELFDEFINEPOLICY_LIST, params).then(res => {
-        console.log(params, res);
+        // console.log(params, res);
         this.tableDataBegin = res.Response.Policys;
         this.allData = res.Response.Policys;
         this.totalItems = res.Response.Total;
@@ -184,13 +184,13 @@ export default {
         Switch: ccPolicy.Switch
       };
       this.axios.post(CCPOLICYSWITCH_MODIFY, params).then(res => {
-        console.log(params, res);
+        // console.log(params, res);
         this.describeCCSelfDefinePolicy();
       });
     },
     // 删除
     deleteCCPolicy(ccPolicy) {
-      console.log(ccPolicy)
+      // console.log(ccPolicy)
       this.visible = false
       this.deleteCCSelfDefinePolicy(ccPolicy);
     },
@@ -203,7 +203,7 @@ export default {
         SetId: ccPolicy.SetId
       };
       this.axios.post(CCSELFDEFINEPOLICY_DELETE, params).then(res => {
-        console.log(params, res);
+        // console.log(params, res);
         this.describeCCSelfDefinePolicy();
       });
     },

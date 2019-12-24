@@ -52,7 +52,7 @@ export default {
       if (this.resourceId != "" && this.resourceId != null) {
         params["IdList.0"] = this.resourceId;
       }
-      this.axios.post("dayu2/DescribeResourceList", params).then(res => {
+      this.axios.post(RESOURCE_LIST, params).then(res => {
         // console.log(res);
       });
     },
