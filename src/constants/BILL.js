@@ -17,7 +17,7 @@ export const PROJECT_COL = 'taifucloud/tbillproduct/projectCol'      // 按项�
 export const PROJECT_COL_LIST = 'taifucloud/tbillproduct/projectColList'      // 按项目（组）汇总-表格
 
 // 账单相关接口
-export const PRODUCT_LIST = 'taifucloud/tbilldetails/getProductList'      // 产品列表
+export const PRODUCT_LIST = 'taifucloud/tbillproduct/getProductList'      // 产品列表
 
 export const ADMIN_PROJECT = 'taifucloud/tbillproduct/projectList'      // admin项目列表
 

@@ -56,22 +56,39 @@
     </div>
 
     <!-- 费用计算 -->
-    <div class="mod-box">
-      <div class="mod-left">
-        <span style="font-size: 14px;">{{$t('BILL.Detail.allCast')}}: </span>
-        <span style="font-size: 16px; color: #006eff;">NT$ {{dataForm.allCoat}}</span>
+    <div class="detail-form">
+        <el-form
+          :inline="true"
+          :model="dataForm"
+          class="demo-form-inline"
+          @keyup.enter.native="getDataList()"
+        >
+          <el-form-item>
+            <span style="font-size: 14px;">{{$t('BILL.Detail.allCast')}}: </span>
+            <span style="font-size: 16px; color: #006eff;">NT$ {{dataForm.allCoat}}</span>
+          </el-form-item>
+          <el-form-item class="item-3">
+            <el-button
+              type="primary"
+              icon="el-icon-download"
+              @click="download"
+              size="small"
+              plain
+              :loading="downloadLoading"
+            ></el-button>
+          </el-form-item>
+          <el-form-item class="item-2">
+            <el-input
+              :placeholder="$t('BILL.Detail.resourceId')"
+              size="small"
+              clearable
+              v-model="dataForm.resourceId"
+            >
+              <el-button type="primary" slot="append" icon="el-icon-search" @click="search()"></el-button>
+            </el-input>
+          </el-form-item>
+        </el-form>
       </div>
-      <div class="mod-right">
-        <div style="float: right;">
-          <el-button type="primary" icon="el-icon-download" @click="download" size="small" plain :loading="downloadLoading"></el-button>
-        </div>
-        <div style="float: right; padding-right:5px;">
-          <el-input :placeholder="$t('BILL.Detail.resourceId')" clearable v-model="dataForm.resourceId" size="small">
-            <el-button type="primary" @click="search()" slot="append" icon="el-icon-search" size="small"></el-button>
-          </el-input>
-        </div>
-      </div>
-    </div>
 
     <!-- 表格 -->
     <div class="mod-table">
@@ -468,6 +485,21 @@ export default {
   .span-1 {
     padding-left: 10px;
     font-size: 12px;
+   
+  }
+}
+
+.detail-form {
+  margin: 0 20px;
+  .item-1 {
+    float: left;
+  }
+  .item-2,
+  .item-3 {
+    float: right;
+  }
+  ::v-deep .el-form-item {
+    margin-bottom: 10px;
   }
 }
 
