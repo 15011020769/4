@@ -1,18 +1,191 @@
-<!--  -->
 <template>
-  <div>ipipip</div>
+  <div>
+    <div class="topHeader">
+      <span>IP查询</span>
+      <el-select
+        v-model="ipSearch"
+        filterable
+        allow-create
+        default-first-option
+        placeholder="请选择文章标签">
+        <el-option
+          v-for="item in ipSearchOptions"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value">
+        </el-option>
+      </el-select>
+    </div>
+    <div class="wrapper">
+      <div class="tipTop newClear" v-if="closeTip">
+        在这里，你可以查询某个IP的封堵状态，是否在IP黑白名单中，是否触发了CC，BOT，自定义人机识别等
+        <span class="el-icon-close" @click="closeTipBtn"></span>
+      </div>
+      <div class="searchIpt">
+        <el-input v-model="searchIp" class="searchIp"></el-input>
+        <el-button @clcik="searchBtn" class="searchBtn">查询</el-button>
+      </div>
+      <div class="searchResoult">
+        <h1>查询结果</h1>
+        <div class="newClear">
+          <div class="newClear newList">
+            <p>IP</p>
+            <p>10.1.1.23<span>拦截</span></p>
+          </div>
+          <div class="newClear newList">
+            <p>域名</p>
+            <p>-</p>
+          </div>
+          <div class="newClear newList">
+            <p>拦截开始时间</p>
+            <p>2019-12-18 14:47:48</p>
+          </div>
+          <div class="newClear newList">
+            <p>拦截结束时间</p>
+            <p>2019-12-25 23:59:59</p>
+          </div>
+          <div class="newClear newList">
+            <p>类别</p>
+            <p>黑名单</p>
+          </div>
+          <div class="newClear newList">
+            <p>触发策略名称</p>
+            <p>custom</p>
+          </div>
+        </div>
+        <a href="#" @click="addBlack">加入黑白名单</a>
+      </div>
+    </div>
+    <addBlackWhite :isShow="addBwModel" @closeModel="closeModel"/>
+  </div>
 </template>
 
 <script>
+import addBlackWhite from './model/addBlackWhite'
 export default {
   data () {
     return {
+      ipSearch:'',//ip查询下拉
+      ipSearchOptions:[],
+      closeTip:true,//提示显示
+      searchIp:'',//要查询的IP
+      addBwModel:false,//弹框
     }
   },
-
-  methods: {}
+  components:{
+    addBlackWhite:addBlackWhite
+  },
+  methods: {
+    //关闭提示
+    closeTipBtn(){
+      this.closeTip=false;
+    },
+    //查询
+    searchBtn(){},
+    //加入黑名单
+    addBlack(){
+      this.addBwModel=true;
+    },
+    //关闭
+    closeModel(isShow){
+      this.addBwModel=isShow;
+    }
+  }
 }
 
 </script>
 <style lang='scss' scoped>
+.newClear:after{
+  content:'';
+  display: block;
+  clear:both;
+}
+.topHeader{
+  width:100%;
+  height:50px;
+  background-color:#fff;
+  border-bottom:1px solid #ddd;
+  padding:0 20px;
+  line-height: 50px;
+  span{
+    font-size:16px;
+    font-weight:600;
+    color:#000;
+    margin-right:20px;
+  }
+}
+::v-deep input{
+  height:30px;
+  border-radius: 0;
+}
+.wrapper{
+  width:100%;
+  padding:20px;
+  .tipTop{
+    width:100%;
+    font-size: 12px;
+    line-height: inherit;
+    padding: 10px 30px 10px 20px;
+    vertical-align: middle;
+    color: #003b80;
+    border: 1px solid #97c7ff;
+    background: #e5f0ff;
+    .el-icon-close{
+      float:right;
+      font-size:15px;
+    }
+  }
+  .searchIpt{
+    width:100%;
+    height:70px;
+    background-color: #fff;
+    box-shadow: 0 2px 3px 0 rgba(0,0,0,.2);
+    padding: 20px;
+    border:1px solid #ddd;
+    margin:20px 0;
+    .searchIp{
+      width:200px;
+      float:left;
+      margin-right:16px;
+    }
+    ::v-deep button{
+      height:30px;
+      line-height: 30px;
+      padding:0 20px;
+      border-radius: 0;
+    }
+    .searchBtn{
+      background-color:#006eff;
+      color:#fff;
+    }
+  }
+  .searchResoult{
+    width:100%;
+    background-color: #fff;
+    box-shadow: 0 2px 3px 0 rgba(0,0,0,.2);
+    padding: 20px;
+    border:1px solid #ddd;
+    h1{
+      font-size: 14px;
+      font-weight: 600;
+      color:#000;
+      margin-bottom:20px;
+    }
+    .newList{
+      margin-bottom:20px;
+      p:nth-child(1){
+        font-size:12px;
+        color:#999;
+        float:left;
+        width:105px;
+      }
+      p:nth-child(2){
+        font-size:12px;
+        color:#000;
+        float:left;
+        width:calc(100% - 105px);
+      }
+    }
+  }
+}
 </style>
