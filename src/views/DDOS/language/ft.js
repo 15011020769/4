@@ -268,7 +268,7 @@ module.exports = {
       Batch_export: '批量導出',
       Delete: '刪除',
       Upadded: '最多可以添加50條URL',
-      IP_address: '請填寫IP地址，確定後IP將加入防護白名單，總共支持添加50條IP。',
+      IP_address: '請填寫IP地址，確定後IP將加入防護白/黑名單，總共支持添加50條IP。',
       Determination: '確 定',
       Shut_down: '關閉',
       Uptoadded: '最多可以添加50條IP',

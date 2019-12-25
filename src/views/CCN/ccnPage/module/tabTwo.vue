@@ -161,7 +161,7 @@ export default {
     Obtain(metricN, symbol) {
       const param = {
         Version: "2018-07-24",
-        Region: this.$cookie.get("regionv2"),
+        Region: localStorage.getItem('regionv2'),
         Namespace: "QCE/VBC",
         MetricName: metricN,
         "Instances.0.Dimensions.0.Name": "CcnId",
@@ -178,7 +178,7 @@ export default {
     getModality(MetricName) {
       const param = {
         Version: "2018-07-24",
-        Region: this.$cookie.get("regionv2"),
+        Region: localStorage.getItem('regionv2'),
         Namespace: "QCE/VBC",
         MetricName: MetricName,
         "Instances.0.Dimensions.0.Name": "InstanceId",

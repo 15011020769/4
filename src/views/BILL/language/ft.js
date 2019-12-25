@@ -49,7 +49,7 @@ module.exports = {
       allpayMode: '全部計費模式',
       allActionType: '全部交易類型',
       filter: '不顯示0元費用',
-      allCast: '總費用',
+      allCast: '總費用（含稅）',
       cashPayment: '現金支付',
       freePayment: '贈送金支付',
       voucherPayment: '代金券支付',

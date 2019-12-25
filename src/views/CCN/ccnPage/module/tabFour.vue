@@ -23,7 +23,11 @@
             <p class="edit">{{ scope.row.InstanceName }}</p>
           </template>
         </el-table-column>
-        <el-table-column prop="InstanceRegion" :label="$t('CCN.tabs.tab4tr4')"></el-table-column>
+        <el-table-column prop="InstanceRegion" :label="$t('CCN.tabs.tab4tr4')">
+          <template slot-scope="scope">
+            <span>{{region[scope.row.InstanceRegion]}}</span>
+          </template>
+        </el-table-column>
         <el-table-column prop="UpdateTime" :label="$t('CCN.tabs.tab4tr5')" width></el-table-column>
         <el-table-column prop="operate" :label="$t('CCN.tabs.tab4tr6')" width>
           <template slot-scope="scope">
@@ -69,7 +73,10 @@ export default {
       pageSize: 10,
       totalItems: 0,
       currpage: 1, // 当前页码
-      loadShow: false
+      loadShow: false,
+      region: {
+        "ap-taipei": "台灣台北"
+      }
     };
   },
   created() {
@@ -81,7 +88,7 @@ export default {
       this.loadShow = true;
       var params = {
         Version: "2017-03-12",
-        Region: VueCookie.get("regionv2"),
+        Region: localStorage.getItem('regionv2'),
         CcnId: this.ccnId
       };
       // 查询-路由表
@@ -108,16 +115,48 @@ export default {
     setRouteEnabled(route) {
       var params = {
         Version: "2017-03-12",
-        Region: VueCookie.get("regionv2"),
+        Region: localStorage.getItem('regionv2'),
         CcnId: this.ccnId,
         "RouteIds.0": route.RouteId
       };
       if (!route.Enabled) {
         // true启用
-        this.axios.post(ENABLE_CCNROUTES, params).then(res => {});
+        this.axios.post(ENABLE_CCNROUTES, params).then(res => {
+          if (res.Response.Error == undefined) {
+            this.$message({
+              message: "启用成功",
+              type: "success",
+              showClose: true,
+              duration: 0
+            });
+          } else {
+            this.$message({
+              message: res.Response.Error.Message,
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+          }
+        });
       } else {
         // false 禁用
-        this.axios.post(DISABLE_CCNROUTES, params).then(res => {});
+        this.axios.post(DISABLE_CCNROUTES, params).then(res => {
+          if (res.Response.Error == undefined) {
+            this.$message({
+              message: "禁用成功",
+              type: "success",
+              showClose: true,
+              duration: 0
+            });
+          } else {
+            this.$message({
+              message: res.Response.Error.Message,
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+          }
+        });
       }
       setTimeout(() => {
         this.getData();

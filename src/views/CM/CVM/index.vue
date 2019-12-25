@@ -21,7 +21,7 @@
             <p>
               <a @click="jump(scope.row.InstanceId)" style="cursor:pointer;">{{scope.row.InstanceId}}</a>
             </p>
-            {{ scope.row.InstanceId}}
+            {{ scope.row.InstanceName}}
           </template>
         </el-table-column>
         <el-table-column prop :label="$t('CVM.clBload.jk')">
@@ -79,10 +79,6 @@
         loadShow: true, //加载是否显示
         //搜索下拉框
         searchOptions: [{
-            value: "project-id",
-            label: "項目ID"
-          },
-          {
             value: "instance-id",
             label: "實例ID"
           },

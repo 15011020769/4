@@ -1,4 +1,5 @@
 <template>
+<!-- 统计报表 -->
   <div class="wrap">
     <div class="statistReportTit">
       <div class="ReportTit newClear">
@@ -52,7 +53,7 @@ export default {
       if (this.resourceId != "" && this.resourceId != null) {
         params["IdList.0"] = this.resourceId;
       }
-      this.axios.post("dayu2/DescribeResourceList", params).then(res => {
+      this.axios.post(RESOURCE_LIST, params).then(res => {
         // console.log(res);
       });
     },

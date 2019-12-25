@@ -1,16 +1,28 @@
 <!-- 雲联网详情 -->
 <template>
-  <div>
+  <div class="wrap">
     <div class="title_top">
       <div class="back">
         <i class="el-icon-back" @click="Back()"></i>
         <span>{{ccnName}}({{ccnId}})</span>
       </div>
       <div class="tabTitle">
-        <span :class="['tab',showIndex==1?'active':'']" @click="handleClick(1)">{{$t("CCN.tabs.tab1")}}</span>
-        <span :class="['tab',showIndex==2?'active':'']" @click="handleClick(2)">{{$t("CCN.tabs.tab2")}}</span>
-        <span :class="['tab',showIndex==3?'active':'']" @click="handleClick(3)">{{$t("CCN.tabs.tab3")}}</span>
-        <span :class="['tab',showIndex==4?'active':'']" @click="handleClick(4)">{{$t("CCN.tabs.tab4")}}</span>
+        <span
+          :class="['tab',showIndex==1?'active':'']"
+          @click="handleClick(1)"
+        >{{$t("CCN.tabs.tab1")}}</span>
+        <span
+          :class="['tab',showIndex==2?'active':'']"
+          @click="handleClick(2)"
+        >{{$t("CCN.tabs.tab2")}}</span>
+        <span
+          :class="['tab',showIndex==3?'active':'']"
+          @click="handleClick(3)"
+        >{{$t("CCN.tabs.tab3")}}</span>
+        <span
+          :class="['tab',showIndex==4?'active':'']"
+          @click="handleClick(4)"
+        >{{$t("CCN.tabs.tab4")}}</span>
       </div>
       <div class="detailContent">
         <tab-one v-if="showIndex==1"></tab-one>
@@ -23,18 +35,18 @@
 </template>
 
 <script>
-import tabOne from './module/tabOne.vue'
-import tabTwo from './module/tabTwo.vue'
-import tabThree from './module/tabThree.vue'
-import tabFour from './module/tabFour.vue'
+import tabOne from "./module/tabOne.vue";
+import tabTwo from "./module/tabTwo.vue";
+import tabThree from "./module/tabThree.vue";
+import tabFour from "./module/tabFour.vue";
 export default {
-  data () {
+  data() {
     return {
-      activeName: 'second',
+      activeName: "second",
       showIndex: 1,
-      ccnId: '',
-      ccnName: ''
-    }
+      ccnId: "",
+      ccnName: ""
+    };
   },
   components: {
     tabOne,
@@ -42,30 +54,35 @@ export default {
     tabThree,
     tabFour
   },
-  created () {
-    this.ccnId = this.$route.query.ccnId
-    this.ccnName = this.$route.query.ccnName
+  created() {
+    this.ccnId = this.$route.query.ccnId;
+    this.ccnName = this.$route.query.ccnName;
   },
   methods: {
     // 返回
-    Back () {
+    Back() {
       this.$router.push({
-        path: '/ccnPage'
-      })
+        path: "/ccnPage"
+      });
     },
-    handleClick (val) {
-      this.showIndex = val
+    handleClick(val) {
+      this.showIndex = val;
     }
   }
-}
+};
 </script>
 <style lang='scss' scoped>
+.wrap >>> .el-input__inner {
+  height: 30px;
+  line-height: 30px;
+  padding-top: 0;
+}
 .title_top {
   height: 82px;
   background: #fff;
   .back {
     padding-left: 20px;
-    [class^='el-icon-'] {
+    [class^="el-icon-"] {
       color: #006eff;
       line-height: 50px;
       font-size: 18px;

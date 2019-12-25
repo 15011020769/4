@@ -472,15 +472,26 @@ export default {
         Version: "2019-01-16"
       };
       this.axios.post(USER_LIST, userList).then(data => {
-        this.loading = false;
-        this.tableData = data.Response.Data;
-        this.json = data.Response.Data;
-        this.tableData1 = this.tableData.slice(
-          (this.currpage - 1) * this.pagesize,
-          this.currpage * this.pagesize
-        );
-        this.TotalCount = this.json.length;
-      });
+        if(data != ""){
+                this.loading = false;
+                this.tableData = data.Response.Data;
+                this.json = data.Response.Data;
+                this.tableData1 = this.tableData.slice(
+                  (this.currpage - 1) * this.pagesize,
+                  this.currpage * this.pagesize
+                );
+                this.TotalCount = this.json.length;
+        }else{
+          this.loading = false;
+          this.$message({
+              type: "info",
+              message: "无响应数据！"
+          });
+        }
+    
+      }).catch(error => {
+        console.log(error)
+      })
     },
     //初始化策略数据
     strategy() {

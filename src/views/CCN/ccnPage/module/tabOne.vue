@@ -146,7 +146,7 @@ export default {
       // 添加关联实例表单
       form: {
         instanceType: "",
-        instanceRegion: VueCookie.get("regionv2"),
+        instanceRegion: localStorage.getItem('regionv2'),
         instanceId: ""
       },
       value: "",
@@ -192,7 +192,7 @@ export default {
       this.loadShow = true;
       var params = {
         Version: "2017-03-12",
-        Region: VueCookie.get("regionv2"),
+        Region: localStorage.getItem('regionv2'),
         CcnId: this.ccnId
       };
       // 查询关联实例列表
@@ -213,13 +213,28 @@ export default {
     doDelCcnIns: function() {
       var params = {
         Version: "2017-03-12",
-        Region: VueCookie.get("regionv2"),
+        Region: localStorage.getItem('regionv2'),
         CcnId: this.instance.CcnId,
         "Instances.0.InstanceId": this.instance.InstanceId,
         "Instances.0.InstanceRegion": this.instance.InstanceRegion,
         "Instances.0.InstanceType": this.instance.InstanceType
       };
       this.axios.post(DETACHCCN_INSTANCES, params).then(res => {
+        if (res.Response.Error == undefined) {
+          this.$message({
+            message: "删除成功",
+            type: "success",
+            showClose: true,
+            duration: 0
+          });
+        } else {
+          this.$message({
+            message: res.Response.Error.Message,
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
         this.getData();
       });
       this.dialogVisible = false;
@@ -228,7 +243,7 @@ export default {
     getInstanceIds: function(instanceType) {
       var params = {
         Version: "2017-03-12",
-        Region: VueCookie.get("regionv2")
+        Region: localStorage.getItem('regionv2')
       };
       if (instanceType == "VPC") {
         // 私有网络
@@ -252,15 +267,23 @@ export default {
     // 新增关联实例
     attCcnIns: function(ins) {
       if (!ins.instanceType) {
-        this.$message("请选择私有网络");
+        this.$message({
+          message: "请选择私有网络",
+          showClose: true,
+          duration: 0
+        });
       } else if (!ins.instanceId) {
-        this.$message("请选择VPC");
+        this.$message({
+          message: "请选择VPC",
+          showClose: true,
+          duration: 0
+        });
       } else {
         this.loading = true;
         // 关联实例
         var params = {
           Version: "2017-03-12",
-          Region: VueCookie.get("regionv2"),
+          Region: localStorage.getItem('regionv2'),
           CcnId: this.ccnId,
           "Instances.0.InstanceId": ins.instanceId,
           "Instances.0.InstanceRegion": ins.instanceRegion,
@@ -270,7 +293,9 @@ export default {
           if (res.Response.Error == undefined) {
             this.$message({
               message: "新增成功",
-              type: "success"
+              type: "success",
+              showClose: true,
+              duration: 0
             });
           } else {
             this.$message.error(res.Response.Error.Message);
@@ -280,7 +305,7 @@ export default {
         this.newVisible = false;
         this.form = {
           instanceType: "",
-          instanceRegion: VueCookie.get("regionv2"),
+          instanceRegion: localStorage.getItem('regionv2'),
           instanceId: ""
         };
       }

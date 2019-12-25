@@ -1,4 +1,5 @@
 <template>
+<!-- 防护配置-CC防护-访问控制策略 -->
   <div id="addAccessControl">
     <div class="ccProtectPartThree">
       <div class="partThreeTop newClear">
@@ -24,29 +25,74 @@
               prop="accessName"
               :label="$t('DDOS.Proteccon_figura.Policy_name')"
               width
-            ></el-table-column>
-            <el-table-column prop="protocol" :label="$t('DDOS.Proteccon_figura.Agreement')" width></el-table-column>
-            <el-table-column prop="protentIp" :label="$t('DDOS.Proteccon_figura.Protection_IP')"></el-table-column>
-            <el-table-column prop="doMin" label="域名"></el-table-column>
-            <el-table-column
-              prop="MatchCondition"
-              :label="$t('DDOS.Proteccon_figura.Matching_condition')"
-            ></el-table-column>
-            <el-table-column
-              prop="MatchAction"
-              :label="$t('DDOS.Proteccon_figura.Matching_action')"
-            ></el-table-column>
-            <el-table-column prop="createTime" :label="$t('DDOS.Proteccon_figura.Creation_time')"></el-table-column>
-            <el-table-column prop="nowState" :label="$t('DDOS.Proteccon_figura.Current_state')"></el-table-column>
+            >
+              <template slot-scope="scope">{{scope.row.Name}}</template>
+            </el-table-column>
+            <el-table-column prop="protocol" :label="$t('DDOS.Proteccon_figura.Agreement')" width>
+              <template slot-scope="scope">{{scope.row.Protocol}}</template>
+            </el-table-column>
+            <el-table-column prop="protentIp" :label="$t('DDOS.Proteccon_figura.Protection_IP')">
+              <template slot-scope="scope">
+                <div v-for="(item, index) in scope.row.IpList" :key="index">
+                  <span>{{item}};</span>
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column prop="domain" label="域名">
+              <template slot-scope="scope">{{scope.row.Domain==''?'-':scope.row.Domain}}</template>
+            </el-table-column>
+            <el-table-column prop="MatchCondition" :label="$t('DDOS.Proteccon_figura.Matching_condition')">
+              <template slot-scope="scope">
+                <div v-for="(item, index) in scope.row.RuleList" :key="index">
+                  {{item.Skey}}
+                  <span v-if="item.Operator=='include'">包含</span>
+                  <span v-else-if="item.Operator=='not_include'">不包含</span>
+                  <span v-else-if="item.Operator=='equal'">等于</span>
+                  {{item.Value}}
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column prop="exeMode" :label="$t('DDOS.Proteccon_figura.Matching_action')">
+              <template slot-scope="scope">
+                <span v-if="scope.row.ExeMode=='alg'">人机识别</span>
+                <span v-else-if="scope.row.ExeMode=='drop'">拦截</span>
+              </template>
+            </el-table-column>
+            <el-table-column prop="createTime" :label="$t('DDOS.Proteccon_figura.Creation_time')">
+              <template slot-scope="scope">{{scope.row.CreateTime}}</template>
+            </el-table-column>
+            <el-table-column prop="switch" :label="$t('DDOS.Proteccon_figura.Current_state')">
+              <template slot-scope="scope">
+                <el-switch
+                  class="switch"
+                  v-model="scope.row.Switch"
+                  :active-value=1
+                  :inactive-value=0
+                  active-color="#006eff"
+                  inactive-color="#bbb"
+                  @change="changeSwitch(scope.row)"
+                ></el-switch>
+              </template>
+            </el-table-column>
             <el-table-column prop="action" label="操作" width="180">
               <template slot-scope="scope">
-                <!-- <el-button type="text" size="small">查看</el-button>
-                <el-button type="text" size="small" @click="handelEdit(scope.$index, scope.row)">编辑</el-button>
-                <el-button @click.native.prevent="deleteRow(scope.$index, tableDataBegin)" type="text" size="small" style="color: red;">移除</el-button>-->
+                <el-button type="text" size="small" @click="handelEdit(scope.row)">编辑</el-button>
+                <el-popover
+                  placement="top"
+                  width="160"
+                  v-model="visible">
+                  <p>删除此访问控制策略？</p>
+                  <div style="text-align: right; margin: 0">
+                    <el-button size="mini" type="text" @click="visible = false">取消</el-button>
+                    <el-button type="primary" size="mini" @click="deleteCCPolicy(scope.row)">确定</el-button>
+                  </div>
+                  <el-button slot="reference" type="text" size="small">删除</el-button>
+                </el-popover>
               </template>
             </el-table-column>
           </el-table>
         </div>
+        
         <div class="Right-style pagstyle">
           <span class="pagtotal">共&nbsp;{{totalItems}}&nbsp;条</span>
           <el-pagination
@@ -61,6 +107,10 @@
     </div>
     <addAccessModel
       :isShow="addAccessContModel"
+      :ccResourceId="ccResourceId"
+      :editFlag="editFlag"
+      :editCCPolicy="editCCPolicy"
+      :dateFlag="new Date()"
       @closeDialogModel="closeDialogModel"
       @addAccessContSure="addAccessContSure"
     />
@@ -68,11 +118,18 @@
 </template>
 <script>
 import addAccessModel from "../model/addAccessContModel";
+import { CCSELFDEFINEPOLICY_LIST, CCPOLICYSWITCH_MODIFY, CCSELFDEFINEPOLICY_DELETE } from "@/constants";
 export default {
+  props: {
+    ccResourceId: String,//资源Id
+  },
   data() {
     return {
       loading: false,
       tableDataBegin: [], //表格数据
+      visible: false, //删除确认框
+      editFlag: false,//是否是编辑
+      editCCPolicy: {},//编辑CC对象
       tableDataName: "", //搜索框内容
       tableDataEnd: [], //定义一个数组
       currentPage: 1, //当前页
@@ -81,29 +138,77 @@ export default {
       filterTableDataEnd: [], //过滤后的数组
       addAccessContModel: false, //添加访问控制策略弹框
       flag: false,
-      allData: [
-        {
-          accessName: "11",
-          protocol: "11",
-          protentIp: "11",
-          doMin: "111",
-          MatchCondition: "111",
-          MatchAction: "111",
-          createTime: "111",
-          nowState: "111"
-        }
-      ]
+      allData: [],//储存全量数据
     };
   },
   components: {
     addAccessModel: addAccessModel
   },
   mounted() {
-    this.getData();
+    if(this.ccResourceId!=""){
+      this.describeCCSelfDefinePolicy();
+    }
+  },
+  watch: {
+    ccResourceId(val) {
+      this.ccResourceId = val;
+      this.describeCCSelfDefinePolicy();
+    }
   },
   methods: {
-    // 获取数据
-    getData() {},
+    // 1.1.获取CC自定义策略
+    describeCCSelfDefinePolicy() {
+      let params = {
+        Version: "2018-07-09",
+        Business: "net", //大禹子产品代号（bgp高防包；bgp-multip共享包）
+        Id: this.ccResourceId
+      };
+      this.axios.post(CCSELFDEFINEPOLICY_LIST, params).then(res => {
+        // console.log(params, res);
+        this.tableDataBegin = res.Response.Policys;
+        this.allData = res.Response.Policys;
+        this.totalItems = res.Response.Total;
+      });
+    },
+    //修改CC自定义策略开关
+    changeSwitch(ccPolicy){
+      // console.log(ccPolicy)
+      this.modifyCCPolicySwitch(ccPolicy);
+    },
+    // 1.2.修改CC自定义策略开关
+    modifyCCPolicySwitch(ccPolicy) {
+      let params = {
+        Version: "2018-07-09",
+        Business: "net",
+        Id: this.ccResourceId,
+        SetId: ccPolicy.SetId,
+        Switch: ccPolicy.Switch
+      };
+      this.axios.post(CCPOLICYSWITCH_MODIFY, params).then(res => {
+        // console.log(params, res);
+        this.describeCCSelfDefinePolicy();
+      });
+    },
+    // 删除
+    deleteCCPolicy(ccPolicy) {
+      // console.log(ccPolicy)
+      this.visible = false
+      this.deleteCCSelfDefinePolicy(ccPolicy);
+    },
+    // 1.3.删除CC自定义策略
+    deleteCCSelfDefinePolicy(ccPolicy) {
+      let params = {
+        Version: "2018-07-09",
+        Business: "net",
+        Id: this.ccResourceId,
+        SetId: ccPolicy.SetId
+      };
+      this.axios.post(CCSELFDEFINEPOLICY_DELETE, params).then(res => {
+        // console.log(params, res);
+        this.describeCCSelfDefinePolicy();
+      });
+    },
+
     // 搜索
     doFilter() {
       this.tableDataBegin = this.allData;
@@ -111,25 +216,18 @@ export default {
       //每次手动将数据置空,因为会出现多次点击搜索情况
       this.filterTableDataEnd = [];
       this.tableDataBegin.forEach((val, index) => {
-        if ((val.name, val.type)) {
-          if (
-            val.name.indexOf(this.tableDataName) == 0 &&
-            val.type.indexOf(this.value) == 0
-          ) {
-            this.filterTableDataEnd.push(val);
-            this.tableDataBegin = this.filterTableDataEnd;
-          } else {
-            this.filterTableDataEnd.push();
-            this.tableDataBegin = this.filterTableDataEnd;
-          }
+        if (val.Name.indexOf(this.tableDataName) >= 0) {
+          this.filterTableDataEnd.push(val);
+        } else {
+          
         }
       });
+      this.tableDataBegin = this.filterTableDataEnd;
       //页面数据改变重新统计数据数量和当前页
       this.currentPage = 1;
       this.totalItems = this.filterTableDataEnd.length;
       //渲染表格,根据值
       this.currentChangePage(this.filterTableDataEnd);
-
       //页面初始化数据需要判断是否检索过
       this.flag = true;
     },
@@ -159,6 +257,7 @@ export default {
     },
     //添加访问控制策略弹框
     addAccessModel() {
+      this.editFlag = false;
       this.addAccessContModel = true;
     },
     //添加访问控制策略弹框关闭按钮
@@ -168,6 +267,13 @@ export default {
     //添加访问控制策略确定按钮
     addAccessContSure(isShow) {
       this.addAccessContModel = isShow;
+      this.describeCCSelfDefinePolicy();
+    },
+    //编辑
+    handelEdit(ccPolicy){
+      this.editFlag = true;
+      this.editCCPolicy = ccPolicy;
+      this.addAccessContModel = true;
     }
   }
 };

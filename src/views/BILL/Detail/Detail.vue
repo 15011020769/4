@@ -14,7 +14,7 @@
       <el-form :inline="true" :model="dataForm" class="demo-form-inline">
         <el-form-item>
           <!-- 产品 -->
-          <el-select v-model="dataForm.businessCode" value-key="code" :placeholder="$t('BILL.Detail.allProduct')" @change="productClick()" clearable size="small">
+          <el-select v-model="dataForm.businessCode" value-key="code" :placeholder="$t('BILL.Detail.allProduct')" :no-data-text="$t('BILL.Overview.none')" @change="productClick()" clearable size="small">
             <el-option v-for="item in getProductList" :key="item.businessCode" :label="item.businessCodeName" :value="item.businessCode">
             </el-option>
           </el-select>
@@ -29,7 +29,7 @@
             </el-option>
           </el-select> -->
           <!-- 项目 -->
-          <el-select v-model="dataForm.projectName" :placeholder="$t('BILL.Detail.allProject')" @change="projectClick()" clearable size="small">
+          <el-select v-model="dataForm.projectName" :placeholder="$t('BILL.Detail.allProject')" :no-data-text="$t('BILL.Overview.none')" @change="projectClick()" clearable size="small">
             <el-option v-for="item in getProjectList" :key="item.projectName" :label="item.projectName" :value="item.projectName">
             </el-option>
           </el-select>
@@ -39,12 +39,12 @@
             </el-option>
           </el-select> -->
           <!-- 计费模式 -->
-          <el-select v-model="dataForm.payModeName" :placeholder="$t('BILL.Detail.allpayMode')" @change="payClick()" clearable size="small">
+          <el-select v-model="dataForm.payModeName" :placeholder="$t('BILL.Detail.allpayMode')" :no-data-text="$t('BILL.Overview.none')" @change="payClick()" clearable size="small">
             <el-option v-for="item in getPayModeList" :key="item.payModeName" :label="item.payModeName" :value="item.payModeName">
             </el-option>
           </el-select>
           <!-- 交易类型 -->
-          <el-select v-model="dataForm.actionTypeName" :placeholder="$t('BILL.Detail.allActionType')" @change="actionTypeClick()" clearable size="small">
+          <el-select v-model="dataForm.actionTypeName" :placeholder="$t('BILL.Detail.allActionType')" :no-data-text="$t('BILL.Overview.none')" @change="actionTypeClick()" clearable size="small">
             <el-option v-for="item in getActionTypeList" :key="item.actionTypeName" :label="item.actionTypeName" :value="item.actionTypeName">
             </el-option>
           </el-select>
@@ -56,22 +56,39 @@
     </div>
 
     <!-- 费用计算 -->
-    <div class="mod-box">
-      <div class="mod-left">
-        <span style="font-size: 14px;">{{$t('BILL.Detail.allCast')}}: </span>
-        <span style="font-size: 16px; color: #006eff;">NT$ {{dataForm.allCoat}}</span>
+    <div class="detail-form">
+        <el-form
+          :inline="true"
+          :model="dataForm"
+          class="demo-form-inline"
+          @keyup.enter.native="getDataList()"
+        >
+          <el-form-item>
+            <span style="font-size: 14px;">{{$t('BILL.Detail.allCast')}}: </span>
+            <span style="font-size: 16px; color: #006eff;">NT$ {{dataForm.allCoat}}</span>
+          </el-form-item>
+          <el-form-item class="item-3">
+            <el-button
+              type="primary"
+              icon="el-icon-download"
+              @click="download"
+              size="small"
+              plain
+              :loading="downloadLoading"
+            ></el-button>
+          </el-form-item>
+          <el-form-item class="item-2">
+            <el-input
+              :placeholder="$t('BILL.Detail.resourceId')"
+              size="small"
+              clearable
+              v-model="dataForm.resourceId"
+            >
+              <el-button type="primary" slot="append" icon="el-icon-search" @click="search()"></el-button>
+            </el-input>
+          </el-form-item>
+        </el-form>
       </div>
-      <div class="mod-right">
-        <div style="float: right;">
-          <el-button type="primary" icon="el-icon-download" @click="download" size="small" plain :loading="downloadLoading"></el-button>
-        </div>
-        <div style="float: right; padding-right:5px;">
-          <el-input :placeholder="$t('BILL.Detail.resourceId')" clearable v-model="dataForm.resourceId" size="small">
-            <el-button type="primary" @click="search()" slot="append" icon="el-icon-search" size="small"></el-button>
-          </el-input>
-        </div>
-      </div>
-    </div>
 
     <!-- 表格 -->
     <div class="mod-table">
@@ -373,7 +390,7 @@ export default {
       }).then(res => {
         const content = res
         const blob = new Blob([content])
-        const fileName = this.dataForm.month + '--賬單明細.csv'
+        const fileName = this.dataForm.month + '--帳單明細.csv'
         if ('download' in document.createElement('a')) {
           // 非IE下载
           const elink = document.createElement('a')
@@ -468,6 +485,21 @@ export default {
   .span-1 {
     padding-left: 10px;
     font-size: 12px;
+   
+  }
+}
+
+.detail-form {
+  margin: 0 20px;
+  .item-1 {
+    float: left;
+  }
+  .item-2,
+  .item-3 {
+    float: right;
+  }
+  ::v-deep .el-form-item {
+    margin-bottom: 10px;
   }
 }
 

@@ -13,16 +13,12 @@ import CMfilters from '@/filters/CMfilters.js'
 // import XLSX from 'xlsx'
 
 import i18n from './language/i18n.js' // 引入i18n包
-// 引入基本模板
-const echarts = require('echarts/lib/echarts')
-// 引入折线图组件
-require('echarts/lib/chart/line')
-// 引入提示框和title组件，图例
-require('echarts/lib/component/tooltip')
+import echarts from 'echarts'
+
 Vue.prototype.$echarts = echarts
 
 for (let key in CMfilters) {
-    Vue.filter(key, CMfilters[key])
+  Vue.filter(key, CMfilters[key])
 }
 
 
@@ -33,8 +29,8 @@ Vue.use(VueCookie)
 // Vue.use(XLSX)
 
 new Vue({
-    router,
-    i18n,
-    // store,
-    render: h => h(App)
+  router,
+  i18n,
+  // store,
+  render: h => h(App)
 }).$mount('#app')

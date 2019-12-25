@@ -2,15 +2,15 @@
   <div id="exportUrl">
     <div>
       <el-dialog
-        title="批量导出IP白名单"
+        title="批量导出IP黑名单"
         :visible.sync="dialogVisible3"
         width="35%"
         :before-close="handleClose">
         <div>
-          <el-input type="textarea" class="urlTexttarea" v-model="exportText" :disabled="true"></el-input>
+          <el-input type="textarea" class="urlTexttarea" v-model="exportText"></el-input>
         </div>
         <span slot="footer" class="dialog-footer">
-          <el-button @click="handleClose" class="closeBtn">{{$t('DDOS.Proteccon_figura.Delete')}}</el-button>
+          <el-button @click="handleClose" class="closeBtn">关闭</el-button>
         </span>
       </el-dialog>
     </div>
@@ -19,7 +19,8 @@
 <script>
 export default {
   props:{
-    isShow3:Boolean
+    isShow3:Boolean,
+    exportText: String
   },
   computed:{
     dialogVisible3(){
@@ -30,7 +31,6 @@ export default {
   data(){
     return{
       dialogVisible:'',//弹框状态
-      exportText:'',//textarea绑定数据
     }
   },
   methods:{

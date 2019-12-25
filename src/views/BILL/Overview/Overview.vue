@@ -128,7 +128,7 @@
                 :pager-count="7"
                 layout="prev, pager, next"
                 @current-change="currentChangeHandle"
-                :total="totalPage1"
+                :total="totalPage2"
               ></el-pagination>
             </div>
           </el-tab-pane>
@@ -340,7 +340,7 @@ export default {
               normal: {
                 show: true,
                 position: 'center',
-                formatter: '{active|總費用}' + '\n\r' + '{total|' + total.toFixed(2) + '}',
+                formatter: '{active|總費用（含稅）}' + '\n\r' + '{total|' + total.toFixed(2) + '}',
                 rich: {
                   total: {
                     fontSize: 20,

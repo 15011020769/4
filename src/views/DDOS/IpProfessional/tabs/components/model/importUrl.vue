@@ -11,7 +11,7 @@
         </div>
         <span slot="footer" class="dialog-footer">
           <el-button @click="handleClose">取 消</el-button>
-          <el-button type="primary" @click="importUrlSure">{{$t('DDOS.Proteccon_figura.Determination')}}</el-button>
+          <el-button type="primary" @click="handleSure">{{$t('DDOS.Proteccon_figura.Determination')}}</el-button>
         </span>
       </el-dialog>
     </div>
@@ -38,12 +38,14 @@ export default {
     //关闭按钮
     handleClose(){
       this.dialogVisible=false;
-      this.$emit("closeModel2",this.dialogVisible)
+      this.$emit("closeModel2",this.dialogVisible);
+      this.urlTextarea = ""
     },
     //批量导入确定按钮
-    importUrlSure(){
+    handleSure(){
       this.dialogVisible=false;
-      this.$emit("importUrlSure",this.dialogVisible)
+      this.$emit("importUrlSure",[this.dialogVisible,this.urlTextarea]);
+      this.urlTextarea = ""
     }
   }
 }

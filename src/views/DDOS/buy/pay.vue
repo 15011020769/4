@@ -69,7 +69,7 @@
             <span class="copyMoney">+ 兑换代金券</span>
           </div>
           <div class="pay-submit">
-            <span>购买/开通/续费 均可开票，支付成功后可前往 控制台 > 费用中心<a href="#">开发票</a></span>
+            <span>购买/开通/续费 均可开票，購買成功后可前往 控制台 > 费用中心<a href="#">开发票</a></span>
             <span class="allTotal">总计费用：<span class="allMoneySpan"> ¥<span>{{allData1.payMoney}}</span></span></span>
             <el-button class="payBtnOne">代理支付</el-button>
             <el-button class="payBtnTwo" @click="next">自行支付</el-button>

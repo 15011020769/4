@@ -81,10 +81,10 @@
                 </template>
               </el-table-column>
               <el-table-column prop :label="$t('DDOS.AccesstoCon.HealthCheck')">
-                <template slot-scope="scope">{{$t('DDOS.AccesstoCon.Temporary')}}</template>
+                <template >{{$t('DDOS.AccesstoCon.Temporary')}}</template>
               </el-table-column>
               <el-table-column prop="KeepEnable" :label="$t('DDOS.AccesstoCon.KeepSession')">
-                <template slot-scope="scope">{{$t('DDOS.AccesstoCon.Temporary')}}</template>
+                <template >{{$t('DDOS.AccesstoCon.Temporary')}}</template>
               </el-table-column>
               <el-table-column prop="RemoveSwitch" :label="$t('DDOS.AccesstoCon.WatermarkState')">
                 <template slot-scope="scope">

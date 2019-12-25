@@ -7,17 +7,44 @@
         <h2>Web应用防火墙是一款基于网站防护的一站式安全服务平台，可以为网站开发者提供网站入侵防护、业务访问风险、网站传播护航等安全服务</h2>
         <div class="boxAll newClear">
           <div class="boxC">
-
+            <div>
+              <img :src="imgUrl1" width="80" height="80" alt="">
+            </div>
+            <p class="litTitle">专业的网站防护能力</p>
+            <p class="botPcon">千余条防御规则全面防护各种Web入侵攻击，专业攻防团队7*24小时实时防护</p>
           </div>
           <div class="boxC">
-
+            <div>
+              <img :src="imgUrl2" width="80" height="80" alt="">
+            </div>
+            <p class="litTitle">及时的补订修复保障</p>
+            <p class="botPcon">
+              12h内更新高危漏洞补丁
+              24h更新常见通用型漏洞补丁
+              云端自动升级 秒级同步下发
+            </p>
           </div>
           <div class="boxC">
-
+            <div>
+              <img :src="imgUrl3" width="80" height="80" alt="">
+            </div>
+            <p class="litTitle">稳定的高可用业务保障</p>
+            <p class="botPcon">
+              BGP线路接入 多地容灾
+              一键DNS接入 隐藏源站
+              一键大流量BGP高防整合
+            </p>
           </div>
           <div class="boxC">
-            
+            <div>
+              <img :src="imgUrl4" width="80" height="80" alt="">
+            </div>
+            <p class="litTitle">常见web攻击防护</p>
+            <p class="botPcon">防御SQL注入、XSS跨站脚本、Web服务器插件漏洞等常见攻击</p>
           </div>
+        </div>
+        <div class="botBtn">
+          <el-button class="immeBuy" @click="immeBuy">立即购买</el-button>
         </div>
       </div>
     </div>
@@ -27,7 +54,18 @@
 export default {
   data(){
     return{
-
+      imgUrl1:require("./img/img1.png"),
+      imgUrl2:require("./img/img2.png"),
+      imgUrl3:require("./img/img3.png"),
+      imgUrl4:require("./img/img4.png"),
+    }
+  },
+  methods:{
+    //立即购买
+    immeBuy(){
+      this.$router.push({
+        name:'choose'
+      })
     }
   }
 }
@@ -62,7 +100,7 @@ export default {
       font-size:14px;
       text-align:center;
       color:#666;
-      margin-top:20px;
+      margin:20px 0;
     }
     .boxAll{
       margin:40px 0 40px;
@@ -73,11 +111,38 @@ export default {
     .boxC{
       border:1px solid #ddd;
       padding:20px;
-      width:200px;
+      width:210px;
       height:210px;
       float:left;
       margin-right:20px;
     }
+    .boxC:bth-child(4){
+      margin-right:0;
+    }
+    .litTitle{
+      font-size:14px;
+      color:#666;
+      margin-top:12px;
+    }
+    .botPcon{
+      font-size: 12px;
+      color: #888;
+      line-height: 20px;
+      text-align: left;
+    }
   }
 }
+.botBtn{
+  text-align: center;
+  .immeBuy{
+    height:30px;
+    border-radius: 0;
+    color:#fff;
+    background-color:#ff9700;
+    line-height:30px;
+    padding:0 20px;
+    margin-top:20px;
+  }
+}
+
 </style>

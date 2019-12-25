@@ -69,20 +69,35 @@
             <div v-else>{{$t('CCN.total.mouthPay')}}</div>
           </template>
         </el-table-column>
-        <el-table-column prop="BandwidthLimitType" :label="$t('CCN.total.tr7')">
+        <el-table-column prop="BandwidthLimitType" :label="$t('CCN.total.tr7')" width="120">
           <template slot-scope="scope">
-            <div
-              class="edit"
-              v-if="scope.row.BandwidthLimitType == 'OUTER_REGION_LIMIT'"
-            >{{$t('CCN.total.addressS')}}</div>
-            <div
-              class="edit"
-              v-else-if="scope.row.BandwidthLimitType == 'INTER_REGION_LIMIT'"
-            >{{$t('CCN.total.addressJS')}}</div>
-            <div class="edit" v-else>{{$t('CCN.total.addressS')}}</div>
-            <i type="text" @click="updateBandwidthLimitType(scope.row)">
-              <i class="el-icon-edit"></i>
-            </i>
+            <div class="edit" v-if="scope.row.BandwidthLimitType == 'OUTER_REGION_LIMIT'">
+              {{$t('CCN.total.addressS')}}
+              <i
+                type="text"
+                @click="updateBandwidthLimitType(scope.row)"
+              >
+                <i class="el-icon-edit"></i>
+              </i>
+            </div>
+            <div class="edit" v-else-if="scope.row.BandwidthLimitType == 'INTER_REGION_LIMIT'">
+              {{$t('CCN.total.addressJS')}}
+              <i
+                type="text"
+                @click="updateBandwidthLimitType(scope.row)"
+              >
+                <i class="el-icon-edit"></i>
+              </i>
+            </div>
+            <div class="edit" v-else>
+              {{$t('CCN.total.addressS')}}
+              <i
+                type="text"
+                @click="updateBandwidthLimitType(scope.row)"
+              >
+                <i class="el-icon-edit"></i>
+              </i>
+            </div>
           </template>
         </el-table-column>
         <el-table-column prop="CreateTime" :label="$t('CCN.total.tr8')" width="200"></el-table-column>
@@ -93,13 +108,6 @@
               $t('CCN.total.td1')
               }}
             </el-button>
-            <el-button type="text" size="small"></el-button>
-            <el-button type="text" size="small" @click="toTags(scope.row)">
-              {{
-              $t('CCN.total.td2')
-              }}
-            </el-button>
-            <br />
             <el-button type="text" size="small" @click="deleteCcn(scope.row)">
               {{
               $t('CCN.total.td3')
@@ -206,7 +214,11 @@
           <el-select v-model="form.instanceRegion" :placeholder="$t('CCN.total.region')">
             <el-option :label="$t('CCN.total.region')" value="ap-taipei"></el-option>
           </el-select>
-          <el-select v-model="form.instanceId" :placeholder="$t('CCN.total.select')">
+          <el-select
+            v-model="form.instanceId"
+            :placeholder="$t('CCN.total.select')"
+            no-data-text="無數據"
+          >
             <el-option
               v-for="(item, index) in vpcs"
               :key="index"
@@ -362,7 +374,7 @@ export default {
         CcnDescription: "",
         QosLevel: "AU",
         instanceType: "",
-        instanceRegion: VueCookie.get("regionv2"),
+        instanceRegion: localStorage.getItem('regionv2'),
         instanceId: ""
       },
       formLabelWidth: "120px",
@@ -416,7 +428,7 @@ export default {
       this.tableload = true;
       var params = {
         Version: "2017-03-12",
-        Region: VueCookie.get("regionv2"),
+        Region: localStorage.getItem('regionv2'),
         Offset: this.currpage * this.pagesize - this.pagesize,
         Limit: this.pagesize
       };
@@ -463,7 +475,7 @@ export default {
     getInstanceIds: function(instanceType) {
       var params = {
         Version: "2017-03-12",
-        Region: VueCookie.get("regionv2")
+        Region: localStorage.getItem('regionv2')
       };
       if (instanceType == "VPC") {
         // 私有网络
@@ -482,7 +494,7 @@ export default {
       this.creatloading = true;
       var params = {
         Version: "2017-03-12",
-        Region: VueCookie.get("regionv2"),
+        Region: localStorage.getItem('regionv2'),
         CcnName: form.CcnName,
         CcnDescription: form.CcnDescription,
         QosLevel: form.QosLevel,
@@ -491,12 +503,18 @@ export default {
       };
       this.axios.post(CCN_CREATE, params).then(res => {
         if (res.Response.Error != undefined) {
-          this.$message(res.Response.Error.Message);
+          this.$message({
+            message: res.Response.Error.Message,
+            showClose: true,
+            duration: 0
+          });
           this.creatloading = false;
         } else {
           this.$message({
             message: "新建成功",
-            type: "success"
+            type: "success",
+            showClose: true,
+            duration: 0
           });
           this.creatloading = false;
           this.dialogFormVisible = false;
@@ -505,7 +523,7 @@ export default {
           // 关联实例
           var params2 = {
             Version: "2017-03-12",
-            Region: VueCookie.get("regionv2"),
+            Region: localStorage.getItem('regionv2'),
             CcnId: res.Response.Ccn.CcnId,
             "Instances.0.InstanceId": form.instanceId,
             "Instances.0.InstanceRegion": form.instanceRegion,
@@ -513,7 +531,11 @@ export default {
           };
           this.axios.post(ATTACHCCN_INSTANCES, params2).then(res => {
             if (res.Response.Error) {
-              this.$message(res.Response.Error.Message);
+              this.$message({
+                message: res.Response.Error.Message,
+                showClose: true,
+                duration: 0
+              });
             }
           });
         }
@@ -531,10 +553,25 @@ export default {
       this.delload = true;
       var params = {
         Version: "2017-03-12",
-        Region: VueCookie.get("regionv2"),
+        Region: localStorage.getItem('regionv2'),
         CcnId: ccnDetail.CcnId
       };
       this.axios.post(CCN_DELETE, params).then(res => {
+        if (res.Response.Error == undefined) {
+          this.$message({
+            message: "删除成功",
+            type: "success",
+            showClose: true,
+            duration: 0
+          });
+        } else {
+          this.$message({
+            message: res.Response.Error.Message,
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
         this.delload = false;
         this.getData();
         this.dialogTableVisible = false;
@@ -554,7 +591,7 @@ export default {
     modifyCcn: function(ccnDetail) {
       var params = {
         Version: "2017-03-12",
-        Region: VueCookie.get("regionv2"),
+        Region: localStorage.getItem('regionv2'),
         CcnId: ccnDetail.CcnId,
         CcnName: ccnDetail.CcnName,
         CcnDescription: ccnDetail.CcnDescription
@@ -562,10 +599,17 @@ export default {
       this.axios.post(MODIFYCCN_ATTRIBUTE, params).then(res => {
         this.$message({
           message: "修改成功",
-          type: "success"
+          type: "success",
+          showClose: true,
+          duration: 0
         });
         if (res.Response.Error != undefined) {
-          this.$message.error("修改失败");
+          this.$message({
+            message: "修改失败",
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
         }
         this.getData();
       });
@@ -581,17 +625,24 @@ export default {
       console.log(ccnDetail);
       var params = {
         Version: "2017-03-12",
-        Region: VueCookie.get("regionv2"),
+        Region: localStorage.getItem('regionv2'),
         CcnId: ccnDetail.CcnId,
         BandwidthLimitType: ccnDetail.BandwidthLimitType
       };
       this.axios.post(MODIFYCCN_REGIONBANDWIDTHLIMITSTYPE, params).then(res => {
         this.$message({
           message: "修改成功",
-          type: "success"
+          type: "success",
+          showClose: true,
+          duration: 0
         });
         if (res.Response.Error != undefined) {
-          this.$message.error("修改失败");
+          this.$message({
+            message: "修改失败",
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
         }
         this.getData();
       });
@@ -608,7 +659,7 @@ export default {
     upTags: function(tagss) {
       var params = {
         Version: "2018-08-13",
-        Region: VueCookie.get("regionv2"),
+        Region: localStorage.getItem('regionv2'),
         Resource:
           "qcs::vpc:ap-guangzhou:uin/100011921910:ccn/" + this.ccnIdOfTag
       };
@@ -643,10 +694,17 @@ export default {
       this.axios.post(MODIFYRESOURCE_TAGS, params).then(res => {
         this.$message({
           message: "修改成功",
-          type: "success"
+          type: "success",
+          showClose: true,
+          duration: 0
         });
         if (res.Response.Error != undefined) {
-          this.$message.error("修改失败");
+          this.$message({
+            message: "修改失败",
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
         }
         this.getData();
       });
