@@ -1,4 +1,5 @@
 <template>
+<!-- 防护配置-CC防护-IP黑名单-添加IP -->
   <div id="addUrlModel">
     <div>
       <el-dialog
@@ -12,7 +13,7 @@
             <span class="checkSpan2">
               <el-radio-group v-model="httpCheck">
                 <el-radio label="HTTP"></el-radio>
-                <el-radio label="HTTPS"></el-radio>
+                <el-radio label="HTTPS" disabled></el-radio>
               </el-radio-group>
             </span>
           </div>
@@ -49,8 +50,10 @@
   </div>
 </template>
 <script>
+import { CCIPALLOWDENY_MODIFY } from "@/constants";
 export default {
   props:{
+    ccResourceId: String, //资源ID
     isShow1:Boolean
   },
   computed:{
@@ -59,10 +62,16 @@ export default {
       return this.isShow1
     }
   },
+  watch: {
+    ccResourceId(val) {
+      this.ccResourceId = val;
+    }
+  },
   data(){
     return{
       dialogVisible:'',//弹框状态
       httpCheck:'HTTP',//协议
+      method: "add",//add表示添加，delete表示删除
       tags5:[
         {
           urlAddress:""
@@ -71,6 +80,26 @@ export default {
     }
   },
   methods:{
+    // 1.1.添加或删除CC的URL白名单
+    modifyCCIpAllowDeny() {
+      let params = {
+        Version: "2018-07-09",
+        Business: "net",
+        Id: this.ccResourceId,
+        Method: this.method,//add表示添加，delete表示删除
+        Type: "black",
+      };
+      for(let i=0; i<this.tags5.length; i++){
+        if(this.tags5[i].urlAddress != ""){
+          params["IpList."+i] = this.tags5[i].urlAddress;
+        }
+      }
+      if(params["IpList.0"] != undefined){
+        this.axios.post(CCIPALLOWDENY_MODIFY, params).then(res => {
+          console.log(params, res);
+        });
+      }
+    },
     //关闭按钮
     handleClose(){
       this.dialogVisible=false;
@@ -93,6 +122,7 @@ export default {
     },
     //确定按钮
     addIpBlackSure(){
+      this.modifyCCIpAllowDeny();
       this.dialogVisible=false;
       this.$emit("addIpBlackSure",this.dialogVisible)
     }
