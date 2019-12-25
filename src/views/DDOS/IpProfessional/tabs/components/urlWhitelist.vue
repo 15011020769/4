@@ -3,9 +3,9 @@
     <div class="urlWhitelist">
       <div class="urlWhitelistBtn newClear">
         <el-button class="addUrlBtn" @click="addUrlModel">添加URL</el-button>
-        <el-button class="exportBtn" @click="importBtn">{{$t('DDOS.Proteccon_figura.Batch_import')}}</el-button>
-        <el-button class="importBtn" @click="exportBtn">{{$t('DDOS.Proteccon_figura.Batch_export')}}</el-button>
-        <el-button :disabled="true">{{$t('DDOS.Proteccon_figura.Delete')}}</el-button>
+        <el-button class="importBtn" @click="importBtn">{{$t('DDOS.Proteccon_figura.Batch_import')}}</el-button>
+        <el-button class="exportBtn" @click="exportBtn">{{$t('DDOS.Proteccon_figura.Batch_export')}}</el-button>
+        <el-button @click="deleteList">{{$t('DDOS.Proteccon_figura.Delete')}}</el-button>
         <span class="addTip">{{$t('DDOS.Proteccon_figura.Upadded')}}</span>
         <el-radio label="HTTP" v-model="radioHttp" value="1" class="httpRadio" @click="httpClick"></el-radio>
       </div>
@@ -17,14 +17,30 @@
             style="width: 100%;margin: 18px 0 20px;"
           >
             <el-table-column type="selection" width="55"></el-table-column>
-            <el-table-column prop="URL" label="URL" width></el-table-column>
-            <el-table-column prop="protocol" :label="$t('DDOS.Proteccon_figura.Agreement')"></el-table-column>
-            <el-table-column prop="doMin" label="域名"></el-table-column>
-            <el-table-column prop="action" label="操作" width="180">
+            <el-table-column prop="URL" label="URL" width>
               <template slot-scope="scope">
-                <!-- <el-button type="text" size="small">查看</el-button>
-                <el-button type="text" size="small" @click="handelEdit(scope.$index, scope.row)">编辑</el-button>
-                <el-button @click.native.prevent="deleteRow(scope.$index, tableDataBegin)" type="text" size="small" style="color: red;">移除</el-button>-->
+                <div v-for="(item, index) in scope.row.Record" :key="index">
+                  <span v-if="item['Key'] == 'url'">{{item['Value']}}</span>
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column prop="protocol" :label="$t('DDOS.Proteccon_figura.Agreement')">
+              <template slot-scope="scope">
+                <div v-for="(item, index) in scope.row.Record" :key="index">
+                  <span v-if="item['Key'] == 'protocol'">{{item['Value']}}</span>
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column prop="domain" label="域名">
+              <template slot-scope="scope">
+                <div v-for="(item, index) in scope.row.Record" :key="index">
+                  <span v-if="item['Key'] == 'domain'">{{item['Value']}}</span>
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column prop="operate" label="操作" width="180">
+              <template slot-scope="scope">
+                <el-button @click="deleteRow(scope.row)" type="text" size="small" style="color: red;">删除</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -39,13 +55,13 @@
             :total="totalItems"
           ></el-pagination>
         </div>
-        <addUrlModel :isShow1="dialogModel1" @closeModel1="closeModel1" @addUrlSure="addUrlSure" />
+        <addUrlModel :ccResourceId="ccResourceId" :isShow1="dialogModel1" @closeModel1="closeModel1" @addUrlSure="addUrlSure" />
         <importUrl
           :isShow2="dialogModel2"
           @closeModel2="closeModel2"
           @importUrlSure="importUrlSure"
         />
-        <exportUrl :isShow3="dialogModel3" @closeModel3="closeModel3" />
+        <exportUrl :isShow3="dialogModel3" :exportText="urlListString" @closeModel3="closeModel3" />
       </div>
     </div>
   </div>
@@ -54,32 +70,28 @@
 import addUrlModel from "./model/addUrlModel";
 import importUrl from "./model/importUrl";
 import exportUrl from "./model/exportUrl";
+import { CC_URLALLOW, CCURLALLOW_MODIFY } from "@/constants";
 export default {
   props: {
-    resourceId: String, //资源ID
-    ccUrlWhiteList: Array //CC的Url白名单
+    ccResourceId: String, //资源ID
+    switchState: Boolean, //防护状态
   },
   data() {
     return {
       tableDataBegin: [], //表格数据
+      method: "",//add表示添加，delete表示删除
       tableDataEnd: [], //定义一个数组
+      tableSelect: [], //选中的数组
       currentPage: 1, //当前页
       pageSize: 10, //每页长度
       totalItems: 0, //总数
       filterTableDataEnd: [], //过滤后的数组
       flag: false,
-      allData: [
-        {
-          URL: "11",
-          protocol: "11",
-          doMin: "111"
-        }
-      ],
-      radioHttp: "http", //默认HTTP
-      httpFlag: false,
+      radioHttp: "HTTP", //默认HTTP
       dialogModel1: false, //添加URL弹出框
       dialogModel2: false, //批量导入URl弹出框
-      dialogModel3: false //批量导出URl弹出框
+      dialogModel3: false, //批量导出URl弹出框
+      urlListString: "",
     };
   },
   components: {
@@ -87,36 +99,146 @@ export default {
     importUrl: importUrl,
     exportUrl: exportUrl
   },
+  watch: {
+    ccResourceId(val) {
+      this.ccResourceId = val;
+      this.describeCCUrlAllow();
+    }
+  },
   created() {
-    this.tableDataBegin = this.ccUrlWhiteList;
+    if(this.ccResourceId!=undefined && this.ccResourceId!=""){
+      this.describeCCUrlAllow();
+    }
   },
   methods: {
-    //全选
-    handleSelectionChange(val) {
-      console.log(val);
-    },
-    // 获取数据
-    getData() {},
     // 1.1.获取CC的Url白名单
     describeCCUrlAllow() {
       let params = {
         Version: "2018-07-09",
         Business: "net",
-        Id: this.resourceId,
-        Protocol: this.httpFlag ? "http" : "",
+        Id: this.ccResourceId,
         "Type.0": "white"
       };
       this.axios.post(CC_URLALLOW, params).then(res => {
-        console.log(res);
-        // this.tableDataBegin = res.Response
+        // console.log(params, res);
+        this.tableDataBegin = res.Response.RecordList;
+        this.totalItems = res.Response.RecordList.length;
       });
-      this.httpFlag = false;
     },
-    //
+    // 1.2.添加或删除CC的URL白名单
+    modifyCCUrlAllow(urlList) {
+      let params = {
+        Version: "2018-07-09",
+        Business: "net",
+        Id: this.ccResourceId,
+        Method: this.method,//add表示添加，delete表示删除
+        Type: "white",
+      };
+      for(let i=0; i<urlList.length; i++){
+        params["UrlList."+i] = urlList[i];
+      }
+      // console.log(params)
+      if(params["UrlList.0"] != undefined){
+        this.axios.post(CCURLALLOW_MODIFY, params).then(res => {
+          console.log(params, res);
+        });
+        setTimeout(() => {
+          this.describeCCUrlAllow()
+        }, 1000); 
+      }
+    },
+    // table行内删除
+    deleteRow(obj){
+      this.method = "delete";
+      let urlList = [];
+      for(let i=0; i<obj.Record.length; i++){
+        if("url" == obj.Record[i].Key){
+          urlList.push(obj.Record[i].Value);
+        }
+      }
+      this.modifyCCUrlAllow(urlList);
+    },
+    //HTTP按钮
     httpClick() {
-      this.httpFlag = true;
+      // console.log('httpClick');
+    },
+    //添加URL按钮
+    addUrlModel() {
+      //判断防护状态
+      if(!this.switchState){
+        this.$message('该资源尚未开启CC防护，不能添加黑白名单');
+      } else if(this.switchState){
+        this.dialogModel1 = true;
+      }
+    },
+    //关闭添加url弹框
+    closeModel1(isShow1) {
+      this.dialogModel1 = isShow1;
+    },
+    //添加Utl确定按钮
+    addUrlSure(isShow1) {
+      this.dialogModel1 = isShow1;
       this.describeCCUrlAllow();
     },
+    //批量导入按钮
+    importBtn() {
+      //判断防护状态
+      if(!this.switchState){
+        this.$message('该资源尚未开启CC防护，不能添加黑白名单');
+      } else if(this.switchState){
+        this.dialogModel2 = true;
+      }
+    },
+    //关闭批量导入url弹框
+    closeModel2(isShow2) {
+      this.dialogModel2 = isShow2;
+    },
+    //确定批量导入确定按钮
+    importUrlSure(arr) {
+      this.method = "add"
+      let urlList = arr[1].split("\n");
+      this.modifyCCUrlAllow(urlList);
+      this.dialogModel2 = arr[0];
+    },
+    //批量导出按钮
+    exportBtn() {
+      this.urlListString = "";
+      for(let i=0; i<this.tableDataBegin.length; i++){
+        for(let j=0; j<this.tableDataBegin[i].Record.length; j++){
+          if("url" == this.tableDataBegin[i].Record[j].Key){
+            this.urlListString += (this.tableDataBegin[i].Record[j].Value + "\r\n");
+          }
+        }
+      }
+      this.dialogModel3 = true;
+    },
+    //关闭批量导出url弹框
+    closeModel3(isShow3) {
+      this.dialogModel3 = isShow3;
+    },
+    // 批量删除
+    deleteList(){
+      if(this.tableSelect.length>0){
+        this.method = "delete";
+        let urlList = [];
+        for(let i=0; i<this.tableSelect.length; i++){
+          for(let j=0; j<this.tableSelect[i].Record.length; j++){
+            if("url" == this.tableSelect[i].Record[j].Key){
+              urlList.push(this.tableSelect[i].Record[j].Value);
+            }
+          }
+        }
+        this.modifyCCUrlAllow(urlList);
+      } else {
+        this.$message("请选择要删除的URL名单")
+      }
+    },
+    //批量选择
+    handleSelectionChange(val) {
+      this.tableSelect = val;
+      console.log(val);
+    },
+    
     // 分页开始
     handleSizeChange(val) {
       this.pageSize = val;
@@ -141,38 +263,6 @@ export default {
         }
       }
     },
-    //添加URL按钮
-    addUrlModel() {
-      this.dialogModel1 = true;
-    },
-    //关闭添加url弹框
-    closeModel1(isShow1) {
-      this.dialogModel1 = isShow1;
-    },
-    //添加Utl确定按钮
-    addUrlSure(isShow1) {
-      this.dialogModel1 = isShow1;
-    },
-    //批量到入按钮
-    importBtn() {
-      this.dialogModel2 = true;
-    },
-    //关闭批量导入url弹框
-    closeModel2(isShow2) {
-      this.dialogModel2 = isShow2;
-    },
-    //确定批量导入确定按钮
-    importUrlSure(isShow2) {
-      this.dialogModel2 = isShow2;
-    },
-    //批量到出按钮
-    exportBtn() {
-      this.dialogModel3 = true;
-    },
-    //关闭批量导入url弹框
-    closeModel3(isShow3) {
-      this.dialogModel3 = isShow3;
-    }
   }
 };
 </script>

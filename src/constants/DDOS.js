@@ -25,7 +25,10 @@ export const ENID_CREATE = 'dayu2/ModifyL4Rules'  // 编辑L4转发规则
 
     // 高防IP专业版-防护配置
 export const CC_URLALLOW = 'dayu2/DescribeCCUrlAllow' //获取CC的Url白名单
-export const CC_THRESHOLD = 'dayu2/ModifyCCThreshold' //修改CC的防护阈值
+export const CCURLALLOW_MODIFY = 'dayu2/ModifyCCUrlAllow' //添加或删除CC的URL白名单
+export const CCTHRESHOLD_MODIFY = 'dayu2/ModifyCCThreshold' //修改CC的防护阈值
+export const CCALARMTHRESHOLD_MODIFY = 'dayu2/ModifyCCAlarmThreshold' //设置CC告警通知阈值
+export const CCALARMTHRESHOLD_GET = 'dayu2/DescribeCCAlarmThreshold' //获取CC告警通知阈值
 
 export const CCSELFDEFINEPOLICY_LIST = 'dayu2/DescribeCCSelfDefinePolicy' // 获取CC自定义策略
 export const CCSELFDEFINEPOLICY_CREATE = 'dayu2/CreateCCSelfDefinePolicy' //创建CC自定义策略

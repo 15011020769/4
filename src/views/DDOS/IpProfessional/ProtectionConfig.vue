@@ -1,4 +1,5 @@
 <template>
+<!-- 防护配置 -->
   <div class="wrap">
     <HeaderCom title="防护配置" />
     <el-tabs v-model="activeName" @tab-click="handleClick">
@@ -116,6 +117,7 @@
           </div>
         </div>
       </el-tab-pane>
+      <!-- CC防护 -->
       <el-tab-pane :label="$t('DDOS.Proteccon_figura.CC_protection')" name="second">
         <div style="padding:0 20px;">
           <ccProtection />
