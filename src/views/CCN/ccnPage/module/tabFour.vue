@@ -121,10 +121,42 @@ export default {
       };
       if (!route.Enabled) {
         // true启用
-        this.axios.post(ENABLE_CCNROUTES, params).then(res => {});
+        this.axios.post(ENABLE_CCNROUTES, params).then(res => {
+          if (res.Response.Error == undefined) {
+            this.$message({
+              message: "启用成功",
+              type: "success",
+              showClose: true,
+              duration: 0
+            });
+          } else {
+            this.$message({
+              message: res.Response.Error.Message,
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+          }
+        });
       } else {
         // false 禁用
-        this.axios.post(DISABLE_CCNROUTES, params).then(res => {});
+        this.axios.post(DISABLE_CCNROUTES, params).then(res => {
+          if (res.Response.Error == undefined) {
+            this.$message({
+              message: "禁用成功",
+              type: "success",
+              showClose: true,
+              duration: 0
+            });
+          } else {
+            this.$message({
+              message: res.Response.Error.Message,
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+          }
+        });
       }
       setTimeout(() => {
         this.getData();

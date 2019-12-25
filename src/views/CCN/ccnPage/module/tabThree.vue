@@ -380,13 +380,21 @@ export default {
         "CcnRegionBandwidthLimits.0.DstRegion": this.upLimits.DstRegion
       };
       this.axios.post(SET_CCNREGIONBANDWIDTHLIMITS, params).then(res => {
+        console.log(res);
         if (res.Response.Error == undefined) {
           this.$message({
             message: "修改成功",
-            type: "success"
+            type: "success",
+            showClose: true,
+            duration: 0
           });
         } else {
-          this.$message.error(res.Response.Error.Message);
+          this.$message({
+            message: res.Response.Error.Message,
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
         }
         this.getData();
       });
