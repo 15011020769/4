@@ -2,7 +2,7 @@
   <div class="wrap">
     <!-- <el-tooltip class="item" effect="dark" content="導出圖片" placement="top">
       <i class="el-icon-download" @click="exportImg"></i>
-    </el-tooltip> -->
+    </el-tooltip>-->
     <div id="id" ref="chart"></div>
   </div>
 </template>
@@ -79,7 +79,10 @@ export default {
         toolbox: {
           feature: {
             show: true,
-            saveAsImage: { show: true }
+            saveAsImage: {
+              show: true,
+              title: "導出圖片"
+            }
           }
         },
         legend: {
