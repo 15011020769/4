@@ -7,7 +7,7 @@
         width="35%"
         :before-close="handleClose">
         <div>
-          <el-input type="textarea" class="urlTexttarea" v-model="exportText" :disabled="true"></el-input>
+          <el-input type="textarea" class="urlTexttarea" v-model="exportText"></el-input>
         </div>
         <span slot="footer" class="dialog-footer">
           <el-button @click="handleClose" class="closeBtn">关闭</el-button>
@@ -19,7 +19,8 @@
 <script>
 export default {
   props:{
-    isShow3:Boolean
+    isShow3:Boolean,
+    exportText: String
   },
   computed:{
     dialogVisible3(){
@@ -30,7 +31,6 @@ export default {
   data(){
     return{
       dialogVisible:'',//弹框状态
-      exportText:'',//textarea绑定数据
     }
   },
   methods:{

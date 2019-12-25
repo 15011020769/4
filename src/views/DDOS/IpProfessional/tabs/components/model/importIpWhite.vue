@@ -11,7 +11,7 @@
         </div>
         <span slot="footer" class="dialog-footer">
           <el-button @click="handleClose">取 消</el-button>
-          <el-button type="primary" @click="importIpWhiteSure">{{$t('DDOS.Proteccon_figura.Determination')}}</el-button>
+          <el-button type="primary" @click="handleSure">{{$t('DDOS.Proteccon_figura.Determination')}}</el-button>
         </span>
       </el-dialog>
     </div>
@@ -39,11 +39,13 @@ export default {
     handleClose(){
       this.dialogVisible=false;
       this.$emit("closeModel2",this.dialogVisible)
+      this.ipWhiteTextarea = ""
     },
     //批量导入确定按钮
-    importIpWhiteSure(){
+    handleSure(){
       this.dialogVisible=false;
-      this.$emit("importIpWhiteSure",this.dialogVisible)
+      this.$emit("importIpWhiteSure",[this.dialogVisible,this.ipWhiteTextarea]);
+      this.ipWhiteTextarea = ""
     }
   }
 }

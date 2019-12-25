@@ -3,9 +3,9 @@
     <div class="urlWhitelist">
       <div class="urlWhitelistBtn newClear">
         <el-button class="addUrlBtn" @click="addIpWhiteModel">添加IP</el-button>
-        <el-button class="exportBtn" @click="importBtn">{{$t('DDOS.Proteccon_figura.Batch_import')}}</el-button>
-        <el-button class="importBtn" @click="exportBtn">{{$t('DDOS.Proteccon_figura.Batch_export')}}</el-button>
-        <el-button :disabled="true">{{$t('DDOS.Proteccon_figura.Delete')}}</el-button>
+        <el-button class="importBtn" @click="importBtn">{{$t('DDOS.Proteccon_figura.Batch_import')}}</el-button>
+        <el-button class="exportBtn" @click="exportBtn">{{$t('DDOS.Proteccon_figura.Batch_export')}}</el-button>
+        <el-button @click="deleteList">{{$t('DDOS.Proteccon_figura.Delete')}}</el-button>
         <span class="addTip">{{$t('DDOS.Proteccon_figura.Uptoadded')}}</span>
         <el-radio label="HTTP" v-model="radioHttp" value="1" class="httpRadio"></el-radio>
       </div>
@@ -17,14 +17,30 @@
             style="width: 100%;margin: 18px 0 20px;"
           >
             <el-table-column type="selection" width="55"></el-table-column>
-            <el-table-column prop="IP" label="IP" width></el-table-column>
-            <el-table-column prop="protocol" :label="$t('DDOS.Proteccon_figura.Agreement')"></el-table-column>
-            <el-table-column prop="doMin" label="域名"></el-table-column>
-            <el-table-column prop="action" label="操作" width="180">
+            <el-table-column prop="IP" label="IP" width>
               <template slot-scope="scope">
-                <!-- <el-button type="text" size="small">查看</el-button>
-                <el-button type="text" size="small" @click="handelEdit(scope.$index, scope.row)">编辑</el-button>
-                <el-button @click.native.prevent="deleteRow(scope.$index, tableDataBegin)" type="text" size="small" style="color: red;">移除</el-button>-->
+                <div v-for="(item, index) in scope.row.Record" :key="index">
+                  <span v-if="item['Key'] == 'ip'">{{item['Value']}}</span>
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column prop="protocol" :label="$t('DDOS.Proteccon_figura.Agreement')">
+              <template slot-scope="scope">
+                <div v-for="(item, index) in scope.row.Record" :key="index">
+                  <span v-if="item['Key'] == 'protocol'">{{item['Value']}}</span>
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column prop="domain" label="域名">
+              <template slot-scope="scope">
+                <div v-for="(item, index) in scope.row.Record" :key="index">
+                  <span v-if="item['Key'] == 'domain'">{{item['Value']}}</span>
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column prop="operate" label="操作" width="180">
+              <template slot-scope="scope">
+                <el-button @click="deleteRow(scope.row)" type="text" size="small" style="color: red;">删除</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -40,6 +56,7 @@
           ></el-pagination>
         </div>
         <addIpWhiteModel
+          :ccResourceId="ccResourceId"
           :isShow1="dialogModel1"
           @closeModel1="closeModel1"
           @addIpWhiteSure="addIpWhiteSure"
@@ -49,7 +66,7 @@
           @closeModel2="closeModel2"
           @importIpWhiteSure="importIpWhiteSure"
         />
-        <exportIpWhite :isShow3="dialogModel3" @closeModel3="closeModel3" />
+        <exportIpWhite :isShow3="dialogModel3" :exportText="ipListString" @closeModel3="closeModel3" />
       </div>
     </div>
   </div>
@@ -58,31 +75,28 @@
 import addIpWhiteModel from "./model/addIpWhiteModel";
 import importIpWhite from "./model/importIpWhite";
 import exportIpWhite from "./model/exportIpWhite";
-import { CC_IPALLOWDENY } from "@/constants";
+import { CC_IPALLOWDENY, CCIPALLOWDENY_MODIFY } from "@/constants";
 export default {
   props: {
-    resourceId: "" //资源ID
+    ccResourceId: String, //资源ID
+    switchState: Boolean, //防护状态
   },
   data() {
     return {
       tableDataBegin: [], //表格数据
+      method: "",//add表示添加，delete表示删除
       tableDataEnd: [], //定义一个数组
+      tableSelect: [], //选中的数组
       currentPage: 1, //当前页
       pageSize: 10, //每页长度
       totalItems: 0, //总数
       filterTableDataEnd: [], //过滤后的数组
       flag: false,
-      allData: [
-        {
-          IP: "11",
-          protocol: "11",
-          doMin: "111"
-        }
-      ],
       radioHttp: "HTTP", //默认HTTP
       dialogModel1: false, //添加IP弹出框
       dialogModel2: false, //批量导入IP弹出框
-      dialogModel3: false //批量导出IP弹出框
+      dialogModel3: false, //批量导出IP弹出框
+      ipListString: "",
     };
   },
   components: {
@@ -90,29 +104,145 @@ export default {
     importIpWhite: importIpWhite,
     exportIpWhite: exportIpWhite
   },
+  watch: {
+    ccResourceId(val) {
+      this.ccResourceId = val;
+      this.describeCCIpAllowDeny();
+    }
+  },
   created() {
-    this.describeCCIpAllowDeny();
+    if(this.ccResourceId!=undefined && this.ccResourceId!=""){
+      this.describeCCIpAllowDeny();
+    }
   },
   methods: {
-    //全选
-    handleSelectionChange(val) {
-      console.log(val);
-    },
-    // 获取数据
-    getData() {},
-    // 获取CC的IP黑白名单
+    // 1.1.获取CC的IP黑白名单
     describeCCIpAllowDeny() {
       let params = {
         Version: "2018-07-09",
         Business: "net",
-        Id: this.resourceId,
+        Id: this.ccResourceId,
         "Type.0": "white"
       };
       this.axios.post(CC_IPALLOWDENY, params).then(res => {
-        console.log(res);
-        // this.tableDataBegin = res.Response
+        // console.log(params, res);
+        this.tableDataBegin = res.Response.RecordList;
+        this.totalItems = res.Response.RecordList.length;
       });
     },
+    // 1.2.添加或删除CC的IP黑白名单
+    modifyCCIpAllowDeny(ipList) {
+      let params = {
+        Version: "2018-07-09",
+        Business: "net",
+        Id: this.ccResourceId,
+        Method: this.method,//add表示添加，delete表示删除
+        Type: "white",
+      };
+      for(let i=0; i<ipList.length; i++){
+        params["IpList."+i] = ipList[i];
+      }
+      // console.log(params)
+      if(params["IpList.0"] != undefined){
+        this.axios.post(CCIPALLOWDENY_MODIFY, params).then(res => {
+          console.log(params, res);
+        });
+        setTimeout(() => {
+          this.describeCCIpAllowDeny()
+        }, 1000); 
+      }
+    },
+    // table行内删除
+    deleteRow(obj){
+      this.method = "delete";
+      let ipList = [];
+      for(let i=0; i<obj.Record.length; i++){
+        if("ip" == obj.Record[i].Key){
+          ipList.push(obj.Record[i].Value);
+        }
+      }
+      this.modifyCCIpAllowDeny(ipList);
+    },
+    //添加IP按钮
+    addIpWhiteModel() {
+      //判断防护状态
+      if(!this.switchState){
+        this.$message('该资源尚未开启CC防护，不能添加黑白名单');
+      } else if(this.switchState){
+        this.dialogModel1 = true;
+      }
+    },
+    //关闭添加IP弹框
+    closeModel1(isShow1) {
+      this.dialogModel1 = isShow1;
+    },
+    //添加IP确定按钮
+    addIpWhiteSure(isShow1) {
+      this.dialogModel1 = isShow1;
+      setTimeout(() => {
+        this.describeCCIpAllowDeny();
+      }, 1000);
+    },
+    //批量导入按钮
+    importBtn() {
+      //判断防护状态
+      if(!this.switchState){
+        this.$message('该资源尚未开启CC防护，不能添加黑白名单');
+      } else if(this.switchState){
+        this.dialogModel2 = true;
+      }
+    },
+    //关闭批量导入IP弹框
+    closeModel2(isShow2) {
+      this.dialogModel2 = isShow2;
+    },
+    //确定批量导入确定按钮
+    importIpWhiteSure(arr) {
+      this.method = "add"
+      let ipList = arr[1].split("\n");
+      this.modifyCCIpAllowDeny(ipList);
+      this.dialogModel2 = arr[0];
+    },
+    //批量导出按钮
+    exportBtn() {
+      this.ipListString = "";
+      for(let i=0; i<this.tableDataBegin.length; i++){
+        for(let j=0; j<this.tableDataBegin[i].Record.length; j++){
+          if("ip" == this.tableDataBegin[i].Record[j].Key){
+            this.ipListString += (this.tableDataBegin[i].Record[j].Value + "\r\n");
+          }
+        }
+      }
+      console.log(this.ipListString)
+      this.dialogModel3 = true;
+    },
+    //关闭批量导入IP弹框
+    closeModel3(isShow3) {
+      this.dialogModel3 = isShow3;
+    },
+    // 批量删除
+    deleteList(){
+      if(this.tableSelect.length>0){
+        this.method = "delete";
+        let ipList = [];
+        for(let i=0; i<this.tableSelect.length; i++){
+          for(let j=0; j<this.tableSelect[i].Record.length; j++){
+            if("ip" == this.tableSelect[i].Record[j].Key){
+              ipList.push(this.tableSelect[i].Record[j].Value);
+            }
+          }
+        }
+        this.modifyCCIpAllowDeny(ipList);
+      } else {
+        this.$message("请选择要删除的IP名单")
+      }
+    },
+    //全选
+    handleSelectionChange(val) {
+      this.tableSelect = val;
+      console.log(val);
+    },
+
     // 分页开始
     handleSizeChange(val) {
       this.pageSize = val;
@@ -137,38 +267,6 @@ export default {
         }
       }
     },
-    //添加IP按钮
-    addIpWhiteModel() {
-      this.dialogModel1 = true;
-    },
-    //关闭添加IP弹框
-    closeModel1(isShow1) {
-      this.dialogModel1 = isShow1;
-    },
-    //添加IP确定按钮
-    addIpWhiteSure(isShow1) {
-      this.dialogModel1 = isShow1;
-    },
-    //批量到入按钮
-    importBtn() {
-      this.dialogModel2 = true;
-    },
-    //关闭批量导入IP弹框
-    closeModel2(isShow2) {
-      this.dialogModel2 = isShow2;
-    },
-    //确定批量导入确定按钮
-    importIpWhiteSure(isShow2) {
-      this.dialogModel2 = isShow2;
-    },
-    //批量到出按钮
-    exportBtn() {
-      this.dialogModel3 = true;
-    },
-    //关闭批量导入IP弹框
-    closeModel3(isShow3) {
-      this.dialogModel3 = isShow3;
-    }
   }
 };
 </script>
