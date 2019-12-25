@@ -128,7 +128,7 @@
                 :pager-count="7"
                 layout="prev, pager, next"
                 @current-change="currentChangeHandle"
-                :total="totalPage1"
+                :total="totalPage2"
               ></el-pagination>
             </div>
           </el-tab-pane>
