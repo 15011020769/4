@@ -88,7 +88,7 @@ export default {
       this.loadShow = true;
       var params = {
         Version: "2017-03-12",
-        Region: VueCookie.get("regionv2"),
+        Region: localStorage.getItem('regionv2'),
         CcnId: this.ccnId
       };
       // 查询-路由表
@@ -115,7 +115,7 @@ export default {
     setRouteEnabled(route) {
       var params = {
         Version: "2017-03-12",
-        Region: VueCookie.get("regionv2"),
+        Region: localStorage.getItem('regionv2'),
         CcnId: this.ccnId,
         "RouteIds.0": route.RouteId
       };

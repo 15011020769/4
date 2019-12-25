@@ -374,7 +374,7 @@ export default {
         CcnDescription: "",
         QosLevel: "AU",
         instanceType: "",
-        instanceRegion: VueCookie.get("regionv2"),
+        instanceRegion: localStorage.getItem('regionv2'),
         instanceId: ""
       },
       formLabelWidth: "120px",
@@ -428,7 +428,7 @@ export default {
       this.tableload = true;
       var params = {
         Version: "2017-03-12",
-        Region: VueCookie.get("regionv2"),
+        Region: localStorage.getItem('regionv2'),
         Offset: this.currpage * this.pagesize - this.pagesize,
         Limit: this.pagesize
       };
@@ -475,7 +475,7 @@ export default {
     getInstanceIds: function(instanceType) {
       var params = {
         Version: "2017-03-12",
-        Region: VueCookie.get("regionv2")
+        Region: localStorage.getItem('regionv2')
       };
       if (instanceType == "VPC") {
         // 私有网络
@@ -494,7 +494,7 @@ export default {
       this.creatloading = true;
       var params = {
         Version: "2017-03-12",
-        Region: VueCookie.get("regionv2"),
+        Region: localStorage.getItem('regionv2'),
         CcnName: form.CcnName,
         CcnDescription: form.CcnDescription,
         QosLevel: form.QosLevel,
@@ -523,7 +523,7 @@ export default {
           // 关联实例
           var params2 = {
             Version: "2017-03-12",
-            Region: VueCookie.get("regionv2"),
+            Region: localStorage.getItem('regionv2'),
             CcnId: res.Response.Ccn.CcnId,
             "Instances.0.InstanceId": form.instanceId,
             "Instances.0.InstanceRegion": form.instanceRegion,
@@ -553,7 +553,7 @@ export default {
       this.delload = true;
       var params = {
         Version: "2017-03-12",
-        Region: VueCookie.get("regionv2"),
+        Region: localStorage.getItem('regionv2'),
         CcnId: ccnDetail.CcnId
       };
       this.axios.post(CCN_DELETE, params).then(res => {
@@ -591,7 +591,7 @@ export default {
     modifyCcn: function(ccnDetail) {
       var params = {
         Version: "2017-03-12",
-        Region: VueCookie.get("regionv2"),
+        Region: localStorage.getItem('regionv2'),
         CcnId: ccnDetail.CcnId,
         CcnName: ccnDetail.CcnName,
         CcnDescription: ccnDetail.CcnDescription
@@ -625,7 +625,7 @@ export default {
       console.log(ccnDetail);
       var params = {
         Version: "2017-03-12",
-        Region: VueCookie.get("regionv2"),
+        Region: localStorage.getItem('regionv2'),
         CcnId: ccnDetail.CcnId,
         BandwidthLimitType: ccnDetail.BandwidthLimitType
       };
@@ -659,7 +659,7 @@ export default {
     upTags: function(tagss) {
       var params = {
         Version: "2018-08-13",
-        Region: VueCookie.get("regionv2"),
+        Region: localStorage.getItem('regionv2'),
         Resource:
           "qcs::vpc:ap-guangzhou:uin/100011921910:ccn/" + this.ccnIdOfTag
       };
