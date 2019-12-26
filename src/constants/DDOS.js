@@ -16,6 +16,7 @@ export const IPUNBlOCKLIST_LIST = 'dayu2/DescribeIpUnBlockList' //获取IP解封
 export const RESOURCE_LIST = 'dayu2/DescribeResourceList' //获取资源列表
 export const DDOSPOLICY_CONT = 'dayu2/DescribeDDoSPolicy' //获取DDoS高级策略
 export const RULESETS_CONT = 'dayu2/DescribeRuleSets' //获取资源的规则数
+export const SOURCEIPSEGMENT_DESCRIBE = 'dayu2/DescribeSourceIpSegment' //获取回源IP段
 
     // 高防IP专业版-接入配置
 export const L4_RULES = 'dayu2/DescribleL4Rules' // 获取L4转发规则
