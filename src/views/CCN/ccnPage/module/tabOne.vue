@@ -222,7 +222,7 @@ export default {
       this.axios.post(DETACHCCN_INSTANCES, params).then(res => {
         if (res.Response.Error == undefined) {
           this.$message({
-            message: "删除成功",
+            message: "刪除成功",
             type: "success",
             showClose: true,
             duration: 0
@@ -268,13 +268,13 @@ export default {
     attCcnIns: function(ins) {
       if (!ins.instanceType) {
         this.$message({
-          message: "请选择私有网络",
+          message: "請選擇私有網路",
           showClose: true,
           duration: 0
         });
       } else if (!ins.instanceId) {
         this.$message({
-          message: "请选择VPC",
+          message: "請選擇VPC",
           showClose: true,
           duration: 0
         });

@@ -559,7 +559,7 @@ export default {
       this.axios.post(CCN_DELETE, params).then(res => {
         if (res.Response.Error == undefined) {
           this.$message({
-            message: "删除成功",
+            message: "刪除成功",
             type: "success",
             showClose: true,
             duration: 0
@@ -605,7 +605,7 @@ export default {
         });
         if (res.Response.Error != undefined) {
           this.$message({
-            message: "修改失败",
+            message: "修改失敗",
             type: "error",
             showClose: true,
             duration: 0
@@ -638,7 +638,7 @@ export default {
         });
         if (res.Response.Error != undefined) {
           this.$message({
-            message: "修改失败",
+            message: "修改失敗",
             type: "error",
             showClose: true,
             duration: 0
@@ -700,7 +700,7 @@ export default {
         });
         if (res.Response.Error != undefined) {
           this.$message({
-            message: "修改失败",
+            message: "修改失敗",
             type: "error",
             showClose: true,
             duration: 0
