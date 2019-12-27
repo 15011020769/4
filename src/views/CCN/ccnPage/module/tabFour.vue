@@ -100,9 +100,9 @@ export default {
     },
     // 启用路由 询问按钮
     switchClick: function(index, route) {
-      let str = route.Enabled ? "关闭" : "启用";
-      this.$confirm("是否确认" + str + "路由？", "系统提示", {
-        confirmButtonText: "确定",
+      let str = route.Enabled ? "關閉" : "啟用";
+      this.$confirm("是否確認" + str + "路由？", "系統提示", {
+        confirmButtonText: "確定",
         cancelButtonText: "取消",
         callback: async action => {
           if (action == "confirm") {
@@ -124,7 +124,7 @@ export default {
         this.axios.post(ENABLE_CCNROUTES, params).then(res => {
           if (res.Response.Error == undefined) {
             this.$message({
-              message: "启用成功",
+              message: "啟用成功",
               type: "success",
               showClose: true,
               duration: 0

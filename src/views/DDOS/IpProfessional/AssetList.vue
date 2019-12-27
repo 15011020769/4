@@ -3,158 +3,199 @@
     <div class="allContent">
       <div class="ReportTit newClear">
         <h3 class="ReportTitH3">{{$t('DDOS.Protective.professionalEdition')}}</h3>
-        <el-select v-model="listResouse" class="selectListResou">
+        <el-select v-model="listSelect" class="selectListResou">
           <el-option :label="$t('DDOS.AssetList.resourceList')" value="resourceList"></el-option>
-          <el-option :label="$t('DDOS.AssetList.businessList')" value="value2"></el-option>
+          <el-option :label="$t('DDOS.AssetList.businessList')" value="businessList"></el-option>
         </el-select>
         <!-- <el-button class="ReportTitBtn" type="primary" @click="newBuy">新购</el-button> -->
       </div>
       <div class="mainContentCenter">
         <div class="textAlignTop newClear">
-          <div class="addBgColor" style="display:flex;"> 
-            <el-checkbox-group v-model="comingSoon" class="checkOne">
-              <el-checkbox :label="$t('DDOS.AssetList.willExpire')" name="comingSoon"></el-checkbox>
+          <div class="addBgColor" style="display:flex;">
+            <el-checkbox-group v-model="expire" class="checkOne">
+              <el-checkbox :label="$t('DDOS.AssetList.willExpire')" name="expire"></el-checkbox>
             </el-checkbox-group>
             <span class="runningStatusText">{{$t('DDOS.AssetList.RunningState')}}:</span>
-            <el-checkbox-group v-model="runningStatus"  class="checkTwo">
-              <el-checkbox :label="$t('DDOS.AssetList.Running')" name="type" value="1"></el-checkbox>
-              <el-checkbox :label="$t('DDOS.Protective.Protectivewash')" name="type" value="2"></el-checkbox>
-              <el-checkbox :label="$t('DDOS.Protective.blockIng')" name="type" value="3"></el-checkbox>
+            <el-checkbox-group v-model="runningStatus" class="checkTwo" @change="statusChange">
+              <el-checkbox :label="0">{{$t('DDOS.AssetList.Running')}}</el-checkbox>
+              <el-checkbox :label="1">{{$t('DDOS.Protective.Protectivewash')}}</el-checkbox>
+              <el-checkbox :label="2">{{$t('DDOS.Protective.blockIng')}}</el-checkbox>
             </el-checkbox-group>
           </div>
-          <span v-if="listResouse=='resourceList'?true:false" style="float:right;">
-            <el-input v-model="tableDataName" class="searchs" :placeholder="$t('DDOS.AssetList.searchAssetList')"></el-input>
+          <span style="float:right;">
+            <el-input
+              v-model="selectResourceInput"
+              class="searchs"
+              :placeholder="$t('DDOS.AssetList.searchAssetList')"
+            ></el-input>
             <el-button class="el-icon-search" @click="doFilter"></el-button>
-          </span>
-          <span v-if="listResouse!='resourceList'?true:false" style="float:right;">
-            <el-input v-model="tableDataName1" class="searchs" :placeholder="$t('DDOS.AssetList.searchAssetListS')"></el-input>
-            <el-button class="el-icon-search" @click="doFilter1"></el-button>
           </span>
         </div>
         <div class="newClear"></div>
         <div class="mainContent newClear">
           <div class="mainTable">
-            <!-- 业务列表 -->
-
-
-            <el-table :data="resourceList.slice((currentPage-1)*pageSize,currentPage*pageSize)" v-if="listResouse=='resourceList'?false:true" v-loading='loading' height="450">
-              <el-table-column prop="Record" label="CNAME/ID">
-
-              <template slot-scope="scope" >
-                      <span v-for="(item,index) in scope.row.Record" >
-                        <a v-if="item.Key=='Id' || item.Key=='CName'" @click="toDoDetailResouse(scope.row)">{{item.Value}}<br>{{item.CName}}</a>
-                      </span>
-                    </template>
-                  </el-table-column>
+            <!-- 资源列表 -->
+            <el-table
+              :data="tableData.slice((currentPage-1)*pageSize,currentPage*pageSize)"
+              v-if="listSelect=='resourceList'"
+              v-loading="loading"
+            >
+              <el-table-column prop="Record" :label="$t('DDOS.AssetList.AssetListName')">
+                <template slot-scope="scope">
+                  <div v-for="(item,index) in scope.row.Record" :key="index">
+                    <a v-if="item.Key=='Id'" @click="toDetailResourse(scope.row)" >
+                      {{item.Value}}
+                    </a>
+                  </div>
+                  <div v-for="(item,index) in scope.row.Record" :key="index+'i'">
+                    <span v-if="item.Key=='Name'">
+                      {{item.Value}}
+                    </span>
+                  </div>
+                </template>
               </el-table-column>
-              <el-table-column prop="domain" :label="$t('DDOS.AssetList.domainName')">
-                 <template slot-scope="scope">
-                   {{scope.row.domain}}<a href="#" @click="toAccest(scope.row)">{{$t('DDOS.AssetList.AssetListSet')}}</a>
+              <el-table-column prop="Record" :label="$t('DDOS.AssetList.Forwarding')">
+                <template slot-scope="scope">
+                  <span v-for="(item,index) in scope.row.Record" :key="index">
+                    <a v-if="item.Key=='ReturnHour'" @click="toAccest(scope.row)">{{item.Value}}</a>
+                  </span>
+                </template>
+              </el-table-column>
+              <el-table-column prop="Record" :label="$t('DDOS.AssetList.protectionNum')">
+                <template slot-scope="scope">
+                  <span v-for="(item,index) in scope.row.Record" :key="index">
+                    <a v-if="item.Key=='GroupIpList'">{{item.Value.split(';').length}}</a>
+                  </span>
+                </template>
+              </el-table-column>
+              <el-table-column prop="origin" :label="$t('DDOS.AssetList.initialRegio')">
+                <template slot-scope="scope">
+                  <span v-for="(item,index) in scope.row.Record" :key="index">
+                    <a v-if="item.Key=='OriginRegion'">{{item.Value}}</a>
+                  </span>
+                </template>
+              </el-table-column>
+              <el-table-column prop="status" label="状态">
+                <template slot-scope="scope">
+                  <span v-for="(item,index) in scope.row.Record" :key="index">
+                    <a v-if="item.Key=='Status'">{{item.Value}}</a>
+                  </span>
+                </template>
+              </el-table-column>
+              <el-table-column prop="dataTime" :label="$t('DDOS.AssetList.DueTime')">
+                <template slot-scope="scope">
+                  <span v-for="(item,index) in scope.row.Record" :key="index">
+                    <a v-if="item.Key=='Expire'">{{item.Value}}</a>
+                  </span>
+                </template>
+              </el-table-column>
+              <el-table-column prop="action" label="操作" width="230">
+                <template slot-scope="scope">
+                  <a
+                    class="marginRightA"
+                    href="#"
+                    @click="upgradeModel"
+                  >{{$t('DDOS.AssetList.upgrade')}}</a>
+                  <a
+                    class="marginRightA"
+                    href="#"
+                    @click="RenewModel"
+                  >{{$t('DDOS.AssetList.renewal')}}</a>
+                  <a
+                    class="marginRightA"
+                    href="#"
+                    @click="configModel"
+                  >{{$t('DDOS.AssetList.ProtectionConfig')}}</a>
+                  <a
+                    class="marginRightA"
+                    href="#"
+                    @clcik="lookReportList(scope.row)"
+                  >{{$t('DDOS.AssetList.CheckReport')}}</a>
+                </template>
+              </el-table-column>
+            </el-table>
+            <!-- 业务列表 -->
+            <el-table
+              :data="tableData.slice((currentPage-1)*pageSize,currentPage*pageSize)"
+              v-if="listSelect=='businessList'"
+              v-loading="loading"
+              height="450"
+            >
+              <el-table-column prop="Record" label="CNAME/ID">
+                <template slot-scope="scope">
+                  <div v-for="(item,index) in scope.row.Record" :key="index">
+                    <span v-if="item.Key=='CName'">
+                      {{item.Value}}
+                    </span>
+                  </div>
+                  <div v-for="(item,index) in scope.row.Record" :key="index+'i'">
+                    <a v-if="item.Key=='Id'" @click="toDetailResourse(scope.row)">
+                      {{item.Value}}
+                    </a>
+                  </div>
+                </template>
+              </el-table-column>
+              <el-table-column prop="RuleNameList" :label="$t('DDOS.AssetList.domainName')">
+                <template slot-scope="scope">
+                  {{ scope.row.RuleNameList }}
+                  <a href="#" @click="toAccest(scope.row)">
+                    {{$t('DDOS.AssetList.AssetListSet')}}
+                  </a>
                 </template>
               </el-table-column>
               <el-table-column prop="nowIp" :label="$t('DDOS.AssetList.currentIp')">
                 <template slot-scope="scope">
-                  <span v-for="(item,index) in scope.row.Record"><a v-if="item.Key=='GroupIpList'" @click="toDoDetailResouse(scope.row)">{{item.Value}}<br></a></span>
+                  <div v-for="(item,index) in scope.row.Record" :key="index">
+                    <span v-if="item.Key=='GroupIpList'">
+                      {{item.Value}}
+                    </span>
+                  </div>
                 </template>
               </el-table-column>
               <el-table-column prop="backSelf" :label="$t('DDOS.AssetList.AutomaticBack')">
                 <template slot-scope="scope">
+                  <!-- {{scope.row.AutoReturn}} -->
                   <el-switch
-                    v-model="scope.row.autoBack"
+                    v-model="scope.row.AutoReturn"
                     active-color="#006eff"
-                    inactive-color="#999">
-                  </el-switch>
+                    inactive-color="#999"
+                    disabled
+                    @change="changeSwitch"
+                  ></el-switch>
                 </template>
               </el-table-column>
               <el-table-column prop="action" label="操作" width="180">
                 <template slot-scope="scope">
-                  <a class="marginRightA" href="#" style="pointer-events:none;color:#999;">{{$t('DDOS.AssetList.keyBack')}}</a>
-                  <a class="marginRightA" href="#" @clcik="lookReportList(scope.row)">{{$t('DDOS.AssetList.CheckReport')}}</a>
+                  <a
+                    class="marginRightA"
+                    href="#"
+                    style="pointer-events:none;color:#999;"
+                  >{{$t('DDOS.AssetList.keyBack')}}</a>
+                  <a
+                    class="marginRightA"
+                    href="#"
+                    @clcik="lookReportList(scope.row)"
+                  >{{$t('DDOS.AssetList.CheckReport')}}</a>
                 </template>
               </el-table-column>
             </el-table>
-            <!-- 资源列表 -->
-            <el-table :data="resourceList.slice((currentPage-1)*pageSize,currentPage*pageSize)" v-if="listResouse!='resourceList'?false:true" v-loading='loading'>
-                <el-table-column prop="Record" :label="$t('DDOS.AssetList.AssetListName')">
-                    <template slot-scope="scope" >
-                      <span v-for="(item,index) in scope.row.Record" >
-                        <a v-if="item.Key=='Id' || item.Key=='Name'" @click="toDoDetailResouse(scope.row)">{{item.Value}}<br>{{item.Name}}</a>
-                      </span>
-                    </template>
-                  </el-table-column>
-                
-                <!-- <el-table-column prop="Id" label="ID/名称">
-                <template slot-scope="scope">
-                  <a href="#" @click="toDoDetailResouse(scope.row)">{{scope.row.Id}}</a><br/>
-                  <span>{{scope.row.Name}}</span>
-                </template>
-              </el-table-column> -->
-              <el-table-column prop="Record" :label="$t('DDOS.AssetList.Forwarding')">
-                <template slot-scope="scope">
-                  <span v-for="(item,index) in scope.row.Record" >
-                        <a v-if="item.Key=='ReturnHour'" @click="toAccest(scope.row)">{{item.Value}}</a>
-                      </span>
-                  <!-- <span>0<a href="#" @click="toAccest(scope.row)">设置</a></span> -->
-                </template>
-              </el-table-column>
-              <el-table-column prop="Record" :label="$t('DDOS.AssetList.protectionNum')">
-                      <template slot-scope="scope" >
-                      <span v-for="(item,index) in scope.row.Record" >
-                        <a v-if="item.Key=='GroupIpList'">{{index}}</a>
-                      </span>
-                    </template>   
 
-                
-              </el-table-column>
-              <el-table-column prop="origin" :label="$t('DDOS.AssetList.initialRegio')">
-            <template slot-scope="scope">
-                  <span v-for="(item,index) in scope.row.Record" >
-                        <a v-if="item.Key=='OriginRegion'">{{item.Value}}</a>
-                      </span>
-                </template>
-
-
-              </el-table-column>
-              <el-table-column prop="status" label="状态">
-                  <template slot-scope="scope">
-                  <span v-for="(item,index) in scope.row.Record" >
-                        <a v-if="item.Key=='Status'">{{item.Value}}</a>
-                      </span>
-                  <!-- <span>0<a href="#" @click="toAccest(scope.row)">设置</a></span> -->
-                </template>
-
-
-
-              </el-table-column>
-              <el-table-column prop="dataTime" :label="$t('DDOS.AssetList.DueTime')">
-
-                <template slot-scope="scope">
-                  <span v-for="(item,index) in scope.row.Record" >
-                        <a v-if="item.Key=='Expire'">{{item.Value}}</a>
-                      </span>
-                  <!-- <span>0<a href="#" @click="toAccest(scope.row)">设置</a></span> -->
-                </template>
-                
-              </el-table-column>
-              <el-table-column prop="action" label="操作" width="230">
-                <template slot-scope="scope">
-                  <a class="marginRightA" href="#" @click="upgradeModel">{{$t('DDOS.AssetList.upgrade')}}</a>
-                  <a class="marginRightA" href="#" @click="RenewModel">{{$t('DDOS.AssetList.renewal')}}</a>
-                  <a class="marginRightA" href="#" @click="configModel">{{$t('DDOS.AssetList.ProtectionConfig')}}</a>
-                  <a class="marginRightA" href="#" @clcik="lookReportList(scope.row)">{{$t('DDOS.AssetList.CheckReport')}}</a>
-                </template>
-              </el-table-column>
-            </el-table>
             <!-- 资源列表详情弹框 -->
-            <resouseListModel :isShow="dialogResouseList"  @closeListDetail="closeListDetail" ref="addOrUpdate"/>
+            <resouseListModel
+              :ipSegment="ipSegment"
+              :isShow="dialogResouseList"
+              @closeListDetail="closeListDetail"
+              ref="addOrUpdate"
+            />
             <!-- 升级弹框 -->
-            <upgradeModel :Upgrade="diaologUpgradeModel" @closeUpgradeModel="closeUpgradeModel"/>
+            <upgradeModel :Upgrade="diaologUpgradeModel" @closeUpgradeModel="closeUpgradeModel" />
             <!-- 续费弹框 -->
-            <RenewModel :RenewShow="doalogRenewModel" @closeRenewModel="closeRenewModel"/>
+            <RenewModel :RenewShow="doalogRenewModel" @closeRenewModel="closeRenewModel" />
             <!-- 防护配置弹框 -->
-            <ProtectConfigModel :configShow="dialogConfigModel" @closeConfigModel="closeConfigModel"/>
-            <!-- 业务列表详情弹框 -->
-            <yewuListModel :isShow="dialogYewuModel" @closeListDetailYw="closeListDetailYw"/>
+            <ProtectConfigModel
+              :configShow="dialogConfigModel"
+              @closeConfigModel="closeConfigModel"
+            />
           </div>
           <div class="Right-style pagstyle">
             <span class="pagtotal">共&nbsp;{{totalItems}}&nbsp;条</span>
@@ -172,42 +213,42 @@
   </div>
 </template>
 <script>
-import { RESOURCE_LIST, DDOSPOLICY_CONT, RULESETS_CONT } from "@/constants";
+import { RESOURCE_LIST, RULESETS_CONT, SOURCEIPSEGMENT_DESCRIBE, INSTANCENAME_CONT } from "@/constants";
 import resouseListModel from "./model/resouseListModel";
 import upgradeModel from "./model/upgradeModel";
 import RenewModel from "./model/RenewModel";
 import ProtectConfigModel from "./model/ProtectConfigModel";
-import yewuListModel from "./model/yewuListModel";
 
 export default {
   data() {
     return {
-      loading:true,
-      activeName: "first",
-      tableDataBegin: [], //业务列表table
-      tableDataBegin1: [], //资源列表table
-      tableDataName: "", //资源列表搜索框
-      tableDataEnd: [],
-      resourceList: [], //资源列表table
-      DDosPolicyList: [], //定义DDoS高级策略接口返回的数据。
-      RuleSetsa: [], //获取资源的规则数接口
+      loading: true,
+      ruleSets: [], //资源的规则数据
+      tableData: [], //共用table数据
+      ipSegment: '', //回源IP
+      inputName: '', //修改名称
+
+      expire: false, //即将到期搜索；可选，取值为[0（不搜索），1（搜索即将到期的资源）]
+      runningStatus: [], //运行状态绑定
+
+      selectResourceInput: "", //资源列表搜索框
+
       currentPage: 1,
       pageSize: 10,
       totalItems: 0,
+
+      tableDataEnd: [],
+      DDosPolicyList: [], //定义DDoS高级策略接口返回的数据。
+      RuleSetsa: [], //获取资源的规则数接口
       filterTableDataEnd: [],
       flag: false,
       multipleSelection: [],
       filterConrent: "",
-      listResouse: "resourceList", //业务列表Or资源列表
-      runningStatus: [], //运行状态绑定
-      comingSoon: false, //是否即将过期
-      tableDataName1: "", //业务列表搜索框
+      listSelect: "resourceList", //列表选择（业务列表Or资源列表）
       dialogResouseList: false, //资产列表详情弹框
       diaologUpgradeModel: false, //升级弹框
       doalogRenewModel: false, //续费弹框
       dialogConfigModel: false, //防护配置弹框
-      // autoBack:false,//是否自动回切开关
-      dialogYewuModel: false, //业务列表详情弹框
       resouseOrYw: "", //判断是哪个列表
       status: ""
     };
@@ -217,156 +258,179 @@ export default {
     upgradeModel: upgradeModel,
     RenewModel: RenewModel,
     ProtectConfigModel,
-    yewuListModel: yewuListModel
   },
   watch: {
-    listResouse: function() {
-      if (this.listResouse == "resourceList") {
-        this.getData1(); //资源列表
-      } else if (this.listResouse != "") {
-        this.getData(); //业务列表
-      }
+    listSelect: function() {//资源列表、业务列表 调用同一接口
+      this.describeResourceList();
+    },
+    expire: function() {
+      this.describeResourceList();
+    },
+    selectResourceInput: function() {
+      this.describeResourceList();
     }
   },
   created() {
     this.describeResourceList(); //获取资源列表接口
-    //this.describeDDoSPolicy()//获取DDoS高级策略接口
-    // this.describeRuleSets(); //获取资源的规则数接口
   },
   methods: {
-    //获取DDoS高级策略接口
-    describeDDoSPolicy() {
-      let params = {
-        Version: "2018-07-09",
-        Business: "net"
-      };
-      this.axios.post(DDOSPOLICY_CONT, params).then(res => {
-        this.DDosPolicyList = res.Response.DDosPolicyList;
-      });
+    //选择运行状态
+    statusChange(){
+      this.describeResourceList();
     },
-    //获取资源的规则数接口
-    describeRuleSets() {
-      filterConrent = this.filterConrent;
-      runningStatus = this.runningStatus; // 运行状态
-
-      comingSoon = this.comingSoon; // 即将过期
-      tableDataName = this.tableDataName; //搜索的输入
-
-      let params = {
-        Version: "2018-07-09",
-        Business: "net",
-        "IdList.0": "net-0000006y"
-      };
-
-      this.axios.post(RULESETS_CONT, params).then(res => {
-        
-      });
-    },
-    //获取资源列表接口
+    // 1.1.获取资源列表接口
     describeResourceList() {
       this.loading = true;
       let params = {
         Version: "2018-07-09",
+        Business: "net"
+      };
+      // 1.1.0.条件搜索调用（即将过期）
+      if(this.expire){
+        params['Expire'] = 1;
+      }
+      // 1.1.1.条件搜索调用（运行状态）
+      if (this.runningStatus.length > 0) {
+        // 勾选框参数
+        for (let a in this.runningStatus) {
+          params["Status." + a] = this.runningStatus[a];
+        }
+      }
+      // 1.1.2.条件搜索调用（输入框参数）
+      if(this.selectResourceInput != ""){
+        if(this.listSelect == "resourceList"){
+          params["Name"] = this.selectResourceInput;
+        } else if(this.listSelect == "businessList"){
+          params["Domain"] = this.selectResourceInput;
+        }
+        // params["IpList.0"] = this.selectResourceInput;
+        // params["IdList.0"] = this.selectResourceInput;
+      }
+      console.log(params)
+      // 执行调用接口--------------
+      this.axios.post(RESOURCE_LIST, params).then(res => {
+        console.log(params, res);
+        this.tableData = res.Response.ServicePacks;
+        this.totalItems = res.Response.Total;
+        // 此接口调用完，调用1.2接口
+        this.describeRuleSets();
+      });
+    },
+    // 1.2.获取资源的规则数接口
+    describeRuleSets() {
+      let params = {
+        Version: "2018-07-09",
         Business: "net",
       };
-      // 1.初始化调用 2.条件搜索调用
-      if(this.runningStatus.length == 0){ //1.初始化调用，当搜索条件为空时
-        
-      } else if(this.runningStatus.length > 0) { //2.条件搜索调用
-        // 1.添加搜索参数
-        // 1.1 勾选框参数
-        for (let a in this.runningStatus) {
-          if (this.runningStatus[a] == "运行中") {
-            params['Status.'+a] = 0;
-          } else if (this.runningStatus[a] == "清洗中") {
-            params['Status.'+a] = 1;
-          } else if (this.runningStatus[a] == "封堵中") {
-            params['Status.'+a] = 2;
+      for(let i=0; i<this.tableData.length; i++){
+        for(let j=0; j<this.tableData[i].Record.length; j++){
+          if("Id" == this.tableData[i].Record[j].Key){
+            params["IdList."+i] = this.tableData[i].Record[j].Value;
           }
         }
-        // 1.2 输入框参数
       }
-      this.axios.post(RESOURCE_LIST, params).then(res => {
-        this.resourceList = res.Response.ServicePacks;
-        this.totalItems = this.resourceList.length;
-        if (this.totalItems > this.pageSize) {
-          for (let index = 0; index < this.pageSize; index++) {
-            this.tableDataEnd.push(this.resourceList[index]);
-          }
-        } else {
-          this.tableDataEnd = this.resourceList;
-        }
+      this.axios.post(RULESETS_CONT, params).then(res => {
+        // console.log(params, res)
+        this.ruleSets = res.Response;
+        // 循环tableData
+        this.tableData.forEach((item)=>{
+          // 循环Record
+          item.Record.forEach((map)=>{
+            // 判断获取Key=Id的值
+            if(map.Key == "Id"){
+              // 循环ruleSets
+              this.ruleSets.L4RuleSets.forEach((ruleSet)=>{
+                // 循环Record2
+                ruleSet.Record.forEach((map2)=>{
+                  // 判断获取Key=Id的值
+                  if(map2.Key == "Id"){
+                    // 判断resourceId和ruleSetId是否相等
+                    if(map.Value == map2.Value){
+                      // 再次循环Record2，获取RuleNameList的值
+                      ruleSet.Record.forEach((map3)=>{
+                        if(map3.Key == "RuleNameList"){
+                          // 将RuleNameList的值添加进tableData
+                          item.RuleNameList = map3.Value;
+                        }
+                      })
+                    }
+                  }
+                })
+              })
+            } else if(map.Key == "AutoReturn"){
+              if(map.Value == '1'){
+                item.AutoReturn = true;
+              } else if(map.Value == '0'){
+                item.AutoReturn = false;
+              }
+            }
+          })
+        })
         this.loading = false;
+        // console.log(this.tableData);
       });
+    },
+    // 1.3.获取回源IP段
+    describeSourceIpSegment(resourceId){
+      let params = {
+        Version: "2018-07-09",
+        Business: "net",
+        Id: resourceId
+      };
+      this.axios.post(SOURCEIPSEGMENT_DESCRIBE, params).then(res => {
+        console.log(res)
+        this.ipSegment = res.Response.Data;
+      })
+    },
+    // 1.4.资源实例重命名接口
+    createInstanceName(resourceId, name){
+      let params = {
+        Version: "2018-07-09",
+        Business: "net",
+        Id: resourceId,
+        Name: name
+      };
+      this.axios.post(INSTANCENAME_CONT, params).then(res => {
+        console.log(res)
+        this.describeResourceList();
+      })
     },
 
-    // 资源列表条件搜索
-    doFilter() {
-      // 调用查询接口
-      this.describeResourceList();
+    changeSwitch(val){
+      // this.$message('暂无接口调用');
     },
-    // 业务列表搜索
-    doFilter1() {
-      this.tableDataEnd = [];
-      //每次手动将数据置空,因为会出现多次点击搜索情况
-      this.filterTableDataEnd = [];
-      this.tableDataBegin.forEach((val, index) => {
-        if (val.canmeId == this.tableDataName1) {
-          this.filterTableDataEnd.push(val);
-          this.tableDataBegin1 = this.filterTableDataEnd;
-        } else {
-          this.filterTableDataEnd.push();
-          this.tableDataBegin1 = this.filterTableDataEnd;
+    // 跳转详情页面
+    toDetailResourse(scopeRow) {
+      //获取回源IP段
+      scopeRow.Record.forEach(item => {
+        if (item.Key == "Id") {
+          this.describeSourceIpSegment(item.Value);
         }
       });
-      //页面数据改变重新统计数据数量和当前页
-      this.currentPage = 1;
-      this.totalItems = this.filterTableDataEnd.length;
-      //渲染表格,根据值
-      this.currentChangePage(this.filterTableDataEnd);
-      //页面初始化数据需要判断是否检索过
-      this.flag = true;
-    },
-    // 分页开始
-    handleSizeChange(val) {
-      this.pageSize = val;
-      this.handleCurrentChange(this.currentPage);
-    },
-    handleCurrentChange(val) {
-      this.currentPage = val;
-      //需要判断是否检索
-      if (!this.flag) {
-        this.currentChangePage(this.tableDataEnd);
-      } else {
-        this.currentChangePage(this.filterTableDataEnd);
-      }
-    }, //组件自带监控当前页码
-    currentChangePage(list) {
-      let from = (this.currentPage - 1) * this.pageSize;
-      let to = this.currentPage * this.pageSize;
-      this.tableDataEnd = [];
-      for (; from < to; from++) {
-        if (list[from]) {
-          this.tableDataEnd.push(list[from]);
-        }
-      }
-    },
-    //跳转新购页面
-    newBuy() {
-      this.$router.push({
-        path: "/choose"
-      });
-    },
-    //资产列表详情
-    toDoDetailResouse(scopeRow) {
       this.dialogResouseList = true;
       this.$nextTick(() => {
         this.$refs.addOrUpdate.init(scopeRow);
       });
     },
-    //关闭资源列表详情
-    closeListDetail(DetailShow) {
-      this.dialogResouseList = DetailShow;
+    //关闭资源详情页面
+    closeListDetail(arr) {
+      if(arr[2]!=""){//编辑确定
+        this.createInstanceName(arr[1], arr[2]);
+      }
+      this.dialogResouseList = arr[0];
+    },
+
+    // 条件搜索
+    doFilter() {
+      // 调用查询接口
+      this.describeResourceList();
+    },
+
+    //跳转新购页面
+    newBuy() {
+      this.$router.push({
+        path: "/choose"
+      });
     },
     //转发规则个数设置按钮
     toAccest() {
@@ -404,22 +468,41 @@ export default {
         path: "/IpProfessional"
       });
     },
-    //业务列表详情
-    toDoDetailYewu(rowList) {
-      this.dialogYewuModel = true;
+
+    // 分页开始
+    handleSizeChange(val) {
+      this.pageSize = val;
+      this.handleCurrentChange(this.currentPage);
     },
-    //关闭业务列表详情
-    closeListDetailYw(DetailShow) {
-      this.dialogYewuModel = DetailShow;
-    }
+    handleCurrentChange(val) {
+      this.currentPage = val;
+      //需要判断是否检索
+      if (!this.flag) {
+        this.currentChangePage(this.tableDataEnd);
+      } else {
+        this.currentChangePage(this.filterTableDataEnd);
+      }
+    }, //组件自带监控当前页码
+    currentChangePage(list) {
+      let from = (this.currentPage - 1) * this.pageSize;
+      let to = this.currentPage * this.pageSize;
+      this.tableDataEnd = [];
+      for (; from < to; from++) {
+        if (list[from]) {
+          this.tableDataEnd.push(list[from]);
+        }
+      }
+    },
   }
 };
 </script>
 <style lang="scss" scoped>
+.wrap >>> .el-loading-mask{
+  background: white;
+}
 .Right-style {
   display: flex;
   justify-content: flex-end;
-
   .esach-inputL {
     width: 300px;
     margin-right: 20px;
@@ -427,7 +510,6 @@ export default {
 }
 .pagstyle {
   padding: 20px;
-
   .pagtotal {
     font-size: 13px;
     font-weight: 400;
@@ -435,7 +517,7 @@ export default {
     line-height: 32px;
   }
 }
-.wrap >>> .el-tabs__nav-wrap{
+.wrap >>> .el-tabs__nav-wrap {
   background: white;
   padding: 0 15px;
   box-sizing: border-box;
@@ -489,7 +571,7 @@ export default {
       width: 670px;
       float: right;
       text-align: right;
-      margin-bottom:20px;
+      margin-bottom: 20px;
       .checkOne {
         float: left;
       }
@@ -504,7 +586,7 @@ export default {
       .searchs {
         float: left;
         height: 30px;
-        width:178px;
+        width: 178px;
         input {
           height: 30px;
           border-radius: 0;
@@ -557,18 +639,18 @@ export default {
     }
   }
 }
-.modelCenterCon{
-  p{
-    margin-bottom:16px;
-    span:nth-child(1).modelSpan1{
-      width:120px;
-      font-size:12px;
-      color:#999;
-      float:left;
+.modelCenterCon {
+  p {
+    margin-bottom: 16px;
+    span:nth-child(1).modelSpan1 {
+      width: 120px;
+      font-size: 12px;
+      color: #999;
+      float: left;
     }
-    span:nth-child(2).modelSpan2{
-      float:left;
-      width:calc(100% - 120px);
+    span:nth-child(2).modelSpan2 {
+      float: left;
+      width: calc(100% - 120px);
       .gardenChoose {
         padding: 0 20px;
         color: #000;
@@ -578,24 +660,24 @@ export default {
         color: #006eff !important;
       }
     }
-  } 
+  }
 }
-.setSelectM{
-  div{
-    width:200px;
-    height:30px;
-    input{
-      height:30px;
-      width:200px;
+.setSelectM {
+  div {
+    width: 200px;
+    height: 30px;
+    input {
+      height: 30px;
+      width: 200px;
       line-height: 30px;
       border-radius: 0;
     }
   }
 }
 .mainContent {
-  background-color:#fff;
+  background-color: #fff;
 }
-.tabListPage{
-  text-align:right;
+.tabListPage {
+  text-align: right;
 }
 </style>
