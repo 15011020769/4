@@ -229,7 +229,11 @@ export default {
     getMonth(mon) {
       this.currpage = 1
       this.dataForm.month = mon           // 2019-11
-      this.getDataList()                  // 获取账单列表
+      this.getDataList()
+      this.getProductInfo()         // 获取产品列表
+      this.getProjectInfo()         // 获取项目列表
+      this.getPayModeInfo()         // 获取计费模式列表    
+      this.getActionTypeInfo()      // 获取交易类型                  // 获取账单列表
     },
 
     // 获取产品列表
