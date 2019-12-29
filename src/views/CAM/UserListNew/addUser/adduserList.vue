@@ -432,7 +432,7 @@ export default {
           };
           this.axios
             .post(
-              "http://tfc.dhycloud.com/adminapi/admin/taifucloud/account-sub/manage/register",
+              "http://152.136.25.227/adminapi/admin/taifucloud/account-sub/manage/register",
               params
             )
             .then(res => {
