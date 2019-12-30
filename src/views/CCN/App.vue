@@ -39,6 +39,7 @@ export default {
         let city = data.data[0];
         this.$cookie.set("regionv1", city.regionCode);
         this.$cookie.set("regionv2", city.Region);
+        localStorage.setItem("regionv2", city.Region);
       });
     }
   }
