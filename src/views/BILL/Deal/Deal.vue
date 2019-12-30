@@ -392,7 +392,7 @@ export default {
         .post(
           `${process.env.VUE_APP_adminUrl}taifucloud/torderproduct/exportList`,
           params,
-          { responseType: "blob" }
+          { responseType: "blob" ,timeout: 1920000}
         )
         .then(res => {
           const content = res;
