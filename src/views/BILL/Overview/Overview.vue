@@ -127,7 +127,7 @@
                 :page-size="pageSize"
                 :pager-count="7"
                 layout="prev, pager, next"
-                @current-change="currentChangeHandle"
+                @current-change="currentChangeHandle1"
                 :total="totalPage2"
               ></el-pagination>
             </div>
@@ -665,10 +665,16 @@ export default {
       this.getDataList1()
     },
 
-    // 按产品/项目汇总-表格当前页
+    // 按产品汇总-表格当前页
     currentChangeHandle(val) {
       this.pageIndex = val
       this.getDataList1()
+    },
+
+    // 按项目汇总-表格当前页
+    currentChangeHandle1(val) {
+      this.pageIndex = val
+      this.getDataList2()
     }
   }
 

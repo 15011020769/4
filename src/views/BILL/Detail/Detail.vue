@@ -126,8 +126,8 @@
         </el-table-column>
         <el-table-column prop="single" header-align="center" align="center" width="120" :label="$t('BILL.Detail.single')">
         </el-table-column>
-        <el-table-column prop="specifiedbak" header-align="center" align="center" width="120" :label="$t('BILL.Detail.specifiedbak')">
-        </el-table-column>
+        <!-- <el-table-column prop="specifiedbak" header-align="center" align="center" width="120" :label="$t('BILL.Detail.specifiedbak')">
+        </el-table-column> -->
         <el-table-column prop="priceUnit" header-align="center" align="center" width="120" :label="$t('BILL.Detail.priceUnit')">
         </el-table-column>
         <el-table-column prop="usedAccount" header-align="center" align="center" width="120" :label="$t('BILL.Detail.usedAccount')">
@@ -144,8 +144,8 @@
         </el-table-column>
         <el-table-column prop="tfcbak" header-align="center" align="center" width="120" :label="$t('BILL.Detail.tfcbak')">
         </el-table-column>
-        <el-table-column prop="reduceType" header-align="center" align="center" width="120" :label="$t('BILL.Detail.reduceType')">
-        </el-table-column>
+        <!-- <el-table-column prop="reduceType" header-align="center" align="center" width="120" :label="$t('BILL.Detail.reduceType')">
+        </el-table-column> -->
         <el-table-column prop="realbak" header-align="center" align="center" width="120" :label="$t('BILL.Detail.realbak')">
         </el-table-column>
         <el-table-column prop="voucherPaybak" header-align="center" align="center" width="120" :label="$t('BILL.Detail.voucherPaybak')">
@@ -156,10 +156,10 @@
         </el-table-column>
         <el-table-column prop="usdExpendbak" header-align="center" align="center" width="120" :label="$t('BILL.Detail.usdExpendbak')">
         </el-table-column>
-        <el-table-column prop="ntExpendbak" header-align="center" align="center" width="120" :label="$t('BILL.Detail.ntExpendbak')">
-        </el-table-column>
-        <el-table-column prop="month" header-align="center" align="center" width="120" :label="$t('BILL.Detail.month')">
-        </el-table-column>
+        <!-- <el-table-column prop="ntExpendbak" header-align="center" align="center" width="120" :label="$t('BILL.Detail.ntExpendbak')">
+        </el-table-column> -->
+        <!-- <el-table-column prop="month" header-align="center" align="center" width="120" :label="$t('BILL.Detail.month')">
+        </el-table-column> -->
       </el-table>
       <!-- <div class="table-page">
         <el-pagination @size-change="sizeChangeHandle" @current-change="currentChangeHandle" :current-page="pageIndex" :page-sizes="[10, 20, 50, 100]" :page-size="pageSize" :total="totalPage" layout="total, sizes, prev, pager, next, jumper" style="width:100%; text-align:right;">
@@ -229,11 +229,11 @@ export default {
     getMonth(mon) {
       this.currpage = 1
       this.dataForm.month = mon           // 2019-11
-      this.getDataList()
       this.getProductInfo()         // 获取产品列表
       this.getProjectInfo()         // 获取项目列表
       this.getPayModeInfo()         // 获取计费模式列表    
-      this.getActionTypeInfo()      // 获取交易类型                  // 获取账单列表
+      this.getActionTypeInfo()      // 获取交易类型                  
+      this.getDataList()            // 获取账单列表
     },
 
     // 获取产品列表
