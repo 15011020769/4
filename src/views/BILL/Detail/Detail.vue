@@ -390,7 +390,7 @@ export default {
       }
       this.downloadLoading = true
       this.axios.post(`${process.env.VUE_APP_adminUrl + EXPORTLIST}`, params, {
-        responseType: 'blob'
+        responseType: 'blob',timeout: 1920000
       }).then(res => {
         const content = res
         const blob = new Blob([content])
