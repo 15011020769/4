@@ -374,7 +374,7 @@ export default {
         CcnDescription: "",
         QosLevel: "AU",
         instanceType: "",
-        instanceRegion: localStorage.getItem('regionv2'),
+        instanceRegion: localStorage.getItem("regionv2"),
         instanceId: ""
       },
       formLabelWidth: "120px",
@@ -428,7 +428,7 @@ export default {
       this.tableload = true;
       var params = {
         Version: "2017-03-12",
-        Region: localStorage.getItem('regionv2'),
+        Region: localStorage.getItem("regionv2"),
         Offset: this.currpage * this.pagesize - this.pagesize,
         Limit: this.pagesize
       };
@@ -475,7 +475,7 @@ export default {
     getInstanceIds: function(instanceType) {
       var params = {
         Version: "2017-03-12",
-        Region: localStorage.getItem('regionv2')
+        Region: localStorage.getItem("regionv2")
       };
       if (instanceType == "VPC") {
         // 私有网络
@@ -494,7 +494,7 @@ export default {
       this.creatloading = true;
       var params = {
         Version: "2017-03-12",
-        Region: localStorage.getItem('regionv2'),
+        Region: localStorage.getItem("regionv2"),
         CcnName: form.CcnName,
         CcnDescription: form.CcnDescription,
         QosLevel: form.QosLevel,
@@ -518,12 +518,11 @@ export default {
           });
           this.creatloading = false;
           this.dialogFormVisible = false;
-          this.getData();
 
           // 关联实例
           var params2 = {
             Version: "2017-03-12",
-            Region: localStorage.getItem('regionv2'),
+            Region: localStorage.getItem("regionv2"),
             CcnId: res.Response.Ccn.CcnId,
             "Instances.0.InstanceId": form.instanceId,
             "Instances.0.InstanceRegion": form.instanceRegion,
@@ -532,11 +531,20 @@ export default {
           this.axios.post(ATTACHCCN_INSTANCES, params2).then(res => {
             if (res.Response.Error) {
               this.$message({
-                message: res.Response.Error.Message,
+                message: "關聯實例失敗," + res.Response.Error.Message,
                 showClose: true,
-                duration: 0
+                duration: 0,
+                type: "error"
+              });
+            } else {
+              this.$message({
+                message: "關聯實例成功",
+                showClose: true,
+                duration: 0,
+                type: "success"
               });
             }
+            this.getData();
           });
         }
       });
@@ -553,7 +561,7 @@ export default {
       this.delload = true;
       var params = {
         Version: "2017-03-12",
-        Region: localStorage.getItem('regionv2'),
+        Region: localStorage.getItem("regionv2"),
         CcnId: ccnDetail.CcnId
       };
       this.axios.post(CCN_DELETE, params).then(res => {
@@ -580,6 +588,7 @@ export default {
     // 修改名称弹窗
     updateName: function(ccnDetail) {
       this.ccnPublic = ccnDetail;
+      this.tableload = true;
       this.updateNameVisible = true;
     },
     // 修改备注弹窗
@@ -589,24 +598,26 @@ export default {
     },
     // 修改ccn公用方法
     modifyCcn: function(ccnDetail) {
+      this.tableload = true;
       var params = {
         Version: "2017-03-12",
-        Region: localStorage.getItem('regionv2'),
+        Region: localStorage.getItem("regionv2"),
         CcnId: ccnDetail.CcnId,
         CcnName: ccnDetail.CcnName,
         CcnDescription: ccnDetail.CcnDescription
       };
       this.axios.post(MODIFYCCN_ATTRIBUTE, params).then(res => {
-        this.$message({
-          message: "修改成功",
-          type: "success",
-          showClose: true,
-          duration: 0
-        });
         if (res.Response.Error != undefined) {
           this.$message({
-            message: "修改失敗",
+            message: "修改失敗," + res.Response.Error.Message,
             type: "error",
+            showClose: true,
+            duration: 0
+          });
+        } else {
+          this.$message({
+            message: "修改成功",
+            type: "success",
             showClose: true,
             duration: 0
           });
@@ -625,7 +636,7 @@ export default {
       console.log(ccnDetail);
       var params = {
         Version: "2017-03-12",
-        Region: localStorage.getItem('regionv2'),
+        Region: localStorage.getItem("regionv2"),
         CcnId: ccnDetail.CcnId,
         BandwidthLimitType: ccnDetail.BandwidthLimitType
       };
@@ -659,7 +670,7 @@ export default {
     upTags: function(tagss) {
       var params = {
         Version: "2018-08-13",
-        Region: localStorage.getItem('regionv2'),
+        Region: localStorage.getItem("regionv2"),
         Resource:
           "qcs::vpc:ap-guangzhou:uin/100011921910:ccn/" + this.ccnIdOfTag
       };
