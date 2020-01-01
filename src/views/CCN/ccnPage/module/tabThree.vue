@@ -7,6 +7,7 @@
         限速方式：{{$t("CCN.tabs.tab3tit1")}}
         <a
           @click="updateBandwidthLimitTypeVisible = true"
+          style="cursor: pointer;"
         >{{$t("CCN.tabs.tab3tit2")}}</a>
       </span>
       <div class="table">
@@ -122,7 +123,7 @@
             </el-select>
             <p class="edit-p">
               {{ $t('CCN.total.eWay4') }}
-              <a href>工單申請</a>
+              <!-- <a href>工單申請</a> -->
             </p>
           </el-form-item>
         </el-form>
