@@ -140,8 +140,8 @@
         </el-table-column>
         <el-table-column prop="costbak" header-align="center" align="center" width="120" :label="$t('BILL.Detail.costbak')">
         </el-table-column>
-        <el-table-column prop="qcloudbak" header-align="center" align="center" width="120" :label="$t('BILL.Detail.qcloudbak')">
-        </el-table-column>
+        <!-- <el-table-column prop="qcloudbak" header-align="center" align="center" width="120" :label="$t('BILL.Detail.qcloudbak')">
+        </el-table-column> -->
         <el-table-column prop="tfcbak" header-align="center" align="center" width="120" :label="$t('BILL.Detail.tfcbak')">
         </el-table-column>
         <!-- <el-table-column prop="reduceType" header-align="center" align="center" width="120" :label="$t('BILL.Detail.reduceType')">
