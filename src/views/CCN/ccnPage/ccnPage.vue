@@ -224,7 +224,9 @@
               :key="index"
               :label="item.VpcId"
               :value="item.VpcId"
-            ></el-option>
+            >
+            <span>{{item.VpcId + '(' +item.VpcName + '|' + item.CidrBlock + ')' }}</span>
+            </el-option>
           </el-select>
         </el-form-item>
       </el-form>
