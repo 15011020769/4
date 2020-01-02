@@ -110,6 +110,15 @@ export default new Router({
       meta: {
         keepAlive: true
       }
-    }
+    },
+    {
+      path: '/persistenceSetting/:uid', // 设置事件持久化
+      props:true,
+      name: 'persistenceSetting',
+      component: () => import(/* webpackChunkName: "persistenceSetting" */ './persistenceSetting/index.vue'),
+      meta: {
+        keepAlive: true
+      }
+    },
   ]
 })
