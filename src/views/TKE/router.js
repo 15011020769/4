@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-
 Vue.use(Router)
 
 export default new Router({
@@ -44,7 +43,25 @@ export default new Router({
       component: () => import(/* webpackChunkName: "myMirror" */ './myMirror/index.vue'),
       meta: {
         keepAlive: true
-      }
+      },
+      children: [
+        {
+          path: '/myMirror/user',
+          name: 'myMirrorUser',
+          component: () => import(/* webpackChunkName: "myMirror" */ './myMirror/user.vue'),
+          meta: {
+            keepAlive: true
+          }
+        },
+        {
+          path: '/myMirror/local',
+          name: 'myMirrorLocal',
+          component: () => import(/* webpackChunkName: "myMirror" */ './myMirror/local.vue'),
+          meta: {
+            keepAlive: true
+          }
+        }
+      ]
     },
     {
       path: '/myFavorite', // 我的收藏
