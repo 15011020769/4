@@ -15,6 +15,8 @@ export const DOMAIN_DELTILS = 'live2/DescribeLiveDomain'
 //统计分析
 //查询直播转码统计信息
 export const CSS_CODE = 'live2/DescribeLiveTranscodeDetailInfo'
+//查询直播转码统计图表信息
+export const CSS_CHARTS = 'live2/DescribeLiveTranscodeTotalInfo'
 //直播计费带宽和流量数据查询
 export const CSS_MBPS = 'live2/DescribeBillBandwidthAndFluxList'
 //查询按省份和运营商分组的播放数据

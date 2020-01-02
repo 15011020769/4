@@ -10,6 +10,7 @@ export default {
   },
   mounted() {
     this.echart();
+    window.onresize = this.$echarts.init(document.getElementById("myChart")).resize;
   },
   props: {
     color: {
@@ -18,11 +19,14 @@ export default {
     },
     xAxis: {
       type: Array,
-      default: []
+      default: () => []
     },
     series: {
       type: Array,
-      default: []
+      default: () => []
+    },
+    legendText: {
+      type: String,
     }
   },
   watch: {
@@ -58,8 +62,26 @@ export default {
       var myChart = this.$echarts.init(document.getElementById("myChart"));
       myChart.setOption({
         color: this.color,
+        legend: {
+          data: this.legendText,
+          bottom: 0,
+        },
         xAxis: {
           type: "category",
+          axisLabel: {
+            color: '#B0B0B0',
+            fontSize: 10,
+          },
+          axisTick: {
+            lineStyle: {
+              color: '#B0B0B0',
+            }
+          },
+          axisLine: {
+            lineStyle: {
+              color: '#B0B0B0'
+            }
+          },
           data:
             this.xAxis.length != 0
               ? this.xAxis
@@ -72,17 +94,42 @@ export default {
                 ]
         },
         yAxis: {
-          type: "value"
+          type: "value",
+          axisLine: {
+            show: false
+          },
+          axisTick: {
+            show: false
+          },
+          axisLabel: {
+            color: '#B0B0B0',
+            fontSize: 10,
+            verticalAlign: 'top'
+          }
+        },
+        tooltip: {
+          trigger: 'axis'
         },
         series: [
           {
+            name: this.legendText,
             data: this.series.length != 0 ? this.series : [0, 0, 0, 0, 0],
             type: "line",
-            smooth: true
+            smooth: true,
+            symbol: "none",
+            itemStyle: {
+              normal: {
+                color: '#2d70f6',
+                lineStyle:{
+                    width:3//设置线条粗细
+                }
+              }
+            }
           }
         ]
       });
     }
   }
 };
+
 </script>
