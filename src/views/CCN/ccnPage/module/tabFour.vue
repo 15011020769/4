@@ -19,7 +19,10 @@
         <el-table-column prop="InstanceId" :label="$t('CCN.tabs.tab4tr3')" width>
           <template slot-scope="scope">
             <!-- <el-button @click="handleClick(scope.row)" type="text">{{ scope.row.InstanceId }}</el-button> -->
-            <a href="../CCN/index" target="_blank">{{ scope.row.InstanceId }}</a>
+            <a
+              :href="'../VPC/index#/priNetwork/priNetworkDetial/'+`${ scope.row.InstanceId }`+'/ap-taipei'"
+              target="_blank"
+            >{{ scope.row.InstanceId }}</a>
             <p class="edit">{{ scope.row.InstanceName }}</p>
           </template>
         </el-table-column>
@@ -88,7 +91,7 @@ export default {
       this.loadShow = true;
       var params = {
         Version: "2017-03-12",
-        Region: localStorage.getItem('regionv2'),
+        Region: localStorage.getItem("regionv2"),
         CcnId: this.ccnId
       };
       // 查询-路由表
@@ -115,7 +118,7 @@ export default {
     setRouteEnabled(route) {
       var params = {
         Version: "2017-03-12",
-        Region: localStorage.getItem('regionv2'),
+        Region: localStorage.getItem("regionv2"),
         CcnId: this.ccnId,
         "RouteIds.0": route.RouteId
       };
