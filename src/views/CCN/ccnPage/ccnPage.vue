@@ -225,7 +225,12 @@
               :label="item.VpcId"
               :value="item.VpcId"
             >
-            <span>{{item.VpcId + '(' +item.VpcName + '|' + item.CidrBlock + ')' }}</span>
+              <span
+                v-if="item.VpcId "
+              >{{item.VpcId + '(' +item.VpcName + '|' + item.CidrBlock + ')' }}</span>
+              <span
+                v-if="item.directConnectGatewayId"
+              >{{item.directConnectGatewayId + '(' + item.directConnectGatewayName + '|' + item.vpcCidrBlock + ')' }}</span>
             </el-option>
           </el-select>
         </el-form-item>
@@ -485,9 +490,12 @@ export default {
           this.vpcs = res.Response.VpcSet;
         });
       } else if (instanceType == "DIRECTCONNECT") {
+        const info = {
+          networkType: "CCN"
+        };
         // 专线网络
-        this.axios.post(DIRECTCONNECTGATEWAYS_LIST, params).then(res => {
-          this.vpcs = res.Response.DirectConnectGatewaySet;
+        this.axios.post(DIRECTCONNECTGATEWAYS_LIST, info).then(res => {
+          this.vpcs = res.data;
         });
       }
     },
@@ -635,7 +643,6 @@ export default {
       this.updateBandwidthLimitTypeVisible = true;
     },
     upBandwidthLimitType: function(ccnDetail) {
-      console.log(ccnDetail);
       var params = {
         Version: "2017-03-12",
         Region: localStorage.getItem("regionv2"),

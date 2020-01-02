@@ -6,7 +6,7 @@ export const CCN_DELETE = 'vpc2/DeleteCcn' // 删除CCN
 
 export const VPCS_LIST = 'vpc2/DescribeVpcs' // 私有网络
 
-export const DIRECTCONNECTGATEWAYS_LIST = 'vpc2/DescribeDirectConnectGateways' // 专线网络
+export const DIRECTCONNECTGATEWAYS_LIST = 'vpc/DescribeDirectConnectGateway' // 专线网络
 
 export const ATTACHCCN_INSTANCES = 'vpc2/AttachCcnInstances' // 关联实例
 

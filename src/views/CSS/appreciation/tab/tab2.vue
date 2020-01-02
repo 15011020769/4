@@ -1,7 +1,7 @@
 <template>
   <div class="wrap">
     <h3>转码时长{{StartTIme}} 到 {{EndTIme}}（单位：分钟）</h3>
-    <Echart />
+    <Echart :xAxis="xAxis" :series="series" :legendText="text" />
     <div class="table">
       <h3>近30天消费量</h3>
       <el-table
@@ -33,8 +33,8 @@
 </template>
 
 <script>
-import Echart from "../components/echarts";
-import { CSS_CODE } from "@/constants";
+import Echart from "../../components/line";
+import { CSS_CODE, CSS_CHARTS } from "@/constants";
 import moment from "moment";
 export default {
   name: "tab2",
@@ -44,7 +44,10 @@ export default {
       current: 1, //页数
       pageSize: 10, //每页数量
       totalItems: 0, //总条数
-      loading: true //加载状态
+      loading: true, //加载状态
+      xAxis: [],
+      series: [],
+      text: '转码时长'
     };
   },
   components: {
@@ -60,6 +63,7 @@ export default {
   },
   created() {
     this.init();
+    this.getCharts();
   },
   methods: {
     //分页
@@ -86,6 +90,28 @@ export default {
         }
         this.loading = false;
       });
+    },
+    // 获取图表数据
+    getCharts() {
+      const axixArr = []
+      const seriesArr = []
+      const params = {
+        Version: "2018-08-01",
+        StartTime: moment(this.StartTIme).format("YYYY-MM-DD HH:mm:ss"),
+        EndTime: moment(this.EndTIme).format("YYYY-MM-DD HH:mm:ss"),
+      };
+      this.axios.post(CSS_CHARTS, params).then(res => {
+        if (res.Response.Error) {
+          this.$message.error(res.Response.Error.Message);
+        } else {
+          res.Response.DataInfoList.map(v => {
+            axixArr.push(v.Time)
+            seriesArr.push(v.Duration)
+          })
+          this.xAxis = axixArr
+          this.series = seriesArr
+        }
+      })
     }
   }
 };

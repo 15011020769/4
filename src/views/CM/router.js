@@ -11,7 +11,7 @@ export default new Router({
   },
   routes: [{
     path: '/',
-    redirect: '/CVM'
+    redirect: '/overview'
   },
   {
     path: '/CVM', // 雲服务器
@@ -200,30 +200,24 @@ export default new Router({
       keepAlive: true
     }
   },
-
-
-
-
-
-
-  // {
-  //     path: '/peerConnect', // 对等链接
-  //     name: 'peerConnect',
-  //     component: () =>
-  //         import ( /* webpackChunkName: "peerConnect" */ './peerConnect/index.vue'),
-  //     meta: {
-  //         keepAlive: true
-  //     }
-  // },
-  // {
-  //     path: '/CMpeerdetails', // 对等链接详情
-  //     name: 'CMpeerdetails',
-  //     component: () =>
-  //         import ( /* webpackChunkName: "peerConnect" */ './peerConnect/details.vue'),
-  //     meta: {
-  //         keepAlive: true
-  //     }
-  // },
+  {
+    path: '/peerConnect', // 对等链接
+    name: 'peerConnect',
+    component: () =>
+      import( /* webpackChunkName: "peerConnect" */ './peerConnect/index.vue'),
+    meta: {
+      keepAlive: true
+    }
+  },
+  {
+    path: '/CMpeerdetails', // 对等链接详情
+    name: 'CMpeerdetails',
+    component: () =>
+      import( /* webpackChunkName: "peerConnect" */ './peerConnect/details.vue'),
+    meta: {
+      keepAlive: true
+    }
+  },
   {
     path: '/VPNgateway', // vpn网关
     name: 'VPNgateway',
@@ -278,95 +272,163 @@ export default new Router({
       keepAlive: true
     }
   },
-    // -----------------------------------------------------
-    // {
-    //   path: '/overview', // 监控概览
-    //   name: 'overview',
-    //   component: () =>
-    //     import( /* webpackChunkName: "overview" */ './overview/overview.vue'),
-    //   meta: {
-    //     keepAlive: true
-    //   }
-    // },
-    // // -----------------------------------------------------
-    // {
-    //   path: '/Template', //  触发条件模板
-    //   name: 'Template',
-    //   component: () =>
-    //     import( /* webpackChunkName: "Template" */ './Template/Template.vue'),
-    //   meta: {
-    //     keepAlive: true
-    //   }
-    // },
-    // // -----------------------------------------------------
-    // {
-    //   path: '/Toconfigure', //     告警配置
-    //   name: 'Toconfigure',
-    //   component: () =>
-    //     import( /* webpackChunkName: "Toconfigure" */ './Toconfigure/Toconfigure.vue'),
-    //   meta: {
-    //     keepAlive: true
-    //   }
-    // },
-    // // -----------------------------------------------------
-    // {
-    //   path: '/History', //       告警历史
-    //   name: 'History',
-    //   component: () =>
-    //     import( /* webpackChunkName: "History" */ './History/History.vue'),
-    //   meta: {
-    //     keepAlive: true
-    //   }
-    // },
-    // // -----------------------------------------------------
-    // {
-    //   path: '/flow', //       流量监控
-    //   name: 'flow',
-    //   component: () =>
-    //     import( /* webpackChunkName: "flow" */ './flow/flow.vue'),
-    //   meta: {
-    //     keepAlive: true
-    //   }
-    // },
-    // -----------------------------------------------------
-    // {
-    //   path: '/EventCenter', //       事件中心
-    //   name: 'EventCenter',
-    //   component: () =>
-    //     import( /* webpackChunkName: "EventCenter" */ './EventCenter/EventCenter.vue'),
-    //   meta: {
-    //     keepAlive: true
-    //   }
-    // },
-    // // -----------------------------------------------------
-    // {
-    //   path: '/Dashboard', //       Dashboard
-    //   name: 'Dashboard',
-    //   component: () =>
-    //     import( /* webpackChunkName: "Dashboard" */ './Dashboard/Dashboard.vue'),
-    //   meta: {
-    //     keepAlive: true
-    //   }
-    // },
-    // // -----------------------------------------------------
-    // {
-    //   path: '/Custom', //       自定义监控
-    //   name: 'Custom',
-    //   component: () =>
-    //     import( /* webpackChunkName: "Custom" */ './Custom/Custom.vue'),
-    //   meta: {
-    //     keepAlive: true
-    //   }
-    // },
-    // // -----------------------------------------------------
-    // {
-    //   path: '/Casegrouping', //           实例分组
-    //   name: 'Casegrouping',
-    //   component: () =>
-    //     import( /* webpackChunkName: "Casegrouping" */ './Casegrouping/Casegrouping.vue'),
-    //   meta: {
-    //     keepAlive: true
-    //   }
-    // },
+  {
+    path: '/overview', // 监控概览
+    name: 'overview',
+    component: () =>
+      import( /* webpackChunkName: "overview" */ './overview/overview.vue'),
+    meta: {
+      keepAlive: true
+    }
+  },
+  // -----------------------------------------------------
+  {
+    path: '/Template', //  触发条件模板
+    name: 'Template',
+    component: () =>
+      import( /* webpackChunkName: "Template" */ './Template/Template.vue'),
+    meta: {
+      keepAlive: true
+    }
+  },
+  // -----------------------------------------------------
+  {
+    path: '/Toconfigure', //     告警配置
+    name: 'Toconfigure',
+    component: () =>
+      import( /* webpackChunkName: "Toconfigure" */ './Toconfigure/Toconfigure.vue'),
+    meta: {
+      keepAlive: true
+    }
+  },
+  // -----------------------------------------------------
+  {
+    path: '/History', //       告警历史
+    name: 'History',
+    component: () =>
+      import( /* webpackChunkName: "History" */ './History/History.vue'),
+    meta: {
+      keepAlive: true
+    }
+  },
+  // -----------------------------------------------------
+  {
+    path: '/flow', //       流量监控
+    name: 'flow',
+    component: () =>
+      import( /* webpackChunkName: "flow" */ './flow/flow.vue'),
+    meta: {
+      keepAlive: true
+    }
+  },
+  {
+    path: '/EventCenter', //       事件中心
+    name: 'EventCenter',
+    component: () =>
+      import( /* webpackChunkName: "EventCenter" */ './EventCenter/EventCenter.vue'),
+    meta: {
+      keepAlive: true
+    }
+  },
+  // -----------------------------------------------------
+  {
+    path: '/Dashboard', //       Dashboard
+    name: 'Dashboard',
+    component: () =>
+      import( /* webpackChunkName: "Dashboard" */ './Dashboard/Dashboard.vue'),
+    meta: {
+      keepAlive: true
+    }
+  },
+  // -----------------------------------------------------
+  {
+    path: '/Custom', //       自定义监控
+    name: 'Custom',
+    component: () =>
+      import( /* webpackChunkName: "Custom" */ './Custom/Custom.vue'),
+    meta: {
+      keepAlive: true
+    }
+  },
+  // -----------------------------------------------------
+  {
+    path: '/Casegrouping', //           实例分组
+    name: 'Casegrouping',
+    component: () =>
+      import( /* webpackChunkName: "Casegrouping" */ './Casegrouping/Casegrouping.vue'),
+    meta: {
+      keepAlive: true
+    }
+  },
+  // -----------------------------------------------------
+  {
+    path: '/strategy', //           告警策略
+    name: 'strategy',
+    component: () =>
+      import( /* webpackChunkName: "strategy" */ './strategy/index.vue'),
+    meta: {
+      keepAlive: true
+    }
+  },
+  // -----------------------------------------------------
+  {
+    path: '/subscription', //           平台事件订阅
+    name: 'subscription',
+    component: () =>
+      import( /* webpackChunkName: "subscription" */ './subscription/index.vue'),
+    meta: {
+      keepAlive: true
+    }
+  },
+  // -----------------------------------------------------
+  {
+    path: '/message', //           自定义消息
+    name: 'message',
+    component: () =>
+      import( /* webpackChunkName: "message" */ './message/index.vue'),
+    meta: {
+      keepAlive: true
+    }
+  },
+  // -----------------------------------------------------
+  {
+    path: '/product', //           产品事件
+    name: 'product',
+    component: () =>
+      import( /* webpackChunkName: "product" */ './product/index.vue'),
+    meta: {
+      keepAlive: true
+    }
+  },
+  // -----------------------------------------------------
+  {
+    path: '/platform', //           平台事件
+    name: 'platform',
+    component: () =>
+      import( /* webpackChunkName: "platform" */ './platform/index.vue'),
+    meta: {
+      keepAlive: true
+    }
+  },
+  // -----------------------------------------------------
+  {
+    path: '/configuration', //           监控配置
+    name: 'configuration',
+    component: () =>
+      import( /* webpackChunkName: "configuration" */ './configuration/index.vue'),
+    meta: {
+      keepAlive: true
+    }
+  },
+  // -----------------------------------------------------
+  {
+    path: '/view', //           监控视图
+    name: 'view',
+    component: () =>
+      import( /* webpackChunkName: "view" */ './view/index.vue'),
+    meta: {
+      keepAlive: true
+    }
+  }
   ]
 })

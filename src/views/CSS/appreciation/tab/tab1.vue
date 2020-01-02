@@ -28,7 +28,7 @@
 </template>
 
 <script>
-import Echart from "../components/echarts";
+import Echart from "../../components/line";;
 import { CSS_CODE } from "@/constants";
 import moment from "moment";
 export default {

@@ -1,53 +1,164 @@
 <template>
   <div class="colony-wrap">
-    <HeadCom title="集群管理">
-      <el-button style="margin-left:10px;" v-show="!btnload">{{region}}</el-button>
-      <el-button style="margin-left:10px;" v-show="btnload" icon="el-icon-loading"></el-button>
-    </HeadCom>
-    <div class="colony-main">
-      <div class="colony-fun">
-        <el-button type="primary">新建</el-button>
-        <!-- 搜索 -->
-        <div class="search">
-          <SEARCH
-            :searchOptions="searchOptions"
-            :searchValue="searchValue"
-            @changeValue="changeValue"
-            :searchInput="searchInput"
-            @changeinput="changeinput" 
-            @clicksearch="clicksearch"
-            @exportExcel="exportExcel"
-          ></SEARCH>
+    <!-- <HeadCom title="集群管理">
+      <el-button style="margin-left:10px;" v-if="!btnload">{{region}}</el-button>
+      <el-button style="margin-left:10px;"  icon="el-icon-loading"></el-button>
+    </HeadCom> -->
+    <div class="tke-content-header">
+      <div class="tke-grid ">
+        <!-- 左侧 -->
+        <div class="grid-left">
+          <h2 class="header-title">集群管理</h2>
+          <el-button class="btn-tke" size="small">台湾台北</el-button>
         </div>
+        <!-- 右侧 -->
+        <div class="grid-right"></div>
       </div>
-      <div class="colony-table">
+    </div>  
+    <div class="colony-main">
+
+      <!-- 新建、搜索相关操作 -->
+      <div class="tke-action">
+        <div class="tke-grid ">
+          <!-- 左侧 -->
+          <div class="grid-left">
+            <el-button class="btn-tke" size="small" type="primary">新建</el-button>
+          </div>
+          <!-- 右侧 -->
+          <div class="grid-right">
+            <div class="dis-flex">
+              <el-input placeholder="请输入内容" size="small" v-model="searchInput" class="tke-search">
+                <el-select class="tke-search-select" v-model="searchSelect" slot="prepend" placeholder="请选择">
+                  <el-option v-for="option in searchOptions" :label="option.label" :value="option.value"></el-option>
+                </el-select>
+                <el-button slot="append" icon="el-icon-search"></el-button>
+              </el-input>
+              <i class="el-icon-download tke-download"></i>
+            </div>
+          </div>
+        </div>
+        
+      </div>
+
+      <!-- 数据列表展示 -->
+      <div class="tke-table">
         <el-table
-          :data="tableData.slice((currpage - 1) * pagesize, currpage * pagesize)"
-          style="width: 100%"
-          height="450"
-          id="exportTable"
-          v-loading="loading"
-        >
-          <el-table-column prop="date" label="ID/名称"></el-table-column>
-          <el-table-column prop="name" label="监控"></el-table-column>
-          <el-table-column prop="address" label="kubernetes版本"></el-table-column>
-          <el-table-column prop="address" label="类型/状态"></el-table-column>
-          <el-table-column prop="address" label="节点数"></el-table-column>
-          <el-table-column prop="address" label="台富雲标签"></el-table-column>
-          <el-table-column prop="address" label="操作"></el-table-column>
+          :data="tableData"
+          style="width: 100%">
+          <el-table-column
+            label="ID/名称"
+            >
+            <template slot-scope="scope">
+              <!-- <span >{{ scope.row.date }}</span> -->
+              <a href="#">cls-n1xokuh6</a>
+              <p class="stk-editor-name">
+                <span>DBA-testDBA-testDBA-testDBA-test</span>
+                <i class="el-icon-edit" @click="showEditNameDlg()"></i>
+              </p>
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="name"
+            label="监控"
+            
+            >
+            <template slot-scope="scope">
+               <i class="icon-chart"></i>
+               <span class="tag-danger">未配告警</span>
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="version"
+            label="kubernetes版本"
+           
+            >
+          </el-table-column>
+          <el-table-column
+            prop="address"
+            label="类型/状态">
+            <template slot-scope="scope">
+              <span>{{scope.row.type}}</span>
+              (<span class="text-green">{{scope.row.state}}</span>)
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="nodeTotal"
+            label="节点数">
+            <template slot-scope="scope">
+              <a href="#">{{scope.row.nodeTotal}}条</a>
+               (<span class="text-green">全部正常</span>)
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="address"
+            label="已分配/总配置">
+            <template slot-scope="scope">
+              <p>CPU: -/-</p>
+              <p>内存: -/-</p>
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="tag"
+            label="腾讯云标签">
+          </el-table-column>
+          <el-table-column
+            label="操作"
+            width="220">
+            <template slot-scope="scope">
+              <a href="#">配置告警</a>
+              <a class="ml10" href="#">添加已有节点</a>
+              <el-dropdown class="ml10 tke-dropdown" @command="handleCommand">
+                <span class="el-dropdown-link " >
+                  更多<i class="el-icon-arrow-down el-icon--right"></i>
+                </span>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item command="a"><a href="#">查看集群凭证</a></el-dropdown-item>
+                  <el-dropdown-item command="b"><a href="#">新建节点</a></el-dropdown-item>
+                  <el-dropdown-item command="c"><a href="#">删除</a></el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown>
+            </template>
+          </el-table-column>
         </el-table>
-        <div class="page">
-          <el-pagination
-            @size-change="handleSizeChange"
-            @current-change="handleCurrentChange"
-            :page-sizes="[20, 30, 40,50,100]"
-            :page-size="pagesize"
-            layout="total, sizes, prev, pager, next, jumper"
-            :total="tableData.length"
-          ></el-pagination>
+
+        <div class="tke-page">
+          <div class="block">
+            <el-pagination
+              @size-change="handleSizeChange"
+              @current-change="handleCurrentChange"
+              :current-page="currentPage4"
+              :page-sizes="[10, 20, 50, 100]"
+              :page-size="10"
+              layout="total, sizes, prev, pager, next"
+              :total="31">
+            </el-pagination>
+          </div>
         </div>
       </div>
     </div>
+
+    <!-- 编辑集群名称弹窗 -->
+    <el-dialog
+      title="编辑集群名称"
+      :visible.sync="editNameDialogVisible"
+      width="500px"
+      custom-class='tke-dialog'
+      >
+      <div>
+        <el-form :label-position="labelPosition" label-width="80px" >
+          <el-form-item label="原名称">
+            <p>集群测试</p>
+          </el-form-item>
+          <el-form-item label="新名称">
+            <el-input size="small" placeholder="请输入新名称"></el-input>
+          </el-form-item>
+        </el-form>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="editNameDialogVisible = false">提交</el-button>
+        <el-button @click="editNameDialogVisible = false">取消</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -61,32 +172,42 @@ export default {
   name: "colony",
   data() {
     return {
+      searchSelect:'',
+      searchInput:'',
+      tableData: [{
+        version: '1.14.3',
+        type: '托管集群',
+        state: '运行中',
+        nodeTotal:'1',
+        tag:'-',
+        address: '上海市普陀区金沙江路 1518 弄'
+      }, {
+        version: '1.14.3',
+        type: '托管集群',
+        state: '运行中',
+        nodeTotal:'1',
+        tag:'-',
+        address: '上海市普陀区金沙江路 1517 弄'
+      }],
+      editNameDialogVisible:false,
+      
+
+
+
       loading: true, //表格加载
       btnload: true, //地域按钮加载状态
       region: "", //地区
-      tableData: [], //表格数据
+      // tableData: [], //表格数据
       //搜索下拉框
       searchOptions: [
         {
-          value: "project-id",
-          label: "項目ID"
+          value: "name",
+          label: "名称"
         },
         {
-          value: "instance-id",
-          label: "實例ID"
+          value: "tag",
+          label: "标签"
         },
-        {
-          value: "instance-name",
-          label: "實例名稱"
-        },
-        {
-          value: "private-ip-address",
-          label: "內網IP"
-        },
-        {
-          value: "public-ip-address ",
-          label: "公網IP"
-        }
       ],
       search: "", // 搜索
       searchInput: "",
@@ -105,6 +226,17 @@ export default {
     this.init();
   },
   methods: {
+    // 编辑集群弹窗相关
+    showEditNameDlg(){
+      this.editNameDialogVisible=true;
+    },
+    //分页操作
+    handleSizeChange(val) {
+      console.log(`每页 ${val} 条`);
+    },
+    handleCurrentChange(val) {
+      console.log(`当前页: ${val}`);
+    },
     //获取列表
     init() {
       this.loading = true;
@@ -208,5 +340,112 @@ export default {
       box-sizing: border-box;
     }
   }
+}
+
+
+//by liling
+.tke-grid{
+  display: flex;
+  align-items: center;
+  .grid-left{
+    flex: 1 1 auto;
+  }
+}
+
+.tke-content-header{
+  color: rgb(0, 0, 0);
+  border-bottom: 1px solid rgb(221, 221, 221);
+  padding: 9px 20px;
+  background: rgb(255, 255, 255);
+  
+  .header-title{
+    font-size: 16px;
+    font-weight: 700;
+    height: 30px;
+    line-height: 30px;
+    margin-right: 20px;
+    float: left;
+  } 
+}
+.tke-action{
+  padding-bottom:10px;
+  .tke-download{
+    font-size: 16px;
+    padding: 8px;
+    color: #666;
+    cursor: pointer;
+  }
+}
+.dis-flex{
+  display: flex;
+  align-items: center;
+}
+.tke-search-select{
+  width: 90px;
+}
+.tke-table{
+  background-color: #fff;
+  box-shadow: 0 2px 3px 0 rgba(0,0,0,.2);
+  margin-left: auto;
+  margin-right: auto;
+  box-sizing: border-box;
+  .el-table{
+    color: #444;
+    .el-icon-edit{
+      cursor: pointer;
+      margin-left: 5px;
+      
+    }
+    .tag-danger{
+      display: inline-block;
+      background-color: #ff9d00;
+      color: #fff;
+      height: 18px;
+      line-height: 18px;
+      padding: 0 3px;
+      vertical-align: 4px;
+      margin-left: 2px;
+    
+    }
+  }
+  .tke-page{
+    padding: 20px;
+    display: flex;
+    flex-direction: row-reverse;
+  }
+}
+
+.icon-chart{
+  background-image: url("./../../../assets/CAM/images/cvm-20199061519.svg");
+  background-size: 267px 176px;
+  background-repeat: no-repeat;
+  background-position: -47px -71px;
+  height: 15px;
+  width: 16px;
+  display: inline-block;
+  cursor: pointer;
+}
+.text-green{
+  color: #0abf5b;
+}
+.ml10{
+  margin-left: 10px;
+}
+.tke-dropdown{
+  font-size: 12px;
+}
+.el-dropdown-menu__item{
+  font-size: 12px;
+}
+
+// 弹窗相关
+.el-dialog__footer .dialog-footer{
+  display: block;
+  text-align: center;
+}
+</style>
+<style>
+.tke-table .el-table .cell{
+  line-height: 18px;
 }
 </style>

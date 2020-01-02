@@ -1,14 +1,18 @@
 <template>
   <div class="Monitor">
     <!-- 时间粒度搜素 -->
-    <XTimeX v-on:switchData="GetDat" :classsvalue="value"></XTimeX>
+    <div class="box">
+      <XTimeX v-on:switchData="GetDat" :classsvalue="value"></XTimeX>
+      <span @click="reload">刷新</span>
+    </div>
     <div class="box-dis p-style">
       <p>
-        <i class="el-icon-info"></i>{{$t('CCN.tabs.tipN1')}}
+        <i class="el-icon-info"></i>
+        {{$t('CCN.tabs.tipN1')}}
       </p>
       <!-- <p>
         <el-button type="text">{{$t('CCN.tabs.exportDta')}}</el-button>
-      </p> -->
+      </p>-->
     </div>
     <div class="box-table">
       <!-- 表格 -->
@@ -98,7 +102,7 @@
 
 <script>
 import moment from "moment";
-import XTimeX from "@/components/public/TimeXK";
+import XTimeX from "../components/TimeXK";
 import echartLine from "@/components/public/echars-line";
 import { All_MONITOR } from "@/constants";
 export default {
@@ -115,7 +119,8 @@ export default {
       tableData: [], // 获取列表数据
       timeData: [], // 折线图的x轴数据
       jingData: [],
-      MetricName: ""
+      MetricName: "",
+      json: []
     };
   },
   components: {
@@ -124,7 +129,11 @@ export default {
   },
   created() {},
   methods: {
+    reload() {
+      this.GetDat(this.json);
+    },
     GetDat(data) {
+      this.json = data;
       this.period = data[0];
       this.Start_End = data[1];
       this.value = data[2];
@@ -146,7 +155,7 @@ export default {
         "個/秒",
         "個/秒",
         "Mbps",
-        "Mbps",
+        "Mbps"
       ];
       this.tableData = [];
       for (let i = 0; i < metricNArr.length; i++) {
@@ -161,7 +170,7 @@ export default {
     Obtain(metricN, symbol) {
       const param = {
         Version: "2018-07-24",
-        Region: localStorage.getItem('regionv2'),
+        Region: localStorage.getItem("regionv2"),
         Namespace: "QCE/VBC",
         MetricName: metricN,
         "Instances.0.Dimensions.0.Name": "CcnId",
@@ -178,7 +187,7 @@ export default {
     getModality(MetricName) {
       const param = {
         Version: "2018-07-24",
-        Region: localStorage.getItem('regionv2'),
+        Region: localStorage.getItem("regionv2"),
         Namespace: "QCE/VBC",
         MetricName: MetricName,
         "Instances.0.Dimensions.0.Name": "InstanceId",
@@ -211,10 +220,10 @@ export default {
         return (value = "單地域總入包量");
       }
       if (value === "RegionOutBandwidth") {
-        return (value = "	單地域總出帶寬");
+        return (value = "	單地域總出頻寬");
       }
       if (value === "RegionInBandwidth") {
-        return (value = "單地域總入帶寬");
+        return (value = "單地域總入頻寬");
       }
       if (value === "OutPkg") {
         return (value = "地域間出包量");
@@ -223,10 +232,10 @@ export default {
         return (value = "	地域間入包量");
       }
       if (value === "OutBandwidth") {
-        return (value = "地域間出帶寬");
+        return (value = "地域間出頻寬");
       }
       if (value === "InBandwidth") {
-        return (value = "地域間入帶寬");
+        return (value = "地域間入頻寬");
       }
     },
     UpTitle(value) {
@@ -296,6 +305,17 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.box {
+  position: relative;
+  span {
+    position: absolute;
+    right: 20px;
+    top: 7px;
+    cursor: pointer;
+    color: #3e8ef7;
+  }
+}
+
 .symbol {
   color: #bbb;
 }

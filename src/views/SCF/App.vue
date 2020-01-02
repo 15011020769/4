@@ -23,7 +23,11 @@ import LeftAside from "./Public/Menu";
 import { ALL_CITY } from "@/constants";
 export default {
   data() {
-    return {};
+    return {
+
+
+      
+    };
   },
   components: {
     NavHeader,
