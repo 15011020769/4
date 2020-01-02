@@ -122,57 +122,18 @@
       </div>
     </div>
     <!-- 购买短信 -->
-    <el-dialog title="购买短信" :visible.sync="dialogVisible" width="40%" :close-on-click-modal="false">
-      <div class="dialog">
-        <div class="explain">
-          <p>所购短信配额没有使用限时，用完为止</p>
-        </div>
-        <div class="dialog-main">
-          <dl>
-            <dt>所属类型</dt>
-            <dd>
-              <el-button
-                v-for="(item,index) in btnArr"
-                :key="index"
-                @click="msgBtn(index)"
-                :class="liIndex == index ? 'active' : ''"
-              >{{item}}</el-button>
-            </dd>
-          </dl>
-          <dl>
-            <dt>短信</dt>
-            <dd>
-              <el-input-number v-model="num" :min="1" label="描述文字" style="margin-right:10px;"></el-input-number>条
-            </dd>
-          </dl>
-          <dl class="dl-price">
-            <dt>总计费用</dt>
-            <dd>
-              <span>{{msgPrice}}</span>元
-            </dd>
-          </dl>
-        </div>
-      </div>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
-      </span>
-    </el-dialog>
+    <bugmsg :dialogVisible="dialogVisible" @cancel="cancel" @save="save" />
   </div>
 </template>
 
 <script>
 import Header from "@/components/public/Head";
 import { ALL_CITY, ALL_PROJECT } from "@/constants";
+import bugmsg from "../components/buymsg";
 export default {
   name: "overview",
   data() {
     return {
-      msgPrice: 0,
-      num: 100,
-      //购买短信 类型
-      liIndex: 0,
-      btnArr: ["基础告警", "云拨测告警", "自定义监控告警", "自定义消息"],
       dialogVisible: false, //购买短信弹出框
       region: "",
       tableData: [], //表格数据
@@ -197,7 +158,8 @@ export default {
     };
   },
   components: {
-    Header
+    Header,
+    bugmsg
   },
   created() {
     this.GetCity();
@@ -208,9 +170,13 @@ export default {
     buyMessgae() {
       this.dialogVisible = true;
     },
-    //类型
-    msgBtn(index) {
-      this.liIndex = index;
+    //取消
+    cancel() {
+      this.dialogVisible = false;
+    },
+    //确定
+    save() {
+      this.dialogVisible = false;
     },
     //获取城市
     GetCity() {
@@ -276,41 +242,6 @@ export default {
   line-height: 28px;
 }
 .overview-wrap {
-  .dialog-main {
-    .dl-price {
-      dd {
-        span {
-          font-size: 24px;
-          font-weight: 700;
-          color: #ed711f;
-        }
-      }
-    }
-    dl {
-      display: flex;
-      font-size: 12px;
-      display: flex;
-      align-items: center;
-      margin-top: 10px;
-      dt {
-        width: 70px;
-      }
-    }
-  }
-  .active {
-    border-color: #006eff;
-    background: #fff;
-    color: #006eff;
-    z-index: 100;
-    position: relative;
-  }
-  .dialog-main >>> .el-button {
-    font-size: 12px;
-    padding: 0 10px;
-    box-sizing: border-box;
-    margin: 0;
-    margin-left: -1px;
-  }
   a {
     color: #006eff;
     cursor: pointer;
