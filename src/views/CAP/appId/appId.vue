@@ -36,11 +36,24 @@
   }
 
 </script>
+<style lang="scss">
+  .el-tabs__content {
+    background: #f2f2f2
+  }
+
+  .el-tabs__header {
+    padding: 0 20px;
+    margin: 0;
+  }
+
+</style>
 <style lang="scss" scoped>
   .appid {
+
+
     .appidTabs {
-      margin-left: 20px;
-      margin-right: 20px;
+      background: #fff;
+
     }
   }
 

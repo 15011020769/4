@@ -1,5 +1,5 @@
 <template>
-  <div class="first">
+  <div class="appidfirst">
     sss
   </div>
 </template>
@@ -13,6 +13,6 @@
   }
 
 </script>
-<style lang="scss">
+<style scoped lang="scss">
 
 </style>
