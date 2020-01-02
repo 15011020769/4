@@ -220,10 +220,10 @@ export default {
         return (value = "單地域總入包量");
       }
       if (value === "RegionOutBandwidth") {
-        return (value = "	單地域總出帶寬");
+        return (value = "	單地域總出頻寬");
       }
       if (value === "RegionInBandwidth") {
-        return (value = "單地域總入帶寬");
+        return (value = "單地域總入頻寬");
       }
       if (value === "OutPkg") {
         return (value = "地域間出包量");
@@ -232,10 +232,10 @@ export default {
         return (value = "	地域間入包量");
       }
       if (value === "OutBandwidth") {
-        return (value = "地域間出帶寬");
+        return (value = "地域間出頻寬");
       }
       if (value === "InBandwidth") {
-        return (value = "地域間入帶寬");
+        return (value = "地域間入頻寬");
       }
     },
     UpTitle(value) {
