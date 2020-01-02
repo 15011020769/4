@@ -91,11 +91,18 @@
                   :no-data-text="$t('CCN.total.tdno')"
                 >
                   <el-option
-                    v-for="(item2,index2) in vpcs"
-                    :key="index2"
-                    :label="item2.VpcId"
-                    :value="item2.VpcId"
-                  ></el-option>
+                    v-for="(item, index) in vpcs"
+                    :key="index"
+                    :label="item.VpcId"
+                    :value="item.VpcId"
+                  >
+                    <span
+                      v-if="item.VpcId "
+                    >{{item.VpcId + '(' +item.VpcName + '|' + item.CidrBlock + ')' }}</span>
+                    <span
+                      v-if="item.directConnectGatewayId"
+                    >{{item.directConnectGatewayId + '(' + item.directConnectGatewayName + '|' + item.vpcCidrBlock + ')' }}</span>
+                  </el-option>
                 </el-select>
               </td>
             </div>
@@ -146,7 +153,7 @@ export default {
       // 添加关联实例表单
       form: {
         instanceType: "",
-        instanceRegion: localStorage.getItem('regionv2'),
+        instanceRegion: localStorage.getItem("regionv2"),
         instanceId: ""
       },
       value: "",
@@ -192,7 +199,7 @@ export default {
       this.loadShow = true;
       var params = {
         Version: "2017-03-12",
-        Region: localStorage.getItem('regionv2'),
+        Region: localStorage.getItem("regionv2"),
         CcnId: this.ccnId
       };
       // 查询关联实例列表
@@ -213,7 +220,7 @@ export default {
     doDelCcnIns: function() {
       var params = {
         Version: "2017-03-12",
-        Region: localStorage.getItem('regionv2'),
+        Region: localStorage.getItem("regionv2"),
         CcnId: this.instance.CcnId,
         "Instances.0.InstanceId": this.instance.InstanceId,
         "Instances.0.InstanceRegion": this.instance.InstanceRegion,
@@ -243,7 +250,7 @@ export default {
     getInstanceIds: function(instanceType) {
       var params = {
         Version: "2017-03-12",
-        Region: localStorage.getItem('regionv2')
+        Region: localStorage.getItem("regionv2")
       };
       if (instanceType == "VPC") {
         // 私有网络
@@ -251,9 +258,12 @@ export default {
           this.vpcs = res.Response.VpcSet;
         });
       } else if (instanceType == "DIRECTCONNECT") {
+        const info = {
+          networkType: "CCN"
+        };
         // 专线网络
-        this.axios.post(DIRECTCONNECTGATEWAYS_LIST, params).then(res => {
-          this.vpcs = res.Response.DirectConnectGatewaySet;
+        this.axios.post(DIRECTCONNECTGATEWAYS_LIST, info).then(res => {
+          this.vpcs = res.data;
         });
       }
       // 过滤已存在的实例数据(需要等待上面的接口调用完成再执行)
@@ -283,7 +293,7 @@ export default {
         // 关联实例
         var params = {
           Version: "2017-03-12",
-          Region: localStorage.getItem('regionv2'),
+          Region: localStorage.getItem("regionv2"),
           CcnId: this.ccnId,
           "Instances.0.InstanceId": ins.instanceId,
           "Instances.0.InstanceRegion": ins.instanceRegion,
@@ -305,7 +315,7 @@ export default {
         this.newVisible = false;
         this.form = {
           instanceType: "",
-          instanceRegion: localStorage.getItem('regionv2'),
+          instanceRegion: localStorage.getItem("regionv2"),
           instanceId: ""
         };
       }
