@@ -312,16 +312,16 @@ export default {
   }
 
   .PRO-style {
-    width: 68%;
+    width: 800px;
     height: 470px;
     background-color: #202020;
     color: #fff;
     display: show;
     overflow: hidden;
-    z-index: 999;
     position: fixed;
     top: 60px;
     left: 200px;
+    z-index: 10000;
   }
 }
 
