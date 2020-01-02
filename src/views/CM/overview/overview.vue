@@ -22,6 +22,7 @@
       </div>
       <div class="main-box">
         <div class="left">
+          <!-- 近24小时服务健康状态 -->
           <div class="box">
             <div class="head">
               <h3>近24小时服务健康状态</h3>
@@ -42,6 +43,7 @@
               <el-table-column prop="address" label="影响对象数"></el-table-column>
             </el-table>
           </div>
+          <!-- 近7天监控时间轴 -->
           <div class="box">
             <div class="head">
               <h3>近7天监控时间轴</h3>
@@ -69,6 +71,7 @@
           </div>
         </div>
         <div class="right">
+          <!-- 当月已使用短信统计 -->
           <div class="box">
             <div class="head">
               <h3 style="flex:1;">
@@ -82,7 +85,7 @@
                   <i class="el-icon-info cursor"></i>
                 </el-tooltip>
               </h3>
-              <a>购买短信</a>
+              <a @click="buyMessgae">购买短信</a>
             </div>
             <div class="box-main" style="margin-top:10px;">
               <div class="progress">
@@ -118,6 +121,43 @@
         </div>
       </div>
     </div>
+    <!-- 购买短信 -->
+    <el-dialog title="购买短信" :visible.sync="dialogVisible" width="40%" :close-on-click-modal="false">
+      <div class="dialog">
+        <div class="explain">
+          <p>所购短信配额没有使用限时，用完为止</p>
+        </div>
+        <div class="dialog-main">
+          <dl>
+            <dt>所属类型</dt>
+            <dd>
+              <el-button
+                v-for="(item,index) in btnArr"
+                :key="index"
+                @click="msgBtn(index)"
+                :class="liIndex == index ? 'active' : ''"
+              >{{item}}</el-button>
+            </dd>
+          </dl>
+          <dl>
+            <dt>短信</dt>
+            <dd>
+              <el-input-number v-model="num" :min="1" label="描述文字" style="margin-right:10px;"></el-input-number>条
+            </dd>
+          </dl>
+          <dl class="dl-price">
+            <dt>总计费用</dt>
+            <dd>
+              <span>{{msgPrice}}</span>元
+            </dd>
+          </dl>
+        </div>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -128,6 +168,12 @@ export default {
   name: "overview",
   data() {
     return {
+      msgPrice: 0,
+      num: 100,
+      //购买短信 类型
+      liIndex: 0,
+      btnArr: ["基础告警", "云拨测告警", "自定义监控告警", "自定义消息"],
+      dialogVisible: false, //购买短信弹出框
       region: "",
       tableData: [], //表格数据
       //下拉框
@@ -158,6 +204,14 @@ export default {
     this.getProject();
   },
   methods: {
+    //购买短信
+    buyMessgae() {
+      this.dialogVisible = true;
+    },
+    //类型
+    msgBtn(index) {
+      this.liIndex = index;
+    },
     //获取城市
     GetCity() {
       this.axios.get(ALL_CITY).then(res => {
@@ -186,17 +240,77 @@ export default {
 .overview-wrap >>> .el-progress-bar__inner {
   border-radius: 0;
 }
+.overview-wrap >>> .el-dialog__body {
+  padding: 20px;
+  box-sizing: border-box;
+}
 .overview-wrap >>> .el-button,
-.overview-wrap >>> .el-input__inner {
+.overview-wrap >>> .el-input__inner,
+.overview-wrap >>> .el-input-number__increase,
+.overview-wrap >>> .el-input-number__decrease {
   height: 30px;
   border-radius: 0;
   padding-top: 0;
   line-height: 30px;
+  font-size: 12px;
+}
+.overview-wrap >>> .el-input-number__increase,
+.overview-wrap >>> .el-input-number__decrease {
+  top: 5px;
+  border-top: 1px #dcdfe6 solid;
+  border-bottom: 1px #dcdfe6 solid;
+}
+.overview-wrap >>> .explain {
+  padding: 10px 30px 10px 20px;
+  vertical-align: middle;
+  color: #003b80;
+  border: 1px solid #97c7ff;
+  background: #e5f0ff;
+
+  p {
+    font-size: 11px;
+    line-height: 18px;
+  }
 }
 .overview-wrap >>> .el-button {
   line-height: 28px;
 }
 .overview-wrap {
+  .dialog-main {
+    .dl-price {
+      dd {
+        span {
+          font-size: 24px;
+          font-weight: 700;
+          color: #ed711f;
+        }
+      }
+    }
+    dl {
+      display: flex;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      margin-top: 10px;
+      dt {
+        width: 70px;
+      }
+    }
+  }
+  .active {
+    border-color: #006eff;
+    background: #fff;
+    color: #006eff;
+    z-index: 100;
+    position: relative;
+  }
+  .dialog-main >>> .el-button {
+    font-size: 12px;
+    padding: 0 10px;
+    box-sizing: border-box;
+    margin: 0;
+    margin-left: -1px;
+  }
   a {
     color: #006eff;
     cursor: pointer;
