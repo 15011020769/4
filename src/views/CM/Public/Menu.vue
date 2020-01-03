@@ -63,7 +63,7 @@
           <el-menu-item index="configuration">
             <span slot="title">监控配置</span>
           </el-menu-item>
-          <el-menu-item index="VPNgateway">
+          <el-menu-item index="view">
             <span slot="title">监控视图</span>
           </el-menu-item>
         </el-menu-item-group>
