@@ -435,26 +435,30 @@ export default {
     },
     // 更新用户组
     saveGroup() {
-      let groupId = parseInt(this.$route.query.GroupId);
-      let params = {
-        Version: "2019-01-16",
-        GroupId: groupId
-      };
-      if (this.groupData.GroupName != "") {
-        params["GroupName"] = this.groupData.GroupName;
+      if (this.groupData.GroupName == "") {
+        this.$message("用户组名称不能为空");
+      } else {
+        let groupId = parseInt(this.$route.query.GroupId);
+        let params = {
+          Version: "2019-01-16",
+          GroupId: groupId
+        };
+        if (this.groupData.GroupName != "") {
+          params["GroupName"] = this.groupData.GroupName;
+        }
+        if (this.groupData.Remark != "") {
+          params["Remark"] = this.groupData.Remark;
+        }
+        this.axios
+          .post(UPDATA_GROUP, params)
+          .then(res => {
+            this.init();
+          })
+          .catch(error => {
+            console.log(error);
+          });
+        this.flag = !this.flag;
       }
-      if (this.groupData.Remark != "") {
-        params["Remark"] = this.groupData.Remark;
-      }
-      this.axios
-        .post(UPDATA_GROUP, params)
-        .then(res => {
-          this.init();
-        })
-        .catch(error => {
-          console.log(error);
-        });
-      this.flag = !this.flag;
     },
     // 获取用户组所属子用户信息
     getUsers() {
@@ -651,7 +655,7 @@ export default {
         .post(DETACH_POLICY, params)
         .then(res => {
           this.selectGroupPolicies();
-          this.$message('移除成功')
+          this.$message("移除成功");
         })
         .catch(error => {
           console.log(error);
@@ -707,7 +711,7 @@ export default {
       this.axios
         .post(ATTACH_GROUP, policiesParams)
         .then(res => {
-          this.$message('添加成功')
+          this.$message("添加成功");
         })
         .catch(error => {
           this.$message.error(error);
