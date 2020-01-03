@@ -407,7 +407,7 @@
         let params = {
           Action: "GetFunction",
           Version: "2018-04-16",
-          Region: "ap-guangzhou" //this.$cookie.get("regionv2")
+          Region: localStorage.getItem('regionv2'), //this.$cookie.get("regionv2")
         };
         let functionName = this.$route.query.functionName;
         if (functionName != "" && functionName != null) {
@@ -446,7 +446,7 @@
         let params = {
           Action: "UpdateFunctionConfiguration",
           Version: "2018-04-16",
-          Region: "ap-guangzhou", //this.$cookie.get("regionv2"),
+          Region: localStorage.getItem('regionv2'),
           Description: this.functionData.Description,
           FunctionName: this.functionData.FunctionName,
           MemorySize: this.functionData.MemorySize,
@@ -478,7 +478,7 @@
       getfunction() {
         let params = {
           Version: "2018-04-16",
-          Region: "ap-guangzhou", //this.$cookie.get("regionv2"),
+          Region: localStorage.getItem('regionv2'),
           Action: "GetFunction"
         };
         let functionName = this.$route.query.functionName;
@@ -539,7 +539,7 @@
         let params = {
           Action: "PublishVersion",
           Version: "2018-04-16",
-          Region: "ap-guangzhou", //this.$cookie.get("regionv2"),
+          Region: localStorage.getItem('regionv2'),
           Description: this.publishVersion.descript
         };
         let functionName = this.$route.query.functionName;
@@ -604,7 +604,7 @@
         let params = {
           Action: "ListVersionByFunction",
           Version: "2018-04-16",
-          Region: "ap-guangzhou" //this.$cookie.get("regionv2")
+          Region: localStorage.getItem('regionv2'),
         };
         let functionName = this.$route.query.functionName;
         if (functionName != "" && functionName != null) {
@@ -633,7 +633,7 @@
         this.centerDialogVisible = false;
         let params = {
           Version: "2018-04-16",
-          Region: "ap-guangzhou", //this.$cookie.get("regionv2"),
+          Region: localStorage.getItem('regionv2'),
           Action: "DeleteTrigger",
           TriggerName: this.childData.TriggerName,
           Type: this.childData.Type
