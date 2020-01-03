@@ -202,7 +202,7 @@
       searchVersion() {
         let params = {
           Version: '2018-04-16',
-          Region: 'ap-guangzhou', // localStorage.getItem('regionv2'),
+          Region: localStorage.getItem('regionv2'),
           FunctionName: this.ID
         }
         this.axios
