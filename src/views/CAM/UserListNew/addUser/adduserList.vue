@@ -147,7 +147,7 @@
         </div>
       </div>
       <div class="btn-box">
-        <el-button @click="_lastStep" v-show="this.active == 0 || this.active == 1">上一步</el-button>
+        <el-button @click="_lastStep" v-show="this.active == 1">上一步</el-button>
         <el-button type="primary" @click="_nextStep('ruleForm')">{{btnVal}}</el-button>
       </div>
     </div>

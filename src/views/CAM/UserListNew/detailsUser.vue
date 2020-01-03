@@ -588,7 +588,6 @@ export default {
     },
     //当前一行移出组
     removeGroup(val) {
-      console.log(val.GroupId);
       this.GroupId = val.GroupId;
       this.GroupLoading = true;
       this.groupTitle = "确认移出";

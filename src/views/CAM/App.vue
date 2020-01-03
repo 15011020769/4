@@ -28,19 +28,6 @@ export default {
   components: {
     NavHeader,
     LeftAside
-  },
-  mounted() {
-    this.GetCity();
-  },
-  methods: {
-    // 获取城市列表
-    GetCity() {
-      this.axios.get(ALL_CITY).then(data => {
-        let city = data.data[0];
-        this.$cookie.set("regionv1", city.regionCode);
-        this.$cookie.set("regionv2", city.Region);
-      });
-    }
   }
 };
 </script>
