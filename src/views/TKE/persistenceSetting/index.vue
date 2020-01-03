@@ -1,11 +1,10 @@
 <template>
   <div class="persistenceSetting">
-    <!-- 可以返回的头部 -->
     <div class="back-hd flex">
-      <router-line :to="'/persistence'">
-        <i class="el-icon-back back-hd-icon"></i>
-      </router-line>
-      <h2>设置事件持久化</h2>
+      <router-link :to="'/persistence'">
+        <i class="el-icon-back hd-icon-back"></i>
+      </router-link>
+      <h3>设置事件持久化</h3>
     </div>
       <div class="tf-g app-tke-fe-content__inner">
         <div class="event-persistence font">
@@ -56,11 +55,11 @@
             <div class='data-card-hd' style="line-height:28px;">日志服务实例</div>
             <div>
               <div class="log-div" style="margin-right:20px;">
-                <input class="log-input log-input-red" type="text" placeholder="无" disabled>
+                <input class="log-input log-input-red" type="text" placeholder="无">
                 <i class="el-icon-caret-bottom log-icon"></i>
               </div>
               <div class="log-div">
-                <input class="log-input log-input-red" type="text" placeholder="无" disabled>
+                <input class="log-input log-input-red" type="text" placeholder="无">
                 <i class="el-icon-caret-bottom log-icon"></i>
               </div>
               <div style="padding-top:20px">
@@ -90,20 +89,19 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.back-hd-icon {
-  color: #006eff;
-  font-size: 20px;
-  font-weight: 900;
-  padding-right: 8px;
-  cursor:pointer;
-}
 .back-hd {
   width: 100%;
   height: 51px;
   background: white;
   padding:15px;
   border-bottom: 1px solid #cccccc;
-  font-size: 12px;
+  font-size: 16px;
+}
+.hd-icon-back {
+  font-weight: 900;
+  font-size: 20px;
+  color: #006eff;
+  padding-right: 10px;
 }
 .log-div {
   display: inline-block;
@@ -112,7 +110,6 @@ export default {
 .log-input-red {
   border: 1px solid red;
   color:red;
-  background: none;
 }
 .log-icon {
   position: absolute;

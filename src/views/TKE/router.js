@@ -113,6 +113,14 @@ export default new Router({
       }
     },
     {
+      path: '/warningCreate',
+      name: 'warningCreate',
+      component: () => import(/* webpackChunkName: "warningCreate" */ './warningCreate/index.vue'),
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
       path: '/persistence', // 事件持久化
       name: 'persistence',
       component: () => import(/* webpackChunkName: "persistence" */ './persistence/index.vue'),

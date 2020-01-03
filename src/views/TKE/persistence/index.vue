@@ -1,6 +1,10 @@
 <template>
   <div class="persistence-wrap">
-    <HeadCom title="事件持久化"></HeadCom>
+    <div class="back-hd flex">
+      <h2>事件持久化</h2>
+      <div style="width:20px"></div>
+      <el-button  type="primary" class="init hd-button">中国台北</el-button>
+    </div>
     <div class="app-tke-fe-content__inner">
       <div class="tf-g">
         <!-- 搜索框 -->
@@ -20,6 +24,10 @@
             </el-row>
           </div>
           <!-- 数据绑定 -->
+          <div class="ep-data-card-main font" style="text-align:center;">
+            您选择的改区域的集群列表为空，您可以
+            <a href="">[新建一个集群]</a>，或切换到其他地域
+          </div>
           <div class="ep-data-card-main" style="padding-top:20px;">
             <el-row>
               <el-col :span="4"><div class="font">
@@ -56,6 +64,29 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.hd-button {
+  width: 80px;
+  height: 22px;
+  padding-left: 30px;
+}
+.back-hd {
+  width: 100%;
+  height: 51px;
+  background: white;
+  padding:15px;
+  border-bottom: 1px solid #cccccc;
+  font-size: 12px;
+}
+.init{
+  padding: 0;
+  margin: 0;
+}
+.show {
+  display: block;
+}
+.hide {
+  display: none;
+}
 .center {
   padding-top: 6px;
 }
@@ -92,7 +123,6 @@ export default {
   top: 20px;
 }
 .app-tke-fe-content__inner {
-  padding-top: 20px;
   max-width: 1360px;
   margin:0 auto;
 }
