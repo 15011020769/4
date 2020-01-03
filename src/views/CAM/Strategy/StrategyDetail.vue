@@ -70,25 +70,23 @@
                   @click="Relation_user"
                   size="small"
                 >{{$t('CAM.strategy.straGroup')}}</el-button>
-                <el-button
+                <!-- <el-button
                   type="primary"
                   @click="Relieve_user"
                   size="small"
-                  :disabled="display"
-                >{{$t('CAM.strategy.outBindUser')}}</el-button>
+                >{{$t('CAM.strategy.outBindUser')}}</el-button> -->
               </p>
               <div class="config_table">
                 <el-table
                   v-loading="loading"
                   :data="policysData.slice((currpage - 1) * 10, currpage * 10)"
                   height="300"
-                  @selection-change="handleSelectionChange"
                   :row-style="{height:0}"
                   :cell-style="{padding:'5px 10px'}"
                   :header-cell-style="{height:'20px',padding:'0px 10px'}"
                   style="width: 100%"
                 >
-                  <el-table-column type="selection" width="60"></el-table-column>
+                  <!-- <el-table-column type="selection" width="60"></el-table-column> -->
                   <el-table-column prop="date" :label="$t('CAM.strategy.straGroup')">
                     <template slot-scope="scope">
                       <el-button
@@ -400,11 +398,16 @@ export default {
     },
     handleClick() {},
     Relieve_user() {
-      this.Relieve_dialogVisible = true;
+      if (this.policysSelData.length != 0) {
+        this.Relieve_dialogVisible = true;
+      } else {
+        this.$message("请选择要解除关联的用户/用户组");
+      }
     },
     // 批量解除绑定到策略的实体
     removePolicysEntity() {
-      let arrs = this.policysSelData;
+      let arrs = this.selectData;
+      console.log(this.selectData);
       for (let i = 0; i < arrs.length; i++) {
         let obj = arrs[i];
         this.removePolicyEntity(obj);
@@ -412,12 +415,9 @@ export default {
       this.Relieve_dialogVisible = false;
     },
     handleSelectionChange(val) {
-      if (val != "") {
-        this.policysSelData = val;
-        this.display = false;
-        this.selTotal = val.length;
-      } else {
-        this.display = true;
+      this.policysSelData = val;
+      if (val.length != 0) {
+        this.selectData = JSON.parse(JSON.stringify(val));
       }
     },
     handleClosePolicyRemove() {

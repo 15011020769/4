@@ -549,7 +549,6 @@ export default {
         this.btnVal = "完成";
       }
       if (this.active == 2) {
-        console.log(this.multipleSelection);
         this.multipleSelection.forEach(item => {
           //从策略列表中选取策略关联
           if (this.activeName == "first") {
