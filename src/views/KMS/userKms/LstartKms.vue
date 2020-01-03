@@ -67,7 +67,6 @@ export default {
     //启动密钥确定按钮
     startKmsSure(){
       this.thisShow=false;
-      this.$emit('startKmsSure',this.thisShow);
       let params = {
         Version: '2019-01-18',
         Region: VueCookie.get("regionv2"),
@@ -75,8 +74,8 @@ export default {
       };
      
       this.axios.post(EnableKey, params).then(res => {
+        this.$emit('startKmsSure',[this.thisShow,res]);
         this.$parent.GetList();
-        
       });
     },
     //禁用密钥确定按钮
