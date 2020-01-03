@@ -146,11 +146,11 @@
           <el-tab-pane :label="$t('CAM.Role.roleCarrier')" name="second">
             <div class="config">
               <p style="margin:10px">
-                <el-button
+                <!-- <el-button
                   type="primary"
                   @click="Relation_user"
                   size="small"
-                >{{$t('CAM.Role.Management')}}</el-button>
+                >{{$t('CAM.Role.Management')}}</el-button>-->
               </p>
               <div class="config_table">
                 <el-table
@@ -183,7 +183,7 @@
                     </template>
                   </el-table-column>
                 </el-table>
-                <div class="Right-style pagstyle">
+                <div class="Right-style pagstyle" v-show="activeName == 'first'">
                   <span
                     style="font-size:12px;color:#888;margin-right:20px;"
                   >{{$t('CAM.userList.choose')}} {{selTotalNum}} 项，共 {{TotalNum}} 项</span>
@@ -416,7 +416,8 @@ export default {
           console.log(res);
           let resInfo = res.Response.RoleInfo;
           let PolicyDocument = JSON.parse(resInfo.PolicyDocument);
-          this.TotalCounts = PolicyDocument.statement[0].principal.service.length
+          this.TotalCounts =
+            PolicyDocument.statement[0].principal.service.length;
           if (typeof PolicyDocument.statement[0].principal.qcs === "object") {
             _this.roleCarrier = PolicyDocument.statement[0].principal.qcs;
             resInfo.PolicyDocument =

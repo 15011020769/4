@@ -31,7 +31,7 @@
               <el-col :span="8"><div class="font center">-</div></el-col>
               <el-col :span="4"><div class="font center">
                 <router-link :to="'/persistenceSetting/'+uid">
-                  <a href="javascript:;">设置</a>
+                  <span>设置</span>
                 </router-link>
                 </div></el-col>
             </el-row>

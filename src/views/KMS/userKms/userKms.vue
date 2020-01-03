@@ -173,7 +173,7 @@
           class="dialogModel"
           :title="$t('KMS.total.planDeleteKms')"
           :visible.sync="dialogModelOpenDelete"
-          width="30%"
+          width="40%"
           :before-close="handleCloseOpenDelete"
         >
           <p class="deleteOpen">{{$t('KMS.total.tip3')}}</p>
@@ -611,7 +611,21 @@ export default {
     },
     //启用密钥确定按钮
     startKmsSure(sureShow) {
-      this.dialogModelKms = sureShow;
+      this.dialogModelKms = sureShow[0];
+      console.log(sureShow)
+      // if (sureShow[1].Response.Error !== undefined) {
+      //     this.$message({
+      //       showClose: true,
+      //       message: this.$t("KMS.total.noRules"),
+      //       type: "error"
+      //     });
+      //   } else {
+      //     this.$message({
+      //       showClose: true,
+      //       message: "新建成功",
+      //       type: "success"
+      //     });
+      //   }
     },
     //禁用密钥确定按钮
     stopKmsSure(sureShow) {

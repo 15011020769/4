@@ -181,6 +181,13 @@ export default {
 </script>
 
 <style scoped lang='scss'>
+.wrap >>> .el-input__inner,.wrap >>> .el-button{
+  height: 30px;
+  line-height: 30px;
+  padding-top: 0;
+  border-radius: 0;
+  font-size: 12px;
+}
 .omit {
   // width: 170px;
   overflow: hidden;

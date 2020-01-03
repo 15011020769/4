@@ -10,7 +10,7 @@
           <h2>{{$t('KMS.total.kmsInfo')}}</h2>
           <div class="detailList">
             <p><span>{{$t('KMS.total.name')}}</span><span>{{keyList.Alias}}</span><i class="el-icon-edit" @click="changeNameHand"></i></p>
-            <el-dialog class="changeNameModel" :title="$t('KMS.total.changeKmsName')" :visible.sync="dialogModel1" width="50%" :before-close="handleClose1">
+            <el-dialog class="changeNameModel" :title="$t('KMS.total.changeKmsName')" :visible.sync="dialogModel1" width="40%" :before-close="handleClose1">
               <div class="dialogModelCon newClear">
                 <div class="newClear"><span class="dialogText">{{$t('KMS.total.oldName')}}</span><span>{{keyList.Alias}}</span></div>
                 <div class="newClear"><span class="dialogText">{{$t('KMS.total.newName')}}</span><span>
@@ -44,7 +44,7 @@
               <a href="#" v-if="keyList.KeyRotationEnabled" @click="startChange(keyList,$event)">{{$t('KMS.total.stopChange')}}</a>
             </p>
             <p><span>{{$t('KMS.total.descriptInfo')}}</span><span>{{keyList.Description}}</span><i class="el-icon-edit" @click="newDescription"></i></p>
-            <el-dialog class="changeNameModel" :title="$t('KMS.total.changeKmsInfo')" :visible.sync="dialogModel2" width="30%" :before-close="handleClose2">
+            <el-dialog class="changeNameModel" :title="$t('KMS.total.changeKmsInfo')" :visible.sync="dialogModel2" width="40%" :before-close="handleClose2">
               <div class="dialogModelCon">
                 <div class="newClear"><span>{{$t('KMS.total.oldDescript')}}</span><span>{{keyList.Description}}</span></div>
                 <div class="newClear"><span>{{$t('KMS.total.newDescript')}}</span><span>
@@ -70,7 +70,7 @@
               <p><span>{{$t('KMS.total.kmsMaterial')}}</span><span><a href="#" :class=" keyList.KeyState=='PendingDelete' || keyList.KeyState=='Disabled'?'atclor':''" @click="dialogModel3=true" >{{$t('KMS.total.reImport')}}</a>&nbsp;&nbsp;&nbsp;<a href="#" :class=" keyList.KeyState=='PendingDelete'?'atclor':''" @click="dialogModel4=true">{{$t('KMS.total.deleteKmsM')}}</a></span></p>
               <p><span>{{$t('KMS.total.outTime')}}</span><span><span style="color: #000;width: auto;">{{timestampToTime(keyList.ValidTo)}}</span></span></p>
             </div>
-            <el-dialog class="changeNameModel" :title="$t('KMS.total.importKmsM')" :visible.sync="dialogModel3" width="30%" :before-close="handleClose3">
+            <el-dialog class="changeNameModel" :title="$t('KMS.total.importKmsM')" :visible.sync="dialogModel3" width="40%" :before-close="handleClose3">
               <div class="dialogModelConT">
                 <div class="TopStepDownload" v-if="thisStepOne">
                   <div class="topStepOne newClear">
@@ -159,7 +159,7 @@
               </div>
             </el-dialog>
 
-            <el-dialog class="changeNameModel" :title="$t('KMS.total.deleteKmsM')" :visible.sync="dialogModel4" width="30%" :before-close="handleClose4">
+            <el-dialog class="changeNameModel" :title="$t('KMS.total.deleteKmsM')" :visible.sync="dialogModel4" width="40%" :before-close="handleClose4">
               <div class="dialogModelConT">
                 <div class="TopStepDownload" v-if="thisStepOne">
 
@@ -732,7 +732,7 @@ export default {
           text-align: right;
           width: 330px;
           ::v-deep textarea {
-            width: 330px;
+            width: 80%;
             height: 100px;
             border-radius: 0;
             resize: none;
@@ -781,7 +781,7 @@ export default {
       }
       .newDescription {
         ::v-deep textarea {
-          width: 330px;
+          width: 80%;
           height: 100px;
           resize: none;
           border-radius: 0;
