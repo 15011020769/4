@@ -212,6 +212,8 @@
       :visible.sync="updataUser"
       width="30%"
       :before-close="handleClose"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
     >
       <el-form :model="ruleForm" ref="ruleForm" label-width="100px" class="demo-ruleForm">
         <el-form-item
@@ -232,15 +234,19 @@
           :label="$t('CAM.userList.userPhone')"
           prop="PhoneNum"
           style="width:75%;text-align:center"
+          class="reg"
         >
           <el-input v-model="ruleForm.PhoneNum" @change="tel"></el-input>
+          <span v-show="telReg">请输入正确的手机号</span>
         </el-form-item>
         <el-form-item
           :label="$t('CAM.userList.userEmail')"
           prop="Email"
           style="width:75%;text-align:center"
+          class="reg"
         >
           <el-input v-model="ruleForm.Email" @change="email"></el-input>
+          <span v-show="emailReg">请输入正确的邮箱</span>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -273,6 +279,8 @@ export default {
   },
   data() {
     return {
+      emailReg: false,
+      telReg: false,
       TotalCount: 0,
       pagesize: 10,
       currpage: 1,
@@ -318,11 +326,12 @@ export default {
       var phone = /^1[345789]\d{9}$/;
       if (this.ruleForm.PhoneNum != "") {
         if (!phone.test(this.ruleForm.PhoneNum)) {
-          this.$message({
-            type: "error",
-            message: "请输入正确的手机号!"
-          });
+          this.telReg = true;
+        } else {
+          this.telReg = false;
         }
+      } else {
+        this.telReg = false;
       }
     },
     //对邮箱进行判断
@@ -330,53 +339,38 @@ export default {
       var email = /^[A-Za-z\d]+([-_.][A-Za-z\d]+)*@([A-Za-z\d]+[-.])+[A-Za-z\d]{2,4}$/;
       if (this.ruleForm.Email != "") {
         if (!email.test(this.ruleForm.Email)) {
-          this.$message({
-            type: "error",
-            message: "请输入正确的邮箱!"
-          });
+          this.emailReg = true;
+        } else {
+          this.emailReg = false;
         }
+      } else {
+        this.emailReg = false;
       }
     },
 
     //编辑用户
     sureUpdata() {
-      var phone = /^1[345789]\d{9}$/;
-      var email = /^[A-Za-z\d]+([-_.][A-Za-z\d]+)*@([A-Za-z\d]+[-.])+[A-Za-z\d]{2,4}$/;
-      if (this.ruleForm.PhoneNum != "" && this.ruleForm.Email != "") {
-        if (
-          !phone.test(this.ruleForm.PhoneNum) ||
-          !email.test(this.ruleForm.Email)
-        ) {
-          this.$message.error("编辑失败,手机号或邮箱输入有误！");
-          this.updataUser = true;
-        } else {
-          let params = {
-            Version: "2019-01-16",
-            Name: this.ruleForm.Name,
-            Remark: this.ruleForm.Remark,
-            PhoneNum: this.ruleForm.PhoneNum,
-            Email: this.ruleForm.Email
-          };
-          this.axios.post(UPDATA_USER, params).then(res => {
-            this.init();
-          });
-          this.$message("编辑成功");
-          this.updataUser = false;
-        }
+      if (this.telReg) {
+        this.$message.error("手机号输入有误");
+      } else if (this.emailReg) {
+        this.$message.error("邮箱输入有误");
       } else {
-        let params = {
-          Version: "2019-01-16",
-          Name: this.ruleForm.Name,
-          Remark: this.ruleForm.Remark,
-          PhoneNum: this.ruleForm.PhoneNum,
-          Email: this.ruleForm.Email
-        };
-        this.axios.post(UPDATA_USER, params).then(res => {
-          this.init();
-        });
-        this.$message("编辑成功");
-        this.updataUser = false;
+        this.edit();
       }
+    },
+    edit() {
+      let params = {
+        Version: "2019-01-16",
+        Name: this.ruleForm.Name,
+        Remark: this.ruleForm.Remark,
+        PhoneNum: this.ruleForm.PhoneNum,
+        Email: this.ruleForm.Email
+      };
+      this.axios.post(UPDATA_USER, params).then(res => {
+        this.init();
+      });
+      this.$message("编辑成功");
+      this.updataUser = false;
     },
     handleClicks(policy) {
       this.$router.push({
@@ -583,7 +577,7 @@ export default {
       };
       this.axios.post(DEL_USERTOGROUP, params).then(data => {
         this.groupListData();
-        this.$message('移出成功')
+        this.$message("移出成功");
       });
     },
     //当前一行移出组
@@ -661,6 +655,15 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+.reg {
+  position: relative;
+  span {
+    position: absolute;
+    bottom: -30px;
+    color: red;
+    left: 0;
+  }
+}
 .Right-style {
   display: flex;
   justify-content: flex-end;
