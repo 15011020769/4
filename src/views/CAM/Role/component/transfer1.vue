@@ -54,8 +54,8 @@
               </el-dropdown>
             </template>
             <template slot-scope="scope">
-              <p v-show="scope.row.Type == 2">{{$t('CAM.Role.customPolicy')}}</p>
-              <p v-show="scope.row.Type == 1">{{$t('CAM.Role.defaultPolicy')}}</p>
+              <p v-show="scope.row.Type == 1">{{$t('CAM.Role.customPolicy')}}</p>
+              <p v-show="scope.row.Type == 2">{{$t('CAM.Role.defaultPolicy')}}</p>
             </template>
           </el-table-column>
         </el-table>

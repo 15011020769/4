@@ -32,6 +32,7 @@
             <ul>
               <li class="li-title">{{$t("COM.safe")}}</li>
               <li class="li-sub" @click="go('../HS/index.html#/overview')">{{$t("COM.yunjing")}}</li>
+              <li @click="testFun">{{$t("COM.captcha")}}</li>
               <!-- <li class="li-sub" @click="go('../CAP/index.html#/appId')">{{$t("COM.captcha")}}</li> -->
               <li @click="testFun">{{$t("COM.waf")}}</li>
               <li class="li-sub" @click="go('../DDOS/index.html#/ProtectOverview')">{{$t("COM.ddos")}}</li>
@@ -40,8 +41,8 @@
             </ul>
             <ul>
               <li class="li-title">{{$t("COM.database")}}</li>
-              <li class="li-sub" @click="go('../MYSQL/index.html#/instancesList')">{{$t("COM.database")}}MySQL</li>
-              <li class="li-sub" @click="go('../Redis/index.html#/exampleList')">{{$t("COM.database")}}Redis</li>
+              <li class="li-sub" @click="go('../MYSQL/index.html#/instancesList')">{{$t("COM.database")}} MySQL</li>
+              <li class="li-sub" @click="go('../Redis/index.html#/exampleList')">{{$t("COM.database")}} Redis</li>
             </ul>
             <ul>
               <li class="li-title">{{$t("COM.middleware")}}</li>
@@ -74,7 +75,8 @@
             </ul>
             <ul>
               <li class="li-title">Serverless</li>
-              <!-- <li class="li-sub" @click="go('../SCF/index.html#/overView')">{{$t("COM.scf")}}</li> -->
+                <li @click="testFun">{{$t("COM.scf")}}</li>
+                <!-- <li class="li-sub" @click="go('../SCF/index.html#/overView')">{{$t("COM.scf")}}</li> -->
             </ul>
             <ul>
               <li class="li-title">{{$t("COM.pro")}}</li>

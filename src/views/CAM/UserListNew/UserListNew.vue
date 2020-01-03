@@ -69,7 +69,9 @@
             </template>
           </el-table-column>
 
-          <el-table-column :label="$t('CAM.userList.userChose')" prop="Remark"></el-table-column>
+          <el-table-column :label="$t('CAM.userList.userChose')" prop="Remark">
+            <template slot-scope="scope">子用户</template>
+          </el-table-column>
 
           <el-table-column :label="$t('CAM.userList.userId')" prop="Uin"></el-table-column>
 
@@ -471,27 +473,30 @@ export default {
       let userList = {
         Version: "2019-01-16"
       };
-      this.axios.post(USER_LIST, userList).then(data => {
-        if(data != ""){
-                this.loading = false;
-                this.tableData = data.Response.Data;
-                this.json = data.Response.Data;
-                this.tableData1 = this.tableData.slice(
-                  (this.currpage - 1) * this.pagesize,
-                  this.currpage * this.pagesize
-                );
-                this.TotalCount = this.json.length;
-        }else{
-          this.loading = false;
-          this.$message({
+      this.axios
+        .post(USER_LIST, userList)
+        .then(data => {
+          if (data != "") {
+            this.loading = false;
+            this.tableData = data.Response.Data;
+            this.tableData.reverse();
+            this.json = data.Response.Data;
+            this.tableData1 = this.tableData.slice(
+              (this.currpage - 1) * this.pagesize,
+              this.currpage * this.pagesize
+            );
+            this.TotalCount = this.json.length;
+          } else {
+            this.loading = false;
+            this.$message({
               type: "info",
               message: "无响应数据！"
-          });
-        }
-    
-      }).catch(error => {
-        console.log(error)
-      })
+            });
+          }
+        })
+        .catch(error => {
+          console.log(error);
+        });
     },
     //初始化策略数据
     strategy() {
@@ -617,7 +622,7 @@ export default {
           };
           this.axios.post(ADD_USERTOGROUP, params).then(res => {
             this.$message("添加成功");
-            this.init()
+            this.init();
           });
         });
         this.authorization = false;

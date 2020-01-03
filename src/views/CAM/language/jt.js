@@ -206,7 +206,7 @@ module.exports = {
             all: '全部',
             allRol: '全部策略',
             rolTitle: '用户或者用户组与策略关联后，即可获得策略所描述的操作权限。',
-            searchRole: '支持搜索策略名称/描述/备注',
+            searchRole: '支持搜索策略名称',
             service: '产品服务',
             item: '项',
             account: '雲账号',

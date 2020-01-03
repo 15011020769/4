@@ -203,7 +203,7 @@ module.exports = {
       all: '全部',
       allRol: '全部策略',
       rolTitle: '用戶或者用戶組與策略關聯後，即可獲得策略所描述的操作許可權。',
-      searchRole: '支持搜索策略名稱/描述/備註',
+      searchRole: '支持搜索策略名稱',
       service: '產品服務',
       item: '項',
       account: '雲賬號',
