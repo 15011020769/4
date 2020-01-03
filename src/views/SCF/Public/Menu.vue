@@ -1,6 +1,6 @@
 <template>
   <div class="SCF">
-    <div class="big-title">{{ $t('SCF.total.yhs') }}</div>
+    <div class="big-title">{{ $t('SCF.total.yhs') }} SCF</div>
     <el-menu
       default-active="2"
       class="el-menu-vertical-demo"

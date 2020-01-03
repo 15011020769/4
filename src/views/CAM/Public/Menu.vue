@@ -1,7 +1,7 @@
 <template>
   <div class="contant">
     <div class="CAM">
-      <div class="big-title">访问管理</div>
+      <div class="big-title">訪問管理 CAM</div>
       <el-menu
         default-active="2"
         class="el-menu-vertical-demo"
