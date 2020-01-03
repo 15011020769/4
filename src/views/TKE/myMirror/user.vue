@@ -2,10 +2,14 @@
   <div class="room">
     <div class="room-top">
       <div class="top-left">
-        <el-button type="primary" size="mini" class="botton-size">新建</el-button>
+        <el-button
+          type="primary"
+          size="mini"
+          class="botton-size"
+          @click="dialogFormVisible = true"
+        >新建</el-button>
         <el-button disabled size="mini" class="botton-size">删除</el-button>
         <el-button size="mini" class="botton-size">重置密码</el-button>
-        <el-button size="mini" class="botton-size">源代码授权</el-button>
       </div>
       <div class="top-right">
         <el-input
@@ -13,42 +17,77 @@
           suffix-icon="el-icon-search"
           v-model="input"
           class="search-input"
+          size="mini"
         ></el-input>
       </div>
     </div>
     <div class="room-center">
       <div class="explain" style="margin-bottom:20px;">
-        <p>
-          当前默认地域内镜像仓库暂不支持海外集群通过内网访问，请配置公网进行访问，或使用与集群位于相同地域的镜像仓库
-        </p>
+        <p>当前默认地域内镜像仓库暂不支持海外集群通过内网访问，请配置公网进行访问，或使用与集群位于相同地域的镜像仓库</p>
       </div>
     </div>
     <div class="room-bottom">
-       <el-table :data="tableData" style="width: 100%" height="450">
-           <el-table-column type="selection" width="55"></el-table-column>
-            <el-table-column prop="address" label="名称"></el-table-column>
-            <el-table-column prop="address" label="类型"></el-table-column>
-            <el-table-column prop="address" label="命名空间"></el-table-column>
-            <el-table-column prop="address" label="镜像地址"></el-table-column>
-            <el-table-column prop="address" label="创建时间"></el-table-column>
-            <el-table-column prop="address" label="操作">
-              <template slot-scope="scope">
-                <el-button @click="handleClick(scope.row)" type="text" size="small">删除</el-button>
-                <el-button type="text" size="small">构建配置</el-button>
-            </template>
-            </el-table-column>
-        </el-table>
-        <div class="Right-style pagstyle">
-            <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;页</span>
-            <el-pagination
-              :page-size="pagesize"
-              :pager-count="7"
-              layout="prev, pager, next"
-              @current-change="handleCurrentChange"
-              :total="TotalCount"
-            ></el-pagination>
-        </div>
+      <el-table :data="tableData" style="width: 100%" height="450">
+        <el-table-column type="selection" width="55"></el-table-column>
+        <el-table-column prop="address" label="名称"></el-table-column>
+        <el-table-column prop="address" label="类型"></el-table-column>
+        <el-table-column prop="address" label="命名空间"></el-table-column>
+        <el-table-column prop="address" label="镜像地址"></el-table-column>
+        <el-table-column prop="address" label="创建时间"></el-table-column>
+        <el-table-column prop="address" label="操作">
+          <template slot-scope="scope">
+            <el-button @click="handleClick(scope.row)" type="text" size="small">删除</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+      <div class="Right-style pagstyle">
+        <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;页</span>
+        <el-pagination
+          :page-size="pagesize"
+          :pager-count="7"
+          layout="prev, pager, next"
+          @current-change="handleCurrentChange"
+          :total="TotalCount"
+        ></el-pagination>
+      </div>
     </div>
+    <!-- 新建弹出窗 -->
+    <el-dialog title="新建仓库镜像" :visible.sync="dialogFormVisible" width="550px">
+      <el-form
+        :model="ruleForm"
+        :rules="rules"
+        ref="ruleForm"
+        label-width="100px"
+        class="demo-ruleForm"
+        size="small"
+        style="width:500px"
+      >
+        <el-form-item label="名称" prop="name">
+          <el-input v-model="ruleForm.name" style="width:200px"></el-input>
+          <p class="form-p">最长为200个字符，只能包含小写字母、数字及分隔符("."、"_"、"-")，且不能以分隔符开头或结尾</p>
+        </el-form-item>
+        <el-form-item label="类型" prop="region">
+          <el-select v-model="ruleForm.region" placeholder="请选择活动区域">
+            <el-option label="私有" value="shanghai"></el-option>
+            <el-option label="公有" value="beijing"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="命名空间" prop="region2">
+          <el-select v-model="ruleForm.region2" placeholder="请选择活动区域">
+            <el-input placeholder="请输入镜像名称" suffix-icon="el-icon-search" v-model="input2" class="search-input2" size="mini"></el-input>
+            <el-option label="区域二" value="beijing"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="描述" prop="desc">
+          <el-input type="textarea" size="medium" v-model="ruleForm.desc" :autosize="{ minRows: 2, maxRows: 4}" maxlength=1000></el-input>
+          <p class="form-p">最长为1000个字符</p>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="submitForm('ruleForm')">确 定</el-button>
+        <el-button @click="dialogFormVisible = false">取 消</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -56,6 +95,7 @@ export default {
   data () {
     return {
       input: '',
+      input2: '',
       tableData: [{
         date: '2016-05-03',
         name: '王小虎',
@@ -68,7 +108,36 @@ export default {
       ],
       TotalCount: 0, // 总条数
       pagesize: 10, // 分页条数
-      currpage: 1 // 当前页码
+      currpage: 1, // 当前页码
+      dialogTableVisible: false,
+      dialogFormVisible: false,
+      formLabelWidth: '120px',
+      ruleForm: {
+        name: '',
+        region: '',
+        region2: '',
+        date1: '',
+        date2: '',
+        delivery: false,
+        type: [],
+        resource: '',
+        desc: ''
+      },
+      rules: {
+        name: [
+          { required: true, message: '请输入镜像名称', trigger: 'blur' },
+          { max: 200, message: '镜像名称不能超过200个字符', trigger: 'blur' }
+        ],
+        region: [
+          { message: '请选择活动区域', trigger: 'change' }
+        ],
+        type: [
+          { type: 'array', message: '请至少选择一个活动性质', trigger: 'change' }
+        ],
+        resource: [
+          { message: '请选择活动资源', trigger: 'change' }
+        ]
+      }
     }
   },
   methods: {
@@ -78,29 +147,42 @@ export default {
     // 分页
     handleCurrentChange (val) {
       this.currpage = val
+    },
+    submitForm (formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          this.dialogFormVisible = !valid
+        } else {
+          console.log('error submit!!')
+          return false
+        }
+      })
     }
   }
-
 }
 </script>
 <style lang="scss" scoped>
 .room {
   position: absolute;
-  left: 40px;
+  left: 20px;
   top: 40px;
-  width: 1069px;
+  width: 95%;
   height: auto;
 }
 .room-top {
-  width: 1069px;
   height: 30px;
+  display: flex;
+  justify-content: space-between;
+}
+.room-bottom {
+  background: white;
 }
 .top-left {
-  float: left;
   height: 30px;
+  display: flex;
+  justify-content: space-between;
 }
 .top-right {
-  float: right;
   height: 30px;
 }
 .botton-size {
@@ -112,37 +194,45 @@ export default {
   width: 180px;
   height: 28px;
 }
-.room-center{
-    margin-top:20px;
-    .explain {
-        padding: 10px 30px 10px 20px;
-        vertical-align: middle;
-        color: #003b80;
-        border: 1px solid #97c7ff;
-        background: #e5f0ff;
-            p {
-                font-size: 11px;
-                line-height: 18px;
-            }
-        }
+.search-input2 {
+  margin-left:5px;
+  width: 185px;
+}
+.room-center {
+  margin-top: 20px;
+  .explain {
+    padding: 10px 30px 10px 20px;
+    vertical-align: middle;
+    color: #003b80;
+    border: 1px solid #97c7ff;
+    background: #e5f0ff;
+    p {
+      font-size: 11px;
+      line-height: 18px;
+    }
+  }
 }
 .Right-style {
-    display: flex;
-    justify-content: flex-end;
-
-    .esach-inputL {
-      width: 300px;
-      margin-right: 20px;
-    }
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 20px;
+  .esach-inputL {
+    width: 300px;
+    margin-right: 20px;
   }
-  .pagstyle {
-    padding: 20px;
-
-    .pagtotal {
-      font-size: 13px;
-      font-weight: 400;
-      color: #565656;
-      line-height: 32px;
-    }
+}
+.pagstyle {
+  padding: 20px;
+  .pagtotal {
+    font-size: 13px;
+    font-weight: 400;
+    color: #565656;
+    line-height: 32px;
   }
+}
+.form-p{
+  font-size: 12px;
+  line-height: 1.8;
+  color: #bbb;
+}
 </style>
