@@ -318,7 +318,7 @@ export default {
     color: #fff;
     display: show;
     overflow: hidden;
-    z-index: 999;
+    z-index: 10000;
     position: fixed;
     top: 60px;
     left: 200px;
