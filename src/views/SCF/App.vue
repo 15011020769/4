@@ -18,55 +18,64 @@
 </template>
 
 <script>
-import NavHeader from "@/components/HeaderAside/Header";
-import LeftAside from "./Public/Menu";
-import { ALL_CITY } from "@/constants";
-export default {
-  data() {
-    return {
+  import NavHeader from "@/components/HeaderAside/Header";
+  import LeftAside from "./Public/Menu";
+  import {
+    ALL_CITY
+  } from "@/constants";
+  export default {
+    data() {
+      return {
 
 
-      
-    };
-  },
-  components: {
-    NavHeader,
-    LeftAside
-  },
-  mounted() {
-    this.GetCity();
-  },
-  methods: {
-    // 获取城市列表
-    GetCity() {
-      this.axios.get(ALL_CITY).then(data => {
-        let city = data.data[0];
-        this.$cookie.set("regionv1", city.regionCode);
-        this.$cookie.set("regionv2", city.Region);
-      });
+
+      };
+    },
+    components: {
+      NavHeader,
+      LeftAside
+    },
+    mounted() {
+      this.GetCity();
+    },
+    methods: {
+      // 获取城市列表
+      GetCity() {
+        this.axios.get(ALL_CITY).then(data => {
+          let city = data.data[0];
+          localStorage.setItem("regionv1", city.regionCode);
+          localStorage.setItem("regionv2", city.Region);
+        });
+      }
     }
-  }
-};
+  };
+
 </script>
 <style lang="scss" scoped>
-#SCF >>> .el-aside {
-  background: #292b36 !important;
-}
-#SCF {
-  height: 100%;
-  .el-container {
+  #SCF>>>.el-aside {
+    background: #292b36 !important;
+  }
+
+  #SCF {
     height: 100%;
-    .el-header {
-      padding: 0 0 !important;
-    }
-    .el-aside {
-      background-color: rgb(84, 92, 100);
-    }
-    .el-main {
-      padding: 0;
-      background: #f2f2f2;
+
+    .el-container {
       height: 100%;
+
+      .el-header {
+        padding: 0 0 !important;
+      }
+
+      .el-aside {
+        background-color: rgb(84, 92, 100);
+      }
+
+      .el-main {
+        padding: 0;
+        background: #f2f2f2;
+        height: 100%;
+      }
     }
   }
-}
+
 </style>
