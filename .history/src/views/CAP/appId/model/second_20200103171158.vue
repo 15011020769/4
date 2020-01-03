@@ -55,7 +55,6 @@
   </div>
 </template>
 <script>
-import {GETALLAPPID_LIST} from '@/constants/CAP.js'
 export default {
   data() {
     return {
@@ -107,14 +106,6 @@ export default {
     setInterval(()=>{
       this.loading=false;
     },2000)
-    let params={
-      "Action":"DescribeCaptchaUserAllAppId",
-      "Version":"2019-07-22",
-    }
-    this.axios.post(GETALLAPPID_LIST,params).then(res=>{
-      console.log(res)
-    })
-
   },
   methods: {
     selectOne(){

@@ -9,7 +9,7 @@
           :label="item.label"
           :value="item.value"
           size="medium"
-          @change="selectOne"
+          v-on:change="selectOne"
         ></el-option>
       </el-select>
     </el-row>
@@ -55,21 +55,20 @@
   </div>
 </template>
 <script>
-import {GETALLAPPID_LIST} from '@/constants/CAP.js'
 export default {
   data() {
     return {
       options: [
         {
-          value: "可使用",
+          value: "1",
           label: "可使用"
         },
         {
-          value: "已用完",
+          value: "2",
           label: "已用完"
         },
         {
-          value: "已过期",
+          value: "3",
           label: "已过期"
         }
       ],
@@ -96,32 +95,20 @@ export default {
         }
       ],
       loading:true,
-      value: "可使用",
+      value: "",
       value2: "",
       tableData: [],
-      TotalCount:1,
-      pagesize:1,
+      TotalCount:'',
     };
   },
   mounted() {
     setInterval(()=>{
       this.loading=false;
     },2000)
-    let params={
-      "Action":"DescribeCaptchaUserAllAppId",
-      "Version":"2019-07-22",
-    }
-    this.axios.post(GETALLAPPID_LIST,params).then(res=>{
-      console.log(res)
-    })
-
   },
   methods: {
     selectOne(){
       console.log(this.value)
-    },
-    handleCurrentChange(){
-
     }
   }
 };

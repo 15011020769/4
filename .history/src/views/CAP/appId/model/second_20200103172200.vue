@@ -108,10 +108,9 @@ export default {
       this.loading=false;
     },2000)
     let params={
-      "Action":"DescribeCaptchaUserAllAppId",
-      "Version":"2019-07-22",
+      
     }
-    this.axios.post(GETALLAPPID_LIST,params).then(res=>{
+    this.axios.post(GETALLAPPID_LIST,).then(res=>{
       console.log(res)
     })
 
