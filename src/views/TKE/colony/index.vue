@@ -22,7 +22,7 @@
         <div class="tke-grid ">
           <!-- 左侧 -->
           <div class="grid-left">
-            <el-button class="btn-tke" size="small" type="primary">新建</el-button>
+            <el-button @click="goColonyCreate" class="btn-tke" size="small" type="primary">新建</el-button>
           </div>
           <!-- 右侧 -->
           <div class="grid-right">
@@ -41,7 +41,7 @@
       </div>
 
       <!-- 数据列表展示 -->
-      <div class="tke-table">
+      <div class="tke-content">
         <el-table
           :data="tableData"
           style="width: 100%">
@@ -102,7 +102,7 @@
             <template slot-scope="scope">
               <a href="#">配置告警</a>
               <a class="ml10" href="#">添加已有节点</a>
-              <el-dropdown class="ml10 tke-dropdown" @command="handleCommand">
+              <el-dropdown class="ml10 tke-dropdown" >
                 <span class="el-dropdown-link " >
                   更多<i class="el-icon-arrow-down el-icon--right"></i>
                 </span>
@@ -121,7 +121,7 @@
             <el-pagination
               @size-change="handleSizeChange"
               @current-change="handleCurrentChange"
-              :current-page="currentPage4"
+              :current-page="currentPage"
               :page-sizes="[10, 20, 50, 100]"
               :page-size="10"
               layout="total, sizes, prev, pager, next"
@@ -140,7 +140,7 @@
       custom-class='tke-dialog'
       >
       <div>
-        <el-form :label-position="labelPosition" label-width="80px" >
+        <el-form  label-width="80px" >
           <el-form-item label="原名称">
             <p>集群测试</p>
           </el-form-item>
@@ -185,7 +185,7 @@ export default {
         address: '上海市普陀区金沙江路 1517 弄'
       }],
       editNameDialogVisible:false,
-      
+      currentPage:1,      
 
 
 
@@ -221,6 +221,15 @@ export default {
     this.init();
   },
   methods: {
+    // 创建集群跳转
+    goColonyCreate(){
+       this.$router.push({
+          name: "colonyCreate",
+          query: {
+           
+          }
+      });
+    },
     // 编辑集群弹窗相关
     showEditNameDlg(){
       this.editNameDialogVisible=true;
@@ -346,6 +355,10 @@ export default {
     flex: 1 1 auto;
   }
 }
+.dis-flex{
+  display: flex;
+  align-items: center;
+}
 
 .tke-content-header{
   color: rgb(0, 0, 0);
@@ -371,14 +384,11 @@ export default {
     cursor: pointer;
   }
 }
-.dis-flex{
-  display: flex;
-  align-items: center;
-}
+
 .tke-search-select{
   width: 90px;
 }
-.tke-table{
+.tke-content{
   background-color: #fff;
   box-shadow: 0 2px 3px 0 rgba(0,0,0,.2);
   margin-left: auto;

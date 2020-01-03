@@ -27,7 +27,15 @@ export default new Router({
       component: () => import(/* webpackChunkName: "colony" */ './colony/index.vue'),
       meta: {
         keepAlive: true
-      }
+      },
+    },
+    {
+      path: '/colony/create', // 创建集群
+      name: 'colonyCreate',
+      component: () => import(/* webpackChunkName: "colony" */ './colony/create.vue'),
+      meta: {
+        keepAlive: true
+      },
     },
     {
       path: '/helm', // helm应用
