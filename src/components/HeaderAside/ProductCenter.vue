@@ -68,7 +68,7 @@
           <div class="item">
             <ul>
               <li class="li-title">{{$t("COM.cdnTitle")}}</li>
-              <li @click="testFun">CDN</li>
+              <li @click="testFun">{{$t("COM.cdn")}}</li>
               <li @click="testFun">{{$t("COM.dsa")}}</li>
               <li @click="testFun">{{$t("COM.gaap")}}</li>
             </ul>
