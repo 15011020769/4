@@ -173,7 +173,7 @@
           class="dialogModel"
           :title="$t('KMS.total.planDeleteKms')"
           :visible.sync="dialogModelOpenDelete"
-          width="30%"
+          width="40%"
           :before-close="handleCloseOpenDelete"
         >
           <p class="deleteOpen">{{$t('KMS.total.tip3')}}</p>

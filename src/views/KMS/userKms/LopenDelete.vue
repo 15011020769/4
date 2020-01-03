@@ -100,13 +100,13 @@ export default {
     //取消删除密钥确定按钮
     closeDeleteSure() {
       this.thisShow = false;
-      this.$emit("closeDeleteSure", this.thisShow);
       let params = {
         Version: "2019-01-18",
         Region: VueCookie.get("regionv2"),
         KeyId: this.contentDialog[3]
       };
       this.axios.post(CEL_KMS, params).then(res => {
+        this.$emit("closeDeleteSure", this.thisShow);
         this.$parent.GetList();
       });
     },

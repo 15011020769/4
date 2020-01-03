@@ -732,7 +732,7 @@ export default {
           text-align: right;
           width: 330px;
           ::v-deep textarea {
-            width: 330px;
+            width: 80%;
             height: 100px;
             border-radius: 0;
             resize: none;
@@ -781,7 +781,7 @@ export default {
       }
       .newDescription {
         ::v-deep textarea {
-          width: 330px;
+          width: 80%;
           height: 100px;
           resize: none;
           border-radius: 0;
