@@ -10,25 +10,23 @@
         <div class="table">
           <!-- 表格 -->
           <template>
-            <el-table :data="tableData" style="width: 100%;" height="450px">
-              <el-table-column prop="date" label="名称"></el-table-column>
-              <el-table-column prop="name" label="昨日恶意占比"></el-table-column>
-              <el-table-column prop="address" label="昨日请求数量"></el-table-column>
-              <el-table-column prop="date" label="昨日验证量"></el-table-column>
-              <el-table-column prop="name" label="昨日恶意拦截量"></el-table-column>
-              <el-table-column prop="address" label="操作"></el-table-column>
+            <el-table :data="tableData.slice((currpage - 1) * pagesize, currpage * pagesize)" style="width: 100%;" height="450px">
+              <el-table-column prop="AppName" label="名称"></el-table-column>
+              <el-table-column label="昨日恶意占比">-</el-table-column>
+              <el-table-column label="昨日请求数量">-</el-table-column>
+              <el-table-column label="昨日验证量">-</el-table-column>
+              <el-table-column label="昨日恶意拦截量">-</el-table-column>
+              <el-table-column label="操作">
+                <template slot-scope="scope">
+                    <span style="color: #006eff; cursor: pointer;">查看详情</span>
+                </template>
+              </el-table-column>
             </el-table>
           </template>
           <!-- 分页 -->
           <div class="Right-style pagstyle" style="height:70px;">
             <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;条</span>
-            <el-pagination
-              :page-size="pagesize"
-              :pager-count="7"
-              layout="prev, pager, next"
-              @current-change="handleCurrentChange"
-              :total="TotalCount"
-            ></el-pagination>
+            <el-pagination :page-size="pagesize" :pager-count="7" layout="prev, pager, next"  @current-change="handleCurrentChange" :total="TotalCount"></el-pagination>
           </div>
         </div>
       </div>
@@ -89,12 +87,17 @@
   </div>
 </template>
 <script>
+import { ADD_LIST } from "@/constants/CAP.js";
 export default {
   data() {
     return {
+      //分页
+      TotalCount: 0,
+      pagesize: 10,
+      currpage: 1,
       dialogVisibleBuild: false, //新建弹框
-      dialogVisibleAdd:false,//导入原有验证弹框
-      tableData: [],
+      dialogVisibleAdd: false, //导入原有验证弹框
+      tableData: [],//表格数据
       form: {
         name: "",
         region: "",
@@ -107,7 +110,25 @@ export default {
       }
     };
   },
+  created() {
+    this.addList();
+  },
   methods: {
+    //获取addip列表数据
+    addList() {
+      let params = {
+        Version: "2019-07-22"
+      };
+      this.axios.post(ADD_LIST, params).then(res => {
+        this.tableData = res.Response.Data;
+        this.TotalCount = res.Response.Data.length
+        console.log(res)
+      });
+    },
+    //分页
+    handleCurrentChange(val) {
+      this.currpage = val;
+    },
     //点击新建验证
     addBuild() {
       this.dialogVisibleBuild = true;
@@ -117,11 +138,11 @@ export default {
       this.dialogVisibleBuild = false;
     },
     //导入原有验证弹框
-    addUp(){
+    addUp() {
       this.dialogVisibleAdd = true;
     },
     //点击关闭导入原有验证弹框
-    handleCloseAdd(){
+    handleCloseAdd() {
       this.dialogVisibleAdd = false;
     }
   }
@@ -141,7 +162,7 @@ export default {
   flex-direction: column;
   .bntWrap {
     width: 100%;
-    padding: 20px 20px 10px 20px;
+    padding: 20px;
     box-sizing: border-box;
     .bnt {
       height: 32px;
