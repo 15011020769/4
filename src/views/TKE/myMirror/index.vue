@@ -4,14 +4,14 @@
     <div class="my-title">
         <ul class="my-ul">
           <router-link :to="{name: 'myMirrorUser'}">
-            <li @click="getTrue()" class="li-one" :style="{fontWeight:this.dataObject.flag==true?700:0}">
+            <li @click="getTrue()" class="li-one" :style="{fontWeight:this.dataObject.flag==true?'700':''}">
               我的镜像<div class="bottom-one" :style="{width:this.dataObject.flag==true?'78px':'0'}"></div>
             </li>
           </router-link>
           <router-link :to="{name: 'myMirrorLocal'}">
-          <li @click="getFalse()" class="li-two" :style="{fontWeight:this.dataObject.flag==false?0:700}">
-              命名空间<div class="bottom-two" :style="{width:this.dataObject.flag==false?'78px':'0'}"></div>
-          </li>
+            <li @click="getFalse()" class="li-two" :style="{fontWeight:this.dataObject.flag==false?'700':''}">
+                命名空间<div class="bottom-two" :style="{width:this.dataObject.flag==false?'78px':'0'}"></div>
+            </li>
           </router-link>
         </ul>
     </div>
@@ -60,7 +60,7 @@ export default {
         width: 76px;
         text-align: center;
         cursor: pointer;
-        font-weight:700;
+        // font-weight:700;
         color:#000;
       }
      }

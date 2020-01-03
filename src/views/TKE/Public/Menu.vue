@@ -11,13 +11,13 @@
       active-text-color="#fff"
       :router="true"
     >
-      <el-menu-item index="overview">
+      <el-menu-item index="/overview">
         <span slot="title">概览</span>
       </el-menu-item>
-      <el-menu-item index="colony">
+      <el-menu-item index="/colony">
         <span slot="title">集群</span>
       </el-menu-item>
-      <el-menu-item index="helm">
+      <el-menu-item index="/helm">
         <span slot="title">Helm应用</span>
       </el-menu-item>
       <el-submenu index="1">
@@ -25,27 +25,27 @@
           <span>镜像仓库</span>
         </template>
         <el-menu-item-group>
-          <el-menu-item index="myMirror">
+          <el-menu-item index="/myMirror">
             <span slot="title">我的镜像</span>
           </el-menu-item>
-          <el-menu-item index="myFavorite">
+          <el-menu-item index="/myFavorite">
             <span slot="title">我的收藏</span>
           </el-menu-item>
-          <el-menu-item index="DockerHub">
+          <el-menu-item index="/DockerHub">
             <span slot="title">DockerHub镜像</span>
           </el-menu-item>
-          <el-menu-item index="totalMirror">
+          <el-menu-item index="/totalMirror">
             <span slot="title">共有镜像</span>
           </el-menu-item>
         </el-menu-item-group>
       </el-submenu>
-      <el-menu-item index="logCollection">
+      <el-menu-item index="/logCollection">
         <span slot="title">日志采集</span>
       </el-menu-item>
-      <el-menu-item index="warnings">
+      <el-menu-item index="/warnings">
         <span slot="title">告警设置</span>
       </el-menu-item>
-      <el-menu-item index="persistence">
+      <el-menu-item index="/persistence">
         <span slot="title">事件持久化</span>
       </el-menu-item>
     </el-menu>

@@ -41,12 +41,13 @@ export default new Router({
       path: '/myMirror', // 我的镜像
       name: 'myMirror',
       component: () => import(/* webpackChunkName: "myMirror" */ './myMirror/index.vue'),
+      redirect: '/myMirror/user',
       meta: {
         keepAlive: true
       },
       children: [
         {
-          path: '/myMirror/user',
+          path: 'user',
           name: 'myMirrorUser',
           component: () => import(/* webpackChunkName: "myMirror" */ './myMirror/user.vue'),
           meta: {
@@ -54,7 +55,7 @@ export default new Router({
           }
         },
         {
-          path: '/myMirror/local',
+          path: 'local',
           name: 'myMirrorLocal',
           component: () => import(/* webpackChunkName: "myMirror" */ './myMirror/local.vue'),
           meta: {
