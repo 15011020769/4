@@ -55,11 +55,13 @@
                     <td>
                       <el-input v-model="ruleForm.Remark"></el-input>
                     </td>
-                    <td>
-                      <el-input v-model="ruleForm.PhoneNum"></el-input>
+                    <td class="reg">
+                      <el-input v-model="ruleForm.PhoneNum" @change="telInp"></el-input>
+                      <span class="red" v-show="phoneReg">手机号输入有误</span>
                     </td>
-                    <td>
-                      <el-input v-model="ruleForm.Email"></el-input>
+                    <td class="reg">
+                      <el-input v-model="ruleForm.Email" @change="emailInp"></el-input>
+                      <span class="red" v-show="emailReg">邮箱输入有误</span>
                     </td>
                   </tr>
                 </tbody>
@@ -245,6 +247,8 @@ export default {
       policyVal: "",
       userVal: "",
       userUin: "",
+      phoneReg: false,
+      emailReg: false,
       userDatas: [] //用户
     };
   },
@@ -259,6 +263,32 @@ export default {
     this.init();
   },
   methods: {
+    //手机号验证
+    telInp() {
+      var reg = /^1[3456789]\d{9}$/;
+      if (this.ruleForm.PhoneNum != "") {
+        if (!reg.test(this.ruleForm.PhoneNum)) {
+          this.phoneReg = true;
+        } else {
+          this.phoneReg = false;
+        }
+      } else {
+        this.phoneReg = false;
+      }
+    },
+    //邮箱验证
+    emailInp() {
+      var reg = /^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/;
+      if (this.ruleForm.Email != "") {
+        if (!reg.test(this.ruleForm.Email)) {
+          this.emailReg = true;
+        } else {
+          this.emailReg = false;
+        }
+      } else {
+        this.emailReg = false;
+      }
+    },
     //获取cookir
     getCookie(name) {
       var strcookie = document.cookie; //获取cookie字符串
@@ -410,7 +440,6 @@ export default {
         .post(ADD_USER, params)
         .then(res => {
           this.taifuAIP = res.Response;
-          console.log(res)
           if (res.Response.Error) {
             this.$message.error(res.Response.Error.Message);
           } else {
@@ -520,7 +549,7 @@ export default {
         this.btnVal = "完成";
       }
       if (this.active == 2) {
-        console.log(this.multipleSelection)
+        console.log(this.multipleSelection);
         this.multipleSelection.forEach(item => {
           //从策略列表中选取策略关联
           if (this.activeName == "first") {
@@ -537,26 +566,32 @@ export default {
         });
       }
       if (this.active == 1) {
-        if (!this.visitType) {
-          if (!this.ruleForm.Name) {
-            this.$message.error("用户名不能为空");
-          } else if (this.ruleForm.type.length == 0) {
-            this.$message.error("编程访问和台富雲控制台访问至少需要选择一个");
-          } else {
-            this._arrUser();
+        if (this.phoneReg) {
+          this.$message.error("请输入正确的手机号");
+        } else if (this.emailReg) {
+          this.$message.error("请输入正确的邮箱");
+        } else {
+          if (!this.visitType) {
+            if (!this.ruleForm.Name) {
+              this.$message.error("用户名不能为空");
+            } else if (this.ruleForm.type.length == 0) {
+              this.$message.error("编程访问和台富雲控制台访问至少需要选择一个");
+            } else {
+              this._arrUser();
+            }
           }
-        }
-        if (this.visitType) {
-          if (!this.ruleForm.Name) {
-            this.$message.error("用户名不能为空");
-          } else if (this.ruleForm.type.length == 0) {
-            this.$message.error("编程访问和台富雲控制台访问至少需要选择一个");
-          } else if (this.ruleForm.loginRadio === "") {
-            this.$message.error("请设置登录保护");
-          } else if (this.ruleForm.processRadio === "") {
-            this.$message.error("请设置操作保护");
-          } else {
-            this._arrUser();
+          if (this.visitType) {
+            if (!this.ruleForm.Name) {
+              this.$message.error("用户名不能为空");
+            } else if (this.ruleForm.type.length == 0) {
+              this.$message.error("编程访问和台富雲控制台访问至少需要选择一个");
+            } else if (this.ruleForm.loginRadio === "") {
+              this.$message.error("请设置登录保护");
+            } else if (this.ruleForm.processRadio === "") {
+              this.$message.error("请设置操作保护");
+            } else {
+              this._arrUser();
+            }
           }
         }
       } else {
@@ -647,6 +682,21 @@ export default {
     box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
     padding: 20px;
     box-sizing: border-box;
+
+    .reg {
+      position: relative;
+      span {
+        position: absolute;
+        bottom: -12px;
+        left: 10px;
+      }
+      .red {
+        color: red;
+      }
+      .green {
+        color: green;
+      }
+    }
 
     .main {
       border-top: 1px #f2f2f2 solid;

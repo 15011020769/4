@@ -32,11 +32,13 @@
               <td>
                 <el-input v-model="form.Remark"></el-input>
               </td>
-              <td>
-                <el-input v-model="form.PhoneNum"></el-input>
+              <td class="reg">
+                <el-input v-model="form.PhoneNum" @change="telInp"></el-input>
+                <span class="red" v-show="phoneReg">手机号输入有误</span>
               </td>
-              <td>
-                <el-input v-model="form.Email"></el-input>
+              <td class="reg">
+                <el-input v-model="form.Email" @change="emailInp"></el-input>
+                <span class="red" v-show="emailReg">邮箱输入有误</span>
               </td>
               <td class="edit">
                 <span @click="_userConfirm">{{$t('CAM.userList.suerAdd')}}</span>
@@ -132,6 +134,8 @@ export default {
   name: "edit",
   data() {
     return {
+      phoneReg: false,
+      emailReg: false,
       loading: true, //加载
       tableloading: true, //表格加载
       //表单
@@ -147,6 +151,32 @@ export default {
     };
   },
   methods: {
+    //手机号验证
+    telInp() {
+      var reg = /^1[3456789]\d{9}$/;
+      if (this.form.PhoneNum != "") {
+        if (!reg.test(this.form.PhoneNum)) {
+          this.phoneReg = true;
+        } else {
+          this.phoneReg = false;
+        }
+      } else {
+        this.phoneReg = false;
+      }
+    },
+    //邮箱验证
+    emailInp() {
+      var reg = /^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/;
+      if (this.form.Email != "") {
+        if (!reg.test(this.form.Email)) {
+          this.emailReg = true;
+        } else {
+          this.emailReg = false;
+        }
+      } else {
+        this.emailReg = false;
+      }
+    },
     //用户组列表
     _groupList() {
       this.tableloading = true;
@@ -270,19 +300,25 @@ export default {
         PhoneNum: this.form.PhoneNum,
         Email: this.form.Email
       };
-      this.axios
-        .post(UPDATA_USER, params)
-        .then(res => {
-          if (res.Response.RequestId) {
-            this.$message("编辑成功");
-            this.userInp = !this.userInp;
-          } else {
-            this.$message.error("编辑失败");
-          }
-        })
-        .then(() => {
-          this._getUser();
-        });
+      if (this.phoneReg) {
+        this.$message.error("请输入正确的手机号");
+      } else if (this.emailReg) {
+        this.$message.error("请输入正确的邮箱");
+      } else {
+        this.axios
+          .post(UPDATA_USER, params)
+          .then(res => {
+            if (res.Response.RequestId) {
+              this.$message("编辑成功");
+              this.userInp = !this.userInp;
+            } else {
+              this.$message.error("编辑失败");
+            }
+          })
+          .then(() => {
+            this._getUser();
+          });
+      }
     },
     //分页
     handleSizeChange(val) {
@@ -339,6 +375,20 @@ export default {
   }
   .edit-main {
     box-sizing: border-box;
+    .reg {
+      position: relative;
+      span {
+        position: absolute;
+        bottom: -12px;
+        left: 10px;
+      }
+      .red {
+        color: red;
+      }
+      .green {
+        color: green;
+      }
+    }
 
     .omit {
       // width: 170px;

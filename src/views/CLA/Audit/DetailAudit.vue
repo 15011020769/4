@@ -41,7 +41,7 @@
         </div>
       </div>
       <div class="detil-audit-main">
-        <div class="detil-audit-box" v-loading='boxloading'>
+        <div class="detil-audit-box" v-loading="boxloading">
           <span class="edit" @click="_edit" v-show="!inpShow">{{ $t('CLA.total.bj') }}</span>
           <h2>{{ $t('CLA.total.glsj') }}</h2>
           <el-form-item :label="$t('CLA.total.glsj')" required>
@@ -67,7 +67,7 @@
         </div>
       </div>
       <div class="detil-audit-main">
-        <div class="detil-audit-box" v-loading='boxloading1'>
+        <div class="detil-audit-box" v-loading="boxloading1">
           <span class="edit" @click="_edit1" v-show="!inpShow1">{{ $t('CLA.total.bj') }}</span>
           <h2>{{ $t('CLA.total.ccwz') }}</h2>
           <div class="info-box" v-show="!inpShow1">
@@ -277,8 +277,8 @@ export default {
       }, 1000);
     };
     return {
-      boxloading:false,
-      boxloading1:false,
+      boxloading: false,
+      boxloading1: false,
       loading: true, //是否为加载中状态
       title: "", //header的标题
       detailData: {}, //页面信息
@@ -339,7 +339,8 @@ export default {
       //开启
       if (this.value) {
         const params = {
-          Name: this.title,
+          AuditName: this.title,
+          Region: "ap-guangzhou",
           Version: "2019-03-19"
         };
         this.axios.post(GZJ_STRATLOGGING, params).then(res => {});
@@ -612,7 +613,7 @@ export default {
 </script>
 
 <style scoped lang='scss'>
-.detail-audit >>> .el-loading-mask{
+.detail-audit >>> .el-loading-mask {
   background: white !important;
 }
 .detail-audit >>> button {
