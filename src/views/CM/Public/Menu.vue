@@ -11,7 +11,7 @@
       active-text-color="#fff"
       :router="true"
     >
-      <!-- <el-menu-item index="overview">
+      <el-menu-item index="overview">
         <span slot="title">监控概览</span>
       </el-menu-item>
       <el-menu-item index="Dashboard">
@@ -70,7 +70,7 @@
       </el-submenu>
       <el-menu-item index="flow">
         <span slot="title">流量监控</span>
-      </el-menu-item>-->
+      </el-menu-item>
       <el-menu-item index="CVM">
         <span slot="title">{{$t("menu.title2")}}</span>
       </el-menu-item>
