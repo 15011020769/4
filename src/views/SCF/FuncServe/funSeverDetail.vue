@@ -421,7 +421,7 @@
             let _this = this;
             this.functionData = res.Response;
             this.functionData.VpcConfig='1';
-            console.log(this.functionData)
+            // console.log(this.functionData)
             this.loading = false;
             let funcData = this.functionData;
             if (funcData.VpcConfig.SubnetId != "") {

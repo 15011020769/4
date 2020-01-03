@@ -208,7 +208,9 @@
         this.axios
           .post(LIST_VERSION, params)
           .then(res => {
-            this.FunctionVersion = res.Response.FunctionVersion[0]
+            if(res.Response.FunctionVersion){
+              this.FunctionVersion = res.Response.FunctionVersion[0]
+            }
           }).then(() => {
             this.GetBasics()
           })

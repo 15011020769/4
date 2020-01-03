@@ -147,14 +147,19 @@ export default {
       this.axios
         .post(FUN_LOG, params)
         .then(res => {
-          _this.logData = res.Response;
-          res.Response.Data.forEach((element, index) => {
-            let obj = {};
-            obj.time = element.StartTime;
-            obj.status = "调用成功";
-            _this.logList.push(obj);
-            element.Log = element.Log.replace(/\n/g, "<br/>");
-          });
+          
+          if(res.Response.Data){
+            _this.logData = res.Response;
+            res.Response.Data.forEach((element, index) => {
+              let obj = {};
+              obj.time = element.StartTime;
+              obj.status = "调用成功";
+              _this.logList.push(obj);
+              console.log(_this.logList)
+              element.Log = element.Log.replace(/\n/g, "<br/>");
+            });
+
+          }
         })
         .catch(error => {
           console.log(error);
