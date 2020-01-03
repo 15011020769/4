@@ -5,12 +5,7 @@
     </div>
     <div class="policyToUser">
       <div class="step">
-        <el-steps
-          :active="active"
-          direction="vertical"
-          simple
-          :space="200"
-        >
+        <el-steps :active="active" direction="vertical" simple :space="200">
           <el-step :title="$t('CAM.userList.permissions')"></el-step>
           <el-step :title="$t('CAM.userList.review')"></el-step>
         </el-steps>
@@ -20,7 +15,7 @@
           :totalNum="totalNum"
           :tableData="tableData"
           :userData="userData"
-          :userNum="userNum"
+          :userNum="userNums"
           :userDatas="userDatas"
           @handleSelectionChange="handleSelectionChange"
           @acitiveName="_acitiveName"
@@ -101,12 +96,14 @@ export default {
       totalNum: 0,
       tableData: [],
       userData: [],
-      userNum: 0,
+      userNums: 0,
       userDatas: [],
       multipleSelection: [],
       activeName: "first",
       emptyData: [],
-      arrDataPush: []
+      arrDataPush: [],
+      policyNum: 10,
+      userNum: 0
     };
   },
   methods: {
@@ -114,14 +111,14 @@ export default {
     _userList(val) {
       const params = {
         Version: "2019-01-16",
-        Rp: this.userNums
+        Rp: this.userNum
       };
       if (val) {
         params["Keyword"] = val;
       }
       this.axios.post(USER_GROUP, params).then(res => {
         this.userData = res.Response.GroupInfo;
-        this.userNum = res.Response.TotalNum;
+        this.userNums = res.Response.TotalNum;
         var data = this.userData;
         data.forEach(item => {
           const params = {
@@ -205,7 +202,7 @@ export default {
         this._getList(this.policyVal);
       } else if (val == "third") {
         this.userPage++;
-        this.userNums = this.userNums + 10;
+        this.userNum = this.userNum + 10;
         this._userList(this.userVal);
       }
     },
