@@ -17,7 +17,7 @@
       <div class="table">
         <!-- 表格 -->
         <template>
-          <el-table :data="tableData" style="width: 100%;" height="450px"  v-loading="loading">
+          <el-table :data="tableData" style="width: 100%;"   v-loading="loading">
             <el-table-column prop="date" label="资源包类型"></el-table-column>
             <el-table-column prop="name" label="来源"></el-table-column>
             <el-table-column prop="address" label="总额(次)"></el-table-column>
@@ -120,14 +120,21 @@ export default {
     selectOne(){
       console.log(this.value)
     },
-    handleCurrentChange(){
-
+    handleCurrentChange(val){
+      console.log(val)
     }
   }
 };
 </script>
+<style>
+  .table .el_table{
+        min-width: 450px !important;
+      }
+</style>
 <style lang="scss" scoped>
+
 /* css */
+
 .appidSecond {
   box-sizing: border-box;
   padding: 20px;
@@ -159,6 +166,7 @@ export default {
     box-sizing: border-box;
     background: #fff;
     .table {
+     
       .pagstyle {
         display: flex;
         justify-content: space-between;

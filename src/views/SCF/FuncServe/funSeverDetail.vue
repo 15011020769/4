@@ -139,21 +139,22 @@
                           </div>
                         </div>
                       </div>
-                      <el-form-item :label="$t('SCF.total.nwfw')" prop="VpcConfig">
+                          <!-- <i class="el-icon-question"></i> -->
+                      <el-form-item :label="$t('SCF.total.nwfw')"  prop="VpcConfig">
+                      <!-- <el-form-item :label="$t('SCF.total.nwfw')" prop="VpcConfig"> -->
                         <span slot="label">
                           {{ $t('SCF.total.nwfw') }}
-                          <!-- <i class="el-icon-question"></i> -->
                         </span>
                         <el-switch v-model="functionData.VpcConfig" active-color="#006eff" inactive-color="#888">
                         </el-switch>
                         <div v-if="functionData.VpcConfig">
                           <el-select v-model="functionData.VpcConfig" v-on:change="getSelectOne($event)">
-                            <el-option v-for="item in functionData.VpcConfig" :label="item.VpcId" :value="item.VpcId"
-                              :key="item"></el-option>
+                            <el-option v-for="(item,index) in functionData.VpcConfig" :label="item.VpcId" :value="item.VpcId"
+                              :key="index"></el-option>
                           </el-select>
                           <el-select v-model="functionData.VpcConfig" v-on:change="getSelectTwo($event)">
-                            <el-option v-for="item in funReast.VpcConfig" :label="item.SubnetId" :value="item.SubnetId"
-                              :key="item"></el-option>
+                            <el-option v-for="(item,index) in funReast.VpcConfig" :label="item.SubnetId" :value="item.SubnetId"
+                              :key="index"></el-option>
                           </el-select>
                         </div>
                       </el-form-item>
@@ -263,6 +264,7 @@
     DEL_TRIGGER
   } from "@/constants";
   export default {
+   
     components: {
       triggerMode,
       funCode,
@@ -418,6 +420,8 @@
           .then(res => {
             let _this = this;
             this.functionData = res.Response;
+            this.functionData.VpcConfig='1';
+            console.log(this.functionData)
             this.loading = false;
             let funcData = this.functionData;
             if (funcData.VpcConfig.SubnetId != "") {
