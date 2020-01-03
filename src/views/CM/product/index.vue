@@ -96,20 +96,7 @@ export default {
       value: 13,
       dialogVisible: false, //购买短信弹出框
       input: "", //搜索框的值
-      tableData: [
-        {
-          date: '机器重启',
-          type: '异常事件',
-          producttype: '云服务器',
-          region:"中国台北",
-          influence:"ins-e9avpkuw as-fdafdsafdsafd",
-          objdetail:"内网IP:10.0.0.85 外网IP:- 私有网络ID:vpc-6whh21",
-          state:"-",
-          starttime:"2020/01/03 14:57:45",
-          updatatime:"2020/01/03 14:57:45",
-          alarm:"已配置 新增配置"
-        }
-      ],
+      tableData: [],
       //分页
       TotalCount: 0, //总条数
       pagesize: 10, // 分页条数
@@ -119,7 +106,17 @@ export default {
   components: {
     Header,
     TimeX
-  }
+  },
+  methods: {
+    //获取数据
+    GetDat(data) {
+      // console.log(data);
+    },
+     //分页
+    handleCurrentChange(val) {
+      this.currpage = val;
+    }
+  },
 };
 </script>
 
@@ -154,6 +151,9 @@ export default {
         display: flex;
         font-size: 16px;
         align-items: center;
+      }
+      .type_data{
+        margin-left:-20px;
       }
   }
   .table_head {

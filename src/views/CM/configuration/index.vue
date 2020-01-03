@@ -15,7 +15,7 @@
       <div class="box">
         <div class="table_top">
           <div class="type_data">
-            <el-button  type="primary">+新增配置项</el-button>
+            <el-button  type="primary" v-on:click="btn">+新增配置项</el-button>
           </div>
          
           <div class="icons"> 
@@ -23,7 +23,7 @@
                 <input type="text" placeholder="请输入关键字">
                 <i class="el-icon-search"></i>              
             </div>
-                <i class="el-icon-setting"></i>
+                <i class="el-icon-setting" v-on:click="Dialog"></i>
           </div>
         </div>
         <div class="table">
@@ -63,21 +63,7 @@ export default {
       value: 1,
       dialogVisible: false, //购买短信弹出框
       input: "", //搜索框的值
-      tableData: [
-        {
-          namespace: 'test1',
-          index: 'aa',
-          dimension: '1,2,3',
-          method:"已配置",
-          operation:"监控 管理 删除",
-        },{
-           namespace: 'test2',
-          index: 'bb',
-          dimension: '4,5,6',
-          method:"已配置",
-          operation:"监控 管理 删除",
-        }
-      ],
+      tableData: [],
       //分页
       TotalCount: 0, //总条数
       pagesize: 10, // 分页条数
@@ -86,7 +72,25 @@ export default {
   },
   components: {
     Header
-  }
+  },
+  methods: {
+    //获取数据
+    GetDat(data) {
+      console.log(data);
+    },
+     //分页
+    handleCurrentChange(val) {
+      this.currpage = val;
+    },
+    //自定义
+    Dialog(val){
+      console.log(123)
+      
+    },
+    btn(val){
+      console.log(456)
+    }
+  },
 };
 </script>
 

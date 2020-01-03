@@ -1,7 +1,6 @@
 <template>
   <div class="product-wrap">
     <Header title="平台事件">
-      <!-- <p>产品事件</p> -->
     </Header>
     <div class="product-main">
       <div class="explain" style="margin-bottom:20px;">
@@ -76,7 +75,17 @@ export default {
   components: {
     Header,
     TimeX
-  }
+  },
+  methods: {
+   //获取数据
+    GetDat(data) {
+      // console.log(data);
+    },
+     //分页
+    handleCurrentChange(val) {
+      this.currpage = val;
+    }
+  },
 };
 </script>
 
@@ -111,6 +120,9 @@ export default {
         display: flex;
         font-size: 16px;
         align-items: center;
+      }
+      .type_data{
+        margin-left:-20px;
       }
   }
   

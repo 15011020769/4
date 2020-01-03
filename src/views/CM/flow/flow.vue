@@ -6,7 +6,6 @@
         <el-tab-pane label="外网出带宽" name="first">
           <div class="history-main">
             <div class="box">
-
               <div class="table-top">
                 <div class="table_top_head">
                   <div style="">
@@ -17,12 +16,12 @@
                   </div>
                   <div class="export">
                       <a>导出数据 </a> 
-                      <a> 导出图片</a>
+                      <a>导出图片</a>
                   </div>
                 </div>
                 <h3>外网出带宽</h3>
                 <div class="echarts" style="width:100%">
-                    <Ecarts/>
+                    <!-- <Ecarts/> -->
                 </div>
               </div>
               <h3>报表详情</h3>
@@ -54,7 +53,7 @@
 <script>
 import Header from "@/components/public/Head";
 import XTimeX from "@/components/public/TimeN";
-import Ecarts from "@/components/public/echars-line"
+// import Ecarts from "@/components/public/echars-line"
 export default {
   name: "history",
   data() {
@@ -73,22 +72,22 @@ export default {
   components: {
     Header,
     XTimeX,
-    Ecarts
+    // Ecarts
   },
   created() {},
   methods: {
     //获取数据
     GetDat(data) {
-      console.log(data);
+      // console.log(data);
     },
     //取消
-    cancel() {
-      this.dialogVisible = false;
-    },
-    //确定
-    save() {
-      this.dialogVisible = false;
-    },
+    // cancel() {
+    //   this.dialogVisible = false;
+    // },
+    // //确定
+    // save() {
+    //   this.dialogVisible = false;
+    // },
     //分页
     handleCurrentChange(val) {
       this.currpage = val;
