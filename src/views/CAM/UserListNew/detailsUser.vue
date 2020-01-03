@@ -88,7 +88,9 @@
                 <el-link @click="handleClicks(scope.row)" type="primary">{{scope.row.PolicyName}}</el-link>
               </template>
             </el-table-column>
-            <el-table-column :label="$t('CAM.userList.AssociationTypes')" prop="CreateMode"></el-table-column>
+            <el-table-column label="创建来源" prop="CreateMode">
+              <template slot-scope="scope">{{CreateMode[scope.row.CreateMode]}}</template>
+            </el-table-column>
             <el-table-column :label="$t('CAM.userList.strategyChose')" prop="Type">
               <template slot-scope="scope">{{scope.row.Type == '1'?'自定义策略':'预设策略'}}</template>
             </el-table-column>
@@ -136,12 +138,21 @@
             @selection-change="Select"
           >
             <el-table-column type="selection"></el-table-column>
-            <el-table-column :label="$t('CAM.userList.GroupName')" prop="GroupName">
+            <el-table-column :label="$t('CAM.userList.GroupName')" prop="GroupName" width="240">
               <template slot-scope="scope">
                 <el-link @click="Interface(scope.row)" type="primary">{{scope.row.GroupName}}</el-link>
               </template>
             </el-table-column>
-            <el-table-column :label="$t('CAM.userList.RelatedPolicies')" prop="GroupId"></el-table-column>
+            <el-table-column :label="$t('CAM.userList.RelatedPolicies')">
+              <template slot-scope="scope">
+                <div class="omit">
+                  <span v-for="(item,index) in scope.row.policy" :key="index">
+                    {{item}}
+                    <font v-show="index != scope.row.policy.length-1">、</font>
+                  </span>
+                </div>
+              </template>
+            </el-table-column>
             <el-table-column :label="$t('CAM.userList.userRemark')" prop="Remark"></el-table-column>
             <el-table-column fixed="right" :label="$t('CAM.userList.userCz')">
               <template slot-scope="scope">
@@ -268,7 +279,8 @@ import {
   DELETE_USER,
   USER_LIST,
   UPDATA_USER,
-  DEL_USERTOGROUP
+  DEL_USERTOGROUP,
+  GROUP_POLICY
 } from "@/constants";
 // import Subscribe from './components/subscribeNew'
 import { parse } from "path";
@@ -279,6 +291,10 @@ export default {
   },
   data() {
     return {
+      CreateMode: {
+        1: "控制台创建",
+        2: "通过策略语法创建"
+      },
       emailReg: false,
       telReg: false,
       TotalCount: 0,
@@ -446,7 +462,6 @@ export default {
         };
         this.axios.post(QUERY_POLICY, ploicyParams).then(res => {
           if (res != "") {
-            console.log(res);
             this.loading = false;
             this.StrategyData = res.Response.List.slice(
               (this.currpages - 1) * this.pagesizes,
@@ -495,6 +510,18 @@ export default {
             this.currpage * this.pagesize
           );
           this.groupNum = "组(" + res.Response.GroupInfo.length + ")";
+          this.groupData.forEach(item => {
+            item.policy = [];
+            const params = {
+              Version: "2019-01-16",
+              TargetGroupId: item.GroupId
+            };
+            this.axios.post(GROUP_POLICY, params).then(res => {
+              res.Response.List.forEach(val => {
+                item.policy.push(val.PolicyName);
+              });
+            });
+          });
           this.loading = false;
         });
       });
@@ -530,7 +557,6 @@ export default {
           DetachUin: this.userData.Uin
         };
         this.axios.post(REMOVEBIND_USER, params).then(data => {
-          console.log(data);
           this.ploicyData();
           this.$message("解除成功");
         });
@@ -621,7 +647,6 @@ export default {
     //多选框
     Select(val) {
       // this.disabled = false;
-      console.log(val);
       this.valArr = val;
       if (val != "") {
         this.disabled = false;
@@ -664,6 +689,14 @@ export default {
     left: 0;
   }
 }
+.omit {
+  color: #006eff;
+  cursor: pointer;
+  width: 220px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
 .Right-style {
   display: flex;
   justify-content: flex-end;
@@ -695,6 +728,14 @@ export default {
   justify-content: center;
   padding: 25px;
   box-sizing: border-box;
+  .omit {
+    color: #006eff;
+    cursor: pointer;
+    width: 220px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
   .details-left {
     width: 75%;
     background: white;

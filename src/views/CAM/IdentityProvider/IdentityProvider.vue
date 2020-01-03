@@ -87,7 +87,6 @@ export default {
       this.axios
         .post(LIST_Providers, params)
         .then(data => {
-          console.log(data);
           this.tableData = data.Response.SAMLProviderSet;
           this.TotalCount = data.Response.TotalCount;
           this.loading = false;

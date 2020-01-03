@@ -45,6 +45,7 @@
           let city = data.data[0];
           localStorage.setItem("regionv1", city.regionCode);
           localStorage.setItem("regionv2", city.Region);
+          localStorage.setItem("regionv3", city.zone);
         });
       }
     }

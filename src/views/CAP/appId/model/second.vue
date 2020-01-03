@@ -9,6 +9,7 @@
           :label="item.label"
           :value="item.value"
           size="medium"
+          @change="selectOne"
         ></el-option>
       </el-select>
     </el-row>
@@ -16,7 +17,7 @@
       <div class="table">
         <!-- 表格 -->
         <template>
-          <el-table :data="tableData" style="width: 100%;" height="450px">
+          <el-table :data="tableData" style="width: 100%;" height="450px"  v-loading="loading">
             <el-table-column prop="date" label="资源包类型"></el-table-column>
             <el-table-column prop="name" label="来源"></el-table-column>
             <el-table-column prop="address" label="总额(次)"></el-table-column>
@@ -54,20 +55,21 @@
   </div>
 </template>
 <script>
+import {GETALLAPPID_LIST} from '@/constants/CAP.js'
 export default {
   data() {
     return {
       options: [
         {
-          value: "1",
+          value: "可使用",
           label: "可使用"
         },
         {
-          value: "2",
+          value: "已用完",
           label: "已用完"
         },
         {
-          value: "3",
+          value: "已过期",
           label: "已过期"
         }
       ],
@@ -93,14 +95,35 @@ export default {
           label: "50"
         }
       ],
-      value: "",
+      loading:true,
+      value: "可使用",
       value2: "",
       tableData: [],
-      TotalCount:'',
+      TotalCount:1,
+      pagesize:1,
     };
   },
-  mounted() {},
-  methods: {}
+  mounted() {
+    setInterval(()=>{
+      this.loading=false;
+    },2000)
+    let params={
+      "Action":"DescribeCaptchaUserAllAppId",
+      "Version":"2019-07-22",
+    }
+    this.axios.post(GETALLAPPID_LIST,params).then(res=>{
+      console.log(res)
+    })
+
+  },
+  methods: {
+    selectOne(){
+      console.log(this.value)
+    },
+    handleCurrentChange(){
+
+    }
+  }
 };
 </script>
 <style lang="scss" scoped>

@@ -48,15 +48,11 @@
         </el-row>
       </div>
       <div class="modelchart">
-        <h3>{{ $t('SCF.total.sytj') }}</h3>
-        <div>
-          <el-button
-            class="addressName"
-            readonly="readonly"
-            v-model="addressIpt"
-          >{{ $t('SCF.total.zgtb') }}</el-button>
+        <!-- <h3>{{ $t('SCF.total.sytj') }}</h3> -->
+        <!-- <div>
+          <el-button class="addressName" readonly="readonly" v-model="addressIpt">{{ $t('SCF.total.zgtb') }}</el-button>
           <XTimeX v-on:switchData="GetDat" :classsvalue="value"></XTimeX>
-        </div>
+        </div> -->
         <div class="chartShowCon">
           <div class="chartShowTit">
             <el-button-group>
@@ -90,26 +86,15 @@
               </el-button>
             </el-button-group>
           </div>
-          <div class="chartTable">
-            <el-table
-              ref="multipleTable"
-              :data="tableData"
-              tooltip-effect="dark"
-              style="width: 100%"
-              class="funDataTable"
-            >
+          <!-- <div class="chartTable">
+            <el-table ref="multipleTable" :data="tableData" tooltip-effect="dark" style="width: 100%"
+              class="funDataTable">
               <el-table-column prop="DataPoints" width="550">
                 <template slot-scope="scope">
                   <p v-if="scope.row.DataPoints[0].Values.length==0">{{ $t('CVM.clBload.zwsj') }}</p>
                   <div class="echart" v-if="scope.row.DataPoints[0].Values.length!=0">
-                    <echart-line
-                      id="diskEchearrts-line"
-                      :time="scope.row.DataPoints[0].Timestamps | UpTime"
-                      :opData="scope.row.DataPoints[0].Values"
-                      :scale="3"
-                      :period="period"
-                      :xdata="false"
-                    ></echart-line>
+                    <echart-line id="diskEchearrts-line" :time="scope.row.DataPoints[0].Timestamps | UpTime"
+                      :opData="scope.row.DataPoints[0].Values" :scale="3" :period="period" :xdata="false"></echart-line>
                   </div>
                 </template>
               </el-table-column>
@@ -117,7 +102,7 @@
               <el-table-column prop="Namespace" label="命名空间"></el-table-column>
               <el-table-column prop="dataNum" label="数据指标"></el-table-column>
             </el-table>
-          </div>
+          </div> -->
         </div>
       </div>
     </div>
@@ -125,447 +110,399 @@
 </template>
 
 <script>
-import moment from "moment";
-import XTimeX from "@/components/public/TimeXK";
-import echartLine from "@/components/public/echars-line";
-import {
-  SCF_DETAILS,
-  All_MONITOR,
-  OVER_VIEW,
-  USER_MONTH_USAGE,
-  USER_YESTERDAY_USAGE,
-  SCF_LIST,
-  LIST_VERSION,
-  ALL_CITY
-} from "@/constants";
-export default {
-  data() {
-    return {
-      funlistname: [],
-      funlistversion: [],
-      functionName: this.$route.query.FunctionName,
-      addressIpt: "台灣台北",
-      topList: {
-        number: "",
-        gbs: "",
-        invokecount: "",
-        outflow: "",
-        number: "",
-        ygbs: "",
-        yinvokecount: "",
-        youtflow: ""
-      },
-      type: "1",
-      value: "",
-      valueAddress: "",
-      newData: "调用次数",
-      value2: "",
-      changeColor: "",
-      //统计图下的列表
-      tableData: [
-        {
-          funName: "函数名1",
-          nameSpace: "命名空间1",
-          dataNum: "数据指标1"
+  import moment from "moment";
+  import XTimeX from "@/components/public/TimeXK";
+  import echartLine from "@/components/public/echars-line";
+  import {
+    SCF_DETAILS,
+    All_MONITOR,
+    OVER_VIEW,
+    USER_MONTH_USAGE,
+    USER_YESTERDAY_USAGE,
+    SCF_LIST,
+    LIST_VERSION,
+    ALL_CITY
+  } from "@/constants";
+  export default {
+    data() {
+      return {
+        addressIpt: localStorage.getItem('regionv3'),
+        topList: {
+          number: "",
+          gbs: "",
+          invokecount: "",
+          outflow: "",
+          ygbs: "",
+          yinvokecount: "",
+          youtflow: ""
         },
-        {
-          funName: "函数名2",
-          nameSpace: "命名空间2",
-          dataNum: "数据指标2"
-        },
-        {
-          funName: "函数名3",
-          nameSpace: "命名空间2",
-          dataNum: "数据指标3"
-        }
-      ],
-      charts: ""
-    };
-  },
-  components: {
-    echartLine,
-    XTimeX
-  },
-  created() {
-    this.GetCity();
-  },
-  methods: {
-    // 获取城市列表
-    GetCity() {
-      this.axios.get(ALL_CITY).then(data => {
-        this.addressIpt = data.data[0].zone;
-      });
-    },
-    //函数数量
-    GetOverView() {
-      let params = {
-        Action: "GetFunctionTotalNum",
-        Version: "2018-04-16",
-        Region: this.$cookie.get("regionv2")
+        type: "1",
+        value: "",
+        newData: "调用次数",
+        //统计图下的列表
+        tableData: [{
+            funName: "函数名1",
+            nameSpace: "命名空间1",
+            dataNum: "数据指标1"
+          },
+          {
+            funName: "函数名2",
+            nameSpace: "命名空间2",
+            dataNum: "数据指标2"
+          },
+          {
+            funName: "函数名3",
+            nameSpace: "命名空间2",
+            dataNum: "数据指标3"
+          }
+        ]
       };
-      this.axios.post(OVER_VIEW, params).then(res => {
-        this.topList.number = res.Response.FunctionTotalNum;
-      });
     },
-    //本月调用数、本月资源量、本月输出量
-    GetUserMonthUsage() {
-      let params = {
-        Action: "GetUserMonthUsage",
-        Version: "2018-04-16",
-        Region: this.$cookie.get("regionv2")
-      };
-      this.axios.post(USER_MONTH_USAGE, params).then(res => {
-        this.topList.gbs = res.Response.Gbs;
-        this.topList.invokecount = res.Response.InvokeCount;
-        this.topList.outflow = res.Response.Outflow;
-      });
+    components: {
+      echartLine,
+      XTimeX
     },
-    //昨日用户使用
-    GetUserYesterdayUsage() {
-      let params = {
-        Action: "GetUserYesterdayUsage",
-        Version: "2018-04-16",
-        Region: this.$cookie.get("regionv2")
-      };
-      this.axios.post(USER_YESTERDAY_USAGE, params).then(res => {
-        this.topList.ygbs = res.Response.Gbs;
-        this.topList.yinvokecount = res.Response.InvokeCount;
-        this.topList.youtflow = res.Response.Outflow;
-      });
+    created() {
+      this.GetOverView();
+      this.GetUserMonthUsage();
+      this.GetUserYesterdayUsage();
     },
-    //获取数据
-    GetDat(data) {
-      this.period = data[0];
-      this.Start_End = data[1];
-      this.value = data[2];
-      this.tableData = [];
-    },
-    //
-    Obtain(metricN) {
-      let param = {
-        Version: "2018-07-24",
-        Region: this.$cookie.get("regionv2"), //'ap-guangzhou',
-        Namespace: "QCE/SCF_V2",
-        MetricName: metricN,
-        // "Instances.0.Dimensions.0.Name": "functionName",
-        // "Instances.0.Dimensions.0.Value": this.funlistname,
-        // "Instances.0.Dimensions.1.Name": "version",
-        // "Instances.0.Dimensions.1.Value": this.funlistversion,
-        Period: this.period,
-        StartTime: this.Start_End.StartTIme,
-        EndTime: this.Start_End.EndTIme
-      };
-      this.funlistname.forEach(function(elem, index) {
-        param["Instances." + index + ".Dimensions.0.Name"] = "functionName";
-        param["Instances." + index + ".Dimensions.0.Value"] = elem;
-      });
-      this.funlistversion.forEach(function(elem, index) {
-        param["Instances." + index + ".Dimensions.1.Name"] = "version";
-        param["Instances." + index + ".Dimensions.1.Value"] = elem;
-      });
-      this.axios.post(All_MONITOR, param).then(data => {
-        this.tableData = [];
-        this.tableData.push(data.Response);
-      });
-    },
-
-    btnClick(clickNode) {
-      this.type = clickNode;
-      if (clickNode == "1") {
-        this.newData = "调用次数";
-        var metricNArr = "Invocation";
-        this.Obtain(metricNArr);
-      } else if (clickNode == "2") {
-        this.newData = "外网出流量";
-        var metricNArr = "OutFlow";
-        this.Obtain(metricNArr);
-      } else if (clickNode == "3") {
-        this.newData = "运行内存";
-        var metricNArr = "Mem";
-        this.Obtain(metricNArr);
-      } else if (clickNode == "4") {
-        this.newData = "运行时间";
-        var metricNArr = "Duration";
-        this.Obtain(metricNArr);
-      } else if (clickNode == "5") {
-        this.newData = "错误次数";
-        var metricNArr = "Error";
-        this.Obtain(metricNArr);
-      } else if (clickNode == "6") {
-        this.newData = "并发执行个数";
-        var metricNArr = "ConcurrentExecutions";
-        this.Obtain(metricNArr);
-      } else if (clickNode == "7") {
-        this.newData = "受限次数";
-        var metricNArr = "Throttle";
-        this.Obtain(metricNArr);
-      }
-    },
-    list() {
-      var vm = this;
-      const param = {
-        Action: "ListFunctions",
-        Version: "2018-04-16",
-        Region: this.$cookie.get("regionv2") //'ap-guangzhou',
-      };
-      this.axios.post(SCF_LIST, param).then(data => {
-        data.Response.Functions.forEach(function(elem, index) {
-          vm.funlistname.push(elem.FunctionName);
-        });
-        vm.typee();
-      });
-    },
-    typee() {
-      var vm = this;
-      var listname = this.funlistname;
-      listname.forEach(function(elem) {
-        var param = {
-          Action: "ListVersionByFunction",
+    methods: {
+      //函数数量
+      GetOverView() {
+        let params = {
+          Action: "GetFunctionTotalNum",
           Version: "2018-04-16",
-          Region: "ap-guangzhou" //'ap-guangzhou',
+          Region: localStorage.getItem('regionv2')
         };
-        param["FunctionName"] = elem;
-        vm.axios.post(LIST_VERSION, param).then(data => {
-          vm.funlistversion.push(data.Response.FunctionVersion[0]);
+        this.axios.post(OVER_VIEW, params).then(res => {
+          console.log(res)
+          this.topList.number = res.Response.FunctionTotalNum;
         });
-      });
-    }
-  },
-  filters: {
-    UpName(value) {
-      if (value === "Duration") {
-        return (value = "运行时间");
-      }
-      if (value === "Invocation") {
-        return (value = "调用次数");
-      }
-      if (value === "Error") {
-        return (value = "调用错误次数");
-      }
-      if (value === "ConcurrentExecutions") {
-        return (value = "并发执行次数");
-      }
-      if (value === "ConfigMem") {
-        return (value = "配置内存");
-      }
-      if (value === "FunctionErrorPercentage") {
-        return (value = "函数错误率");
-      }
-      if (value === "Http2xx") {
-        return (value = "正确调用次数");
-      }
-      if (value === "Http432") {
-        return (value = "资源超过限制");
-      }
-      if (value === "Http433") {
-        return (value = "函数执行超时");
-      }
-      if (value === "Http434") {
-        return (value = "内存超过限制");
-      }
-
-      if (value === "Http4xx") {
-        return (value = "函数错误次数");
-      }
-      if (value === "Invocation") {
-        return (value = "函数调用次数");
-      }
-      if (value === "Mem") {
-        return (value = "运行内存");
-      }
-      if (value === "MemDuration") {
-        return (value = "时间内存");
-      }
-      if (value === "OutFlow") {
-        return (value = "外网出流量");
-      }
-      if (value === "ServerErrorPercentage") {
-        return (value = "平台错误率");
-      }
-      if (value === "Syserr") {
-        return (value = "系统内部错误次数");
-      }
-      if (value === "Throttle") {
-        return (value = "函数运行受限次数");
+      },
+      //本月调用数、本月资源量、本月输出量
+      GetUserMonthUsage() {
+        let params = {
+          Action: "GetUserMonthUsage",
+          Version: "2018-04-16",
+          Region: localStorage.getItem('regionv2')
+        };
+        this.axios.post(USER_MONTH_USAGE, params).then(res => {
+          this.topList.gbs = res.Response.Gbs;
+          this.topList.invokecount = res.Response.InvokeCount;
+          this.topList.outflow = res.Response.Outflow;
+        });
+      },
+      //昨日用户使用
+      GetUserYesterdayUsage() {
+        let params = {
+          Action: "GetUserYesterdayUsage",
+          Version: "2018-04-16",
+          Region: localStorage.getItem('regionv2')
+        };
+        this.axios.post(USER_YESTERDAY_USAGE, params).then(res => {
+          this.topList.ygbs = res.Response.Gbs;
+          this.topList.yinvokecount = res.Response.InvokeCount;
+          this.topList.youtflow = res.Response.Outflow;
+        });
+      },
+      //获取数据
+      GetDat(data) {
+        this.period = data[0];
+        this.Start_End = data[1];
+        this.value = data[2];
+        this.tableData = [];
+      },
+      btnClick(clickNode) {
+        this.type = clickNode;
+        if (clickNode == "1") {
+          this.newData = "调用次数";
+          var metricNArr = "Invocation";
+          this.Obtain(metricNArr);
+        } else if (clickNode == "2") {
+          this.newData = "外网出流量";
+          var metricNArr = "OutFlow";
+          this.Obtain(metricNArr);
+        } else if (clickNode == "3") {
+          this.newData = "运行内存";
+          var metricNArr = "Mem";
+          this.Obtain(metricNArr);
+        } else if (clickNode == "4") {
+          this.newData = "运行时间";
+          var metricNArr = "Duration";
+          this.Obtain(metricNArr);
+        } else if (clickNode == "5") {
+          this.newData = "错误次数";
+          var metricNArr = "Error";
+          this.Obtain(metricNArr);
+        } else if (clickNode == "6") {
+          this.newData = "并发执行个数";
+          var metricNArr = "ConcurrentExecutions";
+          this.Obtain(metricNArr);
+        } else if (clickNode == "7") {
+          this.newData = "受限次数";
+          var metricNArr = "Throttle";
+          this.Obtain(metricNArr);
+        }
       }
     },
-    UpTime(value) {
-      let timeArr = [];
-      for (let i = 0; i < value.length; i++) {
-        let uptime = moment(value[i] * 1000).format("YYYY-MM-DD HH:mm:ss");
-        timeArr.push(uptime);
+    filters: {
+      UpName(value) {
+        if (value === "Duration") {
+          return (value = "运行时间");
+        }
+        if (value === "Invocation") {
+          return (value = "调用次数");
+        }
+        if (value === "Error") {
+          return (value = "调用错误次数");
+        }
+        if (value === "ConcurrentExecutions") {
+          return (value = "并发执行次数");
+        }
+        if (value === "ConfigMem") {
+          return (value = "配置内存");
+        }
+        if (value === "FunctionErrorPercentage") {
+          return (value = "函数错误率");
+        }
+        if (value === "Http2xx") {
+          return (value = "正确调用次数");
+        }
+        if (value === "Http432") {
+          return (value = "资源超过限制");
+        }
+        if (value === "Http433") {
+          return (value = "函数执行超时");
+        }
+        if (value === "Http434") {
+          return (value = "内存超过限制");
+        }
+
+        if (value === "Http4xx") {
+          return (value = "函数错误次数");
+        }
+        if (value === "Invocation") {
+          return (value = "函数调用次数");
+        }
+        if (value === "Mem") {
+          return (value = "运行内存");
+        }
+        if (value === "MemDuration") {
+          return (value = "时间内存");
+        }
+        if (value === "OutFlow") {
+          return (value = "外网出流量");
+        }
+        if (value === "ServerErrorPercentage") {
+          return (value = "平台错误率");
+        }
+        if (value === "Syserr") {
+          return (value = "系统内部错误次数");
+        }
+        if (value === "Throttle") {
+          return (value = "函数运行受限次数");
+        }
+      },
+      UpTime(value) {
+        let timeArr = [];
+        for (let i = 0; i < value.length; i++) {
+          let uptime = moment(value[i] * 1000).format("YYYY-MM-DD HH:mm:ss");
+          timeArr.push(uptime);
+        }
+
+        return timeArr;
       }
+    },
+  };
 
-      return timeArr;
-    }
-  },
-  mounted() {
-    this.list();
-
-    if (this.tableData == "") {
-      document.querySelector(".chartTable").innerHTML = "暫無數據";
-    }
-    // this.initChart(this.tableData);
-    this.GetOverView();
-    this.GetUserMonthUsage();
-    this.GetUserYesterdayUsage();
-  }
-};
 </script>
 
 <style scoped lang="scss">
-.wrap >>> .btn-style {
-  margin-left: 0;
-}
-.wrap >>> input,
-.wrap >>> button {
-  height: 30px;
-  border-radius: 0;
-  font-size: 12px;
-}
-.wrap >>> button {
-  padding: 0 15px;
-  box-sizing: border-box;
-}
-.chartShowCon >>> button {
-  background: transparent;
-}
-.newClear:after {
-  display: block;
-  content: "";
-  clear: both;
-}
-.topOverView {
-  width: 100%;
-  height: 52px;
-  background-color: #fff;
-  line-height: 52px;
-  border-bottom: 1px solid #eee;
-  padding: 0 20px;
-  span:nth-child(1) {
-    font-size: 16px;
-    font-weight: 600;
-    color: #000;
-    float: left;
+  .wrap>>>.btn-style {
+    margin-left: 0;
   }
-  span:nth-child(2) {
-    font-size: 14px;
-    color: #888;
-    float: right;
-    a {
-      color: #888;
-    }
-  }
-}
-.mainContainer {
-  width: 100%;
-  padding: 20px 20px;
-  box-sizing: border-box;
-}
-.contentTop {
-  padding: 20px 0;
-  width: 100%;
-  height: 150px;
-  background-color: #fff;
-  border-radius: 4px;
-  border: 1px solid #eee;
-  box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
-  div:nth-child(4) {
-    div {
-      border-right: 0;
-    }
-  }
-}
-.modelList {
-  padding: 10px 20px;
-  border-right: 1px solid #ccc;
-  height: 110px;
-  p:nth-child(1) {
-    color: #000;
-    font-size: 12px;
-    font-weight: 700;
-    margin-bottom: 15px;
-  }
-  p:nth-child(2) {
-    margin-bottom: 8px;
-    color: #000;
-    span:nth-child(1) {
-      font-size: 30px;
-    }
-  }
-  p:nth-child(3) {
-    color: #888;
-  }
-}
-.modelchart {
-  width: 100%;
-  min-height: 500px;
-  background-color: #fff;
-  border-radius: 4px;
-  border: 1px solid #eee;
-  box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
-  margin-top: 20px;
-  padding: 20px;
-  h3 {
-    line-height: 28px;
-  }
-}
-.selectAddress {
-  margin-right: 20px;
-}
-.newDataTime {
-  margin-left: 20px;
-}
-.chartShowTit {
-  width: 100%;
-  border-bottom: 1px solid #eaeaea;
-  height: 35px;
-  line-height: 38px;
-  margin-top: 20px;
-  button {
-    padding: 5px 10px;
-    border-bottom: 2px solid transparent;
-    margin-right: 20px !important;
-    border: none;
+
+  .wrap>>>input,
+  .wrap>>>button {
+    height: 30px;
     border-radius: 0;
-    span {
+    font-size: 12px;
+  }
+
+  .wrap>>>button {
+    padding: 0 15px;
+    box-sizing: border-box;
+  }
+
+  .chartShowCon>>>button {
+    background: transparent;
+  }
+
+  .newClear:after {
+    display: block;
+    content: "";
+    clear: both;
+  }
+
+  .topOverView {
+    width: 100%;
+    height: 52px;
+    background-color: #fff;
+    line-height: 52px;
+    border-bottom: 1px solid #eee;
+    padding: 0 20px;
+
+    span:nth-child(1) {
+      font-size: 16px;
+      font-weight: 600;
+      color: #000;
+      float: left;
+    }
+
+    span:nth-child(2) {
+      font-size: 14px;
+      color: #888;
+      float: right;
+
+      a {
+        color: #888;
+      }
+    }
+  }
+
+  .mainContainer {
+    width: 100%;
+    padding: 20px 20px;
+    box-sizing: border-box;
+  }
+
+  .contentTop {
+    padding: 20px 0;
+    width: 100%;
+    height: 150px;
+    background-color: #fff;
+    border-radius: 4px;
+    border: 1px solid #eee;
+    box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
+
+    div:nth-child(4) {
+      div {
+        border-right: 0;
+      }
+    }
+  }
+
+  .modelList {
+    padding: 10px 20px;
+    border-right: 1px solid #ccc;
+    height: 110px;
+
+    p:nth-child(1) {
+      color: #000;
       font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 15px;
+    }
+
+    p:nth-child(2) {
+      margin-bottom: 8px;
+      color: #000;
+
+      span:nth-child(1) {
+        font-size: 30px;
+      }
+    }
+
+    p:nth-child(3) {
       color: #888;
     }
   }
-  .addColor {
-    border-bottom: 2px solid #006eff;
-    background-color: transparent;
-    font-weight: 600;
-    color: #000;
-    span {
-      font-weight: 100;
+
+  .modelchart {
+    width: 100%;
+    min-height: 500px;
+    background-color: #fff;
+    border-radius: 4px;
+    border: 1px solid #eee;
+    box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
+    margin-top: 20px;
+    padding: 20px;
+
+    h3 {
+      line-height: 28px;
     }
   }
-}
-.chartCon {
-  min-height: 300px;
-  // border:1px solid #eaeaea;
-}
-.chartNum {
-  margin-top: 20px;
-  margin-bottom: 20px;
-  span:nth-child(1) {
-    font-weight: 600;
-    float: left;
+
+  .selectAddress {
+    margin-right: 20px;
   }
-  span:nth-child(2) {
-    color: #006eff;
-    float: right;
-    cursor: pointer;
+
+  .newDataTime {
+    margin-left: 20px;
   }
-}
-.chartTable {
-  min-height: 32px;
-  line-height: 32px;
-  text-align: left;
-  table tbody tr td {
+
+  .chartShowTit {
+    width: 100%;
+    border-bottom: 1px solid #eaeaea;
+    height: 35px;
+    line-height: 38px;
+    margin-top: 20px;
+
+    button {
+      padding: 5px 10px;
+      border-bottom: 2px solid transparent;
+      margin-right: 20px !important;
+      border: none;
+      border-radius: 0;
+
+      span {
+        font-size: 12px;
+        color: #888;
+      }
+    }
+
+    .addColor {
+      border-bottom: 2px solid #006eff;
+      background-color: transparent;
+      font-weight: 600;
+      color: #000;
+
+      span {
+        font-weight: 100;
+      }
+    }
+  }
+
+  .chartCon {
+    min-height: 300px;
+    // border:1px solid #eaeaea;
+  }
+
+  .chartNum {
+    margin-top: 20px;
+    margin-bottom: 20px;
+
+    span:nth-child(1) {
+      font-weight: 600;
+      float: left;
+    }
+
+    span:nth-child(2) {
+      color: #006eff;
+      float: right;
+      cursor: pointer;
+    }
+  }
+
+  .chartTable {
+    min-height: 32px;
+    line-height: 32px;
     text-align: left;
+
+    table tbody tr td {
+      text-align: left;
+    }
   }
-}
+
 </style>

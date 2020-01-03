@@ -42,6 +42,12 @@ export const BACKRULE_DELTILS = 'live2/CreateLiveCallbackRule'
 //创建录制规则
 export const LIVERULE_DELTILS = 'live2/CreateLiveRecordRule'
 
+/** 功能模板 */
+// 增加录制配置模板
+export const ADD_RECORDING_CONFIG = 'live2/CreateLiveRecordTemplate'
+// 删除录制配置模板
+export const DELETE_RECORDING_CONFIG = 'live2/DeleteLiveRecordTemplate'
+
 
 
 

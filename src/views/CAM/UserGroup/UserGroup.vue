@@ -11,7 +11,7 @@
           type="primary"
           :disabled="btnVisible"
           @click="addUserGroup()"
-        >{{$t('CAM.userGroup.createBtn')}}</el-button> -->
+        >{{$t('CAM.userGroup.createBtn')}}</el-button>-->
       </el-row>
       <div class="head-container">
         <el-input
@@ -79,14 +79,15 @@
           prop="GroupName"
           :label="$t('CAM.userGroup.colNmae')"
           show-overflow-tooltip
+          width="240"
         >
           &lt;!&ndash;
           <template slot-scope="scope">
-            <el-button
+            <p
               @click="Interface(scope.row.GroupId)"
-              size="mini"
+              class="omit"
               type="text"
-            >{{scope.row.GroupName}}</el-button>
+            >{{scope.row.GroupName}}</p>
           </template>&ndash;&gt;
         </el-table-column>
         <el-table-column prop="Remark" :label="$t('CAM.userGroup.colRemark')" show-overflow-tooltip></el-table-column>
@@ -375,11 +376,11 @@ export default {
           this.axios
             .post(DELE_GROUP, params)
             .then(data => {
-                this.$message({
+              this.$message({
                 type: "success",
-                message: '删除成功'
+                message: "删除成功"
               });
-                this.init()
+              this.init();
             })
             .catch(error => {
               this.$message({
@@ -413,7 +414,7 @@ export default {
               message: this.$t("CAM.userGroup.successInfo"),
               type: "success"
             });
-            this.init()
+            this.init();
             // this.$emit("update")
             // this.cancel()
           })
@@ -511,6 +512,14 @@ export default {
   }
 }
 .Cam {
+  .omit {
+    color: #006eff;
+    cursor: pointer;
+    width: 220px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
   .top {
     height: 50px;
     line-height: 50px;
