@@ -31,7 +31,7 @@
           <div class="pagestyle_right">
             <div>
               <span>每页显示行</span>
-              <el-select v-model="value2" placeholder="10" style="width:64px" size="mini">
+              <el-select v-model="value2" placeholder="10">
                 <el-option
                   v-for="item in options2"
                   :key="item.value"
@@ -95,8 +95,7 @@ export default {
       ],
       value: "",
       value2: "",
-      tableData: [],
-      TotalCount:'',
+      tableData: []
     };
   },
   mounted() {},
@@ -125,6 +124,7 @@ export default {
       font-size: 12px;
       .el-input {
         .el-input__inner {
+          height: 30px !important;
           border-radius: 0 !important;
         }
       }
@@ -144,9 +144,7 @@ export default {
           display: flex;
           justify-content: flex-start;
           div{
-            span{
-              margin-right: 10px;
-            }
+            .el-select
           }
         }
       }

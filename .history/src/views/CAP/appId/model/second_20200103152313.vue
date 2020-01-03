@@ -125,6 +125,7 @@ export default {
       font-size: 12px;
       .el-input {
         .el-input__inner {
+          height: 30px !important;
           border-radius: 0 !important;
         }
       }
@@ -146,6 +147,11 @@ export default {
           div{
             span{
               margin-right: 10px;
+            }
+            .el-select{
+             .el-input--suffix{
+              
+             }
             }
           }
         }
