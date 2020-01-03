@@ -1,6 +1,6 @@
 <template>
   <div class="subscription-wrap">
-    <Header title="平台事件订阅" />
+    <Header title="平臺訂閱事件" />
     <div class="table">
       <el-table :data="tableData" style="width: 100%;">
         <el-table-column label="事件类型" width="180">

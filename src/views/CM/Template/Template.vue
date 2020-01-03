@@ -1,6 +1,6 @@
 <template>
   <div class="Template-wrap">
-    <Header title="平台事件订阅" />
+    <Header title="觸發條件模板" />
     <div class="overview-main">
       <div class="explain">
         <p>
@@ -15,24 +15,22 @@
           <el-button type="primary">新建</el-button>
         </el-row>
         <el-row class="search">
-          <el-input placeholder="请输入触发条件模板名搜索" prefix-icon="el-icon-search" v-model="input2"></el-input>
+          <el-input placeholder="请输入触发条件模板名搜索" prefix-icon="el-icon-search" v-model="searchName"></el-input>
         </el-row>
       </p>
+      
       <el-table
         :data="tableData"
         style="width: 100%"
         height="450"
         :default-sort="{prop: 'changeData', order: 'descending'}"
       >
-        <el-table-column type="selection" width="55"></el-table-column>
-        <el-table-column prop="groupName" label="策略名称"></el-table-column>
+        <el-table-column prop="groupName" label="模板名称"></el-table-column>
         <el-table-column prop="chufa" label="触发条件"></el-table-column>
-        <el-table-column prop="object" label="所属项目"></el-table-column>
         <el-table-column prop="type" label="策略类型"></el-table-column>
-        <el-table-column prop="YS" label="已启用/实例数"></el-table-column>
-        <el-table-column prop="address" sortable label="最后修改"></el-table-column>
-        <el-table-column prop="qudao" label="告警渠道"></el-table-column>
-        <el-table-column prop="address" label="告警启停"></el-table-column>
+        <el-table-column prop="YS" label="备注"></el-table-column>
+        <el-table-column prop="address" sortable label="绑定告警策略数"></el-table-column>
+        <el-table-column prop="qudao" label="最后修改"></el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
             <el-button type="text" class="cloneBtn">复制</el-button>
@@ -221,7 +219,8 @@ export default {
       TotalCount: 0, //总条数
       pagesize: 10, // 分页条数
       currpage: 1, // 当前页码
-      operationFlag: -1 //按钮禁用开关
+      operationFlag: -1, //按钮禁用开关
+      searchName:""
     };
   },
   components: {

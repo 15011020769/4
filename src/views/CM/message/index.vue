@@ -1,6 +1,6 @@
 <template>
   <div class="message-wrap">
-    <Header title="自定义消息" />
+    <Header title="自定義消息" />
     <div class="overview-main">
       <div class="explain">
         <p>
@@ -10,16 +10,44 @@
       </div>
     </div>
     <div class="table">
-      <p class="addBtn">
+      <p class="addBtn" >
         <el-row>
           <el-button type="primary">新增消息策略</el-button>
         </el-row>
         <el-row class="iconBtn">
+          <el-input placeholder="请输入策略ID、策略名称搜索" prefix-icon="el-icon-search" v-model="searchName"></el-input>
           <i class="el-icon-setting"></i>
-          <i class="el-icon-refresh"></i>
-          <i class="el-icon-download"></i>
         </el-row>
       </p>
+
+      <el-table
+        :data="tableData"
+        style="width: 100%"
+        height="450"
+        :default-sort="{prop: 'changeData', order: 'descending'}"
+      >
+        <el-table-column prop="groupName" label="ID/策略名"></el-table-column>
+        <el-table-column prop="chufa" label="近24小时触发告警"></el-table-column>
+        <el-table-column prop="type" label="消息接收组"></el-table-column>
+        <el-table-column prop="address" label="告警渠道"></el-table-column>
+        <el-table-column label="操作">
+          <template slot-scope="scope">
+            <el-button type="text" class="cloneBtn">复制</el-button>
+            <el-button type="text" class="deleteBtn">删除</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+      <!-- 分页 -->
+      <div class="Right-style pagstyle">
+        <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;{{$t("CVM.strip")}}</span>
+        <el-pagination
+          :page-size="pagesize"
+          :pager-count="7"
+          layout="prev, pager, next"
+          @current-change="handleCurrentChange"
+          :total="TotalCount"
+        ></el-pagination>
+      </div>
     </div>
   </div>
 </template>
@@ -30,7 +58,112 @@ import Header from "@/components/public/Head";
 export default {
   name: "message",
   data() {
-    return {};
+    return {
+      tableData: [
+        {
+          address: "邮件",
+          grounpId: 3290043,
+          groupName: "啊啊啊",
+          isOpen: true,
+          chufa: "0",
+          object: "東崋雲计算有限公司",
+          type: "1",
+          YS: "3/3",
+          yiqiying: 3,
+          shilishu: 3,
+          lastEditUin: 100011921910,
+          changeData: "2019/12/31 13:52:55",
+          qudao: "",
+          zanting: true
+        },
+        {
+          address: "邮件",
+          grounpId: 3290043,
+          groupName: "啊啊啊",
+          isOpen: true,
+          chufa: "0",
+          object: "東崋雲计算有限公司",
+          type: "1",
+          YS: "0/0",
+          yiqiying: 3,
+          shilishu: 3,
+          lastEditUin: 100011921910,
+          changeData: "2019/12/31 13:21:32",
+          qudao: "",
+          zanting: true
+        },
+        {
+          address: "邮件",
+          grounpId: 3290043,
+          groupName: "啊啊啊",
+          isOpen: true,
+          chufa: "0",
+          object: "東崋雲计算有限公司",
+          type: "1",
+          YS: "15/15",
+          yiqiying: 3,
+          shilishu: 3,
+          lastEditUin: 100011921910,
+          changeData: "2019/12/31 7:16:46",
+          qudao: "",
+          zanting: true
+        },
+        {
+          address: "邮件",
+          grounpId: 3290043,
+          groupName: "啊啊啊",
+          isOpen: true,
+          chufa: "0",
+          object: "東崋雲计算有限公司",
+          type: "1",
+          YS: "3/3",
+          yiqiying: 3,
+          shilishu: 3,
+          lastEditUin: 100011921910,
+          changeData: "2019/12/31 13:52:55",
+          qudao: "",
+          zanting: true
+        },
+        {
+          address: "邮件",
+          grounpId: 3290043,
+          groupName: "啊啊啊",
+          isOpen: true,
+          chufa: "0",
+          object: "東崋雲计算有限公司",
+          type: "1",
+          YS: "0/0",
+          yiqiying: 3,
+          shilishu: 3,
+          lastEditUin: 100011921910,
+          changeData: "2019/12/31 13:21:32",
+          qudao: "",
+          zanting: true
+        },
+        {
+          address: "邮件",
+          grounpId: 3290043,
+          groupName: "啊啊啊",
+          isOpen: true,
+          chufa: "0",
+          object: "東崋雲计算有限公司",
+          type: "1",
+          YS: "15/15",
+          yiqiying: 3,
+          shilishu: 3,
+          lastEditUin: 100011921910,
+          changeData: "2019/12/31 7:16:46",
+          qudao: "",
+          zanting: true
+        }
+      ], //表格数据
+      //分页
+      TotalCount: 0, //总条数
+      pagesize: 10, // 分页条数
+      currpage: 1, // 当前页码
+      operationFlag: -1, //按钮禁用开关
+      searchName: ""
+    };
   },
   components: {
     Header
@@ -40,17 +173,73 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.strategy-wrap >>> .el-button,
-.strategy-wrap >>> .el-input__inner {
+.message-wrap >>> .el-button,
+.message-wrap >>> .el-input__inner {
   height: 30px;
   border-radius: 0;
   padding-top: 0;
   line-height: 30px;
   font-size: 12px;
 }
-.table {
-  padding: 20px;
+a {
+  color: #006eff;
+  cursor: pointer;
 }
+a:hover {
+  border-bottom: 1px solid #006eff;
+}
+.cursor {
+  cursor: pointer;
+}
+.Template-wrap >>> .cloneBtn > span:hover {
+  border-bottom: 1px solid #006eff;
+}
+.Template-wrap >>> .deleteBtn > span {
+  color: #666;
+}
+.table {
+    padding: 0 20px 20px 20px;
+    .addBtn {
+      width: 100%;
+      height: 45px;
+      padding-bottom:5px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      .iconBtn {
+        font-size: 16px;
+        color: #888;
+        display: flex;
+        align-items: center;
+        > i {
+          margin: 0 10px;
+          font-weight: 600;
+        }
+        i:hover {
+          cursor: pointer;
+        }
+      }
+    }
+    .Right-style {
+      display: flex;
+      justify-content: flex-end;
+
+      .esach-inputL {
+        width: 300px;
+        margin-right: 20px;
+      }
+    }
+    .pagstyle {
+      padding: 20px;
+
+      .pagtotal {
+        font-size: 13px;
+        font-weight: 400;
+        color: #565656;
+        line-height: 32px;
+      }
+    }
+  }
 
 .message-wrap {
   a {

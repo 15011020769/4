@@ -14,7 +14,7 @@
             <el-input v-model="formInline.strategy_name" style="width:360px;"></el-input>
           </el-form-item>
           <el-form-item label="产品/策略类型">
-            <el-select v-model="formInline.product_value" style="width:100px;">
+            <el-select filterable v-model="formInline.product_value" style="width:100px;">
               <el-option
                 v-for="(item,index) in formInline.product_kind"
                 :key="index"
@@ -23,7 +23,19 @@
                 label-width="40px"
               ></el-option>
             </el-select>
-            <el-select v-model="formInline.strategy_value" style="width:250px;margin-left:10px;">
+            <el-select multiple v-model="formInline.strategy_value" style="width:250px;margin-left:10px;">
+              <!-- <el-checkbox
+                :indeterminate="isIndeterminate"
+                v-model="checkAllProduct"
+                @change="handleCheckAllChange"
+              >全选</el-checkbox>
+              <el-checkbox-group v-model="checkedCities" @change="handleCheckedCitiesChange">
+                <el-checkbox
+                  v-for="(item,index) in formInline.strategy_kind"
+                  :label="item.name"
+                  :key="index"
+                >{{item.name}}</el-checkbox>
+              </el-checkbox-group> -->
               <el-option
                 v-for="(item,index) in formInline.strategy_kind"
                 :key="index"
@@ -106,6 +118,7 @@
         :data="tableData"
         style="width: 100%"
         height="450"
+        v-loading="dataListLoading"
         :default-sort="{prop: 'changeData', order: 'descending'}"
       >
         <el-table-column type="selection" width="55"></el-table-column>
@@ -122,7 +135,7 @@
             <el-button type="text" class="cloneBtn">复制</el-button>
             <el-button type="text" class="deleteBtn">删除</el-button>
             <!-- <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-            <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button> -->
+            <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button>-->
           </template>
         </el-table-column>
       </el-table>
@@ -146,6 +159,20 @@ export default {
   name: "strategy",
   data() {
     return {
+      checkAllProduct: false,
+      checkedCities: [],
+      cities: [
+        {
+          value: 0,
+          name: "产品类型"
+        },
+        {
+          value: 1,
+          name: "策略类型"
+        }
+      ],
+      isIndeterminate: true,
+
       formInline: {
         product_kind: [
           {
@@ -303,13 +330,25 @@ export default {
       TotalCount: 0, //总条数
       pagesize: 10, // 分页条数
       currpage: 1, // 当前页码
-      operationFlag: -1 //按钮禁用开关
+      operationFlag: -1, //按钮禁用开关
+      dataListLoading: false,
     };
   },
   components: {
     Header
   },
   methods: {
+    handleCheckAllChange(val) {
+      this.checkedCities = val ? cityOptions : [];
+      this.isIndeterminate = false;
+    },
+    handleCheckedCitiesChange(value) {
+      let checkedCount = value.length;
+      this.checkAll = checkedCount === this.cities.length;
+      this.isIndeterminate =
+        checkedCount > 0 && checkedCount < this.cities.length;
+    },
+
     onSubmit() {
       console.log("submit!");
     },
@@ -353,12 +392,12 @@ a:hover {
 }
 .cursor {
   cursor: pointer;
-} 
+}
 .strategy-wrap >>> .cloneBtn > span:hover {
   border-bottom: 1px solid #006eff;
 }
 .strategy-wrap >>> .deleteBtn > span {
- color: #666;
+  color: #666;
 }
 .strategy-wrap {
   border-radius: 0;
