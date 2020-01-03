@@ -48,11 +48,11 @@
         </el-row>
       </div>
       <div class="modelchart">
-        <!-- <h3>{{ $t('SCF.total.sytj') }}</h3> -->
-        <!-- <div>
+        <h3>{{ $t('SCF.total.sytj') }}</h3>
+        <div>
           <el-button class="addressName" readonly="readonly" v-model="addressIpt">{{ $t('SCF.total.zgtb') }}</el-button>
           <XTimeX v-on:switchData="GetDat" :classsvalue="value"></XTimeX>
-        </div> -->
+        </div>
         <div class="chartShowCon">
           <div class="chartShowTit">
             <el-button-group>
@@ -120,12 +120,13 @@
     USER_MONTH_USAGE,
     USER_YESTERDAY_USAGE,
     SCF_LIST,
+    ALL_Basics,
     LIST_VERSION,
-    ALL_CITY
   } from "@/constants";
   export default {
     data() {
       return {
+        FuncList: [], //函数列表
         addressIpt: localStorage.getItem('regionv3'),
         topList: {
           number: "",
@@ -138,7 +139,7 @@
         },
         type: "1",
         value: "",
-        newData: "调用次数",
+        MetricName: 'MemDuration',
         //统计图下的列表
         tableData: [{
             funName: "函数名1",
@@ -166,24 +167,22 @@
       this.GetOverView();
       this.GetUserMonthUsage();
       this.GetUserYesterdayUsage();
+      this.getList()
     },
     methods: {
       //函数数量
       GetOverView() {
         let params = {
-          Action: "GetFunctionTotalNum",
           Version: "2018-04-16",
           Region: localStorage.getItem('regionv2')
         };
         this.axios.post(OVER_VIEW, params).then(res => {
-          console.log(res)
           this.topList.number = res.Response.FunctionTotalNum;
         });
       },
       //本月调用数、本月资源量、本月输出量
       GetUserMonthUsage() {
         let params = {
-          Action: "GetUserMonthUsage",
           Version: "2018-04-16",
           Region: localStorage.getItem('regionv2')
         };
@@ -196,7 +195,6 @@
       //昨日用户使用
       GetUserYesterdayUsage() {
         let params = {
-          Action: "GetUserYesterdayUsage",
           Version: "2018-04-16",
           Region: localStorage.getItem('regionv2')
         };
@@ -206,45 +204,81 @@
           this.topList.youtflow = res.Response.Outflow;
         });
       },
-      //获取数据
+      btnClick(clickNode) {
+        this.type = clickNode;
+      },
       GetDat(data) {
         this.period = data[0];
         this.Start_End = data[1];
         this.value = data[2];
-        this.tableData = [];
       },
-      btnClick(clickNode) {
-        this.type = clickNode;
-        if (clickNode == "1") {
-          this.newData = "调用次数";
-          var metricNArr = "Invocation";
-          this.Obtain(metricNArr);
-        } else if (clickNode == "2") {
-          this.newData = "外网出流量";
-          var metricNArr = "OutFlow";
-          this.Obtain(metricNArr);
-        } else if (clickNode == "3") {
-          this.newData = "运行内存";
-          var metricNArr = "Mem";
-          this.Obtain(metricNArr);
-        } else if (clickNode == "4") {
-          this.newData = "运行时间";
-          var metricNArr = "Duration";
-          this.Obtain(metricNArr);
-        } else if (clickNode == "5") {
-          this.newData = "错误次数";
-          var metricNArr = "Error";
-          this.Obtain(metricNArr);
-        } else if (clickNode == "6") {
-          this.newData = "并发执行个数";
-          var metricNArr = "ConcurrentExecutions";
-          this.Obtain(metricNArr);
-        } else if (clickNode == "7") {
-          this.newData = "受限次数";
-          var metricNArr = "Throttle";
-          this.Obtain(metricNArr);
-        }
-      }
+      //获取函数列表
+      getList() {
+        let params = {
+          Version: "2018-04-16",
+          Region: localStorage.getItem('regionv2'),
+        };
+        this.axios.post(SCF_LIST, params).then(res => {
+          this.FuncList = res.Response.Functions
+          this.FuncList.forEach(element => {
+            let params = {
+              Version: '2018-04-16',
+              Region: localStorage.getItem('regionv2'),
+              FunctionName: element.FunctionName
+            }
+            this.axios
+              .post(LIST_VERSION, params)
+              .then(res => {
+                element.FunctionVersion = res.Response.FunctionVersion[0]
+              })
+          })
+        }).then(() => {
+          this.GetBasics()
+        })
+      },
+      //监控指标
+      GetBasics() {
+        const param = {
+          Version: "2018-07-24",
+          Region: localStorage.getItem('regionv2'),
+          Namespace: "QCE/SCF_V2",
+          MetricName: this.MetricName
+        };
+        this.axios.post(ALL_Basics, param).then(data => {
+          this.BasicsList = data.Response.MetricSet
+        }).then(() => {
+          this.tableData = []
+          this.BasicsList.forEach(item => {
+            item.Period.forEach(element => {
+              if (element == this.period) {
+                this.Obtain(item.MetricName)
+              }
+            });
+          });
+        })
+      },
+      //监控数据
+      Obtain(metricN) {
+        // console.log(this.FuncList)
+        const param = {
+          Version: "2018-07-24",
+          Region: localStorage.getItem('regionv2'),
+          Namespace: "QCE/SCF_V2",
+          MetricName: metricN,
+          Period: this.period,
+          StartTime: this.Start_End.StartTIme,
+          EndTime: this.Start_End.EndTIme
+        };
+        this.FuncList.forEach((item, index) => {
+          param[`Instances.${index}.Dimensions.0.Name`] = 'functionName'
+          param[`Instances.${index}.Dimensions.0.Value`] = item.FunctionName
+          param[`Instances.${index}.Dimensions.1.Name`] = 'version'
+          param[`Instances.${index}.Dimensions.1.Value`] = item.FunctionVersion
+        });
+        this.axios.post(All_MONITOR, param).then(data => {
+          this.tableData.push(data.Response);
+        });
+      },
     },
     filters: {
       UpName(value) {
