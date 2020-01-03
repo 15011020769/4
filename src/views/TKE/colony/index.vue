@@ -70,7 +70,6 @@
           <el-table-column
             prop="version"
             label="kubernetes版本"
-           
             >
           </el-table-column>
           <el-table-column
@@ -96,10 +95,6 @@
               <p>CPU: -/-</p>
               <p>内存: -/-</p>
             </template>
-          </el-table-column>
-          <el-table-column
-            prop="tag"
-            label="腾讯云标签">
           </el-table-column>
           <el-table-column
             label="操作"
