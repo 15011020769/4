@@ -6,9 +6,6 @@
       <p>
         <i class="el-icon-info"></i>{{ $t('SCF.total.zs') }}
       </p>
-      <p>
-        <el-button type="text">{{ $t('SCF.total.dcsj') }}</el-button>
-      </p>
     </div>
     <div class="box-table">
       <!-- 表格 -->
@@ -92,7 +89,8 @@
   import echartLine from "@/components/public/echars-line";
   import {
     All_MONITOR,
-    ALL_Basics
+    ALL_Basics,
+    LIST_VERSION
   } from "@/constants";
   export default {
     data() {
@@ -109,7 +107,78 @@
         tableData: [], // 获取列表数据
         timeData: [], // 折线图的x轴数据
         jingData: [],
-        MetricName: ""
+        FunctionVersion: '', //函数版本
+        MetricName: "",
+        symbol: [{
+            name: "Duration",
+            Company: "毫秒(ms)",
+          },
+          {
+            name: "Invocation",
+            Company: "次",
+          },
+          {
+            name: "Error",
+            Company: "次",
+          },
+          {
+            name: "ConcurrentExecutions",
+            Company: "次",
+          },
+          {
+            name: "ConfigMem",
+            Company: "MB",
+          },
+          {
+            name: "FunctionErrorPercentage",
+            Company: "次",
+          },
+          {
+            name: "Http2xx",
+            Company: "次",
+          },
+          {
+            name: "Http432",
+            Company: "次",
+          },
+          {
+            name: "Http433",
+            Company: "次",
+          },
+          {
+            name: "Http434",
+            Company: "次",
+          },
+          {
+            name: "Http4xx",
+            Company: "次"
+          },
+          {
+            name: "Mem",
+            Company: "MB",
+          },
+          {
+            name: "MemDuration",
+            Company: "MB/ms",
+          },
+          {
+            name: "OutFlow",
+            Company: "次",
+          },
+          {
+            name: "ServerErrorPercentage",
+            Company: "%",
+          },
+          {
+            name: "Syserr",
+            Company: "次",
+          },
+          {
+            name: "Throttle",
+            Company: "次",
+          },
+
+        ]
       };
     },
     components: {
@@ -126,8 +195,23 @@
         this.Start_End = data[1];
         this.value = data[2];
         if (this.period) {
-          this.GetBasics()
+          this.searchVersion()
         }
+      },
+      //查看函数新版本
+      searchVersion() {
+        let params = {
+          Version: '2018-04-16',
+          Region: 'ap-guangzhou', // localStorage.getItem('regionv2'),
+          FunctionName: this.ID
+        }
+        this.axios
+          .post(LIST_VERSION, params)
+          .then(res => {
+            this.FunctionVersion = res.Response.FunctionVersion[0]
+          }).then(() => {
+            this.GetBasics()
+          })
       },
       //监控指标
       GetBasics() {
@@ -143,7 +227,6 @@
           this.BasicsList.forEach(item => {
             item.Period.forEach(element => {
               if (element == this.period) {
-                console.log(item.MetricName)
                 this.Obtain(item.MetricName)
               }
             });
@@ -160,12 +243,17 @@
           "Instances.0.Dimensions.0.Name": "functionName",
           "Instances.0.Dimensions.0.Value": this.ID,
           "Instances.0.Dimensions.1.Name": "version",
-          "Instances.0.Dimensions.1.Value": '$latest',
+          "Instances.0.Dimensions.1.Value": this.FunctionVersion,
           Period: this.period,
           StartTime: this.Start_End.StartTIme,
           EndTime: this.Start_End.EndTIme
         };
         this.axios.post(All_MONITOR, param).then(data => {
+          this.symbol.forEach(element => {
+            if (element.name == data.Response.MetricName) {
+              data.Response.symbol = element.Company
+            }
+          });
           this.tableData.push(data.Response);
         });
       },
@@ -177,11 +265,14 @@
           MetricName: MetricName,
           "Instances.0.Dimensions.0.Name": "functionName",
           "Instances.0.Dimensions.0.Value": this.ID,
+          "Instances.0.Dimensions.1.Name": "version",
+          "Instances.0.Dimensions.1.Value": this.FunctionVersion,
           Period: this.period,
           StartTime: this.Start_End.StartTIme,
           EndTime: this.Start_End.EndTIme
         };
         this.axios.post(All_MONITOR, param).then(data => {
+          console.log(data)
           this.timeData = data.Response.DataPoints[0].Timestamps;
           this.jingData = data.Response.DataPoints[0].Values;
         });
@@ -189,6 +280,7 @@
 
       // 模态框
       Modality(MetricName) {
+        console.log(MetricName)
         this.MetricName = MetricName;
         this.dialogVisible = true;
         this.getModality(this.MetricName);
