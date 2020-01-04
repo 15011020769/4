@@ -1,7 +1,7 @@
 <template>
   <div class="appidSecond"  v-loading="loading">
     <el-row>
-      <el-button type="primary">购买套餐包</el-button>
+      <el-button type="primary" @click="buyNew">购买套餐包</el-button>
       <el-select v-model="value" placeholder="请选择" size="small" @change="selectOne">
         <el-option
           v-for="item in options"
@@ -131,8 +131,13 @@ export default {
     // 选择展示行
     selectShowRow(val){
       console.log(val)  
+    },
+    //路由跳转
+    buyNew(){
+       this.$router.push({
+        path: '/purchase'
+      })
     }
-    
   },
   watch:{
     // 监听表格数据变化改变loadding的值

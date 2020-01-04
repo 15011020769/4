@@ -188,7 +188,7 @@ export default {
     }
   }
   .tableWrap {
-    flex: 1;
+    // flex: 1;
     padding-left: 20px;
     padding-right: 20px;
     .table {
@@ -200,7 +200,7 @@ export default {
       background: white;
       align-items: center;
       .pagstyle {
-        display: flex;
+        // display: flex;
         padding: 20px;
         .pagtotal {
           font-size: 13px;
