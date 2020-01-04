@@ -1,3 +1,4 @@
+ <!-- 创建集群 -->
 <template>
   <div class="colony-wrap">
     <!-- <HeadCom title="集群管理">
@@ -40,8 +41,6 @@
 
       </div>
       <hr>
-      
-      
       <div class="tke-reminder">当您使用容器服务时，需要先创建集群，容器服务运行在集群中。一个集群由若干节点（云服务器）构成，可运行多个容器服务。集群的更多说明参考<a href="#">集群概述</a></div>
 
       <div class="tke-content tke-formpanel-wrap">

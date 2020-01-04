@@ -24,7 +24,7 @@ export default new Router({
     {
       path: '/colony', // 集群
       name: 'colony',
-      component: () => import(/* webpackChunkName: "colony" */ './colony/index.vue'),
+      component: () => import( './colony/index.vue'),
       meta: {
         keepAlive: true
       },
@@ -32,10 +32,181 @@ export default new Router({
     {
       path: '/colony/create', // 创建集群
       name: 'colonyCreate',
-      component: () => import(/* webpackChunkName: "colony" */ './colony/create.vue'),
+      component: () => import( './colony/create.vue'),
       meta: {
         keepAlive: true
       },
+    },
+    {
+      path: '/colony/sub', // 集群详情
+      name: 'colonySub',
+      component: () => import( './colony/sub/index.vue'),
+      redirect: '/colony/sub/basic', //默认子路由
+      meta: {
+        keepAlive: true
+      },
+      children: [ //子路由
+        { //基本信息
+          path: '/colony/sub/basic',
+          name: 'colonyBasic',
+          component: () => import('./colony/sub/basic/index.vue'),
+          meta: {
+            keepAlive: true
+          }
+        },
+        { //节点列表
+          path: '/colony/sub/nodeManage/node',
+          name: 'colonyNodeManageNode',
+          component: () => import('./colony/sub/nodeManage/node.vue'),
+          meta: {
+            keepAlive: true
+          }
+        },
+        { //Master&Etcd列表
+          path: '/colony/sub/nodeManage/masteretcd',
+          name: 'colonyNodeManageMasteretcd',
+          component: () => import('./colony/sub/nodeManage/masteretcd.vue'),
+          meta: {
+            keepAlive: true
+          }
+        },
+        { //伸缩组列表
+          path: '/colony/sub/nodeManage/asg',
+          name: 'colonyNodeManageAsg',
+          component: () => import('./colony/sub/nodeManage/asg.vue'),
+          meta: {
+            keepAlive: true
+          }
+        },
+        { //命名空间
+          path: '/colony/sub/namespace',
+          name: 'colonyNodeManageAsg',
+          component: () => import('./colony/sub/namespace/index.vue'),
+          meta: {
+            keepAlive: true
+          }
+        },
+        { //工作负载-Deployment
+          path: '/colony/sub/resource/deployment',
+          name: 'colonyNodeManageAsg',
+          component: () => import('./colony/sub/resource/deployment.vue'),
+          meta: {
+            keepAlive: true
+          }
+        },
+        { //工作负载-StatefulSet
+          path: '/colony/sub/resource/statefulSet',
+          name: 'colonyResourceStatefulSet',
+          component: () => import('./colony/sub/resource/statefulSet.vue'),
+          meta: {
+            keepAlive: true
+          }
+        },
+        { //工作负载-DaemonSet
+          path: '/colony/sub/resource/daemonSet',
+          name: 'colonyResourceDaemonSet',
+          component: () => import('./colony/sub/resource/daemonSet.vue'),
+          meta: {
+            keepAlive: true
+          }
+        },
+        { //工作负载-Job
+          path: '/colony/sub/resource/job',
+          name: 'colonyResourceJob',
+          component: () => import('./colony/sub/resource/job.vue'),
+          meta: {
+            keepAlive: true
+          }
+        },
+        { //工作负载-CronJob
+          path: '/colony/sub/resource/cronJob',
+          name: 'colonyResourceCronJob',
+          component: () => import('./colony/sub/resource/cronJob.vue'),
+          meta: {
+            keepAlive: true
+          }
+        },
+        { //自动伸缩
+          path: '/colony/sub/hpa',
+          name: 'colonyHpa',
+          component: () => import('./colony/sub/hpa/index.vue'),
+          meta: {
+            keepAlive: true
+          }
+        },
+        { //服务-Service
+          path: '/colony/sub/service/svc',
+          name: 'colonyServiceSvc',
+          component: () => import('./colony/sub/service/svc.vue'),
+          meta: {
+            keepAlive: true
+          }
+        },
+        { //服务-Ingress
+          path: '/colony/sub/service/ingress',
+          name: 'colonyServiceIngress',
+          component: () => import('./colony/sub/service/ingress.vue'),
+          meta: {
+            keepAlive: true
+          }
+        },
+        { //配置管理-ConfigMap
+          path: '/colony/sub/config/configMap',
+          name: 'colonyConfigConfigMap',
+          component: () => import('./colony/sub/config/configMap.vue'),
+          meta: {
+            keepAlive: true
+          }
+        },
+        { //配置管理-Secret
+          path: '/colony/sub/config/secret',
+          name: 'colonyConfigSecret',
+          component: () => import('./colony/sub/config/secret.vue'),
+          meta: {
+            keepAlive: true
+          }
+        },
+        { //储存-PersistentVolume
+          path: '/colony/sub/storage/pv',
+          name: 'colonyStoragePv',
+          component: () => import('./colony/sub/storage/pv.vue'),
+          meta: {
+            keepAlive: true
+          }
+        },
+        { //储存-PersistentVolumeClaim
+          path: '/colony/sub/storage/pvc',
+          name: 'colonyStoragePvc',
+          component: () => import('./colony/sub/storage/pvc.vue'),
+          meta: {
+            keepAlive: true
+          }
+        },
+        { //储存-StorageClass
+          path: '/colony/sub/storage/sc',
+          name: 'colonyStorageSc',
+          component: () => import('./colony/sub/storage/sc.vue'),
+          meta: {
+            keepAlive: true
+          }
+        },
+        { //日志
+          path: '/colony/sub/log',
+          name: 'colonyLog',
+          component: () => import('./colony/sub/log/index.vue'),
+          meta: {
+            keepAlive: true
+          }
+        },
+        { //事件
+          path: '/colony/sub/event',
+          name: 'colonyEvent',
+          component: () => import('./colony/sub/event/index.vue'),
+          meta: {
+            keepAlive: true
+          }
+        }
+      ]
     },
     {
       path: '/helm', // helm应用

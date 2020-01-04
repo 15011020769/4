@@ -50,7 +50,7 @@
             >
             <template slot-scope="scope">
               <!-- <span >{{ scope.row.date }}</span> -->
-              <a href="#">cls-n1xokuh6</a>
+              <a href="#" @click="goColonySub">cls-n1xokuh6</a>
               <p class="stk-editor-name">
                 <span>DBA-testDBA-testDBA-testDBA-test</span>
                 <i class="el-icon-edit" @click="showEditNameDlg()"></i>
@@ -107,7 +107,7 @@
                   更多<i class="el-icon-arrow-down el-icon--right"></i>
                 </span>
                 <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item command="a"><a href="#">查看集群凭证</a></el-dropdown-item>
+                  <el-dropdown-item command="a"><a href="#" @click="goColonySub">查看集群凭证</a></el-dropdown-item>
                   <el-dropdown-item command="b"><a href="#">新建节点</a></el-dropdown-item>
                   <el-dropdown-item command="c"><a href="#">删除</a></el-dropdown-item>
                 </el-dropdown-menu>
@@ -230,6 +230,15 @@ export default {
           }
       });
     },
+    // 查看详情跳转
+    goColonySub(){
+       this.$router.push({
+          name: "colonySub",
+          query: {
+           
+          }
+      });
+    },
     // 编辑集群弹窗相关
     showEditNameDlg(){
       this.editNameDialogVisible=true;
@@ -312,7 +321,7 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss" c>
 .colony-wrap >>> .el-button,
 .colony-wrap >>> .el-input__inner {
   height: 30px !important;
