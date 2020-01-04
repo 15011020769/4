@@ -497,6 +497,9 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+a{
+  cursor: pointer;
+}
 .wrap >>> .el-loading-mask{
   background: white;
 }

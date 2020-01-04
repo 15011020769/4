@@ -13,6 +13,7 @@
           </span>
           <div class="selectDrowBox" v-if="trueOrFalse">
             <div style="position:relative;z-index:100;display:flex;align-items:center;">
+              <!-- 请输入别名或者版本号进行搜索 -->
               <el-input v-model="searchIpt" :placeholder="$t('SCF.total.qsrbm')"></el-input>
               <el-button class="el-icon-search"></el-button>
             </div>
@@ -53,6 +54,7 @@
       </div>
       <div class="appIdListCon">
         <el-tabs class="allTabs" v-model="activeName" @tab-click="handleClick">
+          <!-- 函数配置 -->
           <el-tab-pane :label="$t('SCF.total.hspz')" name="first">
             <div class="allConListMain">
               <div class="allConListMainOne">
@@ -139,21 +141,21 @@
                           </div>
                         </div>
                       </div>
-                      <el-form-item :label="$t('SCF.total.nwfw')" prop="VpcConfig">
+                          <!-- <i class="el-icon-question"></i> -->
+                      <el-form-item :label="$t('SCF.total.nwfw')"  prop="VpcConfig">
                         <span slot="label">
                           {{ $t('SCF.total.nwfw') }}
-                          <!-- <i class="el-icon-question"></i> -->
                         </span>
-                        <el-switch v-model="functionData.VpcConfig" active-color="#006eff" inactive-color="#888">
+                        <el-switch v-model="functionData.switchFlag" active-color="#006eff" inactive-color="#888">
                         </el-switch>
-                        <div v-if="functionData.VpcConfig">
-                          <el-select v-model="functionData.VpcConfig" v-on:change="getSelectOne($event)">
-                            <el-option v-for="item in functionData.VpcConfig" :label="item.VpcId" :value="item.VpcId"
-                              :key="item"></el-option>
+                        <div v-if="functionData.switchFlag">
+                          <el-select v-model="functionData.VpcId" v-on:change="getSelectOne($event)">
+                            <el-option v-for="(item,index) in functionData.VpcConfig.VpcId" :label="item.VpcId" :value="item.VpcId"
+                              :key="index"></el-option>
                           </el-select>
-                          <el-select v-model="functionData.VpcConfig" v-on:change="getSelectTwo($event)">
-                            <el-option v-for="item in funReast.VpcConfig" :label="item.SubnetId" :value="item.SubnetId"
-                              :key="item"></el-option>
+                          <el-select v-model="functionData.SubnetId" v-on:change="getSelectTwo($event)">
+                            <el-option v-for="(item,index) in functionData.VpcConfig.SubnetId" :label="item.SubnetId" :value="item.SubnetId"
+                              :key="index"></el-option>
                           </el-select>
                         </div>
                       </el-form-item>
@@ -218,21 +220,25 @@
               </div>
             </div>
           </el-tab-pane>
+          <!-- 函数代码 -->
           <el-tab-pane :label="$t('SCF.total.hsdm')" name="second">
             <div class="allConListMain">
               <funCode />
             </div>
           </el-tab-pane>
+          <!-- 触发方式 -->
           <el-tab-pane :label="$t('SCF.total.cffs')" name="third">
             <div class="allConListMain">
               <triggerMode ref="mychild" @childFn="childFn" />
             </div>
           </el-tab-pane>
+          <!-- 通行日志 -->
           <el-tab-pane :label="$t('SCF.total.yxrz')" name="fouth">
             <div class="allConListMain">
               <runningLog />
             </div>
           </el-tab-pane>
+          <!-- 监控信息 -->
           <el-tab-pane :label="$t('SCF.total.jkxx')" name="fifth">
             <div class="allConListMain">
               <monitInfo />
@@ -263,6 +269,7 @@
     DEL_TRIGGER
   } from "@/constants";
   export default {
+   
     components: {
       triggerMode,
       funCode,
@@ -305,7 +312,11 @@
         functionData: {
           Environment: {
             Variables: ""
-          }
+          },
+          // 内网访问
+          switchFlag:false,
+          VpcId:'',
+          SubnetId:'',
         },
         environmentFlag: true,
         vpcConfigFlag: true,
@@ -407,7 +418,7 @@
         let params = {
           Action: "GetFunction",
           Version: "2018-04-16",
-          Region: "ap-guangzhou" //this.$cookie.get("regionv2")
+          Region: localStorage.getItem('regionv2'), //this.$cookie.get("regionv2")
         };
         let functionName = this.$route.query.functionName;
         if (functionName != "" && functionName != null) {
@@ -417,7 +428,9 @@
           .post(SCF_DETAILS, params)
           .then(res => {
             let _this = this;
-            this.functionData = res.Response;
+            let returnData=res.Response;
+           
+            this.functionData =  returnData;
             this.loading = false;
             let funcData = this.functionData;
             if (funcData.VpcConfig.SubnetId != "") {
@@ -446,7 +459,7 @@
         let params = {
           Action: "UpdateFunctionConfiguration",
           Version: "2018-04-16",
-          Region: "ap-guangzhou", //this.$cookie.get("regionv2"),
+          Region: localStorage.getItem('regionv2'),
           Description: this.functionData.Description,
           FunctionName: this.functionData.FunctionName,
           MemorySize: this.functionData.MemorySize,
@@ -478,7 +491,7 @@
       getfunction() {
         let params = {
           Version: "2018-04-16",
-          Region: "ap-guangzhou", //this.$cookie.get("regionv2"),
+          Region: localStorage.getItem('regionv2'),
           Action: "GetFunction"
         };
         let functionName = this.$route.query.functionName;
@@ -488,7 +501,7 @@
         this.axios.post(SCF_DETAILS, params).then(res => {
           this.triggerBoxList = res.Response.Triggers;
           for (let i = 0; i < this.triggerBoxList.length; i++) {
-            this.switch1[i] = true;
+            // this.switch1[i] = true;
           }
         });
       },
@@ -539,7 +552,7 @@
         let params = {
           Action: "PublishVersion",
           Version: "2018-04-16",
-          Region: "ap-guangzhou", //this.$cookie.get("regionv2"),
+          Region: localStorage.getItem('regionv2'),
           Description: this.publishVersion.descript
         };
         let functionName = this.$route.query.functionName;
@@ -604,7 +617,7 @@
         let params = {
           Action: "ListVersionByFunction",
           Version: "2018-04-16",
-          Region: "ap-guangzhou" //this.$cookie.get("regionv2")
+          Region: localStorage.getItem('regionv2'),
         };
         let functionName = this.$route.query.functionName;
         if (functionName != "" && functionName != null) {
@@ -633,7 +646,7 @@
         this.centerDialogVisible = false;
         let params = {
           Version: "2018-04-16",
-          Region: "ap-guangzhou", //this.$cookie.get("regionv2"),
+          Region: localStorage.getItem('regionv2'),
           Action: "DeleteTrigger",
           TriggerName: this.childData.TriggerName,
           Type: this.childData.Type

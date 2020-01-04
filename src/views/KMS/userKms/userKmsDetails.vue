@@ -274,7 +274,8 @@ export default {
       this.projectDetail.KeyState == this.$t('KMS.total.alredayStop') || this.projectDetail.KeyState == "PendingDelete" ? this.thisType = "0" : 3
       let params = {
         Version: '2019-01-18',
-        Region: VueCookie.get("regionv2"),
+        // Region: VueCookie.get("regionv2"),
+        Region:localStorage.getItem("regionv2"),
         KeyId: this.projectDetail.KeyId
       };
       this.axios.post(Des_KMS, params).then(res => {
@@ -375,7 +376,8 @@ export default {
     changeNameSure() {
       let params = {
         Version: '2019-01-18',
-        Region: VueCookie.get("regionv2"),
+        // Region: VueCookie.get("regionv2"),
+        Region:localStorage.getItem("regionv2"),
         Alias: this.changeName,
         KeyId: this.projectDetail.KeyId
       };
@@ -388,7 +390,8 @@ export default {
     changeDescriptionSure() {
       let params = {
         Version: '2019-01-18',
-        Region: VueCookie.get("regionv2"),
+        // Region: VueCookie.get("regionv2"),
+        Region:localStorage.getItem("regionv2"),
         Description: this.descriptionNew,
         KeyId: this.projectDetail.KeyId
       };
@@ -406,7 +409,8 @@ export default {
       let params = {
         Action: "Encrypt",
         Version: '2019-01-18',
-        Region: VueCookie.get("regionv2"),
+        // Region: VueCookie.get("regionv2"),
+        Region:localStorage.getItem("regionv2"),
         Plaintext: this.Plaintext,
         KeyId: this.projectDetail.KeyId
       };
@@ -426,7 +430,8 @@ export default {
       let params = {
         Action: "Decrypt",
         Version: '2019-01-18',
-        Region: VueCookie.get("regionv2"),
+        // Region: VueCookie.get("regionv2"),
+        Region:localStorage.getItem("regionv2"),
         CiphertextBlob: this.Ciphertext
       };
       this.axios.post(Decrypt, params).then(res => {
@@ -463,7 +468,8 @@ export default {
     downloadTxt1() {
       let params = {
         Version: '2019-01-18',
-        Region: VueCookie.get("regionv2"),
+        // Region: VueCookie.get("regionv2"),
+        Region:localStorage.getItem("regionv2"),
         KeyId: this.projectDetail.KeyId,
         WrappingAlgorithm: this.thisAddSuan,
         WrappingKeySpec: this.thisSuanType
@@ -491,7 +497,8 @@ export default {
       this.thisStepTwo = false;
       let params = {
         Version: '2019-01-18',
-        Region: VueCookie.get("regionv2"),
+        // Region: VueCookie.get("regionv2"),
+        Region:localStorage.getItem("regionv2"),
         EncryptedKeyMaterial: sessionStorage.getItem("EncryptedKeyMaterial1"),
         ImportToken: sessionStorage.getItem("ImportToken1"),
         KeyId: this.projectDetail.KeyId,
@@ -566,7 +573,8 @@ export default {
     deletekms() {
        let params = {
         Version: '2019-01-18',
-        Region: VueCookie.get("regionv2"),
+        // Region: VueCookie.get("regionv2"),
+        Region:localStorage.getItem("regionv2"),
         KeyId: this.projectDetail.KeyId,
       };
       this.axios.post(DEL_KMS, params).then(res => {

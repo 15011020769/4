@@ -20,7 +20,7 @@ module.exports = {
   kms: '密鑰管理服務 KMS',
   database: '資料庫',
   middleware: '互聯網中間件',
-  ckafka: '消息服務Ckafka',
+  ckafka: '消息服務 CKafka',
   net: '網路',
   clb: '負載均衡 CLB',
   dc: '專線接入 DC',

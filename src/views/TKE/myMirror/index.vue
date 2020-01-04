@@ -35,6 +35,7 @@ export default {
     }
   },
   methods: {
+    // 切换点击事件
     getTrue () {
       this.dataObject.flag = true
     },

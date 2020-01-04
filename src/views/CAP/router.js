@@ -28,6 +28,14 @@ export default new Router({
       meta: {
         keepAlive: true
       }
+    },
+    {
+      path: '/purchase', // purchase
+      name: 'purchase',
+      component: () => import(/* webpackChunkName: "appId" */ './appId/BUY/purchase.vue'),
+      meta: {
+        keepAlive: false
+      }
     }
   ]
 })

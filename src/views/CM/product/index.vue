@@ -1,7 +1,6 @@
 <template>
   <div class="product-wrap">
     <Header title="产品事件">
-      <!-- <p>产品事件</p> -->
     </Header>
     <div class="product-main">
       <div class="explain" style="margin-bottom:20px;">
@@ -19,7 +18,7 @@
               <input type="text">
           </div>
           <div class="icons">
-                <i class="el-icon-setting"></i>
+                <i class="el-icon-setting" @click="dialog"></i>
                 <i class="el-icon-download"></i>
           </div>
         </div>
@@ -81,6 +80,7 @@
         </div>
       </div>
     </div>
+    <Dialog :dialogVisible="dialogVisible" @cancel="cancel" @save="save"/>
   </div>
 </template>
 
@@ -88,28 +88,16 @@
 import Header from "@/components/public/Head";
 import TimeX from "@/components/public/TimeN";
 
+import Dialog from "./custom/custom";
 export default {
   name: "product",
   data() {
     return {
       activeName: "first",
       value: 13,
-      dialogVisible: false, //购买短信弹出框
+      dialogVisible: false, //弹框
       input: "", //搜索框的值
-      tableData: [
-        {
-          date: '机器重启',
-          type: '异常事件',
-          producttype: '云服务器',
-          region:"中国台北",
-          influence:"ins-e9avpkuw as-fdafdsafdsafd",
-          objdetail:"内网IP:10.0.0.85 外网IP:- 私有网络ID:vpc-6whh21",
-          state:"-",
-          starttime:"2020/01/03 14:57:45",
-          updatatime:"2020/01/03 14:57:45",
-          alarm:"已配置 新增配置"
-        }
-      ],
+      tableData: [],
       //分页
       TotalCount: 0, //总条数
       pagesize: 10, // 分页条数
@@ -118,8 +106,29 @@ export default {
   },
   components: {
     Header,
-    TimeX
-  }
+    Dialog,
+    TimeX,
+  },
+  methods: {
+    //获取数据
+    GetDat(data) {
+      // console.log(data);
+    },
+     //分页
+    handleCurrentChange(val) {
+      this.currpage = val;
+    },
+    //弹框
+    dialog(){
+      this.dialogVisible = true;
+    },
+    cancel(){
+      this.dialogVisible = false;
+    },
+    save(){
+      this.dialogVisible = false;
+    },
+  },
 };
 </script>
 
@@ -154,6 +163,9 @@ export default {
         display: flex;
         font-size: 16px;
         align-items: center;
+      }
+      .type_data{
+        margin-left:-20px;
       }
   }
   .table_head {
@@ -238,5 +250,10 @@ export default {
     color: #565656;
     line-height: 32px;
   }
+}
+.icons i{
+  font-size: 19px;
+  display: inline-block;
+  margin: 0 5px;
 }
 </style>  

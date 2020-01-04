@@ -1,15 +1,15 @@
 <template>
-  <div class="appidSecond">
+  <div class="appidSecond"  v-loading="loading">
     <el-row>
-      <el-button type="primary">购买套餐包</el-button>
-      <el-select v-model="value" placeholder="请选择" size="small">
+      <el-button type="primary" @click="buyNew">购买套餐包</el-button>
+      <el-select v-model="value" placeholder="请选择" size="small" @change="selectOne">
         <el-option
           v-for="item in options"
           :key="item.value"
           :label="item.label"
           :value="item.value"
           size="medium"
-          @change="selectOne"
+          
         ></el-option>
       </el-select>
     </el-row>
@@ -17,7 +17,7 @@
       <div class="table">
         <!-- 表格 -->
         <template>
-          <el-table :data="tableData" style="width: 100%;" height="450px"  v-loading="loading">
+          <el-table :data="tableData.slice((currpage - 1) * pagesize, currpage * pagesize)" style="width: 100%;"   class="table_set">
             <el-table-column prop="date" label="资源包类型"></el-table-column>
             <el-table-column prop="name" label="来源"></el-table-column>
             <el-table-column prop="address" label="总额(次)"></el-table-column>
@@ -32,7 +32,7 @@
           <div class="pagestyle_right">
             <div>
               <span>每页显示行</span>
-              <el-select v-model="value2" placeholder="10" style="width:64px" size="mini">
+              <el-select v-model="value2" placeholder="10" style="width:64px" size="mini" @change="selectShowRow">
                 <el-option
                   v-for="item in options2"
                   :key="item.value"
@@ -75,57 +75,83 @@ export default {
       ],
       options2: [
         {
-          value: "1",
+          value: "10",
           label: "10"
         },
         {
-          value: "2",
+          value: "20",
           label: "20"
         },
         {
-          value: "3",
+          value: "30",
           label: "30"
         },
         {
-          value: "4",
+          value: "40",
           label: "40"
         },
         {
-          value: "5",
+          value: "50",
           label: "50"
         }
       ],
-      loading:true,
+      loading:false,
       value: "可使用",
-      value2: "",
+      value2: "10",//默认展示行数
       tableData: [],
-      TotalCount:1,
-      pagesize:1,
+      //分页
+      TotalCount:0,
+      pagesize:10,
+      currpage: 1,
     };
   },
   mounted() {
-    setInterval(()=>{
-      this.loading=false;
-    },2000)
-    let params={
-      "Action":"DescribeCaptchaUserAllAppId",
-      "Version":"2019-07-22",
-    }
-    this.axios.post(GETALLAPPID_LIST,params).then(res=>{
-      console.log(res)
-    })
+    // setInterval(()=>{
+    //   this.loading=false;
+    // },2000)
+    // let params={
+    //   "Action":"DescribeCaptchaUserAllAppId",
+    //   "Version":"2019-07-22",
+    // }
+    // this.axios.post(GETALLAPPID_LIST,params).then(res=>{
+    //   console.log(res)
+    // })
 
   },
   methods: {
-    selectOne(){
-      console.log(this.value)
+    // 选择第一项
+    selectOne(val){
+       console.log(val)
     },
-    handleCurrentChange(){
-
+    // 改变页数
+    handleCurrentChange(val){
+      console.log(val)
+      this.currpage = val;
+    },
+    // 选择展示行
+    selectShowRow(val){
+      console.log(val)  
+    },
+    //路由跳转
+    buyNew(){
+       this.$router.push({
+        path: '/purchase'
+      })
+    }
+  },
+  watch:{
+    // 监听表格数据变化改变loadding的值
+    tableData:function(newVal){
+      if(!newVal){
+        // this.loading=false
+      }else{
+        // this.loading=true
+      }
     }
   }
 };
 </script>
+
 <style lang="scss" scoped>
 /* css */
 .appidSecond {
@@ -159,6 +185,9 @@ export default {
     box-sizing: border-box;
     background: #fff;
     .table {
+     .table_set{
+        min-height: 450px !important;
+      }
       .pagstyle {
         display: flex;
         justify-content: space-between;

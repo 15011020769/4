@@ -1,6 +1,6 @@
 <template>
   <div class="kms">
-    <div class="big-title">{{ $t('KMS.total.title') }}</div>
+    <div class="big-title">{{ $t('KMS.total.title') }} KMS</div>
     <el-menu
       default-active="2"
       class="el-menu-vertical-demo"

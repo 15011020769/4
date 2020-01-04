@@ -1,6 +1,6 @@
 <template>
   <div class="CLA">
-    <div class="big-title">{{$t("menu.title1")}}</div>
+    <div class="big-title">{{$t("menu.title1")}} CM</div>
     <el-menu
       default-active="2"
       class="el-menu-vertical-demo"

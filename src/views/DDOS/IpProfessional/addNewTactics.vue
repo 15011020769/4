@@ -806,6 +806,9 @@ export default {
 }
 </script>
 <style lang="scss">
+a{
+  cursor: pointer;
+}
 .newClear:after{
   display: block;
   clear:both;

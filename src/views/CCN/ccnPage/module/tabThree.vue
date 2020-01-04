@@ -123,7 +123,7 @@
             </el-select>
             <p class="edit-p">
               {{ $t('CCN.total.eWay4') }}
-              <!-- <a href>工單申請</a> -->
+              <a href>工單申請</a>
             </p>
           </el-form-item>
         </el-form>

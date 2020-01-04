@@ -306,7 +306,8 @@ export default {
         this.arr.forEach(item => {
           let params = {
             Version: "2019-01-18",
-            Region: VueCookie.get("regionv2"),
+            // Region: VueCookie.get("regionv2"),
+            Region:localStorage.getItem("regionv2"),
             KeyId: item.KeyId
           };
           this.axios.post(EnableKey, params).then(res => {
@@ -331,7 +332,8 @@ export default {
         this.arr.forEach(item => {
           let params = {
             Version: "2019-01-18",
-            Region: VueCookie.get("regionv2"),
+            // Region: VueCookie.get("regionv2"),
+            Region:localStorage.getItem("regionv2"),
             KeyId: item.KeyId
           };
 
@@ -417,7 +419,8 @@ export default {
       }
       let params = {
         Version: "2019-01-18",
-        Region: VueCookie.get("regionv2"),
+        // Region: VueCookie.get("regionv2"),
+        Region:localStorage.getItem("regionv2"),
         Limit: 100
       };
       //获取主密钥列表详情
@@ -490,7 +493,8 @@ export default {
     sureNewCreate() {
       let params = {
         Version: "2019-01-18",
-        Region: VueCookie.get("regionv2"),
+        // Region: VueCookie.get("regionv2"),
+        Region:localStorage.getItem("regionv2"),
         Alias: this.createForm.name,
         Description: this.createForm.discription,
         Type: this.createForm.Type == "KMS" ? 1 : 2

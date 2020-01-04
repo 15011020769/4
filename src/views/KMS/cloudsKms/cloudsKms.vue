@@ -87,15 +87,16 @@ export default {
     },
     //获取全部数据
     getData() {
-      var cookies = document.cookie;
-      var list = cookies.split(";");
-      for (var i = 0; i < list.length; i++) {
-        var arr = list[i].split("=");
-      }
+      // var cookies = document.cookie;
+      // var list = cookies.split(";");
+      // for (var i = 0; i < list.length; i++) {
+      //   var arr = list[i].split("=");
+      // }
       let params = {
         // Action: "ListFunctions",
         Version: "2018-04-16",
-        Region: arr[1]
+        // Region: arr[1]
+        Region:localStorage.getItem("regionv2"),
       };
       //this.$axios.post('scf/ListFunctions', params).then(res => {
         // console.log(res.data.functions);

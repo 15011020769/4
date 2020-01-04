@@ -1,6 +1,6 @@
 <template>
   <div class="CLA">
-    <div class="big-title">{{ $t('CLA.total.ysj') }}</div>
+    <div class="big-title">{{ $t('CLA.total.ysj') }} CloudAudit</div>
     <el-menu
       default-active="2"
       class="el-menu-vertical-demo"

@@ -370,6 +370,15 @@ export default new Router({
       keepAlive: true
     }
   },
+  {//lxx
+    path: '/strategy/detail:id', //           告警策略（点击“ 默认 ”设置动态路由）
+    name: 'strategyDetail',
+    component: () =>
+      import( /* webpackChunkName: "strategy" */ './strategy/index.vue'),
+    meta: {
+      keepAlive: true
+    }
+  },
   // -----------------------------------------------------
   {
     path: '/subscription', //           平台事件订阅
@@ -386,6 +395,15 @@ export default new Router({
     name: 'message',
     component: () =>
       import( /* webpackChunkName: "message" */ './message/index.vue'),
+    meta: {
+      keepAlive: true
+    }
+  },
+  {
+    path: '/message/create', //     自定义消息创建列表
+    name: 'create',
+    component: () =>
+      import( /* webpackChunkName: "/message/create" */ './message/components/create.vue'),
     meta: {
       keepAlive: true
     }
@@ -428,6 +446,16 @@ export default new Router({
       import( /* webpackChunkName: "view" */ './view/index.vue'),
     meta: {
       keepAlive: true
+    }
+  },
+  //------------------------------------------------------
+  {
+    path:"/configuration/create",//      新增配置项
+    name:"create",
+    component:()=>
+      import(/* webpackChunkName:"create" */ './configuration/create/index.vue'),
+    meta:{
+      keepAlive:true
     }
   }
   ]

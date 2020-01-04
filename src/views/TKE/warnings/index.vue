@@ -1,6 +1,73 @@
 <template>
   <div class="warnings-wrap">
-    告警设置
+    <!-- 头部 -->
+    <div class="back-hd flex">
+      <h2>警告设置</h2>
+      <div style="width:20px"></div>
+      <div style="padding-top:3px;">地域</div> 
+      &nbsp;<el-button  type="primary" class="init hd-button">中国台北</el-button>
+      <div style="width:20px"></div>
+      <div style="padding-top:3px;">集群</div> 
+      &nbsp;
+    </div>
+    <div class="app-tke-fe-content__inner">
+      <!-- 搜索框与新建，删除 -->
+      <div class="flex">
+        <div class="font" style="flex:1;padding-top:20px;">
+          <router-link :to="'/warningCreate'">
+            <button class="data-card-hd">新建</button>
+          </router-link>
+          <button class="data-card-hd data-card-hd-del" style="margin-left:8px;">删除</button>
+        </div>
+        <div style="position: relative;">
+          <input type="search" placeholder="请输入集群名称" class="search">
+          <button class="el-icon-search ip-btn"></button>
+        </div>
+      </div>
+      <!-- 内容 -->
+      <div class="event-persistence">
+        <div class="ep-data-card-main" style="padding:5px 0 10px 0;">
+          <el-row>
+            <el-col :span="5"><div class="font"><input type="checkbox" class="app-tke-fe-checkbox"> 告警策略名称</div></el-col>
+            <el-col :span="4"><div class="font">策略类型</div></el-col>
+            <el-col :span="5"><div class="font">触发条件</div></el-col>
+            <el-col :span="5"><div class="font">警告渠道</div></el-col>
+            <el-col :span="5"><div class="font">操作</div></el-col>
+          </el-row>
+        </div>
+        <!-- 数据绑定 -->
+        <div class="ep-data-card-main font" style="text-align:center;">
+          您选择的集群的告警设置列表为空，您可以
+          <a href="">新建告警设置</a>，或切换到其他集群
+        </div>
+        <div class="ep-data-card-main" style="padding-top:20px;">
+          <el-row>
+            <el-col :span="5"><div class="font">
+                <input type="checkbox" class="app-tke-fe-checkbox"><a href="javascript:;">aaaaaaa</a>
+              </div></el-col>
+            <el-col :span="4"><div class="font">集群</div></el-col>
+            <el-col :span="5"><div class="font">
+                <div>CPU利用率>90%,持续5分钟告警</div>
+                <div>内存利用率>90%,持续5分钟告警</div>
+                <div>CPU分配率>90%,持续5分钟告警</div>
+              </div></el-col>
+            <el-col :span="5"><div class="font">
+                <div>接收组:1个</div>
+                <div>渠道:短信</div>
+              </div></el-col>
+            <el-col :span="5"><div class="font">
+              <router-link :to="'/persistenceSetting/'+uid">
+                <span>删除</span>
+              </router-link>
+              <div style="width:10px;display:inline-block"></div>
+               <router-link :to="'/persistenceSetting/'+uid">
+                <span>复制</span>
+              </router-link>
+              </div></el-col>
+          </el-row>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -16,5 +83,101 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
+.app-tke-fe-checkbox {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  vertical-align: middle;
+  outline: none;
+  -webkit-appearance: none;
+  border: 1px solid #bbb;
+  background-color: #fff;
+  margin:0 10px 0 10px;
+}
+.ep-data-card-main {
+  padding: 20px 0 20px 0;
+  border-bottom: 1px solid #cccccc;
+}
+.data-card-hd {
+  height: 30px;
+  min-width: 24px;
+  padding: 0 20px;
+  background-color: #006eff;
+  color: #fff;
+  border: 1px solid #006eff;
+  line-height: 30px;
+  text-align: center;
+  display: inline-block;
+  cursor: pointer;
+  outline: 0 none;
+  box-sizing: border-box;
+  text-decoration: none;
+  font-size: 12px;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+.data-card-hd-del {
+  border-color: #ddd;
+  background-color: #fff;
+  color: #bbb;
+  cursor: not-allowed;
+}
+.init {
+  padding: 0;
+  margin: 0;
+}
+.hd-button {
+  width: 80px;
+  height: 22px;
+}
+.back-hd {
+  width: 100%;
+  height: 51px;
+  background: white;
+  padding:15px;
+  border-bottom: 1px solid #cccccc;
+  font-size: 12px;
+}
+.flex {
+  display: flex;
+}
+.event-persistence {
+  padding: 20px;
+  background: white;
+  box-shadow: 0 1px 3px 0 rgba(0,0,0,.1);
+}
+.app-tke-fe-content__inner {
+  max-width: 1360px;
+  margin:0 auto;
+  font-size: 0;
+  margin-bottom: 50px;
+}
+.search {
+  width: 200px;
+  height: 30px;
+  margin: 20px 0 10px 0;
+  font-size: 12px;
+  padding-left: 5px;
+  border: 1px solid #cccccc;
+}
+.ip-btn {
+  font-size: 12px;
+  width: 30px;
+  height: 30px;
+  background: none;
+  border:none;
+  position: absolute;
+  z-index: 1;
+  top: 20px;
+  right: 0px;
+}
+.font {
+  font-size: 12px;
+}
+.hide {
+  display: none;
+}
+.show {
+  display: block;
+}
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <div class="appidfirst">
+  <div class="appidfirst"  v-loading='loading'>
     <div class="appidWrap">
       <div class="bntWrap">
         <!-- 操作按钮 -->
@@ -91,6 +91,7 @@ import { ADD_LIST } from "@/constants/CAP.js";
 export default {
   data() {
     return {
+      loading:true,
       //分页
       TotalCount: 0,
       pagesize: 10,
@@ -120,9 +121,18 @@ export default {
         Version: "2019-07-22"
       };
       this.axios.post(ADD_LIST, params).then(res => {
-        this.tableData = res.Response.Data;
-        this.TotalCount = res.Response.Data.length
-        console.log(res)
+        if(res != ""){
+              this.loading = false
+              this.tableData = res.Response.Data;
+              this.TotalCount = res.Response.Data.length
+              console.log(res)
+        }else{
+           this.loading = false
+            this.$message({
+              type: "info",
+              message: "无响应数据！"
+            });
+        }
       });
     },
     //分页
@@ -178,19 +188,19 @@ export default {
     }
   }
   .tableWrap {
-    flex: 1;
+    // flex: 1;
     padding-left: 20px;
     padding-right: 20px;
     .table {
       width: 100%;
       box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
-    }
-    .Right-style {
+         .Right-style {
       display: flex;
       justify-content: flex-end;
       background: white;
       align-items: center;
       .pagstyle {
+        // display: flex;
         padding: 20px;
         .pagtotal {
           font-size: 13px;
@@ -200,6 +210,8 @@ export default {
         }
       }
     }
+    }
+ 
   }
 }
 </style>

@@ -48,43 +48,62 @@
         </el-row>
       </div>
       <div class="modelchart">
-        <!-- <h3>{{ $t('SCF.total.sytj') }}</h3> -->
-        <!-- <div>
-          <el-button class="addressName" readonly="readonly" v-model="addressIpt">{{ $t('SCF.total.zgtb') }}</el-button>
+        <h3>{{ $t('SCF.total.sytj') }}</h3>
+        <div>
+          <el-button class="addressName" readonly="readonly" v-model="addressIpt" style="margin-top:20px">{{ $t('SCF.total.zgtb') }}</el-button>
           <XTimeX v-on:switchData="GetDat" :classsvalue="value"></XTimeX>
-        </div> -->
+        </div>
         <div class="chartShowCon">
           <div class="chartShowTit">
             <el-button-group>
-              <el-button @click="btnClick(1)" :class="{'addColor':type=='1'}">
-                {{ $t('SCF.total.dycs') }}
+              <el-button @click="btnClick('MemDuration')" :class="{'addColor':type=='MemDuration'}"  >
+                资源使用量
+                <span>(MBms)</span>
+              </el-button>
+              <el-button @click="btnClick('Invocation')" :class="{'addColor':type=='Invocation'}">
+                调用次数
                 <span>(次)</span>
               </el-button>
-              <el-button @click="btnClick(2)" :class="{'addColor':type=='2'}">
-                {{ $t('SCF.total.wwcll') }}
-                <span>(KB)</span>
-              </el-button>
-              <el-button @click="btnClick(3)" :class="{'addColor':type=='3'}">
-                {{ $t('SCF.total.yxnc') }}
+              <el-button @click="btnClick('OutFlow')" :class="{'addColor':type=='OutFlow'}">
+                外网出流量
                 <span>(MB)</span>
               </el-button>
-              <el-button @click="btnClick(4)" :class="{'addColor':type=='4'}">
-                {{ $t('SCF.total.yxsj') }}
-                <span>(ms)</span>
-              </el-button>
-              <el-button @click="btnClick(5)" :class="{'addColor':type=='5'}">
-                {{ $t('SCF.total.cwcs') }}
+              <el-button @click="btnClick('Error')" :class="{'addColor':type=='Error'}">
+                错误次数
                 <span>(次)</span>
               </el-button>
-              <el-button @click="btnClick(6)" :class="{'addColor':type=='6'}">
-                {{ $t('SCF.total.bfzxgs') }}
+              <!-- <el-button @click="btnClick('ConcurrentExecutions')" :class="{'addColor':type=='ConcurrentExecutions'}">
+                并发执行个数
                 <span>(个)</span>
-              </el-button>
-              <el-button @click="btnClick(7)" :class="{'addColor':type=='7'}">
-                {{ $t('SCF.total.sxcs') }}
+              </el-button> -->
+              <el-button @click="btnClick('Throttle')" :class="{'addColor':type=='Throttle'}">
+                受限次数
                 <span>(次)</span>
               </el-button>
             </el-button-group>
+          </div>
+
+          <div style="margin-top:5px">
+            <el-table :data="tableData" style="width: 100%;" :show-header="showHeader">
+              <el-table-column prop width="150">
+                <template slot-scope="scope">
+                  <span style="font-size:12px;font-weight:bolder; color:#333;font-weight:600;">
+                    {{scope.row.MetricName | UpName(value)}}
+                    <span class="symbol">{{scope.row.symbol}}</span>
+                  </span>
+                </template>
+              </el-table-column>
+              <el-table-column prop="DataPoints">
+                <template slot-scope="scope">
+                  <p v-if="scope.row.DataPoints[0].Values.length==0">暂无数据</p>
+                  <div class="echart" v-if="scope.row.DataPoints[0].Values.length!=0">
+                    <echart-line id="diskEchearrts-line" :time="scope.row.DataPoints[0].Timestamps | UpTime"
+                      :opData="scope.row.DataPoints[0].Values" :scale="3" :period="period" :xdata="false">
+                    </echart-line>
+                  </div>
+                </template>
+              </el-table-column>
+            </el-table>
           </div>
           <!-- <div class="chartTable">
             <el-table ref="multipleTable" :data="tableData" tooltip-effect="dark" style="width: 100%"
@@ -120,12 +139,14 @@
     USER_MONTH_USAGE,
     USER_YESTERDAY_USAGE,
     SCF_LIST,
+    ALL_Basics,
     LIST_VERSION,
-    ALL_CITY
   } from "@/constants";
   export default {
     data() {
       return {
+        showHeader:false,
+        FuncList: [], //函数列表
         addressIpt: localStorage.getItem('regionv3'),
         topList: {
           number: "",
@@ -136,26 +157,11 @@
           yinvokecount: "",
           youtflow: ""
         },
-        type: "1",
+        type: "MemDuration",
         value: "",
-        newData: "调用次数",
+        MetricName: 'MemDuration',
         //统计图下的列表
-        tableData: [{
-            funName: "函数名1",
-            nameSpace: "命名空间1",
-            dataNum: "数据指标1"
-          },
-          {
-            funName: "函数名2",
-            nameSpace: "命名空间2",
-            dataNum: "数据指标2"
-          },
-          {
-            funName: "函数名3",
-            nameSpace: "命名空间2",
-            dataNum: "数据指标3"
-          }
-        ]
+        tableData: [],
       };
     },
     components: {
@@ -171,19 +177,16 @@
       //函数数量
       GetOverView() {
         let params = {
-          Action: "GetFunctionTotalNum",
           Version: "2018-04-16",
           Region: localStorage.getItem('regionv2')
         };
         this.axios.post(OVER_VIEW, params).then(res => {
-          console.log(res)
           this.topList.number = res.Response.FunctionTotalNum;
         });
       },
       //本月调用数、本月资源量、本月输出量
       GetUserMonthUsage() {
         let params = {
-          Action: "GetUserMonthUsage",
           Version: "2018-04-16",
           Region: localStorage.getItem('regionv2')
         };
@@ -196,7 +199,6 @@
       //昨日用户使用
       GetUserYesterdayUsage() {
         let params = {
-          Action: "GetUserYesterdayUsage",
           Version: "2018-04-16",
           Region: localStorage.getItem('regionv2')
         };
@@ -206,45 +208,38 @@
           this.topList.youtflow = res.Response.Outflow;
         });
       },
-      //获取数据
+      btnClick(clickNode) {
+        this.tableData = []
+        this.type = clickNode;
+        this.Obtain(clickNode)
+      },
       GetDat(data) {
         this.period = data[0];
         this.Start_End = data[1];
         this.value = data[2];
-        this.tableData = [];
-      },
-      btnClick(clickNode) {
-        this.type = clickNode;
-        if (clickNode == "1") {
-          this.newData = "调用次数";
-          var metricNArr = "Invocation";
-          this.Obtain(metricNArr);
-        } else if (clickNode == "2") {
-          this.newData = "外网出流量";
-          var metricNArr = "OutFlow";
-          this.Obtain(metricNArr);
-        } else if (clickNode == "3") {
-          this.newData = "运行内存";
-          var metricNArr = "Mem";
-          this.Obtain(metricNArr);
-        } else if (clickNode == "4") {
-          this.newData = "运行时间";
-          var metricNArr = "Duration";
-          this.Obtain(metricNArr);
-        } else if (clickNode == "5") {
-          this.newData = "错误次数";
-          var metricNArr = "Error";
-          this.Obtain(metricNArr);
-        } else if (clickNode == "6") {
-          this.newData = "并发执行个数";
-          var metricNArr = "ConcurrentExecutions";
-          this.Obtain(metricNArr);
-        } else if (clickNode == "7") {
-          this.newData = "受限次数";
-          var metricNArr = "Throttle";
-          this.Obtain(metricNArr);
+        if (this.period) {
+          this.Obtain(this.MetricName)
         }
-      }
+      },
+      //监控数据
+      Obtain(metricN) {
+        const param = {
+          Version: "2018-07-24",
+          Region: localStorage.getItem('regionv2'),
+          Namespace: "QCE/SCF_V2",
+          MetricName: metricN,
+          Period: this.period,
+          StartTime: this.Start_End.StartTIme,
+          EndTime: this.Start_End.EndTIme
+        };
+        param[`Instances.0.Dimensions.0.Name`] = 'functionName'
+        param[`Instances.0.Dimensions.0.Value`] = 'iai_tiia_deletePod'
+        param[`Instances.0.Dimensions.1.Name`] = 'version'
+        param[`Instances.0.Dimensions.1.Value`] = '$ATEST'
+        this.axios.post(All_MONITOR, param).then(data => {
+          this.tableData=[data.Response];
+        });
+      },
     },
     filters: {
       UpName(value) {
