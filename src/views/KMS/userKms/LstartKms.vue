@@ -69,7 +69,8 @@ export default {
       this.thisShow=false;
       let params = {
         Version: '2019-01-18',
-        Region: VueCookie.get("regionv2"),
+        // Region: VueCookie.get("regionv2"),
+        Region:localStorage.getItem("regionv2"),
         KeyId: this.contentDialog[1]
       };
      
@@ -84,7 +85,8 @@ export default {
       this.$emit('stopKmsSure',this.thisShow);
       let params = {
         Version: '2019-01-18',
-        Region: VueCookie.get("regionv2"),
+        // Region: VueCookie.get("regionv2"),
+        Region:localStorage.getItem("regionv2"),
         KeyId: this.contentDialog[1]
       };
       this.axios.post(DisableKey, params).then(res => {

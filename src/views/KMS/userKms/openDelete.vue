@@ -70,7 +70,8 @@ export default {
       
       let params = {
         Version: '2019-01-18',
-        Region: VueCookie.get("regionv2"),
+        // Region: VueCookie.get("regionv2"),
+        Region:localStorage.getItem("regionv2"),
         KeyId: this.contentDialog[3],
         PendingWindowInDays:this.thisNumber
       };
@@ -87,7 +88,8 @@ export default {
       this.$emit('closeDeleteSure',this.thisShow);
       let params = {
         Version: '2019-01-18',
-        Region: VueCookie.get("regionv2"),
+        // Region: VueCookie.get("regionv2"),
+        Region:localStorage.getItem("regionv2"),
         KeyId: this.contentDialog[3],
       };
       this.axios.post(CEL_KMS, params).then(res => {
