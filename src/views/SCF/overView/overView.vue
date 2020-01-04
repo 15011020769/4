@@ -50,7 +50,7 @@
       <div class="modelchart">
         <h3>{{ $t('SCF.total.sytj') }}</h3>
         <div>
-          <el-button class="addressName" readonly="readonly" v-model="addressIpt">{{ $t('SCF.total.zgtb') }}</el-button>
+          <el-button class="addressName" readonly="readonly" v-model="addressIpt" style="margin-top:40px">{{ $t('SCF.total.zgtb') }}</el-button>
           <XTimeX v-on:switchData="GetDat" :classsvalue="value"></XTimeX>
         </div>
         <div class="chartShowCon">

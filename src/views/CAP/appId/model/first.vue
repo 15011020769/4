@@ -192,15 +192,15 @@ export default {
     padding-left: 20px;
     padding-right: 20px;
     .table {
-      // width: 100%;
+      width: 100%;
       box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
-    }
-    .Right-style {
+         .Right-style {
       display: flex;
       justify-content: flex-end;
       background: white;
       align-items: center;
       .pagstyle {
+        display: flex;
         padding: 20px;
         .pagtotal {
           font-size: 13px;
@@ -210,6 +210,8 @@ export default {
         }
       }
     }
+    }
+ 
   }
 }
 </style>
