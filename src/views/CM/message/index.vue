@@ -13,14 +13,17 @@
     <div class="table">
       <div class="addBtn">
         <el-row>
-          <el-button type="primary">新增消息策略</el-button>
+          <el-button type="primary" @click="addMessage">新增消息策略</el-button>
         </el-row>
         <el-row class="seek">
           <el-input v-model="triggerInput" placeholder="请输入策略ID、策略名称搜索"></el-input>
-          <el-button icon="el-icon-search" style="margin-left:-1px;"></el-button> 
-          <i class="el-icon-setting" style="line-height:30px;padding:0 20px;cursor: pointer;"></i>
+          <el-button icon="el-icon-search" style="margin-left:-1px;"></el-button>
+          <i
+            class="el-icon-setting"
+            style="line-height:30px;padding:0 20px;cursor: pointer;"
+            @click="buyMessgae"
+          ></i>
         </el-row>
-       
       </div>
 
       <el-table
@@ -53,12 +56,14 @@
         ></el-pagination>
       </div>
     </div>
+    <!-- 点击设置 -->
+    <Dialog :dialogVisible="dialogVisible" @cancel="cancel" @save="save" />
   </div>
 </template>
 
 <script>
 import Header from "@/components/public/Head";
-// import Search from "@/components/public/SEARCH";//搜索框组建
+import Dialog from "./components/dialog";
 
 export default {
   name: "message",
@@ -167,14 +172,41 @@ export default {
       pagesize: 10, // 分页条数
       currpage: 1, // 当前页码
       operationFlag: -1, //按钮禁用开关
-      searchName: ""
+      searchName: "",
+      dialogVisible: false, //设置弹出框
+      triggerInput: "" //搜索
+      //分页
     };
   },
   components: {
-    Header
+    Header,
+    Dialog
     // Search  //搜索框组件
   },
-  methods: {}
+  methods: {
+    //新增消息策略
+    addMessage() {
+        this.$router.push( {name:"create"});
+      // this.$router.push({ path: "/message/create", query: {} });
+    },
+    //分页
+    handleCurrentChange(val) {
+      this.currpage = val;
+    },
+    //设置弹框
+    buyMessgae() {
+      // alert("11")
+      this.dialogVisible = true;
+    },
+    //取消设置弹框
+    cancel() {
+      this.dialogVisible = false;
+    },
+    //确定设置弹框
+    save() {
+      this.dialogVisible = false;
+    }
+  }
 };
 </script>
 

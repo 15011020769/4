@@ -127,7 +127,11 @@
         :default-sort="{prop: 'changeData', order: 'descending'}"
       >
         <el-table-column type="selection" width="40"></el-table-column>
-        <el-table-column prop="groupName" label="策略名称"></el-table-column>
+        <el-table-column label="策略名称">
+          <template slot-scope="scope">
+            <a  @click="defaultClick(proupName)">{{scope.row.groupName}}</a>
+          </template>
+        </el-table-column>
         <el-table-column label="触发条件">
           <template slot-scope="scope">
             <!-- {{scope.chufa1}} -->
@@ -145,7 +149,6 @@
             </p>
           </template>
         </el-table-column>
-
         <el-table-column prop="object" label="所属项目"></el-table-column>
         <el-table-column label="策略类型">
           <template slot-scope="scope">
@@ -178,7 +181,6 @@
             <div v-else>-</div>
           </template>
         </el-table-column>
-
         <el-table-column label="告警启停">
           <template slot-scope="scope">
             <el-switch v-model="scope.row.zanting" active-color="#13ce66" inactive-color="#eee"></el-switch>
@@ -299,7 +301,7 @@ export default {
           chufa1: {
             tiaojian: "我是条件",
             zhiling: "",
-            shijian:""
+            shijian: ""
           },
           chufa: "容量使用率>80%,持续5分钟，不重复告警",
           object: "東崋雲计算有限公司",
@@ -322,7 +324,7 @@ export default {
           isOpen: true,
           chufa1: {
             tiaojian: "我是条件",
-             zhiling:"",
+            zhiling: "",
             shijian: "我是事件"
           },
           chufa: "容量使用率>80%,持续5分钟",
@@ -349,8 +351,8 @@ export default {
           groupName: "默认",
           isOpen: true,
           chufa1: {
-             tiaojian: "我是条件",
-             zhiling:"",
+            tiaojian: "我是条件",
+            zhiling: "",
             shijian: "我是事件"
           },
           chufa: "容量使用率>80%",
@@ -486,6 +488,9 @@ export default {
     //确定设置弹框
     save() {
       this.dialogVisible = false;
+    },
+    defaultClick(data) {
+      console.log(data, "data");
     }
   }
 };
@@ -543,6 +548,7 @@ a:hover {
 .strategy-wrap >>> .deleteBtn > span {
   color: #666;
 }
+
 .strategy-wrap {
   border-radius: 0;
   .strategy-filter {
@@ -551,6 +557,7 @@ a:hover {
   }
   .table {
     padding: 0 20px 20px 20px;
+
     .addBtn {
       width: 100%;
       height: 55px;

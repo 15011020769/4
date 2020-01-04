@@ -8,23 +8,19 @@
     >
       <div class="dialog">
         <div class="explain">
-          <p>所购短信配额没有使用限时，用完为止</p>
+          <p>请选择您想显示的列表详细信息，最多勾选5个字段，已勾选5个。</p>
         </div>
         <div class="dialog-main">
           <el-checkbox-group v-model="checkList">
             <p>
-              <el-checkbox label="策略名称"></el-checkbox>
-              <el-checkbox label="触发条件"></el-checkbox>
-              <el-checkbox label="所属项目"></el-checkbox>
-              <el-checkbox label="策略类型" disabled></el-checkbox>
-              <el-checkbox label="已启用/实例数" disabled></el-checkbox>
-              <el-checkbox label="最后修改"></el-checkbox>
+              <el-checkbox label="ID/策略名" disabled></el-checkbox>
+              <el-checkbox label="近24小时触发告警" disabled></el-checkbox>
+              <el-checkbox label="消息接收组"></el-checkbox>
               <el-checkbox label="告警渠道"></el-checkbox>
+              <el-checkbox label="操作" disabled></el-checkbox>
             </p>
             <p>
-              
-              <el-checkbox label="告警启停" disabled></el-checkbox>
-              <el-checkbox label="操作" disabled></el-checkbox>
+            
             </p>
           </el-checkbox-group>
         </div>
@@ -88,8 +84,8 @@ export default {
   border-top: 1px #dcdfe6 solid;
   border-bottom: 1px #dcdfe6 solid;
 }
-.wrap >>> .el-checkbox{
-  margin-left:31px;
+.wrap >>> .el-checkbox {
+  margin-left: 31px;
 }
 .wrap {
   .dialog-main >>> .el-button {
@@ -104,15 +100,13 @@ export default {
       width: 100%;
       height: 210px;
       display: flex;
-      p{
+      p {
         display: flex;
         flex-direction: column;
-        .el-checkbox{
+        .el-checkbox {
           line-height: 30px;
         }
       }
-      
-     
     }
   }
   .active {
