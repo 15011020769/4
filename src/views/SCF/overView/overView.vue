@@ -56,7 +56,7 @@
         <div class="chartShowCon">
           <div class="chartShowTit">
             <el-button-group>
-              <el-button @click="btnClick('MemDuration')" :class="{'addColor':type=='MemDuration'}">
+              <el-button @click="btnClick('MemDuration')" :class="{'addColor':type=='MemDuration'}"  >
                 资源使用量
                 <span>(MBms)</span>
               </el-button>
@@ -84,7 +84,7 @@
           </div>
 
           <div>
-            <el-table :data="tableData" style="width: 100%">
+            <el-table :data="tableData" style="width: 100%;" :show-header="showHeader">
               <el-table-column prop width="150">
                 <template slot-scope="scope">
                   <span style="font-size:12px;font-weight:bolder; color:#333;font-weight:600;">
@@ -145,6 +145,7 @@
   export default {
     data() {
       return {
+        showHeader:false,
         FuncList: [], //函数列表
         addressIpt: localStorage.getItem('regionv3'),
         topList: {
@@ -156,7 +157,7 @@
           yinvokecount: "",
           youtflow: ""
         },
-        type: "1",
+        type: "MemDuration",
         value: "",
         MetricName: 'MemDuration',
         //统计图下的列表
