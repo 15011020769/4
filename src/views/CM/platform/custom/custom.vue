@@ -1,6 +1,5 @@
 <template>
     <div class="newdialog">
-      <div>
          <el-dialog
             title="自定义列表字段"
             :visible.sync="dialogVisible"
@@ -8,14 +7,14 @@
             <div class="content">
               <div class="explain" style="margin-bottom:20px;">
                 <p>
-                  请选择您想显示的列表详细信息，最多勾选5个字段，已勾选5个
+                  请选择您想显示的列表详细信息，最多勾选7个字段，已勾选7个
                 </p>
               </div>
               <div class="checkbox">
-                <el-checkbox-group v-model="checkedlist" >
-                <el-checkbox v-for="option in cities" :label="option" :key="option">
-                  {{option}}
-                </el-checkbox>
+                <el-checkbox-group v-model="checkedlist" disabled="事件">
+                  <el-checkbox v-for="option in cities" :label="option" :key="option">
+                    {{option}}
+                  </el-checkbox>
                 </el-checkbox-group>
               </div>
             </div>
@@ -24,16 +23,15 @@
                 <el-button type="primary" @click="save">确 定</el-button>
             </span>
         </el-dialog>
-      </div>
     </div>
 </template>
 
 <script>
-  const options = ['命名空间', '指标', '维度', '统计方式',"操作"];
+  const options = ['事件', '地域',"状态","影响对象","开始时间","更新时间","事件类型"];
   export default {
     data() {
       return {
-        checkedlist: [ '指标', '维度', '统计方式'],
+        checkedlist: [ '事件', '地域',"状态","影响对象","开始时间","更新时间","事件类型"],
         cities: options,
       };
     },
@@ -59,6 +57,9 @@
     width: 100%;
     height: 100%;
     background: rgba(0,0,0,.32);
+    // position: fixed;
+    right:0;
+    bottom:0;
   }
   .checkbox >>> .el-checkbox{
     display: block;

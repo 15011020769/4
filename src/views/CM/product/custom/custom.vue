@@ -8,11 +8,11 @@
             <div class="content">
               <div class="explain" style="margin-bottom:20px;">
                 <p>
-                  请选择您想显示的列表详细信息，最多勾选5个字段，已勾选5个
+                  请选择您想显示的列表详细信息，最多勾选10个字段，已勾选10个
                 </p>
               </div>
               <div class="checkbox">
-                <el-checkbox-group v-model="checkedlist" >
+                <el-checkbox-group v-model="checkedlist">
                 <el-checkbox v-for="option in cities" :label="option" :key="option">
                   {{option}}
                 </el-checkbox>
@@ -29,11 +29,11 @@
 </template>
 
 <script>
-  const options = ['命名空间', '指标', '维度', '统计方式',"操作"];
+  const options = ['事件', '类型', '产品类型', '地域',"影响对象","对象详情","状态","开始时间","更新时间","告警配置"];
   export default {
     data() {
       return {
-        checkedlist: [ '指标', '维度', '统计方式'],
+        checkedlist: [  '类型', '产品类型', '地域',"影响对象","对象详情","状态","开始时间","更新时间","告警配置"],
         cities: options,
       };
     },

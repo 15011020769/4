@@ -18,7 +18,7 @@
               <input type="text">
           </div>
           <div class="icons">
-                <i class="el-icon-setting"></i>
+                <i class="el-icon-setting" @click="dialog"></i>
                 <i class="el-icon-download"></i>
           </div>
         </div>
@@ -50,20 +50,21 @@
         </div>
       </div>
     </div>
+    <Dialog :dialogVisible="dialogVisible" @cancel="cancel" @save="save"/>
   </div>
 </template>
 
 <script>
 import Header from "@/components/public/Head";
 import TimeX from "@/components/public/TimeN";
-
+import Dialog from "./custom/custom"
 export default {
   name: "product",
   data() {
     return {
       activeName: "first",
       value: 1,
-      dialogVisible: false, //购买短信弹出框
+      dialogVisible: false, //弹出框
       input: "", //搜索框的值
       tableData: [],
       //分页
@@ -74,7 +75,8 @@ export default {
   },
   components: {
     Header,
-    TimeX
+    TimeX,
+    Dialog
   },
   methods: {
    //获取数据
@@ -84,7 +86,18 @@ export default {
      //分页
     handleCurrentChange(val) {
       this.currpage = val;
-    }
+    },
+     //弹框
+    dialog(){
+      this.dialogVisible = true;
+      console.log(this.dialogVisible)
+    },
+    cancel(){
+      this.dialogVisible = false;
+    },
+    save(){
+      this.dialogVisible = false;
+    },
   },
 };
 </script>

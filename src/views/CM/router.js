@@ -438,6 +438,16 @@ export default new Router({
     meta: {
       keepAlive: true
     }
+  },
+  //------------------------------------------------------
+  {
+    path:"/configuration/create",//      新增配置项
+    name:"create",
+    component:()=>
+      import(/* webpackChunkName:"create" */ './configuration/create/index.vue'),
+    meta:{
+      keepAlive:true
+    }
   }
   ]
 })

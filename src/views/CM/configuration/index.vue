@@ -1,12 +1,20 @@
 <template>
   <div class="product-wrap">
     <Header title="监控配置">
-      <!-- <p>产品事件</p> -->
+      <el-select v-model="values" placeholder="请选择">
+        <el-option
+          v-for="item in options"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value"
+          >
+        </el-option>
+      </el-select>
     </Header>
     <div class="product-main">
       <div class="explain" style="margin-bottom:20px;">
         <p>
-          新版自定义监控以灰度上线，目前处于内侧阶段，如需使用可<a href="">申请内侧体验</a>。
+          新版自定义监控以灰度上线，目前处于内侧阶段，如需使用可<a href="">申请内侧体验</a>
         </p>
         <p>
           若在使用过程中遇到任何问题，您可以通过加入自定义监控交流QQ群（793979710），我们将竭诚为您服务!
@@ -15,7 +23,7 @@
       <div class="box">
         <div class="table_top">
           <div class="type_data">
-            <el-button  type="primary" v-on:click="btn">+新增配置项</el-button>
+            <el-button  type="primary"  @click="newbtn">+新增配置项</el-button>
           </div>
          
           <div class="icons"> 
@@ -23,7 +31,7 @@
                 <input type="text" placeholder="请输入关键字">
                 <i class="el-icon-search"></i>              
             </div>
-                <i class="el-icon-setting" v-on:click="Dialog"></i>
+                <i class="el-icon-setting" @click="setup"></i>
           </div>
         </div>
         <div class="table">
@@ -32,7 +40,7 @@
             <el-table-column prop="index" label="指标"></el-table-column>
             <el-table-column prop="dimension" label="维度" ></el-table-column>
             <el-table-column prop="method" label="统计方式" ></el-table-column>
-            <el-table-column prop="operation" label="操作"></el-table-column>
+            <el-table-column prop="operation" label="操作"> <a @click="montior">监控</a> <a @click="administration">管理</a> <a>删除</a> </el-table-column>
           </el-table>
 
           <!-- 分页 -->
@@ -49,29 +57,41 @@
         </div>
       </div>
     </div>
+      <Custom :dialogVisible="dialogVisible" @cancel="cancel" @save="save"/>
   </div>
 </template>
 
 <script>
 import Header from "@/components/public/Head";
-
+import Custom from "./custom/custom"
 export default {
   name: "product",
   data() {
     return {
       activeName: "first",
       value: 1,
-      dialogVisible: false, //购买短信弹出框
+      dialogVisible: false, //新增配置弹框
       input: "", //搜索框的值
-      tableData: [],
+      tableData: [
+        {
+          namespace:"test1",
+          index:"qq",
+          dimension:"1,2,3",
+          method:"已配置",
+        },
+      ],
       //分页
       TotalCount: 0, //总条数
       pagesize: 10, // 分页条数
-      currpage: 1 // 当前页码
+      currpage: 1, // 当前页码
+      //city选择
+      options:[],
+      values:"",
     };
   },
   components: {
-    Header
+    Header,
+    Custom
   },
   methods: {
     //获取数据
@@ -82,14 +102,44 @@ export default {
     handleCurrentChange(val) {
       this.currpage = val;
     },
-    //自定义
-    Dialog(val){
-      console.log(123)
+    //新增配置项
+    newbtn(){
+      this.$router.push({
+        path:"/configuration/create",
+        name:"create",
+         component:()=>
+          import('./create/index'),
+        meta:{
+          keepAlive:true
+        }
+      })
+      console.log("点击")
+    },
+    //取消
+    cancel(){
+      this.dialogVisible = false;
+    },
+    //确定
+    save(){
+      this.dialogVisible = false;
+    },
+    //icon自定义按钮
+    setup(){
+      this.dialogVisible = true;
+    },
+    //监控
+    montior(){
+
+    },
+    //管理
+    administration(){
+
+    },
+    //删除
+    delet(){
       
     },
-    btn(val){
-      console.log(456)
-    }
+    
   },
 };
 </script>
@@ -102,6 +152,7 @@ export default {
   justify-content: space-between;
   align-items: center;
   padding: 17px 20px;
+  position: relative;
   p:first-child {
     font-size: 16px;
     font-weight: 600;
@@ -109,6 +160,10 @@ export default {
       color: #000;
     }
   }
+}
+.product-wrap >>> .el-select{
+    margin-left:20px;
+    border:0px;
 }
 .product-main {
   padding: 20px;
@@ -121,28 +176,25 @@ export default {
     display: flex;
     justify-content: space-between;
     align-items: center;
-      .icons {
-        display: flex;
-        align-items: center;
-        >i{
-          font-size: 16px;
-        }
-        .writeput{
-           input{
-            font-size: 15px;
-            padding: 5px;
-            margin-right:10px;
-          }
-          >i{
-             font-size: 16px;
-            margin-left:-30px;
-          }
-        }
-       
-        
+    .icons {
+      display: flex;
+      align-items: center;
+      >i{
+        font-size: 16px;
       }
+      .writeput{
+          input{
+          font-size: 15px;
+          padding: 5px;
+          margin-right:10px;
+        }
+        >i{
+            font-size: 16px;
+          margin-left:-30px;
+        }
+      }
+    }
   }
-  
   .table {
     width: 100%;
     background: white;
@@ -171,7 +223,6 @@ export default {
 }
 .pagstyle {
   padding: 20px;
-
   .pagtotal {
     font-size: 13px;
     font-weight: 400;
