@@ -10,14 +10,15 @@
       </div>
     </div>
     <div class="table">
-      <p class="addBtn">
+      <div class="addBtn">
         <el-row>
           <el-button type="primary">新建</el-button>
         </el-row>
-        <el-row class="search">
-          <el-input placeholder="请输入触发条件模板名搜索" prefix-icon="el-icon-search" v-model="searchName"></el-input>
-        </el-row>
-      </p>
+        <el-row class="seek">
+            <el-input v-model="triggerInput" placeholder="请输入触发条件模板名搜索"></el-input>
+            <el-button icon="el-icon-search" style="margin-left:-1px;"></el-button>
+          </el-row>
+      </div>
       
       <el-table
         :data="tableData"
@@ -32,7 +33,7 @@
         <el-table-column prop="address" sortable label="绑定告警策略数"></el-table-column>
         <el-table-column prop="qudao" label="最后修改"></el-table-column>
         <el-table-column label="操作">
-          <template slot-scope="scope">
+          <template :slot-scope="$scope.row">
             <el-button type="text" class="cloneBtn">复制</el-button>
             <el-button type="text" class="deleteBtn">删除</el-button>
             <!-- <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
@@ -220,7 +221,8 @@ export default {
       pagesize: 10, // 分页条数
       currpage: 1, // 当前页码
       operationFlag: -1, //按钮禁用开关
-      searchName:""
+      searchName:"",
+      triggerInput:"",//触发条件模板名
     };
   },
   components: {
@@ -292,6 +294,11 @@ a:hover {
       background: rgb(255, 255, 255);
       display: flex;
       justify-content: space-between;
+      .seek{
+        width: 240px;
+        display: flex;
+
+      }
       .iconBtn {
         font-size: 16px;
         color: #888;

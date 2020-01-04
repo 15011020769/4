@@ -1,6 +1,7 @@
 <template>
   <div class="message-wrap">
     <Header title="自定義消息" />
+    <!-- <Search></Search> -->
     <div class="overview-main">
       <div class="explain">
         <p>
@@ -10,15 +11,17 @@
       </div>
     </div>
     <div class="table">
-      <p class="addBtn" >
+      <div class="addBtn">
         <el-row>
           <el-button type="primary">新增消息策略</el-button>
         </el-row>
-        <el-row class="iconBtn">
-          <el-input placeholder="请输入策略ID、策略名称搜索" prefix-icon="el-icon-search" v-model="searchName"></el-input>
-          <i class="el-icon-setting"></i>
+        <el-row class="seek">
+          <el-input v-model="triggerInput" placeholder="请输入策略ID、策略名称搜索"></el-input>
+          <el-button icon="el-icon-search" style="margin-left:-1px;"></el-button> 
+          <i class="el-icon-setting" style="line-height:30px;padding:0 20px;cursor: pointer;"></i>
         </el-row>
-      </p>
+       
+      </div>
 
       <el-table
         :data="tableData"
@@ -31,7 +34,8 @@
         <el-table-column prop="type" label="消息接收组"></el-table-column>
         <el-table-column prop="address" label="告警渠道"></el-table-column>
         <el-table-column label="操作">
-          <template slot-scope="scope">
+          <!-- <template slot-scope="scope"> -->
+          <template :slot-scope="$scope.row">
             <el-button type="text" class="cloneBtn">复制</el-button>
             <el-button type="text" class="deleteBtn">删除</el-button>
           </template>
@@ -54,6 +58,7 @@
 
 <script>
 import Header from "@/components/public/Head";
+// import Search from "@/components/public/SEARCH";//搜索框组建
 
 export default {
   name: "message",
@@ -167,6 +172,7 @@ export default {
   },
   components: {
     Header
+    // Search  //搜索框组件
   },
   methods: {}
 };
@@ -180,6 +186,10 @@ export default {
   padding-top: 0;
   line-height: 30px;
   font-size: 12px;
+}
+.seek {
+  display: flex;
+  width: 248px;
 }
 a {
   color: #006eff;
@@ -198,48 +208,48 @@ a:hover {
   color: #666;
 }
 .table {
-    padding: 0 20px 20px 20px;
-    .addBtn {
-      width: 100%;
-      height: 45px;
-      padding-bottom:5px;
+  padding: 0 20px 20px 20px;
+  .addBtn {
+    width: 100%;
+    height: 45px;
+    padding-bottom: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    .iconBtn {
+      font-size: 16px;
+      color: #888;
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      .iconBtn {
-        font-size: 16px;
-        color: #888;
-        display: flex;
-        align-items: center;
-        > i {
-          margin: 0 10px;
-          font-weight: 600;
-        }
-        i:hover {
-          cursor: pointer;
-        }
+      > i {
+        margin: 0 10px;
+        font-weight: 600;
       }
-    }
-    .Right-style {
-      display: flex;
-      justify-content: flex-end;
-
-      .esach-inputL {
-        width: 300px;
-        margin-right: 20px;
-      }
-    }
-    .pagstyle {
-      padding: 20px;
-
-      .pagtotal {
-        font-size: 13px;
-        font-weight: 400;
-        color: #565656;
-        line-height: 32px;
+      i:hover {
+        cursor: pointer;
       }
     }
   }
+  .Right-style {
+    display: flex;
+    justify-content: flex-end;
+
+    .esach-inputL {
+      width: 300px;
+      margin-right: 20px;
+    }
+  }
+  .pagstyle {
+    padding: 20px;
+
+    .pagtotal {
+      font-size: 13px;
+      font-weight: 400;
+      color: #565656;
+      line-height: 32px;
+    }
+  }
+}
 
 .message-wrap {
   a {

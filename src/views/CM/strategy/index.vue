@@ -1,6 +1,6 @@
 <template>
   <div class="strategy-wrap">
-    <Header title="告警策略" class="flex-direction: column;">
+    <Header title="告警策略">
       <div class="strategy-filter">
         <el-form
           :inline="true"
@@ -14,16 +14,20 @@
             <el-input v-model="formInline.strategy_name" style="width:360px;"></el-input>
           </el-form-item>
           <el-form-item label="产品/策略类型">
-            <el-select filterable v-model="formInline.product_value" style="width:100px;">
+            <el-select filterable v-model="formInline.product_name" style="width:100px;">
               <el-option
                 v-for="(item,index) in formInline.product_kind"
                 :key="index"
                 :label="item.name"
-                :value="item.value"
+                :value="item.id"
                 label-width="40px"
               ></el-option>
             </el-select>
-            <el-select multiple v-model="formInline.strategy_value" style="width:250px;margin-left:10px;">
+            <el-select
+              multiple
+              v-model="formInline.strategy_value"
+              style="width:250px;margin-left:10px;"
+            >
               <!-- <el-checkbox
                 :indeterminate="isIndeterminate"
                 v-model="checkAllProduct"
@@ -35,7 +39,7 @@
                   :label="item.name"
                   :key="index"
                 >{{item.name}}</el-checkbox>
-              </el-checkbox-group> -->
+              </el-checkbox-group>-->
               <el-option
                 v-for="(item,index) in formInline.strategy_kind"
                 :key="index"
@@ -67,6 +71,7 @@
               ></el-option>
             </el-select>
             <el-select
+              multiple
               v-model="formInline.group"
               style="width:250px;margin-left:10px;margin-right:20px;"
             >
@@ -109,7 +114,7 @@
           <el-button :disable="operationFlag==-1?true:false">修改告警渠道</el-button>
         </el-row>
         <el-row class="iconBtn">
-          <i class="el-icon-setting"></i>
+          <i class="el-icon-setting" @click="buyMessgae"></i>
           <i class="el-icon-refresh"></i>
           <i class="el-icon-download"></i>
         </el-row>
@@ -121,21 +126,68 @@
         v-loading="dataListLoading"
         :default-sort="{prop: 'changeData', order: 'descending'}"
       >
-        <el-table-column type="selection" width="55"></el-table-column>
+        <el-table-column type="selection" width="40"></el-table-column>
         <el-table-column prop="groupName" label="策略名称"></el-table-column>
-        <el-table-column prop="chufa" label="触发条件"></el-table-column>
-        <el-table-column prop="object" label="所属项目"></el-table-column>
-        <el-table-column prop="type" label="策略类型"></el-table-column>
-        <el-table-column prop="YS" label="已启用/实例数"></el-table-column>
-        <el-table-column prop="address" sortable label="最后修改"></el-table-column>
-        <el-table-column prop="qudao" label="告警渠道"></el-table-column>
-        <el-table-column prop="address" label="告警启停"></el-table-column>
-        <el-table-column label="操作">
+        <el-table-column label="触发条件">
           <template slot-scope="scope">
+            <!-- {{scope.chufa1}} -->
+            <p v-if="scope.row.chufa1.tiaojian">
+              <span>触发条件：</span>
+              <span>{{scope.row.chufa1.tiaojian}}</span>
+            </p>
+            <p v-if="scope.row.chufa1.zhiling">
+              <span>指令告警：</span>
+              <span>{{scope.row.chufa1.zhiling}}</span>
+            </p>
+            <p v-if="scope.row.chufa1.shijian">
+              <span>事件告警：</span>
+              <span>{{scope.row.chufa1.shijian}}</span>
+            </p>
+          </template>
+        </el-table-column>
+
+        <el-table-column prop="object" label="所属项目"></el-table-column>
+        <el-table-column label="策略类型">
+          <template slot-scope="scope">
+            <b>{{scope.row.type}}</b>
+          </template>
+        </el-table-column>
+        <el-table-column prop="YS" label="已启用/实例数"></el-table-column>
+        <el-table-column label="最后修改">
+          <template slot-scope="scope">
+            <p>{{scope.row.lastChange.id}}</p>
+            <p>{{scope.row.lastChange.data}}</p>
+          </template>
+        </el-table-column>
+        <el-table-column label="告警渠道">
+          <template slot-scope="scope">
+            <div v-if="scope.row.qudao">
+              <p class="qudaoInfo">
+                <span>接收组：</span>
+                <span>{{scope.row.qudao.jieshou}}个</span>
+              </p>
+              <p class="qudaoInfo">
+                <span>有效期：</span>
+                <span>{{scope.row.qudao.youxiao}}</span>
+              </p>
+              <p class="qudaoInfo">
+                <span>渠道：</span>
+                <span>{{scope.row.qudao.qudao}}</span>
+              </p>
+            </div>
+            <div v-else>-</div>
+          </template>
+        </el-table-column>
+
+        <el-table-column label="告警启停">
+          <template slot-scope="scope">
+            <el-switch v-model="scope.row.zanting" active-color="#13ce66" inactive-color="#eee"></el-switch>
+          </template>
+        </el-table-column>
+        <el-table-column label="操作">
+          <template :slot-scope="scope.row">
             <el-button type="text" class="cloneBtn">复制</el-button>
             <el-button type="text" class="deleteBtn">删除</el-button>
-            <!-- <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-            <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button>-->
           </template>
         </el-table-column>
       </el-table>
@@ -151,10 +203,13 @@
         ></el-pagination>
       </div>
     </div>
+    <!-- 点击设置 -->
+    <Dialog :dialogVisible="dialogVisible" @cancel="cancel" @save="save" />
   </div>
 </template>
 <script>
 import Header from "./components/Head";
+import Dialog from "./components/dialog";
 export default {
   name: "strategy",
   data() {
@@ -176,10 +231,12 @@ export default {
       formInline: {
         product_kind: [
           {
+            id: "1",
             value: 0,
             name: "产品类型"
           },
           {
+            id: "2",
             value: 1,
             name: "策略类型"
           }
@@ -239,12 +296,21 @@ export default {
           grounpId: 3290043,
           groupName: "默认",
           isOpen: true,
+          chufa1: {
+            tiaojian: "我是条件",
+            zhiling: "",
+            shijian:""
+          },
           chufa: "容量使用率>80%,持续5分钟，不重复告警",
           object: "東崋雲计算有限公司",
           type: "默认云数据库-Redis-其他版本",
           YS: "3/3",
           yiqiying: 3,
           shilishu: 3,
+          lastChange: {
+            id: "100011921910",
+            data: "2019/12/31 13:21:32"
+          },
           lastEditUin: 100011921910,
           changeData: "2019/12/31 13:52:55",
           qudao: "",
@@ -254,27 +320,49 @@ export default {
           grounpId: 3290043,
           groupName: "默认",
           isOpen: true,
+          chufa1: {
+            tiaojian: "我是条件",
+             zhiling:"",
+            shijian: "我是事件"
+          },
           chufa: "容量使用率>80%,持续5分钟",
           object: "東崋雲计算有限公司",
           type: "默认云数据库",
           YS: "0/0",
           yiqiying: 3,
           shilishu: 3,
+          lastChange: {
+            id: "100011921910",
+            data: "2019/12/31 13:21:32"
+          },
           lastEditUin: 100011921910,
           changeData: "2019/12/31 13:21:32",
-          qudao: "",
-          zanting: true
+          qudao: {
+            jieshou: "1",
+            youxiao: "00:00:00 - 23:59:59",
+            qudao: "邮箱、短信"
+          },
+          zanting: false
         },
         {
           grounpId: 3290043,
           groupName: "默认",
           isOpen: true,
+          chufa1: {
+             tiaojian: "我是条件",
+             zhiling:"",
+            shijian: "我是事件"
+          },
           chufa: "容量使用率>80%",
           object: "東崋雲计算有限公司",
           type: "東崋雲云数据库",
           YS: "15/15",
           yiqiying: 3,
           shilishu: 3,
+          lastChange: {
+            id: "100011921910",
+            data: "2019/12/31 13:21:32"
+          },
           lastEditUin: 100011921910,
           changeData: "2019/12/31 7:16:46",
           qudao: "",
@@ -284,12 +372,21 @@ export default {
           grounpId: 3290043,
           groupName: "默认",
           isOpen: true,
+          chufa1: {
+            tiaojian: "我是条件",
+            zhiling: "我是指令",
+            shijian: "我是事件"
+          },
           chufa: "容量使用率>80%,持续5分钟，不重复告警",
           object: "東崋雲计算有限公司",
           type: "默认云数据库-Redis-其他版本",
           YS: "3/3",
           yiqiying: 3,
           shilishu: 3,
+          lastChange: {
+            id: "100011921910",
+            data: "2019/12/31 13:21:32"
+          },
           lastEditUin: 100011921910,
           changeData: "2019/12/31 13:52:55",
           qudao: "",
@@ -299,12 +396,21 @@ export default {
           grounpId: 3290043,
           groupName: "默认",
           isOpen: true,
+          chufa1: {
+            tiaojian: "我是条件",
+            zhiling: "我是指令",
+            shijian: "我是事件"
+          },
           chufa: "容量使用率>80%,持续5分钟",
           object: "東崋雲计算有限公司",
           type: "默认云数据库",
           YS: "0/0",
           yiqiying: 3,
           shilishu: 3,
+          lastChange: {
+            id: "100011921910",
+            data: "2019/12/31 13:21:32"
+          },
           lastEditUin: 100011921910,
           changeData: "2019/12/31 13:21:32",
           qudao: "",
@@ -314,12 +420,21 @@ export default {
           grounpId: 3290043,
           groupName: "默认",
           isOpen: true,
+          chufa1: {
+            tiaojian: "我是条件",
+            zhiling: "我是指令",
+            shijian: "我是事件"
+          },
           chufa: "容量使用率>80%",
           object: "東崋雲计算有限公司",
           type: "東崋雲云数据库",
           YS: "15/15",
           yiqiying: 3,
           shilishu: 3,
+          lastChange: {
+            id: "100011921910",
+            data: "2019/12/31 13:21:32"
+          },
           lastEditUin: 100011921910,
           changeData: "2019/12/31 7:16:46",
           qudao: "",
@@ -332,10 +447,13 @@ export default {
       currpage: 1, // 当前页码
       operationFlag: -1, //按钮禁用开关
       dataListLoading: false,
+      dialogVisible: false, //设置弹出框
+      value: true
     };
   },
   components: {
-    Header
+    Header,
+    Dialog
   },
   methods: {
     handleCheckAllChange(val) {
@@ -355,6 +473,19 @@ export default {
     //分页
     handleCurrentChange(val) {
       this.currpage = val;
+    },
+    //设置弹框
+    buyMessgae() {
+      // alert("11")
+      this.dialogVisible = true;
+    },
+    //取消设置弹框
+    cancel() {
+      this.dialogVisible = false;
+    },
+    //确定设置弹框
+    save() {
+      this.dialogVisible = false;
     }
   }
 };
@@ -382,6 +513,19 @@ export default {
   font-size: 12px;
   color: #888;
   font-weight: 200;
+}
+
+.strategy-wrap >>> .el-table .cell {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  overflow: hidden;
+}
+p.qudaoInfo {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  overflow: hidden;
 }
 a {
   color: #006eff;

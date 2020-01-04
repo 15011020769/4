@@ -370,6 +370,15 @@ export default new Router({
       keepAlive: true
     }
   },
+  {
+    path: '/strategy/detail:1', //           告警策略（点击“ 默认 ”设置动态路由）
+    name: 'strategyDetail',
+    component: () =>
+      import( /* webpackChunkName: "strategy" */ './strategy/index.vue'),
+    meta: {
+      keepAlive: true
+    }
+  },
   // -----------------------------------------------------
   {
     path: '/subscription', //           平台事件订阅

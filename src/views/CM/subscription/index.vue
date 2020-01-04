@@ -1,12 +1,16 @@
 <template>
   <div class="subscription-wrap">
-    <Header title="平臺訂閱事件" />
+    <Header title="平臺事件訂閱" />
     <div class="table">
+      <p class="boxLi">
+        <i class="el-icon-arrow-down"></i>
+        <span>问题：</span>
+      </p>
       <el-table :data="tableData" style="width: 100%;">
         <el-table-column label="事件类型" width="180">
           <template slot-scope="scope">
             <span style="margin-left: 0px;flex-wrap:nowrap">{{ scope.row.type }}</span>
-            <i class="el-icon-info"></i>
+            <i class="el-icon-info" style="margin:0 5px;"></i>
           </template>
         </el-table-column>
         <el-table-column label="短信" width="180">
@@ -46,7 +50,7 @@
           </template>
         </el-table-column>-->
         <el-table-column label>
-          <template slot-scope="scope">
+          <template :slot-scope="$scope.row">
             <el-button type="text" class="btn subBtn">订阅管理</el-button>
             <el-button type="text" class="btn unSubBtn">取消订阅</el-button>
           </template>
@@ -63,6 +67,7 @@ export default {
   name: "subscription",
   data() {
     return {
+     
       tableData: [
         {
           type: "云服务器存储问题",
@@ -96,13 +101,16 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.strategy-wrap >>> .el-button,
-.strategy-wrap >>> .el-input__inner {
+.subscription-wrap >>> .el-button,
+.subscription-wrap >>> .el-input__inner {
   height: 30px;
   border-radius: 0;
   padding-top: 0;
   line-height: 30px;
   font-size: 12px;
+}
+.subscription-wrap >>> .el-table__body{
+  margin-top:55px
 }
 .subscription-wrap >>> .btn > span:hover {
   border-bottom: 1px solid #006eff;
@@ -119,5 +127,24 @@ export default {
 }
 .table {
   padding: 20px;
+  position: relative;
+  .boxLi{
+    background: rgb(255, 255, 255);
+    padding:20px;
+    position: absolute;
+    width: 100%;
+    top:66px;
+    border-bottom: 1px solid #eee;
+    border-top: 1px solid #eee;
+    z-index: 100;
+    vertical-align: middle;
+    i{
+      color:#2184d6;
+    }
+    span{
+      margin:0 10px;
+      
+    }
+  }
 }
 </style>
