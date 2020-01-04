@@ -141,19 +141,18 @@
                       </div>
                           <!-- <i class="el-icon-question"></i> -->
                       <el-form-item :label="$t('SCF.total.nwfw')"  prop="VpcConfig">
-                      <!-- <el-form-item :label="$t('SCF.total.nwfw')" prop="VpcConfig"> -->
                         <span slot="label">
                           {{ $t('SCF.total.nwfw') }}
                         </span>
-                        <el-switch v-model="functionData.VpcConfig" active-color="#006eff" inactive-color="#888">
+                        <el-switch v-model="functionData.switchFlag" active-color="#006eff" inactive-color="#888">
                         </el-switch>
-                        <div v-if="functionData.VpcConfig">
-                          <el-select v-model="functionData.VpcConfig" v-on:change="getSelectOne($event)">
-                            <el-option v-for="(item,index) in functionData.VpcConfig" :label="item.VpcId" :value="item.VpcId"
+                        <div v-if="functionData.switchFlag">
+                          <el-select v-model="functionData.VpcId" v-on:change="getSelectOne($event)">
+                            <el-option v-for="(item,index) in functionData.VpcConfig.VpcId" :label="item.VpcId" :value="item.VpcId"
                               :key="index"></el-option>
                           </el-select>
-                          <el-select v-model="functionData.VpcConfig" v-on:change="getSelectTwo($event)">
-                            <el-option v-for="(item,index) in funReast.VpcConfig" :label="item.SubnetId" :value="item.SubnetId"
+                          <el-select v-model="functionData.SubnetId" v-on:change="getSelectTwo($event)">
+                            <el-option v-for="(item,index) in functionData.VpcConfig.SubnetId" :label="item.SubnetId" :value="item.SubnetId"
                               :key="index"></el-option>
                           </el-select>
                         </div>
@@ -307,7 +306,11 @@
         functionData: {
           Environment: {
             Variables: ""
-          }
+          },
+          // 内网访问
+          switchFlag:false,
+          VpcId:'',
+          SubnetId:'',
         },
         environmentFlag: true,
         vpcConfigFlag: true,
@@ -419,9 +422,9 @@
           .post(SCF_DETAILS, params)
           .then(res => {
             let _this = this;
-            this.functionData = res.Response;
-            this.functionData.VpcConfig='1';
-            // console.log(this.functionData)
+            let returnData=res.Response;
+           
+            this.functionData =  returnData;
             this.loading = false;
             let funcData = this.functionData;
             if (funcData.VpcConfig.SubnetId != "") {

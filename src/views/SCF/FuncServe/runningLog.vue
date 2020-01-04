@@ -129,7 +129,7 @@ export default {
         .replace(/\//g, "-");
     },
     reset() {
-      this.logStatus = "全部状态";
+      this.logStatus = "全部日志";
       this.value1 = null;
       this.searchLogs();
     },
@@ -147,7 +147,7 @@ export default {
       this.axios
         .post(FUN_LOG, params)
         .then(res => {
-          
+          console.log(res)
           if(res.Response.Data){
             _this.logData = res.Response;
             res.Response.Data.forEach((element, index) => {

@@ -7,7 +7,7 @@
         </div>
         <div class="addTriggerBox" v-if="displayShow">
           <h3 @click="addTriggerBtn" style="cursor:pointer">{{ $t('SCF.total.tjcffs') }}</h3>
-          <el-form :model="formTriggerForm" label-width="130px">
+          <el-form :model="formTriggerForm" label-width="130px" :rules="rules" ref="formTriggerForm">
             <el-form-item :label="$t('SCF.total.cffs')" :required="true">
               <span slot="label">{{ $t('SCF.total.cffs') }}</span>
               <el-select v-model="formTriggerForm.triggerType" @change="chufatype" class="selectSetWidth">
@@ -18,8 +18,9 @@
                 <el-option :label="$t('SCF.total.wgcf')" value="apiwg"></el-option>
               </el-select>
             </el-form-item>
-            <el-form-item :label="$t('SCF.total.dsrwmc')" :required="true">
+            <el-form-item :label="$t('SCF.total.dsrwmc')"  prop="tasksName" >
               <span slot="label">{{ $t('SCF.total.dsrwmc') }}</span>
+              <!-- 请输入定时任务名称 -->
               <el-input v-model="formTriggerForm.tasksName" class="inputSetWidth"
                 :placeholder="$t('SCF.total.srdsrwmc')" />
             </el-form-item>
@@ -54,7 +55,7 @@
             </el-form-item>
           </el-form>
           <div class="triggerBtnBot">
-            <el-button type="primary" @click="saveTrigger">{{ $t('SCF.total.bc') }}</el-button>
+            <el-button type="primary" @click="saveTrigger('formTriggerForm')">{{ $t('SCF.total.bc') }}</el-button>
             <el-button @click="displayShow=false">{{ $t('SCF.total.qx') }}</el-button>
           </div>
         </div>
@@ -107,18 +108,39 @@
     SCF_DETAILS,
     CREAT_TRIGGER
   } from "@/constants";
+  
   export default {
+    
     data() {
+      var validateTasksName = (rule, value, callback) => {
+        if (value === '') {
+          callback(new Error('1.最多60个字符，最少2个字符  2.字母开头,支持 a-z,A-Z,0-9,-,_,且需要以数字或字母结尾'));
+        } else {
+          console.log(this.formTriggerForm.tasksName)
+          let reg=/^[A-Za-z0-9]([A-Za-z0-9]|-|_){0,59}([A-Za-z0-9])$/
+            let flag=reg.test(this.formTriggerForm.tasksName)
+            if(!flag){
+            callback(new Error('1.最多60个字符，最少2个字符  2.字母开头,支持 a-z,A-Z,0-9,-,_,且需要以数字或字母结尾'));
+            }else{
+              callback();
+            }
+        }
+      };
       return {
         loading: true,
         displayShow: false,
         triggerShow: false,
+        rules:{
+          tasksName:[
+            { validator: validateTasksName, trigger: 'blur' ,required:true}
+          ],
+        },
         formTriggerForm: {
           triggerType: "timer",
           tasksName: "",
           triggerTime: "每5分鐘（每5分鐘的0秒执行一次）",
           cronlist: "",
-          writeIsTrue: "",
+          writeIsTrue: "true",
           nowStart: ""
         },
         desc: "0 */5 * * * * *",
@@ -135,18 +157,21 @@
         this.displayShow = true;
       },
       //保存添加的触发
-      saveTrigger() {
+      saveTrigger(formName) {
         let _this = this;
-        this.displayShow = false;
-        let params = {
-          Version: "2018-04-16",
-          Region: localStorage.getItem('regionv2'),
-          Action: "CreateTrigger",
-          TriggerName: this.formTriggerForm.tasksName,
-          Type: this.formTriggerForm.triggerType,
-          TriggerDesc: this.desc
-        };
-        let functionName = this.$route.query.functionName;
+        let reg=/^[A-Za-z0-9]([A-Za-z0-9]|-|_){0,59}([A-Za-z0-9])$/
+        let flag=reg.test(this.formTriggerForm.tasksName)
+        if(flag){
+           this.displayShow = false;
+          let params = {
+            Version: "2018-04-16",
+            Region: localStorage.getItem('regionv2'),
+            Action: "CreateTrigger",
+            TriggerName: this.formTriggerForm.tasksName,
+            Type: this.formTriggerForm.triggerType,
+            TriggerDesc: this.desc
+          };
+           let functionName = this.$route.query.functionName;
         // functionName = 'tttt'
         if (functionName != "" && functionName != null) {
           params["FunctionName"] = functionName;
@@ -154,10 +179,12 @@
         this.axios.post(CREAT_TRIGGER, params).then(res => {
           _this.getfunction();
           _this.formTriggerForm.tasksName = "";
-          _this.formTriggerForm.writeIsTrue = "";
+          _this.formTriggerForm.writeIsTrue = "true";
           _this.formTriggerForm.triggerType = "timer";
           _this.formTriggerForm.triggerTime = "每5分鐘（每5分鐘的0秒执行一次）";
         });
+        }
+       
       },
       //监测select变化
       triggerChange(val) {
@@ -194,6 +221,7 @@
           params["FunctionName"] = functionName;
         }
         this.axios.post(SCF_DETAILS, params).then(res => {
+          console.log(res)
           this.triggerBoxList = res.Response.Triggers;
           for (let i = 0; i < this.triggerBoxList.length; i++) {
             this.switch1[i] = true;
