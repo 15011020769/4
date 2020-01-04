@@ -236,7 +236,7 @@
         param[`Instances.0.Dimensions.1.Name`] = 'version'
         param[`Instances.0.Dimensions.1.Value`] = '$ATEST'
         this.axios.post(All_MONITOR, param).then(data => {
-          this.tableData.push(data.Response);
+          this.tableData=[data.Response];
         });
       },
     },
