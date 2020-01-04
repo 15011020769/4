@@ -284,7 +284,7 @@
   .box-dis {
     display: flex;
     justify-content: space-between;
-    margin-top: 40px;
+    margin-top: 20px;
 
     .btn-style {
       margin-left: 20px;
