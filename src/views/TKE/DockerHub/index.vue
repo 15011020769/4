@@ -28,7 +28,13 @@
               </template>
             </el-table-column>
             <el-table-column prop="address" label="名称"></el-table-column>
-            <el-table-column prop="address" label="" ></el-table-column>
+            <el-table-column prop label="" >
+              <template slot-scope="scope">
+                <p>
+                  <a style="cursor:pointer;" @click="jump()">跳转</a>
+                </p>
+              </template>
+            </el-table-column>
             <el-table-column prop="address" label="类型" ></el-table-column>
             <el-table-column prop="address" label="收藏量"></el-table-column>
           </el-table>
@@ -47,7 +53,6 @@
     </div>
   </div>
 </template>
-
 <script>
 import HeadCom from '@/components/public/Head'
 export default {
@@ -87,11 +92,18 @@ export default {
     handleSelectionChange (val) {
       this.multipleSelection = val
       console.log(this.multipleSelection)
+    },
+    jump () {
+      this.$router.push({
+        name: 'mirrorDetailInfo',
+        query: {
+          id: 1
+        }
+      })
     }
   }
 }
 </script>
-
 <style lang="scss" scoped>
 .body {
   position: relative;

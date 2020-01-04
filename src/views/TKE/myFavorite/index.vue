@@ -8,13 +8,8 @@
             <el-button :disabled="true" size="mini" class="botton-size">取消收藏</el-button>
           </div>
           <div class="top-right">
-            <el-input
-              placeholder="请输入名称"
-              suffix-icon="el-icon-search"
-              v-model="input"
-              class="search-input"
-              size="mini"
-            ></el-input>
+            <el-input v-model="input" placeholder="请输入实例组名搜索" size="mini"></el-input>
+            <el-button icon="el-icon-search" size="mini" style="margin-left:-1px;height:28px;"></el-button>
             <i class="el-icon-download"></i>
           </div>
         </div>
@@ -123,7 +118,7 @@ export default {
   justify-content: space-between;
 }
 .top-right {
-  height: 30px;
+  width:240px;
   display: flex;
   justify-content: space-between;
 }

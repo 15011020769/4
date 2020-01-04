@@ -226,7 +226,7 @@ export default new Router({
       },
       children: [
         {
-          path: 'user',
+          path: 'user', // 我的镜像
           name: 'myMirrorUser',
           component: () => import(/* webpackChunkName: "myMirror" */ './myMirror/user.vue'),
           meta: {
@@ -234,9 +234,36 @@ export default new Router({
           }
         },
         {
-          path: 'local',
+          path: 'local', // 命名空间
           name: 'myMirrorLocal',
           component: () => import(/* webpackChunkName: "myMirror" */ './myMirror/local.vue'),
+          meta: {
+            keepAlive: true
+          }
+        }
+      ]
+    },
+    {
+      path: '/mirrorDetail', // 镜像详情
+      name: 'mirrorDetail',
+      component: () => import(/* webpackChunkName: "myFavorite" */ './mirrorDetail/index.vue'),
+      redirect: '/mirrorDetail/info',
+      meta: {
+        keepAlive: true
+      },
+      children: [
+        {
+          path: 'info', // 镜像信息
+          name: 'mirrorDetailInfo',
+          component: () => import(/* webpackChunkName: "myMirror" */ './mirrorDetail/info.vue'),
+          meta: {
+            keepAlive: true
+          }
+        },
+        {
+          path: 'detail', // 镜像详情
+          name: 'mirrorDetailDetail',
+          component: () => import(/* webpackChunkName: "myMirror" */ './mirrorDetail/detail.vue'),
           meta: {
             keepAlive: true
           }

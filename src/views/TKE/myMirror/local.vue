@@ -5,13 +5,8 @@
         <el-button type="primary" size="mini" class="botton-size">新建</el-button>
       </div>
       <div class="top-right">
-        <el-input
-          placeholder="请输入镜像名称"
-          suffix-icon="el-icon-search"
-          v-model="input"
-          class="search-input"
-          size="mini"
-        ></el-input>
+          <el-input v-model="input" placeholder="请输入名称" size="mini"></el-input>
+          <el-button icon="el-icon-search" size="mini" style="margin-left:-1px;height:28px;"></el-button>
       </div>
     </div>
     <div class="room-bottom">
@@ -26,7 +21,7 @@
             </el-table-column>
         </el-table>
         <div class="Right-style pagstyle">
-            <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;页</span>
+            <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;条</span>
             <el-pagination
               :page-size="pagesize"
               :pager-count="7"
@@ -39,6 +34,7 @@
   </div>
 </template>
 <script>
+// import { CGI_LIST } from '@/constants'
 export default {
   data () {
     return {
@@ -59,6 +55,9 @@ export default {
       multipleSelection: ''
     }
   },
+  // created () {
+  //   this.GetMyMirrorData()
+  // },
   methods: {
     handleClick (row) {
       console.log(row)
@@ -67,6 +66,17 @@ export default {
     handleCurrentChange (val) {
       this.currpage = val
     }
+    // GetMyMirrorData () {
+    //   const param = {
+    //     serviceType: 'ccr',
+    //     action: 'GetNamespaceInfo',
+    //     regionId: 39,
+    //     data: { namespace: '', offset: 0, limit: 100 }
+    //   }
+    //   this.axios.post(CGI_LIST, param).then(data => {
+    //     console.log(data)
+    //   })
+    // }
 
   }
 
@@ -92,7 +102,8 @@ export default {
   justify-content: space-between;
 }
 .top-right {
-  height: 30px;
+  width:240px;
+  display: flex;
 }
 .botton-size {
   text-align: center;

@@ -1,36 +1,32 @@
 <template>
   <div class="room">
-    <div class="room-top">
+    <div class="room-center">
+      <div class="explain" style="margin-bottom:20px;">
+        <p>当前账号下镜像仓库内镜像版本配额为1000个，当前仓库版本数为0个，您可设置
+            <el-button type="text" size="small">自动清理策略</el-button>
+            以仅保留较新版本的容器镜像，以免因达到配额限制而无法上传新版本镜像。
+        </p>
+      </div>
+    </div>
+    <div class="room-top" style="margin-bottom:20px;">
       <div class="top-left">
         <el-button
           type="primary"
           size="mini"
           class="botton-size"
           @click="dialogFormVisible = true"
-        >新建</el-button>
+        >使用索引</el-button>
         <el-button disabled size="mini" class="botton-size">删除</el-button>
-        <el-button size="mini" class="botton-size" @click="dialogFormVisible2 = true">重置密码</el-button>
       </div>
       <div class="top-right">
-          <el-input v-model="input" placeholder="请输入镜像名称" size="mini"></el-input>
+          <el-input v-model="input" placeholder="请输入实例组名搜索" size="mini"></el-input>
           <el-button icon="el-icon-search" size="mini" style="margin-left:-1px;height:28px;"></el-button>
-      </div>
-    </div>
-    <div class="room-center">
-      <div class="explain" style="margin-bottom:20px;">
-        <p>当前默认地域内镜像仓库暂不支持海外集群通过内网访问，请配置公网进行访问，或使用与集群位于相同地域的镜像仓库</p>
       </div>
     </div>
     <div class="room-bottom">
       <el-table :data="tableData" style="width: 100%" height="450">
         <el-table-column type="selection" width="55"></el-table-column>
-        <el-table-column prop label="名称">
-          <template slot-scope="scope">
-            <p>
-              <a style="cursor:pointer;" @click="jump">跳转</a>
-            </p>
-          </template>
-        </el-table-column>
+        <el-table-column prop="address" label="名称"></el-table-column>
         <el-table-column prop="address" label="类型"></el-table-column>
         <el-table-column prop="address" label="命名空间"></el-table-column>
         <el-table-column prop="address" label="镜像地址"></el-table-column>
@@ -42,7 +38,7 @@
         </el-table-column>
       </el-table>
       <div class="Right-style pagstyle">
-        <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;条</span>
+        <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;页</span>
         <el-pagination
           :page-size="pagesize"
           :pager-count="7"
@@ -53,7 +49,7 @@
       </div>
     </div>
     <!-- 新建弹出窗 -->
-    <el-dialog title="新建镜像仓库" :visible.sync="dialogFormVisible" width="550px">
+    <el-dialog title="新建仓库镜像" :visible.sync="dialogFormVisible" width="550px">
       <el-form
         :model="ruleForm"
         :rules="rules"
@@ -68,14 +64,15 @@
           <p class="form-p">最长为200个字符，只能包含小写字母、数字及分隔符("."、"_"、"-")，且不能以分隔符开头或结尾</p>
         </el-form-item>
         <el-form-item label="类型" prop="region">
-          <el-select v-model="ruleForm.region" label="私有">
-            <el-option label="私有" value="1"></el-option>
-            <el-option label="公有" value="2"></el-option>
+          <el-select v-model="ruleForm.region" placeholder="请选择活动区域">
+            <el-option label="私有" value="shanghai"></el-option>
+            <el-option label="公有" value="beijing"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="命名空间" prop="region2">
-           <el-select v-model="ruleForm.region2" filterable placeholder="请选择">
-              <el-option label="公有" value="2"></el-option>
+          <el-select v-model="ruleForm.region2" placeholder="请选择活动区域">
+            <el-input placeholder="请输入镜像名称" suffix-icon="el-icon-search" v-model="input2" class="search-input2" size="mini"></el-input>
+            <el-option label="区域二" value="beijing"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="描述" prop="desc">
@@ -88,57 +85,11 @@
         <el-button @click="dialogFormVisible = false">取 消</el-button>
       </div>
     </el-dialog>
-    <!-- 重置密码弹出窗口 -->
-    <el-dialog title="重置密码" :visible.sync="dialogFormVisible2" width="550px">
-      <el-form
-        :model="ruleForm"
-        :rules="rules"
-        ref="ruleForm"
-        label-width="100px"
-        class="demo-ruleForm"
-        size="small"
-        style="width:500px"
-      >
-        <p class="form-pt">您将重置使用docker login命令登录到腾讯云镜像仓库的密码</p>
-        <el-form-item label="名称">
-            <p>110111001</p>
-        </el-form-item>
-        <el-form-item label="密码" prop="pass">
-          <el-input type="password" v-model="ruleForm.pass" autocomplete="off" style="width:200px"></el-input>
-        </el-form-item>
-        <el-form-item label="确认密码" prop="checkPass">
-          <el-input type="password" v-model="ruleForm.checkPass" autocomplete="off" style="width:200px"></el-input>
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitForm('ruleForm')">确 定</el-button>
-        <el-button @click="dialogFormVisible2 = false">取 消</el-button>
-      </div>
-    </el-dialog>
   </div>
 </template>
 <script>
 export default {
   data () {
-    var validatePass = (rule, value, callback) => {
-      if (value === '') {
-        callback(new Error('请输入密码'))
-      } else {
-        if (this.ruleForm.checkPass !== '') {
-          this.$refs.ruleForm.validateField('checkPass')
-        }
-        callback()
-      }
-    }
-    var validatePass2 = (rule, value, callback) => {
-      if (value === '') {
-        callback(new Error('请再次输入密码'))
-      } else if (value !== this.ruleForm.pass) {
-        callback(new Error('两次输入密码不一致!'))
-      } else {
-        callback()
-      }
-    }
     return {
       input: '',
       input2: '',
@@ -157,32 +108,25 @@ export default {
       currpage: 1, // 当前页码
       dialogTableVisible: false,
       dialogFormVisible: false,
-      dialogFormVisible2: false,
       formLabelWidth: '120px',
       ruleForm: {
         name: '',
-        region: '1',
+        region: '',
         region2: '',
+        date1: '',
+        date2: '',
         delivery: false,
         type: [],
         resource: '',
-        desc: '',
-        pass: '',
-        checkPass: ''
+        desc: ''
       },
       rules: {
-        pass: [
-          { validator: validatePass, trigger: 'blur' }
-        ],
-        checkPass: [
-          { validator: validatePass2, trigger: 'blur' }
-        ],
         name: [
           { required: true, message: '请输入镜像名称', trigger: 'blur' },
           { max: 200, message: '镜像名称不能超过200个字符', trigger: 'blur' }
         ],
-        region2: [
-          { required: true, message: '命名空间不能为空', trigger: 'change' }
+        region: [
+          { message: '请选择活动区域', trigger: 'change' }
         ],
         type: [
           { type: 'array', message: '请至少选择一个活动性质', trigger: 'change' }
@@ -261,7 +205,6 @@ export default {
   width: 185px;
 }
 .room-center {
-  margin-top: 20px;
   .explain {
     padding: 10px 30px 10px 20px;
     vertical-align: middle;
@@ -296,12 +239,5 @@ export default {
   font-size: 12px;
   line-height: 1.8;
   color: #bbb;
-}
-.form-pt{
-  font-size: 12px;
-  line-height: 1.8;
-  color: #bbb;
-  margin-left:60px;
-  margin-bottom:20px;
 }
 </style>
