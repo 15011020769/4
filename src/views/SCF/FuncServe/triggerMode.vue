@@ -116,8 +116,7 @@
         if (value === '') {
           callback(new Error('1.最多60个字符，最少2个字符  2.字母开头,支持 a-z,A-Z,0-9,-,_,且需要以数字或字母结尾'));
         } else {
-          console.log(this.formTriggerForm.tasksName)
-          let reg=/^[A-Za-z0-9]([A-Za-z0-9]|-|_){0,59}([A-Za-z0-9])$/
+          let reg=/^[A-Za-z0-9]([A-Za-z0-9]|-|_){0,58}([A-Za-z0-9])$/;
             let flag=reg.test(this.formTriggerForm.tasksName)
             if(!flag){
             callback(new Error('1.最多60个字符，最少2个字符  2.字母开头,支持 a-z,A-Z,0-9,-,_,且需要以数字或字母结尾'));
@@ -159,8 +158,9 @@
       //保存添加的触发
       saveTrigger(formName) {
         let _this = this;
-        let reg=/^[A-Za-z0-9]([A-Za-z0-9]|-|_){0,59}([A-Za-z0-9])$/
+        let reg=/^[A-Za-z0-9]([A-Za-z0-9]|-|_){0,58}([A-Za-z0-9])$/
         let flag=reg.test(this.formTriggerForm.tasksName)
+        this.$refs.formTriggerForm.validateField('tasksName');
         if(flag){
            this.displayShow = false;
           let params = {
@@ -221,7 +221,6 @@
           params["FunctionName"] = functionName;
         }
         this.axios.post(SCF_DETAILS, params).then(res => {
-          console.log(res)
           this.triggerBoxList = res.Response.Triggers;
           for (let i = 0; i < this.triggerBoxList.length; i++) {
             this.switch1[i] = true;

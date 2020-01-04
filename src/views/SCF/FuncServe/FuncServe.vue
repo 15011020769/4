@@ -1,6 +1,7 @@
 <template>
   <div class="wrap">
     <div class="topFun" style="display:flex;">
+      <!-- 函数服务 -->
       <span>{{ $t('SCF.total.title') }}</span>
       <el-input class="addressName" readonly="readonly" v-model="addressIpt"></el-input>
       <div>
@@ -13,6 +14,7 @@
         <el-button class="setBtn" icon="el-icon-setting" @click="dialogVisible3 = true"></el-button>
       </div>
     </div>
+    <!-- 命名空间管理弹出框 -->
     <el-dialog :title="$t('SCF.total.mmkjgl')" :visible.sync="dialogVisible3" width="800px"
       :before-close="handleClose3">
       <div class="regionTit">
@@ -73,6 +75,7 @@
     <div class="mainContainer">
       <div class="mainCon">
         <div class="tableTit newClear">
+          <!-- 新建按钮 -->
           <el-button size="small" type="primary" class="newCreate" @click="newCreateFun()">{{ $t('SCF.total.xj') }}
           </el-button>
           <div class="searchRight">
@@ -89,6 +92,7 @@
           <el-table :data="tableDataBegin" v-loading="loading" height="450">
             <el-table-column prop="FunctionName" :label="$t('SCF.total.hsm')">
               <template slot-scope="scope">
+                <!-- 点击函数名跳转页面 -->
                 <a href="#" @click="toDoDetail(scope.$index, scope.row)">{{scope.row.FunctionName}}</a>
               </template>
             </el-table-column>
@@ -118,9 +122,9 @@
                 </el-dialog>
                 <el-button type="text" size="small" @click="handelCopy(scope.$index, scope.row)">
                   {{ $t('SCF.total.fz') }}</el-button>
-                <el-dialog :title="$t('SCF.total.hsfz')" :visible.sync="dialogVisible2" width="38%"
+                <el-dialog :title="$t('SCF.total.hsfz')" :visible.sync="dialogVisible2" class="dialog_copy" width="38%"
                   :before-close="handleClose2">
-                  <el-form ref="form" :model="copyForm" label-width="80px">
+                  <el-form ref="form" :model="copyForm" label-width="80px" >
                     <el-form-item :label="$t('SCF.total.ssdy')" :required="true">
                       <!-- <el-select v-model="addressIpt">
                         <el-option label="北京" value="beijing"></el-option>
@@ -673,6 +677,9 @@
     border-radius: 4px;
     border: 1px solid #eee;
     box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
+    .dialog_copy>>>.el-dialog{
+      box-shadow: none;
+    }
   }
 
   .tabListPage {

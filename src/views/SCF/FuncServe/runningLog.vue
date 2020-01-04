@@ -147,7 +147,6 @@ export default {
       this.axios
         .post(FUN_LOG, params)
         .then(res => {
-          console.log(res)
           if(res.Response.Data){
             _this.logData = res.Response;
             res.Response.Data.forEach((element, index) => {

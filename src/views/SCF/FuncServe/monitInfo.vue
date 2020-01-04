@@ -25,7 +25,9 @@
 
         <el-table-column prop="DataPoints" width="550">
           <template slot-scope="scope">
+            <!-- 暂无数据 -->
             <p v-if="scope.row.DataPoints[0].Values.length==0">{{ $t('SCF.total.zwsj') }}</p>
+            <!-- 有数据 -->
             <div class="echart" v-if="scope.row.DataPoints[0].Values.length!=0">
               <echart-line id="diskEchearrts-line" :time="scope.row.DataPoints[0].Timestamps | UpTime"
                 :opData="scope.row.DataPoints[0].Values" :scale="3" :period="period" :xdata="false"></echart-line>

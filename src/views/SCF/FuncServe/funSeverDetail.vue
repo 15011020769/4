@@ -13,6 +13,7 @@
           </span>
           <div class="selectDrowBox" v-if="trueOrFalse">
             <div style="position:relative;z-index:100;display:flex;align-items:center;">
+              <!-- 请输入别名或者版本号进行搜索 -->
               <el-input v-model="searchIpt" :placeholder="$t('SCF.total.qsrbm')"></el-input>
               <el-button class="el-icon-search"></el-button>
             </div>
@@ -53,6 +54,7 @@
       </div>
       <div class="appIdListCon">
         <el-tabs class="allTabs" v-model="activeName" @tab-click="handleClick">
+          <!-- 函数配置 -->
           <el-tab-pane :label="$t('SCF.total.hspz')" name="first">
             <div class="allConListMain">
               <div class="allConListMainOne">
@@ -218,21 +220,25 @@
               </div>
             </div>
           </el-tab-pane>
+          <!-- 函数代码 -->
           <el-tab-pane :label="$t('SCF.total.hsdm')" name="second">
             <div class="allConListMain">
               <funCode />
             </div>
           </el-tab-pane>
+          <!-- 触发方式 -->
           <el-tab-pane :label="$t('SCF.total.cffs')" name="third">
             <div class="allConListMain">
               <triggerMode ref="mychild" @childFn="childFn" />
             </div>
           </el-tab-pane>
+          <!-- 通行日志 -->
           <el-tab-pane :label="$t('SCF.total.yxrz')" name="fouth">
             <div class="allConListMain">
               <runningLog />
             </div>
           </el-tab-pane>
+          <!-- 监控信息 -->
           <el-tab-pane :label="$t('SCF.total.jkxx')" name="fifth">
             <div class="allConListMain">
               <monitInfo />
@@ -495,7 +501,7 @@
         this.axios.post(SCF_DETAILS, params).then(res => {
           this.triggerBoxList = res.Response.Triggers;
           for (let i = 0; i < this.triggerBoxList.length; i++) {
-            this.switch1[i] = true;
+            // this.switch1[i] = true;
           }
         });
       },
