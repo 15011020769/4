@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="wrap">
     <div class="basicProtTit">
       <span>DDoS基础防护</span>
       <el-select v-model="selectedSubarea" placeholder class="codeOrigin">
@@ -10,15 +10,7 @@
           :value="item.subarea"
         ></el-option>
       </el-select>
-      <el-select v-model="selectedRegion" placeholder class="taiwan">
-        <el-option
-          v-for="item in cities"
-          :key="item.Region"
-          :label="item.lable"
-          :value="item.Region"
-          @click="changeCity(item)"
-        ></el-option>
-      </el-select>
+      <el-button>{{region}}</el-button>
     </div>
     <div class="basicProtCon">
       <div class="newClear">
@@ -153,7 +145,8 @@ export default {
       currentPage: 1,
       pageSize: 10,
       totalItems: 0,
-      flag: false
+      flag: false,
+      region: "载入中..."
     };
   },
   created() {
@@ -191,7 +184,8 @@ export default {
       this.loading = true;
       let params = {
         Version: "2017-03-12",
-        Region: this.selectedRegion
+        Region: this.selectedRegion,
+        Limit: 100
       };
       this.axios.post(CVM_INSTANCES, params).then(res => {
         if (res.Response.Error == undefined) {
@@ -300,6 +294,7 @@ export default {
         this.selectedRegion = data.data[0].Region;
         this.selectedCity = data.data[0];
         this.$cookie.set("regionv2", this.selectedCity.Region);
+        this.region = data.data[0].zone;
       });
     },
     // 切换城市
@@ -372,6 +367,13 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+.wrap >>> .el-button {
+  height: 30px;
+  padding-top: 0;
+  font-size: 12px;
+  border-radius: 0;
+  line-height: 30px;
+}
 .Right-style {
   display: flex;
   justify-content: flex-end;

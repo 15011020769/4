@@ -496,6 +496,9 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+a{
+  cursor: pointer;
+}
 .wrap >>> .el-tabs__nav-wrap {
   background: white;
   padding: 0 15px;
