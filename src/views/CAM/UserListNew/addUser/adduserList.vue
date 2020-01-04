@@ -85,23 +85,20 @@
                   <el-radio :label="false">{{$t('CAM.userList.generation')}}</el-radio>
                   <el-radio :label="true">{{$t('CAM.userList.Custom')}}</el-radio>
                 </el-radio-group>
-                <div v-show="pwdInp">
-                  <el-form-item prop="Password" v-if="ruleForm.pwdRadio">
-                    <el-input
-                      v-model="ruleForm.Password"
-                      style="width:200px;"
-                      type="password"
-                      show-password
-                    ></el-input>
-                  </el-form-item>
-                  <el-form-item v-if="!ruleForm.pwdRadio">
-                    <el-input
-                      v-model="ruleForm.Password"
-                      style="width:200px;"
-                      type="password"
-                      show-password
-                    ></el-input>
-                  </el-form-item>
+                <div v-show="pwdInp" class="regPWD">
+                  <el-input
+                    v-model="ruleForm.Password"
+                    style="width:200px;"
+                    type="password"
+                    show-password
+                    @click="visible = !visible"
+                    @change="_pwdInp"
+                  ></el-input>
+                  <div class="reg-box">
+                    <p :class="pwdlenReg ? 'red' : 'green'">长度为8-32个字符</p>
+                    <p :class="pwdtypeReg ? 'red' : 'green'">包含数字，特殊字符，小写字母，大写字母</p>
+                    <p :class="pwdreReg ? 'red' : 'green'">密码不能与当前用户名相同</p>
+                  </div>
                 </div>
               </el-form-item>
               <el-form-item :label="$t('CAM.userList.resetPassword')">
@@ -191,6 +188,10 @@ export default {
       });
     };
     return {
+      //密码正则验证
+      pwdlenReg: false,
+      pwdtypeReg: false,
+      pwdreReg: false,
       loading: false,
       activeName: "first",
       userData: [], //用户组
@@ -263,6 +264,34 @@ export default {
     this.init();
   },
   methods: {
+    //密码验证
+    _pwdInp() {
+      var reg = /^(?=.*?[a-z])(?=.*?[A-Z])(?=.*?\d)(?=.*?[#@*&.]).*$/;
+      //用户名不能和密码相同
+      if (this.ruleForm.Name != this.ruleForm.Password) {
+        this.pwdreReg = false;
+      } else {
+        this.pwdreReg = true;
+      }
+      //长度为8-32个字符
+      if (
+        this.ruleForm.Password.length >= 8 &&
+        this.ruleForm.Password.length <= 32
+      ) {
+        this.pwdlenReg = false;
+      } else {
+        this.pwdlenReg = true;
+      }
+      //包含数字，特殊字符(除空格)，小写字母，大写字母
+      if (
+        reg.test(this.ruleForm.Password) &&
+        !/s/.test(this.ruleForm.Password)
+      ) {
+        this.pwdtypeReg = false;
+      } else {
+        this.pwdtypeReg = true;
+      }
+    },
     //手机号验证
     telInp() {
       var reg = /^1[3456789]\d{9}$/;
@@ -511,8 +540,14 @@ export default {
     _pwdRadio() {
       if (this.ruleForm.pwdRadio) {
         this.pwdInp = true;
+        this.pwdlenReg = true;
+        this.pwdtypeReg = true;
+        this.pwdreReg = true;
       } else {
         this.pwdInp = false;
+        this.pwdlenReg = false;
+        this.pwdtypeReg = false;
+        this.pwdreReg = false;
       }
     },
     //访问方式
@@ -588,6 +623,8 @@ export default {
               this.$message.error("请设置登录保护");
             } else if (this.ruleForm.processRadio === "") {
               this.$message.error("请设置操作保护");
+            } else if (this.pwdlenReg || this.pwdtypeReg || this.pwdreReg) {
+              this.$message.error("密码格式输入有误");
             } else {
               this._arrUser();
             }
@@ -694,6 +731,24 @@ export default {
       }
       .green {
         color: green;
+      }
+    }
+
+    .regPWD {
+      position: relative;
+
+      .reg-box {
+        p {
+          line-height: 20px;
+          font-size: 12px;
+        }
+
+        .green {
+          color: green;
+        }
+        .red {
+          color: red;
+        }
       }
     }
 
