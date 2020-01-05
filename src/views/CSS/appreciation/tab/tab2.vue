@@ -1,7 +1,7 @@
 <template>
   <div class="wrap">
     <h3>转码时长{{StartTIme}} 到 {{EndTIme}}（单位：分钟）</h3>
-    <Echart :xAxis="xAxis" :series="series" :legendText="text" />
+    <Echart :xAxis="xAxis" :series="series" :legendText="legendText" />
     <div class="table">
       <h3>近30天消费量</h3>
       <el-table
@@ -34,7 +34,7 @@
 
 <script>
 import Echart from "../../components/line";
-import { CSS_CODE, CSS_CHARTS } from "@/constants";
+import { CSS_CODE, CSS_CODECHARTS } from "@/constants";
 import moment from "moment";
 export default {
   name: "tab2",
@@ -47,7 +47,7 @@ export default {
       loading: true, //加载状态
       xAxis: [],
       series: [],
-      text: '转码时长'
+      legendText: '转码时长'
     };
   },
   components: {
@@ -76,8 +76,8 @@ export default {
       this.loading = true;
       const params = {
         Version: "2018-08-01",
-        StartDayTime: moment(this.StartTIme).format("YYYYMMDD"),
-        EndDayTime: moment(this.EndTIme).format("YYYYMMDD"),
+        StartDayTime: moment().subtract(31, 'days').format("YYYYMMDD"),
+        EndDayTime: moment().format("YYYYMMDD"),
         PageSize: this.pageSize,
         PageNum: this.current
       };
@@ -93,6 +93,7 @@ export default {
     },
     // 获取图表数据
     getCharts() {
+      this.loading = true;
       const axixArr = []
       const seriesArr = []
       const params = {
@@ -100,7 +101,7 @@ export default {
         StartTime: moment(this.StartTIme).format("YYYY-MM-DD HH:mm:ss"),
         EndTime: moment(this.EndTIme).format("YYYY-MM-DD HH:mm:ss"),
       };
-      this.axios.post(CSS_CHARTS, params).then(res => {
+      this.axios.post(CSS_CODECHARTS, params).then(res => {
         if (res.Response.Error) {
           this.$message.error(res.Response.Error.Message);
         } else {
@@ -111,6 +112,7 @@ export default {
           this.xAxis = axixArr
           this.series = seriesArr
         }
+        this.loading = false;
       })
     }
   }

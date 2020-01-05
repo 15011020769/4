@@ -1,17 +1,17 @@
 <template>
   <div class="wrap">
     <h3>截图{{StartTIme}} 到 {{EndTIme}}（单位：张）</h3>
-    <Echart />
+    <Echart :xAxis="xAxis" :series="series" :legendText="legendText" />
     <div class="table">
-      <h3>近30天消费量</h3>
+      <h3>月度消费量</h3>
       <el-table
         :data="tableData"
         style="width: 100%;margin-top:20px;"
         height="450"
         v-loading="loading"
       >
-        <el-table-column prop="StreamName" label="月份"></el-table-column>
-        <el-table-column prop="StartTime" label="截图数量（张）"></el-table-column>
+        <el-table-column prop="time" label="月份"></el-table-column>
+        <el-table-column prop="num" label="截图数量（张）"></el-table-column>
       </el-table>
       <div class="Right-style pagstyle">
         <span class="pagtotal">共&nbsp;{{totalItems}}&nbsp;条</span>
@@ -29,7 +29,7 @@
 
 <script>
 import Echart from "../../components/line";;
-import { CSS_CODE } from "@/constants";
+import { CSS_CODE, CSS_SCREEN } from "@/constants";
 import moment from "moment";
 export default {
   name: "tab2",
@@ -39,7 +39,10 @@ export default {
       current: 1, //页数
       pageSize: 10, //每页数量
       totalItems: 0, //总条数
-      loading: true //加载状态
+      loading: true, //加载状态
+      xAxis: [],
+      series: [],
+      legendText: '截图',
     };
   },
   components: {
@@ -55,6 +58,7 @@ export default {
   },
   created() {
     this.init();
+    this.getCharts();
   },
   methods: {
     //分页
@@ -67,20 +71,76 @@ export default {
       this.loading = true;
       const params = {
         Version: "2018-08-01",
-        StartDayTime: moment(this.StartTIme).format("YYYYMMDD"),
-        EndDayTime: moment(this.EndTIme).format("YYYYMMDD"),
-        PageSize: this.pageSize,
-        PageNum: this.current
+        Granularity: "Day",
+        Zone: "Oversea",
+        StartTime : moment().subtract(6, "months").endOf("months").utc().format(),
+        EndTime : moment().utc().format(),
       };
-      this.axios.post(CSS_CODE, params).then(res => {
+      this.axios.post(CSS_SCREEN, params).then(res => {
         if (res.Response.Error) {
           this.$message.error(res.Response.Error.Message);
         } else {
-          this.tableData = res.Response.DataInfoList;
-          this.totalItems = res.Response.TotalNum;
+          let obj = res.Response.DataInfoList
+          var mon = [];
+            for (var i = 1; i < obj.length; i++) {
+                var repeat = false;
+                  for (var j = 0; j < mon.length; j++) {
+                    if (mon[j].time == obj[i].Time.substring(0,7)) {
+                        repeat = true
+                        break
+                    }
+                  }
+                  if (!repeat) {
+                    mon.push({time: obj[i].Time.substring(0,7)})
+                  }
+              }
+            var monvalue = [];
+            var one = 0;
+            for(var j = 0;j<mon.length;j++){
+              var one = 0;
+            for(var i=0;i<obj.length;i++){
+                  if(obj[i].Time.substring(0,7) == mon[j].num){
+                    one += parseInt(obj[i].Num);
+                  }
+              }
+            monvalue.push({num: one});
+            }
+            var json_arr = [];
+            for (var i=0;i<mon.length;i++){
+              json_arr.push(Object.assign(mon[i],monvalue[i]));
+            }
+          const brr = json_arr.splice(0,1)
+          this.tableData = json_arr.sort((a, b) => new Date(b.time) - new Date(a.time));
+          this.totalItems = json_arr.length;
         }
         this.loading = false;
       });
+    },
+    // 获取图表数据
+    getCharts() {
+      this.loading = true;
+      const axixArr = []
+      const seriesArr = []
+      const params = {
+        Version: "2018-08-01",
+        Granularity: "Minute",
+        Zone: "Oversea",
+        StartTime: moment(this.StartTIme).utc().format(),
+        EndTime: moment(this.EndTIme).utc().format(),
+      };
+      this.axios.post(CSS_SCREEN, params).then(res => {
+        if (res.Response.Error) {
+          this.$message.error(res.Response.Error.Message);
+        } else {
+          res.Response.DataInfoList.map(v => {
+            axixArr.push(moment(v.Time).format('YYYY-MM-DD HH:mm:ss'))
+            seriesArr.push(v.Num)
+          })
+          this.xAxis = axixArr
+          this.series = seriesArr
+        }
+        this.loading = false;
+      })
     }
   }
 };
