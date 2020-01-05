@@ -13,14 +13,14 @@
           <template slot-scope="scope">
             <div v-if="scope.row.Enabled == true" class="off_color">有效</div>
             <!-- <div v-if="scope.row.Enabled == 0" class="close_color">关闭</div> -->
-            <div v-else>{{$t('CCN.total.newClose')}}newClose</div>
+            <div v-else>{{$t('CCN.total.newClose')}}</div>
           </template>
         </el-table-column>
         <el-table-column prop="InstanceId" :label="$t('CCN.tabs.tab4tr3')" width>
           <template slot-scope="scope">
             <!-- <el-button @click="handleClick(scope.row)" type="text">{{ scope.row.InstanceId }}</el-button> -->
             <a
-              :href="'../VPC/index#/priNetwork/priNetworkDetial/'+`${ scope.row.InstanceId }`+'/ap-taipei'"
+              :href="'../VPC/index.html#/priNetwork/priNetworkDetial/'+ scope.row.InstanceId + '/ap-taipei'"
               target="_blank"
             >{{ scope.row.InstanceId }}</a>
             <p class="edit">{{ scope.row.InstanceName }}</p>
