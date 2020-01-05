@@ -365,7 +365,7 @@ export default {
       }
       this.axios.post(`${process.env.VUE_APP_adminUrl + GET_PAY_AMOUNT}`, params).then(data => {
         if (data.payAmount != null && data.code === 0) {
-          var costs=data.payAmount.totalAmount.toFixed(2)
+          var costs=data.payAmount.totalAmount.toFixed(8)
           this.dataForm.allCoat = costs
         } else {
           this.dataForm.allCoat = 0

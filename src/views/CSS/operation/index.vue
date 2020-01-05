@@ -6,6 +6,23 @@
     </div>
     <div class="seek seek-box">
       <p>
+        <span>选择域名标签</span>
+        <el-select
+          v-model="damainValue"
+          multiple
+          collapse-tags
+          style="margin-left: 10px;"
+          placeholder="请选择"
+        >
+          <el-option
+            v-for="item in domainsData"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          ></el-option>
+        </el-select>
+      </p>
+      <p style="margin-left:20px;">
         <span>选择域名</span>
         <el-select
           v-model="damainValue"
@@ -190,6 +207,7 @@ export default {
         Version: "2018-08-01"
       };
       this.axios.post(DOMAIN_LIST, params).then(res => {
+        console.log(res)
         var arr = [];
         res.Response.DomainList.forEach((item, index) => {
           const data = {

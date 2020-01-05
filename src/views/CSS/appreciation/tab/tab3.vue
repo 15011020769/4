@@ -1,9 +1,9 @@
 <template>
   <div class="wrap">
     <h3>录制任务个数{{StartTIme}} 到 {{EndTIme}}（单位：个）</h3>
-    <Echart />
+    <Echart :legendText="legendText" />
     <div class="table">
-      <h3>近30天消费量</h3>
+      <h3>月度消费量</h3>
       <el-table
         :data="tableData"
         style="width: 100%;margin-top:20px;"
@@ -29,7 +29,7 @@
 
 <script>
 import Echart from "../../components/line";;
-import { CSS_CODE } from "@/constants";
+import { CSS_CODE, CSS_RECORDsTREAM } from "@/constants";
 import moment from "moment";
 export default {
   name: "tab2",
@@ -39,7 +39,8 @@ export default {
       current: 1, //页数
       pageSize: 10, //每页数量
       totalItems: 0, //总条数
-      loading: true //加载状态
+      loading: true, //加载状态
+      legendText: '录制任务个数',
     };
   },
   components: {
@@ -67,15 +68,20 @@ export default {
       this.loading = true;
       const params = {
         Version: "2018-08-01",
-        StartDayTime: moment(this.StartTIme).format("YYYYMMDD"),
-        EndDayTime: moment(this.EndTIme).format("YYYYMMDD"),
-        PageSize: this.pageSize,
-        PageNum: this.current
+        // StartTime : moment().subtract(6, "months").endOf("months").format('YYYY-MM-DD HH:mm:ss'),
+        // EndTime : moment().format('YYYY-MM-DD HH:mm:ss'),
+        StartTime : moment(this.StartTIme).format('YYYY-MM-DD HH:mm:ss'),
+        EndTime : moment(this.EndTIme).format('YYYY-MM-DD HH:mm:ss'),
+        MainlandOrOversea: "Oversea",
+        LiveType: "NormalLive",
+        // Granularity: 'Day'
+        // PageNum: this.current
       };
-      this.axios.post(CSS_CODE, params).then(res => {
+      this.axios.post(CSS_RECORDsTREAM, params).then(res => {
         if (res.Response.Error) {
           this.$message.error(res.Response.Error.Message);
         } else {
+          console.log(res)
           this.tableData = res.Response.DataInfoList;
           this.totalItems = res.Response.TotalNum;
         }
