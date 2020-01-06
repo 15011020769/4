@@ -1,8 +1,8 @@
 <template>
-  <div class="product-wrap">
+  <div class="platform-wrap">
     <Header title="平台事件">
     </Header>
-    <div class="product-main">
+    <div class="platform-main">
       <div class="explain" style="margin-bottom:20px;">
         <p>
           事件中心概述，产品事件与平台事件区别
@@ -15,7 +15,8 @@
             <TimeX v-on:switchData="GetDat" :classsvalue="value"></TimeX>
           </div>
           <div class="writeput">
-              <input type="text">
+              <el-input v-model="input" placeholder="请输入实例组名搜索"></el-input>
+              <el-button icon="el-icon-search" style="margin-left:-1px;"></el-button>
           </div>
           <div class="icons">
                 <i class="el-icon-setting" @click="dialog"></i>
@@ -24,16 +25,13 @@
         </div>
         <div class="table">
           <el-table :data="tableData" style="width: 100%" height="450">
-            <el-table-column prop="date" label="事件" width="200"></el-table-column>
-            <el-table-column prop="type" label="类型" width="100"></el-table-column>
-            <el-table-column prop="producttype" label="产品类型" width="90"></el-table-column>
-            <el-table-column prop="region" label="地域" width="100"></el-table-column>
-            <el-table-column prop="influence" label="影响对象" width="105"></el-table-column>
-            <el-table-column prop="objdetail" label="对象详情" width="117"></el-table-column>
-            <el-table-column prop="state" label="状态" width="60"></el-table-column>
-            <el-table-column prop="starttime" label="开始时间" width="90"></el-table-column>
-            <el-table-column prop="updatatime" label="更新时间" width="90"></el-table-column>
-            <el-table-column prop="alarm" label="告警配置"></el-table-column>
+            <el-table-column prop="date" label="事件" class="el-icon-info"></el-table-column>
+            <el-table-column prop="region" label="地域" ></el-table-column>
+            <el-table-column prop="state" label="状态" ></el-table-column>
+            <el-table-column prop="influence" label="影响对象" ></el-table-column>
+            <el-table-column prop="starttime" label="开始时间" ></el-table-column>
+            <el-table-column prop="updatatime" label="更新时间" ></el-table-column>
+            <el-table-column prop="alarm" label="事件类型"></el-table-column>
           </el-table>
 
           <!-- 分页 -->
@@ -59,7 +57,7 @@ import Header from "@/components/public/Head";
 import TimeX from "@/components/public/TimeN";
 import Dialog from "./custom/custom"
 export default {
-  name: "product",
+  name: "platform",
   data() {
     return {
       activeName: "first",
@@ -103,7 +101,22 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.product-wrap > header {
+.platform-wrap >>> .el-button,
+.platform-wrap >>> .el-input__inner {
+  height: 30px;
+  border-radius: 0;
+  padding-top: 0;
+  line-height: 30px;
+  font-size: 12px;
+}
+.writeput{
+   width: 240px;
+        display: flex;
+}
+.type_data{
+  margin-top:-20px;
+}
+.platform-wrap > header {
   width: 100%;
   background: #fff;
   display: flex;
@@ -118,7 +131,7 @@ export default {
     }
   }
 }
-.product-main {
+.platform-main {
   padding: 20px;
 }
 .box {
@@ -131,8 +144,15 @@ export default {
     align-items: center;
       .icons {
         display: flex;
-        font-size: 16px;
+        font-size: 17px;
         align-items: center;
+        >i{
+          display: inline-block;
+          margin:0 10px;
+        }
+        :hover{
+          cursor: pointer;
+        }
       }
       .type_data{
         margin-left:-20px;

@@ -53,6 +53,14 @@ export const ADD_RECORDING_CONFIG = 'live2/CreateLiveRecordTemplate'
 export const DELETE_RECORDING_CONFIG = 'live2/DeleteLiveRecordTemplate'
 // 修改录制模板
 export const UPDATE_RECORDING_CONFIG = 'live2/ModifyLiveRecordTemplate'
+// 创建转码模板
+export const ADD_TRANSCODE_TEMPLATE = 'live2/CreateLiveTranscodeTemplate'
+// 查詢轉碼模板
+export const GET_TRANSCODE_TEMPLATE = 'live2/DescribeLiveTranscodeTemplates'
+// 修改轉碼模板
+export const UPDATE_TRANSCODE_TEMPLATE = 'live2/ModifyLiveTranscodeTemplate'
+// 刪除轉碼模板
+export const DELETE_TRANSCODE_TEMPLATE = 'live2/DeleteLiveTranscodeTemplate'
 
 
 /** 查询实时总带宽 实时总连接数 */

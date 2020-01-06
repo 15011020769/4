@@ -439,9 +439,10 @@
             } else {
               _this.vpcConfigFlag = false;
             }
-
+           
             if (funcData.Environment.Variables.length != 0) {
-              for (let i = 0; i <= funcData.Environment.Variables.length; i++) {
+              
+              for (let i = 0; i < funcData.Environment.Variables.length; i++) {
                 _this.environmentKey = funcData.Environment.Variables[i].Key;
                 _this.environmentValue = funcData.Environment.Variables[i].Value;
               }
@@ -485,6 +486,7 @@
             this.dialogVisible2 = false;
           })
           .catch(error => {
+            console.log(error)
             this.$message.error(error);
           });
       },
@@ -566,6 +568,7 @@
             this.searchVersion();
           })
           .catch(error => {
+            console.log(error)
             this.$message.error(error);
           });
         this.publishNewVewsion = false;
@@ -635,6 +638,7 @@
             this.versionArr = arr;
           })
           .catch(error => {
+            console.log(error)
             this.$message.error(error);
           });
       },

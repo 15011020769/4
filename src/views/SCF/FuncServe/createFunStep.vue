@@ -119,8 +119,9 @@
         </div>
       </div>
       <el-button class="prevStep" @click="prevStep">{{ $t('SCF.total.syb') }}</el-button>
-      <el-button class="compileSucc" @click="compileSucc()" v-show="loading">{{ $t('SCF.total.wc') }}</el-button>
-      <el-button class="compileSucc" icon="el-icon-loading" v-show="!loading"></el-button>
+      <el-button class="compileSucc" @click="compileSucc()" >{{ $t('SCF.total.wc') }}</el-button>
+      <!-- <el-button class="compileSucc" @click="compileSucc()" v-show="loading">{{ $t('SCF.total.wc') }}</el-button> -->
+      <!-- <el-button class="compileSucc" icon="el-icon-loading" v-show="!loading"></el-button> -->
     </div>
   </div>
 </template>
@@ -254,11 +255,12 @@
           Region: localStorage.getItem('regionv2'),
           FunctionName: this.formShowable.funNameStep,
           "Code.DemoId": this.DemoId,
-          Handler: this.formShowable.runFun,
-          Runtime: this.formShowable.runMoentStep,
-          Description: this.formShowable.descStep,
+          Handler: this.formShowable.runFun,//执行方法
+          Runtime: this.formShowable.runMoentStep,//运行环境
+          Description: this.formShowable.descStep,//描述
           Role: this.formShowable.runRole
         };
+       
         if (this.Vpcvalue != "" && this.Subnetvalue != "") {
           params["VpcConfig.VpcId"] = this.Vpcvalue;
           params["VpcConfig.SubnetId"] = this.Subnetvalue;
@@ -271,12 +273,15 @@
             i
           ].Value);
         }
-
-        this.axios.post(ADD_FUNC, params).then(res => {
-          this.$router.push({
-            path: "/FuncServe"
+        if(this.formShowable.runFun&&this.formShowable.runMoentStep&&this.formShowable.runRole){
+          this.axios.post(ADD_FUNC, params).then(res => {
+            console.log(res)
+            // this.$router.push({
+            //   path: "/FuncServe"
+            // });
           });
-        });
+        }
+      
       }
     }
   };

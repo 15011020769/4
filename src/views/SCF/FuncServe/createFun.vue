@@ -14,11 +14,11 @@
         <span>{{ $t('SCF.total.hspz') }}</span>
       </div>
       <div class="mainContForm">
-        <el-form :model="createFunTable" label-width="80px">
-          <el-form-item :label="$t('SCF.total.hsmc')" :required="true">
-            <el-input class="funNameIpt" v-model="createFunTable.funName"></el-input>
-            <p class="tipCon">{{ $t('SCF.total.ts1') }}</p>
-            <p class="tipCon">{{ $t('SCF.total.ts2') }}</p>
+        <el-form :model="createFunTable" label-width="80px" :rules="rules" ref="createFunTable">
+          <el-form-item :label="$t('SCF.total.hsmc')"  prop="funName">
+            <el-input class="funNameIpt" v-model="createFunTable.funName" ></el-input>
+            <p class="tipCon" :class="{activeColor:reg}">{{ $t('SCF.total.ts1') }}</p>
+            <p class="tipCon" :class="{activeColor:reg}">{{ $t('SCF.total.ts2') }}</p>
           </el-form-item>
           <el-form-item :label="$t('SCF.total.yxhj')">
             <el-select v-model="createFunTable.runMoment" @change="changerunMoment">
@@ -155,6 +155,22 @@
   } from "@/constants";
   export default {
     data() {
+       var validatefunName = (rule, value, callback) => {
+        if (value === '') {
+          this.reg=true;
+          callback();
+        } else {
+            let reg=/^[A-Za-z]([A-Za-z0-9]|-|_){0,58}([A-Za-z0-9])$/;
+            let flag=reg.test(this.createFunTable.funName)
+            if(!flag){
+               this.reg=true;
+            callback();
+            }else{
+               this.reg=false;
+              callback();
+            }
+        }
+      };
       return {
         loading: true,
         index: "",
@@ -165,6 +181,12 @@
           funName: "",
           modelNameSpace: "",
           runMoment: "Python2.7"
+        },
+        reg:false,
+        rules:{
+          funName:[
+            { validator: validatefunName, trigger: 'blur' ,required:true}
+          ],
         },
         clickTab: true,
         tableDataBegin: [], //函数模板列表
@@ -220,11 +242,13 @@
           param["SearchKey.0.Value"] = this.searchName;
         }
         this.axios.post(TEMPLATE_LIST, param).then(data => {
-          this.tableDataBegin = data.Response.Demos;
-          this.DemoId = this.tableDataBegin[0].DemoId;
-          this.isactive = 0;
-          this.totalItems = data.Response.TotalCount;
-          this.loading = false;
+          if(data.Response.Demos){
+            this.tableDataBegin = data.Response.Demos;
+            this.DemoId = this.tableDataBegin[0].DemoId;
+            this.isactive = 0;
+            this.totalItems = data.Response.TotalCount;
+            this.loading = false;
+          }
         });
       },
 
@@ -279,16 +303,27 @@
         if (this.DemoId === "") {
           this.$message("請選擇函數模板");
         }
-        window.sessionStorage.setItem("funNameSess", this.createFunTable.funName);
-        window.sessionStorage.setItem("runMoent", this.createFunTable.runMoment);
-        window.sessionStorage.setItem("DemoId", this.DemoId);
+
         if (this.createFunTable.funName == "") {
+          this.$refs.createFunTable.validateField('funName');
           this.$message("函數名不能為空");
           return false;
         }
-        this.$router.push({
-          path: "/createFunStep"
-        });
+
+        //判断函数名是否合理
+       let reg=/^[A-Za-z]([A-Za-z0-9]|-|_){0,58}([A-Za-z0-9])$/;
+       let flag=reg.test(this.createFunTable.funName)
+       if(flag){
+          window.sessionStorage.setItem("funNameSess", this.createFunTable.funName);
+          window.sessionStorage.setItem("runMoent", this.createFunTable.runMoment);
+          window.sessionStorage.setItem("DemoId", this.DemoId);
+           this.$router.push({
+             path: "/createFunStep"
+           });
+       }
+       
+
+       
       },
       lookFunDetails(DemoId) {
         this.DemoId = DemoId;
@@ -376,7 +411,9 @@
     line-height: 30px !important;
     border-radius: 0 !important;
   }
-
+  .mainContForm .activeColor{
+    color: #F56C6C !important;
+  }
   .funListBoxConP span {
     margin-bottom: 5px;
     display: inline-block;

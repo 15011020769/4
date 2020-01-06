@@ -23,13 +23,13 @@
       <div class="box">
         <div class="table_top">
           <div class="type_data">
-            <el-button  type="primary"  @click="newbtn">+新增配置项</el-button>
+            <el-button  type="primary"  @click="newbtn" style="line-height:30px;">+新增配置项</el-button>
           </div>
          
           <div class="icons"> 
             <div class="writeput">
-                <input type="text" placeholder="请输入关键字">
-                <i class="el-icon-search"></i>              
+                <el-input v-model="input" placeholder="请输入实例组名搜索"></el-input>
+                <el-button icon="el-icon-search" style="margin-left:-1px;"></el-button>     
             </div>
                 <i class="el-icon-setting" @click="setup"></i>
           </div>
@@ -40,7 +40,7 @@
             <el-table-column prop="index" label="指标"></el-table-column>
             <el-table-column prop="dimension" label="维度" ></el-table-column>
             <el-table-column prop="method" label="统计方式" ></el-table-column>
-            <el-table-column prop="operation" label="操作"> <a @click="montior">监控</a> <a @click="administration">管理</a> <a>删除</a> </el-table-column>
+            <el-table-column prop="operation" label="操作"> <a @click="montior">监控</a> <a @click="administration">管理</a> <a @click="delet">删除</a> </el-table-column>
           </el-table>
 
           <!-- 分页 -->
@@ -105,15 +105,15 @@ export default {
     //新增配置项
     newbtn(){
       this.$router.push({
-        path:"/configuration/create",
+        path:"/configuration/create",//      新增配置项
         name:"create",
-         component:()=>
-          import('./create/index'),
-        meta:{
-          keepAlive:true
-        }
+          component:()=>
+      import(/* webpackChunkName:"create" */ './create/index.vue'),
+    meta:{
+      keepAlive:true
+    },
       })
-      console.log("点击")
+      // console.log("点击")
     },
     //取消
     cancel(){
@@ -129,15 +129,33 @@ export default {
     },
     //监控
     montior(){
-
+      this.$router.push( {
+        path:"/configuration/montior",//     监控页面
+        name:"montior",
+        component:()=>
+          import(/* webpackChunkName:'montior' */ "./montior/index.vue"),
+        meta:{
+          keepAlive:true,
+        }
+      },
+      )
     },
     //管理
     administration(){
-
+      this.$router.push( {
+        path:"/configuration/administration",//     监控页面
+        name:"administration",
+        component:()=>
+          import(/* webpackChunkName:'administration' */ "./administration/index.vue"),
+        meta:{
+          keepAlive:true,
+        }
+      },
+      )
     },
     //删除
     delet(){
-      
+      console.log('删除')
     },
     
   },
@@ -165,6 +183,14 @@ export default {
     margin-left:20px;
     border:0px;
 }
+.product-wrap >>> .el-button,
+.product-wrap >>> .el-input__inner {
+  height: 30px;
+  border-radius: 0;
+  padding-top: 0;
+  line-height: 30px;
+  font-size: 12px;
+}
 .product-main {
   padding: 20px;
 }
@@ -183,15 +209,9 @@ export default {
         font-size: 16px;
       }
       .writeput{
-          input{
-          font-size: 15px;
-          padding: 5px;
-          margin-right:10px;
-        }
-        >i{
-            font-size: 16px;
-          margin-left:-30px;
-        }
+          width: 240px;
+          display: flex;
+          margin-right:20px;
       }
     }
   }
@@ -199,14 +219,21 @@ export default {
     width: 100%;
     background: white;
     box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.32);
+    a{
+      display: inline-block;
+      margin:0 5px;
+    }
+    a:hover{
+    cursor: pointer;
+    }
   }
 }
 .explain {
   padding: 10px 30px 10px 20px;
   vertical-align: middle;
-  color: #003b80;
-  border: 1px solid #97c7ff;
-  background: pink;
+  color: #c07400;
+  border:1px solid  #ffd18b;
+  background: #fff4e3;
   p {
     font-size: 11px;
     line-height: 18px;

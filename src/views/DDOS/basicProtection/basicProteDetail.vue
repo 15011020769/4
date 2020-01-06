@@ -8,8 +8,8 @@
       <div class="basicCenter">
         <div class="basicCenterOne">
           <p>
-            <span class="pOne">黑洞触发阈值</span>
-            <span>2 Gbps(当触发黑洞会使雲主机服务中断2小时)</span>
+            <span class="pOne">{{$t('DDOS.basicProtection.hdcfyz')}}</span>
+            <span>2 Gbps{{$t('DDOS.basicProtection.cfhd')}}</span>
           </p>
           <!-- <p>
             <span class="pOne">CC防护</span>
@@ -33,7 +33,7 @@
         </div>
         <div class="basicCenterTwo">
           <el-tabs v-model="activeName" @tab-click="handleClick">
-            <el-tab-pane label="DDoS攻击" name="first">
+            <el-tab-pane :label="$t('DDOS.basicProtection.ddosgj')" name="first">
               <ddosAttack :ddosAttack="instance" />
             </el-tab-pane>
             <!-- <el-tab-pane label="CC攻击" name="second">
