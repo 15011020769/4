@@ -87,8 +87,9 @@ export function clearLoginInfo() {
   Vue.cookie.delete('JSESSIONID')
   Vue.cookie.delete('uin')
   Vue.cookie.delete('proxyType')
-  Vue.cookie.delete('tencentStatus')
+  Vue.cookie.delete('lock_state')
   Vue.cookie.delete('username')
+  Vue.cookie.delete('subAccountName')
 }
 
 // 跳转首页

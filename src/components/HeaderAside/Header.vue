@@ -212,6 +212,7 @@ export default {
       this.axios
         .post(`${process.env.VUE_APP_adminUrl}taifucloud/account/manage/logoutActive`, params)
         .then(({ data }) => {
+          console.log(data)
           if (data.RetCode === '00') {
             // 退出我们的系统
             clearLoginInfo()
