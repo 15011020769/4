@@ -74,7 +74,7 @@
                   type="primary"
                   @click="Relieve_user"
                   size="small"
-                >{{$t('CAM.strategy.outBindUser')}}</el-button> -->
+                >{{$t('CAM.strategy.outBindUser')}}</el-button>-->
               </p>
               <div class="config_table">
                 <el-table
@@ -158,7 +158,7 @@
       <el-dialog :visible.sync="dialogVisible" width="72%" :before-close="handleClosePolicy">
         <p class="dialog">{{$t('CAM.strategy.straGroup')}}</p>
         <div>
-          <transfer ref="userTransfer" :PolicyId="policyID"></transfer>
+          <transfer ref="userTransfer" :PolicyId="policyID" :userArr="userArr" :groupArr="groupArr"></transfer>
         </div>
         <p style="text-align:center;margin-top:20px">
           <el-button @click="dialogVisible = false" size="small">取 消</el-button>
@@ -260,7 +260,9 @@ export default {
       rp: 10,
       total: 0,
       selTotal: 0,
-      handleFlag: false
+      handleFlag: false,
+      groupArr: [],
+      userArr: []
     };
   },
   created() {
@@ -296,9 +298,9 @@ export default {
     handleClickPolicies(obj) {
       if (obj.RelatedType != undefined && obj.RelatedType === 1) {
         this.$router.push({
-          path: "/details",
+          path: "/detailsUser",
           query: {
-            content: obj.Name
+            detailsData: obj.Name
           }
         });
       }
@@ -351,6 +353,14 @@ export default {
         this.policysData = res.Response.List;
         this.TotalCount = res.Response.TotalNum;
         this.loading = false;
+        this.policysData.forEach(item => {
+          if (item.RelatedType == 2) {
+            this.groupArr.push(item);
+          }
+          if (item.RelatedType == 1) {
+            this.userArr.push(item);
+          }
+        });
       });
     },
     // 解除策略绑定实体
