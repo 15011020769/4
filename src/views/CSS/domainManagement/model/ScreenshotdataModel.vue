@@ -2,9 +2,8 @@
   <div>
     <div>
       <el-dialog
-        title="提示"
+        title="截图&鉴黄配置"
         :visible.sync="isShow"
-        width="30%"
         :before-close="handleClose">
         <div class="newClear">
           <p class="tip">模板选择（如需添加新模板，请前往<a>【 功能模板】<i class="el-icon-share"></i></a>中进行设置）</p>
@@ -17,10 +16,14 @@
                 type="selection"
                 width="55">
               </el-table-column>
-              <el-table-column prop="name" label="模板名称"></el-table-column>
-              <el-table-column prop="id" label="模板ID"></el-table-column>
-              <el-table-column prop="dateTime" label="截图间隔(秒)"></el-table-column>
-              <el-table-column prop="selec" label="智能鉴黄"></el-table-column>
+              <el-table-column prop="TemplateName" label="模板名称"></el-table-column>
+              <el-table-column prop="TemplateId" label="模板ID"></el-table-column>
+              <el-table-column prop="SnapshotInterval" label="截图间隔(秒)"></el-table-column>
+              <el-table-column prop="selec" label="智能鉴黄">
+                <template slot-scope="scope">
+                  {{scope.row.PornFlag === 0 ? '不开启' : '开启'}}
+                </template>
+              </el-table-column>
             </el-table>
           </div>
         </div>
@@ -33,39 +36,52 @@
   </div>
 </template>
 <script>
+import { LIVE_DESCRIBE_LIVESNAPSHOTTEMPLATES, LIVE_DELETELIVESNAPSHOTRULE, LIVE_CREATELIVESNAPSHOTRULE } from '@/constants'
 export default {
   props:{
     isShow:{
       required:false,
       type:Boolean
-    }
+    },
+    checkedTemplateId: {
+      required: false,
+    },
   },
   data(){
     return{
-      ScreenshotData:[
-        {
-          name:'123',
-          id:'123',
-          dateTime:'123',
-          selec:'123'
-        },
-        {
-          name:'123',
-          id:'123',
-          dateTime:'123',
-          selec:'123'
-        }
-      ],//表格
+      ScreenshotData:[],//表格
+      selection: [],
     }
+  },
+  watch: {
+    isShow(newVal) {
+      if (newVal === true) {
+        if (this.checkedTemplateId) {
+          this.$nextTick(() => {
+            this.ScreenshotData.forEach(template => {
+              if (template.TemplateId === this.checkedTemplateId) {
+                this.$refs.multipleTable.toggleRowSelection(template, true)
+              }
+            })
+          })
+        }
+      }
+    }
+  },
+  mounted() {
+    this.axios.post(LIVE_DESCRIBE_LIVESNAPSHOTTEMPLATES, {
+      Version: '2018-08-01'
+    }).then(({ Response }) => {
+      this.ScreenshotData = Response.Templates
+    })
   },
   methods:{
     //checkbox
     handleSelectionChange(val) {
+      this.selection = val
       if (val.length > 1) {
         this.$refs.multipleTable.clearSelection()
         this.$refs.multipleTable.toggleRowSelection(val.pop())
-      } else {
-
       }
     },
     //关闭弹框
@@ -74,7 +90,24 @@ export default {
     },
     //保存
     saveScreenEdit(){
-      this.$emit("closeScreenshotModel",false)
+      this.axios.post(LIVE_DELETELIVESNAPSHOTRULE, {
+        Version: '2018-08-01',
+        DomainName: this.$route.params.domain,
+        AppName: ''
+      }).then(res => {
+        if (this.selection.length > 0) {
+          this.axios.post(LIVE_CREATELIVESNAPSHOTRULE, {
+            Version: '2018-08-01',
+            DomainName: this.$route.params.domain,
+            AppName: '',
+            TemplateId: this.selection[0].TemplateId
+          }).then(() => {
+            this.$emit("closeScreenshotModel",false)
+          })
+        } else {
+          this.$emit("closeScreenshotModel",false)
+        }
+      })
     }
   }
 }

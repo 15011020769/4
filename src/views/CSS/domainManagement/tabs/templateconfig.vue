@@ -7,9 +7,9 @@
           <div>
             <el-table
               :data="callbackconfigData">
-              <el-table-column prop="date" label="模板名称"></el-table-column>
-              <el-table-column prop="name" label="模板ID"></el-table-column>
-              <el-table-column prop="address" label="回调地址"></el-table-column>
+              <el-table-column prop="TemplateName" label="模板名称"></el-table-column>
+              <el-table-column prop="TemplateId" label="模板ID"></el-table-column>
+              <el-table-column prop="StreamBeginNotifyUrl" label="回调地址"></el-table-column>
             </el-table>
           </div>
         </div>
@@ -17,11 +17,15 @@
           <h1>截图&鉴黄配置<a @click="ScreenshotEdit">编辑</a></h1>
           <div>
             <el-table
-              :data="ScreenshotData">
-              <el-table-column prop="date" label="模板名称"></el-table-column>
-              <el-table-column prop="name" label="模板ID"></el-table-column>
-              <el-table-column prop="address" label="截图间隔(秒)"></el-table-column>
-              <el-table-column prop="address" label="只能鉴黄"></el-table-column>
+              :data="screenshotData">
+              <el-table-column prop="TemplateName" label="模板名称"></el-table-column>
+              <el-table-column prop="TemplateId" label="模板ID"></el-table-column>
+              <el-table-column prop="SnapshotInterval" label="截图间隔(秒)"></el-table-column>
+              <el-table-column prop="PornFlag" label="智能鉴黄">
+                <template slot-scope="scope">
+                  {{scope.row.PornFlag === 0 ? '不开启' : '开启'}}
+                </template>
+              </el-table-column>
             </el-table>
           </div>
         </div>
@@ -32,9 +36,13 @@
           <div>
             <el-table
               :data="recordingconfigData">
-              <el-table-column prop="date" label="模板名称"></el-table-column>
-              <el-table-column prop="name" label="模板ID"></el-table-column>
-              <el-table-column prop="address" label="录制格式"></el-table-column>
+              <el-table-column prop="TemplateName" label="模板名称"></el-table-column>
+              <el-table-column prop="TemplateId" label="模板ID"></el-table-column>
+              <el-table-column prop="address" label="录制格式">
+                <template slot-scope="scope">
+                  {{scope.row | format}}
+                </template>
+              </el-table-column>
             </el-table>
           </div>
         </div>
@@ -43,22 +51,52 @@
           <div>
             <el-table
               :data="watermarkconfigData">
-              <el-table-column prop="date" label="模板名称"></el-table-column>
-              <el-table-column prop="name" label="模板ID"></el-table-column>
-              <el-table-column prop="address" label="水印位置"></el-table-column>
+              <el-table-column prop="WatermarkName" label="模板名称"></el-table-column>
+              <el-table-column prop="WatermarkId" label="模板ID"></el-table-column>
+              <el-table-column prop="address" label="水印位置">
+                <template slot-scope="scope">
+                  {{scope.row | position}}
+                </template>
+              </el-table-column>
               <el-table-column prop="address" label="操作">
-                <template>
-                  <a href="#">预览</a>
+                <template slot-scope="scope">
+                  <a href="#" @click="previewWatermark(scope.row)">预览</a>
                 </template>
               </el-table-column>
             </el-table>
           </div>
         </div>
       </div>
-      <callbackconfigDataModel :isShow="callBackModel" @closeModel="closeModel"/>
-      <ScreenshotdataModel :isShow="ScreenshotModel" @closeScreenshotModel="closeScreenshotModel"/>
-      <recordconfigModel :isShow="recordconfigModel" @closeRecordModel="closeRecordModel"/>
-      <watermarkconfigmode :isShow="watermarkconfigmode" @closeWaterModel="closeWaterModel"/>
+      <callbackconfigDataModel
+        :checkedTemplateId="callbackconfigData.length > 0 && callbackconfigData[0].TemplateId"
+        :isShow="callBackModel"
+        @closeModel="closeModel"
+      />
+      <ScreenshotdataModel
+        :checkedTemplateId="screenshotData.length > 0 && screenshotData[0].TemplateId"
+        :isShow="ScreenshotModel"
+        @closeScreenshotModel="closeScreenshotModel"
+      />
+      <recordconfigModel
+        :checkedTemplateId="recordingconfigData.length > 0 && recordingconfigData[0].TemplateId"
+        :isShow="recordconfigModel"
+        @closeRecordModel="closeRecordModel"
+      />
+      <watermarkconfigmode
+        :checkedWatermarkId="watermarkconfigData.length > 0 && watermarkconfigData[0].WatermarkId"
+        :isShow="watermarkconfigmode"
+        @closeWaterModel="closeWaterModel"
+        @preview="previewWatermark"
+      />
+      <el-dialog
+        :visible.sync="previewDialog"
+        title="预览"
+      >
+      <div style="position: relative;">
+        <img src="https://imgcache.qq.com/open_proj/proj_qcloud_v2/mc_2014/video/css/img/video-img.png">
+        <img :src="preview" :style="previewStyle">
+      </div>
+      </el-dialog>
     </div>
   </div>
 </template>
@@ -67,17 +105,34 @@ import callbackconfigDataModel from '../model/callbackconfigDataModel'
 import ScreenshotdataModel from '../model/ScreenshotdataModel'
 import recordconfigModel from '../model/recordconfigModel'
 import watermarkconfigmode from '../model/watermarkconfigmode'
+import {
+  RULELIST_DELTILS,
+  LIVELIST_DELTILS,
+  LIVE_DESCRIBE_LIVESNAPSHOTRULES,
+  LIVE_DESCRIBE_LIVEWATERMARKRULES,
+  SINGLECALLBACK_DELTILS,
+  SINGLELIVE_DELTILS,
+  LIVE_DESCRIBE_LIVESNAPSHOTTEMPLATE,
+  LIVE_DESCRIBE_LIVEWATERMARK,
+} from '@/constants'
+
+const defaultParam = {
+  Version: '2018-08-01'
+}
 export default {
   data(){
     return{
       callbackconfigData:[],//回调配置table
-      ScreenshotData:[],//截图&鉴黄配置
+      screenshotData:[],//截图&鉴黄配置
       recordingconfigData:[],//录制配置
       watermarkconfigData:[],//水印配置
       callBackModel:false,//回调配置弹框
       ScreenshotModel:false,//截图鉴黄配置弹框
       recordconfigModel:false,//录制配置弹框
       watermarkconfigmode:false,//水印配置弹框
+      preview: '',
+      previewDialog: false,
+      previewStyle: {},
     }
   },
   components:{
@@ -86,13 +141,88 @@ export default {
     recordconfigModel:recordconfigModel,
     watermarkconfigmode:watermarkconfigmode
   },
+  filters: {
+    position(b) {
+      if (!b) return
+      if (b.XPosition < 50 && b.YPosition < 50)
+        return '左上角';
+      if (b.XPosition >= 50 && b.YPosition < 50)
+        return '右上角';
+      if (b.XPosition < 50 && b.YPosition >= 50)
+        return '左下角';
+      if (b.XPosition >= 50 && b.YPosition >= 50)
+        return '右下角'
+    },
+    format(record) {
+      const format = []
+      if (record.FlvParam.Enable === 1) format.push('FLV')
+      if (record.HlsParam.Enable === 1) format.push('HLS')
+      if (record.Mp4Param.Enable === 1) format.push('MP4')
+      if (record.AacParam.Enable === 1) format.push('AAC')
+      if (record.Mp3Param.Enable === 1) format.push('MP3')
+      return format.join()
+    }
+  },
+  mounted() {
+    this.init()
+  },
   methods:{
+    init() {
+      this.callback()
+      this.record()
+      this.screenshot()
+      this.watermark()
+    },
+    previewWatermark(obj) {
+      this.preview = obj.PictureUrl
+      this.previewDialog = true
+      this.previewStyle = {
+        position: 'absolute',
+        'max-width': '200px',
+        'max-height': '112px',
+        top: `${.01 * obj.YPosition * 430}px`,
+        left: `${.01 * obj.XPosition * 760}px`
+      }
+    },
+    callback() {
+      this.setTemplate(RULELIST_DELTILS, SINGLECALLBACK_DELTILS, 'callbackconfigData')
+    },
+    record() {
+      this.setTemplate(LIVELIST_DELTILS, SINGLELIVE_DELTILS, 'recordingconfigData')
+    },
+    screenshot() {
+      this.setTemplate(LIVE_DESCRIBE_LIVESNAPSHOTRULES, LIVE_DESCRIBE_LIVESNAPSHOTTEMPLATE, 'screenshotData')
+    },
+    watermark() {
+      this.setTemplate(LIVE_DESCRIBE_LIVEWATERMARKRULES, LIVE_DESCRIBE_LIVEWATERMARK, 'watermarkconfigData', 'WatermarkId')
+    },
+    getRule(rules) {
+      const domain = this.$route.params.domain
+      return rules.find(rule => rule.DomainName === domain)
+    },
+    setTemplate(ruleUrl, templateUrl, key, paramKey = 'TemplateId') {
+      this.axios.post(ruleUrl, defaultParam)
+      .then(({ Response }) => {
+        const template = this.getRule(Response.Rules)
+        if (template) {
+          this.axios.post(templateUrl, {
+            ...defaultParam,
+            [paramKey]: template.TemplateId,
+          }).then(({ Response }) => {
+            this[key] = [Response.Template || Response.Watermark]
+          })
+        } else {
+          this[key] = []
+        }
+      })
+    },
     //回调配置编辑
     callBackEdit(){
       this.callBackModel=true;
     },
     //关闭弹框
     closeModel(isShow){
+      this.callback()
       this.callBackModel=isShow;
     },
     //截图鉴黄配置编辑
@@ -100,6 +230,7 @@ export default {
       this.ScreenshotModel=true;
     },
     closeScreenshotModel(isShow){
+      this.screenshot()
       this.ScreenshotModel=isShow;
     },
     //录制配置编辑按钮
@@ -108,6 +239,7 @@ export default {
     },
     //关闭
     closeRecordModel(isShow){
+      this.record()
       this.recordconfigModel=isShow;
     },
     //水印配置编辑
@@ -116,6 +248,7 @@ export default {
     },
     //关闭
     closeWaterModel(isShow){
+      this.watermark()
       this.watermarkconfigmode=isShow;
     }
   }

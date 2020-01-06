@@ -31,7 +31,7 @@ export default new Router({
       }
     },
     {
-      path: '/detailPushStream', // 域名管理推流详情页
+      path: '/detailPushStream/:domain', // 域名管理推流详情页
       name: 'detailPushStream',
       component: () => import(/* webpackChunkName: "detailPushStream" */ './domainManagement/detailPushStream.vue'),
       meta: {

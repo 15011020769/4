@@ -2,9 +2,8 @@
   <div>
     <div>
       <el-dialog
-        title="提示"
+        title="水印配置"
         :visible.sync="isShow"
-        width="30%"
         :before-close="handleClose">
         <div class="newClear">
           <p class="tip">模板选择（如需添加新模板，请前往<a>【 功能模板】<i class="el-icon-share"></i></a>中进行设置）</p>
@@ -17,12 +16,16 @@
                 type="selection"
                 width="55">
               </el-table-column>
-              <el-table-column prop="name" label="模板名称"></el-table-column>
-              <el-table-column prop="id" label="模板ID"></el-table-column>
-              <el-table-column prop="water" label="水印位置"></el-table-column>
+              <el-table-column prop="WatermarkName" label="模板名称"></el-table-column>
+              <el-table-column prop="WatermarkId" label="模板ID"></el-table-column>
+              <el-table-column prop="water" label="水印位置">
+                <template slot-scope="scope">
+                  {{scope.row | position}}
+                </template>
+              </el-table-column>
               <el-table-column prop="action" label="操作">
-                  <template>
-                    <a href="#">预览</a>
+                  <template slot-scope="scope">
+                    <a href="#" @click="previewWatermark(scope.row)">预览</a>
                   </template>
               </el-table-column>
             </el-table>
@@ -37,37 +40,70 @@
   </div>
 </template>
 <script>
+import { LIVE_DESCRIBELIVEWATERMARKS, LIVE_DELETELIVEWATERMARKRULE, LIVE_CREATELIVEWATERMARKRULE } from '@/constants'
 export default {
   props:{
     isShow:{
       required:false,
       type:Boolean
-    }
+    },
+    checkedWatermarkId: {
+      required: false,
+    },
+  },
+  filters: {
+    position(b) {
+      if (!b) return
+      if (b.XPosition < 50 && b.YPosition < 50)
+        return '左上角';
+      if (b.XPosition >= 50 && b.YPosition < 50)
+        return '右上角';
+      if (b.XPosition < 50 && b.YPosition >= 50)
+        return '左下角';
+      if (b.XPosition >= 50 && b.YPosition >= 50)
+        return '右下角'
+    },
   },
   data(){
     return{
-      waterData:[
-        {
-          name:'123',
-          id:'123',
-          water:'123'
-        },
-        {
-          name:'123',
-          id:'123',
-          water:'123'
-        }
-      ],//表格
+      waterData:[],//表格
+      selection: [],
     }
   },
+  watch: {
+    isShow(newVal) {
+      if (newVal === true) {
+        console.log(this)
+        if (this.checkedWatermarkId) {
+          this.$nextTick(() => {
+            this.waterData.forEach(water => {
+              if (water.WatermarkId === this.checkedWatermarkId) {
+                this.$refs.multipleTable.toggleRowSelection(water, true)
+              }
+            })
+          })
+        }
+      }
+    }
+  },
+  mounted() {
+    this.axios.post(LIVE_DESCRIBELIVEWATERMARKS, {
+      Version: '2018-08-01'
+    }).then(({ Response }) => {
+      this.waterData = Response.WatermarkList
+    })
+  },
   methods:{
+    previewWatermark(row) {
+      console.log(row)
+      this.$emit('preview', row)
+    },
     //checkbox
     handleSelectionChange(val) {
+      this.selection = val
       if (val.length > 1) {
         this.$refs.multipleTable.clearSelection()
         this.$refs.multipleTable.toggleRowSelection(val.pop())
-      } else {
-
       }
     },
     //关闭弹框
@@ -76,7 +112,26 @@ export default {
     },
     //保存
     waterEdit(){
-      this.$emit("closeWaterModel",false)
+      this.axios.post(LIVE_DELETELIVEWATERMARKRULE, {
+        Version: '2018-08-01',
+        DomainName: this.$route.params.domain,
+        AppName: '',
+        StreamName: '',
+      }).then(res => {
+        if (this.selection.length > 0) {
+          this.axios.post(LIVE_CREATELIVEWATERMARKRULE, {
+            Version: '2018-08-01',
+            DomainName: this.$route.params.domain,
+            AppName: '',
+            StreamName: '',
+            TemplateId: this.selection[0].WatermarkId
+          }).then(() => {
+            this.$emit("closeWaterModel",false)
+          })
+        } else {
+          this.$emit("closeWaterModel",false)
+        }
+      })
     }
   }
 }

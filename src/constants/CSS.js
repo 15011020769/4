@@ -33,11 +33,11 @@ export const FLOW_DELTILS = 'live2/DescribePullStreamConfigs'
 export const CALLBACK_DELTILS = 'live2/DescribeLiveCallbackTemplates'
 //获取录制模板列表
 export const RECORDING_DELTILS = 'live2/DescribeLiveRecordTemplates'
-//获取回调规则列表
+// 获取直播回调规则列表
 export const RULELIST_DELTILS = 'live2/DescribeLiveCallbackRules'
 //获取单个回调模板
 export const SINGLECALLBACK_DELTILS = 'live2/DescribeLiveCallbackTemplate'
-//获取直播规则列表
+// 获取录制规则列表
 export const LIVELIST_DELTILS = 'live2/DescribeLiveRecordRules'
 //获取单个录制模板
 export const SINGLELIVE_DELTILS = 'live2/DescribeLiveRecordTemplate'
@@ -52,9 +52,33 @@ export const ADD_RECORDING_CONFIG = 'live2/CreateLiveRecordTemplate'
 // 删除录制配置模板
 export const DELETE_RECORDING_CONFIG = 'live2/DeleteLiveRecordTemplate'
 
-
-
-
-
-
-
+/** 查询实时总带宽 实时总连接数 */
+export const LIVE_DESCRIBE_LIVEDOMAINPLAYINFOLIST = 'live2/DescribeLiveDomainPlayInfoList'
+/** 查询推流鉴权key */
+export const LIVE_DESCRIBELIVE_PUSHAUTHKEY = 'live2/DescribeLivePushAuthKey'
+/** 修改推流鉴权key */
+export const LIVE_MODIFYLIVEPUSHAUTHKEY = 'live2/ModifyLivePushAuthKey'
+/** 获取截图规则列表 */
+export const LIVE_DESCRIBE_LIVESNAPSHOTRULES = 'live2/DescribeLiveSnapshotRules'
+/** 获取水印规则列表 */
+export const LIVE_DESCRIBE_LIVEWATERMARKRULES = 'live2/DescribeLiveWatermarkRules'
+/** 获取单个截图模板 */
+export const LIVE_DESCRIBE_LIVESNAPSHOTTEMPLATE = 'live2/DescribeLiveSnapshotTemplate'
+/** 获取单个水印 */
+export const LIVE_DESCRIBE_LIVEWATERMARK = 'live2/DescribeLiveWatermark'
+/** 删除回调规则 */
+export const LIVE_DELETELIVECALLBACKRULE = 'live2/DeleteLiveCallbackRule'
+/** 删除录制规则 */
+export const LIVE_DELETELIVERECORDRULE = 'live2/DeleteLiveRecordRule'
+/** 获取截图模板列表 */
+export const LIVE_DESCRIBE_LIVESNAPSHOTTEMPLATES = 'live2/DescribeLiveSnapshotTemplates'
+/** 删除截图规则 */
+export const LIVE_DELETELIVESNAPSHOTRULE = 'live2/DeleteLiveSnapshotRule'
+/** 创建截图规则 */
+export const LIVE_CREATELIVESNAPSHOTRULE = 'live2/CreateLiveSnapshotRule'
+/** 查询水印列表 */
+export const LIVE_DESCRIBELIVEWATERMARKS = 'live2/DescribeLiveWatermarks'
+/** 删除水印规则 */
+export const LIVE_DELETELIVEWATERMARKRULE = 'live2/DeleteLiveWatermarkRule'
+/** 创建水印规则 */
+export const LIVE_CREATELIVEWATERMARKRULE = 'live2/CreateLiveWatermarkRule'

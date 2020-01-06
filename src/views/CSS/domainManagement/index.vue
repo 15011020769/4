@@ -65,7 +65,7 @@
             </el-table-column>
             <el-table-column prop="action" label="操作" width="180">
               <template slot-scope="scope">
-                <el-button type="text" size="small">管理</el-button>
+                <el-button type="text" size="small" @click="$router.push(`/detailPushStream/${scope.row.Name}`)">管理</el-button>
                 <el-button v-if="scope.row.Status==0" type="text" size="small" @click="startBtn(scope.$index, scope.row)">启用</el-button>
                 <el-button v-if="scope.row.Status==1" type="text" size="small" @click="stopBtn(scope.$index, scope.row)">禁用</el-button>
                 <el-button

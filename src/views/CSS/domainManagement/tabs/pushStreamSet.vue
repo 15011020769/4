@@ -5,56 +5,58 @@
       <div class="newClear">
         <div class="newClear newList">
           <p>推流鉴权</p>
-          <p>开启</p>
+          <p>{{pushAuthKeyInfo.Enable === 0 ? '关闭' : '启用'}}</p>
         </div>
         <div class="newClear newList">
           <p>主KEY</p>
-          <p>f5ad1c36d3cb7d48fe43e72d5dc028c4</p>
+          <p>{{pushAuthKeyInfo.MasterAuthKey}}</p>
         </div>
         <div class="newClear newList">
           <p>备KEY</p>
-          <p></p>
+          <p>{{pushAuthKeyInfo.BackupAuthKey}}</p>
         </div>
       </div>
-      <editSet :isShow="editSetModel" @closeModel="closeModel"/>
+      <editSet
+        :isShow="editSetModel"
+        :pushAuthKeyInfo="pushAuthKeyInfo"
+        @closeModel="closeModel"
+      />
     </div>
     <div class="basicinfo">
       <h1 class="newClear">推流地址生成器</h1>
       <div class="bgGray">
         <div class="newClear newList1">
           <p>推流防盗链Key <i class="el-icon-info"></i></p>
-          <p>f5ad1c36d3cb7d48fe43e72d5dc028c4</p>
+          <p>{{pushAuthKeyInfo.MasterAuthKey}}</p>
         </div>
         <div class="newClear newList1">
           <p>推流回调地址</p>
-          <p>--</p>
+          <p>{{callBackTemplate.StreamBeginNotifyUrl}}</p>
         </div>
         <div class="newClear newList1">
           <p>推流域名</p>
-          <p>68922.livepush.myqcloud.com</p>
+          <p>{{$route.params.domain}}</p>
         </div>
       </div>
       <div class="dateOut">
         <span class="spanBlod">过期时间</span>
         <el-date-picker class="dataDateTime"
+          :clearable="false"
           v-model="dataDateTime"
           type="date"
           placeholder="选择日期">
         </el-date-picker>
-        <el-time-picker
-          v-model="dateValue" class="dateValue"
-          :picker-options="{
-            selectableRange: '18:30:00 - 20:30:00'
-          }"
-          placeholder="任意时间点">
+        <el-time-picker :clearable="false"
+          v-model="dateValue" class="dateValue">
         </el-time-picker>
         <span class="spanBlod">StreamName </span>
         <el-input placeholder="仅支持英文字母、数字和符号" v-model="streamName" class="streamName"></el-input>
-        <el-button>生成堆流地址</el-button>
+        <el-button @click="generatePushUrl">生成堆流地址</el-button>
       </div>
       <div class="newClear ">
         <span class="leftCon">推流地址</span>
-        <span class="rightCon"><i class="el-icon-info"></i>尚无推流地址，请点击【生成推流地址】</span>
+        <span v-if="pushUrl">{{pushUrl}}</span>
+        <span class="rightCon" v-else><i class="el-icon-info"></i>尚无推流地址，请点击【生成推流地址】</span>
       </div>
     </div>
     <div class="basicinfo">
@@ -62,12 +64,93 @@
       <el-tabs v-model="activeName" @tab-click="handleClick">
         <el-tab-pane label="php" name="first">
           <div class="greyContent">
-
+            <pre>
+    /**
+    * 获取推流地址
+    * 如果不传key和过期时间，将返回不含防盗链的url
+    * @param domain 您用来推流的域名
+    * @streamName 您用来区别不同推流地址的唯一流名称
+    * @key 安全密钥
+    * @time 过期时间 sample 2016-11-12 12:00:00
+    * @return String url
+    */
+    function getPushUrl($domain, $streamName, $key = null, $time = null){
+      if($key && $time){
+        $txTime = strtoupper(base_convert(strtotime($time),10,16));
+        //txSecret = MD5( KEY + streamName + txTime )
+        $txSecret = md5($key.$streamName.$txTime);
+        $ext_str = "?".http_build_query(array(
+          "txSecret"=> $txSecret,
+          "txTime"=> $txTime
+        ));
+      }
+      return "rtmp://".$domain."/live/".$streamName . (isset($ext_str) ? $ext_str : "");
+    }
+    
+    echo getPushUrl("123.test.com","123456","69e0daf7234b01f257a7adb9f807ae9f","2016-09-11 20:08:07");
+            </pre>
           </div>
         </el-tab-pane>
         <el-tab-pane label="Java" name="second">
           <div class="greyContent">
+            <pre>
+    package com.test;
+			
+    import java.io.UnsupportedEncodingException;
+    import java.security.MessageDigest;
+    import java.security.NoSuchAlgorithmException;
+    
+    public class Test {
+			
+      public static void main(String[] args) {
+            System.out.println(getSafeUrl("txrtmp", "11212122", 1469762325L));
+      }
 
+      private static final char[] DIGITS_LOWER =
+            {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
+
+      /*
+      * KEY+ streamName + txTime
+      */
+      private static String getSafeUrl(String key, String streamName, long txTime) {
+        String input = new StringBuilder().
+                          append(key).
+                          append(streamName).
+                          append(Long.toHexString(txTime).toUpperCase()).toString();
+			
+        String txSecret = null;
+        try {
+              MessageDigest messageDigest = MessageDigest.getInstance("MD5");
+              txSecret  = byteArrayToHexString(
+                          messageDigest.digest(input.getBytes("UTF-8")));
+        } catch (NoSuchAlgorithmException e) {
+              e.printStackTrace();
+        } catch (UnsupportedEncodingException e) {
+              e.printStackTrace();
+        }
+
+        return txSecret == null ? "" :
+                          new StringBuilder().
+                          append("txSecret=").
+                          append(txSecret).
+                          append("&").
+                          append("txTime=").
+                          append(Long.toHexString(txTime).toUpperCase()).
+                          toString();
+      }
+			
+      private static String byteArrayToHexString(byte[] data) {
+        char[] out = new char[data.length << 1];
+
+        for (int i = 0, j = 0; i < data.length; i++) {
+              out[j++] = DIGITS_LOWER[(0xF0 & data[i]) >>> 4];
+              out[j++] = DIGITS_LOWER[0x0F & data[i]];
+        }
+        return new String(out);
+      }
+    }
+			
+            </pre>
           </div>
         </el-tab-pane>
       </el-tabs>
@@ -76,26 +159,91 @@
 </template>
 <script>
 import editSet from '../model/editSet'
+import { LIVE_DESCRIBELIVE_PUSHAUTHKEY, RULELIST_DELTILS, SINGLECALLBACK_DELTILS } from '@/constants'
+import { toUTF8Array } from '@/utils'
+import moment from 'moment'
+import md5 from 'js-md5'
 export default {
   data(){
     return{
       editSetModel:false,//编辑弹框
-      dataDateTime:'',//过期时间月份
-      dateValue:new Date(2016, 9, 10, 18, 40),//时间
+      dataDateTime: new Date(),//过期时间月份
+      dateValue: new Date(moment().endOf('d')),//时间
       streamName:'',//streamName
       activeName:'first',//tab
+      pushAuthKeyInfo: {},
+      callBackTemplate: {},
+      pushUrl: '',
+    }
+  },
+  watch: {
+    streamName(newVal, oldVal) {
+      this.streamName = newVal.replace(/[^\u0000-\u00FF]/g,'')
     }
   },
   components:{
     editSet:editSet
   },
+  mounted() {
+    this.getAuthConf()
+    const domain = this.$route.params.domain
+
+    const param = {
+      Version: '2018-08-01',
+    };
+    this.axios.post(RULELIST_DELTILS, param).then(data => {
+      if (data.Response.Error == undefined) {
+        let callbackrule = data.Response.Rules
+        callbackrule.forEach(item => {
+          if (item.DomainName === domain) {
+            let parms = {
+              Version: '2018-08-01',
+              TemplateId: item.TemplateId
+            }
+            this.axios.post(SINGLECALLBACK_DELTILS, parms).then(data => {
+              if (data.Response.Error == undefined) {
+                this.callBackTemplate = data.Response.Template
+              } else {
+                this.$message.error(data.Response.Error.Message);
+              }
+            });
+          }
+        })
+      } else {
+        this.$message.error(data.Response.Error.Message);
+      }
+    })
+  },
   methods:{
+    getAuthConf() {
+      const domain = this.$route.params.domain
+      this.axios.post(LIVE_DESCRIBELIVE_PUSHAUTHKEY, {
+        Version: "2018-08-01",
+        DomainName: domain
+      }).then(({ Response: { PushAuthKeyInfo } }) => {
+        this.pushAuthKeyInfo = PushAuthKeyInfo
+      })
+    },
+    generatePushUrl() {
+      if (!this.streamName || !this.streamName.trim()) {
+        this.$message({
+          type: 'warning',
+          message: '请输入 StreamName'
+        })
+        return
+      }
+      const timeHex = moment(`${moment(this.dataDateTime).format('YYYY-MM-DD')} ${moment(this.dateValue).format('HH:mm:ss')}`).unix().toString(16).toUpperCase()
+      const str = `${this.pushAuthKeyInfo.MasterAuthKey}${this.streamName}${timeHex}`
+      const txSecret = md5.hex(str)
+      this.pushUrl = `rtmp://${this.$route.params.domain}/live/${this.streamName}?txSecret=${txSecret}&txTime=${timeHex}`
+    },
     //编辑
     editSet(){
       this.editSetModel=true;
     },
     //关闭
     closeModel(isShow){
+      this.getAuthConf()
       this.editSetModel=isShow;
     },
     //tab
@@ -192,16 +340,19 @@ export default {
   }
 }
 .dataDateTime{
-  width:110px;
+  width:132px;
   margin:0 20px 0 12px;
   font-size:12px;
   ::v-deep .el-input__icon{
-    line-height: 34px;
+    line-height: 1;
   }
 }
 .dateValue{
-  width:100px;
+  width:120px;
   margin-right:20px;
+  ::v-deep .el-input__icon{
+    line-height: 1;
+  }
 }
 .streamName{
   width:200px;
