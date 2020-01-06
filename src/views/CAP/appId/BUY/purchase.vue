@@ -100,9 +100,9 @@ export default {
       flex-direction: column;
       background: white;
       margin-top: 30px;
+      margin-bottom: 30px;
       .contentChoose {
         flex: 1;
-        
       padding: 20px;
       box-sizing: border-box;
         .packAgesNum {
