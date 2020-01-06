@@ -369,13 +369,21 @@ export default {
     // 绑定策略到用户组
     attachGroupPolicy(params) {
       this.axios.post(ATTACH_GROUP, params).then(res => {
-        console.log(res);
+        if (res.Response.Error) {
+          this.$emit("attach", Response.Error.Message);
+        } else {
+          this.$emit("attach", "success");
+        }
       });
     },
     // 绑定策略到用户
     attachUserPolicy(params) {
       this.axios.post(POLICY_USER, params).then(res => {
-        console.log(res);
+        if (res.Response.Error) {
+          this.$emit("attach", "success");
+        } else {
+          this.$emit("attach", "success");
+        }
       });
     },
     // 清空数据
