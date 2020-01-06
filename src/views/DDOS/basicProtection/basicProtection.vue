@@ -131,7 +131,7 @@ export default {
       ],
       // 地域选择
       selectedCity: {},
-      selectedRegion: "ap-taipei",
+      selectedRegion: localStorage.getItem("regionv2"),
       cities: [],
       // 实例列表
       tableDataBegin: [],
