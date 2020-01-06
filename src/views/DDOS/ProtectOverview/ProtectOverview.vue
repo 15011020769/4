@@ -157,6 +157,7 @@
               :data="tableDataBegin.slice((currentPage-1)*pageSize,currentPage*pageSize)"
               height="450"
               v-loading="loading"
+              empty-text='暫無數據'
             >
               <el-table-column prop="StartTime" :label="$t('DDOS.Protective.AgainstTime')">
                 <template slot-scope="scope">
