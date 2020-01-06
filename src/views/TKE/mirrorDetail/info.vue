@@ -3,7 +3,7 @@
     <div class="room-center">
       <div class="explain" style="margin-bottom:20px;">
         <p>当前账号下镜像仓库内镜像版本配额为1000个，当前仓库版本数为0个，您可设置
-            <el-button type="text" size="small">自动清理策略</el-button>
+            <el-button type="text" size="small" @click="dialogVisible = true">设置自动清理策略</el-button>
             以仅保留较新版本的容器镜像，以免因达到配额限制而无法上传新版本镜像。
         </p>
       </div>
@@ -19,8 +19,8 @@
         <el-button disabled size="mini" class="botton-size">删除</el-button>
       </div>
       <div class="top-right">
-          <el-input v-model="input" placeholder="请输入实例组名搜索" size="mini"></el-input>
-          <el-button icon="el-icon-search" size="mini" style="margin-left:-1px;height:28px;"></el-button>
+          <i class="el-icon-setting"  @click="dialogVisible = true"></i>
+          <span>设置自动清理旧版本镜像策略</span>
       </div>
     </div>
     <div class="room-bottom">
@@ -49,41 +49,56 @@
       </div>
     </div>
     <!-- 新建弹出窗 -->
-    <el-dialog title="新建仓库镜像" :visible.sync="dialogFormVisible" width="550px">
-      <el-form
-        :model="ruleForm"
-        :rules="rules"
-        ref="ruleForm"
-        label-width="100px"
-        class="demo-ruleForm"
-        size="small"
-        style="width:500px"
-      >
-        <el-form-item label="名称" prop="name">
-          <el-input v-model="ruleForm.name" style="width:200px"></el-input>
-          <p class="form-p">最长为200个字符，只能包含小写字母、数字及分隔符("."、"_"、"-")，且不能以分隔符开头或结尾</p>
+    <el-dialog title="使用指引" :visible.sync="dialogFormVisible" width="620px">
+        <ul>
+          <li>
+            <p>登录腾讯云docker registry</p>
+            <div class="tip">
+              <p class="tip-p">sudo docker login --username=100011921910sudo</p>
+                <div class="tip-position" @click="getContext($event)">复制</div>
+            </div>
+          </li>
+          <li>
+            <p>从registry拉取镜像</p>
+            <div class="tip">
+              <p class="tip-p">sudo docker login --username=100011921910</p>
+                <div class="tip-position" @click="getContext($event)">复制</div>
+            </div>
+          </li>
+          <li>
+            <p>将镜像推送到registry</p>
+            <div class="tip">
+              <p class="tip-p">sudo docker login --username=100011921910sudo docker login --username=100011921910</p>
+                <div class="tip-position" @click="getContext($event)">复制</div>
+            </div>
+          </li>
+        </ul>
+    </el-dialog>
+    <!-- 设置 -->
+    <el-dialog
+      title="自动删除镜像设置"
+      :visible.sync="dialogVisible"
+      width="40%"
+    >
+      <div class="explain2" style="margin-bottom:20px;">
+        <p>当前账号下镜像仓库内镜像版本配额为1000个，当前仓库内镜像版本数达到此配额后，将触发自动清理策略。</p>
+      </div>
+      <el-form :model="ruleForm" ref="ruleForm" label-width="30px" class="demo-ruleForm">
+        <el-form-item>
+          <el-radio v-model="radio" label="1">
+            保留最新的<el-input v-model="input3" :disabled="flag1" class="dialog-input" size="mini"></el-input>个镜像版本
+          </el-radio>
         </el-form-item>
-        <el-form-item label="类型" prop="region">
-          <el-select v-model="ruleForm.region" placeholder="请选择活动区域">
-            <el-option label="私有" value="shanghai"></el-option>
-            <el-option label="公有" value="beijing"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="命名空间" prop="region2">
-          <el-select v-model="ruleForm.region2" placeholder="请选择活动区域">
-            <el-input placeholder="请输入镜像名称" suffix-icon="el-icon-search" v-model="input2" class="search-input2" size="mini"></el-input>
-            <el-option label="区域二" value="beijing"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="描述" prop="desc">
-          <el-input type="textarea" size="medium" v-model="ruleForm.desc" :autosize="{ minRows: 2, maxRows: 4}" maxlength=1000></el-input>
-          <p class="form-p">最长为1000个字符</p>
+         <el-form-item>
+          <el-radio v-model="radio" label="2">
+            保留最新的<el-input v-model="input4" :disabled="flag2" class="dialog-input" size="mini"></el-input>天内的镜像版本
+          </el-radio>
         </el-form-item>
       </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitForm('ruleForm')">确 定</el-button>
-        <el-button @click="dialogFormVisible = false">取 消</el-button>
-      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+      </span>
     </el-dialog>
   </div>
 </template>
@@ -93,6 +108,11 @@ export default {
     return {
       input: '',
       input2: '',
+      input3: '',
+      input4: '',
+      radio: '1',
+      flag1: false,
+      flag2: true,
       tableData: [{
         date: '2016-05-03',
         name: '王小虎',
@@ -108,6 +128,7 @@ export default {
       currpage: 1, // 当前页码
       dialogTableVisible: false,
       dialogFormVisible: false,
+      dialogVisible: false,
       formLabelWidth: '120px',
       ruleForm: {
         name: '',
@@ -124,16 +145,21 @@ export default {
         name: [
           { required: true, message: '请输入镜像名称', trigger: 'blur' },
           { max: 200, message: '镜像名称不能超过200个字符', trigger: 'blur' }
-        ],
-        region: [
-          { message: '请选择活动区域', trigger: 'change' }
-        ],
-        type: [
-          { type: 'array', message: '请至少选择一个活动性质', trigger: 'change' }
-        ],
-        resource: [
-          { message: '请选择活动资源', trigger: 'change' }
         ]
+      }
+    }
+  },
+  watch: {
+    radio (newName, oldName) {
+      if (newName === '1') {
+        this.flag1 = false
+        this.flag2 = true
+        this.input4 = ''
+      }
+      if (newName === '2') {
+        this.flag1 = true
+        this.flag2 = false
+        this.input3 = ''
       }
     }
   },
@@ -155,13 +181,31 @@ export default {
         }
       })
     },
-    jump () {
+    jump () { // 路由跳转
       this.$router.push({
         name: 'mirrorDetailInfo',
         query: {
           id: 1
         }
       })
+    },
+    getContext (e) {
+      let getText = e.currentTarget.previousElementSibling.innerHTML
+      this.copy(getText)
+    },
+    copy (data) { // 复制功能
+      let url = data
+      let oInput = document.createElement('input')
+      oInput.value = url
+      document.body.appendChild(oInput)
+      oInput.select() // 选择对象;
+      console.log(oInput.value)
+      document.execCommand('Copy') // 执行浏览器复制命令
+      this.$message({
+        message: '复制成功',
+        type: 'success'
+      })
+      oInput.remove()
     }
   }
 }
@@ -190,6 +234,15 @@ export default {
 .top-right {
   width:240px;
   display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  i{
+    font-size: 14px;
+    cursor: pointer;
+  }
+  span{
+    margin-left:10px;
+  }
 }
 .botton-size {
   text-align: center;
@@ -239,5 +292,40 @@ export default {
   font-size: 12px;
   line-height: 1.8;
   color: #bbb;
+}
+.dialog-input{
+  margin-left:10px;
+  width:70px;
+  margin-right:10px;
+}
+.explain2 {
+    padding: 10px 30px 10px 20px;
+    vertical-align: middle;
+    color: #003b80;
+    border: 1px solid #ffd18b;
+    background: #fff4e3;
+    p {
+      font-size: 11px;
+      line-height: 18px;
+    }
+  }
+.tip{
+    padding: 8px 16px;
+    background-color: #ecf8ff;
+    border-radius: 4px;
+    border-left: 5px solid #50bfff;
+    margin: 20px 0;
+    position: relative;
+}
+.tip-position{
+    font-size: 12px;
+    text-align: center;
+    color: #2177D9;
+    position: absolute;
+    right: 0;
+    top: 0;
+    background-color: #E1E1E1;
+    padding: 3px 5px;
+    cursor: pointer;
 }
 </style>
