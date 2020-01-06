@@ -13,7 +13,7 @@
       </div>
       <div class="top-right">
           <el-input v-model="input" placeholder="请输入镜像名称" size="mini"></el-input>
-          <el-button icon="el-icon-search" size="mini" style="margin-left:-1px;height:28px;"></el-button>
+          <el-button icon="el-icon-search" size="mini" style="margin-left:-1px;height:28px;" @click="getSearch()"></el-button>
       </div>
     </div>
     <div class="room-center">
@@ -22,20 +22,32 @@
       </div>
     </div>
     <div class="room-bottom">
-      <el-table :data="tableData" style="width: 100%" height="450">
+      <el-table :data="tableData" style="width: 100%" height="450" v-loading="loadShow" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55"></el-table-column>
-        <el-table-column prop label="名称">
+        <el-table-column prop="reponame" label="名称">
           <template slot-scope="scope">
             <p>
-              <a style="cursor:pointer;" @click="jump">跳转</a>
+              <a style="cursor:pointer;" @click="jump">{{scope.row.reponame|reponameCg}}</a>
             </p>
           </template>
         </el-table-column>
-        <el-table-column prop="address" label="类型"></el-table-column>
-        <el-table-column prop="address" label="命名空间"></el-table-column>
-        <el-table-column prop="address" label="镜像地址"></el-table-column>
-        <el-table-column prop="address" label="创建时间"></el-table-column>
-        <el-table-column prop="address" label="操作">
+        <el-table-column prop="public" label="类型">
+           <template slot-scope="scope">
+                {{scope.row.public|publics}}
+            </template>
+        </el-table-column>
+        <el-table-column prop="reponame" label="命名空间">
+           <template slot-scope="scope">
+                {{scope.row.reponame|reponameCgs}}
+            </template>
+        </el-table-column>
+        <el-table-column prop="reponame" label="镜像地址">
+          <template slot-scope="scope">
+                {{tableServer+'/'+scope.row.reponame}}
+            </template>
+        </el-table-column>
+        <el-table-column prop="creationTime" label="创建时间"></el-table-column>
+        <el-table-column label="操作">
           <template slot-scope="scope">
             <el-button @click="handleClick(scope.row)" type="text" size="small">删除</el-button>
           </template>
@@ -45,7 +57,6 @@
         <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;条</span>
         <el-pagination
           :page-size="pagesize"
-          :pager-count="7"
           layout="prev, pager, next"
           @current-change="handleCurrentChange"
           :total="TotalCount"
@@ -118,6 +129,7 @@
   </div>
 </template>
 <script>
+import { ALL_CITY, MIRROR_LIST, SPACENAME_LIST, ALL_PROJECT } from '@/constants'
 export default {
   data () {
     var validatePass = (rule, value, callback) => {
@@ -142,19 +154,12 @@ export default {
     return {
       input: '',
       input2: '',
-      tableData: [{
-        date: '2016-05-03',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
-      }, {
-        date: '2016-05-02',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
-      }
-      ],
+      tableData: [], // 我的镜像数据
       TotalCount: 0, // 总条数
-      pagesize: 10, // 分页条数
+      pagesize: 20, // 分页条数
       currpage: 1, // 当前页码
+      tableServer: '',
+      loadShow: true, // 加载是否显示
       dialogTableVisible: false,
       dialogFormVisible: false,
       dialogFormVisible2: false,
@@ -193,6 +198,9 @@ export default {
       }
     }
   },
+  created () {
+    this.GetSpaceName()
+  },
   methods: {
     handleClick (row) {
       console.log(row)
@@ -200,6 +208,8 @@ export default {
     // 分页
     handleCurrentChange (val) {
       this.currpage = val
+      this.GetSpaceName()
+      this.loadShow = true
     },
     submitForm (formName) {
       this.$refs[formName].validate((valid) => {
@@ -211,6 +221,11 @@ export default {
         }
       })
     },
+    handleSelectionChange (val) {
+      this.multipleSelection = val;
+      console.log(val)
+    },
+    // 路由跳转
     jump () {
       this.$router.push({
         name: 'mirrorDetailInfo',
@@ -218,6 +233,44 @@ export default {
           id: 1
         }
       })
+    },
+    getSearch () {
+      this.GetSpaceName()
+      this.loadShow = true
+    },
+    GetSpaceName () { // 获得我的镜像列表
+      const param = {
+        reponame: this.input,
+        offset: 20 * (this.currpage - 1),
+        limit: this.pagesize
+      }
+      this.axios.post(MIRROR_LIST, param).then(res => {
+        if (res.code === 0) {
+          this.tableData = res.data.repoInfo
+          this.tableServer = res.data.server
+          this.TotalCount = res.data.totalCount
+          this.loadShow = false
+          console.log(this.tableData)
+        }
+      })
+    }
+  },
+  filters: {
+    reponameCg: function (value) {
+      // 名称过滤
+      return value.split('/')[1]
+    },
+    reponameCgs: function (value) {
+      // 命名空间过滤
+      return value.split('/')[0]
+    },
+    publics: function (value) {
+      // 类型过滤
+      if (value === 1) {
+        return '公有'
+      } else {
+        return '私有'
+      }
     }
   }
 }
