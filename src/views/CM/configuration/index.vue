@@ -40,7 +40,7 @@
             <el-table-column prop="index" label="指标"></el-table-column>
             <el-table-column prop="dimension" label="维度" ></el-table-column>
             <el-table-column prop="method" label="统计方式" ></el-table-column>
-            <el-table-column prop="operation" label="操作"> <a @click="montior">监控</a> <a @click="administration">管理</a> <a>删除</a> </el-table-column>
+            <el-table-column prop="operation" label="操作"> <a @click="montior">监控</a> <a @click="administration">管理</a> <a @click="delet">删除</a> </el-table-column>
           </el-table>
 
           <!-- 分页 -->
@@ -129,15 +129,33 @@ export default {
     },
     //监控
     montior(){
-
+      this.$router.push( {
+        path:"/configuration/montior",//     监控页面
+        name:"montior",
+        component:()=>
+          import(/* webpackChunkName:'montior' */ "./montior/index.vue"),
+        meta:{
+          keepAlive:true,
+        }
+      },
+      )
     },
     //管理
     administration(){
-
+      this.$router.push( {
+        path:"/configuration/administration",//     监控页面
+        name:"administration",
+        component:()=>
+          import(/* webpackChunkName:'administration' */ "./administration/index.vue"),
+        meta:{
+          keepAlive:true,
+        }
+      },
+      )
     },
     //删除
     delet(){
-      
+      console.log('删除')
     },
     
   },
@@ -199,6 +217,13 @@ export default {
     width: 100%;
     background: white;
     box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.32);
+    a{
+      display: inline-block;
+      margin:0 5px;
+    }
+    a:hover{
+    cursor: pointer;
+    }
   }
 }
 .explain {
