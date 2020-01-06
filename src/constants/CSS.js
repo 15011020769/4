@@ -51,6 +51,9 @@ export const LIVERULE_DELTILS = 'live2/CreateLiveRecordRule'
 export const ADD_RECORDING_CONFIG = 'live2/CreateLiveRecordTemplate'
 // 删除录制配置模板
 export const DELETE_RECORDING_CONFIG = 'live2/DeleteLiveRecordTemplate'
+// 修改录制模板
+export const UPDATE_RECORDING_CONFIG = 'live2/ModifyLiveRecordTemplate'
+
 
 /** 查询实时总带宽 实时总连接数 */
 export const LIVE_DESCRIBE_LIVEDOMAINPLAYINFOLIST = 'live2/DescribeLiveDomainPlayInfoList'

@@ -32,11 +32,13 @@
         <div class="right">
           <OptionForm 
             :formShow.sync="formShow"
-            v-show="formShow"
+            :selectItem="selectItem"
+            v-if="formShow"
             />
           <ConfigDetail 
-            v-show="!formShow"
+            v-if="!formShow"
             :selectItem="selectItem"
+            :formShow.sync="formShow"
             />
         </div>
           <DeleteModal 
@@ -70,8 +72,6 @@ export default {
     ConfigDetail,
     DeleteModal
   },
-  watch: {
-  },
 
   mounted() {
     this.fetchRecordingList()
@@ -79,6 +79,7 @@ export default {
 
   methods: {
     _add() {
+      this.selectItem = {}
       this.formShow = true;
     },
 
@@ -104,7 +105,7 @@ export default {
       })
     },
 
-    async fetchRecordingList() {
+    fetchRecordingList() {
       this.axios.post(RECORDING_DELTILS, {
         Version: '2018-08-01'
       }).then(data => {
@@ -119,6 +120,7 @@ export default {
 
     // 选中模板
     onSelectRecording(item) {
+      this.formShow = false
       this.selectItem = item
     }
   }

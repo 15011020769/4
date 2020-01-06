@@ -1,7 +1,7 @@
 <!--
  * @Author: T
  * @Date: 2020-01-03 11:13:24
- * @LastEditTime : 2020-01-03 15:32:16
+ * @LastEditTime : 2020-01-06 13:45:36
  * @LastEditors  : Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: /new_product/src/views/CSS/transcoding/tab/configDetail.vue
@@ -10,7 +10,7 @@
   <div class="detail-wrap">
     <el-row type="flex" justify="space-between" align="middle">
       <h3>錄製配置</h3>
-      <el-button type="text">編輯</el-button>
+      <el-button type="text" @click="onEdit">編輯</el-button>
     </el-row>
     <ul class="content-box">
       <li>
@@ -58,6 +58,7 @@
 import { TEMPLATE_TYPE } from '../constance'
 export default {
   name: 'configDetail',
+
   props: {
     selectItem: {
       type: Object
@@ -71,13 +72,25 @@ export default {
   },
 
   mounted() {
+    this.tableData = TEMPLATE_TYPE.map(item => {
+      const currentItem = { ...this.selectItem[item.paramName] }
+      currentItem.TemplateName = item.TemplateName
+      currentItem.HlsSpecialParam = this.selectItem.HlsSpecialParam
+      return currentItem
+    })
+  },
 
+  methods: {
+    onEdit() {
+      this.$emit('update:formShow', true)
+    }
   },
 
   watch: {
     selectItem: {
       handler: function (newValue) {
-        if (newValue) {
+        // console.log(newValue, 'newValue')
+        if (Object.keys(newValue).length) {
           this.tableData = TEMPLATE_TYPE.map(item => {
             const currentItem = { ...this.selectItem[item.paramName] }
             currentItem.TemplateName = item.TemplateName
