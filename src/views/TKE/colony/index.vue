@@ -43,24 +43,22 @@
       <!-- 数据列表展示 -->
       <div class="tke-card">
         <el-table
-          :data="tableData"
+          :data="list"
           style="width: 100%">
           <el-table-column
             label="ID/名称"
             >
             <template slot-scope="scope">
-              <!-- <span >{{ scope.row.date }}</span> -->
-              <a href="#" @click="goColonySub">cls-n1xokuh6</a>
+              <a href="#" @click="goColonySub()">{{scope.row.ClusterId}}</a>
               <p class="stk-editor-name">
-                <span>DBA-testDBA-testDBA-testDBA-test</span>
+                <span>{{scope.row.ClusterName}}</span>
                 <i class="el-icon-edit" @click="showEditNameDlg()"></i>
               </p>
             </template>
           </el-table-column>
           <el-table-column
-            prop="name"
+            prop=""
             label="监控"
-            
             >
             <template slot-scope="scope">
                <i class="icon-chart"></i>
@@ -68,7 +66,7 @@
             </template>
           </el-table-column>
           <el-table-column
-            prop="version"
+            prop="ClusterVersion"
             label="kubernetes版本"
             >
           </el-table-column>
@@ -76,15 +74,17 @@
             prop="address"
             label="类型/状态">
             <template slot-scope="scope">
-              <span>{{scope.row.type}}</span>
-              (<span class="text-green">{{scope.row.state}}</span>)
+              <span v-if="scope.row.ClusterType=='MANAGED_CLUSTER'">托管集群</span>
+              <span v-else>独立部署</span>
+              (<span v-if="scope.row.ClusterStatus=='Running'" class="text-green">运行中</span>
+              <span v-else class="text-red">已停止</span>)
             </template>
           </el-table-column>
           <el-table-column
             prop="nodeTotal"
             label="节点数">
             <template slot-scope="scope">
-              <a href="#">{{scope.row.nodeTotal}}条</a>
+              <a href="#">{{scope.row.ClusterNodeNum}}条</a>
                (<span class="text-green">全部正常</span>)
             </template>
           </el-table-column>
@@ -121,11 +121,11 @@
             <el-pagination
               @size-change="handleSizeChange"
               @current-change="handleCurrentChange"
-              :current-page="currentPage"
+              :current-page="pageIndex"
               :page-sizes="[10, 20, 50, 100]"
-              :page-size="10"
+              :page-size="pageSize"
               layout="total, sizes, prev, pager, next"
-              :total="31">
+              :total="total">
             </el-pagination>
           </div>
         </div>
@@ -158,41 +158,31 @@
 </template>
 
 <script>
-import HeadCom from "@/components/public/Head";
-import SEARCH from "@/components/public/SEARCH";
-import FileSaver from "file-saver";
-import XLSX from "xlsx";
+// import HeadCom from "@/components/public/Head";
+// import SEARCH from "@/components/public/SEARCH";
+// import FileSaver from "file-saver";
+// import XLSX from "xlsx";
+import Loading from "@/components/public/Loading";
 import {
     ALL_CITY,
+    ALL_PROJECT,
     COLONY_LIST,
-    ALL_PROJECT
+    COLONY_STATUS
 } from "@/constants";
 export default {
   name: "colony",
   data() {
     return {
+      list:[], //集群列表
+      total:0,
+      pageSize:10,
+      pageIndex:0,      
+
+
+
       searchSelect:'',
       searchInput:'',
-      tableData: [{
-        version: '1.14.3',
-        type: '托管集群',
-        state: '运行中',
-        nodeTotal:'1',
-        tag:'-',
-        address: '上海市普陀区金沙江路 1518 弄'
-      }, {
-        version: '1.14.3',
-        type: '托管集群',
-        state: '运行中',
-        nodeTotal:'1',
-        tag:'-',
-        address: '上海市普陀区金沙江路 1517 弄'
-      }],
       editNameDialogVisible:false,
-      currentPage:1,      
-
-
-
       loading: true, //表格加载
       btnload: true, //地域按钮加载状态
       region: "", //地区
@@ -212,40 +202,67 @@ export default {
       searchInput: "",
       searchValue: "", //inp输入的值
       //分页
-      pagesize: 20, // 分页条数
-      currpage: 1 // 当前页码
     };
   },
   components: {
-    HeadCom,
-    SEARCH
+    // HeadCom,
+    // SEARCH
+    Loading
   },
   created() {
     this._region();
-    this.init();
-    this.GetColontList();
+    this.getColonyList();
   },
   methods: {
     // 获取集群列表
-   
-      GetColontList() {
-        console.log('GetColontList...')
-        const param = {
-          Limit:20,
-          Offset:0,
-          regionId:39,
-          serviceType:'tke',
+    async getColonyList() {
+      let params = {
+        Version:'2018-05-25',
+        Limit:this.pageSize,
+        Offset:this.pageIndex,
+      };
+      const res = await this.axios.post(COLONY_LIST, params);
+      if(res.Error){
+        console.log(res)
+      }else{
+        // console.log(res)
+        if(res.Response.Clusters.length>0){
+          let ids=[];
+          res.Response.Clusters = res.Response.Clusters.map(item => {
+              ids.push(item.ClusterId);
+              return item;
+          })
+          this.total = res.Response.TotalCount;
+          // console.log(ids);
+          // this.getColonyStatus(ids);
+        }
+        this.list=res.Response.Clusters;
+        console.log(this.list)
+      }
+    },
+    // 获取集群列表状态(不对外单独提供文档,所以无法实现)
+    async getColonyStatus(ids) {
+        let params = {
+          ClusterIds:ids,
           Version:'2018-05-25'
-          // Region: this.selectedRegion,
-          // Version: "2018-03-17",
-          // Offset: this.currpage * this.pagesize - this.pagesize,
-          // Limit: this.pagesize
         };
-        
-        this.axios.post(COLONY_LIST, param).then(res => {
-          console.log(res)
-        });
-      },
+        const res = await this.axios.post(COLONY_STATUS, params);
+        console.log(res);
+        return res;
+    },
+    // 分页
+    handleCurrentChange(val) {
+      this.pageIndex = val-1;
+      this.getColonyList();
+      this.pageIndex+=1;
+    },
+    handleSizeChange(val) {
+      // console.log(`每页 ${val} 条`);
+      this.pageSize=val;
+      this.getColonyList();
+    },
+    
+
     // 创建集群跳转
     goColonyCreate(){
        this.$router.push({
@@ -268,35 +285,23 @@ export default {
     showEditNameDlg(){
       this.editNameDialogVisible=true;
     },
-    //分页操作
-    handleSizeChange(val) {
-      console.log(`每页 ${val} 条`);
-    },
-    handleCurrentChange(val) {
-      console.log(`当前页: ${val}`);
-    },
+   
+
+
     //获取列表
-    init() {
-      this.loading = true;
-      const params = {
-        Region: "ap-taipei",
-        Version: "2018-05-25"
-      };
-      this.axios.post("tke2/DescribeClusters", params).then(res => {
-        console.log(res);
-        this.loading = false;
-      });
-    },
+    // init() {
+    //   this.loading = true;
+    //   const params = {
+    //     Region: "ap-taipei",
+    //     Version: "2018-05-25"
+    //   };
+    //   this.axios.post("tke2/DescribeClusters", params).then(res => {
+    //     console.log(res);
+    //     this.loading = false;
+    //   });
+    // },
     //分页
-    handleSizeChange(val) {
-      this.pagesize = val;
-      this.currpage = 1;
-      this.init();
-    },
-    handleCurrentChange(val) {
-      this.currpage = val;
-      this.init();
-    },
+    
     //获取地域
     _region() {
       this.axios.post(ALL_CITY).then(res => {

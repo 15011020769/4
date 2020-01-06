@@ -15,7 +15,8 @@
             <TimeX v-on:switchData="GetDat" :classsvalue="value"></TimeX>
           </div>
           <div class="writeput">
-              <input type="text">
+              <el-input v-model="input" placeholder="请输入实例组名搜索"></el-input>
+              <el-button icon="el-icon-search" style="margin-left:-1px;"></el-button>
           </div>
           <div class="icons">
                 <i class="el-icon-setting" @click="dialog"></i>
@@ -87,7 +88,6 @@
 <script>
 import Header from "@/components/public/Head";
 import TimeX from "@/components/public/TimeN";
-
 import Dialog from "./custom/custom";
 export default {
   name: "product",
@@ -133,6 +133,18 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.product-wrap >>> .el-button,
+.product-wrap >>> .el-input__inner {
+  height: 30px;
+  border-radius: 0;
+  padding-top: 0;
+  line-height: 30px;
+  font-size: 12px;
+}
+.writeput{
+   width: 240px;
+        display: flex;
+}
 .product-wrap > header {
   width: 100%;
   background: #fff;
@@ -159,6 +171,7 @@ export default {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    line-height: auto;
       .icons {
         display: flex;
         font-size: 16px;
@@ -166,6 +179,9 @@ export default {
       }
       .type_data{
         margin-left:-20px;
+      }
+      .type_data{
+        margin-top:-20px;
       }
   }
   .table_head {

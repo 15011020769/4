@@ -454,7 +454,7 @@
               QcloudUin: this.getCookie("uin"), //uin
               SecretId: this.taifuAIP.SecretId,
               SecretKey: this.taifuAIP.SecretKey,
-              SubAccountUin: this.taifuAIP.Uin,
+              SubAccountUin: String(this.taifuAIP.Uin),
               SubAccountname: this.taifuAIP.Name
             };
             this.axios

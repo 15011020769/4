@@ -39,7 +39,8 @@
           <template slot-scope="scope">
             <p style="font-size:12px;color:#bbb;font-weight:600">Max:</p>
             <template v-if="scope.row.DataPoints[0].Values.length!==0">
-              <span style="color:#333;font-weight:600;font-size: 12px;">{{scope.row.DataPoints[0].Values|CMMax}}</span>
+              <span style="color:#333;font-weight:600;font-size: 12px;">{{scope.row.DataPoints[0].Values}}</span>
+              <!-- <span style="color:#333;font-weight:600;font-size: 12px;">{{scope.row.DataPoints[0].Values|CMMax}}</span> -->
               <span style="color:#333;font-weight:600;font-size: 12px;">{{scope.row.symbol}}</span>
             </template>
             <template v-if="scope.row.DataPoints[0].Values.length==0">-</template>
@@ -49,7 +50,8 @@
           <template slot-scope="scope">
             <p style="font-size:12px;color:#bbb;font-weight:600">Min:</p>
             <template v-if="scope.row.DataPoints[0].Values.length!==0">
-              <span style="color:#333;font-weight:600;font-size: 12px;">{{scope.row.DataPoints[0].Values|CMMin}}</span>
+              <span style="color:#333;font-weight:600;font-size: 12px;">{{scope.row.DataPoints[0].Values}}</span>
+              <!-- <span style="color:#333;font-weight:600;font-size: 12px;">{{scope.row.DataPoints[0].Values|CMMin}}</span> -->
               <span style="color:#333;font-weight:600;font-size: 12px;">{{scope.row.symbol}}</span>
             </template>
             <template v-if="scope.row.DataPoints[0].Values.length==0">-</template>
@@ -60,7 +62,8 @@
           <template slot-scope="scope">
             <p style="font-size:12px;color:#bbb;font-weight:600">Avg:</p>
             <template v-if="scope.row.DataPoints[0].Values.length!==0">
-              <span style="color:#333;font-weight:600;font-size: 12px;">{{scope.row.DataPoints[0].Values|CMAvg}}</span>
+              <span style="color:#333;font-weight:600;font-size: 12px;">{{scope.row.DataPoints[0].Values}}</span>
+              <!-- <span style="color:#333;font-weight:600;font-size: 12px;">{{scope.row.DataPoints[0].Values|CMAvg}}</span> -->
               <span style="color:#333;font-weight:600;font-size: 12px;">{{scope.row.symbol}}</span>
             </template>
             <template v-if="scope.row.DataPoints[0].Values.length==0">-</template>
@@ -101,6 +104,9 @@
         period: "",
         Start_End: [],
         value: 1,
+        CMMax:"",
+        CMMin:"",
+        CMAvg:"",
         dialogVisible: false, // 模态框 （放大后的折线图）
         pageIndex: 1, // 当前页
         pageSize: 10, // 每页数
@@ -191,7 +197,7 @@
 
     },
     methods: {
-      //获取数据
+      //获取数据,通过改变时间来获取数据
       GetDat(data) {
         this.period = data[0];
         this.Start_End = data[1];

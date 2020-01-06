@@ -96,7 +96,7 @@ import { FUN_LOG } from "@/constants";
 export default {
   data() {
     return {
-      logStatus: "",
+      logStatus: "allLog",
       value1: "",
       iptSearch: "",
       logIndex: 0,
@@ -108,6 +108,7 @@ export default {
   },
   created() {
     this.searchLogs();
+    console.log(111)
   },
   mounted() {},
   methods: {
@@ -129,7 +130,7 @@ export default {
         .replace(/\//g, "-");
     },
     reset() {
-      this.logStatus = "全部日志";
+      this.logStatus = "allLog";
       this.value1 = null;
       this.searchLogs();
     },
@@ -144,9 +145,11 @@ export default {
       if (functionName != "" && functionName != null) {
         params["FunctionName"] = functionName;
       }
+      console.log(params)
       this.axios
         .post(FUN_LOG, params)
         .then(res => {
+         console.log(res)
           if(res.Response.Data){
             _this.logData = res.Response;
             res.Response.Data.forEach((element, index) => {
@@ -154,7 +157,6 @@ export default {
               obj.time = element.StartTime;
               obj.status = "调用成功";
               _this.logList.push(obj);
-              console.log(_this.logList)
               element.Log = element.Log.replace(/\n/g, "<br/>");
             });
 

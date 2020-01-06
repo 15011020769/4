@@ -122,9 +122,12 @@
                 </el-dialog>
                 <el-button type="text" size="small" @click="handelCopy(scope.$index, scope.row)">
                   {{ $t('SCF.total.fz') }}</el-button>
+
+
+                  <!-- 函数复制弹框 -->
                 <el-dialog :title="$t('SCF.total.hsfz')" :visible.sync="dialogVisible2" class="dialog_copy" width="38%"
                   :before-close="handleClose2">
-                  <el-form ref="form" :model="copyForm" label-width="80px" >
+                  <el-form ref="form" :model="copyForm" label-width="80px"   >
                     <el-form-item :label="$t('SCF.total.ssdy')" :required="true">
                       <!-- <el-select v-model="addressIpt">
                         <el-option label="北京" value="beijing"></el-option>
@@ -133,12 +136,12 @@
                       <el-button value="ap-taipei">{{ $t('SCF.total.zgtb') }}</el-button>
                     </el-form-item>
                     <el-form-item :label="$t('SCF.total.mmkj')" :required="true">
-                      <el-select v-model="nameSpaceValue">
+                      <el-select v-model="copyForm.nameSpaceValue">
                         <el-option label="fun1()" value="1"></el-option>
                         <el-option label="default()" value="2"></el-option>
                       </el-select>
                     </el-form-item>
-                    <el-form-item :label="$t('SCF.total.hsmc')" :required="true">
+                    <el-form-item :label="$t('SCF.total.hsmc')" prop="newname">
                       <el-input v-model="newname" label-width="80px" @blur="inpBlur"></el-input>
                       <p class="tipBot">{{ $t('SCF.total.ts1') }}</p>
                       <p class="tipBot">{{ $t('SCF.total.ts2') }}</p>
@@ -189,7 +192,24 @@
     NAME_SPACE_DEL
   } from "@/constants";
   export default {
+    
     data() {
+       var validateNewName = (rule, value, callback) => {
+      if (value === "") {
+        this.warnFlag = true;
+        callback();
+      } else {
+        let reg = /^[A-Za-z]([A-Za-z0-9]|-|_){0,58}([A-Za-z0-9])$/;
+        let flag = reg.test(this.form.newName);
+        if (!flag) {
+          this.warnFlag = true;
+          callback();
+        } else {
+          this.warnFlag = false;
+          callback();
+        }
+      }
+    };
       return {
         TotalCount: 0,
         pagesize: 10,
@@ -221,6 +241,11 @@
         dialogVisible2: false,
         defaults: "",
         branches: 0,
+        rules: {
+        newName: [
+          { validator: validateNewName, trigger: "blur", required: true }
+          ]
+       },
         copyForm: {
           //复制函数
           region: this.addressIpt,
@@ -230,6 +255,7 @@
           coverFun: "",
           funDecs: ""
         },
+
         dialogVisible3: false,
         modelNameSpace: [{
           //命名空间input,textarea绑定的参数
@@ -305,9 +331,12 @@
         }
         // 获取表格数据
         this.axios.post(SCF_LIST, params).then(res => {
-          this.tableDataBegin = res.Response.Functions;
-          this.TotalCount = res.Response.TotalCount;
-          this.loading = false;
+          console.log(res)
+          if(res.Response.Functions){
+            this.tableDataBegin = res.Response.Functions;
+            this.TotalCount = res.Response.TotalCount;
+            this.loading = false;
+          }
         });
       },
       // 搜索
@@ -667,8 +696,15 @@
 
   .searchRight {
     float: right;
-  }
 
+  }
+     .searchRight>>>      .searchs{
+        margin-left: -1px;
+     }
+ .searchRight>>>   .el-icon-search{
+   float: right;
+   margin-left: -2px;
+ }
   .mainTable {
     // padding:20px 0;
     width: 100%;
