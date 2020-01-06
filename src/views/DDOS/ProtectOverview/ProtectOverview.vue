@@ -204,7 +204,7 @@
             </el-table>
           </div>
           <div class="Right-style pagstyle">
-            <span class="pagtotal">共&nbsp;{{totalItems}}&nbsp;条</span>
+            <span class="pagtotal">共&nbsp;{{totalItems}}&nbsp;{{$t('DDOS.UnsealCode.tiao')}}</span>
             <el-pagination
               :page-size="pageSize"
               :pager-count="7"
@@ -228,11 +228,11 @@ export default {
       loading: true,
       // 安全统计-本月
       attackData: [
-        { Key: "AttackIpCount", Value: 0, desc: "受攻击的IP数" },
-        { Key: "AttackCount", Value: 0, desc: "攻击次数" },
-        { Key: "BlockCount", Value: 0, desc: "封堵次数" },
-        { Key: "MaxMbps", Value: 0, desc: "攻击峰值Mbps" },
-        { Key: "IpNum", Value: 0, desc: "统计的IP数据" }
+        { Key: "AttackIpCount", Value: 0, desc: "受攻擊的IP數" },
+        { Key: "AttackCount", Value: 0, desc: "攻擊次數" },
+        { Key: "BlockCount", Value: 0, desc: "封堵次數" },
+        { Key: "MaxMbps", Value: 0, desc: "攻擊峰值Mbps" },
+        { Key: "IpNum", Value: 0, desc: "統計的IP數據" }
       ],
       // 获取产品总览
       packParams: ["bgp", "net"],
@@ -269,7 +269,7 @@ export default {
       // 攻击事件列表：bgp表示独享包；bgp-multip表示共享包；net表示高防IP专业版
       type: "bgp",
       // 下载名称
-      downloadName: "独享包攻击记录",
+      downloadName: "獨享包攻擊記錄",
       // 查询输入字段（资源实例id）
       searchInputID: "",
 
@@ -374,11 +374,11 @@ export default {
     btnClick(param) {
       this.type = param;
       if (param == "bgp") {
-        this.downloadName = "独享包攻击记录";
+        this.downloadName = "獨享包攻擊記錄";
       } else if (param == "bgp-multip") {
-        this.downloadName = "共享包攻击记录";
+        this.downloadName = "共享包攻擊記錄";
       } else if (param == "net") {
-        this.downloadName = "高防IP专业版攻击记录";
+        this.downloadName = "高防IP專業版攻擊記錄";
       }
       this.describeDDoSEvList();
     },

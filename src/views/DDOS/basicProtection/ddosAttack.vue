@@ -13,36 +13,36 @@
         type="daterange"
         class="newDataTime"
         range-separator="至"
-        start-placeholder="开始日期"
-        end-placeholder="结束日期"
+        :start-placeholder="$t('DDOS.UnsealCode.beginDate')"
+        :end-placeholder="$t('DDOS.UnsealCode.overDate')"
       ></el-date-picker>
     </div>
     <div id="myChart"></div>
     <div>
-      <h3>DDoS攻击记录</h3>
+      <h3>{{$t('DDOS.basicProtection.ddosgjjl')}}</h3>
       <el-table
         :data="tableDataBegin.slice((currentPage-1)*pageSize,currentPage*pageSize)"
         height="450"
       >
-        <el-table-column prop="StartTime" label="攻击时间">
+        <el-table-column prop="StartTime" :label="$t('DDOS.Protective.AgainstTime')">
           <template slot-scope="scope">{{scope.row.StartTime}}</template>
         </el-table-column>
-        <el-table-column prop="durnTime" label="持续时间">
+        <el-table-column prop="durnTime" :label="$t('DDOS.Protective.durationTime')">
           <template slot-scope="scope">{{scope.row.EndTime - scope.row.StartTime}}</template>
         </el-table-column>
-        <el-table-column prop="AttackType" label="攻击类型">
+        <el-table-column prop="AttackType" :label="$t('DDOS.Protective.AgainstType')">
           <template slot-scope="scope">{{scope.row.AttackType}}</template>
         </el-table-column>
-        <el-table-column prop="AttackStatus" label="攻击状态">
+        <el-table-column prop="AttackStatus" :label="$t('DDOS.basicProtection.gjzt')">
           <template slot-scope="scope">
-            <div v-if="scope.row.AttackStatus == '0'">攻击中</div>
-            <div v-else-if="scope.row.AttackStatus == '1'">攻击结束</div>
+            <div v-if="scope.row.AttackStatus == '0'">{{$t('DDOS.basicProtection.gongjiz')}}</div>
+            <div v-else-if="scope.row.AttackStatus == '1'">{{$t('DDOS.basicProtection.gjjs')}}</div>
           </template>
         </el-table-column>
       </el-table>
     </div>
     <div class="Right-style pagstyle">
-      <span class="pagtotal">共&nbsp;{{totalItems}}&nbsp;条</span>
+      <span class="pagtotal">共&nbsp;{{totalItems}}&nbsp;{{$t('DDOS.UnsealCode.tiao')}}</span>
       <el-pagination
         :page-size="pageSize"
         :pager-count="7"
@@ -264,7 +264,7 @@ export default {
         },
         series: [
           {
-            name: "攻击流量宽带",
+            name: "攻擊流量寬頻",
             type: "line",
             data: y,
             itemStyle: {
