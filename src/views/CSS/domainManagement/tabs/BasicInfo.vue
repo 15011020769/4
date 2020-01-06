@@ -5,23 +5,19 @@
       <div class="newClear">
         <div class="newClear newList">
           <p>CNAME</p>
-          <p>{{Con.Name}}</p>
+          <p>{{info.TargetDomain}}</p>
         </div>
         <div class="newClear newList">
           <p>创建时间</p>
-          <p>{{Con.CreateTime}}</p>
+          <p>{{info.CreateTime}}</p>
         </div>
         <div class="newClear newList">
           <p>类型</p>
-          <p>{{Con.Type|typeCh}}</p>
+          <p>{{info.Type|typeCh}}</p>
         </div>
         <div class="newClear newList">
           <p>API Key</p>
-          <p>f5ad1c36d3cb7d48fe43e72d5dc028c4</p>
-        </div>
-        <div class="newClear newList">
-          <p>标签</p>
-          <p><span class="spanTags">fff:fff</span><i class="el-icon-edit" @click="editTags"></i></p>
+          <p>{{apiKey}}</p>
         </div>
       </div>
       <editTagsModel :isShow="modelEdit" @closeEditTagsModel="closeEditTagsModel"/>
@@ -30,10 +26,10 @@
 </template>
 <script>
 import editTagsModel from '../model/editTagsModel'
+import { LIVE_DESCRIBELIVE_PUSHAUTHKEY } from '@/constants'
 export default {
   props:{
-    // Con:Object,
-    Con: {
+    info: {
       required: false,
       type: Object
     },
@@ -43,17 +39,25 @@ export default {
   },
   filters: {
     typeCh (val) {
-      console.log(val);
-      if(val=='0'){
+      if (val === 0) {
         return '推流域名'
-      }else if(val=='1'){
+      } else if (val === 1) {
         return '播放域名'
       }
     }
   },
+  mounted() {
+    this.axios.post(LIVE_DESCRIBELIVE_PUSHAUTHKEY, {
+      Version: "2018-08-01",
+      DomainName: this.$route.params.domain
+    }).then(({ Response: { PushAuthKeyInfo } }) => {
+      this.apiKey = PushAuthKeyInfo.MasterAuthKey
+    })
+  },
   data(){
     return{
       modelEdit:false,//编辑弹框
+      apiKey: ''
     }
   },
   methods:{

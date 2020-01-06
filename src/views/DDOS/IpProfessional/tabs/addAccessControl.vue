@@ -86,7 +86,7 @@
                     <el-button size="mini" type="text" @click="visible = false">取消</el-button>
                     <el-button type="primary" size="mini" @click="deleteCCPolicy(scope.row)">确定</el-button>
                   </div>
-                  <el-button slot="reference" type="text" size="small">删除</el-button>
+                  <el-button slot="reference" type="text" size="small"  @click="deleteCCPolicy(scope.row)">删除</el-button>
                 </el-popover>
               </template>
             </el-table-column>

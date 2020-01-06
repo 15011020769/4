@@ -8,7 +8,7 @@
             <p>来自<a href="https://hub.docker.com/" target="_blank">hub.docker.com</a>的镜像</p>
             <div>
               <el-input placeholder="请输入内容" v-model="input" class="input-with-select">
-                <el-button slot="append" icon="el-icon-search"></el-button>
+                <el-button slot="append" icon="el-icon-search" class="btn-search"></el-button>
               </el-input>
             </div>
           </div>
@@ -95,7 +95,7 @@ export default {
     },
     jump () {
       this.$router.push({
-        name: 'mirrorDetailInfo',
+        name: 'DockerHubDetailInfo',
         query: {
           id: 1
         }
@@ -222,5 +222,9 @@ i{
     .right .el-tooltip__popper {
       padding: 8px 10px;
     }
+  }
+  .btn-search{
+    background:#2177D9!important;
+    color:#fff!important;
   }
 </style>

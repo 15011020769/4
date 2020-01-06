@@ -1,44 +1,41 @@
 <template>
   <div class="form-wrap">
-    <h4>錄製配置</h4>
-    <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
-      <el-form-item label="可用模板" prop="template">
-        <el-radio-group v-model="ruleForm.template" @change="radioChange">
-          <el-radio label="FLV" />
-          <el-radio label="MP4" />
-          <el-radio label="HLS" />
+    <h4>轉碼配置</h4>
+    <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px" class="demo-ruleForm">
+      <el-form-item 
+        label="轉碼類型" 
+        prop="AiTransCode"
+        v-if="!Object.keys(selectItem).length"
+        >
+        <el-select placeholder="请选择" v-model="ruleForm.AiTransCode">
+          <el-option label="普通轉碼" value="0" key="0" />
+          <el-option label="極速高清" value="1" key="1" />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="可用模板">
+        <el-radio-group v-model="selectType" @change="radioChange">
+          <el-radio v-for="item in tableData" :key="item.key" :label="item.value" />
+          <el-radio v-show="ruleForm.AiTransCode !== '1'" key="voice" label="純音頻" />
         </el-radio-group>
       </el-form-item>
       <el-form-item label="模板名稱" prop="TemplateName">
-        <el-input v-model="ruleForm.TemplateName" style="width:330px;" />
+        <el-input 
+          v-model="ruleForm.TemplateName" 
+          style="width:330px;" 
+          :disabled="Object.keys(selectItem).length > 0"
+          />
       </el-form-item>
       <el-form-item label="模板描述" prop="Description">
         <el-input type="textarea" v-model="ruleForm.Description" style="width:330px;" />
       </el-form-item>
-      <el-form-item label="錄製文件類型">
-        <el-table ref="multipleTable" :data="tableData" tooltip-effect="dark" style="width: 100%" @selection-change="handleSelectionChange">
-          <el-table-column type="selection" width="55" />
-          <el-table-column label="文件類型" width="120">
-            <template slot-scope="scope">{{ scope.row.TemplateName }}</template>
-          </el-table-column>
-          <el-table-column label="單個錄製文件時長(分鐘)">
-            <template slot-scope="scope">
-              <el-input :placeholder="scope.row.TemplateName === 'HLS' ? '無時長限制' : '5-120分钟'" v-model="scope.row.TemplateName === 'HLS' ? undefined : tableParams[scope.row.paramName].RecordInterval" :disabled="scope.row.TemplateName === 'HLS'" />
-            </template>
-          </el-table-column>
-          <el-table-column label="文件保存時長(天)" show-overflow-tooltip>
-            <template slot-scope="scope">
-              <el-input v-model="tableParams[scope.row.paramName].StorageTime" placeholder="0~1080天，0为永久保存" />
-            </template>
-          </el-table-column>
-          <el-table-column label="續錄超時時長(秒)" show-overflow-tooltip>
-            <template slot-scope="scope">
-              <el-input v-if="scope.row.TemplateName==='HLS'" v-model="tableParams.HlsSpecialParam.FlowContinueDuration" />
-              <el-input v-else disabled placeholder="不支持續錄" />
-            </template>
-          </el-table-column>
-        </el-table>
-      </el-form-item>
+      <template v-if="selectType !== '純音頻'">
+        <el-form-item label="視頻碼率(kbps)" prop="VideoBitrate">
+          <el-input type="textarea" v-model="ruleForm.VideoBitrate" style="width:330px;" />
+        </el-form-item>
+        <el-form-item label="視頻高度(px)" prop="Height">
+          <el-input type="textarea" v-model="ruleForm.Height" style="width:330px;" />
+        </el-form-item>
+      </template>
       <el-form-item>
         <el-button type="primary" @click="submitForm('ruleForm')">保存</el-button>
         <el-button @click="$emit('update:formShow', false)">取消</el-button>
@@ -49,7 +46,7 @@
 
 <script>
 import { TEMPLATE_TYPE, TEMPLATE_TYPE_PARAMS } from '../constance'
-import { ADD_RECORDING_CONFIG, UPDATE_RECORDING_CONFIG } from "@/constants"
+import { ADD_TRANSCODE_TEMPLATE, UPDATE_TRANSCODE_TEMPLATE } from "@/constants"
 
 export default {
   name: "optionForm",
@@ -70,7 +67,10 @@ export default {
 
       ruleForm: {
         TemplateName: "",
-        Description: ""
+        Description: "",
+        AiTransCode: "0",
+        Height: "",
+        VideoBitrate: ""
       },
 
       rules: {
@@ -81,17 +81,25 @@ export default {
         desc: [
           { required: false },
           { max: 100, message: "長度不能超過100個字符", trigger: 'blur' }
-        ]
+        ],
+        Height: [
+          { required: true, message: "請輸入視頻高度", trigger: "blur" },
+        ],
+         VideoBitrate: [
+          { required: true, message: "請輸入視頻碼率", trigger: "blur" },
+        ],
       },
 
       tableData: JSON.parse(JSON.stringify(TEMPLATE_TYPE)),
       tableParams: JSON.parse(JSON.stringify(TEMPLATE_TYPE_PARAMS)),
+
+      selectType: ""
     }
   },
 
   mounted() {
     this.initTableParams()
-    this.initInfo()
+    // this.initInfo()
 
     console.log(this.selectItem, 'selectItem');
   },
@@ -100,32 +108,23 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          const sortParams = {}
-          const keyArr = Object.keys(this.tableParams)
-          keyArr.forEach(key => {
-            Object.keys(this.tableParams[key]).forEach(_key => {
-              sortParams[`${key}.${_key}`] = this.tableParams[key][_key]
-              if (this.tableParams[key].RecordInterval) {
-                sortParams[`${key}.RecordInterval`] = this.tableParams[key].RecordInterval * 60
-              }
-
-              if (this.tableParams[key].StorageTime) {
-                sortParams[`${key}.StorageTime`] = this.tableParams[key].StorageTime * 60 * 24
-              }
-            })
-          })
-
-          const params = Object.assign(sortParams, {
-            Version: '2018-08-01',
-            TemplateName: this.ruleForm.TemplateName,
-            Description: this.ruleForm.Description
-          })
-
           // 如果有selectItem则为修改
 
-          if(Object.keys(this.selectItem).length) {
+          const params = Object.assign(this.ruleForm, {
+            Version: '2018-08-01'
+          }) 
+
+          console.log(params, 'params')
+
+          if (this.selectType === '純音頻') {
+            params.Height = 0
+            params.VideoBitrate = 100
+          }
+
+          if (Object.keys(this.selectItem).length) {
             params.TemplateId = this.selectItem.TemplateId
-            delete params['HlsParam.RecordInterval']
+            delete params.AiTransCode
+            delete params.TemplateName
             this.handleUpdate(params)
             return
           }
@@ -137,7 +136,7 @@ export default {
     },
 
     handleAdd(params) {
-      this.axios.post(ADD_RECORDING_CONFIG, params).then(data => {
+      this.axios.post(ADD_TRANSCODE_TEMPLATE, params).then(data => {
         if (data.Response.Error == undefined) {
           this.$message({
             message: '添加成功',
@@ -152,7 +151,7 @@ export default {
     },
 
     handleUpdate(params) {
-      this.axios.post(UPDATE_RECORDING_CONFIG, params).then(data => {
+      this.axios.post(UPDATE_TRANSCODE_TEMPLATE, params).then(data => {
         if (data.Response.Error == undefined) {
           this.$message({
             message: '修改成功',
@@ -176,27 +175,21 @@ export default {
     },
 
     radioChange(rows) {
-      const index = this.tableData.findIndex(item => item.TemplateName === rows)
-      this.$refs.multipleTable.clearSelection();
-      if (rows) {
-        this.$refs.multipleTable.toggleRowSelection(this.tableData[index]);
-        return
-      }
+      const currentItem = TEMPLATE_TYPE.find(item => (
+        item.value === rows
+      ))
+      this.ruleForm.Height = currentItem.Height
+      this.ruleForm.VideoBitrate = currentItem.VideoBitrate
+      this.selectType = rows
     },
 
     initTableParams() {
       if (Object.keys(this.selectItem).length) {
         const currentParams = {}
-        Object.keys(this.tableParams).forEach(key => {
-          this.tableParams[key] = JSON.parse(JSON.stringify(this.selectItem[key]))
-
-          if (this.tableParams[key].RecordInterval) {
-            this.tableParams[key].RecordInterval = this.tableParams[key].RecordInterval / 60
-          }
-
-          if (this.tableParams[key].StorageTime) {
-            this.tableParams[key].StorageTime = this.tableParams[key].StorageTime / 60 / 24
-          }
+        Object.keys(this.ruleForm).forEach(key => {
+          this.ruleForm[key] = JSON.parse(JSON.stringify(this.selectItem[key]))
+          this.ruleForm.AiTransCode = this.ruleForm.AiTransCode.toString()
+         
         })
       }
     },

@@ -18,12 +18,7 @@
               :value="item.Value"
             ></el-option>
           </el-select>
-          <el-input
-            :placeholder="$t('CLA.total.qsrnr')"
-            v-model="input3"
-            class="inp"
-            @change="_inpChange"
-          ></el-input>
+          <el-input :placeholder="placeholder" v-model="input3" class="inp" @change="_inpChange"></el-input>
           <el-button icon="el-icon-search" @click="seach()"></el-button>
         </div>
         <div class="date">
@@ -89,7 +84,7 @@
               <p style="color:#006eff">{{scope.row.Username}}</p>
             </template>
           </el-table-column>
-          <el-table-column :label="$t('CLA.total.sjmc')">
+          <el-table-column :label="$t('CLA.total.sjmc')" width="300">
             <template slot-scope="scope">
               <div>
                 {{scope.row.EventName}}
@@ -111,7 +106,7 @@
           </el-table-column>
           <el-table-column :label="$t('CLA.total.zymc')" prop="Resources.ResourceName"></el-table-column>
           <div v-if="Show" slot="append" style="line-height:40px;padding:0 20px;color:#006eff;">
-            <p v-show="!loading" @click="more()">{{ $t('CLA.total.djjz') }}</p>
+            <p v-show="!loading" @click="more()" style="cursor: pointer;">{{ $t('CLA.total.djjz') }}</p>
             <p v-show="loading" style="width:100%;text-align:center;">
               <i class="el-icon-loading"></i>
               {{ $t('CLA.total.jzz') }}
@@ -129,6 +124,7 @@ import VueCookie from "vue-cookie";
 export default {
   data() {
     return {
+      placeholder: "请输入内容",
       value1: "", // 日历
       startTime: "", //  搜索 --> 默认开始时间
       endTime: "", //  搜索 --> 默认结束时间
@@ -152,24 +148,6 @@ export default {
               start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
               picker.$emit("pick", [start, end]);
             }
-          },
-          {
-            text: "最近一個月",
-            onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
-              picker.$emit("pick", [start, end]);
-            }
-          },
-          {
-            text: "最近三個月",
-            onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
-              picker.$emit("pick", [start, end]);
-            }
           }
         ]
       },
@@ -183,13 +161,13 @@ export default {
     let myDate = new Date();
     let _nowtime = myDate.getTime() / 1000;
     this.nowtime = parseFloat(_nowtime).toFixed(); // 现在当前时间
-    let lw = new Date(myDate - 1000 * 60 * 60 * 24 * 30).getTime() / 1000;
+    let lw = new Date(myDate - 1000 * 60 * 60 * 24 * 7).getTime() / 1000;
     this.oldTime = parseFloat(lw).toFixed();
     this.Loading();
     this.axios
       .post(YJS_GETATTRIBUTEKEY, {
         Version: "2019-03-19",
-        // Region: VueCookie.get("regionv2"),
+        // Region: localStorage.getItem("regionv2"),
         Region: "ap-guangzhou"
       })
       .then(data => {
@@ -203,33 +181,27 @@ export default {
       }
     },
     _select(val) {
+      if (val == "ReadOnly") {
+        this.placeholder = "支持搜索关键字为true或false";
+      } else {
+        this.placeholder = "请输入内容";
+      }
       this.AttributeKey = val;
     },
     //列表数据
     Loading() {
-      let params = {
+      this.vloading = true;
+      const params = {
         Version: "2019-03-19",
-        Region: "ap-taipei",
-        StartTime: this.oldTime, // 开始时间
-        EndTime: this.nowtime, // 结束时间1558108799
+        Region: "ap-guangzhou",
+        EndTime: this.nowtime,
+        StartTime: this.oldTime,
         MaxResults: this.MaxResults
       };
-      if (this.endTime != "") {
-        params["EndTime"] = this.endTime;
-        params["StartTime"] = this.startTime;
-      }
-      if (this.input3 != "") {
-        params["LookupAttributes.0.AttributeKey"] = this.AttributeKey;
-        params["LookupAttributes.0.AttributeValue"] = this.input3;
-      }
-
       this.axios.post(YJS_LIST, params).then(res => {
-        console.log(res);
-        if (res.codeDesc == "Success") {
-          this.tableData = res.data.Events;
-          this.vloading = false;
-          this.loading = false;
-        }
+        this.tableData = res.Response.Events;
+        this.loading = false;
+        this.vloading = false;
       });
     },
     //搜索
@@ -249,7 +221,7 @@ export default {
       }
       let params = {
         Version: "2019-03-19",
-        Region: VueCookie.get("regionv2"),
+        Region: "ap-guangzhou",
         EndTime: this.nowtime,
         MaxResults: this.MaxResults,
         StartTime: this.oldTime
@@ -260,32 +232,17 @@ export default {
       }
       params["LookupAttributes.0.AttributeKey"] = this.AttributeKey;
       params["LookupAttributes.0.AttributeValue"] = this.input3;
-      this.axios.post(YJS_LIST, params).then(data => {
-        if (data.codeDesc == "Success") {
-          this.tableData = data.data.Events;
-          this.vloading = false;
-        } else {
-          this.$message({
-            showClose: true,
-            message: data.message,
-            type: "error"
-          });
-          this.vloading = false;
-        }
-        if (this.tableData.length == 0 || this.tableData.length < 10) {
-          this.Show = false;
-        }
+      this.axios.post(YJS_LIST, params).then(res => {
+        this.tableData = res.Response.Events;
+        this.loading = false;
+        this.vloading = false;
       });
     },
     //加载更多
     more() {
       this.loading = true;
-      this.MaxResults = this.MaxResults1 += 10;
+      this.MaxResults = this.MaxResults + 10;
       this.Loading();
-      let startTime = new Date(this.value1[0]).getTime() / 1000;
-      if (!startTime == NaN) {
-        this.seach();
-      }
     },
     // 查看事件
     LookShows() {

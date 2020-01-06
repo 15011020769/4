@@ -41,7 +41,7 @@
       </div>
 
       <!-- 数据列表展示 -->
-      <div class="tke-content">
+      <div class="tke-card">
         <el-table
           :data="tableData"
           style="width: 100%">
@@ -162,7 +162,11 @@ import HeadCom from "@/components/public/Head";
 import SEARCH from "@/components/public/SEARCH";
 import FileSaver from "file-saver";
 import XLSX from "xlsx";
-import { ALL_CITY } from "@/constants";
+import {
+    ALL_CITY,
+    COLONY_LIST,
+    ALL_PROJECT
+} from "@/constants";
 export default {
   name: "colony",
   data() {
@@ -219,8 +223,29 @@ export default {
   created() {
     this._region();
     this.init();
+    this.GetColontList();
   },
   methods: {
+    // 获取集群列表
+   
+      GetColontList() {
+        console.log('GetColontList...')
+        const param = {
+          Limit:20,
+          Offset:0,
+          regionId:39,
+          serviceType:'tke',
+          Version:'2018-05-25'
+          // Region: this.selectedRegion,
+          // Version: "2018-03-17",
+          // Offset: this.currpage * this.pagesize - this.pagesize,
+          // Limit: this.pagesize
+        };
+        
+        this.axios.post(COLONY_LIST, param).then(res => {
+          console.log(res)
+        });
+      },
     // 创建集群跳转
     goColonyCreate(){
        this.$router.push({
@@ -397,7 +422,7 @@ export default {
 .tke-search-select{
   width: 90px;
 }
-.tke-content{
+.tke-card{
   background-color: #fff;
   box-shadow: 0 2px 3px 0 rgba(0,0,0,.2);
   margin-left: auto;

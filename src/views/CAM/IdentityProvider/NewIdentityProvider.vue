@@ -113,7 +113,7 @@ export default {
         providerName: [
           {
             required: true,
-            message: "请输入用户组名称",
+            message: "请输入名称",
             trigger: "blur"
           }
         ],

@@ -2,7 +2,7 @@
   <div class="myMirror-wrap">
     <div class="datails-nav">
       <ul>
-        <router-link to="/DockerHub">
+        <router-link to="/totalMirror">
           <li>
             <i class="el-icon-back"></i>
             <span>路由信息</span>
@@ -12,14 +12,14 @@
     </div>
     <div class="my-title">
         <ul class="my-ul">
-          <router-link :to="{name: 'DockerHubDetailInfo'}">
+          <router-link :to="{name: 'totalMirrorDetailVersion'}">
             <li @click="getTrue()" class="li-one" :style="{fontWeight:this.dataObject.flag==true?'700':''}">
-              基本信息<div class="bottom-one" :style="{width:this.dataObject.flag==true?'78px':'0'}"></div>
+              镜像版本<div class="bottom-one" :style="{width:this.dataObject.flag==true?'78px':'0'}"></div>
             </li>
           </router-link>
-          <router-link :to="{name: 'DockerHubDetailDetail'}">
+          <router-link :to="{name: 'totalMirrorDetailInfo'}">
             <li @click="getFalse()" class="li-two" :style="{fontWeight:this.dataObject.flag==false?'700':''}">
-              详情描述<div class="bottom-two" :style="{width:this.dataObject.flag==false?'78px':'0'}"></div>
+              镜像信息<div class="bottom-two" :style="{width:this.dataObject.flag==false?'78px':'0'}"></div>
             </li>
           </router-link>
         </ul>

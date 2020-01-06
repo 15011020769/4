@@ -124,6 +124,9 @@ export default {
 .tke-sub-menu{
     border-right: 1px solid #ddd;
     background: #fff;
+    .el-menu{
+      border-right: none;
+    }
 }
 
 

@@ -24,29 +24,29 @@ export default new Router({
     {
       path: '/colony', // 集群
       name: 'colony',
-      component: () => import( './colony/index.vue'),
+      component: () => import('./colony/index.vue'),
       meta: {
         keepAlive: true
-      },
+      }
     },
     {
       path: '/colony/create', // 创建集群
       name: 'colonyCreate',
-      component: () => import( './colony/create.vue'),
+      component: () => import('./colony/create.vue'),
       meta: {
         keepAlive: true
-      },
+      }
     },
     {
       path: '/colony/sub', // 集群详情
       name: 'colonySub',
-      component: () => import( './colony/sub/index.vue'),
-      redirect: '/colony/sub/basic', //默认子路由
+      component: () => import('./colony/sub/index.vue'),
+      redirect: '/colony/sub/basic', // 默认子路由
       meta: {
         keepAlive: true
       },
-      children: [ //子路由
-        { //基本信息
+      children: [ // 子路由
+        { // 基本信息
           path: '/colony/sub/basic',
           name: 'colonyBasic',
           component: () => import('./colony/sub/basic/index.vue'),
@@ -54,7 +54,7 @@ export default new Router({
             keepAlive: true
           }
         },
-        { //节点列表
+        { // 节点列表
           path: '/colony/sub/nodeManage/node',
           name: 'colonyNodeManageNode',
           component: () => import('./colony/sub/nodeManage/node.vue'),
@@ -62,7 +62,7 @@ export default new Router({
             keepAlive: true
           }
         },
-        { //Master&Etcd列表
+        { // Master&Etcd列表
           path: '/colony/sub/nodeManage/masteretcd',
           name: 'colonyNodeManageMasteretcd',
           component: () => import('./colony/sub/nodeManage/masteretcd.vue'),
@@ -70,7 +70,7 @@ export default new Router({
             keepAlive: true
           }
         },
-        { //伸缩组列表
+        { // 伸缩组列表
           path: '/colony/sub/nodeManage/asg',
           name: 'colonyNodeManageAsg',
           component: () => import('./colony/sub/nodeManage/asg.vue'),
@@ -78,7 +78,7 @@ export default new Router({
             keepAlive: true
           }
         },
-        { //命名空间
+        { // 命名空间
           path: '/colony/sub/namespace',
           name: 'colonyNodeManageAsg',
           component: () => import('./colony/sub/namespace/index.vue'),
@@ -86,7 +86,7 @@ export default new Router({
             keepAlive: true
           }
         },
-        { //工作负载-Deployment
+        { // 工作负载-Deployment
           path: '/colony/sub/resource/deployment',
           name: 'colonyNodeManageAsg',
           component: () => import('./colony/sub/resource/deployment.vue'),
@@ -94,7 +94,7 @@ export default new Router({
             keepAlive: true
           }
         },
-        { //工作负载-StatefulSet
+        { // 工作负载-StatefulSet
           path: '/colony/sub/resource/statefulSet',
           name: 'colonyResourceStatefulSet',
           component: () => import('./colony/sub/resource/statefulSet.vue'),
@@ -102,7 +102,7 @@ export default new Router({
             keepAlive: true
           }
         },
-        { //工作负载-DaemonSet
+        { // 工作负载-DaemonSet
           path: '/colony/sub/resource/daemonSet',
           name: 'colonyResourceDaemonSet',
           component: () => import('./colony/sub/resource/daemonSet.vue'),
@@ -110,7 +110,7 @@ export default new Router({
             keepAlive: true
           }
         },
-        { //工作负载-Job
+        { // 工作负载-Job
           path: '/colony/sub/resource/job',
           name: 'colonyResourceJob',
           component: () => import('./colony/sub/resource/job.vue'),
@@ -118,7 +118,7 @@ export default new Router({
             keepAlive: true
           }
         },
-        { //工作负载-CronJob
+        { // 工作负载-CronJob
           path: '/colony/sub/resource/cronJob',
           name: 'colonyResourceCronJob',
           component: () => import('./colony/sub/resource/cronJob.vue'),
@@ -126,7 +126,7 @@ export default new Router({
             keepAlive: true
           }
         },
-        { //自动伸缩
+        { // 自动伸缩
           path: '/colony/sub/hpa',
           name: 'colonyHpa',
           component: () => import('./colony/sub/hpa/index.vue'),
@@ -134,7 +134,7 @@ export default new Router({
             keepAlive: true
           }
         },
-        { //服务-Service
+        { // 服务-Service
           path: '/colony/sub/service/svc',
           name: 'colonyServiceSvc',
           component: () => import('./colony/sub/service/svc.vue'),
@@ -142,7 +142,7 @@ export default new Router({
             keepAlive: true
           }
         },
-        { //服务-Ingress
+        { // 服务-Ingress
           path: '/colony/sub/service/ingress',
           name: 'colonyServiceIngress',
           component: () => import('./colony/sub/service/ingress.vue'),
@@ -150,7 +150,7 @@ export default new Router({
             keepAlive: true
           }
         },
-        { //配置管理-ConfigMap
+        { // 配置管理-ConfigMap
           path: '/colony/sub/config/configMap',
           name: 'colonyConfigConfigMap',
           component: () => import('./colony/sub/config/configMap.vue'),
@@ -158,7 +158,7 @@ export default new Router({
             keepAlive: true
           }
         },
-        { //配置管理-Secret
+        { // 配置管理-Secret
           path: '/colony/sub/config/secret',
           name: 'colonyConfigSecret',
           component: () => import('./colony/sub/config/secret.vue'),
@@ -166,7 +166,7 @@ export default new Router({
             keepAlive: true
           }
         },
-        { //储存-PersistentVolume
+        { // 储存-PersistentVolume
           path: '/colony/sub/storage/pv',
           name: 'colonyStoragePv',
           component: () => import('./colony/sub/storage/pv.vue'),
@@ -174,7 +174,7 @@ export default new Router({
             keepAlive: true
           }
         },
-        { //储存-PersistentVolumeClaim
+        { // 储存-PersistentVolumeClaim
           path: '/colony/sub/storage/pvc',
           name: 'colonyStoragePvc',
           component: () => import('./colony/sub/storage/pvc.vue'),
@@ -182,7 +182,7 @@ export default new Router({
             keepAlive: true
           }
         },
-        { //储存-StorageClass
+        { // 储存-StorageClass
           path: '/colony/sub/storage/sc',
           name: 'colonyStorageSc',
           component: () => import('./colony/sub/storage/sc.vue'),
@@ -190,7 +190,7 @@ export default new Router({
             keepAlive: true
           }
         },
-        { //日志
+        { // 日志
           path: '/colony/sub/log',
           name: 'colonyLog',
           component: () => import('./colony/sub/log/index.vue'),
@@ -198,7 +198,7 @@ export default new Router({
             keepAlive: true
           }
         },
-        { //事件
+        { // 事件
           path: '/colony/sub/event',
           name: 'colonyEvent',
           component: () => import('./colony/sub/event/index.vue'),
@@ -287,12 +287,64 @@ export default new Router({
       }
     },
     {
+      path: '/DockerHubDetail', // DockerHubDetail
+      name: 'DockerHubDetail',
+      component: () => import(/* webpackChunkName: "DockerHub" */ './DockerHubDetail/index.vue'),
+      meta: {
+        keepAlive: true
+      },
+      children: [
+        {
+          path: 'info', // 基本信息
+          name: 'DockerHubDetailInfo',
+          component: () => import(/* webpackChunkName: "myMirror" */ './DockerHubDetail/info.vue'),
+          meta: {
+            keepAlive: true
+          }
+        },
+        {
+          path: 'detail', // 详情描述
+          name: 'DockerHubDetailDetail',
+          component: () => import(/* webpackChunkName: "myMirror" */ './DockerHubDetail/detail.vue'),
+          meta: {
+            keepAlive: true
+          }
+        }
+      ]
+    },
+    {
       path: '/totalMirror', // 共有镜像
       name: 'totalMirror',
       component: () => import(/* webpackChunkName: "totalMirror" */ './totalMirror/index.vue'),
       meta: {
         keepAlive: true
       }
+    },
+    {
+      path: '/totalMirrorDetail', // DockerHubDetail
+      name: 'totalMirrorDetail',
+      component: () => import(/* webpackChunkName: "DockerHub" */ './totalMirrorDetail/index.vue'),
+      meta: {
+        keepAlive: true
+      },
+      children: [
+        {
+          path: 'version', // 镜像版本
+          name: 'totalMirrorDetailVersion',
+          component: () => import(/* webpackChunkName: "myMirror" */ './totalMirrorDetail/version.vue'),
+          meta: {
+            keepAlive: true
+          }
+        },
+        {
+          path: 'info', // 镜像信息
+          name: 'totalMirrorDetailInfo',
+          component: () => import(/* webpackChunkName: "myMirror" */ './totalMirrorDetail/info.vue'),
+          meta: {
+            keepAlive: true
+          }
+        }
+      ]
     },
     {
       path: '/logCollection', // 日志采集
@@ -328,12 +380,12 @@ export default new Router({
     },
     {
       path: '/persistenceSetting/:uid', // 设置事件持久化
-      props:true,
+      props: true,
       name: 'persistenceSetting',
       component: () => import(/* webpackChunkName: "persistenceSetting" */ './persistenceSetting/index.vue'),
       meta: {
         keepAlive: true
       }
-    },
+    }
   ]
 })

@@ -17,6 +17,12 @@ export default {
       type: String,
       default: "#3E8EF7"
     },
+    tooltip: {
+      type: Object,
+      default: {
+        trigger: 'axis',
+      }
+    },
     xAxis: {
       type: Array,
       default: () => []
@@ -62,8 +68,9 @@ export default {
       var myChart = this.$echarts.init(document.getElementById("myChart"));
       myChart.setOption({
         color: this.color,
+        tooltip: this.tooltip,
         legend: {
-          data: this.legendText,
+          data: [this.legendText],
           bottom: 0,
         },
         xAxis: {
@@ -106,9 +113,6 @@ export default {
             fontSize: 10,
             verticalAlign: 'top'
           }
-        },
-        tooltip: {
-          trigger: 'axis'
         },
         series: [
           {

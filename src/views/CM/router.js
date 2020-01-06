@@ -457,6 +457,25 @@ export default new Router({
     meta:{
       keepAlive:true
     }
-  }
+  },
+  //------------------------------------------------------
+  {
+    path:"/configuration/montior",//     监控页面  
+    name:"montior",
+    component:()=>
+      import(/* webpackChunkName:'montior' */ "./configuration/montior/index.vue"),
+    meta:{
+      keepAlive:true,
+    }
+  },
+  {
+    path:"/configuration/administration",//     管理页面   
+    name:"administration",
+    component:()=>
+      import(/* webpackChunkName:'administration' */ "./configuration/administration/index.vue"),
+    meta:{
+      keepAlive:true,
+    }
+  },
   ]
 })

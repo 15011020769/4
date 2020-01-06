@@ -4,9 +4,11 @@
     <div class="streamWrap">
       <div class="streamBnt">
         <div class="bntWrap" style="flex:1">
-          <el-button type="primary">在线流</el-button>
-          <el-button type="primary">历史流</el-button>
-          <el-button type="primary">禁推流</el-button>
+          <el-radio-group v-model="type">
+            <el-radio-button label="在线流"></el-radio-button>
+            <el-radio-button label="历史流"></el-radio-button>
+            <el-radio-button label="禁推流"></el-radio-button>
+          </el-radio-group>
         </div>
         <div class="streamInp">
           <el-input placeholder="输入部分域名搜索" size="small" class="inputSearch" style="width:90%;">
@@ -54,7 +56,9 @@ export default {
   },
   name: "streamManagement",
   data() {
-    return {};
+    return {
+      type: '在线流'
+    };
   }
 };
 </script>

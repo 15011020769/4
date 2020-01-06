@@ -2,7 +2,7 @@
   <div class="room">
     <div class="room-top">
       <div class="top-left">
-        <el-button type="primary" size="mini" class="botton-size">新建</el-button>
+        <el-button type="primary" size="mini" class="botton-size" @click="dialogVisible = true">新建</el-button>
       </div>
       <div class="top-right">
           <el-input v-model="input" placeholder="请输入名称" size="mini"></el-input>
@@ -31,6 +31,22 @@
             ></el-pagination>
         </div>
     </div>
+    <el-dialog
+      title="新建命名空间"
+      :visible.sync="dialogVisible"
+      width="50%"
+    >
+      <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
+        <el-form-item label="名称:" prop="name">
+          <el-input v-model="ruleForm.name"></el-input>
+          <p  class="form-p">最长30个字符，只能包含小写字母、数字及分隔符("."、"_"、"-")，且不能以分隔符开头、结尾或连续</p>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -49,10 +65,27 @@ export default {
         address: '上海市普陀区金沙江路 1518 弄'
       }
       ],
+      ruleForm: {
+        name: '',
+        region: '',
+        date1: '',
+        date2: '',
+        delivery: false,
+        type: [],
+        resource: '',
+        desc: ''
+      },
       TotalCount: 0, // 总条数
       pagesize: 10, // 分页条数
       currpage: 1, // 当前页码
-      multipleSelection: ''
+      multipleSelection: '',
+      dialogVisible: false,
+      rules: {
+        name: [
+          { required: true, message: '请输入命名空间名称', trigger: 'blur' },
+          { max: 30, message: '命名空间不能超过30个字符', trigger: 'blur' }
+        ]
+      }
     }
   },
   // created () {
@@ -65,19 +98,14 @@ export default {
     // 分页
     handleCurrentChange (val) {
       this.currpage = val
+    },
+    handleClose (done) {
+      this.$confirm('确认关闭？')
+        .then(_ => {
+          done()
+        })
+        .catch(_ => {})
     }
-    // GetMyMirrorData () {
-    //   const param = {
-    //     serviceType: 'ccr',
-    //     action: 'GetNamespaceInfo',
-    //     regionId: 39,
-    //     data: { namespace: '', offset: 0, limit: 100 }
-    //   }
-    //   this.axios.post(CGI_LIST, param).then(data => {
-    //     console.log(data)
-    //   })
-    // }
-
   }
 
 }
@@ -150,4 +178,9 @@ export default {
   .room-bottom{
     background: white;
   }
+  .form-p{
+  font-size: 12px;
+  line-height: 1.8;
+  color: #bbb;
+}
 </style>

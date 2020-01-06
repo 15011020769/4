@@ -37,8 +37,10 @@ export default {
     GetCity() {
       this.axios.get(ALL_CITY).then(data => {
         let city = data.data[0];
-        this.$cookie.set("regionv1", city.regionCode);
-        this.$cookie.set("regionv2", city.Region);
+        // this.$cookie.set("regionv1", city.regionCode);
+        // this.$cookie.set("regionv2", city.Region);
+        localStorage.setItem("regionv1",city.regionCode);
+        localStorage.setItem("regionv2",city.Region);
       });
     }
   }

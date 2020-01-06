@@ -51,7 +51,7 @@
                 class="el-icon-edit item"
               ></i>
             </p>
-            <p class="baseInfo_type item">{{policy.Type}}</p>
+            <p class="baseInfo_type item">{{Type[policy.Type]}}</p>
             <p class="baseInfo_time item">{{policy.AddTime}}</p>
           </div>
         </div>
@@ -63,7 +63,7 @@
           </el-tab-pane>-->
           <!-- tab 策略详情页面，关联用户组tab  start -->
           <el-tab-pane :label="$t('CAM.strategy.straGroup')" name="first">
-            <div class="config">
+            <div class="config" v-loading="loading">
               <p style="margin:10px">
                 <el-button
                   type="primary"
@@ -74,11 +74,10 @@
                   type="primary"
                   @click="Relieve_user"
                   size="small"
-                >{{$t('CAM.strategy.outBindUser')}}</el-button> -->
+                >{{$t('CAM.strategy.outBindUser')}}</el-button>-->
               </p>
               <div class="config_table">
                 <el-table
-                  v-loading="loading"
                   :data="policysData.slice((currpage - 1) * 10, currpage * 10)"
                   height="300"
                   :row-style="{height:0}"
@@ -98,7 +97,12 @@
                   </el-table-column>
                   <el-table-column align="center">
                     <template slot="header">
-                      <el-dropdown trigger="click" @command="handleCommand" size="mini">
+                      <el-dropdown
+                        trigger="click"
+                        @command="handleCommand"
+                        size="mini"
+                        style="cursor: pointer;"
+                      >
                         <span style="color:#909399">
                           {{ tableTitle }}
                           <i class="el-icon-arrow-down el-icon--right"></i>
@@ -158,7 +162,13 @@
       <el-dialog :visible.sync="dialogVisible" width="72%" :before-close="handleClosePolicy">
         <p class="dialog">{{$t('CAM.strategy.straGroup')}}</p>
         <div>
-          <transfer ref="userTransfer" :PolicyId="policyID"></transfer>
+          <transfer
+            ref="userTransfer"
+            :PolicyId="policyID"
+            :userArr="userArr"
+            :groupArr="groupArr"
+            @attach="attach"
+          ></transfer>
         </div>
         <p style="text-align:center;margin-top:20px">
           <el-button @click="dialogVisible = false" size="small">取 消</el-button>
@@ -260,7 +270,14 @@ export default {
       rp: 10,
       total: 0,
       selTotal: 0,
-      handleFlag: false
+      handleFlag: false,
+      groupArr: [],
+      userArr: [],
+      Type: {
+        1: "自定义策略",
+        2: "预设策略"
+      },
+      attachVal: ""
     };
   },
   created() {
@@ -276,6 +293,9 @@ export default {
     this.getAttachPolicys();
   },
   methods: {
+    attach(val) {
+      this.attachVal = val;
+    },
     handleCurrentChange(val) {
       this.currpage = val;
       // this.getAttachPolicys();
@@ -284,7 +304,7 @@ export default {
     Relation_user() {
       this.dialogVisible = true;
       if (this.handleFlag) {
-        this.$refs.userTransfer.getList(); //dialog关闭再打开，created()mounted()方法不执行，所以需要再此处执行初始化方法
+        this.$refs.userTransfer.getUserList(); //dialog关闭再打开，created()mounted()方法不执行，所以需要再此处执行初始化方法
       }
     },
     // 关闭 关联用户/用户组 页面
@@ -296,9 +316,9 @@ export default {
     handleClickPolicies(obj) {
       if (obj.RelatedType != undefined && obj.RelatedType === 1) {
         this.$router.push({
-          path: "/details",
+          path: "/detailsUser",
           query: {
-            content: obj.Name
+            detailsData: obj.Name
           }
         });
       }
@@ -319,13 +339,27 @@ export default {
       this.$refs.userTransfer.clearData(); // 添加完毕时清空数组。
       this.handleFlag = this.$refs.userTransfer.getHandleFlag();
       this.loading = true;
-      setTimeout(() => {
-        this.getAttachPolicys();
-        this.$message({
-          message: "关联成功",
-          type: "success"
+      new Promise(function(resolve, reject) {
+        resolve("成功"); // 数据处理完成
+      })
+        .then(res => {
+          setTimeout(() => {
+            this.getAttachPolicys();
+            if (this.attachVal == "success") {
+              this.$message({
+                message: "关联成功",
+                type: "success"
+              });
+            } else if (this.attachVal == "") {
+              this.$message("请选择要关联的数据");
+            } else {
+              this.$message.error(this.attachVal);
+            }
+          }, 3000);
+        })
+        .then(() => {
+          this.attachVal == "";
         });
-      }, 3000);
     },
     // 获取策略关联的实体列表
     getAttachPolicys() {
@@ -346,11 +380,18 @@ export default {
         params["EntityFilter"] = "User|Group";
       }
       this.axios.post(LIST_ENPOLICY, params).then(res => {
-        console.log(res);
         // RelatedType 关联类型。1 用户关联 ； 2 用户组关联
         this.policysData = res.Response.List;
         this.TotalCount = res.Response.TotalNum;
         this.loading = false;
+        this.policysData.forEach(item => {
+          if (item.RelatedType == 2) {
+            this.groupArr.push(item);
+          }
+          if (item.RelatedType == 1) {
+            this.userArr.push(item);
+          }
+        });
       });
     },
     // 解除策略绑定实体
@@ -407,7 +448,6 @@ export default {
     // 批量解除绑定到策略的实体
     removePolicysEntity() {
       let arrs = this.selectData;
-      console.log(this.selectData);
       for (let i = 0; i < arrs.length; i++) {
         let obj = arrs[i];
         this.removePolicyEntity(obj);

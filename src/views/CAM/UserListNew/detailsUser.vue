@@ -8,11 +8,7 @@
         <div class="leftHead" style="display:flex">
           <p style="flex:1">{{userData.Name}}</p>
           <p style="width:30px;">
-            <el-link
-              @click="editGroup"
-              class="edit"
-              type="primary"
-            >{{$t('CAM.userList.updataUser')}}</el-link>
+            <el-link @click="editGroup" class="edit" type="primary">{{$t('CAM.userList.updataUser')}}</el-link>
           </p>
         </div>
         <div class="leftBody">
@@ -62,26 +58,12 @@
           <div class="explain">
             <p>{{$t('CAM.userList.strategyTitles')}}</p>
           </div>
-          <el-button
-            class="buttonCla"
-            type="primary"
-            size="small"
-            @click="gotoPolicy"
-          >{{$t('CAM.userList.RelatedPolicies')}}</el-button>
-          <el-button
-            class="buttonCla"
-            type="primary"
-            size="small"
-            :disabled="disabled"
-            @click="delMoreStrateg"
-          >{{$t('CAM.userList.RemoveStrategy')}}</el-button>
-          <el-table
-            ref="multipleTable"
-            :data="StrategyData"
-            style="width: 100%;"
-            height="300"
-            @selection-change="Select"
-          >
+          <el-button class="buttonCla" type="primary" size="small" @click="gotoPolicy">
+            {{$t('CAM.userList.RelatedPolicies')}}</el-button>
+          <el-button class="buttonCla" type="primary" size="small" :disabled="disabled" @click="delMoreStrateg">
+            {{$t('CAM.userList.RemoveStrategy')}}</el-button>
+          <el-table ref="multipleTable" :data="StrategyData" style="width: 100%;" height="300"
+            @selection-change="Select">
             <el-table-column type="selection" width="55"></el-table-column>
             <el-table-column :label="$t('CAM.userList.strategyNames')" prop="PolicyName">
               <template slot-scope="scope">
@@ -97,46 +79,23 @@
             <el-table-column :label="$t('CAM.userList.AssociationTime')" prop="AddTime"></el-table-column>
             <el-table-column fixed="right" :label="$t('CAM.userList.userCz')">
               <template slot-scope="scope">
-                <el-button
-                  type="text"
-                  size="small"
-                  @click="deleteStrage(scope.row.PolicyId)"
-                >{{$t('CAM.userList.Remove')}}</el-button>
+                <el-button type="text" size="small" @click="deleteStrage(scope.row.PolicyId)">
+                  {{$t('CAM.userList.Remove')}}</el-button>
               </template>
             </el-table-column>
           </el-table>
           <div class="Right-style pagstyle">
             <span class="pagtotal">共&nbsp;{{TotalCounts}}&nbsp;{{$t("CAM.strip")}}</span>
-            <el-pagination
-              :page-size="pagesizes"
-              :pager-count="7"
-              layout="prev, pager, next"
-              @current-change="handleCurrentChanges"
-              :total="TotalCounts"
-            ></el-pagination>
+            <el-pagination :page-size="pagesizes" :pager-count="7" layout="prev, pager, next"
+              @current-change="handleCurrentChanges" :total="TotalCounts"></el-pagination>
           </div>
         </el-tab-pane>
         <el-tab-pane :label="groupNum" name="second">
-          <el-button
-            class="buttonCla"
-            type="primary"
-            size="small"
-            @click="addGroupUser"
-          >{{$t('CAM.userList.userAddGroup')}}</el-button>
-          <el-button
-            class="buttonCla"
-            type="primary"
-            size="small"
-            :disabled="disabled"
-            @click="removeMoreGroup"
-          >{{$t('CAM.userList.RemoveGroups')}}</el-button>
-          <el-table
-            ref="multipleTable"
-            :data="groupData"
-            style="width: 100%;"
-            height="300"
-            @selection-change="Select"
-          >
+          <el-button class="buttonCla" type="primary" size="small" @click="addGroupUser">
+            {{$t('CAM.userList.userAddGroup')}}</el-button>
+          <el-button class="buttonCla" type="primary" size="small" :disabled="disabled" @click="removeMoreGroup">
+            {{$t('CAM.userList.RemoveGroups')}}</el-button>
+          <el-table ref="multipleTable" :data="groupData" style="width: 100%;" height="300" @selection-change="Select">
             <el-table-column type="selection"></el-table-column>
             <el-table-column :label="$t('CAM.userList.GroupName')" prop="GroupName" width="240">
               <template slot-scope="scope">
@@ -156,23 +115,15 @@
             <el-table-column :label="$t('CAM.userList.userRemark')" prop="Remark"></el-table-column>
             <el-table-column fixed="right" :label="$t('CAM.userList.userCz')">
               <template slot-scope="scope">
-                <el-button
-                  type="text"
-                  size="small"
-                  @click="removeGroup(scope.row)"
-                >{{$t('CAM.userList.RemoveGroups')}}</el-button>
+                <el-button type="text" size="small" @click="removeGroup(scope.row)">{{$t('CAM.userList.RemoveGroups')}}
+                </el-button>
               </template>
             </el-table-column>
           </el-table>
           <div class="Right-style pagstyle">
             <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;{{$t("CAM.strip")}}</span>
-            <el-pagination
-              :page-size="pagesize"
-              :pager-count="7"
-              layout="prev, pager, next"
-              @current-change="handleCurrentChange"
-              :total="TotalCount"
-            ></el-pagination>
+            <el-pagination :page-size="pagesize" :pager-count="7" layout="prev, pager, next"
+              @current-change="handleCurrentChange" :total="TotalCount"></el-pagination>
           </div>
         </el-tab-pane>
         <!-- <el-tab-pane label="安全" name="third">{{$t('CAM.userList.RoleManagement')}}</el-tab-pane>
@@ -181,12 +132,7 @@
       </el-tabs>
     </div>
     <!-- 策略 -->
-    <el-dialog
-      :title="StrategyTitle"
-      :visible.sync="StrategyLoading"
-      width="30%"
-      :before-close="handleClose"
-    >
+    <el-dialog :title="StrategyTitle" :visible.sync="StrategyLoading" width="30%" :before-close="handleClose">
       <span v-if="showStrategyMore">{{$t('CAM.userList.StrategyExplain')}}</span>
       <span v-if="showStrategyRow">{{$t('CAM.userList.StrategyExplains')}}</span>
       <span slot="footer" class="dialog-footer">
@@ -195,12 +141,7 @@
       </span>
     </el-dialog>
     <!-- 用户 -->
-    <el-dialog
-      :title="groupTitle"
-      :visible.sync="GroupLoading"
-      width="30%"
-      :before-close="handleClose"
-    >
+    <el-dialog :title="groupTitle" :visible.sync="GroupLoading" width="30%" :before-close="handleClose">
       <span>{{$t('CAM.userList.delRowUser')}}</span>
       <span slot="footer" class="dialog-footer">
         <el-button @click="GroupLoading = false">{{$t('CAM.userList.handClose')}}</el-button>
@@ -218,44 +159,22 @@
     </el-dialog>
 
     <!-- 编辑 -->
-    <el-dialog
-      :title="$t('CAM.userList.upDataUsers')"
-      :visible.sync="updataUser"
-      width="30%"
-      :before-close="handleClose"
-      :close-on-click-modal="false"
-      :close-on-press-escape="false"
-    >
+    <el-dialog :title="$t('CAM.userList.upDataUsers')" :visible.sync="updataUser" width="30%"
+      :before-close="handleClose" :close-on-click-modal="false" :close-on-press-escape="false">
       <el-form :model="ruleForm" ref="ruleForm" label-width="100px" class="demo-ruleForm">
-        <el-form-item
-          :label="$t('CAM.userList.userName')"
-          prop="Name"
-          style="width:75%;text-align:center"
-        >
+        <el-form-item :label="$t('CAM.userList.userName')" prop="Name" style="width:75%;text-align:center">
           <el-input v-model="ruleForm.Name" :disabled="true"></el-input>
         </el-form-item>
-        <el-form-item
-          :label="$t('CAM.userList.userRemark')"
-          prop="Remark"
-          style="width:75%;text-align:center"
-        >
+        <el-form-item :label="$t('CAM.userList.userRemark')" prop="Remark" style="width:75%;text-align:center">
           <el-input v-model="ruleForm.Remark"></el-input>
         </el-form-item>
-        <el-form-item
-          :label="$t('CAM.userList.userPhone')"
-          prop="PhoneNum"
-          style="width:75%;text-align:center"
-          class="reg"
-        >
+        <el-form-item :label="$t('CAM.userList.userPhone')" prop="PhoneNum" style="width:75%;text-align:center"
+          class="reg">
           <el-input v-model="ruleForm.PhoneNum" @change="tel"></el-input>
           <span v-show="telReg">请输入正确的手机号</span>
         </el-form-item>
-        <el-form-item
-          :label="$t('CAM.userList.userEmail')"
-          prop="Email"
-          style="width:75%;text-align:center"
-          class="reg"
-        >
+        <el-form-item :label="$t('CAM.userList.userEmail')" prop="Email" style="width:75%;text-align:center"
+          class="reg">
           <el-input v-model="ruleForm.Email" @change="email"></el-input>
           <span v-show="emailReg">请输入正确的邮箱</span>
         </el-form-item>
@@ -269,465 +188,431 @@
   </div>
 </template>
 <script>
-import Headcom from "./components/Head"; //头部组件引入
-import {
-  QUERY_USER,
-  QUERY_POLICY,
-  RELATE_USER,
-  REMOVEBIND_USER,
-  REMOVEGROUP_USER,
-  DELETE_USER,
-  USER_LIST,
-  UPDATA_USER,
-  DEL_USERTOGROUP,
-  GROUP_POLICY
-} from "@/constants";
-// import Subscribe from './components/subscribeNew'
-import { parse } from "path";
-export default {
-  components: {
-    Headcom //头部组件
-    // Subscribe
-  },
-  data() {
-    return {
-      CreateMode: {
-        1: "控制台创建",
-        2: "通过策略语法创建"
-      },
-      emailReg: false,
-      telReg: false,
-      TotalCount: 0,
-      pagesize: 10,
-      currpage: 1,
-      TotalCounts: 0,
-      pagesizes: 10,
-      currpages: 1,
-      infoLoad: true,
-      ConsoleLogin: {
-        1: "可以登录控制台",
-        2: "无法登录控制台"
-      },
-      userData: [], //获取用户详情数据
-      activeName: "first",
-      StrategyData: [], //存放授权数据
-      StrategNum: "", //权限数量
-      groupData: [], //存放用户组数据
-      disabled: true, //按钮禁用状态
-      StrategyLoading: false, //移出策略弹框
-      StrategyTitle: "", //弹出框title
-      showStrategyRow: false, //对批量与单条解除数据进行判断
-      showStrategyMore: false, //对批量与单条解除数据进行判断
-      valArr: [], //存放多选框选中数据
-      GroupLoading: false, //用户组弹框
-      groupTitle: "", //用户组弹出框title
-      GroupId: "",
-      delDialog: false,
-      updataUser: false,
-      totalNum: "", //策略列表条数
-      groupNum: "", //用户组列表条数
-      // flag:false,
-      loading: true,
-      ruleForm: {
-        Name: "",
-        Remark: "",
-        PhoneNum: "",
-        Email: ""
-      }
-    };
-  },
-  methods: {
-    //对手机号进行判断
-    tel: function() {
-      var phone = /^1[345789]\d{9}$/;
-      if (this.ruleForm.PhoneNum != "") {
-        if (!phone.test(this.ruleForm.PhoneNum)) {
-          this.telReg = true;
+  import Headcom from "./components/Head"; //头部组件引入
+  import {
+    QUERY_USER,
+    QUERY_POLICY,
+    RELATE_USER,
+    REMOVEBIND_USER,
+    REMOVEGROUP_USER,
+    DELETE_USER,
+    USER_LIST,
+    UPDATA_USER,
+    DEL_USERTOGROUP,
+    GROUP_POLICY
+  } from "@/constants";
+  // import Subscribe from './components/subscribeNew'
+  import {
+    parse
+  } from "path";
+  export default {
+    components: {
+      Headcom //头部组件
+      // Subscribe
+    },
+    data() {
+      return {
+        CreateMode: {
+          1: "控制台创建",
+          2: "通过策略语法创建"
+        },
+        emailReg: false,
+        telReg: false,
+        TotalCount: 0,
+        pagesize: 10,
+        currpage: 1,
+        TotalCounts: 0,
+        pagesizes: 10,
+        currpages: 1,
+        infoLoad: true,
+        ConsoleLogin: {
+          1: "可以登录控制台",
+          2: "无法登录控制台"
+        },
+        userData: [], //获取用户详情数据
+        activeName: "first",
+        StrategyData: [], //存放授权数据
+        StrategNum: "", //权限数量
+        groupData: [], //存放用户组数据
+        disabled: true, //按钮禁用状态
+        StrategyLoading: false, //移出策略弹框
+        StrategyTitle: "", //弹出框title
+        showStrategyRow: false, //对批量与单条解除数据进行判断
+        showStrategyMore: false, //对批量与单条解除数据进行判断
+        valArr: [], //存放多选框选中数据
+        GroupLoading: false, //用户组弹框
+        groupTitle: "", //用户组弹出框title
+        GroupId: "",
+        delDialog: false,
+        updataUser: false,
+        totalNum: "", //策略列表条数
+        groupNum: "", //用户组列表条数
+        // flag:false,
+        loading: true,
+        ruleForm: {
+          Name: "",
+          Remark: "",
+          PhoneNum: "",
+          Email: ""
+        }
+      };
+    },
+    methods: {
+      //对手机号进行判断
+      tel: function () {
+        var phone = /^1[345789]\d{9}$/;
+        if (this.ruleForm.PhoneNum != "") {
+          if (!phone.test(this.ruleForm.PhoneNum)) {
+            this.telReg = true;
+          } else {
+            this.telReg = false;
+          }
         } else {
           this.telReg = false;
         }
-      } else {
-        this.telReg = false;
-      }
-    },
-    //对邮箱进行判断
-    email: function() {
-      var email = /^[A-Za-z\d]+([-_.][A-Za-z\d]+)*@([A-Za-z\d]+[-.])+[A-Za-z\d]{2,4}$/;
-      if (this.ruleForm.Email != "") {
-        if (!email.test(this.ruleForm.Email)) {
-          this.emailReg = true;
+      },
+      //对邮箱进行判断
+      email: function () {
+        var email = /^[A-Za-z\d]+([-_.][A-Za-z\d]+)*@([A-Za-z\d]+[-.])+[A-Za-z\d]{2,4}$/;
+        if (this.ruleForm.Email != "") {
+          if (!email.test(this.ruleForm.Email)) {
+            this.emailReg = true;
+          } else {
+            this.emailReg = false;
+          }
         } else {
           this.emailReg = false;
         }
-      } else {
-        this.emailReg = false;
-      }
-    },
+      },
 
-    //编辑用户
-    sureUpdata() {
-      if (this.telReg) {
-        this.$message.error("手机号输入有误");
-      } else if (this.emailReg) {
-        this.$message.error("邮箱输入有误");
-      } else {
-        this.edit();
-      }
-    },
-    edit() {
-      let params = {
-        Version: "2019-01-16",
-        Name: this.ruleForm.Name,
-        Remark: this.ruleForm.Remark,
-        PhoneNum: this.ruleForm.PhoneNum,
-        Email: this.ruleForm.Email
-      };
-      this.axios.post(UPDATA_USER, params).then(res => {
-        this.init();
-      });
-      this.$message("编辑成功");
-      this.updataUser = false;
-    },
-    handleClicks(policy) {
-      this.$router.push({
-        path: "/StrategyDetail",
-        query: {
-          policy: policy.PolicyId
+      //编辑用户
+      sureUpdata() {
+        if (this.telReg) {
+          this.$message.error("手机号输入有误");
+        } else if (this.emailReg) {
+          this.$message.error("邮箱输入有误");
+        } else {
+          this.edit();
         }
-      });
-    },
-    editGroup() {
-      this.ruleForm.Name = this.userData.Name;
-      this.ruleForm.Remark = this.userData.Remark;
-      this.ruleForm.PhoneNum = this.userData.PhoneNum;
-      this.ruleForm.Email = this.userData.Email;
-      this.updataUser = true;
-    },
-    //删除子用户
-    userDelete() {
-      let params = {
-        Version: "2019-01-16",
-        Name: this.userData.Name
-      };
-      this.axios
-        .post(DELETE_USER, params)
-        .then(data => {
-          this.$router.push("/UserListNew");
-        })
-        .then(() => {
-          let delparams = {
-            QcloudUin: this.delUin,
-            SubAccountname: this.deleteName
-          };
-          this.axios
-            .post(
-              "http://152.136.25.227/adminapi/admin/taifucloud/account-sub/manage/delete",
-              delparams
-            )
-            .then(res => {
-              console.log(res);
-            });
-        });
-      this.ploicyData(); //获取策略数据
-      this.groupListData();
-      this.delDialog = false;
-    },
-    deleteUser() {
-      this.delDialog = true;
-    },
-    //获取用户详情数据
-    init() {
-      this.infoLoad = true;
-      let params = {
-        Version: "2019-01-16",
-        Name: this.$route.query.detailsData
-      };
-      this.axios.post(QUERY_USER, params).then(res => {
-        this.userData = res.Response;
-        this.infoLoad = false;
-      });
-    },
-    //获取每一个用户下的权限
-    ploicyData() {
-      this.loading = true;
-      let params = {
-        Version: "2019-01-16",
-        Name: this.$route.query.detailsData
-      };
-      this.axios.post(QUERY_USER, params).then(res => {
-        this.userData = res.Response;
-        let ploicyParams = {
+      },
+      edit() {
+        let params = {
           Version: "2019-01-16",
-          TargetUin: this.userData.Uin
+          Name: this.ruleForm.Name,
+          Remark: this.ruleForm.Remark,
+          PhoneNum: this.ruleForm.PhoneNum,
+          Email: this.ruleForm.Email
         };
-        this.axios.post(QUERY_POLICY, ploicyParams).then(res => {
-          if (res != "") {
-            this.loading = false;
-            this.StrategyData = res.Response.List.slice(
-              (this.currpages - 1) * this.pagesizes,
-              this.currpages * this.pagesizes
-            );
-            this.TotalCounts = res.Response.List.length;
-            this.totalNum = "权限(" + res.Response.List.length + ")";
-          } else {
-            this.loading = false;
-            this.$message({
-              type: "info",
-              message: "无响应数据！"
-            });
+        this.axios.post(UPDATA_USER, params).then(res => {
+          this.init();
+        });
+        this.$message("编辑成功");
+        this.updataUser = false;
+      },
+      handleClicks(policy) {
+        this.$router.push({
+          path: "/StrategyDetail",
+          query: {
+            policy: policy.PolicyId
           }
         });
-      });
-    },
-    handleCurrentChanges(val) {
-      this.currpages = val;
-      this.ploicyData();
-    },
-    //初始化用户列表
-    userLists() {
-      let userList = {
-        Version: "2019-01-16"
-      };
-      this.axios.post(USER_LIST, userList).then(data => {});
-    },
-    //获取每一个子用户下的用户组
-    groupListData() {
-      this.loading = true;
-      let params = {
-        Version: "2019-01-16",
-        Name: this.$route.query.detailsData
-      };
-      this.axios.post(QUERY_USER, params).then(res => {
-        this.userData = res.Response;
-        let groupParams = {
+      },
+      editGroup() {
+        this.ruleForm.Name = this.userData.Name;
+        this.ruleForm.Remark = this.userData.Remark;
+        this.ruleForm.PhoneNum = this.userData.PhoneNum;
+        this.ruleForm.Email = this.userData.Email;
+        this.updataUser = true;
+      },
+      //删除子用户
+      userDelete() {
+        let params = {
           Version: "2019-01-16",
-          Uid: this.userData.Uid
+          Name: this.userData.Name
         };
-        this.axios.post(RELATE_USER, groupParams).then(res => {
-          this.TotalCount = res.Response.GroupInfo.length;
-          this.groupData = res.Response.GroupInfo.slice(
-            (this.currpage - 1) * this.pagesize,
-            this.currpage * this.pagesize
-          );
-          this.groupNum = "组(" + res.Response.GroupInfo.length + ")";
-          this.groupData.forEach(item => {
-            item.policy = [];
-            const params = {
-              Version: "2019-01-16",
-              TargetGroupId: item.GroupId
+        this.axios
+          .post(DELETE_USER, params)
+          .then(data => {
+            this.$router.push("/UserListNew");
+          })
+          .then(() => {
+            let delparams = {
+              QcloudUin: this.delUin,
+              SubAccountname: this.deleteName
             };
-            this.axios.post(GROUP_POLICY, params).then(res => {
-              res.Response.List.forEach(val => {
-                item.policy.push(val.PolicyName);
+            this.axios
+              .post(
+                `${process.env.VUE_APP_adminUrl}taifucloud/account-sub/manage/delete`,
+                delparams
+              )
+              .then(res => {
+                console.log(res);
+              });
+          });
+        this.ploicyData(); //获取策略数据
+        this.groupListData();
+        this.delDialog = false;
+      },
+      deleteUser() {
+        this.delDialog = true;
+      },
+      //获取用户详情数据
+      init() {
+        this.infoLoad = true;
+        let params = {
+          Version: "2019-01-16",
+          Name: this.$route.query.detailsData
+        };
+        this.axios.post(QUERY_USER, params).then(res => {
+          this.userData = res.Response;
+          this.infoLoad = false;
+        });
+      },
+      //获取每一个用户下的权限
+      ploicyData() {
+        this.loading = true;
+        let params = {
+          Version: "2019-01-16",
+          Name: this.$route.query.detailsData
+        };
+        this.axios.post(QUERY_USER, params).then(res => {
+          this.userData = res.Response;
+          let ploicyParams = {
+            Version: "2019-01-16",
+            TargetUin: this.userData.Uin
+          };
+          this.axios.post(QUERY_POLICY, ploicyParams).then(res => {
+            if (res != "") {
+              this.loading = false;
+              this.StrategyData = res.Response.List.slice(
+                (this.currpages - 1) * this.pagesizes,
+                this.currpages * this.pagesizes
+              );
+              this.TotalCounts = res.Response.List.length;
+              this.totalNum = "权限(" + res.Response.List.length + ")";
+            } else {
+              this.loading = false;
+              this.$message({
+                type: "info",
+                message: "无响应数据！"
+              });
+            }
+          });
+        });
+      },
+      handleCurrentChanges(val) {
+        this.currpages = val;
+        this.ploicyData();
+      },
+      //初始化用户列表
+      userLists() {
+        let userList = {
+          Version: "2019-01-16"
+        };
+        this.axios.post(USER_LIST, userList).then(data => {});
+      },
+      //获取每一个子用户下的用户组
+      groupListData() {
+        this.loading = true;
+        let params = {
+          Version: "2019-01-16",
+          Name: this.$route.query.detailsData
+        };
+        this.axios.post(QUERY_USER, params).then(res => {
+          this.userData = res.Response;
+          let groupParams = {
+            Version: "2019-01-16",
+            Uid: this.userData.Uid
+          };
+          this.axios.post(RELATE_USER, groupParams).then(res => {
+            this.TotalCount = res.Response.GroupInfo.length;
+            this.groupData = res.Response.GroupInfo.slice(
+              (this.currpage - 1) * this.pagesize,
+              this.currpage * this.pagesize
+            );
+            this.groupNum = "组(" + res.Response.GroupInfo.length + ")";
+            this.groupData.forEach(item => {
+              item.policy = [];
+              const params = {
+                Version: "2019-01-16",
+                TargetGroupId: item.GroupId
+              };
+              this.axios.post(GROUP_POLICY, params).then(res => {
+                res.Response.List.forEach(val => {
+                  item.policy.push(val.PolicyName);
+                });
               });
             });
+            this.loading = false;
           });
-          this.loading = false;
         });
-      });
-    },
-    handleCurrentChange(val) {
-      this.currpage = val;
-      this.groupListData();
-    },
-    //确定解除策略
-    moveStrategy() {
-      if (this.StrategyTitle == "批量解除策略") {
-        var removeIndex = [];
-        this.valArr.forEach(item => {
-          removeIndex.unshift(item.PolicyId);
-        });
-        removeIndex.forEach(item => {
+      },
+      handleCurrentChange(val) {
+        this.currpage = val;
+        this.groupListData();
+      },
+      //确定解除策略
+      moveStrategy() {
+        if (this.StrategyTitle == "批量解除策略") {
+          var removeIndex = [];
+          this.valArr.forEach(item => {
+            removeIndex.unshift(item.PolicyId);
+          });
+          removeIndex.forEach(item => {
+            let params = {
+              Version: "2019-01-16",
+              PolicyId: item,
+              DetachUin: this.userData.Uin
+            };
+            this.axios.post(REMOVEBIND_USER, params).then(data => {
+              this.ploicyData();
+              this.$message("批量解除成功");
+            });
+          });
+          this.StrategyLoading = false;
+        }
+        if (this.StrategyTitle == "解除策略") {
           let params = {
             Version: "2019-01-16",
-            PolicyId: item,
+            PolicyId: this.PolicyId,
             DetachUin: this.userData.Uin
           };
           this.axios.post(REMOVEBIND_USER, params).then(data => {
             this.ploicyData();
-            this.$message("批量解除成功");
+            this.$message("解除成功");
           });
-        });
-        this.StrategyLoading = false;
-      }
-      if (this.StrategyTitle == "解除策略") {
+          this.StrategyLoading = false;
+        }
+      },
+      //解除当前行策略
+      deleteStrage(PolicyId) {
+        this.PolicyId = PolicyId;
+        this.StrategyLoading = true;
+        this.StrategyTitle = "解除策略";
+        this.showStrategyMore = false;
+        this.showStrategyRow = true;
+      },
+      //批量解除按钮
+      delMoreStrateg() {
+        this.StrategyLoading = true;
+        this.StrategyTitle = "批量解除策略";
+        this.showStrategyMore = true;
+        this.showStrategyRow = false;
+      },
+      //将用户移出用户组
+      removeGroupUser() {
+        if (this.groupTitle == "移出组") {
+          var groupId = [];
+          this.valArr.forEach(item => {
+            groupId.unshift(item.GroupId);
+          });
+          groupId.forEach(item => {
+            this.delGroup(item);
+          });
+          this.GroupLoading = false;
+        }
+        if (this.groupTitle == "确认移出") {
+          this.delGroup(this.GroupId);
+          this.GroupLoading = false;
+        }
+      },
+      delGroup(val) {
         let params = {
           Version: "2019-01-16",
-          PolicyId: this.PolicyId,
-          DetachUin: this.userData.Uin
+          "Info.0.Uid": this.userData.Uid,
+          "Info.0.GroupId": val
         };
-        this.axios.post(REMOVEBIND_USER, params).then(data => {
-          this.ploicyData();
-          this.$message("解除成功");
+        this.axios.post(DEL_USERTOGROUP, params).then(data => {
+          this.groupListData();
+          this.$message("移出成功");
         });
+      },
+      //当前一行移出组
+      removeGroup(val) {
+        this.GroupId = val.GroupId;
+        this.GroupLoading = true;
+        this.groupTitle = "确认移出";
+      },
+      //批量移出组
+      removeMoreGroup() {
+        this.GroupLoading = true;
+        this.groupTitle = "移出组";
+      },
+      //用户组详情
+      Interface(groupId) {
+        this.$router.push({
+          name: "Interfacedetails",
+          query: {
+            GroupId: groupId
+          }
+        });
+      },
+      //跳转到添加策略到用户页面
+      gotoPolicy() {
+        this.$router.push({
+          path: "/addPolicyToUser",
+          query: {
+            Uin: this.userData.Uin
+          }
+        });
+      },
+      //跳转加入到用户组页面
+      addGroupUser(data) {
+        this.$router.push({
+          path: "/addGroup",
+          query: {
+            Uid: this.userData.Uid
+          }
+        });
+      },
+      //多选框
+      Select(val) {
+        // this.disabled = false;
+        this.valArr = val;
+        if (val != "") {
+          this.disabled = false;
+        } else {
+          this.disabled = true;
+        }
+      },
+      handleClick(tab, event) {
+        console.log(tab, event);
+      },
+      handleClose(done) {
         this.StrategyLoading = false;
-      }
-    },
-    //解除当前行策略
-    deleteStrage(PolicyId) {
-      this.PolicyId = PolicyId;
-      this.StrategyLoading = true;
-      this.StrategyTitle = "解除策略";
-      this.showStrategyMore = false;
-      this.showStrategyRow = true;
-    },
-    //批量解除按钮
-    delMoreStrateg() {
-      this.StrategyLoading = true;
-      this.StrategyTitle = "批量解除策略";
-      this.showStrategyMore = true;
-      this.showStrategyRow = false;
-    },
-    //将用户移出用户组
-    removeGroupUser() {
-      if (this.groupTitle == "移出组") {
-        var groupId = [];
-        this.valArr.forEach(item => {
-          groupId.unshift(item.GroupId);
+        this.delDialog = false;
+        this.updataUser = false;
+      },
+      bindMesg() {
+        this.$message({
+          type: "info",
+          message: "内测中..."
         });
-        groupId.forEach(item => {
-          this.delGroup(item);
-        });
-        this.GroupLoading = false;
-      }
-      if (this.groupTitle == "确认移出") {
-        this.delGroup(this.GroupId);
-        this.GroupLoading = false;
+      },
+      back() {
+        this.$router.go(-1);
       }
     },
-    delGroup(val) {
-      let params = {
-        Version: "2019-01-16",
-        "Info.0.Uid": this.userData.Uid,
-        "Info.0.GroupId": val
-      };
-      this.axios.post(DEL_USERTOGROUP, params).then(data => {
-        this.groupListData();
-        this.$message("移出成功");
-      });
-    },
-    //当前一行移出组
-    removeGroup(val) {
-      this.GroupId = val.GroupId;
-      this.GroupLoading = true;
-      this.groupTitle = "确认移出";
-    },
-    //批量移出组
-    removeMoreGroup() {
-      this.GroupLoading = true;
-      this.groupTitle = "移出组";
-    },
-    //用户组详情
-    Interface(groupId) {
-      this.$router.push({
-        name: "Interfacedetails",
-        query: {
-          GroupId: groupId
-        }
-      });
-    },
-    //跳转到添加策略到用户页面
-    gotoPolicy() {
-      this.$router.push({
-        path: "/addPolicyToUser",
-        query: {
-          Uin: this.userData.Uin
-        }
-      });
-    },
-    //跳转加入到用户组页面
-    addGroupUser(data) {
-      this.$router.push({
-        path: "/addGroup",
-        query: {
-          Uid: this.userData.Uid
-        }
-      });
-    },
-    //多选框
-    Select(val) {
-      // this.disabled = false;
-      this.valArr = val;
-      if (val != "") {
-        this.disabled = false;
-      } else {
-        this.disabled = true;
-      }
-    },
-    handleClick(tab, event) {
-      console.log(tab, event);
-    },
-    handleClose(done) {
-      this.StrategyLoading = false;
-      this.delDialog = false;
-      this.updataUser = false;
-    },
-    bindMesg() {
-      this.$message({
-        type: "info",
-        message: "内测中..."
-      });
-    },
-    back() {
-      this.$router.go(-1);
+    created() {
+      this.init(); //获取当前用户的详情
+      this.ploicyData(); //获取策略数据
+      this.groupListData(); //获取用户组数据
     }
-  },
-  created() {
-    this.init(); //获取当前用户的详情
-    this.ploicyData(); //获取策略数据
-    this.groupListData(); //获取用户组数据
-  }
-};
+  };
+
 </script>
 <style lang="scss" scoped>
-.reg {
-  position: relative;
-  span {
-    position: absolute;
-    bottom: -30px;
-    color: red;
-    left: 0;
-  }
-}
-.omit {
-  color: #006eff;
-  cursor: pointer;
-  width: 220px;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-.Right-style {
-  display: flex;
-  justify-content: flex-end;
-}
-.pagstyle {
-  padding: 20px;
+  .reg {
+    position: relative;
 
-  .pagtotal {
-    font-size: 13px;
-    font-weight: 400;
-    color: #565656;
-    line-height: 32px;
+    span {
+      position: absolute;
+      bottom: -30px;
+      color: red;
+      left: 0;
+    }
   }
-}
-.tabs {
-  background: white;
-  padding: 0 20px;
-  margin-top: -20px;
-  box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
-}
-.spns {
-  color: #666;
-  display: inline-block;
-  width: 70px;
-}
-.details {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  padding: 25px;
-  box-sizing: border-box;
+
   .omit {
     color: #006eff;
     cursor: pointer;
@@ -736,98 +621,160 @@ export default {
     white-space: nowrap;
     text-overflow: ellipsis;
   }
-  .details-left {
-    width: 75%;
-    background: white;
-    padding: 10px 10px 20px 10px;
-    box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
-    left: 0;
-    .leftHead {
-      width: 100%;
-      background: white;
-      padding: 10px 10px 10px 10px;
-      box-sizing: border-box;
-    }
-    .leftBody {
-      flex: 1;
-      display: flex;
-      background: white;
-      .bodyLeft {
-        padding: 10px;
-        box-sizing: border-box;
-        p {
-          padding: 0 0 25px 0;
-          box-sizing: border-box;
-        }
-      }
-      .bodyRight {
-        padding: 10px;
-        box-sizing: border-box;
-        border-left: 1px solid #ccc;
-        p {
-          padding: 0 0 25px 0;
-          box-sizing: border-box;
-        }
-      }
+
+  .Right-style {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .pagstyle {
+    padding: 20px;
+
+    .pagtotal {
+      font-size: 13px;
+      font-weight: 400;
+      color: #565656;
+      line-height: 32px;
     }
   }
-  .details-right {
-    flex: 1;
-    background: skyblue;
-    margin-left: 46px;
-    display: flex;
-    flex-direction: column;
+
+  .tabs {
+    background: white;
+    padding: 0 20px;
+    margin-top: -20px;
     box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
-    .rightHead {
-      width: 100%;
+  }
+
+  .spns {
+    color: #666;
+    display: inline-block;
+    width: 70px;
+  }
+
+  .details {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 25px;
+    box-sizing: border-box;
+
+    .omit {
+      color: #006eff;
+      cursor: pointer;
+      width: 220px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    .details-left {
+      width: 75%;
       background: white;
-      padding: 10px 10px 0px 10px;
-      p {
-        font-weight: bold;
+      padding: 10px 10px 20px 10px;
+      box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
+      left: 0;
+
+      .leftHead {
+        width: 100%;
+        background: white;
         padding: 10px 10px 10px 10px;
         box-sizing: border-box;
       }
+
+      .leftBody {
+        flex: 1;
+        display: flex;
+        background: white;
+
+        .bodyLeft {
+          padding: 10px;
+          box-sizing: border-box;
+
+          p {
+            padding: 0 0 25px 0;
+            box-sizing: border-box;
+          }
+        }
+
+        .bodyRight {
+          padding: 10px;
+          box-sizing: border-box;
+          border-left: 1px solid #ccc;
+
+          p {
+            padding: 0 0 25px 0;
+            box-sizing: border-box;
+          }
+        }
+      }
     }
-    .rightBody {
+
+    .details-right {
       flex: 1;
-      background: white;
+      background: skyblue;
+      margin-left: 46px;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      .delete {
-        margin-left: -1px;
-        margin-top: 15px;
+      box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
+
+      .rightHead {
+        width: 100%;
+        background: white;
+        padding: 10px 10px 0px 10px;
+
+        p {
+          font-weight: bold;
+          padding: 10px 10px 10px 10px;
+          box-sizing: border-box;
+        }
+      }
+
+      .rightBody {
+        flex: 1;
+        background: white;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        .delete {
+          margin-left: -1px;
+          margin-top: 15px;
+        }
       }
     }
   }
-}
-.tableTab {
-  padding: 25px;
-  box-sizing: border-box;
-  margin: 0 auto;
-  .buttonCla {
-    height: 35px;
-    min-width: 24px;
-    padding: 0 20px;
-    background-color: #006eff;
-    color: #fff;
-    border: 1px solid #006eff;
-    text-align: center;
-    margin-bottom: 10px;
+
+  .tableTab {
+    padding: 25px;
+    box-sizing: border-box;
+    margin: 0 auto;
+
+    .buttonCla {
+      height: 35px;
+      min-width: 24px;
+      padding: 0 20px;
+      background-color: #006eff;
+      color: #fff;
+      border: 1px solid #006eff;
+      text-align: center;
+      margin-bottom: 10px;
+    }
   }
-}
-.explain {
-  width: 100%;
-  margin: 0 auto;
-  font-size: 12px;
-  padding: 10px 30px 10px 20px;
-  color: #003b80;
-  border: 1px solid #97c7ff;
-  background: #e5f0ff;
-  box-sizing: border-box;
-  margin-bottom: 20px;
-  p {
-    line-height: 20px;
+
+  .explain {
+    width: 100%;
+    margin: 0 auto;
+    font-size: 12px;
+    padding: 10px 30px 10px 20px;
+    color: #003b80;
+    border: 1px solid #97c7ff;
+    background: #e5f0ff;
+    box-sizing: border-box;
+    margin-bottom: 20px;
+
+    p {
+      line-height: 20px;
+    }
   }
-}
+
 </style>

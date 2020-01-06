@@ -1,7 +1,7 @@
 <template>
   <div class="wrap">
     <div class="basicProtTit">
-      <span>DDoS基础防护</span>
+      <span>{{$t('DDOS.basicProtection.jcfh')}}</span>
       <el-select v-model="selectedSubarea" placeholder class="codeOrigin">
         <el-option
           v-for="item in subareas"
@@ -16,7 +16,7 @@
       <div class="newClear">
         <div class="basicProtConSearch newClear">
           <el-input
-            placeholder="请输入主机名/主机IP搜索"
+            :placeholder="$t('DDOS.basicProtection.qsrzjmip')"
             class="searchIpt"
             v-model="searchInputVal"
             @change="inpVal"
@@ -31,7 +31,7 @@
             v-loading="loading"
             height="450"
           >
-            <el-table-column prop="Name" label="主机名">
+            <el-table-column prop="Name" :label="$t('DDOS.basicProtection.zjm')">
               <template slot-scope="scope">
                 <a
                   href="#"
@@ -50,7 +50,7 @@
                 >{{scope.row.NatGatewayName}}</a>
               </template>
             </el-table-column>
-            <el-table-column prop="IP" label="绑定IP">
+            <el-table-column prop="IP" :label="$t('DDOS.basicProtection.bdip')">
               <template slot-scope="scope">
                 <div v-if="selectedSubarea=='cvm'">
                   <span v-for="(item,index) in scope.row.PublicIpAddresses" :key="index">{{item}}</span>
@@ -66,35 +66,35 @@
                 </div>
               </template>
             </el-table-column>
-            <el-table-column prop="InstanceType" label="主机类型">
-              <span v-if="selectedSubarea=='cvm'">雲主机</span>
-              <span v-else-if="selectedSubarea=='clb'">负载均衡</span>
+            <el-table-column prop="InstanceType" :label="$t('DDOS.basicProtection.zjlx')">
+              <span v-if="selectedSubarea=='cvm'">{{$t('DDOS.basicProtection.yzj')}}</span>
+              <span v-else-if="selectedSubarea=='clb'">{{$t('DDOS.basicProtection.fzjh')}}</span>
               <span v-else-if="selectedSubarea=='nat'">NAT</span>
-              <span v-else-if="selectedSubarea=='net'">互联网</span>
+              <span v-else-if="selectedSubarea=='net'">{{$t('DDOS.basicProtection.hlw')}}</span>
             </el-table-column>
-            <el-table-column prop="Status" label="安全状态">
+            <el-table-column prop="Status" :label="$t('DDOS.basicProtection.aqzt')">
               <template slot-scope="scope">
                 <div v-if="selectedSubarea=='cvm'">
-                  <span v-if="scope.row.InstanceState == 'PENDING'">创建中</span>
-                  <span v-else-if="scope.row.InstanceState == 'LAUNCH_FAILED'">创建失败</span>
-                  <span v-else-if="scope.row.InstanceState == 'RUNNING'">运行中</span>
-                  <span v-else-if="scope.row.InstanceState == 'STOPPED'">关机</span>
-                  <span v-else-if="scope.row.InstanceState == 'STARTING'">开机中</span>
-                  <span v-else-if="scope.row.InstanceState == 'STOPPING'">关机中</span>
-                  <span v-else-if="scope.row.InstanceState == 'REBOOTING'">重启中</span>
-                  <span v-else-if="scope.row.InstanceState == 'SHUTDOWN'">停止待销毁</span>
-                  <span v-else-if="scope.row.InstanceState == 'TERMINATING'">销毁中</span>
+                  <span v-if="scope.row.InstanceState == 'PENDING'">{{$t('DDOS.basicProtection.cjz')}}</span>
+                  <span v-else-if="scope.row.InstanceState == 'LAUNCH_FAILED'">{{$t('DDOS.basicProtection.cjsb')}}</span>
+                  <span v-else-if="scope.row.InstanceState == 'RUNNING'">{{$t('DDOS.AssetList.Running')}}</span>
+                  <span v-else-if="scope.row.InstanceState == 'STOPPED'">{{$t('DDOS.basicProtection.gj')}}</span>
+                  <span v-else-if="scope.row.InstanceState == 'STARTING'">{{$t('DDOS.basicProtection.kjz')}}</span>
+                  <span v-else-if="scope.row.InstanceState == 'STOPPING'">{{$t('DDOS.basicProtection.gjz')}}</span>
+                  <span v-else-if="scope.row.InstanceState == 'REBOOTING'">{{$t('DDOS.basicProtection.cqz')}}</span>
+                  <span v-else-if="scope.row.InstanceState == 'SHUTDOWN'">{{$t('DDOS.basicProtection.tzdxh')}}</span>
+                  <span v-else-if="scope.row.InstanceState == 'TERMINATING'">{{$t('DDOS.basicProtection.xhz')}}</span>
                 </div>
                 <div v-else-if="selectedSubarea=='clb'">
-                  <span v-if="scope.row.Status == '0'">创建中</span>
-                  <span v-else-if="scope.row.Status == '1'">正常运行</span>
+                  <span v-if="scope.row.Status == '0'">{{$t('DDOS.basicProtection.cjz')}}</span>
+                  <span v-else-if="scope.row.Status == '1'">{{$t('DDOS.basicProtection.zcyx')}}</span>
                 </div>
                 <div v-else-if="selectedSubarea=='nat'">
-                  <span v-if="scope.row.State == 'PENDING'">生产中</span>
-                  <span v-else-if="scope.row.State == 'DELETING'">删除中</span>
-                  <span v-else-if="scope.row.State == 'AVAILABLE'">运行中</span>
-                  <span v-else-if="scope.row.State == 'UPDATING'">升级中</span>
-                  <span v-else-if="scope.row.State == 'FAILED'">失败</span>
+                  <span v-if="scope.row.State == 'PENDING'">{{$t('DDOS.basicProtection.scz')}}</span>
+                  <span v-else-if="scope.row.State == 'DELETING'">{{$t('DDOS.basicProtection.del')}}</span>
+                  <span v-else-if="scope.row.State == 'AVAILABLE'">{{$t('DDOS.AssetList.Running')}}</span>
+                  <span v-else-if="scope.row.State == 'UPDATING'">{{$t('DDOS.basicProtection.sjz')}}</span>
+                  <span v-else-if="scope.row.State == 'FAILED'">{{$t('DDOS.basicProtection.sb')}}</span>
                 </div>
               </template>
             </el-table-column>
@@ -102,7 +102,7 @@
           </el-table>
         </div>
         <div class="Right-style pagstyle">
-          <span class="pagtotal">共&nbsp;{{totalItems}}&nbsp;条</span>
+          <span class="pagtotal">共&nbsp;{{totalItems}}&nbsp;{{$t('DDOS.UnsealCode.tiao')}}</span>
           <el-pagination
             :page-size="pageSize"
             :pager-count="7"
@@ -124,14 +124,14 @@ export default {
       // 专区选择
       selectedSubarea: "cvm",
       subareas: [
-        { subarea: "cvm", lable: "雲服务器专区" },
-        { subarea: "clb", lable: "负载均衡专区" },
-        { subarea: "nat", lable: "NAT服务器专区" },
-        { subarea: "net", lable: "互联网通道" }
+        { subarea: "cvm", lable: "雲伺服器專區" },
+        { subarea: "clb", lable: "負載均衡專區" },
+        { subarea: "nat", lable: "NAT伺服器專區" },
+        { subarea: "net", lable: "互聯網通道" }
       ],
       // 地域选择
       selectedCity: {},
-      selectedRegion: "ap-taipei",
+      selectedRegion: localStorage.getItem("regionv2"),
       cities: [],
       // 实例列表
       tableDataBegin: [],
@@ -146,7 +146,7 @@ export default {
       pageSize: 10,
       totalItems: 0,
       flag: false,
-      region: "载入中..."
+      region: "載入中..."
     };
   },
   created() {
@@ -174,7 +174,7 @@ export default {
       } else if (this.selectedSubarea == "nat") {
         this.describeNatGateway();
       } else if (this.selectedSubarea == "net") {
-        this.$message("此服务功能暂未开通！");
+        this.$message("此服務功能暫未開通！");
         this.tableDataBegin = this.allData;
         this.totalItems = 0;
       }

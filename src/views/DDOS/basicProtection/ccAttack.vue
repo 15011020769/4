@@ -13,8 +13,8 @@
         type="daterange"
         class="newDataTime"
         range-separator="至"
-        start-placeholder="开始日期"
-        end-placeholder="结束日期">
+        start-placeholder="開始日期"
+        end-placeholder="結束日期">
       </el-date-picker>
     </div>
     <div id="myChart1">

@@ -1,16 +1,16 @@
 <template>
   <div v-loading="loadShow">
     <div class="topHead">
-      <i class="el-icon-back" @click="returnBack"></i>{{this.$route.query.Name}}
+      <i class="el-icon-back" @click="returnBack"></i>{{$route.params.domain}}
     </div>
     <div class="conTabs">
-      <el-tabs v-model="activeName" @tab-click="handleClick">
+      <el-tabs v-model="activeName">
         <el-tab-pane label="基本信息" name="first">
           <div class="wrapper">
-            <BasicInfo :Con="allCon"/>
+            <BasicInfo :info="info"/>
           </div>
         </el-tab-pane>
-        <el-tab-pane label="推流配置" name="second">
+        <el-tab-pane label="推流配置" name="second" v-if="info.Type === 0">
           <div class="wrapper">
             <pushStreamSet/>
           </div>
@@ -28,12 +28,13 @@
 import BasicInfo from './tabs/BasicInfo'
 import pushStreamSet from './tabs/pushStreamSet'
 import templateconfig from './tabs/templateconfig'
+import { DOMAIN_DELTILS } from "@/constants"
 export default {
   data(){
     return{
       activeName: 'first',
-      loadShow:false,//加载
-      allCon:{},//详情内容
+      loadShow: false,//加载
+      info: {},//详情内容
     }
   },
   components:{
@@ -42,13 +43,15 @@ export default {
     templateconfig:templateconfig
   },
   mounted(){
-    console.log(this.$route.query)
-    this.allCon=this.$route.query;
+    const params = {
+      Version: "2018-08-01",
+      DomainName: this.$route.params.domain
+    };
+    this.axios.post(DOMAIN_DELTILS, params).then(({ Response: { DomainInfo } }) => {
+      this.info = DomainInfo
+    })
   },
   methods: {
-    handleClick(tab, event) {
-      console.log(tab, event);
-    },
     //返回列表页
     returnBack(){
       this.$router.push({
