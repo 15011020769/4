@@ -474,7 +474,9 @@
         } else if (instanceType == "DIRECTCONNECT") {
           const info = {
             Version: '2017-03-12',
-            Region: localStorage.getItem('regionv2')
+            Region: localStorage.getItem('regionv2'),
+            'Filters.0.Name': 'network-type',
+            'Filters.0.Values.0': 'CCN',
           };
           this.axios.post(DIRECTCONNECTGATEWAYS_LIST, info).then(res => {
             if (res.Response.Error === undefined) {
