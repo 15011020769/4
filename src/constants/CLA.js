@@ -1,5 +1,5 @@
 // 雲审计--列表接口
-export const YJS_LIST = 'cloudaudit/LookupEvents'
+export const YJS_LIST = 'cloudaudit2/LookUpEvents'
 
 // 雲审计--搜索下拉
 export const YJS_GETATTRIBUTEKEY = 'cloudaudit2/GetAttributeKey'
