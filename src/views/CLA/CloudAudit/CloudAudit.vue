@@ -189,7 +189,7 @@ export default {
     this.axios
       .post(YJS_GETATTRIBUTEKEY, {
         Version: "2019-03-19",
-        // Region: VueCookie.get("regionv2"),
+        // Region: localStorage.getItem("regionv2"),
         Region: "ap-guangzhou"
       })
       .then(data => {
@@ -209,7 +209,7 @@ export default {
     Loading() {
       let params = {
         Version: "2019-03-19",
-        Region: "ap-taipei",
+        Region: localStorage.getItem("regionv2"),
         StartTime: this.oldTime, // 开始时间
         EndTime: this.nowtime, // 结束时间1558108799
         MaxResults: this.MaxResults
@@ -224,7 +224,6 @@ export default {
       }
 
       this.axios.post(YJS_LIST, params).then(res => {
-        console.log(res);
         if (res.codeDesc == "Success") {
           this.tableData = res.data.Events;
           this.vloading = false;
@@ -249,7 +248,7 @@ export default {
       }
       let params = {
         Version: "2019-03-19",
-        Region: VueCookie.get("regionv2"),
+        Region: localStorage.getItem("regionv2"),
         EndTime: this.nowtime,
         MaxResults: this.MaxResults,
         StartTime: this.oldTime

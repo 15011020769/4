@@ -109,7 +109,7 @@ export default {
     getData() {
       let params = {
         Version: "2019-03-19",
-        Region: VueCookie.get("regionv2")
+        Region: localStorage.getItem("regionv2")
       };
       this.axios.post(GZJ_LIST, params).then(({ data }) => {
         this.tableData = data.auditLists;
