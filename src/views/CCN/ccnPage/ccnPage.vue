@@ -303,7 +303,6 @@
     MODIFYCCN_REGIONBANDWIDTHLIMITSTYPE,
     MODIFYRESOURCE_TAGS
   } from "@/constants";
-  import VueCookie from "vue-cookie";
   export default {
     data() {
       return {
@@ -602,8 +601,13 @@
               duration: 0
             });
           } else {
+            let ErrTips = {
+              'InvalidParameter': '入参不合法',
+              'ResourceNotFound': '资源不存在',
+            }
+            let ErrOr = Object.assign(ErrorTips, ErrTips)
             this.$message({
-              message: res.Response.Error.Message,
+              message: ErrOr[res.Response.Error.Code],
               type: "error",
               showClose: true,
               duration: 0
@@ -673,16 +677,22 @@
           BandwidthLimitType: ccnDetail.BandwidthLimitType
         };
         this.axios.post(MODIFYCCN_REGIONBANDWIDTHLIMITSTYPE, params).then(res => {
-          this.$message({
-            message: "修改成功",
-            type: "success",
-            showClose: true,
-            duration: 0
-          });
           if (res.Response.Error != undefined) {
+            let ErrTips = {
+              'InvalidParameter': '入参不合法',
+              'UnsupportedOperation': '操作不支持',
+            }
+            let ErrOr = Object.assign(ErrorTips, ErrTips)
             this.$message({
-              message: "修改失敗",
+              message: ErrOr[res.Response.Error.Code],
               type: "error",
+              showClose: true,
+              duration: 0
+            });
+          } else {
+            this.$message({
+              message: "修改成功",
+              type: "success",
               showClose: true,
               duration: 0
             });

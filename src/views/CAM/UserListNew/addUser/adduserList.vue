@@ -450,7 +450,7 @@
           })
           .then(() => {
             const params = {
-              Password: this.taifuAIP.Password,
+              Password: 'yes',
               QcloudUin: this.getCookie("uin"), //uin
               SecretId: this.taifuAIP.SecretId,
               SecretKey: this.taifuAIP.SecretKey,

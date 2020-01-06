@@ -1,5 +1,8 @@
+// 命名空间
+export const SPACENAME_LIST = 'ccr/GetNamespaceInfo'
+
 // 我的镜像
-export const CGI_LIST = 'tke2/capi' 
+export const MIRROR_LIST = 'ccr/SearchUserRepository'
 
 // 获取集群列表
 export const COLONY_LIST = 'tke2/DescribeClusters' 

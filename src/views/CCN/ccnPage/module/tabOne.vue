@@ -9,7 +9,6 @@
         <template slot="empty">{{$t("CCN.tabs.tab1no")}}</template>
         <el-table-column prop="InstanceId" :label="$t('CCN.tabs.tab1tr1')" width>
           <template slot-scope="scope">
-            <!-- <a href="../CCN/index"  target="_blank">{{ scope.row.InstanceId }}</a> -->
             <a href="javascript:void(0);">{{ scope.row.InstanceId }}</a>
             <p class="edit">{{ scope.row.InstanceName }}</p>
           </template>
@@ -20,21 +19,11 @@
             <div v-else-if="scope.row.State=='PENDING'" class="off_color">{{$t('CCN.tabs.hasAp')}}</div>
             <div v-else-if="scope.row.State=='EXPIRED'" class="close_color">{{$t('CCN.tabs.hasOu')}}</div>
             <div v-else-if="scope.row.State=='REJECTED'" class="close_color">{{$t('CCN.tabs.hasJ')}}</div>
-            <div
-              v-else-if="scope.row.State=='DELETED'"
-              class="close_color"
-            >{{$t('CCN.tabs.hasDel')}}</div>
+            <div v-else-if="scope.row.State=='DELETED'" class="close_color">{{$t('CCN.tabs.hasDel')}}</div>
             <div v-else-if="scope.row.State=='FAILED'" class="close_color">{{$t('CCN.tabs.error1')}}</div>
             <div v-else-if="scope.row.State=='ATTACHING'" class="off_color">{{$t('CCN.tabs.con1')}}</div>
-            <div
-              v-else-if="scope.row.State=='DETACHING'"
-              class="off_color"
-            >{{$t('CCN.tabs.uncon1')}}</div>
-            <div
-              v-else-if="scope.row.State=='DETACHFAILED'"
-              class="close_color"
-            >{{$t('CCN.tabs.unconer')}}</div>
-            <!-- <div v-else-if="scope.row.State==''" class="off_color"></div> -->
+            <div v-else-if="scope.row.State=='DETACHING'" class="off_color">{{$t('CCN.tabs.uncon1')}}</div>
+            <div v-else-if="scope.row.State=='DETACHFAILED'" class="close_color">{{$t('CCN.tabs.unconer')}}</div>
           </template>
         </el-table-column>
         <el-table-column prop="InstanceType" :label="$t('CCN.tabs.tab1tr3')" width>
@@ -85,23 +74,12 @@
                 </el-select>
               </td>
               <td>
-                <el-select
-                  v-model="form.instanceId"
-                  :placeholder="$t('CCN.tabs.select')"
-                  :no-data-text="$t('CCN.total.tdno')"
-                >
-                  <el-option
-                    v-for="(item, index) in vpcs"
-                    :key="index"
-                    :label="item.VpcId"
-                    :value="item.VpcId"
-                  >
+                <el-select v-model="form.instanceId" :placeholder="$t('CCN.tabs.select')"
+                  :no-data-text="$t('CCN.total.tdno')">
+                  <el-option v-for="(item, index) in vpcs" :key="index" :label="item.VpcId" :value="item.VpcId">
+                    <span v-if="item.VpcId ">{{item.VpcId + '(' +item.VpcName + '|' + item.CidrBlock + ')' }}</span>
                     <span
-                      v-if="item.VpcId "
-                    >{{item.VpcId + '(' +item.VpcName + '|' + item.CidrBlock + ')' }}</span>
-                    <span
-                      v-if="item.directConnectGatewayId"
-                    >{{item.directConnectGatewayId + '(' + item.directConnectGatewayName + '|' + item.vpcCidrBlock + ')' }}</span>
+                      v-if="item.directConnectGatewayId">{{item.directConnectGatewayId + '(' + item.directConnectGatewayName + '|' + item.vpcCidrBlock + ')' }}</span>
                   </el-option>
                 </el-select>
               </td>
@@ -126,268 +104,266 @@
 </template>
 
 <script>
-import VueCookie from "vue-cookie";
-import {
-  CCN_ATTACHEDINSTANCES_LIST,
-  DETACHCCN_INSTANCES,
-  VPCS_LIST,
-  DIRECTCONNECTGATEWAYS_LIST,
-  ATTACHCCN_INSTANCES
-} from "@/constants";
-export default {
-  data() {
-    return {
-      ccnId: "",
-      newVisible: false,
-      dialogVisible: false,
-      tableData: [], // 列表数据
-      // 解关联模态窗回显数据
-      instance: {
-        CcnId: "",
-        InstanceId: "",
-        InstanceRegion: "",
-        InstanceType: ""
-      },
-      // 添加关联实例，根据私有网络/专线网络查询VPC列表
-      vpcs: [],
-      // 添加关联实例表单
-      form: {
-        instanceType: "",
-        instanceRegion: localStorage.getItem("regionv2"),
-        instanceId: ""
-      },
-      value: "",
-      input: "",
+  import {
+    ErrorTips
+  } from '@/components/ErrorTips'
+  import {
+    CCN_ATTACHEDINSTANCES_LIST,
+    DETACHCCN_INSTANCES,
+    VPCS_LIST,
+    DIRECTCONNECTGATEWAYS_LIST,
+    ATTACHCCN_INSTANCES
+  } from "@/constants";
+  export default {
+    data() {
+      return {
+        ccnId: "",
+        newVisible: false,
+        dialogVisible: false,
+        tableData: [], // 列表数据
+        // 解关联模态窗回显数据
+        instance: {
+          CcnId: "",
+          InstanceId: "",
+          InstanceRegion: "",
+          InstanceType: ""
+        },
+        // 添加关联实例，根据私有网络/专线网络查询VPC列表
+        vpcs: [],
+        // 添加关联实例表单
+        form: {
+          instanceType: "",
+          instanceRegion: localStorage.getItem("regionv2"),
+          instanceId: ""
+        },
+        value: "",
+        input: "",
 
-      formInfoObj: {
-        key: undefined
-      },
-      formArr: [],
-      loadShow: false
-    };
-  },
-  watch: {
-    "form.instanceType": function(value) {
-      // console.log(value)
-      this.getInstanceIds(value);
-    }
-  },
-  created() {
-    this.ccnId = this.$route.query.ccnId;
-    this.getData();
-    this.formArr.push(this.formInfoObj);
-  },
-  methods: {
-    // 生产一个新的obj对象
-    copyObj: function() {
-      var des = {
-        key: undefined
+        formInfoObj: {
+          key: undefined
+        },
+        formArr: [],
+        loadShow: false
       };
-      return des;
     },
-    // 新增一行
-    addRow: function() {
-      var des = this.copyObj();
-      this.formArr.push(des);
-    },
-    // 删除一行
-    removeRow: function(idx) {
-      this.formArr.splice(idx, 1);
-    },
-    // 初始化数据
-    getData: function() {
-      this.loadShow = true;
-      var params = {
-        Version: "2017-03-12",
-        Region: localStorage.getItem("regionv2"),
-        CcnId: this.ccnId
-      };
-      // 查询关联实例列表
-      this.axios.post(CCN_ATTACHEDINSTANCES_LIST, params).then(res => {
-        this.tableData = res.Response.InstanceSet;
-        this.total = res.Response.TotalCount;
-        this.loadShow = false;
-      });
-    },
-    // 解除关联模态窗-回显数据
-    delCcnIns: function(ins) {
-      this.instance.CcnId = ins.CcnId;
-      this.instance.InstanceId = ins.InstanceId;
-      this.instance.InstanceRegion = ins.InstanceRegion;
-      this.instance.InstanceType = ins.InstanceType;
-      this.dialogVisible = true;
-    },
-    doDelCcnIns: function() {
-      var params = {
-        Version: "2017-03-12",
-        Region: localStorage.getItem("regionv2"),
-        CcnId: this.instance.CcnId,
-        "Instances.0.InstanceId": this.instance.InstanceId,
-        "Instances.0.InstanceRegion": this.instance.InstanceRegion,
-        "Instances.0.InstanceType": this.instance.InstanceType
-      };
-      this.axios.post(DETACHCCN_INSTANCES, params).then(res => {
-        if (res.Response.Error == undefined) {
-          this.$message({
-            message: "刪除成功",
-            type: "success",
-            showClose: true,
-            duration: 0
-          });
-        } else {
-          this.$message({
-            message: res.Response.Error.Message,
-            type: "error",
-            showClose: true,
-            duration: 0
-          });
-        }
-        this.getData();
-      });
-      this.dialogVisible = false;
-    },
-    // 查询instanceId
-    getInstanceIds: function(instanceType) {
-      var params = {
-        Version: "2017-03-12",
-        Region: localStorage.getItem("regionv2")
-      };
-      if (instanceType == "VPC") {
-        // 私有网络
-        this.axios.post(VPCS_LIST, params).then(res => {
-          this.vpcs = res.Response.VpcSet;
-        });
-      } else if (instanceType == "DIRECTCONNECT") {
-        const info = {
-          networkType: "CCN"
-        };
-        // 专线网络
-        this.axios.post(DIRECTCONNECTGATEWAYS_LIST, info).then(res => {
-          this.vpcs = res.data;
-        });
+    watch: {
+      "form.instanceType"(value) {
+        this.getInstanceIds(value);
       }
-      // 过滤已存在的实例数据(需要等待上面的接口调用完成再执行)
-      setTimeout(() => {
-        this.vpcs = this.vpcs.filter(item => {
-          let vpcIdList = this.tableData.map(v => v.InstanceId);
-          return !vpcIdList.includes(item.VpcId);
-        });
-      }, 1000);
     },
-    // 新增关联实例
-    attCcnIns: function(ins) {
-      if (!ins.instanceType) {
-        this.$message({
-          message: "請選擇私有網路",
-          showClose: true,
-          duration: 0
-        });
-      } else if (!ins.instanceId) {
-        this.$message({
-          message: "請選擇VPC",
-          showClose: true,
-          duration: 0
-        });
-      } else {
-        this.loading = true;
-        // 关联实例
+    created() {
+      this.ccnId = this.$route.query.ccnId;
+      this.getData();
+      this.formArr.push(this.formInfoObj);
+    },
+    methods: {
+      // 初始化数据
+      getData() {
+        this.loadShow = true;
         var params = {
           Version: "2017-03-12",
           Region: localStorage.getItem("regionv2"),
-          CcnId: this.ccnId,
-          "Instances.0.InstanceId": ins.instanceId,
-          "Instances.0.InstanceRegion": ins.instanceRegion,
-          "Instances.0.InstanceType": ins.instanceType
+          CcnId: this.ccnId
         };
-        this.axios.post(ATTACHCCN_INSTANCES, params).then(res => {
+        // 查询关联实例列表
+        this.axios.post(CCN_ATTACHEDINSTANCES_LIST, params).then(res => {
+          this.tableData = res.Response.InstanceSet;
+          this.total = res.Response.TotalCount;
+          this.loadShow = false;
+        });
+      },
+      // 解除关联模态窗-回显数据
+      delCcnIns(ins) {
+        this.instance.CcnId = ins.CcnId;
+        this.instance.InstanceId = ins.InstanceId;
+        this.instance.InstanceRegion = ins.InstanceRegion;
+        this.instance.InstanceType = ins.InstanceType;
+        this.dialogVisible = true;
+      },
+      doDelCcnIns() {
+        var params = {
+          Version: "2017-03-12",
+          Region: localStorage.getItem("regionv2"),
+          CcnId: this.instance.CcnId,
+          "Instances.0.InstanceId": this.instance.InstanceId,
+          "Instances.0.InstanceRegion": this.instance.InstanceRegion,
+          "Instances.0.InstanceType": this.instance.InstanceType
+        };
+        this.axios.post(DETACHCCN_INSTANCES, params).then(res => {
           if (res.Response.Error == undefined) {
             this.$message({
-              message: "新增成功",
+              message: "刪除成功",
               type: "success",
               showClose: true,
               duration: 0
             });
           } else {
-            this.$message.error(res.Response.Error.Message);
+            this.$message({
+              message: res.Response.Error.Message,
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
           }
           this.getData();
         });
-        this.newVisible = false;
-        this.form = {
-          instanceType: "",
-          instanceRegion: localStorage.getItem("regionv2"),
-          instanceId: ""
+        this.dialogVisible = false;
+      },
+      // 查询instanceId
+      getInstanceIds(instanceType) {
+        var params = {
+          Version: "2017-03-12",
+          Region: localStorage.getItem("regionv2")
         };
+        if (instanceType == "VPC") {
+          // 私有网络
+          this.axios.post(VPCS_LIST, params).then(res => {
+            this.vpcs = res.Response.VpcSet;
+          });
+        } else if (instanceType == "DIRECTCONNECT") {
+          const info = {
+            networkType: "CCN"
+          };
+          // 专线网络
+          this.axios.post(DIRECTCONNECTGATEWAYS_LIST, info).then(res => {
+            this.vpcs = res.data;
+          });
+        }
+        // 过滤已存在的实例数据(需要等待上面的接口调用完成再执行)
+        setTimeout(() => {
+          this.vpcs = this.vpcs.filter(item => {
+            let vpcIdList = this.tableData.map(v => v.InstanceId);
+            return !vpcIdList.includes(item.VpcId);
+          });
+        }, 1000);
+      },
+      // 新增关联实例
+      attCcnIns(ins) {
+        if (!ins.instanceType) {
+          this.$message({
+            message: "請選擇私有網路",
+            showClose: true,
+            duration: 0
+          });
+        } else if (!ins.instanceId) {
+          this.$message({
+            message: "請選擇VPC",
+            showClose: true,
+            duration: 0
+          });
+        } else {
+          this.loading = true;
+          // 关联实例
+          var params = {
+            Version: "2017-03-12",
+            Region: localStorage.getItem("regionv2"),
+            CcnId: this.ccnId,
+            "Instances.0.InstanceId": ins.instanceId,
+            "Instances.0.InstanceRegion": ins.instanceRegion,
+            "Instances.0.InstanceType": ins.instanceType
+          };
+          this.axios.post(ATTACHCCN_INSTANCES, params).then(res => {
+            if (res.Response.Error == undefined) {
+              this.$message({
+                message: "新增成功",
+                type: "success",
+                showClose: true,
+                duration: 0
+              });
+            } else {
+              this.$message.error(res.Response.Error.Message);
+            }
+            this.getData();
+          });
+          this.newVisible = false;
+          this.form = {
+            instanceType: "",
+            instanceRegion: localStorage.getItem("regionv2"),
+            instanceId: ""
+          };
+        }
       }
     }
-  }
-};
+  };
+
 </script>
 <style lang="scss">
-.el-select {
-  .el-input__inner {
-    height: 30px !important;
+  .el-select {
+    .el-input__inner {
+      height: 30px !important;
+    }
   }
-}
+
 </style>
 <style lang='scss' scoped>
-.tabOne {
-  .btn {
-    .el-button {
-      height: 30px;
-      background-color: #006eff;
-      color: #fff;
-      border: 1px solid #006eff;
-      line-height: 0px;
-      border-radius: 0px;
-      font-size: 12px !important;
-      padding: 10px 15px;
-    }
-    .el-button.is-plain:hover {
-      background-color: #0063e5;
-      color: #fff;
-      border: 1px solid #0063e5;
-    }
-  }
-  .table {
-    margin-top: 10px;
-    min-height: 450px;
-    background: #fff;
-    .cell {
+  .tabOne {
+    .btn {
       .el-button {
-        padding: 0;
+        height: 30px;
+        background-color: #006eff;
+        color: #fff;
+        border: 1px solid #006eff;
+        line-height: 0px;
+        border-radius: 0px;
+        font-size: 12px !important;
+        padding: 10px 15px;
+      }
+
+      .el-button.is-plain:hover {
+        background-color: #0063e5;
+        color: #fff;
+        border: 1px solid #0063e5;
       }
     }
-    .close_color {
-      color: #e54545;
-    }
-    .off_color {
-      color: #0abf5b;
-    }
-  }
-  .newDialog {
-    span {
-      color: #444;
-    }
-    .body-con {
+
+    .table {
       margin-top: 10px;
-      .tr-con {
-        display: table;
-        width: 100%;
-        padding: 10px;
-        box-sizing: border-box;
-        margin-bottom: 10px;
-        background-color: #f7f7f7;
+      min-height: 450px;
+      background: #fff;
+
+      .cell {
+        .el-button {
+          padding: 0;
+        }
+      }
+
+      .close_color {
+        color: #e54545;
+      }
+
+      .off_color {
+        color: #0abf5b;
+      }
+    }
+
+    .newDialog {
+      span {
+        color: #444;
+      }
+
+      .body-con {
+        margin-top: 10px;
+
+        .tr-con {
+          display: table;
+          width: 100%;
+          padding: 10px;
+          box-sizing: border-box;
+          margin-bottom: 10px;
+          background-color: #f7f7f7;
+        }
+      }
+    }
+
+    .dialog-footer {
+      text-align: center;
+
+      .el-button {
+        height: 30px;
+        line-height: 6px;
+        border-radius: 0px;
       }
     }
   }
-  .dialog-footer {
-    text-align: center;
-    .el-button {
-      height: 30px;
-      line-height: 6px;
-      border-radius: 0px;
-    }
-  }
-}
+
 </style>
