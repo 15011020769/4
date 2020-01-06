@@ -150,9 +150,9 @@ export default {
 .explain {
   padding: 10px 30px 10px 20px;
   vertical-align: middle;
-  color: #003b80;
-  border: 1px solid #97c7ff;
-  background: pink;
+  color: #c07400;
+  border:1px solid  #ffd18b;
+  background: #fff4e3;
   p {
     font-size: 11px;
     line-height: 18px;

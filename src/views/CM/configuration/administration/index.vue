@@ -25,9 +25,9 @@
         <div class="box_form">
           <p>指标</p>
           <div class="box_formtable">
-            <el-table :data="tableData" style="width: 100%" height="200">
-              <el-table-column prop="date" label="指标" width="180"></el-table-column>
-              <el-table-column prop="name" label="指标中文" width="180"></el-table-column>
+            <el-table :data="tableDatas" style="width: 100%" height="200">
+              <el-table-column prop="date" label="指标" ></el-table-column>
+              <el-table-column prop="name" label="指标中文" ></el-table-column>
               <el-table-column prop="address" label="单位">%</el-table-column>
             </el-table>
           </div>
@@ -53,7 +53,7 @@
               <div class="tab_right">
                 <h2>指标统计方式</h2>
                 <p class="page_first">
-                  <el-button type="primary">配置指标</el-button>
+                  <el-button type="primary" @click="pageindex">配置指标</el-button>
                 </p>
                 <el-table :data="tableData" style="width: 100%" height="100">
                   <el-table-column prop="address" label="指标" width="180"></el-table-column>
@@ -65,7 +65,7 @@
                   <p>以此为通用告警管理，如需要对特定的监控对象配置告警规则和告警接收组，请至监控对象详情页进行配置。</p>
                 </div>
                 <p class="page_nav">
-                  <el-button type="primary" size="small">配置告警</el-button>
+                  <el-button type="primary" size="small" @click="warings">配置告警</el-button>
                 </p>
                 <el-table :data="tableData" style="width: 100%" height="450">
                   <el-table-column prop="address" label="指标" width="180"></el-table-column>
@@ -80,7 +80,7 @@
               <div class="tab_right">
                 <h2>指标统计方式</h2>
                 <p class="page_first">
-                  <el-button type="primary">配置指标</el-button>
+                  <el-button type="primary" @click="pageindex">配置指标</el-button>
                 </p>
                 <el-table :data="tableData" style="width: 100%" height="100">
                   <el-table-column prop="address" label="指标" width="180"></el-table-column>
@@ -92,7 +92,7 @@
                   <p>以此为通用告警管理，如需要对特定的监控对象配置告警规则和告警接收组，请至监控对象详情页进行配置。</p>
                 </div>
                 <p class="page_nav">
-                  <el-button type="primary" size="small">配置告警</el-button>
+                  <el-button type="primary" size="small" @click="warings">配置告警</el-button>
                 </p>
                 <el-table :data="tableData" style="width: 100%" height="450">
                   <el-table-column prop="address" label="指标" width="180"></el-table-column>
@@ -102,17 +102,22 @@
                 </el-table>
               </div>
             </el-tab-pane>
-            <!-- <el-tab-pane label="新增聚合维度"  @click="addTab(editableTabsValue)" style="margin-top:20px">新增聚合维度</el-tab-pane> -->
+            <el-button @click="addTab" style="margin-top:20px">新增聚合维度</el-button>
           </el-tabs>
         </div>
       </div>
     </div>
+    <Pageindex :dialogVisible="dialogVisible" @cancel="cancel" @save="save"></Pageindex>
+    <warings :dialogVisibles="dialogVisibles" @dele="dele" @yes="yes"/>
+    <!-- <Newoage :dialogVisiblenew="dialogVisiblenew" @deletes="deletes" @shows="shows"/> -->
   </div>
 </template>
 
 <script>
 import Header from "@/components/public/Head";
-// import Custom from "./custom/custom"
+import Pageindex from "../pageindex/index.vue";
+import Warings from "../warings/index.vue"
+// import Newpage from "../newpage/index.vue"
 export default {
   name: "admin",
   data() {
@@ -122,6 +127,8 @@ export default {
       activeName: "first",
       value: 1,
       dialogVisible: false, //新增配置弹框
+      dialogVisibles: false,
+      // dialogVisiblenew: false,
       input: "", //搜索框的值
       tableData: [],
       //city选择
@@ -129,46 +136,59 @@ export default {
       values: "",
       //管理表格
       editableTabsValue: "2",
-      tableData: []
+      tableDatas: [{
+          date:"aa",
+          name:"内存",
+          address:"%"
+      }]
     };
   },
   components: {
-    Header
-    // Custom,
+    Header,
+    Pageindex,
+    Warings,
+    // Newpage
   },
   methods: {
-    handleTabsEdit(targetName, action) {
-      if (action === "add") {
-        let newTabName = ++this.tabIndex + "";
-        this.editableTabs.push({
-          title: "New Tab",
-          name: newTabName,
-          content: "New Tab content"
-        });
-        this.editableTabsValue = newTabName;
-      }
-      if (action === "remove") {
-        let tabs = this.editableTabs;
-        let activeName = this.editableTabsValue;
-        if (activeName === targetName) {
-          tabs.forEach((tab, index) => {
-            if (tab.name === targetName) {
-              let nextTab = tabs[index + 1] || tabs[index - 1];
-              if (nextTab) {
-                activeName = nextTab.name;
-              }
-            }
-          });
-        }
-        this.editableTabsValue = activeName;
-        this.editableTabs = tabs.filter(tab => tab.name !== targetName);
-      }
-    }
+    pageindex(){
+       this.dialogVisible = true;
+    },
+    warings(){
+      this.dialogVisibles = true;
+    },
+    addtab(){
+      this.dialogVisiblenew = true;
+    },
+    cancel(){
+      this.dialogVisible = false;
+    },
+    save(){
+      this.dialogVisible = false;
+    },
+    dele(){
+      this.dialogVisibles = false;
+    },
+    yes(){
+      this.dialogVisibles = false;
+    },
+    // deletes(){
+    //   this.dialogVisiblenew = false;
+    // },
+    // shows(){
+    //   this.dialogVisiblenew = false;
+    // },
+
   }
 };
 </script>
 
 <style lang="scss" scoped>
+.admin-wrap >>> .el-button{
+    height: 30px;
+    line-height: 0px;
+    border-radius: 0;
+    cursor: pointer;
+}
 .admin-wrap >>> .el-select {
   margin-left: 20px;
   border: 0px;
@@ -176,13 +196,24 @@ export default {
 .el-tabs {
   border: 0;
 }
+.admin-wrap >>> .el-tabs--left .el-tabs__active-bar.is-left, .el-tabs--left .el-tabs__nav-wrap.is-left::after{
+    right:1;
+    left:none;
+}
 .el-tabs >>> .el-tabs__item {
-  border: 1px solid #9c9c9c;
+    border: 1px solid #dce0e8;
+    border-bottom: 0;
+    padding-left:22px;
+    font-size: 14px;
+    cursor: pointer;
 }
 
-.el-tabs >>> .is-active {
-  border-left: 3px solid red;
-  border-right: 0;
+.el-tabs >>> .is-active{
+    color: #0071cc;
+    border-left: 3px solid #2277da;
+    padding-left: 20px;
+    border-right-color: #fff;
+    // border-bottom: 0;
 }
 .box {
   background: white;
@@ -191,20 +222,26 @@ export default {
   .box_send,.box_dime {
     display: flex;
     margin: 25px 0;
-    font-size: 14px;
+    font-size: 13px;
     p {
       width: 100px;
     }
   }
   .box_first {
       display: flex;
+      margin-top:20px;
     h3 {
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 600;
+      font-family: "微软雅黑";
+    
       margin-right: 26px;
     }
     span {
       font-size: 15px;
+      a:hover{
+          cursor: pointer;
+      }
     }
   }
   .box_form {
@@ -217,6 +254,7 @@ export default {
   .box_formtable {
     width: 80%;
     border: 1px solid #ccc;
+    border-bottom:0;
   }
 }
 .indexdetail {
@@ -235,6 +273,8 @@ export default {
       padding: 20px 20px;
       h2 {
         margin: 0 -20px;
+        font-weight: 600;
+        font-size: 14px;
       }
       .page_first >>> .el-button {
         margin: 20px -20px;
@@ -246,11 +286,11 @@ export default {
   padding: 20px;
 }
 .explain {
-  padding: 10px 30px 10px 20px;
-  vertical-align: middle;
-  color: #003b80;
-  border: 1px solid #97c7ff;
-  background: pink;
+    padding: 10px 30px 10px 20px;
+    vertical-align: middle;
+    color: #003b80;
+    border: 1px solid #97c7ff;
+    background: #e5f0ff;
   p {
     font-size: 11px;
     line-height: 18px;
@@ -259,9 +299,9 @@ export default {
 .explains {
   padding: 10px 30px 10px 20px;
   vertical-align: middle;
-  color: #003b80;
-  border: 1px solid #97c7ff;
-  background: pink;
+      color: #003b80;
+    border: 1px solid #97c7ff;
+    background: #e5f0ff;
   margin: 0 -20px;
   p {
     font-size: 11px;
@@ -270,18 +310,18 @@ export default {
 }
 .el-tabs >>> .el-tabs__item {
   width: 300px;
-  height: 50px;
-  text-align: left;
+  height: 62px;
+  text-align: left;line-height: 62px;
 }
 .el-tabs--left.el-tabs__nav-wrap.is-left::after {
   left: "";
 }
 .page_nav {
-  width: 100%;
-  background: #cfcfcf;
-  margin: 0 -20px;
-  > .el-button {
-    margin: 0 0 10px 0;
-  }
+    width: 110%;
+    background-color: #f2f2f2;
+    margin: 0 -20px;
+    >.el-button {
+        margin: 0 0 10px 0;
+    }
 }
 </style>  
