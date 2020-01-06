@@ -43,7 +43,7 @@
       <hr>
       <div class="tke-reminder">当您使用容器服务时，需要先创建集群，容器服务运行在集群中。一个集群由若干节点（云服务器）构成，可运行多个容器服务。集群的更多说明参考<a href="#">集群概述</a></div>
 
-      <div class="tke-content tke-formpanel-wrap">
+      <div class="tke-card tke-formpanel-wrap">
         <el-form  class="tke-form" :model="colony" label-position='left' label-width="120px" size="mini">
           <el-form-item label="集群名称">
             <el-input class="w200" v-model="colony.name" placeholder="请输入集群名称，不超过60个字符"></el-input>
@@ -446,7 +446,7 @@ export default {
     margin-right: 20px;
   } 
 }
-.tke-content{
+.tke-card{
   background-color: #fff;
   box-shadow: 0 2px 3px 0 rgba(0,0,0,.2);
   margin-left: auto;

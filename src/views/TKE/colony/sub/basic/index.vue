@@ -1,7 +1,113 @@
  <!-- 基本信息 -->
 <template>
   <div >
-    <p>basic</p>
+    <h4 class="tke-sub-title">基本信息</h4>
+
+
+    <el-row :gutter="20" class="mt20" style="display:flex;  align-items: stretch;">
+      <el-col :span="12">
+        <div class="tke-card tke-formpanel-wrap">
+          <h4 class="tke-formpanel-title">集群信息</h4>
+          <el-form  class="tke-form"  label-position='left' label-width="130px" size="mini">
+            <el-form-item label="集群名称">
+              <div class="tke-form-item_text"><span>tfydb</span><i class="el-icon-edit"></i></div>
+            </el-form-item>
+            <el-form-item label="集群ID">
+              <div class="tke-form-item_text"><span>cls-gwblk71e</span></div>
+            </el-form-item>
+            <el-form-item label="部署类型">
+              <div class="tke-form-item_text"><span>托管集群</span></div>
+            </el-form-item>
+            <el-form-item label="状态">
+              <div class="tke-form-item_text"><span>运行中</span></div>
+            </el-form-item>
+            <el-form-item label="所在地域">
+              <div class="tke-form-item_text"><span>港澳台地区(中国台北)</span></div>
+            </el-form-item>
+            <el-form-item label="新增资源所属项目">
+              <div class="tke-form-item_text"><span>1111</span><i class="el-icon-edit"></i></div>
+            </el-form-item>
+            <el-form-item label="kubernetes版本">
+              <div class="tke-form-item_text">
+                <p>Master</p>
+                <p>Node</p>
+              </div>
+            </el-form-item>
+            <el-form-item label="运行时组件">
+              <div class="tke-form-item_text"><span>docker</span></div>
+            </el-form-item>
+            <el-form-item label="集群描述">
+              <div class="tke-form-item_text"><span>tfydbtfydb</span><i class="el-icon-edit"></i></div>
+            </el-form-item>
+            <el-form-item label="创建时间">
+              <div class="tke-form-item_text"><span>2020-01-02 14:01:57</span></div>
+            </el-form-item>
+          </el-form>
+        </div>
+
+      </el-col>
+      <el-col :span="12">
+        <div class="tke-card tke-formpanel-wrap">
+          <h4 class="tke-formpanel-title">节点和网络信息</h4>
+          <el-form  class="tke-form"  label-position='left' label-width="130px" size="mini">
+            <el-form-item label="节点数量">
+              <div class="tke-form-item_text"><span>1个</span></div>
+            </el-form-item>
+            <el-form-item label="默认操作系统">
+              <div class="tke-form-item_text"><span>ubuntu16.04.1 LTSx86_64</span><i class="el-icon-edit"></i></div>
+            </el-form-item>
+            
+            <el-form-item label="系统镜像来源">
+              <div class="tke-form-item_text"><span>公共镜像 - 基础镜像</span></div>
+            </el-form-item>
+            <el-form-item label="网络节点">
+              <div class="tke-form-item_text"><span><a href="#">vpc-6whh21qa</a></span></div>
+            </el-form-item>
+            <el-form-item label="容器网络">
+              <div class="tke-form-item_text">
+                <p>172.16.0.0/16</p>
+                <p>1024个Service/集群，64个Pod/节点,1008个节点/集群</p>
+              </div>
+            </el-form-item>
+            <el-form-item label="网络模式">
+              <div class="tke-form-item_text"><span>cni</span></div>
+            </el-form-item>
+            <el-form-item label="云联网">
+              <div class="tke-form-item_text"><span>docker</span></div>
+            </el-form-item>
+            <el-form-item label="ipvs支持">
+              <div class="tke-form-item_text"><span>未开启</span></div>
+            </el-form-item>
+          </el-form>
+        </div>
+      </el-col>
+    </el-row>
+    
+    <div class="tke-card tke-formpanel-wrap mt10">
+      <h4 class="tke-formpanel-title">集群APIServer信息</h4>
+      <el-form  class="tke-form"  label-position='left' label-width="130px" size="mini">
+        <el-form-item label="访问地址">
+          <div class="tke-form-item_text"><span>https://cls-gwblk71e.ccs.tencent-cloud.com</span></div>
+        </el-form-item>
+        <el-form-item label="外网访问">
+          <div class="tke-form-item_text"><span>未开启</span></div>
+        </el-form-item>
+        
+        <el-form-item label="内网访问">
+          <div class="tke-form-item_text"><span>未开启</span></div>
+        </el-form-item>
+        <el-form-item label="Kubeconfig">
+          <div class="tke-form-item_text">1111</div>
+        </el-form-item>
+      </el-form>
+      <hr>
+      <div style='line-height:1.5'>
+        <p><strong>通过Kubectl连接Kubernetes集群操作说明:</strong></p>
+        <p class="mt10">1.安装Kubectl客户端：从Kubernetes版本页面下载最新的kubectl客户端，并安装和设置kubectl客户端，具体可参考安装和设置kubectl。</p>
+        <p>2.配置Kubeconfig：复制上方Kubeconfig访问凭证内容，替换 $HOME/.kube/config 内已有内容；或下载该kubeconfig至指定位置，并配置环境变量： KUBECONFIG=$HOME/.kube/config:cls-gwblk71e-config。</p>
+        <p>3.完成以上配置即可使用kubectl访问Kubernetes集群。如果无法连接请查看是否已经开启公网访问或内网访问入口，并确保访问客户端在指定的网络环境内。</p>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -35,7 +141,56 @@ export default {
 </script>
 
 <style lang="scss" tke-formpanel>
+.tke-sub-title{
+    font-size: 16px;
+    font-weight: 700;
+    color: #000;
+}
+.mt10{
+  margin-top: 10px;
+}
+.mt20{
+  margin-top: 20px;
+}
+hr{
+  padding: 0;
+    border: none;
+    border-bottom: 1px solid #ddd;
+    margin: 20px 0;
+}
 
+.tke-card{
+  background-color: #fff;
+  box-shadow: 0 2px 3px 0 rgba(0,0,0,.2);
+  box-sizing: border-box;
+  height: 100%;
+}
+.tke-formpanel-wrap{
+  padding: 20px;
+  .tke-formpanel-title{
+    font-size: 14px;
+    font-weight: 700;
+    color: #000;
+    margin-bottom: 20px;
+  }
+}
+.tke-form {
+  
+  .el-form-item__label,.el-form-item__content{
+    font-size: 12px;
+    color: #888;
+  }
+  .tke-form-item_text{
+    font-size: 12px;
+    color: #444;
+  }
+  .el-icon-edit{
+    margin-left: 5px;
+    vertical-align: middle;
+    cursor: pointer;
+  }
+  
+}
 
 </style>
 
