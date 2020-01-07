@@ -37,7 +37,7 @@
               :class="{'logActive': logIndex == index}"
             >
               <span>{{item.time}}</span>
-              <span>{{item.status}}</span>
+              <span :class="{successStyle:item.status=='调用成功'}">{{item.status}}</span>
             </li>
           </ul>
         </div>
@@ -103,7 +103,9 @@ export default {
       logData: {
         Data: []
       },
-      logList: []
+      logList: [],
+      startTime:'',
+      endTime:'',
     };
   },
   created() {
@@ -128,6 +130,10 @@ export default {
       ipt2.value = end
         .toLocaleString("chinese", { hour12: false })
         .replace(/\//g, "-");
+      this.startTime= ipt1.value ;
+      this.endTime=ipt2.value;
+      console.log(this.startTime)
+      console.log(this.endTime)
     },
     reset() {
       this.logStatus = "allLog";
@@ -139,7 +145,8 @@ export default {
       let params = {
         Action: "GetFunctionLogs",
         Version: "2018-04-16",
-        Region: 'ap-guangzhou',//_this.$cookie.get("regionv2")
+        Region: localStorage.getItem('regionv2'),
+        // Region: 'ap-guangzhou',//_this.$cookie.get("regionv2")
       };
       let functionName = this.$route.query.functionName;
       if (functionName != "" && functionName != null) {
@@ -190,7 +197,8 @@ export default {
       let params = {
         Action: "GetFunctionLogs",
         Version: "2018-04-16",
-        Region: 'ap-guangzhou',//_this.$cookie.get("regionv2"),
+        Region: localStorage.getItem('regionv2'),
+        // Region: 'ap-guangzhou',//_this.$cookie.get("regionv2"),
         StartTime: this.formatDateTime(val[0].getTime()),
         EndTime: this.formatDateTime(val[1].getTime())
       };
@@ -219,6 +227,7 @@ export default {
 };
 </script>
 <style lang="scss">
+
 .topChoseTime {
   margin-bottom: 12px;
   .chooseSelect {
@@ -254,10 +263,12 @@ export default {
   .leftConList {
     float: left;
     width: 370px;
+    background: #fff;
     border-right: 1px solid #ddd;
     height: 690px;
     overflow-y: scroll;
     ul {
+     
       li {
         width: 100%;
         height: 50px;
@@ -268,6 +279,7 @@ export default {
         span:nth-child(1) {
           margin-right: 110px;
         }
+        
       }
     }
   }
@@ -276,6 +288,7 @@ export default {
     width: calc(100% - 371px);
     min-height: 500px;
     padding: 10px 20px;
+    background: #fff;
     p {
       margin-bottom: 10px;
       font-size: 14px;
@@ -298,7 +311,8 @@ export default {
       border-left: 11px solid rgb(210, 231, 247);
       min-height: 600px;
       background-color: rgb(242, 242, 242);
-      padding: 12px;
+      padding: 12px 12px 20px;
+      overflow: auto;
       div {
         h1 {
           font-size: 14px;
@@ -315,5 +329,8 @@ export default {
   .logActive {
     background-color: #e5e5e5;
   }
+   .successStyle{
+           color:#0ABF5B ;
+     }
 }
 </style>
