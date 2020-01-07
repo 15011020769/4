@@ -44,6 +44,7 @@
       <div class="tke-card">
         <el-table
           :data="list"
+          v-loading="loadShow"
           style="width: 100%">
           <el-table-column
             label="ID/名称"
@@ -163,6 +164,7 @@
 // import FileSaver from "file-saver";
 // import XLSX from "xlsx";
 import Loading from "@/components/public/Loading";
+
 import {
     ALL_CITY,
     ALL_PROJECT,
@@ -173,6 +175,7 @@ export default {
   name: "colony",
   data() {
     return {
+      loadShow: true, //加载是否显示
       list:[], //集群列表
       total:0,
       pageSize:10,
@@ -213,9 +216,12 @@ export default {
     this._region();
     this.getColonyList();
   },
+  mounted() {
+  },
   methods: {
     // 获取集群列表
     async getColonyList() {
+      this.loadShow = true;
       let params = {
         Version:'2018-05-25',
         Limit:this.pageSize,
@@ -238,6 +244,7 @@ export default {
         }
         this.list=res.Response.Clusters;
         console.log(this.list)
+        this.loadShow = false;
       }
     },
     // 获取集群列表状态(不对外单独提供文档,所以无法实现)
