@@ -32,7 +32,7 @@
                   class="setSelectM"
                   @change="cleanThreshold"
                 >
-                  <el-option
+                  <el-option 
                     v-for="(item, index) in cleanNumOption"
                     :label="item.label"
                     :value="item.value"
@@ -99,7 +99,7 @@
               <el-dialog
                 :title="$t('DDOS.protectCon.toggloose')"
                 :visible.sync="changeModelTip1"
-                width="30%"
+                width="30%" 
                 :append-to-body="true"
                 :before-close="changeCloseTip1"
               >
@@ -245,6 +245,7 @@ export default {
   },
   created() {
     this.GetID(); //获取ID
+    this.GETSPolicy();//获取DDoS高级策略
   },
   methods: {
     //获取ID
@@ -255,7 +256,9 @@ export default {
       };
       this.axios.post(GET_ID, params).then(res => {
         this.resourceId = res.Response.Resource[0].Id;
+        console.log(this.resourceId )
         this.GETStatus(); // 获取DDoS防护状态
+        
       });
     },
     // 获取DDoS高级策略
@@ -266,6 +269,7 @@ export default {
       };
       this.axios.post(GET_SPolicy, params).then(res => {
         this.topFun = res.Response.DDosPolicyList[0].PolicyName;
+        // console.log(this.topFun)
       });
     },
     // 获取DDoS防护状态
@@ -276,9 +280,7 @@ export default {
         Id: this.resourceId
       };
       this.axios.post(GET_Status, params).then(res => {
-
         this.ShowFlag = res.Response.ShowFlag;
-        console.log( this.ShowFlag )
         if (res.Response.DefendStatus == 0) {
           this.servicePack.DefendStatus = false;
         }
@@ -304,7 +306,7 @@ export default {
     },
     //选择防护等级
     clickGarden(typeNum, type) {
-      // this.changeModel = false;
+      this.changeModel = false;
       if (typeNum == 3) {
         this.changeModelTip3 = true;
         this.tabMode = "high";
@@ -484,6 +486,7 @@ export default {
   a{
     display: inline-block;
     margin: 0 20px;
+    color:#000;
   }
   .modelSpan1 {
     width: 120px;
@@ -526,11 +529,10 @@ export default {
       span:nth-child(2).modelSpan2 {
         .gardenChoose {
           padding: 0 20px;
-          color: #000;
           font-size: 12px;
         }
         .seceltGarden {
-          color: #006eff !important;
+          color: #006eff;
         }
       }
     }

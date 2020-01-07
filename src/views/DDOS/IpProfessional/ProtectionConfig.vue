@@ -22,7 +22,6 @@
             <el-button class="el-icon-search" @click="doFilter"></el-button>
           </div>
           <div class="mainTable">
-            {{tableDataBegin}}
             <el-table
               :data="tableDataBegin.slice((currentPage-1)*pageSize,currentPage*pageSize)"
               v-loading="loading"
@@ -30,7 +29,7 @@
               <el-table-column prop="Record.Id" :label="$t('DDOS.Proteccon_figura.Id_name')">
                 <template slot-scope="scope">
                   <div v-for="(item, index) in scope.row.Record" :key="index">
-                    <div v-if="item.Key=='Id'">{{item.Value}}</div>
+                    <div v-if="item.Key=='Id'">{{item.Value}}</div>  <!-- ID名称-->
                     <!-- <a v-if="item.Key=='Id'" href="#" @click="toDetail(scope.$index, scope.row)">{{item.Value}}</a> -->
                   </div>
                 </template>
@@ -38,17 +37,19 @@
               <el-table-column prop="Record.GroupIpList" label="IP">
                 <template slot-scope="scope">
                   <div v-for="(item, index) in scope.row.Record" :key="index">
-                    <div v-if="item.Key=='GroupIpList'">{{item.Value}}</div>
+                    <div v-if="item.Key=='GroupIpList'">{{item.Value}}</div>  <!-- IP地址-->
                   </div>
                 </template>
               </el-table-column>
+
               <el-table-column prop="origin" :label="$t('DDOS.Proteccon_figura.region')">
                 <template slot-scope="scope">
                   <div v-for="(item, index) in scope.row.Record" :key="index">
-                    <div v-if="item.Key=='Id'">-</div>
+                    <div v-if="item.Key=='Id'">中国台湾</div>   <!--地区：中国台湾 -->
                   </div>
                 </template>
               </el-table-column>
+
               <el-table-column
                 prop="Record.DefendStatus"
                 :label="$t('DDOS.Proteccon_figura.Protection_state')"
@@ -60,6 +61,7 @@
                   </div>
                 </template>
               </el-table-column>
+
               <el-table-column prop="Record.DdosThreshold" label="清洗阈值">
                 <template slot-scope="scope">
                   <div v-for="(item, index) in scope.row.Record" :key="index">
@@ -67,37 +69,39 @@
                   </div>
                 </template>
               </el-table-column>
+
               <el-table-column
-                prop="saveGarden"
+                prop="saveGardenText"
                 :label="$t('DDOS.Proteccon_figura.Protection_level')"
               >
                 <template slot-scope="scope">
                   <div v-for="(item, index) in scope.row.Record" :key="index">
-                    <div v-if="item.Key=='Id'">-</div>
+                    <div v-if="item.Key=='saveGardenText'">{{item.Value}}</div>  <!--防护等级 -->
                   </div>
                 </template>
               </el-table-column>
+
               <el-table-column
                 prop="BusinessScene"
                 :label="$t('DDOS.Proteccon_figura.Business_scenario')"
               >
                 <template slot-scope="scope">
                   <div v-for="(item, index) in scope.row.Record" :key="index">
-                    <div v-if="item.Key=='Id'">-</div>
+                    <div v-if="item.Key=='Id'">-</div>   <!--业务场景 -->
                   </div>
                 </template>
               </el-table-column>
-            
               <el-table-column
-                prop="advanced"
+                prop="Record.advanced"
                 :label="$t('DDOS.Proteccon_figura.Advanced_strategy')"
               >
                 <template slot-scope="scope">
                   <div v-for="(item, index) in scope.row.Record" :key="index">
-                    <div v-if="item.Key=='Id'">-</div>
+                    <div v-if="item.Key=='Id'">-</div>       <!--高级防护策略 -->
                   </div>
                 </template>
               </el-table-column>
+
               <el-table-column prop="action" label="操作" width="180">
                 <template slot-scope="scope">
                   <el-button @click="changeRow(scope.$index, scope.row)" type="text" size="small">修改</el-button>
@@ -244,7 +248,8 @@ import ccProtection from "./tabs/ccProtection"; //cc防护模块
 import {
   RESOURCE_LIST,
   DDOSPOLICY_CONT,
-  DDOS_POLICY_DELETE
+  DDOS_POLICY_DELETE,
+  GET_ID
 } from "@/constants";
 import HeaderCom from "../../CLA/Public/Head";
 export default {
@@ -309,8 +314,19 @@ export default {
   created() {
     this.describeResourceList();
     this.describeDDoSPolicy();
+    this.dev()
   },
   methods: {
+    dev(){
+      this.loading = true;
+      let params = {
+        Version: "",
+        Business: "net"
+      };
+      this.axios.get(GET_ID,params).then(res=>{
+        console.log(res)
+      })
+    },
     // 1.1.获取资源列表
     describeResourceList() {
       this.loading = true;
@@ -320,6 +336,7 @@ export default {
       };
       this.axios.post(RESOURCE_LIST, params).then(res => {
         this.tableDataBegin = res.Response.ServicePacks;
+        console.log(this.tableDataBegin)
         for (let i = 0; i < this.tableDataBegin.length; i++) {
           let list = this.tableDataBegin[i];
           list.Record.forEach((value, index) => {
@@ -344,13 +361,12 @@ export default {
       this.axios.post(DDOSPOLICY_CONT, params).then(res => {
         this.tableDataPolicy = res.Response.DDosPolicyList;
         this.loading = false;
+        console.log(this.tableDataPolicy)
       });
     },
-
     // 修改
     changeRow(changeIndex, changeRow) {
       this.changeModel = true;
-
     },
     // 搜索
     doFilter() {
