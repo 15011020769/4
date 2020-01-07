@@ -72,15 +72,21 @@ export default {
     //查询
     search() {
       this.StartTIme = this.timeData[0].StartTIme;
-      this.EndTIme = this.timeData[0].EndTIme;
+      this.EndTIme = this.timeData[0].EndTIme
       if (this.tabIndex == 0) {
-        this.$refs.tab1.init();
-        this.$refs.tab1.getCharts()
+        this.$nextTick(() => {
+          this.$refs.tab1.init();
+          this.$refs.tab1.getCharts()
+        })
       } else if (this.tabIndex == 1) {
-        // this.$refs.tab2.init();
-        this.$refs.tab2.getCharts();
+        this.$nextTick(() => {
+          // this.$refs.tab2.init();
+          this.$refs.tab2.getCharts();
+        })
       } else if (this.tabIndex == 2) {
-        this.$refs.tab3.init();
+        this.$nextTick(() => {
+          this.$refs.tab3.init();
+        })
       }
     },
     //时间组件返回的数据

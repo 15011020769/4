@@ -4,7 +4,7 @@
       带宽趋势
       <span style="color:#bbb;">(单位:Mbps)</span>
     </h3>
-    <Echart :xAxis="xAxis" :series="series" v-loading="loading" />
+    <Echart :xAxis="xAxis" :series="series" :legendText="legendText" v-loading="loading" />
     <div class="table">
       <el-table
         :data="tableData.slice((currpage - 1) * pagesize, currpage * pagesize)"
@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import Echart from "../components/echarts";
+import Echart from "../../components/line";
 import { CSS_MBPS } from "@/constants";
 import moment from "moment";
 export default {
@@ -39,11 +39,12 @@ export default {
       //图表数据
       xAxis: [],
       series: [],
+      legendText: '带宽',
       tableData: [], //表格数据
       currpage: 1, //页数
       pagesize: 10, //每页数量
       totalItems: 0, //总条数
-      loading: true //加载状态
+      loading: true, //加载状态
     };
   },
   components: {
@@ -52,7 +53,8 @@ export default {
   props: {
     StartTIme: String,
     EndTIme: String,
-    domain: Array
+    domain: Array,
+    operator: String
   },
   created() {
     this.init();
@@ -66,34 +68,59 @@ export default {
     //获取表格数据
     init() {
       this.loading = true;
-      const params = {
+      const params1 = {
         Version: "2018-08-01",
         StartTime: moment(this.StartTIme).format("YYYY-MM-DD HH:MM:SS"),
-        EndTime: moment(this.EndTIme).format("YYYY-MM-DD HH:MM:SS")
+        EndTime: moment(this.EndTIme).format("YYYY-MM-DD HH:MM:SS"),
+      };
+      const params2 = {
+        Version: "2018-08-01",
+        StartTime: moment(this.StartTIme).format("YYYY-MM-DD HH:MM:SS"),
+        EndTime: moment(this.EndTIme).format("YYYY-MM-DD HH:MM:SS"),
       };
       if (this.domain.length != 0) {
         this.domain.forEach((item, index) => {
           params["PlayDomains." + index] = item;
         });
       }
-      var Granularity =
-        moment(this.EndTIme).format("YYYYMMDD") -
-        moment(this.StartTIme).format("YYYYMMDD");
-      if (Granularity < 6) {
-        params["Granularity"] = 60;
-      } else {
-        params["Granularity"] = 1440;
+      const Granularity = moment().diff(this.StartTIme, 'days')
+      switch(Granularity) {
+        case 0:
+          params1["Granularity"] = 60
+          params2["Granularity"] = 5
+          break
+        case 1:
+          params1["Granularity"] = 60
+          params2["Granularity"] = 5
+          break
+        case 6:
+          params1["Granularity"] = 1440
+          params2["Granularity"] = 60
+          break
+        case 29:
+          params1["Granularity"] = 1440
+          params2["Granularity"] = 60
+        default:
+        break
       }
-      this.axios.post(CSS_MBPS, params).then(res => {
+      this.axios.post(CSS_MBPS, params1).then(res => {
         if (res.Response.Error) {
           this.$message.error(res.Response.Error.Message);
         } else {
+          // 表格数据
           this.tableData = res.Response.DataInfoList;
           this.totalItems = res.Response.DataInfoList.length;
-          //图表数据
+        }
+        this.loading = false;
+      });
+      this.axios.post(CSS_MBPS, params2).then(res => {
+        if (res.Response.Error) {
+          this.$message.error(res.Response.Error.Message);
+        } else {
+          // 图表数据
           var xAxis = [];
           var series = [];
-          res.Response.DataInfoList.slice(0, 5).forEach(item => {
+          res.Response.DataInfoList.forEach(item => {
             xAxis.push(item.Time);
             series.push(item.Bandwidth);
           });
@@ -102,7 +129,7 @@ export default {
         }
         this.loading = false;
       });
-    }
+    },
   }
 };
 </script>
