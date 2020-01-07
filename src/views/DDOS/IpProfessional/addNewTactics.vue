@@ -2,7 +2,7 @@
   <div>
     <!-- 策略名称 -->
     <div>
-      <span class="fontWeightBold">{{$t('DDOS.Proteccon_figura.Policy_name')}}</span><el-input class="tacticsName" v-model="tacticsName" :disabled="nameFlag==true?false:true"></el-input>
+      <span class="fontWeightBold">{{$t('DDOS.Proteccon_figura.Policy_name')}}</span><el-input class="tacticsName" v-model="tacticsName" :disabled="nameFlag==true?false:true" @change="val"></el-input>
     </div>
     <!-- 黑白名单表格 -->
     <div>
@@ -493,17 +493,17 @@ export default {
       filterConrent:"",
       DdisableProtocol:[],//禁用协议
       radios1:"关闭",
-      radios2:"关闭",
-      radios3:"关闭",
-      radios4:"关闭",
-      radios5:"关闭",
-      radios6:"关闭",
-      radios7:"关闭",
-      radios8:"关闭",
-      radios9:"关闭",
-      radios10:"关闭",
-      radios11:"关闭",
-      radios12:"关闭",
+      radios2:"關閉",
+      radios3:"關閉",
+      radios4:"關閉",
+      radios5:"關閉",
+      radios6:"關閉",
+      radios7:"關閉",
+      radios8:"關閉",
+      radios9:"關閉",
+      radios10:"關閉",
+      radios11:"關閉",
+      radios12:"關閉",
       moveNum: 0,//水印防护偏移量
       thisRadio3:false,
       thisRadio4:false,
@@ -545,9 +545,18 @@ export default {
     }
   },
   methods:{
-    // 添加DDoS高级策略
+  //判断策略名称
+   val:function() {
+      if(this.tacticsName == ''){
+         this.$message('请填写策略名称');
+      }
+   },
+   // 添加DDoS高级策略
     createDDoSPolicy(bl) {
-      let params = {
+       if(this.tacticsName == ''){
+        this.$message('请填写策略名称');
+      }else{
+        let params = {
         Version: '2018-07-09',
         Business: 'net',
         // DropOptions.N 协议禁用，必须填写且数组长度必须为1
@@ -616,6 +625,7 @@ export default {
       }
       // 关闭新增页面
       this.closeAddPage()
+      }
     },
     handleClose(done) {
       this.dialogVisible=false;
