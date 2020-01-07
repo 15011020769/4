@@ -22,6 +22,7 @@
             <el-button class="el-icon-search" @click="doFilter"></el-button>
           </div>
           <div class="mainTable">
+            {{tableDataBegin}}
             <el-table
               :data="tableDataBegin.slice((currentPage-1)*pageSize,currentPage*pageSize)"
               v-loading="loading"
@@ -86,6 +87,7 @@
                   </div>
                 </template>
               </el-table-column>
+            
               <el-table-column
                 prop="advanced"
                 :label="$t('DDOS.Proteccon_figura.Advanced_strategy')"
@@ -102,7 +104,7 @@
                 </template>
               </el-table-column>
               <!-- 修改弹框 -->
-              <changeModel :configShow="changeModel" @closeConfigModel="closeConfigModel" />
+              <changeModel :configShow="changeModel"  @closeConfigModel="closeConfigModel" />
             </el-table>
           </div>
           <div class="Right-style pagstyle">
@@ -348,6 +350,7 @@ export default {
     // 修改
     changeRow(changeIndex, changeRow) {
       this.changeModel = true;
+
     },
     // 搜索
     doFilter() {

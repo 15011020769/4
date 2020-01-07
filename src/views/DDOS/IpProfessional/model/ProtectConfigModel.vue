@@ -9,6 +9,7 @@
         :before-close="handleClose"
       >
         <div class="modelCenterCon">
+         
           <p class="newClear">
             <span class="modelSpan1">{{$t('DDOS.protectCon.protectionStatus')}}</span>
             <span @click="outOk()">
@@ -62,6 +63,7 @@
                   @click="clickGarden(3,'严格')"
                 >{{$t('DDOS.protectCon.strict')}}</a>
               </span>
+              
               <el-dialog
                 :title="$t('DDOS.protectCon.toggStrtic')"
                 :visible.sync="changeModelTip3"
@@ -141,24 +143,29 @@
             <p class="newClear">
               <span class="modelSpan1">{{$t('DDOS.protectCon.AdvancedStra')}}</span>
               <span class="modelSpan2">
-                <el-select v-model="topFun" class="setSelectM">
+                <el-select v-model="topFun" class="setSelectM" @change="changeTopFun">
                   <el-option :label="$t('DDOS.protectCon.noHave')" value="no"></el-option>
                   <el-option label="erg" value="erg"></el-option>
+                  <el-option label="高级防护策略测试" value="高级防护策略测试"></el-option>
+                  <el-option label="sxdfg" value="sxdfg"></el-option>
+                  <el-option label="asd" value="asd"></el-option>
                 </el-select>
               </span>
             </p>
             <p class="newClear">
               <span class="modelSpan1">{{$t('DDOS.protectCon.configValue')}}</span>
-              <span class="modelSpan2">
+              <span class="modelSpan2 modelSpan2_2">
                 <el-select v-model="ddosWarning" class="setSelectM" @change="selectChange1">
                   <el-option :label="$t('DDOS.protectCon.NotSet')" value="no"></el-option>
                   <el-option :label="$t('DDOS.protectCon.Incoming')" value="into"></el-option>
                   <el-option :label="$t('DDOS.protectCon.CleaningFlow')" value="clean"></el-option>
                 </el-select>
-                <span v-if="iptNummbps">
-                  <el-input v-model="iptmbpsText" class="intMbps" @input="CreateBasic"></el-input>Mbps
-                </span>
               </span>
+                <span class="modelSpan3" v-if="iptNummbps">
+                <!-- <span v-if="iptNummbps"> -->
+                  <el-input v-model="iptmbpsText" class="intMbps" @input="CreateBasic"></el-input>
+                </span>
+                <span  class="modelSpan3" v-if="iptNummbps">Mbps</span>
             </p>
           </div>
         </div>
@@ -173,6 +180,7 @@ import {
   GET_Status,
   CLAEN_SHOLD,
   Modify_Level,
+  DDOS_POLICY_MODIFY,
   SET_SHOLD,
   Modify_Status
 } from "@/constants";
@@ -366,6 +374,7 @@ export default {
         DDoSLevel: this.tabMode
       };
       this.axios.post(Modify_Level, params).then(res => {
+        console.log(res)
         if (res.Response.Error !== undefined) {
           this.$message({
             showClose: true,
@@ -394,6 +403,20 @@ export default {
         }
       });
     },
+    //修改高级策略
+    changeTopFun(){
+      console.log(this.topFun,DDOS_POLICY_MODIFY)
+      // let params = {
+      //   Action:'ModifyDDoSPolicy',
+      //   Version: "2018-07-09",
+      //   Business: "net",
+      //   PolicyId: this.resourceId,
+      //   "DropOptions.N":'',
+      //   Method: "set",
+      //   DDoSLevel: this.tabMode
+      // };
+
+    },
     //设置基础防护的DDoS告警阈值
     CreateBasic() {
       let params = {
@@ -404,7 +427,7 @@ export default {
         AlarmThreshold: this.iptmbpsText
       };
       this.axios.post(SET_SHOLD, params).then(res => {
-        // console.log(res);
+        console.log(res);
         if (res.Response.Error !== undefined) {
           this.$message({
             showClose: true,
@@ -465,6 +488,7 @@ export default {
   .modelSpan1 {
     width: 120px;
   }
+  
   .newClear >>> .el-input__inner {
     height: 30px !important;
     line-height: 30px !important;
@@ -472,6 +496,20 @@ export default {
     border-radius: 0 !important;
   }
 }
+.modelSpan3 >>>.el-input__inner {
+      width: 100px;
+      margin-left: 10px;
+  }
+ .modelSpan2{
+   float: left;
+ } 
+ .modelSpan3{
+   float: left;
+   margin-top: 10px;
+ } 
+ .modelSpan2_2{
+   margin-top: 10px;
+ }
 #configModel {
   .modelCenterCon {
     p {

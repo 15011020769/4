@@ -43,6 +43,7 @@
               <el-table-column prop="Record" :label="$t('DDOS.AssetList.AssetListName')">
                 <template slot-scope="scope">
                   <div v-for="(item,index) in scope.row.Record" :key="index">
+                   
                     <a v-if="item.Key=='Id'" @click="toDetailResourse(scope.row)" >
                       {{item.Value}}
                     </a>
@@ -75,6 +76,7 @@
                   </span>
                 </template>
               </el-table-column>
+              <!-- zhaungtai -->
               <el-table-column prop="status" label="状态">
                 <template slot-scope="scope">
                   <span v-for="(item,index) in scope.row.Record" :key="index">

@@ -184,6 +184,7 @@ export default {
       this.resObj = JSON.parse(JSON.stringify(scopeRow));
     
       //循环获取name
+      console.log(this.resObj)
       this.resObj.Record.forEach(item => {
         if (item.Key == "Id") {
           this.resName = item.Value;
