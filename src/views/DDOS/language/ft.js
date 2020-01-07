@@ -349,11 +349,26 @@ module.exports = {
       Automatic_stripping:'自動剝離UDP報文水印',
       After_passing:'數據報文經過安全防護系統後，自動剝離UDP報文中的水印，再傳到源站。海外地區不支持。',
       Specify:'指定水印標籤在UDP報文中的偏移量，可填範圍 0-99',
-
-     
-
-
-
+      dklx: '端口類型',
+      yglbq: '要過濾的標籤',
+      qsrcxnr: '請輸入要查詢的內容',
+      scgjcl: '刪除高級策略',
+      gjgjyz: 'HTTP CC攻擊告警閾值',
+      qxz: '請選擇',
+      qqsyz: 'http請求數閾值',
+      scfwkzcl: '刪除此訪問控制策略？',
+      qsrczclmc: '請輸入要查找的策略名稱',
+      qsrip: '請輸入IP',
+      qsrurl: '請輸入URL',
+      pldchmd: '批量導出IP黑名單',
+      pldcbmd: '批量導出IP白名單',
+      pldcurlbmd: '批量導出URL白名單',
+      pldrhmd: '批量導入IP黑名單',
+      qsrhmd: '請輸入IP黑名單, 以換行符分隔',
+      pldrbmd: '批量導入IP白名單',
+      qsrbmd: '請輸入IP白名單, 以換行符分隔',
+      pldrurlbmd: '批量導入URL白名單',
+      qsrurlbmd: '請輸入URL白名單, 以換行符分隔',
     }
   },
   COM: require('@/components/language/ft')

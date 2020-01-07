@@ -15,8 +15,8 @@
             type="daterange"
             class="newDataTime newDataTimetwo"
             range-separator="至"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期"
+            :start-placeholder="$t('DDOS.UnsealCode.beginDate')"
+            :end-placeholder="$t('DDOS.UnsealCode.overDate')"
           ></el-date-picker>
         </div>
         <br />
@@ -25,7 +25,7 @@
           v-model="inputIdCC"
           @change="changeIdCC"
           filterable
-          placeholder="请输入要查询的ID或名称"
+          :placeholder="$t('DDOS.AccesstoCon.searchAccess')"
           style="margin-right:10px;"
         >
           <el-option :label="inputIdCC" :value="inputIdCC"></el-option>
@@ -42,7 +42,7 @@
         <div class="ddosTableMin">
           <el-table
             :data="tableDataOfDescribeDDoSNetEvListcc.slice((currentPage-1)*pageSize,currentPage*pageSize)"
-            height="450"
+            height="450" empty-text='暫無數據'
           >
             <el-table-column prop="attackTime" :label="$t('DDOS.Statistical_forms.Attack_time')"></el-table-column>
             <el-table-column
@@ -59,7 +59,7 @@
           </el-table>
         </div>
         <div class="Right-style pagstyle">
-          <span class="pagtotal">共&nbsp;{{totalItems}}&nbsp;条</span>
+          <span class="pagtotal">共&nbsp;{{totalItems}}&nbsp;{{$t('DDOS.UnsealCode.tiao')}}</span>
           <el-pagination
             :page-size="pageSize"
             :pager-count="7"
@@ -89,7 +89,7 @@ export default {
       currentPage: 1, //当前页
       pageSize: 10, //每页长度
       totalItems: 0, //总条数
-      ccTimeBtnSelect2: "总览", //cc时间按钮下面第二个下拉
+      ccTimeBtnSelect2: "總覽", //cc时间按钮下面第二个下拉
       dateChoice2: {}, //日期选择
       // 日期区间：默认获取当前时间和前一天时间
       endTime: this.getDateString(new Date()),
@@ -367,7 +367,7 @@ export default {
         },
         series: [
           {
-            name: "总请求峰值",
+            name: "總請求峰值",
             type: "line",
             data: data1,
             itemStyle: {
@@ -379,7 +379,7 @@ export default {
             }
           },
           {
-            name: "攻击请求峰值",
+            name: "攻擊請求峰值",
             type: "line",
             data: data2,
             itemStyle: {

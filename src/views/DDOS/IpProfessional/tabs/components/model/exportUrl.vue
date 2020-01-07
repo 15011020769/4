@@ -2,7 +2,7 @@
   <div id="exportUrl">
     <div>
       <el-dialog
-        title="批量导出URL白名单"
+        :title="$t('DDOS.Proteccon_figura.pldcurlbmd')"
         :visible.sync="dialogVisible3"
         width="35%"
         :before-close="handleClose">

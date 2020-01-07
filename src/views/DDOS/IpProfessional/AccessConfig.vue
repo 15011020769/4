@@ -117,7 +117,7 @@
                 class="pContent"
                 style="margin-right:20px;"
               >{{$t('DDOS.AccesstoCon.AccSum')}} {{ruleTotalNum}} ，已用 {{usedNum}} ，可用 {{ruleTotalNum-usedNum}}</p>
-              <span class="pagtotal">共&nbsp;{{totalItems}}&nbsp;条</span>
+              <span class="pagtotal">共&nbsp;{{totalItems}}&nbsp;{{$t('DDOS.UnsealCode.tiao')}}</span>
               <el-pagination
                 :page-size="pageSize"
                 :pager-count="7"
@@ -436,7 +436,7 @@ export default {
         } else {
           this.$message({
             showClose: true,
-            message: "删除成功",
+            message: "刪除成功",
             type: "success"
           });
           this.describleL4Rules();

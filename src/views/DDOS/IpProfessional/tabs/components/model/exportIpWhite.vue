@@ -2,7 +2,7 @@
   <div id="exportUrl">
     <div>
       <el-dialog
-        title="批量导出IP白名单"
+        :title="$t('DDOS.Proteccon_figura.pldcbmd')"
         :visible.sync="dialogVisible3"
         width="35%"
         :before-close="handleClose">
@@ -10,7 +10,7 @@
           <el-input type="textarea" class="urlTexttarea" v-model="exportText"></el-input>
         </div>
         <span slot="footer" class="dialog-footer">
-          <el-button @click="handleClose" class="closeBtn">关闭</el-button>
+          <el-button @click="handleClose" class="closeBtn">{{$t('DDOS.AccesstoCon.AccClose')}}</el-button>
         </span>
       </el-dialog>
     </div>

@@ -2,12 +2,12 @@
   <div id="importUrl">
     <div>
       <el-dialog
-        title="批量导入IP黑名单"
+        :title="$t('DDOS.Proteccon_figura.pldrhmd')"
         :visible.sync="dialogVisible2"
         width="40%"
         :before-close="handleClose">
         <div>
-          <el-input v-model="ipBlackTextarea" placeholder="请输入IP黑名单, 以换行符分隔" class="urlTexttarea" type="textarea"></el-input>
+          <el-input v-model="ipBlackTextarea" :placeholder="$t('DDOS.Proteccon_figura.qsrhmd')" class="urlTexttarea" type="textarea"></el-input>
         </div>
         <span slot="footer" class="dialog-footer">
           <el-button @click="handleClose">取 消</el-button>

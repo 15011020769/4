@@ -2,7 +2,7 @@
 <!-- 防护配置-CC防护 -->
   <div id="ccProtection">
     <div class="ccProtectPartOne">
-      <el-select class="ccResourceId" v-model="ccResourceId" filterable placeholder="请选择">
+      <el-select class="ccResourceId" v-model="ccResourceId" filterable :placeholder="$t('DDOS.Proteccon_figura.qxz')">
         <el-option
           v-for="item in resourceIPs"
           :key="item.Id"
@@ -27,9 +27,9 @@
           </p>
         </div>
         <div class="newClear" v-if="switchState==true?true:false">
-          <p class="partTwoPO">http请求数阈值</p>
+          <p class="partTwoPO">{{$t('DDOS.Proteccon_figura.qqsyz')}}</p>
           <p class="partTwoPT">
-            <el-select class="ccProtectSele" v-model="httpRequestNum" placeholder="请选择">
+            <el-select class="ccProtectSele" v-model="httpRequestNum" :placeholder="$t('DDOS.Proteccon_figura.qxz')">
               <el-option
                 v-for="item in httpOptions"
                 :key="item.value"
@@ -41,7 +41,7 @@
           </p>
         </div>
         <div class="newClear" v-if="switchState==true?true:false">
-          <p class="partTwoPO">HTTP CC攻击告警阈值</p>
+          <p class="partTwoPO">{{$t('DDOS.Proteccon_figura.gjgjyz')}}</p>
           <p class="partTwoPT">
             <el-input v-model="alarmThreshold" class="partTwoPTIpt" :onchange="changeAlarmThreshold()"></el-input>
             <span class="marginLeftSpan">QPS</span>

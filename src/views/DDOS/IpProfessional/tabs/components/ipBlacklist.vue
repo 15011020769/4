@@ -15,7 +15,8 @@
             :data="tableDataBegin.slice((currentPage-1)*pageSize,currentPage*pageSize)"
             @selection-change="handleSelectionChange"
             style="width: 100%;margin: 18px 0 20px;"
-            v-loading="loading"
+            v-loading="loading" 
+            empty-text='暫無數據'
           >
             <el-table-column type="selection" width="55"></el-table-column>
             <el-table-column prop="IP" label="IP" width>
@@ -46,13 +47,13 @@
                   type="text"
                   size="small"
                   style="color: red;"
-                >删除</el-button>
+                >{{$t('DDOS.AccesstoCon.AccDel')}}</el-button>
               </template>
             </el-table-column>
           </el-table>
         </div>
         <div class="Right-style pagstyle">
-          <span class="pagtotal">共&nbsp;{{totalItems}}&nbsp;条</span>
+          <span class="pagtotal">共&nbsp;{{totalItems}}&nbsp;{{$t('DDOS.UnsealCode.tiao')}}</span>
           <el-pagination
             :page-size="pageSize"
             :pager-count="7"
@@ -215,7 +216,7 @@ export default {
     addIpBlackModel() {
       //判断防护状态
       if (!this.switchState) {
-        this.$message("该资源尚未开启CC防护，不能添加黑白名单");
+        this.$message("該資源尚未開啟CC防護，不能添加黑白名單");
       } else if (this.switchState) {
         this.dialogModel1 = true;
       }
@@ -235,7 +236,7 @@ export default {
     importBtn() {
       //判断防护状态
       if (!this.switchState) {
-        this.$message("该资源尚未开启CC防护，不能添加黑白名单");
+        this.$message("該資源尚未開啟CC防護，不能添加黑白名單");
       } else if (this.switchState) {
         this.dialogModel2 = true;
       }
@@ -295,7 +296,7 @@ export default {
             });
           });
       } else {
-        this.$message("请选择要删除的IP名单");
+        this.$message("請選擇要刪除的IP名單");
       }
     },
     //全选

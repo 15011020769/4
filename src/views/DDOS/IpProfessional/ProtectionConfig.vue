@@ -1,7 +1,7 @@
 <template>
 <!-- 防护配置 -->
   <div class="wrap">
-    <HeaderCom title="防护配置" />
+    <HeaderCom :title="$t('DDOS.Proteccon_figura.Proteccon_title')" />
     <el-tabs v-model="activeName" @tab-click="handleClick">
       <el-tab-pane
         :label="$t('DDOS.Statistical_forms.DDoS_Protection')"
@@ -10,7 +10,7 @@
       >
         <div class="mainContent">
           <div class="textAlignTop newClear">
-            <el-select class="checkListSelect" placeholder="要过滤的标签" v-model="filterConrent">
+            <el-select class="checkListSelect" :placeholder="$t('DDOS.Proteccon_figura.yglbq')" v-model="filterConrent">
               <el-option
                 v-for="(item, index) in options1"
                 :label="item.label"
@@ -18,13 +18,13 @@
                 :key="index"
               ></el-option>
             </el-select>
-            <el-input v-model="tableDataName" class="searchs" placeholder="请输入要查询的内容"></el-input>
+            <el-input v-model="tableDataName" class="searchs" :placeholder="$t('DDOS.Proteccon_figura.qsrcxnr')"></el-input>
             <el-button class="el-icon-search" @click="doFilter"></el-button>
           </div>
           <div class="mainTable">
             <el-table
               :data="tableDataBegin.slice((currentPage-1)*pageSize,currentPage*pageSize)"
-              v-loading="loading"
+              v-loading="loading" empty-text='暫無數據'
             >
               <el-table-column prop="Record.Id" :label="$t('DDOS.Proteccon_figura.Id_name')">
                 <template slot-scope="scope">
@@ -56,6 +56,7 @@
               >
                 <template slot-scope="scope">
                   <div v-for="(item, index) in scope.row.Record" :key="index">
+<<<<<<< HEAD
                     <div v-if="item.Key=='DefendStatus' && item.Value == '1'">开启</div>
                     <div v-else-if="item.Key=='DefendStatus' && item.Value != '1'">关闭</div>
                   </div>
@@ -63,6 +64,14 @@
               </el-table-column>
 
               <el-table-column prop="Record.DdosThreshold" label="清洗阈值">
+=======
+                    <div v-if="item.Key=='DefendStatus' && item.Value == '1'">{{$t('DDOS.AccesstoCon.AccOpen')}}</div>
+                    <div v-else-if="item.Key=='DefendStatus' && item.Value != '1'">-</div>
+                  </div>
+                </template>
+              </el-table-column>
+              <el-table-column prop="Record.DdosThreshold" :label="$t('DDOS.protectCon.CleaningShold')">
+>>>>>>> 高仿IP专业版修改简转繁
                 <template slot-scope="scope">
                   <div v-for="(item, index) in scope.row.Record" :key="index">
                     <div v-if="item.Key=='DdosThreshold'">{{item.Value}}Mps</div>
@@ -112,7 +121,7 @@
             </el-table>
           </div>
           <div class="Right-style pagstyle">
-            <span class="pagtotal">共&nbsp;{{totalItems}}&nbsp;条</span>
+            <span class="pagtotal">共&nbsp;{{totalItems}}&nbsp;{{$t('DDOS.UnsealCode.tiao')}}</span>
             <el-pagination
               :page-size="pageSize"
               :pager-count="7"
@@ -142,7 +151,7 @@
               @click="addNewTactics"
             >{{$t('DDOS.Proteccon_figura.Add_newpolicy')}}</el-button>
             <div class="minTable">
-              <el-table :data="tableDataPolicy" height="450" v-loading="loading">
+              <el-table :data="tableDataPolicy" height="450" v-loading="loading"  empty-text='暫無數據'>
                 <el-table-column prop="PolicyName" :label="$t('DDOS.Proteccon_figura.Policy_name')">
                   <template slot-scope="scope">
                     {{scope.row.PolicyName}}
@@ -175,21 +184,21 @@
                       size="small"
                     >{{$t('DDOS.Proteccon_figura.Delete')}}</el-button>
                     <el-dialog
-                      title="删除高级策略"
+                      :title="$t('DDOS.Proteccon_figura.scgjcl')"
                       :visible.sync="dialogVisible"
                       width="30%"
                       :before-close="handleClose"
                     >
                       <h1 class="deleteTit">
-                        <i class="el-icon-warning"></i>确定删除该政策么？
+                        <i class="el-icon-warning"></i>{{$t('DDOS.Proteccon_figura.delete_thepolicy')}}
                       </h1>
                       <p
                         class="deleteCont"
-                      >删除策略后，该防护策略将从列表中永久删除，不可恢复。若您已开启UDP水印剥离开关，则策略会同步关闭UDP水印剥离开关。</p>
-                      <p class="deleteCont">确定删除该条高级策略(erg)？</p>
+                      >{{$t('DDOS.Proteccon_figura.After_deletingpolicy')}}</p>
+                      <p class="deleteCont">{{$t('DDOS.Proteccon_figura.delete_advanced')}}</p>
                       <span slot="footer" class="dialog-footer">
                         <el-button @click="dialogVisible = false">取 消</el-button>
-                        <el-button type="primary" @click="deleteDDoSPolicy()">确 定</el-button>
+                        <el-button type="primary" @click="deleteDDoSPolicy()">{{$t('DDOS.Proteccon_figura.Determination')}}</el-button>
                       </span>
                     </el-dialog>
                     <el-button
@@ -197,9 +206,9 @@
                       type="text"
                       size="small"
                       style="padding-left:7px"
-                    >绑定资源</el-button>
+                    >{{$t('DDOS.Proteccon_figura.Binding_resources')}}</el-button>
                     <el-dialog
-                      title="绑定资源"
+                      :title="$t('DDOS.Proteccon_figura.Binding_resources')"
                       :visible.sync="dialogVisible1"
                       width="43%"
                       :before-close="handleClose1"
@@ -212,8 +221,8 @@
                           :left-default-checked="[2, 3]"
                           :right-default-checked="[1]"
                           :render-content="renderFunc"
-                          :titles="['选择资源', '已选择']"
-                          :button-texts="['到左边', '到右边']"
+                          :titles="['選擇資源', '已選擇']"
+                          :button-texts="['到左邊', '到右邊']"
                           :format="{
                               noChecked: '${total}',
                               hasChecked: '${checked}/${total}'
@@ -225,7 +234,7 @@
 
                       <span slot="footer" class="dialog-footer">
                         <el-button @click="dialogVisible1 = false">取 消</el-button>
-                        <el-button type="primary" @click="bindingResourceSure()">确 定</el-button>
+                        <el-button type="primary" @click="bindingResourceSure()">{{$t('DDOS.Proteccon_figura.Determination')}}</el-button>
                       </span>
                     </el-dialog>
                   </template>
@@ -271,7 +280,7 @@ export default {
           value: "ID"
         },
         {
-          label: "服务包名称",
+          label: "服務包名稱",
           value: "serverBag"
         }
       ],

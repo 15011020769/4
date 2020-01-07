@@ -31,7 +31,7 @@
                   <td>
                     <el-input
                       class="inputChange"
-                      placeholder="请输入URL"
+                      :placeholder="$t('DDOS.Proteccon_figura.qsrurl')"
                       v-model="item.urlAddress"
                       autocomplete="off"
                     ></el-input>
@@ -124,7 +124,7 @@ export default {
     },
     // https消息
     message() {
-      this.$message("请先配置网站业务规则");
+      this.$message("請先配置網站業務規則");
     },
     //关闭按钮
     handleClose() {

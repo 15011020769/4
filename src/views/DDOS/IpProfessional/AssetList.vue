@@ -77,7 +77,7 @@
                 </template>
               </el-table-column>
               <!-- zhaungtai -->
-              <el-table-column prop="status" label="状态">
+              <el-table-column prop="status" :label="$t('DDOS.UnlockOperation.Unlockstate')">
                 <template slot-scope="scope">
                   <span v-for="(item,index) in scope.row.Record" :key="index">
                     <a v-if="item.Key=='Status'">{{item.Value}}</a>
@@ -200,7 +200,7 @@
             />
           </div>
           <div class="Right-style pagstyle">
-            <span class="pagtotal">共&nbsp;{{totalItems}}&nbsp;条</span>
+            <span class="pagtotal">共&nbsp;{{totalItems}}&nbsp;{{$t('DDOS.UnsealCode.tiao')}}</span>
             <el-pagination
               :page-size="pageSize"
               :pager-count="7"
