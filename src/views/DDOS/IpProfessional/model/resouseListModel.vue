@@ -182,6 +182,7 @@ export default {
   methods: {
     init(scopeRow) {
       this.resObj = JSON.parse(JSON.stringify(scopeRow));
+    
       //循环获取name
       this.resObj.Record.forEach(item => {
         if (item.Key == "Id") {
