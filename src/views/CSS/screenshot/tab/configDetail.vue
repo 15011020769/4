@@ -1,7 +1,7 @@
 <!--
  * @Author: T
  * @Date: 2020-01-03 11:13:24
- * @LastEditTime : 2020-01-07 14:59:23
+ * @LastEditTime : 2020-01-07 17:09:03
  * @LastEditors  : Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: /new_product/src/views/CSS/transcoding/tab/configDetail.vue
@@ -60,7 +60,6 @@
 </template>
 
 <script>
-import { TEMPLATE_TYPE } from '../constance'
 export default {
   name: 'configDetail',
 
