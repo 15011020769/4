@@ -21,6 +21,24 @@ for (let key in filters) {
     Vue.filter(key, filters[key])
 }
 
+// 集群详情子路由新增统一参数clusterId
+router.beforeEach((to, from, next) => {
+    if (to.query.clusterId) {
+        next();
+        return;
+    };
+    if (from.query.clusterId && to.meta.clusterId === true) {
+        let toQuery = JSON.parse(JSON.stringify(to.query));
+        toQuery.clusterId = from.query.clusterId;
+        next({
+            path: to.path,
+            query: toQuery
+        })
+    } else {
+        next()
+    }
+});
+
 Vue.config.productionTip = false
 Vue.use(ElementUI)
 Vue.use(VueCookie)

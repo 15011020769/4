@@ -43,7 +43,8 @@ export default new Router({
       component: () => import('./colony/sub/index.vue'),
       redirect: '/colony/sub/basic', // 默认子路由
       meta: {
-        keepAlive: true
+        keepAlive: true,
+        CId: true
       },
       children: [ // 子路由
         { // 基本信息
@@ -51,7 +52,8 @@ export default new Router({
           name: 'colonyBasic',
           component: () => import('./colony/sub/basic/index.vue'),
           meta: {
-            keepAlive: true
+            keepAlive: true,
+            clusterId: true
           }
         },
         { // 节点列表
@@ -59,7 +61,8 @@ export default new Router({
           name: 'colonyNodeManageNode',
           component: () => import('./colony/sub/nodeManage/node.vue'),
           meta: {
-            keepAlive: true
+            keepAlive: true,
+            clusterId: true
           }
         },
         { // Master&Etcd列表
@@ -67,7 +70,8 @@ export default new Router({
           name: 'colonyNodeManageMasteretcd',
           component: () => import('./colony/sub/nodeManage/masteretcd.vue'),
           meta: {
-            keepAlive: true
+            keepAlive: true,
+            clusterId: true
           }
         },
         { // 伸缩组列表
@@ -75,7 +79,8 @@ export default new Router({
           name: 'colonyNodeManageAsg',
           component: () => import('./colony/sub/nodeManage/asg.vue'),
           meta: {
-            keepAlive: true
+            keepAlive: true,
+            clusterId: true
           }
         },
         { // 命名空间
@@ -83,7 +88,8 @@ export default new Router({
           name: 'colonyNodeManageAsg',
           component: () => import('./colony/sub/namespace/index.vue'),
           meta: {
-            keepAlive: true
+            keepAlive: true,
+            clusterId: true
           }
         },
         { // 工作负载-Deployment
@@ -91,7 +97,8 @@ export default new Router({
           name: 'colonyNodeManageAsg',
           component: () => import('./colony/sub/resource/deployment.vue'),
           meta: {
-            keepAlive: true
+            keepAlive: true,
+            clusterId: true
           }
         },
         { // 工作负载-StatefulSet
@@ -99,7 +106,8 @@ export default new Router({
           name: 'colonyResourceStatefulSet',
           component: () => import('./colony/sub/resource/statefulSet.vue'),
           meta: {
-            keepAlive: true
+            keepAlive: true,
+            clusterId: true
           }
         },
         { // 工作负载-DaemonSet
@@ -107,7 +115,8 @@ export default new Router({
           name: 'colonyResourceDaemonSet',
           component: () => import('./colony/sub/resource/daemonSet.vue'),
           meta: {
-            keepAlive: true
+            keepAlive: true,
+            clusterId: true
           }
         },
         { // 工作负载-Job
@@ -115,7 +124,8 @@ export default new Router({
           name: 'colonyResourceJob',
           component: () => import('./colony/sub/resource/job.vue'),
           meta: {
-            keepAlive: true
+            keepAlive: true,
+            clusterId: true
           }
         },
         { // 工作负载-CronJob
@@ -123,7 +133,8 @@ export default new Router({
           name: 'colonyResourceCronJob',
           component: () => import('./colony/sub/resource/cronJob.vue'),
           meta: {
-            keepAlive: true
+            keepAlive: true,
+            clusterId: true
           }
         },
         { // 自动伸缩
@@ -131,7 +142,8 @@ export default new Router({
           name: 'colonyHpa',
           component: () => import('./colony/sub/hpa/index.vue'),
           meta: {
-            keepAlive: true
+            keepAlive: true,
+            clusterId: true
           }
         },
         { // 服务-Service
@@ -139,7 +151,8 @@ export default new Router({
           name: 'colonyServiceSvc',
           component: () => import('./colony/sub/service/svc.vue'),
           meta: {
-            keepAlive: true
+            keepAlive: true,
+            clusterId: true
           }
         },
         { // 服务-Ingress
@@ -147,7 +160,8 @@ export default new Router({
           name: 'colonyServiceIngress',
           component: () => import('./colony/sub/service/ingress.vue'),
           meta: {
-            keepAlive: true
+            keepAlive: true,
+            clusterId: true
           }
         },
         { // 配置管理-ConfigMap
@@ -155,7 +169,8 @@ export default new Router({
           name: 'colonyConfigConfigMap',
           component: () => import('./colony/sub/config/configMap.vue'),
           meta: {
-            keepAlive: true
+            keepAlive: true,
+            clusterId: true
           }
         },
         { // 配置管理-Secret
@@ -163,7 +178,8 @@ export default new Router({
           name: 'colonyConfigSecret',
           component: () => import('./colony/sub/config/secret.vue'),
           meta: {
-            keepAlive: true
+            keepAlive: true,
+            clusterId: true
           }
         },
         { // 储存-PersistentVolume
@@ -171,7 +187,8 @@ export default new Router({
           name: 'colonyStoragePv',
           component: () => import('./colony/sub/storage/pv.vue'),
           meta: {
-            keepAlive: true
+            keepAlive: true,
+            clusterId: true
           }
         },
         { // 储存-PersistentVolumeClaim
@@ -179,7 +196,8 @@ export default new Router({
           name: 'colonyStoragePvc',
           component: () => import('./colony/sub/storage/pvc.vue'),
           meta: {
-            keepAlive: true
+            keepAlive: true,
+            clusterId: true
           }
         },
         { // 储存-StorageClass
@@ -187,7 +205,8 @@ export default new Router({
           name: 'colonyStorageSc',
           component: () => import('./colony/sub/storage/sc.vue'),
           meta: {
-            keepAlive: true
+            keepAlive: true,
+            clusterId: true
           }
         },
         { // 日志
@@ -195,7 +214,8 @@ export default new Router({
           name: 'colonyLog',
           component: () => import('./colony/sub/log/index.vue'),
           meta: {
-            keepAlive: true
+            keepAlive: true,
+            clusterId: true
           }
         },
         { // 事件
@@ -203,7 +223,8 @@ export default new Router({
           name: 'colonyEvent',
           component: () => import('./colony/sub/event/index.vue'),
           meta: {
-            keepAlive: true
+            keepAlive: true,
+            clusterId: true
           }
         }
       ]

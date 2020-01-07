@@ -50,7 +50,7 @@
             label="ID/名称"
             >
             <template slot-scope="scope">
-              <a href="#" @click="goColonySub()">{{scope.row.ClusterId}}</a>
+              <span class="tke-text-link" @click="goColonySub(scope.row.ClusterId)">{{scope.row.ClusterId}}</span>
               <p class="stk-editor-name">
                 <span>{{scope.row.ClusterName}}</span>
                 <i class="el-icon-edit" @click="showEditNameDlg()"></i>
@@ -108,7 +108,7 @@
                   更多<i class="el-icon-arrow-down el-icon--right"></i>
                 </span>
                 <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item command="a"><a href="#" @click="goColonySub">查看集群凭证</a></el-dropdown-item>
+                  <el-dropdown-item command="a"><span class="tke-text-link" @click="goColonySub(scope.row.ClusterId)">查看集群凭证</span></el-dropdown-item>
                   <el-dropdown-item command="b"><a href="#">新建节点</a></el-dropdown-item>
                   <el-dropdown-item command="c"><a href="#">删除</a></el-dropdown-item>
                 </el-dropdown-menu>
@@ -217,6 +217,7 @@ export default {
     this.getColonyList();
   },
   mounted() {
+   
   },
   methods: {
     // 获取集群列表
@@ -229,7 +230,8 @@ export default {
       };
       const res = await this.axios.post(COLONY_LIST, params);
       if(res.Error){
-        console.log(res)
+        console.log(res);
+        this.loadShow = false;
       }else{
         // console.log(res)
         if(res.Response.Clusters.length>0){
@@ -269,7 +271,6 @@ export default {
       this.getColonyList();
     },
     
-
     // 创建集群跳转
     goColonyCreate(){
        this.$router.push({
@@ -280,11 +281,11 @@ export default {
       });
     },
     // 查看详情跳转
-    goColonySub(){
+    goColonySub(id){
        this.$router.push({
           name: "colonySub",
           query: {
-           
+            clusterId: id
           }
       });
     },
@@ -292,6 +293,7 @@ export default {
     showEditNameDlg(){
       this.editNameDialogVisible=true;
     },
+   
    
 
 
@@ -487,6 +489,14 @@ export default {
 }
 .el-dropdown-menu__item{
   font-size: 12px;
+}
+.tke-text-link{
+  color: #006eff;
+  cursor: pointer;
+  &:hover{
+    text-decoration: underline;
+    color: #006eff;
+  }
 }
 
 // 弹窗相关
