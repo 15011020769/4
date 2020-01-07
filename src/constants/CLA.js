@@ -5,7 +5,7 @@ export const YJS_LIST = 'cloudaudit2/LookUpEvents'
 export const YJS_GETATTRIBUTEKEY = 'cloudaudit2/GetAttributeKey'
 
 // 雲审计--跟踪集列表
-export const GZJ_LIST = 'cloudaudit/ListAudits'
+export const GZJ_LIST = 'cloudaudit2/ListAudits'
 
 // 雲审计--跟踪集--创建跟踪集
 export const GZJ_CREATE = 'cloudaudit2/CreateAudit'
@@ -35,4 +35,4 @@ export const GZJ_REGION = 'cloudaudit2/ListCmqEnableRegion'
 export const GZJ_COS = 'cloudaudit2/ListCosEnableRegion'
 
 //雲审计--查询用户可创建跟踪集数量
-export const GZJ_NUM= 'cloudaudit2/InquireAuditCredit'
+export const GZJ_NUM = 'cloudaudit2/InquireAuditCredit'
