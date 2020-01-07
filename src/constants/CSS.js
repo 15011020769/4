@@ -109,3 +109,13 @@ export const LIVE_DESCRIBELIVEWATERMARKS = 'live2/DescribeLiveWatermarks'
 export const LIVE_DELETELIVEWATERMARKRULE = 'live2/DeleteLiveWatermarkRule'
 /** 创建水印规则 */
 export const LIVE_CREATELIVEWATERMARKRULE = 'live2/CreateLiveWatermarkRule'
+/** 查询历史流 */
+export const LIVE_DESCRIBE_LIVESTREAMEVENTLIST = 'live2/DescribeLiveStreamEventList'
+/** 查询禁推流 */
+export const LIVE_DESCRIBE_LIVEFORBIDSTREAMLIST = 'live2/DescribeLiveForbidStreamList'
+/** 查询在线流 */
+export const LIVE_DESCRIBE_LIVESTREAMONLINELIST = 'live2/DescribeLiveStreamOnlineList'
+/** 禁止直播流 */
+export const LIVE_FORBIDLIVESTREAM = 'live2/ForbidLiveStream'
+// 查询播放鉴权key
+export const LIVE_DESCRIBE_LIVEPLAYAUTHKEY = 'live2/DescribeLivePlayAuthKey'

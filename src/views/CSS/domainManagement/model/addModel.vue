@@ -121,8 +121,14 @@ export default {
         DomainName: this.dominForm.DominName,
         DomainType:this.dominForm.DomainType,
       };
-      this.axios.post(ADD_DOMAIN, params).then(data => {
-        console.log(data)
+      this.axios.post(ADD_DOMAIN, params).then(({ Response }) => {
+        if (Response.Error) {
+          this.$message({
+            type: 'error',
+            message: '添加失败'
+          })
+          return
+        }
         this.initData();
         this.dialogmodel=false;
         this.$emit("closeAddModel",this.dialogmodel);

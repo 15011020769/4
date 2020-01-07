@@ -30,21 +30,21 @@
                 <span>從</span>
                 <el-date-picker
                   class="width-date"
-                  v-model="datevalueStart"
+                  v-model="Start_End.StartTIme"
                   type="date"
                   placeholder="選擇日期"
                 ></el-date-picker>
-                <el-time-picker class="width-date" v-model="timevalueStart" placeholder="任意時間點"></el-time-picker>
+                <el-time-picker class="width-date" v-model="Start_End.StartTIme" placeholder="任意時間點"></el-time-picker>
               </p>
               <p class="p-dis">
                 <span>至</span>
                 <el-date-picker
                   class="width-date"
-                  v-model="datevalueEnd"
+                  v-model="Start_End.EndTIme"
                   type="date"
                   placeholder="選擇日期"
                 ></el-date-picker>
-                <el-time-picker class="width-date" v-model="timevalueEnd" placeholder="任意時間點"></el-time-picker>
+                <el-time-picker class="width-date" v-model="Start_End.EndTIme" placeholder="任意時間點"></el-time-picker>
               </p>
               <el-row class="margin-row">
                 <el-button size="mini" type="primary" @click="Sure">確定</el-button>
@@ -71,7 +71,7 @@
             ></el-date-picker>
           </el-button-group>
         </el-row>
-        <div class="drop">
+        <div class="drop" v-if="granularity">
           <span style="margin-right:15px">時間粒度:</span>
           <el-select v-model="value" placeholder="請選擇" @change="switchData()" size="small">
             <el-option
@@ -93,10 +93,6 @@ import moment from "moment";
 export default {
   data() {
     return {
-      datevalueStart: new Date(), // 日期（从）
-      timevalueStart: new Date(), // 时间（从）
-      datevalueEnd: new Date(), // 日期（至）
-      timevalueEnd: new Date(), // 时间（至）
       datetimeval: [], // 选择时间数据
       visible: false, // 时间选择器的变化
       datetim: true, // 时间选择器的变化
@@ -123,6 +119,11 @@ export default {
   props: {
     classsvalue: {
       required: true
+    },
+    granularity: {
+      required: false,
+      type: Boolean,
+      default: true,
     }
   },
   created() {
@@ -191,23 +192,10 @@ export default {
     getdate() {
       this.datetim = false;
       this.datetime = true;
-      const y = moment(this.datevalueStart).format("YYYY");
-      const m = moment(this.datevalueStart).format("MM") - 1;
-      const d = moment(this.datevalueStart).format("DD");
-      const h = moment(this.timevalueStart).format("HH");
-      const f = moment(this.timevalueStart).format("mm");
-      const s = moment(this.timevalueStart).format("ss");
-
-      const yy = moment(this.datevalueEnd).format("YYYY");
-      const mm = moment(this.datevalueEnd).format("MM") - 1;
-      const dd = moment(this.datevalueEnd).format("DD");
-      const hh = moment(this.timevalueEnd).format("HH") - 1;
-      const ff = moment(this.timevalueEnd).format("mm");
-      const ss = moment(this.timevalueEnd).format("ss");
 
       this.datetimeval = [
-        new Date(y, m, d, h, f, s),
-        new Date(yy, mm, dd, hh, ff, ss)
+        new Date(this.Start_End.StartTIme),
+        new Date(this.Start_End.EndTIme)
       ];
     },
     // 选择时间
