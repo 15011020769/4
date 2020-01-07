@@ -228,7 +228,7 @@
             </div>
           </div>
           <div v-if="!tableShow">
-            <addNewTactics :policy="policy" :isShow="tableShow" @closePage="closePageAdd" />
+            <addNewTactics :policy="policy" :isShow="tableShow" @closePage="closePageAdd" @describeDDoSPolicyADD="describeDDoSPolicy" />
           </div>
         </div>
       </el-tab-pane>
@@ -333,6 +333,7 @@ export default {
     },
     // 1.2.获取DDoS高级策略
     describeDDoSPolicy() {
+      // debugger
       this.loading = true;
       let params = {
         Version: "2018-07-09",
@@ -397,6 +398,7 @@ export default {
       } else if (tab.name == "third") {
         //DDOS高级防护策略
         this.describeDDoSPolicy();
+        this.closePageAdd()
       }
     },
 
@@ -473,7 +475,7 @@ export default {
     },
     //接收子组件的方法，并让子组件消失父组件显示
     closePageAdd(obj) {
-      // console.log(obj)
+      console.log(obj)
       this.tableShow = true;
     },
     //穿梭框事件

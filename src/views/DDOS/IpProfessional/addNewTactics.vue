@@ -726,23 +726,19 @@ export default {
           params["Name"] = this.tacticsName;
           this.axios.post(DDOS_POLICY_CREATE, params).then(res => {
             console.log(res);
-            // let params = {
-            //   Version: "2018-07-09",
-            //   Business: "net"
-            // };
-            // this.axios.post(DDOSPOLICY_CONT, params).then(res => {
-            //   this.tableDataPolicy = res.Response.DDosPolicyList;
-            //   this.loading = false;
-            // });
+            this.$emit('describeDDoSPolicyADD');
+            // 关闭新增页面
+            this.closeAddPage();
+            // this.$emit("closePage", { message: this.tableShow });
           });
         } else {
           params["PolicyId"] = this.policy.PolicyId;
           this.axios.post(DDOS_POLICY_MODIFY, params).then(res => {
             console.log(params, res);
+          // 关闭新增页面
+          this.closeAddPage();
           });
         }
-        // 关闭新增页面
-        this.closeAddPage();
       }
     },
     handleClose(done) {
