@@ -144,7 +144,6 @@ export default {
         Version: "2018-05-25",
       };
       const res = await this.axios.post(CLUSTERS_SECURITY, params);
-      
       if(res.Error){
         console.log(res);
         this.loadShow = false;
