@@ -1,5 +1,5 @@
 <template>
-  <div class="RoleDetail" v-loading="loading">
+  <div class="RoleDetail">
     <HeadCom :title="roleInfo.RoleName" :backShow="true" @_back="_back" />
     <div class="container">
       <div class="baseInfo" v-loading="infoLoad">
@@ -54,7 +54,7 @@
           </p>
         </div>
       </div>
-      <div class="tabs">
+      <div class="tabs" v-loading="loading">
         <el-tabs v-model="activeName" @tab-click="handleClick">
           <!-- tab 角色策略 start -->
           <el-tab-pane :label="$t('CAM.Role.Authorized')" name="first">
@@ -413,7 +413,6 @@ export default {
       this.axios
         .post(GET_ROLE, paramsInfo)
         .then(res => {
-          console.log(res);
           let resInfo = res.Response.RoleInfo;
           let PolicyDocument = JSON.parse(resInfo.PolicyDocument);
           this.TotalCounts =
@@ -565,13 +564,25 @@ export default {
         AttachRoleId: this.$route.query.RoleId
       };
       this.axios.post(ATTACH_ROLE, params).then(res => {
-        console.log(res);
+        if (res.Response.Error) {
+          this.$message({
+            message: "关联失败",
+            type: "success"
+          });
+        } else {
+          this.$message({
+            message: "关联成功",
+            type: "success"
+          });
+        }
       });
     },
     // 关联角色策略
     attachRolePolicies() {
       if (this.multipleSelection.length > 3) {
         this.$message("每次最多可以选中三条");
+      } else if (this.multipleSelection.length == 0) {
+        this.$message("请选中要关联的数据");
       } else {
         this.multipleSelection.forEach(item => {
           this.attachPolicy(item.PolicyId);
@@ -581,10 +592,6 @@ export default {
         // this.multipleSelection = [];
         setTimeout(() => {
           this.getRolePolicy();
-          this.$message({
-            message: "关联成功",
-            type: "success"
-          });
         }, 3000);
       }
     },

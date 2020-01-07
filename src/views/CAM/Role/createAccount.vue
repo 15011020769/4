@@ -101,7 +101,7 @@
 <script>
 import transfer from "./component/transfer";
 import HeadCom from "../UserListNew/components/Head";
-import {CREATE_ROLE,ATTACH_ROLE} from '@/constants'
+import { CREATE_ROLE, ATTACH_ROLE } from "@/constants";
 export default {
   components: {
     transfer,
@@ -204,20 +204,6 @@ export default {
         this.have = true;
         return;
       }
-      /**
-         * PolicyDocument参数示例：principal用于指定角色的授权对象。获取该参数可参阅 获取角色详情 输出参数RoleInfo
-         * service是指定的
-          {
-            "version": "2.0",
-            "statement": [{
-              "action": "name/sts:AssumeRole",
-              "effect": "allow",
-              "principal": {
-                "qcs": ["qcs::cam::uin/100011921910:root"]
-              }
-            }]
-          }
-         */
       let params = {
         Version: "2019-01-16",
         RoleName: this.inputRoleName,
@@ -229,7 +215,14 @@ export default {
       };
       this.axios.post(CREATE_ROLE, params).then(data => {
         let roleId = data.Response.RoleId; // 获取创建的角色id
-        this.$message("创建角色成功");
+        if (data.Response.Error) {
+          if (data.Response.Error.Code == "InvalidParameter.RoleNameError") {
+            this.$message.error("角色名不合法。");
+          }
+        } else {
+          this.$message("创建角色成功");
+        }
+
         let policiesArray = this.policiesSelectedData; // 获取权限策略
         // 根据获取的角色ID创建角色策略
         if (roleId != undefined && roleId != "" && policiesArray != "") {
@@ -282,7 +275,6 @@ export default {
       margin: 0 auto;
       padding: 20px;
       background: #fff;
-
 
       .contant_flex {
         display: flex;
@@ -340,8 +332,8 @@ export default {
     }
   }
   .step >>> .el-steps {
-  background: white;
-  padding-bottom: 25px;
-}
+    background: white;
+    padding-bottom: 25px;
+  }
 }
 </style>
