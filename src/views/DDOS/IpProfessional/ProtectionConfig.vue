@@ -55,7 +55,7 @@
                 <template slot-scope="scope">
                   <div v-for="(item, index) in scope.row.Record" :key="index">
                     <div v-if="item.Key=='DefendStatus' && item.Value == '1'">开启</div>
-                    <div v-else-if="item.Key=='DefendStatus' && item.Value != '1'">-</div>
+                    <div v-else-if="item.Key=='DefendStatus' && item.Value != '1'">关闭</div>
                   </div>
                 </template>
               </el-table-column>

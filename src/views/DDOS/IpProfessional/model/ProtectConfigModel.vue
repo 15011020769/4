@@ -268,7 +268,9 @@ export default {
         Id: this.resourceId
       };
       this.axios.post(GET_Status, params).then(res => {
+
         this.ShowFlag = res.Response.ShowFlag;
+        console.log( this.ShowFlag )
         if (res.Response.DefendStatus == 0) {
           this.servicePack.DefendStatus = false;
         }
@@ -294,7 +296,7 @@ export default {
     },
     //选择防护等级
     clickGarden(typeNum, type) {
-      this.changeModel = false;
+      // this.changeModel = false;
       if (typeNum == 3) {
         this.changeModelTip3 = true;
         this.tabMode = "high";
@@ -456,7 +458,10 @@ export default {
   margin-bottom: 10px;
   display: flex;
   align-items: center;
-
+  a{
+    display: inline-block;
+    margin: 0 20px;
+  }
   .modelSpan1 {
     width: 120px;
   }
