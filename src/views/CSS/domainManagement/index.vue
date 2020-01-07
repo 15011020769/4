@@ -154,10 +154,13 @@ export default {
       let params = {
         Version: "2018-08-01",
         PageSize: this.pageSize, //分页大小，范围：10~100。默认10
-        PageNum: this.currentPage //取第几页，范围：1~100000。默认1
+        PageNum: this.currentPage, //取第几页，范围：1~100000。默认1
+        // DomainPrefix: this.tableDataName
       };
+      if (this.tableDataName) {
+        params.DomainPrefix = this.tableDataName
+      }
       this.axios.post(DOMAIN_LIST, params).then(res => {
-        console.log(res);
         this.allData=res.Response.DomainList;
         this.tableDataBegin = res.Response.DomainList;
         this.totalItems = res.Response.AllCount;
@@ -174,41 +177,21 @@ export default {
     },
     // 搜索
     doFilter() {
-      this.tableDataBegin = this.allData;
-      this.tableDataEnd = [];
-      //每次手动将数据置空,因为会出现多次点击搜索情况
-      this.filterTableDataEnd = [];
-      this.tableDataBegin.forEach((val, index) => {
-        if (val.Name) {
-          if (val.Name.indexOf(this.tableDataName) == 0) {
-            this.filterTableDataEnd.push(val);
-            this.tableDataBegin = this.filterTableDataEnd;
-          } else {
-            this.filterTableDataEnd.push();
-            this.tableDataBegin = this.filterTableDataEnd;
-          }
-        }
-      });
-      //页面数据改变重新统计数据数量和当前页
-      this.currentPage = 1;
-      this.totalItems = this.filterTableDataEnd.length;
-      //渲染表格,根据值
-      this.currentChangePage(this.filterTableDataEnd);
-      //页面初始化数据需要判断是否检索过
-      this.flag = true;
+      this.currentPage = 1
+      this.$nextTick(this.describeLiveDomains)
     },
     //切换pagesize
     handleSizeChange(val) {
       console.log(`每页 ${val} 条`);
       this.pageSize = val;
-      this.describeLiveDomains();
+      this.$nextTick(this.describeLiveDomains)
     },
     //切换分页
     handleCurrentChange(val) {
       console.log(`当前页: ${val}`);
       this.currentPage = val;
       //分页查询
-      this.describeLiveDomains();
+      this.$nextTick(this.describeLiveDomains)
     }, //组件自带监控当前页码
     
     currentChangePage(list) {

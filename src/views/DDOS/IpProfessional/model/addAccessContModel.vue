@@ -75,10 +75,10 @@
               <p>{{$t('DDOS.accessCopy.perform')}}</p>
               <p>
                 <el-select v-model="policyForm.ExeMode">
-                  <el-option :label="$t('DDOS.accessCopy.intercept')" value='alg'></el-option>
-                  <el-option :label="$t('DDOS.accessCopy.identification')" value="drop"></el-option>
+                  <el-option :label="$t('DDOS.accessCopy.intercept')" value='drop'></el-option>
+                  <el-option :label="$t('DDOS.accessCopy.identification')" value="alg"></el-option>
                 </el-select>
-                <span class="executionSpan" v-if="policyForm.ExeMode=='drop'?true:false">{{$t('DDOS.accessCopy.identificationTitle')}}</span>
+                <span class="executionSpan" v-if="policyForm.ExeMode=='alg'">{{$t('DDOS.accessCopy.identificationTitle')}}</span>
               </p>
             </div>
           </div>
@@ -161,7 +161,19 @@ export default {
         params["Policy.Frequency"] = this.policyForm.Frequency
       }
       this.axios.post(CCSELFDEFINEPOLICY_CREATE, params).then(res => {
-        console.log(params, res);
+        if(res.Response.Success){
+          this.$message({
+          message: '添加成功',
+          type: 'success'
+        });
+        }
+        else{
+          if(res.Response.Error.Code == 'LimitExceeded'){
+            this.$message.error('CC自定义策略不能超过5个');
+          }
+          this.$message.error('添加失败');
+        }
+        this.$emit('init')
       });
     },
     // 1.2.修改CC自定义策略

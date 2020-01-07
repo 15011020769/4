@@ -106,12 +106,6 @@ export default {
     newbtn(){
       this.$router.push({
         path:"/configuration/create",//      新增配置项
-        name:"create",
-          component:()=>
-      import(/* webpackChunkName:"create" */ './create/index.vue'),
-    meta:{
-      keepAlive:true
-    },
       })
       // console.log("点击")
     },
@@ -131,25 +125,13 @@ export default {
     montior(){
       this.$router.push( {
         path:"/configuration/montior",//     监控页面
-        name:"montior",
-        component:()=>
-          import(/* webpackChunkName:'montior' */ "./montior/index.vue"),
-        meta:{
-          keepAlive:true,
-        }
       },
       )
     },
     //管理
     administration(){
       this.$router.push( {
-        path:"/configuration/administration",//     监控页面
-        name:"administration",
-        component:()=>
-          import(/* webpackChunkName:'administration' */ "./administration/index.vue"),
-        meta:{
-          keepAlive:true,
-        }
+        path:"/configuration/administration",//     管理页面
       },
       )
     },

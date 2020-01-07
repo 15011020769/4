@@ -5,7 +5,8 @@
         title="批量导出IP黑名单"
         :visible.sync="dialogVisible3"
         width="35%"
-        :before-close="handleClose">
+        :before-close="handleClose"
+      >
         <div>
           <el-input type="textarea" class="urlTexttarea" v-model="exportText"></el-input>
         </div>
@@ -18,45 +19,45 @@
 </template>
 <script>
 export default {
-  props:{
-    isShow3:Boolean,
+  props: {
+    isShow3: Boolean,
     exportText: String
   },
-  computed:{
-    dialogVisible3(){
-      this.dialogVisible=this.isShow3
-      return this.isShow3
+  computed: {
+    dialogVisible3() {
+      this.dialogVisible = this.isShow3;
+      return this.isShow3;
     }
   },
-  data(){
-    return{
-      dialogVisible:'',//弹框状态
-    }
+  data() {
+    return {
+      dialogVisible: "" //弹框状态
+    };
   },
-  methods:{
+  methods: {
     //关闭按钮
-    handleClose(){
-      this.dialogVisible=false;
-      this.$emit("closeModel3",this.dialogVisible)
+    handleClose() {
+      this.dialogVisible = false;
+      this.$emit("closeModel3", this.dialogVisible);
     }
   }
-}
+};
 </script>
 <style lang="scss">
-#exportUrl{
-  .urlTexttarea{
-    width:100%;
-    height:100px;
-    textarea{
-      width:100%;
-      height:100px;
+#exportUrl {
+  .urlTexttarea {
+    width: 100%;
+    height: 100px;
+    textarea {
+      width: 100%;
+      height: 100px;
       border-radius: 0;
       resize: none;
     }
   }
-  .closeBtn{
-    background-color:#006eff;
-    color:#fff;
+  .closeBtn {
+    background-color: #006eff;
+    color: #fff;
   }
 }
 </style>

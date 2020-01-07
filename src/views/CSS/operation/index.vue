@@ -5,27 +5,11 @@
       <XTimeX v-on:switchData="GetDat" :classsvalue="value"></XTimeX>
     </div>
     <div class="seek seek-box">
-      <p>
-        <span>选择域名标签</span>
-        <el-select
-          v-model="damainValue"
-          multiple
-          collapse-tags
-          style="margin-left: 10px;"
-          placeholder="请选择"
-        >
-          <el-option
-            v-for="item in domainsData"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          ></el-option>
-        </el-select>
-      </p>
       <p style="margin-left:20px;">
         <span>选择域名</span>
         <el-select
           v-model="damainValue"
+          @change="changeDomain"
           multiple
           collapse-tags
           style="margin-left: 10px;"
@@ -35,7 +19,7 @@
             v-for="item in domainsData"
             :key="item.value"
             :label="item.label"
-            :value="item.value"
+            :value="item.label"
           ></el-option>
         </el-select>
       </p>
@@ -50,7 +34,7 @@
           ></el-option>
         </el-select>
       </p>
-      <el-button style="margin-left:20px;">{{region}}</el-button>
+      <el-button type="primary" style="margin-left:20px;">{{region}}</el-button>
       <el-button style="margin-left:20px;" type="primary" @click="search">查询</el-button>
     </div>
     <div class="operation-main">
@@ -72,6 +56,7 @@
         <Tab1
           :StartTIme="StartTIme"
           :EndTIme="EndTIme"
+          :operator="operator"
           v-if="tabIndex == 0"
           :domain="domain"
           ref="tab1"
@@ -86,6 +71,7 @@
         <Tab3
           :StartTIme="StartTIme"
           :EndTIme="EndTIme"
+          :operator="operator"
           v-if="tabIndex == 2"
           :domain="domain"
           ref="tab3"
@@ -119,25 +105,21 @@ export default {
       domainsData: [],
       options: [
         {
-          value: "选项1",
-          label: "黄金糕"
+          value: "",
+          label: "全部运营商"
         },
         {
-          value: "选项2",
-          label: "双皮奶"
+          value: "China Telecom",
+          label: "中国电信"
         },
         {
-          value: "选项3",
-          label: "蚵仔煎"
+          value: "China Unicom",
+          label: "中国联通"
         },
         {
-          value: "选项4",
-          label: "龙须面"
+          value: "China Mobile",
+          label: "中国移动"
         },
-        {
-          value: "选项5",
-          label: "北京烤鸭"
-        }
       ],
       damainValue: [],
       domain: [],
@@ -178,7 +160,7 @@ export default {
   created() {
     this.getCity();
     this.getDomains();
-    console.log(this.getDay(5));
+    // console.log(this.getDay(5));
   },
   methods: {
     doHandleMonth(month) {
@@ -187,6 +169,9 @@ export default {
         m = "0" + month;
       }
       return m;
+    },
+    changeDomain(value) {
+      this.domain = value
     },
     getDay(day) {
       var today = new Date();
@@ -207,7 +192,7 @@ export default {
         Version: "2018-08-01"
       };
       this.axios.post(DOMAIN_LIST, params).then(res => {
-        console.log(res)
+        // console.log(res)
         var arr = [];
         res.Response.DomainList.forEach((item, index) => {
           const data = {
@@ -223,17 +208,26 @@ export default {
     search() {
       this.StartTIme = this.timeData[0].StartTIme;
       this.EndTIme = this.timeData[0].EndTIme;
-      this.damainValue.forEach(item => {
-        this.domain.push(this.domainsData[item].label);
-      });
+      // this.damainValue.forEach(item => {
+      //   this.domain.push(this.domainsData[item].label);
+      //   this.domain = Array.from(new Set(this.domain))
+      // });     
       if (this.tabIndex == 0) {
-        this.$refs.tab1.init();
+        this.$nextTick(() => {
+          this.$refs.tab1.init();
+        })
       } else if (this.tabIndex == 1) {
-        this.$refs.tab2.init();
+        this.$nextTick(() => {
+          this.$refs.tab2.init();
+        })
       } else if (this.tabIndex == 2) {
-        this.$refs.tab3.init();
+        this.$nextTick(() => {
+          this.$refs.tab3.init();
+        })
       } else if (this.tabIndex == 3) {
-        this.$refs.tab4.init();
+        this.$nextTick(() => {
+          this.$refs.tab4.init();
+        })
       }
     },
     //时间组件返回的数据

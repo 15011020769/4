@@ -434,6 +434,15 @@ export default new Router({
     name: 'configuration',
     component: () =>
       import( /* webpackChunkName: "configuration" */ './configuration/index.vue'),
+      // children:{
+      //   path:"/configuration/create",//      新增配置项
+      //   name:"create",
+      //   component:()=>
+      //     import(/* webpackChunkName:"create" */ './configuration/create/index.vue'),
+      //   // meta:{
+      //   //   keepAlive:true
+      //   // }
+      // },
     meta: {
       keepAlive: true
     }

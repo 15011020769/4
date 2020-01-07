@@ -54,7 +54,8 @@ export default {
   props: {
     StartTIme: String,
     EndTIme: String,
-    domain: Array
+    domain: Array,
+    operator: String,
   },
   created() {
     this.init();
@@ -71,8 +72,17 @@ export default {
       const params = {
         Version: "2018-08-01",
         StartTime: moment(this.StartTIme).format("YYYY-MM-DD HH:MM:SS"),
-        EndTime: moment(this.EndTIme).format("YYYY-MM-DD HH:MM:SS")
+        EndTime: moment(this.EndTIme).format("YYYY-MM-DD HH:MM:SS"),
+        "ProvinceNames.0": "Taiwan",
       };
+      if (this.operator) {
+        params["IspNames.0"] = this.operator
+      }
+       if (this.domain.length != 0) {
+        this.domain.forEach((item, index) => {
+          params["PlayDomains." + index] = item;
+        });
+      }
       const param = {
         Version: "2018-08-01",
         StartTime: moment(this.StartTIme).format("YYYY-MM-DD HH:MM:SS"),
@@ -97,6 +107,7 @@ export default {
         })
         .then(() => {
           this.axios.post(CSS_PLAY, params).then(res => {
+            console.log(res)
             if (res.Response.Error) {
               if (
                 res.Response.Error.Message ==

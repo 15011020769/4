@@ -1,3 +1,11 @@
+/*
+ * @Author: your name
+ * @Date: 2020-01-06 17:51:24
+ * @LastEditTime : 2020-01-07 15:31:13
+ * @LastEditors  : Please set LastEditors
+ * @Description: In User Settings Edit
+ * @FilePath: /new_product/src/constants/CSS.js
+ */
 // 断流诊断 列表
 export const CUTOUT_LIST = 'live2/DescribeLiveStreamEventList'
 //域名列表
@@ -61,6 +69,14 @@ export const GET_TRANSCODE_TEMPLATE = 'live2/DescribeLiveTranscodeTemplates'
 export const UPDATE_TRANSCODE_TEMPLATE = 'live2/ModifyLiveTranscodeTemplate'
 // 刪除轉碼模板
 export const DELETE_TRANSCODE_TEMPLATE = 'live2/DeleteLiveTranscodeTemplate'
+// 创建截图鉴黄模板
+export const ADD_SNAPSHOT_TEMPLATE = 'live2/CreateLiveSnapshotTemplate'
+// 获取截图鉴黄模板
+export const GET_SNAPSHOT_TEMPLATE = 'live2/DescribeLiveSnapshotTemplates'
+// 修改截图鉴黄模板
+export const UPDATE_SNAPSHOT_TEMPLATE = 'live2/ModifyLiveSnapshotTemplate'
+// 删除截图鉴黄模板
+export const DELETE_SNAPSHOT_TEMPLATE = 'live2/DeleteLiveSnapshotTemplate'
 
 
 /** 查询实时总带宽 实时总连接数 */
@@ -93,3 +109,13 @@ export const LIVE_DESCRIBELIVEWATERMARKS = 'live2/DescribeLiveWatermarks'
 export const LIVE_DELETELIVEWATERMARKRULE = 'live2/DeleteLiveWatermarkRule'
 /** 创建水印规则 */
 export const LIVE_CREATELIVEWATERMARKRULE = 'live2/CreateLiveWatermarkRule'
+/** 查询历史流 */
+export const LIVE_DESCRIBE_LIVESTREAMEVENTLIST = 'live2/DescribeLiveStreamEventList'
+/** 查询禁推流 */
+export const LIVE_DESCRIBE_LIVEFORBIDSTREAMLIST = 'live2/DescribeLiveForbidStreamList'
+/** 查询在线流 */
+export const LIVE_DESCRIBE_LIVESTREAMONLINELIST = 'live2/DescribeLiveStreamOnlineList'
+/** 禁止直播流 */
+export const LIVE_FORBIDLIVESTREAM = 'live2/ForbidLiveStream'
+// 查询播放鉴权key
+export const LIVE_DESCRIBE_LIVEPLAYAUTHKEY = 'live2/DescribeLivePlayAuthKey'

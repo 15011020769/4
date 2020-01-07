@@ -101,12 +101,14 @@
           <div class="newClear">
             <span class="timerListTit">{{ $t('SCF.total.dscf') }}</span>
             <div class="btnAll">
+            <!-- v-model="item.Enable" -->
               <el-switch
                 v-model="switch1[index]"
                 active-color="#006eff"
                 inactive-color="#888"
                 class="switchs"
               ></el-switch>
+             
               <i class="el-icon-delete" style="cursor:pointer" @click="deleteTrigger(index,item)"></i>
             </div>
           </div>
@@ -187,7 +189,7 @@ export default {
         triggerTime: "每5分鐘（每5分鐘的0秒执行一次）",
         cronlist: "",
         writeIsTrue: "false",
-        nowStart: "",
+        nowStart: false,
         CustomArgument:'',
       },
       desc: "0 */5 * * * * *",
@@ -234,15 +236,19 @@ export default {
             TriggerName: this.formTriggerForm.tasksName,
             Type: this.formTriggerForm.triggerType,
             TriggerDesc: this.desc,
-            CustomArgument:this.formTriggerForm.CustomArgument
+            CustomArgument:this.formTriggerForm.CustomArgument,
+            Enable:'OPEN',
+            // Enable:(this.formTriggerForm.nowStart==true?"OPEN":"CLOSE"),
           };
           let functionName = this.$route.query.functionName;
           if (functionName != "" && functionName != null) {
             params["FunctionName"] = functionName;
           }
-          console.log(params)
+          console.log('向后台发送的params',params)
+          // console.log(this.formTriggerForm.nowStart)
+          // console.log(this.formTriggerForm.nowStart==true?"OPEN":"CLOSE")
           this.axios.post(CREAT_TRIGGER, params).then(res => {
-            console.log(res);
+            console.log('保存成功后的返回值',res);
             _this.getfunction();
             _this.formTriggerForm.tasksName = "";
             _this.formTriggerForm.writeIsTrue = "false";
@@ -303,9 +309,9 @@ export default {
         params["FunctionName"] = functionName;
       }
       this.axios.post(SCF_DETAILS, params).then(res => {
-        console.log(res);
-        console.log(this.triggerBoxList);
+        // console.log('请求数据的返回值',res);
         this.triggerBoxList = res.Response.Triggers;
+        // console.log(this.triggerBoxList);
         for (let i = 0; i < this.triggerBoxList.length; i++) {
           this.switch1[i] = true;
         }

@@ -2,7 +2,13 @@
   <div>
     <!-- 策略名称 -->
     <div>
-      <span class="fontWeightBold">{{$t('DDOS.Proteccon_figura.Policy_name')}}</span><el-input class="tacticsName" v-model="tacticsName" :disabled="nameFlag==true?false:true"></el-input>
+      <span class="fontWeightBold">{{$t('DDOS.Proteccon_figura.Policy_name')}}</span>
+      <el-input
+        class="tacticsName"
+        v-model="tacticsName"
+        :disabled="nameFlag==true?false:true"
+        @change="val"
+      ></el-input>
     </div>
     <!-- 黑白名单表格 -->
     <div>
@@ -17,14 +23,16 @@
               placeholder="请输入要查询的内容"
             ></el-input>
             <el-button class="el-icon-search" @click="doFilter"></el-button>
-          </span> -->
+          </span>-->
         </div>
         <div>
           <el-table :data="IpBlackWhiteLists.slice((currentPage-1)*pageSize,currentPage*pageSize)">
             <el-table-column prop="Type" label="策略">
               <template slot-scope="scope">
                 <span v-if="scope.row.Type == 'black'">{{$t('DDOS.Proteccon_figura.Blacklist')}}</span>
-                <span v-else-if="scope.row.Type == 'white'">{{$t('DDOS.Proteccon_figura.Whitelist')}}</span>
+                <span
+                  v-else-if="scope.row.Type == 'white'"
+                >{{$t('DDOS.Proteccon_figura.Whitelist')}}</span>
               </template>
             </el-table-column>
             <el-table-column prop="Ip" label="地址">
@@ -36,7 +44,7 @@
                   @click.native.prevent="editRow(scope.$index, scope.row)"
                   type="text"
                   size="small"
-                >编辑</el-button> -->
+                >编辑</el-button>-->
                 <el-button
                   @click.native.prevent="deleteRowBW(scope.$index, scope.row)"
                   type="text"
@@ -107,7 +115,10 @@
               <el-input class="inputChange" v-model="item.DPortEnd" autocomplete="off"></el-input>
             </td>
             <td>
-              <a v-on:click="removeRow(index,1)" v-show="index >= 0">{{$t('DDOS.Proteccon_figura.Delete')}}</a>
+              <a
+                v-on:click="removeRow(index,1)"
+                v-show="index >= 0"
+              >{{$t('DDOS.Proteccon_figura.Delete')}}</a>
             </td>
           </tr>
         </table>
@@ -167,7 +178,7 @@
                 <el-option label="不检测" value="no_match"></el-option>
                 <!-- <el-option label="IP头开始检查" value="sourcePort"></el-option>
                 <el-option label="TCP/UDP头开始检查" value="allPost"></el-option>
-                <el-option label="载荷开始检查" value="allPost"></el-option> -->
+                <el-option label="载荷开始检查" value="allPost"></el-option>-->
               </el-select>
             </td>
             <td>
@@ -177,19 +188,29 @@
               </el-select>
             </td>
             <td>
-              <el-input class="inputChange1" v-model="item.Offset" autocomplete="off" disabled=true>0</el-input>
+              <el-input
+                class="inputChange1"
+                v-model="item.Offset"
+                autocomplete="off"
+                disabled="true"
+              >0</el-input>
             </td>
             <td>
-              <el-input class="inputChange1" v-model="item.Depth" autocomplete="off" disabled=true>1</el-input>
+              <el-input
+                class="inputChange1"
+                v-model="item.Depth"
+                autocomplete="off"
+                disabled="true"
+              >1</el-input>
             </td>
             <td>
               <el-select class="selectChange1" v-model="item.IsNot">
-                <el-option label="包含" value=1></el-option>
-                <el-option label="不包含" value=0></el-option>
+                <el-option label="包含" value="1"></el-option>
+                <el-option label="不包含" value="0"></el-option>
               </el-select>
             </td>
             <td>
-              <el-input class="inputChange1" v-model="item.Str" autocomplete="off" disabled=true></el-input>
+              <el-input class="inputChange1" v-model="item.Str" autocomplete="off" disabled="true"></el-input>
             </td>
             <td>
               <el-select class="selectChange1" v-model="item.Action">
@@ -248,57 +269,96 @@
       <!-- 连接耗尽防护 -->
       <div class="childContTit">
         <h2>{{$t('DDOS.Proteccon_figura.overseas_traffic')}}</h2>
-        <span class="spanStyleLabel">{{$t('DDOS.Proteccon_figura.Air_protection')}}<i class="el-icon-info"></i></span>
+        <span class="spanStyleLabel">
+          {{$t('DDOS.Proteccon_figura.Air_protection')}}
+          <i class="el-icon-info"></i>
+        </span>
         <el-radio-group v-model="radios2">
           <el-radio :label="$t('DDOS.Proteccon_figura.Shut_down')"></el-radio>
           <el-radio :label="$t('DDOS.Proteccon_figura.Opening')"></el-radio>
-        </el-radio-group><br/>
+        </el-radio-group>
+        <br />
         <span class="spanStyleLabel">{{$t('DDOS.Proteccon_figura.Source_limit')}}</span>
         <el-radio-group v-model="radios3" @change="thisNextShowRow(3)">
           <el-radio :label="$t('DDOS.Proteccon_figura.Shut_down')"></el-radio>
           <el-radio :label="$t('DDOS.Proteccon_figura.Opening')"></el-radio>
         </el-radio-group>
-        <span  v-if="thisRadio3"><el-input class="inputChange1"></el-input>个/秒</span><br/>
+        <span v-if="thisRadio3">
+          <el-input class="inputChange1"></el-input>个/秒
+        </span>
+        <br />
         <span class="spanStyleLabel">{{$t('DDOS.Proteccon_figura.Sourceconnection')}}</span>
         <el-radio-group v-model="radios4" @change="thisNextShowRow(4)">
           <el-radio :label="$t('DDOS.Proteccon_figura.Shut_down')"></el-radio>
           <el-radio :label="$t('DDOS.Proteccon_figura.Opening')"></el-radio>
-        </el-radio-group><span  v-if="thisRadio4"><el-input class="inputChange1"></el-input>个</span><br/>
+        </el-radio-group>
+        <span v-if="thisRadio4">
+          <el-input class="inputChange1"></el-input>个
+        </span>
+        <br />
         <span class="spanStyleLabel">{{$t('DDOS.Proteccon_figura.Purpose_newconnection')}}</span>
         <el-radio-group v-model="radios5" @change="thisNextShowRow(5)">
-          <el-radio  :label="$t('DDOS.Proteccon_figura.Shut_down')"></el-radio>
-          <el-radio  :label="$t('DDOS.Proteccon_figura.Opening')"></el-radio>
-        </el-radio-group><span  v-if="thisRadio5"><el-input class="inputChange1"></el-input>个/秒</span><br/>
+          <el-radio :label="$t('DDOS.Proteccon_figura.Shut_down')"></el-radio>
+          <el-radio :label="$t('DDOS.Proteccon_figura.Opening')"></el-radio>
+        </el-radio-group>
+        <span v-if="thisRadio5">
+          <el-input class="inputChange1"></el-input>个/秒
+        </span>
+        <br />
         <span class="spanStyleLabel">{{$t('DDOS.Proteccon_figura.Destination_concurren')}}</span>
         <el-radio-group v-model="radios6" @change="thisNextShowRow(6)">
           <el-radio :label="$t('DDOS.Proteccon_figura.Shut_down')"></el-radio>
           <el-radio :label="$t('DDOS.Proteccon_figura.Opening')"></el-radio>
-        </el-radio-group><span  v-if="thisRadio6"><el-input class="inputChange1"></el-input>个</span>
+        </el-radio-group>
+        <span v-if="thisRadio6">
+          <el-input class="inputChange1"></el-input>个
+        </span>
       </div>
       <!-- 异常连接检测 -->
       <div class="childContTit">
-        <h2>{{$t('DDOS.Proteccon_figura.Abnormal_detection')}}<i class="el-icon-info"></i></h2>
+        <h2>
+          {{$t('DDOS.Proteccon_figura.Abnormal_detection')}}
+          <i class="el-icon-info"></i>
+        </h2>
         <span class="spanStyleLabel">{{$t('DDOS.Proteccon_figura.Abnormal_detection')}}</span>
         <el-radio-group v-model="radios7" @change="thisNextShow">
-          <el-radio  :label="$t('DDOS.Proteccon_figura.Shut_down')"></el-radio>
-          <el-radio  :label="$t('DDOS.Proteccon_figura.Opening')"></el-radio>
-        </el-radio-group><span  v-if="thisRadio7"><el-input class="inputChange1"></el-input>个</span><br/>
+          <el-radio :label="$t('DDOS.Proteccon_figura.Shut_down')"></el-radio>
+          <el-radio :label="$t('DDOS.Proteccon_figura.Opening')"></el-radio>
+        </el-radio-group>
+        <span v-if="thisRadio7">
+          <el-input class="inputChange1"></el-input>个
+        </span>
+        <br />
         <div v-if="thisRadio7">
           <span class="spanStyleLabel">Syn报文占比检测</span>
-          <el-radio-group v-model="radios8"  @change="thisNextShowRow(8)">
-            <el-radio  :label="$t('DDOS.Proteccon_figura.Shut_down')"></el-radio>
-            <el-radio  :label="$t('DDOS.Proteccon_figura.Opening')"></el-radio>
-          </el-radio-group><span v-if="thisRadio8"><span class="spanText">Syn报文占比检测：</span><el-input class="inputChange1"></el-input></span><br/>
+          <el-radio-group v-model="radios8" @change="thisNextShowRow(8)">
+            <el-radio :label="$t('DDOS.Proteccon_figura.Shut_down')"></el-radio>
+            <el-radio :label="$t('DDOS.Proteccon_figura.Opening')"></el-radio>
+          </el-radio-group>
+          <span v-if="thisRadio8">
+            <span class="spanText">Syn报文占比检测：</span>
+            <el-input class="inputChange1"></el-input>
+          </span>
+          <br />
           <span class="spanStyleLabel">Syn报文数检测</span>
           <el-radio-group v-model="radios9" @change="thisNextShowRow(9)">
             <el-radio :label="$t('DDOS.Proteccon_figura.Shut_down')"></el-radio>
             <el-radio :label="$t('DDOS.Proteccon_figura.Opening')"></el-radio>
-          </el-radio-group><span v-if="thisRadio9"><span class="spanText">Syn报文数检测：</span><el-input class="inputChange1"></el-input></span><br/>
+          </el-radio-group>
+          <span v-if="thisRadio9">
+            <span class="spanText">Syn报文数检测：</span>
+            <el-input class="inputChange1"></el-input>
+          </span>
+          <br />
           <span class="spanStyleLabel">连接超时检测</span>
           <el-radio-group v-model="radios10" @change="thisNextShowRow(10)">
             <el-radio :label="$t('DDOS.Proteccon_figura.Shut_down')"></el-radio>
             <el-radio :label="$t('DDOS.Proteccon_figura.Opening')"></el-radio>
-          </el-radio-group><span v-if="thisRadio10"><el-input class="inputChange1"></el-input>秒</span><br/>
+          </el-radio-group>
+          <span v-if="thisRadio10">
+            <el-input class="inputChange1"></el-input>秒
+          </span>
+          <br />
           <span class="spanStyleLabel">异常空连接防护</span>
           <el-radio-group v-model="radios11">
             <el-radio :label="$t('DDOS.Proteccon_figura.Shut_down')"></el-radio>
@@ -330,12 +390,17 @@
             </template>
           </el-table-column>
         </el-table>
-        <a href="#" class="addNewRow" @click="dialogVisible = true">{{$t('DDOS.Proteccon_figura.Click_open')}}</a>
+        <a
+          href="#"
+          class="addNewRow"
+          @click="dialogVisible = true"
+        >{{$t('DDOS.Proteccon_figura.Click_open')}}</a>
         <el-dialog
           title="水印创建"
           :visible.sync="dialogVisible"
           width="50%"
-          :before-close="handleClose">
+          :before-close="handleClose"
+        >
           <div class="childContTit childContTitModel">
             <h2>{{$t('DDOS.Proteccon_figura.TCP_port')}}</h2>
             <table class="table-div">
@@ -352,7 +417,10 @@
                   <el-input class="inputChange" v-model="item.endPort" autocomplete="off"></el-input>
                 </td>
                 <td>
-                  <a v-on:click="removeRow(index,4)" v-show="index >= 0">{{$t('DDOS.Proteccon_figura.Delete')}}</a>
+                  <a
+                    v-on:click="removeRow(index,4)"
+                    v-show="index >= 0"
+                  >{{$t('DDOS.Proteccon_figura.Delete')}}</a>
                 </td>
               </tr>
             </table>
@@ -401,7 +469,10 @@
           </div>
           <span slot="footer" class="dialog-footer">
             <el-button @click="dialogVisible = false">取 消</el-button>
-            <el-button type="primary" @click="createSY">{{$t('DDOS.Proteccon_figura.Determination')}}</el-button>
+            <el-button
+              type="primary"
+              @click="createSY"
+            >{{$t('DDOS.Proteccon_figura.Determination')}}</el-button>
           </span>
         </el-dialog>
       </div>
@@ -411,15 +482,24 @@
         <el-button @click="closeAddPage">取消</el-button>
       </div>
     </div>
-    <el-dialog class="dialogModelAddBw"
+    <el-dialog
+      class="dialogModelAddBw"
       title="添加黑白名单"
       :visible.sync="dialogModelAddBw"
       width="40%"
-      :before-close="handleCloseAddBw">
+      :before-close="handleCloseAddBw"
+    >
       <div class="contantList newClear">
         <div class="newClear">
           <p>地址</p>
-          <p><el-input class="inputText" v-model="blackWhiteText" type="textarea" placeholder="请输入IP地址，以换行符分隔"></el-input></p>
+          <p>
+            <el-input
+              class="inputText"
+              v-model="blackWhiteText"
+              type="textarea"
+              placeholder="请输入IP地址，以换行符分隔"
+            ></el-input>
+          </p>
         </div>
         <div class="newClear">
           <p>地址</p>
@@ -436,15 +516,19 @@
         <el-button @click="dialogModelAddBw=false">取消</el-button>
       </span>
     </el-dialog>
-    <el-dialog class="dialogModelAddBw"
+    <el-dialog
+      class="dialogModelAddBw"
       title="编辑黑白名单"
       :visible.sync="dialogEdit"
       width="40%"
-      :before-close="handleCloseedit">
+      :before-close="handleCloseedit"
+    >
       <div class="contantList newClear">
         <div class="newClear">
           <p>地址</p>
-          <p><el-input placeholder=""></el-input></p>
+          <p>
+            <el-input placeholder></el-input>
+          </p>
         </div>
         <div class="newClear">
           <p>地址</p>
@@ -464,24 +548,28 @@
   </div>
 </template>
 <script>
-import { DDOS_POLICY_CREATE, DDOS_POLICY_MODIFY } from '@/constants'
+import {
+  DDOS_POLICY_CREATE,
+  DDOS_POLICY_MODIFY,
+  DDOSPOLICY_CONT
+} from "@/constants";
 export default {
-  props:{
+  props: {
     isShow: Boolean,
     policy: Object
   },
-  data(){
-    return{
-      tacticsName:"",// 策略名称
-      nameFlag: true,//名称是否可编辑 true:可编辑
-      tags:[],
-      tags1:[],
-      tags3:[],
-      tags4:[],
-      tags5:[],
-      tableDataName1:"",
+  data() {
+    return {
+      tacticsName: "", // 策略名称
+      nameFlag: true, //名称是否可编辑 true:可编辑
+      tags: [],
+      tags1: [],
+      tags3: [],
+      tags4: [],
+      tags5: [],
+      tableDataName1: "",
       IpBlackWhiteLists: [], //黑白名单数据
-      tableDataBegin2:[],//水印防护
+      tableDataBegin2: [], //水印防护
       tableDataEnd: [],
       currentPage: 1,
       pageSize: 10,
@@ -490,135 +578,171 @@ export default {
       flag: false,
       multipleSelection: [],
       dialogVisible: false,
-      filterConrent:"",
-      DdisableProtocol:[],//禁用协议
-      radios1:"关闭",
-      radios2:"关闭",
-      radios3:"关闭",
-      radios4:"关闭",
-      radios5:"关闭",
-      radios6:"关闭",
-      radios7:"关闭",
-      radios8:"关闭",
-      radios9:"关闭",
-      radios10:"关闭",
-      radios11:"关闭",
-      radios12:"关闭",
-      moveNum: 0,//水印防护偏移量
-      thisRadio3:false,
-      thisRadio4:false,
-      thisRadio5:false,
-      thisRadio6:false,
-      thisRadio7:false,
-      thisRadio8:false,
-      thisRadio9:false,
-      thisRadio10:false,
-      dialogModelAddBw:false,//添加黑白名单
-      blackWhiteText: '',
-      blackWhite:'black',//添加黑白名单
-      dialogEdit:false,//编辑框
-      blackWhiteEdit: '',//编辑黑白名单
-      blackWhiteTextEdit: '',
-      policyTemp: {},//编辑用的暂存对象
-    }
+      filterConrent: "",
+      DdisableProtocol: [], //禁用协议
+      radios1: "关闭",
+      radios2: "關閉",
+      radios3: "關閉",
+      radios4: "關閉",
+      radios5: "關閉",
+      radios6: "關閉",
+      radios7: "關閉",
+      radios8: "關閉",
+      radios9: "關閉",
+      radios10: "關閉",
+      radios11: "關閉",
+      radios12: "關閉",
+      moveNum: 0, //水印防护偏移量
+      thisRadio3: false,
+      thisRadio4: false,
+      thisRadio5: false,
+      thisRadio6: false,
+      thisRadio7: false,
+      thisRadio8: false,
+      thisRadio9: false,
+      thisRadio10: false,
+      dialogModelAddBw: false, //添加黑白名单
+      blackWhiteText: "",
+      blackWhite: "black", //添加黑白名单
+      dialogEdit: false, //编辑框
+      blackWhiteEdit: "", //编辑黑白名单
+      blackWhiteTextEdit: "",
+      policyTemp: {} //编辑用的暂存对象
+    };
   },
-  mounted() {
-    
-  },
+  mounted() {},
   created() {
     //根据有无对象传入，判断是添加还是配置
-    if(this.policy.PolicyId == undefined){
-
-    } else { //配置
-      console.log(this.policy)
+    if (this.policy.PolicyId == undefined) {
+    } else {
+      //配置
+      console.log(this.policy);
       this.policyTemp = JSON.parse(JSON.stringify(this.policy));
-      this.tacticsName = this.policyTemp.PolicyName
-      this.nameFlag = false
-      this.IpBlackWhiteLists = this.policyTemp.IpBlackWhiteLists
-      this.DdisableProtocol.push(this.policyTemp.DropOptions.DropTcp==0?'':'TCP')
-      this.DdisableProtocol.push(this.policyTemp.DropOptions.DropUdp==0?'':'UDP')
-      this.DdisableProtocol.push(this.policyTemp.DropOptions.DropIcmp==0?'':'ICMP')
-      this.DdisableProtocol.push(this.policyTemp.DropOptions.DropOther==0?'':'其他协议')
-      this.tags = this.policyTemp.PortLimits
-      this.tags1 = this.policyTemp.PacketFilters
+      this.tacticsName = this.policyTemp.PolicyName;
+      this.nameFlag = false;
+      this.IpBlackWhiteLists = this.policyTemp.IpBlackWhiteLists;
+      this.DdisableProtocol.push(
+        this.policyTemp.DropOptions.DropTcp == 0 ? "" : "TCP"
+      );
+      this.DdisableProtocol.push(
+        this.policyTemp.DropOptions.DropUdp == 0 ? "" : "UDP"
+      );
+      this.DdisableProtocol.push(
+        this.policyTemp.DropOptions.DropIcmp == 0 ? "" : "ICMP"
+      );
+      this.DdisableProtocol.push(
+        this.policyTemp.DropOptions.DropOther == 0 ? "" : "其他协议"
+      );
+      this.tags = this.policyTemp.PortLimits;
+      this.tags1 = this.policyTemp.PacketFilters;
       //this.tableDataBegin2 = this.policyTemp.WaterPrint
     }
   },
-  methods:{
+  methods: {
+    //判断策略名称
+    val: function() {
+      if (this.tacticsName == "") {
+        this.$message("请填写策略名称");
+      }
+    },
     // 添加DDoS高级策略
     createDDoSPolicy(bl) {
-      let params = {
-        Version: '2018-07-09',
-        Business: 'net',
-        // DropOptions.N 协议禁用，必须填写且数组长度必须为1
-        'DropOptions.0.DropTcp': this.DdisableProtocol.indexOf('TCP')>-1?1:0,
-        'DropOptions.0.DropUdp': this.DdisableProtocol.indexOf('UDP')>-1?1:0,
-        'DropOptions.0.DropIcmp': this.DdisableProtocol.indexOf('ICMP')>-1?1:0,
-        'DropOptions.0.DropOther': this.DdisableProtocol.indexOf('其他协议')>-1?1:0,
-        'DropOptions.0.DropAbroad': 1,
-        'DropOptions.0.CheckSyncConn': 1,
-        // Name: this.tacticsName,
-      }
-      // PortLimits.N 端口禁用，当没有禁用端口时填空数组
-      for(let i in this.tags) {
-        params['PortLimit.'+i+'.Protocol'] = this.tags[i].Protocol //协议，取值范围[tcp,udp,icmp,all]
-        params['PortLimit.'+i+'.DPortStart'] = this.tags[i].DPortStart //开始目的端口，取值范围[0,65535]
-        params['PortLimit.'+i+'.DPortEnd'] = this.tags[i].DPortEnd //结束目的端口，取值范围[0,65535]，要求大于等于开始目的端口
-        params['PortLimit.'+i+'.Kind'] = this.tags[i].Kind//取值[0（目的端口范围禁用）， 1（源端口范围禁用）， 2（目的和源端口范围同时禁用）]
-      }
-      // IpAllowDenys.N IP黑白名单，当没有IP黑白名单时填空数组
-      for(let i in this.IpBlackWhiteLists) {
-        params['IpAllowDenys.'+i+'.Ip'] = this.IpBlackWhiteLists[i].Ip
-        params['IpAllowDenys.'+i+'.Type'] = this.IpBlackWhiteLists[i].Type
-      }
-      // PacketFilters.N 报文过滤，当没有报文过滤时填空数组
-      for(let i in this.tags1) {
-        params['PacketFilters.'+i+'.Protocol'] = this.tags1[i].Protocol
-        params['PacketFilters.'+i+'.SportStart'] = this.tags1[i].SportStart
-        params['PacketFilters.'+i+'.SportEnd'] = this.tags1[i].SportEnd
-        params['PacketFilters.'+i+'.DportStart'] = this.tags1[i].DportStart
-        params['PacketFilters.'+i+'.DportEnd'] = this.tags1[i].DportEnd
-        params['PacketFilters.'+i+'.PktlenMin'] = this.tags1[i].PktlenMin
-        params['PacketFilters.'+i+'.PktlenMax'] = this.tags1[i].PktlenMax
-        params['PacketFilters.'+i+'.MatchBegin'] = this.tags1[i].MatchBegin
-        params['PacketFilters.'+i+'.MatchType'] = this.tags1[i].MatchType
-        params['PacketFilters.'+i+'.Str'] = this.tags1[i].Str
-        params['PacketFilters.'+i+'.Depth'] = this.tags1[i].Depth
-        params['PacketFilters.'+i+'.Offset'] = this.tags1[i].Offset
-        params['PacketFilters.'+i+'.IsNot'] = this.tags1[i].IsNot
-        params['PacketFilters.'+i+'.Action'] = this.tags1[i].Action
-      }
-      // WaterPrint.N 水印策略参数，当没有启用水印功能时填空数组，最多只能传一条水印策略（即数组大小不超过1）
-      console.log(this.tableDataBegin2)
-      for(let i in this.tableDataBegin2) {
-        params['WaterPrint.'+i+'.Offset'] = this.tableDataBegin2[i].Offset
-        params['WaterPrint.'+i+'.RemoveSwitch'] = this.tableDataBegin2[i].RemoveSwitch
-        params['WaterPrint.'+i+'.OpenStatus'] = 1 //this.tableDataBegin2[i].OpenStatus
-        let arr = this.tableDataBegin2[i].tcpPort.split(/[\s\n]/)
-        for(let j in arr) {
-          params['WaterPrint.'+i+'.TcpPortList.'+j] = arr[j]
-        }
-        let arr2 = this.tableDataBegin2[i].udpPort.split(/[\s\n]/)
-        for(let k in arr) {
-          params['WaterPrint.'+i+'.UdpPortList.'+k] = arr2[k]
-        }
-      }
-      if(bl){
-        params['Name'] = this.tacticsName
-        this.axios.post(DDOS_POLICY_CREATE, params).then(res => {
-          console.log(params, res)
-        })
+      if (this.tacticsName == "") {
+        this.$message("请填写策略名称");
       } else {
-        params['PolicyId'] = this.policy.PolicyId
-        this.axios.post(DDOS_POLICY_MODIFY, params).then(res => {
-          console.log(params, res)
-        })
+        let params = {
+          Version: "2018-07-09",
+          Business: "net",
+          // DropOptions.N 协议禁用，必须填写且数组长度必须为1
+          "DropOptions.0.DropTcp":
+            this.DdisableProtocol.indexOf("TCP") > -1 ? 1 : 0,
+          "DropOptions.0.DropUdp":
+            this.DdisableProtocol.indexOf("UDP") > -1 ? 1 : 0,
+          "DropOptions.0.DropIcmp":
+            this.DdisableProtocol.indexOf("ICMP") > -1 ? 1 : 0,
+          "DropOptions.0.DropOther":
+            this.DdisableProtocol.indexOf("其他协议") > -1 ? 1 : 0,
+          "DropOptions.0.DropAbroad": 1,
+          "DropOptions.0.CheckSyncConn": 1
+          // Name: this.tacticsName,
+        };
+        // PortLimits.N 端口禁用，当没有禁用端口时填空数组
+        for (let i in this.tags) {
+          params["PortLimit." + i + ".Protocol"] = this.tags[i].Protocol; //协议，取值范围[tcp,udp,icmp,all]
+          params["PortLimit." + i + ".DPortStart"] = this.tags[i].DPortStart; //开始目的端口，取值范围[0,65535]
+          params["PortLimit." + i + ".DPortEnd"] = this.tags[i].DPortEnd; //结束目的端口，取值范围[0,65535]，要求大于等于开始目的端口
+          params["PortLimit." + i + ".Kind"] = this.tags[i].Kind; //取值[0（目的端口范围禁用）， 1（源端口范围禁用）， 2（目的和源端口范围同时禁用）]
+        }
+        // IpAllowDenys.N IP黑白名单，当没有IP黑白名单时填空数组
+        for (let i in this.IpBlackWhiteLists) {
+          params["IpAllowDenys." + i + ".Ip"] = this.IpBlackWhiteLists[i].Ip;
+          params["IpAllowDenys." + i + ".Type"] = this.IpBlackWhiteLists[
+            i
+          ].Type;
+        }
+        // PacketFilters.N 报文过滤，当没有报文过滤时填空数组
+        for (let i in this.tags1) {
+          params["PacketFilters." + i + ".Protocol"] = this.tags1[i].Protocol;
+          params["PacketFilters." + i + ".SportStart"] = this.tags1[
+            i
+          ].SportStart;
+          params["PacketFilters." + i + ".SportEnd"] = this.tags1[i].SportEnd;
+          params["PacketFilters." + i + ".DportStart"] = this.tags1[
+            i
+          ].DportStart;
+          params["PacketFilters." + i + ".DportEnd"] = this.tags1[i].DportEnd;
+          params["PacketFilters." + i + ".PktlenMin"] = this.tags1[i].PktlenMin;
+          params["PacketFilters." + i + ".PktlenMax"] = this.tags1[i].PktlenMax;
+          params["PacketFilters." + i + ".MatchBegin"] = this.tags1[
+            i
+          ].MatchBegin;
+          params["PacketFilters." + i + ".MatchType"] = this.tags1[i].MatchType;
+          params["PacketFilters." + i + ".Str"] = this.tags1[i].Str;
+          params["PacketFilters." + i + ".Depth"] = this.tags1[i].Depth;
+          params["PacketFilters." + i + ".Offset"] = this.tags1[i].Offset;
+          params["PacketFilters." + i + ".IsNot"] = this.tags1[i].IsNot;
+          params["PacketFilters." + i + ".Action"] = this.tags1[i].Action;
+        }
+        // WaterPrint.N 水印策略参数，当没有启用水印功能时填空数组，最多只能传一条水印策略（即数组大小不超过1）
+        console.log(this.tableDataBegin2);
+        for (let i in this.tableDataBegin2) {
+          params["WaterPrint." + i + ".Offset"] = this.tableDataBegin2[
+            i
+          ].Offset;
+          params["WaterPrint." + i + ".RemoveSwitch"] = this.tableDataBegin2[
+            i
+          ].RemoveSwitch;
+          params["WaterPrint." + i + ".OpenStatus"] = 1; //this.tableDataBegin2[i].OpenStatus
+          let arr = this.tableDataBegin2[i].tcpPort.split(/[\s\n]/);
+          for (let j in arr) {
+            params["WaterPrint." + i + ".TcpPortList." + j] = arr[j];
+          }
+          let arr2 = this.tableDataBegin2[i].udpPort.split(/[\s\n]/);
+          for (let k in arr) {
+            params["WaterPrint." + i + ".UdpPortList." + k] = arr2[k];
+          }
+        }
+        if (bl) {
+          params["Name"] = this.tacticsName;
+          this.axios.post(DDOS_POLICY_CREATE, params).then(res => {
+            console.log(res);
+            this.$emit('describeDDoSPolicyADD');
+            // 关闭新增页面
+            this.closeAddPage();
+            // this.$emit("closePage", { message: this.tableShow });
+          });
+        } else {
+          params["PolicyId"] = this.policy.PolicyId;
+          this.axios.post(DDOS_POLICY_MODIFY, params).then(res => {
+            console.log(params, res);
+          // 关闭新增页面
+          this.closeAddPage();
+          });
+        }
       }
-      // 关闭新增页面
-      this.closeAddPage()
     },
     handleClose(done) {
-      this.dialogVisible=false;
+      this.dialogVisible = false;
     },
     // 搜索
     doFilter() {
@@ -658,198 +782,198 @@ export default {
       }
     },
     //关闭新增页面
-    closeAddPage(){
-      this.tableShow=true;
-      this.$emit('closePage',{message:this.tableShow})
+    closeAddPage() {
+      this.tableShow = true;
+      this.$emit("closePage", { message: this.tableShow });
     },
-    copyObj: function () {
+    copyObj: function() {
       var des = {
-        protocol:"",
-        tortType:"",
-        beginPort:"",
-        endPort:""
-      }
-      return des
+        protocol: "",
+        tortType: "",
+        beginPort: "",
+        endPort: ""
+      };
+      return des;
     },
     //新增一行
-    addRow: function (type) {
-      var des = this.copyObj()
-      if(type==1){
-        this.tags.push(des)
-      }else if(type==2){
-        this.tags1.push(des)
-      }else if(type==3){
-        this.tags3.push(des)
-      }else if(type==4){
-        this.tags4.push(des)
-      }else if(type==5){
-        this.tags5.push(des)
+    addRow: function(type) {
+      var des = this.copyObj();
+      if (type == 1) {
+        this.tags.push(des);
+      } else if (type == 2) {
+        this.tags1.push(des);
+      } else if (type == 3) {
+        this.tags3.push(des);
+      } else if (type == 4) {
+        this.tags4.push(des);
+      } else if (type == 5) {
+        this.tags5.push(des);
       }
     },
     // 删除一行
-    removeRow: function (idx,typeNode) {
-      if(typeNode==1){
-        this.tags.splice(idx, 1)
-      }else if(typeNode==2){
-        this.tags1.splice(idx, 1)
-      }else if(typeNode==3){
-        this.tags3.splice(idx, 1)
-      }else if(typeNode==4){
-        this.tags4.splice(idx, 1)
-      }else if(typeNode==5){
-        this.tags5.splice(idx, 1)
+    removeRow: function(idx, typeNode) {
+      if (typeNode == 1) {
+        this.tags.splice(idx, 1);
+      } else if (typeNode == 2) {
+        this.tags1.splice(idx, 1);
+      } else if (typeNode == 3) {
+        this.tags3.splice(idx, 1);
+      } else if (typeNode == 4) {
+        this.tags4.splice(idx, 1);
+      } else if (typeNode == 5) {
+        this.tags5.splice(idx, 1);
       }
     },
-    thisNextShow(){
-      if(this.radios7=="开启"){
-        this.thisRadio7=true;
-      }else{
-        this.thisRadio7=false;
+    thisNextShow() {
+      if (this.radios7 == "开启") {
+        this.thisRadio7 = true;
+      } else {
+        this.thisRadio7 = false;
       }
     },
-    thisNextShowRow(radioNumber){
-      if(radioNumber==3){
-        if(this.radios3=="开启"){
-          this.thisRadio3=true;
-        }else{
-          this.thisRadio3=false;
+    thisNextShowRow(radioNumber) {
+      if (radioNumber == 3) {
+        if (this.radios3 == "开启") {
+          this.thisRadio3 = true;
+        } else {
+          this.thisRadio3 = false;
         }
-      }else if(radioNumber==4){
-        if(this.radios4=="开启"){
-          this.thisRadio4=true;
-        }else{
-          this.thisRadio4=false;
+      } else if (radioNumber == 4) {
+        if (this.radios4 == "开启") {
+          this.thisRadio4 = true;
+        } else {
+          this.thisRadio4 = false;
         }
-      }else if(radioNumber==5){
-        if(this.radios5=="开启"){
-          this.thisRadio5=true;
-        }else{
-          this.thisRadio5=false;
+      } else if (radioNumber == 5) {
+        if (this.radios5 == "开启") {
+          this.thisRadio5 = true;
+        } else {
+          this.thisRadio5 = false;
         }
-      }else if(radioNumber==6){
-        if(this.radios6=="开启"){
-          this.thisRadio6=true;
-        }else{
-          this.thisRadio6=false;
+      } else if (radioNumber == 6) {
+        if (this.radios6 == "开启") {
+          this.thisRadio6 = true;
+        } else {
+          this.thisRadio6 = false;
         }
-      }else if(radioNumber==8){
-        if(this.radios8=="开启"){
-          this.thisRadio8=true;
-        }else{
-          this.thisRadio8=false;
+      } else if (radioNumber == 8) {
+        if (this.radios8 == "开启") {
+          this.thisRadio8 = true;
+        } else {
+          this.thisRadio8 = false;
         }
-      }else if(radioNumber==9){
-        if(this.radios9=="开启"){
-          this.thisRadio9=true;
-        }else{
-          this.thisRadio9=false;
+      } else if (radioNumber == 9) {
+        if (this.radios9 == "开启") {
+          this.thisRadio9 = true;
+        } else {
+          this.thisRadio9 = false;
         }
-      }else if(radioNumber==10){
-        if(this.radios10=="开启"){
-          this.thisRadio10=true;
-        }else{
-          this.thisRadio10=false;
+      } else if (radioNumber == 10) {
+        if (this.radios10 == "开启") {
+          this.thisRadio10 = true;
+        } else {
+          this.thisRadio10 = false;
         }
       }
     },
     //添加关闭按钮
-    handleCloseAddBw(){
-      this.dialogModelAddBw=false;
+    handleCloseAddBw() {
+      this.dialogModelAddBw = false;
     },
     //添加黑白确定按钮
-    addBWSure(){
-      this.dialogModelAddBw=false;
-      let arr = this.blackWhiteText.split(/[\n]/)
-      for(let i in arr) {
-        let temp = {Type: this.blackWhite, Ip: arr[i]}
-        this.IpBlackWhiteLists.push(temp)
+    addBWSure() {
+      this.dialogModelAddBw = false;
+      let arr = this.blackWhiteText.split(/[\n]/);
+      for (let i in arr) {
+        let temp = { Type: this.blackWhite, Ip: arr[i] };
+        this.IpBlackWhiteLists.push(temp);
       }
-      console.log(this.IpBlackWhiteLists)
+      console.log(this.IpBlackWhiteLists);
     },
     //删除黑白名单
     deleteRowBW(index, row) {
-      this.IpBlackWhiteLists.splice(index, 1)
+      this.IpBlackWhiteLists.splice(index, 1);
     },
-    addbwSURE(){
-      this.dialogModelAddBw=false;
+    addbwSURE() {
+      this.dialogModelAddBw = false;
     },
     //编辑
-    editRow(){
-      this.dialogEdit=true;
+    editRow() {
+      this.dialogEdit = true;
     },
     //编辑关闭按钮
-    handleCloseedit(){
-      this.dialogEdit=false;
+    handleCloseedit() {
+      this.dialogEdit = false;
     },
     // 水印防护
     createSY() {
-      console.log(this.tags4, this.tags5, this.radios12, this.moveNum)
-      let str = ''
-      for(let i in this.tags4) {
-        str += (this.tags4[i].beginPort + '-' + this.tags4[i].endPort + '\r\n')
+      console.log(this.tags4, this.tags5, this.radios12, this.moveNum);
+      let str = "";
+      for (let i in this.tags4) {
+        str += this.tags4[i].beginPort + "-" + this.tags4[i].endPort + "\r\n";
       }
-      let str2 = ''
-      for(let j in this.tags5) {
-        str2 += (this.tags5[j].beginPort + '-' + this.tags5[j].endPort + '\r\n')
+      let str2 = "";
+      for (let j in this.tags5) {
+        str2 += this.tags5[j].beginPort + "-" + this.tags5[j].endPort + "\r\n";
       }
       let temp = {
         tcpPort: str,
         udpPort: str2,
-        RemoveSwitch: this.radios12=='关闭'?0:1,
+        RemoveSwitch: this.radios12 == "关闭" ? 0 : 1,
         OpenStatus: 1,
         Offset: this.moveNum
-      }
-      this.tableDataBegin2.push(temp)
-      this.dialogVisible = false
+      };
+      this.tableDataBegin2.push(temp);
+      this.dialogVisible = false;
     }
   }
-}
+};
 </script>
 <style lang="scss">
-a{
+a {
   cursor: pointer;
 }
-.newClear:after{
+.newClear:after {
   display: block;
-  clear:both;
-  content:"";
+  clear: both;
+  content: "";
 }
-.fontWeightBold{
-  font-size:14px;
+.fontWeightBold {
+  font-size: 14px;
   font-weight: 600;
-  color:#000;
-  margin-right:10px;
-  margin-top:12px;
+  color: #000;
+  margin-right: 10px;
+  margin-top: 12px;
   display: inline-block;
 }
-.tacticsName{
-  width:120px!important;
-  input{
-    width:120px;
+.tacticsName {
+  width: 120px !important;
+  input {
+    width: 120px;
   }
 }
-.tableConOne{
-  margin-top:20px;
-  .rightSearch{
-    float:right;
+.tableConOne {
+  margin-top: 20px;
+  .rightSearch {
+    float: right;
   }
 }
-.childContTit{
-  margin-top:25px;
-  margin-bottom:6px;
-  h2{
-    font-size:12px;
+.childContTit {
+  margin-top: 25px;
+  margin-bottom: 6px;
+  h2 {
+    font-size: 12px;
     font-weight: 600;
-    color:#000;
-    margin-bottom:15px;
+    color: #000;
+    margin-bottom: 15px;
   }
 }
-.tableBorderTop{
-  border-top:1px solid #eaeaea;
-  border-left:1px solid #eaeaea;
-  border-right:1px solid #eaeaea!important;
+.tableBorderTop {
+  border-top: 1px solid #eaeaea;
+  border-left: 1px solid #eaeaea;
+  border-right: 1px solid #eaeaea !important;
 }
-.addNewRow{
+.addNewRow {
   display: inline-block;
   width: 100%;
   height: 30px;
@@ -859,48 +983,48 @@ a{
   border-top: 0;
   border-bottom: 3px solid #eaeaea;
 }
-.spanStyleLabel{
-  font-size:12px;
-  color:#888;
-  margin-right:50px;
+.spanStyleLabel {
+  font-size: 12px;
+  color: #888;
+  margin-right: 50px;
   display: inline-block;
-  line-height:30px;
-  width:147px;
+  line-height: 30px;
+  width: 147px;
 }
-.el-icon-info{
-  color:#888;
+.el-icon-info {
+  color: #888;
 }
-.bottomBtn{
-  width:100%;
-  border-top:1px solid #eaeaea;
-  padding:20px 0;
-  margin-top:20px;
+.bottomBtn {
+  width: 100%;
+  border-top: 1px solid #eaeaea;
+  padding: 20px 0;
+  margin-top: 20px;
 }
-.childContTitModel{
-  padding-bottom:20px;
-  border-bottom:1px solid #ddd;
-  p{
-    color:#888;
-    font-size:12px;
-    margin-top:12px;
+.childContTitModel {
+  padding-bottom: 20px;
+  border-bottom: 1px solid #ddd;
+  p {
+    color: #888;
+    font-size: 12px;
+    margin-top: 12px;
   }
 }
-.childContTitNoBorder{
-  padding-bottom:20px;
-  p{
-    color:#888;
-    font-size:12px;
-    margin-top:12px;
+.childContTitNoBorder {
+  padding-bottom: 20px;
+  p {
+    color: #888;
+    font-size: 12px;
+    margin-top: 12px;
   }
-  .OffsetNum{
-    width:120px;
-    input{
-      width:120px;
+  .OffsetNum {
+    width: 120px;
+    input {
+      width: 120px;
     }
   }
 }
-.hSpanTit{
-  margin-right:22px;
+.hSpanTit {
+  margin-right: 22px;
 }
 .table-div {
   width: 100%;
@@ -911,127 +1035,126 @@ a{
   .t-head {
     height: 45px;
     padding: 0 5px;
-    td{
-      border-bottom:1px solid #eaeaea;
+    td {
+      border-bottom: 1px solid #eaeaea;
     }
   }
   .t-body {
     height: 45px;
     min-height: 200px;
-    td{
-      border-bottom:1px solid #eaeaea;
-      .selectChange{
-        height:30px;
-        div{
-          height:30px;
-          input{
-            height:30px;
+    td {
+      border-bottom: 1px solid #eaeaea;
+      .selectChange {
+        height: 30px;
+        div {
+          height: 30px;
+          input {
+            height: 30px;
             border-radius: 0;
           }
         }
       }
-      .selectChange1{
-        width:70px;
-        height:30px;
-        div{
-          width:70px;
-          height:30px;
-          input{
-            width:70px;
-            height:30px;
+      .selectChange1 {
+        width: 70px;
+        height: 30px;
+        div {
+          width: 70px;
+          height: 30px;
+          input {
+            width: 70px;
+            height: 30px;
             border-radius: 0;
           }
         }
       }
-      .inputChange{
-        height:30px;
-        width:150px;
-        input{
-          height:30px;
-          width:150px;
+      .inputChange {
+        height: 30px;
+        width: 150px;
+        input {
+          height: 30px;
+          width: 150px;
           border-radius: 0;
         }
       }
-      .inputChange1{
-        height:30px;
-        width:70px;
+      .inputChange1 {
+        height: 30px;
+        width: 70px;
         margin-bottom: 0;
-        margin-left:0;
-        input{
-          height:30px;
-          width:70px;
+        margin-left: 0;
+        input {
+          height: 30px;
+          width: 70px;
           border-radius: 0;
         }
       }
     }
   }
 }
-.inputChange1{
-  height:30px;
-  width:66px!important;
-  margin-left:12px;
-  margin-bottom:10px;
-  margin-right:6px;
-  input{
-    height:30px;
-    width:80px;
+.inputChange1 {
+  height: 30px;
+  width: 66px !important;
+  margin-left: 12px;
+  margin-bottom: 10px;
+  margin-right: 6px;
+  input {
+    height: 30px;
+    width: 80px;
     border-radius: 0;
   }
 }
-.spanText{
-  margin-left:12px;
+.spanText {
+  margin-left: 12px;
 }
-.contantList{
-  div{
-    margin-bottom:15px;
-    p:nth-child(1){
-      width:50px;
-      float:left;
-      color:#999;
-      font-size:12px;
+.contantList {
+  div {
+    margin-bottom: 15px;
+    p:nth-child(1) {
+      width: 50px;
+      float: left;
+      color: #999;
+      font-size: 12px;
     }
-    p:nth-child(2){
-      float:left;
-      width:calc(100% - 50px);
-      .inputText{
-        width:100%;
-        height:100px;
-        textarea{
-          width:100%;
-          height:100%;
+    p:nth-child(2) {
+      float: left;
+      width: calc(100% - 50px);
+      .inputText {
+        width: 100%;
+        height: 100px;
+        textarea {
+          width: 100%;
+          height: 100%;
           resize: none;
           border-radius: 0;
         }
       }
-      .blackWhiteBtn{
-        height:30px;
-        .el-radio-button__inner{
+      .blackWhiteBtn {
+        height: 30px;
+        .el-radio-button__inner {
           border-radius: 0;
         }
       }
     }
   }
-  
 }
-.footerBw{
-    text-align:center;
-    display: inline-block;
-    width:100%;
-    button{
-      height:30px;
-      padding:0;
-      line-height:30px;
-      width:60px;
-      text-align:center;
-      border-radius: 0;
-    }
-    button:nth-child(1){
-      color:#fff;
-      background-color:#006eff;
-    }
+.footerBw {
+  text-align: center;
+  display: inline-block;
+  width: 100%;
+  button {
+    height: 30px;
+    padding: 0;
+    line-height: 30px;
+    width: 60px;
+    text-align: center;
+    border-radius: 0;
   }
-  .el-dialog__title{
-    font-size:14px!important;
-    font-weight:600;
+  button:nth-child(1) {
+    color: #fff;
+    background-color: #006eff;
   }
+}
+.el-dialog__title {
+  font-size: 14px !important;
+  font-weight: 600;
+}
 </style>

@@ -1,7 +1,7 @@
 <template>
   <div class="createServe">
-    <HeadCom :title="$t('CAM.Role.createServe')" :backShow="true" @_back="_back"/>
-    
+    <HeadCom :title="$t('CAM.Role.createServe')" :backShow="true" @_back="_back" />
+
     <div class="container">
       <div class="contant">
         <div class="step">
@@ -19,7 +19,9 @@
         </div>
         <div v-if="active == 1" class="contant_flex">
           <div class="flex_left">
-            <p style="margin-top:5px;text-overflow:ellipsis;white-space:nowrap">{{$t('CAM.Role.support')}}*</p>
+            <p
+              style="margin-top:5px;text-overflow:ellipsis;white-space:nowrap"
+            >{{$t('CAM.Role.support')}}*</p>
           </div>
           <div class="flex_right">
             <el-checkbox-group
@@ -48,8 +50,16 @@
             </div>
             <div class="content_right">
               <div class="jscontent" style="height:50px">
-                <el-input v-model="inputRoleName" :placeholder="$t('CAM.Role.inputRoleName')" size="mini" @blur="jsname"></el-input>
-                <p v-if="have" style="font-size:12px;color:#E1504A;padding-top:10px">{{$t('CAM.Role.empty')}}</p>
+                <el-input
+                  v-model="inputRoleName"
+                  :placeholder="$t('CAM.Role.inputRoleName')"
+                  size="mini"
+                  @blur="jsname"
+                ></el-input>
+                <p
+                  v-if="have"
+                  style="font-size:12px;color:#E1504A;padding-top:10px"
+                >{{$t('CAM.Role.empty')}}</p>
               </div>
               <p class="jscontent">
                 <el-input v-model="inputRoleDesc" placeholder size="mini"></el-input>
@@ -90,7 +100,7 @@
 <script>
 import HeadCom from "../UserListNew/components/Head";
 import transfer from "./component/transfer1";
-import {CREATE_ROLE,ATTACH_ROLE} from '@/constants'
+import { CREATE_ROLE, ATTACH_ROLE } from "@/constants";
 export default {
   components: {
     transfer,
@@ -261,7 +271,13 @@ export default {
       };
       this.axios.post(CREATE_ROLE, params).then(data => {
         let roleId = data.Response.RoleId; // 获取创建的角色id
-        this.$message("创建角色成功");
+        if (data.Response.Error) {
+          if (data.Response.Error.Code == "InvalidParameter.RoleNameError") {
+            this.$message.error("角色名不合法,创建失败");
+          }
+        } else {
+          this.$message("创建角色成功");
+        }
         let policiesArray = this.policiesSelectedData; // 获取权限策略
         // 根据获取的角色ID创建角色策略
         if (roleId != undefined && roleId != "" && policiesArray != "") {
@@ -350,7 +366,7 @@ export default {
       }
     }
   }
-  .step{
+  .step {
     margin-bottom: 20px;
   }
 }

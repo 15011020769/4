@@ -4,38 +4,51 @@
       <Header :backShow="false" title="断流诊断" />
     </div>
     <div class="toolbar">
-      <XTimeX v-on:switchData="GetDat" :classsvalue="value"></XTimeX>
+      <XTimeX v-on:switchData="GetDat" :classsvalue="value" :granularity="false"></XTimeX>
       <div class="search">
-        <el-input v-model="searchInput" placeholder="输入推流名称" @change="_searchchange"></el-input>
-        <el-button type="primary" size="small" class="searchbtn" @click="_search">查询</el-button>
+        <el-input v-model="searchInput" placeholder="输入推流名称"></el-input>
+        <el-button type="primary" size="small" class="searchbtn" @click="doFilter">查询</el-button>
       </div>
     </div>
-    <div class="tableStyle">
-      <el-table :data="tableData" height='450px'>
-        <el-table-column prop="" label="流名称">
-        </el-table-column>
-        <el-table-column prop="" label="路径">
-        </el-table-column>
-        <el-table-column prop="" label="域名">
-        </el-table-column>
-        <el-table-column prop="" label="开始时间">
-        </el-table-column>
-        <el-table-column prop="" label="结束时间">
-        </el-table-column>
-        <el-table-column prop="" label="推流时长">
-        </el-table-column>
-        <el-table-column prop="" label="推流客户端IP">
-        </el-table-column>
-        <el-table-column prop="" label="断流原因(错误码)">
-        </el-table-column>
-      </el-table>
+    <div class="cutoutTable">
+      <div class="tableWrap">
+        <el-table :data="tableData" height='450px'>
+          <el-table-column prop="StreamName" label="流名称">
+          </el-table-column>
+          <el-table-column prop="" label="路径">
+          </el-table-column>
+          <el-table-column prop="DomainName" label="域名">
+          </el-table-column>
+          <el-table-column prop="StreamStartTime" label="开始时间">
+          </el-table-column>
+          <el-table-column prop="StreamEndTime" label="结束时间">
+          </el-table-column>
+          <el-table-column prop="" label="推流时长">
+          </el-table-column>
+          <el-table-column prop="ClientIp" label="推流客户端IP">
+          </el-table-column>
+          <el-table-column prop="StopReason" label="断流原因(错误码)">
+          </el-table-column>
+        </el-table>
+      </div>
+      <div class="tabListPage">
+        <el-pagination
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page="pageNum"
+          :page-sizes="[10, 20, 30, 50]"
+          :page-size="pageSize"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="total"
+        ></el-pagination>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
   import Header from "@/components/public/Head";
-  import XTimeX from "@/components/public/TimeN";
+  import XTimeX from "@/components/public/TimeY";
   import moment from "moment";
   import {
     CUTOUT_LIST
@@ -44,11 +57,14 @@
     name: 'cutout',
     data() {
       return {
-        Start_End: [],
+        StartTime: '',
+        EndTime: '',
         value: 1,
         searchInput: '',
         tableData: [],
-        Region: this.$cookie.get("regionv2")
+        pageNum: 1,
+        pageSize: 10,
+        total: 0,
       }
     },
     components: {
@@ -57,18 +73,19 @@
     },
     methods: {
       //获取数据
-      GetDat(data) {
-        console.log(data)
-        this.Start_End = data[0];
-        this.value = data[1];
-        this.getDATA()
+      GetDat(params) {
+        this.StartTime = params[1].StartTIme
+        this.EndTime = params[1].EndTIme
+        this.value = params[2]
+        this.$nextTick(this.getDATA)
       },
       getDATA() {
         const param = {
-          Region: this.Region,
           Version: '2018-08-01',
-          StartTime: moment(this.Start_End.StartTIme).utc().format(),
-          EndTime: moment(this.Start_End.EndTIme).utc().format()
+          StartTime: moment(this.StartTime).utc().format(),
+          EndTime: moment(this.EndTime).utc().format(),
+          IsFilter: 0,
+          IsAsc: 0,
         };
         if (this.searchInput != '') {
           param['StreamName'] = this.searchInput
@@ -76,23 +93,24 @@
         // 获取表格数据
         this.axios.post(CUTOUT_LIST, param).then(data => {
           if (data.Response.Error == undefined) {
-            console.log(data)
+            this.tableData = data.Response.EventList
+            this.total = data.Response.TotalNum
           } else {
             this.$message.error(data.Response.Error.Message);
           }
         });
       },
-      _search() {
-        if (this.searchInput == '') {
-          this.$message('请输入流名称');
-        } else {
-          this.getDATA()
-        }
+      doFilter() {
+        this.currentPage = 1
+        this.$nextTick(this.getDATA)
       },
-      _searchchange() {
-        if (this.searchInput == '') {
-          this.getDATA()
-        }
+      handleSizeChange(val) {
+        this.pageSize = val;
+        this.$nextTick(this.getDATA)
+      },
+      handleCurrentChange(val) {
+        this.pageNum = val;
+        this.$nextTick(this.getDATA)
       }
     },
   }
@@ -103,10 +121,9 @@
   .cutout-wrap {
     .toolbar {
       display: flex;
-
+      margin-top: 20px;
       .search {
         display: flex;
-        margin-top: 20px;
         margin-left: 50px;
 
         ::v-deep .el-input__inner {
@@ -118,9 +135,40 @@
         }
       }
     }
+    .cutoutTable {
+      padding: 20px 20px 0px 20px;
+      box-sizing: border-box;
+      width: 100%;
+      .tableWrap {
+        width: 100%;
+        min-height: 450px;
+        background: white;
+        .Right-style {
+          display: flex;
+          justify-content: flex-end;
 
-    .tableStyle {
-      margin: 20px;
+          .esach-inputL {
+            width: 300px;
+            margin-right: 20px;
+          }
+        }
+        .page-box {
+          padding: 20px;
+          padding-right: 30px;
+          box-sizing: border-box;
+        }
+      }
+    }
+    .tabListPage{
+      height:50px;
+      padding-top:8px;
+      border-top:1px solid #ddd;
+      text-align:right;
+      background-color:#fff;
+      ::v-deep .el-input__inner {
+        width: 100% !important;
+        height: 30px !important;
+      }
     }
   }
 

@@ -38,172 +38,193 @@ export default new Router({
       }
     },
     {
-      path: '/colony/sub', // 集群详情
+      path: '/colony/sub/list/basic', // 集群详情
       name: 'colonySub',
-      component: () => import('./colony/sub/index.vue'),
-      redirect: '/colony/sub/basic', // 默认子路由
+      component: () => import('./colony/sub/list/index.vue'),
+      redirect: '/colony/sub/list/basic', // 默认子路由
       meta: {
-        keepAlive: true
+        keepAlive: true,
+        CId: true
       },
-      children: [ // 子路由
+      children: [ // 子路由-列表页
         { // 基本信息
-          path: '/colony/sub/basic',
+          path: '/colony/sub/list/basic',
           name: 'colonyBasic',
-          component: () => import('./colony/sub/basic/index.vue'),
+          component: () => import('./colony/sub/list/basic/index.vue'),
           meta: {
-            keepAlive: true
+            keepAlive: true,
+            clusterId: true
           }
         },
         { // 节点列表
-          path: '/colony/sub/nodeManage/node',
+          path: '/colony/sub/list/nodeManage/node',
           name: 'colonyNodeManageNode',
-          component: () => import('./colony/sub/nodeManage/node.vue'),
+          component: () => import('./colony/sub/list/nodeManage/node.vue'),
           meta: {
-            keepAlive: true
+            keepAlive: true,
+            clusterId: true
           }
         },
         { // Master&Etcd列表
-          path: '/colony/sub/nodeManage/masteretcd',
+          path: '/colony/sub/list/nodeManage/masteretcd',
           name: 'colonyNodeManageMasteretcd',
-          component: () => import('./colony/sub/nodeManage/masteretcd.vue'),
+          component: () => import('./colony/sub/list/nodeManage/masteretcd.vue'),
           meta: {
-            keepAlive: true
+            keepAlive: true,
+            clusterId: true
           }
         },
         { // 伸缩组列表
-          path: '/colony/sub/nodeManage/asg',
+          path: '/colony/sub/list/nodeManage/asg',
           name: 'colonyNodeManageAsg',
-          component: () => import('./colony/sub/nodeManage/asg.vue'),
+          component: () => import('./colony/sub/list/nodeManage/asg.vue'),
           meta: {
-            keepAlive: true
+            keepAlive: true,
+            clusterId: true
           }
         },
         { // 命名空间
-          path: '/colony/sub/namespace',
+          path: '/colony/sub/list/namespace',
           name: 'colonyNodeManageAsg',
-          component: () => import('./colony/sub/namespace/index.vue'),
+          component: () => import('./colony/sub/list/namespace/index.vue'),
           meta: {
-            keepAlive: true
+            keepAlive: true,
+            clusterId: true
           }
         },
         { // 工作负载-Deployment
-          path: '/colony/sub/resource/deployment',
+          path: '/colony/sub/list/resource/deployment',
           name: 'colonyNodeManageAsg',
-          component: () => import('./colony/sub/resource/deployment.vue'),
+          component: () => import('./colony/sub/list/resource/deployment.vue'),
           meta: {
-            keepAlive: true
+            keepAlive: true,
+            clusterId: true
           }
         },
         { // 工作负载-StatefulSet
-          path: '/colony/sub/resource/statefulSet',
+          path: '/colony/sub/list/resource/statefulSet',
           name: 'colonyResourceStatefulSet',
-          component: () => import('./colony/sub/resource/statefulSet.vue'),
+          component: () => import('./colony/sub/list/resource/statefulSet.vue'),
           meta: {
-            keepAlive: true
+            keepAlive: true,
+            clusterId: true
           }
         },
         { // 工作负载-DaemonSet
-          path: '/colony/sub/resource/daemonSet',
+          path: '/colony/sub/list/resource/daemonSet',
           name: 'colonyResourceDaemonSet',
-          component: () => import('./colony/sub/resource/daemonSet.vue'),
+          component: () => import('./colony/sub/list/resource/daemonSet.vue'),
           meta: {
-            keepAlive: true
+            keepAlive: true,
+            clusterId: true
           }
         },
         { // 工作负载-Job
-          path: '/colony/sub/resource/job',
+          path: '/colony/sub/list/resource/job',
           name: 'colonyResourceJob',
-          component: () => import('./colony/sub/resource/job.vue'),
+          component: () => import('./colony/sub/list/resource/job.vue'),
           meta: {
-            keepAlive: true
+            keepAlive: true,
+            clusterId: true
           }
         },
         { // 工作负载-CronJob
-          path: '/colony/sub/resource/cronJob',
+          path: '/colony/sub/list/resource/cronJob',
           name: 'colonyResourceCronJob',
-          component: () => import('./colony/sub/resource/cronJob.vue'),
+          component: () => import('./colony/sub/list/resource/cronJob.vue'),
           meta: {
-            keepAlive: true
+            keepAlive: true,
+            clusterId: true
           }
         },
         { // 自动伸缩
-          path: '/colony/sub/hpa',
+          path: '/colony/sub/list/hpa',
           name: 'colonyHpa',
-          component: () => import('./colony/sub/hpa/index.vue'),
+          component: () => import('./colony/sub/list/hpa/index.vue'),
           meta: {
-            keepAlive: true
+            keepAlive: true,
+            clusterId: true
           }
         },
         { // 服务-Service
-          path: '/colony/sub/service/svc',
+          path: '/colony/sub/list/service/svc',
           name: 'colonyServiceSvc',
-          component: () => import('./colony/sub/service/svc.vue'),
+          component: () => import('./colony/sub/list/service/svc.vue'),
           meta: {
-            keepAlive: true
+            keepAlive: true,
+            clusterId: true
           }
         },
         { // 服务-Ingress
-          path: '/colony/sub/service/ingress',
+          path: '/colony/sub/list/service/ingress',
           name: 'colonyServiceIngress',
-          component: () => import('./colony/sub/service/ingress.vue'),
+          component: () => import('./colony/sub/list/service/ingress.vue'),
           meta: {
-            keepAlive: true
+            keepAlive: true,
+            clusterId: true
           }
         },
         { // 配置管理-ConfigMap
-          path: '/colony/sub/config/configMap',
+          path: '/colony/sub/list/config/configMap',
           name: 'colonyConfigConfigMap',
-          component: () => import('./colony/sub/config/configMap.vue'),
+          component: () => import('./colony/sub/list/config/configMap.vue'),
           meta: {
-            keepAlive: true
+            keepAlive: true,
+            clusterId: true
           }
         },
         { // 配置管理-Secret
-          path: '/colony/sub/config/secret',
+          path: '/colony/sub/list/config/secret',
           name: 'colonyConfigSecret',
-          component: () => import('./colony/sub/config/secret.vue'),
+          component: () => import('./colony/sub/list/config/secret.vue'),
           meta: {
-            keepAlive: true
+            keepAlive: true,
+            clusterId: true
           }
         },
         { // 储存-PersistentVolume
-          path: '/colony/sub/storage/pv',
+          path: '/colony/sub/list/storage/pv',
           name: 'colonyStoragePv',
-          component: () => import('./colony/sub/storage/pv.vue'),
+          component: () => import('./colony/sub/list/storage/pv.vue'),
           meta: {
-            keepAlive: true
+            keepAlive: true,
+            clusterId: true
           }
         },
         { // 储存-PersistentVolumeClaim
-          path: '/colony/sub/storage/pvc',
+          path: '/colony/sub/list/storage/pvc',
           name: 'colonyStoragePvc',
-          component: () => import('./colony/sub/storage/pvc.vue'),
+          component: () => import('./colony/sub/list/storage/pvc.vue'),
           meta: {
-            keepAlive: true
+            keepAlive: true,
+            clusterId: true
           }
         },
         { // 储存-StorageClass
-          path: '/colony/sub/storage/sc',
+          path: '/colony/sub/list/storage/sc',
           name: 'colonyStorageSc',
-          component: () => import('./colony/sub/storage/sc.vue'),
+          component: () => import('./colony/sub/list/storage/sc.vue'),
           meta: {
-            keepAlive: true
+            keepAlive: true,
+            clusterId: true
           }
         },
         { // 日志
-          path: '/colony/sub/log',
+          path: '/colony/sub/list/log',
           name: 'colonyLog',
-          component: () => import('./colony/sub/log/index.vue'),
+          component: () => import('./colony/sub/list/log/index.vue'),
           meta: {
-            keepAlive: true
+            keepAlive: true,
+            clusterId: true
           }
         },
         { // 事件
-          path: '/colony/sub/event',
+          path: '/colony/sub/list/event',
           name: 'colonyEvent',
-          component: () => import('./colony/sub/event/index.vue'),
+          component: () => import('./colony/sub/list/event/index.vue'),
           meta: {
-            keepAlive: true
+            keepAlive: true,
+            clusterId: true
           }
         }
       ]

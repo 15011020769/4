@@ -22,6 +22,7 @@
             <el-button class="el-icon-search" @click="doFilter"></el-button>
           </div>
           <div class="mainTable">
+            {{tableDataBegin}}
             <el-table
               :data="tableDataBegin.slice((currentPage-1)*pageSize,currentPage*pageSize)"
               v-loading="loading"
@@ -55,7 +56,7 @@
                 <template slot-scope="scope">
                   <div v-for="(item, index) in scope.row.Record" :key="index">
                     <div v-if="item.Key=='DefendStatus' && item.Value == '1'">开启</div>
-                    <div v-else-if="item.Key=='DefendStatus' && item.Value != '1'">-</div>
+                    <div v-else-if="item.Key=='DefendStatus' && item.Value != '1'">关闭</div>
                   </div>
                 </template>
               </el-table-column>
@@ -86,6 +87,7 @@
                   </div>
                 </template>
               </el-table-column>
+            
               <el-table-column
                 prop="advanced"
                 :label="$t('DDOS.Proteccon_figura.Advanced_strategy')"
@@ -102,7 +104,7 @@
                 </template>
               </el-table-column>
               <!-- 修改弹框 -->
-              <changeModel :configShow="changeModel" @closeConfigModel="closeConfigModel" />
+              <changeModel :configShow="changeModel"  @closeConfigModel="closeConfigModel" />
             </el-table>
           </div>
           <div class="Right-style pagstyle">
@@ -161,6 +163,7 @@
                       @click="configListCon(scope.$index, scope.row)"
                       type="text"
                       size="small"
+                      style="padding-left:7px"
                     >配置</el-button>
                     <el-button
                       @click.native.prevent="deleteRow(scope.$index, scope.row)"
@@ -189,6 +192,7 @@
                       @click="bindingResource(scope.$index, scope.row)"
                       type="text"
                       size="small"
+                      style="padding-left:7px"
                     >绑定资源</el-button>
                     <el-dialog
                       title="绑定资源"
@@ -226,7 +230,7 @@
             </div>
           </div>
           <div v-if="!tableShow">
-            <addNewTactics :policy="policy" :isShow="tableShow" @closePage="closePageAdd" />
+            <addNewTactics :policy="policy" :isShow="tableShow" @closePage="closePageAdd" @describeDDoSPolicyADD="describeDDoSPolicy" />
           </div>
         </div>
       </el-tab-pane>
@@ -331,6 +335,7 @@ export default {
     },
     // 1.2.获取DDoS高级策略
     describeDDoSPolicy() {
+      // debugger
       this.loading = true;
       let params = {
         Version: "2018-07-09",
@@ -345,6 +350,7 @@ export default {
     // 修改
     changeRow(changeIndex, changeRow) {
       this.changeModel = true;
+
     },
     // 搜索
     doFilter() {
@@ -395,6 +401,7 @@ export default {
       } else if (tab.name == "third") {
         //DDOS高级防护策略
         this.describeDDoSPolicy();
+        this.closePageAdd()
       }
     },
 
@@ -471,7 +478,7 @@ export default {
     },
     //接收子组件的方法，并让子组件消失父组件显示
     closePageAdd(obj) {
-      // console.log(obj)
+      console.log(obj)
       this.tableShow = true;
     },
     //穿梭框事件

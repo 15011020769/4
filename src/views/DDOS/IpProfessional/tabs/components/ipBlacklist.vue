@@ -15,6 +15,7 @@
             :data="tableDataBegin.slice((currentPage-1)*pageSize,currentPage*pageSize)"
             @selection-change="handleSelectionChange"
             style="width: 100%;margin: 18px 0 20px;"
+            v-loading="loading"
           >
             <el-table-column type="selection" width="55"></el-table-column>
             <el-table-column prop="IP" label="IP" width>
@@ -40,7 +41,12 @@
             </el-table-column>
             <el-table-column prop="operate" label="操作" width="180">
               <template slot-scope="scope">
-                <el-button @click="deleteRow(scope.row)" type="text" size="small" style="color: red;">删除</el-button>
+                <el-button
+                  @click="deleteRow(scope.row)"
+                  type="text"
+                  size="small"
+                  style="color: red;"
+                >删除</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -66,7 +72,11 @@
           @closeModel2="closeModel2"
           @importIpBlackSure="importIpBlackSure"
         />
-        <exportIpBlack :isShow3="dialogModel3" :exportText="ipListString" @closeModel3="closeModel3" />
+        <exportIpBlack
+          :isShow3="dialogModel3"
+          :exportText="ipListString"
+          @closeModel3="closeModel3"
+        />
       </div>
     </div>
   </div>
@@ -79,12 +89,13 @@ import { CC_IPALLOWDENY, CCIPALLOWDENY_MODIFY } from "@/constants";
 export default {
   props: {
     ccResourceId: String, //资源ID
-    switchState: Boolean, //防护状态
+    switchState: Boolean //防护状态
   },
   data() {
     return {
+      loading: true,
       tableDataBegin: [], //表格数据
-      method: "",//add表示添加，delete表示删除
+      method: "", //add表示添加，delete表示删除
       tableDataEnd: [], //定义一个数组
       tableSelect: [], //选中的数组
       currentPage: 1, //当前页
@@ -96,7 +107,7 @@ export default {
       dialogModel1: false, //添加IP弹出框
       dialogModel2: false, //批量导入IP弹出框
       dialogModel3: false, //批量导出IP弹出框
-      ipListString: "",
+      ipListString: ""
     };
   },
   components: {
@@ -111,13 +122,14 @@ export default {
     }
   },
   created() {
-    if(this.ccResourceId!=undefined && this.ccResourceId!=""){
+    if (this.ccResourceId != undefined && this.ccResourceId != "") {
       this.describeCCIpAllowDeny();
     }
   },
   methods: {
     // 1.1.获取CC的IP黑白名单
     describeCCIpAllowDeny() {
+      this.loading = true;
       let params = {
         Version: "2018-07-09",
         Business: "net",
@@ -128,6 +140,7 @@ export default {
         // console.log(params, res);
         this.tableDataBegin = res.Response.RecordList;
         this.totalItems = res.Response.RecordList.length;
+        this.loading = false;
       });
     },
     // 1.2.添加或删除CC的IP黑白名单
@@ -136,39 +149,74 @@ export default {
         Version: "2018-07-09",
         Business: "net",
         Id: this.ccResourceId,
-        Method: this.method,//add表示添加，delete表示删除
-        Type: "black",
+        Method: this.method, //add表示添加，delete表示删除
+        Type: "black"
       };
-      for(let i=0; i<ipList.length; i++){
-        params["IpList."+i] = ipList[i];
+      for (let i = 0; i < ipList.length; i++) {
+        params["IpList." + i] = ipList[i];
       }
       // console.log(params)
-      if(params["IpList.0"] != undefined){
+      if (params["IpList.0"] != undefined) {
         this.axios.post(CCIPALLOWDENY_MODIFY, params).then(res => {
-          console.log(params, res);
+          if (res.Response.Error) {
+            if (this.method == "delete") {
+              this.$message.error("删除失败");
+            } else if (this.method == "add") {
+              if (res.Response.Error.Code == "InvalidParameterValue") {
+                this.$message.error("添加失败，参数错误");
+              } else {
+                this.$message.error("添加失败");
+              }
+            }
+          } else {
+            if (this.method == "delete") {
+              this.$message({
+                message: "删除成功",
+                type: "success"
+              });
+            } else if (this.method == "add") {
+              this.$message({
+                message: "添加成功",
+                type: "success"
+              });
+            }
+          }
         });
         setTimeout(() => {
-          this.describeCCIpAllowDeny()
-        }, 1000); 
+          this.describeCCIpAllowDeny();
+        }, 1000);
       }
     },
     // table行内删除
-    deleteRow(obj){
-      this.method = "delete";
-      let ipList = [];
-      for(let i=0; i<obj.Record.length; i++){
-        if("ip" == obj.Record[i].Key){
-          ipList.push(obj.Record[i].Value);
-        }
-      }
-      this.modifyCCIpAllowDeny(ipList);
+    deleteRow(obj) {
+      this.$confirm("此操作将永久删除, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          this.method = "delete";
+          let ipList = [];
+          for (let i = 0; i < obj.Record.length; i++) {
+            if ("ip" == obj.Record[i].Key) {
+              ipList.push(obj.Record[i].Value);
+            }
+          }
+          this.modifyCCIpAllowDeny(ipList);
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除"
+          });
+        });
     },
     //添加IP按钮
     addIpBlackModel() {
       //判断防护状态
-      if(!this.switchState){
-        this.$message('该资源尚未开启CC防护，不能添加黑白名单');
-      } else if(this.switchState){
+      if (!this.switchState) {
+        this.$message("该资源尚未开启CC防护，不能添加黑白名单");
+      } else if (this.switchState) {
         this.dialogModel1 = true;
       }
     },
@@ -186,9 +234,9 @@ export default {
     //批量导入按钮
     importBtn() {
       //判断防护状态
-      if(!this.switchState){
-        this.$message('该资源尚未开启CC防护，不能添加黑白名单');
-      } else if(this.switchState){
+      if (!this.switchState) {
+        this.$message("该资源尚未开启CC防护，不能添加黑白名单");
+      } else if (this.switchState) {
         this.dialogModel2 = true;
       }
     },
@@ -198,7 +246,7 @@ export default {
     },
     //确定批量导入确定按钮
     importIpBlackSure(arr) {
-      this.method = "add"
+      this.method = "add";
       let ipList = arr[1].split("\n");
       this.modifyCCIpAllowDeny(ipList);
       this.dialogModel2 = arr[0];
@@ -206,14 +254,14 @@ export default {
     //批量导出按钮
     exportBtn() {
       this.ipListString = "";
-      for(let i=0; i<this.tableDataBegin.length; i++){
-        for(let j=0; j<this.tableDataBegin[i].Record.length; j++){
-          if("ip" == this.tableDataBegin[i].Record[j].Key){
-            this.ipListString += (this.tableDataBegin[i].Record[j].Value + "\r\n");
+      for (let i = 0; i < this.tableDataBegin.length; i++) {
+        for (let j = 0; j < this.tableDataBegin[i].Record.length; j++) {
+          if ("ip" == this.tableDataBegin[i].Record[j].Key) {
+            this.ipListString +=
+              this.tableDataBegin[i].Record[j].Value + "\r\n";
           }
         }
       }
-      console.log(this.ipListString)
       this.dialogModel3 = true;
     },
     //关闭批量导入IP弹框
@@ -221,28 +269,39 @@ export default {
       this.dialogModel3 = isShow3;
     },
     // 批量删除
-    deleteList(){
-      if(this.tableSelect.length>0){
-        this.method = "delete";
-        let ipList = [];
-        for(let i=0; i<this.tableSelect.length; i++){
-          for(let j=0; j<this.tableSelect[i].Record.length; j++){
-            if("ip" == this.tableSelect[i].Record[j].Key){
-              ipList.push(this.tableSelect[i].Record[j].Value);
+    deleteList() {
+      if (this.tableSelect.length > 0) {
+        this.$confirm("此操作将永久删除, 是否继续?", "提示", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning"
+        })
+          .then(() => {
+            this.method = "delete";
+            let ipList = [];
+            for (let i = 0; i < this.tableSelect.length; i++) {
+              for (let j = 0; j < this.tableSelect[i].Record.length; j++) {
+                if ("ip" == this.tableSelect[i].Record[j].Key) {
+                  ipList.push(this.tableSelect[i].Record[j].Value);
+                }
+              }
             }
-          }
-        }
-        this.modifyCCIpAllowDeny(ipList);
+            this.modifyCCIpAllowDeny(ipList);
+          })
+          .catch(() => {
+            this.$message({
+              type: "info",
+              message: "已取消删除"
+            });
+          });
       } else {
-        this.$message("请选择要删除的IP名单")
+        this.$message("请选择要删除的IP名单");
       }
     },
     //全选
     handleSelectionChange(val) {
       this.tableSelect = val;
-      console.log(val);
     },
-
     // 分页开始
     handleSizeChange(val) {
       this.pageSize = val;
@@ -266,7 +325,7 @@ export default {
           this.tableDataEnd.push(list[from]);
         }
       }
-    },
+    }
   }
 };
 </script>

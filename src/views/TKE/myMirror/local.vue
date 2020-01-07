@@ -10,10 +10,10 @@
       </div>
     </div>
     <div class="room-bottom">
-       <el-table :data="tableData" style="width: 100%" height="450"  >
-            <el-table-column prop="address" label="命名空间"></el-table-column>
-            <el-table-column prop="address" label="仓库数目" ></el-table-column>
-            <el-table-column prop="address" label="创建时间"></el-table-column>
+       <el-table :data="tableData" style="width: 100%" height="450" v-loading="loadShow">
+            <el-table-column prop="namespace" label="命名空间"></el-table-column>
+            <el-table-column prop="repoCount" label="仓库数目" ></el-table-column>
+            <el-table-column prop="creationTime" label="创建时间"></el-table-column>
             <el-table-column prop="address" label="操作" >
               <template slot-scope="scope">
                 <el-button @click="handleClick(scope.row)" type="text" size="small">删除</el-button>
@@ -50,21 +50,13 @@
   </div>
 </template>
 <script>
-// import { CGI_LIST } from '@/constants'
+import { SPACENAME_LIST } from '@/constants'
 export default {
   data () {
     return {
       input: '',
-      tableData: [{
-        date: '201z6-05-03',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
-      }, {
-        date: '2016-05-02',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
-      }
-      ],
+      loadShow: true, // 加载是否显示
+      tableData: [],
       ruleForm: {
         name: '',
         region: '',
@@ -88,9 +80,9 @@ export default {
       }
     }
   },
-  // created () {
-  //   this.GetMyMirrorData()
-  // },
+  created () {
+    this.GetSpaceName()
+  },
   methods: {
     handleClick (row) {
       console.log(row)
@@ -105,6 +97,21 @@ export default {
           done()
         })
         .catch(_ => {})
+    },
+    GetSpaceName () { // 获取命名空间
+      const param = {
+        namespace: '',
+        offset: 0,
+        limit: 20
+      }
+      this.axios.post(SPACENAME_LIST, param).then(res => {
+        if (res.code === 0) {
+          // this.spaceName = res.data.namespaceInfo
+          // console.log(this.spaceName)
+          this.tableData = res.data.namespaceInfo
+          this.loadShow = false
+        }
+      })
     }
   }
 

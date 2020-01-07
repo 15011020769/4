@@ -1,7 +1,7 @@
 <template>
   <div class="wrap">
     <h3>截图{{StartTIme}} 到 {{EndTIme}}（单位：张）</h3>
-    <Echart :xAxis="xAxis" :series="series" :legendText="legendText" />
+    <Echart :xAxis="xAxis" :series="series" :legendText="legendText" v-loading="loading"/>
     <div class="table">
       <h3>月度消费量</h3>
       <el-table

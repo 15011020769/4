@@ -222,7 +222,7 @@
 <script>
 import FileSaver from "file-saver";
 import XLSX from "xlsx";
-import { DDOS_SECINDEX, DDOS_PACKINDEX, DDOS_EV_LIST } from "@/constants";
+import { DDOS_SECINDEX, DDOS_PACKINDEX, DDOS_EV_LIST} from "@/constants";
 export default {
   data() {
     return {

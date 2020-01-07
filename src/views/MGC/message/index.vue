@@ -2,10 +2,6 @@
   <div class="message-wrap" v-loading="loading">
     <div class="message-header">
       <HeaderCom title="站内信">
-        <p>
-          （共{{this.TotalCount}}封，其中{{this.TotalCount}}封未读，
-          <span @click="justRead">仅查看未读消息</span>）
-        </p>
       </HeaderCom>
     </div>
     <div class="message-main">
@@ -34,7 +30,7 @@
         </div>
       </div>
       <div class="meaasge-table">
-        <el-table :data="tableData" style="width: 100%" height="450" @selection-change="handleSelectionChange">
+        <el-table :data="tableData.slice((currpage - 1) * pagesize, currpage * pagesize)" style="width: 100%" height="450" @selection-change="handleSelectionChange">
           <el-table-column type="selection" width="55"></el-table-column>
           <el-table-column prop="title" label="消息内容">
              <template slot-scope="scope">
@@ -42,8 +38,10 @@
               </template>
           </el-table-column>
           <el-table-column prop="sendTime" label="接收时间" ></el-table-column>
-          <el-table-column prop="msgTypeLabel" label="消息类型" ></el-table-column>
-          <el-table-column prop="channelLabel" label="消息子类型"></el-table-column>
+          <el-table-column prop="msgTypeName" label="消息类型" ></el-table-column>
+          <el-table-column label="消息子类型">
+            其他
+          </el-table-column>
         </el-table>
         <div class="Right-style pagstyle" style="height:70px;">
           <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;条</span>
@@ -85,7 +83,9 @@
 </template>
 
 <script>
+import {INMAIL_LIST,UNREAD_DATA,UPDATA_DATA,UPDATAID_DATA,DELETE_DATA} from  '@/constants/MGC.js';
 import HeaderCom from "@/components/public/Head";
+import VueCookie from 'vue-cookie'
 export default {
   name: "message",
   data() {
@@ -118,38 +118,38 @@ export default {
     HeaderCom
   },
   created(){
-     this.init()
+     this.init();
+     this.getCount()
   },
   methods: {
    //初始化数据
     init(){
-       let params = {
-        //  searchForm:this.tableData,
-         limit:this.pagesize,
-         page:this.currpage
-       };
-       this.axios.post(`${process.env.VUE_APP_adminUrl}`+"/taifucloud/inmail/list",params).then(res => {
-           console.log(res)
-           this.tableData = res.data.list
-           this.tableAll = res.data.list
-           this.json = res.data.list
-           this.TotalCount = res.data.totalCount
-           this.loading = false
+       let uin = "100011921910"
+      //  let uin = VueCookie.get('uuid')
+       this.axios.get(`${process.env.VUE_APP_adminUrl + INMAIL_LIST}`+'?uin='+uin).then(res=>{
+         console.log(res)
+         this.tableData = res.page.list;
+         this.TotalCount = res.page.totalCount
+         this.json = res.page.list;
+         this.tableAll = res.page.list;
+       })
+    },
+    //获取未读数据
+    getCount(){
+       let uin = "100011921910"
+       this.axios.get(`${process.env.VUE_APP_adminUrl + UNREAD_DATA}`+'?uin='+uin).then(res=>{
+          console.log(res)
        })
     },
     //批量删除弹框点击确定删除
     confirmDel(){
         var delIndex = [];
         this.getData.forEach(item => {
-           delIndex.unshift(item)
+           delIndex.push(item.id)
         })
-        delIndex.forEach(item => {
-          let params = [item.id]
-           this.axios.delete(`${process.env.VUE_APP_adminUrl}`+"/taifucloud/inmail/delete",{data: params}).then(res=>{
-             this.$message('删除成功')
-             console.log(res)
-             this.init()
-           })
+        let id = delIndex.join(',')
+        this.axios.get(`${process.env.VUE_APP_adminUrl + DELETE_DATA}`+'?ids='+id).then(res=>{
+            console.log(res)
         })
         this.dialogVisible = false;
     },
@@ -185,16 +185,12 @@ export default {
       if(this.getData.length != 0){
          var updata = []
          this.getData.forEach(item => {
-            updata.push(item)
+            updata.push(item.id)
          })
-         updata.forEach(item => {
-            let params = [item.qcloudUin]
-            this.axios.put(`${process.env.VUE_APP_adminUrl}`+"/taifucloud/inmail/status/modify",params).then(res=>{
-             this.init()
-             this.$message('标记成功')
-             console.log(res)
-            })
-         })
+         let id = updata.join(',')
+         this.axios.get(`${process.env.VUE_APP_adminUrl + UPDATAID_DATA}`+'?ids='+id).then(res=>{
+          console.log(res)
+        })
      }else{
          this.$message("请选择数据")
       }
@@ -205,15 +201,12 @@ export default {
     },
     //确定全部标记为已读
     updataMesg(){
-         this.tableData.forEach(item => {
-         console.log(item.qcloudUin)
-         let params = [item.qcloudUin]
-        this.axios.put(`${process.env.VUE_APP_adminUrl}`+"/taifucloud/inmail/status/modify",params).then(res=>{
-            this.init()
-            this.$message('标记成功')
+      this.tableData.forEach(item => {
+          let id = item.id
+          this.axios.get(`${process.env.VUE_APP_adminUrl + UPDATA_DATA}`+'?id='+id).then(res=>{
             console.log(res)
-         })
-       })
+          })
+      })
        this.MessageDialog = false
     },
     //跳转详情
@@ -225,17 +218,6 @@ export default {
         }
       });
     },
-    //查看未读信息
-    justRead(){
-      var arr = [];
-      this.tableAll.forEach(item => {
-         if(item.statusLabel == "未讀"){
-              arr.push(item)
-         }
-      })
-      this.tableData = arr
-      this.TotalCount = arr.length
-    },
      //对关键字进行搜索
      searchAll(){
         this.init()
@@ -243,7 +225,7 @@ export default {
     searchTitle(){
       var arr = [];
       this.tableAll.forEach(item => {
-         if(item.msgTypeLabel == "母雲動態"){
+         if(item.msgTypeName == "母雲動態"){
               arr.push(item)
          }
       })
@@ -253,7 +235,7 @@ export default {
     searchText(){
       var arr = [];
       this.tableAll.forEach(item => {
-         if(item.msgTypeLabel =='運維消息'){
+         if(item.msgTypeName =='運維消息'){
               arr.push(item)
          }
       })
@@ -263,7 +245,7 @@ export default {
     searchProduct(){
       var arr = [];
       this.tableAll.forEach(item => {
-         if(item.msgTypeLabel =='產品消息'){
+         if(item.msgTypeName =='產品消息'){
               arr.push(item)
          }
       })
@@ -273,7 +255,7 @@ export default {
     searchMsgAq(){
       var arr = [];
       this.tableAll.forEach(item => {
-         if(item.msgTypeLabel =='安全消息'){
+         if(item.msgTypeName =='安全消息'){
               arr.push(item)
          }
       })

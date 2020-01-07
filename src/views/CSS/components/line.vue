@@ -19,8 +19,8 @@ export default {
     },
     tooltip: {
       type: Object,
-      default: {
-        trigger: 'axis',
+      default: function() {
+        return {trigger: 'axis'}
       }
     },
     xAxis: {
@@ -42,6 +42,10 @@ export default {
     },
     series(val) {
       this.series = val;
+      this.echart();
+    },
+    legendText() {
+      this.legendText = val;
       this.echart();
     }
   },

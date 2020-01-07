@@ -4,15 +4,15 @@
     <div class="streamWrap">
       <div class="streamBnt">
         <div class="bntWrap" style="flex:1">
-          <el-radio-group v-model="type">
+          <el-radio-group v-model="type" @change="onTypeChange">
             <el-radio-button label="在线流"></el-radio-button>
             <el-radio-button label="历史流"></el-radio-button>
             <el-radio-button label="禁推流"></el-radio-button>
           </el-radio-group>
         </div>
         <div class="streamInp">
-          <el-input placeholder="输入部分域名搜索" size="small" class="inputSearch" style="width:90%;">
-            <i slot="suffix" class="el-input__icon el-icon-search"></i>
+          <el-input v-model="streamName" placeholder="按照推流ID搜索" size="small" class="inputSearch" style="width:90%;">
+            <i slot="suffix" class="el-input__icon el-icon-search" @click="doFilter"></i>
           </el-input>
           <svg
             t="1576486867236"
@@ -33,16 +33,45 @@
         </div>
       </div>
       <div class="streamWTable">
-        <template>
+        <div class="tableWrap">
           <el-table :data="tableData" style="width: 100%">
-            <el-table-column  label="流名称" width="180"></el-table-column>
-            <el-table-column  label="域名" width="180"></el-table-column>
-            <el-table-column  label="应用名"></el-table-column>
-            <el-table-column  label="状态" width="180"></el-table-column>
-            <el-table-column  label="开始推流时间" width="180"></el-table-column>
-            <el-table-column  label="操作"></el-table-column>
+            <el-table-column prop="StreamName" label="流名称"></el-table-column>
+
+            <template v-if="type !== '禁推流'">
+              <el-table-column prop="DomainName" label="域名"></el-table-column>
+              <el-table-column prop="AppName" label="应用名"></el-table-column>
+            </template>
+
+            <template v-if="type !== '历史流'">
+              <el-table-column  label="状态"></el-table-column>
+            </template>
+
+            <template v-if="type === '在线流'">
+              <el-table-column  label="开始推流时间" width="180"></el-table-column>
+            </template>
+
+            <template v-if="type === '历史流'">
+              <el-table-column prop="StreamEndTime" label="结束推流时间" width="180"></el-table-column>
+            </template>
+
+            <el-table-column label="操作">
+              <template slot-scope="scope">
+                <el-button type="text" size="small" @click="disable">禁止</el-button>
+              </template>
+            </el-table-column>
           </el-table>
-        </template>
+        </div>
+        <div class="tabListPage">
+          <el-pagination
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+            :current-page="pageNum"
+            :page-sizes="[10, 20, 30, 50]"
+            :page-size="pageSize"
+            layout="total, sizes, prev, pager, next, jumper"
+            :total="total"
+          ></el-pagination>
+        </div>
       </div>
     </div>
   </div>
@@ -50,6 +79,13 @@
 
 <script>
 import HeadCom from "@/components/public/Head";
+import { 
+  LIVE_DESCRIBE_LIVESTREAMONLINELIST,
+  LIVE_DESCRIBE_LIVESTREAMEVENTLIST,
+  LIVE_DESCRIBE_LIVEFORBIDSTREAMLIST,
+  LIVE_FORBIDLIVESTREAM
+} from '@/constants'
+import moment from 'moment'
 export default {
   components: {
     HeadCom
@@ -57,8 +93,69 @@ export default {
   name: "streamManagement",
   data() {
     return {
-      type: '在线流'
+      type: '在线流',
+      tableData: [],
+      streamName: '',
+      pageNum: 1,
+      pageSize: 10,
+      total: 0,
     };
+  },
+  mounted() {
+    this.onTypeChange(this.type)
+  },
+  methods: {
+    onTypeChange(val) {
+      let url = LIVE_DESCRIBE_LIVESTREAMONLINELIST
+      let key = 'OnlineInfo'
+      const params = {
+        Version: '2018-08-01',
+        PageNum: this.pageNum,
+        PageSize: this.pageSize,
+        StreamName: this.streamName,
+      }
+      switch(val) {
+        case '在线流':
+          break
+        case '历史流':
+          url = LIVE_DESCRIBE_LIVESTREAMEVENTLIST
+          key = 'EventList'
+          params.EndTime = moment.utc().format()
+          params.StartTime = moment().subtract(7, 'd').utc().format()
+          params.IsFilter = 1 // 返回推流历史记录
+          break
+        case '禁推流':
+          url = LIVE_DESCRIBE_LIVEFORBIDSTREAMLIST
+          key = 'ForbidStreamList'
+          delete params.StreamName
+          break
+        default: break
+      }
+      this.axios.post(url, params).then(({ Response }) => {
+        this.tableData = Response[key]
+        this.total = Response.TotalNum
+      })
+    },
+    disable(row) {
+      this.axios.post(LIVE_FORBIDLIVESTREAM, {
+        Version: '2018-08-01',
+        AppName: row.AppName,
+        DomainName: row.DomainName,
+        StreamName: row.StreamName,
+      })
+    },
+    doFilter() {
+      this.currentPage = 1
+      this.$nextTick(() => this.onTypeChange(this.type))
+    },
+    handleSizeChange(val) {
+      this.pageSize = val;
+      this.$nextTick(() => this.onTypeChange(this.type))
+    },
+    handleCurrentChange(val) {
+      this.pageNum = val;
+      this.$nextTick(() => this.onTypeChange(this.type))
+    }
   }
 };
 </script>
@@ -87,5 +184,40 @@ export default {
      padding: 0px 20px 0px 20px;
      box-sizing: border-box;
    }
+}
+.streamWTable {
+  padding: 20px 20px 0px 20px;
+  box-sizing: border-box;
+  width: 100%;
+  .tableWrap {
+    width: 100%;
+    min-height: 450px;
+    background: white;
+    .Right-style {
+      display: flex;
+      justify-content: flex-end;
+
+      .esach-inputL {
+        width: 300px;
+        margin-right: 20px;
+      }
+    }
+    .page-box {
+      padding: 20px;
+      padding-right: 30px;
+      box-sizing: border-box;
+    }
+  }
+}
+.tabListPage{
+  height:50px;
+  padding-top:8px;
+  border-top:1px solid #ddd;
+  text-align:right;
+  background-color:#fff;
+  ::v-deep .el-input__inner {
+    width: 100% !important;
+    height: 30px !important;
+  }
 }
 </style>

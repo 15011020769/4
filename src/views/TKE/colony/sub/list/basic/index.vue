@@ -87,7 +87,7 @@
       <h4 class="tke-formpanel-title">集群APIServer信息</h4>
       <el-form  class="tke-form"  label-position='left' label-width="130px" size="mini">
         <el-form-item label="访问地址">
-          <div class="tke-form-item_text"><span>https://cls-gwblk71e.ccs.tencent-cloud.com</span></div>
+          <div class="tke-form-item_text"><span>{{security.Domain}}</span></div>
         </el-form-item>
         <el-form-item label="外网访问">
           <div class="tke-form-item_text"><span>未开启</span></div>
@@ -97,7 +97,11 @@
           <div class="tke-form-item_text"><span>未开启</span></div>
         </el-form-item>
         <el-form-item label="Kubeconfig">
-          <div class="tke-form-item_text">1111</div>
+          <div class="tke-form-item_text tke-rich-textarea">
+            <div class="rich-content">
+              <pre class="rich-text"> {{security.Kubeconfig}}</pre>
+            </div>
+          </div>
         </el-form-item>
       </el-form>
       <hr>
@@ -112,29 +116,44 @@
 </template>
 
 <script>
-import HeadCom from "@/components/public/Head";
-import SEARCH from "@/components/public/SEARCH";
-import FileSaver from "file-saver";
-import XLSX from "xlsx";
-import { ALL_CITY } from "@/constants";
+import Loading from "@/components/public/Loading";
+import { ALL_CITY,CLUSTERS_DESCRIBE,CLUSTERS_SECURITY } from "@/constants";
 export default {
   name: "create",
   data() {
     return {
-    
+        clusterId:[], //集群id
+        loadShow:false,
+        security:{}
     };
   },
   components: {
-    HeadCom,
-    SEARCH
+    Loading
   },
   created() {
-
+    // 从路由获取集群id
+    this.clusterId=this.$route.query.clusterId;
+    this.getSecurity();
   },
   methods: {
-    //返回上一层
-    goBack(){
-          this.$router.go(-1);
+    // 获取集群APIServer信息 相关
+    async getSecurity() {
+      this.loadShow = true;
+      let params = {
+        ClusterId: this.clusterId, 
+        Version: "2018-05-25",
+      };
+      const res = await this.axios.post(CLUSTERS_SECURITY, params);
+      if(res.Error){
+        console.log(res);
+        this.loadShow = false;
+      }else{
+        // console.log(res)
+        this.security=res.Response;
+        console.log(this.security)
+        this.loadShow = false;
+      }
+     
     },
   }
 };
@@ -189,6 +208,39 @@ hr{
     vertical-align: middle;
     cursor: pointer;
   }
+  .tke-rich-textarea{
+    border: 1px solid #d1d2d3;
+    background-color: #fff;
+    border-radius: 3px;
+    position: relative;
+    display: inline-block;
+    vertical-align: middle;
+    box-sizing: border-box;
+    overflow: auto;
+    .rich-content{
+      counter-reset: num 0;
+      font-family: consolas;
+      outline: 0;
+      display: inline-block;
+      word-break: break-word;
+      .rich-text{
+        margin: 0;
+        font-size: 12px;
+        line-height: 22px;
+        color: #000;
+        position: relative;
+        padding: 5px;
+        white-space: pre-wrap;
+        overflow: auto;
+        height: 300px;
+        font-family: SFMono-Regular,Consolas,"Liberation Mono",Menlo,Courier,monospace;
+        &:hover{
+          background-color: #fafafa;
+        }
+      }
+    }
+  }
+  
   
 }
 

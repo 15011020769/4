@@ -1,41 +1,43 @@
 <template>
   <div class="form-wrap">
-    <h4>轉碼配置</h4>
+    <h4>截圖鑒黃配置</h4>
     <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px" class="demo-ruleForm">
-      <el-form-item 
-        label="轉碼類型" 
-        prop="AiTransCode"
-        v-if="!Object.keys(selectItem).length"
-        >
-        <el-select placeholder="请选择" v-model="ruleForm.AiTransCode">
-          <el-option label="普通轉碼" value="0" key="0" />
-          <el-option label="極速高清" value="1" key="1" />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="可用模板">
-        <el-radio-group v-model="selectType" @change="radioChange">
-          <el-radio v-for="item in tableData" :key="item.key" :label="item.value" />
-          <el-radio v-show="ruleForm.AiTransCode !== '1'" key="voice" label="純音頻" />
-        </el-radio-group>
-      </el-form-item>
       <el-form-item label="模板名稱" prop="TemplateName">
-        <el-input 
-          v-model="ruleForm.TemplateName" 
-          style="width:330px;" 
-          :disabled="Object.keys(selectItem).length > 0"
-          />
+        <el-input v-model="ruleForm.TemplateName" style="width:330px;" />
       </el-form-item>
       <el-form-item label="模板描述" prop="Description">
         <el-input type="textarea" v-model="ruleForm.Description" style="width:330px;" />
       </el-form-item>
-      <template v-if="selectType !== '純音頻'">
-        <el-form-item label="視頻碼率(kbps)" prop="VideoBitrate">
-          <el-input type="textarea" v-model="ruleForm.VideoBitrate" style="width:330px;" />
-        </el-form-item>
-        <el-form-item label="視頻高度(px)" prop="Height">
-          <el-input type="textarea" v-model="ruleForm.Height" style="width:330px;" />
-        </el-form-item>
-      </template>
+      <el-form-item class="input-number" label="截圖間隔" prop="SnapshotInterval">
+        <el-input-number v-model="ruleForm.SnapshotInterval" :step="5" step-strictly />
+      </el-form-item>
+      <el-form-item label="啟用智能鑒黃" prop="PornFlag">
+      <el-switch v-model="ruleForm.PornFlag" />
+      <div class="explain" v-if="ruleForm.PornFlag">
+        <p>
+          启用智能鉴黄后，需配置回调才可收到鉴黄结果，请参考文档
+          <a href="#">回调配置</a>
+        </p>
+      </div>
+      </el-form-item>
+      <el-form-item label="存儲位置">
+        <div class="explain">
+          <p>
+            截图将存储在您配置的 COS bucket 中，请您确认 COS bucket 已授权云直播写入，
+            创建 COS bucket 及授权
+            <a href="#">参考文档</a>
+          </p>
+        </div>
+      </el-form-item>
+      <el-form-item label="CosAppId" prop="CosAppId">
+        <el-input v-model="ruleForm.CosAppId" />
+      </el-form-item>
+      <el-form-item label="CosBucket" prop="CosBucket">
+        <el-input v-model="ruleForm.CosBucket" />
+      </el-form-item>
+      <el-form-item label="CosRegion" prop="CosRegion">
+        <el-input v-model="ruleForm.CosRegion" />
+      </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="submitForm('ruleForm')">保存</el-button>
         <el-button @click="$emit('update:formShow', false)">取消</el-button>
@@ -45,8 +47,7 @@
 </template>
 
 <script>
-import { TEMPLATE_TYPE, TEMPLATE_TYPE_PARAMS } from '../constance'
-import { ADD_TRANSCODE_TEMPLATE, UPDATE_TRANSCODE_TEMPLATE } from "@/constants"
+import { ADD_SNAPSHOT_TEMPLATE, UPDATE_SNAPSHOT_TEMPLATE } from "@/constants"
 
 export default {
   name: "optionForm",
@@ -59,18 +60,14 @@ export default {
 
   data() {
     return {
-      form: {
-        desc: "", //模板描述
-        template: "", //可用模板
-        name: "" //模板名称
-      },
-
       ruleForm: {
         TemplateName: "",
         Description: "",
-        AiTransCode: "0",
-        Height: "",
-        VideoBitrate: ""
+        SnapshotInterval: 10, // 截圖間隔
+        PornFlag: 0, // 是否开启鉴黄，0：不开启，1：开启。默认：0。
+        CosAppId: '',
+        CosBucket: '',
+        CosRegion: ''
       },
 
       rules: {
@@ -82,23 +79,24 @@ export default {
           { required: false },
           { max: 100, message: "長度不能超過100個字符", trigger: 'blur' }
         ],
-        Height: [
-          { required: true, message: "請輸入視頻高度", trigger: "blur" },
+        SnapshotInterval: [
+          { required: true, message: "請輸入截圖間隔", trigger: "blur" }
         ],
-         VideoBitrate: [
-          { required: true, message: "請輸入視頻碼率", trigger: "blur" },
+        CosAppId: [
+          { required: true, message: "請輸入CosAppId", trigger: "blur" }
+        ],
+        CosBucket: [
+          { required: true, message: "請輸入CosBucket", trigger: "blur" }
+        ],
+        CosRegion: [
+          { required: true, message: "請輸入CosRegion", trigger: "blur" }
         ],
       },
-
-      tableData: JSON.parse(JSON.stringify(TEMPLATE_TYPE)),
-
-      selectType: ""
     }
   },
 
   mounted() {
     this.initTableParams()
-    // this.initInfo()
   },
 
   methods: {
@@ -107,19 +105,13 @@ export default {
         if (valid) {
           // 如果有selectItem则为修改
 
-          const params = Object.assign(this.ruleForm, {
-            Version: '2018-08-01'
-          }) 
-
-          if (this.selectType === '純音頻') {
-            params.Height = 0
-            params.VideoBitrate = 100
-          }
+          const params = { ...this.ruleForm }
+          params.Version = '2018-08-01'
+          params.PornFlag = this.ruleForm.PornFlag ? 1 : 0
 
           if (Object.keys(this.selectItem).length) {
             params.TemplateId = this.selectItem.TemplateId
-            delete params.AiTransCode
-            delete params.TemplateName
+            params.CosAppId = Number(params.CosAppId)
             this.handleUpdate(params)
             return
           }
@@ -131,7 +123,7 @@ export default {
     },
 
     handleAdd(params) {
-      this.axios.post(ADD_TRANSCODE_TEMPLATE, params).then(data => {
+      this.axios.post(ADD_SNAPSHOT_TEMPLATE, params).then(data => {
         if (data.Response.Error == undefined) {
           this.$message({
             message: '添加成功',
@@ -146,7 +138,7 @@ export default {
     },
 
     handleUpdate(params) {
-      this.axios.post(UPDATE_TRANSCODE_TEMPLATE, params).then(data => {
+      this.axios.post(UPDATE_SNAPSHOT_TEMPLATE, params).then(data => {
         if (data.Response.Error == undefined) {
           this.$message({
             message: '修改成功',
@@ -160,34 +152,15 @@ export default {
       })
     },
 
-    handleSelectionChange(e) {
-      this.tableData.forEach(item => {
-        this.tableParams[item.paramName].Enable = 0
-      })
-      e.forEach(item => {
-        this.tableParams[item.paramName].Enable = 1
-      })
-    },
-
-    radioChange(rows) {
-      const currentItem = TEMPLATE_TYPE.find(item => (
-        item.value === rows
-      ))
-      this.ruleForm.Height = currentItem.Height
-      this.ruleForm.VideoBitrate = currentItem.VideoBitrate
-      this.selectType = rows
-    },
-
     initTableParams() {
       if (Object.keys(this.selectItem).length) {
         const currentParams = {}
         Object.keys(this.ruleForm).forEach(key => {
           this.ruleForm[key] = JSON.parse(JSON.stringify(this.selectItem[key]))
-          this.ruleForm.AiTransCode = this.ruleForm.AiTransCode.toString()
-         
+          this.ruleForm.PornFlag = this.selectItem.PornFlag > 0
         })
       }
-    },
+    }
   }
 };
 </script>
@@ -200,6 +173,9 @@ export default {
   padding-top: 0;
   font-size: 12px !important;
   border-radius: 0;
+}
+.input-number >>> .el-input__inner {
+  height: 40px;
 }
 .form-wrap >>> .el-textarea__inner {
   border-radius: 0;
@@ -217,6 +193,19 @@ export default {
   h4 {
     font-size: 14px;
     margin-bottom: 15px;
+  }
+  .explain {
+    display: inline-block;
+    p {
+      line-height: 18px;
+
+      a {
+        color: #006eff;
+      }
+      a:hover {
+        border-bottom: 1px #006eff solid;
+      }
+    }
   }
 }
 </style>

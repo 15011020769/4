@@ -63,24 +63,24 @@ export default {
         save(){
             this.$router.push({
                 path:"/configuration",
-                name:"configuration",
-                component:()=>
-                import('../../configuration'),
-                meta:{
-                keepAlive:true
-                }
+                // name:"configuration",
+                // component:()=>
+                // import('../../configuration'),
+                // meta:{
+                // keepAlive:true
+                // }
             })
         },
         //取消
         cancel(){
             this.$router.push({
                 path:"/configuration",
-                name:"configuration",
-                component:()=>
-                import('../../configuration'),
-                meta:{
-                keepAlive:true
-                }
+                // name:"configuration",
+                // component:()=>
+                // import('../../configuration'),
+                // meta:{
+                // keepAlive:true
+                // }
             })
         }
   }

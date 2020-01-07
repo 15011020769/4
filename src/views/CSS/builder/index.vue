@@ -11,7 +11,7 @@
             <el-option label="播放域名" value="1"></el-option>
           </el-select>
           <el-select v-model="ruleForm.domain" placeholder="请选择域名" v-for="(item,index) in domainArr" :key="index">
-            <el-option :label="item.name" :value="item.TargetDomain"></el-option>
+            <el-option :label="item.Name" :value="item.Name"></el-option>
           </el-select>
           <p>选择推流域名，则生成推流地址；选择播放域名，则生成播放地址。如无可选域名，<span @click="_adddomain" class="Adomain">请添加域名</span></p>
         </el-form-item>
@@ -25,7 +25,11 @@
           <p>仅支持英文字母、数字和符号</p>
         </el-form-item>
         <el-form-item label="过期时间" prop="date">
-          <el-date-picker type="date" placeholder="选择过期时间" v-model="ruleForm.date">
+          <el-date-picker
+            v-model="ruleForm.date"
+            type="datetime"
+            placeholder="选择过期时间">
+          </el-date-picker>
           </el-date-picker>
         </el-form-item>
 
@@ -34,6 +38,47 @@
           <span class="Adomain aExplain" @click="_aExplain">地址解析说明示例</span>
         </el-form-item>
       </el-form>
+      <div class="result" v-show="txSecret && txTime">
+        <h3>生成结果</h3><span>(根据上面设置项生成以下地址)</span>
+        <div class="item">
+          <div>
+            <span>类型</span>
+            <span>{{ruleForm.domainType === '0' ? '推流' : '播放'}}域名</span>
+          </div>
+          <div>
+            <span>过期时间</span>
+            <span>{{ruleForm.date}}</span>
+          </div>
+          <template v-if="ruleForm.domainType === '0'">
+            <div>
+              <span>推流地址</span>
+              <span>rtmp://{{ruleForm.domain}}/{{ruleForm.AppName}}/{{ruleForm.StreamName}}?txSecret={{txSecret}}&txTime={{txTime}}</span>
+            </div>
+            <div>
+              <span>OBS推流地址</span>
+              <span>rtmp://{{ruleForm.domain}}/{{ruleForm.AppName}}/</span>
+            </div>
+            <div>
+              <span>OBS推流名称</span>
+              <span>{{ruleForm.StreamName}}?txSecret={{txSecret}}&txTime={{txTime}}</span>
+            </div>
+          </template>
+          <template v-else>
+            <div>
+              <span>播放地址(RTMP)</span>
+              <span>rtmp://{{ruleForm.domain}}/{{ruleForm.AppName}}/{{ruleForm.StreamName}}?txSecret={{txSecret}}&txTime={{txTime}}</span>
+            </div>
+            <div>
+              <span>播放地址(FLV)</span>
+              <span>rtmp://{{ruleForm.domain}}/{{ruleForm.AppName}}/{{ruleForm.StreamName}}.flv?txSecret={{txSecret}}&txTime={{txTime}}</span>
+            </div>
+            <div>
+              <span>播放地址(HLS)</span>
+              <span>rtmp://{{ruleForm.domain}}/{{ruleForm.AppName}}/{{ruleForm.StreamName}}.m38u?txSecret={{txSecret}}&txTime={{txTime}}</span>
+            </div>
+          </template>
+        </div>
+      </div>
     </div>
     <el-dialog title="地址解析说明示例" :visible.sync="dialogVisible" width="850px">
       <img width="800px"
@@ -43,32 +88,35 @@
 </template>
 
 <script>
-  import Header from "@/components/public/Head";
-
-  import {
-    DOMAIN_LIST
-  } from "@/constants";
+import Header from "@/components/public/Head";
+import {
+  LIVE_DESCRIBELIVE_PUSHAUTHKEY,
+  LIVE_DESCRIBE_LIVEPLAYAUTHKEY,
+  DOMAIN_LIST
+} from "@/constants";
+import { toUTF8Array } from '@/utils'
+import md5 from 'js-md5'
+import moment from 'moment'
   export default {
     name: 'builder',
     data() {
       return {
+        txSecret: '',
+        txTime: '',
         ruleForm: {
           domainType: '0',
           domain: '',
           AppName: 'live',
           StreamName: '',
-          date: '',
+          date: '2020-01-07 23:59:59',
         },
         dialogVisible: false, //模态框
-        domainArr: [{ //接口无数据，假数据
-          name: 'abc.com',
-          TargetDomain: 'abc.com.liveplay.myqcloud.com'
-        }], //域名列表
+        domainArr: [], //域名列表
         rules: {
           domain: [{
             required: true,
             message: '请选择域名',
-            trigger: 'change'
+            // trigger: 'change'
           }],
           AppName: [{
               required: true,
@@ -108,8 +156,9 @@
     },
     methods: {
       Getdomain() {
+        this.txSecret = ''
+        this.timeHex = ''
         const param = {
-          Region: this.Region,
           Version: '2018-08-01',
           DomainStatus: '1',
           DomainType: this.ruleForm.domainType
@@ -117,8 +166,7 @@
         // 获取表格数据
         this.axios.post(DOMAIN_LIST, param).then(data => {
           if (data.Response.Error == undefined) {
-            // this.domainArr = data.Response.DomainList
-            console.log(this.domainArr)
+            this.domainArr = data.Response.DomainList
           } else {
             this.$message.error(data.Response.Error.Message);
           }
@@ -128,8 +176,27 @@
       submitForm(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            console.log(this.ruleForm)
-            alert('submit!');
+            let url = LIVE_DESCRIBE_LIVEPLAYAUTHKEY
+            let key = 'PlayAuthKeyInfo'
+            let key1 = 'AuthKey'
+            let timeHex
+            if (this.ruleForm.domainType === '0') {
+              url = LIVE_DESCRIBELIVE_PUSHAUTHKEY
+              key = 'PushAuthKeyInfo'
+              key1 = 'MasterAuthKey'
+            }
+            this.axios.post(url, {
+              Version: "2018-08-01",
+              DomainName: this.ruleForm.domain
+            }).then(({ Response }) => {
+              if (this.ruleForm.domainType === '0') {
+                timeHex = moment(this.ruleForm.date).unix().toString(16).toUpperCase()
+              } else {
+                timeHex = ((+new Date(moment(this.ruleForm.date)) - 1e3 * Response[key].AuthDelta) / 1e3).toString(16).toUpperCase()
+              }
+              this.txSecret = md5(`${Response[key][key1]}${this.ruleForm.StreamName}${timeHex}`)
+              this.txTime = timeHex
+            })
           } else {
             console.log('error submit!!');
             return false;
@@ -178,5 +245,21 @@
       }
     }
   }
-
+.result {
+  h3 {
+    display: inline-block;
+  }
+  h3 + span {
+    color: #bbb;
+  }
+  .item > div span {
+    line-height: 32px;
+    &:first-of-type {
+      display: inline-block;
+      width: 111px;
+      font-size: 12px;
+      color: #888;
+    }
+  }
+}
 </style>
