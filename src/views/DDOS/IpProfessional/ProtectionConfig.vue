@@ -161,6 +161,7 @@
                       @click="configListCon(scope.$index, scope.row)"
                       type="text"
                       size="small"
+                      style="padding-left:7px"
                     >配置</el-button>
                     <el-button
                       @click.native.prevent="deleteRow(scope.$index, scope.row)"
@@ -189,6 +190,7 @@
                       @click="bindingResource(scope.$index, scope.row)"
                       type="text"
                       size="small"
+                      style="padding-left:7px"
                     >绑定资源</el-button>
                     <el-dialog
                       title="绑定资源"
