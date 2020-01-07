@@ -63,7 +63,7 @@
           <div class="body-con">
             <div class="tr-con" v-for="(item, index) in formArr" :key="index">
               <td>
-                <el-select v-model="form.instanceType" :placeholder="$t('CCN.tabs.tab1new2')">
+                <el-select v-model="form.instanceType" :placeholder="$t('CCN.tabs.tab1new2')" @change="_instance()">
                   <el-option :label="$t('CCN.total.vpc1')" value="VPC"></el-option>
                   <el-option :label="$t('CCN.total.vpc2')" value="DIRECTCONNECT"></el-option>
                 </el-select>
@@ -74,12 +74,13 @@
                 </el-select>
               </td>
               <td>
-                <el-select v-model="form.instanceId" :placeholder="$t('CCN.tabs.select')"
-                  :no-data-text="$t('CCN.total.tdno')">
-                  <el-option v-for="(item, index) in vpcs" :key="index" :label="item.VpcId" :value="item.VpcId">
-                    <span v-if="item.VpcId ">{{item.VpcId + '(' +item.VpcName + '|' + item.CidrBlock + ')' }}</span>
-                    <span
-                      v-if="item.directConnectGatewayId">{{item.directConnectGatewayId + '(' + item.directConnectGatewayName + '|' + item.vpcCidrBlock + ')' }}</span>
+                <el-select v-model="form.instanceId" :placeholder="$t('CCN.total.select')" no-data-text="無數據">
+                  <el-option v-if="form.instanceType=='VPC'" v-for="(item, index) in vpcs" :key="index"
+                    :label="`${item.VpcId}(${item.VpcName}|${item.CidrBlock})`" :value="item.VpcId">
+                  </el-option>
+                  <el-option v-if="form.instanceType=='DIRECTCONNECT'" v-for="(item, index) in vpcs" :key="index"
+                    :label="`${item.DirectConnectGatewayId}(${item.DirectConnectGatewayName})`"
+                    :value="item.DirectConnectGatewayId">
                   </el-option>
                 </el-select>
               </td>
@@ -180,6 +181,7 @@
         this.instance.InstanceType = ins.InstanceType;
         this.dialogVisible = true;
       },
+      //云联网解除关联
       doDelCcnIns() {
         var params = {
           Version: "2017-03-12",
@@ -192,14 +194,18 @@
         this.axios.post(DETACHCCN_INSTANCES, params).then(res => {
           if (res.Response.Error == undefined) {
             this.$message({
-              message: "刪除成功",
+              message: "云联网解除关联成功",
               type: "success",
               showClose: true,
               duration: 0
             });
           } else {
+            let ErrTips = {
+              'ResourceNotFound': '资源不存在'
+            }
+            let ErrOr = Object.assign(ErrorTips, ErrTips)
             this.$message({
-              message: res.Response.Error.Message,
+              message: ErrOr[res.Response.Error.Code],
               type: "error",
               showClose: true,
               duration: 0
@@ -209,24 +215,62 @@
         });
         this.dialogVisible = false;
       },
+      _instance() {
+        this.form.instanceId = ""
+      },
       // 查询instanceId
       getInstanceIds(instanceType) {
         var params = {
           Version: "2017-03-12",
           Region: localStorage.getItem("regionv2")
         };
+        // 私有网络
         if (instanceType == "VPC") {
-          // 私有网络
           this.axios.post(VPCS_LIST, params).then(res => {
-            this.vpcs = res.Response.VpcSet;
+            if (res.Response.Error === undefined) {
+              this.vpcs = res.Response.VpcSet;
+              console.log(this.vpcs)
+            } else {
+              let ErrTips = {
+                'InvalidParameter.Coexist': '参数不支持同时指定',
+                'InvalidParameterValue.Malformed': '入参格式不合法',
+                'ResourceNotFound': '资源不存在'
+              }
+              let ErrOr = Object.assign(ErrorTips, ErrTips)
+              this.$message({
+                message: ErrOr[res.Response.Error.Code],
+                type: "error",
+                showClose: true,
+                duration: 0
+              });
+            }
           });
+          // 专线网络
         } else if (instanceType == "DIRECTCONNECT") {
           const info = {
-            networkType: "CCN"
+            Version: '2017-03-12',
+            Region: localStorage.getItem('regionv2'),
+            'Filters.0.Name': 'network-type',
+            'Filters.0.Values.0': 'CCN',
           };
-          // 专线网络
           this.axios.post(DIRECTCONNECTGATEWAYS_LIST, info).then(res => {
-            this.vpcs = res.data;
+            if (res.Response.Error === undefined) {
+              this.vpcs = res.Response.DirectConnectGatewaySet;
+            } else {
+              let ErrTips = {
+                'InvalidParameter.Coexist': '参数不支持同时指定',
+                'InvalidParameterValue': '参数值不合法',
+                'InvalidParameterValue.Malformed': '入参格式不合法',
+                'InvalidParameterValue.TooLong': '无效参数值。参数值太长'
+              }
+              let ErrOr = Object.assign(ErrorTips, ErrTips)
+              this.$message({
+                message: ErrOr[res.Response.Error.Code],
+                type: "error",
+                showClose: true,
+                duration: 0
+              });
+            }
           });
         }
         // 过滤已存在的实例数据(需要等待上面的接口调用完成再执行)
