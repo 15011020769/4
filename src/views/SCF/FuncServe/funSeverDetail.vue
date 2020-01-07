@@ -669,6 +669,9 @@
 
 </script>
 <style lang="scss" scoped>
+.wrap{
+  height: 100%;
+}
   .appIdTit>>>.el-loading-mask {
     background: white;
   }

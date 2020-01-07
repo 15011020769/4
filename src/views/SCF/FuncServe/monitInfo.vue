@@ -104,9 +104,6 @@
         period: "",
         Start_End: [],
         value: 1,
-        CMMax:"",
-        CMMin:"",
-        CMAvg:"",
         dialogVisible: false, // 模态框 （放大后的折线图）
         pageIndex: 1, // 当前页
         pageSize: 10, // 每页数

@@ -9,8 +9,8 @@
           <el-col :span="6">
             <div class="modelList">
               <p>{{ $t('SCF.total.hssl') }}</p>
-              <p>
-                <span>{{topList.number}}</span>
+              <p v-loading="loading">
+                <span >{{topList.number}}</span>
                 <span>个</span>
               </p>
             </div>
@@ -19,7 +19,7 @@
             <div class="modelList">
               <p>{{ $t('SCF.total.bydys') }}</p>
               <p>
-                <span>{{topList.invokecount}}</span>
+                <span  >{{topList.invokecount}}</span>
                 <span>次</span>
               </p>
               <p>{{ $t('SCF.total.zrdys') }}{{topList.yinvokecount}}次</p>
@@ -148,6 +148,7 @@
         showHeader:false,
         FuncList: [], //函数列表
         addressIpt: localStorage.getItem('regionv3'),
+        loading:true,
         topList: {
           number: "",
           gbs: "",
@@ -181,7 +182,10 @@
           Region: localStorage.getItem('regionv2')
         };
         this.axios.post(OVER_VIEW, params).then(res => {
-          this.topList.number = res.Response.FunctionTotalNum;
+          if(res.Response.FunctionTotalNum){
+            this.topList.number = res.Response.FunctionTotalNum;
+            this.loading=false;
+          }
         });
       },
       //本月调用数、本月资源量、本月输出量
@@ -314,6 +318,9 @@
 </script>
 
 <style scoped lang="scss">
+    .wrap{
+      height: 100%;
+    }
   .wrap>>>.btn-style {
     margin-left: 0;
   }
@@ -423,7 +430,11 @@
     box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
     margin-top: 20px;
     padding: 20px;
-
+    &>>>.addressName{
+     border: solid 1px #3e8ee7;
+     color: #3e8ee7;
+     background: rgba(0, 0, 0, 0.04);
+    }
     h3 {
       line-height: 28px;
     }
