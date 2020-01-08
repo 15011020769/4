@@ -133,6 +133,7 @@
 </template>
 
 <script>
+import { ErrorTips } from "@/components/ErrorTips";
 import Header from "../Public/Head";
 import {
   LIST_COSBUCKETS,
@@ -257,18 +258,31 @@ export default {
         Region: "ap-guangzhou"
       };
       this.axios.post(GZJ_REGION, params).then(res => {
-        var data = res.Response.EnableRegions;
-        var arr = [];
-        data.forEach((item, index) => {
-          const obj = {
-            label: item.CmqRegionName,
-            value: index,
-            name: item.CmqRegion
+        if (res.Response.Error === undefined) {
+          var data = res.Response.EnableRegions;
+          var arr = [];
+          data.forEach((item, index) => {
+            const obj = {
+              label: item.CmqRegionName,
+              value: index,
+              name: item.CmqRegion
+            };
+            arr.push(obj);
+          });
+          this.cmqSelect.options = arr;
+          this.cmqSelect.name = arr[0].label;
+        } else {
+          let ErrTips = {
+            "InternalError.ListCmqEnableRegionError": "	内部错误，请联系开发人员"
           };
-          arr.push(obj);
-        });
-        this.cmqSelect.options = arr;
-        this.cmqSelect.name = arr[0].label;
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
       });
     },
     //cmq单选变化
@@ -337,7 +351,7 @@ export default {
             delete this.ruleForm.CmqQueueName;
           }
           this.axios.post(GZJ_CREATE, this.ruleForm).then(res => {
-            if (res.Response.IsSuccess == 1) {
+            if (res.Response.Error === undefined) {
               this.$message({
                 message: "創建成功",
                 type: "success"
@@ -345,13 +359,52 @@ export default {
               this.btnLoad = false;
               this.$router.push("/Audit");
             } else {
-              this.$message.error("創建失敗");
-              this.btnLoad = false;
+              let ErrTips = {
+                "InternalError.CmqError":
+                  "创建cmq时发生异常，可能您准备创建的cmq队列已经存在，也有可能您没有权限或者欠费",
+                "InternalError.CreateAuditError":
+                  "创建跟踪集错误，请联系开发人员",
+                "InvalidParameterValue.AuditNameError": "跟踪集名称不符合规则",
+                "InvalidParameterValue.CmqRegionError":
+                  "云审计目前不支持输入的cmq地域",
+                "InvalidParameterValue.CosNameError":
+                  "输入的cos存储桶名称不符合规范",
+                "InvalidParameterValue.CosRegionError":
+                  "云审计目前不支持输入的cos地域",
+                "InvalidParameterValue.IsCreateNewBucketError":
+                  "IsCreateNewBucket的有效取值范围是0和1，0代表不创建新的存储桶，1代表创建新的存储桶",
+                "InvalidParameterValue.IsCreateNewQueueError":
+                  "IsCreateNewQueue的有效取值范围是0和1，0代表不新创建，1代表新创建",
+                "InvalidParameterValue.IsEnableCmqNotifyError":
+                  "IsEnableCmqNotify的有效取值范围是0和1，0代表不开启投递cmq,1代表开启cmq投递",
+                "InvalidParameterValue.LogFilePrefixError": "日志前缀格式错误",
+                "InvalidParameterValue.QueueNameError":
+                  "输入的队列名称不符合规范",
+                "InvalidParameterValue.ReadWriteAttributeError":
+                  "读写属性值仅支持：1,2,3。1代表只读，2代表只写，3代表全部。",
+                "LimitExceeded.OverAmount": "超过跟踪集的最大值",
+                "MissingParameter.MissAuditName": "缺少跟踪集名称",
+                "MissingParameter.MissCosBucketName": "缺少cos存储桶参数",
+                "MissingParameter.MissCosRegion": "缺少cos地域参数",
+                "MissingParameter.cmq":
+                  "IsEnableCmqNotify输入1的话，IsCreateNewQueue、CmqQueueName和CmqRegion都是必须参数。",
+                "ResourceInUse.AlreadyExistsSameAudit":
+                  "已经存在相同名称的跟踪集",
+                "ResourceInUse.AlreadyExistsSameAuditCmqConfig":
+                  "已经存在相同cmq投递配置的跟踪集",
+                "ResourceInUse.AlreadyExistsSameAuditCosConfig":
+                  "已经存在相同cos投递配置的跟踪集",
+                "ResourceInUse.CosBucketExists": "cos存储桶已经存在"
+              };
+              let ErrOr = Object.assign(ErrorTips, ErrTips);
+              this.$message({
+                message: ErrOr[res.Response.Error.Code],
+                type: "error",
+                showClose: true,
+                duration: 0
+              });
             }
           });
-        } else {
-          this.btnLoad = false;
-          return false;
         }
       });
     },
@@ -397,18 +450,31 @@ export default {
     };
     //	cos地域
     this.axios.post(GZJ_COS, params).then(res => {
-      var data = res.Response.EnableRegions;
-      var arr = [];
-      data.forEach((item, index) => {
-        const obj = {
-          label: item.CosRegionName,
-          value: index,
-          name: item.CosRegion
+      if (res.Response.Error === undefined) {
+        var data = res.Response.EnableRegions;
+        var arr = [];
+        data.forEach((item, index) => {
+          const obj = {
+            label: item.CosRegionName,
+            value: index,
+            name: item.CosRegion
+          };
+          arr.push(obj);
+        });
+        this.select.options = arr;
+        this.select.name = arr[0].label;
+      } else {
+        let ErrTips = {
+          "InternalError.ListCosEnableRegionError": "内部错误，请联系开发人员"
         };
-        arr.push(obj);
-      });
-      this.select.options = arr;
-      this.select.name = arr[0].label;
+        let ErrOr = Object.assign(ErrorTips, ErrTips);
+        this.$message({
+          message: ErrOr[res.Response.Error.Code],
+          type: "error",
+          showClose: true,
+          duration: 0
+        });
+      }
     });
   }
 };
