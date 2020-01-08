@@ -429,7 +429,7 @@ export default {
         Version: "2019-03-19",
         Region: "ap-guangzhou"
       };
-      this.axios.post(GZJ_DELETE, params).then(data => {
+      this.axios.post(GZJ_DELETE, params).then(res => {
         if (res.Response.Error === undefined) {
           this.$message({
             message: "刪除成功",
