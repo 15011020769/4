@@ -7,7 +7,6 @@
       <el-table
         :data="tableData"
         style="width: 100%;margin-top:20px;"
-        height="450"
         v-loading="loading"
       >
         <el-table-column prop="time" label="月份"></el-table-column>
@@ -83,25 +82,25 @@ export default {
           let obj = res.Response.DataInfoList
           var mon = [];
             for (var i = 1; i < obj.length; i++) {
-                var repeat = false;
-                  for (var j = 0; j < mon.length; j++) {
-                    if (mon[j].time == obj[i].Time.substring(0,7)) {
-                        repeat = true
-                        break
-                    }
+              var repeat = false;
+                for (var j = 0; j < mon.length; j++) {
+                  if (mon[j].time == obj[i].Time.substring(0,7)) {
+                      repeat = true
+                      break
                   }
-                  if (!repeat) {
-                    mon.push({time: obj[i].Time.substring(0,7)})
-                  }
-              }
+                }
+                if (!repeat) {
+                  mon.push({time: obj[i].Time.substring(0,7)})
+                }
+            }
             var monvalue = [];
             var one = 0;
             for(var j = 0;j<mon.length;j++){
               var one = 0;
             for(var i=0;i<obj.length;i++){
-                  if(obj[i].Time.substring(0,7) == mon[j].num){
-                    one += parseInt(obj[i].Num);
-                  }
+                if(obj[i].Time.substring(0,7) == mon[j].time){
+                  one += parseInt(obj[i].Num);
+                }
               }
             monvalue.push({num: one});
             }

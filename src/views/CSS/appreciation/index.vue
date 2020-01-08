@@ -75,17 +75,16 @@ export default {
       this.EndTIme = this.timeData[0].EndTIme
       if (this.tabIndex == 0) {
         this.$nextTick(() => {
-          this.$refs.tab1.init();
+          // this.$refs.tab1.init();
           this.$refs.tab1.getCharts()
         })
       } else if (this.tabIndex == 1) {
         this.$nextTick(() => {
-          // this.$refs.tab2.init();
           this.$refs.tab2.getCharts();
         })
       } else if (this.tabIndex == 2) {
         this.$nextTick(() => {
-          this.$refs.tab3.init();
+           this.$refs.tab3.getCharts();
         })
       }
     },

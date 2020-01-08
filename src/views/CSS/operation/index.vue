@@ -47,7 +47,7 @@
         >
           <dt>{{item.name}}</dt>
           <dd>
-            0
+            {{item.value}}
             <span style="font-size:16px;color:black;">{{item.code}}</span>
           </dd>
         </dl>
@@ -92,7 +92,7 @@
 import moment from "moment";
 import Header from "@/components/public/Head";
 import XTimeX from "@/components/public/TimeN";
-import { ALL_CITY, DOMAIN_LIST } from "@/constants";
+import { ALL_CITY, DOMAIN_LIST, CSS_MBPS } from "@/constants";
 import Tab1 from "./tab/tab1";
 import Tab2 from "./tab/tab2";
 import Tab3 from "./tab/tab3";
@@ -130,19 +130,23 @@ export default {
       tab: [
         {
           name: "带宽峰值",
-          code: "Mbps"
+          code: "Mbps",
+          value: 0
         },
         {
           name: "总流量",
-          code: "MB"
+          code: "MB",
+          value: 0
         },
         {
           name: "总请求数",
-          code: "次"
+          code: "次",
+          value: 0
         },
         {
           name: "并发连接数峰值",
-          code: "次"
+          code: "次",
+          value: 0
         }
       ],
       StartTIme: moment(new Date()).format("YYYY-MM-DD 00:00:00"),
@@ -160,7 +164,7 @@ export default {
   created() {
     this.getCity();
     this.getDomains();
-    // console.log(this.getDay(5));
+    this.getTotal()
   },
   methods: {
     doHandleMonth(month) {
@@ -172,19 +176,6 @@ export default {
     },
     changeDomain(value) {
       this.domain = value
-    },
-    getDay(day) {
-      var today = new Date();
-      var targetday_milliseconds = today.getTime() + 1000 * 60 * 60 * 24 * day;
-
-      today.setTime(targetday_milliseconds); //注意，这行是关键代码
-
-      var tYear = today.getFullYear();
-      var tMonth = today.getMonth();
-      var tDate = today.getDate();
-      tMonth = this.doHandleMonth(tMonth + 1);
-      tDate = this.doHandleMonth(tDate);
-      return tYear + "-" + tMonth + "-" + tDate;
     },
     //域名列表
     getDomains() {
@@ -213,10 +204,12 @@ export default {
       //   this.domain = Array.from(new Set(this.domain))
       // });     
       if (this.tabIndex == 0) {
+        this.getTotal()
         this.$nextTick(() => {
           this.$refs.tab1.init();
         })
       } else if (this.tabIndex == 1) {
+        this.getTotal()
         this.$nextTick(() => {
           this.$refs.tab2.init();
         })
@@ -245,6 +238,23 @@ export default {
     //tab切换
     tabClick(index) {
       this.tabIndex = index;
+    },
+    getTotal() {
+      const params = {
+        Version: "2018-08-01",
+        StartTime: moment(this.StartTIme).format("YYYY-MM-DD HH:mm:ss"),
+        EndTime: moment(this.EndTIme).format("YYYY-MM-DD HH:mm:ss"),
+        Granularity: 5,
+      };
+      this.axios.post(CSS_MBPS, params).then(res => {
+        if (res.Response.Error) {
+          this.$message.error(res.Response.Error.Message);
+        } else {
+          // 表格数据
+          this.tab[0].value = res.Response.PeakBandwidth
+          this.tab[1].value = res.Response.SumFlux
+        }
+      });
     }
   }
 };
