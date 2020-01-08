@@ -2,22 +2,20 @@
   <div class="mesg-detils">
     <HeaderCom title="站内信详情" @_back="back"  :backShow="true"></HeaderCom>
     <div class="detilswrap">
-          <mavon-editor v-model="html" :toolbarsFlag="false" :editable="false" :subfield="false" defaultOpen="preview" style="width: 100%; margin: 20px auto;"></mavon-editor>
+        <div class="wrap" v-html="content">123</div>
     </div>
   </div>
 </template>
 <script>
-import { mavonEditor } from 'mavon-editor'
-import 'mavon-editor/dist/css/index.css'
 import HeaderCom from "@/components/public/Head";
+import {DATA_DETILE,UPDATA_DATA} from  '@/constants/MGC.js';
 export default {
   components: {
     HeaderCom,
-    mavonEditor
   },
   data() {
     return {
-      html: ''
+      content:''
     }
   },
   methods:{
@@ -27,13 +25,17 @@ export default {
     },
     //获取详情数据
     init(){
-      let params = {
-        id:this.$route.query.detailsData
-      }
-      this.axios.get(`${process.env.VUE_APP_adminUrl}`+"/taifucloud/inmail/info/"+params.id).then(res=>{
-          console.log(res)
-          this.html = res.data.content
-      })
+       let id = this.$route.query.detailsData
+       this.axios.get(`${process.env.VUE_APP_adminUrl + DATA_DETILE}`+'?id='+id).then(res=>{
+            console.log(res)
+            this.content = res.inMailEntity.content
+       })
+    },
+    update(){
+       let id = this.$route.query.detailsData
+       this.axios.get(`${process.env.VUE_APP_adminUrl + UPDATA_DATA}`+'?id='+id).then(res=>{
+            console.log(res)
+       })
     }
   },
   created(){
@@ -48,7 +50,7 @@ export default {
      box-sizing: border-box;
      .wrap{
        width: 100%;
-       height: 800px;
+       display: flex;
        background: white;
        box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
      }

@@ -13,28 +13,30 @@
             <el-button @click="AllRead">全部标记为已读</el-button>
           </div>
           <div class="message-btns btnStyle">
-            <el-button @click="searchAll">全部</el-button>
-            <el-button @click="searchTitle">母云动态</el-button>
-            <el-button @click="searchText">运维消息</el-button>
-            <el-button @click="searchProduct">产品消息</el-button>
-            <el-button @click="searchMsgAq">安全消息</el-button>
+            <el-button @click="getDataListByType('')">全部</el-button>
+            <el-button @click="getDataListByType('運維消息')">運維消息</el-button>
+            <el-button @click="getDataListByType('騰訊雲動態')">騰訊雲動態</el-button>
+            <el-button @click="getDataListByType('產品消息')">產品消息</el-button>
+            <el-button @click="getDataListByType('安全消息')">安全消息</el-button>
+            <el-button @click="getDataListByType('其他消息')">其他消息</el-button>
+            <el-button @click="getDataListByType('財務消息')">財務消息</el-button>
           </div>
         </div>
-        <div class="message-funRight">
+        <!-- <div class="message-funRight">
           <div class="search">
             <el-input v-model="inputVal" placeholder="请输入内容" @change="tableInpVal"></el-input>
             <span>
               <i class="el-icon-search" @click="tableSearch"></i>
             </span>
           </div>
-        </div>
+        </div> -->
       </div>
       <div class="meaasge-table">
-        <el-table :data="tableData.slice((currpage - 1) * pagesize, currpage * pagesize)" style="width: 100%" height="450" @selection-change="handleSelectionChange">
+        <el-table :data="tableData" style="width: 100%" height="450" @selection-change="handleSelectionChange">
           <el-table-column type="selection" width="55"></el-table-column>
           <el-table-column prop="title" label="消息内容">
              <template slot-scope="scope">
-                <el-link @click="detailsMesg(scope.row)" class="edit" type="primary">{{scope.row.title}}</el-link>
+                <el-link @click="detailsMesg(scope.row)" :class="scope.row.status === '1' ? 'classGray' : 'classblue'" type="primary">{{scope.row.title}}</el-link>
               </template>
           </el-table-column>
           <el-table-column prop="sendTime" label="接收时间" ></el-table-column>
@@ -83,19 +85,16 @@
 </template>
 
 <script>
-import {INMAIL_LIST,UNREAD_DATA,UPDATA_DATA,UPDATAID_DATA,DELETE_DATA} from  '@/constants/MGC.js';
+import {INMAIL_LIST,UNREAD_DATA,UPDATAID_DATA,DELETE_DATA,UPDATALL_DATA} from  '@/constants/MGC.js';
 import HeaderCom from "@/components/public/Head";
 import VueCookie from 'vue-cookie'
 export default {
   name: "message",
   data() {
     return {
-      loading:false,
+      loading:true,
       dialogVisible:false,//删除弹框
       MessageDialog:false,//消息弹框
-      TotalCount:0,//分页
-      pagesize:10,//分页条数
-      currpage:1,//当前页码
       btnIndex: 0, //按钮默认选中
       //按钮数据
       btnData: [
@@ -111,7 +110,12 @@ export default {
       tableData: [], //表格数据
       getData:[],//获取选中时的数据
       json:[], //搜索数据
-      tableAll:[]
+      tableAll:[],
+       //分页
+      TotalCount: 0,
+      pagesize: 10,//分页条数
+      currpage: 1,//当前页面
+      dataType:'',
     };
   },
   components: {
@@ -125,13 +129,20 @@ export default {
    //初始化数据
     init(){
        let uin = "100011921910"
+       let Page = this.currpage //当前页码
+       let Rp = this.pagesize  //条数
+       let typeUrl = ""
+       if(this.dataType!=undefined&&this.dataType!=""){
+         typeUrl = '&type='+this.dataType
+       }
       //  let uin = VueCookie.get('uuid')
-       this.axios.get(`${process.env.VUE_APP_adminUrl + INMAIL_LIST}`+'?uin='+uin).then(res=>{
+       this.axios.get(`${process.env.VUE_APP_adminUrl + INMAIL_LIST}`+'?uin='+uin+'&page='+Page+'&limit='+Rp+typeUrl).then(res=>{
          console.log(res)
          this.tableData = res.page.list;
          this.TotalCount = res.page.totalCount
          this.json = res.page.list;
          this.tableAll = res.page.list;
+         this.loading=false
        })
     },
     //获取未读数据
@@ -150,6 +161,7 @@ export default {
         let id = delIndex.join(',')
         this.axios.get(`${process.env.VUE_APP_adminUrl + DELETE_DATA}`+'?ids='+id).then(res=>{
             console.log(res)
+            this.init()
         })
         this.dialogVisible = false;
     },
@@ -158,19 +170,8 @@ export default {
     if(this.inputVal == ""){
          this.tableData = this.json
          this.TotalCount = this.json.length
+         this.currpage = 1;
        }
-    },
-    //搜索按钮
-    tableSearch(){
-      var arr = [];
-      this.tableData.forEach(item => {
-         if(item.title.includes(this.inputVal)){
-              arr.push(item)
-         }
-      })
-      this.tableData = arr
-      this.TotalCount = arr.length
-      console.log(this.tableData)
     },
     //批量删除消息弹框
     delMesg(){
@@ -190,6 +191,7 @@ export default {
          let id = updata.join(',')
          this.axios.get(`${process.env.VUE_APP_adminUrl + UPDATAID_DATA}`+'?ids='+id).then(res=>{
           console.log(res)
+          this.init()
         })
      }else{
          this.$message("请选择数据")
@@ -202,12 +204,27 @@ export default {
     //确定全部标记为已读
     updataMesg(){
       this.tableData.forEach(item => {
-          let id = item.id
-          this.axios.get(`${process.env.VUE_APP_adminUrl + UPDATA_DATA}`+'?id='+id).then(res=>{
+          let uin = item.uin
+          this.axios.get(`${process.env.VUE_APP_adminUrl + UPDATALL_DATA}`+'?uin='+uin).then(res=>{
             console.log(res)
+            this.init()
           })
       })
        this.MessageDialog = false
+    },
+    //获取不同类型的数据
+    getDataListByType(val){
+      this.dataType = val
+      this.init()
+      //  let uin = "100011921910"
+      //  let Page = this.currpage //当前页码
+      //  let Rp = this.pagesize  //条数
+      //  let type = val
+      //  this.axios.get(`${process.env.VUE_APP_adminUrl + INMAIL_LIST}`+'?uin='+uin+'&page='+Page+'&limit='+Rp+'&type='+type).then(res=>{
+      //    console.log(res)
+      //    this.tableData = res.page.list;
+      //    this.TotalCount = res.page.totalCount
+      //  })
     },
     //跳转详情
     detailsMesg(val){
@@ -222,46 +239,48 @@ export default {
      searchAll(){
         this.init()
      },
-    searchTitle(){
-      var arr = [];
-      this.tableAll.forEach(item => {
-         if(item.msgTypeName == "母雲動態"){
-              arr.push(item)
-         }
-      })
-      this.tableData = arr
-      this.TotalCount = arr.length
-    },
-    searchText(){
-      var arr = [];
-      this.tableAll.forEach(item => {
-         if(item.msgTypeName =='運維消息'){
-              arr.push(item)
-         }
-      })
-      this.tableData = arr
-      this.TotalCount = arr.length
-    },
-    searchProduct(){
-      var arr = [];
-      this.tableAll.forEach(item => {
-         if(item.msgTypeName =='產品消息'){
-              arr.push(item)
-         }
-      })
-      this.tableData = arr
-      this.TotalCount = arr.length
-    },
-    searchMsgAq(){
-      var arr = [];
-      this.tableAll.forEach(item => {
-         if(item.msgTypeName =='安全消息'){
-              arr.push(item)
-         }
-      })
-      this.tableData = arr
-      this.TotalCount = arr.length
-    },
+    // searchTitle(){
+    //   var arr = [];
+    //   this.tableAll.forEach(item => {
+    //      if(item.msgTypeName == "母雲動態"){
+    //           arr.push(item)
+    //      }
+    //   })
+    //   this.tableData = arr
+    //   this.TotalCount = arr.length
+    // },
+    // searchText(){
+    //   var arr = [];
+    //   this.tableAll.forEach(item => {
+    //      if(item.msgTypeName =='運維消息'){
+    //           arr.push(item)
+    //      }
+    //   })
+    //   this.tableData = arr
+    //   this.TotalCount = arr.length
+    // },
+    // searchProduct(){
+    //   var arr = [];
+    //   this.tableAll.forEach(item => {
+    //      if(item.msgTypeName =='產品消息'){
+    //           arr.push(item)
+    //           this.currpage = 1;
+    //      }
+    //   })
+    //   this.tableData = arr
+    //   this.TotalCount = arr.length
+    // },
+    // searchMsgAq(){
+    //   var arr = [];
+    //   this.tableAll.forEach(item => {
+    //      if(item.msgTypeName =='安全消息'){
+    //           arr.push(item)
+    //           this.currpage = 1;
+    //      }
+    //   })
+    //   this.tableData = arr
+    //   this.TotalCount = arr.length
+    // },
     //分页
     handleCurrentChange(val) {
       this.currpage = val;
@@ -288,9 +307,15 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.edit{
-  cursor: pointer; 
-}
+
+  .classGray{
+    color: gray;
+    cursor: pointer;
+  }
+  .classblue{
+    color:blue;
+    cursor: pointer;
+  }
  .Right-style {
     display: flex;
     justify-content: flex-end;
