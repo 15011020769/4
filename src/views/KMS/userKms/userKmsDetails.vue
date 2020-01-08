@@ -358,7 +358,8 @@ export default {
     },
     //禁用密钥确定按钮
     stopKmsSure(sureShow) {
-      this.dialogModelKms = sureShow
+
+      this.dialogModelKms = false
     },
     //计划删除弹框消失
     childrenShow2(trueOrFalse) {
