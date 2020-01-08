@@ -237,7 +237,6 @@ export default {
             Type: this.formTriggerForm.triggerType,
             TriggerDesc: this.desc,
             CustomArgument:this.formTriggerForm.CustomArgument,
-            // Enable:'OPEN',
             Enable:(this.formTriggerForm.nowStart==true?"OPEN":"CLOSE"),
           };
           let functionName = this.$route.query.functionName;

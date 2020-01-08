@@ -334,6 +334,7 @@
           console.log(res)
           if(res.Response.Functions){
             this.tableDataBegin = res.Response.Functions;
+            
             this.TotalCount = res.Response.TotalCount;
             this.loading = false;
           }
