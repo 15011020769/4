@@ -24,7 +24,7 @@
               <div>最长100个字符</div>
             </el-form-item>
             <el-form-item label="策略类型">
-              <el-select v-model="form.region" placeholder="请选择活动区域" size="mini">
+              <el-select v-model="value" placeholder="请选择活动区域" size="mini">
                 <el-option label="集群" value="jq">
                 </el-option>
                 <el-option label="节点" value="jd"></el-option>
@@ -32,7 +32,7 @@
               </el-select>
             </el-form-item>
             <!-- 集群显示内容 -->
-            <div v-if="form.region=='集群'">
+            <div v-if="value=='jq'">
               <el-form-item label="指标">
                 <div class="form-form">
                   <div class="flex p3">
@@ -199,7 +199,7 @@
               </el-form-item>
             </div>
             <!-- 节点显示内容 -->
-            <div v-if="form.region==='节点'">
+            <div v-if="value=='jd'">
               <el-form-item label="告警对象"></el-form-item>
               <el-form-item label="指标">
                 <div class="form-form">
@@ -400,7 +400,7 @@ export default {
       },
       form: {
         name: '',
-        region: '集群',
+        region: '',
         date1: '',
         date2: '',
         delivery: false,
@@ -408,7 +408,7 @@ export default {
         resource: '',
         desc: ''
       },
-      value:'',
+      value:'jq',
       // options: [
       //   {
       //   value: '1',
@@ -473,6 +473,11 @@ export default {
         wechar: false,
         phone: false
       }
+    }
+  },
+  watch: {
+    value() {
+      console.log(this.value)
     }
   },
   methods: {
