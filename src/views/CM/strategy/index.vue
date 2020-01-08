@@ -109,7 +109,7 @@
     <div class="table">
       <p class="addBtn">
         <el-row>
-          <el-button type="primary">新增</el-button>
+          <el-button type="primary" @click="addCreate">新增</el-button>
           <el-button :disable="operationFlag==-1?true:false">删除</el-button>
           <el-button :disable="operationFlag==-1?true:false">修改告警渠道</el-button>
         </el-row>
@@ -231,6 +231,7 @@ export default {
       isIndeterminate: true,
 
       formInline: {
+        product_name:"产品类型",//策略
         product_kind: [
           {
             id: "1",
@@ -264,7 +265,7 @@ export default {
             name: "告警对象1"
           }
         ], //告警对象数组
-        user: "", //用户
+        user: "用户组", //用户
         group: "", //组
         user_kind: [
           {
@@ -491,6 +492,10 @@ export default {
     },
     defaultClick(data) {
       console.log(data, "data");
+    },
+    addCreate(){
+      // alert('/strategy/create');
+      this.$router.push({path:"/strategy/create"});
     }
   }
 };
