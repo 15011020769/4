@@ -1,5 +1,5 @@
 <template>
-<!-- 防护配置 -->
+  <!-- 防护配置 -->
   <div class="wrap">
     <HeaderCom :title="$t('DDOS.Proteccon_figura.Proteccon_title')" />
     <el-tabs v-model="activeName" @tab-click="handleClick">
@@ -29,7 +29,8 @@
               <el-table-column prop="Record.Id" :label="$t('DDOS.Proteccon_figura.Id_name')">
                 <template slot-scope="scope">
                   <div v-for="(item, index) in scope.row.Record" :key="index">
-                    <div v-if="item.Key=='Id'">{{item.Value}}</div>  <!-- ID名称-->
+                    <div v-if="item.Key=='Id'">{{item.Value}}</div>
+                    <!-- ID名称-->
                     <!-- <a v-if="item.Key=='Id'" href="#" @click="toDetail(scope.$index, scope.row)">{{item.Value}}</a> -->
                   </div>
                 </template>
@@ -37,7 +38,8 @@
               <el-table-column prop="Record.GroupIpList" label="IP">
                 <template slot-scope="scope">
                   <div v-for="(item, index) in scope.row.Record" :key="index">
-                    <div v-if="item.Key=='GroupIpList'">{{item.Value}}</div>  <!-- IP地址-->
+                    <div v-if="item.Key=='GroupIpList'">{{item.Value}}</div>
+                    <!-- IP地址-->
                   </div>
                 </template>
               </el-table-column>
@@ -45,7 +47,8 @@
               <el-table-column prop="origin" :label="$t('DDOS.Proteccon_figura.region')">
                 <template slot-scope="scope">
                   <div v-for="(item, index) in scope.row.Record" :key="index">
-                    <div v-if="item.Key=='Id'">中国台湾</div>   <!--地区：中国台湾 -->
+                    <div v-if="item.Key=='Id'">中国台湾</div>
+                    <!--地区：中国台湾 -->
                   </div>
                 </template>
               </el-table-column>
@@ -85,7 +88,8 @@
               >
                 <template slot-scope="scope">
                   <div v-for="(item, index) in scope.row.Record" :key="index">
-                    <div v-if="item.Key=='saveGardenText'">{{item.Value}}</div>  <!--防护等级 -->
+                    <div v-if="item.Key=='saveGardenText'">{{item.Value}}</div>
+                    <!--防护等级 -->
                   </div>
                 </template>
               </el-table-column>
@@ -96,7 +100,8 @@
               >
                 <template slot-scope="scope">
                   <div v-for="(item, index) in scope.row.Record" :key="index">
-                    <div v-if="item.Key=='Id'">-</div>   <!--业务场景 -->
+                    <div v-if="item.Key=='Id'">-</div>
+                    <!--业务场景 -->
                   </div>
                 </template>
               </el-table-column>
@@ -106,7 +111,8 @@
               >
                 <template slot-scope="scope">
                   <div v-for="(item, index) in scope.row.Record" :key="index">
-                    <div v-if="item.Key=='Id'">-</div>       <!--高级防护策略 -->
+                    <div v-if="item.Key=='Id'">-</div>
+                    <!--高级防护策略 -->
                   </div>
                 </template>
               </el-table-column>
@@ -117,7 +123,7 @@
                 </template>
               </el-table-column>
               <!-- 修改弹框 -->
-              <changeModel :configShow="changeModel"  @closeConfigModel="closeConfigModel" />
+              <changeModel :configShow="changeModel" @closeConfigModel="closeConfigModel" :changeRow1="changeRow1"/>
             </el-table>
           </div>
           <div class="Right-style pagstyle">
@@ -243,7 +249,12 @@
             </div>
           </div>
           <div v-if="!tableShow">
-            <addNewTactics :policy="policy" :isShow="tableShow" @closePage="closePageAdd" @describeDDoSPolicyADD="describeDDoSPolicy" />
+            <addNewTactics
+              :policy="policy"
+              :isShow="tableShow"
+              @closePage="closePageAdd"
+              @describeDDoSPolicyADD="describeDDoSPolicy"
+            />
           </div>
         </div>
       </el-tab-pane>
@@ -311,7 +322,8 @@ export default {
       thisData: ["1", "2", "3"],
       changeModelTip1: false, //修改模式提示弹框
       changeModelTip2: false,
-      changeModelTip3: false
+      changeModelTip3: false,
+      changeRow1:String,
     };
   },
   components: {
@@ -323,19 +335,8 @@ export default {
   created() {
     this.describeResourceList();
     this.describeDDoSPolicy();
-    this.dev()
   },
   methods: {
-    dev(){
-      this.loading = true;
-      let params = {
-        Version: "",
-        Business: "net"
-      };
-      this.axios.get(GET_ID,params).then(res=>{
-        console.log(res)
-      })
-    },
     // 1.1.获取资源列表
     describeResourceList() {
       this.loading = true;
@@ -344,8 +345,8 @@ export default {
         Business: "net"
       };
       this.axios.post(RESOURCE_LIST, params).then(res => {
+        // console.log(res, 8888);
         this.tableDataBegin = res.Response.ServicePacks;
-        console.log(this.tableDataBegin)
         for (let i = 0; i < this.tableDataBegin.length; i++) {
           let list = this.tableDataBegin[i];
           list.Record.forEach((value, index) => {
@@ -357,7 +358,13 @@ export default {
         this.allData = res.Response.ServicePacks;
         this.totalItems = res.Response.Total;
         this.loading = false;
+        // console.log(this.allData)
       });
+    },
+     //修改弹框关闭按钮
+    closeConfigModel(isShow) {
+      this.changeModel = isShow;
+      this.describeResourceList();
     },
     // 1.2.获取DDoS高级策略
     describeDDoSPolicy() {
@@ -370,12 +377,20 @@ export default {
       this.axios.post(DDOSPOLICY_CONT, params).then(res => {
         this.tableDataPolicy = res.Response.DDosPolicyList;
         this.loading = false;
-        console.log(this.tableDataPolicy)
       });
     },
     // 修改
-    changeRow(changeIndex, changeRow) {
-      this.changeModel = true;
+    changeRow(changeIndex, changeRow1) {
+      // console.log(changeIndex,changeRow1.Record)
+      this.changeModel = true;  //DdosThreshold"
+      // this.changeRow=changeRow1;
+      let arr = changeRow1.Record;
+      arr.map((item,index)=>{
+        if(item.Key == "DdosThreshold"){
+          // console.log(item.Value)
+          this.changeRow1 = item.Value;
+        }
+      })
     },
     // 搜索
     doFilter() {
@@ -426,7 +441,7 @@ export default {
       } else if (tab.name == "third") {
         //DDOS高级防护策略
         this.describeDDoSPolicy();
-        this.closePageAdd()
+        this.closePageAdd();
       }
     },
 
@@ -503,7 +518,7 @@ export default {
     },
     //接收子组件的方法，并让子组件消失父组件显示
     closePageAdd(obj) {
-      console.log(obj)
+      console.log(obj);
       this.tableShow = true;
     },
     //穿梭框事件
@@ -519,16 +534,12 @@ export default {
       });
       window.open(routeUrl.href, "_blank");
     },
-    //修改弹框关闭按钮
-    closeConfigModel(isShow) {
-      this.changeModel = isShow;
-      this.describeResourceList();
-    }
-  }
+   
+  },
 };
 </script>
 <style lang="scss" scoped>
-a{
+a {
   cursor: pointer;
 }
 .wrap >>> .el-tabs__nav-wrap {

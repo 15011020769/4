@@ -153,6 +153,7 @@ export default {
     this.getCity();
     this.getData();
   },
+  
   watch: {
     selectedSubarea: function() {
       this.getData();

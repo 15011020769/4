@@ -9,7 +9,6 @@
         :before-close="handleClose"
       >
         <div class="modelCenterCon">
-         
           <p class="newClear">
             <span class="modelSpan1">{{$t('DDOS.protectCon.protectionStatus')}}</span>
             <span @click="outOk()">
@@ -32,7 +31,7 @@
                   class="setSelectM"
                   @change="cleanThreshold"
                 >
-                  <el-option 
+                  <el-option
                     v-for="(item, index) in cleanNumOption"
                     :label="item.label"
                     :value="item.value"
@@ -63,7 +62,7 @@
                   @click="clickGarden(3,'严格')"
                 >{{$t('DDOS.protectCon.strict')}}</a>
               </span>
-              
+
               <el-dialog
                 :title="$t('DDOS.protectCon.toggStrtic')"
                 :visible.sync="changeModelTip3"
@@ -99,7 +98,7 @@
               <el-dialog
                 :title="$t('DDOS.protectCon.toggloose')"
                 :visible.sync="changeModelTip1"
-                width="30%" 
+                width="30%"
                 :append-to-body="true"
                 :before-close="changeCloseTip1"
               >
@@ -161,11 +160,11 @@
                   <el-option :label="$t('DDOS.protectCon.CleaningFlow')" value="clean"></el-option>
                 </el-select>
               </span>
-                <span class="modelSpan3" v-if="iptNummbps">
+              <span class="modelSpan3" v-if="iptNummbps">
                 <!-- <span v-if="iptNummbps"> -->
-                  <el-input v-model="iptmbpsText" class="intMbps" @input="CreateBasic"></el-input>
-                </span>
-                <span  class="modelSpan3" v-if="iptNummbps">Mbps</span>
+                <el-input v-model="iptmbpsText" class="intMbps" @input="CreateBasic"></el-input>
+              </span>
+              <span class="modelSpan3" v-if="iptNummbps">Mbps</span>
             </p>
           </div>
         </div>
@@ -185,8 +184,21 @@ import {
   Modify_Status
 } from "@/constants";
 export default {
+  // props: {
+  //   configShow: Boolean,
+  //   changeRow:,
+  // },
   props: {
-    configShow: Boolean
+    configShow: {
+      type: Boolean,
+      default: true
+    },
+    changeRow1: {
+      type: String,
+      default:function(){
+        return "80"
+      }
+    }
   },
   data() {
     return {
@@ -245,7 +257,7 @@ export default {
   },
   created() {
     this.GetID(); //获取ID
-    this.GETSPolicy();//获取DDoS高级策略
+    this.GETSPolicy(); //获取DDoS高级策略
   },
   methods: {
     //获取ID
@@ -256,9 +268,7 @@ export default {
       };
       this.axios.post(GET_ID, params).then(res => {
         this.resourceId = res.Response.Resource[0].Id;
-        console.log(this.resourceId )
         this.GETStatus(); // 获取DDoS防护状态
-        
       });
     },
     // 获取DDoS高级策略
@@ -269,7 +279,6 @@ export default {
       };
       this.axios.post(GET_SPolicy, params).then(res => {
         this.topFun = res.Response.DDosPolicyList[0].PolicyName;
-        // console.log(this.topFun)
       });
     },
     // 获取DDoS防护状态
@@ -338,6 +347,10 @@ export default {
         Threshold: value
       };
       this.axios.post(CLAEN_SHOLD, params).then(res => {
+        // console.log(res,1111,this.servicePack.DdosThreshold)
+        // let {Response}= this.changeRow;
+        this.servicePack.DdosThreshold = this.changeRow1;
+        console.log(this.changeRow1, 1222);
         if (res.Response.Error !== undefined) {
           this.$message({
             showClose: true,
@@ -376,7 +389,6 @@ export default {
         DDoSLevel: this.tabMode
       };
       this.axios.post(Modify_Level, params).then(res => {
-        console.log(res)
         if (res.Response.Error !== undefined) {
           this.$message({
             showClose: true,
@@ -406,8 +418,8 @@ export default {
       });
     },
     //修改高级策略
-    changeTopFun(){
-      console.log(this.topFun,DDOS_POLICY_MODIFY)
+    changeTopFun() {
+      console.log(this.topFun, DDOS_POLICY_MODIFY);
       // let params = {
       //   Action:'ModifyDDoSPolicy',
       //   Version: "2018-07-09",
@@ -417,7 +429,6 @@ export default {
       //   Method: "set",
       //   DDoSLevel: this.tabMode
       // };
-
     },
     //设置基础防护的DDoS告警阈值
     CreateBasic() {
@@ -429,7 +440,6 @@ export default {
         AlarmThreshold: this.iptmbpsText
       };
       this.axios.post(SET_SHOLD, params).then(res => {
-        console.log(res);
         if (res.Response.Error !== undefined) {
           this.$message({
             showClose: true,
@@ -483,15 +493,15 @@ export default {
   margin-bottom: 10px;
   display: flex;
   align-items: center;
-  a{
+  a {
     display: inline-block;
     margin: 0 20px;
-    color:#000;
+    color: #000;
   }
   .modelSpan1 {
     width: 120px;
   }
-  
+
   .newClear >>> .el-input__inner {
     height: 30px !important;
     line-height: 30px !important;
@@ -499,20 +509,20 @@ export default {
     border-radius: 0 !important;
   }
 }
-.modelSpan3 >>>.el-input__inner {
-      width: 100px;
-      margin-left: 10px;
-  }
- .modelSpan2{
-   float: left;
- } 
- .modelSpan3{
-   float: left;
-   margin-top: 10px;
- } 
- .modelSpan2_2{
-   margin-top: 10px;
- }
+.modelSpan3 >>> .el-input__inner {
+  width: 100px;
+  margin-left: 10px;
+}
+.modelSpan2 {
+  float: left;
+}
+.modelSpan3 {
+  float: left;
+  margin-top: 10px;
+}
+.modelSpan2_2 {
+  margin-top: 10px;
+}
 #configModel {
   .modelCenterCon {
     p {
