@@ -67,11 +67,10 @@
           <span>触发条件</span>
           <div class="chufaContent">
             <div>
-              <el-radio v-model="radioChufa" label="1" @change="template">触发条件模板</el-radio>
+              <el-radio v-model="radioChufa" label="1" @change="chufaTemplate">触发条件模板</el-radio>
               <a>新增触发条件模板</a>
-              <div class="tip" v-show="errorTip1==true?true:false">请至少配置1项触发条件</div>
-              <br />
-              <div class="content">
+              <div class="tip" v-show="errorTip1==true?true:false">请至少选中1项触发条件</div>
+              <div class="content" v-show="showChufa1==true?true:false">
                 <p>
                   <el-select v-model="formInline.projectName" style="width:150px;">
                     <el-option
@@ -84,87 +83,286 @@
                   </el-select>
                   <a>刷新</a>
                 </p>
-                <p>
-                  <el-checkbox v-model="checkedGaojing" disabled>指标告警</el-checkbox>
-                </p>
-                <p>
-                  <i>满足</i>
-                  <el-select v-model="formInline.projectName" style="width:90px;margin:0 5px;">
-                    <el-option
-                      v-for="(item,index) in formInline.project"
-                      :key="index"
-                      :label="item.name"
-                      :value="item.value"
-                      label-width="40px"
-                    ></el-option>
-                  </el-select>
-                  <i>条件时，触发告警</i>
-                </p>
-                <p>
-                  if
-                  <el-select v-model="formInline.projectName" style="width:150px;">
-                    <el-option
-                      v-for="(item,index) in formInline.project"
-                      :key="index"
-                      :label="item.name"
-                      :value="item.value"
-                      label-width="40px"
-                    ></el-option>
-                  </el-select>
-                  <el-select v-model="formInline.projectName" style="width:130px;">
-                    <el-option
-                      v-for="(item,index) in formInline.project"
-                      :key="index"
-                      :label="item.name"
-                      :value="item.value"
-                      label-width="40px"
-                    ></el-option>
-                  </el-select>
-                  <el-select v-model="formInline.projectName" style="width:60px;">
-                    <el-option
-                      v-for="(item,index) in formInline.project"
-                      :key="index"
-                      :label="item.name"
-                      :value="item.value"
-                      label-width="40px"
-                    ></el-option>
-                  </el-select>
-  
-                  <input style="height: 30px;line-height: 30px;width:85px;border: 1px solid #dcdfe6;" value="0" min="0" max="100" type="number"/>
-                  <span>%</span>
-                  <el-select v-model="formInline.projectName" style="width:110px;">
-                    <el-option
-                      v-for="(item,index) in formInline.project"
-                      :key="index"
-                      :label="item.name"
-                      :value="item.value"
-                      label-width="40px"
-                    ></el-option>
-                  </el-select>
-                  then
-                  <el-select v-model="formInline.projectName" style="width:150px;">
-                    <el-option
-                      v-for="(item,index) in formInline.project"
-                      :key="index"
-                      :label="item.name"
-                      :value="item.value"
-                      label-width="40px"
-                    ></el-option>
-                  </el-select>
-                  <i class="el-icon-info" style="color:#888; margin:0 5px;"></i>
-                </p>
+                <div>
+                  <p>
+                    <el-checkbox v-model="checkedZhibiao" disabled>指标告警</el-checkbox>
+                  </p>
+                  <p>
+                    <i>满足</i>
+                    <el-select v-model="formInline.projectName" style="width:90px;margin:0 5px;">
+                      <el-option
+                        v-for="(item,index) in formInline.project"
+                        :key="index"
+                        :label="item.name"
+                        :value="item.value"
+                        label-width="40px"
+                      ></el-option>
+                    </el-select>
+                    <i>条件时，触发告警</i>
+                  </p>
+                  <!-- 在这里进行便利，添加 -->
+                  <ul>
+                    <li style="display:flex;align-items: center;cursor: pointer;">
+                      <p>
+                        if&nbsp;
+                        <el-select v-model="formInline.projectName" style="width:150px;">
+                          <el-option
+                            v-for="(item,index) in formInline.project"
+                            :key="index"
+                            :label="item.name"
+                            :value="item.value"
+                            label-width="40px"
+                          ></el-option>
+                        </el-select>&nbsp;
+                        <el-select v-model="formInline.projectName" style="width:130px;">
+                          <el-option
+                            v-for="(item,index) in formInline.project"
+                            :key="index"
+                            :label="item.name"
+                            :value="item.value"
+                            label-width="40px"
+                          ></el-option>
+                        </el-select>&nbsp;
+                        <el-select v-model="formInline.projectName" style="width:60px;">
+                          <el-option
+                            v-for="(item,index) in formInline.project"
+                            :key="index"
+                            :label="item.name"
+                            :value="item.value"
+                            label-width="40px"
+                          ></el-option>
+                        </el-select>&nbsp;
+                        <input
+                          placeholder="指标"
+                          style="height: 30px;line-height: 30px;padding:0 10px;width:85px;border: 1px solid #dcdfe6;"
+                          value="0"
+                          min="0"
+                          max="100"
+                          type="number"
+                        />
+                        <b
+                          style="padding:0 10px;display:inline-block;height: 30px;line-height: 30px;width:52px;border: 1px solid #dcdfe6;"
+                        >%</b>
+                        &nbsp;
+                        <el-select v-model="formInline.projectName" style="width:110px;">
+                          <el-option
+                            v-for="(item,index) in formInline.project"
+                            :key="index"
+                            :label="item.name"
+                            :value="item.value"
+                            label-width="40px"
+                          ></el-option>
+                        </el-select>&nbsp;
+                        then&nbsp;
+                        <el-select v-model="formInline.projectName" style="width:150px;">
+                          <el-option
+                            v-for="(item,index) in formInline.project"
+                            :key="index"
+                            :label="item.name"
+                            :value="item.value"
+                            label-width="40px"
+                          ></el-option>
+                        </el-select>
+                        <i class="el-icon-info" style="color:#888; margin:0 5px;"></i>
+                      </p>
+                      <i
+                        class="el-icon-error"
+                        style="color:#888; margin:0 5px;"
+                        @click="delZhibiao"
+                      ></i>
+                    </li>
+                    <a @click="addZhibiao">添加</a>
+                  </ul>
+                </div>
+                <div>
+                  <p>
+                    <el-checkbox v-model="checkedGaojing" disabled>
+                      事件告警
+                      <i class="el-icon-info" style="color:#888; margin:0 5px;"></i>
+                    </el-checkbox>
+                  </p>
+                  <!-- 在这里进行便利，添加 -->
+                  <ul>
+                    <li style="display:flex;align-items: center;cursor: pointer;">
+                      <p>
+                        <el-select
+                          v-model="formInline.projectName"
+                          style="width:180px;margin:0 5px;"
+                        >
+                          <el-option
+                            v-for="(item,index) in formInline.project"
+                            :key="index"
+                            :label="item.name"
+                            :value="item.value"
+                            label-width="40px"
+                          ></el-option>
+                        </el-select>
+                      </p>
+                      <i
+                        class="el-icon-error"
+                        style="color:#888; margin:0 5px;"
+                        @click="delShijian"
+                      ></i>
+                    </li>
+                    <a @click="addShijian">添加</a>
+                  </ul>
+                </div>
               </div>
             </div>
             <div>
               <el-radio v-model="radioChufa" label="2" @change="config">配置触发条件</el-radio>
               <div class="tip" v-show="errorTip2==true?true:false">请至少配置1项触发条件</div>
-              <div class="content"></div>
+              <div class="content" v-show="showChufa2==true?true:false">
+                <p>
+                  <el-select v-model="formInline.projectName" style="width:150px;">
+                    <el-option
+                      v-for="(item,index) in formInline.project"
+                      :key="index"
+                      :label="item.name"
+                      :value="item.value"
+                      label-width="40px"
+                    ></el-option>
+                  </el-select>
+                  <a>刷新</a>
+                </p>
+                <div>
+                  <p>
+                    <el-checkbox v-model="checkedZhibiao">指标告警</el-checkbox>
+                  </p>
+                  <p>
+                    <i>满足</i>
+                    <el-select v-model="formInline.projectName" style="width:90px;margin:0 5px;">
+                      <el-option
+                        v-for="(item,index) in formInline.project"
+                        :key="index"
+                        :label="item.name"
+                        :value="item.value"
+                        label-width="40px"
+                      ></el-option>
+                    </el-select>
+                    <i>条件时，触发告警</i>
+                  </p>
+                  <!-- 在这里进行便利，添加 -->
+                  <ul>
+                    <li style="display:flex;align-items: center;cursor: pointer;">
+                      <p>
+                        if&nbsp;
+                        <el-select v-model="formInline.projectName" style="width:150px;">
+                          <el-option
+                            v-for="(item,index) in formInline.project"
+                            :key="index"
+                            :label="item.name"
+                            :value="item.value"
+                            label-width="40px"
+                          ></el-option>
+                        </el-select>&nbsp;
+                        <el-select v-model="formInline.projectName" style="width:130px;">
+                          <el-option
+                            v-for="(item,index) in formInline.project"
+                            :key="index"
+                            :label="item.name"
+                            :value="item.value"
+                            label-width="40px"
+                          ></el-option>
+                        </el-select>&nbsp;
+                        <el-select v-model="formInline.projectName" style="width:60px;">
+                          <el-option
+                            v-for="(item,index) in formInline.project"
+                            :key="index"
+                            :label="item.name"
+                            :value="item.value"
+                            label-width="40px"
+                          ></el-option>
+                        </el-select>&nbsp;
+                        <input
+                          placeholder="指标"
+                          style="height: 30px;line-height: 30px;padding:0 10px;width:85px;border: 1px solid #dcdfe6;"
+                          value="0"
+                          min="0"
+                          max="100"
+                          type="number"
+                        />
+                        <b
+                          style="padding:0 10px;display:inline-block;height: 30px;line-height: 30px;width:52px;border: 1px solid #dcdfe6;"
+                        >%</b>
+                        &nbsp;
+                        <el-select v-model="formInline.projectName" style="width:110px;">
+                          <el-option
+                            v-for="(item,index) in formInline.project"
+                            :key="index"
+                            :label="item.name"
+                            :value="item.value"
+                            label-width="40px"
+                          ></el-option>
+                        </el-select>&nbsp;
+                        then&nbsp;
+                        <el-select v-model="formInline.projectName" style="width:150px;">
+                          <el-option
+                            v-for="(item,index) in formInline.project"
+                            :key="index"
+                            :label="item.name"
+                            :value="item.value"
+                            label-width="40px"
+                          ></el-option>
+                        </el-select>
+                        <i class="el-icon-info" style="color:#888; margin:0 5px;"></i>
+                      </p>
+                      <i
+                        class="el-icon-error"
+                        style="color:#888; margin:0 5px;"
+                        @click="delZhibiao"
+                      ></i>
+                    </li>
+                    <a @click="addZhibiao">添加</a>
+                  </ul>
+                </div>
+                <div>
+                  <p>
+                    <el-checkbox v-model="checkedGaojing">
+                      事件告警
+                      <i class="el-icon-info" style="color:#888; margin:0 5px;"></i>
+                    </el-checkbox>
+                  </p>
+                  <!-- 在这里进行便利，添加 -->
+                  <ul>
+                    <li style="display:flex;align-items: center;cursor: pointer;">
+                      <p>
+                        <el-select
+                          v-model="formInline.projectName"
+                          style="width:180px;margin:0 5px;"
+                        >
+                          <el-option
+                            v-for="(item,index) in formInline.project"
+                            :key="index"
+                            :label="item.name"
+                            :value="item.value"
+                            label-width="40px"
+                          ></el-option>
+                        </el-select>
+                      </p>
+                      <i
+                        class="el-icon-error"
+                        style="color:#888; margin:0 5px;"
+                        @click="delShijian"
+                      ></i>
+                    </li>
+                    <a @click="addShijian">添加</a>
+                  </ul>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-        <div class>
+        <div class style="display:flex">
           <span>告警渠道</span>
-          <div class="qudaoContent"></div>
+          <div class="qudaoContent">
+            <p style="">
+              <span>接收对象</span>
+            </p>
+
+            <p></p>
+            <p></p>
+          </div>
         </div>
         <div class>
           <span>接口回调</span>
@@ -220,9 +418,12 @@ import Header from "@/components/public/Head";
 export default {
   data() {
     return {
+      showChufa1: true, //触发条件1显示开关
+      showChufa2: false, //触发条件2显示开关
+
       errorTip1: false, //触发条件模板错误提示
       errorTip2: true, //配置触发条件错误提示
-      checkedGaojing: false, //指示告警
+      checkedZhibiao: false, //指示告警
 
       radio: "1", //选择告警对象类型
       radioChufa: "1", //触发条件单选
@@ -293,6 +494,32 @@ export default {
       this.$router.push({
         path: "/strategy"
       });
+    },
+    chufaTemplate() {
+      //触发条件模板
+      this.showChufa1 = true;
+      this.showChufa2 = false;
+    },
+    config() {
+      //配置触发条件
+      this.showChufa1 = false;
+      this.showChufa2 = true;
+    },
+    addZhibiao() {
+      //添加触发条件的指标告警
+      alert("你要添加此项触发条件的指标告警");
+    },
+    delZhibiao() {
+      //删除触发条件的指标告警
+      alert("你要删除此项触发条件的指标告警");
+    },
+    addShijian() {
+      //添加触发条件的事件告警
+      alert("你要添加此项触发条件的事件告警");
+    },
+    delShijian() {
+      //删除触发条件的事件告警
+      alert("你要删除此项触发条件的事件告警");
     }
   },
   destroyed() {}
