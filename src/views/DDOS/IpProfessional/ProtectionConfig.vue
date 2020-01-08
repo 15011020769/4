@@ -92,7 +92,7 @@
               >
                 <template slot-scope="scope">
                   <div v-for="(item, index) in scope.row.Record" :key="index">
-                    <div v-if="item.Key=='saveGardenText'">{{item.Value}}</div>
+                    <div v-if="item.Key=='DDoSLevel'">{{DDoSLevel[item.Value]}}</div>
                     <!--防护等级 -->
                   </div>
                 </template>
@@ -129,6 +129,7 @@
               <!-- 修改弹框 -->
               <changeModel
                 :configShow="changeModel"
+                :ddoslevel="ddoslevel"
                 @closeConfigModel="closeConfigModel"
                 :changeRow1="changeRow1"
               />
@@ -282,7 +283,8 @@ import {
   RESOURCE_LIST,
   DDOSPOLICY_CONT,
   DDOS_POLICY_DELETE,
-  GET_ID
+  GET_ID,
+  Modify_Level
 } from "@/constants";
 import HeaderCom from "../../CLA/Public/Head";
 export default {
@@ -336,7 +338,13 @@ export default {
       changeModelTip1: false, //修改模式提示弹框
       changeModelTip2: false,
       changeModelTip3: false,
-      changeRow1: ""
+      changeRow1: "",
+      DDoSLevel: {
+        low: "宽松",
+        middle: "正常",
+        high: "严格"
+      },
+      ddoslevel: ""
     };
   },
   components: {
@@ -370,7 +378,28 @@ export default {
         }
         this.allData = res.Response.ServicePacks;
         this.totalItems = res.Response.Total;
+        this.allData.forEach(val => {
+          val.Record.forEach(item => {
+            if (item.Key == "Id") {
+              let params = {
+                Version: "2018-07-09",
+                Business: "net",
+                Id: item.Value,
+                Method: "get"
+              };
+              this.axios.post(Modify_Level, params).then(res => {
+                const obj = {
+                  Key: "DDoSLevel",
+                  Value: res.Response.DDoSLevel
+                };
+                val.Record.push(obj);
+              });
+            }
+          });
+        });
         this.loading = false;
+
+        //宽松 1
         // console.log(this.allData)
       });
     },
@@ -397,7 +426,9 @@ export default {
       changeRow1.Record.forEach(item => {
         if (item.Key == "DdosThreshold") {
           this.changeRow1 = item.Value;
-          return;
+        }
+        if (item.Key == "DDoSLevel") {
+          this.ddoslevel = item.Value;
         }
       });
       this.changeModel = true; //DdosThreshold"
@@ -528,7 +559,6 @@ export default {
     },
     //接收子组件的方法，并让子组件消失父组件显示
     closePageAdd(obj) {
-      console.log(obj);
       this.tableShow = true;
     },
     //穿梭框事件

@@ -47,18 +47,15 @@
               </span>
               <span class="modelSpan2">
                 <a
-                  class="gardenChoose"
-                  :class="saveGarden==1?'seceltGarden':''"
+                  :class="saveGarden==1?'seceltGarden gardenChoose':'gardenChoose'"
                   @click="clickGarden(1,'宽松')"
                 >{{$t('DDOS.protectCon.loose')}}</a>
                 <a
-                  class="gardenChoose"
-                  :class="saveGarden==2?'seceltGarden':''"
+                  :class="saveGarden==2?'seceltGarden gardenChoose':'gardenChoose'"
                   @click="clickGarden(2,'正常')"
                 >正常</a>
                 <a
-                  class="gardenChoose"
-                  :class="saveGarden==3?'seceltGarden':''"
+                  :class="saveGarden==3?'seceltGarden gardenChoose':'gardenChoose'"
                   @click="clickGarden(3,'严格')"
                 >{{$t('DDOS.protectCon.strict')}}</a>
               </span>
@@ -195,11 +192,23 @@ export default {
     },
     changeRow1: {
       type: String
+    },
+    ddoslevel: {
+      type: String
     }
   },
   watch: {
     changeRow1(val) {
       this.servicePack.DdosThreshold = val;
+    },
+    ddoslevel(val) {
+      if (val == "low") {
+        this.saveGarden = 1;
+      } else if (val == "middle") {
+        this.saveGarden = 2;
+      } else if (val == "high") {
+        this.saveGarden = 3;
+      }
     }
   },
   data() {
@@ -261,6 +270,13 @@ export default {
     this.GetID(); //获取ID
     this.GETSPolicy(); //获取DDoS高级策略
     this.servicePack.DdosThreshold = this.changeRow1;
+    if (this.ddoslevel == "low") {
+      this.saveGarden = 1;
+    } else if (this.ddoslevel == "middle") {
+      this.saveGarden = 2;
+    } else if (this.ddoslevel == "high") {
+      this.saveGarden = 3;
+    }
   },
   methods: {
     //获取ID
@@ -546,6 +562,9 @@ export default {
       }
     }
   }
+}
+.seceltGarden {
+  color: #006eff !important;
 }
 .outOk {
   font-size: 12px;
