@@ -43,11 +43,11 @@
           </el-row>
         </div>
         <!-- 数据绑定 -->
-        <div class="ep-data-card-main font" style="text-align:center;">
+        <div ref="dataHide" class="ep-data-card-main font" style="text-align:center;">
           您选择的集群的告警设置列表为空，您可以
           <a href="">新建告警设置</a>，或切换到其他集群
         </div>
-        <div class="ep-data-card-main" style="padding-top:20px;">
+        <div ref="dataShow" class="ep-data-card-main" style="padding-top:20px;display:none">
           <el-row>
             <el-col :span="5"><div class="font pt12">
                 <input type="checkbox" class="app-tke-fe-checkbox"><a href="javascript:;">aaaaaaa</a>
@@ -60,7 +60,7 @@
               </div></el-col>
             <el-col :span="5"><div class="font pt6">
                 <div>接收组:1个</div>
-                <div>渠道:短信</div>
+                <div>渠道:短信 邮箱</div>
               </div></el-col>
             <el-col :span="5"><div class="font pt12">
               <router-link :to="''">
@@ -74,7 +74,7 @@
           </el-row>
         </div>
         <div class="font flex">
-          <div style="flex:1;padding-top:17px;">共&nbsp;1&nbsp;项</div>
+          <div style="flex:1;padding-top:17px;">共&nbsp;{{length}}&nbsp;项</div>
           <div class="block" style="padding-top:5px;">
             <el-pagination
               :page-sizes="[10, 20, 30, 40, 50]"
@@ -100,11 +100,19 @@ export default {
   name:'warnings',
   data() {
     return {
-      ClusterId: 'cls-gwblk71e',
+      length: '0',
       pageSize: 20,
       pageIndex: 0,
       options: [],
-      value: ''
+      value: '',
+      tableData: [{
+        date: '2016-05-03',
+        name: '王小虎',
+        address: '上海市普陀区金沙江路 1518 弄'
+      }
+      ],
+      multipleSelection: [],
+      funllscreenLoading:false
     }
   },
   watch:{
@@ -118,36 +126,41 @@ export default {
       console.log((val.split('('))[0])
       const res = this.axios.post(WARNING_GetCOLONY,params).then(res=>{
         if(res.Response.AlarmPolicySet.length>0){
-          // console.log(res)
-          
+          this.$refs.dataHide.style.display = 'none'
+          this.$refs.dataShow.style.display = 'block'
+          let resData= res.Response.AlarmPolicySet
+          this.length = resData.length;
+          console.log(resData)
+          for (let i = 0; i < resData.length; i++) {
+            let getData = {
+              AlarmPolicyName:'',AlarmPolicyType:''
+            };
+            getData.name = resData.AlarmPolicySettings
+          }
+          console.log(res)
         }else{
+          this.$refs.dateHide.style.display = 'block'
+          this.$refs.dateShow.style.display = 'none'
           console.log('数据请求出错')
         }
       });
-      // if(res.Error){
-      //   console.log(res);
-      // }else{
-      //   console.log(res)
-        // console.log(res.[[PromiseValue]].Response)
-        // if(res.Response.AlarmPolicySet.length>0){
-        //   consoel.log(1)
-        // }
-        // if(res.Response.Clusters.length>0){
-        //   let ids=[];
-        //   res.Response.Clusters = res.Response.Clusters.map(item => {
-        //       ids.push(item.ClusterId+'('+item.ClusterName+')');
-        //       return item;
-        // })
-      // }
     }
   },
   created() {
     // 获取集群列表
     this.getWarningList();
+    // 数据加载遮罩层
+    this.openFullScreen1();
     // 获取集群列表详情
     // this.getWarningListItem();
   },
   methods:{
+    openFullScreen1() {
+        this.fullscreenLoading = true;
+        setTimeout(() => {
+          this.fullscreenLoading = false;
+        }, 2000);
+      },
     // 获取集群列表
     async getWarningList() {
       let params = {

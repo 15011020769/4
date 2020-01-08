@@ -8,41 +8,369 @@
     </div>
       <div class="tf-g app-tke-fe-content__inner">
         <div class="event-persistence font">
-          <!-- 内容标题 -->
-           <div class="flex padding">
-            <div class='data-card-hd'>地域</div>
-            <div class="data-card-list">北京</div>
-          </div>
-          <div class="flex padding">
-            <div class='data-card-hd'>集群</div>
-            <div class="data-card-list">(sssssssss)cls-kukvzoc1</div>
-          </div>
-          <div class="flex padding">
-            <div class='data-card-hd'>告警策略名称</div>
-            <div>
-              <input type="text" placeholder="请输入告警策略名称">
-              <div style="padding:10px 0 5px 0;">最长40个字符</div>
-            </div>
-          </div>
-          <div class="flex padding">
-            <div class='data-card-hd'>备注</div>
-            <div>
-              <textarea placeholder="请输入策略备注" name="" id="" cols="30" rows="10"></textarea>
-            </div>
-          </div>
-          <div class="flex padding">
-            <div class='data-card-hd' style="padding-top:5px;" >策略类型</div>
-            <div>
-              <el-select v-model="value" placeholder="请选择" >
-                <el-option
-                  v-for="item in options"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value">
+          <el-form ref="form" :model="form" label-width="100px">
+            <el-form-item label="地域">
+              <div>中国台北</div>
+            </el-form-item>
+            <el-form-item label="集群">
+              <div>cls-gwblk71e(tfy_test)</div>
+            </el-form-item>
+            <el-form-item label="告警策略名称">
+              <el-input size="mini" class="el-input" placeholder="请输入告警策略名称"></el-input>
+              <div>最长40个字符</div>
+            </el-form-item>
+            <el-form-item label="备注">
+              <el-input type="textarea" class="el-textarea" placeholder="请输入策略备注" v-model="form.desc"></el-input>
+              <div>最长100个字符</div>
+            </el-form-item>
+            <el-form-item label="策略类型">
+              <el-select v-model="form.region" placeholder="请选择活动区域" size="mini">
+                <el-option label="集群" value="jq">
                 </el-option>
+                <el-option label="节点" value="jd"></el-option>
+                <el-option label="pod" value="pod"></el-option>
               </el-select>
+            </el-form-item>
+            <!-- 集群显示内容 -->
+            <div v-if="form.region=='集群'">
+              <el-form-item label="指标">
+                <div class="form-form">
+                  <div class="flex p3">
+                    <!-- 内容 -->
+                    <div class="flex" style="flex:1;padding-top:5px;">
+                      <input class="el-checkbox" type="checkbox" v-model="cpuLY.check">
+                      <span>CPU利用率</span>
+                    </div>
+                    <div>
+                      <el-select v-model="cpuLY.tj" placeholder="请选择" size="mini">
+                        <el-option
+                          v-for="(item,i) in cpuLY.tjs"
+                          :key="i"
+                          :value="item">
+                        </el-option>
+                      </el-select>
+                      <el-select v-model="cpuLY.gl" placeholder="请选择" size="mini" class="glw">
+                        <el-option
+                          v-for="(item,i) in cpuLY.gls"
+                          :key="i"
+                          :value="item">
+                        </el-option>
+                      </el-select>
+                      <el-input v-model="cpuLY.number" size="mini" class="w100"></el-input>
+                      <span class="numberEnd">{{cpuLY.numberEnd}}</span>
+                      <el-select v-model="cpuLY.zq" placeholder="请选择" size="mini" class="gz" style="padding-left:20px;">
+                        <el-option
+                          v-for="(item,i) in cpuLY.zqs"
+                          :key="i"
+                          :value="item">
+                        </el-option>
+                      </el-select>
+                    </div>
+                  </div>
+                  <div class="flex p3">
+                    <!-- 内容 -->
+                    <div class="flex" style="flex:1;padding-top:5px;">
+                      <input class="el-checkbox" type="checkbox">
+                      <span>内存利用率</span>
+                    </div>
+                    <div>
+                      <el-select v-model="ncLY.tj" placeholder="请选择" size="mini">
+                        <el-option
+                          v-for="(item,i) in ncLY.tjs"
+                          :key="i"
+                          :value="item">
+                        </el-option>
+                      </el-select>
+                      <el-select v-model="ncLY.gl" placeholder="请选择" size="mini" class="glw">
+                        <el-option
+                          v-for="(item,i) in ncLY.gls"
+                          :key="i"
+                          :value="item">
+                        </el-option>
+                      </el-select>
+                      <el-input v-model="ncLY.number" size="mini" class="w100"></el-input>
+                      <span class="numberEnd">{{ncLY.numberEnd}}</span>
+                      <el-select v-model="ncLY.zq" placeholder="请选择" size="mini" class="gz" style="padding-left:20px;">
+                        <el-option
+                          v-for="(item,i) in ncLY.zqs"
+                          :key="i"
+                          :value="item">
+                        </el-option>
+                      </el-select>
+                    </div>
+                  </div>
+                  <div class="flex p3">
+                    <!-- 内容 -->
+                    <div class="flex" style="flex:1;padding-top:5px;">
+                      <input class="el-checkbox" type="checkbox">
+                      <span>CPU分配率</span>
+                    </div>
+                    <div>
+                      <el-select v-model="cpuFP.tj" placeholder="请选择" size="mini">
+                        <el-option
+                          v-for="(item,i) in cpuFP.tjs"
+                          :key="i"
+                          :value="item">
+                        </el-option>
+                      </el-select>
+                      <el-select v-model="cpuFP.gl" placeholder="请选择" size="mini" class="glw">
+                        <el-option
+                          v-for="(item,i) in cpuFP.gls"
+                          :key="i"
+                          :value="item">
+                        </el-option>
+                      </el-select>
+                      <el-input v-model="cpuFP.number" size="mini" class="w100"></el-input>
+                      <span class="numberEnd">{{cpuFP.numberEnd}}</span>
+                      <el-select v-model="cpuFP.zq" placeholder="请选择" size="mini" class="gz" style="padding-left:20px;">
+                        <el-option
+                          v-for="(item  ,i) in cpuFP.zqs"
+                          :key="i"
+                          :value="item">
+                        </el-option>
+                      </el-select>
+                    </div>
+                  </div>
+                  <div class="flex p3">
+                    <!-- 内容 -->
+                    <div class="flex" style="flex:1;padding-top:5px;">
+                      <input class="el-checkbox" type="checkbox">
+                      <span>内存分配率</span>
+                    </div>
+                    <div>
+                      <el-select v-model="ncFP.tj" placeholder="请选择" size="mini">
+                        <el-option
+                          v-for="(item,i) in ncFP.tjs"
+                          :key="i"
+                          :value="item">
+                        </el-option>
+                      </el-select>
+                      <el-select v-model="ncFP.gl" placeholder="请选择" size="mini" class="glw">
+                        <el-option
+                          v-for="(item,i) in ncFP.gls"
+                          :key="i"
+                          :value="item">
+                        </el-option>
+                      </el-select>
+                      <el-input v-model="ncFP.number" size="mini" class="w100"></el-input>
+                      <span class="numberEnd">{{ncFP.numberEnd}}</span>
+                      <el-select v-model="ncFP.zq" placeholder="请选择" size="mini" class="gz" style="padding-left:20px;">
+                        <el-option
+                          v-for="(item,i) in ncFP.zqs"
+                          :key="i"
+                          :value="item">
+                        </el-option>
+                      </el-select>
+                    </div>
+                  </div>
+                </div>
+              </el-form-item>
+              <el-form-item label="接收组">
+                <div class="flex">
+                  <div>可用用户组</div>
+                  <div style="margin-left:225px;">已选择用户组</div>
+                </div>
+                <el-transfer
+                  filterable
+                  :filter-method="filterMethod"
+                  filter-placeholder="请输入用户组名称"
+                  v-model="genDataValue"
+                  :data="data">
+                </el-transfer>
+                <div>若无合适的用户组，请<a href="">新建用户组</a><i class="el-icon-edit-outline"></i></div>
+              </el-form-item>
+              <el-form-item label="告警渠道" style="margin-top:0;">
+                <div style="line-height:0;padding:5px;" class="flex">
+                  <input class="el-checkbox" type="checkbox" v-model="tellWarning.SMS">
+                  <div style="margin-top:9px;">短信</div>
+                </div>
+                <div style="line-height:0;padding:5px;" class="flex">
+                  <input class="el-checkbox" type="checkbox" v-model="tellWarning.email">
+                  <div style="margin-top:9px;">邮箱</div>
+                </div>
+                <div style="line-height:0;padding:5px;" class="flex">
+                  <input class="el-checkbox" type="checkbox" v-model="tellWarning.wechar">
+                  <div style="margin-top:9px;">微信<span><i class="el-icon-warning-info"></i>（关注<a href="">腾讯云公众号</a>后才能接受告警通知）</span></div>
+                </div>
+                <div style="line-height:0;padding:5px;" class="flex">
+                  <input class="el-checkbox" type="checkbox" v-model="tellWarning.phone">
+                  <div style="margin-top:9px;">电话</div>
+                </div>
+              </el-form-item>
             </div>
-          </div>
+            <!-- 节点显示内容 -->
+            <div v-if="form.region==='节点'">
+              <el-form-item label="告警对象"></el-form-item>
+              <el-form-item label="指标">
+                <div class="form-form">
+                  <div class="flex p3">
+                    <!-- 内容 -->
+                    <div class="flex" style="flex:1;padding-top:5px;">
+                      <input class="el-checkbox" type="checkbox" v-model="cpuLY.check">
+                      <span>CPU利用率</span>
+                    </div>
+                    <div>
+                      <el-select v-model="cpuLY.tj" placeholder="请选择" size="mini">
+                        <el-option
+                          v-for="(item,i) in cpuLY.tjs"
+                          :key="i"
+                          :value="item">
+                        </el-option>
+                      </el-select>
+                      <el-select v-model="cpuLY.gl" placeholder="请选择" size="mini" class="glw">
+                        <el-option
+                          v-for="(item,i) in cpuLY.gls"
+                          :key="i"
+                          :value="item">
+                        </el-option>
+                      </el-select>
+                      <el-input v-model="cpuLY.number" size="mini" class="w100"></el-input>
+                      <span class="numberEnd">{{cpuLY.numberEnd}}</span>
+                      <el-select v-model="cpuLY.zq" placeholder="请选择" size="mini" class="gz" style="padding-left:20px;">
+                        <el-option
+                          v-for="(item,i) in cpuLY.zqs"
+                          :key="i"
+                          :value="item">
+                        </el-option>
+                      </el-select>
+                    </div>
+                  </div>
+                  <div class="flex p3">
+                    <!-- 内容 -->
+                    <div class="flex" style="flex:1;padding-top:5px;">
+                      <input class="el-checkbox" type="checkbox">
+                      <span>内存利用率</span>
+                    </div>
+                    <div>
+                      <el-select v-model="ncLY.tj" placeholder="请选择" size="mini">
+                        <el-option
+                          v-for="(item,i) in ncLY.tjs"
+                          :key="i"
+                          :value="item">
+                        </el-option>
+                      </el-select>
+                      <el-select v-model="ncLY.gl" placeholder="请选择" size="mini" class="glw">
+                        <el-option
+                          v-for="(item,i) in ncLY.gls"
+                          :key="i"
+                          :value="item">
+                        </el-option>
+                      </el-select>
+                      <el-input v-model="ncLY.number" size="mini" class="w100"></el-input>
+                      <span class="numberEnd">{{ncLY.numberEnd}}</span>
+                      <el-select v-model="ncLY.zq" placeholder="请选择" size="mini" class="gz" style="padding-left:20px;">
+                        <el-option
+                          v-for="(item,i) in ncLY.zqs"
+                          :key="i"
+                          :value="item">
+                        </el-option>
+                      </el-select>
+                    </div>
+                  </div>
+                  <div class="flex p3">
+                    <!-- 内容 -->
+                    <div class="flex" style="flex:1;padding-top:5px;">
+                      <input class="el-checkbox" type="checkbox">
+                      <span>CPU分配率</span>
+                    </div>
+                    <div>
+                      <el-select v-model="cpuFP.tj" placeholder="请选择" size="mini">
+                        <el-option
+                          v-for="(item,i) in cpuFP.tjs"
+                          :key="i"
+                          :value="item">
+                        </el-option>
+                      </el-select>
+                      <el-select v-model="cpuFP.gl" placeholder="请选择" size="mini" class="glw">
+                        <el-option
+                          v-for="(item,i) in cpuFP.gls"
+                          :key="i"
+                          :value="item">
+                        </el-option>
+                      </el-select>
+                      <el-input v-model="cpuFP.number" size="mini" class="w100"></el-input>
+                      <span class="numberEnd">{{cpuFP.numberEnd}}</span>
+                      <el-select v-model="cpuFP.zq" placeholder="请选择" size="mini" class="gz" style="padding-left:20px;">
+                        <el-option
+                          v-for="(item  ,i) in cpuFP.zqs"
+                          :key="i"
+                          :value="item">
+                        </el-option>
+                      </el-select>
+                    </div>
+                  </div>
+                  <div class="flex p3">
+                    <!-- 内容 -->
+                    <div class="flex" style="flex:1;padding-top:5px;">
+                      <input class="el-checkbox" type="checkbox">
+                      <span>内存分配率</span>
+                    </div>
+                    <div>
+                      <el-select v-model="ncFP.tj" placeholder="请选择" size="mini">
+                        <el-option
+                          v-for="(item,i) in ncFP.tjs"
+                          :key="i"
+                          :value="item">
+                        </el-option>
+                      </el-select>
+                      <el-select v-model="ncFP.gl" placeholder="请选择" size="mini" class="glw">
+                        <el-option
+                          v-for="(item,i) in ncFP.gls"
+                          :key="i"
+                          :value="item">
+                        </el-option>
+                      </el-select>
+                      <el-input v-model="ncFP.number" size="mini" class="w100"></el-input>
+                      <span class="numberEnd">{{ncFP.numberEnd}}</span>
+                      <el-select v-model="ncFP.zq" placeholder="请选择" size="mini" class="gz" style="padding-left:20px;">
+                        <el-option
+                          v-for="(item,i) in ncFP.zqs"
+                          :key="i"
+                          :value="item">
+                        </el-option>
+                      </el-select>
+                    </div>
+                  </div>
+                </div>
+              </el-form-item>
+              <el-form-item label="接收组">
+                <div class="flex">
+                  <div>可用用户组</div>
+                  <div style="margin-left:225px;">已选择用户组</div>
+                </div>
+                <el-transfer
+                  filterable
+                  :filter-method="filterMethod"
+                  filter-placeholder="请输入用户组名称"
+                  v-model="genDataValue"
+                  :data="data">
+                </el-transfer>
+                <div>若无合适的用户组，请<a href="">新建用户组</a><i class="el-icon-edit-outline"></i></div>
+              </el-form-item>
+              <el-form-item label="告警渠道" style="margin-top:0;">
+                <div style="line-height:0;padding:5px;" class="flex">
+                  <input class="el-checkbox" type="checkbox" v-model="tellWarning.SMS">
+                  <div style="margin-top:9px;">短信</div>
+                </div>
+                <div style="line-height:0;padding:5px;" class="flex">
+                  <input class="el-checkbox" type="checkbox" v-model="tellWarning.email">
+                  <div style="margin-top:9px;">邮箱</div>
+                </div>
+                <div style="line-height:0;padding:5px;" class="flex">
+                  <input class="el-checkbox" type="checkbox" v-model="tellWarning.wechar">
+                  <div style="margin-top:9px;">微信<span><i class="el-icon-warning-info"></i>（关注<a href="">腾讯云公众号</a>后才能接受告警通知）</span></div>
+                </div>
+                <div style="line-height:0;padding:5px;" class="flex">
+                  <input class="el-checkbox" type="checkbox" v-model="tellWarning.phone">
+                  <div style="margin-top:9px;">电话</div>
+                </div>
+              </el-form-item>
+            </div>
+            <el-form-item>
+              <el-button type="primary" @click="onSubmit">立即创建</el-button>
+              <el-button>取消</el-button>
+            </el-form-item>
+          </el-form>
         </div>
       </div>
     </div>
@@ -51,22 +379,105 @@
 import HeadCom from "@/components/public/Head";
 export default {
   data(){
+    const generateData = _ => {
+      const data = [];
+      const cities = ['测试误删', '误删', 'ac', '可以删除', 'dfa', 'aaaaaaaaaaaaa', 'ddddddddd'];
+      const pinyin = ['shanghai', 'beijing', 'guangzhou', 'shenzhen', 'nanjing', 'xian', 'chengdu'];
+      cities.forEach((city, index) => {
+        data.push({
+          label: city,
+          key: index,
+          pinyin: pinyin[index]
+        });
+      });
+      return data;
+    };
     return{
-      value:'集群',
-      options: [
-        {
-        value: '1',
-        label: '集群'
-        },
-        {
-        value: '2',
-        label: '节点'
-        },
-        {
-        value: '3',
-        label: 'Pod'
-        }
-      ]
+      data: generateData(),
+      genDataValue:[],
+      filterMethod(query, item) {
+        return item.pinyin.indexOf(query) > -1;
+      },
+      form: {
+        name: '',
+        region: '集群',
+        date1: '',
+        date2: '',
+        delivery: false,
+        type: [],
+        resource: '',
+        desc: ''
+      },
+      value:'',
+      // options: [
+      //   {
+      //   value: '1',
+      //   label: '集群'
+      //   },
+      //   {
+      //   value: '2',
+      //   label: '节点'
+      //   },
+      //   {
+      //   value: '3',
+      //   label: 'Pod'
+      //   }
+      // ],
+      cpuLY: {
+        check: false,
+        tj: '统计周期1分钟',
+        tjs: ['统计周期1分钟','统计周期2分钟','统计周期3分钟','统计周期4分钟','统计周期5分钟'],
+        gl: '>',
+        gls: ['>','<'],
+        number: '90',
+        numberEnd: '%',
+        zq: '持续5个周期',
+        zqs: ['持续1个周期','持续2个周期','持续3个周期','持续4个周期','持续5个周期']
+      },
+      ncLY: {
+        check: false,
+        tj: '统计周期1分钟',
+        tjs: ['统计周期1分钟','统计周期2分钟','统计周期3分钟','统计周期4分钟','统计周期5分钟'],
+        gl: '>',
+        gls: ['>','<'],
+        number: '90',
+        numberEnd: '%',
+        zq: '持续5个周期',
+        zqs: ['持续1个周期','持续2个周期','持续3个周期','持续4个周期','持续5个周期']
+      },
+      cpuFP: {
+        check: false,
+        tj: '统计周期1分钟',
+        tjs: ['统计周期1分钟','统计周期2分钟','统计周期3分钟','统计周期4分钟','统计周期5分钟'],
+        gl: '>',
+        gls: ['>','<'],
+        number: '95',
+        numberEnd: '%',
+        zq: '持续5个周期',
+        zqs: ['持续1个周期','持续2个周期','持续3个周期','持续4个周期','持续5个周期']
+      },
+      ncFP: {
+        check: false,
+        tj: '统计周期1分钟',
+        tjs: ['统计周期1分钟','统计周期2分钟','统计周期3分钟','统计周期4分钟','统计周期5分钟'],
+        gl: '>',
+        gls: ['>','<'],
+        number: '95',
+        numberEnd: '%',
+        zq: '持续5个周期',
+        zqs: ['持续1个周期','持续2个周期','持续3个周期','持续4个周期','持续5个周期']
+      },
+      tellWarning: {
+        SMS: false,
+        email: false,
+        wechar: false,
+        phone: false
+      }
+    }
+  },
+  methods: {
+    onSubmit() {
+      alert('已提交')
     }
   },
   props:["uid"],
@@ -76,8 +487,51 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.data-card-select {
-  width: 999999px;
+.init {
+  margin:0;
+}
+.mt12 {
+  margin-top:12px;
+}
+.p3 {
+  padding:3px 0 3px 0;
+}
+.numberEnd {
+  display: inline-block;
+  width: 28px;
+  height: 29px;
+  text-align: center;
+  line-height: 28px;
+  border: 1px solid #cccccc;
+}
+.w100 {
+  width: 100px !important;
+}
+.glw {
+  width:80px;
+  padding-left: 5px;
+}
+.el-checkbox {
+  width: 18px;
+  height: 18px;
+}
+.form-form {
+  width: 840px;
+  padding: 20px;
+  background-color: #f2f2f2;
+  display: table;
+  font-size: 12px;
+  line-height: 1.5
+}
+.el-textarea {
+  max-width:900px;
+  width: 420px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  // height: 100px;
+}
+.el-input {
+  width:200px;
 }
 .back-hd {
   width: 100%;
