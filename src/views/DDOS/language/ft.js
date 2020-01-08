@@ -35,7 +35,7 @@ module.exports = {
     },
     basicProtection:{
       jcfh: 'DDoS基礎防護',
-      qsrzjmip: '請輸入主機名/主機IP搜索',
+      qsrzjmip: '請輸入主機名搜索',
       yzj: '雲主機',
       fzjh: '負載均衡',
       hlw: '互聯網',
