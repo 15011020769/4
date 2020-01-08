@@ -616,7 +616,7 @@ export default {
     if (this.policy.PolicyId == undefined) {
     } else {
       //配置
-      console.log(this.policy);
+      // console.log(this.policy);
       this.policyTemp = JSON.parse(JSON.stringify(this.policy));
       this.tacticsName = this.policyTemp.PolicyName;
       this.nameFlag = false;

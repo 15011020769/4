@@ -3,6 +3,7 @@
   <div class="wrap">
     <HeaderCom title="防护配置" />
     <el-tabs v-model="activeName" @tab-click="handleClick">
+      <!-- DDOS攻击防护 -->
       <el-tab-pane
         :label="$t('DDOS.Statistical_forms.DDoS_Protection')"
         name="first"
@@ -153,6 +154,7 @@
           <ccProtection />
         </div>
       </el-tab-pane>
+      <!-- DDOS高级防护策略 -->
       <el-tab-pane
         :label="$t('DDOS.Proteccon_figura.Advanced_strategys')"
         name="third"
@@ -197,6 +199,7 @@
                       @click.native.prevent="deleteRow(scope.$index, scope.row)"
                       type="text"
                       size="small"
+                      :disabled="scope.row.BoundResources.length==0?false:true"
                     >{{$t('DDOS.Proteccon_figura.Delete')}}</el-button>
                     <el-dialog
                       title="删除高级策略"
@@ -235,8 +238,8 @@
                           style="text-align: left; display: inline-block"
                           v-model="valueThrou"
                           filterable
-                          :left-default-checked="[2, 3]"
-                          :right-default-checked="[1]"
+                          :left-default-checked="[]"
+                          :right-default-checked="[]"
                           :render-content="renderFunc"
                           :titles="['选择资源', '已选择']"
                           :button-texts="['到左边', '到右边']"
@@ -284,7 +287,8 @@ import {
   DDOSPOLICY_CONT,
   DDOS_POLICY_DELETE,
   GET_ID,
-  Modify_Level
+  Modify_Level,
+  RESBIND_MODIFY
 } from "@/constants";
 import HeaderCom from "../../CLA/Public/Head";
 export default {
@@ -316,9 +320,10 @@ export default {
       tableDataPolicy: [], //tab3,DDoS高级防护策略
       policy: {}, //配置高级防护策略的对象
       resData: this.generateData(),
-      valueThrou: [1],
+      valueThrou: [],
+      valueRightOld: [],
       renderFunc(h, option) {
-        return <span> {option.key} </span>;
+        return <div><span> {option.key} </span><br/><span>{option.label}</span></div>;
       }, //穿梭框
       activeName: "first", //tab页
       filterConrent: "IP",
@@ -332,8 +337,8 @@ export default {
       tableShow: true,
       deleteIndex: "",
       deleteBegin: {},
-      deleteIndex1: "",
-      deleteBegin1: {},
+      bindingIndex: "",
+      bindingCon: {},
       thisData: ["1", "2", "3"],
       changeModelTip1: false, //修改模式提示弹框
       changeModelTip2: false,
@@ -419,6 +424,20 @@ export default {
       this.axios.post(DDOSPOLICY_CONT, params).then(res => {
         this.tableDataPolicy = res.Response.DDosPolicyList;
         this.loading = false;
+        // console.log(this.tableDataPolicy)
+      });
+    },
+    // 1.3.资源绑定DDoS高级策略
+    modifyResBindDDoSPolicy(resId, method) {
+      let params = {
+        Version: "2018-07-09",
+        Business: "net",
+        Id: resId, //资源ID
+        PolicyId: this.bindingCon.PolicyId, //策略ID
+        Method: method //bind/unbind
+      };
+      this.axios.post(RESBIND_MODIFY, params).then(res => {
+        // console.log(res.Response)
       });
     },
     // 修改
@@ -549,20 +568,66 @@ export default {
     },
     //绑定资源按钮
     bindingResource(bindingIndex, bindingCon) {
-      this.deleteIndex1 = bindingIndex;
-      this.deleteBegin1 = bindingCon;
+      this.resData = [];
+      // 循环资源列表
+      this.tableDataBegin.forEach(policy => {
+        const objTemp = {};
+        policy.Record.forEach(element => {
+          if(element.Key == "Id"){
+            objTemp.key = element.Value;
+          } else if(element.Key == "GroupIpList"){
+            //175.97.143.121-tpe-bgp-300-1;175.97.142.153-tpe-bgp-100-1
+            let arr = element.Value.split(';');
+            objTemp.label = "";
+            arr.forEach(ipStr => {
+              objTemp.label += ipStr.substring(0, ipStr.indexOf('-'))+";";
+            });
+          }
+        });
+        this.resData.push(objTemp);
+      });
+      this.valueThrou = bindingCon.BoundResources;
+      this.valueRightOld = bindingCon.BoundResources;
+      // console.log(this.tableDataBegin);
+      this.bindingIndex = bindingIndex;
+      this.bindingCon = bindingCon;
       this.dialogVisible1 = true;
     },
     //绑定资源弹框确定按钮
     bindingResourceSure() {
+      // 获取‘已选择’的两个数组差集
+      let diff = [];// 1.绑定资源元素集（原数组中不包含的新元素）
+      let tmp = JSON.parse(JSON.stringify(this.valueRightOld));// 2.解绑资源元素集（原数组中移除的元素）
+      // 循环‘已选择’
+      this.valueThrou.forEach(element => {
+        if(this.valueRightOld.indexOf(element) < 0){
+          diff.push(element);
+        } else {
+          tmp.splice(tmp.indexOf(element),1);
+        }
+      });
+      this.loading = true;
+      // console.log(diff, tmp);
+      diff.forEach(resId => {
+        this.modifyResBindDDoSPolicy(resId, "bind");
+      });
+      tmp.forEach(resId => {
+        this.modifyResBindDDoSPolicy(resId, "unbind");
+      });
+      setTimeout(() => {
+        this.describeDDoSPolicy();
+      }, 2000);
+
       this.dialogVisible1 = false;
     },
     //接收子组件的方法，并让子组件消失父组件显示
     closePageAdd(obj) {
       this.tableShow = true;
     },
-    //穿梭框事件
-    handleChange(value, direction, movedKeys) {},
+    //穿梭框事件(value右侧数组，direction:left/right，movedKeys移动元素)
+    handleChange(value, direction, movedKeys) {
+      // this.valueRightOld = value;
+    },
     generateData() {
       const data = [];
       return data;
