@@ -10,7 +10,11 @@
       >
         <div class="mainContent">
           <div class="textAlignTop newClear">
-            <el-select class="checkListSelect" :placeholder="$t('DDOS.Proteccon_figura.yglbq')" v-model="filterConrent">
+            <el-select
+              class="checkListSelect"
+              :placeholder="$t('DDOS.Proteccon_figura.yglbq')"
+              v-model="filterConrent"
+            >
               <el-option
                 v-for="(item, index) in options1"
                 :label="item.label"
@@ -18,13 +22,18 @@
                 :key="index"
               ></el-option>
             </el-select>
-            <el-input v-model="tableDataName" class="searchs" :placeholder="$t('DDOS.Proteccon_figura.qsrcxnr')"></el-input>
+            <el-input
+              v-model="tableDataName"
+              class="searchs"
+              :placeholder="$t('DDOS.Proteccon_figura.qsrcxnr')"
+            ></el-input>
             <el-button class="el-icon-search" @click="doFilter"></el-button>
           </div>
           <div class="mainTable">
             <el-table
               :data="tableDataBegin.slice((currentPage-1)*pageSize,currentPage*pageSize)"
-              v-loading="loading" empty-text='暫無數據'
+              v-loading="loading"
+              empty-text="暫無數據"
             >
               <el-table-column prop="Record.Id" :label="$t('DDOS.Proteccon_figura.Id_name')">
                 <template slot-scope="scope">
@@ -59,22 +68,17 @@
               >
                 <template slot-scope="scope">
                   <div v-for="(item, index) in scope.row.Record" :key="index">
-<<<<<<< HEAD
-                    <div v-if="item.Key=='DefendStatus' && item.Value == '1'">开启</div>
-                    <div v-else-if="item.Key=='DefendStatus' && item.Value != '1'">关闭</div>
-                  </div>
-                </template>
-              </el-table-column>
-
-              <el-table-column prop="Record.DdosThreshold" label="清洗阈值">
-=======
-                    <div v-if="item.Key=='DefendStatus' && item.Value == '1'">{{$t('DDOS.AccesstoCon.AccOpen')}}</div>
+                    <div
+                      v-if="item.Key=='DefendStatus' && item.Value == '1'"
+                    >{{$t('DDOS.AccesstoCon.AccOpen')}}</div>
                     <div v-else-if="item.Key=='DefendStatus' && item.Value != '1'">-</div>
                   </div>
                 </template>
               </el-table-column>
-              <el-table-column prop="Record.DdosThreshold" :label="$t('DDOS.protectCon.CleaningShold')">
->>>>>>> 高仿IP专业版修改简转繁
+              <el-table-column
+                prop="Record.DdosThreshold"
+                :label="$t('DDOS.protectCon.CleaningShold')"
+              >
                 <template slot-scope="scope">
                   <div v-for="(item, index) in scope.row.Record" :key="index">
                     <div v-if="item.Key=='DdosThreshold'">{{item.Value}}Mps</div>
@@ -123,7 +127,11 @@
                 </template>
               </el-table-column>
               <!-- 修改弹框 -->
-              <changeModel :configShow="changeModel" @closeConfigModel="closeConfigModel" :changeRow1="changeRow1"/>
+              <changeModel
+                :configShow="changeModel"
+                @closeConfigModel="closeConfigModel"
+                :changeRow1="changeRow1"
+              />
             </el-table>
           </div>
           <div class="Right-style pagstyle">
@@ -157,7 +165,7 @@
               @click="addNewTactics"
             >{{$t('DDOS.Proteccon_figura.Add_newpolicy')}}</el-button>
             <div class="minTable">
-              <el-table :data="tableDataPolicy" height="450" v-loading="loading"  empty-text='暫無數據'>
+              <el-table :data="tableDataPolicy" height="450" v-loading="loading" empty-text="暫無數據">
                 <el-table-column prop="PolicyName" :label="$t('DDOS.Proteccon_figura.Policy_name')">
                   <template slot-scope="scope">
                     {{scope.row.PolicyName}}
@@ -196,15 +204,17 @@
                       :before-close="handleClose"
                     >
                       <h1 class="deleteTit">
-                        <i class="el-icon-warning"></i>{{$t('DDOS.Proteccon_figura.delete_thepolicy')}}
+                        <i class="el-icon-warning"></i>
+                        {{$t('DDOS.Proteccon_figura.delete_thepolicy')}}
                       </h1>
-                      <p
-                        class="deleteCont"
-                      >{{$t('DDOS.Proteccon_figura.After_deletingpolicy')}}</p>
+                      <p class="deleteCont">{{$t('DDOS.Proteccon_figura.After_deletingpolicy')}}</p>
                       <p class="deleteCont">{{$t('DDOS.Proteccon_figura.delete_advanced')}}</p>
                       <span slot="footer" class="dialog-footer">
                         <el-button @click="dialogVisible = false">取 消</el-button>
-                        <el-button type="primary" @click="deleteDDoSPolicy()">{{$t('DDOS.Proteccon_figura.Determination')}}</el-button>
+                        <el-button
+                          type="primary"
+                          @click="deleteDDoSPolicy()"
+                        >{{$t('DDOS.Proteccon_figura.Determination')}}</el-button>
                       </span>
                     </el-dialog>
                     <el-button
@@ -240,7 +250,10 @@
 
                       <span slot="footer" class="dialog-footer">
                         <el-button @click="dialogVisible1 = false">取 消</el-button>
-                        <el-button type="primary" @click="bindingResourceSure()">{{$t('DDOS.Proteccon_figura.Determination')}}</el-button>
+                        <el-button
+                          type="primary"
+                          @click="bindingResourceSure()"
+                        >{{$t('DDOS.Proteccon_figura.Determination')}}</el-button>
                       </span>
                     </el-dialog>
                   </template>
@@ -323,7 +336,7 @@ export default {
       changeModelTip1: false, //修改模式提示弹框
       changeModelTip2: false,
       changeModelTip3: false,
-      changeRow1:String,
+      changeRow1: String
     };
   },
   components: {
@@ -361,7 +374,7 @@ export default {
         // console.log(this.allData)
       });
     },
-     //修改弹框关闭按钮
+    //修改弹框关闭按钮
     closeConfigModel(isShow) {
       this.changeModel = isShow;
       this.describeResourceList();
@@ -382,15 +395,15 @@ export default {
     // 修改
     changeRow(changeIndex, changeRow1) {
       // console.log(changeIndex,changeRow1.Record)
-      this.changeModel = true;  //DdosThreshold"
+      this.changeModel = true; //DdosThreshold"
       // this.changeRow=changeRow1;
       let arr = changeRow1.Record;
-      arr.map((item,index)=>{
-        if(item.Key == "DdosThreshold"){
+      arr.map((item, index) => {
+        if (item.Key == "DdosThreshold") {
           // console.log(item.Value)
           this.changeRow1 = item.Value;
         }
-      })
+      });
     },
     // 搜索
     doFilter() {
@@ -533,9 +546,8 @@ export default {
         path: "/choose"
       });
       window.open(routeUrl.href, "_blank");
-    },
-   
-  },
+    }
+  }
 };
 </script>
 <style lang="scss" scoped>
