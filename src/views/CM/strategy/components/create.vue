@@ -61,6 +61,20 @@
               <el-radio v-model="radio" label="3" @change="group">选择实例组</el-radio>
               <a>新建实例组</a>
             </p>
+            <!-- <Transfer :multipleSelection="tableData"/> -->
+            <Transfer v-show="showQudao1==true?true:false" :multipleSelection="options" />
+            <p v-show="showQudao2==true?true:false">
+              <el-select v-model="formInline.projectName" style="width:150px;">
+                <el-option
+                  v-for="(item,index) in formInline.project"
+                  :key="index"
+                  :label="item.name"
+                  :value="item.value"
+                  label-width="40px"
+                ></el-option>
+              </el-select>
+              <a>刷新</a>
+            </p>
           </div>
         </div>
         <div class style="display: flex;">
@@ -134,7 +148,7 @@
                         </el-select>&nbsp;
                         <input
                           placeholder="指标"
-                          style="height: 30px;line-height: 30px;padding:0 10px;width:85px;border: 1px solid #dcdfe6;"
+                          style="height: 30px;line-height: 30px;padding-left:10px;width:85px;border: 1px solid #dcdfe6;"
                           value="0"
                           min="0"
                           max="100"
@@ -356,12 +370,66 @@
         <div class style="display:flex">
           <span>告警渠道</span>
           <div class="qudaoContent">
-            <p style="">
+            <p style="display:flex">
               <span>接收对象</span>
+              <el-select v-model="formInline.jieshou" style="width:100px;">
+                <el-option
+                  v-for="(item,index) in formInline.jieshouArr"
+                  :key="index"
+                  :label="item.name"
+                  :value="item.value"
+                  label-width="40px"
+                ></el-option>
+              </el-select>
+              <el-row class="seek" style="display:flex;margin:0 10px;">
+                <el-input v-model="triggerInput" placeholder></el-input>
+                <el-button icon="el-icon-search" style="margin-left:-1px;"></el-button>
+              </el-row>
+              <a>新增接收组</a>
+              <!-- <a>新增接收人</a> -->
             </p>
+            <div>
+              <el-table
+                :data="tableData"
+                style="width: 100%"
+                height="430"
+                :default-sort="{prop: 'changeData', order: 'descending'}"
+              >
+                <el-table-column type="selection" width="55"></el-table-column>
+                <el-table-column prop="userGroupName" label="用户组名"></el-table-column>
+                <el-table-column prop="userName" label="用户名"></el-table-column>
+              </el-table>
+            </div>
 
-            <p></p>
-            <p></p>
+            <p>
+              <span>有效时段</span>
+              <el-time-picker
+                style="width:150px"
+                v-model="value1"
+                :picker-options="{
+                  selectableRange: '18:30:00 - 20:30:00'
+                }"
+                placeholder="任意时间点"
+              ></el-time-picker>
+              <i>&nbsp;至&nbsp;</i>
+              <el-time-picker
+                style="width:150px"
+                arrow-control
+                v-model="value2"
+                :picker-options="{
+                  selectableRange: '18:30:00 - 20:30:00'
+                }"
+                placeholder="任意时间点"
+              ></el-time-picker>
+            </p>
+            <p style="display:flex">
+              <span>接收渠道</span>
+              <el-checkbox-group v-model="qudaoCheckList">
+                <el-checkbox label="邮件"></el-checkbox>
+                <el-checkbox label="短信"></el-checkbox>
+                <el-checkbox label="微信"></el-checkbox>
+              </el-checkbox-group>
+            </p>
           </div>
         </div>
         <div class>
@@ -415,24 +483,57 @@
 </template>
 <script>
 import Header from "@/components/public/Head";
+import Transfer from "./transfer";
 export default {
   data() {
     return {
+      value1: new Date(2020, 1, 10, 18, 40),
+      value2: new Date(2020, 1, 10, 18, 40),
+
       showChufa1: true, //触发条件1显示开关
       showChufa2: false, //触发条件2显示开关
+
+      showQudao1: true, //渠道选择1显示开关
+      showQudao2: false, //渠道选择2显示开关
 
       errorTip1: false, //触发条件模板错误提示
       errorTip2: true, //配置触发条件错误提示
       checkedZhibiao: false, //指示告警
 
+      checkedGaojing: "", //告警
+      triggerInput: "", //新增接收
+
       radio: "1", //选择告警对象类型
       radioChufa: "1", //触发条件单选
       input: "",
       input1: "",
-      tableData: [],
+      tableData: [
+        {
+          userGroupName: "测试勿删",
+          userName: "test、test02"
+        },
+        {
+          userGroupName: "勿删",
+          userName:
+            "测试1、TX测试---李慧、腾讯李慧、測試、test、mytest、test02、test03、test04、test111"
+        },
+        {
+          userGroupName: "可以删除",
+          userName: "测试一下"
+        }
+      ],
       options: [],
       values: "",
+      qudaoCheckList: ["邮件", "短信"], //渠道选择
       formInline: {
+        jieshou: "接收组",
+        jieshouArr: [
+          { value: "0", name: "接收组" },
+          {
+            value: "1",
+            name: "接收人"
+          }
+        ],
         apiStr: "http", //接口回调
         apiArr: [
           {
@@ -474,20 +575,27 @@ export default {
     }
   },
   components: {
-    Header
+    Header,
+    Transfer
   },
   methods: {
     all() {
       //全部对象
       //   alert("all");
+      this.showQudao1=false;
+      this.showQudao2=false;
     },
     some() {
       //部分对象
       //   alert("some");
+      this.showQudao1=true;
+      this.showQudao2=false;
     },
     group() {
       //实例对象组
       //   alert("group");
+       this.showQudao1=false;
+      this.showQudao2=true;
     },
     //确定
     save() {
@@ -541,7 +649,7 @@ export default {
   padding: 20px 35px;
 }
 .create-wrap >>> .box a {
-  padding: 3px 5px;
+  padding: 0 5px;
   margin-left: 20px;
   color: #006eff;
 }
@@ -573,7 +681,8 @@ export default {
       width: 70px;
     }
   }
-  .chufaContent {
+  .chufaContent,
+  .qudaoContent {
     width: 100%;
     padding: 0 10px;
     > div {
@@ -588,6 +697,9 @@ export default {
         }
       }
     }
+  }
+  .qudaoContent {
+    background-color: #f2f2f2;
   }
   .qudao {
     display: flex;

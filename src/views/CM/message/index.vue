@@ -45,7 +45,7 @@
         </el-table-column>
       </el-table>
       <!-- 分页 -->
-      <div class="Right-style pagstyle">
+      <div class="Right-style pagstyle" style="background: #fff;">
         <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;{{$t("CVM.strip")}}</span>
         <el-pagination
           :page-size="pagesize"
