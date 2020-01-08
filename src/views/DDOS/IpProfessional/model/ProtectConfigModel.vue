@@ -194,10 +194,12 @@ export default {
       default: true
     },
     changeRow1: {
-      type: String,
-      default:function(){
-        return "80"
-      }
+      type: String
+    }
+  },
+  watch: {
+    changeRow1(val) {
+      this.servicePack.DdosThreshold = val;
     }
   },
   data() {
@@ -258,6 +260,7 @@ export default {
   created() {
     this.GetID(); //获取ID
     this.GETSPolicy(); //获取DDoS高级策略
+    this.servicePack.DdosThreshold = this.changeRow1;
   },
   methods: {
     //获取ID
@@ -347,10 +350,6 @@ export default {
         Threshold: value
       };
       this.axios.post(CLAEN_SHOLD, params).then(res => {
-        // console.log(res,1111,this.servicePack.DdosThreshold)
-        // let {Response}= this.changeRow;
-        this.servicePack.DdosThreshold = this.changeRow1;
-        console.log(this.changeRow1, 1222);
         if (res.Response.Error !== undefined) {
           this.$message({
             showClose: true,

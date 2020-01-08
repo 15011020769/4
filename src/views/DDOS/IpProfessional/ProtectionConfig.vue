@@ -336,7 +336,7 @@ export default {
       changeModelTip1: false, //修改模式提示弹框
       changeModelTip2: false,
       changeModelTip3: false,
-      changeRow1: String
+      changeRow1: ""
     };
   },
   components: {
@@ -394,16 +394,13 @@ export default {
     },
     // 修改
     changeRow(changeIndex, changeRow1) {
-      // console.log(changeIndex,changeRow1.Record)
-      this.changeModel = true; //DdosThreshold"
-      // this.changeRow=changeRow1;
-      let arr = changeRow1.Record;
-      arr.map((item, index) => {
+      changeRow1.Record.forEach(item => {
         if (item.Key == "DdosThreshold") {
-          // console.log(item.Value)
           this.changeRow1 = item.Value;
+          return;
         }
       });
+      this.changeModel = true; //DdosThreshold"
     },
     // 搜索
     doFilter() {
