@@ -251,7 +251,7 @@ export default {
           this.strs = val.LoadBalancerName;
           this.strss = val.NatGatewayName;
           if (this.selectedSubarea == "cvm" ) {
-            if (val.InstanceName == this.searchInputVal || _this.str.slice(0,1) == this.searchInputVal ) {
+            if (val.InstanceName == this.searchInputVal || _this.str.slice(0,1) == this.searchInputVal || _this.str.slice(0,2) == this.searchInputVal || _this.str.slice(0,3) == this.searchInputVal || _this.str.slice(0,4) == this.searchInputVal) {
               this.filterTableDataEnd.push(val);
             } else if (
               this.searchInputVal.indexOf(val.PublicIpAddresses) > -1
@@ -259,13 +259,13 @@ export default {
               this.filterTableDataEnd.push(val);
             }
           } else if (this.selectedSubarea == "clb") {
-            if (val.LoadBalancerName == this.searchInputVal || _this.strs.slice(0,1) == this.searchInputVal ) {
+            if (val.LoadBalancerName == this.searchInputVal || _this.strs.slice(0,1) == this.searchInputVal || _this.strs.slice(0,2) == this.searchInputVal || _this.strs.slice(0,3) == this.searchInputVal || _this.strs.slice(0,4) == this.searchInputVal ) {
               this.filterTableDataEnd.push(val);
             } else if (this.searchInputVal.indexOf(val.LoadBalancerVips) > -1) {
               this.filterTableDataEnd.push(val);
             }
           } else if (this.selectedSubarea == "nat") {
-            if (val.NatGatewayName == this.searchInputVal || _this.strss.slice(0,1) == this.searchInputVal ) {
+            if (val.NatGatewayName == this.searchInputVal || _this.strss.slice(0,1) == this.searchInputVal || _this.strss.slice(0,2) == this.searchInputVal || _this.strss.slice(0,3) == this.searchInputVal || _this.strss.slice(0,4) == this.searchInputVal ) {
               this.filterTableDataEnd.push(val);
             }
             for (let i in val.PublicIpAddressSet) {
