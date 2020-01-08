@@ -47,12 +47,16 @@
                   <el-dropdown-item disabled>{{$t('DDOS.AccesstoCon.ImportTitleIn')}}</el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
-              <el-button class="allDeleteBtn" :disabled="true">{{$t('DDOS.AccesstoCon.delMoreAcc')}}</el-button>
+              <!-- 批量删除 -->
+              <!-- :disabled="partDelFlag" -->
+              <el-button class="allDeleteBtn"  @click="partDel">{{$t('DDOS.AccesstoCon.delMoreAcc')}}</el-button>
             </div>
             <el-table
               class="tableListA"
               :data="tableDataBegin.slice((currentPage-1)*pageSize,currentPage*pageSize)"
               ref="multipleTable"
+              v-on:select="checkBoxClick"
+              @select-all="checkBoxAll"
               @selection-change="handleSelectionChange"
               v-loading="loading"
             >
@@ -104,6 +108,7 @@
                     size="small"
                     @click="copyAccess(scope.row)"
                   >{{$t('DDOS.AccesstoCon.AccClone')}}</el-button>
+                  <!-- 删除 -->
                   <el-button
                     type="text"
                     size="small"
@@ -177,6 +182,21 @@
               <el-button @click="dialogDelete=false">取消</el-button>
             </span>
           </el-dialog>
+          <!-- 批量删除弹框 -->
+            <!-- :title="$t('DDOS.AccesstoCon.addAcc')" -->
+          <el-dialog
+            class="dialogModel"
+            title="批量删除转发规则"
+            :visible.sync="dialogDelete_2"
+            width="30%"
+            :before-close="handleCloseDelete"
+          >
+            <p>确定批量删除转发规则</p>
+            <span class="footerBtn">
+              <el-button @click="deleteSurePart">{{$t('DDOS.AccesstoCon.ImSure')}}</el-button>
+              <el-button @click="dialogDelete_2=false,partD2=[]">取消</el-button>
+            </span>
+          </el-dialog>
         </el-tab-pane>
       </div>
     </el-tabs>
@@ -214,6 +234,8 @@ export default {
       dialogVisible3: false, //编辑弹框
       dialogVisible4: false, //复制弹框
       dialogDelete: false, //删除弹框
+      dialogDelete_2:false,//批量删除弹框
+      partD2:[],//接收所有要删除数据的id
       deleteIndex: ""
     };
   },
@@ -236,6 +258,60 @@ export default {
     };
   },
   methods: {
+   
+    //点击批量删除
+    partDel(){
+      if(this.partD2.length==0){
+          this.$message({
+            showClose: true,
+            message: "请选择删除项",
+            type: "warning"
+          });
+      }else{
+        this.dialogDelete_2=true;
+      }
+    },
+    //单选
+    checkBoxClick(selection, row){
+      if(selection.length!='0'){
+        this.partD2.push(row.RuleId)
+      }
+    },
+    //全选
+    checkBoxAll(val){
+        val.forEach(v=>{
+          this.partD2.push(v.RuleId) 
+        })
+    },
+    //批量删除确定按钮
+   deleteSurePart() {
+    this.dialogDelete_2 = false;
+    let delAllId=[...new Set(this.partD2)];
+    for(let i=0;i<delAllId.length;i++){
+      let params = {
+        Version: "2018-07-09",
+        Business: "net",
+        Id: this.resourceId,
+        "RuleIdList.0": delAllId[i],
+      };
+      this.axios.post(L4DEL_CREATE, params).then(res => {
+        if (res.Response.Error !== undefined) {
+          this.$message({
+            showClose: true,
+            message: res.Response.Error.Message,
+            type: "error"
+          });
+        } else {
+          this.$message({
+            showClose: true,
+            message: "删除成功",
+            type: "success"
+          });
+          this.describleL4Rules();
+        }
+      });
+    }
+    },
     // 1.1.获取资源列表
     describeResourceList() {
       let params = {
@@ -254,11 +330,13 @@ export default {
         Id: this.resourceId
       };
       this.axios.post(L4_RULES, params).then(res => {
+        console.log(this.tableDataBegin)
         this.tableDataBegin = res.Response.Rules;
         this.totalItems = res.Response.Total;
         this.usedNum = res.Response.Total;
         this.loading = false;
       });
+      
     },
     //获取资源的IP列表
     GetID() {

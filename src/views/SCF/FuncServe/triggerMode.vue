@@ -237,8 +237,8 @@ export default {
             Type: this.formTriggerForm.triggerType,
             TriggerDesc: this.desc,
             CustomArgument:this.formTriggerForm.CustomArgument,
-            Enable:'OPEN',
-            // Enable:(this.formTriggerForm.nowStart==true?"OPEN":"CLOSE"),
+            // Enable:'OPEN',
+            Enable:(this.formTriggerForm.nowStart==true?"OPEN":"CLOSE"),
           };
           let functionName = this.$route.query.functionName;
           if (functionName != "" && functionName != null) {
@@ -313,7 +313,12 @@ export default {
         this.triggerBoxList = res.Response.Triggers;
         // console.log(this.triggerBoxList);
         for (let i = 0; i < this.triggerBoxList.length; i++) {
-          this.switch1[i] = true;
+          if(this.triggerBoxList[i].Enable=='1'){
+              this.switch1[i] = true;
+          }else{
+            this.switch1[i] = false;
+          }
+          
         }
         this.loading = false;
       });
