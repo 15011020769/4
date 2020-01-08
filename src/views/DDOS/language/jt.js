@@ -308,7 +308,7 @@ module.exports = {
       Add_newpolicy:'添加新策略',
       delete_thepolicy:'确定删除该政策么？',
       After_deletingpolicy:'删除策略后，该防护策略将从列表中永久删除，不可恢复。若您已开启UDP水印剥离开关，则策略会同步关闭UDP水印剥离开关。',
-      delete_advanced:'确定删除该条高级策略(erg)？',
+      delete_advanced:'确定删除该条高级策略',
       Binding_resources:'绑定资源',
       Blackwhite_list:'黑白名单',
       Blacklist:'黑名单',

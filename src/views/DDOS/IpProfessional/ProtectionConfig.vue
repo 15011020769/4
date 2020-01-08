@@ -212,7 +212,7 @@
                         {{$t('DDOS.Proteccon_figura.delete_thepolicy')}}
                       </h1>
                       <p class="deleteCont">{{$t('DDOS.Proteccon_figura.After_deletingpolicy')}}</p>
-                      <p class="deleteCont">{{$t('DDOS.Proteccon_figura.delete_advanced')}}</p>
+                      <p class="deleteCont">{{$t('DDOS.Proteccon_figura.delete_advanced')}}({{deleteBegin.PolicyName}})?</p>
                       <span slot="footer" class="dialog-footer">
                         <el-button @click="dialogVisible = false">取 消</el-button>
                         <el-button
