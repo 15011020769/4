@@ -569,10 +569,19 @@ export default {
     //绑定资源按钮
     bindingResource(bindingIndex, bindingCon) {
       this.resData = [];
+      // 循环策略列表（找出已被绑定的资源）
+      let binded = [];
+      this.tableDataPolicy.forEach(policy => {
+        if(policy.PolicyId != bindingCon.PolicyId){
+          policy.BoundResources.forEach(res => {
+            binded.push(res);
+          })
+        }
+      });
       // 循环资源列表
-      this.tableDataBegin.forEach(policy => {
+      this.tableDataBegin.forEach(resource => {
         const objTemp = {};
-        policy.Record.forEach(element => {
+        resource.Record.forEach(element => {
           if(element.Key == "Id"){
             objTemp.key = element.Value;
           } else if(element.Key == "GroupIpList"){
@@ -584,7 +593,11 @@ export default {
             });
           }
         });
-        this.resData.push(objTemp);
+        if(binded.length>0 && binded.indexOf(objTemp.key)<0){
+          this.resData.push(objTemp);
+        } else if(binded.length==0){
+          this.resData.push(objTemp);
+        }
       });
       this.valueThrou = bindingCon.BoundResources;
       this.valueRightOld = bindingCon.BoundResources;
