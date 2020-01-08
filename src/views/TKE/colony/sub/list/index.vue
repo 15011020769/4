@@ -137,45 +137,5 @@ export default {
       border-right: none;
     }
 }
-
-
-.tke-grid{
-  display: flex;
-  align-items: center;
-  .grid-left{
-    flex: 1 1 auto;
-    display: flex;
-    align-items: center;
-  }
-}
-
-.tke-content-header{
-  color: rgb(0, 0, 0);
-  border-bottom: 1px solid rgb(221, 221, 221);
-  padding: 9px 20px;
-  background: rgb(255, 255, 255);
-  .goback{
-    margin-right: 10px;
-    cursor: pointer;
-    .el-icon-back{
-      font-size: 16px;
-      color: #006eff;
-      font-weight: 800;
-      height: 30px;
-      line-height: 30px;
-      display: inline-block;
-      margin-right: 5px;
-    }
-  }
-  
-  .header-title{
-    font-size: 16px;
-    font-weight: 700;
-    height: 30px;
-    line-height: 30px;
-    margin-right: 20px;
-  } 
-}
-
 </style>
 

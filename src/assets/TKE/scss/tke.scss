@@ -1,0 +1,202 @@
+// 左右两侧布局
+.tke-grid{
+    display: flex;
+    align-items: center;
+    .grid-left{
+        flex: 1 ;
+        display:flex;
+        align-items: center;
+    }
+    .grid-right{
+        display:flex;
+        align-items: center;
+    }
+}
+
+// 数据操作布局
+.tke-action{
+    padding-bottom:10px;
+    .tke-download{
+        font-size: 16px;
+        padding: 8px;
+        color: #666;
+        cursor: pointer;
+    }
+}
+
+// 头部
+.tke-content-header{
+    color: rgb(0, 0, 0);
+    border-bottom: 1px solid rgb(221, 221, 221);
+    padding: 9px 20px;
+    background: rgb(255, 255, 255);
+    .goback{
+        margin-right: 10px;
+        cursor: pointer;
+        .el-icon-back{
+            font-size: 16px;
+            color: #006eff;
+            font-weight: 800;
+            height: 30px;
+            line-height: 30px;
+            display: inline-block;
+            margin-right: 5px;
+        }
+    }
+    .header-title{
+        font-size: 16px;
+        font-weight: 700;
+        height: 30px;
+        line-height: 30px;
+        margin-right: 20px;
+    } 
+}
+
+// 白色内容主体区域
+.tke-card{
+    background-color: #fff;
+    box-shadow: 0 2px 3px 0 rgba(0,0,0,.2);
+    margin-left: auto;
+    margin-right: auto;
+    box-sizing: border-box;
+    .el-table{
+      color: #444;
+      .tke-icon{
+        cursor: pointer;
+        margin-left: 5px;
+      }
+    }
+    .tke-page{
+      padding: 20px;
+      display: flex;
+      flex-direction: row-reverse;
+    }
+}
+
+// 表单
+.tke-formpanel-wrap{
+    padding: 20px;
+    .tke-formpanel-title{
+      font-size: 14px;
+      font-weight: 700;
+      color: #000;
+      margin-bottom: 20px;
+    }
+}
+.tke-form {
+    .el-form-item__label,.el-form-item__content{
+        font-size: 12px;
+        color: #888;
+    }
+    .tke-form-item_text{
+        font-size: 12px;
+        color: #444;
+    }
+    .tke-icon{
+        cursor: pointer;
+        margin-left: 5px;
+    }
+}
+// 步骤 step
+.tke-step-item{
+    display: flex;
+    align-items: center;
+    .num{
+        width: 28px;
+        height: 28px;
+        box-sizing: border-box;
+        line-height: 24px;
+        border-radius: 50%;
+        margin-right: 10px;
+        text-align: center;
+        font-size: 16px;
+        font-weight: 700;
+        border: 2px solid #ddd;
+        background-color: #fff;
+        vertical-align: middle;
+        color: #bbb;
+        
+    }
+    .title{
+        color: #bbb;
+        font-size: 14px;
+        font-weight: 700; 
+    }
+    .el-icon-arrow-right{
+        font-size: 16px;
+        padding: 0 30px;
+        color: #bbb;
+        font-weight: 800;
+    }
+    }
+    .tke-step-item.is-curr{
+    .num{
+        background-color: #006eff;
+        border: 2px solid #006eff;
+        color: #fff;
+    }
+    .title{
+        color: #000;
+    }
+}
+
+// 其他可共用部分
+.icon-chart{
+    background-image: url("../../CAM/images/cvm-20199061519.svg");
+    background-size: 267px 176px;
+    background-repeat: no-repeat;
+    background-position: -47px -71px;
+    height: 15px;
+    width: 16px;
+    display: inline-block;
+    cursor: pointer;
+}
+  
+  
+.tke-dropdown{
+    font-size: 12px;
+}
+.el-dropdown-menu__item{
+    font-size: 12px;
+}
+
+
+.text-green{
+    color: #0abf5b;
+}
+.text-gray{
+    color: #bbb;
+}
+.text-red{
+    color: rgb(225, 80, 74);
+}
+.tke-text-link{
+    color: #006eff;
+    cursor: pointer;
+    &:hover{
+        text-decoration: underline;
+        color: #006eff;
+    }
+}
+
+.ml5{
+    margin-left: 5px;
+} 
+.ml10{
+    margin-left: 10px;
+}
+.mt10{
+    margin-top: 10px;
+  }
+  .mt20{
+    margin-top: 20px;
+  }
+  hr{
+    padding: 0;
+      border: none;
+      border-bottom: 1px solid #ddd;
+      margin: 20px 0;
+  }
+
+
+  

@@ -5,6 +5,7 @@ import ElementUI from 'element-ui'
 import '@/element-ui-theme'
 import '@/assets/scss/index.scss'
 import '@/assets/style/reset.scss'
+import '@/assets/TKE/scss/tke.scss' //引入tke所需样式
 import '@/utils/axios'
 import VueCookie from 'vue-cookie'
 import '@/assets/iconfont/iconfont.css'

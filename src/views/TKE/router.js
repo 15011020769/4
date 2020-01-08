@@ -38,7 +38,7 @@ export default new Router({
       }
     },
     {
-      path: '/colony/sub/list/basic', // 集群详情
+      path: '/colony/sub', // 集群详情
       name: 'colonySub',
       component: () => import('./colony/sub/list/index.vue'),
       redirect: '/colony/sub/list/basic', // 默认子路由

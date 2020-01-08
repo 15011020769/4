@@ -9,7 +9,9 @@
       <div class="tke-grid ">
         <!-- 左侧 -->
         <div class="grid-left">
-          <i class="el-icon-back" @click="goBack"></i>
+          <span class="goback" @click="goBack">
+            <i class="el-icon-back"></i>
+          </span>
           <h2 class="header-title">创建集群</h2>
         </div>
         <!-- 右侧 -->
@@ -413,97 +415,15 @@ export default {
 
 
 //by liling
-.tke-grid{
-  display: flex;
-  align-items: center;
-  .grid-left{
-    flex: 1 1 auto;
-    display: flex;
-    align-items: center;
-  }
-}
 
-.tke-content-header{
-  color: rgb(0, 0, 0);
-  border-bottom: 1px solid rgb(221, 221, 221);
-  padding: 9px 20px;
-  background: rgb(255, 255, 255);
-  .el-icon-back{
-    font-size: 16px;
-    color: #006eff;
-    font-weight: 800;
-    width: 30px;
-    height: 30px;
-    line-height: 30px;
-    margin-right: 10px;
-    cursor: pointer;
-  }
-  .header-title{
-    font-size: 16px;
-    font-weight: 700;
-    height: 30px;
-    line-height: 30px;
-    margin-right: 20px;
-  } 
-}
-.tke-card{
-  background-color: #fff;
-  box-shadow: 0 2px 3px 0 rgba(0,0,0,.2);
-  margin-left: auto;
-  margin-right: auto;
-  box-sizing: border-box;
-}
 hr{
   padding: 0;
     border: none;
     border-bottom: 1px solid #ddd;
     margin: 20px 0;
 }
-.ml5{
-  margin-left: 5px;
-}
 
-.tke-step-item{
-  display: flex;
-  align-items: center;
-  .num{
-    width: 28px;
-    height: 28px;
-    box-sizing: border-box;
-    line-height: 24px;
-    border-radius: 50%;
-    margin-right: 10px;
-    text-align: center;
-    font-size: 16px;
-    font-weight: 700;
-    border: 2px solid #ddd;
-    background-color: #fff;
-    vertical-align: middle;
-    color: #bbb;
-    
-  }
-  .title{
-    color: #bbb;
-    font-size: 14px;
-    font-weight: 700; 
-  }
-  .el-icon-arrow-right{
-    font-size: 16px;
-    padding: 0 30px;
-    color: #bbb;
-    font-weight: 800;
-  }
-}
-.tke-step-item.is-curr{
-  .num{
-    background-color: #006eff;
-    border: 2px solid #006eff;
-    color: #fff;
-  }
-  .title{
-    color: #000;
-  }
-}
+
 .tke-reminder{
   padding: 10px 30px 10px 20px;
   vertical-align: middle;
@@ -547,19 +467,9 @@ hr{
 .w420{
   width: 420px;
 }
-.text-gray{
-  color: #bbb;
-}
-.text-red{
-  color: rgb(225, 80, 74);
-}
+
 
 .tke-form {
-
-  .el-form-item__label,.el-form-item__content{
-    font-size: 12px;
-    color: #888;
-  }
   .el-icon-refresh{
     font-size: 16px;
     font-weight: 800;
