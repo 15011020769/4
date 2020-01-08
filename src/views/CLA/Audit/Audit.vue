@@ -34,8 +34,8 @@
           </el-table-column>
           <el-table-column prop="isMultiRegionAudit" :label="$t('CLA.total.qbqy')">
             <template slot-scope="scope">
-              <div v-if="scope.row.isMultiRegionAudit == 1">{{ $t('CLA.total.s') }}</div>
-              <div v-if="scope.row.isMultiRegionAudit == 0">{{ $t('CLA.total.f') }}</div>
+              <div>{{ $t('CLA.total.s') }}</div>
+
             </template>
           </el-table-column>
           <el-table-column prop="CosBucketName" :label="$t('CLA.total.coscct')"></el-table-column>
