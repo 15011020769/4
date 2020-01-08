@@ -141,6 +141,9 @@ export default {
       allData: [], // 存储全部实例列表
       tableDataEnd: [],
       filterTableDataEnd: [],
+      str:"",
+      strs:"",
+      strss:"",
       // 分页相关
       currentPage: 1,
       pageSize: 10,
@@ -238,13 +241,17 @@ export default {
     // 搜索
     doFilter() {
       this.loading = true;
-      if (this.searchInputVal != null && this.searchInputVal != "") {
+      if (this.searchInputVal != null && this.searchInputVal != "" ){
         //每次手动将数据置空,因为会出现多次点击搜索情况
         this.tableDataBegin = new Array();
         this.filterTableDataEnd = new Array();
         this.allData.forEach((val, index) => {
-          if (this.selectedSubarea == "cvm") {
-            if (val.InstanceName == this.searchInputVal) {
+          let _this = this;
+          this.str = val.InstanceName;
+          this.strs = val.LoadBalancerName;
+          this.strss = val.NatGatewayName;
+          if (this.selectedSubarea == "cvm" ) {
+            if (val.InstanceName == this.searchInputVal || _this.str.slice(0,1) == this.searchInputVal ) {
               this.filterTableDataEnd.push(val);
             } else if (
               this.searchInputVal.indexOf(val.PublicIpAddresses) > -1
@@ -252,13 +259,13 @@ export default {
               this.filterTableDataEnd.push(val);
             }
           } else if (this.selectedSubarea == "clb") {
-            if (val.LoadBalancerName == this.searchInputVal) {
+            if (val.LoadBalancerName == this.searchInputVal || _this.strs.slice(0,1) == this.searchInputVal ) {
               this.filterTableDataEnd.push(val);
             } else if (this.searchInputVal.indexOf(val.LoadBalancerVips) > -1) {
               this.filterTableDataEnd.push(val);
             }
           } else if (this.selectedSubarea == "nat") {
-            if (val.NatGatewayName == this.searchInputVal) {
+            if (val.NatGatewayName == this.searchInputVal || _this.strss.slice(0,1) == this.searchInputVal ) {
               this.filterTableDataEnd.push(val);
             }
             for (let i in val.PublicIpAddressSet) {

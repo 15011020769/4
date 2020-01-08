@@ -532,7 +532,7 @@ export default {
   a {
     display: inline-block;
     margin: 0 20px;
-    color: #000;
+    // color: #000;
   }
   .modelSpan1 {
     width: 120px;
@@ -545,6 +545,8 @@ export default {
     border-radius: 0 !important;
   }
 }
+
+ 
 .modelSpan3 >>> .el-input__inner {
   width: 100px;
   margin-left: 10px;

@@ -1,7 +1,7 @@
 <template>
   <!-- 防护配置 -->
   <div class="wrap">
-    <HeaderCom :title="$t('DDOS.Proteccon_figura.Proteccon_title')" />
+    <HeaderCom title="防护配置" />
     <el-tabs v-model="activeName" @tab-click="handleClick">
       <el-tab-pane
         :label="$t('DDOS.Statistical_forms.DDoS_Protection')"
@@ -136,7 +136,7 @@
             </el-table>
           </div>
           <div class="Right-style pagstyle">
-            <span class="pagtotal">共&nbsp;{{totalItems}}&nbsp;{{$t('DDOS.UnsealCode.tiao')}}</span>
+            <span class="pagtotal">共&nbsp;{{totalItems}}&nbsp;条</span>
             <el-pagination
               :page-size="pageSize"
               :pager-count="7"
@@ -199,7 +199,7 @@
                       size="small"
                     >{{$t('DDOS.Proteccon_figura.Delete')}}</el-button>
                     <el-dialog
-                      :title="$t('DDOS.Proteccon_figura.scgjcl')"
+                      title="删除高级策略"
                       :visible.sync="dialogVisible"
                       width="30%"
                       :before-close="handleClose"
@@ -223,9 +223,9 @@
                       type="text"
                       size="small"
                       style="padding-left:7px"
-                    >{{$t('DDOS.Proteccon_figura.Binding_resources')}}</el-button>
+                    >绑定资源</el-button>
                     <el-dialog
-                      :title="$t('DDOS.Proteccon_figura.Binding_resources')"
+                      title="绑定资源"
                       :visible.sync="dialogVisible1"
                       width="43%"
                       :before-close="handleClose1"
@@ -238,8 +238,8 @@
                           :left-default-checked="[2, 3]"
                           :right-default-checked="[1]"
                           :render-content="renderFunc"
-                          :titles="['選擇資源', '已選擇']"
-                          :button-texts="['到左邊', '到右邊']"
+                          :titles="['选择资源', '已选择']"
+                          :button-texts="['到左边', '到右边']"
                           :format="{
                               noChecked: '${total}',
                               hasChecked: '${checked}/${total}'
@@ -306,7 +306,7 @@ export default {
           value: "ID"
         },
         {
-          label: "服務包名稱",
+          label: "服务包名称",
           value: "serverBag"
         }
       ],
