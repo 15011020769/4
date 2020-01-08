@@ -12,8 +12,8 @@
         <el-button size="mini" class="botton-size" @click="dialogFormVisible2 = true">重置密码</el-button>
       </div>
       <div class="top-right">
-          <el-input v-model="input" placeholder="请输入镜像名称" size="mini"></el-input>
-          <el-button icon="el-icon-search" size="mini" style="margin-left:-1px;height:28px;" @click="getSearch()"></el-button>
+          <el-input v-model.trim="input" placeholder="请输入镜像名称" size="mini"></el-input>
+          <el-button icon="el-icon-search" size="mini" style="margin-left:-1px;height:28px;" :plain="true" @click="getSearch()"></el-button>
       </div>
     </div>
     <div class="room-center">
@@ -75,7 +75,7 @@
         style="width:500px"
       >
         <el-form-item label="名称" prop="name">
-          <el-input  v-model="name" @blur="getName()" style="width:200px"></el-input>
+          <el-input  v-model="name" @change="getName()" style="width:200px"></el-input>
           <p class="form-p">最长为200个字符，只能包含小写字母、数字及分隔符("."、"_"、"-")，且不能以分隔符开头或结尾</p>
         </el-form-item>
         <el-form-item label="类型" prop="region">
@@ -266,7 +266,6 @@ export default {
     dateRange (val) {
       if (val.name !== '' && val.region2 !== '') {
         this.isReponame = val.region2 + '/' + val.name
-        console.log(this.isReponame)
         this.isPresence()
       }
     }
@@ -322,8 +321,16 @@ export default {
     },
     // 搜索
     getSearch () {
-      this.GetMyMirror()
-      this.loadShow = true
+      var regex = /^[a-z0-9\.\-_]+$/g
+      if (regex.test(this.input) || this.input === '') {
+        this.loadShow = true
+        this.GetMyMirror()
+      } else {
+        this.$message({
+          message: '当前输入的镜像名称不符合镜像仓库命名规范，仅支持小写字母、数字及分隔符("."、"_"、"-")',
+          type: 'warning'
+        })
+      }
     },
     // 单个删除
     deleteOne () {
@@ -347,6 +354,12 @@ export default {
       this.deleteSpace = obj
       this.DeleteMyMirror()
     },
+    open3() {
+        this.$message({
+          message: '警告哦，这是一条警告消息',
+          type: 'warning'
+        });
+      },
     GetMyMirror () { // 获得我的镜像数据
       const param = {
         reponame: this.input,
@@ -394,7 +407,7 @@ export default {
       }
       this.axios.post(MIRROR_CREATE, param).then(res => {
         if (res.code === 0) {
-          // this.loadShow = false
+          this.loadShow = false
           console.log(res)
         }
       })

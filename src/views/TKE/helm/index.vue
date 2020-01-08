@@ -1,26 +1,40 @@
 <template>
   <div class="helm-wrap">
-    <HeadCom title="Helm应用"></HeadCom>
+    <HeadCom title="Helm应用">
+      <slot>
+        <div class="head-address">
+          <City :Cityvalue.sync="selectedRegion" :cities="cities" class="city" @changeCity="changeCity"></City>
+          <div class="head-cluster">
+            <span style="font-size:12px;">集群</span>
+            <el-select v-model="select" slot="prepend" placeholder="请选择" size="mini" style="width:100px">
+              <el-option label="餐厅名" value="1"></el-option>
+              <el-option label="订单号" value="2"></el-option>
+              <el-option label="用户电话" value="3"></el-option>
+            </el-select>
+          </div>
+        </div>
+      </slot>
+    </HeadCom>
     <div class="wrap">
       <div class="wrap-bnt">
-        <button type="button" disabled="disabled">新建</button>
+        <el-button type="primary" plain size="small" @click="jump()">新建</el-button>
       </div>
-      <div class="helm-titleWrap">
+      <!-- <div class="helm-titleWrap">
         <div class="helm-titleBox">
           <p>Helm应用管理仅支持kubernetes 1.8以上版本的集群。</p>
         </div>
-      </div>
+      </div> -->
       <div class="helm-table">
         <template>
           <el-table :data="tableData" style="width: 100%" height="450">
-            <el-table-column label="应用名" width="180"></el-table-column>
-            <el-table-column label="状态" width="180"></el-table-column>
-            <el-table-column label="版本号"></el-table-column>
-            <el-table-column label="创建时间" width="180"></el-table-column>
-            <el-table-column label="Chart仓库" width="180"></el-table-column>
-            <el-table-column label="Chart命名空间"></el-table-column>
-            <el-table-column label="Chart版本" width="180"></el-table-column>
-            <el-table-column label="操作"></el-table-column>
+            <el-table-column label="应用名" max-width="10%"></el-table-column>
+            <el-table-column label="状态" max-width="10%"></el-table-column>
+            <el-table-column label="版本号" max-width="15%"></el-table-column>
+            <el-table-column label="创建时间" max-width="15%"></el-table-column>
+            <el-table-column label="Chart仓库" max-width="15%"></el-table-column>
+            <el-table-column label="Chart命名空间" max-width="15%"></el-table-column>
+            <el-table-column label="Chart版本" max-width="10%"></el-table-column>
+            <el-table-column label="操作" max-width="10%"></el-table-column>
           </el-table>
         </template>
       </div>
@@ -29,18 +43,54 @@
 </template>
 
 <script>
-import HeadCom from "@/components/public/Head";
+import HeadCom from '@/components/public/Head'
+import City from '@/components/public/CITY'
+import {
+  ALL_CITY
+} from '@/constants'
 export default {
-  name: "helm",
+  name: 'helm',
   components: {
-    HeadCom
+    HeadCom,
+    City
   },
-  data() {
+  data () {
     return {
-      tableData: []
-    };
+      tableData: [],
+      cities: [],
+      selectedRegion: '',
+      selectedCity: '',
+      select: ''
+    }
+  },
+  created () {
+    this.GetCity()
+  },
+  methods: {
+    GetCity () {
+      this.axios.get(ALL_CITY).then(data => {
+        console.log(data.data)
+        this.cities = data.data
+        this.selectedRegion = data.data[0].Region
+        this.selectedCity = data.data[0]
+        this.$cookie.set('regionv2', this.selectedCity.Region)
+      })
+    },
+    changeCity (city) {
+      this.selectedCity = city
+      this.$cookie.set('regionv2', city.Region)
+      // this.GetTabularData()
+    },
+    jump () {
+      this.$router.push({
+        name: 'helmCreate',
+        query: {
+          id: 1
+        }
+      })
+    }
   }
-};
+}
 </script>
 
 <style lang="scss" scoped>
@@ -81,6 +131,18 @@ export default {
     width: 100%;
     padding: 0px 20px 0 20px;
     box-sizing: border-box;
+  }
+}
+.head-address{
+  margin-top:10px;
+  margin-left:20px;
+  width: 250px;
+  display: flex;
+  justify-content: space-between;
+  .head-cluster{
+    display: flex;
+    justify-content: space-between;
+    width: 140px;
   }
 }
 </style>

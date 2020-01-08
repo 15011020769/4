@@ -238,6 +238,14 @@ export default new Router({
       }
     },
     {
+      path: '/helmCreate', // helm应用
+      name: 'helmCreate',
+      component: () => import(/* webpackChunkName: "helm" */ './helmCreate/index.vue'),
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
       path: '/myMirror', // 我的镜像
       name: 'myMirror',
       component: () => import(/* webpackChunkName: "myMirror" */ './myMirror/index.vue'),
