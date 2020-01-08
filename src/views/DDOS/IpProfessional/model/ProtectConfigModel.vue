@@ -27,7 +27,7 @@
               </span>
               <!-- 清洗阙值 -->
               <span>
-                  <!-- v-model="servicePack.DdosThreshold" -->
+                <!-- v-model="servicePack.DdosThreshold" -->
                 <el-select
                   v-model="servicePack.DdosThreshold"
                   class="setSelectM"
@@ -193,10 +193,12 @@ export default {
       default: true
     },
     changeRow1: {
-      type: String
+      type: String,
+      default: ""
     },
     ddoslevel: {
-      type: String
+      type: String,
+      default: ""
     }
   },
   watch: {
@@ -218,7 +220,7 @@ export default {
       modelIsShow: "", //模态框
       servicePack: {
         DefendStatus: "",
-        DdosThreshold: '',
+        DdosThreshold: "",
         cleanTime: ""
       }, //修改框数据绑定
       cleanNumOption: [
@@ -267,23 +269,23 @@ export default {
     configIsShow() {
       return this.configShow;
     },
-    configDataShow(){
-      return this.configData
-    },
+    configDataShow() {
+      return this.configData;
+    }
   },
-  watch:{
-    configDataShow:{
-      handler(val){
-        console.log(val)
-           let DdosThreshold= val.filter(v=>{
-             return  v.Key=='DdosThreshold'
-           })
-          
-        this.servicePack.DdosThreshold= DdosThreshold[0].Value;
+  watch: {
+    configDataShow: {
+      handler(val) {
+        console.log(val);
+        let DdosThreshold = val.filter(v => {
+          return v.Key == "DdosThreshold";
+        });
+
+        this.servicePack.DdosThreshold = DdosThreshold[0].Value;
         // this.topFun=''
       },
-      deep:true,
-    },
+      deep: true
+    }
   },
   created() {
     this.GetID(); //获取ID
