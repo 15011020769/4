@@ -4,12 +4,17 @@
       流量趋势
       <span style="color:#bbb;">(单位:MB)</span>
     </h3>
-    <Echart color="#0accac" :xAxis="xAxis" :series="series" v-loading="loading" />
+    <Echart
+      color="#0accac"
+      :xAxis="xAxis"
+      :series="series"
+      :legendText="legendText"
+      v-loading="loading"
+    />
     <div class="table">
       <el-table
         :data="tableData.slice((currpage - 1) * pagesize, currpage * pagesize)"
         style="width: 100%;margin-top:20px;"
-        height="450"
         v-loading="loading"
       >
         <el-table-column prop="Time" label="时间点"></el-table-column>
@@ -30,7 +35,7 @@
 </template>
 
 <script>
-import Echart from "../components/echarts";
+import Echart from "../../components/line";
 import { CSS_MBPS } from "@/constants";
 import moment from "moment";
 export default {
@@ -40,6 +45,7 @@ export default {
       //图表数据
       xAxis: [],
       series: [],
+      legendText: '流量',
       tableData: [], //表格数据
       currpage: 1, //页数
       pagesize: 10, //每页数量
@@ -67,29 +73,48 @@ export default {
     //获取表格数据
     init() {
       this.loading = true;
-      const params = {
+      const params1 = {
         Version: "2018-08-01",
-        StartTime: moment(this.StartTIme).format("YYYY-MM-DD HH:MM:SS"),
-        EndTime: moment(this.EndTIme).format("YYYY-MM-DD HH:MM:SS")
+        StartTime: moment(this.StartTIme).format("YYYY-MM-DD HH:mm:ss"),
+        EndTime: moment(this.EndTIme).format("YYYY-MM-DD HH:mm:ss"),
       };
-      var Granularity =
-        moment(this.EndTIme).format("YYYYMMDD") -
-        moment(this.StartTIme).format("YYYYMMDD");
-      if (Granularity < 6) {
-        params["Granularity"] = 60;
-      } else {
-        params["Granularity"] = 1440;
+      const params2 = {
+        Version: "2018-08-01",
+        StartTime: moment(this.StartTIme).format("YYYY-MM-DD HH:mm:ss"),
+        EndTime: moment(this.EndTIme).format("YYYY-MM-DD HH:mm:ss"),
+      };
+      if (this.domain.length != 0) {
+        this.domain.forEach((item, index) => {
+          params1["PlayDomains." + index] = item;
+          params2["PlayDomains." + index] = item;
+        });
       }
-      this.axios.post(CSS_MBPS, params).then(res => {
+      const Granularity = moment(this.EndTIme).diff(this.StartTIme, 'days')
+      if (Granularity < 3) {
+        params1["Granularity"] = 60
+        params2["Granularity"] = 5
+      } else {
+        params1["Granularity"] = 1440
+        params2["Granularity"] = 60
+      }
+      this.axios.post(CSS_MBPS, params1).then(res => {
         if (res.Response.Error) {
           this.$message.error(res.Response.Error.Message);
         } else {
+          // 表格数据
           this.tableData = res.Response.DataInfoList;
           this.totalItems = res.Response.DataInfoList.length;
-          //图表数据
+        }
+        this.loading = false;
+      });
+      this.axios.post(CSS_MBPS, params2).then(res => {
+        if (res.Response.Error) {
+          this.$message.error(res.Response.Error.Message);
+        } else {
+          // 图表数据
           var xAxis = [];
           var series = [];
-          res.Response.DataInfoList.slice(0, 5).forEach(item => {
+          res.Response.DataInfoList.forEach(item => {
             xAxis.push(item.Time);
             series.push(item.Flux);
           });
@@ -98,7 +123,7 @@ export default {
         }
         this.loading = false;
       });
-    }
+    },
   }
 };
 </script>

@@ -7,7 +7,6 @@
       <el-table
         :data="tableData"
         style="width: 100%;margin-top:20px;"
-        height="450"
         v-loading="loading"
       >
         <el-table-column prop="time" label="月份"></el-table-column>
@@ -29,7 +28,7 @@
 
 <script>
 import Echart from "../../components/line";;
-import { CSS_CODE, CSS_SCREEN } from "@/constants";
+import { CSS_SCREEN } from "@/constants";
 import moment from "moment";
 export default {
   name: "tab2",
@@ -82,31 +81,31 @@ export default {
         } else {
           let obj = res.Response.DataInfoList
           var mon = [];
-            for (var i = 1; i < obj.length; i++) {
-                var repeat = false;
-                  for (var j = 0; j < mon.length; j++) {
-                    if (mon[j].time == obj[i].Time.substring(0,7)) {
-                        repeat = true
-                        break
-                    }
+            for (var i = 0; i < obj.length; i++) {
+              var repeat = false;
+                for (var j = 0; j < mon.length; j++) {
+                  if (mon[j].time == obj[i].Time.substring(0,7)) {
+                      repeat = true
+                      break
                   }
-                  if (!repeat) {
-                    mon.push({time: obj[i].Time.substring(0,7)})
-                  }
-              }
+                }
+                if (!repeat) {
+                  mon.push({time: obj[i].Time.substring(0,7)})
+                }
+            }
             var monvalue = [];
             var one = 0;
-            for(var j = 0;j<mon.length;j++){
+            for(var j = 0; j < mon.length; j++){
               var one = 0;
-            for(var i=0;i<obj.length;i++){
-                  if(obj[i].Time.substring(0,7) == mon[j].num){
-                    one += parseInt(obj[i].Num);
-                  }
+            for(var i = 0; i < obj.length; i++){
+                if(obj[i].Time.substring(0,7) == mon[j].time){
+                  one += obj[i].Num;
+                }
               }
             monvalue.push({num: one});
             }
             var json_arr = [];
-            for (var i=0;i<mon.length;i++){
+            for (var i = 0; i < mon.length; i++){
               json_arr.push(Object.assign(mon[i],monvalue[i]));
             }
           const brr = json_arr.splice(0,1)

@@ -9,7 +9,6 @@
         :before-close="handleClose"
       >
         <div class="modelCenterCon">
-         
           <p class="newClear">
             <span class="modelSpan1">{{$t('DDOS.protectCon.protectionStatus')}}</span>
             <span @click="outOk()">
@@ -26,7 +25,9 @@
                 {{$t('DDOS.protectCon.CleaningShold')}}
                 <i class="el-icon-info"></i>
               </span>
+              <!-- 清洗阙值 -->
               <span>
+                <!-- v-model="servicePack.DdosThreshold" -->
                 <el-select
                   v-model="servicePack.DdosThreshold"
                   class="setSelectM"
@@ -48,22 +49,19 @@
               </span>
               <span class="modelSpan2">
                 <a
-                  class="gardenChoose"
-                  :class="saveGarden==1?'seceltGarden':''"
+                  :class="saveGarden==1?'seceltGarden gardenChoose':'gardenChoose'"
                   @click="clickGarden(1,'宽松')"
                 >{{$t('DDOS.protectCon.loose')}}</a>
                 <a
-                  class="gardenChoose"
-                  :class="saveGarden==2?'seceltGarden':''"
+                  :class="saveGarden==2?'seceltGarden gardenChoose':'gardenChoose'"
                   @click="clickGarden(2,'正常')"
                 >正常</a>
                 <a
-                  class="gardenChoose"
-                  :class="saveGarden==3?'seceltGarden':''"
+                  :class="saveGarden==3?'seceltGarden gardenChoose':'gardenChoose'"
                   @click="clickGarden(3,'严格')"
                 >{{$t('DDOS.protectCon.strict')}}</a>
               </span>
-              
+
               <el-dialog
                 :title="$t('DDOS.protectCon.toggStrtic')"
                 :visible.sync="changeModelTip3"
@@ -161,11 +159,11 @@
                   <el-option :label="$t('DDOS.protectCon.CleaningFlow')" value="clean"></el-option>
                 </el-select>
               </span>
-                <span class="modelSpan3" v-if="iptNummbps">
+              <span class="modelSpan3" v-if="iptNummbps">
                 <!-- <span v-if="iptNummbps"> -->
-                  <el-input v-model="iptmbpsText" class="intMbps" @input="CreateBasic"></el-input>
-                </span>
-                <span  class="modelSpan3" v-if="iptNummbps">Mbps</span>
+                <el-input v-model="iptmbpsText" class="intMbps" @input="CreateBasic"></el-input>
+              </span>
+              <span class="modelSpan3" v-if="iptNummbps">Mbps</span>
             </p>
           </div>
         </div>
@@ -185,8 +183,37 @@ import {
   Modify_Status
 } from "@/constants";
 export default {
+  // props: {
+  //   configShow: Boolean,
+  //   changeRow:,
+  // },
   props: {
-    configShow: Boolean
+    configShow: {
+      type: Boolean,
+      default: true
+    },
+    changeRow1: {
+      type: String,
+      default: ""
+    },
+    ddoslevel: {
+      type: String,
+      default: ""
+    }
+  },
+  watch: {
+    changeRow1(val) {
+      this.servicePack.DdosThreshold = val;
+    },
+    ddoslevel(val) {
+      if (val == "low") {
+        this.saveGarden = 1;
+      } else if (val == "middle") {
+        this.saveGarden = 2;
+      } else if (val == "high") {
+        this.saveGarden = 3;
+      }
+    }
   },
   data() {
     return {
@@ -241,10 +268,36 @@ export default {
   computed: {
     configIsShow() {
       return this.configShow;
+    },
+    configDataShow() {
+      return this.configData;
+    }
+  },
+  watch: {
+    configDataShow: {
+      handler(val) {
+        console.log(val);
+        let DdosThreshold = val.filter(v => {
+          return v.Key == "DdosThreshold";
+        });
+
+        this.servicePack.DdosThreshold = DdosThreshold[0].Value;
+        // this.topFun=''
+      },
+      deep: true
     }
   },
   created() {
     this.GetID(); //获取ID
+    this.GETSPolicy(); //获取DDoS高级策略
+    this.servicePack.DdosThreshold = this.changeRow1;
+    if (this.ddoslevel == "low") {
+      this.saveGarden = 1;
+    } else if (this.ddoslevel == "middle") {
+      this.saveGarden = 2;
+    } else if (this.ddoslevel == "high") {
+      this.saveGarden = 3;
+    }
   },
   methods: {
     //获取ID
@@ -276,9 +329,7 @@ export default {
         Id: this.resourceId
       };
       this.axios.post(GET_Status, params).then(res => {
-
         this.ShowFlag = res.Response.ShowFlag;
-        console.log( this.ShowFlag )
         if (res.Response.DefendStatus == 0) {
           this.servicePack.DefendStatus = false;
         }
@@ -304,7 +355,7 @@ export default {
     },
     //选择防护等级
     clickGarden(typeNum, type) {
-      // this.changeModel = false;
+      this.changeModel = false;
       if (typeNum == 3) {
         this.changeModelTip3 = true;
         this.tabMode = "high";
@@ -374,7 +425,6 @@ export default {
         DDoSLevel: this.tabMode
       };
       this.axios.post(Modify_Level, params).then(res => {
-        console.log(res)
         if (res.Response.Error !== undefined) {
           this.$message({
             showClose: true,
@@ -404,8 +454,8 @@ export default {
       });
     },
     //修改高级策略
-    changeTopFun(){
-      console.log(this.topFun,DDOS_POLICY_MODIFY)
+    changeTopFun() {
+      console.log(this.topFun, DDOS_POLICY_MODIFY);
       // let params = {
       //   Action:'ModifyDDoSPolicy',
       //   Version: "2018-07-09",
@@ -415,7 +465,6 @@ export default {
       //   Method: "set",
       //   DDoSLevel: this.tabMode
       // };
-
     },
     //设置基础防护的DDoS告警阈值
     CreateBasic() {
@@ -427,7 +476,6 @@ export default {
         AlarmThreshold: this.iptmbpsText
       };
       this.axios.post(SET_SHOLD, params).then(res => {
-        console.log(res);
         if (res.Response.Error !== undefined) {
           this.$message({
             showClose: true,
@@ -481,14 +529,15 @@ export default {
   margin-bottom: 10px;
   display: flex;
   align-items: center;
-  a{
+  a {
     display: inline-block;
     margin: 0 20px;
+    // color: #000;
   }
   .modelSpan1 {
     width: 120px;
   }
-  
+
   .newClear >>> .el-input__inner {
     height: 30px !important;
     line-height: 30px !important;
@@ -496,20 +545,22 @@ export default {
     border-radius: 0 !important;
   }
 }
-.modelSpan3 >>>.el-input__inner {
-      width: 100px;
-      margin-left: 10px;
-  }
- .modelSpan2{
-   float: left;
- } 
- .modelSpan3{
-   float: left;
-   margin-top: 10px;
- } 
- .modelSpan2_2{
-   margin-top: 10px;
- }
+
+ 
+.modelSpan3 >>> .el-input__inner {
+  width: 100px;
+  margin-left: 10px;
+}
+.modelSpan2 {
+  float: left;
+}
+.modelSpan3 {
+  float: left;
+  margin-top: 10px;
+}
+.modelSpan2_2 {
+  margin-top: 10px;
+}
 #configModel {
   .modelCenterCon {
     p {
@@ -526,15 +577,17 @@ export default {
       span:nth-child(2).modelSpan2 {
         .gardenChoose {
           padding: 0 20px;
-          color: #000;
           font-size: 12px;
         }
         .seceltGarden {
-          color: #006eff !important;
+          color: #006eff;
         }
       }
     }
   }
+}
+.seceltGarden {
+  color: #006eff !important;
 }
 .outOk {
   font-size: 12px;

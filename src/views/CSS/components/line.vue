@@ -15,7 +15,7 @@ export default {
   props: {
     color: {
       type: String,
-      default: "#3E8EF7"
+      default: "#2d70f6"
     },
     tooltip: {
       type: Object,
@@ -76,6 +76,8 @@ export default {
         legend: {
           data: [this.legendText],
           bottom: 0,
+          orient: 'vertical',
+          x: 'left',
         },
         xAxis: {
           type: "category",
@@ -127,9 +129,9 @@ export default {
             symbol: "none",
             itemStyle: {
               normal: {
-                color: '#2d70f6',
+                color: this.color,
                 lineStyle:{
-                    width:3//设置线条粗细
+                  width:3//设置线条粗细
                 }
               }
             }

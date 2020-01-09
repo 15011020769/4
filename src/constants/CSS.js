@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2020-01-06 17:51:24
- * @LastEditTime : 2020-01-07 15:31:13
+ * @LastEditTime : 2020-01-08 10:36:48
  * @LastEditors  : Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: /new_product/src/constants/CSS.js
@@ -28,7 +28,7 @@ export const CSS_CODECHARTS = 'live2/DescribeLiveTranscodeTotalInfo'
 // 查询截图张数
 export const CSS_SCREEN = 'live2/DescribeScreenShotSheetNumList'
 // 查询并发录制路数
-export const CSS_RECORDsTREAM = 'live2/DescribeConcurrentRecordStreamNum'
+export const CSS_RECORDSTREAM = 'live2/DescribeConcurrentRecordStreamNum'
 //直播计费带宽和流量数据查询
 export const CSS_MBPS = 'live2/DescribeBillBandwidthAndFluxList'
 //查询按省份和运营商分组的播放数据
@@ -77,6 +77,14 @@ export const GET_SNAPSHOT_TEMPLATE = 'live2/DescribeLiveSnapshotTemplates'
 export const UPDATE_SNAPSHOT_TEMPLATE = 'live2/ModifyLiveSnapshotTemplate'
 // 删除截图鉴黄模板
 export const DELETE_SNAPSHOT_TEMPLATE = 'live2/DeleteLiveSnapshotTemplate'
+// 创建回调模板
+export const ADD_CALLBACK_TEMPLATE = 'live2/CreateLiveCallbackTemplate'
+// 获取回调模板列表
+export const GET_CALLBACK_TEMPLATES = 'live2/DescribeLiveCallbackTemplates'
+// 修改回调模板
+export const UPDATE_CALLBACK_TEMPLATES = 'live2/ModifyLiveCallbackTemplate'
+// 删除回调模板
+export const DELETE_CALLBACK_TEMPLATES = 'live2/DeleteLiveCallbackTemplate'
 
 
 /** 查询实时总带宽 实时总连接数 */
@@ -117,5 +125,17 @@ export const LIVE_DESCRIBE_LIVEFORBIDSTREAMLIST = 'live2/DescribeLiveForbidStrea
 export const LIVE_DESCRIBE_LIVESTREAMONLINELIST = 'live2/DescribeLiveStreamOnlineList'
 /** 禁止直播流 */
 export const LIVE_FORBIDLIVESTREAM = 'live2/ForbidLiveStream'
-// 查询播放鉴权key
+/** 恢复直播流 */
+export const LIVE_RESUMELIVESTREAM = 'live2/ResumeLiveStream'
+/** 断开直播流 */
+export const LIVE_DROPLIVESTREAM = 'live2/DropLiveStream'
+/** 查询播放鉴权key */
 export const LIVE_DESCRIBE_LIVEPLAYAUTHKEY = 'live2/DescribeLivePlayAuthKey'
+/** 删除水印 */
+export const LIVE_DELETELIVEWATERMARK = 'live2/DeleteLiveWatermark'
+/** 更新水印 */
+export const LIVE_UPDATELIVEWATERMARK = 'live2/UpdateLiveWatermark'
+/** 添加水印 */
+export const LIVE_ADDLIVEWATERMARK = 'live2/AddLiveWatermark'
+/** 查询用户套餐包总量、使用量、剩余量、包状态、购买时间和过期时间等 */
+export const LIVE_DESCRIBE_LIVEPACKAGEINFO = 'live2/DescribeLivePackageInfo'

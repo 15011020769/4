@@ -1,8 +1,9 @@
 <template>
-<!-- 防护配置 -->
+  <!-- 防护配置 -->
   <div class="wrap">
     <HeaderCom title="防护配置" />
     <el-tabs v-model="activeName" @tab-click="handleClick">
+      <!-- DDOS攻击防护 -->
       <el-tab-pane
         :label="$t('DDOS.Statistical_forms.DDoS_Protection')"
         name="first"
@@ -10,7 +11,11 @@
       >
         <div class="mainContent">
           <div class="textAlignTop newClear">
-            <el-select class="checkListSelect" placeholder="要过滤的标签" v-model="filterConrent">
+            <el-select
+              class="checkListSelect"
+              :placeholder="$t('DDOS.Proteccon_figura.yglbq')"
+              v-model="filterConrent"
+            >
               <el-option
                 v-for="(item, index) in options1"
                 :label="item.label"
@@ -18,20 +23,28 @@
                 :key="index"
               ></el-option>
             </el-select>
-            <el-input v-model="tableDataName" class="searchs" placeholder="请输入要查询的内容"></el-input>
+            <el-input
+              v-model="tableDataName"
+              class="searchs"
+              :placeholder="$t('DDOS.Proteccon_figura.qsrcxnr')"
+            ></el-input>
             <el-button class="el-icon-search" @click="doFilter"></el-button>
           </div>
           <div class="mainTable">
-            {{tableDataBegin}}
             <el-table
               :data="tableDataBegin.slice((currentPage-1)*pageSize,currentPage*pageSize)"
               v-loading="loading"
+              empty-text="暫無數據"
             >
               <el-table-column prop="Record.Id" :label="$t('DDOS.Proteccon_figura.Id_name')">
                 <template slot-scope="scope">
                   <div v-for="(item, index) in scope.row.Record" :key="index">
-                    <div v-if="item.Key=='Id'">{{item.Value}}</div>
+                    <span v-if="item.Key=='Id'">{{item.Value}}</span>
+                    <!-- ID名称-->
                     <!-- <a v-if="item.Key=='Id'" href="#" @click="toDetail(scope.$index, scope.row)">{{item.Value}}</a> -->
+                  </div>
+                  <div v-for="(item, index) in scope.row.Record" :key="index+'i'">
+                    <span v-if="item.Key=='Name'">{{item.Value}}</span>
                   </div>
                 </template>
               </el-table-column>
@@ -39,41 +52,52 @@
                 <template slot-scope="scope">
                   <div v-for="(item, index) in scope.row.Record" :key="index">
                     <div v-if="item.Key=='GroupIpList'">{{item.Value}}</div>
+                    <!-- IP地址-->
                   </div>
                 </template>
               </el-table-column>
+
               <el-table-column prop="origin" :label="$t('DDOS.Proteccon_figura.region')">
                 <template slot-scope="scope">
                   <div v-for="(item, index) in scope.row.Record" :key="index">
-                    <div v-if="item.Key=='Id'">-</div>
+                    <div v-if="item.Key=='Id'">中国台湾</div>
+                    <!--地区：中国台湾 -->
                   </div>
                 </template>
               </el-table-column>
+
               <el-table-column
                 prop="Record.DefendStatus"
                 :label="$t('DDOS.Proteccon_figura.Protection_state')"
               >
                 <template slot-scope="scope">
                   <div v-for="(item, index) in scope.row.Record" :key="index">
-                    <div v-if="item.Key=='DefendStatus' && item.Value == '1'">开启</div>
-                    <div v-else-if="item.Key=='DefendStatus' && item.Value != '1'">关闭</div>
+                    <div v-if="item.Key=='DefendStatus' && item.Value == '1'">
+                      {{$t('DDOS.AccesstoCon.AccOpen')}}
+                    </div>
+                    <div v-else-if="item.Key=='DefendStatus' && item.Value != '1'">-</div>
                   </div>
                 </template>
               </el-table-column>
-              <el-table-column prop="Record.DdosThreshold" label="清洗阈值">
+              <el-table-column
+                prop="Record.DdosThreshold"
+                :label="$t('DDOS.protectCon.CleaningShold')"
+              >
                 <template slot-scope="scope">
                   <div v-for="(item, index) in scope.row.Record" :key="index">
                     <div v-if="item.Key=='DdosThreshold'">{{item.Value}}Mps</div>
                   </div>
                 </template>
               </el-table-column>
+
               <el-table-column
-                prop="saveGarden"
+                prop="saveGardenText"
                 :label="$t('DDOS.Proteccon_figura.Protection_level')"
               >
                 <template slot-scope="scope">
                   <div v-for="(item, index) in scope.row.Record" :key="index">
-                    <div v-if="item.Key=='Id'">-</div>
+                    <div v-if="item.Key=='DDoSLevel'">{{DDoSLevel[item.Value]}}</div>
+                    <!--防护等级 -->
                   </div>
                 </template>
               </el-table-column>
@@ -84,27 +108,40 @@
                 <template slot-scope="scope">
                   <div v-for="(item, index) in scope.row.Record" :key="index">
                     <div v-if="item.Key=='Id'">-</div>
+                    <!--业务场景 -->
                   </div>
                 </template>
               </el-table-column>
-            
               <el-table-column
-                prop="advanced"
+                prop="Record.advanced"
                 :label="$t('DDOS.Proteccon_figura.Advanced_strategy')"
               >
                 <template slot-scope="scope">
                   <div v-for="(item, index) in scope.row.Record" :key="index">
-                    <div v-if="item.Key=='Id'">-</div>
+                    <div v-if="item.Key=='Id'">
+                      <div v-for="(item2, i) in bindingArr" :key="i+'i'">
+                        <div v-if="item2.ResId==item.Value">
+                          {{item2.PolicyName}}
+                        </div>
+                      </div>
+                    </div>
+                    <!--高级防护策略 -->
                   </div>
                 </template>
               </el-table-column>
+
               <el-table-column prop="action" label="操作" width="180">
                 <template slot-scope="scope">
                   <el-button @click="changeRow(scope.$index, scope.row)" type="text" size="small">修改</el-button>
                 </template>
               </el-table-column>
               <!-- 修改弹框 -->
-              <changeModel :configShow="changeModel"  @closeConfigModel="closeConfigModel" />
+              <changeModel
+                :configShow="changeModel"
+                :ddoslevel="ddoslevel"
+                @closeConfigModel="closeConfigModel"
+                :changeRow1="changeRow1"
+              />
             </el-table>
           </div>
           <div class="Right-style pagstyle">
@@ -125,6 +162,7 @@
           <ccProtection />
         </div>
       </el-tab-pane>
+      <!-- DDOS高级防护策略 -->
       <el-tab-pane
         :label="$t('DDOS.Proteccon_figura.Advanced_strategys')"
         name="third"
@@ -138,7 +176,7 @@
               @click="addNewTactics"
             >{{$t('DDOS.Proteccon_figura.Add_newpolicy')}}</el-button>
             <div class="minTable">
-              <el-table :data="tableDataPolicy" height="450" v-loading="loading">
+              <el-table :data="tableDataPolicy" height="450" v-loading="loading" empty-text="暫無數據">
                 <el-table-column prop="PolicyName" :label="$t('DDOS.Proteccon_figura.Policy_name')">
                   <template slot-scope="scope">
                     {{scope.row.PolicyName}}
@@ -169,6 +207,7 @@
                       @click.native.prevent="deleteRow(scope.$index, scope.row)"
                       type="text"
                       size="small"
+                      :disabled="scope.row.BoundResources.length==0?false:true"
                     >{{$t('DDOS.Proteccon_figura.Delete')}}</el-button>
                     <el-dialog
                       title="删除高级策略"
@@ -177,15 +216,17 @@
                       :before-close="handleClose"
                     >
                       <h1 class="deleteTit">
-                        <i class="el-icon-warning"></i>确定删除该政策么？
+                        <i class="el-icon-warning"></i>
+                        {{$t('DDOS.Proteccon_figura.delete_thepolicy')}}
                       </h1>
-                      <p
-                        class="deleteCont"
-                      >删除策略后，该防护策略将从列表中永久删除，不可恢复。若您已开启UDP水印剥离开关，则策略会同步关闭UDP水印剥离开关。</p>
-                      <p class="deleteCont">确定删除该条高级策略(erg)？</p>
+                      <p class="deleteCont">{{$t('DDOS.Proteccon_figura.After_deletingpolicy')}}</p>
+                      <p class="deleteCont">{{$t('DDOS.Proteccon_figura.delete_advanced')}}({{deleteBegin.PolicyName}})?</p>
                       <span slot="footer" class="dialog-footer">
                         <el-button @click="dialogVisible = false">取 消</el-button>
-                        <el-button type="primary" @click="deleteDDoSPolicy()">确 定</el-button>
+                        <el-button
+                          type="primary"
+                          @click="deleteDDoSPolicy()"
+                        >{{$t('DDOS.Proteccon_figura.Determination')}}</el-button>
                       </span>
                     </el-dialog>
                     <el-button
@@ -205,8 +246,8 @@
                           style="text-align: left; display: inline-block"
                           v-model="valueThrou"
                           filterable
-                          :left-default-checked="[2, 3]"
-                          :right-default-checked="[1]"
+                          :left-default-checked="[]"
+                          :right-default-checked="[]"
                           :render-content="renderFunc"
                           :titles="['选择资源', '已选择']"
                           :button-texts="['到左边', '到右边']"
@@ -221,7 +262,10 @@
 
                       <span slot="footer" class="dialog-footer">
                         <el-button @click="dialogVisible1 = false">取 消</el-button>
-                        <el-button type="primary" @click="bindingResourceSure()">确 定</el-button>
+                        <el-button
+                          type="primary"
+                          @click="bindingResourceSure()"
+                        >{{$t('DDOS.Proteccon_figura.Determination')}}</el-button>
                       </span>
                     </el-dialog>
                   </template>
@@ -230,7 +274,12 @@
             </div>
           </div>
           <div v-if="!tableShow">
-            <addNewTactics :policy="policy" :isShow="tableShow" @closePage="closePageAdd" @describeDDoSPolicyADD="describeDDoSPolicy" />
+            <addNewTactics
+              :policy="policy"
+              :isShow="tableShow"
+              @closePage="closePageAdd"
+              @describeDDoSPolicyADD="describeDDoSPolicy"
+            />
           </div>
         </div>
       </el-tab-pane>
@@ -244,7 +293,10 @@ import ccProtection from "./tabs/ccProtection"; //cc防护模块
 import {
   RESOURCE_LIST,
   DDOSPOLICY_CONT,
-  DDOS_POLICY_DELETE
+  DDOS_POLICY_DELETE,
+  GET_ID,
+  Modify_Level,
+  RESBIND_MODIFY
 } from "@/constants";
 import HeaderCom from "../../CLA/Public/Head";
 export default {
@@ -252,6 +304,7 @@ export default {
     return {
       loading: true,
       resourceId: "", //资源ID
+      bindingArr: [], //资源和策略绑定关系数组
       tableDataBegin: [], //DDoS攻击防护列表
       // 过滤刷新列表过程中使用
       allData: [], // 存储全部实例列表
@@ -276,9 +329,10 @@ export default {
       tableDataPolicy: [], //tab3,DDoS高级防护策略
       policy: {}, //配置高级防护策略的对象
       resData: this.generateData(),
-      valueThrou: [1],
+      valueThrou: [],
+      valueRightOld: [],
       renderFunc(h, option) {
-        return <span> {option.key} </span>;
+        return <div><span> {option.key} </span><br/><span>{option.label}</span></div>;
       }, //穿梭框
       activeName: "first", //tab页
       filterConrent: "IP",
@@ -292,12 +346,19 @@ export default {
       tableShow: true,
       deleteIndex: "",
       deleteBegin: {},
-      deleteIndex1: "",
-      deleteBegin1: {},
+      bindingIndex: "",
+      bindingCon: {},
       thisData: ["1", "2", "3"],
       changeModelTip1: false, //修改模式提示弹框
       changeModelTip2: false,
-      changeModelTip3: false
+      changeModelTip3: false,
+      changeRow1: "",
+      DDoSLevel: {
+        low: "宽松",
+        middle: "正常",
+        high: "严格"
+      },
+      ddoslevel: ""
     };
   },
   components: {
@@ -319,6 +380,7 @@ export default {
         Business: "net"
       };
       this.axios.post(RESOURCE_LIST, params).then(res => {
+        // console.log(res, 8888);
         this.tableDataBegin = res.Response.ServicePacks;
         for (let i = 0; i < this.tableDataBegin.length; i++) {
           let list = this.tableDataBegin[i];
@@ -330,8 +392,35 @@ export default {
         }
         this.allData = res.Response.ServicePacks;
         this.totalItems = res.Response.Total;
+        this.allData.forEach(val => {
+          val.Record.forEach(item => {
+            if (item.Key == "Id") {
+              let params = {
+                Version: "2018-07-09",
+                Business: "net",
+                Id: item.Value,
+                Method: "get"
+              };
+              this.axios.post(Modify_Level, params).then(res => {
+                const obj = {
+                  Key: "DDoSLevel",
+                  Value: res.Response.DDoSLevel
+                };
+                val.Record.push(obj);
+              });
+            }
+          });
+        });
         this.loading = false;
+
+        //宽松 1
+        // console.log(this.allData)
       });
+    },
+    //修改弹框关闭按钮
+    closeConfigModel(isShow) {
+      this.changeModel = isShow;
+      this.describeResourceList();
     },
     // 1.2.获取DDoS高级策略
     describeDDoSPolicy() {
@@ -343,14 +432,49 @@ export default {
       };
       this.axios.post(DDOSPOLICY_CONT, params).then(res => {
         this.tableDataPolicy = res.Response.DDosPolicyList;
+        this.getBindingArr();
         this.loading = false;
+        // console.log(this.tableDataPolicy)
       });
     },
-
+    // 1.3.资源绑定DDoS高级策略
+    modifyResBindDDoSPolicy(resId, method) {
+      let params = {
+        Version: "2018-07-09",
+        Business: "net",
+        Id: resId, //资源ID
+        PolicyId: this.bindingCon.PolicyId, //策略ID
+        Method: method //bind/unbind
+      };
+      this.axios.post(RESBIND_MODIFY, params).then(res => {
+        // console.log(res.Response)
+      });
+    },
+    // 获取资源和策略绑定关系数组
+    getBindingArr(){
+      // 循环策略列表（找出已被绑定的资源）
+      let binded = {};
+      this.tableDataPolicy.forEach(policy => {
+        policy.BoundResources.forEach(res => {
+          binded = {};
+          binded.ResId = res;
+          binded.PolicyId = policy.PolicyId;
+          binded.PolicyName = policy.PolicyName;
+          this.bindingArr.push(binded);
+        })
+      });
+    },
     // 修改
-    changeRow(changeIndex, changeRow) {
-      this.changeModel = true;
-
+    changeRow(changeIndex, changeRow1) {
+      changeRow1.Record.forEach(item => {
+        if (item.Key == "DdosThreshold") {
+          this.changeRow1 = item.Value;
+        }
+        if (item.Key == "DDoSLevel") {
+          this.ddoslevel = item.Value;
+        }
+      });
+      this.changeModel = true; //DdosThreshold"
     },
     // 搜索
     doFilter() {
@@ -401,7 +525,7 @@ export default {
       } else if (tab.name == "third") {
         //DDOS高级防护策略
         this.describeDDoSPolicy();
-        this.closePageAdd()
+        this.closePageAdd();
       }
     },
 
@@ -468,21 +592,98 @@ export default {
     },
     //绑定资源按钮
     bindingResource(bindingIndex, bindingCon) {
-      this.deleteIndex1 = bindingIndex;
-      this.deleteBegin1 = bindingCon;
+      this.resData = [];
+      // 循环策略列表（找出已被绑定的资源）
+      let binded = [];
+      this.tableDataPolicy.forEach(policy => {
+        if(policy.PolicyId != bindingCon.PolicyId){
+          policy.BoundResources.forEach(res => {
+            binded.push(res);
+          })
+        }
+      });
+      // 循环资源列表
+      this.tableDataBegin.forEach(resource => {
+        const objTemp = {};
+        for (const i in resource.Record) {
+          if (resource.Record.hasOwnProperty(i)) {
+            const element = resource.Record[i];
+            if(element.Key == "Id"){
+              objTemp.key = element.Value;
+            } else if(element.Key == "GroupIpList"){
+              //175.97.143.121-tpe-bgp-300-1;175.97.142.153-tpe-bgp-100-1
+              let arr = element.Value.split(';');
+              objTemp.label = "";
+              for (const j in arr) {
+                if (arr.hasOwnProperty(j)) {
+                  const ipStr = arr[j];
+                  objTemp.label += ipStr.substring(0, ipStr.indexOf('-'))+";";
+                }
+              }
+            }
+          }
+        }
+        // resource.Record.forEach(element => {
+        //   if(element.Key == "Id"){
+        //     objTemp.key = element.Value;
+        //   } else if(element.Key == "GroupIpList"){
+        //     //175.97.143.121-tpe-bgp-300-1;175.97.142.153-tpe-bgp-100-1
+        //     let arr = element.Value.split(';');
+        //     objTemp.label = "";
+        //     arr.forEach(ipStr => {
+        //       let tmpStr = ipStr+"";
+        //       objTemp.label += tmpStr.substring(0, tmpStr.indexOf('-'))+";";
+        //     });
+        //   }
+        // });
+        if(binded.length>0 && binded.indexOf(objTemp.key)<0){
+          this.resData.push(objTemp);
+        } else if(binded.length==0){
+          this.resData.push(objTemp);
+        }
+      });
+      this.valueThrou = bindingCon.BoundResources;
+      this.valueRightOld = bindingCon.BoundResources;
+      // console.log(this.tableDataBegin);
+      this.bindingIndex = bindingIndex;
+      this.bindingCon = bindingCon;
       this.dialogVisible1 = true;
     },
     //绑定资源弹框确定按钮
     bindingResourceSure() {
+      // 获取‘已选择’的两个数组差集
+      let diff = [];// 1.绑定资源元素集（原数组中不包含的新元素）
+      let tmp = JSON.parse(JSON.stringify(this.valueRightOld));// 2.解绑资源元素集（原数组中移除的元素）
+      // 循环‘已选择’
+      this.valueThrou.forEach(element => {
+        if(this.valueRightOld.indexOf(element) < 0){
+          diff.push(element);
+        } else {
+          tmp.splice(tmp.indexOf(element),1);
+        }
+      });
+      this.loading = true;
+      // console.log(diff, tmp);
+      diff.forEach(resId => {
+        this.modifyResBindDDoSPolicy(resId, "bind");
+      });
+      tmp.forEach(resId => {
+        this.modifyResBindDDoSPolicy(resId, "unbind");
+      });
+      setTimeout(() => {
+        this.describeDDoSPolicy();
+      }, 2000);
+
       this.dialogVisible1 = false;
     },
     //接收子组件的方法，并让子组件消失父组件显示
     closePageAdd(obj) {
-      console.log(obj)
       this.tableShow = true;
     },
-    //穿梭框事件
-    handleChange(value, direction, movedKeys) {},
+    //穿梭框事件(value右侧数组，direction:left/right，movedKeys移动元素)
+    handleChange(value, direction, movedKeys) {
+      // this.valueRightOld = value;
+    },
     generateData() {
       const data = [];
       return data;
@@ -493,17 +694,12 @@ export default {
         path: "/choose"
       });
       window.open(routeUrl.href, "_blank");
-    },
-    //修改弹框关闭按钮
-    closeConfigModel(isShow) {
-      this.changeModel = isShow;
-      this.describeResourceList();
     }
   }
 };
 </script>
 <style lang="scss" scoped>
-a{
+a {
   cursor: pointer;
 }
 .wrap >>> .el-tabs__nav-wrap {

@@ -1,34 +1,37 @@
 <template>
-  <div class="newdFeeds-wrap" v-loading="loading">
+  <div class="newdFeeds-wrap" >
     <HeadCom title="通知公告"></HeadCom>
     <div class="wrap">
-      <div class="wrap-button">
-            <el-button @click="removePeol">删除</el-button>
-            <el-button @click="changeRead">标记为已读</el-button>
-            <el-button @click="AllRead">全部标记为已读</el-button>
-      </div>
-      <div class="wrap-table">
+      <div class="message-funRight">
+          <div class="search">
+            <el-input placeholder="请输入内容" v-model="inputVal"></el-input>
+            <span>
+              <i class="el-icon-search" @click="tableSearch"></i>
+            </span>
+          </div>
+        </div>
+      <div class="wrap-table" >
         <template>
           <el-table
             :data="tableData"
             style="width: 100%"
             height="450"
-            @selection-change="handleSelectionChange"
+            v-loading="loading"
           >
-            <el-table-column type="selection" width="55"></el-table-column>
-            <el-table-column prop="title" label="消息内容" >
+            <el-table-column prop="title" label="标题" >
                 <template slot-scope="scope">
                    <el-link @click="detailsMesg(scope.row)" type="primary" class="edit">{{scope.row.title}}</el-link>
                 </template>
             </el-table-column>
-            <el-table-column prop="sendTime" label="接收时间"></el-table-column>
+            <el-table-column prop="publishTime" label="发布时间"></el-table-column>
             <el-table-column prop="content" label="消息内容"></el-table-column>
-            <el-table-column label="操作" >
+            <el-table-column prop="publishStatus" label="状态"></el-table-column>
+            <el-table-column label="操作">
               <template slot-scope="scope">
                 <el-button
-                  @click.native.prevent="deleteRow(scope.row)"
+                  @click.native.prevent="detailsMesg(scope.row)"
                   type="text"
-                >移除</el-button>
+                >查看</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -45,34 +48,11 @@
         </div>
       </div>
     </div>
-    <!-- 删除对话框 -->
-      <el-dialog
-  title="批量删除"
-  :visible.sync="dialogVisible"
-  width="30%"
-  :before-close="handleClose">
-  <span>删除后将无法恢复，您确定要删除吗？</span>
-  <span slot="footer" class="dialog-footer">
-    <el-button @click="dialogVisible = false">取 消</el-button>
-    <el-button type="primary" @click="confirmDel">确 定</el-button>
-  </span>
-</el-dialog>
- <!-- 全部改为已读状态弹框 -->
- <el-dialog
-  title="确认标记所有已读"
-  :visible.sync="MessageDialog"
-  width="30%"
-  :before-close="handleCloseMsg">
-  <span>确认标记所有消息为已读吗？</span>
-  <span slot="footer" class="dialog-footer">
-    <el-button @click="MessageDialog = false">取 消</el-button>
-    <el-button type="primary" @click="updataMesg">确 定</el-button>
-  </span>
-</el-dialog>
   </div>
 </template>
 
 <script>
+import {NOTICE_LIST} from  '@/constants/MGC.js';
 import HeadCom from "@/components/public/Head";
 export default {
   components: {
@@ -81,7 +61,8 @@ export default {
   name: "newdFeeds",
   data() {
     return {
-      loading:false,
+      inputVal:'',
+      loading:true,
       TotalCount: 0, //分页
       pagesize: 10, //分页条数
       currpage: 1, //当前页码
@@ -97,129 +78,40 @@ export default {
   methods: {
     //初始化表格数据
     init() {
-      let params = {
-        searchForm: this.tableData,
-        limit: this.pagesize,
-        page: this.currpage
-      };
-      this.axios
-        .post(
-          `${process.env.VUE_APP_adminUrl}` + "/taifucloud/notice/owner/list",
-          params
-        )
-        .then(res => {
-          console.log(res)
-          this.tableData = res.data.list;
-          this.TotalCount = res.data.totalCount;
-          this.loading = false
-        });
-    },
-    //批量删除
-    removePeol(){
-      if(this.getData.length != 0){
-          this.dialogVisible = true
-      }else{
-         this.$message("请选择数据")
-      }
-    },
-    //单条删除
-    deleteRow(val){
-       let params = {
-           qcloudUin:val.qcloudUin,
-           noticeIds:[val.noticeId]
-       }
-       this.axios.delete(`${process.env.VUE_APP_adminUrl}`+"/taifucloud/notice/owner/delete",{data: params}).then(res=>{
-           console.log(res)
-           this.init()
+       let uin = "100011921910"
+       let Page = this.currpage //当前页码
+       let Rp = this.pagesize  //条数
+       this.axios.get(`${process.env.VUE_APP_adminUrl + NOTICE_LIST}`+'?uin='+uin+'&publishStatus=2'+'&page='+Page+'&limit='+Rp).then(res=>{
+         console.log(res)
+         this.tableData = res.page.list
+         this.TotalCount = res.page.totalCount
+         this.loading = false
        })
     },
-    //删除按钮
-    confirmDel(){
-       var delIndex = []
-       this.getData.forEach(item => {
-         delIndex.unshift(item)
+    tableSearch() {
+       let uin = "100011921910"
+       let Page = this.currpage //当前页码
+       let Rp = this.pagesize  //条数
+       let title = this.inputVal
+       this.axios.get(`${process.env.VUE_APP_adminUrl + NOTICE_LIST}`+'?uin='+uin+'&publishStatus=2'+'&page='+Page+'&limit='+Rp+'&title='+title).then(res=>{
+         console.log(res)
+         this.tableData = res.page.list
+         this.TotalCount = res.page.totalCount
        })
-       delIndex.forEach(item => {
-         console.log(item)
-         let params = {
-           qcloudUin:item.qcloudUin,
-           noticeIds:[item.noticeId]
-         }
-         this.axios.delete(`${process.env.VUE_APP_adminUrl}`+"/taifucloud/notice/owner/delete",{data: params}).then(res=>{
-           console.log(res)
-           this.init()
-           this.$message('删除成功')
-          })
-       })
-       this.dialogVisible = false;
     },
     //跳转详情页
     detailsMesg(val){
       this.$router.push({
       path: "/newsdetils",
         query: {
-          detailsData: val.noticeId,
-          detailsIn:val.qcloudUin
+          detailsDatas: val.id,
         }
       });
-    },
-    //多选标记为已读
-    changeRead(){
-       if(this.getData.length!=0){
-         var update = []
-         this.getData.forEach(item => {
-            update.push(item)
-         })
-         update.forEach(item => {
-           let params = {
-                noticeId:item.noticeId,
-                qcloudUin:item.qcloudUin,
-            }
-            this.axios.put(`${process.env.VUE_APP_adminUrl}`+"/taifucloud/notice/owner/update",params).then(res=>{
-                this.init()
-                console.log(res)
-                this.$message('标记成功')
-            })
-         })
-       }else{
-         this.$message("请选择数据")   
-       }
-    },
-    //全部标记为已读
-    updataMesg(){
-        this.tableData.forEach(item=>{
-            let params = {
-                noticeId:item.noticeId,
-                qcloudUin:item.qcloudUin,
-            }
-          this.axios.put(`${process.env.VUE_APP_adminUrl}`+"/taifucloud/notice/owner/update",params).then(res=>{
-            this.init()
-            console.log(res)
-            this.$message('标记成功')
-          })
-        })   
-        this.MessageDialog = false
-    },
-    //全部标记为已读显示弹框
-    AllRead(){
-       this.MessageDialog = true
-    },
-    //表格选框
-    handleSelectionChange(val) {
-       this.getData = val
     },
     //分页
     handleCurrentChange(val) {
       this.currpage = val;
       this.init();
-    },
-    //关闭删除弹框
-    handleClose(){
-      this.dialogVisible = false;
-    },
-    //关闭全部移除选框
-    handleCloseMsg(){
-      this.MessageDialog = false;
     }
   }
 };
@@ -229,6 +121,35 @@ export default {
 .edit{
   cursor: pointer; 
 }
+     .message-funRight {
+        width: 200px;
+        display: flex;
+        align-items: center;
+        float: right;
+        padding: 20px;
+        .search {
+          position: relative;
+          width: 100%;
+   
+          span {
+            height: 30px;
+            width: 30px;
+            align-items: center;
+            justify-content: center;
+            display: flex;
+            position: absolute;
+            top: 0;
+            right: 0;
+            cursor: pointer;
+
+            i {
+              font-size: 14px;
+              font-weight: bold;
+              margin-top: 10px;
+            }
+          }
+        }
+      }
 .newdFeeds-wrap >>> .el-button {
   height: 30px;
   line-height: 30px;
@@ -238,14 +159,9 @@ export default {
 }
 .wrap {
   width: 100%;
-  .wrap-button {
-    width: 100%;
-    padding: 20px 0px 20px 20px;
-    box-sizing: border-box;
-  }
   .wrap-table {
     width: 100%;
-    padding: 0px 20px 0 20px;
+    padding: 20px 20px 0 20px;
     box-sizing: border-box;
   }
 }

@@ -11,9 +11,9 @@
       </div>
     </div>
     <div class="table">
-      <div class="addBtn">
+      <div class="addBtn"> 
         <el-row>
-          <el-button type="primary" @click="addMessage">新增消息策略</el-button>
+         <el-button type="primary" @click="addMessage">新增消息策略</el-button>
         </el-row>
         <el-row class="seek">
           <el-input v-model="triggerInput" placeholder="请输入策略ID、策略名称搜索"></el-input>
@@ -45,7 +45,7 @@
         </el-table-column>
       </el-table>
       <!-- 分页 -->
-      <div class="Right-style pagstyle">
+      <div class="Right-style pagstyle" style="background: #fff;">
         <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;{{$t("CVM.strip")}}</span>
         <el-pagination
           :page-size="pagesize"
@@ -186,8 +186,8 @@ export default {
   methods: {
     //新增消息策略
     addMessage() {
-        this.$router.push( {name:"create"});
-      // this.$router.push({ path: "/message/create", query: {} });
+      alert("/message/create")
+        this.$router.push({path:"/message/create"});
     },
     //分页
     handleCurrentChange(val) {

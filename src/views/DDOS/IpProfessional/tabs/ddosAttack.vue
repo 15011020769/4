@@ -24,8 +24,8 @@
             type="daterange"
             class="newDataTime"
             range-separator="至"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期"
+            :start-placeholder="$t('DDOS.UnsealCode.beginDate')"
+            :end-placeholder="$t('DDOS.UnsealCode.overDate')"
           ></el-date-picker>
         </div>
         <div style="margin-top:12px;">
@@ -34,7 +34,7 @@
             v-model="inputId"
             @change="changeId"
             filterable
-            placeholder="请输入要查询的ID或名称"
+            :placeholder="$t('DDOS.AccesstoCon.searchAccess')"
             style="margin-right:10px;"
           >
             <el-option :label="inputId" :value="inputId"></el-option>
@@ -87,6 +87,7 @@
           <el-table
             height="450"
             :data="tableDataOfDescribeDDoSNetEvList.slice((currentPage-1)*pageSize,currentPage*pageSize)"
+            empty-text='暫無數據'
           >
             <el-table-column prop="attackTime" :label="$t('DDOS.Statistical_forms.Attack_time')"></el-table-column>
             <el-table-column prop="durnTime" :label="$t('DDOS.Statistical_forms.Duration')"></el-table-column>
@@ -101,7 +102,7 @@
         </div>
 
         <div class="Right-style pagstyle">
-          <span class="pagtotal">共&nbsp;{{totalItems}}&nbsp;条</span>
+          <span class="pagtotal">共&nbsp;{{totalItems}}&nbsp;{{$t('DDOS.UnsealCode.tiao')}}</span>
           <el-pagination
             :page-size="pageSize"
             :pager-count="7"
@@ -131,7 +132,7 @@ export default {
       dateChoice1: {}, //选择日期
       IpList: "",
       inputId: "", //下拉框ID
-      timeBtnSelect2: "总览", //ddos时间按钮下面第二个下拉
+      timeBtnSelect2: "總覽", //ddos时间按钮下面第二个下拉
       activeName1: "bps", //DDoS攻击防护-二级tab标识
       tableDataOfDescribeDDoSNetEvList: [], //DDoS攻击事件列表
       currentPage: 1, //当前页
@@ -436,7 +437,7 @@ export default {
         },
         series: [
           {
-            name: "攻击流量宽带",
+            name: "攻擊流量寬頻",
             type: "line",
             data: y,
             itemStyle: {
@@ -501,7 +502,7 @@ export default {
         },
         series: [
           {
-            name: "总攻击流量",
+            name: "總攻擊流量",
             type: "line",
             data: y,
             itemStyle: {

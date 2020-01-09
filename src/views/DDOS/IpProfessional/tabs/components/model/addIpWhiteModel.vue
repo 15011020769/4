@@ -31,7 +31,7 @@
                   <td>
                     <el-input
                       class="inputChange"
-                      placeholder="请输入IP"
+                      :placeholder="$t('DDOS.Proteccon_figura.qsrip')"
                       v-model="item.urlAddress"
                       autocomplete="off"
                     ></el-input>

@@ -20,7 +20,7 @@ module.exports = {
   kms: '密钥管理服务 KMS',
   database: '云数据库',
   middleware: '互联网中间件',
-  ckafka: '消息服务 CKafka',
+  ckafka: '消息队列 CKafka',
   net: '网络',
   clb: '负载均衡 CLB',
   dc: '专线接入 DC',

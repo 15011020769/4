@@ -75,15 +75,33 @@
             <el-table-column prop="Status" :label="$t('DDOS.basicProtection.aqzt')">
               <template slot-scope="scope">
                 <div v-if="selectedSubarea=='cvm'">
-                  <span v-if="scope.row.InstanceState == 'PENDING'">{{$t('DDOS.basicProtection.cjz')}}</span>
-                  <span v-else-if="scope.row.InstanceState == 'LAUNCH_FAILED'">{{$t('DDOS.basicProtection.cjsb')}}</span>
-                  <span v-else-if="scope.row.InstanceState == 'RUNNING'">{{$t('DDOS.AssetList.Running')}}</span>
-                  <span v-else-if="scope.row.InstanceState == 'STOPPED'">{{$t('DDOS.basicProtection.gj')}}</span>
-                  <span v-else-if="scope.row.InstanceState == 'STARTING'">{{$t('DDOS.basicProtection.kjz')}}</span>
-                  <span v-else-if="scope.row.InstanceState == 'STOPPING'">{{$t('DDOS.basicProtection.gjz')}}</span>
-                  <span v-else-if="scope.row.InstanceState == 'REBOOTING'">{{$t('DDOS.basicProtection.cqz')}}</span>
-                  <span v-else-if="scope.row.InstanceState == 'SHUTDOWN'">{{$t('DDOS.basicProtection.tzdxh')}}</span>
-                  <span v-else-if="scope.row.InstanceState == 'TERMINATING'">{{$t('DDOS.basicProtection.xhz')}}</span>
+                  <span
+                    v-if="scope.row.InstanceState == 'PENDING'"
+                  >{{$t('DDOS.basicProtection.cjz')}}</span>
+                  <span
+                    v-else-if="scope.row.InstanceState == 'LAUNCH_FAILED'"
+                  >{{$t('DDOS.basicProtection.cjsb')}}</span>
+                  <span
+                    v-else-if="scope.row.InstanceState == 'RUNNING'"
+                  >{{$t('DDOS.AssetList.Running')}}</span>
+                  <span
+                    v-else-if="scope.row.InstanceState == 'STOPPED'"
+                  >{{$t('DDOS.basicProtection.gj')}}</span>
+                  <span
+                    v-else-if="scope.row.InstanceState == 'STARTING'"
+                  >{{$t('DDOS.basicProtection.kjz')}}</span>
+                  <span
+                    v-else-if="scope.row.InstanceState == 'STOPPING'"
+                  >{{$t('DDOS.basicProtection.gjz')}}</span>
+                  <span
+                    v-else-if="scope.row.InstanceState == 'REBOOTING'"
+                  >{{$t('DDOS.basicProtection.cqz')}}</span>
+                  <span
+                    v-else-if="scope.row.InstanceState == 'SHUTDOWN'"
+                  >{{$t('DDOS.basicProtection.tzdxh')}}</span>
+                  <span
+                    v-else-if="scope.row.InstanceState == 'TERMINATING'"
+                  >{{$t('DDOS.basicProtection.xhz')}}</span>
                 </div>
                 <div v-else-if="selectedSubarea=='clb'">
                   <span v-if="scope.row.Status == '0'">{{$t('DDOS.basicProtection.cjz')}}</span>
@@ -141,6 +159,9 @@ export default {
       allData: [], // 存储全部实例列表
       tableDataEnd: [],
       filterTableDataEnd: [],
+      str: "",
+      strs: "",
+      strss: "",
       // 分页相关
       currentPage: 1,
       pageSize: 10,
@@ -153,6 +174,7 @@ export default {
     this.getCity();
     this.getData();
   },
+
   watch: {
     selectedSubarea: function() {
       this.getData();
@@ -241,38 +263,13 @@ export default {
         //每次手动将数据置空,因为会出现多次点击搜索情况
         this.tableDataBegin = new Array();
         this.filterTableDataEnd = new Array();
+        var arr = [];
         this.allData.forEach((val, index) => {
-          if (this.selectedSubarea == "cvm") {
-            if (val.InstanceName == this.searchInputVal) {
-              this.filterTableDataEnd.push(val);
-            } else if (
-              this.searchInputVal.indexOf(val.PublicIpAddresses) > -1
-            ) {
-              this.filterTableDataEnd.push(val);
-            }
-          } else if (this.selectedSubarea == "clb") {
-            if (val.LoadBalancerName == this.searchInputVal) {
-              this.filterTableDataEnd.push(val);
-            } else if (this.searchInputVal.indexOf(val.LoadBalancerVips) > -1) {
-              this.filterTableDataEnd.push(val);
-            }
-          } else if (this.selectedSubarea == "nat") {
-            if (val.NatGatewayName == this.searchInputVal) {
-              this.filterTableDataEnd.push(val);
-            }
-            for (let i in val.PublicIpAddressSet) {
-              if (
-                this.searchInputVal == val.PublicIpAddressSet[i].PublicIpAddress
-              ) {
-                this.filterTableDataEnd.push(val);
-                break;
-              }
-            }
-          } else if (this.selectedSubarea == "net") {
-            // 未找到接口
+          if (val.InstanceName.includes(this.searchInputVal)) {
+            arr.push(val);
           }
         });
-        this.tableDataBegin = this.filterTableDataEnd;
+        this.tableDataBegin = arr;
       } else {
         // 如果没有输入搜素内容
         this.tableDataBegin = this.allData;

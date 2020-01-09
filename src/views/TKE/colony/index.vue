@@ -9,7 +9,7 @@
         <!-- 左侧 -->
         <div class="grid-left">
           <h2 class="header-title">集群管理</h2>
-          <el-button class="btn-tke" size="small">台湾台北</el-button>
+          <el-button size="small">台湾台北</el-button>
         </div>
         <!-- 右侧 -->
         <div class="grid-right"></div>
@@ -22,19 +22,17 @@
         <div class="tke-grid ">
           <!-- 左侧 -->
           <div class="grid-left">
-            <el-button @click="goColonyCreate" class="btn-tke" size="small" type="primary">新建</el-button>
+            <el-button @click="goColonyCreate"  size="small" type="primary">新建</el-button>
           </div>
           <!-- 右侧 -->
           <div class="grid-right">
-            <div class="dis-flex">
-              <el-input placeholder="请输入内容" size="small" v-model="searchInput" class="tke-search">
-                <el-select class="tke-search-select" v-model="searchSelect" slot="prepend" placeholder="请选择">
-                  <el-option v-for="option in searchOptions" :label="option.label" :value="option.value"></el-option>
-                </el-select>
-                <el-button slot="append" icon="el-icon-search"></el-button>
-              </el-input>
-              <i class="el-icon-download tke-download"></i>
-            </div>
+            <el-input placeholder="请输入内容" size="small" v-model="searchInput" class="tke-search">
+              <el-select class="tke-search-select" v-model="searchSelect" slot="prepend" placeholder="请选择">
+                <el-option v-for="option in searchOptions" :label="option.label" :value="option.value"></el-option>
+              </el-select>
+              <el-button slot="append" icon="el-icon-search"></el-button>
+            </el-input>
+            <i class="el-icon-download tke-download"></i>
           </div>
         </div>
         
@@ -53,7 +51,7 @@
               <span class="tke-text-link" @click="goColonySub(scope.row.ClusterId)">{{scope.row.ClusterId}}</span>
               <p class="stk-editor-name">
                 <span>{{scope.row.ClusterName}}</span>
-                <i class="el-icon-edit" @click="showEditNameDlg()"></i>
+                <i class="el-icon-edit tke-icon" @click="showEditNameDlg()"></i>
               </p>
             </template>
           </el-table-column>
@@ -101,16 +99,16 @@
             label="操作"
             width="220">
             <template slot-scope="scope">
-              <a href="#">配置告警</a>
-              <a class="ml10" href="#">添加已有节点</a>
+              <span class="tke-text-link">配置告警</span>
+              <span class="tke-text-link ml10">添加已有节点</span>
               <el-dropdown class="ml10 tke-dropdown" >
                 <span class="el-dropdown-link " >
                   更多<i class="el-icon-arrow-down el-icon--right"></i>
                 </span>
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item command="a"><span class="tke-text-link" @click="goColonySub(scope.row.ClusterId)">查看集群凭证</span></el-dropdown-item>
-                  <el-dropdown-item command="b"><a href="#">新建节点</a></el-dropdown-item>
-                  <el-dropdown-item command="c"><a href="#">删除</a></el-dropdown-item>
+                  <el-dropdown-item command="b"><span class="tke-text-link" href="#">新建节点</span></el-dropdown-item>
+                  <el-dropdown-item command="c"><span class="tke-text-link" href="#">删除</span></el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
             </template>
@@ -360,7 +358,7 @@ export default {
 };
 </script>
 
-<style lang="scss" c>
+<style lang="scss" scoped>
 .colony-wrap >>> .el-button,
 .colony-wrap >>> .el-input__inner {
   height: 30px !important;
@@ -393,110 +391,8 @@ export default {
     }
   }
 }
-
-
-//by liling
-.tke-grid{
-  display: flex;
-  align-items: center;
-  .grid-left{
-    flex: 1 1 auto;
-  }
-}
-.dis-flex{
-  display: flex;
-  align-items: center;
-}
-
-.tke-content-header{
-  color: rgb(0, 0, 0);
-  border-bottom: 1px solid rgb(221, 221, 221);
-  padding: 9px 20px;
-  background: rgb(255, 255, 255);
-  
-  .header-title{
-    font-size: 16px;
-    font-weight: 700;
-    height: 30px;
-    line-height: 30px;
-    margin-right: 20px;
-    float: left;
-  } 
-}
-.tke-action{
-  padding-bottom:10px;
-  .tke-download{
-    font-size: 16px;
-    padding: 8px;
-    color: #666;
-    cursor: pointer;
-  }
-}
-
 .tke-search-select{
   width: 90px;
-}
-.tke-card{
-  background-color: #fff;
-  box-shadow: 0 2px 3px 0 rgba(0,0,0,.2);
-  margin-left: auto;
-  margin-right: auto;
-  box-sizing: border-box;
-  .el-table{
-    color: #444;
-    .el-icon-edit{
-      cursor: pointer;
-      margin-left: 5px;
-      
-    }
-    .tag-danger{
-      display: inline-block;
-      background-color: #ff9d00;
-      color: #fff;
-      height: 18px;
-      line-height: 18px;
-      padding: 0 3px;
-      vertical-align: 4px;
-      margin-left: 2px;
-    
-    }
-  }
-  .tke-page{
-    padding: 20px;
-    display: flex;
-    flex-direction: row-reverse;
-  }
-}
-
-.icon-chart{
-  background-image: url("./../../../assets/CAM/images/cvm-20199061519.svg");
-  background-size: 267px 176px;
-  background-repeat: no-repeat;
-  background-position: -47px -71px;
-  height: 15px;
-  width: 16px;
-  display: inline-block;
-  cursor: pointer;
-}
-.text-green{
-  color: #0abf5b;
-}
-.ml10{
-  margin-left: 10px;
-}
-.tke-dropdown{
-  font-size: 12px;
-}
-.el-dropdown-menu__item{
-  font-size: 12px;
-}
-.tke-text-link{
-  color: #006eff;
-  cursor: pointer;
-  &:hover{
-    text-decoration: underline;
-    color: #006eff;
-  }
 }
 
 // 弹窗相关
@@ -505,8 +401,4 @@ export default {
   text-align: center;
 }
 </style>
-<style>
-.tke-table .el-table .cell{
-  line-height: 18px;
-}
-</style>
+

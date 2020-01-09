@@ -1,18 +1,18 @@
 <template>
   <div>
     <div class="basicinfo">
-      <h1 class="newClear">鉴权配置<a @click="editSet">编辑</a></h1>
+      <h1 class="newClear">{{$t('CSS.domainManagement.22')}}<a @click="editSet">{{$t('CSS.domainManagement.10')}}</a></h1>
       <div class="newClear">
         <div class="newClear newList">
-          <p>推流鉴权</p>
-          <p>{{pushAuthKeyInfo.Enable === 0 ? '关闭' : '启用'}}</p>
+          <p>{{$t('CSS.domainManagement.23')}}</p>
+          <p>{{pushAuthKeyInfo.Enable === 0 ? $t('CSS.domainManagement.32') : $t('CSS.domainManagement.7')}}</p>
         </div>
         <div class="newClear newList">
           <p>主KEY</p>
           <p>{{pushAuthKeyInfo.MasterAuthKey}}</p>
         </div>
         <div class="newClear newList">
-          <p>备KEY</p>
+          <p>{{$t('CSS.domainManagement.24')}}</p>
           <p>{{pushAuthKeyInfo.BackupAuthKey}}</p>
         </div>
       </div>
@@ -26,11 +26,11 @@
       <h1 class="newClear">推流地址生成器</h1>
       <div class="bgGray">
         <div class="newClear newList1">
-          <p>推流防盗链Key <i class="el-icon-info"></i></p>
+          <p>{{$t('CSS.domainManagement.25')}}Key</p>
           <p>{{pushAuthKeyInfo.MasterAuthKey}}</p>
         </div>
         <div class="newClear newList1">
-          <p>推流回调地址</p>
+          <p>{{$t('CSS.domainManagement.26')}}</p>
           <p>{{callBackTemplate.StreamBeginNotifyUrl}}</p>
         </div>
         <div class="newClear newList1">
@@ -39,41 +39,32 @@
         </div>
       </div>
       <div class="dateOut">
-        <span class="spanBlod">过期时间</span>
+        <span class="spanBlod">{{$t('CSS.domainManagement.27')}}</span>
         <el-date-picker class="dataDateTime"
           :clearable="false"
           v-model="dataDateTime"
           type="date"
-          placeholder="选择日期">
+          :placeholder="$t('CSS.domainManagement.31')">
         </el-date-picker>
         <el-time-picker :clearable="false"
           v-model="dateValue" class="dateValue">
         </el-time-picker>
         <span class="spanBlod">StreamName </span>
-        <el-input placeholder="仅支持英文字母、数字和符号" v-model="streamName" class="streamName"></el-input>
+        <el-input :placeholder="$t('CSS.domainManagement.28')" v-model="streamName" class="streamName"></el-input>
         <el-button @click="generatePushUrl">生成堆流地址</el-button>
       </div>
       <div class="newClear ">
         <span class="leftCon">推流地址</span>
         <span v-if="pushUrl">{{pushUrl}}</span>
-        <span class="rightCon" v-else><i class="el-icon-info"></i>尚无推流地址，请点击【生成推流地址】</span>
+        <span class="rightCon" v-else>{{$t('CSS.domainManagement.29')}}</span>
       </div>
     </div>
     <div class="basicinfo">
-      <h1 class="newClear">推流地址示例代码</h1>
+      <h1 class="newClear">{{$t('CSS.domainManagement.30')}}</h1>
       <el-tabs v-model="activeName" @tab-click="handleClick">
         <el-tab-pane label="php" name="first">
           <div class="greyContent">
             <pre>
-    /**
-    * 获取推流地址
-    * 如果不传key和过期时间，将返回不含防盗链的url
-    * @param domain 您用来推流的域名
-    * @streamName 您用来区别不同推流地址的唯一流名称
-    * @key 安全密钥
-    * @time 过期时间 sample 2016-11-12 12:00:00
-    * @return String url
-    */
     function getPushUrl($domain, $streamName, $key = null, $time = null){
       if($key && $time){
         $txTime = strtoupper(base_convert(strtotime($time),10,16));

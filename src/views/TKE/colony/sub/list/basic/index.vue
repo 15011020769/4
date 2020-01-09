@@ -1,16 +1,15 @@
  <!-- 基本信息 -->
 <template>
   <div >
-    <h4 class="tke-sub-title">基本信息</h4>
+    <subTitle title='基本信息'  />
 
-
-    <el-row :gutter="20" class="mt20" style="display:flex;  align-items: stretch;">
+    <el-row :gutter="20" style="display:flex;  align-items: stretch;">
       <el-col :span="12">
         <div class="tke-card tke-formpanel-wrap">
           <h4 class="tke-formpanel-title">集群信息</h4>
           <el-form  class="tke-form"  label-position='left' label-width="130px" size="mini">
             <el-form-item label="集群名称">
-              <div class="tke-form-item_text"><span>tfydb</span><i class="el-icon-edit"></i></div>
+              <div class="tke-form-item_text"><span>tfydb</span><i class="el-icon-edit tke-icon"></i></div>
             </el-form-item>
             <el-form-item label="集群ID">
               <div class="tke-form-item_text"><span>cls-gwblk71e</span></div>
@@ -25,7 +24,7 @@
               <div class="tke-form-item_text"><span>港澳台地区(中国台北)</span></div>
             </el-form-item>
             <el-form-item label="新增资源所属项目">
-              <div class="tke-form-item_text"><span>1111</span><i class="el-icon-edit"></i></div>
+              <div class="tke-form-item_text"><span>1111</span><i class="el-icon-edit tke-icon"></i></div>
             </el-form-item>
             <el-form-item label="kubernetes版本">
               <div class="tke-form-item_text">
@@ -37,7 +36,7 @@
               <div class="tke-form-item_text"><span>docker</span></div>
             </el-form-item>
             <el-form-item label="集群描述">
-              <div class="tke-form-item_text"><span>tfydbtfydb</span><i class="el-icon-edit"></i></div>
+              <div class="tke-form-item_text"><span>tfydbtfydb</span><i class="el-icon-edit tke-icon"></i></div>
             </el-form-item>
             <el-form-item label="创建时间">
               <div class="tke-form-item_text"><span>2020-01-02 14:01:57</span></div>
@@ -54,7 +53,7 @@
               <div class="tke-form-item_text"><span>1个</span></div>
             </el-form-item>
             <el-form-item label="默认操作系统">
-              <div class="tke-form-item_text"><span>ubuntu16.04.1 LTSx86_64</span><i class="el-icon-edit"></i></div>
+              <div class="tke-form-item_text"><span>ubuntu16.04.1 LTSx86_64</span><i class="el-icon-edit tke-icon"></i></div>
             </el-form-item>
             
             <el-form-item label="系统镜像来源">
@@ -97,7 +96,7 @@
           <div class="tke-form-item_text"><span>未开启</span></div>
         </el-form-item>
         <el-form-item label="Kubeconfig">
-          <div class="tke-form-item_text tke-rich-textarea">
+          <div class="tke-form-item_text tke-rich-textarea" >
             <div class="rich-content">
               <pre class="rich-text"> {{security.Kubeconfig}}</pre>
             </div>
@@ -116,18 +115,20 @@
 </template>
 
 <script>
+import subTitle from "@/views/TKE/components/subTitle";
 import Loading from "@/components/public/Loading";
 import { ALL_CITY,CLUSTERS_DESCRIBE,CLUSTERS_SECURITY } from "@/constants";
 export default {
-  name: "create",
+  name: "colonyBasic",
   data() {
     return {
-        clusterId:[], //集群id
+        clusterId:'', //集群id
         loadShow:false,
         security:{}
     };
   },
   components: {
+    subTitle,
     Loading
   },
   created() {
@@ -153,61 +154,15 @@ export default {
         console.log(this.security)
         this.loadShow = false;
       }
-     
     },
+
   }
 };
 </script>
 
-<style lang="scss" tke-formpanel>
-.tke-sub-title{
-    font-size: 16px;
-    font-weight: 700;
-    color: #000;
-}
-.mt10{
-  margin-top: 10px;
-}
-.mt20{
-  margin-top: 20px;
-}
-hr{
-  padding: 0;
-    border: none;
-    border-bottom: 1px solid #ddd;
-    margin: 20px 0;
-}
+<style lang="scss" scoped>
 
-.tke-card{
-  background-color: #fff;
-  box-shadow: 0 2px 3px 0 rgba(0,0,0,.2);
-  box-sizing: border-box;
-  height: 100%;
-}
-.tke-formpanel-wrap{
-  padding: 20px;
-  .tke-formpanel-title{
-    font-size: 14px;
-    font-weight: 700;
-    color: #000;
-    margin-bottom: 20px;
-  }
-}
 .tke-form {
-  
-  .el-form-item__label,.el-form-item__content{
-    font-size: 12px;
-    color: #888;
-  }
-  .tke-form-item_text{
-    font-size: 12px;
-    color: #444;
-  }
-  .el-icon-edit{
-    margin-left: 5px;
-    vertical-align: middle;
-    cursor: pointer;
-  }
   .tke-rich-textarea{
     border: 1px solid #d1d2d3;
     background-color: #fff;

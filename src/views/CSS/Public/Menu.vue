@@ -11,13 +11,13 @@
       active-text-color="#fff"
       :router="true"
     >
-      <el-menu-item index="overview">
+      <el-menu-item index="/overview">
         <span slot="title">概览</span>
       </el-menu-item>
-      <el-menu-item index="domainManagement">
+      <el-menu-item index="/domainManagement">
         <span slot="title">域名管理</span>
       </el-menu-item>
-      <el-menu-item index="streamManagement">
+      <el-menu-item index="/streamManagement">
         <span slot="title">流管理</span>
       </el-menu-item>
       <el-submenu index="1">
@@ -25,19 +25,19 @@
           <span>功能模板</span>
         </template>
         <el-menu-item-group>
-          <el-menu-item index="transcribe">
+          <el-menu-item index="/transcribe">
             <span slot="title">录制配置</span>
           </el-menu-item>
-          <el-menu-item index="transcoding">
+          <el-menu-item index="/transcoding">
             <span slot="title">转码设置</span>
           </el-menu-item>
-          <el-menu-item index="screenshot">
+          <el-menu-item index="/screenshot">
             <span slot="title">截图鉴黄配置</span>
           </el-menu-item>
-          <el-menu-item index="watermark">
+          <el-menu-item index="/watermark">
             <span slot="title">水印配置</span>
           </el-menu-item>
-          <el-menu-item index="callback">
+          <el-menu-item index="/callback">
             <span slot="title">回调配置</span>
           </el-menu-item>
         </el-menu-item-group>
@@ -47,18 +47,18 @@
           <span>统计分析</span>
         </template>
         <el-menu-item-group>
-          <el-menu-item index="appreciation">
+          <el-menu-item index="/appreciation">
             <span slot="title">增值功能</span>
           </el-menu-item>
-          <el-menu-item index="streamlookup">
+          <el-menu-item index="/streamlookup">
             <span slot="title">流查询</span>
           </el-menu-item>
-          <el-menu-item index="operation">
+          <el-menu-item index="/operation">
             <span slot="title">运营数据</span>
           </el-menu-item>
         </el-menu-item-group>
       </el-submenu>
-      <el-menu-item index="logManagement">
+      <el-menu-item index="/logManagement">
         <span slot="title">日志分析</span>
       </el-menu-item>
       <!-- <el-submenu index="3">
@@ -101,10 +101,10 @@
           <span>辅助工具</span>
         </template>
         <el-menu-item-group>
-          <el-menu-item index="cutout">
+          <el-menu-item index="/cutout">
             <span slot="title">断流诊断</span>
           </el-menu-item>
-          <el-menu-item index="builder">
+          <el-menu-item index="/builder">
             <span slot="title">地址生成器</span>
           </el-menu-item>
         </el-menu-item-group>

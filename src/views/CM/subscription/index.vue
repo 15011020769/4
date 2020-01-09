@@ -67,7 +67,6 @@ export default {
   name: "subscription",
   data() {
     return {
-     
       tableData: [
         {
           type: "云服务器存储问题",
@@ -109,8 +108,8 @@ export default {
   line-height: 30px;
   font-size: 12px;
 }
-.subscription-wrap >>> .el-table__body{
-  margin-top:55px
+.subscription-wrap >>> .el-table__body {
+  margin-top: 55px;
 }
 .subscription-wrap >>> .btn > span:hover {
   border-bottom: 1px solid #006eff;
@@ -119,7 +118,7 @@ export default {
   padding-left: 65px;
 }
 .subscription-wrap >>> .el-table__header-wrapper,
-.subscription-wrap >>> .el-table__body {
+.subscription-wrap >>> .el-table__body div.cell {
   padding-left: 66px;
 }
 .subscription-wrap >>> .table i {
@@ -128,22 +127,25 @@ export default {
 .table {
   padding: 20px;
   position: relative;
-  .boxLi{
+  .boxLi:hover {
+    background: rgb(245, 245, 245);
+  }
+  .boxLi {
     background: rgb(255, 255, 255);
-    padding:20px;
+    padding: 20px;
     position: absolute;
-    width: 100%;
-    top:66px;
+    width: 97%;
+    top: 66px;
     border-bottom: 1px solid #eee;
     border-top: 1px solid #eee;
     z-index: 100;
     vertical-align: middle;
-    i{
-      color:#2184d6;
+
+    i {
+      color: #2184d6;
     }
-    span{
-      margin:0 10px;
-      
+    span {
+      margin: 0 10px;
     }
   }
 }

@@ -34,7 +34,7 @@ import Echart from "../components/echarts";
 import { CSS_PLAY, CSS_MBPS } from "@/constants";
 import moment from "moment";
 export default {
-  name: "tab2",
+  name: "tab4",
   data() {
     return {
       DataInfoList: [],

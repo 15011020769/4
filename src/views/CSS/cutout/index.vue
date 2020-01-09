@@ -1,33 +1,42 @@
 <template>
   <div class="cutout-wrap">
     <div>
-      <Header :backShow="false" title="断流诊断" />
+      <Header :backShow="false" :title="$t('CSS.cutout.0')" />
     </div>
     <div class="toolbar">
       <XTimeX v-on:switchData="GetDat" :classsvalue="value" :granularity="false"></XTimeX>
       <div class="search">
-        <el-input v-model="searchInput" placeholder="输入推流名称"></el-input>
-        <el-button type="primary" size="small" class="searchbtn" @click="doFilter">查询</el-button>
+        <el-input v-model="searchInput" :placeholder="$t('CSS.cutout.2')"></el-input>
+        <el-button type="primary" size="small" class="searchbtn" @click="doFilter">{{$t('CSS.cutout.1')}}</el-button>
       </div>
     </div>
     <div class="cutoutTable">
       <div class="tableWrap">
-        <el-table :data="tableData" height='450px'>
-          <el-table-column prop="StreamName" label="流名称">
+        <el-table :data="tableData">
+          <el-table-column prop="StreamName" :label="$t('CSS.cutout.3')">
           </el-table-column>
-          <el-table-column prop="" label="路径">
+          <el-table-column prop="AppName" :label="$t('CSS.cutout.4')">
           </el-table-column>
           <el-table-column prop="DomainName" label="域名">
           </el-table-column>
-          <el-table-column prop="StreamStartTime" label="开始时间">
+          <el-table-column prop="StreamStartTime" :label="$t('CSS.cutout.5')">
+            <template slot-scope="scope">
+              {{format(scope.row.StreamStartTime)}}
+            </template>
           </el-table-column>
-          <el-table-column prop="StreamEndTime" label="结束时间">
+          <el-table-column prop="StreamEndTime" :label="$t('CSS.cutout.6')">
+             <template slot-scope="scope">
+              {{format(scope.row.StreamEndTime)}}
+            </template>
           </el-table-column>
-          <el-table-column prop="" label="推流时长">
+          <el-table-column :label="$t('CSS.cutout.7')">
+             <template slot-scope="scope">
+              {{duration(scope.row)}}
+            </template>
           </el-table-column>
           <el-table-column prop="ClientIp" label="推流客户端IP">
           </el-table-column>
-          <el-table-column prop="StopReason" label="断流原因(错误码)">
+          <el-table-column prop="StopReason" :label="$t('CSS.cutout.8')">
           </el-table-column>
         </el-table>
       </div>
@@ -72,6 +81,27 @@
       XTimeX
     },
     methods: {
+      duration(row) {
+        let t = moment(row.StreamEndTime).diff(moment(row.StreamStartTime), 's')
+        // 抄的腾讯的
+        var n = 0
+            , r = 0
+            , a = 0;
+        Number(t) > 60 && (n = Math.floor(t / 60),
+        t = Math.floor(t % 60),
+        n >= 60 && (r = Math.floor(n / 60),
+        n = Math.floor(n % 60),
+        r >= 24 && (a = Math.floor(r / 24),
+        r = Math.floor(r % 24))));
+        var o = "" + Math.floor(t) + "秒";
+        return n > 0 && (o = "" + Math.floor(n) + "分" + o),
+        r > 0 && (o = "" + Math.floor(r) + "小时" + o),
+        a > 0 && (o = "" + Math.floor(a) + "天" + o),
+        o
+      },
+      format(utcDate) {
+        return moment(utcDate).format('YYYY-MM-DD HH:mm:ss')
+      },
       //获取数据
       GetDat(params) {
         this.StartTime = params[1].StartTIme

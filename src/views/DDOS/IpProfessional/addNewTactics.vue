@@ -49,7 +49,7 @@
                   @click.native.prevent="deleteRowBW(scope.$index, scope.row)"
                   type="text"
                   size="small"
-                >删除</el-button>
+                >{{$t('DDOS.AccesstoCon.AccDel')}}</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -86,7 +86,7 @@
         <table class="table-div">
           <tr class="t-head">
             <td>{{$t('DDOS.Proteccon_figura.Agreement')}}</td>
-            <td>端口类型</td>
+            <td>{{$t('DDOS.Proteccon_figura.dklx')}}</td>
             <td>{{$t('DDOS.Proteccon_figura.Start_portnumber')}}</td>
             <td>{{$t('DDOS.Proteccon_figura.End_portnumbe')}}</td>
             <td>操作</td>
@@ -580,7 +580,7 @@ export default {
       dialogVisible: false,
       filterConrent: "",
       DdisableProtocol: [], //禁用协议
-      radios1: "关闭",
+      radios1: "關閉",
       radios2: "關閉",
       radios3: "關閉",
       radios4: "關閉",
@@ -616,7 +616,7 @@ export default {
     if (this.policy.PolicyId == undefined) {
     } else {
       //配置
-      console.log(this.policy);
+      // console.log(this.policy);
       this.policyTemp = JSON.parse(JSON.stringify(this.policy));
       this.tacticsName = this.policyTemp.PolicyName;
       this.nameFlag = false;
@@ -631,7 +631,7 @@ export default {
         this.policyTemp.DropOptions.DropIcmp == 0 ? "" : "ICMP"
       );
       this.DdisableProtocol.push(
-        this.policyTemp.DropOptions.DropOther == 0 ? "" : "其他协议"
+        this.policyTemp.DropOptions.DropOther == 0 ? "" : "其他協議"
       );
       this.tags = this.policyTemp.PortLimits;
       this.tags1 = this.policyTemp.PacketFilters;
@@ -661,7 +661,7 @@ export default {
           "DropOptions.0.DropIcmp":
             this.DdisableProtocol.indexOf("ICMP") > -1 ? 1 : 0,
           "DropOptions.0.DropOther":
-            this.DdisableProtocol.indexOf("其他协议") > -1 ? 1 : 0,
+            this.DdisableProtocol.indexOf("其他協議") > -1 ? 1 : 0,
           "DropOptions.0.DropAbroad": 1,
           "DropOptions.0.CheckSyncConn": 1
           // Name: this.tacticsName,
@@ -825,7 +825,7 @@ export default {
       }
     },
     thisNextShow() {
-      if (this.radios7 == "开启") {
+      if (this.radios7 == "開啟") {
         this.thisRadio7 = true;
       } else {
         this.thisRadio7 = false;
@@ -833,43 +833,43 @@ export default {
     },
     thisNextShowRow(radioNumber) {
       if (radioNumber == 3) {
-        if (this.radios3 == "开启") {
+        if (this.radios3 == "開啟") {
           this.thisRadio3 = true;
         } else {
           this.thisRadio3 = false;
         }
       } else if (radioNumber == 4) {
-        if (this.radios4 == "开启") {
+        if (this.radios4 == "開啟") {
           this.thisRadio4 = true;
         } else {
           this.thisRadio4 = false;
         }
       } else if (radioNumber == 5) {
-        if (this.radios5 == "开启") {
+        if (this.radios5 == "開啟") {
           this.thisRadio5 = true;
         } else {
           this.thisRadio5 = false;
         }
       } else if (radioNumber == 6) {
-        if (this.radios6 == "开启") {
+        if (this.radios6 == "開啟") {
           this.thisRadio6 = true;
         } else {
           this.thisRadio6 = false;
         }
       } else if (radioNumber == 8) {
-        if (this.radios8 == "开启") {
+        if (this.radios8 == "開啟") {
           this.thisRadio8 = true;
         } else {
           this.thisRadio8 = false;
         }
       } else if (radioNumber == 9) {
-        if (this.radios9 == "开启") {
+        if (this.radios9 == "開啟") {
           this.thisRadio9 = true;
         } else {
           this.thisRadio9 = false;
         }
       } else if (radioNumber == 10) {
-        if (this.radios10 == "开启") {
+        if (this.radios10 == "開啟") {
           this.thisRadio10 = true;
         } else {
           this.thisRadio10 = false;
@@ -919,7 +919,7 @@ export default {
       let temp = {
         tcpPort: str,
         udpPort: str2,
-        RemoveSwitch: this.radios12 == "关闭" ? 0 : 1,
+        RemoveSwitch: this.radios12 == "關閉" ? 0 : 1,
         OpenStatus: 1,
         Offset: this.moveNum
       };

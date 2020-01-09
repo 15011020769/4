@@ -40,9 +40,11 @@ export const CCSELFDEFINEPOLICY_MODIFY = 'dayu2/ModifyCCSelfDefinePolicy' //修�
 export const CC_IPALLOWDENY = 'dayu2/DescribeCCIpAllowDeny' //获取CC的IP黑白名单
 export const CCIPALLOWDENY_MODIFY = 'dayu2/ModifyCCIpAllowDeny' //添加或删除CC的IP黑白名单
 
+    // DDOS高级防护策略
 export const DDOS_POLICY_CREATE = 'dayu2/CreateDDoSPolicy' // 添加DDoS高级策略
 export const DDOS_POLICY_DELETE = 'dayu2/DeleteDDoSPolicy' // 删除DDoS高级策略
 export const DDOS_POLICY_MODIFY = 'dayu2/ModifyDDoSPolicy' // 修改DDoS高级策略
+export const RESBIND_MODIFY = 'dayu2/ModifyResBindDDoSPolicy' // 资源绑定DDoS高级策略
 
 export const INSTANCENAME_CONT = 'dayu2/CreateInstanceName' //资源实例重命名接口
 export const GET_ID = 'dayu2/DescribeResIpList' //获取资源的IP列表

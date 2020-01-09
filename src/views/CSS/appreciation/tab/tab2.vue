@@ -1,13 +1,12 @@
 <template>
   <div class="wrap">
     <h3>转码时长{{StartTIme}} 到 {{EndTIme}}（单位：分钟）</h3>
-    <Echart :xAxis="xAxis" :series="series" :legendText="legendText" />
+    <Echart :xAxis="xAxis" :series="series" :legendText="legendText" v-loading="loading" />
     <div class="table">
       <h3>近30天消费量</h3>
       <el-table
         :data="tableData"
         style="width: 100%;margin-top:20px;"
-        height="450"
         v-loading="loading"
       >
         <el-table-column prop="StreamName" label="StreamName"></el-table-column>

@@ -15,8 +15,8 @@
             type="daterange"
             class="newDataTime newDataTimethree"
             range-separator="至"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期"
+            :start-placeholder="$t('DDOS.UnsealCode.beginDate')"
+            :end-placeholder="$t('DDOS.UnsealCode.overDate')"
           ></el-date-picker>
         </div>
         <br />
@@ -25,7 +25,7 @@
           v-model="inputIdService"
           @change="changeIdService"
           filterable
-          placeholder="请输入要查询的ID或名称"
+          :placeholder="$t('DDOS.AccesstoCon.searchAccess')"
           style="margin-right:10px;"
         >
           <el-option :label="inputIdService" :value="inputIdService"></el-option>
@@ -68,7 +68,7 @@ export default {
       // inpkg表示入包速率；
       // outpkg表示出包速率；
       metricNameService2s: ["connum", "inactive_conn"],
-      ywTimeBtnSelect2: "总览", //业务 时间按钮下面第二个下拉
+      ywTimeBtnSelect2: "總覽", //业务 时间按钮下面第二个下拉
 
       dateChoice3: {}, //日期选择
       periodService: 3600, //统计粒度，取值[300(5分鐘)，3600(小时)，86400(天)]
@@ -343,7 +343,7 @@ export default {
         },
         series: [
           {
-            name: "入流量带宽峰值",
+            name: "入流量頻寬峰值",
             type: "line",
             data: data1,
             itemStyle: {
@@ -355,7 +355,7 @@ export default {
             }
           },
           {
-            name: "出流量带宽峰值",
+            name: "出流量頻寬峰值",
             type: "line",
             data: data2,
             itemStyle: {
@@ -429,7 +429,7 @@ export default {
         },
         series: [
           {
-            name: "入流量带宽峰值",
+            name: "入流量頻寬峰值",
             type: "line",
             data: data1,
             itemStyle: {
@@ -441,7 +441,7 @@ export default {
             }
           },
           {
-            name: "出流量带宽峰值",
+            name: "出流量頻寬峰值",
             type: "line",
             data: data2,
             itemStyle: {

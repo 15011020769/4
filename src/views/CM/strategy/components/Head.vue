@@ -1,7 +1,10 @@
 <template>
   <div class="header">
-    <i class="el-icon-back" v-show="backShow" @click="back"></i>
-    {{title}}
+    <div style="display: flex;">
+      <i style="color: #006eff;" class="el-icon-back" v-show="backShow" @click="back"></i>
+      {{title}}
+    </div>
+
     <slot></slot>
   </div>
 </template>
@@ -22,6 +25,7 @@ export default {
   },
   methods: {
     back() {
+      this.$router.push("/strategy");
       this.$emit("_back");
     }
   }
@@ -39,11 +43,15 @@ export default {
   line-height: 30px;
   display: flex;
   flex-direction: column;
-//   align-items: center;
+  //   align-items: center;
 
   i {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    line-height: 20px;
     color: #006eff;
-    font-size: 16px;
+    font-size: 17px;
     margin-right: 12px;
     font-weight: bold;
     padding: 5px;

@@ -8,8 +8,7 @@
         <span
           @click="updateBandwidthLimitTypeVisible = true"
           style="cursor: pointer;"
-        >{{$t("CCN.tabs.tab3tit2")}}
-        </span>
+        >{{$t("CCN.tabs.tab3tit2")}}</span>
       </span>
       <div class="table">
         <div class="btn">
@@ -122,9 +121,7 @@
               <!-- <el-option :label="$t('CCN.total.eWay2')" value="INTER_REGION_LIMIT"></el-option> -->
               <el-option :label="$t('CCN.total.eWay3')" value="OUTER_REGION_LIMIT"></el-option>
             </el-select>
-            <p class="edit-p">
-              {{ $t('CCN.total.eWay4') }}
-            </p>
+            <p class="edit-p">{{ $t('CCN.total.eWay4') }}</p>
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
@@ -235,9 +232,7 @@
               <el-option :label="$t('CCN.total.eWay2')" value="INTER_REGION_LIMIT"></el-option>
               <!-- <el-option :label="$t('CCN.total.eWay3')" value="OUTER_REGION_LIMIT"></el-option> -->
             </el-select>
-            <p class="edit-p">
-              {{ $t('CCN.total.eWay4') }}
-            </p>
+            <p class="edit-p">{{ $t('CCN.total.eWay4') }}</p>
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
@@ -262,6 +257,7 @@ import {
   REGIONS_LIST,
   SET_CCNREGIONBANDWIDTHLIMITS
 } from "@/constants";
+import { ErrorTips } from "@/components/ErrorTips";
 export default {
   data() {
     return {
@@ -313,13 +309,26 @@ export default {
       this.loadShow = true;
       var params = {
         Version: "2017-03-12",
-        Region: localStorage.getItem('regionv2'),
+        Region: localStorage.getItem("regionv2"),
         CcnId: this.ccnId
       };
       // 查询-各地域出带宽限速（DescribeCcnRegionBandwidthLimits原API中给出接口）（GetCcnRegionBandwidthLimits腾讯雲给出接口）
       this.axios.post(GET_CCNREGIONBANDWIDTHLIMITS, params).then(res => {
-        this.tableData = res.Response.CcnBandwidthSet;
-        this.totalItems = res.Response.TotalCount;
+        if (res.Response.Error === undefined) {
+          this.tableData = res.Response.CcnBandwidthSet;
+          this.totalItems = res.Response.TotalCount;
+        } else {
+          let ErrTips = {
+            "InvalidParameterValue.Malformed": "入参格式不合法"
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
         this.loadShow = false;
       });
     },
@@ -327,7 +336,7 @@ export default {
     upBandwidthLimitType: function(ccnDetail) {
       var params = {
         Version: "2017-03-12",
-        Region: localStorage.getItem('regionv2'),
+        Region: localStorage.getItem("regionv2"),
         CcnId: this.ccnId,
         BandwidthLimitType: ccnDetail.BandwidthLimitType
       };
@@ -338,6 +347,20 @@ export default {
         this.regionShow = true;
       }
       this.axios.post(MODIFYCCN_REGIONBANDWIDTHLIMITSTYPE, params).then(res => {
+        if (res.Response.Error) {
+          let ErrTips = {
+            InvalidParameter: "入参不合法",
+            "InvalidParameterValue.Malformed": "入参格式不合法",
+            UnsupportedOperation: "操作不支持"
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
         this.getData();
       });
       this.ccnPublic = {};
@@ -366,7 +389,20 @@ export default {
         Version: "2017-03-12"
       };
       this.axios.post(REGIONS_LIST, params).then(res => {
-        this.regionSet = res.Response.RegionSet;
+        if (res.Response.Error === undefined) {
+          this.regionSet = res.Response.RegionSet;
+        } else {
+          let ErrTips = {
+            InternalError: "内部错误"
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
       });
       this.updateVisible2 = true;
     },
@@ -374,15 +410,14 @@ export default {
     updateLimits: function() {
       var params = {
         Version: "2017-03-12",
-        Region: localStorage.getItem('regionv2'),
+        Region: localStorage.getItem("regionv2"),
         CcnId: this.ccnId,
         "CcnRegionBandwidthLimits.0.Region": this.upLimits.Region,
         "CcnRegionBandwidthLimits.0.BandwidthLimit": this.upLimits.Limits,
         "CcnRegionBandwidthLimits.0.DstRegion": this.upLimits.DstRegion
       };
       this.axios.post(SET_CCNREGIONBANDWIDTHLIMITS, params).then(res => {
-        console.log(res);
-        if (res.Response.Error == undefined) {
+        if (res.Response.Error === undefined) {
           this.$message({
             message: "修改成功",
             type: "success",
@@ -390,8 +425,10 @@ export default {
             duration: 0
           });
         } else {
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
-            message: res.Response.Error.Message,
+            message: ErrOr[res.Response.Error.Code],
             type: "error",
             showClose: true,
             duration: 0

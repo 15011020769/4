@@ -9,7 +9,7 @@
         >{{$t('DDOS.Proteccon_figura.Add_access')}}</el-button>
         <span class="topTipAdd">{{$t('DDOS.Proteccon_figura.add_access')}}</span>
         <span class="floatRightSearch">
-          <el-input class="searchIpt" placeholder="请输入要查找的策略名称" v-model="tableDataName"></el-input>
+          <el-input class="searchIpt" :placeholder="$t('DDOS.Proteccon_figura.qsrczclmc')" v-model="tableDataName"></el-input>
           <el-button @click="doFilter" class="el-icon-search"></el-button>
         </span>
       </div>
@@ -19,7 +19,7 @@
             :data="tableDataBegin.slice((currentPage-1)*pageSize,currentPage*pageSize)"
             style="width: 100%;margin: 18px 0 20px;"
             height="450"
-            v-loading="loading"
+            v-loading="loading" empty-text='暫無數據'
           >
             <el-table-column
               prop="accessName"
@@ -55,7 +55,7 @@
                     {{item.Skey}}
                     <span v-if="item.Operator=='include'">包含</span>
                     <span v-else-if="item.Operator=='not_include'">不包含</span>
-                    <span v-else-if="item.Operator=='equal'">等于</span>
+                    <span v-else-if="item.Operator=='equal'">{{$t('DDOS.accessCopy.noEqua')}}</span>
                     {{item.Value}}
                   </div>
                 </div>
@@ -64,8 +64,8 @@
             </el-table-column>
             <el-table-column prop="exeMode" :label="$t('DDOS.Proteccon_figura.Matching_action')">
               <template slot-scope="scope">
-                <span v-if="scope.row.ExeMode=='alg'">人机识别</span>
-                <span v-else-if="scope.row.ExeMode=='drop'">拦截</span>
+                <span v-if="scope.row.ExeMode=='alg'">{{$t('DDOS.accessCopy.identification')}}</span>
+                <span v-else-if="scope.row.ExeMode=='drop'">{{$t('DDOS.accessCopy.intercept')}}</span>
                 <span v-else>-</span>
               </template>
             </el-table-column>
@@ -87,20 +87,20 @@
             </el-table-column>
             <el-table-column prop="action" label="操作" width="180">
               <template slot-scope="scope">
-                <el-button type="text" size="small" @click="handelEdit(scope.row)">编辑</el-button>
+                <el-button type="text" size="small" @click="handelEdit(scope.row)">{{$t('DDOS.AccesstoCon.AccUpdate')}}</el-button>
                 <el-button
                   slot="reference"
                   type="text"
                   size="small"
                   @click="deleteCCPolicy(scope.row)"
-                >删除</el-button>
+                >{{$t('DDOS.Proteccon_figura.Delete')}}</el-button>
               </template>
             </el-table-column>
           </el-table>
         </div>
 
         <div class="Right-style pagstyle">
-          <span class="pagtotal">共&nbsp;{{totalItems}}&nbsp;条</span>
+          <span class="pagtotal">共&nbsp;{{totalItems}}&nbsp;{{$t('DDOS.UnsealCode.tiao')}}</span>
           <el-pagination
             :page-size="pageSize"
             :pager-count="7"

@@ -38,7 +38,7 @@ export default new Router({
       }
     },
     {
-      path: '/colony/sub/list/basic', // 集群详情
+      path: '/colony/sub', // 集群详情
       name: 'colonySub',
       component: () => import('./colony/sub/list/index.vue'),
       redirect: '/colony/sub/list/basic', // 默认子路由
@@ -85,7 +85,7 @@ export default new Router({
         },
         { // 命名空间
           path: '/colony/sub/list/namespace',
-          name: 'colonyNodeManageAsg',
+          name: 'colonyNamespace',
           component: () => import('./colony/sub/list/namespace/index.vue'),
           meta: {
             keepAlive: true,
@@ -94,7 +94,7 @@ export default new Router({
         },
         { // 工作负载-Deployment
           path: '/colony/sub/list/resource/deployment',
-          name: 'colonyNodeManageAsg',
+          name: 'colonyResourceDeployment',
           component: () => import('./colony/sub/list/resource/deployment.vue'),
           meta: {
             keepAlive: true,
@@ -233,6 +233,14 @@ export default new Router({
       path: '/helm', // helm应用
       name: 'helm',
       component: () => import(/* webpackChunkName: "helm" */ './helm/index.vue'),
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
+      path: '/helmCreate', // helm应用
+      name: 'helmCreate',
+      component: () => import(/* webpackChunkName: "helm" */ './helmCreate/index.vue'),
       meta: {
         keepAlive: true
       }

@@ -86,7 +86,7 @@
 import Loading from "@/components/public/Loading";
 import { ALL_CITY } from "@/constants";
 export default {
-  name: "create",
+  name: "colonySub",
   data() {
     return {
 
@@ -113,21 +113,13 @@ export default {
 };
 </script>
 
-<style lang="scss" tke-formpanel>
+<style lang="scss">
 .tke-colony-sub{
   height: 100%;
   display: flex;
   flex-direction: column;
-  
   .el-container{
     height: 100%;
-  }
-  .el-menu-item, .el-submenu__title{
-    height: 34px;
-    line-height: 34px;
-    font-size: 12px;
-    padding: 0 0 0 20px;
-    min-width: auto;
   }
 }
 .tke-sub-menu{
@@ -135,47 +127,14 @@ export default {
     background: #fff;
     .el-menu{
       border-right: none;
+      .el-menu-item, .el-submenu__title{
+        height: 34px;
+        line-height: 34px;
+        font-size: 12px !important;
+        padding: 0 0 0 20px;
+        min-width: auto;
+      }
     }
 }
-
-
-.tke-grid{
-  display: flex;
-  align-items: center;
-  .grid-left{
-    flex: 1 1 auto;
-    display: flex;
-    align-items: center;
-  }
-}
-
-.tke-content-header{
-  color: rgb(0, 0, 0);
-  border-bottom: 1px solid rgb(221, 221, 221);
-  padding: 9px 20px;
-  background: rgb(255, 255, 255);
-  .goback{
-    margin-right: 10px;
-    cursor: pointer;
-    .el-icon-back{
-      font-size: 16px;
-      color: #006eff;
-      font-weight: 800;
-      height: 30px;
-      line-height: 30px;
-      display: inline-block;
-      margin-right: 5px;
-    }
-  }
-  
-  .header-title{
-    font-size: 16px;
-    font-weight: 700;
-    height: 30px;
-    line-height: 30px;
-    margin-right: 20px;
-  } 
-}
-
 </style>
 

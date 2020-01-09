@@ -63,6 +63,7 @@
     "resize-detector": "^0.2.0",
     "vue": "^2.6.10",
     "vue-cookie": "^1.1.4",
+    "vue-draggable-resizable": "^2.1.0",
     "vue-echarts": "^4.1.0",
     "vue-router": "^3.0.3",
     "vuex": "^3.0.1",

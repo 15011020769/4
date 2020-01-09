@@ -39,7 +39,6 @@
               v-model="scope.row.Enabled"
               active-color="#13ce66"
               inactive-color="#888"
-              disabled
               @click.native="switchClick(scope.$index, scope.row)"
             ></el-switch>
           </template>
@@ -61,6 +60,7 @@
 </template>
 
 <script>
+import { ErrorTips } from "@/components/ErrorTips";
 import { CCN_ROUTES, ENABLE_CCNROUTES, DISABLE_CCNROUTES } from "@/constants";
 import { timeout } from "q";
 import VueCookie from "vue-cookie";
@@ -96,8 +96,23 @@ export default {
       };
       // 查询-路由表
       this.axios.post(CCN_ROUTES, params).then(res => {
-        this.tableData = res.Response.RouteSet;
-        this.totalItems = res.Response.TotalCount;
+        if (res.Response.Error === undefined) {
+          this.tableData = res.Response.RouteSet;
+          this.totalItems = res.Response.TotalCount;
+        } else {
+          let ErrTips = {
+            "InvalidParameter.Coexist": "参数不支持同时指定",
+            ResourceNotFound: "资源不存在"
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+
         this.loadShow = false;
       });
     },
@@ -133,8 +148,13 @@ export default {
               duration: 0
             });
           } else {
+            let ErrTips = {
+              "UnsupportedOperation.Ecmp": "不支持ECMP",
+              ResourceNotFound: "资源不存在"
+            };
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
             this.$message({
-              message: res.Response.Error.Message,
+              message: ErrOr[res.Response.Error.Code],
               type: "error",
               showClose: true,
               duration: 0
@@ -152,8 +172,12 @@ export default {
               duration: 0
             });
           } else {
+            let ErrTips = {
+              ResourceNotFound: "资源不存在"
+            };
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
             this.$message({
-              message: res.Response.Error.Message,
+              message: ErrOr[res.Response.Error.Code],
               type: "error",
               showClose: true,
               duration: 0

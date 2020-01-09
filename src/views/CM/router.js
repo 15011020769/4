@@ -370,18 +370,29 @@ export default new Router({
       keepAlive: true
     }
   },
-  {//lxx
-    path: '/strategy/detail:id', //           告警策略（点击“ 默认 ”设置动态路由）
-    name: 'strategyDetail',
+  // -----------------------------------------------------
+  {
+    path: '/strategy/create', //    新增告警策略
+    name: 'strategyCreate',
     component: () =>
-      import( /* webpackChunkName: "strategy" */ './strategy/index.vue'),
+      import( /* webpackChunkName: "strategy" */ './strategy/components/create.vue'),
     meta: {
       keepAlive: true
     }
   },
   // -----------------------------------------------------
   {
-    path: '/subscription', //           平台事件订阅
+    path: '/strategy/create:11111', //    新增告警策略默认点击按钮（详情），写死了，到时候可动态:id访问
+    name: 'strategyCreateDetail',
+    component: () =>
+      import( /* webpackChunkName: "strategy" */ './strategy/components/defaultDetail.vue'),
+    meta: {
+      keepAlive: true
+    }
+  },
+  // -----------------------------------------------------
+  {
+    path: '/subscription', //       平台事件订阅
     name: 'subscription',
     component: () =>
       import( /* webpackChunkName: "subscription" */ './subscription/index.vue'),
@@ -391,7 +402,7 @@ export default new Router({
   },
   // -----------------------------------------------------
   {
-    path: '/message', //           自定义消息
+    path: '/message', //            自定义消息
     name: 'message',
     component: () =>
       import( /* webpackChunkName: "message" */ './message/index.vue'),
@@ -399,11 +410,12 @@ export default new Router({
       keepAlive: true
     }
   },
+  // -----------------------------------------------------
   {
     path: '/message/create', //     自定义消息创建列表
-    name: 'create',
+    name: 'messageCreate',
     component: () =>
-      import( /* webpackChunkName: "/message/create" */ './message/components/create.vue'),
+      import( /* webpackChunkName: "/message" */ './message/components/create.vue'),
     meta: {
       keepAlive: true
     }
@@ -434,15 +446,6 @@ export default new Router({
     name: 'configuration',
     component: () =>
       import( /* webpackChunkName: "configuration" */ './configuration/index.vue'),
-      // children:{
-      //   path:"/configuration/create",//      新增配置项
-      //   name:"create",
-      //   component:()=>
-      //     import(/* webpackChunkName:"create" */ './configuration/create/index.vue'),
-      //   // meta:{
-      //   //   keepAlive:true
-      //   // }
-      // },
     meta: {
       keepAlive: true
     }
@@ -459,31 +462,32 @@ export default new Router({
   },
   //------------------------------------------------------
   {
-    path:"/configuration/create",//      新增配置项
-    name:"create",
-    component:()=>
+    path: "/configuration/create",//      新增配置项
+    name: "create",
+    component: () =>
       import(/* webpackChunkName:"create" */ './configuration/create/index.vue'),
-    meta:{
-      keepAlive:true
+    meta: {
+      keepAlive: true
     }
   },
   //------------------------------------------------------
   {
-    path:"/configuration/montior",//     监控页面  
-    name:"montior",
-    component:()=>
+    path: "/configuration/montior",//     监控页面  
+    name: "montior",
+    component: () =>
       import(/* webpackChunkName:'montior' */ "./configuration/montior/index.vue"),
-    meta:{
-      keepAlive:true,
+    meta: {
+      keepAlive: true,
     }
   },
+  // -----------------------------------------------------
   {
-    path:"/configuration/administration",//     管理页面   
-    name:"administration",
-    component:()=>
+    path: "/configuration/administration",//     管理页面   
+    name: "administration",
+    component: () =>
       import(/* webpackChunkName:'administration' */ "./configuration/administration/index.vue"),
-    meta:{
-      keepAlive:true,
+    meta: {
+      keepAlive: true,
     }
   },
   ]

@@ -33,7 +33,7 @@ import Echart from "../../components/line";
 import { CSS_MBPS } from "@/constants";
 import moment from "moment";
 export default {
-  name: "tab2",
+  name: "tab1",
   data() {
     return {
       //图表数据
@@ -51,8 +51,12 @@ export default {
     Echart
   },
   props: {
-    StartTIme: String,
-    EndTIme: String,
+    StartTIme: {
+      type: String
+    },
+    EndTIme: {
+      type: String
+    },
     domain: Array,
     operator: String
   },
@@ -70,38 +74,27 @@ export default {
       this.loading = true;
       const params1 = {
         Version: "2018-08-01",
-        StartTime: moment(this.StartTIme).format("YYYY-MM-DD HH:MM:SS"),
-        EndTime: moment(this.EndTIme).format("YYYY-MM-DD HH:MM:SS"),
+        StartTime: moment(this.StartTIme).format("YYYY-MM-DD HH:mm:ss"),
+        EndTime: moment(this.EndTIme).format("YYYY-MM-DD HH:mm:ss"),
       };
       const params2 = {
         Version: "2018-08-01",
-        StartTime: moment(this.StartTIme).format("YYYY-MM-DD HH:MM:SS"),
-        EndTime: moment(this.EndTIme).format("YYYY-MM-DD HH:MM:SS"),
+        StartTime: moment(this.StartTIme).format("YYYY-MM-DD HH:mm:ss"),
+        EndTime: moment(this.EndTIme).format("YYYY-MM-DD HH:mm:ss"),
       };
       if (this.domain.length != 0) {
         this.domain.forEach((item, index) => {
-          params["PlayDomains." + index] = item;
+          params1["PlayDomains." + index] = item;
+          params2["PlayDomains." + index] = item;
         });
       }
-      const Granularity = moment().diff(this.StartTIme, 'days')
-      switch(Granularity) {
-        case 0:
-          params1["Granularity"] = 60
-          params2["Granularity"] = 5
-          break
-        case 1:
-          params1["Granularity"] = 60
-          params2["Granularity"] = 5
-          break
-        case 6:
-          params1["Granularity"] = 1440
-          params2["Granularity"] = 60
-          break
-        case 29:
-          params1["Granularity"] = 1440
-          params2["Granularity"] = 60
-        default:
-        break
+      const Granularity = moment(this.EndTIme).diff(this.StartTIme, 'days')
+      if (Granularity < 3) {
+        params1["Granularity"] = 60
+        params2["Granularity"] = 5
+      } else {
+        params1["Granularity"] = 1440
+        params2["Granularity"] = 60
       }
       this.axios.post(CSS_MBPS, params1).then(res => {
         if (res.Response.Error) {

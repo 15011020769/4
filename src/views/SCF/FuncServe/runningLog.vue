@@ -93,6 +93,7 @@
 </template>
 <script>
 import { FUN_LOG } from "@/constants";
+import moment from "moment";
 export default {
   data() {
     return {
@@ -105,7 +106,8 @@ export default {
       },
       logList: [],
       startTime: "",
-      endTime: ""
+      endTime: "",
+      timeData:'',
     };
   },
   created() {
@@ -116,24 +118,31 @@ export default {
     thisTime(thisTime) {
       var ipt1 = document.querySelector(".timeNode input:nth-child(2)");
       var ipt2 = document.querySelector(".timeNode input:nth-child(4)");
-      const end = new Date();
-      const start = new Date();
+      const ETime = moment(new Date()).format("YYYY-MM-DD HH:mm:ss"); //获取当前时间
+      const start = new Date(ETime).getTime();
+      const setTime=new Date()
       if (thisTime == "1") {
-        start.setTime(start.getTime() - 3600 * 1000);
-        this.startTime = start.getTime() - 3600 * 1000 + "";
+         // 1小时前
+        const onehoursago = moment(start - 3600000).format(
+            "YYYY-MM-DD HH:mm:ss"
+          ); //获取1小时前的时间
+        setTime.setTime(setTime - 3600 * 1000);
+        this.startTime=onehoursago;
+       
       } else if (thisTime == "2") {
-        start.setTime(start.getTime() - 3600 * 1000 * 24);
-        this.startTime = start.getTime() - 3600 * 1000 * 24 + "";
+        setTime.setTime(setTime - 3600 * 1000 * 24);
+         // 1天前
+        const oneDaysago = moment(start -3600 * 1000 * 24).format(
+            "YYYY-MM-DD HH:mm:ss"
+          ); //获取1天前的时间
+        this.startTime=oneDaysago
       }
-      ipt1.value = start
+      this.endTime=ETime;
+      ipt1.value = setTime
         .toLocaleString("chinese", { hour12: false })
-        .replace(/\//g, "-");
-      ipt2.value = end
-        .toLocaleString("chinese", { hour12: false })
-        .replace(/\//g, "-");
-      this.endTime = new Date().getTime() + "";
-      console.log(this.startTime);
-      console.log(this.endTime);
+        .replace(/\//g, "-");  
+      ipt2.value = new Date().toLocaleString("chinese", { hour12: false }).replace(/\//g, "-");
+     
       this.searchLogs();
     },
     reset() {
@@ -146,9 +155,9 @@ export default {
       let params = {
         Action: "GetFunctionLogs",
         Version: "2018-04-16",
-        Region: localStorage.getItem("regionv2")
-        // Filter:{"filter.RetCode":"is0"},
-        // Filter:{RetCode:''}
+        Region: localStorage.getItem("regionv2"),
+        // Filter:{RetCode:'not0'}
+        // Filter:'{"RetCode":"is0"}'
         // Region: 'ap-guangzhou',//_this.$cookie.get("regionv2")
       };
       if (this.startTime && this.endTime) {
@@ -163,7 +172,7 @@ export default {
       this.axios
         .post(FUN_LOG, params)
         .then(res => {
-          console.log("加载数据", res);
+          console.log("加载数据", res.Response);
           if (res.Response.Data) {
             _this.logData = res.Response;
             res.Response.Data.forEach((element, index) => {
@@ -173,6 +182,7 @@ export default {
               _this.logList.push(obj);
               element.Log = element.Log.replace(/\n/g, "<br/>");
             });
+            console.log( _this.logList)
           }
         })
         .catch(error => {
@@ -199,8 +209,11 @@ export default {
     },
     // 选择日期
     sureDate(val, item) {
+    
       let _this = this;
-      let params = {
+      var differentTime=val[1].getTime()-val[0].getTime()
+    if(differentTime>0&&differentTime<=3600 * 1000 * 24){
+        let params = {
         Action: "GetFunctionLogs",
         Version: "2018-04-16",
         Region: localStorage.getItem("regionv2"),
@@ -216,18 +229,28 @@ export default {
         .post(FUN_LOG, params)
         .then(res => {
           _this.logData = res.Response;
-          console.log(_this.logData);
-          res.Response.Data.forEach((element, index) => {
-            let obj = {};
-            obj.time = element.StartTime;
-            obj.status = "调用成功";
-            _this.logList.push(obj);
-            element.Log = element.Log.replace(/\n/g, "<br/>");
-          });
+          console.log(res);
+          if(res.Response.Data){
+            res.Response.Data.forEach((element, index) => {
+              let obj = {};
+              obj.time = element.StartTime;
+              obj.status = "调用成功";
+              _this.logList.push(obj);
+              element.Log = element.Log.replace(/\n/g, "<br/>");
+            });
+          }
         })
         .catch(error => {
           console.log(error);
         });
+      }else{
+        this.$message({
+          message: '开始时间与结束时间仅可相差一天,请重新选择',
+          type: 'warning'
+        });
+       
+      }
+      
     }
   }
 };
