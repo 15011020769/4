@@ -59,27 +59,25 @@
               <span>{{ $t('SCF.total.bdsts') }}</span>
             </el-form-item>
             <el-form-item :label="$t('SCF.total.fjxx')">
-              <span slot="label">
-                {{ $t('SCF.total.fjxx') }}
-              </span>
+              <span slot="label">{{ $t('SCF.total.fjxx') }}</span>
               <el-select
                 v-model="formTriggerForm.writeIsTrue"
                 class="selectSetWidth"
-                @change="selectChange"
               >
+                <!-- @change="selectChange" -->
                 <el-option :label="$t('SCF.total.s')" value="true"></el-option>
                 <el-option :label="$t('SCF.total.f')" value="false"></el-option>
               </el-select>
             </el-form-item>
-             <el-form-item v-show="formTriggerForm.writeIsTrue=='true'" class="writeIsTrue">
-                <span slot="label"></span>
+            <el-form-item v-show="formTriggerForm.writeIsTrue=='true'" class="writeIsTrue">
+              <span slot="label"></span>
               <el-input
-                  class="inputSetWidth"
-                  type="textarea"
-                  :rows="3"
-                   placeholder="请输入内容"
-               v-model="formTriggerForm.CustomArgument">
-              </el-input>
+                class="inputSetWidth"
+                type="textarea"
+                :rows="3"
+                placeholder="请输入内容"
+                v-model="formTriggerForm.CustomArgument"
+              ></el-input>
               <p>请填写附加信息,长度不超过4KiB</p>
             </el-form-item>
             <el-form-item :label="$t('SCF.total.ljqy')">
@@ -101,14 +99,15 @@
           <div class="newClear">
             <span class="timerListTit">{{ $t('SCF.total.dscf') }}</span>
             <div class="btnAll">
-            <!-- v-model="item.Enable" -->
+              <!-- v-model="item.Enable" -->
               <el-switch
                 v-model="switch1[index]"
                 active-color="#006eff"
+                @change="triggerStatus(item,switch1[index])"
                 inactive-color="#888"
                 class="switchs"
               ></el-switch>
-             
+
               <i class="el-icon-delete" style="cursor:pointer" @click="deleteTrigger(index,item)"></i>
             </div>
           </div>
@@ -152,7 +151,7 @@
   </div>
 </template>
 <script>
-import { SCF_DETAILS, CREAT_TRIGGER } from "@/constants";
+import { SCF_DETAILS, CREAT_TRIGGER, UPDATE_TRIGGER } from "@/constants";
 
 export default {
   data() {
@@ -190,7 +189,7 @@ export default {
         cronlist: "",
         writeIsTrue: "false",
         nowStart: false,
-        CustomArgument:'',
+        CustomArgument: ""
       },
       desc: "0 */5 * * * * *",
       switch1: [],
@@ -213,10 +212,7 @@ export default {
         this.notNullFlag = false;
       }
     },
-    selectChange() {
-      // console.log(val)
-      console.log(this.formTriggerForm.writeIsTrue);
-    },
+   
     //保存添加的触发
     saveTrigger(formName) {
       let _this = this;
@@ -236,25 +232,23 @@ export default {
             TriggerName: this.formTriggerForm.tasksName,
             Type: this.formTriggerForm.triggerType,
             TriggerDesc: this.desc,
-            CustomArgument:this.formTriggerForm.CustomArgument,
-            Enable:(this.formTriggerForm.nowStart==true?"OPEN":"CLOSE"),
+            CustomArgument: this.formTriggerForm.CustomArgument,
+            Enable: this.formTriggerForm.nowStart == true ? "OPEN" : "CLOSE"
           };
           let functionName = this.$route.query.functionName;
           if (functionName != "" && functionName != null) {
             params["FunctionName"] = functionName;
           }
-          console.log('向后台发送的params',params)
-          // console.log(this.formTriggerForm.nowStart)
-          // console.log(this.formTriggerForm.nowStart==true?"OPEN":"CLOSE")
+          // console.log("向后台发送的params", params);
           this.axios.post(CREAT_TRIGGER, params).then(res => {
-            console.log('保存成功后的返回值',res);
+            // console.log("保存成功后的返回值", res);
             _this.getfunction();
             _this.formTriggerForm.tasksName = "";
             _this.formTriggerForm.writeIsTrue = "false";
             _this.formTriggerForm.triggerType = "timer";
             _this.formTriggerForm.triggerTime =
               "每5分鐘（每5分鐘的0秒执行一次）";
-             _this.formTriggerForm.CustomArgument='';
+            _this.formTriggerForm.CustomArgument = "";
           });
         } else {
           this.warnFlag = true;
@@ -262,16 +256,49 @@ export default {
         }
       }
     },
+    //更改定时触发器状态
+    triggerStatus(val, status) {
+      if (val) {
+        let state = status == true ? "OPEN" : "CLOSE";
+        let functionName = this.$route.query.functionName;
+        let params = {
+          Version: "2018-04-16",
+          Action: "CreateTrigger",
+          Enable: state,
+          TriggerName: val.TriggerName,
+          Type: val.Type
+        };
+        if (functionName != "" && functionName != null) {
+          params["FunctionName"] = functionName;
+        }
+        this.axios.post(UPDATE_TRIGGER, params).then(res => {
+          if (res.Response.RequestId) {
+            if (state == "OPEN") {
+              this.$message({
+                showClose: true,
+                message: "触发器已启用",
+                type: "success"
+              });
+            }else{
+               this.$message({
+                showClose: true,
+                message: "触发器已关闭",
+                type: "success"
+              });
+            }
+          }
+        });
+      }
+    },
     //取消添加触发方式
-    cancleAdd(){
-      this.displayShow=false;
-       this.formTriggerForm.tasksName = "";
-       this.formTriggerForm.writeIsTrue = "false";
-       this.formTriggerForm.triggerType = "timer";
-        this.formTriggerForm.triggerTime =
-              "每5分鐘（每5分鐘的0秒执行一次）";
-        this.formTriggerForm.CustomArgument='';
-         this.warnFlag = false;
+    cancleAdd() {
+      this.displayShow = false;
+      this.formTriggerForm.tasksName = "";
+      this.formTriggerForm.writeIsTrue = "false";
+      this.formTriggerForm.triggerType = "timer";
+      this.formTriggerForm.triggerTime = "每5分鐘（每5分鐘的0秒执行一次）";
+      this.formTriggerForm.CustomArgument = "";
+      this.warnFlag = false;
     },
     //监测select变化
     triggerChange(val) {
@@ -312,13 +339,13 @@ export default {
         this.triggerBoxList = res.Response.Triggers;
         // console.log(this.triggerBoxList);
         for (let i = 0; i < this.triggerBoxList.length; i++) {
-          if(this.triggerBoxList[i].Enable=='1'){
-              this.switch1[i] = true;
-          }else{
+          if (this.triggerBoxList[i].Enable == "1") {
+            this.switch1[i] = true;
+          } else {
             this.switch1[i] = false;
           }
-          
         }
+        console.log(this.switch1);
         this.loading = false;
       });
     },
@@ -369,8 +396,8 @@ export default {
       padding: 20px;
       border: 1px solid #ddd;
       margin-bottom: 20px;
-      .writeIsTrue{
-          div span{
+      .writeIsTrue {
+        div span {
           // float: left
         }
       }
@@ -425,17 +452,15 @@ export default {
     }
   }
 }
-
 </style>
 <style lang="scss">
-
-.addTriggerBox .selectSetWidth .el-input{
+.addTriggerBox .selectSetWidth .el-input {
   width: 200px !important;
 }
-.addTriggerBox .selectSetWidth .el-input__inner{
+.addTriggerBox .selectSetWidth .el-input__inner {
   width: 200px !important;
 }
- .addTriggerBox .inputSetWidth {
+.addTriggerBox .inputSetWidth {
   width: 200px;
 
   input {

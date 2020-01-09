@@ -155,9 +155,9 @@ export default {
       let params = {
         Action: "GetFunctionLogs",
         Version: "2018-04-16",
-        Region: localStorage.getItem("regionv2")
-        // Filter:{"filter.RetCode":"is0"},
-        // Filter:{RetCode:''}
+        Region: localStorage.getItem("regionv2"),
+        // Filter:{RetCode:'not0'}
+        // Filter:'{"RetCode":"is0"}'
         // Region: 'ap-guangzhou',//_this.$cookie.get("regionv2")
       };
       if (this.startTime && this.endTime) {
