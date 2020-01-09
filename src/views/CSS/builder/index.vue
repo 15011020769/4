@@ -10,8 +10,8 @@
             <el-option label="推流域名" value="0"></el-option>
             <el-option label="播放域名" value="1"></el-option>
           </el-select>
-          <el-select v-model="ruleForm.domain" placeholder="请选择域名" v-for="(item,index) in domainArr" :key="index">
-            <el-option :label="item.Name" :value="item.Name"></el-option>
+          <el-select v-model="ruleForm.domain" placeholder="请选择域名">
+            <el-option v-for="(item,index) in domainArr" :key="index" :label="item.Name" :value="item.Name"></el-option>
           </el-select>
           <p>选择推流域名，则生成推流地址；选择播放域名，则生成播放地址。如无可选域名，<span @click="_adddomain" class="Adomain">请添加域名</span></p>
         </el-form-item>
@@ -158,6 +158,7 @@ import moment from 'moment'
       Getdomain() {
         this.txSecret = ''
         this.timeHex = ''
+        this.ruleForm.domain = ''
         const param = {
           Version: '2018-08-01',
           DomainStatus: '1',

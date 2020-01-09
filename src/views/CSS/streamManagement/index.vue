@@ -10,11 +10,12 @@
             <el-radio-button label="禁推流"></el-radio-button>
           </el-radio-group>
         </div>
-        <div class="streamInp">
+        <div class="streamInp" v-show="type !== '禁推流'">
           <el-input v-model="streamName" placeholder="按照推流ID搜索" size="small" class="inputSearch" style="width:90%;">
             <i slot="suffix" class="el-input__icon el-icon-search" @click="doFilter"></i>
           </el-input>
           <svg
+            @click="doFilter"
             t="1576486867236"
             class="icon"
             viewBox="0 0 1024 1024"
@@ -43,20 +44,36 @@
             </template>
 
             <template v-if="type !== '历史流'">
-              <el-table-column  label="状态"></el-table-column>
+              <el-table-column  label="状态">
+                <span v-if="type === '在线流'">直播中</span>
+                <span v-if="type === '禁推流'">已禁用</span>
+              </el-table-column>
             </template>
 
             <template v-if="type === '在线流'">
-              <el-table-column  label="开始推流时间" width="180"></el-table-column>
+              <el-table-column label="开始推流时间" width="180">
+                <template slot-scope="scope">
+                  {{format(scope.row.PublishTimeList[0].PublishTime)}}
+                </template>
+              </el-table-column>
             </template>
 
             <template v-if="type === '历史流'">
-              <el-table-column prop="StreamEndTime" label="结束推流时间" width="180"></el-table-column>
+              <el-table-column prop="StreamEndTime" label="结束推流时间" width="180">
+                <template slot-scope="scope">
+                  {{format(scope.row.StreamEndTime)}}
+                </template>
+              </el-table-column>
             </template>
 
             <el-table-column label="操作">
               <template slot-scope="scope">
-                <el-button type="text" size="small" @click="disable">禁止</el-button>
+                <template v-if="type === '在线流'">
+                  <el-button type="text" size="small" @click="test(scope.row)">测试</el-button>
+                  <el-button type="text" size="small" @click="dropStream(scope.row)">断流</el-button>
+                </template>
+                <el-button v-if="type === '禁推流'" type="text" size="small" @click="enable(scope.row)">启用</el-button>
+                <el-button v-else type="text" size="small" @click="disable(scope.row)">禁用</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -83,7 +100,9 @@ import {
   LIVE_DESCRIBE_LIVESTREAMONLINELIST,
   LIVE_DESCRIBE_LIVESTREAMEVENTLIST,
   LIVE_DESCRIBE_LIVEFORBIDSTREAMLIST,
-  LIVE_FORBIDLIVESTREAM
+  LIVE_FORBIDLIVESTREAM,
+  LIVE_RESUMELIVESTREAM,
+  LIVE_DROPLIVESTREAM
 } from '@/constants'
 import moment from 'moment'
 export default {
@@ -105,7 +124,11 @@ export default {
     this.onTypeChange(this.type)
   },
   methods: {
+    format(utcDate) {
+      return moment(utcDate).format('YYYY-MM-DD HH:mm:ss')
+    },
     onTypeChange(val) {
+      this.tableData = []
       let url = LIVE_DESCRIBE_LIVESTREAMONLINELIST
       let key = 'OnlineInfo'
       const params = {
@@ -114,6 +137,7 @@ export default {
         PageSize: this.pageSize,
         StreamName: this.streamName,
       }
+      let cb
       switch(val) {
         case '在线流':
           break
@@ -136,12 +160,55 @@ export default {
         this.total = Response.TotalNum
       })
     },
+    test(row) {
+
+    },
     disable(row) {
-      this.axios.post(LIVE_FORBIDLIVESTREAM, {
-        Version: '2018-08-01',
-        AppName: row.AppName,
-        DomainName: row.DomainName,
-        StreamName: row.StreamName,
+      this.$confirm(`确认禁用${row.StreamName}?`, '禁用', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.axios.post(LIVE_FORBIDLIVESTREAM, {
+          Version: '2018-08-01',
+          AppName: row.AppName,
+          DomainName: row.DomainName,
+          StreamName: row.StreamName,
+        }).then(() => this.onTypeChange(this.type))
+      })
+    },
+    enable(row) {
+      this.$confirm(`确认启用${row.StreamName}?`, '启用', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.axios.post(LIVE_RESUMELIVESTREAM, {
+          Version: '2018-08-01',
+          AppName: row.AppName || '',
+          DomainName: row.DomainName || '',
+          StreamName: row.StreamName,
+        }).then(() => this.onTypeChange(this.type))
+      })
+    },
+    dropStream(row) {
+      this.$confirm(`确认断流${row.StreamName}?`, '断流', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.axios.post(LIVE_DROPLIVESTREAM, {
+          Version: '2018-08-01',
+          AppName: row.AppName,
+          DomainName: row.DomainName,
+          StreamName: row.StreamName,
+        }).then(() => {
+          this.$message({
+            message: '断流操作有延时，可能需要几分钟才生效',
+            type: 'success'
+          })
+          this.onTypeChange(this.type)
+        })
       })
     },
     doFilter() {

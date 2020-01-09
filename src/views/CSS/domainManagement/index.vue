@@ -4,9 +4,9 @@
     <div class="wrap">
       <div class="domainTitle-wrap">
         <div class="title">
-          <p>关于推流域名：直播已为您提供系统推流域名，您亦可添加自有已备案域名进行推流。</p>
-          <p>关于播放域名：您需要添加自有已备案域名进行直播播放，更多域名管理使用方法参见域名管理和CNAME配置</p>
-          <p>若您暂无域名，可通过腾讯雲域名注册快速注册属于您的域名。</p>
+          <p>{{$t('CSS.domainManagement.0')}}</p>
+          <p>{{$t('CSS.domainManagement.1')}}</p>
+          <p>{{$t('CSS.domainManagement.2')}}</p>
         </div>
       </div>
       <div class="domainTitleBnt">
@@ -17,7 +17,7 @@
         <div class="input">
           <el-input
             v-model="tableDataName"
-            placeholder="输入部分域名搜索"
+            :placeholder="$t('CSS.domainManagement.8')"
             size="small"
             class="inputSearch"
             style="width:90%;"
@@ -45,22 +45,22 @@
                 <span v-if="scope.row.Status==1">{{scope.row.CurrentCName}}</span> -->
               </template>
             </el-table-column>
-            <el-table-column prop="Type" label="类型">
+            <el-table-column prop="Type" :label="$t('CSS.domainManagement.3')">
               <template slot-scope="scope">
                 <span v-if="scope.row.Type==0">推流域名</span>
                 <span v-if="scope.row.Type==1">播放域名</span>
               </template>
             </el-table-column>
-            <el-table-column prop="Status" label="状态">
+            <el-table-column prop="Status" :label="$t('CSS.domainManagement.4')">
               <template slot-scope="scope">
-                <span v-if="scope.row.Status==0" style="color:red">未启用</span>
-                <span v-if="scope.row.Status==1" style="color:green">已启用</span>
+                <span v-if="scope.row.Status==0" style="color:red">未{{$t('CSS.domainManagement.7')}}</span>
+                <span v-if="scope.row.Status==1" style="color:green">已{{$t('CSS.domainManagement.7')}}</span>
               </template>
             </el-table-column>
-            <el-table-column prop="CreateTime" label="开始时间">
+            <el-table-column prop="CreateTime" :label="$t('CSS.domainManagement.5')">
               <template slot-scope="scope">{{scope.row.CreateTime}}</template>
             </el-table-column>
-            <el-table-column prop="RentExpireTime" label="过期时间">
+            <el-table-column prop="RentExpireTime" :label="$t('CSS.domainManagement.6')">
               <template slot-scope="scope">{{scope.row.RentExpireTime}}</template>
             </el-table-column>
             <el-table-column prop="action" label="操作" width="180">

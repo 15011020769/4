@@ -125,5 +125,17 @@ export const LIVE_DESCRIBE_LIVEFORBIDSTREAMLIST = 'live2/DescribeLiveForbidStrea
 export const LIVE_DESCRIBE_LIVESTREAMONLINELIST = 'live2/DescribeLiveStreamOnlineList'
 /** 禁止直播流 */
 export const LIVE_FORBIDLIVESTREAM = 'live2/ForbidLiveStream'
-// 查询播放鉴权key
+/** 恢复直播流 */
+export const LIVE_RESUMELIVESTREAM = 'live2/ResumeLiveStream'
+/** 断开直播流 */
+export const LIVE_DROPLIVESTREAM = 'live2/DropLiveStream'
+/** 查询播放鉴权key */
 export const LIVE_DESCRIBE_LIVEPLAYAUTHKEY = 'live2/DescribeLivePlayAuthKey'
+/** 删除水印 */
+export const LIVE_DELETELIVEWATERMARK = 'live2/DeleteLiveWatermark'
+/** 更新水印 */
+export const LIVE_UPDATELIVEWATERMARK = 'live2/UpdateLiveWatermark'
+/** 添加水印 */
+export const LIVE_ADDLIVEWATERMARK = 'live2/AddLiveWatermark'
+/** 查询用户套餐包总量、使用量、剩余量、包状态、购买时间和过期时间等 */
+export const LIVE_DESCRIBE_LIVEPACKAGEINFO = 'live2/DescribeLivePackageInfo'

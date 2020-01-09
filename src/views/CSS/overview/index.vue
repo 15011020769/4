@@ -1,26 +1,26 @@
 <template>
   <div class="overview-wrap">
-    <HeaderCom title="概览" />
+    <HeaderCom :title="$t('CSS.overview.0')"/>
     <div class="overview-main">
       <div class="explain">
         <p>
-          新用户9.9元特惠包（100G流量，1年有效期），限购1次，
-          <a href="#">立即购买</a>
+          {{$t('CSS.overview.1')}}
+          <a href="#">{{$t('CSS.overview.2')}}</a>
         </p>
         <p>
-          CDN(直播)日志实时分析解决方案内测开放， 实时分析与检索日志数据，
-          <a href="#">立即申请>>>></a>
+          {{$t('CSS.overview.3')}}
+          <a href="#">{{$t('CSS.overview.4')}} >>>></a>
         </p>
       </div>
       <div class="main-box">
-        <h3>今日数据</h3>
+        <h3>{{$t('CSS.overview.5')}}</h3>
         <div class="overview">
           <dl>
             <dt>
-              <span>{{totalBandwidth}}</span>Mbps
+              <span>{{totalBandwidth && totalBandwidth.split(' ')[0]}}</span>{{totalBandwidth && totalBandwidth.split(' ')[1]}}
             </dt>
             <dd>
-              <p>实时下行带宽</p>
+              <p>{{$t('CSS.overview.6')}}</p>
             </dd>
           </dl>
           <dl>
@@ -37,11 +37,11 @@
             </dt>
             <dd>
               <p>
-                直播在线数
+                {{$t('CSS.overview.7')}}
                 <el-tooltip
                   class="item"
                   effect="dark"
-                  content="在线数是直播过程中，平台统计的并发连接数量。"
+                  :content="$t('CSS.overview.8')"
                   placement="bottom"
                 >
                   <span style="cursor: pointer;">
@@ -53,12 +53,12 @@
           </dl>
           <dl>
             <dt>
-              <span>1</span>个
+              <span>{{fluxPackageCount}}</span>个
             </dt>
             <dd>
               <p>流量包</p>
-              <p style="margin-top:10px;">总流量 20.0 GB</p>
-              <p>已使用 0.0 GB</p>
+              <p style="margin-top:10px;">{{$t('CSS.overview.9')}} {{totalFlux}} GB</p>
+              <p>已使用 {{usedFlux}} GB</p>
             </dd>
           </dl>
         </div>
@@ -88,17 +88,17 @@
               <label class="domain-label"><el-checkbox @change="checked => doaminChange(checked, item)" :value="domainCheckedList.includes(item)" /> {{item}}</label>
             </el-dropdown-item>
             <el-row class="doamin-btn-container">
-              <el-button size="small" type="primary" @click="comfirmDomain">确定</el-button>
+              <el-button size="small" type="primary" @click="comfirmDomain">{{$t('CSS.overview.12')}}</el-button>
               <el-button size="small" @click="cancelDomain">取消</el-button>
             </el-row>
           </el-dropdown-menu>
         </el-dropdown>
-        <el-button size="small" type="primary" @click="getTrend" style="margin-left: 30px">确定</el-button>
+        <el-button size="small" type="primary" @click="getTrend" style="margin-left: 30px">{{$t('CSS.overview.12')}}</el-button>
       </div>
       <el-tabs v-model="activeName" style="margin-top:10px;">
-        <el-tab-pane label="带宽趋势" name="带宽">
+        <el-tab-pane :label="$t('CSS.overview.10')" name="带宽">
         </el-tab-pane>
-        <el-tab-pane label="流量趋势" name="流量"></el-tab-pane>
+        <el-tab-pane :label="$t('CSS.overview.11')" name="流量"></el-tab-pane>
       </el-tabs>
       <e-line
         :xAxis="timeData"
@@ -122,7 +122,8 @@ import {
   ALL_CITY,
   CSS_MBPS,
   LIVE_DESCRIBE_LIVEDOMAINPLAYINFOLIST,
-  DOMAIN_LIST
+  DOMAIN_LIST,
+  LIVE_DESCRIBE_LIVEPACKAGEINFO
 } from "@/constants";
 
 let defaultParams = {
@@ -138,6 +139,9 @@ export default {
       totalBandwidth: 0,
       todayFlux: 0,
       online: 0,
+      usedFlux: 0,
+      totalFlux: 0,
+      fluxPackageCount: 0,
       value: 1,
       granularity: 0,
       activeName: '带宽',
@@ -241,12 +245,31 @@ export default {
       // 查询今日总流量
       this.axios.post(CSS_MBPS, params).then(({ Response }) => {
         this.todayFlux = Response.SumFlux
+        this.totalBandwidth = Response.PeakBandwidth > 1 ? `${Response.PeakBandwidth} Mbps` : `${Response.PeakBandwidth * 1000} Kbps`
       })
       // 查询实时总带宽 实时总连接数
       this.axios.post(LIVE_DESCRIBE_LIVEDOMAINPLAYINFOLIST, defaultParams).then(({ Response }) => {
-        this.totalBandwidth = Response.TotalBandwidth
         this.online = Response.TotalOnline
       })
+      // 查询流量包
+      this.axios.post(LIVE_DESCRIBE_LIVEPACKAGEINFO, {
+        ...defaultParams,
+        PackageType: 0,
+      })
+      .then(({ Response: { LivePackageInfoList } }) => {
+        if (Array.isArray(LivePackageInfoList)) {
+          this.fluxPackageCount = LivePackageInfoList.length
+          let usedFlux = 0
+          let totalFlux = 0
+          LivePackageInfoList.forEach(item => {
+            usedFlux += item.Used
+            totalFlux += item.Total
+          })
+          this.totalFlux = (totalFlux / 1000 / 1000 / 1000).toFixed(2)
+          this.usedFlux = (usedFlux / 1000 / 1000 / 1000).toFixed(2)
+        }
+      })
+      
     },
     // 统计趋势数据
     getTrend() {
@@ -255,8 +278,9 @@ export default {
         StartTime: this.StartTime,
         EndTime: this.EndTime,
         Granularity: Number(this.granularity) / 60,
+        MainlandOrOversea: 'Mainland'
       }
-      if (this.domainCheckedListCopy.length !== this.domainData) {
+      if (this.domainCheckedListCopy.length !== this.domainData.length) {
         this.domainCheckedListCopy.forEach((domain, index) => {
           params[`PlayDomains.${index}`] = domain
         })
