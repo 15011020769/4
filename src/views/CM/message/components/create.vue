@@ -96,14 +96,6 @@ export default {
       }
     };
   },
-  directives: {
-    trigger: {
-      inserted(el, binging) {
-        el.click();
-        $(el).trigger("click");
-      }
-    }
-  },
   components: {
     Header
   },

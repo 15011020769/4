@@ -20,9 +20,9 @@ export default {
       backShow: true
     };
   },
-  components: {},
+  components: {Header},
   methods: {
-    Header
+    
   }
 };
 </script>
@@ -31,7 +31,7 @@ export default {
 .defaultDetail {
   width: 100%;
   height: 100%;
-  background: red;
+  background: rgb(235, 235, 235);
 }
 // .defaultDetail >>> .{
 

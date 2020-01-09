@@ -120,6 +120,8 @@
         </el-row>
       </p>
       <el-table
+        @cell-mouse-enter="mouseoverDefault"
+        @cell-mouse-leave="mouseoutDefault"
         :data="tableData"
         style="width: 100%"
         height="450"
@@ -129,7 +131,11 @@
         <el-table-column type="selection" width="40"></el-table-column>
         <el-table-column label="策略名称">
           <template slot-scope="scope">
-            <a  @click="defaultClick(proupName)">{{scope.row.groupName}}</a>
+            <a
+              class="defaultDialog"
+              @click="defaultClick(scope.row.grounpId)"
+            >{{scope.row.groupName}}</a>
+            <i v-show="defaultIconFlag" class="el-icon-edit"></i>
           </template>
         </el-table-column>
         <el-table-column label="触发条件">
@@ -231,7 +237,7 @@ export default {
       isIndeterminate: true,
 
       formInline: {
-        product_name:"产品类型",//策略
+        product_name: "产品类型", //策略
         product_kind: [
           {
             id: "1",
@@ -451,7 +457,8 @@ export default {
       operationFlag: -1, //按钮禁用开关
       dataListLoading: false,
       dialogVisible: false, //设置弹出框
-      value: true
+      value: true,
+      defaultIconFlag: false //鼠标事件
     };
   },
   components: {
@@ -469,7 +476,6 @@ export default {
       this.isIndeterminate =
         checkedCount > 0 && checkedCount < this.cities.length;
     },
-
     onSubmit() {
       console.log("submit!");
     },
@@ -490,12 +496,35 @@ export default {
     save() {
       this.dialogVisible = false;
     },
-    defaultClick(data) {
-      console.log(data, "data");
+    defaultClick(id) {
+      //点击默认按钮
+      console.log(id, "id");
+      //这里是写死的:id动态路由，写数据的时候改成动态的id
+      this.$router.push({path: "/strategy/create:"+id});
+      // this.$router.push({
+      //   path: "/strategy/create:"+"id", // 新增告警策略默认点击按钮（详情），写死了，到时候可动态访问
+      //   name: "strategy",
+      //   component: () =>
+      //     import(
+      //       /* webpackChunkName: "strategy" */ "./components/defaultDetail.vue"
+      //     ),
+      //   meta: {
+      //     keepAlive: true
+      //   }
+      // });
     },
-    addCreate(){
+    //思路：便利你所有的数据，给每条都加上defaultIconFlag：false属性，当你划过的时候就可以改成true
+    mouseoverDefault() {
+      //鼠标划入事件
+      this.defaultIconFlag = true;
+    },
+    mouseoutDefault() {
+      //鼠标移除事件
+      this.defaultIconFlag = false;
+    },
+    addCreate() {
       // alert('/strategy/create');
-      this.$router.push({path:"/strategy/create"});
+      this.$router.push({ path: "/strategy/create" });
     }
   }
 };

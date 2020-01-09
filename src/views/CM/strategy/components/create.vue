@@ -1,6 +1,6 @@
 <template>
   <div class="create-wrap">
-    <Header title="新增策略" backShow="true"></Header>
+    <Header title="新增策略" :backShow="backShow"></Header>
     <div class="create-main">
       <div class="box">
         <p class="rowCont">
@@ -466,7 +466,7 @@
             <div class="explain">
               <p>
                 回调域名通过验证后生效，请于Response Body中返回以下code。
-                <i class="el-icon-info" style="margin:0 5px;"></i>
+                <i class="el-icon-info" style="margin:0 5px;color: #c07400;"></i>
               </p>
               <p>
                 <b style="font-size:16px">y46vg1ma</b>
@@ -482,16 +482,18 @@
   </div>
 </template>
 <script>
-import Header from "@/components/public/Head";
+import Header from "./Head";
 import Transfer from "./transfer";
 export default {
   data() {
     return {
+      backShow:"true",
+
       value1: new Date(2020, 1, 10, 18, 40),
       value2: new Date(2020, 1, 10, 18, 40),
 
-      showChufa1: true, //触发条件1显示开关
-      showChufa2: false, //触发条件2显示开关
+      showChufa1: false, //触发条件1显示开关
+      showChufa2: true, //触发条件2显示开关
 
       showQudao1: false, //渠道选择1显示开关
       showQudao2: false, //渠道选择2显示开关
@@ -566,14 +568,6 @@ export default {
       allFlag: true
     };
   },
-  directives: {
-    trigger: {
-      inserted(el, binging) {
-        el.click();
-        $(el).trigger("click");
-      }
-    }
-  },
   components: {
     Header,
     Transfer
@@ -582,20 +576,20 @@ export default {
     all() {
       //全部对象
       //   alert("all");
-      this.showQudao1=false;
-      this.showQudao2=false;
+      this.showQudao1 = false;
+      this.showQudao2 = false;
     },
     some() {
       //部分对象
       //   alert("some");
-      this.showQudao1=true;
-      this.showQudao2=false;
+      this.showQudao1 = true;
+      this.showQudao2 = false;
     },
     group() {
       //实例对象组
       //   alert("group");
-       this.showQudao1=false;
-      this.showQudao2=true;
+      this.showQudao1 = false;
+      this.showQudao2 = true;
     },
     //确定
     save() {
