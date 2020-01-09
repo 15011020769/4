@@ -15,7 +15,7 @@
           @click="tabClick(index)"
         >
           <dt>{{item.name}}</dt>
-          <dd>0</dd>
+          <dd>{{item.value}}</dd>
         </dl>
       </div>
       <div class="main">
@@ -31,7 +31,7 @@
 import moment from "moment";
 import Header from "@/components/public/Head";
 import XTimeX from "@/components/public/TimeN";
-import { ALL_CITY } from "@/constants";
+import { ALL_CITY, CSS_SCREEN } from "@/constants";
 import Tab1 from "./tab/tab1";
 import Tab2 from "./tab/tab2";
 import Tab3 from "./tab/tab3";
@@ -45,13 +45,16 @@ export default {
       //tab内容
       tab: [
         {
-          name: "截图累计值"
+          name: "截图累计值",
+          value: 0
         },
         {
-          name: "转码总时长"
+          name: "转码总时长",
+          value: 0
         },
         {
-          name: "录制峰值"
+          name: "录制峰值",
+          value: 0
         }
       ],
       StartTIme: moment(new Date()).format("YYYY-MM-DD 00:00:00"),
@@ -67,6 +70,7 @@ export default {
   },
   created() {
     this.getCity();
+    this.getScreens();
   },
   methods: {
     //查询
@@ -74,6 +78,7 @@ export default {
       this.StartTIme = this.timeData[0].StartTIme;
       this.EndTIme = this.timeData[0].EndTIme
       if (this.tabIndex == 0) {
+        this.getScreens()
         this.$nextTick(() => {
           // this.$refs.tab1.init();
           this.$refs.tab1.getCharts()
@@ -103,6 +108,26 @@ export default {
     //tab切换
     tabClick(index) {
       this.tabIndex = index;
+    },
+    getScreens() {
+      let totalScreen = 0
+      const params = {
+        Version: "2018-08-01",
+        Granularity: "Minute",
+        Zone: "Oversea",
+        StartTime: moment(this.StartTIme).utc().format(),
+        EndTime: moment(this.EndTIme).utc().format(),
+      };
+      this.axios.post(CSS_SCREEN, params).then(res => {
+        if (res.Response.Error) {
+          this.$message.error(res.Response.Error.Message);
+        } else {
+          res.Response.DataInfoList.map(v => {
+            totalScreen += v.Num
+          })
+          this.tab[0].value = totalScreen
+        }
+      })
     }
   }
 };

@@ -92,7 +92,7 @@ export default {
             arrDetail = arrTotal.reduce(function (a, b) { return a.concat(b)})
             let obj = arrDetail
             var mon = [];
-            for (var i = 1; i < obj.length; i++) {
+            for (var i = 0; i < obj.length; i++) {
                 var repeat = false;
                   for (var j = 0; j < mon.length; j++) {
                     if (mon[j].time == obj[i].Time.substring(0,7)) {
@@ -106,17 +106,17 @@ export default {
               }
               var monvalue = [];
               var one = 0;
-              for(var j = 0;j<mon.length;j++){
+              for(var j = 0; j < mon.length; j++){
                 var one = 0;
-              for(var i=0;i<obj.length;i++){
+              for(var i = 0; i < obj.length; i++){
                   if(obj[i].Time.substring(0,7) == mon[j].time){
-                    one += parseInt(obj[i].Num);
+                    one += obj[i].Num;
                   }
                 }
               monvalue.push({num: one});
               }
               var json_arr = [];
-              for (var i=0;i<mon.length;i++){
+              for (var i = 0; i < mon.length; i++){
                 json_arr.push(Object.assign(mon[i],monvalue[i]));
               }
             this.tableData = json_arr.sort((a, b) => moment(b.time) - moment(a.time));
