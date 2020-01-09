@@ -1,3 +1,11 @@
+<!--
+ * @Author: your name
+ * @Date: 2020-01-07 16:47:16
+ * @LastEditTime: 2020-01-08 14:21:02
+ * @LastEditors: your name
+ * @Description: In User Settings Edit
+ * @FilePath: /new_product/src/views/CSS/logManagement/tab/download.vue
+ -->
 <template>
    <div class="explain">
     <p>
@@ -15,6 +23,24 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss" scoped>
+.explain {
+  color: #003b80;
+  border: 1px solid #97c7ff;
+  background: #e5f0ff;
+  padding: 10px 30px 10px 20px;
+  margin-bottom: 20px;
+  border-radius: 2px;
 
+  p {
+    line-height: 18px;
+
+    a {
+      color: #006eff;
+    }
+    a:hover {
+      border-bottom: 1px #006eff solid;
+    }
+  }
+}
 </style>

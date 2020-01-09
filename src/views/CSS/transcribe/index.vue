@@ -63,7 +63,8 @@ export default {
       formShow: false,
       configList: [],
       selectItem: {},
-      modalVisible: false
+      modalVisible: false,
+      selectIndex: 0
     };
   },
   components: {
@@ -84,6 +85,11 @@ export default {
     },
 
     _close() {
+      this.formShow = false;
+    },
+
+     _cancel() {
+      this.selectItem = this.configList[this.selectIndex]
       this.formShow = false;
     },
 
@@ -122,6 +128,8 @@ export default {
     onSelectRecording(item) {
       this.formShow = false
       this.selectItem = item
+      this.selectIndex = this.configList.findIndex(_item => item.TemplateId === _item.TemplateId)
+
     }
   }
 };

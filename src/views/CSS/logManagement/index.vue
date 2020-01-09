@@ -41,12 +41,7 @@ export default {
 .log-management-wrap {
   .tabs-wrap >>> .el-tabs__nav-scroll {
     background: #fff;
-  }
-  .log-management-main {
-    // background-color: black;
-  }
-  .log-management-main >>> .el-tabs {
-    background: yellow;
+    padding-left: 30px;
   }
 }
 </style>
