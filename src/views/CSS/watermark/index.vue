@@ -59,6 +59,7 @@ export default {
       formShow: false,
       configList: [],
       selectItem: {},
+      selectIndex: 0,
       modalVisible: false
     };
   },
@@ -80,6 +81,11 @@ export default {
     },
 
     _close() {
+      this.formShow = false;
+    },
+
+    _cancel() {
+      this.selectItem = this.configList[this.selectIndex]
       this.formShow = false;
     },
 
@@ -124,6 +130,7 @@ export default {
     onSelectRecording(item) {
       this.formShow = false
       this.selectItem = item
+      this.selectIndex = this.configList.findIndex(_item => item.WatermarkId === _item.WatermarkId)
     }
   }
 };

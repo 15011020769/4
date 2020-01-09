@@ -50,7 +50,7 @@
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="submitForm('ruleForm')">保存</el-button>
-        <el-button @click="$emit('update:formShow', false)">取消</el-button>
+        <el-button @click="$parent._cancel()">取消</el-button>
       </el-form-item>
     </el-form>
   </div>
