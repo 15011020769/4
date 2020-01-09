@@ -44,6 +44,22 @@
                 </div></el-col>
             </el-row>
           </div>
+          <div class="ep-data-card-main" style="padding-top:20px;">
+            <el-row>
+              <el-col :span="4"><div class="font">
+                  <a href="javascript:;">cls-kukvzoc1</a>
+                  <div>ssssss</div>
+                </div></el-col>
+              <el-col :span="4"><div class="font center">未开启</div></el-col>
+              <el-col :span="4"><div class="font center">-</div></el-col>
+              <el-col :span="8"><div class="font center">-</div></el-col>
+              <el-col :span="4"><div class="font center">
+                <router-link :to="'/persistenceSetting/'+uid">
+                  <span>设置</span>
+                </router-link>
+                </div></el-col>
+            </el-row>
+          </div>
         </div>
       </div>
     </div>
@@ -51,11 +67,46 @@
 </template>
 
 <script>
+import {
+  CreateListGroups,
+  WARNING_GetCOLONY,
+  WARNING_GetUSER
+} from "@/constants";
 import HeadCom from "@/components/public/Head";
 export default {
   name:'persistence',
   data(){
-    return{}
+    return{
+      list: []
+    }
+  },
+  created() {
+    this.getData();
+  },
+  methods: {
+    getData() {
+      let params = {
+        Version: "2018-05-25"
+      }
+      const res = this.axios.post(WARNING_GetUSER,params).then(res=>{
+        console.log(res)
+        if(res.Response.Clusters.length>0){
+          let resData= res.Response.AlarmPolicySet
+          this.length = resData.length;
+          console.log(resData)
+          for (let i = 0; i < resData.length; i++) {
+            let getData = {
+              AlarmPolicyName:'',AlarmPolicyType:''
+            };
+            getData.name = resData.AlarmPolicySettings
+          }
+        }else{
+          this.$refs.dateHide.style.display = 'block'
+          this.$refs.dateShow.style.display = 'none'
+          console.log('数据请求出错')
+        }
+      });
+    }
   },
   components: {
     HeadCom

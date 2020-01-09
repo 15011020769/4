@@ -91,7 +91,6 @@
 
 <script>
 import {
-  CreateGetGroups,
   CreateListGroups,
   WARNING_GetCOLONY,
   WARNING_GetUSER
@@ -124,7 +123,8 @@ export default {
         Version: "2018-05-25"
       }
       console.log((val.split('('))[0])
-      const res = this.axios.post(WARNING_GetCOLONY,params).then(res=>{
+      const res = this.axios.post(CreateListGroups,params).then(res=>{
+        // console.log(res)
         if(res.Response.AlarmPolicySet.length>0){
           this.$refs.dataHide.style.display = 'none'
           this.$refs.dataShow.style.display = 'block'
@@ -137,7 +137,6 @@ export default {
             };
             getData.name = resData.AlarmPolicySettings
           }
-          console.log(res)
         }else{
           this.$refs.dateHide.style.display = 'block'
           this.$refs.dateShow.style.display = 'none'

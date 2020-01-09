@@ -70,7 +70,7 @@
                   <div class="flex p3">
                     <!-- 内容 -->
                     <div class="flex" style="flex:1;padding-top:5px;">
-                      <input class="el-checkbox" type="checkbox">
+                      <input class="el-checkbox" type="checkbox" v-model="ncLY.check">
                       <span>内存利用率</span>
                     </div>
                     <div>
@@ -102,7 +102,7 @@
                   <div class="flex p3">
                     <!-- 内容 -->
                     <div class="flex" style="flex:1;padding-top:5px;">
-                      <input class="el-checkbox" type="checkbox">
+                      <input class="el-checkbox" type="checkbox" v-model="cpuFP.check">
                       <span>CPU分配率</span>
                     </div>
                     <div>
@@ -134,7 +134,7 @@
                   <div class="flex p3">
                     <!-- 内容 -->
                     <div class="flex" style="flex:1;padding-top:5px;">
-                      <input class="el-checkbox" type="checkbox">
+                      <input class="el-checkbox" type="checkbox" v-model="ncFP.check">
                       <span>内存分配率</span>
                     </div>
                     <div>
@@ -200,13 +200,18 @@
             </div>
             <!-- 节点显示内容 -->
             <div v-if="value=='jd'">
-              <el-form-item label="告警对象"></el-form-item>
+              <el-form-item label="告警对象">
+                <div class="form-form flex">
+                  <input class="el-checkbox" type="radio" value='true' v-model="TWA">
+                  <div>全部选择（包括后续新增加节点）</div>
+                </div>
+              </el-form-item>
               <el-form-item label="指标">
                 <div class="form-form">
                   <div class="flex p3">
                     <!-- 内容 -->
                     <div class="flex" style="flex:1;padding-top:5px;">
-                      <input class="el-checkbox" type="checkbox" v-model="cpuLY.check">
+                      <input class="el-checkbox" type="checkbox" v-model="cpuLY.nodeCheck">
                       <span>CPU利用率</span>
                     </div>
                     <div>
@@ -238,7 +243,8 @@
                   <div class="flex p3">
                     <!-- 内容 -->
                     <div class="flex" style="flex:1;padding-top:5px;">
-                      <input class="el-checkbox" type="checkbox">
+                      <input class="el-checkbox" type="checkbox"
+                      v-model="ncLY.nodeCheck">
                       <span>内存利用率</span>
                     </div>
                     <div>
@@ -270,29 +276,29 @@
                   <div class="flex p3">
                     <!-- 内容 -->
                     <div class="flex" style="flex:1;padding-top:5px;">
-                      <input class="el-checkbox" type="checkbox">
-                      <span>CPU分配率</span>
+                      <input class="el-checkbox" type="checkbox" v-model="nodeSet.check">
+                      <span>节点上Pod重启次数</span>
                     </div>
                     <div>
-                      <el-select v-model="cpuFP.tj" placeholder="请选择" size="mini">
+                      <el-select v-model="nodeSet.tj" placeholder="请选择" size="mini">
                         <el-option
-                          v-for="(item,i) in cpuFP.tjs"
+                          v-for="(item,i) in nodeSet.tjs"
                           :key="i"
                           :value="item">
                         </el-option>
                       </el-select>
-                      <el-select v-model="cpuFP.gl" placeholder="请选择" size="mini" class="glw">
+                      <el-select v-model="nodeSet.gl" placeholder="请选择" size="mini" class="glw">
                         <el-option
-                          v-for="(item,i) in cpuFP.gls"
+                          v-for="(item,i) in nodeSet.gls"
                           :key="i"
                           :value="item">
                         </el-option>
                       </el-select>
-                      <el-input v-model="cpuFP.number" size="mini" class="w100"></el-input>
-                      <span class="numberEnd">{{cpuFP.numberEnd}}</span>
-                      <el-select v-model="cpuFP.zq" placeholder="请选择" size="mini" class="gz" style="padding-left:20px;">
+                      <el-input v-model="nodeSet.number" size="mini" class="w100"></el-input>
+                      <span class="numberEnd">{{nodeSet.numberEnd}}</span>
+                      <el-select v-model="nodeSet.zq" placeholder="请选择" size="mini" class="gz" style="padding-left:20px;">
                         <el-option
-                          v-for="(item  ,i) in cpuFP.zqs"
+                          v-for="(item  ,i) in nodeSet.zqs"
                           :key="i"
                           :value="item">
                         </el-option>
@@ -302,29 +308,37 @@
                   <div class="flex p3">
                     <!-- 内容 -->
                     <div class="flex" style="flex:1;padding-top:5px;">
-                      <input class="el-checkbox" type="checkbox">
-                      <span>内存分配率</span>
+                      <input class="el-checkbox" type="checkbox" v-model="NodeReady.check">
+                      <span>Node Ready</span>
                     </div>
                     <div>
-                      <el-select v-model="ncFP.tj" placeholder="请选择" size="mini">
+                      <el-select v-model="NodeReady.tj" placeholder="请选择" size="mini">
                         <el-option
-                          v-for="(item,i) in ncFP.tjs"
+                          v-for="(item,i) in NodeReady.tjs"
                           :key="i"
                           :value="item">
                         </el-option>
                       </el-select>
-                      <el-select v-model="ncFP.gl" placeholder="请选择" size="mini" class="glw">
+                      <el-select v-model="NodeReady.gl" placeholder="请选择" size="mini" class="glw" disabled>
                         <el-option
-                          v-for="(item,i) in ncFP.gls"
+                          v-for="(item,i) in NodeReady.gls"
                           :key="i"
                           :value="item">
                         </el-option>
                       </el-select>
-                      <el-input v-model="ncFP.number" size="mini" class="w100"></el-input>
-                      <span class="numberEnd">{{ncFP.numberEnd}}</span>
-                      <el-select v-model="ncFP.zq" placeholder="请选择" size="mini" class="gz" style="padding-left:20px;">
+                      <el-select v-model="NodeReady.number" placeholder="请选择" size="mini" class="glw w100" style="padding:0;">
                         <el-option
-                          v-for="(item,i) in ncFP.zqs"
+                          v-for="(item,i) in NodeReady.numbers"
+                          :key="i"
+                          :value="item">
+                        </el-option>
+                      </el-select>
+                      <!-- <el-input v-model="NodeReady.number" size="mini" class="w100"></el-input> -->
+                      <div style="display:inline-block;width:28px;"></div>
+                      <!-- <span class="numberEnd">{{ncFP.numberEnd}}</span> -->
+                      <el-select v-model="NodeReady.zq" placeholder="请选择" size="mini" class="gz" style="padding-left:20px;">
+                        <el-option
+                          v-for="(item,i) in NodeReady.zqs"
                           :key="i"
                           :value="item">
                         </el-option>
@@ -363,6 +377,348 @@
                 <div style="line-height:0;padding:5px;" class="flex">
                   <input class="el-checkbox" type="checkbox" v-model="tellWarning.phone">
                   <div style="margin-top:9px;">电话</div>
+                </div>
+              </el-form-item>
+            </div>
+            <!-- pod显示内容 -->
+            <div v-if="value=='pod'">
+              <el-form-item label="告警对象">
+                <div class="form-form" style="max-width:400px;">
+                  <div class="flex">
+                    <input class="el-checkbox" type="radio" value='true' v-model="TWA">
+                    <div>按工作负载选择（包括后续新增加Pod）</div>
+                  </div>
+                  <div class="flex" style="padding:10px 0 5px 0;">
+                    <div>Namespace</div>
+                    <el-select style="padding-left:30px;" v-model="Namespace.content" placeholder="请选择" size="mini">
+                      <el-option
+                        v-for="(item,i) in Namespace.contents"
+                        :key="i"
+                        :value="item">
+                      </el-option>
+                    </el-select>
+                  </div>
+                  <div class="flex" style="padding:10px 0 5px 0;">
+                    <div>WorkloadType</div>
+                    <el-select style="padding-left:13px;" v-model="WorkloadType.content" placeholder="请选择" size="mini">
+                      <el-option
+                        v-for="(item,i) in WorkloadType.contents"
+                        :key="i"
+                        :value="item">
+                      </el-option>
+                    </el-select>
+                  </div>
+                  <div class="workload">该命名空间下无workload</div>
+                </div>
+                <div class="form-form flex" style="margin-top:5px;max-width:400px;">
+                  <input class="el-checkbox" type="radio" value='false' v-model="TWA">
+                  <div>全部选择（包括后续新增加Pod）</div>
+                </div>
+              </el-form-item>
+             <el-form-item label="指标">
+                <div class="form-form">
+                  <div class="flex p3">
+                    <!-- 内容 -->
+                    <div class="flex" style="flex:1;padding-top:5px;">
+                      <input class="el-checkbox" type="checkbox" v-model="cpuLY.nodeCheck">
+                      <span>CPU利用率（占Request）</span>
+                    </div>
+                    <div>
+                      <el-select v-model="cpuLY.tj" placeholder="请选择" size="mini">
+                        <el-option
+                          v-for="(item,i) in cpuLY.tjs"
+                          :key="i"
+                          :value="item">
+                        </el-option>
+                      </el-select>
+                      <el-select v-model="cpuLY.gl" placeholder="请选择" size="mini" class="glw">
+                        <el-option
+                          v-for="(item,i) in cpuLY.gls"
+                          :key="i"
+                          :value="item">
+                        </el-option>
+                      </el-select>
+                      <el-input v-model="cpuLY.number" size="mini" class="w100"></el-input>
+                      <span class="numberEnd">{{cpuLY.numberEnd}}</span>
+                      <el-select v-model="cpuLY.zq" placeholder="请选择" size="mini" class="gz" style="padding-left:20px;">
+                        <el-option
+                          v-for="(item,i) in cpuLY.zqs"
+                          :key="i"
+                          :value="item">
+                        </el-option>
+                      </el-select>
+                    </div>
+                  </div>
+                  <div class="flex p3">
+                    <!-- 内容 -->
+                    <div class="flex" style="flex:1;padding-top:5px;">
+                      <input class="el-checkbox" type="checkbox"
+                      v-model="ncLY.nodeCheck">
+                      <span>内存利用率（占Request）</span>
+                    </div>
+                    <div>
+                      <el-select v-model="ncLY.tj" placeholder="请选择" size="mini">
+                        <el-option
+                          v-for="(item,i) in ncLY.tjs"
+                          :key="i"
+                          :value="item">
+                        </el-option>
+                      </el-select>
+                      <el-select v-model="ncLY.gl" placeholder="请选择" size="mini" class="glw">
+                        <el-option
+                          v-for="(item,i) in ncLY.gls"
+                          :key="i"
+                          :value="item">
+                        </el-option>
+                      </el-select>
+                      <el-input v-model="ncLY.number" size="mini" class="w100"></el-input>
+                      <span class="numberEnd">{{ncLY.numberEnd}}</span>
+                      <el-select v-model="ncLY.zq" placeholder="请选择" size="mini" class="gz" style="padding-left:20px;">
+                        <el-option
+                          v-for="(item,i) in ncLY.zqs"
+                          :key="i"
+                          :value="item">
+                        </el-option>
+                      </el-select>
+                    </div>
+                  </div>
+                  <div class="flex p3">
+                    <!-- 内容 -->
+                    <div class="flex" style="flex:1;padding-top:5px;">
+                      <input class="el-checkbox" type="checkbox"
+                      v-model="ncLY.nodeCheck">
+                      <span>实际内存利用率（占Request）</span>
+                    </div>
+                    <div>
+                      <el-select v-model="ncLY.tj" placeholder="请选择" size="mini">
+                        <el-option
+                          v-for="(item,i) in ncLY.tjs"
+                          :key="i"
+                          :value="item">
+                        </el-option>
+                      </el-select>
+                      <el-select v-model="ncLY.gl" placeholder="请选择" size="mini" class="glw">
+                        <el-option
+                          v-for="(item,i) in ncLY.gls"
+                          :key="i"
+                          :value="item">
+                        </el-option>
+                      </el-select>
+                      <el-input v-model="ncLY.number" size="mini" class="w100"></el-input>
+                      <span class="numberEnd">{{ncLY.numberEnd}}</span>
+                      <el-select v-model="ncLY.zq" placeholder="请选择" size="mini" class="gz" style="padding-left:20px;">
+                        <el-option
+                          v-for="(item,i) in ncLY.zqs"
+                          :key="i"
+                          :value="item">
+                        </el-option>
+                      </el-select>
+                    </div>
+                  </div>
+                  <div class="flex p3">
+                    <!-- 内容 -->
+                    <div class="flex" style="flex:1;padding-top:5px;">
+                      <input class="el-checkbox" type="checkbox"
+                      v-model="ncLY.nodeCheck">
+                      <span>CPU利用率（占节点）</span>
+                    </div>
+                    <div>
+                      <el-select v-model="ncLY.tj" placeholder="请选择" size="mini">
+                        <el-option
+                          v-for="(item,i) in ncLY.tjs"
+                          :key="i"
+                          :value="item">
+                        </el-option>
+                      </el-select>
+                      <el-select v-model="ncLY.gl" placeholder="请选择" size="mini" class="glw">
+                        <el-option
+                          v-for="(item,i) in ncLY.gls"
+                          :key="i"
+                          :value="item">
+                        </el-option>
+                      </el-select>
+                      <el-input v-model="ncLY.number" size="mini" class="w100"></el-input>
+                      <span class="numberEnd">{{ncLY.numberEnd}}</span>
+                      <el-select v-model="ncLY.zq" placeholder="请选择" size="mini" class="gz" style="padding-left:20px;">
+                        <el-option
+                          v-for="(item,i) in ncLY.zqs"
+                          :key="i"
+                          :value="item">
+                        </el-option>
+                      </el-select>
+                    </div>
+                  </div>
+                  <div class="flex p3">
+                    <!-- 内容 -->
+                    <div class="flex" style="flex:1;padding-top:5px;">
+                      <input class="el-checkbox" type="checkbox"
+                      v-model="ncLY.nodeCheck">
+                      <span>内存利用率（占节点）</span>
+                    </div>
+                    <div>
+                      <el-select v-model="ncLY.tj" placeholder="请选择" size="mini">
+                        <el-option
+                          v-for="(item,i) in ncLY.tjs"
+                          :key="i"
+                          :value="item">
+                        </el-option>
+                      </el-select>
+                      <el-select v-model="ncLY.gl" placeholder="请选择" size="mini" class="glw">
+                        <el-option
+                          v-for="(item,i) in ncLY.gls"
+                          :key="i"
+                          :value="item">
+                        </el-option>
+                      </el-select>
+                      <el-input v-model="ncLY.number" size="mini" class="w100"></el-input>
+                      <span class="numberEnd">{{ncLY.numberEnd}}</span>
+                      <el-select v-model="ncLY.zq" placeholder="请选择" size="mini" class="gz" style="padding-left:20px;">
+                        <el-option
+                          v-for="(item,i) in ncLY.zqs"
+                          :key="i"
+                          :value="item">
+                        </el-option>
+                      </el-select>
+                    </div>
+                  </div>
+                  <div class="flex p3">
+                    <!-- 内容 -->
+                    <div class="flex" style="flex:1;padding-top:5px;">
+                      <input class="el-checkbox" type="checkbox"
+                      v-model="ncLY.nodeCheck">
+                      <span>实际内存利用率（占节点）</span>
+                    </div>
+                    <div>
+                      <el-select v-model="ncLY.tj" placeholder="请选择" size="mini">
+                        <el-option
+                          v-for="(item,i) in ncLY.tjs"
+                          :key="i"
+                          :value="item">
+                        </el-option>
+                      </el-select>
+                      <el-select v-model="ncLY.gl" placeholder="请选择" size="mini" class="glw">
+                        <el-option
+                          v-for="(item,i) in ncLY.gls"
+                          :key="i"
+                          :value="item">
+                        </el-option>
+                      </el-select>
+                      <el-input v-model="ncLY.number" size="mini" class="w100"></el-input>
+                      <span class="numberEnd">{{ncLY.numberEnd}}</span>
+                      <el-select v-model="ncLY.zq" placeholder="请选择" size="mini" class="gz" style="padding-left:20px;">
+                        <el-option
+                          v-for="(item,i) in ncLY.zqs"
+                          :key="i"
+                          :value="item">
+                        </el-option>
+                      </el-select>
+                    </div>
+                  </div>
+                  <div class="flex p3">
+                    <!-- 内容 -->
+                    <div class="flex" style="flex:1;padding-top:5px;">
+                      <input class="el-checkbox" type="checkbox"
+                      v-model="ncLY.nodeCheck">
+                      <span>内存利用率（占节点）</span>
+                    </div>
+                    <div>
+                      <el-select v-model="ncLY.tj" placeholder="请选择" size="mini">
+                        <el-option
+                          v-for="(item,i) in ncLY.tjs"
+                          :key="i"
+                          :value="item">
+                        </el-option>
+                      </el-select>
+                      <el-select v-model="ncLY.gl" placeholder="请选择" size="mini" class="glw">
+                        <el-option
+                          v-for="(item,i) in ncLY.gls"
+                          :key="i"
+                          :value="item">
+                        </el-option>
+                      </el-select>
+                      <el-input v-model="ncLY.number" size="mini" class="w100"></el-input>
+                      <span class="numberEnd">{{ncLY.numberEnd}}</span>
+                      <el-select v-model="ncLY.zq" placeholder="请选择" size="mini" class="gz" style="padding-left:20px;">
+                        <el-option
+                          v-for="(item,i) in ncLY.zqs"
+                          :key="i"
+                          :value="item">
+                        </el-option>
+                      </el-select>
+                    </div>
+                  </div>
+                  <div class="flex p3">
+                    <!-- 内容 -->
+                    <div class="flex" style="flex:1;padding-top:5px;">
+                      <input class="el-checkbox" type="checkbox" v-model="nodeSet.check">
+                      <span>节点上Pod重启次数</span>
+                    </div>
+                    <div>
+                      <el-select v-model="nodeSet.tj" placeholder="请选择" size="mini">
+                        <el-option
+                          v-for="(item,i) in nodeSet.tjs"
+                          :key="i"
+                          :value="item">
+                        </el-option>
+                      </el-select>
+                      <el-select v-model="nodeSet.gl" placeholder="请选择" size="mini" class="glw">
+                        <el-option
+                          v-for="(item,i) in nodeSet.gls"
+                          :key="i"
+                          :value="item">
+                        </el-option>
+                      </el-select>
+                      <el-input v-model="nodeSet.number" size="mini" class="w100"></el-input>
+                      <span class="numberEnd">{{nodeSet.numberEnd}}</span>
+                      <el-select v-model="nodeSet.zq" placeholder="请选择" size="mini" class="gz" style="padding-left:20px;">
+                        <el-option
+                          v-for="(item  ,i) in nodeSet.zqs"
+                          :key="i"
+                          :value="item">
+                        </el-option>
+                      </el-select>
+                    </div>
+                  </div>
+                  <div class="flex p3">
+                    <!-- 内容 -->
+                    <div class="flex" style="flex:1;padding-top:5px;">
+                      <input class="el-checkbox" type="checkbox" v-model="NodeReady.check">
+                      <span>Node Ready</span>
+                    </div>
+                    <div>
+                      <el-select v-model="NodeReady.tj" placeholder="请选择" size="mini">
+                        <el-option
+                          v-for="(item,i) in NodeReady.tjs"
+                          :key="i"
+                          :value="item">
+                        </el-option>
+                      </el-select>
+                      <el-select v-model="NodeReady.gl" placeholder="请选择" size="mini" class="glw" disabled>
+                        <el-option
+                          v-for="(item,i) in NodeReady.gls"
+                          :key="i"
+                          :value="item">
+                        </el-option>
+                      </el-select>
+                      <el-select v-model="NodeReady.number" placeholder="请选择" size="mini" class="glw w100" style="padding:0;">
+                        <el-option
+                          v-for="(item,i) in NodeReady.numbers"
+                          :key="i"
+                          :value="item">
+                        </el-option>
+                      </el-select>
+                      <!-- <el-input v-model="NodeReady.number" size="mini" class="w100"></el-input> -->
+                      <div style="display:inline-block;width:28px;"></div>
+                      <!-- <span class="numberEnd">{{ncFP.numberEnd}}</span> -->
+                      <el-select v-model="NodeReady.zq" placeholder="请选择" size="mini" class="gz" style="padding-left:20px;">
+                        <el-option
+                          v-for="(item,i) in NodeReady.zqs"
+                          :key="i"
+                          :value="item">
+                        </el-option>
+                      </el-select>
+                    </div>
+                  </div>
                 </div>
               </el-form-item>
             </div>
@@ -409,22 +765,40 @@ export default {
         desc: ''
       },
       value:'jq',
-      // options: [
-      //   {
-      //   value: '1',
-      //   label: '集群'
-      //   },
-      //   {
-      //   value: '2',
-      //   label: '节点'
-      //   },
-      //   {
-      //   value: '3',
-      //   label: 'Pod'
-      //   }
-      // ],
+      TWA: true,
+      WorkloadType: {
+        content: 'Deployment',
+        contents: ['Deployment','DeamonSet','StatefulSet']
+      },
+      Namespace: {
+        content: 'default',
+        contents: ['default','kube-public','bube-system']
+      },
+      NodeReady: {
+        check: true,
+        tj: '统计周期1分钟',
+        tjs: ['统计周期1分钟','统计周期2分钟','统计周期3分钟','统计周期4分钟','统计周期5分钟'],
+        gl: '=',
+        gls: ['>','<','='],
+        number: 'False',
+        numbers: ['true','False'],
+        zq: '持续5个周期',
+        zqs: ['持续1个周期','持续2个周期','持续3个周期','持续4个周期','持续5个周期']
+      },
+      nodeSet: {
+        check: true,
+        tj: '统计周期1分钟',
+        tjs: ['统计周期1分钟','统计周期2分钟','统计周期3分钟','统计周期4分钟','统计周期5分钟'],
+        gl: '>',
+        gls: ['>','<'],
+        number: '1',
+        numberEnd: '次',
+        zq: '持续5个周期',
+        zqs: ['持续1个周期','持续2个周期','持续3个周期','持续4个周期','持续5个周期']
+      },
       cpuLY: {
-        check: false,
+        nodeCheck: true,
+        check: true,
         tj: '统计周期1分钟',
         tjs: ['统计周期1分钟','统计周期2分钟','统计周期3分钟','统计周期4分钟','统计周期5分钟'],
         gl: '>',
@@ -435,7 +809,8 @@ export default {
         zqs: ['持续1个周期','持续2个周期','持续3个周期','持续4个周期','持续5个周期']
       },
       ncLY: {
-        check: false,
+        nodeCheck: true,
+        check: true,
         tj: '统计周期1分钟',
         tjs: ['统计周期1分钟','统计周期2分钟','统计周期3分钟','统计周期4分钟','统计周期5分钟'],
         gl: '>',
@@ -446,7 +821,7 @@ export default {
         zqs: ['持续1个周期','持续2个周期','持续3个周期','持续4个周期','持续5个周期']
       },
       cpuFP: {
-        check: false,
+        check: true,
         tj: '统计周期1分钟',
         tjs: ['统计周期1分钟','统计周期2分钟','统计周期3分钟','统计周期4分钟','统计周期5分钟'],
         gl: '>',
@@ -457,7 +832,7 @@ export default {
         zqs: ['持续1个周期','持续2个周期','持续3个周期','持续4个周期','持续5个周期']
       },
       ncFP: {
-        check: false,
+        check: true,
         tj: '统计周期1分钟',
         tjs: ['统计周期1分钟','统计周期2分钟','统计周期3分钟','统计周期4分钟','统计周期5分钟'],
         gl: '>',
@@ -492,6 +867,14 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+.workload {
+  width:200px;
+  height:30px;
+  background-color:white;
+  margin-left:96px;
+  line-height:30px;
+  padding-left: 5px;
+}
 .init {
   margin:0;
 }
