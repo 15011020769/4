@@ -11,7 +11,9 @@ export default {
   },
   props: {
     title: {
-      required: true
+      required: true,
+      type:String,
+      default:'标题'
     }
   },
   methods: {

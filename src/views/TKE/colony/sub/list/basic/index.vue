@@ -119,10 +119,10 @@ import subTitle from "@/views/TKE/components/subTitle";
 import Loading from "@/components/public/Loading";
 import { ALL_CITY,CLUSTERS_DESCRIBE,CLUSTERS_SECURITY } from "@/constants";
 export default {
-  name: "create",
+  name: "colonyBasic",
   data() {
     return {
-        clusterId:[], //集群id
+        clusterId:'', //集群id
         loadShow:false,
         security:{}
     };
@@ -160,7 +160,7 @@ export default {
 };
 </script>
 
-<style lang="scss" tke-formpanel>
+<style lang="scss" scoped>
 
 .tke-form {
   .tke-rich-textarea{

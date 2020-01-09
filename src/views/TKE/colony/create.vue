@@ -378,7 +378,7 @@ export default {
 };
 </script>
 
-<style lang="scss" tke-formpanel>
+<style lang="scss" scoped>
 
 .colony-wrap >>> .el-button,
 .colony-wrap >>> .el-input__inner {

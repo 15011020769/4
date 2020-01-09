@@ -161,7 +161,7 @@ import subTitle from "@/views/TKE/components/subTitle";
 import Loading from "@/components/public/Loading";
 import { ALL_CITY } from "@/constants";
 export default {
-  name: "create",
+  name: "colonyNodeManageNode",
   data() {
     return {
       loadShow: false, //加载是否显示
@@ -208,7 +208,7 @@ export default {
 };
 </script>
 
-<style lang="scss" tke-formpanel>
+<style lang="scss" scoped>
 
 
 </style>

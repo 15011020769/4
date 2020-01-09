@@ -86,7 +86,7 @@
 import Loading from "@/components/public/Loading";
 import { ALL_CITY } from "@/constants";
 export default {
-  name: "create",
+  name: "colonySub",
   data() {
     return {
 
@@ -113,21 +113,13 @@ export default {
 };
 </script>
 
-<style lang="scss" tke-formpanel>
+<style lang="scss">
 .tke-colony-sub{
   height: 100%;
   display: flex;
   flex-direction: column;
-  
   .el-container{
     height: 100%;
-  }
-  .el-menu-item, .el-submenu__title{
-    height: 34px;
-    line-height: 34px;
-    font-size: 12px;
-    padding: 0 0 0 20px;
-    min-width: auto;
   }
 }
 .tke-sub-menu{
@@ -135,6 +127,13 @@ export default {
     background: #fff;
     .el-menu{
       border-right: none;
+      .el-menu-item, .el-submenu__title{
+        height: 34px;
+        line-height: 34px;
+        font-size: 12px !important;
+        padding: 0 0 0 20px;
+        min-width: auto;
+      }
     }
 }
 </style>

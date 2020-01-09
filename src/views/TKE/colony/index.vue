@@ -358,7 +358,7 @@ export default {
 };
 </script>
 
-<style lang="scss" c>
+<style lang="scss" scoped>
 .colony-wrap >>> .el-button,
 .colony-wrap >>> .el-input__inner {
   height: 30px !important;
@@ -391,7 +391,9 @@ export default {
     }
   }
 }
-
+.tke-search-select{
+  width: 90px;
+}
 
 // 弹窗相关
 .el-dialog__footer .dialog-footer{

@@ -85,7 +85,7 @@ export default new Router({
         },
         { // 命名空间
           path: '/colony/sub/list/namespace',
-          name: 'colonyNodeManageAsg',
+          name: 'colonyNamespace',
           component: () => import('./colony/sub/list/namespace/index.vue'),
           meta: {
             keepAlive: true,
@@ -94,7 +94,7 @@ export default new Router({
         },
         { // 工作负载-Deployment
           path: '/colony/sub/list/resource/deployment',
-          name: 'colonyNodeManageAsg',
+          name: 'colonyResourceDeployment',
           component: () => import('./colony/sub/list/resource/deployment.vue'),
           meta: {
             keepAlive: true,
