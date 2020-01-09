@@ -5,8 +5,8 @@
       <div class="streamBnt">
         <div class="bntWrap" style="flex:1">
           <el-radio-group v-model="type" @change="onTypeChange">
-            <el-radio-button label="在线流"></el-radio-button>
-            <el-radio-button label="历史流"></el-radio-button>
+            <el-radio-button :label="$t('CSS.domainManagement.33')"></el-radio-button>
+            <el-radio-button :label="$t('CSS.domainManagement.34')"></el-radio-button>
             <el-radio-button label="禁推流"></el-radio-button>
           </el-radio-group>
         </div>
@@ -35,31 +35,31 @@
       </div>
       <div class="streamWTable">
         <div class="tableWrap">
-          <el-table :data="tableData" style="width: 100%">
-            <el-table-column prop="StreamName" label="流名称"></el-table-column>
+          <el-table :data="tableData" empty-text="暫無數據" style="width: 100%">
+            <el-table-column prop="StreamName" :label="$t('CSS.domainManagement.35')"></el-table-column>
 
             <template v-if="type !== '禁推流'">
               <el-table-column prop="DomainName" label="域名"></el-table-column>
-              <el-table-column prop="AppName" label="应用名"></el-table-column>
+              <el-table-column prop="AppName" :label="$t('CSS.domainManagement.36')"></el-table-column>
             </template>
 
-            <template v-if="type !== '历史流'">
-              <el-table-column  label="状态">
+            <template v-if="type !== $t('CSS.domainManagement.34')">
+              <el-table-column :label="$t('CSS.domainManagement.3')">
                 <span v-if="type === '在线流'">直播中</span>
                 <span v-if="type === '禁推流'">已禁用</span>
               </el-table-column>
             </template>
 
-            <template v-if="type === '在线流'">
-              <el-table-column label="开始推流时间" width="180">
+            <template v-if="type === $t('CSS.domainManagement.33')">
+              <el-table-column :label="$t('CSS.domainManagement.37')" width="180">
                 <template slot-scope="scope">
                   {{format(scope.row.PublishTimeList[0].PublishTime)}}
                 </template>
               </el-table-column>
             </template>
 
-            <template v-if="type === '历史流'">
-              <el-table-column prop="StreamEndTime" label="结束推流时间" width="180">
+            <template v-if="type === $t('CSS.domainManagement.34')">
+              <el-table-column prop="StreamEndTime" :label="$t('CSS.domainManagement.38')" width="180">
                 <template slot-scope="scope">
                   {{format(scope.row.StreamEndTime)}}
                 </template>
@@ -68,11 +68,11 @@
 
             <el-table-column label="操作">
               <template slot-scope="scope">
-                <template v-if="type === '在线流'">
-                  <el-button type="text" size="small" @click="test(scope.row)">测试</el-button>
-                  <el-button type="text" size="small" @click="dropStream(scope.row)">断流</el-button>
+                <template v-if="type === $t('CSS.domainManagement.33')">
+                  <el-button type="text" size="small" @click="test(scope.row)">{{$t('CSS.domainManagement.39')}}</el-button>
+                  <el-button type="text" size="small" @click="dropStream(scope.row)">{{$t('CSS.domainManagement.40')}}</el-button>
                 </template>
-                <el-button v-if="type === '禁推流'" type="text" size="small" @click="enable(scope.row)">启用</el-button>
+                <el-button v-if="type === '禁推流'" type="text" size="small" @click="enable(scope.row)">{{$t('CSS.domainManagement.7')}}</el-button>
                 <el-button v-else type="text" size="small" @click="disable(scope.row)">禁用</el-button>
               </template>
             </el-table-column>
@@ -112,7 +112,7 @@ export default {
   name: "streamManagement",
   data() {
     return {
-      type: '在线流',
+      type: $t('CSS.domainManagement.33'),
       tableData: [],
       streamName: '',
       pageNum: 1,
@@ -139,9 +139,9 @@ export default {
       }
       let cb
       switch(val) {
-        case '在线流':
+        case $t('CSS.domainManagement.33'):
           break
-        case '历史流':
+        case $t('CSS.domainManagement.34'):
           url = LIVE_DESCRIBE_LIVESTREAMEVENTLIST
           key = 'EventList'
           params.EndTime = moment.utc().format()
@@ -164,8 +164,8 @@ export default {
 
     },
     disable(row) {
-      this.$confirm(`确认禁用${row.StreamName}?`, '禁用', {
-        confirmButtonText: '确定',
+      this.$confirm(`${$t('CSS.domainManagement.46')}${row.StreamName}?`, '禁用', {
+        confirmButtonText: $t('CSS.domainManagement.43'),
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
@@ -178,8 +178,8 @@ export default {
       })
     },
     enable(row) {
-      this.$confirm(`确认启用${row.StreamName}?`, '启用', {
-        confirmButtonText: '确定',
+      this.$confirm(`${$t('CSS.domainManagement.44')}${row.StreamName}?`, $t('CSS.domainManagement.7'), {
+        confirmButtonText: $t('CSS.domainManagement.43'),
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
@@ -192,8 +192,8 @@ export default {
       })
     },
     dropStream(row) {
-      this.$confirm(`确认断流${row.StreamName}?`, '断流', {
-        confirmButtonText: '确定',
+      this.$confirm(`${$t('CSS.domainManagement.42')}${row.StreamName}?`, $t('CSS.domainManagement.45'), {
+        confirmButtonText: $t('CSS.domainManagement.43'),
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
@@ -204,7 +204,7 @@ export default {
           StreamName: row.StreamName,
         }).then(() => {
           this.$message({
-            message: '断流操作有延时，可能需要几分钟才生效',
+            message: $t('CSS.domainManagement.41'),
             type: 'success'
           })
           this.onTypeChange(this.type)

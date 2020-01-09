@@ -3,27 +3,29 @@
     <div class="newClear">
       <div class="leftFloat">
         <div class="modileCon">
-          <h1>回调配置<a @click="callBackEdit">编辑</a></h1>
+          <h1>回调配置<a @click="callBackEdit">{{$t('CSS.domainManagement.10')}}</a></h1>
           <div>
             <el-table
+              empty-text="暫無數據"
               :data="callbackconfigData">
-              <el-table-column prop="TemplateName" label="模板名称"></el-table-column>
+              <el-table-column prop="TemplateName" :label="$t('CSS.domainManagement.14')"></el-table-column>
               <el-table-column prop="TemplateId" label="模板ID"></el-table-column>
-              <el-table-column prop="StreamBeginNotifyUrl" label="回调地址"></el-table-column>
+              <el-table-column prop="StreamBeginNotifyUrl" :label="$t('CSS.domainManagement.18')"></el-table-column>
             </el-table>
           </div>
         </div>
         <div class="modileCon">
-          <h1>截图&鉴黄配置<a @click="ScreenshotEdit">编辑</a></h1>
+          <h1>{{$t('CSS.domainManagement.13')}}<a @click="ScreenshotEdit">{{$t('CSS.domainManagement.10')}}</a></h1>
           <div>
             <el-table
+              empty-text="暫無數據"
               :data="screenshotData">
-              <el-table-column prop="TemplateName" label="模板名称"></el-table-column>
+              <el-table-column prop="TemplateName" :label="$t('CSS.domainManagement.14')"></el-table-column>
               <el-table-column prop="TemplateId" label="模板ID"></el-table-column>
-              <el-table-column prop="SnapshotInterval" label="截图间隔(秒)"></el-table-column>
-              <el-table-column prop="PornFlag" label="智能鉴黄">
+              <el-table-column prop="SnapshotInterval" :label="$t('CSS.domainManagement.17')"></el-table-column>
+              <el-table-column prop="PornFlag" :label="$t('CSS.domainManagement.16')">
                 <template slot-scope="scope">
-                  {{scope.row.PornFlag === 0 ? '不开启' : '开启'}}
+                  {{scope.row.PornFlag === 0 ? $t('CSS.domainManagement.19') : $t('CSS.domainManagement.20')}}
                 </template>
               </el-table-column>
             </el-table>
@@ -32,13 +34,14 @@
       </div>
       <div class="rightFloat">
         <div class="modileCon">
-          <h1>录制配置<a @click="recordconfigEdit">编辑</a></h1>
+          <h1>{{$t('CSS.domainManagement.12')}}<a @click="recordconfigEdit">{{$t('CSS.domainManagement.10')}}</a></h1>
           <div>
             <el-table
+              empty-text="暫無數據"
               :data="recordingconfigData">
-              <el-table-column prop="TemplateName" label="模板名称"></el-table-column>
+              <el-table-column prop="TemplateName" :label="$t('CSS.domainManagement.14')"></el-table-column>
               <el-table-column prop="TemplateId" label="模板ID"></el-table-column>
-              <el-table-column prop="address" label="录制格式">
+              <el-table-column prop="address" :label="$t('CSS.domainManagement.15')">
                 <template slot-scope="scope">
                   {{scope.row | format}}
                 </template>
@@ -47,11 +50,12 @@
           </div>
         </div>
         <div class="modileCon">
-          <h1>水印配置<a @click="waterEdit">编辑</a></h1>
+          <h1>水印配置<a @click="waterEdit">{{$t('CSS.domainManagement.10')}}</a></h1>
           <div>
             <el-table
+              empty-text="暫無數據"
               :data="watermarkconfigData">
-              <el-table-column prop="WatermarkName" label="模板名称"></el-table-column>
+              <el-table-column prop="WatermarkName" :label="$t('CSS.domainManagement.14')"></el-table-column>
               <el-table-column prop="WatermarkId" label="模板ID"></el-table-column>
               <el-table-column prop="address" label="水印位置">
                 <template slot-scope="scope">
@@ -60,7 +64,7 @@
               </el-table-column>
               <el-table-column prop="address" label="操作">
                 <template slot-scope="scope">
-                  <a href="#" @click="previewWatermark(scope.row)">预览</a>
+                  <a href="#" @click="previewWatermark(scope.row)">{{$t('CSS.domainManagement.21')}}</a>
                 </template>
               </el-table-column>
             </el-table>

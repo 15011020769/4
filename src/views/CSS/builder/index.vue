@@ -5,48 +5,48 @@
     </div>
     <div class="content">
       <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="130px" class="demo-ruleForm">
-        <el-form-item label="生成类型与域名" prop="domain">
-          <el-select v-model="ruleForm.domainType" placeholder="请选择域名类型" @change="Getdomain">
+        <el-form-item :label="$t('CSS.builder.0')" prop="domain">
+          <el-select v-model="ruleForm.domainType" :placeholder="$t('CSS.builder.7')" @change="Getdomain">
             <el-option label="推流域名" value="0"></el-option>
             <el-option label="播放域名" value="1"></el-option>
           </el-select>
-          <el-select v-model="ruleForm.domain" placeholder="请选择域名">
+          <el-select v-model="ruleForm.domain" :placeholder="$t('CSS.builder.13')">
             <el-option v-for="(item,index) in domainArr" :key="index" :label="item.Name" :value="item.Name"></el-option>
           </el-select>
-          <p>选择推流域名，则生成推流地址；选择播放域名，则生成播放地址。如无可选域名，<span @click="_adddomain" class="Adomain">请添加域名</span></p>
+          <p>{{$t('CSS.builder.1')}}<span @click="_adddomain" class="Adomain">{{$t('CSS.builder.2')}}</span></p>
         </el-form-item>
         <el-form-item label="AppName" prop="AppName">
           <el-input v-model="ruleForm.AppName" class="inputstyle"></el-input>
-          <p>默认为live，仅支持英文字母、数字和符号</p>
+          <p>{{$t('CSS.builder.3')}}</p>
         </el-form-item>
 
         <el-form-item label="StreamName" prop="StreamName">
           <el-input v-model="ruleForm.StreamName" class="inputstyle"></el-input>
-          <p>仅支持英文字母、数字和符号</p>
+          <p>{{$t('CSS.builder.4')}}</p>
         </el-form-item>
-        <el-form-item label="过期时间" prop="date">
+        <el-form-item :label="$t('CSS.builder.5')" prop="date">
           <el-date-picker
             v-model="ruleForm.date"
             type="datetime"
-            placeholder="选择过期时间">
+            :placeholder="$t('CSS.builder.8')">
           </el-date-picker>
           </el-date-picker>
         </el-form-item>
 
         <el-form-item>
           <el-button type="primary" @click="submitForm('ruleForm')" size="small">生成地址</el-button>
-          <span class="Adomain aExplain" @click="_aExplain">地址解析说明示例</span>
+          <span class="Adomain aExplain" @click="_aExplain">{{$t('CSS.builder.6')}}</span>
         </el-form-item>
       </el-form>
       <div class="result" v-show="txSecret && txTime">
-        <h3>生成结果</h3><span>(根据上面设置项生成以下地址)</span>
+        <h3>生成结果</h3><span>({{$t('CSS.builder.9')}})</span>
         <div class="item">
           <div>
-            <span>类型</span>
+            <span>{{$t('CSS.builder.11')}}</span>
             <span>{{ruleForm.domainType === '0' ? '推流' : '播放'}}域名</span>
           </div>
           <div>
-            <span>过期时间</span>
+            <span>{{$t('CSS.builder.5')}}</span>
             <span>{{ruleForm.date}}</span>
           </div>
           <template v-if="ruleForm.domainType === '0'">
@@ -59,7 +59,7 @@
               <span>rtmp://{{ruleForm.domain}}/{{ruleForm.AppName}}/</span>
             </div>
             <div>
-              <span>OBS推流名称</span>
+              <span>{{$t('CSS.builder.12')}}</span>
               <span>{{ruleForm.StreamName}}?txSecret={{txSecret}}&txTime={{txTime}}</span>
             </div>
           </template>
@@ -80,7 +80,7 @@
         </div>
       </div>
     </div>
-    <el-dialog title="地址解析说明示例" :visible.sync="dialogVisible" width="850px">
+    <el-dialog :title="$t('CSS.builder.14')" :visible.sync="dialogVisible" width="850px">
       <img width="800px"
         src="https://imgcache.qq.com/open_proj/proj_qcloud_v2/mc_2014/video/console/v1/css/img/lvb/url-description.png">
     </el-dialog>
@@ -108,7 +108,7 @@ import moment from 'moment'
           domain: '',
           AppName: 'live',
           StreamName: '',
-          date: '2020-01-07 23:59:59',
+          date: moment('2020-01-07 23:59:59'),
         },
         dialogVisible: false, //模态框
         domainArr: [], //域名列表
@@ -124,7 +124,7 @@ import moment from 'moment'
               trigger: 'blur'
             },
             {
-              pattern: /^[0-9a-zA-Z]*$/g,
+              pattern: /^[\u0000-\u00FF]*$/g,
               message: '仅支持英文字母、数字和符号'
             }
           ],
@@ -134,7 +134,7 @@ import moment from 'moment'
               trigger: 'blur'
             },
             {
-              pattern: /^[0-9a-zA-Z]*$/g,
+              pattern: /^[\u0000-\u00FF]*$/g,
               message: '仅支持英文字母、数字和符号'
             }
           ],

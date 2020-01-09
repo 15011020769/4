@@ -1,18 +1,18 @@
 <template>
   <div class="transcribe-wrap">
-    <HeaderCom title="水印设置" />
+    <HeaderCom :title="$t('CSS.watermark.0')" />
     <div class="transcribe-main">
       <div class="explain">
         <p>
-          温馨提示：水印功能为增值收费项，详细计费规则请
-          <a href="#">参考文档</a>
+          {{$t('CSS.watermark.1')}}
+          <a href="#">{{$t('CSS.watermark.2')}}</a>
         </p>
       </div>
       <div class="explain">
         <p>
-          模板设置完成，需关联推流域名方可生效，请点击
-          <a href="#">域名管理</a>进行关联设置。模板设置请
-          <a href="#">参考文档</a>模板配置完后续大约5分鐘生效
+          {{$t('CSS.watermark.3')}}
+          <a href="#">域名管理</a>{{$t('CSS.watermark.4')}}
+          <a href="#">{{$t('CSS.watermark.2')}}</a>{{$t('CSS.watermark.5')}}
         </p>
       </div>
       <div class="main-box">
@@ -90,7 +90,7 @@ export default {
     },
 
     _delete() {
-      this.$confirm(`确定删除水印配置: ${this.selectItem.WatermarkName}`, '删除水印配置', {
+      this.$confirm(`${$t('CSS.watermark.6')}: ${this.selectItem.WatermarkName}`, '删除水印配置', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'

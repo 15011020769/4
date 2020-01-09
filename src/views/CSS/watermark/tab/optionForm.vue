@@ -2,10 +2,10 @@
   <div class="form-wrap">
     <h4>水印配置</h4>
     <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px" class="demo-ruleForm">
-      <el-form-item label="水印名称" prop="WatermarkName">
+      <el-form-item :label="$t('CSS.watermark.8')" prop="WatermarkName">
         <el-input v-model="ruleForm.WatermarkName" style="width:330px;" />
       </el-form-item>
-      <el-form-item label="图片上传" prop="PictureUrl">
+      <el-form-item :label="$t('CSS.watermark.13')" prop="PictureUrl">
         <el-row type="flex">
           <img v-if="ruleForm.PictureUrl" :src="ruleForm.PictureUrl" style="width: 100px; height: 100px; margin-right: 20px" />
           <div v-else style="width: 100px; height: 100px; margin-right: 20px; border: 1px solid #ddd;"></div>
@@ -17,14 +17,14 @@
             list-type="picture"
             :show-file-list="false"
           >
-            <el-button size="small" type="primary">上传图片</el-button>
-            <div slot="tip" class="el-upload__tip">注意：为了最佳视觉效果，水印应为透明图片 png 格式；图片大小小于2M</div>
+            <el-button size="small" type="primary">{{$t('CSS.watermark.16')}}</el-button>
+            <div slot="tip" class="el-upload__tip">{{$t('CSS.watermark.14')}}</div>
             <div slot="file" slot-scope="{file}">
             </div>
           </el-upload>
         </el-row>
       </el-form-item>
-      <el-form-item label="水印图片">
+      <el-form-item :label="$t('CSS.watermark.7')">
         <div class="edit-img">
           <draggable-resizable
             :x="x"
@@ -42,10 +42,10 @@
           </draggable-resizable>
         </div>
       </el-form-item>
-      <el-form-item label="显示位置X轴方向" prop="XPosition">
+      <el-form-item :label="$t('CSS.watermark.15')" prop="XPosition">
         <el-input-number v-model="ruleForm.XPosition" :step="1" step-strictly :max="99" :min="0" @blur="xblur" /> %
       </el-form-item>
-      <el-form-item label="显示位置Y轴方向" prop="YPosition">
+      <el-form-item :label="$t('CSS.watermark.17')" prop="YPosition">
         <el-input-number v-model="ruleForm.YPosition" :step="1" step-strictly :max="99" :min="0" @blur="yblur"/> %
       </el-form-item>
       <el-form-item>

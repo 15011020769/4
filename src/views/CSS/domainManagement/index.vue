@@ -29,6 +29,7 @@
       <div class="domainTable">
         <div class="tableWrap">
           <el-table
+            empty-text="暫無數據"
             :data="tableDataBegin"
             ref="multipleTable"
             tooltip-effect="dark"

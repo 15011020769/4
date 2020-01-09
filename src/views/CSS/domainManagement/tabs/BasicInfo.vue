@@ -8,11 +8,11 @@
           <p>{{info.TargetDomain}}</p>
         </div>
         <div class="newClear newList">
-          <p>创建时间</p>
+          <p>{{$t('CSS.domainManagement.9')}}</p>
           <p>{{info.CreateTime}}</p>
         </div>
         <div class="newClear newList">
-          <p>类型</p>
+          <p>{{$t('CSS.domainManagement.3')}}</p>
           <p>{{info.Type|typeCh}}</p>
         </div>
         <div class="newClear newList">

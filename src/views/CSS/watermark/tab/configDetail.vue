@@ -10,36 +10,36 @@
   <div class="detail-wrap">
     <el-row type="flex" justify="space-between" align="middle">
       <h3>水印配置</h3>
-      <el-button type="text" @click="onEdit">編輯</el-button>
+      <el-button type="text" @click="onEdit">{{$t('CSS.watermark.12')}}</el-button>
     </el-row>
     <ul class="content-box">
       <li>
         <el-row type="flex">
-          <label>水印图片</label>
+          <label>{{$t('CSS.watermark.7')}}</label>
           <div class="watermark-wrap"><img :src="selectItem.PictureUrl" /></div>
         </el-row>
       </li>
       <li>
         <el-row type="flex">
-          <label>水印名称</label>
+          <label>{{$t('CSS.watermark.8')}}</label>
           <div class="text-black">{{ selectItem.WatermarkName }}</div>
         </el-row>
       </li>
       <li>
         <el-row type="flex">
-          <label>显示位置</label>
+          <label>{{$t('CSS.watermark.9')}}</label>
           <div class="text-black">{{ selectItem | position }}</div>
         </el-row>
       </li>
       <li>
         <el-row type="flex">
-          <label>X轴方向</label>
+          <label>X{{$t('CSS.watermark.10')}}</label>
           <div class="text-black">{{ selectItem.XPosition }}%</div>
         </el-row>
       </li>
       <li>
         <el-row type="flex">
-          <label>Y轴方向</label>
+          <label>Y{{$t('CSS.watermark.10')}}</label>
           <div class="text-black">{{ selectItem.YPosition }}%</div>
         </el-row>
       </li>
@@ -58,7 +58,7 @@
     </ul>
     <el-dialog
       :visible.sync="previewDialog"
-      title="预览"
+      :title="$t('CSS.watermark.11')"
     >
     <div style="position: relative;" v-if="selectItem">
       <img src="https://imgcache.qq.com/open_proj/proj_qcloud_v2/mc_2014/video/css/img/video-img.png">
