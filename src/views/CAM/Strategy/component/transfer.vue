@@ -19,7 +19,6 @@
           size="small"
           height="220px"
           tooltip-effect="dark"
-          v-loading="loading"
           style="width: 100%"
           @selection-change="handleSelectionChange"
         >
@@ -175,7 +174,7 @@ export default {
           });
         });
         this.json = _this.transfer_data;
-        this.loading = false;
+        _this.loading = false;
       });
     },
     // 2.查询用户组列表ListGroups
