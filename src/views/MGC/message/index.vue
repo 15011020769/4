@@ -1,5 +1,5 @@
 <template>
-  <div class="message-wrap" v-loading="loading">
+  <div class="message-wrap">
     <div class="message-header">
       <HeaderCom title="站内信">
       </HeaderCom>
@@ -13,7 +13,7 @@
             <el-button @click="AllRead">全部标记为已读</el-button>
           </div>
           <div class="message-btns btnStyle">
-            <el-button @click="getDataListByType('')">全部</el-button>
+            <el-button  autofocus="true" @click="getDataListByType('')" >全部</el-button>
             <el-button @click="getDataListByType('運維消息')">運維消息</el-button>
             <el-button @click="getDataListByType('騰訊雲動態')">騰訊雲動態</el-button>
             <el-button @click="getDataListByType('產品消息')">產品消息</el-button>
@@ -31,7 +31,7 @@
           </div>
         </div> -->
       </div>
-      <div class="meaasge-table">
+      <div class="meaasge-table"  v-loading="loading">
         <el-table :data="tableData" style="width: 100%" height="450" @selection-change="handleSelectionChange">
           <el-table-column type="selection" width="55"></el-table-column>
           <el-table-column prop="title" label="消息内容">
@@ -128,6 +128,7 @@ export default {
   methods: {
    //初始化数据
     init(){
+       this.loading = true
        let uin = "100011921910"
        let Page = this.currpage //当前页码
        let Rp = this.pagesize  //条数
@@ -137,13 +138,21 @@ export default {
        }
       //  let uin = VueCookie.get('uuid')
        this.axios.get(`${process.env.VUE_APP_adminUrl + INMAIL_LIST}`+'?uin='+uin+'&page='+Page+'&limit='+Rp+typeUrl).then(res=>{
-         console.log(res)
-         this.tableData = res.page.list;
-         this.TotalCount = res.page.totalCount
-         this.json = res.page.list;
-         this.tableAll = res.page.list;
-         this.loading=false
-       })
+        if(res != ''){
+            console.log(res)
+            this.tableData = res.page.list;
+            this.TotalCount = res.page.totalCount
+            this.json = res.page.list;
+            this.tableAll = res.page.list;
+            this.loading=false
+        }else{
+             this.loading = false;
+              this.$message({
+                type: "info",
+                message: "无响应数据！"
+            });
+        }
+      })
     },
     //获取未读数据
     getCount(){
@@ -216,15 +225,6 @@ export default {
     getDataListByType(val){
       this.dataType = val
       this.init()
-      //  let uin = "100011921910"
-      //  let Page = this.currpage //当前页码
-      //  let Rp = this.pagesize  //条数
-      //  let type = val
-      //  this.axios.get(`${process.env.VUE_APP_adminUrl + INMAIL_LIST}`+'?uin='+uin+'&page='+Page+'&limit='+Rp+'&type='+type).then(res=>{
-      //    console.log(res)
-      //    this.tableData = res.page.list;
-      //    this.TotalCount = res.page.totalCount
-      //  })
     },
     //跳转详情
     detailsMesg(val){
@@ -239,48 +239,6 @@ export default {
      searchAll(){
         this.init()
      },
-    // searchTitle(){
-    //   var arr = [];
-    //   this.tableAll.forEach(item => {
-    //      if(item.msgTypeName == "母雲動態"){
-    //           arr.push(item)
-    //      }
-    //   })
-    //   this.tableData = arr
-    //   this.TotalCount = arr.length
-    // },
-    // searchText(){
-    //   var arr = [];
-    //   this.tableAll.forEach(item => {
-    //      if(item.msgTypeName =='運維消息'){
-    //           arr.push(item)
-    //      }
-    //   })
-    //   this.tableData = arr
-    //   this.TotalCount = arr.length
-    // },
-    // searchProduct(){
-    //   var arr = [];
-    //   this.tableAll.forEach(item => {
-    //      if(item.msgTypeName =='產品消息'){
-    //           arr.push(item)
-    //           this.currpage = 1;
-    //      }
-    //   })
-    //   this.tableData = arr
-    //   this.TotalCount = arr.length
-    // },
-    // searchMsgAq(){
-    //   var arr = [];
-    //   this.tableAll.forEach(item => {
-    //      if(item.msgTypeName =='安全消息'){
-    //           arr.push(item)
-    //           this.currpage = 1;
-    //      }
-    //   })
-    //   this.tableData = arr
-    //   this.TotalCount = arr.length
-    // },
     //分页
     handleCurrentChange(val) {
       this.currpage = val;

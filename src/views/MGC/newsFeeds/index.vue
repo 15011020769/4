@@ -1,5 +1,5 @@
 <template>
-  <div class="newdFeeds-wrap" v-loading="loading">
+  <div class="newdFeeds-wrap" >
     <HeadCom title="通知公告"></HeadCom>
     <div class="wrap">
       <div class="message-funRight">
@@ -10,12 +10,13 @@
             </span>
           </div>
         </div>
-      <div class="wrap-table">
+      <div class="wrap-table" >
         <template>
           <el-table
             :data="tableData"
             style="width: 100%"
             height="450"
+            v-loading="loading"
           >
             <el-table-column prop="title" label="标题" >
                 <template slot-scope="scope">
@@ -61,7 +62,7 @@ export default {
   data() {
     return {
       inputVal:'',
-      loading:false,
+      loading:true,
       TotalCount: 0, //分页
       pagesize: 10, //分页条数
       currpage: 1, //当前页码
@@ -84,6 +85,7 @@ export default {
          console.log(res)
          this.tableData = res.page.list
          this.TotalCount = res.page.totalCount
+         this.loading = false
        })
     },
     tableSearch() {
