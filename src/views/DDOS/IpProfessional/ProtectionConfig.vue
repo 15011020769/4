@@ -43,6 +43,10 @@
                     <!-- ID名称-->
                     <!-- <a v-if="item.Key=='Id'" href="#" @click="toDetail(scope.$index, scope.row)">{{item.Value}}</a> -->
                   </div>
+                  <div v-for="(item, index) in scope.row.Record" :key="index">
+                    <div v-if="item.Key=='Name'">{{item.Value}}</div>
+                    <!-- ID名称-->
+                  </div>
                 </template>
               </el-table-column>
               <el-table-column prop="Record.GroupIpList" label="IP">
@@ -116,7 +120,13 @@
               >
                 <template slot-scope="scope">
                   <div v-for="(item, index) in scope.row.Record" :key="index">
-                    <div v-if="item.Key=='Id'">-</div>
+                    <div v-if="item.Key=='Id'">
+                      <div v-for="(item2, index2) in bindingArr" :key="index2">
+                        <div v-if="item2.ResId==item.Value">
+                          {{item2.PolicyName}}
+                        </div>
+                      </div>
+                    </div>
                     <!--高级防护策略 -->
                   </div>
                 </template>
@@ -296,6 +306,7 @@ export default {
     return {
       loading: true,
       resourceId: "", //资源ID
+      bindingArr: [], //资源和策略绑定关系数组
       tableDataBegin: [], //DDoS攻击防护列表
       // 过滤刷新列表过程中使用
       allData: [], // 存储全部实例列表
@@ -423,6 +434,7 @@ export default {
       };
       this.axios.post(DDOSPOLICY_CONT, params).then(res => {
         this.tableDataPolicy = res.Response.DDosPolicyList;
+        this.getBindingArr();
         this.loading = false;
         // console.log(this.tableDataPolicy)
       });
@@ -438,6 +450,20 @@ export default {
       };
       this.axios.post(RESBIND_MODIFY, params).then(res => {
         // console.log(res.Response)
+      });
+    },
+    // 获取资源和策略绑定关系数组
+    getBindingArr(){
+      // 循环策略列表（找出已被绑定的资源）
+      let binded = {};
+      this.tableDataPolicy.forEach(policy => {
+        policy.BoundResources.forEach(res => {
+          binded = {};
+          binded.ResId = res;
+          binded.PolicyId = policy.PolicyId;
+          binded.PolicyName = policy.PolicyName;
+          this.bindingArr.push(binded);
+        })
       });
     },
     // 修改
