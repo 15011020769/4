@@ -493,7 +493,7 @@ export default {
       showChufa1: true, //触发条件1显示开关
       showChufa2: false, //触发条件2显示开关
 
-      showQudao1: true, //渠道选择1显示开关
+      showQudao1: false, //渠道选择1显示开关
       showQudao2: false, //渠道选择2显示开关
 
       errorTip1: false, //触发条件模板错误提示
