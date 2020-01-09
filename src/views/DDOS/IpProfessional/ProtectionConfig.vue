@@ -39,13 +39,12 @@
               <el-table-column prop="Record.Id" :label="$t('DDOS.Proteccon_figura.Id_name')">
                 <template slot-scope="scope">
                   <div v-for="(item, index) in scope.row.Record" :key="index">
-                    <div v-if="item.Key=='Id'">{{item.Value}}</div>
+                    <span v-if="item.Key=='Id'">{{item.Value}}</span>
                     <!-- ID名称-->
                     <!-- <a v-if="item.Key=='Id'" href="#" @click="toDetail(scope.$index, scope.row)">{{item.Value}}</a> -->
                   </div>
-                  <div v-for="(item, index) in scope.row.Record" :key="index">
-                    <div v-if="item.Key=='Name'">{{item.Value}}</div>
-                    <!-- ID名称-->
+                  <div v-for="(item, index) in scope.row.Record" :key="index+'i'">
+                    <span v-if="item.Key=='Name'">{{item.Value}}</span>
                   </div>
                 </template>
               </el-table-column>
@@ -73,9 +72,9 @@
               >
                 <template slot-scope="scope">
                   <div v-for="(item, index) in scope.row.Record" :key="index">
-                    <div
-                      v-if="item.Key=='DefendStatus' && item.Value == '1'"
-                    >{{$t('DDOS.AccesstoCon.AccOpen')}}</div>
+                    <div v-if="item.Key=='DefendStatus' && item.Value == '1'">
+                      {{$t('DDOS.AccesstoCon.AccOpen')}}
+                    </div>
                     <div v-else-if="item.Key=='DefendStatus' && item.Value != '1'">-</div>
                   </div>
                 </template>
@@ -102,7 +101,6 @@
                   </div>
                 </template>
               </el-table-column>
-
               <el-table-column
                 prop="BusinessScene"
                 :label="$t('DDOS.Proteccon_figura.Business_scenario')"
@@ -121,7 +119,7 @@
                 <template slot-scope="scope">
                   <div v-for="(item, index) in scope.row.Record" :key="index">
                     <div v-if="item.Key=='Id'">
-                      <div v-for="(item2, index2) in bindingArr" :key="index2">
+                      <div v-for="(item2, i) in bindingArr" :key="i+'i'">
                         <div v-if="item2.ResId==item.Value">
                           {{item2.PolicyName}}
                         </div>
@@ -607,18 +605,37 @@ export default {
       // 循环资源列表
       this.tableDataBegin.forEach(resource => {
         const objTemp = {};
-        resource.Record.forEach(element => {
-          if(element.Key == "Id"){
-            objTemp.key = element.Value;
-          } else if(element.Key == "GroupIpList"){
-            //175.97.143.121-tpe-bgp-300-1;175.97.142.153-tpe-bgp-100-1
-            let arr = element.Value.split(';');
-            objTemp.label = "";
-            arr.forEach(ipStr => {
-              objTemp.label += ipStr.substring(0, ipStr.indexOf('-'))+";";
-            });
+        for (const i in resource.Record) {
+          if (resource.Record.hasOwnProperty(i)) {
+            const element = resource.Record[i];
+            if(element.Key == "Id"){
+              objTemp.key = element.Value;
+            } else if(element.Key == "GroupIpList"){
+              //175.97.143.121-tpe-bgp-300-1;175.97.142.153-tpe-bgp-100-1
+              let arr = element.Value.split(';');
+              objTemp.label = "";
+              for (const j in arr) {
+                if (arr.hasOwnProperty(j)) {
+                  const ipStr = arr[j];
+                  objTemp.label += ipStr.substring(0, ipStr.indexOf('-'))+";";
+                }
+              }
+            }
           }
-        });
+        }
+        // resource.Record.forEach(element => {
+        //   if(element.Key == "Id"){
+        //     objTemp.key = element.Value;
+        //   } else if(element.Key == "GroupIpList"){
+        //     //175.97.143.121-tpe-bgp-300-1;175.97.142.153-tpe-bgp-100-1
+        //     let arr = element.Value.split(';');
+        //     objTemp.label = "";
+        //     arr.forEach(ipStr => {
+        //       let tmpStr = ipStr+"";
+        //       objTemp.label += tmpStr.substring(0, tmpStr.indexOf('-'))+";";
+        //     });
+        //   }
+        // });
         if(binded.length>0 && binded.indexOf(objTemp.key)<0){
           this.resData.push(objTemp);
         } else if(binded.length==0){
