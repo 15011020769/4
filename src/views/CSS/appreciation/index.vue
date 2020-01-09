@@ -4,7 +4,7 @@
     <div class="seek">
       <XTimeX v-on:switchData="GetDat" :classsvalue="value"></XTimeX>
       <el-button style="margin-top:22.5px;margin-left:20px;">{{region}}</el-button>
-      <el-button style="margin-top:22.5px;margin-left:20px;" type="primary" @click="search">查询</el-button>
+      <el-button style="margin-top:22.5px;margin-left:20px;" type="primary" @click="search">{{$t('CSS.appreciation.0')}}</el-button>
     </div>
     <div class="appreciation-main">
       <div class="tab-box">
@@ -45,15 +45,15 @@ export default {
       //tab内容
       tab: [
         {
-          name: "截图累计值",
+          name: "截圖累計值",
           value: 0
         },
         {
-          name: "转码总时长",
+          name: "轉碼總時長",
           value: 0
         },
         {
-          name: "录制峰值",
+          name: "錄製峰值",
           value: 0
         }
       ],
@@ -114,7 +114,7 @@ export default {
       const params = {
         Version: "2018-08-01",
         Granularity: "Minute",
-        Zone: "Oversea",
+        // Zone: "Oversea",
         StartTime: moment(this.StartTIme).utc().format(),
         EndTime: moment(this.EndTIme).utc().format(),
       };

@@ -1,5 +1,5 @@
 <template>
-  <div id="myChart" style="width: 100%;height: 400px;"></div>
+  <div ref="line_dv" style="width: 100%;height: 400px;"></div>
 </template>
 
 <script>
@@ -10,7 +10,7 @@ export default {
   },
   mounted() {
     this.echart();
-    window.onresize = this.$echarts.init(document.getElementById("myChart")).resize;
+    window.onresize = this.$echarts.init(this.$refs.line_dv).resize;
   },
   props: {
     color: {
@@ -44,7 +44,7 @@ export default {
       this.series = val;
       this.echart();
     },
-    legendText() {
+    legendText(val) {
       this.legendText = val;
       this.echart();
     }
@@ -69,7 +69,8 @@ export default {
       return tYear + "-" + tMonth + "-" + tDate;
     },
     echart() {
-      var myChart = this.$echarts.init(document.getElementById("myChart"));
+      // var myChart = this.$echarts.init(document.getElementById("myChart"));
+      var myChart = this.$echarts.init(this.$refs.line_dv)
       myChart.setOption({
         color: this.color,
         tooltip: this.tooltip,
