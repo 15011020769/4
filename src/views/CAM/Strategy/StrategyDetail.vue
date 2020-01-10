@@ -1,5 +1,5 @@
 <template>
-  <div class="StrategyDetail">
+  <div class="StrategyDetail wrap">
     <div class="top">
       <img
         style="width:20px;cursor: pointer;"
@@ -503,6 +503,14 @@ export default {
 };
 </script>
 <style lang='scss' scoped>
+.wrap >>> .el-button,
+.wrap >>> .el-input__inner {
+  border-radius: 0;
+  height: 30px !important;
+  line-height: 30px;
+  padding-top: 0;
+  font-size: 12px;
+}
 .StrategyDetail {
   .top {
     padding: 0 20px;

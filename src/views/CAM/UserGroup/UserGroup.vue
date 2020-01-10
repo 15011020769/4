@@ -90,7 +90,9 @@
             >{{scope.row.GroupName}}</p>
           </template>&ndash;&gt;
         </el-table-column>
-        <el-table-column prop="Remark" :label="$t('CAM.userGroup.colRemark')" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="Remark" :label="$t('CAM.userGroup.colRemark')" show-overflow-tooltip>
+          <template slot-scope="scope">{{scope.row.Remark ? scope.row.Remark : '-'}}</template>
+        </el-table-column>
         <el-table-column
           prop="CreateTime"
           :label="$t('CAM.userGroup.colCreTime')"
@@ -152,6 +154,7 @@
             style="width: 100%"
             @row-click="selectedRow"
             @selection-change="handleSelectionChangeUser"
+            v-loading="loading1"
           >
             <el-table-column type="selection" prop="Uin" width="28"></el-table-column>
             <el-table-column prop="Name" :label="$t('CAM.userGroup.user')" show-overflow-tooltip></el-table-column>
@@ -229,6 +232,7 @@ export default {
       },
       searchValue: "",
       gear: false,
+      loading1: true,
       userData: [],
       userAllData: [],
       userSelData: [],
@@ -300,6 +304,7 @@ export default {
     },
     // 打开添加用户页面
     addUserGroup(rowId) {
+      this.loading1 = true;
       if (rowId != undefined && rowId != "") {
         this.selectedGroupId = rowId;
       }
@@ -315,6 +320,7 @@ export default {
           this.getUsers();
           // 获取数据成功，打开dialog。
           this.dialogVisible = true;
+          this.loading1 = false;
           // this.cancel()
         })
         .catch(error => {

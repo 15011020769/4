@@ -1,5 +1,5 @@
 <template>
-  <div class="Cam">
+  <div class="Cam wrap">
     <div class="top">
       <div class="top-left">
         <span class="top-text">{{$t('CAM.Role.strategy')}}</span>
@@ -28,7 +28,7 @@
           </div>
 
           <el-input
-            style="width:30%"
+            style="width:300px;"
             :placeholder="$t('CAM.Role.searchRole')"
             size="small"
             v-model="searchValue"
@@ -202,7 +202,6 @@ export default {
     },
     // 穿梭框：value右侧框值、direction操作、movedKeys移动值
     handleChange(value, direction, movedKeys) {
-      console.log(value, direction, movedKeys);
       this.transfer_data_right = value;
     },
     // 关联用户/用户组
@@ -251,6 +250,14 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+.wrap >>> .el-button,
+.wrap >>> .el-input__inner {
+  border-radius: 0;
+  height: 30px !important;
+  line-height: 30px;
+  padding-top: 0;
+  font-size: 12px;
+}
 .Right-style {
   display: flex;
   justify-content: flex-end;
