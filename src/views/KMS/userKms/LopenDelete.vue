@@ -53,6 +53,7 @@
   </div>
 </template>
 <script>
+import { ErrorTips } from "@/components/ErrorTips";
 import { SCH_KMS, CEL_KMS } from "@/constants";
 import VueCookie from "vue-cookie";
 export default {
@@ -93,9 +94,28 @@ export default {
         PendingWindowInDays: this.thisNumber
       };
       this.axios.post(SCH_KMS, params).then(res => {
-        this.outTime = this.timestampToTime(res.Response.DeletionDate);
-        this.$emit("openDeleteSure", [this.thisShow, this.outTime]);
-        this.$parent.GetList();
+        if(res.Response.Error === undefined){
+                this.outTime = this.timestampToTime(res.Response.DeletionDate);
+                this.$emit("openDeleteSure", [this.thisShow, this.outTime]);
+                this.$parent.GetList();
+        }else{
+            let ErrTips = {
+              "InternalError": "内部错误",
+              "InvalidParameter.InvalidPendingWindowInDays": "计划删除时间参数非法",
+              "InvalidParameterValue.InvalidKeyId":"KeyId不合法",
+              "ResourceUnavailable.CmkNotFound":"CMK不存在",
+              "ResourceUnavailable.CmkShouldBeDisabled":"未被禁用的CMK不能被计划删除",
+              "ResourceUnavailable.CmkStateNotSupport":"CMK 状态不支持该操作",
+              "UnauthorizedOperation":"未授权操作"  
+            };
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+        }
       });
     },
     //取消删除密钥确定按钮
@@ -108,8 +128,25 @@ export default {
         KeyId: this.contentDialog[3]
       };
       this.axios.post(CEL_KMS, params).then(res => {
-        this.$emit("closeDeleteSure", this.thisShow);
-        this.$parent.GetList();
+        if(res.Response.Error === undefined){
+           this.$emit("closeDeleteSure", this.thisShow);
+           this.$parent.GetList();
+        }else{
+            let ErrTips = {
+               "InternalError":'内部错误',
+               "InvalidParameterValue.InvalidKeyId":'KeyId不合法',
+               "ResourceUnavailable.CmkNotFound":'CMK不存在',
+               "esourceUnavailable.CmkNotPendingDelete":'CMK不是计划删除状态不能被执行取消计划删除',
+               "UnauthorizedOperation":'未授权操作'
+            };
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+        }
       });
     },
     timestampToTime(timestamp) {

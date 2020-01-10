@@ -25,6 +25,7 @@
   </div>
 </template>
 <script>
+import { ErrorTips } from "@/components/ErrorTips";
 import VueCookie from "vue-cookie";
 import { EnableKey,DisableKey } from "@/constants";
 export default {
@@ -76,7 +77,25 @@ export default {
       };
      
       this.axios.post(EnableKey, params).then(res => {
-        this.$parent.getData();
+        if(res.Response.Error === undefined){
+          this.$parent.getData();
+        }else{
+            let ErrTips = {
+              "InternalError": "内部错误",
+              "nvalidParameter": "参数错误",
+              "InvalidParameterValue.InvalidKeyId":"KeyId不合法",
+              "ResourceUnavailable.CmkNotFound":"CMK不存在",
+              "ResourceUnavailable.CmkStateNotSupport":"CMK 状态不支持该操作",
+              "UnauthorizedOperation":"未授权操作"
+            };
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+        }
       });
     },
     //禁用密钥确定按钮
@@ -90,7 +109,25 @@ export default {
         KeyId: this.contentDialog[1]
       };
       this.axios.post(DisableKey, params).then(res => {
-        this.$parent.getData();
+         if(res.Response.Error === undefined){
+           this.$parent.getData();
+         }else{
+            let ErrTips = {
+              "InternalError":'内部错误',
+               "InvalidParameter":'参数错误',
+               "InvalidParameterValue.InvalidKeyId":'KeyId不合法',
+               "ResourceUnavailable.CmkNotFound":'CMK不存在',
+               "ResourceUnavailable.CmkStateNotSupport":'CMK 状态不支持该操作',
+               "UnauthorizedOperation":'未授权操作'
+            };
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+         }
       });
     }
   }

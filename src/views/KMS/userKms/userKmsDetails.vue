@@ -207,6 +207,7 @@
   </div>
 </template>
 <script>
+import { ErrorTips } from "@/components/ErrorTips";
 import VueCookie from "vue-cookie";
 import moment from 'moment'
 import LstopChange from './LstopChange'
@@ -279,8 +280,25 @@ export default {
         KeyId: this.projectDetail.KeyId
       };
       this.axios.post(Des_KMS, params).then(res => {
-        this.keyList = res.Response.KeyMetadata;
-        this.loading = false;
+        if(res.Response.Error === undefined){
+           this.keyList = res.Response.KeyMetadata;
+           this.loading = false;
+        }else{
+           let ErrTips = {
+             "InternalError":'内部错误',
+             "InvalidParameter":'参数错误',
+             "InvalidParameterValue.InvalidKeyId":'KeyId不合法',
+             "ResourceUnavailable.CmkNotFound":'CMK不存在',
+             "UnauthorizedOperation":'未授权操作'
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
       });
     },
     //修改名称关闭按钮
@@ -383,8 +401,27 @@ export default {
         KeyId: this.projectDetail.KeyId
       };
       this.axios.post(UP_NAME, params).then(res => {
-        this.keyList.Alias = this.changeName;
-        this.dialogModel1 = false;
+        if(res.Response.Error === undefined){
+          this.keyList.Alias = this.changeName;
+          this.dialogModel1 = false;
+        }else{
+             let ErrTips = {
+               "InternalError":'内部错误',
+               "InvalidParameter":'参数错误',
+               "InvalidParameterValue.AliasAlreadyExists":'别名已经存在',
+               "InvalidParameterValue.InvalidAlias":'别名格式错误',
+               "InvalidParameterValue.InvalidKeyId":'KeyId不合法',
+               "ResourceUnavailable.CmkNotFound":'CMK不存在',
+               "UnauthorizedOperation":'未授权操作'
+              };
+              let ErrOr = Object.assign(ErrorTips, ErrTips);
+              this.$message({
+                message: ErrOr[res.Response.Error.Code],
+                type: "error",
+                showClose: true,
+                duration: 0
+            });
+        }
       })
     },
     //修改密钥描述确定按钮
@@ -397,8 +434,25 @@ export default {
         KeyId: this.projectDetail.KeyId
       };
       this.axios.post(UP_DESC, params).then(res => {
-        this.keyList.Description = this.descriptionNew;
-        this.dialogModel2 = false;
+        if(res.Response.Error === undefined){
+          this.keyList.Description = this.descriptionNew;
+          this.dialogModel2 = false;
+        }else{
+          let ErrTips = {
+             "InternalError":'内部错误',
+             "InvalidParameter":'参数错误',
+             "InvalidParameterValue.InvalidKeyId":'KeyId不合法',
+             "ResourceUnavailable.CmkNotFound":'CMK不存在',
+             "UnauthorizedOperation":'未授权操作'
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
       })
     },
     //加密解密按钮
@@ -422,6 +476,23 @@ export default {
             message: res.Response.Error.Message,
             type: 'error'
           });
+        }else{
+            let ErrTips = { 
+                 "InternalError":'内部错误',
+                 "InvalidParameter":'参数错误',
+                 "InvalidParameterValue.InvalidKeyId":'KeyId不合法',
+                 "InvalidParameterValue.InvalidPlaintext":'Plaintext不合法',
+                 "ResourceUnavailable.CmkDisabled":'CMK已被禁用',
+                 "ResourceUnavailable.CmkNotFound":'CMK不存在',
+                 "UnauthorizedOperation":'未授权操作'
+            };
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
         }
         this.downLoadText = res.Response.CiphertextBlob
       })
@@ -436,12 +507,28 @@ export default {
         CiphertextBlob: this.Ciphertext
       };
       this.axios.post(Decrypt, params).then(res => {
-        if (res.Response.Error !== undefined) {
+        if (res.Response.Error === undefined) {
           this.$message({
             showClose: true,
             message: res.Response.Error.Message,
             type: 'error'
           });
+        }else{
+            let ErrTips = {
+               "InternalError":'内部错误',
+               "InvalidParameter":'参数错误',
+               "InvalidParameterValue.InvalidCiphertext":'密文格式错误',
+               "ResourceUnavailable.CmkDisabled":'CMK已被禁用',
+               "ResourceUnavailable.CmkNotFound":'CMK不存在',
+               "UnauthorizedOperation":'未授权操作'
+            };
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
         }
         this.downLoadText = res.Response.Plaintext
       })
@@ -477,21 +564,36 @@ export default {
       };
       //获取导入主密钥（CMK）材料的参数
       this.axios.post(GET_CMK, params).then(res => {
-        this.GetParameters = res.Response
-        this.downLoadText1 = this.GetParameters.ImportToken
-        this.downLoadText2 = this.GetParameters.PublicKey
-        this.exportRaw('ImportToken' + '.txt', this.downLoadText1)
-        this.exportRaw('public_key' + '.base64', this.downLoadText2)
-        var README = ''
-        README += '演算法類型：' + this.thisSuanType + '\n' +
-          '加密演算法：' + this.thisAddSuan + '\n' +
-          '加密公鑰文件：public_key' + '\n' +
-          '導入令牌文件：ImportToken' + '\n' +
-          '密鑰導入材料過期時間：' + this.timestampToTime(this.GetParameters.ParametersValidTo)
-        this.exportRaw('README' + '.txt', README)
-      })
-
-    },
+        if(res.Response.Error === undefined){
+            this.GetParameters = res.Response
+            this.downLoadText1 = this.GetParameters.ImportToken
+            this.downLoadText2 = this.GetParameters.PublicKey
+            this.exportRaw('ImportToken' + '.txt', this.downLoadText1)
+            this.exportRaw('public_key' + '.base64', this.downLoadText2)
+            var README = ''
+            README += '演算法類型：' + this.thisSuanType + '\n' +
+              '加密演算法：' + this.thisAddSuan + '\n' +
+              '加密公鑰文件：public_key' + '\n' +
+              '導入令牌文件：ImportToken' + '\n' +
+              '密鑰導入材料過期時間：' + this.timestampToTime(this.GetParameters.ParametersValidTo)
+            this.exportRaw('README' + '.txt', README)
+        }else{
+              let ErrTips = {
+                   "InternalError":'内部错误',
+                   "InvalidParameter":'参数错误',
+                   "ResourceUnavailable.CmkNotFound":'CMK不存在',
+                   "UnsupportedOperation.NotExternalCmk":'CMK类型错误,仅支持External CMK'
+              };
+              let ErrOr = Object.assign(ErrorTips, ErrTips);
+              this.$message({
+                message: ErrOr[res.Response.Error.Code],
+                type: "error",
+                showClose: true,
+                duration: 0
+              });
+        }
+       })
+     },
      //第二步的下一步按钮\导入密钥按钮
     nextStepTwo() {
       this.thisStepOne = false;
@@ -512,7 +614,7 @@ export default {
         params['ValidTo'] = Date.parse(moment(this.selectTime).format('YYYY-MM-DD')) / 1000
       }
       this.axios.post(ImportKey, params).then(res => {
-        if (res.Response.Error !== undefined) {
+        if (res.Response.Error === undefined) {
           this.$message({
             showClose: true,
             message: res.Response.Error.Message,
@@ -523,6 +625,23 @@ export default {
           this.ishowkms = true
           this.keyStatus = true
           this.GetList();
+          let ErrTips = {
+              "InternalError":'内部错误',
+              "InvalidParameter":'参数错误',
+              "InvalidParameter.DecryptMaterialError":'解密EncryptedKeyMaterial失败',
+              "InvalidParameterValue.MaterialNotMatch":'导入的密钥材料和历史导入不同',
+              "ResourceUnavailable.CmkNotFound":'CMK不存在',
+              "ResourceUnavailable.CmkStateNotSupport":'CMK状态不支持该操作',
+              "ResourceUnavailable.TokenExpired":'Token已过期',
+              "UnsupportedOperation.NotExternalCmk":'CMK类型错误,仅支持External CMK'
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
         }
       })
       this.thisStepThree = true;
@@ -579,12 +698,28 @@ export default {
         KeyId: this.projectDetail.KeyId,
       };
       this.axios.post(DEL_KMS, params).then(res => {
-        if (res.Response.Error !== undefined) {
+        if (res.Response.Error === undefined) {
           this.$message({
             showClose: true,
             message: res.Response.Error.Message,
             type: 'error'
           });
+        }else{
+            let ErrTips = {
+              "InternalError":'内部错误',
+              "InvalidParameter":'参数错误',
+              "InvalidParameterValue.InvalidKeyId":'KeyId不合法',
+              "ResourceUnavailable.CmkNotFound":'CMK不存在',
+              "ResourceUnavailable.CmkStateNotSupport":'CMK状态不支持该操作',
+              "UnsupportedOperation.NotExternalCmk":'CMK类型错误,仅支持External CMK'
+            };
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
         }
         this.dialogModel4 = false;
         this.GetList();

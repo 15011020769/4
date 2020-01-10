@@ -200,6 +200,7 @@
   </div>
 </template>
 <script>
+import { ErrorTips } from "@/components/ErrorTips";
 import stopChange from "./stopChange";
 import startKms from "./startKms";
 import openDelete from "./openDelete";
@@ -311,19 +312,29 @@ export default {
             KeyId: item.KeyId
           };
           this.axios.post(EnableKey, params).then(res => {
-            if (res.Response.Error == undefined) {
+            if (res.Response.Error === undefined) {
               this.$message({
                 showClose: true,
                 message: this.$t("KMS.total.startSuccess"),
                 type: "success"
               });
             } else {
-              this.$message({
-                showClose: true,
-                message: res.Response.Error,
-                type: "error"
-              });
-            }
+                let ErrTips = {
+                  "InternalError": "内部错误",
+                  "nvalidParameter": "参数错误",
+                  "InvalidParameterValue.InvalidKeyId":"KeyId不合法",
+                  "ResourceUnavailable.CmkNotFound":"CMK不存在",
+                  "ResourceUnavailable.CmkStateNotSupport":"CMK 状态不支持该操作",
+                  "UnauthorizedOperation":"未授权操作"
+                };
+                let ErrOr = Object.assign(ErrorTips, ErrTips);
+                this.$message({
+                  message: ErrOr[res.Response.Error.Code],
+                  type: "error",
+                  showClose: true,
+                  duration: 0
+                });
+             }
           });
         });
       }
@@ -338,18 +349,28 @@ export default {
           };
 
           this.axios.post(DisableKey, params).then(res => {
-            if (res.Response.Error == undefined) {
+            if (res.Response.Error === undefined) {
               this.$message({
                 showClose: true,
                 message: this.$t("KMS.total.stopSuccess"),
                 type: "success"
               });
             } else {
-              this.$message({
-                showClose: true,
-                message: res.Response.Error,
-                type: "error"
-              });
+                let ErrTips = {
+                    "InternalError":'内部错误',
+                    "InvalidParameter":'参数错误',
+                    "InvalidParameterValue.InvalidKeyId":'KeyId不合法',
+                    "ResourceUnavailable.CmkNotFound":'CMK不存在',
+                    "ResourceUnavailable.CmkStateNotSupport":'CMK 状态不支持该操作',
+                    "UnauthorizedOperation":'未授权操作'
+                };
+                let ErrOr = Object.assign(ErrorTips, ErrTips);
+                this.$message({
+                  message: ErrOr[res.Response.Error.Code],
+                  type: "error",
+                  showClose: true,
+                  duration: 0
+                });
             }
           });
         });
@@ -425,18 +446,33 @@ export default {
       };
       //获取主密钥列表详情
       this.axios.post(KMS_LIST, params).then(res => {
-        var DataList = res.Response.KeyMetadatas;
-        this.TotalCount = res.Response.TotalCount;
-        this.tableDataBegin = DataList;
-        this.allData = DataList;
-        // 将数据的长度赋值给totalItems
-        this.totalItems = this.tableDataBegin.length;
-        if (this.totalItems > this.pageSize) {
-          for (let index = 0; index < this.pageSize; index++) {
-            this.tableDataEnd.push(this.tableDataBegin[index]);
-          }
-        } else {
-          this.tableDataEnd = this.tableDataBegin;
+        if(res.Response.Error === undefined){
+            var DataList = res.Response.KeyMetadatas;
+            this.TotalCount = res.Response.TotalCount;
+            this.tableDataBegin = DataList;
+            this.allData = DataList;
+            // 将数据的长度赋值给totalItems
+            this.totalItems = this.tableDataBegin.length;
+            if (this.totalItems > this.pageSize) {
+              for (let index = 0; index < this.pageSize; index++) {
+                this.tableDataEnd.push(this.tableDataBegin[index]);
+              }
+            } else {
+              this.tableDataEnd = this.tableDataBegin;
+            }
+        }else{
+              let ErrTips = {
+                 "InternalError":'内部错误',
+                 "InvalidParameter":'参数错误',
+                 "UnauthorizedOperation":'未授权操作'
+              };
+              let ErrOr = Object.assign(ErrorTips, ErrTips);
+              this.$message({
+                message: ErrOr[res.Response.Error.Code],
+                type: "error",
+                showClose: true,
+                duration: 0
+              }); 
         }
         this.loading = false;
       });
