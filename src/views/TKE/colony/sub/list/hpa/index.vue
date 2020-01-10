@@ -71,27 +71,25 @@
             label="最小实例数"
             >
             <template slot-scope="scope">
-              <span>1/1</span>
+              <span>1</span>
+            </template>
+          </el-table-column>
+
+          <el-table-column
+            prop=""
+            label="最大实例数"
+            >
+            <template slot-scope="scope">
+              <span>2</span>
             </template>
           </el-table-column>
           <el-table-column
             label="操作"
             >
             <template slot-scope="scope">
-              <span class="tke-text-link">更新Pod数量</span>
-              <span class="tke-text-link ml10">更新Pod配置</span>
-              <el-dropdown class=" tke-dropdown" >
-                <span class="el-dropdown-link ml10" >
-                  更多<i class="el-icon-arrow-down el-icon--right"></i>
-                </span>
-                <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item command="a"><span class="tke-text-link">重新部署</span></el-dropdown-item>
-                  <el-dropdown-item command="a"><span class="tke-text-link">设置更新策略</span></el-dropdown-item>
-                  <el-dropdown-item command="b"><span class="tke-text-link" >更新调度策略</span></el-dropdown-item>
-                  <el-dropdown-item command="c"><span class="tke-text-link">编辑YAML</span></el-dropdown-item>
-                  <el-dropdown-item command="c"><span class="tke-text-link">删除</span></el-dropdown-item>
-                </el-dropdown-menu>
-              </el-dropdown>
+              <span class="tke-text-link">修改配置</span>
+              <span class="tke-text-link ml10">编辑YAML</span>
+              <span class="tke-text-link ml10">删除</span>
             </template>
           </el-table-column>
         </el-table>
