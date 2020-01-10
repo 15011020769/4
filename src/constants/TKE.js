@@ -16,11 +16,8 @@ export const COLONY_LIST = 'tke2/DescribeClusters'
 export const COLONY_STATUS = 'tke2/DescribeClusterStatus'
 // 获取集群列表
 export const WARNING_GetUSER = 'tke2/DescribeClusters'
-// 获取告警设置集群详细信息
+// 获取集群详细信息
 export const WARNING_GetCOLONY = 'tke2/DescribeAlarmPolicies'
-// 获取用户组信息
-export const CreateGetGroups = 'cam/Get'
-
 // 获取集群基本信息相关
 export const CLUSTERS_DESCRIBE = 'tke2/DescribeClusters'
 export const CLUSTERS_SECURITY = 'tke2/DescribeClusterSecurity'
