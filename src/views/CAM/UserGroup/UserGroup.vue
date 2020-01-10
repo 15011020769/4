@@ -1,5 +1,5 @@
 <template>
-  <div class="Cam">
+  <div class="Cam wrap">
     <div class="top">
       <span class="title-left">{{$t('CAM.userGroup.title')}}</span>
     </div>
@@ -498,6 +498,14 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+.wrap >>> .el-button,
+.wrap >>> .el-input__inner {
+  border-radius: 0;
+  height: 30px !important;
+  line-height: 30px;
+  padding-top: 0;
+  font-size: 12px;
+}
 .pagstyle {
   padding: 20px;
   height: 70px;

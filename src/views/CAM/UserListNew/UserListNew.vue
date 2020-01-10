@@ -765,9 +765,7 @@ export default {
       height: 32px;
       min-width: 24px;
       padding: 0 20px;
-      background-color: #006eff;
       color: #fff;
-      border: 1px solid #006eff;
       text-align: center;
       display: inline-block;
       cursor: pointer;

@@ -23,7 +23,7 @@
             </p>
             <p>
               <span class="spns">{{$t('CAM.userList.userRemark')}}</span>
-              <span>{{userData.Remark}}</span>
+              <span>{{userData.Remark ? userData.Remark : '-'}}</span>
             </p>
             <p>
               <span class="spns">{{$t('CAM.userList.userWay')}}</span>
@@ -33,11 +33,11 @@
           <div class="bodyRight" style="flex:1">
             <p>
               <span class="spns">{{$t('CAM.userList.userPhone')}}</span>
-              <span>{{userData.PhoneNum}}</span>
+              <span>{{userData.PhoneNum ? userData.PhoneNum : '-'}}</span>
             </p>
             <p>
               <span class="spns">{{$t('CAM.userList.userEmail')}}</span>
-              <span>{{userData.Email}}</span>
+              <span>{{userData.Email ? userData.Email : '-'}}</span>
             </p>
             <p>
               <span class="spns">{{$t('CAM.userList.userWeChat')}}</span>
@@ -227,41 +227,29 @@
     <el-dialog
       :title="$t('CAM.userList.upDataUsers')"
       :visible.sync="updataUser"
-      width="30%"
+      width="35%"
       :before-close="handleClose"
       :close-on-click-modal="false"
       :close-on-press-escape="false"
     >
-      <el-form :model="ruleForm" ref="ruleForm" label-width="100px" class="demo-ruleForm">
-        <el-form-item
-          :label="$t('CAM.userList.userName')"
-          prop="Name"
-          style="width:75%;text-align:center"
-        >
+      <el-form
+        :model="ruleForm"
+        ref="ruleForm"
+        label-width="80px"
+        class="demo-ruleForm"
+        style="padding:0 10px;box-sizing:boder-box;"
+      >
+        <el-form-item :label="$t('CAM.userList.userName')" prop="Name">
           <el-input v-model="ruleForm.Name" :disabled="true"></el-input>
         </el-form-item>
-        <el-form-item
-          :label="$t('CAM.userList.userRemark')"
-          prop="Remark"
-          style="width:75%;text-align:center"
-        >
+        <el-form-item :label="$t('CAM.userList.userRemark')" prop="Remark">
           <el-input v-model="ruleForm.Remark"></el-input>
         </el-form-item>
-        <el-form-item
-          :label="$t('CAM.userList.userPhone')"
-          prop="PhoneNum"
-          style="width:75%;text-align:center"
-          class="reg"
-        >
+        <el-form-item :label="$t('CAM.userList.userPhone')" prop="PhoneNum" class="reg">
           <el-input v-model="ruleForm.PhoneNum" @change="tel"></el-input>
           <span v-show="telReg">请输入正确的手机号</span>
         </el-form-item>
-        <el-form-item
-          :label="$t('CAM.userList.userEmail')"
-          prop="Email"
-          style="width:75%;text-align:center"
-          class="reg"
-        >
+        <el-form-item :label="$t('CAM.userList.userEmail')" prop="Email" class="reg">
           <el-input v-model="ruleForm.Email" @change="email"></el-input>
           <span v-show="emailReg">请输入正确的邮箱</span>
         </el-form-item>
@@ -704,6 +692,17 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+.wrap >>> .el-form-item__label {
+  text-align: left;
+}
+.wrap >>> .el-button,
+.wrap >>> .el-input__inner {
+  border-radius: 0;
+  height: 30px !important;
+  line-height: 30px;
+  padding-top: 0;
+  font-size: 12px;
+}
 .reg {
   position: relative;
 
