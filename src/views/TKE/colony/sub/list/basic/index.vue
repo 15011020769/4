@@ -161,7 +161,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
+.tke-formpanel-wrap{
+  height: 100%;
+}
 .tke-form {
   .tke-rich-textarea{
     border: 1px solid #d1d2d3;

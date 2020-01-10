@@ -330,7 +330,7 @@ export default {
                 label: 'Ubuntu Server 18.04.1 LTS 64bit TKE-Optimized'
               }, 
               {
-                value: 'Ubuntu-1',
+                value: 'Ubuntu-2',
                 label: 'Ubuntu Server 18.04.1 LTS 64bit'
               }, 
               {

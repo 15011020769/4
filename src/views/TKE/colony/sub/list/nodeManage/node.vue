@@ -187,13 +187,13 @@ export default {
     // 分页
     handleCurrentChange(val) {
       this.pageIndex = val-1;
-      this.getColonyList();
+      // this.getColonyList();
       this.pageIndex+=1;
     },
     handleSizeChange(val) {
       // console.log(`每页 ${val} 条`);
       this.pageSize=val;
-      this.getColonyList();
+      // this.getColonyList();
     },
 
     //全选

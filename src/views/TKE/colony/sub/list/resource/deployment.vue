@@ -1,4 +1,4 @@
- <!-- 伸缩组列表 -->
+ <!--工作负载- Deployment -->
 <template>
   <div >
       <subTitle title='Deployment'  />
@@ -22,6 +22,12 @@
               :typeValue='searchType' 
               inputPlaceholder='请输入关键词搜索'
               :searchInput='searchInput'
+
+              @changeType="changeSearchType"
+              @changeInput="changeSearchInput"
+              @clickSearch="clickSearch"
+              @refresh='refreshList'
+              @exportExcel="exportExcel"
             >
             </tkeSearch>
           
@@ -41,42 +47,52 @@
             label="名称"
             >
             <template slot-scope="scope">
-              <span class="tke-text-link" >kube-public</span>
+              <span class="tke-text-link">test</span>
             </template>
           </el-table-column>
           <el-table-column
             prop=""
-            label="状态"
+            label="Labels"
             >
             <template slot-scope="scope">
-               <span v-if="scope.row.status===true" class="text-green">Active</span>
-               <span v-else class="text-red">Stop</span>
+               <span>k8s-app:test、qcloud-app:test</span>
             </template>
           </el-table-column>
           <el-table-column
             prop=""
-            label="描述"
+            label="Selector"
             >
             <template slot-scope="scope">
-                <span>-</span>
+                <span>k8s-app:test、qcloud-app:test</span>
             </template>
           </el-table-column>
           
           <el-table-column
             prop=""
-            label="创建时间"
+            label="运行/期望Pod数量"
             >
             <template slot-scope="scope">
-              <el-tooltip effect="light" content="2020-01-02 14:02:22" placement="top">
-                <span>2020-01-02 14:02:22</span>
-              </el-tooltip>
+              <span>0/1</span>
             </template>
           </el-table-column>
           <el-table-column
             label="操作"
             >
             <template slot-scope="scope">
-              <span class="tke-text-link">删除</span>
+              <span class="tke-text-link">更新Pod数量</span>
+              <span class="tke-text-link ml10">更新Pod配置</span>
+              <el-dropdown class=" tke-dropdown" >
+                <span class="el-dropdown-link ml10" >
+                  更多<i class="el-icon-arrow-down el-icon--right"></i>
+                </span>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item command="a"><span class="tke-text-link">重新部署</span></el-dropdown-item>
+                  <el-dropdown-item command="a"><span class="tke-text-link">设置更新策略</span></el-dropdown-item>
+                  <el-dropdown-item command="b"><span class="tke-text-link" >更新调度策略</span></el-dropdown-item>
+                  <el-dropdown-item command="c"><span class="tke-text-link">编辑YAML</span></el-dropdown-item>
+                  <el-dropdown-item command="c"><span class="tke-text-link">删除</span></el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown>
             </template>
           </el-table-column>
         </el-table>
@@ -104,7 +120,7 @@ import tkeSearch from "@/views/TKE/components/tkeSearch";
 import Loading from "@/components/public/Loading";
 import { ALL_CITY } from "@/constants";
 export default {
-  name: "colonyNamespace",
+  name: "colonyResourceDeployment",
   data() {
     return {
       loadShow: false, //加载是否显示
@@ -124,15 +140,20 @@ export default {
       //搜索下拉框
       searchOptions: [
         {
-          value: "name",
-          label: "名称"
+          value: "default",
+          label: "default"
         },
         {
-          value: "tag",
-          label: "标签"
+          value: "kube-system",
+          label: "kube-system"
         },
+        {
+          value: "kube-public",
+          label: "kube-public"
+        }
+        
       ],
-      searchType: "", //下拉选中的值
+      searchType: "default", //下拉选中的值
       searchInput: "", //输入的搜索关键字
     };
   },
@@ -141,16 +162,59 @@ export default {
 
   },
   methods: {
+    //选择搜索条件
+    changeSearchType(val) {
+      this.searchType = val;
+      console.log(this.searchType)
+    },
+    //监听搜索框的值
+    changeSearchInput(val) {
+      this.searchInput = val;
+      console.log(this.searchInput)
+    },
+    // 点击搜索
+    clickSearch(val){
+      this.searchInput = val;
+      console.log(this.searchInput)
+    },
+    //刷新数据
+    refreshList(){
+      console.log('refreshList....')
+    },
+    // 导出表格
+    exportExcel() {
+      console.log('exportExcel...')
+      /* generate workbook object from table */
+      // var wb = XLSX.utils.table_to_book(document.querySelector("#exportTable"));
+      /* get binary string as output */
+      // var wbout = XLSX.write(wb, {
+      //   bookType: "xlsx",
+      //   bookSST: true,
+      //   type: "array"
+      // });
+      // try {
+      //   FileSaver.saveAs(
+      //     new Blob([wbout], {
+      //       type: "application/octet-stream"
+      //     }),
+      //     this.$t("CVM.clBload.fzjh") + ".xlsx"
+      //   );
+      // } catch (e) {
+      //   if (typeof console !== "undefined") console.log(e, wbout);
+      // }
+      // return wbout;
+    },
+
     // 分页
     handleCurrentChange(val) {
       this.pageIndex = val-1;
-      this.getColonyList();
+      // this.getColonyList();
       this.pageIndex+=1;
     },
     handleSizeChange(val) {
       // console.log(`每页 ${val} 条`);
       this.pageSize=val;
-      this.getColonyList();
+      // this.getColonyList();
     },
 
   },
@@ -163,8 +227,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  .tke-search-select{
-    width: 100px;
-  }
+ 
 </style>
 

@@ -396,6 +396,16 @@ export default {
 }
 
 // 弹窗相关
+.tag-danger{
+  display: inline-block;
+  background-color: #ff9d00;
+  color: #fff;
+  height: 18px;
+  line-height: 18px;
+  padding: 0 3px;
+  vertical-align: top;
+  margin-left: 5px;
+}
 .el-dialog__footer .dialog-footer{
   display: block;
   text-align: center;
