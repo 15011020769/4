@@ -72,6 +72,7 @@ export default {
       };
       this.axios.post(CSS_STREAMPUSH, params).then(res => {
         if (res.Response.Error) {
+          this.showEchart = false
            if (
               res.Response.Error.Message ==
               "param=StreamName,value=, length is zero."

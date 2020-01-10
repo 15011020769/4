@@ -35,7 +35,7 @@
         :StreamName="StreamName"
         :StartTime="StartTime"
         :EndTime="EndTime"
-        v-if="!showPlay"
+        v-else
         ref="tab2"
       />
     </div>
@@ -78,7 +78,6 @@ export default {
     Play
   },
   created () {
-    // console.log(this.searchInput)
   },
   methods: {
     search() {
@@ -86,15 +85,11 @@ export default {
         this.$message.error("请输入流id");
       } else {
         this.showMain = true
-        // this.StartTIme = this.timeData[0].StartTIme;
-        // this.EndTIme = this.timeData[0].EndTIme;
         if (this.selectStream == '1') {
-          // this.showPlay = true
           this.$nextTick(() => {
             this.$refs.tab1.init();
           })
         } else {
-          // this.showPlay = false
           this.$nextTick(() => {
             this.$refs.tab2.init();
           })
@@ -109,12 +104,10 @@ export default {
       this.StartTime = this.timeData[0].StartTIme;
       this.EndTime = this.timeData[0].EndTIme;
       if (this.selectStream == '1') {
-        // this.showPlay = true
         this.$nextTick(() => {
           this.$refs.tab1.init();
         })
       } else {
-        // this.showPlay = false
         this.$nextTick(() => {
           this.$refs.tab2.init();
         })

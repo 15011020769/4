@@ -59,7 +59,8 @@ export default {
   props: {
     StartTIme: String,
     EndTIme: String,
-    domain: Array
+    domainsData: Array,
+    domainCheckedListCopy: Array,
   },
   created() {
     this.init();
@@ -83,8 +84,8 @@ export default {
         StartTime: moment(this.StartTIme).format("YYYY-MM-DD HH:mm:ss"),
         EndTime: moment(this.EndTIme).format("YYYY-MM-DD HH:mm:ss"),
       };
-      if (this.domain.length != 0) {
-        this.domain.forEach((item, index) => {
+      if (this.domainCheckedListCopy.length !== this.domainsData.length) {
+        this.domainCheckedListCopy.forEach((item, index) => {
           params1["PlayDomains." + index] = item;
           params2["PlayDomains." + index] = item;
         });

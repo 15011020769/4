@@ -77,13 +77,15 @@ export default {
         color: this.color,
         tooltip: this.tooltip,
         grid: {
-            left: '0%',
-            right: '0%',
-            bottom: '0%',
+            left: '3%',
+            right: '4%',
+            bottom: '6%',
             containLabel: true
         },
         legend: {
-            data: [this.legendText]
+            data: [this.legendText],
+            bottom: 0,
+            icon: 'rect',
         },
         xAxis: {
           type: "category",

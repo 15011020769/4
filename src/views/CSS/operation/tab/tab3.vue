@@ -198,12 +198,13 @@ export default {
                 //图表数据
                 var xAxis = [];
                 var series = [];
-                this.tableData.forEach(item => {
+                res.Response.DataInfoList[0].DetailInfoList.forEach(item => {
                   xAxis.push(item.Time);
                   series.push(item.Request);
                 });
                 this.xAxis = xAxis;
                 this.series = series;
+                console.log(this.series)
               }
               this.loading = false;
             });

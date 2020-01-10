@@ -1,10 +1,30 @@
 <template>
   <div class="stream-wrap">
-    <Echart :xAxis="xAxis1" :series="series1" :legendText="legendText1"  v-loading="loading" v-if="showEchart"/>
+    <Echart
+      :xAxis="xAxis1"
+      :series="series1"
+      :legendText="legendText1"
+      v-loading="loading"
+      v-if="showEchart"
+    />
     <div class="empty" v-else>暂无数据</div>
-    <Echart :xAxis="xAxis1" :series="series2" :legendText="legendText2"  v-loading="loading" v-if="showEchart"/>
+    <Echart
+      :xAxis="xAxis1"
+      :series="series2"
+      :legendText="legendText2"
+      v-loading="loading"
+      v-if="showEchart"
+      color="#0accac"
+    />
     <div class="empty" v-else>暂无数据</div>
-    <Echart :xAxis="xAxis1" :series="series3" :legendText="legendText3"  v-loading="loading" v-if="showEchart"/>
+    <Echart
+      :xAxis="xAxis1"
+      :series="series3"
+      :legendText="legendText3"
+      v-loading="loading"
+      v-if="showEchart"
+      color="#fa970c"
+    />
     <div class="empty" v-else>暂无数据</div>
   </div>
 </template>
@@ -61,6 +81,7 @@ export default {
       };
       this.axios.post(CSS_STREAMPLAY, params).then(res => {
         if (res.Response.Error) {
+          this.showEchart = false
            if (
               res.Response.Error.Message ==
               "param=StreamName,value=, length is zero."
