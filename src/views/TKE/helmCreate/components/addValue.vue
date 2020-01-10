@@ -6,11 +6,11 @@
                 :key="domain.key"
                 :prop="'domains.' + index + '.value'"
             >
-            <el-form-item
+            <!-- <el-form-item
                 v-for="(domain, index) in dynamicValidateForm.domains"
                 :key="domain.key"
                 :prop="'domains.' + index + '.value'"
-            >
+            > -->
             <el-input v-model="domain.value" size="mini"></el-input><el-button @click.prevent="removeDomain(domain)"  size="mini">删除</el-button>
             </el-form-item>
         </el-form>
