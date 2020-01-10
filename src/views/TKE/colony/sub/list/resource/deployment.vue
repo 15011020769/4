@@ -40,9 +40,14 @@
       <!-- 数据列表展示 -->
       <div class="tke-card">
         <el-table
+          @selection-change="handleSelectionChange"
           :data="list"
           v-loading="loadShow"
           style="width: 100%">
+          <el-table-column
+            type="selection"
+            width="55">
+          </el-table-column>
           <el-table-column
             label="名称"
             >
@@ -216,6 +221,10 @@ export default {
       this.pageSize=val;
       // this.getColonyList();
     },
+    //全选
+    handleSelectionChange(val) {
+      this.multipleSelection = val;
+    }
 
   },
   components: {

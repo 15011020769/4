@@ -29,7 +29,6 @@
       <!-- 数据列表展示 -->
       <div class="tke-card">
         <el-table
-          ref="multipleTable"
           @selection-change="handleSelectionChange"
           :data="list"
           v-loading="loadShow"
