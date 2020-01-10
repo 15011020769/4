@@ -263,6 +263,7 @@
   </div>
 </template>
 <script>
+import { ErrorTips } from "@/components/ErrorTips";
 import Headcom from "./components/Head"; //头部组件引入
 import {
   QUERY_USER,
@@ -392,7 +393,21 @@ export default {
         Email: this.ruleForm.Email
       };
       this.axios.post(UPDATA_USER, params).then(res => {
-        this.init();
+        if(res.Response.Error === undefined){
+           this.init();
+        }else{
+          let ErrTips = {
+             "InvalidParameter.PasswordViolatedRules":'密码不符合用户安全设置',
+             "ResourceNotFound.UserNotExist":'用户不存在'
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
       });
       this.$message("编辑成功");
       this.updataUser = false;
@@ -421,7 +436,20 @@ export default {
       this.axios
         .post(DELETE_USER, params)
         .then(data => {
-          this.$router.push("/UserListNew");
+          if(data.Response.Error === undefined){
+              this.$router.push("/UserListNew");
+          }else{
+              let ErrTips = {
+                "ResourceNotFound.UserNotExist":'用户不存在'
+              };
+              let ErrOr = Object.assign(ErrorTips, ErrTips);
+              this.$message({
+                message: ErrOr[res.Response.Error.Code],
+                type: "error",
+                showClose: true,
+                duration: 0
+              });
+          }
         })
         .then(() => {
           let delparams = {
