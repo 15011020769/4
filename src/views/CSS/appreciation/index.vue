@@ -45,15 +45,15 @@ export default {
       //tab内容
       tab: [
         {
-          name: "截圖累計值",
+          name: "截图累计值",
           value: 0
         },
         {
-          name: "轉碼總時長",
+          name: "转码总时长",
           value: 0
         },
         {
-          name: "錄製峰值",
+          name: "录制峰值",
           value: 0
         }
       ],
@@ -176,7 +176,7 @@ export default {
     background: white;
 
     .main {
-      padding: 20px;
+      padding: 0 20px 20px 20px;
       padding-bottom: 0;
       box-sizing: border-box;
     }

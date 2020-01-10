@@ -1,6 +1,13 @@
 <template>
   <div class="wrap">
-    <h3>录制任务个数{{StartTIme}} 到 {{EndTIme}}（单位：个）</h3>
+    <p class="down">
+      <el-row>
+        <h3 style="font-size: 14px;font-weight: 700;">录制任务个数{{StartTIme}} 到 {{EndTIme}}（单位：个）</h3>
+      </el-row>
+      <el-row class="iconBtn">
+        <i class="el-icon-download"></i>
+      </el-row>
+    </p>
     <Echart :xAxis="xAxis" :series="series" :legendText="legendText" />
     <div class="table">
       <h3>月度消费量</h3>
@@ -75,11 +82,11 @@ export default {
     init() {
       this.loading = true;
       let arrTotal = [];
-      let arrDetail = []
+      let arrDetail = [];
       for (let i = 0 ; i < 6; i++) {
         const params = {
           Version: "2018-08-01",
-          MainlandOrOversea: "Oversea",
+          // MainlandOrOversea: "Oversea",
           LiveType: "NormalLive",
         };
         params.StartTime =  moment().subtract(i, "months").startOf("months").format('YYYY-MM-DD HH:mm:ss')
@@ -108,9 +115,11 @@ export default {
               var one = 0;
               for(var j = 0; j < mon.length; j++){
                 var one = 0;
+                var totalNum = [];
               for(var i = 0; i < obj.length; i++){
                   if(obj[i].Time.substring(0,7) == mon[j].time){
-                    one += obj[i].Num;
+                    totalNum.push(obj[i].Num)
+                    one = Math.max(...totalNum)
                   }
                 }
               monvalue.push({num: one});
@@ -174,6 +183,25 @@ export default {
       font-weight: 400;
       color: #565656;
       line-height: 32px;
+    }
+  }
+  .down {
+    width: 100%;
+    margin: 30px 0 10px 0;
+    display: flex;
+    justify-content: space-between;
+    .iconBtn {
+      font-size: 16px;
+      color: #888;
+      display: flex;
+      align-items: center;
+      > i {
+        margin: 0 10px;
+        font-weight: 600;
+      }
+      i:hover {
+        cursor: pointer;
+      }
     }
   }
 }
