@@ -3,6 +3,8 @@
 </template>
 
 <script>
+import 'echarts/lib/component/legend'
+import 'echarts/lib/component/tooltip'
 export default {
   name: "myChart",
   data() {
@@ -74,11 +76,14 @@ export default {
       myChart.setOption({
         color: this.color,
         tooltip: this.tooltip,
+        grid: {
+            left: '0%',
+            right: '0%',
+            bottom: '0%',
+            containLabel: true
+        },
         legend: {
-          data: [this.legendText],
-          bottom: 0,
-          orient: 'vertical',
-          x: 'left',
+            data: [this.legendText]
         },
         xAxis: {
           type: "category",
