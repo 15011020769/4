@@ -209,7 +209,6 @@ export default {
     attachPolicy() {
       this.$refs.userTransfer.attachPolicy();
       this.getData();
-      this.$message("关联成功");
       this.dialogVisible = false;
     },
     // table标题栏选择项

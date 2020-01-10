@@ -338,29 +338,34 @@ export default {
     attachPolicy() {
       let _this = this;
       let transfer_data_right = this.transfer_data_right;
+      if (this.transfer_data_right.length == 0) {
+        this.$message("请选择数据");
+      }
       // console.log(transfer_data_right);
-      let policyId = this.PolicyId; //获取策略ID,父页面传递参数。
-      if (policyId != undefined && policyId != "") {
-        for (let i = 0; i < transfer_data_right.length; i++) {
-          let obj = transfer_data_right[i];
-          if (obj != "" && obj.type === "user") {
-            // 定义策略添加到用户params；系统接口是单条绑定，多条数据需要循环调用接口，params只能作为局部参数存在，多条数据循环时，参数会出现后一条数据会覆盖上一条数据，
-            let paramsUser = {
-              Action: "AttachUserPolicy",
-              Version: "2019-01-16",
-              PolicyId: policyId,
-              AttachUin: obj.id
-            };
-            _this.attachUserPolicy(paramsUser);
-          }
-          if (obj != "" && obj.type === "group") {
-            // 定义策略添加到用户组params
-            let paramsGroup = {
-              Version: "2019-01-16",
-              PolicyId: policyId,
-              AttachGroupId: obj.id
-            };
-            _this.attachGroupPolicy(paramsGroup);
+      else {
+        let policyId = this.PolicyId; //获取策略ID,父页面传递参数。
+        if (policyId != undefined && policyId != "") {
+          for (let i = 0; i < transfer_data_right.length; i++) {
+            let obj = transfer_data_right[i];
+            if (obj != "" && obj.type === "user") {
+              // 定义策略添加到用户params；系统接口是单条绑定，多条数据需要循环调用接口，params只能作为局部参数存在，多条数据循环时，参数会出现后一条数据会覆盖上一条数据，
+              let paramsUser = {
+                Action: "AttachUserPolicy",
+                Version: "2019-01-16",
+                PolicyId: policyId,
+                AttachUin: obj.id
+              };
+              _this.attachUserPolicy(paramsUser);
+            }
+            if (obj != "" && obj.type === "group") {
+              // 定义策略添加到用户组params
+              let paramsGroup = {
+                Version: "2019-01-16",
+                PolicyId: policyId,
+                AttachGroupId: obj.id
+              };
+              _this.attachGroupPolicy(paramsGroup);
+            }
           }
         }
       }
@@ -369,9 +374,12 @@ export default {
     attachGroupPolicy(params) {
       this.axios.post(ATTACH_GROUP, params).then(res => {
         if (res.Response.Error) {
-          this.$emit("attach", Response.Error.Message);
+          this.$message.error("关联失败");
         } else {
-          this.$emit("attach", "success");
+          this.$message({
+            message: "关联成功",
+            type: "success"
+          });
         }
       });
     },
@@ -379,9 +387,12 @@ export default {
     attachUserPolicy(params) {
       this.axios.post(POLICY_USER, params).then(res => {
         if (res.Response.Error) {
-          this.$emit("attach", "success");
+          this.$message.error("关联失败");
         } else {
-          this.$emit("attach", "success");
+          this.$message({
+            message: "关联成功",
+            type: "success"
+          });
         }
       });
     },
