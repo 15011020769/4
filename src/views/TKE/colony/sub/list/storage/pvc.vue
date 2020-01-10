@@ -13,10 +13,16 @@
           <!-- 右侧 -->
           <div class="grid-right">
             <tkeSearch 
+              typeSelect 
               refreshData
               exportData
+              typeLabel='命名空间' 
+              :typeOptions='searchOptions'
+              :typeValue='searchType' 
               inputPlaceholder='请输入关键词搜索'
               :searchInput='searchInput'
+
+              @changeType="changeSearchType"
               @changeInput="changeSearchInput"
               @clickSearch="clickSearch"
               @refresh='refreshList'
@@ -134,7 +140,23 @@ export default {
       pageIndex:0,
       multipleSelection: [],
       
-      
+      //搜索下拉框
+      searchOptions: [
+        {
+          value: "default",
+          label: "default"
+        },
+        {
+          value: "kube-system",
+          label: "kube-system"
+        },
+        {
+          value: "kube-public",
+          label: "kube-public"
+        }
+        
+      ],
+      searchType: "default", //下拉选中的值
       searchInput: "", //输入的搜索关键字
     };
   },
