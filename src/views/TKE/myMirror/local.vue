@@ -127,6 +127,7 @@ export default {
     getCreate () {
       this.dialogVisible = false
       this.CreateSpaceName()
+      this.loadShow = true
       this.GetSpaceName()
     },
     getSearch () {
@@ -172,7 +173,7 @@ export default {
         namespace: this.ruleForm.name
       }
       this.axios.post(CREATE_SPACENAME, param).then(res => {
-        this.loadShow = true
+        // this.loadShow = true
         console.log(res)
         // if (res.code === 0) {
         //   this.isExist = res.data.isExist
