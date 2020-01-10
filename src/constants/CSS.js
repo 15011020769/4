@@ -29,10 +29,14 @@ export const CSS_CODECHARTS = 'live2/DescribeLiveTranscodeTotalInfo'
 export const CSS_SCREEN = 'live2/DescribeScreenShotSheetNumList'
 // 查询并发录制路数
 export const CSS_RECORDSTREAM = 'live2/DescribeConcurrentRecordStreamNum'
-//直播计费带宽和流量数据查询
+// 直播计费带宽和流量数据查询
 export const CSS_MBPS = 'live2/DescribeBillBandwidthAndFluxList'
-//查询按省份和运营商分组的播放数据
+// 查询按省份和运营商分组的播放数据
 export const CSS_PLAY = 'live2/DescribeGroupProIspPlayInfoList'
+// 查询某条流上行推流质量数据
+export const CSS_STREAMPUSH = 'live2/DescribeStreamPushInfoList'
+// 查询流的播放信息列表
+export const CSS_STREAMPLAY = 'live2/DescribeStreamPlayInfoList'
 // 查询推流鉴权key
 export const FLOWKEY_DELTILS = 'live2/DescribeLivePushAuthKey'
 //查询拉流配置

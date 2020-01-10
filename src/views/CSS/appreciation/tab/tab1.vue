@@ -1,6 +1,6 @@
 <template>
   <div class="wrap">
-    <h3>截图{{StartTIme}} 到 {{EndTIme}}（单位：张）</h3>
+    <h3>{{$t('CSS.appreciation.4')}}{{StartTIme}} 到 {{EndTIme}}{{$t('CSS.appreciation.5')}}</h3>
     <Echart :xAxis="xAxis" :series="series" :legendText="legendText" v-loading="loading"/>
     <div class="table">
       <h3>月度消费量</h3>
@@ -27,7 +27,7 @@
 </template>
 
 <script>
-import Echart from "../../components/line";;
+import Echart from "../../components/line";
 import { CSS_SCREEN } from "@/constants";
 import moment from "moment";
 export default {

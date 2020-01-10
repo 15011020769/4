@@ -1,6 +1,6 @@
 <template>
   <div class="Cam">
-    <HeadCom title="身份提供者" />
+    <HeadCom title="身份提供商" />
     <div class="cam_button" style="margin-top:20px;">
       <el-row class="cam-lt">
         <el-button type="primary" size="small" @click="NewUser">新建提供商</el-button>

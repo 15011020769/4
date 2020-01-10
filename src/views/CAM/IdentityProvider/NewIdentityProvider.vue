@@ -14,12 +14,12 @@
       <hr style="margin-top:10px;" />
       <div v-show="active==0" style="width:100%;">
         <el-form :model="addModel" :rules="rules" size="mini" ref="ruleForm" label-width="100px">
-          <el-form-item :label="$t('CAM.strategy.supplier')" prop="providerType">
+          <el-form-item label="提供商类型" prop="providerType">
             <el-col :span="14">
               <el-radio size="mini" v-model="addModel.providerType" label="SAML">SAML</el-radio>
             </el-col>
           </el-form-item>
-          <el-form-item :label="$t('CAM.strategy.supplierName')" prop="providerName">
+          <el-form-item label="提供商名称" prop="providerName">
             <el-col :span="14">
               <el-input size="mini" ref="providerNameRules" v-model="addModel.providerName"></el-input>
             </el-col>
