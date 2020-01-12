@@ -1,21 +1,9 @@
 <template>
-  <div class="Cam" id="app">
-    <div class="top">
-      <i
-        @click="goback"
-        class="el-icon-back"
-        style="padding-right: 10px;font-size: 130%;color: #006eff;font-weight: 900;cursor:pointer;"
-      ></i>
-      <span class="title-left">{{$t('CAM.userGroup.addBtn')}}</span>
-    </div>
+  <div class="Cam wrap" id="app">
+    <Headcom :title="$t('CAM.userGroup.addBtn')" :backShow="true" @_back="goback" />
     <div class="container">
       <div class="step">
-        <el-steps
-          :space="200"
-          :active="active"
-          simple
-          style="margin-top: 20px;margin-right: 450px;padding-left: 10px;"
-        >
+        <el-steps :space="200" :active="active" simple style="padding-left: 10px;">
           <el-step :title="$t('CAM.userGroup.createWrite')"></el-step>
           <el-step :title="$t('CAM.userGroup.createRelevance')"></el-step>
           <el-step :title="$t('CAM.userGroup.createCheck')"></el-step>
@@ -64,12 +52,14 @@ import FirstStep from "./AddGroup/AddUserGroup.vue";
 import SecondStep from "./AddGroup/PoliciesList";
 import ThirdlyStep from "./AddGroup/ConfirmationGroup";
 import { CREATE_USER, ATTACH_GROUP } from "@/constants";
+import Headcom from "@/components/public/Head"; //头部组件引入
 export default {
   name: "app",
   components: {
     FirstStep,
     SecondStep,
-    ThirdlyStep
+    ThirdlyStep,
+    Headcom
   },
   data() {
     return {
@@ -170,6 +160,17 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.wrap >>> .el-button,
+.wrap >>> .el-input__inner {
+  border-radius: 0;
+  height: 30px !important;
+  line-height: 30px;
+  padding-top: 0;
+  font-size: 12px;
+}
+.wrap >>> .el-textarea__inner {
+  border-radius: 0;
+}
 .Cam {
   .top {
     height: 45px;

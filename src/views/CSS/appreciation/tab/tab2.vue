@@ -1,6 +1,13 @@
 <template>
   <div class="wrap">
-    <h3>转码时长{{StartTIme}} 到 {{EndTIme}}（单位：分钟）</h3>
+    <p class="down">
+      <el-row>
+        <h3 style="font-size: 14px;font-weight: 700;">转码时长{{StartTIme}} 到 {{EndTIme}}（单位：分钟）</h3>
+      </el-row>
+      <el-row class="iconBtn">
+        <i class="el-icon-download"></i>
+      </el-row>
+    </p>
     <Echart :xAxis="xAxis" :series="series" :legendText="legendText" v-loading="loading" />
     <div class="table">
       <h3>近30天消费量</h3>
@@ -137,6 +144,25 @@ export default {
       font-weight: 400;
       color: #565656;
       line-height: 32px;
+    }
+  }
+  .down {
+    width: 100%;
+    margin: 30px 0 10px 0;
+    display: flex;
+    justify-content: space-between;
+    .iconBtn {
+      font-size: 16px;
+      color: #888;
+      display: flex;
+      align-items: center;
+      > i {
+        margin: 0 10px;
+        font-weight: 600;
+      }
+      i:hover {
+        cursor: pointer;
+      }
     }
   }
 }

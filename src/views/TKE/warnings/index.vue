@@ -43,16 +43,17 @@
           </el-row>
         </div>
         <!-- 数据绑定 -->
-        <div ref="dataHide" class="ep-data-card-main font" style="text-align:center;">
+        <div class="ep-data-card-main font" style="text-align:center;" v-if="length=='0'">
           您选择的集群的告警设置列表为空，您可以
           <a href="">新建告警设置</a>，或切换到其他集群
         </div>
-        <div ref="dataShow" class="ep-data-card-main" style="padding-top:20px;display:none">
+        <div v-if="length!==0">
+          <div ref="dataShow" class="ep-data-card-main" style="padding-top:20px;"  v-for="(item,i) in listData" :key="i" >
           <el-row>
             <el-col :span="5"><div class="font pt12">
-                <input type="checkbox" class="app-tke-fe-checkbox"><a href="javascript:;">aaaaaaa</a>
+                <input type="checkbox" class="app-tke-fe-checkbox"><a href="javascript:;">{{item.AlarmPolicySettings.AlarmPolicyName}}</a>
               </div></el-col>
-            <el-col :span="4"><div class="font pt12">集群</div></el-col>
+            <el-col :span="4"><div class="font pt12">{{item.AlarmPolicySettings.AlarmPolicyType}}</div></el-col>
             <el-col :span="5"><div class="font">
                 <div>CPU利用率>90%,持续5分钟告警</div>
                 <div>内存利用率>90%,持续5分钟告警</div>
@@ -72,6 +73,7 @@
               </router-link>
               </div></el-col>
           </el-row>
+          </div>
         </div>
         <div class="font flex">
           <div style="flex:1;padding-top:17px;">共&nbsp;{{length}}&nbsp;项</div>
@@ -108,8 +110,8 @@ export default {
         date: '2016-05-03',
         name: '王小虎',
         address: '上海市普陀区金沙江路 1518 弄'
-      }
-      ],
+      }],
+      listData: [],
       multipleSelection: [],
       funllscreenLoading:false
     }
@@ -123,13 +125,13 @@ export default {
         Version: "2018-05-25"
       }
       console.log((val.split('('))[0])
-      const res = this.axios.post(CreateListGroups,params).then(res=>{
-        // console.log(res)
+      const res = this.axios.post(WARNING_GetCOLONY,params).then(res=>{
         if(res.Response.AlarmPolicySet.length>0){
-          this.$refs.dataHide.style.display = 'none'
-          this.$refs.dataShow.style.display = 'block'
+          // this.$refs.dataHide.style.display = 'none'
+          // this.$refs.dataShow.style.display = 'block'
           let resData= res.Response.AlarmPolicySet
           this.length = resData.length;
+          this.listData = resData;
           console.log(resData)
           for (let i = 0; i < resData.length; i++) {
             let getData = {
@@ -138,8 +140,8 @@ export default {
             getData.name = resData.AlarmPolicySettings
           }
         }else{
-          this.$refs.dateHide.style.display = 'block'
-          this.$refs.dateShow.style.display = 'none'
+          // this.$refs.dateHide.style.display = 'block'
+          // this.$refs.dateShow.style.display = 'none'
           console.log('数据请求出错')
         }
       });
@@ -153,6 +155,20 @@ export default {
     // 获取集群列表详情
     // this.getWarningListItem();
   },
+  // filters:{
+  //   filterName:function(val){
+  //     console.log(val)
+  //     const list={cluster:'集群',node:'节点',pod:'pod'}
+  //     console.log(list[0].val)
+  //     return list.val
+  //     // console.log(this.list)
+  //     // for(var key in this.list){
+  //     //   if(key == val){
+  //     //     return this.list.val
+  //     //   }
+  //     // }
+  //   }
+  // },
   methods:{
     openFullScreen1() {
         this.fullscreenLoading = true;

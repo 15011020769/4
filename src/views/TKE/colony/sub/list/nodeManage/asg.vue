@@ -187,7 +187,7 @@ import subTitle from "@/views/TKE/components/subTitle";
 import Loading from "@/components/public/Loading";
 import { ALL_CITY } from "@/constants";
 export default {
-  name: "colonyNodeManageAsg",
+  name: "colonyHpa",
   data() {
     return {
       loadShow: false, //加载是否显示
@@ -212,12 +212,12 @@ export default {
     // 分页
     handleCurrentChange(val) {
       this.pageIndex = val-1;
-      this.getColonyList();
+      // this.getColonyList();
       this.pageIndex+=1;
     },
     handleSizeChange(val) {
       // console.log(`每页 ${val} 条`);
-      this.pageSize=val;
+      // this.pageSize=val;
       this.getColonyList();
     },
 

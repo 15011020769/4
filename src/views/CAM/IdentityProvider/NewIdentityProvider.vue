@@ -14,12 +14,12 @@
       <hr style="margin-top:10px;" />
       <div v-show="active==0" style="width:100%;">
         <el-form :model="addModel" :rules="rules" size="mini" ref="ruleForm" label-width="100px">
-          <el-form-item :label="$t('CAM.strategy.supplier')" prop="providerType">
+          <el-form-item label="提供商类型" prop="providerType">
             <el-col :span="14">
               <el-radio size="mini" v-model="addModel.providerType" label="SAML">SAML</el-radio>
             </el-col>
           </el-form-item>
-          <el-form-item :label="$t('CAM.strategy.supplierName')" prop="providerName">
+          <el-form-item label="提供商名称" prop="providerName">
             <el-col :span="14">
               <el-input size="mini" ref="providerNameRules" v-model="addModel.providerName"></el-input>
             </el-col>
@@ -71,6 +71,7 @@
   </div>
 </template>
 <script>
+import { ErrorTips } from "@/components/ErrorTips";
 import SecondStep from "./CheckAccomplish.vue";
 import HeadCom from "../UserListNew/components/Head";
 import { CREATE_SAML } from "@/constants";
@@ -160,7 +161,8 @@ export default {
             SAMLMetadataDocument: localStorage.getItem("base64")
           };
           this.axios.post(CREATE_SAML, params).then(res => {
-            if (
+            if(res.Response.Error === undefined){
+               if (
               res.Response.Error.Code == "InvalidParameterValue.MetadataError"
             ) {
               this.$message.error("元數據錯誤解析元數據錯誤");
@@ -174,6 +176,21 @@ export default {
                 this.active = 0;
                 this.form = this.addModel;
               }
+            }
+            }else{
+                 let ErrTips = {
+                      "InvalidParameter.IdentityNameInUse":'身份提供商名称已经使用',
+                      "InvalidParameterValue.MetadataError":'身份提供商元数据文档错误',
+                      "InvalidParameterValue.NameError":'身份提供商名称错误',
+                      "LimitExceeded.IdentityFull":'身份提供商已达到上限',
+                };
+                let ErrOr = Object.assign(ErrorTips, ErrTips);
+                this.$message({
+                  message: ErrOr[res.Response.Error.Code],
+                  type: "error",
+                  showClose: true,
+                  duration: 0
+                }); 
             }
             this.loading = false;
           });

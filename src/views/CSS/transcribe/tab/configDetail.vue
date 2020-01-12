@@ -1,7 +1,7 @@
 <!--
  * @Author: T
  * @Date: 2020-01-03 11:13:24
- * @LastEditTime : 2020-01-06 13:45:36
+ * @LastEditTime : 2020-01-10 10:51:50
  * @LastEditors  : Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: /new_product/src/views/CSS/transcoding/tab/configDetail.vue
@@ -9,39 +9,39 @@
 <template>
   <div class="detail-wrap">
     <el-row type="flex" justify="space-between" align="middle">
-      <h3>錄製配置</h3>
-      <el-button type="text" @click="onEdit">編輯</el-button>
+      <h3>{{$t('CSS.transcribe.0')}}</h3>
+      <el-button type="text" @click="onEdit">{{$t('CSS.transcribe.17')}}</el-button>
     </el-row>
     <ul class="content-box">
       <li>
         <el-row type="flex">
-          <el-col :span="5">模板名稱</el-col>
+          <el-col :span="5">{{$t('CSS.transcribe.7')}}</el-col>
           <el-col class="text-black">{{ selectItem.TemplateName }}</el-col>
         </el-row>
       </li>
       <li>
         <el-row type="flex">
-          <el-col :span="5">模板描述</el-col>
+          <el-col :span="5">{{$t('CSS.transcribe.8')}}</el-col>
           <el-col class="text-black">{{ selectItem.Description }}</el-col>
         </el-row>
       </li>
       <li>
         <el-row type="flex">
-          <el-col :span="5">錄製文件類型</el-col>
+          <el-col :span="5">{{$t('CSS.transcribe.9')}}</el-col>
           <el-col class="text-black">
             <el-table :data="this.tableData.filter(item => item.Enable > 0)">
-              <el-table-column label="文件類型" prop="TemplateName" />
-              <el-table-column label="單個錄製文件時長(分鐘)" prop="RecordInterval">
+              <el-table-column :label="$t('CSS.transcribe.11')" prop="TemplateName" />
+              <el-table-column :label="$t('CSS.transcribe.12')" prop="RecordInterval">
                 <template slot-scope="scope">
                   {{scope.row | RecordInterval}}
                 </template>
               </el-table-column>
-              <el-table-column label="文件保存時長(天)" prop="StorageTime">
+              <el-table-column :label="$t('CSS.transcribe.13')" prop="StorageTime">
                 <template slot-scope="scope">
                   {{scope.row | StorageTimeFilter}}
                 </template>
               </el-table-column>
-              <el-table-column label="續錄超時時長(秒)">
+              <el-table-column :label="$t('CSS.transcribe.14')">
                 <template slot-scope="scope">
                   {{scope.row | HlsSpecialParamFilter}}
                 </template>
@@ -105,7 +105,7 @@ export default {
   filters: {
     RecordInterval(item) {
       if (item.TemplateName === 'HLS') {
-        return '无时长限制'
+        return '無時長限制'
       }
       return item.RecordInterval / 60 //单位为分钟 
     },
@@ -121,7 +121,7 @@ export default {
       if (item.TemplateName === 'HLS') {
         return item.HlsSpecialParam.FlowContinueDuration
       }
-      return '不支持续录'
+      return '不支持續錄'
     }
   }
 }

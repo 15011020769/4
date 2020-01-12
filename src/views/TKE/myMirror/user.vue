@@ -185,11 +185,20 @@ export default {
       }
     }
     var validatePass3 = (rule, value, callback) => {
-      if (this.isExist) {
-        callback(new Error('镜像名称已存在'))
-      } else {
-        callback()
+      const version = /^(?!_)(?!.*-$)[a-z0-9_]+$/
+      // 判断新建是否存在镜像名称接口
+      const param = {
+        reponame: this.isReponame
       }
+      this.axios.post(MIRROR_PRESENCE, param).then(res => {
+        if (res.code === 0 && res.data.isExist) {
+          callback(new Error('镜像名称已存在'))
+        } else if (!version.test(this.ruleForm.name)) {
+          callback(new Error('镜像格式不正确'))
+        } else {
+          callback()
+        }
+      })
     }
     return {
       name: '',
@@ -214,7 +223,7 @@ export default {
       deleteSpace: '',
       spaceName: [], // 命名空间
       isReponame: '',
-      isExist: '', // 镜像名称是否存在变量
+      // isExist: '', // 镜像名称是否存在变量
       ruleForm: {
         name: '',
         region: '0',
@@ -235,7 +244,7 @@ export default {
         name: [
           { required: true, message: '请输入镜像名称', trigger: 'blur' },
           { max: 200, message: '镜像名称不能超过200个字符', trigger: 'blur' },
-          { validator: validatePass3, trigger: 'blur, change' }
+          { validator: validatePass3, trigger: 'blur' }
         ],
         region2: [
           { required: true, message: '命名空间不能为空', trigger: 'change' }
@@ -354,12 +363,12 @@ export default {
       this.deleteSpace = obj
       this.DeleteMyMirror()
     },
-    open3() {
-        this.$message({
-          message: '警告哦，这是一条警告消息',
-          type: 'warning'
-        });
-      },
+    open3 () {
+      this.$message({
+        message: '警告哦，这是一条警告消息',
+        type: 'warning'
+      })
+    },
     GetMyMirror () { // 获得我的镜像数据
       const param = {
         reponame: this.input,
@@ -409,18 +418,6 @@ export default {
         if (res.code === 0) {
           this.loadShow = false
           console.log(res)
-        }
-      })
-    },
-    // 判断新建是否存在镜像名称接口
-    isPresence () {
-      const param = {
-        reponame: this.isReponame
-      }
-      this.axios.post(MIRROR_PRESENCE, param).then(res => {
-        if (res.code === 0) {
-          this.isExist = res.data.isExist
-          console.log(this.isExist)
         }
       })
     }

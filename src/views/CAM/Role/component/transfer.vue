@@ -19,6 +19,7 @@
             height="420"
             @selection-change="handleSelectionChange"
             v-loadmore="debounce"
+            v-loading="loading"
           >
             <el-table-column type="selection" width="55"></el-table-column>
             <el-table-column prop="PolicyName" label="策略名" width="180"></el-table-column>
@@ -75,6 +76,7 @@ export default {
   name: "transfer",
   data() {
     return {
+      loading: true,
       num: 0,
       tableData: [],
       input: "",
@@ -129,6 +131,7 @@ export default {
     },
     //策略列表
     _getList() {
+      this.loading = true;
       const params = {
         Version: "2019-01-16",
         Rp: 10,
@@ -143,6 +146,7 @@ export default {
       this.axios.post(POLICY_LIST, params).then(res => {
         this.tableData = res.Response.List;
         this.num = res.Response.TotalNum;
+        this.loading = false;
       });
     },
     listMore() {

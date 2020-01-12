@@ -1,9 +1,17 @@
 <template>
   <div class="wrap">
-    <h3>截图{{StartTIme}} 到 {{EndTIme}}（单位：张）</h3>
+    <p class="down">
+      <el-row>
+        <h3 style="font-size: 14px;font-weight: 700;">{{$t('CSS.appreciation.4')}}{{StartTIme}} 到 {{EndTIme}}{{$t('CSS.appreciation.5')}}</h3>
+      </el-row>
+      <el-row class="iconBtn">
+        <i class="el-icon-download"></i>
+      </el-row>
+    </p>
     <Echart :xAxis="xAxis" :series="series" :legendText="legendText" v-loading="loading"/>
     <div class="table">
       <h3>月度消费量</h3>
+      <!-- <el-button @click="exportExcel">导出表格</el-button> -->
       <el-table
         :data="tableData"
         style="width: 100%;margin-top:20px;"
@@ -27,7 +35,9 @@
 </template>
 
 <script>
-import Echart from "../../components/line";;
+import FileSaver from "file-saver";
+import XLSX from "xlsx";
+import Echart from "../../components/line";
 import { CSS_SCREEN } from "@/constants";
 import moment from "moment";
 export default {
@@ -60,6 +70,27 @@ export default {
     this.getCharts();
   },
   methods: {
+    // exportExcel() {
+    //     /* generate workbook object from table */
+    //     var wb = XLSX.utils.table_to_book(document.querySelector("#exportTable"));
+    //     /* get binary string as output */
+    //     var wbout = XLSX.write(wb, {
+    //       bookType: "xlsx",
+    //       bookSST: true,
+    //       type: "array"
+    //     });
+    //     try {
+    //       FileSaver.saveAs(
+    //         new Blob([wbout], {
+    //           type: "application/octet-stream"
+    //         }),
+    //         this.$t("CVM.cloudDisk.yyp") + ".xlsx"
+    //       );
+    //     } catch (e) {
+    //       if (typeof console !== "undefined") console.log(e, wbout);
+    //     }
+    //     return wbout;
+    //   },
     //分页
     handleCurrentChange(val) {
       this.current = val;
@@ -164,6 +195,25 @@ export default {
       font-weight: 400;
       color: #565656;
       line-height: 32px;
+    }
+  }
+  .down {
+    width: 100%;
+    margin: 30px 0 10px 0;
+    display: flex;
+    justify-content: space-between;
+    .iconBtn {
+      font-size: 16px;
+      color: #888;
+      display: flex;
+      align-items: center;
+      > i {
+        margin: 0 10px;
+        font-weight: 600;
+      }
+      i:hover {
+        cursor: pointer;
+      }
     }
   }
 }

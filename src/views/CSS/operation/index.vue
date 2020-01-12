@@ -7,21 +7,32 @@
     <div class="seek seek-box">
       <p style="margin-left:20px;">
         <span>选择域名</span>
-        <el-select
-          v-model="damainValue"
-          @change="changeDomain"
-          multiple
-          collapse-tags
-          style="margin-left: 10px;"
-          placeholder="请选择"
+        <el-dropdown
+          :hide-on-click="false"
+          trigger="click"
+          ref="doaminRef"
+          style="margin-left: 20px"
         >
-          <el-option
-            v-for="item in domainsData"
-            :key="item.value"
-            :label="item.label"
-            :value="item.label"
-          ></el-option>
-        </el-select>
+          <el-button type="primary" size="small">
+            {{domainCheckedListCopy.length === domainsData.length ? '全部域名' : domainCheckedListCopy.join()}}
+            <i class="el-icon-arrow-down el-icon--right"></i>
+          </el-button>
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item>
+              <label class="domain-label"><el-checkbox :value="domainCheckedList.length === domainsData.length" @change="checkDomainAll" /> 全部域名</label>
+            </el-dropdown-item>
+            <el-dropdown-item
+              v-for="item in domainsData"
+              :key="item"
+            >
+              <label class="domain-label"><el-checkbox @change="checked => doaminChange(checked, item)" :value="domainCheckedList.includes(item)" /> {{item}}</label>
+            </el-dropdown-item>
+            <el-row class="doamin-btn-container">
+              <el-button size="small" type="primary" @click="comfirmDomain">{{$t('CSS.overview.12')}}</el-button>
+              <el-button size="small" @click="cancelDomain">取消</el-button>
+            </el-row>
+          </el-dropdown-menu>
+        </el-dropdown>
       </p>
       <p style="margin-left:20px;">
         <span>选择运营商</span>
@@ -58,14 +69,16 @@
           :EndTIme="EndTIme"
           :operator="operator"
           v-if="tabIndex == 0"
-          :domain="domain"
+          :domainsData="domainsData"
+          :domainCheckedListCopy="domainCheckedListCopy"
           ref="tab1"
         />
         <Tab2
           :StartTIme="StartTIme"
           :EndTIme="EndTIme"
           v-if="tabIndex == 1"
-          :domain="domain"
+          :domainsData="domainsData"
+          :domainCheckedListCopy="domainCheckedListCopy"
           ref="tab2"
         />
         <Tab3
@@ -103,6 +116,8 @@ export default {
     return {
       operator: "",
       domainsData: [],
+      domainCheckedList: [],
+      domainCheckedListCopy: [],
       options: [
         {
           value: "",
@@ -121,7 +136,6 @@ export default {
           label: "中国移动"
         },
       ],
-      damainValue: [],
       domain: [],
       value: 1, //时间组件默认选中值
       region: "台灣台北", //地域
@@ -174,35 +188,25 @@ export default {
       }
       return m;
     },
-    changeDomain(value) {
-      this.domain = value
-    },
     //域名列表
     getDomains() {
       const params = {
         Version: "2018-08-01"
       };
       this.axios.post(DOMAIN_LIST, params).then(res => {
-        // console.log(res)
         var arr = [];
-        res.Response.DomainList.forEach((item, index) => {
-          const data = {
-            value: index,
-            label: item.TargetDomain
-          };
-          arr.push(data);
+        res.Response.DomainList.forEach((domain, index) => {
+          arr.push(domain.Name);
         });
         this.domainsData = arr;
+        this.domainCheckedList = arr
+        this.domainCheckedListCopy = arr
       });
     },
     //查询
     search() {
       this.StartTIme = this.timeData[0].StartTIme;
       this.EndTIme = this.timeData[0].EndTIme;
-      // this.damainValue.forEach(item => {
-      //   this.domain.push(this.domainsData[item].label);
-      //   this.domain = Array.from(new Set(this.domain))
-      // });     
       if (this.tabIndex == 0) {
         this.getTotal()
         this.$nextTick(() => {
@@ -246,16 +250,49 @@ export default {
         EndTime: moment(this.EndTIme).format("YYYY-MM-DD HH:mm:ss"),
         Granularity: 5,
       };
+      if (this.domainCheckedListCopy.length !== this.domainsData.length) {
+        this.domainCheckedListCopy.forEach((item, index) => {
+          params["PlayDomains." + index] = item;
+        });
+      }
       this.axios.post(CSS_MBPS, params).then(res => {
         if (res.Response.Error) {
           this.$message.error(res.Response.Error.Message);
         } else {
-          // 表格数据
           this.tab[0].value = res.Response.PeakBandwidth
           this.tab[1].value = res.Response.SumFlux
         }
       });
-    }
+    },
+    checkDomainAll(checked) {
+      if (checked) {
+        this.domainCheckedList = [...this.domainsData]
+      } else {
+        this.domainCheckedList = []
+      }
+    },
+    doaminChange(checked, domain) {
+      if (checked) {
+        this.domainCheckedList.push(domain);
+      } else {
+        this.domainCheckedList = this.domainCheckedList.filter(item => item !== domain)
+      }
+    },
+    comfirmDomain() {
+      if (this.domainCheckedList.length === 0) {
+        this.$message({
+          type: 'warning',
+          message: '请选择域名'
+        })
+      } else {
+        this.$refs.doaminRef.visible = false
+        this.domainCheckedListCopy = [...this.domainCheckedList]
+      }
+    },
+    cancelDomain() {
+      this.domainCheckedList = [...this.domainCheckedListCopy]
+      this.$refs.doaminRef.visible = false
+    },
   }
 };
 </script>
@@ -348,5 +385,12 @@ export default {
       }
     }
   }
+}
+.domain-label {
+  display: block;
+  cursor: pointer;
+}
+.doamin-btn-container {
+  margin-left: 20px;
 }
 </style>

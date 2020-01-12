@@ -67,7 +67,7 @@
                </li>
                <li>
                    <div class="li-left">Kry-Value</div>
-                    <el-link type="primary" style="cursor: pointer;">新增变量</el-link>
+                    <AddValue></AddValue>
                </li>
             </ul>
         </el-card>
@@ -75,8 +75,12 @@
   </div>
 </template>
 <script>
+import AddValue from '@/views/TKE/helmCreate/components/addValue.vue'
 export default {
   name: 'myMirror',
+  components: {
+    AddValue
+  },
   data () {
     var validatePass = (rule, value, callback) => {
       if (value === '') {

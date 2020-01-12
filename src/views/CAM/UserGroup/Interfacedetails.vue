@@ -1,17 +1,10 @@
 <template>
-  <div class="Cam">
-    <div class="top">
-      <i
-        @click="backoff"
-        class="el-icon-back"
-        style="padding-right: 10px; font-size: 130%; color: #006eff; font-weight: 900; cursor:pointer;"
-      ></i>
-      <span class="title-left">{{title}}</span>
-    </div>
+  <div class="Cam wrap">
+    <Headcom :title="$t('CAM.userList.userDetil')" :backShow="true" @_back="backoff" />
     <!-- 内容 -->
-    <div class="Interface" v-loading="loading">
+    <div class="Interface">
       <!-- 用户组详情上半部分页面 start -->
-      <div class="Interface-top">
+      <div class="Interface-top" v-loading="loading1">
         <div class="upper-side">
           <h3 class="information">{{$t('CAM.userGroup.groupTest')}}</h3>
           <el-link @click="editGroup" class="edit" type="primary">{{$t('CAM.userList.updataUser')}}</el-link>
@@ -23,7 +16,7 @@
               <span>{{groupData.GroupName}}</span>
             </el-form-item>
             <el-form-item :label="$t('CAM.userGroup.colRemark')">
-              <span>{{groupData.Remark}}</span>
+              <span>{{groupData.Remark ? groupData.Remark : '-'}}</span>
             </el-form-item>
             <el-form-item :label="$t('CAM.userGroup.colCreTime')">
               <span>{{groupData.CreateTime}}</span>
@@ -52,20 +45,18 @@
       </div>
       <!-- 用户组详情上半部分页面 end -->
       <!-- 用户组详情下半部分页面 start -->
-      <div class="tabswitch">
+      <div class="tabswitch" v-loading="loading">
         <template>
           <el-tabs v-model="activeName" @tab-click="handleClick">
             <el-tab-pane :label="policiesLable" name="first">
               <div class="app-cam-alert">
                 <div class="app-cam-alert__info">{{$t('CAM.userGroup.polictTitle')}}</div>
               </div>
-              <div class="btn">
-                <el-button
-                  type="primary"
-                  @click="openPolicies"
-                  size="small"
-                >{{$t('CAM.userGroup.getPolicy')}}</el-button>
-              </div>
+              <el-button
+                type="primary"
+                @click="openPolicies"
+                size="small"
+              >{{$t('CAM.userGroup.getPolicy')}}</el-button>
               <div>
                 <el-table :data="policiesData" style="width: 100%;" height="300">
                   <el-table-column :label="$t('CAM.userList.strategyNames')" show-overflow-tooltip>
@@ -141,7 +132,8 @@
                   ref="multipleTable"
                   :data="owneruserData"
                   tooltip-effect="dark"
-                  style="width: 100%; border:1px solid #ddd"
+                  height="300"
+                  style="width: 100%;"
                   @selection-change="handleSelectionChangeUsers"
                 >
                   <el-table-column type="selection" width="55"></el-table-column>
@@ -289,6 +281,7 @@
 </template>
 <script>
 import transfer from "../Role/component/transfer";
+import Headcom from "@/components/public/Head"; //头部组件引入
 import {
   GET_GROUP,
   DEL_USERTOGROUP,
@@ -306,6 +299,7 @@ export default {
     return {
       title: "",
       loading: true,
+      loading1: true,
       multipleSelection: [],
       TotalCount: 0, //总条数
       pagesize: 10, // 分页条数
@@ -345,7 +339,8 @@ export default {
     };
   },
   components: {
-    transfer
+    transfer,
+    Headcom
   },
   mounted() {
     this.groupId = this.$route.query.GroupId;
@@ -371,7 +366,7 @@ export default {
     },
     // 查询用户组详情
     selectGroup() {
-      this.loading = true;
+      this.loading1 = true;
       let params = {
         Version: "2019-01-16"
       };
@@ -390,8 +385,8 @@ export default {
           );
           this.TotalCounts = res.Response.UserInfo.length;
           this.userLabel = "用户（" + res.Response.UserInfo.length + "）";
-          this.loading = false;
           this.title = this.groupData.GroupName;
+          this.loading1 = false;
         })
         .catch(error => {
           console.log(error);
@@ -761,6 +756,14 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+.wrap >>> .el-button,
+.wrap >>> .el-input__inner {
+  border-radius: 0;
+  height: 30px !important;
+  line-height: 30px;
+  padding-top: 0;
+  font-size: 12px;
+}
 .Interface >>> .el-form-item__label {
   text-align: left;
 }

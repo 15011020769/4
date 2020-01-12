@@ -3,8 +3,8 @@
     <Header title="增值功能" />
     <div class="seek">
       <XTimeX v-on:switchData="GetDat" :classsvalue="value"></XTimeX>
-      <el-button style="margin-top:22.5px;margin-left:20px;">{{region}}</el-button>
-      <el-button style="margin-top:22.5px;margin-left:20px;" type="primary" @click="search">查询</el-button>
+      <el-button style="margin-top:22.5px;margin-left:20px;" type="primary">{{region}}</el-button>
+      <el-button style="margin-top:22.5px;margin-left:20px;" type="primary" @click="search">{{$t('CSS.appreciation.0')}}</el-button>
     </div>
     <div class="appreciation-main">
       <div class="tab-box">
@@ -31,7 +31,7 @@
 import moment from "moment";
 import Header from "@/components/public/Head";
 import XTimeX from "@/components/public/TimeN";
-import { ALL_CITY, CSS_SCREEN } from "@/constants";
+import { ALL_CITY, CSS_SCREEN, CSS_RECORDSTREAM } from "@/constants";
 import Tab1 from "./tab/tab1";
 import Tab2 from "./tab/tab2";
 import Tab3 from "./tab/tab3";
@@ -71,6 +71,7 @@ export default {
   created() {
     this.getCity();
     this.getScreens();
+    this.getPeaks();
   },
   methods: {
     //查询
@@ -88,6 +89,7 @@ export default {
           this.$refs.tab2.getCharts();
         })
       } else if (this.tabIndex == 2) {
+        this.getPeaks();
         this.$nextTick(() => {
            this.$refs.tab3.getCharts();
         })
@@ -114,7 +116,7 @@ export default {
       const params = {
         Version: "2018-08-01",
         Granularity: "Minute",
-        Zone: "Oversea",
+        // Zone: "Oversea",
         StartTime: moment(this.StartTIme).utc().format(),
         EndTime: moment(this.EndTIme).utc().format(),
       };
@@ -128,6 +130,22 @@ export default {
           this.tab[0].value = totalScreen
         }
       })
+    },
+    getPeaks() {
+      const params = {
+        Version: "2018-08-01",
+        StartTime : moment(this.StartTIme).format('YYYY-MM-DD HH:mm:ss'),
+        EndTime : moment(this.EndTIme).format('YYYY-MM-DD HH:mm:ss'),
+        // MainlandOrOversea: "Oversea",
+        LiveType: "NormalLive",
+      };
+      this.axios.post(CSS_RECORDSTREAM, params).then(res => {
+        if (res.Response.Error) {
+          this.$message.error(res.Response.Error.Message);
+        } else {
+          this.tab[2].value = Math.max(...res.Response.DataInfoList.map(item => item.Num))
+        }
+      });
     }
   }
 };
@@ -158,7 +176,7 @@ export default {
     background: white;
 
     .main {
-      padding: 20px;
+      padding: 0 20px 20px 20px;
       padding-bottom: 0;
       box-sizing: border-box;
     }

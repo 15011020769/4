@@ -26,6 +26,7 @@
   </div>
 </template>
 <script>
+import { ErrorTips } from "@/components/ErrorTips";
 import VueCookie from "vue-cookie";
 import { END_KMS,DIS_KMS } from "@/constants";
 export default {
@@ -76,9 +77,26 @@ export default {
         KeyId: this.contentDialog[1]
       };
       this.axios.post(END_KMS, params).then(res => {
-        this.$parent.GetList();
+        if(res.Response.Error === undefined){
+           this.$parent.GetList();
+        }else{
+            let ErrTips = {
+                "InternalError":'	内部错误',
+                "InvalidParameter":'参数错误',
+                "InvalidParameterValue.InvalidKeyId":'KeyId不合法',
+                "ResourceUnavailable.CmkNotFound":'CMK不存在',
+                "UnauthorizedOperation":'未授权操作',
+                "UnsupportedOperation.ExternalCmkCanNotRotate":'用户导入类型的CMK禁止轮换'
+            };
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+        }
       });
-      
     },
     //禁用密钥轮换确定按钮
     topSure(){
@@ -91,8 +109,24 @@ export default {
         KeyId: this.contentDialog[1]
       };
       this.axios.post(DIS_KMS, params).then(res => {
-        this.$parent.GetList();
-       
+        if(res.Response.Error === undefined){
+          this.$parent.GetList();
+        }else{
+          let ErrTips = {
+             "InternalError":'内部错误',
+             "InvalidParameter":'参数错误',
+             "InvalidParameterValue.InvalidKeyId":'KeyId不合法',
+             "ResourceUnavailable.CmkNotFound":'CMK不存在',
+             "UnauthorizedOperation":'未授权操作'
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
       });
     }
   }

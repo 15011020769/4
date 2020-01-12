@@ -3,7 +3,7 @@
   <div class="tke-search">
     <el-form :inline="true"  size="small">
       <el-form-item v-if='typeSelect' :label="typeLabel">
-        <el-select v-model='selectValue'>
+        <el-select v-model='selectValue'  @change="changeType">
           <el-option 
             v-for="item in typeOptions" 
             :key="item.value"
@@ -13,21 +13,24 @@
         </el-select>
       </el-form-item>
       <el-form-item>
-          <el-input v-model="inputValue" :placeholder="inputPlaceholder"></el-input>
-          <el-button icon="el-icon-search" ></el-button>
+          <el-input 
+            v-model="inputValue" 
+            :placeholder="inputPlaceholder"
+            @input="changeInput"
+          ></el-input>
+          <el-button icon="el-icon-search"  @click="clickSearch(inputValue)"></el-button>
           <span v-if='refreshData'>
-             <i class="el-icon-refresh tke-refresh "></i>
+            <el-tooltip class="tooltip" effect="dark" content="刷新" placement="top">
+              <i @click="refresh" class="el-icon-refresh tke-refresh "></i>
+            </el-tooltip>
+             
           </span>
           <span v-if='exportData'>
             <el-tooltip class="tooltip" effect="dark" content="導出表格" placement="top">
-              <i class="el-icon-download tke-download "></i>
+              <i  @click="exportExcel" class="el-icon-download tke-download "></i>
             </el-tooltip>
           </span>
       </el-form-item>
-      
-      <!-- <el-form-item>
-        <el-button type="primary" @click="onSubmit">查询</el-button>
-      </el-form-item> --> 
     </el-form>
   </div>
 </template>
@@ -77,23 +80,27 @@ export default {
   },
  
   methods: {
+    //选择搜索条件
+    changeType(val) {
+      this.$emit("changeType", val);
+    },
+    //输入时获取value
+    changeInput(val) {
+      this.$emit("changeInput", val);
+    },
+    //点击搜索按钮
+    clickSearch(val) {
+      this.$emit("clickSearch", val);
+    },
+    //刷新数据
+    refresh() {
+      this.$emit("refresh");
+    },
     //导出表格
     exportExcel() {
       this.$emit("exportExcel");
-    },
-    //选择搜索条件
-    changeValue(val) {
-      this.$emit("changeValue", val);
-    },
-    //输入时获取value
-    changeinput(val) {
-      this.$emit("changeinput", val);
-    },
-
-    //点击搜索按钮
-    clicksearch(val) {
-      this.$emit("clicksearch", val);
     }
+
   }
 };
 </script>
