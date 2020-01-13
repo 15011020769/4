@@ -292,12 +292,13 @@ export default {
       this.loadShow = true
     },
     submitForm (formName) {
+      console.log(formName)
       this.$refs[formName].validate((valid) => {
         if (valid) {
           console.log(valid)
+          // this.$refs.ruleForm.clearValidate()
+          //   this.$refs.ruleForm.resetFields()
           this.dialogFormVisible = !valid
-          this.$refs.ruleForm.clearValidate()
-          this.$refs.ruleForm.resetFields()
           this.CreateMyMirror()
           this.GetMyMirror()
           this.loadShow = true

@@ -2,9 +2,11 @@
   <div class="room">
     <div class="room-center">
       <div class="explain" style="margin-bottom:20px;">
-        <p>当前账号下镜像仓库内镜像版本配额为1000个，当前仓库版本数为0个，您可设置
+        <p>当前账号下镜像仓库内镜像版本配额为1000个，当前仓库版本数为0个，<span v-show="this.input1||this.input2?false:true">您可设置
             <el-button type="text" size="small" @click="dialogVisible = true">设置自动清理策略</el-button>
-            以仅保留较新版本的容器镜像，以免因达到配额限制而无法上传新版本镜像。
+            以仅保留较新版本的容器镜像，以免因达到配额限制而无法上传新版本镜像。</span>
+            <span v-show='this.input1?true:false'>当前自动清理策略为仅保留最新的{{input1}}个镜像版本，您可<el-button type="text" size="small" @click="deleteAuto()">删除自动清理策略</el-button>后重新设置。</span>
+            <span v-show='this.input2?true:false'>当前自动清理策略为仅保留最新的{{input2}}天以内的镜像版本，您可<el-button type="text" size="small" @click="deleteAuto()">删除自动清理策略</el-button>后重新设置。</span>
         </p>
       </div>
     </div>
@@ -19,20 +21,20 @@
         <el-button disabled size="mini" class="botton-size">删除</el-button>
       </div>
       <div class="top-right">
-          <i class="el-icon-setting"  @click="dialogVisible = true"></i>
-          <span>设置自动清理旧版本镜像策略</span>
-          <span v-show="false">当前仅保留最新的1个镜像版本<el-button type="text" size="mini">删除自动清理策略</el-button></span>
-          <span v-show="false">当前仅保留最近1天以内的镜像版本<el-button type="text" size="mini">删除自动清理策略</el-button></span>
+          <i v-show="this.input1||this.input2?false:true" class="el-icon-setting"  @click="dialogVisible = true"></i>
+          <span v-show="this.input1||this.input2?false:true">设置自动清理旧版本镜像策略</span>
+          <p v-show="this.input1?true:false">当前仅保留最新的{{input1}}个镜像版本<el-button type="text" size="mini" @click="deleteAuto()">删除自动清理策略</el-button></p>
+          <p v-show="this.input2?true:false">当前仅保留最近{{input2}}天以内的镜像版本<el-button type="text" size="mini"  @click="deleteAuto()">删除自动清理策略</el-button></p>
       </div>
     </div>
     <div class="room-bottom">
       <el-table :data="tableData" style="width: 100%" height="450">
         <el-table-column type="selection" width="55"></el-table-column>
-        <el-table-column prop="address" label="名称"></el-table-column>
-        <el-table-column prop="address" label="类型"></el-table-column>
-        <el-table-column prop="address" label="命名空间"></el-table-column>
-        <el-table-column prop="address" label="镜像地址"></el-table-column>
+        <el-table-column prop="address" label="镜像版本"></el-table-column>
         <el-table-column prop="address" label="创建时间"></el-table-column>
+        <el-table-column prop="address" label="修改时间"></el-table-column>
+        <el-table-column prop="address" label="静态ID（SHA256）"></el-table-column>
+        <el-table-column prop="address" label="大小"></el-table-column>
         <el-table-column prop="address" label="操作">
           <template slot-scope="scope">
             <el-button @click="handleClick(scope.row)" type="text" size="small">删除</el-button>
@@ -50,7 +52,7 @@
         ></el-pagination>
       </div>
     </div>
-    <!-- 新建弹出窗 -->
+    <!-- 使用指引弹出框 -->
     <el-dialog title="使用指引" :visible.sync="dialogFormVisible" width="620px">
         <ul>
           <li>
@@ -100,26 +102,26 @@
         <p>当前账号下镜像仓库内镜像版本配额为1000个，当前仓库内镜像版本数达到此配额后，将触发自动清理策略。</p>
       </div>
       <el-form :model="ruleForm" ref="ruleForm" label-width="30px" class="demo-ruleForm">
-        <el-form-item>
+        <el-form-item >
           <el-radio v-model="radio" label="1">
-            保留最新的<el-input v-model.number="ruleForm.input1" :disabled="flag1" class="dialog-input" size="mini"></el-input>个镜像版本
+            保留最新的<el-input v-model.number="ruleForm.input1" :disabled="flag1" class="dialog-input" size="mini" autocomplete="off"></el-input>个镜像版本
           </el-radio>
         </el-form-item>
          <el-form-item>
           <el-radio v-model="radio" label="2">
-            保留最新的<el-input v-model.number="ruleForm.input2" :disabled="flag2" class="dialog-input" size="mini"></el-input>天内的镜像版本
+            保留最新的<el-input v-model.number="ruleForm.input2" :disabled="flag2" class="dialog-input" size="mini" autocomplete="off"></el-input>天内的镜像版本
           </el-radio>
         </el-form-item>
       </el-form>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="submitForm ('ruleForm')">确 定</el-button>
-      </span>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="dialogVisible = false">取 消</el-button>
+          <el-button type="primary" @click="submitForm (ruleForm)">确 定</el-button>
+        </span>
     </el-dialog>
   </div>
 </template>
 <script>
-import { MIRROR_ROAD } from '@/constants'
+import { MIRROR_ROAD, MIRROR_STRATEGY, MIRROR_AUTODELELTE } from '@/constants'
 export default {
   data () {
     return {
@@ -138,14 +140,11 @@ export default {
       formLabelWidth: '120px',
       reponame: '',
       server: '',
+      input1: '',
+      input2: '',
       ruleForm: {
         input1: '',
         input2: ''
-      },
-      rules: {
-        input1: [
-          { required: true, trigger: 'blur' }
-        ]
       }
     }
   },
@@ -154,17 +153,19 @@ export default {
       if (newName === '1') {
         this.flag1 = false
         this.flag2 = true
+        this.input2 = ''
         this.ruleForm.input2 = ''
       }
       if (newName === '2') {
         this.flag1 = true
         this.flag2 = false
+        this.input2 = ''
         this.ruleForm.input1 = ''
       }
     }
   },
   created () {
-    this.GetSpaceName()
+    this.GetLink()
   },
   methods: {
     handleClick (row) {
@@ -175,14 +176,11 @@ export default {
       this.currpage = val
     },
     submitForm (formName) {
-      this.$refs[formName].validate((valid) => {
-        if (valid) {
-          this.dialogVisible = !valid
-        } else {
-          console.log('error submit!!')
-          return false
-        }
-      })
+      // console.log(formName)
+      if (formName.input1 !== '' || formName.input2 !== '') {
+        this.dialogVisible = false
+        this.GetMirrorVersion()
+      }
     },
     getContext (e) {
       let getText = e.currentTarget.previousElementSibling.innerHTML
@@ -202,7 +200,7 @@ export default {
       })
       oInput.remove()
     },
-    GetSpaceName () { // 获取命名空间
+    GetLink () { // 获取索引信息
       const param = {
         reponame: this.name
       }
@@ -213,6 +211,52 @@ export default {
           this.reponame = res.data.reponame
         }
       })
+    },
+    DeleteMirrorAuto () { // 删除镜像自动
+      const param = {
+        reponame: this.name
+      }
+      this.axios.post(MIRROR_AUTODELELTE, param).then(res => {
+        console.log(res)
+        if (res.code === 0) {
+          // console.log(res.data)
+          this.input1 = ''
+          this.input2 = ''
+        }
+      })
+    },
+    GetMirrorVersion () { // 获取镜像版本
+      const param = {
+        type: 'keep_last_nums',
+        val: this.ruleForm.input1,
+        reponame: 'cstest/as'
+      }
+      const param2 = {
+        type: 'keep_last_days',
+        val: this.ruleForm.input2,
+        reponame: 'cstest/as'
+      }
+      if (this.ruleForm.input1 !== '') {
+        this.axios.post(MIRROR_STRATEGY, param).then(res => {
+          console.log(res)
+          if (res.code === 0) {
+            this.input1 = this.ruleForm.input1
+          }
+        })
+      }
+      if (this.ruleForm.input2 !== '') {
+        this.axios.post(MIRROR_STRATEGY, param2).then(res => {
+          console.log(res)
+          if (res.code === 0) {
+            this.input2 = this.ruleForm.input2
+          }
+        })
+      }
+    },
+    deleteAuto () {
+      this.ruleForm.input1 = ''
+      this.ruleForm.input2 = ''
+      this.DeleteMirrorAuto()
     }
   }
 }
@@ -239,7 +283,7 @@ export default {
   justify-content: space-between;
 }
 .top-right {
-  width:240px;
+  width:300px;
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -249,6 +293,7 @@ export default {
   }
   span{
     margin-left:10px;
+    font-size: 12px;
   }
 }
 .botton-size {
@@ -348,7 +393,6 @@ export default {
 }
 .pli-2{
   padding: 8px 0;
-
     font-size: 12px;
     color: #bbb
 }
