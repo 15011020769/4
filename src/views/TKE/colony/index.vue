@@ -100,14 +100,14 @@
             width="220">
             <template slot-scope="scope">
               <span class="tke-text-link">配置告警</span>
-              <span class="tke-text-link ml10">添加已有节点</span>
+              <span  @click="goAddExist(scope.row.ClusterId)" class="tke-text-link ml10">添加已有节点</span>
               <el-dropdown class="ml10 tke-dropdown" >
                 <span class="el-dropdown-link " >
                   更多<i class="el-icon-arrow-down el-icon--right"></i>
                 </span>
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item command="a"><span class="tke-text-link" @click="goColonySub(scope.row.ClusterId)">查看集群凭证</span></el-dropdown-item>
-                  <el-dropdown-item command="b"><span class="tke-text-link" href="#">新建节点</span></el-dropdown-item>
+                  <el-dropdown-item command="b"><span class="tke-text-link" @click="goExpand(scope.row.ClusterId)" >新建节点</span></el-dropdown-item>
                   <el-dropdown-item command="c"><span class="tke-text-link" href="#">删除</span></el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
@@ -272,7 +272,7 @@ export default {
     // 创建集群跳转
     goColonyCreate(){
        this.$router.push({
-          name: "colonyCreate",
+          name: "clusterCreate",
           query: {
            
           }
@@ -280,7 +280,7 @@ export default {
     },
     // 查看详情跳转
     goColonySub(id){
-       this.$router.push({
+      this.$router.push({
           name: "colonySub",
           query: {
             clusterId: id
@@ -290,6 +290,26 @@ export default {
     // 编辑集群弹窗相关
     showEditNameDlg(){
       this.editNameDialogVisible=true;
+    },
+
+    // 新建节点跳转
+    goExpand(id){
+      this.$router.push({
+          name: "clusterExpand",
+          query: {
+            clusterId: id
+          }
+      });
+    },
+
+    // 添加已有节点跳转呢
+    goAddExist(id){
+      this.$router.push({
+          name: "clusterAddExist",
+          query: {
+            clusterId: id
+          }
+      });
     },
    
    

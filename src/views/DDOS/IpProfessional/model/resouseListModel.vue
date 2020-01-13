@@ -151,7 +151,6 @@
 <script>
 import {
   RESOURCE_LIST,
-  DDOSPOLICY_CONT,
   RULESETS_CONT,
   INSTANCENAME_CONT
 } from "@/constants";

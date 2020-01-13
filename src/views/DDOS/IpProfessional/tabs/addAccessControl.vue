@@ -49,7 +49,7 @@
                 <div
                   v-for="(item, index) in scope.row.RuleList"
                   :key="index"
-                  v-show="scope.row.RuleList.length!=0"
+                  v-show="scope.row.Smode=='matching'"
                 >
                   <div>
                     {{item.Skey}}
@@ -59,14 +59,14 @@
                     {{item.Value}}
                   </div>
                 </div>
-                <div v-show="scope.row.RuleList.length==0">-</div>
+                <div v-show="scope.row.Smode=='speedlimit'">限速模式</div>
               </template>
             </el-table-column>
             <el-table-column prop="exeMode" :label="$t('DDOS.Proteccon_figura.Matching_action')">
               <template slot-scope="scope">
-                <span v-if="scope.row.ExeMode=='alg'">{{$t('DDOS.accessCopy.identification')}}</span>
-                <span v-else-if="scope.row.ExeMode=='drop'">{{$t('DDOS.accessCopy.intercept')}}</span>
-                <span v-else>-</span>
+                <span v-if="scope.row.Smode=='matching' && scope.row.ExeMode=='alg'">{{$t('DDOS.accessCopy.identification')}}</span>
+                <span v-else-if="scope.row.Smode=='matching' && scope.row.ExeMode=='drop'">{{$t('DDOS.accessCopy.intercept')}}</span>
+                <span v-else-if="scope.row.Smode=='speedlimit'">{{$t('DDOS.accessCopy.frequency')}}{{scope.row.Frequency}}{{$t('DDOS.accessCopy.askTime')}}</span>
               </template>
             </el-table-column>
             <el-table-column prop="createTime" :label="$t('DDOS.Proteccon_figura.Creation_time')">

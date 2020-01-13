@@ -550,8 +550,7 @@
 <script>
 import {
   DDOS_POLICY_CREATE,
-  DDOS_POLICY_MODIFY,
-  DDOSPOLICY_CONT
+  DDOS_POLICY_MODIFY
 } from "@/constants";
 export default {
   props: {

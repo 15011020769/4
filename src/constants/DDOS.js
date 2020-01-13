@@ -14,7 +14,6 @@ export const IPUNBlOCKLIST_LIST = 'dayu2/DescribeIpUnBlockList' //获取IP解封
 
     // 高防IP专业版-资产列表
 export const RESOURCE_LIST = 'dayu2/DescribeResourceList' //获取资源列表
-export const DDOSPOLICY_CONT = 'dayu2/DescribeDDoSPolicy' //获取DDoS高级策略
 export const RULESETS_CONT = 'dayu2/DescribeRuleSets' //获取资源的规则数
 export const SOURCEIPSEGMENT_DESCRIBE = 'dayu2/DescribeSourceIpSegment' //获取回源IP段
 
@@ -51,7 +50,7 @@ export const GET_ID = 'dayu2/DescribeResIpList' //获取资源的IP列表
 export const GET_SPolicy = 'dayu2/DescribeDDoSPolicy' // 获取DDoS高级策略
 export const GET_Status = 'dayu2/DescribeDDoSDefendStatus' // 获取DDoS防护状态
 export const CLAEN_SHOLD = 'dayu2/ModifyDDoSThreshold' //修改DDoS清洗阈值
-export const Modify_Level = 'dayu2/ModifyDDoSLevel' //修改DDoSIP防护等级
+export const Modify_Level = 'dayu2/ModifyDDoSLevel' //读取或修改DDoSIP防护等级
 export const SET_SHOLD = 'dayu2/CreateBasicDDoSAlarmThreshold' //设置基础防护的DDoS告警阈值
 export const Modify_Status = 'dayu2/ModifyDDoSDefendStatus' //修改DDoS防护状态
 

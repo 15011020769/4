@@ -1,5 +1,5 @@
 <template>
-  <div class="RoleDetail">
+  <div class="RoleDetail wrap">
     <HeadCom :title="roleInfo.RoleName" :backShow="true" @_back="_back" />
     <div class="container">
       <div class="baseInfo" v-loading="infoLoad">
@@ -129,7 +129,7 @@
               <div class="Right-style pagstyle">
                 <span
                   style="font-size:12px;color:#888;margin-right:20px;"
-                >{{$t('CAM.userList.choose')}} {{selTotalNum}} 项，共 {{TotalNum}} 项</span>
+                >{{$t('CAM.userList.choose')}} {{selTotalNum}} 项</span>
                 <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;{{$t("CAM.strip")}}</span>
                 <el-pagination
                   :page-size="pagesize"
@@ -704,6 +704,14 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+.wrap >>> .el-button,
+.wrap >>> .el-input__inner {
+  border-radius: 0;
+  height: 30px !important;
+  line-height: 30px;
+  padding-top: 0;
+  font-size: 12px;
+}
 .RoleDetail >>> .el-loading-mask {
   background: #fff;
 }

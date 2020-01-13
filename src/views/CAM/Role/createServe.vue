@@ -1,5 +1,5 @@
 <template>
-  <div class="createServe">
+  <div class="createServe wrap">
     <HeadCom :title="$t('CAM.Role.createServe')" :backShow="true" @_back="_back" />
 
     <div class="container">
@@ -305,6 +305,14 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+.wrap >>> .el-button,
+.wrap >>> .el-input__inner {
+  border-radius: 0;
+  height: 30px !important;
+  line-height: 30px;
+  padding-top: 0;
+  font-size: 12px;
+}
 .createServe {
   .top {
     padding: 0 20px;
