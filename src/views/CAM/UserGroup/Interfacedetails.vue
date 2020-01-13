@@ -591,7 +591,7 @@ export default {
       this.$router.push({
         path: "/detailsUser",
         query: {
-          content: val.Name
+          detailsData: val.Name
         }
       });
     },

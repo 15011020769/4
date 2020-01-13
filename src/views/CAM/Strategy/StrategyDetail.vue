@@ -336,7 +336,7 @@ export default {
       this.$refs.userTransfer.attachPolicy();
       this.dialogVisible = false;
       // 重新加载策略关联实体列表
-      this.$refs.userTransfer.clearData(); // 添加完毕时清空数组。
+
       this.handleFlag = this.$refs.userTransfer.getHandleFlag();
       this.loading = true;
       new Promise(function(resolve, reject) {
@@ -345,20 +345,11 @@ export default {
         .then(res => {
           setTimeout(() => {
             this.getAttachPolicys();
-            if (this.attachVal == "success") {
-              this.$message({
-                message: "关联成功",
-                type: "success"
-              });
-            } else if (this.attachVal == "") {
-              this.$message("请选择要关联的数据");
-            } else {
-              this.$message.error(this.attachVal);
-            }
           }, 3000);
         })
         .then(() => {
           this.attachVal == "";
+          // this.$refs.userTransfer.clearData(); // 添加完毕时清空数组。
         });
     },
     // 获取策略关联的实体列表

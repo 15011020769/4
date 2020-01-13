@@ -198,6 +198,7 @@ export default {
       this.$nextTick(() => {
         this.transferFlag = true;
       });
+      console.log(policy);
       this.dialogVisible = true;
     },
     // 穿梭框：value右侧框值、direction操作、movedKeys移动值

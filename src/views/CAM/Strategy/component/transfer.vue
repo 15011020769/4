@@ -338,6 +338,7 @@ export default {
     attachPolicy() {
       let _this = this;
       let transfer_data_right = this.transfer_data_right;
+      console.log(this.transfer_data_right)
       if (this.transfer_data_right.length == 0) {
         this.$message("请选择数据");
       }
