@@ -69,6 +69,11 @@
                    <div class="li-left">Kry-Value</div>
                     <AddValue></AddValue>
                </li>
+               <div>
+                    <hr class="hr-mod">
+                </div>
+                  <el-button type="primary" size="mini">确定</el-button>
+                  <el-button size="mini">取消</el-button>
             </ul>
         </el-card>
     </div>

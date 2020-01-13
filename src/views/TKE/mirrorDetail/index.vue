@@ -5,23 +5,19 @@
         <router-link to="/myMirror">
           <li>
             <i class="el-icon-back"></i>
-            <span>路由信息</span>
+            <span>{{name}}</span>
           </li>
         </router-link>
       </ul>
     </div>
     <div class="my-title">
         <ul class="my-ul">
-          <router-link :to="{name: 'mirrorDetailInfo'}">
             <li @click="getTrue()" class="li-one" :style="{fontWeight:this.dataObject.flag==true?'700':''}">
               镜像信息<div class="bottom-one" :style="{width:this.dataObject.flag==true?'78px':'0'}"></div>
             </li>
-          </router-link>
-          <router-link :to="{name: 'mirrorDetailDetail'}">
             <li @click="getFalse()" class="li-two" :style="{fontWeight:this.dataObject.flag==false?'700':''}">
               镜像详情<div class="bottom-two" :style="{width:this.dataObject.flag==false?'78px':'0'}"></div>
             </li>
-          </router-link>
         </ul>
     </div>
     <div class="room">
@@ -36,19 +32,33 @@ export default {
     return {
       dataObject: {
         flag: true
-      }
+      },
+      name: this.$route.query.id
     }
   },
   methods: {
     // 切换点击事件
     getTrue () {
       this.dataObject.flag = true
+      this.$router.push({
+        name: 'mirrorDetailInfo',
+        query: {
+          id: this.name
+        }
+      })
     },
     getFalse () {
       this.dataObject.flag = false
+      this.$router.push({
+        name: 'mirrorDetailDetail',
+        query: {
+          id: this.name
+        }
+      })
     }
   }
 }
+
 </script>
 <style lang="scss" scoped>
    .my-title{
@@ -66,7 +76,6 @@ export default {
         width: 76px;
         text-align: center;
         cursor: pointer;
-        // font-weight:700;
         color:#000;
       }
      }
@@ -122,6 +131,10 @@ export default {
           i {
             font-size: 16px;
             font-weight: bold;
+          }
+          span{
+            font-size: 16px;
+            font-weight: 700;
           }
         }
         li:nth-child(1) {

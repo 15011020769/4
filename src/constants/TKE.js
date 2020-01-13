@@ -22,6 +22,9 @@ export const MIRROR_PRESENCE = 'ccr/RepositoryisExists'
 // 新建我的镜像
 export const MIRROR_CREATE = 'ccr/CreateRepository'
 
+// 镜像版本使用指引
+export const MIRROR_ROAD = 'ccr/GetTagList'
+
 // 获取集群列表
 export const COLONY_LIST = 'tke2/DescribeClusters'
 // 获取集群列表状态
