@@ -89,22 +89,7 @@ export default {
         Version: "2018-05-25"
       }
       const res = this.axios.post(WARNING_GetUSER,params).then(res=>{
-        console.log(res)
-        if(res.Response.Clusters.length>0){
-          let resData= res.Response.AlarmPolicySet
-          this.length = resData.length;
-          console.log(resData)
-          for (let i = 0; i < resData.length; i++) {
-            let getData = {
-              AlarmPolicyName:'',AlarmPolicyType:''
-            };
-            getData.name = resData.AlarmPolicySettings
-          }
-        }else{
-          this.$refs.dateHide.style.display = 'block'
-          this.$refs.dateShow.style.display = 'none'
-          console.log('数据请求出错')
-        }
+        console.log(res);
       });
     }
   },

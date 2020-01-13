@@ -68,7 +68,7 @@
               <router-link :to="''">
                 <span>编辑收集规则</span>
               </router-link>
-              <router-link :to="'/persistenceSetting/'+uid">
+              <router-link :to="''">
                 <span style="margin-left:10px;">设置</span>
               </router-link>
               </div></el-col>

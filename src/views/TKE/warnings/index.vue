@@ -9,7 +9,7 @@
       <div style="width:20px"></div>
       <div style="padding-top:6px;">集群</div> 
       &nbsp;
-      <el-select size="mini" v-model="value" placeholder="请选择" @change="GetCOLONY_name()" style="margin-bottom:5px;">
+      <el-select size="mini" v-model="value" placeholder="请选择" style="margin-bottom:5px;">
         <el-option
           v-for="item in options"
           :key="item.value"
@@ -80,9 +80,9 @@
           <div class="block" style="padding-top:5px;">
             <el-pagination
               :page-sizes="[10, 20, 30, 40, 50]"
-              :page-size="20"
+              :page-size="pageSize"
               layout="sizes, prev, pager, next"
-              :total="100">
+              :total="length">
             </el-pagination>
           </div>
         </div>
@@ -101,16 +101,11 @@ export default {
   name:'warnings',
   data() {
     return {
-      length: '0',
+      length: 1,
       pageSize: 20,
       pageIndex: 0,
       options: [],
       value: '',
-      tableData: [{
-        date: '2016-05-03',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
-      }],
       listData: [],
       multipleSelection: [],
       funllscreenLoading:false
@@ -126,6 +121,7 @@ export default {
       }
       console.log((val.split('('))[0])
       const res = this.axios.post(WARNING_GetCOLONY,params).then(res=>{
+        console.log(res)
         if(res.Response.AlarmPolicySet.length>0){
           let resData= res.Response.AlarmPolicySet;
           this.length = resData.length;
@@ -138,6 +134,7 @@ export default {
             getData.name = resData.AlarmPolicySettings
           }
         }else{
+          this.length = 0;
           console.log('数据请求出错')
         }
       });
