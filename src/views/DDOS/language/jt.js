@@ -187,6 +187,7 @@ module.exports = {
       TextBiness: '有业务域名',
       noTextBin: '省略业务域名',
       binessTitle: '注意：粘贴内容从左至右依次为业务域名(选填)、协议、转发端口、源站端口、回源IP和权重（或回源域名），中间由空格分隔。一行只能填写一条转发规则。',
+      frequency: '访问频率 ',
     },
     protectCon: {
       ProtectionName: 'DDoS防护配置',
@@ -370,6 +371,7 @@ module.exports = {
       qsrbmd: '请输入IP白名单, 以换行符分隔',
       pldrurlbmd: '批量导入URL白名单',
       qsrurlbmd: '请输入URL白名单, 以换行符分隔',
+      zgtw: '中国台湾',
     }
   },
   COM: require('@/components/language/jt'),
