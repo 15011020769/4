@@ -271,6 +271,22 @@ export default new Router({
         keepAlive: true
       }
     },
+    {
+      path: '/colony/sub/create/service/svc', // 新建Service
+      name: 'svcCreate',
+      component: () => import('./colony/sub/create/service/svc.vue'),
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
+      path: '/colony/sub/create/service/ingress', // 新建Ingress
+      name: 'ingressCreate',
+      component: () => import('./colony/sub/create/service/ingress.vue'),
+      meta: {
+        keepAlive: true
+      }
+    },
 
     {
       path: '/helm', // helm应用
