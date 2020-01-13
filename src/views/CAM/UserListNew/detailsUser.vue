@@ -498,20 +498,34 @@ export default {
           TargetUin: this.userData.Uin
         };
         this.axios.post(QUERY_POLICY, ploicyParams).then(res => {
-          if (res != "") {
-            this.loading = false;
-            this.StrategyData = res.Response.List.slice(
-              (this.currpages - 1) * this.pagesizes,
-              this.currpages * this.pagesizes
-            );
-            this.TotalCounts = res.Response.List.length;
-            this.totalNum = "权限(" + res.Response.List.length + ")";
-          } else {
-            this.loading = false;
-            this.$message({
-              type: "info",
-              message: "无响应数据！"
-            });
+          if(res.Response.Error === undefined){
+              if (res != "") {
+                this.loading = false;
+                this.StrategyData = res.Response.List.slice(
+                  (this.currpages - 1) * this.pagesizes,
+                  this.currpages * this.pagesizes
+                );
+                this.TotalCounts = res.Response.List.length;
+                this.totalNum = "权限(" + res.Response.List.length + ")";
+              } else {
+                this.loading = false;
+                this.$message({
+                  type: "info",
+                  message: "无响应数据！"
+                });
+              }
+          }else{
+              let ErrTips = {
+                "InternalError.SystemError": "内部错误",
+                "InvalidParameter.ParamError": "非法入参"
+              };
+              let ErrOr = Object.assign(ErrorTips, ErrTips);
+              this.$message({
+                message: ErrOr[res.Response.Error.Code],
+                type: "error",
+                showClose: true,
+                duration: 0
+              }); 
           }
         });
       });
@@ -541,7 +555,8 @@ export default {
           Uid: this.userData.Uid
         };
         this.axios.post(RELATE_USER, groupParams).then(res => {
-          this.TotalCount = res.Response.GroupInfo.length;
+          if(res.Response.Error === undefined){
+                 this.TotalCount = res.Response.GroupInfo.length;
           this.groupData = res.Response.GroupInfo.slice(
             (this.currpage - 1) * this.pagesize,
             this.currpage * this.pagesize
@@ -555,17 +570,44 @@ export default {
               TargetGroupId: item.GroupId
             };
             this.axios.post(GROUP_POLICY, params).then(res => {
-              res.Response.List.forEach(val => {
-                const obj = {
-                  PolicyName: val.PolicyName,
-                  PolicyId: val.PolicyId
-                };
-                item.policy.push(obj);
-              });
+              if(res.Response.Error === undefined){
+                   res.Response.List.forEach(val => {
+                    const obj = {
+                      PolicyName: val.PolicyName,
+                      PolicyId: val.PolicyId
+                    };
+                    item.policy.push(obj);
+                  });
+              }else{
+                  let ErrTips = {
+                    "InternalError.SystemError":'内部错误',
+                    "InvalidParameter.ParamError":'非法入参'
+                  };
+                  let ErrOr = Object.assign(ErrorTips, ErrTips);
+                  this.$message({
+                    message: ErrOr[res.Response.Error.Code],
+                    type: "error",
+                    showClose: true,
+                    duration: 0
+                  });
+              }
+             
               this.loading = false;
             });
           });
-        });
+        }else{
+             let ErrTips = {
+                "ResourceNotFound.UserNotExist":'用户不存在',
+              };
+              let ErrOr = Object.assign(ErrorTips, ErrTips);
+              this.$message({
+                message: ErrOr[res.Response.Error.Code],
+                type: "error",
+                showClose: true,
+                duration: 0
+              });
+          }
+       });
       });
     },
     handleCurrentChange(val) {
@@ -586,8 +628,28 @@ export default {
             DetachUin: this.userData.Uin
           };
           this.axios.post(REMOVEBIND_USER, params).then(data => {
-            this.ploicyData();
-            this.$message("批量解除成功");
+            if(data.Response.Error === undefined){
+                this.ploicyData();
+                this.$message("批量解除成功");
+            }else{
+               let ErrTips = {
+                   "InternalError.SystemError":'内部错误',
+                   "InvalidParameter.AttachmentFull":'principal字段的授权对象关联策略数已达到上限',
+                   "InvalidParameter.ParamError":'非法入参',
+                   "InvalidParameter.PolicyIdError":'输入参数PolicyId不合法',
+                   "InvalidParameter.PolicyIdNotExist":'策略ID不存在',
+                   "InvalidParameter.UserNotExist":'principal字段的授权对象不存在',
+                   "ResourceNotFound.PolicyIdNotFound":'PolicyId指定的资源不存在',
+                   "ResourceNotFound.UserNotExist":'用户不存在'
+                };
+                let ErrOr = Object.assign(ErrorTips, ErrTips);
+                this.$message({
+                  message: ErrOr[res.Response.Error.Code],
+                  type: "error",
+                  showClose: true,
+                  duration: 0
+                });
+            }
           });
         });
         this.StrategyLoading = false;
@@ -599,8 +661,28 @@ export default {
           DetachUin: this.userData.Uin
         };
         this.axios.post(REMOVEBIND_USER, params).then(data => {
-          this.ploicyData();
-          this.$message("解除成功");
+          if(data.Response.Error === undefined){
+            this.ploicyData();
+            this.$message("解除成功");
+          }else{
+            let ErrTips = {
+                   "InternalError.SystemError":'内部错误',
+                   "InvalidParameter.AttachmentFull":'principal字段的授权对象关联策略数已达到上限',
+                   "InvalidParameter.ParamError":'非法入参',
+                   "InvalidParameter.PolicyIdError":'输入参数PolicyId不合法',
+                   "InvalidParameter.PolicyIdNotExist":'策略ID不存在',
+                   "InvalidParameter.UserNotExist":'principal字段的授权对象不存在',
+                   "ResourceNotFound.PolicyIdNotFound":'PolicyId指定的资源不存在',
+                   "ResourceNotFound.UserNotExist":'用户不存在'
+                };
+                let ErrOr = Object.assign(ErrorTips, ErrTips);
+                this.$message({
+                  message: ErrOr[res.Response.Error.Code],
+                  type: "error",
+                  showClose: true,
+                  duration: 0
+              });
+          }
         });
         this.StrategyLoading = false;
       }
