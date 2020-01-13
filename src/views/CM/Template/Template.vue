@@ -10,22 +10,15 @@
       </div>
     </div>
     <div class="table">
-      <el-dialog title="新建" :visible.sync="dialogFormVisible" :before-close="handleClose">
-        <div slot="footer" class="dialog-footer">
-          <el-button @click="dialogFormVisible = false">取 消</el-button>
-          <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
-        </div>
-      </el-dialog>
       <div class="addBtn">
         <el-row>
-          <el-button type="primary" @click="addTemplate">新建</el-button>
+          <el-button type="primary" @click="buyMessgae">新建</el-button>
         </el-row>
         <el-row class="seek">
           <el-input v-model="triggerInput" placeholder="请输入触发条件模板名搜索"></el-input>
           <el-button icon="el-icon-search" style="margin-left:-1px;"></el-button>
         </el-row>
       </div>
-
       <el-table
         :data="tableData"
         style="width: 100%"
@@ -57,17 +50,19 @@
         ></el-pagination>
       </div>
     </div>
+    <Dialog :dialogVisible="panelFlag" @cancel="cancel" @save="save" style="margin:0;" />
   </div>
 </template>
 
 <script>
 import Header from "@/components/public/Head";
-
+import Dialog from "./components/dialog";
 export default {
   name: "Template",
   data() {
     return {
-      dialogFormVisible: false, //dialog新建弹框
+      panelFlag: false, //dialog新建弹框
+      // dialogFormVisible: false,
       formInline: {
         product_kind: [
           {
@@ -231,9 +226,23 @@ export default {
     };
   },
   components: {
-    Header
+    Header,
+    Dialog
   },
   methods: {
+    //设置弹框//新建实例分组
+    buyMessgae() {
+      // alert("11")
+      this.panelFlag = true;
+    },
+    //取消设置弹框
+    cancel() {
+      this.panelFlag = false;
+    },
+    //确定设置弹框
+    save() {
+      this.panelFlag = false;
+    },
     handleClose(done) {
       return;
       // this.$confirm("确认关闭？")
@@ -265,6 +274,11 @@ export default {
   padding-top: 0;
   line-height: 30px;
   font-size: 12px;
+}
+.Template-wrap >>> .el-dialog {
+  width: 1000px;
+  // height: 650px;
+  // margin-top: 0;
 }
 .Template-wrap >>> .el-button:nth-child(0) {
   background: #006eff;

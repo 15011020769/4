@@ -1,6 +1,21 @@
 <template>
   <div class="Dashboard-wrap">
-    <Header title="Dashboard" />
+    <Header title="Dashboard">
+      <el-select v-model="panelValue" placeholder="请选择" style="margin:0 20px 0 40px;width:260px">
+        <el-option
+          v-for="item in options"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value"
+        ></el-option>
+      </el-select>
+      <a
+        class="addPanel"
+        style="font-size:12px;font-weight:20"
+        @click="buyMessgae"
+      >添加监控面板</a>
+      <AddPanel :dialogVisible="panelFlag" @cancel="cancel" @save="save" />
+    </Header>
     <div class="Dashboard-main">
       <div class="explain">
         <p>现已支持配置和查看一批资源的聚合统计数据，请在新建图表配置中选择“聚合视图”。</p>
@@ -60,10 +75,10 @@
           <div class="open">
             <p>
               <span>共2个实例</span>
-              <span v-show="openChartFlag">,监控明细（2020-01-10 21:47:40）</span>
+              <!-- <span v-show="retractChartFlag">,监控明细（2020-01-10 21:47:40）</span> -->
             </p>
             <p>
-              <span v-show="openChartFlag">
+              <span v-show="retractChartFlag">
                 <a @click="exportChart">导出</a>
                 <i class="el-icon-info" style="color:#888"></i>
               </span>
@@ -71,6 +86,7 @@
               <a v-show="retractChartFlag" @click="retractChart" style="margin-left:30px;">收起</a>
             </p>
           </div>
+          <div class="chartContent" v-show="retractChartFlag">content</div>
         </div>
       </div>
     </div>
@@ -80,10 +96,23 @@
 <script>
 import Header from "@/components/public/Head";
 import TimeX from "./components/Time";
+import AddPanel from "./components/AddPaneldialog";
 export default {
   name: "Dashboard",
   data() {
     return {
+      panelFlag: false, //面板开关
+      panelValue: "监控面板01", //监控面板默认值
+      options: [
+        {
+          value: "选项1",
+          label: "监控面板01"
+        },
+        {
+          value: "选项2",
+          label: "监控面板02"
+        }
+      ],
       openName: "展开", //展开收起名字显示
       openChartFlag: true, //展开图表开关
       retractChartFlag: false,
@@ -114,17 +143,39 @@ export default {
   },
   components: {
     Header,
-    TimeX
+    TimeX,
+    AddPanel
   },
   created() {},
   methods: {
+     //设置弹框//新建实例分组
+    buyMessgae() {
+      // alert("11")
+      this.dialogVisible = true;
+    },
+    //取消设置弹框
+    cancel() {
+      this.dialogVisible = false;
+    },
+    //确定设置弹框
+    save() {
+      this.dialogVisible = false;
+    },
+    // panelStatus(flag) {
+    //   //父组件事件
+    //   this.panelFlag = flag;
+    // },
+    // addPanel() {
+    //   //添加dialog面板
+    //   this.panelFlag = true;
+    // },
     openChart() {
       //展开图表
       this.openChartFlag = false;
       this.retractChartFlag = true;
     },
     retractChart() {
-       this.openChartFlag = true;
+      this.openChartFlag = true;
       this.retractChartFlag = false;
     }, //收起
     exportChart() {
@@ -138,19 +189,25 @@ export default {
     GetData(data) {
       // console.log(data);
     },
-    //取消
-    cancel() {
-      this.dialogVisible = false;
-    },
-    //确定
-    save() {
-      this.dialogVisible = false;
-    }
+    // //取消
+    // cancel() {
+    //   this.dialogVisible = false;
+    // },
+    // //确定
+    // save() {
+    //   this.dialogVisible = false;
+    // }
   }
 };
 </script>
 
 <style lang="scss" scoped>
+.chartContent {
+  width: 100%;
+  height: 200px;
+  padding: 20px;
+  background: #ffffff;
+}
 .Dashboard-wrap >>> .el-progress-bar__outer,
 .Dashboard-wrap >>> .el-progress-bar__inner {
   border-radius: 0;
