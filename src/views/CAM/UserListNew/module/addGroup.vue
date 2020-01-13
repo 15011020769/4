@@ -118,6 +118,7 @@
   </div>
 </template>
 <script>
+import { ErrorTips } from "@/components/ErrorTips";
 import Headcom from "../components/Head";
 import { USER_GROUP,ADD_USERTOGROUP } from "@/constants";
 export default {
@@ -169,7 +170,24 @@ export default {
             };
             console.log(params)
              this.axios.post(ADD_USERTOGROUP, params).then(res => {
-               console.log(res)
+               if(res.Response.Error === undefined){
+                    console.log(res)
+               }else{
+                     let ErrTips = {
+                        "InvalidParameter.GroupNotExist":'用户组不存在',
+                        "InvalidParameter.GroupUserFull":'用户组中的子用户数量达到上限',
+                        "InvalidParameter.UserGroupFull":'子用户加入的用户组数量达到上限',
+                        "ResourceNotFound.UserNotExist":'用户不存在'
+                    };
+                    let ErrOr = Object.assign(ErrorTips, ErrTips);
+                    this.$message({
+                      message: ErrOr[res.Response.Error.Code],
+                      type: "error",
+                      showClose: true,
+                      duration: 0
+                    });
+               }
+               
              });
     },
     prev() {
