@@ -31,7 +31,7 @@ export default new Router({
     },
     {
       path: '/colony/create', // 创建集群
-      name: 'colonyCreate',
+      name: 'clusterCreate',
       component: () => import('./colony/create.vue'),
       meta: {
         keepAlive: true
@@ -44,7 +44,7 @@ export default new Router({
       redirect: '/colony/sub/list/basic', // 默认子路由
       meta: {
         keepAlive: true,
-        CId: true
+        clusterId: true
       },
       children: [ // 子路由-列表页
         { // 基本信息
@@ -229,6 +229,25 @@ export default new Router({
         }
       ]
     },
+    {
+      path: '/colony/expand', // 集群-新建节点
+      name: 'clusterExpand',
+      component: () => import('./colony/expand.vue'),
+      meta: {
+        keepAlive: true,
+        clusterId: true
+      }
+    },
+    {
+      path: '/colony/addExist', // 集群-添加已有节点  
+      name: 'clusterAddExist',
+      component: () => import('./colony/addExist.vue'),
+      meta: {
+        keepAlive: true,
+        clusterId: true
+      }
+    },
+
     {
       path: '/helm', // helm应用
       name: 'helm',
