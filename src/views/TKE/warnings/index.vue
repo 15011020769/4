@@ -2,14 +2,14 @@
   <div class="warnings-wrap">
     <!-- 头部 -->
     <div class="back-hd flex">
-      <h2>警告设置</h2>
+      <h2 style="padding-top:3px;">警告设置</h2>
       <div style="width:20px"></div>
-      <div style="padding-top:3px;">地域</div> 
-      &nbsp;<el-button  type="primary" class="init hd-button">中国台北</el-button>
+      <div style="padding-top:6px;">地域</div> 
+      &nbsp;<el-button  type="primary" class="init hd-button" style="margin-top:2px;">中国台北</el-button>
       <div style="width:20px"></div>
-      <div style="padding-top:3px;">集群</div> 
+      <div style="padding-top:6px;">集群</div> 
       &nbsp;
-      <el-select size="mini" v-model="value" placeholder="请选择" @change="GetCOLONY_name()">
+      <el-select size="mini" v-model="value" placeholder="请选择" @change="GetCOLONY_name()" style="margin-bottom:5px;">
         <el-option
           v-for="item in options"
           :key="item.value"
@@ -127,9 +127,7 @@ export default {
       console.log((val.split('('))[0])
       const res = this.axios.post(WARNING_GetCOLONY,params).then(res=>{
         if(res.Response.AlarmPolicySet.length>0){
-          // this.$refs.dataHide.style.display = 'none'
-          // this.$refs.dataShow.style.display = 'block'
-          let resData= res.Response.AlarmPolicySet
+          let resData= res.Response.AlarmPolicySet;
           this.length = resData.length;
           this.listData = resData;
           console.log(resData)
@@ -140,8 +138,6 @@ export default {
             getData.name = resData.AlarmPolicySettings
           }
         }else{
-          // this.$refs.dateHide.style.display = 'block'
-          // this.$refs.dateShow.style.display = 'none'
           console.log('数据请求出错')
         }
       });
@@ -299,7 +295,7 @@ export default {
   width: 100%;
   height: 51px;
   background: white;
-  padding:15px;
+  padding:12px 15px 15px 15px;
   border-bottom: 1px solid #cccccc;
   font-size: 12px;
 }

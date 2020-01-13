@@ -384,6 +384,14 @@ export default new Router({
       }
     },
     {
+      path: '/logCreate', // 日志采集
+      name: 'logCreate',
+      component: () => import(/* webpackChunkName: "logCreate" */ './logCreate/index.vue'),
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
       path: '/warnings', // 告警设置
       name: 'warnings',
       component: () => import(/* webpackChunkName: "warnings" */ './warnings/index.vue'),

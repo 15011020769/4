@@ -1,18 +1,22 @@
 <template>
   <div class="persistenceSetting">
     <div class="back-hd flex">
-      <router-link :to="'/warnings'">
+      <router-link :to="'/logCollection'">
         <i class="el-icon-back hd-icon-back"></i>
       </router-link>
-      <h3>新建策略</h3>
+      <h3>新建日志采集规则</h3>
     </div>
       <div class="tf-g app-tke-fe-content__inner">
         <div class="event-persistence font">
           <el-form ref="form" :model="form" label-width="100px">
-            <el-form-item label="地域">
+            <el-form-item label="收集规则名称">
+              <el-input size="mini" class="el-input" placeholder="请输入日志收集规则名称"></el-input>
+              <div>最长63个字符，只能包含小写字母、数字及分隔符("-")，且必须以小写字母开头，数字或小写字母结尾</div>
+            </el-form-item>
+            <el-form-item label="所在地域">
               <div>中国台北</div>
             </el-form-item>
-            <el-form-item label="集群">
+            <el-form-item label="所属集群">
               <div>cls-gwblk71e(tfy_test)</div>
             </el-form-item>
             <el-form-item label="告警策略名称">

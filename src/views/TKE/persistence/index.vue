@@ -158,7 +158,7 @@ export default {
 .search {
   width: 200px;
   height: 30px;
-  margin: 20px 0 20px 0;
+  margin: 20px 0 10px 0;
   font-size: 12px;
   padding-left: 5px;
   border: 1px solid #cccccc;
