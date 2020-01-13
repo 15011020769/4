@@ -272,7 +272,7 @@ export default new Router({
       }
     },
     {
-      path: '/colony/sub/create/service/svc', // 新建Service
+      path: '/colony/sub/create/service/svc', // 集群-新建Service
       name: 'svcCreate',
       component: () => import('./colony/sub/create/service/svc.vue'),
       meta: {
@@ -280,9 +280,25 @@ export default new Router({
       }
     },
     {
-      path: '/colony/sub/create/service/ingress', // 新建Ingress
+      path: '/colony/sub/create/service/ingress', // 集群-新建Ingress
       name: 'ingressCreate',
       component: () => import('./colony/sub/create/service/ingress.vue'),
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
+      path: '/colony/sub/create/config/configmap', // 集群-新建ConfigMap
+      name: 'configmapCreate',
+      component: () => import('./colony/sub/create/config/configmap.vue'),
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
+      path: '/colony/sub/create/config/secret', // 集群-新建Secret
+      name: 'secretCreate',
+      component: () => import('./colony/sub/create/config/secret.vue'),
       meta: {
         keepAlive: true
       }
