@@ -98,7 +98,7 @@ import FileSaver from "file-saver";
 import XLSX from "xlsx";
 import { ALL_CITY } from "@/constants";
 export default {
-  name: "create",
+  name: "clusterExpand",
   data() {
     return {
       colony: {
@@ -193,12 +193,6 @@ export default {
   }
   .el-icon-info{
    cursor: pointer;
-  }
-  .form-controls{
-    background-color: #f2f2f2;
-    padding: 10px;
-    width: 600px;
-    box-sizing: border-box;
   }
 }
 

@@ -39,7 +39,7 @@
       <div class="tke-grid ">
         <!-- 左侧 -->
         <div class="grid-left">
-          <el-button size="small" type="primary">新建伸缩组</el-button>
+          <el-button @click="goAsgCreate" size="small" type="primary">新建伸缩组</el-button>
           <el-button size="small" disabled="">删除</el-button>
         </div>
         <!-- 右侧 -->
@@ -193,9 +193,10 @@ import tkeSearch from "@/views/TKE/components/tkeSearch";
 import Loading from "@/components/public/Loading";
 import { ALL_CITY } from "@/constants";
 export default {
-  name: "colonyHpa",
+  name: "colonyNodeManageAsg",
   data() {
     return {
+      clusterId:'',
       searchInput: "", //输入的搜索关键字
       loadShow: false, //加载是否显示
       list:[
@@ -213,9 +214,20 @@ export default {
     };
   },
   created() {
-
+    // 从路由获取集群id
+    this.clusterId=this.$route.query.clusterId;
   },
   methods: {
+     // 新建伸缩组
+    goAsgCreate(){
+      this.$router.push({
+          name: "asgCreate",
+          query: {
+            clusterId: this.clusterId
+          }
+      });
+    },
+
     //监听搜索框的值
     changeSearchInput(val) {
       this.searchInput = val;

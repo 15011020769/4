@@ -246,6 +246,31 @@ export default new Router({
         keepAlive: true
       }
     },
+    {
+      path: '/colony/sub/create/nodeManage/asg', // 集群-新建节点
+      name: 'asgCreate',
+      component: () => import('./colony/sub/create/nodeManage/asg.vue'),
+      meta: {
+        keepAlive: true
+       
+      }
+    },
+    {
+      path: '/colony/sub/create/namespace', // 集群-新建Namespace
+      name: 'namespaceCreate',
+      component: () => import('./colony/sub/create/namespace/index.vue'),
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
+      path: '/colony/sub/create/resource/workload', // 集群-新建Workload(Deployment、StatefulSet、DaemonSet、Job、CronJob)
+      name: 'workloadCreate',
+      component: () => import('./colony/sub/create/resource/workload.vue'),
+      meta: {
+        keepAlive: true
+      }
+    },
 
     {
       path: '/helm', // helm应用

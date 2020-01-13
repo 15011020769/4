@@ -10,7 +10,7 @@
           <div class="grid-left">
             <el-button size="small" @click="goExpand" type="primary">新建节点</el-button>
             <el-button size="small" >监控</el-button>
-            <el-button size="small" >添加已有节点</el-button>
+            <el-button size="small" @click="goAddExist">添加已有节点</el-button>
             <el-button size="small" disabled="">移除</el-button>
             <el-button size="small" disabled="">封锁</el-button>
             <el-button size="small" disabled="">解除封锁</el-button>
@@ -232,6 +232,15 @@ export default {
     goExpand(){
       this.$router.push({
           name: "clusterExpand",
+          query: {
+            clusterId: this.clusterId
+          }
+      });
+    },
+    // 添加已有节点跳转呢
+    goAddExist(){
+      this.$router.push({
+          name: "clusterAddExist",
           query: {
             clusterId: this.clusterId
           }

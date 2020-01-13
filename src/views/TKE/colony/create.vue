@@ -102,7 +102,7 @@
           </el-form-item>
           <el-form-item >
             <span slot="label">容器网络 <i class="el-icon-info"></i></span>
-            <div class='form-controls'>
+            <div class='form-controls' style="width:600px">
               <el-form  class="tke-form"  label-position='left' label-width="140px" size="mini">
                 <el-form-item label="CIDR">
                   <el-select class="w70" v-model="colony.CIDRValue_1" >
@@ -460,12 +460,6 @@ export default {
   }
   .el-icon-info{
    cursor: pointer;
-  }
-  .form-controls{
-    background-color: #f2f2f2;
-    padding: 10px;
-    width: 600px;
-    box-sizing: border-box;
   }
 }
 
