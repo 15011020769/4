@@ -68,6 +68,7 @@
 }
 
 // 表单
+
 .tke-formpanel-wrap{
     padding: 20px;
     .tke-formpanel-title{
@@ -76,6 +77,19 @@
       color: #000;
       margin-bottom: 20px;
     }
+}
+
+.tke-formpanel-footer{
+position: fixed;
+bottom: 0;
+left: 220px;
+right: 20px;
+z-index: 11;
+box-sizing: border-box;
+padding: 15px 15px 15px 100px;
+border-top: 1px solid #dbe3e4;
+background-color: #fff;
+box-shadow: 0 2px 3px 0 rgba(0,0,0,.2);
 }
 .tke-form {
     .el-form-item__label,.el-form-item__content{

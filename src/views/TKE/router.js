@@ -234,8 +234,8 @@ export default new Router({
       name: 'clusterExpand',
       component: () => import('./colony/expand.vue'),
       meta: {
-        keepAlive: true,
-        clusterId: true
+        keepAlive: true
+       
       }
     },
     {
@@ -243,8 +243,7 @@ export default new Router({
       name: 'clusterAddExist',
       component: () => import('./colony/addExist.vue'),
       meta: {
-        keepAlive: true,
-        clusterId: true
+        keepAlive: true
       }
     },
 
