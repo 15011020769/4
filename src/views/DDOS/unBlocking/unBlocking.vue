@@ -35,7 +35,7 @@
       </div>
       <div class="contPartTwo">
         <div class="tableContentUn">
-          <el-table :data="tableDatalist" v-loading="loading" height="450">
+          <el-table :data="tableDatalist" v-loading="loading" height="450" :empty-text="$t('DDOS.Statistical_forms.Nodate')">
             <el-table-column prop="Ip" label="IP">
               <template slot-scope="scope">
                 <a href="#" @click="toDoDetail(scope.$index, scope.row)">{{scope.row.Ip}}</a>

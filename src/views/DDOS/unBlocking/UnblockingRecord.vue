@@ -17,6 +17,7 @@
           <el-table
             :data="IpUnBlockList.slice((currentPage-1)*pageSize,currentPage*pageSize)"
             v-loading="loading"
+            :empty-text="$t('DDOS.Statistical_forms.Nodate')"
           >
             <el-table-column prop="ip" label="IP">
               <template slot-scope="scope">
