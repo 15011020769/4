@@ -371,17 +371,6 @@ export default {
         o[i] = (o[i]+"").length == 1 ? "0"+o[i] : o[i]
       }
       return o.y+"-"+o.M+"-"+o.d+" " +o.h+":"+o.m+":"+o.s;
-      // return date
-      //   .toLocaleString("zh", {
-      //     hour12: false,
-      //     year: "numeric",
-      //     month: "2-digit",
-      //     day: "2-digit",
-      //     hour: "2-digit",
-      //     minute: "2-digit",
-      //     second: "2-digit"
-      //   })
-      //   .replace(/\//g, "-");
     },
     //下面tab切换表格
     btnClick(param) {

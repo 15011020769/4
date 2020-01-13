@@ -134,7 +134,7 @@
   </div>
 </template>
 <script>
-import { CVM_INSTANCES, CLB_LIST, NAT_LIST, ALL_CITY } from "@/constants";
+import { CVM_LIST, CLB_LIST, NAT_LIST, ALL_CITY } from "@/constants";
 export default {
   data() {
     return {
@@ -209,7 +209,7 @@ export default {
         Region: this.selectedRegion,
         Limit: 100
       };
-      this.axios.post(CVM_INSTANCES, params).then(res => {
+      this.axios.post(CVM_LIST, params).then(res => {
         if (res.Response.Error == undefined) {
           this.allData = res.Response.InstanceSet;
           this.tableDataBegin = res.Response.InstanceSet;
