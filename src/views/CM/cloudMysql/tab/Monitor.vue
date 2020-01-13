@@ -13,7 +13,7 @@
     <div class="box-table">
       <!-- 表格 -->
       <el-table :data="tableData" style="width: 100%">
-        <el-table-column prop width="200">
+        <el-table-column prop width="200" :empty-text="$t('CVM.clBload.zwsj')">
           <template slot-scope="scope">
             <span style="font-size:12px;font-weight:bolder;  color:#333;font-weight:600;">
               {{scope.row.MetricName | UpName(value)}}

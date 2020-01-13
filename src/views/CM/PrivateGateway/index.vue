@@ -200,9 +200,9 @@ export default {
       } else if (this.searchInput !== "" || this.searchValue !== "") {
         this.currpage = 1;
         this.GetTabularData();
-        this.$message.error("请输入正确搜索信息");
+        this.$message.error("請輸入正確搜索信息");
       } else {
-        this.$message.error("请输入正确搜索信息");
+        this.$message.error("請輸入正確搜索信息");
       }
     },
     // 添加项目列表的表格数据

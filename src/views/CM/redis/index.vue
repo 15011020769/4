@@ -218,7 +218,7 @@
                     ].projectName;
                   }
                   if (this.TbaleData[i].ProjectId == 0) {
-                    this.TbaleData[i].projectName = "默认项目";
+                    this.TbaleData[i].projectName = "默認項目";
                   }
                 }
               }

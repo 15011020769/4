@@ -139,8 +139,20 @@ module.exports = {
       dk: '帶寬',
       szd: '所在地',
       tdmc: '通道ID/名稱',
+    },
+    Casegrouping: {
+      slfz: '實例分組',
+      slfztgnl: '實例分組功能提供對跨地域、跨項目組的雲產品資源進行分組管理的能力',
+      xj: '新建',
+      qsrslzm: '請輸入實例組名搜索',
+      slzmc: '實例組名稱',
+      fzlx: '分組類型',
+      sls: '實例數',
+      bdgjcls: '綁定告警策略數',
+      zhxg: '最後修改',
+      fz: '複製',
+      sc: '刪除',
     }
-
   },
   COM: require('@/components/language/ft'),
 }
