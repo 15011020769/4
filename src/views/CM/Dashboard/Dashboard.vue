@@ -67,8 +67,8 @@
                 <a @click="exportChart">导出</a>
                 <i class="el-icon-info" style="color:#888"></i>
               </span>
-              <a @click="openChart" style="margin-left:30px;">展开</a>
-              <a  v-show="openChartFlag" @click="openChart" style="margin-left:30px;">收起</a>
+              <a v-show="openChartFlag" @click="openChart" style="margin-left:30px;">展开</a>
+              <a v-show="retractChartFlag" @click="retractChart" style="margin-left:30px;">收起</a>
             </p>
           </div>
         </div>
@@ -85,7 +85,8 @@ export default {
   data() {
     return {
       openName: "展开", //展开收起名字显示
-      openChartFlag: false, //展开图表开关
+      openChartFlag: true, //展开图表开关
+      retractChartFlag: false,
       value: 13, //时间
       timeBtnRadio: "上海", //事件选择单选
       dialogVisible: false, //购买短信弹出框
@@ -119,14 +120,13 @@ export default {
   methods: {
     openChart() {
       //展开图表
-      this.openChartFlag = true;
-      if (this.openChartFlag == true) {
-        this.openName = "收起";
-      } else {
-        this.openName = "展开";
-      }
-    
+      this.openChartFlag = false;
+      this.retractChartFlag = true;
     },
+    retractChart() {
+       this.openChartFlag = true;
+      this.retractChartFlag = false;
+    }, //收起
     exportChart() {
       //导出图表
       alert("导出");

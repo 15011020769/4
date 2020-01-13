@@ -8,55 +8,29 @@
           <el-input
             style="width:330px;margin:0"
             v-model="formInline.strategy_name"
-            placeholder="1-20个中英文字符或下划线"
+            placeholder="请输入策略名称，20字以内"
           ></el-input>
         </p>
-        <p class="rowCont">
-          <span style="margin-bottom:110px">备注</span>
-          <el-input
-            style="width:330px;"
-            :autosize="{ minRows: 5, maxRows: 2}"
-            type="textarea"
-            placeholder="1-100个中英文字符或下划线"
-            v-model="formInline.textarea"
-            maxlength="100"
-            show-word-limit
-          ></el-input>
-        </p>
-
-        <p class="rowCont">
-          <span>策略类型</span>
-          <el-select v-model="formInline.strategy" style="width:100px;">
-            <el-option
-              v-for="(item,index) in formInline.strategy_kind"
-              :key="index"
-              :label="item.name"
-              :value="item.value"
-              label-width="40px"
-            ></el-option>
-          </el-select>
-        </p>
-        <p class="rowCont">
-          <span>所属项目</span>
-          <el-select v-model="formInline.projectName" style="width:100px;">
-            <el-option
-              v-for="(item,index) in formInline.project"
-              :key="index"
-              :label="item.name"
-              :value="item.value"
-              label-width="40px"
-            ></el-option>
-          </el-select>
-        </p>
+        <div class="rowGaojing">
+          <span style>告警接收组</span>
+          <p class="tip">
+            您可到访问
+            <a>管理控制台</a>修改用户和用户组信息
+            <br />
+          </p>
+        </div>
+        <Transfer style="margin-left:80px;" :multipleSelection="multipleSelection"></Transfer>
         <div class="qudao">
           <span>告警渠道</span>
-          <div class="qudaoContent"></div>
+          <div class="qudaoContent">
+            <p>
+              <el-checkbox v-model="checked1">邮件</el-checkbox>
+            </p>
+            <p>
+              <el-checkbox v-model="checked2">短信</el-checkbox>
+            </p>
+          </div>
         </div>
-        <div class>
-          <span>触发条件</span>
-          <div class="qudaoContent"></div>
-        </div>
-
 
         <div class="foot">
           <el-button type="primary" size="small" @click="save">完成</el-button>
@@ -66,10 +40,14 @@
   </div>
 </template>
 <script>
-import Header from "@/components/public/Head";
+import Header from "./Header";
+import Transfer from "./transfer";
 export default {
   data() {
     return {
+      multipleSelection: [], //穿梭框数据
+      checked1: "", //邮件
+      checked2: "", //短信
       input: "",
       input1: "",
       tableData: [],
@@ -97,7 +75,8 @@ export default {
     };
   },
   components: {
-    Header
+    Header,
+    Transfer
   },
   methods: {
     //确定
@@ -134,8 +113,24 @@ export default {
     padding: 10px 0;
     span {
       display: inline-block;
-      width: 70px;
-
+      width: 80px;
+    }
+  }
+  .qudao {
+    display: flex;
+    p:nth-last-child(1) {
+      margin: 10px 0;
+    }
+  }
+  .rowGaojing {
+    display: flex;
+    width: 100%;
+    .tip {
+      flex: 1;
+      padding: 20px;
+      color: #003b80;
+      border: 1px solid #97c7ff;
+      background: #e5f0ff;
     }
   }
   input {
@@ -148,7 +143,7 @@ export default {
       width: 80px;
     }
   }
-  
+
   .table {
     margin-top: 20px;
   }

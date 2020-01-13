@@ -29,6 +29,7 @@
         id="exportTable"
         style="width: 100%"
         v-loading="loadShow"
+        :empty-text="$t('CVM.clBload.zwsj')"
       >
         <el-table-column prop :label="$t('CVM.clBload.zjm') ">
           <template slot-scope="scope">

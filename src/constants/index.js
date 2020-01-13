@@ -16,8 +16,6 @@ export * from './CCN'
 
 // DDOS防护
 export * from './DDOS'
-// 雲服务
-export * from './CVM'
 
 // 标签
 export * from './TAG'

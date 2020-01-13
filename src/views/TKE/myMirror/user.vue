@@ -27,7 +27,7 @@
         <el-table-column prop="reponame" label="名称">
           <template slot-scope="scope">
             <p>
-              <a style="cursor:pointer;" @click="jump">{{scope.row.reponame|reponameCg}}</a>
+              <a style="cursor:pointer;" @click="jump(scope.row)">{{scope.row.reponame|reponameCg}}</a>
             </p>
           </template>
         </el-table-column>
@@ -295,18 +295,12 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           console.log(valid)
-          if (!this.isExist) {
-            this.dialogFormVisible = !valid
-            this.CreateMyMirror()
-            this.GetMyMirror()
-            this.loadShow = true
-            // this.name = ''
-            // this.ruleForm = {
-            //   region2: '',
-            //   region: '0',
-            //   desc: ''
-            // }
-          }
+          this.dialogFormVisible = !valid
+          this.$refs.ruleForm.clearValidate()
+          this.$refs.ruleForm.resetFields()
+          this.CreateMyMirror()
+          this.GetMyMirror()
+          this.loadShow = true
         } else {
           console.log('error submit!!')
           return false
@@ -320,11 +314,12 @@ export default {
       this.ruleForm.name = this.name
     },
     // 路由跳转
-    jump () {
+    jump (row) {
+      // console.log(row)
       this.$router.push({
         name: 'mirrorDetailInfo',
         query: {
-          id: 1
+          id: row.reponame
         }
       })
     },

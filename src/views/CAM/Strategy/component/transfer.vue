@@ -91,6 +91,7 @@
 </template>
 
 <script>
+import { ErrorTips } from "@/components/ErrorTips";
 import { USER_LIST, USER_GROUP, ATTACH_GROUP, POLICY_USER } from "@/constants";
 export default {
   props: {
@@ -338,6 +339,7 @@ export default {
     attachPolicy() {
       let _this = this;
       let transfer_data_right = this.transfer_data_right;
+      console.log(this.transfer_data_right)
       if (this.transfer_data_right.length == 0) {
         this.$message("请选择数据");
       }
@@ -373,12 +375,34 @@ export default {
     // 绑定策略到用户组
     attachGroupPolicy(params) {
       this.axios.post(ATTACH_GROUP, params).then(res => {
-        if (res.Response.Error) {
-          this.$message.error("关联失败");
-        } else {
+        if(res.Response.Error === undefined){
+            if (res.Response.Error) {
+              this.$message.error("关联失败");
+            } else {
+              this.$message({
+                message: "关联成功",
+                type: "success"
+              });
+            }
+        }else{
+          let ErrTips = {
+             "FailedOperation.PolicyFull":'用户策略数超过上限',
+             "InternalError.SystemError":'内部错误',
+             "InvalidParameter.AttachmentFull":'principal字段的授权对象关联策略数已达到上限',
+             "InvalidParameter.ParamError":'非法入参',
+             "InvalidParameter.PolicyIdError":'输入参数PolicyId不合法',
+             "InvalidParameter.PolicyIdNotExist":'策略ID不存在',
+             "InvalidParameter.UserNotExist":'principal字段的授权对象不存在',
+             "ResourceNotFound.GroupNotExist":'用户组不存在',
+             "ResourceNotFound.PolicyIdNotFound":'PolicyId指定的资源不存在',
+             "ResourceNotFound.UserNotExist":'用户不存在'
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
-            message: "关联成功",
-            type: "success"
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
           });
         }
       });
@@ -386,14 +410,36 @@ export default {
     // 绑定策略到用户
     attachUserPolicy(params) {
       this.axios.post(POLICY_USER, params).then(res => {
-        if (res.Response.Error) {
-          this.$message.error("关联失败");
-        } else {
+        if(res.Response.Error === undefined){
+            if (res.Response.Error) {
+              this.$message.error("关联失败");
+            } else {
+              this.$message({
+                message: "关联成功",
+                type: "success"
+              });
+            }
+        }else{
+          let ErrTips = {
+             "FailedOperation.PolicyFull":'用户策略数超过上限',
+             "InternalError.SystemError":'内部错误',
+             "InvalidParameter.AttachmentFull":'principal字段的授权对象关联策略数已达到上限',
+             "InvalidParameter.ParamError":'非法入参',
+             "InvalidParameter.PolicyIdError":'输入参数PolicyId不合法',
+             "InvalidParameter.PolicyIdNotExist":'策略ID不存在',
+             "InvalidParameter.UserNotExist":'principal字段的授权对象不存在',
+             "ResourceNotFound.PolicyIdNotFound":'PolicyId指定的资源不存在',
+             "ResourceNotFound.UserNotExist":'用户不存在'
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
-            message: "关联成功",
-            type: "success"
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
           });
         }
+      
       });
     },
     // 清空数据

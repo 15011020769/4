@@ -234,8 +234,8 @@ export default new Router({
       name: 'clusterExpand',
       component: () => import('./colony/expand.vue'),
       meta: {
-        keepAlive: true,
-        clusterId: true
+        keepAlive: true
+       
       }
     },
     {
@@ -243,8 +243,96 @@ export default new Router({
       name: 'clusterAddExist',
       component: () => import('./colony/addExist.vue'),
       meta: {
-        keepAlive: true,
-        clusterId: true
+        keepAlive: true
+      }
+    },
+    {
+      path: '/colony/sub/create/nodeManage/asg', // 集群-新建节点
+      name: 'asgCreate',
+      component: () => import('./colony/sub/create/nodeManage/asg.vue'),
+      meta: {
+        keepAlive: true
+       
+      }
+    },
+    {
+      path: '/colony/sub/create/namespace', // 集群-新建Namespace
+      name: 'namespaceCreate',
+      component: () => import('./colony/sub/create/namespace/index.vue'),
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
+      path: '/colony/sub/create/resource/workload', // 集群-新建Workload(Deployment、StatefulSet、DaemonSet、Job、CronJob)
+      name: 'workloadCreate',
+      component: () => import('./colony/sub/create/resource/workload.vue'),
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
+      path: '/colony/sub/create/hpa', // 集群-新建Service
+      name: 'hpaCreate',
+      component: () => import('./colony/sub/create/hpa/index.vue'),
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
+      path: '/colony/sub/create/service/svc', // 集群-新建Service
+      name: 'svcCreate',
+      component: () => import('./colony/sub/create/service/svc.vue'),
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
+      path: '/colony/sub/create/service/ingress', // 集群-新建Ingress
+      name: 'ingressCreate',
+      component: () => import('./colony/sub/create/service/ingress.vue'),
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
+      path: '/colony/sub/create/config/configmap', // 集群-新建ConfigMap
+      name: 'configmapCreate',
+      component: () => import('./colony/sub/create/config/configmap.vue'),
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
+      path: '/colony/sub/create/config/secret', // 集群-新建Secret
+      name: 'secretCreate',
+      component: () => import('./colony/sub/create/config/secret.vue'),
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
+      path: '/colony/sub/create/storage/pv', // 集群-新建PersistentVolume
+      name: 'pvCreate',
+      component: () => import('./colony/sub/create/storage/pv.vue'),
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
+      path: '/colony/sub/create/storage/pvc', // 集群-新建PersistentVolumeClaim
+      name: 'pvcCreate',
+      component: () => import('./colony/sub/create/storage/pvc.vue'),
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
+      path: '/colony/sub/create/storage/sc', // 集群-新建StorageClass
+      name: 'scCreate',
+      component: () => import('./colony/sub/create/storage/sc.vue'),
+      meta: {
+        keepAlive: true
       }
     },
 

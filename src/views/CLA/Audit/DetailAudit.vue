@@ -191,12 +191,8 @@
           <div class="btn-box" v-show="inpShow1">
             <div class="line lineVal"></div>
             <el-form-item class="button">
-              <el-button type="primary" icon="el-icon-loading" v-show="btnLoad"></el-button>
-              <el-button
-                type="primary"
-                @click="submitForm1('detailData')"
-                v-show="!btnLoad"
-              >{{ $t('CLA.total.bc') }}</el-button>
+              <!-- <el-button type="primary" icon="el-icon-loading" v-show="btnLoad"></el-button> -->
+              <el-button type="primary" @click="submitForm1('detailData')">{{ $t('CLA.total.bc') }}</el-button>
               <el-button @click="_cancel1">{{ $t('CLA.total.qx') }}</el-button>
             </el-form-item>
           </div>
@@ -350,9 +346,20 @@ export default {
       CmqQueueName1: "123",
       //cmq地域选择框
       cmqSelect: {
+        name: "",
         index: 0
       },
-      value: true
+      value: true,
+      regionType: {
+        "ap-beijing": "北京",
+        "ap-guangzhou": "广州",
+        "ap-hongkong": "香港",
+        "ap-shanghai": "上海"
+      },
+      regionType1: {
+        sh: "上海",
+        hk: "香港"
+      }
     };
   },
   methods: {
@@ -391,7 +398,8 @@ export default {
       //关闭
       else {
         const params = {
-          Name: this.title,
+          AuditName: this.title,
+          Region: "ap-guangzhou",
           Version: "2019-03-19"
         };
         this.axios.post(GZJ_STOPLOGGING, params).then(res => {
@@ -477,9 +485,10 @@ export default {
             Region: "ap-guangzhou",
             AuditName: this.title,
             IsCreateNewBucket: this.detailData.IsCreateNewBucket,
-            CosRegion: this.detailData.CosRegion,
+            // CosRegion: this.detailData.CosRegion,
             CosBucketName: this.detailData.CosBucketName,
-            IsEnableCmqNotify: this.detailData.IsEnableCmqNotify
+            IsEnableCmqNotify: this.detailData.IsEnableCmqNotify,
+            LogFilePrefix: this.detailData.LogFilePrefix
           };
           if (this.detailData.IsEnableCmqNotify == 1) {
             params["CmqQueueName"] = this.detailData.CmqQueueName;
@@ -487,6 +496,7 @@ export default {
             params["CmqRegion"] = this.cmqSelect.options[
               this.cmqSelect.index
             ].name;
+            params["CosRegion"] = this.select.options[this.select.index].name;
           } else {
             delete params.CmqQueueName;
             delete params.CmqRegion;
@@ -656,6 +666,8 @@ export default {
           this.loading = false;
           this.boxloading1 = false;
           this.boxloading = false;
+          this.select.name = this.regionType[this.detailData.CosRegion];
+          this.cmqSelect.name = this.regionType1[this.detailData.CmqRegion];
         } else {
           let ErrTips = {
             "InternalError.DescribeAuditError":

@@ -112,12 +112,28 @@ export default {
       // console.log('create')
       this.createL4Rules()
       this.dialogVisible=false;
+      this.clearData();
       this.$emit("addRulesSure",this.dialogVisible)
     },
     //弹框关闭按钮
     handleClose(){
       this.dialogVisible=false;
+      this.clearData();
       this.$emit("closeModel",this.dialogVisible)
+    },
+    // 数据清空方法
+    clearData() {
+      this.RuleName = '',//业务域名
+      this.Protocol = 'TCP',//转发协议，取值[TCP, UDP]
+      this.VirtualPort = '',//转发端口
+      this.SourcePort = '',//源站端口
+      this.SourceType = 2,//回源方式，取值[1(域名回源)，2(IP回源)]
+      this.KeepTime = 0,//会话保持时间，单位秒
+      // 回源列表SourceList
+      this.IpResource = '',
+      this.HttpResource = '',
+      this.LbType = 1,//负载均衡方式，取值[1(加权轮询)，2(源IP hash)]
+      this.KeepEnable = 0//会话保持开关，取值[0(会话保持关闭)，1(会话保持开启)]
     },
     //回源方式点击按钮
     BackResouse(thisType){
@@ -161,7 +177,7 @@ export default {
         if (res.Response.Error !== undefined) {
           this.$message({
             showClose: true,
-            message: res.Response.Error.Message,
+            message: '新建失敗，請確保輸入內容正確再操作！',
             type: 'error'
           });
         }else{

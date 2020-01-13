@@ -12,7 +12,7 @@
     </div>
     <div class="box-table">
       <!-- 表格 -->
-      <el-table :data="tableData" style="width: 100%">
+      <el-table :data="tableData" style="width: 100%" :empty-text="$t('CVM.clBload.zwsj')">
         <el-table-column prop width="150">
           <template slot-scope="scope">
             <span style="font-size:12px;font-weight:bolder; color:#333;font-weight:600;">

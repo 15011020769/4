@@ -99,6 +99,7 @@
   </div>
 </template>
 <script>
+import { ErrorTips } from "@/components/ErrorTips";
 import transfer from "./component/transfer";
 import { POLICY_LIST, DELETE_POLICY } from "@/constants";
 export default {
@@ -172,9 +173,28 @@ export default {
         params["Keyword"] = this.searchValue;
       }
       this.axios.post(POLICY_LIST, params).then(res => {
-        console.log(res);
-        this.tableData = res.Response.List;
-        this.TotalCount = res.Response.TotalNum;
+        if(res.Response.Error === undefined){
+          console.log(res);
+          this.tableData = res.Response.List;
+          this.TotalCount = res.Response.TotalNum;
+        }else{
+              let ErrTips = {
+                 "InternalError.SystemError":'内部错误',
+                 "InvalidParameter.GroupIdError":'GroupId字段不合法',
+                 "InvalidParameter.KeywordError":'Keyword字段不合法',
+                 "InvalidParameter.ParamError":'非法入参',
+                 "InvalidParameter.ScopeError":'Scope字段不合法',
+                 "InvalidParameter.ServiceTypeError":'ServiceType字段不合法',
+                 "InvalidParameter.UinError":'Uin字段不合法'
+              };
+              let ErrOr = Object.assign(ErrorTips, ErrTips);
+              this.$message({
+                message: ErrOr[res.Response.Error.Code],
+                type: "error",
+                showClose: true,
+                duration: 0
+              });
+        }
         this.loading = false;
       });
     },
@@ -198,6 +218,7 @@ export default {
       this.$nextTick(() => {
         this.transferFlag = true;
       });
+      console.log(policy);
       this.dialogVisible = true;
     },
     // 穿梭框：value右侧框值、direction操作、movedKeys移动值
@@ -232,7 +253,25 @@ export default {
         });
       }
       this.axios.post(DELETE_POLICY, params).then(res => {
-        console.log(res);
+        if(res.Response.Error === undefined){
+          console.log(res);
+        }else{
+          let ErrTips = {
+             "InternalError.SystemError":'内部错误',
+             "InvalidParameter.ParamError":'非法入参',
+             "InvalidParameter.PolicyIdError":'输入参数PolicyId不合法',
+             "ResourceNotFound.NotFound":'资源不存在',
+             "ResourceNotFound.PolicyIdNotFound":'PolicyId指定的资源不存在'
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+        
       });
       this.selectedData.splice(0, this.selectedData.length);
       this.getData();

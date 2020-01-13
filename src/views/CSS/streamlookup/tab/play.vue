@@ -6,6 +6,10 @@
       :legendText="legendText1"
       v-loading="loading"
       v-if="showEchart"
+      :tooltip="{
+        trigger: 'axis',   
+        formatter: `{b}<br/>{a}  {c}Mbps`
+      }"
     />
     <div class="empty" v-else>暂无数据</div>
     <Echart
@@ -15,6 +19,10 @@
       v-loading="loading"
       v-if="showEchart"
       color="#0accac"
+      :tooltip="{
+        trigger: 'axis',   
+        formatter: `{b}<br/>{a}  {c}MB`
+      }"
     />
     <div class="empty" v-else>暂无数据</div>
     <Echart

@@ -68,6 +68,7 @@
 }
 
 // 表单
+
 .tke-formpanel-wrap{
     padding: 20px;
     .tke-formpanel-title{
@@ -77,18 +78,37 @@
       margin-bottom: 20px;
     }
 }
+
+.tke-formpanel-footer{
+position: fixed;
+bottom: 0;
+left: 220px;
+right: 20px;
+z-index: 11;
+box-sizing: border-box;
+padding: 15px 15px 15px 100px;
+border-top: 1px solid #dbe3e4;
+background-color: #fff;
+box-shadow: 0 2px 3px 0 rgba(0,0,0,.2);
+}
 .tke-form {
     .el-form-item__label,.el-form-item__content{
         font-size: 12px;
         color: #888;
     }
-    .tke-form-item_text{
+    .tke-form-item_text,.el-checkbox__label,.el-radio__label{
         font-size: 12px;
         color: #444;
     }
+   
     .tke-icon{
         cursor: pointer;
         margin-left: 5px;
+    }
+    .form-controls{
+        background-color: #f2f2f2;
+        padding: 10px;
+        box-sizing: border-box;
     }
 }
 // 步骤 step

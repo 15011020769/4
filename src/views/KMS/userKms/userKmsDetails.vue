@@ -43,6 +43,7 @@
               <a href="#" v-if="!keyList.KeyRotationEnabled" :style=" projectDetail.KeyState==$t('KMS.total.willImport')?'display:none':'display:inline-block'" :class=" keyList.KeyState=='PendingDelete' || keyList.Origin == 'EXTERNAL'?'atclor':''" @click="startChange(keyList,$event)">{{$t('KMS.total.startChange')}}</a>
               <a href="#" v-if="keyList.KeyRotationEnabled" @click="startChange(keyList,$event)">{{$t('KMS.total.stopChange')}}</a>
             </p>
+            <p><span>下次轮换时间</span><span>{{timestampToTime(keyList.NextRotateTime)}}</span></p>
             <p><span>{{$t('KMS.total.descriptInfo')}}</span><span>{{keyList.Description}}</span><i class="el-icon-edit" @click="newDescription"></i></p>
             <el-dialog class="changeNameModel" :title="$t('KMS.total.changeKmsInfo')" :visible.sync="dialogModel2" width="40%" :before-close="handleClose2">
               <div class="dialogModelCon">
@@ -837,7 +838,7 @@ export default {
           font-size: 12px;
           color: #888;
           display: inline-block;
-          width: 70px;
+          width: 90px;
         }
         span:nth-child(2) {
           font-size: 12px;

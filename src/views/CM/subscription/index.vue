@@ -51,22 +51,76 @@
         </el-table-column>-->
         <el-table-column label>
           <template :slot-scope="$scope.row">
-            <el-button type="text" class="btn subBtn">订阅管理</el-button>
-            <el-button type="text" class="btn unSubBtn">取消订阅</el-button>
+            <el-button type="text" class="btn subBtn" @click="dialogSubscribe = true">订阅管理</el-button>
+            <el-button type="text" class="btn unSubBtn" @click="dialogcancel = true">取消订阅</el-button>
           </template>
         </el-table-column>
       </el-table>
     </div>
+    <el-dialog title="订阅管理" :visible.sync="dialogSubscribe" width="640px">
+      <div class="list">
+        <p>
+          <span>接收方式</span>
+          <el-checkbox
+            v-for="city in cities"
+            :label="city"
+            :key="city"
+            style="margin:0 10px;"
+          >{{city}}</el-checkbox>
+        </p>
+        <p style="display:flex;justify-content: space-between;">
+          <span>
+            请选择接收人(已选
+            <b>{{num}}</b>人)
+          </span>
+          <el-row class="seek" style="display:flex;">
+            <el-input v-model="triggerSearch" placeholder="搜索"></el-input>
+            <el-button icon="el-icon-search" style="margin-left:-1px;"></el-button>
+          </el-row>
+        </p>
+        <el-table
+          ref="multipleTable"
+          :data="tableData"
+          tooltip-effect="dark"
+          style="width: 100%"
+          @selection-change="handleSelectionChange"
+          class="receiver"
+        >
+          <el-table-column type="selection" width="55"></el-table-column>
+          <el-table-column label="用户名" width="120">
+            <template slot-scope="scope">{{ scope.row.date }}</template>
+          </el-table-column>
+          <el-table-column prop="name" label="手机号" width="120"></el-table-column>
+          <el-table-column prop="address" label="邮箱" show-overflow-tooltip></el-table-column>
+        </el-table>
+      </div>
+      <span slot="footer" class="dialog-footer center">
+        <el-button class="subscribe" type="primary" @click="dialogSubscribe = false">确定</el-button>
+        <el-button @click="dialogSubscribe = false">取 消</el-button>
+      </span>
+    </el-dialog>
+    <el-dialog title="取消订阅" :visible.sync="dialogcancel" width="30%">
+      <span>取消订阅云服务器存储问题？</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button class="cancelsubscribe" type="primary" @click="dialogcancel = false">取消订阅</el-button>
+        <el-button @click="dialogcancel = false">取 消</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import Header from "@/components/public/Head";
-
+const cityOptions = ["短信", "邮件", "站内信"];
 export default {
   name: "subscription",
   data() {
     return {
+      triggerSearch: "", //选择触发条件名搜索
+      num: 1, //已选择几人
+      cities: cityOptions,
+      dialogcancel: false, //取消订阅确认框
+      dialogSubscribe: false, //订阅管理确认框
       tableData: [
         {
           type: "云服务器存储问题",
@@ -89,13 +143,33 @@ export default {
           zhanneixin: 0,
           receive: "开发商，共1人"
         }
-      ]
+      ],
+      multipleSelection: []
     };
   },
   components: {
     Header
   },
-  methods: {}
+  methods: {
+    toggleSelection(rows) {
+      if (rows) {
+        rows.forEach(row => {
+          this.$refs.multipleTable.toggleRowSelection(row);
+        });
+      } else {
+        this.$refs.multipleTable.clearSelection();
+      }
+    },
+    handleSelectionChange(val) {
+      this.multipleSelection = val;
+    }
+    // cancelSubscribe() {
+    //   //取消订阅
+    // },
+    // subscribe() {
+    //   //订阅
+    // }
+  }
 };
 </script>
 
@@ -124,6 +198,42 @@ export default {
 .subscription-wrap >>> .table i {
   font-size: 16px;
 }
+.subscription-wrap >>> .el-dialog__body {
+  padding: 10px 20px;
+  color: #606266;
+  line-height: 24px;
+  font-size: 14px;
+}
+.subscription-wrap >>> .center{
+    text-align: center;
+}
+.dialog-footer {
+  text-align: center;
+  .cancelsubscribe {
+    border-color: #ff9700;
+    background-color: #ff9700;
+  }
+}
+.subscription-wrap >>> .receiver {
+  width: 100%;
+  .cell {
+    padding: 0px;
+  }
+  .el-table__header-wrapper {
+    padding: 0;
+  }
+  .el-dialog__body {
+    padding: 0;
+  }
+  .el-table__body {
+    margin: 0px;
+  }
+  .el-table__header-wrapper,
+  .el-table__body div.cell {
+    padding: 0;
+  }
+}
+
 .table {
   padding: 20px;
   position: relative;

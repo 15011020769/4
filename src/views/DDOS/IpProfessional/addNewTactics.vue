@@ -131,7 +131,7 @@
           <tr class="t-head">
             <td>{{$t('DDOS.Proteccon_figura.Agreement')}}</td>
             <td>{{$t('DDOS.Proteccon_figura.Start_portnumber')}}</td>
-            <td>{{$t('DDOS.Proteccon_figura.Start_portnumber')}}</td>
+            <td>{{$t('DDOS.Proteccon_figura.End_portnumbe')}}</td>
             <td>{{$t('DDOS.Proteccon_figura.start_destination')}}</td>
             <td>{{$t('DDOS.Proteccon_figura.end_destination')}}</td>
             <td>{{$t('DDOS.Proteccon_figura.Minimum_length')}}</td>

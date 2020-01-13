@@ -39,15 +39,20 @@
       <div class="tke-grid ">
         <!-- 左侧 -->
         <div class="grid-left">
-          <el-button size="small" type="primary">新建伸缩组</el-button>
+          <el-button @click="goAsgCreate" size="small" type="primary">新建伸缩组</el-button>
           <el-button size="small" disabled="">删除</el-button>
         </div>
         <!-- 右侧 -->
         <div class="grid-right">
-          <el-input placeholder="请输入内容" size="small"  class="tke-search">
-            <el-button slot="append" icon="el-icon-search"></el-button>
-          </el-input>
-          <i class="el-icon-download tke-download"></i>
+          <tkeSearch 
+              exportData
+              inputPlaceholder='请输入伸缩组ID'
+              :searchInput='searchInput'
+              @changeInput="changeSearchInput"
+              @clickSearch="clickSearch"
+              @exportExcel="exportExcel"
+            >
+          </tkeSearch>
         </div>
       </div>
     </div>
@@ -184,12 +189,15 @@
 
 <script>
 import subTitle from "@/views/TKE/components/subTitle";
+import tkeSearch from "@/views/TKE/components/tkeSearch";
 import Loading from "@/components/public/Loading";
 import { ALL_CITY } from "@/constants";
 export default {
-  name: "colonyHpa",
+  name: "colonyNodeManageAsg",
   data() {
     return {
+      clusterId:'',
+      searchInput: "", //输入的搜索关键字
       loadShow: false, //加载是否显示
       list:[
         {
@@ -206,9 +214,55 @@ export default {
     };
   },
   created() {
-
+    // 从路由获取集群id
+    this.clusterId=this.$route.query.clusterId;
   },
   methods: {
+     // 新建伸缩组
+    goAsgCreate(){
+      this.$router.push({
+          name: "asgCreate",
+          query: {
+            clusterId: this.clusterId
+          }
+      });
+    },
+
+    //监听搜索框的值
+    changeSearchInput(val) {
+      this.searchInput = val;
+      console.log(this.searchInput)
+    },
+    // 点击搜索
+    clickSearch(val){
+      this.searchInput = val;
+      console.log(this.searchInput)
+    },
+    
+    // 导出表格
+    exportExcel() {
+      console.log('exportExcel...')
+      /* generate workbook object from table */
+      // var wb = XLSX.utils.table_to_book(document.querySelector("#exportTable"));
+      /* get binary string as output */
+      // var wbout = XLSX.write(wb, {
+      //   bookType: "xlsx",
+      //   bookSST: true,
+      //   type: "array"
+      // });
+      // try {
+      //   FileSaver.saveAs(
+      //     new Blob([wbout], {
+      //       type: "application/octet-stream"
+      //     }),
+      //     this.$t("CVM.clBload.fzjh") + ".xlsx"
+      //   );
+      // } catch (e) {
+      //   if (typeof console !== "undefined") console.log(e, wbout);
+      // }
+      // return wbout;
+    },
+
     // 分页
     handleCurrentChange(val) {
       this.pageIndex = val-1;
@@ -228,6 +282,7 @@ export default {
   },
   components: {
     subTitle,
+    tkeSearch,
     Loading
   }
 };
