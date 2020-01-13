@@ -272,6 +272,14 @@ export default new Router({
       }
     },
     {
+      path: '/colony/sub/create/hpa', // 集群-新建Service
+      name: 'hpaCreate',
+      component: () => import('./colony/sub/create/hpa/index.vue'),
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
       path: '/colony/sub/create/service/svc', // 集群-新建Service
       name: 'svcCreate',
       component: () => import('./colony/sub/create/service/svc.vue'),
