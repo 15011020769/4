@@ -186,7 +186,7 @@ export default {
   methods: {
     //新增消息策略
     addMessage() {
-      alert("/message/create")
+      // alert("/message/create")
         this.$router.push({path:"/message/create"});
     },
     //分页

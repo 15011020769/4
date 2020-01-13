@@ -1,5 +1,7 @@
 <template>
-  <div class="wrap"></div>
+  <div class="wrap">
+    新建
+  </div>
 </template>
 
 <script>
