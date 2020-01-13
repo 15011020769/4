@@ -303,6 +303,30 @@ export default new Router({
         keepAlive: true
       }
     },
+    {
+      path: '/colony/sub/create/storage/pv', // 集群-新建PersistentVolume
+      name: 'pvCreate',
+      component: () => import('./colony/sub/create/storage/pv.vue'),
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
+      path: '/colony/sub/create/storage/pvc', // 集群-新建PersistentVolumeClaim
+      name: 'pvcCreate',
+      component: () => import('./colony/sub/create/storage/pvc.vue'),
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
+      path: '/colony/sub/create/storage/sc', // 集群-新建StorageClass
+      name: 'scCreate',
+      component: () => import('./colony/sub/create/storage/sc.vue'),
+      meta: {
+        keepAlive: true
+      }
+    },
 
     {
       path: '/helm', // helm应用
