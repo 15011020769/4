@@ -96,7 +96,10 @@ module.exports = {
             costd: '投递至 COS',
             zgtb: '台湾台北',
             qddqsj: '您确定要丢弃数据？',
-            ysj: '雲审计',
+            ysj: '云审计',
+            day: '天',
+            logOn: '开启日志记录',
+            zwsj: '暂无数据'
         }
     },
     COM: require('@/components/language/jt'),
