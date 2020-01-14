@@ -68,6 +68,7 @@
             @selection-change="handleSelectionChange"
             height="450"
             v-loading="loading"
+            :empty-text="$t('KMS.total.zwsj')"
           >
             <el-table-column type="selection" width="55"></el-table-column>
             <el-table-column prop="KeyId" :label="$t('KMS.total.label1')">
@@ -186,7 +187,7 @@
           </span>
         </el-dialog>
         <div class="Right-style pagstyle">
-          <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;条</span>
+          <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;{{$t('KMS.total.tiao')}}</span>
           <el-pagination
             :page-size="pagesize"
             :pager-count="7"
@@ -245,7 +246,7 @@ export default {
         {
           KeyId: "1235468165",
           Alias: "222",
-          KeyState: "已启用",
+          KeyState: "已啟用",
           CreateTime: "5696523658",
           Origin: "外部"
         }
@@ -320,12 +321,12 @@ export default {
               });
             } else {
                 let ErrTips = {
-                  "InternalError": "内部错误",
-                  "nvalidParameter": "参数错误",
+                  "InternalError": "內部錯誤",
+                  "nvalidParameter": "參數錯誤",
                   "InvalidParameterValue.InvalidKeyId":"KeyId不合法",
                   "ResourceUnavailable.CmkNotFound":"CMK不存在",
-                  "ResourceUnavailable.CmkStateNotSupport":"CMK 状态不支持该操作",
-                  "UnauthorizedOperation":"未授权操作"
+                  "ResourceUnavailable.CmkStateNotSupport":"CMK 狀態不支持該操作",
+                  "UnauthorizedOperation":"未授權操作"
                 };
                 let ErrOr = Object.assign(ErrorTips, ErrTips);
                 this.$message({
@@ -357,12 +358,12 @@ export default {
               });
             } else {
                 let ErrTips = {
-                    "InternalError":'内部错误',
-                    "InvalidParameter":'参数错误',
+                    "InternalError":'內部錯誤',
+                    "InvalidParameter":'參數錯誤',
                     "InvalidParameterValue.InvalidKeyId":'KeyId不合法',
                     "ResourceUnavailable.CmkNotFound":'CMK不存在',
-                    "ResourceUnavailable.CmkStateNotSupport":'CMK 状态不支持该操作',
-                    "UnauthorizedOperation":'未授权操作'
+                    "ResourceUnavailable.CmkStateNotSupport":'CMK 狀態不支持該操作',
+                    "UnauthorizedOperation":'未授權操作'
                 };
                 let ErrOr = Object.assign(ErrorTips, ErrTips);
                 this.$message({
@@ -462,9 +463,9 @@ export default {
             }
         }else{
               let ErrTips = {
-                 "InternalError":'内部错误',
-                 "InvalidParameter":'参数错误',
-                 "UnauthorizedOperation":'未授权操作'
+                 "InternalError":'內部錯誤',
+                 "InvalidParameter":'參數錯誤',
+                 "UnauthorizedOperation":'未授權操作'
               };
               let ErrOr = Object.assign(ErrorTips, ErrTips);
               this.$message({

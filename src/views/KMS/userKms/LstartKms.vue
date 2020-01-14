@@ -2,24 +2,24 @@
   <div>
     <el-dialog class="dialogModel" :title='contentDialog[2]=="啟用密鑰"?"啟用密鑰服務":"禁用密鑰服務"' :visible.sync="disableDialog" width="50%" :before-close="handleClose">
       <div>
-        <p v-if="contentDialog[2]=='啟用密鑰'?true:false" class="titleTip">{{$t('KMS.total.question1')}}</p>
-        <p v-if="contentDialog[2]=='禁用密鑰'?true:false" class="titleTip">{{$t('KMS.total.question2')}}</p>
+        <p v-if="contentDialog[2]==$t('KMS.total.startKms')?true:false" class="titleTip">{{$t('KMS.total.question1')}}</p>
+        <p v-if="contentDialog[2]==$t('KMS.total.stopKms')?true:false" class="titleTip">{{$t('KMS.total.question2')}}</p>
         <p class="lookDetails">{{$t('KMS.total.chooseAl')}}<span class="fontweight">{{$t('KMS.total.oneKmsSer')}}</span><a @click="detailsIsshow"> {{$t('KMS.total.lookDetail')}}</a></p>
         <table class="listShow" v-if="detailIsShow">
           <tbody>
             <tr>
               <td class="listShowNum">1</td>
               <td class="listShowNick">{{contentDialog[0]}}</td>
-              <td v-if="contentDialog[2]=='啟用密鑰'?true:false" class="listShowIsable">{{$t('KMS.total.canStart')}}</td>
-              <td v-if="contentDialog[2]=='禁用密鑰'?true:false" class="listShowIsable">{{$t('KMS.total.canStop')}}</td>
+              <td v-if="contentDialog[2]==$t('KMS.total.startKms')?true:false" class="listShowIsable">{{$t('KMS.total.canStart')}}</td>
+              <td v-if="contentDialog[2]==$t('KMS.total.stopKms')?true:false" class="listShowIsable">{{$t('KMS.total.canStop')}}</td>
             </tr>
           </tbody>
         </table>
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button @click="handleClose">{{$t('KMS.total.modelClose')}}</el-button>
-        <el-button v-if="contentDialog[2]=='啟用密鑰'?true:false" type="primary" @click="startKmsSure">{{$t('KMS.total.modelSure')}}</el-button>
-        <el-button v-if="contentDialog[2]=='禁用密鑰'?true:false" type="primary" @click="stopKmsSure">{{$t('KMS.total.modelSure')}}</el-button>
+        <el-button v-if="contentDialog[2]==$t('KMS.total.startKms')?true:false" type="primary" @click="startKmsSure">{{$t('KMS.total.modelSure')}}</el-button>
+        <el-button v-if="contentDialog[2]==$t('KMS.total.stopKms')?true:false" type="primary" @click="stopKmsSure">{{$t('KMS.total.modelSure')}}</el-button>
       </span>
     </el-dialog>
   </div>
@@ -80,12 +80,12 @@ export default {
             this.$parent.GetList();
         }else{
             let ErrTips = {
-              "InternalError": "内部错误",
-              "nvalidParameter": "参数错误",
+              "InternalError": "內部錯誤",
+              "nvalidParameter": "參數錯誤",
               "InvalidParameterValue.InvalidKeyId":"KeyId不合法",
               "ResourceUnavailable.CmkNotFound":"CMK不存在",
-              "ResourceUnavailable.CmkStateNotSupport":"CMK 状态不支持该操作",
-              "UnauthorizedOperation":"未授权操作"
+              "ResourceUnavailable.CmkStateNotSupport":"CMK 狀態不支持該操作",
+              "UnauthorizedOperation":"未授權操作"
             };
             let ErrOr = Object.assign(ErrorTips, ErrTips);
             this.$message({
@@ -112,12 +112,12 @@ export default {
            this.$parent.GetList();
         }else{
             let ErrTips = {
-               "InternalError":'内部错误',
-               "InvalidParameter":'参数错误',
+               "InternalError":'內部錯誤',
+               "InvalidParameter":'參數錯誤',
                "InvalidParameterValue.InvalidKeyId":'KeyId不合法',
                "ResourceUnavailable.CmkNotFound":'CMK不存在',
-               "ResourceUnavailable.CmkStateNotSupport":'CMK 状态不支持该操作',
-               "UnauthorizedOperation":'未授权操作'
+               "ResourceUnavailable.CmkStateNotSupport":'CMK 狀態不支持該操作',
+               "UnauthorizedOperation":'未授權操作'
             };
             let ErrOr = Object.assign(ErrorTips, ErrTips);
             this.$message({
