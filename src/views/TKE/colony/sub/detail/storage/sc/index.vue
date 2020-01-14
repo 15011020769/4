@@ -5,8 +5,10 @@
       <div class="tke-grid ">
         <!-- 左侧 -->
         <div class="grid-left">
-          <span class="goback" @click="goColonyList()">
+          <span class="goback" @click="goBack()">
             <i class="el-icon-back"></i>
+          </span>
+          <span class="goback" @click="goColonyList()">
             集群(中国台北) /
           </span>
           <span class="goback" @click="goBack()">
@@ -70,21 +72,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
-.colony-wrap >>> .el-button,
-.colony-wrap >>> .el-input__inner {
-  height: 30px !important;
-  line-height: 30px;
-  border-radius: 0;
-  font-size: 12px;
-  padding-top: 0;
-}
-.colony-wrap {
-  .colony-main {
-    padding: 20px;
-    box-sizing: border-box;
-  }
-}
 
 
 
