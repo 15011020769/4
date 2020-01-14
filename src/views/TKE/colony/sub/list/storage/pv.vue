@@ -4,34 +4,29 @@
       <subTitle title='PersistentVolume'  />
 
       <!-- 新建、搜索相关操作 -->
-      <div class="tke-action">
-        <div class="tke-grid ">
-          <!-- 左侧 -->
-          <div class="grid-left">
-            <el-button @click="goPvCreate()" size="small" type="primary">新建</el-button>
-          </div>
-          <!-- 右侧 -->
-          <div class="grid-right">
-            <tkeSearch 
-              refreshData
-              exportData
-              inputPlaceholder='请输入关键词搜索'
-              :searchInput='searchInput'
-              @changeInput="changeSearchInput"
-              @clickSearch="clickSearch"
-              @refresh='refreshList'
-              @exportExcel="exportExcel"
-            >
-            </tkeSearch>
-          
-              
-          </div>
+      <div class="tke-grid ">
+        <!-- 左侧 -->
+        <div class="grid-left">
+          <el-button @click="goPvCreate()" size="small" type="primary">新建</el-button>
         </div>
-        
+        <!-- 右侧 -->
+        <div class="grid-right">
+          <tkeSearch 
+            refreshData
+            exportData
+            inputPlaceholder='请输入关键词搜索'
+            :searchInput='searchInput'
+            @changeInput="changeSearchInput"
+            @clickSearch="clickSearch"
+            @refresh='refreshList'
+            @exportExcel="exportExcel"
+          >
+          </tkeSearch>
+        </div>
       </div>
 
       <!-- 数据列表展示 -->
-      <div class="tke-card">
+      <div class="tke-card mt10">
         <el-table
           :data="list"
           v-loading="loadShow"
