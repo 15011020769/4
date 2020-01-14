@@ -29,8 +29,11 @@
     </div> 
 
     <!-- 子页面 -->
-    <router-view/>
-   
+    <keep-alive>
+        <transition name="fade" mode="out-in">
+          <router-view></router-view>
+        </transition>
+    </keep-alive>
    
   </div>
 </template>
@@ -73,7 +76,15 @@ export default {
 
 <style lang="scss" scoped>
 
-
+.fade-enter-active, .fade-leave-active {
+  transition: opacity .2s;
+  transition: transform .2s;
+ 
+}
+.fade-enter, .fade-leave-to {
+  transform: translateY(5px);
+  opacity: 0;
+}
 
 </style>
 
