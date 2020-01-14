@@ -15,7 +15,8 @@
 
     <!-- 表格 -->
     <div class="Table-SY">
-      <el-table id="exportTable" :data="ProTableData" height="550" style="width: 100%" v-loading="loadShow" :empty-text="$t('CVM.clBload.zwsj')">
+      <el-table id="exportTable" :data="ProTableData" height="550" style="width: 100%" v-loading="loadShow"
+        :empty-text="$t('CVM.clBload.zwsj')">
         <el-table-column prop :label="$t('CVM.clBload.zjm') ">
           <template slot-scope="scope">
             <p>
@@ -68,6 +69,9 @@
   import Cities from "@/components/public/CITY";
   import SEARCH from "@/components/public/SEARCH";
   import Loading from "@/components/public/Loading";
+  import {
+    ErrorTips
+  } from '@/components/ErrorTips'
   import {
     ALL_CITY,
     CVM_LIST,
@@ -166,13 +170,15 @@
           this.cities = data.data;
           this.selectedRegion = data.data[0].Region;
           this.selectedCity = data.data[0];
-          this.$cookie.set("regionv2", this.selectedCity.Region);
+          localStorage.setItem("regionv1", this.selectedCity.regionCode);
+          localStorage.setItem("regionv2", this.selectedRegion);
         });
       },
       // 切换城市
       changeCity(city) {
         this.selectedCity = city;
-        this.$cookie.set("regionv2", city.Region);
+        localStorage.setItem("regionv1", this.selectedCity.regionCode);
+        localStorage.setItem("regionv2", this.selectedCity.Region);
         this.GetTabularData();
       },
       //选择搜索条件
@@ -200,7 +206,7 @@
         console.log("currpage" + this.currpage, "pagesize" + this.pagesize);
         this.loadShow = true;
         const param = {
-          Region: this.selectedRegion,
+          Region: localStorage.getItem("regionv2"),
           Version: "2017-03-12",
           Offset: this.currpage * this.pagesize - this.pagesize,
           Limit: this.pagesize
@@ -220,7 +226,24 @@
               this.TbaleData = data.Response.InstanceSet;
               this.TotalCount = data.Response.TotalCount;
             } else {
-              this.$message.error(data.Response.Error.Message);
+              let ErrTips = {
+                'InternalServerError': '操作内部错误',
+                'InvalidFilter': '无效的过滤器',
+                'InvalidFilterValue.LimitExceeded': 'Filter参数值数量超过限制',
+                'InvalidHostId.Malformed': '无效CDH ID。指定的CDH ID格式错误。例如ID长度错误host-1122',
+                'InvalidInstanceId.Malformed': '无效实例ID。指定的实例ID格式错误。例如实例ID长度错误ins-1122',
+                'InvalidParameter': '无效参数。参数不合要求或者参数不被支持等',
+                'InvalidParameterValue': '无效参数值。参数值格式错误或者参数值不被支持等',
+                'InvalidParameterValue.LimitExceeded': '参数值数量超过限制',
+                'InvalidZone.MismatchRegion': '指定的zone不存在',
+              }
+              let ErrOr = Object.assign(ErrorTips, ErrTips)
+              this.$message({
+                message: ErrOr[data.Response.Error.Code],
+                type: "error",
+                showClose: true,
+                duration: 0
+              });
             }
           })
           .then(() => {

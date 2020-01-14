@@ -11,7 +11,7 @@ let ErrorTips = {
   'InternalError': '内部错误',
   'InvalidAction': '接口不存在',
   'InvalidParameter': '参数错误',
-  'InvalidParameterValue': '参数取值错误',
+  'InvalidParameterValue': '参数取值错误/无效的参数值',
   'LimitExceeded': '超过配额限制',
   'MissingParameter': '缺少参数错误',
   'NoSuchVersion': '接口版本不存在',
