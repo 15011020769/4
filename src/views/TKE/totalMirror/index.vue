@@ -17,32 +17,44 @@
             :data="tableData"
             style="width: 100%"
             height="450"
+            v-loading="loadShow"
           >
             <!-- 自定义样式 -->
-            <el-table-column  align="center" width="40">
+            <el-table-column  align="center" min-width="5%">
+              <template>
+                <el-tooltip class="item" effect="light" content="收藏" placement="left" >
+                  <i class="el-icon-star-off" ></i>
+                </el-tooltip>
+              </template>
+            </el-table-column>
+            <el-table-column  align="center" min-width="10%">
               <template>
                 <el-tooltip class="item" effect="light" content="收藏" placement="left">
                   <i class="el-icon-star-off" ></i>
                 </el-tooltip>
               </template>
             </el-table-column>
-            <el-table-column prop="address" label="名称" >
+            <el-table-column prop="address" label="名称" min-width="20%">
               <template slot-scope="scope">
                 <p>
-                  <a style="cursor:pointer;" @click="jump()">跳转</a>
+                  <a style="cursor:pointer;" @click="jump()">{{scope.row.reponame}}</a>
                 </p>
               </template>
             </el-table-column>
-            <el-table-column prop="address" label="" ></el-table-column>
-            <el-table-column prop="address" label="类型" ></el-table-column>
-            <el-table-column prop="address" label="收藏量"></el-table-column>
+            <el-table-column prop="isQcloudOfficial" label="类型" min-width="20%">
+              <template slot-scope="scope">
+                {{scope.row.isQcloudOfficial|isQcloudOfficials}}
+              </template>
+            </el-table-column>
+            <el-table-column prop="favorCount" label="收藏量" min-width="20%"></el-table-column>
+            <el-table-column prop="pullCount" label="下载量" min-width="20%" sortable></el-table-column>
           </el-table>
           <div class="Right-style pagstyle">
             <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;页</span>
             <el-pagination
               :page-size="pagesize"
-              :pager-count="7"
               layout="prev, pager, next"
+              :current-page.sync="currpage"
               @current-change="handleCurrentChange"
               :total="TotalCount"
             ></el-pagination>
@@ -55,6 +67,7 @@
 
 <script>
 import HeadCom from '@/components/public/Head'
+import { GET_REPOSITORY_LIST } from '@/constants'
 export default {
   name: 'totalMirror',
   components: {
@@ -63,23 +76,16 @@ export default {
   data () {
     return {
       input: '',
-      tableData: [
-        {
-          date: '2016-05-03',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        },
-        {
-          date: '2016-05-02',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        }
-      ],
+      tableData: [],
       TotalCount: 0, // 总条数
       pagesize: 10, // 分页条数
       currpage: 1, // 当前页码
+      loadShow: true,
       multipleSelection: ''
     }
+  },
+  created () {
+    this.GetRepositoryList()
   },
   methods: {
     handleClick (row) {
@@ -88,6 +94,9 @@ export default {
     // 分页
     handleCurrentChange (val) {
       this.currpage = val
+      this.loadShow = true
+      this.GetRepositoryList()
+      console.log(val)
     },
     handleSelectionChange (val) {
       this.multipleSelection = val
@@ -100,6 +109,31 @@ export default {
           id: 1
         }
       })
+    },
+    GetRepositoryList () {
+      const param = {
+        reponame: '',
+        order: 'asc',
+        offset: 10 * (this.currpage - 1),
+        limit: this.pagesize
+      }
+      this.axios.post(GET_REPOSITORY_LIST, param).then(res => {
+        console.log(res)
+        if (res.code === 0) {
+          this.tableData = res.data.repoInfo
+          this.TotalCount = res.data.totalCount
+          this.loadShow = false
+        }
+      })
+    }
+  },
+  filters: {
+    isQcloudOfficials: function (val) {
+      if (val) {
+        return 'Tencent官方'
+      } else {
+        return '用户公开'
+      }
     }
   }
 }
@@ -110,11 +144,8 @@ export default {
   position: relative;
 }
 .room {
-  position: absolute;
-  left: 20px;
-  top: 20px;
-  width: 95%;
   height: auto;
+  padding:20px;
 }
 .room-top {
   height: 30px;

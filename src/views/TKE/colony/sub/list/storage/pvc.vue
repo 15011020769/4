@@ -43,7 +43,7 @@
             label="名称"
             >
             <template slot-scope="scope">
-              <span class="tke-text-link">x7wsp</span>
+              <span @click="goPvcDetail()" class="tke-text-link">x7wsp</span>
             </template>
           </el-table-column>
           <el-table-column
@@ -167,6 +167,15 @@ export default {
     goPvcCreate(){
       this.$router.push({
           name: "pvcCreate",
+          query: {
+            clusterId: this.clusterId
+          }
+      });
+    },
+     // 详情
+    goPvcDetail(){
+      this.$router.push({
+          name: "pvcDetail",
           query: {
             clusterId: this.clusterId
           }

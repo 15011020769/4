@@ -37,6 +37,12 @@ export const MIRROR_UPDATE = 'ccr/UpdateRepositoryPublic'
 // 修改镜像描述
 export const MIRROR_UPDATE_DESC = 'ccr/UpdateRepositoryDesc'
 
+// 获取我的收藏
+export const GETFAVOR = 'ccr/GetFavor'
+
+// 获取公有收藏
+export const GET_REPOSITORY_LIST = 'ccr/GetRepositoryList'
+
 // 获取集群列表
 export const COLONY_LIST = 'tke2/DescribeClusters'
 

@@ -1,4 +1,4 @@
- <!-- StorageClass-详情 -->
+ <!-- PersistentVolumeClaim-详情 -->
 <template>
   <div class="colony-wrap">
     <div class="tke-content-header tke-detail-header">
@@ -14,7 +14,7 @@
           <span class="goback" @click="goBack()">
             cls-gwblk71e(tfy_test1) /
           </span>
-          <h2 class="header-title">StorageClass:cbs</h2>
+          <h2 class="header-title">PersistentVolumeClaim:vvv(kube-public)</h2>
         </div>
         <!-- 右侧 -->
         <div class="grid-right"></div>
@@ -23,9 +23,9 @@
 
     <!-- 详情子菜单导航 -->
     <div class="tke-detial-nav">
-      <router-link class="nav-item" :to="{name:'scDetailInfo',query: {clusterId: clusterId}}">详情</router-link>
-      <router-link class="nav-item" :to="{name:'scDetailEvent',query: {clusterId: clusterId}}">事件</router-link>
-      <router-link class="nav-item" :to="{name:'scDetailYaml',query: {clusterId: clusterId}}">YAML</router-link>
+      <router-link class="nav-item" :to="{name:'pvcDetailInfo',query: {clusterId: clusterId}}">详情</router-link>
+      <router-link class="nav-item" :to="{name:'pvcDetailEvent',query: {clusterId: clusterId}}">事件</router-link>
+      <router-link class="nav-item" :to="{name:'pvcDetailYaml',query: {clusterId: clusterId}}">YAML</router-link>
     </div> 
 
     <!-- 子页面 -->
@@ -42,7 +42,7 @@
 import XLSX from "xlsx";
 import { ALL_CITY } from "@/constants";
 export default {
-  name: "scDetail",
+  name: "pvcDetail",
   data() {
     return {
         clusterId:'',
@@ -59,7 +59,7 @@ export default {
     //返回上一层
     goBack(){
       this.$router.push({
-        name:'colonyStorageSc',
+        name:'colonyStoragePvc',
         
       })
     },

@@ -79,7 +79,7 @@
                     <div v-if="item.Key=='DefendStatus' && item.Value == '1'">
                       {{$t('DDOS.AccesstoCon.AccOpen')}}
                     </div>
-                    <div v-else-if="item.Key=='DefendStatus' && item.Value != '1'">-</div>
+                    <div v-else-if="item.Key=='DefendStatus' && item.Value == '0'">{{$t('DDOS.AccesstoCon.AccClose')}}</div>
                   </div>
                 </template>
               </el-table-column>
@@ -136,9 +136,9 @@
               <!-- 修改弹框 -->
               <changeModel
                 :configShow="changeModel"
-                :ddoslevel="ddoslevel"
                 @closeConfigModel="closeConfigModel"
-                :changeRow1="changeRow1"
+                :modifyDDosRes="modifyDDosRes"
+                :policysData="tableDataPolicy"
               />
             </el-table>
           </div>
@@ -302,8 +302,8 @@ export default {
       loading: true,
       tableDataBegin: [], //DDoS攻击防护列表
       // 过滤刷新列表过程中使用
-      allData: [], // 存储全部实例列表
       changeModel: false, //修改框
+      modifyDDosRes: {}, //修改使用对象
       options1: [
         {
           label: "IP",
@@ -343,17 +343,11 @@ export default {
       deleteBegin: {},
       bindingIndex: "",
       bindingCon: {},
-      thisData: ["1", "2", "3"],
-      changeModelTip1: false, //修改模式提示弹框
-      changeModelTip2: false,
-      changeModelTip3: false,
-      changeRow1: "",
       DDoSLevel: {
         low: "寬鬆模式",
         middle: "正常模式",
         high: "嚴格模式"
       },
-      ddoslevel: ""
     };
   },
   components: {
@@ -419,11 +413,29 @@ export default {
                 Id: item.Value
               };
               this.axios.post(GET_SPolicy, params2).then(res => {
-                const obj2 = {
-                  Key: "SPolicyName",
-                  Value: res.Response.DDosPolicyList[0].PolicyName
-                };
-                val.Record.push(obj2);
+                if(res.Response.DDosPolicyList.length == 0){
+                  const obj2 = {
+                    Key: "SPolicyName",
+                    Value: "-"
+                  };
+                  const obj2Id = {
+                    Key: "SPolicyId",
+                    Value: "0000"
+                  }
+                  val.Record.push(obj2);
+                  val.Record.push(obj2Id);
+                } else {
+                  const obj2 = {
+                    Key: "SPolicyName",
+                    Value: res.Response.DDosPolicyList[0].PolicyName
+                  };
+                  const obj2Id = {
+                    Key: "SPolicyId",
+                    Value: res.Response.DDosPolicyList[0].PolicyId
+                  }
+                  val.Record.push(obj2);
+                  val.Record.push(obj2Id);
+                }
               });
             } else if (item.Key == "GroupIpList") {
               // 3.IP格式化175.97.143.121-tpe-bgp-300-1;175.97.142.153-tpe-bgp-100-1 >>> 175.97.142.153(中国台湾BGP)
@@ -481,16 +493,9 @@ export default {
       });
     },
     // 修改
-    changeRow(changeIndex, changeRow1) {
-      changeRow1.Record.forEach(item => {
-        if (item.Key == "DdosThreshold") {
-          this.changeRow1 = item.Value;
-        }
-        if (item.Key == "DDoSLevel") {
-          this.ddoslevel = item.Value;
-        }
-      });
-      this.changeModel = true; //DdosThreshold"
+    changeRow(changeIndex, ddosRes) {
+      this.modifyDDosRes = ddosRes;
+      this.changeModel = true;
     },
     // 搜索
     doFilter() {
@@ -503,6 +508,7 @@ export default {
       if (tab.name == "first") {
         //DDOS攻击防护
         this.describeResourceList();
+        this.describeDDoSPolicy();
       } else if (tab.name == "second") {
         //CC防护
       } else if (tab.name == "third") {

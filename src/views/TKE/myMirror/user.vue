@@ -36,7 +36,13 @@
                 {{scope.row.public|publics}}
             </template>
         </el-table-column>
-        <el-table-column prop="reponame" label="命名空间">
+        <el-table-column prop="reponame">
+          <template slot="header">
+            命名空间<i class="el-icon-more" style="cursor: pointer;"></i>
+            <!-- <ul>
+              <li>全部</li>
+            </ul> -->
+          </template>
            <template slot-scope="scope">
                 {{scope.row.reponame|reponameCgs}}
             </template>
@@ -58,13 +64,14 @@
         <el-pagination
           :page-size="pagesize"
           layout="prev, pager, next"
+          :current-page.sync="currpage"
           @current-change="handleCurrentChange"
           :total="TotalCount"
         ></el-pagination>
       </div>
     </div>
     <!-- 新建弹出窗 -->
-    <el-dialog title="新建镜像仓库" :visible.sync="dialogFormVisible" width="550px">
+    <el-dialog title="新建镜像仓库" :visible.sync="dialogFormVisible" width="550px" :before-close="close">
       <el-form
         :model="ruleForm"
         :rules="rules"
@@ -96,7 +103,7 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm('ruleForm')">确 定</el-button>
-        <el-button @click="dialogFormVisible = false">取 消</el-button>
+        <el-button @click="close()">取 消</el-button>
       </div>
     </el-dialog>
     <!-- 重置密码弹出窗口 -->
@@ -244,7 +251,7 @@ export default {
         name: [
           { required: true, message: '请输入镜像名称', trigger: 'blur' },
           { max: 200, message: '镜像名称不能超过200个字符', trigger: 'blur' },
-          { validator: validatePass3, trigger: 'blur' }
+          { validator: validatePass3, trigger: 'blur,change' }
         ],
         region2: [
           { required: true, message: '命名空间不能为空', trigger: 'change' }
@@ -296,11 +303,13 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           console.log(valid)
-          // this.$refs.ruleForm.clearValidate()
-          //   this.$refs.ruleForm.resetFields()
           this.dialogFormVisible = !valid
           this.CreateMyMirror()
           this.GetMyMirror()
+          this.$refs.ruleForm.clearValidate()
+          this.$refs.ruleForm.resetFields()
+          this.name = ''
+          this.ruleForm.name = ''
           this.loadShow = true
         } else {
           console.log('error submit!!')
@@ -308,11 +317,22 @@ export default {
         }
       })
     },
+    // 命名空间列表
+    // setListName(){
+
+    // },
     handleSelectionChange (val) {
       this.multipleSelection = val
     },
     getName () {
       this.ruleForm.name = this.name
+    },
+    // 关闭新建窗口
+    close () {
+      this.dialogFormVisible = false
+      this.$refs.ruleForm.clearValidate()
+      this.$refs.ruleForm.resetFields()
+      this.name = ''
     },
     // 路由跳转
     jump (row) {
@@ -440,11 +460,12 @@ export default {
 </script>
 <style lang="scss" scoped>
 .room {
-  position: absolute;
-  left: 20px;
-  top: 40px;
-  width: 95%;
+  // position: absolute;
+  // left: 20px;
+  // top: 40px;
+  // width: 95%;
   height: auto;
+  padding:20px;
 }
 .room-top {
   height: 30px;
@@ -520,4 +541,22 @@ export default {
   margin-left:60px;
   margin-bottom:20px;
 }
+.el-dropdown-link {
+    cursor: pointer;
+    color: #909399;
+    font-size: 12px;
+    // line-height: 30px;
+    // text-align: left;
+    margin-left:-10px;
+    margin-top: 5px;
+}
+  .el-icon-arrow-down {
+    font-size: 12px;
+  }
+  .demonstration {
+    display: block;
+    color: #8492a6;
+    font-size: 14px;
+    margin-bottom: 20px;
+  }
 </style>
