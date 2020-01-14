@@ -43,8 +43,8 @@
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="getClose()">取 消</el-button>
         <el-button type="primary" @click="submitForm('ruleForm')">确 定</el-button>
+        <el-button @click="getClose()">取 消</el-button>
       </span>
     </el-dialog>
   </div>
@@ -186,11 +186,12 @@ export default {
 </script>
 <style lang="scss" scoped>
 .room {
-  position: absolute;
-  left: 20px;
-  top: 40px;
-  width: 95%;
+  // position: absolute;
+  // left: 20px;
+  // top: 40px;
+  // width: 95%;
   height: auto;
+  padding:20px;
 }
 .room-top {
   height: 30px;

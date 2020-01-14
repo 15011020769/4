@@ -121,21 +121,21 @@
 <script>
 import { ErrorTips } from "@/components/ErrorTips";
 import Headcom from "../components/Head";
-import { USER_GROUP,ADD_USERTOGROUP,RELATE_USER } from "@/constants";
+import { USER_GROUP, ADD_USERTOGROUP, RELATE_USER } from "@/constants";
 export default {
   components: {
-    Headcom, //头部组件
+    Headcom //头部组件
   },
   data() {
     return {
       active: 1,
-      searchGroupValue:"",
-      userGroup:[],
+      searchGroupValue: "",
+      userGroup: [],
       userGroupSelect: [],
-      userNewGroup:[],
-      groupArr:[],
-      loading:true,
-      userGroup1:[]
+      userNewGroup: [],
+      groupArr: [],
+      loading: true,
+      userGroup1: []
     };
   },
   methods: {
@@ -157,8 +157,8 @@ export default {
       this.axios.post(USER_GROUP, params).then(res => {
         this.userGroup1 = res.Response.GroupInfo;
         const param = {
-        Version: "2019-01-16",
-        Uid: this.$route.query.Uid
+          Version: "2019-01-16",
+          Uid: this.$route.query.Uid
         };
         this.axios.post(RELATE_USER, param).then(res => {
           this.groupArr = res.Response.GroupInfo;
@@ -178,45 +178,41 @@ export default {
     searchGroup() {
       this.userGroups();
     },
-    complete(){
-       var addGroup = [];
-       this.userNewGroup[0].forEach(item => {
-          addGroup.push(item)
-       })
-       console.log(addGroup)
-       addGroup.forEach(item => {
-           this.addUserGroup(item.GroupId)
-       })
-       this.$router.go(-1)
+    complete() {
+      var addGroup = [];
+      this.userNewGroup[0].forEach(item => {
+        addGroup.push(item);
+      });
+      addGroup.forEach(item => {
+        this.addUserGroup(item.GroupId);
+      });
+      this.$router.go(-1);
     },
-    addUserGroup(val){
-      console.log(this.$route.query.Uid)
+    addUserGroup(val) {
       let params = {
-                Version: "2019-01-16",
-                "Info.0.Uid": this.$route.query.Uid,
-                "Info.0.GroupId":val
-            };
-            console.log(params)
-             this.axios.post(ADD_USERTOGROUP, params).then(res => {
-               if(res.Response.Error === undefined){
-                    console.log(res)
-               }else{
-                     let ErrTips = {
-                        "InvalidParameter.GroupNotExist":'用户组不存在',
-                        "InvalidParameter.GroupUserFull":'用户组中的子用户数量达到上限',
-                        "InvalidParameter.UserGroupFull":'子用户加入的用户组数量达到上限',
-                        "ResourceNotFound.UserNotExist":'用户不存在'
-                    };
-                    let ErrOr = Object.assign(ErrorTips, ErrTips);
-                    this.$message({
-                      message: ErrOr[res.Response.Error.Code],
-                      type: "error",
-                      showClose: true,
-                      duration: 0
-                    });
-               }
-               
-             });
+        Version: "2019-01-16",
+        "Info.0.Uid": this.$route.query.Uid,
+        "Info.0.GroupId": val
+      };
+      this.axios.post(ADD_USERTOGROUP, params).then(res => {
+        if (res.Response.Error === undefined) {
+          console.log(res);
+        } else {
+          let ErrTips = {
+            "InvalidParameter.GroupNotExist": "用户组不存在",
+            "InvalidParameter.GroupUserFull": "用户组中的子用户数量达到上限",
+            "InvalidParameter.UserGroupFull": "子用户加入的用户组数量达到上限",
+            "ResourceNotFound.UserNotExist": "用户不存在"
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
     },
     prev() {
       --this.active;
@@ -236,20 +232,19 @@ export default {
     handleSelection(val) {
       // 给右边table框赋值，只需在此处赋值即可，selectedRow方法中不写，因为单独点击复选框，只有此方法有效。
       this.userGroupSelect = val;
-      let newGroupData = []
-      newGroupData.push(val)
-      console.log(val)
-      this.userNewGroup = newGroupData
+      let newGroupData = [];
+      newGroupData.push(val);
+      this.userNewGroup = newGroupData;
     },
-     deleteRow(index, rows) {
-        rows.splice(index, 1);
-      },
-      back(){
-      this.$router.go(-1)
+    deleteRow(index, rows) {
+      rows.splice(index, 1);
+    },
+    back() {
+      this.$router.go(-1);
     }
   },
-  created(){
-    this.userGroups()
+  created() {
+    this.userGroups();
   }
 };
 </script>
@@ -274,36 +269,36 @@ export default {
   flex-direction: column;
   padding: 20px;
   box-sizing: border-box;
-  .step{
+  .step {
     width: 100%;
   }
-  .table{
+  .table {
     flex: 1;
   }
-  .button{
+  .button {
     width: 100%;
   }
- .container {
-  display: flex;
-  padding: 20px;
-  box-sizing: border-box;
-  .container-right {
-    width: 70%;
-    flex-direction: column;
-    justify-content: center;
-    margin-left: 100px;
-    .inputSearchCl {
-      width: 80%;
+  .container {
+    display: flex;
+    padding: 20px;
+    box-sizing: border-box;
+    .container-right {
+      width: 70%;
+      flex-direction: column;
+      justify-content: center;
+      margin-left: 100px;
+      .inputSearchCl {
+        width: 80%;
+      }
+    }
+    .container-left {
+      width: 70%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      flex-direction: column;
     }
   }
-  .container-left {
-    width: 70%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    flex-direction: column;
-  }
-}
 }
 .step >>> .el-steps {
   background: white;

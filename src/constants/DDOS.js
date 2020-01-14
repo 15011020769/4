@@ -51,7 +51,8 @@ export const GET_SPolicy = 'dayu2/DescribeDDoSPolicy' // 获取DDoS高级策略
 export const GET_Status = 'dayu2/DescribeDDoSDefendStatus' // 获取DDoS防护状态
 export const CLAEN_SHOLD = 'dayu2/ModifyDDoSThreshold' //修改DDoS清洗阈值
 export const Modify_Level = 'dayu2/ModifyDDoSLevel' //读取或修改DDoSIP防护等级
-export const SET_SHOLD = 'dayu2/CreateBasicDDoSAlarmThreshold' //设置基础防护的DDoS告警阈值
+export const SET_SHOLD = 'dayu2/ModifyDDoSAlarmThreshold' //设置DDoS告警通知阈值
+export const GET_SHOLD = 'dayu2/DescribeDDoSAlarmThreshold' //获取DDoS告警通知阈值
 export const Modify_Status = 'dayu2/ModifyDDoSDefendStatus' //修改DDoS防护状态
 
 export const DDOS_EVENT = 'dayu2/DescribeDDoSNetEvList' //获取高防IP专业版资源的DDoS攻击事件列表

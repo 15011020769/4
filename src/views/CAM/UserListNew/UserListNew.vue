@@ -98,8 +98,17 @@
 
           <el-table-column :label="$t('CAM.userList.userText')">
             <template slot-scope="scope">
-              <i class="el-icon-mobile mobile" @click="detailsUser(scope.row)"></i>
-              <i class="el-icon-message message" @click="detailsUser(scope.row)"></i>
+              <span v-show="scope.row.PhoneNum == '' && scope.row.Email ==''">-</span>
+              <i
+                class="el-icon-mobile mobile pointer"
+                @click="detailsUser(scope.row)"
+                v-show="scope.row.PhoneNum"
+              ></i>
+              <i
+                class="el-icon-message message pointer"
+                @click="detailsUser(scope.row)"
+                v-show="scope.row.Email"
+              ></i>
             </template>
           </el-table-column>
           <el-table-column label="操作" width="140">
@@ -836,6 +845,9 @@ export default {
 }
 .wrap >>> .el-table__expanded-cell:hover {
   background: rgb(250, 250, 250);
+}
+.pointer{
+  cursor: pointer;
 }
 .wrap {
   width: 100%;

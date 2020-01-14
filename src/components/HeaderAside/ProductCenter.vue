@@ -12,9 +12,9 @@
             <ul>
               <li class="li-title">{{$t("COM.calculate")}}</li>
               <li class="li-sub" @click="go('../CVM/index.html#/cloudHost')">{{$t("COM.cvm")}}</li>
-              <li class="li-sub" @click="go('../CVM/index.html#/cloudDisk')">{{$t("COM.cbs")}}</li>
               <li @click="testFun">{{$t("COM.tke")}}</li>
               <li class="li-sub" @click="go('../AS/index.html#/flexGroup')">{{$t("COM.as")}}</li>
+              <li @click="testFun">{{$t("COM.scf")}}</li>
             </ul>
             <ul>
               <li class="li-title">{{$t("COM.tool")}}</li>
@@ -63,6 +63,7 @@
             </ul>
             <ul>
               <li class="li-title">{{$t("COM.cosTitle")}}</li>
+              <li class="li-sub" @click="go('../CVM/index.html#/cloudDisk')">{{$t("COM.cbs")}}</li>
               <li class="li-sub" @click="go('../COS/index.html#/bucket')">{{$t("COM.cos")}}</li>
             </ul>
           </div>
@@ -72,11 +73,6 @@
               <li @click="testFun">{{$t("COM.cdn")}}</li>
               <li @click="testFun">{{$t("COM.dsa")}}</li>
               <li @click="testFun">{{$t("COM.gaap")}}</li>
-            </ul>
-            <ul>
-              <li class="li-title">Serverless</li>
-                <li @click="testFun">{{$t("COM.scf")}}</li>
-                <!-- <li class="li-sub" @click="go('../SCF/index.html#/overView')">{{$t("COM.scf")}}</li> -->
             </ul>
             <ul>
               <li class="li-title">{{$t("COM.pro")}}</li>
@@ -295,7 +291,6 @@ export default {
 </script>
 <style lang="scss" scoped>
 .pro-box {
-  
   padding: 44px 50px;
   .my-autocomplete {
     li {

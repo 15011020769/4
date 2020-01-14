@@ -336,6 +336,76 @@ export default new Router({
       }
     },
     {
+      path: '/colony/sub/detail/storage/pv', // PersistentVolume详情
+      name: 'pvDetail',
+      component: () => import('./colony/sub/detail/storage/pv/index.vue'),
+      redirect: '/colony/sub/detail/storage/pv/info', // 默认子路由
+      meta: {
+        keepAlive: true
+      },
+      children: [ // 子路由
+        { // 详情
+          path: '/colony/sub/detail/storage/pv/info',
+          name: 'pvDetailInfo',
+          component: () => import('./colony/sub/detail/storage/pv/info.vue'),
+          meta: {
+            keepAlive: true,
+          }
+        }, 
+        { // 事件
+          path: '/colony/sub/detail/storage/pv/event',
+          name: 'pvDetailEvent',
+          component: () => import('./colony/sub/detail/storage/pv/event.vue'),
+          meta: {
+            keepAlive: true,
+          }
+        }, 
+        { // yaml
+          path: '/colony/sub/detail/storage/pv/yaml',
+          name: 'pvDetailYaml',
+          component: () => import('./colony/sub/detail/storage/pv/yaml.vue'),
+          meta: {
+            keepAlive: true,
+          }
+        },  
+      ]
+    },
+    {
+      path: '/colony/sub/detail/storage/pvc', // PersistentVolumeClaim详情
+      name: 'pvcDetail',
+      component: () => import('./colony/sub/detail/storage/pvc/index.vue'),
+      redirect: '/colony/sub/detail/storage/pvc/info', // 默认子路由
+      meta: {
+        keepAlive: true
+      },
+      children: [ // 子路由
+        { // 详情
+          path: '/colony/sub/detail/storage/pvc/info',
+          name: 'pvcDetailInfo',
+          component: () => import('./colony/sub/detail/storage/pvc/info.vue'),
+          meta: {
+            keepAlive: true,
+          }
+        }, 
+        { // 事件
+          path: '/colony/sub/detail/storage/pvc/event',
+          name: 'pvcDetailEvent',
+          component: () => import('./colony/sub/detail/storage/pvc/event.vue'),
+          meta: {
+            keepAlive: true,
+          }
+        }, 
+        { // yaml
+          path: '/colony/sub/detail/storage/pvc/yaml',
+          name: 'pvcDetailYaml',
+          component: () => import('./colony/sub/detail/storage/pvc/yaml.vue'),
+          meta: {
+            keepAlive: true,
+          }
+        },  
+      ]
+    },
+    {
       path: '/colony/sub/detail/storage/sc', // StorageClass详情
       name: 'scDetail',
       component: () => import('./colony/sub/detail/storage/sc/index.vue'),

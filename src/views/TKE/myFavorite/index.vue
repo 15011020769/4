@@ -5,12 +5,12 @@
       <div class="room">
         <div class="room-top">
           <div class="top-left">
-            <el-button :disabled="true" size="mini" class="botton-size">取消收藏</el-button>
+            <el-button :disabled="this.multipleSelection.length?false:true" size="mini" class="botton-size">取消收藏</el-button>
           </div>
           <div class="top-right">
-            <el-input v-model="input" placeholder="请输入实例组名搜索" size="mini"></el-input>
-            <el-button icon="el-icon-search" size="mini" style="margin-left:-1px;height:28px;"></el-button>
-            <i class="el-icon-download"></i>
+              <el-input v-model.trim="input" placeholder="请输入镜像名称" size="mini" ></el-input>
+              <el-button icon="el-icon-search" size="mini" style="margin-left:-1px;height:28px;" :plain="true" @click="getSearch()"></el-button>
+              <i class="el-icon-download"></i>
           </div>
         </div>
         <div class="room-bottom">
@@ -23,9 +23,8 @@
             <el-table-column type="selection" width="55"></el-table-column>
             <el-table-column prop="address" label="名称"></el-table-column>
             <el-table-column prop="address" label="类型"></el-table-column>
-            <el-table-column prop="address" label="命名空间"></el-table-column>
-            <el-table-column prop="address" label="镜像地址"></el-table-column>
-            <el-table-column prop="address" label="创建时间"></el-table-column>
+            <el-table-column prop="address" label="地域"></el-table-column>
+            <el-table-column prop="address" label="收藏量"></el-table-column>
             <el-table-column prop="address" label="操作">
               <template slot-scope="scope">
                 <el-button @click="handleClick(scope.row)" type="text" size="small">取消收藏</el-button>
@@ -49,6 +48,7 @@
 </template>
 <script>
 import HeadCom from '@/components/public/Head'
+import { GETFAVOR } from '@/constants'
 export default {
   name: 'myFavorite',
   components: {
@@ -72,8 +72,11 @@ export default {
       TotalCount: 0, // 总条数
       pagesize: 10, // 分页条数
       currpage: 1, // 当前页码
-      multipleSelection: ''
+      multipleSelection: []
     }
+  },
+  created () {
+    this.GetFavor()
   },
   methods: {
     handleClick (row) {
@@ -86,11 +89,20 @@ export default {
     handleSelectionChange (val) {
       this.multipleSelection = val
       console.log(this.multipleSelection)
+    },
+    GetFavor () {
+      const param = {
+        reponame: '',
+        offset: 0,
+        limit: 10
+      }
+      this.axios.post(GETFAVOR, param).then(res => {
+        console.log(res)
+      })
     }
   }
 }
 </script>
-
 <style lang="scss" scoped>
 .body {
   position: relative;

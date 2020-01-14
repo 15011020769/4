@@ -115,7 +115,11 @@ module.exports= {
             yu:'于',
             allDelete:'彻底删除',
             noTimeout:'不过期',
-            chooseFile:'选择文件'
+            chooseFile:'选择文件',
+            zwsj: '暂无数据',
+            tiao: '条',
+            xclhsj: '下次轮换时间',
+            jhsc: '计划删除',
         }
 
     },

@@ -107,7 +107,7 @@
                   <a
                     class="marginRightA"
                     href="#"
-                    @clcik="lookReportList(scope.row)"
+                    @click="lookReportList(scope.row)"
                   >{{$t('DDOS.AssetList.CheckReport')}}</a>
                 </template>
               </el-table-column>
@@ -141,7 +141,12 @@
               <el-table-column prop="nowIp" :label="$t('DDOS.AssetList.currentIp')">
                 <template slot-scope="scope">
                   <div v-for="(item,index) in scope.row.Record" :key="index">
-                    <span v-if="item.Key=='GroupIpList'">{{item.Value}}</span>
+                    <div v-if="item.Key=='IPText'">
+                      <div v-for="(item2, i) in item.Value" :key="i+'i'">
+                        <span>{{item2}}</span><br/>
+                      </div>
+                    </div>
+                    <!-- IP地址-->
                   </div>
                 </template>
               </el-table-column>
@@ -167,7 +172,7 @@
                   <a
                     class="marginRightA"
                     href="#"
-                    @clcik="lookReportList(scope.row)"
+                    @click="lookReportList(scope.row)"
                   >{{$t('DDOS.AssetList.CheckReport')}}</a>
                 </template>
               </el-table-column>
@@ -313,6 +318,28 @@ export default {
         console.log(params, res);
         this.tableData = res.Response.ServicePacks;
         this.totalItems = res.Response.Total;
+        this.tableData.forEach(val => {
+          val.Record.forEach(item => {
+            if (item.Key == "GroupIpList") {
+              // IP格式化175.97.143.121-tpe-bgp-300-1;175.97.142.153-tpe-bgp-100-1 >>> 175.97.142.153(中国台湾BGP)
+              let IPText = [];
+              let ipArr = item.Value.split(";");
+              for (const key in ipArr) {
+                if (ipArr.hasOwnProperty(key)) {
+                  const element = ipArr[key];
+                  let ipDetailArr = element.split("-");
+                  IPText.push(ipDetailArr[0]+"("+(ipDetailArr[1]=='tpe'?'中國台灣':ipDetailArr[1])+
+                  (ipDetailArr[2]=='bgp'?'BGP':ipDetailArr[2])+")");
+                }
+              }
+              const obj = {
+                Key: "IPText",
+                Value: IPText
+              };
+              val.Record.push(obj);
+            }
+          });
+        });
         // 此接口调用完，调用1.2接口
         this.describeRuleSets();
       });

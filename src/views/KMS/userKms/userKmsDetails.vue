@@ -43,7 +43,7 @@
               <a href="#" v-if="!keyList.KeyRotationEnabled" :style=" projectDetail.KeyState==$t('KMS.total.willImport')?'display:none':'display:inline-block'" :class=" keyList.KeyState=='PendingDelete' || keyList.Origin == 'EXTERNAL'?'atclor':''" @click="startChange(keyList,$event)">{{$t('KMS.total.startChange')}}</a>
               <a href="#" v-if="keyList.KeyRotationEnabled" @click="startChange(keyList,$event)">{{$t('KMS.total.stopChange')}}</a>
             </p>
-            <p><span>下次轮换时间</span><span>{{timestampToTime(keyList.NextRotateTime)}}</span></p>
+            <p><span>{{$t('KMS.total.xclhsj')}}</span><span>{{timestampToTime(keyList.NextRotateTime)}}</span></p>
             <p><span>{{$t('KMS.total.descriptInfo')}}</span><span>{{keyList.Description}}</span><i class="el-icon-edit" @click="newDescription"></i></p>
             <el-dialog class="changeNameModel" :title="$t('KMS.total.changeKmsInfo')" :visible.sync="dialogModel2" width="40%" :before-close="handleClose2">
               <div class="dialogModelCon">
@@ -286,11 +286,11 @@ export default {
            this.loading = false;
         }else{
            let ErrTips = {
-             "InternalError":'内部错误',
-             "InvalidParameter":'参数错误',
+             "InternalError":'內部錯誤',
+             "InvalidParameter":'參數錯誤',
              "InvalidParameterValue.InvalidKeyId":'KeyId不合法',
              "ResourceUnavailable.CmkNotFound":'CMK不存在',
-             "UnauthorizedOperation":'未授权操作'
+             "UnauthorizedOperation":'未授權操作'
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
@@ -407,13 +407,13 @@ export default {
           this.dialogModel1 = false;
         }else{
              let ErrTips = {
-               "InternalError":'内部错误',
-               "InvalidParameter":'参数错误',
-               "InvalidParameterValue.AliasAlreadyExists":'别名已经存在',
-               "InvalidParameterValue.InvalidAlias":'别名格式错误',
+               "InternalError":'內部錯誤',
+               "InvalidParameter":'參數錯誤',
+               "InvalidParameterValue.AliasAlreadyExists":'別名已經存在',
+               "InvalidParameterValue.InvalidAlias":'別名格式錯誤',
                "InvalidParameterValue.InvalidKeyId":'KeyId不合法',
                "ResourceUnavailable.CmkNotFound":'CMK不存在',
-               "UnauthorizedOperation":'未授权操作'
+               "UnauthorizedOperation":'未授權操作'
               };
               let ErrOr = Object.assign(ErrorTips, ErrTips);
               this.$message({
@@ -440,11 +440,11 @@ export default {
           this.dialogModel2 = false;
         }else{
           let ErrTips = {
-             "InternalError":'内部错误',
-             "InvalidParameter":'参数错误',
+             "InternalError":'內部錯誤',
+             "InvalidParameter":'參數錯誤',
              "InvalidParameterValue.InvalidKeyId":'KeyId不合法',
              "ResourceUnavailable.CmkNotFound":'CMK不存在',
-             "UnauthorizedOperation":'未授权操作'
+             "UnauthorizedOperation":'未授權操作'
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
@@ -479,13 +479,13 @@ export default {
           });
         }else{
             let ErrTips = { 
-                 "InternalError":'内部错误',
-                 "InvalidParameter":'参数错误',
+                 "InternalError":'內部錯誤',
+                 "InvalidParameter":'參數錯誤',
                  "InvalidParameterValue.InvalidKeyId":'KeyId不合法',
                  "InvalidParameterValue.InvalidPlaintext":'Plaintext不合法',
                  "ResourceUnavailable.CmkDisabled":'CMK已被禁用',
                  "ResourceUnavailable.CmkNotFound":'CMK不存在',
-                 "UnauthorizedOperation":'未授权操作'
+                 "UnauthorizedOperation":'未授權操作'
             };
             let ErrOr = Object.assign(ErrorTips, ErrTips);
             this.$message({
@@ -516,12 +516,12 @@ export default {
           });
         }else{
             let ErrTips = {
-               "InternalError":'内部错误',
-               "InvalidParameter":'参数错误',
-               "InvalidParameterValue.InvalidCiphertext":'密文格式错误',
+               "InternalError":'內部錯誤',
+               "InvalidParameter":'參數錯誤',
+               "InvalidParameterValue.InvalidCiphertext":'密文格式錯誤',
                "ResourceUnavailable.CmkDisabled":'CMK已被禁用',
                "ResourceUnavailable.CmkNotFound":'CMK不存在',
-               "UnauthorizedOperation":'未授权操作'
+               "UnauthorizedOperation":'未授權操作'
             };
             let ErrOr = Object.assign(ErrorTips, ErrTips);
             this.$message({
@@ -580,10 +580,10 @@ export default {
             this.exportRaw('README' + '.txt', README)
         }else{
               let ErrTips = {
-                   "InternalError":'内部错误',
-                   "InvalidParameter":'参数错误',
+                   "InternalError":'內部錯誤',
+                   "InvalidParameter":'參數錯誤',
                    "ResourceUnavailable.CmkNotFound":'CMK不存在',
-                   "UnsupportedOperation.NotExternalCmk":'CMK类型错误,仅支持External CMK'
+                   "UnsupportedOperation.NotExternalCmk":'CMK類型錯誤,僅支持External CMK'
               };
               let ErrOr = Object.assign(ErrorTips, ErrTips);
               this.$message({
@@ -627,14 +627,14 @@ export default {
           this.keyStatus = true
           this.GetList();
           let ErrTips = {
-              "InternalError":'内部错误',
-              "InvalidParameter":'参数错误',
-              "InvalidParameter.DecryptMaterialError":'解密EncryptedKeyMaterial失败',
-              "InvalidParameterValue.MaterialNotMatch":'导入的密钥材料和历史导入不同',
+              "InternalError":'內部錯誤',
+              "InvalidParameter":'參數錯誤',
+              "InvalidParameter.DecryptMaterialError":'解密EncryptedKeyMaterial失敗',
+              "InvalidParameterValue.MaterialNotMatch":'導入的密鑰材料和歷史導入不同',
               "ResourceUnavailable.CmkNotFound":'CMK不存在',
-              "ResourceUnavailable.CmkStateNotSupport":'CMK状态不支持该操作',
-              "ResourceUnavailable.TokenExpired":'Token已过期',
-              "UnsupportedOperation.NotExternalCmk":'CMK类型错误,仅支持External CMK'
+              "ResourceUnavailable.CmkStateNotSupport":'CMK狀態不支持該操作',
+              "ResourceUnavailable.TokenExpired":'Token已過期',
+              "UnsupportedOperation.NotExternalCmk":'CMK類型錯誤,僅支持External CMK'
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
@@ -707,12 +707,12 @@ export default {
           });
         }else{
             let ErrTips = {
-              "InternalError":'内部错误',
-              "InvalidParameter":'参数错误',
+              "InternalError":'內部錯誤',
+              "InvalidParameter":'參數錯誤',
               "InvalidParameterValue.InvalidKeyId":'KeyId不合法',
               "ResourceUnavailable.CmkNotFound":'CMK不存在',
-              "ResourceUnavailable.CmkStateNotSupport":'CMK状态不支持该操作',
-              "UnsupportedOperation.NotExternalCmk":'CMK类型错误,仅支持External CMK'
+              "ResourceUnavailable.CmkStateNotSupport":'CMK狀態不支持該操作',
+              "UnsupportedOperation.NotExternalCmk":'CMK類型錯誤,僅支持External CMK'
             };
             let ErrOr = Object.assign(ErrorTips, ErrTips);
             this.$message({

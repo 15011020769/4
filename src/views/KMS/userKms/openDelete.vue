@@ -79,7 +79,7 @@ export default {
       this.axios.post(SCH_KMS, params).then(res => {
         if(res.Response.Error === undefined){
           this.$message({
-                message: '删除成功',
+                message: '刪除成功',
                 type: "success",
                 showClose: true,
                 duration: 0
@@ -89,13 +89,13 @@ export default {
             this.$parent.getData();
         }else{ 
              let ErrTips = {
-                 "InternalError":'内部错误',
-                 "InvalidParameter.InvalidPendingWindowInDays":'计划删除时间参数非法',
+                 "InternalError":'內部錯誤',
+                 "InvalidParameter.InvalidPendingWindowInDays":'計畫刪除時間參數非法',
                  "InvalidParameterValue.InvalidKeyId":'KeyId不合法',
                  "ResourceUnavailable.CmkNotFound":'CMK不存在',
-                 "ResourceUnavailable.CmkShouldBeDisabled":'未被禁用的CMK不能被计划删除',
-                 "ResourceUnavailable.CmkStateNotSupport":'CMK 状态不支持该操作',
-                 "UnauthorizedOperation":'未授权操作'
+                 "ResourceUnavailable.CmkShouldBeDisabled":'未被禁用的CMK不能被計畫刪除',
+                 "ResourceUnavailable.CmkStateNotSupport":'CMK 狀態不支持該操作',
+                 "UnauthorizedOperation":'未授權操作'
               };
               let ErrOr = Object.assign(ErrorTips, ErrTips);
               this.$message({
@@ -122,11 +122,11 @@ export default {
            this.$parent.getData();
         }else{
             let ErrTips = {
-                 "InternalError":'内部错误',
+                 "InternalError":'內部錯誤',
                  "InvalidParameterValue.InvalidKeyId":'KeyId不合法',
                  "ResourceUnavailable.CmkNotFound":'CMK不存在',
-                 "ResourceUnavailable.CmkNotPendingDelete":'MK不是计划删除状态不能被执行取消计划删除',
-                 "UnauthorizedOperation":'未授权操作'
+                 "ResourceUnavailable.CmkNotPendingDelete":'MK不是計畫刪除狀態不能被執行取消計畫刪除',
+                 "UnauthorizedOperation":'未授權操作'
             };
             let ErrOr = Object.assign(ErrorTips, ErrTips);
             this.$message({

@@ -81,12 +81,12 @@ export default {
            this.$parent.GetList();
         }else{
             let ErrTips = {
-                "InternalError":'	内部错误',
-                "InvalidParameter":'参数错误',
+                "InternalError":'	內部錯誤',
+                "InvalidParameter":'參數錯誤',
                 "InvalidParameterValue.InvalidKeyId":'KeyId不合法',
                 "ResourceUnavailable.CmkNotFound":'CMK不存在',
-                "UnauthorizedOperation":'未授权操作',
-                "UnsupportedOperation.ExternalCmkCanNotRotate":'用户导入类型的CMK禁止轮换'
+                "UnauthorizedOperation":'未授權操作',
+                "UnsupportedOperation.ExternalCmkCanNotRotate":'用戶導入類型的CMK禁止輪換'
             };
             let ErrOr = Object.assign(ErrorTips, ErrTips);
             this.$message({
@@ -113,11 +113,11 @@ export default {
           this.$parent.GetList();
         }else{
           let ErrTips = {
-             "InternalError":'内部错误',
-             "InvalidParameter":'参数错误',
+             "InternalError":'內部錯誤',
+             "InvalidParameter":'參數錯誤',
              "InvalidParameterValue.InvalidKeyId":'KeyId不合法',
              "ResourceUnavailable.CmkNotFound":'CMK不存在',
-             "UnauthorizedOperation":'未授权操作'
+             "UnauthorizedOperation":'未授權操作'
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
