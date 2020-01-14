@@ -156,7 +156,7 @@
             @selection-change="handleSelectionChangeUser"
             v-loading="loading1"
           >
-            <el-table-column type="selection" prop="Uin" width="28"></el-table-column>
+            <el-table-column type="selection" prop="Uin" width="28" :selectable="checkboxT"></el-table-column>
             <el-table-column prop="Name" :label="$t('CAM.userGroup.user')" show-overflow-tooltip></el-table-column>
             <el-table-column :label="$t('CAM.userList.userChose')" width="100">
               <template slot-scope="scope">
@@ -259,6 +259,13 @@ export default {
     this.init();
   },
   methods: {
+    checkboxT(row, index) {
+      if (row.status == 1) {
+        return false;
+      } else {
+        return true;
+      }
+    },
     // page操作
     handleCurrentChange(val) {
       this.currpage = val;
@@ -316,13 +323,28 @@ export default {
         .post(USER_LIST, params)
         .then(res => {
           this.userData = [];
-          this.userAllData = res.Response.Data;
-          this.totalNum = this.userData.length;
-          this.getUsers();
-          // 获取数据成功，打开dialog。
-          this.dialogVisible = true;
-          this.loading1 = false;
-          // this.cancel()
+          this.userAllData1 = res.Response.Data;
+          const param = {
+            Version: "2019-01-16",
+            GroupId: rowId
+          };
+          this.axios.post(GROUP_USERS, param).then(res => {
+            this.userAllData1.forEach(item => {
+              item.status = 0;
+              res.Response.UserInfo.forEach(val => {
+                if (val.Uid == item.Uid) {
+                  item.status = 1;
+                }
+              });
+            });
+            this.userAllData = this.userAllData1;
+            this.totalNum = this.userData.length;
+            // this.userData = this.userAllData1;
+            this.getUsers();
+            // 获取数据成功，打开dialog。
+            this.dialogVisible = true;
+            this.loading1 = false;
+          });
         })
         .catch(error => {
           console.log(error);
@@ -340,37 +362,37 @@ export default {
       this.axios
         .post(GROUP_USERS, paramsGroup)
         .then(resGroup => {
-          if(resGroup.Response.Error === undefined){
-              // 不直接将子用户信息赋予用户组选择框中,是避免页面出现 过滤后的子用户信息刷新覆盖初始信息
-              owneruserData = resGroup.Response.UserInfo;
-              // 用户组拥有子用户，系统将拥有子用户从用户组添加框中去掉，避免重复选择
-              if (owneruserData != "") {
-                for (var i = 0; i < owneruserData.length; i++) {
-                  let ownerObj = owneruserData[i];
-                  for (var j = 0; j < _this.userAllData.length; j++) {
-                    let allObj = _this.userAllData[j];
-                    if (allObj.Uin === ownerObj.Uin) {
-                      _this.userAllData.splice(j, 1);
-                    }
+          if (resGroup.Response.Error === undefined) {
+            // 不直接将子用户信息赋予用户组选择框中,是避免页面出现 过滤后的子用户信息刷新覆盖初始信息
+            owneruserData = resGroup.Response.UserInfo;
+            // 用户组拥有子用户，系统将拥有子用户从用户组添加框中去掉，避免重复选择
+            if (owneruserData != "") {
+              for (var i = 0; i < owneruserData.length; i++) {
+                let ownerObj = owneruserData[i];
+                for (var j = 0; j < _this.userAllData.length; j++) {
+                  let allObj = _this.userAllData[j];
+                  if (allObj.Uin === ownerObj.Uin) {
+                    _this.userAllData.splice(j, 1);
                   }
                 }
-                _this.userData = _this.userAllData;
-                _this.json = _this.userData;
-              } else {
-                _this.userData = _this.userAllData;
-                _this.json = _this.userData;
               }
-          }else{
-              let ErrTips = {
-                 "ResourceNotFound.GroupNotExist":'用户组不存在'
-              };
-              let ErrOr = Object.assign(ErrorTips, ErrTips);
-              this.$message({
-                message: ErrOr[res.Response.Error.Code],
-                type: "error",
-                showClose: true,
-                duration: 0
-              });
+              _this.userData = _this.userAllData;
+              _this.json = _this.userData;
+            } else {
+              _this.userData = _this.userAllData;
+              _this.json = _this.userData;
+            }
+          } else {
+            let ErrTips = {
+              "ResourceNotFound.GroupNotExist": "用户组不存在"
+            };
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
           }
         })
         .catch(error => {
@@ -430,18 +452,20 @@ export default {
         this.axios
           .post(ADD_GROUPTOLIST, params)
           .then(data => {
-            if(data.Response.Error === undefined){
+            if (data.Response.Error === undefined) {
               this.$message({
                 message: this.$t("CAM.userGroup.successInfo"),
                 type: "success"
               });
               this.init();
-            }else{
+            } else {
               let ErrTips = {
-                 "InvalidParameter.GroupNotExist":'用户组不存在',
-                 "InvalidParameter.GroupUserFull":'用户组中的子用户数量达到上限',
-                 "InvalidParameter.UserGroupFull":'子用户加入的用户组数量达到上限',
-                 "ResourceNotFound.UserNotExist":'用户不存在'
+                "InvalidParameter.GroupNotExist": "用户组不存在",
+                "InvalidParameter.GroupUserFull":
+                  "用户组中的子用户数量达到上限",
+                "InvalidParameter.UserGroupFull":
+                  "子用户加入的用户组数量达到上限",
+                "ResourceNotFound.UserNotExist": "用户不存在"
               };
               let ErrOr = Object.assign(ErrorTips, ErrTips);
               this.$message({
@@ -451,7 +475,7 @@ export default {
                 duration: 0
               });
             }
-           
+
             // this.$emit("update")
             // this.cancel()
           })
