@@ -24,7 +24,7 @@
                 <li>
                   <div class="li-one">
                     <div class="li-p-one">描述</div>
-                    <div class="li-p-two">{{form.textarea | descriptions}}<i class="el-icon-edit" style="cursor: pointer;" @click="getEditTwo()"></i></div>
+                    <div class="li-p-two">{{forminput.textarea | descriptions}}<i class="el-icon-edit" style="cursor: pointer;" @click="getEditTwo()"></i></div>
                   </div>
                 </li>
                 <li>
@@ -52,19 +52,24 @@
         </el-dialog>
         <!-- 修改描述 -->
         <el-dialog title="修改镜像仓库描述" :visible.sync="dialogFormVisible2">
-          <el-form :model="form">
-            <el-form-item label="描述" :label-width="formLabelWidth">
+          <el-form :model="forminput" ref="forminput">
+            <el-form-item label="描述" :label-width="formLabelWidth"  prop="textarea"
+            :rules="[
+              { max: 1000, message: '长度不能超过1000个字符', trigger: 'blur' }
+            ]">
                 <el-input
                   type="textarea"
                   :rows="4"
                   placeholder="请输入内容"
-                  v-model="form.textarea">
+                  v-model="forminput.textarea"
+                  >
                 </el-input>
+                 <p style="font-size:12px;color:#bbb;">最长为1000个字符</p>
             </el-form-item>
           </el-form>
           <div slot="footer" class="dialog-footer">
             <el-button @click="dialogFormVisible2 = false">取 消</el-button>
-            <el-button type="primary" @click="dialogFormVisible2 = false">确 定</el-button>
+            <el-button type="primary" @click="submitForm('forminput')">确 定</el-button>
           </div>
         </el-dialog>
     </el-card>
@@ -84,7 +89,9 @@ export default {
       dialogFormVisible: false,
       dialogFormVisible2: false,
       form: {
-        region: '',
+        region: ''
+      },
+      forminput: {
         textarea: ''
       },
       formLabelWidth: '100px'
@@ -100,12 +107,30 @@ export default {
     setPublic () {
       this.SetMyMirrorPublic()
     },
-    getContext (e) {
-      let getText = e.currentTarget.previousElementSibling.innerHTML
-      this.copy(getText)
+    submitForm (formName) {
+      console.log(formName)
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          this.dialogFormVisible2 = !valid
+          this.description = this.forminput.textarea
+          console.log(this.description)
+          this.SetMyMirrorDesc()
+        } else {
+          console.log('error submit!!')
+          return false
+        }
+      })
+    },
+    // @blur="setDescription()"
+    setDescription () {
+      this.description = this.forminput.textarea
     },
     getEditTwo () {
       this.dialogFormVisible2 = true
+    },
+    getContext (e) {
+      let getText = e.currentTarget.previousElementSibling.innerHTML
+      this.copy(getText)
     },
     copy (data) { // 复制功能
       let url = data
@@ -131,14 +156,14 @@ export default {
         if (res.code === 0) {
           this.name = res.data.repoInfo[0].reponame
           this.form.region = res.data.repoInfo[0].public.toString()
-          this.form.textarea = res.data.repoInfo[0].description
+          this.forminput.textarea = res.data.repoInfo[0].description
           this.creationTime = res.data.repoInfo[0].creationTime
           this.server = res.data.server
-          console.log(res.data)
+          // console.log(res.data)
         }
       })
     },
-    SetMyMirrorPublic () { // 获得我的镜像数据
+    SetMyMirrorPublic () { // 修改类型
       const param = {
         reponame: this.name,
         public: Number(this.form.region)
@@ -147,10 +172,10 @@ export default {
         console.log(res)
       })
     },
-    SetMyMirrorDesc () { // 获得我的镜像数据
+    SetMyMirrorDesc () { // 修改描述
       const param = {
         reponame: this.name,
-        public: this.form.textarea
+        description: this.description
       }
       this.axios.post(MIRROR_UPDATE_DESC, param).then(res => {
         console.log(res)
