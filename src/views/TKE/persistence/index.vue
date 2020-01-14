@@ -1,5 +1,5 @@
 <template>
-  <div class="persistence-wrap">
+  <div class="persistence-wrap" v-loading='funllscreenLoading'>
     <div class="back-hd flex">
       <h2>事件持久化</h2>
       <div style="width:20px"></div>
@@ -77,7 +77,8 @@ export default {
   name:'persistence',
   data(){
     return{
-      list: []
+      list: [],
+      funllscreenLoading:false,
     }
   },
   created() {
@@ -85,11 +86,13 @@ export default {
   },
   methods: {
     getData() {
+      this.funllscreenLoading = true;
       let params = {
         Version: "2018-05-25"
       }
       const res = this.axios.post(WARNING_GetUSER,params).then(res=>{
         console.log(res);
+        this.funllscreenLoading = false;
       });
     }
   },

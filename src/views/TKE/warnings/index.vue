@@ -9,7 +9,8 @@
       <div style="width:20px"></div>
       <div style="padding-top:6px;">集群</div> 
       &nbsp;
-      <el-select size="mini" v-model="value" placeholder="请选择" style="margin-bottom:5px;">
+      <el-select size="mini" v-model="value" placeholder="请选择"
+      style="margin-bottom:5px;">
         <el-option
           v-for="item in options"
           :key="item.value"
@@ -32,7 +33,7 @@
         </div>
       </div>
       <!-- 内容 -->
-      <div class="event-persistence">
+      <div class="event-persistence" v-loading='funllscreenLoading'>
         <div class="ep-data-card-main" style="padding:5px 0 10px 0;">
           <el-row>
             <el-col :span="5"><div class="font"><input type="checkbox" class="app-tke-fe-checkbox"> 告警策略名称</div></el-col>
@@ -42,7 +43,6 @@
             <el-col :span="5"><div class="font">操作</div></el-col>
           </el-row>
         </div>
-        <!-- 数据绑定 -->
         <div class="ep-data-card-main font" style="text-align:center;" v-if="length=='0'">
           您选择的集群的告警设置列表为空，您可以
           <a href="">新建告警设置</a>，或切换到其他集群
@@ -108,7 +108,20 @@ export default {
       value: '',
       listData: [],
       multipleSelection: [],
-      funllscreenLoading:false
+      funllscreenLoading:false,
+      tableData: [{
+          date: '2016-05-03',
+          name: '王小虎',
+          address: '上海市普陀区金沙江路 1518 弄'
+        }, {
+          date: '2016-05-02',
+          name: '王小虎',
+          address: '上海市普陀区金沙江路 1518 弄'
+        }, {
+          date: '2016-05-04',
+          name: '王小虎',
+          address: '上海市普陀区金沙江路 1518 弄'
+        }]
     }
   },
   watch:{
@@ -119,6 +132,7 @@ export default {
         Offset: this.pageIndex,
         Version: "2018-05-25"
       }
+      this.funllscreenLoading = true;
       console.log((val.split('('))[0])
       const res = this.axios.post(WARNING_GetCOLONY,params).then(res=>{
         console.log(res)
@@ -133,7 +147,9 @@ export default {
             };
             getData.name = resData.AlarmPolicySettings
           }
+          this.funllscreenLoading = false;
         }else{
+          this.funllscreenLoading = false;
           this.length = 0;
           console.log('数据请求出错')
         }
@@ -143,32 +159,8 @@ export default {
   created() {
     // 获取集群列表
     this.getWarningList();
-    // 数据加载遮罩层
-    this.openFullScreen1();
-    // 获取集群列表详情
-    // this.getWarningListItem();
   },
-  // filters:{
-  //   filterName:function(val){
-  //     console.log(val)
-  //     const list={cluster:'集群',node:'节点',pod:'pod'}
-  //     console.log(list[0].val)
-  //     return list.val
-  //     // console.log(this.list)
-  //     // for(var key in this.list){
-  //     //   if(key == val){
-  //     //     return this.list.val
-  //     //   }
-  //     // }
-  //   }
-  // },
   methods:{
-    openFullScreen1() {
-        this.fullscreenLoading = true;
-        setTimeout(() => {
-          this.fullscreenLoading = false;
-        }, 2000);
-      },
     // 获取集群列表
     async getWarningList() {
       let params = {

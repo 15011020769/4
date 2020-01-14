@@ -9,7 +9,7 @@
       <div style="width:20px"></div>
       <div style="padding-top:6px;">集群</div> 
       &nbsp;
-      <el-select size="mini" v-model="value" placeholder="请选择" @change="GetCOLONY_name()" style="margin-bottom:5px;">
+      <el-select size="mini" v-model="value" placeholder="请选择" style="margin-bottom:5px;">
         <el-option
           v-for="item in options"
           :key="item.value"
@@ -39,7 +39,7 @@
         </div>
       </div>
       <!-- 内容 -->
-      <div class="event-persistence">
+      <div class="event-persistence" v-loading='funllscreenLoading'>
         <div class="ep-data-card-main" style="padding-top:5px;">
           <el-row>
             <el-col :span="4"><div class="font">名称</div></el-col>
@@ -89,6 +89,7 @@ export default {
   name:'logCollection',
   data(){
     return{
+      funllscreenLoading:false,
       options:[],
       value:'',
       Name:{
@@ -103,6 +104,7 @@ export default {
   },
   watch:{
     value(val) {
+      this.funllscreenLoading = true;
       let params = {
         ClusterInstanceId: (val.split('('))[0],
         Limit: this.pageSize,
@@ -122,7 +124,9 @@ export default {
             };
             getData.name = resData.AlarmPolicySettings
           }
+          this.funllscreenLoading = false;
         }else{
+          this.funllscreenLoading = false;
           console.log('数据请求出错')
         }
       });
