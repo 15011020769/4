@@ -103,6 +103,7 @@
 <script>
 import HeadCom from "../UserListNew/components/Head";
 import {DESCRIB_ROLE,DELETE_ROLE} from '@/constants'
+import { ErrorTips } from "@/components/ErrorTips";
 export default {
   data() {
     return {
@@ -138,6 +139,7 @@ export default {
       this.axios
         .post(DESCRIB_ROLE, params)
         .then(data => {
+          if(data.Response.Error === undefined){
           if (
             data === "" ||
             data.Response.error == "undefined" ||
@@ -179,6 +181,19 @@ export default {
             this.total = data.Response.TotalNum;
             // var dataRole = JSON.parse(data.Response.List);
           }
+          }else{
+            let ErrTips = {
+               "InternalError.SystemError":'内部错误',
+               "InvalidParameter.ParamError":'非法入参'
+            };
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+          }
         })
         .catch(error => {
           console.log(error);
@@ -199,7 +214,8 @@ export default {
           this.axios
             .post(DELETE_ROLE, params)
             .then(data => {
-              if (data != null && data.Response.RequestId != "") {
+              if(data.Response.Error === undefined){
+                if (data != null && data.Response.RequestId != "") {
                 this.$message({
                   type: "success",
                   message: this.$t("CAM.Role.delInfo") + "!"
@@ -207,6 +223,21 @@ export default {
                 this.init();
                 this.loading = false;
               }
+              }else{
+                   let ErrTips = {
+                     "InternalError.SystemError":'内部错误',
+                     "InvalidParameter.ParamError":'非法入参',
+                     "InvalidParameter.RoleNotExist":'角色不存在'
+                  };
+                  let ErrOr = Object.assign(ErrorTips, ErrTips);
+                  this.$message({
+                    message: ErrOr[res.Response.Error.Code],
+                    type: "error",
+                    showClose: true,
+                    duration: 0
+                  });
+              }
+              
             })
             .catch(error => {
               this.$message({
