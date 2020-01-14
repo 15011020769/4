@@ -73,7 +73,7 @@
         <el-table-column prop>
           <template slot-scope="scope">
             <p>
-              <i class="el-icon-menu i-font" style="font-size:26px;" @click="Modality(scope.row.MetricName)"></i>
+              <!-- <i class="el-icon-menu i-font" style="font-size:26px;" @click="Modality(scope.row.MetricName)"></i> -->
             </p>
           </template>
         </el-table-column>

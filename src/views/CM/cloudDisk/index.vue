@@ -102,7 +102,7 @@
         searchInput: "",
         TbaleData: [], // 表格数据
         TotalCount: 0,
-        pagesize: 2, // 分页条数
+        pagesize: 10, // 分页条数
         currpage: 1 // 当前页码
       };
     },
