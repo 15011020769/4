@@ -70,8 +70,7 @@ export default {
     };
   },
   components: {
-    HeadCom,
-    SEARCH
+    
   },
   created() {
 
