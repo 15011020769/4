@@ -111,6 +111,7 @@
 
 <script>
 import { POLICY_LIST, ATTACH_ROLE } from "@/constants";
+import { ErrorTips } from "@/components/ErrorTips";
 export default {
   props: {
     roleId: String
