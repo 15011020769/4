@@ -11,7 +11,7 @@
         <el-table-column prop="DestinationCidrBlock" :label="$t('CCN.tabs.tab4tr1')" width></el-table-column>
         <el-table-column prop="Enabled" :label="$t('CCN.tabs.tab4tr2') " width>
           <template slot-scope="scope">
-            <div v-if="scope.row.Enabled == true" class="off_color">有效</div>
+            <div v-if="scope.row.Enabled == true" class="off_color">{{$t('CCN.tabs.worked')}}</div>
             <!-- <div v-if="scope.row.Enabled == 0" class="close_color">关闭</div> -->
             <div v-else>{{$t('CCN.total.newClose')}}</div>
           </template>
@@ -101,8 +101,8 @@ export default {
           this.totalItems = res.Response.TotalCount;
         } else {
           let ErrTips = {
-            "InvalidParameter.Coexist": "参数不支持同时指定",
-            ResourceNotFound: "资源不存在"
+            "InvalidParameter.Coexist": "參數不支持同時指定",
+            ResourceNotFound: "資源不存在"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
@@ -150,7 +150,7 @@ export default {
           } else {
             let ErrTips = {
               "UnsupportedOperation.Ecmp": "不支持ECMP",
-              ResourceNotFound: "资源不存在"
+              ResourceNotFound: "資源不存在"
             };
             let ErrOr = Object.assign(ErrorTips, ErrTips);
             this.$message({
@@ -173,7 +173,7 @@ export default {
             });
           } else {
             let ErrTips = {
-              ResourceNotFound: "资源不存在"
+              ResourceNotFound: "資源不存在"
             };
             let ErrOr = Object.assign(ErrorTips, ErrTips);
             this.$message({

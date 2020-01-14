@@ -3,7 +3,7 @@
     <!-- 时间粒度搜素 -->
     <div class="box">
       <XTimeX v-on:switchData="GetDat" :classsvalue="value"></XTimeX>
-      <span @click="reload">刷新</span>
+      <span @click="reload">{{$t('CCN.tabs.refrush')}}</span>
     </div>
     <div class="box-dis p-style">
       <p>
@@ -16,7 +16,7 @@
     </div>
     <div class="box-table">
       <!-- 表格 -->
-      <el-table :data="tableData" style="width: 100%">
+      <el-table :data="tableData" style="width: 100%" :empty-text="$t('CCN.tabs.nodata')">
         <el-table-column prop width="150">
           <template slot-scope="scope">
             <span style="font-size:12px;font-weight:bolder; color:#333;font-weight:600;">
@@ -277,11 +277,11 @@ export default {
       }
       if (value === "MemUsed") {
         return (value =
-          "使用的內存量，不包括系統緩存和緩存區佔用內存，依賴監控組件安裝採集");
+          "使用的記憶體量，不包括系統緩存和緩存區佔用記憶體，依賴監控組件安裝採集");
       }
       if (value === "MemUsage") {
         return (value =
-          "用戶實際使用的內存量與總內存量之比，不包括緩衝區與系統緩存佔用的內存");
+          "用戶實際使用的記憶體量與總記憶體量之比，不包括緩衝區與系統緩存佔用的記憶體");
       }
       if (value === "TcpCurrEstab") {
         return (value =
