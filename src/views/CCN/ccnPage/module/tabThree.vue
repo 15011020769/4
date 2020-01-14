@@ -4,7 +4,7 @@
     <!-- 地域间带宽 -->
     <div v-show="regionShow">
       <span>
-        限速方式: {{$t("CCN.tabs.tab3tit1")}}
+        {{$t("CCN.tabs.tr7")}}：{{$t("CCN.tabs.tab3tit1")}}
         <span
           @click="updateBandwidthLimitTypeVisible = true"
           style="cursor: pointer;"
@@ -20,12 +20,20 @@
           v-loading="loadShow"
         >
           <template slot="empty">{{$t("CCN.tabs.tab1no")}}</template>
-          <el-table-column prop="CcnRegionBandwidthLimit.Region" label="地域A" width>
+          <el-table-column
+            prop="CcnRegionBandwidthLimit.Region"
+            :label="$t('CCN.tabs.tab3tr3')"
+            width
+          >
             <template slot-scope="scope">
               <p class="edit">{{ scope.row.CcnRegionBandwidthLimit.Region }}</p>
             </template>
           </el-table-column>
-          <el-table-column prop="CcnRegionBandwidthLimit.DstRegion" label="地域B" width>
+          <el-table-column
+            prop="CcnRegionBandwidthLimit.DstRegion"
+            :label="$t('CCN.tabs.tab3tr4')"
+            width
+          >
             <template slot-scope="scope">
               <p class="edit">{{ scope.row.CcnRegionBandwidthLimit.DstRegion }}</p>
             </template>
@@ -69,8 +77,8 @@
         <div>
           <table class="table-div">
             <tr class="t-head">
-              <td>地域A</td>
-              <td>地域B</td>
+              <td>{{$t('CCN.tabs.tab3tr3')}}</td>
+              <td>{{$t('CCN.tabs.tab3tr4')}}</td>
               <td>{{$t('CCN.tabs.tab3tr2')}}</td>
               <td></td>
             </tr>
@@ -106,7 +114,7 @@
         </div>
         <div slot="footer" class="dialog-footer">
           <el-button type="primary" @click="updateLimits()">{{$t('CCN.total.sure')}}</el-button>
-          <el-button @click="updateVisible2 = false">取消</el-button>
+          <el-button @click="updateVisible2 = false">{{ $t('CCN.total.buttonQX') }}</el-button>
         </div>
       </el-dialog>
       <!-- 地域间-修改限速方式的模态窗 -->
@@ -125,7 +133,7 @@
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
-          <el-button @click="updateBandwidthLimitTypeVisible = false">取 消</el-button>
+          <el-button @click="updateBandwidthLimitTypeVisible = false">{{ $t('CCN.total.buttonQX') }}</el-button>
           <el-button type="primary" @click="upBandwidthLimitType(ccnPublic)">
             {{
             $t('CCN.total.sure')
@@ -137,7 +145,7 @@
     <!-- 地域出带宽 -->
     <div v-show="!regionShow">
       <span>
-        限速方式：{{$t("CCN.tabs.tab3tit")}}
+        {{$t("CCN.tabs.tr7")}}：{{$t("CCN.tabs.tab3tit")}}
         <a
           @click="updateBandwidthLimitTypeVisible2 = true"
           style="cursor: pointer;"
@@ -217,7 +225,7 @@
         </div>
         <div slot="footer" class="dialog-footer">
           <el-button type="primary" @click="updateLimits()">{{$t('CCN.total.sure')}}</el-button>
-          <el-button @click="updateVisible = false">取消</el-button>
+          <el-button @click="updateVisible = false">{{ $t('CCN.total.buttonQX') }}</el-button>
         </div>
       </el-dialog>
       <!-- 地域出 修改限速方式的模态窗 -->
@@ -236,7 +244,7 @@
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
-          <el-button @click="updateBandwidthLimitTypeVisible2 = false">取 消</el-button>
+          <el-button @click="updateBandwidthLimitTypeVisible2 = false">{{$t('CCN.total.buttonQX')}}</el-button>
           <el-button type="primary" @click="upBandwidthLimitType(ccnPublic)">
             {{
             $t('CCN.total.sure')
@@ -319,7 +327,7 @@ export default {
           this.totalItems = res.Response.TotalCount;
         } else {
           let ErrTips = {
-            "InvalidParameterValue.Malformed": "入参格式不合法"
+            "InvalidParameterValue.Malformed": "入參格式不合法"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
@@ -349,8 +357,8 @@ export default {
       this.axios.post(MODIFYCCN_REGIONBANDWIDTHLIMITSTYPE, params).then(res => {
         if (res.Response.Error) {
           let ErrTips = {
-            InvalidParameter: "入参不合法",
-            "InvalidParameterValue.Malformed": "入参格式不合法",
+            InvalidParameter: "入參不合法",
+            "InvalidParameterValue.Malformed": "入參格式不合法",
             UnsupportedOperation: "操作不支持"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
@@ -393,7 +401,7 @@ export default {
           this.regionSet = res.Response.RegionSet;
         } else {
           let ErrTips = {
-            InternalError: "内部错误"
+            InternalError: "內部錯誤"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({

@@ -12,7 +12,8 @@
     </div>
     <!-- 表格 -->
     <div class="Table-SY">
-      <el-table :data="ProTableData" height="550" style="width: 100%" id="exportTable" v-loading="loadShow" :empty-text="$t('CVM.clBload.zwsj')">
+      <el-table :data="ProTableData" height="550" style="width: 100%" id="exportTable" v-loading="loadShow"
+        :empty-text="$t('CVM.clBload.zwsj')">
         <el-table-column prop :label="$t('CVM.cloudDisk.mc')">
           <template slot-scope="scope">
             <p>
@@ -73,10 +74,12 @@
   import SEARCH from "@/components/public/SEARCH";
   import Loading from "@/components/public/Loading";
   import {
+    ErrorTips
+  } from '@/components/ErrorTips'
+  import {
     ALL_CITY,
     MYSQL_LIST,
-    ALL_PROJECT,
-    OBJ_LIST
+    ALL_PROJECT
   } from "@/constants";
   export default {
     data() {
@@ -169,13 +172,15 @@
           this.cities = data.data;
           this.selectedRegion = data.data[0].Region;
           this.selectedCity = data.data[0];
-          this.$cookie.set("regionv2", this.selectedCity.Region);
+          localStorage.setItem("regionv1", this.selectedCity.regionCode);
+          localStorage.setItem("regionv2", this.selectedRegion);
         });
       },
       // 切换城市
       changeCity(city) {
         this.selectedCity = city;
-        this.$cookie.set("regionv2", city.Region);
+        localStorage.setItem("regionv1", this.selectedCity.regionCode);
+        localStorage.setItem("regionv2", this.selectedCity.Region);
         this.GetTabularData();
       },
       //选择搜索条件
@@ -204,7 +209,7 @@
       // 添加项目列表的表格数据
       GetTabularData() {
         const param = {
-          Region: this.selectedRegion,
+          Region: localStorage.getItem('regionv2'),
           Version: "2017-03-20",
           Offset: this.currpage * this.pagesize - this.pagesize,
           Limit: this.pagesize
@@ -219,12 +224,25 @@
         this.axios
           .post(MYSQL_LIST, param)
           .then(data => {
-            // console.log(data);
             if (data.Response.Error == undefined) {
               this.TbaleData = data.Response.Items;
               this.TotalCount = data.Response.TotalCount;
             } else {
-              this.$message.error(data.Response.Error.Message);
+              let ErrTips = {
+                'CdbError': '后端错误或者流程错误',
+                'InternalError.DatabaseAccessError': '数据库内部错误',
+                'InternalError.DesError': '系统内部错误',
+                'InvalidParameter': '参数错误',
+                'InvalidParameter.InstanceNotFound': '实例不存在',
+                'OperationDenied.WrongStatus': '后端任务状态非法',
+              }
+              let ErrOr = Object.assign(ErrorTips, ErrTips)
+              this.$message({
+                message: ErrOr[res.Response.Error.Code],
+                type: "error",
+                showClose: true,
+                duration: 0
+              });
             }
           })
           .then(() => {

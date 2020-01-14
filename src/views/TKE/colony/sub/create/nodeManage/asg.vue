@@ -20,7 +20,7 @@
     </div>  
     <div class="colony-main">
 
-      <div class="tke-card tke-formpanel-wrap">
+      <div class="tke-card tke-formpanel-wrap mb60">
         <h4  class="tke-formpanel-title">启动配置</h4>
         <el-form  class="tke-form" :model="asg" label-position='left' label-width="120px" size="mini">
           <el-form-item label="名称">
@@ -91,8 +91,6 @@
 </template>
 
 <script>
-import HeadCom from "@/components/public/Head";
-import SEARCH from "@/components/public/SEARCH";
 import FileSaver from "file-saver";
 import XLSX from "xlsx";
 import { ALL_CITY } from "@/constants";
@@ -110,8 +108,7 @@ export default {
     };
   },
   components: {
-    HeadCom,
-    SEARCH
+   
   },
   created() {
 
@@ -126,88 +123,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
-.colony-wrap >>> .el-button,
-.colony-wrap >>> .el-input__inner {
-  height: 30px !important;
-  line-height: 30px;
-  border-radius: 0;
-  font-size: 12px;
-  padding-top: 0;
-}
-.colony-wrap {
-  .colony-main {
-    padding: 20px;
-    box-sizing: border-box;
-
-    .search {
-      float: right;
-      height: 100%;
-    }
-
-    .colony-table {
-      background: white;
-      margin-top: 10px;
-    }
-    .page {
-      height: 70px;
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-      padding: 0 20px;
-      box-sizing: border-box;
-    }
-  }
-}
-
-
-//by liling
-
-.tke-reminder{
-  padding: 10px 30px 10px 20px;
-  vertical-align: middle;
-  color: #003b80;
-  border: 1px solid #97c7ff;
-  border-radius: 2px;
-  background: #e5f0ff;
-  position: relative;
-  box-sizing: border-box;
-  margin-bottom: 20px;  
-}
-.tke-formpanel-wrap{
-    margin-bottom: 60px;
-  }
-
-
-.w50{
-  width: 50px;
-}
-.w70{
-  width: 70px;
-}
-.w200{
-  width: 200px;
-}
-.w320{
-  width: 320px;
-}
-.w420{
-  width: 420px;
-}
-
-
-.tke-form {
-  .el-icon-refresh{
-    font-size: 16px;
-    font-weight: 800;
-    vertical-align: middle;
-    cursor: pointer;
-  }
-  .el-icon-info{
-   cursor: pointer;
-  }
-}
-
 
 
 </style>

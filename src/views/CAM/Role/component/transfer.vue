@@ -21,7 +21,7 @@
             v-loadmore="debounce"
             v-loading="loading"
           >
-            <el-table-column type="selection" width="55"></el-table-column>
+            <el-table-column type="selection" width="55" :selectable="checkboxT"></el-table-column>
             <el-table-column prop="PolicyName" label="策略名" width="180"></el-table-column>
             <el-table-column align="center">
               <template slot="header" slot-scope="scope">
@@ -72,6 +72,7 @@
 <script>
 let timer;
 import { POLICY_LIST } from "@/constants";
+import { ErrorTips } from "@/components/ErrorTips";
 export default {
   name: "transfer",
   data() {
@@ -105,12 +106,38 @@ export default {
     };
   },
   props: {
-    multipleSelection: Array
+    multipleSelection: Array,
+    rolePolicies: {
+      type: Array,
+      default: []
+    },
+    reload: {
+      type: Boolean,
+      default: false
+    }
+  },
+  watch: {
+    reload(val) {
+      this._getList();
+    },
+    rolePolicies(val) {
+      this._getList();
+    }
   },
   created() {
     this._getList();
   },
   methods: {
+    clear() {
+      this._getList();
+    },
+    checkboxT(row, index) {
+      if (row.status == 1) {
+        return false;
+      } else {
+        return true;
+      }
+    },
     handleCommand(command) {
       this.tableTitle = command.label;
       this.rolePolicyType = command.value;
@@ -145,6 +172,14 @@ export default {
       }
       this.axios.post(POLICY_LIST, params).then(res => {
         this.tableData = res.Response.List;
+        this.tableData.forEach(item => {
+          item.status = 0;
+          this.rolePolicies.forEach(val => {
+            if (val.PolicyId == item.PolicyId) {
+              item.status = 1;
+            }
+          });
+        });
         this.num = res.Response.TotalNum;
         this.loading = false;
       });
@@ -164,6 +199,14 @@ export default {
       this.axios.post(POLICY_LIST, params).then(res => {
         res.Response.List.forEach(item => {
           this.tableData.push(item);
+        });
+        this.tableData.forEach(item => {
+          item.status = 0;
+          this.rolePolicies.forEach(val => {
+            if (val.PolicyId == item.PolicyId) {
+              item.status = 1;
+            }
+          });
         });
       });
     },

@@ -17,3 +17,6 @@ export const ADD_LIST = 'captcha2/DescribeCaptchaUserAllAppId'
 //更新验证码应用APPId信息
 
 export const UPDATEAPPID_INFO = "captcha2/UpdateCaptchaAppIdInfo";
+
+//安全码创建
+export const CREATE_APPID = "captcha2/CreateCaptchaAppId";

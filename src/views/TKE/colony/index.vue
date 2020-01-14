@@ -18,28 +18,27 @@
     <div class="colony-main">
 
       <!-- 新建、搜索相关操作 -->
-      <div class="tke-action">
-        <div class="tke-grid ">
-          <!-- 左侧 -->
-          <div class="grid-left">
-            <el-button @click="goColonyCreate"  size="small" type="primary">新建</el-button>
-          </div>
-          <!-- 右侧 -->
-          <div class="grid-right">
-            <el-input placeholder="请输入内容" size="small" v-model="searchInput" class="tke-search">
-              <el-select class="tke-search-select" v-model="searchSelect" slot="prepend" placeholder="请选择">
-                <el-option v-for="option in searchOptions" :label="option.label" :value="option.value"></el-option>
-              </el-select>
-              <el-button slot="append" icon="el-icon-search"></el-button>
-            </el-input>
-            <i class="el-icon-download tke-download"></i>
-          </div>
+      <div class="tke-grid ">
+        <!-- 左侧 -->
+        <div class="grid-left">
+          <el-button @click="goColonyCreate"  size="small" type="primary">新建</el-button>
         </div>
-        
+        <!-- 右侧 -->
+        <div class="grid-right">
+          <tkeSearch 
+              exportData
+              inputPlaceholder='请输入名称搜索'
+              :searchInput='searchInput'
+              @changeInput="changeSearchInput"
+              @clickSearch="clickSearch"
+              @exportExcel="exportExcel"
+            >
+          </tkeSearch>
+        </div>
       </div>
 
       <!-- 数据列表展示 -->
-      <div class="tke-card">
+      <div class="tke-card mt10">
         <el-table
           :data="list"
           v-loading="loadShow"
@@ -161,6 +160,7 @@
 // import SEARCH from "@/components/public/SEARCH";
 // import FileSaver from "file-saver";
 // import XLSX from "xlsx";
+import tkeSearch from "@/views/TKE/components/tkeSearch";
 import Loading from "@/components/public/Loading";
 
 import {
@@ -206,9 +206,8 @@ export default {
     };
   },
   components: {
-    // HeadCom,
-    // SEARCH
-    Loading
+    Loading,
+    tkeSearch,
   },
   created() {
     this._region();
@@ -336,84 +335,47 @@ export default {
         this.btnload = false;
       });
     },
-    //导出表格
+    
+
+    //监听搜索框的值
+    changeSearchInput(val) {
+      this.searchInput = val;
+      console.log(this.searchInput)
+    },
+    // 点击搜索
+    clickSearch(val){
+      this.searchInput = val;
+      console.log(this.searchInput)
+    },
+    
+    // 导出表格
     exportExcel() {
+      console.log('exportExcel...')
       /* generate workbook object from table */
-      var wb = XLSX.utils.table_to_book(document.querySelector("#exportTable"));
+      // var wb = XLSX.utils.table_to_book(document.querySelector("#exportTable"));
       /* get binary string as output */
-      var wbout = XLSX.write(wb, {
-        bookType: "xlsx",
-        bookSST: true,
-        type: "array"
-      });
-      try {
-        FileSaver.saveAs(
-          new Blob([wbout], { type: "application/octet-stream" }),
-          '集群管理' + ".xlsx"
-        );
-      } catch (e) {
-        if (typeof console !== "undefined") console.log(e, wbout);
-      }
-      return wbout;
+      // var wbout = XLSX.write(wb, {
+      //   bookType: "xlsx",
+      //   bookSST: true,
+      //   type: "array"
+      // });
+      // try {
+      //   FileSaver.saveAs(
+      //     new Blob([wbout], {
+      //       type: "application/octet-stream"
+      //     }),
+      //     this.$t("CVM.clBload.fzjh") + ".xlsx"
+      //   );
+      // } catch (e) {
+      //   if (typeof console !== "undefined") console.log(e, wbout);
+      // }
+      // return wbout;
     },
-    //选择搜索条件
-    changeValue(val) {
-      this.searchValue = val;
-    },
-    changeinput(val) {
-      this.searchInput = val;
-      if (this.searchInput === "") {
-        this.init();
-      }
-    },
-    clicksearch(val) {
-      this.searchInput = val;
-      if (this.searchInput !== "" && this.searchValue !== "") {
-        this.init();
-      } else {
-        this.$message.error("請輸入正確搜索信息");
-      }
-    }
   }
 };
 </script>
 
 <style lang="scss" scoped>
-.colony-wrap >>> .el-button,
-.colony-wrap >>> .el-input__inner {
-  height: 30px !important;
-  line-height: 30px;
-  border-radius: 0;
-  font-size: 12px;
-  padding-top: 0;
-}
-.colony-wrap {
-  .colony-main {
-    padding: 20px;
-    box-sizing: border-box;
-
-    .search {
-      float: right;
-      height: 100%;
-    }
-
-    .colony-table {
-      background: white;
-      margin-top: 10px;
-    }
-    .page {
-      height: 70px;
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-      padding: 0 20px;
-      box-sizing: border-box;
-    }
-  }
-}
-.tke-search-select{
-  width: 90px;
-}
 
 // 弹窗相关
 .tag-danger{

@@ -52,7 +52,7 @@
                       <p v-show="scope.row.group.length == 0">-</p>
                       <p v-show="scope.row.group.length != 0">
                         <a v-for="(item,index) in scope.row.group" :key="index" v-show="index < 2">
-                          {{item.GroupName}}
+                          <span @click="goToGroup(item)">{{item.GroupName}}</span>
                           <span style="color:black;" v-show="index < 1">,</span>
                         </a>
                         <span>
@@ -98,16 +98,22 @@
 
           <el-table-column :label="$t('CAM.userList.userText')">
             <template slot-scope="scope">
-              <i class="el-icon-mobile mobile" @click="detailsUser(scope.row)"></i>
-              <i class="el-icon-message message" @click="detailsUser(scope.row)"></i>
+              <span v-show="scope.row.PhoneNum == '' && scope.row.Email ==''">-</span>
+              <i
+                class="el-icon-mobile mobile pointer"
+                @click="detailsUser(scope.row)"
+                v-show="scope.row.PhoneNum"
+              ></i>
+              <i
+                class="el-icon-message message pointer"
+                @click="detailsUser(scope.row)"
+                v-show="scope.row.Email"
+              ></i>
             </template>
           </el-table-column>
           <el-table-column label="操作" width="140">
             <template scope="scope">
-              <el-button
-                type="text"
-                @click="addRight(scope.row.Uin)"
-              >{{$t('CAM.userList.userStrage')}}</el-button>
+              <el-button type="text" @click="addRight(scope.row)">{{$t('CAM.userList.userStrage')}}</el-button>
               <span>|</span>
               <el-dropdown :hide-on-click="false">
                 <span class="el-dropdown-link" style="color: #3E8EF7">
@@ -153,12 +159,24 @@
     </div>
 
     <!-- 添加用户组弹框 -->
-    <el-dialog :title="title" :visible.sync="authorization" width="60%" :before-close="handleClose">
-      <div class="container" v-if="strategyShow">
-        <transfer :multipleSelection="multipleSelection" @_multipleSelection="_multipleSelection" />
+    <el-dialog
+      :title="title"
+      :visible.sync="authorization"
+      width="60%"
+      :before-close="handleClose"
+      ref="tab1"
+    >
+      <div class="container" v-show="strategyShow">
+        <transfer
+          ref="transfer"
+          :multipleSelection="multipleSelection"
+          @_multipleSelection="_multipleSelection"
+          :rolePolicies="rolePolicies"
+          :reload="reload"
+        />
       </div>
 
-      <div class="container" v-if="userGroupShow">
+      <div class="container" v-show="userGroupShow">
         <div class="container-right">
           <span>{{$t('CAM.userList.listTitle')}}</span>
           <div>
@@ -182,11 +200,11 @@
             @row-click="selectedRow"
             @selection-change="handleSelection"
             :data="userGroup"
-            v-loading="loading"
+            v-loading="groupLoading"
           >
             <el-input size="mini" style="width:20%" />
             <el-button size="mini" class="suo" icon="el-icon-search" show-overflow-tooltip></el-button>
-            <el-table-column type="selection" width></el-table-column>
+            <el-table-column type="selection" :selectable="checkboxT"></el-table-column>
             <el-table-column :label="$t('CAM.userList.userGroup')" prop="GroupName"></el-table-column>
           </el-table>
         </div>
@@ -272,7 +290,8 @@ import {
   POLICY_USER,
   ADD_USERTOGROUP,
   DELETE_USER,
-  RELATE_USER
+  RELATE_USER,
+  QUERY_POLICY
 } from "@/constants";
 import { ErrorTips } from "@/components/ErrorTips";
 import Subscribe from "./components/subscribeNew";
@@ -284,6 +303,10 @@ export default {
   },
   data() {
     return {
+      groupLoading: true,
+      userArr: [],
+      reload: false,
+      rolePolicies: [],
       multipleSelection: [],
       dialogVisible: false,
       json: [],
@@ -321,6 +344,22 @@ export default {
     };
   },
   methods: {
+    goToGroup(item) {
+      var groupId = item.GroupId;
+      this.$router.push({
+        name: "Interfacedetails",
+        query: {
+          GroupId: groupId
+        }
+      });
+    },
+    checkboxT(row, index) {
+      if (row.status == 1) {
+        return false;
+      } else {
+        return true;
+      }
+    },
     goTo() {
       this.$router.push("/UserGroup");
     },
@@ -345,31 +384,31 @@ export default {
           Name: item.Name
         };
         this.axios.post(DELETE_USER, params).then(res => {
-          if(res.Response.Error == undefined){
+          if (res.Response.Error == undefined) {
             this.init();
-          }else{
-              let ErrTips = {
-                 "InternalError":'内部错误',
-                 "InvalidParameter":'参数错误',
-                 "InvalidParameterValue.InstanceNotExist":'实例不存在',
-                 "InvalidParameterValue.RepetitionValue":'已存在相同参数',
-                 "InvalidParameterValue.SubnetIdInvalid":'无效的子网id',
-                 "InvalidParameterValue.SubnetNotBelongToZone":'子网不属于zone',
-                 "InvalidParameterValue.VpcIdInvalid":'无效的 Vpc Id',
-                 "InvalidParameterValue.WrongAction":'Action参数取值错误',
-                 "InvalidParameterValue.ZoneNotSupport":'zone不支持',
-                 "ResourceUnavailable":'资源不可用',
-                 "UnauthorizedOperation":'未授权操作',
-                 "UnsupportedOperation.BatchDelInstanceLimit":'批量删除实例限制',
-                 "UnsupportedOperation.OssReject":'Oss拒绝该操作'
-              };
-              let ErrOr = Object.assign(ErrorTips, ErrTips);
-              this.$message({
-                message: ErrOr[res.Response.Error.Code],
-                type: "error",
-                showClose: true,
-                duration: 0
-              });
+          } else {
+            let ErrTips = {
+              InternalError: "内部错误",
+              InvalidParameter: "参数错误",
+              "InvalidParameterValue.InstanceNotExist": "实例不存在",
+              "InvalidParameterValue.RepetitionValue": "已存在相同参数",
+              "InvalidParameterValue.SubnetIdInvalid": "无效的子网id",
+              "InvalidParameterValue.SubnetNotBelongToZone": "子网不属于zone",
+              "InvalidParameterValue.VpcIdInvalid": "无效的 Vpc Id",
+              "InvalidParameterValue.WrongAction": "Action参数取值错误",
+              "InvalidParameterValue.ZoneNotSupport": "zone不支持",
+              ResourceUnavailable: "资源不可用",
+              UnauthorizedOperation: "未授权操作",
+              "UnsupportedOperation.BatchDelInstanceLimit": "批量删除实例限制",
+              "UnsupportedOperation.OssReject": "Oss拒绝该操作"
+            };
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
           }
         });
       });
@@ -388,23 +427,23 @@ export default {
       this.axios
         .post(DELETE_USER, params)
         .then(res => {
-          if(res.Response.Error === undefined){
+          if (res.Response.Error === undefined) {
             this.init();
-          }else{
+          } else {
             let ErrTips = {
-                 "InternalError":'内部错误',
-                 "InvalidParameter":'参数错误',
-                 "InvalidParameterValue.InstanceNotExist":'实例不存在',
-                 "InvalidParameterValue.RepetitionValue":'已存在相同参数',
-                 "InvalidParameterValue.SubnetIdInvalid":'无效的子网id',
-                 "InvalidParameterValue.SubnetNotBelongToZone":'子网不属于zone',
-                 "InvalidParameterValue.VpcIdInvalid":'无效的 Vpc Id',
-                 "InvalidParameterValue.WrongAction":'Action参数取值错误',
-                 "InvalidParameterValue.ZoneNotSupport":'zone不支持',
-                 "ResourceUnavailable":'资源不可用',
-                 "UnauthorizedOperation":'未授权操作',
-                 "UnsupportedOperation.BatchDelInstanceLimit":'批量删除实例限制',
-                 "UnsupportedOperation.OssReject":'Oss拒绝该操作'
+              InternalError: "内部错误",
+              InvalidParameter: "参数错误",
+              "InvalidParameterValue.InstanceNotExist": "实例不存在",
+              "InvalidParameterValue.RepetitionValue": "已存在相同参数",
+              "InvalidParameterValue.SubnetIdInvalid": "无效的子网id",
+              "InvalidParameterValue.SubnetNotBelongToZone": "子网不属于zone",
+              "InvalidParameterValue.VpcIdInvalid": "无效的 Vpc Id",
+              "InvalidParameterValue.WrongAction": "Action参数取值错误",
+              "InvalidParameterValue.ZoneNotSupport": "zone不支持",
+              ResourceUnavailable: "资源不可用",
+              UnauthorizedOperation: "未授权操作",
+              "UnsupportedOperation.BatchDelInstanceLimit": "批量删除实例限制",
+              "UnsupportedOperation.OssReject": "Oss拒绝该操作"
             };
             let ErrOr = Object.assign(ErrorTips, ErrTips);
             this.$message({
@@ -412,7 +451,7 @@ export default {
               type: "error",
               showClose: true,
               duration: 0
-            }); 
+            });
           }
         })
         .then(() => {
@@ -536,27 +575,27 @@ export default {
         params["Keyword"] = this.searchStrategyValue;
       }
       this.axios.post(POLICY_LIST, params).then(res => {
-        if(res.Response.Error === undefined){
-            if (res != "") {
-              this.loading = false;
-              this.strategyData = res.Response.List;
-              this.TotalCount = this.strategyData.length;
-            } else {
-              this.loading = false;
-              this.$message({
-                type: "info",
-                message: "无响应数据！"
-              });
-            }
-        }else{
-           let ErrTips = {
-             "InternalError.SystemError":'内部错误',
-             "InvalidParameter.GroupIdError":'GroupId字段不合法',
-             "InvalidParameter.KeywordError":'Keyword字段不合法',
-             "InvalidParameter.ParamError":'非法入参',
-             "InvalidParameter.ScopeError":'Scope字段不合法',
-             "InvalidParameter.ServiceTypeError":'ServiceType字段不合法',
-             "InvalidParameter.UinError":'Uin字段不合法'
+        if (res.Response.Error === undefined) {
+          if (res != "") {
+            this.loading = false;
+            this.strategyData = res.Response.List;
+            this.TotalCount = this.strategyData.length;
+          } else {
+            this.loading = false;
+            this.$message({
+              type: "info",
+              message: "无响应数据！"
+            });
+          }
+        } else {
+          let ErrTips = {
+            "InternalError.SystemError": "内部错误",
+            "InvalidParameter.GroupIdError": "GroupId字段不合法",
+            "InvalidParameter.KeywordError": "Keyword字段不合法",
+            "InvalidParameter.ParamError": "非法入参",
+            "InvalidParameter.ScopeError": "Scope字段不合法",
+            "InvalidParameter.ServiceTypeError": "ServiceType字段不合法",
+            "InvalidParameter.UinError": "Uin字段不合法"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
@@ -574,24 +613,50 @@ export default {
     },
     //初始化用户组数据
     userGroups() {
+      this.userGroup = [];
+      this.selectData = [];
+      this.groupLoading = true;
       let params = {
         Version: "2019-01-16"
       };
       if (this.searchGroupValue != null && this.searchGroupValue != "") {
         params["Keyword"] = this.searchGroupValue;
       }
-      this.axios.post(USER_GROUP, params).then(res => {
-        if (res != "") {
-          this.loading = false;
-          this.userGroup = res.Response.GroupInfo;
-        } else {
-          this.loading = false;
-          this.$message({
-            type: "info",
-            message: "无响应数据！"
+      this.axios
+        .post(USER_GROUP, params)
+        .then(res => {
+          if (res != "") {
+            this.loading = false;
+            this.userArr = res.Response.GroupInfo;
+          } else {
+            this.loading = false;
+            this.$message({
+              type: "info",
+              message: "无响应数据！"
+            });
+          }
+        })
+        .then(() => {
+          const params = {
+            Version: "2019-01-16",
+            Uid: this.Uid
+          };
+          this.axios.post(RELATE_USER, params).then(res => {
+            this.userArr.forEach(item => {
+              item.status = 0;
+              res.Response.GroupInfo.forEach(val => {
+                if (val.GroupId == item.GroupId) {
+                  item.status = 1;
+                }
+              });
+            });
           });
-        }
-      });
+          var _this = this;
+          setTimeout(() => {
+            _this.userGroup = _this.userArr;
+            _this.groupLoading = false;
+          }, 1500);
+        });
     },
     //搜索用户组数据
     searchGroup() {
@@ -618,7 +683,7 @@ export default {
       this.deletDatas = deletData;
     },
 
-    //点击添加到组事件
+    //点击添加到组事件 更多
     addRroup(uid) {
       this.Uid = uid;
       this.title = "添加到组";
@@ -628,12 +693,24 @@ export default {
       this.userGroups(); //调用初始化用户组数据
     },
     //点击授权
-    addRight(uin) {
-      this.Uin = uin;
+    addRight(val) {
+      const params = {
+        Version: "2019-01-16",
+        TargetUin: val.Uin
+      };
+      this.axios.post(QUERY_POLICY, params).then(res => {
+        this.rolePolicies = res.Response.List;
+        this.reload = !this.reload;
+      });
+      this.Uin = val.Uin;
       this.title = "关联策略";
       this.authorization = true;
       this.userGroupShow = false;
       this.strategyShow = true;
+      this.multipleSelection = [];
+      if (this.$refs.transfer) {
+        this.$refs.transfer._getList();
+      }
       this.strategy(); //调动初始化策略数据
     },
     //策略与用户组数据弹框确定按钮
@@ -651,28 +728,30 @@ export default {
             AttachUin: this.Uin
           };
           this.axios.post(POLICY_USER, params).then(data => {
-            if(data.Response.Error === undefined){
-                this.init();
-                this.$message("授权成功");
-            }else{
-                let ErrTips = {
-                   "FailedOperation.PolicyFull":'用户策略数超过上限',
-                   "InternalError.SystemError":'内部错误',
-                   "InvalidParameter.AttachmentFull":'principal字段的授权对象关联策略数已达到上限',
-                   "InvalidParameter.ParamError":'非法入参',
-                   "InvalidParameter.PolicyIdError":'输入参数PolicyId不合法',
-                   "InvalidParameter.PolicyIdNotExist":'策略ID不存在',
-                   "InvalidParameter.UserNotExist":'principal字段的授权对象不存在',
-                   "ResourceNotFound.PolicyIdNotFound":'PolicyId指定的资源不存在',
-                   "ResourceNotFound.UserNotExist":'用户不存在'
-                };
-                let ErrOr = Object.assign(ErrorTips, ErrTips);
-                this.$message({
-                  message: ErrOr[res.Response.Error.Code],
-                  type: "error",
-                  showClose: true,
-                  duration: 0
-                });
+            if (data.Response.Error === undefined) {
+              this.init();
+              this.$message("授权成功");
+            } else {
+              let ErrTips = {
+                "FailedOperation.PolicyFull": "用户策略数超过上限",
+                "InternalError.SystemError": "内部错误",
+                "InvalidParameter.AttachmentFull":
+                  "principal字段的授权对象关联策略数已达到上限",
+                "InvalidParameter.ParamError": "非法入参",
+                "InvalidParameter.PolicyIdError": "输入参数PolicyId不合法",
+                "InvalidParameter.PolicyIdNotExist": "策略ID不存在",
+                "InvalidParameter.UserNotExist":
+                  "principal字段的授权对象不存在",
+                "ResourceNotFound.PolicyIdNotFound": "PolicyId指定的资源不存在",
+                "ResourceNotFound.UserNotExist": "用户不存在"
+              };
+              let ErrOr = Object.assign(ErrorTips, ErrTips);
+              this.$message({
+                message: ErrOr[res.Response.Error.Code],
+                type: "error",
+                showClose: true,
+                duration: 0
+              });
             }
           });
         });
@@ -690,23 +769,25 @@ export default {
             "Info.0.GroupId": item.GroupId
           };
           this.axios.post(ADD_USERTOGROUP, params).then(res => {
-            if(res.Response.Error === undefined){
-                this.$message("添加成功");
-                this.init();
-            }else{
-                let ErrTips = {
-                   "InvalidParameter.GroupNotExist":'用户组不存在',
-                   "InvalidParameter.GroupUserFull":'用户组中的子用户数量达到上限',
-                   "InvalidParameter.UserGroupFull":'子用户加入的用户组数量达到上限',
-                   "ResourceNotFound.UserNotExist":'用户不存在'
-                };
-                let ErrOr = Object.assign(ErrorTips, ErrTips);
-                this.$message({
-                  message: ErrOr[res.Response.Error.Code],
-                  type: "error",
-                  showClose: true,
-                  duration: 0
-                });
+            if (res.Response.Error === undefined) {
+              this.$message("添加成功");
+              this.init();
+            } else {
+              let ErrTips = {
+                "InvalidParameter.GroupNotExist": "用户组不存在",
+                "InvalidParameter.GroupUserFull":
+                  "用户组中的子用户数量达到上限",
+                "InvalidParameter.UserGroupFull":
+                  "子用户加入的用户组数量达到上限",
+                "ResourceNotFound.UserNotExist": "用户不存在"
+              };
+              let ErrOr = Object.assign(ErrorTips, ErrTips);
+              this.$message({
+                message: ErrOr[res.Response.Error.Code],
+                type: "error",
+                showClose: true,
+                duration: 0
+              });
             }
           });
         });
@@ -764,6 +845,9 @@ export default {
 }
 .wrap >>> .el-table__expanded-cell:hover {
   background: rgb(250, 250, 250);
+}
+.pointer{
+  cursor: pointer;
 }
 .wrap {
   width: 100%;

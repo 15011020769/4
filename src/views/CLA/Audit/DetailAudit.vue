@@ -5,7 +5,7 @@
       {{title}}
       <el-switch
         v-model="value"
-        inactive-text="開啟日誌記錄"
+        :inactive-text="$t('CLA.total.logOn')"
         style="float:right;margin-top:5px;"
         @change="_switch"
       ></el-switch>
@@ -352,7 +352,7 @@ export default {
       value: true,
       regionType: {
         "ap-beijing": "北京",
-        "ap-guangzhou": "广州",
+        "ap-guangzhou": "廣州",
         "ap-hongkong": "香港",
         "ap-shanghai": "上海"
       },
@@ -375,15 +375,15 @@ export default {
         this.axios.post(GZJ_STRATLOGGING, params).then(res => {
           if (res.Response.Error === undefined) {
             this.$message({
-              message: "开启成功",
+              message: "開啟成功",
               type: "success",
               showClose: true,
               duration: 0
             });
           } else {
             let ErrTips = {
-              "InternalError.StartLoggingError": "内部错误，请联系开发人员",
-              "ResourceNotFound.AuditNotExist": "跟踪集不存在"
+              "InternalError.StartLoggingError": "內部錯誤，請聯繫開發人員",
+              "ResourceNotFound.AuditNotExist": "跟蹤集不存在"
             };
             let ErrOr = Object.assign(ErrorTips, ErrTips);
             this.$message({
@@ -405,15 +405,15 @@ export default {
         this.axios.post(GZJ_STOPLOGGING, params).then(res => {
           if (res.Response.Error === undefined) {
             this.$message({
-              message: "关闭成功",
+              message: "關閉成功",
               type: "success",
               showClose: true,
               duration: 0
             });
           } else {
             let ErrTips = {
-              "InternalError.StartLoggingError": "内部错误，请联系开发人员",
-              "ResourceNotFound.AuditNotExist": "跟踪集不存在"
+              "InternalError.StartLoggingError": "內部錯誤，請聯繫開發人員",
+              "ResourceNotFound.AuditNotExist": "跟蹤集不存在"
             };
             let ErrOr = Object.assign(ErrorTips, ErrTips);
             this.$message({
@@ -446,8 +446,8 @@ export default {
           this.$router.push("/Audit");
         } else {
           let ErrTips = {
-            "InternalError.DeleteAuditError": "删除跟踪集失败，请联系开发人员",
-            "ResourceNotFound.AuditNotExist": "跟踪集不存在"
+            "InternalError.DeleteAuditError": "刪除跟蹤集失敗，請聯繫開發人員",
+            "ResourceNotFound.AuditNotExist": "跟蹤集不存在"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
@@ -513,17 +513,17 @@ export default {
             } else {
               let ErrTips = {
                 "InternalError.CmqError":
-                  "创建cmq时发生异常，可能您准备创建的cmq队列已经存在，也有可能您没有权限或者欠费",
-                "InternalError.UpdateAuditError": "内部错误，请联系开发人员",
+                  "創建cmq時發生異常，可能您準備創建的cmq隊列已經存在，也有可能您沒有許可權或者欠費",
+                "InternalError.UpdateAuditError": "內部錯誤，請聯繫開發人員",
                 "InvalidParameterValue.CmqRegionError":
-                  "云审计目前不支持输入的cmq地域",
+                  "雲審計目前不支持輸入的cmq地域",
                 "InvalidParameterValue.CosRegionError":
-                  "云审计目前不支持输入的cos地域",
+                  "雲審計目前不支持輸入的cos地域",
                 "InvalidParameterValue.ReadWriteAttributeError":
-                  "读写属性值仅支持：1,2,3。1代表只读，2代表只写，3代表全部",
+                  "讀寫屬性值僅支持：1,2,3。1代表只讀，2代表只寫，3代表全部",
                 "MissingParameter.cmq":
-                  "IsEnableCmqNotify输入1的话，IsCreateNewQueue、CmqQueueName和CmqRegion都是必须参数",
-                "ResourceNotFound.AuditNotExist": "跟踪集不存在"
+                  "IsEnableCmqNotify輸入1的話，IsCreateNewQueue、CmqQueueName和CmqRegion都是必須參數",
+                "ResourceNotFound.AuditNotExist": "跟蹤集不存在"
               };
               let ErrOr = Object.assign(ErrorTips, ErrTips);
               this.$message({
@@ -588,7 +588,7 @@ export default {
           this.cmqSelect.name = arr[0].label;
         } else {
           let ErrTips = {
-            "InternalError.ListCmqEnableRegionError": "内部错误，请联系开发人员"
+            "InternalError.ListCmqEnableRegionError": "內部錯誤，請聯繫開發人員"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
@@ -639,7 +639,7 @@ export default {
           this.select.name = arr[0].label;
         } else {
           let ErrTips = {
-            "InternalError.ListCosEnableRegionError": "内部错误，请联系开发人员"
+            "InternalError.ListCosEnableRegionError": "內部錯誤，請聯繫開發人員"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
@@ -671,8 +671,8 @@ export default {
         } else {
           let ErrTips = {
             "InternalError.DescribeAuditError":
-              "查看跟踪集详情错误，请联系开发人员",
-            "ResourceNotFound.AuditNotExist": "跟踪集不存在"
+              "查看跟蹤集詳情錯誤，請聯繫開發人員",
+            "ResourceNotFound.AuditNotExist": "跟蹤集不存在"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
@@ -734,17 +734,17 @@ export default {
         } else {
           let ErrTips = {
             "InternalError.CmqError":
-              "创建cmq时发生异常，可能您准备创建的cmq队列已经存在，也有可能您没有权限或者欠费",
-            "InternalError.UpdateAuditError": "内部错误，请联系开发人员",
+              "創建cmq時發生異常，可能您準備創建的cmq隊列已經存在，也有可能您沒有許可權或者欠費",
+            "InternalError.UpdateAuditError": "內部錯誤，請聯繫開發人員",
             "InvalidParameterValue.CmqRegionError":
-              "云审计目前不支持输入的cmq地域",
+              "雲審計目前不支持輸入的cmq地域",
             "InvalidParameterValue.CosRegionError":
-              "云审计目前不支持输入的cos地域",
+              "雲審計目前不支持輸入的cos地域",
             "InvalidParameterValue.ReadWriteAttributeError":
-              "读写属性值仅支持：1,2,3。1代表只读，2代表只写，3代表全部。",
+              "讀寫屬性值僅支持：1,2,3。1代表只讀，2代表只寫，3代表全部。",
             "MissingParameter.cmq":
-              "IsEnableCmqNotify输入1的话，IsCreateNewQueue、CmqQueueName和CmqRegion都是必须参数。",
-            "ResourceNotFound.AuditNotExist": "跟踪集不存在"
+              "IsEnableCmqNotify輸入1的話，IsCreateNewQueue、CmqQueueName和CmqRegion都是必須參數。",
+            "ResourceNotFound.AuditNotExist": "跟蹤集不存在"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({

@@ -12,9 +12,7 @@
           <span>{{ $t('CLA.total.ww') }}</span>
         </p>
         <p>
-          <span
-            >{{ $t('CLA.total.lsjlts2') }}</span
-          >
+          <span>{{ $t('CLA.total.lsjlts2') }}</span>
         </p>
         <p>
           <span>{{ $t('CLA.total.lsjlts3') }}</span>
@@ -22,28 +20,34 @@
         </p>
       </div>
       <div class="btn">
-        <el-button :plain="true" type="text" @click="dialogVisible = true">{{ $t('CLA.total.sqdc') }}</el-button>
+        <el-button
+          :plain="true"
+          type="text"
+          @click="dialogVisible = true"
+        >{{ $t('CLA.total.sqdc') }}</el-button>
       </div>
       <div class="tables">
-        <el-table :data="tableData" style="width: 100%">
+        <el-table :data="tableData" style="width: 100%" :empty-text="$t('CLA.total.zwsj')">
           <template slot="empty">{{ $t('CLA.total.zwlsdcjl') }}</template>
           <el-table-column prop="name" :label="$t('CLA.total.sjdcfw')">
-            <template slot-scope="scope">
-              {{ scope.row.name }}
-            </template>
+            <template slot-scope="scope">{{ scope.row.name }}</template>
           </el-table-column>
-          <el-table-column prop="" :label="$t('CLA.total.sjdx')">
-            <template slot-scope="scope"> {{ scope.row.size }} MB </template>
+          <el-table-column prop :label="$t('CLA.total.sjdx')">
+            <template slot-scope="scope">{{ scope.row.size }} MB</template>
           </el-table-column>
-          <el-table-column prop="" :label="$t('CLA.total.sjyxq')">
-            <template slot-scope="scope"> {{ scope.row.time }} 天 </template>
+          <el-table-column prop :label="$t('CLA.total.sjyxq')">
+            <template slot-scope="scope">{{ scope.row.time }} {{ $t('CLA.total.day') }}</template>
           </el-table-column>
           <el-table-column prop="status" :label="$t('CLA.total.zt')">
             <template slot-scope="scope">
               <div v-if="scope.row.status == 0">
-                <i class="el-icon-time close_color"></i> {{ $t('CLA.total.dtd') }}
+                <i class="el-icon-time close_color"></i>
+                {{ $t('CLA.total.dtd') }}
               </div>
-              <div v-if="scope.row.status == 1"><i class="el-icon-time off_color"></i>{{ $t('CLA.total.td') }}</div>
+              <div v-if="scope.row.status == 1">
+                <i class="el-icon-time off_color"></i>
+                {{ $t('CLA.total.td') }}
+              </div>
             </template>
           </el-table-column>
           <el-table-column prop="dataTime" :label="$t('CLA.total.sjsqsj')"></el-table-column>
@@ -61,8 +65,7 @@
           :page-size="10"
           layout="total, sizes, prev, pager, next, jumper"
           :total="4"
-        >
-        </el-pagination>
+        ></el-pagination>
       </div>
     </div>
     <!-- 导出模态框 -->
@@ -81,13 +84,14 @@
           </el-radio-group>
         </el-form-item>
       </el-form>
-      <el-dialog width="30%" :title="$t('CLA.total.czts')" :visible.sync="innerVisible" append-to-body>
-        <p>
-         {{ $t('CLA.total.dcts') }} 
-        </p>
-        <p>
-         {{ $t('CLA.total.dcts2') }} 
-        </p>
+      <el-dialog
+        width="30%"
+        :title="$t('CLA.total.czts')"
+        :visible.sync="innerVisible"
+        append-to-body
+      >
+        <p>{{ $t('CLA.total.dcts') }}</p>
+        <p>{{ $t('CLA.total.dcts2') }}</p>
         <el-radio v-model="radioIn">{{ $t('CLA.total.wyzx') }}</el-radio>
         <div slot="footer" class="dialog-footer">
           <el-button type="primary" @click="innerVisible = false">{{ $t('CLA.total.qd') }}</el-button>
@@ -109,7 +113,7 @@
           </el-radio-group>
         </el-form-item>
         <el-form-item :label="$t('CLA.total.coscct')">
-          <el-select v-model="sendCos.region" placeholder="">
+          <el-select v-model="sendCos.region" placeholder>
             <el-option :label="$t('CLA.total.zgtb')" value="taibei"></el-option>
           </el-select>
           <el-input v-model="sendCos.input" :placeholder="$t('CLA.total.qsrnr')"></el-input>
@@ -138,10 +142,10 @@
 </template>
 <script>
 export default {
-  data () {
+  data() {
     return {
-      value1: '',
-      input3: '',
+      value1: "",
+      input3: "",
       visible: false,
       dialogVisible: false, // 模态框
       discardVisible: false,
@@ -153,38 +157,38 @@ export default {
       },
       tableData: [
         {
-          name: '2019-10-19 ~ 2019-11-19',
-          size: '129',
-          time: '5',
+          name: "2019-10-19 ~ 2019-11-19",
+          size: "129",
+          time: "5",
           status: 0,
-          dataTime: '2019-11-19 19:40:37'
+          dataTime: "2019-11-19 19:40:37"
         }
       ], // 列表数据
       sendCos: {
         isCreate: 0,
-        region: '',
-        input: ''
+        region: "",
+        input: ""
       },
       currentPage: 1
-    }
+    };
   },
   methods: {
     // 模态框的关闭
-    handleClose (done) {
-      this.$confirm('確認關閉？')
+    handleClose(done) {
+      this.$confirm("確認關閉？")
         .then(_ => {
-          done()
+          done();
         })
-        .catch(_ => {})
+        .catch(_ => {});
     },
-    handleSizeChange (val) {
-      console.log(`每頁 ${val} 條`)
+    handleSizeChange(val) {
+      console.log(`每頁 ${val} 條`);
     },
-    handleCurrentChange (val) {
-      console.log(`當前頁: ${val}`)
+    handleCurrentChange(val) {
+      console.log(`當前頁: ${val}`);
     }
   }
-}
+};
 </script>
 
 <style lang="scss" scoped>
@@ -283,7 +287,7 @@ export default {
     color: #0abf5b;
   }
 }
-.el-pagination{
+.el-pagination {
   float: right;
 }
 .formDialog {
@@ -320,13 +324,13 @@ export default {
   ::v-deep .el-input__inner {
     height: 30px;
     width: 200px;
-    line-height: 30px
+    line-height: 30px;
   }
 }
 .el-select {
   ::v-deep .el-input__inner {
     height: 30px;
-    line-height: 30px
+    line-height: 30px;
   }
 }
 .dialog-footer {

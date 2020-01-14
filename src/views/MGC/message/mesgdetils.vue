@@ -1,6 +1,6 @@
 <template>
   <div class="mesg-detils">
-    <HeaderCom title="站内信详情" @_back="back"  :backShow="true"></HeaderCom>
+    <HeaderCom :title="$t('MGC.znxxq')" @_back="back"  :backShow="true"></HeaderCom>
     <div class="detilswrap">
         <div class="wrap" v-html="content">123</div>
     </div>

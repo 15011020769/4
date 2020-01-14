@@ -84,7 +84,7 @@ export default {
         } else {
           let ErrTips = {
             "InternalError.InquireAuditCreditError":
-              "查询可创建跟踪集的数量错误，请联系开发人员"
+              "查詢可創建跟蹤集的數量錯誤，請聯繫開發人員"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
@@ -109,7 +109,7 @@ export default {
         } else {
           let ErrTips = {
             "InternalError.ListAuditsError":
-              "查询跟踪集概要内部错误，请联系开发人员"
+              "查詢跟蹤集概要內部錯誤，請聯繫開發人員"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({

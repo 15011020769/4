@@ -18,7 +18,7 @@
               <el-table-column label="昨日恶意拦截量">-</el-table-column>
               <el-table-column label="操作">
                 <template slot-scope="scope">
-                    <span style="color: #006eff; cursor: pointer;">查看详情</span>
+                    <el-link @click="detailsAppid(scope.row)" type="primary">查看详情</el-link>
                 </template>
               </el-table-column>
             </el-table>
@@ -44,19 +44,21 @@
             <el-input v-model="form.name" style="width:50%;" placeholder="如(小程序短信验证)"></el-input>
           </el-form-item>
           <el-form-item label="验证所属域名" label-width="100px">
-            <el-input v-model="form.name" style="width:50%" placeholder="如(example.com)"></el-input>
+            <el-input v-model="form.domain" style="width:50%" placeholder="如(example.com)"></el-input>
           </el-form-item>
           <el-form-item label="验证场景" label-width="100px">
             <el-select v-model="form.region" placeholder="请选择您的验证场景" style="width:50%">
-              <el-option label="区域一" value="shanghai"></el-option>
-              <el-option label="区域二" value="beijing"></el-option>
+              <el-option label="账号场景(登录,注册等)" value="1"></el-option>
+              <el-option label="短信场景(短信/邮箱验证码)" value="2"></el-option>
+              <el-option label="活动场景(秒杀,领劵等)" value="3"></el-option>
+              <el-option label="其他场景(评论,投票等)" value="4"></el-option>
             </el-select>
           </el-form-item>
         </el-form>
       </span>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisibleBuild = false">取 消</el-button>
-        <el-button type="primary" @click="dialogVisibleBuild = false">确 定</el-button>
+        <el-button type="primary" @click="createAppid">确 定</el-button>
       </span>
     </el-dialog>
     <!-- 导入原有验证弹框 -->
@@ -87,7 +89,7 @@
   </div>
 </template>
 <script>
-import { ADD_LIST } from "@/constants/CAP.js";
+import { ADD_LIST,CREATE_APPID } from "@/constants/CAP.js";
 export default {
   data() {
     return {
@@ -100,14 +102,9 @@ export default {
       dialogVisibleAdd: false, //导入原有验证弹框
       tableData: [],//表格数据
       form: {
-        name: "",
-        region: "",
-        date1: "",
-        date2: "",
-        delivery: false,
-        type: [],
-        resource: "",
-        desc: ""
+         name:'',
+         domain:'',
+         region:''
       }
     };
   },
@@ -133,6 +130,38 @@ export default {
               message: "无响应数据！"
             });
         }
+      });
+    },
+    //点击按钮添加验证码
+    createAppid(){
+       if(this.form.name == "" || this.form.domain == "" || this.form.region == ""){
+           this.$message({
+              type: "error",
+              message: "数据请填写完整!"
+          });
+       }else{
+         let params = {
+           Version:'2019-07-22',
+           AppName:this.form.name,
+           Domain:this.form.domain,
+           SceneType:this.form.region
+        }
+        this.axios.post(CREATE_APPID,params).then(res=>{
+          console.log(res)
+          this.$message({
+              type: "success",
+              message: "添加成功!"
+          });
+          this.addList()
+        })
+        
+        this.dialogVisibleBuild = false;
+     }
+    },
+    //跳转详情页
+    detailsAppid(){
+      this.$router.push({
+        path: "/appIdDetail",
       });
     },
     //分页

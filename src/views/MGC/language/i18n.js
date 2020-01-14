@@ -4,8 +4,8 @@ Vue.use(VueI18n)
 var i18n = new VueI18n({
     locale: 'ft', // 语言标识
     messages: {
-        'jt': require('@/views/TKE/language/jt'),
-        'ft': require('@/views/TKE/language/ft')
+        'jt': require('@/views/MGC/language/jt'),
+        'ft': require('@/views/MGC/language/ft')
     }
 })
 export default i18n

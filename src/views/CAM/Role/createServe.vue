@@ -98,6 +98,7 @@
   </div>
 </template>
 <script>
+import { ErrorTips } from "@/components/ErrorTips";
 import HeadCom from "../UserListNew/components/Head";
 import transfer from "./component/transfer1";
 import { CREATE_ROLE, ATTACH_ROLE } from "@/constants";
@@ -270,35 +271,74 @@ export default {
           '{"version":"2.0","statement":[{"action":"name/sts:AssumeRole","effect":"allow","principal":{"service":["cloudaudit.cloud.tencent.com","cls.cloud.tencent.com"]}}]}'
       };
       this.axios.post(CREATE_ROLE, params).then(data => {
-        let roleId = data.Response.RoleId; // 获取创建的角色id
-        if (data.Response.Error) {
-          if (data.Response.Error.Code == "InvalidParameter.RoleNameError") {
-            this.$message.error("角色名不合法,创建失败");
-          }
-        } else {
-          this.$message("创建角色成功");
-        }
-        let policiesArray = this.policiesSelectedData; // 获取权限策略
-        // 根据获取的角色ID创建角色策略
-        if (roleId != undefined && roleId != "" && policiesArray != "") {
-          for (let i = 0; i < policiesArray.length; i++) {
-            let obj = policiesArray[i];
-            let params = {
-              Action: "AttachRolePolicy",
-              Version: "2019-01-16",
-              PolicyId: obj.PolicyId,
-              AttachRoleId: roleId
+        if(data.Response.Error === undefined){
+            let roleId = data.Response.RoleId; // 获取创建的角色id
+            if (data.Response.Error) {
+              if (data.Response.Error.Code == "InvalidParameter.RoleNameError") {
+                this.$message.error("角色名不合法,创建失败");
+              }
+            } else {
+              this.$message("创建角色成功");
+            }
+            let policiesArray = this.policiesSelectedData; // 获取权限策略
+            // 根据获取的角色ID创建角色策略
+            if (roleId != undefined && roleId != "" && policiesArray != "") {
+              for (let i = 0; i < policiesArray.length; i++) {
+                let obj = policiesArray[i];
+                let params = {
+                  Action: "AttachRolePolicy",
+                  Version: "2019-01-16",
+                  PolicyId: obj.PolicyId,
+                  AttachRoleId: roleId
+                };
+                _this.AttachRolePolicy(params);
+              }
+            }
+            this.back();
+        }else{
+            let ErrTips = {
+               "InternalError.SystemError":'内部错误',
+               "InvalidParameter.AttachmentFull":'principal字段的授权对象关联策略数已达到上限',
+               "InvalidParameter.ConditionError":'策略文档的condition字段不合法',
+               "InvalidParameter.DescriptionLengthOverlimit":'Description入参长度不能大于300字节',
+               "InvalidParameter.ParamError":'非法入参',
+               "InvalidParameter.PrincipalError":'策略文档的principal字段不合法',
+               "InvalidParameter.RoleFull":'角色数量达到上限',
+               "InvalidParameter.RoleNameError":'角色名不合法',
+               "InvalidParameter.RoleNameInUse":'相同名称的角色已存在',
+               "InvalidParameter.UserNotExist":'principal字段的授权对象不存在'
             };
-            _this.AttachRolePolicy(params);
-          }
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
         }
-        this.back();
       });
     },
     // 绑定权限策略到角色
     AttachRolePolicy(params) {
       this.$axios.post(ATTACH_ROLE, params).then(res => {
-        console.log(res);
+        if(res.Response.Error === undefined){
+          console.log(res);
+        }else{
+          let ErrTips = {
+             "InternalError.SystemError":'内部错误',
+             "InvalidParameter.AttachmentFull":'principal字段的授权对象关联策略数已达到上限',
+             "InvalidParameter.ParamError":'非法入参',
+             "InvalidParameter.PolicyIdNotExist":'策略ID不存在',
+             "InvalidParameter.RoleNotExist":'角色不存在'
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
       });
     }
   }

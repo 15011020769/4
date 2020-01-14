@@ -1,6 +1,27 @@
 module.exports = {
-    TME: {
-
+    MGC: {
+        sc: '删除',
+        bjyd: '标记为已读',
+        qbbjyd: '全部标记为已读',
+        jssj: '接收时间',
+        xxlx: '消息类型',
+        xxzlx: '消息子类型',
+        tiao: '条',
+        scqd: '删除后消息将无法恢复，您确定要删除吗？',
+        qd: '确 定',
+        qrbjyd: '确认标记所有已读',
+        qrbjsyxxyd: '确认标记所有消息为已读吗？',
+        ywxx: '运维消息',
+        tfygn: '台富云动态',
+        cpxx: '产品消息',
+        cwxx: '财务消息',
+        znxxq: '站内信详情',
+        tzgg: '通知公告',
+        qsrnr: '请输入内容',
+        bt: '标题',
+        fbsj: '发布时间',
+        zt: '状态',
+        tzggxq: '通知公告详情'
     },
     COM: require('@/components/language/jt'),
 }

@@ -285,7 +285,12 @@
         :before-close="handleClosePolicy"
       >
         <p class="dialog" slot="title">{{$t('CAM.userGroup.createRelevance')}}</p>
-        <transfer @_multipleSelection="_multipleSelection" :multipleSelection="multipleSelection"></transfer>
+        <transfer
+          @_multipleSelection="_multipleSelection"
+          :multipleSelection="multipleSelection"
+          :rolePolicies="rolePolicies"
+          ref="transfer"
+        ></transfer>
         <p style="text-align:center;margin-top:30px">
           <el-button @click="dialogVisiblePolicies = false" size="small">取 消</el-button>
           <el-button
@@ -414,51 +419,52 @@ export default {
       this.axios
         .post(GET_ROLE, paramsInfo)
         .then(res => {
-          if(res.Response.Error === undefined){
-                let resInfo = res.Response.RoleInfo;
-                let PolicyDocument = JSON.parse(resInfo.PolicyDocument);
-                this.TotalCounts =
-                  PolicyDocument.statement[0].principal.service.length;
-                if (typeof PolicyDocument.statement[0].principal.qcs === "object") {
-                  _this.roleCarrier = PolicyDocument.statement[0].principal.qcs;
-                  resInfo.PolicyDocument =
-                    PolicyDocument.statement[0].principal.qcs[0];
-                }
-                if (typeof PolicyDocument.statement[0].principal.qcs === "string") {
-                  _this.roleCarrier.push(PolicyDocument.statement[0].principal.qcs);
-                  resInfo.PolicyDocument = PolicyDocument.statement[0].principal.qcs;
-                }
-                if (
-                  typeof PolicyDocument.statement[0].principal.service === "object"
-                ) {
-                  _this.roleCarrier = PolicyDocument.statement[0].principal.service;
-                  resInfo.PolicyDocument =
-                    PolicyDocument.statement[0].principal.service[0];
-                }
-                if (
-                  typeof PolicyDocument.statement[0].principal.service === "string"
-                ) {
-                  _this.roleCarrier.push(
-                    PolicyDocument.statement[0].principal.service
-                  );
-                  resInfo.PolicyDocument =
-                    PolicyDocument.statement[0].principal.service;
-                }
-                this.roleInfo = resInfo;
-                this.loading = false;
-          }else{
-               let ErrTips = {
-                  "InternalError.SystemError":'内部错误',
-                  "InvalidParameter.ParamError":'非法入参',
-                  "InvalidParameter.RoleNotExist":'角色不存在'
-                };
-                let ErrOr = Object.assign(ErrorTips, ErrTips);
-                this.$message({
-                  message: ErrOr[res.Response.Error.Code],
-                  type: "error",
-                  showClose: true,
-                  duration: 0
-                });
+          if (res.Response.Error === undefined) {
+            let resInfo = res.Response.RoleInfo;
+            let PolicyDocument = JSON.parse(resInfo.PolicyDocument);
+            this.TotalCounts =
+              PolicyDocument.statement[0].principal.service.length;
+            if (typeof PolicyDocument.statement[0].principal.qcs === "object") {
+              _this.roleCarrier = PolicyDocument.statement[0].principal.qcs;
+              resInfo.PolicyDocument =
+                PolicyDocument.statement[0].principal.qcs[0];
+            }
+            if (typeof PolicyDocument.statement[0].principal.qcs === "string") {
+              _this.roleCarrier.push(PolicyDocument.statement[0].principal.qcs);
+              resInfo.PolicyDocument =
+                PolicyDocument.statement[0].principal.qcs;
+            }
+            if (
+              typeof PolicyDocument.statement[0].principal.service === "object"
+            ) {
+              _this.roleCarrier = PolicyDocument.statement[0].principal.service;
+              resInfo.PolicyDocument =
+                PolicyDocument.statement[0].principal.service[0];
+            }
+            if (
+              typeof PolicyDocument.statement[0].principal.service === "string"
+            ) {
+              _this.roleCarrier.push(
+                PolicyDocument.statement[0].principal.service
+              );
+              resInfo.PolicyDocument =
+                PolicyDocument.statement[0].principal.service;
+            }
+            this.roleInfo = resInfo;
+            this.loading = false;
+          } else {
+            let ErrTips = {
+              "InternalError.SystemError": "内部错误",
+              "InvalidParameter.ParamError": "非法入参",
+              "InvalidParameter.RoleNotExist": "角色不存在"
+            };
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
           }
           this.infoLoad = false;
         })
@@ -480,22 +486,22 @@ export default {
       this.axios
         .post(LIST_ATTACHE, paramsList)
         .then(res => {
-          if(res.Response.Error === undefined){
+          if (res.Response.Error === undefined) {
             this.rolePolicies = res.Response.List;
             this.TotalNum = res.Response.TotalNum;
             this.TotalCount = res.Response.TotalNum;
-          }else{
-             let ErrTips = {
-                "InternalError.SystemError":'内部错误',
-                "InvalidParameter.ParamError":'非法入参'
-              };
-              let ErrOr = Object.assign(ErrorTips, ErrTips);
-              this.$message({
-                message: ErrOr[res.Response.Error.Code],
-                type: "error",
-                showClose: true,
-                duration: 0
-              });
+          } else {
+            let ErrTips = {
+              "InternalError.SystemError": "内部错误",
+              "InvalidParameter.ParamError": "非法入参"
+            };
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
           }
           this.loading = false;
         })
@@ -515,28 +521,28 @@ export default {
       this.axios
         .post(DEACH_ROLE, paramsRelieve)
         .then(res => {
-          if(res.Response.Error === undefined){
-              if (res.Response.RequestId) {
-                this.$message({
-                  message: "解绑成功",
-                  type: "success"
-                });
-              }
-              this.getRolePolicy(); // 重新加载
-          }else{
-              let ErrTips = {
-                 "InternalError.SystemError":'内部错误',
-                 "InvalidParameter.ParamError":'非法入参',
-                 "InvalidParameter.PolicyIdNotExist":'策略ID不存在',
-                 "InvalidParameter.RoleNotExist":'角色不存在'
-              };
-              let ErrOr = Object.assign(ErrorTips, ErrTips);
+          if (res.Response.Error === undefined) {
+            if (res.Response.RequestId) {
               this.$message({
-                message: ErrOr[res.Response.Error.Code],
-                type: "error",
-                showClose: true,
-                duration: 0
+                message: "解绑成功",
+                type: "success"
               });
+            }
+            this.getRolePolicy(); // 重新加载
+          } else {
+            let ErrTips = {
+              "InternalError.SystemError": "内部错误",
+              "InvalidParameter.ParamError": "非法入参",
+              "InvalidParameter.PolicyIdNotExist": "策略ID不存在",
+              "InvalidParameter.RoleNotExist": "角色不存在"
+            };
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
           }
         })
         .catch(error => {});
@@ -574,22 +580,23 @@ export default {
       this.axios
         .post(UPDATE_ROLE, paramsUpdate)
         .then(res => {
-          if(res.Response.Error === undefined){
+          if (res.Response.Error === undefined) {
             this.getRoleDetail(); //重新加载
-          }else{
-                let ErrTips = {
-                   "InternalError.SystemError":'内部错误',
-                   "InvalidParameter.DescriptionLengthOverlimit":'Description入参长度不能大于300字节',
-                   "InvalidParameter.ParamError":'非法入参',
-                   "InvalidParameter.RoleNotExist":'角色不存在'
-                };
-                let ErrOr = Object.assign(ErrorTips, ErrTips);
-                this.$message({
-                  message: ErrOr[res.Response.Error.Code],
-                  type: "error",
-                  showClose: true,
-                  duration: 0
-                });
+          } else {
+            let ErrTips = {
+              "InternalError.SystemError": "内部错误",
+              "InvalidParameter.DescriptionLengthOverlimit":
+                "Description入参长度不能大于300字节",
+              "InvalidParameter.ParamError": "非法入参",
+              "InvalidParameter.RoleNotExist": "角色不存在"
+            };
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
           }
         })
         .catch(error => {});
@@ -611,25 +618,28 @@ export default {
       this.axios
         .post(UPDATE_ASSUME, paramsPolicy)
         .then(res => {
-          if(res.Response.Error === undefined){
-             this.getRoleDetail(); //重新加载
-          }else{
-              let ErrTips = {
-                 "InternalError.SystemError":'内部错误',
-                 "InvalidParameter.AttachmentFull":'principal字段的授权对象关联策略数已达到上限',
-                 "InvalidParameter.ConditionError":'策略文档的condition字段不合法',
-                 "InvalidParameter.ParamError":'非法入参',
-                 "InvalidParameter.PrincipalError":'策略文档的principal字段不合法',
-                 "InvalidParameter.RoleNotExist":'角色不存在',
-                 "InvalidParameter.UserNotExist":'principal字段的授权对象不存在'
-              };
-              let ErrOr = Object.assign(ErrorTips, ErrTips);
-              this.$message({
-                message: ErrOr[res.Response.Error.Code],
-                type: "error",
-                showClose: true,
-                duration: 0
-              });
+          if (res.Response.Error === undefined) {
+            this.getRoleDetail(); //重新加载
+          } else {
+            let ErrTips = {
+              "InternalError.SystemError": "内部错误",
+              "InvalidParameter.AttachmentFull":
+                "principal字段的授权对象关联策略数已达到上限",
+              "InvalidParameter.ConditionError":
+                "策略文档的condition字段不合法",
+              "InvalidParameter.ParamError": "非法入参",
+              "InvalidParameter.PrincipalError":
+                "策略文档的principal字段不合法",
+              "InvalidParameter.RoleNotExist": "角色不存在",
+              "InvalidParameter.UserNotExist": "principal字段的授权对象不存在"
+            };
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
           }
         })
         .catch(error => {});
@@ -645,7 +655,7 @@ export default {
         AttachRoleId: this.$route.query.RoleId
       };
       this.axios.post(ATTACH_ROLE, params).then(res => {
-        if(res.Response.Error === undefined){
+        if (res.Response.Error === undefined) {
           if (res.Response.Error) {
             this.$message({
               message: "关联失败",
@@ -657,23 +667,24 @@ export default {
               type: "success"
             });
           }
-        }else{
-            let ErrTips = {
-               "InternalError.SystemError":'内部错误',
-               "InvalidParameter.AttachmentFull":'principal字段的授权对象关联策略数已达到上限',
-               "InvalidParameter.ParamError":'非法入参',
-               "InvalidParameter.PolicyIdNotExist":'策略ID不存在',
-               "InvalidParameter.RoleNotExist":'角色不存在'
-            };
-            let ErrOr = Object.assign(ErrorTips, ErrTips);
-            this.$message({
-              message: ErrOr[res.Response.Error.Code],
-              type: "error",
-              showClose: true,
-              duration: 0
-            });
+        } else {
+          let ErrTips = {
+            "InternalError.SystemError": "内部错误",
+            "InvalidParameter.AttachmentFull":
+              "principal字段的授权对象关联策略数已达到上限",
+            "InvalidParameter.ParamError": "非法入参",
+            "InvalidParameter.PolicyIdNotExist": "策略ID不存在",
+            "InvalidParameter.RoleNotExist": "角色不存在"
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
         }
-       });
+      });
     },
     // 关联角色策略
     attachRolePolicies() {
@@ -682,15 +693,18 @@ export default {
       } else if (this.multipleSelection.length == 0) {
         this.$message("请选中要关联的数据");
       } else {
-        this.multipleSelection.forEach(item => {
-          this.attachPolicy(item.PolicyId);
-        });
-        this.dialogVisiblePolicies = false;
-        this.loading = true;
-        // this.multipleSelection = [];
-        setTimeout(() => {
-          this.getRolePolicy();
-        }, 3000);
+        var _this = this;
+        new Promise(function() {
+          _this.multipleSelection.forEach(item => {
+            _this.attachPolicy(item.PolicyId);
+          });
+          _this.dialogVisiblePolicies = false;
+          _this.loading = true;
+          // _this.multipleSelection = [];
+          setTimeout(() => {
+            _this.getRolePolicy();
+          }, 3000);
+        }).then(_this.$refs.transfer.clear());
       }
     },
     // 关闭关联策略dialog
@@ -745,33 +759,42 @@ export default {
       this.axios
         .post(url, paramsPolicy)
         .then(res => {
-          if(res.Response.Error === undefined){
+          if (res.Response.Error === undefined) {
             this.getRoleDetail(); //重新加载
-          }else{
+          } else {
             let ErrTips = {
-               "FailedOperation.PolicyNameInUse":'PolicyName字段指定的策略名已存在',
-               "InternalError.SystemError":'内部错误',
-               "InvalidParameter.ActionError":'策略文档的Action字段不合法',
-               "InvalidParameter.AttachmentFull":'principal字段的授权对象关联策略数已达到上限',
-               "InvalidParameter.ConditionError":'策略文档的condition字段不合法',
-               "InvalidParameter.DescriptionLengthOverlimit":'Description入参长度不能大于300字节',
-               "InvalidParameter.EffectError":'策略文档的Effect字段不合法',
-               "InvalidParameter.NotSupportProduct":'CAM不支持策略文档中所指定的资源类型',
-               "InvalidParameter.ParamError":'非法入参',
-               "InvalidParameter.PolicyDocumentError":'PolicyDocument字段不合法',
-               "InvalidParameter.PolicyDocumentLengthOverLimit":'PolicyDocument字段超过长度限制',
-               "InvalidParameter.PolicyIdError":'输入参数PolicyId不合法',
-               "InvalidParameter.PolicyIdNotExist":'策略ID不存在',
-               "InvalidParameter.PolicyNameError":'PolicyName字段不合法',
-               "InvalidParameter.PrincipalError":'策略文档的principal字段不合法',
-               "InvalidParameter.ResourceError":'策略文档的Resource字段不合法',
-               "InvalidParameter.StatementError":'策略文档的Statement字段不合法',
-               "InvalidParameter.UserNotExist":'principal字段的授权对象不存在',
-               "InvalidParameter.VersionError":'策略文档的Version字段不合法',
-               "ResourceNotFound.GroupNotExist":'用户组不存在',
-               "ResourceNotFound.NotFound":'资源不存在',
-               "ResourceNotFound.PolicyIdNotFound":'PolicyId指定的资源不存在',
-               "ResourceNotFound.UserNotExist":'用户不存在'
+              "FailedOperation.PolicyNameInUse":
+                "PolicyName字段指定的策略名已存在",
+              "InternalError.SystemError": "内部错误",
+              "InvalidParameter.ActionError": "策略文档的Action字段不合法",
+              "InvalidParameter.AttachmentFull":
+                "principal字段的授权对象关联策略数已达到上限",
+              "InvalidParameter.ConditionError":
+                "策略文档的condition字段不合法",
+              "InvalidParameter.DescriptionLengthOverlimit":
+                "Description入参长度不能大于300字节",
+              "InvalidParameter.EffectError": "策略文档的Effect字段不合法",
+              "InvalidParameter.NotSupportProduct":
+                "CAM不支持策略文档中所指定的资源类型",
+              "InvalidParameter.ParamError": "非法入参",
+              "InvalidParameter.PolicyDocumentError":
+                "PolicyDocument字段不合法",
+              "InvalidParameter.PolicyDocumentLengthOverLimit":
+                "PolicyDocument字段超过长度限制",
+              "InvalidParameter.PolicyIdError": "输入参数PolicyId不合法",
+              "InvalidParameter.PolicyIdNotExist": "策略ID不存在",
+              "InvalidParameter.PolicyNameError": "PolicyName字段不合法",
+              "InvalidParameter.PrincipalError":
+                "策略文档的principal字段不合法",
+              "InvalidParameter.ResourceError": "策略文档的Resource字段不合法",
+              "InvalidParameter.StatementError":
+                "策略文档的Statement字段不合法",
+              "InvalidParameter.UserNotExist": "principal字段的授权对象不存在",
+              "InvalidParameter.VersionError": "策略文档的Version字段不合法",
+              "ResourceNotFound.GroupNotExist": "用户组不存在",
+              "ResourceNotFound.NotFound": "资源不存在",
+              "ResourceNotFound.PolicyIdNotFound": "PolicyId指定的资源不存在",
+              "ResourceNotFound.UserNotExist": "用户不存在"
             };
             let ErrOr = Object.assign(ErrorTips, ErrTips);
             this.$message({

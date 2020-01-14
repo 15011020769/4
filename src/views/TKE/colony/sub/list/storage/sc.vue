@@ -4,34 +4,31 @@
       <subTitle title='StorageClass'  />
 
       <!-- 新建、搜索相关操作 -->
-      <div class="tke-action">
-        <div class="tke-grid ">
-          <!-- 左侧 -->
-          <div class="grid-left">
-            <el-button @click="goScCreate()" size="small" type="primary">新建</el-button>
-          </div>
-          <!-- 右侧 -->
-          <div class="grid-right">
-            <tkeSearch 
-              refreshData
-              exportData
-              inputPlaceholder='请输入关键词搜索'
-              :searchInput='searchInput'
-              @changeInput="changeSearchInput"
-              @clickSearch="clickSearch"
-              @refresh='refreshList'
-              @exportExcel="exportExcel"
-            >
-            </tkeSearch>
-          
-              
-          </div>
+      <div class="tke-grid ">
+        <!-- 左侧 -->
+        <div class="grid-left">
+          <el-button @click="goScCreate()" size="small" type="primary">新建</el-button>
         </div>
+        <!-- 右侧 -->
+        <div class="grid-right">
+          <tkeSearch 
+            refreshData
+            exportData
+            inputPlaceholder='请输入关键词搜索'
+            :searchInput='searchInput'
+            @changeInput="changeSearchInput"
+            @clickSearch="clickSearch"
+            @refresh='refreshList'
+            @exportExcel="exportExcel"
+          >
+          </tkeSearch>
         
+            
+        </div>
       </div>
-
+        
       <!-- 数据列表展示 -->
-      <div class="tke-card">
+      <div class="tke-card mt10">
         <el-table
           :data="list"
           v-loading="loadShow"
@@ -40,7 +37,7 @@
             label="名称"
             >
             <template slot-scope="scope">
-              <span class="tke-text-link">cbs</span>
+              <span @click="goScDetail()" class="tke-text-link">cbs</span>
             </template>
           </el-table-column>
           <el-table-column
@@ -119,7 +116,7 @@ import tkeSearch from "@/views/TKE/components/tkeSearch";
 import Loading from "@/components/public/Loading";
 import { ALL_CITY } from "@/constants";
 export default {
-  name: "colonyStoragePvc",
+  name: "colonyStorageSc",
   data() {
     return {
       loadShow: false, //加载是否显示
@@ -150,6 +147,16 @@ export default {
     goScCreate(){
       this.$router.push({
           name: "scCreate",
+          query: {
+            clusterId: this.clusterId
+          }
+      });
+    },
+
+    // 详情
+    goScDetail(){
+      this.$router.push({
+          name: "scDetail",
           query: {
             clusterId: this.clusterId
           }

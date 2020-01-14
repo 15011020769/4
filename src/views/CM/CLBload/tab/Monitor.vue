@@ -74,15 +74,16 @@
 
         <el-table-column prop="">
           <template slot-scope="scope">
-            <p> <i class="el-icon-menu i-font" style="font-size:26px;" @click="Modality(scope.row.MetricName)"></i>
-            </p>
+            <!-- <p> <i class="el-icon-menu i-font" style="font-size:26px;" @click="Modality(scope.row.MetricName)"></i>
+            </p> -->
 
           </template>
         </el-table-column>
 
       </el-table>
       <!-- 模态框 -->
-      <el-dialog :title="$t('CVM.clBload.jqjkzt')" :visible.sync="dialogVisible" width="60%" :before-close="handleClose">
+      <el-dialog :title="$t('CVM.clBload.jqjkzt')" :visible.sync="dialogVisible" width="60%"
+        :before-close="handleClose">
         <XTimeX v-on:switchData="GetDat" :classsvalue='value'></XTimeX>
         <echart-line id="diskEchearrts-line" class="echart-wh" :time='timeData | UpTime' :opData='jingData'
           :period=period :xdata=true>
@@ -101,6 +102,9 @@
   import {
     All_MONITOR
   } from '@/constants';
+  import {
+    ErrorTips
+  } from '@/components/ErrorTips'
   export default {
     data() {
       return {
@@ -152,7 +156,7 @@
       Obtain(metricN, symbol) {
         const param = {
           Version: '2018-07-24',
-          Region: this.$cookie.get('regionv2'),
+          Region: localStorage.getItem('regionv2'),
           Namespace: 'QCE/LB_PUBLIC',
           MetricName: metricN,
           'Instances.0.Dimensions.0.Name': 'vip',
@@ -162,15 +166,24 @@
           EndTime: this.Start_End.EndTIme,
         };
         this.axios.post(All_MONITOR, param).then((data) => {
-          data.Response.symbol = symbol;
-          this.tableData.push(data.Response);
+          if (data.Response.Error == undefined) {
+            data.Response.symbol = symbol;
+            this.tableData.push(data.Response);
+          } else {
+            this.$message({
+              message: ErrorTips[data.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+          }
         });
       },
       //获取监控信息
       getModality(MetricName) {
         const param = {
           Version: '2018-07-24',
-          Region: this.$cookie.get('regionv2'),
+          Region: localStorage.getItem('regionv2'),
           Namespace: 'QCE/LB_PUBLIC',
           MetricName: MetricName,
           'Instances.0.Dimensions.0.Name': 'vip',
@@ -180,8 +193,17 @@
           EndTime: this.Start_End.EndTIme,
         };
         this.axios.post(All_MONITOR, param).then((data) => {
-          this.timeData = data.Response.DataPoints[0].Timestamps
-          this.jingData = data.Response.DataPoints[0].Values
+          if (data.Response.Error == undefined) {
+            this.timeData = data.Response.DataPoints[0].Timestamps
+            this.jingData = data.Response.DataPoints[0].Values
+          } else {
+            this.$message({
+              message: ErrorTips[data.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+          }
         });
       },
       // 模态框
