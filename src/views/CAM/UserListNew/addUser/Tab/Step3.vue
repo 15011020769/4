@@ -21,7 +21,7 @@
           @selection-change="handleSelectionChange"
           v-loadmore="debounce"
         >
-          <el-table-column type="selection" width="55"></el-table-column>
+          <el-table-column type="selection" width="55" :selectable="checkboxT"></el-table-column>
           <el-table-column prop="PolicyName" :label="$t('CAM.userList.strategyNames')" width="250"></el-table-column>
           <el-table-column :label="$t('CAM.userList.descs')" width="280">
             <template slot-scope="scope">
@@ -38,7 +38,7 @@
       </el-tab-pane>
       <el-tab-pane :label="$t('CAM.userList.userPolicies')" name="second">
         <h3>
-         {{$t('CAM.userList.listTitle')}}
+          {{$t('CAM.userList.listTitle')}}
           <span>（共{{userDatas.length}}条）</span>
         </h3>
         <el-radio-group v-model="radio" @change="_radio" style="width:100%;margin-top:-3px;">
@@ -88,11 +88,12 @@
           @selection-change="handleSelectionChange"
           v-loadmore="debounce"
         >
-          <el-table-column type="selection" width="55"></el-table-column>
-          <el-table-column prop="GroupName"  :label="$t('CAM.userList.userName')"></el-table-column>
-          <el-table-column  :label="$t('CAM.userList.userRemark')">
+          <el-table-column type="selection" width="55" :selectable="checkboxT"></el-table-column>
+          <el-table-column prop="GroupName" :label="$t('CAM.userList.userName')"></el-table-column>
+          <el-table-column :label="$t('CAM.userList.userRemark')">
             <template slot-scope="scope">
-              <p class="omit">{{scope.row.Remark}}</p>
+              <p class="omit" v-show="scope.row.Remark">{{scope.row.Remark}}</p>
+              <p v-show="!scope.row.Remark">-</p>
             </template>
           </el-table-column>
           <el-table-column :label="$t('CAM.userList.RelatedPolicies')">
@@ -138,6 +139,13 @@ export default {
     userDatas: Array
   },
   methods: {
+    checkboxT(row, index) {
+      if (row.status == 1) {
+        return false;
+      } else {
+        return true;
+      }
+    },
     //用户
     _radio() {
       this.$emit("_userRadio", this.radio);
@@ -181,7 +189,8 @@ export default {
 </script>
 
 <style scoped lang='scss'>
-.wrap >>> .el-input__inner,.wrap >>> .el-button{
+.wrap >>> .el-input__inner,
+.wrap >>> .el-button {
   height: 30px;
   line-height: 30px;
   padding-top: 0;

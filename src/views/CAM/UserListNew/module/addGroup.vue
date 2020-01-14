@@ -41,10 +41,11 @@
             @row-click="selectedRow"
             @selection-change="handleSelection"
             :data="userGroup"
+            v-loading='loading'
           >
             <el-input size="mini" style="width:20%" />
             <el-button size="mini" class="suo" icon="el-icon-search" show-overflow-tooltip></el-button>
-            <el-table-column type="selection" width></el-table-column>
+            <el-table-column type="selection" :selectable="checkboxT"></el-table-column>
             <el-table-column :label="$t('CAM.userList.userGroup')" prop="GroupName"></el-table-column>
           </el-table>
         </div>
@@ -120,7 +121,7 @@
 <script>
 import { ErrorTips } from "@/components/ErrorTips";
 import Headcom from "../components/Head";
-import { USER_GROUP,ADD_USERTOGROUP } from "@/constants";
+import { USER_GROUP,ADD_USERTOGROUP,RELATE_USER } from "@/constants";
 export default {
   components: {
     Headcom, //头部组件
@@ -132,10 +133,21 @@ export default {
       userGroup:[],
       userGroupSelect: [],
       userNewGroup:[],
+      groupArr:[],
+      loading:true,
+      userGroup1:[]
     };
   },
   methods: {
+    checkboxT(row, index) {
+      if (row.status == 1) {
+        return false;
+      } else {
+        return true;
+      }
+    },
     userGroups() {
+      this.loading = true;
       let params = {
         Version: "2019-01-16"
       };
@@ -143,8 +155,24 @@ export default {
         params["Keyword"] = this.searchGroupValue;
       }
       this.axios.post(USER_GROUP, params).then(res => {
-        console.log(res)
-        this.userGroup = res.Response.GroupInfo;
+        this.userGroup1 = res.Response.GroupInfo;
+        const param = {
+        Version: "2019-01-16",
+        Uid: this.$route.query.Uid
+        };
+        this.axios.post(RELATE_USER, param).then(res => {
+          this.groupArr = res.Response.GroupInfo;
+          this.userGroup1.forEach(item => {
+            item.status = 0;
+            this.groupArr.forEach(val => {
+              if (val.GroupId == item.GroupId) {
+                item.status = 1;
+              }
+            });
+          });
+          this.userGroup = this.userGroup1;
+          this.loading = false;
+        });
       });
     },
     searchGroup() {
@@ -226,6 +254,17 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+.wrap >>> .el-form-item__label {
+  text-align: left;
+}
+.wrap >>> .el-button,
+.wrap >>> .el-input__inner {
+  border-radius: 0;
+  height: 30px !important;
+  line-height: 30px;
+  padding-top: 0;
+  font-size: 12px;
+}
 .policyToUser {
   width: 85%;
   background: white;
