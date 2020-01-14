@@ -13,7 +13,8 @@
     </div>
     <!-- 表格 -->
     <div class="Table-SY">
-      <el-table :data="TbaleData" height="550" style="width: 100%" id="exportTable" v-loading="loadShow" :empty-text="$t('CVM.clBload.zwsj')">
+      <el-table :data="TbaleData" height="550" style="width: 100%" id="exportTable" v-loading="loadShow"
+        :empty-text="$t('CVM.clBload.zwsj')">
         <el-table-column prop :label="$t('CVM.cloudDisk.mc')">
           <template slot-scope="scope">
             <p>
@@ -61,6 +62,9 @@
   import SEARCH from "@/components/public/SEARCH";
   import Loading from "@/components/public/Loading";
   import {
+    ErrorTips
+  } from '@/components/ErrorTips'
+  import {
     ALL_CITY,
     DISK_LIST,
     ALL_PROJECT
@@ -98,7 +102,7 @@
         searchInput: "",
         TbaleData: [], // 表格数据
         TotalCount: 0,
-        pagesize: 2, // 分页条数
+        pagesize: 10, // 分页条数
         currpage: 1 // 当前页码
       };
     },
@@ -140,13 +144,15 @@
           this.cities = data.data;
           this.selectedRegion = data.data[0].Region;
           this.selectedCity = data.data[0];
-          this.$cookie.set("regionv2", this.selectedCity.Region);
+          localStorage.setItem("regionv1", this.selectedCity.regionCode);
+          localStorage.setItem("regionv2", this.selectedRegion);
         });
       },
       // 切换城市
       changeCity(city) {
         this.selectedCity = city;
-        this.$cookie.set("regionv2", city.Region);
+        localStorage.setItem("regionv1", this.selectedCity.regionCode);
+        localStorage.setItem("regionv2", this.selectedCity.Region);
         this.GetTabularData();
       },
       //选择搜索条件
@@ -176,7 +182,7 @@
       // 添加项目列表的表格数据
       GetTabularData() {
         const param = {
-          Region: this.selectedRegion,
+          Region: localStorage.getItem('regionv2'),
           Version: "2017-03-12",
           Offset: this.currpage * this.pagesize - this.pagesize,
           Limit: this.pagesize
@@ -195,7 +201,18 @@
             this.TotalCount = data.Response.TotalCount
             this.loadShow = false;
           } else {
-            this.$message.error(data.Response.Error.Message);
+            let ErrTips = {
+              'InvalidFilter': '指定的Filter不被支持',
+              'InvalidParameterValue': '无效参数值。参数值格式错误或者参数值不被支持等',
+              'MissingParameter': '参数缺失。请求没有带必选参数'
+            }
+            let ErrOr = Object.assign(ErrorTips, ErrTips)
+            this.$message({
+              message: ErrOr[data.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
           }
         });
       },

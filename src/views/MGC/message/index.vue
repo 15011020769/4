@@ -8,18 +8,18 @@
       <div class="message-fun">
         <div class="message-funLeft">
           <div class="message-btns">
-            <el-button @click="delMesg">删除</el-button>
-            <el-button @click="changeRead">标记为已读</el-button>
-            <el-button @click="AllRead">全部标记为已读</el-button>
+            <el-button @click="delMesg">{{$t('MGC.sc')}}</el-button>
+            <el-button @click="changeRead">{{$t('MGC.bjyd')}}</el-button>
+            <el-button @click="AllRead">{{$t('MGC.qbbjyd')}}</el-button>
           </div>
           <div class="message-btns btnStyle">
-            <el-button  autofocus="true" @click="getDataListByType('')" >全部</el-button>
-            <el-button @click="getDataListByType('運維消息')">運維消息</el-button>
-            <el-button @click="getDataListByType('騰訊雲動態')">騰訊雲動態</el-button>
-            <el-button @click="getDataListByType('產品消息')">產品消息</el-button>
+            <el-button @click="getDataListByType('')" >全部</el-button>
+            <el-button @click="getDataListByType('運維消息')">{{$t('MGC.ywxx')}}</el-button>
+            <el-button @click="getDataListByType('台富雲動態')">{{$t('MGC.tfygn')}}</el-button>
+            <el-button @click="getDataListByType('產品消息')">{{$t('MGC.cpxx')}}</el-button>
             <el-button @click="getDataListByType('安全消息')">安全消息</el-button>
             <el-button @click="getDataListByType('其他消息')">其他消息</el-button>
-            <el-button @click="getDataListByType('財務消息')">財務消息</el-button>
+            <el-button @click="getDataListByType('財務消息')">{{$t('MGC.cwxx')}}</el-button>
           </div>
         </div>
         <!-- <div class="message-funRight">
@@ -39,14 +39,14 @@
                 <el-link @click="detailsMesg(scope.row)" :class="scope.row.status === '1' ? 'classGray' : 'classblue'" type="primary">{{scope.row.title}}</el-link>
               </template>
           </el-table-column>
-          <el-table-column prop="sendTime" label="接收时间" ></el-table-column>
-          <el-table-column prop="msgTypeName" label="消息类型" ></el-table-column>
-          <el-table-column label="消息子类型">
+          <el-table-column prop="sendTime" :label="$t('MGC.jssj')" ></el-table-column>
+          <el-table-column prop="msgTypeName" :label="$t('MGC.xxlx')" ></el-table-column>
+          <el-table-column :label="$t('MGC.xxzlx')">
             其他
           </el-table-column>
         </el-table>
         <div class="Right-style pagstyle" style="height:70px;">
-          <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;条</span>
+          <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;{{$t('MGC.tiao')}}</span>
           <el-pagination
             :page-size="pagesize"
             :pager-count="7"
@@ -59,26 +59,26 @@
     </div>
     <!-- 删除对话框 -->
     <el-dialog
-  title="删除"
+  :title="$t('MGC.sc')"
   :visible.sync="dialogVisible"
   width="30%"
   :before-close="handleClose">
-  <span>删除后消息将无法恢复，您确定要删除吗？</span>
+  <span>{{$t('MGC.scqd')}}</span>
   <span slot="footer" class="dialog-footer">
     <el-button @click="dialogVisible = false">取 消</el-button>
-    <el-button type="primary" @click="confirmDel">确 定</el-button>
+    <el-button type="primary" @click="confirmDel">{{$t('MGC.qd')}}</el-button>
   </span>
 </el-dialog>
  <!-- 全部改为已读状态弹框 -->
  <el-dialog
-  title="确认标记所有已读"
+  :title="$t('MGC.qrbjyd')"
   :visible.sync="MessageDialog"
   width="30%"
   :before-close="handleCloseMsg">
-  <span>确认标记所有消息为已读吗？</span>
+  <span>{{$t('MGC.qrbjsyxxyd')}}</span>
   <span slot="footer" class="dialog-footer">
     <el-button @click="MessageDialog = false">取 消</el-button>
-    <el-button type="primary" @click="updataMesg">确 定</el-button>
+    <el-button type="primary" @click="updataMesg">{{$t('MGC.qd')}}</el-button>
   </span>
 </el-dialog>
   </div>
@@ -99,12 +99,12 @@ export default {
       //按钮数据
       btnData: [
         "全部",
-        "运维消息",
-        "台富雲动态",
-        "产品消息",
+        "運維消息",
+        "台富雲動態",
+        "產品消息",
         "安全消息",
         "其他消息",
-        "财务消息"
+        "財務消息"
       ],
       inputVal: "", //搜索输入的内容
       tableData: [], //表格数据
@@ -149,7 +149,7 @@ export default {
              this.loading = false;
               this.$message({
                 type: "info",
-                message: "无响应数据！"
+                message: "無響應數據！"
             });
         }
       })
@@ -187,7 +187,7 @@ export default {
       if(this.getData.length != 0){
           this.dialogVisible = true
       }else{
-         this.$message("请选择数据")
+         this.$message("請選擇數據")
       }
     },
      //多选已读
@@ -203,7 +203,7 @@ export default {
           this.init()
         })
      }else{
-         this.$message("请选择数据")
+         this.$message("請選擇數據")
       }
     },
     //全部标记为已读显示弹框

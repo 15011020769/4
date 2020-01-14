@@ -1,33 +1,46 @@
+// 主体布局
+.colony-wrap {
+    .colony-main {
+        padding: 20px;
+        box-sizing: border-box;
+    }
+}
+
 // 左右两侧布局
-.tke-grid{
+.tke-grid {
     display: flex;
     align-items: center;
-    .grid-left{
-        flex: 1 ;
-        display:flex;
+
+    .grid-left {
+        flex: 1;
+        display: flex;
         align-items: center;
     }
-    .grid-right{
-        display:flex;
+
+    .grid-right {
+        display: flex;
         align-items: center;
+        margin-left: auto;
     }
 }
 
 // 数据操作布局
-.tke-action{
-    padding-bottom:10px;
+.tke-action {
+    padding-bottom: 10px;
 }
 
 // 头部
-.tke-content-header{
+.tke-content-header {
     color: rgb(0, 0, 0);
     border-bottom: 1px solid rgb(221, 221, 221);
     padding: 9px 20px;
     background: rgb(255, 255, 255);
-    .goback{
+
+    .goback {
         margin-right: 10px;
         cursor: pointer;
-        .el-icon-back{
+
+        .el-icon-back {
             font-size: 16px;
             color: #006eff;
             font-weight: 800;
@@ -36,86 +49,171 @@
             display: inline-block;
             margin-right: 5px;
         }
+
+        &:hover {
+            color: #006eff;
+        }
     }
-    .header-title{
+
+    .header-title {
         font-size: 16px;
         font-weight: 700;
         height: 30px;
         line-height: 30px;
         margin-right: 20px;
-    } 
+    }
+
+    // 详情页头部
+    &.tke-detail-header {
+        border-bottom: none;
+    }
 }
 
+// 详情页导航
+.tke-detial-nav {
+    padding: 0 20px;
+    background: #fff;
+    position: relative;
+    display: flex;
+
+    &:after {
+        position: absolute;
+        content: "";
+        bottom: 0;
+        left: 0;
+        right: 0;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .nav-item {
+        height: 30px;
+        line-height: 30px;
+        margin-right: 20px;
+        padding: 0 10px;
+        font-size: 14px;
+        color: #000;
+        display: inline-block;
+        position: relative;
+        z-index: 2;
+
+        &:after {
+            position: absolute;
+            content: "";
+            bottom: 0;
+            left: 0;
+            width: 0;
+            border-bottom: 2px solid transparent;
+        }
+
+        &.router-link-active {
+            font-weight: 800;
+        }
+
+        &.router-link-active:after {
+            width: 100%;
+            border-bottom-color: #006eff;
+            -webkit-transition: border-color .15s ease-in-out, width .15s ease-in-out, height .15s ease-in-out;
+            transition: border-color .15s ease-in-out, width .15s ease-in-out, height .15s ease-in-out;
+        }
+    }
+}
+
+
+
+
 // 白色内容主体区域
-.tke-card{
+.tke-card {
     background-color: #fff;
-    box-shadow: 0 2px 3px 0 rgba(0,0,0,.2);
+    box-shadow: 0 2px 3px 0 rgba(0, 0, 0, .2);
     margin-left: auto;
     margin-right: auto;
     box-sizing: border-box;
-    .el-table{
-      color: #444;
-      .tke-icon{
-        cursor: pointer;
-        margin-left: 5px;
-      }
+
+    .el-table {
+        color: #444;
+
+        .tke-icon {
+            cursor: pointer;
+            margin-left: 5px;
+        }
     }
-    .tke-page{
-      padding: 20px;
-      display: flex;
-      flex-direction: row-reverse;
+
+    .tke-page {
+        padding: 20px;
+        display: flex;
+        flex-direction: row-reverse;
     }
 }
 
 // 表单
 
-.tke-formpanel-wrap{
+.tke-formpanel-wrap {
     padding: 20px;
-    .tke-formpanel-title{
-      font-size: 14px;
-      font-weight: 700;
-      color: #000;
-      margin-bottom: 20px;
+
+    .tke-formpanel-title {
+        font-size: 14px;
+        font-weight: 700;
+        color: #000;
+        margin-bottom: 20px;
     }
 }
 
-.tke-formpanel-footer{
-position: fixed;
-bottom: 0;
-left: 220px;
-right: 20px;
-z-index: 11;
-box-sizing: border-box;
-padding: 15px 15px 15px 100px;
-border-top: 1px solid #dbe3e4;
-background-color: #fff;
-box-shadow: 0 2px 3px 0 rgba(0,0,0,.2);
+.tke-formpanel-footer {
+    position: fixed;
+    bottom: 0;
+    left: 220px;
+    right: 20px;
+    z-index: 11;
+    box-sizing: border-box;
+    padding: 15px 15px 15px 100px;
+    border-top: 1px solid #dbe3e4;
+    background-color: #fff;
+    box-shadow: 0 2px 3px 0 rgba(0, 0, 0, .2);
 }
+
 .tke-form {
-    .el-form-item__label,.el-form-item__content{
+
+    .el-form-item__label,
+    .el-form-item__content {
         font-size: 12px;
         color: #888;
     }
-    .tke-form-item_text,.el-checkbox__label,.el-radio__label{
+
+    .tke-form-item_text,
+    .el-checkbox__label,
+    .el-radio__label {
         font-size: 12px;
         color: #444;
     }
-   
-    .tke-icon{
+
+    .tke-icon {
         cursor: pointer;
         margin-left: 5px;
     }
-    .form-controls{
+
+    .form-controls {
         background-color: #f2f2f2;
         padding: 10px;
         box-sizing: border-box;
     }
+    .el-icon-refresh {
+        font-size: 16px;
+        font-weight: 800;
+        vertical-align: middle;
+        cursor: pointer;
+    }
+
+    .el-icon-info {
+        cursor: pointer;
+    }
 }
+
 // 步骤 step
-.tke-step-item{
+.tke-step-item {
     display: flex;
     align-items: center;
-    .num{
+
+    .num {
         width: 28px;
         height: 28px;
         box-sizing: border-box;
@@ -129,33 +227,50 @@ box-shadow: 0 2px 3px 0 rgba(0,0,0,.2);
         background-color: #fff;
         vertical-align: middle;
         color: #bbb;
-        
+
     }
-    .title{
+
+    .title {
         color: #bbb;
         font-size: 14px;
-        font-weight: 700; 
+        font-weight: 700;
     }
-    .el-icon-arrow-right{
+
+    .el-icon-arrow-right {
         font-size: 16px;
         padding: 0 30px;
         color: #bbb;
         font-weight: 800;
     }
-    }
-    .tke-step-item.is-curr{
-    .num{
+}
+
+.tke-step-item.is-curr {
+    .num {
         background-color: #006eff;
         border: 2px solid #006eff;
         color: #fff;
     }
-    .title{
+
+    .title {
         color: #000;
     }
 }
 
+// 蓝色框文字提示
+.tke-reminder {
+    padding: 10px 30px 10px 20px;
+    vertical-align: middle;
+    color: #003b80;
+    border: 1px solid #97c7ff;
+    border-radius: 2px;
+    background: #e5f0ff;
+    position: relative;
+    box-sizing: border-box;
+    margin-bottom: 10px;
+}
+
 // 其他可共用部分
-.icon-chart{
+.icon-chart {
     background-image: url("../../CAM/images/cvm-20199061519.svg");
     background-size: 267px 176px;
     background-repeat: no-repeat;
@@ -165,52 +280,81 @@ box-shadow: 0 2px 3px 0 rgba(0,0,0,.2);
     display: inline-block;
     cursor: pointer;
 }
-  
-  
-.tke-dropdown{
+
+
+.tke-dropdown {
     font-size: 12px;
 }
-.el-dropdown-menu__item{
+
+.el-dropdown-menu__item {
     font-size: 12px;
 }
 
 
-.text-green{
+.text-green {
     color: #0abf5b;
 }
-.text-gray{
+
+.text-gray {
     color: #bbb;
 }
-.text-red{
+
+.text-red {
     color: rgb(225, 80, 74);
 }
-.tke-text-link{
+
+.tke-text-link {
     color: #006eff;
     cursor: pointer;
-    &:hover{
+
+    &:hover {
         text-decoration: underline;
         color: #006eff;
     }
 }
 
-.ml5{
+.ml5 {
     margin-left: 5px;
-} 
-.ml10{
+}
+
+.ml10 {
     margin-left: 10px;
 }
-.mt10{
+
+.mt10 {
     margin-top: 10px;
-  }
-  .mt20{
+}
+
+.mt20 {
     margin-top: 20px;
-  }
-  hr{
+}
+.mb60{
+    margin-bottom: 60px;
+}
+
+hr {
     padding: 0;
-      border: none;
-      border-bottom: 1px solid #ddd;
-      margin: 20px 0;
-  }
+    border: none;
+    border-bottom: 1px solid #ddd;
+    margin: 20px 0;
+}
 
+.w50 {
+    width: 50px;
+}
 
-  
+.w70 {
+    width: 70px;
+}
+
+.w200 {
+    width: 200px;
+}
+
+.w320 {
+    width: 320px;
+}
+
+.w420 {
+    width: 420px;
+}

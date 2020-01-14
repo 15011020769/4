@@ -1,10 +1,10 @@
 <template>
   <div class="newdFeeds-wrap" >
-    <HeadCom title="通知公告"></HeadCom>
+    <HeadCom :title="$t('MGC.tzgg')"></HeadCom>
     <div class="wrap">
       <div class="message-funRight">
           <div class="search">
-            <el-input placeholder="请输入内容" v-model="inputVal"></el-input>
+            <el-input :placeholder="$t('MGC.qsrnr')" v-model="inputVal"></el-input>
             <span>
               <i class="el-icon-search" @click="tableSearch"></i>
             </span>
@@ -18,14 +18,14 @@
             height="450"
             v-loading="loading"
           >
-            <el-table-column prop="title" label="标题" >
+            <el-table-column prop="title" :label="$t('MGC.bt')" >
                 <template slot-scope="scope">
                    <el-link @click="detailsMesg(scope.row)" type="primary" class="edit">{{scope.row.title}}</el-link>
                 </template>
             </el-table-column>
-            <el-table-column prop="publishTime" label="发布时间"></el-table-column>
+            <el-table-column prop="publishTime" :label="$t('MGC.fbsj')"></el-table-column>
             <el-table-column prop="content" label="消息内容"></el-table-column>
-            <el-table-column prop="publishStatus" label="状态"></el-table-column>
+            <el-table-column prop="publishStatus" :label="$t('MGC.zt')"></el-table-column>
             <el-table-column label="操作">
               <template slot-scope="scope">
                 <el-button
@@ -37,7 +37,7 @@
           </el-table>
         </template>
         <div class="Right-style pagstyle" style="height:70px;">
-          <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;条</span>
+          <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;{{$t('MGC.tiao')}}</span>
           <el-pagination
             :page-size="pagesize"
             :pager-count="7"

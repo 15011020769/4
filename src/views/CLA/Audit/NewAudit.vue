@@ -273,7 +273,7 @@ export default {
           this.cmqSelect.name = arr[0].label;
         } else {
           let ErrTips = {
-            "InternalError.ListCmqEnableRegionError": "	内部错误，请联系开发人员"
+            "InternalError.ListCmqEnableRegionError": "內部錯誤，請聯繫開發人員"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
@@ -361,40 +361,40 @@ export default {
             } else {
               let ErrTips = {
                 "InternalError.CmqError":
-                  "创建cmq时发生异常，可能您准备创建的cmq队列已经存在，也有可能您没有权限或者欠费",
+                  "創建cmq時發生異常，可能您準備創建的cmq隊列已經存在，也有可能您沒有許可權或者欠費",
                 "InternalError.CreateAuditError":
-                  "创建跟踪集错误，请联系开发人员",
-                "InvalidParameterValue.AuditNameError": "跟踪集名称不符合规则",
+                  "創建跟蹤集錯誤，請聯繫開發人員",
+                "InvalidParameterValue.AuditNameError": "跟蹤集名稱不符合規則",
                 "InvalidParameterValue.CmqRegionError":
-                  "云审计目前不支持输入的cmq地域",
+                  "雲審計目前不支持輸入的cmq地域",
                 "InvalidParameterValue.CosNameError":
-                  "输入的cos存储桶名称不符合规范",
+                  "輸入的cos儲存桶名稱不符合規範",
                 "InvalidParameterValue.CosRegionError":
-                  "云审计目前不支持输入的cos地域",
+                  "雲審計目前不支持輸入的cos地域",
                 "InvalidParameterValue.IsCreateNewBucketError":
-                  "IsCreateNewBucket的有效取值范围是0和1，0代表不创建新的存储桶，1代表创建新的存储桶",
+                  "IsCreateNewBucket的有效取值範圍是0和1，0代表不創建新的儲存桶，1代表創建新的儲存桶",
                 "InvalidParameterValue.IsCreateNewQueueError":
-                  "IsCreateNewQueue的有效取值范围是0和1，0代表不新创建，1代表新创建",
+                  "IsCreateNewQueue的有效取值範圍是0和1，0代表不新創建，1代表新創建",
                 "InvalidParameterValue.IsEnableCmqNotifyError":
-                  "IsEnableCmqNotify的有效取值范围是0和1，0代表不开启投递cmq,1代表开启cmq投递",
-                "InvalidParameterValue.LogFilePrefixError": "日志前缀格式错误",
+                  "IsEnableCmqNotify的有效取值範圍是0和1，0代表不開啟投遞cmq,1代表開啟cmq投遞",
+                "InvalidParameterValue.LogFilePrefixError": "日誌前綴格式錯誤",
                 "InvalidParameterValue.QueueNameError":
-                  "输入的队列名称不符合规范",
+                  "輸入的隊列名稱不符合規範",
                 "InvalidParameterValue.ReadWriteAttributeError":
-                  "读写属性值仅支持：1,2,3。1代表只读，2代表只写，3代表全部。",
-                "LimitExceeded.OverAmount": "超过跟踪集的最大值",
-                "MissingParameter.MissAuditName": "缺少跟踪集名称",
-                "MissingParameter.MissCosBucketName": "缺少cos存储桶参数",
-                "MissingParameter.MissCosRegion": "缺少cos地域参数",
+                  "讀寫屬性值僅支持：1,2,3。1代表只讀，2代表只寫，3代表全部。",
+                "LimitExceeded.OverAmount": "超過跟蹤集的最大值",
+                "MissingParameter.MissAuditName": "缺少跟蹤集名稱",
+                "MissingParameter.MissCosBucketName": "缺少cos儲存桶參數",
+                "MissingParameter.MissCosRegion": "缺少cos地域參數",
                 "MissingParameter.cmq":
-                  "IsEnableCmqNotify输入1的话，IsCreateNewQueue、CmqQueueName和CmqRegion都是必须参数。",
+                  "IsEnableCmqNotify輸入1的話，IsCreateNewQueue、CmqQueueName和CmqRegion都是必須參數。",
                 "ResourceInUse.AlreadyExistsSameAudit":
-                  "已经存在相同名称的跟踪集",
+                  "已經存在相同名稱的跟蹤集",
                 "ResourceInUse.AlreadyExistsSameAuditCmqConfig":
-                  "已经存在相同cmq投递配置的跟踪集",
+                  "已經存在相同cmq投遞配置的跟蹤集",
                 "ResourceInUse.AlreadyExistsSameAuditCosConfig":
-                  "已经存在相同cos投递配置的跟踪集",
-                "ResourceInUse.CosBucketExists": "cos存储桶已经存在"
+                  "已經存在相同cos投遞配置的跟蹤集",
+                "ResourceInUse.CosBucketExists": "cos儲存桶已經存在"
               };
               let ErrOr = Object.assign(ErrorTips, ErrTips);
               this.$message({
@@ -465,7 +465,7 @@ export default {
         this.select.name = arr[0].label;
       } else {
         let ErrTips = {
-          "InternalError.ListCosEnableRegionError": "内部错误，请联系开发人员"
+          "InternalError.ListCosEnableRegionError": "內部錯誤，請聯繫開發人員"
         };
         let ErrOr = Object.assign(ErrorTips, ErrTips);
         this.$message({

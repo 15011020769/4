@@ -111,6 +111,7 @@
 
 <script>
 import { POLICY_LIST, ATTACH_ROLE } from "@/constants";
+import { ErrorTips } from "@/components/ErrorTips";
 export default {
   props: {
     roleId: String
@@ -201,7 +202,26 @@ export default {
       this.axios
         .post(POLICY_LIST, params)
         .then(res => {
-          this.policiesData = res.Response.List;
+          if(res.Response.Error == undefined){
+              this.policiesData = res.Response.List;
+          }else{
+            let ErrTips = {
+              "InternalError.SystemError":'内部错误',
+              "InvalidParameter.GroupIdError":'GroupId字段不合法',
+              "InvalidParameter.KeywordError":'Keyword字段不合法',
+              "InvalidParameter.ParamError":'非法入参',
+              "InvalidParameter.ScopeError":'Scope字段不合法',
+              "InvalidParameter.ServiceTypeError":'ServiceType字段不合法',
+              "InvalidParameter.UinError":'Uin字段不合法'
+            };
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+          }
         })
         .catch(error => {});
     },
@@ -250,7 +270,26 @@ export default {
     },
     // 绑定权限策略到角色
     AttachRolePolicy(params) {
-      this.$axios.post(ATTACH_ROLE, params).then(res => {});
+      this.$axios.post(ATTACH_ROLE, params).then(res => {
+        if(res.Response.Error == undefined){
+           console.log(res)
+        }else{
+            let ErrTips = {
+             "InternalError.SystemError":'内部错误',
+             "InvalidParameter.AttachmentFull":'principal字段的授权对象关联策略数已达到上限',
+             "InvalidParameter.ParamError":'非法入参',
+             "InvalidParameter.PolicyIdNotExist":'策略ID不存在',
+             "InvalidParameter.RoleNotExist":'角色不存在'
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
     }
   }
 };

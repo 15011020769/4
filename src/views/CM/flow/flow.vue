@@ -8,26 +8,33 @@
             <div class="box">
               <div class="table-top">
                 <div class="table_top_head">
-                  <div style="">
+                  <div style>
                     <XTimeX v-on:switchData="GetDat" :classsvalue="value"></XTimeX>
                   </div>
                   <div class="contrast">
-                    数据对比
+                    <el-button @click="contrast">数据对比</el-button>
+                    <!-- <span><span>对比</span><span>&times;</span></p> -->
                   </div>
+
                   <div class="export">
-                      <a>导出数据 </a> 
-                      <a>导出图片</a>
+                    <a @click="exportData" style="margin-right:10px;">导出数据</a>
+                    <a @click="exportImg">导出图片</a>
                   </div>
                 </div>
                 <h3>外网出带宽</h3>
                 <div class="echarts" style="width:100%">
-                    <!-- <Ecarts/> -->
+                  <!-- <Ecarts/> -->
                 </div>
               </div>
               <h3>报表详情</h3>
               <div class="table">
-                <el-table :data="tableData" style="width: 100%" height="450">
-                  <el-table-column prop="address" label="时间"></el-table-column>
+                <el-table
+                  :data="tableData"
+                  style="width: 100%"
+                  height="450"
+                  :default-sort="{prop: 'date', order: 'descending'}"
+                >
+                  <el-table-column prop="address" label="时间" sortable></el-table-column>
                   <el-table-column prop="address" label="外出带宽"></el-table-column>
                 </el-table>
                 <!-- 分页 -->
@@ -71,7 +78,7 @@ export default {
   },
   components: {
     Header,
-    XTimeX,
+    XTimeX
     // Ecarts
   },
   created() {},
@@ -91,15 +98,30 @@ export default {
     //分页
     handleCurrentChange(val) {
       this.currpage = val;
+    },
+    contrast() {
+      //数据对比
+      alert("对比");
+    },
+    exportData() {
+      //导出数据
+      alert("导出数据");
+    },
+    exportImg() {
+      //导出图片
+      alert("导出图片");
     }
   }
 };
 </script>
 
 <style lang="scss" scoped>
-.history-wrap >>> .header{
+.history-wrap >>> .header {
   border: 0;
   margin-bottom: -8px;
+}
+.history-wrap >>> a:hover {
+  border-bottom: 1px solid #006eff;
 }
 .history-wrap >>> .el-tabs__header {
   margin: 0;
@@ -173,31 +195,33 @@ export default {
       box-sizing: border-box;
     }
     .table-top {
-      border:1px solid #ccc;
+      border: 1px solid #ccc;
       height: 450px;
       margin-bottom: 10px;
       .table_top_head {
         width: 100%;
         display: flex;
         align-items: center;
-        .contrast{
-          border:1px solid #ccc;
-          margin-top:22px;
-          margin-left:15px;
-          padding:7px 20px; 
+        .contrast {
+          margin: 23px 10px 0 10px;
+          display: flex;
+          cursor: pointer;
+          span.del {
+            font-size: 16px;
+          }
         }
-        .export{
-           margin-top:22px;
-          margin-left:15px;
+        .export {
+          margin-top: 22px;
+          margin-left: 15px;
         }
       }
-      h3{
-          margin:20px;
+      h3 {
+        margin: 20px;
       }
-      .echarts{
-        border:1px solid #ccc;
+      .echarts {
+        border: 1px solid #ccc;
         width: 100%;
-        height:340px ;
+        height: 340px;
       }
     }
   }

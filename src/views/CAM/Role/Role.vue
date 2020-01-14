@@ -102,7 +102,8 @@
 </template>
 <script>
 import HeadCom from "../UserListNew/components/Head";
-import {DESCRIB_ROLE,DELETE_ROLE} from '@/constants'
+import { DESCRIB_ROLE, DELETE_ROLE } from "@/constants";
+import { ErrorTips } from "@/components/ErrorTips";
 export default {
   data() {
     return {
@@ -112,11 +113,11 @@ export default {
       Page: 1,
       size: 10,
       total: 0,
-      TotalCount:0,
-      pagesize:10,
-      currpage:1,
+      TotalCount: 0,
+      pagesize: 10,
+      currpage: 1,
       create_dialogVisible: false,
-      value:'',
+      value: ""
     };
   },
   components: {
@@ -138,46 +139,59 @@ export default {
       this.axios
         .post(DESCRIB_ROLE, params)
         .then(data => {
-          if (
-            data === "" ||
-            data.Response.error == "undefined" ||
-            data.Response.List.length == 0
-          ) {
-            this.loading = false;
+          if (data.Response.Error === undefined) {
+            if (
+              data === "" ||
+              data.Response.error == "undefined" ||
+              data.Response.List.length == 0
+            ) {
+              this.loading = false;
+            } else {
+              let resData = data.Response.List;
+              this.TotalCount = data.Response.TotalNum;
+              this.loading = false;
+              resData.forEach(item => {
+                let obj = {
+                  val: String,
+                  len: String
+                };
+                let policyObj = JSON.parse(item.PolicyDocument);
+                if (policyObj.statement[0].principal.service != undefined) {
+                  if (
+                    typeof policyObj.statement[0].principal.service === "object"
+                  ) {
+                    policyObj.val = policyObj.statement[0].principal.service[0];
+                    policyObj.len =
+                      policyObj.statement[0].principal.service.length - 1;
+                  }
+                  if (
+                    typeof policyObj.statement[0].principal.service === "string"
+                  ) {
+                    policyObj.val = policyObj.statement[0].principal.service;
+                    policyObj.len = 0;
+                  }
+                }
+                if (policyObj.statement[0].principal.qcs != undefined) {
+                  policyObj.val = policyObj.statement[0].principal.qcs[0];
+                }
+                item.PolicyDocument = policyObj;
+              });
+              this.tableData = resData;
+              this.total = data.Response.TotalNum;
+              // var dataRole = JSON.parse(data.Response.List);
+            }
           } else {
-            let resData = data.Response.List;
-            this.TotalCount = data.Response.TotalNum
-            console.log(data)
-            this.loading = false;
-            resData.forEach(item => {
-              let obj = {
-                val: String,
-                len: String
-              };
-              let policyObj = JSON.parse(item.PolicyDocument);
-              if (policyObj.statement[0].principal.service != undefined) {
-                if (
-                  typeof policyObj.statement[0].principal.service === "object"
-                ) {
-                  policyObj.val = policyObj.statement[0].principal.service[0];
-                  policyObj.len =
-                    policyObj.statement[0].principal.service.length - 1;
-                }
-                if (
-                  typeof policyObj.statement[0].principal.service === "string"
-                ) {
-                  policyObj.val = policyObj.statement[0].principal.service;
-                  policyObj.len = 0;
-                }
-              }
-              if (policyObj.statement[0].principal.qcs != undefined) {
-                policyObj.val = policyObj.statement[0].principal.qcs[0];
-              }
-              item.PolicyDocument = policyObj;
+            let ErrTips = {
+              "InternalError.SystemError": "内部错误",
+              "InvalidParameter.ParamError": "非法入参"
+            };
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
             });
-            this.tableData = resData;
-            this.total = data.Response.TotalNum;
-            // var dataRole = JSON.parse(data.Response.List);
           }
         })
         .catch(error => {
@@ -199,13 +213,28 @@ export default {
           this.axios
             .post(DELETE_ROLE, params)
             .then(data => {
-              if (data != null && data.Response.RequestId != "") {
+              if (data.Response.Error === undefined) {
+                if (data != null && data.Response.RequestId != "") {
+                  this.$message({
+                    type: "success",
+                    message: this.$t("CAM.Role.delInfo") + "!"
+                  });
+                  this.init();
+                  this.loading = false;
+                }
+              } else {
+                let ErrTips = {
+                  "InternalError.SystemError": "内部错误",
+                  "InvalidParameter.ParamError": "非法入参",
+                  "InvalidParameter.RoleNotExist": "角色不存在"
+                };
+                let ErrOr = Object.assign(ErrorTips, ErrTips);
                 this.$message({
-                  type: "success",
-                  message: this.$t("CAM.Role.delInfo") + "!"
+                  message: ErrOr[res.Response.Error.Code],
+                  type: "error",
+                  showClose: true,
+                  duration: 0
                 });
-                this.init();
-                this.loading = false;
               }
             })
             .catch(error => {
@@ -222,7 +251,6 @@ export default {
     },
     // 打开新增角色页面
     created_user() {
-      console.log(1111);
       this.create_dialogVisible = true;
     },
     handleClose() {
@@ -230,7 +258,6 @@ export default {
     },
     handleCommand(command) {},
     handleClick(scope) {
-      console.log(scope);
       this.$router.push({
         path: "/RoleDetail",
         query: {
@@ -254,7 +281,7 @@ export default {
     },
     handleCurrentChange(val) {
       this.Page = val;
-      this. init();
+      this.init();
     },
     toAccount() {
       // this.$router.push("/createAccount");
@@ -265,7 +292,7 @@ export default {
     },
     toProvider() {
       // this.$router.push("/createProvider");
-       this.$message({
+      this.$message({
         type: "info",
         message: "内测中..."
       });
@@ -282,18 +309,18 @@ export default {
   padding-top: 0;
   font-size: 12px;
 }
-.Right-style{
+.Right-style {
   display: flex;
   justify-content: flex-end;
 }
 .pagstyle {
   padding: 5px;
   .pagtotal {
-      font-size: 13px;
-      font-weight: 400;
-      color: #565656;
-      line-height: 32px;
-    }
+    font-size: 13px;
+    font-weight: 400;
+    color: #565656;
+    line-height: 32px;
+  }
 }
 .Cam {
   .top {
@@ -309,7 +336,7 @@ export default {
     width: 100%;
     display: flex;
     margin: 0 auto;
-    padding: 20px ;
+    padding: 20px;
     flex-direction: column;
     .container-text {
       width: 100%;
@@ -395,10 +422,10 @@ export default {
     }
   }
 }
-.opration{
+.opration {
   width: 100%;
 }
-.container_table{
+.container_table {
   width: 100%;
 }
 </style>

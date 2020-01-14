@@ -12,7 +12,8 @@
     </div>
     <!-- 表格 -->
     <div class="Table-SY">
-      <el-table :data="TbaleData" height="550" style="width: 100%" id="exportTable" v-loading="loadShow" :empty-text="$t('CVM.clBload.zwsj')">
+      <el-table :data="TbaleData" height="550" style="width: 100%" id="exportTable" v-loading="loadShow"
+        :empty-text="$t('CVM.clBload.zwsj')">
         <el-table-column prop :label="$t('CVM.clBload.zjm') " width="120">
           <template slot-scope="scope">
             <p v-for="i in scope.row.LoadBalancerVips">
@@ -62,9 +63,11 @@
   import SEARCH from "@/components/public/SEARCH";
   import Loading from "@/components/public/Loading";
   import {
+    ErrorTips
+  } from '@/components/ErrorTips'
+  import {
     ALL_CITY,
-    CLB_LIST,
-    ALL_PROJECT
+    CLB_LIST
   } from "@/constants";
   export default {
     data() {
@@ -131,13 +134,15 @@
           this.cities = data.data;
           this.selectedRegion = data.data[0].Region;
           this.selectedCity = data.data[0];
-          this.$cookie.set("regionv2", this.selectedCity.Region);
+          localStorage.setItem("regionv1", this.selectedCity.regionCode);
+          localStorage.setItem("regionv2", this.selectedRegion);
         });
       },
       // 切换城市
       changeCity(city) {
         this.selectedCity = city;
-        this.$cookie.set("regionv2", city.Region);
+        localStorage.setItem("regionv1", this.selectedCity.regionCode);
+        localStorage.setItem("regionv2", this.selectedCity.Region);
         this.GetTabularData();
       },
       //选择搜索条件
@@ -167,7 +172,7 @@
       // 添加项目列表的表格数据
       GetTabularData() {
         const param = {
-          Region: this.selectedRegion,
+          Region: localStorage.getItem('regionv2'),
           Version: "2018-03-17",
           Offset: this.currpage * this.pagesize - this.pagesize,
           Limit: this.pagesize
@@ -185,7 +190,24 @@
             this.TotalCount = data.Response.TotalCount;
             this.loadShow = false;
           } else {
-            this.$message.error(data.Response.Error.Message);
+            let ErrTips = {
+              'FailedOperation': '操作失败',
+              'InternalError': '必须包含开始时间和结束时间，且必须为整形时间戳（精确到秒）',
+              'InvalidParameterValue.MaxResult': '内部错误',
+              'InvalidParameter': '参数错误',
+              'InvalidParameter.FormatError': '参数格式错误',
+              'InvalidParameterValue': '参数取值错误',
+              'InvalidParameterValue.InvalidFilter': 'Filter参数输入错误',
+              'InvalidParameterValue.Length': '参数长度错误',
+              'UnauthorizedOperation': '未授权操作',
+            }
+            let ErrOr = Object.assign(ErrorTips, ErrTips)
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
           }
         });
       },

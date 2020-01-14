@@ -335,6 +335,41 @@ export default new Router({
         keepAlive: true
       }
     },
+    {
+      path: '/colony/sub/detail/storage/sc', // StorageClass详情
+      name: 'scDetail',
+      component: () => import('./colony/sub/detail/storage/sc/index.vue'),
+      redirect: '/colony/sub/detail/storage/sc/info', // 默认子路由
+      meta: {
+        keepAlive: true
+      },
+      children: [ // 子路由
+        { // 详情
+          path: '/colony/sub/detail/storage/sc/info',
+          name: 'scDetailInfo',
+          component: () => import('./colony/sub/detail/storage/sc/info.vue'),
+          meta: {
+            keepAlive: true,
+          }
+        }, 
+        { // 事件
+          path: '/colony/sub/detail/storage/sc/event',
+          name: 'scDetailEvent',
+          component: () => import('./colony/sub/detail/storage/sc/event.vue'),
+          meta: {
+            keepAlive: true,
+          }
+        }, 
+        { // yaml
+          path: '/colony/sub/detail/storage/sc/yaml',
+          name: 'scDetailYaml',
+          component: () => import('./colony/sub/detail/storage/sc/yaml.vue'),
+          meta: {
+            keepAlive: true,
+          }
+        },  
+      ]
+    },
 
     {
       path: '/helm', // helm应用
