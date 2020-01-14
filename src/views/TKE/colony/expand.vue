@@ -44,7 +44,7 @@
       </div>
       <hr>
 
-      <div class="tke-card tke-formpanel-wrap">
+      <div class="tke-card tke-formpanel-wrap mb60">
         <h4  class="tke-formpanel-title">已选配置</h4>
         
         <el-form  class="tke-form" :model="colony" label-position='left' label-width="120px" size="mini">

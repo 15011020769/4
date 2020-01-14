@@ -16,7 +16,7 @@
     </div>  
     <div class="colony-main">
 
-      <div class="tke-card tke-formpanel-wrap">
+      <div class="tke-card tke-formpanel-wrap mb60">
         <el-form  class="tke-form" :model="wl" label-position='left' label-width="120px" size="mini">
           <el-form-item label="名称">
             <el-input class="w200" v-model="wl.name" placeholder="请输入Workload名称"></el-input>
@@ -91,6 +91,15 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.tke-radio-group{
+    .el-radio{
+      display: block;
+    }
+    .el-radio+.el-radio{
+      margin-left: 0;
+      margin-top: 10px;
+    }
+  }
 
 
 </style>

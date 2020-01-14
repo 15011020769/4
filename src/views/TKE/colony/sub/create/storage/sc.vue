@@ -16,7 +16,7 @@
     </div>  
     <div class="colony-main">
 
-      <div class="tke-card tke-formpanel-wrap">
+      <div class="tke-card tke-formpanel-wrap mb60">
         <el-form  class="tke-form" :model="sc" label-position='left' label-width="120px" size="mini">
           <el-form-item label="名称">
             <el-input class="w200" v-model="sc.name" placeholder="请输入名称"></el-input>

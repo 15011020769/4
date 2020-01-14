@@ -19,7 +19,7 @@
 
     <div class="colony-main">
       
-      <div class="tke-card tke-formpanel-wrap">
+      <div class="tke-card tke-formpanel-wrap mb60">
         <div class="tke-step tke-grid">
           <div class="tke-step-item is-curr">
             <span class="num">1</span>

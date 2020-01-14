@@ -20,7 +20,7 @@
     </div>  
     <div class="colony-main">
 
-      <div class="tke-card tke-formpanel-wrap">
+      <div class="tke-card tke-formpanel-wrap mb60">
         <h4  class="tke-formpanel-title">启动配置</h4>
         <el-form  class="tke-form" :model="asg" label-position='left' label-width="120px" size="mini">
           <el-form-item label="名称">
