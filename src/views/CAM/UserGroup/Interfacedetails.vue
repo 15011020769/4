@@ -110,7 +110,7 @@
                 <transfer
                   :multipleSelection="multipleSelection"
                   @_multipleSelection="_multipleSelection"
-                  :rolePolicies="policiesData"
+                  :rolePolicies="rolePolicies"
                 />
                 <div slot="footer" class="dialog-footer">
                   <el-button
@@ -299,6 +299,7 @@ import {
 export default {
   data() {
     return {
+      rolePolicies: [],
       title: "",
       loading: true,
       loading1: true,
@@ -670,6 +671,7 @@ export default {
         .then(res => {
           if (res.Response.Error === undefined) {
             this.policiesData = res.Response.List;
+            this.rolePolicies = this.policiesData;
             this.policiesLable = "权限（" + res.Response.TotalNum + "）";
             this.TotalCount = res.Response.TotalNum;
           } else {
