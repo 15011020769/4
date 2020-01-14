@@ -1,12 +1,52 @@
 <template>
   <div class="stream-wrap">
-    <Echart :xAxis="xAxis1" :series="series1" :legendText="legendText1"  v-loading="loading" v-if="showEchart"/>
+    <Echart
+      :xAxis="xAxis1"
+      :series="series1"
+      :legendText="legendText1"
+      v-loading="loading"
+      v-if="showEchart"
+      :tooltip="{
+        trigger: 'axis',   
+        formatter: `{b}<br/>{a}  {c}fps`
+      }"
+    />
     <div class="empty" v-else>暂无数据</div>
-    <Echart :xAxis="xAxis1" :series="series2" :legendText="legendText2"  v-loading="loading" v-if="showEchart"/>
+    <Echart
+      :xAxis="xAxis1"
+      :series="series2"
+      :legendText="legendText2"
+      v-loading="loading"
+      v-if="showEchart"
+      :tooltip="{
+        trigger: 'axis',   
+        formatter: `{b}<br/>{a}  {c}bps`
+      }"
+    />
     <div class="empty" v-else>暂无数据</div>
-    <Echart :xAxis="xAxis1" :series="series3" :legendText="legendText3"  v-loading="loading" v-if="showEchart"/>
+    <Echart
+      :xAxis="xAxis1"
+      :series="series3"
+      :legendText="legendText3"
+      v-loading="loading"
+      v-if="showEchart"
+      :tooltip="{
+        trigger: 'axis',   
+        formatter: `{b}<br/>{a}  {c}fps`
+      }"
+    />
     <div class="empty" v-else>暂无数据</div>
-    <Echart :xAxis="xAxis1" :series="series4" :legendText="legendText4"  v-loading="loading" v-if="showEchart"/>
+    <Echart
+      :xAxis="xAxis1"
+      :series="series4"
+      :legendText="legendText4"
+      v-loading="loading"
+      v-if="showEchart"
+      :tooltip="{
+        trigger: 'axis',   
+        formatter: `{b}<br/>{a}  {c}bps`
+      }"
+    />
     <div class="empty" v-else>暂无数据</div>
     <div class="stream-table">
       <p>详细信息</p>

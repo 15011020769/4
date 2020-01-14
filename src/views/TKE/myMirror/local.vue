@@ -43,8 +43,8 @@
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="getCreate()">确 定</el-button>
+        <el-button @click="getClose()">取 消</el-button>
+        <el-button type="primary" @click="submitForm('ruleForm')">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -112,23 +112,28 @@ export default {
       this.GetSpaceName()
       this.loadShow = true
     },
-    handleClose (done) {
-      this.$confirm('确认关闭？')
-        .then(_ => {
-          done()
-        })
-        .catch(_ => {})
+    getClose () {
+      this.dialogVisible = false
+      this.$refs.ruleForm.clearValidate()
+      this.$refs.ruleForm.resetFields()
+    },
+    submitForm (formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          this.dialogVisible = !valid
+          this.CreateSpaceName()
+          this.loadShow = true
+          this.GetSpaceName()
+        } else {
+          console.log('error submit!!')
+          return false
+        }
+      })
     },
     getExist () {
       if (this.ruleForm.name.length >= 4) {
         this.GetIsExist()
       }
-    },
-    getCreate () {
-      this.dialogVisible = false
-      this.CreateSpaceName()
-      this.loadShow = true
-      this.GetSpaceName()
     },
     getSearch () {
       var regex = /^[a-z0-9\.\-_]+$/g
@@ -173,11 +178,7 @@ export default {
         namespace: this.ruleForm.name
       }
       this.axios.post(CREATE_SPACENAME, param).then(res => {
-        // this.loadShow = true
         console.log(res)
-        // if (res.code === 0) {
-        //   this.isExist = res.data.isExist
-        // }
       })
     }
   }

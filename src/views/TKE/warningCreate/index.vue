@@ -333,9 +333,7 @@
                           :value="item">
                         </el-option>
                       </el-select>
-                      <!-- <el-input v-model="NodeReady.number" size="mini" class="w100"></el-input> -->
                       <div style="display:inline-block;width:28px;"></div>
-                      <!-- <span class="numberEnd">{{ncFP.numberEnd}}</span> -->
                       <el-select v-model="NodeReady.zq" placeholder="请选择" size="mini" class="gz" style="padding-left:20px;">
                         <el-option
                           v-for="(item,i) in NodeReady.zqs"
@@ -707,9 +705,7 @@
                           :value="item">
                         </el-option>
                       </el-select>
-                      <!-- <el-input v-model="NodeReady.number" size="mini" class="w100"></el-input> -->
                       <div style="display:inline-block;width:28px;"></div>
-                      <!-- <span class="numberEnd">{{ncFP.numberEnd}}</span> -->
                       <el-select v-model="NodeReady.zq" placeholder="请选择" size="mini" class="gz" style="padding-left:20px;">
                         <el-option
                           v-for="(item,i) in NodeReady.zqs"

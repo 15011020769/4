@@ -29,6 +29,7 @@
         style="width: 100%"
         id="exportTable"
         v-loading="loadShow"
+        :empty-text="$t('CVM.clBload.zwsj')"
       >
         <el-table-column prop :label="$t('CVM.cloudDisk.mc')">
           <template slot-scope="scope">
@@ -200,9 +201,9 @@ export default {
       } else if (this.searchInput !== "" || this.searchValue !== "") {
         this.currpage = 1;
         this.GetTabularData();
-        this.$message.error("请输入正确搜索信息");
+        this.$message.error("請輸入正確搜索信息");
       } else {
-        this.$message.error("请输入正确搜索信息");
+        this.$message.error("請輸入正確搜索信息");
       }
     },
     // 添加项目列表的表格数据

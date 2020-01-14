@@ -50,7 +50,7 @@
             <el-table-column
               prop="PolicyName"
               :label="$t('CAM.userList.strategyNames')"
-              width="150"
+              width="200"
             >
               <template slot-scope="scope">
                 <el-button
@@ -89,7 +89,13 @@
     <el-dialog title :visible.sync="dialogVisible" width="72%">
       <h3 style="color:#000;margin-bottom:20px;">{{$t('CAM.strategy.straGroup')}}</h3>
       <div class="dialog_div">
-        <transfer v-if="transferFlag" ref="userTransfer" :PolicyId="policyId"></transfer>
+        <transfer
+          v-if="transferFlag"
+          ref="userTransfer"
+          :PolicyId="policyId"
+          :userArr="userArr"
+          :groupArr="groupArr"
+        ></transfer>
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button size="mini" @click="dialogVisible = false">取 消</el-button>
@@ -99,8 +105,9 @@
   </div>
 </template>
 <script>
+import { ErrorTips } from "@/components/ErrorTips";
 import transfer from "./component/transfer";
-import { POLICY_LIST, DELETE_POLICY } from "@/constants";
+import { POLICY_LIST, DELETE_POLICY, LIST_ENPOLICY } from "@/constants";
 export default {
   components: {
     transfer
@@ -151,7 +158,9 @@ export default {
       TotalCount: 0,
       pagesize: 10,
       currpage: 1,
-      loading: true
+      loading: true,
+      userArr: [],
+      groupArr: []
     };
   },
   created() {
@@ -172,9 +181,27 @@ export default {
         params["Keyword"] = this.searchValue;
       }
       this.axios.post(POLICY_LIST, params).then(res => {
-        console.log(res);
-        this.tableData = res.Response.List;
-        this.TotalCount = res.Response.TotalNum;
+        if (res.Response.Error === undefined) {
+          this.tableData = res.Response.List;
+          this.TotalCount = res.Response.TotalNum;
+        } else {
+          let ErrTips = {
+            "InternalError.SystemError": "内部错误",
+            "InvalidParameter.GroupIdError": "GroupId字段不合法",
+            "InvalidParameter.KeywordError": "Keyword字段不合法",
+            "InvalidParameter.ParamError": "非法入参",
+            "InvalidParameter.ScopeError": "Scope字段不合法",
+            "InvalidParameter.ServiceTypeError": "ServiceType字段不合法",
+            "InvalidParameter.UinError": "Uin字段不合法"
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
         this.loading = false;
       });
     },
@@ -183,7 +210,6 @@ export default {
     },
     // 跳转到详情页面
     handleClick(policy) {
-      console.log(policy);
       this.$router.push({
         path: "/StrategyDetail",
         query: {
@@ -198,7 +224,28 @@ export default {
       this.$nextTick(() => {
         this.transferFlag = true;
       });
+      this.getAttachPolicys(policy.PolicyId);
       this.dialogVisible = true;
+    },
+    // 获取策略关联的实体列表
+    getAttachPolicys(val) {
+      const params = {
+        Version: "2019-01-16",
+        PolicyId: val
+      };
+      var userArr = [];
+      var groupArr = [];
+      this.axios.post(LIST_ENPOLICY, params).then(res => {
+        res.Response.List.forEach(item => {
+          if (item.RelatedType == 1) {
+            userArr.push(item);
+          } else {
+            groupArr.push(item);
+          }
+        });
+        this.userArr = userArr;
+        this.groupArr = groupArr;
+      });
     },
     // 穿梭框：value右侧框值、direction操作、movedKeys移动值
     handleChange(value, direction, movedKeys) {
@@ -232,7 +279,24 @@ export default {
         });
       }
       this.axios.post(DELETE_POLICY, params).then(res => {
-        console.log(res);
+        if (res.Response.Error === undefined) {
+          console.log(res);
+        } else {
+          let ErrTips = {
+            "InternalError.SystemError": "内部错误",
+            "InvalidParameter.ParamError": "非法入参",
+            "InvalidParameter.PolicyIdError": "输入参数PolicyId不合法",
+            "ResourceNotFound.NotFound": "资源不存在",
+            "ResourceNotFound.PolicyIdNotFound": "PolicyId指定的资源不存在"
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
       });
       this.selectedData.splice(0, this.selectedData.length);
       this.getData();

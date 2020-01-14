@@ -8,7 +8,7 @@
         <div class="tke-grid ">
           <!-- 左侧 -->
           <div class="grid-left">
-            <el-button size="small" type="primary">新建</el-button>
+            <el-button @click="goWorkloadCreate('statefulSet')" size="small" type="primary">新建</el-button>
             <el-button size="small" >监控</el-button>
           </div>
           <!-- 右侧 -->
@@ -164,9 +164,20 @@ export default {
   },
  
   created() {
-
+    // 从路由获取集群id
+    this.clusterId=this.$route.query.clusterId;
   },
   methods: {
+     // 新建
+    goWorkloadCreate(type){
+      this.$router.push({
+          name: "workloadCreate",
+          query: {
+            type:type,
+            clusterId: this.clusterId
+          }
+      });
+    },
     //选择搜索条件
     changeSearchType(val) {
       this.searchType = val;

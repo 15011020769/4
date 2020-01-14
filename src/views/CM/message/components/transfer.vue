@@ -2,13 +2,10 @@
   <div class="wrap">
     <div class="main" style="background:white;">
       <div class="left">
-        <p class="title">
-          <b style="font-size:13px;">策略列表</b>
-          &nbsp;(共{{num}}条)
-        </p>
+        <h3 class="title">选择告警接收组</h3>
         <div class="left-main border">
-          <div class="seek" style="width:100%;">
-            <el-input v-model="input" placeholder="请输入内容" @change="_inpVal" style="width:100%;"></el-input>
+          <div class="seek">
+            <el-input v-model="input" placeholder="请输入内容" @change="_inpVal" style="margin:0;width:100%;"></el-input>
             <p>
               <i class="el-icon-search" @click="_serach"></i>
             </p>
@@ -18,8 +15,8 @@
             style="width: 100%"
             height="420"
             @selection-change="handleSelectionChange"
-            v-loadmore="debounce"
           >
+            <!-- v-loadmore="debounce" -->
             <el-table-column type="selection" width="55"></el-table-column>
             <el-table-column prop="PolicyName" label="策略名" width="180"></el-table-column>
             <el-table-column align="center">
@@ -129,39 +126,39 @@ export default {
     },
     //策略列表
     _getList() {
-      const params = {
-        Version: "2019-01-16",
-        Rp: 10,
-        Page: 1
-      };
-      if (this.input != "") {
-        params["Keyword"] = this.input;
-      }
-      if (this.rolePolicyType != "") {
-        params["Scope"] = this.rolePolicyType;
-      }
-      this.axios.post(POLICY_LIST, params).then(res => {
-        this.tableData = res.Response.List;
-        this.num = res.Response.TotalNum;
-      });
+      // const params = {
+      //   Version: "2019-01-16",
+      //   Rp: 10,
+      //   Page: 1
+      // };
+      // if (this.input != "") {
+      //   params["Keyword"] = this.input;
+      // }
+      // if (this.rolePolicyType != "") {
+      //   params["Scope"] = this.rolePolicyType;
+      // }
+      // this.axios.post(POLICY_LIST, params).then(res => {
+      //   this.tableData = res.Response.List;
+      //   this.num = res.Response.TotalNum;
+      // });
     },
     listMore() {
-      const params = {
-        Version: "2019-01-16",
-        Rp: 10,
-        Page: this.page
-      };
-      if (this.input != "") {
-        params["Keyword"] = this.input;
-      }
-      if (this.rolePolicyType != "") {
-        params["Scope"] = this.rolePolicyType;
-      }
-      this.axios.post(POLICY_LIST, params).then(res => {
-        res.Response.List.forEach(item => {
-          this.tableData.push(item);
-        });
-      });
+      // const params = {
+      //   Version: "2019-01-16",
+      //   Rp: 10,
+      //   Page: this.page
+      // };
+      // if (this.input != "") {
+      //   params["Keyword"] = this.input;
+      // }
+      // if (this.rolePolicyType != "") {
+      //   params["Scope"] = this.rolePolicyType;
+      // }
+      // this.axios.post(POLICY_LIST, params).then(res => {
+      //   res.Response.List.forEach(item => {
+      //     this.tableData.push(item);
+      //   });
+      // });
     },
     debounce() {
       let that = this;

@@ -1,5 +1,5 @@
 <template>
-  <div class="Cam">
+  <div class="Cam wrap">
     <HeadCom title="身份提供商" />
     <div class="cam_button" style="margin-top:20px;">
       <el-row class="cam-lt">
@@ -102,6 +102,14 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+.wrap >>> .el-button,
+.wrap >>> .el-input__inner {
+  border-radius: 0;
+  height: 30px !important;
+  line-height: 30px;
+  padding-top: 0;
+  font-size: 12px;
+}
 .Cam {
   .top {
     height: 45px;

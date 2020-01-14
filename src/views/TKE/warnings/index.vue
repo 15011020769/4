@@ -2,14 +2,14 @@
   <div class="warnings-wrap">
     <!-- 头部 -->
     <div class="back-hd flex">
-      <h2>警告设置</h2>
+      <h2 style="padding-top:3px;">警告设置</h2>
       <div style="width:20px"></div>
-      <div style="padding-top:3px;">地域</div> 
-      &nbsp;<el-button  type="primary" class="init hd-button">中国台北</el-button>
+      <div style="padding-top:6px;">地域</div> 
+      &nbsp;<el-button  type="primary" class="init hd-button" style="margin-top:2px;">中国台北</el-button>
       <div style="width:20px"></div>
-      <div style="padding-top:3px;">集群</div> 
+      <div style="padding-top:6px;">集群</div> 
       &nbsp;
-      <el-select size="mini" v-model="value" placeholder="请选择" @change="GetCOLONY_name()">
+      <el-select size="mini" v-model="value" placeholder="请选择" style="margin-bottom:5px;">
         <el-option
           v-for="item in options"
           :key="item.value"
@@ -80,9 +80,9 @@
           <div class="block" style="padding-top:5px;">
             <el-pagination
               :page-sizes="[10, 20, 30, 40, 50]"
-              :page-size="20"
+              :page-size="pageSize"
               layout="sizes, prev, pager, next"
-              :total="100">
+              :total="length">
             </el-pagination>
           </div>
         </div>
@@ -101,16 +101,11 @@ export default {
   name:'warnings',
   data() {
     return {
-      length: '0',
+      length: 1,
       pageSize: 20,
       pageIndex: 0,
       options: [],
       value: '',
-      tableData: [{
-        date: '2016-05-03',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
-      }],
       listData: [],
       multipleSelection: [],
       funllscreenLoading:false
@@ -126,10 +121,9 @@ export default {
       }
       console.log((val.split('('))[0])
       const res = this.axios.post(WARNING_GetCOLONY,params).then(res=>{
+        console.log(res)
         if(res.Response.AlarmPolicySet.length>0){
-          // this.$refs.dataHide.style.display = 'none'
-          // this.$refs.dataShow.style.display = 'block'
-          let resData= res.Response.AlarmPolicySet
+          let resData= res.Response.AlarmPolicySet;
           this.length = resData.length;
           this.listData = resData;
           console.log(resData)
@@ -140,8 +134,7 @@ export default {
             getData.name = resData.AlarmPolicySettings
           }
         }else{
-          // this.$refs.dateHide.style.display = 'block'
-          // this.$refs.dateShow.style.display = 'none'
+          this.length = 0;
           console.log('数据请求出错')
         }
       });
@@ -299,7 +292,7 @@ export default {
   width: 100%;
   height: 51px;
   background: white;
-  padding:15px;
+  padding:12px 15px 15px 15px;
   border-bottom: 1px solid #cccccc;
   font-size: 12px;
 }

@@ -69,6 +69,12 @@
               </div>
             </div>
           </div>
+          <el-form>
+            <el-form-item style="margin-top:40px;margin-left:30px;">
+              <el-button type="primary" @click="onSubmit">立即创建</el-button>
+              <el-button>取消</el-button>
+            </el-form-item>
+          </el-form>
         </div>
       </div>
     </div>

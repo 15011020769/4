@@ -15,7 +15,7 @@
 
     <!-- 表格 -->
     <div class="Table-SY">
-      <el-table id="exportTable" :data="ProTableData" height="550" style="width: 100%" v-loading="loadShow">
+      <el-table id="exportTable" :data="ProTableData" height="550" style="width: 100%" v-loading="loadShow" :empty-text="$t('CVM.clBload.zwsj')">
         <el-table-column prop :label="$t('CVM.clBload.zjm') ">
           <template slot-scope="scope">
             <p>

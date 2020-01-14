@@ -131,7 +131,7 @@
           <tr class="t-head">
             <td>{{$t('DDOS.Proteccon_figura.Agreement')}}</td>
             <td>{{$t('DDOS.Proteccon_figura.Start_portnumber')}}</td>
-            <td>{{$t('DDOS.Proteccon_figura.Start_portnumber')}}</td>
+            <td>{{$t('DDOS.Proteccon_figura.End_portnumbe')}}</td>
             <td>{{$t('DDOS.Proteccon_figura.start_destination')}}</td>
             <td>{{$t('DDOS.Proteccon_figura.end_destination')}}</td>
             <td>{{$t('DDOS.Proteccon_figura.Minimum_length')}}</td>
@@ -550,8 +550,7 @@
 <script>
 import {
   DDOS_POLICY_CREATE,
-  DDOS_POLICY_MODIFY,
-  DDOSPOLICY_CONT
+  DDOS_POLICY_MODIFY
 } from "@/constants";
 export default {
   props: {

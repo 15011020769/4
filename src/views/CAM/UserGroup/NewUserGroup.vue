@@ -48,6 +48,7 @@
   </div>
 </template>
 <script>
+import { ErrorTips } from "@/components/ErrorTips";
 import FirstStep from "./AddGroup/AddUserGroup.vue";
 import SecondStep from "./AddGroup/PoliciesList";
 import ThirdlyStep from "./AddGroup/ConfirmationGroup";
@@ -120,35 +121,71 @@ export default {
         this.axios
           .post(CREATE_USER, params)
           .then(res => {
-            // 获取新创建的用户组ID
-            let AttachGroupId = res.Response.GroupId;
-            let selArr = _this.policiesSelectedData;
-            // 绑定策略到用户组
-            if (AttachGroupId != "" && selArr != "") {
-              //目前系统接口只支持单个策略绑定到用户组，不支持多个，所以循环执行绑定方法
-              for (var i = 0; i < selArr.length; i++) {
-                let paramsurlPolicies = {
-                  AttachGroupId: AttachGroupId,
-                  PolicyId: selArr[i].PolicyId,
-                  Version: "2019-01-16"
-                };
-                // 获取策略id
-                this.axios
-                  .post(ATTACH_GROUP, paramsurlPolicies)
-                  .then(res => {
-                    console.log(res);
-                  })
-                  .catch(error => {
-                    console.log(error);
-                  });
+            if(res.Response.Error === undefined){
+              // 获取新创建的用户组ID
+              let AttachGroupId = res.Response.GroupId;
+              let selArr = _this.policiesSelectedData;
+              // 绑定策略到用户组
+              if (AttachGroupId != "" && selArr != "") {
+                //目前系统接口只支持单个策略绑定到用户组，不支持多个，所以循环执行绑定方法
+                for (var i = 0; i < selArr.length; i++) {
+                  let paramsurlPolicies = {
+                    AttachGroupId: AttachGroupId,
+                    PolicyId: selArr[i].PolicyId,
+                    Version: "2019-01-16"
+                  };
+                  // 获取策略id
+                  this.axios
+                    .post(ATTACH_GROUP, paramsurlPolicies)
+                    .then(res => {
+                      if(res.Response.Error === undefined){
+                        console.log(res);
+                      }else{
+                          let ErrTips = {
+                             "FailedOperation.PolicyFull":'用户策略数超过上限',
+                             "InternalError.SystemError":'内部错误',
+                             "InvalidParameter.AttachmentFull":'principal字段的授权对象关联策略数已达到上限',
+                             "InvalidParameter.ParamError":'非法入参',
+                             "InvalidParameter.PolicyIdError":'输入参数PolicyId不合法',
+                             "InvalidParameter.PolicyIdNotExist":'策略ID不存在',
+                             "nvalidParameter.UserNotExist":'principal字段的授权对象不存在',
+                             "ResourceNotFound.GroupNotExist":'用户组不存在',
+                             "ResourceNotFound.PolicyIdNotFound":'PolicyId指定的资源不存在',
+                             "ResourceNotFound.UserNotExist":'用户不存在'
+                          };
+                          let ErrOr = Object.assign(ErrorTips, ErrTips);
+                          this.$message({
+                            message: ErrOr[res.Response.Error.Code],
+                            type: "error",
+                            showClose: true,
+                            duration: 0
+                          });
+                      }
+                    })
+                    .catch(error => {
+                      console.log(error);
+                    });
+                }
               }
+              setTimeout(() => {
+                this.$router.push({
+                  name: "UserGroup"
+                });
+              }, 3000);
+              // 添加返回值回显，如用户组名称重复
+            }else{
+               let ErrTips = {
+                  "InvalidParameter.GroupFull":'用户组数量达到上限',
+                  "InvalidParameter.GroupNameInUse":'用户组名称重复'
+                };
+                let ErrOr = Object.assign(ErrorTips, ErrTips);
+                this.$message({
+                  message: ErrOr[res.Response.Error.Code],
+                  type: "error",
+                  showClose: true,
+                  duration: 0
+                });
             }
-            setTimeout(() => {
-              this.$router.push({
-                name: "UserGroup"
-              });
-            }, 3000);
-            // 添加返回值回显，如用户组名称重复
           })
           .catch(error => {
             console.log(error);

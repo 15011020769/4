@@ -1,5 +1,5 @@
 <template>
-  <div class="Cam" id="app">
+  <div class="Cam wrap" id="app">
     <HeadCom title="新建身份提供商" :backShow="true" @_back="_back" />
     <div class="container" v-loading="loading">
       <el-steps
@@ -216,6 +216,14 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.wrap >>> .el-button,
+.wrap >>> .el-input__inner {
+  border-radius: 0;
+  height: 30px !important;
+  line-height: 30px;
+  padding-top: 0;
+  font-size: 12px;
+}
 .Cam {
   .top {
     height: 45px;

@@ -8,7 +8,7 @@
         <div class="tke-grid ">
           <!-- 左侧 -->
           <div class="grid-left">
-            <el-button size="small" type="primary">新建</el-button>
+            <el-button @click="goPvCreate()" size="small" type="primary">新建</el-button>
           </div>
           <!-- 右侧 -->
           <div class="grid-right">
@@ -148,10 +148,20 @@ export default {
     };
   },
  
-  created() {
-
+ created() {
+    // 从路由获取集群id
+    this.clusterId=this.$route.query.clusterId;
   },
   methods: {
+     // 新建
+    goPvCreate(){
+      this.$router.push({
+          name: "pvCreate",
+          query: {
+            clusterId: this.clusterId
+          }
+      });
+    },
     //选择搜索条件
     changeSearchType(val) {
       this.searchType = val;

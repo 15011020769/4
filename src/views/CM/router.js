@@ -412,10 +412,10 @@ export default new Router({
   },
   // -----------------------------------------------------
   {
-    path: '/message/create', //     自定义消息创建列表
+    path: '/message/create', //     新建自定义消息
     name: 'messageCreate',
     component: () =>
-      import( /* webpackChunkName: "/message" */ './message/components/create.vue'),
+      import( /* webpackChunkName: "message" */ './message/components/create.vue'),
     meta: {
       keepAlive: true
     }

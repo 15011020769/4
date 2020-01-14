@@ -187,6 +187,7 @@ module.exports = {
       TextBiness: '有业务域名',
       noTextBin: '省略业务域名',
       binessTitle: '注意：粘贴内容从左至右依次为业务域名(选填)、协议、转发端口、源站端口、回源IP和权重（或回源域名），中间由空格分隔。一行只能填写一条转发规则。',
+      frequency: '访问频率 ',
     },
     protectCon: {
       ProtectionName: 'DDoS防护配置',
@@ -319,8 +320,8 @@ module.exports = {
       Start_portnumber:'开始端口号',
       End_portnumbe:'结束端口号',
       Message_features:'报文过滤特征',
-      start_destination:'开始目的的端口',
-      end_destination:'结束目的的端口',
+      start_destination:'开始目的端口',
+      end_destination:'结束目的端口',
       Minimum_length:'最小包长',
       Maximum_length:'最大包長',
       Monitoring_load:'监测载荷',
@@ -370,6 +371,7 @@ module.exports = {
       qsrbmd: '请输入IP白名单, 以换行符分隔',
       pldrurlbmd: '批量导入URL白名单',
       qsrurlbmd: '请输入URL白名单, 以换行符分隔',
+      zgtw: '中国台湾',
     }
   },
   COM: require('@/components/language/jt'),

@@ -51,7 +51,11 @@
               <el-table-column prop="Record.GroupIpList" label="IP">
                 <template slot-scope="scope">
                   <div v-for="(item, index) in scope.row.Record" :key="index">
-                    <div v-if="item.Key=='GroupIpList'">{{item.Value}}</div>
+                    <div v-if="item.Key=='IPText'">
+                      <div v-for="(item2, i) in item.Value" :key="i+'i'">
+                        <span>{{item2}}</span><br/>
+                      </div>
+                    </div>
                     <!-- IP地址-->
                   </div>
                 </template>
@@ -60,7 +64,7 @@
               <el-table-column prop="origin" :label="$t('DDOS.Proteccon_figura.region')">
                 <template slot-scope="scope">
                   <div v-for="(item, index) in scope.row.Record" :key="index">
-                    <div v-if="item.Key=='Id'">中国台湾</div>
+                    <div v-if="item.Key=='Id'">{{$t('DDOS.Proteccon_figura.zgtw')}}</div>
                     <!--地区：中国台湾 -->
                   </div>
                 </template>
@@ -118,13 +122,7 @@
               >
                 <template slot-scope="scope">
                   <div v-for="(item, index) in scope.row.Record" :key="index">
-                    <div v-if="item.Key=='Id'">
-                      <div v-for="(item2, i) in bindingArr" :key="i+'i'">
-                        <div v-if="item2.ResId==item.Value">
-                          {{item2.PolicyName}}
-                        </div>
-                      </div>
-                    </div>
+                    <div v-if="item.Key=='SPolicyName'">{{item.Value}}</div>
                     <!--高级防护策略 -->
                   </div>
                 </template>
@@ -292,9 +290,8 @@ import ProtectConfigModel from "./model/ProtectConfigModel";
 import ccProtection from "./tabs/ccProtection"; //cc防护模块
 import {
   RESOURCE_LIST,
-  DDOSPOLICY_CONT,
+  GET_SPolicy,
   DDOS_POLICY_DELETE,
-  GET_ID,
   Modify_Level,
   RESBIND_MODIFY
 } from "@/constants";
@@ -303,8 +300,6 @@ export default {
   data() {
     return {
       loading: true,
-      resourceId: "", //资源ID
-      bindingArr: [], //资源和策略绑定关系数组
       tableDataBegin: [], //DDoS攻击防护列表
       // 过滤刷新列表过程中使用
       allData: [], // 存储全部实例列表
@@ -319,7 +314,7 @@ export default {
           value: "ID"
         },
         {
-          label: "服务包名称",
+          label: "服務包名稱",
           value: "serverBag"
         }
       ],
@@ -354,9 +349,9 @@ export default {
       changeModelTip3: false,
       changeRow1: "",
       DDoSLevel: {
-        low: "宽松",
-        middle: "正常",
-        high: "严格"
+        low: "寬鬆模式",
+        middle: "正常模式",
+        high: "嚴格模式"
       },
       ddoslevel: ""
     };
@@ -379,22 +374,31 @@ export default {
         Version: "2018-07-09",
         Business: "net"
       };
-      this.axios.post(RESOURCE_LIST, params).then(res => {
-        // console.log(res, 8888);
-        this.tableDataBegin = res.Response.ServicePacks;
-        for (let i = 0; i < this.tableDataBegin.length; i++) {
-          let list = this.tableDataBegin[i];
-          list.Record.forEach((value, index) => {
-            if (value.Key == "Id") {
-              this.resourceId = value.Value;
-            }
-          });
+      // 条件搜索参数
+      if (this.tableDataName != null && this.tableDataName != "") {
+        if (this.filterConrent == "IP") {
+          params['IpList.0'] = this.tableDataName;
+        } else if (this.filterConrent == "ID") {
+          params['IdList.0'] = this.tableDataName;
+        } else if (this.filterConrent == "serverBag") {
+          params['Name'] = this.tableDataName;
         }
-        this.allData = res.Response.ServicePacks;
+      }
+      // 调用接口
+      this.axios.post(RESOURCE_LIST, params).then(res => {
+        if(res.Response.Error != undefined){ //条件搜索可能返回Error
+          this.tableDataBegin = [];
+          this.totalItems = 0;
+          this.loading = false;
+          return
+        }
+        this.tableDataBegin = res.Response.ServicePacks;
         this.totalItems = res.Response.Total;
-        this.allData.forEach(val => {
+        
+        this.tableDataBegin.forEach(val => {
           val.Record.forEach(item => {
             if (item.Key == "Id") {
+              // 1.防护等级
               let params = {
                 Version: "2018-07-09",
                 Business: "net",
@@ -408,13 +412,40 @@ export default {
                 };
                 val.Record.push(obj);
               });
+              // 2.高级防护策略
+              let params2 = {
+                Version: "2018-07-09",
+                Business: "net",
+                Id: item.Value
+              };
+              this.axios.post(GET_SPolicy, params2).then(res => {
+                const obj2 = {
+                  Key: "SPolicyName",
+                  Value: res.Response.DDosPolicyList[0].PolicyName
+                };
+                val.Record.push(obj2);
+              });
+            } else if (item.Key == "GroupIpList") {
+              // 3.IP格式化175.97.143.121-tpe-bgp-300-1;175.97.142.153-tpe-bgp-100-1 >>> 175.97.142.153(中国台湾BGP)
+              let IPText = [];
+              let ipArr = item.Value.split(";");
+              for (const key in ipArr) {
+                if (ipArr.hasOwnProperty(key)) {
+                  const element = ipArr[key];
+                  let ipDetailArr = element.split("-");
+                  IPText.push(ipDetailArr[0]+"("+(ipDetailArr[1]=='tpe'?'中國台灣':ipDetailArr[1])+
+                  (ipDetailArr[2]=='bgp'?'BGP':ipDetailArr[2])+")");
+                }
+              }
+              const obj3 = {
+                Key: "IPText",
+                Value: IPText
+              };
+              val.Record.push(obj3);
             }
           });
         });
         this.loading = false;
-
-        //宽松 1
-        // console.log(this.allData)
       });
     },
     //修改弹框关闭按钮
@@ -430,9 +461,8 @@ export default {
         Version: "2018-07-09",
         Business: "net"
       };
-      this.axios.post(DDOSPOLICY_CONT, params).then(res => {
+      this.axios.post(GET_SPolicy, params).then(res => {
         this.tableDataPolicy = res.Response.DDosPolicyList;
-        this.getBindingArr();
         this.loading = false;
         // console.log(this.tableDataPolicy)
       });
@@ -450,20 +480,6 @@ export default {
         // console.log(res.Response)
       });
     },
-    // 获取资源和策略绑定关系数组
-    getBindingArr(){
-      // 循环策略列表（找出已被绑定的资源）
-      let binded = {};
-      this.tableDataPolicy.forEach(policy => {
-        policy.BoundResources.forEach(res => {
-          binded = {};
-          binded.ResId = res;
-          binded.PolicyId = policy.PolicyId;
-          binded.PolicyName = policy.PolicyName;
-          this.bindingArr.push(binded);
-        })
-      });
-    },
     // 修改
     changeRow(changeIndex, changeRow1) {
       changeRow1.Record.forEach(item => {
@@ -478,40 +494,7 @@ export default {
     },
     // 搜索
     doFilter() {
-      // console.log(this.filterConrent, this.tableDataName);
-      if (this.tableDataName != null && this.tableDataName != "") {
-        //每次手动将数据置空,因为会出现多次点击搜索情况
-        this.tableDataBegin = new Array();
-        this.tableDataTemp = new Array();
-        this.allData.forEach((val, index) => {
-          if (this.filterConrent == "IP") {
-            val.Record.forEach((val2, index) => {
-              if (
-                val2.Key == "GroupIpList" &&
-                this.tableDataName.indexOf(val2.Value) > -1
-              ) {
-                this.tableDataTemp.push(val);
-              }
-            });
-          } else if (this.filterConrent == "ID") {
-            val.Record.forEach((val2, index) => {
-              if (val2.Key == "Id" && val2.Value == this.tableDataName) {
-                this.tableDataTemp.push(val);
-              }
-            });
-          }
-        });
-        this.tableDataBegin = this.tableDataTemp;
-      } else {
-        // 如果没有输入搜素内容
-        this.tableDataBegin = this.allData;
-      }
-      this.totalItems = this.tableDataBegin.length;
-      //页面数据改变重新统计数据数量和当前页
-      this.currentPage = 1;
-      this.totalItems = this.tableDataBegin.length;
-      //渲染表格,根据值
-      this.currentChangePage(this.tableDataBegin);
+      this.describeResourceList();
       //页面初始化数据需要判断是否检索过
       this.flag = true;
     },
@@ -623,19 +606,6 @@ export default {
             }
           }
         }
-        // resource.Record.forEach(element => {
-        //   if(element.Key == "Id"){
-        //     objTemp.key = element.Value;
-        //   } else if(element.Key == "GroupIpList"){
-        //     //175.97.143.121-tpe-bgp-300-1;175.97.142.153-tpe-bgp-100-1
-        //     let arr = element.Value.split(';');
-        //     objTemp.label = "";
-        //     arr.forEach(ipStr => {
-        //       let tmpStr = ipStr+"";
-        //       objTemp.label += tmpStr.substring(0, tmpStr.indexOf('-'))+";";
-        //     });
-        //   }
-        // });
         if(binded.length>0 && binded.indexOf(objTemp.key)<0){
           this.resData.push(objTemp);
         } else if(binded.length==0){

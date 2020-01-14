@@ -102,7 +102,7 @@
           </el-form-item>
           <el-form-item >
             <span slot="label">容器网络 <i class="el-icon-info"></i></span>
-            <div class='form-controls'>
+            <div class='form-controls' style="width:600px">
               <el-form  class="tke-form"  label-position='left' label-width="140px" size="mini">
                 <el-form-item label="CIDR">
                   <el-select class="w70" v-model="colony.CIDRValue_1" >
@@ -416,12 +416,6 @@ export default {
 
 //by liling
 
-hr{
-  padding: 0;
-    border: none;
-    border-bottom: 1px solid #ddd;
-    margin: 20px 0;
-}
 
 
 .tke-reminder{
@@ -436,21 +430,9 @@ hr{
   margin-bottom: 20px;  
 }
 .tke-formpanel-wrap{
-  padding: 20px;
-  margin-bottom: 60px;
-}
-.tke-formpanel-footer{
-  position: fixed;
-  bottom: 0;
-  left: 220px;
-  right: 20px;
-  z-index: 11;
-  box-sizing: border-box;
-  padding: 15px 15px 15px 100px;
-  border-top: 1px solid #dbe3e4;
-  background-color: #fff;
-  box-shadow: 0 2px 3px 0 rgba(0,0,0,.2);
-}
+    margin-bottom: 60px;
+  }
+
 
 .w50{
   width: 50px;
@@ -478,12 +460,6 @@ hr{
   }
   .el-icon-info{
    cursor: pointer;
-  }
-  .form-controls{
-    background-color: #f2f2f2;
-    padding: 10px;
-    width: 600px;
-    box-sizing: border-box;
   }
 }
 

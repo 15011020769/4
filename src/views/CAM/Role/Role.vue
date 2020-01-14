@@ -1,5 +1,5 @@
 <template>
-  <div class="Cam">
+  <div class="Cam wrap">
     <HeadCom title="角色" />
     <div class="container">
       <div class="container-text">
@@ -55,7 +55,12 @@
               prop="Description"
               :label="$t('CAM.Role.roleDesc')"
               show-overflow-tooltip
-            ></el-table-column>
+            >
+            <template slot-scope="scope">
+               <span v-show="!scope.row.Description">-</span>
+               <span v-show="scope.row.Description">{{scope.row.Description}}</span>
+              </template>
+            </el-table-column>
             <el-table-column prop="oper" :label="$t('CAM.Role.colHandle')" width="100">
               <template slot-scope="scope">
                 <el-button
@@ -78,18 +83,18 @@
         <h3 slot="title">{{$t('CAM.Role.selectCarrier')}}</h3>
         <div class="createItem" @click="toServe">
           <i class="strategy-icon ps"></i>
-          <h3 style="color:#333;font-weight:400">{{$t('CAM.Role.tencentProductService')}}</h3>
+          <h3 style="color:#333;font-weight:400">台富云产品服务</h3>
           <p>{{$t('CAM.Role.tencentProductServiceTitle')}}</p>
         </div>
         <div class="createItem" @click="toAccount">
           <i class="strategy-icon ca"></i>
-          <h3 style="color:#333;font-weight:400">{{$t('CAM.Role.tencentCard')}}</h3>
+          <h3 style="color:#333;font-weight:400">台富云账户</h3>
           <p>{{$t('CAM.Role.tencentCardTitle')}}</p>
         </div>
         <div class="createItem" @click="toProvider">
           <i class="strategy-icon sf"></i>
           <h3 style="color:#333;font-weight:400">{{$t('CAM.Role.identityProvider')}}</h3>
-          <p>{{$t('CAM.Role.identityProviderTitle')}}</p>
+          <p>授权台富云外部用户身份(如企业用户目录)使用您的资源</p>
         </div>
       </el-dialog>
     </div>
@@ -98,6 +103,7 @@
 <script>
 import HeadCom from "../UserListNew/components/Head";
 import {DESCRIB_ROLE,DELETE_ROLE} from '@/constants'
+import { ErrorTips } from "@/components/ErrorTips";
 export default {
   data() {
     return {
@@ -133,6 +139,7 @@ export default {
       this.axios
         .post(DESCRIB_ROLE, params)
         .then(data => {
+          if(data.Response.Error === undefined){
           if (
             data === "" ||
             data.Response.error == "undefined" ||
@@ -174,6 +181,19 @@ export default {
             this.total = data.Response.TotalNum;
             // var dataRole = JSON.parse(data.Response.List);
           }
+          }else{
+            let ErrTips = {
+               "InternalError.SystemError":'内部错误',
+               "InvalidParameter.ParamError":'非法入参'
+            };
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+          }
         })
         .catch(error => {
           console.log(error);
@@ -194,7 +214,8 @@ export default {
           this.axios
             .post(DELETE_ROLE, params)
             .then(data => {
-              if (data != null && data.Response.RequestId != "") {
+              if(data.Response.Error === undefined){
+                if (data != null && data.Response.RequestId != "") {
                 this.$message({
                   type: "success",
                   message: this.$t("CAM.Role.delInfo") + "!"
@@ -202,6 +223,21 @@ export default {
                 this.init();
                 this.loading = false;
               }
+              }else{
+                   let ErrTips = {
+                     "InternalError.SystemError":'内部错误',
+                     "InvalidParameter.ParamError":'非法入参',
+                     "InvalidParameter.RoleNotExist":'角色不存在'
+                  };
+                  let ErrOr = Object.assign(ErrorTips, ErrTips);
+                  this.$message({
+                    message: ErrOr[res.Response.Error.Code],
+                    type: "error",
+                    showClose: true,
+                    duration: 0
+                  });
+              }
+              
             })
             .catch(error => {
               this.$message({
@@ -248,7 +284,7 @@ export default {
       this.$router.push("/createServe");
     },
     handleCurrentChange(val) {
-      this.currpage = val;
+      this.Page = val;
       this. init();
     },
     toAccount() {
@@ -269,6 +305,14 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+.wrap >>> .el-button,
+.wrap >>> .el-input__inner {
+  border-radius: 0;
+  height: 30px !important;
+  line-height: 30px;
+  padding-top: 0;
+  font-size: 12px;
+}
 .Right-style{
   display: flex;
   justify-content: flex-end;

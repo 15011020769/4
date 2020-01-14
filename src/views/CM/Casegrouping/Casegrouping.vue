@@ -11,7 +11,12 @@
       <div class="box">
         <div class="table-top">
           <div style="flex:1;">
-            <el-button type="primary">新建</el-button>
+            <el-button type="primary" @click="buyMessgae">新建</el-button>
+            <Dialog
+              :dialogVisible="dialogVisible"
+              @cancel="cancel"
+              @save="save"
+            />
           </div>
           <div class="seek">
             <el-input v-model="input" placeholder="请输入实例组名搜索"></el-input>
@@ -51,10 +56,13 @@
 
 <script>
 import Header from "@/components/public/Head";
+import Transfer from "./components/transfer";
+import Dialog from "./components/dialog";
 export default {
   name: "group",
   data() {
     return {
+      dialogVisible: false, //dialog
       input: "", //搜索框的值
       tableData: [],
       //分页
@@ -64,13 +72,28 @@ export default {
     };
   },
   components: {
-    Header
+    Header,
+    Transfer,
+    Dialog
   },
   created() {},
   methods: {
     //分页
     handleCurrentChange(val) {
       this.currpage = val;
+    },
+    //设置弹框//新建实例分组
+    buyMessgae() {
+      // alert("11")
+      this.dialogVisible = true;
+    },
+    //取消设置弹框
+    cancel() {
+      this.dialogVisible = false;
+    },
+    //确定设置弹框
+    save() {
+      this.dialogVisible = false;
     }
   }
 };
@@ -84,6 +107,12 @@ export default {
   padding-top: 0;
   line-height: 30px;
   font-size: 12px;
+}
+.group-wrap >>> .el-dialog {
+  width: 1000px;
+  height: 700px;
+  margin-top:-350px;
+  top:50%;
 }
 .group-wrap {
   .Right-style {
@@ -116,7 +145,7 @@ export default {
     padding: 20px;
     box-sizing: border-box;
 
-    .table{
+    .table {
       background: white;
     }
 

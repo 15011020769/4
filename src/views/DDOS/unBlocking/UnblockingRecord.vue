@@ -17,6 +17,7 @@
           <el-table
             :data="IpUnBlockList.slice((currentPage-1)*pageSize,currentPage*pageSize)"
             v-loading="loading"
+            :empty-text="$t('DDOS.Statistical_forms.Nodate')"
           >
             <el-table-column prop="ip" label="IP">
               <template slot-scope="scope">
@@ -134,17 +135,18 @@ export default {
 
     // 时间格式化'yyyy-MM-dd hh:mm:ss'
     getDateString(date) {
-      return date
-        .toLocaleString("zh", {
-          hour12: false,
-          year: "numeric",
-          month: "2-digit",
-          day: "2-digit",
-          hour: "2-digit",
-          minute: "2-digit",
-          second: "2-digit"
-        })
-        .replace(/\//g, "-");
+      let o = {
+        y: date.getFullYear(),
+        M: date.getMonth()+1,
+        d: date.getDate(),
+        h: date.getHours(),
+        m: date.getMinutes(),
+        s: date.getSeconds()
+      }
+      for (const i in o) {
+        o[i] = (o[i]+"").length == 1 ? "0"+o[i] : o[i]
+      }
+      return o.y+"-"+o.M+"-"+o.d+" " +o.h+":"+o.m+":"+o.s;
     }
   }
 };

@@ -22,16 +22,37 @@ export const MIRROR_PRESENCE = 'ccr/RepositoryisExists'
 // 新建我的镜像
 export const MIRROR_CREATE = 'ccr/CreateRepository'
 
+// 镜像版本使用指引
+export const MIRROR_ROAD = 'ccr/GetTagList'
+
+// 保留镜像自动
+export const MIRROR_STRATEGY = 'ccr/SetAutoDelStrategy'
+
+// 删除镜像自动
+export const MIRROR_AUTODELELTE = 'ccr/closeAutoDelStrategy'
+
+// 修改镜像类型
+export const MIRROR_UPDATE = 'ccr/UpdateRepositoryPublic'
+
+// 修改镜像描述
+export const MIRROR_UPDATE_DESC = 'ccr/UpdateRepositoryDesc'
+
 // 获取集群列表
 export const COLONY_LIST = 'tke2/DescribeClusters'
+
 // 获取集群列表状态
 export const COLONY_STATUS = 'tke2/DescribeClusterStatus'
+
 // 获取集群列表
 export const WARNING_GetUSER = 'tke2/DescribeClusters'
+
 // 获取集群详细信息
 export const WARNING_GetCOLONY = 'tke2/DescribeAlarmPolicies'
+
 // 获取集群基本信息相关
 export const CLUSTERS_DESCRIBE = 'tke2/DescribeClusters'
+
 export const CLUSTERS_SECURITY = 'tke2/DescribeClusterSecurity'
+
 // export const CreateGetGroups = 'cam/GetGroups'
 export const CreateListGroups = 'cam/ListGroups'

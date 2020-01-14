@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2020-01-06 17:51:24
- * @LastEditTime : 2020-01-08 10:36:48
+ * @LastEditTime : 2020-01-11 10:01:42
  * @LastEditors  : Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: /new_product/src/constants/CSS.js
@@ -143,3 +143,7 @@ export const LIVE_UPDATELIVEWATERMARK = 'live2/UpdateLiveWatermark'
 export const LIVE_ADDLIVEWATERMARK = 'live2/AddLiveWatermark'
 /** 查询用户套餐包总量、使用量、剩余量、包状态、购买时间和过期时间等 */
 export const LIVE_DESCRIBE_LIVEPACKAGEINFO = 'live2/DescribeLivePackageInfo'
+
+/** 日志服务 */
+// 批量获取日志服务
+export const GET_LOG_DOWNLOAD_LIST = 'live2/DescribeLogDownloadList'
