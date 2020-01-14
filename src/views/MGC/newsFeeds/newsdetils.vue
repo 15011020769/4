@@ -1,6 +1,6 @@
 <template>
   <div class="news-wrap">
-    <HeaderCom title="通知公告详情" @_back="back"  :backShow="true"></HeaderCom>
+    <HeaderCom :title="$t('MGC.tzggxq')" @_back="back"  :backShow="true"></HeaderCom>
     <div class="detilswrap">
         <div class="wrap">
                <p>{{content.content}}</p>
