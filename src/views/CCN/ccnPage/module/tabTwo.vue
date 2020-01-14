@@ -64,11 +64,7 @@
         <el-table-column prop>
           <template slot-scope="scope">
             <p>
-              <!-- <i
-                class="el-icon-menu i-font"
-                style="font-size:26px;"
-                @click="Modality(scope.row.MetricName)"
-              ></i> -->
+              <!-- <i class="el-icon-menu i-font" style="font-size:26px;" @click="Modality(scope.row.MetricName)"></i> -->
             </p>
           </template>
         </el-table-column>
@@ -112,57 +108,88 @@
       echartLine,
       XTimeX
     },
-    UpTitle(value) {
-      if (value === "lanOuttraffic") {
-        return (value = "內網網卡的平均每秒出流量");
-      }
-      if (value === "lanIntraffic") {
-        return (value = "內網網卡的平均每秒入流量");
-      }
-      if (value === "lanOutpkg") {
-        return (value = "內網網卡的平均每秒出包量");
-      }
-      if (value === "lanInpkg") {
-        return (value = "內網網卡的平均每秒入包量");
-      }
-      if (value === "WanOuttraffic") {
-        return (value =
-          "外網平均每秒出流量，最小粒度數據為10秒總流量/10秒 計算得出");
-      }
-      if (value === "WanIntraffic") {
-        return (value = "外網平均每秒入流量");
-      }
-      if (value === "AccOuttraffic") {
-        return (value = "外網網卡的平均每秒出流量");
-      }
-      if (value === "WanOutpkg") {
-        return (value = "外網平均每秒出包量");
-      }
-      if (value === "WanInpkg") {
-        return (value = "外網平均每秒入包量");
-      }
-      if (value === "CPUUsage") {
-        return (value =
-          "CPU利用率是通過CVM子機內部監控組件採集上報，數據更加精準");
-      }
-      if (value === "CPULoadAvg") {
-        return (value =
-          "1分鐘內CPU平均負載，取 /proc/loadavg 第一列數據（windows操作系統無此指標），依賴監控組件安裝採集");
-      }
-      if (value === "MemUsed") {
-        return (value =
-          "使用的記憶體量，不包括系統緩存和緩存區佔用記憶體，依賴監控組件安裝採集");
-      }
-      if (value === "MemUsage") {
-        return (value =
-          "用戶實際使用的記憶體量與總記憶體量之比，不包括緩衝區與系統緩存佔用的記憶體");
-      }
-      if (value === "TcpCurrEstab") {
-        return (value =
-          "處於 ESTABLISHED 狀態的 TCP 連接數量，依賴監控組件安裝採集");
-      }
-      if (value === "") {
-        return (value = "");
+    created() {},
+    methods: {
+      reload() {
+        this.GetDat(this.json);
+      },
+      GetDat(data) {
+        this.json = data;
+        this.period = data[0];
+        this.Start_End = data[1];
+        this.value = data[2];
+        const metricNArr = [
+          "RegionOutPkg",
+          "RegionInPkg",
+          "RegionOutBandwidth",
+          "RegionInBandwidth",
+          "OutPkg",
+          "InPkg",
+          "OutBandwidth",
+          "InBandwidth"
+        ];
+        const symbol = [
+          "個/秒",
+          "個/秒",
+          "	Mbps",
+          "Mbsp",
+          "個/秒",
+          "個/秒",
+          "Mbps",
+          "Mbps"
+        ];
+        this.tableData = [];
+        for (let i = 0; i < metricNArr.length; i++) {
+          this.Obtain(metricNArr[i], symbol[i]);
+          // this.tableData[i].symbol = symbol
+        }
+        if (this.MetricName) {
+          this.getModality(this.MetricName);
+        }
+      },
+      //
+      Obtain(metricN, symbol) {
+        const param = {
+          Version: "2018-07-24",
+          Region: localStorage.getItem("regionv2"),
+          Namespace: "QCE/VBC",
+          MetricName: metricN,
+          "Instances.0.Dimensions.0.Name": "CcnId",
+          "Instances.0.Dimensions.0.Value": this.ID,
+          Period: this.period,
+          StartTime: this.Start_End.StartTIme,
+          EndTime: this.Start_End.EndTIme
+        };
+        this.axios.post(All_MONITOR, param).then(data => {
+          data.Response.symbol = symbol;
+          this.tableData.push(data.Response);
+        });
+      },
+      getModality(MetricName) {
+        const param = {
+          Version: "2018-07-24",
+          Region: localStorage.getItem("regionv2"),
+          Namespace: "QCE/VBC",
+          MetricName: MetricName,
+          "Instances.0.Dimensions.0.Name": "InstanceId",
+          "Instances.0.Dimensions.0.Value": this.ID,
+          Period: this.period,
+          StartTime: this.Start_End.StartTIme,
+          EndTime: this.Start_End.EndTIme
+        };
+        this.axios.post(All_MONITOR, param).then(data => {
+          this.timeData = data.Response.DataPoints[0].Timestamps;
+          this.jingData = data.Response.DataPoints[0].Values;
+        });
+      },
+      // 模态框
+      Modality(MetricName) {
+        this.MetricName = MetricName;
+        this.dialogVisible = true;
+        this.getModality(this.MetricName);
+      },
+      handleClose(done) {
+        done();
       }
     },
     filters: {
@@ -231,11 +258,11 @@
         }
         if (value === "MemUsed") {
           return (value =
-            "使用的內存量，不包括系統緩存和緩存區佔用內存，依賴監控組件安裝採集");
+            "使用的記憶體量，不包括系統緩存和緩存區佔用記憶體，依賴監控組件安裝採集");
         }
         if (value === "MemUsage") {
           return (value =
-            "用戶實際使用的內存量與總內存量之比，不包括緩衝區與系統緩存佔用的內存");
+            "用戶實際使用的記憶體量與總記憶體量之比，不包括緩衝區與系統緩存佔用的記憶體");
         }
         if (value === "TcpCurrEstab") {
           return (value =
