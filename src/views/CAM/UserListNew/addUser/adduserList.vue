@@ -353,16 +353,17 @@ export default {
         .then(res => {
           if (res.Response.Error === undefined) {
             this.userUin = res.Response.Uin;
-          } else {
-            let ErrTips = {};
-            let ErrOr = Object.assign(ErrorTips, ErrTips);
-            this.$message({
-              message: ErrOr[res.Response.Error.Code],
-              type: "error",
-              showClose: true,
-              duration: 0
-            });
           }
+          // else {
+          //   let ErrTips = {};
+          //   let ErrOr = Object.assign(ErrorTips, ErrTips);
+          //   this.$message({
+          //     message: ErrOr[res.Response.Error.Code],
+          //     type: "error",
+          //     showClose: true,
+          //     duration: 0
+          //   });
+          // }
         })
         //获取关联的策略
         .then(data => {
@@ -373,19 +374,20 @@ export default {
           this.axios.post(QUERY_POLICY, params).then(res => {
             if (res.Response.Error === undefined) {
               this.multipleSelection = res.Response.List;
-            } else {
-              let ErrTips = {
-                "InternalError.SystemError": "内部错误",
-                "nvalidParameter.ParamError": "非法入参"
-              };
-              let ErrOr = Object.assign(ErrorTips, ErrTips);
-              this.$message({
-                message: ErrOr[res.Response.Error.Code],
-                type: "error",
-                showClose: true,
-                duration: 0
-              });
             }
+            // else {
+            //   let ErrTips = {
+            //     "InternalError.SystemError": "内部错误",
+            //     "nvalidParameter.ParamError": "非法入参"
+            //   };
+            //   let ErrOr = Object.assign(ErrorTips, ErrTips);
+            //   this.$message({
+            //     message: ErrOr[res.Response.Error.Code],
+            //     type: "error",
+            //     showClose: true,
+            //     duration: 0
+            //   });
+            // }
           });
         });
     },
@@ -405,19 +407,20 @@ export default {
             this.axios.post(QUERY_POLICY, params).then(res => {
               if (res.Response.Error === undefined) {
                 item.policy = res.Response.List;
-              } else {
-                let ErrTips = {
-                  "InternalError.SystemError": "内部错误",
-                  "nvalidParameter.ParamError": "非法入参"
-                };
-                let ErrOr = Object.assign(ErrorTips, ErrTips);
-                this.$message({
-                  message: ErrOr[res.Response.Error.Code],
-                  type: "error",
-                  showClose: true,
-                  duration: 0
-                });
               }
+              // else {
+              //   let ErrTips = {
+              //     "InternalError.SystemError": "内部错误",
+              //     "nvalidParameter.ParamError": "非法入参"
+              //   };
+              //   let ErrOr = Object.assign(ErrorTips, ErrTips);
+              //   this.$message({
+              //     message: ErrOr[res.Response.Error.Code],
+              //     type: "error",
+              //     showClose: true,
+              //     duration: 0
+              //   });
+              // }
             });
           });
           this.userDatas = json;
@@ -508,18 +511,19 @@ export default {
       this.axios.post(QUERY_USER, params).then(res => {
         if (res.Response.Error === undefined) {
           this.userpolicyData = res.Response;
-        } else {
-          let ErrTips = {
-            "ResourceNotFound.UserNotExist": "用户不存在"
-          };
-          let ErrOr = Object.assign(ErrorTips, ErrTips);
-          this.$message({
-            message: ErrOr[res.Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-          });
         }
+        // else {
+        //   let ErrTips = {
+        //     "ResourceNotFound.UserNotExist": "用户不存在"
+        //   };
+        //   let ErrOr = Object.assign(ErrorTips, ErrTips);
+        //   this.$message({
+        //     message: ErrOr[res.Response.Error.Code],
+        //     type: "error",
+        //     showClose: true,
+        //     duration: 0
+        //   });
+        // }
       });
     },
     //绑定策略列表
@@ -653,19 +657,20 @@ export default {
             this.axios.post(GROUP_POLICY, params).then(res => {
               if (res.Response.Error === undefined) {
                 item.policy = res.Response.List;
-              } else {
-                let ErrTips = {
-                  "InternalError.SystemError": "内部错误",
-                  "InvalidParameter.ParamError": "非法入参"
-                };
-                let ErrOr = Object.assign(ErrorTips, ErrTips);
-                this.$message({
-                  message: ErrOr[res.Response.Error.Code],
-                  type: "error",
-                  showClose: true,
-                  duration: 0
-                });
               }
+              // else {
+              //   let ErrTips = {
+              //     "InternalError.SystemError": "内部错误",
+              //     "InvalidParameter.ParamError": "非法入参"
+              //   };
+              //   let ErrOr = Object.assign(ErrorTips, ErrTips);
+              //   this.$message({
+              //     message: ErrOr[res.Response.Error.Code],
+              //     type: "error",
+              //     showClose: true,
+              //     duration: 0
+              //   });
+              // }
             });
           });
         } else {

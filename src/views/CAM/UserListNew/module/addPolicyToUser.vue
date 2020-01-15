@@ -121,19 +121,20 @@ export default {
         if (res.Response.Error === undefined) {
           this.policyArr = res.Response.List;
           this._getList();
-        } else {
-          let ErrTips = {
-            "InternalError.SystemError": "内部错误",
-            "InvalidParameter.ParamError": "非法入参"
-          };
-          let ErrOr = Object.assign(ErrorTips, ErrTips);
-          this.$message({
-            message: ErrOr[res.Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-          });
         }
+        // else {
+        //   let ErrTips = {
+        //     "InternalError.SystemError": "内部错误",
+        //     "InvalidParameter.ParamError": "非法入参"
+        //   };
+        //   let ErrOr = Object.assign(ErrorTips, ErrTips);
+        //   this.$message({
+        //     message: ErrOr[res.Response.Error.Code],
+        //     type: "error",
+        //     showClose: true,
+        //     duration: 0
+        //   });
+        // }
       });
       const param = {
         Version: "2019-01-16",
@@ -143,18 +144,19 @@ export default {
         if (res.Response.Error === undefined) {
           this.groupArr = res.Response.GroupInfo;
           this._userList();
-        } else {
-          let ErrTips = {
-            "ResourceNotFound.UserNotExist": "用户不存在"
-          };
-          let ErrOr = Object.assign(ErrorTips, ErrTips);
-          this.$message({
-            message: ErrOr[res.Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-          });
         }
+        // else {
+        //   let ErrTips = {
+        //     "ResourceNotFound.UserNotExist": "用户不存在"
+        //   };
+        //   let ErrOr = Object.assign(ErrorTips, ErrTips);
+        //   this.$message({
+        //     message: ErrOr[res.Response.Error.Code],
+        //     type: "error",
+        //     showClose: true,
+        //     duration: 0
+        //   });
+        // }
       });
     },
     //用户组列表
@@ -187,19 +189,20 @@ export default {
             this.axios.post(GROUP_POLICY, params).then(res => {
               if (res.Response.Error === undefined) {
                 item.policy = res.Response.List;
-              } else {
-                let ErrTips = {
-                  "nternalError.SystemError": "内部错误",
-                  "InvalidParameter.ParamError": "非法入参"
-                };
-                let ErrOr = Object.assign(ErrorTips, ErrTips);
-                this.$message({
-                  message: ErrOr[res.Response.Error.Code],
-                  type: "error",
-                  showClose: true,
-                  duration: 0
-                });
               }
+              // else {
+              //   let ErrTips = {
+              //     "nternalError.SystemError": "内部错误",
+              //     "InvalidParameter.ParamError": "非法入参"
+              //   };
+              //   let ErrOr = Object.assign(ErrorTips, ErrTips);
+              //   this.$message({
+              //     message: ErrOr[res.Response.Error.Code],
+              //     type: "error",
+              //     showClose: true,
+              //     duration: 0
+              //   });
+              // }
             });
           });
         } else {
@@ -342,19 +345,20 @@ export default {
           this.axios.post(QUERY_POLICY, params).then(res => {
             if (res.Response.Error === undefined) {
               this.multipleSelection = res.Response.List;
-            } else {
-              let ErrTips = {
-                "InternalError.SystemError": "内部错误",
-                "InvalidParameter.ParamError": "非法入参"
-              };
-              let ErrOr = Object.assign(ErrorTips, ErrTips);
-              this.$message({
-                message: ErrOr[res.Response.Error.Code],
-                type: "error",
-                showClose: true,
-                duration: 0
-              });
             }
+            // else {
+            //   let ErrTips = {
+            //     "InternalError.SystemError": "内部错误",
+            //     "InvalidParameter.ParamError": "非法入参"
+            //   };
+            //   let ErrOr = Object.assign(ErrorTips, ErrTips);
+            //   this.$message({
+            //     message: ErrOr[res.Response.Error.Code],
+            //     type: "error",
+            //     showClose: true,
+            //     duration: 0
+            //   });
+            // }
           });
         });
     },
