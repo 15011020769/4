@@ -161,43 +161,33 @@ export default {
             SAMLMetadataDocument: localStorage.getItem("base64")
           };
           this.axios.post(CREATE_SAML, params).then(res => {
-            if(res.Response.Error === undefined){
-               if (
-              res.Response.Error.Code == "InvalidParameterValue.MetadataError"
-            ) {
-              this.$message({
-                message: "元數據錯誤解析元數據錯誤",
-                type: "error",
-                duration: 0,
-                showClose: true
-              });
-            } else {
+            if (res.Response.Error === undefined) {
               this.$message({
                 message: "添加成功",
                 type: "success",
-                duration: 0,
-                showClose: true
+                duration: 0,
+                showClose: true
               });
               const addModel = this.addModel;
               if (this.active++ > 1) {
                 this.active = 0;
                 this.form = this.addModel;
               }
-            }
-            }else{
-                 let ErrTips = {
-                      "InvalidParameter.IdentityNameInUse":'身份提供商名称已经使用',
-                      "InvalidParameterValue.MetadataError":'身份提供商元数据文档错误',
-                      "InvalidParameterValue.NameError":'身份提供商名称错误',
-                      "LimitExceeded.IdentityFull":'身份提供商已达到上限',
-                };
-                let ErrOr = Object.assign(ErrorTips, ErrTips);
-                this.$message({
-                  message: ErrOr[res.Response.Error.Code],
-                  type: "error",
-                  showClose: true,
-                  duration: 0
-                }); 
+            } else {
+              let ErrTips = {
+                "InvalidParameter.IdentityNameInUse": "身份提供商名称已经使用",
+                "InvalidParameterValue.MetadataError":
+                  "身份提供商元数据文档错误",
+                "InvalidParameterValue.NameError": "身份提供商名称错误",
+                "LimitExceeded.IdentityFull": "身份提供商已达到上限"
+              };
+              let ErrOr = Object.assign(ErrorTips, ErrTips);
+              this.$message({
+                message: ErrOr[res.Response.Error.Code],
+                type: "error",
+                showClose: true,
+                duration: 0
+              });
             }
             this.loading = false;
           });
