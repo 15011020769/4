@@ -37,7 +37,7 @@ module.exports = {
   dsa: '動態加速 DSA',
   gaap: '全球應用加速 GAAP',
   scf: '雲函數 SCF',
-  pro: '項目管理',
+  pro: '專案管理',
   center: '產品中心',
   price: '定價',
   document: '文檔中心',

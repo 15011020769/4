@@ -9,11 +9,21 @@
         <el-step :title="$t('CAM.userList.userMesg')" v-if="this.ruleForm.ConsoleLogin == 1"></el-step>
       </el-steps>
       <div class="main">
-        <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
+        <el-form
+          :model="ruleForm"
+          :rules="rules"
+          ref="ruleForm"
+          label-width="100px"
+          class="demo-ruleForm"
+        >
           <div class="step1" v-show="active == 0">
             <el-form-item :label="$t('CAM.userList.chooserType')" required>
-              <div :class="index == typeIndex ? 'type-box active' : 'type-box'" v-for="(item,index) in type"
-                :key="index" @click="_type(index)">
+              <div
+                :class="index == typeIndex ? 'type-box active' : 'type-box'"
+                v-for="(item,index) in type"
+                :key="index"
+                @click="_type(index)"
+              >
                 <p>
                   <b>{{item.title}}</b>
                 </p>
@@ -76,8 +86,14 @@
                   <el-radio :label="true">{{$t('CAM.userList.Custom')}}</el-radio>
                 </el-radio-group>
                 <div v-show="pwdInp" class="regPWD">
-                  <el-input v-model="ruleForm.Password" style="width:200px;" type="password" show-password
-                    @click="visible = !visible" @change="_pwdInp"></el-input>
+                  <el-input
+                    v-model="ruleForm.Password"
+                    style="width:200px;"
+                    type="password"
+                    show-password
+                    @click="visible = !visible"
+                    @change="_pwdInp"
+                  ></el-input>
                   <div class="reg-box">
                     <p :class="pwdlenReg ? 'red' : 'green'">长度为8-32个字符</p>
                     <p :class="pwdtypeReg ? 'red' : 'green'">包含数字，特殊字符，小写字母，大写字母</p>
@@ -104,14 +120,29 @@
           </div>
         </el-form>
         <div class="step3" v-show="active == 2">
-          <Step3 :totalNum="totalNum" :tableData="tableData" :userData="userData" :userNum="userNum"
-            :userDatas="userDatas" @handleSelectionChange="handleSelectionChange" @acitiveName="_acitiveName"
-            @loadMore="_loadMore" @_policySearch="_policySearch" @_policyInp="_policyInp" @_userSearch="_userSearch"
-            @_userInp="_userInp" @_userRadio="_userRadio" />
+          <Step3
+            :totalNum="totalNum"
+            :tableData="tableData"
+            :userData="userData"
+            :userNum="userNum"
+            :userDatas="userDatas"
+            @handleSelectionChange="handleSelectionChange"
+            @acitiveName="_acitiveName"
+            @loadMore="_loadMore"
+            @_policySearch="_policySearch"
+            @_policyInp="_policyInp"
+            @_userSearch="_userSearch"
+            @_userInp="_userInp"
+            @_userRadio="_userRadio"
+          />
         </div>
         <div class="step4" v-if="active == 3">
-          <Step4 :name="this.ruleForm.Name" :activeName="activeName" :pwdType="ruleForm.pwdType"
-            :pwdRadio="ruleForm.pwdRadio" />
+          <Step4
+            :name="this.ruleForm.Name"
+            :activeName="activeName"
+            :pwdType="ruleForm.pwdType"
+            :pwdRadio="ruleForm.pwdRadio"
+          />
         </div>
       </div>
       <div class="btn-box">
@@ -123,231 +154,250 @@
 </template>
 
 <script>
-  import { ErrorTips } from "@/components/ErrorTips";
-  import HeadCom from "../components/Head";
-  import {
-    ADD_USER,
-    POLICY_LIST,
-    USER_GROUP,
-    POLICY_USER,
-    QUERY_USER,
-    ADD_USERTOGROUP,
-    USER_LIST,
-    QUERY_POLICY,
-    GROUP_POLICY
-  } from "@/constants";
-  import Step3 from "./Tab/Step3"; //步骤3
-  import Step4 from "./Tab/Step4"; //步骤4
+import { ErrorTips } from "@/components/ErrorTips";
+import HeadCom from "../components/Head";
+import {
+  ADD_USER,
+  POLICY_LIST,
+  USER_GROUP,
+  POLICY_USER,
+  QUERY_USER,
+  ADD_USERTOGROUP,
+  USER_LIST,
+  QUERY_POLICY,
+  GROUP_POLICY
+} from "@/constants";
+import Step3 from "./Tab/Step3"; //步骤3
+import Step4 from "./Tab/Step4"; //步骤4
 
-  export default {
-    name: "adduserlist",
-    data() {
-      var Password = (rule, value, callback) => {
-        var reg = /^(?![0-9]+$)(?![a-z]+$)(?![A-Z]+$)(?!([^(0-9a-zA-Z)])+$)^.{8,}$/;
-        var _this = this;
-        setTimeout(() => {
-          if (!reg.test(value)) {
-            _this.pwdReg = false;
-            callback(
-              new Error("密码规则为8位以上同时包含大写小字母、数字和特殊字符")
-            );
-          } else {
-            _this.pwdReg = true;
-            callback();
-          }
-        });
-      };
-      return {
-        //密码正则验证
-        pwdlenReg: false,
-        pwdtypeReg: false,
-        pwdreReg: false,
-        loading: false,
-        activeName: "first",
-        userData: [], //用户组
-        totalNum: 0, //策略列表条数
-        multipleSelection: [], //全选
-        tableData: [],
-        active: 0,
-        btnVal: "下一步",
-        pwdReg: true,
-        //选择类型
-        type: [{
-            code: 1,
-            title: "可访问资源并接收消息",
-            txt: "该用户可以登录控制台或通过 API 密钥访问您授予其权限的台富雲资源，同时拥有接收消息等子账号的全部功能"
-          },
-          {
-            code: 0,
-            title: "仅用于接收消息",
-            txt: "该用户仅可通过手机、邮箱接收台富雲发送给您的消息通知，不可访问台富雲"
-          }
-        ],
-        //访问方式
-        visitType: false,
-        typeIndex: 0,
-        pwdInp: false, //密码框
-        ruleForm: {
-          loginRadio: true, //登录保护
-          processRadio: true, //操作保护
-          type: [],
-          CountryCode: "",
-          pwdType: [],
-          pwdRadio: false,
-          Password: "", //密码
-          ConsoleLogin: 1, //子用户是否可以登录控制台
-          Name: "", //	子用户用户名
-          Remark: "", //子用户备注
-          PhoneNum: "", //手机号
-          Email: "" //邮箱
+export default {
+  name: "adduserlist",
+  data() {
+    var Password = (rule, value, callback) => {
+      var reg = /^(?![0-9]+$)(?![a-z]+$)(?![A-Z]+$)(?!([^(0-9a-zA-Z)])+$)^.{8,}$/;
+      var _this = this;
+      setTimeout(() => {
+        if (!reg.test(value)) {
+          _this.pwdReg = false;
+          callback(
+            new Error("密码规则为8位以上同时包含大写小字母、数字和特殊字符")
+          );
+        } else {
+          _this.pwdReg = true;
+          callback();
+        }
+      });
+    };
+    return {
+      //密码正则验证
+      pwdlenReg: false,
+      pwdtypeReg: false,
+      pwdreReg: false,
+      loading: false,
+      activeName: "first",
+      userData: [], //用户组
+      totalNum: 0, //策略列表条数
+      multipleSelection: [], //全选
+      tableData: [],
+      active: 0,
+      btnVal: "下一步",
+      pwdReg: true,
+      //选择类型
+      type: [
+        {
+          code: 1,
+          title: "可访问资源并接收消息",
+          txt:
+            "该用户可以登录控制台或通过 API 密钥访问您授予其权限的台富雲资源，同时拥有接收消息等子账号的全部功能"
         },
-        rules: {
-          Password: [{
+        {
+          code: 0,
+          title: "仅用于接收消息",
+          txt:
+            "该用户仅可通过手机、邮箱接收台富雲发送给您的消息通知，不可访问台富雲"
+        }
+      ],
+      //访问方式
+      visitType: false,
+      typeIndex: 0,
+      pwdInp: false, //密码框
+      ruleForm: {
+        loginRadio: true, //登录保护
+        processRadio: true, //操作保护
+        type: [],
+        CountryCode: "",
+        pwdType: [],
+        pwdRadio: false,
+        Password: "", //密码
+        ConsoleLogin: 1, //子用户是否可以登录控制台
+        Name: "", //	子用户用户名
+        Remark: "", //子用户备注
+        PhoneNum: "", //手机号
+        Email: "" //邮箱
+      },
+      rules: {
+        Password: [
+          {
             validator: Password,
             trigger: "blur"
-          }]
-        }, //规则
-        userpolicyData: {},
-        //步骤三表格页数
-        policyPage: 1,
-        policyNum: 10,
-        userPage: 1,
-        userNums: 10,
-        userNum: 0,
-        namereg: "",
-        policyVal: "",
-        userVal: "",
-        userUin: "",
-        phoneReg: false,
-        emailReg: false,
-        userDatas: [] //用户
-      };
-    },
-    components: {
-      HeadCom,
-      Step3,
-      Step4
-    },
-    created() {
-      this._getList();
-      this._userList();
-      this.init();
-    },
-    methods: {
-      //密码验证
-      _pwdInp() {
-        var reg = /^(?=.*?[a-z])(?=.*?[A-Z])(?=.*?\d)(?=.*?[#@*&.]).*$/;
-        //用户名不能和密码相同
-        if (this.ruleForm.Name != this.ruleForm.Password) {
-          this.pwdreReg = false;
-        } else {
-          this.pwdreReg = true;
-        }
-        //长度为8-32个字符
-        if (
-          this.ruleForm.Password.length >= 8 &&
-          this.ruleForm.Password.length <= 32
-        ) {
-          this.pwdlenReg = false;
-        } else {
-          this.pwdlenReg = true;
-        }
-        //包含数字，特殊字符(除空格)，小写字母，大写字母
-        if (
-          reg.test(this.ruleForm.Password) &&
-          !/s/.test(this.ruleForm.Password)
-        ) {
-          this.pwdtypeReg = false;
-        } else {
-          this.pwdtypeReg = true;
-        }
-      },
-      //手机号验证
-      telInp() {
-        var reg = /^1[3456789]\d{9}$/;
-        if (this.ruleForm.PhoneNum != "") {
-          if (!reg.test(this.ruleForm.PhoneNum)) {
-            this.phoneReg = true;
-          } else {
-            this.phoneReg = false;
           }
+        ]
+      }, //规则
+      userpolicyData: {},
+      //步骤三表格页数
+      policyPage: 1,
+      policyNum: 10,
+      userPage: 1,
+      userNums: 10,
+      userNum: 0,
+      namereg: "",
+      policyVal: "",
+      userVal: "",
+      userUin: "",
+      phoneReg: false,
+      emailReg: false,
+      userDatas: [] //用户
+    };
+  },
+  components: {
+    HeadCom,
+    Step3,
+    Step4
+  },
+  created() {
+    this._getList();
+    this._userList();
+    this.init();
+  },
+  methods: {
+    //密码验证
+    _pwdInp() {
+      var reg = /^(?=.*?[a-z])(?=.*?[A-Z])(?=.*?\d)(?=.*?[#@*&.]).*$/;
+      //用户名不能和密码相同
+      if (this.ruleForm.Name != this.ruleForm.Password) {
+        this.pwdreReg = false;
+      } else {
+        this.pwdreReg = true;
+      }
+      //长度为8-32个字符
+      if (
+        this.ruleForm.Password.length >= 8 &&
+        this.ruleForm.Password.length <= 32
+      ) {
+        this.pwdlenReg = false;
+      } else {
+        this.pwdlenReg = true;
+      }
+      //包含数字，特殊字符(除空格)，小写字母，大写字母
+      if (
+        reg.test(this.ruleForm.Password) &&
+        !/s/.test(this.ruleForm.Password)
+      ) {
+        this.pwdtypeReg = false;
+      } else {
+        this.pwdtypeReg = true;
+      }
+    },
+    //手机号验证
+    telInp() {
+      var reg = /^1[3456789]\d{9}$/;
+      if (this.ruleForm.PhoneNum != "") {
+        if (!reg.test(this.ruleForm.PhoneNum)) {
+          this.phoneReg = true;
         } else {
           this.phoneReg = false;
         }
-      },
-      //邮箱验证
-      emailInp() {
-        var reg = /^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/;
-        if (this.ruleForm.Email != "") {
-          if (!reg.test(this.ruleForm.Email)) {
-            this.emailReg = true;
-          } else {
-            this.emailReg = false;
-          }
+      } else {
+        this.phoneReg = false;
+      }
+    },
+    //邮箱验证
+    emailInp() {
+      var reg = /^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/;
+      if (this.ruleForm.Email != "") {
+        if (!reg.test(this.ruleForm.Email)) {
+          this.emailReg = true;
         } else {
           this.emailReg = false;
         }
-      },
-      //获取cookir
-      getCookie(name) {
-        var strcookie = document.cookie; //获取cookie字符串
-        var arrcookie = strcookie.split("; "); //分割
-        //遍历匹配
-        for (var i = 0; i < arrcookie.length; i++) {
-          var arr = arrcookie[i].split("=");
-          if (arr[0] == name) {
-            return arr[1];
-          }
+      } else {
+        this.emailReg = false;
+      }
+    },
+    //获取cookir
+    getCookie(name) {
+      var strcookie = document.cookie; //获取cookie字符串
+      var arrcookie = strcookie.split("; "); //分割
+      //遍历匹配
+      for (var i = 0; i < arrcookie.length; i++) {
+        var arr = arrcookie[i].split("=");
+        if (arr[0] == name) {
+          return arr[1];
         }
-        return "";
-      },
-      //返回上一级
-      _back() {
-        this.$router.go(-1);
-      },
-      //复用现有用户策略
-      _userRadio(val) {
-        const params = {
-          Version: "2019-01-16",
-          Name: val
-          // Name: this.ruleForm.Name
-        };
-        this.axios
-          .post(QUERY_USER, params)
-          .then(res => {
+      }
+      return "";
+    },
+    //返回上一级
+    _back() {
+      this.$router.go(-1);
+    },
+    //复用现有用户策略
+    _userRadio(val) {
+      const params = {
+        Version: "2019-01-16",
+        Name: val
+        // Name: this.ruleForm.Name
+      };
+      this.axios
+        .post(QUERY_USER, params)
+        .then(res => {
+          if (res.Response.Error === undefined) {
             this.userUin = res.Response.Uin;
-          })
-          //获取关联的策略
-          .then(data => {
-            const params = {
-              Version: "2019-01-16",
-              TargetUin: this.userUin
-            };
-            this.axios.post(QUERY_POLICY, params).then(res => {
-              if(res.Response.Error === undefined){
-                 this.multipleSelection = res.Response.List;
-              }else{
-                  let ErrTips = {
-                     "InternalError.SystemError":'内部错误',
-                     "nvalidParameter.ParamError":'非法入参'
-                  };
-                  let ErrOr = Object.assign(ErrorTips, ErrTips);
-                  this.$message({
-                    message: ErrOr[res.Response.Error.Code],
-                    type: "error",
-                    showClose: true,
-                    duration: 0
-                  });
-              }
-            });
+          }
+          // else {
+          //   let ErrTips = {};
+          //   let ErrOr = Object.assign(ErrorTips, ErrTips);
+          //   this.$message({
+          //     message: ErrOr[res.Response.Error.Code],
+          //     type: "error",
+          //     showClose: true,
+          //     duration: 0
+          //   });
+          // }
+        })
+        //获取关联的策略
+        .then(data => {
+          const params = {
+            Version: "2019-01-16",
+            TargetUin: this.userUin
+          };
+          this.axios.post(QUERY_POLICY, params).then(res => {
+            if (res.Response.Error === undefined) {
+              this.multipleSelection = res.Response.List;
+            }
+            // else {
+            //   let ErrTips = {
+            //     "InternalError.SystemError": "内部错误",
+            //     "nvalidParameter.ParamError": "非法入参"
+            //   };
+            //   let ErrOr = Object.assign(ErrorTips, ErrTips);
+            //   this.$message({
+            //     message: ErrOr[res.Response.Error.Code],
+            //     type: "error",
+            //     showClose: true,
+            //     duration: 0
+            //   });
+            // }
           });
-      },
-      //初始化用户列表数据
-      init() {
-        let userList = {
-          Version: "2019-01-16"
-        };
-        this.axios.post(USER_LIST, userList).then(data => {
+        });
+    },
+    //初始化用户列表数据
+    init() {
+      let userList = {
+        Version: "2019-01-16"
+      };
+      this.axios.post(USER_LIST, userList).then(data => {
+        if (data.Response.Error === undefined) {
           var json = data.Response.Data;
           json.forEach(item => {
             const params = {
@@ -355,212 +405,247 @@
               TargetUin: item.Uin
             };
             this.axios.post(QUERY_POLICY, params).then(res => {
-              if(res.Response.Error === undefined){ 
-                  item.policy = res.Response.List;
-              }else{
-                   let ErrTips = {
-                     "InternalError.SystemError":'内部错误',
-                     "nvalidParameter.ParamError":'非法入参'
-                  };
-                  let ErrOr = Object.assign(ErrorTips, ErrTips);
-                  this.$message({
-                    message: ErrOr[res.Response.Error.Code],
-                    type: "error",
-                    showClose: true,
-                    duration: 0
-                  });
+              if (res.Response.Error === undefined) {
+                item.policy = res.Response.List;
               }
-             });
+              // else {
+              //   let ErrTips = {
+              //     "InternalError.SystemError": "内部错误",
+              //     "nvalidParameter.ParamError": "非法入参"
+              //   };
+              //   let ErrOr = Object.assign(ErrorTips, ErrTips);
+              //   this.$message({
+              //     message: ErrOr[res.Response.Error.Code],
+              //     type: "error",
+              //     showClose: true,
+              //     duration: 0
+              //   });
+              // }
+            });
           });
           this.userDatas = json;
-        });
-      },
-      //用户列表搜索
-      _userSearch(val) {
-        this.userVal = val;
-        this._userList(val);
-      },
-      _userInp(val) {
-        if (val == "") {
-          this._userList();
-        }
-      },
-      //策略列表搜索
-      _policySearch(val) {
-        this.policyVal = val;
-        this._getList(val);
-      },
-      _policyInp(val) {
-        if (val == "") {
-          this._getList();
-        }
-      },
-      //步骤三表格懒加载
-      _loadMore(val) {
-        if (val == "first") {
-          this.policyPage++;
-          this.policyNum = this.policyNum + 10;
-          this._getList(this.policyVal);
-        } else if (val == "third") {
-          this.userPage++;
-          this.userNums = this.userNums + 10;
-          this._userList(this.userVal);
-        }
-      },
-      //绑定用户组
-      _userGroup(id) {
-        const params = {
-          Version: "2019-01-16",
-          "Info.0.Uid": this.userpolicyData.Uid,
-          "Info.0.GroupId": id
-        };
-        this.axios.post(ADD_USERTOGROUP, params).then(res => {
-          if(res.Response.Error === undefined){
-             console.log(res)
-          }else{
-              let ErrTips = {
-                 "InvalidParameter.GroupNotExist":'用户组不存在',
-                 "InvalidParameter.GroupUserFull":'用户组中的子用户数量达到上限',
-                 "InvalidParameter.UserGroupFull":'子用户加入的用户组数量达到上限',
-                 "ResourceNotFound.UserNotExist":'用户不存在'
-              };
-              let ErrOr = Object.assign(ErrorTips, ErrTips);
-              this.$message({
-                message: ErrOr[res.Response.Error.Code],
-                type: "error",
-                showClose: true,
-                duration: 0
-              });
-          }
-        });
-      },
-      //tab标签名称
-      _acitiveName(val) {
-        this.activeName = val;
-      },
-      //获取用户信息
-      _getUser() {
-        const params = {
-          Version: "2019-01-16",
-          // Name: "策略列表"
-          Name: this.ruleForm.Name
-        };
-        this.axios.post(QUERY_USER, params).then(res => {
-          this.userpolicyData = res.Response;
-        });
-      },
-      //绑定策略列表
-      _policy(id) {
-        const params = {
-          Version: "2019-01-16",
-          PolicyId: id,
-          AttachUin: this.userpolicyData.Uin
-        };
-        this.axios.post(POLICY_USER, params).then(res => {
-          if(res.Response.Error === undefined){
-              if (res.Response.RequestId) {
-                this.active = 3;
-              }
-          }else{
-              let ErrTips = {
-                 "FailedOperation.PolicyFull":'用户策略数超过上限',
-                 "InternalError.SystemError":'内部错误',
-                 "InvalidParameter.AttachmentFull":'principal字段的授权对象关联策略数已达到上限',
-                 "InvalidParameter.ParamError":'非法入参',
-                 "InvalidParameter.PolicyIdError":'输入参数PolicyId不合法',
-                 "InvalidParameter.PolicyIdNotExist":'策略ID不存在',
-                 "InvalidParameter.UserNotExist":'principal字段的授权对象不存在',
-                 "ResourceNotFound.PolicyIdNotFound":'PolicyId指定的资源不存在',
-                 "ResourceNotFound.UserNotExist":'用户不存在'
-              };
-              let ErrOr = Object.assign(ErrorTips, ErrTips);
-              this.$message({
-                message: ErrOr[res.Response.Error.Code],
-                type: "error",
-                showClose: true,
-                duration: 0
-              });
-          }
-        });
-      },
-      //全选
-      handleSelectionChange(val) {
-        this.multipleSelection = val;
-      },
-      //新建子用户
-      _arrUser() {
-        this.loading = true;
-        const params = {
-          Version: "2019-01-16",
-          Name: this.ruleForm.Name,
-          Remark: this.ruleForm.Remark,
-          ConsoleLogin: this.ruleForm.ConsoleLogin,
-          Password: this.ruleForm.pwdRadio ? this.ruleForm.Password : "",
-          NeedResetPassword: this.ruleForm.pwdType.includes(0) ? 1 : 0,
-          PhoneNum: this.ruleForm.PhoneNum,
-          CountryCode: this.ruleForm.CountryCode,
-          Email: this.ruleForm.Email,
-          UseApi: 1
-        };
-        this.axios
-          .post(ADD_USER, params)
-          .then(res => {
-            if(res.Response.Error === undefined){
-                this.taifuAIP = res.Response;
-                if (res.Response.Error) {
-                  this.$message.error(res.Response.Error.Message);
-                } else {
-                  if (this.pwdReg) {
-                    this._getUser();
-                    this.active = 2;
-                  }
-                }
-            }else{
-                let ErrTips = {
-                   "InvalidParameter.ParamError":'非法入参',
-                   "InvalidParameter.PasswordViolatedRules":'密码不符合用户安全设置',
-                   "InvalidParameter.SubUserFull":'子帐号数量达到上限',
-                   "InvalidParameter.SubUserNameInUse":'子用户名称重复'
-                };
-                let ErrOr = Object.assign(ErrorTips, ErrTips);
-                this.$message({
-                  message: ErrOr[res.Response.Error.Code],
-                  type: "error",
-                  showClose: true,
-                  duration: 0
-                });
-            }
-            this.loading = false;
-          })
-          .then(() => {
-            const params = {
-              Password: 'yes',
-              QcloudUin: this.getCookie("uin"), //uin
-              SecretId: this.taifuAIP.SecretId,
-              SecretKey: this.taifuAIP.SecretKey,
-              SubAccountUin: String(this.taifuAIP.Uin),
-              SubAccountname: this.taifuAIP.Name
-            };
-            this.axios
-              .post(
-                `${process.env.VUE_APP_adminUrl}taifucloud/account-sub/manage/register`,
-                params
-              )
-              .then(res => {
-                console.log(res);
-              });
+        } else {
+          let ErrTips = {
+            "ResourceNotFound.UserNotExist": "用户不存在"
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
           });
-      },
-      //用户组列表
-      _userList(val) {
-        const params = {
-          Version: "2019-01-16",
-          Rp: this.userNums
-        };
-        if (val) {
-          params["Keyword"] = val;
         }
-        this.axios.post(USER_GROUP, params).then(res => {
+      });
+    },
+    //用户列表搜索
+    _userSearch(val) {
+      this.userVal = val;
+      this._userList(val);
+    },
+    _userInp(val) {
+      if (val == "") {
+        this._userList();
+      }
+    },
+    //策略列表搜索
+    _policySearch(val) {
+      this.policyVal = val;
+      this._getList(val);
+    },
+    _policyInp(val) {
+      if (val == "") {
+        this._getList();
+      }
+    },
+    //步骤三表格懒加载
+    _loadMore(val) {
+      if (val == "first") {
+        this.policyPage++;
+        this.policyNum = this.policyNum + 10;
+        this._getList(this.policyVal);
+      } else if (val == "third") {
+        this.userPage++;
+        this.userNums = this.userNums + 10;
+        this._userList(this.userVal);
+      }
+    },
+    //绑定用户组
+    _userGroup(id) {
+      const params = {
+        Version: "2019-01-16",
+        "Info.0.Uid": this.userpolicyData.Uid,
+        "Info.0.GroupId": id
+      };
+      this.axios.post(ADD_USERTOGROUP, params).then(res => {
+        if (res.Response.Error === undefined) {
+          console.log(res);
+        } else {
+          let ErrTips = {
+            "InvalidParameter.GroupNotExist": "用户组不存在",
+            "InvalidParameter.GroupUserFull": "用户组中的子用户数量达到上限",
+            "InvalidParameter.UserGroupFull": "子用户加入的用户组数量达到上限",
+            "ResourceNotFound.UserNotExist": "用户不存在"
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
+    },
+    //tab标签名称
+    _acitiveName(val) {
+      this.activeName = val;
+    },
+    //获取用户信息
+    _getUser() {
+      const params = {
+        Version: "2019-01-16",
+        // Name: "策略列表"
+        Name: this.ruleForm.Name
+      };
+      this.axios.post(QUERY_USER, params).then(res => {
+        if (res.Response.Error === undefined) {
+          this.userpolicyData = res.Response;
+        }
+        // else {
+        //   let ErrTips = {
+        //     "ResourceNotFound.UserNotExist": "用户不存在"
+        //   };
+        //   let ErrOr = Object.assign(ErrorTips, ErrTips);
+        //   this.$message({
+        //     message: ErrOr[res.Response.Error.Code],
+        //     type: "error",
+        //     showClose: true,
+        //     duration: 0
+        //   });
+        // }
+      });
+    },
+    //绑定策略列表
+    _policy(id) {
+      const params = {
+        Version: "2019-01-16",
+        PolicyId: id,
+        AttachUin: this.userpolicyData.Uin
+      };
+      this.axios.post(POLICY_USER, params).then(res => {
+        if (res.Response.Error === undefined) {
+          if (res.Response.RequestId) {
+            this.active = 3;
+          }
+        } else {
+          let ErrTips = {
+            "FailedOperation.PolicyFull": "用户策略数超过上限",
+            "InternalError.SystemError": "内部错误",
+            "InvalidParameter.AttachmentFull":
+              "principal字段的授权对象关联策略数已达到上限",
+            "InvalidParameter.ParamError": "非法入参",
+            "InvalidParameter.PolicyIdError": "输入参数PolicyId不合法",
+            "InvalidParameter.PolicyIdNotExist": "策略ID不存在",
+            "InvalidParameter.UserNotExist": "principal字段的授权对象不存在",
+            "ResourceNotFound.PolicyIdNotFound": "PolicyId指定的资源不存在",
+            "ResourceNotFound.UserNotExist": "用户不存在"
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
+    },
+    //全选
+    handleSelectionChange(val) {
+      this.multipleSelection = val;
+    },
+    //新建子用户
+    _arrUser() {
+      this.loading = true;
+      const params = {
+        Version: "2019-01-16",
+        Name: this.ruleForm.Name,
+        Remark: this.ruleForm.Remark,
+        ConsoleLogin: this.ruleForm.ConsoleLogin,
+        Password: this.ruleForm.pwdRadio ? this.ruleForm.Password : "",
+        NeedResetPassword: this.ruleForm.pwdType.includes(0) ? 1 : 0,
+        PhoneNum: this.ruleForm.PhoneNum,
+        CountryCode: this.ruleForm.CountryCode,
+        Email: this.ruleForm.Email,
+        UseApi: 1
+      };
+      this.axios
+        .post(ADD_USER, params)
+        .then(res => {
+          if (res.Response.Error === undefined) {
+            this.taifuAIP = res.Response;
+            if (res.Response.Error) {
+              this.$message({
+                showClose: true,
+                message: res.Response.Error.Message,
+                type: "error",
+                duration: 0
+              });
+            } else {
+              if (this.pwdReg) {
+                this._getUser();
+                this.active = 2;
+              }
+            }
+          } else {
+            let ErrTips = {
+              "InvalidParameter.ParamError": "非法入参",
+              "InvalidParameter.PasswordViolatedRules":
+                "密码不符合用户安全设置",
+              "InvalidParameter.SubUserFull": "子帐号数量达到上限",
+              "InvalidParameter.SubUserNameInUse": "子用户名称重复"
+            };
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+          }
+          this.loading = false;
+        })
+        .then(() => {
+          const params = {
+            Password: "yes",
+            QcloudUin: this.getCookie("uin"), //uin
+            SecretId: this.taifuAIP.SecretId,
+            SecretKey: this.taifuAIP.SecretKey,
+            SubAccountUin: String(this.taifuAIP.Uin),
+            SubAccountname: this.taifuAIP.Name
+          };
+          this.axios
+            .post(
+              `${process.env.VUE_APP_adminUrl}taifucloud/account-sub/manage/register`,
+              params
+            )
+            .then(res => {
+              console.log(res);
+            });
+        });
+    },
+    //用户组列表
+    _userList(val) {
+      const params = {
+        Version: "2019-01-16",
+        Rp: this.userNums
+      };
+      if (val) {
+        params["Keyword"] = val;
+      }
+      this.axios.post(USER_GROUP, params).then(res => {
+        if (res.Response.Error === undefined) {
           this.userData = res.Response.GroupInfo;
           this.userNum = res.Response.TotalNum;
           var data = this.userData;
@@ -570,383 +655,437 @@
               TargetGroupId: item.GroupId
             };
             this.axios.post(GROUP_POLICY, params).then(res => {
-              if(res.Response.Error === undefined){
-                 item.policy = res.Response.List;
-              }else{
-                let ErrTips = {
-                   "InternalError.SystemError":'内部错误',
-                   "InvalidParameter.ParamError":'非法入参'
-                };
-                let ErrOr = Object.assign(ErrorTips, ErrTips);
-                this.$message({
-                  message: ErrOr[res.Response.Error.Code],
-                  type: "error",
-                  showClose: true,
-                  duration: 0
-                }); 
+              if (res.Response.Error === undefined) {
+                item.policy = res.Response.List;
               }
+              // else {
+              //   let ErrTips = {
+              //     "InternalError.SystemError": "内部错误",
+              //     "InvalidParameter.ParamError": "非法入参"
+              //   };
+              //   let ErrOr = Object.assign(ErrorTips, ErrTips);
+              //   this.$message({
+              //     message: ErrOr[res.Response.Error.Code],
+              //     type: "error",
+              //     showClose: true,
+              //     duration: 0
+              //   });
+              // }
             });
           });
-        });
-      },
-      //策略列表
-      _getList(val) {
-        const params = {
-          Version: "2019-01-16",
-          Rp: this.policyNum
-        };
-        if (val) {
-          params["Keyword"] = val;
-        }
-        this.axios.post(POLICY_LIST, params).then(res => {
-          if(res.Response.Error === undefined){
-            this.tableData = res.Response.List;
-            this.totalNum = res.Response.TotalNum;
-          }else{
-              let ErrTips = {
-                 "InternalError.SystemError":'内部错误',
-                 "InvalidParameter.GroupIdError":'GroupId字段不合法',
-                 "InvalidParameter.KeywordError":'Keyword字段不合法',
-                 "InvalidParameter.ParamError":'非法入参',
-                 "InvalidParameter.ScopeError":'Scope字段不合法',
-                 "InvalidParameter.ServiceTypeError":'ServiceType字段不合法',
-                 "InvalidParameter.UinError":'Uin字段不合法'
-              };
-              let ErrOr = Object.assign(ErrorTips, ErrTips);
-              this.$message({
-                message: ErrOr[res.Response.Error.Code],
-                type: "error",
-                showClose: true,
-                duration: 0
-              }); 
-          }
-        });
-      },
-      //控制台密码
-      _pwdRadio() {
-        if (this.ruleForm.pwdRadio) {
-          this.pwdInp = true;
-          this.pwdlenReg = true;
-          this.pwdtypeReg = true;
-          this.pwdreReg = true;
         } else {
-          this.pwdInp = false;
-          this.pwdlenReg = false;
-          this.pwdtypeReg = false;
-          this.pwdreReg = false;
-        }
-      },
-      //访问方式
-      _visitType() {
-        if (this.ruleForm.type.includes("1")) {
-          this.visitType = true;
-        } else {
-          this.visitType = false;
-        }
-      },
-      //选择类型
-      _type(index) {
-        this.typeIndex = index;
-        this.ruleForm.ConsoleLogin = this.type[index].code;
-      },
-      //返回上一级
-      _back() {
-        this.$router.go(-1);
-      },
-      //下一步
-      _nextStep(formName) {
-        var num = this.active;
-        var temp = 3;
-        if (this.btnVal == "完成") {
-          this.$router.push("/UserListNew");
-        }
-        if (this.ruleForm.ConsoleLogin == 0) {
-          var temp = 1;
-        }
-        if (this.active < temp) {
-          num++;
-        }
-        if (num == temp) {
-          this.btnVal = "完成";
-        }
-        if (this.active == 2) {
-          this.multipleSelection.forEach(item => {
-            //从策略列表中选取策略关联
-            if (this.activeName == "first") {
-              this._policy(item.PolicyId);
-            }
-            //复用现有用户策略
-            else if (this.activeName == "second") {
-              this._policy(item.PolicyId);
-            }
-            //添加至组获得随机权限
-            else if (this.activeName == "third") {
-              this._userGroup(item.GroupId);
-            }
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
           });
         }
-        if (this.active == 1) {
-          if (this.phoneReg) {
-            this.$message.error("请输入正确的手机号");
-          } else if (this.emailReg) {
-            this.$message.error("请输入正确的邮箱");
-          } else {
-            if (!this.visitType) {
-              if (!this.ruleForm.Name) {
-                this.$message.error("用户名不能为空");
-              } else if (this.ruleForm.type.length == 0) {
-                this.$message.error("编程访问和台富雲控制台访问至少需要选择一个");
-              } else {
-                this._arrUser();
-              }
-            }
-            if (this.visitType) {
-              if (!this.ruleForm.Name) {
-                this.$message.error("用户名不能为空");
-              } else if (this.ruleForm.type.length == 0) {
-                this.$message.error("编程访问和台富雲控制台访问至少需要选择一个");
-              } else if (this.ruleForm.loginRadio === "") {
-                this.$message.error("请设置登录保护");
-              } else if (this.ruleForm.processRadio === "") {
-                this.$message.error("请设置操作保护");
-              } else if (this.pwdlenReg || this.pwdtypeReg || this.pwdreReg) {
-                this.$message.error("密码格式输入有误");
-              } else {
-                this._arrUser();
-              }
+      });
+    },
+    //策略列表
+    _getList(val) {
+      const params = {
+        Version: "2019-01-16",
+        Rp: this.policyNum
+      };
+      if (val) {
+        params["Keyword"] = val;
+      }
+      this.axios.post(POLICY_LIST, params).then(res => {
+        if (res.Response.Error === undefined) {
+          this.tableData = res.Response.List;
+          this.totalNum = res.Response.TotalNum;
+        } else {
+          let ErrTips = {
+            "InternalError.SystemError": "内部错误",
+            "InvalidParameter.GroupIdError": "GroupId字段不合法",
+            "InvalidParameter.KeywordError": "Keyword字段不合法",
+            "InvalidParameter.ParamError": "非法入参",
+            "InvalidParameter.ScopeError": "Scope字段不合法",
+            "InvalidParameter.ServiceTypeError": "ServiceType字段不合法",
+            "InvalidParameter.UinError": "Uin字段不合法"
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
+    },
+    //控制台密码
+    _pwdRadio() {
+      if (this.ruleForm.pwdRadio) {
+        this.pwdInp = true;
+        this.pwdlenReg = true;
+        this.pwdtypeReg = true;
+        this.pwdreReg = true;
+      } else {
+        this.pwdInp = false;
+        this.pwdlenReg = false;
+        this.pwdtypeReg = false;
+        this.pwdreReg = false;
+      }
+    },
+    //访问方式
+    _visitType() {
+      if (this.ruleForm.type.includes("1")) {
+        this.visitType = true;
+      } else {
+        this.visitType = false;
+      }
+    },
+    //选择类型
+    _type(index) {
+      this.typeIndex = index;
+      this.ruleForm.ConsoleLogin = this.type[index].code;
+    },
+    //返回上一级
+    _back() {
+      this.$router.go(-1);
+    },
+    //下一步
+    _nextStep(formName) {
+      var num = this.active;
+      var temp = 3;
+      if (this.btnVal == "完成") {
+        this.$router.push("/UserListNew");
+      }
+      if (this.ruleForm.ConsoleLogin == 0) {
+        var temp = 1;
+      }
+      if (this.active < temp) {
+        num++;
+      }
+      if (num == temp) {
+        this.btnVal = "完成";
+      }
+      if (this.active == 2) {
+        this.multipleSelection.forEach(item => {
+          //从策略列表中选取策略关联
+          if (this.activeName == "first") {
+            this._policy(item.PolicyId);
+          }
+          //复用现有用户策略
+          else if (this.activeName == "second") {
+            this._policy(item.PolicyId);
+          }
+          //添加至组获得随机权限
+          else if (this.activeName == "third") {
+            this._userGroup(item.GroupId);
+          }
+        });
+      }
+      if (this.active == 1) {
+        if (this.phoneReg) {
+          this.$message({
+            showClose: true,
+            message: "请输入正确的手机号",
+            type: "error",
+            duration: 0
+          });
+        } else if (this.emailReg) {
+          this.$message({
+            showClose: true,
+            message: "请输入正确的邮箱",
+            type: "error",
+            duration: 0
+          });
+        } else {
+          if (!this.visitType) {
+            if (!this.ruleForm.Name) {
+              this.$message({
+                showClose: true,
+                message: "用户名不能为空",
+                type: "error",
+                duration: 0
+              });
+            } else if (this.ruleForm.type.length == 0) {
+              this.$message({
+                showClose: true,
+                message: "编程访问和台富雲控制台访问至少需要选择一个",
+                type: "error",
+                duration: 0
+              });
+            } else {
+              this._arrUser();
             }
           }
-        } else {
-          this.active = num;
+          if (this.visitType) {
+            if (!this.ruleForm.Name) {
+              this.$message({
+                showClose: true,
+                message: "用户名不能为空",
+                type: "error",
+                duration: 0
+              });
+            } else if (this.ruleForm.type.length == 0) {
+              this.$message({
+                showClose: true,
+                message: "编程访问和台富雲控制台访问至少需要选择一个",
+                type: "error",
+                duration: 0
+              });
+            } else if (this.ruleForm.loginRadio === "") {
+              this.$message({
+                showClose: true,
+                message: "请设置登录保护",
+                type: "error",
+                duration: 0
+              });
+            } else if (this.ruleForm.processRadio === "") {
+              this.$message({
+                showClose: true,
+                message: "请设置操作保护",
+                type: "error",
+                duration: 0
+              });
+            } else if (this.pwdlenReg || this.pwdtypeReg || this.pwdreReg) {
+              this.$message({
+                showClose: true,
+                message: "密码格式输入有误",
+                type: "error",
+                duration: 0
+              });
+            } else {
+              this._arrUser();
+            }
+          }
         }
-      },
-      //上一步
-      _lastStep() {
-        var num = this.active;
-        if (this.active > 0) {
-          num--;
-        }
-        if (this.btnVal == "完成") {
-          this.btnVal = "下一步";
-        }
+      } else {
         this.active = num;
       }
+    },
+    //上一步
+    _lastStep() {
+      var num = this.active;
+      if (this.active > 0) {
+        num--;
+      }
+      if (this.btnVal == "完成") {
+        this.btnVal = "下一步";
+      }
+      this.active = num;
     }
-  };
-
+  }
+};
 </script>
 
 <style scoped lang='scss'>
-  .adduserlist-wrap {
-    width: 100%;
-    height: 100%;
+.adduserlist-wrap {
+  width: 100%;
+  height: 100%;
 
-    .adduserlist-main>>>.el-tabs {
-      padding-bottom: 30px;
+  .adduserlist-main >>> .el-tabs {
+    padding-bottom: 30px;
+  }
+
+  .adduserlist-main >>> .el-button {
+    height: 30px;
+    line-height: 30px;
+    border-radius: 0;
+    padding-top: 0;
+    font-size: 12px;
+  }
+
+  .adduserlist-main >>> .el-form-item__label {
+    font-size: 12px;
+    text-align: left;
+  }
+
+  .adduserlist-main >>> .el-steps {
+    background: white;
+    padding-bottom: 25px;
+
+    .el-step__title {
+      font-size: 15px;
     }
+  }
 
-    .adduserlist-main>>>.el-button {
-      height: 30px;
-      line-height: 30px;
-      border-radius: 0;
-      padding-top: 0;
-      font-size: 12px;
-    }
+  .adduserlist-main >>> .el-form-item__error {
+    top: -12px;
+  }
 
-    .adduserlist-main>>>.el-form-item__label {
-      font-size: 12px;
-      text-align: left;
-    }
+  .adduserlist-main >>> .el-input__inner {
+    font-size: 12px;
+    border-radius: 0;
+    line-height: 30px;
+    height: 30px;
+    padding-left: 5px;
+  }
 
-    .adduserlist-main>>>.el-steps {
-      background: white;
-      padding-bottom: 25px;
+  .adduserlist-main >>> .el-checkbox {
+    margin-left: 0;
+    display: block;
+  }
 
-      .el-step__title {
-        font-size: 15px;
-      }
-    }
+  .adduserlist-main >>> .el-checkbox-group {
+    margin-top: 12px;
+  }
 
-    .adduserlist-main>>>.el-form-item__error {
-      top: -12px;
-    }
+  .adduserlist-main >>> .el-checkbox__label {
+    font-size: 12px;
 
-    .adduserlist-main>>>.el-input__inner {
-      font-size: 12px;
-      border-radius: 0;
-      line-height: 30px;
-      height: 30px;
-      padding-left: 5px;
-    }
-
-    .adduserlist-main>>>.el-checkbox {
-      margin-left: 0;
+    span {
       display: block;
-    }
-
-    .adduserlist-main>>>.el-checkbox-group {
-      margin-top: 12px;
-    }
-
-    .adduserlist-main>>>.el-checkbox__label {
       font-size: 12px;
+    }
+  }
+
+  .adduserlist-main >>> .el-radio-group {
+    margin-top: 12px;
+  }
+
+  .adduserlist-main >>> .el-radio {
+    display: block;
+    margin-bottom: 8px;
+    margin-left: 0;
+
+    .el-radio__label {
+      font-size: 12px;
+    }
+  }
+
+  .adduserlist-main .check >>> .el-checkbox__input {
+    margin-top: -36px;
+  }
+
+  .adduserlist-main {
+    background: white;
+    margin: 20px;
+    box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    box-sizing: border-box;
+
+    .reg {
+      position: relative;
 
       span {
-        display: block;
-        font-size: 12px;
+        position: absolute;
+        bottom: -12px;
+        left: 10px;
+      }
+
+      .red {
+        color: red;
+      }
+
+      .green {
+        color: green;
       }
     }
 
-    .adduserlist-main>>>.el-radio-group {
-      margin-top: 12px;
-    }
+    .regPWD {
+      position: relative;
 
-    .adduserlist-main>>>.el-radio {
-      display: block;
-      margin-bottom: 8px;
-      margin-left: 0;
-
-      .el-radio__label {
-        font-size: 12px;
-      }
-    }
-
-    .adduserlist-main .check>>>.el-checkbox__input {
-      margin-top: -36px;
-    }
-
-    .adduserlist-main {
-      background: white;
-      margin: 20px;
-      box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
-      padding: 20px;
-      box-sizing: border-box;
-
-      .reg {
-        position: relative;
-
-        span {
-          position: absolute;
-          bottom: -12px;
-          left: 10px;
-        }
-
-        .red {
-          color: red;
+      .reg-box {
+        p {
+          line-height: 20px;
+          font-size: 12px;
         }
 
         .green {
           color: green;
         }
-      }
 
-      .regPWD {
-        position: relative;
-
-        .reg-box {
-          p {
-            line-height: 20px;
-            font-size: 12px;
-          }
-
-          .green {
-            color: green;
-          }
-
-          .red {
-            color: red;
-          }
+        .red {
+          color: red;
         }
       }
+    }
 
-      .main {
-        border-top: 1px #f2f2f2 solid;
-        border-bottom: 1px #f2f2f2 solid;
-        margin-bottom: 20px;
-        padding: 20px;
-        padding-bottom: 0;
-        box-sizing: border-box;
+    .main {
+      border-top: 1px #f2f2f2 solid;
+      border-bottom: 1px #f2f2f2 solid;
+      margin-bottom: 20px;
+      padding: 20px;
+      padding-bottom: 0;
+      box-sizing: border-box;
 
-        h3 {
-          font-size: 12px;
-          margin-bottom: 10px;
-          margin-top: 5px;
+      h3 {
+        font-size: 12px;
+        margin-bottom: 10px;
+        margin-top: 5px;
 
-          span {
-            font-weight: normal;
-            color: #666;
-          }
+        span {
+          font-weight: normal;
+          color: #666;
         }
+      }
 
-        .omit {
-          // width: 170px;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          white-space: nowrap;
-        }
+      .omit {
+        // width: 170px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
 
-        table {
-          border: 1px #f2f2f2 solid;
+      table {
+        border: 1px #f2f2f2 solid;
 
-          thead {
-            td {
-              font-weight: bold;
-              color: #888;
-            }
-          }
-
-          tbody {
-            td {
-              padding: 10px;
-              box-sizing: border-box;
-            }
-          }
-
+        thead {
           td {
-            font-size: 12px;
-            border: 0.5px #f2f2f2 solid;
-            border-right: 0;
-            border-left: 0;
-            padding: 0 10px;
+            font-weight: bold;
+            color: #888;
+          }
+        }
+
+        tbody {
+          td {
+            padding: 10px;
             box-sizing: border-box;
           }
         }
 
-        .active {
-          border-color: #0075ff !important;
-          background-color: #f0f5ff !important;
-
-          p:nth-child(1) {
-            color: #0075ff;
-          }
-        }
-
-        .type-box:hover {
-          border: 1px #0075ff solid;
-        }
-
-        .type-box {
-          cursor: pointer;
-          margin-bottom: 15px;
-          border: 1px #f2f2f2 solid;
-          padding: 5px 15px;
-          padding-bottom: 14px;
+        td {
+          font-size: 12px;
+          border: 0.5px #f2f2f2 solid;
+          border-right: 0;
+          border-left: 0;
+          padding: 0 10px;
           box-sizing: border-box;
-          background: white;
+        }
+      }
 
-          p {
-            margin: 0;
-            padding: 0;
-          }
+      .active {
+        border-color: #0075ff !important;
+        background-color: #f0f5ff !important;
 
-          p:nth-child(2) {
-            font-size: 12px;
-            color: #666;
-            line-height: 20px;
-          }
+        p:nth-child(1) {
+          color: #0075ff;
+        }
+      }
+
+      .type-box:hover {
+        border: 1px #0075ff solid;
+      }
+
+      .type-box {
+        cursor: pointer;
+        margin-bottom: 15px;
+        border: 1px #f2f2f2 solid;
+        padding: 5px 15px;
+        padding-bottom: 14px;
+        box-sizing: border-box;
+        background: white;
+
+        p {
+          margin: 0;
+          padding: 0;
+        }
+
+        p:nth-child(2) {
+          font-size: 12px;
+          color: #666;
+          line-height: 20px;
         }
       }
     }
   }
-
+}
 </style>

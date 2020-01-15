@@ -219,10 +219,20 @@ export default {
           let roleId = data.Response.RoleId; // 获取创建的角色id
           if (data.Response.Error) {
             if (data.Response.Error.Code == "InvalidParameter.RoleNameError") {
-              this.$message.error("角色名不合法。");
+              this.$message({
+              message: "角色名不合法。",
+              type: "error",
+              showClose: true,
+              duration: 0
+            })
             }
           } else {
-            this.$message("创建角色成功");
+            this.$message({
+              message: "创建角色成功",
+              type: "success",
+              showClose: true,
+              duration: 0
+            })
           }
 
           let policiesArray = this.policiesSelectedData; // 获取权限策略

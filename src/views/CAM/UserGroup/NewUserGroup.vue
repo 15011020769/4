@@ -89,7 +89,11 @@ export default {
           this.active = 0;
         }
       } else {
-        this.$message("请输入用户组名称");
+        this.$message({
+          showClose: true,
+          message: "请输入用户组名称",
+          duration: 0
+        });
       }
     },
     step() {
@@ -121,7 +125,7 @@ export default {
         this.axios
           .post(CREATE_USER, params)
           .then(res => {
-            if(res.Response.Error === undefined){
+            if (res.Response.Error === undefined) {
               // 获取新创建的用户组ID
               let AttachGroupId = res.Response.GroupId;
               let selArr = _this.policiesSelectedData;
@@ -138,28 +142,32 @@ export default {
                   this.axios
                     .post(ATTACH_GROUP, paramsurlPolicies)
                     .then(res => {
-                      if(res.Response.Error === undefined){
+                      if (res.Response.Error === undefined) {
                         console.log(res);
-                      }else{
-                          let ErrTips = {
-                             "FailedOperation.PolicyFull":'用户策略数超过上限',
-                             "InternalError.SystemError":'内部错误',
-                             "InvalidParameter.AttachmentFull":'principal字段的授权对象关联策略数已达到上限',
-                             "InvalidParameter.ParamError":'非法入参',
-                             "InvalidParameter.PolicyIdError":'输入参数PolicyId不合法',
-                             "InvalidParameter.PolicyIdNotExist":'策略ID不存在',
-                             "nvalidParameter.UserNotExist":'principal字段的授权对象不存在',
-                             "ResourceNotFound.GroupNotExist":'用户组不存在',
-                             "ResourceNotFound.PolicyIdNotFound":'PolicyId指定的资源不存在',
-                             "ResourceNotFound.UserNotExist":'用户不存在'
-                          };
-                          let ErrOr = Object.assign(ErrorTips, ErrTips);
-                          this.$message({
-                            message: ErrOr[res.Response.Error.Code],
-                            type: "error",
-                            showClose: true,
-                            duration: 0
-                          });
+                      } else {
+                        let ErrTips = {
+                          "FailedOperation.PolicyFull": "用户策略数超过上限",
+                          "InternalError.SystemError": "内部错误",
+                          "InvalidParameter.AttachmentFull":
+                            "principal字段的授权对象关联策略数已达到上限",
+                          "InvalidParameter.ParamError": "非法入参",
+                          "InvalidParameter.PolicyIdError":
+                            "输入参数PolicyId不合法",
+                          "InvalidParameter.PolicyIdNotExist": "策略ID不存在",
+                          "nvalidParameter.UserNotExist":
+                            "principal字段的授权对象不存在",
+                          "ResourceNotFound.GroupNotExist": "用户组不存在",
+                          "ResourceNotFound.PolicyIdNotFound":
+                            "PolicyId指定的资源不存在",
+                          "ResourceNotFound.UserNotExist": "用户不存在"
+                        };
+                        let ErrOr = Object.assign(ErrorTips, ErrTips);
+                        this.$message({
+                          message: ErrOr[res.Response.Error.Code],
+                          type: "error",
+                          showClose: true,
+                          duration: 0
+                        });
                       }
                     })
                     .catch(error => {
@@ -173,18 +181,18 @@ export default {
                 });
               }, 3000);
               // 添加返回值回显，如用户组名称重复
-            }else{
-               let ErrTips = {
-                  "InvalidParameter.GroupFull":'用户组数量达到上限',
-                  "InvalidParameter.GroupNameInUse":'用户组名称重复'
-                };
-                let ErrOr = Object.assign(ErrorTips, ErrTips);
-                this.$message({
-                  message: ErrOr[res.Response.Error.Code],
-                  type: "error",
-                  showClose: true,
-                  duration: 0
-                });
+            } else {
+              let ErrTips = {
+                "InvalidParameter.GroupFull": "用户组数量达到上限",
+                "InvalidParameter.GroupNameInUse": "用户组名称重复"
+              };
+              let ErrOr = Object.assign(ErrorTips, ErrTips);
+              this.$message({
+                message: ErrOr[res.Response.Error.Code],
+                type: "error",
+                showClose: true,
+                duration: 0
+              });
             }
           })
           .catch(error => {

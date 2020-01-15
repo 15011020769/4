@@ -380,16 +380,29 @@ export default {
       this.axios
         .post(GET_GROUP, params)
         .then(res => {
-          // .slice((currpages - 1) * pagesizes, currpages * pagesizes)
-          this.groupData = res.Response;
-          this.owneruserData = res.Response.UserInfo.slice(
-            (this.currpages - 1) * this.pagesizes,
-            this.currpages * this.pagesizes
-          );
-          this.TotalCounts = res.Response.UserInfo.length;
-          this.userLabel = "用户（" + res.Response.UserInfo.length + "）";
-          this.title = this.groupData.GroupName;
-          this.loading1 = false;
+          if (res.Response.Error === undefined) {
+            // .slice((currpages - 1) * pagesizes, currpages * pagesizes)
+            this.groupData = res.Response;
+            this.owneruserData = res.Response.UserInfo.slice(
+              (this.currpages - 1) * this.pagesizes,
+              this.currpages * this.pagesizes
+            );
+            this.TotalCounts = res.Response.UserInfo.length;
+            this.userLabel = "用户（" + res.Response.UserInfo.length + "）";
+            this.title = this.groupData.GroupName;
+            this.loading1 = false;
+          } else {
+            let ErrTips = {
+              "ResourceNotFound.UserNotExist": "用户不存在"
+            };
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+          }
         })
         .catch(error => {
           console.log(error);
@@ -410,8 +423,18 @@ export default {
       this.axios
         .post(DEL_USERTOGROUP, params)
         .then(data => {
-          console.log(data);
-          this.selectGroup(); // 重新加载页面
+          if (data.Response.Error === undefined) {
+            this.selectGroup(); // 重新加载页面
+          } else {
+            let ErrTips = {};
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+          }
         })
         .catch(error => {
           console.log(error);
@@ -434,7 +457,11 @@ export default {
     // 更新用户组
     saveGroup() {
       if (this.groupData.GroupName == "") {
-        this.$message("用户组名称不能为空");
+        this.$message({
+          showClose: true,
+          message: "用户组名称不能为空",
+          duration: 0
+        });
       } else {
         let groupId = parseInt(this.$route.query.GroupId);
         let params = {
@@ -522,52 +549,63 @@ export default {
       this.axios
         .post(USER_LIST, params)
         .then(res => {
-          this.userData = [];
-          let userAllData = res.Response.Data;
-          // 获取用户组管理用户
-          let selUserData = [];
-          let paramsGroup = {
-            GroupId: groupId,
-            Version: "2019-01-16"
-          };
-          this.axios
-            .post(GROUP_USERS, paramsGroup)
-            .then(resGroup => {
-              if (resGroup.Response.Error === undefined) {
-                // 不直接将子用户信息赋予用户组选择框中,是避免页面出现 过滤后的子用户信息刷新覆盖初始信息
-                selUserData = resGroup.Response.UserInfo;
-                // 用户组拥有子用户，系统将拥有子用户从用户组添加框中去掉，避免重复选择
-                if (selUserData != "") {
-                  for (var i = 0; i < selUserData.length; i++) {
-                    let ownerObj = selUserData[i];
-                    for (var j = 0; j < userAllData.length; j++) {
-                      let allObj = userAllData[j];
-                      if (allObj.Uin === ownerObj.Uin) {
-                        userAllData.splice(j, 1);
+          if (res.Response.Error === undefined) {
+            this.userData = [];
+            let userAllData = res.Response.Data;
+            // 获取用户组管理用户
+            let selUserData = [];
+            let paramsGroup = {
+              GroupId: groupId,
+              Version: "2019-01-16"
+            };
+            this.axios
+              .post(GROUP_USERS, paramsGroup)
+              .then(resGroup => {
+                if (resGroup.Response.Error === undefined) {
+                  // 不直接将子用户信息赋予用户组选择框中,是避免页面出现 过滤后的子用户信息刷新覆盖初始信息
+                  selUserData = resGroup.Response.UserInfo;
+                  // 用户组拥有子用户，系统将拥有子用户从用户组添加框中去掉，避免重复选择
+                  if (selUserData != "") {
+                    for (var i = 0; i < selUserData.length; i++) {
+                      let ownerObj = selUserData[i];
+                      for (var j = 0; j < userAllData.length; j++) {
+                        let allObj = userAllData[j];
+                        if (allObj.Uin === ownerObj.Uin) {
+                          userAllData.splice(j, 1);
+                        }
                       }
                     }
+                    _this.userData = userAllData;
+                  } else {
+                    _this.userData = userAllData;
                   }
-                  _this.userData = userAllData;
+                  _this.totalNumUser = this.userData.length;
                 } else {
-                  _this.userData = userAllData;
+                  let ErrTips = {
+                    "ResourceNotFound.GroupNotExist": "用户组不存在"
+                  };
+                  let ErrOr = Object.assign(ErrorTips, ErrTips);
+                  this.$message({
+                    message: ErrOr[res.Response.Error.Code],
+                    type: "error",
+                    showClose: true,
+                    duration: 0
+                  });
                 }
-                _this.totalNumUser = this.userData.length;
-              } else {
-                let ErrTips = {
-                  "ResourceNotFound.GroupNotExist": "用户组不存在"
-                };
-                let ErrOr = Object.assign(ErrorTips, ErrTips);
-                this.$message({
-                  message: ErrOr[res.Response.Error.Code],
-                  type: "error",
-                  showClose: true,
-                  duration: 0
-                });
-              }
-            })
-            .catch(error => {
-              console.log(error);
+              })
+              .catch(error => {
+                console.log(error);
+              });
+          } else {
+            let ErrTips = {};
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
             });
+          }
         })
         .catch(error => {
           console.log(error);
@@ -746,7 +784,12 @@ export default {
         .then(res => {
           if (res.Response.Error === undefined) {
             this.selectGroupPolicies();
-            this.$message("移除成功");
+            this.$message({
+              showClose: true,
+              message: "移除成功",
+              duration: 0,
+              type: "success"
+            });
           } else {
             let ErrTips = {
               "InternalError.SystemError": "内部错误",
@@ -797,7 +840,11 @@ export default {
     // 添加策略信息到用户组
     addPoliciesToGroup() {
       if (this.multipleSelection.length == 0) {
-        this.$message("请选择数据");
+        this.$message({
+          showClose: true,
+          message: "请选中数据",
+          duration: 0
+        });
       } else {
         this.multipleSelection.forEach(item => {
           this.addPolicies(item.PolicyId);
@@ -821,7 +868,12 @@ export default {
         .post(ATTACH_GROUP, policiesParams)
         .then(res => {
           if (res.Response.Error === undefined) {
-            this.$message("添加成功");
+            this.$message({
+              showClose: true,
+              message: "添加成功",
+              duration: 0,
+              type: "success"
+            });
           } else {
             let ErrTips = {
               "FailedOperation.PolicyFull": "用户策略数超过上限",
@@ -845,9 +897,6 @@ export default {
             });
           }
         })
-        .catch(error => {
-          this.$message.error(error);
-        });
     },
     // 跳转到策略详情页面
     policyDetail(policy) {

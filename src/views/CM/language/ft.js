@@ -2,7 +2,7 @@ module.exports = {
   menu: {
     title1: '雲監控',
     title2: '雲伺服器',
-    title3: '塊存儲',
+    title3: '塊儲存',
     title4: '負載均衡-CLB',
     title5: '雲資料庫',
     title6: 'MySQL',
@@ -15,7 +15,7 @@ module.exports = {
     title13: '專線接入',
     title14: '物理專線',
     title15: '專線通道',
-    title16: '對象存儲'
+    title16: '對象儲存'
   },
   CVM: {
     strip: '條',
@@ -30,7 +30,7 @@ module.exports = {
     zxwg: '專線網關',
     cftjmb: '觸發條件模板',
     gjpz: '告警配置',
-    dxcc: '對象存儲',
+    dxcc: '對象儲存',
     ddlj: '對等連接',
     wlzx: '專線接入-物理專線',
     zxtd: '專線接入-專線通道',
@@ -120,7 +120,7 @@ module.exports = {
       glyzj: '關聯雲主機ID/名稱',
     },
     cloudMysql: {
-      nw: '內網IP/埠',
+      nw: '內網IP/端口',
       lx: '類型',
       wl: 'VPC 網路',
     },
@@ -132,11 +132,11 @@ module.exports = {
       qsrzjm: '請輸入IP或主機名',
       bdsywl: '本端私有網路',
       ddsywl: '對端私有網路',
-      dksx: '帶寬上限',
+      dksx: '頻寬上限',
       wsx: '無上限',
     },
     Physics: {
-      dk: '帶寬',
+      dk: '頻寬',
       szd: '所在地',
       tdmc: '通道ID/名稱',
     },

@@ -85,10 +85,14 @@
         </el-table-column>-->
       </el-table>
       <div class="Right-style pagstyle">
-        <span class='pagtotal'>共&nbsp;{{TotalCount}}&nbsp;{{$t("CVM.strip")}}</span>
-        <el-pagination :page-size="pagesize" :pager-count="7" layout="prev, pager, next"
-          @current-change="handleCurrentChange" :total="TotalCount">
-        </el-pagination>
+        <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;{{$t("CVM.strip")}}</span>
+        <el-pagination
+          :page-size="pagesize"
+          :pager-count="7"
+          layout="prev, pager, next"
+          @current-change="handleCurrentChange"
+          :total="TotalCount"
+        ></el-pagination>
       </div>
     </div>
   </div>
@@ -101,6 +105,7 @@ import Cities from "@/components/public/CITY";
 import SEARCH from "@/components/public/SEARCH";
 import Loading from "@/components/public/Loading";
 import { ALL_CITY, Physics_LIST, ALL_PROJECT } from "@/constants";
+import { ErrorTips } from "@/components/ErrorTips";
 export default {
   data() {
     return {
@@ -139,7 +144,7 @@ export default {
       TbaleData: [], // 表格数据
       ProjectData: [], // 项目列表数据
       ProTableData: [], // 添加完项目列表的表格数据
-      TotalCount:0,
+      TotalCount: 0,
       pagesize: 10, // 分页条数
       currpage: 1 // 当前页码
     };
@@ -232,16 +237,30 @@ export default {
       this.axios.post(Physics_LIST, param).then(data => {
         if (data.Response.Error == undefined) {
           this.TbaleData = data.Response.DirectConnectSet;
-          this.TotalCount = data.Response.TotalCount
+          this.TotalCount = data.Response.TotalCount;
         } else {
-          this.$message.error(data.Response.Error.Message);
+          let ErrTips = {
+            InternalError: "内部错误",
+            InvalidParameter: "参数错误",
+            InvalidParameterValue: "参数取值错误",
+            ResourceNotFound: "资源不存在",
+            UnauthorizedOperation: "未授权操作",
+            UnsupportedOperation: "	操作不支持"
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
         }
         this.ProTableData = this.TbaleData;
         this.loadShow = false;
       });
     },
     //分页
-   
+
     handleCurrentChange(val) {
       this.currpage = val;
       this.GetTabularData();
@@ -319,11 +338,11 @@ export default {
 .pagstyle {
   padding: 20px;
   .pagtotal {
-      font-size: 13px;
-      font-weight: 400;
-      color: #565656;
-      line-height: 32px;
-    }
+    font-size: 13px;
+    font-weight: 400;
+    color: #565656;
+    line-height: 32px;
+  }
 }
 
 .a {

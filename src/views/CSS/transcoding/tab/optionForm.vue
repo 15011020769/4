@@ -29,10 +29,10 @@
         <el-input type="textarea" v-model="ruleForm.Description" style="width:330px;" />
       </el-form-item>
       <template v-if="selectType !== '純音頻'">
-        <el-form-item label="視頻碼率(kbps)" prop="VideoBitrate">
+        <el-form-item label="影音碼率(kbps)" prop="VideoBitrate">
           <el-input type="textarea" v-model="ruleForm.VideoBitrate" style="width:330px;" />
         </el-form-item>
-        <el-form-item label="視頻高度(px)" prop="Height">
+        <el-form-item label="影音高度(px)" prop="Height">
           <el-input type="textarea" v-model="ruleForm.Height" style="width:330px;" />
         </el-form-item>
       </template>
@@ -83,10 +83,10 @@ export default {
           { max: 100, message: "長度不能超過100個字符", trigger: 'blur' }
         ],
         Height: [
-          { required: true, message: "請輸入視頻高度", trigger: "blur" },
+          { required: true, message: "請輸入影音高度", trigger: "blur" },
         ],
          VideoBitrate: [
-          { required: true, message: "請輸入視頻碼率", trigger: "blur" },
+          { required: true, message: "請輸入影音碼率", trigger: "blur" },
         ],
       },
 

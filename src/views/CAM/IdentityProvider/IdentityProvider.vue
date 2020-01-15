@@ -55,6 +55,7 @@
 <script>
 import HeadCom from "../UserListNew/components/Head";
 import { LIST_Providers } from "@/constants";
+import { ErrorTips } from "@/components/ErrorTips";
 export default {
   data() {
     return {
@@ -81,14 +82,26 @@ export default {
     },
     // 初始化方法。
     init() {
+      this.loading = true;
       let params = {
         Version: "2019-01-16"
       };
       this.axios
         .post(LIST_Providers, params)
         .then(data => {
-          this.tableData = data.Response.SAMLProviderSet;
-          this.TotalCount = data.Response.TotalCount;
+          if (data.Response.Error === undefined) {
+            this.tableData = data.Response.SAMLProviderSet;
+            this.TotalCount = data.Response.TotalCount;
+          } else {
+            let ErrTips = {};
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+          }
           this.loading = false;
         })
         .catch(error => {

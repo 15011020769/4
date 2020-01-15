@@ -15,7 +15,6 @@
         @click="addUser"
         style="margin-left:0;"
       >{{$t('CAM.userList.listAdduser')}}</el-button>
-      <!-- <el-button type="primary" class="addUser" size="small" @click="addMoreUser">{{$t('CAM.userList.listAddMoreuser')}}</el-button> -->
       <el-button
         type="primary"
         class="addUser"
@@ -40,11 +39,12 @@
           :data="tableData1"
           @selection-change="selectDataChange"
           v-loading="loading"
+          @expand-change="rowChange"
         >
           <el-table-column type="selection" width="55"></el-table-column>
           <el-table-column type="expand" :label="$t('CAM.userList.userDetils')" width="50">
             <template slot-scope="scope">
-              <div class="user-details">
+              <div class="user-details" v-loading="loadrowC">
                 <div class="top">
                   <dl>
                     <dd>用户组</dd>
@@ -53,9 +53,12 @@
                       <p v-show="scope.row.group.length != 0">
                         <a v-for="(item,index) in scope.row.group" :key="index" v-show="index < 2">
                           <span @click="goToGroup(item)">{{item.GroupName}}</span>
-                          <span style="color:black;" v-show="index < 1">,</span>
+                          <span
+                            style="color:black;"
+                            v-show="index == 0 && scope.row.group.length>1"
+                          >,</span>
                         </a>
-                        <span>
+                        <span v-show="scope.row.group.length>2">
                           以及
                           <a @click="goTo">另外({{scope.row.group.length-2}})个</a>
                         </span>
@@ -303,6 +306,7 @@ export default {
   },
   data() {
     return {
+      loadrowC: true,
       groupLoading: true,
       userArr: [],
       reload: false,
@@ -344,6 +348,34 @@ export default {
     };
   },
   methods: {
+    rowChange(row) {
+      this.loadrowC = true;
+      this.tableData.forEach(element => {
+        if (row.Uid === element.Uid) {
+          const params = {
+            Version: "2019-01-16",
+            Uid: row.Uid
+          };
+          this.axios.post(RELATE_USER, params).then(res => {
+            if (res.Response.Error === undefined) {
+              element.group = res.Response.GroupInfo;
+            } else {
+              let ErrTips = {
+                "ResourceNotFound.UserNotExist": "用户不存在"
+              };
+              let ErrOr = Object.assign(ErrorTips, ErrTips);
+              this.$message({
+                message: ErrOr[res.Response.Error.Code],
+                type: "error",
+                showClose: true,
+                duration: 0
+              });
+            }
+            this.loadrowC = false;
+          });
+        }
+      });
+    },
     goToGroup(item) {
       var groupId = item.GroupId;
       this.$router.push({
@@ -370,7 +402,11 @@ export default {
       if (this.selectData.length != 0) {
         this.dialogVisible = true;
       } else {
-        this.$message("请选中数据");
+        this.$message({
+          showClose: true,
+          message: "请选中数据",
+          duration: 0
+        });
       }
     },
     removeDeleteUser() {
@@ -471,7 +507,9 @@ export default {
         .catch(error => {
           this.$message({
             type: "error",
-            message: "删除失败"
+            message: "删除失败",
+            showClose: true,
+            duration: 0
           });
         });
       this.dialogDeleteUser = false;
@@ -532,20 +570,14 @@ export default {
       this.axios
         .post(USER_LIST, userList)
         .then(data => {
-          if (res.Response.Error === undefined) {
+          if (data.Response.Error === undefined) {
             if (data != "") {
               this.loading = false;
               var arr = data.Response.Data;
               //获取用户关联的用户组
-              arr.forEach(item => {
+              arr.forEach((item, index) => {
                 item.group = [];
-                const params = {
-                  Version: "2019-01-16",
-                  Uid: item.Uid
-                };
-                this.axios.post(RELATE_USER, params).then(res => {
-                  item.group = res.Response.GroupInfo;
-                });
+                item.index = index;
               });
               this.tableData = arr;
               this.tableData.reverse();
@@ -559,7 +591,9 @@ export default {
               this.loading = false;
               this.$message({
                 type: "info",
-                message: "无响应数据！"
+                message: "无响应数据！",
+                showClose: true,
+                duration: 0
               });
             }
           } else {
@@ -595,7 +629,9 @@ export default {
             this.loading = false;
             this.$message({
               type: "info",
-              message: "无响应数据！"
+              message: "无响应数据！",
+              showClose: true,
+              duration: 0
             });
           }
         } else {
@@ -636,14 +672,18 @@ export default {
       this.axios
         .post(USER_GROUP, params)
         .then(res => {
-          if (res != "") {
+          if (res.Response.Error === undefined) {
             this.loading = false;
             this.userArr = res.Response.GroupInfo;
           } else {
             this.loading = false;
+            let ErrTips = {};
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
             this.$message({
-              type: "info",
-              message: "无响应数据！"
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
             });
           }
         })
@@ -653,14 +693,27 @@ export default {
             Uid: this.Uid
           };
           this.axios.post(RELATE_USER, params).then(res => {
-            this.userArr.forEach(item => {
-              item.status = 0;
-              res.Response.GroupInfo.forEach(val => {
-                if (val.GroupId == item.GroupId) {
-                  item.status = 1;
-                }
+            if (res.Response.Error === undefined) {
+              this.userArr.forEach(item => {
+                item.status = 0;
+                res.Response.GroupInfo.forEach(val => {
+                  if (val.GroupId == item.GroupId) {
+                    item.status = 1;
+                  }
+                });
               });
-            });
+            } else {
+              let ErrTips = {
+                "ResourceNotFound.UserNotExist": "用户不存在"
+              };
+              let ErrOr = Object.assign(ErrorTips, ErrTips);
+              this.$message({
+                message: ErrOr[res.Response.Error.Code],
+                type: "error",
+                showClose: true,
+                duration: 0
+              });
+            }
           });
           var _this = this;
           setTimeout(() => {
@@ -710,8 +763,22 @@ export default {
         TargetUin: val.Uin
       };
       this.axios.post(QUERY_POLICY, params).then(res => {
-        this.rolePolicies = res.Response.List;
-        this.reload = !this.reload;
+        if (res.Response.Error === undefined) {
+          this.rolePolicies = res.Response.List;
+          this.reload = !this.reload;
+        } else {
+          let ErrTips = {
+            "InternalError.SystemError": "内部错误",
+            "InvalidParameter.ParamError": "非法入参"
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
       });
       this.Uin = val.Uin;
       this.title = "关联策略";
@@ -741,7 +808,11 @@ export default {
           this.axios.post(POLICY_USER, params).then(data => {
             if (data.Response.Error === undefined) {
               this.init();
-              this.$message("授权成功");
+              this.$message({
+                message: "授权成功",
+                showClose: true,
+                duration: 0
+              });
             } else {
               let ErrTips = {
                 "FailedOperation.PolicyFull": "用户策略数超过上限",
@@ -781,7 +852,12 @@ export default {
           };
           this.axios.post(ADD_USERTOGROUP, params).then(res => {
             if (res.Response.Error === undefined) {
-              this.$message("添加成功");
+              this.$message({
+                showClose: true,
+                message: "添加成功",
+                duration: 0,
+                type: "success"
+              });
               this.init();
             } else {
               let ErrTips = {
@@ -827,7 +903,9 @@ export default {
     bindMesg() {
       this.$message({
         type: "info",
-        message: "内测中..."
+        message: "内测中...",
+        duration: 0,
+        showClose: true
       });
     },
     handleCloses() {
@@ -848,18 +926,23 @@ export default {
   padding-top: 0;
   font-size: 12px;
 }
+
 .wrap >>> .el-dropdown {
   cursor: pointer;
 }
+
 .wrap >>> .el-table__expanded-cell {
   background: rgb(250, 250, 250);
 }
+
 .wrap >>> .el-table__expanded-cell:hover {
   background: rgb(250, 250, 250);
 }
+
 .pointer {
   cursor: pointer;
 }
+
 .wrap {
   width: 100%;
   background-color: #f2f2f2 !important;
@@ -869,22 +952,27 @@ export default {
     padding: 0 25px;
     box-sizing: border-box;
     flex-direction: column;
+
     .red {
       color: darkred;
     }
+
     .green {
       color: green;
     }
+
     .top {
       background: transparent;
       margin: 0;
       padding: 0;
       margin-bottom: 15px;
     }
+
     a {
       color: #006eff;
       cursor: pointer;
     }
+
     dl {
       width: 50%;
       flex: none;

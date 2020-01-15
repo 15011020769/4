@@ -46,7 +46,7 @@
             label="名称"
             >
             <template slot-scope="scope">
-              <span class="tke-text-link">ass</span>
+              <span @click="goIngressDetail()" class="tke-text-link">ass</span>
             </template>
           </el-table-column>
           <el-table-column
@@ -173,6 +173,18 @@ export default {
           }
       });
     },
+
+    // 详情
+    goIngressDetail(){
+      this.$router.push({
+          name: "ingressDetail",
+          query: {
+            clusterId: this.clusterId
+          }
+      });
+    },
+
+
     //选择搜索条件
     changeSearchType(val) {
       this.searchType = val;

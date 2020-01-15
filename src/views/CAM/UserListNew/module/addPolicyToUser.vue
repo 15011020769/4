@@ -118,44 +118,45 @@ export default {
         TargetUin: this.$route.query.Uin
       };
       this.axios.post(QUERY_POLICY, params).then(res => {
-        if(res.Response.Error === undefined){
+        if (res.Response.Error === undefined) {
           this.policyArr = res.Response.List;
           this._getList();
-        }else{
-          let ErrTips = {
-                 "InternalError.SystemError":'内部错误',
-                 "InvalidParameter.ParamError":'非法入参'
-              };
-              let ErrOr = Object.assign(ErrorTips, ErrTips);
-              this.$message({
-                message: ErrOr[res.Response.Error.Code],
-                type: "error",
-                showClose: true,
-                duration: 0
-              });
         }
-       });
+        // else {
+        //   let ErrTips = {
+        //     "InternalError.SystemError": "内部错误",
+        //     "InvalidParameter.ParamError": "非法入参"
+        //   };
+        //   let ErrOr = Object.assign(ErrorTips, ErrTips);
+        //   this.$message({
+        //     message: ErrOr[res.Response.Error.Code],
+        //     type: "error",
+        //     showClose: true,
+        //     duration: 0
+        //   });
+        // }
+      });
       const param = {
         Version: "2019-01-16",
         Uid: this.$route.query.Uid
       };
       this.axios.post(RELATE_USER, param).then(res => {
-        if(res.Response.Error === undefined){
+        if (res.Response.Error === undefined) {
           this.groupArr = res.Response.GroupInfo;
           this._userList();
-        }else{
-              let ErrTips = {
-                 "ResourceNotFound.UserNotExist":'用户不存在'
-              };
-              let ErrOr = Object.assign(ErrorTips, ErrTips);
-              this.$message({
-                message: ErrOr[res.Response.Error.Code],
-                type: "error",
-                showClose: true,
-                duration: 0
-              });
         }
-        
+        // else {
+        //   let ErrTips = {
+        //     "ResourceNotFound.UserNotExist": "用户不存在"
+        //   };
+        //   let ErrOr = Object.assign(ErrorTips, ErrTips);
+        //   this.$message({
+        //     message: ErrOr[res.Response.Error.Code],
+        //     type: "error",
+        //     showClose: true,
+        //     duration: 0
+        //   });
+        // }
       });
     },
     //用户组列表
@@ -168,40 +169,54 @@ export default {
         params["Keyword"] = val;
       }
       this.axios.post(USER_GROUP, params).then(res => {
-        this.userData = res.Response.GroupInfo;
-        this.userNums = res.Response.TotalNum;
-        this.userData.forEach(item => {
-          item.status = 0;
-          this.groupArr.forEach(val => {
-            if (val.GroupId == item.GroupId) {
-              item.status = 1;
-            }
+        if (res.Response.Error === undefined) {
+          this.userData = res.Response.GroupInfo;
+          this.userNums = res.Response.TotalNum;
+          this.userData.forEach(item => {
+            item.status = 0;
+            this.groupArr.forEach(val => {
+              if (val.GroupId == item.GroupId) {
+                item.status = 1;
+              }
+            });
           });
-        });
-        var data = this.userData;
-        data.forEach(item => {
-          const params = {
-            Version: "2019-01-16",
-            TargetGroupId: item.GroupId
+          var data = this.userData;
+          data.forEach(item => {
+            const params = {
+              Version: "2019-01-16",
+              TargetGroupId: item.GroupId
+            };
+            this.axios.post(GROUP_POLICY, params).then(res => {
+              if (res.Response.Error === undefined) {
+                item.policy = res.Response.List;
+              }
+              // else {
+              //   let ErrTips = {
+              //     "nternalError.SystemError": "内部错误",
+              //     "InvalidParameter.ParamError": "非法入参"
+              //   };
+              //   let ErrOr = Object.assign(ErrorTips, ErrTips);
+              //   this.$message({
+              //     message: ErrOr[res.Response.Error.Code],
+              //     type: "error",
+              //     showClose: true,
+              //     duration: 0
+              //   });
+              // }
+            });
+          });
+        } else {
+          let ErrTips = {
+            "ResourceNotFound.UserNotExist": "用户不存在"
           };
-          this.axios.post(GROUP_POLICY, params).then(res => {
-            if (res.Response.Error === undefined) {
-              item.policy = res.Response.List;
-            } else {
-              let ErrTips = {
-                "nternalError.SystemError": "内部错误",
-                "InvalidParameter.ParamError": "非法入参"
-              };
-              let ErrOr = Object.assign(ErrorTips, ErrTips);
-              this.$message({
-                message: ErrOr[res.Response.Error.Code],
-                type: "error",
-                showClose: true,
-                duration: 0
-              });
-            }
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
           });
-        });
+        }
       });
     },
     //初始化用户列表数据
@@ -210,31 +225,44 @@ export default {
         Version: "2019-01-16"
       };
       this.axios.post(USER_LIST, userList).then(data => {
-        var json = data.Response.Data;
-        json.forEach(item => {
-          const params = {
-            Version: "2019-01-16",
-            TargetUin: item.Uin
-          };
-          this.axios.post(QUERY_POLICY, params).then(res => {
-            if (res.Response.Error === undefined) {
-              item.policy = res.Response.List;
-            } else {
-              let ErrTips = {
-                "InternalError.SystemError": "内部错误",
-                "InvalidParameter.ParamError": "非法入参"
-              };
-              let ErrOr = Object.assign(ErrorTips, ErrTips);
-              this.$message({
-                message: ErrOr[res.Response.Error.Code],
-                type: "error",
-                showClose: true,
-                duration: 0
-              });
-            }
+        if (data.Response.Error === undefined) {
+          var json = data.Response.Data;
+          json.forEach(item => {
+            const params = {
+              Version: "2019-01-16",
+              TargetUin: item.Uin
+            };
+            this.axios.post(QUERY_POLICY, params).then(res => {
+              if (res.Response.Error === undefined) {
+                item.policy = res.Response.List;
+              } else {
+                let ErrTips = {
+                  "InternalError.SystemError": "内部错误",
+                  "InvalidParameter.ParamError": "非法入参"
+                };
+                let ErrOr = Object.assign(ErrorTips, ErrTips);
+                this.$message({
+                  message: ErrOr[res.Response.Error.Code],
+                  type: "error",
+                  showClose: true,
+                  duration: 0
+                });
+              }
+            });
           });
-        });
-        this.userDatas = json;
+          this.userDatas = json;
+        } else {
+          let ErrTips = {
+            "ResourceNotFound.UserNotExist": "用户不存在"
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
       });
     },
     //策略列表
@@ -295,7 +323,18 @@ export default {
       this.axios
         .post(QUERY_USER, params)
         .then(res => {
-          this.userUin = res.Response.Uin;
+          if (res.Response.Error === undefined) {
+            this.userUin = res.Response.Uin;
+          } else {
+            let ErrTips = {};
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+          }
         })
         //获取关联的策略
         .then(data => {
@@ -306,19 +345,20 @@ export default {
           this.axios.post(QUERY_POLICY, params).then(res => {
             if (res.Response.Error === undefined) {
               this.multipleSelection = res.Response.List;
-            } else {
-              let ErrTips = {
-                "InternalError.SystemError": "内部错误",
-                "InvalidParameter.ParamError": "非法入参"
-              };
-              let ErrOr = Object.assign(ErrorTips, ErrTips);
-              this.$message({
-                message: ErrOr[res.Response.Error.Code],
-                type: "error",
-                showClose: true,
-                duration: 0
-              });
             }
+            // else {
+            //   let ErrTips = {
+            //     "InternalError.SystemError": "内部错误",
+            //     "InvalidParameter.ParamError": "非法入参"
+            //   };
+            //   let ErrOr = Object.assign(ErrorTips, ErrTips);
+            //   this.$message({
+            //     message: ErrOr[res.Response.Error.Code],
+            //     type: "error",
+            //     showClose: true,
+            //     duration: 0
+            //   });
+            // }
           });
         });
     },

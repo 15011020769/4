@@ -377,9 +377,19 @@ export default {
     //编辑用户
     sureUpdata() {
       if (this.telReg) {
-        this.$message.error("手机号输入有误");
+        this.$message({
+          showClose: true,
+          message: "手机号输入有误",
+          duration: 0,
+          type: "error"
+        });
       } else if (this.emailReg) {
-        this.$message.error("邮箱输入有误");
+        this.$message({
+          showClose: true,
+          message: "邮箱输入有误",
+          duration: 0,
+          type: "error"
+        });
       } else {
         this.edit();
       }
@@ -394,6 +404,13 @@ export default {
       };
       this.axios.post(UPDATA_USER, params).then(res => {
         if (res.Response.Error === undefined) {
+          this.$message({
+            showClose: true,
+            message: "编辑成功",
+            type: "success",
+            duration: 0
+          });
+          this.updataUser = false;
           this.init();
         } else {
           let ErrTips = {
@@ -409,8 +426,6 @@ export default {
           });
         }
       });
-      this.$message("编辑成功");
-      this.updataUser = false;
     },
     handleClicks(policy) {
       this.$router.push({
@@ -480,8 +495,19 @@ export default {
         Name: this.$route.query.detailsData
       };
       this.axios.post(QUERY_USER, params).then(res => {
-        this.userData = res.Response;
-        this.infoLoad = false;
+        if (res.Response.Error === undefined) {
+          this.userData = res.Response;
+          this.infoLoad = false;
+        } else {
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
       });
     },
     //获取每一个用户下的权限
@@ -511,7 +537,9 @@ export default {
               this.loading = false;
               this.$message({
                 type: "info",
-                message: "无响应数据！"
+                message: "无响应数据！",
+                duration: 0,
+                showClose: true
               });
             }
           } else {
@@ -534,13 +562,6 @@ export default {
       this.currpages = val;
       this.ploicyData();
     },
-    //初始化用户列表
-    userLists() {
-      let userList = {
-        Version: "2019-01-16"
-      };
-      this.axios.post(USER_LIST, userList).then(data => {});
-    },
     //获取每一个子用户下的用户组
     groupListData() {
       this.loading = true;
@@ -549,65 +570,76 @@ export default {
         Name: this.$route.query.detailsData
       };
       this.axios.post(QUERY_USER, params).then(res => {
-        this.userData = res.Response;
-        let groupParams = {
-          Version: "2019-01-16",
-          Uid: this.userData.Uid
-        };
-        this.axios.post(RELATE_USER, groupParams).then(res => {
-          if (res.Response.Error === undefined) {
-            this.TotalCount = res.Response.GroupInfo.length;
-            this.groupData = res.Response.GroupInfo.slice(
-              (this.currpage - 1) * this.pagesize,
-              this.currpage * this.pagesize
-            );
+        if (res.Response.Error === undefined) {
+          this.userData = res.Response;
+          let groupParams = {
+            Version: "2019-01-16",
+            Uid: this.userData.Uid
+          };
+          this.axios.post(RELATE_USER, groupParams).then(res => {
+            if (res.Response.Error === undefined) {
+              this.TotalCount = res.Response.GroupInfo.length;
+              this.groupData = res.Response.GroupInfo.slice(
+                (this.currpage - 1) * this.pagesize,
+                this.currpage * this.pagesize
+              );
 
-            this.groupNum = "组(" + res.Response.GroupInfo.length + ")";
-            this.groupData.forEach(item => {
-              item.policy = [];
-              const params = {
-                Version: "2019-01-16",
-                TargetGroupId: item.GroupId
-              };
-              this.axios.post(GROUP_POLICY, params).then(res => {
-                if (res.Response.Error === undefined) {
-                  res.Response.List.forEach(val => {
-                    const obj = {
-                      PolicyName: val.PolicyName,
-                      PolicyId: val.PolicyId
+              this.groupNum = "组(" + res.Response.GroupInfo.length + ")";
+              this.groupData.forEach(item => {
+                item.policy = [];
+                const params = {
+                  Version: "2019-01-16",
+                  TargetGroupId: item.GroupId
+                };
+                this.axios.post(GROUP_POLICY, params).then(res => {
+                  if (res.Response.Error === undefined) {
+                    res.Response.List.forEach(val => {
+                      const obj = {
+                        PolicyName: val.PolicyName,
+                        PolicyId: val.PolicyId
+                      };
+                      item.policy.push(obj);
+                    });
+                  } else {
+                    let ErrTips = {
+                      "InternalError.SystemError": "内部错误",
+                      "InvalidParameter.ParamError": "非法入参"
                     };
-                    item.policy.push(obj);
-                  });
-                } else {
-                  let ErrTips = {
-                    "InternalError.SystemError": "内部错误",
-                    "InvalidParameter.ParamError": "非法入参"
-                  };
-                  let ErrOr = Object.assign(ErrorTips, ErrTips);
-                  this.$message({
-                    message: ErrOr[res.Response.Error.Code],
-                    type: "error",
-                    showClose: true,
-                    duration: 0
-                  });
-                }
+                    let ErrOr = Object.assign(ErrorTips, ErrTips);
+                    this.$message({
+                      message: ErrOr[res.Response.Error.Code],
+                      type: "error",
+                      showClose: true,
+                      duration: 0
+                    });
+                  }
 
-                this.loading = false;
+                  this.loading = false;
+                });
               });
-            });
-          } else {
-            let ErrTips = {
-              "ResourceNotFound.UserNotExist": "用户不存在"
-            };
-            let ErrOr = Object.assign(ErrorTips, ErrTips);
-            this.$message({
-              message: ErrOr[res.Response.Error.Code],
-              type: "error",
-              showClose: true,
-              duration: 0
-            });
-          }
-        });
+            } else {
+              let ErrTips = {
+                "ResourceNotFound.UserNotExist": "用户不存在"
+              };
+              let ErrOr = Object.assign(ErrorTips, ErrTips);
+              this.$message({
+                message: ErrOr[res.Response.Error.Code],
+                type: "error",
+                showClose: true,
+                duration: 0
+              });
+            }
+          });
+        } else {
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
       });
     },
     handleCurrentChange(val) {
@@ -630,7 +662,13 @@ export default {
           this.axios.post(REMOVEBIND_USER, params).then(data => {
             if (data.Response.Error === undefined) {
               this.ploicyData();
-              this.$message("批量解除成功");
+              this.$message({
+                showClose: true,
+                message: "批量解除成功",
+                type: "success",
+                duration: 0,
+                showClose: true
+              });
             } else {
               let ErrTips = {
                 "InternalError.SystemError": "内部错误",
@@ -665,7 +703,13 @@ export default {
         this.axios.post(REMOVEBIND_USER, params).then(data => {
           if (data.Response.Error === undefined) {
             this.ploicyData();
-            this.$message("解除成功");
+            this.$message({
+              showClose: true,
+              message: "解除成功",
+              type: "success",
+              duration: 0,
+              showClose: true
+            });
           } else {
             let ErrTips = {
               "InternalError.SystemError": "内部错误",
@@ -729,8 +773,25 @@ export default {
         "Info.0.GroupId": val
       };
       this.axios.post(DEL_USERTOGROUP, params).then(data => {
-        this.groupListData();
-        this.$message("移出成功");
+        if (data.Response.Error === undefined) {
+          this.groupListData();
+          this.$message({
+            showClose: true,
+            message: "移出成功",
+            type: "success",
+            duration: 0,
+            showClose: true
+          });
+        } else {
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: "移除失败" + ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
       });
     },
     //当前一行移出组
@@ -790,8 +851,11 @@ export default {
     },
     bindMesg() {
       this.$message({
+        showClose: true,
+        message: "内测中...",
         type: "info",
-        message: "内测中..."
+        duration: 0,
+        showClose: true
       });
     },
     back() {

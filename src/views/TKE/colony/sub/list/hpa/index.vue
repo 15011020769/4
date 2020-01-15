@@ -46,7 +46,7 @@
             label="名称"
             >
             <template slot-scope="scope">
-              <span class="tke-text-link">sdsd</span>
+              <span @click="goHpaDetail()" class="tke-text-link">sdsd</span>
             </template>
           </el-table-column>
           <el-table-column
@@ -169,6 +169,17 @@ export default {
           }
       });
     },
+
+    // 详情
+    goHpaDetail(){
+      this.$router.push({
+          name: "hpaDetail",
+          query: {
+            clusterId: this.clusterId
+          }
+      });
+    },
+
     //选择搜索条件
     changeSearchType(val) {
       this.searchType = val;
