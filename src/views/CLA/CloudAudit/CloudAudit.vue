@@ -473,6 +473,7 @@ export default {
 
   .el-date-editor--daterange.el-input__inner {
     width: 287px;
+    margin-left:20px;
   }
 
   .el-date-editor .el-range__close-icon {
