@@ -54,6 +54,14 @@ export default {
   .appidDetials{
      .appidTabs{
          background: #fff;
+        &>>> .el-tabs__header {
+          padding: 0 20px;
+           margin: 0;
+         }
+        &>>>.el-tab-pane{
+           background: #f2f2f2
+        } 
      }
   }
+  
 </style>
