@@ -35,8 +35,47 @@
             kubernetes.io/ingress.rule-mix: false
           </div>
         </el-form-item>
-        
       </el-form>
+    </div>
+
+    <div class="tke-card tke-formpanel-wrap mt10">
+      <h4  class="tke-formpanel-title">转发配置</h4>
+      <el-table
+        :data="list"
+        
+        style="width: 100%">
+        <el-table-column
+          prop="protocol"
+          label="协议"
+          >
+        </el-table-column>
+        <el-table-column
+          prop="monitorPort"
+          label="监听端口"
+          >
+        </el-table-column>
+        <el-table-column
+          prop="domainName"
+          label="域名"
+          >
+        </el-table-column>
+        <el-table-column
+          prop="url"
+          label="URL路径"
+          >
+        </el-table-column>
+        <el-table-column
+          prop="backend"
+          label="后端服务"
+          >
+        </el-table-column>
+        <el-table-column
+          prop="servicePort"
+          label="服务端口"
+          >
+        </el-table-column>
+        
+      </el-table>
     </div>
    </div>
 </template>
@@ -49,7 +88,17 @@ export default {
   name: "ingressDetailInfo",
   data() {
     return {
-      
+      list:[
+        {
+          protocol:'http',
+          monitorPort:'80',
+          domainName:'175.97.144.235',
+          url:'/acc',
+          backend:'asdasd',
+          servicePort:'333',
+        },
+        
+      ], //列表 
     };
   },
   components: {
