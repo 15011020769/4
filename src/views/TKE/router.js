@@ -167,7 +167,7 @@ export default new Router({
         { // 配置管理-ConfigMap
           path: '/colony/sub/list/config/configmap',
           name: 'colonyConfigConfigmap',
-          component: () => import('./colony/sub/list/config/configmap.vue'),
+          component: () => import('./colony/sub/list/config/configMap.vue'),
           meta: {
             keepAlive: true,
             clusterId: true

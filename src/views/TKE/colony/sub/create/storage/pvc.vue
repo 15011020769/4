@@ -1,4 +1,4 @@
- <!-- 新建PersistentVolumeClaim -->
+ <!-- 新建PersistentVolume -->
 <template>
   <div class="colony-wrap">
     <div class="tke-content-header">
@@ -17,18 +17,99 @@
     <div class="colony-main">
 
       <div class="tke-card tke-formpanel-wrap mb60">
-        <el-form  class="tke-form" :model="pvc" label-position='left' label-width="120px" size="mini">
-          <el-form-item label="名称">
-            <el-input class="w200" v-model="pvc.name" placeholder="请输入名称"></el-input>
+        <el-form  class="tke-form m0" :model="pv" label-position='left' label-width="120px" size="mini">
+          <el-form-item label="名称" class="m0">
+            <el-input class="w200" v-model="pv.name" placeholder="请输入名称"></el-input>
             <p>最长63个字符，只能包含小写字母、数字及分隔符("-")，且必须以小写字母开头，数字或小写字母结尾</p>
           </el-form-item>
-          
+          <el-form-item label="命名空间">
+            <el-select v-model="pv.value" placeholder="请选择">
+              <el-option
+                v-for="(item,index) in pv.options"
+                :key="index"
+                :label="item"
+                :value="item">
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="Provisioner" class="m0">
+            <el-radio-group v-model="pv.ps" style="margin-bottom: 30px;">
+              <el-radio-button label="CBS">云硬盘CBS</el-radio-button>
+              <el-radio-button label="CFS">文件存储CFS</el-radio-button>
+            </el-radio-group>
+          </el-form-item>
+          <el-form-item label="读写权利" class="m0">
+              <el-radio-group v-model="pv.rw" style="margin-bottom: 30px;">
+                <el-radio-button label="orw">单机读写</el-radio-button>
+                <el-radio-button label="tor" :disabled="pv.ps=='CBS'">多机只读
+                </el-radio-button>
+                <el-radio-button label="trw" :disabled="pv.ps=='CBS'">多机读写</el-radio-button>
+              </el-radio-group>
+            </el-form-item>
+          <div v-if="pv.ps=='CBS'">
+            <el-form-item label="StorageClass" class="m0">
+              <el-select v-model="pv.value" placeholder="请选择">
+                <el-option
+                  v-for="(item,index) in pv.options"
+                  :key="index"
+                  :label="item"
+                  :value="item">
+                </el-option>
+              </el-select>
+              <el-button size="mini" style="height:28px;padding-bottom:2px;border:none;" icon="el-icon-refresh"></el-button>
+              <div>PersistentVolumeClaim将自动绑定具有相同StoragClass，且容量大于或等于当前PVC设置的容量大小的静态创建的PersistentVolume</div>
+            </el-form-item>
+            <el-form-item label="云盘类型">
+              <div>普通云硬盘</div>
+              <div>StorageClass为cbs，默认为普通云硬盘，最小为10GiB，<span class="red">若普通云盘售罄时将自动创建高性能云硬盘，最小为10GiB</span></div>
+            </el-form-item>
+            <el-form-item label="容量">
+              el
+            </el-form-item>
+            <el-form-item label="选择云盘" class="m0">
+              <div>未选择数据盘<a href="">选择云硬盘</a></div>
+            </el-form-item>
+            <el-form-item label="文件系统" class="m0">
+              <el-radio v-model="pv.radio" label="1">ext4</el-radio>
+            </el-form-item>
+          </div>
+          <div v-if="pv.ps=='CFS'">
+            <el-form-item label="StorageClass" class="m0">
+              <el-select class="err" v-model="pv.value" placeholder="暂无数据" disabled>
+                <el-option
+                  v-for="(item,index) in pv.options"
+                  :key="index"
+                  :label="item"
+                  :value="item">
+                </el-option>
+              </el-select>
+              <el-button size="mini" style="height:28px;padding-bottom:2px;border:none;" icon="el-icon-refresh"></el-button>
+              <i class="el-icon-warning red"></i>
+              <div>当前类型无可用StorageClass，请前往<a href="">StorageClass</a><i class="el-icon-edit-outline"></i>进行新建</div>
+            </el-form-item>
+            <el-form-item label="选择CFS" class="m0">
+              <el-select v-model="pv.value" placeholder="暂无数据" disabled>
+                <el-option
+                  v-for="(item,index) in pv.options"
+                  :key="index"
+                  :label="item"
+                  :value="item">
+                </el-option>
+              </el-select>
+              <el-button size="mini" style="height:28px;padding-bottom:2px;border:none;" icon="el-icon-refresh"></el-button>
+              <div>如当前CFS不适合，请前往<a href="">文件存储控制台</a><i class="el-icon-edit-outline"></i>进行新建</div>
+            </el-form-item>
+            <el-form-item label="CFS子目录" class="m0">
+            <el-input class="w200" v-model="pv.name" placeholder="子目录默认为/"></el-input>
+            <p class="red">请确保CFS中存在该子目录，否则会挂载失败</p>
+          </el-form-item>
+          </div>
         </el-form>
 
        
         <!-- 底部 -->
         <div class="tke-formpanel-footer">
-          <el-button size="small" type="primary">创建PersistentVolumeClaim</el-button>
+          <el-button size="small" type="primary">创建PersistentVolume</el-button>
           <el-button size="small">取消</el-button>
         </div>
       </div>
@@ -43,18 +124,22 @@ import FileSaver from "file-saver";
 import XLSX from "xlsx";
 import { ALL_CITY } from "@/constants";
 export default {
-  name: "pvcCreate",
+  name: "pvCreate",
   data() {
     return {
-      pvc: {
+      pv: {
         name: '',
-       
+        tabPosition: 'jt',
+        ps: 'CBS',
+        rw:'orw',
+        value: 'cbs',
+        options: ['cbs','ttt'],
+        radio: '1'
       }  
     };
   },
   components: {
-    HeadCom,
-    SEARCH
+    
   },
   created() {
      // 从路由获取类型
@@ -70,7 +155,14 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
-
+.m0 {
+  margin:0;
+};
+.red {
+  color: #e54545;
+};
+.err {
+  border: 1px solid #e54544;
+}
 </style>
 
