@@ -28,7 +28,7 @@
     <el-dialog
       class="dialogModel"
       :title="$t('KMS.total.closeDeleteKms')"
-      v-if="contentDialog[2]=='取消刪除'?true:false"
+      v-if="contentDialog[2]==$t('KMS.total.closeDelete')?true:false"
       :visible.sync="disableDialog"
       width="50%"
       :before-close="handleClose"

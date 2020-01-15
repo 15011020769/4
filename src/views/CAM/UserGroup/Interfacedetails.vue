@@ -796,18 +796,18 @@ export default {
     },
     // 添加策略信息到用户组
     addPoliciesToGroup() {
-      this.multipleSelection.forEach(item => {
-        this.addPolicies(item.PolicyId);
-      });
-      this.dialogVisible = false;
-      this.loading = true;
-      setTimeout(() => {
-        this.selectGroupPolicies();
-        this.$message({
-          message: "绑定成功",
-          type: "success"
+      if (this.multipleSelection.length == 0) {
+        this.$message("请选择数据");
+      } else {
+        this.multipleSelection.forEach(item => {
+          this.addPolicies(item.PolicyId);
         });
-      }, 2000);
+        this.dialogVisible = false;
+        this.loading = true;
+        setTimeout(() => {
+          this.selectGroupPolicies();
+        }, 2000);
+      }
     },
     // 添加策略信息
     addPolicies(val) {
