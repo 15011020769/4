@@ -571,7 +571,7 @@ export default {
           let ErrTips = {
             InvalidParameterValue: "參數值不合法",
             LimitExceeded: "超過配額限制",
-            "UnsupportedOperation.InsufficientFunds": "賬戶餘額不足"
+            "UnsupportedOperation.InsufficientFunds": "帳戶餘額不足"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({

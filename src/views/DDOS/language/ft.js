@@ -120,7 +120,7 @@ module.exports = {
       months: '6個月以上享88折',
       sixMonths: '個月',
       renewalMoney: '自動續費',
-      accountMoney: '賬戶餘額足夠時，設備到期後按月自動續費',
+      accountMoney: '帳戶餘額足夠時，設備到期後按月自動續費',
       configuration: '當前配置',
       ElasticVal: '彈性防護',
       doNotOpen: '未開啟',

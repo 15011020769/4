@@ -120,7 +120,7 @@ module.exports = {
       glyzj: '關聯雲主機ID/名稱',
     },
     cloudMysql: {
-      nw: '內網IP/埠',
+      nw: '內網IP/端口',
       lx: '類型',
       wl: 'VPC 網路',
     },
