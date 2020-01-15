@@ -161,16 +161,30 @@ export default {
           Uid: this.$route.query.Uid
         };
         this.axios.post(RELATE_USER, param).then(res => {
-          this.groupArr = res.Response.GroupInfo;
-          this.userGroup1.forEach(item => {
-            item.status = 0;
-            this.groupArr.forEach(val => {
-              if (val.GroupId == item.GroupId) {
-                item.status = 1;
-              }
+          if(res.Response.Error === undefined){
+            this.groupArr = res.Response.GroupInfo;
+            this.userGroup1.forEach(item => {
+              item.status = 0;
+              this.groupArr.forEach(val => {
+                if (val.GroupId == item.GroupId) {
+                  item.status = 1;
+                }
+              });
             });
-          });
-          this.userGroup = this.userGroup1;
+            this.userGroup = this.userGroup1;
+          }else{
+              let ErrTips = {
+                 "ResourceNotFound.UserNotExist":'用户不存在'
+              };
+              let ErrOr = Object.assign(ErrorTips, ErrTips);
+              this.$message({
+                message: ErrOr[res.Response.Error.Code],
+                type: "error",
+                showClose: true,
+                duration: 0
+              });
+          }
+         
           this.loading = false;
         });
       });
