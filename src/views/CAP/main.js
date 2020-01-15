@@ -10,12 +10,9 @@ import VueCookie from 'vue-cookie'
 import '@/assets/iconfont/iconfont.css'
 import filters from '@/filters/filters.js'
 import i18n from './language/i18n.js' // 引入i18n包
-// 引入基本模板
-const echarts = require('echarts/lib/echarts')
-    // 引入折线图组件
-require('echarts/lib/chart/line')
-    // 引入提示框和title组件，图例
-require('echarts/lib/component/tooltip')
+// 引入折线图组件
+import echarts from 'echarts'
+
 Vue.prototype.$echarts = echarts
 for (let key in filters) {
     Vue.filter(key, filters[key])
