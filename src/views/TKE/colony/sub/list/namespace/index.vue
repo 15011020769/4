@@ -38,7 +38,7 @@
             label="名称"
             >
             <template slot-scope="scope">
-              <span class="tke-text-link" >kube-public</span>
+              <span @click="goNamespaceDetail()" class="tke-text-link" >kube-public</span>
             </template>
           </el-table-column>
           <el-table-column
@@ -130,6 +130,16 @@ export default {
     goNamespaceCreate(){
       this.$router.push({
           name: "namespaceCreate",
+          query: {
+            clusterId: this.clusterId
+          }
+      });
+    },
+
+    // 详情
+    goNamespaceDetail(){
+      this.$router.push({
+          name: "namespaceDetail",
           query: {
             clusterId: this.clusterId
           }
