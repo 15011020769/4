@@ -132,7 +132,7 @@ export default {
       this.$router.push({
         path: "/DetailAudit",
         query: {
-          AuditName: rows.AuditName,
+          AuditName:   rows.AuditName,
           AuditStatus: rows.AuditStatus
         }
       });
