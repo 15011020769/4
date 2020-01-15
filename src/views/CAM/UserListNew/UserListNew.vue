@@ -15,7 +15,6 @@
         @click="addUser"
         style="margin-left:0;"
       >{{$t('CAM.userList.listAdduser')}}</el-button>
-      <!-- <el-button type="primary" class="addUser" size="small" @click="addMoreUser">{{$t('CAM.userList.listAddMoreuser')}}</el-button> -->
       <el-button
         type="primary"
         class="addUser"
@@ -40,11 +39,12 @@
           :data="tableData1"
           @selection-change="selectDataChange"
           v-loading="loading"
+          @expand-change="rowChange"
         >
           <el-table-column type="selection" width="55"></el-table-column>
           <el-table-column type="expand" :label="$t('CAM.userList.userDetils')" width="50">
             <template slot-scope="scope">
-              <div class="user-details">
+              <div class="user-details" v-loading="loadrowC">
                 <div class="top">
                   <dl>
                     <dd>用户组</dd>
@@ -53,9 +53,12 @@
                       <p v-show="scope.row.group.length != 0">
                         <a v-for="(item,index) in scope.row.group" :key="index" v-show="index < 2">
                           <span @click="goToGroup(item)">{{item.GroupName}}</span>
-                          <span style="color:black;" v-show="index < 1">,</span>
+                          <span
+                            style="color:black;"
+                            v-show="index == 0 && scope.row.group.length>1"
+                          >,</span>
                         </a>
-                        <span>
+                        <span v-show="scope.row.group.length>2">
                           以及
                           <a @click="goTo">另外({{scope.row.group.length-2}})个</a>
                         </span>
@@ -303,6 +306,7 @@ export default {
   },
   data() {
     return {
+      loadrowC: true,
       groupLoading: true,
       userArr: [],
       reload: false,
@@ -344,6 +348,34 @@ export default {
     };
   },
   methods: {
+    rowChange(row) {
+      this.loadrowC = true;
+      this.tableData.forEach(element => {
+        if (row.Uid === element.Uid) {
+          const params = {
+            Version: "2019-01-16",
+            Uid: row.Uid
+          };
+          this.axios.post(RELATE_USER, params).then(res => {
+            if (res.Response.Error === undefined) {
+              element.group = res.Response.GroupInfo;
+            } else {
+              let ErrTips = {
+                "ResourceNotFound.UserNotExist": "用户不存在"
+              };
+              let ErrOr = Object.assign(ErrorTips, ErrTips);
+              this.$message({
+                message: ErrOr[res.Response.Error.Code],
+                type: "error",
+                showClose: true,
+                duration: 0
+              });
+            }
+            this.loadrowC = false;
+          });
+        }
+      });
+    },
     goToGroup(item) {
       var groupId = item.GroupId;
       this.$router.push({
@@ -543,28 +575,9 @@ export default {
               this.loading = false;
               var arr = data.Response.Data;
               //获取用户关联的用户组
-              arr.forEach(item => {
+              arr.forEach((item, index) => {
                 item.group = [];
-                const params = {
-                  Version: "2019-01-16",
-                  Uid: item.Uid
-                };
-                this.axios.post(RELATE_USER, params).then(res => {
-                  if (res.Response.Error === undefined) {
-                    item.group = res.Response.GroupInfo;
-                  } else {
-                    let ErrTips = {
-                      "ResourceNotFound.UserNotExist": "用户不存在"
-                    };
-                    let ErrOr = Object.assign(ErrorTips, ErrTips);
-                    this.$message({
-                      message: ErrOr[res.Response.Error.Code],
-                      type: "error",
-                      showClose: true,
-                      duration: 0
-                    });
-                  }
-                });
+                item.index = index;
               });
               this.tableData = arr;
               this.tableData.reverse();
@@ -913,18 +926,23 @@ export default {
   padding-top: 0;
   font-size: 12px;
 }
+
 .wrap >>> .el-dropdown {
   cursor: pointer;
 }
+
 .wrap >>> .el-table__expanded-cell {
   background: rgb(250, 250, 250);
 }
+
 .wrap >>> .el-table__expanded-cell:hover {
   background: rgb(250, 250, 250);
 }
+
 .pointer {
   cursor: pointer;
 }
+
 .wrap {
   width: 100%;
   background-color: #f2f2f2 !important;
@@ -934,22 +952,27 @@ export default {
     padding: 0 25px;
     box-sizing: border-box;
     flex-direction: column;
+
     .red {
       color: darkred;
     }
+
     .green {
       color: green;
     }
+
     .top {
       background: transparent;
       margin: 0;
       padding: 0;
       margin-bottom: 15px;
     }
+
     a {
       color: #006eff;
       cursor: pointer;
     }
+
     dl {
       width: 50%;
       flex: none;
