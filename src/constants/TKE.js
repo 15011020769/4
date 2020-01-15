@@ -43,6 +43,15 @@ export const GETFAVOR = 'ccr/GetFavor'
 // 获取公有收藏
 export const GET_REPOSITORY_LIST = 'ccr/GetRepositoryList'
 
+// 取消收藏
+export const DELETE_FAVOR = 'ccr/DeleteFavor'
+
+// 添加收藏
+export const ADD_FAVOR = 'ccr/AddFavor'
+
+// 获取镜像版本列表
+export const GET_TAGLIST = 'ccr/GetTagList'
+
 // 获取集群列表
 export const COLONY_LIST = 'tke2/DescribeClusters'
 

@@ -15,16 +15,18 @@
         </div>
         <!--  -->
         <el-form status-icon ref="ruleForm" label-width="112px" class="demo-ruleForm">
-          <el-form-item label="应用名称" prop="pass">
-            <span>11112e</span>
+          <el-form-item label="应用名称" prop="name">
+            <span v-if="nameFlag">11112e<i class="el-icon-edit" @click="nameFlag=!nameFlag"></i></span>
+            <el-input v-model="appName" @blur="disappearName" v-if="!nameFlag"></el-input>
           </el-form-item>
-          <el-form-item label="所在网址" prop="checkPass">
-            <span>11112e</span>
+          <el-form-item label="所在网址" prop="url">
+            <span  v-if="urlFlag">11112e<i class="el-icon-edit"  @click="urlFlag=!urlFlag"></i></span>
+            <el-input v-model="onUrl" @blur="disappearUrl" v-if="!urlFlag"></el-input>
           </el-form-item>
-          <el-form-item label="APPID" prop="age">
+          <el-form-item label="APPID" prop="appId">
             <span>2002636472</span>
           </el-form-item>
-          <el-form-item label="APP Secret Key" prop="age">
+          <el-form-item label="APP Secret Key" prop="key">
             <span>0uVi_glKfQIQbhG7qdAqNPw**</span>
           </el-form-item>
         </el-form>
@@ -45,8 +47,17 @@
             <p class="close">验证情况出现恶意量、拉取量波动时，将通过以下邮箱通知您</p>
           </div>
           <div class="addordel">
-           <el-input v-model="addEmail" placeholder="请输入内容" ></el-input>
-           <i class="el-icon-plus" @click="submit()"></i>
+            <el-input v-model="addEmail" placeholder="请输入内容"></el-input>
+            <i class="el-icon-plus" @click="submit()"></i>
+            <span class="warn" v-show="warnFlag">请输入正确的邮箱!</span>
+            <ul>
+              <li @mouseover="overLi" @mouseout="outLi">
+                <span>爱仕达多撒大奥所多</span>
+                <span v-show="delIconFlag">
+                  <i class="el-icon-minus"></i>
+                </span>
+              </li>
+            </ul>
           </div>
         </div>
       </div>
@@ -54,16 +65,41 @@
   </div>
 </template>
 <script>
-// import {isEmail} from ''
+import { isEmail } from "@/utils/validate.js";
 export default {
   data() {
     return {
-      addEmail:''
-    }
+      addEmail: "",
+      warnFlag: false,
+      delIconFlag:false,
+      nameFlag:true,
+      urlFlag:true,
+      appName:'',
+      onUrl:"",
+    };
   },
-  methods:{
-    submit(){
-
+  mounted() {},
+  methods: {
+    submit() {
+      var flag = isEmail(this.addEmail);
+      if (!flag) {
+        this.warnFlag = true;
+      } else {
+        this.warnFlag = false;
+      }
+    },
+    overLi(){
+      this.delIconFlag=true;
+    },
+    outLi(){
+      this.delIconFlag=false;
+    },
+    
+    disappearName(){
+      this.nameFlag=true;
+    },
+    disappearUrl(){
+      this.urlFlag=true;
     }
   }
 };
@@ -111,14 +147,29 @@ export default {
             color: #666;
           }
         }
-        .addordel{
-          position:relative;
-           & >>>   .el-input .el-input__inner{
+        .addordel {
+          position: relative;
+          & >>> .el-input .el-input__inner {
             width: 300px;
             border: none;
             border-bottom: solid 1px #ddd;
           }
-          .el-icon-plus{
+          ul {
+            width: 300px;
+            li {
+              padding: 10px;
+              display: flex;
+              justify-content: space-between;
+              cursor: pointer;
+              &:hover{
+                background: #EAF5FF;
+              }
+              span:nth-of-type(2){
+                color: red;
+              }
+            }
+          }
+          .el-icon-plus {
             cursor: pointer;
             position: absolute;
             font-size: 18px;
@@ -130,11 +181,15 @@ export default {
       }
     }
     .demo-ruleForm {
+      &>>>.el-input .el-input__inner{
+        width: 200px;
+        height: 34px;
+      }
       & >>> .el-form-item__content span {
         margin-left: 30px;
       }
     }
-    .basis-two{
+    .basis-two {
       min-height: 480px;
     }
   }
@@ -148,4 +203,15 @@ export default {
 .open {
   color: #006ef0;
 }
+.warn {
+  color: red;
+  position: absolute;
+  left: 310px;
+  top: 12px;
+  // font-size:
+}
+.el-icon-edit{
+  cursor: pointer;
+}
+
 </style>

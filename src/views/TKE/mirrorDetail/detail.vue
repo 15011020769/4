@@ -1,7 +1,7 @@
 <template>
     <el-card class="box-card">
         <p class="box-info">基本信息</p>
-        <el-form  class="tke-form" :model="colony" label-position='left' label-width="120px" size="mini">
+        <el-form  class="tke-form"  label-position='left' label-width="120px" size="mini">
           <el-form-item label="仓库名称">
             <div class="tke-form-item_text"><span>{{name}}</span></div>
           </el-form-item>
@@ -168,7 +168,7 @@ export default {
   filters: {
     publicsEdit: function (value) {
       // 类型过滤
-      if (value === '1') {
+      if (value == '1') {
         return '公有'
       } else {
         return '私有'

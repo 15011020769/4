@@ -7,7 +7,7 @@
           <div class="context-center">
             <div>
               <el-input placeholder="请输入内容" v-model="input" class="input-with-select">
-                <el-button slot="append" icon="el-icon-search" class="btn-search"></el-button>
+                <el-button slot="append" icon="el-icon-search" class="btn-search" @click="getSearch()"></el-button>
               </el-input>
             </div>
           </div>
@@ -20,24 +20,22 @@
             v-loading="loadShow"
           >
             <!-- 自定义样式 -->
-            <el-table-column  align="center" min-width="5%">
-              <template>
-                <el-tooltip class="item" effect="light" content="收藏" placement="left" >
-                  <i class="el-icon-star-off" ></i>
+            <el-table-column  align="center" min-width="5%" prop='isUserFavor'>
+              <template slot-scope="scope">
+                <el-tooltip class="item" effect="light" :content="scope.row.isUserFavor?'取消收藏':'收藏'" placement="left" >
+                  <i :class="[scope.row.isUserFavor?'el-icon-star-on icon-color':'el-icon-star-off']" @click="handleClick(scope.row)" ></i>
                 </el-tooltip>
               </template>
             </el-table-column>
             <el-table-column  align="center" min-width="10%">
               <template>
-                <el-tooltip class="item" effect="light" content="收藏" placement="left">
-                  <i class="el-icon-star-off" ></i>
-                </el-tooltip>
+                
               </template>
             </el-table-column>
-            <el-table-column prop="address" label="名称" min-width="20%">
+            <el-table-column prop="reponame" label="名称" min-width="20%">
               <template slot-scope="scope">
                 <p>
-                  <a style="cursor:pointer;" @click="jump()">{{scope.row.reponame}}</a>
+                  <a style="cursor:pointer;" @click="jump(scope.row)">{{scope.row.reponame}}</a>
                 </p>
               </template>
             </el-table-column>
@@ -67,7 +65,7 @@
 
 <script>
 import HeadCom from '@/components/public/Head'
-import { GET_REPOSITORY_LIST } from '@/constants'
+import { GET_REPOSITORY_LIST, DELETE_FAVOR, ADD_FAVOR } from '@/constants'
 export default {
   name: 'totalMirror',
   components: {
@@ -81,7 +79,8 @@ export default {
       pagesize: 10, // 分页条数
       currpage: 1, // 当前页码
       loadShow: true,
-      multipleSelection: ''
+      multipleSelection: '',
+      favor: ''
     }
   },
   created () {
@@ -89,7 +88,11 @@ export default {
   },
   methods: {
     handleClick (row) {
-      console.log(row)
+      if (row.isUserFavor) {
+        this.DeleteFavor(row)
+      } else {
+        this.AddFavor(row)
+      }
     },
     // 分页
     handleCurrentChange (val) {
@@ -102,17 +105,22 @@ export default {
       this.multipleSelection = val
       console.log(this.multipleSelection)
     },
-    jump () {
+    getSearch () {
+      this.loadShow = true
+      this.GetRepositoryList()
+    },
+    jump (row) {
       this.$router.push({
         name: 'totalMirrorDetailVersion',
         query: {
-          id: 1
+          id: row.reponame
         }
       })
     },
+    // 获取共有镜像列表
     GetRepositoryList () {
       const param = {
-        reponame: '',
+        reponame: this.input,
         order: 'asc',
         offset: 10 * (this.currpage - 1),
         limit: this.pagesize
@@ -122,7 +130,37 @@ export default {
         if (res.code === 0) {
           this.tableData = res.data.repoInfo
           this.TotalCount = res.data.totalCount
+          this.favor = res.data.repoInfo.isUserFavor
           this.loadShow = false
+        }
+      })
+    },
+    // 取消收藏
+    DeleteFavor (row) {
+      const param = {
+        reponame: row.reponame,
+        repotype: row.repotype
+      }
+      this.axios.post(DELETE_FAVOR, param).then(res => {
+        // console.log(res)
+        if (res.code === 0) {
+          this.loadShow = true
+          this.GetRepositoryList()
+        }
+      })
+    },
+    // 添加收藏
+    AddFavor (row) {
+      const param = {
+        reponame: row.reponame,
+        repotype: row.repotype
+      }
+      this.axios.post(ADD_FAVOR, param).then(res => {
+        // console.log(res)
+        // console.log("收藏")
+        if (res.code === 0) {
+          this.loadShow = true
+          this.GetRepositoryList()
         }
       })
     }
@@ -259,5 +297,8 @@ i{
   .btn-search{
     background:#2177D9!important;
     color:#fff!important;
+  }
+  .icon-color{
+    color:#006eff;
   }
 </style>
