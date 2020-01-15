@@ -165,11 +165,18 @@ export default {
                if (
               res.Response.Error.Code == "InvalidParameterValue.MetadataError"
             ) {
-              this.$message.error("元數據錯誤解析元數據錯誤");
+              this.$message({
+                message: "元數據錯誤解析元數據錯誤",
+                type: "error",
+                duration: 0,
+                showClose: true
+              });
             } else {
               this.$message({
                 message: "添加成功",
-                type: "success"
+                type: "success",
+                duration: 0,
+                showClose: true
               });
               const addModel = this.addModel;
               if (this.active++ > 1) {

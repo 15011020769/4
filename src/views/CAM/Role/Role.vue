@@ -217,7 +217,9 @@ export default {
                 if (data != null && data.Response.RequestId != "") {
                   this.$message({
                     type: "success",
-                    message: this.$t("CAM.Role.delInfo") + "!"
+                    message: this.$t("CAM.Role.delInfo") + "!",
+                    duration: 0,
+                    showClose: true
                   });
                   this.init();
                   this.loading = false;
@@ -240,7 +242,9 @@ export default {
             .catch(error => {
               this.$message({
                 type: "success",
-                message: error
+                message: error,
+                duration: 0,
+                showClose: true
               });
               console.log(error);
             });
@@ -287,14 +291,18 @@ export default {
       // this.$router.push("/createAccount");
       this.$message({
         type: "info",
-        message: "内测中..."
+        message: "内测中...",
+        duration: 0,
+        showClose: true
       });
     },
     toProvider() {
       // this.$router.push("/createProvider");
       this.$message({
         type: "info",
-        message: "内测中..."
+        message: "内测中...",
+        duration: 0,
+        showClose: true
       });
     }
   }

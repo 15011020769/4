@@ -159,9 +159,13 @@ export default {
      }
     },
     //跳转详情页
-    detailsAppid(){
+    detailsAppid(item){
+      var Id = item.CaptchaAppId
       this.$router.push({
         path: "/appIdDetail",
+        query:{
+          Id:Id
+        }
       });
     },
     //分页

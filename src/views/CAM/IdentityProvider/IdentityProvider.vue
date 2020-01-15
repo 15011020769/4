@@ -87,8 +87,19 @@ export default {
       this.axios
         .post(LIST_Providers, params)
         .then(data => {
-          this.tableData = data.Response.SAMLProviderSet;
-          this.TotalCount = data.Response.TotalCount;
+          if(res.Response.Error === undefined){
+              this.tableData = data.Response.SAMLProviderSet;
+              this.TotalCount = data.Response.TotalCount;
+          }else{
+              let ErrTips = {};
+              let ErrOr = Object.assign(ErrorTips, ErrTips);
+              this.$message({
+                message: ErrOr[res.Response.Error.Code],
+                type: "error",
+                showClose: true,
+                duration: 0
+              });
+          }
           this.loading = false;
         })
         .catch(error => {

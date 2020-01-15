@@ -14,7 +14,7 @@
         <p>---</p>
       </div>
       <div class="accountedData">
-        <p>昨日通过量</p>
+        <p @click="click">昨日通过量</p>
         <p>---</p>
       </div>
       <div class="accountedData">
@@ -27,7 +27,9 @@
       </div>
     </div>
     <div class="accData">
-      <Echarts :data="echartsData" :xAxis="xAxis" :series="series" />
+      <div class="charts">
+        <Echarts :data="echartsData" :xAxis="xAxis" :series="series" />
+      </div>
     </div>
   </div>
 </template>
@@ -37,6 +39,7 @@ export default {
   name: "validationData",
   data() {
     return {
+      Id:this.$route.query.Id,
       echartsData: ["请求量", "验证量", "通过量", "拦截量"],
       xAxis: ["00:00", "00:50", "01:40", "02:30", "04:10", "05:00"],
       series: [
@@ -65,11 +68,28 @@ export default {
   },
   components: {
     Echarts
+  },
+  methods:{
+    click(){
+      console.log(this.Id)
+    }
   }
 };
 </script>
+<style lang="scss">
+  .el-tabs__content {
+    background: #f2f2f2
+  }
+
+  .el-tabs__header {
+    padding: 0 20px;
+    margin: 0;
+  }
+
+</style>
+
 <style scoped lang="scss">
-   .wrap{
+  .wrap{
      width: 100%;
      height: 100%;
      padding: 20px;

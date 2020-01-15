@@ -174,7 +174,12 @@ export default {
         this.active = this.active + 1;
       } else if (this.active == 2) {
         if (this.transfer_value.length == 0) {
-          this.$message("请至少选择一个策略");
+          this.$message({
+              message: "请至少选择一个策略",
+              type: "error",
+              showClose: true,
+              duration: 0
+          })
           return;
         }
         if (this.active == 3) {
@@ -205,7 +210,12 @@ export default {
         this.have = true;
         return;
       }
-      this.$message("创建角色成功");
+       this.$message({
+              message: "创建角色成功",
+              type: "success",
+              showClose: true,
+              duration: 0
+        })
     },
     add_use() {
       let obj = {};
