@@ -96,6 +96,7 @@ import Cities from "@/components/public/CITY";
 import SEARCH from "@/components/public/SEARCH";
 import Loading from "@/components/public/Loading";
 import { ALL_CITY, VPN_LIST, ALL_PROJECT } from "@/constants";
+import { ErrorTips } from "@/components/ErrorTips";
 export default {
   data() {
     return {
@@ -239,7 +240,18 @@ export default {
           this.TotalCount = data.Response.TotalCount;
           this.loadShow = false;
         } else {
-          this.$message.error(data.Response.Error.Message);
+          let ErrTips = {
+            "InvalidVpnGatewayId.Malformed": "无效的VPN网关,VPN实例ID不合法",
+            "InvalidVpnGatewayId.NotFound":
+              "无效的VPN网关,VPN实例不存在，请再次核实您输入的资源信息是否正确"
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
         }
       });
     },

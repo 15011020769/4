@@ -99,6 +99,7 @@ import Cities from "@/components/public/CITY";
 import SEARCH from "@/components/public/SEARCH";
 import Loading from "@/components/public/Loading";
 import { ALL_CITY, DCG_LIST, ALL_PROJECT } from "@/constants";
+import { ErrorTips } from "@/components/ErrorTips";
 export default {
   data() {
     return {
@@ -225,8 +226,19 @@ export default {
           this.ProTableData = data.Response.DirectConnectGatewaySet;
           this.TotalCount = data.Response.TotalCount;
         } else {
-          this.$message.error(data.Response.Error.Message);
-          // this.ProTableData = []
+          let ErrTips = {
+            "InvalidParameter.Coexist": "参数不支持同时指定",
+            InvalidParameterValue: "	参数值不合法",
+            "InvalidParameterValue.Malformed": "入参格式不合法",
+            "InvalidParameterValue.TooLong": "无效参数值,参数值太长"
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
         }
         this.loadShow = false;
       });

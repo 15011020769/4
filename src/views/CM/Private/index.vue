@@ -83,10 +83,14 @@
         </el-table-column>-->
       </el-table>
       <div class="Right-style pagstyle">
-       <span class='pagtotal'>共&nbsp;{{TotalCount}}&nbsp;{{$t("CVM.strip")}}</span>
-        <el-pagination :page-size="pagesize" :pager-count="7" layout="prev, pager, next"
-          @current-change="handleCurrentChange" :total="TotalCount">1
-        </el-pagination>
+        <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;{{$t("CVM.strip")}}</span>
+        <el-pagination
+          :page-size="pagesize"
+          :pager-count="7"
+          layout="prev, pager, next"
+          @current-change="handleCurrentChange"
+          :total="TotalCount"
+        >1</el-pagination>
       </div>
     </div>
   </div>
@@ -99,6 +103,7 @@ import Cities from "@/components/public/CITY";
 import SEARCH from "@/components/public/SEARCH";
 import Loading from "@/components/public/Loading";
 import { ALL_CITY, Private_LIST, ALL_PROJECT } from "@/constants";
+import { ErrorTips } from "@/components/ErrorTips";
 export default {
   data() {
     return {
@@ -230,7 +235,18 @@ export default {
         if (data.Response.Error == undefined) {
           this.TbaleData = data.Response.DirectConnectTunnelSet;
         } else {
-          this.$message.error(data.Response.Error.Message);
+          let ErrTips = {
+            InternalError: "内部错误",
+            ResourceNotFound: "资源不存在",
+            "ResourceNotFound.DirectConnectTunnelIdIsNotExist": "专用通道不存在"
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
         }
         this.ProTableData = this.TbaleData;
         this.loadShow = false;
@@ -265,7 +281,7 @@ export default {
         this.loadShow = false;
       });
     },
-   
+
     handleCurrentChange(val) {
       this.currpage = val;
       this.GetTabularData();
@@ -280,7 +296,7 @@ export default {
     }
   },
   //分页
- 
+
   handleCurrentChange(val) {
     this.currpage = val;
     this.GetTabularData();
@@ -357,11 +373,11 @@ export default {
 .pagstyle {
   padding: 20px;
   .pagtotal {
-      font-size: 13px;
-      font-weight: 400;
-      color: #565656;
-      line-height: 32px;
-    }
+    font-size: 13px;
+    font-weight: 400;
+    color: #565656;
+    line-height: 32px;
+  }
 }
 
 .a {
