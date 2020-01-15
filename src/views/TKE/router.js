@@ -336,6 +336,41 @@ export default new Router({
       }
     },
     {
+      path: '/colony/sub/detail/hpa', // 自动伸缩-详情
+      name: 'hpaDetail',
+      component: () => import('./colony/sub/detail/hpa/index.vue'),
+      redirect: '/colony/sub/detail/hpa/info', // 默认子路由
+      meta: {
+        keepAlive: true
+      },
+      children: [ // 子路由
+        { // 详情
+          path: '/colony/sub/detail/hpa/info',
+          name: 'hpaDetailInfo',
+          component: () => import('./colony/sub/detail/hpa/info.vue'),
+          meta: {
+            keepAlive: true,
+          }
+        },
+        { // 事件
+          path: '/colony/sub/detail/hpa/event',
+          name: 'hpaDetailEvent',
+          component: () => import('./colony/sub/detail/hpa/event.vue'),
+          meta: {
+            keepAlive: true,
+          }
+        },   
+        { // yaml
+          path: '/colony/sub/detail/hpa/yaml',
+          name: 'hpaDetailYaml',
+          component: () => import('./colony/sub/detail/hpa/yaml.vue'),
+          meta: {
+            keepAlive: true,
+          }
+        },  
+      ]
+    },
+    {
       path: '/colony/sub/detail/service/svc', // 服务-Service-详情
       name: 'svcDetail',
       component: () => import('./colony/sub/detail/service/svc/index.vue'),
