@@ -3,24 +3,22 @@
   <div >
     <subTitle title='Master&Etcd列表'  />
     <!-- 新建、搜索相关操作 -->
-    <div class="tke-action">
-      <div class="tke-grid ">
-        <!-- 左侧 -->
-        <div class="grid-left">
-          <el-button size="small" disabled="">监控</el-button>
-        </div>
-        <!-- 右侧 -->
-        <!-- <div class="grid-right">
-          <el-input placeholder="请输入内容" size="small"  class="tke-search">
-            <el-button slot="append" icon="el-icon-search"></el-button>
-          </el-input>
-          <i class="el-icon-download tke-download"></i>
-        </div> -->
+    <div class="tke-grid ">
+      <!-- 左侧 -->
+      <div class="grid-left">
+        <el-button size="small" disabled="">监控</el-button>
       </div>
+      <!-- 右侧 -->
+      <!-- <div class="grid-right">
+        <el-input placeholder="请输入内容" size="small"  class="tke-search">
+          <el-button slot="append" icon="el-icon-search"></el-button>
+        </el-input>
+        <i class="el-icon-download tke-download"></i>
+      </div> -->
     </div>
 
     <!-- 数据列表展示 -->
-      <div class="tke-card">
+      <div class="tke-card mt10">
         <el-table
           :data="list"
           v-loading="loadShow"

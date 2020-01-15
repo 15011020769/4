@@ -336,6 +336,111 @@ export default new Router({
       }
     },
     {
+      path: '/colony/sub/detail/nodeManage/node', // 节点管理-节点-详情
+      name: 'nodeDetail',
+      component: () => import('./colony/sub/detail/nodeManage/node/index.vue'),
+      redirect: '/colony/sub/detail/nodeManage/node/pod', // 默认子路由
+      meta: {
+        keepAlive: true
+      },
+      children: [ // 子路由
+        { // pod管理
+          path: '/colony/sub/detail/nodeManage/node/pod',
+          name: 'nodeDetailPod',
+          component: () => import('./colony/sub/detail/nodeManage/node/pod.vue'),
+          meta: {
+            keepAlive: true,
+          }
+        },
+        { // 详情
+          path: '/colony/sub/detail/nodeManage/node/info',
+          name: 'nodeDetailInfo',
+          component: () => import('./colony/sub/detail/nodeManage/node/info.vue'),
+          meta: {
+            keepAlive: true,
+          }
+        },
+        { // 事件
+          path: '/colony/sub/detail/nodeManage/node/event',
+          name: 'nodeDetailEvent',
+          component: () => import('./colony/sub/detail/nodeManage/node/event.vue'),
+          meta: {
+            keepAlive: true,
+          }
+        },   
+        { // yaml
+          path: '/colony/sub/detail/nodeManage/node/yaml',
+          name: 'nodeDetailYaml',
+          component: () => import('./colony/sub/detail/nodeManage/node/yaml.vue'),
+          meta: {
+            keepAlive: true,
+          }
+        },  
+      ]
+    },
+    {
+      path: '/colony/sub/detail/hpa', // 命名空间-详情
+      name: 'namespaceDetail',
+      component: () => import('./colony/sub/detail/namespace/index.vue'),
+      redirect: '/colony/sub/detail/namespace/info', // 默认子路由
+      meta: {
+        keepAlive: true
+      },
+      children: [ // 子路由
+        { // 详情
+          path: '/colony/sub/detail/namespace/info',
+          name: 'namespaceDetailInfo',
+          component: () => import('./colony/sub/detail/namespace/info.vue'),
+          meta: {
+            keepAlive: true,
+          }
+        }, 
+        { // yaml
+          path: '/colony/sub/detail/namespace/yaml',
+          name: 'namespaceDetailYaml',
+          component: () => import('./colony/sub/detail/namespace/yaml.vue'),
+          meta: {
+            keepAlive: true,
+          }
+        },  
+      ]
+    },
+    {
+      path: '/colony/sub/detail/hpa', // 自动伸缩-详情
+      name: 'hpaDetail',
+      component: () => import('./colony/sub/detail/hpa/index.vue'),
+      redirect: '/colony/sub/detail/hpa/info', // 默认子路由
+      meta: {
+        keepAlive: true
+      },
+      children: [ // 子路由
+        { // 详情
+          path: '/colony/sub/detail/hpa/info',
+          name: 'hpaDetailInfo',
+          component: () => import('./colony/sub/detail/hpa/info.vue'),
+          meta: {
+            keepAlive: true,
+          }
+        },
+        { // 事件
+          path: '/colony/sub/detail/hpa/event',
+          name: 'hpaDetailEvent',
+          component: () => import('./colony/sub/detail/hpa/event.vue'),
+          meta: {
+            keepAlive: true,
+          }
+        },   
+        { // yaml
+          path: '/colony/sub/detail/hpa/yaml',
+          name: 'hpaDetailYaml',
+          component: () => import('./colony/sub/detail/hpa/yaml.vue'),
+          meta: {
+            keepAlive: true,
+          }
+        },  
+      ]
+    },
+    {
       path: '/colony/sub/detail/service/svc', // 服务-Service-详情
       name: 'svcDetail',
       component: () => import('./colony/sub/detail/service/svc/index.vue'),

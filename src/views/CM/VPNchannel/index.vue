@@ -97,7 +97,7 @@
 <script>
 import FileSaver from "file-saver";
 import XLSX from "xlsx";
-
+import { ErrorTips } from "@/components/ErrorTips";
 import Cities from "@/components/public/CITY";
 import SEARCH from "@/components/public/SEARCH";
 import Loading from "@/components/public/Loading";
@@ -244,7 +244,18 @@ export default {
           this.TotalCount = data.Response.TotalCount;
           this.loadShow = false;
         } else {
-          this.$message.error(data.Response.Error.Message);
+          let ErrTips = {
+            "InvalidParameter.Coexist": "参数不支持同时指定",
+            "InvalidParameterValue.Malformed": "入参格式不合法",
+            ResourceNotFound: "资源不存在"
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
         }
       });
     },

@@ -64,13 +64,14 @@
               <div>StorageClass为cbs，默认为普通云硬盘，最小为10GiB，<span class="red">若普通云盘售罄时将自动创建高性能云硬盘，最小为10GiB</span></div>
             </el-form-item>
             <el-form-item label="容量">
-              el
+              <el-tooltip content="普通云硬盘硬盘大小为10GB,最大为16000GB" placement="top" effect="light">
+                <el-input style="width:150px" v-model="input">
+                  <template slot="append">GiB</template>
+                </el-input>
+              </el-tooltip>
             </el-form-item>
-            <el-form-item label="选择云盘" class="m0">
-              <div>未选择数据盘<a href="">选择云硬盘</a></div>
-            </el-form-item>
-            <el-form-item label="文件系统" class="m0">
-              <el-radio v-model="pv.radio" label="1">ext4</el-radio>
+            <el-form-item label="费用">
+              <div>请先输入合法的云盘容量</div>
             </el-form-item>
           </div>
           <div v-if="pv.ps=='CFS'">
@@ -85,31 +86,15 @@
               </el-select>
               <el-button size="mini" style="height:28px;padding-bottom:2px;border:none;" icon="el-icon-refresh"></el-button>
               <i class="el-icon-warning red"></i>
-              <div>当前类型无可用StorageClass，请前往<a href="">StorageClass</a><i class="el-icon-edit-outline"></i>进行新建</div>
+              <div>当前类型无可用StorageClass，请前往<a href="">StorageClass</a><i class="el-icon-edit-outline"></i>新建</div>
             </el-form-item>
-            <el-form-item label="选择CFS" class="m0">
-              <el-select v-model="pv.value" placeholder="暂无数据" disabled>
-                <el-option
-                  v-for="(item,index) in pv.options"
-                  :key="index"
-                  :label="item"
-                  :value="item">
-                </el-option>
-              </el-select>
-              <el-button size="mini" style="height:28px;padding-bottom:2px;border:none;" icon="el-icon-refresh"></el-button>
-              <div>如当前CFS不适合，请前往<a href="">文件存储控制台</a><i class="el-icon-edit-outline"></i>进行新建</div>
-            </el-form-item>
-            <el-form-item label="CFS子目录" class="m0">
-            <el-input class="w200" v-model="pv.name" placeholder="子目录默认为/"></el-input>
-            <p class="red">请确保CFS中存在该子目录，否则会挂载失败</p>
-          </el-form-item>
           </div>
         </el-form>
 
        
         <!-- 底部 -->
         <div class="tke-formpanel-footer">
-          <el-button size="small" type="primary">创建PersistentVolume</el-button>
+          <el-button size="small" type="primary">新建PersistentVolumeClaim</el-button>
           <el-button size="small">取消</el-button>
         </div>
       </div>

@@ -1,5 +1,5 @@
 <template>
-<!-- 添加高级防护策略 -->
+  <!-- 添加高级防护策略 -->
   <div>
     <!-- 策略名称 -->
     <div>
@@ -68,7 +68,7 @@
         </div>
       </div>
     </div>
-    <!-- 高级安全策略 -->
+    <!-- DDos高级安全策略 -->
     <div>
       <span class="fontWeightBold">{{$t('DDOS.Proteccon_figura.Advanced_policy')}}</span>
       <!-- 禁用协议 -->
@@ -103,9 +103,10 @@
             </td>
             <td>
               <el-select class="selectChange" v-model="item.Kind">
-                <el-option label="目的端口" value="0"></el-option>
+                <el-option v-for="t in portArr" :key="t.value" :label="t.label" :value="t.value"></el-option>
+                <!-- <el-option label="目的端口" value="0"></el-option>
                 <el-option label="源端口" value="1"></el-option>
-                <el-option label="目的端口和源端口" value="2"></el-option>
+                <el-option label="目的端口和源端口" value="2"></el-option>-->
               </el-select>
             </td>
             <td>
@@ -189,20 +190,10 @@
               </el-select>
             </td>
             <td>
-              <el-input
-                class="inputChange1"
-                v-model="item.Offset"
-                autocomplete="off"
-                disabled="true"
-              >0</el-input>
+              <el-input class="inputChange1" v-model="item.Offset" autocomplete="off" disabled>0</el-input>
             </td>
             <td>
-              <el-input
-                class="inputChange1"
-                v-model="item.Depth"
-                autocomplete="off"
-                disabled="true"
-              >1</el-input>
+              <el-input class="inputChange1" v-model="item.Depth" autocomplete="off" disabled>1</el-input>
             </td>
             <td>
               <el-select class="selectChange1" v-model="item.IsNot">
@@ -211,7 +202,7 @@
               </el-select>
             </td>
             <td>
-              <el-input class="inputChange1" v-model="item.Str" autocomplete="off" disabled="true"></el-input>
+              <el-input class="inputChange1" v-model="item.Str" autocomplete="off" disabled></el-input>
             </td>
             <td>
               <el-select class="selectChange1" v-model="item.Action">
@@ -260,16 +251,19 @@
       </div>
       <!-- 拒绝海外流量 -->
       <div class="childContTit">
-        <h2>{{$t('DDOS.Proteccon_figura.Agreement')}}</h2>
-        <span class="spanStyleLabel">特殊资源</span>
+        <h2>{{$t('DDOS.Proteccon_figura.overseas_traffic')}}</h2>
+        <span class="spanStyleLabel">{{$t('DDOS.Proteccon_figura.overseas_traffic')}}</span>
         <el-radio-group v-model="radios1">
-          <el-radio label="关闭" name="radio1"></el-radio>
-          <el-radio label="开启" name="radio1"></el-radio>
+          <!-- <el-radio label="关闭" name="radio1"></el-radio>
+          <el-radio label="开启" name="radio1"></el-radio>-->
+          <el-radio label="關閉"></el-radio>
+          <el-radio label="開啟"></el-radio>
         </el-radio-group>
       </div>
       <!-- 连接耗尽防护 -->
       <div class="childContTit">
-        <h2>{{$t('DDOS.Proteccon_figura.overseas_traffic')}}</h2>
+        <!-- <h2>{{$t('DDOS.Proteccon_figura.overseas_traffic')}}</h2> -->
+        <h2>連接耗盡防護</h2>
         <span class="spanStyleLabel">
           {{$t('DDOS.Proteccon_figura.Air_protection')}}
           <i class="el-icon-info"></i>
@@ -479,7 +473,7 @@
       </div>
       <div class="bottomBtn">
         <el-button type="primary" @click="createDDoSPolicy(true)" v-if="nameFlag">确定</el-button>
-        <el-button type="primary" @click="createDDoSPolicy(false)" v-else-if="!nameFlag">确定</el-button>
+        <el-button type="primary" @click="createDDoSPolicy(false)" v-else>确定</el-button>
         <el-button @click="closeAddPage">取消</el-button>
       </div>
     </div>
@@ -549,10 +543,7 @@
   </div>
 </template>
 <script>
-import {
-  DDOS_POLICY_CREATE,
-  DDOS_POLICY_MODIFY
-} from "@/constants";
+import { DDOS_POLICY_CREATE, DDOS_POLICY_MODIFY } from "@/constants";
 export default {
   props: {
     isShow: Boolean,
@@ -568,6 +559,21 @@ export default {
       tags4: [],
       tags5: [],
       tableDataName1: "",
+      portArr: [
+        //禁用端口数据
+        {
+          value: 0,
+          label: "目的端口"
+        },
+        {
+          value: 1,
+          label: "源端口"
+        },
+        {
+          value: 2,
+          label: "目的端口和源端口"
+        }
+      ],
       IpBlackWhiteLists: [], //黑白名单数据
       tableDataBegin2: [], //水印防护
       tableDataEnd: [],
@@ -607,16 +613,20 @@ export default {
       dialogEdit: false, //编辑框
       blackWhiteEdit: "", //编辑黑白名单
       blackWhiteTextEdit: "",
-      policyTemp: {} //编辑用的暂存对象
+      policyTemp: {}, //编辑用的暂存对象
+      useKind: 0, //全局存Kind值
+      depthChangeVale: 0 //depth[0-1500]
     };
   },
-  mounted() {},
+  mounted() {
+    // console.log(this.policy,'我要的');
+  },
   created() {
     //根据有无对象传入，判断是添加还是配置
+    // console.log(this.policy, "大哥，传个参");
     if (this.policy.PolicyId == undefined) {
     } else {
       //配置
-      // console.log(this.policy);
       this.policyTemp = JSON.parse(JSON.stringify(this.policy));
       this.tacticsName = this.policyTemp.PolicyName;
       this.nameFlag = false;
@@ -633,8 +643,9 @@ export default {
       this.DdisableProtocol.push(
         this.policyTemp.DropOptions.DropOther == 0 ? "" : "其他協議"
       );
-      this.tags = this.policyTemp.PortLimits;
-      this.tags1 = this.policyTemp.PacketFilters;
+      this.tags = this.policyTemp.PortLimits; //禁用
+      this.tags1 = this.policyTemp.PacketFilters; //报文
+      console.log(this.policyTemp.DropOptions, "工作进行到此");
       //this.tableDataBegin2 = this.policyTemp.WaterPrint
     }
   },
@@ -667,11 +678,22 @@ export default {
           // Name: this.tacticsName,
         };
         // PortLimits.N 端口禁用，当没有禁用端口时填空数组
+        // console.log(this.tags);
         for (let i in this.tags) {
-          params["PortLimit." + i + ".Protocol"] = this.tags[i].Protocol; //协议，取值范围[tcp,udp,icmp,all]
-          params["PortLimit." + i + ".DPortStart"] = this.tags[i].DPortStart; //开始目的端口，取值范围[0,65535]
-          params["PortLimit." + i + ".DPortEnd"] = this.tags[i].DPortEnd; //结束目的端口，取值范围[0,65535]，要求大于等于开始目的端口
-          params["PortLimit." + i + ".Kind"] = this.tags[i].Kind; //取值[0（目的端口范围禁用）， 1（源端口范围禁用）， 2（目的和源端口范围同时禁用）]
+          params["PortLimits." + i + ".Protocol"] = this.tags[i].Protocol; //协议，取值范围[tcp,udp,icmp,all]
+          params["PortLimits." + i + ".DPortStart"] = this.tags[i].DPortStart; //开始目的端口，取值范围[0,65535]
+          params["PortLimits." + i + ".DPortEnd"] = this.tags[i].DPortEnd; //结束目的端口，取值范围[0,65535]，要求大于等于开始目的端口
+          this.useKind = this.tags[i].Kind;
+          if (this.tags[i].Kind == 0) {
+            params["PortLimits." + i + ".Kind"] = this.tags[i].Kind; //取值[0（目的端口范围禁用）， 1（源端口范围禁用）， 2（目的和源端口范围同时禁用）]
+            params["PortLimits." + i + ".Action"] = this.tags[i].Action; //执行动作，取值[drop(丢弃) ，transmit(转发)]
+          } else if (this.tags[i].Kind == 1) {
+            params["PortLimits." + i + ".SPortEnd"] = this.tags[i].SPortEnd; //结束源端口，取值范围[0,65535]，要求大于等于开始源端口
+            params["PortLimits." + i + ".SPortStart"] = this.tags[i].SPortStart; //开始源端口，取值范围[0,65535]
+          } else if (this.tags[i].Kind == 2) {
+            params["PortLimits." + i + ".Kind"] = this.tags[i].Kind; //取值[0（目的端口范围禁用）， 1（源端口范围禁用）， 2（目的和源端口范围同时禁用）]
+            params["PortLimits." + i + ".Action"] = this.tags[i].Action; //执行动作，取值[drop(丢弃) ，transmit(转发)]
+          }
         }
         // IpAllowDenys.N IP黑白名单，当没有IP黑白名单时填空数组
         for (let i in this.IpBlackWhiteLists) {
@@ -680,7 +702,8 @@ export default {
             i
           ].Type;
         }
-        // PacketFilters.N 报文过滤，当没有报文过滤时填空数组
+        // PacketFilters.N 报文过滤特征，当没有报文过滤时填空数组
+        // console.log(this.tags1, "this.tags1，这里暂时是空");
         for (let i in this.tags1) {
           params["PacketFilters." + i + ".Protocol"] = this.tags1[i].Protocol;
           params["PacketFilters." + i + ".SportStart"] = this.tags1[
@@ -704,7 +727,7 @@ export default {
           params["PacketFilters." + i + ".Action"] = this.tags1[i].Action;
         }
         // WaterPrint.N 水印策略参数，当没有启用水印功能时填空数组，最多只能传一条水印策略（即数组大小不超过1）
-        console.log(this.tableDataBegin2);
+        // console.log(this.tableDataBegin2);
         for (let i in this.tableDataBegin2) {
           params["WaterPrint." + i + ".Offset"] = this.tableDataBegin2[
             i
@@ -722,21 +745,48 @@ export default {
             params["WaterPrint." + i + ".UdpPortList." + k] = arr2[k];
           }
         }
+
+        // 拒绝海外流量
+        
+
+
+
         if (bl) {
-          params["Name"] = this.tacticsName;
+          params.Name = this.tacticsName;
+          console.log(params, ",'添加的参数'");
           this.axios.post(DDOS_POLICY_CREATE, params).then(res => {
-            console.log(res);
-            this.$emit('describeDDoSPolicyADD');
-            // 关闭新增页面
-            this.closeAddPage();
-            // this.$emit("closePage", { message: this.tableShow });
+            console.log(res, "新增");
+            if (res.Response.Success) {
+              this.$message("添加成功");
+              this.$emit("describeDDoSPolicyADD");
+              // 关闭新增页面
+              this.closeAddPage();
+              // this.$emit("closePage", { message: this.tableShow });//lxx
+            } else {
+              this.$message({
+                message: "添加失败" + res.Response.Error.Message,
+                type: "warning"
+              });
+              // 关闭新增页面
+              this.closeAddPage();
+            }
           });
         } else {
-          params["PolicyId"] = this.policy.PolicyId;
+          params.PolicyId = this.policy.PolicyId;
+          console.log(params, "修改的参数");
           this.axios.post(DDOS_POLICY_MODIFY, params).then(res => {
-            console.log(params, res);
-          // 关闭新增页面
-          this.closeAddPage();
+            if (res.Response.Success) {
+              this.$message("修改成功");
+              // 关闭修改页面
+              this.closeAddPage();
+            } else {
+              this.$message({
+                message: "修改失败" + res.Response.Error.Message,
+                type: "warning"
+              });
+              // 关闭新增页面
+              this.closeAddPage();
+            }
           });
         }
       }
@@ -746,7 +796,7 @@ export default {
     },
     // 搜索
     doFilter() {
-      console.log(this.filterConrent);
+      // console.log(this.filterConrent);
       // TODO
       //页面数据改变重新统计数据数量和当前页
       this.currentPage = 1;
@@ -788,7 +838,7 @@ export default {
     },
     copyObj: function() {
       var des = {
-        protocol: "",
+        Protocol: "",
         tortType: "",
         beginPort: "",
         endPort: ""
@@ -799,11 +849,18 @@ export default {
     addRow: function(type) {
       var des = this.copyObj();
       if (type == 1) {
+        des.Action = "drop";
+        if (this.useKind == 1) {
+          des.SPortEnd = "";
+          des.SPortStart = "";
+        }
         this.tags.push(des);
       } else if (type == 2) {
+        des.Depth = "0";
         this.tags1.push(des);
       } else if (type == 3) {
         this.tags3.push(des);
+        console.log(this.tags3, "tages3");
       } else if (type == 4) {
         this.tags4.push(des);
       } else if (type == 5) {
@@ -888,7 +945,7 @@ export default {
         let temp = { Type: this.blackWhite, Ip: arr[i] };
         this.IpBlackWhiteLists.push(temp);
       }
-      console.log(this.IpBlackWhiteLists);
+      // console.log(this.IpBlackWhiteLists);
     },
     //删除黑白名单
     deleteRowBW(index, row) {
@@ -907,7 +964,7 @@ export default {
     },
     // 水印防护
     createSY() {
-      console.log(this.tags4, this.tags5, this.radios12, this.moveNum);
+      // console.log(this.tags4, this.tags5, this.radios12, this.moveNum);
       let str = "";
       for (let i in this.tags4) {
         str += this.tags4[i].beginPort + "-" + this.tags4[i].endPort + "\r\n";

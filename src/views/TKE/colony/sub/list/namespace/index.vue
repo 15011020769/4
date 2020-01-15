@@ -4,32 +4,29 @@
       <subTitle title='Namespace'  />
 
       <!-- 新建、搜索相关操作 -->
-      <div class="tke-action">
-        <div class="tke-grid ">
-          <!-- 左侧 -->
-          <div class="grid-left">
-            <el-button size="small" @click="goNamespaceCreate" type="primary">新建</el-button>
-          </div>
-          <!-- 右侧 -->
-          <div class="grid-right">
-            <tkeSearch 
-              exportData
-              refreshData
-              inputPlaceholder='请输入伸缩组ID'
-              :searchInput='searchInput'
-              @changeInput="changeSearchInput"
-              @clickSearch="clickSearch"
-              @refresh='refreshList'
-              @exportExcel="exportExcel"
-            >
-            </tkeSearch>
-          </div>
+      <div class="tke-grid ">
+        <!-- 左侧 -->
+        <div class="grid-left">
+          <el-button size="small" @click="goNamespaceCreate" type="primary">新建</el-button>
         </div>
-        
+        <!-- 右侧 -->
+        <div class="grid-right">
+          <tkeSearch 
+            exportData
+            refreshData
+            inputPlaceholder='请输入伸缩组ID'
+            :searchInput='searchInput'
+            @changeInput="changeSearchInput"
+            @clickSearch="clickSearch"
+            @refresh='refreshList'
+            @exportExcel="exportExcel"
+          >
+          </tkeSearch>
+        </div>
       </div>
 
       <!-- 数据列表展示 -->
-      <div class="tke-card">
+      <div class="tke-card mt10">
         <el-table
           :data="list"
           v-loading="loadShow"
@@ -38,7 +35,7 @@
             label="名称"
             >
             <template slot-scope="scope">
-              <span class="tke-text-link" >kube-public</span>
+              <span @click="goNamespaceDetail()" class="tke-text-link" >kube-public</span>
             </template>
           </el-table-column>
           <el-table-column
@@ -130,6 +127,16 @@ export default {
     goNamespaceCreate(){
       this.$router.push({
           name: "namespaceCreate",
+          query: {
+            clusterId: this.clusterId
+          }
+      });
+    },
+
+    // 详情
+    goNamespaceDetail(){
+      this.$router.push({
+          name: "namespaceDetail",
           query: {
             clusterId: this.clusterId
           }

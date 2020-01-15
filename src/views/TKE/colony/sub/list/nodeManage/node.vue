@@ -4,35 +4,32 @@
       <subTitle title='节点列表'  />
 
       <!-- 新建、搜索相关操作 -->
-      <div class="tke-action">
-        <div class="tke-grid ">
-          <!-- 左侧 -->
-          <div class="grid-left">
-            <el-button size="small" @click="goExpand" type="primary">新建节点</el-button>
-            <el-button size="small" >监控</el-button>
-            <el-button size="small" @click="goAddExist">添加已有节点</el-button>
-            <el-button size="small" disabled="">移除</el-button>
-            <el-button size="small" disabled="">封锁</el-button>
-            <el-button size="small" disabled="">解除封锁</el-button>
-          </div>
-          <!-- 右侧 -->
-          <div class="grid-right">
-            <tkeSearch 
-              exportData
-              inputPlaceholder='请输入IP或节点名/ID'
-              :searchInput='searchInput'
-              @changeInput="changeSearchInput"
-              @clickSearch="clickSearch"
-              @exportExcel="exportExcel"
-            >
-            </tkeSearch>
-          </div>
+      <div class="tke-grid ">
+        <!-- 左侧 -->
+        <div class="grid-left">
+          <el-button size="small" @click="goExpand" type="primary">新建节点</el-button>
+          <el-button size="small" >监控</el-button>
+          <el-button size="small" @click="goAddExist">添加已有节点</el-button>
+          <el-button size="small" disabled="">移除</el-button>
+          <el-button size="small" disabled="">封锁</el-button>
+          <el-button size="small" disabled="">解除封锁</el-button>
         </div>
-        
+        <!-- 右侧 -->
+        <div class="grid-right">
+          <tkeSearch 
+            exportData
+            inputPlaceholder='请输入IP或节点名/ID'
+            :searchInput='searchInput'
+            @changeInput="changeSearchInput"
+            @clickSearch="clickSearch"
+            @exportExcel="exportExcel"
+          >
+          </tkeSearch>
+        </div>
       </div>
 
       <!-- 数据列表展示 -->
-      <div class="tke-card">
+      <div class="tke-card mt10">
         <el-table
           @selection-change="handleSelectionChange"
           :data="list"
@@ -46,7 +43,7 @@
             label="ID/节点名"
             >
             <template slot-scope="scope">
-              <span class="tke-text-link" >ins-8czy2x5q</span>
+              <span @click="goNodeDetail()" class="tke-text-link" >ins-8czy2x5q</span>
               <p>as-test02</p>
             </template>
           </el-table-column>
@@ -237,6 +234,7 @@ export default {
           }
       });
     },
+    
     // 添加已有节点跳转呢
     goAddExist(){
       this.$router.push({
@@ -262,7 +260,17 @@ export default {
     //全选
     handleSelectionChange(val) {
       this.multipleSelection = val;
-    }
+    },
+
+     // 详情
+    goNodeDetail(){
+      this.$router.push({
+          name: "nodeDetail",
+          query: {
+            clusterId: this.clusterId
+          }
+      });
+    },
   },
   components: {
     subTitle,

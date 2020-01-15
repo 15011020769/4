@@ -53,7 +53,8 @@
                   <div v-for="(item, index) in scope.row.Record" :key="index">
                     <div v-if="item.Key=='IPText'">
                       <div v-for="(item2, i) in item.Value" :key="i+'i'">
-                        <span>{{item2}}</span><br/>
+                        <span>{{item2}}</span>
+                        <br />
                       </div>
                     </div>
                     <!-- IP地址-->
@@ -76,10 +77,12 @@
               >
                 <template slot-scope="scope">
                   <div v-for="(item, index) in scope.row.Record" :key="index">
-                    <div v-if="item.Key=='DefendStatus' && item.Value == '1'">
-                      {{$t('DDOS.AccesstoCon.AccOpen')}}
-                    </div>
-                    <div v-else-if="item.Key=='DefendStatus' && item.Value == '0'">{{$t('DDOS.AccesstoCon.AccClose')}}</div>
+                    <div
+                      v-if="item.Key=='DefendStatus' && item.Value == '1'"
+                    >{{$t('DDOS.AccesstoCon.AccOpen')}}</div>
+                    <div
+                      v-else-if="item.Key=='DefendStatus' && item.Value == '0'"
+                    >{{$t('DDOS.AccesstoCon.AccClose')}}</div>
                   </div>
                 </template>
               </el-table-column>
@@ -165,16 +168,24 @@
         :label="$t('DDOS.Proteccon_figura.Advanced_strategys')"
         name="third"
         style="padding:0 20px;"
+        :key="$t('DDOS.Proteccon_figura.Advanced_strategys')"
       >
         <div class="mainContent">
-          <div v-if="tableShow" style="background:white;">
+          <!-- 添加新策略 -->
+          <div v-show="tableShow" style="background:white;">
             <el-button
               class="addNewT"
               type="primary"
               @click="addNewTactics"
             >{{$t('DDOS.Proteccon_figura.Add_newpolicy')}}</el-button>
             <div class="minTable">
-              <el-table :data="tableDataPolicy" height="450" v-loading="loading" empty-text="暫無數據">
+              <el-table
+                :data="tableDataPolicy"
+                height="450"
+                v-loading="loading"
+                empty-text="暫無數據"
+                :default-sort="{prop: 'CreateTime', order: 'descending'}"
+              >
                 <el-table-column prop="PolicyName" :label="$t('DDOS.Proteccon_figura.Policy_name')">
                   <template slot-scope="scope">
                     {{scope.row.PolicyName}}
@@ -189,8 +200,10 @@
                 </el-table-column>
                 <el-table-column
                   prop="CreateTime"
+                  sortable
                   :label="$t('DDOS.Proteccon_figura.Creation_time')"
                 >
+                  <!-- 创建时间 -->
                   <template slot-scope="scope">{{scope.row.CreateTime}}</template>
                 </el-table-column>
                 <el-table-column prop="action" label="操作" width="180">
@@ -201,6 +214,7 @@
                       size="small"
                       style="padding-left:7px"
                     >配置</el-button>
+                    <!-- 删除 -->
                     <el-button
                       @click.native.prevent="deleteRow(scope.$index, scope.row)"
                       type="text"
@@ -218,7 +232,9 @@
                         {{$t('DDOS.Proteccon_figura.delete_thepolicy')}}
                       </h1>
                       <p class="deleteCont">{{$t('DDOS.Proteccon_figura.After_deletingpolicy')}}</p>
-                      <p class="deleteCont">{{$t('DDOS.Proteccon_figura.delete_advanced')}}({{deleteBegin.PolicyName}})?</p>
+                      <p
+                        class="deleteCont"
+                      >{{$t('DDOS.Proteccon_figura.delete_advanced')}}({{deleteBegin.PolicyName}})?</p>
                       <span slot="footer" class="dialog-footer">
                         <el-button @click="dialogVisible = false">取 消</el-button>
                         <el-button
@@ -327,7 +343,13 @@ export default {
       valueThrou: [],
       valueRightOld: [],
       renderFunc(h, option) {
-        return <div><span> {option.key} </span><br/><span>{option.label}</span></div>;
+        return (
+          <div>
+            <span> {option.key} </span>
+            <br />
+            <span>{option.label}</span>
+          </div>
+        );
       }, //穿梭框
       activeName: "first", //tab页
       filterConrent: "IP",
@@ -347,7 +369,7 @@ export default {
         low: "寬鬆模式",
         middle: "正常模式",
         high: "嚴格模式"
-      },
+      }
     };
   },
   components: {
@@ -358,7 +380,7 @@ export default {
   },
   created() {
     this.describeResourceList();
-    this.describeDDoSPolicy();
+    // this.describeDDoSPolicy();
   },
   methods: {
     // 1.1.获取资源列表
@@ -371,24 +393,26 @@ export default {
       // 条件搜索参数
       if (this.tableDataName != null && this.tableDataName != "") {
         if (this.filterConrent == "IP") {
-          params['IpList.0'] = this.tableDataName;
+          params["IpList.0"] = this.tableDataName;
         } else if (this.filterConrent == "ID") {
-          params['IdList.0'] = this.tableDataName;
+          params["IdList.0"] = this.tableDataName;
         } else if (this.filterConrent == "serverBag") {
-          params['Name'] = this.tableDataName;
+          params["Name"] = this.tableDataName;
         }
       }
       // 调用接口
       this.axios.post(RESOURCE_LIST, params).then(res => {
-        if(res.Response.Error != undefined){ //条件搜索可能返回Error
+        // console.log(res,"获取的后台");
+        if (res.Response.Error != undefined) {
+          //条件搜索可能返回Error
           this.tableDataBegin = [];
           this.totalItems = 0;
           this.loading = false;
-          return
+          return;
         }
         this.tableDataBegin = res.Response.ServicePacks;
         this.totalItems = res.Response.Total;
-        
+
         this.tableDataBegin.forEach(val => {
           val.Record.forEach(item => {
             if (item.Key == "Id") {
@@ -413,7 +437,7 @@ export default {
                 Id: item.Value
               };
               this.axios.post(GET_SPolicy, params2).then(res => {
-                if(res.Response.DDosPolicyList.length == 0){
+                if (res.Response.DDosPolicyList.length == 0) {
                   const obj2 = {
                     Key: "SPolicyName",
                     Value: "-"
@@ -421,7 +445,7 @@ export default {
                   const obj2Id = {
                     Key: "SPolicyId",
                     Value: "0000"
-                  }
+                  };
                   val.Record.push(obj2);
                   val.Record.push(obj2Id);
                 } else {
@@ -432,7 +456,7 @@ export default {
                   const obj2Id = {
                     Key: "SPolicyId",
                     Value: res.Response.DDosPolicyList[0].PolicyId
-                  }
+                  };
                   val.Record.push(obj2);
                   val.Record.push(obj2Id);
                 }
@@ -445,8 +469,13 @@ export default {
                 if (ipArr.hasOwnProperty(key)) {
                   const element = ipArr[key];
                   let ipDetailArr = element.split("-");
-                  IPText.push(ipDetailArr[0]+"("+(ipDetailArr[1]=='tpe'?'中國台灣':ipDetailArr[1])+
-                  (ipDetailArr[2]=='bgp'?'BGP':ipDetailArr[2])+")");
+                  IPText.push(
+                    ipDetailArr[0] +
+                      "(" +
+                      (ipDetailArr[1] == "tpe" ? "中國台灣" : ipDetailArr[1]) +
+                      (ipDetailArr[2] == "bgp" ? "BGP" : ipDetailArr[2]) +
+                      ")"
+                  );
                 }
               }
               const obj3 = {
@@ -474,6 +503,8 @@ export default {
         Business: "net"
       };
       this.axios.post(GET_SPolicy, params).then(res => {
+        this.loading = true;
+        console.log(res, "获取");
         this.tableDataPolicy = res.Response.DDosPolicyList;
         this.loading = false;
         // console.log(this.tableDataPolicy)
@@ -513,7 +544,7 @@ export default {
         //CC防护
       } else if (tab.name == "third") {
         //DDOS高级防护策略
-        this.describeDDoSPolicy();
+        // this.describeDDoSPolicy();
         this.closePageAdd();
       }
     },
@@ -571,12 +602,31 @@ export default {
     },
     // 添加高级防护策略
     addNewTactics() {
+      console.log(this.tableDataPolicy.length);
+      if (this.tableDataPolicy.length >= 5) {
+        this.$message({
+          showClose: true,
+          message: "最多添加五个策略",
+          type: "warning"
+        });
+        return;
+      }
       this.policy = {};
       this.tableShow = false;
     },
+    sortArr(arr) {
+      arr.sort((a, b) => {
+        return a.CreateTime + "" < b.CreateTime + "" ? 1 : -1;
+      });
+    },
     //点击表格操作配置按钮
     configListCon(configIndex, val) {
-      this.policy = val;
+      // console.log(configIndex, val, "点配置时获取的数据");
+      this.describeDDoSPolicy();
+      this.sortArr(this.tableDataPolicy);
+      // console.log(this.tableDataPolicy);
+      this.policy = this.tableDataPolicy[configIndex];
+      // this.policy = val;
       this.tableShow = false;
     },
     //绑定资源按钮
@@ -585,10 +635,10 @@ export default {
       // 循环策略列表（找出已被绑定的资源）
       let binded = [];
       this.tableDataPolicy.forEach(policy => {
-        if(policy.PolicyId != bindingCon.PolicyId){
+        if (policy.PolicyId != bindingCon.PolicyId) {
           policy.BoundResources.forEach(res => {
             binded.push(res);
-          })
+          });
         }
       });
       // 循环资源列表
@@ -597,24 +647,24 @@ export default {
         for (const i in resource.Record) {
           if (resource.Record.hasOwnProperty(i)) {
             const element = resource.Record[i];
-            if(element.Key == "Id"){
+            if (element.Key == "Id") {
               objTemp.key = element.Value;
-            } else if(element.Key == "GroupIpList"){
+            } else if (element.Key == "GroupIpList") {
               //175.97.143.121-tpe-bgp-300-1;175.97.142.153-tpe-bgp-100-1
-              let arr = element.Value.split(';');
+              let arr = element.Value.split(";");
               objTemp.label = "";
               for (const j in arr) {
                 if (arr.hasOwnProperty(j)) {
                   const ipStr = arr[j];
-                  objTemp.label += ipStr.substring(0, ipStr.indexOf('-'))+";";
+                  objTemp.label += ipStr.substring(0, ipStr.indexOf("-")) + ";";
                 }
               }
             }
           }
         }
-        if(binded.length>0 && binded.indexOf(objTemp.key)<0){
+        if (binded.length > 0 && binded.indexOf(objTemp.key) < 0) {
           this.resData.push(objTemp);
-        } else if(binded.length==0){
+        } else if (binded.length == 0) {
           this.resData.push(objTemp);
         }
       });
@@ -628,14 +678,14 @@ export default {
     //绑定资源弹框确定按钮
     bindingResourceSure() {
       // 获取‘已选择’的两个数组差集
-      let diff = [];// 1.绑定资源元素集（原数组中不包含的新元素）
-      let tmp = JSON.parse(JSON.stringify(this.valueRightOld));// 2.解绑资源元素集（原数组中移除的元素）
+      let diff = []; // 1.绑定资源元素集（原数组中不包含的新元素）
+      let tmp = JSON.parse(JSON.stringify(this.valueRightOld)); // 2.解绑资源元素集（原数组中移除的元素）
       // 循环‘已选择’
       this.valueThrou.forEach(element => {
-        if(this.valueRightOld.indexOf(element) < 0){
+        if (this.valueRightOld.indexOf(element) < 0) {
           diff.push(element);
         } else {
-          tmp.splice(tmp.indexOf(element),1);
+          tmp.splice(tmp.indexOf(element), 1);
         }
       });
       this.loading = true;
@@ -655,6 +705,9 @@ export default {
     //接收子组件的方法，并让子组件消失父组件显示
     closePageAdd(obj) {
       this.tableShow = true;
+       setTimeout(() => {
+        this.describeDDoSPolicy();
+      }, 200);
     },
     //穿梭框事件(value右侧数组，direction:left/right，movedKeys移动元素)
     handleChange(value, direction, movedKeys) {

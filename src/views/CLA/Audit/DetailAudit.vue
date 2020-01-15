@@ -761,7 +761,11 @@ export default {
   },
   created() {
     this.title = this.$route.query.AuditName;
-
+    if(this.$route.query.AuditStatus==1){
+      this.value=true
+    }else{
+       this.value=false
+    }
     //跟踪集详情
     this.detailList();
     this.bucket();

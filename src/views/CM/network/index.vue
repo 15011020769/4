@@ -77,7 +77,7 @@
 <script>
 import FileSaver from "file-saver";
 import XLSX from "xlsx";
-
+import { ErrorTips } from "@/components/ErrorTips";
 import Cities from "@/components/public/CITY";
 import SEARCH from "@/components/public/SEARCH";
 import Loading from "@/components/public/Loading";
@@ -211,12 +211,20 @@ export default {
       // 获取表格数据
       this.axios.post(NETIP_LIST, param).then(data => {
         if (data.Response.Error == undefined) {
-          console.log(data.Response.AddressSet);
           this.TbaleData = data.Response.AddressSet;
           this.TotalCount = data.Response.TotalCount;
           this.loadShow = false;
         } else {
-          this.$message.error(data.Response.Error.Message);
+          let ErrTips = {
+            InvalidParameter: "入参不合法"
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
         }
       });
     },
