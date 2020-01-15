@@ -115,7 +115,7 @@ export default {
           Value: '',//规则的值，长度小于31字节
         }
       ],//规则列表对象
-      dialogVisible:'',//弹框
+      dialogVisible: false,//弹框
     }
   },
   computed:{
@@ -169,9 +169,9 @@ export default {
         }
         else{
           if(res.Response.Error.Code == 'LimitExceeded'){
-            this.$message.error('CC自定义策略不能超过5个');
+            this.$message.error('CC自定義策略不能超過5個');
           }
-          this.$message.error('添加失败');
+          this.$message.error('添加失敗');
         }
         this.$emit('init')
       });
@@ -203,7 +203,26 @@ export default {
         params["Policy.Frequency"] = this.policyForm.Frequency
       }
       this.axios.post(CCSELFDEFINEPOLICY_MODIFY, params).then(res => {
-        console.log(params, res);
+        // console.log(params, res);
+        if(res.Response.Error !== undefined && res.Response.Error.Message == "speedlimit must less than 1"){
+          this.$message({
+            showClose: true,
+            message: "限速模式訪問控制策略最多添加一條",
+            type: "error"
+          });
+        } else if(res.Response.Error !== undefined){
+          this.$message({
+            showClose: true,
+            message: "編輯失敗，請確認參數無誤",
+            type: "error"
+          });
+        } else {
+          this.$message({
+            showClose: true,
+            message: "編輯成功",
+            type: "success"
+          });
+        }
       });
     },
     //弹框关闭按钮
