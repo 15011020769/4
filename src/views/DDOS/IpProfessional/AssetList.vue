@@ -192,8 +192,9 @@
             <!-- 防护配置弹框 -->
             <ProtectConfigModel
               :configShow="dialogConfigModel"
-              :configData="configData"
               @closeConfigModel="closeConfigModel"
+              :modifyDDosRes="modifyDDosRes"
+              :policysData="tableDataPolicy"
             />
           </div>
           <div class="Right-style pagstyle">
@@ -214,6 +215,8 @@
 <script>
 import {
   RESOURCE_LIST,
+  GET_SPolicy,
+  Modify_Level,
   RULESETS_CONT,
   SOURCEIPSEGMENT_DESCRIBE,
   INSTANCENAME_CONT
@@ -242,7 +245,7 @@ export default {
       totalItems: 0,
 
       tableDataEnd: [],
-      DDosPolicyList: [], //定义DDoS高级策略接口返回的数据。
+      tableDataPolicy: [], //DDoS高级防护策略列表
       RuleSetsa: [], //获取资源的规则数接口
       filterTableDataEnd: [],
       flag: false,
@@ -255,7 +258,7 @@ export default {
       dialogConfigModel: false, //防护配置弹框
       resouseOrYw: "", //判断是哪个列表
       status: "",
-      configData: null,
+      modifyDDosRes: {}, //防护配置使用对象
     };
   },
   components: {
@@ -278,6 +281,7 @@ export default {
   },
   created() {
     this.describeResourceList(); //获取资源列表接口
+    this.describeDDoSPolicy(); //获取高级策略列表
   },
   methods: {
     //选择运行状态
@@ -309,18 +313,62 @@ export default {
         } else if (this.listSelect == "businessList") {
           params["Domain"] = this.selectResourceInput;
         }
-        // params["IpList.0"] = this.selectResourceInput;
-        // params["IdList.0"] = this.selectResourceInput;
       }
-      console.log(params);
+      // console.log(params);
       // 执行调用接口--------------
       this.axios.post(RESOURCE_LIST, params).then(res => {
-        console.log(params, res);
+        // console.log(params, res);
         this.tableData = res.Response.ServicePacks;
         this.totalItems = res.Response.Total;
         this.tableData.forEach(val => {
           val.Record.forEach(item => {
-            if (item.Key == "GroupIpList") {
+            if (item.Key == "Id") {
+              // 1.防护等级
+              let params = {
+                Version: "2018-07-09",
+                Business: "net",
+                Id: item.Value,
+                Method: "get"
+              };
+              this.axios.post(Modify_Level, params).then(res => {
+                const obj = {
+                  Key: "DDoSLevel",
+                  Value: res.Response.DDoSLevel
+                };
+                val.Record.push(obj);
+              });
+              // 2.高级防护策略
+              let params2 = {
+                Version: "2018-07-09",
+                Business: "net",
+                Id: item.Value
+              };
+              this.axios.post(GET_SPolicy, params2).then(res => {
+                if(res.Response.DDosPolicyList.length == 0){
+                  const obj2 = {
+                    Key: "SPolicyName",
+                    Value: "-"
+                  };
+                  const obj2Id = {
+                    Key: "SPolicyId",
+                    Value: "0000"
+                  }
+                  val.Record.push(obj2);
+                  val.Record.push(obj2Id);
+                } else {
+                  const obj2 = {
+                    Key: "SPolicyName",
+                    Value: res.Response.DDosPolicyList[0].PolicyName
+                  };
+                  const obj2Id = {
+                    Key: "SPolicyId",
+                    Value: res.Response.DDosPolicyList[0].PolicyId
+                  }
+                  val.Record.push(obj2);
+                  val.Record.push(obj2Id);
+                }
+              });
+            } else if (item.Key == "GroupIpList") {
               // IP格式化175.97.143.121-tpe-bgp-300-1;175.97.142.153-tpe-bgp-100-1 >>> 175.97.142.153(中国台湾BGP)
               let IPText = [];
               let ipArr = item.Value.split(";");
@@ -423,6 +471,16 @@ export default {
         this.describeResourceList();
       });
     },
+    // 1.5.获取DDoS高级策略
+    describeDDoSPolicy() {
+      let params = {
+        Version: "2018-07-09",
+        Business: "net"
+      };
+      this.axios.post(GET_SPolicy, params).then(res => {
+        this.tableDataPolicy = res.Response.DDosPolicyList;
+      });
+    },
 
     changeSwitch(val) {
       // this.$message('暂无接口调用');
@@ -484,13 +542,14 @@ export default {
       this.doalogRenewModel = isShow;
     },
     //防护配置点击按钮
-    configModel(value) {
+    configModel(ddosRes) {
+      this.modifyDDosRes = ddosRes;
       this.dialogConfigModel = true;
-      this.configData = value.Record;
     },
     //防护配置弹框关闭按钮
     closeConfigModel(isShow) {
       this.dialogConfigModel = isShow;
+      this.describeResourceList();
     },
     //查看报表跳转页面
     lookReportList() {

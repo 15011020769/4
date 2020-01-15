@@ -532,31 +532,20 @@ export default {
       this.axios
         .post(USER_LIST, userList)
         .then(data => {
-          if (data != "") {
-            this.loading = false;
-            var arr = data.Response.Data;
-            //获取用户关联的用户组
-            arr.forEach(item => {
-              item.group = [];
-              const params = {
-                Version: "2019-01-16",
-                Uid: item.Uid
-              };
-              this.axios.post(RELATE_USER, params).then(res => {
-                if(res.Response.Error === undefined){
-                   item.group = res.Response.GroupInfo;
-                }else{
-                   let ErrTips = {
-                      "ResourceNotFound.UserNotExist":'用户不存在'
-                  };
-                  let ErrOr = Object.assign(ErrorTips, ErrTips);
-                  this.$message({
-                    message: ErrOr[res.Response.Error.Code],
-                    type: "error",
-                    showClose: true,
-                    duration: 0
-                  });
-                }
+          if (res.Response.Error === undefined) {
+            if (data != "") {
+              this.loading = false;
+              var arr = data.Response.Data;
+              //获取用户关联的用户组
+              arr.forEach(item => {
+                item.group = [];
+                const params = {
+                  Version: "2019-01-16",
+                  Uid: item.Uid
+                };
+                this.axios.post(RELATE_USER, params).then(res => {
+                  item.group = res.Response.GroupInfo;
+                });
               });
               this.tableData = arr;
               this.tableData.reverse();
@@ -664,28 +653,14 @@ export default {
             Uid: this.Uid
           };
           this.axios.post(RELATE_USER, params).then(res => {
-            if(res.Response.Error === undefined){
-              this.userArr.forEach(item => {
-                item.status = 0;
-                res.Response.GroupInfo.forEach(val => {
-                  if (val.GroupId == item.GroupId) {
-                    item.status = 1;
-                  }
-                });
+            this.userArr.forEach(item => {
+              item.status = 0;
+              res.Response.GroupInfo.forEach(val => {
+                if (val.GroupId == item.GroupId) {
+                  item.status = 1;
+                }
               });
-            }else{
-               let ErrTips = {
-                  "ResourceNotFound.UserNotExist":'用户不存在'
-              };
-              let ErrOr = Object.assign(ErrorTips, ErrTips);
-              this.$message({
-                message: ErrOr[res.Response.Error.Code],
-                type: "error",
-                showClose: true,
-                duration: 0
-              });
-            }
-           
+            });
           });
           var _this = this;
           setTimeout(() => {
@@ -735,23 +710,8 @@ export default {
         TargetUin: val.Uin
       };
       this.axios.post(QUERY_POLICY, params).then(res => {
-        if(res.Response.Error === undefined){
-          this.rolePolicies = res.Response.List;
-          this.reload = !this.reload;
-        }else{
-              let ErrTips = {
-                 "InternalError.SystemError":'内部错误',
-                 "InvalidParameter.ParamError":'非法入参'
-              };
-              let ErrOr = Object.assign(ErrorTips, ErrTips);
-              this.$message({
-                message: ErrOr[res.Response.Error.Code],
-                type: "error",
-                showClose: true,
-                duration: 0
-              });
-        }
-       
+        this.rolePolicies = res.Response.List;
+        this.reload = !this.reload;
       });
       this.Uin = val.Uin;
       this.title = "关联策略";
