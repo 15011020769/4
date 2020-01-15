@@ -49,9 +49,13 @@
             </div>
           </el-form-item>
           <el-form-item label="内容">
-            <div>
-              <div>变量名</div>
-              <div>变量值</div>
+            <div style="width:400px;">
+              <!-- 头部 -->
+              <div class="flex header">
+                <div style="width:200px">变量名</div>
+                <div>变量值</div>
+              </div>
+							<addSecret></addSecret>
             </div>
           </el-form-item>
         </el-form>
@@ -70,7 +74,7 @@
 </template>
 
 <script>
-
+import addSecret from './components/addValue'
 import FileSaver from "file-saver";
 import XLSX from "xlsx";
 import { ALL_CITY } from "@/constants";
@@ -104,7 +108,7 @@ export default {
     };
   },
   components: {
-   
+   addSecret
   },
   created() {
      // 从路由获取类型
@@ -120,6 +124,14 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.header {
+  height:40px;
+  border-bottom:1px solid #ddd;
+  padding-bottom:10px;
+}
+.flex {
+  display: flex;
+}
 .bg {
   background-color: #F2F2F2;
   margin-bottom: 10px;
