@@ -2,7 +2,7 @@ module.exports = {
   menu: {
     title1: '雲監控',
     title2: '雲伺服器',
-    title3: '塊存儲',
+    title3: '塊儲存',
     title4: '負載均衡-CLB',
     title5: '雲資料庫',
     title6: 'MySQL',
@@ -15,7 +15,7 @@ module.exports = {
     title13: '專線接入',
     title14: '物理專線',
     title15: '專線通道',
-    title16: '對象存儲'
+    title16: '對象儲存'
   },
   CVM: {
     strip: '條',
@@ -30,7 +30,7 @@ module.exports = {
     zxwg: '專線網關',
     cftjmb: '觸發條件模板',
     gjpz: '告警配置',
-    dxcc: '對象存儲',
+    dxcc: '對象儲存',
     ddlj: '對等連接',
     wlzx: '專線接入-物理專線',
     zxtd: '專線接入-專線通道',

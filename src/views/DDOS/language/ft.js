@@ -38,7 +38,7 @@ module.exports = {
       qsrzjmip: '請輸入主機名搜索',
       yzj: '雲主機',
       fzjh: '負載均衡',
-      hlw: '互聯網',
+      hlw: '網際網路',
       cjz: '創建中',
       cjsb: '創建失敗',
       gj: '關機',

@@ -215,16 +215,16 @@
       //文字过滤
       UpName(value) {
         if (value === "StdStorage") {
-          return (value = "標準存儲-存儲空間");
+          return (value = "標準儲存-儲存空間");
         }
         if (value === "SiaStorage") {
-          return (value = "低頻存儲-存儲空間");
+          return (value = "低頻儲存-儲存空間");
         }
         if (value === "NelStorage") {
-          return (value = "近線存儲-存儲空間");
+          return (value = "近線儲存-儲存空間");
         }
         if (value === "ArcStorage") {
-          return (value = "歸檔存儲-存儲空間");
+          return (value = "歸檔儲存-儲存空間");
         }
         if (value === "InternetTraffic") {
           return (value = "	外網流量");
@@ -249,22 +249,22 @@
           return (value = "	近線數據讀取");
         }
         if (value === "StdReadRequests") {
-          return (value = "標準存儲讀請求");
+          return (value = "標準儲存讀請求");
         }
         if (value === "StdWriteRequests") {
-          return (value = "標準存儲寫請求");
+          return (value = "標準儲存寫請求");
         }
         if (value === "IaReadRequests") {
-          return (value = "	低頻存儲讀請求");
+          return (value = "	低頻儲存讀請求");
         }
         if (value === "IaWriteRequests") {
-          return (value = "	低頻存儲寫請求");
+          return (value = "	低頻儲存寫請求");
         }
         if (value === "NlReadRequests") {
-          return (value = "	近線存儲讀請求");
+          return (value = "	近線儲存讀請求");
         }
         if (value === "NlWriteRequests") {
-          return (value = "近線存儲寫請求");
+          return (value = "近線儲存寫請求");
         }
         if (value === "") {
           return (value = "");
