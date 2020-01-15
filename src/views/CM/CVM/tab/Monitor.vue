@@ -235,10 +235,10 @@
       //文字过滤
       UpName(value) {
         if (value === "lanOuttraffic") {
-          return (value = "內網出帶寬");
+          return (value = "內網出頻寬");
         }
         if (value === "lanIntraffic") {
-          return (value = "內網入帶寬");
+          return (value = "內網入頻寬");
         }
         if (value === "lanOutpkg") {
           return (value = "內網出包量");
@@ -247,10 +247,10 @@
           return (value = "內網入包量");
         }
         if (value === "WanOuttraffic") {
-          return (value = "外網出帶寬");
+          return (value = "外網出頻寬");
         }
         if (value === "WanIntraffic") {
-          return (value = "外網入帶寬");
+          return (value = "外網入頻寬");
         }
         if (value === "AccOuttraffic") {
           return (value = "外網出流量");

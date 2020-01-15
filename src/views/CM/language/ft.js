@@ -132,11 +132,11 @@ module.exports = {
       qsrzjm: '請輸入IP或主機名',
       bdsywl: '本端私有網路',
       ddsywl: '對端私有網路',
-      dksx: '帶寬上限',
+      dksx: '頻寬上限',
       wsx: '無上限',
     },
     Physics: {
-      dk: '帶寬',
+      dk: '頻寬',
       szd: '所在地',
       tdmc: '通道ID/名稱',
     },

@@ -115,7 +115,7 @@ module.exports = {
       chooseTitles: '購買後，彈性防護不可修改。',
       BusinessMetrics: '業務規格',
       toBychoose: '台富雲為您免費贈送100M的業務頻寬，如不夠用，請及時升級業務頻寬。',
-      bandwidth: '業務帶寬',
+      bandwidth: '業務頻寬',
       byTime: '購買時長',
       months: '6個月以上享88折',
       sixMonths: '個月',

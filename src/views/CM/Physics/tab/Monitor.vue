@@ -183,10 +183,10 @@
       //文字过滤
       UpName(value) {
         if (value === "Inbandwidth") {
-          return (value = "入帶寬");
+          return (value = "入頻寬");
         }
         if (value === "Outbandwidth") {
-          return (value = "	出帶寬");
+          return (value = "	出頻寬");
         }
       },
       Upsymbol(value) {
