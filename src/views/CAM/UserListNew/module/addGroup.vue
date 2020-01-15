@@ -1,7 +1,7 @@
 <template>
   <div class="wrap">
     <div class="head">
-      <Headcom :title="$t('CAM.userList.userAddGroup')" :backShow="true"  @_back="back" />
+      <Headcom :title="$t('CAM.userList.userAddGroup')" :backShow="true" @_back="back" />
     </div>
     <div class="policyToUser">
       <div class="step">
@@ -17,79 +17,75 @@
         </el-steps>
       </div>
       <div v-show="active==1" class="table">
-        <div class="container" >
-        <div class="container-right">
-          <span>{{$t('CAM.userList.listTitle')}}</span>
-          <div style="margin-top:10px;">
-            <el-input
+        <div class="container">
+          <div class="container-right">
+            <span>{{$t('CAM.userList.listTitle')}}</span>
+            <div style="margin-top:10px;">
+              <el-input
+                v-model="searchGroupValue"
+                :placeholder="$t('CAM.userList.search')"
+                size="small"
+                class="inputSearchCl"
+                @keyup.enter.native="searchGroup"
+              >
+                <i slot="suffix" class="el-input__icon el-icon-search" @click="searchGroup"></i>
+              </el-input>
+            </div>
+
+            <el-table
               v-model="searchGroupValue"
-              :placeholder="$t('CAM.userList.search')"
-              size="small"
-              class="inputSearchCl"
-              @keyup.enter.native="searchGroup"
+              ref="multipleOption"
+              tooltip-effect="dark"
+              height="400"
+              style="width: 80%; border:1px solid #ddd;"
+              @row-click="selectedRow"
+              @selection-change="handleSelection"
+              :data="userGroup"
+              v-loading="loading"
             >
-              <i slot="suffix" class="el-input__icon el-icon-search" @click="searchGroup"></i>
-            </el-input>
+              <el-input size="mini" style="width:20%" />
+              <el-button size="mini" class="suo" icon="el-icon-search" show-overflow-tooltip></el-button>
+              <el-table-column type="selection" :selectable="checkboxT"></el-table-column>
+              <el-table-column :label="$t('CAM.userList.userGroup')" prop="GroupName"></el-table-column>
+            </el-table>
           </div>
 
-          <el-table
-            v-model="searchGroupValue"
-            ref="multipleOption"
-            tooltip-effect="dark"
-            height="400"
-            style="width: 80%; border:1px solid #ddd;"
-            @row-click="selectedRow"
-            @selection-change="handleSelection"
-            :data="userGroup"
-            v-loading='loading'
-          >
-            <el-input size="mini" style="width:20%" />
-            <el-button size="mini" class="suo" icon="el-icon-search" show-overflow-tooltip></el-button>
-            <el-table-column type="selection" :selectable="checkboxT"></el-table-column>
-            <el-table-column :label="$t('CAM.userList.userGroup')" prop="GroupName"></el-table-column>
-          </el-table>
+          <div class="container-left">
+            <span>{{$t('CAM.userList.choose')}}</span>
+            <el-table
+              ref="multipleSelected"
+              tooltip-effect="dark"
+              height="400"
+              style="width: 80%;border:1px solid #ddd;margin-top:10px;"
+              :data="userGroupSelect"
+            >
+              <el-table-column :label="$t('CAM.userList.userGroup')" prop="GroupName"></el-table-column>
+              <el-table-column :label="$t('CAM.userList.userCz')" show-overflow-tooltip>
+                &lt;!&ndash;
+                <template slot-scope="scope">
+                  <el-button
+                    @click.native.prevent="deleteRow(scope.$index,userGroupSelect)"
+                    type="text"
+                    size="small"
+                  >{{$t('CAM.userList.userRemove')}}</el-button>
+                </template>&ndash;&gt;
+              </el-table-column>
+            </el-table>
+          </div>
         </div>
-
-        <div class="container-left">
-          <span>{{$t('CAM.userList.choose')}}</span>
-          <el-table
-            ref="multipleSelected"
-            tooltip-effect="dark"
-            height="400"
-            style="width: 80%;border:1px solid #ddd;margin-top:10px;"
-            :data="userGroupSelect"
-          >
-            <el-table-column :label="$t('CAM.userList.userGroup')"  prop="GroupName"></el-table-column>
-            <el-table-column :label="$t('CAM.userList.userCz')" show-overflow-tooltip>
-              &lt;!&ndash;
-              <template slot-scope="scope">
-                <el-button
-                  @click.native.prevent="deleteRow(scope.$index,userGroupSelect)"
-                  type="text"
-                  size="small"
-                >{{$t('CAM.userList.userRemove')}}</el-button>
-              </template>&ndash;&gt;
-            </el-table-column>
-          </el-table>
-        </div>
-      </div>
       </div>
       <div v-show="active==2">
         <el-table style="width: 96%; margin: 0 auto;" :data="userNewGroup[0]">
           <el-table-column :label="$t('CAM.userList.userGroup')" prop="GroupName"></el-table-column>
-           <el-table-column
-      fixed="right"
-     :label="$t('CAM.userList.userCz')">
-      <template slot-scope="scope">
-        <el-button
-          @click.native.prevent="deleteRow(scope.$index, userNewGroup[0])"
-          type="text"
-          size="small">
-          {{$t('CAM.userList.userRemove')}}
-        </el-button>
-      </template>
-    </el-table-column>
-  </el-table>
+          <el-table-column fixed="right" :label="$t('CAM.userList.userCz')">
+            <template slot-scope="scope">
+              <el-button
+                @click.native.prevent="deleteRow(scope.$index, userNewGroup[0])"
+                type="text"
+                size="small"
+              >{{$t('CAM.userList.userRemove')}}</el-button>
+            </template>
+          </el-table-column>
         </el-table>
       </div>
       <div class="button">
@@ -155,24 +151,48 @@ export default {
         params["Keyword"] = this.searchGroupValue;
       }
       this.axios.post(USER_GROUP, params).then(res => {
-        this.userGroup1 = res.Response.GroupInfo;
-        const param = {
-          Version: "2019-01-16",
-          Uid: this.$route.query.Uid
-        };
-        this.axios.post(RELATE_USER, param).then(res => {
-          this.groupArr = res.Response.GroupInfo;
-          this.userGroup1.forEach(item => {
-            item.status = 0;
-            this.groupArr.forEach(val => {
-              if (val.GroupId == item.GroupId) {
-                item.status = 1;
-              }
-            });
+        if (res.Response.Error === undefined) {
+          this.userGroup1 = res.Response.GroupInfo;
+          const param = {
+            Version: "2019-01-16",
+            Uid: this.$route.query.Uid
+          };
+          this.axios.post(RELATE_USER, param).then(res => {
+            if (res.Response.Error === undefined) {
+              this.groupArr = res.Response.GroupInfo;
+              this.userGroup1.forEach(item => {
+                item.status = 0;
+                this.groupArr.forEach(val => {
+                  if (val.GroupId == item.GroupId) {
+                    item.status = 1;
+                  }
+                });
+              });
+              this.userGroup = this.userGroup1;
+            } else {
+              let ErrTips = {};
+              let ErrOr = Object.assign(ErrorTips, ErrTips);
+              this.$message({
+                message: ErrOr[res.Response.Error.Code],
+                type: "error",
+                showClose: true,
+                duration: 0
+              });
+            }
+            this.loading = false;
           });
-          this.userGroup = this.userGroup1;
-          this.loading = false;
-        });
+        } else {
+          let ErrTips = {
+            "ResourceNotFound.UserNotExist": "用户不存在"
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
       });
     },
     searchGroup() {

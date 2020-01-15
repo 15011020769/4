@@ -1,40 +1,23 @@
 <template>
     <el-card class="box-card">
         <p class="box-info">基本信息</p>
-        <div class="text item">
-            <ul>
-                <li>
-                  <div class="li-one">
-                    <div class="li-p-one">仓库名称</div>
-                    <div class="li-p-two">{{name}}</div>
-                  </div>
-                </li>
-                <li>
-                  <div class="li-one">
-                    <div class="li-p-one">类型</div>
-                    <div class="li-p-two">{{form.region|publicsEdit}}<i class="el-icon-edit" style="cursor: pointer;" @click="getEdit()"></i></div>
-                  </div>
-                </li>
-                <li>
-                  <div class="li-one">
-                    <div class="li-p-one">仓库地址</div>
-                    <div class="li-p-two"><span>{{server}}/{{name}}</span><i class="el-icon-document" style="cursor: pointer;"  @click="getContext($event)"></i></div>
-                  </div>
-                </li>
-                <li>
-                  <div class="li-one">
-                    <div class="li-p-one">描述</div>
-                    <div class="li-p-two">{{forminput.textarea | descriptions}}<i class="el-icon-edit" style="cursor: pointer;" @click="getEditTwo()"></i></div>
-                  </div>
-                </li>
-                <li>
-                  <div class="li-one">
-                    <div class="li-p-one">创建时间</div>
-                    <div class="li-p-two">{{creationTime}}</div>
-                  </div>
-                </li>
-            </ul>
-        </div>
+        <el-form  class="tke-form" :model="colony" label-position='left' label-width="120px" size="mini">
+          <el-form-item label="仓库名称">
+            <div class="tke-form-item_text"><span>{{name}}</span></div>
+          </el-form-item>
+          <el-form-item label="类型">
+            <div class="tke-form-item_text"><span>{{form.region|publicsEdit}}<i class="el-icon-edit" style="cursor: pointer;" @click="getEdit()"></i></span></div>
+          </el-form-item>
+          <el-form-item label="仓库地址">
+            <div class="tke-form-item_text"><span>{{server}}/{{name}}</span><i class="el-icon-document" style="cursor: pointer;"  @click="getContext($event)"></i></div>
+          </el-form-item>
+          <el-form-item label="描述">
+            <div class="tke-form-item_text"><span>{{forminput.textarea | descriptions}}<i class="el-icon-edit" style="cursor: pointer;" @click="getEditTwo()"></i></span></div>
+          </el-form-item>
+          <el-form-item label="创建时间">
+            <div class="tke-form-item_text"><span>{{creationTime}}</span></div>
+          </el-form-item>
+        </el-form>
         <!-- 修改类型 -->
         <el-dialog title="修改镜像仓库类型" :visible.sync="dialogFormVisible">
           <el-form :model="form">
@@ -221,6 +204,7 @@ export default {
     .box-info{
         font-size: 14px;
         font-weight: 700;
+        margin-bottom:20px;
     }
   }
   .li-one{

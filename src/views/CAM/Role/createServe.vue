@@ -210,7 +210,12 @@ export default {
     next() {
       if (this.active === 1) {
         if (this.checkedCities.length === 0) {
-          this.$message("请至少选择一个服务");
+          this.$message({
+              message: "请至少选择一个服务",
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
           return;
         }
         if (this.active === 3) {
@@ -275,10 +280,20 @@ export default {
             let roleId = data.Response.RoleId; // 获取创建的角色id
             if (data.Response.Error) {
               if (data.Response.Error.Code == "InvalidParameter.RoleNameError") {
-                this.$message.error("角色名不合法,创建失败");
+                this.$message({
+                  message: "角色名不合法,创建失败",
+                  type: "error",
+                  showClose: true,
+                  duration: 0
+                });
               }
             } else {
-              this.$message("创建角色成功");
+               this.$message({
+                  message: "创建角色成功",
+                  type: "success",
+                  showClose: true,
+                  duration: 0
+                });
             }
             let policiesArray = this.policiesSelectedData; // 获取权限策略
             // 根据获取的角色ID创建角色策略

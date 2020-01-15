@@ -82,7 +82,7 @@ export default {
       searchOptions: [
         {
           value: "bucket",
-          label: "存儲桶名稱"
+          label: "儲存桶名稱"
         }
       ],
       //默认
@@ -141,7 +141,7 @@ export default {
       try {
         FileSaver.saveAs(
           new Blob([wbout], { type: "application/octet-stream" }),
-          "對象存儲" + ".xlsx"
+          "對象儲存" + ".xlsx"
         );
       } catch (e) {
         if (typeof console !== "undefined") console.log(e, wbout);

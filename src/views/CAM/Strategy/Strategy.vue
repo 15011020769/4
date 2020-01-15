@@ -236,15 +236,28 @@ export default {
       var userArr = [];
       var groupArr = [];
       this.axios.post(LIST_ENPOLICY, params).then(res => {
-        res.Response.List.forEach(item => {
-          if (item.RelatedType == 1) {
-            userArr.push(item);
-          } else {
-            groupArr.push(item);
-          }
-        });
-        this.userArr = userArr;
-        this.groupArr = groupArr;
+        if (res.Response.Error === undefined) {
+          res.Response.List.forEach(item => {
+            if (item.RelatedType == 1) {
+              userArr.push(item);
+            } else {
+              groupArr.push(item);
+            }
+          });
+          this.userArr = userArr;
+          this.groupArr = groupArr;
+        } else {
+          let ErrTips = {
+            "ResourceNotFound.UserNotExist": "用户不存在"
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
       });
     },
     // 穿梭框：value右侧框值、direction操作、movedKeys移动值

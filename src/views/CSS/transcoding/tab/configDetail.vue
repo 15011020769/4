@@ -27,13 +27,13 @@
       </li>
       <li>
         <el-row type="flex">
-          <el-col :span="5">視頻碼率(kbps)</el-col>
+          <el-col :span="5">影音碼率(kbps)</el-col>
           <el-col class="text-black">{{ `${selectItem.VideoBitrate}kbps` }}</el-col>
         </el-row>
       </li>
       <li>
         <el-row type="flex">
-          <el-col :span="5">視頻高度(px)</el-col>
+          <el-col :span="5">影音高度(px)</el-col>
           <el-col class="text-black">{{ `${selectItem.Height}px` }}</el-col>
         </el-row>
       </li>

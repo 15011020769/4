@@ -370,7 +370,11 @@ export default {
       if (this.selectData.length != 0) {
         this.dialogVisible = true;
       } else {
-        this.$message("请选中数据");
+        this.$message({
+          showClose: true,
+          message: "请选中数据",
+          duration: 0
+        });
       }
     },
     removeDeleteUser() {
@@ -471,7 +475,9 @@ export default {
         .catch(error => {
           this.$message({
             type: "error",
-            message: "删除失败"
+            message: "删除失败",
+            showClose: true,
+            duration: 0
           });
         });
       this.dialogDeleteUser = false;
@@ -532,7 +538,7 @@ export default {
       this.axios
         .post(USER_LIST, userList)
         .then(data => {
-          if (res.Response.Error === undefined) {
+          if (data.Response.Error === undefined) {
             if (data != "") {
               this.loading = false;
               var arr = data.Response.Data;
@@ -544,7 +550,20 @@ export default {
                   Uid: item.Uid
                 };
                 this.axios.post(RELATE_USER, params).then(res => {
-                  item.group = res.Response.GroupInfo;
+                  if (res.Response.Error === undefined) {
+                    item.group = res.Response.GroupInfo;
+                  } else {
+                    let ErrTips = {
+                      "ResourceNotFound.UserNotExist": "用户不存在"
+                    };
+                    let ErrOr = Object.assign(ErrorTips, ErrTips);
+                    this.$message({
+                      message: ErrOr[res.Response.Error.Code],
+                      type: "error",
+                      showClose: true,
+                      duration: 0
+                    });
+                  }
                 });
               });
               this.tableData = arr;
@@ -559,7 +578,9 @@ export default {
               this.loading = false;
               this.$message({
                 type: "info",
-                message: "无响应数据！"
+                message: "无响应数据！",
+                showClose: true,
+                duration: 0
               });
             }
           } else {
@@ -595,7 +616,9 @@ export default {
             this.loading = false;
             this.$message({
               type: "info",
-              message: "无响应数据！"
+              message: "无响应数据！",
+              showClose: true,
+              duration: 0
             });
           }
         } else {
@@ -636,14 +659,18 @@ export default {
       this.axios
         .post(USER_GROUP, params)
         .then(res => {
-          if (res != "") {
+          if (res.Response.Error === undefined) {
             this.loading = false;
             this.userArr = res.Response.GroupInfo;
           } else {
             this.loading = false;
+            let ErrTips = {};
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
             this.$message({
-              type: "info",
-              message: "无响应数据！"
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
             });
           }
         })
@@ -653,14 +680,27 @@ export default {
             Uid: this.Uid
           };
           this.axios.post(RELATE_USER, params).then(res => {
-            this.userArr.forEach(item => {
-              item.status = 0;
-              res.Response.GroupInfo.forEach(val => {
-                if (val.GroupId == item.GroupId) {
-                  item.status = 1;
-                }
+            if (res.Response.Error === undefined) {
+              this.userArr.forEach(item => {
+                item.status = 0;
+                res.Response.GroupInfo.forEach(val => {
+                  if (val.GroupId == item.GroupId) {
+                    item.status = 1;
+                  }
+                });
               });
-            });
+            } else {
+              let ErrTips = {
+                "ResourceNotFound.UserNotExist": "用户不存在"
+              };
+              let ErrOr = Object.assign(ErrorTips, ErrTips);
+              this.$message({
+                message: ErrOr[res.Response.Error.Code],
+                type: "error",
+                showClose: true,
+                duration: 0
+              });
+            }
           });
           var _this = this;
           setTimeout(() => {
@@ -710,8 +750,22 @@ export default {
         TargetUin: val.Uin
       };
       this.axios.post(QUERY_POLICY, params).then(res => {
-        this.rolePolicies = res.Response.List;
-        this.reload = !this.reload;
+        if (res.Response.Error === undefined) {
+          this.rolePolicies = res.Response.List;
+          this.reload = !this.reload;
+        } else {
+          let ErrTips = {
+            "InternalError.SystemError": "内部错误",
+            "InvalidParameter.ParamError": "非法入参"
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
       });
       this.Uin = val.Uin;
       this.title = "关联策略";
@@ -741,7 +795,11 @@ export default {
           this.axios.post(POLICY_USER, params).then(data => {
             if (data.Response.Error === undefined) {
               this.init();
-              this.$message("授权成功");
+              this.$message({
+                message: "授权成功",
+                showClose: true,
+                duration: 0
+              });
             } else {
               let ErrTips = {
                 "FailedOperation.PolicyFull": "用户策略数超过上限",
@@ -781,7 +839,12 @@ export default {
           };
           this.axios.post(ADD_USERTOGROUP, params).then(res => {
             if (res.Response.Error === undefined) {
-              this.$message("添加成功");
+              this.$message({
+                showClose: true,
+                message: "添加成功",
+                duration: 0,
+                type: "success"
+              });
               this.init();
             } else {
               let ErrTips = {
@@ -827,7 +890,9 @@ export default {
     bindMesg() {
       this.$message({
         type: "info",
-        message: "内测中..."
+        message: "内测中...",
+        duration: 0,
+        showClose: true
       });
     },
     handleCloses() {

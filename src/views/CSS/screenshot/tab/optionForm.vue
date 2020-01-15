@@ -20,7 +20,7 @@
         </p>
       </div>
       </el-form-item>
-      <el-form-item label="存儲位置">
+      <el-form-item label="儲存位置">
         <div class="explain">
           <p>
             截图将存储在您配置的 COS bucket 中，请您确认 COS bucket 已授权云直播写入，

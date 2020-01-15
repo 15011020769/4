@@ -46,7 +46,7 @@
             label="名称"
             >
             <template slot-scope="scope">
-              <span class="tke-text-link">default-token-x7wsp</span>
+              <span @click="goSecretDetail()" class="tke-text-link">default-token-x7wsp</span>
             </template>
           </el-table-column>
           <el-table-column
@@ -160,6 +160,16 @@ export default {
           }
       });
     },
+    // 详情
+    goSecretDetail(){
+      this.$router.push({
+          name: "secretDetail",
+          query: {
+            clusterId: this.clusterId
+          }
+      });
+    },
+
     //选择搜索条件
     changeSearchType(val) {
       this.searchType = val;

@@ -288,23 +288,23 @@ export default {
       PolicyId: this.policyID
     };
     this.axios.post(GET_POLICY, params).then(res => {
-      if(res.Response.Error === undefined){
+      if (res.Response.Error === undefined) {
         this.policy = res.Response;
         this.infoLoad = false;
-      }else{
-         let ErrTips = {
-            "InternalError.SystemError":'内部错误',
-            "InvalidParameter.ParamError":'非法入参',
-            "InvalidParameter.PolicyIdError":'输入参数PolicyId不合法',
-            "ResourceNotFound.PolicyIdNotFound":'PolicyId指定的资源不存在'
-          };
-          let ErrOr = Object.assign(ErrorTips, ErrTips);
-          this.$message({
-            message: ErrOr[res.Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-          });
+      } else {
+        let ErrTips = {
+          "InternalError.SystemError": "内部错误",
+          "InvalidParameter.ParamError": "非法入参",
+          "InvalidParameter.PolicyIdError": "输入参数PolicyId不合法",
+          "ResourceNotFound.PolicyIdNotFound": "PolicyId指定的资源不存在"
+        };
+        let ErrOr = Object.assign(ErrorTips, ErrTips);
+        this.$message({
+          message: ErrOr[res.Response.Error.Code],
+          type: "error",
+          showClose: true,
+          duration: 0
+        });
       }
     });
     this.getAttachPolicys();
@@ -388,25 +388,25 @@ export default {
         params["EntityFilter"] = "User|Group";
       }
       this.axios.post(LIST_ENPOLICY, params).then(res => {
-        if(res.Response.Error === undefined){
-               // RelatedType 关联类型。1 用户关联 ； 2 用户组关联
-                this.policysData = res.Response.List;
-                this.TotalCount = res.Response.TotalNum;
-                this.loading = false;
-                this.policysData.forEach(item => {
-                  if (item.RelatedType == 2) {
-                    this.groupArr.push(item);
-                  }
-                  if (item.RelatedType == 1) {
-                    this.userArr.push(item);
-                  }
-                });
-        }else{
+        if (res.Response.Error === undefined) {
+          // RelatedType 关联类型。1 用户关联 ； 2 用户组关联
+          this.policysData = res.Response.List;
+          this.TotalCount = res.Response.TotalNum;
+          this.loading = false;
+          this.policysData.forEach(item => {
+            if (item.RelatedType == 2) {
+              this.groupArr.push(item);
+            }
+            if (item.RelatedType == 1) {
+              this.userArr.push(item);
+            }
+          });
+        } else {
           let ErrTips = {
-             "InternalError.SystemError":'内部错误',
-             "InvalidParameter.EntityFilterError":'EntityFilter字段不合法',
-             "InvalidParameter.ParamError":'非法入参',
-             "InvalidParameter.PolicyIdError":'输入参数PolicyId不合法'
+            "InternalError.SystemError": "内部错误",
+            "InvalidParameter.EntityFilterError": "EntityFilter字段不合法",
+            "InvalidParameter.ParamError": "非法入参",
+            "InvalidParameter.PolicyIdError": "输入参数PolicyId不合法"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
@@ -416,7 +416,6 @@ export default {
             duration: 0
           });
         }
-        
       });
     },
     // 解除策略绑定实体
@@ -445,48 +444,19 @@ export default {
       this.axios
         .post(REMOVEBIND_USER, params)
         .then(res => {
-          if(res.Response.Error === undefined){
-              this.getAttachPolicys(); // 重新加载
-          }else{
-                 let ErrTips = {
-                    "InternalError.SystemError":'内部错误',
-                    "InvalidParameter.AttachmentFull":'principal字段的授权对象关联策略数已达到上限',
-                    "InvalidParameter.ParamError":'非法入参',
-                    "InvalidParameter.PolicyIdError":'输入参数PolicyId不合法',
-                    "InvalidParameter.PolicyIdNotExist":'策略ID不存在',
-                    "InvalidParameter.UserNotExist":'principal字段的授权对象不存在',
-                    "ResourceNotFound.PolicyIdNotFound":'PolicyId指定的资源不存在',
-                    "ResourceNotFound.UserNotExist":'用户不存在'
-                };
-                let ErrOr = Object.assign(ErrorTips, ErrTips);
-                this.$message({
-                  message: ErrOr[res.Response.Error.Code],
-                  type: "error",
-                  showClose: true,
-                  duration: 0
-                });
-          }
-         })
-        .catch(error => {
-          console.log(error);
-        });
-    },
-    // 解除绑定到用户组的策略
-    removeGroupPolicy(params) {
-      this.axios
-        .post(DETACH_POLICY, params)
-        .then(res => {
-          if(res.Response.Error === undefined){
-             this.getAttachPolicys(); // 重新加载
-          }else{
+          if (res.Response.Error === undefined) {
+            this.getAttachPolicys(); // 重新加载
+          } else {
             let ErrTips = {
-               "InternalError.SystemError":'内部错误',
-               "InvalidParameter.ParamError":'非法入参',
-               "InvalidParameter.PolicyIdError":'输入参数PolicyId不合法',
-               "InvalidParameter.PolicyIdNotExist":'策略ID不存在',
-               "InvalidParameter.UserNotExist":'principal字段的授权对象不存在',
-               "ResourceNotFound.GroupNotExist":'用户组不存在',
-               "ResourceNotFound.UserNotExist":'用户不存在'
+              "InternalError.SystemError": "内部错误",
+              "InvalidParameter.AttachmentFull":
+                "principal字段的授权对象关联策略数已达到上限",
+              "InvalidParameter.ParamError": "非法入参",
+              "InvalidParameter.PolicyIdError": "输入参数PolicyId不合法",
+              "InvalidParameter.PolicyIdNotExist": "策略ID不存在",
+              "InvalidParameter.UserNotExist": "principal字段的授权对象不存在",
+              "ResourceNotFound.PolicyIdNotFound": "PolicyId指定的资源不存在",
+              "ResourceNotFound.UserNotExist": "用户不存在"
             };
             let ErrOr = Object.assign(ErrorTips, ErrTips);
             this.$message({
@@ -496,7 +466,36 @@ export default {
               duration: 0
             });
           }
-          
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    },
+    // 解除绑定到用户组的策略
+    removeGroupPolicy(params) {
+      this.axios
+        .post(DETACH_POLICY, params)
+        .then(res => {
+          if (res.Response.Error === undefined) {
+            this.getAttachPolicys(); // 重新加载
+          } else {
+            let ErrTips = {
+              "InternalError.SystemError": "内部错误",
+              "InvalidParameter.ParamError": "非法入参",
+              "InvalidParameter.PolicyIdError": "输入参数PolicyId不合法",
+              "InvalidParameter.PolicyIdNotExist": "策略ID不存在",
+              "InvalidParameter.UserNotExist": "principal字段的授权对象不存在",
+              "ResourceNotFound.GroupNotExist": "用户组不存在",
+              "ResourceNotFound.UserNotExist": "用户不存在"
+            };
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+          }
         })
         .catch(error => {
           console.log(error);
@@ -507,7 +506,11 @@ export default {
       if (this.policysSelData.length != 0) {
         this.Relieve_dialogVisible = true;
       } else {
-        this.$message("请选择要解除关联的用户/用户组");
+        this.$message({
+          showClose: true,
+          message: "请选择要解除关联的用户/用户组",
+          duration: 0
+        });
       }
     },
     // 批量解除绑定到策略的实体

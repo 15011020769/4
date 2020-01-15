@@ -183,10 +183,10 @@
       //文字过滤
       UpName(value) {
         if (value === "Outbandwidth") {
-          return (value = "外網出帶寬");
+          return (value = "外網出頻寬");
         }
         if (value === "Inbandwidth") {
-          return (value = "外網入帶寬");
+          return (value = "外網入頻寬");
         }
         if (value === "Outpkg") {
           return (value = "出包量");

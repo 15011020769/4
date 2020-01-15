@@ -181,7 +181,7 @@
     filters: {
       UpName(value) {
         if (value === "Inbandwidth") {
-          return (value = "	入帶寬");
+          return (value = "	入頻寬");
         }
         if (value === "Inpkg") {
           return (value = "	入包量");
@@ -190,7 +190,7 @@
           return (value = "出包量");
         }
         if (value === "Outbandwidth") {
-          return (value = "	出帶寬");
+          return (value = "	出頻寬");
         }
       },
       UpTitle(value) {

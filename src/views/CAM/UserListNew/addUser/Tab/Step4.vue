@@ -188,21 +188,21 @@ export default {
         Rp: this.pagesize
       };
       this.axios.post(RELATE_USER, params).then(res => {
-        if(res.Response.Error === undefined){
+        if (res.Response.Error === undefined) {
           this.userList = res.Response.GroupInfo;
           this.num = res.Response.TotalNum;
           this.TotalCount = res.Response.TotalNum;
-        }else{
-              let ErrTips = {
-                 "ResourceNotFound.UserNotExist":'用户不存在'
-              };
-              let ErrOr = Object.assign(ErrorTips, ErrTips);
-              this.$message({
-                message: ErrOr[res.Response.Error.Code],
-                type: "error",
-                showClose: true,
-                duration: 0
-              });
+        } else {
+          let ErrTips = {
+            "ResourceNotFound.UserNotExist": "用户不存在"
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
         }
         this.tableloading = false;
       });
@@ -215,10 +215,22 @@ export default {
         "Info.0.GroupId": val.GroupId
       };
       this.axios.post(DEL_USERTOGROUP, params).then(res => {
-        if (res.Response.RequestId) {
-          this.$message("解除成功");
+        if (res.Response.Error === undefined) {
+          this.$message({
+            message: "解除成功",
+            type: "success",
+            showClose: true,
+            duration: 0
+          });
         } else {
-          this.$message.error(Response.Error.Message);
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
         }
         this._getUser();
       });
@@ -240,7 +252,9 @@ export default {
         .catch(() => {
           this.$message({
             type: "info",
-            message: "已取消删除"
+            message: "已取消删除",
+            duration: 0,
+            showClose: true
           });
         });
     },
@@ -252,31 +266,33 @@ export default {
         PolicyId: val.PolicyId
       };
       this.axios.post(REMOVEBIND_USER, params).then(res => {
-        if(res.Response.Error === undefined){
-            if (res.Response.RequestId) {
-              this.$message("解除成功");
-            } else {
-              this.$message.error(Response.Error.Message);
-            }
-            this._getUser();
-        }else{
-            let ErrTips = {
-               "InternalError.SystemError":'内部错误',
-               "InvalidParameter.AttachmentFull":'principal字段的授权对象关联策略数已达到上限',
-               "InvalidParameter.ParamError":'非法入参',
-               "InvalidParameter.PolicyIdError":'输入参数PolicyId不合法',
-               "InvalidParameter.PolicyIdNotExist":'策略ID不存在',
-               "InvalidParameter.UserNotExist":'principal字段的授权对象不存在',
-               "ResourceNotFound.PolicyIdNotFound":'PolicyId指定的资源不存在',
-               "ResourceNotFound.UserNotExist":'用户不存在'
-            };
-            let ErrOr = Object.assign(ErrorTips, ErrTips);
-            this.$message({
-              message: ErrOr[res.Response.Error.Code],
-              type: "error",
-              showClose: true,
-              duration: 0
-            }); 
+        if (res.Response.Error === undefined) {
+          this.$message({
+            showClose: true,
+            message: "解除成功",
+            duration: 0,
+            type: "success"
+          });
+          this._getUser();
+        } else {
+          let ErrTips = {
+            "InternalError.SystemError": "内部错误",
+            "InvalidParameter.AttachmentFull":
+              "principal字段的授权对象关联策略数已达到上限",
+            "InvalidParameter.ParamError": "非法入参",
+            "InvalidParameter.PolicyIdError": "输入参数PolicyId不合法",
+            "InvalidParameter.PolicyIdNotExist": "策略ID不存在",
+            "InvalidParameter.UserNotExist": "principal字段的授权对象不存在",
+            "ResourceNotFound.PolicyIdNotFound": "PolicyId指定的资源不存在",
+            "ResourceNotFound.UserNotExist": "用户不存在"
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
         }
       });
     },
@@ -290,24 +306,24 @@ export default {
         Rp: this.pagesize
       };
       this.axios.post(QUERY_POLICY, params).then(res => {
-        if(res.Response.Error === undefined){
-            this.num = res.Response.TotalNum;
-            this.TotalCount = res.Response.TotalNum;
-            this.policyData = res.Response.List;    
-        }else{
-            let ErrTips = {
-               "InternalError.SystemError":'内部错误',
-               "InvalidParameter.ParamError":'非法入参'
-            };
-            let ErrOr = Object.assign(ErrorTips, ErrTips);
-            this.$message({
-              message: ErrOr[res.Response.Error.Code],
-              type: "error",
-              showClose: true,
-              duration: 0
-            });
+        if (res.Response.Error === undefined) {
+          this.num = res.Response.TotalNum;
+          this.TotalCount = res.Response.TotalNum;
+          this.policyData = res.Response.List;
+        } else {
+          let ErrTips = {
+            "InternalError.SystemError": "内部错误",
+            "InvalidParameter.ParamError": "非法入参"
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
         }
-        
+
         this.tableloading = false;
       });
     },
@@ -320,9 +336,20 @@ export default {
       this.axios
         .post(QUERY_USER, params)
         .then(res => {
-          this.userData = res.Response;
-          this.form = res.Response;
-          this.loading = false;
+          if (res.Response.Error === undefined) {
+            this.userData = res.Response;
+            this.form = res.Response;
+            this.loading = false;
+          } else {
+            let ErrTips = {};
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+          }
         })
         .then(() => {
           if (this.activeName == "first" || this.activeName == "second") {
@@ -350,34 +377,46 @@ export default {
         Email: this.form.Email
       };
       if (this.phoneReg) {
-        this.$message.error("请输入正确的手机号");
+        this.$message({
+          showClose: true,
+          message: "请输入正确的手机号",
+          duration: 0,
+          type: "error"
+        });
       } else if (this.emailReg) {
-        this.$message.error("请输入正确的邮箱");
+        this.$message({
+          showClose: true,
+          message: "请输入正确的邮箱",
+          duration: 0,
+          type: "error"
+        });
       } else {
         this.axios
           .post(UPDATA_USER, params)
           .then(res => {
-            if(res.Response.Error === undefined){
-                if (res.Response.RequestId) {
-                  this.$message("编辑成功");
-                  this.userInp = !this.userInp;
-                } else {
-                  this.$message.error("编辑失败");
-                }
-            }else{
-                let ErrTips = {
-                   "InvalidParameter.PasswordViolatedRules":'密码不符合用户安全设置',
-                   "ResourceNotFound.UserNotExist":'用户不存在'
-                };
-                let ErrOr = Object.assign(ErrorTips, ErrTips);
-                this.$message({
-                  message: ErrOr[res.Response.Error.Code],
-                  type: "error",
-                  showClose: true,
-                  duration: 0
-                });
+            if (res.Response.Error === undefined) {
+              this.$message({
+                showClose: true,
+                message: "编辑成功",
+                duration: 0,
+                type: "success"
+              });
+              this.userInp = !this.userInp;
+            } else {
+              let ErrTips = {
+                "InvalidParameter.PasswordViolatedRules":
+                  "密码不符合用户安全设置",
+                "ResourceNotFound.UserNotExist": "用户不存在"
+              };
+              let ErrOr = Object.assign(ErrorTips, ErrTips);
+              this.$message({
+                message: ErrOr[res.Response.Error.Code],
+                type: "error",
+                showClose: true,
+                duration: 0
+              });
             }
-           })
+          })
           .then(() => {
             this._getUser();
           });

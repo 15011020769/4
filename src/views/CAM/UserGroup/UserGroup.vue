@@ -293,17 +293,21 @@ export default {
       this.axios
         .post(USER_GROUP, params)
         .then(res => {
-          if (res != "") {
+          if (res.Response.Error === undefined) {
             this.tableData = res.Response.GroupInfo;
             this.total = res.Response.TotalNum;
             this.TotalCount = res.Response.TotalNum;
             this.loading = false;
           } else {
-            this.loading = false;
+            let ErrTips = {};
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
             this.$message({
-              type: "info",
-              message: "无响应数据！"
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
             });
+            this.loading = false;
           }
         })
         .catch(error => {
@@ -322,29 +326,51 @@ export default {
       this.axios
         .post(USER_LIST, params)
         .then(res => {
-          this.userData = [];
-          this.userAllData1 = res.Response.Data;
-          const param = {
-            Version: "2019-01-16",
-            GroupId: rowId
-          };
-          this.axios.post(GROUP_USERS, param).then(res => {
-            this.userAllData1.forEach(item => {
-              item.status = 0;
-              res.Response.UserInfo.forEach(val => {
-                if (val.Uid == item.Uid) {
-                  item.status = 1;
-                }
-              });
+          if (res.Response.Error === undefined) {
+            this.userData = [];
+            this.userAllData1 = res.Response.Data;
+            const param = {
+              Version: "2019-01-16",
+              GroupId: rowId
+            };
+            this.axios.post(GROUP_USERS, param).then(res => {
+              if (res.Response.Error === undefined) {
+                this.userAllData1.forEach(item => {
+                  item.status = 0;
+                  res.Response.UserInfo.forEach(val => {
+                    if (val.Uid == item.Uid) {
+                      item.status = 1;
+                    }
+                  });
+                });
+                this.userAllData = this.userAllData1;
+                this.totalNum = this.userData.length;
+                // this.userData = this.userAllData1;
+                this.getUsers();
+                // 获取数据成功，打开dialog。
+                this.dialogVisible = true;
+                this.loading1 = false;
+              } else {
+                let ErrTips = {};
+                let ErrOr = Object.assign(ErrorTips, ErrTips);
+                this.$message({
+                  message: ErrOr[res.Response.Error.Code],
+                  type: "error",
+                  showClose: true,
+                  duration: 0
+                });
+              }
             });
-            this.userAllData = this.userAllData1;
-            this.totalNum = this.userData.length;
-            // this.userData = this.userAllData1;
-            this.getUsers();
-            // 获取数据成功，打开dialog。
-            this.dialogVisible = true;
-            this.loading1 = false;
-          });
+          } else {
+            let ErrTips = {};
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+          }
         })
         .catch(error => {
           console.log(error);
@@ -415,22 +441,26 @@ export default {
             Version: "2019-01-16",
             GroupId: groupId
           };
-          this.axios
-            .post(DELE_GROUP, params)
-            .then(data => {
+          this.axios.post(DELE_GROUP, params).then(data => {
+            if (data.Response.Error === undefined) {
               this.$message({
                 type: "success",
-                message: "删除成功"
+                message: "删除成功",
+                duration: 0,
+                showClose: true
               });
               this.init();
-            })
-            .catch(error => {
+            } else {
+              let ErrTips = {};
+              let ErrOr = Object.assign(ErrorTips, ErrTips);
               this.$message({
+                message: ErrOr[res.Response.Error.Code],
                 type: "error",
-                message: "删除失败"
+                showClose: true,
+                duration: 0
               });
-              console.log(error);
-            });
+            }
+          });
         })
         .catch(() => {
           // this.$message({ type: 'info', message: '已取消删除' })
@@ -455,7 +485,9 @@ export default {
             if (data.Response.Error === undefined) {
               this.$message({
                 message: this.$t("CAM.userGroup.successInfo"),
-                type: "success"
+                type: "success",
+                duration: 0,
+                showClose: true
               });
               this.init();
             } else {

@@ -187,10 +187,10 @@
       //数据过滤
       UpName(value) {
         if (value === "VipOuttraffic") {
-          return (value = "出帶寬");
+          return (value = "出頻寬");
         }
         if (value === "VipIntraffic") {
-          return (value = "入帶寬");
+          return (value = "入頻寬");
         }
         if (value === "VipOutpkg") {
           return (value = "出包量");
@@ -204,10 +204,10 @@
       },
       UpTitle(value) {
         if (value === "VipOuttraffic") {
-          return (value = "外網出帶寬");
+          return (value = "外網出頻寬");
         }
         if (value === "VipIntraffic") {
-          return (value = "外網入帶寬");
+          return (value = "外網入頻寬");
         }
         if (value === "VipOutpkg") {
           return (value = "出包量");

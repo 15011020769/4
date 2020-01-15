@@ -159,23 +159,34 @@ export default {
         Version: "2019-01-16"
       };
       _this.axios.post(USER_LIST, paramsUser).then(res => {
-        _this.transfer_data = res.Response.Data;
-        //添加type值判断为用户还是用户组
-        _this.transfer_data.forEach(item => {
-          item.type = "user";
-          item.name = item.Name;
-          item.id = item.Uin;
-        });
-        this.transfer_data.forEach(item => {
-          item.status = 1;
-          this.userArr.forEach(val => {
-            if (val.Name == item.name) {
-              item.status = 0;
-            }
+        if (res.Response.Error === undefined) {
+          _this.transfer_data = res.Response.Data;
+          //添加type值判断为用户还是用户组
+          _this.transfer_data.forEach(item => {
+            item.type = "user";
+            item.name = item.Name;
+            item.id = item.Uin;
           });
-        });
-        this.json = _this.transfer_data;
-        _this.loading = false;
+          this.transfer_data.forEach(item => {
+            item.status = 1;
+            this.userArr.forEach(val => {
+              if (val.Name == item.name) {
+                item.status = 0;
+              }
+            });
+          });
+          this.json = _this.transfer_data;
+          _this.loading = false;
+        } else {
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
       });
     },
     // 2.查询用户组列表ListGroups
@@ -187,24 +198,35 @@ export default {
         Version: "2019-01-16"
       };
       _this.axios.post(USER_GROUP, paramsGroup).then(res => {
-        _this.transferArrayTemp = [];
-        _this.transfer_data = res.Response.GroupInfo;
-        //添加type值判断为用户还是用户组
-        _this.transfer_data.forEach(item => {
-          item.type = "group";
-          item.name = item.GroupName;
-          item.id = item.GroupId;
-        });
-        this.transfer_data.forEach(item => {
-          item.status = 1;
-          this.groupArr.forEach(val => {
-            if (val.Name == item.name) {
-              item.status = 0;
-            }
+        if (res.Response.Error === undefined) {
+          _this.transferArrayTemp = [];
+          _this.transfer_data = res.Response.GroupInfo;
+          //添加type值判断为用户还是用户组
+          _this.transfer_data.forEach(item => {
+            item.type = "group";
+            item.name = item.GroupName;
+            item.id = item.GroupId;
           });
-        });
-        this.json = _this.transfer_data;
-        _this.loading = false;
+          this.transfer_data.forEach(item => {
+            item.status = 1;
+            this.groupArr.forEach(val => {
+              if (val.Name == item.name) {
+                item.status = 0;
+              }
+            });
+          });
+          this.json = _this.transfer_data;
+          _this.loading = false;
+        } else {
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
       });
     },
     handleCommand(command) {
@@ -340,7 +362,11 @@ export default {
       let _this = this;
       let transfer_data_right = this.transfer_data_right;
       if (this.transfer_data_right.length == 0) {
-        this.$message("请选择数据");
+        this.$message({
+          showClose: true,
+          message: "请选中数据",
+          duration: 0
+        });
       }
       // console.log(transfer_data_right);
       else {
@@ -375,14 +401,12 @@ export default {
     attachGroupPolicy(params) {
       this.axios.post(ATTACH_GROUP, params).then(res => {
         if (res.Response.Error === undefined) {
-          if (res.Response.Error) {
-            this.$message.error("关联失败");
-          } else {
-            this.$message({
-              message: "关联成功",
-              type: "success"
-            });
-          }
+          this.$message({
+            message: "关联成功",
+            type: "success",
+            duration: 0,
+            showClose: true
+          });
         } else {
           let ErrTips = {
             "FailedOperation.PolicyFull": "用户策略数超过上限",
@@ -411,14 +435,12 @@ export default {
     attachUserPolicy(params) {
       this.axios.post(POLICY_USER, params).then(res => {
         if (res.Response.Error === undefined) {
-          if (res.Response.Error) {
-            this.$message.error("关联失败");
-          } else {
-            this.$message({
-              message: "关联成功",
-              type: "success"
-            });
-          }
+          this.$message({
+            message: "关联成功",
+            type: "success",
+            duration: 0,
+            showClose: true
+          });
         } else {
           let ErrTips = {
             "FailedOperation.PolicyFull": "用户策略数超过上限",

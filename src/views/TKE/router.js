@@ -165,8 +165,8 @@ export default new Router({
           }
         },
         { // 配置管理-ConfigMap
-          path: '/colony/sub/list/config/configMap',
-          name: 'colonyConfigConfigMap',
+          path: '/colony/sub/list/config/configmap',
+          name: 'colonyConfigConfigmap',
           component: () => import('./colony/sub/list/config/configMap.vue'),
           meta: {
             keepAlive: true,
@@ -336,7 +336,61 @@ export default new Router({
       }
     },
     {
-      path: '/colony/sub/detail/storage/pv', // PersistentVolume详情
+      path: '/colony/sub/detail/config/configmap', // 配置管理-ConfigMap-详情
+      name: 'configmapDetail',
+      component: () => import('./colony/sub/detail/config/configmap/index.vue'),
+      redirect: '/colony/sub/detail/config/configmap/info', // 默认子路由
+      meta: {
+        keepAlive: true
+      },
+      children: [ // 子路由
+        { // 详情
+          path: '/colony/sub/detail/config/configmap/info',
+          name: 'configmapDetailInfo',
+          component: () => import('./colony/sub/detail/config/configmap/info.vue'),
+          meta: {
+            keepAlive: true,
+          }
+        }, 
+        { // yaml
+          path: '/colony/sub/detail/config/configmap/yaml',
+          name: 'configmapDetailYaml',
+          component: () => import('./colony/sub/detail/config/configmap/yaml.vue'),
+          meta: {
+            keepAlive: true,
+          }
+        },  
+      ]
+    },
+    {
+      path: '/colony/sub/detail/config/secret', // 配置管理-secret-详情
+      name: 'secretDetail',
+      component: () => import('./colony/sub/detail/config/secret/index.vue'),
+      redirect: '/colony/sub/detail/config/secret/info', // 默认子路由
+      meta: {
+        keepAlive: true
+      },
+      children: [ // 子路由
+        { // 详情
+          path: '/colony/sub/detail/config/secret/info',
+          name: 'secretDetailInfo',
+          component: () => import('./colony/sub/detail/config/secret/info.vue'),
+          meta: {
+            keepAlive: true,
+          }
+        }, 
+        { // yaml
+          path: '/colony/sub/detail/config/secret/yaml',
+          name: 'secretDetailYaml',
+          component: () => import('./colony/sub/detail/config/secret/yaml.vue'),
+          meta: {
+            keepAlive: true,
+          }
+        },  
+      ]
+    },
+    {
+      path: '/colony/sub/detail/storage/pv', // 存储-PersistentVolume-详情
       name: 'pvDetail',
       component: () => import('./colony/sub/detail/storage/pv/index.vue'),
       redirect: '/colony/sub/detail/storage/pv/info', // 默认子路由
@@ -371,7 +425,7 @@ export default new Router({
       ]
     },
     {
-      path: '/colony/sub/detail/storage/pvc', // PersistentVolumeClaim详情
+      path: '/colony/sub/detail/storage/pvc', // 存储--PersistentVolumeClaim-详情
       name: 'pvcDetail',
       component: () => import('./colony/sub/detail/storage/pvc/index.vue'),
       redirect: '/colony/sub/detail/storage/pvc/info', // 默认子路由
@@ -406,7 +460,7 @@ export default new Router({
       ]
     },
     {
-      path: '/colony/sub/detail/storage/sc', // StorageClass详情
+      path: '/colony/sub/detail/storage/sc', // 存储--StorageClass-详情
       name: 'scDetail',
       component: () => import('./colony/sub/detail/storage/sc/index.vue'),
       redirect: '/colony/sub/detail/storage/sc/info', // 默认子路由

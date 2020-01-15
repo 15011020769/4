@@ -166,13 +166,13 @@
           return (value = '入包量');
         }
         if (value === 'inbandwidth') {
-          return (value = '網路入帶寬');
+          return (value = '網路入頻寬');
         }
         if (value === 'outpkg') {
           return (value = '出包量');
         }
         if (value === 'outbandwidth') {
-          return (value = '出帶寬使用率');
+          return (value = '出頻寬使用率');
         }
         if (value === 'pkgdrop') {
           return (value = '丢包率');
@@ -183,16 +183,16 @@
           return (value = '對等連接每秒入包量');
         }
         if (value === 'inbandwidth') {
-          return (value = '對等連接入帶寬');
+          return (value = '對等連接入頻寬');
         }
         if (value === 'outpkg') {
           return (value = '對等連接每秒出包量');
         }
         if (value === 'outbandwidth') {
-          return (value = '對等連接出帶寬使用率');
+          return (value = '對等連接出頻寬使用率');
         }
         if (value === 'pkgdrop') {
-          return (value = '對等連接因帶寬限制丟棄報文與總報文的比率');
+          return (value = '對等連接因頻寬限制丟棄報文與總報文的比率');
         }
       },
     },

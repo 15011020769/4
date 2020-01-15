@@ -39,19 +39,19 @@
       </li>
       <li>
         <el-row type="flex">
-          <el-col :span="7">存儲位置CosAppid</el-col>
+          <el-col :span="7">儲存位置CosAppid</el-col>
           <el-col class="text-black">{{ selectItem.CosAppId }}</el-col>
         </el-row>
       </li>
       <li>
         <el-row type="flex">
-          <el-col :span="7">存儲位置CosRegion</el-col>
+          <el-col :span="7">儲存位置CosRegion</el-col>
           <el-col class="text-black">{{ selectItem.CosRegion }}</el-col>
         </el-row>
       </li>
       <li>
         <el-row type="flex">
-          <el-col :span="7">存儲位置CosBucket</el-col>
+          <el-col :span="7">儲存位置CosBucket</el-col>
           <el-col class="text-black">{{ selectItem.CosBucket }}</el-col>
         </el-row>
       </li>

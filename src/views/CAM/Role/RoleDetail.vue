@@ -525,7 +525,9 @@ export default {
             if (res.Response.RequestId) {
               this.$message({
                 message: "解绑成功",
-                type: "success"
+                type: "success",
+                duration: 0,
+                showClose: true
               });
             }
             this.getRolePolicy(); // 重新加载
@@ -560,7 +562,12 @@ export default {
     // 批量解除绑定到策略的实体
     relieveRolePolicies() {
       if (this.roleSelPolicies.length > 3) {
-        this.$message("每次最多可以选中3条");
+        this.$message({
+            type: "success",
+            message: "每次最多可以选中3条",
+            duration: 0,
+            showClose: true
+        });
       } else {
         let arrs = this.roleSelPolicies;
         for (let i = 0; i < arrs.length; i++) {
@@ -659,12 +666,16 @@ export default {
           if (res.Response.Error) {
             this.$message({
               message: "关联失败",
-              type: "success"
+              type: "error",
+              duration: 0,
+              showClose: true
             });
           } else {
             this.$message({
               message: "关联成功",
-              type: "success"
+              type: "success",
+              duration: 0,
+              showClose: true
             });
           }
         } else {
@@ -689,9 +700,19 @@ export default {
     // 关联角色策略
     attachRolePolicies() {
       if (this.multipleSelection.length > 3) {
-        this.$message("每次最多可以选中三条");
+        this.$message({
+            message: "每次最多可以选中三条",
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
       } else if (this.multipleSelection.length == 0) {
-        this.$message("请选中要关联的数据");
+        this.$message({
+            message: "请选中要关联的数据",
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
       } else {
         var _this = this;
         new Promise(function() {
