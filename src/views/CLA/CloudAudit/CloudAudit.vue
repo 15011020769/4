@@ -8,31 +8,40 @@
         <span>{{ $t('CLA.total.czjlts') }}</span>
       </div>
       <div class="search">
-        <div class="search_dropdown">
-          <el-select class="childSelect" slot="prepend" v-model="value" @change="_select">
-            <el-option
-              v-for="(item,index) in this.options"
-              :key="index"
-              :label="item.Label"
-              :value="item.Value"
-            ></el-option>
-          </el-select>
-          <el-input :placeholder="placeholder" v-model="input3" class="inp" @change="_inpChange"></el-input>
-          <el-button icon="el-icon-search" @click="seach()"></el-button>
+        <div style="display:flex;">
+          <div class="search_dropdown">
+            <el-select class="childSelect" slot="prepend" v-model="value" @change="_select">
+              <el-option
+                v-for="(item,index) in this.options"
+                :key="index"
+                :label="item.Label"
+                :value="item.Value"
+              ></el-option>
+            </el-select>
+            <el-input
+              :placeholder="placeholder"
+              v-model="input3"
+              class="inp"
+              @blur="_inBlur"
+              @input="_inpChange"
+            ></el-input>
+            <el-button icon="el-icon-search" @click="seach()"></el-button>
+          </div>
+          <div class="date">
+            <el-date-picker
+              v-model="value1"
+              type="daterange"
+              align="right"
+              unlink-panels
+              :range-separator="$t('CLA.total.z')"
+              :start-placeholder="$t('CLA.total.ksrq')"
+              :end-placeholder="$t('CLA.total.jsrq')"
+              :picker-options="pickerOptions"
+              @change="seach()"
+            ></el-date-picker>
+          </div>
         </div>
-        <div class="date">
-          <el-date-picker
-            v-model="value1"
-            type="daterange"
-            align="right"
-            unlink-panels
-            :range-separator="$t('CLA.total.z')"
-            :start-placeholder="$t('CLA.total.ksrq')"
-            :end-placeholder="$t('CLA.total.jsrq')"
-            :picker-options="pickerOptions"
-            @change="seach()"
-          ></el-date-picker>
-        </div>
+
         <div class="updates_download">
           <div class="updates" @click="reload()">
             <i class="el-icon-refresh"></i>
@@ -40,7 +49,13 @@
         </div>
       </div>
       <div class="tab-list">
-        <el-table :data="tableData" style="width: 100%" v-if="isRouterAlive" v-loading="vloading" :empty-text="$t('CLA.total.zwsj')">
+        <el-table
+          :data="tableData"
+          style="width: 100%"
+          v-if="isRouterAlive"
+          v-loading="vloading"
+          :empty-text="$t('CLA.total.zwsj')"
+        >
           <el-table-column type="expand" width="27">
             <template slot-scope="props">
               <el-form label-position="left" inline class="demo-table-expand">
@@ -153,7 +168,7 @@ export default {
       },
       options: [], // 下拉框数据
       value: "",
-      input3: "",
+      input3: "", //搜索绑定值
       tableData: []
     };
   },
@@ -172,6 +187,7 @@ export default {
       .then(data => {
         if (data.Response.Error === undefined) {
           this.options = data.Response.AttributeKeyDetails;
+          this.value = this.options[0].Label;
         } else {
           let ErrTips = {
             "InternalError.SearchError": "內部錯誤，請聯繫開發人員"
@@ -187,9 +203,13 @@ export default {
       });
   },
   methods: {
+    _inBlur() {
+      this.seach();
+    },
     _inpChange() {
-      if (this.input3 == "") {
-        this.seach();
+      if (this.input3 === "") {
+        // this.seach();
+        this.tableData = [];
       }
     },
     _select(val) {
@@ -235,6 +255,17 @@ export default {
           });
         }
       });
+    },
+    seach1() {
+      if (this.input3 == "") {
+        this.$message({
+          message: "请输入搜索条件",
+          type: "warning"
+        });
+        return;
+      } else {
+        seach();
+      }
     },
     //搜索
     seach() {
@@ -409,7 +440,8 @@ export default {
 
 .search {
   display: flex;
-
+  align-items: center;
+  justify-content: space-between;
   .search_dropdown {
     display: flex;
   }
@@ -473,7 +505,7 @@ export default {
 
   .el-date-editor--daterange.el-input__inner {
     width: 287px;
-    margin-left:20px;
+    margin-left: 20px;
   }
 
   .el-date-editor .el-range__close-icon {
@@ -482,7 +514,7 @@ export default {
 
   .updates_download {
     display: flex;
-    width: 375px;
+    // width: 375px;
     justify-content: flex-end;
 
     .updates {
