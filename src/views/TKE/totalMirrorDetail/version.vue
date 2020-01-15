@@ -4,63 +4,108 @@
             <el-table
                 :data="tableData"
                 style="width: 100%"
+                v-loading="loadShow"
                 >
                 <el-table-column
-                    prop="date"
+                    prop="tagName"
                     label="镜像版本"
-                    width="180">
+                    min-width="15%">
                 </el-table-column>
                 <el-table-column
-                    prop="name"
+                    prop="pushTime"
                     label="创建时间"
-                    width="180">
+                    min-width="30%"
+                    :show-overflow-tooltip="true">
                 </el-table-column>
                 <el-table-column
-                    prop="address"
-                    label="镜像ID（SHA256）">
+                    prop="tagId"
+                    label="镜像ID（SHA256）"
+                    min-width="40%"
+                    :show-overflow-tooltip="true">
                 </el-table-column>
                  <el-table-column
-                    prop="address"
-                    label="大小">
+                    prop="size"
+                    label="大小"
+                    min-width="15%">
                 </el-table-column>
             </el-table>
+            <div class="Right-style pagstyle">
+              <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;条</span>
+              <el-pagination
+                :page-size="pagesize"
+                layout="prev, pager, next"
+                :current-page.sync="currpage"
+                @current-change="handleCurrentChange"
+                :total="TotalCount"
+              ></el-pagination>
+            </div>
         </div>
     </div>
 </template>
 <script>
+import { GET_TAGLIST } from '@/constants'
 export default {
   data () {
     return {
-      tableData: [{
-        date: '2016-05-02',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
-      }, {
-        date: '2016-05-04',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1517 弄'
-      }, {
-        date: '2016-05-01',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1519 弄'
-      }, {
-        date: '2016-05-03',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1516 弄'
-      }]
+      tableData: [],
+      TotalCount: 0, // 总条数
+      pagesize: 20, // 分页条数
+      currpage: 1, // 当前页码
+      loadShow: true
+    }
+  },
+  created () {
+    this.GetTagList()
+  },
+  methods: {
+    handleCurrentChange (val) {
+      this.currpage = val
+      this.GetMyMirror()
+      this.loadShow = true
+    },
+    GetTagList () { // 获取镜像版本
+      const param = {
+        reponame: this.$route.query.id
+      }
+      this.axios.post(GET_TAGLIST, param).then(res => {
+        console.log(res)
+        if (res.code === 0) {
+          this.tableData = res.data.tagInfo
+          this.TotalCount = res.data.tagCount
+          this.loadShow = false
+        }
+      })
     }
   }
 }
 </script>
 <style lang="scss" scoped>
     .room{
-       position: relative;
        width: 100%;
+       padding:20px;
+        height:auto;
     }
     .room-table{
-        position: absolute;
-        width: 95%;
-        top:40px;
-        left:10px;
+        background: white;
     }
+    .Right-style {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 20px;
+      align-items:center;
+      height:60px;
+      .esach-inputL {
+        width: 300px;
+        margin-right: 20px;
+      }
+    .pagstyle {
+      padding: 20px;
+      .pagtotal {
+        font-size: 13px;
+        font-weight: 400;
+        color: #565656;
+        line-height: 32px;
+      }
+    }
+}
 </style>

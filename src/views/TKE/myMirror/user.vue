@@ -460,10 +460,6 @@ export default {
 </script>
 <style lang="scss" scoped>
 .room {
-  // position: absolute;
-  // left: 20px;
-  // top: 40px;
-  // width: 95%;
   height: auto;
   padding:20px;
 }

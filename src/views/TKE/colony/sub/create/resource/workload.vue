@@ -32,6 +32,12 @@
               </el-input>
           </el-form-item>
 
+           <el-form-item label="标签">
+              <el-input class="w200" v-model="wl.name" placeholder="请输入Workload名称"></el-input>
+              <p>最长40个字符，只能包含小写字母、数字及分隔符("-")，且必须以小写字母开头，数字或小写字母结尾</p>
+            </el-form-item>
+
+
           <el-form-item label="类型">
             <div class='form-controls' style="width:350px">
               <el-radio-group class="tke-radio-group" v-model="wl.type">
