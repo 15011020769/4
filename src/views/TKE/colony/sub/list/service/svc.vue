@@ -46,7 +46,7 @@
             label="名称"
             >
             <template slot-scope="scope">
-              <span class="tke-text-link">ass</span>
+              <span @click="goSvcDetail()" class="tke-text-link">ass</span>
             </template>
           </el-table-column>
           <el-table-column
@@ -170,6 +170,17 @@ export default {
           }
       });
     },
+
+    // 详情
+    goSvcDetail(){
+      this.$router.push({
+          name: "svcDetail",
+          query: {
+            clusterId: this.clusterId
+          }
+      });
+    },
+
     //选择搜索条件
     changeSearchType(val) {
       this.searchType = val;

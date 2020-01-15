@@ -336,6 +336,76 @@ export default new Router({
       }
     },
     {
+      path: '/colony/sub/detail/service/svc', // 服务-Service-详情
+      name: 'svcDetail',
+      component: () => import('./colony/sub/detail/service/svc/index.vue'),
+      redirect: '/colony/sub/detail/service/svc/info', // 默认子路由
+      meta: {
+        keepAlive: true
+      },
+      children: [ // 子路由
+        { // 详情
+          path: '/colony/sub/detail/service/svc/info',
+          name: 'svcDetailInfo',
+          component: () => import('./colony/sub/detail/service/svc/info.vue'),
+          meta: {
+            keepAlive: true,
+          }
+        },
+        { // 事件
+          path: '/colony/sub/detail/service/svc/event',
+          name: 'svcDetailEvent',
+          component: () => import('./colony/sub/detail/service/svc/event.vue'),
+          meta: {
+            keepAlive: true,
+          }
+        },   
+        { // yaml
+          path: '/colony/sub/detail/service/svc/yaml',
+          name: 'svcDetailYaml',
+          component: () => import('./colony/sub/detail/service/svc/yaml.vue'),
+          meta: {
+            keepAlive: true,
+          }
+        },  
+      ]
+    },
+    {
+      path: '/colony/sub/detail/service/ingress', // 服务-ingress-详情
+      name: 'ingressDetail',
+      component: () => import('./colony/sub/detail/service/ingress/index.vue'),
+      redirect: '/colony/sub/detail/service/ingress/info', // 默认子路由
+      meta: {
+        keepAlive: true
+      },
+      children: [ // 子路由
+        { // 详情
+          path: '/colony/sub/detail/service/ingress/info',
+          name: 'ingressDetailInfo',
+          component: () => import('./colony/sub/detail/service/ingress/info.vue'),
+          meta: {
+            keepAlive: true,
+          }
+        },
+        { // 事件
+          path: '/colony/sub/detail/service/ingress/event',
+          name: 'ingressDetailEvent',
+          component: () => import('./colony/sub/detail/service/ingress/event.vue'),
+          meta: {
+            keepAlive: true,
+          }
+        },   
+        { // yaml
+          path: '/colony/sub/detail/service/ingress/yaml',
+          name: 'ingressDetailYaml',
+          component: () => import('./colony/sub/detail/service/ingress/yaml.vue'),
+          meta: {
+            keepAlive: true,
+          }
+        },  
+      ]
+    },
+    {
       path: '/colony/sub/detail/config/configmap', // 配置管理-ConfigMap-详情
       name: 'configmapDetail',
       component: () => import('./colony/sub/detail/config/configmap/index.vue'),
