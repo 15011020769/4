@@ -543,22 +543,44 @@ export default {
                 Uid: item.Uid
               };
               this.axios.post(RELATE_USER, params).then(res => {
-                item.group = res.Response.GroupInfo;
+                if(res.Response.Error === undefined){
+                   item.group = res.Response.GroupInfo;
+                }else{
+                   let ErrTips = {
+                      "ResourceNotFound.UserNotExist":'用户不存在'
+                  };
+                  let ErrOr = Object.assign(ErrorTips, ErrTips);
+                  this.$message({
+                    message: ErrOr[res.Response.Error.Code],
+                    type: "error",
+                    showClose: true,
+                    duration: 0
+                  });
+                }
               });
-            });
-            this.tableData = arr;
-            this.tableData.reverse();
-            this.json = arr;
-            this.tableData1 = this.tableData.slice(
-              (this.currpage - 1) * this.pagesize,
-              this.currpage * this.pagesize
-            );
-            this.TotalCount = this.json.length;
+              this.tableData = arr;
+              this.tableData.reverse();
+              this.json = arr;
+              this.tableData1 = this.tableData.slice(
+                (this.currpage - 1) * this.pagesize,
+                this.currpage * this.pagesize
+              );
+              this.TotalCount = this.json.length;
+            } else {
+              this.loading = false;
+              this.$message({
+                type: "info",
+                message: "无响应数据！"
+              });
+            }
           } else {
-            this.loading = false;
+            let ErrTips = {};
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
             this.$message({
-              type: "info",
-              message: "无响应数据！"
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
             });
           }
         })
@@ -642,14 +664,28 @@ export default {
             Uid: this.Uid
           };
           this.axios.post(RELATE_USER, params).then(res => {
-            this.userArr.forEach(item => {
-              item.status = 0;
-              res.Response.GroupInfo.forEach(val => {
-                if (val.GroupId == item.GroupId) {
-                  item.status = 1;
-                }
+            if(res.Response.Error === undefined){
+              this.userArr.forEach(item => {
+                item.status = 0;
+                res.Response.GroupInfo.forEach(val => {
+                  if (val.GroupId == item.GroupId) {
+                    item.status = 1;
+                  }
+                });
               });
-            });
+            }else{
+               let ErrTips = {
+                  "ResourceNotFound.UserNotExist":'用户不存在'
+              };
+              let ErrOr = Object.assign(ErrorTips, ErrTips);
+              this.$message({
+                message: ErrOr[res.Response.Error.Code],
+                type: "error",
+                showClose: true,
+                duration: 0
+              });
+            }
+           
           });
           var _this = this;
           setTimeout(() => {
@@ -699,8 +735,23 @@ export default {
         TargetUin: val.Uin
       };
       this.axios.post(QUERY_POLICY, params).then(res => {
-        this.rolePolicies = res.Response.List;
-        this.reload = !this.reload;
+        if(res.Response.Error === undefined){
+          this.rolePolicies = res.Response.List;
+          this.reload = !this.reload;
+        }else{
+              let ErrTips = {
+                 "InternalError.SystemError":'内部错误',
+                 "InvalidParameter.ParamError":'非法入参'
+              };
+              let ErrOr = Object.assign(ErrorTips, ErrTips);
+              this.$message({
+                message: ErrOr[res.Response.Error.Code],
+                type: "error",
+                showClose: true,
+                duration: 0
+              });
+        }
+       
       });
       this.Uin = val.Uin;
       this.title = "关联策略";
@@ -846,7 +897,7 @@ export default {
 .wrap >>> .el-table__expanded-cell:hover {
   background: rgb(250, 250, 250);
 }
-.pointer{
+.pointer {
   cursor: pointer;
 }
 .wrap {

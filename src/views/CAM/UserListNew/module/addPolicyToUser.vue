@@ -118,16 +118,44 @@ export default {
         TargetUin: this.$route.query.Uin
       };
       this.axios.post(QUERY_POLICY, params).then(res => {
-        this.policyArr = res.Response.List;
-        this._getList();
-      });
+        if(res.Response.Error === undefined){
+          this.policyArr = res.Response.List;
+          this._getList();
+        }else{
+          let ErrTips = {
+                 "InternalError.SystemError":'内部错误',
+                 "InvalidParameter.ParamError":'非法入参'
+              };
+              let ErrOr = Object.assign(ErrorTips, ErrTips);
+              this.$message({
+                message: ErrOr[res.Response.Error.Code],
+                type: "error",
+                showClose: true,
+                duration: 0
+              });
+        }
+       });
       const param = {
         Version: "2019-01-16",
         Uid: this.$route.query.Uid
       };
       this.axios.post(RELATE_USER, param).then(res => {
-        this.groupArr = res.Response.GroupInfo;
-        this._userList();
+        if(res.Response.Error === undefined){
+          this.groupArr = res.Response.GroupInfo;
+          this._userList();
+        }else{
+              let ErrTips = {
+                 "ResourceNotFound.UserNotExist":'用户不存在'
+              };
+              let ErrOr = Object.assign(ErrorTips, ErrTips);
+              this.$message({
+                message: ErrOr[res.Response.Error.Code],
+                type: "error",
+                showClose: true,
+                duration: 0
+              });
+        }
+        
       });
     },
     //用户组列表

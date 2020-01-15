@@ -325,7 +325,11 @@
           this.KMSchange = false;
           this.state = this.$t("KMS.total.canStart");
         } else {
-          this.$message(this.$t("KMS.total.noStartData"));
+          this.$message({
+            message: this.$t("KMS.total.noStartData"),
+            showClose: true,
+            duration: 0
+          });
         }
       },
       //禁用按钮
@@ -347,7 +351,11 @@
           this.KMSchange = true;
           this.state = this.$t("KMS.total.canStop");
         } else {
-          this.$message(this.$t("KMS.total.noStartDataK"));
+          this.$message({
+            message: this.$t("KMS.total.noStartDataK"),
+            showClose: true,
+            duration: 0
+          });
         }
       },
       //判断是否有已禁用，已启用

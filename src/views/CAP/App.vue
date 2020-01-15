@@ -39,9 +39,10 @@
       // 获取城市列表
       GetCity() {
         this.axios.get(ALL_CITY).then(data => {
-          let city = data.data[0];
-          localStorage.setItem("regionv1", city.regionCode);
-          localStorage.setItem("regionv2", city.Region);
+          console.log(data)
+          // let city = data.data[0];
+          // localStorage.setItem("regionv1", city.regionCode);
+          // localStorage.setItem("regionv2", city.Region);
         });
       }
     }

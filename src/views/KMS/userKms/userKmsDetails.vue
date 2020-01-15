@@ -1139,10 +1139,12 @@ export default {
 .atclor {
   color: #bbb;
   cursor: default;
+  pointer-events:none;
 }
 .atclor:hover {
   color: #bbb;
   cursor: default;
+  pointer-events:none;
 }
 .iconys{
     font-size: 24px;

@@ -46,7 +46,7 @@
             label="名称"
             >
             <template slot-scope="scope">
-              <span class="tke-text-link">ccas</span>
+              <span @click="goConfigmapDetail()" class="tke-text-link">ccas</span>
             </template>
           </el-table-column>
           <el-table-column
@@ -100,7 +100,7 @@ import tkeSearch from "@/views/TKE/components/tkeSearch";
 import Loading from "@/components/public/Loading";
 import { ALL_CITY } from "@/constants";
 export default {
-  name: "colonyConfigConfigMap",
+  name: "colonyConfigConfigmap",
   data() {
     return {
       loadShow: false, //加载是否显示
@@ -147,6 +147,16 @@ export default {
     goConfigmapCreate(){
       this.$router.push({
           name: "configmapCreate",
+          query: {
+            clusterId: this.clusterId
+          }
+      });
+    },
+
+     // 详情
+    goConfigmapDetail(){
+      this.$router.push({
+          name: "configmapDetail",
           query: {
             clusterId: this.clusterId
           }
