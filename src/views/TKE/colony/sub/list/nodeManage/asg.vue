@@ -35,30 +35,28 @@
     </div>
 
     <!-- 新建、搜索相关操作 -->
-    <div class="tke-action mt20">
-      <div class="tke-grid ">
-        <!-- 左侧 -->
-        <div class="grid-left">
-          <el-button @click="goAsgCreate" size="small" type="primary">新建伸缩组</el-button>
-          <el-button size="small" disabled="">删除</el-button>
-        </div>
-        <!-- 右侧 -->
-        <div class="grid-right">
-          <tkeSearch 
-              exportData
-              inputPlaceholder='请输入伸缩组ID'
-              :searchInput='searchInput'
-              @changeInput="changeSearchInput"
-              @clickSearch="clickSearch"
-              @exportExcel="exportExcel"
-            >
-          </tkeSearch>
-        </div>
+    <div class="tke-grid mt10">
+      <!-- 左侧 -->
+      <div class="grid-left">
+        <el-button @click="goAsgCreate" size="small" type="primary">新建伸缩组</el-button>
+        <el-button size="small" disabled="">删除</el-button>
+      </div>
+      <!-- 右侧 -->
+      <div class="grid-right">
+        <tkeSearch 
+            exportData
+            inputPlaceholder='请输入伸缩组ID'
+            :searchInput='searchInput'
+            @changeInput="changeSearchInput"
+            @clickSearch="clickSearch"
+            @exportExcel="exportExcel"
+          >
+        </tkeSearch>
       </div>
     </div>
 
     <!-- 数据列表展示 -->
-    <div class="tke-card">
+    <div class="tke-card mt10">
       <el-table
         ref="multipleTable"
         @selection-change="handleSelectionChange"
