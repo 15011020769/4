@@ -532,33 +532,44 @@ export default {
       this.axios
         .post(USER_LIST, userList)
         .then(data => {
-          if (data != "") {
-            this.loading = false;
-            var arr = data.Response.Data;
-            //获取用户关联的用户组
-            arr.forEach(item => {
-              item.group = [];
-              const params = {
-                Version: "2019-01-16",
-                Uid: item.Uid
-              };
-              this.axios.post(RELATE_USER, params).then(res => {
-                item.group = res.Response.GroupInfo;
+          if (res.Response.Error === undefined) {
+            if (data != "") {
+              this.loading = false;
+              var arr = data.Response.Data;
+              //获取用户关联的用户组
+              arr.forEach(item => {
+                item.group = [];
+                const params = {
+                  Version: "2019-01-16",
+                  Uid: item.Uid
+                };
+                this.axios.post(RELATE_USER, params).then(res => {
+                  item.group = res.Response.GroupInfo;
+                });
               });
-            });
-            this.tableData = arr;
-            this.tableData.reverse();
-            this.json = arr;
-            this.tableData1 = this.tableData.slice(
-              (this.currpage - 1) * this.pagesize,
-              this.currpage * this.pagesize
-            );
-            this.TotalCount = this.json.length;
+              this.tableData = arr;
+              this.tableData.reverse();
+              this.json = arr;
+              this.tableData1 = this.tableData.slice(
+                (this.currpage - 1) * this.pagesize,
+                this.currpage * this.pagesize
+              );
+              this.TotalCount = this.json.length;
+            } else {
+              this.loading = false;
+              this.$message({
+                type: "info",
+                message: "无响应数据！"
+              });
+            }
           } else {
-            this.loading = false;
+            let ErrTips = {};
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
             this.$message({
-              type: "info",
-              message: "无响应数据！"
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
             });
           }
         })
@@ -846,7 +857,7 @@ export default {
 .wrap >>> .el-table__expanded-cell:hover {
   background: rgb(250, 250, 250);
 }
-.pointer{
+.pointer {
   cursor: pointer;
 }
 .wrap {
