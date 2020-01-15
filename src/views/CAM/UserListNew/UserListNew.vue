@@ -40,6 +40,7 @@
           :data="tableData1"
           @selection-change="selectDataChange"
           v-loading="loading"
+          @expand-change="rowChange"
         >
           <el-table-column type="selection" width="55"></el-table-column>
           <el-table-column type="expand" :label="$t('CAM.userList.userDetils')" width="50">
@@ -344,6 +345,32 @@ export default {
     };
   },
   methods: {
+    rowChange(row, expandedRows) {
+      if (expandedRows.length != 0) {
+        expandedRows.forEach(item => {
+          const params = {
+            Version: "2019-01-16",
+            Uid: item.Uid
+          };
+          this.axios.post(RELATE_USER, params).then(res => {
+            if (res.Response.Error === undefined) {
+              this.tableData[item.index].group = res.Response.GroupInfo;
+            } else {
+              let ErrTips = {
+                "ResourceNotFound.UserNotExist": "用户不存在"
+              };
+              let ErrOr = Object.assign(ErrorTips, ErrTips);
+              this.$message({
+                message: ErrOr[res.Response.Error.Code],
+                type: "error",
+                showClose: true,
+                duration: 0
+              });
+            }
+          });
+        });
+      }
+    },
     goToGroup(item) {
       var groupId = item.GroupId;
       this.$router.push({
@@ -543,28 +570,9 @@ export default {
               this.loading = false;
               var arr = data.Response.Data;
               //获取用户关联的用户组
-              arr.forEach(item => {
+              arr.forEach((item, index) => {
                 item.group = [];
-                const params = {
-                  Version: "2019-01-16",
-                  Uid: item.Uid
-                };
-                this.axios.post(RELATE_USER, params).then(res => {
-                  if (res.Response.Error === undefined) {
-                    item.group = res.Response.GroupInfo;
-                  } else {
-                    let ErrTips = {
-                      "ResourceNotFound.UserNotExist": "用户不存在"
-                    };
-                    let ErrOr = Object.assign(ErrorTips, ErrTips);
-                    this.$message({
-                      message: ErrOr[res.Response.Error.Code],
-                      type: "error",
-                      showClose: true,
-                      duration: 0
-                    });
-                  }
-                });
+                item.index = index;
               });
               this.tableData = arr;
               this.tableData.reverse();
