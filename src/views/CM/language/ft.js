@@ -36,7 +36,7 @@ module.exports = {
     zxtd: '專線接入-專線通道',
     td: 'VPN通道',
     vpnwg: 'VPN網關',
-    errorTxt: '請輸入正確搜索信息',
+    errorTxt: '請輸入正確搜索訊息',
     table: {
       x1: 'ID/主機名',
       x2: '監控',
