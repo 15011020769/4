@@ -52,6 +52,9 @@ export const ADD_FAVOR = 'ccr/AddFavor'
 // 获取镜像版本列表
 export const GET_TAGLIST = 'ccr/GetTagList'
 
+// 取消全选收藏
+export const DELETE_BATCHDELETEFAVOR = 'ccr/BatchDeleteFavor'
+
 // 获取集群列表
 export const COLONY_LIST = 'tke2/DescribeClusters'
 

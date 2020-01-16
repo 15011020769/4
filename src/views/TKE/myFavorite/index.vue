@@ -5,7 +5,7 @@
       <div class="room">
         <div class="room-top">
           <div class="top-left">
-            <el-button :disabled="this.multipleSelection.length?false:true" size="mini" class="botton-size">取消收藏</el-button>
+            <el-button :disabled="this.multipleSelection.length?false:true" size="mini" class="botton-size" @click="disFavor()">取消收藏</el-button>
           </div>
           <div class="top-right">
               <el-input v-model.trim="input" placeholder="请输入镜像名称" size="mini" ></el-input>
@@ -19,26 +19,31 @@
             style="width: 100%"
             height="450"
             @selection-change="handleSelectionChange"
+            v-loading="loadShow"
           >
             <el-table-column type="selection" width="55"></el-table-column>
-            <el-table-column prop="address" label="名称"></el-table-column>
-            <el-table-column prop="address" label="类型"></el-table-column>
+            <el-table-column prop="reponame" label="名称"></el-table-column>
+            <el-table-column prop="public" label="类型">
+              <template slot-scope="scope">
+                 {{scope.row.public | publics}}
+              </template>
+            </el-table-column>
             <el-table-column prop="address" label="地域"></el-table-column>
-            <el-table-column prop="address" label="收藏量"></el-table-column>
-            <el-table-column prop="address" label="操作">
+            <el-table-column prop="favorCount" label="收藏量"></el-table-column>
+            <el-table-column label="操作">
               <template slot-scope="scope">
                 <el-button @click="handleClick(scope.row)" type="text" size="small">取消收藏</el-button>
               </template>
             </el-table-column>
           </el-table>
           <div class="Right-style pagstyle">
-            <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;页</span>
+            <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;条</span>
             <el-pagination
               :page-size="pagesize"
-              :pager-count="7"
               layout="prev, pager, next"
               @current-change="handleCurrentChange"
               :total="TotalCount"
+              :current-page.sync="currpage"
             ></el-pagination>
           </div>
         </div>
@@ -48,7 +53,7 @@
 </template>
 <script>
 import HeadCom from '@/components/public/Head'
-import { GETFAVOR } from '@/constants'
+import { GETFAVOR, DELETE_BATCHDELETEFAVOR, DELETE_FAVOR } from '@/constants'
 export default {
   name: 'myFavorite',
   components: {
@@ -57,22 +62,12 @@ export default {
   data () {
     return {
       input: '',
-      tableData: [
-        {
-          date: '2016-05-03',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        },
-        {
-          date: '2016-05-02',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        }
-      ],
+      tableData: [],
       TotalCount: 0, // 总条数
       pagesize: 10, // 分页条数
       currpage: 1, // 当前页码
-      multipleSelection: []
+      multipleSelection: [],
+      loadShow: true
     }
   },
   created () {
@@ -81,6 +76,7 @@ export default {
   methods: {
     handleClick (row) {
       console.log(row)
+      this.DeleteFavor(row)
     },
     // 分页
     handleCurrentChange (val) {
@@ -90,15 +86,66 @@ export default {
       this.multipleSelection = val
       console.log(this.multipleSelection)
     },
+    getSearch () {
+      this.loadShow = true
+      this.GetFavor()
+    },
+    disFavor () {
+      var obj = {}
+      for (var i = 0; i < this.multipleSelection.length; i++) {
+        obj['favors.' + i + '.reponame'] = this.multipleSelection[i].reponame
+        obj['favors.' + i + '.repotype'] = this.multipleSelection[i].repotype
+        obj['favors.' + i + '.regionId'] = this.multipleSelection[i].regionId
+      }
+      console.log(obj)
+      this.BatchDeleteFavor(obj)
+    },
+    // 获取我的收藏列表
     GetFavor () {
       const param = {
-        reponame: '',
+        reponame: this.input,
         offset: 0,
         limit: 10
       }
       this.axios.post(GETFAVOR, param).then(res => {
         console.log(res)
+        this.tableData = res.data.repoInfo
+        this.TotalCount = res.data.totalCount
+        this.loadShow = false
       })
+    },
+    // 取消全选收藏
+    BatchDeleteFavor (obj) {
+      const param = obj
+      this.axios.post(DELETE_BATCHDELETEFAVOR, param).then(res => {
+        if (res.code === 0) {
+          this.loadShow = true
+          this.GetFavor()
+        }
+      })
+    },
+    // 取消收藏
+    DeleteFavor (row) {
+      const param = {
+        reponame: row.reponame,
+        repotype: row.repotype
+      }
+      this.axios.post(DELETE_FAVOR, param).then(res => {
+        console.log(res)
+        if (res.code === 0) {
+          this.loadShow = true
+          this.GetFavor()
+        }
+      })
+    }
+  },
+  filters: {
+    publics: function (val) {
+      if (val == 1) {
+        return 'Docker Hub'
+      } else {
+        return '用户公开'
+      }
     }
   }
 }
@@ -108,12 +155,7 @@ export default {
   position: relative;
 }
 .room {
-  position: absolute;
-  left: 20px;
-  top: 20px;
-
-  width: 95%;
-  height: auto;
+  padding:20px;
 }
 .room-top {
   height: 30px;
