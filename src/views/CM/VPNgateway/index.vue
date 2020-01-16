@@ -109,7 +109,7 @@ export default {
         },
         {
           value: "vpn-gateway-name",
-          label: "名称"
+          label: "名稱"
         }
       ],
       //文字过滤
@@ -241,9 +241,9 @@ export default {
           this.loadShow = false;
         } else {
           let ErrTips = {
-            "InvalidVpnGatewayId.Malformed": "无效的VPN网关,VPN实例ID不合法",
+            "InvalidVpnGatewayId.Malformed": "無效的VPN網關,VPN實例ID不合法",
             "InvalidVpnGatewayId.NotFound":
-              "无效的VPN网关,VPN实例不存在，请再次核实您输入的资源信息是否正确"
+              "無效的VPN網關,VPN實例不存在，請再次核實您輸入的資源信息是否正確"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({

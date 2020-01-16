@@ -227,10 +227,10 @@ export default {
           this.TotalCount = data.Response.TotalCount;
         } else {
           let ErrTips = {
-            "InvalidParameter.Coexist": "参数不支持同时指定",
-            InvalidParameterValue: "	参数值不合法",
-            "InvalidParameterValue.Malformed": "入参格式不合法",
-            "InvalidParameterValue.TooLong": "无效参数值,参数值太长"
+            "InvalidParameter.Coexist": "參數不支持同時指定",
+            InvalidParameterValue: "	參數值不合法",
+            "InvalidParameterValue.Malformed": "入參格式不合法",
+            "InvalidParameterValue.TooLong": "無效參數值,參數值太長"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({

@@ -236,9 +236,9 @@ export default {
           this.TbaleData = data.Response.DirectConnectTunnelSet;
         } else {
           let ErrTips = {
-            InternalError: "内部错误",
-            ResourceNotFound: "资源不存在",
-            "ResourceNotFound.DirectConnectTunnelIdIsNotExist": "专用通道不存在"
+            InternalError: "內部錯誤",
+            ResourceNotFound: "資源不存在",
+            "ResourceNotFound.DirectConnectTunnelIdIsNotExist": "專用通道不存在"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({

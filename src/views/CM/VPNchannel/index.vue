@@ -245,9 +245,9 @@ export default {
           this.loadShow = false;
         } else {
           let ErrTips = {
-            "InvalidParameter.Coexist": "参数不支持同时指定",
-            "InvalidParameterValue.Malformed": "入参格式不合法",
-            ResourceNotFound: "资源不存在"
+            "InvalidParameter.Coexist": "參數不支持同時指定",
+            "InvalidParameterValue.Malformed": "入參格式不合法",
+            ResourceNotFound: "資源不存在"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
