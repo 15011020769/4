@@ -47,7 +47,7 @@
             label="名称"
             >
             <template slot-scope="scope">
-              <span class="tke-text-link">test</span>
+              <span @click="goDeploymentDetail()" class="tke-text-link">test</span>
             </template>
           </el-table-column>
           <el-table-column
@@ -173,6 +173,18 @@ export default {
           }
       });
     },
+
+     // 详情
+    goDeploymentDetail(){
+      this.$router.push({
+          name: "deploymentDetail",
+          query: {
+            clusterId: this.clusterId
+          }
+      });
+    },
+
+
     //选择搜索条件
     changeSearchType(val) {
       this.searchType = val;

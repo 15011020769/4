@@ -34,7 +34,7 @@
                 >
                 <template slot-scope="scope">
                   <span v-if="scope.row.status===true" class="text-green">已下发 <i class="el-icon-success"></i></span>
-                  <span v-else class="text-red">未下发 <i class="el-icon-error"></i></span>
+                  <span v-else class="text-red">未下发 <i class="el-icon-warning"></i></span>
                 </template>
               </el-table-column>
               <el-table-column
