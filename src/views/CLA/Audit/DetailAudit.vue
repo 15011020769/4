@@ -123,7 +123,7 @@
               <el-select
                 v-model="BucketSelect.name"
                 v-show="cosShow"
-                class="BucketSelect"
+                class="BucketSelect red"
                 @change="_BucketSelect"
               >
                 <el-option
@@ -485,7 +485,9 @@ export default {
             Region: localStorage.getItem("regionv2"),
             AuditName: this.title,
             IsCreateNewBucket: this.detailData.IsCreateNewBucket,
-            CosRegion: this.detailData.CosRegion,
+            CosRegion: this.select.options[this.select.index].name
+              ? this.select.options[this.select.index].name
+              : this.detailData.CosRegion,
             CosBucketName: this.detailData.CosBucketName,
             IsEnableCmqNotify: this.detailData.IsEnableCmqNotify,
             LogFilePrefix: this.detailData.LogFilePrefix
@@ -502,40 +504,52 @@ export default {
             delete params.CmqRegion;
             delete params.IsCreateNewQueue;
           }
-          console.log(params);
-          this.axios.post(GZJ_UPDATEAUDIT, params).then(res => {
-            if (res.Response.Error === undefined) {
+          if (this.cosShow) {
+            if (
+              this.detailData.CosBucketName == "" ||
+              this.BucketSelect.options.length == 0
+            ) {
               this.$message({
-                message: "更新成功",
-                type: "success"
-              });
-              this.inpShow1 = false;
-              this.detailList();
-            } else {
-              let ErrTips = {
-                "InternalError.CmqError":
-                  "創建cmq時發生異常，可能您準備創建的cmq隊列已經存在，也有可能您沒有許可權或者欠費",
-                "InternalError.UpdateAuditError": "內部錯誤，請聯繫開發人員",
-                "InvalidParameterValue.CmqRegionError":
-                  "雲審計目前不支持輸入的cmq地域",
-                "InvalidParameterValue.CosRegionError":
-                  "雲審計目前不支持輸入的cos地域",
-                "InvalidParameterValue.ReadWriteAttributeError":
-                  "讀寫屬性值僅支持：1,2,3。1代表只讀，2代表只寫，3代表全部",
-                "MissingParameter.cmq":
-                  "IsEnableCmqNotify輸入1的話，IsCreateNewQueue、CmqQueueName和CmqRegion都是必須參數",
-                "ResourceNotFound.AuditNotExist": "跟蹤集不存在"
-              };
-              let ErrOr = Object.assign(ErrorTips, ErrTips);
-              this.$message({
-                message: ErrOr[res.Response.Error.Code],
-                type: "error",
                 showClose: true,
-                duration: 0
+                message: "COS 儲存桶名称不能为空",
+                type: "warning"
               });
             }
-            this.btnLoad = false;
-          });
+          } else {
+            this.axios.post(GZJ_UPDATEAUDIT, params).then(res => {
+              if (res.Response.Error === undefined) {
+                this.$message({
+                  message: "更新成功",
+                  type: "success"
+                });
+                this.inpShow1 = false;
+                this.detailList();
+              } else {
+                let ErrTips = {
+                  "InternalError.CmqError":
+                    "創建cmq時發生異常，可能您準備創建的cmq隊列已經存在，也有可能您沒有許可權或者欠費",
+                  "InternalError.UpdateAuditError": "內部錯誤，請聯繫開發人員",
+                  "InvalidParameterValue.CmqRegionError":
+                    "雲審計目前不支持輸入的cmq地域",
+                  "InvalidParameterValue.CosRegionError":
+                    "雲審計目前不支持輸入的cos地域",
+                  "InvalidParameterValue.ReadWriteAttributeError":
+                    "讀寫屬性值僅支持：1,2,3。1代表只讀，2代表只寫，3代表全部",
+                  "MissingParameter.cmq":
+                    "IsEnableCmqNotify輸入1的話，IsCreateNewQueue、CmqQueueName和CmqRegion都是必須參數",
+                  "ResourceNotFound.AuditNotExist": "跟蹤集不存在"
+                };
+                let ErrOr = Object.assign(ErrorTips, ErrTips);
+                this.$message({
+                  message: ErrOr[res.Response.Error.Code],
+                  type: "error",
+                  showClose: true,
+                  duration: 0
+                });
+              }
+              this.btnLoad = false;
+            });
+          }
         } else {
           return false;
           this.btnLoad = false;
