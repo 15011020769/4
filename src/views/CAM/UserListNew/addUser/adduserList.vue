@@ -57,11 +57,11 @@
                     </td>
                     <td class="reg">
                       <el-input v-model="ruleForm.PhoneNum" @change="telInp"></el-input>
-                      <span class="red" v-show="phoneReg">手机号输入有误</span>
+                      <span class="red" v-show="phoneReg">{{$t('CAM.userList.sjhyw')}}</span>
                     </td>
                     <td class="reg">
                       <el-input v-model="ruleForm.Email" @change="emailInp"></el-input>
-                      <span class="red" v-show="emailReg">邮箱输入有误</span>
+                      <span class="red" v-show="emailReg">{{$t('CAM.userList.yxsryw')}}</span>
                     </td>
                   </tr>
                 </tbody>
@@ -95,9 +95,9 @@
                     @change="_pwdInp"
                   ></el-input>
                   <div class="reg-box">
-                    <p :class="pwdlenReg ? 'red' : 'green'">长度为8-32个字符</p>
-                    <p :class="pwdtypeReg ? 'red' : 'green'">包含数字，特殊字符，小写字母，大写字母</p>
-                    <p :class="pwdreReg ? 'red' : 'green'">密码不能与当前用户名相同</p>
+                    <p :class="pwdlenReg ? 'red' : 'green'">{{$t('CAM.userList.cdzf')}}</p>
+                    <p :class="pwdtypeReg ? 'red' : 'green'">{{$t('CAM.userList.bhzf')}}</p>
+                    <p :class="pwdreReg ? 'red' : 'green'">{{$t('CAM.userList.mmbnyyhmxt')}}</p>
                   </div>
                 </div>
               </el-form-item>
@@ -180,7 +180,7 @@ export default {
         if (!reg.test(value)) {
           _this.pwdReg = false;
           callback(
-            new Error("密码规则为8位以上同时包含大写小字母、数字和特殊字符")
+            new Error("密碼規則為8位以上同時包含大寫小字母、數字和特殊字元")
           );
         } else {
           _this.pwdReg = true;
@@ -206,15 +206,15 @@ export default {
       type: [
         {
           code: 1,
-          title: "可访问资源并接收消息",
+          title: "可訪問資源並接收消息",
           txt:
-            "该用户可以登录控制台或通过 API 密钥访问您授予其权限的台富雲资源，同时拥有接收消息等子账号的全部功能"
+            "該用戶可以登錄控制台或通過 API 密鑰訪問您授予其許可權的台富雲資源，同時擁有接收消息等子賬號的全部功能"
         },
         {
           code: 0,
-          title: "仅用于接收消息",
+          title: "僅用於接收消息",
           txt:
-            "该用户仅可通过手机、邮箱接收台富雲发送给您的消息通知，不可访问台富雲"
+            "該用戶僅可通過手機、郵箱接收台富雲發送給您的消息通知，不可訪問台富雲"
         }
       ],
       //访问方式
@@ -426,7 +426,7 @@ export default {
           this.userDatas = json;
         } else {
           let ErrTips = {
-            "ResourceNotFound.UserNotExist": "用户不存在"
+            "ResourceNotFound.UserNotExist": "用戶不存在"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
@@ -482,10 +482,10 @@ export default {
           console.log(res);
         } else {
           let ErrTips = {
-            "InvalidParameter.GroupNotExist": "用户组不存在",
-            "InvalidParameter.GroupUserFull": "用户组中的子用户数量达到上限",
-            "InvalidParameter.UserGroupFull": "子用户加入的用户组数量达到上限",
-            "ResourceNotFound.UserNotExist": "用户不存在"
+            "InvalidParameter.GroupNotExist": "用戶組不存在",
+            "InvalidParameter.GroupUserFull": "用戶組中的子用戶數量達到上限",
+            "InvalidParameter.UserGroupFull": "子用戶加入的用戶組數量達到上限",
+            "ResourceNotFound.UserNotExist": "用戶不存在"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
@@ -540,16 +540,16 @@ export default {
           }
         } else {
           let ErrTips = {
-            "FailedOperation.PolicyFull": "用户策略数超过上限",
-            "InternalError.SystemError": "内部错误",
+            "FailedOperation.PolicyFull": "用戶策略數超過上限",
+            "InternalError.SystemError": "內部錯誤",
             "InvalidParameter.AttachmentFull":
-              "principal字段的授权对象关联策略数已达到上限",
-            "InvalidParameter.ParamError": "非法入参",
-            "InvalidParameter.PolicyIdError": "输入参数PolicyId不合法",
+              "principal欄位的授權對象關聯策略數已達到上限",
+            "InvalidParameter.ParamError": "非法入參",
+            "InvalidParameter.PolicyIdError": "輸入參數PolicyId不合法",
             "InvalidParameter.PolicyIdNotExist": "策略ID不存在",
-            "InvalidParameter.UserNotExist": "principal字段的授权对象不存在",
-            "ResourceNotFound.PolicyIdNotFound": "PolicyId指定的资源不存在",
-            "ResourceNotFound.UserNotExist": "用户不存在"
+            "InvalidParameter.UserNotExist": "principal欄位的授權對象不存在",
+            "ResourceNotFound.PolicyIdNotFound": "PolicyId指定的資源不存在",
+            "ResourceNotFound.UserNotExist": "用戶不存在"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
@@ -600,11 +600,11 @@ export default {
             }
           } else {
             let ErrTips = {
-              "InvalidParameter.ParamError": "非法入参",
+              "InvalidParameter.ParamError": "非法入參",
               "InvalidParameter.PasswordViolatedRules":
-                "密码不符合用户安全设置",
-              "InvalidParameter.SubUserFull": "子帐号数量达到上限",
-              "InvalidParameter.SubUserNameInUse": "子用户名称重复"
+                "密碼不符合用戶安全設置",
+              "InvalidParameter.SubUserFull": "子帳號數量達到上限",
+              "InvalidParameter.SubUserNameInUse": "子用戶名稱重複"
             };
             let ErrOr = Object.assign(ErrorTips, ErrTips);
             this.$message({
@@ -786,14 +786,14 @@ export default {
         if (this.phoneReg) {
           this.$message({
             showClose: true,
-            message: "请输入正确的手机号",
+            message: "請輸入正確的手機號",
             type: "error",
             duration: 0
           });
         } else if (this.emailReg) {
           this.$message({
             showClose: true,
-            message: "请输入正确的邮箱",
+            message: "請輸入正確的郵箱",
             type: "error",
             duration: 0
           });
@@ -802,14 +802,14 @@ export default {
             if (!this.ruleForm.Name) {
               this.$message({
                 showClose: true,
-                message: "用户名不能为空",
+                message: "用戶名不能為空",
                 type: "error",
                 duration: 0
               });
             } else if (this.ruleForm.type.length == 0) {
               this.$message({
                 showClose: true,
-                message: "编程访问和台富雲控制台访问至少需要选择一个",
+                message: "編程訪問和台富雲控制台訪問至少需要選擇一個",
                 type: "error",
                 duration: 0
               });
@@ -821,35 +821,35 @@ export default {
             if (!this.ruleForm.Name) {
               this.$message({
                 showClose: true,
-                message: "用户名不能为空",
+                message: "用戶名不能為空",
                 type: "error",
                 duration: 0
               });
             } else if (this.ruleForm.type.length == 0) {
               this.$message({
                 showClose: true,
-                message: "编程访问和台富雲控制台访问至少需要选择一个",
+                message: "編程訪問和台富雲控制台訪問至少需要選擇一個",
                 type: "error",
                 duration: 0
               });
             } else if (this.ruleForm.loginRadio === "") {
               this.$message({
                 showClose: true,
-                message: "请设置登录保护",
+                message: "請設置登入保護",
                 type: "error",
                 duration: 0
               });
             } else if (this.ruleForm.processRadio === "") {
               this.$message({
                 showClose: true,
-                message: "请设置操作保护",
+                message: "請設置操作保護",
                 type: "error",
                 duration: 0
               });
             } else if (this.pwdlenReg || this.pwdtypeReg || this.pwdreReg) {
               this.$message({
                 showClose: true,
-                message: "密码格式输入有误",
+                message: "密碼格式輸入有誤",
                 type: "error",
                 duration: 0
               });

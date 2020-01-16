@@ -183,7 +183,7 @@ export default {
           });
         } else {
           let ErrTips = {
-            "ResourceNotFound.UserNotExist": "用户不存在"
+            "ResourceNotFound.UserNotExist": "用戶不存在"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
@@ -219,10 +219,10 @@ export default {
           console.log(res);
         } else {
           let ErrTips = {
-            "InvalidParameter.GroupNotExist": "用户组不存在",
-            "InvalidParameter.GroupUserFull": "用户组中的子用户数量达到上限",
-            "InvalidParameter.UserGroupFull": "子用户加入的用户组数量达到上限",
-            "ResourceNotFound.UserNotExist": "用户不存在"
+            "InvalidParameter.GroupNotExist": "用戶組不存在",
+            "InvalidParameter.GroupUserFull": "用戶組中的子用戶數量達到上限",
+            "InvalidParameter.UserGroupFull": "子用戶加入的用戶組數量達到上限",
+            "ResourceNotFound.UserNotExist": "用戶不存在"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({

@@ -113,7 +113,16 @@ module.exports = {
             policyMesg: '权限信息',
             policyMS: '策略描述',
             choosepolicy: '选择策略',
-            searchUserName: '支持搜索用户名'
+            searchUserName: '支持搜索用户名',
+            cjly: '创建来源',
+            scyh: '删除用户',
+            qsrzqdsjh: '请输入正确的手机号',
+            qsrzqdyx: '请输入正确的邮箱',
+            sjhyw: '手机号输入有误',
+            yxsryw: '邮箱输入有误',
+            cdzf: '长度为8-32个字符',
+            bhzf: '包含数字，特殊字符，小写字母，大写字母',
+            mmbnyyhmxt: '密码不能与当前用户名相同',
         },
         userGroup: {
             title: '用户组',
@@ -158,7 +167,10 @@ module.exports = {
             choosepolicy: '选择策略',
             searchUserName: '支持搜索用户名',
             removeUser: '移除用户',
-            removeGrop: '移出该组'
+            removeGrop: '移出该组',
+            ge: '个',
+            xxdy: '消息订阅',
+            ckyhxq: '查看用户详情',
         },
         Role: {
             title: '角色',
