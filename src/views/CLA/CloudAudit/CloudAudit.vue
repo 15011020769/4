@@ -157,7 +157,7 @@ export default {
             onClick(picker) {
               const end = new Date();
               const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 6);
               picker.$emit("pick", [start, end]);
             }
           }
@@ -267,83 +267,76 @@ export default {
             showClose: true,
             duration: 0
           });
+          this.vloading = false;
         }
       });
     },
     //搜索
     seach() {
-      if (this.value !== "" && this.input3 !== "") {
-        if (
-          this.value == "ReadOnly" &&
-          this.input3 !== "true" &&
-          this.input3 !== "false"
-        ) {
-          this.$message({
-            message: "只读搜索内容为true或false",
-            type: "warning",
-            showClose: true,
-            duration: 0
-          });
-        } else {
-          this.vloading = true;
-          let startTime = null;
-          let endTime = null;
-          if (this.value1 != null) {
-            startTime = String(new Date(this.value1[0]).getTime() / 1000).split(
-              "."
-            )[0];
-            endTime = String(new Date(this.value1[1]).getTime() / 1000).split(
-              "."
-            )[0];
-            this.startTime = startTime;
-            this.endTime = endTime;
-          }
-          let params = {
-            Version: "2019-03-19",
-            Region: localStorage.getItem("regionv2"),
-            EndTime: this.nowtime,
-            MaxResults: this.MaxResults,
-            StartTime: this.oldTime
-          };
-          if (this.value1) {
-            params["EndTime"] = endTime;
-            params["StartTime"] = startTime;
-          }
-          params["LookupAttributes.0.AttributeKey"] = this.AttributeKey;
-          params["LookupAttributes.0.AttributeValue"] = this.input3;
-          this.axios.post(YJS_LIST, params).then(res => {
-            if (res.Response.Error === undefined) {
-              this.tableData = res.Response.Events;
-              this.loading = false;
-              this.vloading = false;
-            } else {
-              let ErrTips = {
-                "InternalError.SearchError": "內部錯誤，請聯繫開發人員",
-                "InvalidParameter.Time":
-                  "必須包含開始時間和結束時間，且必須為整形時間戳（精確到秒）",
-                "InvalidParameterValue.MaxResult":
-                  "單次檢索支持的最大返回條數是50",
-                "InvalidParameterValue.Time": "開始時間不能大於結束時間",
-                "InvalidParameterValue.attributeKey":
-                  "AttributeKey的有效取值範圍是:RequestId、EventName、ReadOnly、Username、ResourceType、ResourceName和AccessKeyId",
-                "LimitExceeded.OverTime": "檢索支持的有效時間範圍是7天"
-              };
-              let ErrOr = Object.assign(ErrorTips, ErrTips);
-              this.$message({
-                message: ErrOr[res.Response.Error.Code],
-                type: "error",
-                showClose: true,
-                duration: 0
-              });
-            }
-          });
-        }
-      } else {
+      if (
+        this.value == "ReadOnly" &&
+        this.input3 !== "true" &&
+        this.input3 !== "false"
+      ) {
         this.$message({
-          message: "请输入搜索条件",
+          message: "只读搜索内容为true或false",
           type: "warning",
           showClose: true,
           duration: 0
+        });
+      } else {
+        this.vloading = true;
+        let startTime = null;
+        let endTime = null;
+        if (this.value1 != null) {
+          startTime = String(new Date(this.value1[0]).getTime() / 1000).split(
+            "."
+          )[0];
+          endTime = String(new Date(this.value1[1]).getTime() / 1000).split(
+            "."
+          )[0];
+          this.startTime = startTime;
+          this.endTime = endTime;
+        }
+        let params = {
+          Version: "2019-03-19",
+          Region: localStorage.getItem("regionv2"),
+          EndTime: this.nowtime,
+          MaxResults: this.MaxResults,
+          StartTime: this.oldTime
+        };
+        if (this.value1) {
+          params["EndTime"] = endTime;
+          params["StartTime"] = startTime;
+        }
+        params["LookupAttributes.0.AttributeKey"] = this.AttributeKey;
+        params["LookupAttributes.0.AttributeValue"] = this.input3;
+        this.axios.post(YJS_LIST, params).then(res => {
+          if (res.Response.Error === undefined) {
+            this.tableData = res.Response.Events;
+            this.loading = false;
+            this.vloading = false;
+          } else {
+            let ErrTips = {
+              "InternalError.SearchError": "內部錯誤，請聯繫開發人員",
+              "InvalidParameter.Time":
+                "必須包含開始時間和結束時間，且必須為整形時間戳（精確到秒）",
+              "InvalidParameterValue.MaxResult":
+                "單次檢索支持的最大返回條數是50",
+              "InvalidParameterValue.Time": "開始時間不能大於結束時間",
+              "InvalidParameterValue.attributeKey":
+                "AttributeKey的有效取值範圍是:RequestId、EventName、ReadOnly、Username、ResourceType、ResourceName和AccessKeyId",
+              "LimitExceeded.OverTime": "檢索支持的有效時間範圍是7天"
+            };
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+            this.vloading = false;
+          }
         });
       }
     },

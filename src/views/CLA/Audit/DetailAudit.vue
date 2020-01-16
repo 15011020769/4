@@ -603,7 +603,10 @@ export default {
       });
     },
     bucket() {
-      this.axios.post(LIST_COSBUCKETS).then(res => {
+      const params = {
+        Region: localStorage.getItem("regionv2")
+      };
+      this.axios.post(LIST_COSBUCKETS, params).then(res => {
         var data = res.data.cosBucketsList;
         var arr = [];
         data.forEach((item, index) => {
