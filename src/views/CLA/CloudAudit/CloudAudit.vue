@@ -14,27 +14,27 @@
               <el-option v-for="(item,index) in this.options" :key="index" :label="item.Label" :value="item.Value">
               </el-option>
             </el-select>
-            <el-input :placeholder="placeholder" v-model="input3" class="inp" @input="_inpChange">
-            </el-input>
+            <el-input :placeholder="placeholder" v-model="input3" class="inp" @input="_inpChange"></el-input>
             <el-button icon="el-icon-search" @click="seach()"></el-button>
           </div>
           <div class="date">
             <el-date-picker v-model="value1" type="daterange" align="right" unlink-panels
               :range-separator="$t('CLA.total.z')" :start-placeholder="$t('CLA.total.ksrq')"
-              :end-placeholder="$t('CLA.total.jsrq')" :picker-options="pickerOptions" @change="seach()">
+              :end-placeholder="$t('CLA.total.jsrq')" :picker-options="pickerOptions" @change="seachpicker()">
             </el-date-picker>
           </div>
         </div>
 
         <div class="updates_download">
-          <div class="updates" @click="reload()">
-            <i class="el-icon-refresh"></i>
+          <div class="updates">
+            <i class="el-icon-refresh" @click="reload()"></i>
+            <i @click="exportExcel" class="el-icon-download" style="margin-left:5px;"></i>
           </div>
         </div>
       </div>
       <div class="tab-list">
         <el-table :data="tableData" style="width: 100%" v-if="isRouterAlive" v-loading="vloading"
-          :empty-text="$t('CLA.total.zwsj')">
+          :empty-text="$t('CLA.total.zwsj')" id="exportTable">
           <el-table-column type="expand" width="27">
             <template slot-scope="props">
               <el-form label-position="left" inline class="demo-table-expand">
@@ -115,7 +115,8 @@
     YJS_LIST,
     YJS_GETATTRIBUTEKEY
   } from "@/constants";
-  import VueCookie from "vue-cookie";
+  import XLSX from "xlsx";
+  import FileSaver from "file-saver";
   export default {
     data() {
       return {
@@ -134,12 +135,15 @@
         MaxResults1: 10,
         vloading: true,
         pickerOptions: {
+          disabledDate(time) {
+            return time.getTime() < Date.now() - 2505600000 || time.getTime() > Date.now()
+          },
           shortcuts: [{
             text: "最近一周",
             onClick(picker) {
               const end = new Date();
               const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 6);
               picker.$emit("pick", [start, end]);
             }
           }]
@@ -160,7 +164,7 @@
       this.axios
         .post(YJS_GETATTRIBUTEKEY, {
           Version: "2019-03-19",
-          Region: "ap-guangzhou"
+          Region: localStorage.getItem("regionv2")
         })
         .then(data => {
           if (data.Response.Error === undefined) {
@@ -180,9 +184,31 @@
         });
     },
     methods: {
+      //导出表格
+      exportExcel() {
+        /* generate workbook object from table */
+        var wb = XLSX.utils.table_to_book(document.querySelector("#exportTable"));
+        /* get binary string as output */
+        var wbout = XLSX.write(wb, {
+          bookType: "xlsx",
+          bookSST: true,
+          type: "array"
+        });
+        try {
+          FileSaver.saveAs(
+            new Blob([wbout], {
+              type: "application/octet-stream"
+            }),
+            "操作記錄.xlsx"
+          );
+        } catch (e) {
+          if (typeof console !== "undefined") console.log(e, wbout);
+        }
+        return wbout;
+      },
       _inpChange() {
         if (this.input3 === "") {
-          this.Loading()
+          this.Loading();
         }
       },
       _select(val) {
@@ -198,7 +224,7 @@
         this.vloading = true;
         const params = {
           Version: "2019-03-19",
-          Region: "ap-guangzhou",
+          Region: localStorage.getItem("regionv2"),
           EndTime: this.nowtime,
           StartTime: this.oldTime,
           MaxResults: this.MaxResults
@@ -224,79 +250,127 @@
               showClose: true,
               duration: 0
             });
+            this.vloading = false;
           }
         });
       },
       //搜索
       seach() {
-        if (this.value !== '' && this.input3 !== '') {
-          if (this.value == 'ReadOnly' && this.input3 !== 'true' && this.input3 !== 'false') {
-            this.$message({
-              message: "只读搜索内容为true或false",
-              type: "warning",
-              showClose: true,
-              duration: 0
-            });
-          } else {
-            this.vloading = true;
-            let startTime = null;
-            let endTime = null;
-            if (this.value1 != null) {
-              startTime = String(new Date(this.value1[0]).getTime() / 1000).split(
-                "."
-              )[0];
-              endTime = String(new Date(this.value1[1]).getTime() / 1000).split(
-                "."
-              )[0];
-              this.startTime = startTime;
-              this.endTime = endTime;
-            }
-            let params = {
-              Version: "2019-03-19",
-              Region: "ap-guangzhou",
-              EndTime: this.nowtime,
-              MaxResults: this.MaxResults,
-              StartTime: this.oldTime
-            };
-            if (this.value1) {
-              params["EndTime"] = endTime;
-              params["StartTime"] = startTime;
-            }
-            params["LookupAttributes.0.AttributeKey"] = this.AttributeKey;
-            params["LookupAttributes.0.AttributeValue"] = this.input3;
-            this.axios.post(YJS_LIST, params).then(res => {
-              if (res.Response.Error === undefined) {
-                this.tableData = res.Response.Events;
-                this.loading = false;
-                this.vloading = false;
-              } else {
-                let ErrTips = {
-                  "InternalError.SearchError": "內部錯誤，請聯繫開發人員",
-                  "InvalidParameter.Time": "必須包含開始時間和結束時間，且必須為整形時間戳（精確到秒）",
-                  "InvalidParameterValue.MaxResult": "單次檢索支持的最大返回條數是50",
-                  "InvalidParameterValue.Time": "開始時間不能大於結束時間",
-                  "InvalidParameterValue.attributeKey": "AttributeKey的有效取值範圍是:RequestId、EventName、ReadOnly、Username、ResourceType、ResourceName和AccessKeyId",
-                  "LimitExceeded.OverTime": "檢索支持的有效時間範圍是7天"
-                };
-                let ErrOr = Object.assign(ErrorTips, ErrTips);
-                this.$message({
-                  message: ErrOr[res.Response.Error.Code],
-                  type: "error",
-                  showClose: true,
-                  duration: 0
-                });
-              }
-            });
-          }
-
-        } else {
+        if (
+          this.value == "ReadOnly" &&
+          this.input3 !== "true" &&
+          this.input3 !== "false"
+        ) {
           this.$message({
-            message: "请输入搜索条件",
+            message: "只读搜索内容为true或false",
             type: "warning",
             showClose: true,
             duration: 0
           });
+        } else {
+          this.vloading = true;
+          let startTime = null;
+          let endTime = null;
+          if (this.value1 != null) {
+            startTime = String(new Date(this.value1[0]).getTime() / 1000).split(
+              "."
+            )[0];
+            endTime = String(new Date(this.value1[1]).getTime() / 1000).split(
+              "."
+            )[0];
+            this.startTime = startTime;
+            this.endTime = endTime;
+          }
+          let params = {
+            Version: "2019-03-19",
+            Region: localStorage.getItem("regionv2"),
+            EndTime: this.nowtime,
+            MaxResults: this.MaxResults,
+            StartTime: this.oldTime
+          };
+          if (this.value1) {
+            params["EndTime"] = endTime;
+            params["StartTime"] = startTime;
+          }
+          params["LookupAttributes.0.AttributeKey"] = this.AttributeKey;
+          params["LookupAttributes.0.AttributeValue"] = this.input3;
+          this.axios.post(YJS_LIST, params).then(res => {
+            if (res.Response.Error === undefined) {
+              this.tableData = res.Response.Events;
+              this.loading = false;
+              this.vloading = false;
+            } else {
+              let ErrTips = {
+                "InternalError.SearchError": "內部錯誤，請聯繫開發人員",
+                "InvalidParameter.Time": "必須包含開始時間和結束時間，且必須為整形時間戳（精確到秒）",
+                "InvalidParameterValue.MaxResult": "單次檢索支持的最大返回條數是50",
+                "InvalidParameterValue.Time": "開始時間不能大於結束時間",
+                "InvalidParameterValue.attributeKey": "AttributeKey的有效取值範圍是:RequestId、EventName、ReadOnly、Username、ResourceType、ResourceName和AccessKeyId",
+                "LimitExceeded.OverTime": "檢索支持的有效時間範圍是7天"
+              };
+              let ErrOr = Object.assign(ErrorTips, ErrTips);
+              this.$message({
+                message: ErrOr[res.Response.Error.Code],
+                type: "error",
+                showClose: true,
+                duration: 0
+              });
+              this.vloading = false;
+            }
+          });
         }
+      },
+      seachpicker() {
+        this.vloading = true;
+        let startTime = null;
+        let endTime = null;
+        if (this.value1 != null) {
+          startTime = String(new Date(this.value1[0]).getTime() / 1000).split(
+            "."
+          )[0];
+          endTime = String(new Date(this.value1[1]).getTime() / 1000).split(
+            "."
+          )[0];
+          this.startTime = startTime;
+          this.endTime = endTime;
+        }
+        let params = {
+          Version: "2019-03-19",
+          Region: localStorage.getItem("regionv2"),
+          EndTime: this.nowtime,
+          MaxResults: this.MaxResults,
+          StartTime: this.oldTime
+        };
+        if (this.value1) {
+          params["EndTime"] = endTime;
+          params["StartTime"] = startTime;
+        }
+        params["LookupAttributes.0.AttributeKey"] = this.AttributeKey;
+        params["LookupAttributes.0.AttributeValue"] = this.input3;
+        this.axios.post(YJS_LIST, params).then(res => {
+          if (res.Response.Error === undefined) {
+            this.tableData = res.Response.Events;
+            this.loading = false;
+            this.vloading = false;
+          } else {
+            let ErrTips = {
+              "InternalError.SearchError": "內部錯誤，請聯繫開發人員",
+              "InvalidParameter.Time": "必須包含開始時間和結束時間，且必須為整形時間戳（精確到秒）",
+              "InvalidParameterValue.MaxResult": "單次檢索支持的最大返回條數是50",
+              "InvalidParameterValue.Time": "開始時間不能大於結束時間",
+              "InvalidParameterValue.attributeKey": "AttributeKey的有效取值範圍是:RequestId、EventName、ReadOnly、Username、ResourceType、ResourceName和AccessKeyId",
+              "LimitExceeded.OverTime": "檢索支持的有效時間範圍是7天"
+            };
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+            this.vloading = false;
+          }
+        });
 
       },
       //加载更多
@@ -322,7 +396,7 @@
         this.isRouterAlive = false;
         this.$nextTick(() => {
           this.isRouterAlive = true;
-          this.seach();
+          this.Loading();
         });
       }
     }

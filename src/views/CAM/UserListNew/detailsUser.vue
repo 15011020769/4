@@ -459,7 +459,7 @@ export default {
             };
             let ErrOr = Object.assign(ErrorTips, ErrTips);
             this.$message({
-              message: ErrOr[res.Response.Error.Code],
+              message: ErrOr[data.Response.Error.Code],
               type: "error",
               showClose: true,
               duration: 0
@@ -583,40 +583,44 @@ export default {
                 (this.currpage - 1) * this.pagesize,
                 this.currpage * this.pagesize
               );
-
               this.groupNum = "组(" + res.Response.GroupInfo.length + ")";
-              this.groupData.forEach(item => {
-                item.policy = [];
-                const params = {
-                  Version: "2019-01-16",
-                  TargetGroupId: item.GroupId
-                };
-                this.axios.post(GROUP_POLICY, params).then(res => {
-                  if (res.Response.Error === undefined) {
-                    res.Response.List.forEach(val => {
-                      const obj = {
-                        PolicyName: val.PolicyName,
-                        PolicyId: val.PolicyId
+              if (this.groupData.length != 0) {
+                this.groupData.forEach(item => {
+                  item.policy = [];
+                  const params = {
+                    Version: "2019-01-16",
+                    TargetGroupId: item.GroupId
+                  };
+                  this.axios.post(GROUP_POLICY, params).then(res => {
+                    if (res.Response.Error === undefined) {
+                      res.Response.List.forEach(val => {
+                        const obj = {
+                          PolicyName: val.PolicyName,
+                          PolicyId: val.PolicyId
+                        };
+                        item.policy.push(obj);
+                        this.loading = false;
+                      });
+                    } else {
+                      let ErrTips = {
+                        "InternalError.SystemError": "内部错误",
+                        "InvalidParameter.ParamError": "非法入参"
                       };
-                      item.policy.push(obj);
-                    });
-                  } else {
-                    let ErrTips = {
-                      "InternalError.SystemError": "内部错误",
-                      "InvalidParameter.ParamError": "非法入参"
-                    };
-                    let ErrOr = Object.assign(ErrorTips, ErrTips);
-                    this.$message({
-                      message: ErrOr[res.Response.Error.Code],
-                      type: "error",
-                      showClose: true,
-                      duration: 0
-                    });
-                  }
-
+                      let ErrOr = Object.assign(ErrorTips, ErrTips);
+                      this.$message({
+                        message: ErrOr[res.Response.Error.Code],
+                        type: "error",
+                        showClose: true,
+                        duration: 0
+                      });
+                      this.loading = false;
+                    }
+                  });
                   this.loading = false;
                 });
-              });
+              } else {
+                this.loading = false;
+              }
             } else {
               let ErrTips = {
                 "ResourceNotFound.UserNotExist": "用户不存在"
@@ -628,6 +632,7 @@ export default {
                 showClose: true,
                 duration: 0
               });
+              this.loading = false;
             }
           });
         } else {
@@ -639,6 +644,7 @@ export default {
             showClose: true,
             duration: 0
           });
+          this.loading = false;
         }
       });
     },
@@ -684,7 +690,7 @@ export default {
               };
               let ErrOr = Object.assign(ErrorTips, ErrTips);
               this.$message({
-                message: ErrOr[res.Response.Error.Code],
+                message: ErrOr[data.Response.Error.Code],
                 type: "error",
                 showClose: true,
                 duration: 0
@@ -724,7 +730,7 @@ export default {
             };
             let ErrOr = Object.assign(ErrorTips, ErrTips);
             this.$message({
-              message: ErrOr[res.Response.Error.Code],
+              message: ErrOr[data.Response.Error.Code],
               type: "error",
               showClose: true,
               duration: 0
@@ -774,7 +780,6 @@ export default {
       };
       this.axios.post(DEL_USERTOGROUP, params).then(data => {
         if (data.Response.Error === undefined) {
-          this.groupListData();
           this.$message({
             showClose: true,
             message: "移出成功",
@@ -782,15 +787,17 @@ export default {
             duration: 0,
             showClose: true
           });
+          this.groupListData();
         } else {
           let ErrTips = {};
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
-            message: "移除失败" + ErrOr[res.Response.Error.Code],
+            message: "移除失败" + ErrOr[data.Response.Error.Code],
             type: "error",
             showClose: true,
             duration: 0
           });
+          this.groupListData();
         }
       });
     },

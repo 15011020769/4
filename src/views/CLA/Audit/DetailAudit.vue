@@ -123,7 +123,7 @@
               <el-select
                 v-model="BucketSelect.name"
                 v-show="cosShow"
-                class="BucketSelect"
+                class="BucketSelect red"
                 @change="_BucketSelect"
               >
                 <el-option
@@ -335,7 +335,7 @@ export default {
         index: 0
       },
       //cos是否显示
-      cosShow: false,
+      cosShow: true,
       //高级设置是否显示
       setShow: true,
       //高级设置下一部分是否显示
@@ -369,7 +369,7 @@ export default {
       if (this.value) {
         const params = {
           AuditName: this.title,
-          Region: "ap-guangzhou",
+          Region: localStorage.getItem("regionv2"),
           Version: "2019-03-19"
         };
         this.axios.post(GZJ_STRATLOGGING, params).then(res => {
@@ -399,7 +399,7 @@ export default {
       else {
         const params = {
           AuditName: this.title,
-          Region: "ap-guangzhou",
+          Region: localStorage.getItem("regionv2"),
           Version: "2019-03-19"
         };
         this.axios.post(GZJ_STOPLOGGING, params).then(res => {
@@ -435,7 +435,7 @@ export default {
       let params = {
         AuditName: this.title,
         Version: "2019-03-19",
-        Region: "ap-guangzhou"
+        Region: localStorage.getItem("regionv2")
       };
       this.axios.post(GZJ_DELETE, params).then(res => {
         if (res.Response.Error === undefined) {
@@ -482,10 +482,12 @@ export default {
         if (valid) {
           const params = {
             Version: "2019-03-19",
-            Region: "ap-guangzhou",
+            Region: localStorage.getItem("regionv2"),
             AuditName: this.title,
             IsCreateNewBucket: this.detailData.IsCreateNewBucket,
-            // CosRegion: this.detailData.CosRegion,
+            CosRegion: this.select.options[this.select.index].name
+              ? this.select.options[this.select.index].name
+              : this.detailData.CosRegion,
             CosBucketName: this.detailData.CosBucketName,
             IsEnableCmqNotify: this.detailData.IsEnableCmqNotify,
             LogFilePrefix: this.detailData.LogFilePrefix
@@ -502,39 +504,52 @@ export default {
             delete params.CmqRegion;
             delete params.IsCreateNewQueue;
           }
-          this.axios.post(GZJ_UPDATEAUDIT, params).then(res => {
-            if (res.Response.Error === undefined) {
+          if (this.cosShow) {
+            if (
+              this.detailData.CosBucketName == "" ||
+              this.BucketSelect.options.length == 0
+            ) {
               this.$message({
-                message: "更新成功",
-                type: "success"
-              });
-              this.inpShow1 = false;
-              this.detailList();
-            } else {
-              let ErrTips = {
-                "InternalError.CmqError":
-                  "創建cmq時發生異常，可能您準備創建的cmq隊列已經存在，也有可能您沒有許可權或者欠費",
-                "InternalError.UpdateAuditError": "內部錯誤，請聯繫開發人員",
-                "InvalidParameterValue.CmqRegionError":
-                  "雲審計目前不支持輸入的cmq地域",
-                "InvalidParameterValue.CosRegionError":
-                  "雲審計目前不支持輸入的cos地域",
-                "InvalidParameterValue.ReadWriteAttributeError":
-                  "讀寫屬性值僅支持：1,2,3。1代表只讀，2代表只寫，3代表全部",
-                "MissingParameter.cmq":
-                  "IsEnableCmqNotify輸入1的話，IsCreateNewQueue、CmqQueueName和CmqRegion都是必須參數",
-                "ResourceNotFound.AuditNotExist": "跟蹤集不存在"
-              };
-              let ErrOr = Object.assign(ErrorTips, ErrTips);
-              this.$message({
-                message: ErrOr[res.Response.Error.Code],
-                type: "error",
                 showClose: true,
-                duration: 0
+                message: "COS 儲存桶名称不能为空",
+                type: "warning"
               });
             }
-            this.btnLoad = false;
-          });
+          } else {
+            this.axios.post(GZJ_UPDATEAUDIT, params).then(res => {
+              if (res.Response.Error === undefined) {
+                this.$message({
+                  message: "更新成功",
+                  type: "success"
+                });
+                this.inpShow1 = false;
+                this.detailList();
+              } else {
+                let ErrTips = {
+                  "InternalError.CmqError":
+                    "創建cmq時發生異常，可能您準備創建的cmq隊列已經存在，也有可能您沒有許可權或者欠費",
+                  "InternalError.UpdateAuditError": "內部錯誤，請聯繫開發人員",
+                  "InvalidParameterValue.CmqRegionError":
+                    "雲審計目前不支持輸入的cmq地域",
+                  "InvalidParameterValue.CosRegionError":
+                    "雲審計目前不支持輸入的cos地域",
+                  "InvalidParameterValue.ReadWriteAttributeError":
+                    "讀寫屬性值僅支持：1,2,3。1代表只讀，2代表只寫，3代表全部",
+                  "MissingParameter.cmq":
+                    "IsEnableCmqNotify輸入1的話，IsCreateNewQueue、CmqQueueName和CmqRegion都是必須參數",
+                  "ResourceNotFound.AuditNotExist": "跟蹤集不存在"
+                };
+                let ErrOr = Object.assign(ErrorTips, ErrTips);
+                this.$message({
+                  message: ErrOr[res.Response.Error.Code],
+                  type: "error",
+                  showClose: true,
+                  duration: 0
+                });
+              }
+              this.btnLoad = false;
+            });
+          }
         } else {
           return false;
           this.btnLoad = false;
@@ -559,6 +574,7 @@ export default {
     //地域下拉框发生变化
     _select() {
       this.select.index = this.select.options[this.select.name].value;
+      this.bucket();
     },
     //Bucket下拉框发生变化
     _BucketSelect() {
@@ -570,7 +586,7 @@ export default {
       //	cmq地域
       const params = {
         Version: "2019-03-19",
-        Region: "ap-guangzhou"
+        Region: localStorage.getItem("regionv2")
       };
       this.axios.post(GZJ_REGION, params).then(res => {
         if (res.Response.Error === undefined) {
@@ -601,19 +617,35 @@ export default {
       });
     },
     bucket() {
-      this.axios.post(LIST_COSBUCKETS).then(res => {
+      const params = {
+        Region: localStorage.getItem("regionv2")
+      };
+      this.axios.post(LIST_COSBUCKETS, params).then(res => {
         var data = res.data.cosBucketsList;
         var arr = [];
         data.forEach((item, index) => {
-          const obj = {
-            label: item.name,
-            value: index,
-            name: item.region,
-            id: item.appId
-          };
-          arr.push(obj);
+          if (item.region == this.select.options[this.select.index].name) {
+            const obj = {
+              label: item.name,
+              value: index,
+              name: item.region,
+              id: item.appId
+            };
+            arr.push(obj);
+          }
         });
+        if (arr.length == 0) {
+          this.BucketSelect.name = "";
+        } else {
+          arr.forEach(item => {
+            if (item.name == this.detailData.CosBucketName) {
+              this.BucketSelect.name = item.name;
+            }
+          });
+        }
         this.BucketSelect.options = arr;
+        //解决 数据更新页面不更新
+        this.BucketSelect = JSON.parse(JSON.stringify(this.BucketSelect));
       });
     },
     //cos信息
@@ -621,7 +653,7 @@ export default {
       //	cos地域
       const params = {
         Version: "2019-03-19",
-        Region: "ap-guangzhou"
+        Region: localStorage.getItem("regionv2")
       };
       this.axios.post(GZJ_COS, params).then(res => {
         if (res.Response.Error === undefined) {
@@ -637,6 +669,7 @@ export default {
           });
           this.select.options = arr;
           this.select.name = arr[0].label;
+          this.bucket();
         } else {
           let ErrTips = {
             "InternalError.ListCosEnableRegionError": "內部錯誤，請聯繫開發人員"
@@ -655,7 +688,7 @@ export default {
     detailList() {
       const params = {
         Version: "2019-03-19",
-        Region: "ap-guangzhou",
+        Region: localStorage.getItem("regionv2"),
         AuditName: this.title
       };
       this.axios.post(GZJ_DETAILIST, params).then(res => {
@@ -668,6 +701,7 @@ export default {
           this.boxloading = false;
           this.select.name = this.regionType[this.detailData.CosRegion];
           this.cmqSelect.name = this.regionType1[this.detailData.CmqRegion];
+          this.BucketSelect.name = this.detailData.CosBucketName;
         } else {
           let ErrTips = {
             "InternalError.DescribeAuditError":
@@ -690,6 +724,7 @@ export default {
     },
     _edit1() {
       this.inpShow1 = !this.inpShow1;
+      this.cosShow = true;
     },
     //取消
     _cancel() {
@@ -720,7 +755,7 @@ export default {
       this.btnLoad1 = true;
       const params = {
         Version: "2019-03-19",
-        Region: "ap-guangzhou",
+        Region: localStorage.getItem("regionv2"),
         AuditName: this.title,
         ReadWriteAttribute: this.detailData.ReadWriteAttribute
       };
@@ -761,14 +796,13 @@ export default {
   },
   created() {
     this.title = this.$route.query.AuditName;
-    if(this.$route.query.AuditStatus==1){
-      this.value=true
-    }else{
-       this.value=false
+    if (this.$route.query.AuditStatus == 1) {
+      this.value = true;
+    } else {
+      this.value = false;
     }
     //跟踪集详情
     this.detailList();
-    this.bucket();
     this.cos();
     this.cmq();
   },

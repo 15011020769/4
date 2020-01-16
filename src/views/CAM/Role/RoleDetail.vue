@@ -3,10 +3,10 @@
     <HeadCom :title="roleInfo.RoleName" :backShow="true" @_back="_back" />
     <div class="container">
       <div class="baseInfo" v-loading="infoLoad">
-        <p class="baseInfo_title">角色信息</p>
+        <p class="baseInfo_title">{{$t('CAM.Role.jsxx')}}</p>
         <div class="baseInfo_flex">
           <p>
-            <span class="spns">角色名称</span>
+            <span class="spns">{{$t('CAM.Role.roleName')}}</span>
             <span>{{roleInfo.RoleName}}</span>
           </p>
           <p>
@@ -129,7 +129,7 @@
               <div class="Right-style pagstyle">
                 <span
                   style="font-size:12px;color:#888;margin-right:20px;"
-                >{{$t('CAM.userList.choose')}} {{selTotalNum}} 项</span>
+                >{{$t('CAM.userList.choose')}} {{selTotalNum}} {{$t('CAM.Role.item')}}</span>
                 <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;{{$t("CAM.strip")}}</span>
                 <el-pagination
                   :page-size="pagesize"
@@ -176,7 +176,7 @@
                       >解除</el-button>
                       <el-button
                         v-if="roleCarrier.length > 1"
-                        @click.native.prevent="updateRolePolicy(scope.$index, roleCarrier)"
+                        @click.native.prevent="delRolePolicy(scope.$index, roleCarrier)"
                         type="text"
                         size="small"
                       >解除</el-button>
@@ -186,7 +186,7 @@
                 <div class="Right-style pagstyle" v-show="activeName == 'first'">
                   <span
                     style="font-size:12px;color:#888;margin-right:20px;"
-                  >{{$t('CAM.userList.choose')}} {{selTotalNum}} 项，共 {{TotalNum}} 项</span>
+                  >{{$t('CAM.userList.choose')}} {{selTotalNum}} {{$t('CAM.Role.item')}}，共 {{TotalNum}} {{$t('CAM.Role.item')}}</span>
                   <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;{{$t("CAM.strip")}}</span>
                   <el-pagination
                     :page-size="pagesize"
@@ -340,15 +340,15 @@ export default {
       transfer_data: [
         {
           value: 1,
-          desc: "备选项1"
+          desc: "備選項1"
         },
         {
           value: 2,
-          desc: "备选项2"
+          desc: "備選項2"
         },
         {
           value: 3,
-          desc: "备选项3"
+          desc: "備選項3"
         }
       ],
       display: true,
@@ -367,15 +367,15 @@ export default {
         },
         {
           value: "User",
-          label: "自定义策略"
+          label: "自定義策略"
         },
         {
           value: "QCS",
-          label: "预设策略"
+          label: "預設策略"
         }
       ],
       displayPolicies: true,
-      tableTitle: "策略类型",
+      tableTitle: "策略類型",
       rolePolicies: [],
       roleSelPolicies: [],
       pagePolicies: 1,
@@ -454,8 +454,8 @@ export default {
             this.loading = false;
           } else {
             let ErrTips = {
-              "InternalError.SystemError": "内部错误",
-              "InvalidParameter.ParamError": "非法入参",
+              "InternalError.SystemError": "內部錯誤",
+              "InvalidParameter.ParamError": "非法入參",
               "InvalidParameter.RoleNotExist": "角色不存在"
             };
             let ErrOr = Object.assign(ErrorTips, ErrTips);
@@ -491,17 +491,19 @@ export default {
             this.TotalNum = res.Response.TotalNum;
             this.TotalCount = res.Response.TotalNum;
           } else {
-            let ErrTips = {
-              "InternalError.SystemError": "内部错误",
-              "InvalidParameter.ParamError": "非法入参"
-            };
-            let ErrOr = Object.assign(ErrorTips, ErrTips);
-            this.$message({
-              message: ErrOr[res.Response.Error.Code],
-              type: "error",
-              showClose: true,
-              duration: 0
-            });
+            if (!res.Response.Error.code == "InvalidParameter.RoleNotExist") {
+              let ErrTips = {
+                "InternalError.SystemError": "內部錯誤",
+                "InvalidParameter.ParamError": "非法入參"
+              };
+              let ErrOr = Object.assign(ErrorTips, ErrTips);
+              this.$message({
+                message: ErrOr[res.Response.Error.Code],
+                type: "error",
+                showClose: true,
+                duration: 0
+              });
+            }
           }
           this.loading = false;
         })
@@ -509,12 +511,18 @@ export default {
     },
     // 解除角色策略
     relieveRolePolicy(scope) {
-      let paramsDel = {
-        Version: "2019-01-16",
-        PolicyId: scope.PolicyId,
-        DetachRoleId: this.roleId
-      };
-      this.relievePolicy(paramsDel);
+      this.$confirm("此操作將永久刪除, 是否繼續?", "提示", {
+        confirmButtonText: "確定",
+        cancelButtonText: "取消",
+        type: "warning"
+      }).then(() => {
+        let paramsDel = {
+          Version: "2019-01-16",
+          PolicyId: scope.PolicyId,
+          DetachRoleId: this.roleId
+        };
+        this.relievePolicy(paramsDel);
+      });
     },
     // 解除角色绑定的策略
     relievePolicy(paramsRelieve) {
@@ -524,17 +532,17 @@ export default {
           if (res.Response.Error === undefined) {
             if (res.Response.RequestId) {
               this.$message({
-                message: "解绑成功",
+                message: "解綁成功",
                 type: "success",
-                duration: 0,
-                showClose: true
+                duration: 0,
+                showClose: true
               });
             }
             this.getRolePolicy(); // 重新加载
           } else {
             let ErrTips = {
-              "InternalError.SystemError": "内部错误",
-              "InvalidParameter.ParamError": "非法入参",
+              "InternalError.SystemError": "內部錯誤",
+              "InvalidParameter.ParamError": "非法入參",
               "InvalidParameter.PolicyIdNotExist": "策略ID不存在",
               "InvalidParameter.RoleNotExist": "角色不存在"
             };
@@ -563,10 +571,10 @@ export default {
     relieveRolePolicies() {
       if (this.roleSelPolicies.length > 3) {
         this.$message({
-            type: "success",
-            message: "每次最多可以选中3条",
-            duration: 0,
-            showClose: true
+          type: "success",
+          message: "每次最多可以選中3條",
+          duration: 0,
+          showClose: true
         });
       } else {
         let arrs = this.roleSelPolicies;
@@ -591,10 +599,10 @@ export default {
             this.getRoleDetail(); //重新加载
           } else {
             let ErrTips = {
-              "InternalError.SystemError": "内部错误",
+              "InternalError.SystemError": "內部錯誤",
               "InvalidParameter.DescriptionLengthOverlimit":
-                "Description入参长度不能大于300字节",
-              "InvalidParameter.ParamError": "非法入参",
+                "Description入參長度不能大於300位元組",
+              "InvalidParameter.ParamError": "非法入參",
               "InvalidParameter.RoleNotExist": "角色不存在"
             };
             let ErrOr = Object.assign(ErrorTips, ErrTips);
@@ -607,6 +615,15 @@ export default {
           }
         })
         .catch(error => {});
+    },
+    delRolePolicy(index, rows) {
+      this.$confirm("此操作將永久刪除, 是否繼續?", "提示", {
+        confirmButtonText: "確定",
+        cancelButtonText: "取消",
+        type: "warning"
+      }).then(() => {
+        this.updateRolePolicy(index, rows);
+      });
     },
     // 修改角色信任策略
     updateRolePolicy(index, rows) {
@@ -629,16 +646,16 @@ export default {
             this.getRoleDetail(); //重新加载
           } else {
             let ErrTips = {
-              "InternalError.SystemError": "内部错误",
+              "InternalError.SystemError": "內部錯誤",
               "InvalidParameter.AttachmentFull":
-                "principal字段的授权对象关联策略数已达到上限",
+                "principal欄位的授權對象關聯策略數已達到上限",
               "InvalidParameter.ConditionError":
-                "策略文档的condition字段不合法",
-              "InvalidParameter.ParamError": "非法入参",
+                "策略文檔的condition欄位不合法",
+              "InvalidParameter.ParamError": "非法入參",
               "InvalidParameter.PrincipalError":
-                "策略文档的principal字段不合法",
+                "策略文檔的principal欄位不合法",
               "InvalidParameter.RoleNotExist": "角色不存在",
-              "InvalidParameter.UserNotExist": "principal字段的授权对象不存在"
+              "InvalidParameter.UserNotExist": "principal欄位的授權對象不存在"
             };
             let ErrOr = Object.assign(ErrorTips, ErrTips);
             this.$message({
@@ -665,25 +682,25 @@ export default {
         if (res.Response.Error === undefined) {
           if (res.Response.Error) {
             this.$message({
-              message: "关联失败",
+              message: "關聯失敗",
               type: "error",
-              duration: 0,
-              showClose: true
+              duration: 0,
+              showClose: true
             });
           } else {
             this.$message({
-              message: "关联成功",
+              message: "關聯成功",
               type: "success",
-              duration: 0,
-              showClose: true
+              duration: 0,
+              showClose: true
             });
           }
         } else {
           let ErrTips = {
-            "InternalError.SystemError": "内部错误",
+            "InternalError.SystemError": "內部錯誤",
             "InvalidParameter.AttachmentFull":
-              "principal字段的授权对象关联策略数已达到上限",
-            "InvalidParameter.ParamError": "非法入参",
+              "principal欄位的授權對象關聯策略數已達到上限",
+            "InvalidParameter.ParamError": "非法入參",
             "InvalidParameter.PolicyIdNotExist": "策略ID不存在",
             "InvalidParameter.RoleNotExist": "角色不存在"
           };
@@ -701,18 +718,18 @@ export default {
     attachRolePolicies() {
       if (this.multipleSelection.length > 3) {
         this.$message({
-            message: "每次最多可以选中三条",
-            type: "error",
-            showClose: true,
-            duration: 0
-          });
+          message: "每次最多可以選中三條",
+          type: "error",
+          showClose: true,
+          duration: 0
+        });
       } else if (this.multipleSelection.length == 0) {
         this.$message({
-            message: "请选中要关联的数据",
-            type: "error",
-            showClose: true,
-            duration: 0
-          });
+          message: "請選中要關聯的數據",
+          type: "error",
+          showClose: true,
+          duration: 0
+        });
       } else {
         var _this = this;
         new Promise(function() {
@@ -785,37 +802,37 @@ export default {
           } else {
             let ErrTips = {
               "FailedOperation.PolicyNameInUse":
-                "PolicyName字段指定的策略名已存在",
-              "InternalError.SystemError": "内部错误",
-              "InvalidParameter.ActionError": "策略文档的Action字段不合法",
+                "PolicyName欄位指定的策略名已存在",
+              "InternalError.SystemError": "內部錯誤",
+              "InvalidParameter.ActionError": "策略文檔的Action欄位不合法",
               "InvalidParameter.AttachmentFull":
-                "principal字段的授权对象关联策略数已达到上限",
+                "principal欄位的授權對象關聯策略數已達到上限",
               "InvalidParameter.ConditionError":
-                "策略文档的condition字段不合法",
+                "策略文檔的condition欄位不合法",
               "InvalidParameter.DescriptionLengthOverlimit":
-                "Description入参长度不能大于300字节",
-              "InvalidParameter.EffectError": "策略文档的Effect字段不合法",
+                "Description入參長度不能大於300位元組",
+              "InvalidParameter.EffectError": "策略文檔的Effect欄位不合法",
               "InvalidParameter.NotSupportProduct":
-                "CAM不支持策略文档中所指定的资源类型",
-              "InvalidParameter.ParamError": "非法入参",
+                "CAM不支持策略文檔中所指定的資源類型",
+              "InvalidParameter.ParamError": "非法入參",
               "InvalidParameter.PolicyDocumentError":
-                "PolicyDocument字段不合法",
+                "PolicyDocument欄位不合法",
               "InvalidParameter.PolicyDocumentLengthOverLimit":
-                "PolicyDocument字段超过长度限制",
-              "InvalidParameter.PolicyIdError": "输入参数PolicyId不合法",
+                "PolicyDocument欄位超過長度限制",
+              "InvalidParameter.PolicyIdError": "輸入參數PolicyId不合法",
               "InvalidParameter.PolicyIdNotExist": "策略ID不存在",
-              "InvalidParameter.PolicyNameError": "PolicyName字段不合法",
+              "InvalidParameter.PolicyNameError": "PolicyName欄位不合法",
               "InvalidParameter.PrincipalError":
-                "策略文档的principal字段不合法",
-              "InvalidParameter.ResourceError": "策略文档的Resource字段不合法",
+                "策略文檔的principal欄位不合法",
+              "InvalidParameter.ResourceError": "策略文檔的Resource欄位不合法",
               "InvalidParameter.StatementError":
-                "策略文档的Statement字段不合法",
-              "InvalidParameter.UserNotExist": "principal字段的授权对象不存在",
-              "InvalidParameter.VersionError": "策略文档的Version字段不合法",
-              "ResourceNotFound.GroupNotExist": "用户组不存在",
-              "ResourceNotFound.NotFound": "资源不存在",
-              "ResourceNotFound.PolicyIdNotFound": "PolicyId指定的资源不存在",
-              "ResourceNotFound.UserNotExist": "用户不存在"
+                "策略文檔的Statement欄位不合法",
+              "InvalidParameter.UserNotExist": "principal欄位的授權對象不存在",
+              "InvalidParameter.VersionError": "策略文檔的Version欄位不合法",
+              "ResourceNotFound.GroupNotExist": "用戶組不存在",
+              "ResourceNotFound.NotFound": "資源不存在",
+              "ResourceNotFound.PolicyIdNotFound": "PolicyId指定的資源不存在",
+              "ResourceNotFound.UserNotExist": "用戶不存在"
             };
             let ErrOr = Object.assign(ErrorTips, ErrTips);
             this.$message({

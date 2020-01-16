@@ -15,6 +15,7 @@
         :data="tableData.slice((currpage - 1) * pagesize, currpage * pagesize)"
         tooltip-effect="dark"
         style="width: 100%;"
+        :empty-text="$t('CAM.strategy.zwsj')"
       >
         <el-table-column prop="name" :label="$t('CAM.strategy.peopleName')" show-overflow-tooltip></el-table-column>
         <el-table-column
@@ -96,7 +97,7 @@ export default {
             let ErrTips = {};
             let ErrOr = Object.assign(ErrorTips, ErrTips);
             this.$message({
-              message: ErrOr[res.Response.Error.Code],
+              message: ErrOr[data.Response.Error.Code],
               type: "error",
               showClose: true,
               duration: 0

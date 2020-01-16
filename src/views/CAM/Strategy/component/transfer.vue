@@ -21,6 +21,7 @@
           tooltip-effect="dark"
           style="width: 100%"
           @selection-change="handleSelectionChange"
+          :empty-text="$t('CAM.strategy.zwsj')"
         >
           <el-table-column type="selection" prop="id" :selectable="checkboxT"></el-table-column>
           <el-table-column prop="name" :label="$t('CAM.userGroup.user')" show-overflow-tooltip></el-table-column>
@@ -62,6 +63,7 @@
           size="small"
           height="220px"
           style="width: 100%"
+          :empty-text="$t('CAM.strategy.zwsj')"
         >
           <el-table-column
             prop="name"
@@ -118,18 +120,18 @@ export default {
       rp: 20,
       page: 1,
       json: [],
-      tableTitle: "切换成用户组",
+      tableTitle: "切換成用戶組",
       handoverFlag: false,
       transferArrayFlag: false,
       transferArrayTemp: [],
       table_options2: [
         {
           value: "user",
-          label: "用户"
+          label: "用戶"
         },
         {
           value: "group",
-          label: "用户组"
+          label: "用戶組"
         }
       ]
     };
@@ -137,6 +139,14 @@ export default {
   created() {
     //系统默认加载用户list
     this.getUserList();
+  },
+  watch: {
+    groupArr(val) {
+      this.getGroupList();
+    },
+    userArr(val) {
+      this.getUserList();
+    }
   },
   methods: {
     checkboxT(row, index) {
@@ -153,7 +163,7 @@ export default {
       _this.transfer_data = [];
       _this.commandObj = {
         value: "user",
-        label: "用户"
+        label: "用戶"
       };
       let paramsUser = {
         Version: "2019-01-16"
@@ -364,7 +374,7 @@ export default {
       if (this.transfer_data_right.length == 0) {
         this.$message({
           showClose: true,
-          message: "请选中数据",
+          message: "請選中數據",
           duration: 0
         });
       }
@@ -402,24 +412,24 @@ export default {
       this.axios.post(ATTACH_GROUP, params).then(res => {
         if (res.Response.Error === undefined) {
           this.$message({
-            message: "关联成功",
+            message: "關聯成功",
             type: "success",
             duration: 0,
             showClose: true
           });
         } else {
           let ErrTips = {
-            "FailedOperation.PolicyFull": "用户策略数超过上限",
-            "InternalError.SystemError": "内部错误",
+            "FailedOperation.PolicyFull": "用戶策略數超過上限",
+            "InternalError.SystemError": "內部錯誤",
             "InvalidParameter.AttachmentFull":
-              "principal字段的授权对象关联策略数已达到上限",
-            "InvalidParameter.ParamError": "非法入参",
-            "InvalidParameter.PolicyIdError": "输入参数PolicyId不合法",
+              "principal欄位的授權對象關聯策略數已達到上限",
+            "InvalidParameter.ParamError": "非法入參",
+            "InvalidParameter.PolicyIdError": "輸入參數PolicyId不合法",
             "InvalidParameter.PolicyIdNotExist": "策略ID不存在",
-            "InvalidParameter.UserNotExist": "principal字段的授权对象不存在",
-            "ResourceNotFound.GroupNotExist": "用户组不存在",
-            "ResourceNotFound.PolicyIdNotFound": "PolicyId指定的资源不存在",
-            "ResourceNotFound.UserNotExist": "用户不存在"
+            "InvalidParameter.UserNotExist": "principal欄位的授權對象不存在",
+            "ResourceNotFound.GroupNotExist": "用戶組不存在",
+            "ResourceNotFound.PolicyIdNotFound": "PolicyId指定的資源不存在",
+            "ResourceNotFound.UserNotExist": "用戶不存在"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
@@ -436,23 +446,23 @@ export default {
       this.axios.post(POLICY_USER, params).then(res => {
         if (res.Response.Error === undefined) {
           this.$message({
-            message: "关联成功",
+            message: "關聯成功",
             type: "success",
             duration: 0,
             showClose: true
           });
         } else {
           let ErrTips = {
-            "FailedOperation.PolicyFull": "用户策略数超过上限",
-            "InternalError.SystemError": "内部错误",
+            "FailedOperation.PolicyFull": "用戶策略數超過上限",
+            "InternalError.SystemError": "內部錯誤",
             "InvalidParameter.AttachmentFull":
-              "principal字段的授权对象关联策略数已达到上限",
-            "InvalidParameter.ParamError": "非法入参",
-            "InvalidParameter.PolicyIdError": "输入参数PolicyId不合法",
+              "principal欄位的授權對象關聯策略數已達到上限",
+            "InvalidParameter.ParamError": "非法入參",
+            "InvalidParameter.PolicyIdError": "輸入參數PolicyId不合法",
             "InvalidParameter.PolicyIdNotExist": "策略ID不存在",
-            "InvalidParameter.UserNotExist": "principal字段的授权对象不存在",
-            "ResourceNotFound.PolicyIdNotFound": "PolicyId指定的资源不存在",
-            "ResourceNotFound.UserNotExist": "用户不存在"
+            "InvalidParameter.UserNotExist": "principal欄位的授權對象不存在",
+            "ResourceNotFound.PolicyIdNotFound": "PolicyId指定的資源不存在",
+            "ResourceNotFound.UserNotExist": "用戶不存在"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({

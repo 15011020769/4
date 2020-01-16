@@ -7,7 +7,7 @@
         <p>{{$t('CAM.Role.roleTitle2')}}</p>
       </div>
       <div class="opration">
-          <el-button type="primary" size="small" @click="created_user">{{$t('CAM.Role.addBtn')}}</el-button>  </p>
+          <el-button type="primary" size="small" @click="created_user">{{$t('CAM.Role.addBtn')}}</el-button> 
       </div>
       <div class="container_table">
         <div class="table">
@@ -83,18 +83,18 @@
         <h3 slot="title">{{$t('CAM.Role.selectCarrier')}}</h3>
         <div class="createItem" @click="toServe">
           <i class="strategy-icon ps"></i>
-          <h3 style="color:#333;font-weight:400">台富云产品服务</h3>
+          <h3 style="color:#333;font-weight:400">{{$t('CAM.Role.tencentProductService')}}</h3>
           <p>{{$t('CAM.Role.tencentProductServiceTitle')}}</p>
         </div>
         <div class="createItem" @click="toAccount">
           <i class="strategy-icon ca"></i>
-          <h3 style="color:#333;font-weight:400">台富云账户</h3>
+          <h3 style="color:#333;font-weight:400">{{$t('CAM.Role.tencentCard')}}</h3>
           <p>{{$t('CAM.Role.tencentCardTitle')}}</p>
         </div>
         <div class="createItem" @click="toProvider">
           <i class="strategy-icon sf"></i>
           <h3 style="color:#333;font-weight:400">{{$t('CAM.Role.identityProvider')}}</h3>
-          <p>授权台富云外部用户身份(如企业用户目录)使用您的资源</p>
+          <p>{{$t('CAM.Role.sqtfy')}}</p>
         </div>
       </el-dialog>
     </div>
@@ -182,12 +182,12 @@ export default {
             }
           } else {
             let ErrTips = {
-              "InternalError.SystemError": "内部错误",
-              "InvalidParameter.ParamError": "非法入参"
+              "InternalError.SystemError": "內部錯誤",
+              "InvalidParameter.ParamError": "非法入參"
             };
             let ErrOr = Object.assign(ErrorTips, ErrTips);
             this.$message({
-              message: ErrOr[res.Response.Error.Code],
+              message: ErrOr[data.Response.Error.Code],
               type: "error",
               showClose: true,
               duration: 0
@@ -226,13 +226,13 @@ export default {
                 }
               } else {
                 let ErrTips = {
-                  "InternalError.SystemError": "内部错误",
-                  "InvalidParameter.ParamError": "非法入参",
+                  "InternalError.SystemError": "內部錯誤",
+                  "InvalidParameter.ParamError": "非法入參",
                   "InvalidParameter.RoleNotExist": "角色不存在"
                 };
                 let ErrOr = Object.assign(ErrorTips, ErrTips);
                 this.$message({
-                  message: ErrOr[res.Response.Error.Code],
+                  message: ErrOr[data.Response.Error.Code],
                   type: "error",
                   showClose: true,
                   duration: 0
@@ -291,7 +291,7 @@ export default {
       // this.$router.push("/createAccount");
       this.$message({
         type: "info",
-        message: "内测中...",
+        message: "內測中...",
         duration: 0,
         showClose: true
       });
@@ -300,7 +300,7 @@ export default {
       // this.$router.push("/createProvider");
       this.$message({
         type: "info",
-        message: "内测中...",
+        message: "內測中...",
         duration: 0,
         showClose: true
       });

@@ -13,8 +13,14 @@
         >
           <div class="main-box">
             <h2>{{ $t('CLA.total.jcxx') }}</h2>
-            <el-form-item :label="$t('CLA.total.gzjmc')" prop="AuditName" required>
+            <el-form-item
+              :label="$t('CLA.total.gzjmc')"
+              prop="AuditName"
+              required
+              class="AuditName"
+            >
               <el-input v-model="ruleForm.AuditName"></el-input>
+              <span>僅支持大小寫字母、數字、以及_的組合，3-128個字元。</span>
             </el-form-item>
             <el-form-item :label="$t('CLA.total.gzqy')">
               <p style="font-size:12px;">{{ $t('CLA.total.s') }}</p>
@@ -47,8 +53,14 @@
                   :value="item.value"
                 ></el-option>
               </el-select>
-              <el-form-item label prop="CosBucketName" class="seletInp" v-show="!cosShow">
+              <el-form-item
+                label
+                prop="CosBucketName"
+                class="seletInp CosBucketName"
+                v-show="!cosShow"
+              >
                 <el-input v-model="ruleForm.CosBucketName" :placeholder="$t('CLA.total.qsrmc')"></el-input>
+                <span>僅支持小寫字母、數字以及中劃線" - "的組合，不能超過40字元。</span>
               </el-form-item>
               <el-select
                 v-model="BucketSelect.name"
@@ -103,13 +115,14 @@
                   <el-form-item
                     label
                     prop="CmqQueueName"
-                    class="seletInp"
+                    class="seletInp CosBucketName"
                     v-if="ruleForm.IsEnableCmqNotify"
                   >
                     <el-input
                       v-model="ruleForm.CmqQueueName"
                       :placeholder="$t('CLA.total.qsrdlmc')"
                     ></el-input>
+                    <span>不超過64個字元的字元串，必須以字母為首字元，剩餘部分可以包含字母、數字和橫劃線(-)。</span>
                   </el-form-item>
                 </el-form-item>
               </div>
@@ -118,12 +131,8 @@
           <div class="main-box" style="border:0;">
             <el-form-item>
               <el-button @click="_cancel">{{ $t('CLA.total.qx') }}</el-button>
-              <el-button
-                type="primary"
-                @click="_onSubmit('ruleForm')"
-                v-show="!btnLoad"
-              >{{ $t('CLA.total.ljcj') }}</el-button>
-              <el-button type="primary" icon="el-icon-loading" v-show="btnLoad"></el-button>
+              <el-button type="primary" @click="_onSubmit('ruleForm')">{{ $t('CLA.total.ljcj') }}</el-button>
+              <!-- <el-button type="primary" icon="el-icon-loading" v-show="btnLoad"></el-button> -->
             </el-form-item>
           </div>
         </el-form>
@@ -210,12 +219,13 @@ export default {
       //是否创建cmq
       cmqShow: false,
       //cmq下拉框
-      cmqSelect: { index: 0 },
+      cmqSelect: { index: 0, name: "" },
       //高级设置是否显示
       setShow: false,
       //选择框
       select: {
-        index: 0
+        index: 0,
+        name: ""
       },
       name: "111",
       //btn加载状态
@@ -255,7 +265,7 @@ export default {
       //	cmq地域
       const params = {
         Version: "2019-03-19",
-        Region: "ap-guangzhou"
+        Region: localStorage.getItem("regionv2")
       };
       this.axios.post(GZJ_REGION, params).then(res => {
         if (res.Response.Error === undefined) {
@@ -310,6 +320,7 @@ export default {
     },
     _select() {
       this.select.index = this.select.options[this.select.name].value;
+      this.bucket();
     },
     _BucketSelect() {
       this.ruleForm.CosBucketName = this.BucketSelect.options[
@@ -340,7 +351,7 @@ export default {
             ? (this.ruleForm.ReadWriteAttribute = 2)
             : (this.ruleForm.ReadWriteAttribute = 3);
           this.ruleForm.Version = "2019-03-19";
-          this.ruleForm.Region = "ap-guangzhou";
+          this.ruleForm.Region = localStorage.getItem("regionv2");
           this.ruleForm.CosRegion = this.select.options[this.select.index].name;
           if (this.ruleForm.IsEnableCmqNotify == 1) {
             this.ruleForm["IsCreateNewQueue"] = this.IsCreateNewQueue;
@@ -422,60 +433,68 @@ export default {
       } else {
         this.cosShow = true;
       }
+    },
+    bucket() {
+      this.axios.post(LIST_COSBUCKETS).then(res => {
+        if (res.message) {
+          this.$message(res.message);
+        }
+        var data = res.data.cosBucketsList;
+        var arr = [];
+        data.forEach((item, index) => {
+          if (item.region == this.select.options[this.select.index].name) {
+            const obj = {
+              label: item.name,
+              value: index,
+              name: item.region,
+              id: item.appId
+            };
+            arr.push(obj);
+          }
+        });
+        this.BucketSelect.options = arr;
+        this.BucketSelect = JSON.parse(JSON.stringify(this.BucketSelect));
+      });
+    },
+    gzj_cos() {
+      const params = {
+        Version: "2019-03-19",
+        Region: localStorage.getItem("regionv2")
+      };
+      this.axios.post(GZJ_COS, params).then(res => {
+        if (res.Response.Error === undefined) {
+          var data = res.Response.EnableRegions;
+          var arr = [];
+          data.forEach((item, index) => {
+            const obj = {
+              label: item.CosRegionName,
+              value: index,
+              name: item.CosRegion
+            };
+            arr.push(obj);
+          });
+          this.select.options = arr;
+          this.select.name = arr[0].label;
+          this.bucket();
+        } else {
+          let ErrTips = {
+            "InternalError.ListCosEnableRegionError": "內部錯誤，請聯繫開發人員"
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
     }
   },
   created() {
     this.cmq();
-    //BucketSelect
-    this.axios.post(LIST_COSBUCKETS).then(res => {
-      if (res.message) {
-        this.$message(res.message);
-      }
-      var data = res.data.cosBucketsList;
-      var arr = [];
-      data.forEach((item, index) => {
-        const obj = {
-          label: item.name,
-          value: index,
-          name: item.region,
-          id: item.appId
-        };
-        arr.push(obj);
-      });
-      this.BucketSelect.options = arr;
-    });
-    const params = {
-      Version: "2019-03-19",
-      Region: "ap-guangzhou"
-    };
     //	cos地域
-    this.axios.post(GZJ_COS, params).then(res => {
-      if (res.Response.Error === undefined) {
-        var data = res.Response.EnableRegions;
-        var arr = [];
-        data.forEach((item, index) => {
-          const obj = {
-            label: item.CosRegionName,
-            value: index,
-            name: item.CosRegion
-          };
-          arr.push(obj);
-        });
-        this.select.options = arr;
-        this.select.name = arr[0].label;
-      } else {
-        let ErrTips = {
-          "InternalError.ListCosEnableRegionError": "內部錯誤，請聯繫開發人員"
-        };
-        let ErrOr = Object.assign(ErrorTips, ErrTips);
-        this.$message({
-          message: ErrOr[res.Response.Error.Code],
-          type: "error",
-          showClose: true,
-          duration: 0
-        });
-      }
-    });
+    this.gzj_cos();
   }
 };
 </script>
@@ -486,6 +505,25 @@ export default {
     padding: 20px;
     padding-bottom: 0;
     box-sizing: border-box;
+    .AuditName {
+      position: relative;
+      span {
+        font-size: 12px;
+        position: absolute;
+        bottom: -30px;
+        left: 0;
+      }
+    }
+    .CosBucketName {
+      position: relative;
+      span {
+        font-size: 12px;
+        position: absolute;
+        width: 500px;
+        bottom: -30px;
+        left: 0;
+      }
+    }
     .newAudit-box {
       background-color: #fff;
       box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
@@ -559,7 +597,7 @@ export default {
         width: 70px;
       }
       .select >>> .el-form-item__error {
-        width: 400px;
+        width: 500px;
       }
       .seletInp {
         margin-left: 10px;
