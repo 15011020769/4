@@ -32,6 +32,7 @@
           :data="multipleSelection"
           style="width: 96%; margin: 0 auto;"
           v-show="activeName != 'third'"
+          :empty-text="$t('CAM.strategy.zwsj')"
         >
           <el-table-column :label="$t('CAM.userList.strategyNames')" prop="PolicyName"></el-table-column>
           <el-table-column :label="$t('CAM.userList.descs')" prop="Description"></el-table-column>
@@ -40,6 +41,7 @@
           :data="multipleSelection"
           style="width: 96%; margin: 0 auto;"
           v-show="activeName == 'third'"
+          :empty-text="$t('CAM.strategy.zwsj')"
         >
           <el-table-column :label="$t('CAM.userList.GroupName')" prop="GroupName"></el-table-column>
           <el-table-column :label="$t('CAM.userList.userRemark')" prop="Remark"></el-table-column>

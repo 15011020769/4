@@ -42,6 +42,7 @@
               @selection-change="handleSelection"
               :data="userGroup"
               v-loading="loading"
+              :empty-text="$t('CAM.strategy.zwsj')"
             >
               <el-input size="mini" style="width:20%" />
               <el-button size="mini" class="suo" icon="el-icon-search" show-overflow-tooltip></el-button>
@@ -58,6 +59,7 @@
               height="400"
               style="width: 80%;border:1px solid #ddd;margin-top:10px;"
               :data="userGroupSelect"
+              :empty-text="$t('CAM.strategy.zwsj')"
             >
               <el-table-column :label="$t('CAM.userList.userGroup')" prop="GroupName"></el-table-column>
               <el-table-column :label="$t('CAM.userList.userCz')" show-overflow-tooltip>
@@ -75,7 +77,7 @@
         </div>
       </div>
       <div v-show="active==2">
-        <el-table style="width: 96%; margin: 0 auto;" :data="userNewGroup[0]">
+        <el-table style="width: 96%; margin: 0 auto;" :data="userNewGroup[0]" :empty-text="$t('CAM.strategy.zwsj')">
           <el-table-column :label="$t('CAM.userList.userGroup')" prop="GroupName"></el-table-column>
           <el-table-column fixed="right" :label="$t('CAM.userList.userCz')">
             <template slot-scope="scope">

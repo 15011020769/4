@@ -40,6 +40,7 @@
           @selection-change="selectDataChange"
           v-loading="loading"
           @expand-change="rowChange"
+          :empty-text="$t('CAM.strategy.zwsj')"
         >
           <el-table-column type="selection" width="55"></el-table-column>
           <el-table-column type="expand" :label="$t('CAM.userList.userDetils')" width="50">
@@ -204,6 +205,7 @@
             @selection-change="handleSelection"
             :data="userGroup"
             v-loading="groupLoading"
+            :empty-text="$t('CAM.strategy.zwsj')"
           >
             <el-input size="mini" style="width:20%" />
             <el-button size="mini" class="suo" icon="el-icon-search" show-overflow-tooltip></el-button>
@@ -220,6 +222,7 @@
             height="400"
             style="width: 80%;border:1px solid #ddd"
             :data="userGroupSelect"
+            :empty-text="$t('CAM.strategy.zwsj')"
           >
             <el-table-column :label="$t('CAM.userList.userGroup')" prop="GroupName"></el-table-column>
             <el-table-column :label="$t('CAM.userList.userCz')" show-overflow-tooltip>
@@ -253,7 +256,7 @@
       </div>
       <div>
         <template>
-          <el-table style="width: 100%" :data="delNewData">
+          <el-table style="width: 100%" :data="delNewData" :empty-text="$t('CAM.strategy.zwsj')">
             <el-table-column :label="$t('CAM.userList.userName')" prop="Name"></el-table-column>
             <el-table-column prop="Uid" :label="$t('CAM.userList.userId')"></el-table-column>
             <!-- <el-table-column :label="$t('CAM.userList.myId')"></el-table-column>

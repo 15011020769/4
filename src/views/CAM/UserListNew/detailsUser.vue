@@ -81,6 +81,7 @@
             style="width: 100%;"
             height="300"
             @selection-change="Select"
+            :empty-text="$t('CAM.strategy.zwsj')"
           >
             <el-table-column type="selection" width="55"></el-table-column>
             <el-table-column :label="$t('CAM.userList.strategyNames')" prop="PolicyName">
@@ -136,6 +137,7 @@
             style="width: 100%;"
             height="300"
             @selection-change="Select"
+            :empty-text="$t('CAM.strategy.zwsj')"
           >
             <el-table-column type="selection"></el-table-column>
             <el-table-column :label="$t('CAM.userList.GroupName')" prop="GroupName"></el-table-column>
