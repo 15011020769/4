@@ -335,7 +335,7 @@ export default {
         index: 0
       },
       //cos是否显示
-      cosShow: false,
+      cosShow: true,
       //高级设置是否显示
       setShow: true,
       //高级设置下一部分是否显示
@@ -488,7 +488,8 @@ export default {
             // CosRegion: this.detailData.CosRegion,
             CosBucketName: this.detailData.CosBucketName,
             IsEnableCmqNotify: this.detailData.IsEnableCmqNotify,
-            LogFilePrefix: this.detailData.LogFilePrefix
+            LogFilePrefix: this.detailData.LogFilePrefix,
+            CosRegion: this.select.options[this.select.index].name
           };
           if (this.detailData.IsEnableCmqNotify == 1) {
             params["CmqQueueName"] = this.detailData.CmqQueueName;
@@ -496,7 +497,6 @@ export default {
             params["CmqRegion"] = this.cmqSelect.options[
               this.cmqSelect.index
             ].name;
-            params["CosRegion"] = this.select.options[this.select.index].name;
           } else {
             delete params.CmqQueueName;
             delete params.CmqRegion;
@@ -559,6 +559,7 @@ export default {
     //地域下拉框发生变化
     _select() {
       this.select.index = this.select.options[this.select.name].value;
+      this.bucket();
     },
     //Bucket下拉框发生变化
     _BucketSelect() {
@@ -605,15 +606,28 @@ export default {
         var data = res.data.cosBucketsList;
         var arr = [];
         data.forEach((item, index) => {
-          const obj = {
-            label: item.name,
-            value: index,
-            name: item.region,
-            id: item.appId
-          };
-          arr.push(obj);
+          if (item.region == this.select.options[this.select.index].name) {
+            const obj = {
+              label: item.name,
+              value: index,
+              name: item.region,
+              id: item.appId
+            };
+            arr.push(obj);
+          }
         });
+        if (arr.length == 0) {
+          this.BucketSelect.name = "";
+        } else {
+          arr.forEach(item => {
+            if (item.name == this.detailData.CosBucketName) {
+              this.BucketSelect.name = item.name;
+            }
+          });
+        }
         this.BucketSelect.options = arr;
+        //解决 数据更新页面不更新
+        this.BucketSelect = JSON.parse(JSON.stringify(this.BucketSelect));
       });
     },
     //cos信息
@@ -637,6 +651,7 @@ export default {
           });
           this.select.options = arr;
           this.select.name = arr[0].label;
+          this.bucket();
         } else {
           let ErrTips = {
             "InternalError.ListCosEnableRegionError": "內部錯誤，請聯繫開發人員"
@@ -668,6 +683,7 @@ export default {
           this.boxloading = false;
           this.select.name = this.regionType[this.detailData.CosRegion];
           this.cmqSelect.name = this.regionType1[this.detailData.CmqRegion];
+          this.BucketSelect.name = this.detailData.CosBucketName;
         } else {
           let ErrTips = {
             "InternalError.DescribeAuditError":
@@ -690,6 +706,7 @@ export default {
     },
     _edit1() {
       this.inpShow1 = !this.inpShow1;
+      this.cosShow = true;
     },
     //取消
     _cancel() {
@@ -761,14 +778,13 @@ export default {
   },
   created() {
     this.title = this.$route.query.AuditName;
-    if(this.$route.query.AuditStatus==1){
-      this.value=true
-    }else{
-       this.value=false
+    if (this.$route.query.AuditStatus == 1) {
+      this.value = true;
+    } else {
+      this.value = false;
     }
     //跟踪集详情
     this.detailList();
-    this.bucket();
     this.cos();
     this.cmq();
   },
