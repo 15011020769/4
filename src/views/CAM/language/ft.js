@@ -32,7 +32,7 @@ module.exports = {
       suerAdd: '確 定',
       handClose: "取 消",
       removeText: '以下用戶存在刪除前置處理項 禁用並刪除 API 密鑰：',
-      removeContext: '需要您注意的是， API 密鑰刪除後無法恢復，請您確認清楚再進行刪除。用戶被刪除後，該用戶無法登錄騰訊雲以及接收消息通知，同時會解除關聯許可權。',
+      removeContext: '需要您注意的是， API 密鑰刪除後無法恢復，請您確認清楚再進行刪除。用戶被刪除後，該用戶無法登錄台富雲以及接收消息通知，同時會解除關聯許可權。',
       myId: '密鑰ID',
       createTime: '創建時間',
       userZt: '狀態',
@@ -256,7 +256,10 @@ module.exports = {
       newAdd: '新建供應商',
       peopleName: '提供商名稱',
       peopleType: '提供商類型',
-      lastCreateTime: '最後更新時間'
+      lastCreateTime: '最後更新時間',
+      qr: '確認',
+      pztgsxx: '配置提供商訊息',
+      zwsj: '暫無數據'
     }
   },
   COM: require('@/components/language/ft'),

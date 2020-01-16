@@ -54,13 +54,13 @@ export default {
       // },
       rules: {
         providerType: [
-          { required: true, message: "请选择提供商类型", trigger: "blur" }
+          { required: true, message: "請選擇提供商類型", trigger: "blur" }
         ],
         providerName: [
-          { required: true, message: "请输入用户组名称", trigger: "blur" }
+          { required: true, message: "請輸入用戶組名稱", trigger: "blur" }
         ],
         metadataDocument: [
-          { required: true, message: "请选择元数据文档", trigger: "blur" }
+          { required: true, message: "請選擇元數據文檔", trigger: "blur" }
         ]
       }
     };
