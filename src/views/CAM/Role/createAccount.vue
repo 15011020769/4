@@ -67,7 +67,7 @@
             </div>
           </div>
           <div class="content_table">
-            <el-table :data="policiesSelectedData" height="300" border style="width: 100%">
+            <el-table :data="policiesSelectedData" height="300" border style="width: 100%" :empty-text="$t('CAM.strategy.zwsj')">
               <el-table-column prop="PolicyName" :label="$t('CAM.Role.strategyName')"></el-table-column>
               <el-table-column prop="Description" :label="$t('CAM.Role.desc')"></el-table-column>
               <el-table-column prop="Type" :label="$t('CAM.Role.strategyType')">

@@ -25,6 +25,7 @@
           @selection-change="handleSelectionChange"
           v-tableloadmore="tableloadmore"
           v-loadmore="debounce"
+          :empty-text="$t('CAM.strategy.zwsj')"
         >
           <el-table-column type="selection" prop="policyId" width="29"></el-table-column>
           <el-table-column
@@ -75,6 +76,7 @@
           size="small"
           :height="tableHeight"
           style="width: 100%"
+          :empty-text="$t('CAM.strategy.zwsj')"
         >
           <el-table-column
             prop="Description"

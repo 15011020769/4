@@ -76,6 +76,7 @@
               :row-style="{height:0}"
               :cell-style="{padding:'5px 10px'}"
               :header-cell-style="{height:'20px',padding:'0px 10px'}"
+              :empty-text="$t('CAM.strategy.zwsj')"
             >
               <el-table-column prop="PolicyName" :label="$t('CAM.Role.strategyName')"></el-table-column>
               <el-table-column prop="Description" :label="$t('CAM.Role.desc')"></el-table-column>

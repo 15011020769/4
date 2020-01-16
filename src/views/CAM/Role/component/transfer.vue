@@ -20,6 +20,7 @@
             @selection-change="handleSelectionChange"
             v-loadmore="debounce"
             v-loading="loading"
+            :empty-text="$t('CAM.strategy.zwsj')"
           >
             <el-table-column type="selection" width="55" :selectable="checkboxT"></el-table-column>
             <el-table-column prop="PolicyName" label="策略名" width="180"></el-table-column>
@@ -55,7 +56,7 @@
           &nbsp;({{multipleSelection.length}}{{$t('CAM.strip')}})
         </p>
         <div class="right-main border">
-          <el-table :data="multipleSelection" style="width: 100%" height="450">
+          <el-table :data="multipleSelection" style="width: 100%" height="450" :empty-text="$t('CAM.strategy.zwsj')">
             <el-table-column prop="PolicyName" label="策略名"></el-table-column>
             <el-table-column prop="Type" :label="$t('CAM.userList.strategyChose')">
               <template slot-scope="scope">

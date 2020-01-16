@@ -32,7 +32,7 @@
                 <el-checkbox v-model="checked">{{$t('CAM.Role.yxjsfwkzt')}}</el-checkbox>
               </p>
               <div style="width:800px;margin-top:40px">
-                <el-table :data="tableData" height="300" border style="width: 100%">
+                <el-table :data="tableData" height="300" border style="width: 100%" :empty-text="$t('CAM.strategy.zwsj')">
                   <el-table-column prop="date" :label="$t('CAM.Role.jian')">
                     <template slot-scope="scope">
                       <el-select v-model="value" :placeholder="$t('CAM.Role.qxz')" size="mini">
