@@ -31,25 +31,95 @@
         <div class="chartsTitle">
           <div class="left">验证通过与拦截</div>
           <div class="right">
-            <Time></Time>
+            <Time :classvalue="classvalues" @setTimeClassvalues="setTimeClassvalues"></Time>
           </div>
         </div>
         <div class="echarts">
-          <Echarts
+          <EchartsCaptcha
             v-if="echartsData0.show"
+            :id="echartsData0.id"
             :data="echartsData0.data"
             :xAxis="echartsData0.xAxis"
             :series="echartsData0.series"
           />
         </div>
       </div>
+      <div class="charts">
+        <div class="chartsTitle">
+          <div class="left">拦截情况 (%)</div>
+          <div class="right">
+            <Time :classvalue="classvalue" @setTimeClassvalue="setTimeClassvalue"></Time>
+          </div>
+        </div>
+        <div class="echarts">
+          <EchartsCaptcha
+            v-if="echartsData1.show"
+            :id="echartsData1.id"
+            :data="echartsData1.data"
+            :xAxis="echartsData1.xAxis"
+            :series="echartsData1.series"
+          />
+        </div>
+      </div>
+       <div class="charts">
+        <div class="chartsTitle">
+          <div class="left">验证码加载耗时 (秒)</div>
+          <div class="right">
+            <Time :classvalue="classvalue" @setTimeClassvalue="setTimeClassvalue"></Time>
+          </div>
+        </div>
+        <div class="echarts">
+          <EchartsCaptcha
+            v-if="echartsData2.show"
+            :id="echartsData2.id"
+            :data="echartsData2.data"
+            :xAxis="echartsData2.xAxis"
+            :series="echartsData2.series"
+          />
+        </div>
+      </div>
+      <div class="charts">
+        <div class="chartsTitle">
+          <div class="left">验证码加载耗时 (秒)</div>
+          <div class="right">
+            <Time :classvalue="classvalue" @setTimeClassvalue="setTimeClassvalue"></Time>
+          </div>
+        </div>
+        <div class="echarts">
+          <EchartsCaptcha
+            v-if="echartsData3.show"
+            :id="echartsData3.id"
+            :data="echartsData3.data"
+            :xAxis="echartsData3.xAxis"
+            :series="echartsData3.series"
+          />
+        </div>
+      </div>
+       <div class="charts">
+        <div class="chartsTitle">
+          <div class="left">一次通过尝试次数分布</div>
+          <div class="right">
+            <Time :classvalue="classvalue" @setTimeClassvalue="setTimeClassvalue"></Time>
+          </div>
+        </div>
+        <div class="echarts">
+          <EchartsCaptcha
+            v-if="echartsData4.show"
+            :id="echartsData4.id"
+            :data="echartsData4.data"
+            :xAxis="echartsData4.xAxis"
+            :series="echartsData4.series"
+          />
+        </div>
+      </div>
     </div>
+    
   </div>
 </template>
 <script>
-import Echarts from "../../component/echarts";
+import EchartsCaptcha from '../../component/echartsCaptcha'
 import Time from "../../component/time";
-import { QUERY_REQDATA, CLASSIFY_QUERY } from "@/constants/CAP.js";
+import { QUERY_REQDATA, CLASSIFY_QUERY , USER_HANDLE} from "@/constants/CAP.js";
 export default {
   name: "validationData",
   data() {
@@ -59,8 +129,11 @@ export default {
       Start: this.getDateString(
         new Date(new Date()),1
       ),
+      classvalues: 1,
+      classvalue: 1,
       Id: this.$route.query.Id,
       echartsData0: {
+        id: 'echartsData0',
         show: false,
         data: ["请求量", "验证量", "通过量", "拦截量"],
         xAxis: ["00:00", "00:50", "01:40", "02:30", "04:10", "05:00"],
@@ -86,12 +159,78 @@ export default {
             data: [4, 4, 3, 2, 1, 0]
           }
         ]
-      }
+      },
+      echartsData1: {
+        id: 'echartsData1',
+        type: 'OperDataInterceptUnitArray',
+        show: false,
+        data: ["总拦截比例", "因答案错误拦截比例", "因安全策略打击拦截比例"],
+        xAxis: ["00:00", "00:50", "01:40", "02:30", "04:10", "05:00"],
+        series: [
+          {
+            name: "总拦截比例",
+            type: "line",
+            data: [0, 2, 3, 7, 10, 0]
+          },
+          {
+            name: "因答案错误拦截比例",
+            type: "line",
+            data: [0, 0, 2, 0, 7, 0]
+          },
+          {
+            name: "因安全策略打击拦截比例",
+            type: "line",
+            data: [1, 2, 3, 4, 5, 9]
+          }
+        ]
+      },
+       echartsData2: {
+        id: 'echartsData2',
+        type:'OperDataLoadTimeUnitArray',
+        show: false,
+        data: ["验证码加载耗时"],
+        xAxis: ["00:00", "00:50", "01:40", "02:30", "04:10", "05:00"],
+        series: [
+          {
+            name: "验证码加载耗时",
+            type: "line",
+            data: [0, 2, 3, 7, 10, 0]
+          }
+        ]
+      },
+       echartsData3: {
+        id: 'echartsData3',
+        type:'OperDataTryTimesUnitArray',
+        show: false,
+        data: ["一次通过平均尝试次数"],
+        xAxis: ["00:00", "00:50", "01:40", "02:30", "04:10", "05:00"],
+        series: [
+          {
+            name: "一次通过平均尝试次数",
+            type: "line",
+            data: [0, 2, 3, 7, 10, 0]
+          }
+        ]
+      },
+      echartsData4: {
+        id: 'echartsData4',
+        type:'OperDataTryTimesDistributeUnitArray',
+        show: false,
+        data: ["一次通过尝试次数分布"],
+        xAxis: ["00:00", "00:50", "01:40", "02:30", "04:10", "05:00"],
+        series: [
+          {
+            name: "一次通过尝试次数分布",
+            type: "line",
+            data: [0, 2, 3, 7, 10, 0]
+          }
+        ]
+      },
     };
   },
   components: {
-    Echarts,
-    Time
+    Time,
+    EchartsCaptcha
   },
   created() {
     this.getAccount();
@@ -111,7 +250,7 @@ export default {
       this.echartsData0.series = [];
       res.Response.Data.forEach(item => {
         data0.push(item.Cnt);
-        xData.push(item.Date);
+        xData.push(item.Date.substr(8,2)+':'+item.Date.substr(10,2));
       });
       this.echartsData0.xAxis = xData;
       this.echartsData0.series.push({
@@ -161,6 +300,7 @@ export default {
         });
       });
     });
+    this.switchData(this.Start);
   },
   methods: {
     //获取占比量
@@ -181,21 +321,74 @@ export default {
     getEachrtsData(params) {
       return this.axios.post(CLASSIFY_QUERY, params);
     },
-    switchData0(StartDate, EndDate) {
-      const params = {
-        Version: "2019-01-01",
-        Type: 0
-      };
-      // getEachrtsData(params, this.echartsData0);
+    //获取折线图数据2
+    getEachrtsDatas(params,eachrtsData) {
+        eachrtsData.show = false
+       this.axios.post(USER_HANDLE,params).then(res => {
+        console.log(res)
+        let data = res.Response.Data
+        if(data[eachrtsData.type]&&data[eachrtsData.type].length>0){
+          eachrtsData.data = data
+        }else{
+          eachrtsData.xAxis = ['01-16']
+          eachrtsData.series = eachrtsData.data.map((item)=>{
+            return {name:item,type:'line',data:[0]}
+          })
+        }
+         this.$nextTick(()=>{
+          eachrtsData.show = true
+          console.log(eachrtsData)
+         })
+       })
     },
-    switchData1(StartDate, EndDate) {
-      const params = {
-        Version: "2019-01-01",
-        Type: 1
-      };
-      // getEachrtsData(params, this.echartsData0);
+    switchData(StartDate,EndDate){
+      if(StartDate!=undefined&&StartDate!=""){
+        this.Start = StartDate 
+      }
+      if(EndDate!=undefined&&EndDate!=""){
+        this.End = EndDate
+      }
+      this.switchData0()
+      this.switchData1()
+      this.switchData2()
+      this.switchData3()
     },
-    // 时间格式化'yyyy-MM-dd hh:mm:ss'
+    switchData0() {
+      let params = {
+        Version:'2019-07-22',
+        Type: 2,
+        CaptchaAppId:this.Id,
+        Start:this.Start
+      };
+      this.getEachrtsDatas(params,this.echartsData1)
+    },
+    switchData1() {
+      let params = {
+        Version:'2019-07-22',
+        Type: 1,
+        CaptchaAppId:this.Id,
+        Start:this.Start
+      };
+      this.getEachrtsDatas(params,this.echartsData2)
+    },
+    switchData2() {
+      let params = {
+        Version:'2019-07-22',
+        Type: 3,
+        CaptchaAppId:this.Id,
+        Start:this.Start
+      };
+      this.getEachrtsDatas(params,this.echartsData3)
+    },
+     switchData3() {
+      let params = {
+        Version:'2019-07-22',
+        Type: 4,
+        CaptchaAppId:this.Id,
+        Start:this.Start
+      };
+      this.getEachrtsDatas(params,this.echartsData4)
+    },
     getDateString(date,flag) {
       // debugger
       let o = {
@@ -209,9 +402,15 @@ export default {
         o[i] = (o[i] + "").length == 1 ? "0" + o[i] : o[i];
       }
       if(flag==1){
-      return o.y + "" + o.M + "" + o.d + "0000" ;
+        return o.y + "" + o.M + "" + o.d + "0000" ;
       }
       return o.y + "" + o.M + "" + o.d + "" + o.h + "" + o.m ;
+    },
+    setTimeClassvalue(value){
+      this.classvalue = value
+    },
+    setTimeClassvalues(value){
+      this.classvalues = value
     }
   }
 };
