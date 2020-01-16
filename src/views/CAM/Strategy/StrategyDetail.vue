@@ -124,12 +124,7 @@
                   <el-table-column prop="address" label="操作">
                     <template slot-scope="scope">
                       <!-- <el-button size="mini" type="text" @click="popover_visible = true" slot="reference">解除用户<span v-show="scope.row.RelatedType == '2'">组</span></el-button> -->
-                      <el-button
-                        size="mini"
-                        type="text"
-                        @click="removePolicyEntity(scope.row)"
-                        slot="reference"
-                      >
+                      <el-button size="mini" type="text" @click="del(scope.row)" slot="reference">
                         {{$t('CAM.strategy.sureOubind')}}
                         <span
                           v-show="scope.row.RelatedType == '2'"
@@ -144,7 +139,7 @@
               style="background:#fff;padding:10px;display:flex;justify-content: space-between;line-height:30px"
             >
               <div style="flex:1;display:flex;justify-content: flex-end;">
-                <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;{{$t("CAM.strip")}}</span>
+                <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;页</span>
                 <el-pagination
                   :page-size="pagesize"
                   :pager-count="7"
@@ -310,6 +305,15 @@ export default {
     this.getAttachPolicys();
   },
   methods: {
+    del(row) {
+      this.$confirm("此操作将永久删除, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      }).then(() => {
+        this.removePolicyEntity(row);
+      });
+    },
     attach(val) {
       this.attachVal = val;
     },
@@ -389,18 +393,22 @@ export default {
       }
       this.axios.post(LIST_ENPOLICY, params).then(res => {
         if (res.Response.Error === undefined) {
+          var groupArr = [];
+          var userArr = [];
           // RelatedType 关联类型。1 用户关联 ； 2 用户组关联
           this.policysData = res.Response.List;
           this.TotalCount = res.Response.TotalNum;
-          this.loading = false;
           this.policysData.forEach(item => {
             if (item.RelatedType == 2) {
-              this.groupArr.push(item);
+              groupArr.push(item);
             }
             if (item.RelatedType == 1) {
-              this.userArr.push(item);
+              userArr.push(item);
             }
           });
+          this.userArr = userArr;
+          this.groupArr = groupArr;
+          this.loading = false;
         } else {
           let ErrTips = {
             "InternalError.SystemError": "内部错误",
@@ -465,6 +473,7 @@ export default {
               showClose: true,
               duration: 0
             });
+            this.getAttachPolicys();
           }
         })
         .catch(error => {

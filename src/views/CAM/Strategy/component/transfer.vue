@@ -138,6 +138,14 @@ export default {
     //系统默认加载用户list
     this.getUserList();
   },
+  watch: {
+    groupArr(val) {
+      this.getGroupList();
+    },
+    userArr(val) {
+      this.getUserList();
+    }
+  },
   methods: {
     checkboxT(row, index) {
       if (row.status == 0) {

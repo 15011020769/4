@@ -235,19 +235,20 @@ export default {
             this.axios.post(QUERY_POLICY, params).then(res => {
               if (res.Response.Error === undefined) {
                 item.policy = res.Response.List;
-              } else {
-                let ErrTips = {
-                  "InternalError.SystemError": "内部错误",
-                  "InvalidParameter.ParamError": "非法入参"
-                };
-                let ErrOr = Object.assign(ErrorTips, ErrTips);
-                this.$message({
-                  message: ErrOr[data.Response.Error.Code],
-                  type: "error",
-                  showClose: true,
-                  duration: 0
-                });
-              }
+              } 
+              // else {
+              //   let ErrTips = {
+              //     "InternalError.SystemError": "内部错误",
+              //     "InvalidParameter.ParamError": "非法入参"
+              //   };
+              //   let ErrOr = Object.assign(ErrorTips, ErrTips);
+              //   this.$message({
+              //     message: ErrOr[data.Response.Error.Code],
+              //     type: "error",
+              //     showClose: true,
+              //     duration: 0
+              //   });
+              // }
             });
           });
           this.userDatas = json;
@@ -294,24 +295,25 @@ export default {
             });
           }
           this.totalNum = res.Response.TotalNum;
-        } else {
-          let ErrTips = {
-            "InternalError.SystemError": "内部错误",
-            "InvalidParameter.GroupIdError": "GroupId字段不合法",
-            "InvalidParameter.KeywordError": "Keyword字段不合法",
-            "InvalidParameter.ParamError": "非法入参",
-            "InvalidParameter.ScopeError": "Scope字段不合法",
-            "InvalidParameter.ServiceTypeError": "ServiceType字段不合法",
-            "InvalidParameter.UinError": "Uin字段不合法"
-          };
-          let ErrOr = Object.assign(ErrorTips, ErrTips);
-          this.$message({
-            message: ErrOr[res.Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-          });
         }
+        //  else {
+        //   let ErrTips = {
+        //     "InternalError.SystemError": "内部错误",
+        //     "InvalidParameter.GroupIdError": "GroupId字段不合法",
+        //     "InvalidParameter.KeywordError": "Keyword字段不合法",
+        //     "InvalidParameter.ParamError": "非法入参",
+        //     "InvalidParameter.ScopeError": "Scope字段不合法",
+        //     "InvalidParameter.ServiceTypeError": "ServiceType字段不合法",
+        //     "InvalidParameter.UinError": "Uin字段不合法"
+        //   };
+        //   let ErrOr = Object.assign(ErrorTips, ErrTips);
+        //   this.$message({
+        //     message: ErrOr[res.Response.Error.Code],
+        //     type: "error",
+        //     showClose: true,
+        //     duration: 0
+        //   });
+        // }
       });
     },
     _userRadio(val) {
@@ -325,16 +327,17 @@ export default {
         .then(res => {
           if (res.Response.Error === undefined) {
             this.userUin = res.Response.Uin;
-          } else {
-            let ErrTips = {};
-            let ErrOr = Object.assign(ErrorTips, ErrTips);
-            this.$message({
-              message: ErrOr[res.Response.Error.Code],
-              type: "error",
-              showClose: true,
-              duration: 0
-            });
-          }
+          } 
+          // else {
+          //   let ErrTips = {};
+          //   let ErrOr = Object.assign(ErrorTips, ErrTips);
+          //   this.$message({
+          //     message: ErrOr[res.Response.Error.Code],
+          //     type: "error",
+          //     showClose: true,
+          //     duration: 0
+          //   });
+          // }
         })
         //获取关联的策略
         .then(data => {

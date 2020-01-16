@@ -59,7 +59,11 @@
               >{{$t('CAM.userGroup.getPolicy')}}</el-button>
               <div>
                 <el-table :data="policiesData" style="width: 100%;" height="300">
-                  <el-table-column :label="$t('CAM.userList.strategyNames')" show-overflow-tooltip>
+                  <el-table-column
+                    :label="$t('CAM.userList.strategyNames')"
+                    show-overflow-tooltip
+                    width="400"
+                  >
                     <template slot-scope="scope">
                       <!-- <p>{{scope.row.PolicyName}}</p> -->
                       <el-button
@@ -67,7 +71,7 @@
                         size="mini"
                         type="text"
                       >{{scope.row.PolicyName}}</el-button>
-                      <p>{{scope.row.Remark}}</p>
+                      <p class="omit">{{scope.row.Remark}}</p>
                     </template>
                   </el-table-column>
                   <el-table-column
@@ -80,7 +84,7 @@
                   </el-table-column>
                   <el-table-column :label="$t('CAM.userGroup.colHandle')" show-overflow-tooltip>
                     <template slot-scope="scope">
-                      <el-link type="primary" @click="deletePolicies(scope.row.PolicyId)">解除</el-link>
+                      <el-link type="primary" @click="delPolicy(scope.row.PolicyId)">解除</el-link>
                     </template>
                   </el-table-column>
                 </el-table>
@@ -352,6 +356,15 @@ export default {
     // this.tableHeight = window.innerHeight - this.$refs.multipleOptionPolicies.$el.offsetTop - 50;
   },
   methods: {
+    delPolicy(id) {
+      this.$confirm("此操作将永久删除, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      }).then(() => {
+        this.deletePolicies(id);
+      });
+    },
     search() {
       if (this.searchUser == "") {
         this.userData = this.userAllData;
@@ -958,6 +971,12 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+.omit {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 390px;
+}
 .wrap >>> .el-button,
 .wrap >>> .el-input__inner {
   border-radius: 0;

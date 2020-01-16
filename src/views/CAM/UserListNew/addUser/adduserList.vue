@@ -698,24 +698,25 @@ export default {
         if (res.Response.Error === undefined) {
           this.tableData = res.Response.List;
           this.totalNum = res.Response.TotalNum;
-        } else {
-          let ErrTips = {
-            "InternalError.SystemError": "内部错误",
-            "InvalidParameter.GroupIdError": "GroupId字段不合法",
-            "InvalidParameter.KeywordError": "Keyword字段不合法",
-            "InvalidParameter.ParamError": "非法入参",
-            "InvalidParameter.ScopeError": "Scope字段不合法",
-            "InvalidParameter.ServiceTypeError": "ServiceType字段不合法",
-            "InvalidParameter.UinError": "Uin字段不合法"
-          };
-          let ErrOr = Object.assign(ErrorTips, ErrTips);
-          this.$message({
-            message: ErrOr[res.Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-          });
         }
+        // else {
+        //   let ErrTips = {
+        //     "InternalError.SystemError": "内部错误",
+        //     "InvalidParameter.GroupIdError": "GroupId字段不合法",
+        //     "InvalidParameter.KeywordError": "Keyword字段不合法",
+        //     "InvalidParameter.ParamError": "非法入参",
+        //     "InvalidParameter.ScopeError": "Scope字段不合法",
+        //     "InvalidParameter.ServiceTypeError": "ServiceType字段不合法",
+        //     "InvalidParameter.UinError": "Uin字段不合法"
+        //   };
+        //   let ErrOr = Object.assign(ErrorTips, ErrTips);
+        //   this.$message({
+        //     message: ErrOr[res.Response.Error.Code],
+        //     type: "error",
+        //     showClose: true,
+        //     duration: 0
+        //   });
+        // }
       });
     },
     //控制台密码
