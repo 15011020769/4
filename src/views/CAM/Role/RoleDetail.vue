@@ -176,7 +176,7 @@
                       >解除</el-button>
                       <el-button
                         v-if="roleCarrier.length > 1"
-                        @click.native.prevent="updateRolePolicy(scope.$index, roleCarrier)"
+                        @click.native.prevent="delRolePolicy(scope.$index, roleCarrier)"
                         type="text"
                         size="small"
                       >解除</el-button>
@@ -491,17 +491,19 @@ export default {
             this.TotalNum = res.Response.TotalNum;
             this.TotalCount = res.Response.TotalNum;
           } else {
-            let ErrTips = {
-              "InternalError.SystemError": "內部錯誤",
-              "InvalidParameter.ParamError": "非法入參"
-            };
-            let ErrOr = Object.assign(ErrorTips, ErrTips);
-            this.$message({
-              message: ErrOr[res.Response.Error.Code],
-              type: "error",
-              showClose: true,
-              duration: 0
-            });
+            if (!res.Response.Error.code == "InvalidParameter.RoleNotExist") {
+              let ErrTips = {
+                "InternalError.SystemError": "內部錯誤",
+                "InvalidParameter.ParamError": "非法入參"
+              };
+              let ErrOr = Object.assign(ErrorTips, ErrTips);
+              this.$message({
+                message: ErrOr[res.Response.Error.Code],
+                type: "error",
+                showClose: true,
+                duration: 0
+              });
+            }
           }
           this.loading = false;
         })
@@ -509,12 +511,18 @@ export default {
     },
     // 解除角色策略
     relieveRolePolicy(scope) {
-      let paramsDel = {
-        Version: "2019-01-16",
-        PolicyId: scope.PolicyId,
-        DetachRoleId: this.roleId
-      };
-      this.relievePolicy(paramsDel);
+      this.$confirm("此操作將永久刪除, 是否繼續?", "提示", {
+        confirmButtonText: "確定",
+        cancelButtonText: "取消",
+        type: "warning"
+      }).then(() => {
+        let paramsDel = {
+          Version: "2019-01-16",
+          PolicyId: scope.PolicyId,
+          DetachRoleId: this.roleId
+        };
+        this.relievePolicy(paramsDel);
+      });
     },
     // 解除角色绑定的策略
     relievePolicy(paramsRelieve) {
@@ -607,6 +615,15 @@ export default {
           }
         })
         .catch(error => {});
+    },
+    delRolePolicy(index, rows) {
+      this.$confirm("此操作將永久刪除, 是否繼續?", "提示", {
+        confirmButtonText: "確定",
+        cancelButtonText: "取消",
+        type: "warning"
+      }).then(() => {
+        this.updateRolePolicy(index, rows);
+      });
     },
     // 修改角色信任策略
     updateRolePolicy(index, rows) {

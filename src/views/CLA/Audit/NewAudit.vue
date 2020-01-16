@@ -13,8 +13,9 @@
         >
           <div class="main-box">
             <h2>{{ $t('CLA.total.jcxx') }}</h2>
-            <el-form-item :label="$t('CLA.total.gzjmc')" prop="AuditName" required>
+            <el-form-item :label="$t('CLA.total.gzjmc')" prop="AuditName" required class="AuditName">
               <el-input v-model="ruleForm.AuditName"></el-input>
+              <span>僅支持大小寫字母、數字、以及_的組合，3-128個字元。</span>
             </el-form-item>
             <el-form-item :label="$t('CLA.total.gzqy')">
               <p style="font-size:12px;">{{ $t('CLA.total.s') }}</p>
@@ -47,8 +48,9 @@
                   :value="item.value"
                 ></el-option>
               </el-select>
-              <el-form-item label prop="CosBucketName" class="seletInp" v-show="!cosShow">
+              <el-form-item label prop="CosBucketName" class="seletInp CosBucketName" v-show="!cosShow">
                 <el-input v-model="ruleForm.CosBucketName" :placeholder="$t('CLA.total.qsrmc')"></el-input>
+                <span>僅支持小寫字母、數字以及中劃線" - "的組合，不能超過40字元。</span>
               </el-form-item>
               <el-select
                 v-model="BucketSelect.name"
@@ -482,6 +484,15 @@ export default {
     padding: 20px;
     padding-bottom: 0;
     box-sizing: border-box;
+    .AuditName{
+      position: relative;
+      span{
+        font-size: 12px;
+        position: absolute;
+        bottom: -30px;
+        left: 0;
+      }
+    }
     .newAudit-box {
       background-color: #fff;
       box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
