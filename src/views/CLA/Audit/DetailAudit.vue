@@ -369,7 +369,7 @@ export default {
       if (this.value) {
         const params = {
           AuditName: this.title,
-          Region: "ap-guangzhou",
+          Region: localStorage.getItem("regionv2"),
           Version: "2019-03-19"
         };
         this.axios.post(GZJ_STRATLOGGING, params).then(res => {
@@ -399,7 +399,7 @@ export default {
       else {
         const params = {
           AuditName: this.title,
-          Region: "ap-guangzhou",
+          Region: localStorage.getItem("regionv2"),
           Version: "2019-03-19"
         };
         this.axios.post(GZJ_STOPLOGGING, params).then(res => {
@@ -435,7 +435,7 @@ export default {
       let params = {
         AuditName: this.title,
         Version: "2019-03-19",
-        Region: "ap-guangzhou"
+        Region: localStorage.getItem("regionv2")
       };
       this.axios.post(GZJ_DELETE, params).then(res => {
         if (res.Response.Error === undefined) {
@@ -482,14 +482,13 @@ export default {
         if (valid) {
           const params = {
             Version: "2019-03-19",
-            Region: "ap-guangzhou",
+            Region: localStorage.getItem("regionv2"),
             AuditName: this.title,
             IsCreateNewBucket: this.detailData.IsCreateNewBucket,
-            // CosRegion: this.detailData.CosRegion,
+            CosRegion: this.detailData.CosRegion,
             CosBucketName: this.detailData.CosBucketName,
             IsEnableCmqNotify: this.detailData.IsEnableCmqNotify,
-            LogFilePrefix: this.detailData.LogFilePrefix,
-            CosRegion: this.select.options[this.select.index].name
+            LogFilePrefix: this.detailData.LogFilePrefix
           };
           if (this.detailData.IsEnableCmqNotify == 1) {
             params["CmqQueueName"] = this.detailData.CmqQueueName;
@@ -497,11 +496,13 @@ export default {
             params["CmqRegion"] = this.cmqSelect.options[
               this.cmqSelect.index
             ].name;
+            params["CosRegion"] = this.select.options[this.select.index].name;
           } else {
             delete params.CmqQueueName;
             delete params.CmqRegion;
             delete params.IsCreateNewQueue;
           }
+          console.log(params);
           this.axios.post(GZJ_UPDATEAUDIT, params).then(res => {
             if (res.Response.Error === undefined) {
               this.$message({
@@ -571,7 +572,7 @@ export default {
       //	cmq地域
       const params = {
         Version: "2019-03-19",
-        Region: "ap-guangzhou"
+        Region: localStorage.getItem("regionv2")
       };
       this.axios.post(GZJ_REGION, params).then(res => {
         if (res.Response.Error === undefined) {
@@ -635,7 +636,7 @@ export default {
       //	cos地域
       const params = {
         Version: "2019-03-19",
-        Region: "ap-guangzhou"
+        Region: localStorage.getItem("regionv2")
       };
       this.axios.post(GZJ_COS, params).then(res => {
         if (res.Response.Error === undefined) {
@@ -670,7 +671,7 @@ export default {
     detailList() {
       const params = {
         Version: "2019-03-19",
-        Region: "ap-guangzhou",
+        Region: localStorage.getItem("regionv2"),
         AuditName: this.title
       };
       this.axios.post(GZJ_DETAILIST, params).then(res => {
@@ -737,7 +738,7 @@ export default {
       this.btnLoad1 = true;
       const params = {
         Version: "2019-03-19",
-        Region: "ap-guangzhou",
+        Region: localStorage.getItem("regionv2"),
         AuditName: this.title,
         ReadWriteAttribute: this.detailData.ReadWriteAttribute
       };

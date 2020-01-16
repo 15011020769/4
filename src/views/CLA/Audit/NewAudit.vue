@@ -118,12 +118,8 @@
           <div class="main-box" style="border:0;">
             <el-form-item>
               <el-button @click="_cancel">{{ $t('CLA.total.qx') }}</el-button>
-              <el-button
-                type="primary"
-                @click="_onSubmit('ruleForm')"
-                v-show="!btnLoad"
-              >{{ $t('CLA.total.ljcj') }}</el-button>
-              <el-button type="primary" icon="el-icon-loading" v-show="btnLoad"></el-button>
+              <el-button type="primary" @click="_onSubmit('ruleForm')">{{ $t('CLA.total.ljcj') }}</el-button>
+              <!-- <el-button type="primary" icon="el-icon-loading" v-show="btnLoad"></el-button> -->
             </el-form-item>
           </div>
         </el-form>
@@ -255,7 +251,7 @@ export default {
       //	cmq地域
       const params = {
         Version: "2019-03-19",
-        Region: "ap-guangzhou"
+        Region: localStorage.getItem("regionv2")
       };
       this.axios.post(GZJ_REGION, params).then(res => {
         if (res.Response.Error === undefined) {
@@ -340,7 +336,7 @@ export default {
             ? (this.ruleForm.ReadWriteAttribute = 2)
             : (this.ruleForm.ReadWriteAttribute = 3);
           this.ruleForm.Version = "2019-03-19";
-          this.ruleForm.Region = "ap-guangzhou";
+          this.ruleForm.Region = localStorage.getItem("regionv2");
           this.ruleForm.CosRegion = this.select.options[this.select.index].name;
           if (this.ruleForm.IsEnableCmqNotify == 1) {
             this.ruleForm["IsCreateNewQueue"] = this.IsCreateNewQueue;
@@ -446,7 +442,7 @@ export default {
     });
     const params = {
       Version: "2019-03-19",
-      Region: "ap-guangzhou"
+      Region: localStorage.getItem("regionv2")
     };
     //	cos地域
     this.axios.post(GZJ_COS, params).then(res => {

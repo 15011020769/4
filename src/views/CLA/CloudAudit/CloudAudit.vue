@@ -179,7 +179,7 @@ export default {
     this.axios
       .post(YJS_GETATTRIBUTEKEY, {
         Version: "2019-03-19",
-        Region: "ap-guangzhou"
+        Region: localStorage.getItem("regionv2")
       })
       .then(data => {
         if (data.Response.Error === undefined) {
@@ -239,7 +239,7 @@ export default {
       this.vloading = true;
       const params = {
         Version: "2019-03-19",
-        Region: "ap-guangzhou",
+        Region: localStorage.getItem("regionv2"),
         EndTime: this.nowtime,
         StartTime: this.oldTime,
         MaxResults: this.MaxResults
@@ -300,7 +300,7 @@ export default {
           }
           let params = {
             Version: "2019-03-19",
-            Region: "ap-guangzhou",
+            Region: localStorage.getItem("regionv2"),
             EndTime: this.nowtime,
             MaxResults: this.MaxResults,
             StartTime: this.oldTime
