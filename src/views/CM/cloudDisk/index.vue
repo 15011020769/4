@@ -74,10 +74,6 @@
       return {
         loadShow: true,
         searchOptions: [{
-            value: "disk-usage",
-            label: "雲盤類型"
-          },
-          {
             value: "disk-id",
             label: "雲硬碟ID"
           },
@@ -203,8 +199,8 @@
           } else {
             let ErrTips = {
               'InvalidFilter': '指定的Filter不被支持',
-              'InvalidParameterValue': '无效参数值。参数值格式错误或者参数值不被支持等',
-              'MissingParameter': '参数缺失。请求没有带必选参数'
+              'InvalidParameterValue': '無效參數值。參數值格式錯誤或者參數值不被支持等',
+              'MissingParameter': '參數缺失。請求沒有帶必選參數'
             }
             let ErrOr = Object.assign(ErrorTips, ErrTips)
             this.$message({

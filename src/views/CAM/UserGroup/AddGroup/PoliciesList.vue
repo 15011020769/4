@@ -2,7 +2,7 @@
   <div class="Cam">
     <div class="container">
       <div class="container-left">
-        <p style="margin-bottom:20px">選擇策略（共{{totalNum}}条）</p>
+        <p style="margin-bottom:20px">{{$t('CAM.userList.choosepolicy')}}（共{{totalNum}}{{$t('CAM.strip')}}）</p>
         <!-- <el-input size="mini" custom-class="dialogStyle" v-model="search" style="width:100%"
           @keyup.enter.native="toQuery" />
         <i class="el-icon-search ifier" @click="toQuery"></i>-->
@@ -25,6 +25,7 @@
           style="width: 100%"
           @row-click="selectedRow"
           @selection-change="handleSelectionChange"
+          :empty-text="$t('CAM.strategy.zwsj')"
         >
           <el-table-column type="selection" prop="PolicyId" width="29"></el-table-column>
           <el-table-column
@@ -51,7 +52,7 @@
         </div>
       </div>
       <div class="container-right">
-        <span style="margin-bottom:20px">已选择</span>
+        <span style="margin-bottom:20px">{{$t('CAM.userList.choose')}}</span>
         <el-table
           class="table-left"
           ref="multipleSelected"
@@ -60,6 +61,7 @@
           size="small"
           :height="tableHeight"
           style="width: 100%"
+          :empty-text="$t('CAM.strategy.zwsj')"
         >
           <el-table-column
             prop="PolicyName"
@@ -138,13 +140,13 @@ export default {
             console.log(res);
           } else {
             let ErrTips = {
-              "InternalError.SystemError": "内部错误",
-              "InvalidParameter.GroupIdError": "GroupId字段不合法",
-              "InvalidParameter.KeywordError": "Keyword字段不合法",
-              "InvalidParameter.ParamError": "非法入参",
-              "InvalidParameter.ScopeError": "Scope字段不合法",
-              "InvalidParameter.ServiceTypeError": "ServiceType字段不合法",
-              "InvalidParameter.UinError": "Uin字段不合法"
+              "InternalError.SystemError": "內部錯誤",
+              "InvalidParameter.GroupIdError": "GroupId欄位不合法",
+              "InvalidParameter.KeywordError": "Keyword欄位不合法",
+              "InvalidParameter.ParamError": "非法入參",
+              "InvalidParameter.ScopeError": "Scope欄位不合法",
+              "InvalidParameter.ServiceTypeError": "ServiceType欄位不合法",
+              "InvalidParameter.UinError": "Uin欄位不合法"
             };
             let ErrOr = Object.assign(ErrorTips, ErrTips);
             this.$message({

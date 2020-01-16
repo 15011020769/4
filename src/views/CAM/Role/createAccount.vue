@@ -1,6 +1,6 @@
 <template>
   <div class="createAccount">
-    <HeadCom title="新建自定義角色" :backShow="true" @_back="_back" />
+    <HeadCom :title="$t('CAM.Role.top_text')" :backShow="true" @_back="_back" />
     <div class="container">
       <div class="contant">
         <div class="step">
@@ -28,7 +28,7 @@
               <p>
                 <el-input
                   v-model="input_num"
-                  placeholder="请输入内容"
+                  :placeholder="$t('CAM.strategy.inputContent')"
                   size="mini"
                   :disabled="disabledAccount"
                   style="width:150px"
@@ -63,17 +63,17 @@
               <p class="jscontent">
                 <el-input v-model="inputRoleDesc" placeholder size="mini"></el-input>
               </p>
-              <p class="jscontent text">服务-mps.cloud.tencent.com</p>
+              <p class="jscontent text">{{$t('CAM.Role.serveRole')}}-mps.cloud.tencent.com</p>
             </div>
           </div>
           <div class="content_table">
-            <el-table :data="policiesSelectedData" height="300" border style="width: 100%">
+            <el-table :data="policiesSelectedData" height="300" border style="width: 100%" :empty-text="$t('CAM.strategy.zwsj')">
               <el-table-column prop="PolicyName" :label="$t('CAM.Role.strategyName')"></el-table-column>
               <el-table-column prop="Description" :label="$t('CAM.Role.desc')"></el-table-column>
               <el-table-column prop="Type" :label="$t('CAM.Role.strategyType')">
                 <template slot-scope="scope">
-                  <p v-show="scope.row.Type == 1">自定义策略</p>
-                  <p v-show="scope.row.Type == 2">预设策略</p>
+                  <p v-show="scope.row.Type == 1">{{$t('CAM.userList.strategySelf')}}</p>
+                  <p v-show="scope.row.Type == 2">{{$t('CAM.userList.ysStrategy')}}</p>
                 </template>
               </el-table-column>
             </el-table>
@@ -123,8 +123,8 @@ export default {
       tableData: [
         {
           date: "QCloudFinanceFullAccess",
-          name: "	该策略允许您管理账户内财务相关的内容，例如：付款、开票。",
-          address: "预设策略"
+          name: "	該策略允許您管理賬戶內財務相關的內容，例如：付款、開票。",
+          address: "預設策略"
         }
       ]
     };
@@ -228,7 +228,7 @@ export default {
             }
           } else {
             this.$message({
-              message: "创建角色成功",
+              message: "創建角色成功",
               type: "success",
               showClose: true,
               duration: 0
@@ -252,20 +252,20 @@ export default {
           this.back();
         }else{
             let ErrTips = {
-              "InternalError.SystemError":'内部错误',
-               "InvalidParameter.AttachmentFull":'principal字段的授权对象关联策略数已达到上限',
-               "InvalidParameter.ConditionError":'策略文档的condition字段不合法',
-               "InvalidParameter.DescriptionLengthOverlimit":'Description入参长度不能大于300字节',
-               "InvalidParameter.ParamError":'非法入参',
-               "InvalidParameter.PrincipalError":'策略文档的principal字段不合法',
-               "InvalidParameter.RoleFull":'角色数量达到上限',
+              "InternalError.SystemError":'內部錯誤',
+               "InvalidParameter.AttachmentFull":'principal欄位的授權對象關聯策略數已達到上限',
+               "InvalidParameter.ConditionError":'策略文檔的condition欄位不合法',
+               "InvalidParameter.DescriptionLengthOverlimit":'Description入參長度不能大於300位元組',
+               "InvalidParameter.ParamError":'非法入參',
+               "InvalidParameter.PrincipalError":'策略文檔的principal欄位不合法',
+               "InvalidParameter.RoleFull":'角色數量達到上限',
                "InvalidParameter.RoleNameError":'角色名不合法',
-               "InvalidParameter.RoleNameInUse":'相同名称的角色已存在',
-               "InvalidParameter.UserNotExist":'principal字段的授权对象不存在'
+               "InvalidParameter.RoleNameInUse":'相同名稱的角色已存在',
+               "InvalidParameter.UserNotExist":'principal欄位的授權對象不存在'
             };
             let ErrOr = Object.assign(ErrorTips, ErrTips);
             this.$message({
-              message: ErrOr[res.Response.Error.Code],
+              message: ErrOr[data.Response.Error.Code],
               type: "error",
               showClose: true,
               duration: 0
@@ -280,9 +280,9 @@ export default {
           console.log(res);
         }else{
           let ErrTips = {
-             "InternalError.SystemError":'内部错误',
-             "InvalidParameter.AttachmentFull":'principal字段的授权对象关联策略数已达到上限',
-             "InvalidParameter.ParamError":'非法入参',
+             "InternalError.SystemError":'內部錯誤',
+             "InvalidParameter.AttachmentFull":'principal欄位的授權對象關聯策略數已達到上限',
+             "InvalidParameter.ParamError":'非法入參',
              "InvalidParameter.PolicyIdNotExist":'策略ID不存在',
              "InvalidParameter.RoleNotExist":'角色不存在'
           };

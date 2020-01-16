@@ -24,7 +24,8 @@ let ErrorTips = {
   'UnknownParameter': '未知参数错误',
   'UnsupportedOperation': '操作不支持',
   'UnsupportedProtocol': 'HTTPS 请求方法错误，只支持 GET 和 POST 请求',
-  'UnsupportedRegion': '接口不支持所传地域'
+  'UnsupportedRegion': '接口不支持所传地域',
+  'InvalidParameterValue.Malformed': '參數值是無效的,请输入正确的参数值'
 }
 export {
   ErrorTips

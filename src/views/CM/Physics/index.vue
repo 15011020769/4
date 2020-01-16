@@ -240,11 +240,11 @@ export default {
           this.TotalCount = data.Response.TotalCount;
         } else {
           let ErrTips = {
-            InternalError: "内部错误",
-            InvalidParameter: "参数错误",
-            InvalidParameterValue: "参数取值错误",
-            ResourceNotFound: "资源不存在",
-            UnauthorizedOperation: "未授权操作",
+            InternalError: "內部錯誤",
+            InvalidParameter: "參數錯誤",
+            InvalidParameterValue: "參數取值錯誤",
+            ResourceNotFound: "資源不存在",
+            UnauthorizedOperation: "未授權操作",
             UnsupportedOperation: "	操作不支持"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);

@@ -34,11 +34,11 @@
               </td>
               <td class="reg">
                 <el-input v-model="form.PhoneNum" @change="telInp"></el-input>
-                <span class="red" v-show="phoneReg">手机号输入有误</span>
+                <span class="red" v-show="phoneReg">{{$t('CAM.userList.sjhyw')}}</span>
               </td>
               <td class="reg">
                 <el-input v-model="form.Email" @change="emailInp"></el-input>
-                <span class="red" v-show="emailReg">邮箱输入有误</span>
+                <span class="red" v-show="emailReg">{{$t('CAM.userList.yxsryw')}}</span>
               </td>
               <td class="edit">
                 <span @click="_userConfirm">{{$t('CAM.userList.suerAdd')}}</span>
@@ -96,7 +96,7 @@
           v-loading="tableloading"
           max-height="520"
         >
-          <el-table-column prop="GroupName" label="用戶組名稱"></el-table-column>
+          <el-table-column prop="GroupName" :label="$t('CAM.userGroup.colNmae')"></el-table-column>
           <el-table-column :label="$t('CAM.userList.userCz')" width="250">
             <template slot-scope="scope">
               <p
@@ -194,7 +194,7 @@ export default {
           this.TotalCount = res.Response.TotalNum;
         } else {
           let ErrTips = {
-            "ResourceNotFound.UserNotExist": "用户不存在"
+            "ResourceNotFound.UserNotExist": "用戶不存在"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
@@ -237,8 +237,8 @@ export default {
     },
     //策略解除绑定
     _del(val) {
-      this.$confirm("此操作将解除绑定, 是否继续?", "提示", {
-        confirmButtonText: "确定",
+      this.$confirm("此操作將解除綁定, 是否繼續?", "提示", {
+        confirmButtonText: "確定",
         cancelButtonText: "取消",
         type: "warning"
       })
@@ -252,7 +252,7 @@ export default {
         .catch(() => {
           this.$message({
             type: "info",
-            message: "已取消删除",
+            message: "已取消刪除",
             duration: 0,
             showClose: true
           });
@@ -276,15 +276,15 @@ export default {
           this._getUser();
         } else {
           let ErrTips = {
-            "InternalError.SystemError": "内部错误",
+            "InternalError.SystemError": "內部錯誤",
             "InvalidParameter.AttachmentFull":
-              "principal字段的授权对象关联策略数已达到上限",
-            "InvalidParameter.ParamError": "非法入参",
-            "InvalidParameter.PolicyIdError": "输入参数PolicyId不合法",
+              "principal欄位的授權對象關聯策略數已達到上限",
+            "InvalidParameter.ParamError": "非法入參",
+            "InvalidParameter.PolicyIdError": "輸入參數PolicyId不合法",
             "InvalidParameter.PolicyIdNotExist": "策略ID不存在",
-            "InvalidParameter.UserNotExist": "principal字段的授权对象不存在",
-            "ResourceNotFound.PolicyIdNotFound": "PolicyId指定的资源不存在",
-            "ResourceNotFound.UserNotExist": "用户不存在"
+            "InvalidParameter.UserNotExist": "principal欄位的授權對象不存在",
+            "ResourceNotFound.PolicyIdNotFound": "PolicyId指定的資源不存在",
+            "ResourceNotFound.UserNotExist": "用戶不存在"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
@@ -312,8 +312,8 @@ export default {
           this.policyData = res.Response.List;
         } else {
           let ErrTips = {
-            "InternalError.SystemError": "内部错误",
-            "InvalidParameter.ParamError": "非法入参"
+            "InternalError.SystemError": "內部錯誤",
+            "InvalidParameter.ParamError": "非法入參"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
@@ -379,14 +379,14 @@ export default {
       if (this.phoneReg) {
         this.$message({
           showClose: true,
-          message: "请输入正确的手机号",
+          message: "請輸入正確的手機號",
           duration: 0,
           type: "error"
         });
       } else if (this.emailReg) {
         this.$message({
           showClose: true,
-          message: "请输入正确的邮箱",
+          message: "請輸入正確的郵箱",
           duration: 0,
           type: "error"
         });
@@ -397,7 +397,7 @@ export default {
             if (res.Response.Error === undefined) {
               this.$message({
                 showClose: true,
-                message: "编辑成功",
+                message: "編輯成功",
                 duration: 0,
                 type: "success"
               });
@@ -405,8 +405,8 @@ export default {
             } else {
               let ErrTips = {
                 "InvalidParameter.PasswordViolatedRules":
-                  "密码不符合用户安全设置",
-                "ResourceNotFound.UserNotExist": "用户不存在"
+                  "密碼不符合用戶安全設置",
+                "ResourceNotFound.UserNotExist": "用戶不存在"
               };
               let ErrOr = Object.assign(ErrorTips, ErrTips);
               this.$message({

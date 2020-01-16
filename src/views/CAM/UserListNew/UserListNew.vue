@@ -40,6 +40,7 @@
           @selection-change="selectDataChange"
           v-loading="loading"
           @expand-change="rowChange"
+          :empty-text="$t('CAM.strategy.zwsj')"
         >
           <el-table-column type="selection" width="55"></el-table-column>
           <el-table-column type="expand" :label="$t('CAM.userList.userDetils')" width="50">
@@ -47,7 +48,7 @@
               <div class="user-details" v-loading="loadrowC">
                 <div class="top">
                   <dl>
-                    <dd>用户组</dd>
+                    <dd>{{$t('CAM.userGroup.title')}}</dd>
                     <dt>
                       <p v-show="scope.row.group.length == 0">-</p>
                       <p v-show="scope.row.group.length != 0">
@@ -60,28 +61,28 @@
                         </a>
                         <span v-show="scope.row.group.length>2">
                           以及
-                          <a @click="goTo">另外({{scope.row.group.length-2}})个</a>
+                          <a @click="goTo">另外({{scope.row.group.length-2}}){{$t('CAM.userGroup.ge')}}</a>
                         </span>
                       </p>
                     </dt>
                   </dl>
                   <dl>
-                    <dd>消息订阅</dd>
+                    <dd>{{$t('CAM.userGroup.xxdy')}}</dd>
                     <dt>-</dt>
                   </dl>
                   <dl>
-                    <dd>备注</dd>
+                    <dd>{{$t('CAM.userList.userRemark')}}</dd>
                     <dt>{{scope.row.Remark ? scope.row.Remark : '-'}}</dt>
                   </dl>
                   <dl>
-                    <dd>控制台访问</dd>
+                    <dd>{{$t('CAM.Role.kztfw')}}</dd>
                     <dt
                       :class="scope.row.ConsoleLogin == 1 ? 'green' : 'red'"
-                    >{{scope.row.ConsoleLogin == 1 ? '启用' : '禁用'}}</dt>
+                    >{{scope.row.ConsoleLogin == 1 ? '啟用' : '禁用'}}</dt>
                   </dl>
                 </div>
                 <div class="bottom">
-                  <a @click="detailsUser(scope.row)">查看用户详情></a>
+                  <a @click="detailsUser(scope.row)">{{$t('CAM.userGroup.ckyhxq')}}></a>
                 </div>
               </div>
             </template>
@@ -94,7 +95,7 @@
           </el-table-column>
 
           <el-table-column :label="$t('CAM.userList.userChose')" prop="Remark">
-            <template slot-scope="scope">子用户</template>
+            <template slot-scope="scope">{{$t('CAM.userGroup.childUser')}}</template>
           </el-table-column>
 
           <el-table-column :label="$t('CAM.userList.userId')" prop="Uin"></el-table-column>
@@ -204,6 +205,7 @@
             @selection-change="handleSelection"
             :data="userGroup"
             v-loading="groupLoading"
+            :empty-text="$t('CAM.strategy.zwsj')"
           >
             <el-input size="mini" style="width:20%" />
             <el-button size="mini" class="suo" icon="el-icon-search" show-overflow-tooltip></el-button>
@@ -220,6 +222,7 @@
             height="400"
             style="width: 80%;border:1px solid #ddd"
             :data="userGroupSelect"
+            :empty-text="$t('CAM.strategy.zwsj')"
           >
             <el-table-column :label="$t('CAM.userList.userGroup')" prop="GroupName"></el-table-column>
             <el-table-column :label="$t('CAM.userList.userCz')" show-overflow-tooltip>
@@ -242,7 +245,7 @@
     </el-dialog>
     <!-- <deleteDialog :dialogDeleteUser="flag" @suerClose="suerClose" @confirm="confirm" /> -->
     <el-dialog
-      title="删除用户"
+      :title="$t('CAM.userList.scyh')"
       :visible.sync="dialogDeleteUser"
       width="70%"
       :before-close="deleteRowHandl"
@@ -253,7 +256,7 @@
       </div>
       <div>
         <template>
-          <el-table style="width: 100%" :data="delNewData">
+          <el-table style="width: 100%" :data="delNewData" :empty-text="$t('CAM.strategy.zwsj')">
             <el-table-column :label="$t('CAM.userList.userName')" prop="Name"></el-table-column>
             <el-table-column prop="Uid" :label="$t('CAM.userList.userId')"></el-table-column>
             <!-- <el-table-column :label="$t('CAM.userList.myId')"></el-table-column>
@@ -361,7 +364,7 @@ export default {
               element.group = res.Response.GroupInfo;
             } else {
               let ErrTips = {
-                "ResourceNotFound.UserNotExist": "用户不存在"
+                "ResourceNotFound.UserNotExist": "用戶不存在"
               };
               let ErrOr = Object.assign(ErrorTips, ErrTips);
               this.$message({
@@ -404,7 +407,7 @@ export default {
       } else {
         this.$message({
           showClose: true,
-          message: "请选中数据",
+          message: "請選中數據",
           duration: 0
         });
       }
@@ -424,19 +427,19 @@ export default {
             this.init();
           } else {
             let ErrTips = {
-              InternalError: "内部错误",
-              InvalidParameter: "参数错误",
-              "InvalidParameterValue.InstanceNotExist": "实例不存在",
-              "InvalidParameterValue.RepetitionValue": "已存在相同参数",
-              "InvalidParameterValue.SubnetIdInvalid": "无效的子网id",
-              "InvalidParameterValue.SubnetNotBelongToZone": "子网不属于zone",
-              "InvalidParameterValue.VpcIdInvalid": "无效的 Vpc Id",
-              "InvalidParameterValue.WrongAction": "Action参数取值错误",
+              InternalError: "內部錯誤",
+              InvalidParameter: "參數錯誤",
+              "InvalidParameterValue.InstanceNotExist": "實例不存在",
+              "InvalidParameterValue.RepetitionValue": "已存在相同參數",
+              "InvalidParameterValue.SubnetIdInvalid": "無效的子網id",
+              "InvalidParameterValue.SubnetNotBelongToZone": "子網不屬於zone",
+              "InvalidParameterValue.VpcIdInvalid": "無效的 Vpc Id",
+              "InvalidParameterValue.WrongAction": "Action參數取值錯誤",
               "InvalidParameterValue.ZoneNotSupport": "zone不支持",
-              ResourceUnavailable: "资源不可用",
-              UnauthorizedOperation: "未授权操作",
-              "UnsupportedOperation.BatchDelInstanceLimit": "批量删除实例限制",
-              "UnsupportedOperation.OssReject": "Oss拒绝该操作"
+              ResourceUnavailable: "資源不可用",
+              UnauthorizedOperation: "未授權操作",
+              "UnsupportedOperation.BatchDelInstanceLimit": "批量刪除實例限制",
+              "UnsupportedOperation.OssReject": "Oss拒絕該操作"
             };
             let ErrOr = Object.assign(ErrorTips, ErrTips);
             this.$message({
@@ -467,19 +470,19 @@ export default {
             this.init();
           } else {
             let ErrTips = {
-              InternalError: "内部错误",
-              InvalidParameter: "参数错误",
-              "InvalidParameterValue.InstanceNotExist": "实例不存在",
-              "InvalidParameterValue.RepetitionValue": "已存在相同参数",
-              "InvalidParameterValue.SubnetIdInvalid": "无效的子网id",
-              "InvalidParameterValue.SubnetNotBelongToZone": "子网不属于zone",
-              "InvalidParameterValue.VpcIdInvalid": "无效的 Vpc Id",
-              "InvalidParameterValue.WrongAction": "Action参数取值错误",
+              InternalError: "內部錯誤",
+              InvalidParameter: "參數錯誤",
+              "InvalidParameterValue.InstanceNotExist": "實例不存在",
+              "InvalidParameterValue.RepetitionValue": "已存在相同參數",
+              "InvalidParameterValue.SubnetIdInvalid": "無效的子網id",
+              "InvalidParameterValue.SubnetNotBelongToZone": "子網不屬於zone",
+              "InvalidParameterValue.VpcIdInvalid": "無效的 Vpc Id",
+              "InvalidParameterValue.WrongAction": "Action參數取值錯誤",
               "InvalidParameterValue.ZoneNotSupport": "zone不支持",
-              ResourceUnavailable: "资源不可用",
-              UnauthorizedOperation: "未授权操作",
-              "UnsupportedOperation.BatchDelInstanceLimit": "批量删除实例限制",
-              "UnsupportedOperation.OssReject": "Oss拒绝该操作"
+              ResourceUnavailable: "資源不可用",
+              UnauthorizedOperation: "未授權操作",
+              "UnsupportedOperation.BatchDelInstanceLimit": "批量刪除實例限制",
+              "UnsupportedOperation.OssReject": "Oss拒絕該操作"
             };
             let ErrOr = Object.assign(ErrorTips, ErrTips);
             this.$message({
@@ -507,7 +510,7 @@ export default {
         .catch(error => {
           this.$message({
             type: "error",
-            message: "删除失败",
+            message: "刪除失敗",
             showClose: true,
             duration: 0
           });
@@ -591,7 +594,7 @@ export default {
               this.loading = false;
               this.$message({
                 type: "info",
-                message: "无响应数据！",
+                message: "無響應數據！",
                 showClose: true,
                 duration: 0
               });
@@ -600,7 +603,7 @@ export default {
             let ErrTips = {};
             let ErrOr = Object.assign(ErrorTips, ErrTips);
             this.$message({
-              message: ErrOr[res.Response.Error.Code],
+              message: ErrOr[data.Response.Error.Code],
               type: "error",
               showClose: true,
               duration: 0
@@ -629,20 +632,20 @@ export default {
             this.loading = false;
             this.$message({
               type: "info",
-              message: "无响应数据！",
+              message: "無響應數據！",
               showClose: true,
               duration: 0
             });
           }
         } else {
           let ErrTips = {
-            "InternalError.SystemError": "内部错误",
-            "InvalidParameter.GroupIdError": "GroupId字段不合法",
-            "InvalidParameter.KeywordError": "Keyword字段不合法",
-            "InvalidParameter.ParamError": "非法入参",
-            "InvalidParameter.ScopeError": "Scope字段不合法",
-            "InvalidParameter.ServiceTypeError": "ServiceType字段不合法",
-            "InvalidParameter.UinError": "Uin字段不合法"
+            "InternalError.SystemError": "內部錯誤",
+            "InvalidParameter.GroupIdError": "GroupId欄位不合法",
+            "InvalidParameter.KeywordError": "Keyword欄位不合法",
+            "InvalidParameter.ParamError": "非法入參",
+            "InvalidParameter.ScopeError": "Scope欄位不合法",
+            "InvalidParameter.ServiceTypeError": "ServiceType欄位不合法",
+            "InvalidParameter.UinError": "Uin欄位不合法"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
@@ -704,7 +707,7 @@ export default {
               });
             } else {
               let ErrTips = {
-                "ResourceNotFound.UserNotExist": "用户不存在"
+                "ResourceNotFound.UserNotExist": "用戶不存在"
               };
               let ErrOr = Object.assign(ErrorTips, ErrTips);
               this.$message({
@@ -750,7 +753,7 @@ export default {
     //点击添加到组事件 更多
     addRroup(uid) {
       this.Uid = uid;
-      this.title = "添加到组";
+      this.title = "添加到組";
       this.authorization = true;
       this.userGroupShow = true;
       this.strategyShow = false;
@@ -768,8 +771,8 @@ export default {
           this.reload = !this.reload;
         } else {
           let ErrTips = {
-            "InternalError.SystemError": "内部错误",
-            "InvalidParameter.ParamError": "非法入参"
+            "InternalError.SystemError": "內部錯誤",
+            "InvalidParameter.ParamError": "非法入參"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
@@ -781,7 +784,7 @@ export default {
         }
       });
       this.Uin = val.Uin;
-      this.title = "关联策略";
+      this.title = "關聯策略";
       this.authorization = true;
       this.userGroupShow = false;
       this.strategyShow = true;
@@ -794,7 +797,7 @@ export default {
     //策略与用户组数据弹框确定按钮
     addUserList() {
       // userGroupSelect
-      if (this.title == "关联策略") {
+      if (this.title == "關聯策略") {
         var addPloicyId = [];
         this.multipleSelection.forEach(item => {
           addPloicyId.push(item);
@@ -809,27 +812,27 @@ export default {
             if (data.Response.Error === undefined) {
               this.init();
               this.$message({
-                message: "授权成功",
+                message: "授權成功",
                 showClose: true,
                 duration: 0
               });
             } else {
               let ErrTips = {
-                "FailedOperation.PolicyFull": "用户策略数超过上限",
-                "InternalError.SystemError": "内部错误",
+                "FailedOperation.PolicyFull": "用戶策略數超過上限",
+                "InternalError.SystemError": "內部錯誤",
                 "InvalidParameter.AttachmentFull":
-                  "principal字段的授权对象关联策略数已达到上限",
-                "InvalidParameter.ParamError": "非法入参",
-                "InvalidParameter.PolicyIdError": "输入参数PolicyId不合法",
+                  "principal欄位的授權對象關聯策略數已達到上限",
+                "InvalidParameter.ParamError": "非法入參",
+                "InvalidParameter.PolicyIdError": "輸入參數PolicyId不合法",
                 "InvalidParameter.PolicyIdNotExist": "策略ID不存在",
                 "InvalidParameter.UserNotExist":
-                  "principal字段的授权对象不存在",
-                "ResourceNotFound.PolicyIdNotFound": "PolicyId指定的资源不存在",
-                "ResourceNotFound.UserNotExist": "用户不存在"
+                  "principal欄位的授權對象不存在",
+                "ResourceNotFound.PolicyIdNotFound": "PolicyId指定的資源不存在",
+                "ResourceNotFound.UserNotExist": "用戶不存在"
               };
               let ErrOr = Object.assign(ErrorTips, ErrTips);
               this.$message({
-                message: ErrOr[res.Response.Error.Code],
+                message: ErrOr[data.Response.Error.Code],
                 type: "error",
                 showClose: true,
                 duration: 0
@@ -839,7 +842,7 @@ export default {
         });
         this.authorization = false;
       }
-      if (this.title == "添加到组") {
+      if (this.title == "添加到組") {
         var addGroupId = [];
         this.userGroupSelect.forEach(item => {
           addGroupId.push(item);
@@ -861,12 +864,12 @@ export default {
               this.init();
             } else {
               let ErrTips = {
-                "InvalidParameter.GroupNotExist": "用户组不存在",
+                "InvalidParameter.GroupNotExist": "用戶組不存在",
                 "InvalidParameter.GroupUserFull":
-                  "用户组中的子用户数量达到上限",
+                  "用戶組中的子用戶數量達到上限",
                 "InvalidParameter.UserGroupFull":
-                  "子用户加入的用户组数量达到上限",
-                "ResourceNotFound.UserNotExist": "用户不存在"
+                  "子用戶加入的用戶組數量達到上限",
+                "ResourceNotFound.UserNotExist": "用戶不存在"
               };
               let ErrOr = Object.assign(ErrorTips, ErrTips);
               this.$message({
@@ -903,7 +906,7 @@ export default {
     bindMesg() {
       this.$message({
         type: "info",
-        message: "内测中...",
+        message: "內測中...",
         duration: 0,
         showClose: true
       });

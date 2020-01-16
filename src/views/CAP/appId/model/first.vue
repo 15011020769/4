@@ -4,7 +4,6 @@
       <div class="bntWrap">
         <!-- 操作按钮 -->
         <el-button type="primary" class="addUser" size="small" @click="addBuild">新建验证</el-button>
-        <el-button size="small" @click="addUp">导入原有验证</el-button>
       </div>
       <div class="tableWrap">
         <div class="table">
@@ -61,31 +60,6 @@
         <el-button type="primary" @click="createAppid">确 定</el-button>
       </span>
     </el-dialog>
-    <!-- 导入原有验证弹框 -->
-    <el-dialog
-      title="导入原有的验证场景"
-      :visible.sync="dialogVisibleAdd"
-      width="30%"
-      :before-close="handleCloseAdd"
-    >
-      <span>
-        <el-form ref="form" :model="form" label-width="180px">
-          <el-form-item label="验证场景APPID (必填)">
-            <el-input v-model="form.name" style="width:70%;" placeholder="原有验证场景的APPID"></el-input>
-          </el-form-item>
-          <el-form-item label="验证场景SecretKey (必填)" label-width="180px">
-            <el-input v-model="form.name" style="width:70%" placeholder="原有验证场景SecretKey"></el-input>
-          </el-form-item>
-          <el-form-item label="007账号关联UIN (选填)" label-width="180px">
-            <el-input v-model="form.name" style="width:70%" placeholder="007账号关联UIN"></el-input>
-          </el-form-item>
-        </el-form>
-      </span>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisibleAdd = false">取 消</el-button>
-        <el-button type="primary" @click="dialogVisibleAdd = false">确 定</el-button>
-      </span>
-    </el-dialog>
   </div>
 </template>
 <script>
@@ -99,7 +73,6 @@ export default {
       pagesize: 10,
       currpage: 1,
       dialogVisibleBuild: false, //新建弹框
-      dialogVisibleAdd: false, //导入原有验证弹框
       tableData: [],//表格数据
       form: {
          name:'',
@@ -180,14 +153,6 @@ export default {
     handleCloseBuild() {
       this.dialogVisibleBuild = false;
     },
-    //导入原有验证弹框
-    addUp() {
-      this.dialogVisibleAdd = true;
-    },
-    //点击关闭导入原有验证弹框
-    handleCloseAdd() {
-      this.dialogVisibleAdd = false;
-    }
   }
 };
 </script>

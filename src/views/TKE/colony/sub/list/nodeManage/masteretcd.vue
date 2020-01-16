@@ -3,24 +3,22 @@
   <div >
     <subTitle title='Master&Etcd列表'  />
     <!-- 新建、搜索相关操作 -->
-    <div class="tke-action">
-      <div class="tke-grid ">
-        <!-- 左侧 -->
-        <div class="grid-left">
-          <el-button size="small" disabled="">监控</el-button>
-        </div>
-        <!-- 右侧 -->
-        <!-- <div class="grid-right">
-          <el-input placeholder="请输入内容" size="small"  class="tke-search">
-            <el-button slot="append" icon="el-icon-search"></el-button>
-          </el-input>
-          <i class="el-icon-download tke-download"></i>
-        </div> -->
+    <div class="tke-grid ">
+      <!-- 左侧 -->
+      <div class="grid-left">
+        <el-button size="small" type="primary">监控</el-button>
       </div>
+      <!-- 右侧 -->
+      <!-- <div class="grid-right">
+        <el-input placeholder="请输入内容" size="small"  class="tke-search">
+          <el-button slot="append" icon="el-icon-search"></el-button>
+        </el-input>
+        <i class="el-icon-download tke-download"></i>
+      </div> -->
     </div>
 
     <!-- 数据列表展示 -->
-      <div class="tke-card">
+      <div class="tke-card mt10">
         <el-table
           :data="list"
           v-loading="loadShow"
@@ -29,7 +27,7 @@
             label="ID/节点名"
             >
             <template slot-scope="scope">
-              <span class="tke-text-link" >ins-8czy2x5q</span>
+              <span @click="goMasteretcdDetail()" class="tke-text-link" >ins-8czy2x5q</span>
               <p>as-test02</p>
             </template>
           </el-table-column>
@@ -130,6 +128,7 @@ export default {
   name: "colonyNodeManageMasteretcd",
   data() {
     return {
+      clusterId:'',
       loadShow: false, //加载是否显示
       list:[
         {
@@ -150,9 +149,20 @@ export default {
     Loading
   },
   created() {
-
+    // 从路由获取集群id
+    this.clusterId=this.$route.query.clusterId;
   },
   methods: {
+     // 详情
+    goMasteretcdDetail(){
+      this.$router.push({
+          name: "masteretcdDetail",
+          query: {
+            clusterId: this.clusterId
+          }
+      });
+    },
+
    // 分页
     handleCurrentChange(val) {
       this.pageIndex = val-1;

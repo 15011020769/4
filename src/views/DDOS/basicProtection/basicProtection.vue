@@ -135,6 +135,7 @@
 </template>
 <script>
 import { CVM_LIST, CLB_LIST, NAT_LIST, ALL_CITY } from "@/constants";
+import { ErrorTips } from "@/components/ErrorTips";
 export default {
   data() {
     return {
@@ -210,13 +211,30 @@ export default {
         Limit: 100
       };
       this.axios.post(CVM_LIST, params).then(res => {
-        if (res.Response.Error == undefined) {
+        if (res.Response.Error === undefined) {
           this.allData = res.Response.InstanceSet;
           this.tableDataBegin = res.Response.InstanceSet;
           this.totalItems = res.Response.TotalCount;
         } else {
-          this.$message.error(res.Response.Error.Message);
-        }
+					let ErrTips = {
+						"InternalServerError": "操作內部錯誤",
+            "InvalidFilter": "無效的過濾器",
+            "InvalidFilterValue.LimitExceeded": "Filter參數值數量超過限制",
+            "InvalidHostId.Malformed":  "無效CDH ID，指定的CDH ID格式錯誤",
+            "InvalidInstanceId.Malformed": "無效實例ID，指定的實例ID格式錯誤",
+            "InvalidParameter": "無效參數",
+            "InvalidParameterValue": "無效參數值",
+            "InvalidParameterValue.LimitExceeded": "參數值數量超過限制",
+            "InvalidZone.MismatchRegion": "指定的zone不存在"
+					};
+					let ErrOr = Object.assign(ErrorTips, ErrTips);
+					this.$message({
+						message: ErrOr[res.Response.Error.Code],
+						type: "error",
+						showClose: true,
+						duration: 0
+					});
+				}
         this.loading = false;
       });
     },
@@ -228,13 +246,30 @@ export default {
         Region: this.selectedRegion
       };
       this.axios.post(CLB_LIST, params).then(res => {
-        if (res.Response.Error == undefined) {
+        if (res.Response.Error === undefined) {
           this.allData = res.Response.LoadBalancerSet;
           this.tableDataBegin = res.Response.LoadBalancerSet;
           this.totalItems = res.Response.TotalCount;
         } else {
-          this.$message.error(res.Response.Error.Message);
-        }
+					let ErrTips = {
+            'FailedOperation': '操作失敗',
+            'InternalError': '必須包含開始時間和結束時間，且必須為整形時間戳（精確到秒）',
+            'InvalidParameterValue.MaxResult': '內部錯誤',
+            'InvalidParameter': '參數錯誤',
+            'InvalidParameter.FormatError': '參數格式錯誤',
+            'InvalidParameterValue': '參數取值錯誤',
+            'InvalidParameterValue.InvalidFilter': 'Filter參數輸入錯誤',
+            'InvalidParameterValue.Length': '參數長度錯誤',
+            'UnauthorizedOperation': '未授權操作',
+					};
+					let ErrOr = Object.assign(ErrorTips, ErrTips);
+					this.$message({
+						message: ErrOr[res.Response.Error.Code],
+						type: "error",
+						showClose: true,
+						duration: 0
+					});
+				}
         this.loading = false;
       });
     },
@@ -246,13 +281,20 @@ export default {
         Region: this.selectedRegion
       };
       this.axios.post(NAT_LIST, params).then(res => {
-        if (res.Response.Error == undefined) {
+        if (res.Response.Error === undefined) {
           this.allData = res.Response.NatGatewaySet;
           this.tableDataBegin = res.Response.NatGatewaySet;
           this.totalItems = res.Response.TotalCount;
         } else {
-          this.$message.error(res.Response.Error.Message);
-        }
+					let ErrTips = {};
+					let ErrOr = Object.assign(ErrorTips, ErrTips);
+					this.$message({
+						message: ErrOr[res.Response.Error.Code],
+						type: "error",
+						showClose: true,
+						duration: 0
+					});
+				}
         this.loading = false;
       });
     },

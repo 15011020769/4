@@ -72,7 +72,7 @@ export default {
     listNum() {
       const params = {
         Version: "2019-03-19",
-        Region: "ap-guangzhou"
+        Region: localStorage.getItem("regionv2")
       };
       this.axios.post(GZJ_NUM, params).then(res => {
         if (res.Response.Error === undefined) {
@@ -100,7 +100,7 @@ export default {
     getData() {
       let params = {
         Version: "2019-03-19",
-        Region: "ap-guangzhou"
+        Region: localStorage.getItem("regionv2")
       };
       this.axios.post(GZJ_LIST, params).then(res => {
         if (res.Response.Error === undefined) {

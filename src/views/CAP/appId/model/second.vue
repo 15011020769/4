@@ -30,22 +30,13 @@
         <div class="pagstyle" style="height:70px;">
           <span>共&nbsp;{{TotalCount}}&nbsp;项</span>
           <div class="pagestyle_right">
-            <div>
-              <span>每页显示行</span>
-              <el-select v-model="value2" placeholder="10" style="width:64px" size="mini" @change="selectShowRow">
-                <el-option
-                  v-for="item in options2"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                ></el-option>
-              </el-select>
-            </div>
             <el-pagination
               :page-size="pagesize"
               :pager-count="7"
-              layout="prev, pager, next"
+              :page-sizes="[10, 20, 30, 40,50]"
+              layout="sizes, prev, pager, next"
               @current-change="handleCurrentChange"
+              @size-change="handleSizeChange"
               :total="TotalCount"
             ></el-pagination>
           </div>
@@ -73,31 +64,8 @@ export default {
           label: "已过期"
         }
       ],
-      options2: [
-        {
-          value: "10",
-          label: "10"
-        },
-        {
-          value: "20",
-          label: "20"
-        },
-        {
-          value: "30",
-          label: "30"
-        },
-        {
-          value: "40",
-          label: "40"
-        },
-        {
-          value: "50",
-          label: "50"
-        }
-      ],
       loading:false,
       value: "可使用",
-      value2: "10",//默认展示行数
       tableData: [],
       //分页
       TotalCount:0,
@@ -123,15 +91,14 @@ export default {
     selectOne(val){
        console.log(val)
     },
+     handleSizeChange(val) {
+      console.log(`每頁 ${val} 條`);
+    },
     // 改变页数
     handleCurrentChange(val){
-      console.log(val)
       this.currpage = val;
     },
-    // 选择展示行
-    selectShowRow(val){
-      console.log(val)  
-    },
+   
     //路由跳转
     buyNew(){
        this.$router.push({

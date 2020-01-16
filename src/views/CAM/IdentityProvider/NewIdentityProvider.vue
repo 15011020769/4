@@ -8,18 +8,18 @@
         simple
         style="background: #fff; padding-top: 20px;padding-left: 10px;width:100%;"
       >
-        <el-step title="配置提供商信息"></el-step>
+        <el-step :title="$t('CAM.strategy.pztgsxx')"></el-step>
         <el-step :title="$t('CAM.strategy.completes')"></el-step>
       </el-steps>
       <hr style="margin-top:10px;" />
       <div v-show="active==0" style="width:100%;">
         <el-form :model="addModel" :rules="rules" size="mini" ref="ruleForm" label-width="100px">
-          <el-form-item label="提供商类型" prop="providerType">
+          <el-form-item :label="$t('CAM.strategy.peopleType')" prop="providerType">
             <el-col :span="14">
               <el-radio size="mini" v-model="addModel.providerType" label="SAML">SAML</el-radio>
             </el-col>
           </el-form-item>
-          <el-form-item label="提供商名称" prop="providerName">
+          <el-form-item :label="$t('CAM.strategy.peopleName')" prop="providerName">
             <el-col :span="14">
               <el-input size="mini" ref="providerNameRules" v-model="addModel.providerName"></el-input>
             </el-col>
@@ -65,7 +65,7 @@
           @click="next('ruleForm')"
         >下一步</el-button>
         <!-- <el-button v-show="active==1" type="primary" @click="step">返回</el-button> -->
-        <el-button v-show="active==1" size="small" type="primary" @click="confirm">确认</el-button>
+        <el-button v-show="active==1" size="small" type="primary" @click="confirm">{{$t('CAM.strategy.qr')}}</el-button>
       </div>
     </div>
   </div>
@@ -100,28 +100,28 @@ export default {
         remark: [
           {
             required: true,
-            message: "请输入描述",
+            message: "請輸入描述",
             trigger: "blur"
           }
         ],
         providerType: [
           {
             required: true,
-            message: "请选择提供商类型",
+            message: "請選擇提供商類型",
             trigger: "blur"
           }
         ],
         providerName: [
           {
             required: true,
-            message: "请输入名称",
+            message: "請輸入名稱",
             trigger: "blur"
           }
         ],
         metadataDocument: [
           {
             required: true,
-            message: "请选择元数据文档",
+            message: "請選擇元數據文檔",
             trigger: "blur"
           }
         ]
@@ -175,11 +175,11 @@ export default {
               }
             } else {
               let ErrTips = {
-                "InvalidParameter.IdentityNameInUse": "身份提供商名称已经使用",
+                "InvalidParameter.IdentityNameInUse": "身份提供商名稱已經使用",
                 "InvalidParameterValue.MetadataError":
-                  "身份提供商元数据文档错误",
-                "InvalidParameterValue.NameError": "身份提供商名称错误",
-                "LimitExceeded.IdentityFull": "身份提供商已达到上限"
+                  "身份提供商元數據文檔錯誤",
+                "InvalidParameterValue.NameError": "身份提供商名稱錯誤",
+                "LimitExceeded.IdentityFull": "身份提供商已達到上限"
               };
               let ErrOr = Object.assign(ErrorTips, ErrTips);
               this.$message({

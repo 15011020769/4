@@ -4,41 +4,38 @@
       <subTitle title='StatefulSet'  />
 
       <!-- 新建、搜索相关操作 -->
-      <div class="tke-action">
-        <div class="tke-grid ">
-          <!-- 左侧 -->
-          <div class="grid-left">
-            <el-button @click="goWorkloadCreate('statefulSet')" size="small" type="primary">新建</el-button>
-            <el-button size="small" >监控</el-button>
-          </div>
-          <!-- 右侧 -->
-          <div class="grid-right">
-            <tkeSearch 
-              typeSelect 
-              refreshData
-              exportData
-              typeLabel='命名空间' 
-              :typeOptions='searchOptions'
-              :typeValue='searchType' 
-              inputPlaceholder='请输入关键词搜索'
-              :searchInput='searchInput'
-
-              @changeType="changeSearchType"
-              @changeInput="changeSearchInput"
-              @clickSearch="clickSearch"
-              @refresh='refreshList'
-              @exportExcel="exportExcel"
-            >
-            </tkeSearch>
-          
-              
-          </div>
+      <div class="tke-grid ">
+        <!-- 左侧 -->
+        <div class="grid-left">
+          <el-button @click="goWorkloadCreate('statefulSet')" size="small" type="primary">新建</el-button>
+          <el-button size="small" >监控</el-button>
         </div>
+        <!-- 右侧 -->
+        <div class="grid-right">
+          <tkeSearch 
+            typeSelect 
+            refreshData
+            exportData
+            typeLabel='命名空间' 
+            :typeOptions='searchOptions'
+            :typeValue='searchType' 
+            inputPlaceholder='请输入关键词搜索'
+            :searchInput='searchInput'
+
+            @changeType="changeSearchType"
+            @changeInput="changeSearchInput"
+            @clickSearch="clickSearch"
+            @refresh='refreshList'
+            @exportExcel="exportExcel"
+          >
+          </tkeSearch>
         
+            
+        </div>
       </div>
 
       <!-- 数据列表展示 -->
-      <div class="tke-card">
+      <div class="tke-card mt10">
         <el-table
           :data="list"
           @selection-change="handleSelectionChange"

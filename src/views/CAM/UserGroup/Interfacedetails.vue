@@ -58,8 +58,12 @@
                 size="small"
               >{{$t('CAM.userGroup.getPolicy')}}</el-button>
               <div>
-                <el-table :data="policiesData" style="width: 100%;" height="300">
-                  <el-table-column :label="$t('CAM.userList.strategyNames')" show-overflow-tooltip>
+                <el-table :data="policiesData" style="width: 100%;" height="300" :empty-text="$t('CAM.strategy.zwsj')">
+                  <el-table-column
+                    :label="$t('CAM.userList.strategyNames')"
+                    show-overflow-tooltip
+                    width="400"
+                  >
                     <template slot-scope="scope">
                       <!-- <p>{{scope.row.PolicyName}}</p> -->
                       <el-button
@@ -67,7 +71,7 @@
                         size="mini"
                         type="text"
                       >{{scope.row.PolicyName}}</el-button>
-                      <p>{{scope.row.Remark}}</p>
+                      <p class="omit">{{scope.row.Remark}}</p>
                     </template>
                   </el-table-column>
                   <el-table-column
@@ -80,7 +84,7 @@
                   </el-table-column>
                   <el-table-column :label="$t('CAM.userGroup.colHandle')" show-overflow-tooltip>
                     <template slot-scope="scope">
-                      <el-link type="primary" @click="deletePolicies(scope.row.PolicyId)">解除</el-link>
+                      <el-link type="primary" @click="delPolicy(scope.row.PolicyId)">解除</el-link>
                     </template>
                   </el-table-column>
                 </el-table>
@@ -136,6 +140,7 @@
                   height="300"
                   style="width: 100%;"
                   @selection-change="handleSelectionChangeUsers"
+                  :empty-text="$t('CAM.strategy.zwsj')"
                 >
                   <el-table-column type="selection" width="55"></el-table-column>
                   <el-table-column :label="$t('CAM.userGroup.colNmae')" prop="Name">
@@ -199,6 +204,7 @@
                       v-model="searchUser"
                       style="width:100%"
                       @keyup.enter.native="toQueryUser"
+                      @change="search"
                     >
                       <i slot="suffix" class="el-input__icon el-icon-search" @click="toQueryUser"></i>
                     </el-input>
@@ -212,6 +218,7 @@
                       style="width: 100%"
                       @row-click="selectedRow"
                       @selection-change="handleSelectionChangeUser"
+                      :empty-text="$t('CAM.strategy.zwsj')"
                     >
                       <el-table-column type="selection" prop="Uin" width="28"></el-table-column>
                       <el-table-column
@@ -241,6 +248,7 @@
                       size="small"
                       :height="tableHeight"
                       style="width: 100%"
+                      :empty-text="$t('CAM.strategy.zwsj')"
                     >
                       <el-table-column
                         prop="Name"
@@ -351,6 +359,20 @@ export default {
     // this.tableHeight = window.innerHeight - this.$refs.multipleOptionPolicies.$el.offsetTop - 50;
   },
   methods: {
+    delPolicy(id) {
+      this.$confirm("此操作將永久刪除, 是否繼續?", "提示", {
+        confirmButtonText: "確定",
+        cancelButtonText: "取消",
+        type: "warning"
+      }).then(() => {
+        this.deletePolicies(id);
+      });
+    },
+    search() {
+      if (this.searchUser == "") {
+        this.userData = this.userAllData;
+      }
+    },
     _multipleSelection(val) {
       this.multipleSelection = val;
     },
@@ -388,12 +410,12 @@ export default {
               this.currpages * this.pagesizes
             );
             this.TotalCounts = res.Response.UserInfo.length;
-            this.userLabel = "用户（" + res.Response.UserInfo.length + "）";
+            this.userLabel = "用戶（" + res.Response.UserInfo.length + "）";
             this.title = this.groupData.GroupName;
             this.loading1 = false;
           } else {
             let ErrTips = {
-              "ResourceNotFound.UserNotExist": "用户不存在"
+              "ResourceNotFound.UserNotExist": "用戶不存在"
             };
             let ErrOr = Object.assign(ErrorTips, ErrTips);
             this.$message({
@@ -429,7 +451,7 @@ export default {
             let ErrTips = {};
             let ErrOr = Object.assign(ErrorTips, ErrTips);
             this.$message({
-              message: ErrOr[res.Response.Error.Code],
+              message: ErrOr[data.Response.Error.Code],
               type: "error",
               showClose: true,
               duration: 0
@@ -459,7 +481,7 @@ export default {
       if (this.groupData.GroupName == "") {
         this.$message({
           showClose: true,
-          message: "用户组名称不能为空",
+          message: "用戶組名稱不能為空",
           duration: 0
         });
       } else {
@@ -481,8 +503,8 @@ export default {
               this.init();
             } else {
               let ErrTips = {
-                "InvalidParameter.GroupNameInUse": "用户组名称重复",
-                "ResourceNotFound.GroupNotExist": "用户组不存在"
+                "InvalidParameter.GroupNameInUse": "用戶組名稱重複",
+                "ResourceNotFound.GroupNotExist": "用戶組不存在"
               };
               let ErrOr = Object.assign(ErrorTips, ErrTips);
               this.$message({
@@ -520,11 +542,11 @@ export default {
             this.totalUser = resGroup.Response.TotalNum;
           } else {
             let ErrTips = {
-              "ResourceNotFound.GroupNotExist": "用户组不存在"
+              "ResourceNotFound.GroupNotExist": "用戶組不存在"
             };
             let ErrOr = Object.assign(ErrorTips, ErrTips);
             this.$message({
-              message: ErrOr[res.Response.Error.Code],
+              message: ErrOr[resGroup.Response.Error.Code],
               type: "error",
               showClose: true,
               duration: 0
@@ -582,11 +604,11 @@ export default {
                   _this.totalNumUser = this.userData.length;
                 } else {
                   let ErrTips = {
-                    "ResourceNotFound.GroupNotExist": "用户组不存在"
+                    "ResourceNotFound.GroupNotExist": "用戶組不存在"
                   };
                   let ErrOr = Object.assign(ErrorTips, ErrTips);
                   this.$message({
-                    message: ErrOr[res.Response.Error.Code],
+                    message: ErrOr[resGroup.Response.Error.Code],
                     type: "error",
                     showClose: true,
                     duration: 0
@@ -631,16 +653,16 @@ export default {
               this.init(); // 重新加载页面
             } else {
               let ErrTips = {
-                "InvalidParameter.GroupNotExist": "用户组不存在",
+                "InvalidParameter.GroupNotExist": "用戶組不存在",
                 "InvalidParameter.GroupUserFull":
-                  "用户组中的子用户数量达到上限",
+                  "用戶組中的子用戶數量達到上限",
                 "InvalidParameter.UserGroupFull":
-                  "子用户加入的用户组数量达到上限",
-                "ResourceNotFound.UserNotExist": "用户不存在"
+                  "子用戶加入的用戶組數量達到上限",
+                "ResourceNotFound.UserNotExist": "用戶不存在"
               };
               let ErrOr = Object.assign(ErrorTips, ErrTips);
               this.$message({
-                message: ErrOr[res.Response.Error.Code],
+                message: ErrOr[data.Response.Error.Code],
                 type: "error",
                 showClose: true,
                 duration: 0
@@ -652,10 +674,28 @@ export default {
           });
       }
     },
-    toQueryUser() {},
+    toQueryUser() {
+      if (this.searchUser == "") {
+        this.userData = this.userAllData;
+      } else {
+        var arr = [];
+        this.userData.forEach(item => {
+          if (item.Name.includes(this.searchUser)) {
+            arr.push(item);
+          }
+        });
+        this.userData = arr;
+      }
+    },
     // 从用户组移除子用户信息，单条移除
     deleteRow(uid) {
-      this.deleteUser(uid);
+      this.$confirm("此操作將永久刪除, 是否繼續?", "提示", {
+        confirmButtonText: "確定",
+        cancelButtonText: "取消",
+        type: "warning"
+      }).then(() => {
+        this.deleteUser(uid);
+      });
     },
     // 子用户多选事件，移除多条用户组子用户使用
     handleSelectionChangeUsers(val) {
@@ -710,12 +750,12 @@ export default {
           if (res.Response.Error === undefined) {
             this.policiesData = res.Response.List;
             this.rolePolicies = this.policiesData;
-            this.policiesLable = "权限（" + res.Response.TotalNum + "）";
+            this.policiesLable = "許可權（" + res.Response.TotalNum + "）";
             this.TotalCount = res.Response.TotalNum;
           } else {
             let ErrTips = {
-              "InternalError.SystemError": "内部错误",
-              "InvalidParameter.ParamError": "非法入参"
+              "InternalError.SystemError": "內部錯誤",
+              "InvalidParameter.ParamError": "非法入參"
             };
             let ErrOr = Object.assign(ErrorTips, ErrTips);
             this.$message({
@@ -750,13 +790,13 @@ export default {
             this.policiesAllData = res.Response.List;
           } else {
             let ErrTips = {
-              "InternalError.SystemError": "内部错误",
-              "InvalidParameter.GroupIdError": "GroupId字段不合法",
-              "InvalidParameter.KeywordError": "Keyword字段不合法",
-              "InvalidParameter.ParamError": "非法入参",
-              "InvalidParameter.ScopeError": "Scope字段不合法",
-              "InvalidParameter.ServiceTypeError": "ServiceType字段不合法",
-              "InvalidParameter.UinError": "Uin字段不合法"
+              "InternalError.SystemError": "內部錯誤",
+              "InvalidParameter.GroupIdError": "GroupId欄位不合法",
+              "InvalidParameter.KeywordError": "Keyword欄位不合法",
+              "InvalidParameter.ParamError": "非法入參",
+              "InvalidParameter.ScopeError": "Scope欄位不合法",
+              "InvalidParameter.ServiceTypeError": "ServiceType欄位不合法",
+              "InvalidParameter.UinError": "Uin欄位不合法"
             };
             let ErrOr = Object.assign(ErrorTips, ErrTips);
             this.$message({
@@ -792,13 +832,13 @@ export default {
             });
           } else {
             let ErrTips = {
-              "InternalError.SystemError": "内部错误",
-              "InvalidParameter.ParamError": "非法入参",
-              "InvalidParameter.PolicyIdError": "输入参数PolicyId不合法",
+              "InternalError.SystemError": "內部錯誤",
+              "InvalidParameter.ParamError": "非法入參",
+              "InvalidParameter.PolicyIdError": "輸入參數PolicyId不合法",
               "nvalidParameter.PolicyIdNotExist": "策略ID不存在",
-              "InvalidParameter.UserNotExist": "principal字段的授权对象不存在",
-              "ResourceNotFound.GroupNotExist": "用户组不存在",
-              "ResourceNotFound.UserNotExist": "用户不存在"
+              "InvalidParameter.UserNotExist": "principal欄位的授權對象不存在",
+              "ResourceNotFound.GroupNotExist": "用戶組不存在",
+              "ResourceNotFound.UserNotExist": "用戶不存在"
             };
             let ErrOr = Object.assign(ErrorTips, ErrTips);
             this.$message({
@@ -842,7 +882,7 @@ export default {
       if (this.multipleSelection.length == 0) {
         this.$message({
           showClose: true,
-          message: "请选中数据",
+          message: "請選中數據",
           duration: 0
         });
       } else {
@@ -864,46 +904,44 @@ export default {
         PolicyId: val,
         Version: "2019-01-16"
       };
-      this.axios
-        .post(ATTACH_GROUP, policiesParams)
-        .then(res => {
-          if (res.Response.Error === undefined) {
-            this.$message({
-              showClose: true,
-              message: "添加成功",
-              duration: 0,
-              type: "success"
-            });
-          } else {
-            let ErrTips = {
-              "FailedOperation.PolicyFull": "用户策略数超过上限",
-              "InternalError.SystemError": "内部错误",
-              "InvalidParameter.AttachmentFull":
-                "principal字段的授权对象关联策略数已达到上限",
-              "InvalidParameter.ParamError": "非法入参",
-              "InvalidParameter.PolicyIdError": "输入参数PolicyId不合法",
-              "InvalidParameter.PolicyIdNotExist": "策略ID不存在",
-              "InvalidParameter.UserNotExist": "principal字段的授权对象不存在",
-              "ResourceNotFound.GroupNotExist": "用户组不存在",
-              "ResourceNotFound.PolicyIdNotFound": "PolicyId指定的资源不存在",
-              "ResourceNotFound.UserNotExist": "用户不存在"
-            };
-            let ErrOr = Object.assign(ErrorTips, ErrTips);
-            this.$message({
-              message: ErrOr[res.Response.Error.Code],
-              type: "error",
-              showClose: true,
-              duration: 0
-            });
-          }
-        })
+      this.axios.post(ATTACH_GROUP, policiesParams).then(res => {
+        if (res.Response.Error === undefined) {
+          this.$message({
+            showClose: true,
+            message: "添加成功",
+            duration: 0,
+            type: "success"
+          });
+        } else {
+          let ErrTips = {
+            "FailedOperation.PolicyFull": "用戶策略數超過上限",
+            "InternalError.SystemError": "內部錯誤",
+            "InvalidParameter.AttachmentFull":
+              "principal欄位的授權對象關聯策略數已達到上限",
+            "InvalidParameter.ParamError": "非法入參",
+            "InvalidParameter.PolicyIdError": "輸入參數PolicyId不合法",
+            "InvalidParameter.PolicyIdNotExist": "策略ID不存在",
+            "InvalidParameter.UserNotExist": "principal欄位的授權對象不存在",
+            "ResourceNotFound.GroupNotExist": "用戶組不存在",
+            "ResourceNotFound.PolicyIdNotFound": "PolicyId指定的資源不存在",
+            "ResourceNotFound.UserNotExist": "用戶不存在"
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
     },
     // 跳转到策略详情页面
     policyDetail(policy) {
       this.$router.push({
         path: "/StrategyDetail",
         query: {
-          policy: policy
+          policy: policy.PolicyId
         }
       });
     },
@@ -942,6 +980,12 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+.omit {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 390px;
+}
 .wrap >>> .el-button,
 .wrap >>> .el-input__inner {
   border-radius: 0;

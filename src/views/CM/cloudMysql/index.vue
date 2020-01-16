@@ -250,12 +250,12 @@ export default {
             this.TotalCount = data.Response.TotalCount;
           } else {
             let ErrTips = {
-              CdbError: "后端错误或者流程错误",
-              "InternalError.DatabaseAccessError": "数据库内部错误",
-              "InternalError.DesError": "系统内部错误",
-              InvalidParameter: "参数错误",
-              "InvalidParameter.InstanceNotFound": "实例不存在",
-              "OperationDenied.WrongStatus": "后端任务状态非法"
+              CdbError: "後端錯誤或者流程錯誤",
+              "InternalError.DatabaseAccessError": "資料庫內部錯誤",
+              "InternalError.DesError": "系統內部錯誤",
+              InvalidParameter: "參數錯誤",
+              "InvalidParameter.InstanceNotFound": "實例不存在",
+              "OperationDenied.WrongStatus": "後端任務狀態非法"
             };
             let ErrOr = Object.assign(ErrorTips, ErrTips);
             this.$message({
