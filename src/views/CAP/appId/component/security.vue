@@ -54,7 +54,7 @@
         </div>
         <div class="model-choose-level">
           <div class="model-choose">
-            <ul>
+            <ul class="setHeight">
               <li>智能验证引擎</li>
               <li>
                 开启验证码智能验证引擎，将根据你业务的实时风险情况下发不同类型的验证码。
@@ -94,7 +94,7 @@
             </div>
           </div>
           <div class="model-level">
-            <ul>
+            <ul class="setHeight">
               <li>
                 智能免验证
                 <span class="open">内测中</span>
@@ -282,7 +282,8 @@ export default {
           padding: 0px 20px;
           ul {
             width: 85%;
-            margin-bottom: 30px;
+            // height: 100px;
+            margin-bottom: 40px;
             li {
               padding: 10px 0px;
             }
@@ -334,7 +335,8 @@ export default {
           flex: 1;
           padding-left: 40px;
           ul {
-            margin-bottom: 30px;
+            //  height: 100px;
+            margin-bottom: 40px;
             li {
               padding: 10px 0px;
               span {
@@ -354,28 +356,7 @@ export default {
             }
           }
           .block {
-            .dialog{
-              display: flex;
-              // justify-content: space-between;
-              // span{
-              //   border: solid 1px #dddddd;
-              //   padding: 8px 20px;
-              //   color:white;
-              //   border-radius: 5px;
-              //   background: rgba(0,0,0,0.8);
-              //   position: relative;
-              // }
-              //   span::before{
-              //       contain: '';
-              //       position: absolute;
-              //       top: 30px;
-              //       left: 40px;
-              //       border-top: solid 10px rgba(0,0,0,0.8);
-              //       border-left: solid 10px transparent;
-              //       border-right: solid 10px transparent;
-              //       border-bottom: solid 10px transparent;
-              //   }
-            }
+            padding-top: 40px;
             .block-content {
               display: flex;
               justify-content: space-between;
@@ -394,6 +375,9 @@ export default {
       }
     }
   }
+}
+.setHeight{
+  height: 100px;
 }
 .active,
 .active2 {
