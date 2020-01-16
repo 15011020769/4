@@ -177,9 +177,9 @@
 					</el-radio-group>
 				</el-form-item>
 				<el-form-item label="资源列表">
-					<el-select v-model="value" placeholder="请选择" style="margin-left:70px;">
+					<el-select v-model="svc.value" placeholder="请选择" style="margin-left:70px;">
 						<el-option
-							v-for="item in options"
+							v-for="item in svc.options"
 							:key="item.value"
 							:label="item.label"
 							:value="item.value">
