@@ -74,10 +74,6 @@
       return {
         loadShow: true,
         searchOptions: [{
-            value: "disk-usage",
-            label: "雲盤類型"
-          },
-          {
             value: "disk-id",
             label: "雲硬碟ID"
           },

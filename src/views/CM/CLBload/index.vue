@@ -24,8 +24,9 @@
         </el-table-column>
         <el-table-column prop :label="$t('CVM.clBload.jk')" width="80">
           <template slot-scope="scope">
-            <div class="a" @click="jump(scope.row.LoadBalancerId,i)"></div>
-            <!-- <i @click="jump(scope.row.LoadBalancerId,i)" style="cursor:pointer;"><i class="el-icon-share"></i></a> -->
+            <div v-for="i in scope.row.LoadBalancerVips">
+              <div class="a" @click="jump(scope.row.LoadBalancerId,i)"></div>
+            </div>
           </template>
         </el-table-column>
         <el-table-column prop :label="$t('CVM.clBload.zt')">
