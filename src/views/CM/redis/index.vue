@@ -225,15 +225,15 @@ export default {
             this.TotalCount = data.Response.TotalCount;
           } else {
             let ErrTips = {
-              InternalError: "内部错误",
-              InvalidParameter: "参数错误",
-              "InvalidParameterValue.InstanceNotExist": "实例不存在",
-              "InvalidParameterValue.RepetitionValue": "已存在相同参数",
-              "InvalidParameterValue.WrongAction": "Action参数取值错误",
-              ResourceUnavailable: "资源不可用",
-              UnauthorizedOperation: "未授权操作",
-              "UnsupportedOperation.BatchDelInstanceLimit": "批量删除实例限制",
-              "UnsupportedOperation.OssReject": "Oss拒绝该操作"
+              InternalError: "內部錯誤",
+              InvalidParameter: "參數錯誤",
+              "InvalidParameterValue.InstanceNotExist": "實例不存在",
+              "InvalidParameterValue.RepetitionValue": "已存在相同參數",
+              "InvalidParameterValue.WrongAction": "Action參數取值錯誤",
+              ResourceUnavailable: "資源不可用",
+              UnauthorizedOperation: "未授權操作",
+              "UnsupportedOperation.BatchDelInstanceLimit": "批量刪除實例限制",
+              "UnsupportedOperation.OssReject": "Oss拒絕該操作"
             };
             let ErrOr = Object.assign(ErrorTips, ErrTips);
             this.$message({

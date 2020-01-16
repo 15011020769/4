@@ -223,6 +223,7 @@
 import FileSaver from "file-saver";
 import XLSX from "xlsx";
 import { DDOS_SECINDEX, DDOS_PACKINDEX, DDOS_EV_LIST} from "@/constants";
+import { ErrorTips } from "@/components/ErrorTips";
 export default {
   data() {
     return {
@@ -289,7 +290,7 @@ export default {
       for (let i in this.packParams) {
         this.business = this.packParams[i];
         switch (
-          this.packParams[i] //[bgpip表示高防IP；bgp表示独享包；bgp-multip表示共享包；net表示高防IP专业版]
+          this.business //[bgpip表示高防IP；bgp表示独享包；bgp-multip表示共享包；net表示高防IP专业版]
         ) {
           case "net":
             this.describePackIndex(this.packDataIP);
@@ -307,13 +308,24 @@ export default {
         Version: "2018-07-09"
       };
       this.axios.post(DDOS_SECINDEX, params).then(res => {
-        for (let i in this.attackData) {
-          for (let j in res.Response.Data) {
-            if (this.attackData[i].Key == res.Response.Data[j].Key) {
-              this.attackData[i].Value = res.Response.Data[j].Value;
-              break;
+        if (res.Response.Error === undefined) {
+          for (let i in this.attackData) {
+            for (let j in res.Response.Data) {
+              if (this.attackData[i].Key == res.Response.Data[j].Key) {
+                this.attackData[i].Value = res.Response.Data[j].Value;
+                break;
+              }
             }
           }
+        } else {
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
         }
       });
     },
@@ -324,13 +336,24 @@ export default {
         Business: this.business
       };
       this.axios.post(DDOS_PACKINDEX, params).then(res => {
-        for (let i in packData) {
-          for (let j in res.Response.Data) {
-            if (packData[i].Key == res.Response.Data[j].Key) {
-              packData[i].Value = res.Response.Data[j].Value;
-              break;
+        if (res.Response.Error === undefined) {
+          for (let i in packData) {
+            for (let j in res.Response.Data) {
+              if (packData[i].Key == res.Response.Data[j].Key) {
+                packData[i].Value = res.Response.Data[j].Value;
+                break;
+              }
             }
           }
+        } else {
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
         }
       });
     },
@@ -345,16 +368,20 @@ export default {
         Id: this.searchInputID
       };
       this.axios.post(DDOS_EV_LIST, params).then(res => {
-        if (!("Error" in res.Response)) {
+        if (res.Response.Error === undefined) {
           this.tableDataBegin = res.Response.Data;
           this.totalItems = this.tableDataBegin.length;
-          this.loading = false;
         } else {
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
-            message: res.Response.Error,
-            type: "error"
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
           });
         }
+        this.loading = false;
       });
     },
     // 时间格式化'yyyy-MM-dd hh:mm:ss'

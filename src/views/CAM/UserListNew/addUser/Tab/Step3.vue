@@ -39,7 +39,7 @@
       <el-tab-pane :label="$t('CAM.userList.userPolicies')" name="second">
         <h3>
           {{$t('CAM.userList.listTitle')}}
-          <span>（共{{userDatas.length}}条）</span>
+          <span>（共{{userDatas.length}}{{$t('CAM.strip')}}）</span>
         </h3>
         <el-radio-group v-model="radio" @change="_radio" style="width:100%;margin-top:-3px;">
           <el-table max-height="520" :data="userDatas" @selection-change="handleSelectionChange">
@@ -71,7 +71,7 @@
       <el-tab-pane :label="$t('CAM.userList.userToGroup')" name="third">
         <h3>
           {{$t('CAM.userList.userGropList')}}
-          <span>（共{{userNum}}条）</span>
+          <span>（共{{userNum}}{{$t('CAM.strip')}}）</span>
           <el-input
             :placeholder="$t('CAM.userList.searchUserGroup')"
             v-model="userInp"
@@ -124,8 +124,8 @@ export default {
       multipleSelection: [],
       //策略类型转换
       tacticsType: {
-        1: "自定义策略",
-        2: "预设策略"
+        1: "自定義策略",
+        2: "預設策略"
       },
       activeName: "first",
       radio: ""

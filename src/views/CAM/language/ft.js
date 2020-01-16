@@ -113,7 +113,16 @@ module.exports = {
       policyMesg: '許可權訊息',
       policyMS: '策略描述',
       choosepolicy: '選擇策略',
-      searchUserName: '支持搜索用戶名'
+      searchUserName: '支持搜索用戶名',
+      cjly: '創建來源',
+      scyh: '刪除用戶',
+      qsrzqdsjh: '請輸入正確的手機號',
+      qsrzqdyx: '請輸入正確的郵箱',
+      sjhyw: '手機號輸入有誤',
+      yxsryw: '郵箱輸入有誤',
+      cdzf: '長度為8-32個字元',
+      bhzf: '包含數字，特殊字元，小寫字母，大寫字母',
+      mmbnyyhmxt: '密碼不能與當前用戶名相同',
     },
     userGroup: {
       title: '用戶組',
@@ -158,7 +167,10 @@ module.exports = {
       choosepolicy: '選擇策略',
       searchUserName: '支持搜索用戶名',
       removeUser: '移除用戶',
-      removeGrop: '移出該組'
+      removeGrop: '移出該組',
+      ge: '個',
+      xxdy: '消息訂閱',
+      ckyhxq: '查看用戶詳情',
     },
     Role: {
       title: '角色',

@@ -14,20 +14,32 @@
           </p>
         </div>
         <!--  -->
-        <el-form status-icon ref="ruleForm" label-width="112px" class="demo-ruleForm">
+        <el-form
+          status-icon
+          ref="ruleForm"
+          label-width="112px"
+          class="demo-ruleForm"
+          :model="baseData"
+        >
           <el-form-item label="应用名称" prop="name">
-            <span v-if="nameFlag">11112e<i class="el-icon-edit" @click="nameFlag=!nameFlag"></i></span>
-            <el-input v-model="appName" @blur="disappearName" v-if="!nameFlag"></el-input>
+            <span v-if="nameFlag">
+              {{baseData.AppName}}
+              <i class="el-icon-edit" @click="nameFlag=!nameFlag"></i>
+            </span>
+            <el-input v-model="baseData.AppName" @blur="disappearName" v-if="!nameFlag"></el-input>
           </el-form-item>
           <el-form-item label="所在网址" prop="url">
-            <span  v-if="urlFlag">11112e<i class="el-icon-edit"  @click="urlFlag=!urlFlag"></i></span>
-            <el-input v-model="onUrl" @blur="disappearUrl" v-if="!urlFlag"></el-input>
+            <span v-if="urlFlag">
+              {{baseData.DomainLimit}}
+              <i class="el-icon-edit" @click="urlFlag=!urlFlag"></i>
+            </span>
+            <el-input v-model="baseData.DomainLimit" @blur="disappearUrl" v-if="!urlFlag"></el-input>
           </el-form-item>
           <el-form-item label="APPID" prop="appId">
-            <span>2002636472</span>
+            <span>{{CaptchaAppId}}</span>
           </el-form-item>
           <el-form-item label="APP Secret Key" prop="key">
-            <span>0uVi_glKfQIQbhG7qdAqNPw**</span>
+            <span>{{baseData.EncryptKey}}</span>
           </el-form-item>
         </el-form>
       </div>
@@ -48,11 +60,11 @@
           </div>
           <div class="addordel">
             <el-input v-model="addEmail" placeholder="请输入内容"></el-input>
-            <i class="el-icon-plus" @click="submit()"></i>
+            <i class="el-icon-plus" @click="submitEmail()"></i>
             <span class="warn" v-show="warnFlag">请输入正确的邮箱!</span>
             <ul>
-              <li @mouseover="overLi" @mouseout="outLi">
-                <span>爱仕达多撒大奥所多</span>
+              <li @mouseover="overLi" @mouseout="outLi" v-for="(v,i) in mailList" :key="i">
+                <span>{{v}}</span>
                 <span v-show="delIconFlag">
                   <i class="el-icon-minus"></i>
                 </span>
@@ -66,41 +78,153 @@
 </template>
 <script>
 import { isEmail } from "@/utils/validate.js";
+import { UPDATEAPPID_INFO, APPID_DESCRIBE,CREAT_WARNEMAIL} from "@/constants/CAP.js";
 export default {
   data() {
     return {
       addEmail: "",
       warnFlag: false,
-      delIconFlag:false,
-      nameFlag:true,
-      urlFlag:true,
-      appName:'',
-      onUrl:"",
+      delIconFlag: false,
+      nameFlag: true,
+      urlFlag: true,
+      CaptchaAppId: "",
+      baseData: {
+        AppName: "",
+        EncryptKey: "",
+        DomainLimit: "", //所在网址 域名限制
+        CapType: "",
+        DomainLimit: "",
+        EvilInterceptGrade: "",
+        SceneType: "",
+        SchemeColor: "",
+        SmartEngine: "",
+        SmartVerify: "",
+        TopFullScreen: "",
+        TrafficThreshold: "",
+        CaptchaLanguage: ""
+      },
+      MailAlarm:'',
+      mailList:[]
     };
   },
-  mounted() {},
+  created() {
+    this.CaptchaAppId = this.$route.query.Id;
+    this.findData();
+  },
   methods: {
-    submit() {
+    //告警邮箱提交
+    submitEmail() {
       var flag = isEmail(this.addEmail);
       if (!flag) {
         this.warnFlag = true;
       } else {
         this.warnFlag = false;
+        const params = {
+          Version: "2019-07-22",
+          CaptchaAppId: this.CaptchaAppId,
+           MailAlarm:this.addEmail,
+        };
+        this.axios.post(CREAT_WARNEMAIL, params).then(res => {
+          if (res.Response.CaptchaCode == 0) {
+            this.mailList=res.Response.MailAlarms;
+            this.addEmail='';
+            this.$message({
+            message: "增加告警邮箱成功",
+            type: "success"
+          });
+          }
+        });
       }
     },
-    overLi(){
-      this.delIconFlag=true;
+    //设置鼠标滑动事件
+    overLi() {
+      this.delIconFlag = true;
     },
-    outLi(){
-      this.delIconFlag=false;
+    outLi() {
+      this.delIconFlag = false;
     },
-    
-    disappearName(){
-      this.nameFlag=true;
+
+    //修改名称
+    disappearName() {
+      this.nameFlag = true;
+      const params = {
+        Version: "2019-07-22",
+        CaptchaAppId: this.CaptchaAppId,
+        AppName: this.baseData.AppName,
+        CapType: this.baseData.CapType,
+        CaptchaLanguage: this.baseData.CaptchaLanguage,
+        DomainLimit: this.baseData.DomainLimit,
+        EvilInterceptGrade: this.baseData.EvilInterceptGrade,
+        MailAlarm: this.MailAlarm,
+        SceneType: this.baseData.SceneType,
+        SchemeColor: this.baseData.SchemeColor,
+        SmartEngine: this.baseData.SmartEngine,
+        SmartVerify: this.baseData.SmartVerify,
+        TopFullScreen: this.baseData.TopFullScreen,
+        TrafficThreshold: this.baseData.TrafficThreshold
+      };
+      this.axios.post(UPDATEAPPID_INFO, params).then(res => {
+        if (res.Response.CaptchaCode == 0) {
+          this.$message({
+            message: "修改成功",
+            type: "success"
+          });
+        }
+      });
     },
-    disappearUrl(){
-      this.urlFlag=true;
-    }
+    //修改所在网址
+    disappearUrl() {
+      this.urlFlag = true;
+      const params = {
+        Version: "2019-07-22",
+        CaptchaAppId: this.CaptchaAppId,
+        AppName: this.baseData.AppName,
+        CapType: this.baseData.CapType,
+        CaptchaLanguage: this.baseData.CaptchaLanguage,
+        DomainLimit: this.baseData.DomainLimit,
+        EvilInterceptGrade: this.baseData.EvilInterceptGrade,
+        MailAlarm: this.MailAlarm,
+        SceneType: this.baseData.SceneType,
+        SchemeColor: this.baseData.SchemeColor,
+        SmartEngine: this.baseData.SmartEngine,
+        SmartVerify: this.baseData.SmartVerify,
+        TopFullScreen: this.baseData.TopFullScreen,
+        TrafficThreshold: this.baseData.TrafficThreshold
+      };
+      this.axios.post(UPDATEAPPID_INFO, params).then(res => {
+        if (res.Response.CaptchaCode == 0) {
+          this.$message({
+            message: "修改成功",
+            type: "success"
+          });
+        }
+      });
+    },
+    findData() {
+      const params = {
+        Version: "2019-07-22",
+        CaptchaAppId: this.CaptchaAppId
+      };
+      this.axios.post(APPID_DESCRIBE, params).then(res => {
+        if (res.Response.CaptchaCode == 0) {
+          this.baseData.AppName = res.Response.AppName;
+          this.baseData.EncryptKey = res.Response.EncryptKey;
+          this.baseData.DomainLimit = res.Response.DomainLimit;
+          this.baseData.CapType = res.Response.CapType;
+          this.baseData.DomainLimit = res.Response.DomainLimit;
+          this.baseData.EvilInterceptGrade = res.Response.EvilInterceptGrade;
+          this.baseData.SceneType = res.Response.SceneType;
+          this.baseData.SchemeColor = res.Response.SchemeColor;
+          this.baseData.SmartEngine = res.Response.SmartEngine;
+          this.baseData.SmartVerify = res.Response.SmartVerify;
+          this.baseData.TopFullScreen = res.Response.TopFullScreen;
+          this.baseData.TrafficThreshold = res.Response.TrafficThreshold;
+          this.baseData.CaptchaLanguage = res.Response.Language;
+        }
+      });
+    },
+
+   
   }
 };
 </script>
@@ -157,14 +281,14 @@ export default {
           ul {
             width: 300px;
             li {
-              padding: 10px;
+              padding: 10px 10px 10px 30px;
               display: flex;
               justify-content: space-between;
               cursor: pointer;
-              &:hover{
-                background: #EAF5FF;
+              &:hover {
+                background: #eaf5ff;
               }
-              span:nth-of-type(2){
+              span:nth-of-type(2) {
                 color: red;
               }
             }
@@ -181,7 +305,7 @@ export default {
       }
     }
     .demo-ruleForm {
-      &>>>.el-input .el-input__inner{
+      & >>> .el-input .el-input__inner {
         width: 200px;
         height: 34px;
       }
@@ -210,8 +334,7 @@ export default {
   top: 12px;
   // font-size:
 }
-.el-icon-edit{
+.el-icon-edit {
   cursor: pointer;
 }
-
 </style>

@@ -81,6 +81,7 @@
             style="width: 100%;"
             height="300"
             @selection-change="Select"
+            :empty-text="$t('CAM.strategy.zwsj')"
           >
             <el-table-column type="selection" width="55"></el-table-column>
             <el-table-column :label="$t('CAM.userList.strategyNames')" prop="PolicyName">
@@ -88,11 +89,11 @@
                 <el-link @click="handleClicks(scope.row)" type="primary">{{scope.row.PolicyName}}</el-link>
               </template>
             </el-table-column>
-            <el-table-column label="创建来源" prop="CreateMode">
+            <el-table-column :label="$t('CAM.userList.cjly')" prop="CreateMode">
               <template slot-scope="scope">{{CreateMode[scope.row.CreateMode]}}</template>
             </el-table-column>
             <el-table-column :label="$t('CAM.userList.strategyChose')" prop="Type">
-              <template slot-scope="scope">{{scope.row.Type == '1'?'自定义策略':'预设策略'}}</template>
+              <template slot-scope="scope">{{scope.row.Type == '1'?'自定義策略':'預設策略'}}</template>
             </el-table-column>
             <el-table-column :label="$t('CAM.userList.AssociationTime')" prop="AddTime"></el-table-column>
             <el-table-column fixed="right" :label="$t('CAM.userList.userCz')">
@@ -136,6 +137,7 @@
             style="width: 100%;"
             height="300"
             @selection-change="Select"
+            :empty-text="$t('CAM.strategy.zwsj')"
           >
             <el-table-column type="selection"></el-table-column>
             <el-table-column :label="$t('CAM.userList.GroupName')" prop="GroupName"></el-table-column>
@@ -148,7 +150,7 @@
                   </p>
                   <p v-show="scope.row.policy.length>2">
                     <span style="color:black;" v-show="scope.row.policy.length>2">以及</span>
-                    <span @click="goToPolicyList">其他({{scope.row.policy.length-2}})项</span>
+                    <span @click="goToPolicyList">其他({{scope.row.policy.length-2}}){{$t('CAM.Role.item')}}</span>
                   </p>
                 </div>
                 <div v-show="scope.row.policy.length==0">-</div>
@@ -215,7 +217,7 @@
     </el-dialog>
 
     <!-- 删除用户 -->
-    <el-dialog title="删除用户" :visible.sync="delDialog" width="30%" :before-close="handleClose">
+    <el-dialog :title="$t('CAM.userList.scyh')" :visible.sync="delDialog" width="30%" :before-close="handleClose">
       <span>{{$t('CAM.userList.delUserTitle')}}</span>
       <span slot="footer" class="dialog-footer">
         <el-button @click="delDialog = false">{{$t('CAM.userList.handClose')}}</el-button>
@@ -247,11 +249,11 @@
         </el-form-item>
         <el-form-item :label="$t('CAM.userList.userPhone')" prop="PhoneNum" class="reg">
           <el-input v-model="ruleForm.PhoneNum" @change="tel"></el-input>
-          <span v-show="telReg">请输入正确的手机号</span>
+          <span v-show="telReg">{{$t('CAM.userList.qsrzqdsjh')}}</span>
         </el-form-item>
         <el-form-item :label="$t('CAM.userList.userEmail')" prop="Email" class="reg">
           <el-input v-model="ruleForm.Email" @change="email"></el-input>
-          <span v-show="emailReg">请输入正确的邮箱</span>
+          <span v-show="emailReg">{{$t('CAM.userList.qsrzqdyx')}}</span>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -287,8 +289,8 @@ export default {
   data() {
     return {
       CreateMode: {
-        1: "控制台创建",
-        2: "通过策略语法创建"
+        1: "控制台創建",
+        2: "通過策略語法創建"
       },
       emailReg: false,
       telReg: false,
@@ -300,8 +302,8 @@ export default {
       currpages: 1,
       infoLoad: true,
       ConsoleLogin: {
-        1: "可以登录控制台",
-        2: "无法登录控制台"
+        1: "可以登入控制台",
+        2: "無法登入控制台"
       },
       userData: [], //获取用户详情数据
       activeName: "first",
@@ -379,14 +381,14 @@ export default {
       if (this.telReg) {
         this.$message({
           showClose: true,
-          message: "手机号输入有误",
+          message: "手機號輸入有誤",
           duration: 0,
           type: "error"
         });
       } else if (this.emailReg) {
         this.$message({
           showClose: true,
-          message: "邮箱输入有误",
+          message: "郵箱輸入有誤",
           duration: 0,
           type: "error"
         });
@@ -406,7 +408,7 @@ export default {
         if (res.Response.Error === undefined) {
           this.$message({
             showClose: true,
-            message: "编辑成功",
+            message: "編輯成功",
             type: "success",
             duration: 0
           });
@@ -414,8 +416,8 @@ export default {
           this.init();
         } else {
           let ErrTips = {
-            "InvalidParameter.PasswordViolatedRules": "密码不符合用户安全设置",
-            "ResourceNotFound.UserNotExist": "用户不存在"
+            "InvalidParameter.PasswordViolatedRules": "密碼不符合用戶安全設置",
+            "ResourceNotFound.UserNotExist": "用戶不存在"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
@@ -455,7 +457,7 @@ export default {
             this.$router.push("/UserListNew");
           } else {
             let ErrTips = {
-              "ResourceNotFound.UserNotExist": "用户不存在"
+              "ResourceNotFound.UserNotExist": "用戶不存在"
             };
             let ErrOr = Object.assign(ErrorTips, ErrTips);
             this.$message({
@@ -532,20 +534,20 @@ export default {
                 this.currpages * this.pagesizes
               );
               this.TotalCounts = res.Response.List.length;
-              this.totalNum = "权限(" + res.Response.List.length + ")";
+              this.totalNum = "許可權(" + res.Response.List.length + ")";
             } else {
               this.loading = false;
               this.$message({
                 type: "info",
-                message: "无响应数据！",
+                message: "無響應數據！",
                 duration: 0,
                 showClose: true
               });
             }
           } else {
             let ErrTips = {
-              "InternalError.SystemError": "内部错误",
-              "InvalidParameter.ParamError": "非法入参"
+              "InternalError.SystemError": "內部錯誤",
+              "InvalidParameter.ParamError": "非法入參"
             };
             let ErrOr = Object.assign(ErrorTips, ErrTips);
             this.$message({
@@ -583,7 +585,7 @@ export default {
                 (this.currpage - 1) * this.pagesize,
                 this.currpage * this.pagesize
               );
-              this.groupNum = "组(" + res.Response.GroupInfo.length + ")";
+              this.groupNum = "組(" + res.Response.GroupInfo.length + ")";
               if (this.groupData.length != 0) {
                 this.groupData.forEach(item => {
                   item.policy = [];
@@ -603,8 +605,8 @@ export default {
                       });
                     } else {
                       let ErrTips = {
-                        "InternalError.SystemError": "内部错误",
-                        "InvalidParameter.ParamError": "非法入参"
+                        "InternalError.SystemError": "內部錯誤",
+                        "InvalidParameter.ParamError": "非法入參"
                       };
                       let ErrOr = Object.assign(ErrorTips, ErrTips);
                       this.$message({
@@ -623,7 +625,7 @@ export default {
               }
             } else {
               let ErrTips = {
-                "ResourceNotFound.UserNotExist": "用户不存在"
+                "ResourceNotFound.UserNotExist": "用戶不存在"
               };
               let ErrOr = Object.assign(ErrorTips, ErrTips);
               this.$message({
@@ -677,16 +679,16 @@ export default {
               });
             } else {
               let ErrTips = {
-                "InternalError.SystemError": "内部错误",
+                "InternalError.SystemError": "內部錯誤",
                 "InvalidParameter.AttachmentFull":
-                  "principal字段的授权对象关联策略数已达到上限",
-                "InvalidParameter.ParamError": "非法入参",
-                "InvalidParameter.PolicyIdError": "输入参数PolicyId不合法",
+                  "principal欄位的授權對象關聯策略數已達到上限",
+                "InvalidParameter.ParamError": "非法入參",
+                "InvalidParameter.PolicyIdError": "輸入參數PolicyId不合法",
                 "InvalidParameter.PolicyIdNotExist": "策略ID不存在",
                 "InvalidParameter.UserNotExist":
-                  "principal字段的授权对象不存在",
-                "ResourceNotFound.PolicyIdNotFound": "PolicyId指定的资源不存在",
-                "ResourceNotFound.UserNotExist": "用户不存在"
+                  "principal欄位的授權對象不存在",
+                "ResourceNotFound.PolicyIdNotFound": "PolicyId指定的資源不存在",
+                "ResourceNotFound.UserNotExist": "用戶不存在"
               };
               let ErrOr = Object.assign(ErrorTips, ErrTips);
               this.$message({
@@ -718,15 +720,15 @@ export default {
             });
           } else {
             let ErrTips = {
-              "InternalError.SystemError": "内部错误",
+              "InternalError.SystemError": "內部錯誤",
               "InvalidParameter.AttachmentFull":
-                "principal字段的授权对象关联策略数已达到上限",
-              "InvalidParameter.ParamError": "非法入参",
-              "InvalidParameter.PolicyIdError": "输入参数PolicyId不合法",
+                "principal欄位的授權對象關聯策略數已達到上限",
+              "InvalidParameter.ParamError": "非法入參",
+              "InvalidParameter.PolicyIdError": "輸入參數PolicyId不合法",
               "InvalidParameter.PolicyIdNotExist": "策略ID不存在",
-              "InvalidParameter.UserNotExist": "principal字段的授权对象不存在",
-              "ResourceNotFound.PolicyIdNotFound": "PolicyId指定的资源不存在",
-              "ResourceNotFound.UserNotExist": "用户不存在"
+              "InvalidParameter.UserNotExist": "principal欄位的授權對象不存在",
+              "ResourceNotFound.PolicyIdNotFound": "PolicyId指定的資源不存在",
+              "ResourceNotFound.UserNotExist": "用戶不存在"
             };
             let ErrOr = Object.assign(ErrorTips, ErrTips);
             this.$message({
@@ -757,7 +759,7 @@ export default {
     },
     //将用户移出用户组
     removeGroupUser() {
-      if (this.groupTitle == "移出组") {
+      if (this.groupTitle == "移出組") {
         var groupId = [];
         this.valArr.forEach(item => {
           groupId.unshift(item.GroupId);
@@ -767,7 +769,7 @@ export default {
         });
         this.GroupLoading = false;
       }
-      if (this.groupTitle == "确认移出") {
+      if (this.groupTitle == "確認移出") {
         this.delGroup(this.GroupId);
         this.GroupLoading = false;
       }
@@ -792,7 +794,7 @@ export default {
           let ErrTips = {};
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
-            message: "移除失败" + ErrOr[data.Response.Error.Code],
+            message: "移除失敗" + ErrOr[data.Response.Error.Code],
             type: "error",
             showClose: true,
             duration: 0
@@ -805,12 +807,12 @@ export default {
     removeGroup(val) {
       this.GroupId = val.GroupId;
       this.GroupLoading = true;
-      this.groupTitle = "确认移出";
+      this.groupTitle = "確認移出";
     },
     //批量移出组
     removeMoreGroup() {
       this.GroupLoading = true;
-      this.groupTitle = "移出组";
+      this.groupTitle = "移出組";
     },
     //用户组详情
     Interface(groupId) {
@@ -859,7 +861,7 @@ export default {
     bindMesg() {
       this.$message({
         showClose: true,
-        message: "内测中...",
+        message: "內測中...",
         type: "info",
         duration: 0,
         showClose: true

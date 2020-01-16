@@ -262,7 +262,7 @@
           return (value = "外網入包量");
         }
         if (value === "CPUUsage") {
-          return (value = "CPU使用率");
+          return (value = "CPU利用率");
         }
 
         if (value === "CPULoadAvg") {

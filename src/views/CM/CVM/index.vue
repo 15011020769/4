@@ -227,14 +227,14 @@
               this.TotalCount = data.Response.TotalCount;
             } else {
               let ErrTips = {
-                'InternalServerError': '操作内部错误',
-                'InvalidFilter': '无效的过滤器',
-                'InvalidFilterValue.LimitExceeded': 'Filter参数值数量超过限制',
-                'InvalidHostId.Malformed': '无效CDH ID。指定的CDH ID格式错误。例如ID长度错误host-1122',
-                'InvalidInstanceId.Malformed': '无效实例ID。指定的实例ID格式错误。例如实例ID长度错误ins-1122',
-                'InvalidParameter': '无效参数。参数不合要求或者参数不被支持等',
-                'InvalidParameterValue': '无效参数值。参数值格式错误或者参数值不被支持等',
-                'InvalidParameterValue.LimitExceeded': '参数值数量超过限制',
+                'InternalServerError': '操作內部錯誤',
+                'InvalidFilter': '無效的過濾器',
+                'InvalidFilterValue.LimitExceeded': 'Filter參數值數量超過限制',
+                'InvalidHostId.Malformed': '無效CDH ID。指定的CDH ID格式錯誤。例如ID長度錯誤host-1122',
+                'InvalidInstanceId.Malformed': '無效實例ID。指定的實例ID格式錯誤。例如實例ID長度錯誤ins-1122',
+                'InvalidParameter': '無效參數。參數不合要求或者參數不被支持等',
+                'InvalidParameterValue': '無效參數值。參數值格式錯誤或者參數值不被支持等',
+                'InvalidParameterValue.LimitExceeded': '參數值數量超過限制',
                 'InvalidZone.MismatchRegion': '指定的zone不存在',
               }
               let ErrOr = Object.assign(ErrorTips, ErrTips)

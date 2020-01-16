@@ -311,6 +311,7 @@ import {
   Modify_Level,
   RESBIND_MODIFY
 } from "@/constants";
+import { ErrorTips } from "@/components/ErrorTips";
 import HeaderCom from "../../CLA/Public/Head";
 export default {
   data() {
@@ -402,90 +403,113 @@ export default {
       }
       // 调用接口
       this.axios.post(RESOURCE_LIST, params).then(res => {
-        // console.log(res,"获取的后台");
-        if (res.Response.Error != undefined) {
-          //条件搜索可能返回Error
+        if (res.Response.Error === undefined) {
+          this.tableDataBegin = res.Response.ServicePacks;
+          this.totalItems = res.Response.Total;
+          
+          this.tableDataBegin.forEach(val => {
+            val.Record.forEach(item => {
+              if (item.Key == "Id") {
+                // 1.防护等级
+                let params = {
+                  Version: "2018-07-09",
+                  Business: "net",
+                  Id: item.Value,
+                  Method: "get"
+                };
+                this.axios.post(Modify_Level, params).then(res => {
+                  if (res.Response.Error === undefined) {
+                    const obj = {
+                      Key: "DDoSLevel",
+                      Value: res.Response.DDoSLevel
+                    };
+                    val.Record.push(obj);
+                  } else {
+                    let ErrTips = {};
+                    let ErrOr = Object.assign(ErrorTips, ErrTips);
+                    this.$message({
+                      message: ErrOr[res.Response.Error.Code],
+                      type: "error",
+                      showClose: true,
+                      duration: 0
+                    });
+                  }
+                });
+                // 2.高级防护策略
+                let params2 = {
+                  Version: "2018-07-09",
+                  Business: "net",
+                  Id: item.Value
+                };
+                this.axios.post(GET_SPolicy, params2).then(res => {
+                  if (res.Response.Error === undefined) {
+                    if(res.Response.DDosPolicyList.length == 0){
+                      const obj2 = {
+                        Key: "SPolicyName",
+                        Value: "-"
+                      };
+                      const obj2Id = {
+                        Key: "SPolicyId",
+                        Value: "0000"
+                      }
+                      val.Record.push(obj2);
+                      val.Record.push(obj2Id);
+                    } else {
+                      const obj2 = {
+                        Key: "SPolicyName",
+                        Value: res.Response.DDosPolicyList[0].PolicyName
+                      };
+                      const obj2Id = {
+                        Key: "SPolicyId",
+                        Value: res.Response.DDosPolicyList[0].PolicyId
+                      }
+                      val.Record.push(obj2);
+                      val.Record.push(obj2Id);
+                    }
+                  } else {
+                    let ErrTips = {};
+                    let ErrOr = Object.assign(ErrorTips, ErrTips);
+                    this.$message({
+                      message: ErrOr[res.Response.Error.Code],
+                      type: "error",
+                      showClose: true,
+                      duration: 0
+                    });
+                  }
+                });
+              } else if (item.Key == "GroupIpList") {
+                // 3.IP格式化175.97.143.121-tpe-bgp-300-1; >>> 175.97.142.153(中国台湾BGP)
+                let IPText = [];
+                let ipArr = item.Value.split(";");
+                for (const key in ipArr) {
+                  if (ipArr.hasOwnProperty(key)) {
+                    const element = ipArr[key];
+                    let ipDetailArr = element.split("-");
+                    IPText.push(ipDetailArr[0]+"("+(ipDetailArr[1]=='tpe'?'中國台灣':ipDetailArr[1])+
+                    (ipDetailArr[2]=='bgp'?'BGP':ipDetailArr[2])+")");
+                  }
+                }
+                const obj3 = {
+                  Key: "IPText",
+                  Value: IPText
+                };
+                val.Record.push(obj3);
+              }
+            });
+          });
+        } else {//条件搜索可能返回Error
           this.tableDataBegin = [];
           this.totalItems = 0;
-          this.loading = false;
-          return;
-        }
-        this.tableDataBegin = res.Response.ServicePacks;
-        this.totalItems = res.Response.Total;
 
-        this.tableDataBegin.forEach(val => {
-          val.Record.forEach(item => {
-            if (item.Key == "Id") {
-              // 1.防护等级
-              let params = {
-                Version: "2018-07-09",
-                Business: "net",
-                Id: item.Value,
-                Method: "get"
-              };
-              this.axios.post(Modify_Level, params).then(res => {
-                const obj = {
-                  Key: "DDoSLevel",
-                  Value: res.Response.DDoSLevel
-                };
-                val.Record.push(obj);
-              });
-              // 2.高级防护策略
-              let params2 = {
-                Version: "2018-07-09",
-                Business: "net",
-                Id: item.Value
-              };
-              this.axios.post(GET_SPolicy, params2).then(res => {
-                if (res.Response.DDosPolicyList.length == 0) {
-                  const obj2 = {
-                    Key: "SPolicyName",
-                    Value: "-"
-                  };
-                  const obj2Id = {
-                    Key: "SPolicyId",
-                    Value: "0000"
-                  };
-                  val.Record.push(obj2);
-                  val.Record.push(obj2Id);
-                } else {
-                  const obj2 = {
-                    Key: "SPolicyName",
-                    Value: res.Response.DDosPolicyList[0].PolicyName
-                  };
-                  const obj2Id = {
-                    Key: "SPolicyId",
-                    Value: res.Response.DDosPolicyList[0].PolicyId
-                  };
-                  val.Record.push(obj2);
-                  val.Record.push(obj2Id);
-                }
-              });
-            } else if (item.Key == "GroupIpList") {
-              // 3.IP格式化175.97.143.121-tpe-bgp-300-1;175.97.142.153-tpe-bgp-100-1 >>> 175.97.142.153(中国台湾BGP)
-              let IPText = [];
-              let ipArr = item.Value.split(";");
-              for (const key in ipArr) {
-                if (ipArr.hasOwnProperty(key)) {
-                  const element = ipArr[key];
-                  let ipDetailArr = element.split("-");
-                  IPText.push(
-                    ipDetailArr[0] +
-                      "(" +
-                      (ipDetailArr[1] == "tpe" ? "中國台灣" : ipDetailArr[1]) +
-                      (ipDetailArr[2] == "bgp" ? "BGP" : ipDetailArr[2]) +
-                      ")"
-                  );
-                }
-              }
-              const obj3 = {
-                Key: "IPText",
-                Value: IPText
-              };
-              val.Record.push(obj3);
-            }
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
           });
-        });
+        }
         this.loading = false;
       });
     },
@@ -503,11 +527,19 @@ export default {
         Business: "net"
       };
       this.axios.post(GET_SPolicy, params).then(res => {
-        this.loading = true;
-        console.log(res, "获取");
-        this.tableDataPolicy = res.Response.DDosPolicyList;
+        if (res.Response.Error === undefined) {
+          this.tableDataPolicy = res.Response.DDosPolicyList;
+				} else {
+					let ErrTips = {};
+					let ErrOr = Object.assign(ErrorTips, ErrTips);
+					this.$message({
+						message: ErrOr[res.Response.Error.Code],
+						type: "error",
+						showClose: true,
+						duration: 0
+					});
+				}
         this.loading = false;
-        // console.log(this.tableDataPolicy)
       });
     },
     // 1.3.资源绑定DDoS高级策略
@@ -521,6 +553,18 @@ export default {
       };
       this.axios.post(RESBIND_MODIFY, params).then(res => {
         // console.log(res.Response)
+        if (res.Response.Error === undefined) {
+
+				} else {
+					let ErrTips = {};
+					let ErrOr = Object.assign(ErrorTips, ErrTips);
+					this.$message({
+						message: ErrOr[res.Response.Error.Code],
+						type: "error",
+						showClose: true,
+						duration: 0
+					});
+				}
       });
     },
     // 修改
@@ -596,7 +640,18 @@ export default {
         PolicyId: this.deleteBegin.PolicyId
       };
       this.axios.post(DDOS_POLICY_DELETE, params).then(res => {
-        this.describeDDoSPolicy();
+        if (res.Response.Error === undefined) {
+          this.describeDDoSPolicy();
+				} else {
+					let ErrTips = {};
+					let ErrOr = Object.assign(ErrorTips, ErrTips);
+					this.$message({
+						message: ErrOr[res.Response.Error.Code],
+						type: "error",
+						showClose: true,
+						duration: 0
+					});
+				}
         this.dialogVisible = false;
       });
     },
@@ -705,7 +760,7 @@ export default {
     //接收子组件的方法，并让子组件消失父组件显示
     closePageAdd(obj) {
       this.tableShow = true;
-       setTimeout(() => {
+      setTimeout(() => {
         this.describeDDoSPolicy();
       }, 200);
     },

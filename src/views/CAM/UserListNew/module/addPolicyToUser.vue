@@ -32,6 +32,7 @@
           :data="multipleSelection"
           style="width: 96%; margin: 0 auto;"
           v-show="activeName != 'third'"
+          :empty-text="$t('CAM.strategy.zwsj')"
         >
           <el-table-column :label="$t('CAM.userList.strategyNames')" prop="PolicyName"></el-table-column>
           <el-table-column :label="$t('CAM.userList.descs')" prop="Description"></el-table-column>
@@ -40,6 +41,7 @@
           :data="multipleSelection"
           style="width: 96%; margin: 0 auto;"
           v-show="activeName == 'third'"
+          :empty-text="$t('CAM.strategy.zwsj')"
         >
           <el-table-column :label="$t('CAM.userList.GroupName')" prop="GroupName"></el-table-column>
           <el-table-column :label="$t('CAM.userList.userRemark')" prop="Remark"></el-table-column>
@@ -207,7 +209,7 @@ export default {
           });
         } else {
           let ErrTips = {
-            "ResourceNotFound.UserNotExist": "用户不存在"
+            "ResourceNotFound.UserNotExist": "用戶不存在"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
@@ -254,7 +256,7 @@ export default {
           this.userDatas = json;
         } else {
           let ErrTips = {
-            "ResourceNotFound.UserNotExist": "用户不存在"
+            "ResourceNotFound.UserNotExist": "用戶不存在"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
@@ -417,10 +419,10 @@ export default {
           console.log(res);
         } else {
           let ErrTips = {
-            "InvalidParameter.GroupNotExist": "用户组不存在",
-            "InvalidParameter.GroupUserFull": "用户组中的子用户数量达到上限",
-            "InvalidParameter.UserGroupFull": "子用户加入的用户组数量达到上限",
-            "ResourceNotFound.UserNotExist": "用户不存在"
+            "InvalidParameter.GroupNotExist": "用戶組不存在",
+            "InvalidParameter.GroupUserFull": "用戶組中的子用戶數量達到上限",
+            "InvalidParameter.UserGroupFull": "子用戶加入的用戶組數量達到上限",
+            "ResourceNotFound.UserNotExist": "用戶不存在"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
@@ -443,16 +445,16 @@ export default {
           console.log(res);
         } else {
           let ErrTips = {
-            "FailedOperation.PolicyFull": "用户策略数超过上限",
-            "InternalError.SystemError": "内部错误",
+            "FailedOperation.PolicyFull": "用戶策略數超過上限",
+            "InternalError.SystemError": "內部錯誤",
             "InvalidParameter.AttachmentFull":
-              "principal字段的授权对象关联策略数已达到上限",
-            "InvalidParameter.ParamError": "非法入参",
-            "InvalidParameter.PolicyIdError": "输入参数PolicyId不合法",
+              "principal欄位的授權對象關聯策略數已達到上限",
+            "InvalidParameter.ParamError": "非法入參",
+            "InvalidParameter.PolicyIdError": "輸入參數PolicyId不合法",
             "InvalidParameter.PolicyIdNotExist": "策略ID不存在",
-            "InvalidParameter.UserNotExist": "principal字段的授权对象不存在",
-            "ResourceNotFound.PolicyIdNotFound": "PolicyId指定的资源不存在",
-            "ResourceNotFound.UserNotExist": "用户不存在"
+            "InvalidParameter.UserNotExist": "principal欄位的授權對象不存在",
+            "ResourceNotFound.PolicyIdNotFound": "PolicyId指定的資源不存在",
+            "ResourceNotFound.UserNotExist": "用戶不存在"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
