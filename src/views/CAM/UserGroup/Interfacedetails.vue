@@ -686,7 +686,13 @@ export default {
     },
     // 从用户组移除子用户信息，单条移除
     deleteRow(uid) {
-      this.deleteUser(uid);
+      this.$confirm("此操作将永久删除, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      }).then(() => {
+        this.deleteUser(uid);
+      });
     },
     // 子用户多选事件，移除多条用户组子用户使用
     handleSelectionChangeUsers(val) {
