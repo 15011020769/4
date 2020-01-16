@@ -197,9 +197,6 @@
 </template>
 <script>
 import {
-  GET_ID,
-  GET_SPolicy,
-  GET_Status,
   CLAEN_SHOLD,
   Modify_Level,
   DDOS_POLICY_MODIFY,
