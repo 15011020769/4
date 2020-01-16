@@ -370,7 +370,7 @@ export default {
       this.isRouterAlive = false;
       this.$nextTick(() => {
         this.isRouterAlive = true;
-        this.seach();
+        this.Loading();
       });
     }
   }
