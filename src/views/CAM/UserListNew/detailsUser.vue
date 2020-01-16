@@ -459,7 +459,7 @@ export default {
             };
             let ErrOr = Object.assign(ErrorTips, ErrTips);
             this.$message({
-              message: ErrOr[res.Response.Error.Code],
+              message: ErrOr[data.Response.Error.Code],
               type: "error",
               showClose: true,
               duration: 0
@@ -690,7 +690,7 @@ export default {
               };
               let ErrOr = Object.assign(ErrorTips, ErrTips);
               this.$message({
-                message: ErrOr[res.Response.Error.Code],
+                message: ErrOr[data.Response.Error.Code],
                 type: "error",
                 showClose: true,
                 duration: 0
@@ -730,7 +730,7 @@ export default {
             };
             let ErrOr = Object.assign(ErrorTips, ErrTips);
             this.$message({
-              message: ErrOr[res.Response.Error.Code],
+              message: ErrOr[data.Response.Error.Code],
               type: "error",
               showClose: true,
               duration: 0
@@ -792,7 +792,7 @@ export default {
           let ErrTips = {};
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
-            message: "移除失败" + ErrOr[res.Response.Error.Code],
+            message: "移除失败" + ErrOr[data.Response.Error.Code],
             type: "error",
             showClose: true,
             duration: 0

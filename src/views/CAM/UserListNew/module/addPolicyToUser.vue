@@ -242,7 +242,7 @@ export default {
                 };
                 let ErrOr = Object.assign(ErrorTips, ErrTips);
                 this.$message({
-                  message: ErrOr[res.Response.Error.Code],
+                  message: ErrOr[data.Response.Error.Code],
                   type: "error",
                   showClose: true,
                   duration: 0
