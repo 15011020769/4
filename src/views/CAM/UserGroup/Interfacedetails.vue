@@ -199,6 +199,7 @@
                       v-model="searchUser"
                       style="width:100%"
                       @keyup.enter.native="toQueryUser"
+                      @change="search"
                     >
                       <i slot="suffix" class="el-input__icon el-icon-search" @click="toQueryUser"></i>
                     </el-input>
@@ -351,6 +352,11 @@ export default {
     // this.tableHeight = window.innerHeight - this.$refs.multipleOptionPolicies.$el.offsetTop - 50;
   },
   methods: {
+    search() {
+      if (this.searchUser == "") {
+        this.userData = this.userAllData;
+      }
+    },
     _multipleSelection(val) {
       this.multipleSelection = val;
     },
@@ -652,7 +658,19 @@ export default {
           });
       }
     },
-    toQueryUser() {},
+    toQueryUser() {
+      if (this.searchUser == "") {
+        this.userData = this.userAllData;
+      } else {
+        var arr = [];
+        this.userData.forEach(item => {
+          if (item.Name.includes(this.searchUser)) {
+            arr.push(item);
+          }
+        });
+        this.userData = arr;
+      }
+    },
     // 从用户组移除子用户信息，单条移除
     deleteRow(uid) {
       this.deleteUser(uid);
@@ -864,46 +882,44 @@ export default {
         PolicyId: val,
         Version: "2019-01-16"
       };
-      this.axios
-        .post(ATTACH_GROUP, policiesParams)
-        .then(res => {
-          if (res.Response.Error === undefined) {
-            this.$message({
-              showClose: true,
-              message: "添加成功",
-              duration: 0,
-              type: "success"
-            });
-          } else {
-            let ErrTips = {
-              "FailedOperation.PolicyFull": "用户策略数超过上限",
-              "InternalError.SystemError": "内部错误",
-              "InvalidParameter.AttachmentFull":
-                "principal字段的授权对象关联策略数已达到上限",
-              "InvalidParameter.ParamError": "非法入参",
-              "InvalidParameter.PolicyIdError": "输入参数PolicyId不合法",
-              "InvalidParameter.PolicyIdNotExist": "策略ID不存在",
-              "InvalidParameter.UserNotExist": "principal字段的授权对象不存在",
-              "ResourceNotFound.GroupNotExist": "用户组不存在",
-              "ResourceNotFound.PolicyIdNotFound": "PolicyId指定的资源不存在",
-              "ResourceNotFound.UserNotExist": "用户不存在"
-            };
-            let ErrOr = Object.assign(ErrorTips, ErrTips);
-            this.$message({
-              message: ErrOr[res.Response.Error.Code],
-              type: "error",
-              showClose: true,
-              duration: 0
-            });
-          }
-        })
+      this.axios.post(ATTACH_GROUP, policiesParams).then(res => {
+        if (res.Response.Error === undefined) {
+          this.$message({
+            showClose: true,
+            message: "添加成功",
+            duration: 0,
+            type: "success"
+          });
+        } else {
+          let ErrTips = {
+            "FailedOperation.PolicyFull": "用户策略数超过上限",
+            "InternalError.SystemError": "内部错误",
+            "InvalidParameter.AttachmentFull":
+              "principal字段的授权对象关联策略数已达到上限",
+            "InvalidParameter.ParamError": "非法入参",
+            "InvalidParameter.PolicyIdError": "输入参数PolicyId不合法",
+            "InvalidParameter.PolicyIdNotExist": "策略ID不存在",
+            "InvalidParameter.UserNotExist": "principal字段的授权对象不存在",
+            "ResourceNotFound.GroupNotExist": "用户组不存在",
+            "ResourceNotFound.PolicyIdNotFound": "PolicyId指定的资源不存在",
+            "ResourceNotFound.UserNotExist": "用户不存在"
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
     },
     // 跳转到策略详情页面
     policyDetail(policy) {
       this.$router.push({
         path: "/StrategyDetail",
         query: {
-          policy: policy
+          policy: policy.PolicyId
         }
       });
     },
