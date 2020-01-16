@@ -760,7 +760,7 @@ export default {
     //接收子组件的方法，并让子组件消失父组件显示
     closePageAdd(obj) {
       this.tableShow = true;
-       setTimeout(() => {
+      setTimeout(() => {
         this.describeDDoSPolicy();
       }, 200);
     },
