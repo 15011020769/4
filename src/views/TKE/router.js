@@ -379,6 +379,49 @@ export default new Router({
       ]
     },
     {
+      path: '/colony/sub/detail/nodeManage/masteretcd', // 节点管理-Master&Etcd-详情
+      name: 'masteretcdDetail',
+      component: () => import('./colony/sub/detail/nodeManage/masteretcd/index.vue'),
+      redirect: '/colony/sub/detail/nodeManage/masteretcd/pod', // 默认子路由
+      meta: {
+        keepAlive: true
+      },
+      children: [ // 子路由
+        { // pod管理
+          path: '/colony/sub/detail/nodeManage/masteretcd/pod',
+          name: 'masteretcdDetailPod',
+          component: () => import('./colony/sub/detail/nodeManage/masteretcd/pod.vue'),
+          meta: {
+            keepAlive: true,
+          }
+        },
+        { // 详情
+          path: '/colony/sub/detail/nodeManage/masteretcd/info',
+          name: 'masteretcdDetailInfo',
+          component: () => import('./colony/sub/detail/nodeManage/masteretcd/info.vue'),
+          meta: {
+            keepAlive: true,
+          }
+        },
+        { // 事件
+          path: '/colony/sub/detail/nodeManage/masteretcd/event',
+          name: 'masteretcdDetailEvent',
+          component: () => import('./colony/sub/detail/nodeManage/masteretcd/event.vue'),
+          meta: {
+            keepAlive: true,
+          }
+        },   
+        { // yaml
+          path: '/colony/sub/detail/nodeManage/masteretcd/yaml',
+          name: 'masteretcdDetailYaml',
+          component: () => import('./colony/sub/detail/nodeManage/masteretcd/yaml.vue'),
+          meta: {
+            keepAlive: true,
+          }
+        },  
+      ]
+    },
+    {
       path: '/colony/sub/detail/hpa', // 命名空间-详情
       name: 'namespaceDetail',
       component: () => import('./colony/sub/detail/namespace/index.vue'),
