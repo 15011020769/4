@@ -135,6 +135,9 @@
         MaxResults1: 10,
         vloading: true,
         pickerOptions: {
+          disabledDate(time) {
+            return time.getTime() < Date.now() - 2505600000 || time.getTime() > Date.now()
+          },
           shortcuts: [{
             text: "最近一周",
             onClick(picker) {
