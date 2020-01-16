@@ -277,7 +277,11 @@ module.exports = {
             lastCreateTime: '最后更新时间',
             qr: '确认',
             pztgsxx: '配置提供商信息',
-            zwsj: '暂无数据'
+            zwsj: '暂无数据',
+            fwlx: '服务类型',
+            ye: '页',
+            jbxx: '基本信息',
+            clxq: '策略详情',
         }
     },
     COM: require('@/components/language/jt'),

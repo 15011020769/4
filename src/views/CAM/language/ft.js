@@ -277,7 +277,11 @@ module.exports = {
       lastCreateTime: '最後更新時間',
       qr: '確認',
       pztgsxx: '配置提供商訊息',
-      zwsj: '暫無數據'
+      zwsj: '暫無數據',
+      fwlx: '服務類型',
+      ye: '頁',
+      jbxx: '基本訊息',
+      clxq: '策略詳情',
     }
   },
   COM: require('@/components/language/ft'),

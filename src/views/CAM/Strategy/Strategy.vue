@@ -45,6 +45,7 @@
             :row-style="{height:0}"
             :cell-style="{padding:'5px 10px'}"
             v-loading="loading"
+            :empty-text="$t('CAM.strategy.zwsj')"
           >
             <!-- <el-table-column type="selection" width="60" v-if="this.policyScope!='QCS'"></el-table-column> -->
             <el-table-column
@@ -61,7 +62,7 @@
               </template>
             </el-table-column>
             <el-table-column prop="Description" label="描述"></el-table-column>
-            <el-table-column prop="ServiceType" label="服务类型" width="150"></el-table-column>
+            <el-table-column prop="ServiceType" :label="$t('CAM.strategy.fwlx')" width="150"></el-table-column>
             <el-table-column prop="operate" label="操作" width="150">
               <template slot-scope="scope">
                 <el-button
@@ -99,7 +100,7 @@
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button size="mini" @click="dialogVisible = false">取 消</el-button>
-        <el-button size="mini" type="primary" @click="attachPolicy">确 定</el-button>
+        <el-button size="mini" type="primary" @click="attachPolicy">{{$t('CAM.userList.suerAdd')}}</el-button>
       </span>
     </el-dialog>
   </div>
@@ -121,11 +122,11 @@ export default {
         },
         {
           value: "Local",
-          label: "自定义策略"
+          label: "自定義策略"
         },
         {
           value: "QCS",
-          label: "预设策略"
+          label: "預設策略"
         }
       ],
       policyScope: "All",
@@ -134,20 +135,20 @@ export default {
       selectedData: [], //选择要删除的
       table_options: [
         {
-          value: "选项1",
-          label: "全部服务"
+          value: "選項1",
+          label: "全部服務"
         },
         {
-          value: "选项2",
-          label: "智能物联网关"
+          value: "選項2",
+          label: "智能物聯網關"
         },
         {
-          value: "选项3",
-          label: "API网关"
+          value: "選項3",
+          label: "API網關"
         }
       ],
       table_value: "",
-      tableTitle: "服务类型",
+      tableTitle: "服務類型",
       dialogVisible: false,
       policyId: "", // 策略Id
       transferFlag: false, //模态框强制刷新flag
@@ -186,13 +187,13 @@ export default {
           this.TotalCount = res.Response.TotalNum;
         } else {
           let ErrTips = {
-            "InternalError.SystemError": "内部错误",
-            "InvalidParameter.GroupIdError": "GroupId字段不合法",
-            "InvalidParameter.KeywordError": "Keyword字段不合法",
-            "InvalidParameter.ParamError": "非法入参",
-            "InvalidParameter.ScopeError": "Scope字段不合法",
-            "InvalidParameter.ServiceTypeError": "ServiceType字段不合法",
-            "InvalidParameter.UinError": "Uin字段不合法"
+            "InternalError.SystemError": "內部錯誤",
+            "InvalidParameter.GroupIdError": "GroupId欄位不合法",
+            "InvalidParameter.KeywordError": "Keyword欄位不合法",
+            "InvalidParameter.ParamError": "非法入參",
+            "InvalidParameter.ScopeError": "Scope欄位不合法",
+            "InvalidParameter.ServiceTypeError": "ServiceType欄位不合法",
+            "InvalidParameter.UinError": "Uin欄位不合法"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
@@ -248,7 +249,7 @@ export default {
           this.groupArr = groupArr;
         } else {
           let ErrTips = {
-            "ResourceNotFound.UserNotExist": "用户不存在"
+            "ResourceNotFound.UserNotExist": "用戶不存在"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
@@ -296,11 +297,11 @@ export default {
           console.log(res);
         } else {
           let ErrTips = {
-            "InternalError.SystemError": "内部错误",
-            "InvalidParameter.ParamError": "非法入参",
-            "InvalidParameter.PolicyIdError": "输入参数PolicyId不合法",
-            "ResourceNotFound.NotFound": "资源不存在",
-            "ResourceNotFound.PolicyIdNotFound": "PolicyId指定的资源不存在"
+            "InternalError.SystemError": "內部錯誤",
+            "InvalidParameter.ParamError": "非法入參",
+            "InvalidParameter.PolicyIdError": "輸入參數PolicyId不合法",
+            "ResourceNotFound.NotFound": "資源不存在",
+            "ResourceNotFound.PolicyIdNotFound": "PolicyId指定的資源不存在"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({

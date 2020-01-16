@@ -7,11 +7,11 @@
         src="../../../assets/CAM/images/left.png"
         alt
       />
-      <span class="top_text">策略详情</span>
+      <span class="top_text">{{$t('CAM.strategy.clxq')}}</span>
     </div>
     <div class="container">
       <div class="baseInfo" v-loading="infoLoad">
-        <p class="baseInfo_title">基本信息</p>
+        <p class="baseInfo_title">{{$t('CAM.strategy.jbxx')}}</p>
         <div class="baseInfo_flex">
           <div class="baseInfo_left">
             <p class="baseInfo_cl item">{{$t('CAM.Role.strategy')}}</p>
@@ -36,7 +36,7 @@
                 @click="input_sure"
                 style="margin-left:10px"
                 href="javascript:;"
-              >确定</a>
+              >{{$t('CAM.userGroup.delConfirmBtn')}}</a>
               <a
                 v-if="input_show"
                 @click="input_cancel"
@@ -84,6 +84,7 @@
                   :cell-style="{padding:'5px 10px'}"
                   :header-cell-style="{height:'20px',padding:'0px 10px'}"
                   style="width: 100%"
+                  :empty-text="$t('CAM.strategy.zwsj')"
                 >
                   <!-- <el-table-column type="selection" width="60"></el-table-column> -->
                   <el-table-column prop="date" :label="$t('CAM.strategy.straGroup')">
@@ -139,7 +140,7 @@
               style="background:#fff;padding:10px;display:flex;justify-content: space-between;line-height:30px"
             >
               <div style="flex:1;display:flex;justify-content: flex-end;">
-                <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;页</span>
+                <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;{{$t('CAM.strategy.ye')}}</span>
                 <el-pagination
                   :page-size="pagesize"
                   :pager-count="7"
@@ -240,15 +241,15 @@ export default {
         },
         {
           value: "1",
-          label: "用户关联"
+          label: "用戶關聯"
         },
         {
           value: "2",
-          label: "用户组关联"
+          label: "用戶組關聯"
         }
       ],
       entityFilter: "",
-      tableTitle: "类型",
+      tableTitle: "類型",
       currentPage1: 5,
       currentPage2: 5,
       currentPage3: 5,
@@ -270,8 +271,8 @@ export default {
       groupArr: [],
       userArr: [],
       Type: {
-        1: "自定义策略",
-        2: "预设策略"
+        1: "自定義策略",
+        2: "預設策略"
       },
       attachVal: ""
     };
@@ -288,10 +289,10 @@ export default {
         this.infoLoad = false;
       } else {
         let ErrTips = {
-          "InternalError.SystemError": "内部错误",
-          "InvalidParameter.ParamError": "非法入参",
-          "InvalidParameter.PolicyIdError": "输入参数PolicyId不合法",
-          "ResourceNotFound.PolicyIdNotFound": "PolicyId指定的资源不存在"
+          "InternalError.SystemError": "內部錯誤",
+          "InvalidParameter.ParamError": "非法入參",
+          "InvalidParameter.PolicyIdError": "輸入參數PolicyId不合法",
+          "ResourceNotFound.PolicyIdNotFound": "PolicyId指定的資源不存在"
         };
         let ErrOr = Object.assign(ErrorTips, ErrTips);
         this.$message({
@@ -306,8 +307,8 @@ export default {
   },
   methods: {
     del(row) {
-      this.$confirm("此操作将永久删除, 是否继续?", "提示", {
-        confirmButtonText: "确定",
+      this.$confirm("此操作將永久刪除, 是否繼續?", "提示", {
+        confirmButtonText: "確定",
         cancelButtonText: "取消",
         type: "warning"
       }).then(() => {
@@ -411,10 +412,10 @@ export default {
           this.loading = false;
         } else {
           let ErrTips = {
-            "InternalError.SystemError": "内部错误",
-            "InvalidParameter.EntityFilterError": "EntityFilter字段不合法",
-            "InvalidParameter.ParamError": "非法入参",
-            "InvalidParameter.PolicyIdError": "输入参数PolicyId不合法"
+            "InternalError.SystemError": "內部錯誤",
+            "InvalidParameter.EntityFilterError": "EntityFilter欄位不合法",
+            "InvalidParameter.ParamError": "非法入參",
+            "InvalidParameter.PolicyIdError": "輸入參數PolicyId不合法"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
@@ -456,15 +457,15 @@ export default {
             this.getAttachPolicys(); // 重新加载
           } else {
             let ErrTips = {
-              "InternalError.SystemError": "内部错误",
+              "InternalError.SystemError": "內部錯誤",
               "InvalidParameter.AttachmentFull":
-                "principal字段的授权对象关联策略数已达到上限",
-              "InvalidParameter.ParamError": "非法入参",
-              "InvalidParameter.PolicyIdError": "输入参数PolicyId不合法",
+                "principal欄位的授權對象關聯策略數已達到上限",
+              "InvalidParameter.ParamError": "非法入參",
+              "InvalidParameter.PolicyIdError": "輸入參數PolicyId不合法",
               "InvalidParameter.PolicyIdNotExist": "策略ID不存在",
-              "InvalidParameter.UserNotExist": "principal字段的授权对象不存在",
-              "ResourceNotFound.PolicyIdNotFound": "PolicyId指定的资源不存在",
-              "ResourceNotFound.UserNotExist": "用户不存在"
+              "InvalidParameter.UserNotExist": "principal欄位的授權對象不存在",
+              "ResourceNotFound.PolicyIdNotFound": "PolicyId指定的資源不存在",
+              "ResourceNotFound.UserNotExist": "用戶不存在"
             };
             let ErrOr = Object.assign(ErrorTips, ErrTips);
             this.$message({
@@ -489,13 +490,13 @@ export default {
             this.getAttachPolicys(); // 重新加载
           } else {
             let ErrTips = {
-              "InternalError.SystemError": "内部错误",
-              "InvalidParameter.ParamError": "非法入参",
-              "InvalidParameter.PolicyIdError": "输入参数PolicyId不合法",
+              "InternalError.SystemError": "內部錯誤",
+              "InvalidParameter.ParamError": "非法入參",
+              "InvalidParameter.PolicyIdError": "輸入參數PolicyId不合法",
               "InvalidParameter.PolicyIdNotExist": "策略ID不存在",
-              "InvalidParameter.UserNotExist": "principal字段的授权对象不存在",
-              "ResourceNotFound.GroupNotExist": "用户组不存在",
-              "ResourceNotFound.UserNotExist": "用户不存在"
+              "InvalidParameter.UserNotExist": "principal欄位的授權對象不存在",
+              "ResourceNotFound.GroupNotExist": "用戶組不存在",
+              "ResourceNotFound.UserNotExist": "用戶不存在"
             };
             let ErrOr = Object.assign(ErrorTips, ErrTips);
             this.$message({
@@ -517,7 +518,7 @@ export default {
       } else {
         this.$message({
           showClose: true,
-          message: "请选择要解除关联的用户/用户组",
+          message: "請選擇要解除關聯的用戶/用戶組",
           duration: 0
         });
       }
