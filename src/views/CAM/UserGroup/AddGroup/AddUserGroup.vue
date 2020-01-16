@@ -22,7 +22,7 @@ export default {
     return {
       rules: {
         groupName: [
-          { required: true, message: "请输入用户组名称", trigger: "blur" }
+          { required: true, message: "請輸入用戶組名稱", trigger: "blur" }
         ]
       }
     };

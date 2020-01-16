@@ -73,6 +73,7 @@
         style="width: 100%;"
         height="450"
         @selection-change="handleSelectionChange"
+        :empty-text="$t('CAM.strategy.zwsj')"
       >
         <!-- <el-table-column prop="GroupId" type="selection" width="29"></el-table-column> -->
         <el-table-column
@@ -140,7 +141,7 @@
     >
       <div class="container">
         <div class="container-left">
-          <p>{{$t('CAM.userGroup.selection')}}（共{{userData.length}}条）</p>
+          <p>{{$t('CAM.userGroup.selection')}}（共{{userData.length}}{{$t('CAM.strip')}}）</p>
           <el-input size="small" v-model="inpVal" style="width:100%" @change="_inpVal">
             <i slot="suffix" class="el-input__icon el-icon-search" @click="toQueryUser"></i>
           </el-input>
@@ -155,6 +156,7 @@
             @row-click="selectedRow"
             @selection-change="handleSelectionChangeUser"
             v-loading="loading1"
+            :empty-text="$t('CAM.strategy.zwsj')"
           >
             <el-table-column type="selection" prop="Uin" width="28" :selectable="checkboxT"></el-table-column>
             <el-table-column prop="Name" :label="$t('CAM.userGroup.user')" show-overflow-tooltip></el-table-column>
@@ -180,6 +182,7 @@
             size="small"
             :height="tableHeight"
             style="width: 100%"
+            :empty-text="$t('CAM.strategy.zwsj')"
           >
             <el-table-column prop="Name" :label="$t('CAM.userGroup.user')" show-overflow-tooltip></el-table-column>
             <el-table-column :label="$t('CAM.userList.userChose')" width="100">
@@ -410,7 +413,7 @@ export default {
             }
           } else {
             let ErrTips = {
-              "ResourceNotFound.GroupNotExist": "用户组不存在"
+              "ResourceNotFound.GroupNotExist": "用戶組不存在"
             };
             let ErrOr = Object.assign(ErrorTips, ErrTips);
             this.$message({
@@ -445,7 +448,7 @@ export default {
             if (data.Response.Error === undefined) {
               this.$message({
                 type: "success",
-                message: "删除成功",
+                message: "刪除成功",
                 duration: 0,
                 showClose: true
               });
@@ -492,12 +495,12 @@ export default {
               this.init();
             } else {
               let ErrTips = {
-                "InvalidParameter.GroupNotExist": "用户组不存在",
+                "InvalidParameter.GroupNotExist": "用戶組不存在",
                 "InvalidParameter.GroupUserFull":
-                  "用户组中的子用户数量达到上限",
+                  "用戶組中的子用戶數量達到上限",
                 "InvalidParameter.UserGroupFull":
-                  "子用户加入的用户组数量达到上限",
-                "ResourceNotFound.UserNotExist": "用户不存在"
+                  "子用戶加入的用戶組數量達到上限",
+                "ResourceNotFound.UserNotExist": "用戶不存在"
               };
               let ErrOr = Object.assign(ErrorTips, ErrTips);
               this.$message({

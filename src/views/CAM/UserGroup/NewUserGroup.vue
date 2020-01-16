@@ -91,7 +91,7 @@ export default {
       } else {
         this.$message({
           showClose: true,
-          message: "请输入用户组名称",
+          message: "請輸入用戶組名稱",
           duration: 0
         });
       }
@@ -146,20 +146,20 @@ export default {
                         console.log(res);
                       } else {
                         let ErrTips = {
-                          "FailedOperation.PolicyFull": "用户策略数超过上限",
-                          "InternalError.SystemError": "内部错误",
+                          "FailedOperation.PolicyFull": "用戶策略數超過上限",
+                          "InternalError.SystemError": "內部錯誤",
                           "InvalidParameter.AttachmentFull":
-                            "principal字段的授权对象关联策略数已达到上限",
-                          "InvalidParameter.ParamError": "非法入参",
+                            "principal欄位的授權對象關聯策略數已達到上限",
+                          "InvalidParameter.ParamError": "非法入參",
                           "InvalidParameter.PolicyIdError":
-                            "输入参数PolicyId不合法",
+                            "輸入參數PolicyId不合法",
                           "InvalidParameter.PolicyIdNotExist": "策略ID不存在",
                           "nvalidParameter.UserNotExist":
-                            "principal字段的授权对象不存在",
-                          "ResourceNotFound.GroupNotExist": "用户组不存在",
+                            "principal欄位的授權對象不存在",
+                          "ResourceNotFound.GroupNotExist": "用戶組不存在",
                           "ResourceNotFound.PolicyIdNotFound":
-                            "PolicyId指定的资源不存在",
-                          "ResourceNotFound.UserNotExist": "用户不存在"
+                            "PolicyId指定的資源不存在",
+                          "ResourceNotFound.UserNotExist": "用戶不存在"
                         };
                         let ErrOr = Object.assign(ErrorTips, ErrTips);
                         this.$message({
@@ -183,8 +183,8 @@ export default {
               // 添加返回值回显，如用户组名称重复
             } else {
               let ErrTips = {
-                "InvalidParameter.GroupFull": "用户组数量达到上限",
-                "InvalidParameter.GroupNameInUse": "用户组名称重复"
+                "InvalidParameter.GroupFull": "用戶組數量達到上限",
+                "InvalidParameter.GroupNameInUse": "用戶組名稱重複"
               };
               let ErrOr = Object.assign(ErrorTips, ErrTips);
               this.$message({
