@@ -1,6 +1,6 @@
 <template>
   <div class="carrier">
-    <Head title="管理角色载体" :backShow="true" @_back="_back" />
+    <Head :title="$t('CAM.Role.gljszt')" :backShow="true" @_back="_back" />
     <div class="main">
       <div class="box contant_flex">
         <div class="flex_left">

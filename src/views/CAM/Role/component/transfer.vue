@@ -4,11 +4,11 @@
       <div class="left">
         <p class="title">
           <b style="font-size:13px;">策略列表</b>
-          &nbsp;(共{{num}}条)
+          &nbsp;(共{{num}}{{$t('CAM.strip')}})
         </p>
         <div class="left-main border">
           <div class="seek" style="width:100%;">
-            <el-input v-model="input" placeholder="请输入内容" @change="_inpVal" style="width:100%;"></el-input>
+            <el-input v-model="input" :placeholder="$t('CAM.strategy.inputContent')" @change="_inpVal" style="width:100%;"></el-input>
             <p>
               <i class="el-icon-search" @click="_serach"></i>
             </p>
@@ -51,13 +51,13 @@
       </div>
       <div class="right">
         <p class="title">
-          <b style="font-size:13px;">已选择</b>
-          &nbsp;({{multipleSelection.length}}条)
+          <b style="font-size:13px;">{{$t('CAM.userList.choose')}}</b>
+          &nbsp;({{multipleSelection.length}}{{$t('CAM.strip')}})
         </p>
         <div class="right-main border">
           <el-table :data="multipleSelection" style="width: 100%" height="450">
             <el-table-column prop="PolicyName" label="策略名"></el-table-column>
-            <el-table-column prop="Type" label="策略类型">
+            <el-table-column prop="Type" :label="$t('CAM.userList.strategyChose')">
               <template slot-scope="scope">
                 <p>{{type[scope.row.Type]}}</p>
               </template>
@@ -84,10 +84,10 @@ export default {
       policyNum: 10,
       page: 1,
       type: {
-        1: "自定义策略",
-        2: "预设策略"
+        1: "自定義策略",
+        2: "預設策略"
       },
-      tableTitle: "策略类型",
+      tableTitle: "策略類型",
       optionPolicies: [
         {
           value: "All",
@@ -95,11 +95,11 @@ export default {
         },
         {
           value: "Local",
-          label: "自定义策略"
+          label: "自定義策略"
         },
         {
           value: "QCS",
-          label: "预设策略"
+          label: "預設策略"
         }
       ],
       rolePolicyType: ""
@@ -184,13 +184,13 @@ export default {
           this.num = res.Response.TotalNum;
         }else{
             let ErrTips = {
-               "InternalError.SystemError":'内部错误',
-               "InvalidParameter.GroupIdError":'GroupId字段不合法',
-               "InvalidParameter.KeywordError":'Keyword字段不合法',
-               "InvalidParameter.ParamError":'非法入参',
-               "InvalidParameter.ScopeError":'Scope字段不合法',
-               "InvalidParameter.ServiceTypeError":'ServiceType字段不合法',
-               "InvalidParameter.UinError":'Uin字段不合法'
+               "InternalError.SystemError":'內部錯誤',
+               "InvalidParameter.GroupIdError":'GroupId欄位不合法',
+               "InvalidParameter.KeywordError":'Keyword欄位不合法',
+               "InvalidParameter.ParamError":'非法入參',
+               "InvalidParameter.ScopeError":'Scope欄位不合法',
+               "InvalidParameter.ServiceTypeError":'ServiceType欄位不合法',
+               "InvalidParameter.UinError":'Uin欄位不合法'
             };
             let ErrOr = Object.assign(ErrorTips, ErrTips);
             this.$message({
@@ -230,13 +230,13 @@ export default {
             });
         }else{
            let ErrTips = {
-               "InternalError.SystemError":'内部错误',
-               "InvalidParameter.GroupIdError":'GroupId字段不合法',
-               "InvalidParameter.KeywordError":'Keyword字段不合法',
-               "InvalidParameter.ParamError":'非法入参',
-               "InvalidParameter.ScopeError":'Scope字段不合法',
-               "InvalidParameter.ServiceTypeError":'ServiceType字段不合法',
-               "InvalidParameter.UinError":'Uin字段不合法'
+               "InternalError.SystemError":'內部錯誤',
+               "InvalidParameter.GroupIdError":'GroupId欄位不合法',
+               "InvalidParameter.KeywordError":'Keyword欄位不合法',
+               "InvalidParameter.ParamError":'非法入參',
+               "InvalidParameter.ScopeError":'Scope欄位不合法',
+               "InvalidParameter.ServiceTypeError":'ServiceType欄位不合法',
+               "InvalidParameter.UinError":'Uin欄位不合法'
             };
             let ErrOr = Object.assign(ErrorTips, ErrTips);
             this.$message({

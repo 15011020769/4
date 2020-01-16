@@ -163,16 +163,16 @@ export default {
         },
         {
           value: "QCS",
-          label: "预设策略"
+          label: "預設策略"
         },
         {
           value: "Local",
-          label: "自定义策略"
+          label: "自定義策略"
         }
       ],
       rp: 20,
       page: 1,
-      tableTitle: "策略类型"
+      tableTitle: "策略類型"
     };
   },
 
@@ -206,13 +206,13 @@ export default {
               this.policiesData = res.Response.List;
           }else{
             let ErrTips = {
-              "InternalError.SystemError":'内部错误',
-              "InvalidParameter.GroupIdError":'GroupId字段不合法',
-              "InvalidParameter.KeywordError":'Keyword字段不合法',
-              "InvalidParameter.ParamError":'非法入参',
-              "InvalidParameter.ScopeError":'Scope字段不合法',
-              "InvalidParameter.ServiceTypeError":'ServiceType字段不合法',
-              "InvalidParameter.UinError":'Uin字段不合法'
+              "InternalError.SystemError":'內部錯誤',
+              "InvalidParameter.GroupIdError":'GroupId欄位不合法',
+              "InvalidParameter.KeywordError":'Keyword欄位不合法',
+              "InvalidParameter.ParamError":'非法入參',
+              "InvalidParameter.ScopeError":'Scope欄位不合法',
+              "InvalidParameter.ServiceTypeError":'ServiceType欄位不合法',
+              "InvalidParameter.UinError":'Uin欄位不合法'
             };
             let ErrOr = Object.assign(ErrorTips, ErrTips);
             this.$message({
@@ -275,9 +275,9 @@ export default {
            console.log(res)
         }else{
             let ErrTips = {
-             "InternalError.SystemError":'内部错误',
-             "InvalidParameter.AttachmentFull":'principal字段的授权对象关联策略数已达到上限',
-             "InvalidParameter.ParamError":'非法入参',
+             "InternalError.SystemError":'內部錯誤',
+             "InvalidParameter.AttachmentFull":'principal欄位的授權對象關聯策略數已達到上限',
+             "InvalidParameter.ParamError":'非法入參',
              "InvalidParameter.PolicyIdNotExist":'策略ID不存在',
              "InvalidParameter.RoleNotExist":'角色不存在'
           };

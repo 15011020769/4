@@ -64,7 +64,7 @@
               <p class="jscontent">
                 <el-input v-model="inputRoleDesc" placeholder size="mini"></el-input>
               </p>
-              <p class="jscontent text">服务 -mps.cloud.tencent.com</p>
+              <p class="jscontent text">{{$t('CAM.Role.serveRole')}} -mps.cloud.tencent.com</p>
             </div>
           </div>
           <div class="content_table">
@@ -179,22 +179,22 @@ export default {
       transfer_data: [
         {
           value: 1,
-          desc: "备选项1"
+          desc: "備選項1"
         },
         {
           value: 2,
-          desc: "备选项2"
+          desc: "備選項2"
         },
         {
           value: 3,
-          desc: "备选项3"
+          desc: "備選項3"
         }
       ],
       tableData: [
         {
           date: "QCloudFinanceFullAccess",
-          name: "该策略允许您管理账户内财务相关的内容，例如：付款、开票。",
-          address: "预设策略"
+          name: "該策略允許您管理賬戶內財務相關的內容，例如：付款、開票。",
+          address: "預設策略"
         }
       ]
     };
@@ -211,7 +211,7 @@ export default {
       if (this.active === 1) {
         if (this.checkedCities.length === 0) {
           this.$message({
-              message: "请至少选择一个服务",
+              message: "請至少選擇一個服務",
               type: "error",
               showClose: true,
               duration: 0
@@ -281,7 +281,7 @@ export default {
             if (data.Response.Error) {
               if (data.Response.Error.Code == "InvalidParameter.RoleNameError") {
                 this.$message({
-                  message: "角色名不合法,创建失败",
+                  message: "角色名不合法,創建失敗",
                   type: "error",
                   showClose: true,
                   duration: 0
@@ -289,7 +289,7 @@ export default {
               }
             } else {
                this.$message({
-                  message: "创建角色成功",
+                  message: "創建角色成功",
                   type: "success",
                   showClose: true,
                   duration: 0
@@ -312,16 +312,16 @@ export default {
             this.back();
         }else{
             let ErrTips = {
-               "InternalError.SystemError":'内部错误',
-               "InvalidParameter.AttachmentFull":'principal字段的授权对象关联策略数已达到上限',
-               "InvalidParameter.ConditionError":'策略文档的condition字段不合法',
-               "InvalidParameter.DescriptionLengthOverlimit":'Description入参长度不能大于300字节',
-               "InvalidParameter.ParamError":'非法入参',
-               "InvalidParameter.PrincipalError":'策略文档的principal字段不合法',
-               "InvalidParameter.RoleFull":'角色数量达到上限',
+               "InternalError.SystemError":'內部錯誤',
+               "InvalidParameter.AttachmentFull":'principal欄位的授權對象關聯策略數已達到上限',
+               "InvalidParameter.ConditionError":'策略文檔的condition欄位不合法',
+               "InvalidParameter.DescriptionLengthOverlimit":'Description入參長度不能大於300位元組',
+               "InvalidParameter.ParamError":'非法入參',
+               "InvalidParameter.PrincipalError":'策略文檔的principal欄位不合法',
+               "InvalidParameter.RoleFull":'角色數量達到上限',
                "InvalidParameter.RoleNameError":'角色名不合法',
-               "InvalidParameter.RoleNameInUse":'相同名称的角色已存在',
-               "InvalidParameter.UserNotExist":'principal字段的授权对象不存在'
+               "InvalidParameter.RoleNameInUse":'相同名稱的角色已存在',
+               "InvalidParameter.UserNotExist":'principal欄位的授權對象不存在'
             };
             let ErrOr = Object.assign(ErrorTips, ErrTips);
             this.$message({
@@ -340,9 +340,9 @@ export default {
           console.log(res);
         }else{
           let ErrTips = {
-             "InternalError.SystemError":'内部错误',
-             "InvalidParameter.AttachmentFull":'principal字段的授权对象关联策略数已达到上限',
-             "InvalidParameter.ParamError":'非法入参',
+             "InternalError.SystemError":'內部錯誤',
+             "InvalidParameter.AttachmentFull":'principal欄位的授權對象關聯策略數已達到上限',
+             "InvalidParameter.ParamError":'非法入參',
              "InvalidParameter.PolicyIdNotExist":'策略ID不存在',
              "InvalidParameter.RoleNotExist":'角色不存在'
           };

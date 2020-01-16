@@ -1,25 +1,25 @@
 <template>
   <div class="createProvider">
-    <HeadCom title="新建自定义角色" :backShow="true" @_back="_back" />
+    <HeadCom :title="$t('CAM.Role.top_text')" :backShow="true" @_back="_back" />
     <div class="container">
       <div class="contant">
         <div class="step">
           <el-steps :active="active" simple finish-status="success">
-            <el-step title="输入角色载体信息"></el-step>
-            <el-step title="配置角色策略"></el-step>
-            <el-step title="审阅"></el-step>
+            <el-step :title="$t('CAM.Role.step_titile1')"></el-step>
+            <el-step :title="$t('CAM.Role.step_titile2')"></el-step>
+            <el-step :title="$t('CAM.Role.step_titile3')"></el-step>
           </el-steps>
         </div>
         <div v-if="active == 1" class="contant_flex">
           <div class="first">
             <div class="first_left">
               <p style="margin-bottom:50px">身份提供商</p>
-              <p>控制台访问</p>
-              <p style="margin-top:30px">使用条件</p>
+              <p>{{$t('CAM.Role.kztfw')}}</p>
+              <p style="margin-top:30px">{{$t('CAM.Role.sytj')}}</p>
             </div>
             <div class="first_right">
               <p style="margin-bottom:30px">
-                <el-select v-model="value" placeholder="暂无可选身份提供商" size="mini">
+                <el-select v-model="value" :placeholder="$t('CAM.Role.zwkxsftgs')" size="mini">
                   <el-option
                     v-for="item in options"
                     :key="item.value"
@@ -29,13 +29,13 @@
                 </el-select>
               </p>
               <p>
-                <el-checkbox v-model="checked">允许当前角色访问控制台</el-checkbox>
+                <el-checkbox v-model="checked">{{$t('CAM.Role.yxjsfwkzt')}}</el-checkbox>
               </p>
               <div style="width:800px;margin-top:40px">
                 <el-table :data="tableData" height="300" border style="width: 100%">
-                  <el-table-column prop="date" label="键">
+                  <el-table-column prop="date" :label="$t('CAM.Role.jian')">
                     <template slot-scope="scope">
-                      <el-select v-model="value" placeholder="请选择" size="mini">
+                      <el-select v-model="value" :placeholder="$t('CAM.Role.qxz')" size="mini">
                         <el-option
                           v-for="item in options"
                           :key="item.value"
@@ -45,9 +45,9 @@
                       </el-select>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="name" label="条件">
+                  <el-table-column prop="name" :label="$t('CAM.Role.tj')">
                     <template slot-scope="scope">
-                      <el-select v-model="value" placeholder="请选择" size="mini">
+                      <el-select v-model="value" :placeholder="$t('CAM.Role.qxz')" size="mini">
                         <el-option
                           v-for="item in options"
                           :key="item.value"
@@ -59,17 +59,17 @@
                   </el-table-column>
                   <el-table-column prop="address" label="值">
                     <template slot-scope="scope">
-                      <el-input v-model="input" placeholder="请输入内容" size="mini"></el-input>
+                      <el-input v-model="input" :placeholder="$t('CAM.strategy.inputContent')" size="mini"></el-input>
                     </template>
                   </el-table-column>
                   <el-table-column prop="address" label>
                     <template slot-scope="scope">
-                      <a href="JavaScript:;" @click="detele(scope)">删除</a>
+                      <a href="JavaScript:;" @click="detele(scope)">{{$t('CAM.userList.userDel')}}</a>
                     </template>
                   </el-table-column>
                 </el-table>
                 <p style="margin-top:20px">
-                  <el-button size="small" @click="add_use">新增使用条件</el-button>
+                  <el-button size="small" @click="add_use">{{$t('CAM.Role.xzsytj')}}</el-button>
                 </p>
               </div>
             </div>
@@ -137,22 +137,22 @@ export default {
       transfer_value: [],
       options: [
         {
-          value: "选项1",
-          label: "暂无可选身份提供商"
+          value: "選項1",
+          label: "暫無可選身份提供商"
         }
       ],
       transfer_data: [
         {
           value: 1,
-          desc: "备选项1"
+          desc: "備選項1"
         },
         {
           value: 2,
-          desc: "备选项2"
+          desc: "備選項2"
         },
         {
           value: 3,
-          desc: "备选项3"
+          desc: "備選項3"
         }
       ],
       tableData: []
@@ -175,7 +175,7 @@ export default {
       } else if (this.active == 2) {
         if (this.transfer_value.length == 0) {
           this.$message({
-              message: "请至少选择一个策略",
+              message: "請至少選擇一個策略",
               type: "error",
               showClose: true,
               duration: 0
@@ -211,7 +211,7 @@ export default {
         return;
       }
        this.$message({
-              message: "创建角色成功",
+              message: "創建角色成功",
               type: "success",
               showClose: true,
               duration: 0
