@@ -48,16 +48,29 @@
               </div>
             </div>
           </el-form-item>
-          <el-form-item label="内容">
-            <div style="width:400px;">
-              <!-- 头部 -->
-              <div class="flex header">
-                <div style="width:200px">变量名</div>
-                <div>变量值</div>
-              </div>
-							<addSecret></addSecret>
-            </div>
-          </el-form-item>
+					<div v-if="se.tabPosition=='jt'">
+						<el-form-item label="内容">
+							<div style="width:400px;">
+								<!-- 头部 -->
+								<div class="flex header">
+									<div style="width:200px">变量名</div>
+									<div>变量值</div>
+								</div>
+								<addSecret></addSecret>
+							</div>
+          	</el-form-item>
+					</div>
+          <div v-if="se.tabPosition=='dt'">
+						<el-form-item label="仓库域名">
+							 <el-input class="w200" v-model="se.name" placeholder="请输入域名或IP"></el-input>
+						</el-form-item>
+						<el-form-item label="用户名">
+							 <el-input class="w200" v-model="se.name" placeholder="请输入第三方仓库的用户名"></el-input>
+						</el-form-item>
+						<el-form-item label="密码">
+							 <el-input class="w200" v-model="se.name" placeholder="请输入第三方仓库的登录密码"></el-input>
+						</el-form-item>
+					</div>
         </el-form>
 
        
