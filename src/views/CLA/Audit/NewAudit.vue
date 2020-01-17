@@ -131,8 +131,12 @@
           <div class="main-box" style="border:0;">
             <el-form-item>
               <el-button @click="_cancel">{{ $t('CLA.total.qx') }}</el-button>
-              <el-button type="primary" @click="_onSubmit('ruleForm')">{{ $t('CLA.total.ljcj') }}</el-button>
-              <!-- <el-button type="primary" icon="el-icon-loading" v-show="btnLoad"></el-button> -->
+              <el-button
+                type="primary"
+                @click="_onSubmit('ruleForm')"
+                v-show="!btnLoad"
+              >{{ $t('CLA.total.ljcj') }}</el-button>
+              <el-button type="primary" icon="el-icon-loading" v-show="btnLoad"></el-button>
             </el-form-item>
           </div>
         </el-form>
@@ -157,11 +161,13 @@ export default {
     //正则验证
     var AuditName = (rule, value, callback) => {
       var reg = /^[a-zA-Z0-9_]{3,128}$/;
+      var _this = this;
       setTimeout(() => {
         if (!reg.test(value)) {
           callback(
             new Error("僅支持大小寫字母、數字、以及_的組合，3-128個字元。")
           );
+          _this.btnLoad = false;
         } else {
           callback();
         }
@@ -169,12 +175,14 @@ export default {
     };
     var LogFilePrefix = (rule, value, callback) => {
       var reg = /^[a-zA-Z0-9]{3,40}$/;
+      var _this = this;
       if (!value) {
         callback();
       }
       setTimeout(() => {
         if (!reg.test(value)) {
           callback(new Error("僅支持字母和數字的組合，3-40個字元。"));
+          _this.btnLoad = false;
         } else {
           callback();
         }
@@ -182,6 +190,7 @@ export default {
     };
     var CosBucketName = (rule, value, callback) => {
       var reg = /^[a-z0-9-]{1,40}$/;
+      var _this = this;
       setTimeout(() => {
         if (!reg.test(value)) {
           callback(
@@ -189,6 +198,7 @@ export default {
               '僅支持小寫字母、數字以及中劃線" - "的組合，不能超過40字元。'
             )
           );
+          _this.btnLoad = false;
         } else {
           callback();
         }
@@ -196,11 +206,13 @@ export default {
     };
     var CmqQueueName = (rule, value, callback) => {
       var reg = /^[a-zA-Z]([-a-zA-Z0-9]{0,64})$/;
+
       if (this.ruleForm.IsEnableCmqNotify) {
         if (!value) {
           callback();
         }
       }
+      var _this = this;
       setTimeout(() => {
         if (!reg.test(value)) {
           callback(
@@ -208,6 +220,7 @@ export default {
               "不超過64個字元的字元串，必須以字母為首字元，剩餘部分可以包含字母、數字和橫劃線(-)。"
             )
           );
+          _this.btnLoad = false;
         } else {
           callback();
         }

@@ -191,8 +191,12 @@
           <div class="btn-box" v-show="inpShow1">
             <div class="line lineVal"></div>
             <el-form-item class="button">
-              <!-- <el-button type="primary" icon="el-icon-loading" v-show="btnLoad"></el-button> -->
-              <el-button type="primary" @click="submitForm1('detailData')">{{ $t('CLA.total.bc') }}</el-button>
+              <el-button type="primary" icon="el-icon-loading" v-show="btnLoad"></el-button>
+              <el-button
+                type="primary"
+                @click="submitForm1('detailData')"
+                v-show="!btnLoad"
+              >{{ $t('CLA.total.bc') }}</el-button>
               <el-button @click="_cancel1">{{ $t('CLA.total.qx') }}</el-button>
             </el-form-item>
           </div>
@@ -551,8 +555,8 @@ export default {
             });
           }
         } else {
-          return false;
           this.btnLoad = false;
+          return false;
         }
       });
     },
