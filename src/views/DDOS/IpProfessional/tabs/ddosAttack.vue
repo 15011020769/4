@@ -121,8 +121,8 @@ import {
   DDOS_EVENT,
   DDOS_ATTACK,
   DDOS_DATA,
-  RESOURCE_LIST
 } from "@/constants";
+import { ErrorTips } from "@/components/ErrorTips";
 import moment from "moment";
 export default {
   data() {
@@ -174,7 +174,6 @@ export default {
 
   //初始化生命周期
   created() {
-    this.describeResourceList(); //获取资源列表的接口单独调用（因为日期变更不需要调用此接口）
     this.getData();
     this.GetID();
   },
@@ -187,17 +186,27 @@ export default {
         Business: "net"
       };
       this.axios.post(GET_ID, params).then(res => {
-        let IpList = res.Response.Resource;
-        for (let i = 0; i < IpList.length; i++) {
-          this.inputId = IpList[i].Id;
-          this.IpList = IpList[i].IpList;
-        }
+        if (res.Response.Error === undefined) {
+					let IpList = res.Response.Resource;
+          for (let i = 0; i < IpList.length; i++) {
+            this.inputId = IpList[i].Id;
+            this.IpList = IpList[i].IpList;
+          }
+				} else {
+					let ErrTips = {};
+					let ErrOr = Object.assign(ErrorTips, ErrTips);
+					this.$message({
+						message: ErrOr[res.Response.Error.Code],
+						type: "error",
+						showClose: true,
+						duration: 0
+					});
+				}
       });
     },
     // DDOS资源Id变化时，重新获取数据
     changeId() {
       this.resourceId = this.inputId;
-      this.describeResourceList();
       this.getData();
     },
     getData() {
@@ -208,7 +217,6 @@ export default {
       this.loading = true;
       let params = {
         Version: "2018-07-09",
-        // Region: '',
         Business: "net",
         Id: this.inputId,
         StartTime: this.startTime,
@@ -217,7 +225,18 @@ export default {
         //Offset: ''  //页起始偏移，取值为(页码-1)*一页条数
       };
       this.axios.post(DDOS_EVENT, params).then(res => {
-        this.tableDataOfDescribeDDoSNetEvList = res.Response.Data;
+        if (res.Response.Error === undefined) {
+					this.tableDataOfDescribeDDoSNetEvList = res.Response.Data;
+				} else {
+					let ErrTips = {};
+					let ErrOr = Object.assign(ErrorTips, ErrTips);
+					this.$message({
+						message: ErrOr[res.Response.Error.Code],
+						type: "error",
+						showClose: true,
+						duration: 0
+					});
+				}
         this.loading = false;
       });
     },
@@ -234,13 +253,24 @@ export default {
         // metricName2: "traffic",
       };
       this.axios.post(DDOS_ATTACK, params).then(res => {
-        if (this.metricName2 == "traffic") {
-          this.traffictable = res.data;
-        } else if (this.metricName2 == "pkg") {
-          this.pkgtable = res.data;
-        } else if (this.metricName2 == "num") {
-          this.numtable = res.data;
-        }
+        if (res.Response.Error === undefined) {
+					if (this.metricName2 == "traffic") {
+            this.traffictable = res.data;
+          } else if (this.metricName2 == "pkg") {
+            this.pkgtable = res.data;
+          } else if (this.metricName2 == "num") {
+            this.numtable = res.data;
+          }
+				} else {
+					let ErrTips = {};
+					let ErrOr = Object.assign(ErrorTips, ErrTips);
+					this.$message({
+						message: ErrOr[res.Response.Error.Code],
+						type: "error",
+						showClose: true,
+						duration: 0
+					});
+				}
       });
     },
     // 1.1.获取高防IP专业版资源的DDoS攻击指标数据
@@ -256,24 +286,22 @@ export default {
         EndTime: this.endTime
       };
       this.axios.post(DDOS_DATA, params).then(res => {
-        if (this.metricName == "bps") {
-          this.drawLine(res.Response.Data, date);
-        } else {
-          this.drawLine2(res.Response.Data, date);
-        }
-      });
-    },
-    // 获取资源列表
-    describeResourceList(data) {
-      let params = {
-        Version: "2018-07-09",
-        Business: "net"
-      };
-      if (this.resourceId != "" && this.resourceId != null) {
-        params["IdList.0"] = this.resourceId;
-      }
-      this.axios.post(RESOURCE_LIST, params).then(res => {
-        // console.log(res)
+        if (res.Response.Error === undefined) {
+					if (this.metricName == "bps") {
+            this.drawLine(res.Response.Data, date);
+          } else {
+            this.drawLine2(res.Response.Data, date);
+          }
+				} else {
+					let ErrTips = {};
+					let ErrOr = Object.assign(ErrorTips, ErrTips);
+					this.$message({
+						message: ErrOr[res.Response.Error.Code],
+						type: "error",
+						showClose: true,
+						duration: 0
+					});
+				}
       });
     },
     // DDOS攻击防护-二级tab切换

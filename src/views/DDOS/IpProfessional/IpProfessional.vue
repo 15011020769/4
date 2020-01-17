@@ -30,7 +30,7 @@ import moment from "moment";
 import ddosAttack from "./tabs/ddosAttack";
 import ccAttack from "./tabs/ccAttack";
 import business from "./tabs/business";
-import { RESOURCE_LIST } from "@/constants/DDOS";
+import { ErrorTips } from "@/components/ErrorTips";
 export default {
   data() {
     return {
@@ -44,23 +44,8 @@ export default {
     HeaderCom: HeaderCom
   },
   methods: {
-    // 获取资源列表
-    describeResourceList(data) {
-      let params = {
-        Version: "2018-07-09",
-        Business: "net"
-      };
-      if (this.resourceId != "" && this.resourceId != null) {
-        params["IdList.0"] = this.resourceId;
-      }
-      this.axios.post(RESOURCE_LIST, params).then(res => {
-        // console.log(res);
-      });
-    },
-
     // tab页面切换
     handleClick(tab, event) {
-      this.$refs.servers.describeResourceList(); //获取资源列表的接口单独调用（因为日期变更不需要调用此接口）
       if (tab.name == "ddos") {
         //DDOS攻击防护
         this.$refs.ddosAttack.getData();

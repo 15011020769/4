@@ -5,7 +5,7 @@
       <div class="contPartOne">
         <el-date-picker
           class="dateUnBlock"
-          v-model="dateChoice1"
+          v-model="dateChoice"
           type="datetimerange"
           range-separator="至"
           :start-placeholder="$t('DDOS.UnsealCode.beginDate')"
@@ -38,10 +38,10 @@
         <div class="Right-style pagstyle">
           <span class="pagtotal">共&nbsp;{{totalItems}}&nbsp;{{$t('DDOS.UnsealCode.tiao')}}</span>
           <el-pagination
+            @current-change="handleCurrentChange"
             :page-size="pageSize"
             :pager-count="7"
             layout="prev, pager, next"
-            @current-change="handleCurrentChange"
             :total="totalItems"
           ></el-pagination>
         </div>
@@ -51,30 +51,26 @@
 </template>
 <script>
 import { IPUNBlOCKLIST_LIST } from "@/constants";
+import { ErrorTips } from "@/components/ErrorTips";
 export default {
   data() {
     return {
-      tableDataName: "",
-      tableDataEnd: [],
       currentPage: 1,
       pageSize: 10,
       totalItems: 0,
-
-      timeValue: {},
       // 日期区间：默认获取当前时间和前90天时间
       EndTime: this.getDateString(new Date()),
       BeginTime: this.getDateString(
         new Date(new Date().getTime() - 24 * 60 * 60 * 1000 * 90)
       ),
       // 日期选择
-      dateChoice1: {},
-      dateChoice2: {},
+      dateChoice: {},
       IpUnBlockList: [],
-      loading: true
+      loading: false
     };
   },
   watch: {
-    dateChoice1: function(value) {
+    dateChoice: function(value) {
       this.BeginTime = this.getDateString(value[0]);
       this.EndTime = this.getDateString(value[1]);
       this.describeIpUnBlockList();
@@ -93,44 +89,31 @@ export default {
         EndTime: this.EndTime
       };
       this.axios.post(IPUNBlOCKLIST_LIST, params).then(res => {
-        this.IpUnBlockList = res.Response.List;
-        // 将数据的长度赋值给totalItems
-        this.totalItems = res.Response.Total;
-        if (this.totalItems > this.pageSize) {
-          for (let index = 0; index < this.pageSize; index++) {
-            this.tableDataEnd.push(this.tableDataBegin[index]);
-          }
-        } else {
-          this.tableDataEnd = this.IpUnBlockList;
-        }
+        if (res.Response.Error === undefined) {
+					this.IpUnBlockList = res.Response.List;
+          this.totalItems = res.Response.Total;
+				} else {
+					let ErrTips = {};
+					let ErrOr = Object.assign(ErrorTips, ErrTips);
+					this.$message({
+						message: ErrOr[res.Response.Error.Code],
+						type: "error",
+						showClose: true,
+						duration: 0
+					});
+				}
         this.loading = false;
       });
     },
-
+    // 分页方法
     handleSizeChange(val) {
       this.pageSize = val;
-      this.handleCurrentChange(this.currentPage);
     },
-
     handleCurrentChange(val) {
       this.currentPage = val;
-      //需要判断是否检索
-      if (!this.flag) {
-        this.currentChangePage(this.tableDataEnd);
-      } else {
-        this.currentChangePage(this.filterTableDataEnd);
-      }
-    }, //组件自带监控当前页码
-
-    currentChangePage(list) {
-      let from = (this.currentPage - 1) * this.pageSize;
-      let to = this.currentPage * this.pageSize;
-      this.tableDataEnd = [];
-      for (; from < to; from++) {
-        if (list[from]) {
-          this.tableDataEnd.push(list[from]);
-        }
-      }
+    },
+    currentChangePage() {
+      
     },
 
     // 时间格式化'yyyy-MM-dd hh:mm:ss'
