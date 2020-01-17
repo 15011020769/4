@@ -758,7 +758,6 @@ export default {
     ProV(p) {
       //限速 ===》协议
       this.proStr = p;
-      console.log(this.proStr);
     },
     speedV(s) {
       //限速 ===》阈值
@@ -819,7 +818,6 @@ export default {
         console.log(this.tags3, "获取的数据"); //2
         this.tags3.map((item, index) => {
           console.log(item.protocol,item.speedLimit);
-          
 
           if (item.protocol == "ICMP") {
             params["DropOptions.0.DIcmpMbpsLimit"] = item.speedLimit;
