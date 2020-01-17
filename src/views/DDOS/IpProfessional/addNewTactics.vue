@@ -75,7 +75,7 @@
       <div class="childContTit">
         <h2>{{$t('DDOS.Proteccon_figura.Disable_protocol')}}</h2>
         <el-checkbox-group v-model="DdisableProtocol">
-          <el-checkbox label="ICMP" name="type"></el-checkbox>
+          <el-checkbox label="ICPM" name="type"></el-checkbox>
           <el-checkbox label="TCP" name="type"></el-checkbox>
           <el-checkbox label="UDP" name="type"></el-checkbox>
           <el-checkbox :label="$t('DDOS.Proteccon_figura.region')" name="type"></el-checkbox>
@@ -669,7 +669,53 @@ export default {
       // this.tags3 = this.policyTemp.DropOptions;
 
       console.log(this.policyTemp.DropOptions.DIcmpMbpsLimit, "工作");
-      this.proStr = this.policyTemp.DropOptions.DIcmpMbpsLimit;
+      var ta = {
+        protocol: "",
+        speedLimit: ""
+      };
+      if (this.policyTemp.DropOptions.DIcmpMbpsLimit) {
+        this.tags3.push({
+          protocol: "ICPM",
+          speedLimit: this.policyTemp.DropOptions.DIcmpMbpsLimit
+        });
+      }
+      if (this.policyTemp.DropOptions.DOtherMbpsLimit) {
+        this.tags3.push({
+          protocol: "OTHER",
+          speedLimit: this.policyTemp.DropOptions.DOtherMbpsLimit
+        });
+      }
+      if (this.policyTemp.DropOptions.DUdpMbpsLimit) {
+        this.tags3.push({
+          protocol: "UDP",
+          speedLimit: this.policyTemp.DropOptions.DUdpMbpsLimit
+        });
+      }
+      if (this.policyTemp.DropOptions.DTcpMbpsLimit) {
+        this.tags3.push({
+          protocol: "TCP",
+          speedLimit: this.policyTemp.DropOptions.DTcpMbpsLimit
+        });
+      };
+
+      // this.tags3 = [
+      //   {
+      //     protocol: "ICPM",
+      //     speedLimit: this.policyTemp.DropOptions.DIcmpMbpsLimit
+      //   },
+      //   {
+      //     protocol: "OTHER",
+      //     speedLimit: this.policyTemp.DropOptions.DOtherMbpsLimit
+      //   },
+      //   {
+      //     protocol: "UDP",
+      //     speedLimit: this.policyTemp.DropOptions.DUdpMbpsLimit
+      //   },
+      //   {
+      //     protocol: "TCP",
+      //     speedLimit: this.policyTemp.DropOptions.DTcpMbpsLimit
+      //   }
+      // ];
       if (this.policyTemp.DropOptions.DropAbroad == 0) {
         this.radios1 = "關閉"; //拒绝海外流量
       } else {
@@ -812,21 +858,28 @@ export default {
             i
           ].Type;
         }
+
+        // params["DropOptions.0.DIcmpMbpsLimit"] = this.tags3[0].speedLimit;
+        // params["DropOptions.0.DOtherMbpsLimit"] = this.tags3[1].speedLimit;
+        // params["DropOptions.0.DTcpMbpsLimit"] = this.tags3[2].speedLimit;
+        // params["DropOptions.0.DUdpMbpsLimit"] = this.tags3[3].speedLimit;
         console.log(this.tags3, "获取的数据"); //2
+
         this.tags3.map((item, index) => {
           console.log(item.protocol, item.speedLimit);
 
-          if (item.protocol == "ICMP") {
-            params["DropOptions.0.DIcmpMbpsLimit"] = item.speedLimit;
+          if (item.protocol == "ICPM") {
+            params["DropOptions.0.DIcmpMbpsLimit"] = this.tags3[0].speedLimit;
+            console.log(this.tags3[0].speedLimit);
           }
           if (item.protocol == "OTHER") {
-            params["DropOptions.0.DOtherMbpsLimit"] = item.speedLimit;
+            params["DropOptions.0.DOtherMbpsLimit"] = this.tags3[1].speedLimit;
           }
           if (item.protocol == "TCP") {
-            params["DropOptions.0.DTcpMbpsLimit"] = item.speedLimit;
+            params["DropOptions.0.DTcpMbpsLimit"] = this.tags3[2].speedLimit;
           }
           if (item.protocol == "UDP") {
-            params["DropOptions.0.DUdpMbpsLimit"] = item.speedLimit;
+            params["DropOptions.0.DUdpMbpsLimit"] = this.tags3[3].speedLimit;
           }
         });
         // for (let a in this.tags3) {
@@ -955,9 +1008,7 @@ export default {
         console.log(params, "水印防护");
         if (bl) {
           params.Name = this.tacticsName;
-          console.log(params, ",'添加的参数'");
           this.axios.post(DDOS_POLICY_CREATE, params).then(res => {
-            console.log(res, "新增");
             if (res.Response.Success) {
               this.$message("添加成功");
               this.$emit("describeDDoSPolicyADD");
@@ -978,7 +1029,6 @@ export default {
         } else {
           params.PolicyId = this.policy.PolicyId;
           this.axios.post(DDOS_POLICY_MODIFY, params).then(res => {
-            console.log(res, "修改");
             if (res.Response.Success) {
               this.$message("修改成功");
               // 关闭修改页面
