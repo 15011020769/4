@@ -236,13 +236,13 @@
           return (value = "硬碟平均每秒讀次數");
         }
         if (value === "DiskReadTraffic") {
-          return (value = "平均每秒從硬碟讀到內存的數據量");
+          return (value = "平均每秒從硬碟讀到記憶體的數據量");
         }
         if (value === "DiskWriteIops") {
           return (value = "硬碟平均每秒寫次數");
         }
         if (value === "DiskWriteTraffic") {
-          return (value = "平均每秒從內存寫到硬碟的數據量");
+          return (value = "平均每秒從記憶體寫到硬碟的數據量");
         }
         if (value === "DiskAwait") {
           return (value = "硬碟I/O平均每次操作的等待時間");
