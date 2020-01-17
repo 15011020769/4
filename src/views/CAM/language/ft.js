@@ -281,7 +281,7 @@ module.exports = {
       completes: '審閱並完成',
       supplier: '供應商類型',
       supplierName: '供應商名稱',
-      dataFile: '元數據文檔',
+      dataFile: '元數據文件',
       chooseFile: "選擇文件",
       newAdd: '新建供應商',
       peopleName: '提供商名稱',

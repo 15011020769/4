@@ -254,10 +254,10 @@ export default {
             let ErrTips = {
               "InternalError.SystemError":'內部錯誤',
                "InvalidParameter.AttachmentFull":'principal欄位的授權對象關聯策略數已達到上限',
-               "InvalidParameter.ConditionError":'策略文檔的condition欄位不合法',
+               "InvalidParameter.ConditionError":'策略文件的condition欄位不合法',
                "InvalidParameter.DescriptionLengthOverlimit":'Description入參長度不能大於300位元組',
                "InvalidParameter.ParamError":'非法入參',
-               "InvalidParameter.PrincipalError":'策略文檔的principal欄位不合法',
+               "InvalidParameter.PrincipalError":'策略文件的principal欄位不合法',
                "InvalidParameter.RoleFull":'角色數量達到上限',
                "InvalidParameter.RoleNameError":'角色名不合法',
                "InvalidParameter.RoleNameInUse":'相同名稱的角色已存在',

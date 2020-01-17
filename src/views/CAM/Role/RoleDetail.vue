@@ -650,10 +650,10 @@ export default {
               "InvalidParameter.AttachmentFull":
                 "principal欄位的授權對象關聯策略數已達到上限",
               "InvalidParameter.ConditionError":
-                "策略文檔的condition欄位不合法",
+                "策略文件的condition欄位不合法",
               "InvalidParameter.ParamError": "非法入參",
               "InvalidParameter.PrincipalError":
-                "策略文檔的principal欄位不合法",
+                "策略文件的principal欄位不合法",
               "InvalidParameter.RoleNotExist": "角色不存在",
               "InvalidParameter.UserNotExist": "principal欄位的授權對象不存在"
             };
@@ -804,16 +804,16 @@ export default {
               "FailedOperation.PolicyNameInUse":
                 "PolicyName欄位指定的策略名已存在",
               "InternalError.SystemError": "內部錯誤",
-              "InvalidParameter.ActionError": "策略文檔的Action欄位不合法",
+              "InvalidParameter.ActionError": "策略文件的Action欄位不合法",
               "InvalidParameter.AttachmentFull":
                 "principal欄位的授權對象關聯策略數已達到上限",
               "InvalidParameter.ConditionError":
-                "策略文檔的condition欄位不合法",
+                "策略文件的condition欄位不合法",
               "InvalidParameter.DescriptionLengthOverlimit":
                 "Description入參長度不能大於300位元組",
-              "InvalidParameter.EffectError": "策略文檔的Effect欄位不合法",
+              "InvalidParameter.EffectError": "策略文件的Effect欄位不合法",
               "InvalidParameter.NotSupportProduct":
-                "CAM不支持策略文檔中所指定的資源類型",
+                "CAM不支持策略文件中所指定的資源類型",
               "InvalidParameter.ParamError": "非法入參",
               "InvalidParameter.PolicyDocumentError":
                 "PolicyDocument欄位不合法",
@@ -823,12 +823,12 @@ export default {
               "InvalidParameter.PolicyIdNotExist": "策略ID不存在",
               "InvalidParameter.PolicyNameError": "PolicyName欄位不合法",
               "InvalidParameter.PrincipalError":
-                "策略文檔的principal欄位不合法",
-              "InvalidParameter.ResourceError": "策略文檔的Resource欄位不合法",
+                "策略文件的principal欄位不合法",
+              "InvalidParameter.ResourceError": "策略文件的Resource欄位不合法",
               "InvalidParameter.StatementError":
-                "策略文檔的Statement欄位不合法",
+                "策略文件的Statement欄位不合法",
               "InvalidParameter.UserNotExist": "principal欄位的授權對象不存在",
-              "InvalidParameter.VersionError": "策略文檔的Version欄位不合法",
+              "InvalidParameter.VersionError": "策略文件的Version欄位不合法",
               "ResourceNotFound.GroupNotExist": "用戶組不存在",
               "ResourceNotFound.NotFound": "資源不存在",
               "ResourceNotFound.PolicyIdNotFound": "PolicyId指定的資源不存在",
