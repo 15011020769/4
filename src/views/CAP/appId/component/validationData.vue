@@ -243,7 +243,7 @@ export default {
     };
     this.echartsData0.show = false;
     this.getEachrtsData(params).then(res => {
-      console.log(res);
+      // console.log(res);
       const data0 = [];
       const xData = [];
       this.echartsData0.xAxis = [];
@@ -260,7 +260,7 @@ export default {
       });
       params.Type = 1;
       this.getEachrtsData(params).then(res => {
-        console.log(res);
+        // console.log(res);
         const data1 = [];
         res.Response.Data.forEach(item => {
           data1.push(item.Cnt);
@@ -272,7 +272,7 @@ export default {
         });
         params.Type = 2;
         this.getEachrtsData(params).then(res => {
-          console.log(res);
+          // console.log(res);
           const data2 = [];
           res.Response.Data.forEach(item => {
             data2.push(item.Cnt);
@@ -284,7 +284,7 @@ export default {
           });
           params.Type = 3;
           this.getEachrtsData(params).then(res => {
-            console.log(res);
+            // console.log(res);
             const data3 = [];
             res.Response.Data.forEach(item => {
               data3.push(item.Cnt);
@@ -295,7 +295,7 @@ export default {
               data: data3
             });
             this.echartsData0.show = true;
-            console.log(this.echartsData0.show)
+            // console.log(this.echartsData0.show)
           });
         });
       });
@@ -312,9 +312,9 @@ export default {
         End: this.End
       };
       this.axios.post(QUERY_REQDATA, params).then(res => {
-        console.log(res);
+        // console.log(res);
         this.dataSum = res.Response;
-        console.log(this.dataSum);
+        // console.log(this.dataSum);
       });
     },
     //获取折线图数据
@@ -325,7 +325,7 @@ export default {
     getEachrtsDatas(params,eachrtsData) {
         eachrtsData.show = false
        this.axios.post(USER_HANDLE,params).then(res => {
-        console.log(res)
+        // console.log(res)
         let data = res.Response.Data
         if(data[eachrtsData.type]&&data[eachrtsData.type].length>0){
           eachrtsData.data = data
@@ -337,7 +337,7 @@ export default {
         }
          this.$nextTick(()=>{
           eachrtsData.show = true
-          console.log(eachrtsData)
+          // console.log(eachrtsData)
          })
        })
     },
