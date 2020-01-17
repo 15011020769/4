@@ -5,7 +5,7 @@ export const SPACENAME_DELETE = 'ccr/DeleteUserNamespace'
 export const SPACENAME_PRESENCE = 'ccr/NamespaceIsExists'
 
 // 创建命名空间
-export const CREATE_SPACENAME = 'ccr/CreateCCRNamespace'
+export const CREATE_SPACENAME = 'ccr/GetRepositoryInfo'
 
 // 获取我的镜像列表
 export const MIRROR_LIST = 'ccr/SearchUserRepository'

@@ -105,7 +105,7 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss" >
  .tke-download,.tke-refresh{
       font-size: 16px;
       padding: 8px;
