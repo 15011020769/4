@@ -7,7 +7,8 @@
           <el-form ref="form" :model="form" label-width="100px">
             <el-form-item label="主题色">
               <span style="padding-left:30px;">{{this.colorValue}}</span>
-              <input type="color" style="margin-left:10px; width:60px" v-model="colorValue" />
+              <!-- <input type="color" style="margin-left:10px; width:60px" v-model="colorValue" /> -->
+              <el-color-picker v-model="colorValue" style="margin-left:10px;"></el-color-picker>
               <el-button type="primary" style="margin-left:10px;" @click="reset">重置</el-button>
               <p style="padding-left:30px;">主题色会影响验证码滑块、打击提醒、错误提醒等内容颜色</p>
             </el-form-item>
@@ -30,6 +31,7 @@
   </div>
 </template>
 <script>
+import { ErrorTips } from "@/components/ErrorTips";
 import {UPDATEAPPID_INFO,APPID_DESCRIBE} from '@/constants/CAP.js'
 export default {
   data() {
@@ -55,7 +57,23 @@ export default {
          CaptchaAppId:this.Id
        }
        this.axios.post(APPID_DESCRIBE,params).then(res => {
-         this.AppDate = res.Response
+         if(res.Response.Error === undefined){
+            this.AppDate = res.Response
+         }else{
+            let ErrTips = {
+               "InternalError":'内部错误',
+               "MissingParameter":'缺少参数错误',
+               "UnauthorizedOperation.ErrAuth":'鉴权失败',
+               "UnauthorizedOperation.Unauthorized":'未开通权限'
+            };
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+         }
        })
     },
     //重置颜色
@@ -84,11 +102,26 @@ export default {
           CaptchaLanguage:this.AppDate.Language
        }
        this.axios.post(UPDATEAPPID_INFO,params).then(res => {
-         console.log(res)
-         this.$message.success('保存成功')
-         setTimeout(()=>{
-            this.timeShow = false
-          }, 5000);
+         if(res.Response.Error === undefined){
+          this.$message.success('保存成功')
+          setTimeout(()=>{
+              this.timeShow = false
+            }, 5000);
+         }else{
+            let ErrTips = {
+               "InternalError":'内部错误',
+               "MissingParameter":'缺少参数错误',
+               "UnauthorizedOperation.ErrAuth":'鉴权失败',
+               "UnauthorizedOperation.Unauthorized":'未开通权限'
+            };
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+         }
        })
     },
   
@@ -114,6 +147,9 @@ export default {
 <style lang="scss" scoped>
 .wrap >>> .el-button {
   border-radius: 0;
+}
+.wrap >>> .el-color-picker__trigger{
+   margin-bottom: -14px;
 }
 .wrap {
   width: 100%;

@@ -72,6 +72,7 @@
 </template>
 <script>
 import { UNBlOCKSTATIS_NUM, IPBlOCKLIST_LIST } from "@/constants";
+import { ErrorTips } from "@/components/ErrorTips";
 export default {
   data() {
     return {
@@ -93,22 +94,47 @@ export default {
   methods: {
     //获取IP封堵列表接口
     describeIpBlockList() {
+      this.loading = true;
       let params = {
         Version: "2018-07-09"
       };
       this.axios.post(IPBlOCKLIST_LIST, params).then(res => {
-        this.tableDatalist = res.Response.List;
+        if (res.Response.Error === undefined) {
+          this.tableDatalist = res.Response.List;
+				} else {
+					let ErrTips = {};
+					let ErrOr = Object.assign(ErrorTips, ErrTips);
+					this.$message({
+						message: ErrOr[res.Response.Error.Code],
+						type: "error",
+						showClose: true,
+						duration: 0
+					});
+				}
         this.loading = false;
       });
     },
 
     //获取黑洞解封次数接口
     describeUnBlockStatis() {
+      this.loading = true;
       let params = {
         Version: "2018-07-09"
       };
       this.axios.post(UNBlOCKSTATIS_NUM, params).then(res => {
-        this.unBlockStatis = res.Response;
+        if (res.Response.Error === undefined) {
+          this.unBlockStatis = res.Response;
+				} else {
+					let ErrTips = {};
+					let ErrOr = Object.assign(ErrorTips, ErrTips);
+					this.$message({
+						message: ErrOr[res.Response.Error.Code],
+						type: "error",
+						showClose: true,
+						duration: 0
+					});
+        }
+        this.loading = false;
       });
     }
   }

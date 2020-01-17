@@ -119,6 +119,7 @@
   </div>
 </template>
 <script>
+import { ErrorTips } from "@/components/ErrorTips";
 import { UPDATEAPPID_INFO, APPID_DESCRIBE } from "@/constants/CAP.js";
 import moment from "moment";
 export default {
@@ -200,18 +201,34 @@ export default {
       };
 
       this.axios.post(UPDATEAPPID_INFO, params).then(res => {
-        // console.log(res)
-        if (res.Response.CaptchaCode == 0) {
-          var setTime = moment(new Date()).format("YYYY-MM-DD HH:mm:ss");
-          this.time = setTime;
-          this.showTime = true;
-          setTimeout(() => {
-            this.showTime = false;
-          }, 3000);
-          this.$message({
-            message: "保存成功",
-            type: "success"
-          });
+        if(res.Response.Error === undefined){
+            // console.log(res)
+            if (res.Response.CaptchaCode == 0) {
+              var setTime = moment(new Date()).format("YYYY-MM-DD HH:mm:ss");
+              this.time = setTime;
+              this.showTime = true;
+              setTimeout(() => {
+                this.showTime = false;
+              }, 3000);
+              this.$message({
+                message: "保存成功",
+                type: "success"
+              });
+            }
+        }else{
+            let ErrTips = {
+              "InternalError":'内部错误',
+              "MissingParameter":'缺少参数错误',
+              "UnauthorizedOperation.ErrAuth":'鉴权失败',
+              "UnauthorizedOperation.Unauthorized":'未开通权限'
+            };
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
         }
       });
     },
@@ -222,26 +239,42 @@ export default {
         CaptchaAppId: this.CaptchaAppId
       };
       this.axios.post(APPID_DESCRIBE, params).then(res => {
-        if (res.Response.CaptchaCode == 0) {
-          this.securityData.AppName = res.Response.AppName;
-          this.securityData.DomainLimit = res.Response.DomainLimit; //域名限制
-          this.securityData.SceneType = res.Response.SceneType; //场景类型
-          this.securityData.CapType = res.Response.CapType; //验证码类型
-          this.securityData.SchemeColor = res.Response.SchemeColor;
-          this.securityData.TopFullScreen = res.Response.TopFullScreen;
-          this.securityData.TrafficThreshold = res.Response.TrafficThreshold;
-          this.securityData.EvilInterceptGrade =
-            res.Response.EvilInterceptGrade; //风险级别
-          this.securityData.CaptchaLanguage = res.Response.Language; //风险级别
-          this.securityData.SmartVerify =
-            res.Response.SmartVerify == 1 ? true : false; //智能检测
-          this.securityData.SmartEngine =
-            res.Response.SmartEngine == 1 ? true : false; //开启智能引擎
-          this.securityData.TrafficThreshold = res.Response.TrafficThreshold; //流量限制
-          this.securityData.TopFullScreen = res.Response.TopFullScreen; //是否全屏
-          this.securityData.SchemeColor = res.Response.SchemeColor; //web风格
+        if(res.Response.Error === undefined){
+            if (res.Response.CaptchaCode == 0) {
+              this.securityData.AppName = res.Response.AppName;
+              this.securityData.DomainLimit = res.Response.DomainLimit; //域名限制
+              this.securityData.SceneType = res.Response.SceneType; //场景类型
+              this.securityData.CapType = res.Response.CapType; //验证码类型
+              this.securityData.SchemeColor = res.Response.SchemeColor;
+              this.securityData.TopFullScreen = res.Response.TopFullScreen;
+              this.securityData.TrafficThreshold = res.Response.TrafficThreshold;
+              this.securityData.EvilInterceptGrade =
+                res.Response.EvilInterceptGrade; //风险级别
+              this.securityData.CaptchaLanguage = res.Response.Language; //风险级别
+              this.securityData.SmartVerify =
+                res.Response.SmartVerify == 1 ? true : false; //智能检测
+              this.securityData.SmartEngine =
+                res.Response.SmartEngine == 1 ? true : false; //开启智能引擎
+              this.securityData.TrafficThreshold = res.Response.TrafficThreshold; //流量限制
+              this.securityData.TopFullScreen = res.Response.TopFullScreen; //是否全屏
+              this.securityData.SchemeColor = res.Response.SchemeColor; //web风格
 
-          this.colorIndex = res.Response.SceneType - 1; //默认选中场景等级
+              this.colorIndex = res.Response.SceneType - 1; //默认选中场景等级
+            }
+        }else{
+            let ErrTips = {
+               "InternalError":'内部错误',
+               "MissingParameter":'缺少参数错误',
+               "UnauthorizedOperation.ErrAuth":'鉴权失败',
+               "UnauthorizedOperation.Unauthorized":'未开通权限'
+            };
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
         }
       });
     }

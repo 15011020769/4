@@ -262,7 +262,7 @@
           this.input3 !== "false"
         ) {
           this.$message({
-            message: "只读搜索内容为true或false",
+            message: "只讀搜索內容為true或false",
             type: "warning",
             showClose: true,
             duration: 0
