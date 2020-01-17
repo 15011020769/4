@@ -818,7 +818,7 @@ export default {
         console.log(this.tags3, "获取的数据"); //2
         this.tags3.map((item, index) => {
           console.log(item.protocol,item.speedLimit);
-
+          
           if (item.protocol == "ICMP") {
             params["DropOptions.0.DIcmpMbpsLimit"] = item.speedLimit;
           }
@@ -837,7 +837,6 @@ export default {
         });
         // for (let a in this.tags3) {
         //   console.log(a,this.tags3[a],'11');
-        //   // protocol
         //   params["DropOptions." + a + ".DIcmpMbpsLimit"] = this.speedStr[a].speedLimit;
         //   // params["DropOptions." + a + ".DOtherMbpsLimit"] = this.speedStr[a].DOtherMbpsLimit;
         //   // params["DropOptions." + a + ".DTcpMbpsLimit"] = this.speedStr[a].DTcpMbpsLimit;
