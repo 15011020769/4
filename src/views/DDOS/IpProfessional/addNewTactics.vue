@@ -240,7 +240,12 @@
               </el-select>
             </td>
             <td>
-              <el-input class="inputChange" v-model="item.speedLimit" autocomplete="off"></el-input>Mbps
+              <el-input
+                class="inputChange"
+                v-model="item.speedLimit"
+                @change="speedV(item.speedLimit)"
+                autocomplete="off"
+              ></el-input>Mbps
             </td>
             <td>
               <a v-on:click="removeRow(index,3)" v-show="index >= 0">删除</a>
@@ -273,6 +278,7 @@
         <br />
         <span class="spanStyleLabel">{{$t('DDOS.Proteccon_figura.Source_limit')}}</span>
         <el-radio-group v-model="radios3" @change="thisNextShowRow(3)">
+          <!-- 源 -->
           <el-radio :label="$t('DDOS.Proteccon_figura.Shut_down')"></el-radio>
           <el-radio :label="$t('DDOS.Proteccon_figura.Opening')"></el-radio>
         </el-radio-group>
@@ -590,7 +596,7 @@ export default {
       dialogVisible: false,
       filterConrent: "",
       DdisableProtocol: [], //禁用协议
-      radios1: "關閉",
+      radios1: "關閉", //拒绝海外流量
       radios2: "關閉",
       radios3: "關閉",
       radios4: "關閉",
@@ -604,21 +610,21 @@ export default {
       radios12: "關閉",
       moveNum: 0, //水印防护偏移量
       thisRadio3: false,
-      input3: 0,
+      input3: "",
       thisRadio4: false,
-      input4: 0,
+      input4: "",
       thisRadio5: false,
-      input5: 0,
+      input5: "",
       thisRadio6: false,
-      input6: 0,
+      input6: "",
       thisRadio7: false, //异常链接检测
-      input7: 0,
+      input7: "",
       thisRadio8: false,
-      input8: 0,
+      input8: "",
       thisRadio9: false,
-      input9: 0,
+      input9: "",
       thisRadio10: false,
-      input10: 0,
+      input10: "",
       dialogModelAddBw: false, //添加黑白名单
       blackWhiteText: "",
       blackWhite: "black", //添加黑白名单
@@ -660,15 +666,12 @@ export default {
       );
       this.tags = this.policyTemp.PortLimits; //禁用协议
       this.tags1 = this.policyTemp.PacketFilters; //报文
-      // this.tagsArr = this.policyTemp.DropOptions; //单选框  废弃的方法
 
-      // console.log(this.policyTemp.DropOptions.DropTcp, "工作");
-      // if(this.policyTemp.DropOptions.DropTcp==0){
-
-      // }
+      console.log(this.policyTemp.DropOptions.DIcmpMbpsLimit, "工作");
+      // this.proStr = this.policyTemp.DropOptions.DIcmpMbpsLimit;
 
       if (this.policyTemp.DropOptions.DropAbroad == 0) {
-        this.radios1 = "關閉";
+        this.radios1 = "關閉"; //拒绝海外流量
       } else {
         this.radios1 = "開啟";
       }
@@ -678,77 +681,87 @@ export default {
         this.radios2 = "開啟";
       }
       if (this.policyTemp.DropOptions.SdNewLimit == 0) {
+        //基于来源IP及目的IP的新建连接抑制
         this.radios3 = "關閉";
       } else {
         this.radios3 = "開啟";
         this.thisRadio3 = true;
+        this.input3 = this.policyTemp.DropOptions.SdNewLimit;
       }
-      if (this.policyTemp.DropOptions.DstNewLimit == 0) {
+      if (this.policyTemp.DropOptions.SdConnLimit == 0) {
+        //基于来源IP及目的IP的并发连接抑制
         this.radios4 = "關閉";
       } else {
         this.radios4 = "開啟";
         this.thisRadio4 = true;
+        this.input4 = this.policyTemp.DropOptions.SdConnLimit;
+        // console.log(this.policyTemp.DropOptions.SdConnLimit);
       }
-      if (this.policyTemp.DropOptions.SdConnLimit == 0) {
+      if (this.policyTemp.DropOptions.DstNewLimit == 0) {
+        //基于目的IP的新建连接抑制
         this.radios5 = "關閉";
       } else {
         this.radios5 = "開啟";
         this.thisRadio5 = true;
+        this.input5 = this.policyTemp.DropOptions.DstNewLimit;
       }
       if (this.policyTemp.DropOptions.DstConnLimit == 0) {
+        //基于目的IP的并发连接抑制
         this.radios6 = "關閉";
       } else {
         this.radios6 = "開啟";
         this.thisRadio6 = true;
+        this.input6 = this.policyTemp.DropOptions.DstConnLimit;
       }
 
       if (this.policyTemp.DropOptions.BadConnThreshold == 0) {
+        //基于连接抑制触发阈值
         this.radios7 = "關閉";
       } else {
         this.radios7 = "開啟";
         this.thisRadio7 = true;
+        this.input7 = this.policyTemp.DropOptions.BadConnThreshold;
       }
       if (this.policyTemp.DropOptions.SynRate == 0) {
+        //syn占比ack百分比
         this.radios8 = "關閉";
       } else {
         this.radios8 = "開啟";
         this.thisRadio8 = true;
+        this.input8 = this.policyTemp.DropOptions.SynRate;
       }
       if (this.policyTemp.DropOptions.SynLimit == 0) {
+        //syn阈值
         this.radios9 = "關閉";
       } else {
         this.radios9 = "開啟";
         this.thisRadio9 = true;
+        this.input9 = this.policyTemp.DropOptions.SynLimit;
       }
       if (this.policyTemp.DropOptions.ConnTimeout == 0) {
+        //连接超时
         this.radios10 = "關閉";
       } else {
         this.radios10 = "開啟";
         this.thisRadio10 = true;
+        this.input10 = this.policyTemp.DropOptions.ConnTimeout;
       }
       if (this.policyTemp.DropOptions.NullConnEnable == 0) {
         this.radios11 = "關閉";
       } else {
         this.radios11 = "開啟";
       }
-      // this.radios1
-      this.tableDataBegin2 = this.policyTemp.WaterPrint
+      this.tableDataBegin2 = this.policyTemp.WaterPrint;
     }
   },
   methods: {
-    // proChange(q) {
-    //   //限速 ===》协议
-    //   this.proStr = q;
-    //   console.log(this.proStr, p, "协议");
-    // },
-    // speed(d) {
-    //   //限速 ===》阈值
-    //   this.speedStr = d;
-    //   console.log(this.speedStr, d, "阈值");
-    // },
-    ProV(a) {  //限速 ===》协议
-      this.proStr = a;
-      console.log(this.proStr);
+    ProV(p) {
+      //限速 ===》协议
+      this.proStr = p;
+    },
+    speedV(s) {
+      //限速 ===》阈值
+      this.speedStr = s;
     },
     //判断策略名称
     val: function() {
@@ -756,12 +769,12 @@ export default {
         this.$message("请填写策略名称");
       }
     },
-    deleteRow(index, dataBegin) {
-      console.log(index, dataBegin);
-      // this.deleteIndex = index;
-      this.deleteBegin = dataBegin;
-      this.dialogVisible = false;
-    },
+    // deleteRow(index, dataBegin) {//删除
+    //   console.log(index, dataBegin);
+    //   // this.deleteIndex = index;
+    //   this.deleteBegin = dataBegin;
+    //   this.dialogVisible = false;
+    // },
     // 添加DDoS高级策略
     createDDoSPolicy(bl) {
       if (this.tacticsName == "") {
@@ -779,9 +792,6 @@ export default {
             this.DdisableProtocol.indexOf("ICMP") > -1 ? 1 : 0,
           "DropOptions.0.DropOther":
             this.DdisableProtocol.indexOf("其他協議") > -1 ? 1 : 0,
-          // "DropOptions.0.DropAbroad": this.radios1 == "開啟" ? 1 : 0, // 拒绝海外流量
-          // "DropOptions.0.DropAbroad": this.radios1 == "開啟" ? 1 : 0, // 拒绝海外流量
-
           "DropOptions.0.DropAbroad": this.radios1 == "開啟" ? 1 : 0, // 拒绝海外流量
 
           "DropOptions.0.CheckSyncConn": this.radios2 == "開啟" ? 1 : 0, //空链接防护
@@ -796,6 +806,46 @@ export default {
           "DropOptions.0.ConnTimeout": this.radios10 == "開啟" ? 1 : 0, //连接超时
           "DropOptions.0.NullConnEnable": this.radios11 == "開啟" ? 1 : 0 //空连接防护开关
         };
+
+        if (this.proStr == "ICMP") {
+          //限速操作
+          params["DropOptions.0.DIcmpMbpsLimit"] = this.speedStr;
+          console.log(this.speedStr);
+        }
+        if (this.proStr == "OTHER") {
+          params["DropOptions.0.DOtherMbpsLimit"] = this.speedStr;
+        }
+        if (this.proStr == "TCP") {
+          params["DropOptions.0.DTcpMbpsLimit"] = this.speedStr;
+        }
+        if (this.proStr == "UDP") {
+          params["DropOptions.0.DUdpMbpsLimit"] = this.speedStr;
+        }
+
+        if (this.radios3 == "開啟") {
+          params["DropOptions.0.SdNewLimit"] = this.input3; //基于来源IP及目的IP的新建连接抑制
+        }
+        if (this.radios4 == "開啟") {
+          params["DropOptions.0.SdConnLimit"] = this.input4; //基于来源IP及目的IP的并发连接抑制
+        }
+        if (this.radios5 == "開啟") {
+          params["DropOptions.0.DstNewLimit"] = this.input5; //基于目的IP的新建连接抑制
+        }
+        if (this.radios6 == "開啟") {
+          params["DropOptions.0.DstConnLimit"] = this.input6; //基于目的IP的并发连接抑制
+        }
+        if (this.radios7 == "開啟") {
+          params["DropOptions.0.BadConnThreshold"] = this.input7; //基于连接抑制触发阈值
+        }
+        if (this.radios8 == "開啟") {
+          params["DropOptions.0.SynRate"] = this.input8; //syn占比ack百分比
+        }
+        if (this.radios9 == "開啟") {
+          params["DropOptions.0.SynLimit"] = this.input9; //syn阈值
+        }
+        if (this.radios10 == "開啟") {
+          params["DropOptions.0.ConnTimeout"] = this.input10; //连接超时
+        }
 
         // PortLimits.N 端口禁用，当没有禁用端口时填空数组
         // console.log(this.tags);
@@ -855,17 +905,20 @@ export default {
           params["WaterPrint." + i + ".RemoveSwitch"] = this.tableDataBegin2[
             i
           ].RemoveSwitch; //是否自动剥离，取值[0（不自动剥离），1（自动剥离）]
-          params["WaterPrint." + i + ".OpenStatus"] = 1; //
+          params["WaterPrint." + i + ".OpenStatus"] = 1;
+          console.log(this.tableDataBegin2[i].tcpPort);
           let arr = this.tableDataBegin2[i].tcpPort.split(/[\s\n]/);
+          console.log(arr);
           for (let j in arr) {
             params["WaterPrint." + i + ".TcpPortList." + j] = arr[j];
           }
           let arr2 = this.tableDataBegin2[i].udpPort.split(/[\s\n]/);
+          console.log(arr2);
           for (let k in arr) {
             params["WaterPrint." + i + ".UdpPortList." + k] = arr2[k];
           }
         }
-        console.log(params.WaterPrint,'水印防护')
+        console.log(params.WaterPrint, "水印防护");
         if (bl) {
           params.Name = this.tacticsName;
           console.log(params, ",'添加的参数'");
@@ -978,16 +1031,19 @@ export default {
         des.Depth = "100";
         this.tags1.push(des);
       } else if (type == 3) {
-        //待开发
-        // if (this.proStr == "ICMP") {
-        //   des.protocol = "icmp";
-        // } else if (this.proStr == "OTHER") {
-        //   des.protocol = "all";
-        // }else if (this.proStr == "TCP") {
-        //   des.protocol = "tcp";
-        // }else if (this.proStr == "UDP") {
-        //   des.protocol = "udp";
-        // }
+        if (des["DropOptions.0.DIcmpMbpsLimit"]) {
+          des["DropOptions.0.DIcmpMbpsLimit"] = this.speedStr;
+        }
+        if (des["DropOptions.0.DOtherMbpsLimit"]) {
+          des["DropOptions.0.DOtherMbpsLimit"] = this.speedStr;
+        }
+        if (des["DropOptions.0.DTcpMbpsLimit"]) {
+          des["DropOptions.0.DTcpMbpsLimit"] = this.speedStr;
+        }
+        if (des["DropOptions.0.DUdpMbpsLimit"]) {
+          des["DropOptions.0.DUdpMbpsLimit"] = this.speedStr;
+        }
+
         des.Protocol = this.tags3.push(des);
         console.log(this.tags3, "this.tags3");
       } else if (type == 4) {

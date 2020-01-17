@@ -117,8 +117,9 @@
                   :value="item.value"
                 ></el-option>
               </el-select>
-              <el-form-item label prop="CosBucketName" class="seletInp" v-show="!cosShow">
+              <el-form-item label prop="CosBucketName" class="seletInp tips" v-show="!cosShow">
                 <el-input v-model="detailData.CosBucketName" :placeholder="$t('CLA.total.qsrmc')"></el-input>
+                <span>僅支持小寫字母、數字以及中劃線" - "的組合，不能超過40字元。</span>
               </el-form-item>
               <el-select
                 v-model="BucketSelect.name"
@@ -141,11 +142,12 @@
               <i class="el-icon-caret-bottom" v-show="setShow"></i>
             </p>
             <div class="set-box" v-show="setShow">
-              <el-form-item :label="$t('CLA.total.rzwjqz')" prop="LogFilePrefix">
+              <el-form-item :label="$t('CLA.total.rzwjqz')" prop="LogFilePrefix" class="tips">
                 <el-input
                   v-model="detailData.LogFilePrefix"
                   :placeholder="$t('CLA.total.qsrrzwjqz')"
                 ></el-input>
+                <span>僅支持字母和數字的組合，3-40個字元。</span>
               </el-form-item>
               <el-form-item :label="$t('CLA.total.fstz')" class="CMQ" required>
                 <el-radio-group v-model="detailData.IsEnableCmqNotify" @change="_cmqRadio">
@@ -176,13 +178,14 @@
                   <el-form-item
                     label
                     prop="CmqQueueName"
-                    class="seletInp"
+                    class="seletInp tips CmqQueueName"
                     v-if="detailData.IsEnableCmqNotify"
                   >
                     <el-input
                       v-model="detailData.CmqQueueName"
                       :placeholder="$t('CLA.total.qsrdlmc')"
                     ></el-input>
+                    <span>不超過64個字元的字元串，必須以字母為首字元，剩餘部分可以包含字母、數字和橫劃線(-)。</span>
                   </el-form-item>
                 </el-form-item>
               </div>
@@ -191,8 +194,12 @@
           <div class="btn-box" v-show="inpShow1">
             <div class="line lineVal"></div>
             <el-form-item class="button">
-              <!-- <el-button type="primary" icon="el-icon-loading" v-show="btnLoad"></el-button> -->
-              <el-button type="primary" @click="submitForm1('detailData')">{{ $t('CLA.total.bc') }}</el-button>
+              <el-button type="primary" icon="el-icon-loading" v-show="btnLoad"></el-button>
+              <el-button
+                type="primary"
+                @click="submitForm1('detailData')"
+                v-show="!btnLoad"
+              >{{ $t('CLA.total.bc') }}</el-button>
               <el-button @click="_cancel1">{{ $t('CLA.total.qx') }}</el-button>
             </el-form-item>
           </div>
@@ -551,8 +558,8 @@ export default {
             });
           }
         } else {
-          return false;
           this.btnLoad = false;
+          return false;
         }
       });
     },
@@ -813,6 +820,21 @@ export default {
 </script>
 
 <style scoped lang='scss'>
+.tips {
+  position: relative;
+  span {
+    font-size: 12px;
+    bottom: -30px;
+    left: 0;
+    width: 500px;
+    position: absolute;
+  }
+}
+.CmqQueueName{
+  span{
+    left: -80px;
+  }
+}
 .detail-audit >>> .el-loading-mask {
   background: white !important;
 }
@@ -960,7 +982,7 @@ export default {
 
       .BucketSelect >>> .el-input {
         width: 200px;
-        margin-bottom: 22px;
+        margin-bottom: 12px;
         margin-left: 10px;
       }
 
