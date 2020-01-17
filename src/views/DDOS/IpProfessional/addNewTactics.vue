@@ -391,7 +391,7 @@
                 @click.native.prevent="deleteRow(scope.$index, scope.row)"
                 type="text"
                 size="small"
-              >{{$t('DDOS.Proteccon_figura.Delete')}}</el-button>
+              >{{$t('DDOS.Proteccon_figura.Delete')}}11111111111</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -666,10 +666,10 @@ export default {
       );
       this.tags = this.policyTemp.PortLimits; //禁用协议
       this.tags1 = this.policyTemp.PacketFilters; //报文
+      // this.tags3 = this.policyTemp.DropOptions;
 
       console.log(this.policyTemp.DropOptions.DIcmpMbpsLimit, "工作");
-      // this.proStr = this.policyTemp.DropOptions.DIcmpMbpsLimit;
-
+      this.proStr = this.policyTemp.DropOptions.DIcmpMbpsLimit;
       if (this.policyTemp.DropOptions.DropAbroad == 0) {
         this.radios1 = "關閉"; //拒绝海外流量
       } else {
@@ -769,12 +769,14 @@ export default {
         this.$message("请填写策略名称");
       }
     },
-    // deleteRow(index, dataBegin) {//删除
-    //   console.log(index, dataBegin);
-    //   // this.deleteIndex = index;
-    //   this.deleteBegin = dataBegin;
-    //   this.dialogVisible = false;
-    // },
+    deleteRow(index, dataBegin) {
+      //删除
+      console.log(index, dataBegin);
+      this.tags3.slice();
+      // this.deleteIndex = index;
+      this.deleteBegin = dataBegin;
+      this.dialogVisible = false;
+    },
     // 添加DDoS高级策略
     createDDoSPolicy(bl) {
       if (this.tacticsName == "") {
@@ -806,21 +808,58 @@ export default {
           "DropOptions.0.ConnTimeout": this.radios10 == "開啟" ? 1 : 0, //连接超时
           "DropOptions.0.NullConnEnable": this.radios11 == "開啟" ? 1 : 0 //空连接防护开关
         };
+        // IpAllowDenys.N IP黑白名单，当没有IP黑白名单时填空数组
+        for (let i in this.IpBlackWhiteLists) {
+          params["IpAllowDenys." + i + ".Ip"] = this.IpBlackWhiteLists[i].Ip;
+          params["IpAllowDenys." + i + ".Type"] = this.IpBlackWhiteLists[
+            i
+          ].Type;
+        }
+        console.log(this.tags3, "获取的数据"); //2
+        this.tags3.map((item, index) => {
+          console.log(item.protocol,item.speedLimit);
+          
+          if (item.protocol == "ICMP") {
+            params["DropOptions.0.DIcmpMbpsLimit"] = item.speedLimit;
+          }
+          if (item.protocol == "OTHER") {
+            
+            params["DropOptions.0.DOtherMbpsLimit"] = item.speedLimit;
+          }
+          if (item.protocol == "TCP") {
+            params["DropOptions.0.DTcpMbpsLimit"] = item.speedLimit;
+          }
+          if (item.protocol == "UDP") {
+            params["DropOptions.0.DUdpMbpsLimit"] = item.speedLimit;
+          }
 
-        if (this.proStr == "ICMP") {
-          //限速操作
-          params["DropOptions.0.DIcmpMbpsLimit"] = this.speedStr;
-          console.log(this.speedStr);
-        }
-        if (this.proStr == "OTHER") {
-          params["DropOptions.0.DOtherMbpsLimit"] = this.speedStr;
-        }
-        if (this.proStr == "TCP") {
-          params["DropOptions.0.DTcpMbpsLimit"] = this.speedStr;
-        }
-        if (this.proStr == "UDP") {
-          params["DropOptions.0.DUdpMbpsLimit"] = this.speedStr;
-        }
+         ;
+        });
+        // for (let a in this.tags3) {
+        //   console.log(a,this.tags3[a],'11');
+        //   params["DropOptions." + a + ".DIcmpMbpsLimit"] = this.speedStr[a].speedLimit;
+        //   // params["DropOptions." + a + ".DOtherMbpsLimit"] = this.speedStr[a].DOtherMbpsLimit;
+        //   // params["DropOptions." + a + ".DTcpMbpsLimit"] = this.speedStr[a].DTcpMbpsLimit;
+        //   // params["DropOptions." + a + ".DUdpMbpsLimit"] = this.speedStr[a].DUdpMbpsLimit;
+
+        // }
+
+        // for (let a in this.tags3) {
+        //   if (this.proStr == "ICMP") {
+        //     //限速操作
+        //     params["DropOptions.0.DIcmpMbpsLimit"] = this.speedStr;
+        //     console.log(this.speedStr);
+        //   }
+        //   if (this.proStr == "OTHER") {
+        //     params["DropOptions.0.DOtherMbpsLimit"] = this.speedStr;
+        //   }
+        //   if (this.proStr == "TCP") {
+        //     params["DropOptions.0.DTcpMbpsLimit"] = this.speedStr;
+        //   }
+        //   if (this.proStr == "UDP") {
+        //     params["DropOptions.0.DUdpMbpsLimit"] = this.speedStr;
+        //   }
+        // }
 
         if (this.radios3 == "開啟") {
           params["DropOptions.0.SdNewLimit"] = this.input3; //基于来源IP及目的IP的新建连接抑制
@@ -865,13 +904,7 @@ export default {
             params["PortLimits." + i + ".Action"] = this.tags[i].Action; //执行动作，取值[drop(丢弃) ，transmit(转发)]
           }
         }
-        // IpAllowDenys.N IP黑白名单，当没有IP黑白名单时填空数组
-        for (let i in this.IpBlackWhiteLists) {
-          params["IpAllowDenys." + i + ".Ip"] = this.IpBlackWhiteLists[i].Ip;
-          params["IpAllowDenys." + i + ".Type"] = this.IpBlackWhiteLists[
-            i
-          ].Type;
-        }
+
         // PacketFilters.N 报文过滤特征，当没有报文过滤时填空数组
         // console.log(this.tags1, "this.tags1，这里暂时是空");
         for (let i in this.tags1) {
@@ -897,7 +930,6 @@ export default {
           params["PacketFilters." + i + ".Action"] = this.tags1[i].Action;
         }
         // WaterPrint.N 水印策略参数，当没有启用水印功能时填空数组，最多只能传一条水印策略（即数组大小不超过1）
-        console.log(this.tableDataBegin2);
         for (let i in this.tableDataBegin2) {
           params["WaterPrint." + i + ".Offset"] = this.tableDataBegin2[
             i
@@ -906,19 +938,28 @@ export default {
             i
           ].RemoveSwitch; //是否自动剥离，取值[0（不自动剥离），1（自动剥离）]
           params["WaterPrint." + i + ".OpenStatus"] = 1;
-          console.log(this.tableDataBegin2[i].tcpPort);
-          let arr = this.tableDataBegin2[i].tcpPort.split(/[\s\n]/);
+
+          // console.log(this.tableDataBegin2[i].tcpPort);
+          let arr = this.tableDataBegin2[i].tcpPort.split(",");
           console.log(arr);
+          if (arr == "") {
+            this.$message("TCP防护端口不能为空");
+            return;
+          }
           for (let j in arr) {
             params["WaterPrint." + i + ".TcpPortList." + j] = arr[j];
           }
-          let arr2 = this.tableDataBegin2[i].udpPort.split(/[\s\n]/);
+          let arr2 = this.tableDataBegin2[i].udpPort.split(",");
+          if (arr == "") {
+            this.$message("UDP防护端口不能为空");
+            return;
+          }
           console.log(arr2);
           for (let k in arr) {
             params["WaterPrint." + i + ".UdpPortList." + k] = arr2[k];
           }
         }
-        console.log(params.WaterPrint, "水印防护");
+        console.log(params, "水印防护");
         if (bl) {
           params.Name = this.tacticsName;
           console.log(params, ",'添加的参数'");
@@ -965,6 +1006,25 @@ export default {
     },
     handleClose(done) {
       this.dialogVisible = false;
+    },
+    delItem(item, list) {
+      //去除指定值
+      list.splice(list.indexOf(item), 1);
+    },
+    unique(arr) {
+      //去重
+      if (!Array.isArray(arr)) {
+        console.log("type error!");
+        return;
+      }
+      arr = arr.sort();
+      var arrry = [arr[0]];
+      for (var i = 1; i < arr.length; i++) {
+        if (arr[i] !== arr[i - 1]) {
+          arrry.push(arr[i]);
+        }
+      }
+      return arrry;
     },
     // 搜索
     doFilter() {
@@ -1031,21 +1091,20 @@ export default {
         des.Depth = "100";
         this.tags1.push(des);
       } else if (type == 3) {
-        if (des["DropOptions.0.DIcmpMbpsLimit"]) {
-          des["DropOptions.0.DIcmpMbpsLimit"] = this.speedStr;
-        }
-        if (des["DropOptions.0.DOtherMbpsLimit"]) {
-          des["DropOptions.0.DOtherMbpsLimit"] = this.speedStr;
-        }
-        if (des["DropOptions.0.DTcpMbpsLimit"]) {
-          des["DropOptions.0.DTcpMbpsLimit"] = this.speedStr;
-        }
-        if (des["DropOptions.0.DUdpMbpsLimit"]) {
-          des["DropOptions.0.DUdpMbpsLimit"] = this.speedStr;
-        }
-
+        // if (des["DropOptions.0.DIcmpMbpsLimit"]) {
+        //   des["DropOptions.0.DIcmpMbpsLimit"] = this.speedStr;
+        // }
+        // if (des["DropOptions.0.DOtherMbpsLimit"]) {
+        //   des["DropOptions.0.DOtherMbpsLimit"] = this.speedStr;
+        // }
+        // if (des["DropOptions.0.DTcpMbpsLimit"]) {
+        //   des["DropOptions.0.DTcpMbpsLimit"] = this.speedStr;
+        // }
+        // if (des["DropOptions.0.DUdpMbpsLimit"]) {
+        //   des["DropOptions.0.DUdpMbpsLimit"] = this.speedStr;
+        // }
         des.Protocol = this.tags3.push(des);
-        console.log(this.tags3, "this.tags3");
+        // console.log(this.tags3, "this.tags3");
       } else if (type == 4) {
         this.tags4.push(des);
       } else if (type == 5) {
@@ -1148,7 +1207,6 @@ export default {
     },
     // 水印防护
     createSY() {
-      // console.log(this.tags4, this.tags5, this.radios12, this.moveNum);
       let str = "";
       for (let i in this.tags4) {
         str += this.tags4[i].beginPort + "-" + this.tags4[i].endPort + "\r\n";
@@ -1165,6 +1223,7 @@ export default {
         Offset: this.moveNum
       };
       this.tableDataBegin2.push(temp);
+      console.log(this.tableDataBegin2, "水印防护渲染数据");
       this.dialogVisible = false;
     }
   }

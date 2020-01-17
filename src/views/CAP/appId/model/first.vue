@@ -63,6 +63,7 @@
   </div>
 </template>
 <script>
+import { ErrorTips } from "@/components/ErrorTips";
 import { ADD_LIST,CREATE_APPID } from "@/constants/CAP.js";
 export default {
   data() {
@@ -91,17 +92,33 @@ export default {
         Version: "2019-07-22"
       };
       this.axios.post(ADD_LIST, params).then(res => {
-        if(res != ""){
-              this.loading = false
-              this.tableData = res.Response.Data;
-              this.TotalCount = res.Response.Data.length
-              console.log(res)
+        if(res.Response.Error === undefined){
+          if(res != ""){
+                this.loading = false
+                this.tableData = res.Response.Data;
+                this.TotalCount = res.Response.Data.length
+                console.log(res)
+          }else{
+            this.loading = false
+              this.$message({
+                type: "info",
+                message: "无响应数据！"
+              });
+          }
         }else{
-           this.loading = false
-            this.$message({
-              type: "info",
-              message: "无响应数据！"
-            });
+           let ErrTips = {
+             "InternalError":'内部错误',
+             "MissingParameter":'缺少参数错误',
+             "UnauthorizedOperation.ErrAuth":'鉴权失败',
+             "UnauthorizedOperation.Unauthorized":'未开通权限'
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
         }
       });
     },
@@ -120,15 +137,29 @@ export default {
            SceneType:this.form.region
         }
         this.axios.post(CREATE_APPID,params).then(res=>{
-          console.log(res)
-          this.$message({
-              type: "success",
-              message: "添加成功!"
-          });
-          this.addList()
-        })
-        
-        this.dialogVisibleBuild = false;
+          if(res.Response.Error === undefined){
+            this.$message({
+                type: "success",
+                message: "添加成功!"
+            });
+            this.addList()
+          }else{
+            let ErrTips = {
+               "InternalError":'内部错误',
+               "MissingParameter":'缺少参数错误',
+               "UnauthorizedOperation.ErrAuth":'鉴权失败',
+               "UnauthorizedOperation.Unauthorized":'未开通权限'
+            };
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+          }
+      })
+       this.dialogVisibleBuild = false;
      }
     },
     //跳转详情页
