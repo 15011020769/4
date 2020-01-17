@@ -83,8 +83,9 @@
               <i class="el-icon-caret-bottom" v-show="setShow"></i>
             </p>
             <div class="set-box" v-show="setShow">
-              <el-form-item :label="$t('CLA.total.rzwjqz')" prop="LogFilePrefix">
+              <el-form-item :label="$t('CLA.total.rzwjqz')" prop="LogFilePrefix" class="LogFilePrefix">
                 <el-input v-model="ruleForm.LogFilePrefix" :placeholder="$t('CLA.total.qsrrzwjqz')"></el-input>
+                <span>僅支持字母和數字的組合，3-40個字元。</span>
               </el-form-item>
               <el-form-item :label="$t('CLA.total.fstz')" class="CMQ" required>
                 <el-radio-group v-model="ruleForm.IsEnableCmqNotify" @change="_cmqRadio">
@@ -521,6 +522,15 @@ export default {
     .AuditName {
       position: relative;
       span {
+        font-size: 12px;
+        position: absolute;
+        bottom: -30px;
+        left: 0;
+      }
+    }
+    .LogFilePrefix{
+      position: relative;
+      span{
         font-size: 12px;
         position: absolute;
         bottom: -30px;
