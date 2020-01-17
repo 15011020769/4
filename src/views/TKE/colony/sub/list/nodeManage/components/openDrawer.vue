@@ -77,41 +77,42 @@ export default {
   },
   data () {
     return {
-      activeName: 'second',
+      activeName: 'first',
       value: '',
       checkAll: true,
-       isCollapse: true,
-       checkedCities: ['asdasd','3dsda','asdaqwe'],
-       isIndeterminate: false,
+      options:[],
+      isCollapse: true,
+      checkedCities: ['asdasd', '3dsda', 'asdaqwe'],
+      isIndeterminate: false,
       cities: cityOptions,
-       pickerOptions: {
-          shortcuts: [{
-            text: '实时',
-            onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime());
-              picker.$emit('pick', [start, end]);
-            }
-          }, {
-            text: '近1天',
-            onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 1);
-              picker.$emit('pick', [start, end]);
-            }
-          }, {
-            text: '近7天',
-            onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
-              picker.$emit('pick', [start, end]);
-            }
-          }]},
-          value1: [new Date(2000, 10, 10, 10, 10), new Date(2000, 10, 11, 10, 10)],
-          value2: ''
+      pickerOptions: {
+        shortcuts: [{
+          text: '实时',
+          onClick (picker) {
+            const end = new Date()
+            const start = new Date()
+            start.setTime(start.getTime())
+            picker.$emit('pick', [start, end]);
+          }
+        }, {
+          text: '近1天',
+          onClick (picker) {
+            const end = new Date()
+            const start = new Date()
+            start.setTime(start.getTime() - 3600 * 1000 * 24 * 1)
+            picker.$emit('pick', [start, end])
+          }
+        }, {
+          text: '近7天',
+          onClick (picker) {
+            const end = new Date()
+            const start = new Date()
+            start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+            picker.$emit('pick', [start, end])
+          }
+        }] },
+      value1: [new Date(2000, 10, 10, 10, 10), new Date(2000, 10, 11, 10, 10)],
+      value2: ''
     }
   },
   methods: {
@@ -127,11 +128,11 @@ export default {
       this.checkAll = checkedCount === this.cities.length
       this.isIndeterminate = checkedCount > 0 && checkedCount < this.cities.length
     },
-     handleClick(tab, event) {
-        console.log(tab, event);
-      },
+    handleClick (tab, event) {
+      console.log(tab, event)
+    },
     setTime () {
-        this.$emit('setTime',this.value2)
+      this.$emit('setTime', this.value2)
     },
     getRoom (e) {
       this.isCollapse = e

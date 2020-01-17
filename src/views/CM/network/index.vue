@@ -201,7 +201,7 @@
             this.TotalCount = data.Response.TotalCount;
           } else {
             let ErrTips = {
-              'InvalidParameter': "入参不合法",
+              'InvalidParameter': "入參不合法",
             };
             let ErrOr = Object.assign(ErrorTips, ErrTips);
             this.$message({

@@ -192,15 +192,15 @@
             this.loadShow = false;
           } else {
             let ErrTips = {
-              'FailedOperation': '操作失败',
-              'InternalError': '必须包含开始时间和结束时间，且必须为整形时间戳（精确到秒）',
-              'InvalidParameterValue.MaxResult': '内部错误',
-              'InvalidParameter': '参数错误',
-              'InvalidParameter.FormatError': '参数格式错误',
-              'InvalidParameterValue': '参数取值错误',
-              'InvalidParameterValue.InvalidFilter': 'Filter参数输入错误',
-              'InvalidParameterValue.Length': '参数长度错误',
-              'UnauthorizedOperation': '未授权操作',
+              'FailedOperation': '操作失敗',
+              'InternalError': '必須包含開始時間和結束時間，且必須為整形時間戳（精確到秒）',
+              'InvalidParameterValue.MaxResult': '內部錯誤',
+              'InvalidParameter': '參數錯誤',
+              'InvalidParameter.FormatError': '參數格式錯誤',
+              'InvalidParameterValue': '參數取值錯誤',
+              'InvalidParameterValue.InvalidFilter': 'Filter參數輸入錯誤',
+              'InvalidParameterValue.Length': '參數長度錯誤',
+              'UnauthorizedOperation': '未授權操作',
             }
             let ErrOr = Object.assign(ErrorTips, ErrTips)
             this.$message({
