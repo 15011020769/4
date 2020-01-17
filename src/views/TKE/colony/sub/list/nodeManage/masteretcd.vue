@@ -6,7 +6,7 @@
     <div class="tke-grid ">
       <!-- 左侧 -->
       <div class="grid-left">
-        <el-button size="small" type="primary">监控</el-button>
+        <el-button size="small" type="primary" @click="flag=!flag">监控</el-button>
       </div>
       <!-- 右侧 -->
       <!-- <div class="grid-right">
@@ -15,8 +15,14 @@
         </el-input>
         <i class="el-icon-download tke-download"></i>
       </div> -->
-    </div>
-
+      <!-- <openDrawer :flag='flag'></openDrawer> -->
+     
+      </div>
+    <!-- 抽屉 -->
+    <openDrawer :flag='flag'
+        title='Master&Etcd列表'
+       @changeFlag='setFlag'
+       @setTime='setTime'></openDrawer>
     <!-- 数据列表展示 -->
       <div class="tke-card mt10">
         <el-table
@@ -117,12 +123,20 @@
           </div>
         </div>
       </div>
+      
+     <!-- <el-drawer
+        title="我是标题"
+        :visible.sync="flag"
+        >
+            <span>我来啦!</span>
+      </el-drawer> -->
   </div>
 </template>
 
 <script>
 import subTitle from "@/views/TKE/components/subTitle";
 import Loading from "@/components/public/Loading";
+import openDrawer from "./components/openDrawer";
 import { ALL_CITY } from "@/constants";
 export default {
   name: "colonyNodeManageMasteretcd",
@@ -141,12 +155,14 @@ export default {
       total:0,
       pageSize:10,
       pageIndex:0,
-    
+      flag: false,
+      DrawerTitle:''
     };
   },
   components: {
     subTitle,
-    Loading
+    Loading,
+    openDrawer
   },
   created() {
     // 从路由获取集群id
@@ -174,6 +190,13 @@ export default {
       this.pageSize=val;
       // this.getColonyList();
     },
+    setFlag (data) {
+      console.log(data)
+      this.flag = data
+    },
+    setTime (data) {
+      console.log(data)
+    }
   }
 };
 </script>
