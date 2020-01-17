@@ -10,7 +10,7 @@
           </p>
           <p class="title-right">
             <i class="el-icon-delete" style="cursor:pointer"></i>
-            <span>删除场景</span>
+            <span @click="deleteAppID">删除场景</span>
           </p>
         </div>
         <!--  -->
@@ -65,8 +65,8 @@
             <ul>
               <li @mouseover="overLi(i)" @mouseout="outLi" v-for="(v,i) in mailList" :key="i">
                 <span>{{v}}</span>
-                <span v-show="delIconFlag==i">
-                  <i class="el-icon-minus"></i>
+                <span v-show="delIconFlag">
+                  <i class="el-icon-minus" @click="deleteEmail"></i>
                 </span>
               </li>
             </ul>
@@ -77,6 +77,7 @@
   </div>
 </template>
 <script>
+import { ErrorTips } from "@/components/ErrorTips";
 import { isEmail } from "@/utils/validate.js";
 import { UPDATEAPPID_INFO, APPID_DESCRIBE,CREAT_WARNEMAIL} from "@/constants/CAP.js";
 export default {
@@ -112,6 +113,12 @@ export default {
     this.findData();
   },
   methods: {
+    deleteAppID(){
+       this.$message('腾讯接口排期中');
+    },
+    deleteEmail(){
+       this.$message('腾讯接口排期中');
+    },
     //告警邮箱提交
     submitEmail() {
       var flag = isEmail(this.addEmail);
@@ -125,13 +132,34 @@ export default {
            MailAlarm:this.addEmail,
         };
         this.axios.post(CREAT_WARNEMAIL, params).then(res => {
-          if (res.Response.CaptchaCode == 0) {
-            this.mailList=res.Response.MailAlarms;
-            this.addEmail='';
-            this.$message({
-            message: "增加告警邮箱成功",
-            type: "success"
-          });
+          if(res.Response.Error === undefined){
+                if (res.Response.CaptchaCode == 0) {
+                    this.mailList=res.Response.MailAlarms;
+                    this.addEmail='';
+                    this.$message({
+                    message: "增加告警邮箱成功",
+                    type: "success"
+                  });
+                }else{
+                  this.$message({
+                    message: "只能添加5条数据",
+                    type: "error"
+                  });
+                }
+          }else{
+              let ErrTips = {
+                 "InternalError":'内部错误',
+                 "MissingParameter":'缺少参数错误',
+                 "UnauthorizedOperation.ErrAuth":'鉴权失败',
+                 "UnauthorizedOperation.Unauthorized":'未开通权限'
+              };
+              let ErrOr = Object.assign(ErrorTips, ErrTips);
+              this.$message({
+                message: ErrOr[res.Response.Error.Code],
+                type: "error",
+                showClose: true,
+                duration: 0
+              });
           }
         });
       }
@@ -165,11 +193,27 @@ export default {
         TrafficThreshold: this.baseData.TrafficThreshold
       };
       this.axios.post(UPDATEAPPID_INFO, params).then(res => {
-        if (res.Response.CaptchaCode == 0) {
-          this.$message({
-            message: "修改成功",
-            type: "success"
-          });
+        if(res.Response.Error === undefined){
+          if (res.Response.CaptchaCode == 0) {
+            this.$message({
+              message: "修改成功",
+              type: "success"
+            });
+          }
+        }else{
+            let ErrTips = {
+               "InternalError":'内部错误',
+               "MissingParameter":'缺少参数错误',
+               "UnauthorizedOperation.ErrAuth":'鉴权失败',
+               "UnauthorizedOperation.Unauthorized":'未开通权限'
+            };
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
         }
       });
     },
@@ -193,11 +237,27 @@ export default {
         TrafficThreshold: this.baseData.TrafficThreshold
       };
       this.axios.post(UPDATEAPPID_INFO, params).then(res => {
-        if (res.Response.CaptchaCode == 0) {
-          this.$message({
-            message: "修改成功",
-            type: "success"
-          });
+        if(res.Response.Error === undefined){
+            if (res.Response.CaptchaCode == 0) {
+              this.$message({
+                message: "修改成功",
+                type: "success"
+              });
+            }
+        }else{
+            let ErrTips = {
+               "InternalError":'内部错误',
+               "MissingParameter":'缺少参数错误',
+               "UnauthorizedOperation.ErrAuth":'鉴权失败',
+               "UnauthorizedOperation.Unauthorized":'未开通权限'
+            };
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
         }
       });
     },
@@ -207,21 +267,38 @@ export default {
         CaptchaAppId: this.CaptchaAppId
       };
       this.axios.post(APPID_DESCRIBE, params).then(res => {
-        if (res.Response.CaptchaCode == 0) {
-          this.baseData.AppName = res.Response.AppName;
-          this.baseData.EncryptKey = res.Response.EncryptKey;
-          this.baseData.DomainLimit = res.Response.DomainLimit;
-          this.baseData.CapType = res.Response.CapType;
-          this.baseData.DomainLimit = res.Response.DomainLimit;
-          this.baseData.EvilInterceptGrade = res.Response.EvilInterceptGrade;
-          this.baseData.SceneType = res.Response.SceneType;
-          this.baseData.SchemeColor = res.Response.SchemeColor;
-          this.baseData.SmartEngine = res.Response.SmartEngine;
-          this.baseData.SmartVerify = res.Response.SmartVerify;
-          this.baseData.TopFullScreen = res.Response.TopFullScreen;
-          this.baseData.TrafficThreshold = res.Response.TrafficThreshold;
-          this.baseData.CaptchaLanguage = res.Response.Language;
+        if(res.Response.Error === undefined){
+            if (res.Response.CaptchaCode == 0) {
+              this.baseData.AppName = res.Response.AppName;
+              this.baseData.EncryptKey = res.Response.EncryptKey;
+              this.baseData.DomainLimit = res.Response.DomainLimit;
+              this.baseData.CapType = res.Response.CapType;
+              this.baseData.DomainLimit = res.Response.DomainLimit;
+              this.baseData.EvilInterceptGrade = res.Response.EvilInterceptGrade;
+              this.baseData.SceneType = res.Response.SceneType;
+              this.baseData.SchemeColor = res.Response.SchemeColor;
+              this.baseData.SmartEngine = res.Response.SmartEngine;
+              this.baseData.SmartVerify = res.Response.SmartVerify;
+              this.baseData.TopFullScreen = res.Response.TopFullScreen;
+              this.baseData.TrafficThreshold = res.Response.TrafficThreshold;
+              this.baseData.CaptchaLanguage = res.Response.Language;
+            }
+        }else{
+            let ErrTips = {
+               "InternalError":'内部错误',
+               "MissingParameter":'缺少参数错误',
+               "UnauthorizedOperation.ErrAuth":'鉴权失败',
+               "UnauthorizedOperation.Unauthorized":'未开通权限'
+            };
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
         }
+        
       });
     },
 

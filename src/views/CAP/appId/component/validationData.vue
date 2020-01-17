@@ -29,10 +29,7 @@
     <div class="accData">
       <div class="charts">
         <div class="chartsTitle">
-          <div class="left">验证通过与拦截</div>
-          <div class="right">
-            <Time :classvalue="classvalues" @setTimeClassvalues="setTimeClassvalues"></Time>
-          </div>
+          <div class="left">验证通过与拦截 <Time :classvalue="classvalues" @setTimeClassvalues="setTimeClassvalues"></Time></div>
         </div>
         <div class="echarts">
           <EchartsCaptcha
@@ -46,10 +43,7 @@
       </div>
       <div class="charts">
         <div class="chartsTitle">
-          <div class="left">拦截情况 (%)</div>
-          <div class="right">
-            <Time :classvalue="classvalue" @setTimeClassvalue="setTimeClassvalue"></Time>
-          </div>
+          <div class="left">拦截情况 (%) <Time :classvalue="classvalue" @setTimeClassvalue="setTimeClassvalue"></Time></div>
         </div>
         <div class="echarts">
           <EchartsCaptcha
@@ -63,10 +57,7 @@
       </div>
        <div class="charts">
         <div class="chartsTitle">
-          <div class="left">验证码加载耗时 (秒)</div>
-          <div class="right">
-            <Time :classvalue="classvalue" @setTimeClassvalue="setTimeClassvalue"></Time>
-          </div>
+          <div class="left">验证码加载耗时 (秒) <Time :classvalue="classvalue" @setTimeClassvalue="setTimeClassvalue"></Time></div>
         </div>
         <div class="echarts">
           <EchartsCaptcha
@@ -80,10 +71,7 @@
       </div>
       <div class="charts">
         <div class="chartsTitle">
-          <div class="left">验证码加载耗时 (秒)</div>
-          <div class="right">
-            <Time :classvalue="classvalue" @setTimeClassvalue="setTimeClassvalue"></Time>
-          </div>
+          <div class="left">验证码加载耗时 (秒) <Time :classvalue="classvalue" @setTimeClassvalue="setTimeClassvalue"></Time></div>
         </div>
         <div class="echarts">
           <EchartsCaptcha
@@ -97,10 +85,7 @@
       </div>
        <div class="charts">
         <div class="chartsTitle">
-          <div class="left">一次通过尝试次数分布</div>
-          <div class="right">
-            <Time :classvalue="classvalue" @setTimeClassvalue="setTimeClassvalue"></Time>
-          </div>
+          <div class="left">一次通过尝试次数分布<Time :classvalue="classvalue" @setTimeClassvalue="setTimeClassvalue"></Time></div>
         </div>
         <div class="echarts">
           <EchartsCaptcha
@@ -117,7 +102,9 @@
   </div>
 </template>
 <script>
+import { ErrorTips } from "@/components/ErrorTips";
 import EchartsCaptcha from '../../component/echartsCaptcha'
+import moment from "moment";
 import Time from "../../component/time";
 import { QUERY_REQDATA, CLASSIFY_QUERY , USER_HANDLE} from "@/constants/CAP.js";
 export default {
@@ -312,9 +299,23 @@ export default {
         End: this.End
       };
       this.axios.post(QUERY_REQDATA, params).then(res => {
-        // console.log(res);
-        this.dataSum = res.Response;
-        // console.log(this.dataSum);
+        if(res.Response.Error === undefined){
+          this.dataSum = res.Response;
+        }else{
+          let ErrTips = {
+             "InternalError":'内部错误',
+             "MissingParameter":'缺少参数错误',
+             "UnauthorizedOperation.ErrAuth":'鉴权失败',
+             "UnauthorizedOperation.Unauthorized":'未开通权限'
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
       });
     },
     //获取折线图数据
@@ -325,21 +326,36 @@ export default {
     getEachrtsDatas(params,eachrtsData) {
         eachrtsData.show = false
        this.axios.post(USER_HANDLE,params).then(res => {
-        // console.log(res)
-        let data = res.Response.Data
-        if(data[eachrtsData.type]&&data[eachrtsData.type].length>0){
-          eachrtsData.data = data
-        }else{
-          eachrtsData.xAxis = ['01-16']
-          eachrtsData.series = eachrtsData.data.map((item)=>{
-            return {name:item,type:'line',data:[0]}
-          })
-        }
-         this.$nextTick(()=>{
-          eachrtsData.show = true
-          // console.log(eachrtsData)
-         })
-       })
+         if(res.Response.Error === undefined){
+            let data = res.Response.Data
+            if(data[eachrtsData.type]&&data[eachrtsData.type].length>0){
+              eachrtsData.data = data
+            }else{
+              eachrtsData.xAxis = [moment().startOf('d').format("MM-DD")]
+              eachrtsData.series = eachrtsData.data.map((item)=>{
+                return {name:item,type:'line',data:[0]}
+              })
+            }
+            this.$nextTick(()=>{
+              eachrtsData.show = true
+              // console.log(eachrtsData)
+            })
+         }else{
+              let ErrTips = {
+                  "InternalError":'内部错误',
+                  "MissingParameter":'缺少参数错误',
+                  "UnauthorizedOperation.ErrAuth":'鉴权失败',
+                  "UnauthorizedOperation.Unauthorized":'未开通权限'
+              };
+              let ErrOr = Object.assign(ErrorTips, ErrTips);
+              this.$message({
+                message: ErrOr[res.Response.Error.Code],
+                type: "error",
+                showClose: true,
+                duration: 0
+              });
+         }
+      })
     },
     switchData(StartDate,EndDate){
       if(StartDate!=undefined&&StartDate!=""){
