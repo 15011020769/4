@@ -48,7 +48,7 @@
 									:value="item.value">
 								</el-option>
 							</el-select>
-							<i class="el-icon-warning text-error" style="margin-left:10px;"></i>
+							<i class="el-icon-warning text-error" style="margin-left:10px;font-size:16px;"></i>
 						</div>
 					</el-form-item>
 					<el-form-item label=""></el-form-item>
@@ -87,7 +87,7 @@
 						<el-checkbox v-model="ing.checkedtwo">Https:443</el-checkbox>
 					</el-form-item>
 					<el-form-item label="服务器证书">
-						<el-select v-model="ing.value" placeholder="请选择" disabled class="borderRed">
+						<el-select v-model="ing.value" placeholder="请选择">
 							<el-option
 								v-for="item in ing.options"
 								:key="item.value"
