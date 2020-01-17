@@ -352,7 +352,7 @@
           return (value = "内存利用率");
         }
         if (value === "MemoryUse") {
-          return (value = "內存佔用");
+          return (value = "記憶體佔用");
         }
         if (value === "VolumeRate") {
           return (value = "磁碟使用率");

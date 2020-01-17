@@ -3,7 +3,7 @@ module.exports = {
     total: {
       title: '雲聯網',
       btn: '新建',
-      link: '雲聯網幫助文檔',
+      link: '雲聯網幫助文件',
       tr1: '名稱/ID',
       tr2: '狀態',
       tr3: '服務質量',

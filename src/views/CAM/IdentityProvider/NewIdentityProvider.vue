@@ -121,7 +121,7 @@ export default {
         metadataDocument: [
           {
             required: true,
-            message: "請選擇元數據文檔",
+            message: "請選擇元數據文件",
             trigger: "blur"
           }
         ]
@@ -177,7 +177,7 @@ export default {
               let ErrTips = {
                 "InvalidParameter.IdentityNameInUse": "身份提供商名稱已經使用",
                 "InvalidParameterValue.MetadataError":
-                  "身份提供商元數據文檔錯誤",
+                  "身份提供商元數據文件錯誤",
                 "InvalidParameterValue.NameError": "身份提供商名稱錯誤",
                 "LimitExceeded.IdentityFull": "身份提供商已達到上限"
               };

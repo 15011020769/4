@@ -40,7 +40,7 @@ module.exports = {
   pro: '專案管理',
   center: '產品中心',
   price: '定價',
-  document: '文檔中心',
+  document: '文件中心',
   console: '控制台',
   login: '登錄',
   register: '免費註冊',
