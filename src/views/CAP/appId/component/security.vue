@@ -135,10 +135,8 @@ export default {
         { title: "滑动验证码", content: "简洁体验，快速通过" },
         { title: "VTT验证码", content: "极致防护，倍享安全" }
       ],
-      value2: 0,
       toolmsg: ['体验优先',  '平衡','安全优先'],
       timestep:100,
-      switch2: false,
       CaptchaAppId: "",
       time: "",
       showTime: false,
@@ -147,7 +145,7 @@ export default {
         DomainLimit: "", //域名限制
         SceneType: "", //场景类型
         CapType: "", //验证码类型
-        EvilInterceptGrade: "", //风险级别
+        EvilInterceptGrade: 0, //风险级别
         SmartVerify: "", //智能检测
         SmartEngine: "", //开启智能引擎
         CaptchaLanguage: "",
