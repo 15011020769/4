@@ -391,7 +391,7 @@
                 @click.native.prevent="deleteRow(scope.$index, scope.row)"
                 type="text"
                 size="small"
-              >{{$t('DDOS.Proteccon_figura.Delete')}}11111111111</el-button>
+              >{{$t('DDOS.Proteccon_figura.Delete')}}</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -644,7 +644,6 @@ export default {
   },
   created() {
     //根据有无对象传入，判断是添加还是配置
-    // console.log(this.policy, "大哥，传个参");
     if (this.policy.PolicyId == undefined) {
     } else {
       //配置
@@ -666,9 +665,6 @@ export default {
       );
       this.tags = this.policyTemp.PortLimits; //禁用协议
       this.tags1 = this.policyTemp.PacketFilters; //报文
-      // this.tags3 = this.policyTemp.DropOptions;
-
-      console.log(this.policyTemp.DropOptions.DIcmpMbpsLimit, "工作");
       var ta = {
         protocol: "",
         speedLimit: ""
@@ -696,26 +692,7 @@ export default {
           protocol: "TCP",
           speedLimit: this.policyTemp.DropOptions.DTcpMbpsLimit
         });
-      };
-
-      // this.tags3 = [
-      //   {
-      //     protocol: "ICPM",
-      //     speedLimit: this.policyTemp.DropOptions.DIcmpMbpsLimit
-      //   },
-      //   {
-      //     protocol: "OTHER",
-      //     speedLimit: this.policyTemp.DropOptions.DOtherMbpsLimit
-      //   },
-      //   {
-      //     protocol: "UDP",
-      //     speedLimit: this.policyTemp.DropOptions.DUdpMbpsLimit
-      //   },
-      //   {
-      //     protocol: "TCP",
-      //     speedLimit: this.policyTemp.DropOptions.DTcpMbpsLimit
-      //   }
-      // ];
+      }
       if (this.policyTemp.DropOptions.DropAbroad == 0) {
         this.radios1 = "關閉"; //拒绝海外流量
       } else {
@@ -817,7 +794,6 @@ export default {
     },
     deleteRow(index, dataBegin) {
       //删除
-      // console.log(index, dataBegin);
       this.tableDataBegin2.splice(index, 1);
     },
     // 添加DDoS高级策略
@@ -858,11 +834,6 @@ export default {
             i
           ].Type;
         }
-
-        // params["DropOptions.0.DIcmpMbpsLimit"] = this.tags3[0].speedLimit;
-        // params["DropOptions.0.DOtherMbpsLimit"] = this.tags3[1].speedLimit;
-        // params["DropOptions.0.DTcpMbpsLimit"] = this.tags3[2].speedLimit;
-        // params["DropOptions.0.DUdpMbpsLimit"] = this.tags3[3].speedLimit;
         console.log(this.tags3, "获取的数据"); //2
 
         this.tags3.map((item, index) => {
@@ -882,30 +853,6 @@ export default {
             params["DropOptions.0.DUdpMbpsLimit"] = this.tags3[3].speedLimit;
           }
         });
-        // for (let a in this.tags3) {
-        //   console.log(a,this.tags3[a],'11');
-        //   params["DropOptions." + a + ".DIcmpMbpsLimit"] = this.speedStr[a].speedLimit;
-        //   // params["DropOptions." + a + ".DOtherMbpsLimit"] = this.speedStr[a].DOtherMbpsLimit;
-        //   // params["DropOptions." + a + ".DTcpMbpsLimit"] = this.speedStr[a].DTcpMbpsLimit;
-        //   // params["DropOptions." + a + ".DUdpMbpsLimit"] = this.speedStr[a].DUdpMbpsLimit;
-        // }
-
-        // for (let a in this.tags3) {
-        //   if (this.proStr == "ICMP") {
-        //     //限速操作
-        //     params["DropOptions.0.DIcmpMbpsLimit"] = this.speedStr;
-        //     console.log(this.speedStr);
-        //   }
-        //   if (this.proStr == "OTHER") {
-        //     params["DropOptions.0.DOtherMbpsLimit"] = this.speedStr;
-        //   }
-        //   if (this.proStr == "TCP") {
-        //     params["DropOptions.0.DTcpMbpsLimit"] = this.speedStr;
-        //   }
-        //   if (this.proStr == "UDP") {
-        //     params["DropOptions.0.DUdpMbpsLimit"] = this.speedStr;
-        //   }
-        // }
 
         if (this.radios3 == "開啟") {
           params["DropOptions.0.SdNewLimit"] = this.input3; //基于来源IP及目的IP的新建连接抑制
