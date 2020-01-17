@@ -771,11 +771,8 @@ export default {
     },
     deleteRow(index, dataBegin) {
       //删除
-      console.log(index, dataBegin);
-      this.tags3.slice();
-      // this.deleteIndex = index;
-      this.deleteBegin = dataBegin;
-      this.dialogVisible = false;
+      // console.log(index, dataBegin);
+      this.tableDataBegin2.splice(index, 1);
     },
     // 添加DDoS高级策略
     createDDoSPolicy(bl) {
@@ -817,13 +814,12 @@ export default {
         }
         console.log(this.tags3, "获取的数据"); //2
         this.tags3.map((item, index) => {
-          console.log(item.protocol,item.speedLimit);
-          
+          console.log(item.protocol, item.speedLimit);
+
           if (item.protocol == "ICMP") {
             params["DropOptions.0.DIcmpMbpsLimit"] = item.speedLimit;
           }
           if (item.protocol == "OTHER") {
-            
             params["DropOptions.0.DOtherMbpsLimit"] = item.speedLimit;
           }
           if (item.protocol == "TCP") {
@@ -832,8 +828,6 @@ export default {
           if (item.protocol == "UDP") {
             params["DropOptions.0.DUdpMbpsLimit"] = item.speedLimit;
           }
-
-         ;
         });
         // for (let a in this.tags3) {
         //   console.log(a,this.tags3[a],'11');
@@ -841,7 +835,6 @@ export default {
         //   // params["DropOptions." + a + ".DOtherMbpsLimit"] = this.speedStr[a].DOtherMbpsLimit;
         //   // params["DropOptions." + a + ".DTcpMbpsLimit"] = this.speedStr[a].DTcpMbpsLimit;
         //   // params["DropOptions." + a + ".DUdpMbpsLimit"] = this.speedStr[a].DUdpMbpsLimit;
-
         // }
 
         // for (let a in this.tags3) {
@@ -1091,6 +1084,10 @@ export default {
         des.Depth = "100";
         this.tags1.push(des);
       } else if (type == 3) {
+        if (this.tags3.length == 4) {
+          this.$message("最多添加有四条协议限速");
+          return;
+        }
         // if (des["DropOptions.0.DIcmpMbpsLimit"]) {
         //   des["DropOptions.0.DIcmpMbpsLimit"] = this.speedStr;
         // }
@@ -1103,8 +1100,9 @@ export default {
         // if (des["DropOptions.0.DUdpMbpsLimit"]) {
         //   des["DropOptions.0.DUdpMbpsLimit"] = this.speedStr;
         // }
-        des.Protocol = this.tags3.push(des);
+        // des.Protocol = this.tags3.push(des);
         // console.log(this.tags3, "this.tags3");
+        this.tags3.push(des);
       } else if (type == 4) {
         this.tags4.push(des);
       } else if (type == 5) {
