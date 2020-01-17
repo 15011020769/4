@@ -63,9 +63,9 @@
             <i class="el-icon-plus" @click="submitEmail()"></i>
             <span class="warn" v-show="warnFlag">请输入正确的邮箱!</span>
             <ul>
-              <li @mouseover="overLi" @mouseout="outLi" v-for="(v,i) in mailList" :key="i">
+              <li @mouseover="overLi(i)" @mouseout="outLi" v-for="(v,i) in mailList" :key="i">
                 <span>{{v}}</span>
-                <span v-show="delIconFlag">
+                <span v-show="delIconFlag==i">
                   <i class="el-icon-minus"></i>
                 </span>
               </li>
@@ -84,7 +84,7 @@ export default {
     return {
       addEmail: "",
       warnFlag: false,
-      delIconFlag: false,
+      delIconFlag: '',
       nameFlag: true,
       urlFlag: true,
       CaptchaAppId: "",
@@ -137,11 +137,12 @@ export default {
       }
     },
     //设置鼠标滑动事件
-    overLi() {
-      this.delIconFlag = true;
+    overLi(i) {
+      this.delIconFlag = i;
+
     },
     outLi() {
-      this.delIconFlag = false;
+      this.delIconFlag = '';
     },
 
     //修改名称

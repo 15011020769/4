@@ -30,7 +30,7 @@
   </div>
 </template>
 <script>
-import {UPDATEAPPID_INFO,APPID_INFO} from '@/constants/CAP.js'
+import {UPDATEAPPID_INFO,APPID_DESCRIBE} from '@/constants/CAP.js'
 export default {
   data() {
     return {
@@ -54,7 +54,7 @@ export default {
          Version:'2019-07-22',
          CaptchaAppId:this.Id
        }
-       this.axios.post(APPID_INFO,params).then(res => {
+       this.axios.post(APPID_DESCRIBE,params).then(res => {
          this.AppDate = res.Response
        })
     },
@@ -80,7 +80,8 @@ export default {
           CaptchaLanguage:this.form.region,
           MailAlarm:this.AppDate.CaptchaMsg,
           TopFullScreen:this.AppDate.TopFullScreen,
-          TrafficThreshold:this.AppDate.TrafficThreshold
+          TrafficThreshold:this.AppDate.TrafficThreshold,
+          CaptchaLanguage:this.AppDate.Language
        }
        this.axios.post(UPDATEAPPID_INFO,params).then(res => {
          console.log(res)

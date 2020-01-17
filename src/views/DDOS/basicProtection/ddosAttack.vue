@@ -57,6 +57,7 @@
 <script>
 import moment from "moment";
 import { DDOS_EV_LIST, DDOS_TREND } from "@/constants";
+import { ErrorTips } from "@/components/ErrorTips";
 export default {
   data() {
     return {
@@ -130,8 +131,19 @@ export default {
         Period: this.Period
       };
       this.axios.post(DDOS_TREND, params).then(res => {
-        this.bps = res.Response.Data;
-        this.drawLine(res.Response.Data, date);
+        if (res.Response.Error === undefined) {
+          this.bps = res.Response.Data;
+          this.drawLine(res.Response.Data, date);
+				} else {
+					let ErrTips = {};
+					let ErrOr = Object.assign(ErrorTips, ErrTips);
+					this.$message({
+						message: ErrOr[res.Response.Error.Code],
+						type: "error",
+						showClose: true,
+						duration: 0
+					});
+				}
       });
     },
 
@@ -147,12 +159,19 @@ export default {
       };
       this.axios.post(DDOS_EV_LIST, params).then(res => {
         // console.log(res)
-        if (!("Error" in res.Response)) {
+        if (res.Response.Error === undefined) {
           this.tableDataBegin = res.Response.Data;
           this.totalItems = this.tableDataBegin.length;
         } else {
-          console.log(res.Response.Error);
-        }
+          let ErrTips = {};
+					let ErrOr = Object.assign(ErrorTips, ErrTips);
+					this.$message({
+						message: ErrOr[res.Response.Error.Code],
+						type: "error",
+						showClose: true,
+						duration: 0
+					});
+				}
         this.loading = false;
       });
     },

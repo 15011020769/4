@@ -58,11 +58,11 @@
       </div>
       <div class="tabs">
         <el-tabs v-model="activeName" @tab-click="handleClick">
-          <!-- <el-tab-pane :label="$t('CAM.strategy.starLangu')" name="first">
-            <div class="markdown"></div>
-          </el-tab-pane>-->
+          <el-tab-pane :label="$t('CAM.strategy.starLangu')" name="first">
+            <div class="markdown">{{policy.PolicyDocument}}</div>
+          </el-tab-pane>
           <!-- tab 策略详情页面，关联用户组tab  start -->
-          <el-tab-pane :label="$t('CAM.strategy.straGroup')" name="first">
+          <el-tab-pane :label="$t('CAM.strategy.straGroup')" name="second">
             <div class="config" v-loading="loading">
               <p style="margin:10px">
                 <el-button
@@ -655,7 +655,19 @@ export default {
         width: 725px;
         height: 300px;
         background-color: #ddd;
+        color: #a31515;
+        font-size: 14px;
+        padding: 20px;
+        box-sizing: border-box;
+        word-wrap: break-word;
+        line-height: 30px;
+        overflow-y: scroll;
       }
+    }
+    .markdown ::-webkit-scrollbar {
+      width: 0;
+      height: 0;
+      display: none;
     }
 
     .dialog {

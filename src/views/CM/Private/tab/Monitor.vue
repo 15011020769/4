@@ -262,11 +262,11 @@ export default {
       }
       if (value === "MemUsed") {
         return (value =
-          "使用的內存量，不包括系統緩存和緩存區佔用內存，依賴監控組件安裝採集");
+          "使用的記憶體量，不包括系統緩存和緩存區佔用記憶體，依賴監控組件安裝採集");
       }
       if (value === "MemUsage") {
         return (value =
-          "用戶實際使用的內存量與總內存量之比，不包括緩衝區與系統緩存佔用的內存");
+          "用戶實際使用的記憶體量與總記憶體量之比，不包括緩衝區與系統緩存佔用的記憶體");
       }
       if (value === "TcpCurrEstab") {
         return (value =

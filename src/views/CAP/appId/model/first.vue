@@ -17,7 +17,7 @@
               <el-table-column label="昨日恶意拦截量">-</el-table-column>
               <el-table-column label="操作">
                 <template slot-scope="scope">
-                    <el-link @click="detailsAppid(scope.row)" type="primary">查看详情</el-link>
+                    <el-link @click="detailsAppid(scope.row)" type="primary" class="cursor">查看详情</el-link>
                 </template>
               </el-table-column>
             </el-table>
@@ -163,7 +163,9 @@ export default {
   color: #fff;
   border: 1px solid #006eff;
 }
-
+.cursor{
+  cursor: pointer;
+}
 .appidWrap {
   width: 100%;
   display: flex;

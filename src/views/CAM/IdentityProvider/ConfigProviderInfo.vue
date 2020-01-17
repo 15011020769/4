@@ -60,7 +60,7 @@ export default {
           { required: true, message: "請輸入用戶組名稱", trigger: "blur" }
         ],
         metadataDocument: [
-          { required: true, message: "請選擇元數據文檔", trigger: "blur" }
+          { required: true, message: "請選擇元數據文件", trigger: "blur" }
         ]
       }
     };
