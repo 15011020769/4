@@ -732,7 +732,7 @@ export default {
         this.radios11 = "開啟";
       }
       // this.radios1
-      //this.tableDataBegin2 = this.policyTemp.WaterPrint
+      this.tableDataBegin2 = this.policyTemp.WaterPrint
     }
   },
   methods: {
@@ -746,7 +746,7 @@ export default {
     //   this.speedStr = d;
     //   console.log(this.speedStr, d, "阈值");
     // },
-    ProV(a) {
+    ProV(a) {  //限速 ===》协议
       this.proStr = a;
       console.log(this.proStr);
     },
@@ -855,7 +855,7 @@ export default {
           params["WaterPrint." + i + ".RemoveSwitch"] = this.tableDataBegin2[
             i
           ].RemoveSwitch; //是否自动剥离，取值[0（不自动剥离），1（自动剥离）]
-          params["WaterPrint." + i + ".OpenStatus"] = 1; //this.tableDataBegin2[i].OpenStatus
+          params["WaterPrint." + i + ".OpenStatus"] = 1; //
           let arr = this.tableDataBegin2[i].tcpPort.split(/[\s\n]/);
           for (let j in arr) {
             params["WaterPrint." + i + ".TcpPortList." + j] = arr[j];
@@ -865,6 +865,7 @@ export default {
             params["WaterPrint." + i + ".UdpPortList." + k] = arr2[k];
           }
         }
+        console.log(params.WaterPrint,'水印防护')
         if (bl) {
           params.Name = this.tacticsName;
           console.log(params, ",'添加的参数'");
@@ -977,6 +978,7 @@ export default {
         des.Depth = "100";
         this.tags1.push(des);
       } else if (type == 3) {
+        //待开发
         // if (this.proStr == "ICMP") {
         //   des.protocol = "icmp";
         // } else if (this.proStr == "OTHER") {
