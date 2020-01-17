@@ -198,7 +198,7 @@
               >
                 <div class="container">
                   <div class="container-left">
-                    <p>{{$t('CAM.userGroup.selection')}}({{totalNumUser}}条）</p>
+                    <p>{{$t('CAM.userGroup.selection')}}({{totalNumUser}}{{$t("CAM.strip")}}）</p>
                     <el-input
                       size="small"
                       v-model="searchUser"
