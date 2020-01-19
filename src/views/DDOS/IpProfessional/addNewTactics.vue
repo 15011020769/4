@@ -373,7 +373,6 @@
       </div>
       <!-- 水印防护 -->
       <div class="childContTit">
-        {{tableDataBegin2}}
         <h2>{{$t('DDOS.Proteccon_figura.Watermark_protection')}}</h2>
         <el-table :data="tableDataBegin2" class="tableBorderTop">
           <el-table-column :label="$t('DDOS.Proteccon_figura.TCP_protectionport')" prop="tcpPort">
@@ -714,7 +713,6 @@ export default {
         this.radios4 = "開啟";
         this.thisRadio4 = true;
         this.input4 = this.policyTemp.DropOptions.SdConnLimit;
-        // console.log(this.policyTemp.DropOptions.SdConnLimit);
       }
       if (this.policyTemp.DropOptions.DstNewLimit == 0) {
         //基于目的IP的新建连接抑制
@@ -777,12 +775,7 @@ export default {
       } else {
         this.radios12 = "開啟";
       }
-      // var des = {
-      //   Protocol: "",
-      //   tortType: "",
-      //   beginPort: "",
-      //   endPort: ""
-      // };//转
+
       var des = this.policyTemp.WaterPrint[0].TcpPortList;
       des.map((item, index) => {
         var result = item.split("-");
@@ -793,7 +786,7 @@ export default {
           endPort: result[1]
         });
       });
-      
+
       var des1 = this.policyTemp.WaterPrint[0].UdpPortList;
       des1.map((item, index) => {
         var result = item.split("-");
@@ -805,21 +798,13 @@ export default {
         });
       });
 
-      // this.tags5 = this.policyTemp.WaterPrint.UdpPortList;
-      console.log(
-        this.policyTemp.WaterPrint[0].TcpPortList,
-        this.policyTemp.WaterPrint[0].UdpPortList,
-        "数据"
-      );
-
       this.tableDataBegin2.push({
         tcpPort: this.policyTemp.WaterPrint[0].TcpPortList[0],
         udpPort: this.policyTemp.WaterPrint[0].UdpPortList[0],
         RemoveSwitch: this.radios12,
         OpenStatus: 1,
         Offset: this.moveNum
-      }) ;
-      console.log(this.tableDataBegin2);
+      });
     }
   },
   methods: {
@@ -981,7 +966,6 @@ export default {
             this.$message("UDP防护端口不能为空");
             return;
           }
-          console.log(arr2);
           for (let k in arr) {
             params["WaterPrint." + i + ".UdpPortList." + k] = arr2[k];
           }
@@ -1084,8 +1068,16 @@ export default {
         }
         this.tags3.push(des);
       } else if (type == 4) {
+        if (this.tags4.length == 5) {
+          this.$message("端口段不能超过五条");
+          return;
+        }
         this.tags4.push(des);
       } else if (type == 5) {
+        if (this.tags5.length == 5) {
+          this.$message("端口段不能超过五条");
+          return;
+        }
         this.tags5.push(des);
       }
     },
@@ -1189,11 +1181,15 @@ export default {
     createSY() {
       let str = "";
       for (let i in this.tags4) {
-        str += this.tags4[i].beginPort + "-" + this.tags4[i].endPort;
+        if (this.tags4[i].beginPort !== "" && this.tags4[i].endPort !== "") {
+          str += this.tags4[i].beginPort + "-" + this.tags4[i].endPort;
+        }
       }
       let str2 = "";
       for (let j in this.tags5) {
-        str2 += this.tags5[j].beginPort + "-" + this.tags5[j].endPort;
+        if (this.tags5[j].beginPort !== "" && this.tags5[j].endPort !== "") {
+          str2 += this.tags5[j].beginPort + "-" + this.tags5[j].endPort;
+        }
       }
       let temp = {
         tcpPort: str,
@@ -1202,10 +1198,7 @@ export default {
         OpenStatus: 1,
         Offset: this.moveNum
       };
-      console.log(this.tags4);
-      console.log(this.tags5);
-      console.log(temp);
-      this.tableDataBegin2 = [];//lxx
+      this.tableDataBegin2 = []; //lxx
       this.tableDataBegin2.push(temp);
       this.dialogVisible = false;
     }

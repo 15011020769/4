@@ -550,7 +550,6 @@ export default {
         Method: method //bind/unbind
       };
       this.axios.post(RESBIND_MODIFY, params).then(res => {
-        console.log(res.Response)
         if (res.Response.Error === undefined) {
 
 				} else {
@@ -654,7 +653,6 @@ export default {
     },
     // 添加高级防护策略
     addNewTactics() {
-      console.log(this.tableDataPolicy.length);
       if (this.tableDataPolicy.length >= 5) {
         this.$message({
           showClose: true,
@@ -737,7 +735,6 @@ export default {
         }
       });
       this.loading = true;
-      // console.log(diff, tmp);
       diff.forEach(resId => {
         this.modifyResBindDDoSPolicy(resId, "bind");
       });
