@@ -1343,6 +1343,7 @@ export default {
         let temp = { Type: this.blackWhite, Ip: arr[i] };
         this.IpBlackWhiteLists.push(temp);
       }
+       this.totalItems =this.IpBlackWhiteLists.length 
     },
     //删除黑白名单
     deleteRowBW(index, row) {
