@@ -1348,6 +1348,7 @@ export default {
     //删除黑白名单
     deleteRowBW(index, row) {
       this.IpBlackWhiteLists.splice(index, 1);
+      this.totalItems =this.IpBlackWhiteLists.length 
     },
     addbwSURE() {
       this.dialogModelAddBw = false;
