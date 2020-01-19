@@ -381,7 +381,6 @@ export default {
   },
   created() {
     this.describeResourceList();
-    // this.describeDDoSPolicy();
   },
   methods: {
     // 1.1.获取资源列表
@@ -520,13 +519,12 @@ export default {
     },
     // 1.2.获取DDoS高级策略
     describeDDoSPolicy() {
-      // debugger
-      this.loading = true;
       let params = {
         Version: "2018-07-09",
         Business: "net"
       };
-      this.axios.post(GET_SPolicy, params).then(res => {
+      this.axios.post(GET_SPolicy, params).then(res => { 
+        this.loading = true;
         if (res.Response.Error === undefined) {
           this.tableDataPolicy = res.Response.DDosPolicyList;
 				} else {
@@ -588,7 +586,6 @@ export default {
         //CC防护
       } else if (tab.name == "third") {
         //DDOS高级防护策略
-        // this.describeDDoSPolicy();
         this.closePageAdd();
       }
     },
@@ -676,12 +673,9 @@ export default {
     },
     //点击表格操作配置按钮
     configListCon(configIndex, val) {
-      // console.log(configIndex, val, "点配置时获取的数据");
       this.describeDDoSPolicy();
       this.sortArr(this.tableDataPolicy);
-      // console.log(this.tableDataPolicy);
       this.policy = this.tableDataPolicy[configIndex];
-      // this.policy = val;
       this.tableShow = false;
     },
     //绑定资源按钮
