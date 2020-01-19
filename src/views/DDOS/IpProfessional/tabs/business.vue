@@ -31,7 +31,7 @@
           <el-option :label="inputIdService" :value="inputIdService"></el-option>
         </el-select>
         <el-select class="ddosAttackSelect1" v-model="ywTimeBtnSelect2">
-          <el-option v-for="item in IpList" :value="item"></el-option>
+          <el-option v-for="(item,index) in IpList" :value="item" :key="index"></el-option>
         </el-select>
       </div>
       <div class="mainConListAll mainConListTwo">
