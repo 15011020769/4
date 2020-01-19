@@ -65,7 +65,7 @@
             <ul>
               <li @mouseover="overLi(i)" @mouseout="outLi" v-for="(v,i) in mailList" :key="i">
                 <span>{{v}}</span>
-                <span v-show="delIconFlag">
+                <span v-show="delIconFlag==i">
                   <i class="el-icon-minus" @click="deleteEmail"></i>
                 </span>
               </li>
@@ -167,7 +167,7 @@ export default {
     //设置鼠标滑动事件
     overLi(i) {
       this.delIconFlag = i;
-
+    
     },
     outLi() {
       this.delIconFlag = '';

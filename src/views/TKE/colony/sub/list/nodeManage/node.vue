@@ -16,7 +16,7 @@
         </div>
         <!-- 右侧 -->
         <div class="grid-right">
-          <tkeSearch 
+          <tkeSearch
             exportData
             inputPlaceholder='请输入IP或节点名/ID'
             :searchInput='searchInput'
@@ -66,7 +66,7 @@
               </el-tooltip>
             </template>
           </el-table-column>
-          
+
           <el-table-column
             prop=""
             label="kubernetes版本"
@@ -124,7 +124,7 @@
             >
             <template slot-scope="scope">
               <p class="tke-text-link">移出</p>
-              
+
               <el-dropdown class=" tke-dropdown" >
                 <span class="el-dropdown-link " >
                   更多<i class="el-icon-arrow-down el-icon--right"></i>
@@ -158,51 +158,51 @@
 </template>
 
 <script>
-import subTitle from "@/views/TKE/components/subTitle";
-import tkeSearch from "@/views/TKE/components/tkeSearch";
-import Loading from "@/components/public/Loading";
-import { ALL_CITY } from "@/constants";
+import subTitle from '@/views/TKE/components/subTitle'
+import tkeSearch from '@/views/TKE/components/tkeSearch'
+import Loading from '@/components/public/Loading'
+import { ALL_CITYk, POINT_REQUEST } from '@/constants'
 export default {
-  name: "colonyNodeManageNode",
-  data() {
+  name: 'colonyNodeManageNode',
+  data () {
     return {
-      clusterId:'',
-      searchInput: "", //输入的搜索关键字
-      loadShow: false, //加载是否显示
-      list:[
+      clusterId: '',
+      searchInput: '', // 输入的搜索关键字
+      loadShow: false, // 加载是否显示
+      list: [
         {
-          status:false
+          status: false
         },
         {
-          status:true
+          status: true
         }
-      ], //列表
-      total:0,
-      pageSize:10,
-      pageIndex:0,
-      multipleSelection: []  
-    };
+      ], // 列表
+      total: 0,
+      pageSize: 10,
+      pageIndex: 0,
+      multipleSelection: []
+    }
   },
- 
-  created() {
+
+  created () {
     // 从路由获取集群id
-    this.clusterId=this.$route.query.clusterId;
+    this.clusterId = this.$route.query.clusterId
+    this.ForwardRequest()
   },
   methods: {
-    
-    //监听搜索框的值
-    changeSearchInput(val) {
-      this.searchInput = val;
+    // 监听搜索框的值
+    changeSearchInput (val) {
+      this.searchInput = val
       console.log(this.searchInput)
     },
     // 点击搜索
-    clickSearch(val){
-      this.searchInput = val;
+    clickSearch (val) {
+      this.searchInput = val
       console.log(this.searchInput)
     },
-    
+
     // 导出表格
-    exportExcel() {
+    exportExcel () {
       console.log('exportExcel...')
       /* generate workbook object from table */
       // var wb = XLSX.utils.table_to_book(document.querySelector("#exportTable"));
@@ -226,62 +226,74 @@ export default {
     },
 
     // 新建节点跳转
-    goExpand(){
+    goExpand () {
       this.$router.push({
-          name: "clusterExpand",
-          query: {
-            clusterId: this.clusterId
-          }
-      });
+        name: 'clusterExpand',
+        query: {
+          clusterId: this.clusterId
+        }
+      })
     },
-    
+
     // 添加已有节点跳转呢
-    goAddExist(){
+    goAddExist () {
       this.$router.push({
-          name: "clusterAddExist",
-          query: {
-            clusterId: this.clusterId
-          }
-      });
+        name: 'clusterAddExist',
+        query: {
+          clusterId: this.clusterId
+        }
+      })
     },
 
     // 分页
-    handleCurrentChange(val) {
-      this.pageIndex = val-1;
+    handleCurrentChange (val) {
+      this.pageIndex = val - 1
       // this.getColonyList();
-      this.pageIndex+=1;
+      this.pageIndex += 1
     },
-    handleSizeChange(val) {
+    handleSizeChange (val) {
       // console.log(`每页 ${val} 条`);
-      this.pageSize=val;
+      this.pageSize = val
       // this.getColonyList();
     },
 
-    //全选
-    handleSelectionChange(val) {
-      this.multipleSelection = val;
+    // 全选
+    handleSelectionChange (val) {
+      this.multipleSelection = val
     },
 
-     // 详情
-    goNodeDetail(){
+    // 详情
+    goNodeDetail () {
       this.$router.push({
-          name: "nodeDetail",
-          query: {
-            clusterId: this.clusterId
-          }
-      });
+        name: 'nodeDetail',
+        query: {
+          clusterId: this.clusterId
+        }
+      })
     },
-  },
-  components: {
-    subTitle,
-    Loading,
-    tkeSearch
+    // ForwardRequest () {
+    //   const param = {
+    //     Method: 'GET',
+    //     Path: '/api/v1/nodes',
+    //     Version: '2018-05-25',
+    //     ClusterName: 'cls-n1xokuh6'
+    //   }
+    //   this.axios.post(POINT_REQUEST, param).then(res => {
+    //     console.log(JSON.parse(res.Response.ResponseBody))
+    //     if (res.code === 0) {
+    //       this.loadShow = true
+    //     }
+    //   })
+    // },
+    components: {
+      subTitle,
+      Loading,
+      tkeSearch
+    }
   }
-};
+}
 </script>
 
 <style lang="scss" scoped>
 
-
 </style>
-

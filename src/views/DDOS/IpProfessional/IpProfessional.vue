@@ -48,13 +48,12 @@ export default {
     handleClick(tab, event) {
       if (tab.name == "ddos") {
         //DDOS攻击防护
-        this.$refs.ddosAttack.getData();
+        this.$refs.ddosAttack.choiceTime(1);
       } else if (tab.name == "cc") {
         //CC攻击防护
         this.$refs.ccAttack.getDataCC();
       } else if (tab.name == "service") {
         //业务
-        // console.log(this.$refs.servers.getDataService())
         this.$refs.servers.getDataService();
       }
     },
@@ -64,7 +63,6 @@ export default {
       });
     },
     //时间按钮
-
     thisTime(thisTime) {
       var ipt1 = document.querySelector(".newDataTime input:nth-child(2)");
       var ipt2 = document.querySelector(".newDataTime input:nth-child(4)");

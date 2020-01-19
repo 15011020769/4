@@ -58,6 +58,9 @@ export const DELETE_BATCHDELETEFAVOR = 'ccr/BatchDeleteFavor'
 // 获取集群列表
 export const COLONY_LIST = 'tke2/DescribeClusters'
 
+// 修改集群列表
+export const COLONY_DES = 'ccs/ModifyClusterAttributes'
+
 // 获取集群列表状态
 export const COLONY_STATUS = 'tke2/DescribeClusterStatus'
 
@@ -70,7 +73,22 @@ export const WARNING_GetCOLONY = 'tke2/DescribeAlarmPolicies'
 // 获取集群基本信息相关
 export const CLUSTERS_DESCRIBE = 'tke2/DescribeClusters'
 
+// 获取集群的基本信息
 export const CLUSTERS_SECURITY = 'tke2/DescribeClusterSecurity'
+
+// export const CLUSTERS_INSTANCES = 'tke2/DescribeCcnInstances'
+
+// export const CLUSTERS_REQUEST = 'tke2/ForwardRequest'
+
+// export const CLUSTERS_VIPSTATUS = 'tke2/DescribeClusterEndpointVipStatus'
+
+// export const CLUSTERS_STATUS = 'tke2/DescribeClusterEndpointStatus'
 
 // export const CreateGetGroups = 'cam/GetGroups'
 export const CreateListGroups = 'cam/ListGroups'
+
+// 获取节点管理
+export const POINT_REQUEST = 'tke2/ForwardRequest'
+
+
+

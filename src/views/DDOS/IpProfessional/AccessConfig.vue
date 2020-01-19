@@ -330,7 +330,6 @@ export default {
         Id: this.resourceId
       };
       this.axios.post(L4_RULES, params).then(res => {
-        console.log(this.tableDataBegin)
         this.tableDataBegin = res.Response.Rules;
         this.totalItems = res.Response.Total;
         this.usedNum = res.Response.Total;

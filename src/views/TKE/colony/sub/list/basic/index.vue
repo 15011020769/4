@@ -55,7 +55,7 @@
             <el-form-item label="默认操作系统">
               <div class="tke-form-item_text"><span>ubuntu16.04.1 LTSx86_64</span><i class="el-icon-edit tke-icon"></i></div>
             </el-form-item>
-            
+
             <el-form-item label="系统镜像来源">
               <div class="tke-form-item_text"><span>公共镜像 - 基础镜像</span></div>
             </el-form-item>
@@ -81,7 +81,7 @@
         </div>
       </el-col>
     </el-row>
-    
+
     <div class="tke-card tke-formpanel-wrap mt10">
       <h4 class="tke-formpanel-title">集群APIServer信息</h4>
       <el-form  class="tke-form"  label-position='left' label-width="130px" size="mini">
@@ -91,7 +91,7 @@
         <el-form-item label="外网访问">
           <div class="tke-form-item_text"><span>未开启</span></div>
         </el-form-item>
-        
+
         <el-form-item label="内网访问">
           <div class="tke-form-item_text"><span>未开启</span></div>
         </el-form-item>
@@ -115,49 +115,49 @@
 </template>
 
 <script>
-import subTitle from "@/views/TKE/components/subTitle";
-import Loading from "@/components/public/Loading";
-import { ALL_CITY,CLUSTERS_DESCRIBE,CLUSTERS_SECURITY } from "@/constants";
+import subTitle from '@/views/TKE/components/subTitle'
+import Loading from '@/components/public/Loading'
+import { ALL_CITY, CLUSTERS_DESCRIBE, CLUSTERS_SECURITY } from '@/constants'
 export default {
-  name: "colonyBasic",
-  data() {
+  name: 'colonyBasic',
+  data () {
     return {
-        clusterId:'', //集群id
-        loadShow:false,
-        security:{}
-    };
+      clusterId: '', // 集群id
+      loadShow: false,
+      security: {}
+    }
   },
   components: {
     subTitle,
     Loading
   },
-  created() {
+  created () {
     // 从路由获取集群id
-    this.clusterId=this.$route.query.clusterId;
-    this.getSecurity();
+    this.clusterId = this.$route.query.clusterId
+    this.getSecurity()
   },
   methods: {
     // 获取集群APIServer信息 相关
-    async getSecurity() {
-      this.loadShow = true;
+    async getSecurity () {
+      this.loadShow = true
       let params = {
-        ClusterId: this.clusterId, 
-        Version: "2018-05-25",
-      };
-      const res = await this.axios.post(CLUSTERS_SECURITY, params);
-      if(res.Error){
-        console.log(res);
-        this.loadShow = false;
-      }else{
-        // console.log(res)
-        this.security=res.Response;
-        console.log(this.security)
-        this.loadShow = false;
+        ClusterId: this.clusterId,
+        Version: '2018-05-25'
       }
-    },
+      const res = await this.axios.post(CLUSTERS_SECURITY, params)
+      if (res.Error) {
+        console.log(res)
+        this.loadShow = false
+      } else {
+        // console.log(res)
+        this.security = res.Response
+        console.log(res)
+        this.loadShow = false
+      }
+    }
 
   }
-};
+}
 </script>
 
 <style lang="scss" scoped>
@@ -197,9 +197,7 @@ export default {
       }
     }
   }
-  
-  
+
 }
 
 </style>
-

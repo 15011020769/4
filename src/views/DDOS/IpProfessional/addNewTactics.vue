@@ -378,7 +378,7 @@
           <el-table-column :label="$t('DDOS.Proteccon_figura.TCP_protectionport')" prop="tcpPort">
             <template slot-scope="scope">{{scope.row.tcpPort}}</template>
           </el-table-column>
-          <el-table-column :label="$t('DDOS.Proteccon_figura.TCP_protectionport')" prop="udpPort">
+          <el-table-column :label="$t('DDOS.Proteccon_figura.UDP_protectionport')" prop="udpPort">
             <template slot-scope="scope">{{scope.row.udpPort}}</template>
           </el-table-column>
           <el-table-column :label="$t('DDOS.Proteccon_figura.UDP_split')" prop="RemoveSwitch">
@@ -387,18 +387,19 @@
           <el-table-column :label="$t('DDOS.Proteccon_figura.Policy_switch')" prop="OpenStatus">开启</el-table-column>
           <el-table-column prop="action" label="操作" width="180">
             <template slot-scope="scope">
-              <el-button
+              <!-- <el-button
                 @click.native.prevent="deleteRow(scope.$index, scope.row)"
                 type="text"
                 size="small"
-              >{{$t('DDOS.Proteccon_figura.Delete')}}11111111111</el-button>
+              >修改配置</el-button>-->
+              <el-button @click="modifyRow(scope.$index, scope.row)" type="text" size="small">修改配置</el-button>
             </template>
           </el-table-column>
         </el-table>
         <a
           href="#"
           class="addNewRow"
-          @click="dialogVisible = true"
+          @click.once="dialogVisible = true"
         >{{$t('DDOS.Proteccon_figura.Click_open')}}</a>
         <el-dialog
           title="水印创建"
@@ -639,12 +640,9 @@ export default {
       deleteBegin: {}
     };
   },
-  mounted() {
-    console.log(this.tags3, "获取的数据");
-  },
+  mounted() {},
   created() {
     //根据有无对象传入，判断是添加还是配置
-    // console.log(this.policy, "大哥，传个参");
     if (this.policy.PolicyId == undefined) {
     } else {
       //配置
@@ -666,13 +664,6 @@ export default {
       );
       this.tags = this.policyTemp.PortLimits; //禁用协议
       this.tags1 = this.policyTemp.PacketFilters; //报文
-      // this.tags3 = this.policyTemp.DropOptions;
-
-      console.log(this.policyTemp.DropOptions.DIcmpMbpsLimit, "工作");
-      var ta = {
-        protocol: "",
-        speedLimit: ""
-      };
       if (this.policyTemp.DropOptions.DIcmpMbpsLimit) {
         this.tags3.push({
           protocol: "ICPM",
@@ -696,26 +687,7 @@ export default {
           protocol: "TCP",
           speedLimit: this.policyTemp.DropOptions.DTcpMbpsLimit
         });
-      };
-
-      // this.tags3 = [
-      //   {
-      //     protocol: "ICPM",
-      //     speedLimit: this.policyTemp.DropOptions.DIcmpMbpsLimit
-      //   },
-      //   {
-      //     protocol: "OTHER",
-      //     speedLimit: this.policyTemp.DropOptions.DOtherMbpsLimit
-      //   },
-      //   {
-      //     protocol: "UDP",
-      //     speedLimit: this.policyTemp.DropOptions.DUdpMbpsLimit
-      //   },
-      //   {
-      //     protocol: "TCP",
-      //     speedLimit: this.policyTemp.DropOptions.DTcpMbpsLimit
-      //   }
-      // ];
+      }
       if (this.policyTemp.DropOptions.DropAbroad == 0) {
         this.radios1 = "關閉"; //拒绝海外流量
       } else {
@@ -741,7 +713,6 @@ export default {
         this.radios4 = "開啟";
         this.thisRadio4 = true;
         this.input4 = this.policyTemp.DropOptions.SdConnLimit;
-        // console.log(this.policyTemp.DropOptions.SdConnLimit);
       }
       if (this.policyTemp.DropOptions.DstNewLimit == 0) {
         //基于目的IP的新建连接抑制
@@ -797,7 +768,43 @@ export default {
       } else {
         this.radios11 = "開啟";
       }
-      this.tableDataBegin2 = this.policyTemp.WaterPrint;
+
+      this.moveNum = this.policyTemp.WaterPrint[0].Offset;
+      if (this.policyTemp.WaterPrint[0].RemoveSwitch == 0) {
+        this.radios12 = "關閉";
+      } else {
+        this.radios12 = "開啟";
+      }
+
+      var des = this.policyTemp.WaterPrint[0].TcpPortList;
+      des.map((item, index) => {
+        var result = item.split("-");
+        this.tags4.push({
+          Protocol: "",
+          tortType: "",
+          beginPort: result[0],
+          endPort: result[1]
+        });
+      });
+
+      var des1 = this.policyTemp.WaterPrint[0].UdpPortList;
+      des1.map((item, index) => {
+        var result = item.split("-");
+        this.tags5.push({
+          Protocol: "",
+          tortType: "",
+          beginPort: result[0],
+          endPort: result[1]
+        });
+      });
+
+      this.tableDataBegin2.push({
+        tcpPort: this.policyTemp.WaterPrint[0].TcpPortList[0],
+        udpPort: this.policyTemp.WaterPrint[0].UdpPortList[0],
+        RemoveSwitch: this.radios12,
+        OpenStatus: 1,
+        Offset: this.moveNum
+      });
     }
   },
   methods: {
@@ -815,10 +822,9 @@ export default {
         this.$message("请填写策略名称");
       }
     },
-    deleteRow(index, dataBegin) {
-      //删除
-      // console.log(index, dataBegin);
-      this.tableDataBegin2.splice(index, 1);
+    modifyRow(index, dataBegin) {
+      //配置水印
+      this.dialogVisible = true;
     },
     // 添加DDoS高级策略
     createDDoSPolicy(bl) {
@@ -858,19 +864,9 @@ export default {
             i
           ].Type;
         }
-
-        // params["DropOptions.0.DIcmpMbpsLimit"] = this.tags3[0].speedLimit;
-        // params["DropOptions.0.DOtherMbpsLimit"] = this.tags3[1].speedLimit;
-        // params["DropOptions.0.DTcpMbpsLimit"] = this.tags3[2].speedLimit;
-        // params["DropOptions.0.DUdpMbpsLimit"] = this.tags3[3].speedLimit;
-        console.log(this.tags3, "获取的数据"); //2
-
         this.tags3.map((item, index) => {
-          console.log(item.protocol, item.speedLimit);
-
           if (item.protocol == "ICPM") {
             params["DropOptions.0.DIcmpMbpsLimit"] = this.tags3[0].speedLimit;
-            console.log(this.tags3[0].speedLimit);
           }
           if (item.protocol == "OTHER") {
             params["DropOptions.0.DOtherMbpsLimit"] = this.tags3[1].speedLimit;
@@ -882,31 +878,6 @@ export default {
             params["DropOptions.0.DUdpMbpsLimit"] = this.tags3[3].speedLimit;
           }
         });
-        // for (let a in this.tags3) {
-        //   console.log(a,this.tags3[a],'11');
-        //   params["DropOptions." + a + ".DIcmpMbpsLimit"] = this.speedStr[a].speedLimit;
-        //   // params["DropOptions." + a + ".DOtherMbpsLimit"] = this.speedStr[a].DOtherMbpsLimit;
-        //   // params["DropOptions." + a + ".DTcpMbpsLimit"] = this.speedStr[a].DTcpMbpsLimit;
-        //   // params["DropOptions." + a + ".DUdpMbpsLimit"] = this.speedStr[a].DUdpMbpsLimit;
-        // }
-
-        // for (let a in this.tags3) {
-        //   if (this.proStr == "ICMP") {
-        //     //限速操作
-        //     params["DropOptions.0.DIcmpMbpsLimit"] = this.speedStr;
-        //     console.log(this.speedStr);
-        //   }
-        //   if (this.proStr == "OTHER") {
-        //     params["DropOptions.0.DOtherMbpsLimit"] = this.speedStr;
-        //   }
-        //   if (this.proStr == "TCP") {
-        //     params["DropOptions.0.DTcpMbpsLimit"] = this.speedStr;
-        //   }
-        //   if (this.proStr == "UDP") {
-        //     params["DropOptions.0.DUdpMbpsLimit"] = this.speedStr;
-        //   }
-        // }
-
         if (this.radios3 == "開啟") {
           params["DropOptions.0.SdNewLimit"] = this.input3; //基于来源IP及目的IP的新建连接抑制
         }
@@ -931,9 +902,7 @@ export default {
         if (this.radios10 == "開啟") {
           params["DropOptions.0.ConnTimeout"] = this.input10; //连接超时
         }
-
         // PortLimits.N 端口禁用，当没有禁用端口时填空数组
-        // console.log(this.tags);
         for (let i in this.tags) {
           params["PortLimits." + i + ".Protocol"] = this.tags[i].Protocol; //协议，取值范围[tcp,udp,icmp,all]
           params["PortLimits." + i + ".DPortStart"] = this.tags[i].DPortStart; //开始目的端口，取值范围[0,65535]
@@ -952,7 +921,6 @@ export default {
         }
 
         // PacketFilters.N 报文过滤特征，当没有报文过滤时填空数组
-        // console.log(this.tags1, "this.tags1，这里暂时是空");
         for (let i in this.tags1) {
           params["PacketFilters." + i + ".Protocol"] = this.tags1[i].Protocol;
           params["PacketFilters." + i + ".SportStart"] = this.tags1[
@@ -985,9 +953,7 @@ export default {
           ].RemoveSwitch; //是否自动剥离，取值[0（不自动剥离），1（自动剥离）]
           params["WaterPrint." + i + ".OpenStatus"] = 1;
 
-          // console.log(this.tableDataBegin2[i].tcpPort);
           let arr = this.tableDataBegin2[i].tcpPort.split(",");
-          console.log(arr);
           if (arr == "") {
             this.$message("TCP防护端口不能为空");
             return;
@@ -996,35 +962,19 @@ export default {
             params["WaterPrint." + i + ".TcpPortList." + j] = arr[j];
           }
           let arr2 = this.tableDataBegin2[i].udpPort.split(",");
-          if (arr == "") {
+          if (arr2 == "") {
             this.$message("UDP防护端口不能为空");
             return;
           }
-          console.log(arr2);
           for (let k in arr) {
             params["WaterPrint." + i + ".UdpPortList." + k] = arr2[k];
           }
         }
-        console.log(params, "水印防护");
         if (bl) {
           params.Name = this.tacticsName;
           this.axios.post(DDOS_POLICY_CREATE, params).then(res => {
-            if (res.Response.Success) {
-              this.$message("添加成功");
-              this.$emit("describeDDoSPolicyADD");
-              // 关闭新增页面
-              this.closeAddPage();
-              // this.$emit("closePage", { message: this.tableShow });//lxx
-            } else {
-              this.$message({
-                message: "添加失败：" + res.Response.Error.Message,
-                type: "warning",
-                showClose: true,
-                duration: 0
-              });
-              // 关闭新增页面
-              this.closeAddPage();
-            }
+            this.$message("添加成功");
+            this.closeAddPage();
           });
         } else {
           params.PolicyId = this.policy.PolicyId;
@@ -1034,13 +984,8 @@ export default {
               // 关闭修改页面
               this.closeAddPage();
             } else {
-              this.$message({
-                message: "修改失败" + res.Response.Error.Message,
-                type: "warning",
-                showClose: true,
-                duration: 0
-              });
-              // 关闭新增页面
+              this.$message("修改失败");
+              // 关闭修改页面
               this.closeAddPage();
             }
           });
@@ -1054,25 +999,8 @@ export default {
       //去除指定值
       list.splice(list.indexOf(item), 1);
     },
-    unique(arr) {
-      //去重
-      if (!Array.isArray(arr)) {
-        console.log("type error!");
-        return;
-      }
-      arr = arr.sort();
-      var arrry = [arr[0]];
-      for (var i = 1; i < arr.length; i++) {
-        if (arr[i] !== arr[i - 1]) {
-          arrry.push(arr[i]);
-        }
-      }
-      return arrry;
-    },
     // 搜索
     doFilter() {
-      // console.log(this.filterConrent);
-      // TODO
       //页面数据改变重新统计数据数量和当前页
       this.currentPage = 1;
       this.totalItems = this.filterTableDataEnd.length;
@@ -1138,24 +1066,18 @@ export default {
           this.$message("最多添加有四条协议限速");
           return;
         }
-        // if (des["DropOptions.0.DIcmpMbpsLimit"]) {
-        //   des["DropOptions.0.DIcmpMbpsLimit"] = this.speedStr;
-        // }
-        // if (des["DropOptions.0.DOtherMbpsLimit"]) {
-        //   des["DropOptions.0.DOtherMbpsLimit"] = this.speedStr;
-        // }
-        // if (des["DropOptions.0.DTcpMbpsLimit"]) {
-        //   des["DropOptions.0.DTcpMbpsLimit"] = this.speedStr;
-        // }
-        // if (des["DropOptions.0.DUdpMbpsLimit"]) {
-        //   des["DropOptions.0.DUdpMbpsLimit"] = this.speedStr;
-        // }
-        // des.Protocol = this.tags3.push(des);
-        // console.log(this.tags3, "this.tags3");
         this.tags3.push(des);
       } else if (type == 4) {
+        if (this.tags4.length == 5) {
+          this.$message("端口段不能超过五条");
+          return;
+        }
         this.tags4.push(des);
       } else if (type == 5) {
+        if (this.tags5.length == 5) {
+          this.$message("端口段不能超过五条");
+          return;
+        }
         this.tags5.push(des);
       }
     },
@@ -1237,10 +1159,12 @@ export default {
         let temp = { Type: this.blackWhite, Ip: arr[i] };
         this.IpBlackWhiteLists.push(temp);
       }
+      this.totalItems = this.IpBlackWhiteLists.length;
     },
     //删除黑白名单
     deleteRowBW(index, row) {
       this.IpBlackWhiteLists.splice(index, 1);
+      // this.totalItems = this.IpBlackWhiteLists.length;
     },
     addbwSURE() {
       this.dialogModelAddBw = false;
@@ -1257,11 +1181,15 @@ export default {
     createSY() {
       let str = "";
       for (let i in this.tags4) {
-        str += this.tags4[i].beginPort + "-" + this.tags4[i].endPort + "\r\n";
+        if (this.tags4[i].beginPort !== "" && this.tags4[i].endPort !== "") {
+          str += this.tags4[i].beginPort + "-" + this.tags4[i].endPort;
+        }
       }
       let str2 = "";
       for (let j in this.tags5) {
-        str2 += this.tags5[j].beginPort + "-" + this.tags5[j].endPort + "\r\n";
+        if (this.tags5[j].beginPort !== "" && this.tags5[j].endPort !== "") {
+          str2 += this.tags5[j].beginPort + "-" + this.tags5[j].endPort;
+        }
       }
       let temp = {
         tcpPort: str,
@@ -1270,8 +1198,8 @@ export default {
         OpenStatus: 1,
         Offset: this.moveNum
       };
+      this.tableDataBegin2 = []; //lxx
       this.tableDataBegin2.push(temp);
-      console.log(this.tableDataBegin2, "水印防护渲染数据");
       this.dialogVisible = false;
     }
   }
@@ -1411,13 +1339,10 @@ a {
         }
       }
       .selectChange1 {
-        // width: 70px;
         height: 30px;
         div {
-          // width: 70px;
           height: 30px;
           input {
-            // width: 70px;
             height: 30px;
             border-radius: 0;
           }

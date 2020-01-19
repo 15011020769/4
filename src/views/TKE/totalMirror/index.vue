@@ -156,8 +156,6 @@ export default {
         repotype: row.repotype
       }
       this.axios.post(ADD_FAVOR, param).then(res => {
-        // console.log(res)
-        // console.log("收藏")
         if (res.code === 0) {
           this.loadShow = true
           this.GetRepositoryList()

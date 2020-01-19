@@ -9,18 +9,18 @@
           <el-button-group class="buttonGroupAll">
             <el-button
               class="buttonGroup"
-              @click="thisTime(1)"
+              @click="choiceTime(1)"
             >{{$t('DDOS.Statistical_forms.Today')}}</el-button>
             <el-button
               class="buttonGroup"
-              @click="thisTime(2)"
+              @click="choiceTime(2)"
             >{{$t('DDOS.Statistical_forms.Nearly_sedays')}}</el-button>
-            <el-button class="buttonGroup" @click="thisTime(3)">近15天</el-button>
-            <el-button class="buttonGroup" @click="thisTime(4)">近30天</el-button>
-            <el-button class="buttonGroup" @click="thisTime(5)">近半年</el-button>
+            <el-button class="buttonGroup" @click="choiceTime(3)">近15天</el-button>
+            <el-button class="buttonGroup" @click="choiceTime(4)">近30天</el-button>
+            <el-button class="buttonGroup" @click="choiceTime(5)">近半年</el-button>
           </el-button-group>
           <el-date-picker
-            v-model="dateChoice1"
+            v-model="dateChoice"
             type="daterange"
             class="newDataTime"
             range-separator="至"
@@ -31,21 +31,30 @@
         <div style="margin-top:12px;">
           <el-select
             class="ddosAttackSelect1"
-            v-model="inputId"
-            @change="changeId"
+            v-model="selectId"
             filterable
             :placeholder="$t('DDOS.AccesstoCon.searchAccess')"
             style="margin-right:10px;"
           >
-            <el-option :label="inputId" :value="inputId"></el-option>
+            <el-option
+              v-for="(item, index) in ResIpList"
+              :label="item.Id"
+              :value="item.Id"
+              :key="index"
+            ></el-option>
           </el-select>
-          <el-select class="ddosAttackSelect1" v-model="timeBtnSelect2">
-            <el-option v-for="item in IpList" :value="item"></el-option>
+          <el-select class="ddosAttackSelect1" v-model="selectIp" placeholder="總覽">
+            <el-option
+              v-for="(item, index) in IpList"
+              :label="item"
+              :value="item"
+              :key="index"
+            ></el-option>
           </el-select>
         </div>
       </div>
       <div class="mainConListAll mainConListTwo">
-        <el-tabs class="tabsCard" v-model="activeName1" type="card" @tab-click="handleClick1">
+        <el-tabs class="tabsCard" v-model="activeName" type="card" @tab-click="handleClick1">
           <el-tab-pane :label="$t('DDOS.Statistical_forms.Overview_broadband')" name="bps">
             <div id="myChart"></div>
           </el-tab-pane>
@@ -128,17 +137,16 @@ export default {
   data() {
     return {
       loading: true,
-      // 日期选择
-      dateChoice1: {}, //选择日期
-      IpList: "",
-      inputId: "", //下拉框ID
-      timeBtnSelect2: "總覽", //ddos时间按钮下面第二个下拉
-      activeName1: "bps", //DDoS攻击防护-二级tab标识
+      dateChoice: [], //选择日期
+      ResIpList: [], //下拉框数据
+      IpList: [], //下拉框IP数据
+      selectId: "", //下拉框ID
+      selectIp: "", //下拉框IP
+      activeName: "bps", //DDoS攻击防护-二级tab标识
       tableDataOfDescribeDDoSNetEvList: [], //DDoS攻击事件列表
       currentPage: 1, //当前页
       pageSize: 10, //每页长度
       totalItems: 0, //总条数
-      resourceId: "", // 根据Id查询
       metricName: "bps", //指标，取值[bps(攻击流量带宽，pps(攻击包速率))]
       // 日期区间：默认获取当前时间和前一天时间
       metricNames: ["traffic", "pkg", "num"], //指标，取值[traffic（攻击协议流量, 单位KB）, pkg（攻击协议报文数）, num（攻击事件次数）]
@@ -146,12 +154,13 @@ export default {
       startTime: this.getDateString(
         new Date(new Date().getTime() - 24 * 60 * 60 * 1000)
       ),
+      timey: [],
       tableDataEnd: [],
       period: 3600 //统计粒度，取值[300(5分鐘)，3600(小时)，86400(天)]
     };
   },
   watch: {
-    dateChoice1: function(value) {
+    dateChoice: function(value) {
       this.period = 86400;
       var num = value[1].getTime() - value[0].getTime(); //计算时间戳的差
       var arr = [];
@@ -169,15 +178,15 @@ export default {
         this.metricName2 = this.metricNames[index];
         this.describeDDoSNetCount();
       }
+    },
+    selectId: function() {
+      this.changeId();
     }
   },
-
   //初始化生命周期
   created() {
-    this.getData();
     this.GetID();
   },
-
   methods: {
     //获取资源的IP列表
     GetID() {
@@ -187,11 +196,8 @@ export default {
       };
       this.axios.post(GET_ID, params).then(res => {
         if (res.Response.Error === undefined) {
-					let IpList = res.Response.Resource;
-          for (let i = 0; i < IpList.length; i++) {
-            this.inputId = IpList[i].Id;
-            this.IpList = IpList[i].IpList;
-          }
+          this.ResIpList = res.Response.Resource;
+          this.selectId = this.ResIpList[0].Id;
 				} else {
 					let ErrTips = {};
 					let ErrOr = Object.assign(ErrorTips, ErrTips);
@@ -206,11 +212,15 @@ export default {
     },
     // DDOS资源Id变化时，重新获取数据
     changeId() {
-      this.resourceId = this.inputId;
-      this.getData();
-    },
-    getData() {
-      this.thisTime(1);
+      for (const i in this.ResIpList) {
+        if (this.ResIpList.hasOwnProperty(i)) {
+          const element = this.ResIpList[i];
+          if(this.selectId == element.Id){
+            this.IpList = element.IpList;
+          }
+        }
+      }
+      this.choiceTime(1);
     },
     // 1.3.获取高防IP专业版资源的DDoS攻击事件列表
     describeDDoSNetEvList() {
@@ -218,7 +228,7 @@ export default {
       let params = {
         Version: "2018-07-09",
         Business: "net",
-        Id: this.inputId,
+        Id: this.selectId,
         StartTime: this.startTime,
         EndTime: this.endTime
         //Limit: '',  //一页条数，填0表示不分页
@@ -246,7 +256,7 @@ export default {
         Version: "2018-07-09",
         // Region: '',
         Business: "net",
-        Id: this.inputId,
+        Id: this.selectId,
         StartTime: this.startTime,
         EndTime: this.endTime,
         MetricName: this.metricName2 //指标，取值[traffic（攻击协议流量, 单位KB）, pkg（攻击协议报文数）, num（攻击事件次数）]
@@ -279,7 +289,7 @@ export default {
         Version: "2018-07-09",
         // Region: '',
         Business: "net",
-        Id: this.inputId,
+        Id: this.selectId,
         MetricName: this.metricName, //指标，取值[bps(攻击流量带宽，pps(攻击包速率))]
         Period: this.period, //统计粒度，取值[300(5分鐘)，3600(小时)，86400(天)]
         StartTime: this.startTime,
@@ -307,7 +317,7 @@ export default {
     // DDOS攻击防护-二级tab切换
     handleClick1(value) {
       this.metricName = value.name;
-      this.thisTime(1);
+      this.choiceTime(1);
     },
     handleSizeChange(val) {
       // console.log(`每页 ${val} 条`);
@@ -335,7 +345,7 @@ export default {
       }
     },
     //获取时间
-    thisTime(thisTime) {
+    choiceTime(thisTime) {
       var ipt1 = document.querySelector(".newDataTime input:nth-child(2)");
       var ipt2 = document.querySelector(".newDataTime input:nth-child(4)");
       const end = new Date();

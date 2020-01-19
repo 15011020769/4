@@ -50,7 +50,7 @@
               <span class="tke-text-link" @click="goColonySub(scope.row.ClusterId)">{{scope.row.ClusterId}}</span>
               <p class="stk-editor-name">
                 <span>{{scope.row.ClusterName}}</span>
-                <i class="el-icon-edit tke-icon" @click="showEditNameDlg()"></i>
+                <i class="el-icon-edit tke-icon" @click="showEditNameDlg(scope.row)"></i>
               </p>
             </template>
           </el-table-column>
@@ -167,7 +167,8 @@ import {
     ALL_CITY,
     ALL_PROJECT,
     COLONY_LIST,
-    COLONY_STATUS
+    COLONY_STATUS,
+    COLONY_DES
 } from "@/constants";
 export default {
   name: "colony",
@@ -267,7 +268,19 @@ export default {
       this.pageSize=val;
       this.getColonyList();
     },
-    
+    // 修改集群名称
+    // setColonyName (row) {
+    //   const param = {
+    //     reponame: row.reponame,
+    //     repotype: row.repotype
+    //   }
+    //   this.axios.post(COLONY_DES, param).then(res => {
+    //     if (res.code === 0) {
+    //       this.loadShow = true
+    //       this.GetRepositoryList()
+    //     }
+    //   })
+    // },
     // 创建集群跳转
     goColonyCreate(){
        this.$router.push({
@@ -287,8 +300,9 @@ export default {
       });
     },
     // 编辑集群弹窗相关
-    showEditNameDlg(){
+    showEditNameDlg(row){
       this.editNameDialogVisible=true;
+      this.setColonyName(row)
     },
 
     // 新建节点跳转
