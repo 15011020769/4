@@ -373,6 +373,7 @@
       </div>
       <!-- 水印防护 -->
       <div class="childContTit">
+        {{tableDataBegin2}}
         <h2>{{$t('DDOS.Proteccon_figura.Watermark_protection')}}</h2>
         <el-table :data="tableDataBegin2" class="tableBorderTop">
           <el-table-column :label="$t('DDOS.Proteccon_figura.TCP_protectionport')" prop="tcpPort">
@@ -664,7 +665,6 @@ export default {
       );
       this.tags = this.policyTemp.PortLimits; //禁用协议
       this.tags1 = this.policyTemp.PacketFilters; //报文
-
       if (this.policyTemp.DropOptions.DIcmpMbpsLimit) {
         this.tags3.push({
           protocol: "ICPM",
@@ -770,20 +770,56 @@ export default {
       } else {
         this.radios11 = "開啟";
       }
-      // let temp = {
-      //   TcpPortList: str,
-      //   UdpPortList: str2,
-      //   RemoveSwitch: this.radios12 == "關閉" ? 0 : 1,
-      //   OpenStatus: 1,
-      //   Offset: this.moveNum
-      // };
-      // console.log(temp);
-      // this.tableDataBegin2 = [];
-      // this.tableDataBegin2.push(temp);
+
+      this.moveNum = this.policyTemp.WaterPrint[0].Offset;
+      if (this.policyTemp.WaterPrint[0].RemoveSwitch == 0) {
+        this.radios12 = "關閉";
+      } else {
+        this.radios12 = "開啟";
+      }
+      // var des = {
+      //   Protocol: "",
+      //   tortType: "",
+      //   beginPort: "",
+      //   endPort: ""
+      // };//转
+      var des = this.policyTemp.WaterPrint[0].TcpPortList;
+      des.map((item, index) => {
+        var result = item.split("-");
+        this.tags4.push({
+          Protocol: "",
+          tortType: "",
+          beginPort: result[0],
+          endPort: result[1]
+        });
+      });
       
-      this.tableDataBegin2 = this.policyTemp.WaterPrint;
-      this.tags4 = this.policyTemp.WaterPrint.TcpPortList;
-      this.tags5 = this.policyTemp.WaterPrint.UdpPortList;
+      var des1 = this.policyTemp.WaterPrint[0].UdpPortList;
+      des1.map((item, index) => {
+        var result = item.split("-");
+        this.tags5.push({
+          Protocol: "",
+          tortType: "",
+          beginPort: result[0],
+          endPort: result[1]
+        });
+      });
+
+      // this.tags5 = this.policyTemp.WaterPrint.UdpPortList;
+      console.log(
+        this.policyTemp.WaterPrint[0].TcpPortList,
+        this.policyTemp.WaterPrint[0].UdpPortList,
+        "数据"
+      );
+
+      this.tableDataBegin2.push({
+        tcpPort: this.policyTemp.WaterPrint[0].TcpPortList[0],
+        udpPort: this.policyTemp.WaterPrint[0].UdpPortList[0],
+        RemoveSwitch: this.radios12,
+        OpenStatus: 1,
+        Offset: this.moveNum
+      }) ;
+      console.log(this.tableDataBegin2);
     }
   },
   methods: {
@@ -843,12 +879,9 @@ export default {
             i
           ].Type;
         }
-        console.log(this.tags3, "获取的数据"); //2
-
         this.tags3.map((item, index) => {
           if (item.protocol == "ICPM") {
             params["DropOptions.0.DIcmpMbpsLimit"] = this.tags3[0].speedLimit;
-            console.log(this.tags3[0].speedLimit);
           }
           if (item.protocol == "OTHER") {
             params["DropOptions.0.DOtherMbpsLimit"] = this.tags3[1].speedLimit;
@@ -884,7 +917,6 @@ export default {
         if (this.radios10 == "開啟") {
           params["DropOptions.0.ConnTimeout"] = this.input10; //连接超时
         }
-
         // PortLimits.N 端口禁用，当没有禁用端口时填空数组
         for (let i in this.tags) {
           params["PortLimits." + i + ".Protocol"] = this.tags[i].Protocol; //协议，取值范围[tcp,udp,icmp,all]
@@ -957,17 +989,8 @@ export default {
         if (bl) {
           params.Name = this.tacticsName;
           this.axios.post(DDOS_POLICY_CREATE, params).then(res => {
-            if (res.Response.Success) {
-              this.$message("添加成功");
-              this.$emit("describeDDoSPolicyADD");
-              // 关闭新增页面
-              this.closeAddPage();
-              return;
-            } else {
-              this.$message("添加失败");
-              // 关闭新增页面
-              this.closeAddPage();
-            }
+            this.$message("添加成功");
+            this.closeAddPage();
           });
         } else {
           params.PolicyId = this.policy.PolicyId;
@@ -978,7 +1001,7 @@ export default {
               this.closeAddPage();
             } else {
               this.$message("修改失败");
-              // 关闭新增页面
+              // 关闭修改页面
               this.closeAddPage();
             }
           });
@@ -991,21 +1014,6 @@ export default {
     delItem(item, list) {
       //去除指定值
       list.splice(list.indexOf(item), 1);
-    },
-    unique(arr) {
-      //去重
-      if (!Array.isArray(arr)) {
-        console.log("type error!");
-        return;
-      }
-      arr = arr.sort();
-      var arrry = [arr[0]];
-      for (var i = 1; i < arr.length; i++) {
-        if (arr[i] !== arr[i - 1]) {
-          arrry.push(arr[i]);
-        }
-      }
-      return arrry;
     },
     // 搜索
     doFilter() {
@@ -1164,7 +1172,7 @@ export default {
     //删除黑白名单
     deleteRowBW(index, row) {
       this.IpBlackWhiteLists.splice(index, 1);
-      this.totalItems = this.IpBlackWhiteLists.length;
+      // this.totalItems = this.IpBlackWhiteLists.length;
     },
     addbwSURE() {
       this.dialogModelAddBw = false;
@@ -1194,8 +1202,10 @@ export default {
         OpenStatus: 1,
         Offset: this.moveNum
       };
+      console.log(this.tags4);
+      console.log(this.tags5);
       console.log(temp);
-      this.tableDataBegin2 = [];
+      this.tableDataBegin2 = [];//lxx
       this.tableDataBegin2.push(temp);
       this.dialogVisible = false;
     }

@@ -519,12 +519,12 @@ export default {
     },
     // 1.2.获取DDoS高级策略
     describeDDoSPolicy() {
+      this.loading = true;
       let params = {
         Version: "2018-07-09",
         Business: "net"
       };
       this.axios.post(GET_SPolicy, params).then(res => { 
-        this.loading = true;
         if (res.Response.Error === undefined) {
           this.tableDataPolicy = res.Response.DDosPolicyList;
 				} else {
@@ -550,7 +550,7 @@ export default {
         Method: method //bind/unbind
       };
       this.axios.post(RESBIND_MODIFY, params).then(res => {
-        // console.log(res.Response)
+        console.log(res.Response)
         if (res.Response.Error === undefined) {
 
 				} else {
@@ -719,7 +719,6 @@ export default {
       });
       this.valueThrou = bindingCon.BoundResources;
       this.valueRightOld = bindingCon.BoundResources;
-      // console.log(this.tableDataBegin);
       this.bindingIndex = bindingIndex;
       this.bindingCon = bindingCon;
       this.dialogVisible1 = true;
