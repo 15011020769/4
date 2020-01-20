@@ -1,7 +1,7 @@
 <template>
   <!-- 防护配置 -->
   <div class="wrap">
-    <HeaderCom title="防护配置" />
+    <HeaderCom title="防護配置" />
     <el-tabs v-model="activeName" @tab-click="handleClick">
       <!-- DDOS攻击防护 -->
       <el-tab-pane
@@ -248,9 +248,9 @@
                       type="text"
                       size="small"
                       style="padding-left:7px"
-                    >绑定资源</el-button>
+                    >綁定資源</el-button>
                     <el-dialog
-                      title="绑定资源"
+                      title="綁定資源"
                       :visible.sync="dialogVisible1"
                       width="43%"
                       :before-close="handleClose1"
@@ -263,8 +263,8 @@
                           :left-default-checked="[]"
                           :right-default-checked="[]"
                           :render-content="renderFunc"
-                          :titles="['选择资源', '已选择']"
-                          :button-texts="['到左边', '到右边']"
+                          :titles="['選擇資源', '已選擇']"
+                          :button-texts="['到左邊', '到右邊']"
                           :format="{
                               noChecked: '${total}',
                               hasChecked: '${checked}/${total}'
@@ -360,7 +360,7 @@ export default {
       flag: false, //定义一个开关
       multipleSelection: [],
       dialogVisible: false,
-      dialogVisible1: false, //绑定资源弹框
+      dialogVisible1: false, //綁定資源弹框
       tableShow: true,
       deleteIndex: "",
       deleteBegin: {},
@@ -618,7 +618,7 @@ export default {
     handleClose() {
       this.dialogVisible = false;
     },
-    //绑定资源弹框关闭按钮
+    //綁定資源弹框关闭按钮
     handleClose1() {
       this.dialogVisible1 = false;
     },
@@ -656,7 +656,7 @@ export default {
       if (this.tableDataPolicy.length >= 5) {
         this.$message({
           showClose: true,
-          message: "最多添加五个策略",
+          message: "最多添加五個策略",
           type: "warning"
         });
         return;
@@ -676,7 +676,7 @@ export default {
       this.policy = this.tableDataPolicy[configIndex];
       this.tableShow = false;
     },
-    //绑定资源按钮
+    //綁定資源按钮
     bindingResource(bindingIndex, bindingCon) {
       this.resData = [];
       // 循环策略列表（找出已被绑定的资源）
@@ -721,10 +721,10 @@ export default {
       this.bindingCon = bindingCon;
       this.dialogVisible1 = true;
     },
-    //绑定资源弹框确定按钮
+    //綁定資源弹框确定按钮
     bindingResourceSure() {
       // 获取‘已选择’的两个数组差集
-      let diff = []; // 1.绑定资源元素集（原数组中不包含的新元素）
+      let diff = []; // 1.綁定資源元素集（原数组中不包含的新元素）
       let tmp = JSON.parse(JSON.stringify(this.valueRightOld)); // 2.解绑资源元素集（原数组中移除的元素）
       // 循环‘已选择’
       this.valueThrou.forEach(element => {
