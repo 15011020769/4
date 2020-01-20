@@ -12,7 +12,12 @@
               filterable
               :placeholder="$t('DDOS.AccesstoCon.searchAccess')"
             >
-              <el-option :label="resourceId" :value="resourceId"></el-option>
+              <el-option
+                v-for="(item, index) in resList"
+                :label="item.Id +'/'+ item.Name"
+                :value="item.Id"
+                :key="index"
+              ></el-option>
             </el-select>
           </div>
           <div class="mainContent">
@@ -215,6 +220,7 @@ export default {
     return {
       loading: true,
       activeName: "first", //tab
+      resList: [], //转化后的资源列表[id/name]
       resourceId: "", //资源ID，输入要查询的ID或名称
       tableDataBegin: [], //table绑定数据，L4规则列表
       dialogVisible: false, //新建规则弹框
@@ -227,7 +233,6 @@ export default {
       totalItems: 0, //总长度
       ruleTotalNum: 60, //配置规则总数
       usedNum: 0, //已用
-
       tableDataEnd: [],
       flag: false,
       multipleTable: [], //table ref属性
@@ -249,7 +254,6 @@ export default {
   },
   created() {
     this.describeResourceList();
-    this.GetID(); //获取资源的IP列表
   },
   //父页面获取L4转发规则的方法
   provide() {
@@ -258,7 +262,65 @@ export default {
     };
   },
   methods: {
+    // 1.1.获取资源列表
+    describeResourceList() {
+      let params = {
+        Version: "2018-07-09",
+        Business: "net"
+      };
+      this.axios.post(RESOURCE_LIST, params).then(res => {
+        // console.log(res)
+        if (res.Response.Error === undefined) {
+					this.resList = [];
+          const resourceList = res.Response.ServicePacks;
+          resourceList.forEach(val => {
+            const obj = {
+              Id: "",
+              Name: ""
+            }
+            val.Record.forEach(item => {
+              if (item.Key == "Id") {
+                obj.Id = item.Value;
+              } else if (item.Key == "Name") {
+                obj.Name = item.Value;
+              }
+            });
+            this.resList.push(obj);
+          });
+          // 判断是从‘资产列表-资源列表’跳转的，还是目录跳转的
+          if(this.$route.query.resourceId === undefined){
+            this.resourceId = this.resList[0].Id;
+          } else {
+            this.resourceId = this.$route.query.resourceId;
+          }
+          this.describleL4Rules();
+				} else {
+					let ErrTips = {};
+					let ErrOr = Object.assign(ErrorTips, ErrTips);
+					this.$message({
+						message: ErrOr[res.Response.Error.Code],
+						type: "error",
+						showClose: true,
+						duration: 0
+					});
+				}
+      });
+    },
+    // 1.2.获取L4转发规则
+    describleL4Rules() {
+      let params = {
+        Version: "2018-07-09",
+        Business: "net",
+        Id: this.resourceId
+      };
+      this.axios.post(L4_RULES, params).then(res => {
+        this.tableDataBegin = res.Response.Rules;
+        this.totalItems = res.Response.Total;
+        this.usedNum = res.Response.Total;
+        this.loading = false;
+      });
    
+    },
     //点击批量删除
     partDel(){
       if(this.partD2.length==0){
@@ -312,45 +374,6 @@ export default {
       });
     }
     },
-    // 1.1.获取资源列表
-    describeResourceList() {
-      let params = {
-        Version: "2018-07-09",
-        Business: "net"
-      };
-      this.axios.post(RESOURCE_LIST, params).then(res => {
-        // console.log(res)
-      });
-    },
-    // 1.2.获取L4转发规则
-    describleL4Rules() {
-      let params = {
-        Version: "2018-07-09",
-        Business: "net",
-        Id: this.resourceId
-      };
-      this.axios.post(L4_RULES, params).then(res => {
-        this.tableDataBegin = res.Response.Rules;
-        this.totalItems = res.Response.Total;
-        this.usedNum = res.Response.Total;
-        this.loading = false;
-      });
-      
-    },
-    //获取资源的IP列表
-    GetID() {
-      let params = {
-        Version: "2018-07-09",
-        Business: "net"
-      };
-      this.axios.post(GET_ID, params).then(res => {
-        let IpList = res.Response.Resource;
-        for (let i = 0; i < IpList.length; i++) {
-          this.resourceId = IpList[i].Id;
-          this.describleL4Rules();
-        }
-      });
-    },
     // 跳转新购页面
     newBuy() {
       let routeUrl = this.$router.resolve({
@@ -360,7 +383,9 @@ export default {
     },
 
     //请输入要查询的ID或名称
-    resourceIdChange() {},
+    resourceIdChange() {
+      this.describleL4Rules();
+    },
     handleClick() {},
     //分页开始
     handleSizeChange(val) {

@@ -1,4 +1,5 @@
 <template>
+<!-- 资产列表 -->
   <div id="ipConfigFourth" class="wrap">
     <div class="allContent">
       <div class="ReportTit newClear">
@@ -52,30 +53,39 @@
               </el-table-column>
               <el-table-column prop="Record" :label="$t('DDOS.AssetList.Forwarding')">
                 <template slot-scope="scope">
-                  <span v-for="(item,index) in scope.row.Record" :key="index">
-                    <a v-if="item.Key=='ReturnHour'" @click="toAccest(scope.row)">{{item.Value}}</a>
-                  </span>
+                  <div v-for="(item,index) in scope.row.Record" :key="index">
+                    <span v-if="item.Key=='L4RulesTotal'">
+                      {{item.Value}}
+                      <a @click="toAccest(scope.row.Record)">{{$t('DDOS.AssetList.AssetListSet')}}</a>
+                    </span>
+                  </div>
                 </template>
               </el-table-column>
               <el-table-column prop="Record" :label="$t('DDOS.AssetList.protectionNum')">
                 <template slot-scope="scope">
                   <span v-for="(item,index) in scope.row.Record" :key="index">
-                    <a v-if="item.Key=='GroupIpList'">{{item.Value.split(';').length}}</a>
+                    <div v-if="item.Key=='IPText'">
+                      <el-tooltip class="item" effect="dark" :content="item.Value.join(';')" placement="top">
+                        <a>{{item.Value.length}}</a>
+                      </el-tooltip>
+                    </div>
+                    
                   </span>
                 </template>
               </el-table-column>
+              <!-- 初始区域（接口未对字段说明，部分值无法解析直接输出） -->
               <el-table-column prop="origin" :label="$t('DDOS.AssetList.initialRegio')">
                 <template slot-scope="scope">
                   <span v-for="(item,index) in scope.row.Record" :key="index">
-                    <a v-if="item.Key=='OriginRegion'">{{item.Value}}</a>
+                    <a v-if="item.Key=='OriginRegion'">{{item.Value=='tpe'?$t('DDOS.total.address'):item.Value}}</a>
                   </span>
                 </template>
               </el-table-column>
-              <!-- zhaungtai -->
+              <!-- 状态（接口未对字段说明，部分值无法解析直接输出） -->
               <el-table-column prop="status" :label="$t('DDOS.UnlockOperation.Unlockstate')">
                 <template slot-scope="scope">
                   <span v-for="(item,index) in scope.row.Record" :key="index">
-                    <a v-if="item.Key=='Status'">{{item.Value}}</a>
+                    <a v-if="item.Key=='Status'">{{item.Value=='idle'?$t('DDOS.AssetList.Running'):item.Value}}</a>
                   </span>
                 </template>
               </el-table-column>
@@ -132,10 +142,6 @@
               <el-table-column prop="RuleNameList" :label="$t('DDOS.AssetList.domainName')">
                 <template slot-scope="scope">
                   {{ scope.row.RuleNameList }}
-                  <a
-                    href="#"
-                    @click="toAccest(scope.row)"
-                  >{{$t('DDOS.AssetList.AssetListSet')}}</a>
                 </template>
               </el-table-column>
               <el-table-column prop="nowIp" :label="$t('DDOS.AssetList.currentIp')">
@@ -219,7 +225,8 @@ import {
   Modify_Level,
   RULESETS_CONT,
   SOURCEIPSEGMENT_DESCRIBE,
-  INSTANCENAME_CONT
+  INSTANCENAME_CONT,
+  L4_RULES
 } from "@/constants";
 import resouseListModel from "./model/resouseListModel";
 import upgradeModel from "./model/upgradeModel";
@@ -368,6 +375,31 @@ export default {
                   val.Record.push(obj2Id);
                 }
               });
+              // 3.转发规则个数（接入配置）
+              let params3 = {
+                Version: "2018-07-09",
+                Business: "net",
+                Id: item.Value
+              };
+              this.axios.post(L4_RULES, params3).then(res => {
+                if (res.Response.Error === undefined) {
+                  const obj3 = {
+                    Key: "L4RulesTotal",
+                    Value: res.Response.Total
+                  };
+                  val.Record.push(obj3);
+                  // this.tableDataBegin = res.Response.Rules;
+                } else {
+                  let ErrTips = {};
+                  let ErrOr = Object.assign(ErrorTips, ErrTips);
+                  this.$message({
+                    message: ErrOr[res.Response.Error.Code],
+                    type: "error",
+                    showClose: true,
+                    duration: 0
+                  });
+                }
+              });
             } else if (item.Key == "GroupIpList") {
               // IP格式化175.97.143.121-tpe-bgp-300-1;175.97.142.153-tpe-bgp-100-1 >>> 175.97.142.153(中国台湾BGP)
               let IPText = [];
@@ -454,8 +486,19 @@ export default {
         Id: resourceId
       };
       this.axios.post(SOURCEIPSEGMENT_DESCRIBE, params).then(res => {
-        console.log(res);
-        this.ipSegment = res.Response.Data;
+        // console.log(res);
+        if (res.Response.Error === undefined) {
+					this.ipSegment = res.Response.Data;
+				} else {
+					let ErrTips = {};
+					let ErrOr = Object.assign(ErrorTips, ErrTips);
+					this.$message({
+						message: ErrOr[res.Response.Error.Code],
+						type: "error",
+						showClose: true,
+						duration: 0
+					});
+				}
       });
     },
     // 1.4.资源实例重命名接口
@@ -520,9 +563,21 @@ export default {
       });
     },
     //转发规则个数设置按钮
-    toAccest() {
+    toAccest(record) {
+      let resId = "";
+      for (const i in record) {
+        if (record.hasOwnProperty(i)) {
+          const element = record[i];
+          if(element.Key == "Id"){
+            resId = element.Value;
+          }
+        }
+      }
       this.$router.push({
-        path: "/AccessConfig"
+        path: "/AccessConfig",
+        query:{
+          resourceId: resId
+        }    
       });
     },
     //升级按钮
