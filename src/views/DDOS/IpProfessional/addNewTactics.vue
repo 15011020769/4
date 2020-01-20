@@ -962,9 +962,11 @@ export default {
             params["WaterPrint." + i + ".TcpPortList." + j] = arr[j];
           }
           let arr2 = this.tableDataBegin2[i].udpPort.split(",");
-          if (arr2 == "") {
-            this.$message("UDP防护端口不能为空");
-            return;
+          if (this.radios12 == "開啟") {
+            if (arr2 == "") {
+              this.$message("开启剥离UDP报文水印功能必须配置UDP协议防护端口");
+              return;
+            }
           }
           for (let k in arr) {
             params["WaterPrint." + i + ".UdpPortList." + k] = arr2[k];
@@ -1068,14 +1070,14 @@ export default {
         }
         this.tags3.push(des);
       } else if (type == 4) {
-        if (this.tags4.length == 5) {
-          this.$message("端口段不能超过五条");
+        if (this.tags4.length == 1) {
+          this.$message("端口段不能超过一条");
           return;
         }
         this.tags4.push(des);
       } else if (type == 5) {
-        if (this.tags5.length == 5) {
-          this.$message("端口段不能超过五条");
+        if (this.tags5.length == 1) {
+          this.$message("端口段不能超过一条");
           return;
         }
         this.tags5.push(des);
