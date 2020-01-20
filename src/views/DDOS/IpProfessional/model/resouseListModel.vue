@@ -1,6 +1,7 @@
 <template>
   <div id="IPprofessionalDetail">
     <div>
+      <!-- 资源详情模态框 -->
       <el-dialog
         class="modelDetail"
         :title="resName"
@@ -40,27 +41,22 @@
                   class="basicLabel"
                   v-if="item.Key=='OriginRegion'"
                 >{{$t('DDOS.protectCon.initialREgion')}}</span>
-                <span class="basicIpt" v-if="item.Key=='OriginRegion'">{{item.Value}}</span>
+                <span class="basicIpt" v-if="item.Key=='OriginRegion'">{{item.Value=='tpe'?$t('DDOS.total.address'):item.Value}}</span>
               </div>
               <div class="newClear" v-for="(item) in resObj.Record" :key="item.key">
                 <span
                   class="basicLabel"
-                  v-if="item.Key=='OriginRegion'"
+                  v-if="item.Key=='CurrentRegion'"
                 >{{$t('DDOS.protectCon.currentRegion')}}</span>
-                <span class="basicIpt" v-if="item.Key=='OriginRegion'">{{item.Value}}</span>
+                <span class="basicIpt" v-if="item.Key=='CurrentRegion'">{{item.Value=='tpe'?$t('DDOS.total.address'):item.Value}}</span>
               </div>
               <div class="newClear" v-for="(item) in resObj.Record" :key="item.key">
                 <span
                   class="basicLabel"
                   v-if="item.Key=='Status'"
                 >{{$t('DDOS.protectCon.currentstates')}}</span>
-                <span class="basicIpt" v-if="item.Key=='Status'">{{item.Value}}</span>
+                <span class="basicIpt" v-if="item.Key=='Status'">{{item.Value=='idle'?$t('DDOS.AssetList.Running'):item.Value}}</span>
               </div>
-              <!-- 标签 -->
-              <!-- <div class="newClear">
-                <span class="basicLabel">{{$t('DDOS.protectCon.label')}}</span>
-                <span class="basicIpt">无<i class="el-icon-edit" @click="addTags"></i></span>
-              </div>-->
             </div>
             <div class="editBtn" v-if="thisEditShow">
               <el-button class="editSure" @click="editSure">{{$t('DDOS.AccesstoCon.ImSure')}}</el-button>
@@ -82,7 +78,7 @@
                   class="basicLabel"
                   v-if="item.Key=='DDoSAI'"
                 >{{$t('DDOS.choose.ElasticProtection')}}</span>
-                <span class="basicIpt" v-if="item.Key=='DDoSAI'">{{item.Value}}</span>
+                <span class="basicIpt" v-if="item.Key=='DDoSAI'">{{item.Value=='off'?$t('DDOS.choose.doNotOpen'):item.Value}}</span>
               </div>
               <div class="newClear" v-for="(item) in resObj.Record" :key="item.key">
                 <span class="basicLabel" v-if="item.Key=='CCMax'">{{$t('DDOS.choose.CCMinimum')}}</span>
@@ -91,9 +87,9 @@
               <div class="newClear" v-for="(item) in resObj.Record" :key="item.key">
                 <span
                   class="basicLabel"
-                  v-if="item.Key=='GroupIpList'"
+                  v-if="item.Key=='IPText'"
                 >{{$t('DDOS.protectCon.IpResour')}}</span>
-                <span class="basicIpt" v-if="item.Key=='GroupIpList'">{{item.Value}}</span>
+                <span class="basicIpt" v-if="item.Key=='IPText'">{{item.Value.join(';')}}</span>
               </div>
               <div class="newClear" v-for="(item) in resObj.Record" :key="item.key">
                 <span class="basicLabel" v-if="item.Key=='Expire'">到期时间</span>
@@ -150,7 +146,6 @@
 </template>
 <script>
 import {
-  RESOURCE_LIST,
   RULESETS_CONT,
   INSTANCENAME_CONT
 } from "@/constants";
@@ -181,7 +176,6 @@ export default {
   methods: {
     init(scopeRow) {
       this.resObj = JSON.parse(JSON.stringify(scopeRow));
-    
       //循环获取name
       console.log(this.resObj)
       this.resObj.Record.forEach(item => {
