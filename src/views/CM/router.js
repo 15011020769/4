@@ -14,6 +14,15 @@ export default new Router({
     redirect: '/CVM'
   },
   {
+    path: '/TEST', // 测试
+    name: 'TEST',
+    component: () =>
+      import( /* webpackChunkName: "CVM" */ './Test/index.vue'),
+    meta: {
+      keepAlive: true
+    }
+  },
+  {
     path: '/CVM', // 雲服务器
     name: 'CVM',
     component: () =>
