@@ -76,6 +76,19 @@ export const CLUSTERS_DESCRIBE = 'tke2/DescribeClusters'
 // 获取集群的基本信息
 export const CLUSTERS_SECURITY = 'tke2/DescribeClusterSecurity'
 
+// 集群关联的伸缩组列表
+export const CLUSTERS_GROUPS = 'tke2/DescribeClusterAsGroups'
+
+// 伸缩组全局配置
+export const CLUSTERS_GROUPSOPTION = 'tke2/DescribeClusterAsGroupOption'
+
+// 弹性伸缩组-伸缩组列表信息
+export const AUTOSCALING_GROUPS = 'as2/DescribeAutoScalingGroups'
+
+
+
+
+
 // export const CLUSTERS_INSTANCES = 'tke2/DescribeCcnInstances'
 
 // export const CLUSTERS_REQUEST = 'tke2/ForwardRequest'
