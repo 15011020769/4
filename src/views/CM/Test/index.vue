@@ -1,6 +1,7 @@
 <template>
   <div>
-    <TimeDropDown :TimeArr='TimeArr' :Datecontrol='true' :Graincontrol='true' v-on:switchData="GetDat" />
+    <TimeDropDown :TimeArr='TimeArr' :Datecontrol='true' :Graincontrol='true' :Difference="'D'"
+      v-on:switchData="GetDat" />
   </div>
 </template>
 <script>
@@ -58,7 +59,31 @@
                 label: "1天"
               }
             ]
-          }
+          },
+          {
+            name: '今天',
+            Time: 'Today',
+            TimeGranularity: [{
+                value: "1099999",
+                label: "777777秒"
+              },
+              {
+                value: "60",
+                label: "1分鐘"
+              },
+              {
+                value: "300",
+                label: "5分鐘"
+              }
+            ]
+          },
+          {
+            name: '昨天',
+            Time: 'Yesterday',
+          }, {
+            name: '近30天',
+            Time: 'Nearly_30_days',
+          },
         ]
       }
     },

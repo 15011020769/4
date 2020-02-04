@@ -61,6 +61,10 @@
       Graincontrol: {
         required: true,
         type: Boolean
+      },
+      Difference: {
+        required: true,
+        type: String
       }
     },
     data() {
@@ -93,8 +97,10 @@
       //初始化数据
       initial() {
         this.TimeValue = this.TimeArr[0].Time
-        this.TimeGranularity = this.TimeArr[0].TimeGranularity
-        this.grainValue = this.TimeArr[0].TimeGranularity[0].value
+        if (this.TimeArr[0].TimeGranularity) {
+          this.TimeGranularity = this.TimeArr[0].TimeGranularity
+          this.grainValue = this.TimeArr[0].TimeGranularity[0].value
+        }
         if (this.TimeValue)[
           this.AcquisitionTime()
         ]
@@ -104,8 +110,10 @@
         this.datetime = false;
         this.datetim = true;
         this.TimeValue = item.Time
-        this.TimeGranularity = item.TimeGranularity
-        this.grainValue = item.TimeGranularity[0].value
+        if (item.TimeGranularity) {
+          this.TimeGranularity = item.TimeGranularity
+          this.grainValue = item.TimeGranularity[0].value
+        }
         this.AcquisitionTime()
       },
       //切换粒度
@@ -114,29 +122,24 @@
       },
       //根据字段获取响应时间
       AcquisitionTime() {
-        const CurrentTime = moment(new Date()).format("YYYY-MM-DD HH:mm:ss"); //获取当前时间
-        const TimeStamp = new Date(CurrentTime).getTime(); //当前时间戳
         if (this.TimeValue === 'realTime') {
-          const StartTimeStamp = TimeStamp - 3600000 //1小时前时间戳
-          const BeforeTime = moment(StartTimeStamp).format(
-            "YYYY-MM-DD HH:mm:ss"
-          ); //获取1小时前的时间
-          this.Start_End.StartTIme = BeforeTime;
-          this.Start_End.EndTIme = CurrentTime;
+          this.Start_End.EndTIme = moment(new Date()).format("YYYY-MM-DD HH:mm:ss"); //获取当前时间
+          this.Start_End.StartTIme = moment(new Date()).subtract(1, 'hours').format("YYYY-MM-DD HH:mm:ss");;
         } else if (this.TimeValue === 'Nearly_24_hours') {
-          const StartTimeStamp = TimeStamp - 86400000 //24小时前时间戳
-          const BeforeTime = moment(StartTimeStamp).format(
-            "YYYY-MM-DD HH:mm:ss"
-          ); //获取1小时前的时间
-          this.Start_End.StartTIme = BeforeTime;
-          this.Start_End.EndTIme = CurrentTime;
+          this.Start_End.EndTIme = moment(new Date()).format("YYYY-MM-DD HH:mm:ss"); //获取当前时间
+          this.Start_End.StartTIme = moment(new Date()).subtract(1, 'days').format("YYYY-MM-DD HH:mm:ss");;
         } else if (this.TimeValue === 'Nearly_7_days') {
-          const StartTimeStamp = TimeStamp - 604800000 //24小时前时间戳
-          const BeforeTime = moment(StartTimeStamp).format(
-            "YYYY-MM-DD HH:mm:ss"
-          ); //获取1小时前的时间
-          this.Start_End.StartTIme = BeforeTime;
-          this.Start_End.EndTIme = CurrentTime;
+          this.Start_End.EndTIme = moment(new Date()).format("YYYY-MM-DD HH:mm:ss"); //获取当前时间
+          this.Start_End.StartTIme = moment(new Date()).subtract(6, 'days').format("YYYY-MM-DD HH:mm:ss");;
+        } else if (this.TimeValue === 'Today') {
+          this.Start_End.EndTIme = moment(new Date()).format("YYYY-MM-DD HH:mm:ss"); //获取当前时间
+          this.Start_End.StartTIme = moment(new Date()).startOf('day').format("YYYY-MM-DD HH:mm:ss");;
+        } else if (this.TimeValue === 'Yesterday') {
+          this.Start_End.StartTIme = moment().subtract(1, 'days').startOf('day').format("YYYY-MM-DD HH:mm:ss");
+          this.Start_End.EndTIme = moment().subtract(1, 'days').endOf('day').format("YYYY-MM-DD HH:mm:ss");
+        } else if (this.TimeValue === 'Nearly_30_days') {
+          this.Start_End.EndTIme = moment(new Date()).format("YYYY-MM-DD HH:mm:ss"); //获取当前时间
+          this.Start_End.StartTIme = moment(new Date()).subtract(29, 'days').format("YYYY-MM-DD HH:mm:ss");;
         }
         this.$emit("switchData", [this.grainValue, this.Start_End]);
       },
@@ -145,24 +148,28 @@
         this.TimeValue = '' //按钮样式去掉
         this.timevalueStart = moment(this.timevalueStart).format("YYYY-MM-DD HH:mm:ss")
         this.timevalueEnd = moment(this.timevalueEnd).format("YYYY-MM-DD HH:mm:ss")
-        const startTime = new Date(this.timevalueStart).getTime() / 1000;
-        const endTime = new Date(this.timevalueEnd).getTime() / 1000;
+        const startTime = moment(this.timevalueStart);
+        const endTime = moment(this.timevalueEnd);
         let Basis = ''
-        if (endTime - startTime <= 3600) {
+        if (endTime.diff(startTime, 'h') <= 1 && this.Difference == 'H') {
           Basis = 'realTime'
-        } else if (endTime -
-          startTime <= 3600 * 24) {
+        } else if (endTime.diff(startTime, 'd') <= 1 && this.Difference == 'H') {
           Basis = 'Nearly_24_hours'
-        } else if (endTime -
-          startTime <= 3600 * 24 * 7) {
+        } else if (endTime.diff(startTime, 'd') <= 1 && this.Difference == 'D') {
+          Basis = 'Today'
+        } else if (endTime.diff(startTime, 'd') <= 6) {
           Basis = 'Nearly_7_days'
+        } else if (endTime.diff(startTime, 'd') <= 29) {
+          Basis = 'Nearly_30_days'
         }
         this.TimeArr.forEach(item => {
           if (item.Time === Basis) {
-            this.TimeGranularity = item.TimeGranularity
+            if (item.TimeGranularity) {
+              this.TimeGranularity = item.TimeGranularity
+              this.grainValue = item.TimeGranularity[0].value
+            }
           }
         });
-        this.grainValue = this.TimeGranularity[0].value
         this.visible = false;
         this.datetime = true;
         this.datetim = false;
@@ -175,10 +182,7 @@
         this.datetime = false;
         this.datetim = true;
         if (this.timevalueStart === null) {
-          const CurrentTime = moment(new Date()).format("YYYY-MM-DD HH:mm:ss"); //获取当前时间
-          const TimeStamp = new Date(CurrentTime).getTime(); //当前时间戳
-          const StartTimeStamp = TimeStamp - 3600000 //1小时前时间戳
-          this.timevalueStart = moment(new Date(StartTimeStamp)).format("YYYY-MM-DD HH:mm:ss")
+          this.timevalueStart = moment(new Date()).subtract(1, 'hours').format("YYYY-MM-DD HH:mm:ss")
           this.timevalueEnd = moment(new Date()).format("YYYY-MM-DD HH:mm:ss")
         }
         this.visible = true;
