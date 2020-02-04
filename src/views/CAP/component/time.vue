@@ -8,24 +8,25 @@
             <el-button
               size="small"
               @click="TimeChoice(1)"
-              :type="classvalue == 1 ? 'primary' : ''"
+              :type="classvalue2 == 1 ? 'primary' : ''"
             >今天</el-button>
             <el-button
               size="small"
               @click="TimeChoice(-1)"
-              :type="classvalue == -1 ? 'primary' : ''"
+              :type="classvalue2 == -1 ? 'primary' : ''"
             >昨天</el-button>
             <el-button
               size="small"
               @click="TimeChoice(1*24*7)"
-              :type="classvalue == 1*24*7 ? 'primary' : ''"
+              :type="classvalue2 == 1*24*7 ? 'primary' : ''"
             >近7天</el-button>
             <el-button
               size="small"
               @click="TimeChoice(1*24*30)"
-              :type="classvalue == 1*24*30 ? 'primary' : ''"
+              :type="classvalue2 == 1*24*30 ? 'primary' : ''"
             >近30天</el-button>
-            <el-popover placement="bottom" width="400" trigger="manual" v-model="visible">
+            <el-popover placement="top-start" width="400" trigger="manual" v-model="visible">
+            <!-- <el-popover placement="bottom" width="400" trigger="manual" v-model="visible"> -->
               <p class="p-dis">
                 <span>從</span>
                 <el-date-picker
@@ -101,8 +102,9 @@ export default {
       Start_End: {
         StartTIme: "",
         EndTIme: ""
-      }
-      // classvalue: 1
+      },
+      classvalue2: 1,
+      value3:'',
     };
   },
   props: {
@@ -116,6 +118,14 @@ export default {
     //   default: true,
     // }
   },
+  watch:{
+    classvalue:{
+      handler(val){
+          this.value3=val;
+      },
+      deep:true
+    }
+  },
   created() {
     // this.TimeChoice(1);
   },
@@ -123,9 +133,7 @@ export default {
     //点击时间按钮
     TimeChoice(time) {
       // debugger
-      // this.classvalue = time;
-      this.$emit("setTimeClassvalue", time);
-      this.$emit("setTimeClassvalues", time);
+      this.classvalue2 = time;
       this.Initialization();
       this.value = "300";
       let options = [
@@ -139,17 +147,17 @@ export default {
         }
       ];
       // console.log(moment())
-      if (time === 1) {
+      if (time === 1) {//今天
         const KTime = moment().startOf('d').format("YYYY-MM-DD HH:mm:ss");
         const ETime = moment().format("YYYY-MM-DD HH:mm:ss");
         this.Start_End.StartTIme = KTime;
         this.Start_End.EndTIme = ETime;
-      } else if(time === -1) {
+      } else if(time === -1) {//昨天
         const KTime = moment().subtract(1,'d').startOf('d').format("YYYY-MM-DD HH:mm:ss");
         const ETime = moment().subtract(1,'d').endOf('d').format("YYYY-MM-DD HH:mm:ss");
         this.Start_End.StartTIme = KTime;
         this.Start_End.EndTIme = ETime;
-      } else if (time === 1 * 24 * 7) {
+      } else if (time === 1 * 24 * 7) {//近7天
         options = [
           ...options,
           {
@@ -159,7 +167,7 @@ export default {
         ];
         this.Start_End.StartTIme = moment().subtract(6,'d').startOf('d').format("YYYY-MM-DD HH:mm:ss");;
         this.Start_End.EndTIme = moment().format("YYYY-MM-DD HH:mm:ss");
-      } else if (time === 1 * 24 * 30) {
+      } else if (time === 1 * 24 * 30) {//近30天
         options = [
           ...options,
           {
@@ -171,15 +179,17 @@ export default {
         this.Start_End.EndTIme = moment().format("YYYY-MM-DD HH:mm:ss");
       }
       this.options = options
-      console.log(this.Start_End)
-      this.$emit("switchData", [this.value, this.Start_End, this.classvalue]);
+      this.$emit("setTimeClassvalues",[this.Start_End,this.value3,time]);
+      this.$emit("setTimeClassvalue",[this.Start_End,this.value3]);
     },
-    switchData() {
-      this.$emit("switchData", [this.value, this.Start_End, this.classvalue]);
-    },
+    // switchData() {
+    //   // this.$emit("switchData", [this.value, this.Start_End, this.classvalue]);
+    //   this.$emit("setTimeClassvalue", [this.value, this.Start_End, this.classvalue]);
+    // },
     // 确定按钮
     Sure() {
       this.visible = false;
+      this.classvalue2='';
       this.getdate();
       this.TimeAfter();
     },
@@ -196,6 +206,8 @@ export default {
     // 选择时间
     SelectionTime() {
       this.visible = true;
+      this.Start_End.StartTIme='';
+      this.Start_End.EndTIme='';
     },
     // 时间重新选择---确定
     ReSelection() {
@@ -210,45 +222,52 @@ export default {
     },
     // 确定之后
     TimeAfter() {
-      const qdate = moment(this.datetimeval[0]);
-      const hdate = moment(this.datetimeval[1]);
-      this.value = "300";
-      this.classvalue = "";
-      if (hdate.diff(qdate, 'd') < 6) {
-        this.options = [
-          {
-            value: "300",
-            label: "5分鐘"
-          },
-          {
-            value: "3600",
-            label: "1小時"
-          }
-        ];
-      } else {
-        this.options = [
-          {
-            value: "300",
-            label: "5分鐘"
-          },
-          {
-            value: "3600",
-            label: "1小時"
-          },
-          {
-            value: "86400",
-            label: "一天"
-          }
-        ];
+      // console.log(this.datetimeval)
+      if(this.datetimeval){
+        const qdate = moment(this.datetimeval[0]);
+        const hdate = moment(this.datetimeval[1]);
+        this.value = "300";
+        // this.classvalue = "";
+        if (hdate.diff(qdate, 'd') < 6) {
+          this.options = [
+            {
+              value: "300",
+              label: "5分鐘"
+            },
+            {
+              value: "3600",
+              label: "1小時"
+            }
+          ];
+        } else {
+          this.options = [
+            {
+              value: "300",
+              label: "5分鐘"
+            },
+            {
+              value: "3600",
+              label: "1小時"
+            },
+            {
+              value: "86400",
+              label: "一天"
+            }
+          ];
+        }
+        this.Start_End.StartTIme = moment(this.datetimeval[0]).format(
+          "YYYY-MM-DD HH:mm:ss"
+        );
+        this.Start_End.EndTIme = moment(this.datetimeval[1]).format(
+          "YYYY-MM-DD HH:mm:ss"
+        );
+        this.$emit("setTimeClassvalues",[this.Start_End,this.value3]);
+        this.$emit("setTimeClassvalue",[this.Start_End,this.value3]);
+        // this.$emit("switchData", [this.value, this.Start_End, this.classvalue]);
+        // this.$emit("setTimeClassvalue", [this.value, this.Start_End, this.classvalue]);
+
       }
-      this.Start_End.StartTIme = moment(this.datetimeval[0]).format(
-        "YYYY-MM-DD HH:mm:ss"
-      );
-      this.Start_End.EndTIme = moment(this.datetimeval[1]).format(
-        "YYYY-MM-DD HH:mm:ss"
-      );
-      this.$emit("switchData", [this.value, this.Start_End, this.classvalue]);
-    }
+    },
   }
 };
 </script>
