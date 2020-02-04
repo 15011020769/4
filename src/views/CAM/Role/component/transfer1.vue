@@ -8,6 +8,7 @@
           v-model="strategyValue"
           style="width:100%;margin-top:10px;"
           @keyup.enter.native="tableloadmore"
+          clearable
         >
           <i slot="suffix" class="el-input__icon el-icon-search" @click="tableloadmore"></i>
         </el-input>
