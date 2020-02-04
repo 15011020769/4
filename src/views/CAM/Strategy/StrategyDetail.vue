@@ -216,7 +216,8 @@ import {
   LIST_ENPOLICY,
   DETACH_POLICY,
   GET_POLICY,
-  ATTACH_GROUP
+  ATTACH_GROUP,
+  UPDATE_POLICY,
 } from "@/constants";
 import transfer from "./component/transfer";
 import { ErrorTips } from "@/components/ErrorTips";
@@ -286,6 +287,7 @@ export default {
     this.axios.post(GET_POLICY, params).then(res => {
       if (res.Response.Error === undefined) {
         this.policy = res.Response;
+        this.inputValue = res.Response.PresetAlias
         this.infoLoad = false;
       } else {
         let ErrTips = {
@@ -571,6 +573,17 @@ export default {
       this.input_show = false;
     },
     input_sure() {
+       let params = {
+        Version: "2019-01-16",
+        PolicyId: this.policyID,
+        alias: this.input_Value,
+      };
+      this.axios.post(UPDATE_POLICY, params)
+          .then(res => {
+            if (res) {
+              console.log(res)
+            }
+          })
       this.inputValue = this.input_Value;
       this.input_show = false;
     },

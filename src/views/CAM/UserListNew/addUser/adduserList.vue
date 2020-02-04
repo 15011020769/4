@@ -313,7 +313,7 @@ export default {
     },
     //邮箱验证
     emailInp() {
-      var reg = /^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/;
+      var reg = /^[A-Za-z0-9_\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/;
       if (this.ruleForm.Email != "") {
         if (!reg.test(this.ruleForm.Email)) {
           this.emailReg = true;

@@ -30,6 +30,7 @@ export const DETACH_POLICY = 'cam2/DetachGroupPolicy'
 export const LIST_ENPOLICY = 'cam2/ListEntitiesForPolicy'
 export const DELETE_POLICY = 'cam2/DeletePolicy'
 export const GET_POLICY = 'cam2/GetPolicy'
+export const UPDATE_POLICY = 'cam2/UpdatePolicy'
 
 //角色
 export const GET_ROLE = 'cam2/GetRole'

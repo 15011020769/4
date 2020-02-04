@@ -22,6 +22,7 @@
             <span>{{$t('CAM.userList.listTitle')}}</span>
             <div style="margin-top:10px;">
               <el-input
+                clearable
                 v-model="searchGroupValue"
                 :placeholder="$t('CAM.userList.search')"
                 size="small"

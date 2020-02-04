@@ -7,6 +7,7 @@
           @keyup.enter.native="toQuery" />
         <i class="el-icon-search ifier" @click="toQuery"></i>-->
         <el-input
+          clearable
           size="mini"
           custom-class="dialogStyle"
           v-model="search"
