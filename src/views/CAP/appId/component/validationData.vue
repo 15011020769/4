@@ -55,10 +55,6 @@
               :classvalue="classvalue"
               @setTimeClassvalue="setTimeClassvalue"
             ></Time>
-            <!-- <Time
-              :classvalue="classvalue"
-              @setTimeClassvalue="setTimeClassvalue"
-            ></Time> -->
           </div>
         </div>
         <div class="echarts">
@@ -79,10 +75,6 @@
               :classvalue="classvalue"
               @setTimeClassvalue="setTimeClassvalue"
             ></Time>
-            <!-- <Time
-              :classvalue="classvalue"
-              @setTimeClassvalue="setTimeClassvalue"
-            ></Time> -->
           </div>
         </div>
         <div class="echarts">
@@ -103,10 +95,6 @@
               :classvalue="classvalue"
               @setTimeClassvalue="setTimeClassvalue"
             ></Time>
-            <!-- <Time
-              :classvalue="classvalue"
-              @setTimeClassvalue="setTimeClassvalue"
-            ></Time> -->
           </div>
         </div>
         <div class="echarts">
@@ -127,10 +115,6 @@
               :classvalue="classvalue"
               @setTimeClassvalue="setTimeClassvalue"
             ></Time>
-            <!-- <Time
-              :classvalue="classvalue"
-              @setTimeClassvalue="setTimeClassvalue"
-            ></Time> -->
           </div>
         </div>
         <div class="echarts">
@@ -159,6 +143,7 @@ export default {
       dataSum: [],
       End: this.getDateString(new Date()),
       Start: this.getDateString(new Date(new Date()), 1),
+      Start2: this.getDateString2(new Date()),
       classvalues: 1,
       classvalue: 1,
       Id: this.$route.query.Id,
@@ -307,6 +292,7 @@ export default {
       this.axios.post(USER_HANDLE, params).then(res => {
         if (res.Response.Error === undefined) {
           let data = res.Response.Data;
+          // console.log(data)
           if (data[eachrtsData.type] && data[eachrtsData.type].length > 0) {
             eachrtsData.data = data;
           } else {
@@ -357,7 +343,7 @@ export default {
         Version: "2019-07-22",
         Type: 2, //拦截情况type = 2
         CaptchaAppId: this.Id,
-        Start: this.Start
+        Start: this.Start2
       };
       this.getEachrtsDatas(params, this.echartsData1);
     },
@@ -366,7 +352,7 @@ export default {
         Version: "2019-07-22",
         Type: 1, //验证码加载耗时type = 1
         CaptchaAppId: this.Id,
-        Start: this.Start
+        Start: this.Start2
       };
       this.getEachrtsDatas(params, this.echartsData2);
     },
@@ -375,7 +361,7 @@ export default {
         Version: "2019-07-22",
         Type: 3, // 一周通过平均尝试次数 type = 3
         CaptchaAppId: this.Id,
-        Start: this.Start
+        Start: this.Start2
       };
       this.getEachrtsDatas(params, this.echartsData3);
     },
@@ -384,7 +370,7 @@ export default {
         Version: "2019-07-22",
         Type: 4, //尝试次数分布 type = 4
         CaptchaAppId: this.Id,
-        Start: this.Start
+        Start: this.Start2
       };
       this.getEachrtsDatas(params, this.echartsData4);
     },
@@ -405,6 +391,18 @@ export default {
       }
       return o.y + "" + o.M + "" + o.d + "" + o.h + "" + o.m;
     },
+    getDateString2(date) {
+      // debugger
+      let o = {
+        y: date.getFullYear(),
+        M: date.getMonth() + 1,
+        d: date.getDate(),
+      };
+      for (const i in o) {
+        o[i] = (o[i] + "").length == 1 ? "0" + o[i] : o[i];
+      }
+      return o.y + "" + o.M + "" + o.d ;
+    },
 
     setTimeClassvalue(value) {
       // this.classvalue = value;
@@ -422,7 +420,7 @@ export default {
     },
     //验证通过与拦截
     setTimeClassvalues(value) {
-      console.log(value)
+      // console.log(value)
       this.Start =moment(value[0].StartTIme).format("YYYYMMDDHHMM");
       this.End =moment(value[0].EndTIme).format("YYYYMMDDHHMM");
       if(this.Start!=='Invalid date'&&this.End!=='Invalid date'){
@@ -457,7 +455,7 @@ export default {
         if(this.chooseDate!='1'){
            res.Response.Data.forEach(item => {
             data0.push(item.Cnt);
-            xData.push(item.Date.substr(8, 2) + ":" + item.Date.substr(10, 2));
+             xData.push(item.Date.substr(4, 2) + "-" + item.Date.substr(6, 2)+' '+item.Date.substr(8, 2) + ":" + item.Date.substr(10, 2));
           });
         }else if(this.chooseDate=='1'){
           res.Response.Data.forEach(item => {
@@ -466,6 +464,7 @@ export default {
           });
         }
         this.echartsData0.xAxis = xData;
+      
         this.echartsData0.series.push({
           name: "请求量",
           type: "line",
@@ -507,6 +506,7 @@ export default {
                 type: "line",
                 data: data3
               });
+              // console.log(this.echartsData0.series)
               this.echartsData0.show = true;
             });
           });

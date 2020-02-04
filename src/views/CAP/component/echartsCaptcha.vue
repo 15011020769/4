@@ -6,9 +6,13 @@
 export default {
   name: "echarts",
   data() {
-    return {};
+    return {
+      xAxle:this.xAxis,
+      data2:this.data,
+      series2:this.series,
+    };
   },
-  mounted() {
+  mounted() {  
     this.drawLine();
   },
   props: {
@@ -29,6 +33,32 @@ export default {
     series: {
       type: Array
     }
+  },
+  created(){
+    // console.log(this.xAxis)
+  },
+  watch:{
+    xAxis:{
+      handler(val){
+        this.xAxle=val;
+        this.drawLine()
+      },
+      deep:true
+    },
+    data:{
+      handler(val){
+        this.data2=val;
+        this.drawLine()
+      },
+      deep:true
+    },
+    series:{
+      handler(val){
+        this.series2=val;
+        this.drawLine()
+      },
+      deep:true
+    },
   },
   methods: {
     drawLine() {
@@ -52,12 +82,13 @@ export default {
         xAxis: {
           type: "category",
           boundaryGap: false,
-          data: this.xAxis
+          data: this.xAxle
+          // data: this.xAxis
         },
         yAxis: {
           type: "value"
         },
-        series: this.series
+        series: this.series2
       });
     }
   }
