@@ -39,10 +39,10 @@
               <span class="spns">{{$t('CAM.userList.userEmail')}}</span>
               <span>{{userData.Email ? userData.Email : '-'}}</span>
             </p>
-            <p>
+            <!-- <p>
               <span class="spns">{{$t('CAM.userList.userWeChat')}}</span>
               <span>-</span>
-            </p>
+            </p> -->
           </div>
         </div>
       </div>
