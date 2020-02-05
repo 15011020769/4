@@ -119,7 +119,7 @@
                 <el-table-column label="操作">
                   <template slot-scope="scope">
                     <el-button
-                      @click.native.prevent="relieveRolePolicy(scope.row)"
+                      @click.native.prevent="relieveRolePolicy(scope.row, true)"
                       type="text"
                       size="small"
                     >解除</el-button>
@@ -503,6 +503,8 @@ export default {
                 showClose: true,
                 duration: 0
               });
+            } else {
+              this.rolePolicies = []
             }
           }
           this.loading = false;
@@ -510,19 +512,29 @@ export default {
         .catch(error => {});
     },
     // 解除角色策略
-    relieveRolePolicy(scope) {
-      this.$confirm("此操作將永久刪除, 是否繼續?", "提示", {
-        confirmButtonText: "確定",
-        cancelButtonText: "取消",
-        type: "warning"
-      }).then(() => {
-        let paramsDel = {
-          Version: "2019-01-16",
-          PolicyId: scope.PolicyId,
-          DetachRoleId: this.roleId
-        };
-        this.relievePolicy(paramsDel);
-      });
+    relieveRolePolicy(scope, flag = false) {
+      if (flag) {
+        this.$confirm("此操作將永久解除策略, 是否繼續?", "提示", {
+          confirmButtonText: "確定",
+          cancelButtonText: "取消",
+          type: "warning"
+        }).then(() => {
+          let paramsDel = {
+            Version: "2019-01-16",
+            PolicyId: scope.PolicyId,
+            DetachRoleId: this.roleId
+          };
+          this.relievePolicy(paramsDel);
+        });
+        return
+      }
+      
+      let paramsDel = {
+        Version: "2019-01-16",
+        PolicyId: scope.PolicyId,
+        DetachRoleId: this.roleId
+      };
+      this.relievePolicy(paramsDel);
     },
     // 解除角色绑定的策略
     relievePolicy(paramsRelieve) {
@@ -577,12 +589,18 @@ export default {
           showClose: true
         });
       } else {
+        this.$confirm("此操作將永久解除策略, 是否繼續?", "提示", {
+        confirmButtonText: "確定",
+        cancelButtonText: "取消",
+        type: "warning"
+      }).then(() => {
         let arrs = this.roleSelPolicies;
         for (let i = 0; i < arrs.length; i++) {
           let obj = arrs[i];
           this.relieveRolePolicy(obj);
         }
         this.displayPolicies = false;
+      });
       }
     },
     // 修改角色描述信息

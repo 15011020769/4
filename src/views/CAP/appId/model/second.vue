@@ -33,7 +33,7 @@
             <el-pagination
               :page-size="pagesize"
               :pager-count="7"
-              :page-sizes="[10, 20, 30, 40,50]"
+              :page-sizes="[50, 40, 30, 20,10]"
               layout="sizes, prev, pager, next"
               @current-change="handleCurrentChange"
               @size-change="handleSizeChange"

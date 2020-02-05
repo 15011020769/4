@@ -3,23 +3,23 @@
     <div class="accounted">
       <div class="accountedData">
         <p>昨日恶意占比</p>
-        <p>{{dataSum.CheckTicketSum}}</p>
+        <p>{{ dataSum.CheckTicketSum }}</p>
       </div>
       <div class="accountedData">
         <p>昨日请求量</p>
-        <p>{{dataSum.VfySum}}</p>
+        <p>{{ dataSum.VfySum }}</p>
       </div>
       <div class="accountedData">
         <p>昨日验证量</p>
-        <p>{{dataSum.AttackSum}}</p>
+        <p>{{ dataSum.AttackSum }}</p>
       </div>
       <div class="accountedData">
         <p>昨日通过量</p>
-        <p>{{dataSum.GetSum}}</p>
+        <p>{{ dataSum.GetSum }}</p>
       </div>
       <div class="accountedData">
         <p>昨日恶意拦截量</p>
-        <p>{{dataSum.VfySuccSum}}</p>
+        <p>{{ dataSum.VfySuccSum }}</p>
       </div>
       <div class="accountedData" style="border:none">
         <p>昨日票据校验量</p>
@@ -29,7 +29,13 @@
     <div class="accData">
       <div class="charts">
         <div class="chartsTitle">
-          <div class="left">验证通过与拦截 <Time :classvalue="classvalues" @setTimeClassvalues="setTimeClassvalues"></Time></div>
+          <div class="left">
+            验证通过与拦截
+            <Time
+              :classvalue="classvalues"
+              @setTimeClassvalues="setTimeClassvalues"
+            ></Time>
+          </div>
         </div>
         <div class="echarts">
           <EchartsCaptcha
@@ -41,9 +47,15 @@
           />
         </div>
       </div>
-      <div class="charts">
+      <div class="charts" @mousemove="classvalue = 2">
         <div class="chartsTitle">
-          <div class="left">拦截情况 (%) <Time :classvalue="classvalue" @setTimeClassvalue="setTimeClassvalue"></Time></div>
+          <div class="left">
+            拦截情况 (%)
+            <Time
+              :classvalue="classvalue"
+              @setTimeClassvalue="setTimeClassvalue"
+            ></Time>
+          </div>
         </div>
         <div class="echarts">
           <EchartsCaptcha
@@ -55,9 +67,15 @@
           />
         </div>
       </div>
-       <div class="charts">
+      <div class="charts" @mousemove="classvalue = 3">
         <div class="chartsTitle">
-          <div class="left">验证码加载耗时 (秒) <Time :classvalue="classvalue" @setTimeClassvalue="setTimeClassvalue"></Time></div>
+          <div class="left">
+            验证码加载耗时 (秒)
+            <Time
+              :classvalue="classvalue"
+              @setTimeClassvalue="setTimeClassvalue"
+            ></Time>
+          </div>
         </div>
         <div class="echarts">
           <EchartsCaptcha
@@ -69,9 +87,15 @@
           />
         </div>
       </div>
-      <div class="charts">
+      <div class="charts" @mousemove="classvalue = 4">
         <div class="chartsTitle">
-          <div class="left">验证码加载耗时 (秒) <Time :classvalue="classvalue" @setTimeClassvalue="setTimeClassvalue"></Time></div>
+          <div class="left">
+            一次通过平均尝试次数 (次)
+            <Time
+              :classvalue="classvalue"
+              @setTimeClassvalue="setTimeClassvalue"
+            ></Time>
+          </div>
         </div>
         <div class="echarts">
           <EchartsCaptcha
@@ -83,9 +107,15 @@
           />
         </div>
       </div>
-       <div class="charts">
+      <div class="charts" @mousemove="classvalue = 5">
         <div class="chartsTitle">
-          <div class="left">一次通过尝试次数分布<Time :classvalue="classvalue" @setTimeClassvalue="setTimeClassvalue"></Time></div>
+          <div class="left">
+            一次通过尝试次数分布
+            <Time
+              :classvalue="classvalue"
+              @setTimeClassvalue="setTimeClassvalue"
+            ></Time>
+          </div>
         </div>
         <div class="echarts">
           <EchartsCaptcha
@@ -98,29 +128,28 @@
         </div>
       </div>
     </div>
-    
   </div>
 </template>
 <script>
 import { ErrorTips } from "@/components/ErrorTips";
-import EchartsCaptcha from '../../component/echartsCaptcha'
+import EchartsCaptcha from "../../component/echartsCaptcha";
 import moment from "moment";
 import Time from "../../component/time";
-import { QUERY_REQDATA, CLASSIFY_QUERY , USER_HANDLE} from "@/constants/CAP.js";
+import { QUERY_REQDATA, CLASSIFY_QUERY, USER_HANDLE } from "@/constants/CAP.js";
 export default {
   name: "validationData",
   data() {
     return {
       dataSum: [],
       End: this.getDateString(new Date()),
-      Start: this.getDateString(
-        new Date(new Date()),1
-      ),
+      Start: this.getDateString(new Date(new Date()), 1),
+      Start2: this.getDateString2(new Date()),
       classvalues: 1,
       classvalue: 1,
       Id: this.$route.query.Id,
+      chooseDate:'',
       echartsData0: {
-        id: 'echartsData0',
+        id: "echartsData0",
         show: false,
         data: ["请求量", "验证量", "通过量", "拦截量"],
         xAxis: ["00:00", "00:50", "01:40", "02:30", "04:10", "05:00"],
@@ -148,8 +177,8 @@ export default {
         ]
       },
       echartsData1: {
-        id: 'echartsData1',
-        type: 'OperDataInterceptUnitArray',
+        id: "echartsData1",
+        type: "OperDataInterceptUnitArray",
         show: false,
         data: ["总拦截比例", "因答案错误拦截比例", "因安全策略打击拦截比例"],
         xAxis: ["00:00", "00:50", "01:40", "02:30", "04:10", "05:00"],
@@ -171,9 +200,9 @@ export default {
           }
         ]
       },
-       echartsData2: {
-        id: 'echartsData2',
-        type:'OperDataLoadTimeUnitArray',
+      echartsData2: {
+        id: "echartsData2",
+        type: "OperDataLoadTimeUnitArray",
         show: false,
         data: ["验证码加载耗时"],
         xAxis: ["00:00", "00:50", "01:40", "02:30", "04:10", "05:00"],
@@ -185,9 +214,9 @@ export default {
           }
         ]
       },
-       echartsData3: {
-        id: 'echartsData3',
-        type:'OperDataTryTimesUnitArray',
+      echartsData3: {
+        id: "echartsData3",
+        type: "OperDataTryTimesUnitArray",
         show: false,
         data: ["一次通过平均尝试次数"],
         xAxis: ["00:00", "00:50", "01:40", "02:30", "04:10", "05:00"],
@@ -200,8 +229,8 @@ export default {
         ]
       },
       echartsData4: {
-        id: 'echartsData4',
-        type:'OperDataTryTimesDistributeUnitArray',
+        id: "echartsData4",
+        type: "OperDataTryTimesDistributeUnitArray",
         show: false,
         data: ["一次通过尝试次数分布"],
         xAxis: ["00:00", "00:50", "01:40", "02:30", "04:10", "05:00"],
@@ -212,7 +241,7 @@ export default {
             data: [0, 2, 3, 7, 10, 0]
           }
         ]
-      },
+      }
     };
   },
   components: {
@@ -221,72 +250,7 @@ export default {
   },
   created() {
     this.getAccount();
-    const params = {
-      Version: "2019-07-22",
-      CaptchaAppId: this.Id,
-      Type: 0,
-      Start: this.Start,
-      End: this.End
-    };
-    this.echartsData0.show = false;
-    this.getEachrtsData(params).then(res => {
-      // console.log(res);
-      const data0 = [];
-      const xData = [];
-      this.echartsData0.xAxis = [];
-      this.echartsData0.series = [];
-      res.Response.Data.forEach(item => {
-        data0.push(item.Cnt);
-        xData.push(item.Date.substr(8,2)+':'+item.Date.substr(10,2));
-      });
-      this.echartsData0.xAxis = xData;
-      this.echartsData0.series.push({
-        name: "请求量",
-        type: "line",
-        data: data0
-      });
-      params.Type = 1;
-      this.getEachrtsData(params).then(res => {
-        // console.log(res);
-        const data1 = [];
-        res.Response.Data.forEach(item => {
-          data1.push(item.Cnt);
-        });
-        this.echartsData0.series.push({
-          name: "验证量",
-          type: "line",
-          data: data1
-        });
-        params.Type = 2;
-        this.getEachrtsData(params).then(res => {
-          // console.log(res);
-          const data2 = [];
-          res.Response.Data.forEach(item => {
-            data2.push(item.Cnt);
-          });
-          this.echartsData0.series.push({
-            name: "通过量",
-            type: "line",
-            data: data2
-          });
-          params.Type = 3;
-          this.getEachrtsData(params).then(res => {
-            // console.log(res);
-            const data3 = [];
-            res.Response.Data.forEach(item => {
-              data3.push(item.Cnt);
-            });
-            this.echartsData0.series.push({
-              name: "拦截量",
-              type: "line",
-              data: data3
-            });
-            this.echartsData0.show = true;
-            // console.log(this.echartsData0.show)
-          });
-        });
-      });
-    });
+    this.classifyCaptch();
     this.switchData(this.Start);
   },
   methods: {
@@ -299,14 +263,14 @@ export default {
         End: this.End
       };
       this.axios.post(QUERY_REQDATA, params).then(res => {
-        if(res.Response.Error === undefined){
+        if (res.Response.Error === undefined) {
           this.dataSum = res.Response;
-        }else{
+        } else {
           let ErrTips = {
-             "InternalError":'内部错误',
-             "MissingParameter":'缺少参数错误',
-             "UnauthorizedOperation.ErrAuth":'鉴权失败',
-             "UnauthorizedOperation.Unauthorized":'未开通权限'
+            InternalError: "内部错误",
+            MissingParameter: "缺少参数错误",
+            "UnauthorizedOperation.ErrAuth": "鉴权失败",
+            "UnauthorizedOperation.Unauthorized": "未开通权限"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
@@ -318,94 +282,99 @@ export default {
         }
       });
     },
-    //获取折线图数据
+    //获取验证通过与拦截折线图数据
     getEachrtsData(params) {
       return this.axios.post(CLASSIFY_QUERY, params);
     },
-    //获取折线图数据2
-    getEachrtsDatas(params,eachrtsData) {
-        eachrtsData.show = false
-       this.axios.post(USER_HANDLE,params).then(res => {
-         if(res.Response.Error === undefined){
-            let data = res.Response.Data
-            if(data[eachrtsData.type]&&data[eachrtsData.type].length>0){
-              eachrtsData.data = data
-            }else{
-              eachrtsData.xAxis = [moment().startOf('d').format("MM-DD")]
-              eachrtsData.series = eachrtsData.data.map((item)=>{
-                return {name:item,type:'line',data:[0]}
-              })
-            }
-            this.$nextTick(()=>{
-              eachrtsData.show = true
-              // console.log(eachrtsData)
-            })
-         }else{
-              let ErrTips = {
-                  "InternalError":'内部错误',
-                  "MissingParameter":'缺少参数错误',
-                  "UnauthorizedOperation.ErrAuth":'鉴权失败',
-                  "UnauthorizedOperation.Unauthorized":'未开通权限'
-              };
-              let ErrOr = Object.assign(ErrorTips, ErrTips);
-              this.$message({
-                message: ErrOr[res.Response.Error.Code],
-                type: "error",
-                showClose: true,
-                duration: 0
-              });
-         }
-      })
+    //获取折线图数据2 // 安全验证码用户操作数据查询
+    getEachrtsDatas(params, eachrtsData) {
+      // eachrtsData.show = false;
+      this.axios.post(USER_HANDLE, params).then(res => {
+        if (res.Response.Error === undefined) {
+          let data = res.Response.Data;
+          // console.log(data)
+          if (data[eachrtsData.type] && data[eachrtsData.type].length > 0) {
+            eachrtsData.data = data;
+          } else {
+            eachrtsData.xAxis = [
+              moment()
+                .startOf("d")
+                .format("MM-DD")
+            ];
+            eachrtsData.series = eachrtsData.data.map(item => {
+              return { name: item, type: "line", data: [0] };
+            });
+          }
+          this.$nextTick(() => {
+            eachrtsData.show = true;
+            // console.log(eachrtsData)
+          });
+        } else {
+          let ErrTips = {
+            InternalError: "内部错误",
+            MissingParameter: "缺少参数错误",
+            "UnauthorizedOperation.ErrAuth": "鉴权失败",
+            "UnauthorizedOperation.Unauthorized": "未开通权限"
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
     },
-    switchData(StartDate,EndDate){
-      if(StartDate!=undefined&&StartDate!=""){
-        this.Start = StartDate 
+    switchData(StartDate, EndDate) {
+      if (StartDate != undefined && StartDate != "") {
+        this.Start = StartDate;
       }
-      if(EndDate!=undefined&&EndDate!=""){
-        this.End = EndDate
+      if (EndDate != undefined && EndDate != "") {
+        this.End = EndDate;
       }
-      this.switchData0()
-      this.switchData1()
-      this.switchData2()
-      this.switchData3()
+      this.switchData0();
+      this.switchData1();
+      this.switchData2();
+      this.switchData3();
     },
     switchData0() {
       let params = {
-        Version:'2019-07-22',
-        Type: 2,
-        CaptchaAppId:this.Id,
-        Start:this.Start
+        Version: "2019-07-22",
+        Type: 2, //拦截情况type = 2
+        CaptchaAppId: this.Id,
+        Start: this.Start2
       };
-      this.getEachrtsDatas(params,this.echartsData1)
+      this.getEachrtsDatas(params, this.echartsData1);
     },
     switchData1() {
       let params = {
-        Version:'2019-07-22',
-        Type: 1,
-        CaptchaAppId:this.Id,
-        Start:this.Start
+        Version: "2019-07-22",
+        Type: 1, //验证码加载耗时type = 1
+        CaptchaAppId: this.Id,
+        Start: this.Start2
       };
-      this.getEachrtsDatas(params,this.echartsData2)
+      this.getEachrtsDatas(params, this.echartsData2);
     },
     switchData2() {
       let params = {
-        Version:'2019-07-22',
-        Type: 3,
-        CaptchaAppId:this.Id,
-        Start:this.Start
+        Version: "2019-07-22",
+        Type: 3, // 一周通过平均尝试次数 type = 3
+        CaptchaAppId: this.Id,
+        Start: this.Start2
       };
-      this.getEachrtsDatas(params,this.echartsData3)
+      this.getEachrtsDatas(params, this.echartsData3);
     },
-     switchData3() {
+    switchData3() {
       let params = {
-        Version:'2019-07-22',
-        Type: 4,
-        CaptchaAppId:this.Id,
-        Start:this.Start
+        Version: "2019-07-22",
+        Type: 4, //尝试次数分布 type = 4
+        CaptchaAppId: this.Id,
+        Start: this.Start2
       };
-      this.getEachrtsDatas(params,this.echartsData4)
+      this.getEachrtsDatas(params, this.echartsData4);
     },
-    getDateString(date,flag) {
+    getDateString(date, flag) {
       // debugger
       let o = {
         y: date.getFullYear(),
@@ -417,16 +386,132 @@ export default {
       for (const i in o) {
         o[i] = (o[i] + "").length == 1 ? "0" + o[i] : o[i];
       }
-      if(flag==1){
-        return o.y + "" + o.M + "" + o.d + "0000" ;
+      if (flag == 1) {
+        return o.y + "" + o.M + "" + o.d + "0000";
       }
-      return o.y + "" + o.M + "" + o.d + "" + o.h + "" + o.m ;
+      return o.y + "" + o.M + "" + o.d + "" + o.h + "" + o.m;
     },
-    setTimeClassvalue(value){
-      this.classvalue = value
+    getDateString2(date) {
+      // debugger
+      let o = {
+        y: date.getFullYear(),
+        M: date.getMonth() + 1,
+        d: date.getDate(),
+      };
+      for (const i in o) {
+        o[i] = (o[i] + "").length == 1 ? "0" + o[i] : o[i];
+      }
+      return o.y + "" + o.M + "" + o.d ;
     },
-    setTimeClassvalues(value){
-      this.classvalues = value
+
+    setTimeClassvalue(value) {
+      // this.classvalue = value;
+      this.Start =moment(value[0].StartTIme).format("YYYYMMDD")
+      // console.log(this.Start)
+      if (value[1] == 2) {
+        this.switchData0();
+      } else if (value[1] == 3) {
+        this.switchData1();
+      } else if (value[1] == 4) {
+        this.switchData2();
+      } else if (value[1] == 5) {
+        this.switchData3();
+      }
+    },
+    //验证通过与拦截
+    setTimeClassvalues(value) {
+      // console.log(value)
+      this.Start =moment(value[0].StartTIme).format("YYYYMMDDHHMM");
+      this.End =moment(value[0].EndTIme).format("YYYYMMDDHHMM");
+      if(this.Start!=='Invalid date'&&this.End!=='Invalid date'){
+        if(value[2]+1<3){
+          this.chooseDate='';
+          this.classifyCaptch();
+        }else{
+          this.chooseDate='1';
+          this.classifyCaptch(); 
+        }
+      }
+    },
+
+    classifyCaptch() {
+      //验证通过与拦截分类
+      const params = {
+        Version: "2019-07-22",
+        CaptchaAppId: this.Id,
+        Type: 0,
+        Start: this.Start,
+        End: this.End
+      };
+      // console.log(this.Start, this.End);
+      // this.echartsData0.show = false;
+      this.getEachrtsData(params).then(res => {
+        //安全验证码分类查询
+        // console.log(res);
+        const data0 = [];
+        const xData = [];
+        this.echartsData0.xAxis = [];
+        this.echartsData0.series = [];
+        if(this.chooseDate!='1'){
+           res.Response.Data.forEach(item => {
+            data0.push(item.Cnt);
+             xData.push(item.Date.substr(4, 2) + "-" + item.Date.substr(6, 2)+' '+item.Date.substr(8, 2) + ":" + item.Date.substr(10, 2));
+          });
+        }else if(this.chooseDate=='1'){
+          res.Response.Data.forEach(item => {
+            data0.push(item.Cnt);
+            xData.push(item.Date.substr(4, 2) + "-" + item.Date.substr(6, 2)+' '+item.Date.substr(8, 2) + ":" + item.Date.substr(10, 2));
+          });
+        }
+        this.echartsData0.xAxis = xData;
+      
+        this.echartsData0.series.push({
+          name: "请求量",
+          type: "line",
+          data: data0
+        });
+        params.Type = 1;
+        this.getEachrtsData(params).then(res => {
+          // console.log(res);
+          const data1 = [];
+          res.Response.Data.forEach(item => {
+            data1.push(item.Cnt);
+          });
+          this.echartsData0.series.push({
+            name: "验证量",
+            type: "line",
+            data: data1
+          });
+          params.Type = 2;
+          this.getEachrtsData(params).then(res => {
+            // console.log(res);
+            const data2 = [];
+            res.Response.Data.forEach(item => {
+              data2.push(item.Cnt);
+            });
+            this.echartsData0.series.push({
+              name: "通过量",
+              type: "line",
+              data: data2
+            });
+            params.Type = 3;
+            this.getEachrtsData(params).then(res => {
+              // console.log(res);
+              const data3 = [];
+              res.Response.Data.forEach(item => {
+                data3.push(item.Cnt);
+              });
+              this.echartsData0.series.push({
+                name: "拦截量",
+                type: "line",
+                data: data3
+              });
+              // console.log(this.echartsData0.series)
+              this.echartsData0.show = true;
+            });
+          });
+        });
+      });
     }
   }
 };
