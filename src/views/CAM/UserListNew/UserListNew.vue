@@ -50,7 +50,7 @@
                 <div class="top">
                   <dl>
                     <dd>{{$t('CAM.userGroup.title')}}</dd>
-                    <dt>
+                    <dt style="max-height: 40px; overflow: hidden">
                       <p v-show="scope.row.group.length == 0">-</p>
                       <p v-show="scope.row.group.length != 0">
                         <a v-for="(item,index) in scope.row.group" :key="index" v-show="index < 2">

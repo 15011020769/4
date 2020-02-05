@@ -23,7 +23,17 @@
             :empty-text="$t('CAM.strategy.zwsj')"
           >
             <el-table-column type="selection" width="55" :selectable="checkboxT"></el-table-column>
-            <el-table-column prop="PolicyName" label="策略名" width="180"></el-table-column>
+            <el-table-column prop="PolicyName" label="策略名" width="180">
+              <template  slot-scope="scope">
+                <el-popover v-if="scope.row.status === 1" trigger="hover" placement="top">
+                  <p>当前策略已被关联，如需解除关联请前往详情页操作</p>
+                  <div slot="reference" class="name-wrapper">
+                    <p>{{scope.row.PolicyName}}</p>
+                  </div>
+                </el-popover>
+                <p v-else>{{scope.row.PolicyName}}</p>
+              </template>
+            </el-table-column>
             <el-table-column align="center">
               <template slot="header" slot-scope="scope">
                 <el-dropdown trigger="click" @command="handleCommand" size="mini">

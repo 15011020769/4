@@ -6,7 +6,7 @@
     <div class="details">
       <div class="details-left" v-loading="infoLoad">
         <div class="leftHead" style="display:flex">
-          <p style="flex:1">{{userData.Name}}</p>
+          <p style="flex:1; overflow: hidden; text-overflow: ellipsis">{{userData.Name}}</p>
           <p style="width:30px;">
             <el-link
               @click="editGroup"
