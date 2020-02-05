@@ -82,10 +82,11 @@ export const CLUSTERS_GROUPS = 'tke2/DescribeClusterAsGroups'
 // 伸缩组全局配置
 export const CLUSTERS_GROUPSOPTION = 'tke2/DescribeClusterAsGroupOption'
 
-// 弹性伸缩组-伸缩组列表信息
+// 修改伸缩组全局配置
+export const MODIFY_ATTRIBUTE = 'tke2/ModifyClusterAsGroupOptionAttribute'
+
+// 弹性伸缩组-伸缩组列表信息  --------不可用
 export const AUTOSCALING_GROUPS = 'as2/DescribeAutoScalingGroups'
-
-
 
 
 
