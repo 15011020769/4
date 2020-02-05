@@ -22,6 +22,7 @@
       >{{$t('CAM.userList.listdeleteuser')}}</el-button>
 
       <el-input
+        clearable
         :placeholder="$t('CAM.userList.searchUser')"
         size="small"
         class="inputSearch"

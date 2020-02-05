@@ -200,6 +200,7 @@
                   <div class="container-left">
                     <p>{{$t('CAM.userGroup.selection')}}({{totalNumUser}}{{$t("CAM.strip")}}）</p>
                     <el-input
+                      clearable
                       size="small"
                       v-model="searchUser"
                       style="width:100%"
@@ -500,6 +501,12 @@ export default {
           .post(UPDATA_GROUP, params)
           .then(res => {
             if (res.Response.Error === undefined) {
+              this.$message({
+                showClose: true,
+                message: "編輯成功",
+                type: "success",
+                duration: 0
+              });
               this.init();
             } else {
               let ErrTips = {

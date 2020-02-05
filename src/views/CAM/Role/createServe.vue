@@ -44,7 +44,7 @@
         <div class="shenyue" v-if="active == 3">
           <div class="content_flex">
             <div class="content_left">
-              <p class="juese">{{$t('CAM.Role.roleName')}}*</p>
+              <p class="juese">{{$t('CAM.Role.roleName')}}<span class="reds">*</span></p>
               <p class="juese" style="margin-top:55px">{{$t('CAM.Role.roleDesc')}}</p>
               <p class="juese">{{$t('CAM.Role.roleCarrier')}}</p>
             </div>
@@ -418,6 +418,9 @@ export default {
         .juese {
           margin-bottom: 40px;
           margin-top: 10px;
+        }
+        .reds {
+          color: #F56C6C;
         }
       }
       .content_right {

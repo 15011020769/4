@@ -116,7 +116,12 @@ export default {
             required: true,
             message: "請輸入名稱",
             trigger: "blur"
-          }
+          },
+          {
+            pattern: /^[a-zA-Z0-9+=,.@_-]+$/g,
+            message: '請輸入正確的名稱,支持3-128個數字、大小寫字母、和+=,.@_-'
+          },
+          { min: 3, max: 128, message: '請輸入正確的名稱,支持3-128個數字、大小寫字母、和+=,.@_-', trigger: 'blur' }
         ],
         metadataDocument: [
           {
