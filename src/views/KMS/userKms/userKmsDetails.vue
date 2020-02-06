@@ -633,12 +633,10 @@
       downloadTxt() {
         this.exportRaw(this.projectDetail.KeyId + '.txt', this.downLoadText)
       },
-
       //密钥参数下载
       downloadTxt1() {
         let params = {
           Version: '2019-01-18',
-          // Region: VueCookie.get("regionv2"),
           Region: localStorage.getItem("regionv2"),
           KeyId: this.projectDetail.KeyId,
           WrappingAlgorithm: this.thisAddSuan,
@@ -682,7 +680,6 @@
         this.thisStepTwo = false;
         let params = {
           Version: '2019-01-18',
-          // Region: VueCookie.get("regionv2"),
           Region: localStorage.getItem("regionv2"),
           EncryptedKeyMaterial: sessionStorage.getItem("EncryptedKeyMaterial1"),
           ImportToken: sessionStorage.getItem("ImportToken1"),
@@ -771,7 +768,6 @@
       deletekms() {
         let params = {
           Version: '2019-01-18',
-          // Region: VueCookie.get("regionv2"),
           Region: localStorage.getItem("regionv2"),
           KeyId: this.projectDetail.KeyId,
         };
@@ -779,9 +775,10 @@
           if (res.Response.Error === undefined) {
             this.$message({
               showClose: true,
-              message: res.Response.Error.Message,
-              type: 'error'
+              message: '刪除密鑰材料成功',
+              duration: 0
             });
+            this.dialogModel4 = false;
           } else {
             let ErrTips = {
               "InternalError": '內部錯誤',
@@ -799,7 +796,7 @@
               duration: 0
             });
           }
-          this.dialogModel4 = false;
+
           this.GetList();
         })
       },
@@ -821,7 +818,6 @@
           sessionStorage.setItem("EncryptedKeyMaterial1", this.result)
         }
       },
-
       //导入令牌change
       exportChange(e) {
         this.exportRead = e.target.files[0].name;
