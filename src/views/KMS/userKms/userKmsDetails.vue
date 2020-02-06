@@ -217,7 +217,6 @@
               width="40%" :before-close="handleClose4">
               <div class="dialogModelConT">
                 <div class="TopStepDownload" v-if="thisStepOne">
-
                   <div class="tipBlue">
                     {{$t('KMS.total.tip8')}}
                   </div>
