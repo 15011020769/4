@@ -334,7 +334,7 @@
         dialogModelKms: false, //是否启用密钥弹框
         dialogModelDelete: false, //是否计划删除
         dialogModelOpenDelete: false, //计划删除如果是已启用时候的弹框
-        ishowkms: true, //密钥材料显示
+        ishowkms: false, //密钥材料显示
         EncryptedKeyMaterial1: '', //加密秘钥材料参数
         ImportToken1: '', //导入令牌参数
 
@@ -697,14 +697,10 @@
         }
         this.axios.post(ImportKey, params).then(res => {
           if (res.Response.Error === undefined) {
-            this.$message({
-              showClose: true,
-              message: res.Response.Error.Message,
-              type: 'error'
-            });
-            this.ishowkms = false
-          } else {
             this.ishowkms = true
+            this.GetList()
+          } else {
+            this.ishowkms = false
             this.keyStatus = true
             this.GetList();
             let ErrTips = {
