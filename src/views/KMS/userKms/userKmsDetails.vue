@@ -217,7 +217,6 @@
               width="40%" :before-close="handleClose4">
               <div class="dialogModelConT">
                 <div class="TopStepDownload" v-if="thisStepOne">
-
                   <div class="tipBlue">
                     {{$t('KMS.total.tip8')}}
                   </div>
@@ -334,7 +333,7 @@
         dialogModelKms: false, //是否启用密钥弹框
         dialogModelDelete: false, //是否计划删除
         dialogModelOpenDelete: false, //计划删除如果是已启用时候的弹框
-        ishowkms: true, //密钥材料显示
+        ishowkms: false, //密钥材料显示
         EncryptedKeyMaterial1: '', //加密秘钥材料参数
         ImportToken1: '', //导入令牌参数
 
@@ -633,12 +632,10 @@
       downloadTxt() {
         this.exportRaw(this.projectDetail.KeyId + '.txt', this.downLoadText)
       },
-
       //密钥参数下载
       downloadTxt1() {
         let params = {
           Version: '2019-01-18',
-          // Region: VueCookie.get("regionv2"),
           Region: localStorage.getItem("regionv2"),
           KeyId: this.projectDetail.KeyId,
           WrappingAlgorithm: this.thisAddSuan,
@@ -682,7 +679,6 @@
         this.thisStepTwo = false;
         let params = {
           Version: '2019-01-18',
-          // Region: VueCookie.get("regionv2"),
           Region: localStorage.getItem("regionv2"),
           EncryptedKeyMaterial: sessionStorage.getItem("EncryptedKeyMaterial1"),
           ImportToken: sessionStorage.getItem("ImportToken1"),
@@ -697,14 +693,10 @@
         }
         this.axios.post(ImportKey, params).then(res => {
           if (res.Response.Error === undefined) {
-            this.$message({
-              showClose: true,
-              message: res.Response.Error.Message,
-              type: 'error'
-            });
-            this.ishowkms = false
-          } else {
             this.ishowkms = true
+            this.GetList()
+          } else {
+            this.ishowkms = false
             this.keyStatus = true
             this.GetList();
             let ErrTips = {
@@ -775,7 +767,6 @@
       deletekms() {
         let params = {
           Version: '2019-01-18',
-          // Region: VueCookie.get("regionv2"),
           Region: localStorage.getItem("regionv2"),
           KeyId: this.projectDetail.KeyId,
         };
@@ -783,9 +774,10 @@
           if (res.Response.Error === undefined) {
             this.$message({
               showClose: true,
-              message: res.Response.Error.Message,
-              type: 'error'
+              message: '刪除密鑰材料成功',
+              duration: 0
             });
+            this.dialogModel4 = false;
           } else {
             let ErrTips = {
               "InternalError": '內部錯誤',
@@ -803,7 +795,7 @@
               duration: 0
             });
           }
-          this.dialogModel4 = false;
+
           this.GetList();
         })
       },
@@ -825,7 +817,6 @@
           sessionStorage.setItem("EncryptedKeyMaterial1", this.result)
         }
       },
-
       //导入令牌change
       exportChange(e) {
         this.exportRead = e.target.files[0].name;
