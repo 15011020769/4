@@ -1,6 +1,6 @@
 <template>
   <div class="Cam wrap">
-    <Headcom :title="$t('CAM.userList.userDetil')" :backShow="true" @_back="backoff" />
+    <Headcom :title="groupData.GroupName" :backShow="true" @_back="backoff" />
     <!-- 内容 -->
     <div class="Interface">
       <!-- 用户组详情上半部分页面 start -->
@@ -97,8 +97,10 @@
                   <el-pagination
                     :page-size="pagesize"
                     :pager-count="7"
-                    layout="prev, pager, next"
+                    layout="prev, sizes, pager, next"
+                    :page-sizes="[10, 20, 30, 40, 50]"
                     @current-change="handleCurrentChange"
+                    @size-change="handleSizeChange"
                     :total="TotalCount"
                   ></el-pagination>
                 </div>
@@ -182,8 +184,10 @@
                   <el-pagination
                     :page-size="pagesizes"
                     :pager-count="7"
-                    layout="prev, pager, next"
-                    @current-change="handleCurrentChanges"
+                    layout="prev, sizes, pager, next"
+                    :page-sizes="[10, 20, 30, 40, 50]"
+                    @current-change="handleCurrentChangeUser"
+                    @size-change="handleSizeChangeUser"
                     :total="TotalCounts"
                   ></el-pagination>
                 </div>
@@ -200,11 +204,13 @@
                   <div class="container-left">
                     <p>{{$t('CAM.userGroup.selection')}}({{totalNumUser}}{{$t("CAM.strip")}}）</p>
                     <el-input
+                      clearable
                       size="small"
                       v-model="searchUser"
                       style="width:100%"
                       @keyup.enter.native="toQueryUser"
                       @change="search"
+                      clearable
                     >
                       <i slot="suffix" class="el-input__icon el-icon-search" @click="toQueryUser"></i>
                     </el-input>
@@ -376,13 +382,13 @@ export default {
     _multipleSelection(val) {
       this.multipleSelection = val;
     },
+    handleSizeChange(val) {
+      this.pagesize = val
+      this.selectGroupPolicies();
+    },
     handleCurrentChange(val) {
       this.currpage = val;
       this.selectGroupPolicies();
-    },
-    handleCurrentChanges(val) {
-      this.currpages = val;
-      this.selectGroup();
     },
     // 初始化时，获取用户组信息
     init() {
@@ -500,6 +506,12 @@ export default {
           .post(UPDATA_GROUP, params)
           .then(res => {
             if (res.Response.Error === undefined) {
+              this.$message({
+                showClose: true,
+                message: "編輯成功",
+                type: "success",
+                duration: 0
+              });
               this.init();
             } else {
               let ErrTips = {
@@ -601,6 +613,7 @@ export default {
                   } else {
                     _this.userData = userAllData;
                   }
+                  _this.userAllData = userAllData
                   _this.totalNumUser = this.userData.length;
                 } else {
                   let ErrTips = {
@@ -675,6 +688,7 @@ export default {
       }
     },
     toQueryUser() {
+      console.log(this.userAllData)
       if (this.searchUser == "") {
         this.userData = this.userAllData;
       } else {

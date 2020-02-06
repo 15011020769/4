@@ -8,12 +8,12 @@
         </p>
         <div class="left-main border">
           <div class="seek" style="width:100%;">
-            <el-input v-model="input" :placeholder="$t('CAM.strategy.inputContent')" @change="_inpVal" style="width:100%;"></el-input>
-            <p>
-              <i class="el-icon-search" @click="_serach"></i>
-            </p>
+            <el-input v-model="input" :placeholder="$t('CAM.strategy.inputContent')" clearable @change="_inpVal" style="width:100%;">
+               <i slot="suffix" class="el-input__icon el-icon-search" @click="_serach"></i>
+            </el-input>
           </div>
           <el-table
+            ref="multipleOption"
             :data="tableData"
             style="width: 100%"
             height="420"
@@ -23,7 +23,17 @@
             :empty-text="$t('CAM.strategy.zwsj')"
           >
             <el-table-column type="selection" width="55" :selectable="checkboxT"></el-table-column>
-            <el-table-column prop="PolicyName" label="策略名" width="180"></el-table-column>
+            <el-table-column prop="PolicyName" label="策略名" width="180">
+              <template  slot-scope="scope">
+                <el-popover v-if="scope.row.status === 1" trigger="hover" placement="top">
+                  <p>当前策略已被关联，如需解除关联请前往详情页操作</p>
+                  <div slot="reference" class="name-wrapper">
+                    <p>{{scope.row.PolicyName}}</p>
+                  </div>
+                </el-popover>
+                <p v-else>{{scope.row.PolicyName}}</p>
+              </template>
+            </el-table-column>
             <el-table-column align="center">
               <template slot="header" slot-scope="scope">
                 <el-dropdown trigger="click" @command="handleCommand" size="mini">
@@ -63,6 +73,13 @@
                 <p>{{type[scope.row.Type]}}</p>
               </template>
             </el-table-column>
+            <el-table-column :label="$t('CAM.userGroup.colHandle')" width="50">
+            &lt;!&ndash;
+            <template slot-scope="scope">
+              <el-button @click.native.prevent="deleteRow(scope.$index, multipleSelection)" type="text" size="small">x
+              </el-button>
+            </template>&ndash;&gt;
+          </el-table-column>
           </el-table>
         </div>
       </div>
@@ -78,6 +95,7 @@ export default {
   name: "transfer",
   data() {
     return {
+      commandObj: {},
       loading: true,
       num: 0,
       tableData: [],
@@ -203,6 +221,11 @@ export default {
         }
         this.loading = false;
       });
+    },
+    deleteRow(index, rows) {
+      this.$refs.multipleOption.toggleRowSelection(rows[index], false);
+      rows.splice(index, 1)
+      this.$emit("_multipleSelection", rows);
     },
     listMore() {
       const params = {

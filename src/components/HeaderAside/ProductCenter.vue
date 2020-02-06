@@ -32,8 +32,8 @@
             <ul>
               <li class="li-title">{{$t("COM.safe")}}</li>
               <li class="li-sub" @click="go('../HS/index.html#/overview')">{{$t("COM.yunjing")}}</li>
-              <li @click="testFun">{{$t("COM.captcha")}}</li>
-              <!-- <li class="li-sub" @click="go('../CAP/index.html#/appId')">{{$t("COM.captcha")}}</li> -->
+              <!-- <li @click="testFun">{{$t("COM.captcha")}}</li> -->
+              <li class="li-sub" @click="go('../CAP/index.html#/appId')">{{$t("COM.captcha")}}</li>
               <li @click="testFun">{{$t("COM.waf")}}</li>
               <li class="li-sub" @click="go('../DDOS/index.html#/ProtectOverview')">{{$t("COM.ddos")}}</li>
               <li class="li-sub" @click="go('../DDOS/index.html#/IpProfessional')">{{$t("COM.bgp")}}</li>
@@ -86,293 +86,303 @@
 </template>
 
 <script>
-export default {
-  data() {
-    return {
-      restaurants: [],
-      state: ''
-    }
-  },
-  methods: {
-    querySearch(queryString, cb) {
-      var restaurants = this.restaurants
-      var results = queryString
-        ? restaurants.filter(this.createFilter(queryString))
-        : restaurants
-      // 调用 callback 返回建议列表的数据
-      cb(results)
-    },
-    createFilter(queryString) {
-      return restaurant => {
-        return (
-          restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) > -1
-        )
+  export default {
+    data() {
+      return {
+        restaurants: [],
+        state: ''
       }
     },
-    loadAll() {
-      return [
-        {
-          value: '云服务器 CVM',
-          url: 'cvm'
-        },
-        {
-          value: '云硬盘 CBS',
-          url: 'cbs'
-        },
-        {
-          value: '弹性伸缩 AS',
-          url: 'as'
-        },
-        {
-          value: '容器服务 TKE',
-          url: 'tke'
-        },
-        {
-          value: '对象存储 COS',
-          url: 'cos'
-        },
-        {
-          value: '文件存储 CFS',
-          url: 'cfs'
-        },
-        {
-          value: '日志服务 CLS',
-          url: 'cls'
-        },
-        {
-          value: '云数据库MySQL',
-          url: 'sql'
-        },
-
-        {
-          value: '云数据库Redis',
-          url: 'redis'
-        },
-
-        {
-          value: '云数据库SQLServer',
-          url: 'sqlserver'
-        },
-
-        {
-          value: 'Elasticsearch Service',
-          url: 'es'
-        },
-
-        {
-          value: '分布式数据库TDSQL',
-          url: 'tdsql'
-        },
-
-        {
-          value: '云数据库PostgreSQL',
-          url: 'postsql'
-        },
-
-        {
-          value: '云数据库MongoDB',
-          url: 'mongodb'
-        },
-
-        {
-          value: '数据传输服务DTS',
-          url: 'dts'
-        },
-
-        {
-          value: '负载均衡CLB',
-          url: 'clb'
-        },
-
-        {
-          value: '私有网络VPC',
-          url: 'vpc'
-        },
-
-        {
-          value: 'VPN连接',
-          url: 'vpn'
-        },
-
-        {
-          value: 'NAT网关',
-          url: 'nat'
-        },
-
-        {
-          value: '对等连接PC',
-          url: 'conn'
-        },
-
-        {
-          value: '专线接入DC',
-          url: 'dc'
-        },
-
-        {
-          value: '短信',
-          url: 'mes'
-        },
-
-        {
-          value: 'DDoS防护',
-          url: 'ip'
-        },
-
-        {
-          value: '网站管家',
-          url: 'waf'
-        },
-
-        {
-          value: '云主机(云镜)',
-          url: 'mirror'
-        },
-
-        {
-          value: '静态内容加速SCD',
-          url: 'scd'
-        },
-
-        {
-          value: '动态加速网络DSA',
-          url: 'dsa'
-        },
-
-        {
-          value: '海外加速GCD',
-          url: 'gcd'
-        },
-
-        {
-          value: '全球应用加速GAAP',
-          url: 'gaap'
-        },
-
-        {
-          value: '消息队列CKAFKA',
-          url: 'ckafka'
-        },
-
-        {
-          value: '云点播',
-          url: 'vod'
-        },
-
-        {
-          value: '活动防刷AA',
-          url: 'aa'
+    methods: {
+      querySearch(queryString, cb) {
+        var restaurants = this.restaurants
+        var results = queryString ?
+          restaurants.filter(this.createFilter(queryString)) :
+          restaurants
+        // 调用 callback 返回建议列表的数据
+        cb(results)
+      },
+      createFilter(queryString) {
+        return restaurant => {
+          return (
+            restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) > -1
+          )
         }
-      ]
-    },
-    handleSelect(item) {
-      this.$emit('childByValue', 'ok')
-      this.$router.push({
-        name: item.url
-      })
-    },
-    handleIconClick(ev) {
-      console.log(ev)
-    },
-    go(url) {
-      this.$emit('childByValue', 'ok')
-      window.location.href = url
-    },
+      },
+      loadAll() {
+        return [{
+            value: '云服务器 CVM',
+            url: 'cvm'
+          },
+          {
+            value: '云硬盘 CBS',
+            url: 'cbs'
+          },
+          {
+            value: '弹性伸缩 AS',
+            url: 'as'
+          },
+          {
+            value: '容器服务 TKE',
+            url: 'tke'
+          },
+          {
+            value: '对象存储 COS',
+            url: 'cos'
+          },
+          {
+            value: '文件存储 CFS',
+            url: 'cfs'
+          },
+          {
+            value: '日志服务 CLS',
+            url: 'cls'
+          },
+          {
+            value: '云数据库MySQL',
+            url: 'sql'
+          },
 
-    testFun() {
-      // 内测中，敬请期待！
-      this.$message('內測中，敬請期待！');
+          {
+            value: '云数据库Redis',
+            url: 'redis'
+          },
+
+          {
+            value: '云数据库SQLServer',
+            url: 'sqlserver'
+          },
+
+          {
+            value: 'Elasticsearch Service',
+            url: 'es'
+          },
+
+          {
+            value: '分布式数据库TDSQL',
+            url: 'tdsql'
+          },
+
+          {
+            value: '云数据库PostgreSQL',
+            url: 'postsql'
+          },
+
+          {
+            value: '云数据库MongoDB',
+            url: 'mongodb'
+          },
+
+          {
+            value: '数据传输服务DTS',
+            url: 'dts'
+          },
+
+          {
+            value: '负载均衡CLB',
+            url: 'clb'
+          },
+
+          {
+            value: '私有网络VPC',
+            url: 'vpc'
+          },
+
+          {
+            value: 'VPN连接',
+            url: 'vpn'
+          },
+
+          {
+            value: 'NAT网关',
+            url: 'nat'
+          },
+
+          {
+            value: '对等连接PC',
+            url: 'conn'
+          },
+
+          {
+            value: '专线接入DC',
+            url: 'dc'
+          },
+
+          {
+            value: '短信',
+            url: 'mes'
+          },
+
+          {
+            value: 'DDoS防护',
+            url: 'ip'
+          },
+
+          {
+            value: '网站管家',
+            url: 'waf'
+          },
+
+          {
+            value: '云主机(云镜)',
+            url: 'mirror'
+          },
+
+          {
+            value: '静态内容加速SCD',
+            url: 'scd'
+          },
+
+          {
+            value: '动态加速网络DSA',
+            url: 'dsa'
+          },
+
+          {
+            value: '海外加速GCD',
+            url: 'gcd'
+          },
+
+          {
+            value: '全球应用加速GAAP',
+            url: 'gaap'
+          },
+
+          {
+            value: '消息队列CKAFKA',
+            url: 'ckafka'
+          },
+
+          {
+            value: '云点播',
+            url: 'vod'
+          },
+
+          {
+            value: '活动防刷AA',
+            url: 'aa'
+          }
+        ]
+      },
+      handleSelect(item) {
+        this.$emit('childByValue', 'ok')
+        this.$router.push({
+          name: item.url
+        })
+      },
+      handleIconClick(ev) {
+        console.log(ev)
+      },
+      go(url) {
+        this.$emit('childByValue', 'ok')
+        window.location.href = url
+      },
+
+      testFun() {
+        // 内测中，敬请期待！
+        this.$message('內測中，敬請期待！');
+      }
+    },
+    mounted() {
+      this.restaurants = this.loadAll()
     }
-  },
-  mounted() {
-    this.restaurants = this.loadAll()
   }
-}
+
 </script>
 <style lang="scss" scoped>
-.pro-box {
-  padding: 44px 50px;
-  .my-autocomplete {
-    li {
-      line-height: normal;
-      padding: 7px;
+  .pro-box {
+    padding: 44px 50px;
 
-      .name {
-        text-overflow: ellipsis;
-        overflow: hidden;
-      }
-      .addr {
-        font-size: 12px;
-        color: #b4b4b4;
-      }
+    .my-autocomplete {
+      li {
+        line-height: normal;
+        padding: 7px;
 
-      .highlighted .addr {
-        color: #ddd;
-      }
-    }
-  }
-  .box-top {
-    text-align: left;
-    font-size: 14px;
-    input {
-      box-sizing: border-box;
-      width: 70%;
-      height: 28px;
-      line-height: 28px;
-      border: 1px solid #484848;
-      background-color: #2c303a;
-      outline: 0;
-      color: #fff;
-      padding-left: 10px;
-    }
+        .name {
+          text-overflow: ellipsis;
+          overflow: hidden;
+        }
 
-    .el-icon-search {
-      position: absolute;
-      height: 28px;
-      width: 28px;
-      line-height: 26px;
-      padding-left: 5px;
-      border: 1px solid #484848;
-      border-left: none;
-      top: 44px;
-    }
-  }
-  .box-content {
-    display: flex;
-    margin-top: 40px;
-    .item {
-      width: 180px;
-      float: left;
-      ul {
-        margin-bottom: 20px;
-        li:not(:first-child) {
-          text-align: left;
+        .addr {
           font-size: 12px;
-          line-height: 25px;
-          color: #888;
-          cursor: pointer;
+          color: #b4b4b4;
         }
-        .li-title {
-          font-size: 14px;
-          color: rgb(238, 227, 227);
-          /* font-weight: 500; */
-          padding-bottom: 5px;
-          cursor: default;
-          line-height: 20px;
-          text-align: left;
+
+        .highlighted .addr {
+          color: #ddd;
         }
-        .li-sub {
-          color: #3d91ff !important;
+      }
+    }
+
+    .box-top {
+      text-align: left;
+      font-size: 14px;
+
+      input {
+        box-sizing: border-box;
+        width: 70%;
+        height: 28px;
+        line-height: 28px;
+        border: 1px solid #484848;
+        background-color: #2c303a;
+        outline: 0;
+        color: #fff;
+        padding-left: 10px;
+      }
+
+      .el-icon-search {
+        position: absolute;
+        height: 28px;
+        width: 28px;
+        line-height: 26px;
+        padding-left: 5px;
+        border: 1px solid #484848;
+        border-left: none;
+        top: 44px;
+      }
+    }
+
+    .box-content {
+      display: flex;
+      margin-top: 40px;
+
+      .item {
+        width: 180px;
+        float: left;
+
+        ul {
+          margin-bottom: 20px;
+
+          li:not(:first-child) {
+            text-align: left;
+            font-size: 12px;
+            line-height: 25px;
+            color: #888;
+            cursor: pointer;
+          }
+
+          .li-title {
+            font-size: 14px;
+            color: rgb(238, 227, 227);
+            /* font-weight: 500; */
+            padding-bottom: 5px;
+            cursor: default;
+            line-height: 20px;
+            text-align: left;
+          }
+
+          .li-sub {
+            color: #3d91ff !important;
+          }
         }
       }
     }
   }
-}
 
-.el-autocomplete {
-  display: block;
-  margin: 0 60px;
-  margin-top: 10px;
-}
+  .el-autocomplete {
+    display: block;
+    margin: 0 60px;
+    margin-top: 10px;
+  }
+
 </style>
-

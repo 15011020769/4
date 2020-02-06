@@ -3,7 +3,7 @@
   <div >
     <subTitle title='伸缩组列表'  />
      <!-- 全局配置 -->
-    <div class="tke-card tke-formpanel-wrap">
+    <div class="tke-card tke-formpanel-wrap" v-show="saw">
       <div class="tke-grid ">
         <!-- 左侧 -->
         <div class="grid-left">
@@ -23,11 +23,13 @@
           <div class="tke-form-item_text">{{global.MaxEmptyBulkDelete}}</div>
         </el-form-item>
         <el-form-item label="缩容计算方法" v-show='control'>
-          <div class="tke-form-item_text">	Pod占用资源/可分配资源小于{{global.ScaleDownUtilizationThreshold}}%开始判断缩容条件DaemonSet类型不计入pod占用资源</div>
+          <div class="tke-form-item_text">	Pod占用资源/可分配资源小于{{global.ScaleDownUtilizationThreshold}}%开始判断缩容条件</div>
+          <div class="tke-form-item_text" v-show='global.IgnoreDaemonSetsUtilization'>DaemonSet类型不计入pod占用资源</div>
         </el-form-item>
         <el-form-item label="节点连续空闲" v-show='control'>
           <div class="tke-form-item_text">{{global.ScaleDownUnneededTime}}分钟后被缩容</div>
         </el-form-item>
+
         <el-form-item label="集群扩容" v-show='control'>
           <div class="tke-form-item_text">{{global.ScaleDownDelay}}分钟后开始判断缩容条件</div>
         </el-form-item>
@@ -182,31 +184,34 @@
     <!-- 编辑 -->
     <el-dialog title="设置集群伸缩全局配置" :visible.sync="dialogFormVisible" width="70%">
       <el-card class="box-card">
-        <el-form :model="form" :rules="rules" ref="ruleForm" label-position='left' label-width="250px" >
-            <el-form-item label="自动缩容" :label-width="formLabelWidth" class='bottom'>
-              <el-checkbox v-model="form.checked1" >开启自动缩容</el-checkbox>
+        <el-form :model="global" :rules="rules" ref="ruleForm" label-position='left' label-width="250px" >
+            <el-form-item label="自动缩容" :label-width="formLabelWidth" class='bottom' >
+              <el-checkbox v-model="global.IsScaleDownEnabled" >开启自动缩容</el-checkbox>
               <p>集群中节点空闲资源较多时将触发缩容。详情请查看<a>集群自动扩缩容说明</a></p>
             </el-form-item>
-            <el-form-item label="缩容配置" :label-width="formLabelWidth" class='bottom' v-show='form.checked1'>
-              <el-form-item label="最大并发缩容数" >
-                  <el-input v-model="form.input1" placeholder="请输入内容" class='input-w' prop="input1" size='mini'></el-input>
+            <el-form-item label="缩容配置" :label-width="formLabelWidth" class='bottom' v-show='global.IsScaleDownEnabled'>
+              <el-form-item label="最大并发缩容数" prop="MaxEmptyBulkDelete">
+                  <el-input v-model="global.MaxEmptyBulkDelete" placeholder="请输入内容" class='input-w' prop="input1" size='mini'></el-input>
               </el-form-item>
-              <i class='el-icon-warning-outline'></i>
-              <el-form-item label="Pod占用资源/可分配资源小于" class='bottom'>
-                  <el-input v-model="form.input2" placeholder="请输入内容" class='input-w' prop="input2" size='mini'></el-input><span>%时开始判断缩容条件</span>
+              <!-- <i class='el-icon-warning-outline'></i> -->
+              <el-form-item label="Pod占用资源/可分配资源小于" class='bottom'  prop="ScaleDownUtilizationThreshold" >
+                  <el-input v-model="global.ScaleDownUtilizationThreshold" placeholder="请输入内容" class='input-w'  size='mini'></el-input><span>%时开始判断缩容条件</span>
+                  <p v-if="global.ScaleDownUtilizationThreshold != ''">占比范围为0-80。<span v-if="global.ScaleDownUtilizationThreshold == 0">占比为0时,仅在节点内的所有Pod运行完成后才开始缩容。</span></p>
+              </el-form-item>
+              <el-form-item label=" " class='bottom'>
                   <p>
-                  <el-checkbox v-model="form.checked2">DaemonSet类型不计入pod占用资源</el-checkbox>
+                  <el-checkbox v-model="global.IgnoreDaemonSetsUtilization">DaemonSet类型不计入pod占用资源</el-checkbox>
                   </p>
               </el-form-item>
-              <el-form-item label="节点连续空闲" class='bottom'>
-                  <el-input v-model="form.input3" placeholder="请输入内容" class='input-w' prop="input3" size='mini'></el-input><span>分钟后被缩容</span>
+              <el-form-item label="节点连续空闲" class='bottom' prop="ScaleDownUnneededTime">
+                  <el-input v-model="global.ScaleDownUnneededTime" placeholder="请输入内容" class='input-w' prop="input3" size='mini'></el-input><span>分钟后被缩容</span>
               </el-form-item>
-               <el-form-item label="集群扩容" class='bottom'>
-                  <el-input v-model="form.input4" placeholder="请输入内容" class='input-w' prop="input3" size='mini'></el-input><span>分钟后开始判断缩容条件</span>
+               <el-form-item label="集群扩容" class='bottom' prop="ScaleDownDelay">
+                  <el-input v-model="global.ScaleDownDelay" placeholder="请输入内容" class='input-w' prop="input3" size='mini'></el-input><span>分钟后开始判断缩容条件</span>
               </el-form-item>
                <el-form-item label="不缩容节点" class='bottom'>
-                  <el-checkbox v-model="form.checked3" >含有本地存储Pod的节点</el-checkbox>
-                  <p><el-checkbox v-model="form.checked4" >含有kube-system namespace下非DaemonSet管理的Pod的节点</el-checkbox></p>
+                  <el-checkbox v-model="global.SkipNodesWithLocalStorage" >含有本地存储Pod的节点</el-checkbox>
+                  <p><el-checkbox v-model="global.SkipNodesWithSystemPods" >含有kube-system namespace下非DaemonSet管理的Pod的节点</el-checkbox></p>
               </el-form-item>
             </el-form-item>
             <el-form-item label="扩容算法" :label-width="formLabelWidth">
@@ -232,11 +237,12 @@
 import subTitle from "@/views/TKE/components/subTitle";
 import tkeSearch from "@/views/TKE/components/tkeSearch";
 import Loading from "@/components/public/Loading";
-import { ALL_CITY,CLUSTERS_GROUPS,AUTOSCALING_GROUPS,CLUSTERS_GROUPSOPTION } from "@/constants";
+import { ALL_CITY,CLUSTERS_GROUPS,AUTOSCALING_GROUPS,CLUSTERS_GROUPSOPTION,MODIFY_ATTRIBUTE } from "@/constants";
 export default {
   name: "colonyNodeManageAsg",
   data() {
     return {
+      saw:'',
       clusterId:'',
       searchInput: "", //输入的搜索关键字
       loadShow: false, //加载是否显示
@@ -256,13 +262,15 @@ export default {
       dialogFormVisible:false,
       global:{
         IsScaleDownEnabled:'',
-        MaxEmptyBulkDelete:'',
-        OkTotalUnreadyCount:'',
+        MaxEmptyBulkDelete:'',// 最大并发缩容数
+        // OkTotalUnreadyCount:'',
         ScaleDownDelay:'',
-        ScaleDownUtilizationThreshold:'',
+        ScaleDownUtilizationThreshold:'',// 缩容计算方法
         SkipNodesWithLocalStorage:'',
         SkipNodesWithSystemPods:'',
-        Expander:''
+        Expander:'',
+        IgnoreDaemonSetsUtilization:'',
+        ScaleDownUnneededTime:''
       },
       form: {
         checked1: '',
@@ -277,8 +285,17 @@ export default {
       },
       formLabelWidth: '80px',
       rules: {
-        input1: [
-          { required: true, message: '最大并发缩容数不能为空', trigger: 'blur' }
+        MaxEmptyBulkDelete: [
+          { required: true, message: '最大并发缩容数不能为空', trigger: 'change' }
+        ],
+        ScaleDownUtilizationThreshold: [
+          { required: true, message: '占比不能为空', trigger: 'change' }
+        ],
+         ScaleDownUnneededTime: [
+          { required: true, message: '时间不能为空', trigger: 'change' }
+        ],
+         ScaleDownDelay: [
+          { required: true, message: '时间不能为空', trigger: 'change' }
         ],
       }
     };
@@ -303,7 +320,8 @@ export default {
     // 确定
     setTrue(){
       this.dialogFormVisible = false
-      if(this.form.checked1){
+      this.DetailGroupsList()
+      if(this.global.IsScaleDownEnabled){
         this.control = true
         return
       }
@@ -381,15 +399,27 @@ export default {
           this.control = true
         }
         this.global.MaxEmptyBulkDelete = res.Response.ClusterAsGroupOption.MaxEmptyBulkDelete
-        this.global.OkTotalUnreadyCount = res.Response.ClusterAsGroupOption.OkTotalUnreadyCount
         this.global.ScaleDownDelay = res.Response.ClusterAsGroupOption.ScaleDownDelay
         this.global.ScaleDownUnneededTime = res.Response.ClusterAsGroupOption.ScaleDownUnneededTime
         this.global.ScaleDownUtilizationThreshold = res.Response.ClusterAsGroupOption.ScaleDownUtilizationThreshold
         this.global.SkipNodesWithLocalStorage = res.Response.ClusterAsGroupOption.SkipNodesWithLocalStorage
         this.global.SkipNodesWithSystemPods = res.Response.ClusterAsGroupOption.SkipNodesWithSystemPods
         this.global.Expander = res.Response.ClusterAsGroupOption.Expander
+        this.global.IgnoreDaemonSetsUtilization = res.Response.ClusterAsGroupOption.IgnoreDaemonSetsUtilization
       }
     },
+    // 修改全局配置
+    async DetailGroupsList () { 
+      let param = {
+        ClusterAsGroupOption:this.global,
+        ClusterId: this.$route.query.clusterId,
+        Version: "2018-05-25"
+      }
+      console.log(param)
+      const res = await this.axios.post(MODIFY_ATTRIBUTE, param);
+      console.log(res)
+    },
+
     // 获取伸缩组列表ID
     async GetGroupsListId () { 
       let param = {
@@ -404,15 +434,17 @@ export default {
         // this.loadShow = false;
       }else{
         // console.log(res,222)
-        console.log(res.Response.ClusterAsGroupSet.length)
         if(res.Response.ClusterAsGroupSet.length>0){
+          this.saw=true
           let ids=[];
           res.Response.ClusterAsGroupSet = res.Response.ClusterAsGroupSet.map(item => {
               ids.push(item.AutoScalingGroupId);
               return item;
           })
           // this.GetGroupsList(ids)
-          // console.log(ids)
+        }
+        else{
+          this.saw = false
         }
       }
     },
@@ -477,7 +509,7 @@ export default {
 
 <style lang="scss" scoped>
   .bottom{
-    margin-bottom:20px;
+    margin:15px 0;
   }
   .text {
     font-size: 14px;

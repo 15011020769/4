@@ -6,12 +6,12 @@
     <div class="cam_button">
       <el-row class="cam-lt">
         <el-button type="primary" size="small" @click="NewUser">{{$t('CAM.userGroup.addBtn')}}</el-button>
-        <!-- <el-button
+        <el-button
           size="small"
           type="primary"
           :disabled="btnVisible"
-          @click="addUserGroup()"
-        >{{$t('CAM.userGroup.createBtn')}}</el-button>-->
+          @click="addUsersToGroup"
+        >{{$t('CAM.userGroup.createBtn')}}</el-button>
       </el-row>
       <div class="head-container">
         <el-input
@@ -75,7 +75,7 @@
         @selection-change="handleSelectionChange"
         :empty-text="$t('CAM.strategy.zwsj')"
       >
-        <!-- <el-table-column prop="GroupId" type="selection" width="29"></el-table-column> -->
+        <el-table-column prop="GroupId" type="selection" width="29"></el-table-column>
         <el-table-column
           prop="GroupName"
           :label="$t('CAM.userGroup.colNmae')"
@@ -124,8 +124,10 @@
           <el-pagination
             :page-size="pagesize"
             :pager-count="7"
-            layout="prev, pager, next"
+            layout="prev, sizes, pager, next"
+            :page-sizes="[10, 20, 30, 40, 50]"
             @current-change="handleCurrentChange"
+            @size-change="handleSizeChange"
             :total="TotalCount"
           ></el-pagination>
         </div>
@@ -142,7 +144,7 @@
       <div class="container">
         <div class="container-left">
           <p>{{$t('CAM.userGroup.selection')}}（共{{userData.length}}{{$t('CAM.strip')}}）</p>
-          <el-input size="small" v-model="inpVal" style="width:100%" @change="_inpVal">
+          <el-input size="small" clearable v-model="inpVal" style="width:100%" @change="_inpVal">
             <i slot="suffix" class="el-input__icon el-icon-search" @click="toQueryUser"></i>
           </el-input>
           <el-table
@@ -204,7 +206,7 @@
         </div>
       </div>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button @click="handleClose">取 消</el-button>
         <el-button type="primary" @click="addUser">{{$t('CAM.userList.suerAdd')}}</el-button>
       </div>
     </el-dialog>
@@ -240,6 +242,7 @@ export default {
       userData: [],
       userAllData: [],
       userSelData: [],
+      selectData: [],
       dialogVisible: false,
       tableData: [],
       search: "",
@@ -255,7 +258,8 @@ export default {
       loading: true,
       TotalCount: 0, //总条数
       pagesize: 10, // 分页条数
-      currpage: 1 // 当前页码
+      currpage: 1, // 当前页码
+      isAddUsersToGroup: false, // 是否添加到多个组
     };
   },
   mounted() {
@@ -273,6 +277,10 @@ export default {
     handleCurrentChange(val) {
       this.currpage = val;
       this.init();
+    },
+    handleSizeChange(val) {
+      this.pagesize = val
+      this.init()
     },
     _inpVal() {
       if (this.inpVal == "") {
@@ -316,6 +324,80 @@ export default {
         .catch(error => {
           console.log(error);
         });
+    },
+    async addUsersToGroup() {
+      this.isAddUsersToGroup = true
+      this.loading1 = true
+      this.dialogVisible = true
+      const params = {
+        Version: "2019-01-16"
+      }
+      let userData = []
+      let res = []
+      // 获取用户组管理用户
+      let owneruserData = []
+      res = await this.axios.post(USER_LIST, params)
+      if (res.Response.Error !== undefined) {
+        let ErrTips = {};
+        let ErrOr = Object.assign(ErrorTips, ErrTips);
+        this.$message({
+          message: ErrOr[res.Response.Error.Code],
+          type: "error",
+          showClose: true,
+          duration: 0
+        })
+        return
+      }
+      userData = res.Response.Data
+      this.userAllData = userData
+      this.userAllData1 = userData
+      res = await Promise.all(this.selectData.map(item => {
+        const params = {
+          Version: "2019-01-16",
+          GroupId: item.GroupId,
+        };
+        return this.axios.post(GROUP_USERS, params)
+      }))
+      res.forEach(resp => {
+        if (resp.Response.Error !== undefined) {
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          })
+        } else {
+          owneruserData = [...owneruserData, ...resp.Response.UserInfo]
+          userData.forEach(item => {
+            resp.Response.UserInfo.forEach(user => {
+              if (item.Uid === user.Uid) {
+                item.status = 1
+              } else if (item.status !== 1) {
+                item.status = 0
+              }
+            })
+          })
+        }
+      })
+      if (owneruserData) {
+        for (var i = 0; i < owneruserData.length; i++) {
+          let ownerObj = owneruserData[i];
+          for (var j = 0; j < this.userAllData.length; j++) {
+            let allObj = this.userAllData[j];
+            if (allObj.Uin === ownerObj.Uin) {
+              this.userAllData.splice(j, 1);
+            }
+          }
+        }
+        this.userData = this.userAllData;
+        this.json = this.userData;
+      } else {
+        this.userData = this.userAllData;
+        this.json = this.userData;
+      }
+      this.loading1 = false
     },
     // 打开添加用户页面
     addUserGroup(rowId) {
@@ -472,21 +554,37 @@ export default {
     // 用户组添加用户
     addUser() {
       let GroupId = this.selectedGroupId;
-      this.dialogVisible = false;
       let value = this.userSelData;
       if (value != "") {
-        let params = {
-          Version: "2019-01-16"
-        };
-        for (var i = 0; i < value.length; i++) {
-          params["Info." + i + ".Uid"] = value[i].Uid;
-          params["Info." + i + ".GroupId"] = GroupId;
+        let promises = []
+        if (this.isAddUsersToGroup) {
+          promises = this.selectData.map(item => {
+            const params = {
+              Version: "2019-01-16",
+            }
+            for (var i = 0; i < value.length; i++) {
+              params["Info." + i + ".Uid"] = value[i].Uid;
+              params["Info." + i + ".GroupId"] = item.GroupId;
+            }
+            return this.axios.post(ADD_GROUPTOLIST, params)
+          })
+        } else {
+          let params = {
+            Version: "2019-01-16"
+          };
+          for (var i = 0; i < value.length; i++) {
+            params["Info." + i + ".Uid"] = value[i].Uid;
+            params["Info." + i + ".GroupId"] = GroupId;
+          }
+          promises = [this.axios.post(ADD_GROUPTOLIST, params)]
         }
-        this.axios
-          .post(ADD_GROUPTOLIST, params)
-          .then(data => {
+        
+        let msg
+        Promise.all(promises).then(res => {
+          res.forEach(data => {
             if (data.Response.Error === undefined) {
-              this.$message({
+              if (msg) msg.close()
+              msg = this.$message({
                 message: this.$t("CAM.userGroup.successInfo"),
                 type: "success",
                 duration: 0,
@@ -510,13 +608,9 @@ export default {
                 duration: 0
               });
             }
-
-            // this.$emit("update")
-            // this.cancel()
           })
-          .catch(error => {
-            console.log(error);
-          });
+        })
+      this.handleClose()
       }
     },
     NewUser() {
@@ -534,6 +628,7 @@ export default {
     },
     // 首页表格选择状态处理
     handleSelectionChange(val) {
+      this.selectData = val
       if (val != "") {
         this.btnVisible = false;
         this.selectedGroupId = val[0].GroupId;
@@ -544,6 +639,7 @@ export default {
     },
     // 关闭弹出框
     handleClose() {
+      this.isAddUsersToGroup = false
       this.dialogVisible = false;
     },
     // 自定义弹出框

@@ -411,7 +411,7 @@ export default {
     _userGroup(id) {
       const params = {
         Version: "2019-01-16",
-        "Info.0.Uid": this.$route.query.Uin,
+        "Info.0.Uid": this.$route.query.Uid,
         "Info.0.GroupId": id
       };
       this.axios.post(ADD_USERTOGROUP, params).then(res => {

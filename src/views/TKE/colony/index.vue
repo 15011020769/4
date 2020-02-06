@@ -47,10 +47,10 @@
             label="ID/名称"
             >
             <template slot-scope="scope">
-              <span class="tke-text-link" @click="goColonySub(scope.row.ClusterId)">{{scope.row.ClusterId}}</span>
-              <p class="stk-editor-name">
+              <span :class="[scope.row.ClusterStatus=='Running'? 'tke-text-link':'']" @click="scope.row.ClusterStatus=='Running'?goColonySub(scope.row.ClusterId):''">{{scope.row.ClusterId}}</span>
+              <p class="stk-editor-name" >
                 <span>{{scope.row.ClusterName}}</span>
-                <i class="el-icon-edit tke-icon" @click="showEditNameDlg(scope.row)"></i>
+                <i class="el-icon-edit tke-icon" @click="showEditNameDlg(scope.row)" v-if="scope.row.ClusterStatus=='Running'"></i>
               </p>
             </template>
           </el-table-column>
@@ -292,6 +292,8 @@ export default {
     },
     // 查看详情跳转
     goColonySub(id){
+// scope.row.ClusterType=='MANAGED_CLUSTER'
+
       this.$router.push({
           name: "colonySub",
           query: {
@@ -314,7 +316,6 @@ export default {
           }
       });
     },
-
     // 添加已有节点跳转呢
     goAddExist(id){
       this.$router.push({

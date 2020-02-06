@@ -201,24 +201,14 @@
           </el-tab-pane>
           <!-- tab  角色载体 end -->
           <el-tab-pane :label="$t('CAM.Role.Cancel')" name="third">
-            <p>
-              <el-popover
-                placement="top-start"
-                title
-                width="200"
-                trigger="hover"
-                :content="$t('CAM.Role.cancelNo')"
-              >
-                <div slot="reference" style="display:inline-block">
-                  <el-button
-                    type="text"
-                    size="small"
-                    @click.native.prevent="cancelAllSession"
-                    disabled
-                  >{{$t('CAM.Role.cancelAll')}}</el-button>
-                </div>
-              </el-popover>
-            </p>
+            <div class="explain">
+              <p>{{$t('CAM.Role.cancelSessionTitle')}}</p>
+            </div>
+            <el-button
+              size="small"
+              type="primary"
+              @click="dialogVisibleCancelAllSession = true"
+            >{{$t('CAM.Role.cancelAll')}}</el-button>
           </el-tab-pane>
         </el-tabs>
       </div>
@@ -300,6 +290,18 @@
           >{{$t('CAM.userGroup.delConfirmBtn')}}</el-button>
         </p>
       </el-dialog>
+      <!-- 撤销所有会话弹窗 -->
+      <el-dialog
+        title="撤销所有会话"
+        :visible.sync="dialogVisibleCancelAllSession"        
+        >
+          <p>您是否确定要撤销角色的当前所有会话？撤销会话后，该角色当前所有访问将立即被拒绝。</p>
+          <el-checkbox v-model="cancelAllSessionChecked">我已知晓上述信息并确认要撤销该角色所有会话</el-checkbox>
+        <span slot="footer" class="dialog-footer">
+          <el-button type="primary" :disabled="!cancelAllSessionChecked" @click="cancelAllSession">确认撤销会话</el-button>
+          <el-button @click="dialogVisibleCancelAllSession = false">取消</el-button>
+        </span>
+      </el-dialog>
     </div>
   </div>
 </template>
@@ -313,7 +315,8 @@ import {
   DEACH_ROLE,
   UPDATE_ROLE,
   UPDATE_ASSUME,
-  ATTACH_ROLE
+  ATTACH_ROLE,
+  POLICY_LIST,
 } from "@/constants";
 export default {
   components: {
@@ -327,6 +330,7 @@ export default {
       currpage: 1, // 当前页码
       infoLoad: true,
       loading: true,
+      cancelAllSessionChecked: false,
       title: "",
       activeName: "first",
       currentPage1: 5,
@@ -337,6 +341,7 @@ export default {
       Relieve_dialogVisible: false,
       transfer_value: [],
       dialogVisiblePolicies: false,
+      dialogVisibleCancelAllSession: false,
       transfer_data: [
         {
           value: 1,
@@ -396,6 +401,7 @@ export default {
   },
   methods: {
     _multipleSelection(val) {
+      console.log(val)
       this.multipleSelection = val;
     },
     //返回上一级
@@ -798,70 +804,101 @@ export default {
       this.Relievesure_dialogVisible = false;
     },
     // 撤销所有会话
-    cancelAllSession() {
-      let url = "cam2/UpdatePolicy";
-      let policyDocument = JSON.parse(
-        '{"version":"2.0","statement":[{"action":"name/sts:AssumeRole","effect":"allow","principal":{"service":[]}}]}'
-      );
-      policyDocument.statement[0].principal.service = policyDocument.statement[0].principal.service.concat(
-        this.roleCarrier
-      );
-      let paramsPolicy = {
-        Action: "UpdatePolicy",
-        Version: "2019-01-16",
-        PolicyDocument: policyDocument,
-        RoleId: this.roleId
-      };
-      this.axios
-        .post(url, paramsPolicy)
-        .then(res => {
-          if (res.Response.Error === undefined) {
-            this.getRoleDetail(); //重新加载
-          } else {
-            let ErrTips = {
-              "FailedOperation.PolicyNameInUse":
-                "PolicyName欄位指定的策略名已存在",
-              "InternalError.SystemError": "內部錯誤",
-              "InvalidParameter.ActionError": "策略文件的Action欄位不合法",
-              "InvalidParameter.AttachmentFull":
-                "principal欄位的授權對象關聯策略數已達到上限",
-              "InvalidParameter.ConditionError":
-                "策略文件的condition欄位不合法",
-              "InvalidParameter.DescriptionLengthOverlimit":
-                "Description入參長度不能大於300位元組",
-              "InvalidParameter.EffectError": "策略文件的Effect欄位不合法",
-              "InvalidParameter.NotSupportProduct":
-                "CAM不支持策略文件中所指定的資源類型",
-              "InvalidParameter.ParamError": "非法入參",
-              "InvalidParameter.PolicyDocumentError":
-                "PolicyDocument欄位不合法",
-              "InvalidParameter.PolicyDocumentLengthOverLimit":
-                "PolicyDocument欄位超過長度限制",
-              "InvalidParameter.PolicyIdError": "輸入參數PolicyId不合法",
-              "InvalidParameter.PolicyIdNotExist": "策略ID不存在",
-              "InvalidParameter.PolicyNameError": "PolicyName欄位不合法",
-              "InvalidParameter.PrincipalError":
-                "策略文件的principal欄位不合法",
-              "InvalidParameter.ResourceError": "策略文件的Resource欄位不合法",
-              "InvalidParameter.StatementError":
-                "策略文件的Statement欄位不合法",
-              "InvalidParameter.UserNotExist": "principal欄位的授權對象不存在",
-              "InvalidParameter.VersionError": "策略文件的Version欄位不合法",
-              "ResourceNotFound.GroupNotExist": "用戶組不存在",
-              "ResourceNotFound.NotFound": "資源不存在",
-              "ResourceNotFound.PolicyIdNotFound": "PolicyId指定的資源不存在",
-              "ResourceNotFound.UserNotExist": "用戶不存在"
-            };
-            let ErrOr = Object.assign(ErrorTips, ErrTips);
-            this.$message({
-              message: ErrOr[res.Response.Error.Code],
-              type: "error",
-              showClose: true,
-              duration: 0
-            });
-          }
+    async cancelAllSession() {
+      let res
+      res = await this.axios.post(POLICY_LIST, {
+        Version: '2019-01-16',
+        Keyword: 'RevokeOlderSessionForadf'
+      })
+      if (res.Response.Error !== undefined) {
+        let ErrTips = {
+          'InvalidParameter.GroupIdError': 'GroupId字段不合法',
+          'InvalidParameter.KeywordError': 'Keyword字段不合法',
+          'InvalidParameter.ParamError': '非法入参',
+          'InvalidParameter.ScopeError': 'Scope字段不合法',
+          'InvalidParameter.ServiceTypeError': 'ServiceType字段不合法',
+          'InvalidParameter.UinError': 'Uin字段不合法',
+        }
+        let ErrOr = Object.assign(ErrorTips, ErrTips);
+        this.$message({
+          message: ErrOr[res.Response.Error.Code],
+          type: "error",
+          showClose: true,
+          duration: 0
         })
-        .catch(error => {});
+        return
+      }
+      if (res.Response.List.length) {
+        let url = "cam2/UpdatePolicy";
+        let policyDocument = JSON.parse(
+          '{"version":"2.0","statement":[{"action":"name/sts:AssumeRole","effect":"allow","principal":{"service":[]}}]}'
+        );
+        policyDocument.statement[0].principal.service = policyDocument.statement[0].principal.service.concat(
+          this.roleCarrier
+        );
+        let paramsPolicy = {
+          Version: "2019-01-16",
+          PolicyDocument: policyDocument,
+          PolicyId: res.Response.List[0].PolicyId
+        };
+        this.axios
+          .post(url, paramsPolicy)
+          .then(res => {
+            if (res.Response.Error === undefined) {
+              this.getRoleDetail(); //重新加载
+            } else {
+              let ErrTips = {
+                "FailedOperation.PolicyNameInUse":
+                  "PolicyName欄位指定的策略名已存在",
+                "InternalError.SystemError": "內部錯誤",
+                "InvalidParameter.ActionError": "策略文件的Action欄位不合法",
+                "InvalidParameter.AttachmentFull":
+                  "principal欄位的授權對象關聯策略數已達到上限",
+                "InvalidParameter.ConditionError":
+                  "策略文件的condition欄位不合法",
+                "InvalidParameter.DescriptionLengthOverlimit":
+                  "Description入參長度不能大於300位元組",
+                "InvalidParameter.EffectError": "策略文件的Effect欄位不合法",
+                "InvalidParameter.NotSupportProduct":
+                  "CAM不支持策略文件中所指定的資源類型",
+                "InvalidParameter.ParamError": "非法入參",
+                "InvalidParameter.PolicyDocumentError":
+                  "PolicyDocument欄位不合法",
+                "InvalidParameter.PolicyDocumentLengthOverLimit":
+                  "PolicyDocument欄位超過長度限制",
+                "InvalidParameter.PolicyIdError": "輸入參數PolicyId不合法",
+                "InvalidParameter.PolicyIdNotExist": "策略ID不存在",
+                "InvalidParameter.PolicyNameError": "PolicyName欄位不合法",
+                "InvalidParameter.PrincipalError":
+                  "策略文件的principal欄位不合法",
+                "InvalidParameter.ResourceError": "策略文件的Resource欄位不合法",
+                "InvalidParameter.StatementError":
+                  "策略文件的Statement欄位不合法",
+                "InvalidParameter.UserNotExist": "principal欄位的授權對象不存在",
+                "InvalidParameter.VersionError": "策略文件的Version欄位不合法",
+                "ResourceNotFound.GroupNotExist": "用戶組不存在",
+                "ResourceNotFound.NotFound": "資源不存在",
+                "ResourceNotFound.PolicyIdNotFound": "PolicyId指定的資源不存在",
+                "ResourceNotFound.UserNotExist": "用戶不存在"
+              };
+              let ErrOr = Object.assign(ErrorTips, ErrTips);
+              this.$message({
+                message: ErrOr[res.Response.Error.Code],
+                type: "error",
+                showClose: true,
+                duration: 0
+              });
+            }
+          })
+          .catch(error => {});
+      } else {
+        this.$message({
+          message: '撤銷失敗',
+          type: "error",
+          showClose: true,
+          duration: 0
+        });
+      }
     },
     handleClick() {},
     isRelieve() {},
@@ -1031,4 +1068,20 @@ export default {
     }
   }
 }
+.explain {
+    font-size: 12px;
+    padding: 10px 30px 10px 20px;
+    vertical-align: middle;
+    color: #003b80;
+    border: 1px solid #97c7ff;
+    border-radius: 2px;
+    background: #e5f0ff;
+    position: relative;
+    box-sizing: border-box;
+    margin-bottom: 20px;
+
+    p {
+      line-height: 20px;
+    }
+  }
 </style>
