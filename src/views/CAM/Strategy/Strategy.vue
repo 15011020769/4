@@ -39,7 +39,7 @@
         </div>
         <div class="table">
           <el-table
-            :data="tableData.slice((currpage - 1) * pagesize, currpage * pagesize)"
+            :data="tableData"
             height="450"
             style="width: 100%"
             :row-style="{height:0}"
@@ -78,8 +78,10 @@
             <el-pagination
               :page-size="pagesize"
               :pager-count="7"
-              layout="prev, pager, next"
+              layout="prev, sizes, pager, next"
+              :page-sizes="[10, 20, 30, 40, 50]"
               @current-change="handleCurrentChange"
+              @size-change="handleSizeChange"
               :total="TotalCount"
             >1</el-pagination>
           </div>
@@ -322,6 +324,10 @@ export default {
     // page操作
     handleCurrentChange(val) {
       this.currentPage = val;
+      this.getData();
+    },
+    handleSizeChange(val) {
+      this.pageSize = val
       this.getData();
     }
   }

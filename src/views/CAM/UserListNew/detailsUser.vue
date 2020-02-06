@@ -111,8 +111,10 @@
             <el-pagination
               :page-size="pagesizes"
               :pager-count="7"
-              layout="prev, pager, next"
+              layout="prev, sizes, pager, next"
+              :page-sizes="[10, 20, 30, 40, 50]"
               @current-change="handleCurrentChanges"
+              @size-change="handleSizeChanges"
               :total="TotalCounts"
             ></el-pagination>
           </div>
@@ -177,8 +179,10 @@
             <el-pagination
               :page-size="pagesize"
               :pager-count="7"
-              layout="prev, pager, next"
+              layout="prev, sizes, pager, next"
+              :page-sizes="[10, 20, 30, 40, 50]"
               @current-change="handleCurrentChange"
+              @size-change="handleSizeChange"
               :total="TotalCount"
             ></el-pagination>
           </div>
@@ -523,7 +527,8 @@ export default {
         this.userData = res.Response;
         let ploicyParams = {
           Version: "2019-01-16",
-          TargetUin: this.userData.Uin
+          TargetUin: this.userData.Uin,
+          Rp: this.pagesizes
         };
         this.axios.post(QUERY_POLICY, ploicyParams).then(res => {
           if (res.Response.Error === undefined) {
@@ -564,6 +569,10 @@ export default {
       this.currpages = val;
       this.ploicyData();
     },
+    handleSizeChanges(val) {
+      this.pagesizes = val
+      this.ploicyData();
+    },
     //获取每一个子用户下的用户组
     groupListData() {
       this.loading = true;
@@ -576,7 +585,7 @@ export default {
           this.userData = res.Response;
           let groupParams = {
             Version: "2019-01-16",
-            Uid: this.userData.Uid
+            Uid: this.userData.Uid,
           };
           this.axios.post(RELATE_USER, groupParams).then(res => {
             if (res.Response.Error === undefined) {
@@ -591,7 +600,8 @@ export default {
                   item.policy = [];
                   const params = {
                     Version: "2019-01-16",
-                    TargetGroupId: item.GroupId
+                    TargetGroupId: item.GroupId,
+                    Rp: this.pagesize,
                   };
                   this.axios.post(GROUP_POLICY, params).then(res => {
                     if (res.Response.Error === undefined) {
@@ -652,6 +662,10 @@ export default {
     },
     handleCurrentChange(val) {
       this.currpage = val;
+      this.groupListData();
+    },
+    handleSizeChange(val) {
+      this.pagesize = val
       this.groupListData();
     },
     //确定解除策略

@@ -1,7 +1,7 @@
 
 <template>
     <div class="appidDetials">
-       <Herd title="APPID详情" :backShow="true" @_back="back" />
+       <Herd title="验证码-详情" :backShow="true" @_back="back" />
          <div class="appidTabs">
       <el-tabs v-model="activeName" @tab-click="handleClick">
         <el-tab-pane label="验证数据" name="first">

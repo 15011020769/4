@@ -8,12 +8,12 @@
         </p>
         <div class="left-main border">
           <div class="seek" style="width:100%;">
-            <el-input v-model="input" :placeholder="$t('CAM.strategy.inputContent')" @change="_inpVal" style="width:100%;"></el-input>
-            <p>
-              <i class="el-icon-search" @click="_serach"></i>
-            </p>
+            <el-input v-model="input" :placeholder="$t('CAM.strategy.inputContent')" clearable @change="_inpVal" style="width:100%;">
+               <i slot="suffix" class="el-input__icon el-icon-search" @click="_serach"></i>
+            </el-input>
           </div>
           <el-table
+            ref="multipleOption"
             :data="tableData"
             style="width: 100%"
             height="420"
@@ -73,6 +73,13 @@
                 <p>{{type[scope.row.Type]}}</p>
               </template>
             </el-table-column>
+            <el-table-column :label="$t('CAM.userGroup.colHandle')" width="50">
+            &lt;!&ndash;
+            <template slot-scope="scope">
+              <el-button @click.native.prevent="deleteRow(scope.$index, multipleSelection)" type="text" size="small">x
+              </el-button>
+            </template>&ndash;&gt;
+          </el-table-column>
           </el-table>
         </div>
       </div>
@@ -88,6 +95,7 @@ export default {
   name: "transfer",
   data() {
     return {
+      commandObj: {},
       loading: true,
       num: 0,
       tableData: [],
@@ -213,6 +221,11 @@ export default {
         }
         this.loading = false;
       });
+    },
+    deleteRow(index, rows) {
+      this.$refs.multipleOption.toggleRowSelection(rows[index], false);
+      rows.splice(index, 1)
+      this.$emit("_multipleSelection", rows);
     },
     listMore() {
       const params = {

@@ -20,6 +20,11 @@
         class="addUser"
         @click="deleteMoreUsers"
       >{{$t('CAM.userList.listdeleteuser')}}</el-button>
+      <el-button
+        type="primary"
+        class="addUser"
+        @click="addToGroup"
+      >{{$t('CAM.userList.userAddGroup')}}</el-button>
 
       <el-input
         clearable
@@ -153,9 +158,11 @@
         <div class="Right-style pagstyle" style="height:70px;">
           <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;{{$t("CAM.strip")}}</span>
           <el-pagination
+            @size-change="handleSizeChange"
             :page-size="pagesize"
             :pager-count="7"
-            layout="prev, pager, next"
+            layout="prev, sizes, pager, next"
+            :page-sizes="[10, 20, 30, 40, 50]"
             @current-change="handleCurrentChange"
             :total="TotalCount"
           ></el-pagination>
@@ -190,6 +197,7 @@
               :placeholder="$t('CAM.userList.search')"
               size="small"
               class="inputSearchCl"
+              clearable
               @keyup.enter.native="searchGroup"
             >
               <i slot="suffix" class="el-input__icon el-icon-search" @click="searchGroup"></i>
@@ -335,6 +343,7 @@ export default {
       searchGroupValue: "", //搜索用户组中的数据
       Uin: "", //点击授权获取当前行的uin
       Uid: "",
+      uids: [],
       deletDatas: [],
       dialogDeleteUser: false,
       delNewData: [],
@@ -352,6 +361,23 @@ export default {
     };
   },
   methods: {
+    addToGroup() {
+      console.log(this.selectData)
+      if (this.selectData.length != 0) {
+        this.title = "添加到組";
+        this.authorization = true;
+        this.userGroupShow = true;
+        this.strategyShow = false;
+        this.uids = this.selectData.map(user => user.Uid); //调用初始化用户组数据
+        this.userGroups()
+      } else {
+        this.$message({
+          showClose: true,
+          message: "請選中數據",
+          duration: 0
+        });
+      }
+    },
     rowChange(row) {
       this.loadrowC = true;
       this.tableData.forEach(element => {
@@ -665,7 +691,7 @@ export default {
     //初始化用户组数据
     userGroups() {
       this.userGroup = [];
-      this.selectData = [];
+      // this.selectData = [];
       this.groupLoading = true;
       let params = {
         Version: "2019-01-16"
@@ -692,38 +718,43 @@ export default {
           }
         })
         .then(() => {
-          const params = {
-            Version: "2019-01-16",
-            Uid: this.Uid
-          };
-          this.axios.post(RELATE_USER, params).then(res => {
-            if (res.Response.Error === undefined) {
-              this.userArr.forEach(item => {
-                item.status = 0;
-                res.Response.GroupInfo.forEach(val => {
-                  if (val.GroupId == item.GroupId) {
-                    item.status = 1;
-                  }
-                });
-              });
-            } else {
-              let ErrTips = {
-                "ResourceNotFound.UserNotExist": "用戶不存在"
+          this.$nextTick(() => {
+            Promise.all(this.uids.map(Uid => {
+              const params = {
+                Version: "2019-01-16",
+                Uid,
               };
-              let ErrOr = Object.assign(ErrorTips, ErrTips);
-              this.$message({
-                message: ErrOr[res.Response.Error.Code],
-                type: "error",
-                showClose: true,
-                duration: 0
-              });
-            }
-          });
-          var _this = this;
-          setTimeout(() => {
-            _this.userGroup = _this.userArr;
-            _this.groupLoading = false;
-          }, 1500);
+              return this.axios.post(RELATE_USER, params)
+            })).then(ress => {
+              const groupInfo = this.userArr
+              ress.forEach(res => {
+                if (res.Response.Error === undefined) {
+                  groupInfo.forEach(item => {
+                    res.Response.GroupInfo.forEach(val => {
+                      if (val.GroupId === item.GroupId) {
+                        item.status = 1;
+                      } else if (item.status !== 1){
+                        item.status = 0;
+                      }
+                    });
+                  });
+                } else {
+                  let ErrTips = {
+                    "ResourceNotFound.UserNotExist": "用戶不存在"
+                  };
+                  let ErrOr = Object.assign(ErrorTips, ErrTips);
+                  this.$message({
+                    message: ErrOr[res.Response.Error.Code],
+                    type: "error",
+                    showClose: true,
+                    duration: 0
+                  });
+                }
+              })
+              this.userGroup = groupInfo;
+              this.groupLoading = false;
+            })
+          })
         });
     },
     //搜索用户组数据
@@ -753,7 +784,7 @@ export default {
 
     //点击添加到组事件 更多
     addRroup(uid) {
-      this.Uid = uid;
+      this.uids = [uid];
       this.title = "添加到組";
       this.authorization = true;
       this.userGroupShow = true;

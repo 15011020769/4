@@ -49,18 +49,18 @@
                   <tr>
                     <td>
                       <el-form-item prop="Name">
-                        <el-input v-model="ruleForm.Name"></el-input>
+                        <el-input v-model="ruleForm.Name" :placeholder="$t('CAM.userList.userNamePlaceholder')"></el-input>
                       </el-form-item>
                     </td>
                     <td>
-                      <el-input v-model="ruleForm.Remark"></el-input>
+                      <el-input v-model="ruleForm.Remark" :placeholder="$t('CAM.userList.userRemarkPlaceholder')"></el-input>
                     </td>
                     <td class="reg">
-                      <el-input v-model="ruleForm.PhoneNum" @change="telInp"></el-input>
+                      <el-input v-model="ruleForm.PhoneNum" @change="telInp" :placeholder="$t('CAM.userList.userPhonePlaceholder')"></el-input>
                       <span class="red" v-show="phoneReg">{{$t('CAM.userList.sjhyw')}}</span>
                     </td>
                     <td class="reg">
-                      <el-input v-model="ruleForm.Email" @change="emailInp"></el-input>
+                      <el-input v-model="ruleForm.Email" @change="emailInp" :placeholder="$t('CAM.userList.userEmailPlaceholder')"></el-input>
                       <span class="red" v-show="emailReg">{{$t('CAM.userList.yxsryw')}}</span>
                     </td>
                   </tr>
@@ -91,6 +91,7 @@
                     style="width:200px;"
                     type="password"
                     show-password
+                    maxlength="32"
                     @click="visible = !visible"
                     @change="_pwdInp"
                   ></el-input>
@@ -593,6 +594,11 @@ export default {
                 duration: 0
               });
             } else {
+              this.$nextTick(() => {
+                if (this.btnVal == "完成") {
+                  this.$router.push("/UserListNew");
+                }
+              })
               if (this.pwdReg) {
                 this._getUser();
                 this.active = 2;
@@ -754,9 +760,6 @@ export default {
     _nextStep(formName) {
       var num = this.active;
       var temp = 3;
-      if (this.btnVal == "完成") {
-        this.$router.push("/UserListNew");
-      }
       if (this.ruleForm.ConsoleLogin == 0) {
         var temp = 1;
       }
@@ -846,7 +849,7 @@ export default {
                 type: "error",
                 duration: 0
               });
-            } else if (this.pwdlenReg || this.pwdtypeReg || this.pwdreReg) {
+            } else if (this.ruleForm.pwdRadio && (this.pwdlenReg || this.pwdtypeReg || this.pwdreReg)) {
               this.$message({
                 showClose: true,
                 message: "密碼格式輸入有誤",

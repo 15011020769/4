@@ -78,7 +78,7 @@
               </p>
               <div class="config_table">
                 <el-table
-                  :data="policysData.slice((currpage - 1) * 10, currpage * 10)"
+                  :data="policysData"
                   height="300"
                   :row-style="{height:0}"
                   :cell-style="{padding:'5px 10px'}"
@@ -140,13 +140,15 @@
               style="background:#fff;padding:10px;display:flex;justify-content: space-between;line-height:30px"
             >
               <div style="flex:1;display:flex;justify-content: flex-end;">
-                <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;{{$t('CAM.strategy.ye')}}</span>
+                <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;{{$t('CAM.strip')}}</span>
                 <el-pagination
                   :page-size="pagesize"
                   :pager-count="7"
-                  layout="prev, pager, next"
+                  layout="prev, sizes, pager, next"
+                  :page-sizes="[10, 20, 30, 40, 50]"
                   @current-change="handleCurrentChange"
-                  :total="policysData.length"
+                  @size-change="handleSizeChange"
+                  :total="TotalCount"
                 ></el-pagination>
               </div>
             </div>
@@ -320,10 +322,6 @@ export default {
     attach(val) {
       this.attachVal = val;
     },
-    handleCurrentChange(val) {
-      this.currpage = val;
-      // this.getAttachPolicys();
-    },
     // 打开 关联用户/用户组 页面
     Relation_user() {
       this.dialogVisible = true;
@@ -383,8 +381,8 @@ export default {
       this.policysData = [];
       let params = {
         Version: "2019-01-16",
-        Page: 1,
-        Rp: 100,
+        Page: this.currpage,
+        Rp: this.pagesize,
         PolicyId: this.policyID
       };
       let entityFilter = this.entityFilter;
@@ -557,8 +555,12 @@ export default {
       // 重新查询策略关联实体
       this.getAttachPolicys();
     },
+    handleCurrentChange(val) {
+      this.currpage = val
+      this.getAttachPolicys();
+    },
     handleSizeChange(val) {
-      this.rp = val;
+      this.pagesize = val;
       this.getAttachPolicys();
     },
     handleClose() {},
