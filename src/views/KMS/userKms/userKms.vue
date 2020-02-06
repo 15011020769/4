@@ -375,7 +375,6 @@
         }
         let params = {
           Version: "2019-01-18",
-          // Region: VueCookie.get("regionv2"),
           Region: localStorage.getItem("regionv2"),
           Limit: 100
         };
