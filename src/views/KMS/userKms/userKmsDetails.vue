@@ -355,7 +355,6 @@
           "PendingDelete" ? this.thisType = "0" : 3
         let params = {
           Version: '2019-01-18',
-          // Region: VueCookie.get("regionv2"),
           Region: localStorage.getItem("regionv2"),
           KeyId: this.projectDetail.KeyId
         };
@@ -553,6 +552,7 @@
             this.$message({
               showClose: true,
               message: '加密成功',
+              type: 'success',
               duration: 0
             });
           } else {
@@ -563,7 +563,10 @@
               "InvalidParameterValue.InvalidPlaintext": 'Plaintext不合法',
               "ResourceUnavailable.CmkDisabled": 'CMK已被禁用',
               "ResourceUnavailable.CmkNotFound": 'CMK不存在',
-              "UnauthorizedOperation": '未授權操作'
+              "UnauthorizedOperation": '未授權操作',
+              'encryption failed, please check input parameters': '加密失败，请检查加密参数。',
+              'illegal encryptionContext': 'encryptionContext 非法，该字段必须为json格式字符串。',
+              'plaintext is not encoded with base64': 'plaintext 必须使用base64编码。'
             };
             let ErrOr = Object.assign(ErrorTips, ErrTips);
             this.$message({
@@ -588,7 +591,8 @@
           if (res.Response.Error === undefined) {
             this.$message({
               showClose: true,
-              message: '解密时间',
+              message: '解密成功',
+              type: 'success',
               duration: 0
             });
           } else {
@@ -772,6 +776,7 @@
             this.$message({
               showClose: true,
               message: '刪除密鑰材料成功',
+              type: 'success',
               duration: 0
             });
             this.dialogModel4 = false;
