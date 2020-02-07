@@ -541,10 +541,14 @@
       },
       //明文执行按钮
       actionPlain() {
+        var encode = encodeURI(this.Plaintext);
+        // 对编码的字符串转化base64
+        var base64 = btoa(encode);
+        console.log(base64)
         let params = {
           Version: '2019-01-18',
           Region: localStorage.getItem("regionv2"),
-          Plaintext: this.Plaintext,
+          Plaintext: base64,
           KeyId: this.projectDetail.KeyId
         };
         this.axios.post(Encrypt, params).then(res => {
