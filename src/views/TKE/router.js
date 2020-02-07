@@ -803,7 +803,8 @@ export default new Router({
           name: 'myMirrorUser',
           component: () => import(/* webpackChunkName: "myMirror" */ './myMirror/user.vue'),
           meta: {
-            keepAlive: true
+            keepAlive: true,
+            flag: true
           }
         },
         {
@@ -811,7 +812,8 @@ export default new Router({
           name: 'myMirrorLocal',
           component: () => import(/* webpackChunkName: "myMirror" */ './myMirror/local.vue'),
           meta: {
-            keepAlive: true
+            keepAlive: true,
+            flag: false
           }
         }
       ]
@@ -830,7 +832,8 @@ export default new Router({
           name: 'mirrorDetailInfo',
           component: () => import(/* webpackChunkName: "myMirror" */ './mirrorDetail/info.vue'),
           meta: {
-            keepAlive: true
+            keepAlive: true,
+            flag: 1
           }
         },
         {
@@ -838,7 +841,26 @@ export default new Router({
           name: 'mirrorDetailDetail',
           component: () => import(/* webpackChunkName: "myMirror" */ './mirrorDetail/detail.vue'),
           meta: {
-            keepAlive: true
+            keepAlive: true,
+            flag: 2
+          }
+        },
+        {
+          path: 'build', // 镜像构建
+          name: 'mirrorDetailBuild',
+          component: () => import(/* webpackChunkName: "myMirror" */ './mirrorDetail/build/build.vue'),
+          meta: {
+            keepAlive: true,
+            flag: 3
+          }
+        },
+        {
+          path: 'touch', // 触发器
+          name: 'mirrorDetailTouch',
+          component: () => import(/* webpackChunkName: "myMirror" */ './mirrorDetail/touch.vue'),
+          meta: {
+            keepAlive: true,
+            flag: 4
           }
         }
       ]
@@ -872,7 +894,8 @@ export default new Router({
           name: 'DockerHubDetailInfo',
           component: () => import(/* webpackChunkName: "myMirror" */ './DockerHubDetail/info.vue'),
           meta: {
-            keepAlive: true
+            keepAlive: true,
+            flag: true
           }
         },
         {
@@ -880,7 +903,8 @@ export default new Router({
           name: 'DockerHubDetailDetail',
           component: () => import(/* webpackChunkName: "myMirror" */ './DockerHubDetail/detail.vue'),
           meta: {
-            keepAlive: true
+            keepAlive: true,
+            flag: false
           }
         }
       ]
@@ -906,7 +930,8 @@ export default new Router({
           name: 'totalMirrorDetailVersion',
           component: () => import(/* webpackChunkName: "myMirror" */ './totalMirrorDetail/version.vue'),
           meta: {
-            keepAlive: true
+            keepAlive: true,
+            flag: true
           }
         },
         {
@@ -914,7 +939,8 @@ export default new Router({
           name: 'totalMirrorDetailInfo',
           component: () => import(/* webpackChunkName: "myMirror" */ './totalMirrorDetail/info.vue'),
           meta: {
-            keepAlive: true
+            keepAlive: true,
+            flag: false
           }
         }
       ]
