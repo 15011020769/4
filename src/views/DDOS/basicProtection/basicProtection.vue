@@ -19,7 +19,7 @@
             :placeholder="$t('DDOS.basicProtection.qsrzjmip')"
             class="searchIpt"
             v-model="searchInputVal"
-            @change="inpVal"
+            @change="doFilter"
           />
           <el-button @click="doFilter" class="el-icon-search"></el-button>
         </div>
@@ -424,7 +424,9 @@ export default {
 }
 .pagstyle {
   padding: 20px;
-
+  box-sizing: border-box;
+  display: flex;
+  justify-content: space-between;
   .pagtotal {
     font-size: 13px;
     font-weight: 400;

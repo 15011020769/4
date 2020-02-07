@@ -144,7 +144,7 @@
       <div class="container">
         <div class="container-left">
           <p>{{$t('CAM.userGroup.selection')}}（共{{userData.length}}{{$t('CAM.strip')}}）</p>
-          <el-input size="small" clearable v-model="inpVal" style="width:100%" @change="_inpVal">
+          <el-input size="small" clearable v-model="inpVal" style="width:100%" @change="toQueryUser">
             <i slot="suffix" class="el-input__icon el-icon-search" @click="toQueryUser"></i>
           </el-input>
           <el-table
@@ -668,14 +668,18 @@ export default {
       this.init();
     },
     // 子用户穿梭框查询
-    toQueryUser() {
-      var arr = [];
-      this.userData.forEach(item => {
-        if (item.Name.includes(this.inpVal)) {
-          arr.push(item);
-        }
-      });
-      this.userData = arr;
+     toQueryUser() {
+       if(this.inpVal != null && this.inpVal != "") {
+          var arr = [];
+          this.userAllData.forEach(item => {
+            if (item.Name.includes(this.inpVal)) {
+              arr.push(item);
+            }
+          });
+          this.userData = arr;
+       } else {
+          this.userData = this.userAllData;
+       }
     },
     //用户组详情
     Interface(groupId) {

@@ -32,7 +32,7 @@
         size="small"
         class="inputSearch"
         v-model="inpVal"
-        @change="userInpSearch"
+        @change="userSearch"
         style="margin-right:0;width:300px;"
       >
         <i slot="suffix" class="el-input__icon el-icon-search" @click="userSearch"></i>
