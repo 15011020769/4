@@ -335,7 +335,7 @@
           this.transfer_data = this.json;
         } else {
           var arr = [];
-          this.transfer_data.forEach(item => {
+          this.json.forEach(item => {
             if (item.name.includes(this.search)) {
               arr.push(item);
             }

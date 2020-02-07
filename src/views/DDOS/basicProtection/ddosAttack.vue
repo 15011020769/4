@@ -366,7 +366,9 @@ export default {
 }
 .pagstyle {
   padding: 20px;
-
+  box-sizing: border-box;
+  display: flex;
+  justify-content: space-between;
   .pagtotal {
     font-size: 13px;
     font-weight: 400;

@@ -8,7 +8,7 @@
         </p>
         <div class="left-main border">
           <div class="seek" style="width:100%;">
-            <el-input v-model="input" :placeholder="$t('CAM.strategy.inputContent')" clearable @change="_inpVal" style="width:100%;">
+            <el-input v-model="input" :placeholder="$t('CAM.strategy.inputContent')" clearable @change="_serach" style="width:100%;">
                <i slot="suffix" class="el-input__icon el-icon-search" @click="_serach"></i>
             </el-input>
           </div>

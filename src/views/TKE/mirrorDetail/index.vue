@@ -12,11 +12,17 @@
     </div>
     <div class="my-title">
         <ul class="my-ul">
-            <li @click="getTrue()" class="li-one" :style="{fontWeight:this.dataObject.flag==true?'700':''}">
-              镜像信息<div class="bottom-one" :style="{width:this.dataObject.flag==true?'78px':'0'}"></div>
+            <li @click="getInfo()" class="li-one" :style="{fontWeight:this.dataObject.flag==1?'700':''}">
+              镜像信息<div :class="[this.dataObject.flag == 1?'bottom-one':'']" :style="{width:this.dataObject.flag==1?'78px':'0'}"></div>
             </li>
-            <li @click="getFalse()" class="li-two" :style="{fontWeight:this.dataObject.flag==false?'700':''}">
-              镜像详情<div class="bottom-two" :style="{width:this.dataObject.flag==false?'78px':'0'}"></div>
+            <li @click="getDetail()" class="li-one" :style="{fontWeight:this.dataObject.flag==2?'700':''}">
+              镜像详情<div :class="[this.dataObject.flag == 2?'bottom-one':'']" :style="{width:this.dataObject.flag==2?'78px':'0'}" ></div>
+            </li>
+            <li @click="getBuild()" class="li-one" :style="{fontWeight:this.dataObject.flag==3?'700':''}">
+              镜像构建<div :class="[this.dataObject.flag == 3?'bottom-one':'']" :style="{width:this.dataObject.flag==3?'78px':'0'}"></div>
+            </li>
+            <li @click="getTouch()" class="li-one" :style="{fontWeight:this.dataObject.flag==4?'700':''}">
+              触发器<div :class="[this.dataObject.flag == 4?'bottom-one':'']" :style="{width:this.dataObject.flag==4?'78px':'0'}"></div>
             </li>
         </ul>
     </div>
@@ -31,15 +37,15 @@ export default {
   data () {
     return {
       dataObject: {
-        flag: true
+        flag: this.$route.meta.flag
       },
       name: this.$route.query.id
     }
   },
   methods: {
     // 切换点击事件
-    getTrue () {
-      this.dataObject.flag = true
+    getInfo () {
+      this.dataObject.flag = 1
       this.$router.push({
         name: 'mirrorDetailInfo',
         query: {
@@ -47,10 +53,28 @@ export default {
         }
       })
     },
-    getFalse () {
-      this.dataObject.flag = false
+    getDetail () {
+      this.dataObject.flag = 2
       this.$router.push({
         name: 'mirrorDetailDetail',
+        query: {
+          id: this.name
+        }
+      })
+    },
+    getBuild () {
+      this.dataObject.flag = 3
+      this.$router.push({
+        name: 'mirrorDetailBuild',
+        query: {
+          id: this.name
+        }
+      })
+    },
+    getTouch () {
+      this.dataObject.flag = 4
+      this.$router.push({
+        name: 'mirrorDetailTouch',
         query: {
           id: this.name
         }

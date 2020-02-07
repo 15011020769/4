@@ -355,7 +355,6 @@
           "PendingDelete" ? this.thisType = "0" : 3
         let params = {
           Version: '2019-01-18',
-          // Region: VueCookie.get("regionv2"),
           Region: localStorage.getItem("regionv2"),
           KeyId: this.projectDetail.KeyId
         };
@@ -542,20 +541,22 @@
       },
       //明文执行按钮
       actionPlain() {
+        var encode = encodeURI(this.Plaintext);
+        // 对编码的字符串转化base64
+        var base64 = btoa(encode);
         let params = {
-          Action: "Encrypt",
           Version: '2019-01-18',
-          // Region: VueCookie.get("regionv2"),
           Region: localStorage.getItem("regionv2"),
-          Plaintext: this.Plaintext,
+          Plaintext: base64,
           KeyId: this.projectDetail.KeyId
         };
         this.axios.post(Encrypt, params).then(res => {
-          if (res.Response.Error !== undefined) {
+          if (res.Response.Error == undefined) {
             this.$message({
               showClose: true,
-              message: res.Response.Error.Message,
-              type: 'error'
+              message: '加密成功',
+              type: 'success',
+              duration: 0
             });
           } else {
             let ErrTips = {
@@ -565,7 +566,10 @@
               "InvalidParameterValue.InvalidPlaintext": 'Plaintext不合法',
               "ResourceUnavailable.CmkDisabled": 'CMK已被禁用',
               "ResourceUnavailable.CmkNotFound": 'CMK不存在',
-              "UnauthorizedOperation": '未授權操作'
+              "UnauthorizedOperation": '未授權操作',
+              'encryption failed, please check input parameters': '加密失败，请检查加密参数。',
+              'illegal encryptionContext': 'encryptionContext 非法，该字段必须为json格式字符串。',
+              'plaintext is not encoded with base64': 'plaintext 必须使用base64编码。'
             };
             let ErrOr = Object.assign(ErrorTips, ErrTips);
             this.$message({
@@ -583,7 +587,6 @@
         let params = {
           Action: "Decrypt",
           Version: '2019-01-18',
-          // Region: VueCookie.get("regionv2"),
           Region: localStorage.getItem("regionv2"),
           CiphertextBlob: this.Ciphertext
         };
@@ -591,8 +594,9 @@
           if (res.Response.Error === undefined) {
             this.$message({
               showClose: true,
-              message: res.Response.Error.Message,
-              type: 'error'
+              message: '解密成功',
+              type: 'success',
+              duration: 0
             });
           } else {
             let ErrTips = {
@@ -775,6 +779,7 @@
             this.$message({
               showClose: true,
               message: '刪除密鑰材料成功',
+              type: 'success',
               duration: 0
             });
             this.dialogModel4 = false;

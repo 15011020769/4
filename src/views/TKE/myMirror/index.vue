@@ -30,7 +30,7 @@ export default {
   data () {
     return {
       dataObject: {
-        flag: true
+        flag: this.$route.meta.flag
       }
     }
   },
