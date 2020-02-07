@@ -544,7 +544,6 @@
         var encode = encodeURI(this.Plaintext);
         // 对编码的字符串转化base64
         var base64 = btoa(encode);
-        console.log(base64)
         let params = {
           Version: '2019-01-18',
           Region: localStorage.getItem("regionv2"),
