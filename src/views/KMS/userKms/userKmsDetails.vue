@@ -543,19 +543,17 @@
       //明文执行按钮
       actionPlain() {
         let params = {
-          Action: "Encrypt",
           Version: '2019-01-18',
-          // Region: VueCookie.get("regionv2"),
           Region: localStorage.getItem("regionv2"),
           Plaintext: this.Plaintext,
           KeyId: this.projectDetail.KeyId
         };
         this.axios.post(Encrypt, params).then(res => {
-          if (res.Response.Error !== undefined) {
+          if (res.Response.Error == undefined) {
             this.$message({
               showClose: true,
-              message: res.Response.Error.Message,
-              type: 'error'
+              message: '加密成功',
+              duration: 0
             });
           } else {
             let ErrTips = {
@@ -583,7 +581,6 @@
         let params = {
           Action: "Decrypt",
           Version: '2019-01-18',
-          // Region: VueCookie.get("regionv2"),
           Region: localStorage.getItem("regionv2"),
           CiphertextBlob: this.Ciphertext
         };
@@ -591,8 +588,8 @@
           if (res.Response.Error === undefined) {
             this.$message({
               showClose: true,
-              message: res.Response.Error.Message,
-              type: 'error'
+              message: '解密时间',
+              duration: 0
             });
           } else {
             let ErrTips = {
