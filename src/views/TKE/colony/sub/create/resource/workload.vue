@@ -16,7 +16,7 @@
     </div>
     <div class="colony-main">
       <div class="tke-card tke-formpanel-wrap mb60">
-        <el-form class="tke-form" :model="wl" label-position="left" label-width="120px" size="mini">
+        <el-form class="tke-form special" :model="wl" label-position="left" label-width="120px" size="mini">
           <el-form-item label="名称">
             <el-input class="w200" v-model="wl.name" placeholder="请输入Workload名称"></el-input>
             <p>
@@ -317,7 +317,7 @@
                     <p>查看健康检查和就绪检查<a href="#">使用指引</a> </p>
                   </el-form-item>
                   <el-form-item label="特权级容器">
-                    <el-switch  active-color="#006eff" inactive-color="#888">
+                    <el-switch active-color="#006eff" inactive-color="#888">
                     </el-switch>
                     <p> 容器开启特权级，将拥有宿主机的root权限 </p>
                   </el-form-item>
@@ -326,10 +326,214 @@
 
               </el-form>
             </div>
+            <p class="addcontent">添加容器</p>
+            <p>注意：Workload创建完成后，容器的配置信息可以通过更新YAML的方式进行修改</p>
           </el-form-item>
-
+          <el-form-item label="实例数量">
+            <el-radio-group v-model="wl.caseNum.adjustType">
+              <el-radio label="handAdjust">手动调节</el-radio>
+              <el-radio label="autoAdjust">自动调节</el-radio>
+            </el-radio-group>
+            <div v-show="wl.caseNum.adjustType=='handAdjust'">
+              <p>直接设定实例数量</p>
+              <p style="background:#f2f2f2;width:80%;height:60px;line-height:60px;margin-top:6px;padding:0px 10px;">
+                <span>实例数量</span>
+                <el-input-number class="ml100" size="small" :min="0"></el-input-number>个
+              </p>
+            </div>
+            <div v-show="wl.caseNum.adjustType=='autoAdjust'">
+              <p>满足任一设定条件，则自动调节实例（pod）数目<a href="#">查看更多</a> </p>
+              <el-form :model="wl" label-position="left" label-width="120px" size="mini" class="form-2">
+                <el-form-item label="触发策略" style="margin-top:10px">
+                  <div class="flex bottom10" v-for="(item,index) in touchTactics" :key="index">
+                    <el-select class="w100" v-model="item.touch1">
+                      <el-option v-for="item in  touchOptions1" :key="item.value" :label="item.label"
+                        :value="item.value">
+                      </el-option>
+                    </el-select>
+                    <el-select class="w192  margin-middle" v-model="item.touch2">
+                      <el-option v-for="item in  touchOptions2" :key="item.value" :label="item.label"
+                        :value="item.value">
+                      </el-option>
+                    </el-select>
+                    <el-input class="w100" v-model="item.size"></el-input>核
+                    <el-tooltip effect="light" content="至少保留一个指标" placement="right" v-if="touchTactics.length==1">
+                      <i class="el-icon-close" style="font-size:20px;margin-left:20px;cursor:pointer"></i>
+                    </el-tooltip>
+                    <i v-else class="el-icon-close" style="font-size:20px;margin-left:20px;cursor:pointer"
+                      @click="delTarget(index)"></i>
+                  </div>
+                  <a href="#" @click="newAddTarget">新增指标</a>
+                </el-form-item>
+                <el-form-item label="实例范围">
+                  <el-input class="w100"></el-input>~<el-input class="w100"></el-input>
+                </el-form-item>
+              </el-form>
+            </div>
+          </el-form-item>
+          <a href="#" @click="highLevelSetShow2=true" v-show="!highLevelSetShow2">显示高级设置</a>
+          <div v-show="highLevelSetShow2">
+            <el-form-item label="imagePullSecrets">
+              <el-select style="margin-top:10px" v-model="wl.name" :disabled="checkTypeOptions.length == 0"
+                :placeholder="
+                  checkTypeOptions.length == 0 ? '暂无数据' : '请选择'
+                ">
+                <el-option v-for="item in checkTypeOptions" :key="item.value" :label="item.label" :value="item.value">
+                </el-option>
+              </el-select><br>
+              <el-select style="margin-top:10px" v-model="wl.name" :disabled="checkTypeOptions.length == 0"
+                :placeholder="
+                  checkTypeOptions.length == 0 ? '暂无数据' : '请选择'
+                ">
+                <el-option v-for="item in checkTypeOptions" :key="item.value" :label="item.label" :value="item.value">
+                </el-option>
+              </el-select>
+              <p>添加</p>
+            </el-form-item>
+            <el-form-item label="更新方式">
+              <el-select v-model="wl.updateWay">
+                <el-option label="滚动更新（推荐）" value="滚动更新（推荐）"> </el-option>
+                <el-option label="快速更新" value="快速更新"> </el-option>
+              </el-select>
+              <p v-show="wl.updateWay=='滚动更新（推荐）'"> 对实例进行逐个更新，这种方式可以让您不中断业务实现对服务的更新</p>
+              <p v-show="wl.updateWay=='快速更新'"> 直接关闭所有实例，启动相同数量的新实例</p>
+            </el-form-item>
+            <div v-show="wl.updateWay=='滚动更新（推荐）'">
+              <el-form-item label="更新间隔">
+                <el-input class="w100"></el-input>秒
+              </el-form-item>
+              <el-form-item label="更新策略">
+                <el-radio-group v-model="wl.updateTactics">
+                  <el-radio label="1">启动新的Pod,停止旧的Pod</el-radio>
+                  <el-radio label="2">停止旧的Pod，启动新的Pod</el-radio>
+                  <el-radio label="3">自定义</el-radio>
+                </el-radio-group>
+                <p v-show="wl.updateTactics==1">请确认集群有足够的CPU和内存用于启动新的Pod, 否则可能导致集群崩溃</p>
+              </el-form-item>
+              <el-form-item label="策略配置">
+                <div class="flex bg" v-show="wl.updateTactics!=3">
+                  <span>Pods</span>
+                  <div style="margin-left:150px;">
+                    <el-input class="w192"></el-input>
+                    <p> Pod将批量启动或停止</p>
+                  </div>
+                </div>
+                <div class="bg" v-show="wl.updateTactics==3">
+                  <div class="flex">
+                    <span>MaxSurge</span>
+                    <div style="margin-left:150px;">
+                      <el-input class="w192"></el-input>
+                      <p>允许超出所需规模的最大Pod数量</p>
+                    </div>
+                  </div>
+                  <div class="flex">
+                    <span>MaxUnavailable</span>
+                    <div style="margin-left:114px;">
+                      <el-input class="w192"></el-input>
+                      <p>允许最大不可用的Pod数量</p>
+                    </div>
+                  </div>
+                </div>
+              </el-form-item>
+            </div>
+            <el-form-item label="节点调度策略">
+              <el-radio-group v-model="wl.nodeTactics">
+                <el-radio label="1">不使用调度策略</el-radio>
+                <el-radio label="2">指定节点调度</el-radio>
+                <el-radio label="3">自定义调度规则</el-radio>
+              </el-radio-group>
+              <p>可根据调度规则，将Pod调度到符合预期的Label的节点中。设置工作负载的调度规则指引</p>
+              <div v-show="wl.nodeTactics==2" class="bg">
+                <p>台北一区</p>
+                <div style="height:70px;overflow:auto">
+                  <p>
+                    <el-checkbox></el-checkbox>ins-4bhved3k(as-变化的2)
+                  </p>
+                  <p>
+                    <el-checkbox></el-checkbox>ins-5ic5rvb2(as-qewq)
+                  </p>
+                </div>
+              </div>
+            </el-form-item>
+            <div  v-show="wl.nodeTactics==3">
+              <el-form-item label="强制满足条件">
+                <el-tooltip class="item" effect="light" content="调度期间如果满足其中一个亲和性条件则调度到对应node，如果没有节点满足条件则调度失败。"
+                  placement="right">
+                  <i class="el-icon-info  setPosition2"></i>
+                </el-tooltip>
+                <div class="bg2" v-for="(val,idx) in mustCondition" :key="idx">
+                  <i class="el-icon-close set-i1" @click="delMustCondition(idx)"></i>
+                  <div style="clear: both; margin-bottom:10px"></div>
+                  <p style="float:left">条件
+                    <el-tooltip class="item" effect="light" content="多个规则为同时满足" placement="right">
+                      <i class="el-icon-info "></i>
+                    </el-tooltip>
+                  </p>
+                  <div style="float:right;">
+                    <div v-for="(i,index) in val" :key="index" style="margin-bottom:6px;" class="flex">
+                      <el-input class="w150" v-model="i.name"></el-input>
+                      <el-select v-model="i.connect" class="w100" style="margin:0px 10px;">
+                        <el-option v-for="item in conditionOptions" :key="item.value" :label="item.label"
+                          :value="item.value">
+                        </el-option>
+                      </el-select>
+                      <el-input class="w150" v-model="i.rule"></el-input>
+                      <el-tooltip v-if="val.length==1" class="item" effect="light" content="至少配置一个选择器" placement="top">
+                        <i class="el-icon-close" style="font-size:20px;cursor:pointer"></i>
+                      </el-tooltip>
+                      <i class="el-icon-close" v-else @click="val.splice(index,1)"
+                        style="font-size:20px;cursor:pointer"></i>
+                    </div>
+                    <a href="#" @click="addRule1(idx)">添加规则</a>
+                  </div>
+                  <div style="clear: both;"></div>
+                </div>
+                <a href="#" @click="addCondition">添加条件</a>
+              </el-form-item>
+              <el-form-item label="尽量满足条件">
+                <el-tooltip class="item" effect="light" content="调度期间如果满足其中一个亲和性条件则调度到对应node，如果没有节点满足条件则随机调度到任意节点。"
+                  placement="right">
+                  <i class="el-icon-info  setPosition2"></i>
+                </el-tooltip>
+                <div class="bg2" v-for="(val,idx) in needCondition" :key="idx">
+                  <i class="el-icon-close set-i1" @click="delNeedCondition(idx)"></i>
+                  <div style="clear: both; margin-bottom:10px"></div>
+                  <div style="float:left">
+                  <p style="margin-bottom:10px">权重</p>
+                    <p>条件
+                    <el-tooltip class="item" effect="light" content="多个规则为同时满足" placement="right">
+                      <i class="el-icon-info "></i>
+                    </el-tooltip></p>
+                  </div>
+                  <div style="float:right;">
+                      <div style="margin-bottom:10px"><el-input   v-model="val.weight" class="w150" ></el-input></div>
+                      <div v-for="(i,index) in val.arr" :key="index" style="margin-bottom:6px;" class="flex">
+                        <el-input class="w150" v-model="i.name"></el-input>
+                        <el-select v-model="i.connect" class="w100" style="margin:0px 10px;">
+                          <el-option v-for="item in conditionOptions" :key="item.value" :label="item.label"
+                            :value="item.value">
+                          </el-option>
+                        </el-select>
+                        <el-input class="w150" v-model="i.rule"></el-input>
+                        <el-tooltip v-if="val.arr.length==1" class="item" effect="light" content="至少配置一个选择器"
+                          placement="top">
+                          <i class="el-icon-close" style="font-size:20px;cursor:pointer"></i>
+                        </el-tooltip>
+                        <i class="el-icon-close" v-else @click="val.arr.splice(index,1)"
+                          style="font-size:20px;cursor:pointer"></i>
+                      </div>
+                      <a href="#" @click="addRule2(idx)">添加规则</a>
+                  </div>
+                  <div style="clear: both;"></div>
+                </div>
+                <a href="#" @click="addCondition2">添加条件</a>
+              </el-form-item>
+            </div>
+            <a href="#" @click="highLevelSetShow2=false">隐藏高级设置</a>
+          </div>
           <!--  </div> -->
         </el-form>
+        <!-- <Service></Service> -->
 
         <!-- 设置主机路径 -->
         <el-dialog title="设置主机路径" :visible.sync="dialogVisiblePath" width="30%">
@@ -456,6 +660,9 @@
             <el-button @click="dialogVisibleSecret = false">取 消</el-button>
           </span>
         </el-dialog>
+
+
+
         <!-- 底部 -->
         <div class="tke-formpanel-footer">
           <el-button size="small" type="primary">创建Workload</el-button>
@@ -468,6 +675,7 @@
 
 <script>
   import FileSaver from "file-saver";
+  import Service from '../service/components/Service'
   import XLSX from "xlsx";
   import {
     ALL_CITY
@@ -479,8 +687,47 @@
         wl: {
           name: "",
           desc: "",
-          type: ""
+          type: "",
+          caseNum: {
+            adjustType: 'handAdjust',
+          },
+          updateWay: '滚动更新（推荐）',
+          updateTactics: '1',
+          nodeTactics: "1",
+
         },
+        // 实例数量自动调节下拉框内容
+        touchTactics: [{
+          touch1: 'CPU',
+          touch2: 'CPU使用量',
+          size: ''
+        }], //触发策略
+        touchOptions1: [{
+          value: 'CPU',
+          label: 'CPU'
+        }, {
+          value: '内存',
+          label: '内存'
+        }, {
+          value: '硬盘',
+          label: '硬盘'
+        }, {
+          value: '网络',
+          label: '网络'
+        }, ],
+        touchOptions2: [{
+          value: 'CPU使用量',
+          label: 'CPU使用量'
+        }, {
+          value: 'CPU利用率（占节点）',
+          label: 'CPU利用率（占节点）'
+        }, {
+          value: 'CPU利用率（占Request）',
+          label: 'CPU利用率（占Request）'
+        }, {
+          value: 'CPU利用率（占Limit）',
+          label: 'CPU利用率（占Limit）'
+        }, ],
         setConfigMapData: {
           select: "",
           checked: ""
@@ -541,6 +788,39 @@
             key: '执行命令检查'
           },
         ],
+        //条件
+        conditionOptions: [{
+            value: 'In',
+            label: 'In'
+          },
+          {
+            value: 'NotIn',
+            label: 'NotIn'
+          },
+          {
+            value: 'Exists',
+            label: 'Exists'
+          },
+          {
+            value: 'DoesNotExist',
+            label: 'DoesNotExist'
+          },
+          {
+            value: 'Gt',
+            label: 'Gt'
+          },
+          {
+            value: 'Lt',
+            label: 'Lt'
+          },
+        ],
+        mustCondition: [], //强制满足条件
+        needCondition: [], //尽量满足条件
+        condition: [{
+          name: '',
+          rule: '',
+          connect: 'In'
+        }, ],
         value: "",
         dataJuan: [],
         usePvcOptions: [],
@@ -558,12 +838,13 @@
         dialogVisibleConfig: false,
         dialogVisibleSecret: false,
         mirrorPullTactics: 'Always', //镜像拉取策略
-        surviveExamine: false,//存活检查
-        readyToCheck: false,//就绪检查
-        highLevelSetShow:false,
+        surviveExamine: false, //存活检查
+        readyToCheck: false, //就绪检查
+        highLevelSetShow: false,
+        highLevelSetShow2: false,
       };
     },
-    components: {},
+    components: {Service},
     watch: {
       dataJuan: {
         handler(val) {
@@ -592,7 +873,7 @@
       goBack() {
         this.$router.go(-1);
       },
-      addDataJuan() {
+      addDataJuan() { //新增数据卷
         this.dataFlag = true;
         var obj = {
           name1: "",
@@ -603,6 +884,62 @@
       },
       delDataJuan(index) {
         this.dataJuan.splice(index, 1);
+      },
+      newAddTarget() { //新增指标
+        var obj = {
+          touch1: 'CPU',
+          touch2: 'CPU使用量',
+          size: ''
+        }
+        this.touchTactics.push(obj)
+      },
+      delTarget(index) {
+        this.touchTactics.splice(index, 1)
+      },
+
+      addRule1(index) {
+        this.mustCondition[index].push({
+          name: '',
+          rule: '',
+          connect: 'In'
+        })
+      },
+      addRule2(index) {
+        console.log(this.needCondition)
+        console.log(index)
+        this.needCondition[index].arr.push({
+          name: '',
+          rule: '',
+          connect: 'In'
+        })
+      },
+      delRule1(index) {
+        this.condition.splice(index, 1)
+      },
+      addCondition() {
+        var arr = [{
+          name: '',
+          connect: 'In',
+          rule: ''
+        }];
+        this.mustCondition.push(arr)
+      },
+      addCondition2() {
+        var obj = {
+          weight:'',
+          arr:[{
+            name: '',
+            connect: 'In',
+            rule: ''
+          }]
+        };
+        this.needCondition.push(obj)
+      },
+      delMustCondition(index) {
+        this.mustCondition.splice(index, 1)
+      },
+      delNeedCondition(index) {
+        this.needCondition.splice(index, 1)
       },
       //选择云硬盘
       selectYun() {
@@ -635,6 +972,7 @@
     .el-radio+.el-radio {
       margin-left: 0;
       margin-top: 10px;
+
     }
   }
 
@@ -646,7 +984,13 @@
     width: 100px;
   }
 
-
+  .margin-middle {
+    margin: 0px 10px;
+  }
+.special{
+  border-bottom: solid 1px #f2f2f2;
+    padding: 0px 0px 26px;
+}
   .search-one {
     display: flex;
     align-items: center;
@@ -691,8 +1035,16 @@
     margin-left: 10px;
   }
 
+  .ml100 {
+    margin-left: 100px;
+  }
+
   .w400 {
     width: 400px;
+  }
+
+  .w150 {
+    width: 150px;
   }
 
   .pagstyle {
@@ -781,14 +1133,60 @@
       margin-top: 0px !important;
     }
 
-    &>>>.el-form-item {
-      // margin-bottom: 0px !important;
-    }
-
     .from-set {
       background: #f2f2f2;
       padding: 6px;
     }
+  }
+
+  .form-2 {
+    width: 60%;
+    background: #f2f2f2;
+    box-sizing: border-box;
+    padding: 10px;
+  }
+
+  .addcontent {
+    width: 80%;
+    border: dotted 2px #f2f2f2;
+    height: 40px;
+    text-align: center;
+    line-height: 40px;
+    margin: 6px 0px;
+
+    &:hover {
+      background: #f2f2f2;
+    }
+  }
+
+  .flex {
+    display: flex;
+    align-items: center;
+  }
+
+  .bg {
+    width: 50%;
+    background: #f2f2f2;
+    box-sizing: border-box;
+    padding: 10px;
+  }
+
+  .bg2 {
+    width: 60%;
+    background: #f2f2f2;
+    box-sizing: border-box;
+    padding: 10px 20px;
+    margin-bottom: 10px;
+  }
+
+  .set-i1 {
+    font-size: 20px;
+    cursor: pointer;
+    float: right;
+  }
+
+  .bottom10 {
+    margin-bottom: 10px;
   }
 
 </style>
