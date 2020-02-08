@@ -14,100 +14,147 @@
         <!-- 右侧 -->
         <div class="grid-right"></div>
       </div>
-    </div>  
+    </div>
     <div class="colony-main">
-
       <!-- 新建、搜索相关操作 -->
       <div class="tke-grid ">
         <!-- 左侧 -->
         <div class="grid-left">
-          <el-button @click="goColonyCreate"  size="small" type="primary">新建</el-button>
+          <el-button @click="goColonyCreate" size="small" type="primary"
+            >新建</el-button
+          >
         </div>
         <!-- 右侧 -->
         <div class="grid-right">
-          <tkeSearch 
-              exportData
-              inputPlaceholder='请输入名称搜索'
-              :searchInput='searchInput'
-              @changeInput="changeSearchInput"
-              @clickSearch="clickSearch"
-              @exportExcel="exportExcel"
-            >
+          <tkeSearch
+            exportData
+            inputPlaceholder="请输入名称搜索"
+            :searchInput="searchInput"
+            @changeInput="changeSearchInput"
+            @clickSearch="clickSearch"
+            @exportExcel="exportExcel"
+          >
           </tkeSearch>
         </div>
       </div>
 
       <!-- 数据列表展示 -->
       <div class="tke-card mt10">
-        <el-table
-          :data="list"
-          v-loading="loadShow"
-          style="width: 100%">
-          <el-table-column
-            label="ID/名称"
-            >
+        <el-table :data="list" v-loading="loadShow" style="width: 100%">
+          <el-table-column label="ID/名称">
             <template slot-scope="scope">
-              <span :class="[scope.row.ClusterStatus=='Running'? 'tke-text-link':'']" @click="scope.row.ClusterStatus=='Running'?goColonySub(scope.row.ClusterId):''">{{scope.row.ClusterId}}</span>
-              <p class="stk-editor-name" >
-                <span>{{scope.row.ClusterName}}</span>
-                <i class="el-icon-edit tke-icon" @click="showEditNameDlg(scope.row)" v-if="scope.row.ClusterStatus=='Running'"></i>
+              <span
+                :class="[
+                  scope.row.ClusterStatus == 'Running' ? 'tke-text-link' : ''
+                ]"
+                @click="
+                  scope.row.ClusterStatus == 'Running'
+                    ? goColonySub(scope.row.ClusterId)
+                    : ''
+                "
+                >{{ scope.row.ClusterId }}</span
+              >
+              <p class="stk-editor-name">
+                <span>{{ scope.row.ClusterName }}</span>
+                <i
+                  class="el-icon-edit tke-icon"
+                  @click="showEditNameDlg(scope.row)"
+                  v-if="scope.row.ClusterStatus == 'Running'"
+                ></i>
               </p>
             </template>
           </el-table-column>
-          <el-table-column
-            prop=""
-            label="监控"
-            >
+          <el-table-column prop="" label="监控">
             <template slot-scope="scope">
-               <i class="icon-chart"></i>
-               <span class="tag-danger">未配告警</span>
+              <i class="icon-chart"></i>
+              <span class="tag-danger">未配告警</span>
             </template>
           </el-table-column>
-          <el-table-column
-            prop="ClusterVersion"
-            label="kubernetes版本"
-            >
+          <el-table-column prop="ClusterVersion" label="kubernetes版本">
           </el-table-column>
-          <el-table-column
-            prop="address"
-            label="类型/状态">
+          <el-table-column prop="address" label="类型/状态">
             <template slot-scope="scope">
-              <span v-if="scope.row.ClusterType=='MANAGED_CLUSTER'">托管集群</span>
+              <span v-if="scope.row.ClusterType == 'MANAGED_CLUSTER'"
+                >托管集群</span
+              >
               <span v-else>独立部署</span>
-              (<span v-if="scope.row.ClusterStatus=='Running'" class="text-green">运行中</span>
+              (<span
+                v-if="scope.row.ClusterStatus == 'Running'"
+                class="text-green"
+                >运行中</span
+              >
               <span v-else class="text-red">已停止</span>)
             </template>
           </el-table-column>
-          <el-table-column
-            prop="nodeTotal"
-            label="节点数">
+          <el-table-column prop="nodeTotal" label="节点数">
             <template slot-scope="scope">
-              <a href="#">{{scope.row.ClusterNodeNum}}条</a>
-               (<span class="text-green">全部正常</span>)
+              <a href="#">{{ scope.row.ClusterNodeNum }}条</a>
+              (<span class="text-green">全部正常</span>)
             </template>
           </el-table-column>
-          <el-table-column
-            prop="address"
-            label="已分配/总配置">
+          <el-table-column prop="address" label="已分配/总配置">
             <template slot-scope="scope">
               <p>CPU: -/-</p>
               <p>内存: -/-</p>
             </template>
           </el-table-column>
-          <el-table-column
-            label="操作"
-            width="220">
+          <el-table-column label="操作" width="220">
             <template slot-scope="scope">
-              <span class="tke-text-link">配置告警</span>
-              <span  @click="goAddExist(scope.row.ClusterId)" class="tke-text-link ml10">添加已有节点</span>
-              <el-dropdown class="ml10 tke-dropdown" >
-                <span class="el-dropdown-link " >
+              <span
+                class="tke-text-link"
+                v-if="scope.row.ClusterStatus == 'Running'"
+                >配置告警</span
+              >
+              <span class="tke-text-link tke-text-link-dis" v-else
+                >配置告警</span
+              >
+              <span
+                @click="goAddExist(scope.row.ClusterId)"
+                v-if="scope.row.ClusterStatus == 'Running'"
+                class="tke-text-link ml10"
+                >添加已有节点</span
+              >
+              <span v-else class="tke-text-link ml10 tke-text-link-dis"
+                >添加已有节点</span
+              >
+              <el-dropdown class="ml10 tke-dropdown">
+                <span class="el-dropdown-link ">
                   更多<i class="el-icon-arrow-down el-icon--right"></i>
                 </span>
                 <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item command="a"><span class="tke-text-link" @click="goColonySub(scope.row.ClusterId)">查看集群凭证</span></el-dropdown-item>
-                  <el-dropdown-item command="b"><span class="tke-text-link" @click="goExpand(scope.row.ClusterId)" >新建节点</span></el-dropdown-item>
-                  <el-dropdown-item command="c"><span class="tke-text-link" href="#">删除</span></el-dropdown-item>
+                  <el-dropdown-item
+                    command="a"
+                    v-if="scope.row.ClusterStatus == 'Running'"
+                    ><span
+                      class="tke-text-link"
+                      @click="goColonySub(scope.row.ClusterId)"
+                      >查看集群凭证</span
+                    ></el-dropdown-item
+                  >
+                  <el-dropdown-item command="a" v-else
+                    ><span class="tke-text-link tke-text-link-dis"
+                      >查看集群凭证</span
+                    ></el-dropdown-item
+                  >
+                  <el-dropdown-item
+                    command="b"
+                    v-if="scope.row.ClusterStatus == 'Running'"
+                    ><span
+                      class="tke-text-link"
+                      @click="goExpand(scope.row.ClusterId)"
+                      >新建节点</span
+                    ></el-dropdown-item
+                  >
+                  <el-dropdown-item command="b" v-else
+                    ><span class="tke-text-link tke-text-link-dis"
+                      >新建节点</span
+                    ></el-dropdown-item
+                  >
+                  <el-dropdown-item command="c"
+                    ><span class="tke-text-link" href="#"
+                      >删除</span
+                    ></el-dropdown-item
+                  >
                 </el-dropdown-menu>
               </el-dropdown>
             </template>
@@ -123,7 +170,8 @@
               :page-sizes="[10, 20, 50, 100]"
               :page-size="pageSize"
               layout="total, sizes, prev, pager, next"
-              :total="total">
+              :total="total"
+            >
             </el-pagination>
           </div>
         </div>
@@ -135,10 +183,10 @@
       title="编辑集群名称"
       :visible.sync="editNameDialogVisible"
       width="500px"
-      custom-class='tke-dialog'
-      >
+      custom-class="tke-dialog"
+    >
       <div>
-        <el-form  label-width="80px" >
+        <el-form label-width="80px">
           <el-form-item label="原名称">
             <p>集群测试</p>
           </el-form-item>
@@ -148,7 +196,9 @@
         </el-form>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="editNameDialogVisible = false">提交</el-button>
+        <el-button type="primary" @click="editNameDialogVisible = false"
+          >提交</el-button
+        >
         <el-button @click="editNameDialogVisible = false">取消</el-button>
       </span>
     </el-dialog>
@@ -164,32 +214,30 @@ import tkeSearch from "@/views/TKE/components/tkeSearch";
 import Loading from "@/components/public/Loading";
 
 import {
-    ALL_CITY,
-    ALL_PROJECT,
-    COLONY_LIST,
-    COLONY_STATUS,
-    COLONY_DES
+  ALL_CITY,
+  ALL_PROJECT,
+  COLONY_LIST,
+  COLONY_STATUS,
+  COLONY_DES
 } from "@/constants";
 export default {
   name: "colony",
   data() {
     return {
-      loadShow: true, //加载是否显示
-      list:[], //集群列表
-      total:0,
-      pageSize:10,
-      pageIndex:0,      
+      loadShow: true, // 加载是否显示
+      list: [], // 集群列表
+      total: 0,
+      pageSize: 10,
+      pageIndex: 0,
 
-
-
-      searchSelect:'',
-      searchInput:'',
-      editNameDialogVisible:false,
-      loading: true, //表格加载
-      btnload: true, //地域按钮加载状态
-      region: "", //地区
+      searchSelect: "",
+      searchInput: "",
+      editNameDialogVisible: false,
+      loading: true, // 表格加载
+      btnload: true, // 地域按钮加载状态
+      region: "", // 地区
       // tableData: [], //表格数据
-      //搜索下拉框
+      // 搜索下拉框
       searchOptions: [
         {
           value: "name",
@@ -198,74 +246,72 @@ export default {
         {
           value: "tag",
           label: "标签"
-        },
+        }
       ],
       search: "", // 搜索
       searchInput: "",
-      searchValue: "", //inp输入的值
-      //分页
+      searchValue: "" // inp输入的值
+      // 分页
     };
   },
   components: {
     Loading,
-    tkeSearch,
+    tkeSearch
   },
   created() {
     this._region();
     this.getColonyList();
   },
-  mounted() {
-   
-  },
+  mounted() {},
   methods: {
     // 获取集群列表
     async getColonyList() {
       this.loadShow = true;
       let params = {
-        Version:'2018-05-25',
-        Limit:this.pageSize,
-        Offset:this.pageIndex,
+        Version: "2018-05-25",
+        Limit: this.pageSize,
+        Offset: this.pageIndex
       };
       const res = await this.axios.post(COLONY_LIST, params);
-      if(res.Error){
+      if (res.Error) {
         console.log(res);
         this.loadShow = false;
-      }else{
+      } else {
         // console.log(res)
-        if(res.Response.Clusters.length>0){
-          let ids=[];
+        if (res.Response.Clusters.length > 0) {
+          let ids = [];
           res.Response.Clusters = res.Response.Clusters.map(item => {
-              ids.push(item.ClusterId);
-              return item;
-          })
+            ids.push(item.ClusterId);
+            return item;
+          });
           this.total = res.Response.TotalCount;
           // console.log(ids);
           // this.getColonyStatus(ids);
         }
-        this.list=res.Response.Clusters;
-        console.log(this.list)
+        this.list = res.Response.Clusters;
+        console.log(this.list);
         this.loadShow = false;
       }
     },
     // 获取集群列表状态(不对外单独提供文档,所以无法实现)
     async getColonyStatus(ids) {
-        let params = {
-          ClusterIds:ids,
-          Version:'2018-05-25'
-        };
-        const res = await this.axios.post(COLONY_STATUS, params);
-        console.log(res);
-        return res;
+      let params = {
+        ClusterIds: ids,
+        Version: "2018-05-25"
+      };
+      const res = await this.axios.post(COLONY_STATUS, params);
+      console.log(res);
+      return res;
     },
     // 分页
     handleCurrentChange(val) {
-      this.pageIndex = val-1;
+      this.pageIndex = val - 1;
       this.getColonyList();
-      this.pageIndex+=1;
+      this.pageIndex += 1;
     },
     handleSizeChange(val) {
       // console.log(`每页 ${val} 条`);
-      this.pageSize=val;
+      this.pageSize = val;
       this.getColonyList();
     },
     // 修改集群名称
@@ -282,54 +328,49 @@ export default {
     //   })
     // },
     // 创建集群跳转
-    goColonyCreate(){
-       this.$router.push({
-          name: "clusterCreate",
-          query: {
-           
-          }
+    goColonyCreate() {
+      this.$router.push({
+        name: "clusterCreate",
+        query: {}
       });
     },
     // 查看详情跳转
-    goColonySub(id){
-// scope.row.ClusterType=='MANAGED_CLUSTER'
+    goColonySub(id) {
+      // scope.row.ClusterType=='MANAGED_CLUSTER'
 
       this.$router.push({
-          name: "colonySub",
-          query: {
-            clusterId: id
-          }
+        name: "colonySub",
+        query: {
+          clusterId: id
+        }
       });
     },
     // 编辑集群弹窗相关
-    showEditNameDlg(row){
-      this.editNameDialogVisible=true;
-      this.setColonyName(row)
+    showEditNameDlg(row) {
+      this.editNameDialogVisible = true;
+      this.setColonyName(row);
     },
 
     // 新建节点跳转
-    goExpand(id){
+    goExpand(id) {
       this.$router.push({
-          name: "clusterExpand",
-          query: {
-            clusterId: id
-          }
+        name: "clusterExpand",
+        query: {
+          clusterId: id
+        }
       });
     },
     // 添加已有节点跳转呢
-    goAddExist(id){
+    goAddExist(id) {
       this.$router.push({
-          name: "clusterAddExist",
-          query: {
-            clusterId: id
-          }
+        name: "clusterAddExist",
+        query: {
+          clusterId: id
+        }
       });
     },
-   
-   
 
-
-    //获取列表
+    // 获取列表
     // init() {
     //   this.loading = true;
     //   const params = {
@@ -341,31 +382,30 @@ export default {
     //     this.loading = false;
     //   });
     // },
-    //分页
-    
-    //获取地域
+    // 分页
+
+    // 获取地域
     _region() {
       this.axios.post(ALL_CITY).then(res => {
         this.region = res.data[0].zone;
         this.btnload = false;
       });
     },
-    
 
-    //监听搜索框的值
+    // 监听搜索框的值
     changeSearchInput(val) {
       this.searchInput = val;
-      console.log(this.searchInput)
+      console.log(this.searchInput);
     },
     // 点击搜索
-    clickSearch(val){
+    clickSearch(val) {
       this.searchInput = val;
-      console.log(this.searchInput)
+      console.log(this.searchInput);
     },
-    
+
     // 导出表格
     exportExcel() {
-      console.log('exportExcel...')
+      console.log("exportExcel...");
       /* generate workbook object from table */
       // var wb = XLSX.utils.table_to_book(document.querySelector("#exportTable"));
       /* get binary string as output */
@@ -385,15 +425,14 @@ export default {
       //   if (typeof console !== "undefined") console.log(e, wbout);
       // }
       // return wbout;
-    },
+    }
   }
 };
 </script>
 
 <style lang="scss" scoped>
-
 // 弹窗相关
-.tag-danger{
+.tag-danger {
   display: inline-block;
   background-color: #ff9d00;
   color: #fff;
@@ -403,9 +442,12 @@ export default {
   vertical-align: top;
   margin-left: 5px;
 }
-.el-dialog__footer .dialog-footer{
+.el-dialog__footer .dialog-footer {
   display: block;
   text-align: center;
 }
+.tke-text-link-dis {
+  color: #bbb;
+  cursor: not-allowed;
+}
 </style>
-
