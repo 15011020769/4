@@ -41,6 +41,16 @@ export default {
   height: 100%;
 }
 
+#CAM >>> .el-container {
+  height: 100vh !important;
+  overflow: -moz-scrollbars-none; //兼容firehox
+  -ms-overflow-style: none; //兼容ie 10+
+  overflow-y: scroll;
+  &::-webkit-scrollbar {
+    width: 0 !important; //兼容chrome safiri
+  }
+}
+
 #CAM {
   height: 100%;
   display: flex;

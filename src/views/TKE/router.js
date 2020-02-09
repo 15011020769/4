@@ -866,6 +866,14 @@ export default new Router({
       ]
     },
     {
+      path: '/config', // 构建配置
+      name: 'mirrorDetailConfig',
+      component: () => import(/* webpackChunkName: "myMirror" */ './mirrorDetail/build/config.vue'),
+      meta: {
+        keepAlive: true,
+      }
+    },
+    {
       path: '/myFavorite', // 我的收藏
       name: 'myFavorite',
       component: () => import(/* webpackChunkName: "myFavorite" */ './myFavorite/index.vue'),

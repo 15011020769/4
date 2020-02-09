@@ -31,6 +31,7 @@ export const LIST_ENPOLICY = 'cam2/ListEntitiesForPolicy'
 export const DELETE_POLICY = 'cam2/DeletePolicy'
 export const GET_POLICY = 'cam2/GetPolicy'
 export const UPDATE_POLICY = 'cam2/UpdatePolicy'
+export const UPDATE_POLICY_V2 = 'cam/UpdatePolicy'
 
 //角色
 export const GET_ROLE = 'cam2/GetRole'
@@ -42,4 +43,6 @@ export const DESCRIB_ROLE = 'cam2/DescribeRoleList'
 export const DELETE_ROLE = 'cam2/DeleteRole'
 export const CREATE_ROLE = 'cam2/CreateRole'
 export const ATTACH_ROLE = 'cam2/AttachRolePolicy'
+// V2接口
+export const LOGOUT_ROLE_SESSIONS = 'cam/LogoutRoleSessions'
 
