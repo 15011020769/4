@@ -459,6 +459,7 @@
       </div>
       <!-- 第三步 云服务器配置 -->
       <div
+        style="display:none;"
         class="tke-second-box tke-third-box tke-card tke-formpanel-wrap mb60"
       >
         <div class="tke-second-title">已选配置</div>
@@ -492,7 +493,126 @@
             >
             <el-input v-model="input" placeholder="请输入内容"></el-input>
           </el-form-item>
+          <div class="tke-third-tips">
+            <p>安全组<i class="el-icon-info"></i></p>
+            <div>
+              <el-input v-model="input" placeholder="请输入内容"></el-input>
+              <p>
+                集群节点间的正常通信需要放通部分端口，集群创建完成后可查看安全组及修改规则。<a
+                  href="#"
+                  >预览默认安全组规则</a
+                >
+              </p>
+              <p>
+                如您业务需要自定义配置安全组规则，可<a href="#">添加安全组</a>
+              </p>
+            </div>
+          </div>
+          <el-form-item label="登录方式">
+            <div class="tke-second-radio-btn tke-third-radio-btn">
+              <el-radio-group v-model="radio1">
+                <el-radio-button label="1">立即关联密钥</el-radio-button>
+                <el-radio-button label="2">自动生成密码</el-radio-button>
+                <el-radio-button label="3">设置密码</el-radio-button>
+              </el-radio-group>
+            </div>
+          </el-form-item>
+          <el-form-item label="用户名">
+            <p>名字</p>
+          </el-form-item>
+          <el-form-item label="SSH密钥">
+            <div class="tke-third-select">
+              <el-select v-model="value" placeholder="请选择">
+                <el-option
+                  v-for="item in options"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                >
+                </el-option>
+              </el-select>
+              <p>如您现有的密钥不合适，可以<a href="#">现在创建</a></p>
+            </div>
+          </el-form-item>
+          <el-form-item label="安全加固">
+            <div class="tke-third-checkbox" style="padding-bottom:10px;">
+              <el-checkbox v-model="checked">免费开通</el-checkbox>
+              <p>
+                安装组件免费开通DDoS防护、WAF和云镜主机防护<a href="#"
+                  >详细介绍</a
+                >
+              </p>
+            </div>
+          </el-form-item>
+          <el-form-item label="云监控">
+            <div class="tke-third-checkbox">
+              <el-checkbox v-model="checked">免费开通</el-checkbox>
+              <p>
+                免费开通云产品监控、分析和实施告警，安装组件获取主机监控指标<a
+                  href="#"
+                  >详细介绍</a
+                >
+              </p>
+            </div>
+          </el-form-item>
         </el-form>
+        <!-- 底部 -->
+        <div class="tke-formpanel-footer">
+          <el-button size="small">上一步</el-button>
+          <el-button size="small" type="primary">下一步</el-button>
+        </div>
+      </div>
+      <!-- 第四步 信息确认 -->
+      <div
+        class="tke-second-box tke-fourth-box tke-card tke-formpanel-wrap mb60"
+      >
+        <div class="tke-second-title">已选配置</div>
+        <el-form
+          ref="form"
+          :model="colonySecind"
+          label-width="110px"
+          label-position="left"
+        >
+          <el-form-item label="集群名">
+            <p>{{ colonySecind.name }}</p>
+          </el-form-item>
+          <el-form-item label="Kubernetes版本">
+            <p>{{ colonySecind.name }}</p>
+          </el-form-item>
+          <el-form-item label="所在地域">
+            <p>{{ colonySecind.name }}</p>
+          </el-form-item>
+          <el-form-item label="容器网络">
+            <p>{{ colonySecind.name }}</p>
+          </el-form-item>
+          <el-form-item label="操作系统">
+            <p>Ubuntu Server 18.04.1 LTS 64bit TKE-Optimized</p>
+          </el-form-item>
+          <el-form-item label="Node节点" class="tke-fourth-node">
+            <p>可用区:台北一区</p>
+            <p>机型:S3.SMALL1(标准型S3,1核1GB)</p>
+            <p>系统盘:高性能云硬盘 50GB</p>
+            <p>数据盘:暂不购买</p>
+            <p>公网带宽:按带宽计费 1Mbps</p>
+            <p>数量:1</p>
+          </el-form-item>
+          <el-form-item label="总计费用">
+            <div class="tke-second-cost">
+              <span class="tke-second-cost-num">0.16</span
+              ><span class="tke-second-cost-h">元/小时</span
+              ><span class="tke-second-cost-t">(配置费用)</span>
+              <i>|</i>
+              <span class="tke-second-cost-num">0.06</span
+              ><span class="tke-second-cost-h">元/小时</span
+              ><span class="tke-second-cost-w"> (网络费用-按带宽计费)</span>
+            </div>
+          </el-form-item>
+        </el-form>
+        <!-- 底部 -->
+        <div class="tke-formpanel-footer">
+          <el-button size="small">上一步</el-button>
+          <el-button size="small" type="primary">完成</el-button>
+        </div>
       </div>
     </div>
   </div>
@@ -716,9 +836,8 @@ export default {
     margin-bottom: 11px;
   }
   ::v-deep .el-form-item__label {
-    line-height: 18px;
+    line-height: 40px;
     font-size: 12px;
-    padding: 6px 20px 16px 0px;
     color: #888;
   }
   ::v-deep .el-form-item__content {
@@ -996,5 +1115,112 @@ export default {
   }
 }
 .tke-third-box {
+  ::v-deep .el-checkbox__input.is-checked .el-checkbox__inner {
+    background: #006eff;
+    width: 16px;
+    height: 16px;
+    border-color: #006eff;
+  }
+  ::v-deep .el-checkbox__inner::after {
+    height: 9px;
+    left: 5px;
+  }
+  ::v-deep .el-checkbox__input.is-checked + .el-checkbox__label {
+    font-size: 12px;
+    color: #444;
+    padding-left: 6px;
+  }
+  ::v-deep .el-input {
+    line-height: 30px;
+    width: 88%;
+    top: -8px;
+  }
+  ::v-deep .el-input__inner {
+    border-radius: 0px;
+    width: 200px;
+    height: 30px;
+  }
+  ::v-deep .el-checkbox {
+    line-height: 30px;
+  }
+  .tke-third-tips {
+    overflow: hidden;
+    padding-bottom: 16px;
+    & > p {
+      float: left;
+      width: 110px;
+      padding: 6px 20px 0px 0px;
+      line-height: 30px;
+      font-size: 12px;
+      color: #888;
+      & > i {
+        font-size: 14px;
+      }
+    }
+    ::v-deep .el-input {
+      top: 0px;
+      line-height: 36px;
+    }
+    & > div {
+      float: left;
+      & > p {
+        line-height: 22px;
+        font-size: 12px;
+        color: #888;
+        & > a {
+          color: #006eff;
+          &:hover {
+            text-decoration: underline;
+          }
+        }
+      }
+    }
+  }
+  .tke-third-radio-btn {
+    margin-top: 0px;
+    padding-bottom: 0px;
+  }
+  .tke-third-select {
+    ::v-deep .el-input {
+      top: 0px;
+    }
+    & > p {
+      line-height: 22px;
+      font-size: 12px;
+      color: #888;
+      & > a {
+        color: #006eff;
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+  .tke-third-checkbox {
+    & > p {
+      line-height: 14px;
+      font-size: 12px;
+      color: #888;
+      & > a {
+        color: #006eff;
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+}
+.tke-fourth-box {
+  .tke-fourth-node {
+    padding-bottom: 40px;
+    border-bottom: 1px solid rgb(221, 221, 221);
+    margin-bottom: 20px;
+    p {
+      line-height: 20px;
+      &:nth-of-type(1) {
+        margin-top: 10px;
+      }
+    }
+  }
 }
 </style>
