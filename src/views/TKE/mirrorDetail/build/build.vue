@@ -56,15 +56,19 @@
                     </el-radio-group>
                 </el-form-item>
                 <el-form-item label="镜像版本"  >
-                   <el-input v-model="input"  class='w180' size='mini'></el-input>
+                   <el-input v-model="form.input"  class='w180' size='mini'></el-input>
                    <p>最长为128位字符，只能包含大小写字母、数字及分隔符("."、"_"、"-")，且不能以分隔符开头或结尾</p>
                 </el-form-item>
                  <el-form-item label="Dockerfile文件" >
                 </el-form-item>
                 <div class='border'>
-                     <el-form-item v-for="(item,index) in form.total" :key='index' :label="item.id" >
+                     <!-- <el-form-item v-for="(item,index) in form.total" :key='index' :label="item.id" >
                          <el-input v-model="item.value"  class='w180' size='mini' ></el-input>
-                    </el-form-item>
+                    </el-form-item> -->
+                    <div v-for="(item,index) in form.total" :key='index'>
+                         <span style='color:#2b91af;'>{{index+1}}</span>
+                         <input v-model="item.value"  class='w180' style='border:none;outline-color:#F2F2F2;margin-left:10px;' @keyup.enter='addInput' ></input>
+                    </div>
                 </div>
             </el-form>
         </el-dialog>
@@ -98,8 +102,7 @@
                     radio:3,
                     input:'',
                     total:[{
-                        id:'1',
-                        value:1
+                        value:''
                     }]
                 }
             }
@@ -110,9 +113,9 @@
             },
             addInput(){
                 console.log(1)
-                // this.form.total.push({
-                //     values:''
-                // })
+                this.form.total.push({
+                    values:''
+                })
                 
             }
         }

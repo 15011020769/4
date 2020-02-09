@@ -18,7 +18,7 @@
                     </el-form-item>
                     <el-form-item label="代码源">
                         <ul class='room-ul' @change="setChange($event)">
-                            <li class='border-color'>Github</li>
+                            <li style='border-color:#2277DA;'>Github</li>
                             <li>Gitlab</li>
                         </ul>
                     </el-form-item>
