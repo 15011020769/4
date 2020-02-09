@@ -875,44 +875,51 @@ export default {
         this.authorization = false;
       }
       if (this.title == "添加到組") {
+        console.log(this.selectData)
         var addGroupId = [];
         this.userGroupSelect.forEach(item => {
           addGroupId.push(item);
         });
+        let msg
+        const info = []
         addGroupId.forEach(item => {
-          let params = {
-            Version: "2019-01-16",
-            "Info.0.Uid": this.Uid,
-            "Info.0.GroupId": item.GroupId
-          };
-          this.axios.post(ADD_USERTOGROUP, params).then(res => {
-            if (res.Response.Error === undefined) {
-              this.$message({
-                showClose: true,
-                message: "添加成功",
-                duration: 0,
-                type: "success"
-              });
-              this.init();
-            } else {
-              let ErrTips = {
-                "InvalidParameter.GroupNotExist": "用戶組不存在",
-                "InvalidParameter.GroupUserFull":
-                  "用戶組中的子用戶數量達到上限",
-                "InvalidParameter.UserGroupFull":
-                  "子用戶加入的用戶組數量達到上限",
-                "ResourceNotFound.UserNotExist": "用戶不存在"
-              };
-              let ErrOr = Object.assign(ErrorTips, ErrTips);
-              this.$message({
-                message: ErrOr[res.Response.Error.Code],
-                type: "error",
-                showClose: true,
-                duration: 0
-              });
-            }
-          });
-        });
+          this.selectData.forEach(user => {
+            const params = {
+              Version: "2019-01-16",
+            };
+            params[`Info.0.Uid`] = user.Uid
+            params[`Info.0.GroupId`] = item.GroupId
+            
+            this.axios.post(ADD_USERTOGROUP, params).then(res => {
+              if (msg) msg.close()
+              if (res.Response.Error === undefined) {
+                msg = this.$message({
+                  showClose: true,
+                  message: "添加成功",
+                  duration: 0,
+                  type: "success"
+                });
+                this.init();
+              } else {
+                let ErrTips = {
+                  "InvalidParameter.GroupNotExist": "用戶組不存在",
+                  "InvalidParameter.GroupUserFull":
+                    "用戶組中的子用戶數量達到上限",
+                  "InvalidParameter.UserGroupFull":
+                    "子用戶加入的用戶組數量達到上限",
+                  "ResourceNotFound.UserNotExist": "用戶不存在"
+                };
+                let ErrOr = Object.assign(ErrorTips, ErrTips);
+                msg = this.$message({
+                  message: ErrOr[res.Response.Error.Code],
+                  type: "error",
+                  showClose: true,
+                  duration: 0
+                });
+              }
+            });
+          })
+        })
         this.authorization = false;
       }
     },
