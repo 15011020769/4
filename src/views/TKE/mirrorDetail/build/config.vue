@@ -63,6 +63,9 @@
                         </el-form-item>
                         <el-link type="primary" style="cursor: pointer;font-size:12px;"  @click="addDomain">新增变量</el-link>
                     </el-form-item>
+                    <el-form-item label=" ">
+                         <el-button type="primary">完成</el-button>
+                    </el-form-item >
                 </el-form>
             </el-card>
         </div>
