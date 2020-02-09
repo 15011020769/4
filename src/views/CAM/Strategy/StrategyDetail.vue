@@ -219,7 +219,7 @@ import {
   DETACH_POLICY,
   GET_POLICY,
   ATTACH_GROUP,
-  UPDATE_POLICY,
+  UPDATE_POLICY_V2,
 } from "@/constants";
 import transfer from "./component/transfer";
 import { ErrorTips } from "@/components/ErrorTips";
@@ -576,11 +576,11 @@ export default {
     },
     input_sure() {
        let params = {
-        Version: "2019-01-16",
-        PolicyId: this.policyID,
+        // Version: "2019-01-16",
+        policyId: this.policyID,
         alias: this.input_Value,
       };
-      this.axios.post(UPDATE_POLICY, params)
+      this.axios.post(UPDATE_POLICY_V2, params)
           .then(res => {
             if (res) {
               console.log(res)
