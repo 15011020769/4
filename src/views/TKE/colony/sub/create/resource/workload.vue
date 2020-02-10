@@ -136,7 +136,8 @@
                 </el-form-item>
                 <el-form-item label="镜像">
                   <el-input class="w192" v-model="wl.name"></el-input>
-                  <span> <a href="#"> 选择镜像</a> </span>
+                  <span> <a  @click="SelectMirrorImgFlag=true"> 选择镜像</a> </span>
+                  <SelectMirrorImg :dialogVisible='SelectMirrorImgFlag' @close='close'></SelectMirrorImg>
                 </el-form-item>
                 <el-form-item label="镜像版本（Tag）">
                   <el-input class="w192" v-model="wl.name"></el-input>
@@ -634,7 +635,7 @@
             </el-input>
           </div>
           <div class="select-yun-body">
-            <el-table ref="multipleTable" :data="tableData" tooltip-effect="dark" style="width: 100%">
+            <el-table ref="multipleTable" :data="tableData.slice((currpage - 1) * pagesize, currpage * pagesize)" tooltip-effect="dark" style="width: 100%">
               <el-table-column width="55">
                 <template slot-scope="scope">
                   <el-radio v-model="id" :label="scope.row.id">&nbsp;</el-radio>
@@ -741,6 +742,7 @@
 <script>
   import FileSaver from "file-saver";
   import Service from './components/Service'
+  import SelectMirrorImg from './components/selectMirrorImg'
   import XLSX from "xlsx";
   import {
     ALL_CITY
@@ -922,9 +924,10 @@
         readyToCheck: false, //就绪检查
         highLevelSetShow: false,
         highLevelSetShow2: false,
+        SelectMirrorImgFlag:false,
       };
     },
-    components: {Service},
+    components: {Service, SelectMirrorImg},
     watch: {
       dataJuan: {
         handler(val) {
@@ -1035,6 +1038,10 @@
       // 改变页数
       handleCurrentChange(val) {
         this.currpage = val;
+      },
+      close(val){
+        this.SelectMirrorImgFlag=val;
+        console.log(val)
       }
     }
   };
@@ -1053,7 +1060,9 @@
 
     }
   }
-
+a{
+  cursor: pointer;
+}
   .w192 {
     width: 192px;
   }
