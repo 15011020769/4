@@ -109,6 +109,7 @@ export default {
       policyNum: 10,
       userNum: 0,
       policyPage: 1,
+      userPage: 1,
       policyArr: [],
       groupArr: []
     };
@@ -165,14 +166,19 @@ export default {
     _userList(val) {
       const params = {
         Version: "2019-01-16",
-        Rp: this.userNum
+        // Rp: this.userNum,
+        Rp: 10,
+        Page: this.userPage,
       };
       if (val) {
         params["Keyword"] = val;
       }
       this.axios.post(USER_GROUP, params).then(res => {
         if (res.Response.Error === undefined) {
-          this.userData = res.Response.GroupInfo;
+          // this.userData = res.Response.GroupInfo
+          res.Response.GroupInfo.forEach(item => {
+            this.userData.push(item)
+          })
           this.userNums = res.Response.TotalNum;
           this.userData.forEach(item => {
             item.status = 0;
@@ -182,7 +188,7 @@ export default {
               }
             });
           });
-          var data = this.userData;
+          var data = [].concat(this.userData);
           data.forEach(item => {
             const params = {
               Version: "2019-01-16",
@@ -383,7 +389,7 @@ export default {
         this._getList(this.policyVal, 1);
       } else if (val == "third") {
         this.userPage++;
-        this.userNum = this.userNum + 10;
+        // this.userNum = this.userNum + 10;
         this._userList(this.userVal);
       }
     },
