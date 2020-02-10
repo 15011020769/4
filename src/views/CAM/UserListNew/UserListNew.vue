@@ -362,7 +362,6 @@ export default {
   },
   methods: {
     addToGroup() {
-      console.log(this.selectData)
       if (this.selectData.length != 0) {
         this.title = "添加到組";
         this.authorization = true;
@@ -828,7 +827,6 @@ export default {
     },
     //策略与用户组数据弹框确定按钮
     addUserList() {
-      // userGroupSelect
       if (this.title == "關聯策略") {
         var addPloicyId = [];
         this.multipleSelection.forEach(item => {
@@ -875,7 +873,6 @@ export default {
         this.authorization = false;
       }
       if (this.title == "添加到組") {
-        console.log(this.selectData)
         var addGroupId = [];
         this.userGroupSelect.forEach(item => {
           addGroupId.push(item);
@@ -883,11 +880,11 @@ export default {
         let msg
         const info = []
         addGroupId.forEach(item => {
-          this.selectData.forEach(user => {
+          this.uids.forEach(uid => {
             const params = {
               Version: "2019-01-16",
             };
-            params[`Info.0.Uid`] = user.Uid
+            params[`Info.0.Uid`] = uid
             params[`Info.0.GroupId`] = item.GroupId
             
             this.axios.post(ADD_USERTOGROUP, params).then(res => {

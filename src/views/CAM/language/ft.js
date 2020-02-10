@@ -11,6 +11,7 @@ module.exports = {
       searchUser: '支持搜索用戶名',
       userDetils: '詳情',
       userGroup: '用戶組',
+      APISecret: 'API秘鑰管理',
       userName: '用戶名稱',
       userNamePlaceholder: '請輸入用戶名稱',
       userId: '賬號ID',

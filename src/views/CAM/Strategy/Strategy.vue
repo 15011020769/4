@@ -47,7 +47,7 @@
             v-loading="loading"
             :empty-text="$t('CAM.strategy.zwsj')"
           >
-            <!-- <el-table-column type="selection" width="60" v-if="this.policyScope!='QCS'"></el-table-column> -->
+            <el-table-column type="selection" width="65"></el-table-column>
             <el-table-column
               prop="PolicyName"
               :label="$t('CAM.userList.strategyNames')"

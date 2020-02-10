@@ -46,6 +46,38 @@
               </el-radio-group>
             </div>
           </el-form-item>
+          <el-form-item label="执行策略" v-show="wl.type=='cronJob'">
+            <el-input class="w192"  placeholder="请输入执行策略,如0 0 2 1 *"></el-input>
+          </el-form-item>
+          <el-form-item label="Job设置" v-show="wl.type=='cronJob'||wl.type=='job'">
+            <div class="form-controls" style="width:350px">
+               <el-form :model="wl" label-position="left" label-width="120px" size="mini">
+                 <el-form-item label="重复次数" >
+                    <el-tooltip class="item" effect="light" content="该Job下的Pod需要重复执行次数" placement="right">
+                    <i class="el-icon-info  setPosition"></i>
+                  </el-tooltip>
+                  <el-input class="w192" ></el-input>
+                 </el-form-item>
+                 <el-form-item label="并行度" >
+                    <el-tooltip class="item" effect="light" content="该Job下Pod并行执行的数量" placement="right">
+                    <i class="el-icon-info  setPosition4"></i>
+                  </el-tooltip>
+                  <el-input class="w192" ></el-input>
+                 </el-form-item>
+                 <el-form-item label="失败重启策略" >
+                    <el-tooltip class="item" effect="light" content="Pod下容器异常推出后的重启策略， Never：不重启容器，直至Pod下所有容器退出; OnFailure : Pod继续运行，容器将重新启动" placement="right">
+                    <i class="el-icon-info  setPosition2"></i>
+                  </el-tooltip>
+                   <el-select v-model="value"  placeholder="请选择">
+                <el-option v-for="item in searchOptions" :key="item.value" :label="item.label" :value="item.value">
+                </el-option>
+              </el-select>
+                 
+                 </el-form-item>
+               </el-form>
+            </div>
+          </el-form-item>
+
           <!--  <div> -->
           <el-form-item label="数据卷（选填）">
             <div class="search-one" v-show="dataFlag" v-for="(item, index) in dataJuan" :key="index">
@@ -157,6 +189,35 @@
                   <el-tooltip class="item" effect="light" content="设置容器中的变量" placement="top">
                     <i class="el-icon-info  setPosition"></i>
                   </el-tooltip>
+                  <div style="padding:10px 0px 10px;">
+                    <p>
+                    <el-input class="w100" v-model="wl.name"></el-input> = 
+                    <el-input class="w192" v-model="wl.name"></el-input> 
+                    <i class="el-icon-close" style="font-size:20px;margin-left:20px;cursor:pointer"></i> 
+                    </p>
+                  </div>
+                  <hr>
+                  <div>
+                    <p>
+                      <el-select v-model="containerCheck.type" class="w100">
+                            <el-option v-for="item in containerTypeOptions" :key="item.value" :label="item.label"
+                              :value="item.value">
+                            </el-option>
+                      </el-select>
+                      <el-select v-model="containerCheck.type" class="w100" style="margin:0px 10px;">
+                            <el-option v-for="item in containerTypeOptions" :key="item.value" :label="item.label"
+                              :value="item.value">
+                            </el-option>
+                      </el-select>
+                      <el-select v-model="containerCheck.type" class="w100">
+                            <el-option v-for="item in containerTypeOptions" :key="item.value" :label="item.label"
+                              :value="item.value">
+                            </el-option>
+                      </el-select>以
+                      <el-input class="w150" v-model="wl.name"></el-input> 为别名
+                       <i class="el-icon-close" style="font-size:20px;margin-left:20px;cursor:pointer"></i> 
+                    </p>
+                  </div>
                   <a href="#">新增变量</a>
                   <a href="#" style="margin-left:4px;">引用ConfigMap/Secret</a>
                   <p>只能包含字母、数字及分隔符("-"、"_"、".")，且必须以字母开头</p>
@@ -390,7 +451,9 @@
               </el-select>
               <p>添加</p>
             </el-form-item>
-            <el-form-item label="更新方式">
+            <!--  -->
+            <div v-show="wl.type!='cronJob'&&wl.type!='job'">
+            <el-form-item label="更新方式" >
               <el-select v-model="wl.updateWay">
                 <el-option label="滚动更新（推荐）" value="滚动更新（推荐）"> </el-option>
                 <el-option label="快速更新" value="快速更新"> </el-option>
@@ -410,7 +473,7 @@
                 </el-radio-group>
                 <p v-show="wl.updateTactics==1">请确认集群有足够的CPU和内存用于启动新的Pod, 否则可能导致集群崩溃</p>
               </el-form-item>
-              <el-form-item label="策略配置">
+              <el-form-item label="策略配置" >
                 <div class="flex bg" v-show="wl.updateTactics!=3">
                   <span>Pods</span>
                   <div style="margin-left:150px;">
@@ -435,6 +498,7 @@
                   </div>
                 </div>
               </el-form-item>
+            </div>
             </div>
             <el-form-item label="节点调度策略">
               <el-radio-group v-model="wl.nodeTactics">
@@ -531,10 +595,11 @@
             </div>
             <a href="#" @click="highLevelSetShow2=false">隐藏高级设置</a>
           </div>
-          <!--  </div> -->
+          <!--  </el-form> -->
         </el-form>
-        <!-- <Service></Service> -->
-
+         <el-form  class="tke-form" :model="svc" label-position='left' label-width="120px" size="mini">
+            <Service></Service>
+        </el-form>
         <!-- 设置主机路径 -->
         <el-dialog title="设置主机路径" :visible.sync="dialogVisiblePath" width="30%">
           <el-form :model="wl" label-position="left" label-width="120px" size="mini">
@@ -675,7 +740,7 @@
 
 <script>
   import FileSaver from "file-saver";
-  import Service from '../service/components/Service'
+  import Service from './components/Service'
   import XLSX from "xlsx";
   import {
     ALL_CITY
@@ -696,6 +761,21 @@
           nodeTactics: "1",
 
         },
+         svc: {
+				show: true,
+				time: 30,
+				checked:false,
+        name: '',
+				value: 'default',
+				options: ['default','kube-public','kube-system','tfy-pub'],
+				radio: '1',
+				ETP: '1',
+				SA: '2',
+				input: '',
+				list: [{}],
+				workload: [],
+				tabPosition: 'dep'
+      }  ,
         // 实例数量自动调节下拉框内容
         touchTactics: [{
           touch1: 'CPU',
@@ -905,8 +985,6 @@
         })
       },
       addRule2(index) {
-        console.log(this.needCondition)
-        console.log(index)
         this.needCondition[index].arr.push({
           name: '',
           rule: '',
@@ -982,6 +1060,9 @@
 
   .w100 {
     width: 100px;
+  }
+  .w150 {
+    width: 150px;
   }
 
   .margin-middle {
@@ -1114,6 +1195,11 @@
   .setPosition2 {
     position: absolute;
     left: -38px;
+    top: 8px;
+  }
+  .setPosition4 {
+    position: absolute;
+    left: -78px;
     top: 8px;
   }
 

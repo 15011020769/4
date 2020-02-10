@@ -38,7 +38,7 @@
         </el-table-column>
         <el-table-column prop="reponame">
           <template slot="header">
-            命名空间<i class="el-icon-more" style="cursor: pointer;"></i>
+            命名空间
             <!-- <ul>
               <li>全部</li>
             </ul> -->
