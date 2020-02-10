@@ -11,6 +11,7 @@ module.exports = {
             searchUser: '支持搜索用户名',
             userDetils: '详情',
             userGroup: '用户组',
+            APISecret: 'API秘钥管理',
             userName: '用户名称',
             userNamePlaceholder: '请输入用户名称',
             userRemarkPlaceholder: '请输入备注',

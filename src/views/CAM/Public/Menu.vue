@@ -32,6 +32,10 @@
           <i class="iconfont"></i>
           <span slot="title">{{$t('CAM.Role.identityProvider')}}</span>
         </el-menu-item>
+        <!-- <el-menu-item index="ApiKeyManager">
+          <i class="iconfont"></i>
+          <span slot="title">{{$t('CAM.userList.APISecret')}}</span>
+        </el-menu-item> -->
         <!-- <el-submenu index="2">
           <template slot="title">
             <i class="iconfont"></i>

@@ -51,24 +51,20 @@
         </div>
       </div>
     </div>
-    <template>
-      <div>
-        <el-dialog title="高风险提示" :visible.sync="highRiskHint" :before-close="highRisClose" width="40%"> 
-          <p style="font-size:10px;">
-            您正在使用主账号访问雲API密钥管理页面，使用密钥通过雲API可以无限制地访问您的腾讯雲资源。 雲API密钥泄露可能造成您的雲上资产损失，强烈建议您登录子用户账户操作并使用子用户密钥访问雲API。
-          </p>
-          <p style="font-size:10px;">
-            <el-checkbox v-model="checked">不再显示此信息</el-checkbox>
-          </p>
-          <br/>
-          <br/>
-          <div style="margin:0 auto;text-align: center;">
-            <el-button size="small" @click="highRiskHint = false">&nbsp;&nbsp;继续使用&nbsp;&nbsp;</el-button>
-            <el-button size="small" type="primary" @click="highRiskLink">&nbsp;&nbsp;立即使用子账户&nbsp;&nbsp;</el-button>
-          </div>
-        </el-dialog>
+    <el-dialog title="高风险提示" :visible.sync="highRiskHint" :before-close="highRisClose" width="40%"> 
+      <p style="font-size:10px;">
+        您正在使用主账号访问雲API密钥管理页面，使用密钥通过雲API可以无限制地访问您的腾讯雲资源。 雲API密钥泄露可能造成您的雲上资产损失，强烈建议您登录子用户账户操作并使用子用户密钥访问雲API。
+      </p>
+      <p style="font-size:10px;">
+        <el-checkbox v-model="checked">不再显示此信息</el-checkbox>
+      </p>
+      <br/>
+      <br/>
+      <div style="margin:0 auto;text-align: center;">
+        <el-button size="small" @click="highRiskHint = false">&nbsp;&nbsp;继续使用&nbsp;&nbsp;</el-button>
+        <el-button size="small" type="primary" @click="highRiskLink">&nbsp;&nbsp;立即使用子账户&nbsp;&nbsp;</el-button>
       </div>
-    </template>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -78,7 +74,7 @@ export default {
       tableData: [],
       total: 0,
       loading: true,
-      highRiskHint: true,
+      highRiskHint: false,
       checked: false
     }
   },
