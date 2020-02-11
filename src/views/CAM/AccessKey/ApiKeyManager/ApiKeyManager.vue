@@ -9,9 +9,6 @@
       </p>
     </div>
     <div class="cam_button">
-      <el-row class="cam-lt">
-        <el-button type="primary" size="small" @click="NewUser" >新建秘钥</el-button>
-      </el-row>
     </div>
     <!-- 表格 -->
     <div class="cam-box">
@@ -65,6 +62,7 @@ export default {
     }
   },
   mounted() {
+    // 如果不是子用户
     if (!this.$cookie.get('subAccountName')) {
       this.highRiskHint = true
       return 
@@ -74,21 +72,9 @@ export default {
   methods: {
     // 初始化方法。
     init() {
-      // let params = {
-      //   Action: 'ListGroups',
-      //   Version: '2019-01-16'
-      // }
-      // let url = "cam/ListGroups"
-      // this.axios.post(url, params).then(res => {
-      //   this.tableData = res.data.groupInfo
-      //   this.total = parseInt(res.data.totalNum)
-        this.loading = false
-      // }).catch(error => {
-      //   console.log(error)
-      // })
-    },
-    NewUser() {
-      this.$router.push({name: 'NewIdentityProvider'})
+      const subUin = '100012644274' // this.$cookie.get('uin') 开发完成后使用cookie获取uin
+      this.axios.post(`redesc/selectSubSecret?subUin=${subUin}`)
+      .then(res => console.log(res))
     },
     highRisClose() {
       this.highRiskHint = false
