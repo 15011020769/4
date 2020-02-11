@@ -81,12 +81,20 @@ export default {
     },
     next() {
       if (this.addModel.groupName != "") {
-        if (this.active == 2) {
-          this.policiesSelectedData = this.$refs.secondStep.getDaata();
-        }
-        const addModel = this.addModel;
-        if (this.active++ > 2) {
-          this.active = 0;
+        if (this.addModel.groupName.length < 31) {
+          if (this.active == 2) {
+            this.policiesSelectedData = this.$refs.secondStep.getDaata();
+          }
+          const addModel = this.addModel;
+          if (this.active++ > 2) {
+            this.active = 0;
+          }
+        } else {
+          this.$message({
+          showClose: true,
+          message: "用戶組名稱長度不能超過30",
+          duration: 0
+        });
         }
       } else {
         this.$message({
