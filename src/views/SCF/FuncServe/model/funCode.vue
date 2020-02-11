@@ -16,7 +16,7 @@
             <span>
               执行方法<i class="el-icon-question"></i>
             </span>
-            <el-input v-model="implementInput" placeholder="请输入内容"></el-input>
+            <el-input v-model="implementInput"></el-input>
           </P>
           <P>
             <span>
@@ -26,12 +26,12 @@
           </P>
         </div>
         <div>
-          <p>
+          <p class="CourseRight">
             <a href="">Python2.7 开发教程</a>
           </p>
           <p>
             <el-dropdown trigger="click">
-              <el-button>
+              <el-button size="small">
                 下载
               </el-button>
               <el-dropdown-menu slot="dropdown">
@@ -46,9 +46,14 @@
   </div>
 </template>
 <script>
+  import {
+    SCF_DETAILS,
+    LIST_VERSION
+  } from "@/constants";
   export default {
     data() {
       return {
+        functionName: this.$route.query.functionName,
         SubmissionValue: 'Inline', //提交方法
         implementInput: '', //执行方法
         ScienceValue: 'Python2.7', //运行环境
@@ -71,8 +76,19 @@
         ]
       }
     },
+    created() {},
     methods: {
+      //获取详情数据
+      GetDate() {
+        let param = {
+          Region: localStorage.getItem('regionv2'),
+          Version: "2018-04-16",
+          FunctionName: this.functionName,
+        };
+        this.axios.post(SCF_DETAILS, param).then(res => {
 
+        });
+      }
     }
   }
 
@@ -90,31 +106,44 @@
       display: flex;
       justify-content: space-between;
 
-
       .CodeTool-frist {
-        // display: flex;
-        flex-basis: 80%;
+        flex-basis: 70%;
       }
 
+      div {
+        display: flex;
 
+        .CourseRight {
+          margin-right: 40px;
+        }
 
-      p {
-        line-height: 30px;
-
-        span {
+        p {
+          display: flex;
+          line-height: 30px;
           margin-right: 10px;
 
-        }
+          span {
+            margin-right: 10px;
 
-        ::v-deep .el-input__inner {
-          width: 200px !important;
-        }
+          }
 
-        ::v-deep .el-input {
-          width: 200px !important;
-        }
+          ::v-deep .el-select {
+            width: 200px !important;
+          }
 
+          ::v-deep .el-input__inner {
+            width: 200px !important;
+          }
+
+          ::v-deep .el-input {
+            width: 200px !important;
+          }
+
+        }
       }
+
+
+
 
 
     }
