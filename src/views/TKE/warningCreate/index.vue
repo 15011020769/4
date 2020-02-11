@@ -994,7 +994,8 @@ input {
 }
 .tf-g {
   font-size: 0;
-  margin-bottom: 50px;
+  // margin-bottom: 50px;
+  padding:20px;
   // background: pink;
 }
 .event-persistence {
