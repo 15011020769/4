@@ -2,16 +2,17 @@
   <div class="funCongig" v-loading='Congigload'>
     <div class="title">
       <h4>函数配置</h4>
-      <p><a>编辑</a></p>
+      <p><a @click="edit=true">编辑</a></p>
     </div>
-    <div v-if="edit">
+    <div v-if="edit===false">
       <div class="Content">
         <p>函数名称</p>
         <p>{{ConfigDate.FunctionName}}</p>
       </div>
       <div class="Content">
         <p>运行角色</p>
-        <p>{{ConfigDate.Role}}</p>
+        <p v-if="ConfigDate.Role">{{ConfigDate.Role}}</p>
+        <p v-else>暂无运行角色</p>
       </div>
       <div class="Content">
         <p>运行环境</p>
@@ -51,14 +52,23 @@
         <p v-else>{{ConfigDate.VpcConfig.SubnetId}}</p>
       </div>
     </div>
-    <div v-if="!edit">
+    <div v-if="edit===true">
       <div class="Content">
         <p>函数名称</p>
         <p>{{ConfigDate.FunctionName}}</p>
       </div>
       <div class="Content">
         <p>运行角色</p>
-        <p>{{ConfigDate.Role}}</p>
+        <div>
+          <el-select v-model="RoleValue" placeholder="请选择">
+            <el-option v-for="item in RoleArr" :key="item.value" :label="item.label" :value="item.value">
+            </el-option>
+          </el-select>
+        </div>
+      </div>
+      <div class="Content">
+        <p></p>
+        <p class="Tips">此角色将用于授权函数运行时操作其他资源的权限。您可以新建角色或对角色修改权限</p>
       </div>
       <div class="Content">
         <p>运行环境</p>
@@ -66,19 +76,28 @@
       </div>
       <div class="Content">
         <p>内存</p>
-        <p>{{ConfigDate.MemorySize}}</p>
+        <div>
+          <el-select v-model="MemoryValue" placeholder="请选择">
+            <el-option v-for="item in MemoryArr" :key="item.value" :label="item.label" :value="item.value">
+            </el-option>
+          </el-select>
+        </div>
       </div>
       <div class="Content">
         <p>超时时间</p>
-        <p>{{ConfigDate.Timeout}}</p>
+        <div>
+          <el-input v-model="TimeoutValue">
+            <el-button slot="append">秒</el-button>
+          </el-input>
+        </div>
+      </div>
+      <div class="Content">
+        <p></p>
+        <p class="Tips">时间范围：1-900秒</p>
       </div>
       <div class="Content">
         <p>描述</p>
         <p>{{ConfigDate.Description}}</p>
-      </div>
-      <div class="Content">
-        <p>修改时间</p>
-        <p>{{ConfigDate.ModTime}}</p>
       </div>
       <div class="Content" v-if="!Congigload">
         <p>环境变量</p>
@@ -115,7 +134,66 @@
         functionName: this.$route.query.functionName,
         ConfigDate: '',
         Variables: [],
-        VpcConfig: {}
+        VpcConfig: {},
+        RoleValue: '', //运行角色
+        RoleArr: [], //运行角色数组
+        MemoryValue: '', //内存
+        MemoryArr: [{
+            label: '64MB',
+            value: 64
+          },
+          {
+            label: '128MB',
+            value: 128
+          },
+          {
+            label: '256MB',
+            value: 256
+          },
+          {
+            label: '384MB',
+            value: 384
+          },
+          {
+            label: '512MB',
+            value: 512
+          },
+          {
+            label: '640MB',
+            value: 640
+          },
+          {
+            label: '768MB',
+            value: 768
+          },
+          {
+            label: '896B',
+            value: 896
+          },
+          {
+            label: '1024MB',
+            value: 1024
+          },
+          {
+            label: '1152MB',
+            value: 1152
+          },
+          {
+            label: '1280MB',
+            value: 1280
+          },
+          {
+            label: '1408MB',
+            value: 1408
+          },
+          {
+            label: '1536MB',
+            value: 1536
+          }
+
+        ], //内存数组
+        TimeoutValue: '', //超出时间
+
       }
     },
     mounted() {
@@ -134,6 +212,9 @@
             this.ConfigDate = res.Response
             this.Variables = res.Response.Environment.Variables
             this.VpcConfig = res.Response.VpcConfig
+            this.RoleValue = this.ConfigDate.Role
+            this.MemoryValue = this.ConfigDate.MemorySize
+            this.TimeoutValue = this.ConfigDate.Timeout
             console.log(this.VpcConfig)
             this.Congigload = false
           } else {
@@ -181,6 +262,9 @@
       p {
         font-size: 12px;
 
+        a {
+          cursor: pointer;
+        }
       }
     }
 
@@ -188,6 +272,11 @@
       display: flex;
       font-size: 12px;
       height: 40px;
+      line-height: 40px;
+
+      .Tips {
+        color: #888;
+      }
 
       p:first-child {
         width: 70px;
