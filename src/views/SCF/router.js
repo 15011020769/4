@@ -1,15 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-// import overView from './overView/overView'
-// import FuncServe from './FuncServe/FuncServe'
-// import createFun from './FuncServe/createFun'
-// import createFunStep from './FuncServe/createFunStep'
-// import funSeverDetail from './FuncServe/funSeverDetail'
-
 Vue.use(Router)
-
 export default new Router({
-  // mode: 'history',
   base: process.env.BASE_URL,
   redirect: {
     name: 'overView'
@@ -24,7 +16,7 @@ export default new Router({
       name: 'overView',
       //component: overView,
       component: () =>
-                import (  './overView/overView.vue'),
+        import('./overView/overView.vue'),
       meta: {
         keepAlive: true
       }
@@ -34,7 +26,7 @@ export default new Router({
       name: 'FuncServe',
       // component: FuncServe,
       component: () =>
-                import (  './FuncServe/FuncServe.vue'),
+        import('./FuncServe/FuncServe.vue'),
       meta: {
         keepAlive: true
       }
@@ -44,7 +36,7 @@ export default new Router({
       name: 'createFun',
       // component: createFun,
       component: () =>
-      import (  './FuncServe/createFun.vue'),
+        import('./FuncServe/createFun.vue'),
       meta: {
         keepAlive: true
       }
@@ -54,7 +46,7 @@ export default new Router({
       name: 'createFunStep',
       // component: createFunStep,
       component: () =>
-      import (  './FuncServe/createFunStep.vue'),
+        import('./FuncServe/createFunStep.vue'),
       meta: {
         keepAlive: true
       }
@@ -64,7 +56,7 @@ export default new Router({
       name: 'funSeverDetail',
       // component: funSeverDetail,
       component: () =>
-      import (  './FuncServe/funSeverDetail.vue'),
+        import('./FuncServe/funSeverDetail.vue'),
       meta: {
         keepAlive: true
       }
