@@ -8,7 +8,7 @@
     </div>
       <div class="tf-g app-tke-fe-content__inner">
         <div class="event-persistence font">
-          <el-form ref="form" :model="form" label-width="100px">
+          <el-form ref="form" :model="form" label-width="100px" class='tke-form' label-position="left">
             <el-form-item label="收集规则名称">
               <el-input size="mini" class="el-input" placeholder="请输入日志收集规则名称"></el-input>
               <div>最长63个字符，只能包含小写字母、数字及分隔符("-")，且必须以小写字母开头，数字或小写字母结尾</div>
@@ -20,21 +20,143 @@
               <div>cls-gwblk71e(tfy_test)</div>
             </el-form-item>
             <el-form-item label="类型">
-              <el-radio-group v-model="tabPosition">
+              <el-radio-group v-model="tabPosition"  size='mini'>
                 <el-radio-button label="one">容器标准输出</el-radio-button>
                 <el-radio-button label="two">容器文件路径</el-radio-button>
                 <el-radio-button label="three">节点文件路径</el-radio-button>
               </el-radio-group>
               <div>
                 采集集群内任意服务下的容器日志，仅支持Stderr和Stdout的日志
-                <a href="" style="margin-left:10px;">查看示例</a><i class="el-icon-edit-outline"></i>
+                <a href="" style="margin-left:10px;">查看示例</a>
               </div>
             </el-form-item>
             <el-form-item label="日志源">
-              <el-radio-group v-model="vlog">
+              <el-radio-group v-model="vlog" size='mini' v-if="tabPosition == 'one'">
                 <el-radio-button label="one">所有容器</el-radio-button>
                 <el-radio-button label="two">指定容器</el-radio-button>
               </el-radio-group>
+
+              <div class="form-form position-form" v-if="vlog == 'one' && tabPosition == 'one'">
+                  <i class='el-icon-edit-outline'></i>
+                  <i class='el-icon-close'></i>
+                  <div><span>Namespace:</span><span>default</span>|<span>采集对象:</span><span>全部容器</span></div>
+              </div>
+
+              <div class="form-form position-form" v-if="vlog == 'two' && tabPosition == 'one'">
+                  <i class='el-icon-check'></i>
+                  <i class='el-icon-close'></i>
+                 <el-form-item label="所属Namespace" label-width="150px">
+                    <el-select placeholder="请选择" size='mini' v-model='formTwo.value1'> 
+                        <el-option
+                          v-for="item in formFour.option1"
+                          :key="item.value"
+                          :label="item.label"
+                          :value="item.value">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+                 <el-form-item label="所属集群">
+                  <div>cls-gwblk71e(tfy_test)</div>
+                </el-form-item>
+              </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+              <div class="form-form" v-if="tabPosition == 'two'">
+                <el-form ref="form" :model="formTwo" label-width="100px" class='tke-form' label-position="left">
+                     <el-form-item label="工作负载选项">
+                       <el-select placeholder="请选择" size='mini' v-model='formTwo.value1'> 
+                          <el-option
+                            v-for="item in formTwo.option1"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                          </el-option>
+                        </el-select>
+                        <el-select placeholder="请选择" size='mini' class='ml10' v-model='formTwo.value2'>
+                          <el-option
+                            v-for="item in formTwo.option2"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                          </el-option>
+                        </el-select>
+                        <el-select placeholder="请选择" size='mini' class='ml10'>
+                          <el-option
+                            v-for="item in formTwo.option3"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                          </el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="配置采集路径">
+                        <div v-for="(domain,index) in formTwo.optionAll">
+                          <el-form-item label="容器名">
+                            <el-select placeholder="请选择" size='mini' class='ml10' v-model='domain.value4'>
+                              <el-option
+                                v-for="item in domain.option4"
+                                :key="item.value"
+                                :label="item.label"
+                                :value="item.value">
+                              </el-option>
+                            </el-select>
+                          </el-form-item>
+                          <el-form-item label="文件路径">
+                            <el-select placeholder="请选择" size='mini' class='ml10' v-model='domain.value5'>
+                              <el-option
+                                v-for="item in domain.option5"
+                                :key="item.value"
+                                :label="item.label"
+                                :value="item.value">
+                              </el-option>
+                            </el-select>
+                            <el-input class='w180' size='mini' placeholder="请输入文件路径"></el-input>
+                            <el-tooltip class="item" effect="dark" content="删除" placement="right" v-if='index !=0'>
+                                <i class="el-icon-close" @click.prevent="removeDomain(domain)"></i>
+                            </el-tooltip>
+                          </el-form-item>
+                         </div>
+                         <el-link type="primary" style="cursor: pointer;font-size:12px;"  @click="addDomain">新增变量</el-link>
+                        <p>可配置多个路径，路径必须以`/`开头，支持通配符（*），请保证容器的日志文件保存在数据卷，否则收集规则无法生效</p>
+                    </el-form-item>
+                </el-form>
+              </div>
+
+              <div class="form-form" v-if="tabPosition == 'three'">
+                <el-form-item label="收集路径">
+                  <el-input size="mini" class="el-input" placeholder="请输入日志收集路径" v-model='formThree.value'></el-input>
+                  <div>指定采集日志的文件路径，支持通配符(*)，必须以`/`开头</div>
+                </el-form-item>
+                <el-form-item label="metadata">
+                  <div style="width:300px;" > 
+                    <div class="form-input"  v-for="(domain, index) in formThree.domains"
+                  :key="domain.key">
+                          <el-input v-model="domain.value" size="mini" placeholder="变量名"></el-input>
+                          <span>=</span>
+                          <el-input v-model="domain.valueKey" size="mini" placeholder="变量值"></el-input>
+                          <el-tooltip class="item" effect="light" content="删除" placement="right">
+                              <i class="el-icon-close" @click.prevent="removeMetadata(domain)"></i>
+                          </el-tooltip>
+                      </div>
+                    </div>
+                  <el-link type="primary" style="cursor: pointer;font-size:12px;"  @click="addMetadata">新增metadata</el-link>
+                  <div>收集规则收集的日志会带上metadata，并上报到消费端</div>
+                </el-form-item>
+              </div>
             </el-form-item>
             <el-form-item label="消费端">
               <div class="form-form">
@@ -48,7 +170,8 @@
                     </el-radio-group>
                     <div style="font-size:10px;">
                       将采集的日志消费到消息服务Kafka中。
-                      <a href="">查看示例</a><i class="el-icon-edit-outline"></i>
+                      <a href="">查看示例</a>
+                      
                     </div>
                   </el-form-item>
                   <el-form-item label="Kafka类型">
@@ -80,8 +203,8 @@
               </div>
             </el-form-item>
             <el-form-item>
-              <el-button type="primary" @click="onSubmit">立即创建</el-button>
-              <el-button>取消</el-button>
+              <el-button type="primary" @click="onSubmit"  size='mini'>立即创建</el-button>
+              <el-button  size='mini'>取消</el-button>
             </el-form-item>
           </el-form>
         </div>
@@ -107,6 +230,94 @@ export default {
         resource: '',
         desc: ''
       },
+      formTwo:{
+        option1:[
+          {
+            value:1,
+            label:'请选择Namespace'
+          },
+          {
+            value:2,
+            label:'default'
+          },
+          {
+            value:3,
+            label:'kube-public'
+          },
+          {
+            value:4,
+            label:'kube-system'
+          },
+          {
+            value:5,
+            label:'tfy-pub'
+          }
+        ],
+         option2:[
+          {
+            value:1,
+            label:'请选择工作负载类型'
+          },
+          {
+            value:2,
+            label:'Deployment'
+          },
+          {
+            value:3,
+            label:'Daemonset'
+          },
+          {
+            value:4,
+            label:'Statefulset'
+          },
+          {
+            value:5,
+            label:'Cronjob'
+          }
+        ],
+        option3:[],
+        optionAll:[{
+          option4:[],
+          option5:[],
+          value4:'',
+          value5:'',
+          valueKey:''
+        }],
+        value1:'',
+        value2:'',
+        value3:'',
+      },
+      formThree:{
+        value:'',
+        domains:[{
+          value:'',
+          valueKey:''
+        }]
+      },
+      formFour:{
+        option1:[
+          {
+            value:1,
+            label:'请选择Namespace'
+          },
+          {
+            value:2,
+            label:'default'
+          },
+          {
+            value:3,
+            label:'kube-public'
+          },
+          {
+            value:4,
+            label:'kube-system'
+          },
+          {
+            value:5,
+            label:'tfy-pub'
+          }
+        ],
+      },
       value:'jq',
       Ckafka:{
         value:'ckafka-2fnu2ckz(kafka-JC3LVVH3)',
@@ -125,7 +336,34 @@ export default {
   methods: {
     onSubmit() {
       alert('已提交')
-    }
+    },
+    removeDomain (item) {
+        var index = this.formTwo.optionAll.indexOf(item)
+        if (index !== -1) {
+            this.formTwo.optionAll.splice(index, 1)
+        }
+    },
+    addDomain () {
+      this.formTwo.optionAll.push({
+          option4:[],
+          option5:[],
+          value4:'',
+          value5:'',
+          valueKey:''
+      })
+    },
+    addMetadata () {
+      this.formThree.domains.push({
+            value: '',
+            valueKey: '',
+        })
+    },
+    removeMetadata (item) {
+        var index = this.formThree.domains.indexOf(item)
+        if (index !== -1) {
+            this.formThree.domains.splice(index, 1)
+        }
+    },
   },
   props:["uid"],
   components: {
@@ -267,10 +505,41 @@ input {
   font-size: 0;
   margin-bottom: 50px;
   // background: pink;
+  padding:20px;
 }
 .event-persistence {
   padding: 20px;
   background: white;
   box-shadow: 0 1px 3px 0 rgba(0,0,0,.1);
+}
+.form-input{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    span{
+        margin:0 10px;
+    }
+    i{
+        margin:0 10px;
+        cursor: pointer;
+    }
+}
+.position-form{
+  position:relative;
+}
+.el-icon-edit-outline{
+  position:absolute;
+  top:10px;
+  right:50px;
+}
+.el-icon-check{
+   position:absolute;
+  top:10px;
+  right:50px;
+}
+.el-icon-close{
+  position:absolute;
+  top:10px;
+  right:30px;
 }
 </style>

@@ -33,59 +33,56 @@
         </div>
       </div>
       <!-- 内容 -->
-      <div class="event-persistence" v-loading='funllscreenLoading'>
-        <div class="ep-data-card-main" style="padding:5px 0 10px 0;">
-          <el-row>
-            <el-col :span="5"><div class="font"><input type="checkbox" class="app-tke-fe-checkbox"> 告警策略名称</div></el-col>
-            <el-col :span="4"><div class="font">策略类型</div></el-col>
-            <el-col :span="5"><div class="font">触发条件</div></el-col>
-            <el-col :span="5"><div class="font">警告渠道</div></el-col>
-            <el-col :span="5"><div class="font">操作</div></el-col>
-          </el-row>
-        </div>
-        <div class="ep-data-card-main font" style="text-align:center;" v-if="length=='0'">
-          您选择的集群的告警设置列表为空，您可以
-          <a href="">新建告警设置</a>，或切换到其他集群
-        </div>
-        <div v-if="length!==0">
-          <div ref="dataShow" class="ep-data-card-main" style="padding-top:20px;"  v-for="(item,i) in listData" :key="i" >
-          <el-row>
-            <el-col :span="5"><div class="font pt12">
-                <input type="checkbox" class="app-tke-fe-checkbox"><a href="javascript:;">{{item.AlarmPolicySettings.AlarmPolicyName}}</a>
-              </div></el-col>
-            <el-col :span="4"><div class="font pt12">{{item.AlarmPolicySettings.AlarmPolicyType}}</div></el-col>
-            <el-col :span="5"><div class="font">
-                <div>CPU利用率>90%,持续5分钟告警</div>
-                <div>内存利用率>90%,持续5分钟告警</div>
-                <div>CPU分配率>90%,持续5分钟告警</div>
-              </div></el-col>
-            <el-col :span="5"><div class="font pt6">
-                <div>接收组:1个</div>
-                <div>渠道:短信 邮箱</div>
-              </div></el-col>
-            <el-col :span="5"><div class="font pt12">
-              <router-link :to="''">
-                <span>删除</span>
-              </router-link>
-              <div style="width:10px;display:inline-block"></div>
-               <router-link :to="''">
-                <span>复制</span>
-              </router-link>
-              </div></el-col>
-          </el-row>
-          </div>
-        </div>
-        <div class="font flex">
-          <div style="flex:1;padding-top:17px;">共&nbsp;{{length}}&nbsp;项</div>
-          <div class="block" style="padding-top:5px;">
-            <el-pagination
-              :page-sizes="[10, 20, 30, 40, 50]"
-              :page-size="pageSize"
-              layout="sizes, prev, pager, next"
-              :total="length">
-            </el-pagination>
-          </div>
-        </div>
+          <el-table
+          ref="multipleTable"
+          :data="tableData"
+          tooltip-effect="dark"
+          style="width: 100%"
+          @selection-change="handleSelectionChange">
+          <el-table-column
+            type="selection"
+            width="55">
+          </el-table-column>
+          <el-table-column
+            label="告警策略名称"
+            width="120">
+            <template slot-scope="scope">{{ scope.row.date }}</template>
+          </el-table-column>
+          <el-table-column
+            prop="name"
+            label="策略类型"
+            width="120">
+          </el-table-column>
+          <el-table-column
+            prop="address"
+            label="触发条件"
+            show-overflow-tooltip>
+          </el-table-column>
+          <el-table-column
+            prop="name"
+            label="告警渠道"
+            width="120">
+          </el-table-column>
+          <el-table-column
+            prop="address"
+            label="操作"
+            show-overflow-tooltip>
+               <template slot-scope="scope">
+                  <el-button
+                    @click.native.prevent="deleteRow(scope.$index, tableData)"
+                    type="text"
+                    size="small">
+                    删除
+                  </el-button>
+                      <el-button
+                    @click.native.prevent="deleteRow(scope.$index, tableData)"
+                    type="text"
+                    size="small">
+                    复制
+                  </el-button>
+                </template>
+          </el-table-column>
+        </el-table>
       </div>
     </div>
   </div>
@@ -301,6 +298,7 @@ export default {
   margin:0 auto;
   font-size: 0;
   margin-bottom: 50px;
+  padding:20px;
 }
 .search {
   width: 200px;

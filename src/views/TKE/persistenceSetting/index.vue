@@ -30,7 +30,7 @@
           <div class="flex padding" style="padding-bottom:0px;">
             <div class='data-card-hd' style="line-height:28px;">存储端选择</div>
             <div class="flex">
-              <el-radio-group v-model="tabPosition" class="font" style="margin-bottom: 30px;">
+              <el-radio-group v-model="tabPosition" class="font" style="margin-bottom: 30px;" size='mini'>
                 <el-radio-button class="tabs-size" style="font-size:12px;" label="Els">Elasticsearch</el-radio-button>
                 <el-radio-button class="tabs-size" label="log">日志服务CLS</el-radio-button>
               </el-radio-group>
@@ -71,8 +71,8 @@
           </div>
           <el-form>
             <el-form-item style="margin-top:40px;margin-left:30px;">
-              <el-button type="primary" @click="onSubmit">立即创建</el-button>
-              <el-button>取消</el-button>
+              <el-button type="primary" @click="onSubmit"  size='mini'>立即创建</el-button>
+              <el-button  size='mini'>取消</el-button>
             </el-form-item>
           </el-form>
         </div>
@@ -164,6 +164,7 @@ input {
   padding-top: 20px;
   max-width: 1360px;
   margin:0 auto;
+  padding:20px;
 }
 .tf-g {
   font-size: 0;
