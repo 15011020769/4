@@ -29,12 +29,25 @@
           </el-form-item>
 
           <el-form-item label="标签">
-            <el-input class="w200" v-model="wl.name" placeholder="请输入Workload名称"></el-input>
+            <div v-for="(v,i) in wl.labels" :key="i">
+             <el-input :disabled="v.key=='k8s-app'" class="w100" v-model="v.key"></el-input> = <el-input class="w100"  v-model="v.value"></el-input>
+              <el-tooltip class="item" effect="light" content="默认标签不可删除" placement="right" v-if="v.key=='k8s-app'">
+                   <i class="el-icon-close"  style="font-size:20px;margin-left:20px;cursor:pointer"></i>
+                </el-tooltip>
+              <i class="el-icon-close"  style="font-size:20px;margin-left:20px;cursor:pointer" v-else @click="delAddVar(i)"></i>
+            </div>
+             <span class="disable" v-if="addVarFlag">新增变量</span>
+             <span class="use" v-if="!addVarFlag" @click="addVar">新增变量</span>
             <p>
               最长40个字符，只能包含小写字母、数字及分隔符("-")，且必须以小写字母开头，数字或小写字母结尾
             </p>
           </el-form-item>
-
+           <el-form-item label="命名空间">
+              <el-select v-model="wl.nameSpace"  placeholder="请选择">
+                <el-option v-for="item in nameSpaceOptions" :key="item.value" :label="item.label" :value="item.value">
+                </el-option>
+              </el-select>
+          </el-form-item>
           <el-form-item label="类型">
             <div class="form-controls" style="width:350px">
               <el-radio-group class="tke-radio-group" v-model="wl.type">
@@ -80,7 +93,7 @@
 
           <!--  <div> -->
           <el-form-item label="数据卷（选填）">
-            <div class="search-one" v-show="dataFlag" v-for="(item, index) in dataJuan" :key="index">
+            <div class="search-one" v-show="dataFlag" v-for="(item, index) in wl.dataJuan" :key="index">
               <el-select v-model="item.name1" placeholder="请选择">
                 <el-option v-for="item in searchOptions" :key="item.value" :label="item.label" :value="item.value">
                 </el-option>
@@ -131,27 +144,27 @@
             <div class="case-content">
               <el-form :model="wl" label-position="left" label-width="120px" size="mini">
                 <el-form-item label="名称">
-                  <el-input class="w192" v-model="wl.name" placeholder="请输入容器名称"></el-input>
+                  <el-input class="w192" v-model="wl.caseContent.name" placeholder="请输入容器名称"></el-input>
                   <p>请输入容器名称最长63个字符，只能包含小写字母、数字及分隔符("-")，且不能以分隔符开头或结尾</p>
                 </el-form-item>
                 <el-form-item label="镜像">
-                  <el-input class="w192" v-model="wl.name"></el-input>
+                  <el-input class="w192" v-model="wl.caseContent.mirrorImg"></el-input>
                   <span> <a  @click="SelectMirrorImgFlag=true"> 选择镜像</a> </span>
                   <SelectMirrorImg :dialogVisible='SelectMirrorImgFlag' @close='close'></SelectMirrorImg>
                 </el-form-item>
                 <el-form-item label="镜像版本（Tag）">
-                  <el-input class="w192" v-model="wl.name"></el-input>
+                  <el-input class="w192" v-model="wl.caseContent.versions"></el-input>
                 </el-form-item>
                 <el-form-item label="镜像拉取策略">
                   <template>
-                    <el-radio-group v-model="mirrorPullTactics" style="margin-bottom: 5px;">
+                    <el-radio-group v-model="wl.caseContent.mirrorPullTactics" style="margin-bottom: 5px;">
                       <el-radio-button label="Always">Always</el-radio-button>
                       <el-radio-button label="IfNotPresent">IfNotPresent</el-radio-button>
                       <el-radio-button label="Never">Never</el-radio-button>
                     </el-radio-group>
-                    <p v-show="mirrorPullTactics=='Always'">总是从远程拉取该镜像</p>
-                    <p v-show="mirrorPullTactics=='IfNotPresent'">默认使用本地镜像，若本地无该镜像则远程拉取该镜像</p>
-                    <p v-show="mirrorPullTactics=='Never'">只使用本地镜像，若本地没有该镜像将报异常</p>
+                    <p v-show="wl.caseContent.mirrorPullTactics=='Always'">总是从远程拉取该镜像</p>
+                    <p v-show="wl.caseContent.mirrorPullTactics=='IfNotPresent'">默认使用本地镜像，若本地无该镜像则远程拉取该镜像</p>
+                    <p v-show="wl.caseContent.mirrorPullTactics=='Never'">只使用本地镜像，若本地没有该镜像将报异常</p>
                   </template>
                 </el-form-item>
                 <el-form-item label="CPU/内存限制">
@@ -161,11 +174,11 @@
                       <div style="display:flex">
                         <div class="cpu-limit2">
                           <span>request</span>
-                          <el-input class="w192" v-model="wl.name"></el-input>
+                          <el-input class="w192" v-model="wl.caseContent.requestCpu"></el-input>
                         </div>-
                         <div class="cpu-limit2">
                           <span>limit</span>
-                          <el-input class="w192" v-model="wl.name"></el-input>
+                          <el-input class="w192" v-model="wl.caseContent.limitCpu"></el-input>
                         </div>核
                       </div>
                     </div>
@@ -174,11 +187,11 @@
                       <div style="display:flex">
                         <div class="cpu-limit2">
                           <span>request</span>
-                          <el-input class="w192" v-model="wl.name"></el-input>
+                          <el-input class="w192" v-model="wl.caseContent.requestMemory"></el-input>
                         </div>-
                         <div class="cpu-limit2">
                           <span>limit</span>
-                          <el-input class="w192" v-model="wl.name"></el-input>
+                          <el-input class="w192" v-model="wl.caseContent.limitMemory"></el-input>
                         </div>Mib
                       </div>
                     </div>
@@ -186,20 +199,20 @@
                   <p style="margin-top:10px;">
                     Request用于预分配资源,当集群中的节点没有request所要求的资源数量时,容器会创建失败。Limit用于设置容器使用资源的最大上限,避免异常情况下节点资源消耗过多。</p>
                 </el-form-item>
+                  <el-form-item label="GPU限制">
+                    <el-input-number  v-model="wl.caseContent.limitNum"   size="small" :min="0"></el-input-number>个
+                  </el-form-item>
                 <el-form-item label="环境变量">
                   <el-tooltip class="item" effect="light" content="设置容器中的变量" placement="top">
                     <i class="el-icon-info  setPosition"></i>
                   </el-tooltip>
-                  <div style="padding:10px 0px 10px;">
-                    <p>
-                    <el-input class="w100" v-model="wl.name"></el-input> = 
-                    <el-input class="w192" v-model="wl.name"></el-input> 
-                    <i class="el-icon-close" style="font-size:20px;margin-left:20px;cursor:pointer"></i> 
-                    </p>
+                  <div style="padding:0px 0px 6px;" v-for="(v,i) in wl.caseContent.environmentVar"  :key="i">
+                    <el-input class="w100" v-model="v.key" placeholder="变量名"></el-input> = 
+                    <el-input class="w192" v-model="v.value" placeholder="变量值"></el-input> 
+                    <i class="el-icon-close" style="font-size:20px;margin-left:20px;cursor:pointer" @click="wl.caseContent.environmentVar.splice(i,1)"></i> 
                   </div>
-                  <hr>
+                  <hr v-if="wl.caseContent.environmentVar.length>0&&wl.caseContent.citeCs.length>0">
                   <div>
-                    <p>
                       <el-select v-model="containerCheck.type" class="w100">
                             <el-option v-for="item in containerTypeOptions" :key="item.value" :label="item.label"
                               :value="item.value">
@@ -217,9 +230,8 @@
                       </el-select>以
                       <el-input class="w150" v-model="wl.name"></el-input> 为别名
                        <i class="el-icon-close" style="font-size:20px;margin-left:20px;cursor:pointer"></i> 
-                    </p>
                   </div>
-                  <a href="#">新增变量</a>
+                  <a href="#"@click='addEnvironmentVar'>新增变量</a>
                   <a href="#" style="margin-left:4px;">引用ConfigMap/Secret</a>
                   <p>只能包含字母、数字及分隔符("-"、"_"、".")，且必须以字母开头</p>
                 </el-form-item>
@@ -755,6 +767,22 @@
           name: "",
           desc: "",
           type: "",
+          labels:[{key:'k8s-app',value:''}],
+          nameSpace:'tfy-pub',
+          dataJuan: [],
+          caseContent:{
+            name:'',
+            mirrorImg:'',
+            versions:'',
+            mirrorPullTactics: 'Always', //镜像拉取策略
+            requestCpu:'',
+            limitCpu:'',
+            requestMemory:'',
+            limitMemory:'',
+            limitNum:0,
+            environmentVar:[],
+            citeCs:[],
+          },
           caseNum: {
             adjustType: 'handAdjust',
           },
@@ -763,7 +791,10 @@
           nodeTactics: "1",
 
         },
-         svc: {
+        nameSpaceOptions:[{value:'tfy-pub',label:'tfy-pub'},{value:'default',label:'default'},{value:'kube-public',label:'kube-public'},{value:'kube-system',label:'kube-system'},],
+        
+        addVarFlag:true,
+        	svc:{
 				show: true,
 				time: 30,
 				checked:false,
@@ -777,7 +808,7 @@
 				list: [{}],
 				workload: [],
 				tabPosition: 'dep'
-      }  ,
+			},
         // 实例数量自动调节下拉框内容
         touchTactics: [{
           touch1: 'CPU',
@@ -904,7 +935,6 @@
           connect: 'In'
         }, ],
         value: "",
-        dataJuan: [],
         usePvcOptions: [],
         checkTypeOptions: [],
         tableData: [],
@@ -919,7 +949,7 @@
         dialogVisibleYun: false,
         dialogVisibleConfig: false,
         dialogVisibleSecret: false,
-        mirrorPullTactics: 'Always', //镜像拉取策略
+       
         surviveExamine: false, //存活检查
         readyToCheck: false, //就绪检查
         highLevelSetShow: false,
@@ -929,9 +959,19 @@
     },
     components: {Service, SelectMirrorImg},
     watch: {
-      dataJuan: {
-        handler(val) {
-          val.forEach(item => {
+     
+      wl:{
+        handler(val){
+          //监听标签
+          val.labels.forEach(v=>{
+            if(v.value==''){
+              this.addVarFlag=true
+            }else{
+               this.addVarFlag=false
+            }
+          });
+          //监听数据卷
+          val.dataJuan.forEach(item => {
             if (item.name1 == "useMenu" && item.name2) {
               this.yesOrnoAddDataJuan = false;
             } else if (item.name1 && item.name2 && item.name3) {
@@ -940,16 +980,17 @@
               this.yesOrnoAddDataJuan = true;
             }
           });
-          if (val.length == 0) {
+          if (val.dataJuan.length == 0) {
             this.yesOrnoAddDataJuan = false;
           }
         },
-        deep: true
+        deep:true,
       }
     },
     created() {
       // 从路由获取类型
       this.wl.type = this.$route.query.type;
+    
     },
     methods: {
       //返回上一层
@@ -963,10 +1004,10 @@
           name2: "",
           name3: ""
         };
-        this.dataJuan.push(obj);
+        this.wl.dataJuan.push(obj);
       },
-      delDataJuan(index) {
-        this.dataJuan.splice(index, 1);
+      delDataJuan(index) {//删除数据卷
+        this.wl.dataJuan.splice(index, 1);
       },
       newAddTarget() { //新增指标
         var obj = {
@@ -980,24 +1021,31 @@
         this.touchTactics.splice(index, 1)
       },
 
-      addRule1(index) {
+       addEnvironmentVar(){
+         this.wl.caseContent.environmentVar.push({key:'',value:''})
+       } ,
+      //  delEnvironmentVar(index){
+      //      this.wl.caseContent.environmentVar.splice()
+      //  },
+
+
+       //节点调度策略
+      addRule1(index) {//添加规则1
         this.mustCondition[index].push({
           name: '',
           rule: '',
           connect: 'In'
         })
       },
-      addRule2(index) {
+      addRule2(index) {//添加规则2
         this.needCondition[index].arr.push({
           name: '',
           rule: '',
           connect: 'In'
         })
       },
-      delRule1(index) {
-        this.condition.splice(index, 1)
-      },
-      addCondition() {
+      //节点调度策略
+      addCondition() {// 添加强制满足条件
         var arr = [{
           name: '',
           connect: 'In',
@@ -1005,7 +1053,7 @@
         }];
         this.mustCondition.push(arr)
       },
-      addCondition2() {
+      addCondition2() {// 添加尽可能满足条件
         var obj = {
           weight:'',
           arr:[{
@@ -1016,10 +1064,11 @@
         };
         this.needCondition.push(obj)
       },
-      delMustCondition(index) {
+      //节点调度策略
+      delMustCondition(index) {// 删除强制满足条件
         this.mustCondition.splice(index, 1)
       },
-      delNeedCondition(index) {
+      delNeedCondition(index) {//删除尽可能满足条件
         this.needCondition.splice(index, 1)
       },
       //选择云硬盘
@@ -1042,6 +1091,14 @@
       close(val){
         this.SelectMirrorImgFlag=val;
         console.log(val)
+      },
+      //新增变量
+      addVar(){
+        console.log(1)
+        this.wl.labels.push({key:'',value:''})
+      },
+      delAddVar(index){
+        this.wl.labels.splice(index,1)
       }
     }
   };
@@ -1132,11 +1189,17 @@ a{
   .w400 {
     width: 400px;
   }
-
+  .disable{
+    cursor: not-allowed;
+  }
+  .use{
+    color: #409EFF;
+    cursor: pointer;
+  }
   .w150 {
     width: 150px;
   }
-
+  
   .pagstyle {
     display: flex;
     justify-content: space-between;

@@ -9,9 +9,6 @@
       </p>
     </div>
     <div class="cam_button">
-      <el-row class="cam-lt">
-        <el-button type="primary" size="small" @click="NewUser" >新建秘钥</el-button>
-      </el-row>
     </div>
     <!-- 表格 -->
     <div class="cam-box">
@@ -32,36 +29,22 @@
         </template>&ndash;&gt;
         </el-table-column>
       </el-table>
-      <div
-        style="background:#fff;padding:10px;display:flex;justify-content: space-between;line-height:30px"
-      >
-        <div>
-          <span style="font-size:12px;color:#888">已选 0 项，共 0 项</span>
-        </div>
-        <div>
-          <el-pagination
-            @size-change="handleSizeChange"
-            @current-change="handleCurrentChange"
-            :current-page.sync="currentPage2"
-            :page-sizes="[10, 20, 30, 40]"
-            :page-size="10"
-            layout="sizes, prev, pager, next"
-            :total="40"
-          ></el-pagination>
-        </div>
-      </div>
     </div>
-    <el-dialog title="高风险提示" :visible.sync="highRiskHint" :before-close="highRisClose" width="40%"> 
+    <el-dialog
+      title="高风险提示"
+      :show-close="false"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      :visible.sync="highRiskHint"
+      :before-close="highRisClose"
+      width="40%"
+    >
       <p style="font-size:10px;">
         您正在使用主账号访问雲API密钥管理页面，使用密钥通过雲API可以无限制地访问您的腾讯雲资源。 雲API密钥泄露可能造成您的雲上资产损失，强烈建议您登录子用户账户操作并使用子用户密钥访问雲API。
-      </p>
-      <p style="font-size:10px;">
-        <el-checkbox v-model="checked">不再显示此信息</el-checkbox>
       </p>
       <br/>
       <br/>
       <div style="margin:0 auto;text-align: center;">
-        <el-button size="small" @click="highRiskHint = false">&nbsp;&nbsp;继续使用&nbsp;&nbsp;</el-button>
         <el-button size="small" type="primary" @click="highRiskLink">&nbsp;&nbsp;立即使用子账户&nbsp;&nbsp;</el-button>
       </div>
     </el-dialog>
@@ -79,32 +62,25 @@ export default {
     }
   },
   mounted() {
+    // 如果不是子用户
+    if (!this.$cookie.get('subAccountName')) {
+      this.highRiskHint = true
+      return 
+    }
     this.init()
   },
   methods: {
     // 初始化方法。
     init() {
-      // let params = {
-      //   Action: 'ListGroups',
-      //   Version: '2019-01-16'
-      // }
-      // let url = "cam/ListGroups"
-      // this.axios.post(url, params).then(res => {
-      //   this.tableData = res.data.groupInfo
-      //   this.total = parseInt(res.data.totalNum)
-        this.loading = false
-      // }).catch(error => {
-      //   console.log(error)
-      // })
-    },
-    NewUser() {
-      this.$router.push({name: 'NewIdentityProvider'})
+      const subUin = '100012644274' // this.$cookie.get('uin') 开发完成后使用cookie获取uin
+      this.axios.post(`redesc/selectSubSecret?subUin=${subUin}`)
+      .then(res => console.log(res))
     },
     highRisClose() {
       this.highRiskHint = false
     },
     highRiskLink() {
-      this.$router.push({ name: "custormCreate" });
+      this.$router.push('/adduserNew');
     }
   }
 }

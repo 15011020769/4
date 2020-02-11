@@ -11,7 +11,7 @@ export default new Router({
   },
   routes: [{
     path: '/',
-    redirect: '/UserGroup'
+    redirect: '/UserListNew'
   },
   {
     path: '/UserGroup', // 用户组

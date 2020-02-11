@@ -13,54 +13,35 @@
           <button class="el-icon-search ip-btn"></button>
         </div>
         <!-- 内容 -->
-        <div class="event-persistence">
-          <div class="ep-data-card-main" style="padding-top:5px;">
-            <el-row>
-              <el-col :span="4"><div class="font">ID/名称</div></el-col>
-              <el-col :span="4"><div class="font">状态</div></el-col>
-              <el-col :span="4"><div class="font">存储端</div></el-col>
-              <el-col :span="8"><div class="font">存储对象</div></el-col>
-              <el-col :span="4"><div class="font">操作</div></el-col>
-            </el-row>
-          </div>
-          <!-- 数据绑定 -->
-          <div class="ep-data-card-main font" style="text-align:center;">
-            您选择的改区域的集群列表为空，您可以
-            <a href="">[新建一个集群]</a>，或切换到其他地域
-          </div>
-          <div class="ep-data-card-main" style="padding-top:20px;">
-            <el-row>
-              <el-col :span="4"><div class="font">
-                  <a href="javascript:;">cls-kukvzoc1</a>
-                  <div>ssssss</div>
-                </div></el-col>
-              <el-col :span="4"><div class="font center">未开启</div></el-col>
-              <el-col :span="4"><div class="font center">-</div></el-col>
-              <el-col :span="8"><div class="font center">-</div></el-col>
-              <el-col :span="4"><div class="font center">
-                <router-link :to="'/persistenceSetting/'+uid">
-                  <span>设置</span>
-                </router-link>
-                </div></el-col>
-            </el-row>
-          </div>
-          <div class="ep-data-card-main" style="padding-top:20px;">
-            <el-row>
-              <el-col :span="4"><div class="font">
-                  <a href="javascript:;">cls-kukvzoc1</a>
-                  <div>ssssss</div>
-                </div></el-col>
-              <el-col :span="4"><div class="font center">未开启</div></el-col>
-              <el-col :span="4"><div class="font center">-</div></el-col>
-              <el-col :span="8"><div class="font center">-</div></el-col>
-              <el-col :span="4"><div class="font center">
-                <router-link :to="'/persistenceSetting/'+uid">
-                  <span>设置</span>
-                </router-link>
-                </div></el-col>
-            </el-row>
-          </div>
-        </div>
+      <el-table
+      :data="tableData"
+      style="width: 100%">
+        <el-table-column
+          prop="date"
+          label="ID/名称"
+          width="180">
+        </el-table-column>
+        <el-table-column
+          prop="name"
+          label="状态"
+          width="180">
+        </el-table-column>
+        <el-table-column
+          prop="address"
+          label="存储端">
+        </el-table-column>
+           <el-table-column
+          prop="date"
+          label="存储对象"
+          width="180">
+        </el-table-column>
+        <el-table-column
+          label="操作">
+           <template slot-scope="scope">
+              <el-button @click="handleClick(scope.row)" type="text" size="small">设置</el-button>
+            </template>
+        </el-table-column>
+    </el-table>
       </div>
     </div>
   </div>
@@ -79,6 +60,7 @@ export default {
     return{
       list: [],
       funllscreenLoading:false,
+      tableData:[]
     }
   },
   created() {
@@ -164,6 +146,7 @@ export default {
 .app-tke-fe-content__inner {
   max-width: 1360px;
   margin:0 auto;
+  padding:20px;
 }
 .tf-g {
   font-size: 0;

@@ -25,24 +25,30 @@
           <span class="title">集群信息</span>
           <i class="el-icon-arrow-right"></i>
         </div>
-        <div class="tke-step-item">
+        <div
+          class="tke-step-item"
+          :class="{ 'is-curr': secondBox || thirdBox || fourthBox }"
+        >
           <span class="num">2</span>
           <span class="title">选择机型</span>
           <i class="el-icon-arrow-right"></i>
         </div>
-        <div class="tke-step-item">
+        <div
+          class="tke-step-item"
+          :class="{ 'is-curr': thirdBox || fourthBox }"
+        >
           <span class="num">3</span>
           <span class="title">云服务器配置</span>
           <i class="el-icon-arrow-right"></i>
         </div>
-        <div class="tke-step-item">
+        <div class="tke-step-item" :class="{ 'is-curr': fourthBox }">
           <span class="num">4</span>
           <span class="title">信息确认</span>
         </div>
       </div>
       <hr />
       <!-- 第一步 -->
-      <div style="display:none;">
+      <div v-if="firstBox">
         <div class="tke-reminder">
           当您使用容器服务时，需要先创建集群，容器服务运行在集群中。一个集群由若干节点（云服务器）构成，可运行多个容器服务。集群的更多说明参考<a
             href="#"
@@ -61,8 +67,12 @@
               <el-input
                 class="w200"
                 v-model="colony.name"
+                :class="{ 'cluster-wran': colony.nameWran }"
+                @blur="ClusterNameBlur"
+                @focus="ClusterNameFocus"
                 placeholder="请输入集群名称，不超过60个字符"
               ></el-input>
+              <i class="el-icon-warning-outline" v-if="colony.nameWran"></i>
             </el-form-item>
             <el-form-item label="新增资源所属项目">
               <el-select
@@ -119,8 +129,6 @@
             </el-form-item>
             <el-form-item label="所在地域">
               <el-radio-group v-model="colony.cityRadio" size="small">
-                <el-radio-button label="gz">广州</el-radio-button>
-                <el-radio-button label="sh">上海</el-radio-button>
                 <el-radio-button label="tb">台湾台北</el-radio-button>
               </el-radio-group>
             </el-form-item>
@@ -279,34 +287,36 @@
 
           <!-- 底部 -->
           <div class="tke-formpanel-footer">
-            <el-button size="small">取消</el-button>
-            <el-button size="small" type="primary">下一步</el-button>
+            <el-button size="small" @click="goBack">取消</el-button>
+            <el-button size="small" type="primary" @click="firstNext"
+              >下一步</el-button
+            >
           </div>
         </div>
       </div>
       <!-- 第二步 选择机型 -->
       <div
-        style="display:none;"
+        v-if="secondBox"
         class="tke-second-box tke-card tke-formpanel-wrap mb60"
       >
         <div class="tke-second-title">已选配置</div>
         <el-form
           ref="form"
-          :model="colonySecind"
-          label-width="110px"
+          :model="colonySecond"
+          label-width="120px"
           label-position="left"
         >
           <el-form-item label="集群名">
-            <p>{{ colonySecind.name }}</p>
+            <p>{{ dispose.name }}</p>
           </el-form-item>
           <el-form-item label="Kubernetes版本">
-            <p>{{ colonySecind.name }}</p>
+            <p>{{ dispose.kuValue }}</p>
           </el-form-item>
           <el-form-item label="所在地域">
-            <p>{{ colonySecind.name }}</p>
+            <p>{{ dispose.cityRadio }}</p>
           </el-form-item>
           <el-form-item label="容器网络">
-            <p>{{ colonySecind.name }}</p>
+            <p>{{ dispose.container }}</p>
           </el-form-item>
           <div class="tke-second-tips">
             <p>操作系统<i class="el-icon-info"></i></p>
@@ -316,7 +326,7 @@
           </div>
           <el-form-item label="节点来源">
             <div class="tke-second-radio-btn">
-              <el-radio-group v-model="radio1">
+              <el-radio-group v-model="colonySecond.source">
                 <el-radio-button label="1">新增节点</el-radio-button>
                 <el-radio-button label="2">已有节点</el-radio-button>
               </el-radio-group>
@@ -324,7 +334,10 @@
           </el-form-item>
           <el-form-item label="Master 节点">
             <div class="tke-second-radio-btn">
-              <el-radio-group v-model="radio1">
+              <el-radio-group
+                v-model="colonySecond.master"
+                @change="SecondMaster"
+              >
                 <el-radio-button label="1">平台托管</el-radio-button>
                 <el-radio-button label="2">独立部署</el-radio-button>
               </el-radio-group>
@@ -335,18 +348,50 @@
               </p>
             </div>
           </el-form-item>
-          <div class="tke-second-tips" style=" border: 0px;">
+          <el-form-item label="Worker 节点" v-if="colonySecond.workerShow">
+            <div class="tke-second-radio-btn">
+              <el-radio-group v-model="colonySecond.worker">
+                <el-radio-button label="1">立即部署</el-radio-button>
+                <el-radio-button label="2">暂不部署</el-radio-button>
+              </el-radio-group>
+            </div>
+          </el-form-item>
+          <div class="tke-second-tips" style="border: 0px;margin:0px;">
             <p>计费模式<i class="el-icon-info"></i></p>
             <div class="tke-second-radio-btn tke-second-icon-btn">
-              <el-radio-group v-model="radio1">
-                <el-radio-button label="1">平台托管</el-radio-button>
-                <el-radio-button label="2">独立部署</el-radio-button>
+              <el-radio-group v-model="colonySecond.charging"  @change="SecondCharging">
+                <el-radio-button label="1">按量计费</el-radio-button>
+                <el-radio-button label="2">包年包月</el-radio-button>
               </el-radio-group>
               <a href="#">详细对比</a>
             </div>
           </div>
+          <el-form-item
+            label="购买时长"
+            v-if="colonySecond.chargingShow"
+            class="tke-second-radio-time"
+          >
+            <div class="tke-second-radio-btn">
+              <el-radio-group v-model="colonySecond.worker">
+                <el-radio-button label="1">1个月</el-radio-button>
+                <el-radio-button label="2">2个月</el-radio-button>
+                <el-radio-button label="3">3个月</el-radio-button>
+                <el-radio-button label="4">6个月</el-radio-button>
+                <el-radio-button label="5">1年</el-radio-button>
+                <el-radio-button label="6">2年</el-radio-button>
+                <el-radio-button label="7">3年</el-radio-button>
+              </el-radio-group>
+            </div>
+          </el-form-item>
+          <el-form-item label="自动续费" v-if="colonySecond.chargingShow">
+            <div class="tke-second-checkbox">
+              <el-checkbox v-model="checked"
+                >账户余额足够时，设备到期后按月自动续费</el-checkbox
+              >
+            </div>
+          </el-form-item>
           <div class="tke-second-worker">
-            <p class="tke-second-worker-l">Worker 配置</p>
+            <p class="tke-second-worker-l">Master&Etcd 配置</p>
             <div class="tke-second-worker-r">
               <ul>
                 <li>
@@ -417,7 +462,6 @@
                   <div class="tke-second-worker-data">
                     <el-input-number
                       v-model="num"
-                      @change="handleChange"
                       :min="1"
                       :max="10"
                       label="描述文字"
@@ -453,33 +497,35 @@
         </el-form>
         <!-- 底部 -->
         <div class="tke-formpanel-footer">
-          <el-button size="small">上一步</el-button>
-          <el-button size="small" type="primary">下一步</el-button>
+          <el-button size="small" @click="secondPrev">上一步</el-button>
+          <el-button size="small" type="primary" @click="secondNext"
+            >下一步</el-button
+          >
         </div>
       </div>
       <!-- 第三步 云服务器配置 -->
       <div
-        style="display:none;"
+        v-if="thirdBox"
         class="tke-second-box tke-third-box tke-card tke-formpanel-wrap mb60"
       >
         <div class="tke-second-title">已选配置</div>
         <el-form
           ref="form"
-          :model="colonySecind"
-          label-width="110px"
+          :model="colonySecond"
+          label-width="120px"
           label-position="left"
         >
           <el-form-item label="集群名">
-            <p>{{ colonySecind.name }}</p>
+            <p>{{ colony.name }}</p>
           </el-form-item>
           <el-form-item label="Kubernetes版本">
-            <p>{{ colonySecind.name }}</p>
+            <p>{{ colony.kuValue }}</p>
           </el-form-item>
           <el-form-item label="所在地域">
-            <p>{{ colonySecind.name }}</p>
+            <p>{{ colonySecond.name }}</p>
           </el-form-item>
           <el-form-item label="容器网络">
-            <p>{{ colonySecind.name }}</p>
+            <p>{{ colonySecond.name }}</p>
           </el-form-item>
           <div class="tke-second-tips">
             <p>操作系统<i class="el-icon-info"></i></p>
@@ -558,32 +604,35 @@
         </el-form>
         <!-- 底部 -->
         <div class="tke-formpanel-footer">
-          <el-button size="small">上一步</el-button>
-          <el-button size="small" type="primary">下一步</el-button>
+          <el-button size="small" @click="thirdPrev">上一步</el-button>
+          <el-button size="small" type="primary" @click="thirdNext"
+            >下一步</el-button
+          >
         </div>
       </div>
       <!-- 第四步 信息确认 -->
       <div
+        v-if="fourthBox"
         class="tke-second-box tke-fourth-box tke-card tke-formpanel-wrap mb60"
       >
         <div class="tke-second-title">已选配置</div>
         <el-form
           ref="form"
-          :model="colonySecind"
-          label-width="110px"
+          :model="colonySecond"
+          label-width="120px"
           label-position="left"
         >
           <el-form-item label="集群名">
-            <p>{{ colonySecind.name }}</p>
+            <p>{{ colony.name }}</p>
           </el-form-item>
           <el-form-item label="Kubernetes版本">
-            <p>{{ colonySecind.name }}</p>
+            <p>{{ colony.kuValue }}</p>
           </el-form-item>
           <el-form-item label="所在地域">
-            <p>{{ colonySecind.name }}</p>
+            <p>{{ colonySecond.name }}</p>
           </el-form-item>
           <el-form-item label="容器网络">
-            <p>{{ colonySecind.name }}</p>
+            <p>{{ colonySecond.name }}</p>
           </el-form-item>
           <el-form-item label="操作系统">
             <p>Ubuntu Server 18.04.1 LTS 64bit TKE-Optimized</p>
@@ -610,7 +659,7 @@
         </el-form>
         <!-- 底部 -->
         <div class="tke-formpanel-footer">
-          <el-button size="small">上一步</el-button>
+          <el-button size="small" @click="fourthPrev">上一步</el-button>
           <el-button size="small" type="primary">完成</el-button>
         </div>
       </div>
@@ -619,215 +668,382 @@
 </template>
 
 <script>
-import HeadCom from "@/components/public/Head";
-import SEARCH from "@/components/public/SEARCH";
-import FileSaver from "file-saver";
-import XLSX from "xlsx";
-import { ALL_CITY } from "@/constants";
+// import HeadCom from '@/components/public/Head'
+// import SEARCH from '@/components/public/SEARCH'
+import FileSaver from 'file-saver'
+import XLSX from 'xlsx'
+import { ALL_CITY } from '@/constants'
 export default {
-  name: "create",
-  data() {
+  name: 'create',
+  data () {
     return {
+      // 步骤显示
+      firstBox: true,
+      secondBox: false,
+      thirdBox: false,
+      fourthBox: false,
+      // 第一步
       colony: {
-        name: "",
+        name: '',
+        nameWran: false,
         projectOptions: [
           {
-            value: "a",
-            label: "默认项目"
+            value: 'a',
+            label: '默认项目'
           },
           {
-            value: "b",
-            label: "测试项目"
+            value: 'b',
+            label: '测试项目'
           }
         ],
-        projectValue: "",
+        projectValue: 'a',
         kuOptions: [
           {
-            value: "a",
-            label: "1.1.1"
+            value: 'a',
+            label: '1.1.1'
           },
           {
-            value: "b",
-            label: "1.2.1"
+            value: 'b',
+            label: '1.2.1'
           }
         ],
-        kuValue: "a",
-        assemblyRadio: "docker",
-        cityRadio: "gz",
+        kuValue: 'a',
+        assemblyRadio: 'docker',
+        cityRadio: 'tb',
         networkOptions: [
           {
-            value: "a",
-            label: "TestVPC"
+            value: 'a',
+            label: 'TestVPC'
           },
           {
-            value: "b",
-            label: "Default-VPC"
+            value: 'b',
+            label: 'Default-VPC'
           }
         ],
-        networkValue: "a",
+        networkValue: 'a',
         CIDROptions_1: [
           {
-            value: "192",
-            label: "192"
+            value: '192',
+            label: '192'
           },
           {
-            value: "172",
-            label: "172"
+            value: '172',
+            label: '172'
           },
           {
-            value: "10",
-            label: "10"
+            value: '10',
+            label: '10'
           }
         ],
-        CIDRValue_1: "192",
-        CIDRValue_2: "16",
-        CIDRValue_3: "0",
-        CIDRValue_4: "0",
+        CIDRValue_1: '192',
+        CIDRValue_2: '16',
+        CIDRValue_3: '0',
+        CIDRValue_4: '0',
         CIDROptions_5: [
           {
-            value: "16",
-            label: "16"
+            value: '16',
+            label: '16'
           },
           {
-            value: "17",
-            label: "17"
+            value: '17',
+            label: '17'
           },
           {
-            value: "18",
-            label: "18"
+            value: '18',
+            label: '18'
           },
           {
-            value: "19",
-            label: "19"
+            value: '19',
+            label: '19'
           }
         ],
-        CIDRValue_5: "16",
+        CIDRValue_5: '16',
         PodOptions: [
           {
-            value: "32",
-            label: "32"
+            value: '32',
+            label: '32'
           },
           {
-            value: "64",
-            label: "64"
+            value: '64',
+            label: '64'
           },
           {
-            value: "128",
-            label: "128"
+            value: '128',
+            label: '128'
           },
           {
-            value: "256",
-            label: "256"
+            value: '256',
+            label: '256'
           }
         ],
-        PodValue: "32",
+        PodValue: '32',
         ServiceOptions: [
           {
-            value: "128",
-            label: "128"
+            value: '128',
+            label: '128'
           },
           {
-            value: "256",
-            label: "256"
+            value: '256',
+            label: '256'
           },
           {
-            value: "512",
-            label: "512"
+            value: '512',
+            label: '512'
           },
           {
-            value: "1024",
-            label: "1024"
+            value: '1024',
+            label: '1024'
           }
         ],
-        ServiceValue: "1024",
-        desc: "",
+        ServiceValue: '1024',
+        desc: '',
         OSoptions: [
           {
-            label: "Ubuntu",
+            label: 'Ubuntu',
             options: [
               {
-                value: "Ubuntu-1",
-                label: "Ubuntu Server 18.04.1 LTS 64bit TKE-Optimized"
+                value: 'Ubuntu-1',
+                label: 'Ubuntu Server 18.04.1 LTS 64bit TKE-Optimized'
               },
               {
-                value: "Ubuntu-2",
-                label: "Ubuntu Server 18.04.1 LTS 64bit"
+                value: 'Ubuntu-2',
+                label: 'Ubuntu Server 18.04.1 LTS 64bit'
               },
               {
-                value: "Ubuntu-3",
-                label: "Ubuntu Server 16.04.1 LTS 64bit"
+                value: 'Ubuntu-3',
+                label: 'Ubuntu Server 16.04.1 LTS 64bit'
               }
             ]
           },
           {
-            label: "CentOS",
+            label: 'CentOS',
             options: [
               {
-                value: "CentOS-1",
-                label: "CentOS 7.6 64bit TKE-Optimized"
+                value: 'CentOS-1',
+                label: 'CentOS 7.6 64bit TKE-Optimized'
               },
               {
-                value: "CentOS-2",
-                label: "CentOS 7.6 64bit"
+                value: 'CentOS-2',
+                label: 'CentOS 7.6 64bit'
               },
               {
-                value: "CentOS-3",
-                label: "CentOS 7.2 64bit"
+                value: 'CentOS-3',
+                label: 'CentOS 7.2 64bit'
               }
             ]
           }
         ],
-        OSvalue: "Ubuntu-1",
+        OSvalue: 'Ubuntu-1',
         ipvs: false
       },
       // 第二步
-      colonySecind: {
-        name: "55"
+      colonySecond: {
+        name: 66,
+        source: 1,
+        master: 1,
+        workerShow: false,
+        worker: 1,
+        charging: 1,
+        chargingShow:false
       },
       radio1: 1,
       options: [
         {
-          value: "选项1",
-          label: "黄金糕"
+          value: '选项1',
+          label: '黄金糕'
         },
         {
-          value: "选项2",
-          label: "双皮奶"
+          value: '选项2',
+          label: '双皮奶'
         },
         {
-          value: "选项3",
-          label: "蚵仔煎"
+          value: '选项3',
+          label: '蚵仔煎'
         },
         {
-          value: "选项4",
-          label: "龙须面"
+          value: '选项4',
+          label: '龙须面'
         },
         {
-          value: "选项5",
-          label: "北京烤鸭"
+          value: '选项5',
+          label: '北京烤鸭'
         }
       ],
-      value: "",
+      value: '',
       num: 1,
       checked: true,
-      input: ""
-    };
+      input: '',
+      // 已选配置
+      dispose: {
+        name: '',
+        kuValue: '',
+        cityRadio: '台湾台北',
+        container: ''
+      }
+    }
   },
   components: {
-    HeadCom,
-    SEARCH
+    // HeadCom,
+    // SEARCH
   },
-  created() {},
+  created () {},
   methods: {
     // 返回上一层
-    goBack() {
-      this.$router.go(-1);
+    goBack () {
+      this.$router.go(-1)
+    },
+    // --------------------------------  第一步 -----------------------------
+    // 第一步 集群名称输入框
+    ClusterNameBlur () {
+      if (this.colony.name === '') {
+        this.colony.nameWran = true
+      } else {
+        this.colony.nameWran = false
+      }
+    },
+    ClusterNameFocus () {
+      if (this.colony.nameWran === true) {
+        this.colony.nameWran = false
+      }
+    },
+    // 第一步 下一步
+    firstNext () {
+      console.log(this.colony.OSvalue)
+      if (this.colony.name !== '') {
+        this.firstBox = false
+        this.secondBox = true
+        this.thirdBox = false
+        this.fourthBox = false
+        this.dispose.name = this.colony.name
+        for (var i in this.colony.kuOptions) {
+          if (this.colony.kuOptions[i].value === this.colony.kuValue) {
+            this.dispose.kuValue = this.colony.kuOptions[i].label
+          }
+        }
+        var CIDRValue_1 = ''
+        var CIDRValue_5 = ''
+        for (var i in this.colony.CIDROptions_1) {
+          console.log(this.colony.CIDROptions_1[i])
+          if (this.colony.CIDROptions_1[i].value === this.colony.CIDRValue_1) {
+            CIDRValue_1 = this.colony.CIDROptions_1[i].label
+          }
+        }
+        for (var i in this.colony.CIDROptions_5) {
+          if (this.colony.CIDROptions_5[i].value === this.colony.CIDRValue_5) {
+            CIDRValue_5 = this.colony.CIDROptions_5[i].label
+          }
+        }
+        this.dispose.container =
+          CIDRValue_1 +
+          '.' +
+          this.colony.CIDRValue_2 +
+          '.' +
+          this.colony.CIDRValue_3 +
+          '.' +
+          this.colony.CIDRValue_4 +
+          '/' +
+          CIDRValue_5
+      } else {
+        this.colony.nameWran = true
+      }
+    },
+    // -------------------------------------- 第二步 ---------------------------------
+    //
+    SecondMaster (val) {
+      // console.log(val)
+      if (val === '2') {
+        this.colonySecond.workerShow = true
+      } else {
+        this.colonySecond.workerShow = false
+      }
+    },
+    // 
+    SecondCharging (val) {
+      console.log(val)
+      if (val === '2') {
+        this.colonySecond.chargingShow = true
+      } else {
+        this.colonySecond.chargingShow = false
+      }
+    },
+    // 第二步 上一步
+    secondPrev () {
+      this.firstBox = true
+      this.secondBox = false
+      this.thirdBox = false
+      this.fourthBox = false
+    },
+    // 第二步 下一步
+    secondNext () {
+      this.firstBox = false
+      this.secondBox = false
+      this.thirdBox = true
+      this.fourthBox = false
+    },
+    // ----------------------------------------- 第三步 -------------------------------------
+    // 第三步 上一步
+    thirdPrev () {
+      this.firstBox = false
+      this.secondBox = true
+      this.thirdBox = false
+      this.fourthBox = false
+    },
+    // 第三步 下一步
+    thirdNext () {
+      this.firstBox = false
+      this.secondBox = false
+      this.thirdBox = false
+      this.fourthBox = true
+    },
+    // ----------------------------------------- 第四步 ---------------------------------------
+    // 第三步 下一步
+    fourthPrev () {
+      this.firstBox = false
+      this.secondBox = false
+      this.thirdBox = true
+      this.fourthBox = false
     }
   }
-};
+}
 </script>
 
 <style lang="scss" scoped>
+.tke-formpanel-footer {
+  ::v-deep .el-button--primary {
+    background: #006eff;
+    border-color: #006eff;
+  }
+}
+.tke-card {
+  a {
+    color: #006eff;
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+  ::v-deep .el-input__inner {
+    border-radius: 0px;
+  }
+  ::v-deep .el-radio-button__inner {
+    border-radius: 0px;
+  }
+  ::v-deep .el-radio-button__orig-radio:checked + .el-radio-button__inner {
+    border-color: #006eff;
+    background: #fff;
+    color: #006eff;
+  }
+  .el-icon-warning-outline {
+    color: #e1504a;
+    margin-left: 5px;
+    font-weight: 600;
+    font-size: 16px;
+  }
+  .cluster-wran {
+    ::v-deep .el-input__inner {
+      border: 1px solid #e1504a;
+    }
+  }
+}
 .tke-second-box {
   .tke-second-title {
     font-size: 14px;
@@ -857,7 +1073,7 @@ export default {
     & > p {
       float: left;
       &:nth-of-type(1) {
-        width: 110px;
+        width: 120px;
         padding: 6px 20px 0px 0px;
         line-height: 18px;
         font-size: 12px;
@@ -910,6 +1126,58 @@ export default {
       }
     }
   }
+  .tke-second-radio-time {
+    padding-bottom: 10px;
+    ::v-deep .el-form-item__label {
+      line-height: 30px;
+    }
+    .tke-second-radio-btn {
+      margin: 0px;
+      padding: 0px;
+      line-height: 30px;
+      ::v-deep .el-radio-button {
+        width: unset;
+      }
+      ::v-deep .el-radio-button__inner {
+        width: unset;
+        padding: 0 20px;
+      }
+      ::v-deep .el-radio-button__orig-radio:checked + .el-radio-button__inner {
+        padding: 0 20px;
+        width: unset;
+      }
+    }
+  }
+  .tke-second-checkbox {
+    ::v-deep .el-checkbox__input.is-checked .el-checkbox__inner {
+      background: #006eff;
+      width: 16px;
+      height: 16px;
+      border-color: #006eff;
+    }
+    ::v-deep .el-checkbox__inner::after {
+      height: 9px;
+      left: 5px;
+    }
+    ::v-deep .el-checkbox__input.is-checked + .el-checkbox__label {
+      font-size: 12px;
+      color: #444;
+      padding-left: 6px;
+    }
+    ::v-deep .el-input {
+      line-height: 30px;
+      width: 88%;
+      top: -8px;
+    }
+    ::v-deep .el-input__inner {
+      border-radius: 0px;
+      width: 200px;
+      height: 30px;
+    }
+    ::v-deep .el-checkbox {
+      line-height: 30px;
+    }
+  }
   .tke-second-icon-btn {
     margin: 0px;
     padding: 0px;
@@ -927,13 +1195,14 @@ export default {
   .tke-second-worker {
     overflow: hidden;
     .tke-second-worker-l {
-      width: 110px;
+      width: 120px;
       float: left;
       font-size: 12px;
       color: #888;
+      padding-top: 6px;
     }
     .tke-second-worker-r {
-      width: 89%;
+      width: 88%;
       float: left;
       & > ul {
         width: 100%;
@@ -1148,7 +1417,7 @@ export default {
     padding-bottom: 16px;
     & > p {
       float: left;
-      width: 110px;
+      width: 120px;
       padding: 6px 20px 0px 0px;
       line-height: 30px;
       font-size: 12px;

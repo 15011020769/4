@@ -988,13 +988,14 @@ input {
   color: #888888;
 }
 .app-tke-fe-content__inner {
-  padding-top: 20px;
+  padding: 20px;
   max-width: 1360px;
   margin:0 auto;
 }
 .tf-g {
   font-size: 0;
-  margin-bottom: 50px;
+  // margin-bottom: 50px;
+  padding:20px;
   // background: pink;
 }
 .event-persistence {

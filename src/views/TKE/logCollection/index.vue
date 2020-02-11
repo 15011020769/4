@@ -39,42 +39,41 @@
         </div>
       </div>
       <!-- 内容 -->
-      <div class="event-persistence" v-loading='funllscreenLoading'>
-        <div class="ep-data-card-main" style="padding-top:5px;">
-          <el-row>
-            <el-col :span="4"><div class="font">名称</div></el-col>
-            <el-col :span="4"><div class="font">状态</div></el-col>
-            <el-col :span="4"><div class="font">类型</div></el-col>
-            <el-col :span="4"><div class="font">命名空间</div></el-col>
-            <el-col :span="4"><div class="font">创建时间</div></el-col>
-            <el-col :span="4"><div class="font">操作</div></el-col>
-          </el-row>
-        </div>
-        <!-- 数据绑定 -->
-        <div class="ep-data-card-main font" style="text-align:center;">
-          您选择的该集群的日志采集规则列表为空，您可以
-          <a href="">新建一个日志采集规则</a>
-        </div>
-        <div class="ep-data-card-main" style="padding-top:20px;">
-          <el-row>
-            <el-col :span="4"><div class="font">
-                <a href="javascript:;">this-is-vlog</a>
-              </div></el-col>
-            <el-col :span="4"><div class="font center">Running</div></el-col>
-            <el-col :span="4"><div class="font center">指定容器文件</div></el-col>
-            <el-col :span="4"><div class="font center">kube-system</div></el-col>
-            <el-col :span="4"><div class="font center">2020-01-13&nbsp;10:01:00</div></el-col>
-            <el-col :span="4"><div class="font center">
-              <router-link :to="''">
-                <span>编辑收集规则</span>
-              </router-link>
-              <router-link :to="''">
-                <span style="margin-left:10px;">设置</span>
-              </router-link>
-              </div></el-col>
-          </el-row>
-        </div>
-      </div>
+      <el-table
+      :data="tableData"
+      style="width: 100%">
+        <el-table-column
+          prop="date"
+          label="名称"
+          width="180">
+        </el-table-column>
+        <el-table-column
+          prop="name"
+          label="状态"
+          width="180">
+        </el-table-column>
+        <el-table-column
+          prop="address"
+          label="类型">
+        </el-table-column>
+           <el-table-column
+          prop="date"
+          label="命名空间"
+          width="180">
+        </el-table-column>
+        <el-table-column
+          prop="name"
+          label="创建时间"
+          width="180">
+        </el-table-column>
+        <el-table-column
+          label="操作">
+           <template slot-scope="scope">
+              <el-button @click="handleClick(scope.row)" type="text" size="small">查看</el-button>
+              <el-button type="text" size="small">编辑</el-button>
+            </template>
+        </el-table-column>
+    </el-table>
     </div>
   </div>
 </template>
@@ -89,6 +88,7 @@ export default {
   name:'logCollection',
   data(){
     return{
+      tableData:[],
       funllscreenLoading:false,
       options:[],
       value:'',
@@ -245,6 +245,7 @@ export default {
   margin:0 auto;
   font-size: 0;
   margin-bottom: 50px;
+  padding:20px;
 }
 .search {
   width: 200px;
