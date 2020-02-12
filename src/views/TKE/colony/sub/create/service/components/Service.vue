@@ -37,6 +37,19 @@
 				</div>
 			</div>
 		</el-form-item>
+		<el-form-item label="负载均衡器" >
+			<div class="radio1">
+			<el-radio-group   v-model='svc.loadBalance' style="margin-bottom: 5px;">
+                      <el-radio-button label="1">自动创建</el-radio-button>
+                      <el-radio-button label="2">使用已有</el-radio-button>
+            </el-radio-group>
+
+			</div>
+			<p v-show="svc.loadBalance=='1'">自动创建CLB用于公网/内网访问Service，请勿手动修改由TKE创建的CLB监听器，<a href="javascript:;">查看更多说明</a></p>
+			<div v-show="svc.loadBalance=='2'">使用已有的CLB用于公网/内网访问Service，不覆盖已有监听器规则，请勿手动修改由TKE创建的CLB监听器，仅支持未被容器服务TKE使用的CLB<a href="javascript:;">查看更多说明</a>
+			<p></p>
+			</div>
+		</el-form-item>
 		<el-form-item label="端口映射">
 			<div class="port">
 				<!-- 头部 -->
@@ -113,7 +126,8 @@ export default {
 				show: true,
 				time: 30,
 				checked:false,
-        name: '',
+				 name: '',
+				 loadBalance:'1',//负载均衡
 				value: 'default',
 				options: ['default','kube-public','kube-system','tfy-pub'],
 				radio: '1',
@@ -188,4 +202,13 @@ export default {
 	border: 1px solid #dcdfe6;
 	resize: none;
 }
+
+// .radio1 {
+//    ::v-deep .el-radio-button__orig-radio:checked + .el-radio-button__inner {
+//               border: 1px solid #006eff;
+//               color: #006eff;
+//               background: #fff;
+//               box-shadow: unset;
+//             }
+// }
 </style>

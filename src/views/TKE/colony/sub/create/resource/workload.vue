@@ -753,7 +753,7 @@
 
 <script>
   import FileSaver from "file-saver";
-  import Service from './components/Service'
+  import Service from '../service/components/Service'
   import SelectMirrorImg from './components/selectMirrorImg'
   import XLSX from "xlsx";
   import {
@@ -1222,7 +1222,7 @@ a{
     background: #f2f2f2;
     overflow: hidden;
     box-sizing: border-box;
-    padding: 0px 20px;
+    padding: 20px 20px 0px;
 
     &>>>.el-form-item:nth-of-type(1) {
       margin-top: 30px;
