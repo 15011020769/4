@@ -475,8 +475,111 @@
                   <p>机型</p>
                   <p class="tke-second-worker-text">
                     S3.SMALL1(标准型S3,1核1GB)
-                    <i class="el-icon-edit"></i>
+                    <i
+                      class="el-icon-edit"
+                      @click="colonySecond.modelShow = true"
+                    ></i>
                   </p>
+                  <div
+                    class="tke-second-worker-model-box"
+                    v-if="colonySecond.modelShow"
+                  >
+                    <div class="tke-second-worker-model">
+                      <p>
+                        <span>选择机型</span
+                        ><i
+                          class="el-icon-close"
+                          @click="colonySecond.modelShow = false"
+                        ></i>
+                      </p>
+                      <div class="model-bg">
+                        <div>
+                          <el-select v-model="value" placeholder="请选择">
+                            <el-option
+                              v-for="item in options"
+                              :key="item.value"
+                              :label="item.label"
+                              :value="item.value"
+                            >
+                            </el-option>
+                          </el-select>
+                          <el-select v-model="value" placeholder="请选择">
+                            <el-option
+                              v-for="item in options"
+                              :key="item.value"
+                              :label="item.label"
+                              :value="item.value"
+                            >
+                            </el-option>
+                          </el-select>
+                        </div>
+                        <div style="margin-top:16px;">
+                          <el-radio-group v-model="colonySecond.buyTime">
+                            <el-radio-button label="1"
+                              >全部实例族</el-radio-button
+                            >
+                            <el-radio-button label="2">标准型</el-radio-button>
+                            <el-radio-button label="3">内存型</el-radio-button>
+                            <el-radio-button label="4">计算型</el-radio-button>
+                          </el-radio-group>
+                        </div>
+                        <div style="margin-top:16px;">
+                          <el-radio-group v-model="colonySecond.buyTime">
+                            <el-radio-button label="1"
+                              >全部实例类型</el-radio-button
+                            >
+                            <el-radio-button label="2"
+                              >标准型S3</el-radio-button
+                            >
+                            <el-radio-button label="3"
+                              >计算型C3</el-radio-button
+                            >
+                            <el-radio-button label="4"
+                              >内存型M3</el-radio-button
+                            >
+                          </el-radio-group>
+                        </div>
+                        <div style="margin-top:16px;">
+                          <el-table
+                            ref="singleTable"
+                            :data="colonySecond.tableData"
+                            highlight-current-row
+                            @current-change="handleCurrentChange"
+                            style="width: 100%"
+                          >
+                            <el-table-column width="50">
+                              <template slot-scope="scope">
+                                <el-radio v-model="radio1" :label="scope.row"
+                                  ><i></i
+                                ></el-radio>
+                              </template>
+                            </el-table-column>
+                            <el-table-column property="date" label="机型">
+                            </el-table-column>
+                            <el-table-column property="name" label="规则">
+                            </el-table-column>
+                            <el-table-column property="address" label="CPU">
+                            </el-table-column>
+                            <el-table-column property="address" label="内存">
+                            </el-table-column>
+                            <el-table-column
+                              property="address"
+                              label="配置费用"
+                            >
+                            </el-table-column>
+                          </el-table>
+                        </div>
+                      </div>
+                      <div class="model-btn">
+                        <el-button class="determine">确定</el-button>
+                        <el-button
+                          class="cancel"
+                          @click="colonySecond.modelShow = false"
+                          >取消</el-button
+                        >
+                      </div>
+                    </div>
+                  </div>
                 </li>
                 <li>
                   <p>系统盘</p>
@@ -1111,7 +1214,6 @@ export default {
       },
       // 第二步
       colonySecond: {
-        name: 66,
         source: 1,
         master: 1,
         workerShow: false,
@@ -1121,6 +1223,41 @@ export default {
         charging: 1,
         chargingShow: false,
         usableArea: 1,
+        // 机型
+        tableData: [
+          {
+            date: "2016-05-02",
+            name: "王小虎",
+            address: "上海市普陀区金沙江路 1518 弄"
+          },
+          {
+            date: "2016-05-04",
+            name: "王小虎",
+            address: "上海市普陀区金沙江路 1517 弄"
+          },
+          {
+            date: "2016-05-01",
+            name: "王小虎",
+            address: "上海市普陀区金沙江路 1519 弄"
+          },
+          {
+            date: "2016-05-03",
+            name: "王小虎",
+            address: "上海市普陀区金沙江路 1516 弄"
+          },
+          {
+            date: "2016-05-01",
+            name: "王小虎",
+            address: "上海市普陀区金沙江路 1519 弄"
+          },
+          {
+            date: "2016-05-03",
+            name: "王小虎",
+            address: "上海市普陀区金沙江路 1516 弄"
+          }
+        ],
+        // 机型
+        modelShow: false,
         // 系统盘
         systemDiskNum: 50,
         systemDiskShow: false,
@@ -1314,6 +1451,10 @@ export default {
       } else {
         this.colonySecond.chargingShow = false;
       }
+    },
+    // 机型
+    handleCurrentChange(val) {
+      console.log(val);
     },
     // 系统盘 弹框确认
     SystemDiskSure() {
@@ -1665,6 +1806,71 @@ export default {
             .tke-second-worker-icon-pen {
               float: left;
               margin-left: 4px;
+            }
+          }
+          .tke-second-worker-model-box {
+            position: fixed;
+            top: 0px;
+            left: 0px;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1200;
+            overflow: auto;
+            .tke-second-worker-model {
+              width: 90%;
+              background: #fff;
+              padding: 25px;
+              margin-left: 5%;
+              & > p {
+                overflow: hidden;
+                margin-bottom: 24px;
+                span {
+                  float: left;
+                  font-size: 14px;
+                  font-weight: 700;
+                  line-height: 26px;
+                }
+                i {
+                  display: inline-block;
+                  float: right;
+                  width: 26px;
+                  height: 26px;
+                  font-size: 20px;
+                  cursor: pointer;
+                  text-align: center;
+                  line-height: 26px;
+                  &:active {
+                    background-color: rgba(0, 0, 0, 0.05);
+                  }
+                }
+              }
+              .model-bg {
+                padding: 20px;
+                background-color: rgb(242, 242, 242);
+                box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
+              }
+              .model-btn {
+                text-align: center;
+                margin-top: 30px;
+                ::v-deep .el-button {
+                  border-radius: 0px;
+                  width: 56px;
+                  height: 30px;
+                  padding: 0px;
+                  font-size: 12px;
+                }
+                .determine {
+                  background-color: #006eff;
+                  color: #fff;
+                  border: 1px solid #006eff;
+                }
+                .cancel {
+                  background-color: #fff;
+                  border-color: #ddd;
+                  color: #000;
+                }
+              }
             }
           }
           & > div {
