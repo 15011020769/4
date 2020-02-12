@@ -288,6 +288,14 @@ export default new Router({
       }
     },
     {
+      path: '/colony/sub/update/service/svc', // 集群-Service--更新
+      name: 'svcUpdate',
+      component: () => import('./colony/sub/update/service/svc.vue'),
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
       path: '/colony/sub/create/service/ingress', // 集群-新建Ingress
       name: 'ingressCreate',
       component: () => import('./colony/sub/create/service/ingress.vue'),

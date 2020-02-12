@@ -1253,7 +1253,7 @@ a{
       border-right: solid 1px #ddd;
     }
 
-    &>>>.el-input__inner {
+    ::v-deep .el-input__inner {
       border: none !important;
     }
   }
