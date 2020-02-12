@@ -1,12 +1,28 @@
+ <!-- 新建Service -->
 <template>
-	<div class="card">
-		<h3 style="margin-bottom:11px;">访问设置(Service)</h3>
-		<el-form-item label="服务访问方式">
+  <div class="colony-wrap">
+    <div class="tke-content-header">
+      <div class="tke-grid ">
+        <!-- 左侧 -->
+        <div class="grid-left">
+          <span class="goback" @click="goBack">
+            <i class="el-icon-back"></i>
+          </span>
+          <h2 class="header-title">更新访问方式</h2>
+        </div>
+        <!-- 右侧 -->
+        <div class="grid-right"></div>
+      </div>
+    </div>  
+    <div class="colony-main">
+      <div class="tke-card tke-formpanel-wrap mb60">
+        <el-form  class="tke-form" :model="svc" label-position='left' label-width="120px" size="mini">
+              <el-form-item label="服务访问方式">
 			<el-radio v-model="svc.radio" label="1">提供公网访问</el-radio>
 			<el-radio v-model="svc.radio" label="2">仅在集群内访问</el-radio>
 			<el-radio v-model="svc.radio" label="3">VPC内网访问</el-radio>
 			<el-radio v-model="svc.radio" label="4">主机端口访问</el-radio>
-			<a href="#" style="padding-left:10px;">如何选择</a><i class="el-icon-edit-outline"></i>
+			<a href="" style="padding-left:10px;">如何选择</a><i class="el-icon-edit-outline"></i>
 			<!-- 方式介绍 -->
 			<div>
 				<div v-if="svc.radio=='1'">
@@ -29,12 +45,25 @@
 				</div>
 				<div v-if="svc.radio=='3'">
 					<div>将提供一个可以被集群所在VPC下的其他资源访问的入口，支持TCP/UDP协议，需要被同一VPC下其他集群、云服务器等访问的服务可以选择VPC内网访问的形式。</div>
-					<div>支持Ingress<a href="#">查看详情</a><i class="el-icon-edit-outline"></i></div>
+					<div>支持Ingress<a href="">查看详情</a><i class="el-icon-edit-outline"></i></div>
 				</div>
 				<div v-if="svc.radio=='4'">
 					<div>提供一个主机端口映射到容器的访问方式，支持TCP&UDP， 可用于业务定制上层LB转发到Node。</div>
-					<div>支持Ingress<a href="#">查看详情</a><i class="el-icon-edit-outline"></i></div>
+					<div>支持Ingress<a href="">查看详情</a><i class="el-icon-edit-outline"></i></div>
 				</div>
+			</div>
+		</el-form-item>
+		<el-form-item label="负载均衡器" >
+			<div class="radio1">
+			<el-radio-group   v-model='svc.loadBalance' style="margin-bottom: 5px;">
+                      <el-radio-button label="1">自动创建</el-radio-button>
+                      <el-radio-button label="2">使用已有</el-radio-button>
+            </el-radio-group>
+
+			</div>
+			<p v-show="svc.loadBalance=='1'">自动创建CLB用于公网/内网访问Service，请勿手动修改由TKE创建的CLB监听器，<a href="javascript:;">查看更多说明</a></p>
+			<div v-show="svc.loadBalance=='2'">使用已有的CLB用于公网/内网访问Service，不覆盖已有监听器规则，请勿手动修改由TKE创建的CLB监听器，仅支持未被容器服务TKE使用的CLB<a href="javascript:;">查看更多说明</a>
+			<p></p>
 			</div>
 		</el-form-item>
 		<el-form-item label="端口映射">
@@ -102,18 +131,40 @@
 		</div>
 		<div v-if="!svc.show"><a href="javascript:;" @click="show()">显示高级设置</a></div>
 		<div v-if="svc.show"><a href="javascript:;" @click="show()">隐藏高级设置</a></div>
-	</div>
+
+
+
+        </el-form>
+
+       
+        <!-- 底部 -->
+        <div class="tke-formpanel-footer">
+          <el-button size="small" type="primary">更新访问方式</el-button>
+          <el-button size="small">取消</el-button>
+        </div>
+      </div>
+    </div>
+		
+  </div>
+	
 </template>
 
 <script>
+// import Service from './components/Service'
+import FileSaver from "file-saver";
+import XLSX from "xlsx";
+import { ALL_CITY } from "@/constants";
 export default {
-	data(){
-		return{
-			svc:{
+  name: "svcCreate",
+  data() {
+    return {
+			dialogFormVisible: false,
+      svc: {
 				show: true,
 				time: 30,
 				checked:false,
         name: '',
+        loadBalance:'1',
 				value: 'default',
 				options: ['default','kube-public','kube-system','tfy-pub'],
 				radio: '1',
@@ -123,30 +174,62 @@ export default {
 				list: [{}],
 				workload: [],
 				tabPosition: 'dep'
+      }  
+    };
+  },
+  components: {
+    // Service
+  },
+  created() {
+     // 从路由获取类型
+
+  },
+  methods: {
+		handleClose(done) {
+        this.$confirm('确认关闭？')
+          .then(_ => {
+            done();
+          })
+          .catch(_ => {});
+      },
+		// 删除work
+		removework(item){
+			var index = this.svc.workload.indexOf(item)
+			if(index !== -1){
+				this.svc.workload.splice(index,1)
 			}
-		}
-	},
-	methods:{
-		// 显示或隐藏高级设置
-		show(){
-			this.svc.show = !this.svc.show;
 		},
 		// 删除端口
-		removeprot(item){
-			var index = this.svc.list.indexOf(item)
-			if(index !== -1){
-				this.svc.list.splice(index,1)
-			}
-		},
-		// 新增端口
-		addport(){
-			this.svc.list.push({
+		// removeprot(item){
+		// 	var index = this.svc.list.indexOf(item)
+		// 	if(index !== -1){
+		// 		this.svc.list.splice(index,1)
+		// 	}
+		// },
+		// 新增work
+		addwork(){
+			this.svc.workload.push({
 				value: '',
 				key: Date.now()
 			})
 		},
-	}
-}
+		// 新增端口
+		// addport(){
+		// 	this.svc.list.push({
+		// 		value: '',
+		// 		key: Date.now()
+		// 	})
+		// },
+		// 显示或隐藏高级设置
+		// show(){
+		// 	this.svc.show = !this.svc.show;
+		// },
+    //返回上一层
+    goBack(){
+          this.$router.go(-1);
+    },
+  }
+};
 </script>
 
 <style lang="scss" scoped>
@@ -189,3 +272,4 @@ export default {
 	resize: none;
 }
 </style>
+

@@ -10,17 +10,27 @@
         </div>
         <div class="flex_right">
           <el-checkbox-group
-            v-model="checkedCities"
+            v-model="checkedPrinCipalService"
             @change="handleCheckedCitiesChange"
             style="display:flex;flex-flow: row wrap;align-content: flex-start;font-size:12px"
           >
             <el-checkbox
-              v-for="city in cities"
-              :label="city"
-              :key="city"
+              v-for="item in prinCipalService"
+              :label="item"
+              :key="item.Domain"
               style="margin-bottom:15px"
-            >{{city}}</el-checkbox>
+              v-if="item.Name.Zh !==''"
+            >{{item.Name.Zh}}</el-checkbox>
           </el-checkbox-group>
+        </div>
+      </div>
+      <div class="box button-box">
+        <div class="button-wrap">
+          <el-button
+          type="primary"
+          @click="onSubmit"
+          size="small"
+        >{{$t('CAM.userGroup.delConfirmBtn')}}</el-button>
         </div>
       </div>
     </div>
@@ -29,70 +39,14 @@
 
 <script>
 import Head from "../../UserListNew/components/Head";
+import { GET_PRINCIPAL_SERVICE, GET_ROLE, UPDATE_ASSUME } from '@/constants'
 export default {
   name: "carrier",
   data() {
     return {
-      cities: [
-        "宙斯盾安全防护",
-        "API网关",
-        "弹性伸缩",
-        "腾讯区块链开发平台",
-        "对象存储批量处理",
-        "蓝鲸平台",
-        "黑石物理服务器1.0",
-        "商业流程服务",
-        "容器服务",
-        "雲数据库 MySQL",
-        "内容分发网络",
-        "文件存储",
-        "雲防火墙",
-        "数据万象",
-        "消息队列 CKafka",
-        "负载均衡",
-        "雲审计",
-        "雲端开发环境",
-        "日志服务",
-        "CODING DevOps",
-        "对象存储",
-        "雲服务器",
-        "腾讯雲开发者平台",
-        "数据集成",
-        "数据安全治理中心",
-        "数据传输服务",
-        "弹性MapReduce",
-        "人脸识别",
-        "身份管理服务",
-        "物联网通信",
-        "加速物联网套件",
-        "开发者实验室",
-        "雲直播",
-        "雲数据库 MariaDB",
-        "小游戏联机对战引擎",
-        "雲数据库 MongoDB",
-        "视频处理",
-        "迁移服务平台",
-        "媒体转码服务",
-        "网络资产风险监测系统",
-        "小程序雲主机",
-        "雲函数",
-        "流计算Oceanus",
-        "雲数据仓库套件-Sparkling",
-        "安全运营中心",
-        "雲开发",
-        "数据库中间件",
-        "腾讯智能钛",
-        "智能钛机器学习加速器",
-        "智能钛弹性模型服务",
-        "智能钛机器学习平台",
-        "智能钛自动机器学习",
-        "腾讯微服务平台",
-        "客服支持平台",
-        "微Mall",
-        "腾讯优Mall",
-        "织雲"
-      ],
-      checkedCities: []
+      prinCipalService:[],
+      checkedPrinCipalService: [],
+      RoleId: this.$route.query.id
     };
   },
   methods: {
@@ -102,14 +56,125 @@ export default {
     //返回上一级
     _back() {
       this.$router.go(-1);
+    },
+    // 获取载体列表
+    getPrinCipalService() {
+      let params = {
+        Version: "2019-01-16",
+        Region: "ap-guangzhou"
+      }
+      this.axios.post(GET_PRINCIPAL_SERVICE, params).then(res => {
+         if (res.Response.Error === undefined) {
+           this.prinCipalService = res.Response.PrinciPalService
+         } else {
+            let ErrTips = {
+              "InternalError.SystemError": "內部錯誤",
+              "InvalidParameter.ParamError": "非法入參",
+              "InvalidParameter.RoleNotExist": "角色不存在"
+            };
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+          }
+      })
+    },
+
+    // 获取角色详情
+    getRoleDetail() {
+      let params = {
+        Version: "2019-01-16",
+        RoleId: this.RoleId
+      }
+       this.axios
+        .post(GET_ROLE, params)
+        .then(res => {
+          if (res.Response.Error === undefined) {
+          let { PolicyDocument } = res.Response.RoleInfo
+          PolicyDocument = JSON.parse(PolicyDocument)
+          setTimeout(() => {
+            PolicyDocument.statement[0].principal.service.forEach(item => {
+              let temp = this.prinCipalService.find(_item => (
+                _item.Domain === item
+              ))
+              this.checkedPrinCipalService.push(temp)
+            })
+          })
+         } else {
+            let ErrTips = {
+              "InternalError.SystemError": "內部錯誤",
+              "InvalidParameter.ParamError": "非法入參",
+              "InvalidParameter.RoleNotExist": "角色不存在"
+            };
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+          }
+        })
+    },
+
+    // 提交
+    onSubmit() {
+      let policyDocument = JSON.parse(
+        '{"version":"2.0","statement":[{"action":"name/sts:AssumeRole","effect":"allow","principal":{"service":[]}}]}'
+      )
+      let roleCarrier = this.checkedPrinCipalService.reduce((prev, next) => {
+        return prev.concat(next.Domain)
+      }, [])
+      policyDocument.statement[0].principal.service = policyDocument.statement[0].principal.service.concat(
+        roleCarrier
+      )
+      let paramsPolicy = {
+        Version: "2019-01-16",
+        PolicyDocument: policyDocument,
+        RoleId: this.RoleId
+      };
+      this.axios
+        .post(UPDATE_ASSUME, paramsPolicy)
+        .then(res => {
+          if (res.Response.Error === undefined) {
+            this.$message.success('操作成功')
+            this._back()
+          } else {
+            let ErrTips = {
+              "InternalError.SystemError": "內部錯誤",
+              "InvalidParameter.AttachmentFull":
+                "principal欄位的授權對象關聯策略數已達到上限",
+              "InvalidParameter.ConditionError":
+                "策略文件的condition欄位不合法",
+              "InvalidParameter.ParamError": "非法入參",
+              "InvalidParameter.PrincipalError":
+                "策略文件的principal欄位不合法",
+              "InvalidParameter.RoleNotExist": "角色不存在",
+              "InvalidParameter.UserNotExist": "principal欄位的授權對象不存在"
+            };
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+          }
+        })
     }
   },
+
+  mounted() {
+    this.getPrinCipalService()
+    this.getRoleDetail()
+  },
+
   components: {
     Head
   },
-  created() {
-    console.log(this.$route.query.id);
-  }
 };
 </script>
 
@@ -137,6 +202,15 @@ export default {
       background: white;
       padding: 20px;
       box-sizing: border-box;
+      margin-top: -1px;
+      .button-wrap {
+        padding-top: 20px;
+        margin: 0 10px;
+        border-top: 1px solid #ddd;
+      }
+    }
+    .button-box {
+      padding-top: 0px;
     }
   }
 }

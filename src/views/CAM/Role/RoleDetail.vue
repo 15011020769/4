@@ -146,11 +146,11 @@
           <el-tab-pane :label="$t('CAM.Role.roleCarrier')" name="second">
             <div class="config">
               <p style="margin:10px">
-                <!-- <el-button
+                <el-button
                   type="primary"
                   @click="Relation_user"
                   size="small"
-                >{{$t('CAM.Role.Management')}}</el-button>-->
+                >{{$t('CAM.Role.Management')}}</el-button>
               </p>
               <div class="config_table">
                 <el-table

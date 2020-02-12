@@ -85,7 +85,7 @@
             label="操作"
             >
             <template slot-scope="scope">
-              <span class="tke-text-link">更新访问方式</span>
+              <span class="tke-text-link" @click="goSvcUpdteType()">更新访问方式</span>
               <span class="tke-text-link ml10">编辑YAML</span>
               <span class="tke-text-link ml10">删除</span>
             </template>
@@ -172,6 +172,14 @@ export default {
     goSvcDetail(){
       this.$router.push({
           name: "svcDetail",
+          query: {
+            clusterId: this.clusterId
+          }
+      });
+    },
+    goSvcUpdteType(){
+      this.$router.push({
+          name: "svcUpdate",
           query: {
             clusterId: this.clusterId
           }

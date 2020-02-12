@@ -102,7 +102,6 @@ export default {
     padding: 20px 0 15px 20px;
     background: #292b36;
     height: 45px;
-    margin: 10px 0;
   }
 
   .iconfont {

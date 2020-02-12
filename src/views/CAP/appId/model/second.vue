@@ -18,12 +18,17 @@
         <!-- 表格 -->
         <template>
           <el-table :data="tableData.slice((currpage - 1) * pagesize, currpage * pagesize)" style="width: 100%;"   class="table_set">
-            <el-table-column prop="date" label="资源包类型"></el-table-column>
-            <el-table-column prop="name" label="来源"></el-table-column>
-            <el-table-column prop="address" label="总额(次)"></el-table-column>
-            <el-table-column prop="date" label="已使用"></el-table-column>
-            <el-table-column prop="name" label="获取时间"></el-table-column>
-            <el-table-column prop="address" label="到期时间"></el-table-column>
+            <el-table-column prop="ResourceName" label="资源包类型"></el-table-column>
+            <!-- <el-table-column prop="name" label="来源"></el-table-column> -->
+            <el-table-column prop="Threshold" label="总额(次)"></el-table-column>
+            <el-table-column prop="Used" label="已使用">
+              <template slot-scope="scope">
+                {{ scope.row.Used }} ({{scope.row.Used * 100 / scope.row.Threshold}}%)
+              </template>
+            </el-table-column>
+            <el-table-column prop="Created" label="获取时间" :formatter="formatter">
+            </el-table-column>
+            <el-table-column prop="Expired" label="到期时间" :formatter="formatter"></el-table-column>
           </el-table>
         </template>
         <!-- 分页 -->
@@ -46,32 +51,37 @@
   </div>
 </template>
 <script>
-import {GETALLAPPID_LIST} from '@/constants/CAP.js'
+import moment from "moment"
+import {GETALLAPPID_LIST, DESCRIBE_PACKAGE} from '@/constants/CAP.js'
 export default {
   data() {
     return {
       options: [
         {
-          value: "可使用",
+          value: "0",
           label: "可使用"
         },
         {
-          value: "已用完",
+          value: "1",
           label: "已用完"
         },
         {
-          value: "已过期",
+          value: "4",
           label: "已过期"
         }
       ],
-      loading:false,
-      value: "可使用",
+      loading: true,
+      value: "0",
       tableData: [],
       //分页
       TotalCount:0,
       pagesize:10,
       currpage: 1,
+      status: 0,
     };
+  },
+  created() {
+    this.getPackageList();
   },
   mounted() {
     // setInterval(()=>{
@@ -87,6 +97,27 @@ export default {
 
   },
   methods: {
+    getPackageList() {
+      let params = {
+        Version: "2019-03-21",
+        Status: this.status,
+        "ServiceTypes.0": "sp_captcha_package",
+        Region: "ap-guangzhou"
+      };
+      this.axios.post(DESCRIBE_PACKAGE, params).then(res => {
+        if(res.Response.Error === undefined) {
+          if(res != "") {
+            this.loading = false
+            this.tableData = res.Response.Data
+            this.TotalCount = res.Response.Data.length
+          }
+        }
+      })
+    },
+    formatter(row, column) {
+      const date = row[column.property]
+      return moment(date).format('YYYY-MM-DD HH:mm:ss')
+    },
     // 选择第一项
     selectOne(val){
        console.log(val)
@@ -115,6 +146,10 @@ export default {
       }else{
         // this.loading=true
       }
+    },
+    value(newVal) {
+      this.status = newVal
+      this.getPackageList()
     }
   }
 };

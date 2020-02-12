@@ -91,7 +91,7 @@
                   </p>
                 </div>
                 <div class="Science">
-                  <p @click="AddScience" class="addScience">{{ $t('SCF.total.tj') }}</p>
+                  <p @click="AddScience" class="addScience">添加</p>
                 </div>
               </div>
             </div>
@@ -119,9 +119,7 @@
         </div>
       </div>
       <el-button class="prevStep" @click="prevStep">{{ $t('SCF.total.syb') }}</el-button>
-      <el-button class="compileSucc" @click="compileSucc()" >{{ $t('SCF.total.wc') }}</el-button>
-      <!-- <el-button class="compileSucc" @click="compileSucc()" v-show="loading">{{ $t('SCF.total.wc') }}</el-button> -->
-      <!-- <el-button class="compileSucc" icon="el-icon-loading" v-show="!loading"></el-button> -->
+      <el-button class="compileSucc" @click="compileSucc()">{{ $t('SCF.total.wc') }}</el-button>
     </div>
   </div>
 </template>
@@ -132,6 +130,9 @@
     VPCS_LIST,
     SUBNET_LIST
   } from "@/constants";
+  import {
+    ErrorTips
+  } from "@/components/ErrorTips";
   export default {
     data() {
       return {
@@ -255,12 +256,12 @@
           Region: localStorage.getItem('regionv2'),
           FunctionName: this.formShowable.funNameStep,
           "Code.DemoId": this.DemoId,
-          Handler: this.formShowable.runFun,//执行方法
-          Runtime: this.formShowable.runMoentStep,//运行环境
-          Description: this.formShowable.descStep,//描述
+          Handler: this.formShowable.runFun, //执行方法
+          Runtime: this.formShowable.runMoentStep, //运行环境
+          Description: this.formShowable.descStep, //描述
           Role: this.formShowable.runRole
         };
-       
+
         if (this.Vpcvalue != "" && this.Subnetvalue != "") {
           params["VpcConfig.VpcId"] = this.Vpcvalue;
           params["VpcConfig.SubnetId"] = this.Subnetvalue;
@@ -273,15 +274,71 @@
             i
           ].Value);
         }
-        if(this.formShowable.runFun&&this.formShowable.runMoentStep&&this.formShowable.runRole){
+        if (this.formShowable.funNameStep && this.formShowable.runMoentStep) {
           this.axios.post(ADD_FUNC, params).then(res => {
-            console.log(res)
-            // this.$router.push({
-            //   path: "/FuncServe"
-            // });
+            if (res.Response.Error === undefined) {
+              this.$message({
+                message: '创建成功',
+                type: "success",
+                showClose: true,
+                duration: 0
+              });
+              this.$router.push({
+                path: "/FuncServe"
+              });
+            } else {
+              let ErrTips = {
+                'FailedOperation.CreateFunction': '操作失败',
+                'FailedOperation.Namespace': 'Namespace已存在',
+                'InternalError': '内部错误',
+                'InternalError.System': '内部系统错误',
+                'InvalidParameter.Payload': '请求参数不合法',
+                'InvalidParameterValue': '参数取值错误',
+                'InvalidParameterValue.Code': 'Code传入错误',
+                'InvalidParameterValue.CodeSecret': 'CodeSecret传入错误',
+                'InvalidParameterValue.CodeSource': 'CodeSource传入错误',
+                'InvalidParameterValue.Cos': 'Cos传入错误',
+                'InvalidParameterValue.CosBucketName': 'CosBucketName不符合规范',
+                'InvalidParameterValue.CosObjectName': 'CosObjectName不符合规范',
+                'InvalidParameterValue.Description': 'Description传入错误',
+                'InvalidParameterValue.EipConfig': 'EipConfig参数错误',
+                'InvalidParameterValue.Environment': 'Environment传入错误',
+                'InvalidParameterValue.FunctionName': '函数不存在',
+                'InvalidParameterValue.Handler': 'Handler传入错误',
+                'InvalidParameterValue.Layers': 'Layers参数传入错误',
+                'InvalidParameterValue.MemorySize': 'MemorySize错误',
+                'InvalidParameterValue.Namespace': 'Namespace参数传入错误',
+                'InvalidParameterValue.Runtime': 'Runtime传入错误',
+                'InvalidParameterValue.TempCosObjectName': '非法的TempCosObjectName',
+                'InvalidParameterValue.Type': 'Type传入错误',
+                'InvalidParameterValue.ZipFile': 'ZipFile非法',
+                'LimitExceeded.Function': '函数数量超出最大限制',
+                'LimitExceeded.Memory': '内存超出最大限制',
+                'LimitExceeded.Timeout': 'Timeout超出最大限制',
+                'MissingParameter.Code': 'Code没有传入',
+                'MissingParameter.Runtime': '缺失 Runtime 字段',
+                'ResourceInUse.Function': '函数已存在',
+                'ResourceInUse.FunctionName': 'FunctionName已存在',
+                'ResourceNotFound.Demo': '不存在的Demo',
+                'ResourceNotFound.Role': '角色不存在',
+                'ResourceNotFound.Vpc': 'VPC或子网不存在',
+                'ResourceUnavailable.Namespace': 'Namespace不可用',
+                'UnauthorizedOperation.CAM': 'CAM鉴权失败',
+                'UnauthorizedOperation.Region': 'Region错误',
+                'UnauthorizedOperation.Role': '没有权限访问您的Cos资源',
+                'UnauthorizedOperation.TempCosAppid': 'TempCos的Appid和请求账户的Appid不一致'
+              };
+              let ErrOr = Object.assign(ErrorTips, ErrTips);
+              this.$message({
+                message: ErrOr[res.Response.Error.Code],
+                type: "error",
+                showClose: true,
+                duration: 0
+              });
+            }
           });
         }
-      
+
       }
     }
   };
