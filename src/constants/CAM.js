@@ -43,6 +43,7 @@ export const DESCRIB_ROLE = 'cam2/DescribeRoleList'
 export const DELETE_ROLE = 'cam2/DeleteRole'
 export const CREATE_ROLE = 'cam2/CreateRole'
 export const ATTACH_ROLE = 'cam2/AttachRolePolicy'
+export const GET_PRINCIPAL_SERVICE = 'cam2/GetPrincipalService'
 // V2接口
 export const LOGOUT_ROLE_SESSIONS = 'cam/LogoutRoleSessions'
 
