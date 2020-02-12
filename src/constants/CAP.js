@@ -23,3 +23,6 @@ export const CREATE_APPID = 'captcha2/CreateCaptchaAppId'
 
 // 增加告警邮箱
 export const CREAT_WARNEMAIL = 'captcha2/CreateCaptchaAlarmMails'
+
+// 验证码→套餐消费明细列表
+export const DESCRIBE_PACKAGE = 'cms2/DescribeContentModerationPackage'
