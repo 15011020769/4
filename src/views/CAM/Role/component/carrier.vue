@@ -19,6 +19,7 @@
               :label="item"
               :key="item.Domain"
               style="margin-bottom:15px"
+              v-if="item.Name.Zh !==''"
             >{{item.Name.Zh}}</el-checkbox>
           </el-checkbox-group>
         </div>
