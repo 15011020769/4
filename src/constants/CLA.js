@@ -26,7 +26,7 @@ export const GZJ_STRATLOGGING = 'cloudaudit2/StartLogging'
 export const GZJ_UPDATEAUDIT = 'cloudaudit2/UpdateAudit'
 
 // 雲审计--编辑跟踪集--否--cos存储桶
-export const LIST_COSBUCKETS = 'cloudaudit/ListCosBuckets'
+export const LIST_COSBUCKETS = 'bucket/list'
 
 // 雲审计--地域列表
 export const GZJ_REGION = 'cloudaudit2/ListCmqEnableRegion'
