@@ -1,0 +1,114 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <script src="https://ssl.captcha.qq.com/template/TCapIframeApi.js?aid=123456&rand=0.7595169853884727&clientype=2&captype=&apptype=1&disturblevel=1"></script>
+  <title></title>
+</head>
+
+<body style="margin:0;">
+
+  <div id="container">
+  </div>
+</body>
+<script>
+  window.addEventListener('message', function (event) {
+    if (event.data.color) {
+      var myobj = event.data;
+      initCaptcha();
+    }
+    function preView() {
+      var _this = this;
+      if (window.capDestroy !== undefined) {
+        window.capDestroy();
+      }
+      // console.log(myobj)
+      var color = myobj.color;
+      var lang = myobj.langid;
+      var capType = myobj.cap_type;
+      // var appid = obj.aid;
+      if (capType == "14") {
+        uin = '2819700269';
+      } else {
+        uin = '2205217039';
+      }
+      // switch (lang) {
+      //   case "2052":
+      //     lang = "2052";
+      //     break;
+      //   case "1028":
+      //     lang = "1028";
+      //     break;
+      //   case "1033":
+      //     lang = "1033";
+      //     break;
+      //   case "1":
+      //     lang = "1";
+      //     break;
+      //   default:
+      //     lang = "2052";
+
+      // }
+      if (window.capInit !== undefined) {
+        var options = {
+          uin: uin,
+          type: 'popup',
+          themeColor: color,
+          lang: lang,
+          showHeader: true,
+          forcestyle: 1,
+          callback: function (retJson) {
+            if (retJson.ret == 0) {
+              // 用户验证成功
+              window.capRefresh();
+            } else {
+              // //用户关闭验证码页面，没有验
+              // window.parent.document.getElementById("preView0").style.display = "block";
+              // window.parent.document.getElementById("preView1").style.display = "block";
+            }
+          }
+        };
+        window.capInit(document.getElementById("container"), options);
+      }
+      // window.parent.document.getElementById("preView1").addEventListener("click", function () {
+      //   window.parent.document.getElementById("preView0").style.display = "none";
+      //   window.parent.document.getElementById("preView1").style.display = "none";
+      // });
+      if (window.capRefresh) {
+        window.capRefresh();
+
+      }
+    }
+
+    function initCaptcha() {
+      // let buildScript = document.getElementById("buildScript");
+      // buildScript && buildScript.remove(0);
+      // var head = document.head;
+      // var header_script = head.getElementsByTagName('script');
+      // for (var i = header_script.length - 1; i >= 0; i--) {
+      //   head.removeChild(header_script[i]);
+      // }
+      // var container = document.getElementById('container');
+      // if (container) {
+      //   container.innerHTML = '';
+      // }
+      // var script = document.createElement('script');
+      // script.type = 'text/javascript';
+      // script.id = 'buildScript';
+      // script.src = '';
+      // script.src =
+      //   'https://ssl.captcha.qq.com/template/TCapIframeApi.js?aid=123456&rand=0.7595169853884727&clientype=2&captype=&apptype=1&disturblevel=1';
+      // head.appendChild(script);
+      setTimeout(function () {
+        preView();
+      }, 150);
+    }
+  });
+
+</script>
+
+</html>

@@ -300,6 +300,9 @@ module.exports = {
       ye: '頁',
       jbxx: '基本訊息',
       clxq: '策略詳情',
+    },
+    provider: {
+      delTip: '此操作將刪除該身份提供商，同時該身份提供商將解除與相關角色的關聯，無法以該身份提供商申請使用相關角色。您確定要刪除該身份提供商嗎？'
     }
   },
   COM: require('@/components/language/ft'),

@@ -12,50 +12,53 @@
         height="450"
         v-loading="loading"
         ref="multipleTable"
-        :data="tableData.slice((currpage - 1) * pagesize, currpage * pagesize)"
+        :data="tableData"
         tooltip-effect="dark"
         style="width: 100%;"
         :empty-text="$t('CAM.strategy.zwsj')"
       >
-        <el-table-column prop="name" :label="$t('CAM.strategy.peopleName')" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="Name" :label="$t('CAM.strategy.peopleName')" show-overflow-tooltip>
+          <template slot-scope="scope">
+            <el-button type="text" @click="$router.push(`/IdentityProviderDetail/${scope.row.Name}`)">{{scope.row.Name}}</el-button>
+          </template>
+        </el-table-column>
         <el-table-column
-          prop="description"
           :label="$t('CAM.strategy.peopleType')"
-          show-overflow-tooltip
-        ></el-table-column>
+        >SMAL</el-table-column>
         <el-table-column
-          prop="createTime"
+          prop="CreateTime"
           :label="$t('CAM.userList.createTime')"
           show-overflow-tooltip
         ></el-table-column>
         <el-table-column
-          prop="modifyTime"
+          prop="ModifyTime"
           :label="$t('CAM.strategy.lastCreateTime')"
           show-overflow-tooltip
         ></el-table-column>
         <el-table-column label="操作" show-overflow-tooltip>
-          <!-- &lt;!&ndash;<template slot-scope="scope">
-          <el-button size="mini" type="text" ></el-button>
-          <el-button size="mini" type="text" ></el-button>
-          </template>&ndash;&gt;-->
+          &lt;!&ndash;<template slot-scope="scope">
+          <el-button size="mini" @click="del(scope.row)" type="text" >{{$t('CAM.userGroup.setDelete')}}</el-button>
+          </template>&ndash;&gt;
         </el-table-column>
       </el-table>
-      <div class="Right-style pagstyle" style="height:70px;display:flex;align-items:center;">
+      <div class="Right-style pagstyle" style="height:70px;">
         <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;{{$t("CAM.strip")}}</span>
-        <el-pagination
+        <!-- <el-pagination
+          @size-change="handleSizeChange"
           :page-size="pagesize"
           :pager-count="7"
-          layout="prev, pager, next"
+          layout="prev, sizes, pager, next"
+          :page-sizes="[10, 20, 30, 40, 50]"
           @current-change="handleCurrentChange"
           :total="TotalCount"
-        ></el-pagination>
+        ></el-pagination> -->
       </div>
     </div>
   </div>
 </template>
 <script>
 import HeadCom from "../UserListNew/components/Head";
-import { LIST_Providers } from "@/constants";
+import { LIST_Providers, DELETE_SAML_PROVIDER } from "@/constants";
 import { ErrorTips } from "@/components/ErrorTips";
 export default {
   data() {
@@ -75,11 +78,49 @@ export default {
     HeadCom
   },
   methods: {
+    del(row) {
+      this.$confirm(
+        this.$t("CAM.provider.delTip"),
+        '提示',
+        {
+          confirmButtonText: this.$t("CAM.userGroup.delConfirmBtn"),
+          cancelButtonText: this.$t("CAM.userGroup.delCancelBtn"),
+          type: "warning"
+        }
+      ).then(() => {
+        this.axios.post(DELETE_SAML_PROVIDER, {
+          Version: '2019-01-16',
+          Name: row.Name
+        }).then(data => {
+          if (data.Response.Error === undefined) {
+              this.$message({
+                type: "success",
+                message: "刪除成功",
+                duration: 0,
+                showClose: true
+              });
+              this.init();
+            } else {
+              let ErrTips = {};
+              let ErrOr = Object.assign(ErrorTips, ErrTips);
+              this.$message({
+                message: ErrOr[data.Response.Error.Code],
+                type: "error",
+                showClose: true,
+                duration: 0
+              });
+            }
+        })
+      })
+    },
     //分页
-
     handleCurrentChange(val) {
       this.currpage = val;
       this.init();
+    },
+    handleSizeChange() {
+      this.pagesize = val;
+      this.currpage = 1;
     },
     // 初始化方法。
     init() {

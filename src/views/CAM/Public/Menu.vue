@@ -12,27 +12,27 @@
         active-text-color="#fff"
         :router="true"
       >
-        <el-menu-item index="UserListNew">
+        <el-menu-item index="/UserListNew">
           <i class="iconfont"></i>
           <span slot="title">{{$t('CAM.userList.listTitle')}}</span>
         </el-menu-item>
-        <el-menu-item index="UserGroup">
+        <el-menu-item index="/UserGroup">
           <i class="iconfont"></i>
           <span slot="title">{{$t('CAM.userList.userGroup')}}</span>
         </el-menu-item>
-        <el-menu-item index="Strategy">
+        <el-menu-item index="/Strategy">
           <i class="iconfont"></i>
           <span slot="title">{{$t('CAM.Role.strategy')}}</span>
         </el-menu-item>
-        <el-menu-item index="Role">
+        <el-menu-item index="/Role">
           <i class="iconfont"></i>
           <span slot="title">{{$t('CAM.Role.title')}}</span>
         </el-menu-item>
-        <el-menu-item index="IdentityProvider">
+        <el-menu-item index="/IdentityProvider">
           <i class="iconfont"></i>
           <span slot="title">{{$t('CAM.Role.identityProvider')}}</span>
         </el-menu-item>
-        <el-menu-item index="ApiKeyManager">
+        <el-menu-item index="/ApiKeyManager">
           <i class="iconfont"></i>
           <span slot="title">{{$t('CAM.userList.APISecret')}}</span>
         </el-menu-item>

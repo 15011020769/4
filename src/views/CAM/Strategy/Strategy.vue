@@ -47,7 +47,18 @@
             v-loading="loading"
             :empty-text="$t('CAM.strategy.zwsj')"
           >
-            <el-table-column type="selection" width="65"></el-table-column>
+            <el-table-column width="65">
+              <template slot="header" slot-scope="scope">
+                <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll"
+                  @change="handleCheckAllChange"></el-checkbox>
+              </template>
+              <template slot-scope="scope">
+                <el-tooltip v-if="scope.row.Type === 2" content="预选策略无法选中删除" placement="top-start">
+                  <el-checkbox disabled />
+                </el-tooltip>
+                <el-checkbox v-model="scope.row.checked" @change="handleCheckOneChange" v-else />
+              </template>
+            </el-table-column>
             <el-table-column
               prop="PolicyName"
               :label="$t('CAM.userList.strategyNames')"
@@ -117,6 +128,8 @@ export default {
   },
   data() {
     return {
+      isIndeterminate: false,
+      checkAll: false,
       options: [
         {
           value: "All",
@@ -170,8 +183,33 @@ export default {
     this.getData();
   },
   methods: {
+    handleCheckAllChange (val) {
+      console.log(val)
+      this.isIndeterminate = false
+      this.tableData.forEach(item => {
+          item.checked = val
+      })
+    },
+    handleCheckOneChange (val) {
+      console.info('check one change is ', val)
+      let totalCount = this.tableData.length
+      let someStatusCount = 0
+      this.tableData.forEach(item => {
+          if (item.checked === val) {
+              someStatusCount++
+          }
+      })
+      this.checkAll = totalCount === someStatusCount ? val : !val
+      this.isIndeterminate = someStatusCount > 0 && someStatusCount < totalCount
+    },
+    selectable(row) {
+      if (row.Type === 2) return false
+      return true
+    },
     // 初始化策略列表数据（默认全部策略）
     getData() {
+      this.isIndeterminate = false,
+      this.checkAll = false,
       this.loading = true;
       var params = {
         Version: "2019-01-16",
@@ -185,6 +223,7 @@ export default {
       }
       this.axios.post(POLICY_LIST, params).then(res => {
         if (res.Response.Error === undefined) {
+          res.Response.List.forEach(item => item.checked = false)
           this.tableData = res.Response.List;
           this.TotalCount = res.Response.TotalNum;
         } else {

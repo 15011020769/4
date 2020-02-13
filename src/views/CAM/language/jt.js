@@ -300,6 +300,9 @@ module.exports = {
             ye: '页',
             jbxx: '基本信息',
             clxq: '策略详情',
+        },
+        provider: {
+          delTip: '此操作将删除该身份提供商，同时该身份提供商将解除与相关角色的关联，无法以该身份提供商申请使用相关角色。您确定要删除该身份提供商吗？'
         }
     },
     COM: require('@/components/language/jt'),
