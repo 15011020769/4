@@ -491,6 +491,14 @@ export default {
           duration: 0
         });
       } else {
+        if (this.groupData.GroupName.length > 30) {
+          this.$message({
+          showClose: true,
+          message: "用戶組名稱長度不能超過30",
+          duration: 0
+        });
+          return
+        }
         let groupId = parseInt(this.$route.query.GroupId);
         let params = {
           Version: "2019-01-16",
