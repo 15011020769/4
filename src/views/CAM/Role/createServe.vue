@@ -25,16 +25,17 @@
           </div>
           <div class="flex_right">
             <el-checkbox-group
-              v-model="checkedCities"
+              v-model="checkedPrinCipalService"
               @change="handleCheckedCitiesChange"
               style="display:flex;flex-flow: row wrap;align-content: flex-start;font-size:12px"
             >
               <el-checkbox
-                v-for="city in cities"
-                :label="city"
-                :key="city"
-                style="flex: 0 0 16%;margin-bottom:15px"
-              >{{city}}</el-checkbox>
+                v-for="item in prinCipalService"
+                :label="item"
+                :key="item.Domain"
+                style="margin-bottom:15px"
+                v-if="item.Name.Zh !==''"
+              >{{item.Name.Zh}}</el-checkbox>
             </el-checkbox-group>
           </div>
         </div>
@@ -64,7 +65,11 @@
               <p class="jscontent">
                 <el-input v-model="inputRoleDesc" placeholder size="mini"></el-input>
               </p>
-              <p class="jscontent text">{{$t('CAM.Role.serveRole')}} -mps.cloud.tencent.com</p>
+              <p class="jscontent text">{{$t('CAM.Role.serveRole')}} -
+                <span v-for="(item, index) in checkedPrinCipalService">
+                  {{item.Domain}}<span v-if="index < checkedPrinCipalService.length - 1">,</span>
+                </span>
+              </p>
             </div>
           </div>
           <div class="content_table">
@@ -102,7 +107,7 @@
 import { ErrorTips } from "@/components/ErrorTips";
 import HeadCom from "../UserListNew/components/Head";
 import transfer from "./component/transfer1";
-import { CREATE_ROLE, ATTACH_ROLE } from "@/constants";
+import { CREATE_ROLE, ATTACH_ROLE, GET_PRINCIPAL_SERVICE } from "@/constants";
 export default {
   components: {
     transfer,
@@ -176,6 +181,8 @@ export default {
         "腾讯优Mall",
         "织雲"
       ],
+      prinCipalService:[],
+      checkedPrinCipalService: [],
       transfer_value: [],
       transfer_data: [
         {
@@ -210,7 +217,7 @@ export default {
     },
     next() {
       if (this.active === 1) {
-        if (this.checkedCities.length === 0) {
+        if (this.checkedPrinCipalService.length === 0) {
           this.$message({
               message: "請至少選擇一個服務",
               type: "error",
@@ -269,13 +276,24 @@ export default {
           }]
         }
        */
-      let params = {
+      let policyDocument = JSON.parse(
+        '{"version":"2.0","statement":[{"action":"name/sts:AssumeRole","effect":"allow","principal":{"service":[]}}]}'
+      )
+      let roleCarrier = this.checkedPrinCipalService.reduce((prev, next) => {
+        return prev.concat(next.Domain)
+      }, [])
+      policyDocument.statement[0].principal.service = policyDocument.statement[0].principal.service.concat(
+        roleCarrier
+      )
+       let params = {
         Version: "2019-01-16",
         RoleName: this.inputRoleName,
         Description: this.inputRoleDesc,
-        PolicyDocument:
-          '{"version":"2.0","statement":[{"action":"name/sts:AssumeRole","effect":"allow","principal":{"service":["cloudaudit.cloud.tencent.com","cls.cloud.tencent.com"]}}]}'
+        // PolicyDocument:
+        //   '{"version":"2.0","statement":[{"action":"name/sts:AssumeRole","effect":"allow","principal":{"service":["cloudaudit.cloud.tencent.com","cls.cloud.tencent.com"]}}]}'
+        PolicyDocument: JSON.stringify(policyDocument)
       };
+
       this.axios.post(CREATE_ROLE, params).then(data => {
         if(data.Response.Error === undefined){
             let roleId = data.Response.RoleId; // 获取创建的角色id
@@ -356,7 +374,37 @@ export default {
           });
         }
       });
-    }
+    },
+  
+    // 获取载体列表
+    getPrinCipalService() {
+      let params = {
+        Version: "2019-01-16",
+        Region: "ap-guangzhou"
+      }
+      this.axios.post(GET_PRINCIPAL_SERVICE, params).then(res => {
+         if (res.Response.Error === undefined) {
+           this.prinCipalService = res.Response.PrinciPalService
+         } else {
+            let ErrTips = {
+              "InternalError.SystemError": "內部錯誤",
+              "InvalidParameter.ParamError": "非法入參",
+              "InvalidParameter.RoleNotExist": "角色不存在"
+            };
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+          }
+      })
+    },
+  },
+
+  mounted() {
+    this.getPrinCipalService()
   }
 };
 </script>
@@ -368,6 +416,9 @@ export default {
   line-height: 30px;
   padding-top: 0;
   font-size: 12px;
+}
+.wrap >>> .el-checkbox {
+  width: 20% !important;
 }
 .createServe {
   .top {

@@ -55,10 +55,10 @@
                 <div class="top">
                   <dl>
                     <dd>{{$t('CAM.userGroup.title')}}</dd>
-                    <dt style="max-height: 40px; overflow: hidden">
+                    <dt>
                       <p v-show="scope.row.group.length == 0">-</p>
-                      <p v-show="scope.row.group.length != 0">
-                        <a v-for="(item,index) in scope.row.group" :key="index" v-show="index < 2">
+                      <p v-show="scope.row.group.length != 0" style="max-width: 170px; word-break: break-all;">
+                        <a v-for="(item,index) in scope.row.group" :key="index" :style="scope.row.group.length < 3 && 'display: block'" v-if="index < 2">
                           <span @click="goToGroup(item)">{{item.GroupName}}</span>
                           <span
                             style="color:black;"
@@ -978,6 +978,10 @@ export default {
   background: rgb(250, 250, 250);
 }
 
+.wrap >>> .el-input__clear {
+  position: absolute;
+  right: calc(100% + 2px);
+}
 .pointer {
   cursor: pointer;
 }
@@ -1039,7 +1043,7 @@ export default {
 
   .top {
     width: 100%;
-    height: 50px;
+    // height: 50px;
     background-color: #fff;
     margin-bottom: 20px;
 

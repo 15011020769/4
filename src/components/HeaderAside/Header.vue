@@ -31,7 +31,7 @@
 
     <transition name="hehe">
       <div class="PRO-style" v-if="show" :key="1" @mouseleave="Show2">
-        <product-center v-on:childByValue="childByValue"></product-center>
+        <product-center></product-center>
       </div>
     </transition>
   </div>
@@ -86,11 +86,7 @@
           this.show = false
         }
       },
-      childByValue: function (childValue) {
-        if (childValue === 'ok') {
-          this.show = false
-        }
-      },
+     
       logoClick() {
         // 点击进入门户首页
         window.location.href = process.env.VUE_APP_sysUrl + 'index.html#/homepage'

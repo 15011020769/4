@@ -210,7 +210,6 @@
                       style="width:100%"
                       @keyup.enter.native="toQueryUser"
                       @change="search"
-                      clearable
                     >
                       <i slot="suffix" class="el-input__icon el-icon-search" @click="toQueryUser"></i>
                     </el-input>
@@ -491,6 +490,14 @@ export default {
           duration: 0
         });
       } else {
+        if (this.groupData.GroupName.length > 30) {
+          this.$message({
+          showClose: true,
+          message: "用戶組名稱長度不能超過30",
+          duration: 0
+        });
+          return
+        }
         let groupId = parseInt(this.$route.query.GroupId);
         let params = {
           Version: "2019-01-16",
@@ -1007,6 +1014,10 @@ export default {
   line-height: 30px;
   padding-top: 0;
   font-size: 12px;
+}
+.wrap >>> .el-input__clear {
+  position: absolute;
+  right: calc(100% + 2px);
 }
 .Interface >>> .el-form-item__label {
   text-align: left;
