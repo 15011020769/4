@@ -251,7 +251,6 @@
           Region: localStorage.getItem("regionv2")
         };
         this.axios.post(GZJ_REGION, params).then(res => {
-          console.log(res)
           if (res.Response.Error === undefined) {
             var data = res.Response.EnableRegions;
             var arr = [];
@@ -309,7 +308,6 @@
       },
       //确认
       _onSubmit(formName) {
-        console.log(formName)
         this.btnLoad = true;
         this.$refs[formName].validate(valid => {
           if (valid) {
