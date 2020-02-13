@@ -300,7 +300,7 @@ export default {
 <style lang="scss" scoped>
 .Cam >>> .el-input__clear {
   position: absolute;
-  right: 26px;
+  right: calc(100% + 2px);
 }
 .Cam {
   .container {

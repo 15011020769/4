@@ -1017,7 +1017,7 @@ export default {
 }
 .wrap >>> .el-input__clear {
   position: absolute;
-  right: 26px;
+  right: calc(100% + 2px);
 }
 .Interface >>> .el-form-item__label {
   text-align: left;
