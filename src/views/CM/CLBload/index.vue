@@ -191,6 +191,7 @@
             this.TotalCount = data.Response.TotalCount;
             this.loadShow = false;
           } else {
+            console.log('sss')
             let ErrTips = {
               'FailedOperation': '操作失敗',
               'InternalError': '必須包含開始時間和結束時間，且必須為整形時間戳（精確到秒）',
@@ -204,7 +205,7 @@
             }
             let ErrOr = Object.assign(ErrorTips, ErrTips)
             this.$message({
-              message: ErrOr[res.Response.Error.Code],
+              message: ErrOr[data.Response.Error.Code],
               type: "error",
               showClose: true,
               duration: 0

@@ -201,7 +201,7 @@
             this.TotalCount = data.Response.TotalCount;
           } else {
             let ErrTips = {
-              'InvalidParameter': "入參不合法",
+              'InvalidAddressId.Malformed': "入參不合法",
             };
             let ErrOr = Object.assign(ErrorTips, ErrTips);
             this.$message({
