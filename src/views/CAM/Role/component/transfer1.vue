@@ -298,6 +298,10 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+.Cam >>> .el-input__clear {
+  position: absolute;
+  right: 26px;
+}
 .Cam {
   .container {
     width: 100%;

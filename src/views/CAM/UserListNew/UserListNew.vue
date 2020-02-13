@@ -980,7 +980,7 @@ export default {
 
 .wrap >>> .el-input__clear {
   position: absolute;
-  right: 20px;
+  right: 26px;
 }
 .pointer {
   cursor: pointer;
