@@ -3,8 +3,11 @@
     <div class="pro-box">
       <div class="nav-main">
         <div class="box-top">
-          <input type="text" placeholder="通過名稱/關鍵字查找產品（例如：雲伺服器、資料庫等）">
+          <input type="text" v-model="searchName" @input="searchProduct" placeholder="通過名稱/關鍵字查找產品（例如：雲伺服器、資料庫等）">
           <i class="el-icon-search"></i>
+          <div class="product-ul" v-show="chooseProduct.length !== 0">
+            <a :href="item.url" class="product-li" v-for="item in chooseProduct" :key="item.name">{{item.name}}</a>
+          </div>
         </div>
 
         <div class="box-content">
@@ -86,303 +89,257 @@
 </template>
 
 <script>
-  export default {
-    data() {
-      return {
-        restaurants: [],
-        state: ''
-      }
-    },
-    methods: {
-      querySearch(queryString, cb) {
-        var restaurants = this.restaurants
-        var results = queryString ?
-          restaurants.filter(this.createFilter(queryString)) :
-          restaurants
-        // 调用 callback 返回建议列表的数据
-        cb(results)
-      },
-      createFilter(queryString) {
-        return restaurant => {
-          return (
-            restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) > -1
-          )
+export default {
+  data() {
+    return {
+      restaurants: [],
+      state: '',
+      searchName: '',           // 搜索的关键字
+      chooseProduct: [],        // 选择的产品对象
+      productArr: [
+        {            // 产品对象
+          name: '雲伺服器 CVM',
+          url: '../CVM/index.html#/cloudHost'
+        }, {
+          name: '容器服務 TKE',
+          url: '../TKE/index.html#/overview'
+        }, {
+          name: '彈性伸縮 AS',
+          url: '../AS/index.html#/flexGroup'
+        }, {
+          name: '雲函數 SCF',
+          url: '../SCF/index.html#/overView'
+        }, {
+          name: '雲監控 CM',
+          url: '../CM/index.html#/CVM'
+        }, {
+          name: '雲審計 CloudAudit',
+          url: '../CLA/index.html#/CloudAudit'
+        }, {
+          name: '訪問管理 CAM',
+          url: '../CAM/index.html#/UserGroup'
+        }, {
+          name: '雲點播 VOD',
+          url: '../COD/index.html#/overview'
+        }, {
+          name: '雲直播 CSS',
+          url: '../CSS/index.html#/overview'
+        }, {
+          name: '主機安全 CWP',
+          url: '../HS/index.html#/overview'
+        }, {
+          name: '驗證碼 Captcha',
+          url: '../CAP/index.html#/appId'
+        }, {
+          name: 'Web應用防火牆',
+          url: '../WAF/index.html#/saveOverView'
+        }, {
+          name: 'DDoS 基礎防護',
+          url: '../DDOS/index.html#/ProtectOverview'
+        }, {
+          name: 'DDoS 高防IP專業版',
+          url: '../DDOS/index.html#/IpProfessional'
+        }, {
+          name: '金鑰管理服務 KMS',
+          url: '../KMS/index.html#/userKms'
+        }, {
+          name: '雲資料庫 Mysql',
+          url: '../MYSQL/index.html#/instancesList'
+        }, {
+          name: '雲資料庫 Redis',
+          url: '../Redis/index.html#/exampleList'
+        }, {
+          name: '訊息服務 CKafka',
+          url: '../CKafka/index.html#/ckafka'
+        }, {
+          name: '負載均衡 CLB',
+          url: '../CLB/index.html#/LB'
+        }, {
+          name: '專線接入 DC',
+          url: '../DC/index.html#/lineAisle'
+        }, {
+          name: '私有網路 VPC',
+          url: '../VPC/index.html#/priNetwork'
+        }, {
+          name: '彈性網路介面 ENI',
+          url: '../VPC/index.html#/elaCard'
+        }, {
+          name: 'NAT閘道',
+          url: '../VPC/index.html#/natGateway'
+        }, {
+          name: 'VPN連接',
+          url: '../VPC/index.html#/vpnGateway'
+        }, {
+          name: '彈性公網IP',
+          url: '../CVM/index.html#/elasticityIp'
+        }, {
+          name: '雲聯網 CCN',
+          url: '../CCN/index.html#/ccnPage'
+        }, {
+          name: '雲硬碟 CBS',
+          url: '../CVM/index.html#/cloudDisk'
+        }, {
+          name: '物件儲存 COS',
+          url: '../COS/index.html#/bucket'
+        }, {
+          name: '內容傳遞網路 CDN',
+          url: '../CDN/index.html#/domainMan'
+        }, {
+          name: '動態加速 DSA',
+          url: '../DSA/index.html#/overview'
+        }, {
+          name: '全球應用加速 GAAP',
+          url: '../GAAP/index.html#/joinMan'
+        }, {
+          name: '專案管理',
+          url: '../PRO/index.html'
         }
-      },
-      loadAll() {
-        return [{
-            value: '云服务器 CVM',
-            url: 'cvm'
-          },
-          {
-            value: '云硬盘 CBS',
-            url: 'cbs'
-          },
-          {
-            value: '弹性伸缩 AS',
-            url: 'as'
-          },
-          {
-            value: '容器服务 TKE',
-            url: 'tke'
-          },
-          {
-            value: '对象存储 COS',
-            url: 'cos'
-          },
-          {
-            value: '文件存储 CFS',
-            url: 'cfs'
-          },
-          {
-            value: '日志服务 CLS',
-            url: 'cls'
-          },
-          {
-            value: '云数据库MySQL',
-            url: 'sql'
-          },
+      ]
+    }
+  },
+  methods: {
 
-          {
-            value: '云数据库Redis',
-            url: 'redis'
-          },
-
-          {
-            value: '云数据库SQLServer',
-            url: 'sqlserver'
-          },
-
-          {
-            value: 'Elasticsearch Service',
-            url: 'es'
-          },
-
-          {
-            value: '分布式数据库TDSQL',
-            url: 'tdsql'
-          },
-
-          {
-            value: '云数据库PostgreSQL',
-            url: 'postsql'
-          },
-
-          {
-            value: '云数据库MongoDB',
-            url: 'mongodb'
-          },
-
-          {
-            value: '数据传输服务DTS',
-            url: 'dts'
-          },
-
-          {
-            value: '负载均衡CLB',
-            url: 'clb'
-          },
-
-          {
-            value: '私有网络VPC',
-            url: 'vpc'
-          },
-
-          {
-            value: 'VPN连接',
-            url: 'vpn'
-          },
-
-          {
-            value: 'NAT网关',
-            url: 'nat'
-          },
-
-          {
-            value: '对等连接PC',
-            url: 'conn'
-          },
-
-          {
-            value: '专线接入DC',
-            url: 'dc'
-          },
-
-          {
-            value: '短信',
-            url: 'mes'
-          },
-
-          {
-            value: 'DDoS防护',
-            url: 'ip'
-          },
-
-          {
-            value: '网站管家',
-            url: 'waf'
-          },
-
-          {
-            value: '云主机(云镜)',
-            url: 'mirror'
-          },
-
-          {
-            value: '静态内容加速SCD',
-            url: 'scd'
-          },
-
-          {
-            value: '动态加速网络DSA',
-            url: 'dsa'
-          },
-
-          {
-            value: '海外加速GCD',
-            url: 'gcd'
-          },
-
-          {
-            value: '全球应用加速GAAP',
-            url: 'gaap'
-          },
-
-          {
-            value: '消息队列CKAFKA',
-            url: 'ckafka'
-          },
-
-          {
-            value: '云点播',
-            url: 'vod'
-          },
-
-          {
-            value: '活动防刷AA',
-            url: 'aa'
-          }
-        ]
-      },
-      handleSelect(item) {
-        this.$emit('childByValue', 'ok')
-        this.$router.push({
-          name: item.url
-        })
-      },
-      handleIconClick(ev) {
-        console.log(ev)
-      },
-      go(url) {
-        this.$emit('childByValue', 'ok')
-        window.location.href = url
-      },
-
-      testFun() {
-        // 内测中，敬请期待！
-        this.$message('內測中，敬請期待！');
+    // 搜索输入框变化时触发的函数
+    searchProduct() {
+      console.log(this.searchName)
+      this.chooseProduct = []
+      for (var i = 0; i < this.productArr.length; i++) {
+        if (this.productArr[i].name.lastIndexOf(this.searchName) !== -1) {
+          this.chooseProduct.push(this.productArr[i])
+        }
+      }
+      if (this.searchName === '' || this.searchName === null || this.searchName === undefined) {
+        this.chooseProduct = []
       }
     },
-    mounted() {
-      this.restaurants = this.loadAll()
+
+    go(url) {
+      window.location.href = url
+    },
+
+    testFun() {
+      // 内测中，敬请期待！
+      this.$message('內測中，敬請期待！');
     }
   }
+}
 
 </script>
 <style lang="scss" scoped>
-  .pro-box {
-    padding: 44px 50px;
+.pro-box {
+  padding: 44px 50px;
 
-    .my-autocomplete {
-      li {
-        line-height: normal;
-        padding: 7px;
+  .my-autocomplete {
+    li {
+      line-height: normal;
+      padding: 7px;
 
-        .name {
-          text-overflow: ellipsis;
-          overflow: hidden;
-        }
+      .name {
+        text-overflow: ellipsis;
+        overflow: hidden;
+      }
 
-        .addr {
-          font-size: 12px;
-          color: #b4b4b4;
-        }
+      .addr {
+        font-size: 12px;
+        color: #b4b4b4;
+      }
 
-        .highlighted .addr {
-          color: #ddd;
-        }
+      .highlighted .addr {
+        color: #ddd;
       }
     }
+  }
 
-    .box-top {
-      text-align: left;
-      font-size: 14px;
+  .box-top {
+    text-align: left;
+    font-size: 14px;
+    position: relative;
 
-      input {
-        box-sizing: border-box;
-        width: 70%;
-        height: 28px;
-        line-height: 28px;
-        border: 1px solid #484848;
-        background-color: #2c303a;
-        outline: 0;
-        color: #fff;
+    input {
+      box-sizing: border-box;
+      width: 550px;
+      height: 28px;
+      line-height: 28px;
+      border: 1px solid #484848;
+      background-color: #2c303a;
+      outline: 0;
+      color: #fff;
+      padding-left: 10px;
+    }
+
+    .el-icon-search {
+      position: absolute;
+      height: 28px;
+      width: 28px;
+      line-height: 26px;
+      padding-left: 5px;
+      border: 1px solid #484848;
+      border-left: none;
+      top: 0;
+    }
+    .product-ul {
+      position: absolute;
+      top: 33px;
+      width: 550px;
+      background-color: #262626;
+      border: 1px solid #525151;
+      font-size: 12px;
+      color: #747474;
+      max-height: 300px;
+      overflow-y: scroll;
+      .product-li {
+        height: 35px;
+        line-height: 35px;
+        border-bottom: 1px solid #646363;
         padding-left: 10px;
-      }
-
-      .el-icon-search {
-        position: absolute;
-        height: 28px;
-        width: 28px;
-        line-height: 26px;
-        padding-left: 5px;
-        border: 1px solid #484848;
-        border-left: none;
-        top: 44px;
-      }
-    }
-
-    .box-content {
-      display: flex;
-      margin-top: 40px;
-
-      .item {
-        width: 180px;
-        float: left;
-
-        ul {
-          margin-bottom: 20px;
-
-          li:not(:first-child) {
-            text-align: left;
-            font-size: 12px;
-            line-height: 25px;
-            color: #888;
-            cursor: pointer;
-          }
-
-          .li-title {
-            font-size: 14px;
-            color: rgb(238, 227, 227);
-            /* font-weight: 500; */
-            padding-bottom: 5px;
-            cursor: default;
-            line-height: 20px;
-            text-align: left;
-          }
-
-          .li-sub {
-            color: #3d91ff !important;
-          }
+        display: block;
+        &:last-child {
+          border-bottom: 0 solid #646363;
         }
       }
     }
   }
 
-  .el-autocomplete {
-    display: block;
-    margin: 0 60px;
-    margin-top: 10px;
-  }
+  .box-content {
+    display: flex;
+    margin-top: 40px;
 
+    .item {
+      width: 180px;
+      float: left;
+
+      ul {
+        margin-bottom: 20px;
+
+        li:not(:first-child) {
+          text-align: left;
+          font-size: 12px;
+          line-height: 25px;
+          color: #888;
+          cursor: pointer;
+        }
+
+        .li-title {
+          font-size: 14px;
+          color: rgb(238, 227, 227);
+          /* font-weight: 500; */
+          padding-bottom: 5px;
+          cursor: default;
+          line-height: 20px;
+          text-align: left;
+        }
+
+        .li-sub {
+          color: #3d91ff !important;
+        }
+      }
+    }
+  }
+}
+
+.el-autocomplete {
+  display: block;
+  margin: 0 60px;
+  margin-top: 10px;
+}
 </style>
