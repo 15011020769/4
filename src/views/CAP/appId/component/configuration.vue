@@ -4,20 +4,21 @@
       <div class="detials">
         <div class="title">基础外观 (修改验证码主题色、语言等，让验证码与你的网站更加融洽)</div>
         <div class="content">
-          <el-form ref="form" :model="form" label-width="100px">
+          <el-form ref="form" label-width="100px">
             <el-form-item label="主题色">
-              <span style="padding-left:30px;">{{this.colorValue}}</span>
-              <!-- <input type="color" style="margin-left:10px; width:60px" v-model="colorValue" /> -->
-              <el-color-picker v-model="colorValue" style="margin-left:10px;"></el-color-picker>
-              <el-button type="primary" style="margin-left:10px;" @click="reset">重置</el-button>
+              <el-row type="flex">
+                <span style="padding-left:30px;">{{captcha.SchemeColor}}</span>
+                <el-color-picker v-model="captcha.SchemeColor" style="margin-left:10px;"></el-color-picker>
+                <el-button type="primary" style="margin-left:10px;" @click="reset">重置</el-button>
+              </el-row>
               <p style="padding-left:30px;">主题色会影响验证码滑块、打击提醒、错误提醒等内容颜色</p>
             </el-form-item>
             <el-form-item label="默认语言">
-              <el-select v-model="form.region" placeholder="自适应" style="padding-left:30px;">
-                <el-option label="自适应" value="1"></el-option>
-                <el-option label="简体验证码" value="2052"></el-option>
-                <el-option label="繁体验证码" value="1028"></el-option>
-                <el-option label="英文验证码" value="1033"></el-option>
+              <el-select v-model="captcha.Language" placeholder="自适应" style="padding-left:30px;">
+                <el-option label="自适应" :value="1"></el-option>
+                <el-option label="简体验证码" :value="2052"></el-option>
+                <el-option label="繁体验证码" :value="1028"></el-option>
+                <el-option label="英文验证码" :value="1033"></el-option>
               </el-select>
               <p style="padding-left:30px;">验证码提示文案的语言，目前VTT类型只支持简体中文</p>
             </el-form-item>
@@ -26,7 +27,18 @@
           </el-form>
         </div>
       </div>
-      <div class="detials" style="border:none"></div>
+      <div class="detials" style="border:none; display: flex;justify-content: center;">
+        <iframe
+          id="tcaptcha"
+          scrolling="no"
+          src="/captcha.html"
+          frameborder="no"
+          border="0"
+          width="360"
+          height="360"
+          ref="tcaptcha"
+        ></iframe>
+      </div>
     </div>
   </div>
 </template>
@@ -36,29 +48,51 @@ import {UPDATEAPPID_INFO,APPID_DESCRIBE} from '@/constants/CAP.js'
 export default {
   data() {
     return {
-      colorValue: "#000000",
-      form: {
-        region:''
-      },
-      Id:this.$route.query.Id,
+      themeColor: '',
+      Id: this.$route.query.Id,
       time: this.getDateString(new Date()),
       timeShow:false,
-      AppDate:[]
-    };
+      captcha: {},
+      message: {
+        color: '',
+        langid: 1,
+        capType: 15
+      }
+    }
   },
-  created(){
-     this.init()
+  watch: {
+    'captcha.SchemeColor'(n) {
+      this.message.color = n
+      this.initCaptcha()
+    },
+    'captcha.Language'(n) {
+      this.message.langid = n
+      this.initCaptcha()
+    }
+  },
+  mounted(){
+    this.init()
   },
   methods: {
+    initCaptcha() {
+      this.$refs.tcaptcha.contentWindow.postMessage({
+        ...this.message,
+        color: this.message.color.substr(1)
+      }, '*')
+    },
     //获取当前APPID信息
     init(){
        let params = {
          Version:'2019-07-22',
-         CaptchaAppId:this.Id
+         CaptchaAppId: this.Id
        }
        this.axios.post(APPID_DESCRIBE,params).then(res => {
          if(res.Response.Error === undefined){
-            this.AppDate = res.Response
+            this.captcha = res.Response
+            this.themeColor = res.Response.SchemeColor
+            this.message.color = res.Response.SchemeColor
+            this.message.langid = res.Response.Language
+            this.initCaptcha()
          }else{
             let ErrTips = {
                "InternalError":'内部错误',
@@ -78,32 +112,36 @@ export default {
     },
     //重置颜色
     reset() {
-      this.colorValue = "";
+      this.captcha.SchemeColor = this.themeColor
+      this.initCaptcha()
     },
     //立刻保存
     save(){
        this.timeShow = true;
-       console.log(this.AppDate)
        let params = {
-          Version:'2019-07-22',
-          CaptchaAppId:this.Id,
-          AppName:this.AppDate.AppName,
-          DomainLimit:this.AppDate.DomainLimit,
-          SceneType:this.AppDate.SceneType,
-          CapType:this.AppDate.CapType,
-          EvilInterceptGrade:this.AppDate.EvilInterceptGrade,
-          SmartVerify:this.AppDate.SmartVerify,
-          SmartEngine:this.AppDate.SmartEngine,
-          SchemeColor:this.colorValue,
-          CaptchaLanguage:this.form.region,
-          MailAlarm:this.AppDate.CaptchaMsg,
-          TopFullScreen:this.AppDate.TopFullScreen,
-          TrafficThreshold:this.AppDate.TrafficThreshold,
-          CaptchaLanguage:this.AppDate.Language
+          Version: '2019-07-22',
+          CaptchaAppId: this.Id,
+          AppName: this.captcha.AppName,
+          DomainLimit: this.captcha.DomainLimit,
+          SceneType: this.captcha.SceneType,
+          CapType: this.captcha.CapType,
+          EvilInterceptGrade: this.captcha.EvilInterceptGrade,
+          SmartVerify: this.captcha.SmartVerify,
+          SmartEngine: this.captcha.SmartEngine,
+          SchemeColor: this.captcha.SchemeColor,
+          MailAlarm: this.captcha.CaptchaMsg,
+          TopFullScreen: this.captcha.TopFullScreen,
+          TrafficThreshold: this.captcha.TrafficThreshold,
+          CaptchaLanguage: this.captcha.Language
        }
        this.axios.post(UPDATEAPPID_INFO,params).then(res => {
          if(res.Response.Error === undefined){
-          this.$message.success('保存成功')
+          this.$message({
+              message: 保存成功,
+              type: "success",
+              showClose: true,
+              duration: 0
+            });
           setTimeout(()=>{
               this.timeShow = false
             }, 5000);

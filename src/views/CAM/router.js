@@ -243,6 +243,14 @@ export default new Router({
     }
   },
   {
+    path: '/IdentityProviderDetail/:name', // 身份提供商详情
+    name: 'IdentityProviderDetail',
+    component: () => import( /* webpackChunkName: "IdentityProvider" */ './IdentityProvider/ProviderDetail.vue'),
+    meta: {
+      keepAlive: true
+    }
+  },
+  {
     path: '/NewIdentityProvider', //新建身份提供商
     name: 'NewIdentityProvider',
     component: () => import( /*webpackChunkName:"IdentityProvider"*/ './IdentityProvider/NewIdentityProvider.vue'),

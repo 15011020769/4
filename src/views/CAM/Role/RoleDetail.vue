@@ -311,6 +311,9 @@ import transfer from "./component/transfer";
 import HeadCom from "../UserListNew/components/Head";
 import moment from 'moment'
 import {
+  Loading
+} from 'element-ui'
+import {
   GET_ROLE,
   LIST_ATTACHE,
   DEACH_ROLE,
@@ -808,6 +811,10 @@ export default {
     },
     // 撤销所有会话
     async cancelAllSession() {
+      const loading = Loading.service({
+        lock: true,
+        background: 'rgba(0, 0, 0, 0.1)'
+      })
       let res
       let PolicyId
       res = await this.axios.post(POLICY_LIST, {
@@ -830,6 +837,7 @@ export default {
           showClose: true,
           duration: 0
         })
+        loading.close()
         return
       }
       PolicyId = res.Response.List[0].PolicyId
@@ -850,6 +858,7 @@ export default {
             res = await this.axios.post(LOGOUT_ROLE_SESSIONS, {
               roleId: this.$route.query.RoleId
             })
+            loading.close()
             if (res.code === 0) {
               this.$message({
                 message: '撤銷成功',
@@ -867,6 +876,7 @@ export default {
               });
             } 
           } else {
+            loading.close()
             let ErrTips = {
               "InternalError.SystemError": "內部錯誤",
               "InvalidParameter.AttachmentFull":
@@ -884,6 +894,7 @@ export default {
             });
           }          
         } else {
+          loading.close()
           let ErrTips = {
             "FailedOperation.PolicyNameInUse":
               "PolicyName欄位指定的策略名已存在",
@@ -927,6 +938,7 @@ export default {
           });
         }
       } else {
+        tloading.close()
         this.$message({
           message: '撤銷失敗',
           type: "error",

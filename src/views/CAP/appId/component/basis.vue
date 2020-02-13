@@ -66,7 +66,7 @@
               <li @mouseover="overLi(i)" @mouseout="outLi" v-for="(v,i) in mailList" :key="i">
                 <span>{{v}}</span>
                 <span v-show="delIconFlag==i">
-                  <i class="el-icon-minus" @click="deleteEmail"></i>
+                  <i class="el-icon-minus" @click="deleteEmail(v)"></i>
                 </span>
               </li>
             </ul>
@@ -111,13 +111,57 @@ export default {
   created() {
     this.CaptchaAppId = this.$route.query.Id;
     this.findData();
+    this.findMailList()
   },
   methods: {
     deleteAppID(){
-       this.$message('腾讯接口排期中');
+      this.$confirm('确认要删除该验证场景？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.axios.post('captcha2/DeleteCaptchaAppIdInfo', {
+          CaptchaAppId: this.$route.query.Id,
+          Version: "2019-07-22"
+        }).then(res => {
+          if(res.Response.Error === undefined){
+            this.$message({
+              message: '删除成功',
+              type: "success",
+              showClose: true,
+              duration: 0
+            });
+            this.$router.push('/appId')
+          }
+        })
+      })
     },
-    deleteEmail(){
-       this.$message('腾讯接口排期中');
+    findMailList() {
+      this.axios.post('captcha2/DescribeCaptchaAlarmMails', {
+        CaptchaAppId: this.$route.query.Id,
+        Version: "2019-07-22"
+      }).then(res => {
+        if(res.Response.Error === undefined){
+          this.mailList = res.Response.MailAlarms
+        }
+      })
+    },
+    deleteEmail(email){
+      this.axios.post('captcha2/DeleteCaptchaAlarmMails', {
+        CaptchaAppId: this.$route.query.Id,
+        MailAlarm: email,
+        Version: "2019-07-22",
+      }).then(res => {
+        if(res.Response.Error === undefined){
+          this.$message({
+            message: '删除邮箱成功',
+            type: "success",
+            showClose: true,
+            duration: 0
+          });
+          this.findMailList()
+        }
+      })
     },
     //告警邮箱提交
     submitEmail() {
@@ -137,13 +181,17 @@ export default {
                     this.mailList=res.Response.MailAlarms;
                     this.addEmail='';
                     this.$message({
-                    message: "增加告警邮箱成功",
-                    type: "success"
-                  });
+                      message: '增加告警邮箱成功',
+                      type: "success",
+                      showClose: true,
+                      duration: 0
+                    });
                 }else{
                   this.$message({
-                    message: "只能添加5条数据",
-                    type: "error"
+                    message: '只能增加5条数据',
+                    type: "error",
+                    showClose: true,
+                    duration: 0
                   });
                 }
           }else{

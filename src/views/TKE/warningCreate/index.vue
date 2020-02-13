@@ -1,730 +1,748 @@
 <template>
   <div class="persistenceSetting">
+
     <div class="back-hd flex">
       <router-link :to="'/warnings'">
         <i class="el-icon-back hd-icon-back"></i>
       </router-link>
       <h3>新建策略</h3>
     </div>
-      <div class="tf-g app-tke-fe-content__inner">
-        <div class="event-persistence font">
-          <el-form ref="form" :model="form" label-width="100px">
-            <el-form-item label="地域">
-              <div>中国台北</div>
-            </el-form-item>
-            <el-form-item label="集群">
-              <div>cls-gwblk71e(tfy_test)</div>
-            </el-form-item>
-            <el-form-item label="告警策略名称">
-              <el-input size="mini" class="el-input" placeholder="请输入告警策略名称"></el-input>
-              <div>最长40个字符</div>
-            </el-form-item>
-            <el-form-item label="备注">
-              <el-input type="textarea" class="el-textarea" placeholder="请输入策略备注" v-model="form.desc"></el-input>
-              <div>最长100个字符</div>
-            </el-form-item>
-            <el-form-item label="策略类型">
-              <el-select v-model="value" placeholder="请选择活动区域" size="mini">
-                <el-option label="集群" value="jq">
-                </el-option>
-                <el-option label="节点" value="jd"></el-option>
-                <el-option label="pod" value="pod"></el-option>
-              </el-select>
-            </el-form-item>
-            <!-- 集群显示内容 -->
-            <div v-if="value=='jq'">
-              <el-form-item label="指标">
-                <div class="form-form">
-                  <div class="flex p3">
-                    <!-- 内容 -->
-                    <div class="flex" style="flex:1;padding-top:5px;">
-                      <input class="el-checkbox" type="checkbox" v-model="cpuLY.check">
-                      <span>CPU利用率</span>
-                    </div>
-                    <div>
-                      <el-select v-model="cpuLY.tj" placeholder="请选择" size="mini">
-                        <el-option
-                          v-for="(item,i) in cpuLY.tjs"
-                          :key="i"
-                          :value="item">
-                        </el-option>
-                      </el-select>
-                      <el-select v-model="cpuLY.gl" placeholder="请选择" size="mini" class="glw">
-                        <el-option
-                          v-for="(item,i) in cpuLY.gls"
-                          :key="i"
-                          :value="item">
-                        </el-option>
-                      </el-select>
-                      <el-input v-model="cpuLY.number" size="mini" class="w100"></el-input>
-                      <span class="numberEnd">{{cpuLY.numberEnd}}</span>
-                      <el-select v-model="cpuLY.zq" placeholder="请选择" size="mini" class="gz" style="padding-left:20px;">
-                        <el-option
-                          v-for="(item,i) in cpuLY.zqs"
-                          :key="i"
-                          :value="item">
-                        </el-option>
-                      </el-select>
-                    </div>
-                  </div>
-                  <div class="flex p3">
-                    <!-- 内容 -->
-                    <div class="flex" style="flex:1;padding-top:5px;">
-                      <input class="el-checkbox" type="checkbox" v-model="ncLY.check">
-                      <span>内存利用率</span>
-                    </div>
-                    <div>
-                      <el-select v-model="ncLY.tj" placeholder="请选择" size="mini">
-                        <el-option
-                          v-for="(item,i) in ncLY.tjs"
-                          :key="i"
-                          :value="item">
-                        </el-option>
-                      </el-select>
-                      <el-select v-model="ncLY.gl" placeholder="请选择" size="mini" class="glw">
-                        <el-option
-                          v-for="(item,i) in ncLY.gls"
-                          :key="i"
-                          :value="item">
-                        </el-option>
-                      </el-select>
-                      <el-input v-model="ncLY.number" size="mini" class="w100"></el-input>
-                      <span class="numberEnd">{{ncLY.numberEnd}}</span>
-                      <el-select v-model="ncLY.zq" placeholder="请选择" size="mini" class="gz" style="padding-left:20px;">
-                        <el-option
-                          v-for="(item,i) in ncLY.zqs"
-                          :key="i"
-                          :value="item">
-                        </el-option>
-                      </el-select>
-                    </div>
-                  </div>
-                  <div class="flex p3">
-                    <!-- 内容 -->
-                    <div class="flex" style="flex:1;padding-top:5px;">
-                      <input class="el-checkbox" type="checkbox" v-model="cpuFP.check">
-                      <span>CPU分配率</span>
-                    </div>
-                    <div>
-                      <el-select v-model="cpuFP.tj" placeholder="请选择" size="mini">
-                        <el-option
-                          v-for="(item,i) in cpuFP.tjs"
-                          :key="i"
-                          :value="item">
-                        </el-option>
-                      </el-select>
-                      <el-select v-model="cpuFP.gl" placeholder="请选择" size="mini" class="glw">
-                        <el-option
-                          v-for="(item,i) in cpuFP.gls"
-                          :key="i"
-                          :value="item">
-                        </el-option>
-                      </el-select>
-                      <el-input v-model="cpuFP.number" size="mini" class="w100"></el-input>
-                      <span class="numberEnd">{{cpuFP.numberEnd}}</span>
-                      <el-select v-model="cpuFP.zq" placeholder="请选择" size="mini" class="gz" style="padding-left:20px;">
-                        <el-option
-                          v-for="(item  ,i) in cpuFP.zqs"
-                          :key="i"
-                          :value="item">
-                        </el-option>
-                      </el-select>
-                    </div>
-                  </div>
-                  <div class="flex p3">
-                    <!-- 内容 -->
-                    <div class="flex" style="flex:1;padding-top:5px;">
-                      <input class="el-checkbox" type="checkbox" v-model="ncFP.check">
-                      <span>内存分配率</span>
-                    </div>
-                    <div>
-                      <el-select v-model="ncFP.tj" placeholder="请选择" size="mini">
-                        <el-option
-                          v-for="(item,i) in ncFP.tjs"
-                          :key="i"
-                          :value="item">
-                        </el-option>
-                      </el-select>
-                      <el-select v-model="ncFP.gl" placeholder="请选择" size="mini" class="glw">
-                        <el-option
-                          v-for="(item,i) in ncFP.gls"
-                          :key="i"
-                          :value="item">
-                        </el-option>
-                      </el-select>
-                      <el-input v-model="ncFP.number" size="mini" class="w100"></el-input>
-                      <span class="numberEnd">{{ncFP.numberEnd}}</span>
-                      <el-select v-model="ncFP.zq" placeholder="请选择" size="mini" class="gz" style="padding-left:20px;">
-                        <el-option
-                          v-for="(item,i) in ncFP.zqs"
-                          :key="i"
-                          :value="item">
-                        </el-option>
-                      </el-select>
-                    </div>
-                  </div>
-                </div>
+    <div class='room'>
+      <el-card class="box-card">
+        <div class="tf-g app-tke-fe-content__inner">
+          <div class="event-persistence font">
+            <el-form ref="form" :model="form" label-width="100px" label-position="left" class="tke-form">
+              <el-form-item label="地域">
+                <div>中国台北</div>
               </el-form-item>
+              <el-form-item label="集群">
+                <div>cls-gwblk71e(tfy_test)</div>
+              </el-form-item>
+              <el-form-item label="告警策略名称">
+                <el-input size="mini" class="el-input" placeholder="请输入告警策略名称"></el-input>
+                <div>最长40个字符</div>
+              </el-form-item>
+              <el-form-item label="备注">
+                <el-input type="textarea" class="el-textarea" placeholder="请输入策略备注" v-model="form.desc"></el-input>
+                <div>最长100个字符</div>
+              </el-form-item>
+              <el-form-item label="策略类型">
+                <el-select v-model="value" placeholder="请选择活动区域" size="mini">
+                  <el-option label="集群" value="jq">
+                  </el-option>
+                  <el-option label="节点" value="jd"></el-option>
+                  <el-option label="pod" value="pod"></el-option>
+                </el-select>
+              </el-form-item>
+
+              <el-form-item label="告警对象" v-if="value == 'jd'">
+                <el-radio v-model="form.radio1" label="1">全部选择</el-radio>
+              </el-form-item>
+
+              <el-form-item label="告警对象" v-if="value == 'pod'">
+                <el-radio-group v-model="form.radio2">
+                  <el-radio :label="1">按工作负载选择</el-radio>
+                  <div v-if="form.radio2 == '1'">
+                    <el-form-item label="Namespace" >
+                          <el-select placeholder="请选择" v-model='form.value1' size='mini'>
+                              <el-option
+                                v-for="item in form.input1"
+                                :key="item.value"
+                                :label="item.label"
+                                :value="item.value">
+                              </el-option>
+                            </el-select>
+                    </el-form-item>
+                    <el-form-item label="WorkloadType" >
+                      <el-select placeholder="请选择" v-model='form.value2' size='mini'>
+                              <el-option
+                                v-for="item in form.input2"
+                                :key="item.value"
+                                :label="item.label"
+                                :value="item.value">
+                              </el-option>
+                            </el-select>
+                    </el-form-item>
+                  </div>
+                  <el-radio :label="2">全部选择</el-radio>
+              </el-radio-group>
+            </el-form-item>
+              <!-- 集群显示内容 -->
+              <div>
+                <el-form-item label="指标">
+                  <div class="form-form" v-if="value == 'jq'">
+                    <div class="flex p3">
+                      <!-- 内容 -->
+                      <div class="flex" style="flex:1;padding-top:5px;">
+                        <el-checkbox  v-model="formOne[0].checked">CPU利用率</el-checkbox>
+                      </div>
+                      <div>
+                        <el-select placeholder="请选择" v-model='formOne[0].option.value1' size='mini'>
+                          <el-option
+                            v-for="item in option1"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                          </el-option>
+                        </el-select>
+                        <el-select placeholder="请选择" v-model='formOne[0].option.value2' size='mini'>
+                          <el-option
+                            v-for="item in option2"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                          </el-option>
+                        </el-select>
+                        <el-input v-model="formOne[0].option.value3" size="mini" class="w100"></el-input>
+                        <span class="numberEnd">%</span>
+                         <el-select placeholder="请选择" v-model='formOne[0].option.value4' size='mini'>
+                          <el-option
+                            v-for="item in option3"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                          </el-option>
+                        </el-select>
+                      </div>
+                    </div>
+
+                    <div class="flex p3">
+                      <!-- 内容 -->
+                      <div class="flex" style="flex:1;padding-top:5px;">
+                        <el-checkbox  v-model="formOne[1].checked">内存利用率</el-checkbox>
+                      </div>
+                      <div>
+                        <el-select placeholder="请选择" v-model='formOne[1].option.value1' size='mini'>
+                          <el-option
+                            v-for="item in option1"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                          </el-option>
+                        </el-select>
+                        <el-select placeholder="请选择" v-model='formOne[1].option.value2' size='mini'>
+                          <el-option
+                            v-for="item in option2"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                          </el-option>
+                        </el-select>
+                        <el-input v-model="formOne[1].option.value3" size="mini" class="w100"></el-input>
+                        <span class="numberEnd">%</span>
+                         <el-select placeholder="请选择" v-model='formOne[1].option.value4' size='mini'>
+                          <el-option
+                            v-for="item in option3"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                          </el-option>
+                        </el-select>
+                      </div>
+                    </div>
+
+                    <div class="flex p3">
+                      <!-- 内容 -->
+                      <div class="flex" style="flex:1;padding-top:5px;">
+                        <el-checkbox  v-model="formOne[2].checked">CPU分配率</el-checkbox>
+                      </div>
+                      <div>
+                        <el-select placeholder="请选择" v-model='formOne[2].option.value1' size='mini'>
+                          <el-option
+                            v-for="item in option1"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                          </el-option>
+                        </el-select>
+                        <el-select placeholder="请选择" v-model='formOne[2].option.value2' size='mini'>
+                          <el-option
+                            v-for="item in option2"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                          </el-option>
+                        </el-select>
+                        <el-input v-model="formOne[2].option.value3" size="mini" class="w100"></el-input>
+                        <span class="numberEnd">%</span>
+                         <el-select placeholder="请选择" v-model='formOne[2].option.value4' size='mini'>
+                          <el-option
+                            v-for="item in option3"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                          </el-option>
+                        </el-select>
+                      </div>
+                    </div>
+
+                    <div class="flex p3">
+                      <!-- 内容 -->
+                      <div class="flex" style="flex:1;padding-top:5px;">
+                        <el-checkbox  v-model="formOne[3].checked">内存分配率</el-checkbox>
+                      </div>
+                      <div>
+                        <el-select placeholder="请选择" v-model='formOne[3].option.value1' size='mini'>
+                          <el-option
+                            v-for="item in option1"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                          </el-option>
+                        </el-select>
+                        <el-select placeholder="请选择" v-model='formOne[3].option.value2' size='mini'>
+                          <el-option
+                            v-for="item in option2"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                          </el-option>
+                        </el-select>
+                        <el-input v-model="formOne[3].option.value3" size="mini" class="w100"></el-input>
+                        <span class="numberEnd">%</span>
+                         <el-select placeholder="请选择" v-model='formOne[3].option.value4' size='mini'>
+                          <el-option
+                            v-for="item in option3"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                          </el-option>
+                        </el-select>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- 节点显示内容 -->
+                  <div class="form-form" v-if="value == 'jd'">
+                    <div class="flex p3">
+                      <div class="flex" style="flex:1;padding-top:5px;">
+                        <el-checkbox  v-model="formTwo[0].checked">CPU利用率</el-checkbox>
+                      </div>
+                      <div>
+                        <el-select placeholder="请选择" v-model='formTwo[0].option.value1' size='mini'>
+                          <el-option
+                            v-for="item in option1"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                          </el-option>
+                        </el-select>
+                        <el-select placeholder="请选择" v-model='formTwo[0].option.value2' size='mini'>
+                          <el-option
+                            v-for="item in option2"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                          </el-option>
+                        </el-select>
+                        <el-input v-model="formTwo[0].option.value3" size="mini" class="w100"></el-input>
+                        <span class="numberEnd">%</span>
+                         <el-select placeholder="请选择" v-model='formTwo[0].option.value4' size='mini'>
+                          <el-option
+                            v-for="item in option3"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                          </el-option>
+                        </el-select>
+                      </div>
+                    </div>
+
+                    <div class="flex p3">
+                      <div class="flex" style="flex:1;padding-top:5px;">
+                        <el-checkbox  v-model="formTwo[1].checked">内存利用率</el-checkbox>
+                      </div>
+                      <div>
+                        <el-select placeholder="请选择" v-model='formTwo[1].option.value1' size='mini'>
+                          <el-option
+                            v-for="item in option1"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                          </el-option>
+                        </el-select>
+                        <el-select placeholder="请选择" v-model='formTwo[1].option.value2' size='mini'>
+                          <el-option
+                            v-for="item in option2"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                          </el-option>
+                        </el-select>
+                        <el-input v-model="formTwo[1].option.value3" size="mini" class="w100"></el-input>
+                        <span class="numberEnd">%</span>
+                         <el-select placeholder="请选择" v-model='formTwo[1].option.value4' size='mini'>
+                          <el-option
+                            v-for="item in option3"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                          </el-option>
+                        </el-select>
+                      </div>
+                    </div>
+
+                    <div class="flex p3">
+                      <div class="flex" style="flex:1;padding-top:5px;">
+                        <el-checkbox  v-model="formTwo[2].checked">节点上Pod重启次数</el-checkbox>
+                      </div>
+                      <div>
+                        <el-select placeholder="请选择" v-model='formTwo[2].option.value1' size='mini'>
+                          <el-option
+                            v-for="item in option1"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                          </el-option>
+                        </el-select>
+                        <el-select placeholder="请选择" v-model='formTwo[2].option.value2' size='mini'>
+                          <el-option
+                            v-for="item in option2"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                          </el-option>
+                        </el-select>
+                        <el-input v-model="formTwo[2].option.value3" size="mini" class="w100"></el-input>
+                        <span class="numberEnd">%</span>
+                         <el-select placeholder="请选择" v-model='formTwo[2].option.value4' size='mini'>
+                          <el-option
+                            v-for="item in option3"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                          </el-option>
+                        </el-select>
+                      </div>
+                    </div>
+
+                    <div class="flex p3">
+                      <div class="flex" style="flex:1;padding-top:5px">
+                        <el-checkbox  v-model="formTwo[3].checked">Node Ready</el-checkbox>
+                      </div>
+                      <div>
+                        <el-select placeholder="请选择" v-model='formTwo[3].option.value1' size='mini'>
+                          <el-option
+                            v-for="item in option1"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                          </el-option>
+                        </el-select>
+                        <el-select placeholder="请选择" v-model='formTwo[3].option.value2' size='mini'>
+                          <el-option
+                            v-for="item in option2"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                          </el-option>
+                        </el-select>
+                        <el-select placeholder="请选择" v-model='formTwo[3].option.value3' size='mini'>
+                          <el-option
+                            v-for="item in option5"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                          </el-option>
+                        </el-select>
+                         <el-select placeholder="请选择" v-model='formTwo[3].option.value4' size='mini'>
+                          <el-option
+                            v-for="item in option3"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                          </el-option>
+                        </el-select>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- pod显示内容 -->
+                  <div class="form-form" v-if="value == 'pod'">
+
+                    <div class="flex p3">
+                      <div class="flex" style="flex:1;padding-top:5px;">
+                        <el-checkbox  v-model="formTwo[0].checked">CPU利用率</el-checkbox>
+                      </div>
+                      <div>
+                        <el-select placeholder="请选择" v-model='formTwo[0].option.value1' size='mini'>
+                          <el-option
+                            v-for="item in option1"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                          </el-option>
+                        </el-select>
+                        <el-select placeholder="请选择" v-model='formTwo[0].option.value2' size='mini'>
+                          <el-option
+                            v-for="item in option2"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                          </el-option>
+                        </el-select>
+                        <el-input v-model="formTwo[0].option.value3" size="mini" class="w100"></el-input>
+                        <span class="numberEnd">%</span>
+                         <el-select placeholder="请选择" v-model='formTwo[0].option.value4' size='mini'>
+                          <el-option
+                            v-for="item in option3"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                          </el-option>
+                        </el-select>
+                      </div>
+                    </div>
+
+                    <div class="flex p3">
+                      <div class="flex" style="flex:1;padding-top:5px;">
+                        <el-checkbox  v-model="formTwo[1].checked">内存利用率</el-checkbox>
+                      </div>
+                      <div>
+                        <el-select placeholder="请选择" v-model='formTwo[1].option.value1' size='mini'>
+                          <el-option
+                            v-for="item in option1"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                          </el-option>
+                        </el-select>
+                        <el-select placeholder="请选择" v-model='formTwo[1].option.value2' size='mini'>
+                          <el-option
+                            v-for="item in option2"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                          </el-option>
+                        </el-select>
+                        <el-input v-model="formTwo[1].option.value3" size="mini" class="w100"></el-input>
+                        <span class="numberEnd">%</span>
+                         <el-select placeholder="请选择" v-model='formTwo[1].option.value4' size='mini'>
+                          <el-option
+                            v-for="item in option3"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                          </el-option>
+                        </el-select>
+                      </div>
+                    </div>
+
+                    <div class="flex p3">
+                      <div class="flex" style="flex:1;padding-top:5px;">
+                        <el-checkbox  v-model="formTwo[2].checked">节点上Pod重启次数</el-checkbox>
+                      </div>
+                      <div>
+                        <el-select placeholder="请选择" v-model='formTwo[2].option.value1' size='mini'>
+                          <el-option
+                            v-for="item in option1"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                          </el-option>
+                        </el-select>
+                        <el-select placeholder="请选择" v-model='formTwo[2].option.value2' size='mini'>
+                          <el-option
+                            v-for="item in option2"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                          </el-option>
+                        </el-select>
+                        <el-input v-model="formTwo[2].option.value3" size="mini" class="w100"></el-input>
+                        <span class="numberEnd">%</span>
+                         <el-select placeholder="请选择" v-model='formTwo[2].option.value4' size='mini'>
+                          <el-option
+                            v-for="item in option3"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                          </el-option>
+                        </el-select>
+                      </div>
+                    </div>
+
+                    <div class="flex p3">
+                      <div class="flex" style="flex:1;padding-top:5px">
+                        <el-checkbox  v-model="formTwo[3].checked">Node Ready</el-checkbox>
+                      </div>
+                      <div>
+                        <el-select placeholder="请选择" v-model='formTwo[3].option.value1' size='mini'>
+                          <el-option
+                            v-for="item in option1"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                          </el-option>
+                        </el-select>
+                        <el-select placeholder="请选择" v-model='formTwo[3].option.value2' size='mini'>
+                          <el-option
+                            v-for="item in option2"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                          </el-option>
+                        </el-select>
+                        <el-select placeholder="请选择" v-model='formTwo[3].option.value3' size='mini'>
+                          <el-option
+                            v-for="item in option5"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                          </el-option>
+                        </el-select>
+                         <el-select placeholder="请选择" v-model='formTwo[3].option.value4' size='mini'>
+                          <el-option
+                            v-for="item in option3"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                          </el-option>
+                        </el-select>
+                      </div>
+                    </div>
+
+                    <div class="flex p3">
+                      <div class="flex" style="flex:1;padding-top:5px;">
+                        <el-checkbox  v-model="formTwo[0].checked">CPU利用率</el-checkbox>
+                      </div>
+                      <div>
+                        <el-select placeholder="请选择" v-model='formTwo[0].option.value1' size='mini'>
+                          <el-option
+                            v-for="item in option1"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                          </el-option>
+                        </el-select>
+                        <el-select placeholder="请选择" v-model='formTwo[0].option.value2' size='mini'>
+                          <el-option
+                            v-for="item in option2"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                          </el-option>
+                        </el-select>
+                        <el-input v-model="formTwo[0].option.value3" size="mini" class="w100"></el-input>
+                        <span class="numberEnd">%</span>
+                         <el-select placeholder="请选择" v-model='formTwo[0].option.value4' size='mini'>
+                          <el-option
+                            v-for="item in option3"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                          </el-option>
+                        </el-select>
+                      </div>
+                    </div>
+
+                    <div class="flex p3">
+                      <div class="flex" style="flex:1;padding-top:5px;">
+                        <el-checkbox  v-model="formTwo[1].checked">内存利用率</el-checkbox>
+                      </div>
+                      <div>
+                        <el-select placeholder="请选择" v-model='formTwo[1].option.value1' size='mini'>
+                          <el-option
+                            v-for="item in option1"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                          </el-option>
+                        </el-select>
+                        <el-select placeholder="请选择" v-model='formTwo[1].option.value2' size='mini'>
+                          <el-option
+                            v-for="item in option2"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                          </el-option>
+                        </el-select>
+                        <el-input v-model="formTwo[1].option.value3" size="mini" class="w100"></el-input>
+                        <span class="numberEnd">%</span>
+                         <el-select placeholder="请选择" v-model='formTwo[1].option.value4' size='mini'>
+                          <el-option
+                            v-for="item in option3"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                          </el-option>
+                        </el-select>
+                      </div>
+                    </div>
+
+                    <div class="flex p3">
+                      <div class="flex" style="flex:1;padding-top:5px;">
+                        <el-checkbox  v-model="formTwo[2].checked">节点上Pod重启次数</el-checkbox>
+                      </div>
+                      <div>
+                        <el-select placeholder="请选择" v-model='formTwo[2].option.value1' size='mini'>
+                          <el-option
+                            v-for="item in option1"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                          </el-option>
+                        </el-select>
+                        <el-select placeholder="请选择" v-model='formTwo[2].option.value2' size='mini'>
+                          <el-option
+                            v-for="item in option2"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                          </el-option>
+                        </el-select>
+                        <el-input v-model="formTwo[2].option.value3" size="mini" class="w100"></el-input>
+                        <span class="numberEnd">%</span>
+                         <el-select placeholder="请选择" v-model='formTwo[2].option.value4' size='mini'>
+                          <el-option
+                            v-for="item in option3"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                          </el-option>
+                        </el-select>
+                      </div>
+                    </div>
+
+                    <div class="flex p3">
+                      <div class="flex" style="flex:1;padding-top:5px">
+                        <el-checkbox  v-model="formTwo[3].checked">Node Ready</el-checkbox>
+                      </div>
+                      <div>
+                        <el-select placeholder="请选择" v-model='formTwo[3].option.value1' size='mini'>
+                          <el-option
+                            v-for="item in option1"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                          </el-option>
+                        </el-select>
+                        <el-select placeholder="请选择" v-model='formTwo[3].option.value2' size='mini'>
+                          <el-option
+                            v-for="item in option2"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                          </el-option>
+                        </el-select>
+                        <el-select placeholder="请选择" v-model='formTwo[3].option.value3' size='mini'>
+                          <el-option
+                            v-for="item in option5"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                          </el-option>
+                        </el-select>
+                         <el-select placeholder="请选择" v-model='formTwo[3].option.value4' size='mini'>
+                          <el-option
+                            v-for="item in option3"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                          </el-option>
+                        </el-select>
+                      </div>
+                    </div>
+
+                  </div>
+
+                </el-form-item>
+              </div>
+    
               <el-form-item label="接收组">
-                <div class="flex">
-                  <div>可用用户组</div>
-                  <div style="margin-left:225px;">已选择用户组</div>
-                </div>
-                <el-transfer
-                  filterable
-                  :filter-method="filterMethod"
-                  filter-placeholder="请输入用户组名称"
-                  v-model="genDataValue"
-                  :data="data">
-                </el-transfer>
-                <div>若无合适的用户组，请<a href="">新建用户组</a><i class="el-icon-edit-outline"></i></div>
+                  <el-transfer
+                    filterable
+                    :filter-method="filterMethod"
+                    filter-placeholder="请输入用户组名称"
+                    v-model="genDataValue"
+                    :titles="['可用用户组', '已选择用户组']"
+                    :data="data">
+                  </el-transfer>
+                  <div>若无合适的用户组，请<a href="">新建用户组</a><i class="el-icon-edit-outline"></i></div>
+                </el-form-item>
+                <el-form-item label="告警渠道" style="margin-top:0;">
+                    <el-checkbox-group v-model="tellWarning.checkList">
+                        <el-checkbox label="短信"></el-checkbox>
+                    </el-checkbox-group>
+                    <el-checkbox-group v-model="tellWarning.checkList">
+                        <el-checkbox label="邮箱"></el-checkbox>
+                    </el-checkbox-group>
+                    <el-checkbox-group v-model="tellWarning.checkList">
+                        <el-checkbox label="微信"></el-checkbox>
+                    </el-checkbox-group>
+                    <el-checkbox-group v-model="tellWarning.checkList">
+                        <el-checkbox label="电话"></el-checkbox>
+                    </el-checkbox-group>
+                    <div class='form-form1' v-if="tellWarning.checkList == '电话'">
+                      <el-form-item label='轮询次数'>
+                         <el-select placeholder="请选择" v-model='formPhone.value1' size='mini'>
+                          <el-option
+                            v-for="item in formPhone.option1"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                          </el-option>
+                        </el-select>
+                        <p>单次告警在无人接听时，将对告警接受人逐一轮拨打电话告警</p>
+                      </el-form-item>
+                      <el-form-item label='轮询顺序'>
+                        <el-table
+                          :data="formPhone.tableData"
+                          style="width: 100%">
+                          <el-table-column
+                            prop="date"
+                            label="接收人(0个)"
+                            width="180">
+                          </el-table-column>
+                          <el-table-column
+                            prop="name"
+                            label="所属用户组"
+                            width="180">
+                          </el-table-column>
+                        </el-table>
+                      </el-form-item>
+                      <el-form-item label='轮询间隔'>
+                        <el-form-item label='单次轮询内拨打间隔' label-width='150px'>
+                           <el-select placeholder="请选择" v-model='formPhone.value2' size='mini'>
+                            <el-option
+                              v-for="item in formPhone.option2"
+                              :key="item.value"
+                              :label="item.label"
+                              :value="item.value">
+                            </el-option>
+                          </el-select>
+                        </el-form-item>
+                        <el-form-item label='两次轮询间隔' label-width='150px'>
+                           <el-select placeholder="请选择" v-model='formPhone.value3' size='mini'>
+                            <el-option
+                              v-for="item in formPhone.option3"
+                              :key="item.value"
+                              :label="item.label"
+                              :value="item.value">
+                            </el-option>
+                          </el-select>
+                        </el-form-item>
+                      </el-form-item>
+                      <el-form-item label='触达通知'>
+                        <el-switch
+                          v-model="formPhone.value4"
+                          >
+                        </el-switch>
+                      </el-form-item>
+                    </div>
+                </el-form-item>
+             
+              
+         
+              <el-form-item>
+                <el-button type="primary" @click="onSubmit">立即创建</el-button>
+                <el-button>取消</el-button>
               </el-form-item>
-              <el-form-item label="告警渠道" style="margin-top:0;">
-                <div style="line-height:0;padding:5px;" class="flex">
-                  <input class="el-checkbox" type="checkbox" v-model="tellWarning.SMS">
-                  <div style="margin-top:9px;">短信</div>
-                </div>
-                <div style="line-height:0;padding:5px;" class="flex">
-                  <input class="el-checkbox" type="checkbox" v-model="tellWarning.email">
-                  <div style="margin-top:9px;">邮箱</div>
-                </div>
-                <div style="line-height:0;padding:5px;" class="flex">
-                  <input class="el-checkbox" type="checkbox" v-model="tellWarning.wechar">
-                  <div style="margin-top:9px;">微信<span><i class="el-icon-warning-info"></i>（关注<a href="">腾讯云公众号</a>后才能接受告警通知）</span></div>
-                </div>
-                <div style="line-height:0;padding:5px;" class="flex">
-                  <input class="el-checkbox" type="checkbox" v-model="tellWarning.phone">
-                  <div style="margin-top:9px;">电话</div>
-                </div>
-              </el-form-item>
-            </div>
-            <!-- 节点显示内容 -->
-            <div v-if="value=='jd'">
-              <el-form-item label="告警对象">
-                <div class="form-form flex">
-                  <input class="el-checkbox" type="radio" value='true' v-model="TWA">
-                  <div>全部选择（包括后续新增加节点）</div>
-                </div>
-              </el-form-item>
-              <el-form-item label="指标">
-                <div class="form-form">
-                  <div class="flex p3">
-                    <!-- 内容 -->
-                    <div class="flex" style="flex:1;padding-top:5px;">
-                      <input class="el-checkbox" type="checkbox" v-model="cpuLY.nodeCheck">
-                      <span>CPU利用率</span>
-                    </div>
-                    <div>
-                      <el-select v-model="cpuLY.tj" placeholder="请选择" size="mini">
-                        <el-option
-                          v-for="(item,i) in cpuLY.tjs"
-                          :key="i"
-                          :value="item">
-                        </el-option>
-                      </el-select>
-                      <el-select v-model="cpuLY.gl" placeholder="请选择" size="mini" class="glw">
-                        <el-option
-                          v-for="(item,i) in cpuLY.gls"
-                          :key="i"
-                          :value="item">
-                        </el-option>
-                      </el-select>
-                      <el-input v-model="cpuLY.number" size="mini" class="w100"></el-input>
-                      <span class="numberEnd">{{cpuLY.numberEnd}}</span>
-                      <el-select v-model="cpuLY.zq" placeholder="请选择" size="mini" class="gz" style="padding-left:20px;">
-                        <el-option
-                          v-for="(item,i) in cpuLY.zqs"
-                          :key="i"
-                          :value="item">
-                        </el-option>
-                      </el-select>
-                    </div>
-                  </div>
-                  <div class="flex p3">
-                    <!-- 内容 -->
-                    <div class="flex" style="flex:1;padding-top:5px;">
-                      <input class="el-checkbox" type="checkbox"
-                      v-model="ncLY.nodeCheck">
-                      <span>内存利用率</span>
-                    </div>
-                    <div>
-                      <el-select v-model="ncLY.tj" placeholder="请选择" size="mini">
-                        <el-option
-                          v-for="(item,i) in ncLY.tjs"
-                          :key="i"
-                          :value="item">
-                        </el-option>
-                      </el-select>
-                      <el-select v-model="ncLY.gl" placeholder="请选择" size="mini" class="glw">
-                        <el-option
-                          v-for="(item,i) in ncLY.gls"
-                          :key="i"
-                          :value="item">
-                        </el-option>
-                      </el-select>
-                      <el-input v-model="ncLY.number" size="mini" class="w100"></el-input>
-                      <span class="numberEnd">{{ncLY.numberEnd}}</span>
-                      <el-select v-model="ncLY.zq" placeholder="请选择" size="mini" class="gz" style="padding-left:20px;">
-                        <el-option
-                          v-for="(item,i) in ncLY.zqs"
-                          :key="i"
-                          :value="item">
-                        </el-option>
-                      </el-select>
-                    </div>
-                  </div>
-                  <div class="flex p3">
-                    <!-- 内容 -->
-                    <div class="flex" style="flex:1;padding-top:5px;">
-                      <input class="el-checkbox" type="checkbox" v-model="nodeSet.check">
-                      <span>节点上Pod重启次数</span>
-                    </div>
-                    <div>
-                      <el-select v-model="nodeSet.tj" placeholder="请选择" size="mini">
-                        <el-option
-                          v-for="(item,i) in nodeSet.tjs"
-                          :key="i"
-                          :value="item">
-                        </el-option>
-                      </el-select>
-                      <el-select v-model="nodeSet.gl" placeholder="请选择" size="mini" class="glw">
-                        <el-option
-                          v-for="(item,i) in nodeSet.gls"
-                          :key="i"
-                          :value="item">
-                        </el-option>
-                      </el-select>
-                      <el-input v-model="nodeSet.number" size="mini" class="w100"></el-input>
-                      <span class="numberEnd">{{nodeSet.numberEnd}}</span>
-                      <el-select v-model="nodeSet.zq" placeholder="请选择" size="mini" class="gz" style="padding-left:20px;">
-                        <el-option
-                          v-for="(item  ,i) in nodeSet.zqs"
-                          :key="i"
-                          :value="item">
-                        </el-option>
-                      </el-select>
-                    </div>
-                  </div>
-                  <div class="flex p3">
-                    <!-- 内容 -->
-                    <div class="flex" style="flex:1;padding-top:5px;">
-                      <input class="el-checkbox" type="checkbox" v-model="NodeReady.check">
-                      <span>Node Ready</span>
-                    </div>
-                    <div>
-                      <el-select v-model="NodeReady.tj" placeholder="请选择" size="mini">
-                        <el-option
-                          v-for="(item,i) in NodeReady.tjs"
-                          :key="i"
-                          :value="item">
-                        </el-option>
-                      </el-select>
-                      <el-select v-model="NodeReady.gl" placeholder="请选择" size="mini" class="glw" disabled>
-                        <el-option
-                          v-for="(item,i) in NodeReady.gls"
-                          :key="i"
-                          :value="item">
-                        </el-option>
-                      </el-select>
-                      <el-select v-model="NodeReady.number" placeholder="请选择" size="mini" class="glw w100" style="padding:0;">
-                        <el-option
-                          v-for="(item,i) in NodeReady.numbers"
-                          :key="i"
-                          :value="item">
-                        </el-option>
-                      </el-select>
-                      <div style="display:inline-block;width:28px;"></div>
-                      <el-select v-model="NodeReady.zq" placeholder="请选择" size="mini" class="gz" style="padding-left:20px;">
-                        <el-option
-                          v-for="(item,i) in NodeReady.zqs"
-                          :key="i"
-                          :value="item">
-                        </el-option>
-                      </el-select>
-                    </div>
-                  </div>
-                </div>
-              </el-form-item>
-              <el-form-item label="接收组">
-                <div class="flex">
-                  <div>可用用户组</div>
-                  <div style="margin-left:225px;">已选择用户组</div>
-                </div>
-                <el-transfer
-                  filterable
-                  :filter-method="filterMethod"
-                  filter-placeholder="请输入用户组名称"
-                  v-model="genDataValue"
-                  :data="data">
-                </el-transfer>
-                <div>若无合适的用户组，请<a href="">新建用户组</a><i class="el-icon-edit-outline"></i></div>
-              </el-form-item>
-              <el-form-item label="告警渠道" style="margin-top:0;">
-                <div style="line-height:0;padding:5px;" class="flex">
-                  <input class="el-checkbox" type="checkbox" v-model="tellWarning.SMS">
-                  <div style="margin-top:9px;">短信</div>
-                </div>
-                <div style="line-height:0;padding:5px;" class="flex">
-                  <input class="el-checkbox" type="checkbox" v-model="tellWarning.email">
-                  <div style="margin-top:9px;">邮箱</div>
-                </div>
-                <div style="line-height:0;padding:5px;" class="flex">
-                  <input class="el-checkbox" type="checkbox" v-model="tellWarning.wechar">
-                  <div style="margin-top:9px;">微信<span><i class="el-icon-warning-info"></i>（关注<a href="">腾讯云公众号</a>后才能接受告警通知）</span></div>
-                </div>
-                <div style="line-height:0;padding:5px;" class="flex">
-                  <input class="el-checkbox" type="checkbox" v-model="tellWarning.phone">
-                  <div style="margin-top:9px;">电话</div>
-                </div>
-              </el-form-item>
-            </div>
-            <!-- pod显示内容 -->
-            <div v-if="value=='pod'">
-              <el-form-item label="告警对象">
-                <div class="form-form" style="max-width:400px;">
-                  <div class="flex">
-                    <input class="el-checkbox" type="radio" value='true' v-model="TWA">
-                    <div>按工作负载选择（包括后续新增加Pod）</div>
-                  </div>
-                  <div class="flex" style="padding:10px 0 5px 0;">
-                    <div>Namespace</div>
-                    <el-select style="padding-left:30px;" v-model="Namespace.content" placeholder="请选择" size="mini">
-                      <el-option
-                        v-for="(item,i) in Namespace.contents"
-                        :key="i"
-                        :value="item">
-                      </el-option>
-                    </el-select>
-                  </div>
-                  <div class="flex" style="padding:10px 0 5px 0;">
-                    <div>WorkloadType</div>
-                    <el-select style="padding-left:13px;" v-model="WorkloadType.content" placeholder="请选择" size="mini">
-                      <el-option
-                        v-for="(item,i) in WorkloadType.contents"
-                        :key="i"
-                        :value="item">
-                      </el-option>
-                    </el-select>
-                  </div>
-                  <div class="workload">该命名空间下无workload</div>
-                </div>
-                <div class="form-form flex" style="margin-top:5px;max-width:400px;">
-                  <input class="el-checkbox" type="radio" value='false' v-model="TWA">
-                  <div>全部选择（包括后续新增加Pod）</div>
-                </div>
-              </el-form-item>
-             <el-form-item label="指标">
-                <div class="form-form">
-                  <div class="flex p3">
-                    <!-- 内容 -->
-                    <div class="flex" style="flex:1;padding-top:5px;">
-                      <input class="el-checkbox" type="checkbox" v-model="cpuLY.nodeCheck">
-                      <span>CPU利用率（占Request）</span>
-                    </div>
-                    <div>
-                      <el-select v-model="cpuLY.tj" placeholder="请选择" size="mini">
-                        <el-option
-                          v-for="(item,i) in cpuLY.tjs"
-                          :key="i"
-                          :value="item">
-                        </el-option>
-                      </el-select>
-                      <el-select v-model="cpuLY.gl" placeholder="请选择" size="mini" class="glw">
-                        <el-option
-                          v-for="(item,i) in cpuLY.gls"
-                          :key="i"
-                          :value="item">
-                        </el-option>
-                      </el-select>
-                      <el-input v-model="cpuLY.number" size="mini" class="w100"></el-input>
-                      <span class="numberEnd">{{cpuLY.numberEnd}}</span>
-                      <el-select v-model="cpuLY.zq" placeholder="请选择" size="mini" class="gz" style="padding-left:20px;">
-                        <el-option
-                          v-for="(item,i) in cpuLY.zqs"
-                          :key="i"
-                          :value="item">
-                        </el-option>
-                      </el-select>
-                    </div>
-                  </div>
-                  <div class="flex p3">
-                    <!-- 内容 -->
-                    <div class="flex" style="flex:1;padding-top:5px;">
-                      <input class="el-checkbox" type="checkbox"
-                      v-model="ncLY.nodeCheck">
-                      <span>内存利用率（占Request）</span>
-                    </div>
-                    <div>
-                      <el-select v-model="ncLY.tj" placeholder="请选择" size="mini">
-                        <el-option
-                          v-for="(item,i) in ncLY.tjs"
-                          :key="i"
-                          :value="item">
-                        </el-option>
-                      </el-select>
-                      <el-select v-model="ncLY.gl" placeholder="请选择" size="mini" class="glw">
-                        <el-option
-                          v-for="(item,i) in ncLY.gls"
-                          :key="i"
-                          :value="item">
-                        </el-option>
-                      </el-select>
-                      <el-input v-model="ncLY.number" size="mini" class="w100"></el-input>
-                      <span class="numberEnd">{{ncLY.numberEnd}}</span>
-                      <el-select v-model="ncLY.zq" placeholder="请选择" size="mini" class="gz" style="padding-left:20px;">
-                        <el-option
-                          v-for="(item,i) in ncLY.zqs"
-                          :key="i"
-                          :value="item">
-                        </el-option>
-                      </el-select>
-                    </div>
-                  </div>
-                  <div class="flex p3">
-                    <!-- 内容 -->
-                    <div class="flex" style="flex:1;padding-top:5px;">
-                      <input class="el-checkbox" type="checkbox"
-                      v-model="ncLY.nodeCheck">
-                      <span>实际内存利用率（占Request）</span>
-                    </div>
-                    <div>
-                      <el-select v-model="ncLY.tj" placeholder="请选择" size="mini">
-                        <el-option
-                          v-for="(item,i) in ncLY.tjs"
-                          :key="i"
-                          :value="item">
-                        </el-option>
-                      </el-select>
-                      <el-select v-model="ncLY.gl" placeholder="请选择" size="mini" class="glw">
-                        <el-option
-                          v-for="(item,i) in ncLY.gls"
-                          :key="i"
-                          :value="item">
-                        </el-option>
-                      </el-select>
-                      <el-input v-model="ncLY.number" size="mini" class="w100"></el-input>
-                      <span class="numberEnd">{{ncLY.numberEnd}}</span>
-                      <el-select v-model="ncLY.zq" placeholder="请选择" size="mini" class="gz" style="padding-left:20px;">
-                        <el-option
-                          v-for="(item,i) in ncLY.zqs"
-                          :key="i"
-                          :value="item">
-                        </el-option>
-                      </el-select>
-                    </div>
-                  </div>
-                  <div class="flex p3">
-                    <!-- 内容 -->
-                    <div class="flex" style="flex:1;padding-top:5px;">
-                      <input class="el-checkbox" type="checkbox"
-                      v-model="ncLY.nodeCheck">
-                      <span>CPU利用率（占节点）</span>
-                    </div>
-                    <div>
-                      <el-select v-model="ncLY.tj" placeholder="请选择" size="mini">
-                        <el-option
-                          v-for="(item,i) in ncLY.tjs"
-                          :key="i"
-                          :value="item">
-                        </el-option>
-                      </el-select>
-                      <el-select v-model="ncLY.gl" placeholder="请选择" size="mini" class="glw">
-                        <el-option
-                          v-for="(item,i) in ncLY.gls"
-                          :key="i"
-                          :value="item">
-                        </el-option>
-                      </el-select>
-                      <el-input v-model="ncLY.number" size="mini" class="w100"></el-input>
-                      <span class="numberEnd">{{ncLY.numberEnd}}</span>
-                      <el-select v-model="ncLY.zq" placeholder="请选择" size="mini" class="gz" style="padding-left:20px;">
-                        <el-option
-                          v-for="(item,i) in ncLY.zqs"
-                          :key="i"
-                          :value="item">
-                        </el-option>
-                      </el-select>
-                    </div>
-                  </div>
-                  <div class="flex p3">
-                    <!-- 内容 -->
-                    <div class="flex" style="flex:1;padding-top:5px;">
-                      <input class="el-checkbox" type="checkbox"
-                      v-model="ncLY.nodeCheck">
-                      <span>内存利用率（占节点）</span>
-                    </div>
-                    <div>
-                      <el-select v-model="ncLY.tj" placeholder="请选择" size="mini">
-                        <el-option
-                          v-for="(item,i) in ncLY.tjs"
-                          :key="i"
-                          :value="item">
-                        </el-option>
-                      </el-select>
-                      <el-select v-model="ncLY.gl" placeholder="请选择" size="mini" class="glw">
-                        <el-option
-                          v-for="(item,i) in ncLY.gls"
-                          :key="i"
-                          :value="item">
-                        </el-option>
-                      </el-select>
-                      <el-input v-model="ncLY.number" size="mini" class="w100"></el-input>
-                      <span class="numberEnd">{{ncLY.numberEnd}}</span>
-                      <el-select v-model="ncLY.zq" placeholder="请选择" size="mini" class="gz" style="padding-left:20px;">
-                        <el-option
-                          v-for="(item,i) in ncLY.zqs"
-                          :key="i"
-                          :value="item">
-                        </el-option>
-                      </el-select>
-                    </div>
-                  </div>
-                  <div class="flex p3">
-                    <!-- 内容 -->
-                    <div class="flex" style="flex:1;padding-top:5px;">
-                      <input class="el-checkbox" type="checkbox"
-                      v-model="ncLY.nodeCheck">
-                      <span>实际内存利用率（占节点）</span>
-                    </div>
-                    <div>
-                      <el-select v-model="ncLY.tj" placeholder="请选择" size="mini">
-                        <el-option
-                          v-for="(item,i) in ncLY.tjs"
-                          :key="i"
-                          :value="item">
-                        </el-option>
-                      </el-select>
-                      <el-select v-model="ncLY.gl" placeholder="请选择" size="mini" class="glw">
-                        <el-option
-                          v-for="(item,i) in ncLY.gls"
-                          :key="i"
-                          :value="item">
-                        </el-option>
-                      </el-select>
-                      <el-input v-model="ncLY.number" size="mini" class="w100"></el-input>
-                      <span class="numberEnd">{{ncLY.numberEnd}}</span>
-                      <el-select v-model="ncLY.zq" placeholder="请选择" size="mini" class="gz" style="padding-left:20px;">
-                        <el-option
-                          v-for="(item,i) in ncLY.zqs"
-                          :key="i"
-                          :value="item">
-                        </el-option>
-                      </el-select>
-                    </div>
-                  </div>
-                  <div class="flex p3">
-                    <!-- 内容 -->
-                    <div class="flex" style="flex:1;padding-top:5px;">
-                      <input class="el-checkbox" type="checkbox"
-                      v-model="ncLY.nodeCheck">
-                      <span>内存利用率（占节点）</span>
-                    </div>
-                    <div>
-                      <el-select v-model="ncLY.tj" placeholder="请选择" size="mini">
-                        <el-option
-                          v-for="(item,i) in ncLY.tjs"
-                          :key="i"
-                          :value="item">
-                        </el-option>
-                      </el-select>
-                      <el-select v-model="ncLY.gl" placeholder="请选择" size="mini" class="glw">
-                        <el-option
-                          v-for="(item,i) in ncLY.gls"
-                          :key="i"
-                          :value="item">
-                        </el-option>
-                      </el-select>
-                      <el-input v-model="ncLY.number" size="mini" class="w100"></el-input>
-                      <span class="numberEnd">{{ncLY.numberEnd}}</span>
-                      <el-select v-model="ncLY.zq" placeholder="请选择" size="mini" class="gz" style="padding-left:20px;">
-                        <el-option
-                          v-for="(item,i) in ncLY.zqs"
-                          :key="i"
-                          :value="item">
-                        </el-option>
-                      </el-select>
-                    </div>
-                  </div>
-                  <div class="flex p3">
-                    <!-- 内容 -->
-                    <div class="flex" style="flex:1;padding-top:5px;">
-                      <input class="el-checkbox" type="checkbox" v-model="nodeSet.check">
-                      <span>节点上Pod重启次数</span>
-                    </div>
-                    <div>
-                      <el-select v-model="nodeSet.tj" placeholder="请选择" size="mini">
-                        <el-option
-                          v-for="(item,i) in nodeSet.tjs"
-                          :key="i"
-                          :value="item">
-                        </el-option>
-                      </el-select>
-                      <el-select v-model="nodeSet.gl" placeholder="请选择" size="mini" class="glw">
-                        <el-option
-                          v-for="(item,i) in nodeSet.gls"
-                          :key="i"
-                          :value="item">
-                        </el-option>
-                      </el-select>
-                      <el-input v-model="nodeSet.number" size="mini" class="w100"></el-input>
-                      <span class="numberEnd">{{nodeSet.numberEnd}}</span>
-                      <el-select v-model="nodeSet.zq" placeholder="请选择" size="mini" class="gz" style="padding-left:20px;">
-                        <el-option
-                          v-for="(item  ,i) in nodeSet.zqs"
-                          :key="i"
-                          :value="item">
-                        </el-option>
-                      </el-select>
-                    </div>
-                  </div>
-                  <div class="flex p3">
-                    <!-- 内容 -->
-                    <div class="flex" style="flex:1;padding-top:5px;">
-                      <input class="el-checkbox" type="checkbox" v-model="NodeReady.check">
-                      <span>Node Ready</span>
-                    </div>
-                    <div>
-                      <el-select v-model="NodeReady.tj" placeholder="请选择" size="mini">
-                        <el-option
-                          v-for="(item,i) in NodeReady.tjs"
-                          :key="i"
-                          :value="item">
-                        </el-option>
-                      </el-select>
-                      <el-select v-model="NodeReady.gl" placeholder="请选择" size="mini" class="glw" disabled>
-                        <el-option
-                          v-for="(item,i) in NodeReady.gls"
-                          :key="i"
-                          :value="item">
-                        </el-option>
-                      </el-select>
-                      <el-select v-model="NodeReady.number" placeholder="请选择" size="mini" class="glw w100" style="padding:0;">
-                        <el-option
-                          v-for="(item,i) in NodeReady.numbers"
-                          :key="i"
-                          :value="item">
-                        </el-option>
-                      </el-select>
-                      <div style="display:inline-block;width:28px;"></div>
-                      <el-select v-model="NodeReady.zq" placeholder="请选择" size="mini" class="gz" style="padding-left:20px;">
-                        <el-option
-                          v-for="(item,i) in NodeReady.zqs"
-                          :key="i"
-                          :value="item">
-                        </el-option>
-                      </el-select>
-                    </div>
-                  </div>
-                </div>
-              </el-form-item>
-            </div>
-            <el-form-item>
-              <el-button type="primary" @click="onSubmit">立即创建</el-button>
-              <el-button>取消</el-button>
-            </el-form-item>
-          </el-form>
+            </el-form>
+          </div>
         </div>
-      </div>
+      </el-card>
+    </div>
     </div>
 </template>
 <script>
@@ -751,14 +769,31 @@ export default {
         return item.pinyin.indexOf(query) > -1;
       },
       form: {
-        name: '',
-        region: '',
-        date1: '',
-        date2: '',
-        delivery: false,
-        type: [],
-        resource: '',
-        desc: ''
+        radio1:'1',
+        radio2:'1',
+        input1:[],
+        input2:[],
+        value1:'',
+        value2:'',
+       
+        // name: '',
+        // region: '',
+        // date1: '',
+        // date2: '',
+        // delivery: false,
+        // type: [],
+        // resource: '',
+        // desc: ''
+      },
+      formPhone:{
+        option1:[],
+        option2:[],
+        option3:[],
+        value1:'',
+        value2:'',
+        value3:'',
+        value4:false,
+         tableData:''
       },
       value:'jq',
       TWA: true,
@@ -770,80 +805,269 @@ export default {
         content: 'default',
         contents: ['default','kube-public','bube-system']
       },
-      NodeReady: {
-        check: true,
-        tj: '统计周期1分钟',
-        tjs: ['统计周期1分钟','统计周期2分钟','统计周期3分钟','统计周期4分钟','统计周期5分钟'],
-        gl: '=',
-        gls: ['>','<','='],
-        number: 'False',
-        numbers: ['true','False'],
-        zq: '持续5个周期',
-        zqs: ['持续1个周期','持续2个周期','持续3个周期','持续4个周期','持续5个周期']
-      },
-      nodeSet: {
-        check: true,
-        tj: '统计周期1分钟',
-        tjs: ['统计周期1分钟','统计周期2分钟','统计周期3分钟','统计周期4分钟','统计周期5分钟'],
-        gl: '>',
-        gls: ['>','<'],
-        number: '1',
-        numberEnd: '次',
-        zq: '持续5个周期',
-        zqs: ['持续1个周期','持续2个周期','持续3个周期','持续4个周期','持续5个周期']
-      },
-      cpuLY: {
-        nodeCheck: true,
-        check: true,
-        tj: '统计周期1分钟',
-        tjs: ['统计周期1分钟','统计周期2分钟','统计周期3分钟','统计周期4分钟','统计周期5分钟'],
-        gl: '>',
-        gls: ['>','<'],
-        number: '90',
-        numberEnd: '%',
-        zq: '持续5个周期',
-        zqs: ['持续1个周期','持续2个周期','持续3个周期','持续4个周期','持续5个周期']
-      },
-      ncLY: {
-        nodeCheck: true,
-        check: true,
-        tj: '统计周期1分钟',
-        tjs: ['统计周期1分钟','统计周期2分钟','统计周期3分钟','统计周期4分钟','统计周期5分钟'],
-        gl: '>',
-        gls: ['>','<'],
-        number: '90',
-        numberEnd: '%',
-        zq: '持续5个周期',
-        zqs: ['持续1个周期','持续2个周期','持续3个周期','持续4个周期','持续5个周期']
-      },
-      cpuFP: {
-        check: true,
-        tj: '统计周期1分钟',
-        tjs: ['统计周期1分钟','统计周期2分钟','统计周期3分钟','统计周期4分钟','统计周期5分钟'],
-        gl: '>',
-        gls: ['>','<'],
-        number: '95',
-        numberEnd: '%',
-        zq: '持续5个周期',
-        zqs: ['持续1个周期','持续2个周期','持续3个周期','持续4个周期','持续5个周期']
-      },
-      ncFP: {
-        check: true,
-        tj: '统计周期1分钟',
-        tjs: ['统计周期1分钟','统计周期2分钟','统计周期3分钟','统计周期4分钟','统计周期5分钟'],
-        gl: '>',
-        gls: ['>','<'],
-        number: '95',
-        numberEnd: '%',
-        zq: '持续5个周期',
-        zqs: ['持续1个周期','持续2个周期','持续3个周期','持续4个周期','持续5个周期']
-      },
       tellWarning: {
-        SMS: false,
-        email: false,
-        wechar: false,
-        phone: false
-      }
+        checkList:[]
+      },
+      option1:[
+          {
+            value:1,
+            label:'统计周期1分钟'
+          },
+          {
+            value:2,
+            label:'统计周期2分钟'
+          },
+          {
+            value:3,
+            label:'统计周期3分钟'
+          },
+          {
+            value:4,
+            label:'统计周期4分钟'
+          },
+          {
+            value:5,
+            label:'统计周期5分钟'
+          }
+        ],
+        option2:[
+          {
+            value:1,
+            label:'>'
+          },
+          {
+            value:2,
+            label:'<'
+          }
+        ],
+        option3:[
+           {
+            value:1,
+            label:'持续1个周期'
+          },
+          {
+            value:2,
+            label:'持续2个周期'
+          },
+          {
+            value:3,
+            label:'持续3个周期'
+          },
+          {
+            value:4,
+            label:'持续4个周期'
+          },
+          {
+            value:5,
+            label:'持续5个周期'
+          }
+        ],
+        option4:[
+          {
+            value:1,
+            label:'>'
+          },
+          {
+            value:2,
+            label:'='
+          },
+          {
+            value:3,
+            label:'<'
+          },
+        ],
+        option5:[
+          {
+            value:true,
+            label:'true'
+          },
+          {
+            value:false,
+            label:'false'
+          }
+        ],
+        // 集群
+      formOne:[{
+        checked:true,
+        option:{
+          value1:'',
+          value2:'',
+          value3:'',
+          value4:'',
+        }
+      },{
+        checked:true,
+        option:{
+          value1:'',
+          value2:'',
+          value3:'',
+          value4:'',
+        }
+      },{
+        checked:true,
+        option:{
+          value1:'',
+          value2:'',
+          value3:'',
+          value4:'',
+        }
+      },{
+        checked:true,
+        option:{
+          value1:'',
+          value2:'',
+          value3:'',
+          value4:'',
+        }
+      }],
+      // 节点
+      formTwo:[{
+        checked:true,
+        option:{
+          value1:'',
+          value2:'',
+          value3:'',
+          value4:'',
+        }
+      },{
+        checked:true,
+        option:{
+          value1:'',
+          value2:'',
+          value3:'',
+          value4:'',
+        }
+      },{
+        checked:true,
+        option:{
+          value1:'',
+          value2:'',
+          value3:'',
+          value4:'',
+        }
+      },{
+        checked:true,
+        option:{
+          value1:'',
+          value2:'',
+          value3:'',
+          value4:'',
+        }
+      }],
+      // pod
+      formThree:[{
+        checked:true,
+        option:{
+          value1:'',
+          value2:'',
+          value3:'',
+          value4:'',
+        }
+      },{
+        checked:true,
+        option:{
+          value1:'',
+          value2:'',
+          value3:'',
+          value4:'',
+        }
+      },{
+        checked:true,
+        option:{
+          value1:'',
+          value2:'',
+          value3:'',
+          value4:'',
+        }
+      },{
+        checked:true,
+        option:{
+          value1:'',
+          value2:'',
+          value3:'',
+          value4:'',
+        }
+      },{
+        checked:true,
+        option:{
+          value1:'',
+          value2:'',
+          value3:'',
+          value4:'',
+        }
+      },{
+        checked:true,
+        option:{
+          value1:'',
+          value2:'',
+          value3:'',
+          value4:'',
+        }
+      },{
+        checked:true,
+        option:{
+          value1:'',
+          value2:'',
+          value3:'',
+          value4:'',
+        }
+      },{
+        checked:true,
+        option:{
+          value1:'',
+          value2:'',
+          value3:'',
+          value4:'',
+        }
+      },{
+        checked:true,
+        option:{
+          value1:'',
+          value2:'',
+          value3:'',
+          value4:'',
+        }
+      },{
+        checked:true,
+        option:{
+          value1:'',
+          value2:'',
+          value3:'',
+          value4:'',
+        }
+      },{
+        checked:true,
+        option:{
+          value1:'',
+          value2:'',
+          value3:'',
+          value4:'',
+        }
+      },{
+        checked:true,
+        option:{
+          value1:'',
+          value2:'',
+          value3:'',
+          value4:'',
+        }
+      },{
+        checked:true,
+        option:{
+          value1:'',
+          value2:'',
+          value3:'',
+          value4:'',
+        }
+      },{
+        checked:true,
+        option:{
+          value1:'',
+          value2:'',
+          value3:'',
+          value4:'',
+        }
+      }]
     }
   },
   watch: {
@@ -900,7 +1124,15 @@ export default {
   height: 18px;
 }
 .form-form {
-  width: 840px;
+  width: 950px;
+  padding: 20px;
+  background-color: #f2f2f2;
+  display: table;
+  font-size: 12px;
+  line-height: 1.5
+}
+.form-form1 {
+  width: 660px;
   padding: 20px;
   background-color: #f2f2f2;
   display: table;
@@ -988,19 +1220,25 @@ input {
   color: #888888;
 }
 .app-tke-fe-content__inner {
-  padding: 20px;
+  // padding: 20px;
   max-width: 1360px;
   margin:0 auto;
 }
 .tf-g {
   font-size: 0;
   // margin-bottom: 50px;
-  padding:20px;
+  // padding:20px;
   // background: pink;
 }
 .event-persistence {
   padding: 20px;
   background: white;
-  box-shadow: 0 1px 3px 0 rgba(0,0,0,.1);
+  // box-shadow: 0 1px 3px 0 rgba(0,0,0,.1);
+}
+.box-card{
+  width:100%;
+}
+.room{
+  padding:20px;
 }
 </style>

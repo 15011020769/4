@@ -3,10 +3,10 @@
     <HeadCom title="新建身份提供商" :backShow="true" @_back="_back" />
     <div class="container" v-loading="loading">
       <el-steps
-        :space="160"
         :active="active"
         simple
-        style="background: #fff; padding-top: 20px;padding-left: 10px;width:100%;"
+        finish-status="success"
+        style="background: #fff; padding-top: 20px;padding-left: 10px;width:500px"
       >
         <el-step :title="$t('CAM.strategy.pztgsxx')"></el-step>
         <el-step :title="$t('CAM.strategy.completes')"></el-step>
@@ -15,39 +15,35 @@
       <div v-show="active==0" style="width:100%;">
         <el-form :model="addModel" :rules="rules" size="mini" ref="ruleForm" label-width="100px">
           <el-form-item :label="$t('CAM.strategy.peopleType')" prop="providerType">
-            <el-col :span="14">
+            <el-col :span="10">
               <el-radio size="mini" v-model="addModel.providerType" label="SAML">SAML</el-radio>
             </el-col>
           </el-form-item>
           <el-form-item :label="$t('CAM.strategy.peopleName')" prop="providerName">
-            <el-col :span="14">
-              <el-input size="mini" ref="providerNameRules" v-model="addModel.providerName"></el-input>
-            </el-col>
+            <el-input size="mini" ref="providerNameRules" v-model="addModel.providerName" style="width: 200px"></el-input>
           </el-form-item>
           <el-form-item :label="$t('CAM.userList.userRemark')" prop="remark">
-            <el-col :span="14">
-              <el-input size="mini" type="text" v-model="addModel.remark"></el-input>
-            </el-col>
+            <el-input size="mini" type="text" v-model="addModel.remark" style="width: 200px"></el-input>
           </el-form-item>
-          <el-form-item :label="$t('CAM.strategy.dataFile')" prop="metadataDocument">
+          <el-form-item :label="$t('CAM.strategy.dataFile')" prop="metadataDocument" :error="metadataDocumentError">
             <el-upload
               size="mini"
               accept="text/xml, application/xml"
               class="upload-demo"
               :limit="1"
-              action="https://jsonplaceholder.typicode.com/posts/"
+              action=""
+              :show-file-list="false"
               :on-change="handleChange"
             >
-              <el-col :span="21">
-                <div style="display:inline-block; width:100%;margin-left:-25px;">
-                  <el-input :disabled="true" v-model="addModel.metadataDocument"></el-input>
-                </div>
-              </el-col>
-              <el-col :span="2">
-                <div style="display:inline-block">
+              <el-row type="flex" :gutter="20">
+                <el-col>
+                  <el-input :disabled="true" v-model="addModel.metadataDocument" style="width: 200px"></el-input>
+                </el-col>
+                <el-col>
                   <el-button size="mini">{{$t('CAM.strategy.chooseFile')}}</el-button>
-                </div>
+                </el-col>
               </el-col>
+            </el-row>
             </el-upload>
           </el-form-item>
         </el-form>
@@ -74,7 +70,7 @@
 import { ErrorTips } from "@/components/ErrorTips";
 import SecondStep from "./CheckAccomplish.vue";
 import HeadCom from "../UserListNew/components/Head";
-import { CREATE_SAML } from "@/constants";
+import { CREATE_SAML, CHECK_SAML_METADATA } from "@/constants";
 import { type } from "os";
 export default {
   name: "app",
@@ -87,9 +83,11 @@ export default {
   },
   data() {
     return {
+      metadataDocumentError: '',
       loading: false,
       form: {},
       active: 0,
+      base64encode: '',
       addModel: {
         providerType: "SAML",
         providerName: "",
@@ -135,16 +133,33 @@ export default {
   },
   methods: {
     handleChange(file) {
+      this.metadataDocumentError = ''
+      if (!file.name.endsWith('.xml')) {
+        this.metadataDocumentError = '文件类型无效，请上传类型为xml的文件'
+        return
+      }
       this.addModel.metadataDocument = file.name;
       var reader = new FileReader();
-      reader.onload = function(e) {
+      reader.onload = e => {
         let textxml = e.currentTarget.result;
-        var encode = encodeURI(textxml);
-        // 对编码的字符串转化base64
-        var base64 = btoa(encode);
-        localStorage.setItem("base64", base64);
+        let base64encode
+        try {
+          base64encode = btoa(textxml)
+          this.axios.post(CHECK_SAML_METADATA, {
+            Version: '2019-01-16',
+            SAMLMetadataDocument: base64encode
+          }).then(res => {
+            if (res.Response.Error) {
+              this.metadataDocumentError = '元数据文档内容有误'
+            } else  {
+              this.base64encode = base64encode
+            }
+          })
+        } catch {
+            this.metadataDocumentError = '元数据文档内容有误'
+        }
       };
-      reader.readAsText(file.raw);
+          reader.readAsText(file.raw);
     },
     //返回上一级
     _back() {
@@ -158,44 +173,7 @@ export default {
     next(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          this.loading = true;
-          const params = {
-            Version: "2019-01-16",
-            Name: this.addModel.providerName,
-            Description: this.addModel.remark,
-            SAMLMetadataDocument: localStorage.getItem("base64")
-          };
-          this.axios.post(CREATE_SAML, params).then(res => {
-            if (res.Response.Error === undefined) {
-              this.$message({
-                message: "添加成功",
-                type: "success",
-                duration: 0,
-                showClose: true
-              });
-              const addModel = this.addModel;
-              if (this.active++ > 1) {
-                this.active = 0;
-                this.form = this.addModel;
-              }
-            } else {
-              let ErrTips = {
-                "InvalidParameter.IdentityNameInUse": "身份提供商名稱已經使用",
-                "InvalidParameterValue.MetadataError":
-                  "身份提供商元數據文件錯誤",
-                "InvalidParameterValue.NameError": "身份提供商名稱錯誤",
-                "LimitExceeded.IdentityFull": "身份提供商已達到上限"
-              };
-              let ErrOr = Object.assign(ErrorTips, ErrTips);
-              this.$message({
-                message: ErrOr[res.Response.Error.Code],
-                type: "error",
-                showClose: true,
-                duration: 0
-              });
-            }
-            this.loading = false;
-          });
+          this.active += 1
         } else {
           return false;
         }
@@ -208,8 +186,41 @@ export default {
     },
     confirm() {
       if (this.active == 1) {
-        this.$router.push({
-          name: "IdentityProvider"
+        this.loading = true;
+        const params = {
+          Version: "2019-01-16",
+          Name: this.addModel.providerName,
+          Description: this.addModel.remark,
+          SAMLMetadataDocument: this.base64encode
+        };
+        this.axios.post(CREATE_SAML, params).then(res => {
+          if (res.Response.Error === undefined) {
+            this.loading = false;
+            this.$message({
+              message: "添加成功",
+              type: "success",
+              duration: 0,
+              showClose: true
+            });
+            this.$router.push({
+              name: "IdentityProvider"
+            });
+          } else {
+            let ErrTips = {
+              "InvalidParameter.IdentityNameInUse": "身份提供商名稱已經使用",
+              "InvalidParameterValue.MetadataError":
+                "身份提供商元數據文件錯誤",
+              "InvalidParameterValue.NameError": "身份提供商名稱錯誤",
+              "LimitExceeded.IdentityFull": "身份提供商已達到上限"
+            };
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+          }
         });
       }
     }

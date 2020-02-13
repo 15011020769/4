@@ -32,7 +32,7 @@ export default {
   methods: {
     //返回上一级
     _back() {
-      this.$router.go(-1);
+      this.$router.push('/UserListNew')
     },
     //跳转到创建页
     _goTo() {

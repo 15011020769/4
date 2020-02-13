@@ -44,6 +44,12 @@ export const DELETE_ROLE = 'cam2/DeleteRole'
 export const CREATE_ROLE = 'cam2/CreateRole'
 export const ATTACH_ROLE = 'cam2/AttachRolePolicy'
 export const GET_PRINCIPAL_SERVICE = 'cam2/GetPrincipalService'
+
+export const CHECK_SAML_METADATA = 'cam2/CheckSAMLMetadata'
+export const DELETE_SAML_PROVIDER = 'cam2/DeleteSAMLProvider'
+export const GET_SAML_PROVIDER = 'cam2/GetSAMLProvider'
+export const UPDATE_SAML_PROVIDER = 'cam2/UpdateSAMLProvider'
+
 // V2接口
 export const LOGOUT_ROLE_SESSIONS = 'cam/LogoutRoleSessions'
 

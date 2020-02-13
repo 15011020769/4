@@ -8,9 +8,9 @@
     </div>
       <div class="tf-g app-tke-fe-content__inner">
         <div class="event-persistence font">
-          <el-form ref="form" :model="form" label-width="100px" class='tke-form' label-position="left">
+          <el-form ref="form" :model="form" label-width="100px" class='tke-form' label-position="left" >
             <el-form-item label="收集规则名称">
-              <el-input size="mini" class="el-input" placeholder="请输入日志收集规则名称"></el-input>
+              <el-input size="mini" class="el-input" placeholder="请输入日志收集规则名称" v-model='form.name'></el-input>
               <div>最长63个字符，只能包含小写字母、数字及分隔符("-")，且必须以小写字母开头，数字或小写字母结尾</div>
             </el-form-item>
             <el-form-item label="所在地域">
@@ -35,46 +35,49 @@
                 <el-radio-button label="one">所有容器</el-radio-button>
                 <el-radio-button label="two">指定容器</el-radio-button>
               </el-radio-group>
+              <div v-for="(item,index) in formFour" :key="index" style="margin-bottom:10px;">
+                <div class="form-form position-form" v-if="vlog == 'two' && tabPosition == 'one' && item.flag == false">
+                    <i class='el-icon-edit-outline icon-edit-outline' @click='item.flag=true'></i>
+                    <i class='el-icon-close icon-close' @click="removeNewRoom(formFour,index)"></i>
+                    <div><span>Namespace:</span><span>default</span>|<span>采集对象:</span><span>全部容器</span></div>
+                </div>
 
-              <div class="form-form position-form" v-if="vlog == 'one' && tabPosition == 'one'">
-                  <i class='el-icon-edit-outline'></i>
-                  <i class='el-icon-close'></i>
-                  <div><span>Namespace:</span><span>default</span>|<span>采集对象:</span><span>全部容器</span></div>
-              </div>
-
-              <div class="form-form position-form" v-if="vlog == 'two' && tabPosition == 'one'">
-                  <i class='el-icon-check'></i>
-                  <i class='el-icon-close'></i>
-                 <el-form-item label="所属Namespace" label-width="150px">
-                    <el-select placeholder="请选择" size='mini' v-model='formTwo.value1'> 
-                        <el-option
-                          v-for="item in formFour.option1"
-                          :key="item.value"
-                          :label="item.label"
-                          :value="item.value">
-                        </el-option>
-                    </el-select>
-                </el-form-item>
-                 <el-form-item label="所属集群">
-                  <div>cls-gwblk71e(tfy_test)</div>
-                </el-form-item>
-              </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+                <div class="form-form position-form" v-if="vlog == 'two' && tabPosition == 'one' && item.flag == true">
+                    <i class='el-icon-check icon-check'  @click='item.flag=false'></i>
+                    <i class='el-icon-close icon-close' @click="removeNewRoom(formFour,index)"></i>
+                  <el-form-item label="所属Namespace" label-width="150px">
+                      <el-select placeholder="请选择" size='mini' v-model='formTwo.value1'> 
+                          <el-option
+                            v-for="item in item.option1"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                          </el-option>
+                      </el-select>
+                  </el-form-item>
+                  <el-form-item label="所属集群">
+                      <el-radio-group v-model="item.radio">
+                        <el-radio :label="1">全部容器包含该Namespace下所有的容器</el-radio>
+                        <el-radio :label="2">按工作负载（Workload）选择</el-radio>
+                      </el-radio-group>
+                  </el-form-item>
+                  <el-form-item label=" " v-if='item.radio == 2'>
+                    <div class='border-room'>
+                      <div class='border-text'>
+                        <div class='border-left'>工作负载类型</div>
+                        <div class='border-right'>列表</div>
+                      </div>
+                      <el-tabs tab-position="left" style="height: 200px;" v-model="item.activeName">
+                        <el-tab-pane label="用户管理" name="first">用户管理</el-tab-pane>
+                        <el-tab-pane label="配置管理" name="second">配置管理</el-tab-pane>
+                        <el-tab-pane label="角色管理"  name="third">角色管理</el-tab-pane>
+                        <el-tab-pane label="定时任务补偿"  name="fourth">定时任务补偿</el-tab-pane>
+                      </el-tabs>
+                    </div>
+                  </el-form-item>
+                  </div>
+                </div>
+                <div v-if="vlog == 'two' && tabPosition == 'one'" class="new-room" @click="addNewRoom">新增容器</div>
               <div class="form-form" v-if="tabPosition == 'two'">
                 <el-form ref="form" :model="formTwo" label-width="100px" class='tke-form' label-position="left">
                      <el-form-item label="工作负载选项">
@@ -171,34 +174,73 @@
                     <div style="font-size:10px;">
                       将采集的日志消费到消息服务Kafka中。
                       <a href="">查看示例</a>
-                      
                     </div>
                   </el-form-item>
-                  <el-form-item label="Kafka类型">
-                    <div class="flex">
-                      <input style="margin-top:6px;" class="el-checkbox" type="checkbox">
-                      <div style="margin-left:5px;">使用腾讯云消息队列CKafka</div>
-                    </div>
-                  </el-form-item>
-                  <el-form-item label="CKafka实例">
-                    <div class="flex">
-                      <el-select v-model="Ckafka.value" placeholder="请选择">
-                        <el-option
-                          v-for="item in Ckafka.options"
-                          :key="item"
-                          :value="item">
-                        </el-option>
-                      </el-select>
-                     <el-select placeholder="请选择" disabled>
-                      <el-option
-                        v-for="item in options"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value">
-                      </el-option>
-                    </el-select>
-                    </div>
-                  </el-form-item>
+                  <div v-if="consumer=='one'">
+                    <el-form-item label="Kafka类型">
+                      <div class="flex">
+                        <el-checkbox v-model="checked">使用腾讯云消息队列CKafka</el-checkbox>
+                      </div>
+                    </el-form-item>
+                    <el-form-item label="CKafka实例" v-if='checked'>
+                        <div class="flex">
+                            <el-select v-model="Ckafka.value" placeholder="请选择">
+                              <el-option
+                                v-for="item in Ckafka.options"
+                                :key="item"
+                                :value="item">
+                              </el-option>
+                            </el-select>
+                          <el-select placeholder="请选择" disabled>
+                            <el-option
+                              v-for="item in options"
+                              :key="item.value"
+                              :label="item.label"
+                              :value="item.value">
+                            </el-option>
+                          </el-select>
+                        </div>
+                      </el-form-item>
+                      <el-form-item label="访问地址" label-width="100px" v-if='!checked'>
+                        <el-input placeholder="请输入IP地址" style='margin-right:10px;' v-model='form.region'></el-input>
+                        <el-input placeholder="请输入IP端口号" v-model='form.number'></el-input>
+                      </el-form-item>
+                      <el-form-item label="主题（Topic）" label-width="100px" v-if='!checked'>
+                          <el-input placeholder="请输入Topic"  v-model='form.topic'></el-input>
+                      </el-form-item>
+                  </div>
+
+                  <div v-if="consumer=='two'">
+                    <el-form-item label="日志服务实例" label-width="100px" v-if='!checked'>
+                        <el-select placeholder="请选择" v-model='form.value1' style='margin-right:10px;'>
+                          <el-option
+                            v-for="item in form.option1"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                          </el-option>
+                        </el-select>
+                        <el-select placeholder="请选择" v-model='form.value2' disabled>
+                          <el-option
+                            v-for="item in form.option2"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                          </el-option>
+                        </el-select>
+                        <p>如现有的日志服务CLS不合适，您可以去控制台<el-link style='font-size:12px;' type="primary">新建日志集</el-link></p>
+                    </el-form-item>
+                  </div>
+
+                  <div v-if="consumer=='three'">
+                    <el-form-item label="Elasticsearch地址" label-width="120px" >
+                          <el-input placeholder="eg"  v-model='form.Elasticsearch'></el-input>
+                    </el-form-item>
+                    <el-form-item label="索引" label-width="120px" >
+                          <el-input placeholder="eg"  v-model='form.index'></el-input>
+                          <p>最长60个字符，只能包含小写字母、数字及分隔符("-"、"_"、"+")，且必须以小写字母开头</p>
+                    </el-form-item>
+                  </div>
                 </el-form>
               </div>
             </el-form-item>
@@ -221,14 +263,16 @@ export default {
         return item.pinyin.indexOf(query) > -1;
       },
       form: {
-        name: '',
+        name:'',
         region: '',
-        date1: '',
-        date2: '',
-        delivery: false,
-        type: [],
-        resource: '',
-        desc: ''
+        number:'',
+        topic:'',
+        option1:[],
+        option2:[],
+        value1:'',
+        value2:'',
+        Elasticsearch:'',
+        index:''
       },
       formTwo:{
         option1:[
@@ -294,7 +338,7 @@ export default {
           valueKey:''
         }]
       },
-      formFour:{
+      formFour:[{
         option1:[
           {
             value:1,
@@ -317,7 +361,10 @@ export default {
             label:'tfy-pub'
           }
         ],
-      },
+        radio:'',
+        flag:true,
+        activeName:'first'
+      }],
       value:'jq',
       Ckafka:{
         value:'ckafka-2fnu2ckz(kafka-JC3LVVH3)',
@@ -325,7 +372,8 @@ export default {
       },
       tabPosition: 'one',
       vlog:'one',
-      consumer:'one'
+      consumer:'one',
+      checked:false
     }
   },
   watch: {
@@ -363,6 +411,38 @@ export default {
         if (index !== -1) {
             this.formThree.domains.splice(index, 1)
         }
+    },
+    removeNewRoom (item,index) {
+        if(item.length !== 1){
+            this.formFour.splice(index, 1)
+        } 
+    },
+    addNewRoom () {
+      this.formFour.push({option1:[
+          {
+            value:1,
+            label:'请选择Namespace'
+          },
+          {
+            value:2,
+            label:'default'
+          },
+          {
+            value:3,
+            label:'kube-public'
+          },
+          {
+            value:4,
+            label:'kube-system'
+          },
+          {
+            value:5,
+            label:'tfy-pub'
+          }
+        ],
+        radio:'',
+        flag:true,
+        activeName:'first'})
     },
   },
   props:["uid"],
@@ -527,19 +607,51 @@ input {
 .position-form{
   position:relative;
 }
-.el-icon-edit-outline{
+.icon-edit-outline{
   position:absolute;
   top:10px;
   right:50px;
 }
-.el-icon-check{
+.icon-check{
    position:absolute;
   top:10px;
   right:50px;
 }
-.el-icon-close{
+.icon-close{
   position:absolute;
   top:10px;
   right:30px;
+}
+.border-room{
+  border:1px solid #e5e5e5;
+  .border-text{
+    height:36px;
+    border-bottom:1px solid #e5e5e5;
+    .border-left{
+      float:left;
+      height:36px;
+      width:124px;
+      border-right:2px solid #e5e5e5;
+      padding-left:10px;
+    }
+    .border-right{
+      float:left;
+      height:36px;
+      padding-left:10px;
+
+    }
+  }
+}
+.new-room{
+  text-align: center;
+  line-height: 30px;
+  height: 30px;
+  width: 840px;
+  border:1px dashed #e5e5e5;
+  margin-top:10px;
+  cursor: pointer;
+  &:hover{
+    background-color:#f2f2f2;
+  }
 }
 </style>
