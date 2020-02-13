@@ -978,6 +978,10 @@ export default {
   background: rgb(250, 250, 250);
 }
 
+.wrap >>> .el-input__clear {
+  position: absolute;
+  right: 20px;
+}
 .pointer {
   cursor: pointer;
 }
