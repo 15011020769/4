@@ -210,7 +210,6 @@
                       style="width:100%"
                       @keyup.enter.native="toQueryUser"
                       @change="search"
-                      clearable
                     >
                       <i slot="suffix" class="el-input__icon el-icon-search" @click="toQueryUser"></i>
                     </el-input>
@@ -1015,6 +1014,10 @@ export default {
   line-height: 30px;
   padding-top: 0;
   font-size: 12px;
+}
+.wrap >>> .el-input__clear {
+  position: absolute;
+  right: 26px;
 }
 .Interface >>> .el-form-item__label {
   text-align: left;
