@@ -89,8 +89,8 @@
                 </span>
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item command="a"><span class="tke-text-link">重新部署</span></el-dropdown-item>
-                  <el-dropdown-item command="a"><span class="tke-text-link">设置更新策略</span></el-dropdown-item>
-                  <el-dropdown-item command="b"><span class="tke-text-link" >更新调度策略</span></el-dropdown-item>
+                  <el-dropdown-item command="a"><span class="tke-text-link" @click="toSetStrategy('123')">设置更新策略</span></el-dropdown-item>
+                  <el-dropdown-item command="b"><span class="tke-text-link" @click="toUpdateStrategy('123')">更新调度策略</span></el-dropdown-item>
                   <el-dropdown-item command="c"><span class="tke-text-link">编辑YAML</span></el-dropdown-item>
                   <el-dropdown-item command="c"><span class="tke-text-link">删除</span></el-dropdown-item>
                 </el-dropdown-menu>
@@ -232,8 +232,24 @@ export default {
     //全选
     handleSelectionChange(val) {
       this.multipleSelection = val;
+    },
+    //跳转设置策略页面
+    toSetStrategy(id) {
+      this.$router.push({
+          name: "setStrategy",
+          query: {
+            id:id
+          }
+      });
+    },
+    toUpdateStrategy(id) {
+      this.$router.push({
+          name: "updateStrategy",
+          query: {
+            id:id
+          }
+      });
     }
-
   },
   components: {
     subTitle,
