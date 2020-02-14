@@ -21,7 +21,7 @@
           <div class="flex_left">
             <p
               style="margin-top:5px;text-overflow:ellipsis;white-space:nowrap"
-            >{{$t('CAM.Role.support')}}*</p>
+            >{{$t('CAM.Role.support')}}<span style="color:#F56C6C">*</span></p>
           </div>
           <div class="flex_right">
             <el-checkbox-group

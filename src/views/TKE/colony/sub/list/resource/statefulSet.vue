@@ -8,8 +8,13 @@
         <!-- 左侧 -->
         <div class="grid-left">
           <el-button @click="goWorkloadCreate('statefulSet')" size="small" type="primary">新建</el-button>
-          <el-button size="small" >监控</el-button>
+          <el-button size="small" @click='flag=!flag'>监控</el-button>
         </div>
+        <!-- 抽屉 -->
+        <openDrawer :flag='flag'
+          title='工作负载监控'
+          @changeFlag='setFlag'
+          @setTime='setTime'></openDrawer>
         <!-- 右侧 -->
         <div class="grid-right">
           <tkeSearch 
@@ -81,17 +86,17 @@
             label="操作"
             >
             <template slot-scope="scope">
-              <span class="tke-text-link">更新Pod数量</span>
-              <span class="tke-text-link ml10">更新Pod配置</span>
+              <span class="tke-text-link" @click="goPodUpdate('number')">更新Pod数量</span>
+              <span class="tke-text-link ml10" @click="goPodUpdate('config')">更新Pod配置</span>
               <el-dropdown class=" tke-dropdown" >
                 <span class="el-dropdown-link ml10" >
                   更多<i class="el-icon-arrow-down el-icon--right"></i>
                 </span>
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item command="a"><span class="tke-text-link">重新部署</span></el-dropdown-item>
-                  <el-dropdown-item command="a"><span class="tke-text-link">设置更新策略</span></el-dropdown-item>
-                  <el-dropdown-item command="b"><span class="tke-text-link" >更新调度策略</span></el-dropdown-item>
-                  <el-dropdown-item command="c"><span class="tke-text-link">编辑YAML</span></el-dropdown-item>
+                  <el-dropdown-item command="a"><span class="tke-text-link" @click="toSetStrategy('123')">设置更新策略</span></el-dropdown-item>
+                  <el-dropdown-item command="b"><span class="tke-text-link" @click="toUpdateStrategy('123')">更新调度策略</span></el-dropdown-item>
+                  <el-dropdown-item command="c"><span class="tke-text-link" @click="toedityaml('123')">编辑YAML</span></el-dropdown-item>
                   <el-dropdown-item command="c"><span class="tke-text-link">删除</span></el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
@@ -120,6 +125,7 @@
 import subTitle from "@/views/TKE/components/subTitle";
 import tkeSearch from "@/views/TKE/components/tkeSearch";
 import Loading from "@/components/public/Loading";
+import openDrawer from "./components/openDrawer";
 import { ALL_CITY } from "@/constants";
 export default {
   name: "colonyResourceStatefulSet",
@@ -138,6 +144,7 @@ export default {
       pageSize:10,
       pageIndex:0,
       multipleSelection: [],
+      flag:false,
       
       //搜索下拉框
       searchOptions: [
@@ -175,6 +182,16 @@ export default {
           }
       });
     },
+    //更新pod
+    goPodUpdate(type){
+      this.$router.push({
+          name: "podUpdate",
+          query: {
+            type:type,
+            clusterId: this.clusterId
+          }
+      });
+    },
     //选择搜索条件
     changeSearchType(val) {
       this.searchType = val;
@@ -193,6 +210,13 @@ export default {
     //刷新数据
     refreshList(){
       console.log('refreshList....')
+    },
+    setFlag (data) {
+      console.log(data)
+      this.flag = data
+    },
+    setTime (data) {
+      console.log(data)
     },
     // 导出表格
     exportExcel() {
@@ -232,13 +256,39 @@ export default {
     //全选
     handleSelectionChange(val) {
       this.multipleSelection = val;
+    },
+    //跳转设置策略页面
+    toSetStrategy(id) {
+      this.$router.push({
+          name: "setStrategy",
+          query: {
+            id:id
+          }
+      });
+    },
+    toUpdateStrategy(id) {
+      this.$router.push({
+          name: "updateStrategy",
+          query: {
+            id:id
+          }
+      });
+    },
+    toedityaml(id) {
+      this.$router.push({
+          name: "editYaml",
+          query: {
+            id:id,
+            type: "StatefulSet"
+          }
+      });
     }
-
   },
   components: {
     subTitle,
     tkeSearch,
-    Loading
+    Loading,
+    openDrawer
   }
 };
 </script>

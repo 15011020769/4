@@ -4,7 +4,8 @@
       <el-form :model="form" :rules="rules" size="mini" ref="form" label-width="100px" style="width:100%;">
         <el-form-item :label="$t('CAM.strategy.supplier')" prop="providerType">
           <el-col :span="10">
-            <el-radio size="mini" v-model="form.providerType" label="SAML">SAML</el-radio>
+            <!-- <el-radio size="mini" v-model="form.providerType" label="SAML">SAML</el-radio> -->
+            <span>SAML</span>
           </el-col>
         </el-form-item>
         <el-form-item :label="$t('CAM.strategy.supplierName')" prop="providerName">

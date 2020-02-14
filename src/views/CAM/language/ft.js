@@ -2,6 +2,7 @@ module.exports = {
   CAM: {
     strip: '條',
     userList: {
+      policyPlaceholder: '支持搜索策略名稱/描述',
       listTitle: '用戶列表',
       listText: '如何查看更多訊息?',
       listContext: '訪問管理對您的敏感訊息進行安全升級保護，您可以點擊列表中【詳情】列下拉按鈕【▶】查看用戶的身份安全狀態、已加入組以及消息訂閱等更多訊息。您也可以點擊用戶名進入用戶詳細訊息中查看或編輯。',
@@ -176,6 +177,8 @@ module.exports = {
       ge: '個',
       xxdy: '消息訂閱',
       ckyhxq: '查看用戶詳情',
+      userGroupPlaceholder: '請輸入用戶組名',
+      userRemarkPlaceholder: '請輸入備註',
     },
     Role: {
       cancelSessionTitle: '為有效保障您的賬戶安全，CAM 支持您立即撤銷角色當前所有活動會話。如果您選擇撤消所有會話, 當前角色將被附加名為 RevokeOlderSessionForTCS_QCSRole 的自定義策略。此策略將更新當前時間戳，並立即拒絕該角色當前所有會話的編程訪問和控制台訪問。您可以繼續通過這個角色創建新的會話，新的會話將不受影響可正常訪問。如果您稍後需要撤消此操作，您可以移除自定義策略。',
@@ -300,6 +303,7 @@ module.exports = {
       ye: '頁',
       jbxx: '基本訊息',
       clxq: '策略詳情',
+      searchUserName: '支持搜索用戶名',
     },
     provider: {
       delTip: '此操作將刪除該身份提供商，同時該身份提供商將解除與相關角色的關聯，無法以該身份提供商申請使用相關角色。您確定要刪除該身份提供商嗎？'

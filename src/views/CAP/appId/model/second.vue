@@ -132,7 +132,6 @@ export default {
    
     //路由跳转
     buyNew(){
-      this.$message('腾讯接口排期中');
        this.$router.push({
         path: '/purchase'
       })

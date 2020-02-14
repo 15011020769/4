@@ -88,7 +88,7 @@
             width="200"
             >
             <template slot-scope="scope">
-              <span class="tke-text-link">更新转发配置</span>
+              <span class="tke-text-link" @click="toUpdateConfigure('123')">更新转发配置</span>
               <span class="tke-text-link ml10">编辑YAML</span>
               <span class="tke-text-link ml10">删除</span>
             </template>
@@ -236,6 +236,15 @@ export default {
       this.pageSize=val;
       // this.getColonyList();
     },
+    toUpdateConfigure(id) {
+      this.$router.push({
+          name: "configure",
+          query: {
+            clusterId: this.clusterId,
+            id: id
+          }
+      });
+    }
 
   },
   components: {

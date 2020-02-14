@@ -394,7 +394,7 @@
             </div>
           </el-form-item>
           <div class="tke-second-worker">
-            <p class="tke-second-worker-l">Master&Etcd 配置</p>
+            <p class="tke-second-worker-l">Worker 配置</p>
             <div class="tke-second-worker-r">
               <div class="tke-second-worker-array">
                 <p>

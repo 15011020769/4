@@ -23,7 +23,7 @@
               <li class="li-title">{{$t("COM.tool")}}</li>
               <li class="li-sub" @click="go('../CM/index.html#/CVM')">{{$t("COM.cm")}}</li>
               <li class="li-sub" @click="go('../CLA/index.html#/CloudAudit')">{{$t("COM.cloudAudit")}}</li>
-              <li class="li-sub" @click="go('../CAM/index.html#/UserGroup')">{{$t("COM.cam")}}</li>
+              <li class="li-sub" @click="go('../CAM/index.html#/UserListNew')">{{$t("COM.cam")}}</li>
             </ul>
             <ul>
               <li class="li-title">{{$t("COM.server")}}</li>

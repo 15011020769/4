@@ -296,6 +296,14 @@ export default new Router({
       }
     },
     {
+      path: '/colony/sub/update/resource/updatePod', // 集群-pod--更新
+      name: 'podUpdate',
+      component: () => import('./colony/sub/update/resource/updatePod.vue'),
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
       path: '/colony/sub/create/service/ingress', // 集群-新建Ingress
       name: 'ingressCreate',
       component: () => import('./colony/sub/create/service/ingress.vue'),
@@ -1006,6 +1014,38 @@ export default new Router({
       props: true,
       name: 'persistenceSetting',
       component: () => import(/* webpackChunkName: "persistenceSetting" */ './persistenceSetting/index.vue'),
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
+      path: '/setStrategy/:rid', //存储列表设置更新策略
+      name: 'setStrategy',
+      component: () => import('./colony/sub/update/resource/setStrategy.vue'),
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
+      path: '/updateStrategy/:rid',//更新调度策略
+      name: 'updateStrategy',
+      component: () => import('./colony/sub/update/resource/updateStrategy.vue'),
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
+      path: '/editYaml/:rid',//更新调度策略
+      name: 'editYaml',
+      component: () => import('./colony/sub/update/resource/editYaml.vue'),
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
+      path: '/configure/:rid',//更新调度策略
+      name: 'configure',
+      component: () => import('./colony/sub/update/service/configure.vue'),
       meta: {
         keepAlive: true
       }

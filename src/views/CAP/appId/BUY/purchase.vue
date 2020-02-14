@@ -14,17 +14,17 @@
               <p style="font-size:15px">次数包</p>
             </div>
             <div class="numRight">
-              <el-button-group>
-                <el-button size="small">20万次</el-button>
-                <el-button size="small">100万次</el-button>
-                <el-button size="small">500万次</el-button>
-                <el-button size="small">1000万次</el-button>
-                <el-button size="small">一亿次</el-button>
-                <el-button size="small">10亿次</el-button>
-              </el-button-group>
-              <p style="font-size:13px;padding-top:15px;">次数包用完后，超出次数会按照0.005元/次日结。</p>
+               <el-radio-group v-model="quantity">
+                <el-radio-button :label="20">20万次</el-radio-button>
+                <el-radio-button :label="100">100万次</el-radio-button>
+                <el-radio-button :label="500">500万次</el-radio-button>
+                <el-radio-button :label="1000">1000万次</el-radio-button>
+                <el-radio-button :label="10000">1亿次</el-radio-button>
+                <el-radio-button :label="100000">10亿次</el-radio-button>
+              </el-radio-group>
+              <p style="font-size:13px;padding-top:15px;color:#999;">次数包用完后，超出次数会按照0.005元/次日结。</p>
               <p
-                style="font-size:13px;padding-top:15px;"
+                style="font-size:13px;padding-top:15px;color:#999;"
               >以上流量包最高可支持QPS 1000,如需购买更高上限流量包,请点击提交工单联系我们，我们将提供专人为您服务</p>
             </div>
           </div>
@@ -33,8 +33,8 @@
               <p style="font-size:15px">有效期</p>
             </div>
             <div class="numRight">
-              <el-button type="primary" plain size="small">主要按钮</el-button>
-              <p style="margin-top:15px;">1年内未使用完的次数自动过期</p>
+              <el-button type="primary" size="small">一年</el-button>
+              <p style="margin-top:15px;color:#999;">1年内未使用完的次数自动过期</p>
             </div>
           </div>
         </div>
@@ -43,8 +43,11 @@
               <p style="font-size:15px">费用:</p>
             </div>
             <div class="numRight">
-              <p style="margin-bottom:15px;">6,000.00 元</p>
-              <el-button type="primary" size="small">主要按钮</el-button>
+              <div style="margin-bottom:15px;">
+                <p v-show="query" style="color: #999;">费用查询中...</p>
+                <p v-show="!query" style="color: #ed711f; font-size: 25px;">{{TotalCost}} 元</p>
+              </div>
+              <el-button type="primary" :disabled="loading" size="small" @click="generateDeal">立即支付</el-button>
             </div>
         </div>
       </div>
@@ -64,13 +67,96 @@
 
 <script>
 import NavHeader from "@/components/HeaderAside/Header";
+import { ES_PRICE, GENERATE_DEALS } from '@/constants'
+import { ErrorTips } from "@/components/ErrorTips"
 export default {
   data() {
     return {
+      quantity: 20,
+      TotalCost: 0,
+      query: true,
+      loading: false,
     };
   },
   components: {
     NavHeader
+  },
+  watch: {
+    quantity() {
+      this.queryPrice()
+    }
+  },
+  mounted() {
+    this.loading = false
+    this.queryPrice()
+  },
+  methods: {
+    generateDeal() {
+      this.loading = true
+      this.axios.post(GENERATE_DEALS, {
+        Version: '2018-07-09',
+        'Goods.0.GoodsCategoryId': 101119,
+        'Goods.0.RegionId': 1,
+        'Goods.0.ZoneId': 0,
+        'Goods.0.GoodsNum': 1,
+        'Goods.0.ProjectId': 0,
+        'Goods.0.PayMode': 1,
+        'Goods.0.Platform': 1,
+        'Goods.0.GoodsDetail': JSON.stringify({
+          timeSpan: 1,
+          timeUnit: 'p',
+          threshold: this.quantity * 10000,
+          pid: 1000772,
+          [`sv_captcha_volume_${this.quantity}`]: this.quantity * 10000,
+          Currency: 'CNY'
+        }),
+      }).then(res => {
+        if (res.Response.Error === undefined) {
+          this.loading = true
+          this.$router.push({name: 'check', params: {totalCost: this.TotalCost, quantity: this.quantity, orderId: res.Response.OrderIds[0]}})
+        } else {
+          this.$message({
+            message: ErrorTips[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      })
+    },
+    queryPrice() {
+      this.query = true
+      this.axios.post(ES_PRICE, {
+        Version: '2018-07-09',
+        PayMode: 1,
+        Platform: 1,
+        'ResInfo.0.GoodsCategoryId': 101119,
+        'ResInfo.0.RegionId': 1,
+        'ResInfo.0.ZoneId': 1,
+        'ResInfo.0.GoodsNum': 1,
+        'ResInfo.0.PayMode': 1,
+        'ResInfo.0.GoodsDetail': JSON.stringify({
+            timeSpan: 1,
+            timeUnit: 'p',
+            threshold: this.quantity * 10000,
+            pid: 1000772,
+            [`sv_captcha_volume_${this.quantity}`]: this.quantity * 10000,
+            Currency: 'CNY'
+          }),
+      }).then(res => {
+        if (res.Response.Error === undefined) {
+          this.query = false
+          this.TotalCost = res.Response.PriceInfos[0].TotalCost
+        } else {
+          this.$message({
+            message: ErrorTips[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      })
+    }
   },
 };
 </script>

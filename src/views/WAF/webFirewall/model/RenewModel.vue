@@ -3,7 +3,7 @@
     <div>
       <el-dialog
         title="Web应用防火墙套餐续费"
-        :visible.sync="renewModel"
+        :visible.sync="isShow"
         width="45%"
         :before-close="handleClose">
         <div class="newClear">
@@ -57,9 +57,10 @@
   </div>
 </template>
 <script>
+import { DESCRIBE_WAF_PRICE } from '@/constants'
 export default {
   props:{
-    isShow:Boolean
+    isShow: Boolean
   },
   data(){
     return{
@@ -67,10 +68,35 @@ export default {
       thisType:'1',//默认选中
     }
   },
-  computed:{
-    renewModel(){
-      this.dialogModel=this.isShow;
-      return this.isShow;
+  watch: {
+    isShow(n) {
+      if (n) {
+        this.axios.post(DESCRIBE_WAF_PRICE, {
+          Version: '2018-01-25',
+          ResInfo: [{
+            "goodsCategoryId":101212,
+            "regionId":1,
+            "projectId":0,
+            "goodsNum":1,
+            "payMode":1,
+            "platform":1,
+            "goodsDetail":{
+              "resourceId":"waf_000q40zkx_qps",
+              "curDeadline":"2020-02-13 10:51:25",
+              "oldConfig":{
+                "pid":1001160,
+                "sv_wsm_waf_qps_ep_clb":3000,
+                "type":"sp_wsm_waf_qpsep_clb"
+              },
+              "newConfig":{
+                "pid":1001160,
+                "sv_wsm_waf_qps_ep_clb":4000,
+                "type":"sp_wsm_waf_qpsep_clb"
+              }
+            }
+          }]
+        })
+      }
     }
   },
   methods:{

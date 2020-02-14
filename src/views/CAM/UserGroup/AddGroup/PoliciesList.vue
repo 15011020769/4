@@ -12,6 +12,7 @@
           custom-class="dialogStyle"
           v-model="search"
           style="width:100%"
+          :placeholder="$t('CAM.userList.policyPlaceholder')"
           @keyup.enter.native="toQuery"
         >
           <i slot="suffix" class="el-input__icon el-icon-search" @click="toQuery"></i>
@@ -27,7 +28,7 @@
           @row-click="selectedRow"
           @selection-change="handleSelectionChange"
           :empty-text="$t('CAM.strategy.zwsj')"
-          v-infinite-scroll="load"
+          v-loading="loading"
         >
           <el-table-column type="selection" prop="PolicyId" width="29"></el-table-column>
           <el-table-column
@@ -109,38 +110,41 @@ export default {
     return {
       tableHeight: 300,
       policiesData: [],
+      policiesDataCopy: [],
       policiesSelectedData: [],
       totalNum: "",
       search: "",
-      rp: 20,
-      page: 1
+      rp: 100,
+      page: 1,
+      loading: true,
     };
   },
   mounted() {
-    // this.init();
+    this.init();
     this.tableHeight =
       window.innerHeight - this.$refs.multipleOption.$el.offsetTop - 50;
   },
   methods: {
-    load() {
+    init() {
       if (this.totalNum && this.page * this.rp > this.totalNum) return
       let params = {
         Version: "2019-01-16",
-        // ,
         Rp: this.rp,
         Page: this.page,
-        // scope:'All'
       };
-      if (this.search != null && this.search != "") {
-        params["Keyword"] = this.search;
-      }
       this.axios
         .post(POLICY_LIST, params)
         .then(res => {
           if (res.Response.Error === undefined) {
             this.totalNum = res.Response.TotalNum;
+            this.policiesDataCopy = this.policiesDataCopy.concat(res.Response.List);
             this.policiesData = this.policiesData.concat(res.Response.List);
             this.page += 1
+            if (this.rp * this.page < res.Response.TotalNum) {
+              this.init()
+            } else {
+              this.loading = false
+            }
           } else {
             let ErrTips = {
               "InternalError.SystemError": "內部錯誤",
@@ -177,7 +181,11 @@ export default {
       this.$refs.multipleOption.toggleRowSelection(rows[index], false);
     },
     toQuery() {
-      this.init();
+      if (this.search) {
+        this.policiesData = this.policiesDataCopy.filter(item => item.PolicyName.indexOf(this.search) > -1 || item.Description.indexOf(this.search) > -1)
+      } else {
+        this.policiesData = [...this.policiesDataCopy]
+      }
     },
     getDaata() {
       return this.policiesSelectedData;

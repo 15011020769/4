@@ -16,7 +16,8 @@
         <el-form :model="addModel" :rules="rules" size="mini" ref="ruleForm" label-width="100px">
           <el-form-item :label="$t('CAM.strategy.peopleType')" prop="providerType">
             <el-col :span="10">
-              <el-radio size="mini" v-model="addModel.providerType" label="SAML">SAML</el-radio>
+              <!-- <el-radio size="mini" v-model="addModel.providerType" label="SAML">SAML</el-radio> -->
+              <span>SAML</span>
             </el-col>
           </el-form-item>
           <el-form-item :label="$t('CAM.strategy.peopleName')" prop="providerName">

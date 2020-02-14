@@ -24,7 +24,7 @@
                             style="width:300px;">
                             </el-date-picker>
                         </div>
-                        <span class='span-2'>对比维度</span>
+                        <!-- <span class='span-2'>对比维度</span>
                         <el-radio-group v-model="isCollapse"  size="mini" @change="getRoom($event)">
                           <el-radio-button :label="true" >节点</el-radio-button>
                           <el-radio-button :label="false">pod</el-radio-button>
@@ -38,7 +38,7 @@
                             :value="item.value"
                             >
                             </el-option>
-                        </el-select>
+                        </el-select> -->
                    </div>
                </div>
                 <div class='box-bottom'>

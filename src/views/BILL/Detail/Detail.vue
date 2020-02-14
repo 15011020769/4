@@ -394,7 +394,7 @@ export default {
       }).then(res => {
         const content = res
         const blob = new Blob([content])
-        const fileName = this.dataForm.month + '--帳單明細.csv'
+        const fileName = this.dataForm.month + '--賬單明細.csv'
         if ('download' in document.createElement('a')) {
           // 非IE下载
           const elink = document.createElement('a')

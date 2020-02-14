@@ -9,7 +9,9 @@
     </div>
     
     <div class="tke-card mt10 tke-formpanel-wrap">
-        yaml
+      <el-card class='box-card'> 
+        <div class='box-black'>1</div>
+      </el-card>
     </div>
   </div>
 </template>
@@ -39,7 +41,13 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
-
+  .box-card {
+    width: 100%;
+    margin:20px 0;
+  }
+	.box-black{
+    margin:10px;
+    background:black;
+  }
 </style>
 

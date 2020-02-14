@@ -11,6 +11,7 @@ export * from './scf'
 export * from './CLA'
 
 export * from './CAM'
+export * from './CAP'
 // 私有网络 雲联网
 export * from './CCN'
 
@@ -19,6 +20,7 @@ export * from './DDOS'
 
 // 标签
 export * from './TAG'
+export * from './WAF'
 
 
 export * from './KMS' //用户密钥
