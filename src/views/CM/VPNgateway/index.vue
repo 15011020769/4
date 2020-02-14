@@ -40,7 +40,8 @@
 
           <el-table-column prop :label="$t('CVM.clBload.sswl')">
             <template slot-scope="scope">
-              <p style="color: #65a5f9;">{{scope.row.VpcId}}</p>
+              <a :href="'../VPC/index.html#/priNetwork/priNetworkDetial/'+ scope.row.VpcId + '/ap-taipei'"
+              target="_blank">{{scope.row.VpcId}}</a>
               <p>{{ scope.row.vpnGwName}}</p>
             </template>
           </el-table-column>
