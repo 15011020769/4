@@ -69,8 +69,7 @@
             @click="gotoPolicy"
           >{{$t('CAM.userList.RelatedPolicies')}}</el-button>
           <el-button
-            class="buttonCla"
-            type="primary"
+            :class="!disabled ? 'buttonCla' : ''"
             size="small"
             :disabled="disabled"
             @click="delMoreStrateg"
@@ -127,14 +126,13 @@
             @click="addGroupUser"
           >{{$t('CAM.userList.userAddGroup')}}</el-button>
           <el-button
-            class="buttonCla"
-            type="primary"
+            :class="!disabled ? 'buttonCla' : ''"
             size="small"
             :disabled="disabled"
             @click="removeMoreGroup"
           >{{$t('CAM.userList.RemoveGroups')}}</el-button>
           <el-table
-            ref="multipleTable"
+            ref="multipleTable2"
             :data="groupData"
             style="width: 100%;"
             height="300"
@@ -866,7 +864,11 @@ export default {
         this.disabled = true;
       }
     },
-    handleClick(tab, event) {},
+    handleClick(tab, event) {
+      this.$refs.multipleTable.clearSelection()
+      this.$refs.multipleTable2.clearSelection()
+      this.disabled = true
+    },
     handleClose(done) {
       this.StrategyLoading = false;
       this.delDialog = false;
@@ -1054,7 +1056,7 @@ export default {
   .buttonCla {
     height: 35px;
     min-width: 24px;
-    padding: 0 20px;
+    // padding: 0 20px;
     background-color: #006eff;
     color: #fff;
     border: 1px solid #006eff;
