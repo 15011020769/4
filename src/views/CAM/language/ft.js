@@ -177,6 +177,7 @@ module.exports = {
       xxdy: '消息訂閱',
       ckyhxq: '查看用戶詳情',
       userGroupPlaceholder: '請輸入用戶組名',
+      userRemarkPlaceholder: '請輸入備註',
     },
     Role: {
       cancelSessionTitle: '為有效保障您的賬戶安全，CAM 支持您立即撤銷角色當前所有活動會話。如果您選擇撤消所有會話, 當前角色將被附加名為 RevokeOlderSessionForTCS_QCSRole 的自定義策略。此策略將更新當前時間戳，並立即拒絕該角色當前所有會話的編程訪問和控制台訪問。您可以繼續通過這個角色創建新的會話，新的會話將不受影響可正常訪問。如果您稍後需要撤消此操作，您可以移除自定義策略。',

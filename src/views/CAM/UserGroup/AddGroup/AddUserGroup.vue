@@ -15,7 +15,7 @@
             size="mini"
             type="textarea"
             v-model="addModel.remark"
-            :placeholder="$t('CAM.userList.userRemarkPlaceholder')"
+            :placeholder="$t('CAM.userGroup.userRemarkPlaceholder')"
           ></el-input>
         </el-form-item>
       </el-form>

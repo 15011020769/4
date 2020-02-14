@@ -53,7 +53,12 @@
                       </el-form-item>
                     </td>
                     <td>
-                      <el-input v-model="ruleForm.Remark" :placeholder="$t('CAM.userList.userRemarkPlaceholder')"></el-input>
+                      <el-form-item prop="Remark">
+                        <el-input
+                          v-model="ruleForm.Remark"
+                          :placeholder="$t('CAM.userList.userRemarkPlaceholder')"
+                        ></el-input>
+                      </el-form-item>
                     </td>
                     <td class="reg">
                       <el-input v-model="ruleForm.PhoneNum" @change="telInp" :placeholder="$t('CAM.userList.userPhonePlaceholder')"></el-input>
@@ -241,6 +246,13 @@ export default {
           {
             validator: Password,
             trigger: "blur"
+          }
+        ],
+        Remark:[
+          { max: 100, message: "100個英文字母、數字或漢字以內，支持@、._[]-:" },
+          {
+            pattern: /^[\u4E00-\u9FFFa-zA-Z0-9@_、.\-:\[\]]+$/g,
+            message: "100個英文字母、數字或漢字以內，支持@、._[]-:"
           }
         ]
       }, //规则
@@ -913,6 +925,7 @@ export default {
 
   .adduserlist-main >>> .el-form-item__error {
     top: -12px;
+    white-space: nowrap;
   }
 
   .adduserlist-main >>> .el-input__inner {
