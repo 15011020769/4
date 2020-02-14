@@ -10,12 +10,17 @@
         <el-button size="small" @click="goExpand" type="primary"
           >新建节点</el-button
         >
-        <el-button size="small">监控</el-button>
+        <el-button size="small" @click='flag=!flag'>监控</el-button>
         <el-button size="small" @click="goAddExist">添加已有节点</el-button>
         <el-button size="small" disabled="">移除</el-button>
         <el-button size="small" disabled="">封锁</el-button>
         <el-button size="small" disabled="">解除封锁</el-button>
       </div>
+       <!-- 抽屉 -->
+      <openDrawer :flag='flag'
+        title='节点监控'
+       @changeFlag='setFlag'
+       @setTime='setTime'></openDrawer>
       <!-- 右侧 -->
       <div class="grid-right">
         <tkeSearch
@@ -149,6 +154,7 @@
 import subTitle from "@/views/TKE/components/subTitle";
 import tkeSearch from "@/views/TKE/components/tkeSearch";
 import Loading from "@/components/public/Loading";
+import openDrawer from "./components/openDrawer";
 import { ALL_CITYk, POINT_REQUEST } from "@/constants";
 export default {
   name: "colonyNodeManageNode",
@@ -168,13 +174,15 @@ export default {
       total: 0,
       pageSize: 10,
       pageIndex: 0,
+      flag: false,
       multipleSelection: []
     };
   },
   components: {
     subTitle,
     Loading,
-    tkeSearch
+    tkeSearch,
+    openDrawer
   },
   created() {
     // 从路由获取集群id
@@ -191,6 +199,13 @@ export default {
     clickSearch(val) {
       this.searchInput = val;
       console.log(this.searchInput);
+    },
+    setFlag (data) {
+      console.log(data)
+      this.flag = data
+    },
+    setTime (data) {
+      console.log(data)
     },
 
     // 导出表格

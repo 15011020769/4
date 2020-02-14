@@ -8,8 +8,13 @@
         <!-- 左侧 -->
         <div class="grid-left">
           <el-button @click="goWorkloadCreate('deployment')" size="small" type="primary">新建</el-button>
-          <el-button size="small" >监控</el-button>
+          <el-button size="small" @click='flag=!flag'>监控</el-button>
         </div>
+         <!-- 抽屉 -->
+        <openDrawer :flag='flag'
+          title='工作负载监控'
+          @changeFlag='setFlag'
+          @setTime='setTime'></openDrawer>
         <!-- 右侧 -->
         <div class="grid-right">
           <tkeSearch 
@@ -118,6 +123,7 @@
 import subTitle from "@/views/TKE/components/subTitle";
 import tkeSearch from "@/views/TKE/components/tkeSearch";
 import Loading from "@/components/public/Loading";
+import openDrawer from "./components/openDrawer";
 import { ALL_CITY } from "@/constants";
 export default {
   name: "colonyResourceDeployment",
@@ -136,7 +142,7 @@ export default {
       pageSize:10,
       pageIndex:0,
       multipleSelection: [],
-      
+      flag:false,
       //搜索下拉框
       searchOptions: [
         {
@@ -214,6 +220,13 @@ export default {
     refreshList(){
       console.log('refreshList....')
     },
+    setFlag (data) {
+      console.log(data)
+      this.flag = data
+    },
+    setTime (data) {
+      console.log(data)
+    },
     // 导出表格
     exportExcel() {
       console.log('exportExcel...')
@@ -258,7 +271,8 @@ export default {
   components: {
     subTitle,
     tkeSearch,
-    Loading
+    Loading,
+    openDrawer
   }
 };
 </script>
