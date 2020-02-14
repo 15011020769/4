@@ -9,14 +9,14 @@
         <el-row>
           <el-col :span="12">
             <div class="informationList">
-              <p><span>套餐</span><span>台湾台北 高级版<a href="#" class="blueHref" @click="packageUpgradeModel">升级</a></span></p>
-              <p><span>到期时间</span><span>2020-01-12 16：00：00<a href="#" class="blueHref" @click="RenewModelBtn">续费</a></span></p>
+              <p><span>套餐</span><span>{{package.Level && PACKAGE_CFG_TYPES[package.Level].name}}<a href="#" class="blueHref" @click="packageUpgradeModel">升级</a></span></p>
+              <p><span>到期时间</span><span>{{package.ValidTime}}<a href="#" class="blueHref" @click="RenewModelBtn">续费</a></span></p>
               <p><span>标签</span><span>无</span></p>
               <p>
                 <span>自动续费开关</span>
                 <span>
                   <el-switch
-                    v-model="automatiCrenewal"
+                    v-model="package.AutoRenew === 1"
                     active-color="#006eff"
                     inactive-color="#bbb">
                   </el-switch>
@@ -26,10 +26,10 @@
           </el-col>
           <el-col :span="12">
             <div class="informationList">
-              <p><span>域名</span><span>0个 (每个域名包包含10个域名防护，仅支持1个一级域名)<a href="#" class="blueHref" @click="buyDominPackBtn">购买域名包</a></span></p>
-              <p><span>已使用域名</span><span>2/20个</span></p>
-              <p><span>安全日志服务包</span><span><a class="orangeHref">0个</a>（一个包包含1T日志服务存储容量），<a href="#" class="blueHref" @click="buyLogBack"> 立即购买</a></span></p>
-              <p><span>QPS扩展包</span><span>当前QPS峰值 <a class="greenHref">0</a>当前套餐QPS <a class="orangeHref">2500</a>，<a href="#" class="blueHref" @click="qpsBack">立即购买</a></span></p>
+              <p><span>域名包</span><span>{{package.DomainPkg && package.DomainPkg.Count || 0}}个 (每个域名包包含10个域名防护，仅支持1个一级域名)<a href="#" class="blueHref" @click="buyDominPackBtn">购买域名包</a></span></p>
+              <p><span>已使用域名</span><span>{{package.DomainCount}}/{{package.DomainLimit}}个</span></p>
+              <p><span>安全日志服务包</span><span><a class="orangeHref">{{package.Cls && package.Cls.Count || 0}}个</a>（一个包包含1T日志服务存储容量），<a href="#" class="blueHref" @click="buyLogBack"> 立即购买</a></span></p>
+              <p><span>QPS扩展包</span><span>当前QPS峰值 <a class="greenHref">{{package.MaxQPS}}</a> 当前套餐QPS <a class="orangeHref">{{package.Level && PACKAGE_CFG_TYPES[package.Level].busQps}}</a>，<a href="#" class="blueHref" @click="qpsBack">立即购买</a></span></p>
             </div>
           </el-col>
         </el-row>
@@ -52,7 +52,25 @@ import RenewModel from './model/RenewModel'
 import dominList from './components/dominList'
 import buyLogBackModel from './model/buyLogBackModel'
 import qpsBackModel from './model/qpsBackModel'
-import { DESCRIBE_USER_INFO, DESCRIBE_SPARTA_PROTECTIONLIST } from '@/constants'
+import { DESCRIBE_USER_INFO, DESCRIBE_SPARTA_PROTECTIONLIST, DESCRIBE_WAF_PRICE } from '@/constants'
+import { ErrorTips } from "@/components/ErrorTips"
+import { PACKAGE_CFG_TYPES } from '../constants'
+
+const ErrTips = {
+  'FailedOperation': '操作失败。',
+  'InternalError': '内部错误。',
+  'InvalidParameter': '参数错误。',
+  'InvalidParameterValue': '参数取值错误。',
+  'LimitExceeded': '超过配额限制。',
+  'MissingParameter': '缺少参数错误。',
+  'ResourceInUse': '资源被占用。',
+  'ResourceInsufficient': '资源不足。',
+  'ResourceNotFound': '资源不存在。',
+  'ResourceUnavailable': '资源不可用。',
+  'ResourcesSoldOut': '资源售罄。',
+  'UnauthorizedOperation': '未授权操作。',
+  'UnknownParameter': '未知参数错误。',
+}
 export default {
   data(){
     return{
@@ -62,6 +80,9 @@ export default {
       RenewModelShow:false,//续费
       buyLogBackModel:false,//安全日志服务包
       qpsBackModel:false,//qps扩展包
+      package: {}, // 套餐信息
+      PACKAGE_CFG_TYPES,
+      domains: [],
     }
   },
   components:{
@@ -73,18 +94,51 @@ export default {
     qpsBackModel:qpsBackModel,//qps扩展包
   },
   mounted() {
-    // this.axios.post(DESCRIBE_SPARTA_PROTECTIONLIST, {
-    //   Version: '2018-01-25',
-    //   Paging: {
-    //     Index: 1,
-    //     Count: 10
-    //   }
-    // })
-    this.axios.post(DESCRIBE_USER_INFO, {
-      Version: '2018-01-25'
-    })
+    this.init()
   },
   methods:{
+    init() {
+      this.getPackage()
+      this.queryDomain()
+    },
+    getPackage() {
+      this.axios.post(DESCRIBE_USER_INFO, {
+        Version: '2018-01-25'
+      }).then(({ Response }) => {
+        if (!Response.Error) {
+          this.package = Response.Data
+          return
+        }
+        let ErrOr = Object.assign(ErrorTips, ErrTips)
+        this.$message({
+          message: ErrOr[Response.Error.Code],
+          type: "error",
+          showClose: true,
+          duration: 0
+        });
+      })
+    },
+    queryDomain() {
+      this.axios.post(DESCRIBE_SPARTA_PROTECTIONLIST, {
+        Version: '2018-01-25',
+        Paging: {
+          Index: 1,
+          Count: 10
+        }
+      }).then(res => {
+        if (!Response.Error) {
+          this.domains = Response.Data
+          return
+        }
+        let ErrOr = Object.assign(ErrorTips, ErrTips)
+        this.$message({
+          message: ErrOr[Response.Error.Code],
+          type: "error",
+          showClose: true,
+          duration: 0
+        });
+      })
+    },
     //升级按钮
     packageUpgradeModel(){
       this.packageUpModelShow=true;

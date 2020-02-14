@@ -2,6 +2,7 @@ module.exports = {
     CAM: {
         strip: '条',
         userList: {
+            policyPlaceholder: '支持搜索策略名称/描述',
             listTitle: '用户列表',
             listText: '如何查看更多信息?',
             listContext: '访问管理对您的敏感信息进行安全升级保护，您可以点击列表中【详情】列下拉按钮【▶】查看用户的身份安全状态、已加入组以及消息订阅等更多信息。您也可以点击用户名进入用户详细信息中查看或编辑。',

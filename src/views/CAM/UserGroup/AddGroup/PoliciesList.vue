@@ -12,6 +12,7 @@
           custom-class="dialogStyle"
           v-model="search"
           style="width:100%"
+          :placeholder="$t('CAM.userList.policyPlaceholder')"
           @keyup.enter.native="toQuery"
         >
           <i slot="suffix" class="el-input__icon el-icon-search" @click="toQuery"></i>
@@ -109,6 +110,7 @@ export default {
     return {
       tableHeight: 300,
       policiesData: [],
+      policiesDataCopy: [],
       policiesSelectedData: [],
       totalNum: "",
       search: "",
@@ -130,14 +132,12 @@ export default {
         Rp: this.rp,
         Page: this.page,
       };
-      if (this.search != null && this.search != "") {
-        params["Keyword"] = this.search;
-      }
       this.axios
         .post(POLICY_LIST, params)
         .then(res => {
           if (res.Response.Error === undefined) {
             this.totalNum = res.Response.TotalNum;
+            this.policiesDataCopy = this.policiesDataCopy.concat(res.Response.List);
             this.policiesData = this.policiesData.concat(res.Response.List);
             this.page += 1
             if (this.rp * this.page < res.Response.TotalNum) {
@@ -181,7 +181,11 @@ export default {
       this.$refs.multipleOption.toggleRowSelection(rows[index], false);
     },
     toQuery() {
-      this.init();
+      if (this.search) {
+        this.policiesData = this.policiesDataCopy.filter(item => item.PolicyName.indexOf(this.search) > -1 || item.Description.indexOf(this.search) > -1)
+      } else {
+        this.policiesData = [...this.policiesDataCopy]
+      }
     },
     getDaata() {
       return this.policiesSelectedData;
