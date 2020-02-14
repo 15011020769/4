@@ -36,6 +36,14 @@ export default new Router({
       meta: {
         keepAlive: false
       }
+    },
+    {
+      path: '/check', // purchase
+      name: 'check',
+      component: () => import(/* webpackChunkName: "check" */ './appId/BUY/check.vue'),
+      meta: {
+        keepAlive: false
+      }
     }
   ]
 })

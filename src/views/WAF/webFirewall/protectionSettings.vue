@@ -52,6 +52,7 @@ import RenewModel from './model/RenewModel'
 import dominList from './components/dominList'
 import buyLogBackModel from './model/buyLogBackModel'
 import qpsBackModel from './model/qpsBackModel'
+import { DESCRIBE_USER_INFO, DESCRIBE_SPARTA_PROTECTIONLIST } from '@/constants'
 export default {
   data(){
     return{
@@ -70,6 +71,18 @@ export default {
     dominList:dominList,//域名列表模块
     buyLogBackModel:buyLogBackModel,//安全日志服务包
     qpsBackModel:qpsBackModel,//qps扩展包
+  },
+  mounted() {
+    // this.axios.post(DESCRIBE_SPARTA_PROTECTIONLIST, {
+    //   Version: '2018-01-25',
+    //   Paging: {
+    //     Index: 1,
+    //     Count: 10
+    //   }
+    // })
+    this.axios.post(DESCRIBE_USER_INFO, {
+      Version: '2018-01-25'
+    })
   },
   methods:{
     //升级按钮

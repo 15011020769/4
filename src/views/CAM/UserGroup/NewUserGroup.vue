@@ -146,65 +146,59 @@ export default {
               // 绑定策略到用户组
               if (AttachGroupId != "" && selArr != "") {
                 //目前系统接口只支持单个策略绑定到用户组，不支持多个，所以循环执行绑定方法 并发10
-                const selArrGroup = []
-                for(let i = 0; i < selArr.length; i+=8){
-                  selArrGroup.push(selArr.slice(i, i + 8))
-                }
-                // this.axios.post('cam2/AttachGroupPolicies', {
-                //   // Version: "2019-01-16",
-                //   groupId: AttachGroupId,
-                //   policyId: selArr.map(item => item.PolicyId)
-                // }).then(res => console.log(res))
                 let msg
                 let requestnum = 0
-                selArrGroup.forEach((group, index) => {
+                selArr.forEach((item, index) => {
                   setTimeout(() => {
-                    Promise.all(group.map(item => {
-                      const params = {
-                        AttachGroupId: AttachGroupId,
-                        PolicyId: item.PolicyId,
-                        Version: "2019-01-16"
-                      }
-                      return this.axios.post(ATTACH_GROUP, params)
-                    })).then(res => {
+                    const params = {
+                      AttachGroupId: AttachGroupId,
+                      PolicyId: item.PolicyId,
+                      Version: "2019-01-16"
+                    }
+                    this.axios.post(ATTACH_GROUP, params)
+                    .then(data => {
                       requestnum += 1
-                      res.forEach(data => {
-                        if (data.Response.Error !== undefined) {
-                          let ErrTips = {
-                            "FailedOperation.PolicyFull": "用戶策略數超過上限",
-                            "InternalError.SystemError": "內部錯誤",
-                            "InvalidParameter.AttachmentFull":
-                              "principal欄位的授權對象關聯策略數已達到上限",
-                            "InvalidParameter.ParamError": "非法入參",
-                            "InvalidParameter.PolicyIdError":
-                              "輸入參數PolicyId不合法",
-                            "InvalidParameter.PolicyIdNotExist": "策略ID不存在",
-                            "nvalidParameter.UserNotExist":
-                              "principal欄位的授權對象不存在",
-                            "ResourceNotFound.GroupNotExist": "用戶組不存在",
-                            "ResourceNotFound.PolicyIdNotFound":
-                              "PolicyId指定的資源不存在",
-                            "ResourceNotFound.UserNotExist": "用戶不存在"
-                          };
-                          let ErrOr = Object.assign(ErrorTips, ErrTips);
-                          if (msg) msg.close()
-                          msg = this.$message({
-                            message: ErrOr[data.Response.Error.Code],
-                            type: "error",
-                            showClose: true,
-                            duration: 0
-                          });
-                        }
-                      })
+                      if (data.Response.Error !== undefined) {
+                        let ErrTips = {
+                          "FailedOperation.PolicyFull": "用戶策略數超過上限",
+                          "InternalError.SystemError": "內部錯誤",
+                          "InvalidParameter.AttachmentFull":
+                            "principal欄位的授權對象關聯策略數已達到上限",
+                          "InvalidParameter.ParamError": "非法入參",
+                          "InvalidParameter.PolicyIdError":
+                            "輸入參數PolicyId不合法",
+                          "InvalidParameter.PolicyIdNotExist": "策略ID不存在",
+                          "nvalidParameter.UserNotExist":
+                            "principal欄位的授權對象不存在",
+                          "ResourceNotFound.GroupNotExist": "用戶組不存在",
+                          "ResourceNotFound.PolicyIdNotFound":
+                            "PolicyId指定的資源不存在",
+                          "ResourceNotFound.UserNotExist": "用戶不存在"
+                        };
+                        let ErrOr = Object.assign(ErrorTips, ErrTips);
+                        if (msg) msg.close()
+                        msg = this.$message({
+                          message: ErrOr[data.Response.Error.Code],
+                          type: "error",
+                          showClose: true,
+                          duration: 0
+                        });
+                      }
                     }).then(() => {
-                      loading.close()
-                      if (requestnum === selArrGroup.length) {
+                      if (requestnum === selArr.length) {
+                        loading.close()
+                        this.$message({
+                          message: '添加成功',
+                          type: "success",
+                          showClose: true,
+                          duration: 0
+                        });
                         this.$router.push({
                           name: "UserGroup"
                         })
                       }
                     })
-                  }, 2000)
+                  }, 100 * index)
                 }) 
               }
             } else {

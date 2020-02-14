@@ -27,7 +27,7 @@
           @row-click="selectedRow"
           @selection-change="handleSelectionChange"
           :empty-text="$t('CAM.strategy.zwsj')"
-          v-infinite-scroll="load"
+          v-loading="loading"
         >
           <el-table-column type="selection" prop="PolicyId" width="29"></el-table-column>
           <el-table-column
@@ -112,24 +112,23 @@ export default {
       policiesSelectedData: [],
       totalNum: "",
       search: "",
-      rp: 20,
-      page: 1
+      rp: 100,
+      page: 1,
+      loading: true,
     };
   },
   mounted() {
-    // this.init();
+    this.init();
     this.tableHeight =
       window.innerHeight - this.$refs.multipleOption.$el.offsetTop - 50;
   },
   methods: {
-    load() {
+    init() {
       if (this.totalNum && this.page * this.rp > this.totalNum) return
       let params = {
         Version: "2019-01-16",
-        // ,
         Rp: this.rp,
         Page: this.page,
-        // scope:'All'
       };
       if (this.search != null && this.search != "") {
         params["Keyword"] = this.search;
@@ -141,6 +140,11 @@ export default {
             this.totalNum = res.Response.TotalNum;
             this.policiesData = this.policiesData.concat(res.Response.List);
             this.page += 1
+            if (this.rp * this.page < res.Response.TotalNum) {
+              this.init()
+            } else {
+              this.loading = false
+            }
           } else {
             let ErrTips = {
               "InternalError.SystemError": "內部錯誤",
