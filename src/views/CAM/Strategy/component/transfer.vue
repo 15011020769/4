@@ -3,7 +3,7 @@
     <div class="container">
       <div class="container-left">
         <p>{{$t('CAM.userList.listTitle')}}</p>
-        <el-input :placeholder="$t('CAM.strategy.inputContent')" clearable size="small" v-model="search" style="width:100%"
+        <el-input :placeholder="$t('CAM.strategy.searchUserName')" clearable size="small" v-model="search" style="width:100%"
           @change="toQuery">
           <i slot="suffix" class="el-input__icon el-icon-search" @click="toQuery"></i>
         </el-input>
