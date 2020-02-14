@@ -5,6 +5,7 @@
         <p>策略</p>
         <el-input
           size="mini"
+          :placeholder="$t('CAM.Role.searchRole')"
           v-model="strategyValue"
           style="width:100%;margin-top:10px;"
           @keyup.enter.native="tableloadmore"
