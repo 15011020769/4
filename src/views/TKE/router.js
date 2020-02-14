@@ -1041,6 +1041,14 @@ export default new Router({
       meta: {
         keepAlive: true
       }
+    },
+    {
+      path: '/configure/:rid',//更新调度策略
+      name: 'configure',
+      component: () => import('./colony/sub/update/service/configure.vue'),
+      meta: {
+        keepAlive: true
+      }
     }
   ]
 })
