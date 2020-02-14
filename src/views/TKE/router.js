@@ -296,6 +296,14 @@ export default new Router({
       }
     },
     {
+      path: '/colony/sub/update/resource/updatePod', // 集群-pod--更新
+      name: 'podUpdate',
+      component: () => import('./colony/sub/update/resource/updatePod.vue'),
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
       path: '/colony/sub/create/service/ingress', // 集群-新建Ingress
       name: 'ingressCreate',
       component: () => import('./colony/sub/create/service/ingress.vue'),

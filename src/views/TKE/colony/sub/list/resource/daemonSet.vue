@@ -81,8 +81,8 @@
             label="操作"
             >
             <template slot-scope="scope">
-              <span class="tke-text-link">更新Pod数量</span>
-              <span class="tke-text-link ml10">更新Pod配置</span>
+              <span class="tke-text-link"  @click="goPodUpdate('number')">更新Pod数量</span>
+              <span class="tke-text-link ml10"  @click="goPodUpdate('config')">更新Pod配置</span>
               <el-dropdown class=" tke-dropdown" >
                 <span class="el-dropdown-link ml10" >
                   更多<i class="el-icon-arrow-down el-icon--right"></i>
@@ -169,6 +169,16 @@ export default {
     goWorkloadCreate(type){
       this.$router.push({
           name: "workloadCreate",
+          query: {
+            type:type,
+            clusterId: this.clusterId
+          }
+      });
+    },
+     //更新pod
+    goPodUpdate(type){
+      this.$router.push({
+          name: "podUpdate",
           query: {
             type:type,
             clusterId: this.clusterId
