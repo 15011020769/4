@@ -57,31 +57,10 @@
                 <el-input v-model="ruleForm.LogFilePrefix" :placeholder="$t('CLA.total.qsrrzwjqz')"></el-input>
                 <span>僅支持字母和數字的組合，3-40個字元。</span>
               </el-form-item>
-              <el-form-item :label="$t('CLA.total.fstz')" class="CMQ" required>
-                <el-radio-group v-model="ruleForm.IsEnableCmqNotify" @change="_cmqRadio">
-                  <el-radio :label="$t('CLA.total.s')"></el-radio>
-                  <el-radio :label="$t('CLA.total.f')"></el-radio>
-                </el-radio-group>
+              <el-form-item class="CMQ" required>
+
               </el-form-item>
-              <div class="set-child" v-show="setChild">
-                <el-form-item :label="$t('CLA.total.cjdl')" class="CMQ" required>
-                  <el-radio-group v-model="cmqShow" @change="_cmqCretae">
-                    <el-radio :label="true">{{ $t('CLA.total.s') }}</el-radio>
-                    <el-radio :label="false">{{ $t('CLA.total.f') }}</el-radio>
-                  </el-radio-group>
-                </el-form-item>
-                <el-form-item :label="$t('CLA.total.dlmc')" required class="select cmqSelect">
-                  <el-select v-model="cmqSelect.name" :placeholder="$t('CLA.total.qxz')" @change="_cmqSelect">
-                    <el-option v-for="(item,index) in cmqSelect.options" :key="index" :label="item.CmqRegionName"
-                      :value="item.CmqRegion"></el-option>
-                  </el-select>
-                  <el-form-item label prop="CmqQueueName" class="seletInp CosBucketName"
-                    v-if="ruleForm.IsEnableCmqNotify">
-                    <el-input v-model="ruleForm.CmqQueueName" :placeholder="$t('CLA.total.qsrdlmc')"></el-input>
-                    <span>不超過64個字元的字元串，必須以字母為首字元，剩餘部分可以包含字母、數字和橫劃線(-)。</span>
-                  </el-form-item>
-                </el-form-item>
-              </div>
+
             </div>
           </div>
           <div class="main-box" style="border:0;">
@@ -159,28 +138,6 @@
           }
         }, 1000);
       };
-      var CmqQueueName = (rule, value, callback) => {
-        var reg = /^[a-zA-Z]([-a-zA-Z0-9]{0,64})$/;
-
-        if (this.ruleForm.IsEnableCmqNotify) {
-          if (!value) {
-            callback();
-          }
-        }
-        var _this = this;
-        setTimeout(() => {
-          if (!reg.test(value)) {
-            callback(
-              new Error(
-                "不超過64個字元的字元串，必須以字母為首字元，剩餘部分可以包含字母、數字和橫劃線(-)。"
-              )
-            );
-            _this.btnLoad = false;
-          } else {
-            callback();
-          }
-        }, 1000);
-      };
       return {
         loadingdata: false,
         //是否创建新的桶
@@ -211,9 +168,7 @@
           ReadWriteAttribute: "全部",
           IsCreateNewBucket: "是",
           CosBucketName: "",
-          IsEnableCmqNotify: "否",
           CosRegion: "",
-          CmqQueueName: ""
         },
         //表单验证
         rules: {
@@ -229,10 +184,6 @@
             validator: CosBucketName,
             trigger: "blur"
           }],
-          CmqQueueName: [{
-            validator: CmqQueueName,
-            trigger: "blur"
-          }]
         },
         //高级设置是否显示
         setChild: false,
@@ -270,29 +221,8 @@
           }
         });
       },
-      //cmq单选变化
-      _cmqRadio() {
-        if (
-          this.ruleForm.IsEnableCmqNotify == "是" ||
-          this.ruleForm.IsEnableCmqNotify == 1
-        ) {
-          this.setChild = true;
-        } else {
-          this.setChild = false;
-        }
-      },
-      //创建cmq
-      _cmqCretae() {
-        if (this.cmqShow) {
-          this.IsCreateNewQueue == 1;
-        } else {
-          this.IsCreateNewQueue == 0;
-        }
-      },
-      //下拉框
-      _cmqSelect() {
 
-      },
+
       _select() {
         this.bucket();
       },
@@ -308,12 +238,9 @@
       },
       //确认
       _onSubmit(formName) {
-        this.btnLoad = true;
         this.$refs[formName].validate(valid => {
           if (valid) {
-            this.ruleForm.IsEnableCmqNotify == "是" ?
-              (this.ruleForm.IsEnableCmqNotify = 1) :
-              (this.ruleForm.IsEnableCmqNotify = 0);
+            this.btnLoad = true;
             this.ruleForm.IsCreateNewBucket == "是" ?
               (this.ruleForm.IsCreateNewBucket = 1) :
               (this.ruleForm.IsCreateNewBucket = 0);
@@ -325,21 +252,26 @@
             this.ruleForm.Version = "2019-03-19";
             this.ruleForm.Region = localStorage.getItem("regionv2");
             this.ruleForm.CosRegion = this.select.name;
-            if (this.ruleForm.IsEnableCmqNotify == 1) {
-              this.ruleForm["IsCreateNewQueue"] = this.IsCreateNewQueue;
-              this.ruleForm["CmqRegion"] = this.cmqSelect.name;
-            } else {
-              delete this.ruleForm.CmqQueueName;
-            }
+            this.ruleForm.IsEnableCmqNotify = 0
             this.axios.post(GZJ_CREATE, this.ruleForm).then(res => {
               if (res.Response.Error === undefined) {
                 this.$message({
                   message: "創建成功",
-                  type: "success"
+                  type: "success",
+                  showClose: true,
+                  duration: 0
                 });
-                this.btnLoad = false;
+
                 this.$router.push("/Audit");
               } else {
+                this.ruleForm.IsCreateNewBucket == 1 ?
+                  (this.ruleForm.IsCreateNewBucket = '是') :
+                  (this.ruleForm.IsCreateNewBucket = '否');
+                this.ruleForm.ReadWriteAttribute == 1 ?
+                  (this.ruleForm.ReadWriteAttribute = '只讀') :
+                  this.ruleForm.ReadWriteAttribute == 2 ?
+                  (this.ruleForm.ReadWriteAttribute = '只寫') :
+                  (this.ruleForm.ReadWriteAttribute = '全部');
                 let ErrTips = {
                   "InternalError.CmqError": "創建cmq時發生異常，可能您準備創建的cmq隊列已經存在，也有可能您沒有許可權或者欠費",
                   "InternalError.CreateAuditError": "創建跟蹤集錯誤，請聯繫開發人員",
@@ -370,8 +302,10 @@
                   showClose: true,
                   duration: 0
                 });
+
               }
             });
+            this.btnLoad = false;
           }
         });
       },
