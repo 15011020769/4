@@ -79,16 +79,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-	.tke-type{
-		font-size: 12px;
-		color: #888;
-		margin-top: 8px;
-	}
-	.tke-set{
-		background-color: #f2f2f2;
-		height: 50px;
-		width	: 400px;
-	}
-
+	
 </style>
 

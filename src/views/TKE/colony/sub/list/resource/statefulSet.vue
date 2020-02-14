@@ -91,7 +91,7 @@
                   <el-dropdown-item command="a"><span class="tke-text-link">重新部署</span></el-dropdown-item>
                   <el-dropdown-item command="a"><span class="tke-text-link" @click="toSetStrategy('123')">设置更新策略</span></el-dropdown-item>
                   <el-dropdown-item command="b"><span class="tke-text-link" @click="toUpdateStrategy('123')">更新调度策略</span></el-dropdown-item>
-                  <el-dropdown-item command="c"><span class="tke-text-link">编辑YAML</span></el-dropdown-item>
+                  <el-dropdown-item command="c"><span class="tke-text-link" @click="toedityaml('123')">编辑YAML</span></el-dropdown-item>
                   <el-dropdown-item command="c"><span class="tke-text-link">删除</span></el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
@@ -247,6 +247,15 @@ export default {
           name: "updateStrategy",
           query: {
             id:id
+          }
+      });
+    },
+    toedityaml(id) {
+      this.$router.push({
+          name: "editYaml",
+          query: {
+            id:id,
+            type: "StatefulSet"
           }
       });
     }

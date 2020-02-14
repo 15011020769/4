@@ -1025,6 +1025,14 @@ export default new Router({
       meta: {
         keepAlive: true
       }
+    },
+    {
+      path: '/editYaml/:rid',//更新调度策略
+      name: 'editYaml',
+      component: () => import('./colony/sub/update/resource/editYaml.vue'),
+      meta: {
+        keepAlive: true
+      }
     }
   ]
 })
