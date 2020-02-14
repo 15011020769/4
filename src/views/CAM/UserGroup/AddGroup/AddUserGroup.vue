@@ -3,10 +3,20 @@
     <div class="container">
       <el-form :model="addModel" :rules="rules" ref="addModel">
         <el-form-item :label="$t('CAM.userGroup.colNmae')" prop="groupName" label-width="100px">
-          <el-input size="mini" ref="groupNameRules" v-model="addModel.groupName"></el-input>
+          <el-input
+            size="mini"
+            ref="groupNameRules"
+            v-model="addModel.groupName"
+            :placeholder="$t('CAM.userGroup.userGroupPlaceholder')"
+          ></el-input>
         </el-form-item>
         <el-form-item :label="$t('CAM.userGroup.colRemark')" prop="remark" label-width="100px">
-          <el-input type="textarea" v-model="addModel.remark"></el-input>
+          <el-input
+            size="mini"
+            type="textarea"
+            v-model="addModel.remark"
+            :placeholder="$t('CAM.userList.userRemarkPlaceholder')"
+          ></el-input>
         </el-form-item>
       </el-form>
     </div>
@@ -22,7 +32,7 @@ export default {
     return {
       rules: {
         groupName: [
-          { required: true, message: "請輸入用戶組名稱", trigger: "blur" }
+          { required: true, message: "組名稱不能為空", trigger: "blur" }
         ]
       }
     };

@@ -176,6 +176,7 @@ module.exports = {
             ge: '个',
             xxdy: '消息订阅',
             ckyhxq: '查看用户详情',
+            userGroupPlaceholder: '请输入用户组名',
         },
         Role: {
             cancelSessionTitle: '为有效保障您的账户安全，CAM 支持您立即撤销角色当前所有活动会话。如果您选择撤消所有会话, 当前角色将被附加名为 RevokeOlderSessionForTCS_QCSRole 的自定义策略。此策略将更新当前时间戳，并立即拒绝该角色当前所有会话的编程访问和控制台访问。您可以继续通过这个角色创建新的会话，新的会话将不受影响可正常访问。如果您稍后需要撤消此操作，您可以移除自定义策略。',
