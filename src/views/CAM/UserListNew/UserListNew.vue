@@ -259,22 +259,23 @@
       width="70%"
       :before-close="deleteRowHandl"
     >
-      <p>{{$t('CAM.userList.removeText')}}</p>
-      <div class="explainDelet">
+    <p>確定刪除該用戶嗎？</p>
+      <!-- <p>{{$t('CAM.userList.removeText')}}</p> -->
+      <!-- <div class="explainDelet">
         <p>{{$t('CAM.userList.removeContext')}}</p>
-      </div>
-      <div>
+      </div> -->
+      <!-- <div>
         <template>
           <el-table style="width: 100%" :data="delNewData" :empty-text="$t('CAM.strategy.zwsj')">
             <el-table-column :label="$t('CAM.userList.userName')" prop="Name"></el-table-column>
             <el-table-column prop="Uid" :label="$t('CAM.userList.userId')"></el-table-column>
-            <!-- <el-table-column :label="$t('CAM.userList.myId')"></el-table-column>
+            <el-table-column :label="$t('CAM.userList.myId')"></el-table-column>
             <el-table-column :label="$t('CAM.userList.createTime')"></el-table-column>
             <el-table-column :label="$t('CAM.userList.userZt')"></el-table-column>
-            <el-table-column :label="$t('CAM.userList.userCz')"></el-table-column>-->
+            <el-table-column :label="$t('CAM.userList.userCz')"></el-table-column>
           </el-table>
         </template>
-      </div>
+      </div> -->
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogDeleteUser = false">{{$t('CAM.userList.handClose')}}</el-button>
         <el-button type="primary" @click="suerDelUser">{{$t('CAM.userList.suerAdd')}}</el-button>
