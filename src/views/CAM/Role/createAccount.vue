@@ -123,7 +123,7 @@ export default {
       tableData: [
         {
           date: "QCloudFinanceFullAccess",
-          name: "	該策略允許您管理帳戶內財務相關的內容，例如：付款、開票。",
+          name: "	該策略允許您管理賬戶內財務相關的內容，例如：付款、開票。",
           address: "預設策略"
         }
       ]
