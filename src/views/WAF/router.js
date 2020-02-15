@@ -51,9 +51,9 @@ export default new Router({
       }
     },
     {
-      path: '/editDominList', // 攻击详情编辑页面
-      name: 'editDominList',
-      component: () => import(/* webpackChunkName: "ipMan" */ './webFirewall/components/editDominList.vue'),
+      path: '/protectDomain', // 添加/修改防护域名
+      name: 'protectDomain',
+      component: () => import(/* webpackChunkName: "ipMan" */ './webFirewall/protectDomain.vue'),
       meta: {
         keepAlive: true,
         leftNav:true

@@ -9,36 +9,36 @@
         <div class="newClear">
           <div class="newClear renewList">
             <p class="renewListLabel">套餐类型</p>
-            <p class="renewListCon">高级版</p>
+            <p class="renewListCon">{{package.Level && PACKAGE_CFG_TYPES[package.Level].name}}</p>
           </div>
           <div class="newClear renewList">
             <p class="renewListLabel">域名包</p>
-            <p class="renewListCon">0 个（包含10个域名防护，仅支持1个一级域名）</p>
+            <p class="renewListCon">{{package.DomainPkg && package.DomainPkg.Count || 0}} 个（包含10个域名防护，仅支持1个一级域名）</p>
           </div>
           <div class="newClear renewList">
             <p class="renewListLabel">安全日志服务包</p>
-            <p class="renewListCon">0个</p>
+            <p class="renewListCon">{{package.Cls && package.Cls.Count || 0}}个</p>
           </div>
           <div class="newClear renewList">
             <p class="renewListLabel">QPS扩展包</p>
-            <p class="renewListCon">0个</p>
+            <p class="renewListCon">{{package.QPS && package.QPS.Count || 0}}个</p>
           </div>
           <div class="newClear renewList">
             <p class="renewListLabel">到期时间</p>
-            <p class="renewListCon">2020-01-12 16：00：00</p>
+            <p class="renewListCon">{{package.ValidTime}}</p>
           </div>
           <div class="newClear renewList">
             <p class="renewListLabel">续费时长</p>
             <p class="renewListCon">
-              <el-button-group>
-                <el-button class="packageTypeBtn" @click="checkType(1)" :class="thisType=='1'?'addBoderC':''">1个月</el-button>
-                <el-button class="packageTypeBtn" @click="checkType(2)" :class="thisType=='2'?'addBoderC':''">2个月</el-button>
-                <el-button class="packageTypeBtn" @click="checkType(3)" :class="thisType=='3'?'addBoderC':''">3个月</el-button>
-                <el-button class="packageTypeBtn" @click="checkType(4)" :class="thisType=='4'?'addBoderC':''">6个月</el-button>
-                <el-button class="packageTypeBtn" @click="checkType(5)" :class="thisType=='5'?'addBoderC':''">1年</el-button>
-                <el-button class="packageTypeBtn" @click="checkType(6)" :class="thisType=='6'?'addBoderC':''">2年</el-button>
-                <el-button class="packageTypeBtn" @click="checkType(7)" :class="thisType=='7'?'addBoderC':''">3年</el-button>
-              </el-button-group>
+              <el-radio-group v-model="month">
+                <el-radio-button :label="1">1个月</el-radio-button>
+                <el-radio-button :label="2">2个月</el-radio-button>
+                <el-radio-button :label="3">3个月</el-radio-button>
+                <el-radio-button :label="6">6个月</el-radio-button>
+                <el-radio-button :label="12">12个月</el-radio-button>
+                <el-radio-button :label="24">24个月</el-radio-button>
+                <el-radio-button :label="36">36个月</el-radio-button>
+              </el-radio-group>
             </p>
           </div>
           <div class="newClear renewList">
@@ -58,48 +58,50 @@
 </template>
 <script>
 import { DESCRIBE_WAF_PRICE } from '@/constants'
+import { PACKAGE_CFG_TYPES } from '../../constants'
 export default {
   props:{
-    isShow: Boolean
+    isShow: Boolean,
+    package: Object
   },
   data(){
     return{
+      PACKAGE_CFG_TYPES,
+      month: 0,
       dialogModel:'',//弹框
       thisType:'1',//默认选中
     }
   },
   watch: {
+    month() {
+      this.queryPrice()
+    },
     isShow(n) {
       if (n) {
-        this.axios.post(DESCRIBE_WAF_PRICE, {
-          Version: '2018-01-25',
-          ResInfo: [{
-            "goodsCategoryId":101212,
-            "regionId":1,
-            "projectId":0,
-            "goodsNum":1,
-            "payMode":1,
-            "platform":1,
-            "goodsDetail":{
-              "resourceId":"waf_000q40zkx_qps",
-              "curDeadline":"2020-02-13 10:51:25",
-              "oldConfig":{
-                "pid":1001160,
-                "sv_wsm_waf_qps_ep_clb":3000,
-                "type":"sp_wsm_waf_qpsep_clb"
-              },
-              "newConfig":{
-                "pid":1001160,
-                "sv_wsm_waf_qps_ep_clb":4000,
-                "type":"sp_wsm_waf_qpsep_clb"
-              }
-            }
-          }]
-        })
+        this.month = 1
       }
     }
   },
   methods:{
+    queryPrice() {
+      this.axios.post(DESCRIBE_WAF_PRICE, {
+        Version: '2018-01-25',
+        ResInfo: [{
+          "goodsCategoryId":101205,
+          "regionId":1,
+          "projectId":0,
+          "goodsNum":1,
+          "payMode":1,
+          "platform":1,
+          "goodsDetail":{
+            "timeSpan": this.month,
+            "timeUnit":"m",
+            "pid":1001152,
+            "sv_wsm_waf_package_enterprise_clb":1
+            }
+          }]
+      })
+    },
     //关闭按钮
     handleClose(){
       this.dialogModel=false;

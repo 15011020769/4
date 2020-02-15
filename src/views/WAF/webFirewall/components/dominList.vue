@@ -6,10 +6,12 @@
       </div>
       <div class="dominListBtn newClear">
         <el-button class="addDomin">添加域名</el-button>
+        <el-button class="deleteBtn" @click="deleteTop">开启</el-button>
+        <el-button class="deleteBtn" @click="deleteTop">关闭</el-button>
         <el-button class="deleteBtn" @click="deleteTop">删除</el-button>
         <span>一级域名套餐已用完，<a @click="packageUpgradeModel">立即升级</a>；子域名套餐还剩余18个。</span>
         <span class="floatRight">
-          <el-input placeholder="请输入域名" v-model="tableDataName" class="searchIpt"></el-input>
+          <el-input placeholder="支持域名、负载均衡名称、监听器名称模糊搜索" v-model="tableDataName" class="searchIpt"></el-input>
           <el-button class="el-icon-search" @click="doFilter"></el-button>
         </span>
       </div>
@@ -19,14 +21,14 @@
             type="selection"
             width="55">
           </el-table-column>
-          <el-table-column prop="domin" label="域名" width="">
+          <el-table-column prop="domin" label="域名/ID" width="">
             <template slot-scope="scope">
               <!-- <a href="#" @click="toProtectSet"> -->
                 {{scope.row.domin}}
               <!-- </a> -->
             </template>
           </el-table-column>
-          <el-table-column prop="proStatus" label="防护状态" width="">
+          <el-table-column prop="proStatus" label="流量模式" width="">
             <template slot-scope="scope">
               <!-- <span href="#">{{scope.row.proStatus}}<i class="el-icon-info"></i></span> -->
               <el-tooltip content="您目前使用了高防、CDN、雲加速等代理" placement="right" effect="light">
@@ -34,13 +36,14 @@
               </el-tooltip>
             </template>
           </el-table-column>
-          <el-table-column prop="vipAddress" label="VIP地址"></el-table-column>
-          <el-table-column prop="useType" label="使用模式"></el-table-column>
-          <el-table-column prop="resouIpAdd" label="回源IP地址">
+          <el-table-column prop="vipAddress" label="区域"></el-table-column>
+          <el-table-column prop="useType" label="负载均衡（ID）"></el-table-column>
+          <el-table-column prop="resouIpAdd" label="负载均衡VIP">
             <template slot-scope="scope">
               <span>{{scope.row.resouIpAdd}}<a @click="lookResouseIp(scope.row.domin,scope.row.resouIpAdd)">查看</a></span>
             </template>
           </el-table-column>
+          <el-table-column prop="useType" label="监听器"></el-table-column>
           <el-table-column prop="logSwitch" label="访问日志开关">
             <template>
               <el-switch
@@ -75,8 +78,8 @@
                 </div>
                 <el-button slot="reference" style="color:#3E8EF7;">删除</el-button>
               </el-popover>
-              <!-- <el-button type="text" size="small" @click="handelEdit(scope.$index, scope.row)">编辑</el-button> -->
-              <!-- <el-button @click.native.prevent="toProtectSet(scope.$index, tableDataBegin)" type="text" size="small">防护配置</el-button> -->
+              <el-button type="text" size="small" @click="handelEdit(scope.$index, scope.row)">编辑</el-button>
+              <el-button @click.native.prevent="toProtectSet(scope.$index, tableDataBegin)" type="text" size="small">防护配置</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -241,9 +244,12 @@ export default {
       this.resouseIpModel=isShow;
     },
     //点击编辑按钮
-    handelEdit(){
+    handelEdit(domain){
       this.$router.push({
-        name:'editDominList'
+        name:'protectDomain',
+        params: {
+          domain,
+        }
       })
     },
     //跳转防护配置页
@@ -304,7 +310,9 @@ export default {
     .deleteBtn{
       border:1px solid #ddd;
       background-color:transparent;
-      margin-right:12px;
+      &:last-of-type {
+        margin-right:12px;
+      }
     }
     .floatRight{
       float:right;

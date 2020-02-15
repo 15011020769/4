@@ -45,7 +45,7 @@
             <div class="numRight">
               <div style="margin-bottom:15px;">
                 <p v-show="query" style="color: #999;">费用查询中...</p>
-                <p v-show="!query" style="color: #ed711f; font-size: 25px;">{{TotalCost}} 元</p>
+                <p v-show="!query" style="color: #ed711f; font-size: 25px;">NT$ {{TotalCost}}</p>
               </div>
               <el-button type="primary" :disabled="loading" size="small" @click="generateDeal">立即支付</el-button>
             </div>

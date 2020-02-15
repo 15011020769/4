@@ -50,3 +50,20 @@ export const PACKAGE_CFG_TYPES = {
       CCQps: 500000
   }
 }
+export const POLICY_RULE_ACTION = {
+  0: '放行',
+  1: '阻断',
+  2: '人机识别',
+  3: '观察',
+  4: '重定向',
+}
+export const CC_RULE_ACTION = {
+  20: '观察',
+  21: '人机识别',
+  22: '拦截',
+}
+export const CC_RULE_MATCH = {
+  0: '相等',
+  1: '前缀匹配',
+  2: '包含'
+}
