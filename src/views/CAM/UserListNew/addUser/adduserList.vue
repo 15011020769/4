@@ -797,6 +797,9 @@ export default {
           }
         });
       }
+      if (this.active == 3) {
+        this.$router.push("/UserListNew");
+      }
       if (this.active == 1) {
         if (this.phoneReg) {
           this.$message({
