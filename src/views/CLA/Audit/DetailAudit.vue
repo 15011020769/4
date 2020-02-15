@@ -68,19 +68,6 @@
             <el-form-item :label="$t('CLA.total.rzwjqz')">
               <p>{{detailData.LogFilePrefix}}</p>
             </el-form-item>
-            <el-form-item :label="$t('CLA.total.fstz')">
-              <p>{{CmqNotify[detailData.IsEnableCmqNotify]}}</p>
-            </el-form-item>
-            <el-form-item :label="$t('CLA.total.dlmc')" class="cos" v-show="detailData.IsEnableCmqNotify">
-              <p>
-                <span class="spn">{{ $t('CLA.total.dy') }}：</span>
-                {{detailData.CmqRegion}}
-              </p>
-              <p>
-                <span class="spn">{{ $t('CLA.total.mc') }}：</span>
-                {{detailData.CmqQueueName}}
-              </p>
-            </el-form-item>
           </div>
           <div class="inp-box" v-if="inpShow1">
             <el-form-item :label="$t('CLA.total.cjcct')" class="store">
@@ -114,12 +101,6 @@
               <el-form-item :label="$t('CLA.total.rzwjqz')" prop="LogFilePrefix" class="tips">
                 <el-input v-model="detailData.LogFilePrefix" :placeholder="$t('CLA.total.qsrrzwjqz')"></el-input>
                 <span>僅支持字母和數字的組合，3-40個字元。</span>
-              </el-form-item>
-              <el-form-item :label="$t('CLA.total.fstz')" class="CMQ" required>
-                <el-radio-group v-model="detailData.IsEnableCmqNotify" @change="_cmqRadio">
-                  <el-radio :label="1">{{ $t('CLA.total.s') }}</el-radio>
-                  <el-radio :label="0">{{ $t('CLA.total.f') }}</el-radio>
-                </el-radio-group>
               </el-form-item>
               <div class="set-child" v-show="setChild">
                 <el-form-item :label="$t('CLA.total.cjdl')" class="CMQ" required>
@@ -391,7 +372,9 @@
           if (res.Response.Error === undefined) {
             this.$message({
               message: "刪除成功",
-              type: "success"
+              type: "success",
+              showClose: true,
+              duration: 0
             });
             this.$router.push("/Audit");
           } else {
@@ -437,25 +420,13 @@
               IsCreateNewBucket: this.detailData.IsCreateNewBucket,
               CosRegion: this.select.name ?
                 this.select.name : this.detailData.CosRegion,
-              IsEnableCmqNotify: this.detailData.IsEnableCmqNotify,
+              IsEnableCmqNotify: 0,
               LogFilePrefix: this.detailData.LogFilePrefix
             };
             if (this.detailData.IsCreateNewBucket === 0) {
               params['CosBucketName'] = this.BucketSelect.name
             } else {
               params['CosBucketName'] = this.detailData.CosBucketName
-            }
-            if (this.detailData.IsEnableCmqNotify == 1) {
-              params["CmqQueueName"] = this.detailData.CmqQueueName;
-              params["IsCreateNewQueue"] = this.IsCreateNewQueue;
-              params["CmqRegion"] = this.cmqSelect.options[
-                this.cmqSelect.index
-              ].name;
-              params["CosRegion"] = this.select.name;
-            } else {
-              delete params.CmqQueueName;
-              delete params.CmqRegion;
-              delete params.IsCreateNewQueue;
             }
             if (
               this.detailData.CosBucketName == "" ||

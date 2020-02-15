@@ -29,7 +29,11 @@
           <tkeSearch
             exportData
             inputPlaceholder="请输入名称搜索"
+            :typeSelect="false"
+            :typeOptions="searchOptions"
             :searchInput="searchInput"
+            :typeValue="searchSelect"
+            @changeType="changeType"
             @changeInput="changeSearchInput"
             @clickSearch="clickSearch"
             @exportExcel="exportExcel"
@@ -83,13 +87,58 @@
                 class="text-green"
                 >运行中</span
               >
-              <span v-else class="text-red">已停止</span>)
+              <span
+                v-else-if="scope.row.ClusterStatus == 'Creating'"
+                class="text-green"
+                >创建中</span
+              >
+              <span v-else class="text-red">异常</span>)
             </template>
           </el-table-column>
           <el-table-column prop="nodeTotal" label="节点数">
             <template slot-scope="scope">
-              <a href="#">{{ scope.row.ClusterNodeNum }}条</a>
-              (<span class="text-green">全部正常</span>)
+              <a href="#">{{ scope.row.ClusterNodeNum }}台</a>
+              (<span
+                class="text-red"
+                v-if="
+                  listStatus[scope.$index].ClusterInstanceState ==
+                    'PartialAbnormal'
+                "
+                >部分异常</span
+              >
+              <span
+                class="text-green"
+                v-else-if="
+                  listStatus[scope.$index].ClusterInstanceState == 'AllNormal'
+                "
+                >全部正常</span
+              >)
+              <el-popover
+                width="50"
+                trigger="hover"
+                placement="top"
+                v-if="
+                  listStatus[scope.$index].ClusterInstanceState ==
+                    'PartialAbnormal'
+                "
+              >
+                <div class="node-popover">
+                  <p>
+                    GetTkeDataResult 创建中：{{
+                      listStatus[scope.$index].ClusterInitNodeNum
+                    }}台
+                  </p>
+                  <p>
+                    运行中：{{
+                      listStatus[scope.$index].ClusterRunningNodeNum
+                    }}台
+                  </p>
+                  <p>
+                    异常：{{ listStatus[scope.$index].ClusterFailedNodeNum }}台
+                  </p>
+                </div>
+                <i class="el-icon-warning-outline" slot="reference"></i>
+              </el-popover>
             </template>
           </el-table-column>
           <el-table-column prop="address" label="已分配/总配置">
@@ -191,14 +240,16 @@
             <p>集群测试</p>
           </el-form-item>
           <el-form-item label="新名称">
-            <el-input size="small" placeholder="请输入新名称"></el-input>
+            <el-input
+              size="small"
+              placeholder="请输入新名称"
+              v-model="editSearchVal"
+            ></el-input>
           </el-form-item>
         </el-form>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="editNameDialogVisible = false"
-          >提交</el-button
-        >
+        <el-button type="primary" @click="setColonyName">提交</el-button>
         <el-button @click="editNameDialogVisible = false">取消</el-button>
       </span>
     </el-dialog>
@@ -212,13 +263,14 @@
 // import XLSX from "xlsx";
 import tkeSearch from "@/views/TKE/components/tkeSearch";
 import Loading from "@/components/public/Loading";
-
+import { ErrorTips } from "@/components/ErrorTips";
 import {
   ALL_CITY,
   ALL_PROJECT,
-  COLONY_LIST,
-  COLONY_STATUS,
-  COLONY_DES
+  TKE_COLONY_LIST,
+  TKE_COLONY_STATUS,
+  TKE_COLONY_DES,
+  TKE_COLONY_DELETE
 } from "@/constants";
 export default {
   name: "colony",
@@ -226,10 +278,12 @@ export default {
     return {
       loadShow: true, // 加载是否显示
       list: [], // 集群列表
+      listStatus: [], // 集群列表节点数状态
+      editClusterId: "",
+      editSearchVal: "", // 编辑名称
       total: 0,
       pageSize: 10,
       pageIndex: 0,
-
       searchSelect: "",
       searchInput: "",
       editNameDialogVisible: false,
@@ -272,12 +326,23 @@ export default {
         Limit: this.pageSize,
         Offset: this.pageIndex
       };
-      const res = await this.axios.post(COLONY_LIST, params);
-      if (res.Error) {
-        console.log(res);
-        this.loadShow = false;
-      } else {
-        // console.log(res)
+      if (this.searchInput !== "") {
+        params["Filters.0.Name"] = "ClusterName";
+        params["Filters.0.Values.0"] = this.searchInput;
+      }
+      // if (
+      //   (this.searchInput !== "" && this.searchSelect == "name") ||
+      //   (this.searchInput !== "" && this.searchSelect === "")
+      // ) {
+      //   params["Filters.0.Name"] = "ClusterName";
+      //   params["Filters.0.Values.0"] = this.searchInput;
+      // }
+      // if (this.searchInput !== '' && this.searchSelect == 'age') {
+      //   params['Filters.0.Name'] = 'Tags'
+      //   params['Filters.0.Values.0'] = this.searchInput
+      // }
+      const res = await this.axios.post(TKE_COLONY_LIST, params);
+      if (res.Response.Error === undefined) {
         if (res.Response.Clusters.length > 0) {
           let ids = [];
           res.Response.Clusters = res.Response.Clusters.map(item => {
@@ -285,23 +350,49 @@ export default {
             return item;
           });
           this.total = res.Response.TotalCount;
-          // console.log(ids);
-          // this.getColonyStatus(ids);
         }
         this.list = res.Response.Clusters;
         console.log(this.list);
         this.loadShow = false;
+        this.getColonyStatus();
+      } else {
+        this.loadShow = false;
+        let ErrTips = {
+          InternalError: "内部错误",
+          "InternalError.CamNoAuth": "没有权限。",
+          "InternalError.Db": "db错误。",
+          "InternalError.DbAffectivedRows": "DB错误",
+          "InternalError.Param": "Param。",
+          "InternalError.PublicClusterOpNotSupport": "集群不支持当前操作。",
+          "InternalError.QuotaMaxClsLimit": "超过配额限制。",
+          "InternalError.QuotaMaxNodLimit": "超过配额限制。",
+          InvalidParameter: "参数错误",
+          "InvalidParameter.Param": "参数错误。",
+          LimitExceeded: "超过配额限制",
+          ResourceNotFound: "资源不存在"
+        };
+        let ErrOr = Object.assign(ErrorTips, ErrTips);
+        this.$message({
+          message: ErrOr[res.Response.Error.Code],
+          type: "error",
+          showClose: true,
+          duration: 0
+        });
       }
     },
     // 获取集群列表状态(不对外单独提供文档,所以无法实现)
-    async getColonyStatus(ids) {
+    async getColonyStatus() {
       let params = {
-        ClusterIds: ids,
         Version: "2018-05-25"
       };
-      const res = await this.axios.post(COLONY_STATUS, params);
-      console.log(res);
-      return res;
+      if (this.searchInput !== "") {
+        for (var i in this.list) {
+          params["ClusterIds." + i] = this.list[i].ClusterId;
+        }
+      }
+      const res = await this.axios.post(TKE_COLONY_STATUS, params);
+      this.listStatus = res.Response.ClusterStatusSet;
+      console.log(this.listStatus);
     },
     // 分页
     handleCurrentChange(val) {
@@ -315,18 +406,19 @@ export default {
       this.getColonyList();
     },
     // 修改集群名称
-    // setColonyName (row) {
-    //   const param = {
-    //     reponame: row.reponame,
-    //     repotype: row.repotype
-    //   }
-    //   this.axios.post(COLONY_DES, param).then(res => {
-    //     if (res.code === 0) {
-    //       this.loadShow = true
-    //       this.GetRepositoryList()
-    //     }
-    //   })
-    // },
+    setColonyName(row) {
+      const param = {
+        Version: "2018-05-25",
+        ClusterId: this.editClusterId,
+        ClusterName: this.editSearchVal
+      };
+      this.axios.post(TKE_COLONY_DES, param).then(res => {
+        this.editNameDialogVisible = false;
+
+        this.loadShow = true;
+        this.getColonyList();
+      });
+    },
     // 创建集群跳转
     goColonyCreate() {
       this.$router.push({
@@ -348,7 +440,7 @@ export default {
     // 编辑集群弹窗相关
     showEditNameDlg(row) {
       this.editNameDialogVisible = true;
-      this.setColonyName(row);
+      this.editClusterId = row.ClusterId;
     },
 
     // 新建节点跳转
@@ -391,7 +483,11 @@ export default {
         this.btnload = false;
       });
     },
-
+    // 监听搜索条件的值
+    changeType(val) {
+      this.searchSelect = val;
+      console.log(this.searchSelect);
+    },
     // 监听搜索框的值
     changeSearchInput(val) {
       this.searchInput = val;
@@ -400,7 +496,7 @@ export default {
     // 点击搜索
     clickSearch(val) {
       this.searchInput = val;
-      console.log(this.searchInput);
+      this.getColonyList();
     },
 
     // 导出表格
@@ -431,6 +527,21 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+//
+.node-popover {
+  font-size: 12px;
+  color: #000;
+  p {
+    line-height: 20px;
+  }
+}
+.el-icon-warning-outline {
+  font-size: 14px;
+  font-weight: 700;
+  color: #444;
+  position: relative;
+  top: 2px;
+}
 // 弹窗相关
 .tag-danger {
   display: inline-block;

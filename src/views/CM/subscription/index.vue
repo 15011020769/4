@@ -1,6 +1,6 @@
 <template>
   <div class="subscription-wrap">
-    <Header title="平臺事件訂閱" />
+    <Header title="平台事件訂閱" />
     <div class="table">
       <p class="boxLi">
         <i class="el-icon-arrow-down"></i>

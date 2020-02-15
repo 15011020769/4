@@ -621,7 +621,7 @@ export default {
               "InvalidParameter.ParamError": "非法入參",
               "InvalidParameter.PasswordViolatedRules":
                 "密碼不符合用戶安全設置",
-              "InvalidParameter.SubUserFull": "子帳號數量達到上限",
+              "InvalidParameter.SubUserFull": "子賬號數量達到上限",
               "InvalidParameter.SubUserNameInUse": "子用戶名稱重複"
             };
             let ErrOr = Object.assign(ErrorTips, ErrTips);
@@ -796,6 +796,9 @@ export default {
             this._userGroup(item.GroupId);
           }
         });
+      }
+      if (this.active == 3) {
+        this.$router.push("/UserListNew");
       }
       if (this.active == 1) {
         if (this.phoneReg) {
