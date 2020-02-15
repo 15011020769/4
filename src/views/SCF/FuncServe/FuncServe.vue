@@ -179,6 +179,9 @@
           Limit: this.pagesize,
           Namespace: this.SpaceValue
         };
+        if (this.ChoiceValue !== '' && this.searchValue !== '') {
+          param[this.ChoiceValue] = this.searchValue
+        }
         this.axios.post(SCF_LIST, param).then(res => {
           if (res.Response.Error == undefined) {
             this.FuncList = res.Response.Functions
@@ -216,7 +219,6 @@
         this.axios.post(NAME_SPACE_LIST, param).then(res => {
           if (res.Response.Error == undefined) {
             let SpaceList = res.Response.Namespaces.reverse()
-            console.log(SpaceList)
             SpaceList.forEach(item => {
               this.SpaceListK.push({
                 name: item.Name,
@@ -236,7 +238,6 @@
                 })
               }
             });
-            console.log(this.SpaceListK)
           } else {
             let ErrTips = {
               'InvalidParameterValue.Filters': 'Filters参数错误',
@@ -256,11 +257,22 @@
       },
       //搜索
       _search() {
-
+        if (this.ChoiceValue !== '' && this.searchValue !== '') {
+          this._GetFuncList()
+        } else {
+          this.$message({
+            message: '请选择过滤条件且输入搜索值',
+            type: "warning",
+            showClose: true,
+            duration: 0
+          });
+        }
       },
       // 搜索框内容为空
       _searchchange() {
-
+        if (this.searchValue === '') {
+          this._GetFuncList()
+        }
       },
       // 分页
       handleCurrentChange(val) {
