@@ -56,16 +56,37 @@ export const GET_TAGLIST = 'ccr/GetTagList'
 export const DELETE_BATCHDELETEFAVOR = 'ccr/BatchDeleteFavor'
 
 // 获取集群列表
-export const COLONY_LIST = 'tke2/DescribeClusters'
-
-// 修改集群列表
-export const COLONY_DES = 'ccs/ModifyClusterAttributes'
+export const TKE_COLONY_LIST = 'tke2/DescribeClusters'
 
 // 获取集群列表状态
-export const COLONY_STATUS = 'tke2/DescribeClusterStatus'
+export const TKE_COLONY_STATUS = 'tke2/DescribeClusterStatus'
 
-// 获取集群列表
-export const WARNING_GetUSER = 'tke2/DescribeClusters'
+// 修改集群列表名称
+export const TKE_COLONY_DES = 'tke2/ModifyClusterAttribute'
+
+// 删除集群
+export const TKE_COLONY_DELETE = 'tke/DeleteCluster'
+
+// 新建集群 Kubernetes版本
+export const TKE_NEW_EDITION = 'tke2/DescribeVersions'
+
+// 新建集群 集群网络
+export const TKE_VPC_METWORK = 'vpc2/DescribeVpcs'
+
+// 新建集群 操作系统
+export const TKE_OPERAT_SYSTEM = 'tke2/DescribeImages'
+
+// 新建集群 节点来源 已有节点
+export const TKE_EXIST_NODES = 'cvm2/DescribeInstances'
+
+// 新建集群 Worker 配置 节点网络
+export const TKE_Worker_METWORK = 'vpc2/DescribeSubnets'
+
+// 新建集群 SSH密钥
+export const TKE_SSH = 'cvm2/DescribeKeyPairs'
+
+// 新建集群 创建集群
+export const TKE_CREATW_CLUSTERS = 'tke2/CreateCluster'
 
 // 获取集群详细信息
 export const WARNING_GetCOLONY = 'tke2/DescribeAlarmPolicies'
@@ -88,8 +109,6 @@ export const MODIFY_ATTRIBUTE = 'tke2/ModifyClusterAsGroupOptionAttribute'
 // 弹性伸缩组-伸缩组列表信息  --------不可用
 export const AUTOSCALING_GROUPS = 'as2/DescribeAutoScalingGroups'
 
-
-
 // export const CLUSTERS_INSTANCES = 'tke2/DescribeCcnInstances'
 
 // export const CLUSTERS_REQUEST = 'tke2/ForwardRequest'
@@ -103,6 +122,3 @@ export const CreateListGroups = 'cam/ListGroups'
 
 // 获取节点管理
 export const POINT_REQUEST = 'tke2/ForwardRequest'
-
-
-
