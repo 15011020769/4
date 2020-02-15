@@ -44,9 +44,9 @@
       </div>
       <div class="tableCoontent">
         <div class="tableList">
-          <el-table ref="multipleTable" :data="tableDataBegin.slice((currpage - 1) * pagesize, currpage * pagesize)"
-            tooltip-effect="dark" style="width: 100%" @selection-change="handleSelectionChange" height="450"
-            v-loading="loading" :empty-text="$t('KMS.total.zwsj')">
+          <el-table ref="multipleTable" :data="tableDataBegin" tooltip-effect="dark" style="width: 100%"
+            @selection-change="handleSelectionChange" height="450" v-loading="loading"
+            :empty-text="$t('KMS.total.zwsj')">
             <el-table-column type="selection" width="55"></el-table-column>
             <el-table-column prop="KeyId" :label="$t('KMS.total.label1')">
               <template slot-scope="scope">
@@ -119,7 +119,7 @@
         </el-dialog>
         <div class="Right-style pagstyle">
           <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;{{$t('KMS.total.tiao')}}</span>
-          <el-pagination :page-size="pagesize" :pager-count="7" layout="prev, pager, next"
+          <el-pagination :page-size="pageSize" :pager-count="7" layout="prev, pager, next"
             @current-change="handleCurrentChange" :total="TotalCount">1</el-pagination>
         </div>
       </div>
@@ -146,9 +146,6 @@
     data() {
       return {
         loading: true,
-        TotalCount: 0,
-        pagesize: 10,
-        currpage: 1,
         thisAddress: "台灣台北",
         //kms弹出框
         KMSchange: false,
@@ -159,24 +156,16 @@
         state: "", //状态
         tableDataName: "",
         tableDataBegin: [],
-        tableDataName: "",
         tableDataEnd: [],
-        currentPage: 1,
+        TotalCount: 0,
+        currentPage: 0,
         pageSize: 10,
-        totalItems: 0,
         filterTableDataEnd: [],
         flag: false,
         multipleSelection: [],
         deleteIndex: "",
         deleteBegin: {},
         dialogVisible: false, //新建模态框
-        allData: [{
-          KeyId: "1235468165",
-          Alias: "222",
-          KeyState: "已啟用",
-          CreateTime: "5696523658",
-          Origin: "外部"
-        }],
         createForm: {
           name: "",
           discription: "",
@@ -218,7 +207,7 @@
         }
       },
       handleCurrentChange(val) {
-        this.currpage = val;
+        this.currentPage = val * this.pageSize - this.pageSize
         this.getData();
       },
       //取消
@@ -368,32 +357,21 @@
       //获取主密钥列表
       getData() {
         this.loading = true;
-        var cookies = document.cookie;
-        var list = cookies.split(";");
-        for (var i = 0; i < list.length; i++) {
-          var arr = list[i].split("=");
-        }
         let params = {
           Version: "2019-01-18",
           Region: localStorage.getItem("regionv2"),
-          Limit: 100
+          Offset: this.currentPage,
+          Limit: this.pageSize
         };
+        if (this.tableDataName !== '') {
+          params['SearchKeyAlias'] = this.tableDataName
+        }
         //获取主密钥列表详情
         this.axios.post(KMS_LIST, params).then(res => {
           if (res.Response.Error === undefined) {
             var DataList = res.Response.KeyMetadatas;
             this.TotalCount = res.Response.TotalCount;
             this.tableDataBegin = DataList;
-            this.allData = DataList;
-            // 将数据的长度赋值给totalItems
-            this.totalItems = this.tableDataBegin.length;
-            if (this.totalItems > this.pageSize) {
-              for (let index = 0; index < this.pageSize; index++) {
-                this.tableDataEnd.push(this.tableDataBegin[index]);
-              }
-            } else {
-              this.tableDataEnd = this.tableDataBegin;
-            }
           } else {
             let ErrTips = {
               "InternalError": '內部錯誤',
@@ -413,44 +391,7 @@
       },
       //搜索
       doFilter() {
-        this.tableDataBegin = this.allData;
-        //每次手动将数据置空,因为会出现多次点击搜索情况
-        this.filterTableDataEnd = [];
-        this.tableDataBegin.forEach((val, index) => {
-          if (val.KeyId) {
-            if (
-              val.KeyId.indexOf(this.tableDataName) == 0 ||
-              val.Alias.indexOf(this.tableDataName) == 0
-            ) {
-              this.filterTableDataEnd.push(val);
-              this.tableDataBegin = this.filterTableDataEnd;
-              this.TotalCount = this.tableDataBegin.length;
-            } else {
-              this.filterTableDataEnd.push();
-              this.tableDataBegin = this.filterTableDataEnd;
-              this.TotalCount = this.tableDataBegin.length;
-            }
-          }
-        });
-        //页面数据改变重新统计数据数量和当前页
-        this.currpage = 1;
-        this.totalItems = this.filterTableDataEnd.length;
-        //渲染表格,根据值
-        this.currentChangePage(this.filterTableDataEnd);
-
-        //页面初始化数据需要判断是否检索过
-        this.flag = true;
-      },
-      //组件自带监控当前页码
-      currentChangePage(list) {
-        let from = (this.currentPage - 1) * this.pageSize;
-        let to = this.currentPage * this.pageSize;
-        this.tableDataEnd = [];
-        for (; from < to; from++) {
-          if (list[from]) {
-            this.tableDataEnd.push(list[from]);
-          }
-        }
+        this.getData()
       },
       handleClose() {
         this.dialogVisible = false;
@@ -537,7 +478,6 @@
       },
       //跳转详情页
       todoDetails(projeatRow) {
-        // console.log(projeatRow)
         let params = {
           Alias: projeatRow.Alias,
           CreateTime: this.timestampToTime(projeatRow.CreateTime),
