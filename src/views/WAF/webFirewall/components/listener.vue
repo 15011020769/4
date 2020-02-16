@@ -6,7 +6,7 @@
         <label class="label">地域</label>
       </el-col>
       <el-col>
-        <el-button type="primary" size="small">台北</el-button>
+        <el-button type="primary" size="small">台北<span v-show="selectedTotal > 0">（{{selectedTotal}}）</span></el-button>
       </el-col>
     </el-row>
     <el-row type="flex" class="col">
@@ -19,30 +19,51 @@
             <li v-for="item in clbs" :key="item.LoadBalancerId">
               <p>
                 <span>{{item.LoadBalancerName}}（{{item.LoadBalancerId}}）</span>
-                <el-button type="text" @click="openListenDialog(item.LoadBalancerId)">选择监听器</el-button>
+                <el-button type="text" @click="openListenDialog(item)">
+                  <span v-if="item.checkedListeners.length">
+                    重新选择
+                  </span>
+                  <span>
+                    选择监听器
+                  </span>
+                </el-button>
               </p>
-              <p class="selcted">已选择0个</p>
+              <p class="selcted ellipsis">
+                已选择{{item.checkedListeners.length}}个
+                <span v-if="item.checkedListeners.length">
+                  : {{item.checkedListeners.map(checkedListener => checkedListener.ListenerName).join('，')}}
+                </span>
+              </p>
             </li>
           </ul>
+      </el-col>
+    </el-row>
+    <el-row type="flex" class="col">
+      <el-col :span="3">
+      </el-col>
+      <el-col>
+         <el-button type="primary" @click="add">完成</el-button>
       </el-col>
     </el-row>
     <el-dialog
       title="选择监听器"
       :visible.sync="dialogVisible"
+      @close="beforeClose"
       width="840px"
     >
       <el-row type="flex" :gutter="10" class="dialog-container">
         <el-col>
-          <el-input class="listener-input" placeholder="请输入关键字" />
+          <el-input class="listener-input" v-model="keyword" placeholder="请输入关键字" />
           <ul class="listener-container">
             <li v-for="item in listeners" :key="item.ListenerId">
               <label>
                 <div class="listen">
-                  <el-checkbox />
-                  <div>
-                    <p>{{item.ListenerName}}</p>
-                    <p>http:aa.aa</p>
-                  </div>
+                  <el-checkbox :label="item.ListenerId" v-model="checkedListenerIds">
+                    <div>
+                      <p class="ellipsis">{{item.ListenerName}}({{item.ListenerId}})</p>
+                      <p>{{item.Protocol.toLowerCase()}}://{{domain.domain}}:{{item.Port}}</p>
+                    </div>
+                  </el-checkbox>
                 </div> 
               </label>
             </li>
@@ -55,33 +76,61 @@
         </div>
         <el-col>
           <ul class="listener-container selected-listener-container">
-            <li v-for="item in listeners" :key="item.ListenerId">
+            <li v-for="item in checkedListeners" :key="item.ListenerId">
               <div class="listen">
                 <div>
-                  <p>{{item.ListenerName}}</p>
-                  <p>http:aa.aa</p>
+                  <p class="ellipsis">{{item.ListenerName}}({{item.ListenerId}})</p>
+                  <p>{{item.Protocol.toLowerCase()}}://{{domain.domain}}:{{item.Port}}</p>
                 </div>
-                <i class="el-icon-close del-listener"></i>
+                <i class="el-icon-close del-listener" @click="remove(item.ListenerId)"></i>
               </div> 
             </li>
           </ul>
         </el-col>
       </el-row>
-        <el-button slot="footer" type="primary" @click="dialogVisible = false">确 定</el-button>
+      <el-row class="dialog-footer">
+        <el-button size="small" type="primary" @click="confirm">确 定</el-button>
+      </el-row>
     </el-dialog>
   </div>
 </template>
 <script>
-import { CLB_LIST, DESCRIBE_LISTENERS } from '@/constants'
+import { CLB_LIST, DESCRIBE_LISTENERS, CREATE_HOST } from '@/constants'
 import { ErrorTips } from '@/components/ErrorTips'
-
+import { COMMON_ERROR } from '../../constants'
+import { flatObj } from '@/utils'
 export default {
+  props: {
+    domain: Object
+  },
+  computed: {
+    selectedTotal() {
+      return this.clbs.map(clb => clb.checkedListeners).flat().length
+    }
+  },
   data() {
     return {
+      selectedCLB: {},
+      keyword: '',
       clbs: [],
       listeners: [],
+      listenersCopy: [],
+      checkedListeners: [],
+      checkedListenerIds: [],
       dialogVisible: false,
     }
+  },
+  watch: {
+    checkedListenerIds(n) {
+      this.checkedListeners = this.listeners.filter(listener => n.includes(listener.ListenerId))
+    },
+    keyword(n) {
+      if (n.trim()) {
+        this.listeners = this.listenersCopy.filter(listener => listener.ListenerName.includes(n.trim()))
+      } else {
+        this.listeners = this.listenersCopy
+      }
+    },
   },
   mounted() {
     this.axios.post(CLB_LIST, {
@@ -100,18 +149,86 @@ export default {
           duration: 0
         });
       } else {
-        this.clbs = Response.LoadBalancerSet
+        const clbs = Response.LoadBalancerSet
+        clbs.forEach(clb => {
+          clb.checkedListeners = []
+        })
+        this.clbs = clbs
       }
     })
   },
   methods: {
-    openListenDialog(lbId) {
-      this.queryListener(lbId)
+    add() {
+      const lbset = []
+      this.clbs.forEach(clb => {
+        lbset.push(
+          ...clb.checkedListeners.map(listener => ({
+            ListenerId: listener.ListenerId,
+            ListenerName: listener.ListenerName,
+            Vport: listener.Port,
+            Protocol: listener.Protocol,
+            LoadBalancerId: clb.LoadBalancerId,
+            LoadBalancerName: clb.LoadBalancerName,
+            Vip: clb.LoadBalancerVips[0],
+            Zone: '',
+            Region: 'gz',
+          }))
+        )
+      })
+      const r = {}
+      flatObj({
+        Version: '2018-01-25',
+        Host: {
+          Domain: this.domain.domain,
+          IsCdn: this.domain.cdn,
+          Region: 'gz',
+          LoadBalancerSet: lbset,
+          DomainId: '',
+        }
+      }, '', r)
+      this.axios.post(CREATE_HOST, r).then(({ Response }) => {
+        if (Response.Error) {
+          let ErrOr = Object.assign(ErrorTips, COMMON_ERROR)
+          this.$message({
+            message: ErrOr[Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          })
+        } else {
+          this.$message({
+            message: '添加成功',
+            type: "success",
+            showClose: true,
+            duration: 0
+          })
+          this.push('/protectionSettings')
+        }
+      })
+    },
+    confirm() {
+      const clb = this.clbs.find(clb => clb.LoadBalancerId === this.selectedCLB.LoadBalancerId)
+      clb.checkedListeners = [...this.checkedListeners]
+      this.dialogVisible = false
+    },
+    beforeClose() {
+      this.selectedCLBId = ''
+      this.checkedListenerIds = []
+      this.checkedListeners = []
+      this.listeners = []
+      this.listenersCopy = []
+    },
+    remove(listenerId) {
+      this.checkedListenerIds = this.checkedListenerIds.filter(checkedListenerId => checkedListenerId !== listenerId)
+    },
+    openListenDialog(clb) {
+      this.selectedCLB = clb
+      this.queryListener()
       this.dialogVisible = true
     },
-    queryListener(lbId) {
+    queryListener() {
       this.axios.post(DESCRIBE_LISTENERS, {
-        LoadBalancerId: lbId,
+        LoadBalancerId: this.selectedCLB.LoadBalancerId,
         Version: '2018-03-17',
         Region: 'ap-guangzhou',
       }).then(({ Response }) => {
@@ -123,7 +240,10 @@ export default {
             duration: 0
           });
         } else {
-          this.listeners = Response.Listeners
+          const listeners = Response.Listeners.filter(listener => listener.Rules && listener.Rules.some(rule => rule.Domain === this.domain.domain))
+          this.listeners = listeners
+          this.listenersCopy = listeners
+          this.checkedListenerIds = [...this.selectedCLB.checkedListeners.map(checkedListener => checkedListener.ListenerId)]
         }
       })
     }
@@ -190,12 +310,25 @@ export default {
     align-items: center;
     padding: 5px 0;
     cursor: pointer;
+    ::v-deep .el-checkbox {
+      display: flex;
+      align-items: center;
+    }
     label {
       margin-right: 10px;
     }
     p {
       height: auto;
       line-height: 20px;
+      font-size: 12px;
+      &:first-of-type {
+        width: 335px;
+        display: block;
+        color: #404a58;
+      }
+      &:last-of-type {
+        color: #bbb;
+      }
     }
   }
 }
@@ -207,10 +340,23 @@ export default {
     cursor: default;
   }
 }
+.selcted {
+  color: #bbb;
+}
+.ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 .direction {
   transform: translateY(50%);
 }
 .del-listener {
   cursor: pointer;
+}
+.dialog-footer {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
 }
 </style>

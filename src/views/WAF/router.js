@@ -42,9 +42,9 @@ export default new Router({
       }
     },
     {
-      path: '/toProtectSet', // 攻击详情防护配置页面
-      name: 'toProtectSet',
-      component: () => import(/* webpackChunkName: "ipMan" */ './webFirewall/components/toProtectSet.vue'),
+      path: '/protectConfig', // 攻击详情防护配置页面
+      name: 'protectConfig',
+      component: () => import(/* webpackChunkName: "ipMan" */ './webFirewall/protectConfig.vue'),
       meta: {
         keepAlive: true,
         leftNav:true

@@ -12,10 +12,13 @@
       <el-col>
         <el-input class="domin-input" v-model="domain">
           <i v-if="notExists === 1"
-          class="el-icon-circle-check el-input__icon"
-          slot="suffix"
-          >
-        </i>
+            class="el-icon-circle-check el-input__icon"
+            slot="suffix"
+          />
+          <i v-if="notExists === 2"
+            class="el-icon-loading el-input__icon"
+            slot="suffix"
+          />
       </el-input> <span class="error">{{error}}</span>
       </el-col>
     </el-row>
@@ -24,9 +27,9 @@
         <label class="label">代理情况</label>
       </el-col>
       <el-col>
-         <el-radio-group v-model="proxy">
-          <el-radio label="否"></el-radio>
-          <el-radio label="是"></el-radio>
+         <el-radio-group v-model="cdn">
+          <el-radio :label="0">否</el-radio>
+          <el-radio :label="1">是</el-radio>
         </el-radio-group>
         <p class="tip">是否已使用了高防、CDN、雲加速等代理？</p>
       </el-col>
@@ -52,7 +55,7 @@ export default {
   data(){
     return{
       domain: '',
-      proxy: '否',
+      cdn: 0,
       error: '',
       notExists: 0
     }
@@ -67,8 +70,13 @@ export default {
     //保存按钮
     next(){
       if (this.notExists === 1) {
-        this.$emit('next', this.domain)
+        this.$emit('next', {
+          domain: this.domain,
+          cdn: this.cdn
+        })
+        return
       }
+      this.notExists = 2
       const domain = this.domain.trim()
       if (!domain) {
         this.error = '域名不能为空'

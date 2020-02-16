@@ -11,8 +11,8 @@
             <el-step title="选择监听器" ></el-step>
           </el-steps>
         </div>
-        <domain @next="active=2" v-show="active === 1" />
-        <listener v-show="active === 2" />
+        <domain @next="next" v-show="active === 1" />
+        <listener :domain="domain" v-show="active === 2" />
       </div>
     </div>
   </div>
@@ -26,14 +26,22 @@ import Listener from './components/listener'
 export default {
   data() {
     return {
-      active: 2
+      active: 1,
+      domain: {}
     }
   },
   components: {
     Domain,
     Listener
   },
+  mounted: {
+    
+  },
   methods: {
+    next(obj) {
+      this.active = 2
+      this.domain = obj
+    },
     backListDomin() {
       this.$router.go(-1)
       if (!t && r.isPanDomain(e)) {

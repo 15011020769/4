@@ -52,7 +52,7 @@ import RenewModel from './model/RenewModel'
 import dominList from './components/dominList'
 import buyLogBackModel from './model/buyLogBackModel'
 import qpsBackModel from './model/qpsBackModel'
-import { DESCRIBE_USER_INFO, DESCRIBE_SPARTA_PROTECTIONLIST, DESCRIBE_WAF_PRICE } from '@/constants'
+import { DESCRIBE_USER_INFO, DESCRIBE_WAF_PRICE } from '@/constants'
 import { ErrorTips } from "@/components/ErrorTips"
 import { PACKAGE_CFG_TYPES, COMMON_ERROR } from '../constants'
 
@@ -84,7 +84,6 @@ export default {
   methods:{
     init() {
       this.getPackage()
-      this.queryDomain()
     },
     getPackage() {
       this.axios.post(DESCRIBE_USER_INFO, {
@@ -103,27 +102,27 @@ export default {
         });
       })
     },
-    queryDomain() {
-      this.axios.post(DESCRIBE_SPARTA_PROTECTIONLIST, {
-        Version: '2018-01-25',
-        Paging: {
-          Index: 1,
-          Count: 10
-        }
-      }).then(res => {
-        if (!Response.Error) {
-          this.domains = Response.Data
-          return
-        }
-        let ErrOr = Object.assign(ErrorTips, ErrTips)
-        this.$message({
-          message: ErrOr[Response.Error.Code],
-          type: "error",
-          showClose: true,
-          duration: 0
-        });
-      })
-    },
+    // queryDomain() {
+    //   this.axios.post(DESCRIBE_SPARTA_PROTECTIONLIST, {
+    //     Version: '2018-01-25',
+    //     Paging: {
+    //       Index: 1,
+    //       Count: 10
+    //     }
+    //   }).then(res => {
+    //     if (!Response.Error) {
+    //       this.domains = Response.Data
+    //       return
+    //     }
+    //     let ErrOr = Object.assign(ErrorTips, ErrTips)
+    //     this.$message({
+    //       message: ErrOr[Response.Error.Code],
+    //       type: "error",
+    //       showClose: true,
+    //       duration: 0
+    //     });
+    //   })
+    // },
     //升级按钮
     packageUpgradeModel(){
       this.packageUpModelShow=true;
