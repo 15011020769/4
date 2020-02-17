@@ -172,9 +172,6 @@
       };
       var LogFilePrefix = (rule, value, callback) => {
         var reg = /^[a-zA-Z0-9]{3,40}$/;
-        if (!value) {
-          callback();
-        }
         setTimeout(() => {
           if (!reg.test(value)) {
             callback(new Error("僅支持字母和數字的組合，3-40個字元。"));
@@ -662,7 +659,9 @@
           if (res.Response.Error === undefined) {
             this.$message({
               message: "更新成功",
-              type: "success"
+              type: "success",
+              showClose: true,
+              duration: 0
             });
             this.inpShow = false;
           } else {
