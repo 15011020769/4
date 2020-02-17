@@ -12,12 +12,20 @@ export default new Router({
   routes: [
     {
       path: '/',
-      redirect: '/userKms'
+      redirect: '/Opening'
+    },
+    {
+      path: '/Opening', // 用户密钥
+      name: 'Opening',
+      component: () => import('./userKms/Opening.vue'),
+      meta: {
+        keepAlive: true
+      }
     },
     {
       path: '/userKms', // 用户密钥
       name: 'userKms',
-      component: () => import ('./userKms/userKms.vue'),
+      component: () => import('./userKms/userKms.vue'),
       meta: {
         keepAlive: true
       }
@@ -25,7 +33,7 @@ export default new Router({
     {
       path: '/userKmsDetails', // 用户密钥详情页
       name: 'userKmsDetails',
-      component: () => import ('./userKms/userKmsDetails.vue'),
+      component: () => import('./userKms/userKmsDetails.vue'),
       meta: {
         keepAlive: true
       }
@@ -33,7 +41,7 @@ export default new Router({
     {
       path: '/cloudsKms', // 用户密钥
       name: 'cloudsKms',
-      component: () => import ('./cloudsKms/cloudsKms'),
+      component: () => import('./cloudsKms/cloudsKms'),
       meta: {
         keepAlive: true
       }

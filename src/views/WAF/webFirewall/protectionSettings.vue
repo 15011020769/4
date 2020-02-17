@@ -40,7 +40,7 @@
     </div>
     <packageUpgradeModel :isShow="packageUpModelShow" @packageUpModelClose="packageUpModelClose"/>
     <buyDominPack :isShow="buyDominModelShow" @buyDominPacModelClose="buyDominPacModelClose"/>
-    <RenewModel :isShow="RenewModelShow" @renewModelClose="renewModelClose"/>
+    <RenewModel :isShow="RenewModelShow" :package="package" @renewModelClose="renewModelClose"/>
     <buyLogBackModel :isShow="buyLogBackModel" @closeLogBackModel="closeLogBackModel"/>
     <qpsBackModel :isShow="qpsBackModel" @closeqpsModel="closeqpsModel"/>
   </div>
@@ -52,25 +52,10 @@ import RenewModel from './model/RenewModel'
 import dominList from './components/dominList'
 import buyLogBackModel from './model/buyLogBackModel'
 import qpsBackModel from './model/qpsBackModel'
-import { DESCRIBE_USER_INFO, DESCRIBE_SPARTA_PROTECTIONLIST, DESCRIBE_WAF_PRICE } from '@/constants'
+import { DESCRIBE_USER_INFO, DESCRIBE_WAF_PRICE } from '@/constants'
 import { ErrorTips } from "@/components/ErrorTips"
-import { PACKAGE_CFG_TYPES } from '../constants'
+import { PACKAGE_CFG_TYPES, COMMON_ERROR } from '../constants'
 
-const ErrTips = {
-  'FailedOperation': '操作失败。',
-  'InternalError': '内部错误。',
-  'InvalidParameter': '参数错误。',
-  'InvalidParameterValue': '参数取值错误。',
-  'LimitExceeded': '超过配额限制。',
-  'MissingParameter': '缺少参数错误。',
-  'ResourceInUse': '资源被占用。',
-  'ResourceInsufficient': '资源不足。',
-  'ResourceNotFound': '资源不存在。',
-  'ResourceUnavailable': '资源不可用。',
-  'ResourcesSoldOut': '资源售罄。',
-  'UnauthorizedOperation': '未授权操作。',
-  'UnknownParameter': '未知参数错误。',
-}
 export default {
   data(){
     return{
@@ -99,7 +84,6 @@ export default {
   methods:{
     init() {
       this.getPackage()
-      this.queryDomain()
     },
     getPackage() {
       this.axios.post(DESCRIBE_USER_INFO, {
@@ -109,7 +93,7 @@ export default {
           this.package = Response.Data
           return
         }
-        let ErrOr = Object.assign(ErrorTips, ErrTips)
+        let ErrOr = Object.assign(ErrorTips, COMMON_ERROR)
         this.$message({
           message: ErrOr[Response.Error.Code],
           type: "error",
@@ -118,27 +102,27 @@ export default {
         });
       })
     },
-    queryDomain() {
-      this.axios.post(DESCRIBE_SPARTA_PROTECTIONLIST, {
-        Version: '2018-01-25',
-        Paging: {
-          Index: 1,
-          Count: 10
-        }
-      }).then(res => {
-        if (!Response.Error) {
-          this.domains = Response.Data
-          return
-        }
-        let ErrOr = Object.assign(ErrorTips, ErrTips)
-        this.$message({
-          message: ErrOr[Response.Error.Code],
-          type: "error",
-          showClose: true,
-          duration: 0
-        });
-      })
-    },
+    // queryDomain() {
+    //   this.axios.post(DESCRIBE_SPARTA_PROTECTIONLIST, {
+    //     Version: '2018-01-25',
+    //     Paging: {
+    //       Index: 1,
+    //       Count: 10
+    //     }
+    //   }).then(res => {
+    //     if (!Response.Error) {
+    //       this.domains = Response.Data
+    //       return
+    //     }
+    //     let ErrOr = Object.assign(ErrorTips, ErrTips)
+    //     this.$message({
+    //       message: ErrOr[Response.Error.Code],
+    //       type: "error",
+    //       showClose: true,
+    //       duration: 0
+    //     });
+    //   })
+    // },
     //升级按钮
     packageUpgradeModel(){
       this.packageUpModelShow=true;

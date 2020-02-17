@@ -1,0 +1,362 @@
+<template>
+  <div class="container">
+    <span class="tip">防护域名必须和负载均衡监听器进行绑定，才能对监听器中添加域名的HTTP或HTTPS流量进行防护。前往负载均衡</span>
+    <el-row type="flex" class="col">
+      <el-col :span="3">
+        <label class="label">地域</label>
+      </el-col>
+      <el-col>
+        <el-button type="primary" size="small">台北<span v-show="selectedTotal > 0">（{{selectedTotal}}）</span></el-button>
+      </el-col>
+    </el-row>
+    <el-row type="flex" class="col">
+      <el-col :span="3">
+        <label class="label">负载均衡 - 监听器</label>
+      </el-col>
+      <el-col>
+        <el-input class="lb-input" placeholder="请选择负载均衡实例" />
+          <ul class="lb-container">
+            <li v-for="item in clbs" :key="item.LoadBalancerId">
+              <p>
+                <span>{{item.LoadBalancerName}}（{{item.LoadBalancerId}}）</span>
+                <el-button type="text" @click="openListenDialog(item)">
+                  <span v-if="item.checkedListeners.length">
+                    重新选择
+                  </span>
+                  <span>
+                    选择监听器
+                  </span>
+                </el-button>
+              </p>
+              <p class="selcted ellipsis">
+                已选择{{item.checkedListeners.length}}个
+                <span v-if="item.checkedListeners.length">
+                  : {{item.checkedListeners.map(checkedListener => checkedListener.ListenerName).join('，')}}
+                </span>
+              </p>
+            </li>
+          </ul>
+      </el-col>
+    </el-row>
+    <el-row type="flex" class="col">
+      <el-col :span="3">
+      </el-col>
+      <el-col>
+         <el-button type="primary" @click="add">完成</el-button>
+      </el-col>
+    </el-row>
+    <el-dialog
+      title="选择监听器"
+      :visible.sync="dialogVisible"
+      @close="beforeClose"
+      width="840px"
+    >
+      <el-row type="flex" :gutter="10" class="dialog-container">
+        <el-col>
+          <el-input class="listener-input" v-model="keyword" placeholder="请输入关键字" />
+          <ul class="listener-container">
+            <li v-for="item in listeners" :key="item.ListenerId">
+              <label>
+                <div class="listen">
+                  <el-checkbox :label="item.ListenerId" v-model="checkedListenerIds">
+                    <div>
+                      <p class="ellipsis">{{item.ListenerName}}({{item.ListenerId}})</p>
+                      <p>{{item.Protocol.toLowerCase()}}://{{domain.domain}}:{{item.Port}}</p>
+                    </div>
+                  </el-checkbox>
+                </div> 
+              </label>
+            </li>
+          </ul>
+        </el-col>
+        <div class="direction">
+          <div class="direction-icon">
+            <i class="iconfont">&#xe603;</i>
+          </div>
+        </div>
+        <el-col>
+          <ul class="listener-container selected-listener-container">
+            <li v-for="item in checkedListeners" :key="item.ListenerId">
+              <div class="listen">
+                <div>
+                  <p class="ellipsis">{{item.ListenerName}}({{item.ListenerId}})</p>
+                  <p>{{item.Protocol.toLowerCase()}}://{{domain.domain}}:{{item.Port}}</p>
+                </div>
+                <i class="el-icon-close del-listener" @click="remove(item.ListenerId)"></i>
+              </div> 
+            </li>
+          </ul>
+        </el-col>
+      </el-row>
+      <el-row class="dialog-footer">
+        <el-button size="small" type="primary" @click="confirm">确 定</el-button>
+      </el-row>
+    </el-dialog>
+  </div>
+</template>
+<script>
+import { CLB_LIST, DESCRIBE_LISTENERS, CREATE_HOST } from '@/constants'
+import { ErrorTips } from '@/components/ErrorTips'
+import { COMMON_ERROR } from '../../constants'
+import { flatObj } from '@/utils'
+export default {
+  props: {
+    domain: Object
+  },
+  computed: {
+    selectedTotal() {
+      return this.clbs.map(clb => clb.checkedListeners).flat().length
+    }
+  },
+  data() {
+    return {
+      selectedCLB: {},
+      keyword: '',
+      clbs: [],
+      listeners: [],
+      listenersCopy: [],
+      checkedListeners: [],
+      checkedListenerIds: [],
+      dialogVisible: false,
+    }
+  },
+  watch: {
+    checkedListenerIds(n) {
+      this.checkedListeners = this.listeners.filter(listener => n.includes(listener.ListenerId))
+    },
+    keyword(n) {
+      if (n.trim()) {
+        this.listeners = this.listenersCopy.filter(listener => listener.ListenerName.includes(n.trim()))
+      } else {
+        this.listeners = this.listenersCopy
+      }
+    },
+  },
+  mounted() {
+    this.axios.post(CLB_LIST, {
+      Version: '2018-03-17',
+      Region: 'ap-guangzhou',
+      Forward: 1,
+      LoadBalancerType: 'OPEN',
+      Offset: 0,
+      Limit: 100
+    }).then(({ Response }) => {
+      if (Response.Error) {
+        this.$message({
+          message: ErrorTips[Response.Error.Code],
+          type: "error",
+          showClose: true,
+          duration: 0
+        });
+      } else {
+        const clbs = Response.LoadBalancerSet
+        clbs.forEach(clb => {
+          clb.checkedListeners = []
+        })
+        this.clbs = clbs
+      }
+    })
+  },
+  methods: {
+    add() {
+      const lbset = []
+      this.clbs.forEach(clb => {
+        lbset.push(
+          ...clb.checkedListeners.map(listener => ({
+            ListenerId: listener.ListenerId,
+            ListenerName: listener.ListenerName,
+            Vport: listener.Port,
+            Protocol: listener.Protocol,
+            LoadBalancerId: clb.LoadBalancerId,
+            LoadBalancerName: clb.LoadBalancerName,
+            Vip: clb.LoadBalancerVips[0],
+            Zone: '',
+            Region: 'gz',
+          }))
+        )
+      })
+      const r = {}
+      flatObj({
+        Version: '2018-01-25',
+        Host: {
+          Domain: this.domain.domain,
+          IsCdn: this.domain.cdn,
+          Region: 'gz',
+          LoadBalancerSet: lbset,
+          DomainId: '',
+        }
+      }, '', r)
+      this.axios.post(CREATE_HOST, r).then(({ Response }) => {
+        if (Response.Error) {
+          let ErrOr = Object.assign(ErrorTips, COMMON_ERROR)
+          this.$message({
+            message: ErrOr[Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          })
+        } else {
+          this.$message({
+            message: '添加成功',
+            type: "success",
+            showClose: true,
+            duration: 0
+          })
+          this.push('/protectionSettings')
+        }
+      })
+    },
+    confirm() {
+      const clb = this.clbs.find(clb => clb.LoadBalancerId === this.selectedCLB.LoadBalancerId)
+      clb.checkedListeners = [...this.checkedListeners]
+      this.dialogVisible = false
+    },
+    beforeClose() {
+      this.selectedCLBId = ''
+      this.checkedListenerIds = []
+      this.checkedListeners = []
+      this.listeners = []
+      this.listenersCopy = []
+    },
+    remove(listenerId) {
+      this.checkedListenerIds = this.checkedListenerIds.filter(checkedListenerId => checkedListenerId !== listenerId)
+    },
+    openListenDialog(clb) {
+      this.selectedCLB = clb
+      this.queryListener()
+      this.dialogVisible = true
+    },
+    queryListener() {
+      this.axios.post(DESCRIBE_LISTENERS, {
+        LoadBalancerId: this.selectedCLB.LoadBalancerId,
+        Version: '2018-03-17',
+        Region: 'ap-guangzhou',
+      }).then(({ Response }) => {
+        if (Response.Error) {
+          this.$message({
+            message: ErrorTips[Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        } else {
+          const listeners = Response.Listeners.filter(listener => listener.Rules && listener.Rules.some(rule => rule.Domain === this.domain.domain))
+          this.listeners = listeners
+          this.listenersCopy = listeners
+          this.checkedListenerIds = [...this.selectedCLB.checkedListeners.map(checkedListener => checkedListener.ListenerId)]
+        }
+      })
+    }
+  }
+}
+</script>
+<style lang="scss" scoped>
+.container {
+  margin-left: 20px;
+  margin-top: 20px;
+}
+.tip {
+  background-color: #fff4e3;
+  color: #c07400;
+  border-color: #ffd18b;
+  font-size: 12px;
+  font-weight: normal;
+  padding: 10px 20px;
+  border: 1px solid #97c7ff;
+  height: 38px;
+  line-height: 38px;
+  margin-top: 20px;
+  // display: inline-block;
+}
+.col {
+  margin-top: 20px;
+}
+.label {
+  color: #888;
+}
+.lb-input, .listener-input, .lb-container, .listener-container {
+  width: 382px;
+}
+.lb-container, .listener-container {
+  border: 1px solid #dcdfe6;
+  border-top: none;
+  li {
+    padding: 0 10px;
+    border-bottom: 1px solid #dcdfe6;
+    // &:last-of-type {
+    //   border-bottom: none;
+    // }
+    p {
+      height: 28px;
+      line-height: 28px;
+      &:first-of-type {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        button {
+          font-size: 12px;
+        }
+      }
+    }
+  }
+}
+.selected {
+  color: #bbb;
+}
+.listener-container {
+  height: 340px;
+  .listen {
+    display: flex;
+    align-items: center;
+    padding: 5px 0;
+    cursor: pointer;
+    ::v-deep .el-checkbox {
+      display: flex;
+      align-items: center;
+    }
+    label {
+      margin-right: 10px;
+    }
+    p {
+      height: auto;
+      line-height: 20px;
+      font-size: 12px;
+      &:first-of-type {
+        width: 335px;
+        display: block;
+        color: #404a58;
+      }
+      &:last-of-type {
+        color: #bbb;
+      }
+    }
+  }
+}
+.selected-listener-container {
+  height: 380px;
+  border-top: 1px solid #dcdfe6;
+  .listen {
+    justify-content: space-between;
+    cursor: default;
+  }
+}
+.selcted {
+  color: #bbb;
+}
+.ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.direction {
+  transform: translateY(50%);
+}
+.del-listener {
+  cursor: pointer;
+}
+.dialog-footer {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+}
+</style>

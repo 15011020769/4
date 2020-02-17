@@ -153,7 +153,12 @@
               </p>
             </el-form-item>
             <el-form-item>
-              <span slot="label">容器网络 <i class="el-icon-info"></i></span>
+              <span slot="label">容器网络  <el-tooltip
+                      effect="dark"
+                      content="系统将为集群内的容器分配在此地址范围内的IP地址，容器网络不能与节点网络冲突。"
+                      placement="right"
+                    ><i class="el-icon-info"></i>
+                    </el-tooltip></span>
               <div class="form-controls" style="width:600px">
                 <el-form
                   class="tke-form"
@@ -162,7 +167,7 @@
                   size="mini"
                 >
                   <el-form-item label="CIDR">
-                    <el-select class="w70" v-model="colony.CIDRValue_1">
+                    <el-select class="w70" v-model="colony.CIDRValue_1" @change="CIDchange_1">
                       <el-option
                         v-for="item in colony.CIDROptions_1"
                         :key="item.value"
@@ -174,28 +179,35 @@
                     .
                     <el-tooltip
                       effect="dark"
-                      content="范围：16, 18, ... , 31"
+                      :content="colony.CIDRValueContent_2"
                       placement="bottom"
                     >
                       <el-input
-                        class="w50"
+                        class="w56"
                         v-model="colony.CIDRValue_2"
+                        :disabled="colony.CIDRValueDis_2"
                       ></el-input>
                     </el-tooltip>
                     .
+                    <el-tooltip
+                      effect="dark"
+                      content="范围：0, 32, ... , 224"
+                      placement="bottom"
+                    >
                     <el-input
-                      class="w50"
-                      disabled
+                      class="w56"
+                      :disabled="colony.CIDRValueDis_3"
                       v-model="colony.CIDRValue_3"
                     ></el-input>
+                     </el-tooltip>
                     .
                     <el-input
-                      class="w50"
-                      disabled
+                      class="w56"
+                      :disabled="colony.CIDRValueDis_4"
                       v-model="colony.CIDRValue_4"
                     ></el-input>
                     /
-                    <el-select class="w70" v-model="colony.CIDRValue_5">
+                    <el-select class="w70" v-model="colony.CIDRValue_5" @change="CIDchange_5">
                       <el-option
                         v-for="item in colony.CIDROptions_5"
                         :key="item.value"
@@ -205,6 +217,19 @@
                       </el-option>
                     </el-select>
                     <a href="#" class="ml5">使用指引</a>
+                    <div class="cid-tips tke-second-box">
+                      <p>与同VPC其它集群CIDR冲突</p>
+                      <p>CIDR_CONFLICT_WITH_OTHER_CLUSTER[cidr 172.16.0.0/16 is conflict with cluster id: cls-a7rua9ae]</p>
+                      <div class="tke-second-checkbox">
+                      <el-checkbox v-model="colonyThird.safetyChecked"
+                ></el-checkbox>
+                <span>与路由冲突时，强制使用该地址访问  <el-tooltip
+                      effect="dark"
+                      content="容器网段路由将由系统自动生成且优先级高于VPC中其他已配置自定义路由"
+                      placement="bottom"
+                    ><i class="el-icon-info"></i></el-tooltip></span>
+                </div>
+                    </div>
                   </el-form-item>
                   <el-form-item label="Pod数量上限/节点">
                     <el-select
@@ -1516,8 +1541,8 @@ export default {
     return {
       data: generateData(),
       // 步骤显示
-      firstBox: false,
-      secondBox: true,
+      firstBox: true,
+      secondBox: false,
       thirdBox: false,
       fourthBox: false,
       // 第一步
@@ -1555,11 +1580,23 @@ export default {
             label: '10'
           }
         ],
-        CIDRValue_1: '192',
+        CIDRValue_1: '172',
         CIDRValue_2: '16',
         CIDRValue_3: '0',
         CIDRValue_4: '0',
+        CIDRValueDis_2: false,
+        CIDRValueDis_3: true,
+        CIDRValueDis_4: true,
+        CIDRValueContent_2: '范围：16, 18, ... , 31',
         CIDROptions_5: [
+          {
+            value: '14',
+            label: '14'
+          },
+          {
+            value: '15',
+            label: '15'
+          },
           {
             value: '16',
             label: '16'
@@ -1659,8 +1696,8 @@ export default {
         chargingShow: false,
         usableArea: 1,
         // 节点网络
-        workerNodeNetworkVal:"",
-        workerNodeNetOpt:[],
+        workerNodeNetworkVal: '',
+        workerNodeNetOpt: [],
         // 机型
         tableData: [
           {
@@ -1809,7 +1846,10 @@ export default {
     // HeadCom,
     // SEARCH
   },
-  created () {},
+  created () {
+    // --------------------------------  第一步 -----------------------------
+    this.colony.CIDROptions_5.splice(0, 2)
+  },
   mounted () {
     // --------------------------------  第一步 -----------------------------
     // Kubernetes版本
@@ -1883,6 +1923,44 @@ export default {
           })
         }
       })
+    },
+    // 容器网络 CID
+    CIDchange_1 (val) {
+      if (val === '192') {
+        this.colony.CIDRValueDis_2 = true
+        this.colony.CIDRValue_2 = '168'
+        this.colony.CIDRValue_5 = '16'
+        this.colony.CIDROptions_5.splice(0, 2)
+      } else if (val === '172') {
+        this.colony.CIDRValueDis_2 = false
+        this.colony.CIDRValue_2 = '16'
+        this.colony.CIDRValue_5 = '16'
+        this.colony.CIDROptions_5.splice(0, 2)
+      } else if (val === '10') {
+        this.colony.CIDRValueDis_2 = false
+        this.colony.CIDRValue_2 = '0'
+        this.colony.CIDRValue_5 = '14'
+        this.colony.CIDRValueContent_2 = '范围：0, 4, ... , 252'
+        this.colony.CIDROptions_5.unshift({
+          value: '14',
+          label: '14'
+        },
+        {
+          value: '15',
+          label: '15'
+        })
+      }
+    },
+    CIDchange_5 (val) {
+      if (val === '17') {
+        this.colony.CIDRValueDis_2 = false
+      } else if (val === '18') {
+        this.colony.CIDRValueDis_2 = false
+      } else if (val === '19') {
+        this.colony.CIDRValueDis_2 = false
+      } else {
+        this.colony.CIDRValueDis_2 = true
+      }
     },
     // 操作系统
     OperatSystemData () {
@@ -2080,6 +2158,22 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.cid-tips{
+  color: #e54545;
+      font-size: 12px;
+      line-height: 30px;
+      margin-top: 8px;
+      span{
+        margin-left: 6px;
+        font-size: 12px;
+        color: #000;
+        i{
+          margin-left: 18px;
+          font-size: 14px;
+        color: #888;
+        }
+      }
+}
 .tke-formpanel-footer {
   ::v-deep .el-button--primary {
     background: #006eff;

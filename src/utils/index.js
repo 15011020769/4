@@ -108,3 +108,29 @@ export function toUserinfo() {
 export function toConsole() {
   window.location.href = `${process.env.VUE_APP_CONSOLE_URL}`
 }
+
+// 扁平对象
+export const flatObj = (obj, prefix = '', result = {}) => {
+  if (Array.isArray(obj)) {
+    obj.forEach((item, index) => {
+      if (Object.prototype.toString.call(item) === '[object Object]') {
+        return flatObj(item, `${prefix}.${index}`, result)
+      } else if (Array.isArray(item)) {
+        return flatObj(item, `${prefix}.${index}`, result)
+      } else {
+        result[`${prefix}.${index}`] = item
+      }
+    })
+  } else {
+    Object.keys(obj).forEach(k => {
+      if (Object.prototype.toString.call(obj[k]) === '[object Object]') {
+        return flatObj(obj[k], prefix ? `${prefix}.${k}` : k, result)
+      } else if (Array.isArray(obj[k])) {
+        return flatObj(obj[k], prefix ? `${prefix}.${k}` : k, result)
+      } else {
+        result[prefix ? `${prefix}.${k}` : k] = obj[k]
+      }
+    })
+  }
+  return result
+}

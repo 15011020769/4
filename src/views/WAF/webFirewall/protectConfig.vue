@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="container">
     <div class="editTitle">
       <i class="el-icon-back" @click="backListDomin"></i>防护设置
       <el-select v-model="dominList" class="dominList">
@@ -17,23 +17,15 @@
         <el-tab-pane label="CC防护设置2.0" name="third">
           <ccProtectSet/>
         </el-tab-pane>
-        <el-tab-pane label="防篡改" name="fourth">
-          <tamperProof/>
-        </el-tab-pane>
-        <el-tab-pane label="防信息泄露" name="fifth">
-          <preventInfoLeakage/>
-        </el-tab-pane>
       </el-tabs>
     </div>
     
   </div>
 </template>
 <script>
-import basicSettings from '../tab/basicSettings'//基础设置
-import customStrategy from '../tab/customStrategy'//自定义策略
-import ccProtectSet from '../tab/ccProtectSet'//cc防护设置2.0
-import tamperProof from '../tab/tamperProof'//防篡改
-import preventInfoLeakage from '../tab/preventInfoLeakage'//防信息泄露
+import basicSettings from './tab/basicSettings'//基础设置
+import customStrategy from './tab/customStrategy'//自定义策略
+import ccProtectSet from './tab/ccProtectSet'//cc防护设置2.0
 export default {
   data(){
     return{
@@ -42,11 +34,9 @@ export default {
     }
   },
   components:{
-    basicSettings:basicSettings,
-    customStrategy:customStrategy,
-    ccProtectSet:ccProtectSet,
-    tamperProof:tamperProof,
-    preventInfoLeakage:preventInfoLeakage
+    basicSettings,
+    customStrategy,
+    ccProtectSet,
   },
   methods:{
      //返回域名列表
@@ -61,11 +51,6 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.newClear:after{
-  content:'';
-  clear:both;
-  display:block;
-}
 .editTitle{
   height:50px;
   // border-bottom:1px solid #ddd;

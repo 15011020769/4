@@ -44,7 +44,12 @@
 
       <!-- 数据列表展示 -->
       <div class="tke-card mt10">
-        <el-table :data="list" v-loading="loadShow" style="width: 100%">
+        <el-table
+          :data="list"
+          v-loading="loadShow"
+          style="width: 100%"
+          id="exportTable"
+        >
           <el-table-column label="ID/名称">
             <template slot-scope="scope">
               <span
@@ -70,7 +75,14 @@
           </el-table-column>
           <el-table-column prop="" label="监控">
             <template slot-scope="scope">
-              <i class="icon-chart"></i>
+              <i
+                class="icon-chart"
+                @click="
+                  scope.row.ClusterStatus == 'Running'
+                    ? goColonySub(scope.row.ClusterId)
+                    : ''
+                "
+              ></i>
               <span class="tag-danger">未配告警</span>
             </template>
           </el-table-column>
@@ -97,36 +109,28 @@
           </el-table-column>
           <el-table-column prop="nodeTotal" label="节点数">
             <template slot-scope="scope">
-              <a href="#">{{ scope.row.ClusterNodeNum }}台</a>
+              <a href="javascript:;" @click="NodeTotal(scope.row.ClusterId)"
+                >{{ scope.row.ClusterNodeNum }}台</a
+              >
               (<span
                 class="text-red"
-                v-if="
-                  listStatus[scope.$index].ClusterInstanceState ==
-                    'PartialAbnormal'
-                "
-                >部分异常</span
-              >
+                v-if="listStatusArr[scope.$index] == 'PartialAbnormal'"
+                >部分异常
+              </span>
               <span
                 class="text-green"
-                v-else-if="
-                  listStatus[scope.$index].ClusterInstanceState == 'AllNormal'
-                "
+                v-else-if="listStatusArr[scope.$index] == 'AllNormal'"
                 >全部正常</span
               >)
               <el-popover
                 width="50"
                 trigger="hover"
                 placement="top"
-                v-if="
-                  listStatus[scope.$index].ClusterInstanceState ==
-                    'PartialAbnormal'
-                "
+                v-if="listStatusArr[scope.$index] == 'PartialAbnormal'"
               >
                 <div class="node-popover">
                   <p>
-                    GetTkeDataResult 创建中：{{
-                      listStatus[scope.$index].ClusterInitNodeNum
-                    }}台
+                    创建中：{{ listStatus[scope.$index].ClusterInitNodeNum }}台
                   </p>
                   <p>
                     运行中：{{
@@ -150,6 +154,7 @@
           <el-table-column label="操作" width="220">
             <template slot-scope="scope">
               <span
+                @click="ConfigWarn"
                 class="tke-text-link"
                 v-if="scope.row.ClusterStatus == 'Running'"
                 >配置告警</span
@@ -176,7 +181,7 @@
                     v-if="scope.row.ClusterStatus == 'Running'"
                     ><span
                       class="tke-text-link"
-                      @click="goColonySub(scope.row.ClusterId)"
+                      @click="ViewCluster(scope.row.ClusterId)"
                       >查看集群凭证</span
                     ></el-dropdown-item
                   >
@@ -259,14 +264,13 @@
 <script>
 // import HeadCom from "@/components/public/Head";
 // import SEARCH from "@/components/public/SEARCH";
-// import FileSaver from "file-saver";
-// import XLSX from "xlsx";
+import FileSaver from "file-saver";
+import XLSX from "xlsx";
 import tkeSearch from "@/views/TKE/components/tkeSearch";
 import Loading from "@/components/public/Loading";
 import { ErrorTips } from "@/components/ErrorTips";
 import {
   ALL_CITY,
-  ALL_PROJECT,
   TKE_COLONY_LIST,
   TKE_COLONY_STATUS,
   TKE_COLONY_DES,
@@ -279,6 +283,7 @@ export default {
       loadShow: true, // 加载是否显示
       list: [], // 集群列表
       listStatus: [], // 集群列表节点数状态
+      listStatusArr: [], // 集群列表节点数状态
       editClusterId: "",
       editSearchVal: "", // 编辑名称
       total: 0,
@@ -330,17 +335,6 @@ export default {
         params["Filters.0.Name"] = "ClusterName";
         params["Filters.0.Values.0"] = this.searchInput;
       }
-      // if (
-      //   (this.searchInput !== "" && this.searchSelect == "name") ||
-      //   (this.searchInput !== "" && this.searchSelect === "")
-      // ) {
-      //   params["Filters.0.Name"] = "ClusterName";
-      //   params["Filters.0.Values.0"] = this.searchInput;
-      // }
-      // if (this.searchInput !== '' && this.searchSelect == 'age') {
-      //   params['Filters.0.Name'] = 'Tags'
-      //   params['Filters.0.Values.0'] = this.searchInput
-      // }
       const res = await this.axios.post(TKE_COLONY_LIST, params);
       if (res.Response.Error === undefined) {
         if (res.Response.Clusters.length > 0) {
@@ -352,9 +346,8 @@ export default {
           this.total = res.Response.TotalCount;
         }
         this.list = res.Response.Clusters;
-        console.log(this.list);
-        this.loadShow = false;
         this.getColonyStatus();
+        this.loadShow = false;
       } else {
         this.loadShow = false;
         let ErrTips = {
@@ -381,7 +374,7 @@ export default {
       }
     },
     // 获取集群列表状态(不对外单独提供文档,所以无法实现)
-    async getColonyStatus() {
+    getColonyStatus() {
       let params = {
         Version: "2018-05-25"
       };
@@ -390,9 +383,14 @@ export default {
           params["ClusterIds." + i] = this.list[i].ClusterId;
         }
       }
-      const res = await this.axios.post(TKE_COLONY_STATUS, params);
-      this.listStatus = res.Response.ClusterStatusSet;
-      console.log(this.listStatus);
+
+      this.axios.post(TKE_COLONY_STATUS, params).then(res => {
+        this.listStatus = res.Response.ClusterStatusSet;
+        this.listStatusArr = [];
+        for (var i in this.listStatus) {
+          this.listStatusArr.push(this.listStatus[i].ClusterInstanceState);
+        }
+      });
     },
     // 分页
     handleCurrentChange(val) {
@@ -429,9 +427,32 @@ export default {
     // 查看详情跳转
     goColonySub(id) {
       // scope.row.ClusterType=='MANAGED_CLUSTER'
-
       this.$router.push({
-        name: "colonySub",
+        name: "colonyResourceDeployment",
+        query: {
+          clusterId: id
+        }
+      });
+    },
+    // 节点数跳转
+    NodeTotal(id) {
+      this.$router.push({
+        name: "colonyNodeManageNode",
+        query: {
+          clusterId: id
+        }
+      });
+    },
+    // 配置警告
+    ConfigWarn() {
+      this.$router.push({
+        name: "warnings"
+      });
+    },
+    // 查看集权凭证
+    ViewCluster(id) {
+      this.$router.push({
+        name: "colonyBasic",
         query: {
           clusterId: id
         }
@@ -442,7 +463,6 @@ export default {
       this.editNameDialogVisible = true;
       this.editClusterId = row.ClusterId;
     },
-
     // 新建节点跳转
     goExpand(id) {
       this.$router.push({
@@ -461,21 +481,6 @@ export default {
         }
       });
     },
-
-    // 获取列表
-    // init() {
-    //   this.loading = true;
-    //   const params = {
-    //     Region: "ap-taipei",
-    //     Version: "2018-05-25"
-    //   };
-    //   this.axios.post("tke2/DescribeClusters", params).then(res => {
-    //     console.log(res);
-    //     this.loading = false;
-    //   });
-    // },
-    // 分页
-
     // 获取地域
     _region() {
       this.axios.post(ALL_CITY).then(res => {
@@ -491,36 +496,37 @@ export default {
     // 监听搜索框的值
     changeSearchInput(val) {
       this.searchInput = val;
-      console.log(this.searchInput);
+      if (val === "") {
+        this.getColonyList();
+      }
     },
     // 点击搜索
     clickSearch(val) {
       this.searchInput = val;
       this.getColonyList();
     },
-
     // 导出表格
     exportExcel() {
       console.log("exportExcel...");
       /* generate workbook object from table */
-      // var wb = XLSX.utils.table_to_book(document.querySelector("#exportTable"));
+      var wb = XLSX.utils.table_to_book(document.querySelector("#exportTable"));
       /* get binary string as output */
-      // var wbout = XLSX.write(wb, {
-      //   bookType: "xlsx",
-      //   bookSST: true,
-      //   type: "array"
-      // });
-      // try {
-      //   FileSaver.saveAs(
-      //     new Blob([wbout], {
-      //       type: "application/octet-stream"
-      //     }),
-      //     this.$t("CVM.clBload.fzjh") + ".xlsx"
-      //   );
-      // } catch (e) {
-      //   if (typeof console !== "undefined") console.log(e, wbout);
-      // }
-      // return wbout;
+      var wbout = XLSX.write(wb, {
+        bookType: "xlsx",
+        bookSST: true,
+        type: "array"
+      });
+      try {
+        FileSaver.saveAs(
+          new Blob([wbout], {
+            type: "application/octet-stream"
+          }),
+          this.$t("tke-clusterList") + ".xlsx"
+        );
+      } catch (e) {
+        if (typeof console !== "undefined") console.log(e, wbout);
+      }
+      return wbout;
     }
   }
 };

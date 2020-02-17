@@ -28,3 +28,7 @@ export * from './KMS' //用户密钥
 export * from './CSS' //雲直播
 
 export * from './TKE' //容器服务
+export * from './TKE-jz' //容器服务
+
+export * from './TKE-wyr' //容器服务
+

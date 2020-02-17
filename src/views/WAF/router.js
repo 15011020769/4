@@ -42,18 +42,18 @@ export default new Router({
       }
     },
     {
-      path: '/toProtectSet', // 攻击详情防护配置页面
-      name: 'toProtectSet',
-      component: () => import(/* webpackChunkName: "ipMan" */ './webFirewall/components/toProtectSet.vue'),
+      path: '/protectConfig', // 攻击详情防护配置页面
+      name: 'protectConfig',
+      component: () => import(/* webpackChunkName: "ipMan" */ './webFirewall/protectConfig.vue'),
       meta: {
         keepAlive: true,
         leftNav:true
       }
     },
     {
-      path: '/editDominList', // 攻击详情编辑页面
-      name: 'editDominList',
-      component: () => import(/* webpackChunkName: "ipMan" */ './webFirewall/components/editDominList.vue'),
+      path: '/protectDomain', // 添加/修改防护域名
+      name: 'protectDomain',
+      component: () => import(/* webpackChunkName: "ipMan" */ './webFirewall/protectDomain.vue'),
       meta: {
         keepAlive: true,
         leftNav:true

@@ -72,7 +72,7 @@ export default {
    .tabList{
      ::v-deep .el-tabs__header{
        background-color:#fff;
-       padding:0 20px;
+       padding-left: 20px;
      }
    }
   }
