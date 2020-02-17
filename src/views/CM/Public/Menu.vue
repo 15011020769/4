@@ -3,7 +3,7 @@
     <div class="big-title">{{$t("menu.title1")}} CM</div>
     <el-menu default-active="2" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose"
       background-color="#292b36" text-color="#fff" active-text-color="#fff" :router="true">
-      <!-- <el-menu-item index="overview">
+      <el-menu-item index="overview">
         <span slot="title">监控概览</span>
       </el-menu-item>
       <el-menu-item index="Dashboard">
@@ -58,11 +58,11 @@
           <el-menu-item index="view">
             <span slot="title">监控视图</span>
           </el-menu-item>
-        </el-menu-item-group> -->
-      <!-- </el-submenu> -->
-      <!-- <el-menu-item index="flow">
+        </el-menu-item-group>
+      </el-submenu>
+      <el-menu-item index="flow">
         <span slot="title">流量监控</span>
-      </el-menu-item> -->
+      </el-menu-item>
       <el-menu-item index="CVM">
         <span slot="title">{{$t("menu.title2")}}</span>
       </el-menu-item>
