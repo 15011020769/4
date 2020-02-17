@@ -1,6 +1,12 @@
 <template>
   <div class="myMirror-wrap">
-    <HeadCom title="我的镜像"></HeadCom>
+    <HeadCom title="我的镜像">
+      <slot>
+        <div class="head-address">
+          <City :Cityvalue.sync="selectedRegion" :cities="cities" class="city" @changeCity="changeCity"></City>
+        </div>
+      </slot>
+    </HeadCom>
     <div class="my-title">
         <ul class="my-ul">
           <router-link :to="{name: 'myMirrorUser'}">
@@ -21,18 +27,30 @@
   </div>
 </template>
 <script>
+import City from '@/components/public/CITY'
 import HeadCom from '@/components/public/Head'
+import {
+  ALL_CITY
+} from '@/constants'
 export default {
   components: {
-    HeadCom
+    HeadCom,
+    City
   },
   name: 'myMirror',
   data () {
     return {
       dataObject: {
         flag: this.$route.meta.flag
-      }
+      },
+      cities: [],
+      selectedRegion: '',
+      selectedCity: '',
+      select: ''
     }
+  },
+   created () {
+    this.GetCity()
   },
   methods: {
     // 切换点击事件
@@ -41,7 +59,20 @@ export default {
     },
     getFalse () {
       this.dataObject.flag = false
-    }
+    },
+    GetCity () {
+      this.axios.get(ALL_CITY).then(data => {
+        console.log(data.data)
+        this.cities = data.data
+        this.selectedRegion = data.data[0].Region
+        this.selectedCity = data.data[0]
+        this.$cookie.set('regionv2', this.selectedCity.Region)
+      })
+    },
+    changeCity (city) {
+      this.selectedCity = city
+      this.$cookie.set('regionv2', city.Region)
+    },
   }
 }
 </script>
@@ -96,4 +127,12 @@ export default {
    .room{
      position: relative;
    }
+   .head-address{
+    margin-top:10px;
+    margin-left:20px;
+    width: 250px;
+    display: flex;
+    justify-content: space-between;
+   
+}
 </style>

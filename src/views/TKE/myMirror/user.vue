@@ -169,7 +169,8 @@
   </div>
 </template>
 <script>
-import { ALL_CITY, MIRROR_LIST, SPACENAME_LIST, MIRROR_DELETE, ALL_PROJECT, MIRROR_PRESENCE, MIRROR_CREATE } from '@/constants'
+import { ErrorTips } from "@/components/ErrorTips";
+import { ALL_CITY, TKE_MIRROR_LIST, TKE_SPACENAME_LIST, TKE_MIRROR_DELETE, ALL_PROJECT, TKE_MIRROR_PRESENCE, TKE_MIRROR_CREATE } from '@/constants'
 export default {
   data () {
     var validatePass = (rule, value, callback) => {
@@ -197,8 +198,8 @@ export default {
       const param = {
         reponame: this.isReponame
       }
-      this.axios.post(MIRROR_PRESENCE, param).then(res => {
-        if (res.code === 0 && res.data.isExist) {
+      this.axios.post(TKE_MIRROR_PRESENCE, param).then(res => {
+        if (res.code == 0 && res.data.isExist) {
           callback(new Error('镜像名称已存在'))
         } else if (!version.test(this.ruleForm.name)) {
           callback(new Error('镜像格式不正确'))
@@ -282,7 +283,7 @@ export default {
     dateRange (val) {
       if (val.name !== '' && val.region2 !== '') {
         this.isReponame = val.region2 + '/' + val.name
-        this.isPresence()
+        // this.isPresence()
       }
     }
   },
@@ -299,10 +300,10 @@ export default {
       this.loadShow = true
     },
     submitForm (formName) {
-      console.log(formName)
+      // console.log(formName)
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          console.log(valid)
+          // console.log(valid)
           this.dialogFormVisible = !valid
           this.CreateMyMirror()
           this.GetMyMirror()
@@ -391,23 +392,37 @@ export default {
         offset: 20 * (this.currpage - 1),
         limit: this.pagesize
       }
-      this.axios.post(MIRROR_LIST, param).then(res => {
-        if (res.code === 0) {
+      this.axios.post(TKE_MIRROR_LIST, param).then(res => {
+        if (res.data.Error == undefined) {
           this.tableData = res.data.repoInfo
           this.tableServer = res.data.server
           this.TotalCount = res.data.totalCount
           this.loadShow = false
+        } else {
+          this.$message({
+              message: ErrorTips[data.data.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+          })
         }
       })
     },
     DeleteMyMirror () { // 删除我的镜像数据
       const param = this.deleteSpace
-      this.axios.post(MIRROR_DELETE, param).then(res => {
-        if (res.code === 0) {
+      this.axios.post(TKE_MIRROR_DELETE, param).then(res => {
+        if (res.data.Error == undefined) {
           this.currpage = 1
           this.GetMyMirror()
           this.loadShow = true
           this.deleteSpace = ''
+        } else {
+          this.$message({
+              message: ErrorTips[data.data.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+          })
         }
       })
     },
@@ -417,10 +432,17 @@ export default {
         offset: 0,
         limit: 100
       }
-      this.axios.post(SPACENAME_LIST, param).then(res => {
-        if (res.code === 0) {
+      this.axios.post(TKE_SPACENAME_LIST, param).then(res => {
+        if (res.data.Error == undefined) {
           this.spaceName = res.data.namespaceInfo
           console.log(this.spaceName)
+        } else {
+          this.$message({
+              message: ErrorTips[data.data.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+          })
         }
       })
     },
@@ -430,10 +452,17 @@ export default {
         public: this.ruleForm.region,
         description: this.ruleForm.desc
       }
-      this.axios.post(MIRROR_CREATE, param).then(res => {
-        if (res.code === 0) {
+      this.axios.post(TKE_MIRROR_CREATE, param).then(res => {
+        if (res.data.Error == undefined) {
           this.loadShow = false
           console.log(res)
+        } else {
+          this.$message({
+              message: ErrorTips[data.data.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+          })
         }
       })
     }
