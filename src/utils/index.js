@@ -110,9 +110,8 @@ export function toConsole() {
 }
 
 // 扁平对象
-export const flatObj = (obj, prefix, result) => {
+export const flatObj = (obj, prefix = '', result = {}) => {
   if (Array.isArray(obj)) {
-    const r = {}
     obj.forEach((item, index) => {
       if (Object.prototype.toString.call(item) === '[object Object]') {
         return flatObj(item, `${prefix}.${index}`, result)
@@ -133,4 +132,5 @@ export const flatObj = (obj, prefix, result) => {
       }
     })
   }
+  return result
 }
