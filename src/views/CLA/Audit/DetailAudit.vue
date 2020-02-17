@@ -258,7 +258,7 @@
         },
         //地域下拉框
         select: {
-          name: localStorage.getItem('regionv2'),
+          name: 'ap-taipei',
           options: []
         },
         //cos是否显示
@@ -596,8 +596,6 @@
             this.loading = false;
             this.boxloading1 = false;
             this.boxloading = false;
-            this.select.name = this.regionType[this.detailData.CosRegion];
-            this.cmqSelect.name = this.regionType1[this.detailData.CmqRegion];
             this.BucketSelect.name = this.detailData.CosBucketName;
           } else {
             let ErrTips = {
