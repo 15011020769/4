@@ -52,7 +52,7 @@
         <el-table-column prop="ModTime" :label="$t('SCF.total.xgsj')"></el-table-column>
         <el-table-column prop="operate" :label="$t('SCF.total.cz')" width="180">
           <template slot-scope="$scope">
-            <el-button type="text" size="small">
+            <el-button type="text" size="small" @click="_deleteFunc($scope.row.FunctionName)">
               {{ $t('SCF.total.sc') }}</el-button>
             <el-button type="text" size="small">
               {{ $t('SCF.total.fz') }}</el-button>
@@ -117,7 +117,20 @@
         </span>
       </el-dialog>
     </div>
+    <!-- 删除函数模态框 -->
+    <div>
+      <el-dialog :visible.sync="DeleteVisible" width="550" center>
+        <div slot="title" class="DeleteVisible">
+          您确定要删除函数 {{FunctionName}} 吗？
+        </div>
+        <span>删除函数将永久删除函数代码及已绑定的触发器。是否确定删除此函数？</span>
+        <span slot="footer" class="dialog-footer">
+          <el-button type="primary" @click="_DeleteDetermine">确 定</el-button>
+          <el-button @click="DeleteVisible = false">取 消</el-button>
 
+        </span>
+      </el-dialog>
+    </div>
   </div>
 </template>
 <script>
@@ -126,7 +139,8 @@
     NAME_SPACE_LIST,
     NAME_SPACE_DEL,
     NAME_SPACE_CREAT,
-    NAME_SPACE_UPD
+    NAME_SPACE_UPD,
+    SCF_DEL
   } from '@/constants'
   import {
     ErrorTips
@@ -158,6 +172,9 @@
         SpaceVisible: false, //命名空间管理模态框
         isbol: false, //判断值是否输入正确
         keeploanding: false, //设置命名空间保存按钮加载
+        DeleteVisible: false, //删除函数模态框
+        FunctionName: '', //函数名字
+        SpaceDate: {} //选择函数  单一数据
       }
     },
     created() {
@@ -447,6 +464,51 @@
           }
         })
       },
+      //删除函数
+      _deleteFunc(name) {
+        this.FunctionName = name
+        this.DeleteVisible = true
+      },
+      //确定删除函数
+      _DeleteDetermine() {
+        let param = {
+          Region: localStorage.getItem('regionv2'),
+          Version: "2018-04-16",
+          FunctionName: this.FunctionName,
+        };
+        this.axios.post(SCF_DEL, param).then(res => {
+          if (res.Response.Error == undefined) {
+            this.$message({
+              message: '删除成功',
+              type: "success",
+              showClose: true,
+              duration: 0
+            });
+            this.DeleteVisible = false
+            this._GetFuncList()
+          } else {
+            let ErrTips = {
+              'FailedOperation.FunctionNameStatusError': '函数在部署中，无法更新代码',
+              'FailedOperation.FunctionStatusError': '函数在部署中,无法做此操作',
+              'InternalError.Cmq': '删除cmq触发器失败',
+              'InternalError.System': '内部系统错误',
+              'InvalidParameter.Payload': '请求参数不合法',
+              'InvalidParameterValue': '参数取值错误',
+              'ResourceNotFound.Function': '函数不存在',
+              'ResourceNotFound.FunctionName': '函数不存在',
+              'UnauthorizedOperation.CAM': 'CAM鉴权失败',
+              'UnauthorizedOperation.DeleteFunction': '没有权限的操作',
+            }
+            let ErrOr = Object.assign(ErrorTips, ErrTips)
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+          }
+        })
+      },
       //跳转新建
       _newCreateFun() {
         this.$router.push({
@@ -562,6 +624,11 @@
 
     .errActive p {
       color: #e1504a !important;
+    }
+
+    .DeleteVisible {
+      text-align: left;
+      font-weight: bold;
     }
 
   }
