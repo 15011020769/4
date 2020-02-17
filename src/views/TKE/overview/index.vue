@@ -14,7 +14,7 @@
                   <div class="font data-card-border-right" >
                     <h3 class="ro-data-card-hd font">集群</h3>
                     <div>
-                      <span class="font-big">2</span>
+                      <span class="font-big">{{TotalCount}}</span>
                       <span class="ro-data-card-value">个</span>
                     </div>
                   </div>
@@ -23,7 +23,7 @@
                   <div class="font data-card-border-right data-card-list">
                     <h3 class="ro-data-card-hd font">节点</h3>
                     <div>
-                      <span class="font-big">1</span>
+                      <span class="font-big">{{nodeNum}}</span>
                       <span>个</span>
                     </div>
                   </div>
@@ -53,15 +53,15 @@
               <h3 class="font" style="margin:0;">
                 <i v-if="isShow" class="el-icon-caret-bottom data-card-icon" style="margin-right:5px"></i>
                 <i v-else class="el-icon-caret-right data-card-icon" style="margin-right:5px"></i>中国台北
-                <span class="font-small" >共&nbsp;1&nbsp;个集群</span>
+                <span class="font-small" >共&nbsp;{{TotalCount}}&nbsp;个集群</span>
                 <i class="data-card-icon el-icon-info font-red" style="margin-left:2px"></i>
               </h3>
-              <div v-if="isShow" class="resource-overview data-card-border" style="box-shadow:none;">
+              <div   v-for="(item,index) in clusters" :key="index" v-if="isShow" class="resource-overview data-card-border" style="box-shadow:none;">
                 <div>
                   <!-- 第二行集群头 -->
                   <div class="font-small">
-                    <a href="javascrpit:;">cls-od5hfc6w</a>
-                    <span style="margin-left:6px">集群测试</span>
+                    <a href="javascrpit:;">{{item.ClusterId}}</a>
+                    <span style="margin-left:6px">{{item.ClusterName}}</span>
                   </div>
                   <!-- 第二行集群内容 -->
                   <div class="ro-data-card" style="margin:0">
@@ -261,20 +261,69 @@
 
 <script>
 import HeadCom from "@/components/public/Head";
+import {TKE_COLONY_LIST} from '@/constants';
+import { ErrorTips } from "@/components/ErrorTips";
 export default {
   name: "overview",
   data() {
     return {
-      isShow:false
+      isShow:false,
+      TotalCount:'',
+      nodeNum:'',
+      clusters:[],//集群
     };
   },
   components: {
     HeadCom
   },
+  created(){
+    this.resourceList();
+  },
   methods: {
     show() {
       this.isShow=!this.isShow
-    }
+    },
+    async  resourceList(){
+       
+       var params={
+         Version:'2018-05-25',
+         Region:this.$cookie.get('regionv2'),
+       }
+      const res= await  this.axios.post(TKE_COLONY_LIST,params)
+       
+        if(res.Response.Error === undefined){
+            this.TotalCount=res.Response.TotalCount;
+            this.nodeNum=res.Response.Clusters.reduce((pre,cur)=>{
+              return pre+cur.ClusterNodeNum
+            },0);
+            this.clusters=res.Response.Clusters;
+            console.log(this.clusters)
+          }else{
+            let ErrTips = {
+                   "InternalError":'内部错误',
+                   "InternalError.CamNoAuth":'没有权限',
+                   "InternalError.Db":'db错误',
+                   "InternalError.DbAffectivedRows":'DB错误',
+                   "InternalError.Param":'Param',
+                   "InternalError.PublicClusterOpNotSupport":'集群不支持当前操作',
+                   "InternalError.QuotaMaxClsLimit":'超过配额限制',
+                   "InternalError.QuotaMaxNodLimit":'超过配额限制',
+                   "InvalidParameter":'参数错误',
+                   "InvalidParameter.Param":'参数错误',
+                   "LimitExceeded":'超过配额限制',
+                   "ResourceNotFound":'资源不存在',
+                };
+                let ErrOr = Object.assign(ErrorTips, ErrTips);
+                this.$message({
+                  message: ErrOr[res.Response.Error.Code],
+                  type: "error",
+                  showClose: true,
+                  duration: 0
+                });
+      }
+
+
+    },
   }
 };
 </script>
@@ -344,9 +393,10 @@ a:hover {
   color: #e54545;
 }
 .app-tke-fe-content__inner {
-  padding-top: 20px;
+  // padding-top: 20px;
   max-width: 1360px;
   margin:0 auto;
+  padding: 20px 15px 0px;
 }
 .tf-g {
   font-size: 0;

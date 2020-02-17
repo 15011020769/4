@@ -82,7 +82,7 @@
 import {
   CreateListGroups,
   WARNING_GetCOLONY,
-  WARNING_GetUSER
+  TKE_COLONY_LIST
 } from "@/constants";
 export default {
   name:'logCollection',
@@ -136,16 +136,11 @@ export default {
     // 获取集群列表
     async getWarningList() {
       let params = {
-          Limit: this.pageSize,
-          Offset: this.pageIndex,
-          Version: "2018-05-25"
+          Version: "2018-05-25",
+          Region:this.$cookie.get('regionv2'),
         }
-      // console.log(params)
-      const res = await this.axios.post(WARNING_GetUSER, params);
-      if(res.Error){
-        console.log(res)
-      }else{
-        // console.log(res)
+      const res = await this.axios.post(TKE_COLONY_LIST, params);
+      if(res.Response.Error === undefined){
         if(res.Response.Clusters.length>0){
           let ids=[];
           res.Response.Clusters = res.Response.Clusters.map(item => {
@@ -159,8 +154,29 @@ export default {
             this.options.push(option)
             this.value = this.options[0].value
           }
-          console.log(this.options)
         }
+      }else{
+         let ErrTips = {
+                   "InternalError":'内部错误',
+                   "InternalError.CamNoAuth":'没有权限',
+                   "InternalError.Db":'db错误',
+                   "InternalError.DbAffectivedRows":'DB错误',
+                   "InternalError.Param":'Param',
+                   "InternalError.PublicClusterOpNotSupport":'集群不支持当前操作',
+                   "InternalError.QuotaMaxClsLimit":'超过配额限制',
+                   "InternalError.QuotaMaxNodLimit":'超过配额限制',
+                   "InvalidParameter":'参数错误',
+                   "InvalidParameter.Param":'参数错误',
+                   "LimitExceeded":'超过配额限制',
+                   "ResourceNotFound":'资源不存在',
+                };
+                let ErrOr = Object.assign(ErrorTips, ErrTips);
+                this.$message({
+                  message: ErrOr[res.Response.Error.Code],
+                  type: "error",
+                  showClose: true,
+                  duration: 0
+                });
       }
     },
   }
