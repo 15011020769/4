@@ -2,7 +2,7 @@
   <div class="container">
     <div class="editTitle">
       <p class="title">
-      <i class="el-icon-back" @click="backListDomin"></i>编辑域名
+      <i class="el-icon-back" @click="backListDomin"></i>{{domainId ? '编辑' : '新增'}}域名
       </p>
       <div class="main">
         <div class="head">
@@ -11,8 +11,8 @@
             <el-step title="选择监听器" ></el-step>
           </el-steps>
         </div>
-        <domain @next="next" v-show="active === 1" />
-        <listener :domain="domain" v-show="active === 2" />
+        <domain @next="next" :domain.sync="domain" v-if="active === 1" />
+        <listener :domain.sync="domain" v-if="active === 2" />
       </div>
     </div>
   </div>
@@ -20,6 +20,7 @@
 <script>
 import { ErrorTips } from "@/components/ErrorTips"
 import { COMMON_ERROR } from '../constants'
+import { DESCRIBE_HOSTS } from '@/constants'
 import Domain from './components/domain'
 import Listener from './components/listener'
 
@@ -27,26 +28,46 @@ export default {
   data() {
     return {
       active: 1,
-      domain: {}
+      domainId: '',
+      domain: {
+        IsCdn: 0,
+      }
     }
   },
   components: {
     Domain,
     Listener
   },
-  mounted: {
-    
+  mounted() {
+    const { domainId } = this.$route.query
+    this.domainId = domainId
+    if (domainId) {
+      this.axios.post(DESCRIBE_HOSTS, {
+        Version: '2018-01-25',
+        DomainId: domainId,
+      }).then(({ Response }) => {
+        if (Response.Error) {
+          let ErrOr = Object.assign(ErrorTips, COMMON_ERROR)
+          this.$message({
+            message: ErrOr[Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          })
+        } else {
+          if (Response.TotalCount === 1) {
+            this.domain = Response.HostList[0]
+          }
+        }
+      })
+    }
   },
   methods: {
-    next(obj) {
+    next() {
       this.active = 2
-      this.domain = obj
     },
     backListDomin() {
       this.$router.go(-1)
-      if (!t && r.isPanDomain(e)) {
-            return "当前版本不支持泛域名，请升级到旗舰版"
-        }
     },
   }
 }

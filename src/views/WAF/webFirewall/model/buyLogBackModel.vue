@@ -15,7 +15,7 @@
           </div>
           <div class="newClear dominPackList">
             <p>到期时间</p>
-            <p>2020-01-12 16：00:00（共26天）</p>
+            <p>{{package.Cls && package.Cls.ValidTime || package.ValidTime}}（共{{remainingDays}}天）</p>
           </div>
           <div class="newClear dominPackList">
             <p>说明</p>
@@ -35,14 +35,30 @@
   </div>
 </template>
 <script>
+import moment from 'moment'
 export default {
   props:{
-    isShow:Boolean
+    isShow:Boolean,
+    package: {
+      type: Object,
+      default() {
+        return {}
+      },
+    },
   },
   data(){
     return{
-      logBackModel:'',//弹框
-      buyNum:'7',//购买数量
+      logBackModel: '', // 弹框
+      buyNum: 1, // 购买数量
+      remainingDays: 0, // 剩余天数
+    }
+  },
+  watch: {
+    package(n) {
+      if (n) {
+        const ValidTime = n.Cls && n.Cls.ValidTime || n.ValidTime
+        this.remainingDays = Math.ceil(moment(ValidTime).diff(moment(), 'h')/24)
+      }
     }
   },
   computed:{

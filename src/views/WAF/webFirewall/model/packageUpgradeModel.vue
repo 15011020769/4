@@ -11,11 +11,11 @@
             <div class="packpageLabel">套餐类型</div>
             <div>
               <el-button-group>
-                <el-button class="packageTypeBtn" @click="checkType(1)" :class="thisType=='1'?'addBoderC':''">企业版</el-button>
-                <el-button class="packageTypeBtn" @click="checkType(2)" :class="thisType=='2'?'addBoderC':''">旗舰版</el-button>
+                <el-button class="packageTypeBtn" v-if="package.Level < 3" @click="checkType(3)" :class="type === 3 ?'addBoderC':''">企业版</el-button>
+                <el-button class="packageTypeBtn" v-if="package.Level < 4" @click="checkType(4)" :class="type === 4 ?'addBoderC':''">旗舰版</el-button>
               </el-button-group>
               <p class="orangeTip">基于AI + 规则双引擎防护；</p>
-              <div v-if="thisType=='1'?true:false">
+              <div v-if="type === 3">
                 <p class="pList">包含高级版所有功能；</p>
                 <p class="pList">支持链路劫持检测（5个）；</p>
                 <p class="pList">支持高级BOT行为管理；</p>
@@ -28,10 +28,9 @@
                 <p class="pList">CC防护峰值QPS:150000；</p>
                 <p class="pList">支持一级域名个数:3；</p>
                 <p class="pList">支持二级域名个数:30；</p>
-                <p class="pList">业务带宽（雲外/雲内）: 30Mbps/200Mbps；</p>
               </div>
-              <div v-if="thisType=='2'?true:false">
-                <p class="pList">包含企业版版所有功能；</p>
+              <div v-if="type === 4">
+                <p class="pList">包含企业版所有功能；</p>
                 <p class="pList">支持链路劫持检测（10个）；</p>
                 <p class="pList">支持高级BOT行为管理；</p>
                 <p class="pList">支持非标准端口（不限于80,8080,443，8443）定制（20个）；</p>
@@ -42,7 +41,6 @@
                 <p class="pList">CC防护峰值QPS:500000；</p>
                 <p class="pList">支持一级域名个数:4；</p>
                 <p class="pList">支持二级域名个数:40；</p>
-                <p class="pList">业务带宽（雲外/雲内）: 50Mbps/200Mbps；</p>
               </div>
             </div>
           </div>
@@ -66,17 +64,30 @@
 <script>
 export default {
   props:{
-    isShow:Boolean
+    isShow: Boolean,
+    package: {
+      type: Object,
+      default() {
+        return {}
+      },
+    },
   },
   data(){
     return{
-      dialogModel:'',//弹框
-      thisType:'1',//旗舰版企业版默认选中
+      dialogModel: '', // 弹框
+      type: '',
+    }
+  },
+  watch: {
+    isShow(n) {
+      if (n) {
+        this.type = this.package.Level + 1
+      }
     }
   },
   computed:{
     packageUpModelShow(){
-      this.dialogModel=this.isShow;
+      this.dialogModel = this.isShow;
       return this.isShow;
     }
   },
@@ -92,7 +103,7 @@ export default {
     },
     //企业版旗舰版按钮
     checkType(type){
-      this.thisType=type;
+      this.type = type;
     }
   }
 }
