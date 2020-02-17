@@ -148,9 +148,9 @@
 
         // 消息中心
         if (key === '6-6') {
-          // this.accessControl('/product/MESS/index.html')
+          this.accessControl('/product/MGC/index.html#/message')
           // 内测中，敬请期待！
-          this.$message('内测中，敬请期待！');
+          // this.$message('内测中，敬请期待！');
         }
 
         // 返回
