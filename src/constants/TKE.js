@@ -100,7 +100,7 @@ export const CLUSTERS_SECURITY = 'tke2/DescribeClusterSecurity'
 // 集群关联的伸缩组列表
 export const CLUSTERS_GROUPS = 'tke2/DescribeClusterAsGroups'
 
-// 伸缩组全局配置
+// 集群详情-节点管理-伸缩组-全局配置
 export const CLUSTERS_GROUPSOPTION = 'tke2/DescribeClusterAsGroupOption'
 
 // 修改伸缩组全局配置
