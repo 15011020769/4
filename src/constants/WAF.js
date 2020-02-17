@@ -9,3 +9,7 @@ export const DESCRIBE_LISTENERS = 'lb2/DescribeListeners'
 export const CREATE_HOST = 'waf2/CreateHost'
 /** 防护域名列表 */
 export const DESCRIBE_HOSTS = 'waf2/DescribeHosts'
+/** 获取业务和攻击概览峰值 */
+export const DESCRIBE_PEAK_VALUE = 'waf2/DescribePeakValue'
+/** 获取业务和攻击概要趋势 */
+export const DESCRIBE_PEAK_POINTS = 'waf2/DescribePeakPoints'

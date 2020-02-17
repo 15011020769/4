@@ -1,35 +1,42 @@
 <template>
   <div>
     <div class="wrapperContent">
-      <div class="timeListTop newClear">
-        <el-select
-          v-model="selectValue"
-          filterable
-          allow-create
-          class="selectDomin"
-          default-first-option
-        >
-          <el-option
-            v-for="item in options"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          ></el-option>
-        </el-select>
-        <el-button-group class="buttonDateCheck">
-          <el-button @click="checkTime(1)" :class="thisType=='1'?'addStyleBtn':''">今天</el-button>
-          <el-button @click="checkTime(2)" :class="thisType=='2'?'addStyleBtn':''">昨天</el-button>
-          <el-button @click="checkTime(3)" :class="thisType=='3'?'addStyleBtn':''">近7天</el-button>
-        </el-button-group>
-        <el-date-picker
-          v-model="dateTimeValue"
-          type="daterange"
-          class="dateTimeValue"
-          range-separator="至"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
-        ></el-date-picker>
-      </div>
+      <p class="down">
+        <el-row class="timeListTop newClear">
+          <el-select
+            v-model="selectValue"
+            filterable
+            allow-create
+            class="selectDomin"
+            default-first-option
+          >
+            <el-option
+              v-for="item in options"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            ></el-option>
+          </el-select>
+          <el-button-group class="buttonDateCheck">
+            <el-button @click="checkTime(1)" :class="thisType=='1'?'addStyleBtn':''">今天</el-button>
+            <el-button @click="checkTime(2)" :class="thisType=='2'?'addStyleBtn':''">昨天</el-button>
+            <el-button @click="checkTime(3)" :class="thisType=='3'?'addStyleBtn':''">近7天</el-button>
+          </el-button-group>
+          <el-date-picker
+            v-model="dateTimeValue"
+            type="daterange"
+            class="dateTimeValue"
+            range-separator="至"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"
+          ></el-date-picker>
+        </el-row>
+        <el-row class="iconBtn">
+          <i class="el-icon-download"></i>
+          <i class="el-icon-refresh"></i>
+          <i class="el-icon-setting"></i>
+        </el-row>
+      </p>
       <div class="contentNum">
         <el-row>
           <el-col :span="8">
@@ -215,29 +222,49 @@ export default {
     line-height: 30px;
     border-radius: 0;
   }
-  .timeListTop {
-    margin-bottom: 12px;
-    .selectDomin {
-      margin-right: 10px;
-      float: left;
+  .down {
+    width: 100%;
+    height: 30px;
+    margin: 5px 0 10px 0;
+    display: flex;
+    justify-content: space-between;
+    .timeListTop {
+      margin-bottom: 12px;
+      .selectDomin {
+        margin-right: 10px;
+        float: left;
+      }
+      .buttonDateCheck {
+        float: left;
+        button {
+          padding: 0 20px;
+        }
+        .addStyleBtn {
+          background-color: #006eff !important;
+          color: #fff;
+        }
+      }
+      .dateTimeValue {
+        ::v-deep .el-range__icon {
+          line-height: 26px;
+        }
+        ::v-deep .el-range-separator {
+          line-height: 26px;
+          width: 7%;
+        }
+      }
     }
-    .buttonDateCheck {
-      float: left;
-      button {
-        padding: 0 20px;
+    .iconBtn {
+      font-size: 16px;
+      color: #888;
+      display: flex;
+      align-items: center;
+      > i {
+        margin: 0 10px;
+        font-weight: 600;
       }
-      .addStyleBtn {
-        background-color: #006eff !important;
-        color: #fff;
-      }
-    }
-    .dateTimeValue {
-      ::v-deep .el-range__icon {
-        line-height: 26px;
-      }
-      ::v-deep .el-range-separator {
-        line-height: 26px;
-        width: 7%;
+      i:hover {
+        cursor: pointer;
       }
     }
   }

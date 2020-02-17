@@ -1,38 +1,46 @@
 <template>
   <div>
-    <div class="wrapperContent">
-      <div class="timeListTop newClear">
-        <el-select
-          v-model="selectValue"
-          filterable
-          allow-create
-          class="selectDomin"
-          default-first-option
-        >
-          <el-option
-            v-for="item in options"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          ></el-option>
-        </el-select>
-        <el-button-group class="buttonDateCheck">
-          <el-button @click="checkTime(1)" :class="thisType=='1'?'addStyleBtn':''">今天</el-button>
-          <el-button @click="checkTime(2)" :class="thisType=='2'?'addStyleBtn':''">昨天</el-button>
-          <el-button @click="checkTime(3)" :class="thisType=='3'?'addStyleBtn':''">近7天</el-button>
-        </el-button-group>
-        <el-date-picker
-          v-model="dateTimeValue"
-          type="daterange"
-          class="dateTimeValue"
-          range-separator="至"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
-        ></el-date-picker>
-      </div>
+    <div class="wrapperContent" ref="wrapperContent">
+      <p class="down">
+        <el-row class="timeListTop newClear">
+          <el-select
+            v-model="selectValue"
+            filterable
+            class="selectDomin"
+            default-first-option
+            @change="handleDomin"
+          >
+            <el-option value="" label="ALL"></el-option>
+            <el-option
+              v-for="item in options"
+              :key="item.DomainId"
+              :label="item.Domain"
+              :value="item.Domain"
+            ></el-option>
+          </el-select>
+          <el-button-group class="buttonDateCheck">
+            <el-button @click="checkTime(1)" :class="thisType=='1'?'addStyleBtn':''">今天</el-button>
+            <el-button @click="checkTime(2)" :class="thisType=='2'?'addStyleBtn':''">昨天</el-button>
+            <el-button @click="checkTime(3)" :class="thisType=='3'?'addStyleBtn':''">近7天</el-button>
+          </el-button-group>
+          <el-date-picker
+            v-model="dateTimeValue"
+            type="daterange"
+            class="dateTimeValue"
+            range-separator="至"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"
+          ></el-date-picker>
+        </el-row>
+        <el-row class="iconBtn">
+          <i class="el-icon-download"></i>
+          <i class="el-icon-refresh"></i>
+          <i class="el-icon-setting"></i>
+        </el-row>
+      </p>
       <div class="contentNum">
         <el-row>
-          <el-col :span="selectValue=='ALL'?12:8">
+          <el-col :span="selectValue==''?12:8">
             <div class="rowContain">
               <p>
                 <span class="red">0</span>
@@ -41,7 +49,7 @@
               <p>WEB攻击次数</p>
             </div>
           </el-col>
-          <el-col :span="selectValue=='ALL'?12:8">
+          <el-col :span="selectValue==''?12:8">
             <div class="rowContain">
               <p>
                 <span class="oarnge">0</span>
@@ -50,7 +58,7 @@
               <p>CC攻击次数</p>
             </div>
           </el-col>
-          <el-col :span="selectValue=='ALL'?12:8" v-if="selectValue=='ALL'?false:true">
+          <el-col :span="selectValue==''?12:8" v-if="selectValue==''?false:true">
             <div class="rowContain">
               <p>
                 <span class="blue">0</span>
@@ -69,30 +77,55 @@
 </template>
 <script>
 import moment from "moment";
+import { DESCRIBE_HOSTS, DESCRIBE_PEAK_VALUE, DESCRIBE_PEAK_POINTS } from '@/constants'
 export default {
   data() {
     return {
-      options: [
-        {
-          value: "ALL",
-          label: "ALL"
-        },
-        {
-          value: "www.baidu.com",
-          label: "domin"
-        }
-      ], //默认下拉选项
+      options: [], //默认下拉选项
       dateTimeValue: "", //日期绑定
       selectValue: [], //域名下拉菜单
       thisType: "1", //按钮默认选中
-      endTime: "",
-      startTime: ""
+      endTime: moment(new Date()).endOf("days").format("YYYY-MM-DD HH:mm:ss"),
+      startTime: moment(new Date()).startOf("days").format("YYYY-MM-DD 00:00:00"),
+      host: "",
     };
   },
   mounted () {
 　　this.initCharts();
+    this.getDominList();
+    this.checkTime("1");
 　},
   methods: {
+    //获取数据
+    getDominList() {
+      this.axios.post(DESCRIBE_HOSTS, {
+        Version: '2018-01-25'
+      }).then(({ Response }) => {
+        if (Response.Error) {
+          let ErrOr = Object.assign(ErrorTips, COMMON_ERROR)
+          this.$message({
+            message: ErrOr[Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          })
+        } else {
+          this.options = Response.HostList
+        }
+      })
+    },
+    handleDomin(val) {
+      this.host = val
+    },
+    getPeakValue() {
+      this.axios.post(DESCRIBE_PEAK_VALUE, {
+        Version: '2018-01-25',
+        FromTime: this.startTime,
+        ToTime: this.endTime
+      }).then((res) => {
+        // console.log(res)
+      })
+    },
     //时间点击事件
     checkTime(type) {
       this.thisType = type;
@@ -101,17 +134,22 @@ export default {
       const end = new Date();
       const start = new Date();
       if (type == "1") {
-        start.setTime(start.getTime() - 3600 * 1000 * 24);
+        start.setTime(start.getTime());
+        end.setTime(end.getTime());
       } else if (type == "2") {
-        start.setTime(start.getTime() - 3600 * 1000 * 24 * 2);
+        start.setTime(start.getTime() - 3600 * 1000 * 24);
         end.setTime(end.getTime() - 3600 * 1000 * 24);
       } else if (type == "3") {
         start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+        end.setTime(end.getTime());
       }
       ipt1.value = moment(start).format("YYYY-MM-DD");
       ipt2.value = moment(end).format("YYYY-MM-DD");
-      this.startTime = moment(start).format("YYYY-MM-DD");
-      this.endTime = moment(end).format("YYYY-MM-DD");
+      this.startTime = moment(start).startOf("days").format("YYYY-MM-DD HH:mm:ss");
+      this.endTime = moment(end).endOf("days").format("YYYY-MM-DD HH:mm:ss");
+      this.$nextTick(() => {
+        this.getPeakValue()
+      })
     },
     //图表
     initCharts() {
@@ -214,29 +252,49 @@ export default {
     line-height: 30px;
     border-radius: 0;
   }
-  .timeListTop {
-    margin-bottom: 12px;
-    .selectDomin {
-      margin-right: 10px;
-      float: left;
+  .down {
+    width: 100%;
+    height: 30px;
+    margin: 5px 0 10px 0;
+    display: flex;
+    justify-content: space-between;
+    .timeListTop {
+      margin-bottom: 12px;
+      .selectDomin {
+        margin-right: 10px;
+        float: left;
+      }
+      .buttonDateCheck {
+        float: left;
+        button {
+          padding: 0 20px;
+        }
+        .addStyleBtn {
+          background-color: #006eff !important;
+          color: #fff;
+        }
+      }
+      .dateTimeValue {
+        ::v-deep .el-range__icon {
+          line-height: 26px;
+        }
+        ::v-deep .el-range-separator {
+          line-height: 26px;
+          width: 7%;
+        }
+      }
     }
-    .buttonDateCheck {
-      float: left;
-      button {
-        padding: 0 20px;
+    .iconBtn {
+      font-size: 16px;
+      color: #888;
+      display: flex;
+      align-items: center;
+      > i {
+        margin: 0 10px;
+        font-weight: 600;
       }
-      .addStyleBtn {
-        background-color: #006eff !important;
-        color: #fff;
-      }
-    }
-    .dateTimeValue {
-      ::v-deep .el-range__icon {
-        line-height: 26px;
-      }
-      ::v-deep .el-range-separator {
-        line-height: 26px;
-        width: 7%;
+      i:hover {
+        cursor: pointer;
       }
     }
   }
