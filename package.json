@@ -44,6 +44,8 @@
     "serve:WAF": "vue-cli-service serve --WAF",
     "build:WAF": "vue-cli-service build --WAF",
     "serve:MGC": "vue-cli-service serve --MGC",
+    "qa:MGC": "vue-cli-service build --MGC --mode qa",
+    "uat:MGC": "vue-cli-service build --MGC --mode uat",
     "build:MGC": "vue-cli-service build --MGC",
     "serve:CSS": "vue-cli-service serve --CSS",
     "build:CSS": "vue-cli-service build --CSS",
