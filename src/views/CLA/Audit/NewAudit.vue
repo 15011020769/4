@@ -178,7 +178,7 @@
           }],
           AuditName: [{
             validator: AuditName,
-            trigger: "blur"
+            trigger: "change"
           }],
           CosBucketName: [{
             validator: CosBucketName,
