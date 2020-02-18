@@ -16,7 +16,7 @@
               ；子域名套餐还剩余{{package.DomainLimit - package.DomainCount}}个。</span>
           </el-row>
         </el-col>
-        <el-input placeholder="支持域名、负载均衡名称、监听器名称模糊搜索" v-model="keyword" style="width: 360px">
+        <el-input placeholder="支持域名、负载均衡名称、监听器名称模糊搜索" v-model="keyword" class="search-input">
           <i class="el-icon-search el-input__icon" slot="suffix" @click="getData"/>
         </el-input>
       </el-row>
@@ -393,9 +393,13 @@ export default {
   white-space: nowrap;
   text-overflow: ellipsis;
 }
-// .mode-tooltip {
-  ::v-deep .el-tooltip__popper {
-  border: none;
+.search-input {
+  width: 360px;
+  .el-icon-search {
+    cursor: pointer;
   }
-// }
+  ::v-deep .el-input__suffix {
+    top: -4px;
+  }
+}
 </style>

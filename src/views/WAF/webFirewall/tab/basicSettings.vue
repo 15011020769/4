@@ -25,7 +25,7 @@
             <el-row type="flex" :gutter="20" align="middle" justify="center">
               <el-col class="subText" :span="4">规则使用模式</el-col>
               <el-col>
-                <el-radio-group size="small" v-model="domain.Mode" @change="onChangeMode">
+                <el-radio-group size="small" v-model="domain.Mode" @change="status => onChangeMode(status, domain)">
                   <el-radio-button :label="0">观察</el-radio-button>
                   <el-radio-button :label="1">拦截</el-radio-button>
                 </el-radio-group>
@@ -59,30 +59,42 @@
             <el-row type="flex" :gutter="20" align="middle" justify="center">
               <el-col class="subText" :span="4">域名</el-col>
               <el-col>
-                waf.dhycloud.com
+                {{domain.Domain}}
               </el-col>
             </el-row>
             <el-row type="flex" :gutter="20" align="middle" justify="center">
               <el-col class="subText" :span="4">ID</el-col>
               <el-col>
-                waf.dhycloud.com
+                {{domain.DomainId}}
               </el-col>
             </el-row>
             <el-row type="flex" :gutter="20" align="middle" justify="center">
               <el-col class="subText" :span="4">代理情况</el-col>
               <el-col>
-                waf.dhycloud.com
+                {{domain.IsCdn ? '是' : '否'}}
               </el-col>
             </el-row>
             <el-row type="flex" :gutter="20" align="middle" justify="center">
               <el-col class="subText" :span="4">流量模式</el-col>
               <el-col>
-                waf.dhycloud.com
+                <el-radio-group size="small" v-model="domain.FlowMode">
+                  <el-radio-button :label="0">镜像模式</el-radio-button>
+                  <el-radio-button :label="1">清洗模式</el-radio-button>
+                </el-radio-group>
               </el-col>
             </el-row>
           </el-col>
           <el-col class="item-container">
-            <h3>地域封禁</h3>
+            <el-row type="flex" justify="space-between">
+              <el-col>
+                <h3>地域封禁</h3>
+              </el-col>
+              <el-col>
+                <el-row type="flex" justify="end">
+                  <el-button type="text">编辑</el-button>
+                </el-row>
+              </el-col>
+            </el-row>
             <el-row type="flex" :gutter="20" align="middle" justify="center">
               <el-col class="subText" :span="4">封禁状态</el-col>
               <el-col>
@@ -104,19 +116,19 @@
           </el-col>
         </el-row>
         <el-row type="flex">
-          <el-col class="item-container">
+          <el-col class="item-container" :span="12">
             <h3>负载均衡 - 监听器</h3>
-            <el-row>
-              <el-col>区域</el-col>
-              <el-col>负载均衡（ID）</el-col>
-              <el-col>负载均衡VIP</el-col>
-              <el-col>监听器</el-col>
+            <el-row class="table-head">
+              <el-col :span="3">区域</el-col>
+              <el-col :span="7">负载均衡（ID）</el-col>
+              <el-col :span="7">负载均衡VIP</el-col>
+              <el-col :span="7">监听器</el-col>
             </el-row>
-            <el-row>
-              <el-col>广州</el-col>
-              <el-col>lb-3ba257(lb-3k1yq</el-col>
-              <el-col>203.195.183.195203.19</el-col>
-              <el-col>勿删(HTTP:80)勿删</el-col>
+            <el-row v-if="domain.LoadBalancerSet" v-for="lb in domain.LoadBalancerSet" :key="lb.LoadBalancerId">
+              <el-col :span="3">{{lb.Region}}</el-col>
+              <el-col :span="7">{{lb.LoadBalancerId}}</el-col>
+              <el-col :span="7">{{lb.Vip}}</el-col>
+              <el-col :span="7">{{lb.ListenerName}}</el-col>
             </el-row>
           </el-col>
         </el-row>
@@ -126,10 +138,16 @@
 </template>
 <script>
 import addressStopEditModel from '../model/addressStopEditModel'
-import { DESCRIBE_WEBSHELL_STATUS, MODIFY_WEBSHELL_STATUS, MODIFY_HOST_MODE } from '@/constants'
+import { 
+  DESCRIBE_WEBSHELL_STATUS,
+  MODIFY_WEBSHELL_STATUS,
+  MODIFY_HOST_MODE,
+  DESCRIBE_AREABAN_AREAS,
+  DESCRIBE_AREABAN_SUPPORT_AREAS
+} from '@/constants'
 import { flatObj } from '@/utils'
 import { ErrorTips } from "@/components/ErrorTips"
-import { COMMON_ERROR } from '../../constants'
+import { COMMON_ERROR, POLICY_RULE_ACTION_ARR } from '../../constants'
 
 export default {
   props: {
@@ -151,23 +169,18 @@ export default {
     domain(n) {
       if (n) {
         this.getWebShellStatus(n)
+        this.getAreaBan(n)
+        this.getAreaBanSupport()
       }
     },
-  },
-  mounted() {
-
   },
   components:{
     addressStopEditModel:addressStopEditModel
   },
   methods:{
-    onChangeMode(Mode) {
-      delete domain.statusBool
-      this.axios.post(MODIFY_HOST_MODE, {
+    getAreaBanSupport() {
+      this.axios.post(DESCRIBE_AREABAN_SUPPORT_AREAS, {
         Version: '2018-01-25',
-        Domain: this.domain.Domain,
-        DomainId: this.domain.DomainId,
-        Mode: 0 ? 10 : 20 // 10 规则观察 20 规则拦截
       }).then(({ Response }) => {
         if (Response.Error) {
           let ErrOr = Object.assign(ErrorTips, COMMON_ERROR)
@@ -178,7 +191,53 @@ export default {
             duration: 0
           })
         } else {
-          this.$emit('change')
+          console.log(Response)
+        }
+      })
+    },
+    getAreaBan({ Domain }) {
+      this.axios.post(DESCRIBE_AREABAN_AREAS, {
+        Version: '2018-01-25',
+        Domain,
+      }).then(({ Response }) => {
+        if (Response.Error) {
+          let ErrOr = Object.assign(ErrorTips, COMMON_ERROR)
+          this.$message({
+            message: ErrOr[Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          })
+        } else {
+          console.log(Response)
+        }
+      })
+    },
+    onChangeMode(status, domain) {
+      // 返回 0 观察 1拦截
+      this.domain.Mode = status^1 // 0 1互换
+      this.axios.post(MODIFY_HOST_MODE, {
+        Version: '2018-01-25',
+        Domain: this.domain.Domain,
+        DomainId: this.domain.DomainId,
+        Mode: status ? 20 : 10 // 传入 10 规则观察 20 规则拦截
+      }).then(({ Response }) => {
+        if (Response.Error) {
+          let ErrOr = Object.assign(ErrorTips, COMMON_ERROR)
+          this.$message({
+            message: ErrOr[Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          })
+        } else {
+          this.$message({
+            message: '切换模式成功',
+            type: "success",
+            showClose: true,
+            duration: 0
+          })
+          this.domain.Mode = status
         }
       })
     },
@@ -193,7 +252,7 @@ export default {
         }).then(() => {
           this.updateWebShellStatus(status)
         }).catch(() => {
-          this.webShellStatus = Math.abs(status - 1)     
+          this.webShellStatus = status^1    
         })
       } else {
         this.updateWebShellStatus(status)
@@ -213,7 +272,6 @@ export default {
             duration: 0
           })
         } else {
-          console.log(Response.Status)
           this.webShellStatus = Response.Status
         }
       })
@@ -304,5 +362,9 @@ export default {
     font-size: 12px;
     color: #888;
   }
+}
+.table-head {
+  color: #888;
+  font-weight: 600;
 }
 </style>

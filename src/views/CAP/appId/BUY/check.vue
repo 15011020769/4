@@ -8,25 +8,25 @@
         <table class="table-div">
           <thead>
             <tr class="t-head">
-              <th class="first-txt">产品名称</th>
-              <th>配置信息</th>
-              <th>单价</th>
-              <th>数量</th>
-              <th>付费方式</th>
-              <th>购买时长</th>
-              <th>优惠</th>
-              <th>费用</th>
+              <th class="first-txt">{{$t('CAP.cpmc')}}</th>
+              <th>{{$t('CAP.pzxx')}}</th>
+              <th>{{$t('CAP.dj')}}</th>
+              <th>{{$t('CAP.sl')}}</th>
+              <th>{{$t('CAP.ff')}}</th>
+              <th>{{$t('CAP.gm')}}</th>
+              <th>{{$t('CAP.yh')}}</th>
+              <th>{{$t('CAP.fy')}}</th>
             </tr>
           </thead>
           <tbody>
             <tr class="t-body" colspan="0" aria-rowspan="0">
               <td class="first-txt">
-                <span>验证码流量包新购</span>
+                <span>{{$t('CAP.yzmllbxg')}}</span>
               </td>
               <td>
-                <p><span>服务 : 验证码服务</span></p>
-                <p><span>次数包 : {{quantity}}万次</span></p>
-                <p><span>有效期 : 1年</span></p>
+                <p><span>{{$t('CAP.fw')}}</span></p>
+                <p><span>{{$t('CAP.csb')}} : {{quantity}}{{$t('CAP.wn')}}</span></p>
+                <p><span>{{$t('CAP.yxq')}}</span></p>
               </td>
               <td>
                 <span>NT$ {{totalCost}}</span>
@@ -35,13 +35,13 @@
                 <span>1</span>
               </td>
               <td>
-                <span>预付费</span>
+                <span>{{$t('CAP.yff')}}</span>
               </td>
               <td>
-                <span>一次性购买</span>
+                <span>{{$t('CAP.ycxgm')}}</span>
               </td>
               <td>
-                <span>无</span>
+                <span>{{$t('CAP.w')}}</span>
               </td>
               <td>
                 <span class="tableTdLast">NT$ {{totalCost}}</span>
@@ -55,8 +55,8 @@
     </el-row>
     <el-row>
       <el-col :span="16" :offset="4" class="btn-wrap">
-        <span class="allTotal">总计费用：<span class="allMoneySpan"> NT$ {{totalCost}}</span></span>
-        <el-button class="payBtnTwo" :disabled="loading" @click="pay">立即购买</el-button>
+        <span class="allTotal">{{$t('CAP.zjjfy')}}：<span class="allMoneySpan"> NT$ {{totalCost}}</span></span>
+        <el-button class="payBtnTwo" :disabled="loading" @click="pay">{{$t('CAP.ljgm')}}</el-button>
       </el-col>
     </el-row>
   </div>
@@ -64,6 +64,8 @@
 <script>
 import NavHeader from "@/components/HeaderAside/Header"
 import { PAY_DEALS } from '@/constants'
+import { ErrorTips } from "@/components/ErrorTips"
+
 export default{
   components: {
     NavHeader
@@ -101,8 +103,21 @@ export default{
           });
           this.$router.replace('/appId')
         } else {
+          let ErrTips = {
+             "FailedOperation":'操作失败',
+             "FailedOperation.AgentPayDealCannotDown":'代理支付设备不能降配',
+             "FailedOperation.BalanceInsufficient":'余额不足',
+             "FailedOperation.InvalidDeal":'订单状态有误，只有未支付订单才能支付',
+             "FailedOperation.InvalidVoucher": '代金券不可用',
+             "FailedOperation.NeedPayTogeter": '一起购买的订单必须同时支付',
+             "FailedOperation.PayPriceError": '支付失敗，請聯繫台富雲工作人員處理',
+             'FailedOperation.PaySuccDeliverFailed': '支付成功但發貨失敗，請聯繫台富雲工作人員處理',
+             'UnauthorizedOperation.CertificationNeedUpgrade': '因賬號安全升級，支付失敗',
+             'UnauthorizedOperation.NotFinanceAuth': '賬號沒有財務授權，支付失敗'
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
-            message: ErrorTips[res.Response.Error.Code],
+            message: ErrOr[res.Response.Error.Code],
             type: "error",
             showClose: true,
             duration: 0

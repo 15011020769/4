@@ -2,25 +2,25 @@
   <div class="wrap">
     <div class="confDetials">
       <div class="detials">
-        <div class="title">基础外观 (修改验证码主题色、语言等，让验证码与你的网站更加融洽)</div>
+        <div class="title">{{$t('CAP.jcwg')}}</div>
         <div class="content">
           <el-form ref="form" label-width="100px">
-            <el-form-item label="主题色">
+            <el-form-item :label="$t('CAP.zts')">
               <el-row type="flex">
                 <span style="padding-left:30px;">{{captcha.SchemeColor}}</span>
                 <el-color-picker v-model="captcha.SchemeColor" style="margin-left:10px;"></el-color-picker>
                 <el-button type="primary" style="margin-left:10px;" @click="reset">重置</el-button>
               </el-row>
-              <p style="padding-left:30px;">主题色会影响验证码滑块、打击提醒、错误提醒等内容颜色</p>
+              <p style="padding-left:30px;">{{$t('CAP.ztshyxyzmhg')}}</p>
             </el-form-item>
-            <el-form-item label="默认语言">
-              <el-select v-model="captcha.Language" placeholder="自适应" style="padding-left:30px;">
-                <el-option label="自适应" :value="1"></el-option>
-                <el-option label="简体验证码" :value="2052"></el-option>
-                <el-option label="繁体验证码" :value="1028"></el-option>
-                <el-option label="英文验证码" :value="1033"></el-option>
+            <el-form-item :label="$t('CAP.mryy')">
+              <el-select v-model="captcha.Language" :placeholder="$t('CAP.zsy')" style="padding-left:30px;">
+                <el-option :label="$t('CAP.zsy')" :value="1"></el-option>
+                <el-option :label="$t('CAP.jtyzm')" :value="2052"></el-option>
+                <el-option :label="$t('CAP.ftyzm')" :value="1028"></el-option>
+                <el-option :label="$t('CAP.ywyzm')" :value="1033"></el-option>
               </el-select>
-              <p style="padding-left:30px;">验证码提示文案的语言，目前VTT类型只支持简体中文</p>
+              <p style="padding-left:30px;">{{$t('CAP.yzmtswa')}}</p>
             </el-form-item>
             <el-button type="primary" style="margin-left:30px;margin-top:10px;" @click="save">立刻保存</el-button> 
             <span style="padding-left:30px;" v-show="timeShow">{{this.time}} <span>已保存</span></span>
@@ -31,7 +31,7 @@
         <iframe
           id="tcaptcha"
           scrolling="no"
-          src="/captcha.html"
+          src="https://file-1300560981.cos.ap-taipei.myqcloud.com/png/captcha/captcha.html"
           frameborder="no"
           border="0"
           width="360"
@@ -117,7 +117,6 @@ export default {
     },
     //立刻保存
     save(){
-       this.timeShow = true;
        let params = {
           Version: '2019-07-22',
           CaptchaAppId: this.Id,
@@ -137,14 +136,16 @@ export default {
        this.axios.post(UPDATEAPPID_INFO,params).then(res => {
          if(res.Response.Error === undefined){
           this.$message({
-              message: 保存成功,
-              type: "success",
-              showClose: true,
-              duration: 0
-            });
+            message: '保存成功',
+            type: "success",
+            showClose: true,
+            duration: 0
+          });
+          this.time = this.getDateString(new Date())
+          this.timeShow = true;
           setTimeout(()=>{
-              this.timeShow = false
-            }, 5000);
+            this.timeShow = false
+          }, 5000);
          }else{
             let ErrTips = {
                "InternalError":'内部错误',

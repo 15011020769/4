@@ -1,9 +1,9 @@
 <template>
   <div class="appid">
-    <Herd title="APPID列表" />
+    <Herd title="APPID清單" />
     <div class="appidTabs">
       <el-tabs v-model="activeName" @tab-click="handleClick">
-        <el-tab-pane label="APPID列表" name="first">
+        <el-tab-pane label="APPID清單" name="first">
           <first />
         </el-tab-pane>
         <el-tab-pane label="套餐包管理" name="second">

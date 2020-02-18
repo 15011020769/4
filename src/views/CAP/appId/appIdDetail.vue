@@ -1,19 +1,19 @@
 
 <template>
     <div class="appidDetials">
-       <Herd title="验证码-详情" :backShow="true" @_back="back" />
+       <Herd :title="$t('CAP.yzmxq')" :backShow="true" @_back="back" />
          <div class="appidTabs">
       <el-tabs v-model="activeName" @tab-click="handleClick">
-        <el-tab-pane label="验证数据" name="first">
+        <el-tab-pane :label="$t('CAP.yzxq')" name="first">
           <Validata/>
         </el-tab-pane>
-        <el-tab-pane label="外观配置" name="second">
+        <el-tab-pane :label="$t('CAP.wgpz')" name="second">
            <Configuration/>           
         </el-tab-pane>
-        <el-tab-pane label="安全配置" name="third">
+        <el-tab-pane :label="$t('CAP.aqpz')" name="third">
            <Security/>
         </el-tab-pane>
-        <el-tab-pane label="基础配置" name="fourth">
+        <el-tab-pane :label="$t('CAP.jcpz')" name="fourth">
            <Basis/>
         </el-tab-pane>
       </el-tabs>

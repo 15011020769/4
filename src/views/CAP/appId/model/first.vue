@@ -3,21 +3,21 @@
     <div class="appidWrap">
       <div class="bntWrap">
         <!-- 操作按钮 -->
-        <el-button type="primary" class="addUser" size="small" @click="addBuild">新建验证</el-button>
+        <el-button type="primary" class="addUser" size="small" @click="addBuild">{{$t('CAP.xjyz')}}</el-button>
       </div>
       <div class="tableWrap">
         <div class="table">
           <!-- 表格 -->
           <template>
             <el-table :data="tableData.slice((currpage - 1) * pagesize, currpage * pagesize)" style="width: 100%;" height="450px">
-              <el-table-column prop="AppName" label="名称"></el-table-column>
-              <el-table-column label="昨日恶意占比">-</el-table-column>
-              <el-table-column label="昨日请求数量">-</el-table-column>
-              <el-table-column label="昨日验证量">-</el-table-column>
-              <el-table-column label="昨日恶意拦截量">-</el-table-column>
+              <el-table-column prop="AppName" :label="$t('CAP.mc')"></el-table-column>
+              <el-table-column :label="$t('CAP.zreyzb')">-</el-table-column>
+              <el-table-column :label="$t('CAP.zrqqsl')">-</el-table-column>
+              <el-table-column :label="$t('CAP.zryzl')">-</el-table-column>
+              <el-table-column :label="$t('CAP.zreyljl')">-</el-table-column>
               <el-table-column label="操作">
                 <template slot-scope="scope">
-                    <el-link @click="detailsAppid(scope.row)" type="primary" class="cursor">查看详情</el-link>
+                    <el-link @click="detailsAppid(scope.row)" type="primary" class="cursor">{{$t('CAP.ckxq')}}</el-link>
                 </template>
               </el-table-column>
             </el-table>
@@ -32,25 +32,25 @@
     </div>
     <!-- 新建验证 -->
     <el-dialog
-      title="新建验证"
+      :title="$t('CAP.xjyz')"
       :visible.sync="dialogVisibleBuild"
       width="30%"
       :before-close="handleCloseBuild"
     >
       <span>
         <el-form ref="form" :model="form" label-width="100px">
-          <el-form-item label="验证名称">
-            <el-input v-model="form.name" style="width:50%;" placeholder="如(小程序短信验证)"></el-input>
+          <el-form-item :label="$t('CAP.yzmc')">
+            <el-input v-model="form.name" style="width:50%;" :placeholder="$t('CAP.xcxyz')"></el-input>
           </el-form-item>
-          <el-form-item label="验证所属域名" label-width="100px">
+          <el-form-item :label="$t('CAP.yzssym')" label-width="100px">
             <el-input v-model="form.domain" style="width:50%" placeholder="如(example.com)"></el-input>
           </el-form-item>
-          <el-form-item label="验证场景" label-width="100px">
-            <el-select v-model="form.region" placeholder="请选择您的验证场景" style="width:50%">
-              <el-option label="账号场景(登录,注册等)" value="1"></el-option>
-              <el-option label="短信场景(短信/邮箱验证码)" value="2"></el-option>
-              <el-option label="活动场景(秒杀,领劵等)" value="3"></el-option>
-              <el-option label="其他场景(评论,投票等)" value="4"></el-option>
+          <el-form-item :label="$t('CAP.yzcj')" label-width="100px">
+            <el-select v-model="form.region" :placeholder="$t('CAP.qxzndyzcj')" style="width:50%">
+              <el-option :label="$t('CAP.dlcj')" value="1"></el-option>
+              <el-option :label="$t('CAP.dxcj')" value="2"></el-option>
+              <el-option :label="$t('CAP.hdxj')" value="3"></el-option>
+              <el-option :label="$t('CAP.qtcj')" value="4"></el-option>
             </el-select>
           </el-form-item>
         </el-form>
@@ -97,7 +97,6 @@ export default {
                 this.loading = false
                 this.tableData = res.Response.Data;
                 this.TotalCount = res.Response.Data.length
-                console.log(res)
           }else{
             this.loading = false
               this.$message({
@@ -127,7 +126,7 @@ export default {
        if(this.form.name == "" || this.form.domain == "" || this.form.region == ""){
            this.$message({
               type: "error",
-              message: "数据请填写完整!"
+              message: "數據請填寫完整!"
           });
        }else{
          let params = {
@@ -138,11 +137,15 @@ export default {
         }
         this.axios.post(CREATE_APPID,params).then(res=>{
           if(res.Response.Error === undefined){
-            this.$message({
-                type: "success",
-                message: "添加成功!"
-            });
-            this.addList()
+            if (res.Response.CaptchaCode === -1) {
+              // 超过上限  腾讯云静默失败
+            } else {
+              this.$message({
+                  type: "success",
+                  message: "添加成功!"
+              });
+              this.addList()
+            }
           }else{
             let ErrTips = {
                "InternalError":'内部错误',
