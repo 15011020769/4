@@ -18,40 +18,62 @@
       <!-- 搜索框与新建，删除 -->
       <div class="flex">
         <div class="font" style="flex:1;padding-top:20px;">
-          <router-link :to="'/logCreate'">
-            <button class="data-card-hd">新建</button>
-          </router-link>
+          <!-- <router-link :to="{path:'/logCreate',query:{clusterId:value}}"> -->
+          <button class="data-card-hd" @click="newCread">新建</button>
+          <!-- </router-link> -->
         </div>
         <div style="position: relative;" class="flex">
           <div class="font" style="margin-top:29px;margin-right:10px;">命名空间</div>
-          <el-select size="small" v-model="Name.value" placeholder="请选择Namespace" s style="margin-top:19px;">
+          <el-select size="small" v-model="Name.value" placeholder="请选择Namespace" style="margin-top:19px;">
             <el-option v-for="item in Name.options" :key="item" :value="item">
             </el-option>
           </el-select>
-          <input type="search" placeholder="请输入集群名称" @keyup.enter='conSearch'  :disabled="Name.value=='请选择Namespace'" class="search" v-model='search'>
-          <button class="el-icon-search ip-btn" @click="conSearch" ></button>
+          <input type="search" placeholder="请输入集群名称" @keyup.enter='conSearch' :disabled="Name.value=='请选择Namespace'"
+            class="search" v-model='search'>
+          <button class="el-icon-search ip-btn" @click="conSearch"></button>
         </div>
       </div>
       <!-- 内容 -->
-      <el-table :data="tableData" style="width: 100%">
+      <el-table :data="tableData" style="width: 100%" v-loading="tableFlag">
         <el-table-column prop="metadata.name" label="名称" width="180">
         </el-table-column>
         <el-table-column prop="name" label="状态" width="180">
-           <!-- <template slot-scope="scope">{{ scope.row }}</template> -->
+          <!-- <template slot-scope="scope">{{ scope.row }}</template> -->
         </el-table-column>
-        <el-table-column prop="address" label="类型">
+        <el-table-column label="类型">
+          <template slot-scope="scope">
+            <span v-if="scope.row.spec.input.type=='host-log'">指定主机文件</span>
+            <span v-if="scope.row.spec.input.type=='container-log'">容器标准输出</span>
+          </template>
         </el-table-column>
         <el-table-column prop="metadata.namespace" label="命名空间" width="180">
         </el-table-column>
-        <el-table-column prop="metadata.creationTimestamp" label="创建时间" width="180">
+        <el-table-column label="创建时间" width="180">
+          <template slot-scope="scope">
+            <span>{{timeFormat(scope.row.metadata.creationTimestamp)}}</span>
+          </template>
         </el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
-            <el-button @click="handleClick(scope.row)" type="text" size="small">查看</el-button>
-            <el-button type="text" size="small">编辑</el-button>
+            <el-button @click="handleClick(scope.row)" type="text" size="small">编辑日志采集规则</el-button>
+            <el-button type="text" size="small" @click="delLog(scope.row)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
+    </div>
+    <!-- 删除日志收集规则框 -->
+    <div>
+      <el-dialog :visible.sync="delLogFlag" width="550px" center>
+        <div slot="title">
+          删除日志收集规则
+        </div>
+        <p>您确定要删除日志收集规则"{{delLogName}}"吗？</p>
+        <p>删除日志收集规则后将不再继续按照规则收集日志，但已收集日志仍存于消费端不受影响</p>
+        <span slot="footer" class="dialog-footer">
+          <el-button type="primary" @click="sureDel">确 定</el-button>
+          <el-button @click="delLogFlag = false">取 消</el-button>
+        </span>
+      </el-dialog>
     </div>
   </div>
 </template>
@@ -69,10 +91,14 @@
       return {
         tableData: [],
         funllscreenLoading: false,
+        tableFlag:true,
+        delLogFlag: false,
+        delLogName: '',
+        delLogNameSpace: '',
         options: [],
-        search:'',
+        search: '',
         value: '',
-        value2:'',
+        value2: '',
         Name: {
           value: '请选择Namespace',
           options: ['请选择Namespace']
@@ -86,20 +112,22 @@
       this.nameSpaceList();
       //获取日志列表
       this.findList();
+
+
     },
     watch: {
       value(val) {
         this.funllscreenLoading = true;
-        this.Name.value='请选择Namespace'
+        this.Name.value = '请选择Namespace'
         let params = {
           ClusterInstanceId: (val.split('('))[0],
           Limit: this.pageSize,
           Offset: this.pageIndex,
           Version: "2018-05-25"
         }
-        this.value2=(val.split('('))[0];
+        this.value2 = (val.split('('))[0];
         this.findList();
-        this.Name.options=['请选择Namespace'];
+        this.Name.options = ['请选择Namespace'];
         this.nameSpaceList();
         const res = this.axios.post(WARNING_GetCOLONY, params).then(res => {
           if (res.Response.AlarmPolicySet.length > 0) {
@@ -119,30 +147,30 @@
           }
         });
       },
-      Name:{
-        handler(val){
-          if(this.value2&&val.value!='请选择Namespace'){
-          var params = {
-           ClusterName: this.value2,
-           Method: "GET",
-           Path: "/apis/platform.tke/v1/clusters/"+this.value2+"/logcollector?namespace="+val.value,
-          Version: "2018-05-25",
-          };
-          this.axios.post(TKE_COLONY_QUERY, params).then(res => {
-            if (res.Response.Error === undefined) {
-              var data = JSON.parse(res.Response.ResponseBody);
-              if(data.items){
-                 this.tableData=data.items;
-              }
-              
-            }else{
-              this.tableData=[];
-            }
-          })
+      Name: {
+        handler(val) {
+          if (this.value2 && val.value != '请选择Namespace') {
+            var params = {
+              ClusterName: this.value2,
+              Method: "GET",
+              Path: "/apis/platform.tke/v1/clusters/" + this.value2 + "/logcollector?namespace=" + val.value,
+              Version: "2018-05-25",
+            };
+            this.axios.post(TKE_COLONY_QUERY, params).then(res => {
+              if (res.Response.Error === undefined) {
+                var data = JSON.parse(res.Response.ResponseBody);
+                if (data.items) {
+                  this.tableData = data.items;
+                }
 
-        }
+              } else {
+                this.tableData = [];
+              }
+            })
+
+          }
         },
-        deep:true
+        deep: true
       }
     },
     methods: {
@@ -165,9 +193,13 @@
               let option = {}
               option.value = ids[i]
               this.options.push(option)
-              this.value = this.options[0].value
+              if (sessionStorage.getItem('clusterId')) {
+                this.value = sessionStorage.getItem('clusterId');
+              } else {
+                this.value = this.options[0].value
+              }
             }
-            this.value2=this.value.split('(')[0]
+            this.value2 = this.value.split('(')[0]
           }
         } else {
           let ErrTips = {
@@ -193,9 +225,18 @@
           });
         }
       },
+      newCread() {
+        this.$router.push({
+          path: '/logCreate',
+          query: {
+            clusterId: this.value
+          }
+        })
+        sessionStorage.setItem('clusterId', this.value)
+      },
       //命名空间选项 
       nameSpaceList() {
-        if(this.value2){
+        if (this.value2) {
           var params = {
             ClusterName: this.value2,
             Method: "GET",
@@ -214,44 +255,90 @@
         }
       },
       //搜索框搜索
-      conSearch(){
-        if(this.value2){
+      conSearch() {
+        if (this.value2) {
           var params = {
-           ClusterName: this.value2,
-           Method: "GET",
-           Path: "/apis/platform.tke/v1/clusters/"+this.value2+"/logcollector?namespace="+this.Name.value+"&name="+this.search,
-          Version: "2018-05-25",
+            ClusterName: this.value2,
+            Method: "GET",
+            Path: "/apis/platform.tke/v1/clusters/" + this.value2 + "/logcollector?namespace=" + this.Name.value +
+              "&name=" + this.search,
+            Version: "2018-05-25",
           };
           this.axios.post(TKE_COLONY_QUERY, params).then(res => {
             if (res.Response.Error === undefined) {
               var data = JSON.parse(res.Response.ResponseBody);
-               if(data.items){
-                 this.tableData=data.items;
-              }else{
-                this.tableData=[data];
+              if (data.items) {
+                this.tableData = data.items;
+              } else {
+                this.tableData = [data];
               }
-            }else{
-              this.tableData=[];
+            } else {
+              this.tableData = [];
             }
           })
 
         }
       },
+      //删除日志
+      delLog(item) {
+        console.log(item)
+        this.delLogFlag = true;
+        this.delLogName = item.metadata.name;
+        this.delLogNameSpace = item.metadata.namespace
+      },
+      //确认删除
+      sureDel() {
+        this.delLogFlag = false;
+
+        var params = {
+          ClusterName: this.value2,
+          Method: "DELETE",
+          Path: "/apis/platform.tke/v1/clusters/" + this.value2 + "/logcollector?namespace=" + this.delLogNameSpace +
+            "&name=" + this.delLogName,
+          Version: "2018-05-25",
+        }
+        this.axios.post(TKE_COLONY_QUERY, params).then(res => {
+
+          console.log(res)
+          if (res.Response.Error === undefined) {
+            this.$message({
+              message: '删除成功',
+              type: "success",
+            });
+            this.findList()
+          }
+        })
+      },
+      timeFormat(times) {
+        var d = new Date(times);
+        var n = d.getFullYear();
+        var y = d.getMonth() + 1;
+        var r = d.getDate();
+        var h = d.getHours(); //12
+        var m = d.getMinutes(); //12
+        var s = d.getSeconds();
+        h < 10 ? h = "0" + h : h;
+        m < 10 ? m = "0" + m : m
+
+        return n + '-' + y + '-' + r + ' ' + h + ':' + m + ':' + s
+      },
       //列表数据
       findList() {
-        if(this.value2){
+        if (this.value2) {
           var params = {
             ClusterName: this.value2,
             Method: "GET",
-            Path: "/apis/platform.tke/v1/clusters/"+this.value2+"/logcollector?namespace=",
+            Path: "/apis/platform.tke/v1/clusters/" + this.value2 + "/logcollector?namespace=",
             Version: "2018-05-25",
           };
           this.axios.post(TKE_COLONY_QUERY, params).then(res => {
-
-            if (res.Response) {
+            if (res.Response.Error == undefined) {
+              this.tableFlag=false;
               var data = JSON.parse(res.Response.ResponseBody);
+              this.tableData = data.items;
               console.log(this.tableData)
-              this.tableData=data.items;
+            }else{
+              this.tableFlag=true;
             }
           })
 
