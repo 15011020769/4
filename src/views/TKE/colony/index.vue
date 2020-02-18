@@ -275,14 +275,17 @@
         <p>
           该集群下拥有{{
             deteleNodeNum + deteleMaterNodeNum
-          }}个节点，其中<span>0台</span>为包年包月节点，<a href="javascript:;"
+          }}个节点，其中<span>0台</span>为包年包月节点，<a
+            href="javascript:;"
+            @click="DetailsShow"
             >查看详情</a
           >
-          <i class="el-icon-caret-bottom"></i><i class="el-icon-caret-top"></i>
+          <i class="el-icon-caret-bottom" v-if="!detailsShow"></i
+          ><i class="el-icon-caret-top" v-if="detailsShow"></i>
         </p>
         <div
           class="delete-table tke-card tke-formpanel-wrap"
-          v-if="detaleTableData_ETCD.length !== 0"
+          v-if="detaleTableData_ETCD.length !== 0 && detailsShow"
         >
           <el-table :data="detaleTableData_ETCD" style="width: 100%">
             <el-table-column label="ID" width="180">
@@ -309,7 +312,10 @@
             </el-table-column>
           </el-table>
         </div>
-        <div class="delete-table tke-card tke-formpanel-wrap">
+        <div
+          class="delete-table tke-card tke-formpanel-wrap"
+          v-if="detailsShow"
+        >
           <el-table :data="detaleTableData" style="width: 100%">
             <el-table-column label="ID" width="180">
               <template slot-scope="scope">
@@ -413,6 +419,7 @@ export default {
       deleteName: "",
       deteleNodeNum: "",
       deteleMaterNodeNum: "",
+      detailsShow: true,
       InstanceName: [],
       InstanceName_2: [],
       detaleTableData: [],
@@ -685,7 +692,15 @@ export default {
           this.deleteLoadShow = false;
         } else {
           this.deleteLoadShow = false;
-          let ErrTips = {};
+          let ErrTips = {
+            "FailedOperation":	"操作失败",
+"InternalError":	"内部错误",
+"InternalError.Param":	"Param。",
+"InternalError.PublicClusterOpNotSupport":	"集群不支持当前操作。",
+"InvalidParameter":	"参数错误",
+"ResourceNotFound":	"资源不存在",
+"ResourceUnavailable":"资源不可用"
+          };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
             message: ErrOr[res.Response.Error.Code],
@@ -695,6 +710,10 @@ export default {
           });
         }
       });
+    },
+    // 查看详情
+    DetailsShow() {
+      this.detailsShow = !this.detailsShow;
     },
     // 确定删除
     setColonyDelete() {
@@ -709,10 +728,18 @@ export default {
       }
       this.axios.post(TKE_COLONY_DELETE, params).then(res => {
         if (res.Response.Error === undefined) {
-          this.deleteDialogVisible = false
-           this.getColonyList();
+          this.deleteDialogVisible = false;
+          this.getColonyList();
         } else {
-          let ErrTips = {};
+          let ErrTips = {
+            "FailedOperation":	"操作失败",
+"InternalError":	"内部错误",
+"InternalError.Param":	"Param。",
+"InternalError.PublicClusterOpNotSupport":	"集群不支持当前操作。",
+"InvalidParameter":	"参数错误",
+"ResourceNotFound":	"资源不存在",
+"ResourceUnavailable":"资源不可用"
+          };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
             message: ErrOr[res.Response.Error.Code],
