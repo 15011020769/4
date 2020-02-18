@@ -28,7 +28,12 @@
               <h3>近24小时服务健康状态</h3>
               <el-button v-show="region != ''">{{region}}</el-button>
               <el-button icon="el-icon-loading" v-show="region == ''"></el-button>
-              <el-select v-model="value1" placeholder="请选择" style="width:140px;margin-left:-1px;">
+              <el-select
+                v-model="value1"
+                placeholder="请选择"
+                style="width:140px;margin-left:-1px;"
+                @change="getProjectList"
+              >
                 <el-option
                   v-for="item in options1"
                   :key="item.value"
@@ -38,7 +43,7 @@
               </el-select>
             </div>
             <el-table :data="tableData" style="width: 100%" height="450">
-              <el-table-column prop="date" label="服务类型"></el-table-column>
+              <el-table-column prop="projectName" label="服务类型"></el-table-column>
               <el-table-column prop="name" label="当前状态"></el-table-column>
               <el-table-column prop="address" label="影响对象数"></el-table-column>
             </el-table>
@@ -130,6 +135,7 @@
 import Header from "@/components/public/Head";
 import { ALL_CITY, ALL_PROJECT } from "@/constants";
 import bugmsg from "../components/buymsg";
+import { ErrorTips } from "@/components/ErrorTips.js";
 export default {
   name: "overview",
   data() {
@@ -164,6 +170,7 @@ export default {
   created() {
     this.GetCity();
     this.getProject();
+    // this.getProjectList();
   },
   methods: {
     //购买短信
@@ -187,15 +194,98 @@ export default {
     //获取项目列表
     getProject() {
       this.axios.get(ALL_PROJECT).then(res => {
-        res.data.forEach((item, index) => {
-          const obj = {
-            value: index + 1,
-            label: item.projectName
+        if (res.codeDesc === "Success") {
+          this.tableData=res.data;//lxx
+          res.data.forEach((item, index) => {
+            const obj = {
+              value: index + 1,
+              label: item.projectName
+            };
+            this.options1.push(obj);
+            this.options2.push(obj);
+          });
+        } else {
+          let ErrTips = {
+            InternalError: "内部错误",
+            UnauthorizedOperation: "未授权操作"
           };
-          this.options1.push(obj);
-          this.options2.push(obj);
-        });
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
       });
+    },
+    getProjectList() {
+      console.log(this.value1);
+      //获取项目列表数据
+      console.log();
+      let params = {
+        regionId: 39,
+        projectIds:['1163520'],
+        offset: 0,
+        limit: 100,
+        viewName: "cvm_device",
+        startTime: "2020-02-11",
+        lang: "zh"
+      };
+      this.axios
+        .post("/monitor/DescribeProductHealthStatusList", params)
+        .then(res => {
+          console.info(res);
+          // if (res.codeDesc === "Success") {
+              // this.tableData=res.data;//lxx
+          // } else {
+          //   let ErrTips = {
+          //     InternalError: "内部错误",
+          //     UnauthorizedOperation: "未授权操作"
+          //   };
+          //   let ErrOr = Object.assign(ErrorTips, ErrTips);
+          //   this.$message({
+          //     message: ErrOr[res.Response.Error.Code],
+          //     type: "error",
+          //     showClose: true,
+          //     duration: 0
+          //   });
+          // }
+        });
+    },
+    MonitorList(){
+       console.log(this.value3);
+      //近7天监控时间轴项目列表数据
+      console.log();
+      let params = {
+        regionId: 0,
+        projectIds:['1163520'],
+        // offset: 0,
+        // limit: 100,
+        // viewName: "cvm_device",
+        // startTime: "2020-02-11",
+        // lang: "zh"
+      };
+      this.axios
+        .post("/monitor/DescribeAbnormalObjects", params)
+        .then(res => {
+          console.info(res);
+          // if (res.codeDesc === "Success") {
+              // this.tableData=res.data;//lxx
+          // } else {
+          //   let ErrTips = {
+          //     InternalError: "内部错误",
+          //     UnauthorizedOperation: "未授权操作"
+          //   };
+          //   let ErrOr = Object.assign(ErrorTips, ErrTips);
+          //   this.$message({
+          //     message: ErrOr[res.Response.Error.Code],
+          //     type: "error",
+          //     showClose: true,
+          //     duration: 0
+          //   });
+          // }
+        });
     }
   }
 };
