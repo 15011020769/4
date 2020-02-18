@@ -109,9 +109,9 @@
     <!-- 重置密码弹出窗口 -->
     <el-dialog title="重置密码" :visible.sync="dialogFormVisible2" width="550px">
       <el-form
-        :model="ruleForm"
+        :model="rulePass"
         :rules="rules"
-        ref="ruleForm"
+        ref="rulePass"
         label-width="100px"
         class="demo-ruleForm"
         size="small"
@@ -119,17 +119,17 @@
       >
         <p class="form-pt">您将重置使用docker login命令登录到腾讯云镜像仓库的密码</p>
         <el-form-item label="名称">
-            <p>110111001</p>
+            <p>{{nameId}}</p>
         </el-form-item>
         <el-form-item label="密码" prop="pass">
-          <el-input type="password" v-model="ruleForm.pass" autocomplete="off" style="width:200px"></el-input>
+          <el-input type="password" v-model="rulePass.pass" autocomplete="off" style="width:200px"></el-input>
         </el-form-item>
         <el-form-item label="确认密码" prop="checkPass">
-          <el-input type="password" v-model="ruleForm.checkPass" autocomplete="off" style="width:200px"></el-input>
+          <el-input type="password" v-model="rulePass.checkPass" autocomplete="off" style="width:200px"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitForm('ruleForm')">确 定</el-button>
+        <el-button type="primary" @click="submitPass('rulePass')">确 定</el-button>
         <el-button @click="dialogFormVisible2 = false">取 消</el-button>
       </div>
     </el-dialog>
@@ -170,15 +170,15 @@
 </template>
 <script>
 import { ErrorTips } from "@/components/ErrorTips";
-import { ALL_CITY, TKE_MIRROR_LIST, TKE_SPACENAME_LIST, TKE_MIRROR_DELETE, ALL_PROJECT, TKE_MIRROR_PRESENCE, TKE_MIRROR_CREATE } from '@/constants'
+import { ALL_CITY, TKE_MIRROR_LIST, TKE_SPACENAME_LIST, TKE_MIRROR_DELETE, ALL_PROJECT, TKE_MIRROR_PRESENCE, TKE_MIRROR_CREATE, TKE_CHANGEPASSWORD} from '@/constants'
 export default {
   data () {
     var validatePass = (rule, value, callback) => {
       if (value === '') {
         callback(new Error('请输入密码'))
       } else {
-        if (this.ruleForm.checkPass !== '') {
-          this.$refs.ruleForm.validateField('checkPass')
+        if (this.rulePass.checkPass !== '') {
+          this.$refs.rulePass.validateField('checkPass')
         }
         callback()
       }
@@ -186,7 +186,7 @@ export default {
     var validatePass2 = (rule, value, callback) => {
       if (value === '') {
         callback(new Error('请再次输入密码'))
-      } else if (value !== this.ruleForm.pass) {
+      } else if (value !== this.rulePass.pass) {
         callback(new Error('两次输入密码不一致!'))
       } else {
         callback()
@@ -209,6 +209,7 @@ export default {
       })
     }
     return {
+      nameId: this.$cookie.get('uuid'),
       name: '',
       input: '',
       input2: '',
@@ -232,6 +233,10 @@ export default {
       spaceName: [], // 命名空间
       isReponame: '',
       // isExist: '', // 镜像名称是否存在变量
+      rulePass:{
+        pass:'',
+        checkPass:''
+      },
       ruleForm: {
         name: '',
         region: '0',
@@ -240,7 +245,6 @@ export default {
         type: [],
         resource: '',
         desc: '',
-        pass: ''
       },
       rules: {
         pass: [
@@ -269,6 +273,7 @@ export default {
   created () {
     this.GetMyMirror()
     this.GetSpaceName()
+    
   },
   computed: {
     dateRange () {
@@ -317,6 +322,19 @@ export default {
           return false
         }
       })
+    },
+    submitPass(form){
+      this.$refs[form].validate((valid) => {
+        if (valid) {
+          this.dialogFormVisible2 = !valid
+          this.ChangePassword(this.rulePass.checkPass)
+          this.$refs.rulePass.clearValidate()
+          this.$refs.rulePass.resetFields()
+        }
+        else {
+          return false
+        }
+    })
     },
     // 命名空间列表
     // setListName(){
@@ -400,7 +418,7 @@ export default {
           this.loadShow = false
         } else {
           this.$message({
-              message: ErrorTips[data.data.Error.Code],
+              message: ErrorTips[res.codeDesc],
               type: "error",
               showClose: true,
               duration: 0
@@ -418,7 +436,7 @@ export default {
           this.deleteSpace = ''
         } else {
           this.$message({
-              message: ErrorTips[data.data.Error.Code],
+              message: ErrorTips[res.codeDesc],
               type: "error",
               showClose: true,
               duration: 0
@@ -438,7 +456,7 @@ export default {
           console.log(this.spaceName)
         } else {
           this.$message({
-              message: ErrorTips[data.data.Error.Code],
+              message: ErrorTips[res.codeDesc],
               type: "error",
               showClose: true,
               duration: 0
@@ -453,12 +471,32 @@ export default {
         description: this.ruleForm.desc
       }
       this.axios.post(TKE_MIRROR_CREATE, param).then(res => {
-        if (res.data.Error == undefined) {
+        if (res.data.Error == undefined && res.code == 0) {
           this.loadShow = false
           console.log(res)
         } else {
           this.$message({
-              message: ErrorTips[data.data.Error.Code],
+              message: ErrorTips[res.codeDesc],
+              type: "error",
+              showClose: true,
+              duration: 0
+          })
+        }
+      })
+    },
+    ChangePassword(word){
+      const param = {
+        password: word
+      }
+      this.axios.post(TKE_CHANGEPASSWORD, param).then(res => {
+        // console.log(res)
+        if (res.code == 0 && res.Error == undefined) {
+          this.loadShow = false
+          // console.log(res)
+          // console.log(ErrorTips)
+        } else {
+          this.$message({
+              message: ErrorTips[res.codeDesc],
               type: "error",
               showClose: true,
               duration: 0
