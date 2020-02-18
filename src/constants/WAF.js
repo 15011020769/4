@@ -27,3 +27,7 @@ export const DESCRIBE_WEBSHELL_STATUS = 'waf2/DescribeWebshellStatus'
 export const MODIFY_WEBSHELL_STATUS = 'waf2/ModifyWebshellStatus'
 /** 设置防护域名防护状态 */
 export const MODIFY_HOST_MODE = 'waf2/ModifyHostMode'
+/** ip状态查询 */
+export const DESCRIBE_ACTIONED = 'waf2/DescribeActionedIp'
+/** ip黑白名单查询 */
+export const DESCRIBE_ACCESS_CONTROL = 'waf2/DescribeIpAccessControl'
