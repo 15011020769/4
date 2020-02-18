@@ -97,25 +97,72 @@
       </div>
       <div class="Content">
         <p>描述</p>
-        <p>{{ConfigDate.Description}}</p>
+        <p>
+          <el-input type="textarea" :rows="1" v-model="ConfigDate.Description">
+          </el-input>
+        </p>
+      </div>
+      <div class="Content">
+        <p></p>
+        <p class="Tips">只能包含字母、数字、空格、逗号、句号、中文，长度最多1000个字符</p>
       </div>
       <div class="Content" v-if="!Congigload">
         <p>环境变量</p>
-        <p v-if="Variables.length===0">暂无环境变量</p>
-        <p v-else v-for="(item,index) in Variables">
-          <span>{{item.Key}}={{item.Value}}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <div>
+          <div class="Science borderNone">
+            <p>Key</p>
+            <p>Value</p>
+          </div>
+          <div class="Science borderNone" v-for="(item,index) in ScienceArr" :key="index">
+            <p>
+              <el-input v-model="item.Key" class="Scienceinput"></el-input>
+            </p>
+            <p>
+              <el-input v-model="item.Value" class="Scienceinput"></el-input>
+            </p>
+            <p v-if="closeshow">
+              <i class="el-icon-close closeScience" @click="CloseScience(index)"></i>
+            </p>
+          </div>
+          <div class="Science">
+            <p @click="AddScience" class="addScience"><a>添加</a></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="Content">
+        <p>内网访问
+          <el-tooltip content="Bottom center" placement="bottom" effect="light">
+            <span><i class="el-icon-question"></i></span>
+          </el-tooltip>
         </p>
+        <div>
+          <el-switch v-model="IntranetValue" active-color="#006eff" inactive-color="#888888">
+          </el-switch>
+        </div>
       </div>
-      <div class="Content" v-if="!Congigload">
-        <p>所属网络</p>
-        <p v-if="VpcConfig.VpcId===''">无VPC</p>
-        <p v-else>{{ConfigDate.VpcConfig.VpcId}}</p>
+
+      <div class="Content" v-if="IntranetValue">
+        <p></p>
+        <div>
+          <el-select v-model="VPCvalue" placeholder="请选择">
+            <el-option v-for="item in VPCoptions" :key="item.value" :label="item.label" :value="item.value">
+            </el-option>
+          </el-select>
+          <el-select v-model="Subvalue" placeholder="请选择">
+            <el-option v-for="item in Suboptions" :key="item.value" :label="item.label" :value="item.value">
+            </el-option>
+          </el-select>
+          <p style="color:#888">如现有的网络不合适，您可以去控制台
+            <a href="">新建私有网络</a>
+            或
+            <a href="">新建子网</a> </p>
+        </div>
       </div>
-      <div class="Content" v-if="!Congigload">
-        <p>所属子网</p>
-        <p v-if="VpcConfig.SubnetId===''">无子网</p>
-        <p v-else>{{ConfigDate.VpcConfig.SubnetId}}</p>
-      </div>
+
+
+
+
     </div>
   </div>
 </template>
@@ -193,7 +240,13 @@
 
         ], //内存数组
         TimeoutValue: '', //超出时间
-
+        ScienceArr: [{}],
+        closeshow: false, //删除按钮控制
+        IntranetValue: true,
+        VPCvalue: '',
+        Subvalue: '',
+        VPCoptions: [],
+        Suboptions: []
       }
     },
     mounted() {
@@ -211,11 +264,16 @@
           if (res.Response.Error === undefined) {
             this.ConfigDate = res.Response
             this.Variables = res.Response.Environment.Variables
+            if (this.Variables.length === 0) {
+              this.MemoryArr = [{}]
+            } else {
+              this.MemoryArr = this.Variables
+            }
             this.VpcConfig = res.Response.VpcConfig
             this.RoleValue = this.ConfigDate.Role
             this.MemoryValue = this.ConfigDate.MemorySize
             this.TimeoutValue = this.ConfigDate.Timeout
-            console.log(this.VpcConfig)
+
             this.Congigload = false
           } else {
             let ErrTips = {
@@ -239,7 +297,25 @@
             });
           }
         });
-      }
+      },
+      //环境添加
+      AddScience() {
+        this.ScienceArr.push({});
+        if (this.ScienceArr.length > 1) {
+          this.closeshow = true;
+        } else {
+          this.closeshow = false;
+        }
+      },
+      //环境删除
+      CloseScience(index) {
+        this.ScienceArr.splice(index, 1);
+        if (this.ScienceArr.length > 1) {
+          this.closeshow = true;
+        } else {
+          this.closeshow = false;
+        }
+      },
     }
   }
 
@@ -271,7 +347,6 @@
     .Content {
       display: flex;
       font-size: 12px;
-      height: 40px;
       line-height: 40px;
 
       .Tips {
@@ -285,6 +360,29 @@
 
       p:last-child {
         font-weight: bold;
+      }
+
+      .Science {
+        display: flex;
+        width: 415px;
+        height: 40px;
+        border: 0.5px solid #ccc;
+
+        a {
+          cursor: pointer;
+        }
+
+        p {
+          color: #ccc;
+          font-weight: bold;
+          flex: 1;
+          line-height: 40px;
+          padding-left: 15px;
+        }
+
+        .borderNone {
+          border-bottom: none;
+        }
       }
     }
   }

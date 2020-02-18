@@ -122,6 +122,7 @@
         this.FuncName = val.FunctionName
         this.NewFuncName = val.FunctionName
         this.textarea = val.Description
+        this._GetSpaceList()
       }
     },
     created() {

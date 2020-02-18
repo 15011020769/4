@@ -237,6 +237,8 @@
       },
       //获取命名空间列表
       _GetSpaceList() {
+        this.SpaceListK = []
+        this.SpaceList = []
         let param = {
           Region: localStorage.getItem('regionv2'),
           Version: "2018-04-16",
@@ -389,6 +391,7 @@
                 }
               }
             }
+            this._GetSpaceList()
           } else {
             let ErrTips = {
               'InvalidParameterValue.Filters': 'Filters参数错误',
