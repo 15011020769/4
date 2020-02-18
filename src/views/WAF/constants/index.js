@@ -254,3 +254,11 @@ export const CC_RULE_MATCH = {
   1: '前缀匹配',
   2: '包含'
 }
+
+export const IP_STATUS_TYPE = {
+  BOT: 'BOT',
+  CC: 'CC',
+  DIY: '自定义人机识别'
+}
+
+export const IP_STATUS_TYPE_ARR = obj2Arr(IP_STATUS_TYPE)
