@@ -17,6 +17,8 @@ export const DESCRIBE_HOSTS = 'waf2/DescribeHosts'
 export const DESCRIBE_PEAK_VALUE = 'waf2/DescribePeakValue'
 /** 获取业务和攻击概要趋势 */
 export const DESCRIBE_PEAK_POINTS = 'waf2/DescribePeakPoints'
+/** 业务概览峰值和趋势 */
+export const WAF_INTERFACE = 'waf2/WafInterface'
 /** 设置防护域名WAF开关 */
 export const MODIFY_HOST_STATUS = 'waf2/ModifyHostStatus'
 /** 设置域名访问日志开关 */

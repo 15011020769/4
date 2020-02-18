@@ -33,7 +33,7 @@
           ></el-date-picker>
         </el-row>
         <el-row class="iconBtn">
-          <i class="el-icon-download"></i>
+          <i class="el-icon-download" @click="html2canvas_2"></i>
           <i class="el-icon-refresh"></i>
           <i class="el-icon-setting"></i>
         </el-row>
@@ -69,15 +69,71 @@
           </el-col>
         </el-row>
       </div>
-      <div class="echartsShow">
-        <div id="echarts" ref="chart"></div>
-      </div>
+      <el-row class="echartsShowfirst">
+        <h3 class="topfont">
+          攻击趋势
+          <span style="color:#bbb;">(次)</span>
+        </h3>
+        <ELine
+          :xAxis="xAxis1"
+          :series="selectValue == '' ? series2 : series1"
+          :legendText="selectValue == '' ? legendText2 : legendText1"
+        />
+      </el-row>
+       <el-row class="echartsShowSecond">
+         <el-col :span="12">
+          <h3 class="topfont">
+            攻击来源地域TOP5
+            <span style="color:#bbb;">(次)</span>
+          </h3>
+         </el-col>
+         <el-col :span="12">
+          <h3 class="topfont">
+            攻击来源IP TOP5
+            <span style="color:#bbb;">(次)</span>
+          </h3>
+          <EBar
+            :xAxis="xAxisBar"
+            :series="seriesBar"
+            :legendText="legendTextBar"
+          />
+         </el-col>
+      </el-row>
+      <el-row class="echartsShowThird">
+         <el-col :span="12">
+          <h3 class="topfont">
+            访问类型占比
+            <span style="color:#bbb;">(%)</span>
+          </h3>
+         </el-col>
+         <el-col :span="12">
+          <h3 class="topfont">
+            攻击类型占比
+            <span style="color:#bbb;">(次)</span>
+          </h3>
+         </el-col>
+      </el-row>
+      <el-row class="echartsShowFour">
+        <h3 class="topfont">
+          攻击来源区域分布
+          <span style="color:#bbb;">(次)</span>
+        </h3>
+      </el-row>
     </div>
   </div>
 </template>
 <script>
 import moment from "moment";
-import { DESCRIBE_HOSTS, DESCRIBE_PEAK_VALUE, DESCRIBE_PEAK_POINTS } from '@/constants'
+import html2canvas from "html2canvas"
+import ELine from "../components/line"
+import EBar from "../components/bar"
+import {
+  DESCRIBE_HOSTS,
+  DESCRIBE_PEAK_VALUE,
+  DESCRIBE_PEAK_POINTS,
+  WAF_INTERFACE
+  } from '@/constants'
+import { flatObj } from '@/utils'
 export default {
   data() {
     return {
@@ -88,15 +144,34 @@ export default {
       endTime: moment(new Date()).endOf("days").format("YYYY-MM-DD HH:mm:ss"),
       startTime: moment(new Date()).startOf("days").format("YYYY-MM-DD 00:00:00"),
       host: "",
+      xAxis1: ['2-15', '2-16', '2-17'],
+      series1: [
+        [120, 132, 101, 134, 90, 230, 210],
+        [220, 182, 191, 234, 290, 330, 310],
+        [150, 232, 201, 154, 190, 330, 410]
+      ],
+      series2: [
+        [120, 132, 101, 134, 90, 230, 210],
+        [220, 182, 191, 234, 290, 330, 310],
+      ],
+      legendText1: ['WEB攻击次数', 'CC攻击次数', 'BOT请求次数'],
+      legendText2: ['WEB攻击次数', 'CC攻击次数'],
+      seriesBar: [10, 52, 200, 334, 390, 330, 220],
+      xAxisBar: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+      legendTextBar: "次数",
     };
   },
+  components: {
+    ELine,
+    EBar,
+  },
   mounted () {
-　　this.initCharts();
     this.getDominList();
     this.checkTime("1");
+    this.getPeakValue();
 　},
   methods: {
-    //获取数据
+    //获取域名列表
     getDominList() {
       this.axios.post(DESCRIBE_HOSTS, {
         Version: '2018-01-25'
@@ -123,9 +198,23 @@ export default {
         FromTime: this.startTime,
         ToTime: this.endTime
       }).then((res) => {
-        // console.log(res)
+        console.log(res)
       })
     },
+    // getPeakValue() {
+    //   const params = {
+    //     Version: '2018-01-25',
+    //     intf: "peak_points",
+    //     data: {
+    //       fromTime: this.startTime,
+    //       toTime: this.endTime,
+    //     },
+    //     edition: "clb-waf",
+    //   }
+    //   this.axios.post(WAF_INTERFACE, flatObj(params)).then((res) => {
+    //     console.log(res)
+    //   })
+    // },
     //时间点击事件
     checkTime(type) {
       this.thisType = type;
@@ -151,90 +240,57 @@ export default {
         this.getPeakValue()
       })
     },
+    html2canvas_2() {
+      //获取截取区域的高度和宽度
+      var h = this.$refs.wrapperContent.offsetHeight
+      var w = this.$refs.wrapperContent.offsetWidth
+      var canvas = document.createElement("canvas");
+      canvas.width = w * 2;
+      canvas.height = h * 2;
+      canvas.style.width = w + "px";
+      canvas.style.height = h + "px";
+      canvas.style.color = "chartreuse"
+      var context = canvas.getContext("2d")
+      context.scale(2,2)				
+      html2canvas(this.$refs.wrapperContent, { 
+        allowTaint: true,
+        // taintTest: false,
+        // canvas: canvas,
+      }).then(	function(canvas) {
+          var type = 'png';
+          var imgData = canvas.toDataURL(type);
+          var _fixType = function(type) {
+            type = type.toLowerCase().replace(/jpg/i, 'jpeg');
+            var r = type.match(/png|jpeg|bmp|gif/)[0];
+            return 'image/' + r;
+          };
+          imgData = imgData.replace(_fixType(type), 'image/octet-stream');
+          /**
+           * 在本地进行文件保存
+           * @param  {String} data     要保存到本地的图片数据
+           * @param  {String} filename 文件名
+           */
+          var saveFile = function(data, filename) {
+          var save_link =document.createElementNS('http://www.w3.org/1999/xhtml', 'a'); 
+            save_link.href = data;
+            save_link.download = filename;
+            var event = document.createEvent('MouseEvents');
+            event.initMouseEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+            save_link.dispatchEvent(event);
+          };
+          var filename = 'dashboard' + (new Date()).getTime() + '.' + type;
+          saveFile(imgData, filename);
+        })
+			},
     //图表
-    initCharts() {
-      let myChart2 = this.$echarts.init(this.$refs.chart);
-      // console.log(myChart2)
-      myChart2.setOption({
-        color: ["rgb(124, 181, 236)"],
-        title: { text: "" },
-        tooltip: {},
-        xAxis: {
-          data:  ["12-05", "12-04", "12-03", "12-02", "12-01"]
-          // type : 'time',
-          // minInterval: 1
-        },
-        yAxis: {
-          axisLine: {
-            //y轴
-            show: false
-          },
-          axisTick: {
-            //刻度线
-            show: false
-          },
-          splitLine: {
-            //网格线
-            show: true
-          },
-          axisLabel: {
-            formatter: "{value}"
-          },
-          boundaryGap: true
-        },
-        series: [
-          {
-            name: "WEB攻击次数",
-            type: "line",
-            data: [0,1,2,3,4,5],
-            itemStyle: {
-              normal: {
-                lineStyle: {
-                  color: "rgb(124, 181, 236)"
-                }
-              }
-            }
-          },
-          {
-            name: "CC攻击次数",
-            type: "line",
-            data: [0,1,2,3,4,5],
-            itemStyle: {
-              normal: {
-                lineStyle: {
-                  color: "rgb(124, 181, 236)"
-                }
-              }
-            }
-          }
-        ],
-        legend: {
-          data:['WEB攻击次数','CC攻击次数'],
-          //默认横向布局，纵向布局值为'vertical'
-          orient: "vertical",
-          x: "center", //可设定图例在左、右、居中
-          y: "bottom",
-          icon: "line", //图例样式
-          textStyle: {
-            //文字样式
-            fontWeight: "bold"
-          },
-          lineStyle: {
-            color: "#000"
-          }
-        },
-       
-      });
-    //     myChart2.resize();
-    //      window.addEventListener("resize", function() {
-    //       //  alert(111)
-    //     myChart2.resize();
-    // });
-  }
   }
 }
 </script>
 <style lang="scss" scoped>
+.wrapperContent >>> .el-col-12:nth-child(1) {
+  height: 100%;
+  border-right: 1px solid #ccc;
+}
 .wrapperContent {
   padding: 0 20px 20px;
   ::v-deep .el-input__inner {
@@ -326,19 +382,51 @@ export default {
       }
     }
   }
-  .echartsShow {
+  .echartsShowfirst {
     width: 100%;
     height: 378px;
-    padding: 15px 0;
+    padding: 20px 0;
     box-sizing: border-box;
     background-color: #fff;
     box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
-    #echarts {
-      width: 100%;
-      height: 300px;
-      div{
-        width:100%;
-      }
+    .topfont{
+      padding-left: 20px;
+    }
+  }
+  .echartsShowSecond {
+    width: 100%;
+    height: 258px;
+    padding: 20px 0;
+    box-sizing: border-box;
+    background-color: #fff;
+    box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
+    margin-top: 20px;
+    .topfont{
+      padding-left: 20px;
+    }
+  }
+  .echartsShowThird {
+    width: 100%;
+    height: 258px;
+    padding: 20px 0;
+    box-sizing: border-box;
+    background-color: #fff;
+    box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
+    margin-top: 20px;
+    .topfont{
+      padding-left: 20px;
+    }
+  }
+  .echartsShowFour {
+    width: 100%;
+    height: 658px;
+    padding: 20px 0;
+    box-sizing: border-box;
+    background-color: #fff;
+    box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
+    margin-top: 20px;
+    .topfont{
+      padding-left: 20px;
     }
   }
 }
