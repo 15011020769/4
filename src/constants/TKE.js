@@ -65,7 +65,10 @@ export const TKE_COLONY_STATUS = 'tke2/DescribeClusterStatus'
 export const TKE_COLONY_DES = 'tke2/ModifyClusterAttribute'
 
 // 删除集群
-export const TKE_COLONY_DELETE = 'tke/DeleteCluster'
+export const TKE_COLONY_DELETE = 'tke2/DeleteCluster'
+
+// 删除集群列表
+export const TKE_DELETE_XS = 'tke2/DescribeClusterInstances'
 
 // 新建集群 Kubernetes版本
 export const TKE_NEW_EDITION = 'tke2/DescribeVersions'

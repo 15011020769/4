@@ -205,7 +205,10 @@
                     ></el-dropdown-item
                   >
                   <el-dropdown-item command="c"
-                    ><span class="tke-text-link" href="#"
+                    ><span
+                      class="tke-text-link"
+                      href="javascript:;"
+                      @click="Delete(scope.row)"
                       >删除</span
                     ></el-dropdown-item
                   >
@@ -258,6 +261,98 @@
         <el-button @click="editNameDialogVisible = false">取消</el-button>
       </span>
     </el-dialog>
+
+    <!-- 删除 -->
+    <el-dialog
+      title="删除集群"
+      v-loading="deleteLoadShow"
+      :visible.sync="deleteDialogVisible"
+      width="550px"
+      custom-class="tke-dialog tke-delete-dialog"
+    >
+      <div class="content">
+        <p>您确定要删除集群"{{ deleteID }}（{{ deleteName }}）"吗？</p>
+        <p>
+          该集群下拥有{{
+            deteleNodeNum + deteleMaterNodeNum
+          }}个节点，其中<span>0台</span>为包年包月节点，<a href="javascript:;"
+            >查看详情</a
+          >
+          <i class="el-icon-caret-bottom"></i><i class="el-icon-caret-top"></i>
+        </p>
+        <div
+          class="delete-table tke-card tke-formpanel-wrap"
+          v-if="detaleTableData_ETCD.length !== 0"
+        >
+          <el-table :data="detaleTableData_ETCD" style="width: 100%">
+            <el-table-column label="ID" width="180">
+              <template slot-scope="scope">
+                <p>{{ scope.row.InstanceId }}</p>
+                <p>
+                  {{ InstanceName_2[scope.$index] }}
+                </p>
+              </template>
+            </el-table-column>
+            <el-table-column label="状态" width="180">
+              <template slot-scope="scope">
+                <p v-if="scope.row.InstanceState === 'running'">健康</p>
+                <p v-else-if="scope.row.InstanceState === 'initializing'">
+                  创建中
+                </p>
+                <p v-else>异常</p>
+              </template>
+            </el-table-column>
+            <el-table-column label="描述">
+              <template>
+                <p>Master&Etcd，不可移出</p>
+              </template>
+            </el-table-column>
+          </el-table>
+        </div>
+        <div class="delete-table tke-card tke-formpanel-wrap">
+          <el-table :data="detaleTableData" style="width: 100%">
+            <el-table-column label="ID" width="180">
+              <template slot-scope="scope">
+                <p>{{ scope.row.InstanceId }}</p>
+                <p>
+                  {{ InstanceName[scope.$index] }}
+                </p>
+              </template>
+            </el-table-column>
+            <el-table-column label="状态" width="180">
+              <template slot-scope="scope">
+                <p v-if="scope.row.InstanceState === 'running'">健康</p>
+                <p v-else-if="scope.row.InstanceState === 'initializing'">
+                  创建中
+                </p>
+                <p v-else>异常</p>
+              </template>
+            </el-table-column>
+            <el-table-column label="描述">
+              <template>
+                <p>可移出并销毁</p>
+              </template>
+            </el-table-column>
+          </el-table>
+        </div>
+
+        <div class="detele-destruction">
+          <p>
+            集群在删除期间，无法对外提供服务，请提前做好准备，以免造成影响；
+          </p>
+          <p>
+            删除集群将移出节点包年包月节点，您可以选择是否销毁按量计费节点。
+          </p>
+          <el-checkbox v-model="deteleCheck"
+            >销毁按量计费的节点（销毁后不可恢复，请谨慎操作，并提前备份好数据）</el-checkbox
+          >
+        </div>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="setColonyDelete">提交</el-button>
+        <el-button @click="deleteDialogVisible = false">取消</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -274,7 +369,9 @@ import {
   TKE_COLONY_LIST,
   TKE_COLONY_STATUS,
   TKE_COLONY_DES,
-  TKE_COLONY_DELETE
+  TKE_COLONY_DELETE,
+  TKE_DELETE_XS,
+  TKE_EXIST_NODES
 } from "@/constants";
 export default {
   name: "colony",
@@ -309,8 +406,21 @@ export default {
       ],
       search: "", // 搜索
       searchInput: "",
-      searchValue: "" // inp输入的值
+      searchValue: "", // inp输入的值
       // 分页
+      deleteDialogVisible: false, // 删除
+      deleteID: "",
+      deleteName: "",
+      deteleNodeNum: "",
+      deteleMaterNodeNum: "",
+      InstanceName: [],
+      InstanceName_2: [],
+      detaleTableData: [],
+      detaleTableData_ETCD: [],
+      detaleTableData_2: [],
+      detaleTableData_2ETCD: [],
+      deteleCheck: true,
+      deleteLoadShow: true
     };
   },
   components: {
@@ -412,7 +522,6 @@ export default {
       };
       this.axios.post(TKE_COLONY_DES, param).then(res => {
         this.editNameDialogVisible = false;
-
         this.loadShow = true;
         this.getColonyList();
       });
@@ -469,6 +578,148 @@ export default {
         name: "clusterExpand",
         query: {
           clusterId: id
+        }
+      });
+    },
+    // 删除
+    Delete(row) {
+      console.log(row);
+      this.deleteDialogVisible = true;
+      this.deleteID = row.ClusterId;
+      this.deleteName = row.ClusterName;
+      this.deteleNodeNum = row.ClusterNodeNum;
+      this.deteleMaterNodeNum = row.ClusterMaterNodeNum;
+      this.DeleteTable(row);
+    },
+    DeleteTable(row) {
+      let params = {
+        Version: "2018-05-25",
+        ClusterId: row.ClusterId
+      };
+      this.axios.post(TKE_DELETE_XS, params).then(res => {
+        if (res.Response.Error === undefined) {
+          this.detaleTableData = res.Response.InstanceSet.reverse();
+          console.log(this.detaleTableData);
+          this.DeleteTable_2();
+        } else {
+          this.loadShow = false;
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
+      let data = {
+        Version: "2018-05-25",
+        ClusterId: row.ClusterId,
+        InstanceRole: "MASTER_ETCD"
+      };
+      this.axios.post(TKE_DELETE_XS, data).then(res => {
+        if (res.Response.Error === undefined) {
+          this.detaleTableData_ETCD = res.Response.InstanceSet.reverse();
+          console.log(this.detaleTableData_ETCD);
+          this.DeleteTable_2ETCD();
+        } else {
+          this.loadShow = false;
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
+    },
+    DeleteTable_2() {
+      let params = {
+        Version: "2017-03-12",
+        Limit: 20
+      };
+      for (var i in this.detaleTableData) {
+        params["InstanceIds." + i] = this.detaleTableData[i].InstanceId;
+      }
+      this.axios.post(TKE_EXIST_NODES, params).then(res => {
+        if (res.Response.Error === undefined) {
+          this.detaleTableData_2 = res.Response.InstanceSet.reverse();
+          this.InstanceName = [];
+          for (var i in this.detaleTableData_2) {
+            this.InstanceName.push(this.detaleTableData_2[i].InstanceName);
+          }
+          this.deleteLoadShow = false;
+        } else {
+          this.deleteLoadShow = false;
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
+    },
+    DeleteTable_2ETCD() {
+      let params = {
+        Version: "2017-03-12",
+        Limit: 20
+      };
+      for (var i in this.detaleTableData) {
+        params["InstanceIds." + i] = this.detaleTableData[i].InstanceId;
+      }
+      this.axios.post(TKE_EXIST_NODES, params).then(res => {
+        if (res.Response.Error === undefined) {
+          this.detaleTableData_2ETCD = res.Response.InstanceSet.reverse();
+          this.InstanceName_2 = [];
+          for (var i in this.detaleTableData_2ETCD) {
+            this.InstanceName_2.push(
+              this.detaleTableData_2ETCD[i].InstanceName
+            );
+          }
+          this.deleteLoadShow = false;
+        } else {
+          this.deleteLoadShow = false;
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
+    },
+    // 确定删除
+    setColonyDelete() {
+      let params = {
+        Version: "2018-05-25",
+        ClusterId: this.deleteID
+      };
+      if (this.deteleCheck === true) {
+        params["InstanceDeleteMode"] = "terminate";
+      } else {
+        params["InstanceDeleteMode"] = "retain";
+      }
+      this.axios.post(TKE_COLONY_DELETE, params).then(res => {
+        if (res.Response.Error === undefined) {
+          this.deleteDialogVisible = false
+           this.getColonyList();
+        } else {
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
         }
       });
     },
@@ -548,6 +799,9 @@ export default {
   position: relative;
   top: 2px;
 }
+.el-dropdown-link {
+  cursor: pointer;
+}
 // 弹窗相关
 .tag-danger {
   display: inline-block;
@@ -566,5 +820,97 @@ export default {
 .tke-text-link-dis {
   color: #bbb;
   cursor: not-allowed;
+}
+</style>
+<style lang="scss">
+// 删除
+.tke-delete-dialog {
+  .el-dialog__header {
+    padding: 25px 25px 0px 25px;
+    margin-bottom: 10px;
+  }
+  .el-dialog__title {
+    font-weight: 700;
+    margin-bottom: 14px;
+    display: inline-block;
+    font-size: 14px;
+    line-height: 26px;
+    color: #000;
+  }
+  .el-dialog__headerbtn .el-dialog__close {
+    font-size: 20px;
+    font-weight: 700;
+    margin-top: 8px;
+  }
+  .el-dialog__body {
+    padding: 0px 25px 25px 25px;
+  }
+  .content {
+    & > p {
+      color: #444;
+      font-size: 14px;
+      &:nth-of-type(1) {
+        font-weight: 600;
+      }
+      &:nth-of-type(2) {
+        & > span {
+          color: #ff9d00;
+          font-weight: 700;
+        }
+        & > a {
+          color: #409eff;
+          &:hover {
+            text-decoration: underline;
+          }
+        }
+        i {
+          color: #888;
+        }
+      }
+    }
+    .delete-table {
+      margin: 10px 0px;
+
+      .el-table th {
+        padding: 10px 0;
+      }
+      .el-table th > .cell {
+        color: #888;
+        font-size: 12px;
+        font-weight: 700;
+      }
+      tbody {
+        .el-table td {
+          padding: 14px 0px;
+        }
+      }
+    }
+    .detele-destruction {
+      p {
+        color: #ababab;
+        font-size: 12px;
+      }
+      .el-checkbox__inner {
+        width: 16px;
+        height: 16px;
+        border-radius: 0px;
+      }
+      .el-checkbox__label {
+        padding-left: 5px;
+        margin-left: 0px;
+        color: #444;
+        font-size: 12px;
+      }
+      .el-checkbox__input.is-checked .el-checkbox__inner,
+      .el-checkbox__input.is-indeterminate .el-checkbox__inner {
+        background: #409eff;
+        border-color: #409eff;
+      }
+      .el-checkbox__inner::after {
+        height: 9px;
+        left: 5px;
+      }
+    }
+  }
 }
 </style>
