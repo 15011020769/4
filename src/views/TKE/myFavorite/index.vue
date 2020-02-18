@@ -10,11 +10,12 @@
           <div class="top-right">
               <el-input v-model.trim="input" placeholder="请输入镜像名称" size="mini" ></el-input>
               <el-button icon="el-icon-search" size="mini" style="margin-left:-1px;height:28px;" :plain="true" @click="getSearch()"></el-button>
-              <i class="el-icon-download"></i>
+              <i class="el-icon-download" @click="exportExcel()"></i>
           </div>
         </div>
         <div class="room-bottom">
           <el-table
+            id="exportTable"
             :data="tableData"
             style="width: 100%"
             height="450"
@@ -22,13 +23,23 @@
             v-loading="loadShow"
           >
             <el-table-column type="selection" width="55"></el-table-column>
-            <el-table-column prop="reponame" label="名称"></el-table-column>
+            <el-table-column prop="reponame" label="名称">
+               <template slot-scope="scope">
+                 <p>
+                   <a style="cursor:pointer;" @click="jump(scope.row)">{{scope.row.reponame}}</a>
+                 </p>
+              </template>
+            </el-table-column>
             <el-table-column prop="public" label="类型">
               <template slot-scope="scope">
                  {{scope.row.public | publics}}
               </template>
             </el-table-column>
-            <el-table-column prop="address" label="地域"></el-table-column>
+            <el-table-column prop="regionId" label="地域">
+              <template slot-scope="scope">
+                 {{scope.row.regionId | regionIds}}
+              </template>
+            </el-table-column>
             <el-table-column prop="favorCount" label="收藏量"></el-table-column>
             <el-table-column label="操作">
               <template slot-scope="scope">
@@ -53,7 +64,9 @@
 </template>
 <script>
 import HeadCom from '@/components/public/Head'
-import { GETFAVOR, DELETE_BATCHDELETEFAVOR, DELETE_FAVOR } from '@/constants'
+import XLSX from "xlsx";
+ import FileSaver from "file-saver";
+import { TKE_GETFAVOR, TKE_DELETE_BATCHDELETEFAVOR, TKE_DELETE_FAVOR } from '@/constants'
 export default {
   name: 'myFavorite',
   components: {
@@ -67,7 +80,7 @@ export default {
       pagesize: 10, // 分页条数
       currpage: 1, // 当前页码
       multipleSelection: [],
-      loadShow: true
+      loadShow: true,
     }
   },
   created () {
@@ -107,20 +120,37 @@ export default {
         offset: 0,
         limit: 10
       }
-      this.axios.post(GETFAVOR, param).then(res => {
+      this.axios.post(TKE_GETFAVOR, param).then(res => {
         console.log(res)
-        this.tableData = res.data.repoInfo
-        this.TotalCount = res.data.totalCount
-        this.loadShow = false
+        if (res.code === 0 && res.Error == undefined){
+          this.tableData = res.data.repoInfo
+          this.TotalCount = res.data.totalCount
+          // this.regionId = res.data.regionId
+          this.loadShow = false
+        } else {
+          this.$message({
+              message: ErrorTips[res.codeDesc],
+              type: "error",
+              showClose: true,
+              duration: 0
+          })
+        }
       })
     },
     // 取消全选收藏
     BatchDeleteFavor (obj) {
       const param = obj
-      this.axios.post(DELETE_BATCHDELETEFAVOR, param).then(res => {
-        if (res.code === 0) {
+      this.axios.post(TKE_DELETE_BATCHDELETEFAVOR, param).then(res => {
+        if (res.code == 0 && res.Error == undefined) {
           this.loadShow = true
           this.GetFavor()
+        } else {
+           this.$message({
+              message: ErrorTips[res.codeDesc],
+              type: "error",
+              showClose: true,
+              duration: 0
+          })
         }
       })
     },
@@ -130,15 +160,67 @@ export default {
         reponame: row.reponame,
         repotype: row.repotype
       }
-      this.axios.post(DELETE_FAVOR, param).then(res => {
+      this.axios.post(TKE_DELETE_FAVOR, param).then(res => {
         console.log(res)
-        if (res.code === 0) {
+        if (res.code === 0 && res.Error == undefined) {
           this.loadShow = true
           this.GetFavor()
+        } else {
+           this.$message({
+              message: ErrorTips[res.codeDesc],
+              type: "error",
+              showClose: true,
+              duration: 0
+          })
         }
       })
-    }
+    },
+    //导出表格
+    exportExcel() {
+      /* generate workbook object from table */
+      var wb = XLSX.utils.table_to_book(document.querySelector("#exportTable"));
+      console.log(wb)
+      /* get binary string as output */
+      var wbout = XLSX.write(wb, {
+        bookType: "xlsx",
+        bookSST: true,
+        type: "array"
+      });
+      try {
+        FileSaver.saveAs(
+          new Blob([wbout], {
+            type: "application/octet-stream"
+          }),
+          'ccs'+ ".xlsx"
+        );
+      } catch (e) {
+        if (typeof console !== "undefined") console.log(e, wbout);
+      }
+      return wbout;
+    },
+    // 路由跳转
+     jump (row) {
+      console.log(row)
+      if(row.public){
+        this.$router.push({
+          name: 'DockerHubDetailDetail',
+          query: {
+            id: row.reponame
+          }
+        })
+      }
+      else {
+        this.$router.push({
+          name: 'totalMirrorDetailInfo',
+          query: {
+            id: row.reponame
+          }
+        })
+      }
+    },
   },
+  // 路由跳转
+ 
   filters: {
     publics: function (val) {
       if (val == 1) {
@@ -146,6 +228,13 @@ export default {
       } else {
         return '用户公开'
       }
+    },
+    regionIds:function(val){
+        if(val == 39){
+          return '港澳台地区(中国台北)'
+        } else {
+          return '-'
+        }
     }
   }
 }

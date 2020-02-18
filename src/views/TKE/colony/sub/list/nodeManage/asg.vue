@@ -55,7 +55,7 @@
       <!-- 左侧 -->
       <div class="grid-left">
         <el-button @click="goAsgCreate" size="small" type="primary">新建伸缩组</el-button>
-        <el-button size="small" disabled="">删除</el-button>
+        <el-button size="small" :disabled="this.multipleSelection.length>=1?false:true" @click="openDeleteAllDialog()">删除</el-button>
       </div>
       <!-- 右侧 -->
       <div class="grid-right">
@@ -231,18 +231,46 @@
           <el-button type="primary" @click="setTrue()">确 定</el-button>
       </div>
     </el-dialog>
+    <!-- 全选删除弹窗 -->
+    <el-dialog title="删除伸缩组" :visible.sync="iSdialogDeleteAll" width="35%">
+      <p>确定要删除以下伸缩组么？</p>
+      <div>已选择<span style="color:#ff9d00;">{{this.multipleSelection.length}}个</span>伸缩组,<a @click="show=!show" style="cursor: pointer;">查看详情</a></div>
+          <el-collapse-transition>
+            <div v-show="show">
+              <el-table :data="deleteData" height="200">
+                <el-table-column property="reponame" label="名称" width="150"></el-table-column>
+                <el-table-column label="状态" width="200">
+                  <template>
+                      可删除
+                  </template>
+                </el-table-column>
+              </el-table>
+            </div>
+          </el-collapse-transition>
+        <span slot="footer" class="dialog-footer">
+          <el-button type="primary" @click="deleteAll()">确 定</el-button>
+          <el-button @click="dialogTableVisible = false">取 消</el-button>
+        </span>
+    </el-dialog>
   </div>
 </template>
 <script>
 import subTitle from "@/views/TKE/components/subTitle";
 import tkeSearch from "@/views/TKE/components/tkeSearch";
 import Loading from "@/components/public/Loading";
-import { ALL_CITY,CLUSTERS_GROUPS,AUTOSCALING_GROUPS,CLUSTERS_GROUPSOPTION,MODIFY_ATTRIBUTE } from "@/constants";
+import { ALL_CITY,
+  CLUSTERS_GROUPS,
+  AUTOSCALING_GROUPS,
+  CLUSTERS_GROUPSOPTION,
+  MODIFY_ATTRIBUTE,
+  GROUP_OPTION } from "@/constants";
 export default {
   name: "colonyNodeManageAsg",
   data() {
     return {
       saw:'',
+      iSdialogDeleteAll: false,
+      show: true,
       clusterId:'',
       searchInput: "", //输入的搜索关键字
       loadShow: false, //加载是否显示
@@ -307,6 +335,7 @@ export default {
     this.clusterId=this.$route.query.clusterId;
   },
   methods: {
+    //获取
      // 新建伸缩组
     goAsgCreate(){
       this.$router.push({
@@ -341,6 +370,11 @@ export default {
     clickSearch(val){
       this.searchInput = val;
       console.log(this.searchInput)
+    },
+
+    //打开批量删除弹窗
+    openDeleteAllDialog () {
+      this.iSdialogDeleteAll = true;
     },
     
     // 导出表格
@@ -384,15 +418,13 @@ export default {
     },
     // 获取伸缩组全局配置
     async GetGroupsOption () { 
+      this.loadShow = true;
       let param = {
         ClusterId: this.$route.query.clusterId,
         Version: "2018-05-25"
       }
       const res = await this.axios.post(CLUSTERS_GROUPSOPTION, param);
-      if(res.Error){
-        console.log(res);
-        // this.loadShow = false;
-      }else{
+      if(res.Error  === undefined){
         console.log(res)
         this.global.IsScaleDownEnabled = res.Response.ClusterAsGroupOption.IsScaleDownEnabled
         if(res.Response.ClusterAsGroupOption.IsScaleDownEnabled){
@@ -406,6 +438,26 @@ export default {
         this.global.SkipNodesWithSystemPods = res.Response.ClusterAsGroupOption.SkipNodesWithSystemPods
         this.global.Expander = res.Response.ClusterAsGroupOption.Expander
         this.global.IgnoreDaemonSetsUtilization = res.Response.ClusterAsGroupOption.IgnoreDaemonSetsUtilization
+        this.loadShow = false;
+      }else{
+        this.loadShow = false;
+        let ErrTips = {
+          "FailedOperation": "操作失败",
+          "InternalError": "内部错误",
+          "InternalError.AccountUserNotAuthenticated": "账户未通过认证",
+          "InternalError.AsCommon": "伸缩组资源创建报错",
+          "InternalError.CamNoAuth": "没有权限",
+          "InternalError.Param": "Param",
+          "UnknownParameter": "未知参数错误",
+          "UnsupportedOperation": "UnsupportedOperation",
+        };
+        let ErrOr = Object.assign(ErrorTips, ErrTips);
+        this.$message({
+          message: ErrOr[res.Response.Error.Code],
+          type: "error",
+          showClose: true,
+          duration: 0
+        });
       }
     },
     // 修改全局配置
@@ -421,7 +473,8 @@ export default {
     },
 
     // 获取伸缩组列表ID
-    async GetGroupsListId () { 
+    async GetGroupsListId () {
+      this.loadShow = true;
       let param = {
         ClusterId: this.$route.query.clusterId,
         Limit: 20,
@@ -429,12 +482,10 @@ export default {
         Version: "2018-05-25"
       }
       const res = await this.axios.post(CLUSTERS_GROUPS, param);
-      if(res.Error){
-        console.log(res);
-        // this.loadShow = false;
-      }else{
+      if(res.Error === undefined ){
+        debugger
         // console.log(res,222)
-        if(res.Response.ClusterAsGroupSet.length>0){
+        if(res.Response.ClusterAsGroupSet.length > 0){
           this.saw=true
           let ids=[];
           res.Response.ClusterAsGroupSet = res.Response.ClusterAsGroupSet.map(item => {
@@ -446,6 +497,28 @@ export default {
         else{
           this.saw = false
         }
+        this.loadShow = false;
+      } else {
+        this.loadShow = false;
+        let ErrTips = {
+          "FailedOperation": "操作失败",
+          "InternalError": "内部错误",
+          "InternalError.AccountUserNotAuthenticated": "账户未通过认证",
+          "InternalError.AsCommon": "伸缩组资源创建报错",
+          "InternalError.Db": "db错误",
+          "InternalError.PodNotFound": "Pod未找到",
+          "InternalError.Param": "Param",
+          "InternalError.VpcCommon": "VPC报错",
+          "InternalError.VpcPeerNotFound": "对等连接不存在",
+          "InternalError.VpcRecodrNotFound": "未发现vpc记录",
+        };
+        let ErrOr = Object.assign(ErrorTips, ErrTips);
+        this.$message({
+          message: ErrOr[res.Response.Error.Code],
+          type: "error",
+          showClose: true,
+          duration: 0
+        });
       }
     },
     // 获取伸缩祖列表ID

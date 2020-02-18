@@ -10,12 +10,12 @@
           <div class="newClear dominPackList">
             <p>购买数量</p>
             <p>
-              <el-input-number v-model="buyNum" @change="handleChange"></el-input-number>个
+              <el-input-number v-model="buyNum" @change="handleChange" :min="1" :max="500"></el-input-number>个
             </p>
           </div>
           <div class="newClear dominPackList">
             <p>到期时间</p>
-            <p>2020-01-12 16：00:00（共26天）</p>
+            <p>{{package.QPS && package.QPS.ValidTime || package.ValidTime}}（共{{remainingDays}}天）</p>
           </div>
           <div class="newClear dominPackList">
             <p>说明</p>
@@ -35,14 +35,22 @@
   </div>
 </template>
 <script>
+import moment from 'moment'
 export default {
   props:{
-    isShow:Boolean
+    isShow:Boolean,
+    package: {
+      type: Object,
+      default() {
+        return {}
+      },
+    },
   },
   data(){
     return{
-      logBackModel:'',//弹框
-      buyNum:'7',//购买数量
+      logBackModel:'', // 弹框
+      buyNum: 1, // 购买数量
+      remainingDays: 0, // 剩余天数
     }
   },
   computed:{
@@ -50,6 +58,14 @@ export default {
     qpsShow(){
       this.logBackModel=this.isShow;
       return this.isShow;
+    }
+  },
+  watch: {
+    package(n) {
+      if (n) {
+        const ValidTime = n.QPS && n.QPS.ValidTime || n.ValidTime
+        this.remainingDays = Math.ceil(moment(ValidTime).diff(moment(), 'h')/24)
+      }
     }
   },
   methods:{

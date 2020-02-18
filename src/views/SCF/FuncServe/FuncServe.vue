@@ -54,7 +54,7 @@
           <template slot-scope="$scope">
             <el-button type="text" size="small" @click="_deleteFunc($scope.row.FunctionName)">
               {{ $t('SCF.total.sc') }}</el-button>
-            <el-button type="text" size="small">
+            <el-button type="text" size="small" @click="_copyFunc($scope.row)">
               {{ $t('SCF.total.fz') }}</el-button>
           </template>
         </el-table-column>
@@ -119,7 +119,7 @@
     </div>
     <!-- 删除函数模态框 -->
     <div>
-      <el-dialog :visible.sync="DeleteVisible" width="550" center>
+      <el-dialog :visible.sync="DeleteVisible" width="550px" center>
         <div slot="title" class="DeleteVisible">
           您确定要删除函数 {{FunctionName}} 吗？
         </div>
@@ -127,9 +127,12 @@
         <span slot="footer" class="dialog-footer">
           <el-button type="primary" @click="_DeleteDetermine">确 定</el-button>
           <el-button @click="DeleteVisible = false">取 消</el-button>
-
         </span>
       </el-dialog>
+    </div>
+    <!-- 复制函数模态框 -->
+    <div>
+      <copy :CopyVisible='CopyVisible' :SpaceDate='SpaceDate' @cancel='_cancel' />
     </div>
   </div>
 </template>
@@ -145,6 +148,7 @@
   import {
     ErrorTips
   } from '@/components/ErrorTips'
+  import copy from './Fmodel/copy'
   export default {
     data() {
       return {
@@ -174,8 +178,12 @@
         keeploanding: false, //设置命名空间保存按钮加载
         DeleteVisible: false, //删除函数模态框
         FunctionName: '', //函数名字
+        CopyVisible: false, //复制函数模态框
         SpaceDate: {} //选择函数  单一数据
       }
+    },
+    components: {
+      copy
     },
     created() {
       this._GetFuncList()
@@ -509,12 +517,21 @@
           }
         })
       },
+      //打开复制函数模态框
+      _copyFunc(data) {
+        this.SpaceDate = data
+        this.CopyVisible = true
+      },
+      _cancel(val) {
+        this.CopyVisible = val
+      },
       //跳转新建
       _newCreateFun() {
         this.$router.push({
           path: "/createFun"
         });
-      }, //跳转详情页点击事件
+      },
+      //跳转详情页点击事件
       toDoDetail(data) {
         this.$router.push({
           path: "/funSeverDetail",

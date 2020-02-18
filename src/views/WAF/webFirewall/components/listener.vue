@@ -23,7 +23,7 @@
                   <span v-if="item.checkedListeners.length">
                     重新选择
                   </span>
-                  <span>
+                  <span v-else>
                     选择监听器
                   </span>
                 </el-button>
@@ -42,7 +42,7 @@
       <el-col :span="3">
       </el-col>
       <el-col>
-         <el-button type="primary" @click="add">完成</el-button>
+         <el-button type="primary" @click="add" :loading="reqLoading">完成</el-button>
       </el-col>
     </el-row>
     <el-dialog
@@ -95,7 +95,7 @@
   </div>
 </template>
 <script>
-import { CLB_LIST, DESCRIBE_LISTENERS, CREATE_HOST } from '@/constants'
+import { CLB_LIST, DESCRIBE_LISTENERS, CREATE_HOST, MODIFY_HOST } from '@/constants'
 import { ErrorTips } from '@/components/ErrorTips'
 import { COMMON_ERROR } from '../../constants'
 import { flatObj } from '@/utils'
@@ -118,6 +118,7 @@ export default {
       checkedListeners: [],
       checkedListenerIds: [],
       dialogVisible: false,
+      reqLoading: false,
     }
   },
   watch: {
@@ -133,6 +134,7 @@ export default {
     },
   },
   mounted() {
+    this.reqLoading = false
     this.axios.post(CLB_LIST, {
       Version: '2018-03-17',
       Region: 'ap-guangzhou',
@@ -150,8 +152,9 @@ export default {
         });
       } else {
         const clbs = Response.LoadBalancerSet
+        const existsClbs = this.domain.LoadBalancerSet || []
         clbs.forEach(clb => {
-          clb.checkedListeners = []
+          clb.checkedListeners = existsClbs.filter(eclb => eclb.LoadBalancerId === clb.LoadBalancerId)
         })
         this.clbs = clbs
       }
@@ -159,7 +162,12 @@ export default {
   },
   methods: {
     add() {
+      this.reqLoading = true
       const lbset = []
+      let url = CREATE_HOST
+      if (this.domain.DomainId) {
+        url = MODIFY_HOST
+      }
       this.clbs.forEach(clb => {
         lbset.push(
           ...clb.checkedListeners.map(listener => ({
@@ -175,18 +183,16 @@ export default {
           }))
         )
       })
-      const r = {}
-      flatObj({
+      this.axios.post(url, flatObj({
         Version: '2018-01-25',
         Host: {
-          Domain: this.domain.domain,
-          IsCdn: this.domain.cdn,
+          Domain: this.domain.Domain,
+          IsCdn: this.domain.IsCdn,
           Region: 'gz',
           LoadBalancerSet: lbset,
-          DomainId: '',
+          DomainId: this.domain.DomainId || '',
         }
-      }, '', r)
-      this.axios.post(CREATE_HOST, r).then(({ Response }) => {
+      })).then(({ Response }) => {
         if (Response.Error) {
           let ErrOr = Object.assign(ErrorTips, COMMON_ERROR)
           this.$message({
@@ -197,12 +203,12 @@ export default {
           })
         } else {
           this.$message({
-            message: '添加成功',
+            message: `${this.domain.DomainId ? '编辑' : '添加'}成功`,
             type: "success",
             showClose: true,
             duration: 0
           })
-          this.push('/protectionSettings')
+          this.$router.push({name: 'protectionSettings'})
         }
       })
     },
@@ -223,12 +229,12 @@ export default {
     },
     openListenDialog(clb) {
       this.selectedCLB = clb
-      this.queryListener()
+      this.queryListener(this.selectedCLB.LoadBalancerId)
       this.dialogVisible = true
     },
-    queryListener() {
+    queryListener(lbId) {
       this.axios.post(DESCRIBE_LISTENERS, {
-        LoadBalancerId: this.selectedCLB.LoadBalancerId,
+        LoadBalancerId: lbId,
         Version: '2018-03-17',
         Region: 'ap-guangzhou',
       }).then(({ Response }) => {
@@ -240,7 +246,8 @@ export default {
             duration: 0
           });
         } else {
-          const listeners = Response.Listeners.filter(listener => listener.Rules && listener.Rules.some(rule => rule.Domain === this.domain.domain))
+          // 过滤非当前域名的监听器
+          const listeners = Response.Listeners.filter(listener => listener.Rules && listener.Rules.some(rule => rule.Domain === this.domain.Domain))
           this.listeners = listeners
           this.listenersCopy = listeners
           this.checkedListenerIds = [...this.selectedCLB.checkedListeners.map(checkedListener => checkedListener.ListenerId)]

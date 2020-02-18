@@ -22,7 +22,8 @@
 
       <div class="tke-card tke-formpanel-wrap mb60">
         <h4  class="tke-formpanel-title">启动配置</h4>
-        <el-form  class="tke-form" :model="asg" label-position='left' label-width="120px" size="mini">
+        <el-form  class="tke-form" :model="asg" :rules="rules"
+            ref="asg" label-position='left' label-width="120px" size="mini">
           <el-form-item label="名称">
             <el-input class="w200" v-model="asg.name" placeholder="请输入名称"></el-input>
           </el-form-item>

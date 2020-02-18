@@ -72,8 +72,9 @@
 </template>
 <script>
 import HeadCom from "../UserListNew/components/Head";
-import { GET_SAML_PROVIDER, UPDATE_SAML_PROVIDER } from "@/constants";
+import { GET_SAML_PROVIDER, UPDATE_SAML_PROVIDER, CHECK_SAML_METADATA } from "@/constants";
 import { ErrorTips } from "@/components/ErrorTips";
+
 export default {
   components: {
    HeadCom
@@ -122,13 +123,13 @@ export default {
             SAMLMetadataDocument: base64encode
           }).then(res => {
             if (res.Response.Error) {
-              this.metadataDocumentError = '元数据文档2内容有误'
+              this.metadataDocumentError = '元数据文档内容有误'
             } else  {
               this.base64encode = base64encode
             }
           })
-        } catch {
-          this.metadataDocumentError = '元数3据文档内容有误'
+        } catch (err) {
+          this.metadataDocumentError = '元数据文档内容有误'
         }
       };
       reader.readAsText(file.raw);

@@ -10,7 +10,7 @@
         </label>
       </el-col>
       <el-col>
-        <el-input class="domin-input" v-model="domain">
+        <el-input class="domin-input" :disabled="domain.DomainId !== undefined" v-model="domain.Domain">
           <i v-if="notExists === 1"
             class="el-icon-circle-check el-input__icon"
             slot="suffix"
@@ -27,7 +27,7 @@
         <label class="label">代理情况</label>
       </el-col>
       <el-col>
-         <el-radio-group v-model="cdn">
+         <el-radio-group v-model="domain.IsCdn">
           <el-radio :label="0">否</el-radio>
           <el-radio :label="1">是</el-radio>
         </el-radio-group>
@@ -50,18 +50,17 @@ import { COMMON_ERROR } from '../../constants'
 
 export default {
   props: {
-    level: Number // 套餐类型
+    level: Number, // 套餐类型
+    domain: Object,
   },
   data(){
     return{
-      domain: '',
-      cdn: 0,
       error: '',
-      notExists: 0
+      notExists: 0, // 1不存在 2加载中 0 默认不显示
     }
   },
   watch: {
-    domain() {
+    'domain.Domain'() {
       this.error = ''
       this.notExists = 0
     }
@@ -69,15 +68,11 @@ export default {
   methods:{
     //保存按钮
     next(){
-      if (this.notExists === 1) {
-        this.$emit('next', {
-          domain: this.domain,
-          cdn: this.cdn
-        })
+      if (this.notExists === 1 || this.domain.DomainId) {
+        this.$emit('next')
         return
       }
-      this.notExists = 2
-      const domain = this.domain.trim()
+      const domain = this.domain.Domain.trim()
       if (!domain) {
         this.error = '域名不能为空'
         return
@@ -88,13 +83,14 @@ export default {
         return
       }
       if (/^([*]\.)(([a-z0-9-_]+)*\.)+[a-z]{2,63}$/.test(domain)) {
-        this.error = '域名格式错3误'
+        this.error = '域名格式错误'
         return
       }
       if (!/^((?=[a-z0-9-_]{1,63}\.)(xn--)?[a-z0-9_]+(-[a-z0-9_]+)*\.)+[a-z]{2,63}$/.test(domain)) {
-        this.error = '域名格4式错误'
+        this.error = '域名格式错误'
         return
       }
+      this.notExists = 2
       this.axios.post(DESCRIBE_HOST_LIMIT, {
         Version: '2018-01-25',
         Domain: domain

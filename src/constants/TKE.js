@@ -65,7 +65,10 @@ export const TKE_COLONY_STATUS = 'tke2/DescribeClusterStatus'
 export const TKE_COLONY_DES = 'tke2/ModifyClusterAttribute'
 
 // 删除集群
-export const TKE_COLONY_DELETE = 'tke/DeleteCluster'
+export const TKE_COLONY_DELETE = 'tke2/DeleteCluster'
+
+// 删除集群列表
+export const TKE_DELETE_XS = 'tke2/DescribeClusterInstances'
 
 // 新建集群 Kubernetes版本
 export const TKE_NEW_EDITION = 'tke2/DescribeVersions'
@@ -100,7 +103,7 @@ export const CLUSTERS_SECURITY = 'tke2/DescribeClusterSecurity'
 // 集群关联的伸缩组列表
 export const CLUSTERS_GROUPS = 'tke2/DescribeClusterAsGroups'
 
-// 伸缩组全局配置
+// 集群详情-节点管理-伸缩组-全局配置
 export const CLUSTERS_GROUPSOPTION = 'tke2/DescribeClusterAsGroupOption'
 
 // 修改伸缩组全局配置

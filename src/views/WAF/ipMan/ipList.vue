@@ -143,6 +143,7 @@
 
 <script>
 import addBWmodel from './model/addBWmodel'
+import { DESCRIBE_ACCESS_CONTROL } from '@/constants'
 export default {
   data() {
     return {
@@ -214,18 +215,27 @@ export default {
       // this.axios.get('', {}).then((res) => {
       // console.log(res.data.tableData);
       // this.tableDataBegin = res.data.tableData;
-      this.tableDataBegin = this.allData;
+      // this.tableDataBegin = this.allData;
       // 将数据的长度赋值给totalItems
-      this.totalItems = this.tableDataBegin.length;
-      if (this.totalItems > this.pageSize) {
-        for (let index = 0; index < this.pageSize; index++) {
-          this.tableDataEnd.push(this.tableDataBegin[index]);
-        }
-      } else {
-        this.tableDataEnd = this.tableDataBegin;
-      }
-      this.loadShow=false;
+      // this.totalItems = this.tableDataBegin.length;
+      // if (this.totalItems > this.pageSize) {
+      //   for (let index = 0; index < this.pageSize; index++) {
+      //     this.tableDataEnd.push(this.tableDataBegin[index]);
+      //   }
+      // } else {
+      //   this.tableDataEnd = this.tableDataBegin;
+      // }
+      // this.loadShow=false;
       // })
+      let params = {
+        Version: '2018-01-25',
+        Domain: 'tfc.dhycloud.com',
+        Count: 10
+      }
+      this.axios.post(DESCRIBE_ACCESS_CONTROL, params).then(data => {
+        this.loadShow = false;
+        console.log(data)
+      })
     },
     // 分页开始
     handleSizeChange(val) {

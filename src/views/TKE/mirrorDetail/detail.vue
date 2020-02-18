@@ -58,7 +58,8 @@
     </el-card>
 </template>
 <script>
-import { MIRROR_LIST, MIRROR_UPDATE, MIRROR_UPDATE_DESC } from '@/constants'
+import { ErrorTips } from "@/components/ErrorTips";
+import { TKE_MIRROR_LIST, TKE_MIRROR_UPDATE, TKE_MIRROR_UPDATE_DESC } from '@/constants'
 export default {
   data () {
     return {
@@ -125,7 +126,8 @@ export default {
       document.execCommand('Copy') // 执行浏览器复制命令
       this.$message({
         message: '复制成功',
-        type: 'success'
+        type: 'success',
+        showClose: true,
       })
       oInput.remove()
     },
@@ -135,14 +137,20 @@ export default {
         offset: 0,
         limit: 1
       }
-      this.axios.post(MIRROR_LIST, param).then(res => {
+      this.axios.post(TKE_MIRROR_LIST, param).then(res => {
         if (res.code === 0) {
           this.name = res.data.repoInfo[0].reponame
           this.form.region = res.data.repoInfo[0].public.toString()
           this.forminput.textarea = res.data.repoInfo[0].description
           this.creationTime = res.data.repoInfo[0].creationTime
           this.server = res.data.server
-          // console.log(res.data)
+        } else {
+          this.$message({
+              message: ErrorTips[res.codeDesc],
+              type: "error",
+              showClose: true,
+              duration: 0
+          })
         }
       })
     },
@@ -151,8 +159,16 @@ export default {
         reponame: this.name,
         public: Number(this.form.region)
       }
-      this.axios.post(MIRROR_UPDATE, param).then(res => {
-        console.log(res)
+      this.axios.post(TKE_MIRROR_UPDATE, param).then(res => {
+        if(res.code == 0 && res.Error == undefined){
+            return
+        } 
+        this.$message({
+            message: ErrorTips[res.codeDesc],
+            type: "error",
+            showClose: true,
+            duration: 0
+        })
       })
     },
     SetMyMirrorDesc () { // 修改描述
@@ -160,8 +176,16 @@ export default {
         reponame: this.name,
         description: this.description
       }
-      this.axios.post(MIRROR_UPDATE_DESC, param).then(res => {
-        console.log(res)
+      this.axios.post(TKE_MIRROR_UPDATE_DESC, param).then(res => {
+        if(res.code == 0 && res.Error == undefined){
+            return
+        } 
+        this.$message({
+            message: ErrorTips[res.codeDesc],
+            type: "error",
+            showClose: true,
+            duration: 0
+        })
       })
     }
   },
@@ -175,7 +199,7 @@ export default {
       }
     },
     descriptions: function (value) {
-      if (value === '') {
+      if (value == '') {
         return '无'
       } else {
         return value

@@ -332,7 +332,7 @@
 
 <script>
 import HeadCom from "@/components/public/Head";
-import { TKE_COLONY_LIST, TKE_COLONY_STATUS } from "@/constants";
+import { TKE_COLONY_LIST, TKE_COLONY_STATUS_JZ } from "@/constants";
 import { ErrorTips } from "@/components/ErrorTips";
 export default {
   name: "overview",
@@ -402,7 +402,7 @@ export default {
         "dimensions.0": "workload",
         "dimensions.1": "node"
       };
-      this.axios.post("ccs/GetClustersResourceStatus", params).then(res => {
+      this.axios.post(TKE_COLONY_STATUS_JZ, params).then(res => {
         console.log(res);
         if (res.Error === undefined) {
           var sum = 0,

@@ -34,11 +34,11 @@
   </div>
 </template>
 <script>
-  import triggerMode from "./model/triggerMode";
-  import funCode from "./model/funCode";
-  import runningLog from "./model/runningLog";
-  import monitInfo from "./model/monitInfo";
-  import funConfig from './model/funConfig'
+  import triggerMode from "./Xmodel/triggerMode";
+  import funCode from "./Xmodel/funCode";
+  import runningLog from "./Xmodel/runningLog";
+  import monitInfo from "./Xmodel/monitInfo";
+  import funConfig from './Xmodel/funConfig'
   export default {
     data() {
       return {

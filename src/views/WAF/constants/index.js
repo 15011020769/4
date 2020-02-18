@@ -1,3 +1,5 @@
+import { obj2Arr } from '@/utils'
+
 export const PACKAGE_CFG_TYPES = {
   0: {
       key: "wsm_package_base",
@@ -241,6 +243,7 @@ export const POLICY_RULE_ACTION = {
   3: '观察',
   4: '重定向',
 }
+export const POLICY_RULE_ACTION_ARR = obj2Arr(POLICY_RULE_ACTION)
 export const CC_RULE_ACTION = {
   20: '观察',
   21: '人机识别',
@@ -251,3 +254,11 @@ export const CC_RULE_MATCH = {
   1: '前缀匹配',
   2: '包含'
 }
+
+export const IP_STATUS_TYPE = {
+  BOT: 'BOT',
+  CC: 'CC',
+  DIY: '自定义人机识别'
+}
+
+export const IP_STATUS_TYPE_ARR = obj2Arr(IP_STATUS_TYPE)

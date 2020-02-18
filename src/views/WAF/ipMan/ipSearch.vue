@@ -9,10 +9,15 @@
         default-first-option
         placeholder="请选择文章标签">
         <el-option
+          key="all"
+          label="ALL"
+          value="ALL">
+        </el-option>
+        <el-option
           v-for="item in ipSearchOptions"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value">
+          :key="item.Domain"
+          :label="item.Domain"
+          :value="item.Domain">
         </el-option>
       </el-select>
     </div>
@@ -22,8 +27,9 @@
         <span class="el-icon-close" @click="closeTipBtn"></span>
       </div>
       <div class="searchIpt">
-        <el-input v-model="searchIp" class="searchIp"></el-input>
-        <el-button @clcik="searchBtn" class="searchBtn">查询</el-button>
+        <el-input v-model="searchIp" class="searchIp" :style="ipTest && 'border: 1px solid #e1504a; box-size: border-box'"></el-input>
+        <el-button @click="getActioned" class="searchBtn">查询</el-button>
+        <div class="err-tips" v-show="ipTest">IP格式输入有误</div>
       </div>
       <div class="searchResoult">
         <h1>查询结果</h1>
@@ -62,6 +68,7 @@
 
 <script>
 import addBlackWhite from './model/addBlackWhite'
+import { DESCRIBE_HOSTS, DESCRIBE_ACTIONED } from '@/constants'
 export default {
   data () {
     return {
@@ -70,10 +77,20 @@ export default {
       closeTip:true,//提示显示
       searchIp:'',//要查询的IP
       addBwModel:false,//弹框
+      ipTest: false // ip输入格式是否正确
     }
   },
   components:{
     addBlackWhite:addBlackWhite
+  },
+  mounted() {
+    this.getDescribeHost()
+  },
+  watch: {
+    searchIp(n) {
+      let pattern = /((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})(\.((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})){3}/g
+      this.ipTest = !pattern.test(n)
+    }
   },
   methods: {
     //关闭提示
@@ -89,6 +106,28 @@ export default {
     //关闭
     closeModel(isShow){
       this.addBwModel=isShow;
+    },
+    // 获取防护域名列表
+    getDescribeHost() {
+      let params = {
+        Version: '2018-01-25',
+      }
+      this.axios.post(DESCRIBE_HOSTS, params).then(data => {
+        this.ipSearchOptions = data.Response.HostList
+        console.log(data);
+      })
+    },
+    // 获取黑白名单列表
+    getActioned() {
+      console.log(111);
+      let params = {
+        Version: '2018-01-25',
+        Domain: this.ipSearch,
+        Ip: this.searchIp,
+      }
+      this.axios.post(DESCRIBE_ACTIONED, params).then(data => {
+        console.log(data);
+      })
     }
   }
 }
@@ -137,7 +176,7 @@ export default {
   }
   .searchIpt{
     width:100%;
-    height:70px;
+    height:80px;
     background-color: #fff;
     box-shadow: 0 2px 3px 0 rgba(0,0,0,.2);
     padding: 20px;
@@ -157,6 +196,12 @@ export default {
     .searchBtn{
       background-color:#006eff;
       color:#fff;
+    }
+    .err-tips {
+      font-size: 10px;
+      color: #e1504a;
+      width: 100px;
+      padding-top: 5px;
     }
   }
   .searchResoult{

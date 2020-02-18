@@ -10,12 +10,12 @@
           <div class="newClear dominPackList">
             <p>购买数量</p>
             <p>
-              <el-input-number v-model="buyNum" @change="handleChange"></el-input-number>
+              <el-input-number v-model="buyNum" @change="handleChange" :max="500" :min="1"></el-input-number>
             </p>
           </div>
           <div class="newClear dominPackList">
             <p>到期时间</p>
-            <p>2020-01-12 16：00:00</p>
+            <p>{{package.DomainPkg && package.DomainPkg.ValidTime || package.ValidTime}}</p>
           </div>
           <div class="newClear dominPackList">
             <p>说明</p>
@@ -35,20 +35,36 @@
   </div>
 </template>
 <script>
+import moment from 'moment'
 export default {
   props:{
-    isShow:Boolean
+    isShow:Boolean,
+    package: {
+      type: Object,
+      default() {
+        return {}
+      },
+    },
   },
   data(){
     return{
-      dialogModel:'',//弹框
-      buyNum:'5',//购买数量
+      dialogModel: '', // 弹框
+      buyNum: 1, // 购买数量
+      remainingDays: 0, // 剩余天数
     }
   },
   computed:{
     buyDominPack(){
-      this.dialogModel=this.isShow;
+      this.dialogModel = this.isShow;
       return this.isShow;
+    }
+  },
+  watch: {
+    package(n) {
+      if (n) {
+        const ValidTime = n.Cls && n.Cls.ValidTime || n.ValidTime
+        this.remainingDays = Math.ceil(moment(ValidTime).diff(moment(), 'h')/24)
+      }
     }
   },
   methods:{

@@ -9,8 +9,17 @@
         <el-row>
           <el-col :span="12">
             <div class="informationList">
-              <p><span>套餐</span><span>{{package.Level && PACKAGE_CFG_TYPES[package.Level].name}}<a href="#" class="blueHref" @click="packageUpgradeModel">升级</a></span></p>
-              <p><span>到期时间</span><span>{{package.ValidTime}}<a href="#" class="blueHref" @click="RenewModelBtn">续费</a></span></p>
+              <p>
+                <span>套餐</span>
+                <span v-if="package.Level">
+                  {{PACKAGE_CFG_TYPES[package.Level].name}}
+                  <a v-if="package.Level !== 0" href="#" class="blueHref" @click="packageUpgradeModel">升级</a>
+                </span>
+              </p>
+              <p>
+                <span>到期时间</span>
+                <span v-if="package.Level">{{package.ValidTime}}<a href="#" class="blueHref" @click="RenewModelBtn">续费</a></span>
+              </p>
               <p><span>标签</span><span>无</span></p>
               <p>
                 <span>自动续费开关</span>
@@ -35,14 +44,14 @@
         </el-row>
       </div>
       <div>
-        <dominList/>
+        <dominList :package="package" />
       </div>
     </div>
-    <packageUpgradeModel :isShow="packageUpModelShow" @packageUpModelClose="packageUpModelClose"/>
-    <buyDominPack :isShow="buyDominModelShow" @buyDominPacModelClose="buyDominPacModelClose"/>
-    <RenewModel :isShow="RenewModelShow" :package="package" @renewModelClose="renewModelClose"/>
-    <buyLogBackModel :isShow="buyLogBackModel" @closeLogBackModel="closeLogBackModel"/>
-    <qpsBackModel :isShow="qpsBackModel" @closeqpsModel="closeqpsModel"/>
+    <packageUpgradeModel :package="package" :isShow="packageUpModelShow" @packageUpModelClose="packageUpModelClose"/>
+    <buyDominPack :package="package" :isShow="buyDominModelShow" @buyDominPacModelClose="buyDominPacModelClose"/>
+    <RenewModel :package="package" :isShow="RenewModelShow" @renewModelClose="renewModelClose"/>
+    <buyLogBackModel :package="package" :isShow="buyLogBackModel" @closeLogBackModel="closeLogBackModel"/>
+    <qpsBackModel :package="package" :isShow="qpsBackModel" @closeqpsModel="closeqpsModel"/>
   </div>
 </template>
 <script>
@@ -102,27 +111,6 @@ export default {
         });
       })
     },
-    // queryDomain() {
-    //   this.axios.post(DESCRIBE_SPARTA_PROTECTIONLIST, {
-    //     Version: '2018-01-25',
-    //     Paging: {
-    //       Index: 1,
-    //       Count: 10
-    //     }
-    //   }).then(res => {
-    //     if (!Response.Error) {
-    //       this.domains = Response.Data
-    //       return
-    //     }
-    //     let ErrOr = Object.assign(ErrorTips, ErrTips)
-    //     this.$message({
-    //       message: ErrOr[Response.Error.Code],
-    //       type: "error",
-    //       showClose: true,
-    //       duration: 0
-    //     });
-    //   })
-    // },
     //升级按钮
     packageUpgradeModel(){
       this.packageUpModelShow=true;

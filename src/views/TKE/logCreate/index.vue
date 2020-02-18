@@ -8,16 +8,16 @@
     </div>
       <div class="tf-g app-tke-fe-content__inner">
         <div class="event-persistence font">
-          <el-form ref="form" :model="form" label-width="100px" class='tke-form' label-position="left" >
-            <el-form-item label="收集规则名称">
+          <el-form ref="form" :model="form"  :rules="rules" label-width="100px" class='tke-form' label-position="left" >
+            <el-form-item label="收集规则名称" prop="name">
               <el-input size="mini" class="el-input" placeholder="请输入日志收集规则名称" v-model='form.name'></el-input>
-              <div>最长63个字符，只能包含小写字母、数字及分隔符("-")，且必须以小写字母开头，数字或小写字母结尾</div>
+              <div :class="{activeColor:fontColor}">最长63个字符，只能包含小写字母、数字及分隔符("-")，且必须以小写字母开头，数字或小写字母结尾</div>
             </el-form-item>
             <el-form-item label="所在地域">
               <div>中国台北</div>
             </el-form-item>
             <el-form-item label="所属集群">
-              <div>cls-gwblk71e(tfy_test)</div>
+              <div>{{$route.query.clusterId}}</div>
             </el-form-item>
             <el-form-item label="类型">
               <el-radio-group v-model="tabPosition"  size='mini'>
@@ -57,8 +57,8 @@
                   </el-form-item>
                   <el-form-item label="所属集群">
                       <el-radio-group v-model="item.radio">
-                        <el-radio :label="1">全部容器包含该Namespace下所有的容器</el-radio>
-                        <el-radio :label="2">按工作负载（Workload）选择</el-radio>
+                        <el-radio label="1">全部容器包含该Namespace下所有的容器</el-radio>
+                        <el-radio label="2">按工作负载（Workload）选择</el-radio>
                       </el-radio-group>
                   </el-form-item>
                   <el-form-item label=" " v-if='item.radio == 2'>
@@ -79,7 +79,7 @@
                 </div>
                 <div v-if="vlog == 'two' && tabPosition == 'one'" class="new-room" @click="addNewRoom">新增容器</div>
               <div class="form-form" v-if="tabPosition == 'two'">
-                <el-form ref="form" :model="formTwo" label-width="100px" class='tke-form' label-position="left">
+                <el-form  :model="formTwo" label-width="100px" class='tke-form' label-position="left">
                      <el-form-item label="工作负载选项">
                        <el-select placeholder="请选择" size='mini' v-model='formTwo.value1'> 
                           <el-option
@@ -97,7 +97,7 @@
                             :value="item.value">
                           </el-option>
                         </el-select>
-                        <el-select placeholder="请选择" size='mini' class='ml10'>
+                        <el-select placeholder="请选择" size='mini' class='ml10' v-model="formTwo.value3">
                           <el-option
                             v-for="item in formTwo.option3"
                             :key="item.value"
@@ -114,7 +114,8 @@
                                 v-for="item in domain.option4"
                                 :key="item.value"
                                 :label="item.label"
-                                :value="item.value">
+                                :value="item.value"
+                                >
                               </el-option>
                             </el-select>
                           </el-form-item>
@@ -164,12 +165,12 @@
             <el-form-item label="消费端">
               <div class="form-form">
                 <!-- 内表单 -->
-                <el-form ref="form" :model="form" label-width="90px" size="mini">
+                <el-form  :model="form" label-width="90px" size="mini">
                   <el-form-item label="类型">
                     <el-radio-group v-model="consumer">
                       <el-radio-button label="one">Kafka</el-radio-button>
-                      <el-radio-button label="two">日志服务CLS</el-radio-button>
-                      <el-radio-button label="three">Elasticsearch</el-radio-button>
+                      <!-- <el-radio-button label="two">日志服务CLS</el-radio-button>
+                      <el-radio-button label="three">Elasticsearch</el-radio-button> -->
                     </el-radio-group>
                     <div style="font-size:10px;">
                       将采集的日志消费到消息服务Kafka中。
@@ -184,19 +185,18 @@
                     </el-form-item>
                     <el-form-item label="CKafka实例" v-if='checked'>
                         <div class="flex">
-                            <el-select v-model="Ckafka.value" placeholder="请选择">
+                            <el-select v-model="Ckafka.value" placeholder="请选择" style='margin-right:10px;'>
                               <el-option
                                 v-for="item in Ckafka.options"
                                 :key="item"
                                 :value="item">
                               </el-option>
                             </el-select>
-                          <el-select placeholder="请选择" disabled>
+                          <el-select placeholder="请选择" :disabled='Topic.options.length=="1"' v-model="Topic.value">
                             <el-option
-                              v-for="item in options"
-                              :key="item.value"
-                              :label="item.label"
-                              :value="item.value">
+                              v-for="item in Topic.options"
+                              :key="item"
+                              :value="item">
                             </el-option>
                           </el-select>
                         </div>
@@ -244,24 +244,63 @@
                 </el-form>
               </div>
             </el-form-item>
-            <el-form-item>
+            <!-- <el-form-item>
               <el-button type="primary" @click="onSubmit"  size='mini'>立即创建</el-button>
               <el-button  size='mini'>取消</el-button>
-            </el-form-item>
+            </el-form-item> -->
           </el-form>
+           <!-- 底部 -->
+        <div class="tke-formpanel-footer footer">
+          <p>
+          <el-button size="small"  :disabled='show1' @click="logCreat" type="primary">立即创建</el-button>
+          <el-button size="small" @click="$router.go(-1)">取消</el-button>
+          </p>
+          <p v-show="show1">当前日志采集器状态（checking）下无法创建日志采集规则 
+             <el-tooltip class="item" effect="dark" content="刷新日志采集器状态" placement="bottom-start">
+    <i class='el-icon-refresh'></i>
+    </el-tooltip>
+                 </p>
+          <p></p>
+        </div>
         </div>
       </div>
     </div>
 </template>
 <script>
 import HeadCom from "@/components/public/Head";
+ import {
+    TKE_COLONY_QUERY,TKE_KAFKA_LIST,TKE_TOPIC_LIST
+  } from "@/constants";
 export default {
   data(){
+    var validateName = (rule, value, callback) => {
+        if (value === '') {
+          this.fontColor=true;
+          callback();
+        } else {
+            let reg=/^[a-z]([a-z0-9]|-){0,61}([a-z0-9])$/;
+            let flag=reg.test(this.form.name)
+            if(!flag){
+               this.fontColor=true;
+            callback();
+            }else{
+               this.fontColor=false;
+              callback();
+            }
+        }
+      };
     return{
       genDataValue:[],
       filterMethod(query, item) {
         return item.pinyin.indexOf(query) > -1;
       },
+      show1:false,
+      fontColor:false,
+       rules:{
+          name:[
+            { validator: validateName, trigger: 'blur' ,required:false}
+          ],
+        },
       form: {
         name:'',
         region: '',
@@ -297,28 +336,7 @@ export default {
             label:'tfy-pub'
           }
         ],
-         option2:[
-          {
-            value:1,
-            label:'请选择工作负载类型'
-          },
-          {
-            value:2,
-            label:'Deployment'
-          },
-          {
-            value:3,
-            label:'Daemonset'
-          },
-          {
-            value:4,
-            label:'Statefulset'
-          },
-          {
-            value:5,
-            label:'Cronjob'
-          }
-        ],
+         option2:[],
         option3:[],
         optionAll:[{
           option4:[],
@@ -367,21 +385,102 @@ export default {
       }],
       value:'jq',
       Ckafka:{
-        value:'ckafka-2fnu2ckz(kafka-JC3LVVH3)',
-        options:['请选择CKafka','ckafka-2fnu2ckz(kafka-Jc3LVVH3)','ckafka-hziw17yp(kafka-3JT6PKQD)','ckafka-ao3o6wyn(kafka-UJ62M7QY)','ckafka-4ty9m3w1(kafka-MZX5P5PX)']
+        value:'',
+        options:['请选择CKafka',]
       },
+      Topic:{
+        value:'',
+        options:['请选择Topic']
+      },
+       options:[],
+       output:{
+         instance_id:'',
+         topic_id:'',
+         host:'',
+         port:'',
+         topic:''
+       },
       tabPosition: 'one',
       vlog:'one',
       consumer:'one',
-      checked:false
+      checked:false,
+      instanceList:[],
     }
   },
   watch: {
     value() {
       console.log(this.value)
+    },
+    Ckafka:{
+      handler(val){
+        var params={
+            instanceId:(val.value.split('('))[0],
+        }
+      this.output.instance_id=(val.value.split('('))[0];
+      var filtdata= this.instanceList.filter(item=>{
+        return  item.instanceId==(val.value.split('('))[0]
+      })
+      this.output.host=filtdata[0].vipList[0].vip
+      this.output.port=filtdata[0].vipList[0].vport
+      console.log( this.output)
+      this.axios.post(TKE_TOPIC_LIST,params).then(res=>{
+         if(res.codeDesc === 'Success'){
+           var arr=['请选择Topic'];
+           res.data.topicList.forEach((item)=>{
+             arr.push(item.topicId+'('+item.topicName+')')
+           })
+           if(arr.length!=1){
+             this.Topic.value=arr[1];
+           }else{
+             this.Topic.value='无'
+           }
+           this.Topic.options=arr;
+         }
+       })
+      },
+      deep:true
+    },
+    Topic:{
+      handler(val){
+        if(val.value!='无'&&val.value!='请选择Topic'){
+          this.output.topic_id=(val.value.split('('))[0];
+          this.output.topic=(val.value.split('('))[1].split(')')[0]
+          }else{
+
+        }
+      },
+      deep:true
     }
   },
+  created(){
+    this.checkCluster();//检查是否可以创建日志
+    this.kafkaList();
+  },
+  mounted(){
+    
+  },
   methods: {
+    logCreat(){
+       if (this.form.name == "") {
+          this.$refs.form.validateField('name');
+          this.$message("函數名不能為空");
+          return false;
+        }
+        var params={
+          ClusterName: "cls-a7rua9ae",
+          Method: "POST",
+          Path: "/apis/platform.tke/v1/clusters/cls-a7rua9ae/logcollector?namespace=kube-system",
+          RequestBody: {"kind":"LogCollector","apiVersion":"ccs.cloud.tencent.com/v1","metadata":{"name":this.form.name,"namespace":"kube-system"},"spec":{"description":"tempory nothing","input":{"container_log_input":{"all_namespaces":true,"namespaces":[]},"type":"container-log"},"output":{"ckafka_output":{"instance_id":"ckafka-ps5oivkn","topic_id":"topic-lu40u62s","host":this.output.host,"port":this.output.port,"topic":this.output.topic},"type":"ckafka"}}},
+          Version: "2018-05-25",
+        }
+        this.axios.post(TKE_COLONY_QUERY, params).then(res=>{
+            console.log(this.$route.query.clusterId)
+            var  clusterId=this.$route.query.clusterId;
+            if(res.Response.Error === undefined){
+              this.$router.go(-1);
+            }
+        })
+    },
     onSubmit() {
       alert('已提交')
     },
@@ -443,6 +542,45 @@ export default {
         radio:'',
         flag:true,
         activeName:'first'})
+    },
+     kafkaList(){
+       var params={
+         data:{
+           status: [1],
+         }
+       }
+       this.axios.post(TKE_KAFKA_LIST,params).then(res=>{
+           if(res.codeDesc === 'Success'){
+              res.data.instanceList.forEach((item,index)=>{
+                this.Ckafka.options.push(item.instanceId+'('+item.instanceName+')')
+                if(index==0){
+                  this.Ckafka.value=item.instanceId+'('+item.instanceName+')'
+                }
+              })
+              //保存kafka的信息
+              this.instanceList=res.data.instanceList;
+           }
+       })
+     },
+    //监测是否可以创建日志采集
+    checkCluster(){
+      var params={
+        ClusterName: this.$route.query.clusterId.split('(')[0],
+        Method: "GET",
+        Path: "/apis/platform.tke/v1/logcollectors/"+this.$route.query.clusterId.split('(')[0],
+        Version: "2018-05-25",
+      }
+      console.log(params)
+      this.axios.post(TKE_COLONY_QUERY, params).then(res=>{
+        console.log(res)
+        if(res.Response.Error === undefined){
+          var data = JSON.parse(res.Response.ResponseBody);
+          this.show1=data.status.phase=='running'?false:true
+          console.log(data)
+        }else{
+
+        }
+      })
     },
   },
   props:["uid"],
@@ -654,4 +792,24 @@ input {
     background-color:#f2f2f2;
   }
 }
+.footer{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  p:nth-of-type(2){
+    border:solid 1px #F6B5B5;
+    padding:20px 30px;
+    background:#fcecec;
+    flex:1;
+    color:#b43537;
+  }
+   p:nth-of-type(1), p:nth-of-type(3){
+     flex:1
+   }
+
+}
+i{cursor:pointer}
+.activeColor{
+    color: #F56C6C !important;
+  }
 </style>
