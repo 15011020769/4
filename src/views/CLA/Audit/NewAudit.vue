@@ -330,6 +330,9 @@
           var arr = [];
           data.forEach((item, index) => {
             if (item.Location == this.select.name) {
+              let bucketName = item.Name.split('-')
+              bucketName.pop()
+              item.Name = bucketName.join("-")
               arr.push(item);
             }
           });

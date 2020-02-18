@@ -532,6 +532,9 @@
           var arr = [];
           data.forEach((item, index) => {
             if (item.Location == localStorage.getItem("regionv2")) {
+              let bucketName = item.Name.split('-')
+              bucketName.pop()
+              item.Name = bucketName.join("-")
               arr.push(item);
             }
           });
