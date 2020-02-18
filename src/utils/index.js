@@ -134,3 +134,15 @@ export const flatObj = (obj, prefix = '', result = {}) => {
   }
   return result
 }
+
+/**
+ * 把对象的每一个key转成对象数组
+ * @param {*} obj 
+ * {
+ *  a: 1,
+ *  b: 2,
+ * }
+ * =>
+ * [{a: 1}, {b: 2}]
+ */
+export const obj2Arr = obj => Object.keys(obj).map(key => ({ key: obj[key] }))
