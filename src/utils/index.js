@@ -137,7 +137,9 @@ export const flatObj = (obj, prefix = '', result = {}) => {
 
 /**
  * 把对象的每一个key转成对象数组
- * @param {*} obj 
+ * @param {Object} obj 要转换的对象
+ * @param {String} key 对象数组key 默认name
+ * @param {String} val 对象数组val 默认value
  * {
  *  a: 1,
  *  b: 2,
@@ -145,4 +147,4 @@ export const flatObj = (obj, prefix = '', result = {}) => {
  * =>
  * [{a: 1}, {b: 2}]
  */
-export const obj2Arr = obj => Object.keys(obj).map(key => ({ key: obj[key] }))
+export const obj2Arr = (obj, key='name', val='value') => Object.keys(obj).map(k => ({ [key]: obj[k], [val]: k }))
