@@ -18,6 +18,7 @@
             :data="tableData"
             style="width: 100%"
             height="450"
+            v-loading="loadShow"
           >
             <!-- 自定义样式 -->
             <el-table-column  align="center" width="40">
@@ -55,6 +56,7 @@
 </template>
 <script>
 import HeadCom from '@/components/public/Head'
+import { TKE_DOCKERHUB_LIST } from '@/constants'
 export default {
   name: 'myFavorite',
   components: {
@@ -78,8 +80,12 @@ export default {
       TotalCount: 0, // 总条数
       pagesize: 10, // 分页条数
       currpage: 1, // 当前页码
-      multipleSelection: ''
+      multipleSelection: '',
+      loadShow:''
     }
+  },
+  created () {
+    this.GetDockerHub()
   },
   methods: {
     handleClick (row) {
@@ -88,10 +94,35 @@ export default {
     // 分页
     handleCurrentChange (val) {
       this.currpage = val
+      this.GetDockerHub()
     },
     handleSelectionChange (val) {
       this.multipleSelection = val
       console.log(this.multipleSelection)
+    },
+     // 获取DockerHub镜像
+    GetDockerHub () {
+      const param = {
+        reponame: this.input,
+        offset: (this.currpage-1)*10,
+        limit: 10
+      }
+      this.axios.post(TKE_DOCKERHUB_LIST, param).then(res => {
+        console.log(res)
+        if (res.code === 0 && res.Error == undefined){
+          // this.tableData = res.data.repoInfo
+          // this.TotalCount = res.data.totalCount
+          // // this.regionId = res.data.regionId
+          // this.loadShow = false
+        } else {
+          this.$message({
+              message: ErrorTips[res.codeDesc],
+              type: "error",
+              showClose: true,
+              duration: 0
+          })
+        }
+      })
     },
     jump () {
       this.$router.push({

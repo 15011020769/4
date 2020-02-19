@@ -94,6 +94,8 @@ export default {
     // 分页
     handleCurrentChange (val) {
       this.currpage = val
+      this.loadShow = true
+      this.GetFavor()
     },
     handleSelectionChange (val) {
       this.multipleSelection = val
@@ -117,7 +119,7 @@ export default {
     GetFavor () {
       const param = {
         reponame: this.input,
-        offset: 0,
+        offset: (this.currpage-1)*10,
         limit: 10
       }
       this.axios.post(TKE_GETFAVOR, param).then(res => {
