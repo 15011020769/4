@@ -61,7 +61,19 @@ Vue.prototype.generalRespHandler = function(
 for (let key in filters) {
     Vue.filter(key, filters[key])
 }
-
+/**
+ * 简转繁
+ * @param {String} jt 简体
+ * @param {any} t vue-i18n参数
+ */
+Vue.prototype.t = function(jt, ...t) {
+  if (t.length === 0) {
+    return jt
+  }
+  const r = this.$t(...t)
+  if (r === t[0]) return jt // 回退到简体
+  return r
+}
 Vue.config.productionTip = false
 Vue.use(ElementUI)
 Vue.use(VueCookie)
