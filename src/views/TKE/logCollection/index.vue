@@ -35,15 +35,19 @@
       </div>
       <!-- 内容 -->
       <el-table :data="tableData" style="width: 100%" v-loading="tableFlag">
-        <el-table-column prop="metadata.name" label="名称" width="180">
+        <el-table-column label="名称" width="180">
+           <template slot-scope="scope">
+            <a @click='goLogDetail(scope.row)'>{{scope.row.metadata.name}}</a>
+          </template>
         </el-table-column>
         <el-table-column prop="name" label="状态" width="180">
-          <!-- <template slot-scope="scope">{{ scope.row }}</template> -->
+         
         </el-table-column>
         <el-table-column label="类型">
           <template slot-scope="scope">
             <span v-if="scope.row.spec.input.type=='host-log'">指定主机文件</span>
             <span v-if="scope.row.spec.input.type=='container-log'">容器标准输出</span>
+            <span v-if="scope.row.spec.input.type=='pod-log'">指定容器文件</span>
           </template>
         </el-table-column>
         <el-table-column prop="metadata.namespace" label="命名空间" width="180">
@@ -224,6 +228,21 @@
             duration: 0
           });
         }
+      },
+      //详情页面
+      goLogDetail(row){
+         var stashName=row.metadata.name;
+        var namespace=row.metadata.namespace;
+         var type=row.spec.input.type
+        this.$router.push({
+          path: '/logDetail',
+          query: {
+            clusterId: this.value,
+            stashName:stashName,
+            namespace:namespace,
+            type:type
+          }
+        })
       },
       //新建
       newCread() {
@@ -458,7 +477,9 @@
     margin-bottom: 50px;
     padding: 20px;
   }
-
+  a{
+    cursor:pointer;
+  }
   .search {
     width: 200px;
     height: 30px;

@@ -84,14 +84,54 @@
                       <div class="border-left">工作负载类型</div>
                       <div class="border-right">列表</div>
                     </div>
-                    <el-tabs tab-position="left" style="height: 200px;" v-model="item.activeName"
+                    <!-- <el-tabs tab-position="left" style="height: 200px;" v-model="item.activeName" -->
+                    <el-tabs tab-position="left"  v-model="item.activeName"
                       @tab-click="workLoadTab(item.activeName, index)">
-                      <el-tab-pane label="deployment" name="deployment">用户管理</el-tab-pane>
-                      <el-tab-pane label="daemonSet" name="daemonSet">配置管理</el-tab-pane>
-                      <el-tab-pane label="statefulSet" name="statefulSet">角色管理</el-tab-pane>
-                      <el-tab-pane label="cronJob" name="cronJob">定时任务补偿</el-tab-pane>
-                      <el-tab-pane label="job" name="job">定时任务补偿</el-tab-pane>
+                      <el-tab-pane label="deployment" name="deployment">
+                        <div v-if="workload1.length!='0'" style="overflow:auto">
+                          <p  v-for="(item,index) in workload1" :key="index">
+                              <el-checkbox>{{item.metadata.name}}</el-checkbox>
+                          </p>
+                        </div>
+                        <span v-else>当前命名空间下，该工作负载类型列表为空</span>
+                      </el-tab-pane>
+                      <el-tab-pane label="daemonSet" name="daemonSet">
+                         <div v-if="workload1.length!='0'">
+                          <span v-for="(item,index) in workload1" :key="index" >
+                              <el-checkbox >{{item.metadata.name}}</el-checkbox>
+                          </span>
+                        </div>
+                        <span v-else>当前命名空间下，该工作负载类型列表为空</span>
+                      </el-tab-pane>
+                      <el-tab-pane label="statefulSet" name="statefulSet">
+                         <div v-if="workload1.length!='0'">
+                          <span v-for="(item,index) in workload1" :key="index" >
+                              <el-checkbox >{{item.metadata.name}}</el-checkbox>
+                          </span>
+                        </div>
+                        <span v-else>当前命名空间下，该工作负载类型列表为空</span>
+                      </el-tab-pane>
+                      <el-tab-pane label="cronJob" name="cronJob">
+                         <div v-if="workload1.length!='0'">
+                          <span v-for="(item,index) in workload1" :key="index" >
+                              <el-checkbox >{{item.metadata.name}}</el-checkbox>
+                          </span>
+                        </div>
+                        <span v-else>当前命名空间下，该工作负载类型列表为空</span>
+                      </el-tab-pane>
+                      <el-tab-pane label="job" name="job">
+                         <div v-if="workload1.length!='0'">
+                          <span v-for="(item,index) in workload1" :key="index" >
+                              <el-checkbox >{{item.metadata.name}}</el-checkbox>
+                          </span>
+                        </div>
+                        <span v-else>当前命名空间下，该工作负载类型列表为空</span>
+                      </el-tab-pane>
                     </el-tabs>
+                      <!--数据展示 -->
+                      <!-- <div v-if="item.activeName=='deployment'">
+                        asdsadadssad
+                      </div> -->
                   </div>
                 </el-form-item>
               </div>
@@ -408,6 +448,11 @@
         consumer: "one",
         checked: true,
         instanceList: [],
+        workload1:[],
+        workload2:[],
+        workload3:[],
+        workload4:[],
+        workload5:[],
         resourceVersion:'',
       };
     },
@@ -723,16 +768,24 @@
       },
       workLoadTab(workLoad, index) {
         var namespace = this.formFour[index].value1;
+        this.workload1=[];
         console.log(namespace, workLoad);
         if (this.$route.query.clusterId) {
           var params = {
             ClusterName: this.$route.query.clusterId.split("(")[0],
             Method: "GET",
-            Path: "/apis/apps/v1beta2/namespaces" + namespace + "/" + workLoad,
+            Path: "/apis/apps/v1beta2/namespaces/" + namespace + "/" + workLoad.toLocaleLowerCase()+'s',
             Version: "2018-05-25"
           };
           this.axios.post(TKE_COLONY_QUERY, params).then(res => {
-            console.log(res);
+            // console.log(res);
+             if (res.Response.Error === undefined) {
+            var data = JSON.parse(res.Response.ResponseBody);
+            this.workload1=data.items
+            console.log(this.workload1)
+             }
+
+
           });
         }
       },
