@@ -1,19 +1,37 @@
 <template>
   <div>
     <div class="topHeader">
-      <span>BOT 防护设置</span>
+      <i class="el-icon-back" data-reactid=".1a.0.0.0" />
+      <span style="margin-left: 20px">BOT 策略设置</span>
+      <el-select
+        v-model="ipSearch"
+        filterable
+        allow-create
+        default-first-option
+        placeholder="请选择文章标签">
+        <el-option
+          v-for="item in ipSearchOptions"
+          :key="item.Domain"
+          :label="item.Domain"
+          :value="item.Domain">
+        </el-option>
+      </el-select>
+      <el-tabs :value="routerTips">
+        <el-tab-pane name="public"><p @click="goRouter('public')" slot="label">公共类型</p></el-tab-pane>
+        <el-tab-pane name="diy"><p @click="goRouter('diy')" slot="label">自定义会话策略</p></el-tab-pane>
+      </el-tabs>
     </div>
     <div class="wrapper">
       <div class="topTip" v-if="tipShow">
         <p style="width: 99%">BOT 行为管理能够对友好及恶意机器人程序进行甄别分类，并采取针对性的流量管理策略，如放通搜索引擎类机器人流量，而对恶意数据爬取商品信息流量采取不响应或减缓响应或差异化响应策略，能够应对恶意机器人程序爬取带来的资源消耗，信息泄露及无效营销问题，同时也保障友好机器人程序（如搜索引擎，广告程序）的正常运行。了解更多</p>
         <span class="el-icon-close" @click="closeTip"></span>
       </div>
-      <el-row type="flex" justify="end">
+      <!-- <el-row type="flex" justify="end">
           <el-input style="width: 180px;" placeholder="请输入域名">
              <i slot="suffix" style="display: flex; justify-content: center; align-items: center; cursor: pointer" class="el-input__icon el-icon-search" />
           </el-input>
-      </el-row>
-      <div class="tableList">
+      </el-row> -->
+      <!-- <div class="tableList">
         <div class="tableCon">
           <el-table
             ref="multipleTable"
@@ -21,7 +39,6 @@
             tooltip-effect="dark"
             style="width: 100%" v-loading="loadShow"
           >
-            <!-- <el-table-column type="selection" width="55" /> -->
             <el-table-column prop="num" label="序号" width="70%">
               <template slot-scope="scope">{{ scope.$index+1 }}</template>
             </el-table-column>
@@ -52,7 +69,6 @@
                   :change="togleSwitch(scope.row)"
                   >
                 </el-switch>
-                <!-- <span>{{scope.row.bot}}</span> -->
               </div>
             </el-table-column>
             <el-table-column prop="waf" label="WAF开关">
@@ -69,7 +85,7 @@
             </el-table-column>
             <el-table-column prop="action" label="操作">
               <template slot-scope="scope">
-                 <a style="cursor: pointer" @click="$router.push(`${$route.path}/diy/${scope.row.host}`)">防护设置</a>
+                 <a style="cursor: pointer">防护设置</a>
               </template>
             </el-table-column>
           </el-table>
@@ -85,18 +101,26 @@
             :total="totalItems"
           ></el-pagination>
         </div>
-      </div>
+      </div> -->
+      <DiyType v-if="routerTips === 'diy'" />
+      <PublicType v-if="routerTips === 'public'" />
     </div>
   </div>
 </template>
 
 <script>
-import { DESCRIBE_ACCESS_CONTROL } from '@/constants'
+import { DESCRIBE_ACCESS_CONTROL, DESCRIBE_HOSTS } from '@/constants'
+import DiyType from './diyType'
+import PublicType from './publicType'
+
 export default {
   data() {
     return {
       tipShow: true, //提示文字
       flag: true,
+      ipSearch:'',//ip查询下拉
+      ipSearchOptions:[],
+      routerTips: 'diy', // 保存tabs选项数据 diy为自定义策略
       tableDataBegin: [{
         host: 'tfc.dhycloud.com',
         bot: 1,
@@ -110,24 +134,30 @@ export default {
       flag: false,//定义一个开关
       loadShow:false,//加载
       visible: false,//删除弹框
-      hostFlag: true // 域名状态 true为向上箭头 false反之
+      hostFlag: true, // 域名状态 true为向上箭头 false反之
     };
   },
   components:{
-  },
-  mounted() {
-    this.getData();
+    DiyType,
+    PublicType
   },
   methods: {
-    onclick() {
-      console.log(this.$route);
-    },
     //关闭提示文字
     closeTip() {
       this.tipShow = false;
     },
     handleSelectionChange(val) {
       this.multipleSelection = val;
+    },
+    // 获取防护域名列表
+    getDescribeHost() {
+      let params = {
+        Version: '2018-01-25',
+      }
+      this.axios.post(DESCRIBE_HOSTS, params).then(data => {
+        this.ipSearchOptions = data.Response.HostList
+        console.log(data);
+      })
     },
     // 获取数据
     getData() {
@@ -175,7 +205,23 @@ export default {
     // 点击bot流量分析开关switch
     togleSwitch(e) {
       console.log(e);
+    },
+    // 绑定tabs选项菜单
+    getTabs() {
+      this.routerTips = this.$route.meta.tips
+    },
+    // 路由跳转
+    goRouter(router) {
+      const host = this.$route.path.split('/').reverse()[0]
+      this.routerTips = router
+      this.$router.push(`/botSetting/${router}/${host}`)
     }
+  },
+  mounted() {
+    this.getDescribeHost(),
+    this.getData();
+    this.getTabs()
+    // console.log(this.$route);
   },
 };
 </script>
@@ -187,7 +233,7 @@ export default {
 }
 .topHeader {
   width: 100%;
-  height: 50px;
+  // height: 50px;
   background-color: #fff;
   border-bottom: 1px solid #ddd;
   padding: 0 20px;

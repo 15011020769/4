@@ -125,6 +125,26 @@ export default new Router({
       }
     },
     {
+      path: '/botSetting/public/:id',
+      name: 'proctionSetting',
+      meta: {
+        keepAlive: true,
+        leftNav:true,
+        tips: 'public'
+      },
+      component: () => import(/* webpackChunckName: "botMan" */ './botMan/component/protectionSetting')
+    },
+    {
+      path: '/botSetting/diy/:id',
+      name: 'proctionSetting',
+      meta: {
+        keepAlive: true,
+        leftNav:true,
+        tips: 'diy'
+      },
+      component: () => import(/* webpackChunckName: "botMan" */ './botMan/component/protectionSetting')
+    },
+    {
       path: '/botDetail', // bot详情
       name: 'botDetail',
       component: () => import(/* webpackChunkName: "ipMan" */ './botMan/botDetail.vue'),

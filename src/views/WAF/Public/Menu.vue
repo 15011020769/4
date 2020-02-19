@@ -12,14 +12,14 @@
       :router="true"
     >
     
-      <el-menu-item index="saveOverView">安全概览</el-menu-item>
+      <el-menu-item index="/saveOverView">安全概览</el-menu-item>
       <el-submenu index="webFirewall">
         <template slot="title">
           <span>web应用防火墙</span>
         </template>
         <el-menu-item-group>
-          <el-menu-item class="selectMenu" index="protectionSettings">防护设置</el-menu-item>
-          <el-menu-item class="selectMenu" index="attackDetails">攻击详情</el-menu-item>
+          <el-menu-item class="selectMenu" index="/protectionSettings">防护设置</el-menu-item>
+          <el-menu-item class="selectMenu" index="/attackDetails">攻击详情</el-menu-item>
         </el-menu-item-group>
       </el-submenu>
       <el-submenu index="saveOverView">
@@ -27,7 +27,7 @@
           <span>web安全检测</span>
         </template>
         <el-menu-item-group>
-          <el-menu-item class="selectMenu" index="hijackDetection">DNS劫持检测</el-menu-item>
+          <el-menu-item class="selectMenu" index="/hijackDetection">DNS劫持检测</el-menu-item>
         </el-menu-item-group>
       </el-submenu>
       <el-submenu index="ipMan">
@@ -35,9 +35,9 @@
           <span>IP管理</span>
         </template>
         <el-menu-item-group>
-          <el-menu-item class="selectMenu" index="ipSearch">IP 查询</el-menu-item>
-          <el-menu-item class="selectMenu" index="ipList">IP 黑白名单</el-menu-item>
-          <el-menu-item class="selectMenu" index="ipStatus">IP 封堵状态</el-menu-item>
+          <el-menu-item class="selectMenu" index="/ipSearch">IP 查询</el-menu-item>
+          <el-menu-item class="selectMenu" index="/ipList">IP 黑白名单</el-menu-item>
+          <el-menu-item class="selectMenu" index="/ipStatus">IP 封堵状态</el-menu-item>
         </el-menu-item-group>
       </el-submenu>
       <el-submenu index="botMan">
@@ -45,9 +45,9 @@
           <span>BOT 行为管理</span>
         </template>
         <el-menu-item-group>
-          <el-menu-item class="selectMenu" index="botOverview">BOT 概览</el-menu-item>
-          <el-menu-item class="selectMenu" index="botSetting">BOT 设置</el-menu-item>
-          <el-menu-item class="selectMenu" index="botDetail">BOT 详情</el-menu-item>
+          <el-menu-item class="selectMenu" index="/botOverview">BOT 概览</el-menu-item>
+          <el-menu-item class="selectMenu" index="/botSetting">BOT 设置</el-menu-item>
+          <el-menu-item class="selectMenu" index="/botDetail">BOT 详情</el-menu-item>
         </el-menu-item-group>
       </el-submenu>
     </el-menu>
