@@ -38,7 +38,7 @@ Vue.prototype.generalRespHandler = function(
   failedCallback=() => {},
 ) {
   if (resp.Response.Error) {
-    failedCallback && failedCallback()
+    failedCallback && failedCallback(resp.Response)
     let ErrOr = Object.assign(ErrorTips, cusError)
     this.$message({
       message: ErrOr[resp.Response.Error.Code],
@@ -47,7 +47,7 @@ Vue.prototype.generalRespHandler = function(
       duration: 0
     })
   } else {
-    successCallback && successCallback()
+    successCallback && successCallback(resp.Response)
     if (successMsg) {
       this.$message({
         message: successMsg,
