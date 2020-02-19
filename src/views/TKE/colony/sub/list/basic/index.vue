@@ -175,7 +175,7 @@
         style="width:700px"
       >
         <el-form-item label="操作系统" prop="pass">
-          <el-select type="text" v-model="ruleForm.projectId" autocomplete="off" style="width:300px">
+          <el-select type="text" v-model="os" autocomplete="off" style="width:300px">
             <el-option
               v-for="item in osList"
               :key="item.Id"
@@ -246,6 +246,7 @@ export default {
       showUpdateProject: false,
       showUpdateDescribe: false,
       showUpdateOs: false,
+      os: {},
       osList: [],
       ruleForm: {
         name: '',
@@ -475,9 +476,8 @@ export default {
 
     //提交修改系统
     async submitOsForm(formName) {
-      // await this.axios.post(UPDATE_OS).then(res => {
-
-      // });
+      // UPDATE_OS
+      console.log(this.os,"os");
     },
 
     //修改项目名

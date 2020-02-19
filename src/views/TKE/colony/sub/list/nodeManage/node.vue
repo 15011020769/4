@@ -51,7 +51,7 @@
         <el-table-column type="selection" width="55"> </el-table-column>
         <el-table-column label="ID/节点名">
           <template slot-scope="scope">
-            <span @click="goNodeDetail()" class="tke-text-link"
+            <span @click="goNodeDetail(scope.row)" class="tke-text-link"
               >{{scope.row.InstanceId}}</span
             >
             <p class="" slot="{{scope.row.InstanceName}}">{{scope.row.InstanceName}}</p>
@@ -221,7 +221,7 @@
         </span>
     </el-dialog>
     <el-dialog title="您确定对选中节点进行驱逐么？" :visible.sync="showExpelModal" width="35%">
-      <div>已选择<span style="color:#ff9d00;">{{this.podList.length}}个</span>实例,<a @click="show=!show" style="cursor: pointer;">查看详情</a></div>
+      <div>已选择<span style="color:#ff9d00;">{{this.podList.length || 0}}个</span>实例,<a @click="show=!show" style="cursor: pointer;">查看详情</a></div>
           <el-collapse-transition>
             <div v-show="show">
               <el-table :data="podList" height="200">
@@ -233,7 +233,7 @@
           <p>节点驱逐后，将会把节点内的所有Pod（不包含DaemonSet管理的Pod）从节点中驱逐到集群内其他节点，并将节点设置为封锁状态。</p>
           <p style="color: red;">注意：本地存储的Pod被驱逐后数据将丢失，请谨慎操作</p>
         <span slot="footer" class="dialog-footer">
-          <el-button type="primary" @click="deleteNode()">确 定</el-button>
+          <el-button type="primary" @click="expelNode()">确 定</el-button>
           <el-button @click="showExpelModal = false">取 消</el-button>
         </span>
     </el-dialog>
@@ -276,6 +276,7 @@ export default {
       multipleSelection: [],//选中的列表
       podList: [],
       clusterIds: [],
+      instanceId: '',
       searchTypes: [
         {
           value: 'name',
@@ -403,6 +404,7 @@ export default {
 
     //打开驱逐弹窗
     async showExpelDialog(rowObj) {
+      this.instanceId = rowObj.InstanceId;
       this.showExpelModal = true;
       let param = {
         ClusterId: this.clusterId,
@@ -411,7 +413,24 @@ export default {
       }
       let res = await this.axios.post(NODE_POD_LIST, param);
       if(res.code === 0 && res.data) {
-        this.podList = res.data;
+        this.podList = res.data.Pods;
+        this.loadShow = false;
+      }
+    },
+
+    //驱逐节点
+    async expelNode() {
+      this.showExpelModal = true;
+      let param = {
+        ClusterId: this.clusterId,
+        InstanceId: this.instanceId,
+        DryRun: 0
+      }
+      let res = await this.axios.post(NODE_POD_LIST, param);
+      if(res.code === 0) {
+        this.showExpelModal = false;
+        this.podList = [];
+        this.loadShow = false;
       }
     },
 
@@ -674,11 +693,12 @@ export default {
     },
 
     // 详情
-    goNodeDetail() {
+    goNodeDetail(row) {
       this.$router.push({
         name: "nodeDetail",
         query: {
-          clusterId: this.clusterId
+          clusterId: this.clusterId,
+          node: row.PrivateIpAddresses[0]
         }
       });
     },

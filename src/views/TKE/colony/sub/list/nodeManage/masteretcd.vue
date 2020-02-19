@@ -137,6 +137,7 @@
 import subTitle from "@/views/TKE/components/subTitle";
 import Loading from "@/components/public/Loading";
 import openDrawer from "./components/openDrawer";
+import moment from 'moment';
 import { NODE_INFO, NODE_LIST, ALL_CITY } from "@/constants";
 export default {
   name: "colonyNodeManageMasteretcd",
