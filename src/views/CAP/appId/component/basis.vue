@@ -5,12 +5,12 @@
         <!--  -->
         <div class="title">
           <p class="title-left">
-            <span>基础信息</span>
-            <span class="close">(展示基本信息，可修改或删除场景)</span>
+            <span>{{$t('CAP.jcxx')}}</span>
+            <span class="close">({{$t('CAP.zsjbxx')}})</span>
           </p>
           <p class="title-right">
             <i class="el-icon-delete" style="cursor:pointer"></i>
-            <span @click="deleteAppID">删除场景</span>
+            <span @click="deleteAppID">{{$t('CAP.sccj')}}</span>
           </p>
         </div>
         <!--  -->
@@ -21,14 +21,14 @@
           class="demo-ruleForm"
           :model="baseData"
         >
-          <el-form-item label="应用名称" prop="name">
+          <el-form-item :label="$t('CAP.yymc')" prop="name">
             <span v-if="nameFlag">
               {{baseData.AppName}}
               <i class="el-icon-edit" @click="nameFlag=!nameFlag"></i>
             </span>
             <el-input v-model="baseData.AppName" @blur="disappearName" v-if="!nameFlag"></el-input>
           </el-form-item>
-          <el-form-item label="所在网址" prop="url">
+          <el-form-item :label="$t('CAP.szyz')" prop="url">
             <span v-if="urlFlag">
               {{baseData.DomainLimit}}
               <i class="el-icon-edit" @click="urlFlag=!urlFlag"></i>
@@ -48,20 +48,20 @@
         <!--  -->
         <div class="title title-two">
           <p class="title-left">
-            <span>阈值和告警</span>
-            <span class="close">(修改验证码流量波动时的告警邮箱)</span>
+            <span>{{$t('CAP.fzhgj')}}</span>
+            <span class="close">({{$t('CAP.xgyzmllbd')}})</span>
           </p>
         </div>
         <!--  -->
         <div class="emailaddordel">
           <div class="warning-email">
-            <p>告警邮箱</p>
-            <p class="close">验证情况出现恶意量、拉取量波动时，将通过以下邮箱通知您</p>
+            <p>{{$t('CAP.gjyx')}}</p>
+            <p class="close">{{$t('CAP.yzqkcxeyl')}}</p>
           </div>
           <div class="addordel">
-            <el-input v-model="addEmail" placeholder="请输入内容"></el-input>
+            <el-input v-model="addEmail" :placeholder="$t('CAP.qsrnr')"></el-input>
             <i class="el-icon-plus" @click="submitEmail()"></i>
-            <span class="warn" v-show="warnFlag">请输入正确的邮箱!</span>
+            <span class="warn" v-show="warnFlag">{{$t('CAP.qsrzqdyx')}}!</span>
             <ul>
               <li @mouseover="overLi(i)" @mouseout="outLi" v-for="(v,i) in mailList" :key="i">
                 <span>{{v}}</span>

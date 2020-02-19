@@ -33,3 +33,9 @@ export const MODIFY_HOST_MODE = 'waf2/ModifyHostMode'
 export const DESCRIBE_ACTIONED = 'waf2/DescribeActionedIp'
 /** ip黑白名单查询 */
 export const DESCRIBE_ACCESS_CONTROL = 'waf2/DescribeIpAccessControl'
+/** 获取地域封禁配置 */
+export const DESCRIBE_AREABAN_AREAS = 'waf2/DescribeAreaBanAreas'
+/** 获取WAF地域封禁支持的地域列表 */
+export const DESCRIBE_AREABAN_SUPPORT_AREAS = 'waf2/DescribeAreaBanSupportAreas'
+/** 获取自定义策略列表 */
+export const DESCRIBE_CUSTOM_RULES = 'waf2/DescribeCustomRules'

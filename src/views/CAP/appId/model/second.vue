@@ -1,7 +1,7 @@
 <template>
   <div class="appidSecond"  v-loading="loading">
     <el-row>
-      <el-button type="primary" @click="buyNew">购买套餐包</el-button>
+      <el-button type="primary" @click="buyNew">{{$t('CAP.gmtcb')}}</el-button>
       <el-select v-model="value" placeholder="请选择" size="small" @change="selectOne">
         <el-option
           v-for="item in options"
@@ -18,17 +18,17 @@
         <!-- 表格 -->
         <template>
           <el-table :data="tableData.slice((currpage - 1) * pagesize, currpage * pagesize)" style="width: 100%;"   class="table_set">
-            <el-table-column prop="ResourceName" label="资源包类型"></el-table-column>
+            <el-table-column prop="ResourceName" :label="$t('CAP.zyblx')"></el-table-column>
             <!-- <el-table-column prop="name" label="来源"></el-table-column> -->
-            <el-table-column prop="Threshold" label="总额(次)"></el-table-column>
-            <el-table-column prop="Used" label="已使用">
+            <el-table-column prop="Threshold" :label="$t('CAP.ze')"></el-table-column>
+            <el-table-column prop="Used" :label="$t('CAP.ysy')">
               <template slot-scope="scope">
                 {{ scope.row.Used }} ({{scope.row.Used * 100 / scope.row.Threshold}}%)
               </template>
             </el-table-column>
-            <el-table-column prop="Created" label="获取时间" :formatter="formatter">
+            <el-table-column prop="Created" :label="$t('CAP.hqsj')" :formatter="formatter">
             </el-table-column>
-            <el-table-column prop="Expired" label="到期时间" :formatter="formatter"></el-table-column>
+            <el-table-column prop="Expired" :label="$t('CAP.dqsj')" :formatter="formatter"></el-table-column>
           </el-table>
         </template>
         <!-- 分页 -->
@@ -67,7 +67,7 @@ export default {
         },
         {
           value: "4",
-          label: "已过期"
+          label: "已過期"
         }
       ],
       loading: true,

@@ -32,8 +32,8 @@
               <!-- <i class="el-icon-question"></i> -->
             </span>
             <el-select v-model="formShowable.runRole" class="decsIptSelect">
-              <el-option label="SCF_QcsRole" value="SCF_QcsRole"></el-option>
-              <el-option label="QCS_SCFExcuteRole" value="QCS_SCFExcuteRole"></el-option>
+              <el-option v-for="item in RoleArr" :key="item.RoleName" :label="item.RoleName" :value="item.RoleName">
+              </el-option>
             </el-select>
             <p class="tipContent">
               <span>{{ $t('SCF.total.jssq') }}</span>
@@ -128,7 +128,8 @@
     ADD_FUNC,
     TEMPLATE_DETAIL,
     VPCS_LIST,
-    SUBNET_LIST
+    SUBNET_LIST,
+    DESCRIB_ROLE
   } from "@/constants";
   import {
     ErrorTips
@@ -155,6 +156,7 @@
         SubnetOptions: [], //子网列表
         Vpcvalue: "", //vpc
         Subnetvalue: "", //子网
+        RoleArr: [],
         closeshow: false //删除按钮控制
       };
     },
@@ -171,6 +173,7 @@
         this.GetTemplateDetail();
       }
       this.GetVpcList();
+      this._Getrole()
     },
     methods: {
       //环境添加
@@ -246,6 +249,47 @@
         };
         this.axios.post(SUBNET_LIST, param).then(data => {
           this.SubnetOptions = data.Response.SubnetSet;
+        });
+      },
+      _Getrole() { //获取角色
+        let param = {
+          Region: localStorage.getItem('regionv2'),
+          Version: "2019-01-16",
+          Page: 1,
+          Rp: 200
+        };
+        this.axios.post(DESCRIB_ROLE, param).then(res => {
+          if (res.Response.Error === undefined) {
+            let List = res.Response.List
+            List.forEach(item => {
+              let strategyArr = JSON.parse(item.PolicyDocument)
+              let strategy = strategyArr.statement[0].principal.service
+              if (typeof strategy === 'object') {
+                strategy.forEach(i => {
+                  if (i.split(".")[0] === 'scf') {
+                    this.RoleArr.push(item)
+                  }
+                });
+              } else if (typeof strategy === "string") {
+                if (strategy.split(".")[0] === 'scf') {
+                  this.RoleArr.push(item)
+                }
+              }
+            });
+            console.log(this.RoleArr)
+          } else {
+            let ErrTips = {
+              'InternalError.SystemError': 'InternalError.SystemError',
+              'InvalidParameter.ParamError': '非法入参'
+            };
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+          }
         });
       },
       //添加子函数

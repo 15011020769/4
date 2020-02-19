@@ -3,7 +3,7 @@
     <div class="editTitle">
       <i class="el-icon-back" @click="backListDomin"></i>防护设置
       <el-select v-model="selectedDomainId" class="domainList">
-        <el-option v-for="item in domainList" :value="item.DomainId" :label="item.DomainId" :key="item.DomainId"></el-option>
+        <el-option v-for="item in domainList" :value="item.DomainId" :label="item.Domain" :key="item.DomainId"></el-option>
       </el-select>
     </div>
     <div class="tabs">
@@ -48,11 +48,9 @@ export default {
     const { domainId } = await this.$route.query
     this.selectedDomainId = domainId
     const domainList = await this.getDomains() // 查询所有域名 下拉框
-  console.log(domainList)
-    const currDomain = domainList.find(domain => domain.DomainId = domainId)
+    const currDomain = domainList.find(domain => domain.DomainId === domainId)
     this.domainList = domainList
-    console.log(domainList)
-    // this.setDomain(currDomain)
+    this.setDomain(currDomain)
   },
   methods:{
     async changeDomain() {
@@ -60,10 +58,10 @@ export default {
       this.setDomain(domain[0])
     },
     setDomain(currDomain) {
-      // this.domain = {
-      //   ...currDomain,
-      //   statusBool: !!currDomain.Status
-      // }
+      this.domain = {
+        ...currDomain,
+        statusBool: !!currDomain.Status
+      }
     },
     async getDomains(domainId) {
       const res = await this.axios.post(DESCRIBE_HOSTS, {

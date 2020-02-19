@@ -2,27 +2,27 @@
   <div class="wrap">
     <div class="accounted">
       <div class="accountedData">
-        <p>昨日恶意占比</p>
+        <p>{{$t('CAP.zreyzbb')}}</p>
         <p>{{ dataSum.CheckTicketSum }}</p>
       </div>
       <div class="accountedData">
-        <p>昨日请求量</p>
+        <p>{{$t('CAP.zrqql')}}</p>
         <p>{{ dataSum.VfySum }}</p>
       </div>
       <div class="accountedData">
-        <p>昨日验证量</p>
+        <p>{{$t('CAP.zryzll')}}</p>
         <p>{{ dataSum.AttackSum }}</p>
       </div>
       <div class="accountedData">
-        <p>昨日通过量</p>
+        <p>{{$t('CAP.zrtgl')}}</p>
         <p>{{ dataSum.GetSum }}</p>
       </div>
       <div class="accountedData">
-        <p>昨日恶意拦截量</p>
+        <p>{{$t('CAP.zreyljll')}}</p>
         <p>{{ dataSum.VfySuccSum }}</p>
       </div>
       <div class="accountedData" style="border:none">
-        <p>昨日票据校验量</p>
+        <p>{{$t('CAP.zrpjjyl')}}</p>
         <p>---</p>
       </div>
     </div>
@@ -30,7 +30,7 @@
       <div class="charts">
         <div class="chartsTitle">
           <div class="left">
-            验证通过与拦截
+            {{$t('CAP.yztgylj')}}
             <Time
               :classvalue="classvalues"
               @setTimeClassvalues="setTimeClassvalues"
@@ -50,7 +50,7 @@
       <div class="charts" @mousemove="classvalue = 2">
         <div class="chartsTitle">
           <div class="left">
-            拦截情况 (%)
+            {{$t('CAP.ljqk')}} (%)
             <Time
               :classvalue="classvalue"
               @setTimeClassvalue="setTimeClassvalue"
@@ -70,7 +70,7 @@
       <div class="charts" @mousemove="classvalue = 3">
         <div class="chartsTitle">
           <div class="left">
-            验证码加载耗时 (秒)
+            {{$t('CAP.yzmjzhs')}}
             <Time
               :classvalue="classvalue"
               @setTimeClassvalue="setTimeClassvalue"
@@ -90,7 +90,7 @@
       <div class="charts" @mousemove="classvalue = 4">
         <div class="chartsTitle">
           <div class="left">
-            一次通过平均尝试次数 (次)
+            {{$t('CAP.yctg')}}
             <Time
               :classvalue="classvalue"
               @setTimeClassvalue="setTimeClassvalue"
@@ -110,7 +110,7 @@
       <div class="charts" @mousemove="classvalue = 5">
         <div class="chartsTitle">
           <div class="left">
-            一次通过尝试次数分布
+            {{$t('CAP.yctgcs')}}
             <Time
               :classvalue="classvalue"
               @setTimeClassvalue="setTimeClassvalue"

@@ -3,14 +3,14 @@
     <div class="wrap-in">
       <div class="defense-model">
         <div class="title">
-          <span>防御模型</span>
-          <span class="close">(根据业务场景特性，平衡安全和体验，配置最合适您需求的防御体系)</span>
+          <span>{{$t('CAP.fymx')}}</span>
+          <span class="close">({{$t('CAP.gjywcj')}})</span>
         </div>
         <div class="model-choose-level">
           <div class="model-choose">
             <ul>
-              <li>场景选择</li>
-              <li>根据您选择的场景适配不同的风控策略，达到最优防御效果</li>
+              <li>{{$t('CAP.cjxz')}}</li>
+              <li>{{$t('CAP.gjnxzdcj')}}</li>
             </ul>
             <div class="choose-select">
               <div
@@ -24,22 +24,22 @@
                 <p>{{v.content}}</p>
               </div>
             </div>
-          </div>
+          </div> 
           <div class="model-level">
             <ul>
-              <li>恶意拦截等级</li>
-              <li>选择风控策略的过滤程度，调整安全和体验的侧重</li>
+              <li>{{$t('CAP.eyljdj')}}</li>
+              <li>{{$t('CAP.xzfkcl')}}</li>
             </ul>
             <div class="block">
               <el-slider v-model="securityData.EvilInterceptGrade" :step="50" show-stops :format-tooltip="timestepToolTip"></el-slider>
               <div class="block-content">
                 <div class="block-left">
-                  <p>体验优先</p>
-                  <p>停用部分容易误伤的策略安全优先</p>
+                  <p>{{$t('CAP.tyyx')}}</p>
+                  <p>{{$t('CAP.tybf')}}</p>
                 </div>
                 <div class="block-right">
-                  <p>安全优先</p>
-                  <p>开启所有安全策略</p>
+                  <p>{{$t('CAP.aqyx')}}</p>
+                  <p>{{$t('CAP.kqsyaq')}}</p>
                 </div>
               </div>
             </div>
@@ -49,16 +49,15 @@
       <!--  -->
       <div class="defense-model">
         <div class="title">
-          <span>验证策略</span>
-          <span>(根据你的选择的场景适配不同的风控策略，达到最优的防御效果)</span>
+          <span>{{$t('CAP.yzcl')}}</span>
+          <span>({{$t('CAP.gjnxzdcj')}})</span>
         </div>
         <div class="model-choose-level">
           <div class="model-choose">
             <ul class="setHeight">
-              <li>智能验证引擎</li>
+              <li>{{$t('CAP.znyzyq')}}</li>
               <li>
-                开启验证码智能验证引擎，将根据你业务的实时风险情况下发不同类型的验证码。
-                把简单验证码下发给真实用户，把复杂验证码下发给恶意访问
+                {{$t('CAP.kqyzmznyq')}}
               </li>
             </ul>
             <div class="verification">
@@ -69,9 +68,9 @@
                   inactive-color="#e4e7ed"
                   @change="switch1Change"
                 ></el-switch>
-                <span class="close" v-if="!securityData.SmartEngine">已关闭智能引擎，可自行指定验证码类型</span>
-                <span class="open" v-if="securityData.SmartEngine">已开启智能引擎，将自动感知恶意调整验证码</span>
-              </div>
+                <span class="close" v-if="!securityData.SmartEngine">{{$t('CAP.ygbznyq')}}</span>
+                <span class="open" v-if="securityData.SmartEngine">{{$t('CAP.ykqznyq')}}</span>
+              </div> 
               <div class="choose-select">
                 <div
                   class="choose-button"
@@ -88,7 +87,7 @@
               </div>
               <el-row>
                 <el-button type="primary" @click="fastSave">立即保存</el-button>
-                <span v-if="!showTime">保存本页面所有的设置</span>
+                <span v-if="!showTime">{{$t('CAP.bcympz')}}</span>
                 <span class="close" v-if="showTime">{{time}} 已保存</span>
               </el-row>
             </div>
@@ -96,10 +95,10 @@
           <div class="model-level">
             <ul class="setHeight">
               <li>
-                智能免验证
-                <span class="open">内测中</span>
+                {{$t('CAP.znmyz')}}
+                <span class="open">{{$t('CAP.ncz')}}</span>
               </li>
-              <li>为可信用户跳过验证环节，秒过验证码，体验更优秀</li>
+              <li>{{$t('CAP.wkxyh')}}</li>
             </ul>
             <div class="verification-switch">
               <el-switch
@@ -108,8 +107,8 @@
                 inactive-color="#e4e7ed"
                 @change="switch2Change"
               ></el-switch>
-              <span class="close" v-if="!securityData.SmartVerify">已关闭免验证，所有访问都需完成验证码</span>
-              <span class="open" v-if="securityData.SmartVerify">已开启免验证，可信用户将跳过验证码环节</span>
+              <span class="close" v-if="!securityData.SmartVerify">{{$t('CAP.ykqqq')}}</span>
+              <span class="open" v-if="securityData.SmartVerify">{{$t('CAP.ygbqqq')}}</span>
             </div>
           </div>
         </div>

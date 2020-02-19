@@ -15,7 +15,7 @@
               <div class="tke-form-item_text"><span>{{clusterInfo.ClusterId}}</span></div>
             </el-form-item>
             <el-form-item label="部署类型">
-              <div class="tke-form-item_text"><span>{{clusterInfo.ClusterId}}</span></div>
+              <div class="tke-form-item_text"><span>{{changeClusterType(clusterInfo.ClusterType)}}</span></div>
             </el-form-item>
             <el-form-item label="状态">
               <div class="tke-form-item_text"><span>{{changeStatus(clusterInfo.ClusterStatus)}}</span></div>
@@ -28,7 +28,7 @@
             </el-form-item>
             <el-form-item label="kubernetes版本">
               <div class="tke-form-item_text">
-                <p>Master    {{clusterInfo.ClusterId}}</p>
+                <p>Master</p>
                 <p>Node</p>
               </div>
             </el-form-item>
@@ -50,32 +50,32 @@
           <h4 class="tke-formpanel-title">节点和网络信息</h4>
           <el-form  class="tke-form"  label-position='left' label-width="130px" size="mini">
             <el-form-item label="节点数量">
-              <div class="tke-form-item_text"><span>1个</span></div>
+              <div class="tke-form-item_text"><span>{{clusterInfo.ClusterNodeNum}}个</span></div>
             </el-form-item>
             <el-form-item label="默认操作系统">
-              <div class="tke-form-item_text"><span>ubuntu16.04.1 LTSx86_64</span><i class="el-icon-edit tke-icon"></i></div>
+              <div class="tke-form-item_text"><span>{{clusterInfo.ClusterOs}}</span><i class="el-icon-edit tke-icon" @click="showOsModal()"></i></div>
             </el-form-item>
 
             <el-form-item label="系统镜像来源">
-              <div class="tke-form-item_text"><span>公共镜像 - 基础镜像</span></div>
+              <div class="tke-form-item_text"><span>公共镜像 - {{changeOsCustomizeType(clusterInfo.OsCustomizeType)}}</span></div>
             </el-form-item>
             <el-form-item label="网络节点">
-              <div class="tke-form-item_text"><span><a href="#">vpc-6whh21qa</a></span></div>
+              <div class="tke-form-item_text"><span><a href="#">{{clusterInfo.ClusterNetworkSettings && clusterInfo.ClusterNetworkSettings.VpcId}}</a></span></div>
             </el-form-item>
             <el-form-item label="容器网络">
               <div class="tke-form-item_text">
-                <p>172.16.0.0/16</p>
-                <p>1024个Service/集群，64个Pod/节点,1008个节点/集群</p>
+                <p>{{clusterInfo.ClusterNetworkSettings && clusterInfo.ClusterNetworkSettings.ClusterCIDR}}</p>
+                <p>{{clusterInfo.ClusterNetworkSettings && clusterInfo.ClusterNetworkSettings.MaxClusterServiceNum}}个Service/集群，{{clusterInfo.ClusterNetworkSettings && clusterInfo.ClusterNetworkSettings.MaxNodePodNum}}个Pod/节点,1008个节点/集群</p>
               </div>
             </el-form-item>
             <el-form-item label="网络模式">
-              <div class="tke-form-item_text"><span>cni</span></div>
+              <div class="tke-form-item_text"><span></span></div>
             </el-form-item>
             <el-form-item label="云联网">
-              <div class="tke-form-item_text"><span>docker</span></div>
+              <div class="tke-form-item_text"><span></span></div>
             </el-form-item>
             <el-form-item label="ipvs支持">
-              <div class="tke-form-item_text"><span>未开启</span></div>
+              <div class="tke-form-item_text"><span>{{changeipvs(clusterInfo.ClusterNetworkSettings && clusterInfo.ClusterNetworkSettings.Ipvs)}}</span></div>
             </el-form-item>
           </el-form>
         </div>
@@ -164,6 +164,33 @@
         <el-button @click="closeDialog('2')">取 消</el-button>
       </div>
     </el-dialog>
+    <el-dialog title="设置集群操作" :visible.sync="showUpdateOs" width="750px">
+      <el-form
+        :model="ruleForm"
+        :rules="rules"
+        ref="ruleForm"
+        label-width="100px"
+        class="demo-ruleForm"
+        size="small"
+        style="width:700px"
+      >
+        <el-form-item label="操作系统" prop="pass">
+          <el-select type="text" v-model="ruleForm.projectId" autocomplete="off" style="width:300px">
+            <el-option
+              v-for="item in osList"
+              :key="item.Id"
+              :label="item.Alias"
+              :value="item.Id"
+            ></el-option>
+          </el-select>
+          <p>注意：更改操作系统仅决定集群内新增或者重装升级节点的操作系统，不影响正在运行节点的操作系统，更多<a href="#">查看详情</a><i class="el-icon-edit-outline"></i></p>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="submitOsForm('ruleForm')">提 交</el-button>
+        <el-button @click="closeDialog('4')">取 消</el-button>
+      </div>
+    </el-dialog>
     <el-dialog title="编辑集群描述" :visible.sync="showUpdateDescribe" width="750px">
       <el-form
         :model="ruleForm"
@@ -202,7 +229,7 @@
 import subTitle from '@/views/TKE/components/subTitle'
 import Loading from '@/components/public/Loading'
 import { ErrorTips } from "@/components/ErrorTips";
-import { CLUSTERS_SECURITY, TKE_COLONY_LIST, ALL_PROJECT, UPDATE_CLUSTER_NAME, UPDATE_PROJECT, CLUSTER_VERSION } from '@/constants'
+import { CLUSTERS_SECURITY, TKE_COLONY_LIST, ALL_PROJECT, UPDATE_CLUSTER_NAME, UPDATE_PROJECT, CLUSTER_VERSION, CLUSTER_OS, UPDATE_OS } from '@/constants'
 export default {
   name: 'colonyBasic',
   data () {
@@ -217,6 +244,8 @@ export default {
       showUpdateName: false,
       showUpdateProject: false,
       showUpdateDescribe: false,
+      showUpdateOs: false,
+      osList: [],
       ruleForm: {
         name: '',
         projectId: '',
@@ -250,7 +279,7 @@ export default {
     this.getSecurity();
     this.getColonyInfo();
     this.getAllPorject();
-    this.getClusterVersion();
+    // this.getClusterVersion();
   },
   methods: {
     //获取集群信息
@@ -361,6 +390,20 @@ export default {
       }
     },
 
+    async getOsList() {
+      await this.axios.post(CLUSTER_OS).then(res => {
+        if(res && res.code === 0 && res.data) {
+          this.osList = res.data.images;
+        }
+      });
+    },
+
+    //打开操作系统modal
+    showOsModal() {
+      this.showUpdateOs = true;
+      this.getOsList();
+    },
+
     //更新集群名称
     async updateName () {
       this.loadShow = true;
@@ -429,6 +472,13 @@ export default {
       });
     },
 
+    //提交修改系统
+    async submitOsForm(formName) {
+      // await this.axios.post(UPDATE_OS).then(res => {
+
+      // });
+    },
+
     //修改项目名
     async updateProject() {
       this.loadShow = true;
@@ -475,6 +525,33 @@ export default {
       }
     },
 
+    //根据集群类型返回中文状态
+    changeClusterType (type) {
+      if(type === 'MANAGED_CLUSTER') {
+        return '托管集群';
+      } else if (type === 'INDEPENDENT_CLUSTER') {
+        return '独立集群';
+      }
+    },
+
+    //根据系统镜像返回中文
+    changeOsCustomizeType(type) {
+      if(type === 'DOCKER_CUSTOMIZE') {
+        return 'TKE定制镜像';
+      } else if (type === 'GENERAL') {
+        return '基础镜像';
+      }
+    },
+
+    //根据ipvs状态返回中文
+    changeipvs(status) {
+      if(status === true) {
+        return '已开启';
+      } else if (status === false) {
+        return '未开启';
+      }
+    },
+
     //关闭弹窗
     closeDialog(type) {
       console.log(type);
@@ -487,6 +564,8 @@ export default {
       } else if (type === '3') {
         this.showUpdateDescribe = false;
         this.ruleForm.textarea = '';
+      } else if (type === '4') {
+        this.showUpdateOs = false;
       }
     }
   }  

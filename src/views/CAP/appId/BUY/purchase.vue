@@ -5,27 +5,27 @@
     </div>
     <div class="body" id="main">
       <div class="bodyTitle">
-        <p>验证码服务</p>
+        <p>{{$t('CAP.yzmfw')}}</p>
       </div>
       <div class="content">
         <div class="contentChoose">
           <div class="packAgesNum">
             <div class="numLeft">
-              <p style="font-size:15px">次数包</p>
+              <p style="font-size:15px">{{$t('CAP.csb')}}</p>
             </div>
             <div class="numRight">
                <el-radio-group v-model="quantity">
-                <el-radio-button :label="20">20万次</el-radio-button>
-                <el-radio-button :label="100">100万次</el-radio-button>
-                <el-radio-button :label="500">500万次</el-radio-button>
-                <el-radio-button :label="1000">1000万次</el-radio-button>
-                <el-radio-button :label="10000">1亿次</el-radio-button>
-                <el-radio-button :label="100000">10亿次</el-radio-button>
+                <el-radio-button :label="20">20{{$t('CAP.wn')}}</el-radio-button>
+                <el-radio-button :label="100">100{{$t('CAP.wn')}}</el-radio-button>
+                <el-radio-button :label="500">500{{$t('CAP.wn')}}</el-radio-button>
+                <el-radio-button :label="1000">1000{{$t('CAP.wn')}}</el-radio-button>
+                <el-radio-button :label="10000">1{{$t('CAP.yc')}}</el-radio-button>
+                <el-radio-button :label="100000">10{{$t('CAP.yc')}}</el-radio-button>
               </el-radio-group>
-              <p style="font-size:13px;padding-top:15px;color:#999;">次数包用完后，超出次数会按照0.005元/次日结。</p>
+              <p style="font-size:13px;padding-top:15px;color:#999;">{{$t('CAP.csbywh')}}。</p>
               <p
                 style="font-size:13px;padding-top:15px;color:#999;"
-              >以上流量包最高可支持QPS 1000,如需购买更高上限流量包,请点击提交工单联系我们，我们将提供专人为您服务</p>
+              >{{$t('CAP.ysllbzg')}}</p>
             </div>
           </div>
           <div class="period">
@@ -34,17 +34,17 @@
             </div>
             <div class="numRight">
               <el-button type="primary" size="small">一年</el-button>
-              <p style="margin-top:15px;color:#999;">1年内未使用完的次数自动过期</p>
+              <p style="margin-top:15px;color:#999;">{{$t('CAP.ynwsy')}}</p>
             </div>
           </div>
         </div>
         <div class="contentPrice">
            <div class="numLeft">
-              <p style="font-size:15px">费用:</p>
+              <p style="font-size:15px">{{$t('CAP.fy')}}:</p>
             </div>
             <div class="numRight">
               <div style="margin-bottom:15px;">
-                <p v-show="query" style="color: #999;">费用查询中...</p>
+                <p v-show="query" style="color: #999;">{{$t('CAP.fycxz')}}...</p>
                 <p v-show="!query" style="color: #ed711f; font-size: 25px;">NT$ {{TotalCost}}</p>
               </div>
               <el-button type="primary" :disabled="loading" size="small" @click="generateDeal">立即支付</el-button>
@@ -54,13 +54,13 @@
     </div>
     <div class="foot" id="foot">
       <p style="color:white;dispaly:flex;align-items: center;margin-top:15px">
-        <span>隐私权声明</span>
-        <span style="padding-left:30px">服务条款</span>
-        <span style="padding-left:30px">营业规章与服务契约</span>
-        <span style="padding-left:30px">著作权保护公告</span>
-        <span style="padding-left:30px">关于我们</span>
+        <span>{{$t('CAP.yssm')}}</span>
+        <span style="padding-left:30px">{{$t('CAP.fwtk')}}</span>
+        <span style="padding-left:30px">{{$t('CAP.yygz')}}</span>
+        <span style="padding-left:30px">{{$t('CAP.zzq')}}</span>
+        <span style="padding-left:30px">{{$t('CAP.gywm')}}</span>
       </p>
-      <p style="color:white">客户服务专线: 0809-016-888 台富云科技股份有限公司</p>
+      <p style="color:white">{{$t('CAP.khfwzx')}}</p>
     </div>
   </div>
 </template>

@@ -84,6 +84,7 @@ export const LOGIC_SYMBOL = {
   exsit: '存在参数',
   nexsit: '不存在参数',
 }
+export const LOGIC_SYMBOL_ARR = obj2Arr(LOGIC_SYMBOL)
 export const MATCH_KEY = {
   IP: {
     name: '来源IP',
@@ -236,6 +237,7 @@ export const MATCH_KEY = {
     },
   },
 }
+export const MATCH_KEY_ARR = obj2Arr(MATCH_KEY)
 export const POLICY_RULE_ACTION = {
   0: '放行',
   1: '阻断',
