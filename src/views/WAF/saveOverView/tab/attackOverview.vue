@@ -35,7 +35,7 @@
         <el-row class="iconBtn">
           <i class="el-icon-download" @click="dialogDownloadVisible = true"></i>
           <i class="el-icon-refresh"></i>
-          <i class="el-icon-setting" @click="dialogControlVisible = true"></i>
+          <i class="el-icon-setting" @click="dialogSetVisible = true"></i>
         </el-row>
       </p>
       <div class="contentNum">
@@ -80,24 +80,24 @@
           :legendText="selectValue == '' ? legendText2 : legendText1"
         />
       </el-row>
-       <el-row class="echartsShowSecond">
-         <el-col :span="12">
-          <h3 class="topfont">
-            攻击来源地域TOP5
-            <span style="color:#bbb;">(次)</span>
-          </h3>
-         </el-col>
-         <el-col :span="12">
-          <h3 class="topfont">
-            攻击来源IP TOP5
-            <span style="color:#bbb;">(次)</span>
-          </h3>
-          <EBar
-            :xAxis="xAxisBar"
-            :series="seriesBar"
-            :legendText="legendTextBar"
-          />
-         </el-col>
+      <el-row class="echartsShowSecond">
+        <el-col :span="12">
+        <h3 class="topfont">
+          攻击来源地域TOP5
+          <span style="color:#bbb;">(次)</span>
+        </h3>
+        </el-col>
+        <el-col :span="12">
+        <h3 class="topfont">
+          攻击来源IP TOP5
+          <span style="color:#bbb;">(次)</span>
+        </h3>
+        <EBar
+          :xAxis="xAxisBar"
+          :series="seriesBar"
+          :legendText="legendTextBar"
+        />
+        </el-col>
       </el-row>
       <el-row class="echartsShowThird">
          <el-col :span="12">
@@ -105,6 +105,10 @@
             访问类型占比
             <span style="color:#bbb;">(%)</span>
           </h3>
+          <EPie
+            :series="seriesPie"
+            :legendText="legendTextPie"
+          />
          </el-col>
          <el-col :span="12">
           <h3 class="topfont">
@@ -127,7 +131,7 @@
     />
     <el-dialog
       title="自定义展示模板"
-      :visible.sync="dialogControlVisible"
+      :visible.sync="dialogSetVisible"
       width="40%"
     >
       <div>
@@ -138,8 +142,8 @@
         <el-checkbox v-model="checked5" label="攻击来源区域分布" border></el-checkbox>
       </div>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="dialogControlVisible = false">保存</el-button>
-        <el-button @click="dialogControlVisible = false">取消</el-button>
+        <el-button type="primary" @click="dialogSetVisible = false">保存</el-button>
+        <el-button @click="dialogSetVisible = false">取消</el-button>
       </div>
     </el-dialog>
   </div>
@@ -149,6 +153,7 @@ import moment from "moment";
 import html2canvas from "html2canvas"
 import ELine from "../components/line"
 import EBar from "../components/bar"
+import EPie from "../components/pie"
 import DownLoadImg from '../components/downLoadImg'
 import {
   DESCRIBE_HOSTS,
@@ -183,17 +188,26 @@ export default {
       xAxisBar: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
       legendTextBar: "次数",
       dialogDownloadVisible: false,
-      dialogControlVisible: false,
+      dialogSetVisible: false,
       checked1: false,
       checked2: false,
       checked3: false,
       checked4: false,
       checked5: false,
+      legendTextPie: ['直接访问', '邮件营销', '联盟广告', '视频广告', '搜索引擎'],
+      seriesPie: [
+        {value: 335, name: '直接访问'},
+        {value: 310, name: '邮件营销'},
+        {value: 234, name: '联盟广告'},
+        {value: 135, name: '视频广告'},
+        {value: 1548, name: '搜索引擎'}
+      ]
     };
   },
   components: {
     ELine,
     EBar,
+    EPie,
     DownLoadImg,
   },
   mounted () {
