@@ -39,7 +39,7 @@
               <div class="tke-form-item_text"><span>{{clusterInfo.ClusterDescription}}</span><i class="el-icon-edit tke-icon" @click="showUpdateDescribe = true"></i></div>
             </el-form-item>
             <el-form-item label="创建时间">
-              <div class="tke-form-item_text"><span>{{clusterInfo.CreatedTime}}</span></div>
+              <div class="tke-form-item_text"><span>{{upTime(clusterInfo.CreatedTime)}}</span></div>
             </el-form-item>
           </el-form>
         </div>
@@ -175,7 +175,7 @@
         style="width:700px"
       >
         <el-form-item label="操作系统" prop="pass">
-          <el-select type="text" v-model="ruleForm.projectId" autocomplete="off" style="width:300px">
+          <el-select type="text" v-model="os" autocomplete="off" style="width:300px">
             <el-option
               v-for="item in osList"
               :key="item.Id"
@@ -228,6 +228,7 @@
 <script>
 import subTitle from '@/views/TKE/components/subTitle'
 import Loading from '@/components/public/Loading'
+import moment from 'moment';
 import { ErrorTips } from "@/components/ErrorTips";
 import { CLUSTERS_SECURITY, TKE_COLONY_LIST, ALL_PROJECT, UPDATE_CLUSTER_NAME, UPDATE_PROJECT, CLUSTER_VERSION, CLUSTER_OS, UPDATE_OS } from '@/constants'
 export default {
@@ -245,6 +246,7 @@ export default {
       showUpdateProject: false,
       showUpdateDescribe: false,
       showUpdateOs: false,
+      os: {},
       osList: [],
       ruleForm: {
         name: '',
@@ -474,9 +476,8 @@ export default {
 
     //提交修改系统
     async submitOsForm(formName) {
-      // await this.axios.post(UPDATE_OS).then(res => {
-
-      // });
+      // UPDATE_OS
+      console.log(this.os,"os");
     },
 
     //修改项目名
@@ -567,6 +568,10 @@ export default {
       } else if (type === '4') {
         this.showUpdateOs = false;
       }
+    },
+
+    upTime(value) {
+      return moment(value).format("YYYY-MM-DD HH:mm:ss");
     }
   }  
 }

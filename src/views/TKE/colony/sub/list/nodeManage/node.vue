@@ -14,7 +14,7 @@
         <el-button size="small" @click="goAddExist">添加已有节点</el-button>
         <el-button size="small" :disabled="this.multipleSelection.length > 0 ? false : true" @click="showDeleteModal()">移出</el-button>
         <el-button size="small" :disabled="this.multipleSelection.length > 0 ? false : true" @click="showBlockModal()">封锁</el-button>
-        <el-button size="small" :disabled="this.multipleSelection.length > 0 ? false : true">解除封锁</el-button>
+        <el-button size="small" :disabled="this.multipleSelection.length > 0 ? false : true" @click="showUnBlockModal()">解除封锁</el-button>
       </div>
        <!-- 抽屉 -->
       <openDrawer :flag='flag'
@@ -22,17 +22,20 @@
        @changeFlag='setFlag'
        @setTime='setTime'></openDrawer>
       <!-- 右侧 -->
-      <div class="grid-right">
-        <tkeSearch
-          exportData
-          inputPlaceholder="请输入IP或节点名/ID"
-          :typeSelect="false"
-          :searchInput="searchInput"
-          @changeInput="changeSearchInput"
-          @clickSearch="clickSearch"
-          @exportExcel="exportExcel"
-        >
-        </tkeSearch>
+      <div class="tool">
+        <div class="searchRight">
+          <el-select placeholder="请选择" v-model="ChoiceValue">
+            <el-option v-for="item in searchTypes" :key="item.value" :label="item.label" :value="item.value"></el-option>
+          </el-select>
+          <el-input v-model="searchValue" class="searchs" placeholder="请输入内容" @change="_searchchange">
+          </el-input>
+          <el-button class="el-icon-search" size="small" @click="_search"></el-button>
+          <span>
+            <el-tooltip class="tooltip" effect="dark" content="導出表格" placement="top">
+              <i  @click="exportExcel" class="el-icon-download tke-download "></i>
+            </el-tooltip>
+          </span>
+        </div>
       </div>
     </div>
 
@@ -48,7 +51,7 @@
         <el-table-column type="selection" width="55"> </el-table-column>
         <el-table-column label="ID/节点名">
           <template slot-scope="scope">
-            <span @click="goNodeDetail()" class="tke-text-link"
+            <span @click="goNodeDetail(scope.row)" class="tke-text-link"
               >{{scope.row.InstanceId}}</span
             >
             <p class="" slot="{{scope.row.InstanceName}}">{{scope.row.InstanceName}}</p>
@@ -104,7 +107,7 @@
         <el-table-column width="200" prop="" label="计费模式">
           <template slot-scope="scope">
             <p></p>
-            <p>{{scope.row.CreatedTime}}创建</p>
+            <p>{{scope.row.addTime}}创建</p>
           </template>
         </el-table-column>
         <el-table-column label="操作">
@@ -120,10 +123,10 @@
                   ><span class="tke-text-link" @click="showBlockModal(scope.row)">封锁</span></el-dropdown-item
                 >
                 <el-dropdown-item command="a"
-                  ><span class="tke-text-link" @click="show">取消封锁</span></el-dropdown-item
+                  ><span class="tke-text-link" @click="showUnBlockModal(scope.row)">取消封锁</span></el-dropdown-item
                 >
                 <el-dropdown-item command="b"
-                  ><span class="tke-text-link">驱逐</span></el-dropdown-item
+                  ><span class="tke-text-link" @click="showExpelDialog(scope.row)">驱逐</span></el-dropdown-item
                 >
               </el-dropdown-menu>
             </el-dropdown>
@@ -167,6 +170,27 @@
           <el-button @click="showBlockademodal = false">取 消</el-button>
         </span>
     </el-dialog>
+    <el-dialog title="您确定取消封锁以下节点么？" :visible.sync="showUnBlockademodal" width="35%">
+      <div>已选择<span style="color:#ff9d00;">{{this.multipleSelection.length}}个</span>节点,<a @click="show=!show" style="cursor: pointer;">查看详情</a></div>
+          <el-collapse-transition>
+            <div v-show="show">
+              <el-table :data="multipleSelection" height="200">
+                <el-table-column property="InstanceId" label="名称" width="150"></el-table-column>
+                <el-table-column property="InstanceName" label="节点名称" width="200"></el-table-column>
+                <el-table-column label="状态" width="200">
+                  <template>
+                      可删除
+                  </template>
+                </el-table-column>
+              </el-table>
+            </div>
+          </el-collapse-transition>
+          <p>封锁节点后，将不接受新的Pod调度到该节点，需要手动取消封锁的节点。</p>
+        <span slot="footer" class="dialog-footer">
+          <el-button type="primary" @click="unBlockNode()">确 定</el-button>
+          <el-button @click="showUnBlockademodal = false">取 消</el-button>
+        </span>
+    </el-dialog>
     <el-dialog title="您确定删除以下节点么？" :visible.sync="showDelModal" width="35%">
       <div>已选择<span style="color:#ff9d00;">{{this.multipleSelection.length}}个</span>节点,<a @click="show=!show" style="cursor: pointer;">查看详情</a></div>
           <el-collapse-transition>
@@ -196,6 +220,23 @@
           <el-button @click="showDelModal = false">取 消</el-button>
         </span>
     </el-dialog>
+    <el-dialog title="您确定对选中节点进行驱逐么？" :visible.sync="showExpelModal" width="35%">
+      <div>已选择<span style="color:#ff9d00;">{{this.podList.length || 0}}个</span>实例,<a @click="show=!show" style="cursor: pointer;">查看详情</a></div>
+          <el-collapse-transition>
+            <div v-show="show">
+              <el-table :data="podList" height="200">
+                <el-table-column property="Name" label="实例(Pod)名称" width="200"></el-table-column>
+                <el-table-column property="Namespace" label="所属集群空间" width="200"></el-table-column>
+              </el-table>
+            </div>
+          </el-collapse-transition>
+          <p>节点驱逐后，将会把节点内的所有Pod（不包含DaemonSet管理的Pod）从节点中驱逐到集群内其他节点，并将节点设置为封锁状态。</p>
+          <p style="color: red;">注意：本地存储的Pod被驱逐后数据将丢失，请谨慎操作</p>
+        <span slot="footer" class="dialog-footer">
+          <el-button type="primary" @click="expelNode()">确 定</el-button>
+          <el-button @click="showExpelModal = false">取 消</el-button>
+        </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -205,9 +246,10 @@ import tkeSearch from "@/views/TKE/components/tkeSearch";
 import Loading from "@/components/public/Loading";
 import openDrawer from "./components/openDrawer";
 import { ErrorTips } from "@/components/ErrorTips";
+import moment from 'moment';
 import XLSX from "xlsx";
 import FileSaver from "file-saver";
-import { ALL_CITY, NODE_INFO, NODE_LIST, POINT_REQUEST, OBJ_LIST, DELETE_NODE, BLOCK_NODE } from '@/constants';
+import { ALL_CITY, NODE_INFO, NODE_LIST, POINT_REQUEST, OBJ_LIST, DELETE_NODE, BLOCK_NODE, NODE_ID_LIST, NODE_POD_LIST } from '@/constants';
 export default {
   name: "colonyNodeManageNode",
   data() {
@@ -218,16 +260,37 @@ export default {
       city: {},
       list: [], // 列表
       total: 0,
-      pageSize: 20,
+      pageSize: 10,
       pageIndex: 0,
       flag: false,
-      showBlockademodal: false,
-      showDelModal: false,
-      show: true,
+      showBlockademodal: false,//是否打开封锁弹窗
+      showUnBlockademodal: false,
+      showDelModal: false,//是否打开删除弹窗
+      showExpelModal: false,//是否打开驱逐弹窗
+      show: true,//弹窗是否显示详情
       checkedItem: true,
       changeType: '',
       unschedulable: 0,
-      multipleSelection: []
+      ChoiceValue: '', //搜索选择
+      searchValue: '', //搜索值
+      multipleSelection: [],//选中的列表
+      podList: [],
+      clusterIds: [],
+      instanceId: '',
+      searchTypes: [
+        {
+          value: 'name',
+          label: '节点名称'
+        },
+        {
+          value: 'ip',
+          label: 'IP'
+        },
+        {
+          value: 'id',
+          label: '节点ID'
+        }
+      ]
     };
   },
   components: {
@@ -254,8 +317,12 @@ export default {
         Version: "2018-05-25",
         InstanceRole: "WORKER"
       };
-      if(this.searchInput !== '') {
-
+      if(this.ChoiceValue !== '' && this.searchValue !== '') {
+        let clusterIds = this.clusterIds;
+        params.InstanceIds = [];
+        clusterIds.map(o => {
+          params.InstanceIds.push(o);
+        })
       }
       const res = await this.axios.post(NODE_INFO, params);
       this.loadShow = false;
@@ -267,7 +334,6 @@ export default {
       }
       let param = {
         Version: "2017-03-12",
-        Offset: this.pageIndex,
         Limit: this.pageSize
       }
       if(ids.length > 0) {
@@ -279,8 +345,12 @@ export default {
         if(nodeRes.Response.Error === undefined) {
           this.loadShow = false;
           if(nodeRes.Response.InstanceSet.length > 0) {
+            nodeRes.Response.InstanceSet.map(node => {
+              node.addTime = moment(node.CreatedTime).format("YYYY-MM-DD HH:mm:ss");
+            });
             this.list = nodeRes.Response.InstanceSet;
           }
+          this.total = res.Response.TotalCount;
         } else {
           this.loadShow = false;
           let ErrTips = {
@@ -305,18 +375,7 @@ export default {
         localStorage.setItem("regionv2", city.Region);
       });
     },
-
-    // 监听搜索框的值
-    changeSearchInput(val) {
-      this.searchInput = val;
-      console.log(this.searchInput);
-    },
-    // 点击搜索
-    clickSearch(val) {
-      this.searchInput = val;
-      this.getNodeList();
-      console.log(this.searchInput);
-    },
+    
     setFlag (data) {
       console.log(data)
       this.flag = data
@@ -332,6 +391,47 @@ export default {
       }
       this.showBlockademodal = true;
       this.unschedulable = 1;
+    },
+
+    //打开解除封锁弹窗
+    showUnBlockModal(rowObj) {
+      if(rowObj) {
+        this.multipleSelection.push(rowObj);
+      }
+      this.showUnBlockademodal = true;
+      this.unschedulable = 0;
+    },
+
+    //打开驱逐弹窗
+    async showExpelDialog(rowObj) {
+      this.instanceId = rowObj.InstanceId;
+      this.showExpelModal = true;
+      let param = {
+        ClusterId: this.clusterId,
+        InstanceId: rowObj.InstanceId,
+        DryRun: 1
+      }
+      let res = await this.axios.post(NODE_POD_LIST, param);
+      if(res.code === 0 && res.data) {
+        this.podList = res.data.Pods;
+        this.loadShow = false;
+      }
+    },
+
+    //驱逐节点
+    async expelNode() {
+      this.showExpelModal = true;
+      let param = {
+        ClusterId: this.clusterId,
+        InstanceId: this.instanceId,
+        DryRun: 0
+      }
+      let res = await this.axios.post(NODE_POD_LIST, param);
+      if(res.code === 0) {
+        this.showExpelModal = false;
+        this.podList = [];
+        this.loadShow = false;
+      }
     },
 
     //打开删除弹窗
@@ -350,6 +450,37 @@ export default {
       } else {
         this.changeType = 'retain';
       }
+    },
+
+    //解除封锁
+    async unBlockNode() {
+      this.loadShow = true;
+      let param = {
+        clusterId: this.clusterId,
+        unschedulable: this.unschedulable
+      }
+      let blockData = this.multipleSelection;
+      for (let i = 0; i < blockData.length; i++) {
+        param["instanceIds."+i] = blockData[i].InstanceId;
+      }
+      await this.axios.post(BLOCK_NODE, param).then(res => {
+        if(res.code === 0) {
+          this.showUnBlockademodal = false;
+          this.getNodeList();
+          this.multipleSelection = [];
+        } else {
+          let ErrTips = {
+            
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
     },
 
     //封锁节点、批量封锁
@@ -450,6 +581,81 @@ export default {
       return wbout;
     },
 
+    // 搜索框内容为空
+    _searchchange() {
+      if (this.searchValue === '') {
+        this.getNodeList();
+      }
+    },
+
+    //根据节点名称获取集id列表
+    async getClusterNodeIds(param) {
+      this.loadShow = true;
+      await this.axios.post(NODE_ID_LIST, param).then(res => {
+        if(res.Response.Error === undefined) {
+          this.loadShow = false;
+          if(res.Response.InstanceIdSet.length > 0) {
+            let instance = res.Response.InstanceIdSet;
+            for(let i = 0; i < instance.length; i++) {
+              this.clusterIds.push(instance[i]);
+            }
+            this.getNodeList();
+          }
+        } else {
+          this.loadShow = false;
+          let ErrTips = {
+            
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+          }
+      });
+    },
+
+    //搜索
+    _search() {
+      if (this.ChoiceValue !== '' && this.searchValue !== '') {
+        console.log(this.ChoiceValue,"ChoiceValue")
+        console.log(this.searchValue,"searchValue")
+        let choiceValue = this.ChoiceValue;
+        let searchValue = this.searchValue;
+        if(choiceValue === 'name') {
+          let param = {
+            ClusterId: this.clusterId, 
+            Version: "2018-05-25",
+            Offset: this.pageIndex,
+            Limit: this.pageSize,
+            VagueInstanceName: searchValue
+          }
+          this.getClusterNodeIds(param);
+        } else if (choiceValue === 'ip') {
+          let param = {
+            ClusterId: this.clusterId, 
+            Version: "2018-05-25",
+            Offset: this.pageIndex,
+            Limit: this.pageSize,
+            VagueIpAddress: searchValue
+          }
+          this.getClusterNodeIds(param);
+        } else if (choiceValue === 'id') {
+          this.clusterIds.push(searchValue);
+        }
+        // this._GetFuncList()
+      } else {
+        this.$message({
+          message: '请选择过滤条件且输入搜索值',
+          type: "warning",
+          showClose: true,
+          duration: 0
+        });
+      }
+    },
+
     // 新建节点跳转
     goExpand() {
       this.$router.push({
@@ -473,13 +679,12 @@ export default {
     // 分页
     handleCurrentChange(val) {
       this.pageIndex = val - 1;
-      // this.getColonyList();
+      this.getNodeList();
       this.pageIndex += 1;
     },
     handleSizeChange(val) {
-      // console.log(`每页 ${val} 条`);
       this.pageSize = val;
-      // this.getColonyList();
+      this.getNodeList();
     },
 
     // 全选
@@ -488,11 +693,12 @@ export default {
     },
 
     // 详情
-    goNodeDetail() {
+    goNodeDetail(row) {
       this.$router.push({
         name: "nodeDetail",
         query: {
-          clusterId: this.clusterId
+          clusterId: this.clusterId,
+          node: row.PrivateIpAddresses[0]
         }
       });
     },
@@ -521,5 +727,24 @@ export default {
     overflow: hidden;
     text-overflow: ellipsis;
     max-width: 100%;
+  }
+
+  .tool {
+    margin: 20px 20px 10px 20px;
+    display: flex;
+    justify-content: space-between;
+
+    ::v-deep .el-button {
+      border-radius: 0 !important;
+    }
+
+    ::v-deep .el-button--small {
+      border-radius: 0 !important;
+
+    }
+
+    .searchRight {
+      display: flex;
+    }
   }
 </style>

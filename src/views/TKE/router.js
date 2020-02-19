@@ -978,9 +978,17 @@ export default new Router({
       }
     },
     {
-      path: '/logCreate', // 日志采集
+      path: '/logCreate', // 日志新建
       name: 'logCreate',
       component: () => import(/* webpackChunkName: "logCreate" */ './logCreate/index.vue'),
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
+      path: '/logDetail', // 日志详情
+      name: 'logDetail',
+      component: () => import(/* webpackChunkName: "logCreate" */ './logCollection/detail.vue'),
       meta: {
         keepAlive: true
       }

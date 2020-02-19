@@ -12,7 +12,7 @@
             <div class="tke-form-item_text"><span>{{server}}/{{$route.query.id}}</span><i class="el-icon-document" style="cursor: pointer;"  @click="getContext($event)"></i></div>
           </el-form-item>
           <el-form-item label="收藏量">
-            <div class="tke-form-item_text"><span></span></div>
+            <div class="tke-form-item_text"><span>{{favorCount}}</span></div>
           </el-form-item>
           <el-form-item label="下载量">
             <div class="tke-form-item_text"><span>{{pullCount}}</span></div>
@@ -35,7 +35,8 @@ export default {
       server: '',
       pullCount: '',
       description: '',
-      updateTime: ''
+      updateTime: '',
+      favorCount:''
     }
   },
   created () {
@@ -77,6 +78,7 @@ export default {
           this.pullCount = res.data.repoInfo[0].pullCount
           this.description = res.data.repoInfo[0].description
           this.updateTime = res.data.repoInfo[0].updateTime
+          this.favorCount = res.data.repoInfo[0].favorCount
         }
       })
     }

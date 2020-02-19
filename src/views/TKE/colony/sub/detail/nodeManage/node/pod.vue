@@ -34,20 +34,20 @@
         style="width: 100%">
         <el-table-column type="expand" prop="container">
           <template slot-scope="scope">
-            <el-table border :data="scope.row.container" >
+            <el-table border :data="scope.row.status.containerStatuses" >
                 <el-table-column prop="" label="容器名称" >
                   <template slot-scope="scope">
-                    <span>ccs-log-collector</span>
+                    <span>{{scope.row.name}}</span>
                   </template>
                 </el-table-column>
                 <el-table-column prop="" label="容器ID" >
                   <template slot-scope="scope">
-                    <span>19112ce7e468a63b5ab4f1ca1f561f8fda57ad5603930d491b514398a25ffe6b</span>
+                    <span>{{scope.row.containerID}}</span>
                   </template>
                 </el-table-column>
                 <el-table-column prop="" label="镜像版本号" >
                   <template slot-scope="scope">
-                    <span>tpeccr.ccs.tencentyun.com/library/ip-masq-agent:latest</span>
+                    <span>{{scope.row.imageID}}</span>
                   </template>
                 </el-table-column>
                 <el-table-column prop="" label="CPU Request" >
@@ -91,7 +91,7 @@
           label="实例名称"
           >
           <template slot-scope="scope">
-            <span class="tke-text-link">ip-masq-agent-7jdzn</span>
+            <span class="tke-text-link">{{scope.row.metadata.name}}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -99,7 +99,7 @@
           label="状态"
           >
           <template slot-scope="scope">
-              <span class="text-green">Running</span>
+              <span class="text-green">{{scope.row.status.phase}}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -107,7 +107,7 @@
           label="实例所在节点IP"
           >
           <template slot-scope="scope">
-              <span>10.0.128.8</span>
+              <span>{{scope.row.status.hostIP}}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -115,7 +115,7 @@
           label="实例IP"
           >
           <template slot-scope="scope">
-            <span>172.16.1.4</span>
+            <span>{{scope.row.status.podIP}}</span>
           </template>
         </el-table-column>
 
@@ -124,7 +124,7 @@
           label="CPU Request"
           >
           <template slot-scope="scope">
-            <span>0.25 核</span>
+            <span></span>
           </template>
         </el-table-column>
         <el-table-column
@@ -132,7 +132,7 @@
           label="内存 Request"
           >
           <template slot-scope="scope">
-            <span>256 M</span>
+            <span></span>
           </template>
         </el-table-column>
         <el-table-column
@@ -140,7 +140,7 @@
           label="命名空间"
           >
           <template slot-scope="scope">
-            <span>kube-system</span>
+            <span>{{scope.row.metadata.namespace}}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -148,8 +148,8 @@
           label="所属工作负载"
           >
           <template slot-scope="scope">
-            <p>asss</p>
-            <p>Deployment</p>
+            <p>{{scope.row.metadata.labels && scope.row.metadata.labels.k8s}}</p>
+            <p></p>
           </template>
         </el-table-column>
         <el-table-column
@@ -157,8 +157,7 @@
           label="创建时间"
           >
           <template slot-scope="scope">
-            <p>2020-01-10</p>
-            <p>14:15:49</p>
+            <p>{{scope.row.addTime}}</p>
           </template>
         </el-table-column>
         <el-table-column
@@ -166,7 +165,7 @@
           label="重启次数"
           >
           <template slot-scope="scope">
-            <span>0 次</span>
+            <span></span>
           </template>
         </el-table-column>
         <el-table-column
@@ -203,32 +202,17 @@ import tkeSearch from "@/views/TKE/components/tkeSearch";
 import Loading from "@/components/public/Loading";
 import FileSaver from "file-saver";
 import XLSX from "xlsx";
-import { ALL_CITY } from "@/constants";
+import moment from 'moment';
+import { ALL_CITY,POINT_REQUEST } from "@/constants";
+import { GET_LINE_LIST } from '@/constants/BILL.js';
 export default {
   name: "nodeDetailPod",
   data() {
     return {
       loadShow: false, //加载是否显示
-      list:[
-        {
-          container:[{},{}]
-        },
-        {
-          container:[{},{}]
-        },
-        {
-          container:[{},{}]
-        },
-        {
-          container:[{},{}]
-        },
-        {
-          container:[{},{}]
-        },
-        {
-          container:[{},{}]
-        },
-      ], //列表
+      clusterId: "",
+      node: '',
+      list:[], //列表
       total:0,
       pageSize:10,
       pageIndex:0,
@@ -259,13 +243,34 @@ export default {
     Loading
   },
   created() {
-     // 从路由获取类型
-   
+    // 从路由获取集群id
+    this.clusterId = this.$route.query.clusterId;
+    this.node = this.$route.query.node;
+    this.getPodList();
   },
   methods: {
+    //获取列表数据
+    getPodList() {
+      const param = {
+        Method: 'GET',
+        Path: '/api/v1/pods?fieldSelector=spec.nodeName='+this.node+'&limit=20',
+        Version: '2018-05-25',
+        ClusterName: this.clusterId
+      }
+      this.axios.post(POINT_REQUEST, param).then(res => {
+        let response = JSON.parse(res.Response.ResponseBody);
+        if(response.items.length > 0) {
+          response.items.map(o => {
+            o.addTime = moment(o.metadata.creationTimestamp).format("YYYY-MM-DD HH:mm:ss");
+          });
+          this.list = response.items;
+        }
+        console.log(response,"response");
+      })
+    },
     //返回上一层
     goBack(){
-          this.$router.go(-1);
+      this.$router.go(-1);
     },
 
     //选择搜索条件

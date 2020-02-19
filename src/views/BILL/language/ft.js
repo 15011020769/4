@@ -83,7 +83,7 @@ module.exports = {
       realbak: '優惠後總價',
       voucherPaybak: '代金券支付金額',
       cash: '現金支付金額',
-      incentivePaybak: '贈送賬戶支付金額',
+      incentivePaybak: '贈送帳戶支付金額',
       usdExpendbak: '美金結算金額',
       ntExpendbak: '台幣結算金額',
       month: '賬單月份',

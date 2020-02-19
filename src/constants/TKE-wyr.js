@@ -31,6 +31,12 @@ export const TKE_DELETE_BATCHDELETEFAVOR = 'ccr/BatchDeleteFavor'
 // 取消收藏
 export const TKE_DELETE_FAVOR = 'ccr/DeleteFavor'
 
+// DockerHub列表
+export const TKE_DOCKERHUB_LIST = 'ccr/GetDockerHubRepositoryList'
+
+
+
+
 
 
 

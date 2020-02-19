@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="wrapperContent">
+    <div class="wrapperContent" ref="wrapperContent">
       <p class="down">
         <el-row class="timeListTop newClear">
           <el-select
@@ -10,11 +10,12 @@
             class="selectDomin"
             default-first-option
           >
+            <el-option value="" label="ALL"></el-option>
             <el-option
               v-for="item in options"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
+              :key="item.DomainId"
+              :label="item.Domain"
+              :value="item.Domain"
             ></el-option>
           </el-select>
           <el-button-group class="buttonDateCheck">
@@ -32,7 +33,7 @@
           ></el-date-picker>
         </el-row>
         <el-row class="iconBtn">
-          <i class="el-icon-download"></i>
+          <i class="el-icon-download" @click="dialogDownloadVisible = true"></i>
           <i class="el-icon-refresh"></i>
           <i class="el-icon-setting"></i>
         </el-row>
@@ -68,143 +69,223 @@
           </el-col>
         </el-row>
       </div>
-      <div class="echartsShow">
+      <!-- <div class="echartsShow">
         <div id="echarts" ref="chart"></div>
-      </div>
+      </div> -->
+      <el-row class="echartsShowfirst">
+        <h3 class="topfont">
+          攻击趋势
+          <span style="color:#bbb;">(次)</span>
+        </h3>
+        <ELine
+          :xAxis="xAxis1"
+          :series="series1"
+          :legendText="legendText1"
+        />
+      </el-row>
+      <el-row class="echartsShowSecond">
+        <el-col :span="12">
+        <h3 class="topfont">
+          服务器响应状态
+          <span style="color:#bbb;">(次)</span>
+        </h3>
+        </el-col>
+        <el-col :span="12">
+        <h3 class="topfont">
+          浏览器类型
+          <span style="color:#bbb;">(次)</span>
+        </h3>
+        <!-- <EBar
+          :xAxis="xAxisBar"
+          :series="seriesBar"
+          :legendText="legendTextBar"
+        /> -->
+        </el-col>
+      </el-row>
+      <el-row class="echartsShowThird">
+         <el-col :span="12">
+          <h3 class="topfont">
+            请求来源地域TOP5
+            <span style="color:#bbb;">(%)</span>
+          </h3>
+          <!-- <EPie
+            :series="seriesPie"
+            :legendText="legendTextPie"
+          /> -->
+         </el-col>
+         <el-col :span="12">
+          <h3 class="topfont">
+            请求来源IP TOP5
+            <span style="color:#bbb;">(次)</span>
+          </h3>
+         </el-col>
+      </el-row>
+      <el-row class="echartsShowFour">
+         <el-col :span="12">
+          <h3 class="topfont">
+            响应时间最慢页面TOP5
+            <span style="color:#bbb;">(毫秒)</span>
+          </h3>
+          <!-- <EPie
+            :series="seriesPie"
+            :legendText="legendTextPie"
+          /> -->
+         </el-col>
+         <el-col :span="12">
+          <h3 class="topfont">
+            页面访问次数TOP5
+            <span style="color:#bbb;">(次)</span>
+          </h3>
+         </el-col>
+      </el-row>
     </div>
+    <DownLoadImg
+      :dialogDownloadVisible = dialogDownloadVisible
+      @imgSaveMethod = "saveImg"
+      @onCancel = "onCancel"
+    />
   </div>
 </template>
 <script>
 import moment from "moment";
+import html2canvas from "html2canvas"
+import DownLoadImg from '../components/downLoadImg'
+import ELine from "../components/line"
+import {
+  DESCRIBE_HOSTS,
+} from '@/constants'
+import { flatObj } from '@/utils'
 export default {
   data() {
     return {
-      options: [
-        {
-          value: "ALL",
-          label: "ALL"
-        },
-        {
-          value: "www.baidu.com",
-          label: "domin"
-        }
-      ], //默认下拉选项
+      options: [], //默认下拉选项
       dateTimeValue: "", //日期绑定
       selectValue: [], //域名下拉菜单
       thisType: "1", //按钮默认选中
       endTime: "",
-      startTime: ""
+      startTime: "",
+      xAxis1: ['2-15', '2-16', '2-17'],
+      series1: [
+        [120, 132, 101, 134, 90, 230, 210],
+        [220, 182, 191, 234, 290, 330, 310],
+        [150, 232, 201, 154, 190, 330, 410]
+      ],
+      legendText1: ['WEB攻击次数', 'CC攻击次数', 'BOT请求次数'],
+      dialogDownloadVisible: false,
     };
   },
+  components: {
+    DownLoadImg,
+    ELine,
+  },
   mounted () {
-    var _this=this;
-    setTimeout(function(){
-      _this.initCharts()
-    },1000)
+    this.checkTime("1");
+    this.getDominList();
 　},
   methods: {
+    //获取域名列表
+    getDominList() {
+      this.axios.post(DESCRIBE_HOSTS, {
+        Version: '2018-01-25'
+      }).then(({ Response }) => {
+        if (Response.Error) {
+          let ErrOr = Object.assign(ErrorTips, COMMON_ERROR)
+          this.$message({
+            message: ErrOr[Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          })
+        } else {
+          this.options = Response.HostList
+        }
+      })
+    },
+    saveImg(type) {
+      this.html2canvas_2(type)
+    },
+     onCancel() {
+      this.dialogDownloadVisible = false
+    },
     //时间点击事件
-    checkTime(type) {
+     checkTime(type) {
       this.thisType = type;
       var ipt1 = document.querySelector(".dateTimeValue input:nth-child(2)");
       var ipt2 = document.querySelector(".dateTimeValue input:nth-child(4)");
       const end = new Date();
       const start = new Date();
       if (type == "1") {
-        start.setTime(start.getTime() - 3600 * 1000 * 24);
+        start.setTime(start.getTime());
+        end.setTime(end.getTime());
       } else if (type == "2") {
-        start.setTime(start.getTime() - 3600 * 1000 * 24 * 2);
+        start.setTime(start.getTime() - 3600 * 1000 * 24);
         end.setTime(end.getTime() - 3600 * 1000 * 24);
       } else if (type == "3") {
         start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+        end.setTime(end.getTime());
       }
       ipt1.value = moment(start).format("YYYY-MM-DD");
       ipt2.value = moment(end).format("YYYY-MM-DD");
-      this.startTime = moment(start).format("YYYY-MM-DD");
-      this.endTime = moment(end).format("YYYY-MM-DD");
+      this.startTime = moment(start).startOf("days").format("YYYY-MM-DD HH:mm:ss");
+      this.endTime = moment(end).endOf("days").format("YYYY-MM-DD HH:mm:ss");
+      // this.$nextTick(() => {
+      //   this.getPeakValue()
+      // })
     },
+    html2canvas_2(imgtype) {
+      //获取截取区域的高度和宽度
+      const h = this.$refs.wrapperContent.offsetHeight
+      const w = this.$refs.wrapperContent.offsetWidth
+      const canvas = document.createElement("canvas");
+      canvas.width = w * 2;
+      canvas.height = h * 2;
+      canvas.style.width = w + "px";
+      canvas.style.height = h + "px";
+      canvas.style.color = "chartreuse"
+      const context = canvas.getContext("2d")
+      context.scale(2,2)				
+      html2canvas(this.$refs.wrapperContent, { 
+        allowTaint: true,
+        // taintTest: false,
+        // canvas: canvas,
+      }).then(	function(canvas) {
+          // const type = 'png';
+          // const type = 'jpeg';
+          const type = imgtype
+          let imgData = canvas.toDataURL(type);
+          const _fixType = function(type) {
+            type = type.toLowerCase().replace(/jpg/i, 'jpeg');
+            const r = type.match(/png|jpeg|bmp|gif/)[0];
+            console.log(r)
+            return 'image/' + r;
+          };
+          imgData = imgData.replace(_fixType(type), 'image/octet-stream');
+          /**
+           * 在本地进行文件保存
+           * @param  {String} data     要保存到本地的图片数据
+           * @param  {String} filename 文件名
+           */
+          const saveFile = function(data, filename) {
+          const save_link =document.createElementNS('http://www.w3.org/1999/xhtml', 'a'); 
+            save_link.href = data;
+            save_link.download = filename;
+            const event = document.createEvent('MouseEvents');
+            event.initMouseEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+            save_link.dispatchEvent(event);
+          };
+          const filename = 'dashboard' + (new Date()).getTime() + '.' + type;
+          saveFile(imgData, filename);
+        })
+			},
     //图表
-    initCharts() {
-      let myChart = this.$echarts.init(this.$refs.chart);
-      // console.log(this.$refs.chart); // 绘制图表
-      myChart.setOption({
-        color: ["rgb(124, 181, 236)"],
-        title: { text: "" },
-        tooltip: {},
-        xAxis: {
-          data:  ["12-05", "12-04", "12-03", "12-02", "12-01"]
-          // type : 'time',
-          // minInterval: 1
-        },
-        yAxis: {
-          axisLine: {
-            //y轴
-            show: false
-          },
-          axisTick: {
-            //刻度线
-            show: false
-          },
-          splitLine: {
-            //网格线
-            show: true
-          },
-          axisLabel: {
-            formatter: "{value}"
-          },
-          boundaryGap: true
-        },
-        series: [
-          {
-            name: "WEB攻击次数",
-            type: "line",
-            data: [0,1,2,3,4,5],
-            itemStyle: {
-              normal: {
-                lineStyle: {
-                  color: "rgb(124, 181, 236)"
-                }
-              }
-            }
-          },
-          {
-            name: "CC攻击次数",
-            type: "line",
-            data: [0,1,2,3,4,5],
-            itemStyle: {
-              normal: {
-                lineStyle: {
-                  color: "rgb(124, 181, 236)"
-                }
-              }
-            }
-          }
-        ],
-        legend: {
-          data:['WEB攻击次数','CC攻击次数'],
-          //默认横向布局，纵向布局值为'vertical'
-          orient: "vertical",
-          x: "center", //可设定图例在左、右、居中
-          y: "bottom",
-          icon: "line", //图例样式
-          textStyle: {
-            //文字样式
-            fontWeight: "bold"
-          },
-          lineStyle: {
-            color: "#000"
-          }
-        }
-      });
-      // myChart.resize();
-      // window.addEventListener("resize", function() {
-      //   myChart.resize();
-      // });
-    }
   }
 };
 </script>
 <style lang="scss" scoped>
+.wrapperContent >>> .el-col-12:nth-child(1) {
+  height: 100%;
+  border-right: 1px solid #ccc;
+}
 .wrapperContent {
   padding: 0 20px 20px;
   ::v-deep .el-input__inner {
@@ -294,6 +375,53 @@ export default {
           color: #006eff;
         }
       }
+    }
+  }
+  .echartsShowfirst {
+    width: 100%;
+    height: 378px;
+    padding: 20px 0;
+    box-sizing: border-box;
+    background-color: #fff;
+    box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
+    .topfont{
+      padding-left: 20px;
+    }
+  }
+  .echartsShowSecond {
+    width: 100%;
+    height: 258px;
+    padding: 20px 0;
+    box-sizing: border-box;
+    background-color: #fff;
+    box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
+    margin-top: 20px;
+    .topfont{
+      padding-left: 20px;
+    }
+  }
+   .echartsShowThird {
+    width: 100%;
+    height: 258px;
+    padding: 20px 0;
+    box-sizing: border-box;
+    background-color: #fff;
+    box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
+    margin-top: 20px;
+    .topfont{
+      padding-left: 20px;
+    }
+  }
+  .echartsShowFour {
+    width: 100%;
+    height: 308px;
+    padding: 20px 0;
+    box-sizing: border-box;
+    background-color: #fff;
+    box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
+    margin-top: 20px;
+    .topfont{
+      padding-left: 20px;
     }
   }
   .echartsShow {

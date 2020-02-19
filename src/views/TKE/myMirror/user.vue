@@ -411,7 +411,7 @@ export default {
         limit: this.pagesize
       }
       this.axios.post(TKE_MIRROR_LIST, param).then(res => {
-        if (res.data.Error == undefined) {
+        if (res.code === 0 && res.Error == undefined) {
           this.tableData = res.data.repoInfo
           this.tableServer = res.data.server
           this.TotalCount = res.data.totalCount
@@ -429,7 +429,7 @@ export default {
     DeleteMyMirror () { // 删除我的镜像数据
       const param = this.deleteSpace
       this.axios.post(TKE_MIRROR_DELETE, param).then(res => {
-        if (res.data.Error == undefined) {
+        if (res.code === 0 && res.Error == undefined) {
           this.currpage = 1
           this.GetMyMirror()
           this.loadShow = true
@@ -451,7 +451,7 @@ export default {
         limit: 100
       }
       this.axios.post(TKE_SPACENAME_LIST, param).then(res => {
-        if (res.data.Error == undefined) {
+        if (res.code === 0 && res.Error == undefined) {
           this.spaceName = res.data.namespaceInfo
           console.log(this.spaceName)
         } else {
@@ -471,7 +471,7 @@ export default {
         description: this.ruleForm.desc
       }
       this.axios.post(TKE_MIRROR_CREATE, param).then(res => {
-        if (res.data.Error == undefined && res.code == 0) {
+        if (res.code === 0 && res.Error == undefined) {
           this.loadShow = false
           console.log(res)
         } else {

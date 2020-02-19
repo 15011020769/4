@@ -50,6 +50,7 @@
   </div>
 </template>
 <script>
+import { ErrorTips } from "@/components/ErrorTips";
 import { SPACENAME_LIST, SPACENAME_DELETE, SPACENAME_PRESENCE, CREATE_SPACENAME } from '@/constants'
 export default {
   data () {
@@ -154,10 +155,17 @@ export default {
         limit: this.pagesize
       }
       this.axios.post(SPACENAME_LIST, param).then(res => {
-        if (res.code === 0) {
+        if (res.code === 0 && res.Error == undefined) {
           this.tableData = res.data.namespaceInfo
           this.TotalCount = res.data.namespaceCount
           this.loadShow = false
+        } else {
+          this.$message({
+              message: ErrorTips[res.codeDesc],
+              type: "error",
+              showClose: true,
+              duration: 0
+          })
         }
       })
     },
@@ -167,9 +175,16 @@ export default {
       }
       this.axios.post(SPACENAME_DELETE, param).then(res => {
         console.log(res)
-        if (res.code === 0) {
+        if (res.code === 0 && res.Error == undefined) {
           this.loadShow = true
           this.GetSpaceName()
+        } else {
+          this.$message({
+              message: ErrorTips[res.codeDesc],
+              type: "error",
+              showClose: true,
+              duration: 0
+          })
         }
       })
     },
@@ -179,6 +194,19 @@ export default {
       }
       this.axios.post(CREATE_SPACENAME, param).then(res => {
         console.log(res)
+        if(res.code == 0 && res.Error == undefined){
+           return 
+        }
+        let Errtip = {
+          'UserNamespaceMaxLimit':'(202)用户命名空间数达到配额'
+        }
+        let Error = Object.assign(ErrorTips,Errtip)
+        this.$message({
+              message: Error[res.codeDesc],
+              type: "error",
+              showClose: true,
+              duration: 0
+          })
       })
     }
   }

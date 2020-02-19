@@ -24,3 +24,9 @@ export const CLUSTER_OS = 'ccs/DescribeClusterImage'
 
 //修改操作系统
 export const UPDATE_OS = 'tke2/ModifyClusterImage'
+
+//查询条件查询集节点id列表
+export const NODE_ID_LIST = 'tke2/DescribeClusterInstanceIds'
+
+//获取节点实例列表
+export const NODE_POD_LIST = 'ccs/DrainClusterNode'

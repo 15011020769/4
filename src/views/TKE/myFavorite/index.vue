@@ -94,6 +94,8 @@ export default {
     // 分页
     handleCurrentChange (val) {
       this.currpage = val
+      this.loadShow = true
+      this.GetFavor()
     },
     handleSelectionChange (val) {
       this.multipleSelection = val
@@ -117,8 +119,8 @@ export default {
     GetFavor () {
       const param = {
         reponame: this.input,
-        offset: 0,
-        limit: 10
+        offset: (this.currpage-1)*10,
+        limit: this.pagesize
       }
       this.axios.post(TKE_GETFAVOR, param).then(res => {
         console.log(res)
@@ -142,8 +144,9 @@ export default {
       const param = obj
       this.axios.post(TKE_DELETE_BATCHDELETEFAVOR, param).then(res => {
         if (res.code == 0 && res.Error == undefined) {
-          this.loadShow = true
+          this.currpage = 1
           this.GetFavor()
+          this.loadShow = true
         } else {
            this.$message({
               message: ErrorTips[res.codeDesc],
@@ -163,8 +166,9 @@ export default {
       this.axios.post(TKE_DELETE_FAVOR, param).then(res => {
         console.log(res)
         if (res.code === 0 && res.Error == undefined) {
-          this.loadShow = true
+          this.currpage = 1
           this.GetFavor()
+          this.loadShow = true
         } else {
            this.$message({
               message: ErrorTips[res.codeDesc],

@@ -11,6 +11,9 @@ import '@/assets/iconfont/iconfont.css'
 import filters from '@/filters/filters.js'
 import echarts from 'echarts'
 import i18n from './language/i18n.js' // 引入i18n包
+import { ErrorTips } from "@/components/ErrorTips"
+import { COMMON_ERROR } from './constants'
+
 // 引入基本模板
 // const echarts = require('echarts/lib/echarts')
 // require("echarts/lib/component/legend")
@@ -19,10 +22,58 @@ import i18n from './language/i18n.js' // 引入i18n包
     // 引入提示框和title组件，图例
 // require('echarts/lib/component/tooltip')
 Vue.prototype.$echarts = echarts
+/**
+ * 通用响应处理函数
+ * @param {Object} resp 响应对象
+ * @param {Function} successCallback 成功回调
+ * @param {Object} cusError 错误信息对象
+ * @param {String} successMsg 成功提示信息
+ * @param {Function} failedCallback 失败回调
+ */
+Vue.prototype.generalRespHandler = function(
+  resp,
+  successCallback,
+  cusError=COMMON_ERROR,
+  successMsg='',
+  failedCallback=() => {},
+) {
+  if (resp.Response.Error) {
+    failedCallback && failedCallback(resp.Response)
+    let ErrOr = Object.assign(ErrorTips, cusError)
+    this.$message({
+      message: ErrOr[resp.Response.Error.Code],
+      type: 'error',
+      showClose: true,
+      duration: 0
+    })
+  } else {
+    successCallback && successCallback(resp.Response)
+    if (successMsg) {
+      this.$message({
+        message: successMsg,
+        type: 'success',
+        showClose: true,
+        duration: 0
+      })
+    }
+  }
+}
 for (let key in filters) {
     Vue.filter(key, filters[key])
 }
-
+/**
+ * 简转繁
+ * @param {String} jt 简体
+ * @param {any} t vue-i18n参数
+ */
+Vue.prototype.t = function(jt, ...t) {
+  if (t.length === 0) {
+    return jt
+  }
+  const r = this.$t(...t)
+  if (r === t[0]) return jt // 回退到简体
+  return r
+}
 Vue.config.productionTip = false
 Vue.use(ElementUI)
 Vue.use(VueCookie)
