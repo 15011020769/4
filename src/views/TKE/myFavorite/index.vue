@@ -120,7 +120,7 @@ export default {
       const param = {
         reponame: this.input,
         offset: (this.currpage-1)*10,
-        limit: 10
+        limit: this.pagesize
       }
       this.axios.post(TKE_GETFAVOR, param).then(res => {
         console.log(res)
@@ -144,8 +144,9 @@ export default {
       const param = obj
       this.axios.post(TKE_DELETE_BATCHDELETEFAVOR, param).then(res => {
         if (res.code == 0 && res.Error == undefined) {
-          this.loadShow = true
+          this.currpage = 1
           this.GetFavor()
+          this.loadShow = true
         } else {
            this.$message({
               message: ErrorTips[res.codeDesc],
@@ -165,8 +166,9 @@ export default {
       this.axios.post(TKE_DELETE_FAVOR, param).then(res => {
         console.log(res)
         if (res.code === 0 && res.Error == undefined) {
-          this.loadShow = true
+          this.currpage = 1
           this.GetFavor()
+          this.loadShow = true
         } else {
            this.$message({
               message: ErrorTips[res.codeDesc],
