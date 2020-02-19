@@ -33,8 +33,8 @@
             label="ID/节点名"
             >
             <template slot-scope="scope">
-              <span @click="goMasteretcdDetail()" class="tke-text-link" >ins-8czy2x5q</span>
-              <p>as-test02</p>
+              <span @click="goMasteretcdDetail()" class="tke-text-link" >{{scope.row.InstanceId}}</span>
+              <p>{{scope.row.InstanceName}}</p>
             </template>
           </el-table-column>
           <el-table-column
@@ -42,8 +42,8 @@
             label="状态"
             >
             <template slot-scope="scope">
-               <span v-if="scope.row.status===true" class="text-green">健康</span>
-               <span v-else class="text-red">异常</span>
+               <span v-if="scope.row.status===true" class="text-green"></span>
+               <span v-else class="text-red"></span>
             </template>
           </el-table-column>
           <el-table-column
@@ -61,7 +61,7 @@
             >
             <template slot-scope="scope">
               <el-tooltip effect="light" content="台北一区" placement="top">
-                <span>台北一区</span>
+                <span></span>
               </el-tooltip>
             </template>
           </el-table-column>
@@ -77,17 +77,17 @@
              width="200"
             label="配置">
             <template slot-scope="scope">
-              标准型S3 <br>
-              1核 , 1GB , 1 Mbps<br>
-              系统盘: 50GB 高性能云硬盘<br>
+              标准型{{scope.row.InstanceFamily}} <br />
+              {{scope.row.CPU}}核 , {{scope.row.Memory}}GB , 1 Mbps<br />
+              系统盘: {{scope.row.SystemDisk && scope.row.SystemDisk.DiskSize}}GB 高性能云硬盘<br />
             </template>
           </el-table-column>
           <el-table-column
             prop=""
             label="IP地址">
             <template slot-scope="scope">
-              <p>175.97.134.163</p>
-              <p>10.209.64.102</p>
+              <p>{{scope.row.PublicIpAddresses && scope.row.PublicIpAddresses[0]}}</p>
+              <p>{{scope.row.PrivateIpAddresses && scope.row.PrivateIpAddresses[0]}}</p>
             </template>
           </el-table-column>
           <el-table-column
@@ -103,8 +103,8 @@
             prop=""
             label="计费模式">
             <template slot-scope="scope">
-              <p>按量计费-竞价</p>
-              <p>2020-01-08 09:40:34创建</p>
+              <p></p>
+              <p>{{scope.row.addTime}}创建</p>
             </template>
           </el-table-column>
         </el-table>
@@ -137,21 +137,14 @@
 import subTitle from "@/views/TKE/components/subTitle";
 import Loading from "@/components/public/Loading";
 import openDrawer from "./components/openDrawer";
-import { ALL_CITY } from "@/constants";
+import { NODE_INFO, NODE_LIST, ALL_CITY } from "@/constants";
 export default {
   name: "colonyNodeManageMasteretcd",
   data() {
     return {
       clusterId:'',
       loadShow: false, //加载是否显示
-      list:[
-        {
-          status:false
-        },
-        {
-          status:true
-        }
-      ], //列表
+      list:[], //列表
       total:0,
       pageSize:10,
       pageIndex:0,
@@ -167,8 +160,61 @@ export default {
   created() {
     // 从路由获取集群id
     this.clusterId=this.$route.query.clusterId;
+    this.getNodeList();
   },
   methods: {
+    //获取节点列表
+    async getNodeList () {
+      this.loadShow = true;
+      let params = {
+        ClusterId: this.clusterId,
+        Offset: this.pageIndex,
+        Limit: this.pageSize,
+        Version: "2018-05-25",
+        InstanceRole: "MASTER_ETCD"
+      };
+      const res = await this.axios.post(NODE_INFO, params);
+      this.loadShow = false;
+      let ids = [];
+      if (res.Response.InstanceSet.length > 0) {
+        res.Response.InstanceSet.map(obj => {
+          ids.push(obj.InstanceId);
+        });
+      }
+      let param = {
+        Version: "2017-03-12",
+        Limit: this.pageSize
+      }
+      if(ids.length > 0) {
+        for(let i = 0; i < ids.length; i++) {
+          param['InstanceIds.'+i] = ids[i];
+        }
+        this.loadShow = true;
+        let nodeRes = await this.axios.post(NODE_LIST, param);
+        if(nodeRes.Response.Error === undefined) {
+          this.loadShow = false;
+          if(nodeRes.Response.InstanceSet.length > 0) {
+            nodeRes.Response.InstanceSet.map(node => {
+              node.addTime = moment(node.CreatedTime).format("YYYY-MM-DD HH:mm:ss");
+            });
+            this.list = nodeRes.Response.InstanceSet;
+          }
+          this.total = res.Response.TotalCount;
+        } else {
+          this.loadShow = false;
+          let ErrTips = {
+            
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      }
+    },
      // 详情
     goMasteretcdDetail(){
       this.$router.push({
@@ -182,13 +228,12 @@ export default {
    // 分页
     handleCurrentChange(val) {
       this.pageIndex = val-1;
-      // this.getColonyList();
+      this.getNodeList();
       this.pageIndex+=1;
     },
     handleSizeChange(val) {
-      // console.log(`每页 ${val} 条`);
       this.pageSize=val;
-      // this.getColonyList();
+      this.getNodeList();
     },
     setFlag (data) {
       console.log(data)
