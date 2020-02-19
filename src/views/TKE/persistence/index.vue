@@ -42,7 +42,8 @@
             <template slot-scope="scope">
               <span v-if="scope.row">
                 ES地址( https://233.13.41.5:5452 )
-                <br />索引( ffff )
+                <br />
+                索引( ffff )
               </span>
               <span v-else-if="!scope.row">-</span>
             </template>
@@ -83,6 +84,12 @@ export default {
     this.getColonyList();
   },
   methods: {
+    handleClick(uid){//设置
+      console.log(uid);
+      this.$router.push({
+        path:"/persistenceSetting/"+uid.ClusterId
+      })
+    },
     searchList() {
       //搜索
       var regex = /^[a-z0-9\.\-_]+$/g;
