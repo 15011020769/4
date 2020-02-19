@@ -12,6 +12,7 @@ import filters from '@/filters/filters.js'
 import echarts from 'echarts'
 import i18n from './language/i18n.js' // 引入i18n包
 import { ErrorTips } from "@/components/ErrorTips"
+import { COMMON_ERROR } from './constants'
 
 // 引入基本模板
 // const echarts = require('echarts/lib/echarts')
@@ -26,18 +27,18 @@ Vue.prototype.$echarts = echarts
  * @param {Object} resp 响应对象
  * @param {Function} successCallback 成功回调
  * @param {Object} cusError 错误信息对象
- * @param {Function} failedCallback 失败回调
  * @param {String} successMsg 成功提示信息
+ * @param {Function} failedCallback 失败回调
  */
 Vue.prototype.generalRespHandler = function(
   resp,
   successCallback,
-  cusError={},
-  failedCallback=() => {},
+  cusError=COMMON_ERROR,
   successMsg='',
+  failedCallback=() => {},
 ) {
   if (resp.Response.Error) {
-    failedCallback()
+    failedCallback && failedCallback()
     let ErrOr = Object.assign(ErrorTips, cusError)
     this.$message({
       message: ErrOr[resp.Response.Error.Code],
@@ -46,7 +47,7 @@ Vue.prototype.generalRespHandler = function(
       duration: 0
     })
   } else {
-    successCallback()
+    successCallback && successCallback()
     if (successMsg) {
       this.$message({
         message: successMsg,
