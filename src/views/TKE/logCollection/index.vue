@@ -55,7 +55,7 @@
         </el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
-            <el-button @click="handleClick(scope.row)" type="text" size="small">编辑日志采集规则</el-button>
+            <el-button @click="editLogCollection(scope.row)" type="text" size="small">编辑日志采集规则</el-button>
             <el-button type="text" size="small" @click="delLog(scope.row)">删除</el-button>
           </template>
         </el-table-column>
@@ -225,6 +225,7 @@
           });
         }
       },
+      //新建
       newCread() {
         this.$router.push({
           path: '/logCreate',
@@ -233,6 +234,22 @@
           }
         })
         sessionStorage.setItem('clusterId', this.value)
+      },
+      //编辑
+      editLogCollection(row){
+        console.log(row)
+        var stashName=row.metadata.name;
+        var namespace=row.metadata.namespace;
+        var type=row.spec.input.type
+           this.$router.push({
+          path: '/logCreate',
+          query: {
+            clusterId: this.value,
+            stashName:stashName,
+            namespace:namespace,
+            type:type
+          }
+        })
       },
       //命名空间选项 
       nameSpaceList() {
@@ -251,7 +268,6 @@
               })
             }
           })
-
         }
       },
       //搜索框搜索
