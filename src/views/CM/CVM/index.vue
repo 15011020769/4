@@ -92,24 +92,18 @@
             <p>{{$t("CVM.cloudMysql.wl")}}</p>
           </template>
         </el-table-column>
-        <el-table-column prop label="公網">
+        <el-table-column prop label="內網">
           <template slot-scope="scope">
             <p v-for="i in scope.row.PrivateIpAddresses">{{i}}({{ $t('CVM.nwang') }})</p>
           </template>
         </el-table-column>
-        <el-table-column prop label="內網">
+        <el-table-column prop label="公網">
           <template slot-scope="scope">
             <p v-for="i in scope.row.PublicIpAddresses">{{i}}</p>
           </template>
         </el-table-column>
-
         <el-table-column prop="projectName" :label="$t('CVM.table.x6')"></el-table-column>
       </el-table>
-      <div class="Right-style pagstyle">
-        <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;{{$t("CVM.strip")}}</span>
-        <el-pagination :page-size="pagesize" :pager-count="7" layout="prev, pager, next"
-          @current-change="handleCurrentChange" :total="TotalCount"></el-pagination>
-      </div>
     </div>
   </div>
 </template>
@@ -254,7 +248,6 @@
       },
       // 添加项目列表的表格数据
       GetTabularData() {
-        console.log("currpage" + this.currpage, "pagesize" + this.pagesize);
         this.loadShow = true;
         const param = {
           Region: localStorage.getItem("regionv2"),
