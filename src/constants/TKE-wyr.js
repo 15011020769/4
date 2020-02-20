@@ -34,6 +34,9 @@ export const TKE_DELETE_FAVOR = 'ccr/DeleteFavor'
 // DockerHub列表
 export const TKE_DOCKERHUB_LIST = 'ccr/GetDockerHubRepositoryList'
 
+// 添加收藏
+export const TKE_ADD_FAVOR = 'ccr/AddFavor'
+
 
 
 

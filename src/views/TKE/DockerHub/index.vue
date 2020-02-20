@@ -8,7 +8,7 @@
             <p>来自<a href="https://hub.docker.com/" target="_blank">hub.docker.com</a>的镜像</p>
             <div>
               <el-input placeholder="请输入内容" v-model="input" class="input-with-select">
-                <el-button slot="append" icon="el-icon-search" class="btn-search"></el-button>
+                <el-button slot="append" icon="el-icon-search" class="btn-search" @click="searchName()"></el-button>
               </el-input>
             </div>
           </div>
@@ -21,23 +21,27 @@
             v-loading="loadShow"
           >
             <!-- 自定义样式 -->
-            <el-table-column  align="center" width="40">
-              <template>
-                <el-tooltip class="item" effect="light" content="收藏" placement="left">
-                  <i class="el-icon-star-off" ></i>
+            <el-table-column  align="center" width="40" prop='isUserFavor'>
+              <template slot-scope="scope">
+                <el-tooltip class="item" effect="light" :content="scope.row.isUserFavor?'取消收藏':'收藏'" placement="left" >
+                  <i :class="[scope.row.isUserFavor?'el-icon-star-on icon-color':'el-icon-star-off']" @click="handleClick(scope.row)" ></i>
                 </el-tooltip>
               </template>
             </el-table-column>
-            <el-table-column prop="address" label="名称"></el-table-column>
-            <el-table-column prop label="" >
+            <el-table-column prop="logo" label="名称" width="100">
+              <template slot-scope="scope">
+                <img :src='scope.row.logo' style="max-width: 32px; max-height: 32px; vertical-align: middle;"></img>
+              </template>
+            </el-table-column>
+            <el-table-column prop='reponame' label="" >
               <template slot-scope="scope">
                 <p>
-                  <a style="cursor:pointer;" @click="jump()">跳转</a>
+                  <a style="cursor:pointer;" @click="jump(scope.row)">{{scope.row.reponame}}</a>
                 </p>
               </template>
             </el-table-column>
-            <el-table-column prop="address" label="类型" ></el-table-column>
-            <el-table-column prop="address" label="收藏量"></el-table-column>
+            <el-table-column prop="repotype" label="类型" ></el-table-column>
+            <el-table-column prop="favorCount" label="收藏量"></el-table-column>
           </el-table>
           <div class="Right-style pagstyle">
             <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;页</span>
@@ -56,7 +60,7 @@
 </template>
 <script>
 import HeadCom from '@/components/public/Head'
-import { TKE_DOCKERHUB_LIST } from '@/constants'
+import { TKE_DOCKERHUB_LIST, TKE_DELETE_FAVOR,TKE_ADD_FAVOR } from '@/constants'
 export default {
   name: 'myFavorite',
   components: {
@@ -65,40 +69,38 @@ export default {
   data () {
     return {
       input: '',
-      tableData: [
-        {
-          date: '2016-05-03',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        },
-        {
-          date: '2016-05-02',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        }
-      ],
+      tableData: [],
       TotalCount: 0, // 总条数
       pagesize: 10, // 分页条数
       currpage: 1, // 当前页码
       multipleSelection: '',
-      loadShow:''
+      loadShow:true
     }
   },
   created () {
     this.GetDockerHub()
   },
   methods: {
-    handleClick (row) {
-      console.log(row)
+     handleClick (row) {
+      if (row.isUserFavor) {
+        this.DeleteFavor(row)
+      } else {
+        this.AddFavor(row)
+      }
     },
     // 分页
     handleCurrentChange (val) {
       this.currpage = val
+      this.loadShow = true
       this.GetDockerHub()
     },
     handleSelectionChange (val) {
       this.multipleSelection = val
       console.log(this.multipleSelection)
+    },
+    searchName(){
+      this.loadShow = true
+      this.GetDockerHub()
     },
      // 获取DockerHub镜像
     GetDockerHub () {
@@ -110,10 +112,9 @@ export default {
       this.axios.post(TKE_DOCKERHUB_LIST, param).then(res => {
         console.log(res)
         if (res.code === 0 && res.Error == undefined){
-          // this.tableData = res.data.repoInfo
-          // this.TotalCount = res.data.totalCount
-          // // this.regionId = res.data.regionId
-          // this.loadShow = false
+          this.tableData = res.data.repoInfo
+          this.TotalCount = res.data.totalCount
+          this.loadShow = false
         } else {
           this.$message({
               message: ErrorTips[res.codeDesc],
@@ -124,11 +125,38 @@ export default {
         }
       })
     },
-    jump () {
+     // 取消收藏
+    DeleteFavor (row) {
+      const param = {
+        reponame: row.reponame,
+        repotype: row.repotype
+      }
+      this.axios.post(TKE_DELETE_FAVOR, param).then(res => {
+        // console.log(res)
+        if (res.code === 0) {
+          this.loadShow = true
+          this.GetDockerHub()
+        }
+      })
+    },
+    // 添加收藏
+    AddFavor (row) {
+      const param = {
+        reponame: row.reponame,
+        repotype: row.repotype
+      }
+      this.axios.post(TKE_ADD_FAVOR, param).then(res => {
+        if (res.code === 0) {
+          this.loadShow = true
+          this.GetDockerHub()
+        }
+      })
+    },
+    jump (row) {
       this.$router.push({
         name: 'DockerHubDetailInfo',
         query: {
-          id: 1
+          id: row.reponame
         }
       })
     }
@@ -138,13 +166,7 @@ export default {
 <style lang="scss" scoped>
 .body {
   position: relative;
-}
-.room {
-  position: absolute;
-  left: 20px;
-  top: 20px;
-  width: 95%;
-  height: auto;
+  padding:20px;
 }
 .room-top {
   height: 30px;
@@ -257,5 +279,8 @@ i{
   .btn-search{
     background:#2177D9!important;
     color:#fff!important;
+  }
+  .icon-color{
+    color:#006eff;
   }
 </style>

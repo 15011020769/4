@@ -1,29 +1,31 @@
 <template>
-    <el-card class="box-card">
-        <p class="box-info">以下内容来自Docker Hub，详情请访问：<a href="https://hub.docker.com/_/nginx" target="_blank">https://hub.docker.com/_/nginx</a></p>
-        <div class="room">
-            <div class="item-left">
-                <ul>
-                    <li>仓库名称</li>
-                    <li>类型</li>
-                    <li>来源</li>
-                    <li>获取镜像</li>
-                    <li>仓库地址</li>
-                    <li>描述</li>
-                </ul>
+    <div class='room-out'>
+        <el-card class="box-card">
+            <p class="box-info">以下内容来自Docker Hub，详情请访问：<a href="https://hub.docker.com/_/nginx" target="_blank">https://hub.docker.com/_/nginx</a></p>
+            <div class="room">
+                <div class="item-left">
+                    <ul>
+                        <li>仓库名称</li>
+                        <li>类型</li>
+                        <li>来源</li>
+                        <li>获取镜像</li>
+                        <li>仓库地址</li>
+                        <li>描述</li>
+                    </ul>
+                </div>
+                <div class="item-right">
+                    <ul>
+                        <li>仓库名称</li>
+                        <li>类型</li>
+                        <li>来源</li>
+                        <li>获取镜像</li>
+                        <li>仓库地址</li>
+                        <li>描述</li>
+                    </ul>
+                </div>
             </div>
-            <div class="item-right">
-                <ul>
-                    <li>仓库名称</li>
-                    <li>类型</li>
-                    <li>来源</li>
-                    <li>获取镜像</li>
-                    <li>仓库地址</li>
-                    <li>描述</li>
-                </ul>
-            </div>
-        </div>
-    </el-card>
+        </el-card>
+    </div>
 </template>
 <style lang="scss" scoped>
   .item-left{
@@ -38,10 +40,7 @@
   }
 
   .box-card {
-    width: 95%;
-    position: absolute;
-    top:40px;
-    left:20px;
+    width: 100%;
     .box-info{
         font-size: 14px;
         font-weight: 700;
@@ -63,5 +62,8 @@
             height: 200px;
         }
     }
+  }
+  .room-out{
+      padding:20px;
   }
 </style>

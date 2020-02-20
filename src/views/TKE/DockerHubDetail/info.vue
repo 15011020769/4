@@ -1,17 +1,12 @@
 <template>
-    <el-card class="box-card">
-        <p class="box-info">基本信息</p>
-        <div class="text item">
-            <ul>
-                <li>仓库名称</li>
-                <li>类型</li>
-                <li>来源</li>
-                <li>获取镜像</li>
-                <li>仓库地址</li>
-                <li>描述</li>
-            </ul>
-        </div>
-    </el-card>
+    <div class='room'>
+      <el-card class="box-card">
+          <p class="box-info">基本信息</p>
+          <el-form>
+            
+          </el-form>
+      </el-card>
+    </div>
 </template>
 <style lang="scss" scoped>
   .text {
@@ -28,13 +23,14 @@
   }
 
   .box-card {
-    width: 95%;
-    position: absolute;
-    top:40px;
-    left:20px;
+    width: 100%;
     .box-info{
         font-size: 14px;
         font-weight: 700;
     }
+  }
+
+  .room{
+    padding:20px;
   }
 </style>
