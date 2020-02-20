@@ -24,9 +24,9 @@
     <!-- 详情子菜单导航 -->
     <div class="tke-detial-nav">
       <router-link class="nav-item" :to="{name:'nodeDetailPod',query: {clusterId: clusterId,node: node}}">Pod管理</router-link>
-      <router-link class="nav-item" :to="{name:'nodeDetailEvent',query: {clusterId: clusterId}}">事件</router-link>
-      <router-link class="nav-item" :to="{name:'nodeDetailInfo',query: {clusterId: clusterId}}">详情</router-link>
-      <router-link class="nav-item" :to="{name:'nodeDetailYaml',query: {clusterId: clusterId}}">YAML</router-link>
+      <router-link class="nav-item" :to="{name:'nodeDetailEvent',query: {clusterId: clusterId,node: node}}">事件</router-link>
+      <router-link class="nav-item" :to="{name:'nodeDetailInfo',query: {clusterId: clusterId,detail: detail}}">详情</router-link>
+      <router-link class="nav-item" :to="{name:'nodeDetailYaml',query: {clusterId: clusterId,node: node}}">YAML</router-link>
     </div> 
 
     <!-- 子页面 -->
@@ -47,7 +47,8 @@ export default {
   data() {
     return {
         clusterId:'',
-        node: ''
+        node: '',
+        detail: {}
     };
   },
   components: {
@@ -57,6 +58,8 @@ export default {
     // 从路由获取集群id
     this.clusterId=this.$route.query.clusterId;
     this.node = this.$route.query.node;
+    this.detail = this.$route.query.detail;
+    console.log("aaassss",this.detail);
   },
   methods: {
     //返回上一层

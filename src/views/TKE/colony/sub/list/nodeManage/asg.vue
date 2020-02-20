@@ -258,6 +258,7 @@
 import subTitle from "@/views/TKE/components/subTitle";
 import tkeSearch from "@/views/TKE/components/tkeSearch";
 import Loading from "@/components/public/Loading";
+import { ErrorTips } from "@/components/ErrorTips";
 import { ALL_CITY,
   CLUSTERS_GROUPS,
   AUTOSCALING_GROUPS,
@@ -275,14 +276,8 @@ export default {
       searchInput: "", //输入的搜索关键字
       loadShow: false, //加载是否显示
       control:false,
-      list:[
-        {
-          status:false
-        },
-        {
-          status:true
-        }
-      ], //列表
+      list:[], //列表
+      groupIds: [],//伸缩组id列表
       total:0,
       pageSize:10,
       pageIndex:0,
@@ -333,6 +328,7 @@ export default {
     this.GetGroupsOption()
     this.GetGroupsListId()
     this.clusterId=this.$route.query.clusterId;
+    this.GetGroupsList();
   },
   methods: {
     //获取
@@ -477,22 +473,20 @@ export default {
       this.loadShow = true;
       let param = {
         ClusterId: this.$route.query.clusterId,
-        Limit: 20,
-        Offset: 0,
+        Limit: this.pageSize,
+        Offset: this.pageIndex,
         Version: "2018-05-25"
       }
       const res = await this.axios.post(CLUSTERS_GROUPS, param);
       if(res.Error === undefined ){
-        debugger
         // console.log(res,222)
         if(res.Response.ClusterAsGroupSet.length > 0){
           this.saw=true
           let ids=[];
           res.Response.ClusterAsGroupSet = res.Response.ClusterAsGroupSet.map(item => {
-              ids.push(item.AutoScalingGroupId);
+              this.groupIds.push(item.AutoScalingGroupId);
               return item;
           })
-          // this.GetGroupsList(ids)
         }
         else{
           this.saw = false
@@ -523,20 +517,35 @@ export default {
     },
     // 获取伸缩祖列表ID
     // 获取不到数据，无法进行后续操作
-    async GetGroupsList (ids) { 
-      console.log(ids)
+    async GetGroupsList () { 
+      let ids = this.groupIds;
+      this.loadShow = true;
       let param = {
-        AutoScalingGroupIds: ids,
-        Limit: 20,
-        Offset: 0,
+        Limit: this.pageSize,
         Version: "2018-04-19"
       }
+      for(let i = 0; i < ids.length; i++) {
+        param['AutoScalingGroupIds.'+i] = ids[i];
+      }
       const res = await this.axios.post(AUTOSCALING_GROUPS, param);
-      if(res.Error){
-        console.log(res);
-        // this.loadShow = false;
+      debugger
+      if(res.Response.Error === undefined){
+        
       }else{
-        console.log(res,222)
+        this.loadShow = false;
+        let ErrTips = {
+          "InvalidFilter": "无效的过滤器",
+          "InvalidParameterConflict": "指定的两个参数冲突，不能同时存在",
+          "InvalidParameterValue.Filter": "无效的过滤器",
+          "InvalidPermission": "账户不支持该操作",
+        };
+        let ErrOr = Object.assign(ErrorTips, ErrTips);
+        this.$message({
+          message: ErrOr[res.Response.Error.Code],
+          type: "error",
+          showClose: true,
+          duration: 0
+        });
       }
     },
     // DescribeClusterAsGroupOption

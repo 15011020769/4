@@ -8,20 +8,15 @@
         <el-button size="small" >监控</el-button>
       </div>
       <!-- 右侧 -->
-      <div class="grid-right">
-        <tkeSearch 
-          typeSelect 
-          typeLabel='资源属性' 
-          :typeOptions='searchOptions'
-          :typeValue='searchType' 
-          inputPlaceholder='请输入关键词搜索'
-          :searchInput='searchInput'
-
-          @changeType="changeSearchType"
-          @changeInput="changeSearchInput"
-          @clickSearch="clickSearch"
-        >
-        </tkeSearch>
+      <div class="tool">
+        <div class="searchRight">
+          <el-select placeholder="请选择" v-model="ChoiceValue">
+            <el-option v-for="item in searchOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
+          </el-select>
+          <el-input v-model="searchValue" class="searchs" placeholder="请输入内容" @change="_searchchange">
+          </el-input>
+          <el-button class="el-icon-search" size="small" @click="_search"></el-button>
+        </div>
       </div>
     </div>
     
@@ -52,32 +47,32 @@
                 </el-table-column>
                 <el-table-column prop="" label="CPU Request" >
                   <template slot-scope="scope">
-                    <span>0.3核</span>
+                    <span></span>
                   </template>
                 </el-table-column>
                 <el-table-column prop="" label="CPU Limit" >
                   <template slot-scope="scope">
-                    <span>无限制</span>
+                    <span></span>
                   </template>
                 </el-table-column>
                 <el-table-column prop="" label="内存 Request" >
                   <template slot-scope="scope">
-                    <span>无限制</span>
+                    <span></span>
                   </template>
                 </el-table-column>
                 <el-table-column prop="" label="内存 Limit" >
                   <template slot-scope="scope">
-                    <span>无限制</span>
+                    <span></span>
                   </template>
                 </el-table-column>
                 <el-table-column prop="" label="重启次数" >
                   <template slot-scope="scope">
-                    <span>0 次</span>
+                    <span></span>
                   </template>
                 </el-table-column>
                 <el-table-column prop="" label="状态" >
                   <template slot-scope="scope">
-                    <span class="text-green">Running</span>
+                    <span class="text-green"></span>
                   </template>
                 </el-table-column>
             </el-table>
@@ -172,8 +167,8 @@
           label="操作"
           >
           <template slot-scope="scope">
-            <span class="tke-text-link">销毁重建</span>
-            <span class="tke-text-link ml10">远程登录</span>
+            <span class="tke-text-link" @click="reconstruction(scope.row)">销毁重建</span>
+            <span class="tke-text-link ml10" @click="remoteLogin(scope.row)">远程登录</span>
           </template>
         </el-table-column>
       </el-table>
@@ -194,6 +189,31 @@
         </div>
       </div>
     </div>
+    <el-dialog title="销毁实例" :visible.sync="showReconstModal" width="35%">
+      <div>
+        <p style="color:black;">您确定要销毁实例{{podName}}吗？</p>
+        <p style="color:#888;">实例销毁重建后将不可恢复，请提前备份好数据。</p>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="deleteReconst()">确 定</el-button>
+        <el-button @click="showReconstModal = false">取 消</el-button>
+      </span>
+    </el-dialog>
+    <el-dialog title="容器登录" :visible.sync="showRemoteLoginModal" width="35%">
+      <div>该实例下共有<span style="color:#ff9d00;">{{this.podLoginList.length || 0}}个</span>容器</div>
+          <el-collapse-transition>
+            <el-table :data="podLoginList" height="200">
+              <el-table-column property="name" label="容器名称" width="200"></el-table-column>
+              <el-table-column property="" label="状态" width="150"></el-table-column>
+              <el-table-column label="操作" width="150">
+                <a href="">登录</a>
+              </el-table-column>
+            </el-table>
+          </el-collapse-transition>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="showRemoteLoginModal = false">关 闭</el-button>
+        </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -203,6 +223,7 @@ import Loading from "@/components/public/Loading";
 import FileSaver from "file-saver";
 import XLSX from "xlsx";
 import moment from 'moment';
+import { ErrorTips } from "@/components/ErrorTips";
 import { ALL_CITY,POINT_REQUEST } from "@/constants";
 import { GET_LINE_LIST } from '@/constants/BILL.js';
 export default {
@@ -217,7 +238,13 @@ export default {
       pageSize:10,
       pageIndex:0,
       multipleSelection: [],
-
+      showReconstModal: false,//是否打开销毁重建modal
+      showRemoteLoginModal: false,//是否打开远程登录modal
+      podName: '',//实例名称
+      nameSpace: '',//空间名
+      podLoginList: [],//容器登录列表
+      ChoiceValue: '', //搜索选择
+      searchValue: '', //搜索值
        //搜索下拉框
       searchOptions: [
         {
@@ -250,66 +277,157 @@ export default {
   },
   methods: {
     //获取列表数据
-    getPodList() {
+    async getPodList() {
+      this.list = [];
       const param = {
         Method: 'GET',
-        Path: '/api/v1/pods?fieldSelector=spec.nodeName='+this.node+'&limit=20',
+        Path: '/api/v1/pods?fieldSelector=spec.nodeName='+this.node+'&limit='+this.pageSize,
         Version: '2018-05-25',
         ClusterName: this.clusterId
       }
-      this.axios.post(POINT_REQUEST, param).then(res => {
-        let response = JSON.parse(res.Response.ResponseBody);
-        if(response.items.length > 0) {
-          response.items.map(o => {
-            o.addTime = moment(o.metadata.creationTimestamp).format("YYYY-MM-DD HH:mm:ss");
-          });
-          this.list = response.items;
+      if(this.ChoiceValue !== '' && this.searchValue !== '') {
+        let ChoiceValue = this.ChoiceValue;
+        let searchValue = this.searchValue;
+        if(ChoiceValue === 'status') {
+          param.Path = '/api/v1/pods?fieldSelector=spec.nodeName='+this.node+',status.phase='+searchValue+'&limit='+this.pageSize
+        } else if(ChoiceValue === 'podname') {
+          param.Path = '/api/v1/pods?fieldSelector=spec.nodeName='+this.node+',metadata.name='+searchValue+'&limit='+this.pageSize
+        } else if(ChoiceValue === 'namespace') {
+          param.Path = '/api/v1/pods?fieldSelector=spec.nodeName='+this.node+',metadata.namespace='+searchValue+'&limit='+this.pageSize
         }
-        console.log(response,"response");
+      }
+      await this.axios.post(POINT_REQUEST, param).then(res => {
+        if(res.Response.Error === undefined) {
+          let response = JSON.parse(res.Response.ResponseBody);
+          if(response.items.length > 0) {
+            response.items.map(o => {
+              o.addTime = moment(o.metadata.creationTimestamp).format("YYYY-MM-DD HH:mm:ss");
+            });
+            this.list = response.items;
+            this.total = response.items.length;
+          } 
+        } else {
+          this.loadShow = false;
+          let ErrTips = {
+            
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
       })
+    },
+    //搜索
+    _search() {
+      if (this.ChoiceValue !== '' && this.searchValue !== '') {
+        this.getPodList();
+      } else {
+        this.$message({
+          message: '请选择过滤条件且输入搜索值',
+          type: "warning",
+          showClose: true,
+          duration: 0
+        });
+      }
+    },
+    // 搜索框内容为空
+    _searchchange() {
+      if (this.searchValue === '') {
+        this.getPodList();
+      }
     },
     //返回上一层
     goBack(){
       this.$router.go(-1);
     },
-
-    //选择搜索条件
-    changeSearchType(val) {
-      this.searchType = val;
-      console.log(this.searchType)
-    },
-    //监听搜索框的值
-    changeSearchInput(val) {
-      this.searchInput = val;
-      console.log(this.searchInput)
-    },
-    // 点击搜索
-    clickSearch(val){
-      this.searchInput = val;
-      console.log(this.searchInput)
-    },
-
     // 分页
     handleCurrentChange(val) {
       this.pageIndex = val-1;
-      // this.getColonyList();
+      this.getPodList();
       this.pageIndex+=1;
     },
     handleSizeChange(val) {
       // console.log(`每页 ${val} 条`);
       this.pageSize=val;
-      // this.getColonyList();
+      this.getPodList();
     },
     //全选
     handleSelectionChange(val) {
       this.multipleSelection = val;
+    },
+    //打开销毁重建弹窗
+    reconstruction(rowObj) {
+      this.showReconstModal = true;
+      this.podName = rowObj.metadata.name;
+      this.nameSpace = rowObj.metadata.namespace;
+    },
+    //打开远程登录弹窗
+    remoteLogin(rowObj) {
+      this.showRemoteLoginModal = true;
+      this.podLoginList = rowObj.status.containerStatuses;
+    },
+    //销毁重建
+    async deleteReconst() {
+      this.loadShow = true;
+      let param = {
+        Method: "DELETE",
+        Path: "/api/v1/namespaces/"+this.rowObj+"/pods/"+this.podName,
+        Version: "2018-05-25",
+        RequestBody: "{'propagationPolicy': 'Background'}",
+        ClusterName: this.clusterId
+      }
+      await this.axios.post(POINT_REQUEST, param).then(res => {
+        if(res.code === 0) {
+          this.loadShow = false;
+          this.showReconstModal = false;
+          this.getPodList();
+          this.$message({
+            message: '删除成功',
+            type: "success",
+            showClose: true,
+            duration: 0
+          });
+        } else {
+          this.loadShow = false;
+          let ErrTips = {
+            
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
     }
   }
 };
 </script>
 
 <style lang="scss" scoped>
+  .tool {
+    margin: 20px 20px 10px 20px;
+    display: flex;
+    justify-content: space-between;
 
+    ::v-deep .el-button {
+      border-radius: 0 !important;
+    }
 
+    ::v-deep .el-button--small {
+      border-radius: 0 !important;
+
+    }
+
+    .searchRight {
+      display: flex;
+    }
+  }
 </style>
 
