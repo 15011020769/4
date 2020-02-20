@@ -6,9 +6,9 @@
       <el-row class="main">
         <el-row type="flex">
           <el-col>
-            <h3>WAF开关</h3>
+            <h3>{{t('WAF开关', 'WAF.waflg')}}</h3>
             <el-row type="flex" :gutter="20" align="middle" justify="center">
-              <el-col class="subText" :span="4">WAF状态</el-col>
+              <el-col class="subText" :span="4">{{t('WAF状态', 'WAF.wafstatus')}}</el-col>
               <el-col>
                 <el-switch v-model="domain.statusBool" />
               </el-col>
@@ -16,18 +16,18 @@
             <el-row type="flex" style="margin-top: 10px">
               <el-col :span="4"></el-col>
               <el-col>
-                <p class="subText">关闭WAF总开关后，WAF将不再对经过负载均衡监听器的流量进行防护，WAF所有功能也将失效。</p>
+                <p class="subText">{{t('关闭WAF总开关后，WAF将不再对经过负载均衡监听器的流量进行防护，WAF所有功能也将失效', 'WAF.gbwaftip')}}。</p>
               </el-col>
             </el-row>
           </el-col>
           <el-col>
-            <h3>WAF防护状态</h3>
+            <h3>{{t('WAF防护状态', 'WAF.waffhzt')}}</h3>
             <el-row type="flex" :gutter="20" align="middle" justify="center">
-              <el-col class="subText" :span="4">规则使用模式</el-col>
+              <el-col class="subText" :span="4">{{t('规则使用模式', 'WAF.gzsyms')}}</el-col>
               <el-col>
                 <el-radio-group size="small" v-model="domain.Mode" @change="status => onChangeMode(status, domain)">
-                  <el-radio-button :label="0">观察</el-radio-button>
-                  <el-radio-button :label="1">拦截</el-radio-button>
+                  <el-radio-button :label="0">{{t('观察', 'WAF.gc')}}</el-radio-button>
+                  <el-radio-button :label="1">{{t('拦截', 'WAF.lj')}}</el-radio-button>
                 </el-radio-group>
               </el-col>
             </el-row>
@@ -35,7 +35,7 @@
               <el-col :span="4"></el-col>
               <el-col style="margin-left: 5px;">
                 <el-link type="primary" style="cursor: pointer" @click="advanceSetting=!advanceSetting">
-                  高级设置 
+                  {{t('高级设置', 'WAF.gjsz')}} 
                   <i class="el-icon-caret-bottom" v-show="!advanceSetting" />
                   <i class="el-icon-caret-top" v-show="advanceSetting"/>
                 </el-link>
@@ -43,7 +43,7 @@
             </el-row>
             <el-row type="flex" style="margin-top: 10px" v-show="advanceSetting">
               <el-col :span="4"></el-col>
-              <el-col class="subText" style="margin-left: 17px" :span="4">恶意文件检测</el-col>
+              <el-col class="subText" style="margin-left: 17px" :span="4">{{t('恶意文件检测', 'WAF.eywjjc')}}</el-col>
               <el-col>
                  <el-radio-group v-model="webShellStatus" @change="onChangeWebShellStatus">
                   <el-radio :label="0">否</el-radio>
@@ -78,7 +78,7 @@
               <el-col class="subText" :span="4">流量模式</el-col>
               <el-col>
                 <el-radio-group size="small" v-model="domain.FlowMode">
-                  <el-radio-button :label="0">镜像模式</el-radio-button>
+                  <el-radio-button :label="0">{{t('镜像模式', 'WAF.jxms')}}</el-radio-button>
                   <el-radio-button :label="1">清洗模式</el-radio-button>
                 </el-radio-group>
               </el-col>
@@ -91,12 +91,12 @@
               </el-col>
               <el-col>
                 <el-row type="flex" justify="end">
-                  <el-button type="text">编辑</el-button>
+                  <el-button type="text">{{t('编辑', 'WAF.bj')}}</el-button>
                 </el-row>
               </el-col>
             </el-row>
             <el-row type="flex" :gutter="20" align="middle" justify="center">
-              <el-col class="subText" :span="4">封禁状态</el-col>
+              <el-col class="subText" :span="4">{{t('封禁状态', 'WAF.fjzt')}}</el-col>
               <el-col>
                 <el-switch />
               </el-col>
@@ -104,11 +104,11 @@
             <el-row type="flex" style="margin-top: 10px">
               <el-col :span="4"></el-col>
               <el-col>
-                <p class="subText" style="margin-left: 8px">可以选择国内省份和海外地区进行封禁。</p>
+                <p class="subText" style="margin-left: 8px">{{t('可以选择国内省份和海外地区进行封禁', 'WAF.zyxzgnsf')}}。</p>
               </el-col>
             </el-row>
             <el-row type="flex">
-              <el-col :span="4">封禁地域</el-col>
+              <el-col :span="4" class="subText">封禁地域</el-col>
               <el-col>
                 <p class="subText">国内全部</p>
               </el-col>
@@ -117,12 +117,12 @@
         </el-row>
         <el-row type="flex">
           <el-col class="item-container" :span="12">
-            <h3>负载均衡 - 监听器</h3>
+            <h3>{{t('负载均衡 - 监听器', 'WAF.lblis')}}</h3>
             <el-row class="table-head">
-              <el-col :span="3">区域</el-col>
-              <el-col :span="7">负载均衡（ID）</el-col>
-              <el-col :span="7">负载均衡VIP</el-col>
-              <el-col :span="7">监听器</el-col>
+              <el-col :span="3">{{t('区域', 'WAF.qy')}}</el-col>
+              <el-col :span="7">{{t('负载均衡（ID）', 'WAF.lbid')}}</el-col>
+              <el-col :span="7">{{t('负载均衡VIP', 'WAF.lbvip')}}</el-col>
+              <el-col :span="7">{{t('监听器', 'WAF.lis')}}</el-col>
             </el-row>
             <el-row v-if="domain.LoadBalancerSet" v-for="lb in domain.LoadBalancerSet" :key="lb.LoadBalancerId">
               <el-col :span="3">{{lb.Region}}</el-col>
@@ -181,36 +181,20 @@ export default {
     getAreaBanSupport() {
       this.axios.post(DESCRIBE_AREABAN_SUPPORT_AREAS, {
         Version: '2018-01-25',
-      }).then(({ Response }) => {
-        if (Response.Error) {
-          let ErrOr = Object.assign(ErrorTips, COMMON_ERROR)
-          this.$message({
-            message: ErrOr[Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-          })
-        } else {
-          console.log(Response)
-        }
+      }).then(resp => {
+        this.generalRespHandler(resp, () => {
+          // TODO 获取支持禁用的地域列表
+        },)
       })
     },
     getAreaBan({ Domain }) {
       this.axios.post(DESCRIBE_AREABAN_AREAS, {
         Version: '2018-01-25',
         Domain,
-      }).then(({ Response }) => {
-        if (Response.Error) {
-          let ErrOr = Object.assign(ErrorTips, COMMON_ERROR)
-          this.$message({
-            message: ErrOr[Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-          })
-        } else {
-          console.log(Response)
-        }
+      }).then(resp => {
+        this.generalRespHandler(resp, () => {
+          // TODO 获取禁用地域
+        })
       })
     },
     onChangeMode(status, domain) {
@@ -221,24 +205,10 @@ export default {
         Domain: this.domain.Domain,
         DomainId: this.domain.DomainId,
         Mode: status ? 20 : 10 // 传入 10 规则观察 20 规则拦截
-      }).then(({ Response }) => {
-        if (Response.Error) {
-          let ErrOr = Object.assign(ErrorTips, COMMON_ERROR)
-          this.$message({
-            message: ErrOr[Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-          })
-        } else {
-          this.$message({
-            message: '切换模式成功',
-            type: "success",
-            showClose: true,
-            duration: 0
-          })
+      }).then(resp => {
+        this.generalRespHandler(resp, () => {
           this.domain.Mode = status
-        }
+        }, COMMON_ERROR, '切换模式成功')
       })
     },
     onChangeWebShellStatus(status) {
@@ -262,18 +232,10 @@ export default {
       this.axios.post(DESCRIBE_WEBSHELL_STATUS, {
         Version: '2018-01-25',
         Domain,
-      }).then(({ Response }) => {
-        if (Response.Error) {
-          let ErrOr = Object.assign(ErrorTips, COMMON_ERROR)
-          this.$message({
-            message: ErrOr[Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-          })
-        } else {
-          this.webShellStatus = Response.Status
-        }
+      }).then(resp => {
+        this.generalRespHandler(resp, ({ Status }) => {
+          this.webShellStatus = Status
+        })
       })
     },
     updateWebShellStatus(Status) {
@@ -283,24 +245,10 @@ export default {
           Domain: this.domain.Domain,
           Status,
         },
-      })).then(({ Response }) => {
-        if (Response.Error) {
-          let ErrOr = Object.assign(ErrorTips, COMMON_ERROR)
-          this.$message({
-            message: ErrOr[Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-          })
-        } else {
+      })).then(resp => {
+        this.generalRespHandler(resp, () => {
           this.getWebShellStatus(this.domain.Domain)
-          this.$message({
-            message: '切换“恶意文件上传”状态成功',
-            type: "success",
-            showClose: true,
-            duration: 0
-          })
-        }
+        }, COMMON_ERROR, '切换“恶意文件上传”状态成功')
       })
     },
     //编辑按钮
@@ -308,19 +256,6 @@ export default {
       this.$router.push({
         name:'editDominList'
       })
-    },
-    //观察拦截事件
-    ruleUseType(thisType){
-      this.thisType=thisType;
-      // console.log(thisType);
-    },
-    //WAF状态事件
-    switchChange(){
-
-    },
-    //地域编辑按钮
-    editAddress(){
-      this.addressModel=true;
     },
     //关闭地域编辑弹框
     closeAddressModel(isShow){

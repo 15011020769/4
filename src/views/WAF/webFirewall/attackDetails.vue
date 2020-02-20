@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="topTitle">
-      攻击详情
+      攻击日志
     </div>
     <div class="tabList">
       <el-tabs v-model="attackLog" @tab-click="handleClick">

@@ -1,53 +1,51 @@
 <template>
   <div class="CLA">
-    <div class="big-title">Web 应用防火墙</div>
+    <div class="big-title">Web {{t('应用防火墙', 'WAF.yyfhq')}}</div>
     <el-menu
       default-active="2"
       class="el-menu-vertical-demo"
-      @open="handleOpen"
-      @close="handleClose"
       background-color="#292b36"
       text-color="#fff"
       active-text-color="#fff"
       :router="true"
     >
     
-      <el-menu-item index="/saveOverView">安全概览</el-menu-item>
+      <el-menu-item index="/saveOverView">{{t('安全概览', 'WAF.aqgl')}}</el-menu-item>
       <el-submenu index="webFirewall">
         <template slot="title">
-          <span>web应用防火墙</span>
+          <span>Web {{t('应用防火墙', 'WAF.yyfhq')}}</span>
         </template>
         <el-menu-item-group>
-          <el-menu-item class="selectMenu" index="/protectionSettings">防护设置</el-menu-item>
-          <el-menu-item class="selectMenu" index="/attackDetails">攻击详情</el-menu-item>
+          <el-menu-item class="selectMenu" index="/protectionSettings">{{t('防护设置', 'WAF.fhsz')}}</el-menu-item>
+          <el-menu-item class="selectMenu" index="/attackDetails">{{t('攻击详情', 'WAF.gjxq')}}</el-menu-item>
         </el-menu-item-group>
       </el-submenu>
-      <el-submenu index="saveOverView">
+      <!-- <el-submenu index="saveOverView">
         <template slot="title">
           <span>web安全检测</span>
         </template>
         <el-menu-item-group>
           <el-menu-item class="selectMenu" index="/hijackDetection">DNS劫持检测</el-menu-item>
         </el-menu-item-group>
-      </el-submenu>
+      </el-submenu> -->
       <el-submenu index="ipMan">
         <template slot="title">
           <span>IP管理</span>
         </template>
         <el-menu-item-group>
-          <el-menu-item class="selectMenu" index="/ipSearch">IP 查询</el-menu-item>
-          <el-menu-item class="selectMenu" index="/ipList">IP 黑白名单</el-menu-item>
-          <el-menu-item class="selectMenu" index="/ipStatus">IP 封堵状态</el-menu-item>
+          <el-menu-item class="selectMenu" index="/ipSearch">IP {{t('查询', 'WAF.js')}}</el-menu-item>
+          <el-menu-item class="selectMenu" index="/ipList">IP {{t('黑白名单', 'WAF.hbmd')}}</el-menu-item>
+          <el-menu-item class="selectMenu" index="/ipStatus">IP {{t('封堵状态', 'WAF.fdzt')}}</el-menu-item>
         </el-menu-item-group>
       </el-submenu>
       <el-submenu index="botMan">
         <template slot="title">
-          <span>BOT 行为管理</span>
+          <span>BOT {{t('行为管理', 'WAF.xwgl')}}</span>
         </template>
         <el-menu-item-group>
-          <el-menu-item class="selectMenu" index="/botOverview">BOT 概览</el-menu-item>
-          <el-menu-item class="selectMenu" index="/botSetting">BOT 设置</el-menu-item>
-          <el-menu-item class="selectMenu" index="/botDetail">BOT 详情</el-menu-item>
+          <el-menu-item class="selectMenu" index="/botOverview">BOT {{t('概览', 'WAF.gl')}}</el-menu-item>
+          <el-menu-item class="selectMenu" index="/botSetting">BOT {{t('设置', 'WAF.sz')}}</el-menu-item>
+          <el-menu-item class="selectMenu" index="/botDetail">BOT {{t('详情', 'WAF.xq')}}</el-menu-item>
         </el-menu-item-group>
       </el-submenu>
     </el-menu>
@@ -62,14 +60,6 @@ export default {
       activeIndex2: "1"
     };
   },
-  methods: {
-    handleOpen(key, keyPath) {
-      console.log(key, keyPath);
-    },
-    handleClose(key, keyPath) {
-      console.log(key, keyPath);
-    }
-  }
 };
 </script>
 

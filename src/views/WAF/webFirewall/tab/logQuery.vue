@@ -9,11 +9,12 @@
             allow-create
             class="dominList"
             default-first-option>
+            <el-option value="all">ALL</el-option>
             <el-option
               v-for="item in dominOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value">
+              :key="item.DomainId"
+              :label="item.Domain"
+              :value="item.DomainId">
             </el-option>
           </el-select>
           <el-button-group class="btnGroup">
@@ -96,20 +97,14 @@
 <script>
 import moment from "moment";
 import createDownTaskModel from '../model/createDownTaskModel'
+import { ATTACK_TYPE } from '../../constants'
+import { DESCRIBE_HOSTS } from '@/constants'
+
 export default {
   data(){
     return{
       dominList:'',//域名下拉
-      dominOptions:[
-        {
-          label:'www.baidu.cn89',
-          value:'www.baidu.cn89',
-        },
-        {
-          label:'www.baidu.cn',
-          value:'www.baidu.cn'
-        }
-      ],
+      dominOptions:[],
       thisType:'1',//默认时间选择
       timeValue:'',//时间选择
       riskLevelVlaue:'',//风险等级
@@ -147,96 +142,7 @@ export default {
         }
       ],
       attackVlaue:'',//注入攻击类型
-      attackOption:[
-        {
-          label:'全部攻击类型',
-          value:'全部攻击类型'
-        },
-        {
-          label:'SQL注入攻击',
-          value:'SQL注入攻击'
-        },
-        {
-          label:'XSS攻击',
-          value:'XSS攻击'
-        },
-        {
-          label:'命令注入攻击',
-          value:'命令注入攻击'
-        },
-        {
-          label:'LDAP注入攻击',
-          value:'LDAP注入攻击'
-        },
-        {
-          label:'SSI注入攻击',
-          value:'SSI注入攻击'
-        },
-        {
-          label:'XML注入攻击',
-          value:'XML注入攻击'
-        },
-        {
-          label:'WEB服务器漏洞攻击',
-          value:'WEB服务器漏洞攻击'
-        },
-        {
-          label:'WEB应用漏洞攻击',
-          value:'WEB应用漏洞攻击'
-        },
-        {
-          label:'路径跨域攻击',
-          value:'路径跨域攻击'
-        },
-        {
-          label:'核心文件非法访问',
-          value:'核心文件非法访问'
-        },
-        {
-          label:'文件上传攻击',
-          value:'文件上传攻击'
-        },
-        {
-          label:'木马后门攻击',
-          value:'木马后门攻击'
-        },
-        {
-          label:'CSRF攻击',
-          value:'CSRF攻击'
-        },
-        {
-          label:'恶意扫描',
-          value:'恶意扫描'
-        },
-        {
-          label:'自定义策略',
-          value:'自定义策略'
-        },
-        {
-          label:'地域封禁拦截',
-          value:'地域封禁拦截'
-        },
-        {
-          label:'信息防泄漏替换',
-          value:'信息防泄漏替换'
-        },
-        {
-          label:'AI引擎检出',
-          value:'AI引擎检出'
-        },
-        {
-          label:'IP黑名单',
-          value:'IP黑名单'
-        },
-        {
-          label:'CC策略拦截',
-          value:'CC策略拦截'
-        },
-        {
-          label:'Bot拦截',
-          value:'Bot拦截'
-        },
-      ],
+      attackOption:ATTACK_TYPE,
       celueId:'',//策略ID
       attackIP:'',//攻击源IP
       tableDataBegin:[
@@ -260,6 +166,15 @@ export default {
   },
   components:{
     createDownTaskModel:createDownTaskModel
+  },
+  mounted() {
+    this.axios.post(DESCRIBE_HOSTS, {
+      Version: '2018-01-25',
+    }).then(resp => {
+      this.generalRespHandler(resp, ({ HostList }) => {
+        this.dominOptions = HostList
+      })
+    })
   },
   methods:{
     //时间选择按钮

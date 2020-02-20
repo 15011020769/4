@@ -8,15 +8,15 @@
         <el-col :span="12">
           <el-row type="flex"align="middle">
             <el-button type="primary" @click="$router.push({name: 'protectDomain'})">添加域名</el-button>
-            <el-button type="primary" :disabled="checkedWafs.length === 0" @click="enableWAF">开启</el-button>
-            <el-button type="primary" :disabled="checkedWafs.length === 0" @click="disableWAF">关闭</el-button>
+            <el-button type="primary" :disabled="checkedWafs.length === 0" @click="enableWAF">{{t('开启', 'WAF.open')}}</el-button>
+            <el-button type="primary" :disabled="checkedWafs.length === 0" @click="disableWAF">{{t('关闭', 'WAF.close')}}</el-button>
             <el-button type="primary" :disabled="checkedWafs.length === 0" @click="del">删除</el-button>
-            <span style="margin-left: 15px">一级域名套餐{{package.MainDomainLimit === package.MainDomainCount ? '已用完，' : `还剩余${package.MainDomainLimit - package.MainDomainCount}个`}}
-              <a @click="packageUpgradeModel" v-if="package.MainDomainLimit === package.MainDomainCount">立即升级</a>
-              ；子域名套餐还剩余{{package.DomainLimit - package.DomainCount}}个。</span>
+            <span style="margin-left: 15px">{{t('一级域名套餐', 'WAF.yjymtc')}}{{package.MainDomainLimit === package.MainDomainCount ? '已用完，' : `${t('还剩余', 'WAF.hsy')}${package.MainDomainLimit - package.MainDomainCount}${t('个', 'WAF.g')}`}}
+              <a @click="packageUpgradeModel" v-if="package.MainDomainLimit === package.MainDomainCount">{{t('立即升级', 'WAF.ljsj')}}</a>
+              ；{{t('子域名套餐还剩余', 'WAF.zymtchsy')}}{{package.DomainLimit - package.DomainCount}}个。</span>
           </el-row>
         </el-col>
-        <el-input placeholder="支持域名、负载均衡名称、监听器名称模糊搜索" v-model="keyword" class="search-input">
+        <el-input :placeholder="t('支持域名、负载均衡名称、监听器名称模糊搜索', 'WAF.zcymlbkis')" v-model="keyword" class="search-input">
           <i class="el-icon-search el-input__icon" slot="suffix" @click="getData"/>
         </el-input>
       </el-row>
@@ -32,7 +32,7 @@
               <p>{{scope.row.DomainId}}</p>
             </template>
           </el-table-column>
-          <el-table-column prop="proStatus" label="流量模式" width="120">
+          <el-table-column prop="proStatus" width="120">
             <div slot="header" style="padding: 0;">
               流量模式 
               <el-tooltip placement="right-end" effect="light" class="mode-tooltip">
@@ -41,15 +41,15 @@
               </el-tooltip>
             </div>
             <template slot-scope="scope">
-              {{scope.row.Mode === 1 ? '镜像模式' : '清洗模式'}}
+              {{scope.row.Mode === 1 ? t('镜像模式', 'WAF.jxms') : '清洗模式'}}
             </template>
           </el-table-column>
-          <el-table-column prop="vipAddress" label="区域" width="60">
+          <el-table-column prop="vipAddress" :label="t('区域', 'WAF.qy')" width="60">
             <template slot-scope="scope">
-              {{scope.row.Region || '无'}}
+              {{scope.row.Region || t('无', 'WAF.w')}}
             </template>
           </el-table-column>
-          <el-table-column label="负载均衡（ID）">
+          <el-table-column :label="t('负载均衡（ID）', 'WAF.lbid')">
             <template slot-scope="scope">
               <span v-if="scope.row.LoadBalancerSet.length">
                 {{scope.row.LoadBalancerSet[0].LoadBalancerName}}({{scope.row.LoadBalancerSet[0].LoadBalancerId}})
@@ -61,8 +61,8 @@
           </el-table-column>
           <el-table-column width="120">
             <div slot="header" style="padding: 0;">
-              负载均衡VIP 
-              <el-tooltip placement="right-end" content="负载均衡外网地址" effect="light">
+              {{t('负载均衡VIP', 'WAF.lbvip')}} 
+              <el-tooltip placement="right-end" :content="t('负载均衡外网地址', 'WAF.lbwwdz')" effect="light">
                 <i class="el-icon-info"></i>
               </el-tooltip>
             </div>
@@ -77,8 +77,8 @@
           </el-table-column>
           <el-table-column width="160">
             <div slot="header" style="padding: 0;">
-              监听器 
-              <el-tooltip placement="right-end" content="WAF和负载均衡绑定后，将对经过负载均衡对应监听器的流量进行防护" effect="light">
+              {{t('监听器', 'WAF.lis')}} 
+              <el-tooltip placement="right-end" :content="t('WAF和负载均衡绑定后，将对经过负载均衡对应监听器的流量进行防护', 'WAF.waflbtip')" effect="light">
                 <i class="el-icon-info"></i>
               </el-tooltip>
             </div>
@@ -93,7 +93,7 @@
               </span>
             </template>
           </el-table-column>
-          <el-table-column prop="logSwitch" label="访问日志开关">
+          <el-table-column prop="logSwitch" :label="t('访问日志开关', 'WAF.logkg')">
             <template slot-scope="scope">
               <el-switch
                 v-model="scope.row.ClsStatusBool"
@@ -103,7 +103,7 @@
               </el-switch>
             </template>
           </el-table-column>
-          <el-table-column prop="wafSwitch" label="WAF开关">
+          <el-table-column prop="wafSwitch" :label="t('WAF开关', 'WAF.waflg')">
             <template slot-scope="scope">
               <el-switch
                 v-model="scope.row.StatusBool"
@@ -121,17 +121,17 @@
                 v-model="scope.row.delDialog"
               >
                 <div class="prpoDialog">
-                  <h1>确定删除此域名？</h1>
-                  <p>删除后源站IP将会遭受恶意攻击的威胁。</p>
+                  <h1>{{t('确定删除此域名', 'WAF.qdscym')}}？</h1>
+                  <p>{{t('删除后源站IP将会遭受恶意攻击的威胁', 'WAF.schyip')}}。</p>
                 </div>
                 <div style="text-align: right; margin: 0">
                   <el-button size="mini" type="text" @click="scope.row.delDialog=false">取消</el-button>
-                  <el-button type="primary" size="mini" @click="delWafs([scope.row])">确定</el-button>
+                  <el-button type="primary" size="mini" @click="delWafs([scope.row])">{{t('确定', 'WAF.qd')}}</el-button>
                 </div>
                 <el-button slot="reference"style="color:#3E8EF7;">删除</el-button>
               </el-popover>
-              <el-button type="text" size="small" @click="handelEdit(scope.row)">编辑</el-button>
-              <el-button @click.native.prevent="toProtectConfig(scope.row)" type="text" size="small">防护配置</el-button>
+              <el-button type="text" size="small" @click="handelEdit(scope.row)">{{t('编辑', 'WAF.bj')}}</el-button>
+              <el-button @click.native.prevent="toProtectConfig(scope.row)" type="text" size="small">{{t('防护配置', 'WAF.fhpz')}}</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -196,24 +196,8 @@ export default {
         Domain: waf.Domain,
         Status: Number(status),
         Edition: 'clb-waf'
-      })).then(({ Response }) => {
-        if (Response.Error) {
-          let ErrOr = Object.assign(ErrorTips, COMMON_ERROR)
-          this.$message({
-            message: ErrOr[Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-          })
-        } else {
-          this.$message({
-            message: '切换成功',
-            type: "success",
-            showClose: true,
-            duration: 0
-          })
-          this.getData()
-        }
+      })).then(resp => {
+        this.generalRespHandler(resp, this.getData, COMMON_ERROR, '切换成功')
       })
     },
     updateWafStatus(wafs, status) {
@@ -225,24 +209,8 @@ export default {
           DomainId: waf.DomainId,
           Status: Number(status)
         }))
-      })).then(({ Response }) => {
-        if (Response.Error) {
-          let ErrOr = Object.assign(ErrorTips, COMMON_ERROR)
-          this.$message({
-            message: ErrOr[Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-          })
-        } else {
-          this.$message({
-            message: '切换成功',
-            type: "success",
-            showClose: true,
-            duration: 0
-          })
-          this.getData()
-        }
+      })).then(resp => {
+        this.generalRespHandler(resp, this.getData, COMMON_ERROR, '切换成功')
       })
     },
     delWafs(wafs) {
@@ -253,24 +221,8 @@ export default {
           Domain: waf.Domain,
           DomainId: waf.DomainId,
         }))
-      })).then(({ Response }) => {
-        if (Response.Error) {
-          let ErrOr = Object.assign(ErrorTips, COMMON_ERROR)
-          this.$message({
-            message: ErrOr[Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-          })
-        } else {
-          this.$message({
-            message: '删除成功',
-            type: "success",
-            showClose: true,
-            duration: 0
-          })
-          this.getData()
-        }
+      })).then(resp => {
+        this.generalRespHandler(resp, this.getData, COMMON_ERROR, '删除成功')
       })
     },
     handleSelectionChange(val){
@@ -281,24 +233,16 @@ export default {
       this.axios.post(DESCRIBE_HOSTS, {
         Version: '2018-01-25',
         Search: this.keyword,
-      }).then(({ Response }) => {
-        if (Response.Error) {
-          let ErrOr = Object.assign(ErrorTips, COMMON_ERROR)
-          this.$message({
-            message: ErrOr[Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-          })
-        } else {
-          const domains = Response.HostList
+      }).then(resp => {
+        this.generalRespHandler(resp, ({ HostList }) => {
+          const domains = HostList
           domains.forEach(domain => {
             domain.StatusBool = !!domain.Status
             domain.ClsStatusBool = !!domain.ClsStatus
             domain.delDialog = false
           })
           this.domains = domains
-        }
+        })
       }).then(() => {
         this.loading = false
       })

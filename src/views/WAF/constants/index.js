@@ -264,3 +264,28 @@ export const IP_STATUS_TYPE = {
 }
 
 export const IP_STATUS_TYPE_ARR = obj2Arr(IP_STATUS_TYPE)
+
+export const ATTACK_TYPE = [
+  { id: "全部攻击类型", label: "全部攻击类型" },
+  { id: "SQL注入攻击", label: "SQL注入攻击" },
+  { id: "XSS攻击", label: "XSS攻击" },
+  { id: "命令注入攻击", label: "命令注入攻击" },
+  { id: "LDAP注入攻击", label: "LDAP注入攻击" },
+  { id: "SSI注入攻击", label: "SSI注入攻击" },
+  { id: "XML注入攻击", label: "XML注入攻击" },
+  { id: "WEB服务器漏洞攻击", label: "WEB服务器漏洞攻击" },
+  { id: "WEB应用漏洞攻击", label: "WEB应用漏洞攻击" },
+  { id: "路径跨越攻击", label: "路径跨越攻击" },
+  { id: "核心文件非法访问", label: "核心文件非法访问" },
+  { id: "文件上传攻击", label: "文件上传攻击" },
+  { id: "木马后门攻击", label: "木马后门攻击" },
+  { id: "CSRF攻击", label: "CSRF攻击" },
+  { id: "恶意扫描", label: "恶意扫描" },
+  { id: "自定义策略", label: "自定义策略" },
+  { id: "地域封禁拦截", label: "地域封禁拦截" },
+  { id: "信息防泄漏替换", label: "信息防泄漏替换" },
+  { id: "AI引擎检出", label: "AI引擎检出" },
+  { id: "IP黑名单", label: "IP黑名单" },
+  { id: "CC策略拦截", label: "CC策略拦截" },
+  { id: "Bot 拦截", label: "Bot 拦截" },
+]

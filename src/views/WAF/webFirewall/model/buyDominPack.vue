@@ -2,32 +2,32 @@
   <div>
     <div>
       <el-dialog
-        title="扩展域名包"
+        :title="t('扩展域名包', 'WAF.kzymb')"
         :visible.sync="buyDominPack"
         width="45%"
         :before-close="handleClose">
         <div class="newClear">
           <div class="newClear dominPackList">
-            <p>购买数量</p>
+            <p>{{t('购买数量', 'WAF.gmsl')}}</p>
             <p>
-              <el-input-number v-model="buyNum" @change="handleChange" :max="500" :min="1"></el-input-number>
+              <el-input-number v-model="buyNum" @change="handleChange" :max="500" :min="1"></el-input-number> {{t('个', 'WAF.g')}}
             </p>
           </div>
           <div class="newClear dominPackList">
-            <p>到期时间</p>
+            <p>{{t('到期时间', 'WAF.dqsj')}}</p>
             <p>{{package.DomainPkg && package.DomainPkg.ValidTime || package.ValidTime}}</p>
           </div>
           <div class="newClear dominPackList">
-            <p>说明</p>
-            <p>每个域名包包含10个域名防护，仅支持1个一级域名；一次最多购买500个。</p>
+            <p>{{t('说明', 'WAF.sm')}}</p>
+            <p>{{t('每个域名包包含10个域名防护，仅支持1个一级域名；一次最多购买500个', 'WAF.mhymbbh')}}。</p>
           </div>
           <div class="newClear dominPackList">
-            <p>费用</p>
+            <p>{{t('费用', 'WAF.fy')}}</p>
             <p class="totalMoney">9,534.24元</p>
           </div>
         </div>
         <span slot="footer" class="dialog-footer">
-          <el-button class="buyImmediate" @click="buyImmediate">立即购买</el-button>
+          <el-button class="buyImmediate" @click="buyImmediate">{{t('立即购买', 'WAF.ljgm')}}</el-button>
           <el-button @click="handleClose">取 消</el-button>
         </span>
       </el-dialog>
