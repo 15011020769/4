@@ -42,6 +42,7 @@
               start-placeholder="開始日期"
               end-placeholder="結束日期"
               :picker-options="pickerOptions"
+              class="item-1-time"
             ></el-date-picker>
           </el-form-item>
           <el-form-item class="item-3">
@@ -169,7 +170,6 @@
             fixed="right"
             header-align="center"
             align="center"
-            width="180"
             label="操作"
           >
             <template slot-scope="scope">
@@ -473,6 +473,9 @@ export default {
     .deal-form {
       .item-1 {
         float: left;
+      }
+      .item-1-time{
+        width:400px;
       }
       .item-2,
       .item-3 {
