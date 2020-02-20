@@ -85,9 +85,9 @@
                       <div class="border-right">列表</div>
                     </div>
                     <!-- <el-tabs tab-position="left" style="height: 200px;" v-model="item.activeName" -->
-                    <el-tabs tab-position="left"  v-model="item.activeName"
+                    <el-tabs tab-position="left" class="tab-set" style="height: 200px;"  v-model="item.activeName"
                       @tab-click="workLoadTab(item.activeName, index)">
-                      <el-tab-pane label="deployment" name="deployment">
+                      <el-tab-pane label="Deployment" name="Deployment">
                         <div v-if="workload1.length!='0'" style="overflow:auto">
                           <p  v-for="(item,index) in workload1" :key="index">
                               <el-checkbox>{{item.metadata.name}}</el-checkbox>
@@ -95,35 +95,35 @@
                         </div>
                         <span v-else>当前命名空间下，该工作负载类型列表为空</span>
                       </el-tab-pane>
-                      <el-tab-pane label="daemonSet" name="daemonSet">
-                         <div v-if="workload1.length!='0'">
-                          <span v-for="(item,index) in workload1" :key="index" >
-                              <el-checkbox >{{item.metadata.name}}</el-checkbox>
-                          </span>
+                      <el-tab-pane label="DaemonSet " name="DaemonSet">
+                        <div v-if="workload1.length!='0'" style="overflow:auto">
+                          <p  v-for="(item,index) in workload1" :key="index">
+                              <el-checkbox>{{item.metadata.name}}</el-checkbox>
+                          </p>
                         </div>
                         <span v-else>当前命名空间下，该工作负载类型列表为空</span>
                       </el-tab-pane>
-                      <el-tab-pane label="statefulSet" name="statefulSet">
-                         <div v-if="workload1.length!='0'">
-                          <span v-for="(item,index) in workload1" :key="index" >
-                              <el-checkbox >{{item.metadata.name}}</el-checkbox>
-                          </span>
+                      <el-tab-pane label="StatefulSet" name="StatefulSet">
+                         <div v-if="workload1.length!='0'" style="overflow:auto">
+                          <p  v-for="(item,index) in workload1" :key="index">
+                              <el-checkbox>{{item.metadata.name}}</el-checkbox>
+                          </p>
                         </div>
                         <span v-else>当前命名空间下，该工作负载类型列表为空</span>
                       </el-tab-pane>
-                      <el-tab-pane label="cronJob" name="cronJob">
-                         <div v-if="workload1.length!='0'">
-                          <span v-for="(item,index) in workload1" :key="index" >
-                              <el-checkbox >{{item.metadata.name}}</el-checkbox>
-                          </span>
+                      <el-tab-pane label="CronJob" name="CronJob">
+                        <div v-if="workload1.length!='0'" style="overflow:auto">
+                          <p  v-for="(item,index) in workload1" :key="index">
+                              <el-checkbox>{{item.metadata.name}}</el-checkbox>
+                          </p>
                         </div>
                         <span v-else>当前命名空间下，该工作负载类型列表为空</span>
                       </el-tab-pane>
-                      <el-tab-pane label="job" name="job">
-                         <div v-if="workload1.length!='0'">
-                          <span v-for="(item,index) in workload1" :key="index" >
-                              <el-checkbox >{{item.metadata.name}}</el-checkbox>
-                          </span>
+                      <el-tab-pane label="Job" name="Job">
+                        <div v-if="workload1.length!='0'" style="overflow:auto">
+                          <p  v-for="(item,index) in workload1" :key="index">
+                              <el-checkbox>{{item.metadata.name}}</el-checkbox>
+                          </p>
                         </div>
                         <span v-else>当前命名空间下，该工作负载类型列表为空</span>
                       </el-tab-pane>
@@ -418,7 +418,7 @@
           value1: "",
           radio: "1",
           flag: true,
-          activeName: "deployment"
+          activeName: "Deployment"
         }],
         namespaceOptions: [],
         value: "jq",
@@ -477,19 +477,6 @@
               res.data.topicList.forEach(item => {
                 arr.push(item.topicId + "(" + item.topicName + ")");
               });
-              // if (!this.editStatus) { //非编辑状态下
-              //   if (arr.length != 1) {
-              //     this.Topic.value = arr[1];
-              //   } else {
-              //     this.Topic.value = "无";
-              //   }
-              // }else{
-              //   if (arr.length != 1) {
-              //     this.Topic.value = arr[1];
-              //   } else {
-              //     this.Topic.value = "无";
-              //   }
-              // }
               if(arr.length=='1'){
                 this.Topic.value = "无"
               }else{
@@ -512,6 +499,17 @@
           }
         },
         deep: true
+      },
+      formFour:{
+        handler(val){
+          val.forEach(item=>{
+              if(item.radio=='2'){
+                console.log(item)
+                this.workLoadTab('Deployment', 0)
+              }
+          })
+        },
+        deep:true
       }
     },
     created() {
@@ -1075,7 +1073,8 @@
         float: left;
         height: 36px;
         width: 124px;
-        border-right: 2px solid #e5e5e5;
+        border-right: 1px solid #e5e5e5;
+        // border-right: 2px solid #e5e5e5;
         padding-left: 10px;
       }
 
@@ -1132,5 +1131,14 @@
   .activeColor {
     color: #f56c6c !important;
   }
-
+  .tab-set{
+    overflow:auto !important;
+    ::v-deep .el-tabs__header{
+      width:123px;
+    }
+    ::v-deep .el-tabs__content{
+      overflow:auto !important;
+      height:200px;
+    } 
+  }
 </style>
