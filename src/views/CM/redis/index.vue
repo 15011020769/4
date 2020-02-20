@@ -12,7 +12,7 @@
     </div>
     <!-- 表格 -->
     <div class="Table-SY">
-      <el-table :data="ProTableData" height="550" style="width: 100%" id="exportTable" v-loading="loadShow"
+      <el-table :data="ProTableData" height="550" style="width: 100%" v-loading="loadShow"
         :empty-text="$t('CVM.clBload.zwsj')">
         <el-table-column prop :label="$t('CVM.clBload.zjm') ">
           <template slot-scope="scope">
@@ -48,6 +48,38 @@
         <el-pagination :page-size="pagesize" :pager-count="7" layout="prev, pager, next"
           @current-change="handleCurrentChange" :total="TotalCount"></el-pagination>
       </div>
+    </div>
+
+    <div class="Table-SY" v-show="false">
+      <el-table :data="ProTableData" height="550" style="width: 100%" id="exportTable" v-loading="loadShow"
+        :empty-text="$t('CVM.clBload.zwsj')">
+        <el-table-column prop label="ID">
+          <template slot-scope="scope">
+            {{scope.row.InstanceId}}
+          </template>
+        </el-table-column>
+        <el-table-column prop label="名稱">
+          <template slot-scope="scope">
+            {{ scope.row.InstanceName}}
+          </template>
+        </el-table-column>
+
+        <el-table-column prop :label="$t('CVM.clBload.zt')">
+          <template slot-scope="scope">
+            <p>{{scope.row.InstanceTitle}}</p>
+          </template>
+        </el-table-column>
+        <el-table-column prop :label="$t('CVM.clBload.cjsj')">
+          <template slot-scope="scope">
+            <p>{{scope.row.Createtime}}</p>
+          </template>
+        </el-table-column>
+        <el-table-column prop :label="$t('CVM.clBload.gg')">
+          <template slot-scope="scope">
+            <p>{{ $t('CVM.cloudMysql.wl') }}</p>
+          </template>
+        </el-table-column>
+      </el-table>
     </div>
   </div>
 </template>
@@ -102,7 +134,7 @@
         ProTableData: [], // 项目列表数据
         ProTableData: [], // 添加完项目列表的表格数据
         TotalCount: 0, //总条数
-        pagesize: 2, // 分页条数
+        pagesize: 10, // 分页条数
         currpage: 1 // 当前页码
       };
     },
@@ -244,6 +276,7 @@
       },
       //分页
       handleCurrentChange(val) {
+        this.loadShow = true;
         this.currpage = val;
         this.GetTabularData();
       },
