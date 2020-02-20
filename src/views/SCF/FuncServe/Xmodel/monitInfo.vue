@@ -73,7 +73,7 @@
 <script>
   import moment from "moment";
   import TimeDropDown from '@/components/public/TimeDropDown' //引入时间组件
-  import echartLine from "@/components/public/echars-line";
+  import echartLine from "@/components/public/echars-line"; //引入图标组件
   import {
     ALL_Basics,
     All_MONITOR
@@ -220,7 +220,9 @@
           if (res.Response.Error == undefined) {
             this.BaseList = res.Response.MetricSet
             this.BaseList.forEach(item => {
-              this._GetMonitorData(item.MetricName)
+              if (item.Period.indexOf(Number(this.Period)) !== -1) {
+                this._GetMonitorData(item.MetricName)
+              }
             });
           } else {
             this.$message({
