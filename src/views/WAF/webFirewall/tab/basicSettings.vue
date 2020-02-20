@@ -79,7 +79,7 @@
               <el-col>
                 <el-radio-group size="small" v-model="domain.FlowMode">
                   <el-radio-button :label="0">{{t('镜像模式', 'WAF.jxms')}}</el-radio-button>
-                  <el-radio-button :label="1">清洗模式</el-radio-button>
+                  <el-radio-button :label="1" disabled title="陆续开放">清洗模式</el-radio-button>
                 </el-radio-group>
               </el-col>
             </el-row>

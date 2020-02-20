@@ -51,7 +51,7 @@
         <el-button type="primary" @click="dialogRule=true">{{t('添加规则', 'WAF.tjgz')}}</el-button>
         <i class="el-icon-refresh refresh" />
       </el-row>
-      <el-table :data="rules" v-loading="loading">
+      <el-table :data="rules" v-loading="loading" :empty-text="t('暂无数据', 'WAF.zwsj')">
         </el-table-column>
         <el-table-column prop="Name" :label="t('规则名称', 'WAF.gzmc')">
         </el-table-column>

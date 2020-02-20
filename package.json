@@ -70,7 +70,7 @@
     "vue-echarts": "^4.1.0",
     "vue-router": "^3.0.3",
     "vuex": "^3.0.1",
-    "xlsx": "^0.15.3"
+    "xlsx": "^0.15.5"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.6.0",

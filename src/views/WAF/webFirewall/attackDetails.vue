@@ -1,14 +1,14 @@
 <template>
   <div>
     <div class="topTitle">
-      攻击日志
+      {{t('攻击日志', 'WAF.gjrz')}}
     </div>
     <div class="tabList">
       <el-tabs v-model="attackLog" @tab-click="handleClick">
-        <el-tab-pane label="日志查询" name="first">
+        <el-tab-pane :label="t('日志查询', 'WAF.rzcx')" name="first">
           <logQuery/>
         </el-tab-pane>
-        <el-tab-pane label="下载任务" name="second">
+        <el-tab-pane :label="t('下载任务', 'WAF.xzrw')" name="second">
           <downloadTask/>
         </el-tab-pane>
       </el-tabs>

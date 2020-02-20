@@ -19,7 +19,7 @@
           </div>
           <div class="newClear dominPackList">
             <p>{{t('说明', 'WAF.sm')}}</p>
-            <p>{{t('一个日志包包含1T日志服务存储容量（套餐有效期内，日志存储时长为180天）；一次最多购买500个', 'WAF.ygrzbbh')}}</p>
+            <p>{{t('一个日志包包含：1T日志服务存储容量（套餐有效期内，日志存储时长为180天）；一次最多购买500个', 'WAF.ygrzbbh')}}</p>
           </div>
           <div class="newClear dominPackList">
             <p>{{t('费用', 'WAF.fy')}}</p>

@@ -15,7 +15,7 @@
         </el-row>
       </el-col>
     </el-row>
-    <el-table :data="rules" v-loading="loading">
+    <el-table :data="rules" v-loading="loading" :empty-text="t('暂无数据', 'WAF.zwsj')">
       <el-table-column prop="RuleId" :label="t('序号', 'WAF.xh')">
       </el-table-column>
       <el-table-column prop="Name" :label="t('规则名称', 'WAF.gzmc')">

@@ -18,8 +18,8 @@
             </el-option>
           </el-select>
           <el-button-group class="btnGroup">
-            <el-button :class="thisType=='1'?'addBgColor':''" @click="choseDate(1)">近1小时</el-button>
-            <el-button :class="thisType=='2'?'addBgColor':''" @click="choseDate(2)">近6小时</el-button>
+            <el-button :class="thisType=='1'?'addBgColor':''" @click="choseDate(1)">近1小{{t('时', 'WAF.hour')}}</el-button>
+            <el-button :class="thisType=='2'?'addBgColor':''" @click="choseDate(2)">近6小{{t('时', 'WAF.hour')}}</el-button>
             <el-button :class="thisType=='3'?'addBgColor':''" @click="choseDate(3)">今天</el-button>
             <el-button :class="thisType=='4'?'addBgColor':''" @click="choseDate(4)">昨天</el-button>
             <el-button :class="thisType=='5'?'addBgColor':''" @click="choseDate(5)">近7天</el-button>
@@ -29,12 +29,13 @@
             type="datetimerange"
             class="dataTime"
             range-separator="至"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期">
+            :start-placeholder="t('开始日期', 'WAF.ksrq')"
+            :end-placeholder="t('结束日期', 'WAF.jsrq')">
           </el-date-picker>
         </div>
         <div class="newClear"> 
           <el-select class="shortSelect" v-model="riskLevelVlaue" placeholder="请选择">
+            <el-option>{{t('全部风险等级', 'WAF.qbfxdj')}}</el-option>
             <el-option
               v-for="item in riskLevelOption"
               :key="item.value"
@@ -43,6 +44,7 @@
             </el-option>
           </el-select>
           <el-select class="shortSelect" v-model="actionVlaue" placeholder="请选择">
+            <el-option>{{t('全部执行动作', 'WAF.qbzxdz')}}</el-option>
             <el-option
               v-for="item in actionOption"
               :key="item.value"
@@ -51,6 +53,7 @@
             </el-option>
           </el-select>
           <el-select class="shortSelect" v-model="attackVlaue" placeholder="请选择">
+            <el-option>{{t('全部攻击类型', 'WAF.qbgjlx')}}</el-option>
             <el-option
               v-for="item in attackOption"
               :key="item.value"
@@ -58,9 +61,9 @@
               :value="item.value">
             </el-option>
           </el-select>
-          <el-input class="inputIpt" v-model="celueId" placeholder="输入策略ID"></el-input>
-          <el-input class="inputIpt" v-model="attackIP" placeholder="输入攻击源IP"></el-input>
-          <el-button class="selectBtn">查询</el-button>
+          <el-input class="inputIpt" v-model="celueId" :placeholder="t('输入策略ID', 'WAF.srclid')"></el-input>
+          <el-input class="inputIpt" v-model="attackIP" :placeholder="t('输入攻击源IP', 'WAF.srgjyip')"></el-input>
+          <el-button class="selectBtn" @click="queryLogs">{{t('查询', 'WAF.js')}}</el-button>
           <i class="el-icon-download" @click="createDownTask"></i>
         </div>
       </div>
@@ -69,22 +72,20 @@
           <i class="el-icon-setting"></i>
         </div>
         <div class="tableMian">
-          <el-table :data="tableDataBegin.slice((currentPage-1)*pageSize,currentPage*pageSize)">
-            <el-table-column prop="num" label="序号" width=""></el-table-column>
-            <el-table-column prop="attackUrl" label="被攻击网址" width=""></el-table-column>
-            <el-table-column prop="AttackIP" label="攻击源IP"></el-table-column>
-            <el-table-column prop="attackType" label="攻击类型"></el-table-column>
+          <el-table :data="tableDataBegin" :empty-text="t('暂无数据', 'WAF.zwsj')">
+            <el-table-column prop="num" :label="t('序号', 'WAF.xh')" width=""></el-table-column>
+            <el-table-column prop="attackUrl" :label="t('被攻击网址', 'WAF.bgjwz')" width=""></el-table-column>
+            <el-table-column prop="AttackIP" :label="t('攻击源IP', 'WAF.gjyip')"></el-table-column>
+            <el-table-column prop="attackType" :label="t('攻击类型', 'WAF.gjlx')"></el-table-column>
             <el-table-column prop="methedId" label="策略ID"></el-table-column>
-            <el-table-column prop="methedName" label="策略名称"></el-table-column>
-            <el-table-column prop="attackCon" label="攻击内容"></el-table-column>
-            <el-table-column prop="attackTime" label="攻击时间"></el-table-column>
-            <el-table-column prop="actionRun" label="执行动作"></el-table-column>
-            <el-table-column prop="gardenW" label="风险等级"></el-table-column>
+            <el-table-column prop="methedName" :label="t('策略名称', 'WAF.clmc')"></el-table-column>
+            <el-table-column prop="attackCon" :label="t('攻击内容', 'WAF.gjlr')"></el-table-column>
+            <el-table-column prop="attackTime" :label="t('攻击时间', 'WAF.gjsj')"></el-table-column>
+            <el-table-column prop="actionRun" :label="t('执行动作', 'WAF.zxdz')"></el-table-column>
+            <el-table-column prop="gardenW" :label="t('风险等级', 'WAF.fxdj')"></el-table-column>
             <el-table-column prop="action" label="操作" width="180">
               <template slot-scope="">
-                <el-button type="text" size="small">查看</el-button>
-                <!-- <el-button type="text" size="small" @click="handelEdit(scope.$index, scope.row)">编辑</el-button>
-                <el-button @click.native.prevent="deleteRow(scope.$index, tableDataBegin)" type="text" size="small" style="color: red;">移除</el-button> -->
+                <el-button type="text" size="small">{{t('详情', 'WAF.xq')}}</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -98,7 +99,7 @@
 import moment from "moment";
 import createDownTaskModel from '../model/createDownTaskModel'
 import { ATTACK_TYPE } from '../../constants'
-import { DESCRIBE_HOSTS } from '@/constants'
+import { DESCRIBE_HOSTS, DESCRIBE_ACCESS_LOGS } from '@/constants'
 
 export default {
   data(){
@@ -145,29 +146,16 @@ export default {
       attackOption:ATTACK_TYPE,
       celueId:'',//策略ID
       attackIP:'',//攻击源IP
-      tableDataBegin:[
-        {
-          num:'1',
-          attackUrl:'1',
-          AttackIP:'1',
-          attackType:'1',
-          methedId:'1',
-          methedName:'1',
-          attackCon:'1',
-          attackTime:'1',
-          actionRun:'1',
-          gardenW:'1',
-        }
-      ],//表格数据
-      currentPage:1,//当前页
-      pageSize:10,//每页长度
+      tableDataBegin:[],
       createDownTaskModel:false,//创建下载任务弹框
+      Context: '',
     }
   },
   components:{
-    createDownTaskModel:createDownTaskModel
+    createDownTaskModel,
   },
   mounted() {
+    this.queryLogs()
     this.axios.post(DESCRIBE_HOSTS, {
       Version: '2018-01-25',
     }).then(resp => {
@@ -177,6 +165,21 @@ export default {
     })
   },
   methods:{
+    queryLogs() {
+      const { Context } = this
+      this.axios.post(DESCRIBE_ACCESS_LOGS, {
+        Version: '2018-01-25',
+        Count: 20,
+        FromTime: '2020-02-20 00:00:00',
+        ToTime: '2020-02-20 23:59:59',
+        Context, 
+      }).then(resp => {
+        console.log(resp)
+        // this.generalRespHandler(resp, ({ HostList }) => {
+        //   this.dominOptions = HostList
+        // })
+      })
+    },
     //时间选择按钮
     choseDate(thisType){
       this.thisType=thisType;

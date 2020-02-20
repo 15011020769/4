@@ -47,3 +47,5 @@ export const DESCRIBE_SESSION = 'waf2/DescribeSession'
 export const UPSERT_SESSION = 'waf2/UpsertSession'
 /** Waf 会话定义 Delete接口 */
 export const DELETE_SESSION = 'waf2/DeleteSession'
+/** 查询访问日志 */
+export const DESCRIBE_ACCESS_LOGS = 'waf2/DescribeAccessLogs'

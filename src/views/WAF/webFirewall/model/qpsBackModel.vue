@@ -19,7 +19,7 @@
           </div>
           <div class="newClear dominPackList">
             <p>{{t('说明', 'WAF.sm')}}</p>
-            <p>{{t('一个QPS扩展包包含1000QPS（套餐有效期内，一次最多可购买500个）', 'WAF.ygqpskzbbh')}}</p>
+            <p>{{t('一个QPS扩展包包含：1000QPS（套餐有效期内，一次最多可购买500个）', 'WAF.ygqpskzbbh')}}</p>
           </div>
           <div class="newClear dominPackList">
             <p>{{t('费用', 'WAF.fy')}}</p>

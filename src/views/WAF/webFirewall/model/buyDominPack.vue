@@ -19,7 +19,7 @@
           </div>
           <div class="newClear dominPackList">
             <p>{{t('说明', 'WAF.sm')}}</p>
-            <p>{{t('每个域名包包含10个域名防护，仅支持1个一级域名；一次最多购买500个', 'WAF.mhymbbh')}}。</p>
+            <p>{{t('每个域名包包含：10个域名防护，仅支持1个一级域名；一次最多购买500个', 'WAF.mhymbbh')}}。</p>
           </div>
           <div class="newClear dominPackList">
             <p>{{t('费用', 'WAF.fy')}}</p>

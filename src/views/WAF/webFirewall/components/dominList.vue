@@ -13,7 +13,7 @@
             <el-button type="primary" :disabled="checkedWafs.length === 0" @click="del">删除</el-button>
             <span style="margin-left: 15px">{{t('一级域名套餐', 'WAF.yjymtc')}}{{package.MainDomainLimit === package.MainDomainCount ? '已用完，' : `${t('还剩余', 'WAF.hsy')}${package.MainDomainLimit - package.MainDomainCount}${t('个', 'WAF.g')}`}}
               <a @click="packageUpgradeModel" v-if="package.MainDomainLimit === package.MainDomainCount">{{t('立即升级', 'WAF.ljsj')}}</a>
-              ；{{t('子域名套餐还剩余', 'WAF.zymtchsy')}}{{package.DomainLimit - package.DomainCount}}个。</span>
+              ；{{t('子域名套餐还剩余', 'WAF.zymtchsy')}}{{package.DomainLimit && package.DomainLimit - package.DomainCount}}个。</span>
           </el-row>
         </el-col>
         <el-input :placeholder="t('支持域名、负载均衡名称、监听器名称模糊搜索', 'WAF.zcymlbkis')" v-model="keyword" class="search-input">
@@ -21,7 +21,7 @@
         </el-input>
       </el-row>
       <div class="tableList">
-        <el-table :data="domains" @selection-change="handleSelectionChange" v-loading="loading">
+        <el-table :data="domains.slice(start, end)" @selection-change="handleSelectionChange" v-loading="loading" :empty-text="t('暂无数据', 'WAF.zwsj')">
           <el-table-column
             type="selection"
             width="55">
@@ -51,12 +51,12 @@
           </el-table-column>
           <el-table-column :label="t('负载均衡（ID）', 'WAF.lbid')">
             <template slot-scope="scope">
-              <span v-if="scope.row.LoadBalancerSet.length">
+              <!-- <span v-if="scope.row.LoadBalancerSet.length">
                 {{scope.row.LoadBalancerSet[0].LoadBalancerName}}({{scope.row.LoadBalancerSet[0].LoadBalancerId}})
               </span>
               <span v-else>
                 未配置
-              </span>
+              </span> -->
             </template>
           </el-table-column>
           <el-table-column width="120">
@@ -67,12 +67,12 @@
               </el-tooltip>
             </div>
             <template slot-scope="scope">
-              <span v-if="scope.row.LoadBalancerSet.length">
+              <!-- <span v-if="scope.row.LoadBalancerSet.length">
                 {{scope.row.LoadBalancerSet[0].Vip}}
               </span>
               <span v-else>
                 未配置
-              </span>
+              </span> -->
             </template>
           </el-table-column>
           <el-table-column width="160">
@@ -83,17 +83,27 @@
               </el-tooltip>
             </div>
             <template slot-scope="scope">
-              <span v-if="scope.row.LoadBalancerSet.length">
+              <!-- <span v-if="scope.row.LoadBalancerSet.length">
                 <p v-for="lb in scope.row.LoadBalancerSet" class="ellipsis" :key="lb.ListenerName">
                   {{lb.ListenerName}}({{lb.Protocol}}:{{lb.Vport}})
                 </p>
               </span>
               <span v-else>
                 未配置
-              </span>
+              </span> -->
             </template>
           </el-table-column>
-          <el-table-column prop="logSwitch" :label="t('访问日志开关', 'WAF.logkg')">
+          <el-table-column prop="logSwitch">
+            <el-dropdown slot="header" style="padding: 0">
+              <span class="el-dropdown-link" style="color: #909399;">
+                {{t('访问日志开关', 'WAF.logkg')}}<i class="el-icon-arrow-down el-icon--right"></i>
+              </span>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item>全部</el-dropdown-item>
+                <el-dropdown-item >{{t('开启', 'WAF.open')}}</el-dropdown-item>
+                <el-dropdown-item>{{t('关闭', 'WAF.close')}}</el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
             <template slot-scope="scope">
               <el-switch
                 v-model="scope.row.ClsStatusBool"
@@ -103,7 +113,17 @@
               </el-switch>
             </template>
           </el-table-column>
-          <el-table-column prop="wafSwitch" :label="t('WAF开关', 'WAF.waflg')">
+          <el-table-column prop="wafSwitch">
+            <el-dropdown slot="header" @command="onChangeWafStatus" style="padding: 0">
+              <span class="el-dropdown-link" style="color: #909399;">
+                {{t('WAF开关', 'WAF.waflg')}}<i class="el-icon-arrow-down el-icon--right"></i>
+              </span>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item command="">全部</el-dropdown-item>
+                <el-dropdown-item command="1">{{t('开启', 'WAF.open')}}</el-dropdown-item>
+                <el-dropdown-item command="0">{{t('关闭', 'WAF.close')}}</el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
             <template slot-scope="scope">
               <el-switch
                 v-model="scope.row.StatusBool"
@@ -135,6 +155,15 @@
             </template>
           </el-table-column>
         </el-table>
+        <el-pagination
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page="currentPage"
+          :page-sizes="[1, 2, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50]"
+          :page-size="pageSize"
+          layout="total, sizes, prev, pager, next"
+          :total="total">
+        </el-pagination>
       </div>
     </div>
     <packageUpgradeModel :isShow="packageUpModelShow" @packageUpModelClose="packageUpModelClose"/>
@@ -160,20 +189,50 @@ export default {
     return {
       loading: true,
       domains: [],//表格数据
-      keyword: "",//搜索框绑定
+      keyword: '',//搜索框绑定
       checkedWafs: [],
       logSwitchValue: true,//访问日志开关
       deleteVisible: false,//删除提示框
       packageUpModelShow: false,//弹框
+      ClsStatus: '',
+      Status: '',
+      total: 0,
+      currentPage: 1,
+      pageSize: 5,
+    }
+  },
+  computed: {
+    start() {
+      return (this.currentPage - 1) * this.pageSize
+    },
+    end() {
+      return (this.currentPage - 1) * this.pageSize + this.pageSize
     }
   },
   components:{
-    packageUpgradeModel:packageUpgradeModel,//升级
+    packageUpgradeModel,//升级
+  },
+  watch: {
+    ClsStatus() {
+      this.getData()
+    },
+    Status() {
+      this.getData()
+    },
   },
   mounted(){
     this.getData()
   },
   methods:{
+    onChangeWafStatus(status) {
+      console.log(status)
+    },
+    handleCurrentChange(page) {
+      this.currentPage = page
+    },
+    handleSizeChange(size) {
+      this.pageSize = size
+    },
     enableWAF() {
       this.updateWafStatus(this.checkedWafs, true)
     },
@@ -191,7 +250,7 @@ export default {
     },
     updateClsStatus(waf, status) {
       this.loading = true
-      this.axios.post(MODIFY_HOST_ACCESS_LOG_STATUS, flatObj({
+      this.axios.post(MODIFY_HOST_ACCESS_LOG_STATUS, ({
         Version: '2018-01-25',
         Domain: waf.Domain,
         Status: Number(status),
@@ -230,18 +289,23 @@ export default {
     },
     //获取数据
     getData() {
-      this.axios.post(DESCRIBE_HOSTS, {
+      this.axios.post(DESCRIBE_HOSTS, ({
         Version: '2018-01-25',
         Search: this.keyword,
-      }).then(resp => {
-        this.generalRespHandler(resp, ({ HostList }) => {
+        // Item: {
+        //   LogStatus: this.ClsStatus,
+        //   Status: this.Status
+        // }
+      })).then(resp => {
+        this.generalRespHandler(resp, ({ HostList, TotalCount }) => {
           const domains = HostList
           domains.forEach(domain => {
             domain.StatusBool = !!domain.Status
             domain.ClsStatusBool = !!domain.ClsStatus
             domain.delDialog = false
           })
-          this.domains = domains
+          this.total = 20 //TotalCount
+          this.domains = Array.from(Array(20), (v,k) => ({DomainId: k}))
         })
       }).then(() => {
         this.loading = false
