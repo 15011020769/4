@@ -12,7 +12,7 @@
     </div>
     <!-- 表格 -->
     <div class="Table-SY">
-      <el-table :data="TbaleData" height="550" style="width: 100%" id="exportTable" v-loading="loadShow"
+      <el-table :data="TbaleData" height="550" style="width: 100%" v-loading="loadShow"
         :empty-text="$t('CVM.clBload.zwsj')">
         <el-table-column prop :label="$t('CVM.clBload.zjm') " width="120">
           <template slot-scope="scope">
@@ -54,6 +54,40 @@
         </el-pagination>
       </div>
     </div>
+
+
+
+    <div class="Table-SY" v-show="false">
+      <el-table :data="TbaleData" height="550" style="width: 100%" id="exportTable" v-loading="loadShow"
+        :empty-text="$t('CVM.clBload.zwsj')">
+        <el-table-column prop label="ID" width="120">
+          <template slot-scope="scope">
+            {{scope.row.LoadBalancerId}}
+          </template>
+        </el-table-column>
+        <el-table-column prop label="主機名" width="120">
+          <template slot-scope="scope">
+            {{ scope.row.LoadBalancerName}}
+          </template>
+        </el-table-column>
+        <el-table-column prop :label="$t('CVM.clBload.zt')">
+          <template slot-scope="scope">
+            <p :class="scope.row.Status=='1'?'green':'orange'">{{instanceStatus[scope.row.Status]}}</p>
+          </template>
+        </el-table-column>
+        <el-table-column prop label="VIP">
+          <template slot-scope="scope">
+            <p v-for="i in scope.row.LoadBalancerVips">{{i}}</p>
+          </template>
+        </el-table-column>
+        <el-table-column prop :label="$t('CVM.clBload.wllx')">
+          <template slot-scope="scope">{{LoadBalancerType[scope.row.LoadBalancerType]}}</template>
+        </el-table-column>
+        <el-table-column prop="VpcId" :label="$t('CVM.clBload.sswl')"></el-table-column>
+        <el-table-column prop="CreateTime" :label="$t('CVM.clBload.cjsj')"></el-table-column>
+      </el-table>
+    </div>
+
   </div>
 </template>
 
