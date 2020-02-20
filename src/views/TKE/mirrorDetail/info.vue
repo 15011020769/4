@@ -121,7 +121,7 @@
   </div>
 </template>
 <script>
-import { MIRROR_ROAD, MIRROR_STRATEGY, MIRROR_AUTODELELTE } from '@/constants'
+import { TKE_MIRROR_ROAD, TKE_MIRROR_STRATEGY, TKE_MIRROR_AUTODELELTE } from '@/constants'
 export default {
   data () {
     return {
@@ -204,11 +204,18 @@ export default {
       const param = {
         reponame: this.name
       }
-      this.axios.post(MIRROR_ROAD, param).then(res => {
-        if (res.code === 0) {
+      this.axios.post(TKE_MIRROR_ROAD, param).then(res => {
+        if (res.code === 0 && res.Error == undefined) {
           // console.log(res.data)
           this.server = res.data.server
           this.reponame = res.data.reponame
+        } else {
+          this.$message({
+              message: ErrorTips[res.codeDesc],
+              type: "error",
+              showClose: true,
+              duration: 0
+          })
         }
       })
     },
@@ -216,12 +223,19 @@ export default {
       const param = {
         reponame: this.name
       }
-      this.axios.post(MIRROR_AUTODELELTE, param).then(res => {
+      this.axios.post(TKE_MIRROR_AUTODELELTE, param).then(res => {
         console.log(res)
-        if (res.code === 0) {
+        if (res.code === 0 && res.Error == undefined) {
           // console.log(res.data)
           this.input1 = ''
           this.input2 = ''
+        } else {
+          this.$message({
+              message: ErrorTips[res.codeDesc],
+              type: "error",
+              showClose: true,
+              duration: 0
+          })
         }
       })
     },
@@ -237,18 +251,32 @@ export default {
         reponame: 'cstest/as'
       }
       if (this.ruleForm.input1 !== '') {
-        this.axios.post(MIRROR_STRATEGY, param).then(res => {
-          console.log(res)
-          if (res.code === 0) {
+        this.axios.post(TKE_MIRROR_STRATEGY, param).then(res => {
+          // console.log(res)
+          if (res.code === 0 && res.Error == undefined) {
             this.input1 = this.ruleForm.input1
+          } else {
+            this.$message({
+                message: ErrorTips[res.codeDesc],
+                type: "error",
+                showClose: true,
+                duration: 0
+            })
           }
         })
       }
       if (this.ruleForm.input2 !== '') {
-        this.axios.post(MIRROR_STRATEGY, param2).then(res => {
+        this.axios.post(TKE_MIRROR_STRATEGY, param2).then(res => {
           console.log(res)
-          if (res.code === 0) {
+          if (res.code === 0 && res.Error == undefined) {
             this.input2 = this.ruleForm.input2
+          } else {
+            this.$message({
+                message: ErrorTips[res.codeDesc],
+                type: "error",
+                showClose: true,
+                duration: 0
+            })
           }
         })
       }

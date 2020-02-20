@@ -4,7 +4,7 @@
     <div class="explain">
       <p>
         {{$t('CAM.userList.mesgPeople')}}
-        <a href="#" style="color:#006eff;"> {{$t('CAM.userList.selfCreate')}}</a>{{$t('CAM.userList.selfCreates')}}
+        <span @click="$router.push('/adduserlist') " style="color:#006eff;cursor: pointer;"> {{$t('CAM.userList.selfCreate')}}</span>{{$t('CAM.userList.selfCreates')}}
       </p>
     </div>
     <div class="adduser-main">

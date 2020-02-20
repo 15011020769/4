@@ -39,3 +39,13 @@ export const DESCRIBE_AREABAN_AREAS = 'waf2/DescribeAreaBanAreas'
 export const DESCRIBE_AREABAN_SUPPORT_AREAS = 'waf2/DescribeAreaBanSupportAreas'
 /** 获取自定义策略列表 */
 export const DESCRIBE_CUSTOM_RULES = 'waf2/DescribeCustomRules'
+/** Waf CC V2 Query接口 */
+export const DESCIRBE_CCRULE = 'waf2/DescirbeCCRule'
+/** Waf 会话定义查询接口 */
+export const DESCRIBE_SESSION = 'waf2/DescribeSession'
+/** Waf 会话定义 Upsert接口 */
+export const UPSERT_SESSION = 'waf2/UpsertSession'
+/** Waf 会话定义 Delete接口 */
+export const DELETE_SESSION = 'waf2/DeleteSession'
+/** 查询访问日志 */
+export const DESCRIBE_ACCESS_LOGS = 'waf2/DescribeAccessLogs'

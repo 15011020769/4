@@ -18,12 +18,12 @@
             <li @click="getDetail()" class="li-one" :style="{fontWeight:this.dataObject.flag==2?'700':''}">
               镜像详情<div :class="[this.dataObject.flag == 2?'bottom-one':'']" :style="{width:this.dataObject.flag==2?'78px':'0'}" ></div>
             </li>
-            <li @click="getBuild()" class="li-one" :style="{fontWeight:this.dataObject.flag==3?'700':''}">
+            <!-- <li @click="getBuild()" class="li-one" :style="{fontWeight:this.dataObject.flag==3?'700':''}">
               镜像构建<div :class="[this.dataObject.flag == 3?'bottom-one':'']" :style="{width:this.dataObject.flag==3?'78px':'0'}"></div>
             </li>
             <li @click="getTouch()" class="li-one" :style="{fontWeight:this.dataObject.flag==4?'700':''}">
               触发器<div :class="[this.dataObject.flag == 4?'bottom-one':'']" :style="{width:this.dataObject.flag==4?'78px':'0'}"></div>
-            </li>
+            </li> -->
         </ul>
     </div>
     <div class="room">

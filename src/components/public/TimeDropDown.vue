@@ -155,11 +155,14 @@
           Basis = 'realTime'
         } else if (endTime.diff(startTime, 'd') <= 1 && this.Difference == 'H') {
           Basis = 'Nearly_24_hours'
+        } else if ((endTime.diff(startTime, 'd') <= 6 && this.Difference == 'H') || (endTime.diff(startTime, 'd') > 6 &&
+            this.Difference == 'H')) {
+          Basis = 'Nearly_7_days'
         } else if (endTime.diff(startTime, 'd') <= 1 && this.Difference == 'D') {
           Basis = 'Today'
-        } else if (endTime.diff(startTime, 'd') <= 6) {
+        } else if (endTime.diff(startTime, 'd') <= 6 && this.Difference == 'D') {
           Basis = 'Nearly_7_days'
-        } else if (endTime.diff(startTime, 'd') <= 29) {
+        } else if (endTime.diff(startTime, 'd') <= 29 && this.Difference == 'D') {
           Basis = 'Nearly_30_days'
         }
         this.TimeArr.forEach(item => {

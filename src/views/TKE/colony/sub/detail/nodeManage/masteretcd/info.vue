@@ -1,14 +1,14 @@
- <!-- Master&Etcd-基本信息 -->
+ <!-- 节点-基本信息 -->
 <template>
   <div class="colony-main">
     <div class="tke-card tke-formpanel-wrap">
       <h4  class="tke-formpanel-title">主机信息</h4>
       <el-form  class="tke-form" label-position='left' label-width="120px" size="mini">
         <el-form-item label="节点ID">
-          <div class="tke-form-item_text"><span class="tke-text-link">	ins-5ic5rvb2</span></div>
+          <div class="tke-form-item_text"><span class="tke-text-link">{{detail.InstanceId}}</span></div>
         </el-form-item>
         <el-form-item label="状态">
-          <div class="tke-form-item_text"><span class="text-green">健康</span></div>
+          <div class="tke-form-item_text"><span class="text-green"></span></div>
         </el-form-item>
         <el-form-item label="地域">
           <div class="tke-form-item_text">港澳台地区(中国台北)</div>
@@ -18,22 +18,22 @@
         </el-form-item>
         <el-form-item label="配置">
           <div class="tke-form-item_text">
-            <span class="text-gray">CPU:</span> 1 核，
-            <span class="text-gray">内存:</span> 1 GB，
+            <span class="text-gray">CPU:</span> {{detail.CPU}} 核，
+            <span class="text-gray">内存:</span> {{detail.Memory}} GB，
             <span class="text-gray">带宽:</span> 1 Mbps，
-            <span class="text-gray">系统盘:</span> 50 GB(高性能云硬盘)</div>
+            <span class="text-gray">系统盘:</span> {{detail.SystemDisk.DiskSize}} GB(高性能云硬盘)</div>
         </el-form-item>
         <el-form-item label="IP地址">
           <div class="tke-form-item_text">
-            <p>175.97.136.110 (外网)</p>
-            <p>10.0.128.8 (内网)</p>
+            <p>{{detail.PrivateIpAddresses[0]}} (外网)</p>
+            <p>{{detail.PublicIpAddresses[0]}} (内网)</p>
           </div>
         </el-form-item>
         <el-form-item label="操作系统">
-          <div class="tke-form-item_text">Ubuntu 16.04.1 LTS</div>
+          <div class="tke-form-item_text">{{detail.OsName}}</div>
         </el-form-item>
         <el-form-item label="创建时间">
-          <div class="tke-form-item_text">2020-01-10 14:15:05</div>
+          <div class="tke-form-item_text">{{detail.addTime}}</div>
         </el-form-item>
       </el-form>
     </div>
@@ -90,10 +90,10 @@ import FileSaver from "file-saver";
 import XLSX from "xlsx";
 import { ALL_CITY } from "@/constants";
 export default {
-  name: "masteretcdDetailInfo",
+  name: "nodeDetailInfo",
   data() {
     return {
-      
+      detail: {}
     };
   },
   components: {
@@ -101,7 +101,8 @@ export default {
   },
   created() {
      // 从路由获取类型
-   
+    this.detail = this.$route.query.detail;
+    console.log("detail",this.detail);
   },
   methods: {
    

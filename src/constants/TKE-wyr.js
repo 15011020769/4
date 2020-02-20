@@ -34,6 +34,35 @@ export const TKE_DELETE_FAVOR = 'ccr/DeleteFavor'
 // DockerHub列表
 export const TKE_DOCKERHUB_LIST = 'ccr/GetDockerHubRepositoryList'
 
+// 添加收藏
+export const TKE_ADD_FAVOR = 'ccr/AddFavor'
+
+// 获取DockerHub基本信息
+export const TKE_DOCKERHUB_INFO = 'ccr/GetDockerHubRepositoryInfo'
+
+// 获取DockerHub详细描述
+export const TKE_DOCKERHUB_TAGLIST = 'ccr/GetDockerHubTagList'
+
+// 获取公有收藏
+export const TKE_GET_REPOSITORY_LIST = 'ccr/GetRepositoryList'
+
+// 获取镜像版本列表
+export const TKE_GET_TAGLIST = 'ccr/GetTagList'
+
+// 镜像版本使用指引
+export const TKE_MIRROR_ROAD = 'ccr/GetTagList'
+
+// 保留镜像自动
+export const TKE_MIRROR_STRATEGY = 'ccr/SetAutoDelStrategy'
+
+// 删除镜像自动
+export const MIRROR_AUTODELELTE = 'ccr/closeAutoDelStrategy'
+
+
+
+
+
+
 
 
 

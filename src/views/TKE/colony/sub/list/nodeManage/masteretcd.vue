@@ -33,7 +33,7 @@
             label="ID/节点名"
             >
             <template slot-scope="scope">
-              <span @click="goMasteretcdDetail()" class="tke-text-link" >{{scope.row.InstanceId}}</span>
+              <span @click="goMasteretcdDetail(scope.row)" class="tke-text-link" >{{scope.row.InstanceId}}</span>
               <p>{{scope.row.InstanceName}}</p>
             </template>
           </el-table-column>
@@ -217,11 +217,13 @@ export default {
       }
     },
      // 详情
-    goMasteretcdDetail(){
+    goMasteretcdDetail(row){
       this.$router.push({
           name: "masteretcdDetail",
           query: {
-            clusterId: this.clusterId
+            clusterId: this.clusterId,
+            node: row.PrivateIpAddresses[0],
+            detail: row
           }
       });
     },

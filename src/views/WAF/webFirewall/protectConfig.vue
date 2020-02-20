@@ -1,21 +1,21 @@
 <template>
   <div class="container">
     <div class="editTitle">
-      <i class="el-icon-back" @click="backListDomin"></i>防护设置
+      <i class="el-icon-back" @click="backListDomin"></i>{{t('防护设置', 'WAF.fhsz')}}
       <el-select v-model="selectedDomainId" class="domainList">
         <el-option v-for="item in domainList" :value="item.DomainId" :label="item.Domain" :key="item.DomainId"></el-option>
       </el-select>
     </div>
     <div class="tabs">
       <el-tabs v-model="activeName" @tab-click="handleClick">
-        <el-tab-pane label="基础设置" name="first">
+        <el-tab-pane :label="t('基础设置', 'WAF.jcsz')" name="first">
           <basicSettings :domain="domain" @change="changeDomain" />
         </el-tab-pane>
-        <el-tab-pane label="自定义策略" name="second">
-          <customStrategy/>
+        <el-tab-pane :label="t('自定义策略', 'WAF.zdycl')" name="second">
+          <customStrategy :domain="domain" />
         </el-tab-pane>
-        <el-tab-pane label="CC防护设置2.0" name="third">
-          <ccProtectSet/>
+        <el-tab-pane :label="t('CC防护设置2.0', 'WAF.ccsz')" name="third">
+          <ccProtectSet :domain="domain" />
         </el-tab-pane>
       </el-tabs>
     </div>
@@ -30,6 +30,7 @@ import { DESCRIBE_HOSTS } from '@/constants'
 import { ErrorTips } from "@/components/ErrorTips"
 import { COMMON_ERROR } from '../constants'
 
+let loading
 export default {
   data(){
     return{
@@ -44,17 +45,24 @@ export default {
     customStrategy,
     ccProtectSet,
   },
+  watch: {
+    async selectedDomainId(n) {
+      loading = this.$loading()
+      const domain = await this.getDomains(n)
+      this.setDomain(domain[0])
+    }
+  },
   async mounted() {
     const { domainId } = await this.$route.query
     this.selectedDomainId = domainId
     const domainList = await this.getDomains() // 查询所有域名 下拉框
     const currDomain = domainList.find(domain => domain.DomainId === domainId)
     this.domainList = domainList
-    this.setDomain(currDomain)
+    // this.setDomain(currDomain)
   },
   methods:{
     async changeDomain() {
-      const domain = await getDomains(this.domain.DomainId)
+      const domain = await this.getDomains(this.domain.DomainId)
       this.setDomain(domain[0])
     },
     setDomain(currDomain) {
@@ -62,6 +70,7 @@ export default {
         ...currDomain,
         statusBool: !!currDomain.Status
       }
+      loading && loading.close()
     },
     async getDomains(domainId) {
       const res = await this.axios.post(DESCRIBE_HOSTS, {

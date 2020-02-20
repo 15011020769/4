@@ -456,6 +456,12 @@ export default {
         .post(DELETE_USER, params)
         .then(data => {
           if (data.Response.Error === undefined) {
+            this.$message({
+              message: '删除成功',
+              type: "success",
+              showClose: true,
+              duration: 0
+            });
             this.$router.push("/UserListNew");
           } else {
             let ErrTips = {
@@ -484,9 +490,9 @@ export default {
               console.log(res);
             });
         });
-      this.ploicyData(); //获取策略数据
-      this.groupListData();
-      this.delDialog = false;
+      // this.ploicyData(); //获取策略数据
+      // this.groupListData();
+      // this.delDialog = false;
     },
     deleteUser() {
       this.delDialog = true;

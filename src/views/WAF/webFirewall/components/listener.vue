@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <span class="tip">防护域名必须和负载均衡监听器进行绑定，才能对监听器中添加域名的HTTP或HTTPS流量进行防护。前往负载均衡</span>
+    <span class="tip">{{t('防护域名必须和负载均衡监听器进行绑定，才能对监听器中添加域名的HTTP或HTTPS流量进行防护', 'WAF.fhymlb')}}。</span>
     <el-row type="flex" class="col">
       <el-col :span="3">
         <label class="label">地域</label>
@@ -11,25 +11,25 @@
     </el-row>
     <el-row type="flex" class="col">
       <el-col :span="3">
-        <label class="label">负载均衡 - 监听器</label>
+        <label class="label">{{t('负载均衡 - 监听器', 'WAF.lblis')}}</label>
       </el-col>
       <el-col>
-        <el-input class="lb-input" placeholder="请选择负载均衡实例" />
+        <el-input class="lb-input" :placeholder="t('请选择负载均衡实例', 'WAF.xzlbi')" />
           <ul class="lb-container">
             <li v-for="item in clbs" :key="item.LoadBalancerId">
               <p>
                 <span>{{item.LoadBalancerName}}（{{item.LoadBalancerId}}）</span>
                 <el-button type="text" @click="openListenDialog(item)">
                   <span v-if="item.checkedListeners.length">
-                    重新选择
+                    {{t('重新选择', 'WAF.resel')}}
                   </span>
                   <span v-else>
-                    选择监听器
+                    {{t('选择监听器', 'WAF.sellis')}}
                   </span>
                 </el-button>
               </p>
               <p class="selcted ellipsis">
-                已选择{{item.checkedListeners.length}}个
+                {{t('已选择', 'WAF.yxz')}}{{item.checkedListeners.length}}个
                 <span v-if="item.checkedListeners.length">
                   : {{item.checkedListeners.map(checkedListener => checkedListener.ListenerName).join('，')}}
                 </span>
@@ -46,14 +46,14 @@
       </el-col>
     </el-row>
     <el-dialog
-      title="选择监听器"
+      :title="t('选择监听器', 'WAF.sellis')"
       :visible.sync="dialogVisible"
       @close="beforeClose"
       width="840px"
     >
       <el-row type="flex" :gutter="10" class="dialog-container">
         <el-col>
-          <el-input class="listener-input" v-model="keyword" placeholder="请输入关键字" />
+          <el-input class="listener-input" v-model="keyword" :placeholder="t('请输入关键字', 'WAF.qsrgjz')" />
           <ul class="listener-container">
             <li v-for="item in listeners" :key="item.ListenerId">
               <label>
@@ -89,7 +89,7 @@
         </el-col>
       </el-row>
       <el-row class="dialog-footer">
-        <el-button size="small" type="primary" @click="confirm">确 定</el-button>
+        <el-button size="small" type="primary" @click="confirm">{{t('确 定', 'WAF.qd')}}</el-button>
       </el-row>
     </el-dialog>
   </div>
@@ -203,7 +203,7 @@ export default {
           })
         } else {
           this.$message({
-            message: `${this.domain.DomainId ? '编辑' : '添加'}成功`,
+            message: `${this.domain.DomainId ? this.t('编辑', 'WAF.bj') : '添加'}成功`,
             type: "success",
             showClose: true,
             duration: 0

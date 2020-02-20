@@ -4,7 +4,7 @@
       <el-col :span="3">
         <label class="label">
           域名
-          <el-tooltip class="item" effect="dark" content="旗舰版支持泛域名" placement="right">
+          <el-tooltip class="item" effect="dark" :content="t('旗舰版支持泛域名', 'WAF.qjbzcfym')" placement="right">
             <i class="el-icon-info"></i>
           </el-tooltip>
         </label>
@@ -31,7 +31,7 @@
           <el-radio :label="0">否</el-radio>
           <el-radio :label="1">是</el-radio>
         </el-radio-group>
-        <p class="tip">是否已使用了高防、CDN、雲加速等代理？</p>
+        <p class="tip">{{t('是否已使用了高防、CDN、云加速等代理', 'WAF.iscdn')}}？</p>
       </el-col>
     </el-row>
     <el-row type="flex" class="col">

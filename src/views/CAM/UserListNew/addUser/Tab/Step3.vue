@@ -10,6 +10,7 @@
             v-model="policyInp"
             class="input-with-select"
             @change="_policySearch"
+            clearable
           >
             <el-button slot="append" icon="el-icon-search" @click="_policySearch"></el-button>
           </el-input>

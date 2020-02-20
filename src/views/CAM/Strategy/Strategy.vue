@@ -33,6 +33,7 @@
             size="small"
             v-model="searchValue"
             @change="toQuery"
+            clearable
           >
             <i slot="suffix" class="el-input__icon el-icon-search" @click="toQuery"></i>
           </el-input>
@@ -100,19 +101,19 @@
       </div>
     </div>
     <!-- 关联用户/用户组 模态窗 -->
-    <el-dialog title :visible.sync="dialogVisible" width="72%">
+    <el-dialog title :visible.sync="dialogVisible" width="72%" :before-close="beforeClose">
       <h3 style="color:#000;margin-bottom:20px;">{{$t('CAM.strategy.straGroup')}}</h3>
       <div class="dialog_div">
+          <!-- v-if="transferFlag" -->
         <transfer
-          v-if="transferFlag"
           ref="userTransfer"
           :PolicyId="policyId"
-          :userArr="userArr"
-          :groupArr="groupArr"
         ></transfer>
+          <!-- :userArr="userArr"
+          :groupArr="groupArr" -->
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button size="mini" @click="dialogVisible = false">取 消</el-button>
+        <el-button size="mini" @click="dialogVisible=false">取 消</el-button>
         <el-button size="mini" type="primary" @click="attachPolicy">{{$t('CAM.userList.suerAdd')}}</el-button>
       </span>
     </el-dialog>
@@ -165,7 +166,7 @@ export default {
       table_value: "",
       tableTitle: "服務類型",
       dialogVisible: false,
-      policyId: "", // 策略Id
+      policyId: "0", // 策略Id
       transferFlag: false, //模态框强制刷新flag
       pageSize: 10,
       choiceNum: 0,
@@ -175,8 +176,11 @@ export default {
       pagesize: 10,
       currpage: 1,
       loading: true,
-      userArr: [],
-      groupArr: []
+      // userArr: [],
+      // groupArr: [],
+      // entitiesForPolicyPage: 1,
+      // entitiesForPolicyRp: 200,
+      // entitiesForPolicy: [],
     };
   },
   created() {
@@ -261,47 +265,63 @@ export default {
     },
     // 关联用户/用户组（展现模态框）
     handleClick_user(policy) {
-      this.policyId = policy.PolicyId;
+      console.log(policy)
       this.transferFlag = false;
       this.$nextTick(() => {
+      this.policyId = policy.PolicyId;
         this.transferFlag = true;
       });
-      this.getAttachPolicys(policy.PolicyId);
+      // this.getAttachPolicys(policy.PolicyId);
       this.dialogVisible = true;
     },
-    // 获取策略关联的实体列表
-    getAttachPolicys(val) {
-      const params = {
-        Version: "2019-01-16",
-        PolicyId: val
-      };
-      var userArr = [];
-      var groupArr = [];
-      this.axios.post(LIST_ENPOLICY, params).then(res => {
-        if (res.Response.Error === undefined) {
-          res.Response.List.forEach(item => {
-            if (item.RelatedType == 1) {
-              userArr.push(item);
-            } else {
-              groupArr.push(item);
-            }
-          });
-          this.userArr = userArr;
-          this.groupArr = groupArr;
-        } else {
-          let ErrTips = {
-            "ResourceNotFound.UserNotExist": "用戶不存在"
-          };
-          let ErrOr = Object.assign(ErrorTips, ErrTips);
-          this.$message({
-            message: ErrOr[res.Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-          });
-        }
-      });
+    beforeClose(done) {
+      // this.userArr = [];
+      // this.groupArr = [];
+      done()
     },
+    // // 获取策略关联的实体列表
+    // getAttachPolicys(val) {
+    //   const params = {
+    //     Version: "2019-01-16",
+    //     PolicyId: val,
+    //     Page: this.entitiesForPolicyPage,
+    //     Rp: this.entitiesForPolicyRp,
+    //   };
+    //   var userArr = [];
+    //   var groupArr = [];
+    //   this.axios.post(LIST_ENPOLICY, params).then(res => {
+    //     if (res.Response.Error === undefined) {
+    //       if (res.Response.List) {
+    //         this.entitiesForPolicy = this.entitiesForPolicy.concat(res.Response.List)
+    //         if (this.entitiesForPolicy.length != res.Response.TotalNum) {
+    //           this.entitiesForPolicyPage += 1
+    //           this.getAttachPolicys(val)
+    //         } else {
+    //           this.entitiesForPolicy.forEach(item => {
+    //             if (item.RelatedType == 1) {
+    //               userArr.push(item);
+    //             } else {
+    //               groupArr.push(item);
+    //             }
+    //           })
+    //             this.userArr = this.userArr.concat(userArr);
+    //             this.groupArr = this.userArr.concat(groupArr);
+    //         }
+    //       }
+    //     } else {
+    //       let ErrTips = {
+    //         "ResourceNotFound.UserNotExist": "用戶不存在"
+    //       };
+    //       let ErrOr = Object.assign(ErrorTips, ErrTips);
+    //       this.$message({
+    //         message: ErrOr[res.Response.Error.Code],
+    //         type: "error",
+    //         showClose: true,
+    //         duration: 0
+    //       });
+    //     }
+    //   });
+    // },
     // 穿梭框：value右侧框值、direction操作、movedKeys移动值
     handleChange(value, direction, movedKeys) {
       this.transfer_data_right = value;

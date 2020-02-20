@@ -138,7 +138,7 @@ export default {
         limit: 1
       }
       this.axios.post(TKE_MIRROR_LIST, param).then(res => {
-        if (res.code === 0) {
+        if (res.code == 0 && res.Error == undefined) {
           this.name = res.data.repoInfo[0].reponame
           this.form.region = res.data.repoInfo[0].public.toString()
           this.forminput.textarea = res.data.repoInfo[0].description

@@ -225,7 +225,7 @@ export default {
       ],
       //访问方式
       visitType: false,
-      typeIndex: 0,
+      typeIndex: 1,
       pwdInp: false, //密码框
       ruleForm: {
         loginRadio: true, //登录保护

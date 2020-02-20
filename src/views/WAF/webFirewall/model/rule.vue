@@ -17,9 +17,12 @@
     <el-form-item
       prop="Strategies"
       label="匹配条件"
+      :rules="[
+        { required: true, message: '匹配条件不能为空' },
+      ]"
     >
       <el-table :data="form.Strategies" class="strategies-table">
-        <el-table-column label="匹配字段" width="130">
+        <el-table-column label="匹配字段" width="160">
           <template slot-scope="scope">
             <el-select v-model="scope.row.Field" popper-class="small" class="small" @change="matchKey => onChangeMatchKey(matchKey, scope)">
               <el-option
@@ -32,9 +35,9 @@
             </el-select>
           </template>
         </el-table-column>
-        <el-table-column label="匹配参数" width="150">
+        <el-table-column label="匹配参数" width="180">
           <template slot-scope="scope">
-            <el-input v-if="MATCH_KEY[scope.row.Field].param" v-model="scope.row.Arg" placeholder="请输入参数值，不填默认全部" />
+            <el-input v-if="MATCH_KEY[scope.row.Field].param" v-model="scope.row.Arg" placeholder="请输入参数值，不填默认全部" class="small" />
             <span v-else>
               此字段不支持参数选择
             </span>
@@ -78,7 +81,13 @@
         <el-button type="text" size="small" @click="addStrategy" :disabled="selectedMatchKeys.length > 4">添加</el-button> <span class="sub-text">还可以添加{{5 - selectedMatchKeys.length}}条，最多5条</span>
       </el-row>
     </el-form-item>
-    <el-form-item label="执行动作">
+    <el-form-item
+      label="执行动作"
+      prop="ActionType"
+      :rules="[
+        { required: true, message: '执行动作不能为空' },
+      ]"
+    >
        <el-select v-model="form.ActionType" placeholder="请选择">
           <el-option
             v-for="item in POLICY_RULE_ACTION_ARR"
@@ -87,17 +96,44 @@
             :value="item.value"
           >
           </el-option>
-        </el-select>
+        </el-select><span class="sub-text"> 放行规则优先于其他匹配操作执行</span>
+        <el-checkbox-group v-model="Bypass" class="bypass">
+          <el-checkbox label="geoip">继续执行地域封禁防护</el-checkbox>
+          <el-checkbox label="cc">继续执行CC策略防护</el-checkbox>
+          <el-checkbox label="owasp">继续执行WEB应用防护</el-checkbox>
+          <el-checkbox label="ai">继续执行AI引擎防护</el-checkbox>
+          <el-checkbox label="antileakage">继续执行信息防泄漏防护</el-checkbox>
+        </el-checkbox-group>
     </el-form-item>
-    <el-form-item label="截止时间">
+    <el-form-item
+      label="截止时间"
+      prop="ExpireTime"
+      :rules="[
+        { required: true, message: '截止时间不能为空' },
+      ]"
+    >
        <el-select v-model="form.ExpireTime" placeholder="请选择">
         <el-option label="永久生效" value="0"></el-option>
-        <el-option label="限定时间" value="0"></el-option>
-      </el-select>
+        <el-option label="限定日期" value="0"></el-option>
+      </el-select>&nbsp;
+      <el-date-picker
+        v-model="ExpireTimeDay"
+        type="date"
+        placeholder="选择日期">
+      </el-date-picker>&nbsp;
+      <el-tooltip placement="right-end" content="截止日期为 选中日期 当天24:00点之前" effect="light">
+        <i class="el-icon-info"></i>
+      </el-tooltip>
     </el-form-item>
-    <el-form-item label="优先级">
+    <el-form-item
+      label="优先级"
+      prop="SortId"
+      :rules="[
+        { required: true, message: '优先级不能为空' },
+      ]"
+    >
       <el-input-number v-model="form.SortId" :min="1" :max="100"></el-input-number>
-      <p class="sub-text">请输入1~100的整数，数字越小，代表这条规则的执行优先级越高"</p>
+      <p class="sub-text">请输入1~100的整数，数字越小，代表这条规则的执行优先级越高</p>
     </el-form-item>
     <el-form-item>
       <el-button type="primary" @click="onSubmit">添加</el-button>
@@ -107,6 +143,7 @@
 </template>
 <script>
 import { POLICY_RULE_ACTION_ARR, MATCH_KEY_ARR, MATCH_KEY, LOGIC_SYMBOL_ARR } from '../../constants'
+const DEFAULT_MATCH_KEY_Field = 'IP'
 
 export default {
   props: {
@@ -118,7 +155,8 @@ export default {
         return {
           Name: '',
           Strategies: [{
-            Field: 'IP'
+            Field: DEFAULT_MATCH_KEY_Field,
+            CompareFunc: MATCH_KEY[DEFAULT_MATCH_KEY_Field].symbol[0]
           }]
         }
       }
@@ -141,6 +179,8 @@ export default {
     return {
       form: this.rule,
       selectedMatchKeys: [],
+      Bypass: [],
+      ExpireTimeDay: new Date(),
       matchKeys: [MATCH_KEY_ARR],
       POLICY_RULE_ACTION_ARR,
       MATCH_KEY,
@@ -153,6 +193,8 @@ export default {
   methods: {
     onChangeMatchKey(matchKey, { $index }) {
       this.selectedMatchKeys.splice($index, 1, matchKey)
+      const strategy = this.form.Strategies.find((_, i) => i === $index)
+      strategy.CompareFunc = MATCH_KEY[strategy.Field].symbol[0]
     },
     onSubmit() {
       this.$refs.form.validate((valid) => {
@@ -168,7 +210,8 @@ export default {
       const matchkeys = MATCH_KEY_ARR.filter(({ value }) => !this.selectedMatchKeys.includes(value))
       this.selectedMatchKeys.push(matchkeys[0].value)
       this.form.Strategies.push({
-        Field: matchkeys[0].value
+        Field: matchkeys[0].value,
+        CompareFunc: MATCH_KEY[matchkeys[0].value].symbol[0]
       })
     },
     delStrategy(index) {
@@ -180,6 +223,7 @@ export default {
       this.matchKeys = this.selectedMatchKeys.map(selectedMatchKeyValue => {
         return MATCH_KEY_ARR.filter(({ value }) => value === selectedMatchKeyValue || !this.selectedMatchKeys.includes(value))
       })
+
     },
     close() {
       this.$emit('update:visible', false)
@@ -213,15 +257,23 @@ export default {
   }
   ::v-deep {
     .el-select-dropdown__item, .el-input__inner {
-    font-size: 12px !important;
-  
+      font-size: 12px !important;
     }
   }
 }
 .content-input {
-  padding-bottom: 20px;
+  // padding-bottom: 20px;
   ::v-deep .el-form-item__error {
     position: static;
+  }
+}
+.bypass {
+  ::v-deep .el-checkbox+.el-checkbox {
+    margin-left: 10px;
+  }
+  ::v-deep .el-checkbox__label {
+    font-size: 12px;
+    font-weight: normal;
   }
 }
 </style>

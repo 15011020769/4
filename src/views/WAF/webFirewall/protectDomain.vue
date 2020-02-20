@@ -2,13 +2,13 @@
   <div class="container">
     <div class="editTitle">
       <p class="title">
-      <i class="el-icon-back" @click="backListDomin"></i>{{domainId ? '编辑' : '新增'}}域名
+      <i class="el-icon-back" @click="backListDomin"></i>{{domainId ? t('编辑', 'WAF.bj') : '新增'}}域名
       </p>
       <div class="main">
         <div class="head">
           <el-steps :active="active" finish-status="success" simple>
-            <el-step title="输入域名" ></el-step>
-            <el-step title="选择监听器" ></el-step>
+            <el-step :title="t('输入域名', 'WAF.srym')" ></el-step>
+            <el-step :title="t('选择监听器', 'WAF.xzjtq')" ></el-step>
           </el-steps>
         </div>
         <domain @next="next" :domain.sync="domain" v-if="active === 1" />

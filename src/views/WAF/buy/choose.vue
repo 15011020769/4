@@ -2,7 +2,7 @@
   <div>
     <div class="topHedaer">
       <div class="mainHedaer">
-        Web应用防火墙
+        Web{{t('应用防火墙', 'WAF.yyfhq')}}
       </div>
     </div>
     <div class="wrapper">
@@ -11,102 +11,103 @@
         <div class="chooseList newClear bodertOP">
           <div class="listLabel">地域</div>
           <div class="listCon">
-            <el-button class="taibei">台湾台北</el-button>
+            <el-button class="taibei">{{t('台湾台北', 'WAF.tb')}}</el-button>
           </div>
         </div>
         <div class="chooseList newClear">
           <div class="listLabel">套餐</div>
           <div class="listCon">
             <el-button-group class="btnGroup">
-              <el-button @click="taocan(1)" :class="thisType=='1'?'addColor':''">高级版</el-button>
-              <el-button @click="taocan(2)" :class="thisType=='2'?'addColor':''">企业版</el-button>
-              <el-button @click="taocan(3)" :class="thisType=='3'?'addColor':''">旗舰版</el-button>
+              <el-button @click="taocan(1)" :class="thisType=='1'?'addColor':''">{{t('高级版', 'WAF.gjb')}}</el-button>
+              <el-button @click="taocan(2)" :class="thisType=='2'?'addColor':''">{{t('企业版', 'WAF.qyb')}}</el-button>
+              <el-button @click="taocan(3)" :class="thisType=='3'?'addColor':''">{{t('旗舰版', 'WAF.qjb')}}</el-button>
             </el-button-group>
             <div v-if="thisType=='1'" class="pList">
-              <p class="tipColr">适用于中小非业务网站的标准防护，基于AI+规则引擎；</p>
-              <p>支持常见的Web攻击防护，包括SQL注入、XSS、Webshell上传、目录遍历等；</p>
-              <p>云端自动更新Web 0 day漏洞的防护规则；</p>
-              <p>支持HTTP(80、8080端口)、HTTPS(443、8443端口)的业务防护；</p>
-              <p>支持高级CC攻击防护，过滤垃圾访问；</p>
-              <p>支持网页防篡改，敏感数据防泄漏；</p>
-              <p>支持按地域细粒度封禁；</p>
-              <p>正常业务请求QPS:2500；</p>
-              <p>CC防护峰值QPS:30000；</p>
-              <p>支持一级域名个数：2；</p>
-              <p>支持二级域名个数：20；</p>
-              <p>业务宽带（云外/云内）：10Mbps/200Mbps；</p>
+              <p class="tipColr">{{t('适用于中小非业务网站的标准防护，', 'WAF.tt0')}}{{t('基于AI + 规则双引擎防护；', 'WAF.ttjyaijgz1')}}</p>
+              <p>{{t('支持常见的Web攻击防护，包括SQL注入、XSS、Webshell上传、目录遍历等；', 'WAF.tt01')}}</p>
+              <p>{{t('云端自动更新Web 0 day漏洞的防护规则；', 'WAF.tt02')}}</p>
+              <p>{{t('支持HTTP(80、8080端口)、HTTPS(443、8443端口)的业务防护；', 'WAF.tt03')}}</p>
+              <p>{{t('支持高级CC攻击防护，过滤垃圾访问；', 'WAF.tt04')}}</p>
+              <p>{{t('支持网页防篡改，敏感数据防泄漏；', 'WAF.tt05')}}</p>
+              <p>{{t('支持按地域细粒度封禁；', 'WAF.tt06')}}</p>
+              <p>{{t('正常业务请求QPS:2500；', 'WAF.tt07')}}</p>
+              <p>{{t('CC防护峰值QPS:30000；', 'WAF.tt08')}}</p>
+              <p>{{t('支持一级域名个数：2；', 'WAF.tt09')}}</p>
+              <p>{{t('支持二级域名个数：20；', 'WAF.tt010')}}</p>
+              <p>{{t('业务宽带（云外/云内）', 'WAF.ywkp')}}：10Mbps/200Mbps；</p>
             </div>
             <div v-if="thisType=='2'" class="pList">
-              <p class="tipColr">适用于中小型普通业务站点及中大型官网站点定制化防护服务，基于AI+规则引擎；</p>
-              <p>包含高级版所有功能；</p>
-              <p>支持链路劫持检测（5个）；</p>
-              <p>支持高级BOT行为管理；</p>
-              <p>支持非标准端口（不限于80，8080，443，8443）定制（10个）；</p>
-              <p>支持HTTP协议级别自定义规则；</p>
-              <p>独享IP防护；</p>
-              <p>支持防御规则化专家服务；</p>
-              <p>支持1对1售前售后支持；</p>
-              <p>正常业务请求QPS：5000；</p>
-              <p>CC防护峰值QPS:150000；</p>
-              <p>支持一级域名个数：3；</p>
-              <p>支持二级域名个数：30；</p>
-              <p>业务宽带（云外/云内）：30Mbps/200Mbps；</p>
+              <p class="tipColr">{{t('适用于中小型普通业务站点及中大型官网站点定制化防护服务，', 'WAF.syyzxqy')}}{{t('基于AI + 规则双引擎防护；', 'WAF.ttjyaijgz1')}}</p>
+              <p>{{t('包含高级版所有功能；', 'WAF.tt1')}}</p>
+              <p>{{t('支持链路劫持检测（5个）；', 'WAF.tt12')}}</p>
+              <p>{{t('支持高级BOT行为管理；', 'WAF.tt13')}}</p>
+              <p>{{t('支持非标准端口（不限于80,8080,443，8443）定制（10个）；', 'WAF.tt14')}}</p>
+              <p>{{t('支持HTTP协议级别自定义规则；', 'WAF.tt15')}}</p>
+              <p>{{t('独享IP防护；', 'WAF.tt16')}}</p>
+              <p>{{t('支持防御规则优化专家服务；', 'WAF.tt17')}}</p>
+              <p>{{t('支持1对1售前售后支持；', 'WAF.tt18')}}</p>
+              <p>{{t('正常业务请求QPS:5000；', 'WAF.tt19')}}</p>
+              <p>{{t('CC防护峰值QPS:150000；', 'WAF.tt110')}}</p>
+              <p>{{t('支持一级域名个数:3；', 'WAF.tt111')}}</p>
+              <p>{{t('支持二级域名个数:30；', 'WAF.tt112')}}</p>
+              <p>{{t('业务宽带（云外/云内）', 'WAF.ywkp')}}：30Mbps/200Mbps；</p>
             </div>
             <div v-if="thisType=='3'" class="pList">
-              <p class="tipColr">适用于大型及超大型业务网站及复杂业务站点定制化防护服务，基于AI+规则引擎；</p>
-              <p>包含高级版所有功能；</p>
-              <p>支持链路劫持检测（10个）；</p>
-              <p>支持高级BOT行为管理；</p>
-              <p>支持非标准端口（不限于80，8080，443，8443）定制（20个）；</p>
-              <p>独享IP防护；</p>
-              <p>支持1对1售前售后支持；</p>
-              <p>正常业务请求QPS：10000；</p>
-              <p>CC防护峰值QPS:500000；</p>
-              <p>支持一级域名个数：4；</p>
-              <p>支持二级域名个数：40；</p>
-              <p>业务宽带（云外/云内）：50Mbps/200Mbps；</p>
+              <p class="tipColr">{{t('适用于大型及超大型业务网站及复杂业务站点定制化防护服务，', 'WAF.syydxjcdxqy')}}{{t('基于AI + 规则双引擎防护；', 'WAF.ttjyaijgz1')}}</p>
+              <p>{{t('包含企业版所有功能；', 'WAF.tt2')}}</p>
+              <p>{{t('支持链路劫持检测（10个）；', 'WAF.tt21')}}</p>
+              <p>{{t('支持高级BOT行为管理；', 'WAF.tt22')}}</p>
+              <p>{{t('支持非标准端口（不限于80,8080,443，8443）定制（20个）；', 'WAF.tt23')}}</p>
+              <p>{{t('支持泛域名定制；', 'WAF.tt24')}}</p>
+              <p>{{t('独享IP防护；', 'WAF.tt25')}}</p>
+              <p>{{t('支持1对1售前售后支持；', 'WAF.tt26')}}</p>
+              <p>{{t('正常业务请求QPS:10000；', 'WAF.tt27')}}</p>
+              <p>{{t('CC防护峰值QPS:500000；', 'WAF.tt28')}}</p>
+              <p>{{t('支持一级域名个数:4；', 'WAF.tt29')}}</p>
+              <p>{{t('支持二级域名个数:40；', 'WAF.tt210')}}</p>
+              <p>{{t('业务宽带（云外/云内）', 'WAF.ywkp')}}：50Mbps/200Mbps；</p>
             </div>
           </div>
         </div>
         <div class="chooseList newClear">
-          <div class="listLabel">扩展域名包</div>
+          <div class="listLabel">{{t('扩展域名包', 'WAF.kzymb')}}</div>
           <div class="listCon">
-            <el-input-number size="mini" v-model="num1" @change="handleChange1" :min="0" :max="10" label="描述文字"></el-input-number>
-            <p class="Ptext">一个域名包包含：10个域名防护（限制仅支持1个一级域名）</p>
+            <el-input-number size="mini" v-model="num1" @change="handleChange1" :min="0" :max="10"></el-input-number>
+            <p class="Ptext">{{t('每个域名包包含: 10个域名防护，仅支持1个一级域名；一次最多购买500个）', 'WAF.mhymbbh')}}</p>
           </div>
         </div>
         <div class="chooseList newClear">
-          <div class="listLabel">QPS扩展包</div>
+          <div class="listLabel">{{t('QPS扩展包', 'WAF.qpskzb')}}</div>
           <div class="listCon">
-            <el-input-number size="mini" v-model="num2" @change="handleChange2" :min="0" :max="10" label="描述文字"></el-input-number>
-            <p class="Ptext">一个QPS扩展包包含：1000QPS（套餐有效期内，一次最多可购买500个）</p>
+            <el-input-number size="mini" v-model="num2" @change="handleChange2" :min="0" :max="10"></el-input-number>
+            <p class="Ptext">{{t('一个QPS扩展包包含：1000QPS（套餐有效期内，一次最多可购买500个）', 'WAF.ygqpskzbbh')}}</p>
           </div>
         </div>
         <div class="chooseList newClear">
-          <div class="listLabel">安全日志服务包</div>
+          <div class="listLabel">{{t('安全日志服务包', 'WAF.aqrzfwb')}}</div>
           <div class="listCon">
-            <el-input-number size="mini" v-model="num3" @change="handleChange3" :min="0" :max="10" label="描述文字"></el-input-number>
-            <p class="Ptext">一个日志服务包包含：1T日志服务存储容量（套餐有效期内，日志存储时长为180天，一次最多可购买500个）</p>
+            <el-input-number size="mini" v-model="num3" @change="handleChange3" :min="0" :max="10"></el-input-number>
+            <p class="Ptext">{{t('一个日志服务包包含：1T日志服务存储容量（套餐有效期内，日志存储时长为180天，一次最多可购买500个）', 'WAF.ygrzbbh')}}</p>
           </div>
         </div>
         <div class="chooseList newClear">
           <div class="borderTop">
-            <div class="listLabel">购买时长</div>
+            <div class="listLabel">{{t('购买时长', 'WAF.gmsc')}}</div>
             <div class="listCon">
               <el-button-group class="btnGroup">
-                <el-button @click="mounth(1)" :class="mounthType=='1'?'addColor':''">1个月</el-button>
-                <el-button @click="mounth(2)" :class="mounthType=='2'?'addColor':''">2个月</el-button>
-                <el-button @click="mounth(3)" :class="mounthType=='3'?'addColor':''">3个月</el-button>
+                <el-button @click="mounth(1)" :class="mounthType=='1'?'addColor':''">1{{t('个', 'WAF.g')}}月</el-button>
+                <el-button @click="mounth(2)" :class="mounthType=='2'?'addColor':''">2{{t('个', 'WAF.g')}}月</el-button>
+                <el-button @click="mounth(3)" :class="mounthType=='3'?'addColor':''">3{{t('个', 'WAF.g')}}月</el-button>
                 <el-button @click="mounth(4)" :class="mounthType=='4'?'addColor':''">半年</el-button>
-                <el-button @click="mounth(5)" :class="mounthType=='5'?'addColor':''">1年<span class="scale">85折</span></el-button>
-                <el-button @click="mounth(6)" :class="mounthType=='6'?'addColor':''">2年<span class="scale">7折</span></el-button>
-                <el-button @click="mounth(7)" :class="mounthType=='7'?'addColor':''">3年<span class="scale">5折</span></el-button>
+                <el-button @click="mounth(5)" :class="mounthType=='5'?'addColor':''">1年</el-button>
+                <el-button @click="mounth(6)" :class="mounthType=='6'?'addColor':''">2年</el-button>
+                <el-button @click="mounth(7)" :class="mounthType=='7'?'addColor':''">3年</el-button>
               </el-button-group>
             </div>
           </div>
         </div>
         <div class="bottomTotal newClear">
-          <p class="totaoLabel">总计费用:</p>
+          <p class="totaoLabel">{{t('总计费用', 'WAF.zjfy')}}:</p>
           <p class="totalMoney">
             <span class="money">3,880.00<i>元</i></span><br/>
             <el-button size="mini" class="immePay" @click="pay">立即支付</el-button>

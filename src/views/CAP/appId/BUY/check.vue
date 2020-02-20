@@ -123,6 +123,8 @@ export default{
             duration: 0
           });
         }
+      }).then(() => {
+        this.loading = false
       })
     }
   }

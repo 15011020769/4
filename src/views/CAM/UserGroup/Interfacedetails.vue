@@ -132,7 +132,7 @@
             <el-tab-pane :label="userLabel" name="second">
               <div class="addbtn">
                 <el-button @click="openUser" size="small" type="primary">添加</el-button>
-                <el-button size="small" :disabled="btnVisible" @click="delAll">移除</el-button>
+                <el-button size="small" type="primary" :disabled="btnVisible" @click="delAll">移除</el-button>
               </div>
               <div>
                 <el-table

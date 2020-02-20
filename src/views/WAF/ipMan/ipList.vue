@@ -80,8 +80,15 @@
         <div class="tableListBtn newClear">
           <el-button class="addBW" size="mini" @click="addBW">添加黑白名单</el-button>
           <el-button class="allDelete" size="mini">批量删除</el-button>
-          <el-button class="exportData" size="mini">导入数据</el-button>
-          <el-button class="exportFilter" size="mini">导出全部筛选结果</el-button>
+          <el-upload
+            class="import-btn"
+            action=""
+            :show-file-list="false"
+            :on-change="fileChange"
+          >
+            <el-button size="mini" type="primary">导入数据</el-button>
+          </el-upload>
+          <el-button class="exportFilter" @click="exportFile" size="mini">导出全部筛选结果</el-button>
         </div>
         <div class="tableCon">
           <el-table
@@ -144,6 +151,9 @@
 <script>
 import addBWmodel from './model/addBWmodel'
 import { DESCRIBE_ACCESS_CONTROL } from '@/constants'
+import XLSX from 'xlsx'
+const make_cols = refstr => Array(XLSX.utils.decode_range(refstr).e.c + 1).fill(0).map((x,i) => ({name:XLSX.utils.encode_col(i), key:i}));
+
 export default {
   data() {
     return {
@@ -183,6 +193,7 @@ export default {
       loadShow:false,//加载
       visible: false,//删除弹框
       addBWmodel:false,//添加黑白IP弹框
+      data: []
     };
   },
   components:{
@@ -192,6 +203,32 @@ export default {
     this.getData();
   },
   methods: {
+    fileChange(file) {
+      const reader = new FileReader();
+			reader.onload = (e) => {
+				/* Parse data */
+				const bstr = e.target.result;
+				const wb = XLSX.read(bstr, {type:'binary'});
+				/* Get first worksheet */
+				const wsname = wb.SheetNames[0];
+        const ws = wb.Sheets[wsname];
+				/* Convert array of arrays */
+        const data = XLSX.utils.sheet_to_json(ws, {header:1});
+        data.splice(0, 1) // 删除第一行表头
+				/* Update state */
+				this.data = data; // 导入的数据
+			};
+			reader.readAsBinaryString(file.raw);
+    },
+    exportFile() {
+      /* convert state to workbook */
+      this.data.unshift(["IP地址", "类别", "来源", "更新时间", "截止时间", "备注"])
+			const ws = XLSX.utils.aoa_to_sheet(this.data); // 导出的数据
+			const wb = XLSX.utils.book_new();
+			XLSX.utils.book_append_sheet(wb, ws, "ip_list");
+			/* generate file and send to client */
+			XLSX.writeFile(wb, "ip_list.xlsx");
+		},
     //关闭提示文字
     closeTip() {
       this.tipShow = false;
@@ -385,5 +422,9 @@ export default {
     text-align:right;
     background-color:#fff;
   }
+}
+.import-btn {
+  display: inline-block;
+  margin-left: 10px;
 }
 </style>

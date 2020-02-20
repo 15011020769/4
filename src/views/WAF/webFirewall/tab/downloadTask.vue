@@ -1,19 +1,19 @@
 <template>
   <div>
     <div class="wrapper">
-      <div class="topTip">创建成功的日志下载任务，只保留7天；7天后日志文件将会删除，请及时下载。</div>
+      <div class="topTip">{{t('创建成功的日志下载任务，只保留7天；7天后日志文件将会删除，请及时下载', 'WAF.cjrwdrzxzrw')}}。</div>
       <div class="taskListCon">
-        <el-table :data="tableDataBegin.slice((currentPage-1)*pageSize,currentPage*pageSize)">
-          <el-table-column prop="num" label="序号" width></el-table-column>
-          <el-table-column prop="taskName" label="任务名称" width></el-table-column>
+        <el-table :data="tableDataBegin" :empty-text="t('暂无数据', 'WAF.zwsj')">
+          <el-table-column prop="num" :label="t('序号', 'WAF.xh')" width></el-table-column>
+          <el-table-column prop="taskName" :label="t('任务名称', 'WAF.rwmc')" width></el-table-column>
           <el-table-column prop="domin" label="域名"></el-table-column>
-          <el-table-column prop="logNum" label="日志条目数"></el-table-column>
-          <el-table-column prop="createTime" label="创建时间"></el-table-column>
-          <el-table-column prop="outTime" label="过期时间"></el-table-column>
-          <el-table-column prop="status" label="状态"></el-table-column>
+          <el-table-column prop="logNum" :label="t('日志条目数', 'WAF.rztms')"></el-table-column>
+          <el-table-column prop="createTime" :label="t('创建时间', 'WAF.xh')"></el-table-column>
+          <el-table-column prop="outTime" :label="t('过期时间', 'WAF.gqsj')"></el-table-column>
+          <el-table-column prop="status" :label="t('状态', 'WAF.zt')"></el-table-column>
           <el-table-column prop="action" label="操作" width="180">
             <template slot-scope="scope">
-              <el-button type="text" :disabled="true" size="small" @click="downLoad(scope.$index, scope.row)">下载</el-button>
+              <el-button type="text" :disabled="true" size="small" @click="downLoad(scope.$index, scope.row)">{{t('下载', 'WAF.xz')}}</el-button>
               <!-- <el-button @click.native.prevent="deleteRow(scope.$index, tableDataBegin)" type="text" size="small">移除</el-button> -->
               <el-popover
                 ref="popovers"
@@ -21,12 +21,12 @@
                 width="280"
                 :value="deleteVisible">
                 <div class="prpoDialog">
-                  <h1>确定删除此域名？</h1>
-                  <p>删除后源站IP将会遭受恶意攻击的威胁。</p>
+                  <h1>确认删除？</h1>
+                  <p>删除后，将无法查询和下载</p>
                 </div>
                 <div style="text-align: right; margin: 0">
+                  <el-button type="text" size="mini" @click="deleteVisibleSure(scope.$index)">{{t('确定', 'WAF.qd')}}</el-button>
                   <el-button size="mini" type="text" @click="deleteVisible = false">取消</el-button>
-                  <el-button type="primary" size="mini" @click="deleteVisibleSure(scope.$index)">确定</el-button>
                 </div>
                 <el-button slot="reference" style="color:#3E8EF7;" class="deleteBtn">删除</el-button>
               </el-popover>

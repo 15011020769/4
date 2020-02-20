@@ -23,10 +23,10 @@
 
     <!-- 详情子菜单导航 -->
     <div class="tke-detial-nav">
-      <router-link class="nav-item" :to="{name:'masteretcdDetailPod',query: {clusterId: clusterId}}">Pod管理</router-link>
-      <router-link class="nav-item" :to="{name:'masteretcdDetailEvent',query: {clusterId: clusterId}}">事件</router-link>
-      <router-link class="nav-item" :to="{name:'masteretcdDetailInfo',query: {clusterId: clusterId}}">详情</router-link>
-      <router-link class="nav-item" :to="{name:'masteretcdDetailYaml',query: {clusterId: clusterId}}">YAML</router-link>
+      <router-link class="nav-item" :to="{name:'masteretcdDetailPod',query: {clusterId: clusterId,node: node}}">Pod管理</router-link>
+      <router-link class="nav-item" :to="{name:'masteretcdDetailEvent',query: {clusterId: clusterId,node: node}}">事件</router-link>
+      <router-link class="nav-item" :to="{name:'masteretcdDetailInfo',query: {clusterId: clusterId,detail: detail}}">详情</router-link>
+      <router-link class="nav-item" :to="{name:'masteretcdDetailYaml',query: {clusterId: clusterId,node: node}}">YAML</router-link>
     </div> 
 
     <!-- 子页面 -->
@@ -46,7 +46,9 @@ export default {
   name: "masteretcdDetail",
   data() {
     return {
-        clusterId:'',
+      clusterId:'',
+      node: '',
+      detail: {}
     };
   },
   components: {
@@ -55,6 +57,9 @@ export default {
   created() {
     // 从路由获取集群id
     this.clusterId=this.$route.query.clusterId;
+    this.node = this.$route.query.node;
+    this.detail = this.$route.query.detail;
+    console.log("asdsadsadasd",node);
   },
   methods: {
     //返回上一层

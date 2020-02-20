@@ -35,7 +35,7 @@
             <span slot="title">DockerHub镜像</span>
           </el-menu-item>
           <el-menu-item index="/totalMirror">
-            <span slot="title">共有镜像</span>
+            <span slot="title">公有镜像</span>
           </el-menu-item>
         </el-menu-item-group>
       </el-submenu>

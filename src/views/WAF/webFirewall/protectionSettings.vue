@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="topTitle">
-      防护设置
+      {{t('防护设置', 'WAF.fhsz')}}
     </div>
     <div class="protectionCon">
       <div class="packageInfo">
@@ -13,16 +13,16 @@
                 <span>套餐</span>
                 <span v-if="package.Level">
                   {{PACKAGE_CFG_TYPES[package.Level].name}}
-                  <a v-if="package.Level !== 0" href="#" class="blueHref" @click="packageUpgradeModel">升级</a>
+                  <a v-if="package.Level !== 0" href="#" class="blueHref" @click="packageUpgradeModel">{{t('升级', 'WAF.sj')}}</a>
                 </span>
               </p>
               <p>
-                <span>到期时间</span>
+                <span>{{t('到期时间', 'WAF.dqsj')}}</span>
                 <span v-if="package.Level">{{package.ValidTime}}<a href="#" class="blueHref" @click="RenewModelBtn">续费</a></span>
               </p>
-              <p><span>标签</span><span>无</span></p>
+              <p><span>{{t('标签', 'WAF.bq')}}</span><span>{{t('无', 'WAF.w')}}</span></p>
               <p>
-                <span>自动续费开关</span>
+                <span>{{t('自动续费开关', 'WAF.zdxfkg')}}</span>
                 <span>
                   <el-switch
                     v-model="package.AutoRenew === 1"
@@ -35,10 +35,10 @@
           </el-col>
           <el-col :span="12">
             <div class="informationList">
-              <p><span>域名包</span><span>{{package.DomainPkg && package.DomainPkg.Count || 0}}个 (每个域名包包含10个域名防护，仅支持1个一级域名)<a href="#" class="blueHref" @click="buyDominPackBtn">购买域名包</a></span></p>
+              <p><span>域名包</span><span>{{package.DomainPkg && package.DomainPkg.Count || 0}}个 ({{t('每个域名包包含10个域名防护，仅支持1个一级域名', 'WAF.mgymb')}})<a href="#" class="blueHref" @click="buyDominPackBtn">{{t('购买域名包', 'WAF.gmymb')}}</a></span></p>
               <p><span>已使用域名</span><span>{{package.DomainCount}}/{{package.DomainLimit}}个</span></p>
-              <p><span>安全日志服务包</span><span><a class="orangeHref">{{package.Cls && package.Cls.Count || 0}}个</a>（一个包包含1T日志服务存储容量），<a href="#" class="blueHref" @click="buyLogBack"> 立即购买</a></span></p>
-              <p><span>QPS扩展包</span><span>当前QPS峰值 <a class="greenHref">{{package.MaxQPS}}</a> 当前套餐QPS <a class="orangeHref">{{package.Level && PACKAGE_CFG_TYPES[package.Level].busQps}}</a>，<a href="#" class="blueHref" @click="qpsBack">立即购买</a></span></p>
+              <p><span>{{t('安全日志服务包', 'WAF.aqrzfwb')}}</span><span><a class="orangeHref">{{package.Cls && package.Cls.Count || 0}}个</a>（{{t('一个包包含1T日志服务存储容量', 'WAF.ygbbh')}}），<a href="#" class="blueHref" @click="buyLogBack"> {{t('立即购买', 'WAF.ljgm')}}</a></span></p>
+              <p><span>{{t('QPS扩展包', 'WAF.qpskzb')}}</span><span>{{t('到期时当前QPS峰值间', 'WAF.dqqpsfz')}} <a class="greenHref">{{package.MaxQPS}}</a> {{t('当前套餐QPS', 'WAF.dqqps')}} <a class="orangeHref">{{package.Level && PACKAGE_CFG_TYPES[package.Level].busQps}}</a>，<a href="#" class="blueHref" @click="qpsBack">{{t('立即购买', 'WAF.ljgm')}}</a></span></p>
             </div>
           </el-col>
         </el-row>
@@ -61,7 +61,7 @@ import RenewModel from './model/RenewModel'
 import dominList from './components/dominList'
 import buyLogBackModel from './model/buyLogBackModel'
 import qpsBackModel from './model/qpsBackModel'
-import { DESCRIBE_USER_INFO, DESCRIBE_WAF_PRICE } from '@/constants'
+import { DESCRIBE_USER_INFO } from '@/constants'
 import { ErrorTips } from "@/components/ErrorTips"
 import { PACKAGE_CFG_TYPES, COMMON_ERROR } from '../constants'
 
@@ -97,18 +97,10 @@ export default {
     getPackage() {
       this.axios.post(DESCRIBE_USER_INFO, {
         Version: '2018-01-25'
-      }).then(({ Response }) => {
-        if (!Response.Error) {
-          this.package = Response.Data
-          return
-        }
-        let ErrOr = Object.assign(ErrorTips, COMMON_ERROR)
-        this.$message({
-          message: ErrOr[Response.Error.Code],
-          type: "error",
-          showClose: true,
-          duration: 0
-        });
+      }).then(resp => {
+        this.generalRespHandler(resp, ({ Data }) => {
+          this.package = Data
+        })
       })
     },
     //升级按钮

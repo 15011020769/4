@@ -2,32 +2,32 @@
   <div>
     <div>
       <el-dialog
-        title="QPS扩展包"
+        :title="t('QPS扩展包', 'WAF.qpskzb')"
         :visible.sync="qpsShow"
         width="45%"
         :before-close="handleClose">
         <div class="newClear">
           <div class="newClear dominPackList">
-            <p>购买数量</p>
+            <p>{{t('购买数量', 'WAF.gmsl')}}</p>
             <p>
-              <el-input-number v-model="buyNum" @change="handleChange" :min="1" :max="500"></el-input-number>个
+              <el-input-number v-model="buyNum" @change="handleChange" :min="1" :max="500"></el-input-number> {{t('个', 'WAF.g')}}
             </p>
           </div>
           <div class="newClear dominPackList">
-            <p>到期时间</p>
+            <p>{{t('到期时间', 'WAF.dqsj')}}</p>
             <p>{{package.QPS && package.QPS.ValidTime || package.ValidTime}}（共{{remainingDays}}天）</p>
           </div>
           <div class="newClear dominPackList">
-            <p>说明</p>
-            <p>一个QPS扩展包包含1000QPS（套餐有效期内，一次最多可购买500个）</p>
+            <p>{{t('说明', 'WAF.sm')}}</p>
+            <p>{{t('一个QPS扩展包包含：1000QPS（套餐有效期内，一次最多可购买500个）', 'WAF.ygqpskzbbh')}}</p>
           </div>
           <div class="newClear dominPackList">
-            <p>费用</p>
+            <p>{{t('费用', 'WAF.fy')}}</p>
             <p class="totalMoney">858.00元</p>
           </div>
         </div>
         <span slot="footer" class="dialog-footer">
-          <el-button class="buyImmediate" @click="nowBuy">立即购买</el-button>
+          <el-button class="buyImmediate" @click="nowBuy">{{t('立即购买', 'WAF.ljgm')}}</el-button>
           <el-button @click="handleClose">取 消</el-button>
         </span>
       </el-dialog>

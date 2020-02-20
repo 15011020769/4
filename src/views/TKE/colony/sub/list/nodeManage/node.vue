@@ -698,7 +698,8 @@ export default {
         name: "nodeDetail",
         query: {
           clusterId: this.clusterId,
-          node: row.PrivateIpAddresses[0]
+          node: row.PrivateIpAddresses[0],
+          detail: row
         }
       });
     },
