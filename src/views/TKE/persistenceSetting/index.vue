@@ -16,7 +16,7 @@
         <div class="flex padding">
           <div class="data-card-hd">事件持久化存储</div>
           <div>
-            <el-switch v-model="value" active-color="#006EFF" inactive-color="#cccccc"></el-switch>
+            <el-switch v-model="value" active-color="#006EFF" inactive-color="#cccccc" ></el-switch>
             <div style="padding-top:8px;">
               开启事件持久化存储功能会额外占用您集群资源
               <span class="font-orange">&nbsp;CPU&nbsp;（0.2核）内存（100MB）</span>
@@ -86,9 +86,22 @@ import HeadCom from "@/components/public/Head";
 export default {
   data() {
     return {
-      value: true,
+      value: true,//事件持久化存储开关
       tabPosition: "Els"
     };
+  },
+  methods:{
+    onSubmit(){
+      console.log("立即创建");
+      // if(){
+         
+      // }else{
+
+      // }
+      this.$router.push({
+        path:"/persistence"
+      })
+    }
   },
   props: ["uid"],
   components: {

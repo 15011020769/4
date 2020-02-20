@@ -146,7 +146,7 @@
             </template>
           </el-table-column>
           <el-table-column prop="address" label="已分配/总配置">
-            <template slot-scope="scope">
+            <template $slot-scope="scope">
               <p>CPU: -/-</p>
               <p>内存: -/-</p>
             </template>
