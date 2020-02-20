@@ -30,8 +30,9 @@
         </el-table-column>
         <el-table-column prop :label="$t('CVM.clBload.sswl')">
           <template slot-scope="scope">
-            <p :class="scope.row.InstanceState==='RUNNING'?'green':scope.row.InstanceState==='STOPPED'?'red':'orange'">
-              {{scope.row.VpcId}}</p>
+            <a :href="'../VPC/index.html#/priNetwork/priNetworkDetial/'+ scope.row.VpcId + '/ap-taipei'"
+              target="_blank">
+              {{scope.row.VpcId}}</a>
           </template>
         </el-table-column>
 
