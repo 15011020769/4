@@ -13,7 +13,10 @@
           <button class="el-icon-search ip-btn" @click="searchList"></button>
         </div>-->
         <!-- 右侧 -->
-        <div class="grid-right flex" style="justify-content: flex-end;  position: relative; bottom:10px;">
+        <div
+          class="grid-right flex"
+          style="justify-content: flex-end;  position: relative; bottom:10px;"
+        >
           <tkeSearch
             :exportData="false"
             inputPlaceholder="请输入集群名称"
@@ -47,11 +50,9 @@
 
           <el-table-column label="状态" width="250">
             <template slot-scope="scope">
-              <span v-if="scope.row" style="color:#0abf5b">
-                已开启
-                <i style="color:#0abf5b;font-weight:900" class="el-icon-circle-check"></i>
-              </span>
-              <span v-else-if="!scope.row">未开启</span>
+              <span v-if="scope.row.ClusterStatus == 'Running'" class="text-green">已开启<i style="color:#0abf5b;font-weight:900" class="el-icon-circle-check"></i></span>
+              <span v-else-if="scope.row.ClusterStatus == 'Creating'" class="text-green">已开启<i style="color:#0abf5b;font-weight:900" class="el-icon-circle-check"></i></span>
+              <span v-else class="text-red">未开启</span>
             </template>
           </el-table-column>
           <el-table-column label="存储端" width="250">
@@ -86,10 +87,13 @@ import {
   CreateListGroups,
   WARNING_GetCOLONY,
   WARNING_GetUSER,
-  TKE_COLONY_STATUS
+  TKE_COLONY_STATUS,
 } from "@/constants";
 import tkeSearch from "@/views/TKE/components/tkeSearch";
-import { TKE_COLONY_LIST, TKE_COLONY_QUERY } from "@/constants/TKE-jz";
+import {
+  TKE_COLONY_LIST,
+  TKE_COLONY_QUERY
+} from "@/constants/TKE-jz";
 import { ErrorTips } from "@/components/ErrorTips.js"; //公共错误码
 import HeadCom from "@/components/public/Head";
 export default {
@@ -104,9 +108,11 @@ export default {
       total: 0,
       pageSize: 10,
       pageIndex: 0,
-       searchSelect: "",
+      searchSelect: "",
       searchInput: "",
-       searchOptions: [
+      listStatus: [], // 集群列表节点数状态
+      listStatusArr: [], // 集群列表节点数状态
+      searchOptions: [
         {
           value: "name",
           label: "名称"
@@ -115,7 +121,7 @@ export default {
           value: "tag",
           label: "标签"
         }
-      ],
+      ]
     };
   },
   created() {
@@ -214,7 +220,7 @@ export default {
           this.total = res.Response.TotalCount;
         }
         this.tableData = res.Response.Clusters;
-        // this.getColonyStatus();
+        this.getColonyStatus();
         this.loadShow = false;
       } else {
         this.loadShow = false;
@@ -241,10 +247,9 @@ export default {
         });
       }
     },
-     // 监听搜索条件的值
+    // 监听搜索条件的值
     changeType(val) {
       this.searchSelect = val;
-      console.log(this.searchSelect);
     },
     // 监听搜索框的值
     changeSearchInput(val) {
@@ -258,6 +263,25 @@ export default {
       this.searchInput = val;
       this.getColonyList();
     },
+    // 获取集群列表状态(不对外单独提供文档,所以无法实现)
+    getColonyStatus() {
+      let params = {
+        Version: "2018-05-25"
+      };
+      if (this.searchInput !== "") {
+        for (var i in this.tableData) {
+          params["ClusterIds." + i] = this.tableData[i].ClusterId;
+        }
+      }
+
+      this.axios.post(TKE_COLONY_STATUS, params).then(res => {
+        this.listStatus = res.Response.ClusterStatusSet;
+        this.listStatusArr = [];
+        for (var i in this.listStatus) {
+          this.listStatusArr.push(this.listStatus[i].ClusterInstanceState);
+        }
+      });
+    }
     // getColonyList() {
     //   //数据持久化集群列表
     //   let params = { Version: "2018-05-25" };
