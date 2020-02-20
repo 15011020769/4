@@ -51,12 +51,12 @@
           </el-table-column>
           <el-table-column :label="t('负载均衡（ID）', 'WAF.lbid')">
             <template slot-scope="scope">
-              <!-- <span v-if="scope.row.LoadBalancerSet.length">
+              <span v-if="scope.row.LoadBalancerSet.length">
                 {{scope.row.LoadBalancerSet[0].LoadBalancerName}}({{scope.row.LoadBalancerSet[0].LoadBalancerId}})
               </span>
               <span v-else>
                 未配置
-              </span> -->
+              </span>
             </template>
           </el-table-column>
           <el-table-column width="120">
@@ -67,12 +67,12 @@
               </el-tooltip>
             </div>
             <template slot-scope="scope">
-              <!-- <span v-if="scope.row.LoadBalancerSet.length">
+              <span v-if="scope.row.LoadBalancerSet.length">
                 {{scope.row.LoadBalancerSet[0].Vip}}
               </span>
               <span v-else>
                 未配置
-              </span> -->
+              </span>
             </template>
           </el-table-column>
           <el-table-column width="160">
@@ -83,17 +83,17 @@
               </el-tooltip>
             </div>
             <template slot-scope="scope">
-              <!-- <span v-if="scope.row.LoadBalancerSet.length">
+              <span v-if="scope.row.LoadBalancerSet.length">
                 <p v-for="lb in scope.row.LoadBalancerSet" class="ellipsis" :key="lb.ListenerName">
                   {{lb.ListenerName}}({{lb.Protocol}}:{{lb.Vport}})
                 </p>
               </span>
               <span v-else>
                 未配置
-              </span> -->
+              </span>
             </template>
           </el-table-column>
-          <el-table-column prop="logSwitch">
+          <el-table-column prop="logSwitch" width="140" align="center">
             <el-dropdown slot="header" style="padding: 0">
               <span class="el-dropdown-link" style="color: #909399;">
                 {{t('访问日志开关', 'WAF.logkg')}}<i class="el-icon-arrow-down el-icon--right"></i>
@@ -113,7 +113,7 @@
               </el-switch>
             </template>
           </el-table-column>
-          <el-table-column prop="wafSwitch">
+          <el-table-column prop="wafSwitch" width="120" align="center">
             <el-dropdown slot="header" @command="onChangeWafStatus" style="padding: 0">
               <span class="el-dropdown-link" style="color: #909399;">
                 {{t('WAF开关', 'WAF.waflg')}}<i class="el-icon-arrow-down el-icon--right"></i>
@@ -133,7 +133,7 @@
               </el-switch>
             </template>
           </el-table-column>
-          <el-table-column prop="action" label="操作" width="250">
+          <el-table-column prop="action" label="操作" width="170" class-name="actions" align="center">
             <template slot-scope="scope">
               <el-popover
                 placement="bottom"
@@ -408,6 +408,12 @@ export default {
   }
   ::v-deep .el-input__suffix {
     top: -4px;
+  }
+}
+.actions {
+  button {
+    padding: 0;
+    margin-left: 15px;
   }
 }
 </style>

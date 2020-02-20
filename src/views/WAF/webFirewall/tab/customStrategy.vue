@@ -99,7 +99,7 @@ export default {
     Rule
   },
   mounted() {
-    
+    this.getCustomRules()
   },
   methods: {
     getCustomRules() {

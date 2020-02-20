@@ -55,12 +55,11 @@
                   v-model="inputRoleName"
                   :placeholder="$t('CAM.Role.inputRoleName')"
                   size="mini"
-                  @blur="jsname"
                 ></el-input>
                 <p
                   v-if="have"
                   style="font-size:12px;color:#E1504A;padding-top:10px"
-                >{{$t('CAM.Role.empty')}}</p>
+                >{{$t('CAM.Role.roleNameInvalid')}}</p>
               </div>
               <p class="jscontent">
                 <el-input v-model="inputRoleDesc" placeholder size="mini"></el-input>
@@ -122,90 +121,14 @@ export default {
       have: false,
       policiesSelectedData: [],
       checkedCities: [],
-      cities: [
-        "宙斯盾安全防护",
-        "API网关",
-        "弹性伸缩",
-        "腾讯区块链开发平台",
-        "对象存储批量处理",
-        "蓝鲸平台",
-        "黑石物理服务器1.0",
-        "商业流程服务",
-        "容器服务",
-        "雲数据库 MySQL",
-        "内容分发网络",
-        "文件存储",
-        "雲防火墙",
-        "数据万象",
-        "消息队列 CKafka",
-        "负载均衡",
-        "雲审计",
-        "雲端开发环境",
-        "日志服务",
-        "CODING DevOps",
-        "对象存储",
-        "雲服务器",
-        "腾讯雲开发者平台",
-        "数据集成",
-        "数据安全治理中心",
-        "数据传输服务",
-        "弹性MapReduce",
-        "人脸识别",
-        "身份管理服务",
-        "物联网通信",
-        "加速物联网套件",
-        "开发者实验室",
-        "雲直播",
-        "雲数据库 MariaDB",
-        "小游戏联机对战引擎",
-        "雲数据库 MongoDB",
-        "视频处理",
-        "迁移服务平台",
-        "媒体转码服务",
-        "网络资产风险监测系统",
-        "小程序雲主机",
-        "雲函数",
-        "流计算Oceanus",
-        "雲数据仓库套件-Sparkling",
-        "安全运营中心",
-        "雲开发",
-        "数据库中间件",
-        "腾讯智能钛",
-        "智能钛机器学习加速器",
-        "智能钛弹性模型服务",
-        "智能钛机器学习平台",
-        "智能钛自动机器学习",
-        "腾讯微服务平台",
-        "客服支持平台",
-        "微Mall",
-        "腾讯优Mall",
-        "织雲"
-      ],
       prinCipalService:[],
       checkedPrinCipalService: [],
-      transfer_value: [],
-      transfer_data: [
-        {
-          value: 1,
-          desc: "備選項1"
-        },
-        {
-          value: 2,
-          desc: "備選項2"
-        },
-        {
-          value: 3,
-          desc: "備選項3"
-        }
-      ],
-      tableData: [
-        {
-          date: "QCloudFinanceFullAccess",
-          name: "該策略允許您管理帳戶內財務相關的內容，例如：付款、開票。",
-          address: "預設策略"
-        }
-      ]
     };
+  },
+  watch: {
+    inputRoleName(n) {
+      this.have = !/^[0-9a-zA-Z+=,.@_-]{1,128}$/.test(n) 
+    }
   },
   methods: {
     //返回上一级
@@ -249,13 +172,6 @@ export default {
       console.log(val);
     },
     leftCheck(val) {},
-    jsname() {
-      if (!this.inputRoleName) {
-        this.have = true;
-      } else {
-        this.have = false;
-      }
-    },
     //新建自定义角色创建
     complete() {
       let _this = this;

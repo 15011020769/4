@@ -8,7 +8,7 @@
           <i slot="suffix" class="el-input__icon el-icon-search" @click="toQuery"></i>
         </el-input>
         <el-table class="table-left" ref="multipleOption" :data="transfer_data" size="small" height="220px"
-          tooltip-effect="dark" style="width: 100%" @selection-change="handleSelectionChange"
+          tooltip-effect="dark" style="width: 100%" @selection-change="handleSelectionChange" v-loading="loading || loading1"
           :empty-text="$t('CAM.strategy.zwsj')">
           <el-table-column type="selection" prop="id" :selectable="checkboxT"></el-table-column>
           <el-table-column prop="name" :label="$t('CAM.userGroup.user')" show-overflow-tooltip></el-table-column>
@@ -69,17 +69,21 @@
     USER_LIST,
     USER_GROUP,
     ATTACH_GROUP,
-    POLICY_USER
+    POLICY_USER,
+    LIST_ENPOLICY
   } from "@/constants";
+  
   export default {
     props: {
-      PolicyId: [String, Number],
-      userArr: {
-        type: Array
+      PolicyId: {
+        default: ''
       },
-      groupArr: {
-        type: Array
-      }
+      // userArr: {
+      //   type: Array
+      // },
+      // groupArr: {
+      //   type: Array
+      // }
     },
     data() {
       return {
@@ -91,6 +95,7 @@
         transferGroupData: [],
         commandObj: {},
         loading: true,
+        loading1: true,
         totalNum: "",
         search: "",
         rp: 20,
@@ -108,22 +113,73 @@
             value: "group",
             label: "用戶組"
           }
-        ]
+        ],
+        userArr: [],
+        groupArr: [],
+        entitiesForPolicyPage: 1,
+        entitiesForPolicyRp: 200,
+        entitiesForPolicy: [],
       };
     },
     created() {
       //系统默认加载用户list
       this.getUserList();
+      this.getAttachPolicys(this.PolicyId)
     },
     watch: {
-      groupArr(val) {
-        this.getGroupList();
-      },
-      userArr(val) {
-        this.getUserList();
+      PolicyId(n) {
+        if (n) {
+          this.entitiesForPolicy = []
+          this.getAttachPolicys(n)
+        }
       }
     },
     methods: {
+      // 获取策略关联的实体列表
+    getAttachPolicys(PolicyId) {
+      this.loading1 = true
+      const params = {
+        Version: "2019-01-16",
+        PolicyId,
+        Page: this.entitiesForPolicyPage,
+        Rp: this.entitiesForPolicyRp,
+      };
+      var userArr = [];
+      var groupArr = [];
+      this.axios.post(LIST_ENPOLICY, params).then(res => {
+        if (res.Response.Error === undefined) {
+          if (res.Response.List) {
+            this.entitiesForPolicy = this.entitiesForPolicy.concat(res.Response.List)
+            if (this.entitiesForPolicy.length != res.Response.TotalNum) {
+              this.entitiesForPolicyPage += 1
+              this.getAttachPolicys(PolicyId)
+            } else {
+              this.entitiesForPolicy.forEach(item => {
+                if (item.RelatedType == 1) {
+                  userArr.push(item);
+                } else {
+                  groupArr.push(item);
+                }
+              })
+              this.userArr = this.userArr.concat(userArr);
+              this.groupArr = this.userArr.concat(groupArr);
+              this.loading1 = false
+            }
+          }
+        } else {
+          let ErrTips = {
+            "ResourceNotFound.UserNotExist": "用戶不存在"
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
+    },
       checkboxT(row, index) {
         if (row.status == 0) {
           return false;
@@ -135,7 +191,7 @@
       getUserList() {
         let _this = this;
         _this.loading = true;
-        _this.transfer_data = [];
+        // _this.transfer_data = [];
         _this.commandObj = {
           value: "user",
           label: "用戶"
@@ -178,7 +234,7 @@
       getGroupList() {
         let _this = this;
         _this.loading = true;
-        _this.transfer_data = [];
+        // _this.transfer_data = [];
         let paramsGroup = {
           Version: "2019-01-16"
         };

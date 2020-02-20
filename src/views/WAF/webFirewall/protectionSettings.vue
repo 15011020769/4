@@ -61,7 +61,7 @@ import RenewModel from './model/RenewModel'
 import dominList from './components/dominList'
 import buyLogBackModel from './model/buyLogBackModel'
 import qpsBackModel from './model/qpsBackModel'
-import { DESCRIBE_USER_INFO, DESCRIBE_WAF_PRICE } from '@/constants'
+import { DESCRIBE_USER_INFO } from '@/constants'
 import { ErrorTips } from "@/components/ErrorTips"
 import { PACKAGE_CFG_TYPES, COMMON_ERROR } from '../constants'
 

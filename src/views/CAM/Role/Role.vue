@@ -73,8 +73,15 @@
           </el-table>
           <div class="Right-style pagstyle" style="height:70px;display:flex;align-items:center;">
         <span class='pagtotal'>共&nbsp;{{TotalCount}}&nbsp;{{$t("CAM.strip")}}</span>
-        <el-pagination :page-size="pagesize" :pager-count="7" layout="prev, pager, next"
-          @current-change="handleCurrentChange" :total="TotalCount">
+        <el-pagination
+          :page-size="pagesize"
+          :pager-count="7"
+          layout="prev, sizes, pager, next"
+          :page-sizes="[10, 20, 30, 40, 50]"
+          @current-change="handleCurrentChange"
+          @size-change="handleSizeChange"
+          :total="TotalCount"
+        >
         </el-pagination>
       </div>
         </div>
@@ -111,7 +118,6 @@ export default {
       tableData: [],
       // 分页
       Page: 1,
-      size: 10,
       total: 0,
       TotalCount: 0,
       pagesize: 10,
@@ -131,7 +137,7 @@ export default {
       let params = {
         Version: "2019-01-16",
         Page: this.Page,
-        Rp: this.size
+        Rp: this.pagesize
       };
       if (this.searchValue != null && this.searchValue != "") {
         params["keyword"] = this.searchValue;
@@ -286,6 +292,10 @@ export default {
     handleCurrentChange(val) {
       this.Page = val;
       this.init();
+    },
+    handleSizeChange(val) {
+      this.pagesize = val
+      this.init()
     },
     toAccount() {
       // this.$router.push("/createAccount");
