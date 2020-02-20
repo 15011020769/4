@@ -1,6 +1,12 @@
 <template>
   <div class="DockerHub-wrap">
-    <HeadCom title="公有镜像"></HeadCom>
+    <HeadCom title="公有镜像">
+      <slot>
+        <div class="head-address">
+          <City :Cityvalue.sync="selectedRegion" :cities="cities" class="city" @changeCity="changeCity"></City>
+        </div>
+      </slot>
+    </HeadCom>
     <div class="body">
       <div class="room">
         <div class="room-top">
@@ -62,14 +68,15 @@
     </div>
   </div>
 </template>
-
 <script>
 import HeadCom from '@/components/public/Head'
-import { GET_REPOSITORY_LIST, DELETE_FAVOR, ADD_FAVOR } from '@/constants'
+import City from '@/components/public/CITY'
+import { TKE_GET_REPOSITORY_LIST, TKE_DELETE_FAVOR, TKE_ADD_FAVOR,ALL_CITY } from '@/constants'
 export default {
   name: 'totalMirror',
   components: {
-    HeadCom
+    HeadCom,
+    City
   },
   data () {
     return {
@@ -80,11 +87,16 @@ export default {
       currpage: 1, // 当前页码
       loadShow: true,
       multipleSelection: '',
-      favor: ''
+      favor: '',
+      cities: [],
+      selectedRegion: '',
+      selectedCity: '',
+      select: ''
     }
   },
   created () {
     this.GetRepositoryList()
+    this.GetCity()
   },
   methods: {
     handleClick (row) {
@@ -109,6 +121,19 @@ export default {
       this.loadShow = true
       this.GetRepositoryList()
     },
+    GetCity () {
+      this.axios.get(ALL_CITY).then(data => {
+        console.log(data.data)
+        this.cities = data.data
+        this.selectedRegion = data.data[0].Region
+        this.selectedCity = data.data[0]
+        this.$cookie.set('regionv2', this.selectedCity.Region)
+      })
+    },
+    changeCity (city) {
+      this.selectedCity = city
+      this.$cookie.set('regionv2', city.Region)
+    },
     jump (row) {
       this.$router.push({
         name: 'totalMirrorDetailVersion',
@@ -125,13 +150,20 @@ export default {
         offset: 10 * (this.currpage - 1),
         limit: this.pagesize
       }
-      this.axios.post(GET_REPOSITORY_LIST, param).then(res => {
+      this.axios.post(TKE_GET_REPOSITORY_LIST, param).then(res => {
         console.log(res)
-        if (res.code === 0) {
+        if (res.code === 0 && res.Error == undefined) {
           this.tableData = res.data.repoInfo
           this.TotalCount = res.data.totalCount
           this.favor = res.data.repoInfo.isUserFavor
           this.loadShow = false
+        } else {
+          this.$message({
+              message: ErrorTips[res.codeDesc],
+              type: "error",
+              showClose: true,
+              duration: 0
+          })
         }
       })
     },
@@ -141,11 +173,18 @@ export default {
         reponame: row.reponame,
         repotype: row.repotype
       }
-      this.axios.post(DELETE_FAVOR, param).then(res => {
+      this.axios.post(TKE_DELETE_FAVOR, param).then(res => {
         // console.log(res)
-        if (res.code === 0) {
+        if (res.code === 0 && res.Error == undefined) {
           this.loadShow = true
           this.GetRepositoryList()
+        } else {
+          this.$message({
+              message: ErrorTips[res.codeDesc],
+              type: "error",
+              showClose: true,
+              duration: 0
+          })
         }
       })
     },
@@ -155,10 +194,17 @@ export default {
         reponame: row.reponame,
         repotype: row.repotype
       }
-      this.axios.post(ADD_FAVOR, param).then(res => {
-        if (res.code === 0) {
+      this.axios.post(TKE_ADD_FAVOR, param).then(res => {
+        if (res.code === 0 && res.Error == undefined) {
           this.loadShow = true
           this.GetRepositoryList()
+        } else {
+          this.$message({
+              message: ErrorTips[res.codeDesc],
+              type: "error",
+              showClose: true,
+              duration: 0
+          })
         }
       })
     }
@@ -298,5 +344,12 @@ i{
   }
   .icon-color{
     color:#006eff;
+  }
+  .head-address{
+    margin-top:10px;
+    margin-left:20px;
+    width: 250px;
+    display: flex;
+    justify-content: space-between;   
   }
 </style>

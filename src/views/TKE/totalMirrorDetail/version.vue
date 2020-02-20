@@ -43,7 +43,7 @@
     </div>
 </template>
 <script>
-import { GET_TAGLIST } from '@/constants'
+import { TKE_GET_TAGLIST } from '@/constants'
 export default {
   data () {
     return {
@@ -67,12 +67,18 @@ export default {
       const param = {
         reponame: this.$route.query.id
       }
-      this.axios.post(GET_TAGLIST, param).then(res => {
-        console.log(res)
-        if (res.code === 0) {
+      this.axios.post(TKE_GET_TAGLIST, param).then(res => {
+        if (res.code === 0 && res.Error == undefined) {
           this.tableData = res.data.tagInfo
           this.TotalCount = res.data.tagCount
           this.loadShow = false
+        } else {
+          this.$message({
+              message: ErrorTips[res.codeDesc],
+              type: "error",
+              showClose: true,
+              duration: 0
+          })
         }
       })
     }

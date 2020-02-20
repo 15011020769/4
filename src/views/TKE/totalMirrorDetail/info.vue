@@ -27,7 +27,7 @@
     </el-card>
 </template>
 <script>
-import { GET_REPOSITORY_LIST } from '@/constants'
+import { TKE_GET_REPOSITORY_LIST } from '@/constants'
 export default {
   data () {
     return {
@@ -70,15 +70,21 @@ export default {
         offset: 0,
         limit: 1
       }
-      this.axios.post(GET_REPOSITORY_LIST, param).then(res => {
-        console.log(res)
-        if (res.code === 0) {
+      this.axios.post(TKE_GET_REPOSITORY_LIST, param).then(res => {
+        if (res.code === 0 && res.Error == undefined) {
           this.publics = res.data.repoInfo[0].public
           this.server = res.data.server
           this.pullCount = res.data.repoInfo[0].pullCount
           this.description = res.data.repoInfo[0].description
           this.updateTime = res.data.repoInfo[0].updateTime
           this.favorCount = res.data.repoInfo[0].favorCount
+        } else {
+          this.$message({
+              message: ErrorTips[res.codeDesc],
+              type: "error",
+              showClose: true,
+              duration: 0
+          })
         }
       })
     }
