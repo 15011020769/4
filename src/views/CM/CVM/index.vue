@@ -15,7 +15,7 @@
 
     <!-- 表格 -->
     <div class="Table-SY">
-      <el-table id="exportTable" :data="ProTableData" height="550" style="width: 100%" v-loading="loadShow"
+      <el-table :data="ProTableData" height="550" style="width: 100%" v-loading="loadShow"
         :empty-text="$t('CVM.clBload.zwsj')">
         <el-table-column prop :label="$t('CVM.clBload.zjm') ">
           <template slot-scope="scope">
@@ -48,6 +48,57 @@
         <el-table-column prop :label="$t('CVM.table.x5')">
           <template slot-scope="scope">
             <p v-for="i in scope.row.PrivateIpAddresses">{{i}}({{ $t('CVM.nwang') }})</p>
+            <p v-for="i in scope.row.PublicIpAddresses">{{i}}</p>
+          </template>
+        </el-table-column>
+
+        <el-table-column prop="projectName" :label="$t('CVM.table.x6')"></el-table-column>
+      </el-table>
+      <div class="Right-style pagstyle">
+        <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;{{$t("CVM.strip")}}</span>
+        <el-pagination :page-size="pagesize" :pager-count="7" layout="prev, pager, next"
+          @current-change="handleCurrentChange" :total="TotalCount"></el-pagination>
+      </div>
+    </div>
+
+
+
+
+    <div class="Table-SY" v-show="false">
+      <el-table id="exportTable" :data="ProTableData" height="550" style="width: 100%" v-loading="loadShow"
+        :empty-text="$t('CVM.clBload.zwsj')">
+        <el-table-column prop label="ID">
+          <template slot-scope="scope">
+            <p>
+              {{scope.row.InstanceId}}
+            </p>
+          </template>
+        </el-table-column>
+        <el-table-column prop label="主機名">
+          <template slot-scope="scope">
+            {{ scope.row.InstanceName}}
+          </template>
+        </el-table-column>
+
+        <el-table-column prop :label="$t('CVM.clBload.zt')">
+          <template slot-scope="scope">
+            <p :class="scope.row.InstanceState==='RUNNING'?'green':scope.row.InstanceState==='STOPPED'?'red':'orange'">
+              {{instanceStatus[scope.row.InstanceState]}}</p>
+          </template>
+        </el-table-column>
+
+        <el-table-column prop :label="$t('CVM.clBload.wllx')">
+          <template slot-scope="scope">
+            <p>{{$t("CVM.cloudMysql.wl")}}</p>
+          </template>
+        </el-table-column>
+        <el-table-column prop label="公網">
+          <template slot-scope="scope">
+            <p v-for="i in scope.row.PrivateIpAddresses">{{i}}({{ $t('CVM.nwang') }})</p>
+          </template>
+        </el-table-column>
+        <el-table-column prop label="內網">
+          <template slot-scope="scope">
             <p v-for="i in scope.row.PublicIpAddresses">{{i}}</p>
           </template>
         </el-table-column>
