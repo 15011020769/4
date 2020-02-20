@@ -32,16 +32,17 @@
             class="search" v-model='search'>
           <button class="el-icon-search ip-btn" @click="conSearch"></button>
         </div>
+          <i class="el-icon-download" @click="exportExcel()"></i>
       </div>
       <!-- 内容 -->
-      <el-table :data="tableData" style="width: 100%" v-loading="tableFlag">
+      <el-table   id="exportTable" :data="tableData" style="width: 100%" v-loading="tableFlag">
         <el-table-column label="名称" width="180">
            <template slot-scope="scope">
             <a @click='goLogDetail(scope.row)'>{{scope.row.metadata.name}}</a>
           </template>
         </el-table-column>
         <el-table-column prop="name" label="状态" width="180">
-         
+          <span style="color:#0abf5b;">Running</span>
         </el-table-column>
         <el-table-column label="类型">
           <template slot-scope="scope">
@@ -89,6 +90,8 @@
     TKE_COLONY_LIST,
     TKE_COLONY_QUERY
   } from "@/constants";
+  import XLSX from "xlsx";
+  import FileSaver from "file-saver";
   export default {
     name: 'logCollection',
     data() {
@@ -344,6 +347,29 @@
           }
         })
       },
+       //导出表格
+    exportExcel() {
+      /* generate workbook object from table */
+      var wb = XLSX.utils.table_to_book(document.querySelector("#exportTable"));
+      console.log(wb)
+      /* get binary string as output */
+      var wbout = XLSX.write(wb, {
+        bookType: "xlsx",
+        bookSST: true,
+        type: "array"
+      });
+      try {
+        FileSaver.saveAs(
+          new Blob([wbout], {
+            type: "application/octet-stream"
+          }),
+          'ccs'+ ".xlsx"
+        );
+      } catch (e) {
+        if (typeof console !== "undefined") console.log(e, wbout);
+      }
+      return wbout;
+    },
       timeFormat(times) {
         var d = new Date(times);
         var n = d.getFullYear();
@@ -503,6 +529,13 @@
 
   .font {
     font-size: 12px;
+  }
+  .el-icon-download{
+    font-size:20px;
+    margin-left: 5px;
+    margin-top: 22px;
+    margin-right:10px;
+    cursor:pointer;
   }
 
   .hide {

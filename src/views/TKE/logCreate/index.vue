@@ -56,7 +56,9 @@
                 <i class="el-icon-edit-outline icon-edit-outline" @click="item.flag = true"></i>
                 <i class="el-icon-close icon-close" @click="removeNewRoom(formFour, index)"></i>
                 <div>
-                  <span>Namespace:</span><span>default</span>|<span>采集对象:</span><span>全部容器</span>
+                  <span>Namespace:</span><span>{{item.value1}}</span>|<span>采集对象:</span>
+                  <span v-if="item.radio=='1'">全部容器</span>
+                  <span v-else>{{sum}}个工作负载</span>
                 </div>
               </div>
 
@@ -85,95 +87,103 @@
                       <div class="border-right">列表</div>
                     </div>
                     <!-- <el-tabs tab-position="left" style="height: 200px;" v-model="item.activeName" -->
-                    <el-tabs tab-position="left" class="tab-set" style="height: 200px;"  v-model="item.activeName"
+                    <el-tabs tab-position="left" class="tab-set" style="height: 200px;" v-model="item.activeName"
                       @tab-click="workLoadTab(item.activeName, index)">
                       <el-tab-pane label="Deployment" name="Deployment">
                         <div v-if="workload1.length!='0'" style="overflow:auto">
-                          <p  v-for="(item,index) in workload1" :key="index">
-                              <el-checkbox>{{item.metadata.name}}</el-checkbox>
-                          </p>
+                          <el-checkbox-group v-model="Checkbox.checkbox0" @change="checkboxChange0">
+                            <p v-for="(item,index) in workload1" :key="index">
+                              <el-checkbox :label="item">{{item.metadata.name}}</el-checkbox>
+                            </p>
+                          </el-checkbox-group>
+
                         </div>
                         <span v-else>当前命名空间下，该工作负载类型列表为空</span>
                       </el-tab-pane>
                       <el-tab-pane label="DaemonSet " name="DaemonSet">
                         <div v-if="workload1.length!='0'" style="overflow:auto">
-                          <p  v-for="(item,index) in workload1" :key="index">
-                              <el-checkbox>{{item.metadata.name}}</el-checkbox>
-                          </p>
+                          <el-checkbox-group v-model="Checkbox.checkbox1" @change="checkboxChange1">
+                            <p v-for="(item,index) in workload1" :key="index">
+                              <el-checkbox :label="item">{{item.metadata.name}}</el-checkbox>
+                            </p>
+                          </el-checkbox-group>
                         </div>
                         <span v-else>当前命名空间下，该工作负载类型列表为空</span>
                       </el-tab-pane>
                       <el-tab-pane label="StatefulSet" name="StatefulSet">
-                         <div v-if="workload1.length!='0'" style="overflow:auto">
-                          <p  v-for="(item,index) in workload1" :key="index">
-                              <el-checkbox>{{item.metadata.name}}</el-checkbox>
-                          </p>
+                        <div v-if="workload1.length!='0'" style="overflow:auto">
+                          <el-checkbox-group v-model="Checkbox.checkbox2" @change="checkboxChange2">
+                            <p v-for="(item,index) in workload1" :key="index">
+                              <el-checkbox :label="item">{{item.metadata.name}}</el-checkbox>
+                            </p>
+                          </el-checkbox-group>
                         </div>
                         <span v-else>当前命名空间下，该工作负载类型列表为空</span>
                       </el-tab-pane>
                       <el-tab-pane label="CronJob" name="CronJob">
                         <div v-if="workload1.length!='0'" style="overflow:auto">
-                          <p  v-for="(item,index) in workload1" :key="index">
-                              <el-checkbox>{{item.metadata.name}}</el-checkbox>
-                          </p>
+                          <el-checkbox-group v-model="Checkbox.checkbox3" @change="checkboxChange3">
+                            <p v-for="(item,index) in workload1" :key="index">
+                              <el-checkbox :label="item">{{item.metadata.name}}</el-checkbox>
+                            </p>
+                          </el-checkbox-group>
                         </div>
                         <span v-else>当前命名空间下，该工作负载类型列表为空</span>
                       </el-tab-pane>
                       <el-tab-pane label="Job" name="Job">
                         <div v-if="workload1.length!='0'" style="overflow:auto">
-                          <p  v-for="(item,index) in workload1" :key="index">
-                              <el-checkbox>{{item.metadata.name}}</el-checkbox>
-                          </p>
+                          <el-checkbox-group v-model="Checkbox.checkbox4" @change="checkboxChange4">
+                            <p v-for="(item,index) in workload1" :key="index">
+                              <el-checkbox :label="item">{{item.metadata.name}}</el-checkbox>
+                            </p>
+                          </el-checkbox-group>
                         </div>
                         <span v-else>当前命名空间下，该工作负载类型列表为空</span>
                       </el-tab-pane>
                     </el-tabs>
-                      <!--数据展示 -->
-                      <!-- <div v-if="item.activeName=='deployment'">
+                    <!--数据展示 -->
+                    <!-- <div v-if="item.activeName=='deployment'">
                         asdsadadssad
                       </div> -->
                   </div>
                 </el-form-item>
               </div>
             </div>
-            <div v-if="vlog == 'two' && tabPosition == 'one'" class="new-room" @click="addNewRoom">
-              新增容器
-            </div>
+            <el-button :disabled="newroomFlag" v-if="vlog == 'two' && tabPosition == 'one'" class="new-room"
+              @click="addNewRoom()">
+              添加Namespace
+            </el-button>
             <div class="form-form" v-if="tabPosition == 'two'">
               <el-form :model="formTwo" label-width="100px" class="tke-form" label-position="left">
                 <el-form-item label="工作负载选项">
-                  <el-select placeholder="请选择" size="mini" v-model="formTwo.value1">
-                    <el-option v-for="item in formTwo.option1" :key="item.value" :label="item.label"
-                      :value="item.value">
+                  <el-select placeholder="请选择namespace" size="mini" v-model="formTwo.value1">
+                    <el-option v-for="item in namespaceOptions" :key="item" :label="item" :value="item">
                     </el-option>
                   </el-select>
                   <el-select placeholder="请选择" size="mini" class="ml10" v-model="formTwo.value2">
-                    <el-option v-for="item in formTwo.option2" :key="item.value" :label="item.label"
-                      :value="item.value">
+                    <el-option v-for="item in formTwo.option2" :key="item" :label="item" :value="item">
                     </el-option>
                   </el-select>
-                  <el-select placeholder="请选择" size="mini" class="ml10" v-model="formTwo.value3">
-                    <el-option v-for="item in formTwo.option3" :key="item.value" :label="item.label"
-                      :value="item.value">
+                  <el-select placeholder="请选择" :disabled="formTwo.value3=='无'" size="mini" class="ml10"
+                    v-model="formTwo.value3">
+                    <el-option v-for="item in formTwo.option3" :key="item" :label="item" :value="item">
                     </el-option>
                   </el-select>
                 </el-form-item>
-                <el-form-item label="配置采集路径">
+                <el-form-item label="配置采集路径" v-if="formTwo.value3!='无'">
                   <div v-for="(domain, index) in formTwo.optionAll" :key="index">
                     <el-form-item label="容器名">
                       <el-select placeholder="请选择" size="mini" class="ml10" v-model="domain.value4">
-                        <el-option v-for="item in domain.option4" :key="item.value" :label="item.label"
-                          :value="item.value">
+                        <el-option v-for="item in domain.option4" :key="item" :label="item" :value="item">
                         </el-option>
                       </el-select>
                     </el-form-item>
                     <el-form-item label="文件路径">
                       <el-select placeholder="请选择" size="mini" class="ml10" v-model="domain.value5">
-                        <el-option v-for="item in domain.option5" :key="item.value" :label="item.label"
-                          :value="item.value">
+                        <el-option v-for="item in domain.option5" :key="item" :label="item" :value="item">
                         </el-option>
                       </el-select>
-                      <el-input class="w180" size="mini" placeholder="请输入文件路径"></el-input>
+                      <el-input class="w180" size="mini" v-model="domain.value6" placeholder="请输入文件路径"></el-input>
                       <el-tooltip class="item" effect="dark" content="删除" placement="right" v-if="index != 0">
                         <i class="el-icon-close" @click.prevent="removeDomain(domain)"></i>
                       </el-tooltip>
@@ -235,7 +245,8 @@
                       <el-col :span="10">
                         <el-form-item prop="CKafka">
                           <!-- <el-select v-model="form.Ckafka" placeholder="请选择" style='margin-right:10px;'> -->
-                          <el-select v-model="Ckafka.value" placeholder="请选择" class="setwidth2" style="margin-right:5px;">
+                          <el-select v-model="Ckafka.value" placeholder="请选择" class="setwidth2"
+                            style="margin-right:5px;">
                             <el-option v-for="item in Ckafka.options" :key="item" :value="item">
                             </el-option>
                           </el-select>
@@ -244,7 +255,8 @@
                       <el-col :span="10">
                         <el-form-item prop="Topic">
                           <!-- <el-select placeholder="请选择" :disabled='Topic.options.length=="1"' v-model="form.Topic"> -->
-                          <el-select placeholder="请选择"   class="setwidth" :disabled="Topic.options.length == '1'" v-model="Topic.value">
+                          <el-select placeholder="请选择" class="setwidth" :disabled="Topic.options.length == '1'"
+                            v-model="Topic.value">
                             <el-option v-for="item in Topic.options" :key="item" :value="item">
                             </el-option>
                           </el-select>
@@ -394,17 +406,18 @@
         },
         formTwo: {
           option1: [],
-          option2: [],
-          option3: [],
+          option2: ['请选择工作负载类型', 'Deployment', 'Daemonset', 'StatefulSet', 'Cronjob'],
+          option3: ['请选择workload'],
           optionAll: [{
-            option4: [],
-            option5: [],
+            option4: ['请选择容器名称'],
+            option5: ['请选择挂载目录'],
             value4: "",
-            value5: "",
+            value5: "请选择挂载目录",
+            value6: '',
             valueKey: ""
           }],
-          value1: "",
-          value2: "",
+          value1: "", //命名空间
+          value2: "Deployment",
           value3: ""
         },
         formThree: {
@@ -430,6 +443,7 @@
           value: "",
           options: ["请选择Topic"]
         },
+        newroomFlag: true,
         options: [],
         output: {
           instance_id: "",
@@ -443,17 +457,30 @@
           port: "",
           topic: ""
         },
+
         tabPosition: "one",
         vlog: "one",
         consumer: "one",
         checked: true,
         instanceList: [],
-        workload1:[],
-        workload2:[],
-        workload3:[],
-        workload4:[],
-        workload5:[],
-        resourceVersion:'',
+        workload1: [],
+        Checkbox: {
+          checkbox0: [],
+          checkbox0c: [],
+          checkbox1: [],
+          checkbox1c: [],
+          checkbox2: [],
+          checkbox2c: [],
+          checkbox3: [],
+          checkbox3c: [],
+          checkbox4: [],
+          checkbox4c: [],
+        },
+        workload2: [],
+        workload3: [],
+        workload4: [],
+        workload5: [],
+        resourceVersion: '',
       };
     },
     watch: {
@@ -477,9 +504,9 @@
               res.data.topicList.forEach(item => {
                 arr.push(item.topicId + "(" + item.topicName + ")");
               });
-              if(arr.length=='1'){
+              if (arr.length == '1') {
                 this.Topic.value = "无"
-              }else{
+              } else {
                 this.Topic.value = arr[1]
               }
               this.Topic.options = arr;
@@ -500,16 +527,103 @@
         },
         deep: true
       },
-      formFour:{
-        handler(val){
-          val.forEach(item=>{
-              if(item.radio=='2'){
-                console.log(item)
-                this.workLoadTab('Deployment', 0)
+      formTwo: {
+        handler(val) {
+          // console.log(val.value1);命名空间
+          // console.log(val.value2); 工作负载类型
+          var params = {
+            ClusterName: this.$route.query.clusterId.split("(")[0],
+            Method: "GET",
+            Path: "/apis/apps/v1beta2/namespaces/" + val.value1 + "/" + val.value2.toLocaleLowerCase() + 's',
+            Version: "2018-05-25"
+          };
+          this.axios.post(TKE_COLONY_QUERY, params).then(res => {
+            if (res.Response.Error === undefined) {
+              this.formTwo.option3 = ['请选择workload'];
+              var data = JSON.parse(res.Response.ResponseBody);
+              if (data.items.length != 0) {
+                data.items.forEach(item => {
+                  this.formTwo.option3.push(item.metadata.name)
+                })
+                var needData = data.items.filter(val1 => {
+                  return val1.metadata.name == this.formTwo.value3
+                })
+                if (needData.length != 0) {
+                  val.optionAll[0].option4 = ['请选择容器名称']
+                  var optionData = needData[0].spec.template.spec.containers;
+                  optionData.forEach(val2 => {
+                    val.optionAll[0].option4.push(val2.name)
+                  })
+                  var needData2 = optionData.filter(val3 => {
+                    return val3.name == val.optionAll[0].value4
+                  })
+                  // console.log(needData2)
+                  if (needData2.length != 0) {
+
+                    if (needData2[0].volumeMounts) {
+                      val.optionAll[0].option5 = ['请选择挂载目录']
+                      needData2[0].volumeMounts.forEach(val4 => {
+                        val.optionAll[0].option5.push(val4.mountPath)
+                      })
+                    } else {
+                      val.optionAll[0].value5 = "无"
+                    }
+
+                  }
+                  //  console.log(needData2)
+                  // console.log(val.optionAll[0].value4)
+
+
+                } else {
+                  val.optionAll[0].value4 = '无'
+                }
+                // val.optionAll[0].option4.push({})
+                // this.formTwo.value3=this.formTwo.option3[1];
+              } else {
+                // this.formTwo.value3 = '无'
               }
-          })
+            }
+          });
+
+
         },
-        deep:true
+        deep: true
+      },
+      formFour: {
+        handler(val) {
+          val.forEach(item => {
+
+            if (val.length == this.namespaceOptions.length) {
+              this.newroomFlag = true
+              return false
+            }
+            if (item.radio == '2') {
+              console.log(item)
+              this.workLoadTab(this.formFour[0].activeName, 0)
+            }
+            if (item.radio == '1') {
+              this.newroomFlag = false
+            } else {
+              this.newroomFlag = true
+            }
+          })
+
+        },
+        deep: true
+      },
+      Checkbox: {
+        handler(val) {
+
+          for (let key in val) {
+            // console.log(key)
+            if (val[key].length == '0') {
+              this.newroomFlag = true
+            } else {
+              this.newroomFlag = false
+            }
+          }
+        },
+        deep: true
       }
     },
     created() {
@@ -524,6 +638,16 @@
       this.checkCluster(); //检查是否可以创建日志
       this.kafkaList();
       this.nameSpaceList();
+    },
+    computed: {
+      sum: function () {
+        var s = 0;
+        for (let i in this.Checkbox) {
+          s += this.Checkbox[i].length
+          console.log(i)
+        }
+        return s
+      }
     },
     mounted() {},
     methods: {
@@ -557,6 +681,8 @@
           },
           Version: "2018-05-25"
         };
+
+
         if (this.checked) {
           //是否使用腾讯云消息队列kafka
           params.RequestBody.spec.output.ckafka_output = this.output;
@@ -566,14 +692,60 @@
           params.RequestBody.spec.output.type = "kafka";
         }
 
+        //容器标准输出
         if (this.tabPosition == "one") {
-          //容器标准输出
+
+          if (this.vlog == 'one') { //所有容器
+            params.RequestBody.spec.input = {
+              container_log_input: {
+                all_namespaces: true,
+                namespaces: []
+              },
+              type: "container-log"
+            };
+          } else { //指定容器
+
+            var arr = [],
+              needData = [];
+            needData = [...this.Checkbox.checkbox0c, ...this.Checkbox.checkbox1c, ...this.Checkbox.checkbox2c,
+              ...this.Checkbox.checkbox3c, ...this.Checkbox.checkbox4c
+            ]
+            this.formFour.forEach(item => {
+              var obj = new Object();
+              obj['namespace'] = item.value1;
+              if (item.radio == '1') {
+                obj['all_containers'] = true;
+                obj['workloads'] = [];
+              } else {
+                obj['all_containers'] = false;
+                obj['workloads'] = needData;
+              }
+              arr.push(obj);
+            })
+            params.RequestBody.spec.input = {
+              container_log_input: {
+                all_namespaces: false,
+                namespaces: arr
+              },
+              type: "container-log"
+            };
+          }
+        } else if (this.tabPosition == "two") {
+          //容器文件路径
           params.RequestBody.spec.input = {
-            container_log_input: {
-              all_namespaces: true,
-              namespaces: []
+            pod_log_input: {
+              container_log_files: {
+                [this.formTwo.optionAll[0].value4]: [{
+                  path: this.formTwo.optionAll[0].value5+this.formTwo.optionAll[0].value6
+                }]
+              },
+              metadata: true,
+              workload: {
+                name: this.formTwo.value3,
+                type: this.formTwo.value2
+              }
             },
-            type: "container-log"
+            type: "pod-log"
           };
         } else if (this.tabPosition == "three") {
           //节点文件路径
@@ -615,7 +787,7 @@
         this.axios.post(TKE_COLONY_QUERY, params).then(res => {
           if (res.Response.Error === undefined) {
             var data = JSON.parse(res.Response.ResponseBody);
-            this.resourceVersion=data.metadata.resourceVersion
+            this.resourceVersion = data.metadata.resourceVersion
             console.log(data)
             if (data.spec.output.ckafka_output) {
               this.axios.post(TKE_KAFKA_LIST, {}).then(val => {
@@ -672,7 +844,7 @@
             metadata: {
               name: this.$route.query.stashName,
               namespace: this.$route.query.namespace,
-              resourceVersion:this.resourceVersion
+              resourceVersion: this.resourceVersion
               // resourceVersion: "1731610"
             },
             spec: {
@@ -683,7 +855,7 @@
           },
           Version: "2018-05-25"
         };
-         if (this.checked) {
+        if (this.checked) {
           //是否使用腾讯云消息队列kafka
           params.RequestBody.spec.output.ckafka_output = this.output;
           params.RequestBody.spec.output.type = "ckafka";
@@ -721,69 +893,104 @@
           }
         });
       },
-      onSubmit() {
-        alert("已提交");
-      },
-      removeDomain(item) {
-        var index = this.formTwo.optionAll.indexOf(item);
-        if (index !== -1) {
-          this.formTwo.optionAll.splice(index, 1);
+      checkboxChange0(val) {
+        // console.log(val)
+        if (val.length != '0') {
+          var filterData = [],
+            filterDatac = [];
+          val.forEach(item => {
+            filterDatac.push({
+              name: item.metadata.name,
+              type: item.metadata.namespace
+            })
+          })
+          this.newroomFlag = false;
+          console.log(this.Checkbox.checkbox0)
+          this.Checkbox.checkbox0c = filterDatac;
+        } else {
+          this.newroomFlag = true;
         }
       },
-      addDomain() {
-        this.formTwo.optionAll.push({
-          option4: [],
-          option5: [],
-          value4: "",
-          value5: "",
-          valueKey: ""
-        });
-      },
-      addMetadata() {
-        this.formThree.domains.push({
-          value: "",
-          valueKey: ""
-        });
-      },
-      removeMetadata(item) {
-        var index = this.formThree.domains.indexOf(item);
-        if (index !== -1) {
-          this.formThree.domains.splice(index, 1);
+      checkboxChange1(val) {
+        if (val.length != '0') {
+          var filterData = [],
+            filterDatac = [];
+          val.forEach(item => {
+            filterDatac.push({
+              name: item.metadata.name,
+              type: item.metadata.namespace
+            })
+          })
+          this.newroomFlag = false;
+          this.Checkbox.checkbox1c = filterDatac;
+        } else {
+          this.newroomFlag = true;
         }
       },
-      removeNewRoom(item, index) {
-        if (item.length !== 1) {
-          this.formFour.splice(index, 1);
+      checkboxChange2(val) {
+        if (val.length != '0') {
+          var filterData = [],
+            filterDatac = [];
+          val.forEach(item => {
+            filterDatac.push({
+              name: item.metadata.name,
+              type: item.metadata.namespace
+            })
+          })
+          this.newroomFlag = false;
+          this.Checkbox.checkbox2c = filterDatac;
+        } else {
+          this.newroomFlag = true;
         }
       },
-      addNewRoom() {
-        this.formFour.push({
-          value1: this.formFour[0].value1,
-          radio: "1",
-          flag: true,
-          activeName: "deployment"
-        });
+      checkboxChange3(val) {
+        if (val.length != '0') {
+          var filterData = [],
+            filterDatac = [];
+          val.forEach(item => {
+            filterDatac.push({
+              name: item.metadata.name,
+              type: item.metadata.namespace
+            })
+          })
+          this.newroomFlag = false;
+          this.Checkbox.checkbox3c = filterDatac;
+        } else {
+          this.newroomFlag = true;
+        }
       },
+      checkboxChange4(val) {
+        if (val.length != '0') {
+          var filterData = [],
+            filterDatac = [];
+          val.forEach(item => {
+            filterDatac.push({
+              name: item.metadata.name,
+              type: item.metadata.namespace
+            })
+          })
+          this.newroomFlag = false;
+          this.Checkbox.checkbox4c = filterDatac;
+        } else {
+          this.newroomFlag = true;
+        }
+      },
+
       workLoadTab(workLoad, index) {
-        var namespace = this.formFour[index].value1;
-        this.workload1=[];
-        console.log(namespace, workLoad);
+        this.workload1 = [];
         if (this.$route.query.clusterId) {
+          var namespace = this.formFour[index].value1;
           var params = {
             ClusterName: this.$route.query.clusterId.split("(")[0],
             Method: "GET",
-            Path: "/apis/apps/v1beta2/namespaces/" + namespace + "/" + workLoad.toLocaleLowerCase()+'s',
+            Path: "/apis/apps/v1beta2/namespaces/" + namespace + "/" + workLoad.toLocaleLowerCase() + 's',
             Version: "2018-05-25"
           };
           this.axios.post(TKE_COLONY_QUERY, params).then(res => {
-            // console.log(res);
-             if (res.Response.Error === undefined) {
-            var data = JSON.parse(res.Response.ResponseBody);
-            this.workload1=data.items
-            console.log(this.workload1)
-             }
-
-
+            if (res.Response.Error === undefined) {
+              var data = JSON.parse(res.Response.ResponseBody);
+              this.workload1 = data.items;
+            }
           });
         }
       },
@@ -827,6 +1034,7 @@
                 this.namespaceOptions.push(item.metadata.name);
               });
               this.formFour[0].value1 = this.namespaceOptions[0];
+              this.formTwo.value1 = this.namespaceOptions[0];
             }
           });
         }
@@ -846,6 +1054,53 @@
             this.show1 = data.status.phase == "running" ? false : true;
           } else {}
         });
+      },
+
+      onSubmit() {
+        alert("已提交");
+      },
+      removeDomain(item) {
+        var index = this.formTwo.optionAll.indexOf(item);
+        if (index !== -1) {
+          this.formTwo.optionAll.splice(index, 1);
+        }
+      },
+      addDomain() {
+        this.formTwo.optionAll.push({
+          option4: [],
+          option5: [],
+          value4: "",
+          value5: "",
+          valueKey: ""
+        });
+      },
+      addMetadata() {
+        this.formThree.domains.push({
+          value: "",
+          valueKey: ""
+        });
+      },
+      removeMetadata(item) {
+        var index = this.formThree.domains.indexOf(item);
+        if (index !== -1) {
+          this.formThree.domains.splice(index, 1);
+        }
+      },
+      removeNewRoom(item, index) {
+        if (item.length !== 1) {
+          this.formFour.splice(index, 1);
+        }
+      },
+      addNewRoom() {
+        this.formFour.push({
+          value1: this.formFour[0].value1,
+          radio: "1",
+          flag: true,
+          activeName: "Deployment"
+        });
+      },
+      unique(arr) {
+        return Array.from(new Set(arr))
       }
     },
     props: ["uid"],
@@ -1088,11 +1343,8 @@
 
   .new-room {
     text-align: center;
-    line-height: 30px;
-    height: 30px;
     width: 840px;
     border: 1px dashed #e5e5e5;
-    margin-top: 10px;
     cursor: pointer;
 
     &:hover {
@@ -1118,12 +1370,15 @@
       flex: 1;
     }
   }
-  .setwidth{
-    width:200px;
+
+  .setwidth {
+    width: 200px;
   }
-  .setwidth2{
-    width:280px;
+
+  .setwidth2 {
+    width: 280px;
   }
+
   i {
     cursor: pointer;
   }
@@ -1131,14 +1386,18 @@
   .activeColor {
     color: #f56c6c !important;
   }
-  .tab-set{
-    overflow:auto !important;
-    ::v-deep .el-tabs__header{
-      width:123px;
+
+  .tab-set {
+    overflow: auto !important;
+
+    ::v-deep .el-tabs__header {
+      width: 123px;
     }
-    ::v-deep .el-tabs__content{
-      overflow:auto !important;
-      height:200px;
-    } 
+
+    ::v-deep .el-tabs__content {
+      overflow: auto !important;
+      height: 200px;
+    }
   }
+
 </style>
