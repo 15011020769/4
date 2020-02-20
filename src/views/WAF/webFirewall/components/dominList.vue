@@ -159,7 +159,7 @@
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
           :current-page="currentPage"
-          :page-sizes="[1, 2, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50]"
+          :page-sizes="[10, 15, 20, 25, 30, 35, 40, 45, 50]"
           :page-size="pageSize"
           layout="total, sizes, prev, pager, next"
           :total="total">
@@ -198,7 +198,7 @@ export default {
       Status: '',
       total: 0,
       currentPage: 1,
-      pageSize: 5,
+      pageSize: 20,
     }
   },
   computed: {
@@ -304,8 +304,8 @@ export default {
             domain.ClsStatusBool = !!domain.ClsStatus
             domain.delDialog = false
           })
-          this.total = 20 //TotalCount
-          this.domains = Array.from(Array(20), (v,k) => ({DomainId: k}))
+          this.total = TotalCount
+          this.domains = domains
         })
       }).then(() => {
         this.loading = false
