@@ -69,7 +69,7 @@
 
 
 
-    <div class="Table-SY">
+    <div class="Table-SY" v-show="false">
       <el-table :data="ProTableData" height="550" id="exportTable" style="width: 100%" v-loading="loadShow"
         :empty-text="$t('CVM.clBload.zwsj')">
         <el-table-column prop label="ID">

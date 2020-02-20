@@ -59,7 +59,7 @@
     </div>
 
 
-    <div class="Table-SY">
+    <div class="Table-SY" v-show="false">
       <el-table :data="TbaleData" height="550" style="width: 100%" id="exportTable" v-loading="loadShow"
         :empty-text="$t('CVM.clBload.zwsj')">
         <el-table-column prop label="ID">
