@@ -34,18 +34,27 @@
                 <el-radio-button label="two">容器文件路径</el-radio-button>
                 <el-radio-button label="three">节点文件路径</el-radio-button>
               </el-radio-group>
-              <div>
+              <p v-if='tabPosition=="one"'>
                 采集集群内任意服务下的容器日志，仅支持Stderr和Stdout的日志
                 <a href="" style="margin-left:10px;">查看示例</a>
-              </div>
+              </p>
+              <p v-if='tabPosition=="two"'>
+               采集集群内指定容器内的文件日志，仅支持挂载了数据卷并将日志输出到数据卷的工作负载
+                <a href="" style="margin-left:10px;">查看示例</a>
+              </p>
+              <p v-if='tabPosition=="three"'>
+               采集集群内指定节点路径的文件
+                <a href="" style="margin-left:10px;">查看示例</a>
+              </p>
             </div>
             <div v-else>
-              <span v-if="$route.query.type == 'host-log'">指定主机文件</span>
+              <span v-if="$route.query.type == 'host-log'">节点文件路径</span>
               <span v-if="$route.query.type == 'container-log'">容器标准输出</span>
+              <span v-if="$route.query.type == 'pod-log'"> 容器文件路径</span>
             </div>
           </el-form-item>
           <el-form-item label="日志源">
-            <el-radio-group v-model="vlog" size="mini" v-if="tabPosition == 'one'">
+            <el-radio-group v-model="vlog" size="mini" v-if="tabPosition == 'one'&&!editStatus">
               <el-radio-button label="one">所有容器</el-radio-button>
               <el-radio-button label="two">指定容器</el-radio-button>
             </el-radio-group>
@@ -63,13 +72,13 @@
               </div>
 
               <div class="form-form position-form" v-if="
-                  vlog == 'two' && tabPosition == 'one' && item.flag == true
+                  vlog == 'two' && tabPosition == 'one' && item.flag == true 
                 ">
                 <i class="el-icon-check icon-check" @click="item.flag = false"></i>
                 <i class="el-icon-close icon-close" @click="removeNewRoom(formFour, index)"></i>
                 <el-form-item label="所属Namespace" label-width="150px">
                   <el-select placeholder="请选择" size="mini" v-model="item.value1">
-                    <el-option v-for="item in namespaceOptions" :key="item" :value="item">
+                    <el-option v-for="item in namespaceOptions1" :key="item" :value="item">
                       <!-- <el-option v-for="item in namespaceOptions" :key="item.value" :label="item.label" :value="item.value"> -->
                     </el-option>
                   </el-select>
@@ -156,15 +165,15 @@
             <div class="form-form" v-if="tabPosition == 'two'">
               <el-form :model="formTwo" label-width="100px" class="tke-form" label-position="left">
                 <el-form-item label="工作负载选项">
-                  <el-select placeholder="请选择namespace" size="mini" v-model="formTwo.value1">
+                  <el-select placeholder="请选择namespace" :disabled='editStatus' size="mini" v-model="formTwo.value1">
                     <el-option v-for="item in namespaceOptions" :key="item" :label="item" :value="item">
                     </el-option>
                   </el-select>
-                  <el-select placeholder="请选择" size="mini" class="ml10" v-model="formTwo.value2">
+                  <el-select placeholder="请选择" size="mini" :disabled='editStatus' class="ml10" v-model="formTwo.value2">
                     <el-option v-for="item in formTwo.option2" :key="item" :label="item" :value="item">
                     </el-option>
                   </el-select>
-                  <el-select placeholder="请选择" :disabled="formTwo.value3=='无'" size="mini" class="ml10"
+                  <el-select placeholder="请选择" :disabled="formTwo.value3=='无'||editStatus" size="mini" class="ml10"
                     v-model="formTwo.value3">
                     <el-option v-for="item in formTwo.option3" :key="item" :label="item" :value="item">
                     </el-option>
@@ -179,11 +188,16 @@
                       </el-select>
                     </el-form-item>
                     <el-form-item label="文件路径">
-                      <el-select placeholder="请选择" size="mini" class="ml10" v-model="domain.value5">
-                        <el-option v-for="item in domain.option5" :key="item" :label="item" :value="item">
-                        </el-option>
-                      </el-select>
-                      <el-input class="w180" size="mini" v-model="domain.value6" placeholder="请输入文件路径"></el-input>
+                      <span v-if="!editStatus">
+                        <el-select placeholder="请选择" size="mini" class="ml10" v-model="domain.value5">
+                          <el-option v-for="item in domain.option5" :key="item" :label="item" :value="item">
+                          </el-option>
+                        </el-select>
+                        <el-input class="w180" size="mini" v-model="domain.value6" placeholder="请输入文件路径"></el-input>
+                      </span>
+                      <span v-else>
+                        <el-input class="w180" size="mini" v-model="domain.value7" placeholder="请输入文件路径"></el-input>
+                      </span>
                       <el-tooltip class="item" effect="dark" content="删除" placement="right" v-if="index != 0">
                         <i class="el-icon-close" @click.prevent="removeDomain(domain)"></i>
                       </el-tooltip>
@@ -368,6 +382,7 @@
       return {
         editStatus: false,
         genDataValue: [],
+        flagOne:true,
         filterMethod(query, item) {
           return item.pinyin.indexOf(query) > -1;
         },
@@ -414,6 +429,7 @@
             value4: "",
             value5: "请选择挂载目录",
             value6: '',
+            value7: '',
             valueKey: ""
           }],
           value1: "", //命名空间
@@ -434,6 +450,7 @@
           activeName: "Deployment"
         }],
         namespaceOptions: [],
+        namespaceOptions1: [],
         value: "jq",
         Ckafka: {
           value: "",
@@ -543,36 +560,46 @@
               var data = JSON.parse(res.Response.ResponseBody);
               if (data.items.length != 0) {
                 data.items.forEach(item => {
+                  //workload选项
                   this.formTwo.option3.push(item.metadata.name)
                 })
                 var needData = data.items.filter(val1 => {
                   return val1.metadata.name == this.formTwo.value3
                 })
                 if (needData.length != 0) {
-                  val.optionAll[0].option4 = ['请选择容器名称']
+                  //容器名称选项
+                  val.optionAll.forEach(v => {
+                    v.option4 = ['请选择容器名称']
+                  })
                   var optionData = needData[0].spec.template.spec.containers;
                   optionData.forEach(val2 => {
-                    val.optionAll[0].option4.push(val2.name)
+                    val.optionAll.forEach(v => {
+                      v.option4.push(val2.name)
+                    })
                   })
                   var needData2 = optionData.filter(val3 => {
                     return val3.name == val.optionAll[0].value4
                   })
-                  // console.log(needData2)
                   if (needData2.length != 0) {
 
                     if (needData2[0].volumeMounts) {
-                      val.optionAll[0].option5 = ['请选择挂载目录']
+                      val.optionAll.forEach(v => {
+                        v.option5 = ['请选择挂载目录']
+                      })
                       needData2[0].volumeMounts.forEach(val4 => {
-                        val.optionAll[0].option5.push(val4.mountPath)
+                        val.optionAll.forEach(v => {
+                          v.option5.push(val4.mountPath)
+                        })
+                        // val.optionAll[0].option5.push(val4.mountPath)
                       })
                     } else {
-                      val.optionAll[0].value5 = "无"
+                      val.optionAll.forEach(v => {
+                        v.value5 = "无"
+                      })
                     }
 
                   }
-                  //  console.log(needData2)
-                  // console.log(val.optionAll[0].value4)
-
+                
 
                 } else {
                   val.optionAll[0].value4 = '无'
@@ -736,7 +763,7 @@
             pod_log_input: {
               container_log_files: {
                 [this.formTwo.optionAll[0].value4]: [{
-                  path: this.formTwo.optionAll[0].value5+this.formTwo.optionAll[0].value6
+                  path: this.formTwo.optionAll[0].value5 + this.formTwo.optionAll[0].value6
                 }]
               },
               metadata: true,
@@ -787,8 +814,58 @@
         this.axios.post(TKE_COLONY_QUERY, params).then(res => {
           if (res.Response.Error === undefined) {
             var data = JSON.parse(res.Response.ResponseBody);
-            this.resourceVersion = data.metadata.resourceVersion
             console.log(data)
+            this.resourceVersion = data.metadata.resourceVersion
+            //节点文件路径
+            if (data.spec.input.type == 'host-log') {
+              this.tabPosition = 'three';
+              this.formThree.value = data.spec.input.host_log_input.path;
+              var data1 = data.spec.input.host_log_input.labels,
+                arr = [];
+              for (let i in data1) {
+                var obj = {};
+                obj['value'] = i;
+                obj['valueKey'] = data1[i]
+                arr.push(obj)
+              }
+              console.log(arr)
+              this.formThree.domains = arr
+            }else if (data.spec.input.type == 'pod-log') { //容器文件路径
+              
+              this.tabPosition = 'two';
+            
+              this.formTwo.value1 = data.metadata.namespace;
+              this.formTwo.value2 = data.spec.input.pod_log_input.workload.type;
+              this.formTwo.value3 = data.spec.input.pod_log_input.workload.name;
+              var data3 = data.spec.input.pod_log_input.container_log_files;
+             
+              var arr = [];
+              for (let i in data3) {
+                for (let j in data3[i]) {
+                  var obj = new Object();
+                  obj['value4'] = i;
+                  obj['value5'] = '请选择挂载目录';
+                  obj['value6'] = '';
+                  obj['valueKey'] = '';
+                  obj['value7'] = data3[i][j].path;
+                  obj['option4'] = ['请选择容器名称'];
+                  obj['option5'] = ['请选择挂载目录'];
+                  arr.push(obj)
+                }
+              }
+              this.formTwo.optionAll = arr;
+            }else if(data.spec.input.type=='container-log'){//容器标准输出
+                //指定文件
+                if(!data.spec.input.container_log_input.all_namespaces){
+                    this.vlog='two'
+                }
+
+
+            }
+
+
+
+
             if (data.spec.output.ckafka_output) {
               this.axios.post(TKE_KAFKA_LIST, {}).then(val => {
                 if (val.codeDesc === "Success") {
@@ -1032,9 +1109,10 @@
               var data = JSON.parse(res.Response.ResponseBody);
               data.items.forEach(item => {
                 this.namespaceOptions.push(item.metadata.name);
+                this.namespaceOptions1.push(item.metadata.name);
               });
               this.formFour[0].value1 = this.namespaceOptions[0];
-              this.formTwo.value1 = this.namespaceOptions[0];
+              // this.formTwo.value1 = this.namespaceOptions[0];
             }
           });
         }
@@ -1092,16 +1170,24 @@
         }
       },
       addNewRoom() {
+        var arr=[],arr2,arr3=[];
+        this.formFour.forEach(v=>{
+          arr.push(v.value1)
+        })
+        arr2=Array.from(new Set(arr));
+        arr2.forEach(v=>{
+          let i= this.namespaceOptions1.indexOf(v)
+          if(i!=-1){
+            this.namespaceOptions1.splice(i,1)
+          }
+        })
         this.formFour.push({
-          value1: this.formFour[0].value1,
+          value1: this.namespaceOptions1[0],
           radio: "1",
           flag: true,
           activeName: "Deployment"
         });
       },
-      unique(arr) {
-        return Array.from(new Set(arr))
-      }
     },
     props: ["uid"],
     components: {
@@ -1346,6 +1432,7 @@
     width: 840px;
     border: 1px dashed #e5e5e5;
     cursor: pointer;
+
     &:hover {
       background-color: #f2f2f2;
     }

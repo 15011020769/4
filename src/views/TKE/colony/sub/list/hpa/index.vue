@@ -36,14 +36,14 @@
       <!-- 数据列表展示 -->
       <div class="tke-card mt10">
         <el-table
-          :data="list"
+          :data="list.slice((pageIndex - 1) * pageSize, pageIndex * pageSize)"
           v-loading="loadShow"
           style="width: 100%">
           <el-table-column
             label="名称"
             >
             <template slot-scope="scope">
-              <span @click="goHpaDetail()" class="tke-text-link">sdsd</span>
+              <span @click="goHpaDetail(scope.row)" class="tke-text-link">{{scope.row.metadata.name}}</span>
             </template>
           </el-table-column>
           <el-table-column
@@ -51,7 +51,7 @@
             label="关联工作负载"
             >
             <template slot-scope="scope">
-               <span>k8s-app:cron、qcloud-app:cron</span>
+               <span>{{scope.row.spec.scaleTargetRef.kind}}:{{scope.row.spec.scaleTargetRef.name}}</span>
             </template>
           </el-table-column>
           <el-table-column
@@ -59,7 +59,7 @@
             label="触发策略"
             >
             <template slot-scope="scope">
-                <span>k8s-app:cron、qcloud-app:cron</span>
+                <span>cpu使用量：{{scope.row.spec.metrics[0].pods.targetAverageValue}}核</span>
             </template>
           </el-table-column>
           
@@ -68,7 +68,7 @@
             label="最小实例数"
             >
             <template slot-scope="scope">
-              <span>1</span>
+              <span>{{scope.row.spec.minReplicas}}</span>
             </template>
           </el-table-column>
 
@@ -77,7 +77,7 @@
             label="最大实例数"
             >
             <template slot-scope="scope">
-              <span>2</span>
+              <span>{{scope.row.spec.maxReplicas}}</span>
             </template>
           </el-table-column>
           <el-table-column
@@ -112,41 +112,27 @@
 import subTitle from "@/views/TKE/components/subTitle";
 import tkeSearch from "@/views/TKE/components/tkeSearch";
 import Loading from "@/components/public/Loading";
-import { ALL_CITY } from "@/constants";
+import { ALL_CITY,TKE_COLONY_QUERY } from "@/constants";
 export default {
   name: "colonyResourceCronJob",
   data() {
     return {
       loadShow: false, //加载是否显示
       list:[
-        {
-          status:false
-        },
-        {
-          status:true
-        }
+        // {
+        //   status:false
+        // },
+        // {
+        //   status:true
+        // }
       ], //列表
       total:0,
       pageSize:10,
-      pageIndex:0,
+      pageIndex:1,
       multipleSelection: [],
       
       //搜索下拉框
-      searchOptions: [
-        {
-          value: "default",
-          label: "default"
-        },
-        {
-          value: "kube-system",
-          label: "kube-system"
-        },
-        {
-          value: "kube-public",
-          label: "kube-public"
-        }
-        
-      ],
+      searchOptions: [],
       searchType: "default", //下拉选中的值
       searchInput: "", //输入的搜索关键字
     };
@@ -155,8 +141,57 @@ export default {
   created() {
     // 从路由获取集群id
     this.clusterId=this.$route.query.clusterId;
+    this.tableListData();
+    this.nameSpaceList();
   },
   methods: {
+
+    //列表数据展示
+    tableListData(){
+      var params={
+        ClusterName:this.clusterId,
+        Method: "GET",
+        Path: "/apis/autoscaling/v2beta1/namespaces/"+this.searchType+"/horizontalpodautoscalers?fieldSelector=metadata.name="+this.searchInput,
+        Version: "2018-05-25",
+      }
+      console.log(params)
+
+      this.axios.post(TKE_COLONY_QUERY,params).then(res=>{
+
+        if (res.Response.Error==undefined) {
+              var data = JSON.parse(res.Response.ResponseBody);
+             console.log(data)
+             this.list = data.items;
+              
+       }
+        
+      })
+    },
+     //命名空间选项 
+      nameSpaceList() {
+        if (this.clusterId) {
+          var params = {
+            ClusterName: this.clusterId,
+            Method: "GET",
+            Path: "/api/v1/namespaces",
+            Version: "2018-05-25",
+          };
+          // console.log(params)
+          this.axios.post(TKE_COLONY_QUERY, params).then(res => {
+            if (res.Response.Error==undefined) {
+              var data = JSON.parse(res.Response.ResponseBody);
+              var nameList=[];
+              console.log(data.items)
+              data.items.forEach(item => {
+                nameList.push({value:item.metadata.name,label:item.metadata.name})
+              })
+              this.searchOptions=nameList
+              this.searchType=nameList[0].value
+              console.log(this.searchType)
+            }
+          })
+        }
+      },
      // 新建
     goHpaCreate(){
       this.$router.push({
@@ -181,15 +216,18 @@ export default {
     changeSearchType(val) {
       this.searchType = val;
       console.log(this.searchType)
+      this.tableListData();
     },
     //监听搜索框的值
     changeSearchInput(val) {
       this.searchInput = val;
+      this.tableListData();
       console.log(this.searchInput)
     },
     // 点击搜索
     clickSearch(val){
       this.searchInput = val;
+      this.tableListData();
       console.log(this.searchInput)
     },
     //刷新数据

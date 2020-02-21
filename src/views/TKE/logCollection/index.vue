@@ -283,7 +283,7 @@
             Version: "2018-05-25",
           };
           this.axios.post(TKE_COLONY_QUERY, params).then(res => {
-            if (res.Response) {
+            if (res.Response.Error==undefined) {
               var data = JSON.parse(res.Response.ResponseBody);
               data.items.forEach(item => {
                 this.Name.options.push(item.metadata.name)
