@@ -199,7 +199,7 @@ export default {
     getEvent() {
       let params = {
         Method: "GET",
-        Path: "/api/v1/namespaces/"+"default"+"/events?&limit=20",
+        Path: "/api/v1/namespaces/" + "default" + "/events?&limit=20",
         Version: "2018-05-25",
         ClusterName: "cls-l74ol4g0"
       };
