@@ -123,6 +123,7 @@
 <script>
 import { TKE_MIRROR_ROAD, TKE_MIRROR_STRATEGY, TKE_MIRROR_AUTODELELTE } from '@/constants'
 export default {
+  name:'MirrorInfos',
   data () {
     return {
       userID: 100011921910,

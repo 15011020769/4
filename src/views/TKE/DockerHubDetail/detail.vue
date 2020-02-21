@@ -23,6 +23,7 @@ import mavonEditor from 'mavon-editor'
 // import 'mavon-editor/dist/css/index.css'
 import { TKE_DOCKERHUB_INFO,TKE_DOCKERHUB_TAGLIST } from "@/constants"
 export default {
+    name: 'DockerHubDetail',
     data(){
         return {
             detailDesc:'',

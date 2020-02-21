@@ -61,6 +61,7 @@
 import { ErrorTips } from "@/components/ErrorTips";
 import { TKE_MIRROR_LIST, TKE_MIRROR_UPDATE, TKE_MIRROR_UPDATE_DESC } from '@/constants'
 export default {
+  name:'MirrorDetails',
   data () {
     return {
       reponame: this.$route.query.id.split('/')[1],

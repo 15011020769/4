@@ -28,6 +28,7 @@
 <script>
 import { TKE_DOCKERHUB_INFO } from "@/constants"
 export default {
+    name: 'DockerHubInfo',
     data () {
       return {
         reponame:'',

@@ -172,6 +172,7 @@
 import { ErrorTips } from "@/components/ErrorTips";
 import { ALL_CITY, TKE_MIRROR_LIST, TKE_SPACENAME_LIST, TKE_MIRROR_DELETE, ALL_PROJECT, TKE_MIRROR_PRESENCE, TKE_MIRROR_CREATE, TKE_CHANGEPASSWORD} from '@/constants'
 export default {
+  name:'MirrorUser',
   data () {
     var validatePass = (rule, value, callback) => {
       if (value === '') {
@@ -241,7 +242,6 @@ export default {
         name: '',
         region: '0',
         region2: '',
-        delivery: false,
         type: [],
         resource: '',
         desc: '',
@@ -484,6 +484,7 @@ export default {
         }
       })
     },
+    // 重置密码
     ChangePassword(word){
       const param = {
         password: word

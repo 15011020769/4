@@ -33,7 +33,7 @@
 </template>
 <script>
 export default {
-  name: 'myMirror',
+  name: 'MirrorMessage',
   data () {
     return {
       dataObject: {
