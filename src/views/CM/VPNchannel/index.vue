@@ -12,7 +12,7 @@
     </div>
     <!-- 表格 -->
     <div class="Table-SY">
-      <el-table :data="ProTableData" height="550" id="exportTable" style="width: 100%" v-loading="loadShow"
+      <el-table :data="ProTableData" height="550" style="width: 100%" v-loading="loadShow"
         :empty-text="$t('CVM.clBload.zwsj')">
         <el-table-column prop :label="$t('CVM.clBload.zjm') ">
           <template slot-scope="scope">
@@ -56,8 +56,7 @@
             <p>{{scope.row.userGwName}}</p>
           </template>
         </el-table-column>
-        <!-- <el-table-column prop label="	健康状态"></el-table-column>
-        <el-table-column prop label="	告警策略数"></el-table-column>-->
+
       </el-table>
       <div class="Right-style pagstyle">
         <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;{{$t("CVM.strip")}}</span>
@@ -65,6 +64,66 @@
           @current-change="handleCurrentChange" :total="TotalCount"></el-pagination>
       </div>
     </div>
+
+
+
+
+
+    <div class="Table-SY" v-show="false">
+      <el-table :data="ProTableData" height="550" id="exportTable" style="width: 100%" v-loading="loadShow"
+        :empty-text="$t('CVM.clBload.zwsj')">
+        <el-table-column prop label="ID">
+          <template slot-scope="scope">
+            <p>
+              <a @click="jump(scope.row.VpnConnectionId)" style="cursor:pointer;">{{scope.row.VpnConnectionId}}</a>
+            </p>
+
+          </template>
+        </el-table-column>
+
+        <el-table-column prop label="名稱">
+          <template slot-scope="scope">
+
+            {{ scope.row.VpnConnectionName}}
+          </template>
+        </el-table-column>
+
+
+
+
+
+        <el-table-column prop :label="$t('CVM.clBload.zt')">
+          <template slot-scope="scope">
+            <p :class="scope.row.State == 'PENDING' ? 'orange' : scope.row.State == 'AVAILABLE' ? 'green' : 'red'">
+              {{vpcConnState[scope.row.State]}}</p>
+          </template>
+        </el-table-column>
+
+        <el-table-column prop :label="$t('CVM.clBload.sswl')">
+          <template slot-scope="scope">
+            <p style="color: #65a5f9;">{{scope.row.VpcId}}</p>
+            <p>{{scope.row.VpcName}}</p>
+          </template>
+        </el-table-column>
+        <el-table-column prop :label="$t('CVM.vpnwg')">
+          <template slot-scope="scope">
+            <p style="color: #65a5f9;">{{scope.row.VpnGatewayId}}</p>
+            <p>{{scope.row.vpnGwName}}</p>
+          </template>
+        </el-table-column>
+        <el-table-column prop :label="$t('CVM.clBload.ddwg')	">
+          <template slot-scope="scope">
+            <p style="color: #65a5f9;">{{scope.row.CustomerGatewayId}}</p>
+            <p>{{scope.row.userGwName}}</p>
+          </template>
+        </el-table-column>
+
+      </el-table>
+    </div>
+
+
+
+
   </div>
 </template>
 
@@ -242,6 +301,7 @@
       },
       //分页
       handleSizeChange(val) {
+        this.loadShow = true
         this.pagesize = val;
         this.currpage = 1;
         this.GetTabularData();

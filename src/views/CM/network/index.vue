@@ -213,12 +213,7 @@
           }
         });
       },
-      //分页
-      handleSizeChange(val) {
-        this.pagesize = val;
-        this.currpage = 1;
-        this.GetTabularData();
-      },
+
       handleCurrentChange(val) {
         this.currpage = val;
         this.GetTabularData();

@@ -62,7 +62,7 @@
 import HeadCom from '@/components/public/Head'
 import { TKE_DOCKERHUB_LIST, TKE_DELETE_FAVOR,TKE_ADD_FAVOR } from '@/constants'
 export default {
-  name: 'myFavorite',
+  name: 'DockerHub',
   components: {
     HeadCom
   },

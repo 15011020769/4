@@ -1,5 +1,6 @@
-import { obj2Arr } from '@/utils'
+import { obj2Arr, addVal2Key } from '@/utils'
 
+/** 套餐包信息 */
 export const PACKAGE_CFG_TYPES = {
   0: {
       key: "wsm_package_base",
@@ -52,6 +53,7 @@ export const PACKAGE_CFG_TYPES = {
       CCQps: 500000
   }
 }
+/** 公共错误code */
 export const COMMON_ERROR = {
   'FailedOperation': '操作失败。',
   'InternalError': '内部错误。',
@@ -67,7 +69,8 @@ export const COMMON_ERROR = {
   'UnauthorizedOperation': '未授权操作。',
   'UnknownParameter': '未知参数错误。',
 }
-export const LOGIC_SYMBOL = {
+/** 自定义策略逻辑符号 */
+const LOGIC_SYMBOL_LOCAL = {
   ipmatch: '匹配',
   ipnmatch: '不匹配',
   empty: '内容为空',
@@ -84,7 +87,10 @@ export const LOGIC_SYMBOL = {
   exsit: '存在参数',
   nexsit: '不存在参数',
 }
-export const LOGIC_SYMBOL_ARR = obj2Arr(LOGIC_SYMBOL)
+export const LOGIC_SYMBOL = addVal2Key(LOGIC_SYMBOL_LOCAL)
+export const LOGIC_SYMBOL_ARR = obj2Arr(LOGIC_SYMBOL_LOCAL)
+
+/** 自定义策略匹配字段 */
 export const MATCH_KEY = {
   IP: {
     name: '来源IP',
@@ -238,33 +244,44 @@ export const MATCH_KEY = {
   },
 }
 export const MATCH_KEY_ARR = obj2Arr(MATCH_KEY)
-export const POLICY_RULE_ACTION = {
+
+/** 自定义策略执行动作  */
+const POLICY_RULE_ACTION_LOCAL = {
   0: '放行',
   1: '阻断',
   2: '人机识别',
   3: '观察',
   4: '重定向',
 }
-export const POLICY_RULE_ACTION_ARR = obj2Arr(POLICY_RULE_ACTION)
-export const CC_RULE_ACTION = {
+export const POLICY_RULE_ACTION = addVal2Key(POLICY_RULE_ACTION_LOCAL)
+export const POLICY_RULE_ACTION_ARR = obj2Arr(POLICY_RULE_ACTION_LOCAL)
+
+/** CC规则执行动作 */
+const CC_RULE_ACTION_LOCAL = {
   20: '观察',
   21: '人机识别',
   22: '拦截',
 }
-export const CC_RULE_MATCH = {
+export const CC_RULE_ACTION = addVal2Key(CC_RULE_ACTION_LOCAL)
+
+/** CC规则匹配条件  */
+export const CC_RULE_MATCH_LOCAL = {
   0: '相等',
   1: '前缀匹配',
   2: '包含'
 }
+export const CC_RULE_MATCH = addVal2Key(CC_RULE_MATCH_LOCAL)
 
-export const IP_STATUS_TYPE = {
+/** IP封堵类型 */
+const IP_STATUS_TYPE_LOCAL = {
   BOT: 'BOT',
   CC: 'CC',
   DIY: '自定义人机识别'
 }
+export const IP_STATUS_TYPE = addVal2Key(IP_STATUS_TYPE_LOCAL)
+export const IP_STATUS_TYPE_ARR = obj2Arr(IP_STATUS_TYPE_LOCAL)
 
-export const IP_STATUS_TYPE_ARR = obj2Arr(IP_STATUS_TYPE)
-
+/** 自定义会话特征匹配字段 */
 export const ATTACK_TYPE = [
   { id: "全部攻击类型", label: "全部攻击类型" },
   { id: "SQL注入攻击", label: "SQL注入攻击" },

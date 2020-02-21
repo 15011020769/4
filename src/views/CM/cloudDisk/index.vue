@@ -13,7 +13,7 @@
     </div>
     <!-- 表格 -->
     <div class="Table-SY">
-      <el-table :data="TbaleData" height="550" style="width: 100%" id="exportTable" v-loading="loadShow"
+      <el-table :data="TbaleData1" height="550" style="width: 100%" v-loading="loadShow"
         :empty-text="$t('CVM.clBload.zwsj')">
         <el-table-column prop :label="$t('CVM.cloudDisk.mc')">
           <template slot-scope="scope">
@@ -42,6 +42,7 @@
         <el-table-column prop :label="$t('CVM.cloudDisk.glyzj')">
           <template slot-scope="scope">
             <p>{{scope.row.InstanceId}}</p>
+            <p>{{scope.row.InstanceName}}</p>
           </template>
         </el-table-column>
       </el-table>
@@ -51,6 +52,46 @@
           @current-change="handleCurrentChange" :total="TotalCount">
         </el-pagination>
       </div>
+    </div>
+
+
+
+    <div class="Table-SY" v-show="false">
+      <el-table :data="TbaleData1" height="550" style="width: 100%" id="exportTable" v-loading="loadShow"
+        :empty-text="$t('CVM.clBload.zwsj')">
+        <el-table-column prop label="ID">
+          <template slot-scope="scope">
+            {{scope.row.DiskId}}
+          </template>
+        </el-table-column>
+        <el-table-column prop label="名稱">
+          <template slot-scope="scope">
+            {{ scope.row.DiskName}}
+          </template>
+        </el-table-column>
+        <el-table-column prop :label="$t('CVM.cloudDisk.dx')">
+          <template slot-scope="scope">{{scope.row.DiskSize}}</template>
+        </el-table-column>
+        <el-table-column prop :label="$t('CVM.cloudDisk.yplx')">
+          <template slot-scope="scope">
+            <p>{{DiskType[scope.row.DiskType]}}</p>
+            <p>{{DiskUsage[scope.row.DiskUsage]}}</p>
+          </template>
+        </el-table-column>
+        <el-table-column prop label="ID">
+          <template slot-scope="scope">
+            <p>
+              {{scope.row.InstanceId}}
+            </p>
+          </template>
+        </el-table-column>
+        <el-table-column prop label="主機名">
+          <template slot-scope="scope">
+            {{ scope.row.InstanceName}}
+          </template>
+        </el-table-column>
+
+      </el-table>
     </div>
   </div>
 </template>
@@ -67,6 +108,7 @@
   import {
     ALL_CITY,
     DISK_LIST,
+    CVM_LIST,
     ALL_PROJECT
   } from "@/constants";
   export default {
@@ -97,9 +139,11 @@
         },
         searchInput: "",
         TbaleData: [], // 表格数据
+        TbaleData1: [],
         TotalCount: 0,
         pagesize: 10, // 分页条数
-        currpage: 1 // 当前页码
+        currpage: 1, // 当前页码
+        VpcList: [] //vpc列表
       };
     },
     created() {
@@ -187,15 +231,12 @@
           param["Filters.0.Name"] = this.searchValue;
           param["Filters.0.Values.0"] = this.searchInput;
         }
-        const paramS = {
-          allList: 0
-        };
         // 获取表格数据
         this.axios.post(DISK_LIST, param).then(data => {
           if (data.Response.Error == undefined) {
             this.TbaleData = data.Response.DiskSet;
             this.TotalCount = data.Response.TotalCount
-            this.loadShow = false;
+
           } else {
             let ErrTips = {
               'InvalidFilter': '指定的Filter不被支持',
@@ -210,10 +251,57 @@
               duration: 0
             });
           }
-        });
+        }).then(() => {
+          this.Getvpc()
+        })
+      },
+
+      // 添加项目列表的表格数据
+      Getvpc() {
+        const param = {
+          Region: localStorage.getItem("regionv2"),
+          Version: "2017-03-12",
+        }
+        // 获取表格数据
+        this.axios
+          .post(CVM_LIST, param)
+          .then(data => {
+            if (data.Response.Error == undefined) {
+              this.VpcList = data.Response.InstanceSet
+              this.TbaleData.forEach(item => {
+                this.VpcList.forEach(element => {
+                  if (item.InstanceId === element.InstanceId) {
+                    item.InstanceName = element.InstanceName
+                  }
+                });
+              });
+              this.loadShow = false;
+              this.TbaleData1 = this.TbaleData
+            } else {
+              let ErrTips = {
+                'InternalServerError': '操作內部錯誤',
+                'InvalidFilter': '無效的過濾器',
+                'InvalidFilterValue.LimitExceeded': 'Filter參數值數量超過限制',
+                'InvalidHostId.Malformed': '無效CDH ID。指定的CDH ID格式錯誤。例如ID長度錯誤host-1122',
+                'InvalidInstanceId.Malformed': '無效實例ID。指定的實例ID格式錯誤。例如實例ID長度錯誤ins-1122',
+                'InvalidParameter': '無效參數。參數不合要求或者參數不被支持等',
+                'InvalidParameterValue': '無效參數值。參數值格式錯誤或者參數值不被支持等',
+                'InvalidParameterValue.LimitExceeded': '參數值數量超過限制',
+                'InvalidZone.MismatchRegion': '指定的zone不存在',
+              }
+              let ErrOr = Object.assign(ErrorTips, ErrTips)
+              this.$message({
+                message: ErrOr[data.Response.Error.Code],
+                type: "error",
+                showClose: true,
+                duration: 0
+              });
+            }
+          })
       },
       //分页
       handleCurrentChange(val) {
+        this.loadShow = true;
         this.currpage = val;
         this.GetTabularData();
       },

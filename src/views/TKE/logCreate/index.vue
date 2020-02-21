@@ -1346,7 +1346,6 @@
     width: 840px;
     border: 1px dashed #e5e5e5;
     cursor: pointer;
-
     &:hover {
       background-color: #f2f2f2;
     }

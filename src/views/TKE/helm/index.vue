@@ -6,10 +6,12 @@
           <City :Cityvalue.sync="selectedRegion" :cities="cities" class="city" @changeCity="changeCity"></City>
           <div class="head-cluster">
             <span style="font-size:12px;">集群</span>
-            <el-select v-model="select" slot="prepend" placeholder="请选择" size="mini" style="width:100px">
-              <el-option label="餐厅名" value="1"></el-option>
-              <el-option label="订单号" value="2"></el-option>
-              <el-option label="用户电话" value="3"></el-option>
+            <el-select v-model="value" slot="prepend" placeholder="请选择" size="mini" style="width:100px">
+              <el-option v-for="item in options"
+                        :key="item.ClusterId"
+                        :label="item.ClusterName"
+                        :value="item.ClusterId">
+              </el-option>
             </el-select>
           </div>
         </div>
@@ -46,7 +48,7 @@
 import HeadCom from '@/components/public/Head'
 import City from '@/components/public/CITY'
 import {
-  ALL_CITY
+  ALL_CITY,TKE_COLONY_LIST
 } from '@/constants'
 export default {
   name: 'helm',
@@ -60,13 +62,35 @@ export default {
       cities: [],
       selectedRegion: '',
       selectedCity: '',
-      select: ''
+      select: '',
+      options:[],
+      value:''
     }
   },
   created () {
     this.GetCity()
+    this.getColony()
   },
   methods: {
+    getColony () { // 获取集群数据
+      const param = {
+        Version: "2018-05-25"
+      }
+      this.axios.post(TKE_COLONY_LIST, param).then(res => {
+        if (res.Error == undefined) {
+          console.log(res)
+          this.options = res.Response.Clusters
+          this.value = res.Response.Clusters[0].ClusterId
+        } else {
+          this.$message({
+              message: ErrorTips[res.codeDesc],
+              type: "error",
+              showClose: true,
+              duration: 0
+          })
+        }
+      })
+    },
     GetCity () {
       this.axios.get(ALL_CITY).then(data => {
         console.log(data.data)

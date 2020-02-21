@@ -31,7 +31,7 @@
 </template>
 <script>
 export default {
-  name: 'myMirror',
+  name: 'DockerHubIndex',
   data () {
     return {
       dataObject: {

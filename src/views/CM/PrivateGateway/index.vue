@@ -12,7 +12,7 @@
     </div>
     <!-- 表格 -->
     <div class="Table-SY">
-      <el-table :data="ProTableData" height="550" style="width: 100%" id="exportTable" v-loading="loadShow"
+      <el-table :data="ProTableData" height="550" style="width: 100%" v-loading="loadShow"
         :empty-text="$t('CVM.clBload.zwsj')">
         <el-table-column prop :label="$t('CVM.cloudDisk.mc')">
           <template slot-scope="scope">
@@ -26,11 +26,55 @@
         <el-table-column prop :label="$t('CVM.clBload.jk')">
           <template slot-scope="scope">
             <div class="a" @click="jump(scope.row.DirectConnectGatewayName)"></div>
-            <!-- <a @click="jump(scope.row.InstanceId)"  :style="note">
-              <img src="./../../../assets/CAM/images/cvm-20199061519.svg" style="width:160px;height:160px">
-            </a>-->
           </template>
         </el-table-column>
+        <el-table-column prop :label="$t('CVM.clBload.sswl')">
+          <template slot-scope="scope">
+            <a :href="'../VPC/index.html#/priNetwork/priNetworkDetial/'+ scope.row.VpcId + '/ap-taipei'"
+              target="_blank">
+              {{scope.row.VpcId}}</a>
+          </template>
+        </el-table-column>
+
+        <el-table-column prop :label="$t('CVM.clBload.cjsj')">
+          <template slot-scope="scope">
+            <p>{{scope.row.CreateTime}}</p>
+          </template>
+        </el-table-column>
+        <el-table-column prop :label="$t('CVM.clBload.wglc')">
+          <template slot-scope="scope">
+            <p>{{instanceStatus[scope.row.GatewayType]}}</p>
+          </template>
+        </el-table-column>
+      </el-table>
+      <div class="Right-style pagstyle">
+        <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;{{$t("CVM.strip")}}</span>
+        <el-pagination :page-size="pagesize" :pager-count="7" layout="prev, pager, next"
+          @current-change="handleCurrentChange" :total="TotalCount"></el-pagination>
+      </div>
+    </div>
+
+
+    <div class="Table-SY" v-show="false">
+      <el-table :data="ProTableData" height="550" style="width: 100%" id="exportTable" v-loading="loadShow"
+        :empty-text="$t('CVM.clBload.zwsj')">
+        <el-table-column prop label="ID">
+          <template slot-scope="scope">
+            <p>
+              {{scope.row.DirectConnectGatewayId}}
+            </p>
+
+          </template>
+        </el-table-column>
+
+        <el-table-column prop label="名稱">
+          <template slot-scope="scope">
+            {{ scope.row.DirectConnectGatewayName}}
+          </template>
+        </el-table-column>
+
+
+
         <el-table-column prop :label="$t('CVM.clBload.sswl')">
           <template slot-scope="scope">
             <p :class="scope.row.InstanceState==='RUNNING'?'green':scope.row.InstanceState==='STOPPED'?'red':'orange'">
@@ -48,21 +92,7 @@
             <p>{{instanceStatus[scope.row.GatewayType]}}</p>
           </template>
         </el-table-column>
-
-        <!-- <el-table-column prop="projectName" label="所属项目"></el-table-column> -->
-
-        <!-- <el-table-column label="健康状态">
-          <template slot-scope="scope">
-            <p :class="scope.row.RestrictState==='NORMAL'?'green':scope.row.RestrictState==='EXPIRED'?'red':'orange'">
-              {{RestrictState[scope.row.RestrictState]}}</p>
-          </template>
-        </el-table-column>-->
       </el-table>
-      <div class="Right-style pagstyle">
-        <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;{{$t("CVM.strip")}}</span>
-        <el-pagination :page-size="pagesize" :pager-count="7" layout="prev, pager, next"
-          @current-change="handleCurrentChange" :total="TotalCount"></el-pagination>
-      </div>
     </div>
   </div>
 </template>
@@ -225,12 +255,8 @@
           this.loadShow = false;
         });
       },
-      handleSizeChange(val) {
-        this.pagesize = val;
-        this.currpage = 1;
-        this.GetTabularData();
-      },
       handleCurrentChange(val) {
+        this.loadShow = true
         this.currpage = val;
         this.GetTabularData();
       },

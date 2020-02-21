@@ -91,8 +91,8 @@ export const TKE_SSH = 'cvm2/DescribeKeyPairs'
 // 新建集群 创建集群
 export const TKE_CREATW_CLUSTERS = 'tke2/CreateCluster'
 
-// 获取集群详细信息
-export const WARNING_GetCOLONY = 'tke2/DescribeAlarmPolicies'
+// 获取告警设置列表信息
+export const TKE_WARNING_GETCOLONY = 'tke2/DescribeAlarmPolicies'
 
 // 获取集群基本信息相关
 export const CLUSTERS_DESCRIBE = 'tke2/DescribeClusters'

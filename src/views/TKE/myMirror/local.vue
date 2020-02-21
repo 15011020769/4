@@ -53,6 +53,7 @@
 import { ErrorTips } from "@/components/ErrorTips";
 import { SPACENAME_LIST, SPACENAME_DELETE, SPACENAME_PRESENCE, CREATE_SPACENAME } from '@/constants'
 export default {
+  name:'MirrorLocal',
   data () {
     var validatePass = (rule, value, callback) => {
       // 获取命名空间是否存在的接口

@@ -127,6 +127,12 @@ export default {
             required: true,
             message: "請選擇元數據文件",
             trigger: "blur"
+          },
+          {
+            validator: (rule, value, callback) => {
+              callback(this.metadataDocumentError)
+              // callback()
+            }
           }
         ]
       }

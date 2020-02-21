@@ -12,7 +12,7 @@
     </div>
     <!-- 表格 -->
     <div class="Table-SY">
-      <el-table :data="TbaleData" height="550" style="width: 100%" id="exportTable" v-loading="loadShow"
+      <el-table :data="TbaleData" height="550" style="width: 100%" v-loading="loadShow"
         :empty-text="$t('CVM.clBload.zwsj')">
         <el-table-column prop :label="$t('CVM.clBload.zjm')">
           <template slot-scope="scope">
@@ -50,8 +50,6 @@
             <p>{{scope.row.CreatedTime}}</p>
           </template>
         </el-table-column>
-        <!-- <el-table-column label="健康状态"></el-table-column>
-        <el-table-column label="告警策略数"></el-table-column>-->
       </el-table>
       <div class="Right-style pagstyle">
         <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;{{$t("CVM.strip")}}</span>
@@ -59,6 +57,54 @@
           @current-change="handleCurrentChange" :total="TotalCount"></el-pagination>
       </div>
     </div>
+
+
+    <div class="Table-SY" v-show="false">
+      <el-table :data="TbaleData" height="550" style="width: 100%" id="exportTable" v-loading="loadShow"
+        :empty-text="$t('CVM.clBload.zwsj')">
+        <el-table-column prop label="ID">
+          <template slot-scope="scope">
+            <p>
+              <a @click="jump(scope.row.NatGatewayId)" style="cursor:pointer;">{{scope.row.NatGatewayId}}</a>
+            </p>
+          </template>
+        </el-table-column>
+
+        <el-table-column prop label="名稱">
+          <template slot-scope="scope">
+
+            <p>{{scope.row.NatGatewayName}}</p>
+          </template>
+        </el-table-column>
+
+
+
+        <el-table-column prop :label="$t('CVM.clBload.zt')">
+          <template slot-scope="scope">
+            <p :class="scope.row.State == 'FAILED' ? 'red' :' green'">{{natStatu[scope.row.State]}}</p>
+          </template>
+        </el-table-column>
+
+        <el-table-column prop :label="$t('CVM.clBload.sywl')">
+          <template slot-scope="scope">
+            <a :href="'../VPC/index.html#/priNetwork/priNetworkDetial/'+ scope.row.VpcId + '/ap-taipei'"
+              target="_blank">{{scope.row.VpcId}}</a>
+            <p></p>
+          </template>
+        </el-table-column>
+        <el-table-column prop :label="$t('CVM.clBload.cjsj')">
+          <template slot-scope="scope">
+            <p>{{scope.row.CreatedTime}}</p>
+          </template>
+        </el-table-column>
+      </el-table>
+
+    </div>
+
+
+
+
+
   </div>
 </template>
 
@@ -241,6 +287,7 @@
       },
       //分页
       handleCurrentChange(val) {
+        this.loadShow = true
         this.currpage = val;
         this.GetTabularData();
       },

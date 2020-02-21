@@ -2,10 +2,10 @@
   <div class="warnings-wrap">
     <!-- 头部 -->
     <div class="back-hd flex">
-      <h2 style="padding-top:3px;">警告设置</h2>
+      <h2 style="padding-top:3px;">告警设置</h2>
       <div style="width:20px"></div>
       <div style="padding-top:6px;">地域</div> 
-      &nbsp;<el-button  type="primary" class="init hd-button" style="margin-top:2px;">中国台北</el-button>
+      &nbsp; <City :Cityvalue.sync="selectedRegion" :cities="cities" class="city" @changeCity="changeCity"></City>
       <div style="width:20px"></div>
       <div style="padding-top:6px;">集群</div> 
       &nbsp;
@@ -13,8 +13,9 @@
       style="margin-bottom:5px;">
         <el-option
           v-for="item in options"
-          :key="item.value"
-          :value="item.value">
+          :key="item.ClusterId"
+          :value="item.ClusterId"
+          :label="item.ClusterId+'('+item.ClusterName+')'">
         </el-option>
       </el-select>
     </div>
@@ -90,131 +91,94 @@
 
 <script>
 import {
-  CreateListGroups,
-  WARNING_GetCOLONY,
-  WARNING_GetUSER
+  TKE_COLONY_LIST,
+  TKE_WARNING_GETCOLONY,
+  ALL_CITY
 } from "@/constants";
+import City from '@/components/public/CITY'
 export default {
   name:'warnings',
+  components: {
+    City
+  },
   data() {
     return {
       length: 1,
       pageSize: 20,
       pageIndex: 0,
       options: [],
+      cities: [],
+      selectedRegion: '',
+      selectedCity: '',
+      select: '',
       value: '',
       listData: [],
       multipleSelection: [],
       funllscreenLoading:false,
-      tableData: [{
-          date: '2016-05-03',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        }, {
-          date: '2016-05-02',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        }, {
-          date: '2016-05-04',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        }]
-    }
-  },
-  watch:{
-    value(val) {
-      let params = {
-        ClusterInstanceId: (val.split('('))[0],
-        Limit: this.pageSize,
-        Offset: this.pageIndex,
-        Version: "2018-05-25"
-      }
-      this.funllscreenLoading = true;
-      console.log((val.split('('))[0])
-      const res = this.axios.post(WARNING_GetCOLONY,params).then(res=>{
-        console.log(res)
-        if(res.Response.AlarmPolicySet.length>0){
-          let resData= res.Response.AlarmPolicySet;
-          this.length = resData.length;
-          this.listData = resData;
-          console.log(resData)
-          for (let i = 0; i < resData.length; i++) {
-            let getData = {
-              AlarmPolicyName:'',AlarmPolicyType:''
-            };
-            getData.name = resData.AlarmPolicySettings
-          }
-          this.funllscreenLoading = false;
-        }else{
-          this.funllscreenLoading = false;
-          this.length = 0;
-          console.log('数据请求出错')
-        }
-      });
+      tableData: []
     }
   },
   created() {
-    // 获取集群列表
-    this.getWarningList();
+    this.getColony()
+    this.GetCity()
+
   },
   methods:{
     // 获取集群列表
-    async getWarningList() {
-      let params = {
-          Limit: this.pageSize,
-          Offset: this.pageIndex,
-          Version: "2018-05-25"
-        }
-      // console.log(params)
-      const res = await this.axios.post(WARNING_GetUSER, params);
-      if(res.Error){
-        console.log(res)
-      }else{
-        // console.log(res)
-        if(res.Response.Clusters.length>0){
-          let ids=[];
-          res.Response.Clusters = res.Response.Clusters.map(item => {
-              ids.push(item.ClusterId+'('+item.ClusterName+')');
-              return item;
-          })
-          // 放到页面上
-          for (let i = 0; i < ids.length; i++) {
-            let option = {}
-            option.value = ids[i]
-            this.options.push(option)
-            this.value = this.options[0].value
-          }
-          // console.log(this.options)
-        }
+    getColony () { 
+      const param = {
+        Version: "2018-05-25"
       }
+      this.axios.post(TKE_COLONY_LIST, param).then(res => {
+        if (res.Error == undefined) {
+          console.log(res)
+          this.options = res.Response.Clusters
+          this.value = res.Response.Clusters[0].ClusterId
+          console.log(this.value)
+          this.getWarningListItem()
+        } else {
+          this.$message({
+              message: ErrorTips[res.codeDesc],
+              type: "error",
+              showClose: true,
+              duration: 0
+          })
+        }
+      })
     },
-    // 获取集群列表详情
-    async getWarningListItem() {
-      let params = {
-          // ClusterInstanceId: this.options
-          Limit: this.pageSize,
-          Offset: this.pageIndex,
-          Version: "2018-05-25"
-        }
-      console.log(params)
-      const res = await this.axios.post(WARNING_GetUSER, params);
-      if(res.Error){
-        console.log(res)
-      }else{
-        if(res.Response.Clusters.length>0){
-          let ids=[];
-          res.Response.Clusters = res.Response.Clusters.map(item => {
-              ids.push(item.ClusterId+'('+item.ClusterName+')');
-              return item;
-          })
-          // 放到页面上
-          for (let i = 0; i < ids.length; i++) {
-            const element = ids[i];
-            this.options[i].value = i
-            this.options[i].label = ids[i]
-          }
-        }
+    getWarningListItem () { 
+      const param = {
+        ClusterInstanceId: this.value,
+        Limit: 20,
+        Offset: 0,
+        Version: "2018-05-25"
       }
+      this.axios.post(TKE_WARNING_GETCOLONY, param).then(res => {
+        if (res.Error == undefined) {
+          console.log(res)
+        } else {
+          this.$message({
+              message: ErrorTips[res.codeDesc],
+              type: "error",
+              showClose: true,
+              duration: 0
+          })
+        }
+      })
+    },
+    
+    GetCity () {
+      this.axios.get(ALL_CITY).then(data => {
+        console.log(data.data)
+        this.cities = data.data
+        this.selectedRegion = data.data[0].Region
+        this.selectedCity = data.data[0]
+        this.$cookie.set('regionv2', this.selectedCity.Region)
+      })
+    },
+    changeCity (city) {
+      this.selectedCity = city
+      this.$cookie.set('regionv2', city.Region)
     },
   }
 }

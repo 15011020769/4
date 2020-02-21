@@ -12,7 +12,7 @@
     </div>
     <!-- 表格 -->
     <div class="Table-SY">
-      <el-table :data="ProTableData" height="550" style="width: 100%" id="exportTable" v-loading="loadShow"
+      <el-table :data="ProTableData" height="550" style="width: 100%" v-loading="loadShow"
         :empty-text="$t('CVM.clBload.zwsj')">
         <el-table-column prop :label="$t('CVM.cloudDisk.mc')">
           <template slot-scope="scope">
@@ -62,6 +62,54 @@
         <el-pagination :page-size="pagesize" :pager-count="7" layout="prev, pager, next"
           @current-change="handleCurrentChange" :total="TotalCount">1</el-pagination>
       </div>
+    </div>
+
+    <div class="Table-SY" v-show="false">
+      <el-table :data="ProTableData" height="550" style="width: 100%" id="exportTable" v-loading="loadShow"
+        :empty-text="$t('CVM.clBload.zwsj')">
+        <el-table-column prop label="ID">
+          <template slot-scope="scope">
+            {{scope.row.InstanceId}}
+          </template>
+        </el-table-column>
+
+        <el-table-column prop label="名稱">
+          <template slot-scope="scope">
+            <p>{{ scope.row.InstanceName}}</p>
+          </template>
+        </el-table-column>
+
+
+        <el-table-column prop :label="$t('CVM.clBload.zt')">
+          <template slot-scope="scope">
+            <p :class="scope.row.Status===1?'green':scope.row.Status===5?'red':'orange'">
+              {{RestrictState[scope.row.Status]}}</p>
+          </template>
+        </el-table-column>
+        <el-table-column prop :label="$t('CVM.cloudMysql.nw')">
+          <template slot-scope="scope">
+            <p>{{scope.row.Vip}}/{{scope.row.Vport}}</p>
+          </template>
+        </el-table-column>
+
+        <el-table-column prop :label="$t('CVM.clBload.wllx')">
+          <template slot-scope="scope">
+            <p>{{ $t('CVM.cloudMysql.wl') }}</p>
+          </template>
+        </el-table-column>
+
+        <el-table-column prop :label="$t('CVM.cloudMysql.lx')">
+          <template slot-scope="scope">
+            <p>{{InstanceTypeState[scope.row.InstanceType]}}</p>
+          </template>
+        </el-table-column>
+
+        <el-table-column prop="projectName" :label="$t('CVM.table.x6')">
+          <template slot-scope="scope">
+            <p>{{scope.row.projectName}}</p>
+          </template>
+        </el-table-column>
+      </el-table>
     </div>
   </div>
 </template>
@@ -269,6 +317,7 @@
       },
       //分页
       handleCurrentChange(val) {
+        this.loadShow = true
         this.currpage = val;
         this.GetTabularData();
       },
