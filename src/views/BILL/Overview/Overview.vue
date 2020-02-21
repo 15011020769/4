@@ -313,6 +313,7 @@ export default {
             data: names,
             left: 600,
             icon: 'circle',
+            selectedMode:false,//取消图例上的点击事件
             formatter: function (name) {
               let tarValue = 0
               let _index = 0
