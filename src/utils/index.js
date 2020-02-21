@@ -162,6 +162,9 @@ export const obj2Arr = (obj, key='name', val='value') => Object.keys(obj).map(k 
  * }
  */
 export const addVal2Key = obj => {
-  Object.keys(obj).forEach(k => obj[obj[k]] = k)
-  return obj
+  const result = {
+    ...obj
+  }
+  Object.keys(result).forEach(k => result[result[k]] = k)
+  return result
 }
