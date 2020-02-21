@@ -25,10 +25,6 @@
         <el-table-column prop :label="$t('CVM.clBload.jk')">
           <template slot-scope="scope">
             <div class="a" @click="jump(scope.row.VpnConnectionId)"></div>
-            <!-- <a
-                @click="jump(scope.row.VpnConnectionId)"
-                style="cursor:pointer;"
-            ><i class="el-icon-share"></i></a>-->
           </template>
         </el-table-column>
         <el-table-column prop :label="$t('CVM.clBload.zt')">
@@ -40,19 +36,20 @@
 
         <el-table-column prop :label="$t('CVM.clBload.sswl')">
           <template slot-scope="scope">
-            <p style="color: #65a5f9;">{{scope.row.VpcId}}</p>
-            <p>{{scope.row.VpcName}}</p>
+            <a :href="'../VPC/index.html#/priNetwork/priNetworkDetial/'+ scope.row.VpcId + '/ap-taipei'"
+              target="_blank">{{scope.row.VpcId}}</a>
           </template>
         </el-table-column>
         <el-table-column prop :label="$t('CVM.vpnwg')">
           <template slot-scope="scope">
-            <p style="color: #65a5f9;">{{scope.row.VpnGatewayId}}</p>
+            <a :href="'../VPC/index.html#/vpnGateway/vpnGatewayDetial/'+ scope.row.VpnGatewayId + '/ap-taipei'"
+              target="_blank">{{scope.row.VpnGatewayId}}</a>
             <p>{{scope.row.vpnGwName}}</p>
           </template>
         </el-table-column>
         <el-table-column prop :label="$t('CVM.clBload.ddwg')	">
           <template slot-scope="scope">
-            <p style="color: #65a5f9;">{{scope.row.CustomerGatewayId}}</p>
+            <p>{{scope.row.CustomerGatewayId}}</p>
             <p>{{scope.row.userGwName}}</p>
           </template>
         </el-table-column>
