@@ -28,10 +28,19 @@
           <el-form-item label="日志类型">
             <span v-if="$route.query.type == 'host-log'">指定容器日志</span>
             <span v-if="$route.query.type == 'container-log'">容器标准输出</span>
+            <span v-if="$route.query.type == 'pod-log'">指定容器文件</span>
           </el-form-item>
-          <el-form-item label="日志源">
+          <el-form-item  v-if="$route.query.type == 'host-log'||$route.query.type == 'container-log'"   label="日志源">
             <span>所有容器</span>
           </el-form-item>
+          <div  v-if="$route.query.type == 'pod-log'">
+             <el-form-item label="工作负载">
+                  kube-system / Deployment / -
+              </el-form-item>
+             <el-form-item label="采集路径">
+                  容器名称：-路径：-
+              </el-form-item>
+          </div>
           <el-divider></el-divider>
           <h3 style='margin-bottom:20px;'>消费端</h3>
           <el-form-item label="类型">
