@@ -1,4 +1,4 @@
-import { obj2Arr } from '@/utils'
+import { obj2Arr, addVal2Key } from '@/utils'
 
 export const PACKAGE_CFG_TYPES = {
   0: {
@@ -67,7 +67,7 @@ export const COMMON_ERROR = {
   'UnauthorizedOperation': '未授权操作。',
   'UnknownParameter': '未知参数错误。',
 }
-export const LOGIC_SYMBOL = {
+export const LOGIC_SYMBOL = addVal2Key({
   ipmatch: '匹配',
   ipnmatch: '不匹配',
   empty: '内容为空',
@@ -83,7 +83,7 @@ export const LOGIC_SYMBOL = {
   strsuffix: '后缀匹配',
   exsit: '存在参数',
   nexsit: '不存在参数',
-}
+})
 export const LOGIC_SYMBOL_ARR = obj2Arr(LOGIC_SYMBOL)
 export const MATCH_KEY = {
   IP: {
@@ -238,30 +238,30 @@ export const MATCH_KEY = {
   },
 }
 export const MATCH_KEY_ARR = obj2Arr(MATCH_KEY)
-export const POLICY_RULE_ACTION = {
+export const POLICY_RULE_ACTION = addVal2Key({
   0: '放行',
   1: '阻断',
   2: '人机识别',
   3: '观察',
   4: '重定向',
-}
+})
 export const POLICY_RULE_ACTION_ARR = obj2Arr(POLICY_RULE_ACTION)
-export const CC_RULE_ACTION = {
+export const CC_RULE_ACTION = addVal2Key({
   20: '观察',
   21: '人机识别',
   22: '拦截',
-}
-export const CC_RULE_MATCH = {
+})
+export const CC_RULE_MATCH = addVal2Key({
   0: '相等',
   1: '前缀匹配',
   2: '包含'
-}
+})
 
-export const IP_STATUS_TYPE = {
+export const IP_STATUS_TYPE = addVal2Key({
   BOT: 'BOT',
   CC: 'CC',
   DIY: '自定义人机识别'
-}
+})
 
 export const IP_STATUS_TYPE_ARR = obj2Arr(IP_STATUS_TYPE)
 
