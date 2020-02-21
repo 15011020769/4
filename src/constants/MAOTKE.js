@@ -30,3 +30,15 @@ export const NODE_ID_LIST = 'tke2/DescribeClusterInstanceIds'
 
 //获取节点实例列表
 export const NODE_POD_LIST = 'ccs/DrainClusterNode'
+
+//修改伸缩组属性
+export const MODIFY_GROUP_STATUS = 'tke2/ModifyClusterAsGroupAttribute'
+
+//删除伸缩组
+export const DELETE_GROUP = 'tke2/DeleteClusterAsGroups'
+
+//获取可用区机型配置信息
+export const DESCRIBE_ZONE_INFO = 'cvm/DescribeZoneInstanceConfigInfos'
+
+//伸缩组列表修改名称
+export const MODIFY_NAME = 'as/ModifyAutoScalingGroup'
