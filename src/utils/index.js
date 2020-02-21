@@ -161,4 +161,7 @@ export const obj2Arr = (obj, key='name', val='value') => Object.keys(obj).map(k 
  *  a: 1, b: 2, 1: a, 2: 2
  * }
  */
-export const addVal2Key = obj => Object.keys(obj).forEach(k => obj[obj[k]] = k)
+export const addVal2Key = obj => {
+  Object.keys(obj).forEach(k => obj[obj[k]] = k)
+  return obj
+}
