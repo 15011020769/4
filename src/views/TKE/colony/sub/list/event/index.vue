@@ -197,26 +197,34 @@ export default {
     //    /api/v1/namespaces/{namespace}/events?&limit=20 get
     //    /api/v1/namespaces//events?limit=20
     getEvent() {
-      let params = { Version: "2018-05-25", ClusterName: "cls-l74ol4g0" };
-      this.axios.get("/api/v1/namespaces/", params).then(res => {
-        console.log(res);
-
-        if (res.Response.Error === undefined) {
+      let params = {
+        Method: "GET",
+        Path: "/api/v1/namespaces/"+default+"/events?&limit=20",
+        Version: "2018-05-25",
+        ClusterName: "cls-l74ol4g0"
+      };
+      this.axios
+        // .get("/api/v1/namespaces/", params).then(res => {
+        .get(POINT_REQUEST, params)
+        .then(res => {
           console.log(res);
-          // this.tableData = res.Response.Clusters;
-          this.loadShow = false;
-          console.log(res.Response.Clusters);
-        } else {
-          let ErrTips = {};
-          let ErrOr = Object.assign(ErrorTips, ErrTips);
-          this.$message({
-            message: ErrOr[res.Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-          });
-        }
-      });
+
+          if (res.Response.Error === undefined) {
+            console.log(res);
+            // this.tableData = res.Response.Clusters;
+            this.loadShow = false;
+            console.log(res.Response.Clusters);
+          } else {
+            let ErrTips = {};
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+          }
+        });
     },
     getEventList() {
       //     /api/v1/namespaces/{namespace}/events
