@@ -62,7 +62,7 @@
               <div class="form-form position-form" v-if="
                   vlog == 'two' && tabPosition == 'one' && item.flag == false
                 ">
-                <i class="el-icon-edit-outline icon-edit-outline" @click="item.flag = true"></i>
+                <i class="el-icon-edit-outline icon-edit-outline" @click="roomShow(index)"></i>
                 <i class="el-icon-close icon-close" @click="removeNewRoom(formFour, index)"></i>
                 <div>
                   <span>Namespace:</span><span>{{item.value1}}</span>|<span>采集对象:</span>
@@ -74,7 +74,7 @@
               <div class="form-form position-form" v-if="
                   vlog == 'two' && tabPosition == 'one' && item.flag == true 
                 ">
-                <i class="el-icon-check icon-check" @click="item.flag = false"></i>
+                <i class="el-icon-check icon-check" @click="roomShow(index)"></i>
                 <i class="el-icon-close icon-close" @click="removeNewRoom(formFour, index)"></i>
                 <el-form-item label="所属Namespace" label-width="150px">
                   <el-select placeholder="请选择" size="mini" v-model="item.value1">
@@ -1165,9 +1165,22 @@
         }
       },
       removeNewRoom(item, index) {
+        var val=this.formFour[index].value1,val2=[];
+        if(val!=''){
+          this.namespaceOptions1.push(val)
+        }
+       this.namespaceOptions1=Array.from(new Set(this.namespaceOptions1))  
         if (item.length !== 1) {
           this.formFour.splice(index, 1);
         }
+      },
+      roomShow(index){
+        
+        if(this.namespaceOptions1.length=='1'){
+          this.namespaceOptions1=[]
+        }
+        this.formFour[index].flag=!this.formFour[index].flag;
+       
       },
       addNewRoom() {
         var arr=[],arr2,arr3=[];
