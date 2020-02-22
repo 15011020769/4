@@ -10,7 +10,7 @@
       <div style="padding-top:6px;">集群</div> 
       &nbsp;
       <el-select size="mini" v-model="value" placeholder="请选择"
-      style="margin-bottom:5px;">
+      style="margin-bottom:5px;" @change="getList($event)">
         <el-option
           v-for="item in options"
           :key="item.ClusterId"
@@ -24,17 +24,17 @@
       <div class="flex">
         <div class="font" style="flex:1;padding-top:20px;">
           <router-link :to="'/warningCreate'">
-            <button class="data-card-hd">新建</button>
+             <el-button type="primary" size="mini">新建</el-button>
           </router-link>
-          <button class="data-card-hd data-card-hd-del" style="margin-left:8px;">删除</button>
+            <el-button  size="mini" style="margin-left:8px;" :disabled="this.multipleSelection.length>=1?false:true" @click="dialogVisible = true">删除</el-button>
         </div>
         <div style="position: relative;">
-          <input type="search" placeholder="请输入集群名称" class="search">
-          <button class="el-icon-search ip-btn"></button>
+          <input type="search" placeholder="请输入集群名称" class="search" v-model ='input'>
+          <button class="el-icon-search ip-btn" @click="getSearch()"></button>
         </div>
       </div>
       <!-- 内容 -->
-          <el-table
+        <el-table
           ref="multipleTable"
           :data="tableData"
           tooltip-effect="dark"
@@ -42,41 +42,56 @@
           @selection-change="handleSelectionChange">
           <el-table-column
             type="selection"
-            width="55">
+            width="55"
+            >
           </el-table-column>
           <el-table-column
             label="告警策略名称"
-            width="120">
-            <template slot-scope="scope">{{ scope.row.date }}</template>
+            min-width="12%"
+            prop='AlarmPolicySettings'>
+            <template slot-scope="scope">
+                {{scope.row.AlarmPolicySettings.AlarmPolicyName}}
+            </template>
           </el-table-column>
           <el-table-column
-            prop="name"
+            prop="AlarmPolicySettings"
             label="策略类型"
-            width="120">
+            min-width="18%">
+            <template slot-scope="scope">
+                {{scope.row.AlarmPolicySettings.AlarmObjectsType | AlarmObjectsTypes}}
+            </template>
           </el-table-column>
           <el-table-column
-            prop="address"
+            prop="AlarmPolicySettings"
             label="触发条件"
-            show-overflow-tooltip>
+            min-width="30%">
+             <template slot-scope="scope">
+               <div v-for="(item,index) in scope.row.AlarmPolicySettings.AlarmMetrics" :key='index'>
+                  {{item.ArgusPolicyName}}{{item.Evaluator|Evaluators}}{{item.Evaluator|EvaluatorValues}}{{item.Unit}}持续{{item.ContinuePeriod}}分钟告警
+               </div>
+            </template>
           </el-table-column>
           <el-table-column
-            prop="name"
+            prop="AlarmPolicySettings"
             label="告警渠道"
-            width="120">
+            min-width="20%">
+            <template slot-scope="scope">
+                <div>接收组:{{scope.row.NotifySettings.ReceiverGroups.length}}个</div>
+                <div>渠道:<span v-for="(item,index) in scope.row.NotifySettings.NotifyWay" :key='index'>{{item|NotifyWays}}</span></div>
+            </template>
           </el-table-column>
           <el-table-column
             prop="address"
             label="操作"
-            show-overflow-tooltip>
+            min-width="20%">
                <template slot-scope="scope">
                   <el-button
-                    @click.native.prevent="deleteRow(scope.$index, tableData)"
+                    @click="deleteRow(scope.$index, tableData)"
                     type="text"
                     size="small">
                     删除
                   </el-button>
                       <el-button
-                    @click.native.prevent="deleteRow(scope.$index, tableData)"
                     type="text"
                     size="small">
                     复制
@@ -85,6 +100,17 @@
           </el-table-column>
         </el-table>
       </div>
+      <!-- 删除提示信息 -->
+      <el-dialog
+        title="删除告警设置"
+        :visible.sync="dialogVisible"
+        width="50%">
+        <span>您确定要删除 4455667 吗？</span>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="dialogVisible = false">取 消</el-button>
+          <el-button type="primary" @click="deleteOne()">确 定</el-button>
+        </span>
+      </el-dialog>
     </div>
   </div>
 </template>
@@ -93,6 +119,7 @@
 import {
   TKE_COLONY_LIST,
   TKE_WARNING_GETCOLONY,
+  TKE_DELETE_POLICIES,
   ALL_CITY
 } from "@/constants";
 import City from '@/components/public/CITY'
@@ -114,8 +141,10 @@ export default {
       value: '',
       listData: [],
       multipleSelection: [],
-      funllscreenLoading:false,
-      tableData: []
+      tableData: [],
+      dialogVisible:false,
+      delete:[],
+      input:''
     }
   },
   created() {
@@ -124,6 +153,17 @@ export default {
 
   },
   methods:{
+    handleSelectionChange(val) {
+        this.multipleSelection = val;
+        console.log(this.multipleSelection)
+    },
+    getList(e){
+      this.value = e
+      this.getWarningListItem()
+    },
+    getSearch(){
+      this.getWarningListItem()
+    },
     // 获取集群列表
     getColony () { 
       const param = {
@@ -131,10 +171,9 @@ export default {
       }
       this.axios.post(TKE_COLONY_LIST, param).then(res => {
         if (res.Error == undefined) {
-          console.log(res)
+          // console.log(res)
           this.options = res.Response.Clusters
           this.value = res.Response.Clusters[0].ClusterId
-          console.log(this.value)
           this.getWarningListItem()
         } else {
           this.$message({
@@ -146,9 +185,11 @@ export default {
         }
       })
     },
+    // 告警配置列表
     getWarningListItem () { 
       const param = {
         ClusterInstanceId: this.value,
+        // Filter:{AlarmPolicyName:this.input},
         Limit: 20,
         Offset: 0,
         Version: "2018-05-25"
@@ -156,9 +197,11 @@ export default {
       this.axios.post(TKE_WARNING_GETCOLONY, param).then(res => {
         if (res.Error == undefined) {
           console.log(res)
+          this.tableData = res.Response.AlarmPolicySet
+          this.delete=[]
         } else {
           this.$message({
-              message: ErrorTips[res.codeDesc],
+              message: ErrorTips[res.Response.Error.code],
               type: "error",
               showClose: true,
               duration: 0
@@ -166,7 +209,39 @@ export default {
         }
       })
     },
-    
+    deleteRow(e,count){
+      this.delete.push(count[e].AlarmPolicyId)
+      this.dialogVisible = true
+      // this.DeleteWarning()
+      console.log(this.delete)
+    },
+    deleteOne(){
+      this.DeleteWarning()
+      this.dialogVisible = false
+    },
+    // 删除告警配置
+    DeleteWarning () { 
+      const param = {
+        AlarmPolicyIds: this.delete,
+        ClusterInstanceId: this.value,
+        Version: "2018-05-25"
+      }
+      this.axios.post(TKE_DELETE_POLICIES, param).then(res => {
+        console.log(res)
+        if (res.Error == undefined) {
+          // console.log(res)
+          this.getWarningListItem()
+          // this.tableData = res.Response.AlarmPolicySet
+        } else {
+          this.$message({
+              message: ErrorTips[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+          })
+        }
+      })
+    },
     GetCity () {
       this.axios.get(ALL_CITY).then(data => {
         console.log(data.data)
@@ -180,6 +255,43 @@ export default {
       this.selectedCity = city
       this.$cookie.set('regionv2', city.Region)
     },
+  },
+  filters:{
+    AlarmObjectsTypes:function(value){
+        if(value == 'all'){
+          return "集群"
+        }
+    },
+    Evaluators:function(value){
+      if(value.Type == 'gt'){
+        return ">"
+      } else if(value.Type == 'lt' && value.Value != '1' && value.Value != '0'){
+        return "<"
+      } else if(value.Value == '1' || value.Value == '0') {
+        return "="
+      }
+    },
+    EvaluatorValues:function(value){
+      // console.log(value)
+      if(value.Value == '1'){
+        return 'False'
+      } else if(value.Value == '0') {
+        return "True"
+      } else {
+        return value.Value
+      }
+    },
+    NotifyWays:function(value){
+      if(value == 'SMS'){
+        return "短信 "
+      } else if(value == 'CALL'){
+        return "电话 "
+      } else if(value == 'EMAIL'){
+        return "邮件 "
+      } else {
+        return "微信 "
+      }
+    }
   }
 }
 </script>

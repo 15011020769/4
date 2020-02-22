@@ -125,3 +125,8 @@ export const CreateListGroups = 'cam/ListGroups'
 
 // 获取节点管理
 export const POINT_REQUEST = 'tke2/ForwardRequest'
+
+// 删除告警配置
+export const TKE_DELETE_POLICIES = 'tke2/DeleteAlarmPolicies'
+
+
