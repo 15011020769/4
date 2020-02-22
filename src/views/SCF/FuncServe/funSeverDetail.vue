@@ -51,6 +51,8 @@
       activeName(val) {
         if (val === 'fifth') {
           this.montshow = true
+        } else {
+          this.montshow = false
         }
       }
     },
