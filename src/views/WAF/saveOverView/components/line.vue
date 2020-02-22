@@ -15,10 +15,10 @@ export default {
     window.onresize = this.$echarts.init(this.$refs.line_dv).resize;
   },
   props: {
-    // color: {
-    //   type: String,
-    //   default: "#2d70f6"
-    // },
+    color: {
+      type: Array,
+      default: () => []
+    },
     // tooltip: {
     //   type: Object,
     //   default: function() {
@@ -29,7 +29,15 @@ export default {
       type: Array,
       default: () => []
     },
-    series: {
+    series1: {
+      type: Array,
+      default: () => []
+    },
+    series2: {
+      type: Array,
+      default: () => []
+    },
+    series3: {
       type: Array,
       default: () => []
     },
@@ -43,8 +51,16 @@ export default {
       this.xAxis = val;
       this.echart();
     },
-    series(val) {
-      this.series = val;
+    series1(val) {
+      this.series1 = val;
+      this.echart();
+    },
+     series2(val) {
+      this.series2 = val;
+      this.echart();
+    },
+     series3(val) {
+      this.series3 = val;
       this.echart();
     },
     legendText(val) {
@@ -108,13 +124,13 @@ export default {
         series: [
           {
             name: this.legendText[0],
-            data: this.series[0],
+            data: this.series1,
             type: "line",
             smooth: true,
             symbol: "none",
             itemStyle: {
               normal: {
-                // color: this.color,
+                color: this.color[0],
                 lineStyle:{
                   width:2//设置线条粗细
                 }
@@ -123,13 +139,13 @@ export default {
           },
           {
             name: this.legendText[1],
-            data: this.series[1],
+            data: this.series2,
             type: "line",
             smooth: true,
             symbol: "none",
             itemStyle: {
               normal: {
-                // color: this.color,
+                color: this.color[1],
                 lineStyle:{
                   width:2//设置线条粗细
                 }
@@ -138,13 +154,13 @@ export default {
           },
           {
             name: this.legendText[2],
-            data: this.series[2],
+            data: this.series3,
             type: "line",
             smooth: true,
             symbol: "none",
             itemStyle: {
               normal: {
-                // color: this.color,
+                color: this.color[2],
                 lineStyle:{
                   width:2//设置线条粗细
                 }

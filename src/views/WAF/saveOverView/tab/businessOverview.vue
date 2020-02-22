@@ -27,6 +27,7 @@
             v-model="dateTimeValue"
             type="daterange"
             class="dateTimeValue"
+            @change="changeTimeValue"
             range-separator="至"
             start-placeholder="开始日期"
             end-placeholder="结束日期"
@@ -74,25 +75,28 @@
       </div> -->
       <el-row class="echartsShowfirst">
         <h3 class="topfont">
-          攻击趋势
+          {{t('业务峰值趋势', 'WAF.ywfzqs')}}
           <span style="color:#bbb;">(次)</span>
         </h3>
         <ELine
           :xAxis="xAxis1"
-          :series="series1"
+          :series1="series1"
+          :series2="series2"
+          :series3="series3"
+          :color="color"
           :legendText="legendText1"
         />
       </el-row>
       <el-row class="echartsShowSecond">
         <el-col :span="12">
         <h3 class="topfont">
-          服务器响应状态
+          {{t('服务器响应状态', 'WAF.fwqxyzt')}}
           <span style="color:#bbb;">(次)</span>
         </h3>
         </el-col>
         <el-col :span="12">
         <h3 class="topfont">
-          浏览器类型
+          {{t('浏览器类型', 'WAF.llqlx')}}
           <span style="color:#bbb;">(次)</span>
         </h3>
         <!-- <EBar
@@ -105,7 +109,7 @@
       <el-row class="echartsShowThird">
          <el-col :span="12">
           <h3 class="topfont">
-            请求来源地域TOP5
+            {{t('请求来源地域TOP5', 'WAF.qqlydy')}}
             <span style="color:#bbb;">(%)</span>
           </h3>
           <!-- <EPie
@@ -115,7 +119,7 @@
          </el-col>
          <el-col :span="12">
           <h3 class="topfont">
-            请求来源IP TOP5
+            {{t('请求来源IP TOP5', 'WAF.qqlyip')}}
             <span style="color:#bbb;">(次)</span>
           </h3>
          </el-col>
@@ -123,7 +127,7 @@
       <el-row class="echartsShowFour">
          <el-col :span="12">
           <h3 class="topfont">
-            响应时间最慢页面TOP5
+            {{t('响应时间最慢页面TOP5', 'WAF.xysjzmym')}}
             <span style="color:#bbb;">(毫秒)</span>
           </h3>
           <!-- <EPie
@@ -133,7 +137,7 @@
          </el-col>
          <el-col :span="12">
           <h3 class="topfont">
-            页面访问次数TOP5
+            {{t('页面访问次数TOP5', 'WAF.ymfwcs')}}
             <span style="color:#bbb;">(次)</span>
           </h3>
          </el-col>
@@ -153,24 +157,25 @@ import DownLoadImg from '../components/downLoadImg'
 import ELine from "../components/line"
 import {
   DESCRIBE_HOSTS,
+  DESCRIBE_PEAK_VALUE,
+  DESCRIBE_PEAK_POINTS,
 } from '@/constants'
 import { flatObj } from '@/utils'
 export default {
   data() {
     return {
       options: [], //默认下拉选项
-      dateTimeValue: "", //日期绑定
+      dateTimeValue: [], //日期绑定
       selectValue: [], //域名下拉菜单
       thisType: "1", //按钮默认选中
       endTime: "",
       startTime: "",
-      xAxis1: ['2-15', '2-16', '2-17'],
-      series1: [
-        [120, 132, 101, 134, 90, 230, 210],
-        [220, 182, 191, 234, 290, 330, 310],
-        [150, 232, 201, 154, 190, 330, 410]
-      ],
-      legendText1: ['WEB攻击次数', 'CC攻击次数', 'BOT请求次数'],
+      xAxis1: [],
+      series1: [],
+      series2: [],
+      series3: [],
+      legendText1: ['QPS', '上行带宽', '下行带宽'],
+      color: ["#006eff", "#29CC85", "#FF9D00"],
       dialogDownloadVisible: false,
     };
   },
@@ -181,7 +186,13 @@ export default {
   mounted () {
     this.checkTime("1");
     this.getDominList();
+    this.getPeakValue();
 　},
+  watch: {
+    selectValue() {
+      this.getPeakPoints()
+    }
+  },
   methods: {
     //获取域名列表
     getDominList() {
@@ -207,6 +218,45 @@ export default {
      onCancel() {
       this.dialogDownloadVisible = false
     },
+    // 获取峰值
+    getPeakValue() {
+      this.axios.post(DESCRIBE_PEAK_VALUE, {
+        Version: '2018-01-25',
+        FromTime: this.startTime,
+        ToTime: this.endTime,
+      }).then((res) => {
+        console.log(res)
+      })
+    },
+    // 获取业务攻击趋势
+    getPeakPoints() {
+      const axixArr = []
+      const series1Arr = []
+      const series2Arr = []
+      const series3Arr = []
+      const params = {
+        Version: '2018-01-25',
+        FromTime: this.startTime,
+        ToTime: this.endTime,
+      }
+      if (this.selectValue != "") {
+        params["Domain"] = this.selectValue
+      }
+      this.axios.post(DESCRIBE_PEAK_POINTS, params).then(resp => {
+        this.generalRespHandler(resp, ({Points}) => {
+          Points.map((v) => {
+            axixArr.push(moment.unix(v.Time).format("YYYY-MM-DD HH:mm:ss"))
+            series1Arr.push(v.Access)
+            series2Arr.push(v.Up * 8)
+            series3Arr.push(v.Down * 8)
+          })
+          this.xAxis1 = axixArr
+          this.series1 = series1Arr
+          this.series2 = series2Arr
+          this.series3 = series3Arr
+        })
+      })
+    },
     //时间点击事件
      checkTime(type) {
       this.thisType = type;
@@ -228,9 +278,17 @@ export default {
       ipt2.value = moment(end).format("YYYY-MM-DD");
       this.startTime = moment(start).startOf("days").format("YYYY-MM-DD HH:mm:ss");
       this.endTime = moment(end).endOf("days").format("YYYY-MM-DD HH:mm:ss");
-      // this.$nextTick(() => {
-      //   this.getPeakValue()
-      // })
+      this.$nextTick(() => {
+        this.getPeakPoints()
+      })
+    },
+    changeTimeValue() {
+      this.thisType = 0
+      this.startTime = moment(this.dateTimeValue[0]).startOf("days").format("YYYY-MM-DD HH:mm:ss");
+      this.endTime = moment(this.dateTimeValue[1]).endOf("days").format("YYYY-MM-DD HH:mm:ss");
+      this.$nextTick(() => {
+        this.getPeakPoints();
+      })
     },
     html2canvas_2(imgtype) {
       //获取截取区域的高度和宽度

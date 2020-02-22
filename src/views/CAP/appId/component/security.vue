@@ -126,16 +126,16 @@ export default {
     return {
       colorIndex: "",
       modelSelectData: [
-        { title: "账号场景", content: "登陆、注册、找回密码等" },
-        { title: "短信场景", content: "发送短信、邮箱验证码等" },
-        { title: "活动场景", content: "秒杀、领券、抢红包等" },
-        { title: "其他场景", content: "评论、投票、发帖等" }
+        { title: "賬號場景", content: "登入、註冊、找回密碼等" },
+        { title: "簡訊場景", content: "發送簡訊、郵箱驗證碼等" },
+        { title: "活動場景", content: "秒殺、領券、搶紅包等" },
+        { title: "其他場景", content: "評論、投票、發帖等" }
       ],
       verificationData: [
-        { title: "滑动验证码", content: "简洁体验，快速通过" },
-        { title: "VTT验证码", content: "极致防护，倍享安全" }
+        { title: "滑動驗證碼", content: "簡潔體驗，快速通過" },
+        { title: "VTT驗證碼", content: "極致防護，倍享安全" }
       ],
-      toolmsg: ['体验优先',  '平衡','安全优先'],
+      toolmsg: ['體驗優先',  '平衡','安全優先'],
       timestep:100,
       CaptchaAppId: "",
       time: "",

@@ -5,16 +5,16 @@
       <h4  class="tke-formpanel-title">基本信息</h4>
       <el-form  class="tke-form" label-position='left' label-width="120px" size="mini">
         <el-form-item label="名称">
-          <div class="tke-form-item_text">default</div>
+          <div class="tke-form-item_text">{{detail.metadata.name}}</div>
         </el-form-item>
         <el-form-item label="状态">
-          <div class="tke-form-item_text"><span class="text-green">Active</span></div>
+          <div class="tke-form-item_text"><span class="text-green">{{detail.status && detail.status.phase}}</span></div>
         </el-form-item>
         <el-form-item label="描述">
-          <div class="tke-form-item_text">-</div>
+          <div class="tke-form-item_text">{{detail.metadata.annotations?detail.metadata.annotations.description:'-'}}</div>
         </el-form-item>
         <el-form-item label="创建时间">
-          <div class="tke-form-item_text">2020-01-02 14:02:22</div>
+          <div class="tke-form-item_text">{{changeTime(detail.metadata.creationTimestamp)}}</div>
         </el-form-item>
         <el-form-item label="镜像仓库秘钥">
           <div style="overflow: visible; max-width: 550px;">
@@ -61,7 +61,10 @@
 <script>
 import FileSaver from "file-saver";
 import XLSX from "xlsx";
-import { ALL_CITY } from "@/constants";
+import { ALL_CITY, POINT_REQUEST } from "@/constants";
+import Loading from "@/components/public/Loading";
+import { ErrorTips } from "@/components/ErrorTips";
+import moment from 'moment';
 export default {
   name: "namespaceDetailInfo",
   data() {
@@ -76,19 +79,56 @@ export default {
           status:false,
         },
       ], //列表
-        
-   
+      clusterId:'',//集群id
+      name: '',//命名空间名称
+      loadShow: false, //加载是否显示
+      detail: {},//详情数据
     };
   },
   components: {
-   
+    Loading
   },
   created() {
-     // 从路由获取类型
-   
+    // 从路由获取参数
+    this.clusterId=this.$route.query.clusterId;
+    this.name = this.$route.query.name;
+    this.getNameSpaceInfo();
   },
   methods: {
-   
+    async getNameSpaceInfo() {
+      this.loadShow = true;
+      let param = {
+        Method: "GET",
+        Path: "/api/v1/namespaces/"+this.name,
+        Version: "2018-05-25",
+        ClusterName: this.clusterId
+      }
+
+      await this.axios.post(POINT_REQUEST, param).then(res => {
+        if(res.Response.Error === undefined) {
+          this.loadShow = false;
+          let response = JSON.parse(res.Response.ResponseBody);
+          this.detail = response;
+          console.log(this.detail,"detail");
+        } else {
+          this.loadShow = false;
+          let ErrTips = {
+          
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
+    },
+    //时间格式化
+    changeTime(time) {
+      return moment(time).format("YYYY-MM-DD HH:mm:ss");
+    }
   }
 };
 </script>

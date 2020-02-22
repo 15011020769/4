@@ -45,13 +45,22 @@
                   <p>启动配置里不包含可用区信息，提供可用区选择的目的是帮助您在已确定将启动实例可用区时，过滤出可用实例类型。</p>
                 </el-form-item>
                 <el-form-item label="机型">
-                  <div class="tke-form-item_text"><span>S3.SMALL1(标准型S3,1核1GB)</span><i class="el-icon-edit tke-icon"></i></div>
+                  <div class="tke-form-item_text">
+                    <span>S3.SMALL1(标准型S3,1核1GB)</span>
+                    <i class="el-icon-edit tke-icon" @click="typeModelShow = true"></i>
+                  </div>
                 </el-form-item>
                 <el-form-item label="系统盘">
-                  <div class="tke-form-item_text"><span>高性能云硬盘 50GB</span><i class="el-icon-edit tke-icon"></i></div>
+                  <div class="tke-form-item_text">
+                    <span>高性能云硬盘 50GB</span>
+                    <i class="el-icon-edit tke-icon" @click="diskModelShow = true"></i>
+                  </div>
                 </el-form-item>
                 <el-form-item label="数据盘">
-                  <div class="tke-form-item_text"><span>暂不购买</span><i class="el-icon-edit tke-icon"></i></div>
+                  <div class="tke-form-item_text">
+                    <span>暂不购买</span>
+                    <i class="el-icon-edit tke-icon" @click="dataDiskShow = true"></i>
+                  </div>
                 </el-form-item>
                 <el-form-item label="公网带宽">
                   <div class="tke-form-item_text"><span>按带宽计费 1Mbps</span><i class="el-icon-edit tke-icon"></i></div>
@@ -142,7 +151,7 @@
               </el-form-item>
           </el-form-item>
 
-          <el-form-item label="Label">
+          <!-- <el-form-item label="Label">
                  <el-form-item
                     v-for="(domain, index) in domainstion"
                     :key="domain.key"
@@ -156,7 +165,7 @@
                 <el-form-item>
                   <el-button type="text"  @click="addDomain2" >新增Lable</el-button>
                 </el-form-item>
-          </el-form-item>
+          </el-form-item> -->
           <p><i :class="[isActive?'el-icon-caret-bottom':'el-icon-caret-right']"></i><el-button type="text" style='font-size:12px;' @click='isActive=!isActive'>高级设置</el-button></p>
           <el-form-item label="自定义数据" v-show="isActive">
             <el-input
@@ -247,13 +256,207 @@
         </div>
       </div>
     </div>
+    <el-dialog title="选择机型" :visible.sync="typeModelShow" width="80%">
+      <div
+        class="tke-second-worker-model-box"
+        v-if="typeModelShow"
+      >
+        <div class="tke-second-worker-model">
+          <div class="model-bg">
+            <div>
+              <el-select v-model="value" placeholder="请选择">
+                <el-option
+                  v-for="item in options"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                >
+                </el-option>
+              </el-select>
+              <el-select v-model="value" placeholder="请选择">
+                <el-option
+                  v-for="item in options"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                >
+                </el-option>
+              </el-select>
+            </div>
+            <div style="margin-top:16px;">
+              <el-radio-group>
+                <el-radio-button label="1"
+                  >全部实例族</el-radio-button
+                >
+                <el-radio-button label="2">标准型</el-radio-button>
+                <el-radio-button label="3">内存型</el-radio-button>
+                <el-radio-button label="4">计算型</el-radio-button>
+              </el-radio-group>
+            </div>
+            <div style="margin-top:16px;">
+              <el-radio-group>
+                <el-radio-button label="1"
+                  >全部实例类型</el-radio-button
+                >
+                <el-radio-button label="2"
+                  >标准型S3</el-radio-button
+                >
+                <el-radio-button label="3"
+                  >计算型C3</el-radio-button
+                >
+                <el-radio-button label="4"
+                  >内存型M3</el-radio-button
+                >
+              </el-radio-group>
+            </div>
+            <div style="margin-top:16px;">
+              <el-table
+                ref="singleTable"
+                highlight-current-row
+                @current-change="handleCurrentChange"
+                style="width: 100%"
+              >
+                <el-table-column width="50">
+                  <template slot-scope="scope">
+                    <el-radio v-model="radio1" :label="scope.row"
+                      ><i></i
+                    ></el-radio>
+                  </template>
+                </el-table-column>
+                <el-table-column property="date" label="机型">
+                </el-table-column>
+                <el-table-column property="name" label="规则">
+                </el-table-column>
+                <el-table-column property="address" label="CPU">
+                </el-table-column>
+                <el-table-column property="address" label="内存">
+                </el-table-column>
+                <el-table-column
+                  property="address"
+                  label="配置费用"
+                >
+                </el-table-column>
+              </el-table>
+            </div>
+          </div>
+          <div class="model-btn">
+            <el-button class="determine">确定</el-button>
+            <el-button
+              class="cancel"
+              @click="colonySecond.modelShow = false"
+              >取消</el-button
+            >
+          </div>
+        </div>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="deleteSingleGroup('single')">确 定</el-button>
+        <el-button @click="deleteSingleModal = false">取 消</el-button>
+      </span>
+    </el-dialog>
+    <el-dialog :visible.sync="diskModelShow" width="35%">
+      <div class="tke-second-worker-popover-disk">
+        <div>
+          <el-select
+            v-model="options"
+            placeholder="请选择"
+          >
+            <el-option
+              v-for="item in options"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            >
+            </el-option>
+          </el-select>
+          <el-input-number
+            v-model="options"
+            :min="50"
+            :max="500"
+          ></el-input-number>
+          <span>GB</span>
+          <p>范围：50~500，步长：1</p>
+        </div>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="deleteSingleGroup('single')">确 定</el-button>
+        <el-button @click="diskModelShow = false">取 消</el-button>
+      </span>
+    </el-dialog>
+    <el-dialog :visible.sync="dataDiskShow" width="35%">
+      <el-checkbox
+        v-model="buyDataDisk"
+        @change="changeIsBuy()"
+        >购买数据盘
+      </el-checkbox>
+    </el-dialog>
+    <el-dialog :visible.sync="buyDataDiskShow" width="50%">
+      <div>
+        <p>云盘设置</p>
+        <div>
+          <el-select
+            v-model="buyDataDisk"
+            placeholder="请选择"
+          >
+            <el-option
+              v-for="item in options"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            >
+            </el-option>
+          </el-select>
+          <el-input-number
+            v-model="options"
+            :min="10"
+            :max="16000"
+          ></el-input-number>
+          <span>GB</span>
+          <el-checkbox
+            v-model="options"
+            class="format-and-mount"
+            >格式化并挂载</el-checkbox
+          >
+          <p>范围：10~16000，步长：10</p>
+        </div>
+        <p
+          style="margin-top:16px;"
+          v-if="options"
+        >
+          格式化设置
+        </p>
+        <div
+          style="margin-top:16px;"
+          
+        >
+          <el-select
+            placeholder="请选择"
+          >
+            <el-option
+              v-for="item in options"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            >
+            </el-option>
+          </el-select>
+          <el-input v-model="value"></el-input>
+        </div>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="deleteSingleGroup('single')">确 定</el-button>
+        <el-button @click="buyDataDiskShow = false">取 消</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import FileSaver from "file-saver";
 import XLSX from "xlsx";
-import { ALL_CITY } from "@/constants";
+import { ErrorTips } from "@/components/ErrorTips";
+import { ALL_CITY,
+      DESCRIBE_ZONE_INFO } from "@/constants";
 export default {
   name: "asgCreate",
   data() {
@@ -264,6 +467,12 @@ export default {
       checkedOne: true,
       checkedTwo: true,
       checkedThree: false,
+      typeModelShow: false,//是否打开机型modal
+      diskModelShow: false,//是否打开系统盘modal
+      dataDiskShow: false,//是否打开数据盘modal
+      buyDataDisk: false,//是否显示是否购买数据盘
+      buyDataDiskShow: false,//是否显示购买数据盘
+      zoneInfoList: [],
       textarea2: '',
       inputRoom: '/var/lib/docker',
       isActive: false,
@@ -319,13 +528,27 @@ export default {
           name: 'asd',
           address: '台北一区'
         }],
+      rules: {
+        name: [
+          { required: true, message: '请输入伸缩组名称', trigger: 'change' }
+        ],
+        ScaleDownUtilizationThreshold: [
+          { required: true, message: '占比不能为空', trigger: 'change' }
+        ],
+         ScaleDownUnneededTime: [
+          { required: true, message: '时间不能为空', trigger: 'change' }
+        ],
+         ScaleDownDelay: [
+          { required: true, message: '时间不能为空', trigger: 'change' }
+        ],
+      }  
     }
   },
   components: {
    
   },
   created() {
-
+    // this.getDescribeZoneInstanceConfigInfos();
   },
   methods: {
     //返回上一层
@@ -348,40 +571,76 @@ export default {
 
       console.log(e)
     },
-     removeDomain(item) {
-       console.log(item)
-        var index = this.domains.indexOf(item)
-        if (index !== -1) {
-          this.domains.splice(index, 1)
-        }
-      },
-      removeDomain2(item) {
-       console.log(item)
-        var index = this.domainstion.indexOf(item)
-        if (index !== -1) {
-          this.domainstion.splice(index, 1)
-        }
-      },
-     addDomain() {
-        this.domains.push({
-          value: [],
-          key: Date.now()
-        })
-      },
-      addDomain2() {
-        this.domainstion.push({
-          value: '',
-          valueKey: '',
-          key: Date.now()
-        })
-      },
-      deleteAll(){
-        this.domains.splice(0,this.domains.length)
-      },
-      setRadio(e){
-
+    removeDomain(item) {
+      console.log(item)
+      var index = this.domains.indexOf(item)
+      if (index !== -1) {
+        this.domains.splice(index, 1)
       }
+    },
+    removeDomain2(item) {
+      console.log(item)
+      var index = this.domainstion.indexOf(item)
+      if (index !== -1) {
+        this.domainstion.splice(index, 1)
+      }
+    },
+    addDomain() {
+      this.domains.push({
+        value: [],
+        key: Date.now()
+      })
+    },
+    addDomain2() {
+      this.domainstion.push({
+        value: '',
+        valueKey: '',
+        key: Date.now()
+      })
+    },
+    deleteAll(){
+      this.domains.splice(0,this.domains.length)
+    },
+    setRadio(e){
+
+    },
+    handleSelectionChange(){
+
+    },
+    //获取可用区机型配置信息
+    async getDescribeZoneInstanceConfigInfos() {
+      let param = {
+        Version: "2017-03-12"        
+      }
+      param["Filters.0"] = [{Name: "instance-charge-type", Values:["POSTPAID_BY_HOUR"]}]
+      await this.axios.post(DESCRIBE_ZONE_INFO, param).then(res => {
+        if(res.Response.Error === undefined) {
+          this.zoneInfoList = res.Response.InstanceTypeQuotaSet;
+        } else {
+          this.loadShow = false;
+          let ErrTips = {
+            "InvalidInstanceType.Malformed": "指定InstanceType参数格式不合法",
+            "InvalidRegion.NotFound": "未找到该区域",
+            "InvalidZone.MismatchRegion": "指定的zone不存在",
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
+    },
+    //选择是否购买数据盘
+  changeIsBuy() {
+    if(this.buyDataDisk) {
+      this.dataDiskShow = false;
+      this.buyDataDiskShow = true;
+    }
   }
+  },
 };
 </script>
 

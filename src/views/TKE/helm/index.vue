@@ -48,7 +48,7 @@
 import HeadCom from '@/components/public/Head'
 import City from '@/components/public/CITY'
 import {
-  ALL_CITY,TKE_COLONY_LIST
+  ALL_CITY,TKE_COLONY_LIST,TKE_DELETE_POLICIES
 } from '@/constants'
 export default {
   name: 'helm',

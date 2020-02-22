@@ -75,10 +75,10 @@
           toolbox: {
             feature: {
               show: true,
-              // saveAsImage: {
-              //   show: true,
-              //   title: "導出圖片"
-              // }
+              saveAsImage: {
+                show: true,
+                title: "導出圖片"
+              }
             }
           },
           legend: {

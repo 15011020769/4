@@ -2,7 +2,7 @@
   <div id="saveOverView">
     <div class="topTitle">
       <div class="topTitleT">
-        安全概览
+        {{t('安全概览', 'WAF.aqgl')}}
       </div>
       <el-tabs v-model="activeName" @tab-click="handleClick" class="tabList">
         <el-tab-pane label="攻击概览" name="first">

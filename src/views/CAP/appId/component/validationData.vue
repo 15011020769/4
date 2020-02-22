@@ -151,26 +151,26 @@ export default {
       echartsData0: {
         id: "echartsData0",
         show: false,
-        data: ["请求量", "验证量", "通过量", "拦截量"],
+        data: ["請求量", "驗證量", "通過量", "攔截量"],
         xAxis: ["00:00", "00:50", "01:40", "02:30", "04:10", "05:00"],
         series: [
           {
-            name: "请求量",
+            name: "請求量",
             type: "line",
             data: [0, 2, 3, 7, 10, 0]
           },
           {
-            name: "验证量",
+            name: "驗證量",
             type: "line",
             data: [0, 0, 2, 0, 7, 0]
           },
           {
-            name: "通过量",
+            name: "通過量",
             type: "line",
             data: [1, 2, 3, 4, 5, 9]
           },
           {
-            name: "拦截量",
+            name: "攔截量",
             type: "line",
             data: [4, 4, 3, 2, 1, 0]
           }
@@ -180,21 +180,21 @@ export default {
         id: "echartsData1",
         type: "OperDataInterceptUnitArray",
         show: false,
-        data: ["总拦截比例", "因答案错误拦截比例", "因安全策略打击拦截比例"],
+        data: ["總攔截比例", "因答案錯誤攔截比例", "因安全策略打擊攔截比例"],
         xAxis: ["00:00", "00:50", "01:40", "02:30", "04:10", "05:00"],
         series: [
           {
-            name: "总拦截比例",
+            name: "總攔截比例",
             type: "line",
             data: [0, 2, 3, 7, 10, 0]
           },
           {
-            name: "因答案错误拦截比例",
+            name: "因答案錯誤攔截比例",
             type: "line",
             data: [0, 0, 2, 0, 7, 0]
           },
           {
-            name: "因安全策略打击拦截比例",
+            name: "因安全策略打擊攔截比例",
             type: "line",
             data: [1, 2, 3, 4, 5, 9]
           }
@@ -204,11 +204,11 @@ export default {
         id: "echartsData2",
         type: "OperDataLoadTimeUnitArray",
         show: false,
-        data: ["验证码加载耗时"],
+        data: ["驗證碼加載耗時"],
         xAxis: ["00:00", "00:50", "01:40", "02:30", "04:10", "05:00"],
         series: [
           {
-            name: "验证码加载耗时",
+            name: "驗證碼加載耗時",
             type: "line",
             data: [0, 2, 3, 7, 10, 0]
           }
@@ -218,11 +218,11 @@ export default {
         id: "echartsData3",
         type: "OperDataTryTimesUnitArray",
         show: false,
-        data: ["一次通过平均尝试次数"],
+        data: ["一次通過平均嘗試次數"],
         xAxis: ["00:00", "00:50", "01:40", "02:30", "04:10", "05:00"],
         series: [
           {
-            name: "一次通过平均尝试次数",
+            name: "一次通過平均嘗試次數",
             type: "line",
             data: [0, 2, 3, 7, 10, 0]
           }
@@ -232,11 +232,11 @@ export default {
         id: "echartsData4",
         type: "OperDataTryTimesDistributeUnitArray",
         show: false,
-        data: ["一次通过尝试次数分布"],
+        data: ["一次通過嘗試次數分佈"],
         xAxis: ["00:00", "00:50", "01:40", "02:30", "04:10", "05:00"],
         series: [
           {
-            name: "一次通过尝试次数分布",
+            name: "一次通過嘗試次數分佈",
             type: "line",
             data: [0, 2, 3, 7, 10, 0]
           }
@@ -466,7 +466,7 @@ export default {
         this.echartsData0.xAxis = xData;
       
         this.echartsData0.series.push({
-          name: "请求量",
+          name: "請求量",
           type: "line",
           data: data0
         });
@@ -478,7 +478,7 @@ export default {
             data1.push(item.Cnt);
           });
           this.echartsData0.series.push({
-            name: "验证量",
+            name: "驗證量",
             type: "line",
             data: data1
           });
@@ -490,7 +490,7 @@ export default {
               data2.push(item.Cnt);
             });
             this.echartsData0.series.push({
-              name: "通过量",
+              name: "通過量",
               type: "line",
               data: data2
             });
@@ -502,7 +502,7 @@ export default {
                 data3.push(item.Cnt);
               });
               this.echartsData0.series.push({
-                name: "拦截量",
+                name: "攔截量",
                 type: "line",
                 data: data3
               });

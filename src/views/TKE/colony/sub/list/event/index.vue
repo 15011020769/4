@@ -6,7 +6,7 @@
       <h4 class="tke-formpanel-title">条件筛选</h4>
       <el-form class="tke-form" label-position="left" label-width="120px" size="mini">
         <el-form-item label="命名空间">
-          <el-select v-model="nsValue" placeholder="请选择">
+          <el-select v-model="nsValue" placeholder="请选择" @change="getKind">
             <el-option
               v-for="item in nsOptions"
               :key="item.value"
@@ -16,7 +16,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="类型">
-          <el-select v-model="typeValue" filterable placeholder="请选择">
+          <el-select v-model="typeValue" filterable placeholder="请选择" @change="getEventList">
             <el-option
               v-for="item in typeOptions"
               :key="item.value"
@@ -49,43 +49,43 @@
       <el-table :data="list" v-loading="loadShow" style="width: 100%">
         <el-table-column label="首次出现时间">
           <template slot-scope="scope">
-            <p>2020-01-09 19:10:37</p>
+            <p>{{scope.row.firstTimestamp}}</p>
           </template>
         </el-table-column>
         <el-table-column label="最后出现时间">
           <template slot-scope="scope">
-            <p>2020-01-10 17:01:02</p>
+            <p>{{scope.row.lastTimestamp}}</p>
           </template>
         </el-table-column>
         <el-table-column prop label="级别">
           <template slot-scope="scope">
-            <span class="text-red">Warning</span>
+            <span v-if="scope.row.type=='Warning'" class="text-red">{{scope.row.type}}</span>
+            <span v-if="scope.row.type=='Normal'">{{scope.row.type}}</span>
           </template>
         </el-table-column>
         <el-table-column prop label="资源类型">
           <template slot-scope="scope">
-            <span>HorizontalPodAutoscaler</span>
+            <span>{{scope.row.involvedObject.kind}}</span>
           </template>
         </el-table-column>
-
         <el-table-column prop label="资源名称">
           <template slot-scope="scope">
-            <span>asdas.15e83372c763e97e</span>
+            <span>{{scope.row.metadata.name}}</span>
           </template>
         </el-table-column>
         <el-table-column prop="address" label="内容">
           <template slot-scope="scope">
-            <span>FailedGetPodsMetric</span>
+            <span>{{scope.row.reason}}</span>
           </template>
         </el-table-column>
         <el-table-column prop="nodeTotal" label="详细描述">
           <template slot-scope="scope">
-            <p>Error: ImagePullBackOff</p>
+            <p>{{scope.row.message}}</p>
           </template>
         </el-table-column>
         <el-table-column prop label="出现次数">
           <template slot-scope="scope">
-            <p>2617</p>
+            <p>{{scope.row.count}}</p>
           </template>
         </el-table-column>
       </el-table>
@@ -110,49 +110,23 @@
 <script>
 import subTitle from "@/views/TKE/components/subTitle";
 import Loading from "@/components/public/Loading";
-import { ALL_CITY, POINT_REQUEST } from "@/constants";
+import { ErrorTips } from "@/components/ErrorTips.js"; //公共错误码
+import { ALL_CITY, POINT_REQUEST, TKE_COLONY_QUERY } from "@/constants";
 export default {
   name: "colonyEvent",
   data() {
     return {
       loadShow: false, //加载是否显示
-      list: [
-        {
-          status: false
-        },
-        {
-          status: true
-        },
-        {
-          status: true
-        },
-        {
-          status: true
-        }
-      ], //列表
+      list: [], //列表
       total: 0,
       pageSize: 10,
       pageIndex: 0,
       multipleSelection: [],
-
-      nsOptions: [
-        {
-          value: "default",
-          label: "default"
-        },
-        {
-          value: "kube-system",
-          label: "kube-system"
-        },
-        {
-          value: "kube-public",
-          label: "kube-public"
-        }
-      ],
+      nsOptions: [],
       nsValue: "default",
       typeOptions: [
         {
-          value: "all",
+          value: "全部类型",
           label: "全部类型"
         },
         {
@@ -172,7 +146,7 @@ export default {
           label: "Ingress"
         }
       ],
-      typeValue: "all",
+      typeValue: "全部类型",
       nameOptions: [
         {
           value: "aaa",
@@ -189,78 +163,111 @@ export default {
   },
 
   created() {
-    this.getEvent();
-    this.getEventList();
+    // this.getEventList();
+    this.nameSpaceList();
+    this.getKind();
   },
   methods: {
     //    /api/v1/namespaces    get
     //    /api/v1/namespaces/{namespace}/events?&limit=20 get
     //    /api/v1/namespaces//events?limit=20
-    getEvent() {
-      let params = {
+    //命名空间选项
+    nameSpaceList() {
+      var params = {
         Method: "GET",
-        Path: "/api/v1/namespaces/" + "default" + "/events?&limit=20",
+        Path: "/api/v1/namespaces",
         Version: "2018-05-25",
-        ClusterName: "cls-l74ol4g0"
+        ClusterName: this.$route.query.clusterId
       };
-      this.axios
-        // .get("/api/v1/namespaces/", params).then(res => {
-        .get(POINT_REQUEST, params)
-        .then(res => {
-          console.log(res);
-
-          if (res.Response.Error === undefined) {
-            console.log(res);
-            // this.tableData = res.Response.Clusters;
-            this.loadShow = false;
-            console.log(res.Response.Clusters);
-          } else {
-            let ErrTips = {};
-            let ErrOr = Object.assign(ErrorTips, ErrTips);
-            this.$message({
-              message: ErrOr[res.Response.Error.Code],
-              type: "error",
-              showClose: true,
-              duration: 0
+      this.axios.post(TKE_COLONY_QUERY, params).then(res => {
+        if (res.Response.Error === undefined) {
+          var mes = JSON.parse(res.Response.ResponseBody);
+          console.log(mes);
+          this.list = mes.items;
+          this.total = mes.items.length;
+          mes.items.forEach(item => {
+            this.nsOptions.push({
+              value: item.metadata.name,
+              label: item.metadata.name
             });
-          }
-        });
+          });
+          this.loadShow = false;
+        } else {
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 2000
+          });
+        }
+      });
+    },
+    getKind() {
+      //获取类型的数据
+      var params = {
+        Method: "GET",
+        Path: "/api/v1/namespaces/" + this.nsValue + "/events?&limit=20",
+        Version: "2018-05-25",
+        ClusterName: this.$route.query.clusterId
+      };
+      this.axios.post(TKE_COLONY_QUERY, params).then(res => {
+        if (res.Response.Error === undefined) {
+          var mes = JSON.parse(res.Response.ResponseBody);
+          this.list = mes.items;
+          this.total = mes.items.length;
+          this.loadShow = false;
+        } else {
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 2000
+          });
+        }
+      });
     },
     getEventList() {
-      //     /api/v1/namespaces/{namespace}/events
-      let params = { Version: "2018-05-25" };
-      this.axios
-        // .get("/api/v1/namespaces/" + 'default' + "/events", params)
-        // .then(res => {
-        .get(POINT_REQUEST, params)
-        .then(res => {
-          console.log(res);
-          if (res.Response.Error === undefined) {
-            this.tableData = res.Response.Clusters;
-            this.loadShow = false;
-            console.log(res.Response.Clusters);
-          } else {
-            let ErrTips = {};
-            let ErrOr = Object.assign(ErrorTips, ErrTips);
-            this.$message({
-              message: ErrOr[res.Response.Error.Code],
-              type: "error",
-              showClose: true,
-              duration: 0
-            });
-          }
-        });
+      //事件列表
+      var params = {
+        Method: "GET",
+        Path:
+          "/api/v1/namespaces/default/events?fieldSelector=involvedObject.kind=" +
+          this.typeValue +
+          "&limit=20",
+        Version: "2018-05-25",
+        ClusterName: this.$route.query.clusterId
+      };
+      this.axios.post(TKE_COLONY_QUERY, params).then(res => {
+        if (res.Response.Error === undefined) {
+          var mes = JSON.parse(res.Response.ResponseBody);
+          this.list = mes.items;
+          this.total = mes.items.length;
+          this.loadShow = false;
+        } else {
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 2000
+          });
+        }
+      });
     },
     // 分页
     handleCurrentChange(val) {
       this.pageIndex = val - 1;
-      // this.getColonyList();
+      this.getEventList();
       this.pageIndex += 1;
     },
     handleSizeChange(val) {
-      // console.log(`每页 ${val} 条`);
       this.pageSize = val;
-      // this.getColonyList();
+      this.getEventList();
     }
   },
   components: {

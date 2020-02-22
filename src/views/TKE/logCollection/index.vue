@@ -137,20 +137,23 @@
         this.Name.options = ['请选择Namespace'];
         this.nameSpaceList();
         const res = this.axios.post(WARNING_GetCOLONY, params).then(res => {
-          if (res.Response.AlarmPolicySet.length > 0) {
-            let resData = res.Response.AlarmPolicySet;
-            this.length = resData.length;
-            this.listData = resData;
-            for (let i = 0; i < resData.length; i++) {
-              let getData = {
-                AlarmPolicyName: '',
-                AlarmPolicyType: ''
-              };
-              getData.name = resData.AlarmPolicySettings
+          console.log(res)
+          if(res){
+            if (res.Response.AlarmPolicySet) {
+              let resData = res.Response.AlarmPolicySet;
+              this.length = resData.length;
+              this.listData = resData;
+              for (let i = 0; i < resData.length; i++) {
+                let getData = {
+                  AlarmPolicyName: '',
+                  AlarmPolicyType: ''
+                };
+                getData.name = resData.AlarmPolicySettings
+              }
+              this.funllscreenLoading = false;
+            } else {
+              this.funllscreenLoading = false;
             }
-            this.funllscreenLoading = false;
-          } else {
-            this.funllscreenLoading = false;
           }
         });
       },
@@ -283,7 +286,7 @@
             Version: "2018-05-25",
           };
           this.axios.post(TKE_COLONY_QUERY, params).then(res => {
-            if (res.Response) {
+            if (res.Response.Error==undefined) {
               var data = JSON.parse(res.Response.ResponseBody);
               data.items.forEach(item => {
                 this.Name.options.push(item.metadata.name)

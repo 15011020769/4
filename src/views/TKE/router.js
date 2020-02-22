@@ -1002,9 +1002,33 @@ export default new Router({
       }
     },
     {
+      path: '/warningDetail', // 告警设置
+      name: 'warningDetail',
+      component: () => import(/* webpackChunkName: "warnings" */ './warnings/detail.vue'),
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
       path: '/warningCreate',
       name: 'warningCreate',
       component: () => import(/* webpackChunkName: "warningCreate" */ './warningCreate/index.vue'),
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
+      path: '/warningUpdate',
+      name: 'warningUpdate',
+      component: () => import(/* webpackChunkName: "warningCreate" */ './warningCreate/update.vue'),
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
+      path: '/warningCopy',
+      name: 'warningCopy',
+      component: () => import(/* webpackChunkName: "warningCreate" */ './warningCreate/copy.vue'),
       meta: {
         keepAlive: true
       }

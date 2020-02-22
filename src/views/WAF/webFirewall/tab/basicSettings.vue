@@ -91,14 +91,14 @@
               </el-col>
               <el-col>
                 <el-row type="flex" justify="end">
-                  <el-button type="text">{{t('编辑', 'WAF.bj')}}</el-button>
+                  <el-button type="text" @click="showAreaBanDialog">{{t('编辑', 'WAF.bj')}}</el-button>
                 </el-row>
               </el-col>
             </el-row>
             <el-row type="flex" :gutter="20" align="middle" justify="center">
               <el-col class="subText" :span="4">{{t('封禁状态', 'WAF.fjzt')}}</el-col>
               <el-col>
-                <el-switch />
+                <el-switch v-model="areaBan" />
               </el-col>
             </el-row>
             <el-row type="flex" style="margin-top: 10px">
@@ -110,7 +110,12 @@
             <el-row type="flex">
               <el-col :span="4" class="subText">封禁地域</el-col>
               <el-col>
-                <p class="subText">国内全部</p>
+                <template v-if="areaBanAreas">
+                  <dl class="tc-tag-list">
+                    <dd class="subText" v-for="area in areaBanAreas.Areas" :key="area" style="margin-right: 10px;">{{area}}</dd>
+                  </dl>
+                </template>
+                <p class="subText" v-else>暂无</p>
               </el-col>
             </el-row>
           </el-col>
@@ -133,21 +138,36 @@
           </el-col>
         </el-row>
       </el-row>
-      <addressStopEditModel :isShow="addressModel" @closeAddressModel="closeAddressModel"/>
+    <el-dialog
+      title="选择封禁地区"
+      :visible.sync="addressModel"
+      width="45%"
+    >
+      <address-ban
+        :visible.sync="addressModel"
+        :availableBanNation="availableBanNation"
+        :availableBanProvinces="availableBanProvinces"
+        :areaBanAreas="areaBanAreas"
+        :domain="domain"
+        @success="getAreaBan"
+      />
+    </el-dialog>
   </div>
 </template>
 <script>
-import addressStopEditModel from '../model/addressStopEditModel'
+import addressBan from '../model/addressStopEditModel'
 import { 
   DESCRIBE_WEBSHELL_STATUS,
   MODIFY_WEBSHELL_STATUS,
   MODIFY_HOST_MODE,
   DESCRIBE_AREABAN_AREAS,
-  DESCRIBE_AREABAN_SUPPORT_AREAS
+  DESCRIBE_AREABAN_SUPPORT_AREAS,
+  MODIFY_AREA_BAN_STATUS
 } from '@/constants'
 import { flatObj } from '@/utils'
 import { ErrorTips } from "@/components/ErrorTips"
 import { COMMON_ERROR, POLICY_RULE_ACTION_ARR } from '../../constants'
+let loading
 
 export default {
   props: {
@@ -163,11 +183,34 @@ export default {
       addressModel: false,
       advanceSetting: false,
       webShellStatus: false,
+      areaBanAreas: undefined,
+      availableBanProvinces: [], // 只有城市名称的字符串数组  方便排除非城市区域
+      availableBanNation: [], // 包括中文名称和英文名称的对象数组
+      allAreaBanAreas: [],
+    }
+  },
+  computed: {
+    areaBan: {
+      get() {
+        return this.areaBanAreas && this.areaBanAreas.Status === '1'
+      },
+      set(status) {
+        this.axios.post(MODIFY_AREA_BAN_STATUS, {
+          Version: '2018-01-25',
+          Domain: this.domain.Domain,
+          Status: Number(status)
+        }).then(resp => {
+          this.generalRespHandler(resp, () => {
+            this.getAreaBan(this.domain)
+          }, COMMON_ERROR, '切换封禁状态成功')
+        })
+      }
     }
   },
   watch: {
     domain(n) {
       if (n) {
+      loading = this.$loading()
         this.getWebShellStatus(n)
         this.getAreaBan(n)
         this.getAreaBanSupport()
@@ -175,15 +218,21 @@ export default {
     },
   },
   components:{
-    addressStopEditModel:addressStopEditModel
+    addressBan,
   },
   methods:{
+    showAreaBanDialog() {
+      this.addressModel = true
+    },
     getAreaBanSupport() {
       this.axios.post(DESCRIBE_AREABAN_SUPPORT_AREAS, {
         Version: '2018-01-25',
       }).then(resp => {
-        this.generalRespHandler(resp, () => {
-          // TODO 获取支持禁用的地域列表
+        this.generalRespHandler(resp, ({ Data }) => {
+          const { areas, provinces } = JSON.parse(Data)
+          this.availableBanProvinces = provinces.map(p => p.zh)
+          this.availableBanNation = areas
+          loading && loading.close()
         },)
       })
     },
@@ -192,8 +241,8 @@ export default {
         Version: '2018-01-25',
         Domain,
       }).then(resp => {
-        this.generalRespHandler(resp, () => {
-          // TODO 获取禁用地域
+        this.generalRespHandler(resp, ({ Data }) => {
+          this.areaBanAreas = Data
         })
       })
     },
@@ -251,16 +300,6 @@ export default {
         }, COMMON_ERROR, '切换“恶意文件上传”状态成功')
       })
     },
-    //编辑按钮
-    editH(){
-      this.$router.push({
-        name:'editDominList'
-      })
-    },
-    //关闭地域编辑弹框
-    closeAddressModel(isShow){
-      this.addressModel=isShow;
-    }
   }
 }
 </script>
@@ -301,5 +340,10 @@ export default {
 .table-head {
   color: #888;
   font-weight: 600;
+}
+.tc-tag-list {
+  dd {
+    display: inline-block;
+  }
 }
 </style>

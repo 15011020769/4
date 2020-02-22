@@ -10,7 +10,7 @@
     </div>
     <div class="box-table">
       <!-- 表格 -->
-      <el-table :data="tableData" style="width: 100%">
+      <el-table :data="tableData" style="width: 100%" v-loading='TableLoad'>
         <el-table-column prop width="200">
           <template slot-scope="scope">
             <p>
@@ -29,7 +29,7 @@
             <p v-if="scope.row.DataPoints[0].Values.length==0">暂无数据</p>
             <div v-if="scope.row.DataPoints[0].Values.length!=0">
               <echart-line id="diskEchearrts-line" :time="scope.row.DataPoints[0].Timestamps | UpTime"
-                :opData="scope.row.DataPoints[0].Values" :scale="3" :period="period" :xdata="false"></echart-line>
+                :opData="scope.row.DataPoints[0].Values" :scale="3" :period="Period" :xdata="false"></echart-line>
             </div>
           </template>
         </el-table-column>
@@ -74,6 +74,9 @@
   import moment from "moment";
   import TimeDropDown from '@/components/public/TimeDropDown' //引入时间组件
   import echartLine from "@/components/public/echars-line"; //引入图标组件
+  import {
+    ErrorTips
+  } from "@/components/ErrorTips";
   import {
     ALL_Basics,
     All_MONITOR
@@ -130,10 +133,13 @@
           }
         ],
         functionName: this.$route.query.functionName,
-        BaseList: [],
+        BaseList: [], //全部指标列表
+        BaseListK: [], //用到的指标列表
+        TableLoad: true,
         Period: '', //粒度
         Time: {}, //监控传递时间
-        tableData: [], // 获取列表数据
+        MonitorData: [], //监控数据
+        tableData: [], // 组合数据
         disName: {
           'Duration': '运行时间',
           'Invocation': '调用次数',
@@ -202,15 +208,32 @@
       TimeDropDown,
       echartLine
     },
+    watch: {
+      MonitorData(val) {
+        if (this.MonitorData) {
+          this.MonitorData.forEach(element => {
+            this.BaseListK.forEach(item => {
+              if (item.MetricName === element.MetricName) {
+                item.DataPoints = element.DataPoints
+              }
+            });
+          });
+          if (this.BaseListK.length == val.length) {
+            this.tableData = this.BaseListK
+            this.TableLoad = false
+          }
+        }
+      }
+    },
     methods: {
       GetDat(data) {
         this.Period = data[0]
         this.Time = data[1]
+        this.TableLoad = true
         this._GetBase()
       },
       //获取基础指标详情
       _GetBase() {
-        this.tableData = [];
         let parms = {
           Version: '2018-07-24',
           Region: localStorage.getItem('regionv2'),
@@ -219,9 +242,11 @@
         this.axios.post(ALL_Basics, parms).then(res => {
           if (res.Response.Error == undefined) {
             this.BaseList = res.Response.MetricSet
-            console.log(this.BaseList)
+            this.MonitorData = []
+            this.BaseListK = []
             this.BaseList.forEach(item => {
               if (item.Period.indexOf(Number(this.Period)) !== -1) {
+                this.BaseListK.push(item)
                 this._GetMonitorData(item.MetricName)
               }
             });
@@ -252,7 +277,7 @@
         }
         this.axios.post(All_MONITOR, parms).then(data => {
           if (data.Response.Error == undefined) {
-            this.tableData.push(data.Response);
+            this.MonitorData.push(data.Response);
           } else {
             this.$message({
               message: ErrorTips[data.Response.Error.Code],
@@ -263,6 +288,9 @@
           }
         });
       },
+
+    },
+    filters: {
       UpTime(value) {
         let timeArr = [];
         for (let i = 0; i < value.length; i++) {

@@ -1,6 +1,6 @@
 export const DESCRIBE_USER_INFO = 'waf2/DescribeUserInfo'
 /** 询价 */
-export const DESCRIBE_WAF_PRICE = 'waf2/DescribeWafPrice'
+export const DESCRIBE_WAF_PRICE = 'waf2/InquiryPriceWafInstance'
 /** 验证添加的域名是否已经存在 */
 export const DESCRIBE_HOST_LIMIT = 'waf2/DescribeHostLimit'
 /** 查询负载均衡的监听器列表 */
@@ -17,8 +17,10 @@ export const DESCRIBE_HOSTS = 'waf2/DescribeHosts'
 export const DESCRIBE_PEAK_VALUE = 'waf2/DescribePeakValue'
 /** 获取业务和攻击概要趋势 */
 export const DESCRIBE_PEAK_POINTS = 'waf2/DescribePeakPoints'
-/** 业务概览峰值和趋势 */
-export const WAF_INTERFACE = 'waf2/WafInterface'
+/** 查询TOP N攻击类型 */
+export const DESCRIBE_ATTACK_TYPE = 'waf2/DescribeAttackType'
+/** 攻击城市分布 */
+export const DESCRIBE_ATTACK_WORLD_MAP = 'waf2/DescribeAttackWorldMap'
 /** 设置防护域名WAF开关 */
 export const MODIFY_HOST_STATUS = 'waf2/ModifyHostStatus'
 /** 设置域名访问日志开关 */
@@ -35,8 +37,14 @@ export const DESCRIBE_ACTIONED = 'waf2/DescribeActionedIp'
 export const DESCRIBE_ACCESS_CONTROL = 'waf2/DescribeIpAccessControl'
 /** 获取地域封禁配置 */
 export const DESCRIBE_AREABAN_AREAS = 'waf2/DescribeAreaBanAreas'
+/** 修改地域封禁状态 */
+export const MODIFY_AREA_BAN_STATUS = 'waf2/ModifyAreaBanStatus'
 /** 获取WAF地域封禁支持的地域列表 */
 export const DESCRIBE_AREABAN_SUPPORT_AREAS = 'waf2/DescribeAreaBanSupportAreas'
+/** 修改地域封禁中地域信息 */
+export const MODIFY_AREA_BAN_AREAS = 'waf2/ModifyAreaBanAreas'
+/** 添加封禁地域 */
+export const ADD_AREA_BAN_AREAS = 'waf2/AddAreaBanAreas'
 /** 获取自定义策略列表 */
 export const DESCRIBE_CUSTOM_RULES = 'waf2/DescribeCustomRules'
 /** Waf CC V2 Query接口 */

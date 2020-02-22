@@ -8,26 +8,23 @@
         <!-- 左侧 -->
         <div class="grid-left">
           <el-button @click="goWorkloadCreate('deployment')" size="small" type="primary">新建</el-button>
-          <el-button size="small" @click='flag=!flag'>监控</el-button>
         </div>
-         <!-- 抽屉 -->
-        <openDrawer :flag='flag'
-          title='工作负载监控'
-          @changeFlag='setFlag'
-          @setTime='setTime'></openDrawer>
         <!-- 右侧 -->
         <div class="grid-right">
+          <div>
+            <span>命名空间</span>
+            <el-select size="mini" v-model="nameSpaceName" placeholder="请选择" @change="changNameSpace" style="margin-bottom:5px;">
+              <el-option v-for="item in searchOptions" :key="item.metadata.name" :value="item.metadata.name">
+              </el-option>
+            </el-select>
+          </div>
           <tkeSearch 
-            typeSelect 
             refreshData
             exportData
-            typeLabel='命名空间' 
-            :typeOptions='searchOptions'
             :typeValue='searchType' 
             inputPlaceholder='请输入关键词搜索'
             :searchInput='searchInput'
 
-            @changeType="changeSearchType"
             @changeInput="changeSearchInput"
             @clickSearch="clickSearch"
             @refresh='refreshList'
@@ -52,7 +49,7 @@
             label="名称"
             >
             <template slot-scope="scope">
-              <span @click="goDeploymentDetail()" class="tke-text-link">test</span>
+              <span @click="goDeploymentDetail()" class="tke-text-link">{{scope.row.metadata && scope.row.metadata.name}}</span>
             </template>
           </el-table-column>
           <el-table-column
@@ -60,7 +57,7 @@
             label="Labels"
             >
             <template slot-scope="scope">
-               <span>k8s-app:test、qcloud-app:test</span>
+               <span>k8s-app:{{scope.row.k8sApp}}、qcloud-app:{{scope.rowqcloudApp}}</span>
             </template>
           </el-table-column>
           <el-table-column
@@ -68,7 +65,7 @@
             label="Selector"
             >
             <template slot-scope="scope">
-                <span>k8s-app:test、qcloud-app:test</span>
+                <span><span>k8s-app:{{scope.row.k8sApp}}、qcloud-app:{{scope.rowqcloudApp}}</span></span>
             </template>
           </el-table-column>
           
@@ -115,6 +112,17 @@
             </el-pagination>
           </div>
         </div>
+        <div class="block">
+          <el-pagination
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+            :current-page="pageIndex"
+            :page-sizes="[10, 20, 50, 100]"
+            :page-size="pageSize"
+            layout="total, sizes, prev, pager, next"
+            :total="total">
+          </el-pagination>
+        </div>
       </div>
   </div>
 </template>
@@ -123,42 +131,25 @@
 import subTitle from "@/views/TKE/components/subTitle";
 import tkeSearch from "@/views/TKE/components/tkeSearch";
 import Loading from "@/components/public/Loading";
+import { ErrorTips } from "@/components/ErrorTips";
+import moment from 'moment';
+import XLSX from "xlsx";
+import FileSaver from "file-saver";
 import openDrawer from "./components/openDrawer";
-import { ALL_CITY } from "@/constants";
+import { ALL_CITY, POINT_REQUEST } from "@/constants";
 export default {
   name: "colonyResourceDeployment",
   data() {
     return {
       loadShow: false, //加载是否显示
-      list:[
-        {
-          status:false
-        },
-        {
-          status:true
-        }
-      ], //列表
+      list:[], //列表
       total:0,
       pageSize:10,
       pageIndex:0,
       multipleSelection: [],
       flag:false,
-      //搜索下拉框
-      searchOptions: [
-        {
-          value: "default",
-          label: "default"
-        },
-        {
-          value: "kube-system",
-          label: "kube-system"
-        },
-        {
-          value: "kube-public",
-          label: "kube-public"
-        }
-        
-      ],
+      searchOptions: [],//命名空间列表
+      nameSpaceName: 'default',//选中的命名空间名称
       searchType: "default", //下拉选中的值
       searchInput: "", //输入的搜索关键字
     };
@@ -167,8 +158,88 @@ export default {
   created() {
     // 从路由获取集群id
     this.clusterId=this.$route.query.clusterId;
+    this.getNameSpaceList();
+    this.getDeploymentList();
   },
   methods: {
+    //获取命名空间列表数据
+    async getNameSpaceList() {
+      this.loadShow = true;
+      let param = {
+        Method: "GET",
+        Path: "/api/v1/namespaces",
+        Version: "2018-05-25",
+        ClusterName: this.clusterId
+      }
+
+      await this.axios.post(POINT_REQUEST, param).then(res => {
+        if(res.Response.Error === undefined) {
+          this.loadShow = false;
+          let response = JSON.parse(res.Response.ResponseBody);
+          this.searchOptions = response.items;
+          //默认选中第一项
+          let nameSpace = response.items[0];
+          this.nameSpaceName = nameSpace.metadata.name;
+        } else {
+          this.loadShow = false;
+          let ErrTips = {
+            
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
+    },
+
+    //获取列表数据
+    async getDeploymentList() {
+      this.loadShow = true;
+      let param = {
+        Method: "GET",
+        Path: "/apis/apps/v1beta2/namespaces/"+this.nameSpaceName+"/deployments?limit="+this.pageSize,
+        Version: "2018-05-25",
+        ClusterName: this.clusterId
+      }
+
+      await this.axios.post(POINT_REQUEST, param).then(res => {
+        if(res.Response.Error === undefined) {
+          this.loadShow = false;
+          let response = JSON.parse(res.Response.ResponseBody);
+          if(response.items.length > 0) {
+            response.items.map(deployment => {
+              deployment.k8sApp = deployment.metadata.labels && deployment.metadata.labels.k8s,
+              deployment.qcloudApp = deployment.metadata.labels && deployment.metadata.labels.qcloud
+            });
+          }
+          console.log(response,"response");
+          this.list = response.items;
+          this.total = response.items.lenght;
+        } else {
+          this.loadShow = false;
+          let ErrTips = {
+            
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
+    },
+
+    //选择命名空间
+    changNameSpace() {
+      this.getDeploymentList();
+    },
+
      // 新建
     goWorkloadCreate(type){
       this.$router.push({
@@ -219,13 +290,6 @@ export default {
     //刷新数据
     refreshList(){
       console.log('refreshList....')
-    },
-    setFlag (data) {
-      console.log(data)
-      this.flag = data
-    },
-    setTime (data) {
-      console.log(data)
     },
     // 导出表格
     exportExcel() {
