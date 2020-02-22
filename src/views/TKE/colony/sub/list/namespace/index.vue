@@ -186,9 +186,11 @@ export default {
         ClusterName: this.clusterId
       }
       this.axios.post(POINT_REQUEST, param).then(res => {
+        debugger
         if (res.Response.Error === undefined) {
-          this.loadShow = false;
           this.getNameSpaceList();
+          this.loadShow = false;
+          this.showNameSpaceModal = false;
         } else {
           this.loadShow = false;
           let ErrTips = {

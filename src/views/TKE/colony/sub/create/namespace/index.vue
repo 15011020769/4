@@ -18,7 +18,7 @@
 
       <div class="tke-card tke-formpanel-wrap mb60">
         <el-form  class="tke-form" :model="np" :rules="rules" ref="np" label-position='left' label-width="120px" size="mini">
-          <el-form-item label="名称">
+          <el-form-item label="名称" prop="spaceName">
             <el-input class="w200" v-model="np.spaceName" placeholder="请输入Namespace名称"></el-input>
             <p>最长63个字符，只能包含小写字母、数字及分隔符("-")，且必须以小写字母开头，数字或小写字母结尾</p>
           </el-form-item>
@@ -38,7 +38,6 @@
           </el-form-item>
         </el-form>
 
-       
         <!-- 底部 -->
         <div class="tke-formpanel-footer">
           <el-button size="small" type="primary" @click="submitAdd('np')">创建Namespace</el-button>
@@ -52,13 +51,12 @@
 </template>
 
 <script>
-import { ALL_CITY } from "@/constants";
+import { ALL_CITY,POINT_REQUEST } from "@/constants";
 import { ErrorTips } from "@/components/ErrorTips";
 export default {
   name: "namespaceCreate",
   data() {
     var validateName = (rule, value, callback) => {
-      debugger
       if (value === '') {
         callback(new Error('请输入Namespace名称'));
       } else if(value.length > 63) {
@@ -69,6 +67,7 @@ export default {
     }
     return {
       loadShow: false, //加载是否显示
+      clusterId: '',//集群id
       np: {
         spaceName: '',
         desc:'',
@@ -86,7 +85,7 @@ export default {
     
   },
   created() {
-
+    this.clusterId=this.$route.query.clusterId;
   },
   methods: {
     //返回上一层
@@ -97,10 +96,8 @@ export default {
     submitAdd (formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          console.log(valid)
           this.createNameSpace();
         } else {
-          console.log('error submit!!')
           return false
         }
       })
@@ -109,8 +106,32 @@ export default {
     async createNameSpace () {
       this.loadShow = true;
       let param = {
-        
+        Method: "POST",
+        Path: "/apis/platform.tke/v1/clusters/"+this.clusterId+"/apply",
+        Version: "2018-05-25",
+        RequestBody: {kind: "Namespace", apiVersion: "v1",
+            metadata:{name: this.np.spaceName, annotations: {description: this.np.desc}}},
+        ClusterName: this.clusterId
       }
+
+      this.axios.post(POINT_REQUEST, param).then(res => {
+        if (res.Response.Error === undefined) {
+          this.loadShow = false;
+          this.goBack();
+        } else {
+          this.loadShow = false;
+          let ErrTips = {
+            
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
     }
   }
 };

@@ -20,7 +20,7 @@
       <el-menu-item index="/helm">
         <span slot="title">Helm应用</span>
       </el-menu-item>
-      <el-submenu index="1">
+      <!-- <el-submenu index="1">
         <template slot="title">
           <span>镜像仓库</span>
         </template>
@@ -38,13 +38,13 @@
             <span slot="title">公有镜像</span>
           </el-menu-item>
         </el-menu-item-group>
-      </el-submenu>
+      </el-submenu> -->
       <el-menu-item index="/logCollection">
         <span slot="title">日志采集</span>
       </el-menu-item>
-      <el-menu-item index="/warnings">
+      <!-- <el-menu-item index="/warnings">
         <span slot="title">告警设置</span>
-      </el-menu-item>
+      </el-menu-item> -->
       <el-menu-item index="/persistence">
         <span slot="title">事件持久化</span>
       </el-menu-item>
