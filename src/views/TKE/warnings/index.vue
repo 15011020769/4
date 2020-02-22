@@ -34,12 +34,14 @@
         </div>
       </div>
       <!-- 内容 -->
+      <div class="room-bottom">
         <el-table
           ref="multipleTable"
           :data="tableData"
           tooltip-effect="dark"
           style="width: 100%"
-          @selection-change="handleSelectionChange">
+          @selection-change="handleSelectionChange"
+          v-loading="loadShow">
           <el-table-column
             type="selection"
             width="55"
@@ -50,7 +52,7 @@
             min-width="12%"
             prop='AlarmPolicySettings'>
             <template slot-scope="scope">
-                {{scope.row.AlarmPolicySettings.AlarmPolicyName}}
+              <a style="cursor:pointer;" @click="jump(scope.row)">{{scope.row.AlarmPolicySettings.AlarmPolicyName}}</a>
             </template>
           </el-table-column>
           <el-table-column
@@ -91,23 +93,47 @@
                     size="small">
                     删除
                   </el-button>
-                      <el-button
+                  <el-button
                     type="text"
-                    size="small">
+                    size="small"
+                    @click="copyRow(scope.$index, tableData)">
                     复制
                   </el-button>
                 </template>
           </el-table-column>
         </el-table>
+        <div class="Right-style pagstyle">
+          <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;条</span>
+          <el-pagination
+            :page-size="pagesize"
+            layout="prev, pager, next"
+            :current-page.sync="currpage"
+            @current-change="handleCurrentChange"
+            :total="TotalCount"
+          ></el-pagination>
+        </div>
       </div>
-      <!-- 删除提示信息 -->
+    </div>
+      <!-- 全选删除提示信息 -->
       <el-dialog
         title="删除告警设置"
         :visible.sync="dialogVisible"
         width="50%">
-        <span>您确定要删除 4455667 吗？</span>
+        <div>您确定要删除<span v-for="(item,index) in multipleSelection" :key="index">{{item.AlarmPolicySettings.AlarmPolicyName}}<span v-if="(index+1)!==item.length">,</span></span>吗？</div>
         <span slot="footer" class="dialog-footer">
-          <el-button @click="dialogVisible = false">取 消</el-button>
+          <el-button @click="dialogVisible=false">取 消</el-button>
+          <el-button type="primary" @click="deleteAll()">确 定</el-button>
+        </span>
+      </el-dialog>
+      <!-- 单选删除 -->
+      <el-dialog
+        title="删除告警设置"
+        :visible.sync="dialogVisibleO"
+        width="50%"
+        @close='disClose'>
+        <div>您确定要删除<span v-for="(item,index) in name" :key="index">{{item}}</span>吗？</div>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="disClose()">取 消</el-button>
           <el-button type="primary" @click="deleteOne()">确 定</el-button>
         </span>
       </el-dialog>
@@ -131,8 +157,9 @@ export default {
   data() {
     return {
       length: 1,
-      pageSize: 20,
-      pageIndex: 0,
+      TotalCount: 0, // 总条数
+      pagesize: 20, // 分页条数
+      currpage: 1, // 当前页码
       options: [],
       cities: [],
       selectedRegion: '',
@@ -143,22 +170,35 @@ export default {
       multipleSelection: [],
       tableData: [],
       dialogVisible:false,
+      dialogVisibleO:false,
       delete:[],
-      input:''
+      input:'',
+      name:[],
+      loadShow:true
     }
   },
   created() {
     this.getColony()
     this.GetCity()
-
   },
   methods:{
     handleSelectionChange(val) {
         this.multipleSelection = val;
-        console.log(this.multipleSelection)
+        // console.log(this.multipleSelection)
+    },
+    handleCurrentChange(val){
+        this.currpage = val
+        this.loadShow = true
+        this.getWarningListItem()
+    },
+    copyRow(){
+      this.$router.push({
+        name: 'warningCopy',
+      })
     },
     getList(e){
       this.value = e
+      this.loadShow = true
       this.getWarningListItem()
     },
     getSearch(){
@@ -174,6 +214,7 @@ export default {
           // console.log(res)
           this.options = res.Response.Clusters
           this.value = res.Response.Clusters[0].ClusterId
+          // this.loadShow = false
           this.getWarningListItem()
         } else {
           this.$message({
@@ -190,15 +231,17 @@ export default {
       const param = {
         ClusterInstanceId: this.value,
         // Filter:{AlarmPolicyName:this.input},
-        Limit: 20,
-        Offset: 0,
+        Limit: this.pagesize,
+        Offset: (this.currpage-1)*20,
         Version: "2018-05-25"
       }
       this.axios.post(TKE_WARNING_GETCOLONY, param).then(res => {
         if (res.Error == undefined) {
           console.log(res)
           this.tableData = res.Response.AlarmPolicySet
+          this.TotalCount = res.Response.TotalCount
           this.delete=[]
+          this.loadShow = false
         } else {
           this.$message({
               message: ErrorTips[res.Response.Error.code],
@@ -209,15 +252,35 @@ export default {
         }
       })
     },
+    // 点击删除
     deleteRow(e,count){
+      // console.log(count[e].AlarmPolicySettings.AlarmPolicyName)
+      this.name.push(count[e].AlarmPolicySettings.AlarmPolicyName)
       this.delete.push(count[e].AlarmPolicyId)
-      this.dialogVisible = true
-      // this.DeleteWarning()
-      console.log(this.delete)
+      this.dialogVisibleO = true
+      // console.log(this.delete)
     },
+    // 点击弹窗确定
     deleteOne(){
       this.DeleteWarning()
-      this.dialogVisible = false
+      this.dialogVisibleO = false
+      this.name=[]
+    },
+    // 点击全选删除
+    deleteAll(){
+      this.delete=[]
+      this.delete = this.multipleSelection.map(item=>{
+        return item.AlarmPolicyId
+      })
+      // console.log(this.delete)
+      this.DeleteWarning()
+      this.dialogVisibleO = false
+    },
+    // 点击弹窗取消
+    disClose(){
+      this.dialogVisibleO=false
+      this.delete=[]
+      this.name=[]
     },
     // 删除告警配置
     DeleteWarning () { 
@@ -254,6 +317,17 @@ export default {
     changeCity (city) {
       this.selectedCity = city
       this.$cookie.set('regionv2', city.Region)
+    },
+    // 路由跳转
+    jump (row) {
+      // console.log(row)
+      this.$router.push({
+        name: 'warningDetail',
+        query: {
+          clusterId:this.value,
+          alarmPolicyId: row.AlarmPolicyId
+        }
+      })
     },
   },
   filters:{
@@ -403,5 +477,26 @@ export default {
 }
 .show {
   display: block;
+}
+.Right-style {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 20px;
+  .esach-inputL {
+    width: 300px;
+    margin-right: 20px;
+  }
+}
+.pagstyle {
+  padding: 20px;
+  .pagtotal {
+    font-size: 13px;
+    font-weight: 400;
+    color: #565656;
+    line-height: 32px;
+  }
+}
+.room-bottom {
+  background: white;
 }
 </style>
