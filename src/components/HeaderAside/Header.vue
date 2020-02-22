@@ -119,6 +119,7 @@
         if (key === '3') {
           // 内测中，敬请期待！
           this.$message('内测中，敬请期待！');
+          window.location.href = process.env.VUE_APP_sysUrl + 'index.html#/documentcenter'
         }
 
         // 登录
