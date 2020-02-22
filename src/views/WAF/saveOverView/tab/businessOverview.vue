@@ -74,7 +74,7 @@
       </div> -->
       <el-row class="echartsShowfirst">
         <h3 class="topfont">
-          攻击趋势
+          {{t('业务峰值趋势', 'WAF.ywfzqs')}}
           <span style="color:#bbb;">(次)</span>
         </h3>
         <ELine
@@ -86,13 +86,13 @@
       <el-row class="echartsShowSecond">
         <el-col :span="12">
         <h3 class="topfont">
-          服务器响应状态
+          {{t('服务器响应状态', 'WAF.fwqxyzt')}}
           <span style="color:#bbb;">(次)</span>
         </h3>
         </el-col>
         <el-col :span="12">
         <h3 class="topfont">
-          浏览器类型
+          {{t('浏览器类型', 'WAF.llqlx')}}
           <span style="color:#bbb;">(次)</span>
         </h3>
         <!-- <EBar
@@ -105,7 +105,7 @@
       <el-row class="echartsShowThird">
          <el-col :span="12">
           <h3 class="topfont">
-            请求来源地域TOP5
+            {{t('请求来源地域TOP5', 'WAF.qqlydy')}}
             <span style="color:#bbb;">(%)</span>
           </h3>
           <!-- <EPie
@@ -115,7 +115,7 @@
          </el-col>
          <el-col :span="12">
           <h3 class="topfont">
-            请求来源IP TOP5
+            {{t('请求来源IP TOP5', 'WAF.qqlyip')}}
             <span style="color:#bbb;">(次)</span>
           </h3>
          </el-col>
@@ -123,7 +123,7 @@
       <el-row class="echartsShowFour">
          <el-col :span="12">
           <h3 class="topfont">
-            响应时间最慢页面TOP5
+            {{t('响应时间最慢页面TOP5', 'WAF.xysjzmym')}}
             <span style="color:#bbb;">(毫秒)</span>
           </h3>
           <!-- <EPie
@@ -133,7 +133,7 @@
          </el-col>
          <el-col :span="12">
           <h3 class="topfont">
-            页面访问次数TOP5
+            {{t('页面访问次数TOP5', 'WAF.ymfwcs')}}
             <span style="color:#bbb;">(次)</span>
           </h3>
          </el-col>

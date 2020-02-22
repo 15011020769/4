@@ -71,7 +71,7 @@
       </div>
       <el-row class="echartsShowfirst">
         <h3 class="topfont">
-          攻击趋势
+          {{t('攻击趋势', 'WAF.gjqs')}}
           <span style="color:#bbb;">(次)</span>
         </h3>
         <ELine
@@ -83,13 +83,13 @@
       <el-row class="echartsShowSecond">
         <el-col :span="12">
         <h3 class="topfont">
-          攻击来源地域TOP5
+          {{t('攻击来源地域TOP5', 'WAF.gjlydy')}}
           <span style="color:#bbb;">(次)</span>
         </h3>
         </el-col>
         <el-col :span="12">
         <h3 class="topfont">
-          攻击来源IP TOP5
+          {{t('攻击来源IP TOP5', 'WAF.gjlyip')}}
           <span style="color:#bbb;">(次)</span>
         </h3>
         <EBar
@@ -102,7 +102,7 @@
       <el-row class="echartsShowThird">
          <el-col :span="12">
           <h3 class="topfont">
-            访问类型占比
+            {{t('访问类型占比', 'WAF.fwlxzb')}}
             <span style="color:#bbb;">(%)</span>
           </h3>
           <EPie
@@ -112,14 +112,14 @@
          </el-col>
          <el-col :span="12">
           <h3 class="topfont">
-            攻击类型占比
+            {{t('攻击类型占比', 'WAF.gjlxzb')}}
             <span style="color:#bbb;">(次)</span>
           </h3>
          </el-col>
       </el-row>
       <el-row class="echartsShowFour">
         <h3 class="topfont">
-          攻击来源区域分布
+          {{t('攻击来源区域分布', 'WAF.gjlyqyfb')}}
           <span style="color:#bbb;">(次)</span>
         </h3>
       </el-row>
@@ -243,11 +243,22 @@ export default {
     onCancel() {
       this.dialogDownloadVisible = false
     },
+    // getPeakValue() {
+    //   this.axios.post(DESCRIBE_PEAK_POINTS, {
+    //     Version: '2018-01-25',
+    //     FromTime: this.startTime,
+    //     ToTime: this.endTime,
+    //     // Region: "ap-guangzhou",
+    //   }).then((res) => {
+    //     console.log(res)
+    //   })
+    // },
     getPeakValue() {
       this.axios.post(DESCRIBE_PEAK_VALUE, {
         Version: '2018-01-25',
         FromTime: this.startTime,
-        ToTime: this.endTime
+        ToTime: this.endTime,
+        // Region: "ap-guangzhou",
       }).then((res) => {
         console.log(res)
       })
