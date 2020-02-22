@@ -27,7 +27,7 @@
         </el-tab-pane>
         <!-- 监控信息 -->
         <el-tab-pane :label="$t('SCF.total.jkxx')" name="fifth">
-          <monitInfo />
+          <monitInfo v-if="montshow" />
         </el-tab-pane>
       </el-tabs>
     </div>
@@ -42,8 +42,16 @@
   export default {
     data() {
       return {
+        montshow: false,
         activeName: 'first',
         funNameTit: "",
+      }
+    },
+    watch: {
+      activeName(val) {
+        if (val === 'fifth') {
+          this.montshow = true
+        }
       }
     },
     components: {

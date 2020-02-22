@@ -12,10 +12,6 @@
               <span slot="label">{{ $t('SCF.total.cffs') }}</span>
               <el-select v-model="formTriggerForm.triggerType" @change="chufatype" class="selectSetWidth">
                 <el-option :label="$t('SCF.total.dscf')" value="timer"></el-option>
-                <el-option :label="$t('SCF.total.coscf')" value="cos"></el-option>
-                <el-option :label="$t('SCF.total.ztdycf')" value="cmq"></el-option>
-                <el-option :label="$t('SCF.total.cfkcf')" value="ckafka"></el-option>
-                <el-option :label="$t('SCF.total.wgcf')" value="apiwg"></el-option>
               </el-select>
             </el-form-item>
             <el-form-item :label="$t('SCF.total.dsrwmc')" prop="tasksName">
@@ -336,9 +332,7 @@
           params["FunctionName"] = functionName;
         }
         this.axios.post(SCF_DETAILS, params).then(res => {
-          // console.log('请求数据的返回值',res);
           this.triggerBoxList = res.Response.Triggers;
-          // console.log(this.triggerBoxList);
           for (let i = 0; i < this.triggerBoxList.length; i++) {
             if (this.triggerBoxList[i].Enable == "1") {
               this.switch1[i] = true;

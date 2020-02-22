@@ -29,7 +29,7 @@
             <p v-if="scope.row.DataPoints[0].Values.length==0">暂无数据</p>
             <div v-if="scope.row.DataPoints[0].Values.length!=0">
               <echart-line id="diskEchearrts-line" :time="scope.row.DataPoints[0].Timestamps | UpTime"
-                :opData="scope.row.DataPoints[0].Values" :scale="3" :period="period" :xdata="false"></echart-line>
+                :opData="scope.row.DataPoints[0].Values" :scale="3" :period="Period" :xdata="false"></echart-line>
             </div>
           </template>
         </el-table-column>
@@ -288,6 +288,9 @@
           }
         });
       },
+
+    },
+    filters: {
       UpTime(value) {
         let timeArr = [];
         for (let i = 0; i < value.length; i++) {
