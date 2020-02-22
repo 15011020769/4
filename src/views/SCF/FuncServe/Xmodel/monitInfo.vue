@@ -75,6 +75,9 @@
   import TimeDropDown from '@/components/public/TimeDropDown' //引入时间组件
   import echartLine from "@/components/public/echars-line"; //引入图标组件
   import {
+    ErrorTips
+  } from "@/components/ErrorTips";
+  import {
     ALL_Basics,
     All_MONITOR
   } from '@/constants'
