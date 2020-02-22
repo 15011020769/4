@@ -58,7 +58,6 @@ export default {
     const domainList = await this.getDomains() // 查询所有域名 下拉框
     const currDomain = domainList.find(domain => domain.DomainId === domainId)
     this.domainList = domainList
-    // this.setDomain(currDomain)
   },
   methods:{
     async changeDomain() {

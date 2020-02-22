@@ -96,13 +96,13 @@ export default {
         metadataDocument: ""
       },
       rules: {
-        // remark: [
-        //   {
-        //     required: false,
-        //     message: "請輸入描述",
-        //     trigger: "blur"
-        //   }
-        // ],
+        remark: [
+          {
+            required: true,
+            message: "請輸入描述",
+            trigger: "blur"
+          }
+        ],
         providerType: [
           {
             required: true,

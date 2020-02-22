@@ -96,34 +96,57 @@
             :value="item.value"
           >
           </el-option>
-        </el-select><span class="sub-text"> 放行规则优先于其他匹配操作执行</span>
-        <el-checkbox-group v-model="Bypass" class="bypass">
-          <el-checkbox label="geoip">继续执行地域封禁防护</el-checkbox>
-          <el-checkbox label="cc">继续执行CC策略防护</el-checkbox>
-          <el-checkbox label="owasp">继续执行WEB应用防护</el-checkbox>
-          <el-checkbox label="ai">继续执行AI引擎防护</el-checkbox>
-          <el-checkbox label="antileakage">继续执行信息防泄漏防护</el-checkbox>
-        </el-checkbox-group>
+        </el-select>&nbsp;
+        <el-tooltip v-show="form.ActionType === POLICY_RULE_ACTION.人机识别" placement="right-end" :content="t('交互式行为验证码，可智能感知并切换验证难度。该功能需JavaScript支持；部分采用Ajax发送的post请求以及非WEB应用（例如App），可能无法支持', 'WAF.rjsbtip')" effect="light">
+          <i class="el-icon-info"></i>
+        </el-tooltip>
+        <div class="name-input" style="display: inline-block;" v-show="form.ActionType === POLICY_RULE_ACTION.重定向">
+          <el-form-item
+            prop="form.Redirect"
+            :rules="[
+              { 
+                validator(rule, value, callback) {
+                  
+                }
+                required: true, message: t('重定向路径输入有误，请以/开头，128个字符以内', 'WAF.cdxtsy') 
+              },
+            ]"
+            >
+            <el-input :placeholder="t('重定向路径输入有误，请以/开头，128个字符以内', 'WAF.cdxtsy')"/>
+          </el-form-item>
+        </div>
+        <span v-show="form.ActionType === POLICY_RULE_ACTION.放行">
+          <span class="sub-text"> 放行规则优先于其他匹配操作执行</span>
+          <el-checkbox-group v-model="Bypass" class="bypass">
+            <el-checkbox label="geoip">继续执行地域封禁防护</el-checkbox>
+            <el-checkbox label="cc">继续执行CC策略防护</el-checkbox>
+            <el-checkbox label="owasp">继续执行WEB应用防护</el-checkbox>
+            <el-checkbox label="ai">继续执行AI引擎防护</el-checkbox>
+            <el-checkbox label="antileakage">继续执行信息防泄漏防护</el-checkbox>
+          </el-checkbox-group>
+        </span>
     </el-form-item>
     <el-form-item
       label="截止时间"
-      prop="ExpireTime"
+      prop="ExpireTimeType"
       :rules="[
         { required: true, message: '截止时间不能为空' },
       ]"
     >
-       <el-select v-model="form.ExpireTime" placeholder="请选择">
-        <el-option label="永久生效" value="0"></el-option>
-        <el-option label="限定日期" value="0"></el-option>
+       <el-select v-model="form.ExpireTimeType" placeholder="请选择">
+        <el-option label="永久生效" :value="0"></el-option>
+        <el-option label="限定日期" :value="1"></el-option>
       </el-select>&nbsp;
-      <el-date-picker
-        v-model="ExpireTimeDay"
-        type="date"
-        placeholder="选择日期">
-      </el-date-picker>&nbsp;
-      <el-tooltip placement="right-end" content="截止日期为 选中日期 当天24:00点之前" effect="light">
-        <i class="el-icon-info"></i>
-      </el-tooltip>
+      <span v-if="form.ExpireTimeType === 1">
+        <el-date-picker
+          v-model="ExpireTimeDay"
+          type="date"
+          placeholder="选择日期">
+        </el-date-picker>&nbsp;
+        <el-tooltip placement="right-end" :content="t('截止日期为 选中日期 当天24:00点之前', 'WAF.jzrqwdt')" effect="light">
+          <i class="el-icon-info"></i>
+        </el-tooltip>
+      </span>
     </el-form-item>
     <el-form-item
       label="优先级"
@@ -142,7 +165,7 @@
   </el-form>
 </template>
 <script>
-import { POLICY_RULE_ACTION_ARR, MATCH_KEY_ARR, MATCH_KEY, LOGIC_SYMBOL_ARR } from '../../constants'
+import { POLICY_RULE_ACTION, POLICY_RULE_ACTION_ARR, MATCH_KEY_ARR, MATCH_KEY, LOGIC_SYMBOL_ARR } from '../../constants'
 const DEFAULT_MATCH_KEY_Field = 'IP'
 
 export default {
@@ -154,6 +177,9 @@ export default {
       default() {
         return {
           Name: '',
+          ExpireTimeType: 0,
+          ActionType: POLICY_RULE_ACTION.阻断,
+          SortId: 100,
           Strategies: [{
             Field: DEFAULT_MATCH_KEY_Field,
             CompareFunc: MATCH_KEY[DEFAULT_MATCH_KEY_Field].symbol[0]
@@ -182,6 +208,7 @@ export default {
       Bypass: [],
       ExpireTimeDay: new Date(),
       matchKeys: [MATCH_KEY_ARR],
+      POLICY_RULE_ACTION,
       POLICY_RULE_ACTION_ARR,
       MATCH_KEY,
       LOGIC_SYMBOL_ARR,

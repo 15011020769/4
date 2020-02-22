@@ -20,7 +20,7 @@
       </el-table-column>
       <el-table-column prop="Name" :label="t('规则名称', 'WAF.gzmc')">
       </el-table-column>
-      <el-table-column label="t('匹配条件', 'WAF.pptj')">
+      <el-table-column :label="t('匹配条件', 'WAF.pptj')">
         <template slot-scope="scope">
         </template>
       </el-table-column>
