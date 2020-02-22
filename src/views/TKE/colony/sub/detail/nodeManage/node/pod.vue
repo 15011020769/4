@@ -298,6 +298,7 @@ export default {
       }
       await this.axios.post(POINT_REQUEST, param).then(res => {
         if(res.Response.Error === undefined) {
+          this.loadShow = false
           let response = JSON.parse(res.Response.ResponseBody);
           if(response.items.length > 0) {
             response.items.map(o => {

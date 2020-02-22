@@ -14,7 +14,7 @@
           <span class="goback" @click="goBack()">
             cls-gwblk71e(tfy_test1) /
           </span>
-          <h2 class="header-title">Namespace:default</h2>
+          <h2 class="header-title">Namespace:{{this.name}}</h2>
         </div>
         <!-- 右侧 -->
         <div class="grid-right"></div>
@@ -23,8 +23,8 @@
 
     <!-- 详情子菜单导航 -->
     <div class="tke-detial-nav">
-      <router-link class="nav-item" :to="{name:'namespaceDetailInfo',query: {clusterId: clusterId}}">详情</router-link>
-      <router-link class="nav-item" :to="{name:'namespaceDetailYaml',query: {clusterId: clusterId}}">YAML</router-link>
+      <router-link class="nav-item" :to="{name:'namespaceDetailInfo',query: {clusterId: clusterId,name: name}}">详情</router-link>
+      <router-link class="nav-item" :to="{name:'namespaceDetailYaml',query: {clusterId: clusterId,name: name}}">YAML</router-link>
     </div> 
 
     <!-- 子页面 -->
@@ -44,7 +44,8 @@ export default {
   name: "namespaceDetail",
   data() {
     return {
-        clusterId:'',
+      clusterId:'',//集群id
+      name: ''//命名空间名称
     };
   },
   components: {
@@ -53,6 +54,7 @@ export default {
   created() {
     // 从路由获取集群id
     this.clusterId=this.$route.query.clusterId;
+    this.name = this.$route.query.name;
   },
   methods: {
     //返回上一层
