@@ -27,6 +27,7 @@
             v-model="dateTimeValue"
             type="daterange"
             class="dateTimeValue"
+            @change="changeTimeValue"
             range-separator="至"
             start-placeholder="开始日期"
             end-placeholder="结束日期"
@@ -76,9 +77,30 @@
         </h3>
         <ELine
           :xAxis="xAxis1"
-          :series="selectValue == '' ? series2 : series1"
+          :series1="series1"
+          :series2="series2"
+          :series3="series3"
+          :color="color"
           :legendText="selectValue == '' ? legendText2 : legendText1"
         />
+      </el-row>
+      <el-row class="echartsShowThird">
+         <el-col :span="12">
+          <h3 class="topfont">
+            {{t('访问类型占比', 'WAF.fwlxzb')}}
+            <span style="color:#bbb;">(%)</span>
+          </h3>
+          <EPie
+            :series="seriesPie"
+            :legendText="legendTextPie"
+          />
+         </el-col>
+         <el-col :span="12">
+          <h3 class="topfont">
+            {{t('攻击类型占比', 'WAF.gjlxzb')}}
+            <span style="color:#bbb;">(次)</span>
+          </h3>
+         </el-col>
       </el-row>
       <el-row class="echartsShowSecond">
         <el-col :span="12">
@@ -99,29 +121,12 @@
         />
         </el-col>
       </el-row>
-      <el-row class="echartsShowThird">
-         <el-col :span="12">
-          <h3 class="topfont">
-            {{t('访问类型占比', 'WAF.fwlxzb')}}
-            <span style="color:#bbb;">(%)</span>
-          </h3>
-          <EPie
-            :series="seriesPie"
-            :legendText="legendTextPie"
-          />
-         </el-col>
-         <el-col :span="12">
-          <h3 class="topfont">
-            {{t('攻击类型占比', 'WAF.gjlxzb')}}
-            <span style="color:#bbb;">(次)</span>
-          </h3>
-         </el-col>
-      </el-row>
       <el-row class="echartsShowFour">
         <h3 class="topfont">
           {{t('攻击来源区域分布', 'WAF.gjlyqyfb')}}
           <span style="color:#bbb;">(次)</span>
         </h3>
+        <EMap :series="seriesMap" />
       </el-row>
     </div>
     <DownLoadImg
@@ -154,34 +159,31 @@ import html2canvas from "html2canvas"
 import ELine from "../components/line"
 import EBar from "../components/bar"
 import EPie from "../components/pie"
+import EMap from '../components/worldMap'
 import DownLoadImg from '../components/downLoadImg'
 import {
   DESCRIBE_HOSTS,
   DESCRIBE_PEAK_VALUE,
   DESCRIBE_PEAK_POINTS,
-  WAF_INTERFACE
+  DESCRIBE_ATTACK_TYPE,
+  DESCRIBE_ATTACK_WORLD_MAP
   } from '@/constants'
 import { flatObj } from '@/utils'
 export default {
   data() {
     return {
       options: [], //默认下拉选项
-      dateTimeValue: "", //日期绑定
+      dateTimeValue: [], //日期绑定
       selectValue: [], //域名下拉菜单
       thisType: "1", //按钮默认选中
       endTime: moment(new Date()).endOf("days").format("YYYY-MM-DD HH:mm:ss"),
       startTime: moment(new Date()).startOf("days").format("YYYY-MM-DD 00:00:00"),
       host: "",
-      xAxis1: ['2-15', '2-16', '2-17'],
-      series1: [
-        [120, 132, 101, 134, 90, 230, 210],
-        [220, 182, 191, 234, 290, 330, 310],
-        [150, 232, 201, 154, 190, 330, 410]
-      ],
-      series2: [
-        [120, 132, 101, 134, 90, 230, 210],
-        [220, 182, 191, 234, 290, 330, 310],
-      ],
+      xAxis1: [],
+      color: ["#FF584C", "#FF9D00", "#006eff"],
+      series1: [],
+      series2: [],
+      series3: [],
       legendText1: ['WEB攻击次数', 'CC攻击次数', 'BOT请求次数'],
       legendText2: ['WEB攻击次数', 'CC攻击次数'],
       seriesBar: [10, 52, 200, 334, 390, 330, 220],
@@ -201,20 +203,33 @@ export default {
         {value: 234, name: '联盟广告'},
         {value: 135, name: '视频广告'},
         {value: 1548, name: '搜索引擎'}
-      ]
+      ],
+      seriesMap: [{
+              name: '中国',
+              value: 2
+            },]
     };
   },
   components: {
     ELine,
     EBar,
     EPie,
+    EMap,
     DownLoadImg,
   },
   mounted () {
     this.getDominList();
     this.checkTime("1");
     this.getPeakValue();
+    this.getPeakPoints();
+    this.getAttackType();
+    this.getAttackWorldMap();
 　},
+  watch: {
+    selectValue() {
+      this.getPeakPoints()
+    }
+  },
   methods: {
     //获取域名列表
     getDominList() {
@@ -243,22 +258,67 @@ export default {
     onCancel() {
       this.dialogDownloadVisible = false
     },
-    // getPeakValue() {
-    //   this.axios.post(DESCRIBE_PEAK_POINTS, {
-    //     Version: '2018-01-25',
-    //     FromTime: this.startTime,
-    //     ToTime: this.endTime,
-    //     // Region: "ap-guangzhou",
-    //   }).then((res) => {
-    //     console.log(res)
-    //   })
-    // },
+    // 获取业务攻击趋势
+    getPeakPoints() {
+      const axixArr = []
+      const series1Arr = []
+      const series2Arr = []
+      const series3Arr = []
+      const params = {
+        Version: '2018-01-25',
+        FromTime: this.startTime,
+        ToTime: this.endTime,
+      }
+      if (this.selectValue != "") {
+        params["Domain"] = this.selectValue
+      }
+      this.axios.post(DESCRIBE_PEAK_POINTS, params).then(resp => {
+        this.generalRespHandler(resp, ({Points}) => {
+          if (this.selectValue == "" ) {
+            Points.map((v) => {
+              axixArr.push(moment.unix(v.Time).format("YYYY-MM-DD HH:mm:ss"))
+              series1Arr.push(v.Attack)
+              series2Arr.push(v.Cc)
+              // series3Arr.push(v.Down * 8)
+            })
+            this.xAxis1 = axixArr
+            this.series1 = series1Arr
+            this.series2 = series2Arr
+            this.series3 = series3Arr
+          }
+        })
+      })
+    },
+    // 获取业务攻击峰值
     getPeakValue() {
       this.axios.post(DESCRIBE_PEAK_VALUE, {
         Version: '2018-01-25',
         FromTime: this.startTime,
         ToTime: this.endTime,
-        // Region: "ap-guangzhou",
+      }).then((res) => {
+        console.log(res)
+      })
+    },
+    // 查询TOP N攻击类型
+    getAttackType() {
+      this.axios.post(DESCRIBE_ATTACK_TYPE, {
+        Version: '2018-01-25',
+        FromTime: this.startTime,
+        ToTime: this.endTime,
+        Host: "all",
+        Edition: "clb-waf"
+      }).then((res) => {
+        console.log(res)
+      })
+    },
+    //获取攻击城市分布
+    getAttackWorldMap() {
+      this.axios.post(DESCRIBE_ATTACK_WORLD_MAP, {
+        Version: '2018-01-25',
+        FromTime: this.startTime,
+        ToTime: this.endTime,
+        Host: "all",
+        Edition: "clb-waf"
       }).then((res) => {
         console.log(res)
       })
@@ -299,7 +359,15 @@ export default {
       this.startTime = moment(start).startOf("days").format("YYYY-MM-DD HH:mm:ss");
       this.endTime = moment(end).endOf("days").format("YYYY-MM-DD HH:mm:ss");
       this.$nextTick(() => {
-        this.getPeakValue()
+        this.getPeakPoints()
+      })
+    },
+    changeTimeValue() {
+      this.thisType = 0
+      this.startTime = moment(this.dateTimeValue[0]).startOf("days").format("YYYY-MM-DD HH:mm:ss");
+      this.endTime = moment(this.dateTimeValue[1]).endOf("days").format("YYYY-MM-DD HH:mm:ss");
+      this.$nextTick(() => {
+        this.getPeakPoints();
       })
     },
     html2canvas_2(imgtype) {
@@ -326,7 +394,6 @@ export default {
           const _fixType = function(type) {
             type = type.toLowerCase().replace(/jpg/i, 'jpeg');
             const r = type.match(/png|jpeg|bmp|gif/)[0];
-            console.log(r)
             return 'image/' + r;
           };
           imgData = imgData.replace(_fixType(type), 'image/octet-stream');

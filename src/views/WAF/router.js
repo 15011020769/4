@@ -24,6 +24,24 @@ export default new Router({
       }
     },
     {
+      path: '/attackLog', // 攻击日志
+      name: 'attackLog',
+      component: () => import(/* webpackChunkName: "ipMan" */ './logService/attackLog.vue'),
+      meta: {
+        keepAlive: true,
+        leftNav:true
+      }
+    },
+    {
+      path: '/accessLog', // 访问日志
+      name: 'accessLog',
+      component: () => import(/* webpackChunkName: "ipMan" */ './logService/accessLog.vue'),
+      meta: {
+        keepAlive: true,
+        leftNav:true
+      }
+    },
+    {
       path: '/protectionSettings', // 防护设置
       name: 'protectionSettings',
       component: () => import(/* webpackChunkName: "ipMan" */ './webFirewall/protectionSettings.vue'),

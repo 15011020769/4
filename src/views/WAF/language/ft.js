@@ -196,6 +196,8 @@ module.exports = {
       rjsbtip: '互動式行為驗證碼，可智能感知並切換驗證難度。該功能需JavaScript支持；部分採用Ajax發送的post請求以及非WEB應用（例如App），可能無法支持',
       cdxtsy: '重定向路徑輸入有誤，請以/開頭，128個字元以內',
       jzrqwdt: '截止日期為 選中日期 當天24:00點之前',
+      rzfw: '日誌服務',
+      fwrz: '訪問日誌',
     },
     COM: require('@/components/language/ft'),
 }
