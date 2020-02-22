@@ -17,8 +17,10 @@ export const DESCRIBE_HOSTS = 'waf2/DescribeHosts'
 export const DESCRIBE_PEAK_VALUE = 'waf2/DescribePeakValue'
 /** 获取业务和攻击概要趋势 */
 export const DESCRIBE_PEAK_POINTS = 'waf2/DescribePeakPoints'
-/** 业务概览峰值和趋势 */
-export const WAF_INTERFACE = 'waf2/WafInterface'
+/** 查询TOP N攻击类型 */
+export const DESCRIBE_ATTACK_TYPE = 'waf2/DescribeAttackType'
+/** 攻击城市分布 */
+export const DESCRIBE_ATTACK_WORLD_MAP = 'waf2/DescribeAttackWorldMap'
 /** 设置防护域名WAF开关 */
 export const MODIFY_HOST_STATUS = 'waf2/ModifyHostStatus'
 /** 设置域名访问日志开关 */

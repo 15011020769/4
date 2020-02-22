@@ -11,6 +11,15 @@
     >
     
       <el-menu-item index="/saveOverView">{{t('安全概览', 'WAF.aqgl')}}</el-menu-item>
+      <el-submenu index="logService">
+        <template slot="title">
+          <span>{{t('日志服务', 'WAF.rzfw')}}</span>
+        </template>
+        <el-menu-item-group>
+          <el-menu-item class="selectMenu" index="/attackLog">{{t('攻击日志', 'WAF.gjrz')}}</el-menu-item>
+          <el-menu-item class="selectMenu" index="/accessLog">{{t('访问日志', 'WAF.fwrz')}}</el-menu-item>
+        </el-menu-item-group>
+      </el-submenu>
       <el-submenu index="webFirewall">
         <template slot="title">
           <span>Web {{t('应用防火墙', 'WAF.yyfhq')}}</span>
