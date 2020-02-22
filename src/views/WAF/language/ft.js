@@ -174,7 +174,6 @@ module.exports = {
       tt08: 'CC防護峰值QPS:30000；',
       tt09: '支持一級域名個數：2；',
       tt010: '支持二級域名個數：20；',
-<<<<<<< Updated upstream
       gjqs: '攻擊趨勢',
       gjlydy: '攻擊來源地域TOP5',
       gjlyip: '攻擊來源IP TOP5',
@@ -188,7 +187,6 @@ module.exports = {
       qqlyip: '請求來源IP TOP5',
       xysjzmym: '響應時間最慢頁面TOP5',
       ymfwcs: '頁面訪問次數TOP5',
-=======
       gn: '國內',
       xzsszzq: '選擇省市自治區',
       qxz: '請選擇',
@@ -198,7 +196,6 @@ module.exports = {
       rjsbtip: '互動式行為驗證碼，可智能感知並切換驗證難度。該功能需JavaScript支持；部分採用Ajax發送的post請求以及非WEB應用（例如App），可能無法支持',
       cdxtsy: '重定向路徑輸入有誤，請以/開頭，128個字元以內',
       jzrqwdt: '截止日期為 選中日期 當天24:00點之前',
->>>>>>> Stashed changes
     },
     COM: require('@/components/language/ft'),
 }
