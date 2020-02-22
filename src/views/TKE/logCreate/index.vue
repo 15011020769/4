@@ -39,11 +39,11 @@
                 <a href="" style="margin-left:10px;">查看示例</a>
               </p>
               <p v-if='tabPosition=="two"'>
-               采集集群内指定容器内的文件日志，仅支持挂载了数据卷并将日志输出到数据卷的工作负载
+                采集集群内指定容器内的文件日志，仅支持挂载了数据卷并将日志输出到数据卷的工作负载
                 <a href="" style="margin-left:10px;">查看示例</a>
               </p>
               <p v-if='tabPosition=="three"'>
-               采集集群内指定节点路径的文件
+                采集集群内指定节点路径的文件
                 <a href="" style="margin-left:10px;">查看示例</a>
               </p>
             </div>
@@ -67,7 +67,7 @@
                 <div>
                   <span>Namespace:</span><span>{{item.value1}}</span>|<span>采集对象:</span>
                   <span v-if="item.radio=='1'">全部容器</span>
-                  <span v-else>{{sum}}个工作负载</span>
+                  <span v-else>{{item.workload}}个工作负载</span>
                 </div>
               </div>
 
@@ -382,7 +382,7 @@
       return {
         editStatus: false,
         genDataValue: [],
-        flagOne:true,
+        flagOne: true,
         filterMethod(query, item) {
           return item.pinyin.indexOf(query) > -1;
         },
@@ -447,7 +447,8 @@
           value1: "",
           radio: "1",
           flag: true,
-          activeName: "Deployment"
+          activeName: "Deployment",
+          workload:[],
         }],
         namespaceOptions: [],
         namespaceOptions1: [],
@@ -483,15 +484,17 @@
         workload1: [],
         Checkbox: {
           checkbox0: [],
-          checkbox0c: [],
           checkbox1: [],
-          checkbox1c: [],
           checkbox2: [],
-          checkbox2c: [],
           checkbox3: [],
-          checkbox3c: [],
           checkbox4: [],
-          checkbox4c: [],
+        },
+        Checkbox2: {
+          checkbox0: [],
+          checkbox1: [],
+          checkbox2: [],
+          checkbox3: [],
+          checkbox4: [],
         },
         workload2: [],
         workload3: [],
@@ -599,7 +602,7 @@
                     }
 
                   }
-                
+
 
                 } else {
                   val.optionAll[0].value4 = '无'
@@ -625,12 +628,30 @@
               return false
             }
             if (item.radio == '2') {
-              console.log(item)
-              this.workLoadTab(this.formFour[0].activeName, 0)
+              //请求接口，重新获得workload数据
+              if (this.$route.query.clusterId) {
+                var params = {
+                  ClusterName: this.$route.query.clusterId.split("(")[0],
+                  Method: "GET",
+                  Path: "/apis/apps/v1beta2/namespaces/" + item.value1 + "/" + item.activeName
+                  .toLocaleLowerCase() + 's',
+                  Version: "2018-05-25"
+                };
+                this.axios.post(TKE_COLONY_QUERY, params).then(res => {
+                  if (res.Response.Error === undefined) {
+                    var data = JSON.parse(res.Response.ResponseBody);
+                    this.workload1 = data.items;
+                  }
+                });
+              }
+              this.workLoadTab(item.value1, 0)
             }
+            //新建禁用判断
             if (item.radio == '1') {
               this.newroomFlag = false
-            } else {
+            } else if(item.radio == '2'&&val.length != this.namespaceOptions.length) {
+              this.newroomFlag = false
+            }else{
               this.newroomFlag = true
             }
           })
@@ -669,9 +690,9 @@
     computed: {
       sum: function () {
         var s = 0;
-        for (let i in this.Checkbox) {
-          s += this.Checkbox[i].length
-          console.log(i)
+        for (let i in this.Checkbox2) {
+          console.log(this.Checkbox2[i])
+          s += this.Checkbox2[i].length
         }
         return s
       }
@@ -732,11 +753,11 @@
             };
           } else { //指定容器
 
-            var arr = [],
-              needData = [];
-            needData = [...this.Checkbox.checkbox0c, ...this.Checkbox.checkbox1c, ...this.Checkbox.checkbox2c,
-              ...this.Checkbox.checkbox3c, ...this.Checkbox.checkbox4c
-            ]
+            var arr = [];
+            //往后台发送的数据
+            var needData = [...this.Checkbox2.checkbox0, ...this.Checkbox2.checkbox1, ...this.Checkbox2.checkbox2,
+              ...this.Checkbox2.checkbox3, ...this.Checkbox2.checkbox4
+            ];
             this.formFour.forEach(item => {
               var obj = new Object();
               obj['namespace'] = item.value1;
@@ -830,15 +851,15 @@
               }
               console.log(arr)
               this.formThree.domains = arr
-            }else if (data.spec.input.type == 'pod-log') { //容器文件路径
-              
+            } else if (data.spec.input.type == 'pod-log') { //容器文件路径
+
               this.tabPosition = 'two';
-            
+
               this.formTwo.value1 = data.metadata.namespace;
               this.formTwo.value2 = data.spec.input.pod_log_input.workload.type;
               this.formTwo.value3 = data.spec.input.pod_log_input.workload.name;
               var data3 = data.spec.input.pod_log_input.container_log_files;
-             
+
               var arr = [];
               for (let i in data3) {
                 for (let j in data3[i]) {
@@ -854,11 +875,11 @@
                 }
               }
               this.formTwo.optionAll = arr;
-            }else if(data.spec.input.type=='container-log'){//容器标准输出
-                //指定文件
-                if(!data.spec.input.container_log_input.all_namespaces){
-                    this.vlog='two'
-                }
+            } else if (data.spec.input.type == 'container-log') { //容器标准输出
+              //指定文件
+              if (!data.spec.input.container_log_input.all_namespaces) {
+                this.vlog = 'two'
+              }
 
 
             }
@@ -982,8 +1003,7 @@
             })
           })
           this.newroomFlag = false;
-          console.log(this.Checkbox.checkbox0)
-          this.Checkbox.checkbox0c = filterDatac;
+          this.Checkbox2.checkbox0 = filterDatac;
         } else {
           this.newroomFlag = true;
         }
@@ -999,7 +1019,7 @@
             })
           })
           this.newroomFlag = false;
-          this.Checkbox.checkbox1c = filterDatac;
+          this.Checkbox2.checkbox1 = filterDatac;
         } else {
           this.newroomFlag = true;
         }
@@ -1015,7 +1035,7 @@
             })
           })
           this.newroomFlag = false;
-          this.Checkbox.checkbox2c = filterDatac;
+          this.Checkbox2.checkbox2 = filterDatac;
         } else {
           this.newroomFlag = true;
         }
@@ -1031,7 +1051,7 @@
             })
           })
           this.newroomFlag = false;
-          this.Checkbox.checkbox3c = filterDatac;
+          this.Checkbox2.checkbox3 = filterDatac;
         } else {
           this.newroomFlag = true;
         }
@@ -1047,7 +1067,7 @@
             })
           })
           this.newroomFlag = false;
-          this.Checkbox.checkbox4c = filterDatac;
+          this.Checkbox2.checkbox4 = filterDatac;
         } else {
           this.newroomFlag = true;
         }
@@ -1165,33 +1185,43 @@
         }
       },
       removeNewRoom(item, index) {
-        var val=this.formFour[index].value1,val2=[];
-        if(val!=''){
+        var val = this.formFour[index].value1,
+          val2 = [];
+        if (val != '') {
           this.namespaceOptions1.push(val)
         }
-       this.namespaceOptions1=Array.from(new Set(this.namespaceOptions1))  
+        this.namespaceOptions1 = Array.from(new Set(this.namespaceOptions1))
         if (item.length !== 1) {
           this.formFour.splice(index, 1);
         }
       },
-      roomShow(index){
-        
-        if(this.namespaceOptions1.length=='1'){
-          this.namespaceOptions1=[]
+      roomShow(index) {
+
+        if (this.namespaceOptions1.length == '1') {
+          this.namespaceOptions1 = []
         }
-        this.formFour[index].flag=!this.formFour[index].flag;
-       
+        var s = 0;
+        for (let i in this.Checkbox2) {
+          s += this.Checkbox2[i].length
+        }
+        this.formFour[index].workload=s;
+        this.formFour[index].flag = !this.formFour[index].flag;
+
       },
       addNewRoom() {
-        var arr=[],arr2,arr3=[];
-        this.formFour.forEach(v=>{
+        var arr = [],
+          arr2, arr3 = [];
+        this.formFour.forEach(v => {
           arr.push(v.value1)
         })
-        arr2=Array.from(new Set(arr));
-        arr2.forEach(v=>{
-          let i= this.namespaceOptions1.indexOf(v)
-          if(i!=-1){
-            this.namespaceOptions1.splice(i,1)
+        for (let i in this.Checkbox2) {
+            this.Checkbox2[i].length=0;
+        }
+        arr2 = Array.from(new Set(arr));
+        arr2.forEach(v => {
+          let i = this.namespaceOptions1.indexOf(v)
+          if (i != -1) {
+            this.namespaceOptions1.splice(i, 1)
           }
         })
         this.formFour.push({
