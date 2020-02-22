@@ -348,7 +348,6 @@
                 }
               }
             });
-            console.log(this.RoleArr)
           } else {
             let ErrTips = {
               'InternalError.SystemError': 'InternalError.SystemError',

@@ -165,8 +165,6 @@
             } else {
               this.contentshow = false
             }
-
-            console.log(this.content)
           } else {
             let ErrTips = {
               'InternalError': '内部错误',
