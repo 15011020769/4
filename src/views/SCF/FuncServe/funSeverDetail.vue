@@ -73,6 +73,9 @@
     LIST_VERSION,
     PUBLISH_VERSION
   } from "@/constants";
+  import {
+    ErrorTips
+  } from "@/components/ErrorTips";
   import triggerMode from "./Xmodel/triggerMode";
   import funCode from "./Xmodel/funCode";
   import runningLog from "./Xmodel/runningLog";
@@ -108,10 +111,7 @@
       monitInfo
     },
     created() {
-      if (localStorage.getItem('FunctionVersion') === '' || localStorage.getItem('FunctionVersion') === null ||
-        localStorage.getItem('FunctionVersion') === undefined) {
-        localStorage.setItem('FunctionVersion', '$LATEST')
-      }
+      localStorage.setItem('FunctionVersion', '$LATEST')
       this.GetDate()
       this.GetVersion()
     },

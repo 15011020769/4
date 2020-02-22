@@ -50,7 +50,7 @@
       </div>
       <div class="Content" v-if="!Congigload">
         <p>所属子网</p>
-        <p v-if="Vpc_Smb.Smb===''">无子网</p>
+        <p v-if="ConfigDate.VpcConfig.SubnetId===''">无子网</p>
         <p v-else><a href=""> {{ConfigDate.VpcConfig.SubnetId}}</a>
           ({{Vpc_Smb.Smb.SubnetId}} | {{Vpc_Smb.Smb.SubnetName}} | {{Vpc_Smb.Smb.CidrBlock}})
         </p>
@@ -415,7 +415,11 @@
             });
           }
         }).then(() => {
-          this._GetSmb()
+          this.Congigload = false
+          if (this.VPCvalue) {
+            this._GetSmb()
+          }
+
         })
       },
       //查询子网列表
@@ -441,7 +445,7 @@
                 }
               });
             }
-            this.Congigload = false
+
           } else {
             let ErrTips = {
               'InvalidParameter.Coexist': '参数不支持同时指定',
