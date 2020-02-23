@@ -33,8 +33,8 @@
           </el-form-item>
 
           <el-form-item label="镜像仓库秘钥">
-            <el-checkbox disabled="" v-model="np.checked1">TKE镜像仓库访问凭证：qcloudregistrykey</el-checkbox>
-            <el-checkbox disabled='' v-model="np.checked2">Tencent Hub镜像仓库访问凭证：tencenthubkey</el-checkbox>
+            <el-checkbox disabled="" v-model="np.checked1">TKE镜像仓库访问凭证：{{secretNameMap.qcloudregistrykey}}</el-checkbox>
+            <el-checkbox disabled='' v-model="np.checked2">Tencent Hub镜像仓库访问凭证：{{secretNameMap.tencenthubkey}}</el-checkbox>
           </el-form-item>
         </el-form>
 
@@ -73,6 +73,10 @@ export default {
         desc:'',
         checked1:true,
         checked2:true,
+      },
+      secretNameMap: {
+        qcloudregistrykey: 'qcloudregistrykey',
+        tencenthubkey: 'tencenthubkey'
       },
       rules: {
         spaceName: [

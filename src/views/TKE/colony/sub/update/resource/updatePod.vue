@@ -20,7 +20,7 @@
          <el-form class="tke-form" :model="upn" label-position="left" label-width="120px" size="mini"
            v-if='type=="number"'>
            <el-form-item label="当前实例数量">
-
+             <span>{{}}</span>
            </el-form-item>
            <el-form-item label="实例数量">
              <el-radio-group v-model="upn.type" style="margin-bottom: 5px;">
@@ -31,7 +31,7 @@
                <p>直接设定实例数量</p>
                <p style="background:#f2f2f2;width:80%;height:60px;line-height:60px;margin-top:6px;padding:0px 10px;">
                  <span>实例数量</span>
-                 <el-input-number class="ml100" v-model="upn.num" size="small" :min="0"></el-input-number>个
+                 <el-input-number class="ml100" v-model="upn.num" size="small" :value="1" :min="0"></el-input-number>个
                </p>
              </div>
              <div v-if="upn.type=='2'">
@@ -516,7 +516,7 @@
 
          <!-- 底部 -->
          <div class="tke-formpanel-footer">
-           <el-button size="small" type="primary" v-if='type=="number"'>更新实例数目</el-button>
+           <el-button size="small" type="primary" v-if='type=="number"' @click="updatePodNumber()">更新实例数目</el-button>
            <el-button size="small" type="primary" v-if='type=="config"'>完成</el-button>
            <el-button size="small" @click="$router.go(-1)">取消</el-button>
          </div>
@@ -532,15 +532,21 @@
    import SelectMirrorImg from '../../create/resource/components/selectMirrorImg'
    import FileSaver from "file-saver";
    import XLSX from "xlsx";
+   import { ErrorTips } from "@/components/ErrorTips";
    import {
-     ALL_CITY
+     ALL_CITY,
+     POINT_REQUEST
    } from "@/constants";
    export default {
      name: "svcCreate",
      data() {
        return {
+         loadShow: false,
          dialogFormVisible: false,
-         type: this.$route.query.type,
+         type: this.$route.query.type,//路由传过来的类型
+         clusterId: this.$route.query.clusterId,
+         spaceName: this.$route.query.spaceName,
+         workloadData: this.$route.query.workloadData,//路由传过来的工作负载数据
          // 更新pod数量
          upn: {
            type: '1',
@@ -678,9 +684,47 @@
      },
      created() {
        console.log(this.type)
-
+      this.getTriggerList();
      },
      methods: {
+       //获取更新pod自动调节触发策略数据
+       async getTriggerList() {
+         this.loadShow = true;
+         let param = {
+            Method: "GET",
+            Path: "/apis/apps/v1beta2/namespaces/"+this.spaceName+"/deployments/"+this.workloadData.metadata.name+"/horizontalpodautoscalers",
+            Version: "2018-05-25",
+            ClusterName: this.clusterId
+         }
+
+        await this.axios.post(POINT_REQUEST, param).then(res => {
+        if(res.Response.Error === undefined) {
+          this.loadShow = false;
+          let response = JSON.parse(res.Response.ResponseBody);
+          // if(response.items.length > 0) {
+          //   response.items.map(deployment => {
+          //     deployment.k8sApp = deployment.metadata.labels && deployment.metadata.labels.k8s,
+          //     deployment.qcloudApp = deployment.metadata.labels && deployment.metadata.labels.qcloud
+          //   });
+          // }
+          console.log(response,"response");
+          // this.list = response.items;
+          // this.total = response.items.lenght;
+        } else {
+          this.loadShow = false;
+          let ErrTips = {
+            
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
+       },
        newAddTarget() { //新增指标
          var obj = {
            touch1: 'CPU',
@@ -731,6 +775,42 @@
         this.SelectMirrorImgFlag=val;
         console.log(val)
       },
+      //更新实例数目
+      async updatePodNumber() {
+        this.loadShow = true;
+        let param = {
+          Method: "PATCH",
+          Path: "/apis/apps/v1beta2/namespaces/"+this.spaceName+"/deployments/"+this.workloadData.metadata.name,
+          Version: "2018-05-25",
+          RequestBody: {spec: {replices: this.upn.num}},
+          ContentType: "application/strategic-merge-patch+json",
+          ClusterName: this.clusterId
+        }
+
+        await this.axios.post(POINT_REQUEST, param).then(res => {
+          if(res.Response.Error === undefined) {
+            this.loadShow = false;
+            this.$router.push({
+              name: "colonyResourceDeployment",
+              query: {
+                
+              }
+            });
+          } else {
+            this.loadShow = false;
+            let ErrTips = {
+              
+            };
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+          }
+        });
+      }  
      },
      watch: {
        upc: {
