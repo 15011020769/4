@@ -14,12 +14,12 @@
           </div>
           <div class="message-btns btnStyle">
             <el-button @click="getDataListByType('')" >全部</el-button>
-            <el-button @click="getDataListByType('運維消息')">{{$t('MGC.ywxx')}}</el-button>
+            <el-button @click="getDataListByType('運維訊息')">{{$t('MGC.ywxx')}}</el-button>
             <el-button @click="getDataListByType('台富雲動態')">{{$t('MGC.tfygn')}}</el-button>
-            <el-button @click="getDataListByType('產品消息')">{{$t('MGC.cpxx')}}</el-button>
-            <el-button @click="getDataListByType('安全消息')">安全消息</el-button>
-            <el-button @click="getDataListByType('其他消息')">其他消息</el-button>
-            <el-button @click="getDataListByType('財務消息')">{{$t('MGC.cwxx')}}</el-button>
+            <el-button @click="getDataListByType('產品訊息')">{{$t('MGC.cpxx')}}</el-button>
+            <el-button @click="getDataListByType('安全訊息')">安全訊息</el-button>
+            <el-button @click="getDataListByType('其他訊息')">其他訊息</el-button>
+            <el-button @click="getDataListByType('財務訊息')">{{$t('MGC.cwxx')}}</el-button>
           </div>
         </div>
         <!-- <div class="message-funRight">
@@ -34,7 +34,7 @@
       <div class="meaasge-table"  v-loading="loading">
         <el-table :data="tableData" style="width: 100%" height="450" @selection-change="handleSelectionChange">
           <el-table-column type="selection" width="55"></el-table-column>
-          <el-table-column prop="title" label="消息内容">
+          <el-table-column prop="title" label="訊息内容">
              <template slot-scope="scope">
                 <el-link @click="detailsMesg(scope.row)" :class="scope.row.status === '1' ? 'classGray' : 'classblue'" type="primary">{{scope.row.title}}</el-link>
               </template>
@@ -94,17 +94,17 @@ export default {
     return {
       loading:true,
       dialogVisible:false,//删除弹框
-      MessageDialog:false,//消息弹框
+      MessageDialog:false,//訊息弹框
       btnIndex: 0, //按钮默认选中
       //按钮数据
       btnData: [
         "全部",
-        "運維消息",
+        "運維訊息",
         "台富雲動態",
-        "產品消息",
-        "安全消息",
-        "其他消息",
-        "財務消息"
+        "產品訊息",
+        "安全訊息",
+        "其他訊息",
+        "財務訊息"
       ],
       inputVal: "", //搜索输入的内容
       tableData: [], //表格数据
@@ -182,7 +182,7 @@ export default {
          this.currpage = 1;
        }
     },
-    //批量删除消息弹框
+    //批量删除訊息弹框
     delMesg(){
       if(this.getData.length != 0){
           this.dialogVisible = true

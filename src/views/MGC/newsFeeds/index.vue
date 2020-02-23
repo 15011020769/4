@@ -24,7 +24,7 @@
                 </template>
             </el-table-column>
             <el-table-column prop="publishTime" :label="$t('MGC.fbsj')"></el-table-column>
-            <el-table-column prop="content" label="消息内容"></el-table-column>
+            <el-table-column prop="content" label="訊息内容"></el-table-column>
             <el-table-column prop="publishStatus" :label="$t('MGC.zt')"></el-table-column>
             <el-table-column label="操作">
               <template slot-scope="scope">
