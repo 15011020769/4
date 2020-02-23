@@ -82,6 +82,7 @@
     All_MONITOR
   } from '@/constants'
   export default {
+    props: ['FunctionVersion'],
     data() {
       return {
         TimeArr: [{
@@ -273,7 +274,7 @@
           'Instances.0.Dimensions.0.Name': 'functionName',
           'Instances.0.Dimensions.0.Value': this.functionName,
           'Instances.0.Dimensions.1.Name': 'version',
-          'Instances.0.Dimensions.1.Value': '$latest'
+          'Instances.0.Dimensions.1.Value': this.FunctionVersion
         }
         this.axios.post(All_MONITOR, parms).then(data => {
           if (data.Response.Error == undefined) {

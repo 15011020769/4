@@ -186,6 +186,7 @@
     ErrorTips
   } from "@/components/ErrorTips";
   export default {
+    props: ['FunctionVersion'],
     data() {
       return {
         Congigload: true,
@@ -286,6 +287,7 @@
           Region: localStorage.getItem('regionv2'),
           Version: "2018-04-16",
           FunctionName: this.functionName,
+          Qualifier: this.FunctionVersion
         };
         this.axios.post(SCF_DETAILS, param).then(res => {
           if (res.Response.Error === undefined) {

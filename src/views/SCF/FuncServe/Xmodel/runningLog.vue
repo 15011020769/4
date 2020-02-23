@@ -84,6 +84,7 @@
   } from "@/components/ErrorTips";
   import TimeDropDown from '@/components/public/TimeDropDown' //引入时间组件
   export default {
+    props: ['FunctionVersion'],
     data() {
       return {
         functionName: this.$route.query.functionName,
@@ -144,7 +145,8 @@
           FunctionName: this.functionName,
           StartTime: this.Time.StartTIme,
           EndTime: this.Time.EndTIme,
-          'Filter.RetCode': this.ChoiceValue
+          'Filter.RetCode': this.ChoiceValue,
+          Qualifier: this.FunctionVersion
         };
         if (this.requestId != '') {
           param['FunctionRequestId'] = this.requestId
