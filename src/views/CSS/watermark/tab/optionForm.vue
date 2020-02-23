@@ -156,9 +156,8 @@ export default {
         getAuthorization: (options, callback) => {
           this.axios({
             baseURL: process.env.VUE_APP_adminUrl,
-            url: "/taifucloud/tworkorder/getUploadKey?method=" + (options.Method || "get").toLowerCase() + "&pathname=/" + (options.Query.prefix || ""),
+            url: "/taifucloud/tworkorder/getUploadKey?method=" + (options.Method || "get").toLowerCase() + "&pathname=/" + (options.Key || ""),
             method: "get",
-            withCredentials: true,
             withCredentials: true
           }).then(data => {
             console.log(data)
