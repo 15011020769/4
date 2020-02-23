@@ -2,7 +2,9 @@
   <div class="funCongig" v-loading='Congigload'>
     <div class="title">
       <h4>函数配置</h4>
-      <p><a @click="edit=true">编辑</a></p>
+      <p>
+        <el-button type="text" @click="edit=true" :disabled='disedit'>编辑</el-button>
+      </p>
     </div>
     <div v-if="edit===false">
       <div class="Content">
@@ -189,6 +191,7 @@
     props: ['FunctionVersion'],
     data() {
       return {
+        disedit: false, //编辑按钮禁用
         Congigload: true,
         edit: false,
         functionName: this.$route.query.functionName,
@@ -267,6 +270,9 @@
       }
     },
     mounted() {
+      if (this.FunctionVersion !== '$LATEST') {
+        this.disedit = true
+      }
       this.GetDate()
       this.AddScience()
       this._Getrole()
