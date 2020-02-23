@@ -1,6 +1,6 @@
  <!--存储 - PersistentVolume -->
 <template>
-  <div >
+  <div>
       <subTitle title='PersistentVolume'  />
 
       <!-- 新建、搜索相关操作 -->
@@ -30,70 +30,68 @@
         <el-table
           :data="list"
           v-loading="loadShow"
-          style="width: 100%">
+          style="width: 100%"
+          id="exportTable">
           <el-table-column
             label="名称"
-            >
+            prop="metadata">
             <template slot-scope="scope">
-              <span @click="goPvDetail()" class="tke-text-link">x7wsp</span>
-            </template>
-          </el-table-column>
-          <el-table-column
-            prop=""
-            label="状态"
-            >
-            <template slot-scope="scope">
-               <span class="text-green">Bound</span>
-            </template>
-          </el-table-column>
-          <el-table-column
-            prop=""
-            label="访问权限"
-            >
-            <template slot-scope="scope">
-               <p>单机读写</p>
-            </template>
-          </el-table-column>
-          <el-table-column
-            prop=""
-            label="回收策略"
-            >
-            <template slot-scope="scope">
-               <p>Retain</p>
-            </template>
-          </el-table-column>
-          <el-table-column
-            prop=""
-            label="PVC"
-            >
-            <template slot-scope="scope">
-               <p>vvv</p>
-            </template>
-          </el-table-column>
-          <el-table-column
-            prop=""
-            label="StorageClass"
-            >
-            <template slot-scope="scope">
-               <p>cbs</p>
+              <div @click="goPvDetail(scope.row)" class="tke-text-link">{{scope.row.metadata.name}}</div>
             </template>
           </el-table-column>
 
           <el-table-column
-            prop=""
-            label="创建时间"
-            >
+            prop="status"
+            label="状态">
             <template slot-scope="scope">
-              <p>2020-01-10<br>14:16:37</p>
+               <p class="text-green">{{scope.row.status.phase}}</p>
+            </template>
+          </el-table-column>
+
+          <el-table-column
+            prop="spec"
+            label="访问权限">
+            <template slot-scope="scope">
+               <p>{{scope.row.spec.accessModes|accessModess}}</p>
+            </template>
+          </el-table-column>
+
+          <el-table-column
+            prop="spec"
+            label="回收策略">
+            <template slot-scope="scope">
+               <p>{{scope.row.spec.persistentVolumeReclaimPolicy}}</p>
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="spec"
+            label="PVC">
+            <template slot-scope="scope">  
+              <!-- {{scope.row.spec.persistentVolumeReclaimPolicy}} -->
+               <p>{{scope.row.spec|claimRefs}}</p>
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="spec"
+            label="StorageClass">
+            <template slot-scope="scope">
+               <div>{{scope.row.spec.storageClassName}}</div>
+            </template>
+          </el-table-column>
+
+          <el-table-column
+            prop="metadata"
+            label="创建时间">
+            <template slot-scope="scope">
+              <p>{{scope.row.metadata.creationTimestamp|creationTimestamps}}</p>
             </template>
           </el-table-column>
           <el-table-column
             label="操作"
-            width="200"
-            >
+            width="200">
             <template slot-scope="scope">
               <span class="tke-text-link">编辑YAML</span>
-              <span class="tke-text-link ml10">删除</span>
+              <span class="tke-text-link ml10" @click="deleteOne(scope.row)">删除</span>
             </template>
           </el-table-column>
         </el-table>
@@ -114,31 +112,24 @@
       </div>
   </div>
 </template>
-
 <script>
+import { ErrorTips } from "@/components/ErrorTips";
 import subTitle from "@/views/TKE/components/subTitle";
 import tkeSearch from "@/views/TKE/components/tkeSearch";
 import Loading from "@/components/public/Loading";
-import { ALL_CITY } from "@/constants";
+import { ALL_CITY,POINT_REQUEST } from "@/constants";
+import XLSX from "xlsx";
+import FileSaver from "file-saver";
 export default {
   name: "colonyStoragePv",
   data() {
     return {
-      loadShow: false, //加载是否显示
-      list:[
-        {
-          status:false
-        },
-        {
-          status:true
-        }
-      ], //列表
+      loadShow: true, //加载是否显示
+      list:[], //列表
       total:0,
       pageSize:10,
       pageIndex:0,
       multipleSelection: [],
-      
-      
       searchInput: "", //输入的搜索关键字
     };
   },
@@ -146,6 +137,7 @@ export default {
  created() {
     // 从路由获取集群id
     this.clusterId=this.$route.query.clusterId;
+    this.GetPersistentVolume()
   },
   methods: {
      // 新建
@@ -158,11 +150,12 @@ export default {
       });
     },
      // 详情
-    goPvDetail(){
+    goPvDetail(row){
       this.$router.push({
           name: "pvDetail",
           query: {
-            clusterId: this.clusterId
+            clusterId: this.clusterId,
+            resourceIns:row.metadata.name
           }
       });
     },
@@ -180,40 +173,39 @@ export default {
     // 点击搜索
     clickSearch(val){
       this.searchInput = val;
-      console.log(this.searchInput)
+      this.loadShow = true
+      this.SearchPersistentVolume()
+      // console.log(this.searchInput)
     },
     //刷新数据
     refreshList(){
-      console.log('refreshList....')
+      this.loadShow = true
+      this.GetPersistentVolume()
     },
     // 导出表格
     exportExcel() {
       console.log('exportExcel...')
-      /* generate workbook object from table */
-      // var wb = XLSX.utils.table_to_book(document.querySelector("#exportTable"));
-      /* get binary string as output */
-      // var wbout = XLSX.write(wb, {
-      //   bookType: "xlsx",
-      //   bookSST: true,
-      //   type: "array"
-      // });
-      // try {
-      //   FileSaver.saveAs(
-      //     new Blob([wbout], {
-      //       type: "application/octet-stream"
-      //     }),
-      //     this.$t("CVM.clBload.fzjh") + ".xlsx"
-      //   );
-      // } catch (e) {
-      //   if (typeof console !== "undefined") console.log(e, wbout);
-      // }
-      // return wbout;
+       var wb = XLSX.utils.table_to_book(document.querySelector("#exportTable"));
+       var wbout = XLSX.write(wb, {
+         bookType: "xlsx",
+         bookSST: true,
+         type: "array"
+       });
+       try {
+         FileSaver.saveAs(
+           new Blob([wbout], {
+             type: "application/octet-stream"
+           }),
+           this.$t("tke_pv") + ".xlsx"
+         );
+       } catch (e) {
+         if (typeof console !== "undefined") console.log(e, wbout);
+       }
+       return wbout;
     },
-
     // 分页
     handleCurrentChange(val) {
       this.pageIndex = val-1;
-      // this.getColonyList();
       this.pageIndex+=1;
     },
     handleSizeChange(val) {
@@ -221,8 +213,118 @@ export default {
       this.pageSize=val;
       // this.getColonyList();
     },
-
+    // 删除一行数据
+    deleteOne(row){
+        this.loadShow = true
+        this.DeletePersistentVolume(row.metadata.name)
+        this.GetPersistentVolume()
+    },
+    // 获取pv列表
+   GetPersistentVolume(){
+      const param = {
+         ClusterName: this.$route.query.clusterId,
+         Method: "GET",
+         Path: "/api/v1/persistentvolumes?limit=20",
+         Version: "2018-05-25"
+        }
+        this.axios.post(POINT_REQUEST, param).then(res => {
+          if (res.Response.Error == undefined) {
+            let data = JSON.parse(res.Response.ResponseBody)
+            console.log(data)
+            this.list = data.items
+            console.log(this.list)
+            // this.TotalCount = res.Response.TotalCount
+            // this.delete = []
+            this.loadShow = false
+          } else {
+            this.$message({
+              message: ErrorTips[res.Response.Error.code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            })
+          }
+        })
+    },
+   
+    // 查询PV
+    SearchPersistentVolume(){
+      const param = {
+         ClusterName: this.$route.query.clusterId,
+         Method: "GET",
+         Path: "/api/v1/persistentvolumes?fieldSelector=metadata.name="+this.searchInput,
+         Version: "2018-05-25"
+        }
+        this.axios.post(POINT_REQUEST, param).then(res => {
+          if (res.Response.Error == undefined) {
+            let data = JSON.parse(res.Response.ResponseBody)
+            console.log(data)
+            this.list = data.items
+            this.loadShow = false
+          } else {
+            this.$message({
+              message: ErrorTips[res.Response.Error.code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            })
+          }
+        })
+    },
+    // 删除pv
+    DeletePersistentVolume(row){
+      const param = {
+          ClusterName: this.$route.query.clusterId,
+          Method: "DELETE",
+          Path: "/api/v1/persistentvolumes/"+row,
+          RequestBody: {"propagationPolicy":"Background"},
+          Version: "2018-05-25"
+        }
+        this.axios.post(POINT_REQUEST, param).then(res => {
+          if (res.Response.Error == undefined) {
+            this.loadShow = false
+          } else {
+            this.$message({
+              message: ErrorTips[res.Response.Error.code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            })
+          }
+        })
+    }
   },
+  filters:{
+    accessModess:function(value){
+      for(let i =0 ; i<value.length ;i++){
+        if(value[i] == "ReadWriteOnce"){
+                return "单机读写"
+          }
+        }
+      },
+    claimRefs:function(value){
+        console.log(value.claimRef)
+        if(value.claimRef == '' || value.claimRef == undefined){
+            return "-"
+        } else if(value){
+            return value.claimRef.name
+        } else {
+            return "-"
+        }
+      },
+    creationTimestamps:function(value){
+              var d = new Date(value);
+              var n = d.getFullYear();
+              var y = d.getMonth() + 1;
+              var r = d.getDate();
+              var h = d.getHours(); //12
+              var m = d.getMinutes(); //12
+              var s = d.getSeconds();
+              h < 10 ? h = "0" + h : h;
+              m < 10 ? m = "0" + m : m
+              return n + '-' + y + '-' + r + ' ' + h + ':' + m + ':' + s
+      }
+    },
   components: {
     subTitle,
     tkeSearch,

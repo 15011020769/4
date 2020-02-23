@@ -5,31 +5,31 @@
       <h4  class="tke-formpanel-title">基本信息</h4>
       <el-form  class="tke-form" label-position='left' label-width="120px" size="mini">
         <el-form-item label="名称">
-          <div class="tke-form-item_text">sdsd</div>
+          <div class="tke-form-item_text">{{this.$route.query.resourceIns}}</div>
         </el-form-item>
         <el-form-item label="Labels">
           <div class="tke-form-item_text">-</div>
         </el-form-item>
         <el-form-item label="状态">
-          <div class="tke-form-item_text"><span class="text-green">Bound</span></div>
+          <div class="tke-form-item_text"><span class="text-green">{{list.status.phase}}</span></div>
         </el-form-item>
         <el-form-item label="访问权限">
-          <div class="tke-form-item_text">ReadWriteOnce</div>
+          <div class="tke-form-item_text">{{list.spec.accessModes[0]}}</div>
         </el-form-item>
         <el-form-item label="PVC">
-          <div class="tke-form-item_text">vvv</div>
+          <div class="tke-form-item_text">{{list.metadata.name}}</div>
         </el-form-item>
         <el-form-item label="StorageClass">
-          <div class="tke-form-item_text">cbs</div>
+          <div class="tke-form-item_text">{{list.spec.storageClassName}}</div>
         </el-form-item>
         <el-form-item label="Storage">
-          <div class="tke-form-item_text">10Gi</div>
+          <div class="tke-form-item_text">{{list.spec.capacity.storage}}</div>
         </el-form-item>
         <el-form-item label="回收策略">
-          <div class="tke-form-item_text">Retain</div>
+          <div class="tke-form-item_text">{{list.spec.persistentVolumeReclaimPolicy}}</div>
         </el-form-item>
         <el-form-item label="创建时间">
-          <div class="tke-form-item_text">2020-01-02 14:02:26</div>
+          <div class="tke-form-item_text">{{list.metadata.creationTimestamp|creationTimestamps}}</div>
         </el-form-item>
       </el-form>
     </div>
@@ -37,26 +37,59 @@
 </template>
 
 <script>
+import { ErrorTips } from "@/components/ErrorTips";
 import FileSaver from "file-saver";
 import XLSX from "xlsx";
-import { ALL_CITY } from "@/constants";
+import { ALL_CITY ,POINT_REQUEST} from "@/constants";
 export default {
   name: "pvDetailInfo",
   data() {
     return {
-      
+      list:''
     };
   },
-  components: {
-   
-  },
   created() {
-     // 从路由获取类型
-   
+    this.GetPersistentVolume()
   },
   methods: {
-   
-  }
+   // 获取pv列表
+   GetPersistentVolume(){
+      const param = {
+         ClusterName: this.$route.query.clusterId,
+         Method: "GET",
+         Path: "/api/v1/persistentvolumes/"+this.$route.query.resourceIns,
+         Version: "2018-05-25"
+        }
+        this.axios.post(POINT_REQUEST, param).then(res => {
+          if (res.Response.Error == undefined) {
+            let data = JSON.parse(res.Response.ResponseBody)
+            console.log(data)
+            this.list = data
+          } else {
+            this.$message({
+              message: ErrorTips[res.Response.Error.code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            })
+          }
+        })
+    },
+  },
+  filters:{
+    creationTimestamps:function(value){
+              var d = new Date(value);
+              var n = d.getFullYear();
+              var y = d.getMonth() + 1;
+              var r = d.getDate();
+              var h = d.getHours(); //12
+              var m = d.getMinutes(); //12
+              var s = d.getSeconds();
+              h < 10 ? h = "0" + h : h;
+              m < 10 ? m = "0" + m : m
+              return n + '-' + y + '-' + r + ' ' + h + ':' + m + ':' + s
+      }
+    }
 };
 </script>
 
