@@ -260,7 +260,7 @@
               })
               if (item.Name === 'default') {
                 this.SpaceList.push({
-                  label: `${item.Name}(${this.TotalCount})`,
+                  label: `${item.Name}`,
                   name: item.Name
                 })
               }
