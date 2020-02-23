@@ -8,11 +8,6 @@
     <div class="app-tke-fe-content__inner">
       <div class="tf-g">
         <!-- 搜索框 -->
-        <!-- <div class="flex" style="justify-content: flex-end;  position: relative;">
-          <input placeholder="请输入集群名称" clearable class="search" v-model.trim="input" />
-          <button class="el-icon-search ip-btn" @click="searchList"></button>
-        </div>-->
-        <!-- 右侧 -->
         <div
           class="grid-right flex"
           style="justify-content: flex-end;  position: relative; bottom:10px;"
@@ -50,8 +45,14 @@
 
           <el-table-column label="状态" width="250">
             <template slot-scope="scope">
-              <span v-if="scope.row.ClusterStatus == 'Running'" class="text-green">已开启<i style="color:#0abf5b;font-weight:900" class="el-icon-circle-check"></i></span>
-              <span v-else-if="scope.row.ClusterStatus == 'Creating'" class="text-green">已开启<i style="color:#0abf5b;font-weight:900" class="el-icon-circle-check"></i></span>
+              <span v-if="scope.row.ClusterStatus == 'Running'" class="text-green">
+                已开启
+                <i style="color:#0abf5b;font-weight:900" class="el-icon-circle-check"></i>
+              </span>
+              <span v-else-if="scope.row.ClusterStatus == 'Creating'" class="text-green">
+                已开启
+                <i style="color:#0abf5b;font-weight:900" class="el-icon-circle-check"></i>
+              </span>
               <span v-else class="text-red">未开启</span>
             </template>
           </el-table-column>
@@ -61,7 +62,6 @@
               <span v-else-if="!scope.row">-</span>
             </template>
           </el-table-column>
-          <!-- <el-table-column prop="date" label="存储对象" width="180"></el-table-column> -->
           <el-table-column label="存储对象" width="320">
             <template slot-scope="scope">
               <span v-if="scope.row">
@@ -87,13 +87,10 @@ import {
   CreateListGroups,
   WARNING_GetCOLONY,
   WARNING_GetUSER,
-  TKE_COLONY_STATUS,
+  TKE_COLONY_STATUS
 } from "@/constants";
 import tkeSearch from "@/views/TKE/components/tkeSearch";
-import {
-  TKE_COLONY_LIST,
-  TKE_COLONY_QUERY
-} from "@/constants/TKE-jz";
+import { TKE_COLONY_LIST, TKE_COLONY_QUERY } from "@/constants/TKE-jz";
 import { ErrorTips } from "@/components/ErrorTips.js"; //公共错误码
 import HeadCom from "@/components/public/Head";
 export default {
@@ -121,12 +118,15 @@ export default {
           value: "tag",
           label: "标签"
         }
-      ]
+      ],
+      tableData1: [],
+      tableData2: []
     };
   },
   created() {
-    this.getData();
+    // this.getData();
     this.getColonyList();
+    // this.getColonyStatus();
   },
   methods: {
     // 查看详情跳转
@@ -141,7 +141,7 @@ export default {
     },
     handleClick(uid) {
       //设置
-      console.log(uid);
+      // console.log(uid);
       this.$router.push({
         path: "/persistenceSetting/" + uid.ClusterId
       });
@@ -211,16 +211,8 @@ export default {
       }
       const res = await this.axios.post(TKE_COLONY_LIST, params);
       if (res.Response.Error === undefined) {
-        if (res.Response.Clusters.length > 0) {
-          let ids = [];
-          res.Response.Clusters = res.Response.Clusters.map(item => {
-            ids.push(item.ClusterId);
-            return item;
-          });
-          this.total = res.Response.TotalCount;
-        }
-        this.tableData = res.Response.Clusters;
-        this.getColonyStatus();
+        this.total = res.Response.TotalCount;
+        this.tableData1 = res.Response.Clusters;
         this.loadShow = false;
       } else {
         this.loadShow = false;
@@ -246,6 +238,37 @@ export default {
           duration: 0
         });
       }
+      let paramsD = {
+        Method: "GET",
+        Path: "/apis/platform.tke/v1/persistentevents",
+        Version: "2018-05-25"
+      };
+      this.axios.post(TKE_COLONY_QUERY, paramsD).then(res => {
+        if (res.Response.Error === undefined) {
+          // console.log(JSON.parse(res.Response.ResponseBody));
+          var data = JSON.parse(res.Response.ResponseBody);
+          this.tableData2 = data.items;
+          console.log( this.tableData2);
+          this.loadShow = false;
+        } else {
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
+
+      var arr = [];//执行合并任务，展示数据
+      console.log(this.tableData1, this.tableData2);
+      for (let index = 0; index < this.tableData1.length; index++) {
+        arr.push(Object.assign(this.tableData1[index], this.tableData2[index]));
+        this.tableData = arr;
+      }
+      console.log(this.tableData);
     },
     // 监听搜索条件的值
     changeType(val) {
@@ -262,45 +285,51 @@ export default {
     clickSearch(val) {
       this.searchInput = val;
       this.getColonyList();
-    },
-    // 获取集群列表状态(不对外单独提供文档,所以无法实现)
-    getColonyStatus() {
-      let params = {
-        Version: "2018-05-25"
-      };
-      if (this.searchInput !== "") {
-        for (var i in this.tableData) {
-          params["ClusterIds." + i] = this.tableData[i].ClusterId;
-        }
-      }
-
-      this.axios.post(TKE_COLONY_STATUS, params).then(res => {
-        this.listStatus = res.Response.ClusterStatusSet;
-        this.listStatusArr = [];
-        for (var i in this.listStatus) {
-          this.listStatusArr.push(this.listStatus[i].ClusterInstanceState);
-        }
-      });
     }
-    // getColonyList() {
-    //   //数据持久化集群列表
-    //   let params = { Version: "2018-05-25" };
-    //   this.axios.post(TKE_COLONY_LIST, params).then(res => {
-    //     if (res.Response.Error === undefined) {
-    //       this.tableData = res.Response.Clusters;
-    //       this.loadShow = false;
-    //       console.log(res.Response.Clusters);
-    //     } else {
-    //       let ErrTips = {};
-    //       let ErrOr = Object.assign(ErrorTips, ErrTips);
-    //       this.$message({
-    //         message: ErrOr[res.Response.Error.Code],
-    //         type: "error",
-    //         showClose: true,
-    //         duration: 0
-    //       });
+    // // 获取集群列表状态(不对外单独提供文档,所以无法实现)
+    // getColonyStatus() {
+    //   let params = {
+    //     Version: "2018-05-25"
+    //   };
+    //   if (this.searchInput !== "") {
+    //     for (var i in this.tableData) {
+    //       params["ClusterIds." + i] = this.tableData[i].ClusterId;
+    //     }
+    //   }
+    //   this.axios.post(TKE_COLONY_STATUS, params).then(res => {
+    //     console.log(res)
+    //     this.listStatus = res.Response.ClusterStatusSet;
+    //     this.listStatusArr = [];
+    //     for (var i in this.listStatus) {
+    //       this.listStatusArr.push(this.listStatus[i].ClusterInstanceState);
     //     }
     //   });
+    // },
+    // getColonyList() {
+    //   //数据持久化集群列表
+    //   // let params = {
+    //   //   Method: "GET",
+    //   //   Path: "/apis/platform.tke/v1/persistentevents",
+    //   //   Version: "2018-05-25"
+    //   // };
+
+    //   // this.axios.post(TKE_COLONY_QUERY, params).then(res => {
+    //   //   if (res.Response.Error === undefined) {
+    //   //     console.log(JSON.parse(res.Response.ResponseBody).items)
+    //   //     var data=JSON.parse(res.Response.ResponseBody).items;
+    //   //     this.tableData = data;
+    //   //     this.loadShow = false;
+    //   //   } else {
+    //   //     let ErrTips = {};
+    //   //     let ErrOr = Object.assign(ErrorTips, ErrTips);
+    //   //     this.$message({
+    //   //       message: ErrOr[res.Response.Error.Code],
+    //   //       type: "error",
+    //   //       showClose: true,
+    //   //       duration: 0
+    //   //     });
+    //   //   }
+    //   // });
     // }
   },
   components: {

@@ -374,6 +374,7 @@ export default {
         params["Filters.0.Values.0"] = this.searchInput;
       }
       const res = await this.axios.post(TKE_COLONY_LIST, params);
+      console.log(res)
       if (res.Response.Error === undefined) {
         if (res.Response.Clusters.length > 0) {
           let ids = [];

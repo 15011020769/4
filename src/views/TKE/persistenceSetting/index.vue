@@ -11,7 +11,7 @@
         <!-- 内容标题 -->
         <div class="flex padding">
           <div class="data-card-hd">集群</div>
-          <div>sssssssss(cls-kukvzoc1)</div>
+          <div>sssssssss({{}})</div>
         </div>
         <div class="flex padding">
           <div class="data-card-hd">事件持久化存储</div>
@@ -83,20 +83,60 @@
 </template>
 <script>
 import HeadCom from "@/components/public/Head";
+import { TKE_COLONY_LIST, TKE_COLONY_QUERY } from "@/constants/TKE-jz";
+import { ErrorTips } from "@/components/ErrorTips.js"; //公共错误码
 export default {
   data() {
     return {
       value: true,//事件持久化存储开关
-      tabPosition: "Els"
+      tabPosition: "Els",
+      loadShow: true, // 加载是否显示
+      dataList:{}
     };
   },
   methods:{
     onSubmit(){
-     
       this.$router.push({
         path:"/persistence"
       })
+    },
+     getColonyList() {
+      //数据持久化集群列表
+      console.log(this.$route.name); //persistence
+      let params = {
+        Method: "GET",
+        Path: "/apis/platform.tke/v1/persistentevents/",
+        Version: "2018-05-25"
+      };
+
+      this.axios.post(TKE_COLONY_QUERY, params).then(res => {
+        if (res.Response.Error === undefined) {
+          // console.log(JSON.parse(res.Response.ResponseBody).items);
+          var data=JSON.parse(res.Response.ResponseBody).items;
+          var name=this.$route.params.uid;
+          data.forEach((item) => {
+            if(item.spec.clusterName==name){
+              // console.log(item)
+              this.dataList = item;
+            }
+          });
+          console.log(this.dataList)
+          this.loadShow = false;
+        } else {
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
     }
+  },
+  created(){
+    this.getColonyList();
   },
   props: ["uid"],
   components: {
