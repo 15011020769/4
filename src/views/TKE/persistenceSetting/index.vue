@@ -92,12 +92,7 @@ export default {
   },
   methods:{
     onSubmit(){
-      console.log("立即创建");
-      // if(){
-         
-      // }else{
-
-      // }
+     
       this.$router.push({
         path:"/persistence"
       })

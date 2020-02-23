@@ -104,22 +104,38 @@ export default {
       const seriesArr = []
       const params = {
         Version: "2018-08-01",
-        StartTime: moment(this.StartTIme).format("YYYY-MM-DD HH:mm:ss"),
-        EndTime: moment(this.EndTIme).format("YYYY-MM-DD HH:mm:ss"),
+        // StartTime: moment(this.StartTIme).format("YYYY-MM-DD HH:mm:ss"),
+        // EndTime: moment(this.EndTIme).format("YYYY-MM-DD HH:mm:ss"),
+        StartDayTime: moment(this.StartTIme).format("YYYYMMDD"),
+        EndDayTime: moment(this.EndTIme).format("YYYYMMDD"),
       };
-      this.axios.post(CSS_CODECHARTS, params).then(res => {
+      this.axios.post(CSS_CODE, params).then(res => {
         if (res.Response.Error) {
           this.$message.error(res.Response.Error.Message);
         } else {
-          res.Response.DataInfoList.map(v => {
-            axixArr.push(v.Time)
-            seriesArr.push(v.Duration)
-          })
-          this.xAxis = axixArr
-          this.series = seriesArr
+          console.log(res)
+          // res.Response.DataInfoList.map(v => {
+          //   axixArr.push(v.Time)
+          //   seriesArr.push(v.Duration)
+          // })
+          // this.xAxis = axixArr
+          // this.series = seriesArr
         }
         this.loading = false;
       })
+      // this.axios.post(CSS_CODECHARTS, params).then(res => {
+      //   if (res.Response.Error) {
+      //     this.$message.error(res.Response.Error.Message);
+      //   } else {
+      //     res.Response.DataInfoList.map(v => {
+      //       axixArr.push(v.Time)
+      //       seriesArr.push(v.Duration)
+      //     })
+      //     this.xAxis = axixArr
+      //     this.series = seriesArr
+      //   }
+      //   this.loading = false;
+      // })
     }
   }
 };

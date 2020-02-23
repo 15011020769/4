@@ -46,7 +46,7 @@ module.exports = {
   register: '免費註冊',
   bill: '費用中心',
   userCenter: '用戶中心',
-  info: '消息中心',
+  info: '訊息中心',
   workorder: '我的工單',
   back: '賬號系統',
   h: '退出',

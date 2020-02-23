@@ -45,7 +45,13 @@
             <p>{{State[$scope.row.Status]}}</p>
           </template>
         </el-table-column>
-        <el-table-column prop="monitor" :label="$t('SCF.total.jk')"></el-table-column>
+        <el-table-column prop="monitor" :label="$t('SCF.total.jk')">
+          <template slot-scope="scope">
+            <div class="a" @click="toDoDetail(scope.row)"></div>
+          </template>
+
+
+        </el-table-column>
         <el-table-column prop="Runtime" :label="$t('SCF.total.yxhj')"></el-table-column>
         <el-table-column prop="Description" :label="$t('SCF.total.ms')"></el-table-column>
         <el-table-column prop="AddTime" :label="$t('SCF.total.cjsj')"></el-table-column>
@@ -550,6 +556,16 @@
 <style lang="scss" scoped>
   .FuncServe {
     a {
+      cursor: pointer;
+    }
+
+    .a {
+      background-image: url("./../../../assets/CAM/images/cvm-20199061519.svg");
+      background-size: 267px 176px;
+      background-repeat: no-repeat;
+      background-position: -47px -71px;
+      height: 15px;
+      width: 16px;
       cursor: pointer;
     }
 

@@ -69,7 +69,7 @@ export default {
     //分页
     handleCurrentChange(val) {
       this.currpage = val;
-      this.init();
+      // this.init();
     },
     //获取表格数据
     init() {

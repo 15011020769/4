@@ -1,80 +1,74 @@
 <template>
-  <div class="contentMain">
-    <div class="topChoseTime newClear" style="display:flex;">
-      <el-select v-model="logStatus" class="chooseSelect">
-        <el-option :label="$t('SCF.total.qbrz')" value="allLog"></el-option>
-        <el-option :label="$t('SCF.total.dycg')" value="successLog"></el-option>
-        <el-option :label="$t('SCF.total.dysb')" value="errorLog"></el-option>
+  <div class="Journal">
+    <div class="Choice">
+      <el-select v-model="ChoiceValue" class="select" @change="_GetJournal">
+        <el-option v-for="item in ChoiceOptions" :key="item.value" :label="item.label" :value="item.value">
+        </el-option>
       </el-select>
-      <el-button-group class="bthGroup">
-        <el-button @click="thisTime(1)" size="small">{{ $t('SCF.total.ss') }}</el-button>
-        <el-button @click="thisTime(2)" size="small">{{ $t('SCF.total.jxs') }}</el-button>
-      </el-button-group>
-      <el-date-picker v-model="value1" type="datetimerange" :range-separator="$t('SCF.total.z')"
-        :start-placeholder="$t('SCF.total.ksrq')" :end-placeholder="$t('SCF.total.jsrq')" class="timeNode"
-        @change="sureDate"></el-date-picker>
-      <el-button type="primary" size="small" @click="reset">{{ $t('SCF.total.czhi') }}</el-button>
-      <div class="topFloatRight" style="margin-left:10px;margin-top:-1px;">
-        <el-input v-model="iptSearch" :placeholder="$t('SCF.total.qsrid')" class="rigthSearch" />
-        <el-button size="small" class="el-icon-search"></el-button>
+      <TimeDropDown :TimeArr='TimeArr' :Datecontrol='true' :Graincontrol='false' :Difference="'H'"
+        v-on:switchData="GetDat" class="TimeDropDown" />
+      <el-input placeholder="请输入requestId" v-model="requestId" @change="_search"></el-input>
+      <el-button icon="el-icon-search" size="small" @click="_GetJournal"></el-button>
+    </div>
+    <div class="content" v-if="contentshow===true">
+      <div class="menu">
+        <ul v-for="(item,index) in JournalList" :key="index">
+          <li @click="_switch(item)">
+            <span> {{item.StartTime}}</span>
+            <span v-if="item.RetCode===0" class="success">
+              调用成功
+            </span>
+            <span v-else class="fail">
+              调用失败
+            </span>
+          </li>
+        </ul>
+      </div>
+      <div class="contentx">
+        <p class="contentID">请求ID:&nbsp;&nbsp;&nbsp;{{content.RequestId}}</p>
+        <div class="information">
+          <p>时间:<span>{{content.StartTime}}</span></p>
+          <p>运行时间:<span>{{content.Duration}}ms</span></p>
+          <p>计费时间:<span>{{content.BillDuration}}ms</span></p>
+          <p>运行内存:<span>{{content.MemUsage |UpMB()}}MB</span></p>
+        </div>
+        <div class="RetMsg_Log">
+          <div>
+            <p class="title">返回数据:</p>
+            <p>{{content.RetMsg}}</p>
+          </div>
+          <div>
+            <p class="title">日志:</p>
+            <p>{{content.Log}}</p>
+          </div>
+        </div>
       </div>
     </div>
-    <div class="bottomContent newClear">
-      <div class="leftConList">
-        <div class="leftConList_in">
-          <ul>
-            <p v-if="logList.length == 0" class="text-weak">{{ $t('SCF.total.zwrzxx') }}</p>
-            <li v-for="(item,index) in logList" :key="item.id" @click="clickLog(index)"
-              :class="{'logActive': logIndex == index}">
-              <span>{{item.time}}</span>
-              <span :class="{successStyle:item.status=='调用成功'}">{{item.status}}</span>
-            </li>
-          </ul>
-        </div>
+
+    <div class="content" v-if="contentshow===false">
+      <div class="menu">
+        <ul>
+          <li>
+            暂无日志信息
+          </li>
+        </ul>
       </div>
-      <div class="RightShow" v-if="logData && logData.Data&&logData.Data.length != 0">
-        <p>{{ $t('SCF.total.qqid') }}：{{logData.Data[logIndex].RequestId}}</p>
-        <div class="timeCenterShow">
-          <span>{{ $t('SCF.total.sj') }}：</span>
-          <span class="marginColor">{{logData.Data[logIndex].StartTime}}</span>
-          <span>{{ $t('SCF.total.yxsj') }}：</span>
-          <span class="marginColor">{{logData.Data[logIndex].Duration}}</span>
-          <span>{{ $t('SCF.total.jfsj') }}:{{logData.Data[logIndex].BillDuration}}</span>
-          <span class="marginColor">ms</span>
-          <span>{{ $t('SCF.total.zync') }}</span>
-          <span class="marginColor">{{logData.Data[logIndex].MemUsage}}mb</span>
+      <div class="contentx">
+        <p class="contentID">请求ID:&nbsp;&nbsp;&nbsp;</p>
+        <div class="information">
+          <p>时间:<span></span></p>
+          <p>运行时间:<span>0ms</span></p>
+          <p>计费时间:<span>0ms</span></p>
+          <p>运行内存:<span>0MB</span></p>
         </div>
-        <div class="logAndData">
-          <div class="dataContent">
-            <h1>{{ $t('SCF.total.fhsj') }}：</h1>
-            <p>{{logData.Data[logIndex].RetMsg}}</p>
-          </div>
-          <div class="logContent">
-            <h1>{{ $t('SCF.total.rz') }}：</h1>
-            <div class="logCodeCont" v-html="logData.Data[logIndex].Log"></div>
-          </div>
-        </div>
-      </div>
-      <div class="RightShow" v-if="logData.Data.length == 0">
-        <p>{{ $t('SCF.total.qqid') }}：</p>
-        <div class="timeCenterShow">
-          <span>{{ $t('SCF.total.sj') }}：</span>
-          <span class="marginColor"></span>
-          <span>{{ $t('SCF.total.yxsj') }}：</span>
-          <span class="marginColor"></span>
-          <span>{{ $t('SCF.total.jfsj') }}:</span>
-          <span class="marginColor">ms</span>
-          <span>{{ $t('SCF.total.zync') }}</span>
-          <span class="marginColor">mb</span>
-        </div>
-        <div class="logAndData">
-          <div class="dataContent">
-            <h1>{{ $t('SCF.total.fhsj') }}：</h1>
+        <div class="RetMsg_Log">
+          <div>
+            <p class="title">返回数据:</p>
             <p></p>
           </div>
-          <div class="logContent">
-            <h1>{{ $t('SCF.total.rz') }}：</h1>
-            <div class="logCodeCont"></div>
+          <div>
+            <p class="title">日志:</p>
+            <p></p>
           </div>
         </div>
       </div>
@@ -85,308 +79,233 @@
   import {
     FUN_LOG
   } from "@/constants";
-  import moment from "moment";
+  import {
+    ErrorTips
+  } from "@/components/ErrorTips";
+  import TimeDropDown from '@/components/public/TimeDropDown' //引入时间组件
   export default {
     data() {
       return {
-        logStatus: "allLog",
-        value1: "",
-        iptSearch: "",
-        logIndex: 0,
-        logData: {
-          Data: []
-        },
-        logList: [],
-        startTime: "",
-        endTime: "",
-        timeData: '',
-      };
+        functionName: this.$route.query.functionName,
+        ChoiceOptions: [{
+            label: '全部日志',
+            value: ''
+          },
+          {
+            label: '正确日志',
+            value: 'is0'
+          },
+          {
+            label: '错误日志',
+            value: 'not0'
+          },
+        ],
+        ChoiceValue: '',
+        TimeArr: [{
+            name: '实时',
+            Time: 'realTime',
+            TimeGranularity: [{
+              value: "",
+              label: ""
+            }]
+          },
+          {
+            name: '近24小时',
+            Time: 'Nearly_24_hours',
+            TimeGranularity: [{
+              value: "",
+              label: ""
+            }]
+          },
+        ],
+        requestId: '',
+        Time: {},
+        JournalList: [], //日志列表
+        contentID: '',
+        contentshow: true,
+        content: {}
+      }
+    },
+    components: {
+      TimeDropDown
     },
     created() {
-      this.searchLogs();
+
     },
-    mounted() {},
     methods: {
-      thisTime(thisTime) {
-        var ipt1 = document.querySelector(".timeNode input:nth-child(2)");
-        var ipt2 = document.querySelector(".timeNode input:nth-child(4)");
-        const ETime = moment(new Date()).format("YYYY-MM-DD HH:mm:ss"); //获取当前时间
-        const start = new Date(ETime).getTime();
-        const setTime = new Date()
-        if (thisTime == "1") {
-          // 1小时前
-          const onehoursago = moment(start - 3600000).format(
-            "YYYY-MM-DD HH:mm:ss"
-          ); //获取1小时前的时间
-          setTime.setTime(setTime - 3600 * 1000);
-          this.startTime = onehoursago;
-
-        } else if (thisTime == "2") {
-          setTime.setTime(setTime - 3600 * 1000 * 24);
-          // 1天前
-          const oneDaysago = moment(start - 3600 * 1000 * 24).format(
-            "YYYY-MM-DD HH:mm:ss"
-          ); //获取1天前的时间
-          this.startTime = oneDaysago
-        }
-        this.endTime = ETime;
-        ipt1.value = setTime
-          .toLocaleString("chinese", {
-            hour12: false
-          })
-          .replace(/\//g, "-");
-        ipt2.value = new Date().toLocaleString("chinese", {
-          hour12: false
-        }).replace(/\//g, "-");
-
-        this.searchLogs();
+      GetDat(data) {
+        this.Time = data[1]
+        this._GetJournal()
       },
-      reset() {
-        this.logStatus = "allLog";
-        this.value1 = null;
-        this.searchLogs();
-      },
-      searchLogs() {
-        let _this = this;
-        let params = {
-          Action: "GetFunctionLogs",
+      _GetJournal() {
+        let param = {
+          Region: localStorage.getItem('regionv2'),
           Version: "2018-04-16",
-          Region: localStorage.getItem("regionv2"),
-          // Filter:{RetCode:'not0'}
-          // Filter:'{"RetCode":"is0"}'
-          // Region: 'ap-guangzhou',//_this.$cookie.get("regionv2")
+          FunctionName: this.functionName,
+          StartTime: this.Time.StartTIme,
+          EndTime: this.Time.EndTIme,
+          'Filter.RetCode': this.ChoiceValue
         };
-        if (this.startTime && this.endTime) {
-          params.StartTime = this.startTime;
-          params.EndTime = this.endTime;
+        if (this.requestId != '') {
+          param['FunctionRequestId'] = this.requestId
         }
-        let functionName = this.$route.query.functionName;
-        if (functionName != "" && functionName != null) {
-          params["FunctionName"] = functionName;
-        }
-        console.log("前端发送", params);
-        this.axios
-          .post(FUN_LOG, params)
-          .then(res => {
-            console.log("加载数据", res.Response);
-            if (res.Response.Data) {
-              _this.logData = res.Response;
-              res.Response.Data.forEach((element, index) => {
-                let obj = {};
-                obj.time = element.StartTime;
-                obj.status = "调用成功";
-                _this.logList.push(obj);
-                element.Log = element.Log.replace(/\n/g, "<br/>");
-              });
-              console.log(_this.logList)
-            }
-          })
-          .catch(error => {
-            console.log(error);
-          });
-      },
-      clickLog(index) {
-        this.logIndex = index;
-      },
-      formatDateTime(inputTime) {
-        var date = new Date(inputTime);
-        var y = date.getFullYear();
-        var m = date.getMonth() + 1;
-        m = m < 10 ? "0" + m : m;
-        var d = date.getDate();
-        d = d < 10 ? "0" + d : d;
-        var h = date.getHours();
-        h = h < 10 ? "0" + h : h;
-        var minute = date.getMinutes();
-        var second = date.getSeconds();
-        minute = minute < 10 ? "0" + minute : minute;
-        second = second < 10 ? "0" + second : second;
-        return y + "-" + m + "-" + d + " " + "00" + ":" + "00" + ":" + "00";
-      },
-      // 选择日期
-      sureDate(val, item) {
-
-        let _this = this;
-        var differentTime = val[1].getTime() - val[0].getTime()
-        if (differentTime > 0 && differentTime <= 3600 * 1000 * 24) {
-          let params = {
-            Action: "GetFunctionLogs",
-            Version: "2018-04-16",
-            Region: localStorage.getItem("regionv2"),
-            // Region: 'ap-guangzhou',//_this.$cookie.get("regionv2"),
-            StartTime: this.formatDateTime(val[0].getTime()),
-            EndTime: this.formatDateTime(val[1].getTime())
-          };
-          let functionName = this.$route.query.functionName;
-          if (functionName != "" && functionName != null) {
-            params["FunctionName"] = functionName;
-          }
-          this.axios
-            .post(FUN_LOG, params)
-            .then(res => {
-              _this.logData = res.Response;
-              console.log(res);
-              if (res.Response.Data) {
-                res.Response.Data.forEach((element, index) => {
-                  let obj = {};
-                  obj.time = element.StartTime;
-                  obj.status = "调用成功";
-                  _this.logList.push(obj);
-                  element.Log = element.Log.replace(/\n/g, "<br/>");
-                });
+        this.axios.post(FUN_LOG, param).then(res => {
+          if (res.Response.Error === undefined) {
+            this.JournalList = res.Response.Data
+            if (this.JournalList.length !== 0) {
+              this.contentshow = true
+              if (this.contentID === '') {
+                this.contentID = this.JournalList[0].RequestId
               }
-            })
-            .catch(error => {
-              console.log(error);
+              this.JournalList.forEach(item => {
+                if (this.contentID === item.RequestId) {
+                  this.content = item
+                }
+              });
+            } else {
+              this.contentshow = false
+            }
+          } else {
+            let ErrTips = {
+              'InternalError': '内部错误',
+              'nternalError.ES': 'ES错误',
+              'InternalError.System': '内部系统错误',
+              'InvalidParameter.Payload': '请求参数不合法',
+              'InvalidParameterValue': '参数取值错误',
+              'InvalidParameterValue.DateTime': 'DateTime传入错误',
+              'InvalidParameterValue.StartTimeOrEndTime': '开始时间与结束时间仅可相差一天'
+            };
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
             });
-        } else {
-          this.$message({
-            message: '开始时间与结束时间仅可相差一天,请重新选择',
-            type: 'warning'
-          });
-
+          }
+        })
+      },
+      _search() {
+        if (this.requestId == '') {
+          this._GetJournal()
         }
-
+      },
+      _switch(data) {
+        this.contentID = data.RequestId
+        this.JournalList.forEach(item => {
+          if (this.contentID === item.RequestId) {
+            this.content = item
+          }
+        });
+      }
+    },
+    filters: {
+      UpMB(value) {
+        return (value / 1048576).toFixed(3)
       }
     }
-  };
+  }
 
 </script>
-<style lang="scss">
-  .contentMain {
-    // margin-bottom: 50px;
-    // background: red;
-  }
+<style lang="scss" scoped>
+  .Journal {
+    background-color: #fff;
+    box-shadow: 0 2px 3px 0 rgba(0, 0, 0, .2);
+    padding: 20px;
 
-  .topChoseTime {
-    margin-bottom: 12px;
+    .Choice {
+      display: flex;
 
-    .chooseSelect {
-      margin-right: 10px;
-    }
+      .TimeDropDown {
+        margin-right: 20%;
+      }
 
-    .bthGroup {
-      margin-right: 10px;
-    }
+      .el-input {
+        width: 160px;
+      }
 
-    .timeNode {
-      margin-right: 10px;
-    }
+      .el-select {
+        width: 120px;
+      }
 
-    .topFloatRight {
-      float: right;
-
-      .rigthSearch {
-        width: 200px;
-
-        input {
-          width: 200px;
-        }
+      .select {
+        margin-right: 20px
       }
     }
-  }
 
-  .text-weak {
-    color: #bbb !important;
-    line-height: 49px;
-    padding: 0 20px;
-  }
+    .content {
+      display: flex;
+      margin-top: 30px;
 
-  .bottomContent {
-    min-height: 500px;
-    background-color: #fff;
-    box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
-    border: 1px solid #ddd;
-    width: 100%;
-
-    .leftConList {
-      float: left;
-      width: 370px;
-      background: #fff;
-
-      height: 730px;
-      margin-bottom: 30px;
-
-      .leftConList_in {
-        height: 690px;
-        overflow-y: scroll;
+      .menu {
+        height: 800px;
+        width: 260px;
         border-right: 1px solid #ddd;
 
         ul {
           li {
-            width: 100%;
-            height: 50px;
+            cursor: pointer;
             line-height: 50px;
             border-bottom: 1px solid #ddd;
-            font-size: 12px;
-            padding: 0 20px;
 
-            span:nth-child(1) {
-              margin-right: 110px;
+            .success {
+              padding-left: 20px;
+              color: #0abf5b
+            }
+
+            .fail {
+              padding-left: 30px;
+              color: #e54545
+            }
+          }
+        }
+      }
+
+      .contentx {
+        width: 100%;
+        margin-left: 20px;
+
+        .contentID {
+          font-size: 14px;
+        }
+
+        .information {
+          margin-top: 20px;
+          display: flex;
+          background-color: rgb(242, 242, 242);
+          padding: 10px;
+
+          p {
+            padding-right: 20px;
+            color: #888;
+
+            span {
+              padding-left: 6px;
+              color: black;
+            }
+          }
+
+        }
+
+        .RetMsg_Log {
+          font-size: 14px;
+          margin-top: 20px;
+          padding-left: 20px;
+          background-color: rgb(242, 242, 242);
+          height: 800px;
+
+          div {
+            padding-top: 20px;
+
+            .title {
+              color: rgb(48, 127, 220);
+              padding-bottom: 10px;
             }
           }
         }
       }
     }
 
-    .RightShow {
-      float: right;
-      width: calc(100% - 371px);
-      height: 730px;
-
-      padding: 10px 20px;
-      background: #fff;
-
-      p {
-        margin-bottom: 10px;
-        font-size: 14px;
-      }
-
-      .timeCenterShow {
-        width: 100%;
-        height: 40px;
-        line-height: 40px;
-        font-size: 12px;
-        margin-bottom: 20px;
-        color: #888;
-        background-color: rgb(242, 242, 242);
-        padding: 0 12px;
-
-        .marginColor {
-          color: #000;
-          margin-right: 12px;
-        }
-      }
-
-      .logAndData {
-        border-left: 11px solid rgb(210, 231, 247);
-        min-height: 600px;
-        background-color: rgb(242, 242, 242);
-        padding: 12px 12px 20px;
-        overflow: auto;
-
-        div {
-          h1 {
-            font-size: 14px;
-            color: rgb(48, 127, 220);
-            margin-bottom: 12px;
-          }
-        }
-
-        .logCodeCont {
-          line-height: 24px;
-          font-size: 14px;
-        }
-      }
-    }
-
-    .logActive {
-      background-color: #e5e5e5;
-    }
-
-    .successStyle {
-      color: #0abf5b;
-    }
   }
 
 </style>

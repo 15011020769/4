@@ -1,6 +1,6 @@
 <template>
   <div class="MGC">
-    <div class="big-title">消息中心</div>
+    <div class="big-title">訊息中心</div>
     <el-menu
       default-active="2"
       class="el-menu-vertical-demo"
