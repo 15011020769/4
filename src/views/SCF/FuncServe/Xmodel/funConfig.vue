@@ -553,7 +553,6 @@
     .title {
       display: flex;
       justify-content: space-between;
-      margin-bottom: 30px;
 
       h4 {
         font-size: 14px;
