@@ -26,7 +26,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="名称">
-          <el-select v-model="nameValue" placeholder="请选择">
+          <el-select v-model="nameValue" placeholder="请选择" :disabled="nameFlag">
             <el-option
               v-for="item in nameOptions"
               :key="item.value"
@@ -124,6 +124,7 @@ export default {
       multipleSelection: [],
       nsOptions: [],
       nsValue: "default",
+      nameFlag: true,
       typeOptions: [
         {
           value: "全部类型",
@@ -203,6 +204,7 @@ export default {
           });
         }
       });
+      this.getKind();
     },
     getKind() {
       //获取类型的数据
@@ -232,20 +234,54 @@ export default {
     },
     getEventList() {
       //事件列表
+      var typeValues = this.typeValue;
+      typeValues =
+        typeValues.replace(typeValues[0], typeValues[0].toLowerCase()) + "s";
+      console.log(typeValues);
       var params = {
         Method: "GET",
+        // /apis/apps/v1beta2/namespaces/default/daemonsets
         Path:
-          "/api/v1/namespaces/default/events?fieldSelector=involvedObject.kind=" +
-          this.typeValue +
-          "&limit=20",
-        Version: "2018-05-25",
-        ClusterName: this.$route.query.clusterId
+          "/apis/batch/v1beta1/namespaces/" + this.nsValue + "/" + typeValues,
+        ClusterName: this.$route.query.clusterId,
+        Version: "2018-05-25"
       };
       this.axios.post(TKE_COLONY_QUERY, params).then(res => {
         if (res.Response.Error === undefined) {
           var mes = JSON.parse(res.Response.ResponseBody);
           this.list = mes.items;
           this.total = mes.items.length;
+          console.log(mes.items[0]);
+          // if (mes.items[0].metadata.name !== "") {
+          //   this.nameFlag = false;
+          // }
+          this.loadShow = false;
+        } else {
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 2000
+          });
+        }
+      });
+      var params = {
+        Method: "GET",
+        Path: "/apis/apps/v1beta2/namespaces/" + this.nsValue + "/daemonsets",
+        ClusterName: this.$route.query.clusterId,
+        Version: "2018-05-25"
+      };
+      this.axios.post(TKE_COLONY_QUERY, params).then(res => {
+        if (res.Response.Error === undefined) {
+          var mes = JSON.parse(res.Response.ResponseBody);
+          this.list = mes.items;
+          this.total = mes.items.length;
+          console.log(mes.items[0]);
+          // if (mes.items[0].metadata.name !== "") {
+          //   this.nameFlag = false;
+          // }
           this.loadShow = false;
         } else {
           let ErrTips = {};
