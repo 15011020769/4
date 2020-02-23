@@ -1,4 +1,4 @@
-import { obj2Arr, addVal2Key } from '@/utils'
+import { obj2Arr, addVal2Key, isValidIPAddressNew, isValidIPv6 } from '@/utils'
 
 /** 套餐包信息 */
 export const PACKAGE_CFG_TYPES = {
@@ -97,53 +97,86 @@ export const MATCH_KEY = {
     param: false,
     symbol: ['ipmatch', 'ipnmatch'],
     placeholder: '多个IP以英文逗号隔开，最多20个',
-    validate(val) {
-      return true
-    },
+    validator: match => (rule, value, callback) => {
+      value = value && value.trim() || ''
+      if (!value) {
+        return callback(new Error(match.placeholder))
+      }
+      const ips = value.split(",");
+      if (ips.length > 20) {
+        return callback(new Error(match.placeholder))
+      }
+      let flag = false;
+      for (let i = 0, l = ips.length; i < l; i++) {
+        if (!isValidIPAddressNew(ips[i])) {
+          flag = true
+          break
+        }
+      }
+      if (flag) {
+        return callback(new Error(match.placeholder))
+      }
+      callback()
+    }
   },
   IPV6: {
     name: '来源IPv6',
     param: false,
     symbol: ['ipmatch', 'ipnmatch'],
     placeholder: '支持单个IPV6地址',
-    validate(val) {
-      return true
-    },
+    validator: match => (rule, value, callback) => {
+      if (value && !isValidIPv6(value)) {
+        return callback(new Error(match.placeholder))
+      }
+      callback()
+    }
   },
   Referer: {
     name: 'Referer',
     param: false,
     symbol: ['empty', 'null', 'eq', 'neq', 'contains', 'ncontains', 'len_eq', 'len_gt', 'len_lt', 'strprefix', 'strsuffix'],
     placeholder: '请输入内容，512个字符以内',
-    validate(val) {
-      return true
-    },
+    validator: match => (rule, value, callback) => {
+      if (!value || value.length > 512) {
+        return callback(new Error(match.placeholder))
+      }
+      callback()
+    }
   },
   URL: {
     name: '请求路径',
     param: false,
     symbol: ['eq', 'neq', 'contains', 'ncontains', 'len_eq', 'len_gt', 'len_lt', 'strprefix', 'strsuffix'],
     placeholder: '请输入内容，512个字符以内',
-    validate(val) {
-      return true
-    },
+    validator: match => (rule, value, callback) => {
+      if (!value || value.length > 512) {
+        return callback(new Error(match.placeholder))
+      }
+      callback()
+    }
   },
   UserAgent: {
     name: 'User-Agent',
     param: false,
     symbol: ['empty', 'null', 'eq', 'neq', 'contains', 'ncontains', 'len_eq', 'len_gt', 'len_lt', 'strprefix', 'strsuffix'],
     placeholder: '请输入内容，512个字符以内',
-    validate(val) {
-      return true
-    },
+    validator: match => (rule, value, callback) => {
+      if (!value || value.length > 512) {
+        return callback(new Error(match.placeholder))
+      }
+      callback()
+    }
   },
   HTTP_METHOD: {
     name: 'HTTP请求方法',
     param: false,
     symbol: ['eq', 'neq',],
     placeholder: '请输入方法名称，建议大写',
-    validate(val) {
-      return true
+    validator: () => (rule, value, callback) => {
+      if (!value || !['HEAD', 'GET', 'POST', 'PUT', 'OPTIONS', 'TRACE', 'DELETE', 'PATCH', 'CONNECT'].includes(value.toUpperCase())) {
+        return callback('支持HEAD,GET,POST,PUT,OPTIONS,TRACE,DELETE,PATCH,CONNECT')
+      }
+      callback()
     },
   },
   QUERY_STRING: {
@@ -151,54 +184,72 @@ export const MATCH_KEY = {
     param: false,
     symbol: ['eq', 'neq', 'contains', 'ncontains', 'len_eq', 'len_gt', 'len_lt', 'strprefix', 'strsuffix'],
     placeholder: '请输入内容，512个字符以内',
-    validate(val) {
-      return true
-    },
+    validator: match => (rule, value, callback) => {
+      if (!value || value.length > 512) {
+        return callback(new Error(match.placeholder))
+      }
+      callback()
+    }
   },
   GET: {
     name: 'GET参数值',
     param: true,
     symbol: ['contains', 'ncontains', 'len_eq', 'len_gt', 'len_lt', 'strprefix', 'strsuffix'],
     placeholder: '请输入内容，512个字符以内',
-    validate(val) {
-      return true
-    },
+    validator: match => (rule, value, callback) => {
+      if (!value || value.length > 512) {
+        return callback(new Error(match.placeholder))
+      }
+      callback()
+    }
   },
   GET_PARAMS_NAMES: {
     name: 'GET参数名',
     param: false,
     symbol: ['exsit', 'nexsit', 'len_eq', 'len_gt', 'len_lt', 'strprefix', 'strsuffix'],
     placeholder: '请输入内容，512个字符以内',
-    validate(val) {
-      return true
-    },
+    validator: match => (rule, value, callback) => {
+      if (!value || value.length > 512) {
+        return callback(new Error(match.placeholder))
+      }
+      callback()
+    }
   },
   POST: {
     name: 'POST参数值',
     param: true,
     symbol: ['contains', 'ncontains', 'len_eq', 'len_gt', 'len_lt', 'strprefix', 'strsuffix'],
     placeholder: '请输入内容，512个字符以内',
-    validate(val) {
-      return true
-    },
+    validator: match => (rule, value, callback) => {
+      if (!value || value.length > 512) {
+        return callback(new Error(match.placeholder))
+      }
+      callback()
+    }
   },
   GET_POST_NAMES: {
     name: 'POST参数名',
     param: false,
     symbol: ['exsit', 'nexsit', 'len_eq', 'len_gt', 'len_lt', 'strprefix', 'strsuffix'],
     placeholder: '请输入内容，512个字符以内',
-    validate(val) {
-      return true
-    },
+    validator: match => (rule, value, callback) => {
+      if (!value || value.length > 512) {
+        return callback(new Error(match.placeholder))
+      }
+      callback()
+    }
   },
   POST_BODY: {
     name: '完整BODY',
     param: false,
     symbol: ['eq', 'neq', 'contains', 'ncontains', 'len_eq', 'len_gt', 'len_lt', 'strprefix', 'strsuffix'],
     placeholder: '请输入BODY内容，512个字符以内',
-    validate(val) {
-      return true
-    },
+    validator: match => (rule, value, callback) => {
+      if (!value || value.length > 512) {
+        return callback(new Error(match.placeholder))
+      }
+      callback()
+    }
   },
   COOKIE: {
     name: 'Cookie',
@@ -211,36 +262,48 @@ export const MATCH_KEY = {
     param: false,
     symbol: ['exsit', 'nexsit', 'len_eq', 'len_gt', 'len_lt', 'strprefix', 'strsuffix'],
     placeholder: '请输入内容，512个字符以内',
-    validate(val) {
-      return true
-    },
+    validator: match => (rule, value, callback) => {
+      if (!value || value.length > 512) {
+        return callback(new Error(match.placeholder))
+      }
+      callback()
+    }
   },
   ARGS_COOKIE: {
     name: 'Cookie参数值',
     param: true,
     symbol: ['contains', 'ncontains', 'len_eq', 'len_gt', 'len_lt', 'strprefix', 'strsuffix'],
     placeholder: '请输入内容，512个字符以内',
-    validate(val) {
-      return true
-    },
+    validator: match => (rule, value, callback) => {
+      if (!value || value.length > 512) {
+        return callback(new Error(match.placeholder))
+      }
+      callback()
+    }
   },
   GET_HEADERS_NAMES: {
     name: 'Header参数名',
     param: false,
     symbol: ['exsit', 'nexsit', 'len_eq', 'len_gt', 'len_lt', 'strprefix', 'strsuffix'],
     placeholder: '请输入内容，建议小写，512个字符以内',
-    validate(val) {
-      return true
-    },
+    validator: match => (rule, value, callback) => {
+      if (!value || value.length > 512) {
+        return callback(new Error(match.placeholder))
+      }
+      callback()
+    }
   },
   ARGS_HEADER: {
     name: 'Header参数值',
     param: true,
     symbol: ['contains', 'ncontains', 'len_eq', 'len_gt', 'len_lt', 'strprefix', 'strsuffix'],
     placeholder: '请输入内容，512个字符以内',
-    validate(val) {
-      return true
-    },
+    validator: match => (rule, value, callback) => {
+      if (!value || value.length > 512) {
+        return callback(new Error(match.placeholder))
+      }
+      callback()
+    }
   },
 }
 export const MATCH_KEY_ARR = obj2Arr(MATCH_KEY)
@@ -256,6 +319,17 @@ const POLICY_RULE_ACTION_LOCAL = {
 export const POLICY_RULE_ACTION = addVal2Key(POLICY_RULE_ACTION_LOCAL)
 export const POLICY_RULE_ACTION_ARR = obj2Arr(POLICY_RULE_ACTION_LOCAL)
 
+/** 放行后继续执行的动作 */
+export const BY_PASS_ACTION = {
+  geoip: '继续执行地域封禁防护',
+  cc: '继续执行CC策略防护',
+  owasp: '继续执行WEB应用防护',
+  ai: '继续执行AI引擎防护',
+  antileakage: '继续执行信息防泄漏防护'
+}
+export const BY_PASS_ACTION_ARR = obj2Arr(BY_PASS_ACTION)
+
+
 /** CC规则执行动作 */
 const CC_RULE_ACTION_LOCAL = {
   20: '观察',
@@ -263,14 +337,16 @@ const CC_RULE_ACTION_LOCAL = {
   22: '拦截',
 }
 export const CC_RULE_ACTION = addVal2Key(CC_RULE_ACTION_LOCAL)
+export const CC_RULE_ACTION_ARR = obj2Arr(CC_RULE_ACTION_LOCAL)
 
 /** CC规则匹配条件  */
-export const CC_RULE_MATCH_LOCAL = {
+const CC_RULE_MATCH_LOCAL = {
   0: '相等',
   1: '前缀匹配',
   2: '包含'
 }
 export const CC_RULE_MATCH = addVal2Key(CC_RULE_MATCH_LOCAL)
+export const CC_RULE_MATCH_ARR = obj2Arr(CC_RULE_MATCH_LOCAL)
 
 /** IP封堵类型 */
 const IP_STATUS_TYPE_LOCAL = {

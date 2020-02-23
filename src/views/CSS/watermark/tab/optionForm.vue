@@ -11,7 +11,7 @@
           <div v-else style="width: 100px; height: 100px; margin-right: 20px; border: 1px solid #ddd;"></div>
           <el-upload
             class="upload-demo"
-            action="https://jsonplaceholder.typicode.com/posts/"
+            action=""
             accept=".png"
             :before-upload="beforeUpload"
             list-type="picture"
@@ -60,6 +60,9 @@
 import { LIVE_ADDLIVEWATERMARK, LIVE_UPDATELIVEWATERMARK } from "@/constants"
 import DraggableResizable from 'vue-draggable-resizable'
 import 'vue-draggable-resizable/dist/VueDraggableResizable.css'
+import COS from 'cos-js-sdk-v5'
+import moment from 'moment'
+
 export default {
   name: "optionForm",
   components: {
@@ -136,7 +139,7 @@ export default {
       if (!isPNG) {
         this.$message({
           type: 'warning',
-          message: '文件格式不符'
+          message: '文件格式不正確'
         })
         return isPNG
       }
@@ -144,10 +147,49 @@ export default {
       if (!isLt2M) {
         this.$message({
           type: 'warning',
-          message: '文件大小超出2M限制'
+          message: '文件大小不能超過2M'
         })
         return isLt2M
       }
+      // new一个cos的对象 获取签名
+      let cos = new COS({
+        getAuthorization: (options, callback) => {
+          this.axios({
+            baseURL: process.env.VUE_APP_adminUrl,
+            url: "/taifucloud/tworkorder/getUploadKey?method=" + (options.Method || "get").toLowerCase() + "&pathname=/" + (options.Query.prefix || ""),
+            method: "get",
+            withCredentials: true,
+            withCredentials: true
+          }).then(data => {
+            console.log(data)
+            callback(data);
+          });
+        }
+      });
+      // 获取异步签名之后 调用cos 上传文件 获取返回文件的网络url 上传的文件名为时间戳
+      cos.sliceUploadFile(
+        {
+          Bucket: "workorder-1300560981",
+          Region: "ap-taipei",
+          StorageClass: "STANDARD",
+          Key: "/" + moment(new Date()).format("YYYY-MM-DD").valueOf() + "/" + file.name,
+          Body: file
+        },
+        (err, data) => {
+          console.log(err)
+          console.log(data)
+          // 获取返回的上传图片的url 在拼接到提交回复工单的参数里面
+          // let backUploadUrl = data;
+          // this.uploadArr.push(backUploadUrl);
+          // this.uploadFileList.push({
+          //   name: data.Key.substring(
+          //     data.Key.lastIndexOf("/") + 1,
+          //     data.Key.length
+          //   ),
+          //   url: `https://${data.Location}`
+          // });
+        }
+      );
       return true
     },
     xblur() {
