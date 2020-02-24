@@ -24,6 +24,14 @@ export const DESCRIBE_PEAK_POINTS = 'waf2/DescribePeakPoints'
 export const DESCRIBE_ATTACK_TYPE = 'waf2/DescribeAttackType'
 /** 攻击城市分布 */
 export const DESCRIBE_ATTACK_WORLD_MAP = 'waf2/DescribeAttackWorldMap'
+/** 查询访问类型占比 web攻击次数 */
+export const DESCRIBE_ATTACK_COUNT = 'waf2/DescribeAttackCount'
+/** 查询访问类型占比 正常访问次数 */
+export const DESCRIBE_REQUEST_COUNT = 'waf2/DescribeRequestCount'
+/** 获取柱状图 */
+export const DESCRIBE_HISTOGRAM = 'waf2/DescribeHistogram'
+/** 攻击概览 服务器响应浏览器类型 */
+export const DESCRIBE_PIECHART = 'waf2/DescribePieChart'
 /** 设置防护域名WAF开关 */
 export const MODIFY_HOST_STATUS = 'waf2/ModifyHostStatus'
 /** 设置域名访问日志开关 */
