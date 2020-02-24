@@ -16,8 +16,8 @@
     </div>
     <div class="colony-main">
       <div class="tke-card tke-formpanel-wrap mb60">
-        <el-form class="tke-form special" :model="wl" label-position="left" label-width="120px" size="mini">
-          <el-form-item label="名称">
+        <el-form class="tke-form special" :model="wl" :rules="rules" ref="wl" label-position="left" label-width="120px" size="mini">
+          <el-form-item label="名称" prop="name">
             <el-input class="w200" v-model="wl.name" placeholder="请输入Workload名称"></el-input>
             <p>
               最长40个字符，只能包含小写字母、数字及分隔符("-")，且必须以小写字母开头，数字或小写字母结尾
@@ -28,9 +28,9 @@
             </el-input>
           </el-form-item>
 
-          <el-form-item label="标签">
+          <el-form-item label="标签" >
             <div v-for="(v,i) in wl.labels" :key="i">
-             <el-input :disabled="v.key=='k8s-app'" class="w100" v-model="v.key"></el-input> = <el-input class="w100"  v-model="v.value"></el-input>
+             <el-input :disabled="v.key=='k8s-app'" class="w100" v-model="v.key"></el-input> = <el-input class="w100"  v-model="v.value" prop="labels"></el-input>
               <el-tooltip class="item" effect="light" content="默认标签不可删除" placement="right" v-if="v.key=='k8s-app'">
                    <i class="el-icon-close"  style="font-size:20px;margin-left:20px;cursor:pointer"></i>
                 </el-tooltip>
@@ -44,7 +44,7 @@
           </el-form-item>
            <el-form-item label="命名空间">
               <el-select v-model="wl.nameSpace"  placeholder="请选择">
-                <el-option v-for="item in nameSpaceOptions" :key="item.value" :label="item.label" :value="item.value">
+                <el-option v-for="item in nameSpaceList" :key="item.metadata.name" :label="item.metadata.name" :value="item.metadata.name">
                 </el-option>
               </el-select>
           </el-form-item>
@@ -762,13 +762,31 @@
   export default {
     name: "workloadCreate",
     data() {
+      var validateName = (rule, value, callback) => {
+        if (value === '') {
+          callback(new Error('Workload名称不能为空'));
+        } else if(value.length > 40) {
+          callback(new Error('Workload名称不能超过40个字符'));
+        } else {
+          callback();
+        }
+      }
+      var validateLabel = (rule, value, callback) => {
+        if (value === '') {
+          callback(new Error('Value不能为空'));
+        } else {
+          callback();
+        }
+      }
       return {
+        nameSpaceList: [],//命名空间列表
+        clusterId: '',//集群id
         wl: {
           name: "",
           desc: "",
           type: "",
           labels:[{key:'k8s-app',value:''}],
-          nameSpace:'tfy-pub',
+          nameSpace:'',
           dataJuan: [],
           caseContent:{
             name:'',
@@ -955,6 +973,14 @@
         highLevelSetShow: false,
         highLevelSetShow2: false,
         SelectMirrorImgFlag:false,
+        rules:{
+          name: [
+            {validator: validateName, trigger: "blur", required: true}
+          ],
+          labels: [
+            {validator: validateLabel, trigger: "blur", required: true}
+          ]
+        }
       };
     },
     components: {Service, SelectMirrorImg},
@@ -990,7 +1016,10 @@
     created() {
       // 从路由获取类型
       this.wl.type = this.$route.query.type;
-    
+      this.nameSpaceList = this.$route.query.nameSpaceList;
+      this.clusterId = this.$route.query.clusterId;
+      this.wl.nameSpace = this.$route.query.spaceName;
+      console.log(this.nameSpaceList,"nameSpaceList");
     },
     methods: {
       //返回上一层

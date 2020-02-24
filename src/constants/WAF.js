@@ -24,6 +24,14 @@ export const DESCRIBE_PEAK_POINTS = 'waf2/DescribePeakPoints'
 export const DESCRIBE_ATTACK_TYPE = 'waf2/DescribeAttackType'
 /** 攻击城市分布 */
 export const DESCRIBE_ATTACK_WORLD_MAP = 'waf2/DescribeAttackWorldMap'
+/** 查询访问类型占比 web攻击次数 */
+export const DESCRIBE_ATTACK_COUNT = 'waf2/DescribeAttackCount'
+/** 查询访问类型占比 正常访问次数 */
+export const DESCRIBE_REQUEST_COUNT = 'waf2/DescribeRequestCount'
+/** 获取柱状图 */
+export const DESCRIBE_HISTOGRAM = 'waf2/DescribeHistogram'
+/** 攻击概览 服务器响应浏览器类型 */
+export const DESCRIBE_PIECHART = 'waf2/DescribePieChart'
 /** 设置防护域名WAF开关 */
 export const MODIFY_HOST_STATUS = 'waf2/ModifyHostStatus'
 /** 设置域名访问日志开关 */
@@ -38,6 +46,8 @@ export const MODIFY_HOST_MODE = 'waf2/ModifyHostMode'
 export const DESCRIBE_ACTIONED = 'waf2/DescribeActionedIp'
 /** ip黑白名单查询 */
 export const DESCRIBE_ACCESS_CONTROL = 'waf2/DescribeIpAccessControl'
+/** ip管理 添加黑白ip */
+export const UPSERTIP_ACCESS_CONTROL = 'waf2/UpsertIpAccessControl'
 /** 获取地域封禁配置 */
 export const DESCRIBE_AREABAN_AREAS = 'waf2/DescribeAreaBanAreas'
 /** 修改地域封禁状态 */
@@ -66,3 +76,13 @@ export const UPSERT_SESSION = 'waf2/UpsertSession'
 export const DELETE_SESSION = 'waf2/DeleteSession'
 /** 查询访问日志 */
 export const DESCRIBE_ACCESS_LOGS = 'waf2/DescribeAccessLogs'
+/** 获取攻击日志 */
+export const DESCRIBE_ATTACK_DETAIL = 'waf2/DescribeAttackDetail'
+/** 查询攻击日志数量 */
+export const DESCRIBE_ATTACK_LOG_COUNT = 'waf2/DescribeAttackLogCount'
+/** 建攻击日志下载任务 */
+export const CREATE_ATTACK_DOWNLOAD_TASK = 'waf2/CreateAttackDownloadTask'
+/** 查询下载记录 */
+export const DESCRIBE_ATTACK_DOWNLOAD_RECORD = 'waf2/DescribeAttackDownloadRecord'
+/** 切换自定义规则的开关 */
+export const MODIFY_CUSTOM_RULE_STATUS = 'waf2/ModifyCustomRuleStatus'

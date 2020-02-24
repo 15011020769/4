@@ -11,7 +11,7 @@
         <el-option
           key="all"
           label="ALL"
-          value="ALL">
+          value="global">
         </el-option>
         <el-option
           v-for="item in ipSearchOptions"
@@ -33,10 +33,10 @@
       </div>
       <div class="searchResoult">
         <h1>查询结果</h1>
-        <div class="newClear">
+        <div class="newClear" v-if="ipInfo.length">
           <div class="newClear newList">
             <p>IP</p>
-            <p>10.1.1.23<span>拦截</span></p>
+            <p>{{ipInfo[0].Ip}}<span style="margin-left: 10px; color: #007e3b">{{ipInfo[0].Name | currentTipsFilter}}</span></p>
           </div>
           <div class="newClear newList">
             <p>域名</p>
@@ -44,40 +44,46 @@
           </div>
           <div class="newClear newList">
             <p>拦截开始时间</p>
-            <p>2019-12-18 14:47:48</p>
+            <p>{{ipInfo[0].TsVersion | currentTimeFilter}}</p>
           </div>
           <div class="newClear newList">
             <p>拦截结束时间</p>
-            <p>2019-12-25 23:59:59</p>
+            <p>{{ipInfo[0].ValidTs | currentTimeFilter}}</p>
           </div>
           <div class="newClear newList">
             <p>类别</p>
-            <p>黑名单</p>
+            <p>{{ipInfo[0].Category | currentNameFilter}}</p>
           </div>
           <div class="newClear newList">
             <p>触发策略名称</p>
-            <p>custom</p>
+            <p>{{ipInfo[0].Name}}</p>
           </div>
         </div>
-        <a href="#" @click="addBlack">加入黑白名单</a>
+        <a href="#" v-if="ipInfo.length" @click="addBlack">加入黑白名单</a>
+        <span v-if="!ipInfo.length">{{textTips}}</span>
       </div>
     </div>
-    <addBlackWhite :isShow="addBwModel" @closeModel="closeModel"/>
+    <template v-if="ipInfo[0]">
+      <addBlackWhite :isShow="addBwModel" @closeModel="closeModel" :ipInfo="Object.assign(ipInfo[0], { Domain: ipSearch })"/>
+    </template>
   </div>
 </template>
 
 <script>
 import addBlackWhite from './model/addBlackWhite'
 import { DESCRIBE_HOSTS, DESCRIBE_ACTIONED } from '@/constants'
+import moment from 'moment'
 export default {
   data () {
     return {
-      ipSearch:'',//ip查询下拉
+      ipSearch: 'global',//ip查询下拉
       ipSearchOptions:[],
       closeTip:true,//提示显示
       searchIp:'',//要查询的IP
       addBwModel:false,//弹框
-      ipTest: false // ip输入格式是否正确
+      ipTest: false, // ip输入格式是否正确
+      ipInfo: [], // 查询的ip信息
+      textTips: '请输入IP，并点击查询。'
     }
   },
   components:{
@@ -112,22 +118,67 @@ export default {
       let params = {
         Version: '2018-01-25',
       }
+      
       this.axios.post(DESCRIBE_HOSTS, params).then(data => {
-        this.ipSearchOptions = data.Response.HostList
-        console.log(data);
+        if (data.Response.Error) {
+          let ErrOr = Object.assign(ErrorTips, COMMON_ERROR)
+          this.$message({
+            message: ErrOr[Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          })
+        } else {
+          this.ipSearchOptions = data.Response.HostList
+        }
       })
     },
     // 获取黑白名单列表
     getActioned() {
-      console.log(111);
       let params = {
         Version: '2018-01-25',
         Domain: this.ipSearch,
         Ip: this.searchIp,
       }
       this.axios.post(DESCRIBE_ACTIONED, params).then(data => {
-        console.log(data);
+        if (data.Response.Error) {
+          let ErrOr = Object.assign(ErrorTips, COMMON_ERROR)
+          this.$message({
+            message: ErrOr[Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          })
+        } else {
+          this.ipInfo = data.Response.Data.Res
+          this.textTips = `没有在域名${this.ipSearch}下，查到${this.searchIp} 的相关信息。`
+        }
       })
+    }
+  },
+
+  filters: {
+    currentTimeFilter(time) {
+      const len = JSON.stringify(time).length
+      let str = time
+      if (len < 13) {
+       str = str * 1000
+      }
+      return moment(new Date(str)).format("YYYY-MM-DD HH:mm:ss");
+    },
+
+    currentNameFilter(text) {
+      if (text === 'whiteIp') {
+        return '白名单'
+      }
+      return '黑名单'
+    },
+
+    currentTipsFilter(text) {
+      if (text === 'custom') {
+        return '放通'
+      }
+      return '拦截'
     }
   }
 }

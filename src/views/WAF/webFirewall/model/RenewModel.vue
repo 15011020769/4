@@ -44,7 +44,7 @@
           <div class="newClear renewList">
             <p class="renewListLabel">{{t('费用', 'WAF.fy')}}</p>
             <p class="renewListCon">
-              <span class="totalMoney">3,880.00元</span>
+              <span class="totalMoney">NT$ {{price}}</span>
             </p>
           </div>
         </div>
@@ -70,6 +70,7 @@ export default {
       month: 0,
       dialogModel:'',//弹框
       thisType:'1',//默认选中
+      price: 0,
     }
   },
   watch: {
@@ -100,6 +101,10 @@ export default {
             "sv_wsm_waf_package_enterprise_clb":1
             }
           }]
+      }).then(resp => {
+        this.generalRespHandler(resp, ({ RealTotalCost }) => {
+          this.price = RealTotalCost
+        })
       })
     },
     //关闭按钮

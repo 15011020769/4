@@ -62,6 +62,7 @@
   </div>
 </template>
 <script>
+import { DESCRIBE_WAF_PRICE } from '@/constants'
 export default {
   props:{
     isShow: Boolean,
@@ -76,6 +77,7 @@ export default {
     return{
       dialogModel: '', // 弹框
       type: '',
+      price: 0,
     }
   },
   watch: {
@@ -92,6 +94,37 @@ export default {
     }
   },
   methods:{
+    queryPrice() {
+      this.axios.post(DESCRIBE_WAF_PRICE, {
+        Version: '2018-01-25',
+        ResInfo: [{
+          "goodsCategoryId":101206,
+          "regionId":1,
+          "projectId":0,
+          "goodsNum":1,
+          "payMode":1,
+          "platform":1,
+          "goodsDetail":{
+            "resourceId": "waf_000q5mgau",
+            "curDeadline": "当前到期时间",
+            "oldConfig": {
+              "pid": 1001152,
+              "type": "sp_wsm_waf_enterprise_clb",
+              "sv_wsm_waf_package_enterprise_clb": 1
+            },
+            "newConfig": {
+              "pid": 1001154,
+              "type": "sp_wsm_waf_ultimate_clb",
+              "sv_wsm_waf_package_ultimate_clb": 1
+            }
+          }
+        }]
+      }).then(resp => {
+        this.generalRespHandler(resp, ({ RealTotalCost }) => {
+          this.price = RealTotalCost
+        })
+      })
+    },
     //关闭按钮
     handleClose(){
       this.dialogModel=false;

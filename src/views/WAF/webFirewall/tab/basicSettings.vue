@@ -142,6 +142,7 @@
       title="选择封禁地区"
       :visible.sync="addressModel"
       width="45%"
+      destroy-on-close
     >
       <address-ban
         :visible.sync="addressModel"

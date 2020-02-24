@@ -41,7 +41,7 @@ export default {
   mounted() {
     this.initChart();
     // this.chinaConfigure();
-    console.log(this.series)
+    // console.log(this.series)
   },
   watch: {
     series(val) {

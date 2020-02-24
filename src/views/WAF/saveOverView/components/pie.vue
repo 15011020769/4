@@ -15,10 +15,10 @@ export default {
     window.onresize = this.$echarts.init(this.$refs.pie_dv).resize;
   },
   props: {
-    // color: {
-    //   type: String,
-    //   default: "#2d70f6"
-    // },
+    color: {
+      type: Array,
+      default: () => []
+    },
     // tooltip: {
     //   type: Object,
     //   default: function() {
@@ -48,6 +48,7 @@ export default {
     echart() {
       var myChart = this.$echarts.init(this.$refs.pie_dv)
       myChart.setOption({
+        color: this.color,
         grid: {
           left: '3%',
           right: '4%',
@@ -60,14 +61,21 @@ export default {
         legend: {
             data: this.legendText,
             orient: 'vertical',
-            right: 30,
-            // padding: [50, 0 , 0, 0]
+            // right: 30,
+            left: '60%',
+            y: 'center',
+            icon: "circle",
+            textStyle:{
+              color: '#333333',
+              fontWeight: 'bold',
+            },
         },
         series: [
           {
             name: "",
             data: this.series,
             type: 'pie',
+            center: ['30%', '50%'],
             radius: ['50%', '70%'],
             avoidLabelOverlap: false,
             label: {

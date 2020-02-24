@@ -37,6 +37,8 @@
       <div class="tke-card mt10">
         <el-table
           :data="list.slice((pageIndex - 1) * pageSize, pageIndex * pageSize)"
+           id="exportTable"
+          
           v-loading="loadShow"
           style="width: 100%">
           <el-table-column
@@ -56,10 +58,14 @@
           </el-table-column>
           <el-table-column
             prop=""
+            :show-overflow-tooltip="true"
             label="触发策略"
             >
             <template slot-scope="scope">
-                <span>cpu使用量：{{scope.row.spec.metrics[0].pods.targetAverageValue}}核</span>
+                <span v-for="(v,i) in scope.row.spec.metrics" :key="i" >
+                 {{v|dataShow(v)}}&nbsp;&nbsp;&nbsp;&nbsp;
+                </span>
+                <!-- <span v-for="(v,i) in scope.row.spec.metrics" >cpu使用量：{{scope.row.spec.metrics[0].pods.targetAverageValue}}核</span> -->
             </template>
           </el-table-column>
           
@@ -112,20 +118,15 @@
 import subTitle from "@/views/TKE/components/subTitle";
 import tkeSearch from "@/views/TKE/components/tkeSearch";
 import Loading from "@/components/public/Loading";
+import XLSX from "xlsx";
+import FileSaver from "file-saver";
 import { ALL_CITY,TKE_COLONY_QUERY } from "@/constants";
 export default {
   name: "colonyResourceCronJob",
   data() {
     return {
       loadShow: false, //加载是否显示
-      list:[
-        // {
-        //   status:false
-        // },
-        // {
-        //   status:true
-        // }
-      ], //列表
+      list:[], //列表
       total:0,
       pageSize:10,
       pageIndex:1,
@@ -145,7 +146,6 @@ export default {
     this.nameSpaceList();
   },
   methods: {
-
     //列表数据展示
     tableListData(){
       var params={
@@ -162,6 +162,7 @@ export default {
               var data = JSON.parse(res.Response.ResponseBody);
              console.log(data)
              this.list = data.items;
+             this.total=data.items.length
               
        }
         
@@ -233,29 +234,30 @@ export default {
     //刷新数据
     refreshList(){
       console.log('refreshList....')
+       this.tableListData();
     },
     // 导出表格
     exportExcel() {
       console.log('exportExcel...')
       /* generate workbook object from table */
-      // var wb = XLSX.utils.table_to_book(document.querySelector("#exportTable"));
+      var wb = XLSX.utils.table_to_book(document.querySelector("#exportTable"));
       /* get binary string as output */
-      // var wbout = XLSX.write(wb, {
-      //   bookType: "xlsx",
-      //   bookSST: true,
-      //   type: "array"
-      // });
-      // try {
-      //   FileSaver.saveAs(
-      //     new Blob([wbout], {
-      //       type: "application/octet-stream"
-      //     }),
-      //     this.$t("CVM.clBload.fzjh") + ".xlsx"
-      //   );
-      // } catch (e) {
-      //   if (typeof console !== "undefined") console.log(e, wbout);
-      // }
-      // return wbout;
+      var wbout = XLSX.write(wb, {
+        bookType: "xlsx",
+        bookSST: true,
+        type: "array"
+      });
+      try {
+        FileSaver.saveAs(
+          new Blob([wbout], {
+            type: "application/octet-stream"
+          }),
+          this.$t("CVM.clBload.fzjh") + ".xlsx"
+        );
+      } catch (e) {
+        if (typeof console !== "undefined") console.log(e, wbout);
+      }
+      return wbout;
     },
 
     // 分页
@@ -271,6 +273,92 @@ export default {
     },
 
   },
+  filters:{
+    dataShow(val){
+      console.log(val)
+
+      if(val.resource){
+         if(val.resource.name=='cpu'){
+             return "CPU利用率（占Request）"+val.resource.targetAverageUtilization+'%'
+        }
+      }
+
+
+      if(val.pods){
+       //cpu
+        if(val.pods['metricName']=='k8s_pod_cpu_core_used'){
+          return "CPU使用量"+val.pods.targetAverageValue+'核'
+        }
+        if(val.pods['metricName']=='k8s_pod_rate_cpu_core_used_node'){
+          return "CPU利用率（占节点）"+val.pods.targetAverageValue+'%'
+        }
+        if(val.pods['metricName']=='k8s_pod_rate_cpu_core_used_request'){
+          return "CPU利用率（占Request）"+val.pods.targetAverageValue+'%'
+        }
+       
+        if(val.pods['metricName']=='k8s_pod_rate_cpu_core_used_limit'){
+          return "CPU利用率（占Limit）"+val.pods.targetAverageValue+'%'
+        }
+        //内存
+         if(val.pods['metricName']=='k8s_pod_mem_usage_bytes'){
+          return "内存使用量"+val.pods.targetAverageValue+'B'
+          }
+         if(val.pods['metricName']=='k8s_pod_mem_no_cache_bytes'){
+          return "内存使用量（不包含 Cache）"+val.pods.targetAverageValue+'B'
+          }
+         if(val.pods['metricName']=='k8s_pod_rate_mem_usage_node'){
+          return "内存利用率（占节点）"+val.pods.targetAverageValue+'%'
+          }
+         if(val.pods['metricName']=='k8s_pod_rate_mem_no_cache_node'){
+          return "内存利用率（占节点，不包含 Cache）"+val.pods.targetAverageValue+'%'
+          }
+         if(val.pods['metricName']=='k8s_pod_rate_mem_usage_request'){
+          return "内存利用率（占Request）"+val.pods.targetAverageValue+'%'
+          }
+         if(val.pods['metricName']=='k8s_pod_rate_mem_no_cache_request'){
+          return "内存利用率（占 Request，不包含Cache）"+val.pods.targetAverageValue+'%'
+          }
+         if(val.pods['metricName']=='k8s_pod_rate_mem_usage_limit'){
+          return "内存利用率（占 Limit）"+val.pods.targetAverageValue+'%'
+          }
+         if(val.pods['metricName']=='k8s_pod_rate_mem_no_cache_limit'){
+          return "内存利用率（占 Limit，不包含 Cache）"+val.pods.targetAverageValue+'%'
+          }
+         //硬盘 
+         if(val.pods['metricName']=='k8s_pod_fs_write_bytes'){
+          return "硬盘写流量"+val.pods.targetAverageValue+'B/s'
+          }
+         if(val.pods['metricName']=='k8s_pod_fs_read_bytes'){
+          return "硬盘读流量"+val.pods.targetAverageValue+'B/s'
+          }
+         if(val.pods['metricName']=='k8s_pod_fs_read_times'){
+          return "硬盘读 IOPS "+val.pods.targetAverageValue+'次/s'
+          }
+         if(val.pods['metricName']=='k8s_pod_fs_write_times'){
+          return "硬盘写 IOPS "+val.pods.targetAverageValue+'次/s'
+          }
+        //网络  
+         if(val.pods['metricName']=='k8s_pod_network_receive_bytes_bw'){
+          return "网络入带宽 "+val.pods.targetAverageValue+'B'
+          }
+         if(val.pods['metricName']=='k8s_pod_network_transmit_bytes_bw'){
+          return "网络出带宽 "+val.pods.targetAverageValue+'B'
+          }
+         if(val.pods['metricName']=='k8s_pod_network_receive_bytes'){
+          return "网络入流量 "+val.pods.targetAverageValue+'B/s'
+          }
+         if(val.pods['metricName']=='k8s_pod_network_transmit_bytes'){
+          return "网络出流量 "+val.pods.targetAverageValue+'B/s'
+          }
+         if(val.pods['metricName']=='k8s_pod_network_receive_packets'){
+          return "网络入包量 "+val.pods.targetAverageValue+'个'
+          }
+         if(val.pods['metricName']=='k8s_pod_network_transmit_packets'){
+          return "网络出包量 "+val.pods.targetAverageValue+'个'
+          }
+      }
+    }
+  },
   components: {
     subTitle,
     tkeSearch,
@@ -279,7 +367,7 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
- 
+<style lang="scss">
+ .el-tooltip__popper{font-size: 14px; max-width:30% } /*设置显示隐藏部分内容，按50%显示*/
 </style>
 

@@ -56,7 +56,7 @@
           label="名称"
           >
           <template slot-scope="scope">
-            <span @click="goDeploymentDetail()" class="tke-text-link">{{scope.row.metadata && scope.row.metadata.name}}</span>
+            <span @click="goDeploymentDetail(scope.row)" class="tke-text-link">{{scope.row.metadata && scope.row.metadata.name}}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -81,7 +81,7 @@
           label="运行/期望Pod数量"
           >
           <template slot-scope="scope">
-            <span>0/1</span>
+            <span>{{scope.row.status && scope.row.status.readyReplicas || 0}}/{{scope.row.status && scope.row.status.replicas || 0}}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -314,7 +314,9 @@ export default {
           name: "workloadCreate",
           query: {
             type:type,
-            clusterId: this.clusterId
+            clusterId: this.clusterId,
+            spaceName: this.nameSpaceName,
+            nameSpaceList: this.searchOptions
           }
       });
     },
@@ -332,11 +334,13 @@ export default {
     },
 
      // 详情.
-    goDeploymentDetail(){
+    goDeploymentDetail(rowData){
       this.$router.push({
           name: "deploymentDetail",
           query: {
-            clusterId: this.clusterId
+            clusterId: this.clusterId,
+            spaceName: this.nameSpaceName,
+            rowData: rowData
           }
       });
     },

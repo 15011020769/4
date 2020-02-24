@@ -6,9 +6,9 @@
       required
     >
       <el-select v-model="form.Source">
-        <el-option :value="GET">GET</el-option>
-        <el-option :value="POST">POST</el-option>
-        <el-option :value="COOKIE">COOKIE</el-option>
+        <el-option value="GET">GET</el-option>
+        <el-option value="POST">POST</el-option>
+        <el-option value="COOKIE">COOKIE</el-option>
       </el-select>
     </el-form-item>
     <el-form-item
@@ -73,6 +73,7 @@
 <script>
 import { ErrorTips } from "@/components/ErrorTips"
 import { COMMON_ERROR } from '../../constants'
+import { UPSERT_SESSION } from '@/constants'
 
 export default {
   props: {

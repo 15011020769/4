@@ -5,37 +5,36 @@
       <el-menu
         default-active="2"
         class="el-menu-vertical-demo"
-        @open="handleOpen"
-        @close="handleClose"
         background-color="#292b36"
         text-color="#fff"
         active-text-color="#fff"
+         @select="handleSelect" 
         :router="true"
       >
-        <el-menu-item index="/UserListNew">
+        <el-menu-item index="/UserListNew" :class="{'menu-active': activeMenu === '/UserListNew'}">
           <i class="iconfont"></i>
           <span slot="title">{{$t('CAM.userList.listTitle')}}</span>
         </el-menu-item>
-        <el-menu-item index="/UserGroup">
+        <el-menu-item index="/UserGroup" :class="{'menu-active': activeMenu === '/UserGroup'}">
           <i class="iconfont"></i>
           <span slot="title">{{$t('CAM.userList.userGroup')}}</span>
         </el-menu-item>
-        <el-menu-item index="/Strategy">
+        <el-menu-item index="/Strategy" :class="{'menu-active': activeMenu === '/Strategy'}">
           <i class="iconfont"></i>
           <span slot="title">{{$t('CAM.Role.strategy')}}</span>
         </el-menu-item>
-        <el-menu-item index="/Role">
+        <el-menu-item index="/Role" :class="{'menu-active': activeMenu === '/Role'}">
           <i class="iconfont"></i>
           <span slot="title">{{$t('CAM.Role.title')}}</span>
         </el-menu-item>
-        <el-menu-item index="/IdentityProvider">
+        <el-menu-item index="/IdentityProvider" :class="{'menu-active': activeMenu === '/IdentityProvider'}">
           <i class="iconfont"></i>
           <span slot="title">{{$t('CAM.Role.identityProvider')}}</span>
         </el-menu-item>
-        <el-menu-item index="/ApiKeyManager">
+        <!-- <el-menu-item index="/ApiKeyManager">
           <i class="iconfont"></i>
           <span slot="title">{{$t('CAM.userList.APISecret')}}</span>
-        </el-menu-item>
+        </el-menu-item> -->
         <!-- <el-submenu index="2">
           <template slot="title">
             <i class="iconfont"></i>
@@ -61,16 +60,15 @@
 export default {
   data() {
     return {
-      activeIndex: "1",
-      activeIndex2: "1"
+      activeMenu: localStorage.getItem('activeMenu') ? localStorage.getItem('activeMenu') : 'deal'        // 默认选中的菜单
     };
   },
+ 
   methods: {
-    handleOpen(key, keyPath) {
-      console.log(key, keyPath);
-    },
-    handleClose(key, keyPath) {
-      console.log(key, keyPath);
+    // 选中菜单点击事件
+    handleSelect(key, keyPath) {
+      this.activeMenu = key
+      localStorage.setItem('activeMenu', this.activeMenu)
     }
   }
 };
@@ -124,5 +122,9 @@ export default {
     align-items: center;
     font-size: 14px;
   }
+}
+.menu-active {
+  background-color: #20222c !important;
+  color: white;
 }
 </style>

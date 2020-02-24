@@ -44,7 +44,7 @@
           <el-col :span="8">
             <div class="rowContain">
               <p>
-                <span class="green">0</span>
+                <span class="green">{{upPeakValue}}</span>
                 <span>bps</span>
               </p>
               <p>上行带宽峰值</p>
@@ -53,7 +53,7 @@
           <el-col :span="8">
             <div class="rowContain">
               <p>
-                <span class="oarnge">0</span>
+                <span class="oarnge">{{downPeakValue}}</span>
                 <span>bps</span>
               </p>
               <p>下行带宽峰值</p>
@@ -62,7 +62,7 @@
           <el-col :span="8">
             <div class="rowContain">
               <p>
-                <span class="blue">0</span>
+                <span class="blue">{{qpsRequest}}</span>
                 <span>QPS</span>
               </p>
               <p>请求峰值</p>
@@ -159,6 +159,7 @@ import {
   DESCRIBE_HOSTS,
   DESCRIBE_PEAK_VALUE,
   DESCRIBE_PEAK_POINTS,
+  DESCRIBE_PIECHART,
 } from '@/constants'
 import { flatObj } from '@/utils'
 export default {
@@ -170,6 +171,9 @@ export default {
       thisType: "1", //按钮默认选中
       endTime: "",
       startTime: "",
+      upPeakValue: 0,
+      downPeakValue: 0,
+      qpsRequest: 0,
       xAxis1: [],
       series1: [],
       series2: [],
@@ -187,6 +191,7 @@ export default {
     this.checkTime("1");
     this.getDominList();
     this.getPeakValue();
+    this.getPieChart();
 　},
   watch: {
     selectValue() {
@@ -224,8 +229,12 @@ export default {
         Version: '2018-01-25',
         FromTime: this.startTime,
         ToTime: this.endTime,
-      }).then((res) => {
-        console.log(res)
+      }).then((resp) => {
+        this.generalRespHandler(resp, ({Up, Down, Access}) => {
+          this.upPeakValue = Up * 8
+          this.downPeakValue = Down * 8
+          this.qpsRequest = Access
+        })
       })
     },
     // 获取业务攻击趋势
@@ -257,7 +266,19 @@ export default {
         })
       })
     },
-    //时间点击事件
+    // 获取服务器响应浏览器类型
+    getPieChart() {
+      this.axios.post(DESCRIBE_PIECHART, {
+        Version: '2018-01-25',
+        FromTime: this.startTime,
+        ToTime: this.endTime,
+        Host: "all",
+        Edition: "clb-waf"
+      }).then((res) => {
+        console.log(res)
+      })
+    },
+    // 时间点击事件
      checkTime(type) {
       this.thisType = type;
       var ipt1 = document.querySelector(".dateTimeValue input:nth-child(2)");
@@ -340,7 +361,8 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-.wrapperContent >>> .el-col-12:nth-child(1) {
+
+::v-deep .el-col-12:nth-child(1) {
   height: 100%;
   border-right: 1px solid #ccc;
 }

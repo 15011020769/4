@@ -44,7 +44,7 @@
           <el-col :span="selectValue==''?12:8">
             <div class="rowContain">
               <p>
-                <span class="red">0</span>
+                <span class="red">{{webAttack}}</span>
                 <span>次</span>
               </p>
               <p>WEB攻击次数</p>
@@ -53,7 +53,7 @@
           <el-col :span="selectValue==''?12:8">
             <div class="rowContain">
               <p>
-                <span class="oarnge">0</span>
+                <span class="oarnge">{{ccRequest}}</span>
                 <span>个</span>
               </p>
               <p>CC攻击次数</p>
@@ -62,7 +62,7 @@
           <el-col :span="selectValue==''?12:8" v-if="selectValue==''?false:true">
             <div class="rowContain">
               <p>
-                <span class="blue">0</span>
+                <span class="blue">{{botRequest}}</span>
                 <span>次</span>
               </p>
               <p>BOT请求次数</p>
@@ -84,24 +84,11 @@
           :legendText="selectValue == '' ? legendText2 : legendText1"
         />
       </el-row>
-      <el-row class="echartsShowThird">
-         <el-col :span="12">
-          <h3 class="topfont">
-            {{t('访问类型占比', 'WAF.fwlxzb')}}
-            <span style="color:#bbb;">(%)</span>
-          </h3>
-          <EPie
-            :series="seriesPie"
-            :legendText="legendTextPie"
-          />
-         </el-col>
-         <el-col :span="12">
-          <h3 class="topfont">
-            {{t('攻击类型占比', 'WAF.gjlxzb')}}
-            <span style="color:#bbb;">(次)</span>
-          </h3>
-         </el-col>
-      </el-row>
+      <attack-Type
+        :seriesPie="seriesPie"
+        :colorPie="colorPie"
+        :legendTextPie="legendTextPie"
+      />
       <el-row class="echartsShowSecond">
         <el-col :span="12">
         <h3 class="topfont">
@@ -160,13 +147,19 @@ import ELine from "../components/line"
 import EBar from "../components/bar"
 import EPie from "../components/pie"
 import EMap from '../components/worldMap'
+import attackType from "../components/attackType"
 import DownLoadImg from '../components/downLoadImg'
+import { ErrorTips } from "@/components/ErrorTips"
+import { COMMON_ERROR } from '../../constants'
 import {
   DESCRIBE_HOSTS,
   DESCRIBE_PEAK_VALUE,
   DESCRIBE_PEAK_POINTS,
   DESCRIBE_ATTACK_TYPE,
-  DESCRIBE_ATTACK_WORLD_MAP
+  DESCRIBE_ATTACK_WORLD_MAP,
+  DESCRIBE_ATTACK_COUNT,
+  DESCRIBE_REQUEST_COUNT,
+  DESCRIBE_HISTOGRAM
   } from '@/constants'
 import { flatObj } from '@/utils'
 export default {
@@ -176,6 +169,9 @@ export default {
       dateTimeValue: [], //日期绑定
       selectValue: [], //域名下拉菜单
       thisType: "1", //按钮默认选中
+      webAttack: 0,
+      ccRequest: 0,
+      botRequest: 0,
       endTime: moment(new Date()).endOf("days").format("YYYY-MM-DD HH:mm:ss"),
       startTime: moment(new Date()).startOf("days").format("YYYY-MM-DD 00:00:00"),
       host: "",
@@ -196,13 +192,12 @@ export default {
       checked3: false,
       checked4: false,
       checked5: false,
-      legendTextPie: ['直接访问', '邮件营销', '联盟广告', '视频广告', '搜索引擎'],
+      colorPie: ['#006eff', '#434348', '#74BD48'],
+      legendTextPie: ['正常访问', 'WEB攻击次数', 'CC攻击次数'],
       seriesPie: [
-        {value: 335, name: '直接访问'},
-        {value: 310, name: '邮件营销'},
-        {value: 234, name: '联盟广告'},
-        {value: 135, name: '视频广告'},
-        {value: 1548, name: '搜索引擎'}
+        {value: 0, name: '正常访问'},
+        {value: 0, name: 'WEB攻击次数'},
+        {value: 0, name: 'CC攻击次数'},
       ],
       seriesMap: [{
               name: '中国',
@@ -216,6 +211,7 @@ export default {
     EPie,
     EMap,
     DownLoadImg,
+    attackType,
   },
   mounted () {
     this.getDominList();
@@ -224,11 +220,14 @@ export default {
     this.getPeakPoints();
     this.getAttackType();
     this.getAttackWorldMap();
+    this.getWebAttack();
+    this.getNormalRequest();
+    this.getHistogram();  
 　},
   watch: {
     selectValue() {
       this.getPeakPoints()
-    }
+    },
   },
   methods: {
     //获取域名列表
@@ -295,13 +294,18 @@ export default {
         Version: '2018-01-25',
         FromTime: this.startTime,
         ToTime: this.endTime,
-      }).then((res) => {
-        console.log(res)
+      }).then((resp) => {
+        this.generalRespHandler(resp, (Response) => {
+          this.webAttack = Response.Attack
+          this.ccRequest = Response.Cc
+          // this.$set(this.seriesPie[2].value = Response.Cc)
+          this.$set(this.seriesPie, 2, {value: `${Response.Cc}`, name: 'CC攻击次数'},)
+        })
       })
     },
-    // 查询TOP N攻击类型
-    getAttackType() {
-      this.axios.post(DESCRIBE_ATTACK_TYPE, {
+    // 获取web攻击次数
+    getWebAttack() {
+      this.axios.post(DESCRIBE_ATTACK_COUNT, {
         Version: '2018-01-25',
         FromTime: this.startTime,
         ToTime: this.endTime,
@@ -311,12 +315,50 @@ export default {
         console.log(res)
       })
     },
-    //获取攻击城市分布
-    getAttackWorldMap() {
-      this.axios.post(DESCRIBE_ATTACK_WORLD_MAP, {
+    // 获取正常访问次数
+    getNormalRequest() {
+      this.axios.post(DESCRIBE_REQUEST_COUNT, {
         Version: '2018-01-25',
         FromTime: this.startTime,
         ToTime: this.endTime,
+        // Host: "all",
+        // Edition: "clb-waf"
+      }).then((res) => {
+        console.log(res)
+        // this.$set(this.seriesPie[0].value = res.Response.Count)
+        this.$set(this.seriesPie, 1, {value: `${res.Response.Count}`, name: 'WEB攻击次数'},)
+      })
+    },
+    // 查询TOP N攻击类型
+    getAttackType() {
+      this.axios.post(DESCRIBE_ATTACK_TYPE, {
+        Version: '2018-01-25',
+        FromTime: '2020-02-24 00:00:00',
+        ToTime: '2020-02-24 23:59:59',
+        Host: "all",
+        Edition: "clb-waf"
+      }).then((res) => {
+        console.log(res)
+      })
+    },
+    // 获取柱状图
+    getHistogram() {
+      this.axios.post(DESCRIBE_HISTOGRAM, {
+        Version: '2018-01-25',
+        FromTime: this.startTime,
+        ToTime: this.endTime,
+        Host: "all",
+        Edition: "clb-waf"
+      }).then((res) => {
+        console.log(res)
+      })
+    },
+    // 获取攻击城市分布
+    getAttackWorldMap() {
+      this.axios.post(DESCRIBE_ATTACK_WORLD_MAP, {
+        Version: '2018-01-25',
+        FromTime: moment(this.startTime).utc().valueOf() / 1000,
+        ToTime: moment(this.endTime).utc().valueOf() / 1000,
         Host: "all",
         Edition: "clb-waf"
       }).then((res) => {
@@ -359,7 +401,10 @@ export default {
       this.startTime = moment(start).startOf("days").format("YYYY-MM-DD HH:mm:ss");
       this.endTime = moment(end).endOf("days").format("YYYY-MM-DD HH:mm:ss");
       this.$nextTick(() => {
-        this.getPeakPoints()
+        this.getPeakPoints();
+        this.getPeakValue();
+        this.getNormalRequest();
+        this.getAttackType();
       })
     },
     changeTimeValue() {
@@ -368,6 +413,9 @@ export default {
       this.endTime = moment(this.dateTimeValue[1]).endOf("days").format("YYYY-MM-DD HH:mm:ss");
       this.$nextTick(() => {
         this.getPeakPoints();
+        this.getPeakValue();
+        this.getNormalRequest();
+        this.getAttackType();
       })
     },
     html2canvas_2(imgtype) {
@@ -419,7 +467,8 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.wrapperContent >>> .el-col-12:nth-child(1) {
+
+::v-deep .el-col-12:nth-child(1) {
   height: 100%;
   border-right: 1px solid #ccc;
 }

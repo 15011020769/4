@@ -8,13 +8,19 @@
         allow-create
         default-first-option
         placeholder="请选择文章标签"
+        @change="onSearch"
       >
         <el-option
+          key="all"
+          label="ALL"
+          value="global">
+        </el-option>
+        <el-option
           v-for="item in ipSearchOptions"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value"
-        ></el-option>
+          :key="item.Domain"
+          :label="item.Domain"
+          :value="item.Domain">
+        </el-option>
       </el-select>
     </div>
     <div class="wrapper">
@@ -27,16 +33,16 @@
         <div>
           <span>类别：</span>
           <el-select class="select" v-model="typeCheck">
-            <el-option label="全部" value="all"></el-option>
-            <el-option label="黑名单" value="black"></el-option>
-            <el-option label="白名单" value="white"></el-option>
+            <el-option label="全部" :value="undefined"></el-option>
+            <el-option label="黑名单" value="42"></el-option>
+            <el-option label="白名单" value="40"></el-option>
           </el-select>
           <span>来源：</span>
           <el-select class="select" v-model="resouseC">
-            <el-option label="全部" value="all"></el-option>
+            <el-option label="全部" :value="undefined"></el-option>
             <el-option label="CC" value="cc"></el-option>
             <el-option label="BOT" value="bot"></el-option>
-            <el-option label="自定义" value="self"></el-option>
+            <el-option label="自定义" value="custom"></el-option>
           </el-select>
           <el-input placeholder="输入IP" class="iptIP" v-model="iptIP" :disabled="!arrowShow"></el-input>
           <span class="topFilter" @click="isShowTop">
@@ -48,9 +54,9 @@
         <div v-if="!arrowShow" class="timeCon newClear">
           <span class="floatLeft">创建时间：</span>
           <el-button-group class="floatLeft">
-            <el-button size="mini">最近1小时</el-button>
-            <el-button size="mini">最近1天</el-button>
-            <el-button size="mini">最近7天</el-button>
+            <el-button size="mini" @click="onTimeClick('hour')">最近1小时</el-button>
+            <el-button size="mini" @click="onTimeClick('day')">最近1天</el-button>
+            <el-button size="mini" @click="onTimeClick('week')">最近7天</el-button>
           </el-button-group>
           <el-date-picker
             size="mini"
@@ -73,7 +79,7 @@
           ></el-date-picker>
         </div>
         <div>
-          <el-button size="mini" class="lookSearch">查询</el-button>
+          <el-button @click="onSearch" size="mini" class="lookSearch">查询</el-button>
         </div>
       </div>
       <div class="tableList">
@@ -93,7 +99,7 @@
         <div class="tableCon">
           <el-table
             ref="multipleTable"
-            :data="tableDataBegin.slice((currentPage-1)*pageSize,currentPage*pageSize)"
+            :data="tableDataBegin ? tableDataBegin.slice((currentPage-1)*pageSize,currentPage*pageSize) : []"
             tooltip-effect="dark"
             style="width: 100%" v-loading="loadShow"
             @selection-change="handleSelectionChange"
@@ -102,30 +108,45 @@
             <el-table-column prop="num" label="序号">
               <template slot-scope="scope">{{ scope.$index+1}}</template>
             </el-table-column>
-            <el-table-column prop="resourse" label="来源"></el-table-column>
-            <el-table-column prop="ipAddress" label="IP地址"></el-table-column>
-            <el-table-column prop="type" label="类别"></el-table-column>
-            <el-table-column prop="updata" label="更新时间"></el-table-column>
-            <el-table-column prop="stopTime" label="截止时间"></el-table-column>
-            <el-table-column prop="descrip" label="备注"></el-table-column>
+            <el-table-column prop="Source" label="来源">
+              <template slot-scope="scope">
+                {{ scope.row.Source | sourceFilter }}
+              </template>
+            </el-table-column>
+            <el-table-column prop="Ip" label="IP地址"></el-table-column>
+            <el-table-column prop="ActionType" label="类别">
+              <template slot-scope="scope">
+                {{scope.row.ActionType | ActionTypeFilter}}
+              </template>
+            </el-table-column>
+            <el-table-column prop="TsVersion" label="更新时间">
+              <template slot-scope="scope">
+                {{scope.row.TsVersion | currentTimeFilter}}
+              </template>
+            </el-table-column>
+            <el-table-column prop="ValidTs" label="截止时间">
+              <template slot-scope="scope">
+                {{scope.row.ValidTs | currentTimeFilter}}
+              </template>
+            </el-table-column>
             <el-table-column prop="action" label="操作">
               <template slot-scope="scope">
-                <el-button type="text" size="mini">编辑</el-button>
-                <el-button type="text" size="mini">加白</el-button>
-                <el-button type="text" size="mini">加黑</el-button>
+                <el-button @click="onEdit(scope)" type="text" size="mini">编辑</el-button>
+                <el-button @click="onAction(scope)" type="text" size="mini">{{scope.row.ActionType | actionButtonFilter}}</el-button>
                 <el-popover
                   placement="bottom"
                   width="220"
-                  v-model="visible">
+                  v-model="visible"
+                  >
                   <div class="deleteCon" style="text-align:center;">
                     <h1 style="font-size:14px;font-weight: 600;margin-bottom:16px;">确认删除该记录？</h1>
-                    <p style="font-size:12px;color:#333;margin-bottom:16px;">删除IP：{{scope.row.ipAddress}}</p>
+                    <p style="font-size:12px;color:#333;margin-bottom:16px;">删除IP：{{scope.row.Ip}}</p>
                   </div>
                   <div style="text-align: right; margin: 0">
                     <el-button type="primary" size="mini" @click="visible = false">删除</el-button>
                     <el-button size="mini" type="text" @click="visible = false">取消</el-button>
                   </div>
-                  <el-button slot="reference" size="mini" type="text" style="margin-left:10px;">删除</el-button>
+                  <el-button slot="reference" size="mini" type="text" style="margin-left:10px;">删除1</el-button>
                 </el-popover>
               </template>
             </el-table-column>
@@ -144,35 +165,32 @@
         </div>
       </div>
     </div>
-    <addBWmodel :isShow="addBWmodel"/>
+    <addBlackWhite @closeModel="closeModel" :isShow="addBWmodel" :ipInfo="Object.assign(ipInfo, { Domain: ipSearch })"/>
   </div>
 </template>
 
 <script>
-import addBWmodel from './model/addBWmodel'
-import { DESCRIBE_ACCESS_CONTROL } from '@/constants'
+import addBlackWhite from './model/addBlackWhite'
+import { DESCRIBE_ACCESS_CONTROL, DESCRIBE_HOSTS, UPSERTIP_ACCESS_CONTROL } from '@/constants'
 import XLSX from 'xlsx'
+import moment from 'moment'
+
 const make_cols = refstr => Array(XLSX.utils.decode_range(refstr).e.c + 1).fill(0).map((x,i) => ({name:XLSX.utils.encode_col(i), key:i}));
 
 export default {
   data() {
     return {
-      ipSearch: "", //ip查询下拉
-      ipSearchOptions: [
-        {
-          value: "www.bai.com",
-          label: "www.bai.com"
-        }
-      ],
+      ipSearch: "global", //ip查询下拉
+      ipSearchOptions: [],
       tipShow: true, //提示文字
-      resouseC: "", //来源
-      typeCheck: "", //类别
+      resouseC: undefined, //来源
+      typeCheck: undefined, //类别
       iptIP: "", //输入IP
       arrowShow: true, //箭头显示
       flag: true,
       timeValue1: "", //创建时间
       timeOut: false, //有效截止日期
-      timeValue2: "", //有效截止日期
+      timeValue2: [moment().subtract(1, 'hour'), new Date()], //有效截止日期
       multipleSelection: [], //tableCheck
       tableDataBegin: [],
       allData: [{
@@ -189,18 +207,19 @@ export default {
       pageSize: 10,//每页长度
       totalItems: 0,//总长度
       filterTableDataEnd: [],
-      flag: false,//定义一个开关
       loadShow:false,//加载
       visible: false,//删除弹框
       addBWmodel:false,//添加黑白IP弹框
-      data: []
+      data: [],
+      ipInfo: {} // 保存编辑信息
     };
   },
   components:{
-    addBWmodel:addBWmodel
+    addBlackWhite
   },
   mounted() {
-    this.getData();
+    this.getDescribeHost()
+    this.onSearch();
   },
   methods: {
     fileChange(file) {
@@ -235,19 +254,21 @@ export default {
     },
     //点击查看详情
     isShowTop() {
+      console.log(this.flag);
       if (this.flag) {
         this.arrowShow = false;
-        this.flag = true;
+        this.flag = false;
+        this.iptIP = ''
       } else {
         this.arrowShow = true;
-        this.flag = false;
+        this.flag = true;
       }
     },
     handleSelectionChange(val) {
       this.multipleSelection = val;
     },
     // 获取数据
-    getData() {
+    getData(params) {
       this.loadShow=true;
       // this.axios.get('', {}).then((res) => {
       // console.log(res.data.tableData);
@@ -264,14 +285,38 @@ export default {
       // }
       // this.loadShow=false;
       // })
-      let params = {
-        Version: '2018-01-25',
-        Domain: 'tfc.dhycloud.com',
-        Count: 10
+      if (!params) {
+        let params = {
+          Version: '2018-01-25',
+          Domain: 'tfc.dhycloud.com',
+          Count: 1,
+          Limit: 20,
+          OffSet: 0
+        }
       }
       this.axios.post(DESCRIBE_ACCESS_CONTROL, params).then(data => {
         this.loadShow = false;
-        console.log(data)
+        if (data.Response.Error) {
+          let ErrOr = Object.assign(ErrorTips, COMMON_ERROR)
+          this.$message({
+            message: ErrOr[Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          })
+        } else {
+           this.tableDataBegin = data.Response.Data.Res;
+            // this.tableDataBegin = this.allData;
+            // 将数据的长度赋值给totalItems
+            this.totalItems = this.tableDataBegin.length;
+            if (this.totalItems > this.pageSize) {
+              for (let index = 0; index < this.pageSize; index++) {
+                this.tableDataEnd.push(this.tableDataBegin[index]);
+              }
+            } else {
+              this.tableDataEnd = this.tableDataBegin;
+            }
+        }
       })
     },
     // 分页开始
@@ -302,7 +347,148 @@ export default {
     },
     //添加黑白名单按钮
     addBW(){
+      console.log(11);
       this.addBWmodel=true;
+    },
+
+    // 获取防护域名列表
+    getDescribeHost() {
+      let params = {
+        Version: '2018-01-25',
+      }
+      
+      this.axios.post(DESCRIBE_HOSTS, params).then(data => {
+        if (data.Response.Error) {
+          let ErrOr = Object.assign(ErrorTips, COMMON_ERROR)
+          this.$message({
+            message: ErrOr[Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          })
+        } else {
+          this.ipSearchOptions = data.Response.HostList
+        }
+      })
+    },
+
+    //  查询
+    onSearch() {
+      let params = {
+        Version: '2018-01-25',
+        Domain: this.ipSearch,
+        Count: 1,
+        Limit: 20,
+        OffSet: 0,
+        Ip: this.iptIP || undefined,
+        CtsMin: this.timeValue1 ? moment(new Date(this.timeValue1[0])).format('x') : undefined, //创建最小时间戳
+        CtsMax: this.timeValue1 ? moment(new Date(this.timeValue1[1])).format('x') : undefined,
+        ActionType: this.typeCheck,
+        Source: this.resouseC || undefined,
+      }
+
+      if (this.timeOut) {
+        params.VtsMin = moment(new Date(this.timeValue2[0])).format('X') || undefined
+        params.VtsMax = moment(new Date(this.timeValue2[1])).format('X') || undefined
+      }
+
+      this.getData(params)
+    },
+
+    //关闭
+    closeModel(isShow){
+      this.addBWmodel=isShow;
+      this.onSearch()
+    },
+
+    // 快捷时间查询
+    onTimeClick(temp) {
+      const map = {
+        hour: [moment().subtract(1, 'hour'), moment(new Date())],
+        day: [moment().subtract(1, 'day'), moment(new Date())],
+        week: [moment().subtract(7, 'day'), moment(new Date())]
+      }
+
+      this.timeValue1 = map[temp]
+    },
+
+    // 编辑
+    onEdit(info) {
+      console.log(info);
+      this.ipInfo = info.row
+      
+    },
+
+    // 加黑或者加白
+    onAction(info) {
+      console.log(info.row)
+        this.axios.post(UPSERTIP_ACCESS_CONTROL, ({
+        Version: '2018-01-25',
+        Domain: this.ipSearch,
+        'Items.0': JSON.stringify({
+          ip: info.row.Ip,
+          action: info.row.ActionType === 40 ? 42 : 40, // 除了黑名单加白 其他都加黑
+          // valid_ts: this.ipInfo.ValidTs,
+          source: info.row.Source,
+          valid_ts: info.row.ValidTs
+        }),
+        Edition: 'clb-waf'
+      })).then(data => {
+        if (data.Response.Error) {
+          let ErrOr = Object.assign(ErrorTips, COMMON_ERROR)
+          this.$message({
+            message: ErrOr[Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          })
+        } else {
+          this.$message({
+            message: '操作成功',
+            type: 'success'
+          })
+          this.onSearch()
+        }
+      })
+    }
+  },
+
+  filters: {
+    currentTimeFilter(time) {
+      const len = JSON.stringify(time).length
+      let str = time
+      if (len < 13) {
+       str = str * 1000
+      }
+      return moment(new Date(str)).format("YYYY-MM-DD HH:mm:ss");
+    },
+
+    ActionTypeFilter(action) {
+      switch (action) {
+        case 40:
+          return '白名单'
+          break;
+        case 42:
+          return '黑名单'
+        default: return '未知'
+          break;
+      }
+    },
+
+    actionButtonFilter(action) {
+      const map = {
+        42: '加白'
+      }
+      return map[action] || '加黑'
+    },
+
+    sourceFilter(text) {
+      const map = {
+        bot: 'BOT',
+        cc: 'CC',
+        custom: '自定义'
+      }
+      return map[text] || '未知'
     }
   }
 };

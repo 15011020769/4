@@ -37,9 +37,9 @@ export default {
    GetPersistentVolume(){
       const param = {
             Accept: "application/yaml",
-            ClusterName: "cls-l74ol4g0",
+            ClusterName: this.$route.query.clusterId,
             Method: "GET",
-            Path: "/api/v1/persistentvolumes/wwe333",
+            Path: "/api/v1/persistentvolumes/"+this.$route.query.resourceIns,
             Version: "2018-05-25"}  
       this.axios.post(POINT_REQUEST, param).then(res => {
           if (res.Response.Error == undefined) {

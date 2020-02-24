@@ -12,9 +12,9 @@
             集群(中国台北) /
           </span>
           <span class="goback" @click="goBack()">
-            cls-gwblk71e(tfy_test1) /
+            {{this.clusterId}}(tfy_test1) /
           </span>
-          <h2 class="header-title">Node:10.0.0.9</h2>
+          <h2 class="header-title">Deployment:{{this.rowData.metadata.name}}({{spaceName}})</h2>
         </div>
         <!-- 右侧 -->
         <div class="grid-right"></div>
@@ -23,12 +23,12 @@
 
     <!-- 详情子菜单导航 -->
     <div class="tke-detial-nav">
-      <router-link class="nav-item" :to="{name:'deploymentDetailPod',query: {clusterId: clusterId}}">Pod管理</router-link>
-      <router-link class="nav-item" :to="{name:'deploymentDetailHistory',query: {clusterId: clusterId}}">修订历史</router-link>
-      <router-link class="nav-item" :to="{name:'deploymentDetailEvent',query: {clusterId: clusterId}}">事件</router-link>
-      <router-link class="nav-item" :to="{name:'deploymentDetailLog',query: {clusterId: clusterId}}">日志</router-link>
-      <router-link class="nav-item" :to="{name:'deploymentDetailInfo',query: {clusterId: clusterId}}">详情</router-link>
-      <router-link class="nav-item" :to="{name:'deploymentDetailYaml',query: {clusterId: clusterId}}">YAML</router-link>
+      <router-link class="nav-item" :to="{name:'deploymentDetailPod',query: {clusterId: clusterId,spaceName: spaceName,rowData: rowData}}">Pod管理</router-link>
+      <router-link class="nav-item" :to="{name:'deploymentDetailHistory',query: {clusterId: clusterId,spaceName: spaceName,rowData: rowData}}">修订历史</router-link>
+      <router-link class="nav-item" :to="{name:'deploymentDetailEvent',query: {clusterId: clusterId,spaceName: spaceName,rowData: rowData}}">事件</router-link>
+      <router-link class="nav-item" :to="{name:'deploymentDetailLog',query: {clusterId: clusterId,spaceName: spaceName,rowData: rowData}}">日志</router-link>
+      <router-link class="nav-item" :to="{name:'deploymentDetailInfo',query: {clusterId: clusterId,spaceName: spaceName,rowData: rowData}}">详情</router-link>
+      <router-link class="nav-item" :to="{name:'deploymentDetailYaml',query: {clusterId: clusterId,spaceName: spaceName,rowData: rowData}}">YAML</router-link>
     </div> 
 
     <!-- 子页面 -->
@@ -48,7 +48,9 @@ export default {
   name: "deploymentDetail",
   data() {
     return {
-        clusterId:'',
+      clusterId:'',//集群id
+      rowData: {},//传过来的数据
+      spaceName: '',//路由传过来的命名空间名称
     };
   },
   components: {
@@ -57,6 +59,8 @@ export default {
   created() {
     // 从路由获取集群id
     this.clusterId=this.$route.query.clusterId;
+    this.spaceName = this.$route.query.spaceName;
+    this.rowData = this.$route.query.rowData;
   },
   methods: {
     //返回上一层

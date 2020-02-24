@@ -47,6 +47,14 @@
         </el-table>
         <div class="Right-style pagstyle" style="height:70px;">
           <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;{{$t('MGC.tiao')}}</span>
+          <el-select v-model="pagevalue" placeholder="请选择" size="mini" class="pageselect" @change='pagechange'>
+            <el-option
+              v-for="item in pageoptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
+          </el-select>
           <el-pagination
             :page-size="pagesize"
             :pager-count="7"
@@ -116,6 +124,23 @@ export default {
       pagesize: 10,//分页条数
       currpage: 1,//当前页面
       dataType:'',
+      pageoptions:[{
+          value: 10,
+          label: '10條/頁'
+        }, {
+          value: 20,
+          label: '20條/頁'
+        }, {
+          value: 30,
+          label: '30條/頁'
+        }, {
+          value: 40,
+          label: '40條/頁'
+        }, {
+          value: 50,
+          label: '50條/頁'
+        }],//分页
+        pagevalue:10//分页
     };
   },
   components: {
@@ -153,6 +178,12 @@ export default {
             });
         }
       })
+    },
+    //分页
+    pagechange(){
+    this.pagesize=this.pagevalue;
+    console.log(123)
+    this.init()
     },
     //获取未读数据
     getCount(){
@@ -286,6 +317,11 @@ export default {
       font-weight: 400;
       color: #565656;
       line-height: 32px;
+    }
+    .pageselect{
+      margin-left:20px;
+      width:100px;
+      margin-top:2px;
     }
   }
 .message-wrap >>> .el-button,

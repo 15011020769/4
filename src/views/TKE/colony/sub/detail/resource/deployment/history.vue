@@ -47,22 +47,6 @@
           </template>
         </el-table-column>
       </el-table>
-      
-
-      <!-- 分页 -->
-      <div class="tke-page">
-        <div class="block">
-          <el-pagination
-            @size-change="handleSizeChange"
-            @current-change="handleCurrentChange"
-            :current-page="pageIndex"
-            :page-sizes="[10, 20, 50, 100]"
-            :page-size="pageSize"
-            layout="total, sizes, prev, pager, next"
-            :total="total">
-          </el-pagination>
-        </div>
-      </div>
     </div>
   </div>
 </template>
@@ -70,35 +54,19 @@
 <script>
 import FileSaver from "file-saver";
 import XLSX from "xlsx";
-import { ALL_CITY } from "@/constants";
+import { ALL_CITY, POINT_REQUEST } from "@/constants";
+import moment from 'moment';
+import { ErrorTips } from "@/components/ErrorTips";
 export default {
   name: "deploymentDetailHistory",
   data() {
     return {
       loadShow: false, //加载是否显示
-      list:[
-        {
-          container:[{},{}]
-        },
-        {
-          container:[{},{}]
-        },
-        {
-          container:[{},{}]
-        },
-        {
-          container:[{},{}]
-        },
-        {
-          container:[{},{}]
-        },
-        {
-          container:[{},{}]
-        },
-      ], //列表
-      total:0,
-      pageSize:10,
-      pageIndex:0
+      clusterId:'',//集群id
+      rowData: {},//传过来的数据
+      spaceName: '',//路由传过来的命名空间名称
+      list:[], //列表
+     
     };
   },
   components: {
@@ -106,19 +74,57 @@ export default {
   },
   created() {
      // 从路由获取类型
-   
+    this.clusterId=this.$route.query.clusterId;
+    this.spaceName = this.$route.query.spaceName;
+    this.rowData = this.$route.query.rowData;
+    this.getHistoryList();
   },
   methods: {
-    // 分页
-    handleCurrentChange(val) {
-      this.pageIndex = val-1;
-      // this.getColonyList();
-      this.pageIndex+=1;
-    },
-    handleSizeChange(val) {
-      // console.log(`每页 ${val} 条`);
-      this.pageSize=val;
-      // this.getColonyList();
+    //获取修订历史列表
+    async getHistoryList() {
+      this.loadShow = true;
+      // let selector = this.rowData.spec.selector.matchLabels;
+      // let selectorList = Object.keys(selector);
+      // let param = '';
+      // if(selectorList.length > 0) {
+      //   for(var i = 0; i < selectorList.length; i++) {
+      //     debugger
+      //     console.log("selectorList[i]",selectorList[i]);
+      //     console.log("selector.selectorList[i]",selector.selectorList[i])
+      //     let key = selectorList[i];
+      //     param += key + "=" + selector.key +",";
+      //   }
+      // }
+      let params = {
+        Method: "GET",
+        Path: "/apis/apps/v1beta2/namespaces/"+this.spaceName+"/replicasets?labelSelector=k8s-app=kube-dns",
+        Version: "2018-05-25",
+        ClusterName: this.clusterId
+      }
+      await this.axios.post(POINT_REQUEST, params).then(res => {
+        if(res.Response.Error === undefined) {
+          this.loadShow = false;
+          let response = JSON.parse(res.Response.ResponseBody);
+          if(response.items.length > 0) {
+            response.items.map(pod => {
+              pod.addTime = moment(pod.metadata.creationTimestamp).format("YYYY-MM-DD HH:mm:ss");
+            });
+          }
+          this.list = response.items;
+        } else {
+          this.loadShow = false;
+          let ErrTips = {
+            
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
     }
   }
 };

@@ -144,7 +144,7 @@
       <div class="container">
         <div class="container-left">
           <p>{{$t('CAM.userGroup.selection')}}（共{{userData.length}}{{$t('CAM.strip')}}）</p>
-          <el-input size="small" clearable v-model="inpVal" style="width:100%" @change="toQueryUser">
+          <el-input size="small" clearable v-model="inpVal" style="width:100%" @change="toQueryUser" class="aaa">
             <i slot="suffix" class="el-input__icon el-icon-search" @click="toQueryUser"></i>
           </el-input>
           <el-table
@@ -931,5 +931,9 @@ export default {
   .dialogStyle > .el-dialog__body {
     padding: 10px 20px 20px;
   }
+}
+::v-deep .el-input__clear {
+  position: absolute;
+  right: 18px;
 }
 </style>
