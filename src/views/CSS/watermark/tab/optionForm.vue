@@ -160,7 +160,6 @@ export default {
             method: "get",
             withCredentials: true
           }).then(data => {
-            console.log(data)
             callback(data);
           });
         }
@@ -175,18 +174,7 @@ export default {
           Body: file
         },
         (err, data) => {
-          console.log(err)
-          console.log(data)
-          // 获取返回的上传图片的url 在拼接到提交回复工单的参数里面
-          // let backUploadUrl = data;
-          // this.uploadArr.push(backUploadUrl);
-          // this.uploadFileList.push({
-          //   name: data.Key.substring(
-          //     data.Key.lastIndexOf("/") + 1,
-          //     data.Key.length
-          //   ),
-          //   url: `https://${data.Location}`
-          // });
+          this.ruleForm.PictureUrl = `https://${data.Location}`
         }
       );
       return true
