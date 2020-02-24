@@ -350,7 +350,6 @@ export default {
           const _fixType = function(type) {
             type = type.toLowerCase().replace(/jpg/i, 'jpeg');
             const r = type.match(/png|jpeg|bmp|gif/)[0];
-            console.log(r)
             return 'image/' + r;
           };
           imgData = imgData.replace(_fixType(type), 'image/octet-stream');

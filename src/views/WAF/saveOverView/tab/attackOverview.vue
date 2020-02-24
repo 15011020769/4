@@ -101,7 +101,9 @@
           :xAxis="xAxisBarLocal"
           :series="seriesBarLocal"
           :legendText="legendTextBarIp"
+          v-if="xAxisBarLocal.length == 0 ? false : true"
         />
+        <el-row class="empty" v-else>暂无数据</el-row>
         </el-col>
         <el-col :span="12">
         <h3 class="topfont">
@@ -112,7 +114,9 @@
           :xAxis="xAxisBarIp"
           :series="seriesBarIp"
           :legendText="legendTextBarIp"
+          v-if="xAxisBarIp.length == 0 ? false : true"
         />
+        <el-row class="empty" v-else>暂无数据</el-row>
         </el-col>
       </el-row>
       <el-row class="echartsShowFour">
@@ -232,12 +236,18 @@ export default {
     this.getAttackWorldMap();
     this.getWebAttack();
     this.getNormalRequest();
-    this.getAttackIp("ip");  
+    this.getAttackIp("ip");
     this.getAttackIp("local");  
 　},
   watch: {
     selectValue() {
-      this.getPeakPoints()
+      this.getPeakValue();
+      this.getPeakPoints();
+      this.getAttackType();
+      this.getNormalRequest();
+      this.getWebAttack();
+      this.getAttackIp("ip");
+      this.getAttackIp("local");
     },
   },
   methods: {
@@ -301,11 +311,15 @@ export default {
     },
     // 获取业务攻击峰值
     getPeakValue() {
-      this.axios.post(DESCRIBE_PEAK_VALUE, {
+      const params = {
         Version: '2018-01-25',
         FromTime: this.startTime,
         ToTime: this.endTime,
-      }).then((resp) => {
+      }
+      if (this.selectValue != "") {
+        params["Domain"] = this.selectValue
+      }
+      this.axios.post(DESCRIBE_PEAK_VALUE, params).then((resp) => {
         this.generalRespHandler(resp, (Response) => {
           this.webAttack = Response.Attack
           this.ccRequest = Response.Cc
@@ -331,7 +345,7 @@ export default {
     },
     // 获取web攻击次数
     getWebAttack() {
-      this.axios.post(DESCRIBE_ATTACK_COUNT, {
+      const params = {
         Version: '2018-01-25',
         FromTime: this.startTime,
         ToTime: this.endTime,
@@ -339,7 +353,11 @@ export default {
         Mode: 0,
         Host: "all",
         Edition: "clb-waf"
-      }).then((res) => {
+      }
+      if (this.selectValue != "") {
+        params["Host"] = this.selectValue
+      }
+      this.axios.post(DESCRIBE_ATTACK_COUNT, params).then((res) => {
         console.log(res)
       })
     },
@@ -347,13 +365,17 @@ export default {
     getAttackType() {
       let typeArr = []
       let typeLegend = []
-      this.axios.post(DESCRIBE_ATTACK_TYPE, {
+      const params = {
         Version: '2018-01-25',
         FromTime: '2020-02-24 00:00:00',
         ToTime: '2020-02-24 23:59:59',
         Host: "all",
         Edition: "clb-waf"
-      }).then((res) => {
+      }
+      if (this.selectValue != "") {
+        params["Host"] = this.selectValue
+      }
+      this.axios.post(DESCRIBE_ATTACK_TYPE, params).then((res) => {
         res.Response.Piechart.map(v => {
           typeArr.push({value:v.Count, name: v.Type, })
           typeLegend.push(v.Type)
@@ -364,7 +386,7 @@ export default {
     },
     // 获取攻击来源地址和ip柱状图
     getAttackIp(type) {
-      this.axios.post(DESCRIBE_HISTOGRAM, {
+      const params = {
         Version: '2018-01-25',
         FromTime: this.startTime,
         ToTime: this.endTime,
@@ -372,14 +394,18 @@ export default {
         Edition: "clb-waf",
         QueryField: type,
         Source: "attack",
-      }).then((resp) => {
+      }
+      if (this.selectValue != "") {
+        params["Host"] = this.selectValue
+      }
+      this.axios.post(DESCRIBE_HISTOGRAM, params).then((resp) => {
         let barArrCount = []
         let ipArr = []
         let localArr = []
         let localArrCount = []
         if (type == "ip") {
           this.generalRespHandler(resp, ({Histogram}) => {
-            Histogram.map(v => {
+            Histogram && Histogram.map(v => {
               barArrCount.push(v.count)
               ipArr.push(v.ip)
             })
@@ -388,7 +414,7 @@ export default {
           })
         } else if(type == "local") {
           this.generalRespHandler(resp, ({Histogram}) => {
-            Histogram.map(v => {
+            Histogram && Histogram.map(v => {
               localArrCount.push(v.count)
               localArr.push(v.local)
             })
@@ -529,6 +555,13 @@ export default {
 }
 ::v-deep .el-checkbox.is-bordered+.el-checkbox.is-bordered {
   margin-left: 0px;
+}
+.empty {
+  height: 200px;
+  width: 100%;
+  line-height: 200px;
+  text-align: center;
+  font-weight: bold
 }
 .wrapperContent {
   padding: 0 20px 20px;
