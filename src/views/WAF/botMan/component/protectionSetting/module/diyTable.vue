@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2020-02-20 17:09:59
- * @LastEditTime: 2020-02-20 20:48:11
+ * @LastEditTime: 2020-02-21 11:05:49
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: /new_product/src/views/WAF/botMan/component/protectionSetting/module/diyTable.vue
@@ -10,7 +10,7 @@
   <div class="main">
     <el-row type="flex" justify="between">
       <el-col>
-        <el-button type="primary">添加</el-button>
+        <el-button type="primary" @click="onAdd">添加</el-button>
         <el-button>复制</el-button>
         <span style="color: #bbb; font-size: 12px; margin-left: 10px">最多可以添加50条</span>
       </el-col>
@@ -49,10 +49,12 @@
         </template>
       </el-table-column>
     </el-table>
+    <DiySessionDialog :visible.sync="showSessionDialog" :infoProp="infoProp" />
   </div>
 </template>
 
 <script>
+import DiySessionDialog from '../../diySessionDIalog'
 export default {
   data() {
     return {
@@ -62,7 +64,21 @@ export default {
         action: '放行',
         switch: '1',
         time: '2020-02-20 17:26:32	'
-      }]
+      }],
+
+      showSessionDialog: false,
+      infoProp: {}
+    }
+  },
+
+  components: {
+    DiySessionDialog
+  },
+
+  methods: {
+    onAdd() {
+      this.showSessionDialog = true
+      this.infoProp.title = '添加自定义会话特征'
     }
   }
 }
