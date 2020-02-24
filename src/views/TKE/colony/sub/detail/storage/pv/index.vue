@@ -23,9 +23,9 @@
 
     <!-- 详情子菜单导航 -->
     <div class="tke-detial-nav">
-      <router-link class="nav-item" :to="{name:'pvDetailInfo',query: {clusterId: clusterId}}">详情</router-link>
-      <router-link class="nav-item" :to="{name:'pvDetailEvent',query: {clusterId: clusterId}}">事件</router-link>
-      <router-link class="nav-item" :to="{name:'pvDetailYaml',query: {clusterId: clusterId}}">YAML</router-link>
+      <router-link class="nav-item" :to="{name:'pvDetailInfo',query: {clusterId: clusterId,resourceIns:resourceIns}}">详情</router-link>
+      <router-link class="nav-item" :to="{name:'pvDetailEvent',query: {clusterId: clusterId,resourceIns:resourceIns}}">事件</router-link>
+      <router-link class="nav-item" :to="{name:'pvDetailYaml',query: {clusterId: clusterId,resourceIns:resourceIns}}">YAML</router-link>
     </div> 
 
     <!-- 子页面 -->
@@ -46,6 +46,7 @@ export default {
   data() {
     return {
         clusterId:'',
+        resourceIns:''
     };
   },
   components: {
@@ -54,6 +55,7 @@ export default {
   created() {
     // 从路由获取集群id
     this.clusterId=this.$route.query.clusterId;
+    this.resourceIns=this.$route.query.resourceIns;
   },
   methods: {
     //返回上一层

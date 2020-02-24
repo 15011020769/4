@@ -168,3 +168,8 @@ export const addVal2Key = obj => {
   Object.keys(result).forEach(k => result[result[k]] = k)
   return result
 }
+
+/** 验证ip地址是否有效 */
+export const isValidIPAddressNew = e => /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])(\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])){3}(\/\d+)?$/.test(e.trim())
+/** 验证ipv6地址是否有效 */
+export const isValidIPv6 = e => /(^\w{1,4}(:\w{0,4}){7}$)|(^\w{1,4}(:\w{1,4}){0,5}::$)|(^::(\w{1,4}:){0,5}\w{1,4}$)|(^(\w{1,4}:){0,3}\w{1,4}::(\w{1,4}:){0,3}\w{1,4}$)/.test(e.trim())

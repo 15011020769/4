@@ -3,13 +3,13 @@
     <div class="topTitR newClear">
       <div class="topTitCenter">
         <div class="leftTit">
-          核对信息
+          核對信息
         </div>
         <div class="rightStep">
           <el-steps :active="active" finish-status="success">
-            <el-step title="核对信息"></el-step>
+            <el-step title="核對信息"></el-step>
             <el-step title="支付"></el-step>
-            <el-step title="支付结果"></el-step>
+            <el-step title="支付結果"></el-step>
           </el-steps>
         </div>
       </div>
@@ -19,28 +19,28 @@
         <div class="payFortable">
           <table class="table-div">
               <tr class="t-head">
-                <td>产品名称</td>
+                <td>產品名稱</td>
                 <td>配置信息</td>
-                <td>单价</td>
-                <td>数量</td>
-                <td>付费方式</td>
-                <td>购买时长</td>
-                <td>优惠</td>
-                <td>费用</td>
+                <td>單價</td>
+                <td>數量</td>
+                <td>付費方式</td>
+                <td>購買時長</td>
+                <td>優惠</td>
+                <td>費用</td>
               </tr>
               <tr class="t-body" colspan="0" aria-rowspan="0">
                 <td>
-                  <span>高防IP专业版新购</span>
+                  <span>高防IP專業版新購</span>
                 </td>
                 <td>
-                  <p><span>地域：{{allData1.address}}</span></p>
-                  <p><span>防护带宽峰值：{{allData1.savePeak}}</span></p>
-                  <p><span>弹性防护峰值：{{allData1.elasticPeak}}</span></p>
-                  <p><span>自动续费：{{allData1.autoPay}}</span></p>
-                  <p><span>业务宽带(Mbps)：{{allData1.BusinessBroadband}}</span></p>
+                  <p><span>地域{{allData1.address}}</span></p>
+                  <p><span>防護帶寬峰值：{{allData1.savePeak}}</span></p>
+                  <p><span>彈性防護峰值：{{allData1.elasticPeak}}</span></p>
+                  <p><span>自動續約：{{allData1.autoPay}}</span></p>
+                  <p><span>業務寬頻(Mbps)：{{allData1.BusinessBroadband}}</span></p>
                   <p><span>HTTP(QPS)：{{allData1.httpQPS}}</span></p>
                   <p><span>HTTPS(QPS)：{{allData1.httpsQPS}}</span></p>
-                  <p><span>转发规则数(个)：{{allData1.shareNum}}</span></p>
+                  <p><span>轉發規則數(个)：{{allData1.shareNum}}</span></p>
                 </td>
                 <td>
                   <span>{{allData1.payMoney}}元/月</span>
@@ -49,13 +49,13 @@
                   <span>1</span>
                 </td>
                 <td>
-                  <span>预付费</span>
+                  <span>預付費</span>
                 </td>
                 <td>
                   <span>{{allData1.payTime}}</span>
                 </td>
                 <td>
-                  <span>无</span>
+                  <span>無</span>
                 </td>
                 <td>
                   <span class="tableTdLast">{{allData1.payMoney}}元</span>
@@ -64,12 +64,8 @@
             </table>
         </div>
         <div class="bottomPay">
-          <div class="payCheck newClear">
-            <el-checkbox label="使用代金券" v-model="checkBox" :disabled='true'></el-checkbox>  <span class="checkBoxTip">(该产品无代金券)</span>
-            <span class="copyMoney">+ 兑换代金券</span>
-          </div>
           <div class="pay-submit">
-            <span>购买/开通/续费 均可开票，購買成功后可前往 控制台 > 费用中心<a href="#">开发票</a></span>
+            <span>購買/開通/續費 均可開票，購買成功後可前往 控制台 > 費用中心<a href="#">開發票</a></span>
             <span class="allTotal">总计费用：<span class="allMoneySpan"> ¥<span>{{allData1.payMoney}}</span></span></span>
             <el-button class="payBtnOne">代理支付</el-button>
             <el-button class="payBtnTwo" @click="next">自行支付</el-button>

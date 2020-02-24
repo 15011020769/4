@@ -129,4 +129,5 @@ export const POINT_REQUEST = 'tke2/ForwardRequest'
 // 删除告警配置
 export const TKE_DELETE_POLICIES = 'tke2/DeleteAlarmPolicies'
 
-
+// 云硬盘列表
+export const TKE_DESCRIBEDISKS = 'cbs2/DescribeDisks'

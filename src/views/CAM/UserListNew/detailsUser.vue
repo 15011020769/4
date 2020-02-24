@@ -271,7 +271,7 @@ import { ErrorTips } from "@/components/ErrorTips";
 import Headcom from "./components/Head"; //头部组件引入
 import {
   QUERY_USER,
-  QUERY_POLICY,
+  QUERY_USER_ALLPOLICY,
   RELATE_USER,
   REMOVEBIND_USER,
   REMOVEGROUP_USER,
@@ -532,9 +532,12 @@ export default {
         let ploicyParams = {
           Version: "2019-01-16",
           TargetUin: this.userData.Uin,
-          Rp: this.pagesizes
+          Rp: this.pagesizes,
+          Page: 10,
+          AttachType: 0,
         };
-        this.axios.post(QUERY_POLICY, ploicyParams).then(res => {
+        // TODO
+        this.axios.post(QUERY_USER_ALLPOLICY, ploicyParams).then(res => {
           if (res.Response.Error === undefined) {
             if (res != "") {
               this.loading = false;

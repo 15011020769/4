@@ -48,7 +48,7 @@
     <el-card style="margin-top: 15px;">
       <h3>{{t('CC规则设置', 'WAF.ccgzsz')}}</h3>
       <el-row type="flex" justify="space-between" class="actions-container">
-        <el-button type="primary" @click="dialogRule=true">{{t('添加规则', 'WAF.tjgz')}}</el-button>
+        <el-button type="primary" @click="dialogCCRule=true">{{t('添加规则', 'WAF.tjgz')}}</el-button>
         <i class="el-icon-refresh refresh" />
       </el-row>
       <el-table :data="rules" v-loading="loading" :empty-text="t('暂无数据', 'WAF.zwsj')">
@@ -57,38 +57,64 @@
         </el-table-column>
         <el-table-column :label="t('匹配条件', 'WAF.pptj')">
           <template slot-scope="scope">
+            {{CC_RULE_MATCH[scope.row.MatchFunc]}}
           </template>
         </el-table-column>
-        <el-table-column prop="CreateTime" :label="t('请求路径', 'WAF.qqlj')">
+        <el-table-column prop="Url" :label="t('请求路径', 'WAF.qqlj')">
         </el-table-column>
-        <el-table-column prop="CreateTime" :label="t('访问频次', 'WAF.fwpc')">
+        <el-table-column :label="t('访问频次', 'WAF.fwpc')">
+          <template slot-scope="scope">
+            {{scope.row.Limit}}次/{{scope.row.Interval}}秒
+          </template>
         </el-table-column>
-        <el-table-column prop="CreateTime" :label="t('执行动作', 'WAF.zxdz')">
+        <el-table-column :label="t('执行动作', 'WAF.zxdz')">
+          <template slot-scope="scope">
+            {{CC_RULE_ACTION[scope.row.ActionType]}}
+          </template>
         </el-table-column>
         <el-table-column prop="CreateTime" :label="`${t('启用', 'WAF.qy')}SESSION`">
+          <template slot-scope="scope">
+            {{scope.row.Advance === 1 ? '是' : '否'}}
+          </template>
         </el-table-column>
         <el-table-column prop="CreateTime" :label="t('惩罚时长', 'WAF.cfsc')">
+          <template slot-scope="scope">
+            {{scope.row.ValidTime/60}}分钟
+          </template>
         </el-table-column>
-        <el-table-column prop="CreateTime" :label="t('优先级', 'WAF.yxsx')" sortable>
+        <el-table-column prop="Priority" :label="t('优先级', 'WAF.yxsx')" sortable>
         </el-table-column>
         <el-table-column prop="Name" :label="t('规则开关', 'WAF.gzkg')">
           <template slot-scope="scope">
+            <el-switch v-model="scope.row.StatusBool" />
           </template>
         </el-table-column>
-        <el-table-column prop="CreateTime" :label="t('创建时间', 'WAF.cjsj')" sortable>
-        </el-table-column>
-        <el-table-column prop="Name" label="操作">
+        <el-table-column prop="CreateTime" :label="t('创建时间', 'WAF.cjsj')" sortable width="150">
           <template slot-scope="scope">
-            <el-button type="text" @click="updateRule">{{t('编辑', 'WAF.bj')}}</el-button> 
+            {{formatDate(scope.row.TsVersion)}}
+          </template>
+        </el-table-column>
+        <el-table-column prop="Name" label="操作" width="120" class-name="actions" align="center">
+          <template slot-scope="scope">
+            <el-button type="text" @click="updateRule(scope.row)">{{t('编辑', 'WAF.bj')}}</el-button> 
             <el-button type="text">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
+       <el-pagination
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :current-page="offset"
+        :page-sizes="[10, 15, 20, 25, 30, 35, 40, 45, 50]"
+        :page-size="limit"
+        layout="total, sizes, prev, pager, next"
+        :total="total">
+      </el-pagination>
     </el-card>
     <el-dialog
       :title="`SESSION${t('设置', 'WAF.sz')}`"
       :visible.sync="dialogSessionSet"
-      :before-close="beforeClose"
+      :before-close="beforeSessionSetClose"
       width="730px"
     >
       <SessionSet :visible.sync="dialogSessionSet" :session="session" />
@@ -96,10 +122,19 @@
     <el-dialog
       :title="`SESSION${t('测试', 'WAF.cs')}`"
       :visible.sync="dialogSessionTest"
-      :before-close="beforeClose"
+      :before-close="beforeSessionSetClose"
       width="530px"
     >
       <SessionTest :visible.sync="dialogSessionTest" :session="session" />
+    </el-dialog>
+    <el-dialog
+      :title="t(!rule ? '添加CC防护规则' : '编辑CC防护规则', !rule ? 'WAF.tjccrule' : 'WAF.bjccrule')"
+      :visible.sync="dialogCCRule"
+      width="730px"
+      @close="beforeRuleClose"
+      destroy-on-close
+    >
+      <CCRule :visible.sync="dialogCCRule" :rule="rule" :domain="domain" />
     </el-dialog>
   </div>
 </template>
@@ -109,7 +144,9 @@ import SessionSet from '../model/sessionSet'
 import SessionTest from '../model/sessionTest'
 import { flatObj } from '@/utils'
 import { ErrorTips } from "@/components/ErrorTips"
-import { COMMON_ERROR } from '../../constants'
+import { COMMON_ERROR, CC_RULE_MATCH, CC_RULE_ACTION } from '../../constants'
+import CCRule from '../model/ccrule'
+import moment from 'moment'
 
 export default {
   props: {
@@ -122,17 +159,25 @@ export default {
   },
   data() {
     return {
+      CC_RULE_MATCH,
+      CC_RULE_ACTION,
       rules: [],
+      rule: undefined,
       session: undefined,
       loading: true,
       showTip: true,
+      dialogCCRule: false,
       dialogSessionSet: false,
       dialogSessionTest: false,
+      offset: 1,
+      limit: 10,
+      total: 0,
     }
   },
   components: {
     SessionSet,
-    SessionTest
+    SessionTest,
+    CCRule
   },
   watch: {
     domain(n) {
@@ -143,6 +188,17 @@ export default {
     }
   },
   methods: {
+    formatDate(ms) {
+      return moment(ms).format('YYYY-MM-DD HH:mm:ss')
+    },
+    handleCurrentChange(page) {
+      this.offset = page
+      this.getCCRule()
+    },
+    handleSizeChange(size) {
+      this.limit = size
+      this.getCCRule()
+    },
     delSession() {
       this.$confirm('删除SESSION设置？', '提示', {
         confirmButtonText: '确定',
@@ -175,10 +231,16 @@ export default {
         Version: '2018-01-25',
         Domain: this.domain.Domain,
         Edition: 'clb-waf',
-        Offset: 1,
-        Limit: 10,
+        Offset: this.offset - 1,
+        Limit: this.limit,
       }).then(resp => {
-        this.generalRespHandler(resp, data => {
+        this.generalRespHandler(resp, ({ Data }) => {
+          Data = Data || {Res: [], TotalCount: 0}
+          Data.Res.forEach(rule => {
+            rule.StatusBool = !!rule.Status
+          })
+          this.rules = Data.Res
+          this.total = Data.TotalCount
           this.loading = false
         })
       })
@@ -189,15 +251,22 @@ export default {
     sessionTest() {
       this.dialogSessionTest = true
     },
-    beforeClose(done) {
+    beforeSessionSetClose(done) {
       this.session = undefined
       done()
     },
     updateRule(rule) {
       this.rule = rule
-      this.dialogRule = true
+      this.dialogCCRule = true
     },
-
+    beforeRuleClose() {
+      this.rule = undefined
+    },
+    onSuccess() {
+      this.dialogRule = false
+      this.rule = undefined
+      this.getCustomRules()
+    },
   }
 }
 </script>
@@ -244,6 +313,11 @@ export default {
         color: #888;
       }
     }
+  }
+}
+.actions {
+  button {
+    padding: 0;
   }
 }
 </style>

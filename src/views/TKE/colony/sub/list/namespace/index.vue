@@ -70,7 +70,7 @@
           label="操作"
           >
           <template slot-scope="scope">
-            <el-button size="small" type="text" :disabled="scope.row.metadata.annotations?false:true" @click="deleteNameSpace(scope.row)">删除</el-button>
+            <el-button size="small" type="text" :disabled="scope.row.isDelete?true:false" @click="deleteNameSpace(scope.row)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -148,9 +148,15 @@ export default {
         if (res.Response.Error === undefined) {
           this.loadShow = false;
           let response = JSON.parse(res.Response.ResponseBody);
+          console.log("sss",response.items,"items");
           if(response.items.length > 0) {
             response.items.map(o => {
               o.addTime = moment(o.metadata.creationTimestamp).format("YYYY-MM-DD HH:mm:ss");
+              if(o.metadata.name === 'default' || o.metadata.name.indexOf('kube-') === 0) {
+                o.isDelete = true
+              } else {
+                o.isDelete = false
+              }
             });
             this.list = response.items;
             this.total = response.items.length;
@@ -186,7 +192,6 @@ export default {
         ClusterName: this.clusterId
       }
       this.axios.post(POINT_REQUEST, param).then(res => {
-        debugger
         if (res.Response.Error === undefined) {
           this.getNameSpaceList();
           this.loadShow = false;

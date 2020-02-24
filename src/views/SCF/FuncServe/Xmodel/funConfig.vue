@@ -2,7 +2,9 @@
   <div class="funCongig" v-loading='Congigload'>
     <div class="title">
       <h4>函数配置</h4>
-      <p><a @click="edit=true">编辑</a></p>
+      <p>
+        <el-button type="text" @click="edit=true" :disabled='disedit'>编辑</el-button>
+      </p>
     </div>
     <div v-if="edit===false">
       <div class="Content">
@@ -186,8 +188,10 @@
     ErrorTips
   } from "@/components/ErrorTips";
   export default {
+    props: ['FunctionVersion'],
     data() {
       return {
+        disedit: false, //编辑按钮禁用
         Congigload: true,
         edit: false,
         functionName: this.$route.query.functionName,
@@ -266,6 +270,9 @@
       }
     },
     mounted() {
+      if (this.FunctionVersion !== '$LATEST') {
+        this.disedit = true
+      }
       this.GetDate()
       this.AddScience()
       this._Getrole()
@@ -286,6 +293,7 @@
           Region: localStorage.getItem('regionv2'),
           Version: "2018-04-16",
           FunctionName: this.functionName,
+          Qualifier: this.FunctionVersion
         };
         this.axios.post(SCF_DETAILS, param).then(res => {
           if (res.Response.Error === undefined) {
@@ -545,7 +553,6 @@
     .title {
       display: flex;
       justify-content: space-between;
-      margin-bottom: 30px;
 
       h4 {
         font-size: 14px;

@@ -1,3 +1,6 @@
+/** 获取用户购买的WAF的类型 */
+export const DESCRIBE_USER_EDITION = 'waf2/DescribeUserEdition'
+/** 获取WAF的套餐信息 */
 export const DESCRIBE_USER_INFO = 'waf2/DescribeUserInfo'
 /** 询价 */
 export const DESCRIBE_WAF_PRICE = 'waf2/InquiryPriceWafInstance'
@@ -45,8 +48,14 @@ export const DESCRIBE_AREABAN_SUPPORT_AREAS = 'waf2/DescribeAreaBanSupportAreas'
 export const MODIFY_AREA_BAN_AREAS = 'waf2/ModifyAreaBanAreas'
 /** 添加封禁地域 */
 export const ADD_AREA_BAN_AREAS = 'waf2/AddAreaBanAreas'
+/** 增加自定义规则 */
+export const ADD_CUSTOM_RULE = 'waf2/AddCustomRule'
+/** 增加自定义规则 */
+export const MODIFY_CUSTOM_RULE = 'waf2/ModifyCustomRule'
 /** 获取自定义策略列表 */
 export const DESCRIBE_CUSTOM_RULES = 'waf2/DescribeCustomRules'
+/** Waf CC V2 Upsert接口 */
+export const UPSERT_CCRULE = 'waf2/UpsertCCRule'
 /** Waf CC V2 Query接口 */
 export const DESCIRBE_CCRULE = 'waf2/DescirbeCCRule'
 /** Waf 会话定义查询接口 */

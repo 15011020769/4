@@ -2,29 +2,33 @@
   <el-form ref="form" :model="form" label-width="80px">
     <el-form-item
       prop="Name"
-      label="规则名称"
+      :label="t('规则名称', 'WAF.gzmc')"
       :rules="[
-        { required: true, message: '名称不能为空' },
-        { max: 50, message: '名称长度不能超过50个字符' }
+        { required: true, message: t('规则名称不能为空', 'WAF.gzmcbnwk') },
+        { max: 50, message: t('名称长度不能超过50个字符', 'WAF.mccd50zy') }
       ]"
     >
       <el-input
         class="name-input"
         v-model="form.Name"
-        placeholder="请输入名称，最长50个字符"
+        :placeholder="t('请输入名称，最长50个字符', 'WAF.qsrmc50zy')"
       ></el-input>
     </el-form-item>
     <el-form-item
-      prop="Strategies"
-      label="匹配条件"
+      :label="t('匹配条件', 'WAF.pptj')"
       :rules="[
-        { required: true, message: '匹配条件不能为空' },
+        { required: true, message: t('匹配条件不能为空', 'WAF.pptjbnwk') },
       ]"
     >
       <el-table :data="form.Strategies" class="strategies-table">
-        <el-table-column label="匹配字段" width="160">
+        <el-table-column :label="t('匹配字段', 'WAF.pplw')" width="160">
           <template slot-scope="scope">
-            <el-select v-model="scope.row.Field" popper-class="small" class="small" @change="matchKey => onChangeMatchKey(matchKey, scope)">
+            <el-select
+              v-model="scope.row.Field"
+              popper-class="small"
+              class="small"
+              @change="matchKey => onChangeMatchKey(matchKey, scope)"
+            >
               <el-option
                 v-for="item in matchKeys[scope.$index]"
                 :key="item.value"
@@ -35,15 +39,20 @@
             </el-select>
           </template>
         </el-table-column>
-        <el-table-column label="匹配参数" width="180">
+        <el-table-column :label="t('匹配参数', 'WAF.ppcs')" width="180">
           <template slot-scope="scope">
-            <el-input v-if="MATCH_KEY[scope.row.Field].param" v-model="scope.row.Arg" placeholder="请输入参数值，不填默认全部" class="small" />
+            <el-form-item
+              v-if="MATCH_KEY[scope.row.Field].param"
+              :prop="`Strategies[${scope.$index}].Arg`"
+            >
+              <el-input v-model="form.Strategies[scope.$index].Arg" :placeholder="t('请输入参数值，不填默认全部', 'WAF.qsrcszmrqb')" class="small" />
+            </el-form-item>
             <span v-else>
-              此字段不支持参数选择
+              {{t('此字段不支持参数选择', 'WAF.clwbzccsxz')}}
             </span>
           </template>
         </el-table-column>
-        <el-table-column label="逻辑符号" width="120">
+        <el-table-column :label="t('逻辑符号', 'WAF.ljfh')" width="120">
           <template slot-scope="scope">
             <el-select v-model="scope.row.CompareFunc" popper-class="small" class="small">
               <el-option
@@ -57,16 +66,17 @@
             </el-select>
           </template>
         </el-table-column>
-        <el-table-column label="匹配内容" width="230">
+        <el-table-column :label="t('匹配内容', 'WAF.ppnr')" width="230" class-name="match-content">
           <template slot-scope="scope">
             <el-form-item
+              v-if="MATCH_KEY[scope.row.Field].input !== false"
               :prop="`Strategies[${scope.$index}].Content`"
               :rules="[
-                { required: true, message: '内容不能为空' },
+                { validator:  MATCH_KEY[scope.row.Field].validator(MATCH_KEY[scope.row.Field])},
               ]"
               class="content-input"
             >
-            <el-input v-model="scope.row.Content" :placeholder="MATCH_KEY[scope.row.Field].placeholder" class="small"/>
+            <el-input v-model="form.Strategies[scope.$index].Content" :placeholder="MATCH_KEY[scope.row.Field].placeholder" class="small"/>
             </el-form-item>
           </template>
         </el-table-column>
@@ -82,13 +92,13 @@
       </el-row>
     </el-form-item>
     <el-form-item
-      label="执行动作"
+      :label="t('执行动作', 'WAF.zxdz')"
       prop="ActionType"
       :rules="[
-        { required: true, message: '执行动作不能为空' },
+        { required: true, },
       ]"
     >
-       <el-select v-model="form.ActionType" placeholder="请选择">
+       <el-select v-model="form.ActionType">
           <el-option
             v-for="item in POLICY_RULE_ACTION_ARR"
             :key="item.value"
@@ -100,40 +110,33 @@
         <el-tooltip v-show="form.ActionType === POLICY_RULE_ACTION.人机识别" placement="right-end" :content="t('交互式行为验证码，可智能感知并切换验证难度。该功能需JavaScript支持；部分采用Ajax发送的post请求以及非WEB应用（例如App），可能无法支持', 'WAF.rjsbtip')" effect="light">
           <i class="el-icon-info"></i>
         </el-tooltip>
-        <div class="name-input" style="display: inline-block;" v-show="form.ActionType === POLICY_RULE_ACTION.重定向">
+        <div class="name-input" style="display: inline-block;" v-if="form.ActionType === POLICY_RULE_ACTION.重定向">
           <el-form-item
-            prop="form.Redirect"
+            prop="Redirect"
             :rules="[
-              { 
-                validator(rule, value, callback) {
-                  
-                }
-                required: true, message: t('重定向路径输入有误，请以/开头，128个字符以内', 'WAF.cdxtsy') 
-              },
+              {
+                validator: isValidURI(),
+              }
             ]"
             >
-            <el-input :placeholder="t('重定向路径输入有误，请以/开头，128个字符以内', 'WAF.cdxtsy')"/>
+            <el-input v-model="form.Redirect" :placeholder="t('重定向路径输入有误，请以/开头，128个字符以内', 'WAF.cdxtsy')"/>
           </el-form-item>
         </div>
         <span v-show="form.ActionType === POLICY_RULE_ACTION.放行">
-          <span class="sub-text"> 放行规则优先于其他匹配操作执行</span>
+          <span class="sub-text"> {{t('放行规则优先于其他匹配操作执行', 'WAF.fxgzyxy')}}</span>
           <el-checkbox-group v-model="Bypass" class="bypass">
-            <el-checkbox label="geoip">继续执行地域封禁防护</el-checkbox>
-            <el-checkbox label="cc">继续执行CC策略防护</el-checkbox>
-            <el-checkbox label="owasp">继续执行WEB应用防护</el-checkbox>
-            <el-checkbox label="ai">继续执行AI引擎防护</el-checkbox>
-            <el-checkbox label="antileakage">继续执行信息防泄漏防护</el-checkbox>
+            <el-checkbox v-for="item in BY_PASS_ACTION_ARR" :label="item.value" :key="item.value">{{item.name}}</el-checkbox>
           </el-checkbox-group>
         </span>
     </el-form-item>
     <el-form-item
-      label="截止时间"
+      :label="t('截止时间', 'WAF.jzsj')"
       prop="ExpireTimeType"
       :rules="[
-        { required: true, message: '截止时间不能为空' },
+        { required: true },
       ]"
     >
-       <el-select v-model="form.ExpireTimeType" placeholder="请选择">
+       <el-select v-model="form.ExpireTimeType">
         <el-option label="永久生效" :value="0"></el-option>
         <el-option label="限定日期" :value="1"></el-option>
       </el-select>&nbsp;
@@ -141,7 +144,7 @@
         <el-date-picker
           v-model="ExpireTimeDay"
           type="date"
-          placeholder="选择日期">
+         >
         </el-date-picker>&nbsp;
         <el-tooltip placement="right-end" :content="t('截止日期为 选中日期 当天24:00点之前', 'WAF.jzrqwdt')" effect="light">
           <i class="el-icon-info"></i>
@@ -149,53 +152,85 @@
       </span>
     </el-form-item>
     <el-form-item
-      label="优先级"
+      :label="t('优先级', 'WAF.yxsx')"
       prop="SortId"
       :rules="[
-        { required: true, message: '优先级不能为空' },
+        { required: true, message: t('优先级不能为空', 'WAF.yxsxbnwk') },
       ]"
     >
       <el-input-number v-model="form.SortId" :min="1" :max="100"></el-input-number>
-      <p class="sub-text">请输入1~100的整数，数字越小，代表这条规则的执行优先级越高</p>
+      <p class="sub-text">{{t('请输入1~100的整数，数字越小，代表这条规则的执行优先级越高', 'WAF.qrs1z100dzs')}}</p>
     </el-form-item>
     <el-form-item>
-      <el-button type="primary" @click="onSubmit">添加</el-button>
-      <el-button @click="close">取消</el-button>
+      <el-button type="primary" :loading="loading" @click="onSubmit">{{rule && rule.RuleId ? '保存' : '添加'}}</el-button>
+      <el-button :disabled="loading" @click="close">取消</el-button>
     </el-form-item>
   </el-form>
 </template>
 <script>
-import { POLICY_RULE_ACTION, POLICY_RULE_ACTION_ARR, MATCH_KEY_ARR, MATCH_KEY, LOGIC_SYMBOL_ARR } from '../../constants'
+import { 
+  POLICY_RULE_ACTION, // 执行动作
+  POLICY_RULE_ACTION_ARR,
+  MATCH_KEY, // 匹配字段
+  MATCH_KEY_ARR,
+  LOGIC_SYMBOL_ARR, // 逻辑符号
+  BY_PASS_ACTION, // 放行后继续执行的动作
+  BY_PASS_ACTION_ARR,
+} from '../../constants'
+import { ADD_CUSTOM_RULE, MODIFY_CUSTOM_RULE } from '@/constants'
+import { flatObj } from '@/utils'
+import moment from 'moment'
+
 const DEFAULT_MATCH_KEY_Field = 'IP'
 
 export default {
   props: {
+    domain: Object,
     visible: Boolean,
     rule: {
       required: false,
       type: Object,
-      default() {
-        return {
-          Name: '',
-          ExpireTimeType: 0,
-          ActionType: POLICY_RULE_ACTION.阻断,
-          SortId: 100,
-          Strategies: [{
-            Field: DEFAULT_MATCH_KEY_Field,
-            CompareFunc: MATCH_KEY[DEFAULT_MATCH_KEY_Field].symbol[0]
-          }]
-        }
-      }
     }
   },
   watch: {
-    rule(r) {
-      if (r) {
-        const selectedMatchKeys = r.Strategies.map(strategy => strategy.Field)
-        const matchKeys = r.Strategies.map((strategy, index) => {
-          return MATCH_KEY_ARR.filter(matchKey => matchKey === selectedMatchKeys[index] && !selectedMatchKeys.includes(matchKey))
-        })
-      }
+    rule: {
+      handler(r) {
+        if (r) {
+          this.selectedMatchKeys = []
+          if (r.ExpireTimeType === 1) {
+            this.ExpireTimeDay = moment(Number(r.ExpireTime)*1000).format('YYYY-MM-DD')
+          }
+          if (r.ActionType === POLICY_RULE_ACTION.放行) {
+            const selectedBypass = new Set(r.Bypass.split(','))
+            const allBypass = new Set(Object.keys(BY_PASS_ACTION))
+            const bypass = []
+            for (let item of allBypass) {
+              if (!selectedBypass.has(item)) {
+                bypass.push(item);
+              }
+            }
+            this.Bypass = bypass
+          }
+          this.form = JSON.parse(JSON.stringify(r))
+          const selectedMatchKeys = r.Strategies.map(strategy => strategy.Field)
+          this.selectedMatchKeys.push(...selectedMatchKeys)
+          this.resetMatchKeys()
+        } else {
+          this.selectedMatchKeys.push('IP')
+          this.form = {
+            Name: '',
+            ExpireTimeType: 0,
+            ActionType: POLICY_RULE_ACTION.阻断,
+            SortId: 100,
+            Strategies: [{
+              Field: DEFAULT_MATCH_KEY_Field,
+              CompareFunc: MATCH_KEY[DEFAULT_MATCH_KEY_Field].symbol[0],
+              Content: '',
+            }]
+          }
+        }
+      },
+      immediate: true
     },
     selectedMatchKeys(n) {
       this.resetMatchKeys()
@@ -203,7 +238,8 @@ export default {
   },
   data() {
     return {
-      form: this.rule,
+      loading: false,
+      form: {},
       selectedMatchKeys: [],
       Bypass: [],
       ExpireTimeDay: new Date(),
@@ -212,33 +248,79 @@ export default {
       POLICY_RULE_ACTION_ARR,
       MATCH_KEY,
       LOGIC_SYMBOL_ARR,
+      BY_PASS_ACTION_ARR,
     }
   },
-  mounted() {
-    this.selectedMatchKeys.push('IP')
-  },
   methods: {
-    onChangeMatchKey(matchKey, { $index }) {
+    isValidURI() {
+      var warpper = (rule, value, callback) => {
+        if (/^\/.{1,128}$/.test(value)) {
+          return callback()
+        }
+        callback(this.t('重定向路径输入有误，请以/开头，128个字符以内', 'WAF.cdxtsy'))
+      }
+      return warpper
+    },
+    onChangeMatchKey(matchKey, { row, $index }) {
+      row.Content = ''
+      this.$refs.form.clearValidate(`Strategies[${$index}].Content`)
       this.selectedMatchKeys.splice($index, 1, matchKey)
       const strategy = this.form.Strategies.find((_, i) => i === $index)
       strategy.CompareFunc = MATCH_KEY[strategy.Field].symbol[0]
     },
     onSubmit() {
+      this.loading = true
       this.$refs.form.validate((valid) => {
         if (valid) {
-          alert('submit!');
-        } else {
-          console.log('error submit!!');
-          return false;
+          const param = {
+            Version: '2018-01-25',
+            SortId: this.form.SortId,
+            ExpireTime: this.form.ExpireTimeType === 0 ? 0 : moment(this.ExpireTimeDay).startOf('day').format("X"),
+            Domain: this.domain.Domain,
+            Edition: 'clb-waf',
+            Strategies: this.form.Strategies,
+          }
+
+          let url = ADD_CUSTOM_RULE
+          if (this.rule) { // 修改
+            url = MODIFY_CUSTOM_RULE
+            param.RuleAction = this.form.ActionType
+            param.RuleName = this.form.Name
+            param.RuleId = this.rule.RuleId
+          } else { // 添加
+            param.ActionType = this.form.ActionType
+            param.Name = this.form.Name
+          }
+          if (param.ActionType === POLICY_RULE_ACTION.重定向) {
+            param.Redirect = this.form.Redirect
+          }
+          if (param.ActionType === POLICY_RULE_ACTION.放行) {
+            const selectedBypass = new Set(this.Bypass)
+            const allBypass = new Set(Object.keys(BY_PASS_ACTION))
+            const bypass = []
+            for (let item of allBypass) {
+              if (!selectedBypass.has(item)) {
+                bypass.push(item);
+              }
+            }
+            param.Bypass = bypass.join()
+          }
+
+          this.axios.post(url, flatObj(param)).then(resp => {
+            this.generalRespHandler(resp, () => {
+              this.$emit('onSuccess')
+            })
+          }).then(() => this.loading = false)
         }
-      });
+      })
     },
     addStrategy() {
       const matchkeys = MATCH_KEY_ARR.filter(({ value }) => !this.selectedMatchKeys.includes(value))
       this.selectedMatchKeys.push(matchkeys[0].value)
       this.form.Strategies.push({
         Field: matchkeys[0].value,
-        CompareFunc: MATCH_KEY[matchkeys[0].value].symbol[0]
+        CompareFunc: MATCH_KEY[matchkeys[0].value].symbol[0],
+        Content: '',
       })
     },
     delStrategy(index) {
@@ -250,7 +332,6 @@ export default {
       this.matchKeys = this.selectedMatchKeys.map(selectedMatchKeyValue => {
         return MATCH_KEY_ARR.filter(({ value }) => value === selectedMatchKeyValue || !this.selectedMatchKeys.includes(value))
       })
-
     },
     close() {
       this.$emit('update:visible', false)
@@ -301,6 +382,21 @@ export default {
   ::v-deep .el-checkbox__label {
     font-size: 12px;
     font-weight: normal;
+  }
+}
+.match-content {
+  padding-bottom: 0;
+}
+::v-deep .el-table__row td {
+  padding: 0;
+  .cell {
+    & > * {
+      padding: 12px 0;
+    }
+    .el-form-item__error {
+      position: absolute;
+      top: 88%;
+    }
   }
 }
 </style>

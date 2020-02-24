@@ -19,7 +19,7 @@
         <el-form-item label="镜像仓库秘钥">
           <div style="overflow: visible; max-width: 550px;">
             <el-table
-              :data="list"
+              :data="secretsList"
               
               style="width: 100%">
               <el-table-column
@@ -27,6 +27,9 @@
                 label="名称"
                  width="300"
                 >
+                <template slot-scope="scope">
+                  <span>{{scope.row.metadata.name}}</span>
+                </template>
               </el-table-column>
               <el-table-column
                 prop=""
@@ -83,6 +86,7 @@ export default {
       name: '',//命名空间名称
       loadShow: false, //加载是否显示
       detail: {},//详情数据
+      secretsList: [],//秘钥列表
     };
   },
   components: {
@@ -93,6 +97,7 @@ export default {
     this.clusterId=this.$route.query.clusterId;
     this.name = this.$route.query.name;
     this.getNameSpaceInfo();
+    this.getSecretsList();
   },
   methods: {
     async getNameSpaceInfo() {
@@ -110,6 +115,38 @@ export default {
           let response = JSON.parse(res.Response.ResponseBody);
           this.detail = response;
           console.log(this.detail,"detail");
+        } else {
+          this.loadShow = false;
+          let ErrTips = {
+          
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
+    },
+    //获取镜像仓库秘钥列表
+    async getSecretsList() {
+      this.loadShow = true;
+      let param = {
+        Method: "GET",
+        Path: "/api/v1/namespaces/"+this.name+"/secrets",
+        Version: "2018-05-25",
+        ClusterName: this.clusterId
+      }
+
+      await this.axios.post(POINT_REQUEST, param).then(res => {
+        if(res.Response.Error === undefined) {
+          this.loadShow = false;
+          let response = JSON.parse(res.Response.ResponseBody);
+          this.secretsList = response.items;
+          // this.detail = response;
+          console.log(response,"response");
         } else {
           this.loadShow = false;
           let ErrTips = {

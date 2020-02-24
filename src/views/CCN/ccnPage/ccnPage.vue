@@ -4,8 +4,10 @@
       <h1>{{ $t('CCN.total.title') }}</h1>
     </div>
     <div class="tea-content__body">
-      <div class="btn">
-        <el-button type="text" @click="dialogFormVisible = true">{{$t('CCN.total.newCreate')}}</el-button>
+      <div>
+        <el-button type="primary" size="small" @click="dialogFormVisible = true" :disabled='newCreateshow'>
+          {{$t('CCN.total.newCreate')}}
+        </el-button>
       </div>
     </div>
     <div class="tables">
@@ -24,14 +26,8 @@
         </el-table-column>
         <el-table-column prop="State" :label="$t('CCN.total.tr2')">
           <template slot-scope="scope">
-            <div
-              v-if="scope.row.State == 'AVAILABLE'"
-              class="off_color"
-            >{{$t('CCN.total.newCreate')}}</div>
-            <div
-              v-else-if="scope.row.State == 'ISOLATED'"
-              class="close_color"
-            >{{$t('CCN.total.glz')}}</div>
+            <div v-if="scope.row.State == 'AVAILABLE'" class="off_color">{{$t('CCN.total.newCreate')}}</div>
+            <div v-else-if="scope.row.State == 'ISOLATED'" class="close_color">{{$t('CCN.total.glz')}}</div>
             <div v-else class="close_color">{{$t('CCN.total.newClose')}}</div>
           </template>
         </el-table-column>
@@ -73,28 +69,19 @@
           <template slot-scope="scope">
             <div class="edit" v-if="scope.row.BandwidthLimitType == 'OUTER_REGION_LIMIT'">
               {{$t('CCN.total.addressS')}}
-              <i
-                type="text"
-                @click="updateBandwidthLimitType(scope.row)"
-              >
+              <i type="text" @click="updateBandwidthLimitType(scope.row)">
                 <i class="el-icon-edit"></i>
               </i>
             </div>
             <div class="edit" v-else-if="scope.row.BandwidthLimitType == 'INTER_REGION_LIMIT'">
               {{$t('CCN.total.addressJS')}}
-              <i
-                type="text"
-                @click="updateBandwidthLimitType(scope.row)"
-              >
+              <i type="text" @click="updateBandwidthLimitType(scope.row)">
                 <i class="el-icon-edit"></i>
               </i>
             </div>
             <div class="edit" v-else>
               {{$t('CCN.total.addressS')}}
-              <i
-                type="text"
-                @click="updateBandwidthLimitType(scope.row)"
-              >
+              <i type="text" @click="updateBandwidthLimitType(scope.row)">
                 <i class="el-icon-edit"></i>
               </i>
             </div>
@@ -118,15 +105,9 @@
       </el-table>
       <!-- 分页 -->
       <div class="Right-style pagstyle">
-        <span
-          class="pagtotal"
-        >{{$t('CCN.total.gongN')}}&nbsp;{{total}}&nbsp;{{$t('CCN.total.tioaN')}}</span>
-        <el-pagination
-          :page-size="pagesize"
-          layout="prev, pager, next"
-          @current-change="handleCurrentChange"
-          :total="total"
-        ></el-pagination>
+        <span class="pagtotal">{{$t('CCN.total.gongN')}}&nbsp;{{total}}&nbsp;{{$t('CCN.total.tioaN')}}</span>
+        <el-pagination :page-size="pagesize" layout="prev, pager, next" @current-change="handleCurrentChange"
+          :total="total"></el-pagination>
       </div>
     </div>
     <!-- 删除的模态窗 -->
@@ -137,10 +118,7 @@
         <el-table-column property="State" :label="$t('CCN.total.del2')">
           <template slot-scope="scope">
             <div v-if="scope.row.State == 'AVAILABLE'" class="off_color">{{$t('CCN.total.run')}}</div>
-            <div
-              v-else-if="scope.row.State == 'ISOLATED'"
-              class="close_color"
-            >{{$t('CCN.total.glz')}}</div>
+            <div v-else-if="scope.row.State == 'ISOLATED'" class="close_color">{{$t('CCN.total.glz')}}</div>
             <div v-else class="close_color">{{$t('CCN.tabs.tab1newc')}}</div>
           </template>
         </el-table-column>
@@ -164,12 +142,7 @@
       </div>
     </el-dialog>
     <!-- 新建模态窗 -->
-    <el-dialog
-      :title="$t('CCN.total.new')"
-      :visible.sync="dialogFormVisible"
-      class="newDialog"
-      width="50%"
-    >
+    <el-dialog :title="$t('CCN.total.new')" :visible.sync="dialogFormVisible" class="newDialog" width="50%">
       <el-form :model="form" v-loading="creatloading">
         <el-form-item :label="$t('CCN.total.new1')">
           <el-input v-model="form.CcnName" autocomplete="off" class="inputName"></el-input>
@@ -190,13 +163,8 @@
           </el-radio-group>
         </el-form-item>
         <el-form-item :label="$t('CCN.total.new4')">
-          <el-input
-            type="textarea"
-            :autosize="{ minRows: 2, maxRows: 8 }"
-            :placeholder="$t('CCN.total.desc')"
-            v-model="form.CcnDescription"
-            autocomplete="off"
-          ></el-input>
+          <el-input type="textarea" :autosize="{ minRows: 2, maxRows: 8 }" :placeholder="$t('CCN.total.desc')"
+            v-model="form.CcnDescription" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item :label="$t('CCN.total.new5')">
           <el-radio-group v-model="form.QosLevel">
@@ -206,36 +174,20 @@
           </el-radio-group>
         </el-form-item>
         <el-form-item :label="$t('CCN.total.new6')">
-          <el-select
-            v-model="form.instanceType"
-            :placeholder="$t('CCN.total.vpc1')"
-            @change="_instance()"
-          >
+          <el-select v-model="form.instanceType" :placeholder="$t('CCN.total.vpc1')" @change="_instance()">
             <el-option :label="$t('CCN.total.vpc1')" value="VPC"></el-option>
             <el-option :label="$t('CCN.total.vpc2')" value="DIRECTCONNECT"></el-option>
           </el-select>
           <el-select v-model="form.instanceRegion" :placeholder="$t('CCN.total.region')">
             <el-option :label="$t('CCN.total.region')" value="ap-taipei"></el-option>
           </el-select>
-          <el-select
-            v-model="form.instanceId"
-            :placeholder="$t('CCN.total.select')"
-            :no-data-text="$t('CCN.total.tdno')"
-          >
-            <el-option
-              v-if="form.instanceType=='VPC'"
-              v-for="(item, index) in vpcs"
-              :key="index"
-              :label="`${item.VpcId}(${item.VpcName}|${item.CidrBlock})`"
-              :value="item.VpcId"
-            ></el-option>
-            <el-option
-              v-if="form.instanceType=='DIRECTCONNECT'"
-              v-for="(item, index) in vpcs"
-              :key="index"
+          <el-select v-model="form.instanceId" :placeholder="$t('CCN.total.select')"
+            :no-data-text="$t('CCN.total.tdno')">
+            <el-option v-if="form.instanceType=='VPC'" v-for="(item, index) in vpcs" :key="index"
+              :label="`${item.VpcId}(${item.VpcName}|${item.CidrBlock})`" :value="item.VpcId"></el-option>
+            <el-option v-if="form.instanceType=='DIRECTCONNECT'" v-for="(item, index) in vpcs" :key="index"
               :label="`${item.DirectConnectGatewayId}(${item.DirectConnectGatewayName})`"
-              :value="item.DirectConnectGatewayId"
-            ></el-option>
+              :value="item.DirectConnectGatewayId"></el-option>
           </el-select>
         </el-form-item>
       </el-form>
@@ -245,11 +197,7 @@
       </div>
     </el-dialog>
     <!-- 修改名称updateName模态窗 -->
-    <el-dialog
-      :title="$t('CCN.total.editname')"
-      :visible.sync="updateNameVisible"
-      class="formDialog"
-    >
+    <el-dialog :title="$t('CCN.total.editname')" :visible.sync="updateNameVisible" class="formDialog">
       <el-form :model="ccnPublic">
         <el-form-item :label="$t('CCN.total.editname2')" :label-width="formLabelWidth">
           <el-input v-model="ccnPublic.CcnName" autocomplete="off" class="inputName"></el-input>
@@ -265,11 +213,7 @@
       </div>
     </el-dialog>
     <!-- 修改备注updateDes模态窗 -->
-    <el-dialog
-      :title="$t('CCN.total.editdesc')"
-      :visible.sync="updateDesVisible"
-      class="formDialog"
-    >
+    <el-dialog :title="$t('CCN.total.editdesc')" :visible.sync="updateDesVisible" class="formDialog">
       <el-form :model="ccnPublic">
         <el-form-item :label="$t('CCN.total.editdesc1')" :label-width="formLabelWidth">
           <el-input v-model="ccnPublic.CcnDescription" autocomplete="off" class="inputName"></el-input>
@@ -285,11 +229,7 @@
       </div>
     </el-dialog>
     <!-- 修改限速方式的模态窗 -->
-    <el-dialog
-      :title="$t('CCN.total.eWay')"
-      :visible.sync="updateBandwidthLimitTypeVisible"
-      class="formDialog"
-    >
+    <el-dialog :title="$t('CCN.total.eWay')" :visible.sync="updateBandwidthLimitTypeVisible" class="formDialog">
       <el-form :model="ccnPublic">
         <el-form-item :label="$t('CCN.total.eWay1')">
           <el-select v-model="ccnPublic.BandwidthLimitType" placeholder>
@@ -346,173 +286,115 @@
 </template>
 
 <script>
-import { ErrorTips } from "@/components/ErrorTips";
-import {
-  CCN_LIST,
-  VPCS_LIST,
-  DIRECTCONNECTGATEWAYS_LIST,
-  CCN_CREATE,
-  ATTACHCCN_INSTANCES,
-  CCN_DELETE,
-  MODIFYCCN_ATTRIBUTE,
-  MODIFYCCN_REGIONBANDWIDTHLIMITSTYPE,
-  MODIFYRESOURCE_TAGS
-} from "@/constants";
-export default {
-  data() {
-    return {
-      delload: false,
-      tableload: true,
-      creatloading: false,
-      // ccn列表数据
-      tableData: [],
-      // 关联实例列表数据
-      // ccnAttachedInstances: [],
-      // 分页
-      currentPage4: 1,
-      total: 0,
-      // 新建ccn模态窗需要的，根据私有网络/专线网络查询VPC列表
-      vpcs: [],
-      // 新建ccn表单
-      form: {
-        CcnName: "",
-        InstanceChargeType: "POSTPAID",
-        BandwidthLimitType: "OUTER_REGION_LIMIT",
-        CcnDescription: "",
-        QosLevel: "AU",
-        instanceType: "",
-        instanceRegion: localStorage.getItem("regionv2"),
-        instanceId: ""
-      },
-      formLabelWidth: "120px",
-      // 删除模态窗回显数据
-      gridData: [
-        {
+  import {
+    ErrorTips
+  } from "@/components/ErrorTips";
+  import {
+    CCN_LIST,
+    VPCS_LIST,
+    DIRECTCONNECTGATEWAYS_LIST,
+    CCN_CREATE,
+    ATTACHCCN_INSTANCES,
+    CCN_DELETE,
+    MODIFYCCN_ATTRIBUTE,
+    MODIFYCCN_REGIONBANDWIDTHLIMITSTYPE,
+    MODIFYRESOURCE_TAGS
+  } from "@/constants";
+  export default {
+    data() {
+      return {
+        newCreateshow: false,
+        delload: false,
+        tableload: true,
+        creatloading: false,
+        // ccn列表数据
+        tableData: [],
+        // 关联实例列表数据
+        // ccnAttachedInstances: [],
+        // 分页
+        currentPage4: 1,
+        total: 0,
+        // 新建ccn模态窗需要的，根据私有网络/专线网络查询VPC列表
+        vpcs: [],
+        // 新建ccn表单
+        form: {
+          CcnName: "",
+          InstanceChargeType: "POSTPAID",
+          BandwidthLimitType: "OUTER_REGION_LIMIT",
+          CcnDescription: "",
+          QosLevel: "AU",
+          instanceType: "",
+          instanceRegion: localStorage.getItem("regionv2"),
+          instanceId: ""
+        },
+        formLabelWidth: "120px",
+        // 删除模态窗回显数据
+        gridData: [{
           CcnId: "",
           CcnName: "",
           InstanceCount: "",
           State: ""
-        }
-      ],
-      // ccn对象（公用）
-      ccnPublic: {},
-      // 标签对象
-      oldTags: [],
-      tags: [],
-      ccnIdOfTag: "",
-      dialogTableVisible: false, // 删除模态窗
-      dialogFormVisible: false, // 新建模态窗
-      updateNameVisible: false, // 修改名称模态窗
-      updateDesVisible: false, // 修改备注模态窗
-      updateBandwidthLimitTypeVisible: false, // 修改限速方式模态窗
-      dialogTagVisible: false, // 编辑模态窗
-      pagesize: 10, // 分页条数
-      currpage: 1 // 当前页码
-    };
-  },
-  watch: {
-    "form.instanceType"(value) {
-      this.getInstanceIds(value);
-    }
-  },
-  created() {
-    this.getData();
-    console.log(ErrorTips);
-  },
-  methods: {
-    //取消修改姓名
-    cancel1() {
-      this.getData();
-      this.updateNameVisible = false;
-    },
-    //取消修改备注
-    cancel() {
-      this.getData();
-      this.updateDesVisible = false;
-    },
-    // 初始化CCN列表数据（包括关联实例列表数据）
-    getData() {
-      this.tableload = true;
-      var params = {
-        Version: "2017-03-12",
-        Region: localStorage.getItem("regionv2"),
-        Offset: this.currpage * this.pagesize - this.pagesize,
-        Limit: this.pagesize
+        }],
+        // ccn对象（公用）
+        ccnPublic: {},
+        // 标签对象
+        oldTags: [],
+        tags: [],
+        ccnIdOfTag: "",
+        dialogTableVisible: false, // 删除模态窗
+        dialogFormVisible: false, // 新建模态窗
+        updateNameVisible: false, // 修改名称模态窗
+        updateDesVisible: false, // 修改备注模态窗
+        updateBandwidthLimitTypeVisible: false, // 修改限速方式模态窗
+        dialogTagVisible: false, // 编辑模态窗
+        pagesize: 10, // 分页条数
+        currpage: 1 // 当前页码
       };
-      this.axios.post(CCN_LIST, params).then(res => {
-        if (res.Response.Error === undefined) {
-          this.tableData = res.Response.CcnSet;
-          this.total = res.Response.TotalCount;
-          this.tableload = false;
-        } else {
-          let ErrTips = {
-            InvalidParameter: "入參不合法",
-            "InvalidParameter.Coexist": "參數不支持同時指定",
-            "InvalidParameterValue.LimitExceeded": "參數值超出限制",
-            "InvalidParameterValue.Malformed": "入參格式不合法",
-            ResourceNotFound: "資源不存在"
-          };
-          let ErrOr = Object.assign(ErrorTips, ErrTips);
-          this.$message({
-            message: ErrOr[res.Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-          });
-        }
-      });
     },
-    _instance() {
-      this.form.instanceId = "";
+    watch: {
+      "form.instanceType"(value) {
+        this.getInstanceIds(value);
+      }
     },
-    // 详情页跳转(关联实例页面)
-    handleClick(rows) {
-      this.$router.push({
-        path: "/ccnDetail",
-        query: {
-          ccnId: rows.CcnId,
-          ccnName: rows.CcnName,
-          BandwidthLimitType: rows.BandwidthLimitType
-        }
-      });
-    },
-    //分页
-    handleCurrentChange(val) {
-      this.currpage = val;
+    created() {
       this.getData();
+      console.log(ErrorTips);
     },
-    // 生产一个新的obj对象
-    copyObj() {
-      var des = {
-        Key: "",
-        Value: ""
-      };
-      return des;
-    },
-    // 新增一行
-    addRow() {
-      var des = this.copyObj();
-      this.tags.push(des);
-    },
-    // 删除一行
-    removeRow(idx) {
-      this.tags.splice(idx, 1);
-    },
-    // 查询instanceId
-    getInstanceIds(instanceType) {
-      var params = {
-        Version: "2017-03-12",
-        Region: localStorage.getItem("regionv2")
-      };
-      // 私有网络
-      if (instanceType == "VPC") {
-        this.axios.post(VPCS_LIST, params).then(res => {
+    methods: {
+      //取消修改姓名
+      cancel1() {
+        this.getData();
+        this.updateNameVisible = false;
+      },
+      //取消修改备注
+      cancel() {
+        this.getData();
+        this.updateDesVisible = false;
+      },
+      // 初始化CCN列表数据（包括关联实例列表数据）
+      getData() {
+        this.tableload = true;
+        var params = {
+          Version: "2017-03-12",
+          Region: localStorage.getItem("regionv2"),
+          Offset: this.currpage * this.pagesize - this.pagesize,
+          Limit: this.pagesize
+        };
+        this.axios.post(CCN_LIST, params).then(res => {
           if (res.Response.Error === undefined) {
-            this.vpcs = res.Response.VpcSet;
-            console.log(this.vpcs);
+            this.tableData = res.Response.CcnSet;
+            this.total = res.Response.TotalCount;
+            if (this.total === 5) {
+              this.newCreateshow = true
+            } else {
+              this.newCreateshow = false
+            }
+            this.tableload = false;
           } else {
             let ErrTips = {
+              InvalidParameter: "入參不合法",
               "InvalidParameter.Coexist": "參數不支持同時指定",
+              "InvalidParameterValue.LimitExceeded": "參數值超出限制",
               "InvalidParameterValue.Malformed": "入參格式不合法",
               ResourceNotFound: "資源不存在"
             };
@@ -525,23 +407,204 @@ export default {
             });
           }
         });
-        // 专线网络
-      } else if (instanceType == "DIRECTCONNECT") {
-        const info = {
+      },
+      _instance() {
+        this.form.instanceId = "";
+      },
+      // 详情页跳转(关联实例页面)
+      handleClick(rows) {
+        this.$router.push({
+          path: "/ccnDetail",
+          query: {
+            ccnId: rows.CcnId,
+            ccnName: rows.CcnName,
+            BandwidthLimitType: rows.BandwidthLimitType
+          }
+        });
+      },
+      //分页
+      handleCurrentChange(val) {
+        this.currpage = val;
+        this.getData();
+      },
+      // 生产一个新的obj对象
+      copyObj() {
+        var des = {
+          Key: "",
+          Value: ""
+        };
+        return des;
+      },
+      // 新增一行
+      addRow() {
+        var des = this.copyObj();
+        this.tags.push(des);
+      },
+      // 删除一行
+      removeRow(idx) {
+        this.tags.splice(idx, 1);
+      },
+      // 查询instanceId
+      getInstanceIds(instanceType) {
+        var params = {
+          Version: "2017-03-12",
+          Region: localStorage.getItem("regionv2")
+        };
+        // 私有网络
+        if (instanceType == "VPC") {
+          this.axios.post(VPCS_LIST, params).then(res => {
+            if (res.Response.Error === undefined) {
+              this.vpcs = res.Response.VpcSet;
+              console.log(this.vpcs);
+            } else {
+              let ErrTips = {
+                "InvalidParameter.Coexist": "參數不支持同時指定",
+                "InvalidParameterValue.Malformed": "入參格式不合法",
+                ResourceNotFound: "資源不存在"
+              };
+              let ErrOr = Object.assign(ErrorTips, ErrTips);
+              this.$message({
+                message: ErrOr[res.Response.Error.Code],
+                type: "error",
+                showClose: true,
+                duration: 0
+              });
+            }
+          });
+          // 专线网络
+        } else if (instanceType == "DIRECTCONNECT") {
+          const info = {
+            Version: "2017-03-12",
+            Region: localStorage.getItem("regionv2"),
+            "Filters.0.Name": "network-type",
+            "Filters.0.Values.0": "CCN"
+          };
+          this.axios.post(DIRECTCONNECTGATEWAYS_LIST, info).then(res => {
+            if (res.Response.Error === undefined) {
+              this.vpcs = res.Response.DirectConnectGatewaySet;
+            } else {
+              let ErrTips = {
+                "InvalidParameter.Coexist": "參數不支持同時指定",
+                InvalidParameterValue: "參數值不合法",
+                "InvalidParameterValue.Malformed": "入參格式不合法",
+                "InvalidParameterValue.TooLong": "無效參數值。參數值太長"
+              };
+              let ErrOr = Object.assign(ErrorTips, ErrTips);
+              this.$message({
+                message: ErrOr[res.Response.Error.Code],
+                type: "error",
+                showClose: true,
+                duration: 0
+              });
+            }
+          });
+        }
+      },
+      // 新建ccn
+      createClick(form) {
+        this.creatloading = true;
+        var params = {
           Version: "2017-03-12",
           Region: localStorage.getItem("regionv2"),
-          "Filters.0.Name": "network-type",
-          "Filters.0.Values.0": "CCN"
+          CcnName: form.CcnName,
+          CcnDescription: form.CcnDescription,
+          QosLevel: form.QosLevel,
+          InstanceChargeType: form.InstanceChargeType,
+          BandwidthLimitType: form.BandwidthLimitType
         };
-        this.axios.post(DIRECTCONNECTGATEWAYS_LIST, info).then(res => {
-          if (res.Response.Error === undefined) {
-            this.vpcs = res.Response.DirectConnectGatewaySet;
+        this.axios.post(CCN_CREATE, params).then(res => {
+          if (res.Response.Error != undefined) {
+            let ErrTips = {
+              InvalidParameterValue: "參數值不合法",
+              LimitExceeded: "超過配額限制",
+              "UnsupportedOperation.InsufficientFunds": "帳戶餘額不足"
+            };
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+            this.creatloading = false;
+          } else {
+            this.$message({
+              message: "新建成功",
+              type: "success",
+              showClose: true,
+              duration: 0
+            });
+            this.creatloading = false;
+            this.dialogFormVisible = false;
+
+            // 关联实例
+            var params2 = {
+              Version: "2017-03-12",
+              Region: localStorage.getItem("regionv2"),
+              CcnId: res.Response.Ccn.CcnId,
+              "Instances.0.InstanceId": form.instanceId,
+              "Instances.0.InstanceRegion": form.instanceRegion,
+              "Instances.0.InstanceType": form.instanceType
+            };
+            this.axios.post(ATTACHCCN_INSTANCES, params2).then(res => {
+              if (res.Response.Error) {
+                let ErrTips = {
+                  "InvalidParameterValue.CcnAttachBmvpcLimitExceeded": "指定雲聯網關聯黑石私有網路數量達到上限",
+                  LimitExceeded: "超過配額限制",
+                  ResourceNotFound: "資源不存在",
+                  "UnsupportedOperation.CcnAttached": "實例已關聯CCN",
+                  "UnsupportedOperation.IsNotFinanceAccount": "關聯當前雲聯網的實例的賬號存在不是金融雲賬號",
+                  "UnsupportedOperation.UinNotFound": "賬號ID不存在",
+                  "UnsupportedOperation.UnableCrossBorder": "不支持跨境",
+                  "UnsupportedOperation.UnableCrossFinance": "當前雲聯網無法關聯金融雲實例"
+                };
+                let ErrOr = Object.assign(ErrorTips, ErrTips);
+                this.$message({
+                  message: "關聯實例失敗," + ErrOr[res.Response.Error.Code],
+                  showClose: true,
+                  duration: 0,
+                  type: "error"
+                });
+              } else {
+                this.$message({
+                  message: "關聯實例成功",
+                  showClose: true,
+                  duration: 0,
+                  type: "success"
+                });
+              }
+              this.getData();
+            });
+          }
+        });
+      },
+      // 删除ccn弹窗
+      deleteCcn(ccnDetail) {
+        this.gridData[0].CcnId = ccnDetail.CcnId;
+        this.gridData[0].CcnName = ccnDetail.CcnName;
+        this.gridData[0].InstanceCount = ccnDetail.InstanceCount;
+        this.gridData[0].State = ccnDetail.State;
+        this.dialogTableVisible = true;
+      },
+      delCcn(ccnDetail) {
+        this.delload = true;
+        var params = {
+          Version: "2017-03-12",
+          Region: localStorage.getItem("regionv2"),
+          CcnId: ccnDetail.CcnId
+        };
+        this.axios.post(CCN_DELETE, params).then(res => {
+          if (res.Response.Error == undefined) {
+            this.$message({
+              message: "刪除成功",
+              type: "success",
+              showClose: true,
+              duration: 0
+            });
           } else {
             let ErrTips = {
-              "InvalidParameter.Coexist": "參數不支持同時指定",
-              InvalidParameterValue: "參數值不合法",
-              "InvalidParameterValue.Malformed": "入參格式不合法",
-              "InvalidParameterValue.TooLong": "無效參數值。參數值太長"
+              InvalidParameter: "入參不合法",
+              ResourceNotFound: "資源不存在"
             };
             let ErrOr = Object.assign(ErrorTips, ErrTips);
             this.$message({
@@ -551,568 +614,431 @@ export default {
               duration: 0
             });
           }
+          this.delload = false;
+          this.getData();
+          this.dialogTableVisible = false;
         });
-      }
-    },
-    // 新建ccn
-    createClick(form) {
-      this.creatloading = true;
-      var params = {
-        Version: "2017-03-12",
-        Region: localStorage.getItem("regionv2"),
-        CcnName: form.CcnName,
-        CcnDescription: form.CcnDescription,
-        QosLevel: form.QosLevel,
-        InstanceChargeType: form.InstanceChargeType,
-        BandwidthLimitType: form.BandwidthLimitType
-      };
-      this.axios.post(CCN_CREATE, params).then(res => {
-        if (res.Response.Error != undefined) {
-          let ErrTips = {
-            InvalidParameterValue: "參數值不合法",
-            LimitExceeded: "超過配額限制",
-            "UnsupportedOperation.InsufficientFunds": "帳戶餘額不足"
-          };
-          let ErrOr = Object.assign(ErrorTips, ErrTips);
-          this.$message({
-            message: ErrOr[res.Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-          });
-          this.creatloading = false;
-        } else {
-          this.$message({
-            message: "新建成功",
-            type: "success",
-            showClose: true,
-            duration: 0
-          });
-          this.creatloading = false;
-          this.dialogFormVisible = false;
-
-          // 关联实例
-          var params2 = {
-            Version: "2017-03-12",
-            Region: localStorage.getItem("regionv2"),
-            CcnId: res.Response.Ccn.CcnId,
-            "Instances.0.InstanceId": form.instanceId,
-            "Instances.0.InstanceRegion": form.instanceRegion,
-            "Instances.0.InstanceType": form.instanceType
-          };
-          this.axios.post(ATTACHCCN_INSTANCES, params2).then(res => {
-            if (res.Response.Error) {
-              let ErrTips = {
-                "InvalidParameterValue.CcnAttachBmvpcLimitExceeded":
-                  "指定雲聯網關聯黑石私有網路數量達到上限",
-                LimitExceeded: "超過配額限制",
-                ResourceNotFound: "資源不存在",
-                "UnsupportedOperation.CcnAttached": "實例已關聯CCN",
-                "UnsupportedOperation.IsNotFinanceAccount":
-                  "關聯當前雲聯網的實例的賬號存在不是金融雲賬號",
-                "UnsupportedOperation.UinNotFound": "賬號ID不存在",
-                "UnsupportedOperation.UnableCrossBorder": "不支持跨境",
-                "UnsupportedOperation.UnableCrossFinance":
-                  "當前雲聯網無法關聯金融雲實例"
-              };
-              let ErrOr = Object.assign(ErrorTips, ErrTips);
-              this.$message({
-                message: "關聯實例失敗," + ErrOr[res.Response.Error.Code],
-                showClose: true,
-                duration: 0,
-                type: "error"
-              });
-            } else {
-              this.$message({
-                message: "關聯實例成功",
-                showClose: true,
-                duration: 0,
-                type: "success"
-              });
-            }
-            this.getData();
-          });
+      },
+      // 修改名称弹窗
+      updateName(ccnDetail) {
+        this.ccnPublic = ccnDetail;
+        this.tableload = true;
+        this.updateNameVisible = true;
+      },
+      // 修改备注弹窗
+      updateDes(ccnDetail) {
+        this.ccnPublic = ccnDetail;
+        this.updateDesVisible = true;
+      },
+      // 修改ccn公用方法
+      modifyCcn(ccnDetail) {
+        this.tableload = true;
+        var params = {
+          Version: "2017-03-12",
+          Region: localStorage.getItem("regionv2"),
+          CcnId: ccnDetail.CcnId,
+          CcnName: ccnDetail.CcnName,
+          CcnDescription: ccnDetail.CcnDescription
+        };
+        this.axios.post(MODIFYCCN_ATTRIBUTE, params).then(res => {
+          if (res.Response.Error != undefined) {
+            let ErrTips = {
+              ResourceNotFound: "資源不存在"
+            };
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: "修改失敗," + ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+          } else {
+            this.$message({
+              message: "修改成功",
+              type: "success",
+              showClose: true,
+              duration: 0
+            });
+          }
+          this.getData();
+        });
+        this.updateNameVisible = false;
+        this.updateDesVisible = false;
+      },
+      // 修改限速方式弹窗
+      updateBandwidthLimitType(ccnDetail) {
+        this.ccnPublic = ccnDetail;
+        this.updateBandwidthLimitTypeVisible = true;
+      },
+      upBandwidthLimitType(ccnDetail) {
+        var params = {
+          Version: "2017-03-12",
+          Region: localStorage.getItem("regionv2"),
+          CcnId: ccnDetail.CcnId,
+          BandwidthLimitType: ccnDetail.BandwidthLimitType
+        };
+        this.axios.post(MODIFYCCN_REGIONBANDWIDTHLIMITSTYPE, params).then(res => {
+          if (res.Response.Error != undefined) {
+            let ErrTips = {
+              InvalidParameter: "入參不合法",
+              UnsupportedOperation: "操作不支持"
+            };
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+          } else {
+            this.$message({
+              message: "修改成功",
+              type: "success",
+              showClose: true,
+              duration: 0
+            });
+          }
+          this.getData();
+        });
+        this.updateBandwidthLimitTypeVisible = false;
+      },
+      // 进入编辑标签模态窗
+      toTags(ccnDetail) {
+        this.ccnIdOfTag = ccnDetail.CcnId;
+        this.oldTags = JSON.parse(JSON.stringify(ccnDetail.TagSet));
+        this.tags = ccnDetail.TagSet;
+        this.dialogTagVisible = true;
+      },
+      // 编辑标签
+      upTags(tagss) {
+        var params = {
+          Version: "2018-08-13",
+          Region: localStorage.getItem("regionv2"),
+          Resource: "qcs::vpc:ap-guangzhou:uin/100011921910:ccn/" + this.ccnIdOfTag
+        };
+        var newKey = [];
+        for (let j = 0, len = tagss.length; j < len; j++) {
+          newKey.push(tagss[j].Key);
         }
-      });
-    },
-    // 删除ccn弹窗
-    deleteCcn(ccnDetail) {
-      this.gridData[0].CcnId = ccnDetail.CcnId;
-      this.gridData[0].CcnName = ccnDetail.CcnName;
-      this.gridData[0].InstanceCount = ccnDetail.InstanceCount;
-      this.gridData[0].State = ccnDetail.State;
-      this.dialogTableVisible = true;
-    },
-    delCcn(ccnDetail) {
-      this.delload = true;
-      var params = {
-        Version: "2017-03-12",
-        Region: localStorage.getItem("regionv2"),
-        CcnId: ccnDetail.CcnId
-      };
-      this.axios.post(CCN_DELETE, params).then(res => {
-        if (res.Response.Error == undefined) {
-          this.$message({
-            message: "刪除成功",
-            type: "success",
-            showClose: true,
-            duration: 0
-          });
-        } else {
-          let ErrTips = {
-            InvalidParameter: "入參不合法",
-            ResourceNotFound: "資源不存在"
-          };
-          let ErrOr = Object.assign(ErrorTips, ErrTips);
-          this.$message({
-            message: ErrOr[res.Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-          });
+        var oldKey = [];
+        for (let j = 0, len = this.oldTags.length; j < len; j++) {
+          oldKey.push(this.oldTags[j].Key);
         }
-        this.delload = false;
-        this.getData();
-        this.dialogTableVisible = false;
-      });
-    },
-    // 修改名称弹窗
-    updateName(ccnDetail) {
-      this.ccnPublic = ccnDetail;
-      this.tableload = true;
-      this.updateNameVisible = true;
-    },
-    // 修改备注弹窗
-    updateDes(ccnDetail) {
-      this.ccnPublic = ccnDetail;
-      this.updateDesVisible = true;
-    },
-    // 修改ccn公用方法
-    modifyCcn(ccnDetail) {
-      this.tableload = true;
-      var params = {
-        Version: "2017-03-12",
-        Region: localStorage.getItem("regionv2"),
-        CcnId: ccnDetail.CcnId,
-        CcnName: ccnDetail.CcnName,
-        CcnDescription: ccnDetail.CcnDescription
-      };
-      this.axios.post(MODIFYCCN_ATTRIBUTE, params).then(res => {
-        if (res.Response.Error != undefined) {
-          let ErrTips = {
-            ResourceNotFound: "資源不存在"
-          };
-          let ErrOr = Object.assign(ErrorTips, ErrTips);
-          this.$message({
-            message: "修改失敗," + ErrOr[res.Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-          });
-        } else {
+        // 获取删除arr
+        let delCount = 0;
+        for (let j = 0, len = oldKey.length; j < len; j++) {
+          if (newKey.indexOf(oldKey[j]) == -1) {
+            let str = "DeleteTags." + delCount + ".TagKey";
+            params[str] = oldKey[j];
+            delCount++;
+          }
+        }
+        // 获取新增arr
+        let addCount = 0;
+        for (let j = 0, len = newKey.length; j < len; j++) {
+          if (oldKey.indexOf(newKey[j]) == -1) {
+            let str1 = "ReplaceTags." + addCount + ".TagKey";
+            let str2 = "ReplaceTags." + addCount + ".TagValue";
+            params[str1] = newKey[j];
+            params[str2] = tagss[j].Value;
+            addCount++;
+          }
+        }
+        this.axios.post(MODIFYRESOURCE_TAGS, params).then(res => {
           this.$message({
             message: "修改成功",
             type: "success",
             showClose: true,
             duration: 0
           });
-        }
-        this.getData();
-      });
-      this.updateNameVisible = false;
-      this.updateDesVisible = false;
-    },
-    // 修改限速方式弹窗
-    updateBandwidthLimitType(ccnDetail) {
-      this.ccnPublic = ccnDetail;
-      this.updateBandwidthLimitTypeVisible = true;
-    },
-    upBandwidthLimitType(ccnDetail) {
-      var params = {
-        Version: "2017-03-12",
-        Region: localStorage.getItem("regionv2"),
-        CcnId: ccnDetail.CcnId,
-        BandwidthLimitType: ccnDetail.BandwidthLimitType
-      };
-      this.axios.post(MODIFYCCN_REGIONBANDWIDTHLIMITSTYPE, params).then(res => {
-        if (res.Response.Error != undefined) {
-          let ErrTips = {
-            InvalidParameter: "入參不合法",
-            UnsupportedOperation: "操作不支持"
-          };
-          let ErrOr = Object.assign(ErrorTips, ErrTips);
-          this.$message({
-            message: ErrOr[res.Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-          });
-        } else {
-          this.$message({
-            message: "修改成功",
-            type: "success",
-            showClose: true,
-            duration: 0
-          });
-        }
-        this.getData();
-      });
-      this.updateBandwidthLimitTypeVisible = false;
-    },
-    // 进入编辑标签模态窗
-    toTags(ccnDetail) {
-      this.ccnIdOfTag = ccnDetail.CcnId;
-      this.oldTags = JSON.parse(JSON.stringify(ccnDetail.TagSet));
-      this.tags = ccnDetail.TagSet;
-      this.dialogTagVisible = true;
-    },
-    // 编辑标签
-    upTags(tagss) {
-      var params = {
-        Version: "2018-08-13",
-        Region: localStorage.getItem("regionv2"),
-        Resource:
-          "qcs::vpc:ap-guangzhou:uin/100011921910:ccn/" + this.ccnIdOfTag
-      };
-      var newKey = [];
-      for (let j = 0, len = tagss.length; j < len; j++) {
-        newKey.push(tagss[j].Key);
-      }
-      var oldKey = [];
-      for (let j = 0, len = this.oldTags.length; j < len; j++) {
-        oldKey.push(this.oldTags[j].Key);
-      }
-      // 获取删除arr
-      let delCount = 0;
-      for (let j = 0, len = oldKey.length; j < len; j++) {
-        if (newKey.indexOf(oldKey[j]) == -1) {
-          let str = "DeleteTags." + delCount + ".TagKey";
-          params[str] = oldKey[j];
-          delCount++;
-        }
-      }
-      // 获取新增arr
-      let addCount = 0;
-      for (let j = 0, len = newKey.length; j < len; j++) {
-        if (oldKey.indexOf(newKey[j]) == -1) {
-          let str1 = "ReplaceTags." + addCount + ".TagKey";
-          let str2 = "ReplaceTags." + addCount + ".TagValue";
-          params[str1] = newKey[j];
-          params[str2] = tagss[j].Value;
-          addCount++;
-        }
-      }
-      this.axios.post(MODIFYRESOURCE_TAGS, params).then(res => {
-        this.$message({
-          message: "修改成功",
-          type: "success",
-          showClose: true,
-          duration: 0
+          if (res.Response.Error != undefined) {
+            this.$message({
+              message: "修改失敗",
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+          }
+          this.getData();
         });
-        if (res.Response.Error != undefined) {
-          this.$message({
-            message: "修改失敗",
-            type: "error",
-            showClose: true,
-            duration: 0
-          });
-        }
-        this.getData();
-      });
-      this.dialogTagVisible = false;
+        this.dialogTagVisible = false;
+      }
     }
-  }
-};
+  };
+
 </script>
 <style scoped lang="scss">
-.wrap >>> .el-loading-mask {
-  background: white !important;
-}
-
-.wrap >>> .el-input__inner {
-  height: 30px;
-  line-height: 30px;
-}
-
-.wrap >>> .el-form-item__label {
-  text-align: left;
-}
-
-.title_top {
-  height: 50px;
-  background: #fff;
-
-  h1 {
-    padding-left: 20px;
-    line-height: 50px;
-    font-size: 16px;
-    font-weight: 700;
+  .wrap>>>.el-loading-mask {
+    background: white !important;
   }
-}
 
-.tea-content__body {
-  padding: 20px 0 10px 20px;
-
-  .explain {
-    font-size: 12px;
-    padding: 10px 30px 10px 20px;
-    vertical-align: middle;
-    color: #003b80;
-    border: 1px solid #97c7ff;
-    border-radius: 2px;
-    background: #e5f0ff;
-    position: relative;
-    box-sizing: border-box;
-    margin-left: auto;
-    margin-right: auto;
-    margin-bottom: 20px;
-
-    p {
-      line-height: 20px;
-    }
-  }
-}
-
-.btn {
-  .el-button {
+  .wrap>>>.el-input__inner {
     height: 30px;
-    background-color: #006eff;
-    color: #fff;
-    border: 1px solid #006eff;
-    line-height: 0px;
-    border-radius: 0px;
-    font-size: 12px !important;
-    padding: 10px 20px;
+    line-height: 30px;
   }
 
-  .el-button.is-plain:hover {
-    background-color: #0063e5;
-    color: #fff;
-    border: 1px solid #0063e5;
-  }
-}
-
-.tables {
-  margin-top: 10px;
-  margin: 0 20px;
-  background-color: #fff;
-
-  .el-table {
-    font-size: 12px;
-    min-height: 450px;
+  .wrap>>>.el-form-item__label {
+    text-align: left;
   }
 
-  .el-table td .cell,
-  .el-table td > .cell > div,
-  .el-table td > .cell > p {
-    font-size: 12px;
-  }
-
-  .el-table td {
-    ::v-deep .el-button {
-      font-style: 12px;
-    }
-  }
-
-  .el-table td > span {
-    font-size: 12px;
-  }
-
-  .el-table .cell {
-    position: relative;
-    height: 23px;
-  }
-
-  .el-button--text {
-    height: 23px;
-    line-height: 0px;
-  }
-
-  .el-table td:nth-of-type(2) {
-    color: #006eff;
-  }
-
-  .p-name {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    width: 90px;
-
-    .i-name {
-      position: absolute;
-      right: 0px;
-      bottom: 12px;
-    }
-  }
-
-  .close_color {
-    color: #e54545;
-  }
-
-  .off_color {
-    color: #0abf5b;
-  }
-
-  .el-pagination {
-    float: right;
-
-    ::v-deep .el-pagination__total {
-    }
-  }
-
-  .el-popover {
-    .btn-footer {
-      text-align: center;
-      margin: 0;
-    }
-
-    .pop-div {
-      height: 40px;
-    }
-  }
-
-  .el-icon-edit {
-    display: none;
-  }
-
-  .el-table__row:hover {
-    .el-icon-edit {
-      display: inline-block;
-    }
-  }
-
-  .pageList {
+  .title_top {
     height: 50px;
+    background: #fff;
+
+    h1 {
+      padding-left: 20px;
+      line-height: 50px;
+      font-size: 16px;
+      font-weight: 700;
+    }
+  }
+
+  .tea-content__body {
+    padding: 20px 0 10px 20px;
+
+    .explain {
+      font-size: 12px;
+      padding: 10px 30px 10px 20px;
+      vertical-align: middle;
+      color: #003b80;
+      border: 1px solid #97c7ff;
+      border-radius: 2px;
+      background: #e5f0ff;
+      position: relative;
+      box-sizing: border-box;
+      margin-left: auto;
+      margin-right: auto;
+      margin-bottom: 20px;
+
+      p {
+        line-height: 20px;
+      }
+    }
+  }
+
+
+
+  .tables {
+    margin-top: 10px;
+    margin: 0 20px;
     background-color: #fff;
-    padding-top: 8px;
+
+    .el-table {
+      font-size: 12px;
+      min-height: 450px;
+    }
+
+    .el-table td .cell,
+    .el-table td>.cell>div,
+    .el-table td>.cell>p {
+      font-size: 12px;
+    }
+
+    .el-table td {
+      ::v-deep .el-button {
+        font-style: 12px;
+      }
+    }
+
+    .el-table td>span {
+      font-size: 12px;
+    }
+
+    .el-table .cell {
+      position: relative;
+      height: 23px;
+    }
+
+    .el-button--text {
+      height: 23px;
+      line-height: 0px;
+    }
+
+    .el-table td:nth-of-type(2) {
+      color: #006eff;
+    }
+
+    .p-name {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      width: 90px;
+
+      .i-name {
+        position: absolute;
+        right: 0px;
+        bottom: 12px;
+      }
+    }
+
+    .close_color {
+      color: #e54545;
+    }
+
+    .off_color {
+      color: #0abf5b;
+    }
+
+    .el-pagination {
+      float: right;
+
+      ::v-deep .el-pagination__total {}
+    }
+
+    .el-popover {
+      .btn-footer {
+        text-align: center;
+        margin: 0;
+      }
+
+      .pop-div {
+        height: 40px;
+      }
+    }
+
+    .el-icon-edit {
+      display: none;
+    }
+
+    .el-table__row:hover {
+      .el-icon-edit {
+        display: inline-block;
+      }
+    }
+
+    .pageList {
+      height: 50px;
+      background-color: #fff;
+      padding-top: 8px;
+
+      .pagtotal {
+        float: right;
+      }
+    }
+  }
+
+  .Right-style {
+    display: flex;
+    justify-content: flex-end;
+
+    .esach-inputL {
+      width: 300px;
+      margin-right: 20px;
+    }
+  }
+
+  .pagstyle {
+    padding: 20px;
 
     .pagtotal {
-      float: right;
-    }
-  }
-}
-
-.Right-style {
-  display: flex;
-  justify-content: flex-end;
-
-  .esach-inputL {
-    width: 300px;
-    margin-right: 20px;
-  }
-}
-
-.pagstyle {
-  padding: 20px;
-
-  .pagtotal {
-    font-size: 13px;
-    font-weight: 400;
-    color: #565656;
-    line-height: 32px;
-  }
-}
-
-.newDialog {
-  .inputName {
-    width: 370px;
-    float: left;
-    margin-left: 30px;
-  }
-
-  .el-textarea {
-    width: 370px;
-    float: left;
-    margin-left: 30px;
-
-    ::v-deep .el-textarea__inner {
-      height: 100px;
+      font-size: 13px;
+      font-weight: 400;
+      color: #565656;
+      line-height: 32px;
     }
   }
 
-  .trankHint {
-    color: #888 !important;
-    font-size: 12px;
-    margin-left: 10%;
+  .newDialog {
+    .inputName {
+      width: 370px;
+      float: left;
+      margin-left: 30px;
+    }
+
+    .el-textarea {
+      width: 370px;
+      float: left;
+      margin-left: 30px;
+
+      ::v-deep .el-textarea__inner {
+        height: 100px;
+      }
+    }
+
+    .trankHint {
+      color: #888 !important;
+      font-size: 12px;
+      margin-left: 10%;
+    }
+
+    .el-select {
+      margin-right: 10px;
+    }
+  }
+
+  .editDialog {
+    .table-div {
+      width: 90%;
+      border: 1px solid #ddd;
+      padding: 0 5px;
+
+      tr {
+        width: 30%;
+      }
+
+      .t-head {
+        height: 45px;
+        padding: 0 5px;
+      }
+
+      .t-body {
+        height: 45px;
+        min-height: 200px;
+      }
+    }
+  }
+
+  .formDialog {
+    .edit-p {
+      color: #e54545;
+      line-height: 20px;
+      margin-left: 10%;
+    }
+  }
+
+  .el-dialog__wrapper {
+    ::v-deep .el-dialog__title {
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    ::v-deep .el-radio__label {
+      font-size: 12px;
+      width: 90px;
+      text-align: left;
+    }
+  }
+
+  .el-form {
+    ::v-deep .el-form-item__label {
+      font-size: 12px;
+      text-align: left;
+    }
+  }
+
+  .el-input {
+    ::v-deep .el-input__inner {
+      height: 30px;
+      width: 200px;
+      line-height: 30px;
+    }
   }
 
   .el-select {
-    margin-right: 10px;
-  }
-}
-
-.editDialog {
-  .table-div {
-    width: 90%;
-    border: 1px solid #ddd;
-    padding: 0 5px;
-
-    tr {
-      width: 30%;
-    }
-
-    .t-head {
-      height: 45px;
-      padding: 0 5px;
-    }
-
-    .t-body {
-      height: 45px;
-      min-height: 200px;
+    ::v-deep .el-input__inner {
+      height: 30px;
+      line-height: 30px;
     }
   }
-}
 
-.formDialog {
-  .edit-p {
-    color: #e54545;
-    line-height: 20px;
-    margin-left: 10%;
-  }
-}
+  .dialog-footer {
+    text-align: center;
 
-.el-dialog__wrapper {
-  ::v-deep .el-dialog__title {
-    font-weight: 700;
-    font-size: 14px;
+    .el-button {
+      height: 30px;
+      line-height: 0;
+      border-radius: 0;
+    }
   }
 
-  ::v-deep .el-radio__label {
-    font-size: 12px;
-    width: 90px;
-    text-align: left;
-  }
-}
-
-.el-form {
-  ::v-deep .el-form-item__label {
-    font-size: 12px;
-    text-align: left;
-  }
-}
-
-.el-input {
-  ::v-deep .el-input__inner {
-    height: 30px;
-    width: 200px;
-    line-height: 30px;
-  }
-}
-
-.el-select {
-  ::v-deep .el-input__inner {
-    height: 30px;
-    line-height: 30px;
-  }
-}
-
-.dialog-footer {
-  text-align: center;
-
-  .el-button {
-    height: 30px;
-    line-height: 0;
-    border-radius: 0;
-  }
-}
 </style>
