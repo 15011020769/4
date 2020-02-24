@@ -46,6 +46,8 @@ export const MODIFY_HOST_MODE = 'waf2/ModifyHostMode'
 export const DESCRIBE_ACTIONED = 'waf2/DescribeActionedIp'
 /** ip黑白名单查询 */
 export const DESCRIBE_ACCESS_CONTROL = 'waf2/DescribeIpAccessControl'
+/** ip管理 添加黑白ip */
+export const UPSERTIP_ACCESS_CONTROL = 'waf2/UpsertIpAccessControl'
 /** 获取地域封禁配置 */
 export const DESCRIBE_AREABAN_AREAS = 'waf2/DescribeAreaBanAreas'
 /** 修改地域封禁状态 */
