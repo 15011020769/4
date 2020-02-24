@@ -166,11 +166,11 @@ export default {
   data() {
     return {
       options: [], //默认下拉选项
-      dateTimeValue: [], //日期绑定
-      selectValue: [], //域名下拉菜单
+      dateTimeValue: [(moment(new Date()).format("YYYY-MM-DD HH:mm:ss")), (moment(new Date()).format("YYYY-MM-DD HH:mm:ss"))], //日期绑定
+      selectValue: "", //域名下拉菜单
       thisType: "1", //按钮默认选中
-      endTime: "",
-      startTime: "",
+      endTime: moment(new Date()).endOf("days").format("YYYY-MM-DD HH:mm:ss"),
+      startTime: moment(new Date()).startOf("days").format("YYYY-MM-DD 00:00:00"),
       upPeakValue: 0,
       downPeakValue: 0,
       qpsRequest: 0,
@@ -188,14 +188,16 @@ export default {
     ELine,
   },
   mounted () {
-    this.checkTime("1");
     this.getDominList();
+    this.getPeakPoints()
     this.getPeakValue();
     this.getPieChart();
 　},
   watch: {
     selectValue() {
       this.getPeakPoints()
+      this.getPeakValue();
+      this.getPieChart();
     }
   },
   methods: {
@@ -225,11 +227,15 @@ export default {
     },
     // 获取峰值
     getPeakValue() {
-      this.axios.post(DESCRIBE_PEAK_VALUE, {
+      const params = {
         Version: '2018-01-25',
         FromTime: this.startTime,
         ToTime: this.endTime,
-      }).then((resp) => {
+      }
+      if (this.selectValue != "") {
+        params["Domain"] = this.selectValue
+      }
+      this.axios.post(DESCRIBE_PEAK_VALUE, params).then((resp) => {
         this.generalRespHandler(resp, ({Up, Down, Access}) => {
           this.upPeakValue = Up * 8
           this.downPeakValue = Down * 8
@@ -268,14 +274,21 @@ export default {
     },
     // 获取服务器响应浏览器类型
     getPieChart() {
-      this.axios.post(DESCRIBE_PIECHART, {
+      const params = {
         Version: '2018-01-25',
         FromTime: this.startTime,
         ToTime: this.endTime,
+        QueryField: "ua",
         Host: "all",
         Edition: "clb-waf"
-      }).then((res) => {
-        console.log(res)
+      }
+      if (this.selectValue != "") {
+        params["Host"] = this.selectValue
+      }
+      this.axios.post(DESCRIBE_PIECHART, params).then((resp) => {
+        this.generalRespHandler(resp, (res) => {
+          console.log(res)
+        })
       })
     },
     // 时间点击事件
@@ -301,6 +314,7 @@ export default {
       this.endTime = moment(end).endOf("days").format("YYYY-MM-DD HH:mm:ss");
       this.$nextTick(() => {
         this.getPeakPoints()
+        this.getPieChart()
       })
     },
     changeTimeValue() {
@@ -309,6 +323,7 @@ export default {
       this.endTime = moment(this.dateTimeValue[1]).endOf("days").format("YYYY-MM-DD HH:mm:ss");
       this.$nextTick(() => {
         this.getPeakPoints();
+        this.getPieChart()
       })
     },
     html2canvas_2(imgtype) {

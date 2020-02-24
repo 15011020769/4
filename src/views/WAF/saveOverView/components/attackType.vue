@@ -17,6 +17,11 @@
           {{t('攻击类型占比', 'WAF.gjlxzb')}}
           <span style="color:#bbb;">(次)</span>
         </h3>
+        <EPie
+          :series="seriesPieAttack"
+          :color="colorPie"
+          :legendText="legendTextPieAttack"
+        />
         </el-col>
     </el-row>
   </div>
@@ -37,6 +42,8 @@ export default {
     },
     colorPie: Array,
     legendTextPie: Array,
+    seriesPieAttack: Array,
+    legendTextPieAttack: Array
   },
   watch: {
     seriesPie(val) {
@@ -47,6 +54,12 @@ export default {
     },
     legendTextPie(val) {
       this.legendTextPie = val;
+    },
+    seriesPieAttack(val) {
+      this.seriesPieAttack = val
+    },
+    legendTextPieAttack(val) {
+      this.legendTextPieAttack = val
     }
   },
   components: {

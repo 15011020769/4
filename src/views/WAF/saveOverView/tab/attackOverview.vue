@@ -88,6 +88,8 @@
         :seriesPie="seriesPie"
         :colorPie="colorPie"
         :legendTextPie="legendTextPie"
+        :seriesPieAttack="seriesPieAttack"
+        :legendTextPieAttack="legendTextPieAttack"
       />
       <el-row class="echartsShowSecond">
         <el-col :span="12">
@@ -95,6 +97,11 @@
           {{t('攻击来源地域TOP5', 'WAF.gjlydy')}}
           <span style="color:#bbb;">(次)</span>
         </h3>
+        <EBar
+          :xAxis="xAxisBarLocal"
+          :series="seriesBarLocal"
+          :legendText="legendTextBarIp"
+        />
         </el-col>
         <el-col :span="12">
         <h3 class="topfont">
@@ -102,9 +109,9 @@
           <span style="color:#bbb;">(次)</span>
         </h3>
         <EBar
-          :xAxis="xAxisBar"
-          :series="seriesBar"
-          :legendText="legendTextBar"
+          :xAxis="xAxisBarIp"
+          :series="seriesBarIp"
+          :legendText="legendTextBarIp"
         />
         </el-col>
       </el-row>
@@ -166,8 +173,8 @@ export default {
   data() {
     return {
       options: [], //默认下拉选项
-      dateTimeValue: [], //日期绑定
-      selectValue: [], //域名下拉菜单
+      dateTimeValue: [(moment(new Date()).format("YYYY-MM-DD HH:mm:ss")), (moment(new Date()).format("YYYY-MM-DD HH:mm:ss"))], //日期绑定
+      selectValue: "", //域名下拉菜单
       thisType: "1", //按钮默认选中
       webAttack: 0,
       ccRequest: 0,
@@ -182,9 +189,11 @@ export default {
       series3: [],
       legendText1: ['WEB攻击次数', 'CC攻击次数', 'BOT请求次数'],
       legendText2: ['WEB攻击次数', 'CC攻击次数'],
-      seriesBar: [10, 52, 200, 334, 390, 330, 220],
-      xAxisBar: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-      legendTextBar: "次数",
+      seriesBarLocal: [],
+      xAxisBarLocal: [],
+      seriesBarIp: [],
+      xAxisBarIp: [],
+      legendTextBarIp: "次数",
       dialogDownloadVisible: false,
       dialogSetVisible: false,
       checked1: false,
@@ -199,6 +208,8 @@ export default {
         {value: 0, name: 'WEB攻击次数'},
         {value: 0, name: 'CC攻击次数'},
       ],
+      seriesPieAttack: [],
+      legendTextPieAttack: [],
       seriesMap: [{
               name: '中国',
               value: 2
@@ -215,14 +226,14 @@ export default {
   },
   mounted () {
     this.getDominList();
-    this.checkTime("1");
     this.getPeakValue();
     this.getPeakPoints();
     this.getAttackType();
     this.getAttackWorldMap();
     this.getWebAttack();
     this.getNormalRequest();
-    this.getHistogram();  
+    this.getAttackIp("ip");  
+    this.getAttackIp("local");  
 　},
   watch: {
     selectValue() {
@@ -298,8 +309,23 @@ export default {
         this.generalRespHandler(resp, (Response) => {
           this.webAttack = Response.Attack
           this.ccRequest = Response.Cc
-          // this.$set(this.seriesPie[2].value = Response.Cc)
           this.$set(this.seriesPie, 2, {value: `${Response.Cc}`, name: 'CC攻击次数'},)
+        })
+      })
+    },
+    // 获取正常访问次数
+    getNormalRequest() {
+      const params =  {
+        Version: '2018-01-25',
+        FromTime: this.startTime,
+        ToTime: this.endTime,
+      }
+      if (this.selectValue != "") {
+        params["Domain"] = this.selectValue
+      }
+      this.axios.post(DESCRIBE_REQUEST_COUNT, params).then((resp) => {
+        this.generalRespHandler(resp, (Response) => {
+          this.$set(this.seriesPie, 0, {value: `${Response.Count}`, name: '正常访问'},)
         })
       })
     },
@@ -309,28 +335,18 @@ export default {
         Version: '2018-01-25',
         FromTime: this.startTime,
         ToTime: this.endTime,
+        QueryField: "web",
+        Mode: 0,
         Host: "all",
         Edition: "clb-waf"
       }).then((res) => {
         console.log(res)
       })
     },
-    // 获取正常访问次数
-    getNormalRequest() {
-      this.axios.post(DESCRIBE_REQUEST_COUNT, {
-        Version: '2018-01-25',
-        FromTime: this.startTime,
-        ToTime: this.endTime,
-        // Host: "all",
-        // Edition: "clb-waf"
-      }).then((res) => {
-        console.log(res)
-        // this.$set(this.seriesPie[0].value = res.Response.Count)
-        this.$set(this.seriesPie, 1, {value: `${res.Response.Count}`, name: 'WEB攻击次数'},)
-      })
-    },
     // 查询TOP N攻击类型
     getAttackType() {
+      let typeArr = []
+      let typeLegend = []
       this.axios.post(DESCRIBE_ATTACK_TYPE, {
         Version: '2018-01-25',
         FromTime: '2020-02-24 00:00:00',
@@ -338,19 +354,48 @@ export default {
         Host: "all",
         Edition: "clb-waf"
       }).then((res) => {
-        console.log(res)
+        res.Response.Piechart.map(v => {
+          typeArr.push({value:v.Count, name: v.Type, })
+          typeLegend.push(v.Type)
+        })
+        this.seriesPieAttack = typeArr
+        this.legendTextPieAttack = typeLegend
       })
     },
-    // 获取柱状图
-    getHistogram() {
+    // 获取攻击来源地址和ip柱状图
+    getAttackIp(type) {
       this.axios.post(DESCRIBE_HISTOGRAM, {
         Version: '2018-01-25',
         FromTime: this.startTime,
         ToTime: this.endTime,
         Host: "all",
-        Edition: "clb-waf"
-      }).then((res) => {
-        console.log(res)
+        Edition: "clb-waf",
+        QueryField: type,
+        Source: "attack",
+      }).then((resp) => {
+        let barArrCount = []
+        let ipArr = []
+        let localArr = []
+        let localArrCount = []
+        if (type == "ip") {
+          this.generalRespHandler(resp, ({Histogram}) => {
+            Histogram.map(v => {
+              barArrCount.push(v.count)
+              ipArr.push(v.ip)
+            })
+            this.xAxisBarIp = ipArr
+            this.seriesBarIp = barArrCount
+          })
+        } else if(type == "local") {
+          this.generalRespHandler(resp, ({Histogram}) => {
+            Histogram.map(v => {
+              localArrCount.push(v.count)
+              localArr.push(v.local)
+            })
+            this.xAxisBarLocal = localArr
+            this.seriesBarLocal = localArrCount
+          })
+        }
       })
     },
     // 获取攻击城市分布
@@ -361,8 +406,10 @@ export default {
         ToTime: moment(this.endTime).utc().valueOf() / 1000,
         Host: "all",
         Edition: "clb-waf"
-      }).then((res) => {
-        console.log(res)
+      }).then((resp) => {
+        this.generalRespHandler(resp, (res) => {
+            console.log(res)
+          })
       })
     },
     // getPeakValue() {
@@ -405,6 +452,8 @@ export default {
         this.getPeakValue();
         this.getNormalRequest();
         this.getAttackType();
+        this.getAttackIp("ip");
+        this.getAttackIp("local"); 
       })
     },
     changeTimeValue() {
@@ -416,6 +465,8 @@ export default {
         this.getPeakValue();
         this.getNormalRequest();
         this.getAttackType();
+        this.getAttackIp("ip");
+        this.getAttackIp("local"); 
       })
     },
     html2canvas_2(imgtype) {
@@ -435,8 +486,6 @@ export default {
         // taintTest: false,
         // canvas: canvas,
       }).then(	function(canvas) {
-          // const type = 'png';
-          // const type = 'jpeg';
           const type = imgtype
           let imgData = canvas.toDataURL(type);
           const _fixType = function(type) {
