@@ -1,14 +1,12 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import { DESCRIBE_USER_EDITION } from '@/constants'
 
 Vue.use(Router)
 
 const router = new Router({
   // mode: 'history',
   base: process.env.BASE_URL,
-  redirect: {
-    name: 'toBuy'
-  },
   routes: [
     {
       path: '/',
@@ -201,9 +199,31 @@ const router = new Router({
   ]
 })
 
+let waf = -1 // 0 未购买 1 已购买
 router.beforeEach((to, from, next) => {
-  console.log(123)
-  next()
+  if (to.path === '/toBuy') {
+    next()
+    return
+  }
+  if (waf === -1) {
+    Vue.prototype.axios.post(DESCRIBE_USER_EDITION, {
+      Version: '2018-01-25'
+    }).then(resp => {
+      Vue.prototype.generalRespHandler(resp, ({ Data }) => {
+        if (!Data || !Data.includes('clb-waf')) {
+          waf = 0
+          next('/toBuy')
+        } else {
+          waf = 1
+          next()
+        }
+      }, )
+    })
+  } else if (waf === 0) {
+    next('/toBuy')
+  } else {
+    next()
+  }
 })
 
 export default router

@@ -333,8 +333,8 @@ export default {
     getAttackType() {
       this.axios.post(DESCRIBE_ATTACK_TYPE, {
         Version: '2018-01-25',
-        FromTime: this.startTime,
-        ToTime: this.endTime,
+        FromTime: '2020-02-24 00:00:00',
+        ToTime: '2020-02-24 23:59:59',
         Host: "all",
         Edition: "clb-waf"
       }).then((res) => {

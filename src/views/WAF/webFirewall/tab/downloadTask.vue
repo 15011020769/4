@@ -4,13 +4,13 @@
       <div class="topTip">{{t('创建成功的日志下载任务，只保留7天；7天后日志文件将会删除，请及时下载', 'WAF.cjrwdrzxzrw')}}。</div>
       <div class="taskListCon">
         <el-table :data="tableDataBegin" :empty-text="t('暂无数据', 'WAF.zwsj')">
-          <el-table-column prop="num" :label="t('序号', 'WAF.xh')" width></el-table-column>
-          <el-table-column prop="taskName" :label="t('任务名称', 'WAF.rwmc')" width></el-table-column>
-          <el-table-column prop="domin" label="域名"></el-table-column>
-          <el-table-column prop="logNum" :label="t('日志条目数', 'WAF.rztms')"></el-table-column>
-          <el-table-column prop="createTime" :label="t('创建时间', 'WAF.xh')"></el-table-column>
-          <el-table-column prop="outTime" :label="t('过期时间', 'WAF.gqsj')"></el-table-column>
-          <el-table-column prop="status" :label="t('状态', 'WAF.zt')"></el-table-column>
+          <el-table-column prop="ID" :label="t('序号', 'WAF.xh')" width></el-table-column>
+          <el-table-column prop="Name" :label="t('任务名称', 'WAF.rwmc')" width></el-table-column>
+          <el-table-column prop="Host" label="域名"></el-table-column>
+          <el-table-column prop="Count" :label="t('日志条目数', 'WAF.rztms')"></el-table-column>
+          <el-table-column prop="CreateTime" :label="t('创建时间', 'WAF.xh')"></el-table-column>
+          <el-table-column prop="ExpireTime" :label="t('过期时间', 'WAF.gqsj')"></el-table-column>
+          <el-table-column prop="Status" :label="t('状态', 'WAF.zt')"></el-table-column>
           <el-table-column prop="action" label="操作" width="180">
             <template slot-scope="scope">
               <el-button type="text" :disabled="true" size="small" @click="downLoad(scope.$index, scope.row)">{{t('下载', 'WAF.xz')}}</el-button>
@@ -47,38 +47,11 @@
   </div>
 </template>
 <script>
+import { DESCRIBE_ATTACK_DOWNLOAD_RECORD } from '@/constants'
 export default {
   data() {
     return {
-      tableDataBegin: [
-        {
-          num: "1",
-          taskName: "1",
-          domin: "1",
-          logNum: "1",
-          createTime: "1",
-          outTime: "1",
-          status: "1"
-        },
-        {
-          num: "1",
-          taskName: "1",
-          domin: "1",
-          logNum: "1",
-          createTime: "1",
-          outTime: "1",
-          status: "1"
-        },
-        {
-          num: "1",
-          taskName: "1",
-          domin: "1",
-          logNum: "1",
-          createTime: "1",
-          outTime: "1",
-          status: "1"
-        }
-      ], //表格数据
+      tableDataBegin: [], //表格数据
       currentPage: 1, //当前页
       pageSize: 10, //每页长度
       totalItems: 0, //总长度
@@ -91,6 +64,13 @@ export default {
   methods: {
     //获取数据
     getData() {
+      this.axios.post(DESCRIBE_ATTACK_DOWNLOAD_RECORD, {
+        Version: '2018-01-25',
+      }).then(resp => {
+        this.generalRespHandler(resp, ({ Records }) => {
+          this.tableDataBegin = Records
+        })
+      })
       this.totalItems = this.tableDataBegin.length;
     },
     // 分页开始

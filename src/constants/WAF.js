@@ -74,3 +74,13 @@ export const UPSERT_SESSION = 'waf2/UpsertSession'
 export const DELETE_SESSION = 'waf2/DeleteSession'
 /** 查询访问日志 */
 export const DESCRIBE_ACCESS_LOGS = 'waf2/DescribeAccessLogs'
+/** 获取攻击日志 */
+export const DESCRIBE_ATTACK_DETAIL = 'waf2/DescribeAttackDetail'
+/** 查询攻击日志数量 */
+export const DESCRIBE_ATTACK_LOG_COUNT = 'waf2/DescribeAttackLogCount'
+/** 建攻击日志下载任务 */
+export const CREATE_ATTACK_DOWNLOAD_TASK = 'waf2/CreateAttackDownloadTask'
+/** 查询下载记录 */
+export const DESCRIBE_ATTACK_DOWNLOAD_RECORD = 'waf2/DescribeAttackDownloadRecord'
+/** 切换自定义规则的开关 */
+export const MODIFY_CUSTOM_RULE_STATUS = 'waf2/ModifyCustomRuleStatus'

@@ -9,7 +9,7 @@
         <div class="newClear pIpt">
           <p>任务名称</p>
           <p>
-            <el-input class="ipt" placeholder="请输入任务名称，50个组符以内" v-model="taskName" @input="iptChange"></el-input>
+            <el-input class="ipt" placeholder="请输入任务名称，50个组符以内" v-model="taskName" :maxlength="50"></el-input>
           </p>
         </div>
         <div class="tip">
@@ -19,7 +19,7 @@
         </div>
       </div>
       <span class="footer">
-        <el-button class="createBtn" @click="createBtn" :disabled="taskName1">创建</el-button>
+        <el-button type="primary" @click="createBtn" :disabled="!taskName || !taskName.trim()">创建</el-button>
         <el-button @click="handleClose">取消</el-button>
       </span>
     </el-dialog>
@@ -34,7 +34,6 @@ export default {
     return{
       dialogModel:'',//弹框
       taskName:'',//任务名称
-      taskName1:false,
     }
   },
   computed:{
@@ -52,17 +51,8 @@ export default {
     //确定按钮点击事件
     createBtn(){
       this.dialogModel=false;
-      this.$emit('closeCreateTaskModel',this.dialogModel)
+      this.$emit('create',this.taskName)
     },
-    //ipt框变化
-    iptChange(){
-      console.log(11)
-      if(this.taskName==''){
-        this.taskName1=true;
-      }else{
-        this.taskName1=false;
-      }
-    }
   }
 }
 </script>
@@ -84,10 +74,6 @@ export default {
   display:inline-block;
   width:100%;
   text-align:center;
-  .createBtn{
-    color:#fff;
-    background-color:#006eff;
-  }
 }
 .pIpt{
   margin-bottom:16px;

@@ -121,6 +121,7 @@ module.exports = {
       choosepolicy: '選擇策略',
       searchUserName: '支持搜索用戶名',
       cjly: '創建來源',
+      gllx: '關聯類型',
       scyh: '刪除用戶',
       qsrzqdsjh: '請輸入正確的手機號',
       qsrzqdyx: '請輸入正確的郵箱',

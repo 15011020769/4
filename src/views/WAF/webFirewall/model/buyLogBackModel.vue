@@ -36,6 +36,7 @@
 </template>
 <script>
 import moment from 'moment'
+import { DESCRIBE_WAF_PRICE } from '@/constants'
 export default {
   props:{
     isShow:Boolean,
@@ -51,6 +52,7 @@ export default {
       logBackModel: '', // 弹框
       buyNum: 1, // 购买数量
       remainingDays: 0, // 剩余天数
+      price: 0,
     }
   },
   watch: {
@@ -69,6 +71,30 @@ export default {
     }
   },
   methods:{
+    queryPrice() {
+      this.axios.post(DESCRIBE_WAF_PRICE, {
+        Version: '2018-01-25',
+        ResInfo: [{
+          "goodsCategoryId": 101207,
+          "regionId": 1,
+          "projectId": 0,
+          "goodsNum": 1,
+          "payMode": 1,
+          "platform": 1,
+          "goodsDetail": {
+            "pid": 1001156,
+            "timeSpan": 19,
+            "timeUnit": "d",
+            "sv_wsm_waf_domain_clb": 1,
+            "type": "sp_wsm_waf_domain_clb"
+          }
+        }]
+      }).then(resp => {
+        this.generalRespHandler(resp, ({ RealTotalCost }) => {
+          this.price = RealTotalCost
+        })
+      })
+    },
     //关闭按钮
     handleClose(){
       this.logBackModel=false;

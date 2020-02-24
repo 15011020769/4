@@ -40,7 +40,7 @@
       width="30%"
       destroy-on-close
     >
-      <el-form :model="addModel" :rules="rules" size="mini" ref="ruleForm" label-width="100px">
+      <el-form :model="addModel" size="mini" ref="ruleForm" label-width="100px">
         <el-form-item :label="$t('CAM.strategy.dataFile')" prop="metadataDocument" :error="metadataDocumentError">
           <el-upload
             size="mini"
@@ -65,7 +65,7 @@
       </el-form>
       <el-row slot="footer" class="dialog-footer">
         <el-button type="primary" @click="updateSAMLMetadata">确 定</el-button>
-        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button @click="cancelUpload">取 消</el-button>
       </el-row>
     </el-dialog>
   </div>
@@ -86,15 +86,15 @@ export default {
       addModel: {
         metadataDocument: ""
       },
-      rules: {
-        metadataDocument: [
-          {
-            required: true,
-            message: "請選擇元數據文件",
-            trigger: "blur"
-          }
-        ]
-      },
+      // rules: {
+      //   metadataDocument: [
+      //     {
+      //       required: true,
+      //       message: "請選擇元數據文件",
+      //       trigger: "blur"
+      //     }
+      //   ]
+      // },
       dialogVisible: false,
       showEditDescription: false,
       description: '',
@@ -105,7 +105,12 @@ export default {
     this.init()
   },
   methods: {
+    cancelUpload() {
+      this.addModel.metadataDocument = ''
+      this.dialogVisible = false
+    },
     handleChange(file) {
+      console.log(file)
       this.metadataDocumentError = ''
       if (!file.name.endsWith('.xml')) {
         this.metadataDocumentError = '文件类型无效，请上传类型为xml的文件'
@@ -123,13 +128,13 @@ export default {
             SAMLMetadataDocument: base64encode
           }).then(res => {
             if (res.Response.Error) {
-              this.metadataDocumentError = '元数据文档内容有误'
+              this.metadataDocumentError = '元數據文檔內容有誤'
             } else  {
               this.base64encode = base64encode
             }
           })
         } catch (err) {
-          this.metadataDocumentError = '元数据文档内容有误'
+          this.metadataDocumentError = '元數據文檔內容有誤'
         }
       };
       reader.readAsText(file.raw);
@@ -164,6 +169,10 @@ export default {
       })
     },
     updateSAMLMetadata() {
+      if (!this.addModel.metadataDocument) {
+        this.metadataDocumentError = '請選擇元數據文件'
+        return
+      }
       this.$refs.ruleForm.validate(valid => {
         if (valid) {
           const info = {
@@ -171,6 +180,7 @@ export default {
             SAMLMetadata: this.base64encode
           }
           this.update(info, () => {
+            this.addModel.metadataDocument = ''
             this.dialogVisible = false
             this.base64encode = ''
           })

@@ -9,7 +9,7 @@
       <el-col>
         <el-row type="flex" justify="end" align="middle" :gutter="15">
           <el-input v-model="keyword" :placeholder="t('请输入规则名称或匹配条件', 'WAF.qsrzgmcpptj')" style="width: 200px">
-            <i slot="suffix" class="el-input__icon el-icon-search" />
+            <i slot="suffix" class="el-input__icon el-icon-search" @click="query" />
           </el-input>
           <i class="el-icon-refresh refresh" />
         </el-row>
@@ -28,12 +28,18 @@
         </template>
       </el-table-column>
       <el-table-column width="100" align="center">
-        <el-dropdown slot="header">
+        <el-dropdown slot="header" @command="handleCommand">
           <span class="el-dropdown-link" style="color: #909399;">
             {{t('执行动作', 'WAF.zxdz')}}<i class="el-icon-arrow-down el-icon--right"></i>
           </span>
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item v-for="action in POLICY_RULE_ACTION_ARR" :key="action.name">{{action.name}}</el-dropdown-item>
+            <el-dropdown-item
+              :command="action.value"
+              v-for="action in POLICY_RULE_ACTION_ARR"
+              :key="action.name"
+            >
+              {{action.name}}
+            </el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
         <template slot-scope="scope">
@@ -59,7 +65,7 @@
       </el-table-column>
       <el-table-column prop="Name" :label="t('规则开关', 'WAF.gzkg')" width="100">
         <template slot-scope="scope">
-          <el-switch v-model="scope.row.StatusBool" />
+          <el-switch v-model="scope.row.StatusBool" @change="switchStatus(scope.row)" />
         </template>
       </el-table-column>
       <el-table-column prop="Name" label="操作" width="120" class-name="actions" align="center">
@@ -90,8 +96,8 @@
   </div>
 </template>
 <script>
-import { DESCRIBE_CUSTOM_RULES } from '@/constants'
-import { POLICY_RULE_ACTION_ARR, POLICY_RULE_ACTION, MATCH_KEY, LOGIC_SYMBOL } from '../../constants'
+import { DESCRIBE_CUSTOM_RULES, MODIFY_CUSTOM_RULE_STATUS } from '@/constants'
+import { POLICY_RULE_ACTION_ARR, POLICY_RULE_ACTION, MATCH_KEY, LOGIC_SYMBOL, COMMON_ERROR } from '../../constants'
 import Rule from '../model/rule'
 import { flatObj } from '@/utils'
 import moment from 'moment'
@@ -110,7 +116,7 @@ export default {
       rule: undefined,
       loading: true,
       showTip: true,
-      POLICY_RULE_ACTION_ARR,
+      POLICY_RULE_ACTION_ARR: [{name: '全部', value: '-1'},...POLICY_RULE_ACTION_ARR],
       POLICY_RULE_ACTION,
       LOGIC_SYMBOL,
       MATCH_KEY,
@@ -119,6 +125,7 @@ export default {
       offset: 1,
       limit: 10,
       total: 0,
+      ActionType: '-1',
     }
   },
   components: {
@@ -130,6 +137,24 @@ export default {
     }
   },
   methods: {
+    switchStatus(rule) {
+      rule.StatusBool = !rule.StatusBool
+      this.axios.post(MODIFY_CUSTOM_RULE_STATUS, {
+        Version: '2018-01-25',
+        Domain: this.domain.Domain,
+        RuleId: rule.RuleId,
+        Status: Number(rule.Status)^1,
+        Edition: 'clb-waf'
+      }).then(resp => {
+        this.generalRespHandler(resp, () => {
+          this.getCustomRules()
+        }, COMMON_ERROR, '切换成功')
+      })
+    },
+    handleCommand(ActionType) {
+      this.ActionType = ActionType
+      this.getCustomRules()
+    },
     handleCurrentChange(page) {
       this.offset = page
       this.getCustomRules()
@@ -142,17 +167,26 @@ export default {
       if (mm === '0') return '永不过期'
       return moment(Number(mm)*1000).format('YYYY-MM-DD 00:00:00')
     },
+    query() {
+      this.offset = 1
+      this.getCustomRules()
+    },
     getCustomRules() {
       this.loading = true
-      this.axios.post(DESCRIBE_CUSTOM_RULES, flatObj({
+      const param = {
         Version: '2018-01-25',
         Domain: this.domain.Domain,
         Edition: 'clb-waf',
         Paging: {
           Offset: this.offset - 1,
           Limit: this.limit
-        }
-      })).then(resp => {
+        },
+        Search: this.keyword,
+      }
+      if (this.ActionType !== '-1') {
+        param.ActionType = this.ActionType
+      }
+      this.axios.post(DESCRIBE_CUSTOM_RULES, flatObj(param)).then(resp => {
         this.generalRespHandler(resp, ({ RuleList, TotalCount }) => {
           RuleList.forEach(rule => {
             rule.StatusBool = !!Number(rule.Status)

@@ -9,12 +9,11 @@
             allow-create
             class="dominList"
             default-first-option>
-            <el-option value="all">ALL</el-option>
             <el-option
               v-for="item in dominOptions"
-              :key="item.DomainId"
+              :key="item.Domain"
               :label="item.Domain"
-              :value="item.DomainId">
+              :value="item.Domain">
             </el-option>
           </el-select>
           <el-button-group class="btnGroup">
@@ -34,8 +33,7 @@
           </el-date-picker>
         </div>
         <div class="newClear"> 
-          <el-select class="shortSelect" v-model="riskLevelVlaue" placeholder="请选择">
-            <el-option>{{t('全部风险等级', 'WAF.qbfxdj')}}</el-option>
+          <el-select class="shortSelect" v-model="riskLevelVlaue">
             <el-option
               v-for="item in riskLevelOption"
               :key="item.value"
@@ -44,7 +42,6 @@
             </el-option>
           </el-select>
           <el-select class="shortSelect" v-model="actionVlaue" placeholder="请选择">
-            <el-option>{{t('全部执行动作', 'WAF.qbzxdz')}}</el-option>
             <el-option
               v-for="item in actionOption"
               :key="item.value"
@@ -52,132 +49,302 @@
               :value="item.value">
             </el-option>
           </el-select>
-          <el-select class="shortSelect" v-model="attackVlaue" placeholder="请选择">
-            <el-option>{{t('全部攻击类型', 'WAF.qbgjlx')}}</el-option>
+          <el-select class="shortSelect" v-model="attackVlaue">
             <el-option
               v-for="item in attackOption"
-              :key="item.value"
+              :key="item.id"
               :label="item.label"
-              :value="item.value">
+              :value="item.id">
             </el-option>
           </el-select>
-          <el-input class="inputIpt" v-model="celueId" :placeholder="t('输入策略ID', 'WAF.srclid')"></el-input>
+          <el-input class="inputIpt" v-model="ruleId" :placeholder="t('输入策略ID', 'WAF.srclid')"></el-input>
           <el-input class="inputIpt" v-model="attackIP" :placeholder="t('输入攻击源IP', 'WAF.srgjyip')"></el-input>
-          <el-button class="selectBtn" @click="queryLogs">{{t('查询', 'WAF.js')}}</el-button>
-          <i class="el-icon-download" @click="createDownTask"></i>
+          <el-button class="selectBtn" @click="search">{{t('查询', 'WAF.js')}}</el-button>
+          <i class="el-icon-download" style="cursor: pointer;" @click="createDownTask"></i>
         </div>
       </div>
       <div class="tableCon">
-        <div class="topSet newClear">
-          <i class="el-icon-setting"></i>
-        </div>
+        <el-row type="flex" align="middle" justify="space-between" style="margin: 0 10px;">
+          总数量：{{total}} 项
+          <div class="topSet newClear">
+            <i class="el-icon-setting" style="cursor: pointer;" @click="openDialog"></i>
+          </div>
+        </el-row>
         <div class="tableMian">
-          <el-table :data="tableDataBegin" :empty-text="t('暂无数据', 'WAF.zwsj')">
-            <el-table-column prop="num" :label="t('序号', 'WAF.xh')" width=""></el-table-column>
-            <el-table-column prop="attackUrl" :label="t('被攻击网址', 'WAF.bgjwz')" width=""></el-table-column>
-            <el-table-column prop="AttackIP" :label="t('攻击源IP', 'WAF.gjyip')"></el-table-column>
-            <el-table-column prop="attackType" :label="t('攻击类型', 'WAF.gjlx')"></el-table-column>
-            <el-table-column prop="methedId" label="策略ID"></el-table-column>
-            <el-table-column prop="methedName" :label="t('策略名称', 'WAF.clmc')"></el-table-column>
-            <el-table-column prop="attackCon" :label="t('攻击内容', 'WAF.gjlr')"></el-table-column>
-            <el-table-column prop="attackTime" :label="t('攻击时间', 'WAF.gjsj')"></el-table-column>
-            <el-table-column prop="actionRun" :label="t('执行动作', 'WAF.zxdz')"></el-table-column>
-            <el-table-column prop="gardenW" :label="t('风险等级', 'WAF.fxdj')"></el-table-column>
+          <el-table :data="tableDataBegin" :empty-text="t('暂无数据', 'WAF.zwsj')" v-loading="loading">
+            <el-table-column type="index" width="50" :label="t('序号', 'WAF.xh')"></el-table-column>
+            <el-table-column prop="Domain" v-if="columnsCopy.includes('Domain')" :label="t('被攻击网址', 'WAF.bgjwz')"></el-table-column>
+            <el-table-column prop="AttackIp" v-if="columnsCopy.includes('AttackIp')" :label="t('攻击源IP', 'WAF.gjyip')"></el-table-column>
+            <el-table-column prop="AttackType" v-if="columnsCopy.includes('AttackType')" :label="t('攻击类型', 'WAF.gjlx')"></el-table-column>
+            <el-table-column prop="RuleId" v-if="columnsCopy.includes('RuleId')" label="策略ID"></el-table-column>
+            <el-table-column prop="RuleName" v-if="columnsCopy.includes('RuleName')" :label="t('策略名称', 'WAF.clmc')">
+              <template scope="scope">
+                <span v-if="scope.row.AttackContent.includes('cc:')">{{scope.row.AttackContent.split(':')[1]}}</span>
+                <span v-else>{{scope.row.RuleName}}</span>
+              </template>
+            </el-table-column>
+            <el-table-column prop="AttackContent" v-if="columnsCopy.includes('AttackContent')" :label="t('攻击内容', 'WAF.gjlr')">
+              <template scope="scope">
+                <span v-if="scope.row.AttackContent.includes('cc:')">{{scope.row.AttackContent.split(':')[2]}}</span>
+                <span v-else>{{scope.row.AttackContent}}</span>
+              </template>
+            </el-table-column>
+            <el-table-column prop="AttackTime" v-if="columnsCopy.includes('AttackTime')" :label="t('攻击时间', 'WAF.gjsj')" width="150"></el-table-column>
+            <el-table-column prop="Status" v-if="columnsCopy.includes('Status')" :label="t('执行动作', 'WAF.zxdz')">
+              <template scope="scope">
+                {{scope.row.Status === '1' ? '拦截' : '观察'}}
+              </template>
+            </el-table-column>
+            <el-table-column prop="RiskLevel" v-if="columnsCopy.includes('RiskLevel')" :label="t('风险等级', 'WAF.fxdj')">
+              <template scope="scope">
+                <span v-if="scope.row.RiskLevel === '1'">高危</span>
+                <span v-if="scope.row.RiskLevel === '2'">中危</span>
+                <span v-if="scope.row.RiskLevel === '3'">低危</span>
+              </template>
+            </el-table-column>
             <el-table-column prop="action" label="操作" width="180">
               <template slot-scope="">
                 <el-button type="text" size="small">{{t('详情', 'WAF.xq')}}</el-button>
               </template>
             </el-table-column>
           </el-table>
+          <p class="loadmore" v-if="Context && !loadmoreloading">
+            <el-button type="text" size="small" @click="loadmore">点击加载更多</el-button>
+          </p>
+          <p class="loadmore" v-if="loadmoreloading">
+            <el-button type="text">加载中</el-button>
+          </p>
         </div>
       </div>
-      <createDownTaskModel :isShow="createDownTaskModel" @closeCreateTaskModel="closeCreateTaskModel"/>
+      <createDownTaskModel :isShow="createDownTaskModel" @create="createDownloadTask" @closeCreateTaskModel="closeCreateTaskModel"/>
     </div>
+    <el-dialog
+      title="自定义列表字段"
+      :visible.sync="visible"
+      width="420px"
+      center
+    >
+      <el-checkbox-group v-model="columns" class="columns">
+        <el-checkbox label="index" disabled>序号</el-checkbox>
+        <el-checkbox label="Domain">被攻击网址</el-checkbox>
+        <el-checkbox label="AttackIp">攻击源IP</el-checkbox>
+        <el-checkbox label="AttackType">攻击类型</el-checkbox>
+        <el-checkbox label="RuleId">策略ID</el-checkbox>
+        <el-checkbox label="RuleName">策略名称</el-checkbox>
+        <el-checkbox label="AttackContent">攻击内容</el-checkbox>
+        <el-checkbox label="AttackTime">攻击时间</el-checkbox>
+        <el-checkbox label="Status">执行动作</el-checkbox>
+        <el-checkbox label="RiskLevel">风险等级</el-checkbox>
+        <el-checkbox label="action" disabled>操作</el-checkbox>
+      </el-checkbox-group>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="cancelDialog">取 消</el-button>
+        <el-button type="primary" @click="setColumns">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 <script>
 import moment from "moment";
 import createDownTaskModel from '../model/createDownTaskModel'
-import { ATTACK_TYPE } from '../../constants'
-import { DESCRIBE_HOSTS, DESCRIBE_ACCESS_LOGS } from '@/constants'
-
+import { ATTACK_TYPE, COMMON_ERROR } from '../../constants'
+import { DESCRIBE_HOSTS, DESCRIBE_ATTACK_DETAIL, DESCRIBE_ATTACK_LOG_COUNT, CREATE_ATTACK_DOWNLOAD_TASK } from '@/constants'
 export default {
   data(){
     return{
-      dominList:'',//域名下拉
+      visible: false,
+      columnsCopy: [],
+      columns: ['index', 'action', 'Domain', 'AttackIp', 'AttackType', 'RuleId', 'RuleName', 'AttackContent', 'AttackTime', 'Status', 'RiskLevel'],
+      dominList: 'ALL',//域名下拉
       dominOptions:[],
-      thisType:'1',//默认时间选择
+      thisType: '1',//默认时间选择
       timeValue:'',//时间选择
-      riskLevelVlaue:'',//风险等级
+      riskLevelVlaue: '-1',//风险等级
       riskLevelOption:[
         {
-          label:'全部风险等级',
-          value:'全部风险等级'
+          label: this.t('全部风险等级', 'WAF.qbfxdj'),
+          value: '-1'
         },
         {
           label:'高危',
-          value:'高危'
+          value:'1'
         },
         {
           label:'中危',
-          value:'中危'
+          value:'2'
         },
         {
           label:'低危',
-          value:'低危'
+          value:'3'
         }
       ],
-      actionVlaue:'',//执行动作
+      actionVlaue:'-1',//执行动作
       actionOption:[
         {
-          label:'全部执行动作',
-          value:'全部执行动作'
+          label: this.t('全部执行动作', 'WAF.qbzxdz'),
+          value: '-1',
         },
         {
           label:'观察',
-          value:'观察'
+          value:'0'
         },
         {
           label:'拦截',
-          value:'拦截'
+          value:'1'
         }
       ],
-      attackVlaue:'',//注入攻击类型
-      attackOption:ATTACK_TYPE,
-      celueId:'',//策略ID
+      attackVlaue: '-1',//注入攻击类型
+      attackOption: [
+        {
+          label: this.t('全部攻击类型', 'WAF.qbgjlx'),
+          id: '-1',
+        },
+        ...ATTACK_TYPE
+      ],
+      ruleId:'',//策略ID
       attackIP:'',//攻击源IP
       tableDataBegin:[],
       createDownTaskModel:false,//创建下载任务弹框
       Context: '',
+      total: 0,
+      loading: false,
+      loadmoreloading: false,
+      startTime: moment().format("YYYY-MM-DD HH:mm:ss"),
+      endTime: moment().subtract(1, 'h').format('YYYY-MM-DD HH:mm:ss'),
     }
   },
   components:{
     createDownTaskModel,
   },
+  watch: {
+    columns(val, oldVal) {
+      if (val.length === 3) {
+        this.$message({
+          message: '至少选择4个',
+          type: 'error',
+          showClose: true,
+          duration: 0
+        })
+        this.columns = [...oldVal]
+      }
+    },
+  },
   mounted() {
-    this.queryLogs()
+    this.columnsCopy = [...this.columns]
+    this.init()
     this.axios.post(DESCRIBE_HOSTS, {
       Version: '2018-01-25',
     }).then(resp => {
       this.generalRespHandler(resp, ({ HostList }) => {
-        this.dominOptions = HostList
+        this.dominOptions = [{
+          Domain: 'ALL',
+        }, ...HostList]
       })
     })
   },
   methods:{
-    queryLogs() {
-      const { Context } = this
-      this.axios.post(DESCRIBE_ACCESS_LOGS, {
+    openDialog() {
+      this.columnsCopy = [...this.columns]
+      this.visible = true
+    },
+    cancelDialog() {
+      this.visible = false
+      this.columns = [...this.columnsCopy]
+    },
+    setColumns() {
+      this.columnsCopy = [...this.columns]
+      this.visible = false
+    },
+    loadmore() {
+      this.loadmoreloading = true
+      this.queryLogs()
+    },
+    search() { // 检索
+      this.tableDataBegin = []
+      this.Context = ''
+      this.init()
+    },
+    init() {
+      this.loading = true
+      this.queryLogs()
+      this.queryLogCount()
+    },
+    queryLogCount() {
+      const { Context, startTime, endTime, dominList } = this
+      let domain = dominList
+      if (domain === 'ALL') {
+        domain = 'all'
+      }
+      const params = {
         Version: '2018-01-25',
-        Count: 20,
-        FromTime: '2020-02-20 00:00:00',
-        ToTime: '2020-02-20 23:59:59',
-        Context, 
+        Domain: domain,
+        FromTime: startTime,
+        ToTime: endTime,
+      }
+      // 风险等级
+      if (this.riskLevelVlaue !== '-1') {
+        params.RiskLevel = this.riskLevelVlaue
+      }
+      // 拦截状态
+      if (this.actionVlaue !== '-1') {
+        params.Status = this.actionVlaue
+      }
+      // 攻击类型
+      if (this.attackVlaue !== '-1') {
+        params.AttackType = this.attackVlaue
+      }
+      if (this.ruleId) {
+        params.RuleId = this.ruleId
+      }
+      this.axios.post(DESCRIBE_ATTACK_LOG_COUNT, {
+        ...params,
+        AttackIp: this.attackIP, // 攻击者IP
       }).then(resp => {
-        console.log(resp)
-        // this.generalRespHandler(resp, ({ HostList }) => {
-        //   this.dominOptions = HostList
-        // })
+        this.generalRespHandler(resp, ({ Count }) => {
+          this.total = Count
+        })
+      })
+    },
+    queryLogs() {
+      const { Context, startTime, endTime, dominList } = this
+      let domain = dominList
+      if (domain === 'ALL') {
+        domain = 'all'
+      }
+      const params = {
+        Version: '2018-01-25',
+        Domain: domain,
+        FromTime: startTime,
+        ToTime: endTime,
+      }
+      // 风险等级
+      if (this.riskLevelVlaue !== '-1') {
+        params.RiskLevel = this.riskLevelVlaue
+      }
+      // 拦截状态
+      if (this.actionVlaue !== '-1') {
+        params.Status = this.actionVlaue
+      }
+      // 攻击类型
+      if (this.attackVlaue !== '-1') {
+        params.AttackType = this.attackVlaue
+      }
+      if (this.ruleId) {
+        params.RuleId = this.ruleId
+      }
+      this.axios.post(DESCRIBE_ATTACK_DETAIL, {
+        ...params,
+        Context,
+        Count: 20,
+        AttackIp: this.attackIP, // 攻击者IP
+      }).then(resp => {
+        this.generalRespHandler(resp, ({ Context, Data, Count }) => {
+          this.tableDataBegin = this.tableDataBegin.concat(Data)
+          this.Context = Context
+        })
+      }).then(() => {
+        this.loading = false
+        this.loadmoreloading = false
       })
     },
     //时间选择按钮
@@ -207,6 +374,41 @@ export default {
     //创建下载任务
     createDownTask(){
       this.createDownTaskModel=true;
+    },
+    createDownloadTask(name) {
+      const { Context, startTime, endTime, dominList } = this
+      let domain = dominList
+      if (domain === 'ALL') {
+        domain = 'all'
+      }
+      const params = {
+        Version: '2018-01-25',
+        Domain: domain,
+        FromTime: startTime,
+        ToTime: endTime,
+        Name: name,
+        AttackIp: this.attackIP,
+      }
+      // 风险等级
+      if (this.riskLevelVlaue !== '-1') {
+        params.RiskLevel = this.riskLevelVlaue
+      }
+      // 拦截状态
+      if (this.actionVlaue !== '-1') {
+        params.Status = this.actionVlaue
+      }
+      // 攻击类型
+      if (this.attackVlaue !== '-1') {
+        params.AttackType = this.attackVlaue
+      }
+      if (this.ruleId) {
+        params.RuleId = this.ruleId
+      }
+      this.axios.post(CREATE_ATTACK_DOWNLOAD_TASK, params).then(resp => {
+        this.generalRespHandler(resp, ({ Context, Data, Count }) => {
+          this.createDownTaskModel = false
+        }, COMMON_ERROR, '创建成功，你可以前往”下载任务“界面查看任务状态')
+      })
     },
     //关闭下载任务弹框
     closeCreateTaskModel(isShow){
@@ -302,10 +504,6 @@ export default {
   border:1px solid #ddd;
 }
 .topSet{
-  text-align:right;
-  padding-bottom:20px;
-  padding-right:20px;
-  border-bottom:1px solid #ddd;
   .el-icon-setting{
     font-size:18px;
     float:right;
@@ -313,5 +511,24 @@ export default {
 }
 .tableMian{
   min-height: 450px;
+}
+.loadmore {
+  border-bottom: 1px solid #ebeef5;
+  padding: 5px 0;
+  text-align: center;
+}
+.columns {
+  label {
+    width: 120px;
+  }
+  ::v-deep .el-checkbox+.el-checkbox {
+    margin-left: 0;
+  }
+  ::v-deep .el-checkbox {
+    font-size: 12px;
+  }
+  ::v-deep .el-checkbox__label {
+    font-size: 12px;
+  }
 }
 </style>

@@ -16,7 +16,7 @@
           <span>{{t('日志服务', 'WAF.rzfw')}}</span>
         </template>
         <el-menu-item-group>
-          <el-menu-item class="selectMenu" index="/attackLog">{{t('攻击日志', 'WAF.gjrz')}}</el-menu-item>
+          <el-menu-item class="selectMenu" index="/attackDetails">{{t('攻击日志', 'WAF.gjrz')}}</el-menu-item>
           <el-menu-item class="selectMenu" index="/accessLog">{{t('访问日志', 'WAF.fwrz')}}</el-menu-item>
         </el-menu-item-group>
       </el-submenu>
@@ -26,7 +26,7 @@
         </template>
         <el-menu-item-group>
           <el-menu-item class="selectMenu" index="/protectionSettings">{{t('防护设置', 'WAF.fhsz')}}</el-menu-item>
-          <el-menu-item class="selectMenu" index="/attackDetails">{{t('攻击详情', 'WAF.gjxq')}}</el-menu-item>
+          <!-- <el-menu-item class="selectMenu" index="/attackDetails">{{t('攻击详情', 'WAF.gjxq')}}</el-menu-item> -->
         </el-menu-item-group>
       </el-submenu>
       <!-- <el-submenu index="saveOverView">

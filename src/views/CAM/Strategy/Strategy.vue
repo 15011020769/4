@@ -493,4 +493,8 @@ export default {
     cursor: pointer;
   }
 }
+::v-deep .el-input__clear {
+  position: absolute;
+  right: 20px;
+}
 </style>
