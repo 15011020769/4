@@ -232,6 +232,7 @@
         this.axios.post(YJS_LIST, params).then(res => {
           if (res.Response.Error === undefined) {
             this.tableData = res.Response.Events;
+            console.log(this.tableData)
             this.loading = false;
             this.vloading = false;
           } else {
