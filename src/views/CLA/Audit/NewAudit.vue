@@ -8,7 +8,7 @@
             <h2>{{ $t('CLA.total.jcxx') }}</h2>
             <el-form-item :label="$t('CLA.total.gzjmc')" prop="AuditName" class="AuditName">
               <el-input v-model="ruleForm.AuditName"></el-input>
-              <span>僅支持大小寫字母、數字、以及_的組合，3-128個字元。</span>
+              <span>{{ $t('CLA.total.jzcfmsz') }}</span>
             </el-form-item>
             <el-form-item :label="$t('CLA.total.gzqy')">
               <p style="font-size:12px;">{{ $t('CLA.total.s') }}</p>
@@ -39,7 +39,7 @@
               </el-select>
               <el-form-item label prop="CosBucketName" class="seletInp CosBucketName" v-show="!cosShow">
                 <el-input v-model="ruleForm.CosBucketName" :placeholder="$t('CLA.total.qsrmc')"></el-input>
-                <span>僅支持小寫字母、數字以及中劃線" - "的組合，不能超過40字元。</span>
+                <span>{{ $t('CLA.total.jzcxxzm') }}</span>
               </el-form-item>
               <el-select v-model="BucketSelect.name" v-show="cosShow" class="BucketSelect" @change="_BucketSelect">
                 <el-option v-for="item in BucketSelect.options" :key="item.Name" :label="item.Name" :value="item.Name">
@@ -55,7 +55,7 @@
             <div class="set-box" v-show="setShow">
               <el-form-item :label="$t('CLA.total.rzwjqz')" prop="LogFilePrefix" class="LogFilePrefix">
                 <el-input v-model="ruleForm.LogFilePrefix" :placeholder="$t('CLA.total.qsrrzwjqz')"></el-input>
-                <span>僅支持字母和數字的組合，3-40個字元。</span>
+                <span>{{ $t('CLA.total.jzczh') }}</span>
               </el-form-item>
               <el-form-item class="CMQ" required>
 
