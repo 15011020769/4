@@ -53,42 +53,59 @@
     </el-form-item>
     <el-form-item>
       <el-button type="text" slot="label" @click="showExplain=!showExplain">
-        {{t('示例说明', 'WAF.slsm')}}
+        {{t('高级匹配', 'WAF.gjpp')}}
         <el-tooltip placement="right-end" :content="t('支持get表单和post表单参数过滤，单个匹配字段最多配置5个', 'WAF.zcgtbd')" effect="light">
           <i class="el-icon-info"></i>
         </el-tooltip>
         <i class="el-icon-caret-top" v-if="showExplain" />
         <i class="el-icon-caret-bottom" v-else />
       </el-button>
-      <el-row class="explain" v-show="showExplain">
-        <el-table :data="form.options" class="strategies-table">
-          <el-table-column :label="t('匹配字段', 'WAF.pplw')" width="120">
-            <template slot-scope="scope">
-              <el-select v-model="form.options[scope.$index].key">
-                <el-option label="GET" value="get"></el-option>
-                <el-option label="POST" value="post"></el-option>
-              </el-select>
-            </template>
-          </el-table-column>
-          <el-table-column :label="t('参数名', 'WAF.csm')" width="120">
-            <template slot-scope="scope">
-              <el-input v-model="form.options[scope.$index].label" placeholder="512个字符以内" />
-            </template>
-          </el-table-column>
-          <el-table-column :label="t('参数值', 'WAF.csz')" width="120">
-            <template slot-scope="scope">
-              <el-input v-model="form.options[scope.$index].value" placeholder="512个字符以内" />
-            </template>
-          </el-table-column>
-          <el-table-column label="操作">
-            <template slot-scope="scope">
-              <el-link type="info" @click="delOption(scope.$index)" style="cursor: pointer;">删除</el-link>
-            </template>
-          </el-table-column>
-        </el-table>
-        <el-row class="options-table-footer" type="flex" align="middle" justify="center">
-          <el-button type="text" size="small" @click="addOption">新增</el-button>
-        </el-row>
+      <el-row class="explain" v-show="showExplain" type="flex" :gutter="15">
+        <el-col>
+          <el-table :data="form.options" class="strategies-table">
+            <el-table-column :label="t('匹配字段', 'WAF.pplw')" width="120">
+              <template slot-scope="scope">
+                <el-select v-model="form.options[scope.$index].key">
+                  <el-option label="GET" value="get"></el-option>
+                  <el-option label="POST" value="post"></el-option>
+                </el-select>
+              </template>
+            </el-table-column>
+            <el-table-column :label="t('参数名', 'WAF.csm')">
+              <template slot-scope="scope">
+                <el-input v-model="form.options[scope.$index].label" placeholder="512个字符以内" />
+              </template>
+            </el-table-column>
+            <el-table-column :label="t('参数值', 'WAF.csz')">
+              <template slot-scope="scope">
+                <el-input v-model="form.options[scope.$index].value" placeholder="512个字符以内" />
+              </template>
+            </el-table-column>
+            <el-table-column label="操作" width="70">
+              <template slot-scope="scope">
+                <el-link type="info" @click="delOption(scope.$index)" style="cursor: pointer;">删除</el-link>
+              </template>
+            </el-table-column>
+          </el-table>
+          <el-row class="options-table-footer" type="flex" align="middle" justify="center">
+            <el-button type="text" size="small" @click="addOption">新增</el-button>
+          </el-row>
+        </el-col>
+        <el-col>
+          <el-button type="text" @click="showExplain=!showExplain1">
+            {{t('示例说明', 'WAF.slsm')}}
+            <i class="el-icon-caret-top" v-if="showExplain1" />
+            <i class="el-icon-caret-bottom" v-else />
+          </el-button>
+          <el-row class="explain">
+            <p>如下三条GET请求测试数据：</p>
+            <p>1. a=1&b=11</p>
+            <p>2. a=2&b=12</p>
+            <p>3. a=&b=13</p>
+            <p>如果GET配置参数名为a，参数值为1；则，1命中</p>
+            <p>如果GET配置参数名为a，参数值为*；则，1，2，3均命中</p>
+          </el-row>
+        </el-col>
       </el-row>
     </el-form-item>
     <el-form-item
@@ -187,6 +204,7 @@ export default {
       CC_RULE_ACTION_ARR,
       loading: false,
       showExplain: false,
+      showExplain1: false,
     }
   },
   watch: {
@@ -302,5 +320,15 @@ export default {
   .el-input__inner {
     font-size: 12px !important;
   }
+}
+.strategies-table {
+  width: 500px;
+  border: 1px solid #ebeef5;
+  border-bottom: none;
+}
+.explain {
+  font-size: 12px;
+  color: #bbb;
+  line-height: 24px;
 }
 </style>

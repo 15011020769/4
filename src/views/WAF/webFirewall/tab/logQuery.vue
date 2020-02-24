@@ -41,7 +41,7 @@
               :value="item.value">
             </el-option>
           </el-select>
-          <el-select class="shortSelect" v-model="actionVlaue" placeholder="请选择">
+          <el-select class="shortSelect" v-model="actionVlaue">
             <el-option
               v-for="item in actionOption"
               :key="item.value"
@@ -65,7 +65,7 @@
       </div>
       <div class="tableCon">
         <el-row type="flex" align="middle" justify="space-between" style="margin: 0 10px;">
-          总数量：{{total}} 项
+          {{t('总数量', 'WAF.zsl')}}：{{total}} {{t('项', 'WAF.x')}}
           <div class="topSet newClear">
             <i class="el-icon-setting" style="cursor: pointer;" @click="openDialog"></i>
           </div>
@@ -109,37 +109,37 @@
             </el-table-column>
           </el-table>
           <p class="loadmore" v-if="Context && !loadmoreloading">
-            <el-button type="text" size="small" @click="loadmore">点击加载更多</el-button>
+            <el-button type="text" size="small" @click="loadmore">{{t('点击加载更多', 'WAF.djjzgd')}}</el-button>
           </p>
           <p class="loadmore" v-if="loadmoreloading">
-            <el-button type="text">加载中</el-button>
+            <el-button type="text">{{t('加载中', 'WAF.zrz')}}</el-button>
           </p>
         </div>
       </div>
       <createDownTaskModel :isShow="createDownTaskModel" @create="createDownloadTask" @closeCreateTaskModel="closeCreateTaskModel"/>
     </div>
     <el-dialog
-      title="自定义列表字段"
+      :title="t('自定义列表字段', 'WAF.dzylbzd')"
       :visible.sync="visible"
       width="420px"
       center
     >
       <el-checkbox-group v-model="columns" class="columns">
-        <el-checkbox label="index" disabled>序号</el-checkbox>
-        <el-checkbox label="Domain">被攻击网址</el-checkbox>
-        <el-checkbox label="AttackIp">攻击源IP</el-checkbox>
-        <el-checkbox label="AttackType">攻击类型</el-checkbox>
+        <el-checkbox label="index" disabled>{{t('序号', 'WAF.xh')}}</el-checkbox>
+        <el-checkbox label="Domain">{{t('被攻击网址', 'WAF.bgjwz')}}</el-checkbox>
+        <el-checkbox label="AttackIp">{{t('攻击源IP', 'WAF.gjyip')}}</el-checkbox>
+        <el-checkbox label="AttackType">{{t('攻击类型', 'WAF.gjlx')}}</el-checkbox>
         <el-checkbox label="RuleId">策略ID</el-checkbox>
-        <el-checkbox label="RuleName">策略名称</el-checkbox>
-        <el-checkbox label="AttackContent">攻击内容</el-checkbox>
-        <el-checkbox label="AttackTime">攻击时间</el-checkbox>
-        <el-checkbox label="Status">执行动作</el-checkbox>
-        <el-checkbox label="RiskLevel">风险等级</el-checkbox>
+        <el-checkbox label="RuleName">{{t('策略名称', 'WAF.clmc')}}</el-checkbox>
+        <el-checkbox label="AttackContent">{{t('攻击内容', 'WAF.gjlr')}}</el-checkbox>
+        <el-checkbox label="AttackTime">{{t('攻击时间', 'WAF.gjsj')}}</el-checkbox>
+        <el-checkbox label="Status">{{t('执行动作', 'WAF.zxdz')}}</el-checkbox>
+        <el-checkbox label="RiskLevel">{{t('风险等级', 'WAF.fxdj')}}</el-checkbox>
         <el-checkbox label="action" disabled>操作</el-checkbox>
       </el-checkbox-group>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="cancelDialog">取 消</el-button>
-        <el-button type="primary" @click="setColumns">确 定</el-button>
+        <el-button @click="cancelDialog">取消</el-button>
+        <el-button type="primary" @click="setColumns">{{t('确定', 'WAF.qd')}}</el-button>
       </span>
     </el-dialog>
   </div>
@@ -220,7 +220,7 @@ export default {
     columns(val, oldVal) {
       if (val.length === 3) {
         this.$message({
-          message: '至少选择4个',
+          message: this.t('至少选择4个', 'WAF.zsxz4g'),
           type: 'error',
           showClose: true,
           duration: 0

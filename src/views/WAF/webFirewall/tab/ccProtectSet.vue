@@ -16,31 +16,35 @@
         <el-col>
           <el-row type="flex" :gutter="20">
             <el-col :span="2" class="label">SESSION位置</el-col>
-            <el-col>为啥子</el-col>
+            <el-col>{{session && session.Source || '未配置'}}</el-col>
           </el-row>
         </el-col>
         <el-col>
           <el-row type="flex" :gutter="20">
             <el-col :span="2" class="label">匹配模式</el-col>
-            <el-col>为啥子</el-col>
+            <el-col>{{session && session.Category === 'match' ? '字符串模式匹配' : '位置匹配' || '未配置'}}</el-col>
           </el-row>
         </el-col>
         <el-col>
           <el-row type="flex" :gutter="20">
             <el-col :span="2" class="label">{{t('会话标识', 'WAF.hhbs')}}</el-col>
-            <el-col>为啥子</el-col>
+            <el-col>{{session && session.KeyOrStartMat || '未配置'}}</el-col>
           </el-row>
         </el-col>
         <el-col>
           <el-row type="flex" :gutter="20">
             <el-col :span="2" class="label">{{t('会话设置', 'WAF.hhsz')}}</el-col>
-            <el-col>为啥子</el-col>
+            <el-col>
+              <span v-if="!session">开始位置：；结束位置：</span>
+              <span v-else-if="session.Category === 'location'">开始位置：{{session.StartOffset}}；结束位置：{{session.EndOffset}}</span>
+              <span v-else>结束字符：{{session.EndMat}}</span>
+            </el-col>
           </el-row>
         </el-col>
         <el-col>
           <el-row type="flex" :gutter="20">
             <el-col :span="2" class="label">{{t('设置时间', 'WAF.szsj')}}</el-col>
-            <el-col>为啥子</el-col>
+            <el-col>{{session && formatDate(session.TsVersion) || '未配置'}}</el-col>
           </el-row>
         </el-col>
       </el-row>
@@ -130,7 +134,7 @@
     <el-dialog
       :title="t(!rule ? '添加CC防护规则' : '编辑CC防护规则', !rule ? 'WAF.tjccrule' : 'WAF.bjccrule')"
       :visible.sync="dialogCCRule"
-      width="730px"
+      width="1000px"
       @close="beforeRuleClose"
       destroy-on-close
     >
@@ -189,7 +193,7 @@ export default {
   },
   methods: {
     formatDate(ms) {
-      return moment(ms).format('YYYY-MM-DD HH:mm:ss')
+      return moment(Number(ms)).format('YYYY-MM-DD HH:mm:ss')
     },
     handleCurrentChange(page) {
       this.offset = page
@@ -220,8 +224,12 @@ export default {
         Domain: this.domain.Domain,
         Edition: 'clb-waf',
       }).then(resp => {
-        this.generalRespHandler(resp, data => {
-          this.session = data
+        this.generalRespHandler(resp, ({ Data }) => {
+          if (Data) {
+            this.session = Data.Res[0]
+          } else {
+            this.session = undefined
+          }
         })
       })
     },
