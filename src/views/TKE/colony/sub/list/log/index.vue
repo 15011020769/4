@@ -101,7 +101,13 @@
     </el-card>
     <el-card class="box-card">
       <div class="box-black">
-        {{htmls}}
+        <ul>
+          <li
+            v-for="(item,index) in htmls"
+            :key="index"
+            style="margin:10px 0"
+          >{{index+1}}.&nbsp;&nbsp;{{item.str}}</li>
+        </ul>
       </div>
     </el-card>
   </div>
@@ -119,7 +125,7 @@ export default {
   name: "create",
   data() {
     return {
-      htmls:"",
+      htmls: "",
       listNumFlag: true, //条数禁用
       option1: [],
       option2: [
@@ -248,18 +254,19 @@ export default {
         Version: "2018-05-25",
         ClusterName: "cls-n1xokuh6"
       };
-    
+
       this.axios.post(TKE_COLONY_QUERY, params).then(res => {
         if (res.Response.Error === undefined) {
           var mes = res.Response.ResponseBody;
-          console.log(mes);
-      this.htmls=mes;
-          // mes.items.forEach(item => {
-          //   this.option1.push({
-          //     value: item.metadata.name,
-          //     label: item.metadata.name
-          //   });
-          // });
+          var newarrs = [];
+          var data = mes.substring(0, 4);
+          mes
+            .split(data)
+            .slice(1)
+            .forEach((x, y) => {
+              newarrs.push({ str: data + x });
+            });
+          this.htmls = newarrs;
           this.loadShow = false;
         } else {
           let ErrTips = {};
