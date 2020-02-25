@@ -17,7 +17,7 @@ module.exports = {
         cwxx: '財務訊息',
         znxxq: '站內信詳情',
         tzgg: '通知公告',
-        qsrnr: '請輸入內容',
+        qsrnr: '請輸入標題',
         bt: '標題',
         fbsj: '發布時間',
         zt: '狀態',

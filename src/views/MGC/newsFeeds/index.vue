@@ -4,7 +4,7 @@
     <div class="wrap">
       <div class="message-funRight">
           <div class="search">
-            <el-input :placeholder="$t('MGC.qsrnr')" v-model="inputVal"></el-input>
+            <el-input :placeholder="$t('MGC.qsrnr')" v-model="inputVal" clearable class="searchinput"></el-input>
             <span>
               <i class="el-icon-search" @click="tableSearch"></i>
             </span>
@@ -122,7 +122,7 @@ export default {
   cursor: pointer; 
 }
      .message-funRight {
-        width: 200px;
+        width: 250px;
         display: flex;
         align-items: center;
         float: right;
@@ -130,7 +130,9 @@ export default {
         .search {
           position: relative;
           width: 100%;
-   
+          .searchinput{
+            margin-right:50px
+          }
           span {
             height: 30px;
             width: 30px;
@@ -139,7 +141,7 @@ export default {
             display: flex;
             position: absolute;
             top: 0;
-            right: 0;
+            right: 25px;
             cursor: pointer;
 
             i {
