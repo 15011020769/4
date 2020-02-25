@@ -22,6 +22,10 @@ export const DESCRIBE_PEAK_VALUE = 'waf2/DescribePeakValue'
 export const DESCRIBE_PEAK_POINTS = 'waf2/DescribePeakPoints'
 /** 查询TOP N攻击类型 */
 export const DESCRIBE_ATTACK_TYPE = 'waf2/DescribeAttackType'
+/** 查询Bot数量 */
+export const DESCRIBE_BOT_COUNT = 'waf2/DescribeBotCount'
+/** 查询Bot趋势数据 */
+export const DESCRIBE_BOT_POINTS = 'waf2/DescribeBotPoints'
 /** 攻击城市分布 */
 export const DESCRIBE_ATTACK_WORLD_MAP = 'waf2/DescribeAttackWorldMap'
 /** 查询访问类型占比 web攻击次数 */
