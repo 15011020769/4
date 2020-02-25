@@ -48,6 +48,8 @@ export const DESCRIBE_ACTIONED = 'waf2/DescribeActionedIp'
 export const DESCRIBE_ACCESS_CONTROL = 'waf2/DescribeIpAccessControl'
 /** ip管理 添加黑白ip */
 export const UPSERTIP_ACCESS_CONTROL = 'waf2/UpsertIpAccessControl'
+/** ip管理 删除ip名单 */
+export const DELETEIP_ACCESS_CONTROL = 'waf2/DeleteIpAccessControl'
 /** 获取地域封禁配置 */
 export const DESCRIBE_AREABAN_AREAS = 'waf2/DescribeAreaBanAreas'
 /** 修改地域封禁状态 */

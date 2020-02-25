@@ -85,7 +85,13 @@
       <div class="tableList">
         <div class="tableListBtn newClear">
           <el-button class="addBW" size="mini" @click="addBW">添加黑白名单</el-button>
-          <el-button class="allDelete" size="mini">批量删除</el-button>
+          <el-button 
+            class="allDelete" 
+            @click="onDeleteRow(multipleSelection)"  
+            size="mini"
+            >
+              批量删除
+            </el-button>
           <el-upload
             class="import-btn"
             action=""
@@ -101,11 +107,12 @@
             ref="multipleTable"
             :data="tableDataBegin ? tableDataBegin.slice((currentPage-1)*pageSize,currentPage*pageSize) : []"
             tooltip-effect="dark"
-            style="width: 100%" v-loading="loadShow"
+            style="width: 100%" 
+            v-loading="loadShow"
             @selection-change="handleSelectionChange"
           >
-            <el-table-column type="selection" width="55"></el-table-column>
-            <el-table-column prop="num" label="序号">
+            <el-table-column type="selection" width="55" />
+            <el-table-column width="80px" prop="num" label="序号">
               <template slot-scope="scope">{{ scope.$index+1}}</template>
             </el-table-column>
             <el-table-column prop="Source" label="来源">
@@ -129,6 +136,11 @@
                 {{scope.row.ValidTs | currentTimeFilter}}
               </template>
             </el-table-column>
+            <el-table-column prop="Note" label="备注">
+              <template slot-scope="scope">
+                {{scope.row.Note || '无'}}
+              </template>
+            </el-table-column>
             <el-table-column prop="action" label="操作">
               <template slot-scope="scope">
                 <el-button @click="onEdit(scope)" type="text" size="mini">编辑</el-button>
@@ -136,17 +148,17 @@
                 <el-popover
                   placement="bottom"
                   width="220"
-                  v-model="visible"
+                  v-model="scope.row.delDialog"
                   >
                   <div class="deleteCon" style="text-align:center;">
                     <h1 style="font-size:14px;font-weight: 600;margin-bottom:16px;">确认删除该记录？</h1>
                     <p style="font-size:12px;color:#333;margin-bottom:16px;">删除IP：{{scope.row.Ip}}</p>
                   </div>
                   <div style="text-align: right; margin: 0">
-                    <el-button type="primary" size="mini" @click="visible = false">删除</el-button>
-                    <el-button size="mini" type="text" @click="visible = false">取消</el-button>
+                    <el-button type="text" size="mini" @click="onDeleteRow(scope.row)">删除</el-button>
+                    <el-button size="mini" style="color: black" type="text" @click="scope.row.delDialog=false">取消</el-button>
                   </div>
-                  <el-button slot="reference" size="mini" type="text" style="margin-left:10px;">删除1</el-button>
+                  <el-button slot="reference" size="mini" type="text" style="margin-left:10px;">删除</el-button>
                 </el-popover>
               </template>
             </el-table-column>
@@ -165,15 +177,35 @@
         </div>
       </div>
     </div>
-    <addBlackWhite @closeModel="closeModel" :isShow="addBWmodel" :ipInfo="Object.assign(ipInfo, { Domain: ipSearch })"/>
+    <template :v-if="addBWmodel">
+      <addBlackWhite @closeModel="closeModel" :isShow="addBWmodel" :ipInfo="Object.assign(ipInfo, { Domain: ipSearch })"/>
+    </template>
+    <el-dialog
+      title="删除IP"
+      :visible.sync="dialogVisible"
+      width="30%"
+      >
+      <i class="el-icon-warning" style="width: 30px"/><span>确定要删除选中的IP么？</span>
+      <el-row slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="onDeleteRow(multipleSelection)">确 定</el-button>
+        <el-button @click="dialogVisible = false">取 消</el-button>
+      </el-row>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import addBlackWhite from './model/addBlackWhite'
-import { DESCRIBE_ACCESS_CONTROL, DESCRIBE_HOSTS, UPSERTIP_ACCESS_CONTROL } from '@/constants'
 import XLSX from 'xlsx'
 import moment from 'moment'
+import { COMMON_ERROR } from '../constants'
+
+import { 
+  DESCRIBE_ACCESS_CONTROL, 
+  DESCRIBE_HOSTS, 
+  UPSERTIP_ACCESS_CONTROL ,
+  DELETEIP_ACCESS_CONTROL
+  } from '@/constants'
 
 const make_cols = refstr => Array(XLSX.utils.decode_range(refstr).e.c + 1).fill(0).map((x,i) => ({name:XLSX.utils.encode_col(i), key:i}));
 
@@ -211,7 +243,8 @@ export default {
       visible: false,//删除弹框
       addBWmodel:false,//添加黑白IP弹框
       data: [],
-      ipInfo: {} // 保存编辑信息
+      ipInfo: {}, // 保存编辑信息
+      dialogVisible: false, // 批量删除弹窗
     };
   },
   components:{
@@ -308,6 +341,9 @@ export default {
            this.tableDataBegin = data.Response.Data.Res;
             // this.tableDataBegin = this.allData;
             // 将数据的长度赋值给totalItems
+            this.tableDataBegin.forEach(item => {
+              this.$set(item, 'delDialog', false)
+            })
             this.totalItems = this.tableDataBegin.length;
             if (this.totalItems > this.pageSize) {
               for (let index = 0; index < this.pageSize; index++) {
@@ -397,8 +433,11 @@ export default {
 
     //关闭
     closeModel(isShow){
-      this.addBWmodel=isShow;
-      this.onSearch()
+      this.addBWmodel = false ;
+      this.ipInfo = {}
+      if (isShow === 'refresh') {
+        this.onSearch()
+      }
     },
 
     // 快捷时间查询
@@ -414,9 +453,11 @@ export default {
 
     // 编辑
     onEdit(info) {
-      console.log(info);
       this.ipInfo = info.row
-      
+      // this.addBWmodel = false
+      setTimeout(() => {
+        this.addBWmodel = true
+      })
     },
 
     // 加黑或者加白
@@ -450,7 +491,24 @@ export default {
           this.onSearch()
         }
       })
-    }
+    },
+
+    // 删除表单
+    onDeleteRow(row) {
+      const itemArr = [].concat(row)
+      const flatItem = itemArr.reduce((prev, next, index) => {
+        return Object.assign(prev, {
+          [`Items.${index}`]: next.Ip
+        })
+      }, {})
+      this.axios.post(DELETEIP_ACCESS_CONTROL, {
+        Version: '2018-01-25',
+        Domain: this.ipSearch,
+        ...flatItem
+      }).then(resp => {
+        this.generalRespHandler(resp, this.onSearch(), COMMON_ERROR, '删除成功')
+      })
+    },
   },
 
   filters: {
