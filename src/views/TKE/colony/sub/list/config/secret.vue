@@ -110,8 +110,8 @@ export default {
       pageSize: 10,
       pageIndex: 0,
       multipleSelection: [],
-       showNameSpaceModal: false,//是否显示删除框
-
+      showNameSpaceModal: false, //是否显示删除框
+      nameSpaceName: "",
       //搜索下拉框
       searchOptions: [],
       searchType: "default", //下拉选中的值
@@ -127,6 +127,7 @@ export default {
   },
   methods: {
     getData() {
+      this.loadShow = true;
       //获取列表数据
       // Method: "GET"
       // Path: "/api/v1/namespaces/default/secrets?limit=20"
@@ -134,7 +135,11 @@ export default {
       // ClusterName: "cls-a7rua9ae"
       var params = {
         Method: "GET",
-        Path: "/api/v1/namespaces/" + this.searchType + "/secrets?&limit=20",
+        Path:
+          "/api/v1/namespaces/" +
+          this.searchType +
+          "/secrets?&limit=" +
+          this.pageSize,
         Version: "2018-05-25",
         ClusterName: this.clusterId
       };
@@ -142,7 +147,6 @@ export default {
         if (res.Response.Error === undefined) {
           var mes = JSON.parse(res.Response.ResponseBody);
           this.list = mes.items;
-          console.log(this.list);
           this.total = mes.items.length;
           this.loadShow = false;
         } else {
@@ -201,6 +205,7 @@ export default {
     },
     // 详情
     goSecretDetail() {
+      alert(this.clusterId)
       this.$router.push({
         name: "secretDetail",
         query: {
@@ -211,8 +216,7 @@ export default {
     //选择搜索条件
     changeSearchType(val) {
       this.searchType = val;
-
-      console.log(this.searchType);
+      this.getData();
     },
     //监听搜索框的值
     changeSearchInput(val) {
@@ -226,7 +230,7 @@ export default {
     },
     //刷新数据
     refreshList() {
-      console.log("refreshList....");
+      this.getData();
     },
     // 导出表格
     exportExcel() {
@@ -268,17 +272,17 @@ export default {
       this.showNameSpaceModal = true;
       this.nameSpaceName = row.metadata.name;
     },
-      //删除命名空间
-    async submitDelete () {
+    //删除命名空间
+    async submitDelete() {
       console.log("正在开发");
       this.loadShow = true;
       const param = {
         Method: "DELETE",
-        Path: "/api/v1/namespaces/"+this.nameSpaceName,
+        Path: "/api/v1/namespaces/" + this.nameSpaceName,
         Version: "2018-05-25",
-        RequestBody: {"propagationPolicy": "Background", "gracePeriodSeconds": 0},
+        RequestBody: { propagationPolicy: "Background", gracePeriodSeconds: 0 },
         ClusterName: this.clusterId
-      }
+      };
       // this.axios.post(POINT_REQUEST, param).then(res => {
       //   if (res.Response.Error === undefined) {
       //     this.getNameSpaceList();
@@ -287,7 +291,7 @@ export default {
       //   } else {
       //     this.loadShow = false;
       //     let ErrTips = {
-            
+
       //     };
       //     let ErrOr = Object.assign(ErrorTips, ErrTips);
       //     this.$message({
@@ -298,7 +302,7 @@ export default {
       //     });
       //   }
       // });
-    },
+    }
   },
   components: {
     subTitle,

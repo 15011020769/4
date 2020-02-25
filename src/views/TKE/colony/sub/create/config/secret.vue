@@ -125,7 +125,7 @@ export default {
   },
   created() {
      // 从路由获取类型
-   
+    
   },
   methods: {
     //返回上一层
@@ -133,7 +133,7 @@ export default {
           this.$router.go(-1);
     },
     creatSecret(){
-          this.$router.push({name:'secret'});
+       this.$router.push({name:'secret'});
     }
   }
 };
