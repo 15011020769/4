@@ -56,7 +56,7 @@
           </el-tooltip>
         </div>
       </el-table-column>
-      <el-table-column :label="t('过期时间', 'WAF.gqsj')" width="70">
+      <el-table-column :label="t('过期时间', 'WAF.gqsj')" width="150">
         <template slot-scope="scope">
           {{
             formatDate(scope.row.ExpireTime)

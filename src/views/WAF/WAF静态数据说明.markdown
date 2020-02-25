@@ -1,6 +1,6 @@
 WAF静态数据说明
 
-### WAF静态数据说明V0.9.1
+###WAF静态数据说明V0.9.2
 ###套餐信息
 ####1.版本描述
 **(1)高级版**
@@ -179,6 +179,91 @@ export const BUY_TIMES = [
     { value: 36, label: "3年" }
 ];
 ```
+####3.询价逻辑说明
+1.新购（买日志包，QPS包等等）
+比如第一次购买日志包：商品goodsCategoryId取值 ***first_categoryid***，具体参数如下：
+```
+ const { defalutCount, resourceId, deadLine, isNew, counts } = this.state;
+        const { pid, goodstype, first_categoryid, edit_categoryid, pricetype } = BUY_LOG_TYPES;
+        let data: any;
+data = {
+                goodsCategoryId: first_categoryid,
+                regionId: 1,
+                projectId: 0,
+                goodsNum: 1,
+                payMode: 1,
+                platform: 1,
+                goodsDetail: {
+                    pid,
+                    timeSpan: getDays(deadLine),
+                    timeUnit: "d",
+                    [pricetype]: counts,
+                    type: goodstype
+                }
+            };
+            
+            WebAPI.fetchUpgradePrice([data]).then(data => {
+            this.setState({ realTotalCost: data[0].realTotalCost, priceLoading: false });
+        }).catch(res => {
+            tips.error("询价失败，请联系腾讯云安全售后服务人员");
+        });
+```
+2.变配（包括日志包从3个变成5个，版本从高级版升级到旗舰版等等）
+商品goodsCategoryId取值 ***edit_categoryid***，具体参数如下：
+```
+ data = {
+                goodsCategoryId: edit_categoryid,
+                regionId: 1,
+                projectId: 0,
+                goodsNum: 1,
+                payMode: 1,
+                platform: 1,
+                goodsDetail: {
+                    resourceId,
+                    curDeadline: deadLine,
+                    oldConfig: {
+                        pid,
+                        [pricetype]: defalutCount,
+                        type: goodstype
+                    },
+                    newConfig: {
+                        pid,
+                        [pricetype]: defalutCount + counts,
+                        type: goodstype
+                    }
+                }
+            };
+            
+              WebAPI.fetchUpgradePrice([data]).then(data => {
+            this.setState({ realTotalCost: data[0].realTotalCost, priceLoading: false });
+        }).catch(res => {
+            tips.error("询价失败，请联系腾讯云安全售后服务人员");
+        });
+```
+3.续费
+需要注意的是： 续费一般 主套餐 + 子产品（如果有的话）
+商品goodsCategoryId取值 ***categoryid***
+```
+ let { type, timeSpan, domainCount, qpsCount, clsCount } = this.state;
+        let { categoryid, goodstype, pid, pricetype } = CLB_PACKAGE_CFG_TYPES[type];
+        const array: any[] = [{
+            goodsCategoryId: categoryid, //续费计费代码
+            regionId: 1,
+            projectId: 0,
+            goodsNum: 1,
+            payMode: 1,
+            platform: 1,
+            goodsDetail: {
+                timeSpan,
+                timeUnit: "m",
+                type: goodstype,
+                pid,
+                [pricetype]: 1
+
+            }
+        }];
+```
+
 ###攻击日志
 ```
 //加入”|“是为了规避 被工具翻译成英文了，导致传参为英文

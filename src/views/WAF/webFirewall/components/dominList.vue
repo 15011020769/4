@@ -148,7 +148,7 @@
                   <el-button size="mini" type="text" @click="scope.row.delDialog=false">取消</el-button>
                   <el-button type="primary" size="mini" @click="delWafs([scope.row])">{{t('确定', 'WAF.qd')}}</el-button>
                 </div>
-                <el-button slot="reference"style="color:#3E8EF7;">删除</el-button>
+                <el-button slot="reference"style="color:#3E8EF7;background: transparent;">删除</el-button>
               </el-popover>
               <el-button type="text" size="small" @click="handelEdit(scope.row)">{{t('编辑', 'WAF.bj')}}</el-button>
               <el-button @click.native.prevent="toProtectConfig(scope.row)" type="text" size="small">{{t('防护配置', 'WAF.fhpz')}}</el-button>

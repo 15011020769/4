@@ -3,13 +3,6 @@
     <div class="topTitle">
       <div class="topTitleMain newClear">
         <div class="tit">核对信息</div>
-        <div class="step">
-          <el-steps :active="active" finish-status="success">
-            <el-step title="步骤 1"></el-step>
-            <el-step title="步骤 2"></el-step>
-            <el-step title="步骤 3"></el-step>
-          </el-steps>
-        </div>
       </div>
     </div>
     <div class="wrapper">
@@ -38,14 +31,9 @@
           </el-table>
         </div>
         <div class="payBot">
-          <div class="newClear">
-            <el-checkbox :disabled="true" label="使用代金券" name="type" v-model="useCard"></el-checkbox><span class="noneTip">(该产品无代金券)</span>
-            <span class="duihaun">+兑换代金券</span>
-          </div>
           <div class="btnGroup">
             <span class="totalMo">总计费用：</span><span class="totaoMoneyO">¥<i>3880.00</i></span>
-            <el-button size="mini" class="agentPay">代理支付</el-button>
-            <el-button @click="next" size="mini" class="selfPay">自行支付</el-button>
+            &nbsp;<el-button @click="next" size="mini" class="selfPay">自行支付</el-button>
           </div>
         </div>
       </div>
@@ -132,8 +120,9 @@ export default {
         float:right;
       }
       .btnGroup{
-        text-align:right;
-        margin-top:20px;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
         .totalMo{
           font-size:14px;
           color:#666;

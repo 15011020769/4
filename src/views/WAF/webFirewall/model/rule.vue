@@ -176,6 +176,7 @@ import {
   LOGIC_SYMBOL_ARR, // 逻辑符号
   BY_PASS_ACTION, // 放行后继续执行的动作
   BY_PASS_ACTION_ARR,
+  COMMON_ERROR,
 } from '../../constants'
 import { ADD_CUSTOM_RULE, MODIFY_CUSTOM_RULE } from '@/constants'
 import { flatObj } from '@/utils'
@@ -309,7 +310,7 @@ export default {
           this.axios.post(url, flatObj(param)).then(resp => {
             this.generalRespHandler(resp, () => {
               this.$emit('onSuccess')
-            })
+            }, COMMON_ERROR, this.rule ? `${this.t('编辑', 'WAF.bj')}成功` : '添加成功')
           }).then(() => this.loading = false)
         }
       })

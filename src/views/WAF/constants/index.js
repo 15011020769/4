@@ -2,56 +2,91 @@ import { obj2Arr, addVal2Key, isValidIPAddressNew, isValidIPv6 } from '@/utils'
 
 /** 套餐包信息 */
 export const PACKAGE_CFG_TYPES = {
-  0: {
-      key: "wsm_package_base",
-      goodstype: "wsm_waf",
-      name: "基础版",
-      index: 0,
-      mainCount: 1,
-      subCount: 10,
-      busQps: 2500,
-      CCQps: 30000
-  },
-  1: {
-      key: "wsm_package_standard",
-      goodstype: "wsm_waf",
-      name: "标准版", 
-      index: 1,
-      mainCount: 1, 
-      subCount: 10,
-      busQps: 2500,
-      CCQps: 30000
-  },
   2: {
       key: "wsm_package_premium",
       goodstype: "wsm_waf",
-      name: "高级版", 
+      name: "高級版", 
       index: 2,
       mainCount: 2,
       subCount: 20,
       busQps: 2500,
-      CCQps: 30000
+      CCQps: 30000,
+      first_categoryid: 100215, categoryid: 100216, edit_categoryid: 100217
   },
   3: {
       key: "wsm_package_enterprise",
       goodstype: "wsm_waf",
-      name: "企业版",
+      name: "企業版",
       index: 3,
       mainCount: 3,
       subCount: 30,
       busQps: 5000,
-      CCQps: 150000
+      CCQps: 150000,
+      first_categoryid: 100215, categoryid: 100216, edit_categoryid: 100217,
   },
   4: {
       key: "wsm_package_ultimate",
       goodstype: "wsm_waf",
-      name: "旗舰版",
+      name: "旗艦版",
       index: 4,
       mainCount: 4,
       subCount: 40,
       busQps: 10000,
-      CCQps: 500000
+      CCQps: 500000,
+      first_categoryid: 100215, categoryid: 100216, edit_categoryid: 100217,
   }
+}
+export const CLB_PACKAGE_CFG_TYPES = {
+
+  2: {
+    key: "sp_wsm_waf_premium_clb",
+    pricetype: "sv_wsm_waf_package_premium_clb",
+    first_categoryid: 101198, categoryid: 101199, edit_categoryid: 101200,
+    pid: 1001150,
+    name: "高級版", index: 2,
+    mainCount: 2, subCount: 20,
+    busQps: 2500,
+    CCQps: 30000
+  },
+  3: {
+      key: "sp_wsm_waf_enterprise_clb",
+      pricetype: "sv_wsm_waf_package_enterprise_clb",
+      first_categoryid: 101204, categoryid: 101205, edit_categoryid: 101206,
+      pid: 1001152,
+      name: "企業版", index: 3,
+      mainCount: 3, subCount: 30,
+      busQps: 5000,
+      CCQps: 150000
+  },
+  4: {
+      key: "sp_wsm_waf_ultimate_clb",
+      pricetype: "sv_wsm_waf_package_ultimate_clb",
+      first_categoryid: 101201, categoryid: 101202, edit_categoryid: 101203,
+      pid: 1001154,
+      name: "旗艦版", index: 4,
+      mainCount: 4, subCount: 40,
+      busQps: 10000,
+      CCQps: 500000
+  },
+}
+
+export const CLB_BUY_DOMAIN_TYPES = {
+  goodstype: "sp_wsm_waf_domain_clb",
+  pricetype: "sv_wsm_waf_domain_clb",
+  first_categoryid: 101207, categoryid: 101208, edit_categoryid: 101209,
+  pid: 1001156
+}
+export const BUY_LOG_TYPES = {
+  goodstype: "sp_wsm_waf_scls",
+  pricetype: "sv_wsm_waf_scls",
+  first_categoryid: 101037, categoryid: 101038, edit_categoryid: 101039,
+  pid: 1000483
+}
+export const CLB_BUY_QPS_TYPES = {
+  goodstype: "sp_wsm_waf_qpsep_clb",
+  pricetype: "sv_wsm_waf_qps_ep_clb",
+  first_categoryid: 101210, categoryid: 101211, edit_categoryid: 101212,
+  pid: 1001160
 }
 /** 公共错误code */
 export const COMMON_ERROR = {

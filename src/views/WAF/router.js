@@ -10,7 +10,7 @@ const router = new Router({
   routes: [
     {
       path: '/',
-      redirect: '/toBuy'
+      redirect: '/protectionSettings'
     },
     {
       path: '/saveOverView', // 安全概览

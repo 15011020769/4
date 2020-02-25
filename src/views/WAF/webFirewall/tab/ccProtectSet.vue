@@ -53,7 +53,7 @@
       <h3>{{t('CC规则设置', 'WAF.ccgzsz')}}</h3>
       <el-row type="flex" justify="space-between" class="actions-container">
         <el-button type="primary" @click="dialogCCRule=true">{{t('添加规则', 'WAF.tjgz')}}</el-button>
-        <i class="el-icon-refresh refresh" />
+        <i class="el-icon-refresh refresh" @click="getCCRule" />
       </el-row>
       <el-table :data="rules" v-loading="loading" :empty-text="t('暂无数据', 'WAF.zwsj')">
         </el-table-column>
@@ -100,8 +100,22 @@
         </el-table-column>
         <el-table-column prop="Name" label="操作" width="120" class-name="actions" align="center">
           <template slot-scope="scope">
-            <el-button type="text" @click="updateRule(scope.row)">{{t('编辑', 'WAF.bj')}}</el-button> 
-            <el-button type="text">删除</el-button>
+            <el-button type="text" @click="updateRule(scope.row)">{{t('编辑', 'WAF.bj')}}</el-button>&nbsp;&nbsp;
+            <el-popover
+              placement="bottom"
+              width="280"
+              v-model="scope.row.delDialog"
+            >
+              <div class="prpoDialog">
+                <h1>{{t('确认删除', 'WAF.qrsc')}}？</h1>
+                <p>{{t('删除后将无法恢复，重新添加才能生效。', 'WAF.schwfhf')}}。</p>
+              </div>
+              <div style="text-align: right; margin: 0">
+                <el-button size="mini" type="text" @click="scope.row.delDialog=false">取消</el-button>
+                <el-button type="primary" size="mini" @click="delCCRule(scope.row)">删除</el-button>
+              </div>
+              <el-button slot="reference"style="color:#3E8EF7;background: transparent;">删除</el-button>
+            </el-popover>
           </template>
         </el-table-column>
       </el-table>
@@ -119,17 +133,24 @@
       :title="`SESSION${t('设置', 'WAF.sz')}`"
       :visible.sync="dialogSessionSet"
       :before-close="beforeSessionSetClose"
+      destroy-on-close
       width="730px"
     >
-      <SessionSet :visible.sync="dialogSessionSet" :session="session" />
+      <SessionSet
+        :visible.sync="dialogSessionSet"
+        :session="session"
+        :domain="domain"
+        @onSuccess="getSession"
+      />
     </el-dialog>
     <el-dialog
       :title="`SESSION${t('测试', 'WAF.cs')}`"
       :visible.sync="dialogSessionTest"
       :before-close="beforeSessionSetClose"
+      destroy-on-close
       width="530px"
     >
-      <SessionTest :visible.sync="dialogSessionTest" :session="session" />
+      <SessionTest :visible.sync="dialogSessionTest" :session="session" :domain="domain"/>
     </el-dialog>
     <el-dialog
       :title="t(!rule ? '添加CC防护规则' : '编辑CC防护规则', !rule ? 'WAF.tjccrule' : 'WAF.bjccrule')"
@@ -138,7 +159,7 @@
       @close="beforeRuleClose"
       destroy-on-close
     >
-      <CCRule :visible.sync="dialogCCRule" :rule="rule" :domain="domain" />
+      <CCRule :visible.sync="dialogCCRule" :rule="rule" :domain="domain" @onSuccess="onSuccess" />
     </el-dialog>
   </div>
 </template>
@@ -192,6 +213,14 @@ export default {
     }
   },
   methods: {
+    delCCRule(rule) {
+      console.log(rule)
+    },
+    onSuccess() {
+      this.dialogCCRule = false
+      this.rule = undefined
+      this.getCCRule()
+    },
     formatDate(ms) {
       return moment(Number(ms)).format('YYYY-MM-DD HH:mm:ss')
     },
@@ -270,11 +299,6 @@ export default {
     beforeRuleClose() {
       this.rule = undefined
     },
-    onSuccess() {
-      this.dialogRule = false
-      this.rule = undefined
-      this.getCustomRules()
-    },
   }
 }
 </script>
@@ -327,5 +351,25 @@ export default {
   button {
     padding: 0;
   }
+}
+.prpoDialog{
+  text-align:center;
+  h1{
+    font-size:14px;
+    font-weight: 600;
+    color:#000;
+    margin-top:16px;
+  }
+  p{
+    margin:16px 0;
+  }
+}
+::v-deep button{
+  border-radius: 0;
+  height:30px;
+  line-height: 30px;
+  padding:0 16px;
+  border:none;
+  outline: none;
 }
 </style>

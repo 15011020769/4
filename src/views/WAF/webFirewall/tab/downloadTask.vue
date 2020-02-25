@@ -68,6 +68,9 @@
 import { DESCRIBE_ATTACK_DOWNLOAD_RECORD } from '@/constants'
 import moment from 'moment';
 export default {
+  props: {
+    active: String,
+  },
   data() {
     return {
       tableDataBegin: [], //表格数据
@@ -77,8 +80,12 @@ export default {
       deleteVisible:false,
     };
   },
-  mounted() {
-    this.getData();
+  watch: {
+    active(n) {
+      if (n === 'second') {
+        this.getData()
+      }
+    }
   },
   methods: {
     formatTime(mm) {
@@ -90,6 +97,7 @@ export default {
         Version: '2018-01-25',
       }).then(resp => {
         this.generalRespHandler(resp, ({ Records }) => {
+          Records.reverse()
           this.tableDataBegin = Records
         })
       })
