@@ -2039,7 +2039,7 @@ export default {
     ExistingNodes () {
       const param = {
         Region: 'ap-taipei',
-        Version: '2018-05-25'
+        Version: "2017-03-12"
       }
       this.axios.post(TKE_EXIST_NODES, param).then(res => {
         if (res.Response.Error === undefined) {
