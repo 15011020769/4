@@ -23,7 +23,7 @@
             <p>最长63个字符，只能包含小写字母、数字及分隔符("-")，且必须以小写字母开头，数字或小写字母结尾</p>
           </el-form-item>
           <el-form-item label="Provisioner" class="m0">
-            <el-radio-group v-model="pv.ps" style="margin-bottom: 30px;">
+            <el-radio-group v-model="pv.cloud" style="margin-bottom: 30px;">
               <el-radio-button label="CBS">云硬盘CBS</el-radio-button>
               <el-radio-button label="CFS" disabled>文件存储CFS</el-radio-button>
             </el-radio-group>
@@ -32,11 +32,15 @@
             <div>港澳台地区(中国台北)</div>
           </el-form-item>
           <el-form-item label="可用区">
-            <el-checkbox v-model="checked">随机可用区</el-checkbox>
-            <el-checkbox v-model="checked">台北一区</el-checkbox>
+              <!-- <el-checkbox-group v-model="checkListO">
+                <el-checkbox v-model="tap1">随机可用区</el-checkbox>
+              </el-checkbox-group> -->
+              <el-checkbox-group v-model="checkListT">
+                 <el-checkbox v-for="(item,index) in checkListT" :label="item" :key="index">{{item}}</el-checkbox>
+              </el-checkbox-group>
           </el-form-item>
           <el-form-item label="计费模式">
-            <el-radio-group v-model="pv.ps">
+            <el-radio-group v-model="pv.money">
               <el-radio-button label="CBS">按量计费</el-radio-button>
               <el-radio-button label="CFS">包年包月</el-radio-button>
             </el-radio-group>
@@ -82,14 +86,15 @@ export default {
   data() {
     return {
       pv: {
-        name: '',
-        tabPosition: 'jt',
+        cloud:"CBS",
+        money:"CBS",
         ps: 'CBS',
-        rw:'orw',
-        value: 'cbs',
+        name: '',
         options: ['cbs','ttt'],
         radio: '1',
-        checked: true
+        // checked: true,
+        checkListO:[],
+        checkListT:["台北一区"]
       }  
     };
   },

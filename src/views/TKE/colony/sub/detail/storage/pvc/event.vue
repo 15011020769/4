@@ -19,14 +19,14 @@
           label="首次出现时间"
           >
           <template slot-scope="scope">
-            <p>{{scope.row.firstTimestamp|creationTimestamps}}</p>
+            <p class='point-white'>{{scope.row.firstTimestamp|creationTimestamps}}</p>
           </template>
         </el-table-column>
         <el-table-column
           label="最后出现时间"
           >
           <template slot-scope="scope">
-            <p>{{scope.row.lastTimestamp|creationTimestamps}}</p>
+            <p class='point-white'>{{scope.row.lastTimestamp|creationTimestamps}}</p>
           </template>
         </el-table-column>
         <el-table-column
@@ -34,7 +34,7 @@
           label="级别"
           >
           <template slot-scope="scope">
-              <span>{{scope.row.type}}</span>
+              <span class='point-white'>{{scope.row.type}}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -51,28 +51,28 @@
           label="资源名称"
           >
           <template slot-scope="scope">
-            <p>{{scope.row.metadata.name}}</p>
+            <p class='point-white'>{{scope.row.metadata.name}}</p>
           </template>
         </el-table-column>
         <el-table-column
           prop="address"
           label="内容">
           <template slot-scope="scope">
-            <p>{{scope.row.reason}}</p>
+            <p class='point-white'>{{scope.row.reason}}</p>
           </template>
         </el-table-column>
         <el-table-column
-          prop="nodeTotal"
+          prop="message"
           label="详细描述">
           <template slot-scope="scope">
-            <p>Error: ImagePullBackOff</p>
+            <p class='point-white'>{{scope.row.message}}</p>
           </template>
         </el-table-column>
         <el-table-column
-          prop=""
+          prop="count"
           label="出现次数">
           <template slot-scope="scope">
-            <p>2617</p>
+            <p class='point-white'>{{scope.row.count}}</p>
           </template>
         </el-table-column>
       </el-table>

@@ -80,16 +80,16 @@ export default {
   },
   filters:{
     creationTimestamps:function(value){
-              var d = new Date(value);
-              var n = d.getFullYear();
-              var y = d.getMonth() + 1;
-              var r = d.getDate();
-              var h = d.getHours(); //12
-              var m = d.getMinutes(); //12
-              var s = d.getSeconds();
-              h < 10 ? h = "0" + h : h;
-              m < 10 ? m = "0" + m : m
-              return n + '-' + y + '-' + r + ' ' + h + ':' + m + ':' + s
+        var d = new Date(value);
+        var n = d.getFullYear();
+        var y = d.getMonth() + 1;
+        var r = d.getDate();
+        var h = d.getHours(); //12
+        var m = d.getMinutes(); //12
+        var s = d.getSeconds();
+        h < 10 ? h = "0" + h : h;
+        m < 10 ? m = "0" + m : m
+        return n + '-' + y + '-' + r + ' ' + h + ':' + m + ':' + s
       }
     }
 };
