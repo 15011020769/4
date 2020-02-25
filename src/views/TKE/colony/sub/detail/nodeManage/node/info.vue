@@ -8,7 +8,7 @@
           <div class="tke-form-item_text"><span class="tke-text-link">{{detail.InstanceId}}</span></div>
         </el-form-item>
         <el-form-item label="状态">
-          <div class="tke-form-item_text"><span class="text-green"></span></div>
+          <div class="tke-form-item_text"><span class="text-green"></span>{{detail.status}}</div>
         </el-form-item>
         <el-form-item label="地域">
           <div class="tke-form-item_text">港澳台地区(中国台北)</div>

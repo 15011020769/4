@@ -7,6 +7,9 @@ export const UPDATE_PROJECT = 'ccs/ModifyProjectId'
 //查询kubernetes版本
 export const CLUSTER_VERSION = 'tke2/DescribeInstancesVersion'
 
+//查询是否关联云网络
+export const CLUSTERS_INSTANCES = 'tke2/DescribeCcnInstances'
+
 //集群节点信息
 export const NODE_INFO = 'tke2/DescribeClusterInstances'
 
@@ -42,3 +45,6 @@ export const DESCRIBE_ZONE_INFO = 'cvm/DescribeZoneInstanceConfigInfos'
 
 //伸缩组列表修改名称
 export const MODIFY_NAME = 'as/ModifyAutoScalingGroup'
+
+//获取节点JOBID
+export const JOB_ID = 'tsm/GetTkeDataJob'

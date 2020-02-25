@@ -102,7 +102,7 @@
               <div class="search-hidden">
                 <p v-if="item.name1 == 'usePath'">
                   暂未设置主机路径设置主机路径
-                  <span class="add-check" @click="dialogVisiblePath = true">设置主机路径</span>
+                  <span class="add-check" @click="dialogVisiblePath = true">主机路径设置</span>
                 </p>
                 <p v-if="item.name1 == 'useNFS'">
                   <el-input class="search-input" v-model="item.name3" placeholder="NFS路径 如：127.0.0.1:/dir"></el-input>
@@ -141,30 +141,30 @@
             </p>
           </el-form-item>
           <el-form-item label="实例内容器">
-            <div class="case-content">
+            <div class="case-content" v-for="(v,i) in wl.container" :key="i">
               <el-form :model="wl" label-position="left" label-width="120px" size="mini">
                 <el-form-item label="名称">
-                  <el-input class="w192" v-model="wl.caseContent.name" placeholder="请输入容器名称"></el-input>
+                  <el-input class="w192" v-model="v.name" placeholder="请输入容器名称"></el-input>
                   <p>请输入容器名称最长63个字符，只能包含小写字母、数字及分隔符("-")，且不能以分隔符开头或结尾</p>
                 </el-form-item>
                 <el-form-item label="镜像">
-                  <el-input class="w192" v-model="wl.caseContent.mirrorImg"></el-input>
+                  <el-input class="w192" v-model="v.mirrorImg"></el-input>
                   <span> <a  @click="SelectMirrorImgFlag=true"> 选择镜像</a> </span>
                   <SelectMirrorImg :dialogVisible='SelectMirrorImgFlag' @close='close'></SelectMirrorImg>
                 </el-form-item>
                 <el-form-item label="镜像版本（Tag）">
-                  <el-input class="w192" v-model="wl.caseContent.versions"></el-input>
+                  <el-input class="w192" v-model="v.versions"></el-input>
                 </el-form-item>
                 <el-form-item label="镜像拉取策略">
                   <template>
-                    <el-radio-group v-model="wl.caseContent.mirrorPullTactics" style="margin-bottom: 5px;">
+                    <el-radio-group v-model="v.mirrorPullTactics" style="margin-bottom: 5px;">
                       <el-radio-button label="Always">Always</el-radio-button>
                       <el-radio-button label="IfNotPresent">IfNotPresent</el-radio-button>
                       <el-radio-button label="Never">Never</el-radio-button>
                     </el-radio-group>
-                    <p v-show="wl.caseContent.mirrorPullTactics=='Always'">总是从远程拉取该镜像</p>
-                    <p v-show="wl.caseContent.mirrorPullTactics=='IfNotPresent'">默认使用本地镜像，若本地无该镜像则远程拉取该镜像</p>
-                    <p v-show="wl.caseContent.mirrorPullTactics=='Never'">只使用本地镜像，若本地没有该镜像将报异常</p>
+                    <p v-show="v.mirrorPullTactics=='Always'">总是从远程拉取该镜像</p>
+                    <p v-show="v.mirrorPullTactics=='IfNotPresent'">默认使用本地镜像，若本地无该镜像则远程拉取该镜像</p>
+                    <p v-show="v.mirrorPullTactics=='Never'">只使用本地镜像，若本地没有该镜像将报异常</p>
                   </template>
                 </el-form-item>
                 <el-form-item label="CPU/内存限制">
@@ -174,11 +174,11 @@
                       <div style="display:flex">
                         <div class="cpu-limit2">
                           <span>request</span>
-                          <el-input class="w192" v-model="wl.caseContent.requestCpu"></el-input>
+                          <el-input class="w192" v-model="v.requestCpu"></el-input>
                         </div>-
                         <div class="cpu-limit2">
                           <span>limit</span>
-                          <el-input class="w192" v-model="wl.caseContent.limitCpu"></el-input>
+                          <el-input class="w192" v-model="v.limitCpu"></el-input>
                         </div>核
                       </div>
                     </div>
@@ -187,11 +187,11 @@
                       <div style="display:flex">
                         <div class="cpu-limit2">
                           <span>request</span>
-                          <el-input class="w192" v-model="wl.caseContent.requestMemory"></el-input>
+                          <el-input class="w192" v-model="v.requestMemory"></el-input>
                         </div>-
                         <div class="cpu-limit2">
                           <span>limit</span>
-                          <el-input class="w192" v-model="wl.caseContent.limitMemory"></el-input>
+                          <el-input class="w192" v-model="v.limitMemory"></el-input>
                         </div>Mib
                       </div>
                     </div>
@@ -199,19 +199,19 @@
                   <p style="margin-top:10px;">
                     Request用于预分配资源,当集群中的节点没有request所要求的资源数量时,容器会创建失败。Limit用于设置容器使用资源的最大上限,避免异常情况下节点资源消耗过多。</p>
                 </el-form-item>
-                  <el-form-item label="GPU限制">
-                    <el-input-number  v-model="wl.caseContent.limitNum"   size="small" :min="0"></el-input-number>个
-                  </el-form-item>
+                <el-form-item label="GPU限制">
+                  <el-input-number  v-model="v.gpuNum"   size="small" :min="0"></el-input-number>个
+                </el-form-item>
                 <el-form-item label="环境变量">
                   <el-tooltip class="item" effect="light" content="设置容器中的变量" placement="top">
                     <i class="el-icon-info  setPosition"></i>
                   </el-tooltip>
-                  <div style="padding:0px 0px 6px;" v-for="(v,i) in wl.caseContent.environmentVar"  :key="i">
-                    <el-input class="w100" v-model="v.key" placeholder="变量名"></el-input> = 
-                    <el-input class="w192" v-model="v.value" placeholder="变量值"></el-input> 
-                    <i class="el-icon-close" style="font-size:20px;margin-left:20px;cursor:pointer" @click="wl.caseContent.environmentVar.splice(i,1)"></i> 
+                  <div style="padding:0px 0px 6px;" v-for="(itemValue,i) in v.environmentVar"  :key="i">
+                    <el-input class="w100" v-model="itemValue.key" placeholder="变量名"></el-input> = 
+                    <el-input class="w192" v-model="itemValue.value" placeholder="变量值"></el-input> 
+                    <i class="el-icon-close" style="font-size:20px;margin-left:20px;cursor:pointer" @click="v.environmentVar.splice(i,1)"></i> 
                   </div>
-                  <hr v-if="wl.caseContent.environmentVar.length>0&&wl.caseContent.citeCs.length>0">
+                  <hr v-if="v.environmentVar.length>0&&v.citeCs.length>0">
                   <div>
                       <el-select v-model="containerCheck.type" class="w100">
                             <el-option v-for="item in containerTypeOptions" :key="item.value" :label="item.label"
@@ -412,7 +412,7 @@
               <p>直接设定实例数量</p>
               <p style="background:#f2f2f2;width:80%;height:60px;line-height:60px;margin-top:6px;padding:0px 10px;">
                 <span>实例数量</span>
-                <el-input-number class="ml100" size="small" :min="0"></el-input-number>个
+                <el-input-number class="ml100" v-model="wl.replicas" size="small" :min="0"></el-input-number>个
               </p>
             </div>
             <div v-show="wl.caseNum.adjustType=='autoAdjust'">
@@ -743,7 +743,7 @@
 
         <!-- 底部 -->
         <div class="tke-formpanel-footer">
-          <el-button size="small" type="primary">创建Workload</el-button>
+          <el-button size="small" type="primary" @click="submit()">创建Workload</el-button>
           <el-button size="small">取消</el-button>
         </div>
       </div>
@@ -752,12 +752,12 @@
 </template>
 
 <script>
-  import FileSaver from "file-saver";
   import Service from '../service/components/Service'
   import SelectMirrorImg from './components/selectMirrorImg'
-  import XLSX from "xlsx";
+  import { ErrorTips } from "@/components/ErrorTips";
   import {
-    ALL_CITY
+    ALL_CITY,
+    POINT_REQUEST
   } from "@/constants";
   export default {
     name: "workloadCreate",
@@ -781,6 +781,7 @@
       return {
         nameSpaceList: [],//命名空间列表
         clusterId: '',//集群id
+        loadShow: false,//是否显示加载
         wl: {
           name: "",
           desc: "",
@@ -788,7 +789,8 @@
           labels:[{key:'k8s-app',value:''}],
           nameSpace:'',
           dataJuan: [],
-          caseContent:{
+          container:[
+            {
             name:'',
             mirrorImg:'',
             versions:'',
@@ -797,17 +799,17 @@
             limitCpu:'',
             requestMemory:'',
             limitMemory:'',
-            limitNum:0,
+            gpuNum: 0,
             environmentVar:[],
             citeCs:[],
-          },
+          }],
           caseNum: {
             adjustType: 'handAdjust',
           },
           updateWay: '滚动更新（推荐）',
           updateTactics: '1',
           nodeTactics: "1",
-
+          replicas: 0
         },
         nameSpaceOptions:[{value:'tfy-pub',label:'tfy-pub'},{value:'default',label:'default'},{value:'kube-public',label:'kube-public'},{value:'kube-system',label:'kube-system'},],
         
@@ -1019,7 +1021,7 @@
       this.nameSpaceList = this.$route.query.nameSpaceList;
       this.clusterId = this.$route.query.clusterId;
       this.wl.nameSpace = this.$route.query.spaceName;
-      console.log(this.nameSpaceList,"nameSpaceList");
+      console.log(this.labels,"nameSpaceList");
     },
     methods: {
       //返回上一层
@@ -1051,7 +1053,7 @@
       },
 
        addEnvironmentVar(){
-         this.wl.caseContent.environmentVar.push({key:'',value:''})
+         this.wl.container.environmentVar.push({key:'',value:''})
        } ,
       //  delEnvironmentVar(index){
       //      this.wl.caseContent.environmentVar.splice()
@@ -1123,11 +1125,110 @@
       },
       //新增变量
       addVar(){
-        console.log(1)
-        this.wl.labels.push({key:'',value:''})
+        this.wl.labels.push({key:'',value:''});
+        console.log(this.wl.labels);
       },
       delAddVar(index){
         this.wl.labels.splice(index,1)
+      },
+      //提交新增
+      async submit() {
+        this.loadShow = true;
+        let requestBody = '';
+        let labels = 'qcloud-app:' + this.wl.name + ",";
+        if(this.wl.labels.length > 0) {
+          for(var i = 0; i < this.wl.labels.length; i++) {
+            labels += this.wl.labels[i].key + ":" + this.wl.labels[i].value + ",";
+          }
+        }
+        labels = labels.substring(0,labels.length - 1);
+        let container = this.wl.container;
+        let containerObj = {};
+        let containerList = [];
+        if(container.length > 0) {
+          for(var i = 0; i < container.length; i++) {
+            containerObj = {
+              name: container[i].name,
+              image: container[i].mirrorImg + ":" + container[i].versions,//'tpeccr.ccs.tencentyun.com/22333/sdf:tagv1',
+              volumeMounts:[],
+              resources: {
+                limits: 
+                {cpu: container[i].limitCpu, 
+                  memory: container[i].limitMemory + "Mi",
+                  'nvidia.com/gpu': container[i].gpuNum
+                },
+                requests: 
+                {
+                  cpu: container[i].requestCpu,
+                  memory: container[i].requestMemory
+                }
+              },
+              env:[],
+              workingDir: "",
+              command:[],
+              args:[],
+              securityContext: {privileged:false}
+            }
+            containerList.push(containerObj);
+          }
+        }
+        console.log("labels",labels);
+        console.log("containerList",containerList);
+        requestBody = {
+          kind: "Deployment",
+          apiVersion: "apps/v1beta2",
+          metadata:{
+            name: this.wl.name,
+            namespace: this.spaceName,
+            labels:{labels},
+            annotations: {description: this.wl.desc}
+          },
+          spec: {
+            replicas: this.wl.replicas,
+            template:{
+              metadata: {
+                labels: {labels},
+                spec: {
+                  volumes: [],
+                  containers: containerList,
+                  restartPolicy: 'restartPolicy'
+                }
+              },
+              selector: {matchLabels: {labels}},
+              minReadySeconds: 0,
+              strategy: {
+                type: "RollingUpdate",
+                rollingUpdate: {maxSurge:1,maxUnavailable:0}
+              }
+            }
+          }
+        }  
+        let params = {
+          Method: "POST",
+          Path: "/apis/platform.tke/v1/clusters/"+this.clusterId+"/apply?notUpdate=true",
+          Version: "2018-05-25",
+          RequestBody: JSON.stringify(requestBody),
+          ClusterName: this.clusterId
+        }
+
+        await this.axios.post(POINT_REQUEST, params).then(res => {
+          if(res.Response.Error === undefined) {
+            this.loadShow = false;
+            this.goBack();
+          } else {
+            this.loadShow = false;
+            let ErrTips = {
+              
+            };
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+          }
+        });
       }
     }
   };

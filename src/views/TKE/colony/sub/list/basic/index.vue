@@ -28,8 +28,8 @@
             </el-form-item>
             <el-form-item label="kubernetes版本">
               <div class="tke-form-item_text">
-                <p>Master</p>
-                <p>Node</p>
+                <p>Master {{clusterVersion.ClusterVersion}}</p>
+                <p>Node {{clusterVersion.InstanceVersions && clusterVersion.InstanceVersions[0].InstanceVersion}}</p>
               </div>
             </el-form-item>
             <el-form-item label="运行时组件">
@@ -69,10 +69,10 @@
               </div>
             </el-form-item>
             <el-form-item label="网络模式">
-              <div class="tke-form-item_text"><span></span></div>
+              <div class="tke-form-item_text"><span>{{clusterInfo.ClusterNetworkSettings && clusterInfo.ClusterNetworkSettings.Cni === true? 'cni' : 'bridge'}}</span></div>
             </el-form-item>
             <el-form-item label="云联网">
-              <div class="tke-form-item_text"><span></span></div>
+              <div class="tke-form-item_text"><span>{{vpcList.length > 0 ? '' : '当前VPC尚未关联云联网'}}</span></div>
             </el-form-item>
             <el-form-item label="ipvs支持">
               <div class="tke-form-item_text"><span>{{changeipvs(clusterInfo.ClusterNetworkSettings && clusterInfo.ClusterNetworkSettings.Ipvs)}}</span></div>
@@ -230,24 +230,25 @@ import subTitle from '@/views/TKE/components/subTitle'
 import Loading from '@/components/public/Loading'
 import moment from 'moment';
 import { ErrorTips } from "@/components/ErrorTips";
-import { CLUSTERS_SECURITY, TKE_COLONY_LIST, ALL_PROJECT, UPDATE_CLUSTER_NAME, UPDATE_PROJECT, CLUSTER_VERSION, CLUSTER_OS, UPDATE_OS } from '@/constants'
+import { CLUSTERS_SECURITY, TKE_COLONY_LIST, ALL_PROJECT, UPDATE_CLUSTER_NAME, UPDATE_PROJECT, CLUSTER_VERSION, CLUSTER_OS, UPDATE_OS,CLUSTERS_INSTANCES } from '@/constants'
 export default {
   name: 'colonyBasic',
   data () {
     return {
       clusterId: '', // 集群id
-      clusterInfo: {},
-      clusterVersion: {},
-      loadShow: false,
-      projectData: [],
-      projectName: "",
-      security: {},
-      showUpdateName: false,
-      showUpdateProject: false,
-      showUpdateDescribe: false,
-      showUpdateOs: false,
-      os: {},
-      osList: [],
+      vpcList: [],//vpc列表
+      clusterInfo: {},//集群信息
+      clusterVersion: {},//kubernetes版本
+      loadShow: false,//是否加载
+      projectData: [],//所有项目列表
+      projectName: "",//项目名称
+      security: {},//访问地址
+      showUpdateName: false,//是否显示更名modal
+      showUpdateProject: false,//是否显示更改项目modal
+      showUpdateDescribe: false,//是否显示更改描述modal
+      showUpdateOs: false,//是否显示更改操作系统modal
+      os: {},//操作系统
+      osList: [],//所有操作系统列表
       ruleForm: {
         name: '',
         projectId: '',
@@ -281,7 +282,7 @@ export default {
     this.getSecurity();
     this.getColonyInfo();
     this.getAllPorject();
-    // this.getClusterVersion();
+    this.getClusterVersion();
   },
   methods: {
     //获取集群信息
@@ -298,6 +299,30 @@ export default {
         this.clusterInfo = res.Response.Clusters[0];
         console.log(this.clusterInfo);
         this.loadShow = false;
+        
+        let params = {
+          VpcId: res.Response.Clusters[0].ClusterNetworkSettings.VpcId,
+          Version: "2018-05-25"
+        }
+
+        await this.axios.post(CLUSTERS_INSTANCES, params).then(res => {
+          if(res.Response.Error === undefined) {
+            this.loadShow = false;
+            this.vpcList = res.Response.InstanceSet;
+          } else {
+            this.loadShow = false;
+            let ErrTips = {
+              
+            };
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+          }
+        });
       } else {
         this.loadShow = false;
         let ErrTips = {
@@ -329,7 +354,7 @@ export default {
       let params = {
         Version: "2018-05-25"
       }
-      params["ClusterId"] = this.clusterId;
+      params["ClusterId.0"] = this.clusterId;
       const res = await this.axios.post(CLUSTER_VERSION, params);
       if (res.Response.Error === undefined) {
         this.clusterVersion = res.Response.Clusters[0];
@@ -461,6 +486,13 @@ export default {
         }
       });
     },
+
+    //查询是否关联云网络
+    async getIsRelation() {
+      
+      //
+    },
+    
 
     //提交描述修改
     submitDescribeForm (formName) {
