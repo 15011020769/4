@@ -11,7 +11,7 @@
           <div class="newClear newList">
             <p>类别</p>
             <p>
-              <el-radio-group v-model="blackWhiteCh">
+              <el-radio-group v-model="blackWhiteCh" :disabled="ipInfo.type === 'ipStatus'">
                 <el-radio :value="42" :label="42">黑名单</el-radio>
                 <el-radio :value="40" :label="40">白名单</el-radio>
               </el-radio-group>
@@ -20,7 +20,7 @@
           <div class="newClear newList">
             <p>IP地址</p>
             <p>
-              <el-input  type="textarea" v-model="ipAddress" />
+              <el-input :disabled="ipInfo.type === 'ipStatus'" type="textarea" v-model="ipAddress" />
               <div class="err-tips" v-show="ipTest">IP格式输入有误</div>
             </p>
           </div>
@@ -131,11 +131,15 @@ export default {
     },
 
     ipInfo(n) {
-      this.ipAddress = n.Ip
+      this.ipAddress = n.Ip || n.ip
       this.blackWhiteCh = n.ActionType
-      this.des = n.Note
+      this.des = n.Note || n.name
       this.datatime = n.ValidTs ? moment(new Date(n.ValidTs*1000)) : ''
       this.timeValue = n.ValidTs && moment(new Date(n.ValidTs*1000)).format('h:mm')
+      if (n.type === "ipStatus") {
+        this.datatime = n.valid_ts ? moment(new Date(n.valid_ts*1000)) : ''
+        this.timeValue = n.ts_version && moment(new Date(n.ts_version*1000)).format('h:mm')
+      }
     }
   },
 }

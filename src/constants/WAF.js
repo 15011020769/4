@@ -54,6 +54,8 @@ export const DESCRIBE_ACCESS_CONTROL = 'waf2/DescribeIpAccessControl'
 export const UPSERTIP_ACCESS_CONTROL = 'waf2/UpsertIpAccessControl'
 /** ip管理 删除ip名单 */
 export const DELETEIP_ACCESS_CONTROL = 'waf2/DeleteIpAccessControl'
+/** ip封堵状态查询 */
+export const DESCRIBEIP_HITITEMS = 'waf2/DescribeIpHitItems'
 /** 获取地域封禁配置 */
 export const DESCRIBE_AREABAN_AREAS = 'waf2/DescribeAreaBanAreas'
 /** 修改地域封禁状态 */
