@@ -34,14 +34,15 @@
       <!-- 数据列表展示 -->
       <div class="tke-card mt10">
         <el-table
-          :data="list"
+          :data="list.slice((pageIndex - 1) * pageSize, pageIndex * pageSize)"
+          id="exportTable"
           v-loading="loadShow"
           style="width: 100%">
           <el-table-column
             label="名称"
             >
             <template slot-scope="scope">
-              <span @click="goConfigmapDetail()" class="tke-text-link">ccas</span>
+              <span @click="goConfigmapDetail(scope.row)" class="tke-text-link">{{scope.row.metadata.name}}</span>
             </template>
           </el-table-column>
           <el-table-column
@@ -49,7 +50,8 @@
             label="Labels"
             >
             <template slot-scope="scope">
-               <p>-</p>
+              <!-- <p v-if="scope.row.metadata.labels">{{scope.row.metadata.labels}}</p> -->
+               <p >-</p>
             </template>
           </el-table-column>
 
@@ -58,7 +60,7 @@
             label="创建时间"
             >
             <template slot-scope="scope">
-              <p>2020-01-10<br>14:16:37</p>
+              <p>{{timeFormat(scope.row.metadata.creationTimestamp)}}</p>
             </template>
           </el-table-column>
           <el-table-column
@@ -86,6 +88,7 @@
           </div>
         </div>
       </div>
+      
   </div>
 </template>
 
@@ -93,41 +96,25 @@
 import subTitle from "@/views/TKE/components/subTitle";
 import tkeSearch from "@/views/TKE/components/tkeSearch";
 import Loading from "@/components/public/Loading";
-import { ALL_CITY } from "@/constants";
+import XLSX from "xlsx";
+import FileSaver from "file-saver";
+import {
+     ALL_CITY,
+     TKE_COLONY_QUERY
+   } from "@/constants";
 export default {
   name: "colonyConfigConfigmap",
   data() {
     return {
       loadShow: false, //加载是否显示
-      list:[
-        {
-          status:false
-        },
-        {
-          status:true
-        }
-      ], //列表
+      list:[], //列表
       total:0,
       pageSize:10,
-      pageIndex:0,
+      pageIndex:1,
       multipleSelection: [],
       
       //搜索下拉框
-      searchOptions: [
-        {
-          value: "default",
-          label: "default"
-        },
-        {
-          value: "kube-system",
-          label: "kube-system"
-        },
-        {
-          value: "kube-public",
-          label: "kube-public"
-        }
-        
-      ],
+      searchOptions: [],
       searchType: "default", //下拉选中的值
       searchInput: "", //输入的搜索关键字
     };
@@ -136,9 +123,51 @@ export default {
   created() {
     // 从路由获取集群id
     this.clusterId=this.$route.query.clusterId;
+    this.nameSpaceList();
+   this.tableListData();
   },
   methods: {
-     // 新建
+   
+    tableListData(){
+      var params={
+          ClusterName: this.clusterId,
+          Method: "GET",
+          Path: "/api/v1/namespaces/"+this.searchType+"/configmaps?fieldSelector=metadata.name="+this.searchInput,
+          Version: "2018-05-25",
+      }
+      this.axios.post(TKE_COLONY_QUERY, params).then(res=>{
+        if (res.Response.Error == undefined) {
+               var data = JSON.parse(res.Response.ResponseBody);
+              console.log(data)
+              this.list=data.items;
+              this.total=data.items.length
+        }
+      })
+
+    },
+    //命名空间选项 
+    nameSpaceList() {
+         if (this.clusterId) {
+           var params = {
+             ClusterName: this.clusterId,
+             Method: "GET",
+             Path: "/api/v1/namespaces",
+             Version: "2018-05-25",
+           };
+           this.axios.post(TKE_COLONY_QUERY, params).then(res => {
+             if (res.Response.Error == undefined) {
+               var data = JSON.parse(res.Response.ResponseBody);
+                 var nameList=[];
+              data.items.forEach(item => {
+                nameList.push({value:item.metadata.name,label:item.metadata.name})
+              })
+              this.searchOptions=nameList
+              this.searchType=nameList[0].value
+             }
+           })
+         }
+       },
+         // 新建
     goConfigmapCreate(){
       this.$router.push({
           name: "configmapCreate",
@@ -149,57 +178,78 @@ export default {
     },
 
      // 详情
-    goConfigmapDetail(){
+    goConfigmapDetail(item){
+      console.log(item)
+
       this.$router.push({
           name: "configmapDetail",
           query: {
-            clusterId: this.clusterId
+            clusterId: this.clusterId,
+            name:item.metadata.name,
+            np:item.metadata.namespace
           }
       });
     },
+    timeFormat(times) {
+        var d = new Date(times);
+        var n = d.getFullYear();
+        var y = d.getMonth() + 1;
+        var r = d.getDate();
+        var h = d.getHours(); //12
+        var m = d.getMinutes(); //12
+        var s = d.getSeconds();
+        h < 10 ? h = "0" + h : h;
+        m < 10 ? m = "0" + m : m
 
+        return n + '-' + y + '-' + r + ' ' + h + ':' + m + ':' + s
+      },
     //选择搜索条件
     changeSearchType(val) {
       this.searchType = val;
+       this.tableListData();
       console.log(this.searchType)
     },
     //监听搜索框的值
     changeSearchInput(val) {
       this.searchInput = val;
+      //  this.tableListData();
       console.log(this.searchInput)
     },
     // 点击搜索
     clickSearch(val){
       this.searchInput = val;
+       this.tableListData();
       console.log(this.searchInput)
     },
     //刷新数据
     refreshList(){
       console.log('refreshList....')
+       this.tableListData();
     },
     // 导出表格
     exportExcel() {
       console.log('exportExcel...')
       /* generate workbook object from table */
-      // var wb = XLSX.utils.table_to_book(document.querySelector("#exportTable"));
+      var wb = XLSX.utils.table_to_book(document.querySelector("#exportTable"));
       /* get binary string as output */
-      // var wbout = XLSX.write(wb, {
-      //   bookType: "xlsx",
-      //   bookSST: true,
-      //   type: "array"
-      // });
-      // try {
-      //   FileSaver.saveAs(
-      //     new Blob([wbout], {
-      //       type: "application/octet-stream"
-      //     }),
-      //     this.$t("CVM.clBload.fzjh") + ".xlsx"
-      //   );
-      // } catch (e) {
-      //   if (typeof console !== "undefined") console.log(e, wbout);
-      // }
-      // return wbout;
+      var wbout = XLSX.write(wb, {
+        bookType: "xlsx",
+        bookSST: true,
+        type: "array"
+      });
+      try {
+        FileSaver.saveAs(
+          new Blob([wbout], {
+            type: "application/octet-stream"
+          }),
+          this.$t("CVM.clBload.fzjh") + ".xlsx"
+        );
+      } catch (e) {
+        if (typeof console !== "undefined") console.log(e, wbout);
+      }
+      return wbout;
     },
+    
 
     // 分页
     handleCurrentChange(val) {
@@ -210,6 +260,7 @@ export default {
     handleSizeChange(val) {
       // console.log(`每页 ${val} 条`);
       this.pageSize=val;
+      //  this.tableListData();
       // this.getColonyList();
     },
 

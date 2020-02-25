@@ -13,7 +13,9 @@
             <el-button @click="AllRead">{{$t('MGC.qbbjyd')}}</el-button>
           </div>
           <div class="message-btns btnStyle">
-            <el-button @click="getDataListByType('')" >全部</el-button>
+            <el-button @click="getDataListByType('')" style="border: 1px #c5ddfd solid;
+            color: #3e8ef7;background-color:#ecf4fe;" v-if="focus">全部</el-button>
+            <el-button @click="getDataListByType('')" v-else>全部</el-button>
             <el-button @click="getDataListByType('運維訊息')">{{$t('MGC.ywxx')}}</el-button>
             <el-button @click="getDataListByType('台富雲動態')">{{$t('MGC.tfygn')}}</el-button>
             <el-button @click="getDataListByType('產品訊息')">{{$t('MGC.cpxx')}}</el-button>
@@ -45,9 +47,10 @@
             其他
           </el-table-column>
         </el-table>
+        <span class="choose-num">{{'已選擇'+this.getData.length+'條'}}</span>
         <div class="Right-style pagstyle" style="height:70px;">
           <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;{{$t('MGC.tiao')}}</span>
-          <el-select v-model="pagevalue" placeholder="请选择" size="mini" class="pageselect" @change='pagechange'>
+          <el-select v-model="pagevalue" placeholder="请選擇" size="mini" class="pageselect" @change='pagechange'>
             <el-option
               v-for="item in pageoptions"
               :key="item.value"
@@ -100,6 +103,7 @@ export default {
   name: "message",
   data() {
     return {
+      focus:true,
       loading:true,
       dialogVisible:false,//删除弹框
       MessageDialog:false,//訊息弹框
@@ -255,6 +259,7 @@ export default {
     //获取不同类型的数据
     getDataListByType(val){
       this.dataType = val
+      this.focus=false
       this.init()
     },
     //跳转详情
@@ -354,19 +359,15 @@ export default {
     box-sizing: border-box;
 
     .message-fun {
-      display: flex;
       height: 65px;
-
       .message-funLeft {
         flex: 1;
-        display: flex;
-        flex-direction: column;
-
         .message-btns {
           flex: 1;
+          float:left
         }
         .btnStyle {
-          margin-top: 5px;
+          margin-left: 5px;
         }
         .btnStyle >>> .el-button {
           margin-left: -1px;
@@ -423,4 +424,10 @@ export default {
     }
   }
 }
+.choose-num{
+    display:block;
+    float:left;
+    margin:27px 20px;
+    font-size:14px;
+  }
 </style>

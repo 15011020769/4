@@ -94,6 +94,18 @@ export const TKE_CREATW_CLUSTERS = 'tke2/CreateCluster'
 // 获取告警设置列表信息
 export const TKE_WARNING_GETCOLONY = 'tke2/DescribeAlarmPolicies'
 
+// 添加已有节点
+export const TKE_EXIST = 'tke2/DescribeExistedInstances'
+
+// 添加已有节点 安全组
+export const TKE_MISG = 'vpc2/DescribeSecurityGroups'
+
+// 添加已有节点 完成
+export const TKE_ADD_COMPLETE = 'tke2/AddExistedInstances'
+
+// 获取集群详细信息
+export const WARNING_GetCOLONY = 'tke2/DescribeAlarmPolicies'
+
 // 获取集群基本信息相关
 export const CLUSTERS_DESCRIBE = 'tke2/DescribeClusters'
 

@@ -8,7 +8,8 @@ import 'echarts/lib/component/tooltip'
 export default {
   name: "myChart",
   data() {
-    return {};
+    return {
+    };
   },
   mounted() {
     this.echart();
@@ -20,9 +21,9 @@ export default {
       default: () => []
     },
     // tooltip: {
-    //   type: Object,
+      //   type: Object,
     //   default: function() {
-    //     return {trigger: 'axis'}
+      //     return {trigger: 'axis'}
     //   }
     // },
     series: {
@@ -46,6 +47,7 @@ export default {
   },
   methods: {
     echart() {
+      let that = this
       var myChart = this.$echarts.init(this.$refs.pie_dv)
       myChart.setOption({
         color: this.color,
@@ -61,13 +63,27 @@ export default {
         legend: {
             data: this.legendText,
             orient: 'vertical',
-            // right: 30,
-            left: '60%',
+            left: '50%',
             y: 'center',
             icon: "circle",
             textStyle:{
               color: '#333333',
               fontWeight: 'bold',
+            },
+            formatter(name){
+              let total = 0
+              let arrdetail = []
+              that.series.map(v => {
+                total += Number(v.value)
+              })
+              that.series.map(v => {
+                if (name == v.name) {
+                  arrdetail.push(
+                    v.name + ' '+v.value + '次,  ' + '占比' + (v.value/total*100).toFixed(1) + '%'
+                  )
+                }
+              })
+             return arrdetail.join('\n')
             },
         },
         series: [

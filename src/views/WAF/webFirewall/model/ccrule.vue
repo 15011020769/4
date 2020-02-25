@@ -180,14 +180,14 @@
       <p class="sub-text">{{t('请输入1~100的整数，数字越小，代表这条规则的执行优先级越高', 'WAF.qrs1z100dzs')}}</p>
     </el-form-item>
     <el-form-item>
-      <el-button type="primary" :loading="loading" @click="onSubmit">{{rule && rule.RuleId ? '保存' : '添加'}}</el-button>
+      <el-button type="primary" :loading="loading" @click="onSubmit">{{rule && rule.Name ? '保存' : '添加'}}</el-button>
       <el-button :disabled="loading" @click="close">取消</el-button>
     </el-form-item>
   </el-form>
 </template>
 <script>
 import { UPSERT_CCRULE } from '@/constants'
-import { CC_RULE_MATCH_ARR, CC_RULE_MATCH, CC_RULE_ACTION, CC_RULE_ACTION_ARR } from '../../constants'
+import { CC_RULE_MATCH_ARR, CC_RULE_MATCH, CC_RULE_ACTION, CC_RULE_ACTION_ARR, COMMON_ERROR } from '../../constants'
 export default {
   props: {
     domain: Object,
@@ -261,7 +261,7 @@ export default {
       this.form.options.splice(index, 1)
     },
     onSubmit() {
-      // this.loading = true
+      this.loading = true
       this.$refs.form.validate((valid) => {
         if (valid) {
           let OptionsArr = ''
@@ -288,7 +288,11 @@ export default {
             ValidTime: this.form.ValidTime * 60,
             OptionsArr: `[${OptionsArr.substr(1)}]`,
             Edition: 'clb-waf'
-          })
+          }).then(resp => {
+            this.generalRespHandler(resp, () => {
+              this.$emit('onSuccess')
+            }, COMMON_ERROR, this.rule ? `${this.t('编辑', 'WAF.bj')}成功` : '添加成功')
+          }).then(() => this.loading = false)
         }
       })
     },

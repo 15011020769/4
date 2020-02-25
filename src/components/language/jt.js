@@ -51,6 +51,6 @@ module.exports = {
   back: '账号系统',
   h: '退出',
   hintTitle: '提示',
-  hintContent: '確定進行[退出]操作?'
-
+  hintContent: '確定進行[退出]操作?',
+  lockText: '您的账户已锁定，暂不支持购买'
 }

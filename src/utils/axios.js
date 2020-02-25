@@ -12,7 +12,7 @@ const conf = {
   withCredentials: true,
   headers: {
     uuid: VueCookie.get('uuid'),
-    //  uuid: 100011921910,
+    // uuid: 100011921910,
     Pragma: 'no-cache',
     'Cache-Control': 'no-cache',
     'Content-Type': 'application/json; charset=utf-8'
@@ -62,4 +62,6 @@ Plugin.install = function (vue) {
 Vue.use(Plugin)
 
 export default Plugin
-export { instance as axios}
+export {
+  instance as axios
+}

@@ -88,6 +88,8 @@
         :seriesPie="seriesPie"
         :colorPie="colorPie"
         :legendTextPie="legendTextPie"
+        :seriesPieAttack="seriesPieAttack"
+        :legendTextPieAttack="legendTextPieAttack"
       />
       <el-row class="echartsShowSecond">
         <el-col :span="12">
@@ -95,6 +97,13 @@
           {{t('攻击来源地域TOP5', 'WAF.gjlydy')}}
           <span style="color:#bbb;">(次)</span>
         </h3>
+        <EBar
+          :xAxis="xAxisBarLocal"
+          :series="seriesBarLocal"
+          :legendText="legendTextBarIp"
+          v-if="xAxisBarLocal.length == 0 ? false : true"
+        />
+        <el-row class="empty" v-else>暂无数据</el-row>
         </el-col>
         <el-col :span="12">
         <h3 class="topfont">
@@ -102,10 +111,12 @@
           <span style="color:#bbb;">(次)</span>
         </h3>
         <EBar
-          :xAxis="xAxisBar"
-          :series="seriesBar"
-          :legendText="legendTextBar"
+          :xAxis="xAxisBarIp"
+          :series="seriesBarIp"
+          :legendText="legendTextBarIp"
+          v-if="xAxisBarIp.length == 0 ? false : true"
         />
+        <el-row class="empty" v-else>暂无数据</el-row>
         </el-col>
       </el-row>
       <el-row class="echartsShowFour">
@@ -149,8 +160,6 @@ import EPie from "../components/pie"
 import EMap from '../components/worldMap'
 import attackType from "../components/attackType"
 import DownLoadImg from '../components/downLoadImg'
-import { ErrorTips } from "@/components/ErrorTips"
-import { COMMON_ERROR } from '../../constants'
 import {
   DESCRIBE_HOSTS,
   DESCRIBE_PEAK_VALUE,
@@ -159,15 +168,17 @@ import {
   DESCRIBE_ATTACK_WORLD_MAP,
   DESCRIBE_ATTACK_COUNT,
   DESCRIBE_REQUEST_COUNT,
-  DESCRIBE_HISTOGRAM
+  DESCRIBE_HISTOGRAM,
+  DESCRIBE_BOT_COUNT,
+  DESCRIBE_BOT_POINTS
   } from '@/constants'
 import { flatObj } from '@/utils'
 export default {
   data() {
     return {
       options: [], //默认下拉选项
-      dateTimeValue: [], //日期绑定
-      selectValue: [], //域名下拉菜单
+      dateTimeValue: [(moment(new Date()).format("YYYY-MM-DD HH:mm:ss")), (moment(new Date()).format("YYYY-MM-DD HH:mm:ss"))], //日期绑定
+      selectValue: "", //域名下拉菜单
       thisType: "1", //按钮默认选中
       webAttack: 0,
       ccRequest: 0,
@@ -182,9 +193,11 @@ export default {
       series3: [],
       legendText1: ['WEB攻击次数', 'CC攻击次数', 'BOT请求次数'],
       legendText2: ['WEB攻击次数', 'CC攻击次数'],
-      seriesBar: [10, 52, 200, 334, 390, 330, 220],
-      xAxisBar: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-      legendTextBar: "次数",
+      seriesBarLocal: [],
+      xAxisBarLocal: [],
+      seriesBarIp: [],
+      xAxisBarIp: [],
+      legendTextBarIp: "次数",
       dialogDownloadVisible: false,
       dialogSetVisible: false,
       checked1: false,
@@ -192,13 +205,16 @@ export default {
       checked3: false,
       checked4: false,
       checked5: false,
-      colorPie: ['#006eff', '#434348', '#74BD48'],
-      legendTextPie: ['正常访问', 'WEB攻击次数', 'CC攻击次数'],
+      colorPie: ['#006eff', '#434348', '#74BD48', "#F7A35C"],
+      legendTextPie: ['正常访问', 'WEB攻击次数', 'CC攻击次数', ''],
       seriesPie: [
         {value: 0, name: '正常访问'},
         {value: 0, name: 'WEB攻击次数'},
         {value: 0, name: 'CC攻击次数'},
+        {value: 0, name: ''},
       ],
+      seriesPieAttack: [],
+      legendTextPieAttack: [],
       seriesMap: [{
               name: '中国',
               value: 2
@@ -215,18 +231,25 @@ export default {
   },
   mounted () {
     this.getDominList();
-    this.checkTime("1");
     this.getPeakValue();
     this.getPeakPoints();
     this.getAttackType();
-    this.getAttackWorldMap();
     this.getWebAttack();
     this.getNormalRequest();
-    this.getHistogram();  
+    this.getAttackIp("ip");
+    this.getAttackIp("local");  
+    this.getAttackWorldMap();
 　},
   watch: {
     selectValue() {
-      this.getPeakPoints()
+      this.getPeakValue();
+      this.getPeakPoints();
+      this.getAttackType();
+      this.getNormalRequest();
+      this.getWebAttack();
+      this.getAttackIp("ip");
+      this.getAttackIp("local");
+      this.getAttackWorldMap();
     },
   },
   methods: {
@@ -262,7 +285,6 @@ export default {
       const axixArr = []
       const series1Arr = []
       const series2Arr = []
-      const series3Arr = []
       const params = {
         Version: '2018-01-25',
         FromTime: this.startTime,
@@ -270,99 +292,195 @@ export default {
       }
       if (this.selectValue != "") {
         params["Domain"] = this.selectValue
+        this.getBotPoints()
+      } else {
+        this.series3 = []
       }
       this.axios.post(DESCRIBE_PEAK_POINTS, params).then(resp => {
         this.generalRespHandler(resp, ({Points}) => {
-          if (this.selectValue == "" ) {
             Points.map((v) => {
               axixArr.push(moment.unix(v.Time).format("YYYY-MM-DD HH:mm:ss"))
               series1Arr.push(v.Attack)
               series2Arr.push(v.Cc)
-              // series3Arr.push(v.Down * 8)
             })
             this.xAxis1 = axixArr
             this.series1 = series1Arr
             this.series2 = series2Arr
-            this.series3 = series3Arr
-          }
         })
       })
     },
     // 获取业务攻击峰值
     getPeakValue() {
-      this.axios.post(DESCRIBE_PEAK_VALUE, {
+      const params = {
         Version: '2018-01-25',
         FromTime: this.startTime,
         ToTime: this.endTime,
-      }).then((resp) => {
+      }
+      if (this.selectValue != "") {
+        params["Domain"] = this.selectValue
+        this.getBotCount()
+      } else {
+        this.botRequest = 0
+        this.$set(this.seriesPie, 3, {value: 0, name: ''},)
+      }
+      this.axios.post(DESCRIBE_PEAK_VALUE, params).then((resp) => {
         this.generalRespHandler(resp, (Response) => {
           this.webAttack = Response.Attack
           this.ccRequest = Response.Cc
-          // this.$set(this.seriesPie[2].value = Response.Cc)
           this.$set(this.seriesPie, 2, {value: `${Response.Cc}`, name: 'CC攻击次数'},)
+        })
+      })
+    },
+    // 查询bot数量
+    getBotCount() {
+      const params = {
+        Version: '2018-01-25',
+        FromTime: this.startTime,
+        ToTime: this.endTime,
+        Edition: "clb-waf",
+        Host: this.selectValue
+      }
+      this.axios.post(DESCRIBE_BOT_COUNT, params).then((resp) => {
+        this.generalRespHandler(resp, (Response) => {
+          this.botRequest = Response.Count
+          this.$set(this.seriesPie, 3, {value: `${Response.Count}`, name: 'Bot请求次数'})
+          this.$set(this.legendTextPie, 3, 'Bot请求次数')
+          console.log(this.seriesPie)
+        })
+      })
+    },
+    // 查询Bot趋势
+    getBotPoints() {
+      const params = {
+        Version: '2018-01-25',
+        FromTime: this.startTime,
+        ToTime: this.endTime,
+        Edition: "clb-waf",
+        Host: this.selectValue
+      }
+      this.axios.post(DESCRIBE_BOT_POINTS, params).then((resp) => {
+        this.generalRespHandler(resp, ({Points}) => {
+          this.series3 = Points
+        })
+      })
+    },
+    // 获取正常访问次数
+    getNormalRequest() {
+      const params =  {
+        Version: '2018-01-25',
+        FromTime: this.startTime,
+        ToTime: this.endTime,
+      }
+      if (this.selectValue != "") {
+        params["Domain"] = this.selectValue
+      }
+      this.axios.post(DESCRIBE_REQUEST_COUNT, params).then((resp) => {
+        this.generalRespHandler(resp, (Response) => {
+          this.$set(this.seriesPie, 0, {value: `${Response.Count}`, name: '正常访问'},)
         })
       })
     },
     // 获取web攻击次数
     getWebAttack() {
-      this.axios.post(DESCRIBE_ATTACK_COUNT, {
+      const params = {
         Version: '2018-01-25',
         FromTime: this.startTime,
         ToTime: this.endTime,
+        QueryField: "web",
+        Mode: 0,
         Host: "all",
         Edition: "clb-waf"
-      }).then((res) => {
-        console.log(res)
+      }
+      if (this.selectValue != "") {
+        params["Host"] = this.selectValue
+      }
+      this.axios.post(DESCRIBE_ATTACK_COUNT, params).then((resp) => {
+        this.generalRespHandler(resp, (Response) => {
+          this.$set(this.seriesPie, 1, {value: `${Response.Count}`, name: 'WEB攻击次数'},)
+        })
       })
     },
-    // 获取正常访问次数
-    getNormalRequest() {
-      this.axios.post(DESCRIBE_REQUEST_COUNT, {
-        Version: '2018-01-25',
-        FromTime: this.startTime,
-        ToTime: this.endTime,
-        // Host: "all",
-        // Edition: "clb-waf"
-      }).then((res) => {
-        console.log(res)
-        // this.$set(this.seriesPie[0].value = res.Response.Count)
-        this.$set(this.seriesPie, 1, {value: `${res.Response.Count}`, name: 'WEB攻击次数'},)
-      })
-    },
-    // 查询TOP N攻击类型
+    // 查询TOP N攻击类型饼图
     getAttackType() {
-      this.axios.post(DESCRIBE_ATTACK_TYPE, {
-        Version: '2018-01-25',
-        FromTime: '2020-02-24 00:00:00',
-        ToTime: '2020-02-24 23:59:59',
-        Host: "all",
-        Edition: "clb-waf"
-      }).then((res) => {
-        console.log(res)
-      })
-    },
-    // 获取柱状图
-    getHistogram() {
-      this.axios.post(DESCRIBE_HISTOGRAM, {
+      let typeArr = []
+      let typeLegend = []
+      const params = {
         Version: '2018-01-25',
         FromTime: this.startTime,
         ToTime: this.endTime,
         Host: "all",
         Edition: "clb-waf"
-      }).then((res) => {
-        console.log(res)
+      }
+      if (this.selectValue != "") {
+        params["Host"] = this.selectValue
+      }
+      this.axios.post(DESCRIBE_ATTACK_TYPE, params).then((resp) => {
+        this.generalRespHandler(resp, ({Piechart}) => {
+          Piechart && Piechart.map(v => {
+            typeArr.push({value:v.Count, name: v.Type, })
+            typeLegend.push(v.Type)
+          })
+          this.seriesPieAttack = typeArr
+          this.legendTextPieAttack = typeLegend    
+        })
+      })
+    },
+    // 获取攻击来源地址和ip柱状图
+    getAttackIp(type) {
+      const params = {
+        Version: '2018-01-25',
+        FromTime: this.startTime,
+        ToTime: this.endTime,
+        Host: "all",
+        Edition: "clb-waf",
+        QueryField: type,
+        Source: "attack",
+      }
+      if (this.selectValue != "") {
+        params["Host"] = this.selectValue
+      }
+      this.axios.post(DESCRIBE_HISTOGRAM, params).then((resp) => {
+        let ipArrCount = []
+        let ipArr = []
+        let localArr = []
+        let localArrCount = []
+        if (type == "ip") {
+          this.generalRespHandler(resp, ({Histogram}) => {
+            Histogram && Histogram.map(v => {
+              ipArrCount.push(v.count)
+              ipArr.push(v.ip)
+            })
+            this.xAxisBarIp = ipArr
+            this.seriesBarIp = ipArrCount
+          })
+        } else if(type == "local") {
+          this.generalRespHandler(resp, ({Histogram}) => {
+            Histogram && Histogram.map(v => {
+              localArrCount.push(v.count)
+              localArr.push(v.local)
+            })
+            this.xAxisBarLocal = localArr
+            this.seriesBarLocal = localArrCount
+          })
+        }
       })
     },
     // 获取攻击城市分布
     getAttackWorldMap() {
-      this.axios.post(DESCRIBE_ATTACK_WORLD_MAP, {
+      const params = {
         Version: '2018-01-25',
-        FromTime: moment(this.startTime).utc().valueOf() / 1000,
-        ToTime: moment(this.endTime).utc().valueOf() / 1000,
+        FromTime: this.startTime,
+        ToTime: this.endTime,
         Host: "all",
         Edition: "clb-waf"
-      }).then((res) => {
-        console.log(res)
+      }
+      if (this.selectValue != "") {
+        params["Host"] = this.selectValue
+      }
+      this.axios.post(DESCRIBE_ATTACK_WORLD_MAP, params).then((resp) => {
+        this.generalRespHandler(resp, (res) => {
+            console.log(res)
+          })
       })
     },
     // getPeakValue() {
@@ -405,6 +523,10 @@ export default {
         this.getPeakValue();
         this.getNormalRequest();
         this.getAttackType();
+        this.getAttackIp("ip");
+        this.getAttackIp("local");
+        this.getAttackWorldMap();
+        this.getWebAttack()
       })
     },
     changeTimeValue() {
@@ -416,6 +538,10 @@ export default {
         this.getPeakValue();
         this.getNormalRequest();
         this.getAttackType();
+        this.getAttackIp("ip");
+        this.getAttackIp("local");
+        this.getAttackWorldMap();
+        this.getWebAttack()
       })
     },
     html2canvas_2(imgtype) {
@@ -435,8 +561,6 @@ export default {
         // taintTest: false,
         // canvas: canvas,
       }).then(	function(canvas) {
-          // const type = 'png';
-          // const type = 'jpeg';
           const type = imgtype
           let imgData = canvas.toDataURL(type);
           const _fixType = function(type) {
@@ -480,6 +604,13 @@ export default {
 }
 ::v-deep .el-checkbox.is-bordered+.el-checkbox.is-bordered {
   margin-left: 0px;
+}
+.empty {
+  height: 200px;
+  width: 100%;
+  line-height: 200px;
+  text-align: center;
+  font-weight: bold
 }
 .wrapperContent {
   padding: 0 20px 20px;
@@ -595,18 +726,18 @@ export default {
       padding-left: 20px;
     }
   }
-  .echartsShowThird {
-    width: 100%;
-    height: 258px;
-    padding: 20px 0;
-    box-sizing: border-box;
-    background-color: #fff;
-    box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
-    margin-top: 20px;
-    .topfont{
-      padding-left: 20px;
-    }
-  }
+  // .echartsShowThird {
+  //   width: 100%;
+  //   height: 258px;
+  //   padding: 20px 0;
+  //   box-sizing: border-box;
+  //   background-color: #fff;
+  //   box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
+  //   margin-top: 20px;
+  //   .topfont{
+  //     padding-left: 20px;
+  //   }
+  // }
   .echartsShowFour {
     width: 100%;
     height: 658px;

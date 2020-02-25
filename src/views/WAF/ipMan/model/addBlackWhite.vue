@@ -5,21 +5,22 @@
         title="添加黑白IP"
         :visible.sync="isShow"
         width="45%"
-        :before-close="handleClose">
+        :before-close="handleClose"
+        >
         <div class="newClear">
           <div class="newClear newList">
             <p>类别</p>
             <p>
-              <el-radio-group v-model="blackWhiteCh">
-                <el-radio label="custom">黑名单</el-radio>
-                <el-radio label="whiteIp">白名单</el-radio>
+              <el-radio-group v-model="blackWhiteCh" :disabled="ipInfo.type === 'ipStatus'">
+                <el-radio :value="42" :label="42">黑名单</el-radio>
+                <el-radio :value="40" :label="40">白名单</el-radio>
               </el-radio-group>
             </p>
           </div>
           <div class="newClear newList">
             <p>IP地址</p>
             <p>
-              <el-input  type="textarea" v-model="ipAddress" />
+              <el-input :disabled="ipInfo.type === 'ipStatus'" type="textarea" v-model="ipAddress" />
               <div class="err-tips" v-show="ipTest">IP格式输入有误</div>
             </p>
           </div>
@@ -41,7 +42,8 @@
                   step: '00:15',
                   end: '18:30'
                 }"
-                placeholder="选择时间">
+                placeholder="选择时间"
+                >
               </el-time-select>
             </p>
           </div>
@@ -74,7 +76,7 @@ export default {
   },
   data(){
     return{
-      blackWhiteCh: 'whiteIp',//黑白名单
+      blackWhiteCh: '42',//黑白名单
       ipAddress:'',//ip地址
       datatime:'',//选择日期
       timeValue:'',//选择时间
@@ -82,6 +84,7 @@ export default {
       ipTest: false, // ip输入格式是否正确
     }
   },
+
   methods:{
     //关闭按钮
     handleClose(){
@@ -98,9 +101,10 @@ export default {
         Domain: this.ipInfo.Domain,
         'Items.0': JSON.stringify({
           ip: this.ipAddress,
-          action: this.ipInfo.Action,
+          action: this.blackWhiteCh,
           // valid_ts: this.ipInfo.ValidTs,
           source: this.blackWhiteCh,
+          note: this.des,
           valid_ts: valid_ts / 1000
         }),
         Edition: 'clb-waf'
@@ -114,28 +118,30 @@ export default {
             duration: 0
           })
         } else {
-          this.$emit("closeModel",false)
+          this.$emit("closeModel", 'refresh')
         }
       })
-    }
+    },
   },
 
   watch: {
     ipAddress(n) {
       let pattern = /((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})(\.((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})){3}/g
       this.ipTest = !pattern.test(n)
-    }
-  },
+    },
 
-  mounted() {
-    if(this.ipInfo) {
-      if (Object.keys(this.ipInfo).length) {
-        this.ipAddress = this.ipInfo.Ip
-        this.blackWhiteCh = this.ipInfo.Category
-        this.des = this.ipInfo.Name
+    ipInfo(n) {
+      this.ipAddress = n.Ip || n.ip
+      this.blackWhiteCh = n.ActionType
+      this.des = n.Note || n.name
+      this.datatime = n.ValidTs ? moment(new Date(n.ValidTs*1000)) : ''
+      this.timeValue = n.ValidTs && moment(new Date(n.ValidTs*1000)).format('h:mm')
+      if (n.type === "ipStatus") {
+        this.datatime = n.valid_ts ? moment(new Date(n.valid_ts*1000)) : ''
+        this.timeValue = n.ts_version && moment(new Date(n.ts_version*1000)).format('h:mm')
       }
     }
-  }
+  },
 }
 </script>
 <style lang="scss" scoped>

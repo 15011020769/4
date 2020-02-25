@@ -2,19 +2,9 @@
   <div>
     <div class="topHeader">
       <span>IP封堵状态</span>
-      <el-select
-        v-model="ipSearch"
-        filterable
-        allow-create
-        default-first-option
-        placeholder="请选择文章标签"
-      >
-        <el-option
-          v-for="item in ipSearchOptions"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value"
-        ></el-option>
+      <el-select v-model="ipSearch" filterable allow-create default-first-option placeholder="请选择Ip地址">
+        <el-option v-for="item in ipSearchOptions" :key="item.Domain" :label="item.Domain" :value="item.Domain">
+        </el-option>
       </el-select>
     </div>
     <div class="wrapper">
@@ -34,77 +24,60 @@
           <div>
             <span class="floatLeft">记录创建时间：</span>
             <el-button-group class="floatLeft">
-              <el-button :disabled="disabledIp" size="mini">最近1小时</el-button>
-              <el-button :disabled="disabledIp" size="mini">最近1天</el-button>
-              <el-button :disabled="disabledIp" size="mini">最近7天</el-button>
+              <el-button :disabled="disabledIp" size="mini" @click="onTimeClick('hour')">最近1小时</el-button>
+              <el-button :disabled="disabledIp" size="mini" @click="onTimeClick('day')">最近1天</el-button>
+              <el-button :disabled="disabledIp" size="mini" @click="onTimeClick('week')">最近7天</el-button>
             </el-button-group>
-            <el-date-picker
-              size="mini"
-              class="floatLeft timePick"
-              v-model="timeValue1"
-              type="datetimerange"
-              range-separator="至"
-              start-placeholder="开始日期"
-              end-placeholder="结束日期"
-              :disabled="disabledIp"
-            />
+            <el-date-picker size="mini" class="floatLeft timePick" v-model="timeValue1" type="datetimerange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" :disabled="disabledIp" />
           </div>
           <div style="flex: 1">
             <el-checkbox :disabled="disabledIp" class="floatLeft checkBo" v-model="timeOut" label="有效截止日期:" name="time"></el-checkbox>
-            <el-date-picker
-              size="mini"
-              class="floatLeft timePick"
-              v-model="timeValue2"
-              type="datetimerange"
-              range-separator="至"
-              start-placeholder="开始日期"
-              end-placeholder="结束日期"
-              :disabled="disabledIp"
-            ></el-date-picker>
-           </div>
+            <el-date-picker size="mini" class="floatLeft timePick" v-model="timeValue2" type="datetimerange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" :disabled="disabledIp"></el-date-picker>
+          </div>
         </div>
-        <div >
+        <div>
           <span>触发策略：</span>
-          <el-input :disabled="disabledIp" style="width: 180px; margin-left: 23px" />
+          <el-input :disabled="disabledIp" v-model="triggerStrategy" style="width: 180px; margin-left: 23px" />
           <el-tooltip class="tooltip" effect="dark" content="如果您想查询“智能CC”的封堵状态，请输入auto_cc" placement="right">
             <i class="el-icon-info" style="margin-left: 10px;" />
           </el-tooltip>
         </div>
         <div style="margin-top: 20px;">
           <span>IP地址：</span>
-          <el-input v-model="searchIp" style="width: 180px; margin-left: 36px" />
+          <el-input v-model="iptIP" style="width: 180px; margin-left: 36px" />
           <div class="err-tips" v-show="ipTest">IP格式输入有误</div>
         </div>
         <div>
-          <el-button size="mini" class="lookSearch">查询</el-button>
+          <el-button @click="onSearch" size="mini" class="lookSearch">查询</el-button>
         </div>
       </div>
       <div class="tableList">
         <div class="tableCon">
-          <el-table
-            ref="multipleTable"
-            :data="tableDataBegin.slice((currentPage-1)*pageSize,currentPage*pageSize)"
-            tooltip-effect="dark"
-            style="width: 100%" v-loading="loadShow"
-            @selection-change="handleSelectionChange"
-          >
-            <el-table-column type="selection" width="55"></el-table-column>
+          <el-table ref="multipleTable" :data="tableDataBegin && tableDataBegin.slice((currentPage-1)*pageSize,currentPage*pageSize)" tooltip-effect="dark" style="width: 100%" v-loading="loadShow">
             <el-table-column prop="num" label="序号">
               <template slot-scope="scope">{{ scope.$index+1}}</template>
             </el-table-column>
             <!-- <el-table-column prop="resourse" label="来源"></el-table-column> -->
-            <el-table-column prop="type" label="类别"></el-table-column>
-            <el-table-column prop="ipAddress" label="IP地址"></el-table-column>
-            <el-table-column prop="updata" label="策略名称"></el-table-column>
-            <el-table-column prop="stopTime" label="动作"></el-table-column>
-            <el-table-column prop="descrip" label="创建时间"></el-table-column>
-            <el-table-column prop="descrip" label="有效截止时间"></el-table-column>
+            <el-table-column prop="category" label="类别"></el-table-column>
+            <el-table-column prop="ip" label="IP地址"></el-table-column>
+            <el-table-column prop="name" label="策略名称"></el-table-column>
+            <el-table-column prop="action" label="动作"></el-table-column>
+            <el-table-column prop="ts_version" label="创建时间">
+              <template slot-scope="scope">
+                {{scope.row.ts_version | currentTimeFilter}}
+              </template>
+            </el-table-column>
+            <el-table-column prop="valid_ts" label="有效截止时间">
+              <template slot-scope="scope">
+                {{scope.row.valid_ts | currentTimeFilter}}
+              </template>
+            </el-table-column>
             <el-table-column prop="action" label="操作">
               <template slot-scope="scope">
-                <el-button type="text" size="mini">编辑</el-button>
-                <el-button type="text" size="mini">加白</el-button>
-                <el-button type="text" size="mini">加黑</el-button>
-                <el-popover
+                <!-- <el-button type="text" size="mini">编辑</el-button> -->
+                <el-button @click="addBW(40, scope)" type="text" size="mini">加白</el-button>
+                <el-button @click="addBW(42, scope)" type="text" size="mini">加黑</el-button>
+                <!-- <el-popover
                   placement="bottom"
                   width="220"
                   v-model="visible">
@@ -117,61 +90,52 @@
                     <el-button size="mini" type="text" @click="visible = false">取消</el-button>
                   </div>
                   <el-button slot="reference" size="mini" type="text" style="margin-left:10px;">删除</el-button>
-                </el-popover>
+                </el-popover> -->
               </template>
             </el-table-column>
           </el-table>
         </div>
         <div class="tabListPage">
-          <el-pagination
-            @size-change="handleSizeChange"
-            @current-change="handleCurrentChange"
-            :current-page="currentPage"
-            :page-sizes="[10, 20, 30, 50]"
-            :page-size="pageSize"
-            layout="total, sizes, prev, pager, next, jumper"
-            :total="totalItems"
-          ></el-pagination>
+          <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage" :page-sizes="[10, 20, 30, 50]" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper" :total="totalItems"></el-pagination>
         </div>
       </div>
     </div>
-    <addBWmodel :isShow="addBWmodel"/>
+    <!-- <addBWmodel :isShow="addBWmodel"/> -->
+    <addBlackWhite @closeModel="closeModel" :isShow="addBWmodel" :ipInfo="Object.assign(ipInfo, { Domain: ipSearch, type: 'ipStatus' })" />
   </div>
 </template>
 
 <script>
 import addBWmodel from './model/addBWmodel'
-import { DESCRIBE_ACCESS_CONTROL } from '@/constants'
+import addBlackWhite from './model/addBlackWhite'
+import { DESCRIBE_ACCESS_CONTROL, DESCRIBE_HOSTS, DESCRIBEIP_HITITEMS } from '@/constants'
 import { IP_STATUS_TYPE_ARR } from '../constants'
+import moment from 'moment'
+import { COMMON_ERROR } from '../constants'
+
 export default {
   data() {
     return {
       ipSearch: "", //ip查询下拉
-      ipSearchOptions: [
-        {
-          value: "www.bai.com",
-          label: "www.bai.com"
-        }
-      ],
+      ipSearchOptions: [],
       IP_STATUS_TYPE_ARR, //类型下拉选项
       tipShow: true, //提示文字
       resouseC: "", //来源
-      typeCheck: "", //类别
-      iptIP: "", //输入IP
+      typeCheck: "BOT", //类别
+      iptIP: "182.254.173.153", //输入IP
       arrowShow: true, //箭头显示
       flag: true,
       timeValue1: "", //创建时间
       timeOut: false, //有效截止日期
       timeValue2: "", //有效截止日期
       multipleSelection: [], //tableCheck
-      tableDataBegin: [],
       allData: [{
-        resourse:'自定义',
-        ipAddress:'10.1.1.23',
-        type:'黑名单',
-        updata:'2019-12-25 13:52:03',
-        stopTime:'2020-01-01 23:59:59',
-        descrip:'123'
+        resourse: '自定义',
+        ipAddress: '10.1.1.23',
+        type: '黑名单',
+        updata: '2019-12-25 13:52:03',
+        stopTime: '2020-01-01 23:59:59',
+        descrip: '123'
       }],//自定义数据
       tableDataBegin: [],//表格数据
       tableDataEnd: [],
@@ -180,20 +144,23 @@ export default {
       totalItems: 0,//总长度
       filterTableDataEnd: [],
       flag: false,//定义一个开关
-      loadShow:false,//加载
+      loadShow: false,//加载
       visible: false,//删除弹框
-      addBWmodel:false,//添加黑白IP弹框
+      addBWmodel: false,//添加黑白IP弹框
       ipTest: false, // ip输入格式是否正确
-      searchIp: '', //输入的IP地址
-      disabledIp: false // 如果有输入ip地址，则禁用别的按钮
+      disabledIp: false, // 如果有输入ip地址，则禁用别的按钮
+      triggerStrategy: '', // 触发策略
+      ipInfo: {}, // 保存编辑信息
+
     };
   },
-  components:{
-    addBWmodel:addBWmodel
+  components: {
+    addBlackWhite
   },
   mounted() {
     this.getData();
-    console.log(IP_STATUS_TYPE_ARR);
+    this.getDescribeHost()
+    this.onSearch()
   },
   methods: {
     //关闭提示文字
@@ -213,9 +180,31 @@ export default {
     handleSelectionChange(val) {
       this.multipleSelection = val;
     },
+    // 获取防护域名列表
+    getDescribeHost() {
+      let params = {
+        Version: '2018-01-25',
+      }
+
+      this.axios.post(DESCRIBE_HOSTS, params).then(data => {
+        if (data.Response.Error) {
+          let ErrOr = Object.assign(ErrorTips, COMMON_ERROR)
+          this.$message({
+            message: ErrOr[Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          })
+        } else {
+          this.ipSearchOptions = data.Response.HostList
+          this.ipSearch = this.ipSearchOptions[0].Domain
+        }
+      })
+    },
+
     // 获取数据
     getData() {
-      this.loadShow=true;
+      this.loadShow = true;
       // this.axios.get('', {}).then((res) => {
       // console.log(res.data.tableData);
       // this.tableDataBegin = res.data.tableData;
@@ -268,21 +257,126 @@ export default {
       }
     },
     //添加黑白名单按钮
-    addBW(){
-      this.addBWmodel=true;
-    }
+    addBW(flag, scope) {
+      this.ipInfo = scope.row
+      this.ipInfo.ActionType = flag
+      this.addBWmodel = true;
+    },
+
+    // 快捷时间查询
+    onTimeClick(temp) {
+      const map = {
+        hour: [moment().subtract(1, 'hour'), moment(new Date())],
+        day: [moment().subtract(1, 'day'), moment(new Date())],
+        week: [moment().subtract(7, 'day'), moment(new Date())]
+      }
+
+      this.timeValue1 = map[temp]
+    },
+
+    // 条件查询
+    onSearch() {
+      let params = {
+        Version: '2018-01-25',
+        Domain: this.ipSearch,
+        Count: 1,
+        Limit: 20,
+        Skip: 0,
+        Ip: this.iptIP || undefined,
+        CtsMin: this.timeValue1 ? moment(new Date(this.timeValue1[0])).format('x') : undefined, //创建最小时间戳
+        CtsMax: this.timeValue1 ? moment(new Date(this.timeValue1[1])).format('x') : undefined,
+        Category: this.typeCheck.toLowerCase(),
+        Name: this.triggerStrategy || undefined
+      }
+
+      if (this.timeOut) {
+        params.VtsMin = moment(new Date(this.timeValue2[0])).format('X') || undefined
+        params.VtsMax = moment(new Date(this.timeValue2[1])).format('X') || undefined
+      }
+
+      if (this.disabledIp) {
+        delete params.CtsMin
+        delete params.CtsMax
+        delete params.VtsMin
+        delete params.VtsMax
+        delete params.Name
+      }
+
+      this.axios.post(DESCRIBEIP_HITITEMS, params).then(data => {
+        // this.loadShow = true
+        // this.generalRespHandler(resp, () => {
+        //   this.tableDataBegin = data.Response.Data.Res;
+        //   this.loadShow = false
+        // }, COMMON_ERROR)
+        // this.axios.get('', {}).then((res) => {
+        if (data.Response.Error) {
+          let ErrOr = Object.assign(ErrorTips, COMMON_ERROR)
+          this.$message({
+            message: ErrOr[Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          })
+        } else {
+          this.tableDataBegin = data.Response.Data.Res || []
+          this.totalItems = this.tableDataBegin.length;
+          if (this.totalItems > this.pageSize) {
+            for (let index = 0; index < this.pageSize; index++) {
+              this.tableDataEnd.push(this.tableDataBegin[index]);
+            }
+          } else {
+            this.tableDataEnd = this.tableDataBegin;
+          }
+          this.loadShow = false;
+        }
+        // this.tableDataBegin = this.allData;
+        // 将数据的长度赋值给totalItems
+        // this.totalItems = this.tableDataBegin.length;
+        // if (this.totalItems > this.pageSize) {
+        //   for (let index = 0; index < this.pageSize; index++) {
+        //     this.tableDataEnd.push(this.tableDataBegin[index]);
+        //   }
+        // } else {
+        //   this.tableDataEnd = this.tableDataBegin;
+        // }
+        // this.loadShow=false;
+        // })
+      })
+    },
+
+    //关闭
+    closeModel(isShow) {
+      this.addBWmodel = false;
+      this.ipInfo = {}
+      if (isShow === 'refresh') {
+        this.onSearch()
+      }
+    },
   },
   watch: {
-    searchIp(n) {
+    iptIP(n) {
       let pattern = /((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})(\.((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})){3}/g
       this.ipTest = !pattern.test(n)
-      if(n) {
+      if (n) {
         this.disabledIp = true
       } else {
         this.disabledIp = false
       }
     }
   },
+
+  filters: {
+    currentTimeFilter(time) {
+      if (time) {
+        const len = JSON.stringify(time).length
+        let str = time
+        if (len < 13) {
+          str = str * 1000
+        }
+        return moment(new Date(str)).format("YYYY-MM-DD HH:mm:ss");
+      }
+    }
+  }
 };
 </script>
 <style lang='scss' scoped>
@@ -400,12 +494,12 @@ export default {
       background-color: #fff;
     }
   }
-  .tabListPage{
-    height:50px;
-    border-top:1px solid #ddd;
-    padding-top:8px;
-    text-align:right;
-    background-color:#fff;
+  .tabListPage {
+    height: 50px;
+    border-top: 1px solid #ddd;
+    padding-top: 8px;
+    text-align: right;
+    background-color: #fff;
   }
 }
 </style>

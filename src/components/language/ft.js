@@ -51,5 +51,6 @@ module.exports = {
   back: '賬號系統',
   h: '退出',
   hintTitle: '提示',
-  hintContent: '確定進行[退出]操作?'
+  hintContent: '確定進行[退出]操作?',
+  lockText: '您的賬戶已鎖定，暫不支持購買'
 }

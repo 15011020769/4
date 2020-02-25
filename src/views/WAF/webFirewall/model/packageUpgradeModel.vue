@@ -49,7 +49,7 @@
               {{t('费用', 'WAF.fy')}}
             </div>
             <div>
-              <p class="totalMoney">24,657.53元</p>
+              <p class="totalMoney">NT$ {{price}}</p>
             </div>
           </div>
         </div>
@@ -63,6 +63,7 @@
 </template>
 <script>
 import { DESCRIBE_WAF_PRICE } from '@/constants'
+import { CLB_PACKAGE_CFG_TYPES } from '../../constants'
 export default {
   props:{
     isShow: Boolean,
@@ -84,6 +85,7 @@ export default {
     isShow(n) {
       if (n) {
         this.type = this.package.Level + 1
+        this.queryPrice()
       }
     }
   },
@@ -98,24 +100,24 @@ export default {
       this.axios.post(DESCRIBE_WAF_PRICE, {
         Version: '2018-01-25',
         ResInfo: [{
-          "goodsCategoryId":101206,
+          "goodsCategoryId": CLB_PACKAGE_CFG_TYPES[this.package.Level].edit_categoryid,
           "regionId":1,
           "projectId":0,
           "goodsNum":1,
           "payMode":1,
           "platform":1,
           "goodsDetail":{
-            "resourceId": "waf_000q5mgau",
-            "curDeadline": "当前到期时间",
+            "resourceId": this.package.ResourceIds,
+            "curDeadline": this.package.ValidTime,
             "oldConfig": {
-              "pid": 1001152,
-              "type": "sp_wsm_waf_enterprise_clb",
-              "sv_wsm_waf_package_enterprise_clb": 1
+              "pid": CLB_PACKAGE_CFG_TYPES[this.package.Level].pid, // 1001152,
+              "type": CLB_PACKAGE_CFG_TYPES[this.package.Level].key, // "sp_wsm_waf_enterprise_clb",
+              [CLB_PACKAGE_CFG_TYPES[this.package.Level].pricetype]: 1
             },
             "newConfig": {
-              "pid": 1001154,
-              "type": "sp_wsm_waf_ultimate_clb",
-              "sv_wsm_waf_package_ultimate_clb": 1
+              "pid": CLB_PACKAGE_CFG_TYPES[this.type].pid, // 1001154,
+              "type": CLB_PACKAGE_CFG_TYPES[this.type].key, // "sp_wsm_waf_ultimate_clb",
+              [CLB_PACKAGE_CFG_TYPES[this.type].pricetype]: 1
             }
           }
         }]
@@ -134,9 +136,8 @@ export default {
     upgradeImmediately(){
       this.$emit("packageUpModelClose",this.dialogModel)
     },
-    //企业版旗舰版按钮
     checkType(type){
-      this.type = type;
+      this.type = type
     }
   }
 }

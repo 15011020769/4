@@ -4,7 +4,7 @@
     <subTitle title='Deployment'  />
 
     <!-- 新建、搜索相关操作 -->
-    <div class="tke-grid ">
+    <div class="tke-grid">
       <!-- 左侧 -->
       <div class="grid-left">
         <el-button @click="goWorkloadCreate('deployment')" size="small" type="primary">新建</el-button>

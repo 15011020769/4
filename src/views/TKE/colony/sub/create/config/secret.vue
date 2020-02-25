@@ -76,7 +76,7 @@
        
         <!-- 底部 -->
         <div class="tke-formpanel-footer">
-          <el-button size="small" type="primary">创建Secret</el-button>
+          <el-button size="small" type="primary" @click="creatSecret()">创建Secret</el-button>
           <el-button size="small">取消</el-button>
         </div>
       </div>
@@ -125,13 +125,16 @@ export default {
   },
   created() {
      // 从路由获取类型
-   
+    
   },
   methods: {
     //返回上一层
     goBack(){
           this.$router.go(-1);
     },
+    creatSecret(){
+       this.$router.push({name:'secret'});
+    }
   }
 };
 </script>

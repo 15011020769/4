@@ -17,6 +17,13 @@
           {{t('攻击类型占比', 'WAF.gjlxzb')}}
           <span style="color:#bbb;">(次)</span>
         </h3>
+        <el-row class="empty" v-if="seriesPieAttack.length == 0 ? true : false">暂无数据</el-row>
+        <EPie
+          :series="seriesPieAttack"
+          :color="colorPie"
+          :legendText="legendTextPieAttack"
+          v-else
+        />
         </el-col>
     </el-row>
   </div>
@@ -28,7 +35,7 @@ export default {
   name: "attackType",
   data() {
     return {
-      
+        isEmpty: false
       };
   },
   props: {
@@ -37,6 +44,8 @@ export default {
     },
     colorPie: Array,
     legendTextPie: Array,
+    seriesPieAttack: Array,
+    legendTextPieAttack: Array
   },
   watch: {
     seriesPie(val) {
@@ -47,6 +56,12 @@ export default {
     },
     legendTextPie(val) {
       this.legendTextPie = val;
+    },
+    seriesPieAttack(val) {
+      this.seriesPieAttack = val
+    },
+    legendTextPieAttack(val) {
+      this.legendTextPieAttack = val
     }
   },
   components: {
@@ -69,8 +84,15 @@ export default {
     background-color: #fff;
     box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
     margin-top: 20px;
-    .topfont{
+    .topfont {
       padding-left: 20px;
+    }
+    .empty {
+      height: 200px;
+      width: 100%;
+      line-height: 200px;
+      text-align: center;
+      font-weight: bold
     }
   }
 </style>

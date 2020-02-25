@@ -12,11 +12,7 @@
                 <div class="checkListLeft">{{$t('DDOS.choose.regional')}}</div>
                 <div class="checkListRight">
                   <div>
-                    <span
-                      class="address spanList"
-                      :class="type1=='1'?'seceltList':''"
-                      @click="checkAddress(1,'台湾台北')"
-                    >{{city}}</span>
+                    <span class="address spanList" :class="type1=='1'?'seceltList':''" @click="checkAddress(1,'台湾台北')">{{city}}</span>
                   </div>
                 </div>
               </div>
@@ -26,13 +22,7 @@
                 <div class="checkListLeft">{{$t('DDOS.choose.MinimumProtection')}}</div>
                 <div class="checkListRight">
                   <div>
-                    <span
-                      v-for="(item,index) in Gbps"
-                      :key="index"
-                      class="spanList"
-                      :class="GbpsIndex==index?'seceltList':''"
-                      @click="_Gbps(index)"
-                    >{{item.name}}Gbps</span>
+                    <span v-for="(item,index) in Gbps" :key="index" class="spanList" :class="GbpsIndex==index?'seceltList':''" @click="_Gbps(index)">{{item.name}}Gbps</span>
                     <!-- <span
                       class="spanList"
                       :class="type2==1?'seceltList':''"
@@ -53,13 +43,7 @@
                 <div class="checkListLeft">{{$t('DDOS.choose.ElasticProtection')}}</div>
                 <div class="checkListRight">
                   <div>
-                    <span
-                      v-for="(item,index) in Gbps[GbpsIndex].child"
-                      :key="index"
-                      class="spanList"
-                      :class="GbpsChildIndex==index?'seceltList':''"
-                      @click="_GbpsChild(index)"
-                    >{{item}}Gbps</span>
+                    <span v-for="(item,index) in Gbps[GbpsIndex].child" :key="index" class="spanList" :class="GbpsChildIndex==index?'seceltList':''" @click="_GbpsChild(index)">{{item}}Gbps</span>
                     <!-- <span
                       class="spanList"
                       :class="type3==index?'seceltList':''"
@@ -78,36 +62,12 @@
                 <div class="checkListLeft">{{$t('DDOS.choose.BusinessMetrics')}}</div>
                 <div class="checkListRight">
                   <div>
-                    <span
-                      class="spanList"
-                      :class="type4==1?'seceltList':''"
-                      @click="checkListFour(1,'100Mbps')"
-                    >100Mbps</span>
-                    <span
-                      class="spanList"
-                      :class="type4==2?'seceltList':''"
-                      @click="checkListFour(2,'150Mbps')"
-                    >150Mbps</span>
-                    <span
-                      class="spanList"
-                      :class="type4==3?'seceltList':''"
-                      @click="checkListFour(3,'200Mbps')"
-                    >200Mbps</span>
-                    <span
-                      class="spanList"
-                      :class="type4==4?'seceltList':''"
-                      @click="checkListFour(4,'500Mbps')"
-                    >500Mbps</span>
-                    <span
-                      class="spanList"
-                      :class="type4==5?'seceltList':''"
-                      @click="checkListFour(5,'1Gbps')"
-                    >1Gbps</span>
-                    <span
-                      class="spanList"
-                      :class="type4==6?'seceltList':''"
-                      @click="checkListFour(6,'2Gbps')"
-                    >2Gbps</span>
+                    <span class="spanList" :class="type4==1?'seceltList':''" @click="checkListFour(1,'100Mbps')">100Mbps</span>
+                    <span class="spanList" :class="type4==2?'seceltList':''" @click="checkListFour(2,'150Mbps')">150Mbps</span>
+                    <span class="spanList" :class="type4==3?'seceltList':''" @click="checkListFour(3,'200Mbps')">200Mbps</span>
+                    <span class="spanList" :class="type4==4?'seceltList':''" @click="checkListFour(4,'500Mbps')">500Mbps</span>
+                    <span class="spanList" :class="type4==5?'seceltList':''" @click="checkListFour(5,'1Gbps')">1Gbps</span>
+                    <span class="spanList" :class="type4==6?'seceltList':''" @click="checkListFour(6,'2Gbps')">2Gbps</span>
                   </div>
                   <div class="tipList">
                     <p class="tipListThree">{{$t('DDOS.choose.toBychoose')}}</p>
@@ -123,104 +83,56 @@
                 <div class="checkListLeft">{{$t('DDOS.choose.byTime')}}</div>
                 <div class="checkListRight">
                   <div>
-                    <span
-                      class="spanList"
-                      :class="type5==1?'seceltList':''"
-                      @click="checkListFive(1,'1个月')"
-                    >1个月</span>
-                    <span
-                      class="spanList"
-                      :class="type5==2?'seceltList':''"
-                      @click="checkListFive(2,'2个月')"
-                    >2个月</span>
-                    <span
-                      class="spanList"
-                      :class="type5==3?'seceltList':''"
-                      @click="checkListFive(3,'3个月')"
-                    >3个月</span>
-                    <span
-                      class="spanList"
-                      :class="type5==4?'seceltList':''"
-                      @click="checkListFive(4,'4个月')"
-                    >4个月</span>
-                    <span
-                      class="spanList"
-                      :class="type5==5?'seceltList':''"
-                      @click="checkListFive(5,'5个月')"
-                    >5个月</span>
+                    <span class="spanList" :class="type5==1?'seceltList':''" @click="checkListFive(1,'1个月')">1个月</span>
+                    <span class="spanList" :class="type5==2?'seceltList':''" @click="checkListFive(2,'2个月')">2个月</span>
+                    <span class="spanList" :class="type5==3?'seceltList':''" @click="checkListFive(3,'3个月')">3个月</span>
+                    <span class="spanList" :class="type5==4?'seceltList':''" @click="checkListFive(4,'4个月')">4个月</span>
+                    <span class="spanList" :class="type5==5?'seceltList':''" @click="checkListFive(5,'5个月')">5个月</span>
                     <el-tooltip placement="top" effect="light">
                       <div slot="content">6个月以上享88折</div>
-                      <span
-                        class="spanList"
-                        :class="type5==6?'seceltList':''"
-                        @click="checkListFive(6,'6个月')"
-                      >
+                      <span class="spanList" :class="type5==6?'seceltList':''" @click="checkListFive(6,'6个月')">
                         6个月
                         <a href="#" class="spanListPosi">惠</a>
                       </span>
                     </el-tooltip>
                     <el-tooltip placement="top" effect="light">
                       <div slot="content">{{$t('DDOS.choose.months')}}</div>
-                      <span
-                        class="spanList"
-                        :class="type5==7?'seceltList':''"
-                        @click="checkListFive(7,'7个月')"
-                      >
+                      <span class="spanList" :class="type5==7?'seceltList':''" @click="checkListFive(7,'7个月')">
                         7个月
                         <a href="#" class="spanListPosi">惠</a>
                       </span>
                     </el-tooltip>
                     <el-tooltip placement="top" effect="light">
                       <div slot="content">6个月以上享88折</div>
-                      <span
-                        class="spanList"
-                        :class="type5==8?'seceltList':''"
-                        @click="checkListFive(8,'8个月')"
-                      >
+                      <span class="spanList" :class="type5==8?'seceltList':''" @click="checkListFive(8,'8个月')">
                         8个月
                         <a href="#" class="spanListPosi">惠</a>
                       </span>
                     </el-tooltip>
                     <el-tooltip placement="top" effect="light">
                       <div slot="content">6个月以上享88折</div>
-                      <span
-                        class="spanList"
-                        :class="type5==9?'seceltList':''"
-                        @click="checkListFive(9,'9个月')"
-                      >
+                      <span class="spanList" :class="type5==9?'seceltList':''" @click="checkListFive(9,'9个月')">
                         9个月
                         <a href="#" class="spanListPosi">惠</a>
                       </span>
                     </el-tooltip>
                     <el-tooltip placement="top" effect="light">
                       <div slot="content">1年享83折</div>
-                      <span
-                        class="spanList"
-                        :class="type5==10?'seceltList':''"
-                        @click="checkListFive(10,'1年')"
-                      >
+                      <span class="spanList" :class="type5==10?'seceltList':''" @click="checkListFive(10,'1年')">
                         1年
                         <a href="#" class="spanListPosi">惠</a>
                       </span>
                     </el-tooltip>
                     <el-tooltip placement="top" effect="light">
                       <div slot="content">2年享7折</div>
-                      <span
-                        class="spanList"
-                        :class="type5==11?'seceltList':''"
-                        @click="checkListFive(11,'2年')"
-                      >
+                      <span class="spanList" :class="type5==11?'seceltList':''" @click="checkListFive(11,'2年')">
                         2年
                         <a href="#" class="spanListPosi">惠</a>
                       </span>
                     </el-tooltip>
                     <el-tooltip placement="top" effect="light">
                       <div slot="content">3年享5折</div>
-                      <span
-                        class="spanList"
-                        :class="type5==12?'seceltList':''"
-                        @click="checkListFive(12,'3年')"
-                      >
+                      <span class="spanList" :class="type5==12?'seceltList':''" @click="checkListFive(12,'3年')">
                         3年
                         <a href="#" class="spanListPosi">惠</a>
                       </span>
@@ -377,7 +289,7 @@ export default {
       GbpsChildIndex: 0
     };
   },
-  mounted: function() {
+  mounted: function () {
     window.addEventListener("scroll", this.handleScroll, true); // 监听（绑定）滚轮滚动事件
   },
   created() {
@@ -465,29 +377,35 @@ export default {
     },
     //点击跳转支付页面
     payPage() {
-      let params = {
-        address: this.checked1,
-        savePeak: this.checked2,
-        elasticPeak: this.checkedRoute3,
-        autoPay: this.checkOrNull,
-        BusinessBroadband: this.checkedRoute4,
-        httpQPS: this.checkChange1,
-        httpsQPS: this.checkChange2,
-        shareNum: 60,
-        payTime: this.checked5,
-        payMoney: this.allMoney
-      };
-      let objStr = JSON.stringify(params);
-      sessionStorage.setItem("allData", [objStr]);
-      this.$router.push({
-        name: "pay"
-        // params:{
-
-        // }
-      });
+      // 被锁定的账户无法购买资源 lock_state === '1' 表示账户为锁定状态
+      if (this.$cookie.get('lock_state') === '1') {
+        this.$message({
+          showClose: true,
+          message: this.$t('COM.lockText'),
+          type: 'warning'
+        });
+      } else {
+        let params = {
+          address: this.checked1,
+          savePeak: this.checked2,
+          elasticPeak: this.checkedRoute3,
+          autoPay: this.checkOrNull,
+          BusinessBroadband: this.checkedRoute4,
+          httpQPS: this.checkChange1,
+          httpsQPS: this.checkChange2,
+          shareNum: 60,
+          payTime: this.checked5,
+          payMoney: this.allMoney
+        };
+        let objStr = JSON.stringify(params);
+        sessionStorage.setItem("allData", [objStr]);
+        this.$router.push({
+          name: "pay"
+        });
+      }
     },
     //滚动监听
-    handleScroll: function() {
+    handleScroll: function () {
       //   const that = this
       // let scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop
       // that.scrollTop = scrollTop

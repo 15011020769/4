@@ -9,7 +9,7 @@
         <div class="newClear">
           <div class="newClear renewList">
             <p class="renewListLabel">{{t('套餐类型', 'WAF.tclx')}}</p>
-            <p class="renewListCon">{{package.Level && PACKAGE_CFG_TYPES[package.Level].name}}</p>
+            <p class="renewListCon">{{package.Level && CLB_PACKAGE_CFG_TYPES[package.Level].name}}</p>
           </div>
           <div class="newClear renewList">
             <p class="renewListLabel">域名包</p>
@@ -58,7 +58,7 @@
 </template>
 <script>
 import { DESCRIBE_WAF_PRICE } from '@/constants'
-import { PACKAGE_CFG_TYPES } from '../../constants'
+import { CLB_PACKAGE_CFG_TYPES } from '../../constants'
 export default {
   props:{
     isShow: Boolean,
@@ -66,7 +66,7 @@ export default {
   },
   data(){
     return{
-      PACKAGE_CFG_TYPES,
+      CLB_PACKAGE_CFG_TYPES,
       month: 0,
       dialogModel:'',//弹框
       thisType:'1',//默认选中
@@ -88,7 +88,7 @@ export default {
       this.axios.post(DESCRIBE_WAF_PRICE, {
         Version: '2018-01-25',
         ResInfo: [{
-          "goodsCategoryId":101205,
+          "goodsCategoryId": CLB_PACKAGE_CFG_TYPES[this.package.Level].categoryid,
           "regionId":1,
           "projectId":0,
           "goodsNum":1,
@@ -97,8 +97,8 @@ export default {
           "goodsDetail":{
             "timeSpan": this.month,
             "timeUnit":"m",
-            "pid":1001152,
-            "sv_wsm_waf_package_enterprise_clb":1
+            "pid": CLB_PACKAGE_CFG_TYPES[this.package.Level].pid, // 1001152,
+            [CLB_PACKAGE_CFG_TYPES[this.package.Level].pricetype]:1
             }
           }]
       }).then(resp => {

@@ -2,6 +2,8 @@
 export const DESCRIBE_USER_EDITION = 'waf2/DescribeUserEdition'
 /** 获取WAF的套餐信息 */
 export const DESCRIBE_USER_INFO = 'waf2/DescribeUserInfo'
+/** 设置套餐自动续费 */
+export const MODIFY_PACKAGE_RENEW = 'waf2/ModifyPackageRenew'
 /** 询价 */
 export const DESCRIBE_WAF_PRICE = 'waf2/InquiryPriceWafInstance'
 /** 验证添加的域名是否已经存在 */
@@ -22,6 +24,10 @@ export const DESCRIBE_PEAK_VALUE = 'waf2/DescribePeakValue'
 export const DESCRIBE_PEAK_POINTS = 'waf2/DescribePeakPoints'
 /** 查询TOP N攻击类型 */
 export const DESCRIBE_ATTACK_TYPE = 'waf2/DescribeAttackType'
+/** 查询Bot数量 */
+export const DESCRIBE_BOT_COUNT = 'waf2/DescribeBotCount'
+/** 查询Bot趋势数据 */
+export const DESCRIBE_BOT_POINTS = 'waf2/DescribeBotPoints'
 /** 攻击城市分布 */
 export const DESCRIBE_ATTACK_WORLD_MAP = 'waf2/DescribeAttackWorldMap'
 /** 查询访问类型占比 web攻击次数 */
@@ -48,6 +54,10 @@ export const DESCRIBE_ACTIONED = 'waf2/DescribeActionedIp'
 export const DESCRIBE_ACCESS_CONTROL = 'waf2/DescribeIpAccessControl'
 /** ip管理 添加黑白ip */
 export const UPSERTIP_ACCESS_CONTROL = 'waf2/UpsertIpAccessControl'
+/** ip管理 删除ip名单 */
+export const DELETEIP_ACCESS_CONTROL = 'waf2/DeleteIpAccessControl'
+/** ip封堵状态查询 */
+export const DESCRIBEIP_HITITEMS = 'waf2/DescribeIpHitItems'
 /** 获取地域封禁配置 */
 export const DESCRIBE_AREABAN_AREAS = 'waf2/DescribeAreaBanAreas'
 /** 修改地域封禁状态 */
