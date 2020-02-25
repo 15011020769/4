@@ -2,7 +2,7 @@
 <template>
   <div class="colony-wrap">
     <div class="tke-content-header">
-      <div class="tke-grid ">
+      <div class="tke-grid">
         <!-- 左侧 -->
         <div class="grid-left">
           <span class="goback" @click="goBack">
@@ -87,7 +87,7 @@ export default {
   methods: {
     //返回上一层
     goBack(){
-          this.$router.go(-1);
+       this.$router.go(-1);
     },
   }
 };
