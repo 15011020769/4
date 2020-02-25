@@ -29,7 +29,11 @@
                   <p v-html="scope.row.content"></p>
                 </template>
             </el-table-column>
-            <el-table-column prop="publishStatus" :label="$t('MGC.zt')" fixed="right"></el-table-column>
+            <el-table-column prop="publishStatus" :label="$t('MGC.zt')" fixed="right">
+            <template slot-scope="scope">
+                  <p>{{'已发布'}}</p>
+                </template>
+            </el-table-column>
             <el-table-column label="操作" fixed="right">
               <template slot-scope="scope">
                 <el-button
