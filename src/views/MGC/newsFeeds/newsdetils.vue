@@ -2,8 +2,7 @@
   <div class="news-wrap">
     <HeaderCom :title="$t('MGC.tzggxq')" @_back="back"  :backShow="true"></HeaderCom>
     <div class="detilswrap">
-        <div class="wrap">
-               <p>{{content.content}}</p>
+        <div class="wrap"  v-html='content'>
         </div>
     </div>
   </div>
@@ -33,7 +32,7 @@ export default {
        let id = this.$route.query.detailsDatas
        this.axios.get(`${process.env.VUE_APP_adminUrl + NOTICE_DETILS}`+'?id='+id).then(res=>{
             console.log(res)
-            this.content = res.notice
+            this.content = res.notice.content
        })
     },
   }
