@@ -23,8 +23,8 @@
 
     <!-- 详情子菜单导航 -->
     <div class="tke-detial-nav">
-      <router-link class="nav-item" :to="{name:'configmapDetailInfo',query: {clusterId: clusterId}}">详情</router-link>
-      <router-link class="nav-item" :to="{name:'configmapDetailYaml',query: {clusterId: clusterId}}">YAML</router-link>
+      <router-link class="nav-item" :to="{name:'configmapDetailInfo',query: {clusterId: clusterId,name:Info.name,np:Info.np}}">详情</router-link>
+      <router-link class="nav-item" :to="{name:'configmapDetailYaml',query: {clusterId: clusterId,name:Info.name,np:Info.np}}">YAML</router-link>
     </div> 
 
     <!-- 子页面 -->
@@ -45,6 +45,11 @@ export default {
   data() {
     return {
         clusterId:'',
+         Info: {
+           name: '',
+           np: '',
+           time: ''
+         }
     };
   },
   components: {
@@ -53,6 +58,10 @@ export default {
   created() {
     // 从路由获取集群id
     this.clusterId=this.$route.query.clusterId;
+     if (this.$route.query.name && this.$route.query.np) {
+         this.Info.name = this.$route.query.name
+         this.Info.np = this.$route.query.np
+       }
    
   },
   methods: {
