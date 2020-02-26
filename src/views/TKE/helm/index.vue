@@ -19,7 +19,7 @@
     </HeadCom>
     <div class="wrap">
       <div class="wrap-bnt">
-        <el-button type="primary" plain size="small" @click="jump()">新建</el-button>
+        <el-button type="primary"  size="small" @click="jump()" :disabled="flag">新建</el-button>
       </div>
       <!-- <div class="helm-titleWrap">
         <div class="helm-titleBox">
@@ -29,14 +29,21 @@
       <div class="helm-table">
         <template>
           <el-table :data="tableData" style="width: 100%" height="450">
-            <el-table-column label="应用名" max-width="10%"></el-table-column>
+            <el-table-column label="应用名" max-width="10%">
+
+            </el-table-column>
             <el-table-column label="状态" max-width="10%"></el-table-column>
             <el-table-column label="版本号" max-width="15%"></el-table-column>
             <el-table-column label="创建时间" max-width="15%"></el-table-column>
             <el-table-column label="Chart仓库" max-width="15%"></el-table-column>
             <el-table-column label="Chart命名空间" max-width="15%"></el-table-column>
             <el-table-column label="Chart版本" max-width="10%"></el-table-column>
-            <el-table-column label="操作" max-width="10%"></el-table-column>
+            <el-table-column label="操作" max-width="10%">
+               <template slot-scope="scope">
+                <el-button @click="handleClick(scope.row)" type="text" size="small">查看</el-button>
+                <el-button type="text" size="small">编辑</el-button>
+              </template>
+            </el-table-column>
           </el-table>
         </template>
       </div>
@@ -46,9 +53,10 @@
 
 <script>
 import HeadCom from '@/components/public/Head'
+import { ErrorTips } from "@/components/ErrorTips";
 import City from '@/components/public/CITY'
 import {
-  ALL_CITY,TKE_COLONY_LIST,TKE_DELETE_POLICIES
+  ALL_CITY,TKE_COLONY_LIST,TKE_DELETE_POLICIES,POINT_REQUEST
 } from '@/constants'
 export default {
   name: 'helm',
@@ -64,12 +72,17 @@ export default {
       selectedCity: '',
       select: '',
       options:[],
-      value:''
+      value:'',
+      flag:false
     }
   },
   created () {
     this.GetCity()
     this.getColony()
+    this.getHelmList()
+    // if(options.length){
+    //   this.flag = false
+    // }
   },
   methods: {
     getColony () { // 获取集群数据
@@ -78,7 +91,7 @@ export default {
       }
       this.axios.post(TKE_COLONY_LIST, param).then(res => {
         if (res.Error == undefined) {
-          console.log(res)
+          // console.log(res)
           this.options = res.Response.Clusters
           this.value = res.Response.Clusters[0].ClusterId
         } else {
@@ -90,6 +103,33 @@ export default {
           })
         }
       })
+    },
+    // Helm列表
+    getHelmList(){
+        const param = {
+          ClusterName: "cls-hjo91z66",
+          Method: "GET",
+          Path: "/apis/platform.tke/v1/clusters/cls-hjo91z66/helm/tiller/v2/releases/json?status_codes=DEPLOYED&&status_codes=FAILED&&status_codes=DELETING&&status_codes=DELETED&&status_codes=UNKNOWN&&sort_by=LAST_RELEASED&&sort_order=DESC&&limit=10",
+          Version: "2018-05-25"
+        }
+        this.axios.post(POINT_REQUEST, param).then(res => {
+          console.log(res)
+          if (res.Error == undefined) {
+            this.tableData=JSON.parse(res.Response.ResponseBody).releases
+            // console.log(res)
+            // this.options = res.Response.Clusters
+            // this.value = res.Response.Clusters[0].ClusterId
+          } else {
+            let ErrTips = {};
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+                message: ErrOr[res.Response.Error.Code],
+                type: "error",
+                showClose: true,
+                duration: 0
+            })
+          }
+        })
     },
     GetCity () {
       this.axios.get(ALL_CITY).then(data => {

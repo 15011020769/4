@@ -54,13 +54,25 @@
             <div>容量限制可查看<a href="">CBS类型说明</a></div>
           </el-form-item>
           <el-form-item label="回收策略" class="m0">
-            <el-radio-group v-model="pv.ps" style="margin-bottom: 30px;">
+            <el-radio-group v-model="pv.del" style="margin-bottom: 30px;">
               <el-radio-button label="CBS">删除</el-radio-button>
               <el-radio-button label="CFS">保留</el-radio-button>
             </el-radio-group>
           </el-form-item>
           <el-form-item label="定期备份" class="m0">
-            <el-checkbox v-model="checked">设置定期备份</el-checkbox>
+            <el-checkbox v-model="checked" @click="">设置定期备份</el-checkbox>
+            <div v-if="checked">
+               <el-select v-model="value" filterable placeholder="请选择">
+                  <el-option
+                    v-for="item in info"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value">
+                  </el-option>
+                </el-select>
+                <span style="margin-left:10px;">策略详情<i class="el-icon-info"></i></span>
+                <p>设置定期备份可有效保护数据安全，备份数据将产生额外费用，请见<a>价格总览</a><i class="el-icon-edit-outline"></i></p>
+            </div>
           </el-form-item>
         </el-form>
 
@@ -79,6 +91,7 @@
 
 <script>
 import FileSaver from "file-saver";
+import { ErrorTips } from "@/components/ErrorTips";
 import XLSX from "xlsx";
 import { ALL_CITY } from "@/constants";
 export default {
@@ -89,10 +102,12 @@ export default {
         cloud:"CBS",
         money:"CBS",
         ps: 'CBS',
+        del:'CBS',
         name: '',
         options: ['cbs','ttt'],
         radio: '1',
-        // checked: true,
+        info:[],
+        checked: false,
         checkListO:[],
         checkListT:["台北一区"]
       }  
