@@ -181,22 +181,21 @@ export default {
         padding: 20px;
         .search {
           position: relative;
-          width: 100%;
+          width: 80%;
           span {
-            height: 30px;
-            width: 30px;
+            height: 36px;
+            width: 32px;
             align-items: center;
             justify-content: center;
             display: flex;
             position: absolute;
-            top: 0;
-            right: 25px;
+            top: 2px;
+            right: -31px;
+            background:#b7b3b3;
             cursor: pointer;
-
             i {
-              font-size: 14px;
+              font-size: 18px;
               font-weight: bold;
-              margin-top: 10px;
             }
           }
         }
