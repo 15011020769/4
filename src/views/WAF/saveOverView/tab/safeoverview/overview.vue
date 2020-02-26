@@ -66,13 +66,11 @@ export default {
         this.getBotCount()
       } else {
         this.botRequest = 0
-        // this.$set(this.seriesPie, 3, {value: 0, name: ''},)
       }
       this.axios.post(DESCRIBE_PEAK_VALUE, params).then((resp) => {
         this.generalRespHandler(resp, (Response) => {
           this.webAttack = Response.Attack
           this.ccRequest = Response.Cc
-          // this.$set(this.seriesPie, 2, {value: `${Response.Cc}`, name: 'CC攻击次数'},)
         })
       })
     },
@@ -88,9 +86,6 @@ export default {
       this.axios.post(DESCRIBE_BOT_COUNT, params).then((resp) => {
         this.generalRespHandler(resp, (Response) => {
           this.botRequest = Response.Count
-          // this.$set(this.seriesPie, 3, {value: `${Response.Count}`, name: 'Bot请求次数'})
-          // this.$set(this.legendTextPie, 3, 'Bot请求次数')
-          // console.log(this.seriesPie)
         })
       })
     },

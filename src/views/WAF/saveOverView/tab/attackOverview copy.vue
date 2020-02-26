@@ -87,6 +87,11 @@
 <script>
 import moment from "moment";
 import html2canvas from "html2canvas"
+import ELine from "../components/line"
+import EBar from "../components/bar"
+import EPie from "../components/pie"
+import EMap from '../components/worldMap'
+import attackType from "../components/attackType"
 import DownLoadImg from '../components/downLoadImg'
 import AttackDistribution from './safeoverview/attackDistribution'
 import AttackSource from './safeoverview/attackSource'
@@ -94,7 +99,18 @@ import AttackTypePrecent from './safeoverview/attackTypePrecent'
 import Business from './safeoverview/business'
 import Overview from './safeoverview/overview'
 import { SAFE_OVERVIEW_SHOWMODULE_KEY } from '../../constants'
-import { DESCRIBE_HOSTS } from '@/constants'
+import {
+  DESCRIBE_HOSTS,
+  DESCRIBE_PEAK_VALUE,
+  DESCRIBE_PEAK_POINTS,
+  DESCRIBE_ATTACK_TYPE,
+  DESCRIBE_ATTACK_WORLD_MAP,
+  DESCRIBE_ATTACK_COUNT,
+  DESCRIBE_REQUEST_COUNT,
+  DESCRIBE_HISTOGRAM,
+  DESCRIBE_BOT_COUNT,
+  DESCRIBE_BOT_POINTS
+  } from '@/constants'
 import { flatObj } from '@/utils'
 export default {
   data() {
@@ -150,7 +166,12 @@ export default {
     };
   },
   components: {
+    ELine,
+    EBar,
+    EPie,
+    EMap,
     DownLoadImg,
+    attackType,
     Overview,
     Business,
     AttackTypePrecent,
@@ -158,6 +179,7 @@ export default {
     AttackDistribution,
   },
   mounted () {
+
     const allModuleCopy = JSON.parse(JSON.stringify(this.allModuleCopy))
     let showModules = localStorage.getItem(SAFE_OVERVIEW_SHOWMODULE_KEY)
     if (showModules) {
@@ -179,10 +201,26 @@ export default {
     allModuleCopy.sort((a, b) => a.index - b.index)
 
     this.allModule = allModuleCopy
-    this.getDominList();
+    // this.getDominList();
+    // this.getPeakValue();
+    // this.getPeakPoints();
+    // this.getAttackType();
+    // this.getWebAttack();
+    // this.getNormalRequest();
+    // this.getAttackIp("ip");
+    // this.getAttackIp("local");  
+    // this.getAttackWorldMap();
 　},
   watch: {
     selectValue() {
+      // this.getPeakValue();
+      // this.getPeakPoints();
+      // this.getAttackType();
+      // this.getNormalRequest();
+      // this.getWebAttack();
+      // this.getAttackIp("ip");
+      // this.getAttackIp("local");
+      // this.getAttackWorldMap();
     },
     showModules(val, oldVal) {
       if (val.length === 1) {
@@ -236,6 +274,223 @@ export default {
     onCancel() {
       this.dialogDownloadVisible = false
     },
+    // 获取业务攻击趋势
+    getPeakPoints() {
+      const axixArr = []
+      const series1Arr = []
+      const series2Arr = []
+      const params = {
+        Version: '2018-01-25',
+        FromTime: this.startTime,
+        ToTime: this.endTime,
+      }
+      if (this.selectValue != "") {
+        params["Domain"] = this.selectValue
+        this.getBotPoints()
+      } else {
+        this.series3 = []
+      }
+      this.axios.post(DESCRIBE_PEAK_POINTS, params).then(resp => {
+        this.generalRespHandler(resp, ({Points}) => {
+            Points.map((v) => {
+              axixArr.push(moment.unix(v.Time).format("YYYY-MM-DD HH:mm:ss"))
+              series1Arr.push(v.Attack)
+              series2Arr.push(v.Cc)
+            })
+            this.xAxis1 = axixArr
+            this.series1 = series1Arr
+            this.series2 = series2Arr
+        })
+      })
+    },
+    // 获取业务攻击峰值
+    getPeakValue() {
+      const params = {
+        Version: '2018-01-25',
+        FromTime: this.startTime,
+        ToTime: this.endTime,
+      }
+      if (this.selectValue != "") {
+        params["Domain"] = this.selectValue
+        this.getBotCount()
+      } else {
+        this.botRequest = 0
+        this.$set(this.seriesPie, 3, {value: 0, name: ''},)
+      }
+      this.axios.post(DESCRIBE_PEAK_VALUE, params).then((resp) => {
+        this.generalRespHandler(resp, (Response) => {
+          this.webAttack = Response.Attack
+          this.ccRequest = Response.Cc
+          this.$set(this.seriesPie, 2, {value: `${Response.Cc}`, name: 'CC攻击次数'},)
+        })
+      })
+    },
+    // 查询bot数量
+    getBotCount() {
+      const params = {
+        Version: '2018-01-25',
+        FromTime: this.startTime,
+        ToTime: this.endTime,
+        Edition: "clb-waf",
+        Host: this.selectValue
+      }
+      this.axios.post(DESCRIBE_BOT_COUNT, params).then((resp) => {
+        this.generalRespHandler(resp, (Response) => {
+          this.botRequest = Response.Count
+          this.$set(this.seriesPie, 3, {value: `${Response.Count}`, name: 'Bot请求次数'})
+          this.$set(this.legendTextPie, 3, 'Bot请求次数')
+          console.log(this.seriesPie)
+        })
+      })
+    },
+    // 查询Bot趋势
+    getBotPoints() {
+      const params = {
+        Version: '2018-01-25',
+        FromTime: this.startTime,
+        ToTime: this.endTime,
+        Edition: "clb-waf",
+        Host: this.selectValue
+      }
+      this.axios.post(DESCRIBE_BOT_POINTS, params).then((resp) => {
+        this.generalRespHandler(resp, ({Points}) => {
+          this.series3 = Points
+        })
+      })
+    },
+    // 获取正常访问次数
+    getNormalRequest() {
+      const params =  {
+        Version: '2018-01-25',
+        FromTime: this.startTime,
+        ToTime: this.endTime,
+      }
+      if (this.selectValue != "") {
+        params["Domain"] = this.selectValue
+      }
+      this.axios.post(DESCRIBE_REQUEST_COUNT, params).then((resp) => {
+        this.generalRespHandler(resp, (Response) => {
+          this.$set(this.seriesPie, 0, {value: `${Response.Count}`, name: '正常访问'},)
+        })
+      })
+    },
+    // 获取web攻击次数
+    getWebAttack() {
+      const params = {
+        Version: '2018-01-25',
+        FromTime: this.startTime,
+        ToTime: this.endTime,
+        QueryField: "web",
+        Mode: 0,
+        Host: "all",
+        Edition: "clb-waf"
+      }
+      if (this.selectValue != "") {
+        params["Host"] = this.selectValue
+      }
+      this.axios.post(DESCRIBE_ATTACK_COUNT, params).then((resp) => {
+        this.generalRespHandler(resp, (Response) => {
+          this.$set(this.seriesPie, 1, {value: `${Response.Count}`, name: 'WEB攻击次数'},)
+        })
+      })
+    },
+    // 查询TOP N攻击类型饼图
+    getAttackType() {
+      let typeArr = []
+      let typeLegend = []
+      const params = {
+        Version: '2018-01-25',
+        FromTime: this.startTime,
+        ToTime: this.endTime,
+        Host: "all",
+        Edition: "clb-waf"
+      }
+      if (this.selectValue != "") {
+        params["Host"] = this.selectValue
+      }
+      this.axios.post(DESCRIBE_ATTACK_TYPE, params).then((resp) => {
+        this.generalRespHandler(resp, ({Piechart}) => {
+          Piechart && Piechart.map(v => {
+            typeArr.push({value:v.Count, name: v.Type, })
+            typeLegend.push(v.Type)
+          })
+          this.seriesPieAttack = typeArr
+          this.legendTextPieAttack = typeLegend    
+        })
+      })
+    },
+    // 获取攻击来源地址和ip柱状图
+    getAttackIp(type) {
+      const params = {
+        Version: '2018-01-25',
+        FromTime: this.startTime,
+        ToTime: this.endTime,
+        Host: "all",
+        Edition: "clb-waf",
+        QueryField: type,
+        Source: "attack",
+      }
+      if (this.selectValue != "") {
+        params["Host"] = this.selectValue
+      }
+      this.axios.post(DESCRIBE_HISTOGRAM, params).then((resp) => {
+        let ipArrCount = []
+        let ipArr = []
+        let localArr = []
+        let localArrCount = []
+        if (type == "ip") {
+          this.generalRespHandler(resp, ({Histogram}) => {
+            Histogram && Histogram.map(v => {
+              ipArrCount.push(v.count)
+              ipArr.push(v.ip)
+            })
+            this.xAxisBarIp = ipArr
+            this.seriesBarIp = ipArrCount
+          })
+        } else if(type == "local") {
+          this.generalRespHandler(resp, ({Histogram}) => {
+            Histogram && Histogram.map(v => {
+              localArrCount.push(v.count)
+              localArr.push(v.local)
+            })
+            this.xAxisBarLocal = localArr
+            this.seriesBarLocal = localArrCount
+          })
+        }
+      })
+    },
+    // 获取攻击城市分布
+    getAttackWorldMap() {
+      const params = {
+        Version: '2018-01-25',
+        FromTime: this.startTime,
+        ToTime: this.endTime,
+        Host: "all",
+        Edition: "clb-waf"
+      }
+      if (this.selectValue != "") {
+        params["Host"] = this.selectValue
+      }
+      this.axios.post(DESCRIBE_ATTACK_WORLD_MAP, params).then((resp) => {
+        this.generalRespHandler(resp, (res) => {
+            console.log(res)
+          })
+      })
+    },
+    // getPeakValue() {
+    //   const params = {
+    //     Version: '2018-01-25',
+    //     intf: "peak_points",
+    //     data: {
+    //       fromTime: this.startTime,
+    //       toTime: this.endTime,
+    //     },
+    //     edition: "clb-waf",
+    //   }
+    //   this.axios.post(WAF_INTERFACE, flatObj(params)).then((res) => {
+    //     console.log(res)
+    //   })
+    // },
     //时间点击事件
     checkTime(type) {
       this.thisType = type;
@@ -257,11 +512,31 @@ export default {
       ipt2.value = moment(end).format("YYYY-MM-DD");
       this.startTime = moment(start).startOf("days").format("YYYY-MM-DD HH:mm:ss");
       this.endTime = moment(end).endOf("days").format("YYYY-MM-DD HH:mm:ss");
+      // this.$nextTick(() => {
+      //   this.getPeakPoints();
+      //   this.getPeakValue();
+      //   this.getNormalRequest();
+      //   this.getAttackType();
+      //   this.getAttackIp("ip");
+      //   this.getAttackIp("local");
+      //   this.getAttackWorldMap();
+      //   this.getWebAttack()
+      // })
     },
     changeTimeValue() {
       this.thisType = 0
       this.startTime = moment(this.dateTimeValue[0]).startOf("days").format("YYYY-MM-DD HH:mm:ss");
       this.endTime = moment(this.dateTimeValue[1]).endOf("days").format("YYYY-MM-DD HH:mm:ss");
+      // this.$nextTick(() => {
+      //   this.getPeakPoints();
+      //   this.getPeakValue();
+      //   this.getNormalRequest();
+      //   this.getAttackType();
+      //   this.getAttackIp("ip");
+      //   this.getAttackIp("local");
+      //   this.getAttackWorldMap();
+      //   this.getWebAttack()
+      // })
     },
     html2canvas_2(imgtype) {
       //获取截取区域的高度和宽度
@@ -280,31 +555,32 @@ export default {
         // taintTest: false,
         // canvas: canvas,
       }).then(	function(canvas) {
-        const type = imgtype
-        let imgData = canvas.toDataURL(type);
-        const _fixType = function(type) {
-          type = type.toLowerCase().replace(/jpg/i, 'jpeg');
-          const r = type.match(/png|jpeg|bmp|gif/)[0];
-          return 'image/' + r;
-        };
-        imgData = imgData.replace(_fixType(type), 'image/octet-stream');
-        /**
-         * 在本地进行文件保存
-         * @param  {String} data     要保存到本地的图片数据
-         * @param  {String} filename 文件名
-         */
-        const saveFile = function(data, filename) {
-        const save_link =document.createElementNS('http://www.w3.org/1999/xhtml', 'a'); 
-          save_link.href = data;
-          save_link.download = filename;
-          const event = document.createEvent('MouseEvents');
-          event.initMouseEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
-          save_link.dispatchEvent(event);
-        };
-        const filename = 'dashboard' + (new Date()).getTime() + '.' + type;
-        saveFile(imgData, filename);
-      })
-    },
+          const type = imgtype
+          let imgData = canvas.toDataURL(type);
+          const _fixType = function(type) {
+            type = type.toLowerCase().replace(/jpg/i, 'jpeg');
+            const r = type.match(/png|jpeg|bmp|gif/)[0];
+            return 'image/' + r;
+          };
+          imgData = imgData.replace(_fixType(type), 'image/octet-stream');
+          /**
+           * 在本地进行文件保存
+           * @param  {String} data     要保存到本地的图片数据
+           * @param  {String} filename 文件名
+           */
+          const saveFile = function(data, filename) {
+          const save_link =document.createElementNS('http://www.w3.org/1999/xhtml', 'a'); 
+            save_link.href = data;
+            save_link.download = filename;
+            const event = document.createEvent('MouseEvents');
+            event.initMouseEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+            save_link.dispatchEvent(event);
+          };
+          const filename = 'dashboard' + (new Date()).getTime() + '.' + type;
+          saveFile(imgData, filename);
+        })
+			},
+    //图表
   }
 }
 </script>
@@ -344,7 +620,7 @@ export default {
   }
   button {
     height: 30px;
-    line-height: 28px;
+    line-height: 30px;
     border-radius: 0;
   }
   .down {
@@ -371,10 +647,10 @@ export default {
       }
       .dateTimeValue {
         ::v-deep .el-range__icon {
-          line-height: 22px;
+          line-height: 26px;
         }
         ::v-deep .el-range-separator {
-          line-height: 22px;
+          line-height: 26px;
           width: 7%;
         }
       }
@@ -391,6 +667,81 @@ export default {
       i:hover {
         cursor: pointer;
       }
+    }
+  }
+  .contentNum {
+    width: 100%;
+    height: 110px;
+    padding: 15px 0;
+    box-sizing: border-box;
+    background-color: #fff;
+    box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
+    margin-bottom: 20px;
+    .rowContain {
+      text-align: center;
+      p:nth-child(1) {
+        margin-bottom: 16px;
+        font-size: 14px;
+        span:nth-child(1) {
+          font-size: 36px;
+        }
+        span.red {
+          color: #e1504a;
+        }
+        span.oarnge {
+          color: #ff9d00;
+        }
+        span.blue {
+          color: #006eff;
+        }
+      }
+    }
+  }
+  .echartsShowfirst {
+    width: 100%;
+    height: 378px;
+    padding: 20px 0;
+    box-sizing: border-box;
+    background-color: #fff;
+    box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
+    .topfont{
+      padding-left: 20px;
+    }
+  }
+  .echartsShowSecond {
+    width: 100%;
+    height: 258px;
+    padding: 20px 0;
+    box-sizing: border-box;
+    background-color: #fff;
+    box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
+    margin-top: 20px;
+    .topfont{
+      padding-left: 20px;
+    }
+  }
+  // .echartsShowThird {
+  //   width: 100%;
+  //   height: 258px;
+  //   padding: 20px 0;
+  //   box-sizing: border-box;
+  //   background-color: #fff;
+  //   box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
+  //   margin-top: 20px;
+  //   .topfont{
+  //     padding-left: 20px;
+  //   }
+  // }
+  .echartsShowFour {
+    width: 100%;
+    height: 658px;
+    padding: 20px 0;
+    box-sizing: border-box;
+    background-color: #fff;
+    box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
+    margin-top: 20px;
+    .topfont{
+      padding-left: 20px;
     }
   }
 }

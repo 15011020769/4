@@ -42,7 +42,7 @@ export default {
       this.getPeakPoints()
     },
     domain() {
-
+      this.getPeakPoints()
     }
   },
   methods: {
