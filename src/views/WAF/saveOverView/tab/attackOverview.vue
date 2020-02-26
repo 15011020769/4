@@ -179,14 +179,28 @@ export default {
     AttackDistribution,
   },
   mounted () {
-    this.allModule = JSON.parse(JSON.stringify(this.allModuleCopy))
+
+    const allModuleCopy = JSON.parse(JSON.stringify(this.allModuleCopy))
     let showModules = localStorage.getItem(SAFE_OVERVIEW_SHOWMODULE_KEY)
     if (showModules) {
       showModules = JSON.parse(showModules)
     } else {
       showModules = ['overview', 'business']
     }
+
     this.showModules = showModules
+
+    let i = showModules.length - 1
+    allModuleCopy.forEach(mm => {
+      if (showModules.includes(mm.name)) {
+        mm.index = showModules.indexOf(mm.name)
+      } else {
+        mm.index = ++i
+      }
+    })
+    allModuleCopy.sort((a, b) => a.index - b.index)
+
+    this.allModule = allModuleCopy
     // this.getDominList();
     // this.getPeakValue();
     // this.getPeakPoints();
@@ -221,27 +235,15 @@ export default {
     },
   },
   methods: {
-    up(index) {
-     if (index!==0){
-        this.allModule[index] = this.allModule.splice(index-1, 1, this.allModule[index])[0]
-      } else {
-        this.allModule.push(this.allModule.shift())
-      }
-console.log(this.allModule)
+    up(i) {
+      this.allModule[i] = this.allModule.splice(i-1, 1, this.allModule[i])[0]
     },
-    down(index) {
-     if (index!==this.allModule.length-1){
-        this.allModule[index] = this.allModule.splice(index+1, 1, this.allModule[index])[0]
-      } else {
-        this.allModule.unshift(this.allModule.splice(index,1)[0])
-      }
-      console.log(this.allModule)
+    down(i) {
+      this.allModule[i] = this.allModule.splice(i+1, 1, this.allModule[i])[0]
     },
     saveModuleDisplaySet() {
       this.dialogSetVisible = false
-      console.log(this.allModule)
       const moduleNames = this.allModule.map(m => m.name)
-      console.log(moduleNames)
       this.showModules = moduleNames.filter(name => this.showModules.includes(name))
       localStorage.setItem(SAFE_OVERVIEW_SHOWMODULE_KEY, JSON.stringify(this.showModules))
     },
