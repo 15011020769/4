@@ -96,19 +96,19 @@ export default {
       MessageDialog:false,
       pageoptions:[{
           value: 10,
-          label: '10條/頁'
+          label: '10項/頁'
         }, {
           value: 20,
-          label: '20條/頁'
+          label: '20項/頁'
         }, {
           value: 30,
-          label: '30條/頁'
+          label: '30項/頁'
         }, {
           value: 40,
-          label: '40條/頁'
+          label: '40項/頁'
         }, {
           value: 50,
-          label: '50條/頁'
+          label: '50項/頁'
         }],//分页
         pagevalue:10//分页
     };
