@@ -16,7 +16,12 @@
         <div class="flex padding">
           <div class="data-card-hd">事件持久化存储</div>
           <div>
-            <el-switch v-model="value" active-color="#006EFF" inactive-color="#cccccc"></el-switch>
+            <el-switch
+              v-model="value"
+              @change="okChange"
+              active-color="#006EFF"
+              inactive-color="#cccccc"
+            ></el-switch>
             <div style="padding-top:8px;">
               开启事件持久化存储功能会额外占用您集群资源
               <span class="font-orange">&nbsp;CPU&nbsp;（0.2核）内存（100MB）</span>
@@ -97,10 +102,21 @@
         </div>
         <el-form>
           <el-form-item style="margin-top:40px;margin-left:30px;">
-            <el-button type="primary" @click="onSubmit" size="mini">保存</el-button>
+            <el-button type="primary" @click="onSubmit" size="mini" :disabled="okFlag">{{ok}}</el-button>
             <el-button size="mini" @click="onCancel">取消</el-button>
           </el-form-item>
         </el-form>
+
+        <el-dialog title="删除资源" :visible.sync="showNameSpaceModal" width="35%">
+          <p
+            style="color:#444;font-weight:bolder;"
+          >您确定要删除当前集群 {{this.$route.query.ClusterId}} 的 PersistentEvent 资源吗？</p>
+          <p style="color:red;margin-top:5px;">该资源下所有Pods将一并销毁，请提前备份好数据。</p>
+          <span slot="footer" class="dialog-footer">
+            <el-button type="primary" @click="submitDelete">确 定</el-button>
+            <el-button @click="showNameSpaceModal = false">取 消</el-button>
+          </span>
+        </el-dialog>
       </div>
     </div>
   </div>
@@ -118,10 +134,52 @@ export default {
       dataList: {},
       elasticVal: "",
       indexesVal: "",
+      ok: "保存",
+      okFlag: false,
+      showNameSpaceModal: false,
       placement: "格式为eg: http://190.0.0.1:9200"
     };
   },
   methods: {
+    //删除
+    submitDelete() {
+      this.elasticVal = "";
+      this.indexesVal = "";
+      this.loadShow = true;
+      //       Method: "DELETE"
+      // Path: "/apis/platform.tke/v1/persistentevents/pe-x7z24hzn"
+      // Version: "2018-05-25"
+      // ClusterName: "cls-a7rua9ae"
+      console.log(this.dataList);
+      const params1 = {
+        Method: "DELETE",
+        Path:
+          "/apis/platform.tke/v1/persistentevents/" +
+          this.dataList.metadata.name,
+        Version: "2018-05-25",
+        RequestBody: { propagationPolicy: "Background", gracePeriodSeconds: 0 },
+        ClusterName: this.$route.query.ClusterId
+      };
+      this.axios.post(TKE_COLONY_QUERY, params1).then(res => {
+        this.$router.push({
+          path: "/persistence"
+        });
+        if (res.Response.Error === undefined) {
+          this.loadShow = false;
+          this.showNameSpaceModal = false;
+        } else {
+          this.loadShow = false;
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
+    },
     //存储
     elastic() {
       // var reg = "http://[1-9]{1}.[1-9]{1}.[1-9]{1}.[1-9]{1}";
@@ -136,55 +194,93 @@ export default {
     indexes() {
       console.log(this.indexesVal);
     },
+    status() {
+      if (this.value == false) {
+        this.okFlag = true;
+        this.ok = "删除";
+        // this.elasticVal = "";
+        // this.indexesVal = "";
+      } else {
+        this.okFlag = false;
+        this.ok = "保存";
+      }
+    },
+    okChange() {
+      this.status();
+    },
     onSubmit() {
-      // 数据持久化集群列表
-      let params = {
-        Method: "POST",
-        Path: "/apis/platform.tke/v1/persistentevents",
-        Version: "2018-05-25",
-        RequestBody:
-          '{"kind":"PersistentEvent","apiVersion":"platform.tke/v1","metadata":{"generateName":"pe"},"spec":{"clusterName":"' +
-          this.$route.query.ClusterId +
-          '","persistentBackEnd":{"es":{"ip":"' +
-          this.elasticVal.substring(7, this.elasticVal.length - 5) +
-          '","port":' +
-          this.elasticVal.substring(
-            this.elasticVal.length - 4,
-            this.elasticVal.length
-          ) +
-          ',"scheme":"' +
-          this.elasticVal.substring(0, 4) +
-          '","indexName":"' +
-          this.indexesVal +
-          '"}}}}',
-        ClusterName: this.$route.query.ClusterId
-      };
-      this.axios.post(TKE_COLONY_QUERY, params).then(res => {
-        if (res.Response.Error === undefined) {
-          var data = JSON.parse(res.Response.ResponseBody).items;
-          this.tableData = data;
-          this.loadShow = false;
-        } else {
-          let ErrTips = {};
-          let ErrOr = Object.assign(ErrorTips, ErrTips);
+      // 保存数据持久化集群
+      this.status();
+      if (this.ok == "删除") {
+        this.showNameSpaceModal = true;
+        return;
+      } else {
+        if (this.elasticVal == "" || this.indexesVal == "") {
           this.$message({
-            message: ErrOr[res.Response.Error.Code],
+            message: "请填写Elasticsearch和索引",
             type: "error",
             showClose: true,
-            duration: 0
+            duration: 2000
           });
+          return;
         }
-      });
-      this.$router.push({
-        path: "/persistence",
-        query: {
-          elasticVal: this.elasticVal,
-          indexesVal: this.indexesVal,
-          targetId: this.$route.query.ClusterId
-        }
-      });
+        
+// Method: "POST"
+// Path: "/apis/platform.tke/v1/persistentevents"
+// Version: "2018-05-25"
+// RequestBody: "{"kind":"PersistentEvent","apiVersion":"platform.tke/v1","metadata":{"generateName":"pe"},"spec":{"clusterName":"cls-8c625d4a","persistentBackEnd":{"es":{"ip":"121.1.1.1","port":9090,"scheme":"http","indexName":"aaaaaa"}}}}"
+// ClusterName: "cls-8c625d4a"
+
+        let params = {
+          Method: "POST",
+          Path: "/apis/platform.tke/v1/persistentevents",
+          Version: "2018-05-25",
+          RequestBody:
+            '{"kind":"PersistentEvent","apiVersion":"platform.tke/v1","metadata":{"generateName":"pe"},"spec":{"clusterName":"' +
+            this.$route.query.ClusterId +
+            '","persistentBackEnd":{"es":{"ip":"' +
+            this.elasticVal.substring(7, this.elasticVal.length - 5) +
+            '","port":"' +
+            this.elasticVal.substring(
+              this.elasticVal.length - 4,
+              this.elasticVal.length
+            ) +
+            '","scheme":"' +
+            this.elasticVal.substring(0, 4) +
+            '","indexName":"' +
+            this.indexesVal +
+            '"}}}}',
+          ClusterName: this.$route.query.ClusterId
+        };
+        console.log(params);
+        this.axios.post(TKE_COLONY_QUERY, params).then(res => {
+          if (res.Response.Error === undefined) {
+            var data = JSON.parse(res.Response.ResponseBody).items;
+            this.tableData = data;
+            this.loadShow = false;
+          } else {
+            let ErrTips = {};
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 2000
+            });
+          }
+        });
+        this.$router.push({
+          path: "/persistence",
+          query: {
+            elasticVal: this.elasticVal,
+            indexesVal: this.indexesVal,
+            targetId: this.$route.query.ClusterId
+          }
+        });
+      }
     },
     onCancel() {
+      //取消
       this.$router.push({
         path: "/persistence"
       });
@@ -199,7 +295,6 @@ export default {
       };
       this.axios.post(TKE_COLONY_QUERY, params).then(res => {
         if (res.Response.Error === undefined) {
-          // console.log(JSON.parse(res.Response.ResponseBody).items);
           var data = JSON.parse(res.Response.ResponseBody).items;
           var name = this.$route.params.uid;
           data.forEach(item => {
@@ -216,7 +311,7 @@ export default {
             message: ErrOr[res.Response.Error.Code],
             type: "error",
             showClose: true,
-            duration: 0
+            duration: 2000
           });
         }
       });
@@ -225,6 +320,7 @@ export default {
   created() {
     this.getColonyList();
     if (this.$route.query.storageObject && this.$route.query.indexName) {
+      this.okFlag = false;
       this.elasticVal = this.$route.query.storageObject.substring(
         6,
         this.$route.query.storageObject.length - 1
@@ -235,6 +331,8 @@ export default {
       );
     } else {
       this.value = false;
+      this.okFlag = true;
+      this.status();
     }
   },
   props: ["uid"],

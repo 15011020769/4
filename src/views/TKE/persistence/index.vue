@@ -200,7 +200,7 @@ export default {
             message: ErrOr[k8sRes.Response.Error.Code],
             type: "error",
             showClose: true,
-            duration: 0
+            duration: 2000
           });
         }
         if (res.Response.Clusters.length > 0) {
@@ -250,17 +250,15 @@ export default {
           message: ErrOr[res.Response.Error.Code],
           type: "error",
           showClose: true,
-          duration: 0
+          duration: 2000
         });
       }
 
       var arr = []; //执行合并任务，展示数据
-      console.log(this.tableData1, this.tableData2);
       for (let index = 0; index < this.tableData1.length; index++) {
         arr.push(Object.assign(this.tableData1[index], this.tableData2[index]));
         this.tableData = arr;
       }
-      console.log(this.tableData);
     },
     // 监听搜索条件的值
     changeType(val) {
