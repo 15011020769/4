@@ -51,7 +51,7 @@
           <p>{{$t('CAM.userList.fastToDo')}}</p>
         </div>
         <div class="rightBody">
-          <el-button size="small" @click="bindMesg">{{$t('CAM.userList.userdep')}}</el-button>
+          <!-- <el-button size="small" @click="bindMesg">{{$t('CAM.userList.userdep')}}</el-button> -->
           <el-button size="small" class="delete" @click="deleteUser">{{$t('CAM.userList.userDel')}}</el-button>
         </div>
       </div>

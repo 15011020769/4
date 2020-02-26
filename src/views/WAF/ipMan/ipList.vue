@@ -102,7 +102,7 @@
           </el-upload>
           <el-button class="exportFilter" @click="exportFile" size="mini">导出全部筛选结果</el-button>
         </div>
-        <div class="tableCon">
+        <el-card>
           <el-table
             ref="multipleTable"
             :data="tableDataBegin ? tableDataBegin.slice((currentPage-1)*pageSize,currentPage*pageSize) : []"
@@ -163,8 +163,6 @@
               </template>
             </el-table-column>
           </el-table>
-        </div>
-        <div class="tabListPage">
           <el-pagination
             @size-change="handleSizeChange"
             @current-change="handleCurrentChange"
@@ -174,7 +172,7 @@
             layout="total, sizes, prev, pager, next, jumper"
             :total="totalItems"
           ></el-pagination>
-        </div>
+        </el-card>
       </div>
     </div>
     <template :v-if="addBWmodel">

@@ -122,14 +122,14 @@
 </template>
 <script>
 import { DESCRIBE_WAF_PRICE } from '@/constants'
-import { CLB_PACKAGE_CFG_TYPES, PACKAGE_CFG_TYPES, BUY_LOG_TYPES } from '../constants'
+import { CLB_PACKAGE_CFG_TYPES, PACKAGE_CFG_TYPES, BUY_LOG_TYPES, CLB_BUY_DOMAIN_TYPES } from '../constants'
 export default {
   data(){
     return{
       thisType: 2,//套餐
-      domainPackageCount: 0,//扩展域名包
+      domainPackageCount: 1,//扩展域名包
       qpsPackageCount: 0,//QPS扩展包
-      clsPackageCount: 1,//安全日志服务包
+      clsPackageCount: 0,//安全日志服务包
       mounthType: 1,//购买时长
       loading: true,
       price: 0,
@@ -178,21 +178,23 @@ export default {
             "pid": 11416, // 1001156,
             [PACKAGE_CFG_TYPES[this.thisType].key]: 1,
           }
-        }, {
-          goodsCategoryId: BUY_LOG_TYPES.first_categoryid,
+        }, 
+        {
+          goodsCategoryId: CLB_BUY_DOMAIN_TYPES.first_categoryid,
           "regionId": 1,
           "projectId": 0,
           "goodsNum": 1,
           "payMode": 1,
           "platform": 1,
           goodsDetail: {
-            "pid": BUY_LOG_TYPES.pid, // 1001156,
+            "pid": CLB_BUY_DOMAIN_TYPES.pid, // 1001156,
             "timeSpan": this.mounthType,
             "timeUnit": "m",
-            [BUY_LOG_TYPES.pricetype]: this.clsPackageCount,
-            "type": BUY_LOG_TYPES.goodstype
+            [CLB_BUY_DOMAIN_TYPES.pricetype]: this.domainPackageCount,
+            "type": CLB_BUY_DOMAIN_TYPES.goodstype,
           }
-        }]
+        }
+        ]
       }).then(resp => {
         this.generalRespHandler(resp, ({ RealTotalCost }) => {
           this.price = RealTotalCost

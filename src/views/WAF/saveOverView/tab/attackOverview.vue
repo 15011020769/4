@@ -39,93 +39,22 @@
           <i class="el-icon-setting" @click="dialogSetVisible = true"></i>
         </el-row>
       </p>
-      <div class="contentNum">
-        <el-row>
-          <el-col :span="selectValue==''?12:8">
-            <div class="rowContain">
-              <p>
-                <span class="red">{{webAttack}}</span>
-                <span>次</span>
-              </p>
-              <p>WEB攻击次数</p>
-            </div>
-          </el-col>
-          <el-col :span="selectValue==''?12:8">
-            <div class="rowContain">
-              <p>
-                <span class="oarnge">{{ccRequest}}</span>
-                <span>个</span>
-              </p>
-              <p>CC攻击次数</p>
-            </div>
-          </el-col>
-          <el-col :span="selectValue==''?12:8" v-if="selectValue==''?false:true">
-            <div class="rowContain">
-              <p>
-                <span class="blue">{{botRequest}}</span>
-                <span>次</span>
-              </p>
-              <p>BOT请求次数</p>
-            </div>
-          </el-col>
-        </el-row>
-      </div>
-      <el-row class="echartsShowfirst">
-        <h3 class="topfont">
-          {{t('攻击趋势', 'WAF.gjqs')}}
-          <span style="color:#bbb;">(次)</span>
-        </h3>
-        <ELine
-          :xAxis="xAxis1"
-          :series1="series1"
-          :series2="series2"
-          :series3="series3"
-          :color="color"
-          :legendText="selectValue == '' ? legendText2 : legendText1"
-        />
-      </el-row>
-      <attack-Type
-        :seriesPie="seriesPie"
-        :colorPie="colorPie"
-        :legendTextPie="legendTextPie"
-        :seriesPieAttack="seriesPieAttack"
-        :legendTextPieAttack="legendTextPieAttack"
-      />
-      <el-row class="echartsShowSecond">
-        <el-col :span="12">
-        <h3 class="topfont">
-          {{t('攻击来源地域TOP5', 'WAF.gjlydy')}}
-          <span style="color:#bbb;">(次)</span>
-        </h3>
-        <EBar
-          :xAxis="xAxisBarLocal"
-          :series="seriesBarLocal"
-          :legendText="legendTextBarIp"
-          v-if="xAxisBarLocal.length == 0 ? false : true"
-        />
-        <el-row class="empty" v-else>暂无数据</el-row>
-        </el-col>
-        <el-col :span="12">
-        <h3 class="topfont">
-          {{t('攻击来源IP TOP5', 'WAF.gjlyip')}}
-          <span style="color:#bbb;">(次)</span>
-        </h3>
-        <EBar
-          :xAxis="xAxisBarIp"
-          :series="seriesBarIp"
-          :legendText="legendTextBarIp"
-          v-if="xAxisBarIp.length == 0 ? false : true"
-        />
-        <el-row class="empty" v-else>暂无数据</el-row>
-        </el-col>
-      </el-row>
-      <el-row class="echartsShowFour">
-        <h3 class="topfont">
-          {{t('攻击来源区域分布', 'WAF.gjlyqyfb')}}
-          <span style="color:#bbb;">(次)</span>
-        </h3>
-        <EMap :series="seriesMap" />
-      </el-row>
+      <component class="comp" v-for="comp in showModules" :is="comp" :times="[startTime, endTime]" :domain="selectValue" />
+      <!-- 1
+      
+      1
+      2
+      
+      2
+      3
+      
+      3
+      4
+      
+      4
+      5
+      
+      5 -->
     </div>
     <DownLoadImg
       :dialogDownloadVisible = dialogDownloadVisible
@@ -138,14 +67,18 @@
       width="40%"
     >
       <div>
-        <el-checkbox v-model="checked1" label="WEB攻击拦截、CC拦截、BOT请求、DNS劫持区域数" border></el-checkbox>
-        <el-checkbox v-model="checked2" label="业务请求趋势" border></el-checkbox>
-        <el-checkbox v-model="checked3" label="攻击来源地域TOP5 & 攻击来源IP TOP5" border></el-checkbox>
-        <el-checkbox v-model="checked4" label="访问类型占比 & 攻击类型占比" border></el-checkbox>
-        <el-checkbox v-model="checked5" label="攻击来源区域分布" border></el-checkbox>
+        <el-checkbox-group v-model="showModules" class="module">
+          <el-checkbox border v-for="(m, index) in allModule" :key="m.name" :label="m.name">
+            {{m.value}}
+            <div :class="`move ${index === 0 || index === (allModule.length - 1) ? 'alone' : ''}`">
+              <i class="el-icon-caret-top" @click.prevent="up(index)" v-if="index !== 0"></i>
+              <i class="el-icon-caret-bottom" @click.prevent="down(index)" v-if="index !== (allModule.length - 1)"></i>
+            </div>
+          </el-checkbox>
+        </el-checkbox-group>
       </div>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="dialogSetVisible = false">保存</el-button>
+        <el-button type="primary" @click="saveModuleDisplaySet">保存</el-button>
         <el-button @click="dialogSetVisible = false">取消</el-button>
       </div>
     </el-dialog>
@@ -160,6 +93,12 @@ import EPie from "../components/pie"
 import EMap from '../components/worldMap'
 import attackType from "../components/attackType"
 import DownLoadImg from '../components/downLoadImg'
+import AttackDistribution from './safeoverview/attackDistribution'
+import AttackSource from './safeoverview/attackSource'
+import AttackTypePrecent from './safeoverview/attackTypePrecent'
+import Business from './safeoverview/business'
+import Overview from './safeoverview/overview'
+import { SAFE_OVERVIEW_SHOWMODULE_KEY } from '../../constants'
 import {
   DESCRIBE_HOSTS,
   DESCRIBE_PEAK_VALUE,
@@ -200,11 +139,16 @@ export default {
       legendTextBarIp: "次数",
       dialogDownloadVisible: false,
       dialogSetVisible: false,
-      checked1: false,
-      checked2: false,
-      checked3: false,
-      checked4: false,
-      checked5: false,
+      allModuleCopy: [
+        { name: 'overview', value: 'WEB攻击拦截、CC拦截、BOT请求、DNS劫持区域数' },
+        { name: 'business', value: '业务请求趋势' },
+        { name: 'attackSource', value: '攻击来源地域TOP5 & 攻击来源IP TOP5' },
+        { name: 'attackTypePrecent', value: '访问类型占比 & 攻击类型占比' },
+        { name: 'attackDistribution', value: '攻击来源区域分布' },
+      ],
+      allModule: [],
+      showModules: [],
+      testcomponent: 'Overview',
       colorPie: ['#006eff', '#434348', '#74BD48', "#F7A35C"],
       legendTextPie: ['正常访问', 'WEB攻击次数', 'CC攻击次数', ''],
       seriesPie: [
@@ -228,31 +172,79 @@ export default {
     EMap,
     DownLoadImg,
     attackType,
+    Overview,
+    Business,
+    AttackTypePrecent,
+    AttackSource,
+    AttackDistribution,
   },
   mounted () {
-    this.getDominList();
-    this.getPeakValue();
-    this.getPeakPoints();
-    this.getAttackType();
-    this.getWebAttack();
-    this.getNormalRequest();
-    this.getAttackIp("ip");
-    this.getAttackIp("local");  
-    this.getAttackWorldMap();
+    this.allModule = JSON.parse(JSON.stringify(this.allModuleCopy))
+    let showModules = localStorage.getItem(SAFE_OVERVIEW_SHOWMODULE_KEY)
+    if (showModules) {
+      showModules = JSON.parse(showModules)
+    } else {
+      showModules = ['overview', 'business']
+    }
+    this.showModules = showModules
+    // this.getDominList();
+    // this.getPeakValue();
+    // this.getPeakPoints();
+    // this.getAttackType();
+    // this.getWebAttack();
+    // this.getNormalRequest();
+    // this.getAttackIp("ip");
+    // this.getAttackIp("local");  
+    // this.getAttackWorldMap();
 　},
   watch: {
     selectValue() {
-      this.getPeakValue();
-      this.getPeakPoints();
-      this.getAttackType();
-      this.getNormalRequest();
-      this.getWebAttack();
-      this.getAttackIp("ip");
-      this.getAttackIp("local");
-      this.getAttackWorldMap();
+      // this.getPeakValue();
+      // this.getPeakPoints();
+      // this.getAttackType();
+      // this.getNormalRequest();
+      // this.getWebAttack();
+      // this.getAttackIp("ip");
+      // this.getAttackIp("local");
+      // this.getAttackWorldMap();
+    },
+    showModules(val, oldVal) {
+      if (val.length === 1) {
+        this.$message({
+          message: this.t('至少选择2个', 'WAF.zsxz2g'),
+          type: 'error',
+          showClose: true,
+          duration: 0
+        })
+        this.showModules = [...oldVal]
+      }
     },
   },
   methods: {
+    up(index) {
+     if (index!==0){
+        this.allModule[index] = this.allModule.splice(index-1, 1, this.allModule[index])[0]
+      } else {
+        this.allModule.push(this.allModule.shift())
+      }
+console.log(this.allModule)
+    },
+    down(index) {
+     if (index!==this.allModule.length-1){
+        this.allModule[index] = this.allModule.splice(index+1, 1, this.allModule[index])[0]
+      } else {
+        this.allModule.unshift(this.allModule.splice(index,1)[0])
+      }
+      console.log(this.allModule)
+    },
+    saveModuleDisplaySet() {
+      this.dialogSetVisible = false
+      console.log(this.allModule)
+      const moduleNames = this.allModule.map(m => m.name)
+      console.log(moduleNames)
+      this.showModules = moduleNames.filter(name => this.showModules.includes(name))
+      localStorage.setItem(SAFE_OVERVIEW_SHOWMODULE_KEY, JSON.stringify(this.showModules))
+    },
     //获取域名列表
     getDominList() {
       this.axios.post(DESCRIBE_HOSTS, {
@@ -518,31 +510,31 @@ export default {
       ipt2.value = moment(end).format("YYYY-MM-DD");
       this.startTime = moment(start).startOf("days").format("YYYY-MM-DD HH:mm:ss");
       this.endTime = moment(end).endOf("days").format("YYYY-MM-DD HH:mm:ss");
-      this.$nextTick(() => {
-        this.getPeakPoints();
-        this.getPeakValue();
-        this.getNormalRequest();
-        this.getAttackType();
-        this.getAttackIp("ip");
-        this.getAttackIp("local");
-        this.getAttackWorldMap();
-        this.getWebAttack()
-      })
+      // this.$nextTick(() => {
+      //   this.getPeakPoints();
+      //   this.getPeakValue();
+      //   this.getNormalRequest();
+      //   this.getAttackType();
+      //   this.getAttackIp("ip");
+      //   this.getAttackIp("local");
+      //   this.getAttackWorldMap();
+      //   this.getWebAttack()
+      // })
     },
     changeTimeValue() {
       this.thisType = 0
       this.startTime = moment(this.dateTimeValue[0]).startOf("days").format("YYYY-MM-DD HH:mm:ss");
       this.endTime = moment(this.dateTimeValue[1]).endOf("days").format("YYYY-MM-DD HH:mm:ss");
-      this.$nextTick(() => {
-        this.getPeakPoints();
-        this.getPeakValue();
-        this.getNormalRequest();
-        this.getAttackType();
-        this.getAttackIp("ip");
-        this.getAttackIp("local");
-        this.getAttackWorldMap();
-        this.getWebAttack()
-      })
+      // this.$nextTick(() => {
+      //   this.getPeakPoints();
+      //   this.getPeakValue();
+      //   this.getNormalRequest();
+      //   this.getAttackType();
+      //   this.getAttackIp("ip");
+      //   this.getAttackIp("local");
+      //   this.getAttackWorldMap();
+      //   this.getWebAttack()
+      // })
     },
     html2canvas_2(imgtype) {
       //获取截取区域的高度和宽度
@@ -751,6 +743,24 @@ export default {
     }
   }
 }
+.module {
+  label {
+    cursor: default;
+  }
+}
+.move {
+  position: absolute;
+  right: 10px;
+  top: 5px;
+  display: flex;
+  flex-direction: column;
+  i {
+    cursor: pointer;
+  }
+}
+.alone.move {
+  top: 13px;
+}
 .message_img {
   color: #007e3b;
   border: 1px solid #9ce4bc;
@@ -761,5 +771,8 @@ export default {
 .label_img {
   display: inline-block;
   padding-right: 20px;
+}
+.comp {
+  margin-top: 20px;
 }
 </style>
