@@ -90,7 +90,7 @@
         </el-table-column>
         <el-table-column prop="Name" :label="t('规则开关', 'WAF.gzkg')">
           <template slot-scope="scope">
-            <el-switch v-model="scope.row.StatusBool" />
+            <el-switch v-model="scope.row.StatusBool" @change="switchStatus(scope.row)" />
           </template>
         </el-table-column>
         <el-table-column prop="CreateTime" :label="t('创建时间', 'WAF.cjsj')" sortable width="150">
@@ -100,7 +100,7 @@
         </el-table-column>
         <el-table-column prop="Name" label="操作" width="120" class-name="actions" align="center">
           <template slot-scope="scope">
-            <el-button type="text" @click="updateRule(scope.row)">{{t('编辑', 'WAF.bj')}}</el-button>&nbsp;&nbsp;
+            <el-button type="text" @click="updateRule(scope.row, scope.$index)">{{t('编辑', 'WAF.bj')}}</el-button>&nbsp;&nbsp;
             <el-popover
               placement="bottom"
               width="280"
@@ -108,11 +108,11 @@
             >
               <div class="prpoDialog">
                 <h1>{{t('确认删除', 'WAF.qrsc')}}？</h1>
-                <p>{{t('删除后将无法恢复，重新添加才能生效。', 'WAF.schwfhf')}}。</p>
+                <p>{{t('删除后将无法恢复，重新添加才能生效。', 'WAF.schwfhf')}}</p>
               </div>
-              <div style="text-align: right; margin: 0">
+              <div style="text-align: center; margin: 0">
+                <el-button size="mini" type="text" @click="delCCRule(scope.row)">删除</el-button>
                 <el-button size="mini" type="text" @click="scope.row.delDialog=false">取消</el-button>
-                <el-button type="primary" size="mini" @click="delCCRule(scope.row)">删除</el-button>
               </div>
               <el-button slot="reference"style="color:#3E8EF7;background: transparent;">删除</el-button>
             </el-popover>
@@ -159,12 +159,18 @@
       @close="beforeRuleClose"
       destroy-on-close
     >
-      <CCRule :visible.sync="dialogCCRule" :rule="rule" :domain="domain" @onSuccess="onSuccess" />
+      <CCRule
+        :visible.sync="dialogCCRule"
+        :rule="rule"
+        :domain="domain"
+        @onSuccess="onSuccess"
+        :ruleNames="ruleNames"
+      />
     </el-dialog>
   </div>
 </template>
 <script>
-import { DESCIRBE_CCRULE, DESCRIBE_SESSION, DELETE_SESSION, DELETE_CCRULE } from '@/constants'
+import { DESCIRBE_CCRULE, DESCRIBE_SESSION, DELETE_SESSION, DELETE_CCRULE, UPSERT_CCRULE } from '@/constants'
 import SessionSet from '../model/sessionSet'
 import SessionTest from '../model/sessionTest'
 import { flatObj } from '@/utils'
@@ -188,6 +194,7 @@ export default {
       CC_RULE_ACTION,
       rules: [],
       rule: undefined,
+      ruleNames: [],
       session: undefined,
       loading: true,
       showTip: true,
@@ -213,6 +220,27 @@ export default {
     }
   },
   methods: {
+    switchStatus(rule) {
+      rule.StatusBool = !rule.StatusBool
+      this.axios.post(UPSERT_CCRULE, {
+        Version: '2018-01-25',
+          Domain: this.domain.Domain,
+          Name: rule.Name,
+          Status: rule.Status^1,
+          Advance: rule.Advance,
+          Limit: rule.Limit,
+          Interval: rule.Interval,
+          Url: rule.Url,
+          MatchFunc: rule.MatchFunc,
+          ActionType: rule.ActionType,
+          Priority: rule.Priority,
+          ValidTime: rule.ValidTime,
+          OptionsArr: rule.OptionsArr,
+          Edition: 'clb-waf'
+      }).then(resp => {
+        this.generalRespHandler(resp, this.getCCRule, COMMON_ERROR, '切换成功')
+      })
+    },
     delCCRule(rule) {
       this.axios.post(DELETE_CCRULE, {
         Version: '2018-01-25',
@@ -280,9 +308,12 @@ export default {
       }).then(resp => {
         this.generalRespHandler(resp, ({ Data }) => {
           Data = Data || {Res: [], TotalCount: 0}
+          const ruleNames = []
           Data.Res.forEach(rule => {
             rule.StatusBool = !!rule.Status
+            ruleNames.push(rule.Name)
           })
+          this.ruleNames = ruleNames
           this.rules = Data.Res
           this.total = Data.TotalCount
           this.loading = false
@@ -299,7 +330,7 @@ export default {
       this.session = undefined
       done()
     },
-    updateRule(rule) {
+    updateRule(rule, index) {
       this.rule = rule
       this.dialogCCRule = true
     },

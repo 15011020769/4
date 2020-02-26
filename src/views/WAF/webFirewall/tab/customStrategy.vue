@@ -93,7 +93,7 @@
       width="900px"
       destroy-on-close
     >
-      <Rule :visible.sync="dialogRule" @onSuccess="onSuccess" :domain="domain" :rule="rule" />
+      <Rule :visible.sync="dialogRule" :ruleNames="ruleNames" @onSuccess="onSuccess" :domain="domain" :rule="rule" />
     </el-dialog>
   </div>
 </template>
@@ -128,6 +128,7 @@ export default {
       limit: 10,
       total: 0,
       ActionType: '-1',
+      ruleNames: [],
     }
   },
   components: {
@@ -190,9 +191,12 @@ export default {
       }
       this.axios.post(DESCRIBE_CUSTOM_RULES, flatObj(param)).then(resp => {
         this.generalRespHandler(resp, ({ RuleList, TotalCount }) => {
+          const ruleNames = []
           RuleList.forEach(rule => {
             rule.StatusBool = !!Number(rule.Status)
+            ruleNames.push(rule.Name)
           })
+          this.ruleNames = ruleNames
           this.total = Number(TotalCount)
           this.customRules = RuleList
           this.loading = false

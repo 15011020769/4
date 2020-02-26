@@ -34,7 +34,8 @@ import { DESCRIBE_HISTOGRAM } from '@/constants'
 export default {
   props: {
     times: Array,
-    domain: String
+    domain: String,
+    showModules: Array
   },
   data() {
     return {
@@ -49,16 +50,30 @@ export default {
     EBar,
   },
   watch: {
-    times() {
+    showModules(val, oldVal) {
+      if (val.join() !== oldVal.join()) {
+        this.init()
+      }
+    },
+    times(val, oldVal) {
+      if (val.join() !== oldVal.join()) {
+        this.init()
+      }
+    },
+    domain(val, oldVal) {
+      if (val !== oldVal) {
+        this.init()
+      }
+    }
+  },
+  mounted() {
+    this.init()
+  },
+  methods: {
+    init() {
       this.getAttackIp("ip")
       this.getAttackIp("local")
     },
-    domain() {
-      this.getAttackIp("ip")
-      this.getAttackIp("local")
-    }
-  },
-  methods: {
     // 获取攻击来源地址和ip柱状图
     getAttackIp(type) {
       const params = {

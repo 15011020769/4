@@ -9,11 +9,10 @@
           <left-aside></left-aside>
         </el-aside>
         <el-main>
-          <router-view />
+        　　<router-view></router-view>
         </el-main>
       </el-container>
     </el-container>
-    <router-view v-if="!$route.meta.keepAlive"></router-view>
   </div>
 </template>
 

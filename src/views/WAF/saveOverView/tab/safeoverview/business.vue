@@ -22,6 +22,7 @@ export default {
   props: {
     times: Array,
     domain: String,
+    showModules: Array
   },
   components: {
     ELine,
@@ -38,12 +39,24 @@ export default {
     }
   },
   watch: {
-    times() {
-      this.getPeakPoints()
+    showModules(val, oldVal) {
+      if (val.join() !== oldVal.join()) {
+        this.getPeakPoints()
+      }
     },
-    domain() {
-      this.getPeakPoints()
+    times(val, oldVal) {
+      if (val.join() !== oldVal.join()) {
+        this.getPeakPoints()
+      }
+    },
+    domain(val, oldVal) {
+      if (val !== oldVal) {
+        this.getPeakPoints()
+      }
     }
+  },
+  mounted() {
+    this.getPeakPoints()
   },
   methods: {
     // 获取业务攻击趋势

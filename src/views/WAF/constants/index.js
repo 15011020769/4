@@ -823,3 +823,21 @@ export const advanceRules = [
         placeholder: "请输入百分比，如50%",
         reg: /^(\d|[1-9]\d|100)%$/
     }];
+
+export const ARGS_MAP = {
+  "ARGS_GET": "GET参数值",
+  "ARGS_GET_NAME": "GET参数名",
+  "ARGS_POST": "POST参数值",
+  "ARGS_POST_NAME": "POST参数名",
+  "REQUEST_HEADERS": "HTTP请求头",
+  "REQUEST_HEADERS[Range]": "HTTP请求头",
+  "REQUEST_URI_RAW": "请求URI",
+  "REQUEST_URI": "请求URI",
+  "PATH_INFO": "请求路径",
+  "FILECONTENT": "文件内容",
+  "REQUEST_COOKIE": "COOKIE内容",
+  "REMOTE_ADDR": "来源IP",
+  "REQUEST_HEADERS[Referer]": "Referer",
+  "USER_AGENT": "User-Agent",
+  "none": "无"
+}

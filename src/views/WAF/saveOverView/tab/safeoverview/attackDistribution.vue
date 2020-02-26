@@ -13,26 +13,39 @@ import { DESCRIBE_ATTACK_WORLD_MAP } from '@/constants'
 export default {
   props: {
     times: Array,
-    domain: String
+    domain: String,
+    showModules: Array
   },
   components: {
     EMap
   },
   watch: {
-    times() {
-      this.getAttackWorldMap()
+    showModules(val, oldVal) {
+      if (val.join() !== oldVal.join()) {
+        this.init()
+      }
     },
-    domain() {
-      this.getAttackWorldMap()
+    times(val, oldVal) {
+      if (val.join() !== oldVal.join()) {
+        this.getAttackWorldMap()
+      }
+    },
+    domain(val, oldVal) {
+      if (val !== oldVal) {
+        this.getAttackWorldMap()
+      }
     }
   },
   data() {
     return {
       seriesMap: [{
-            name: '中国',
-            value: 2
-          },]
+        name: '中国',
+        value: 2
+      },]
     }
+  },
+  mounted() {
+    this.getAttackWorldMap()
   },
   methods: {
     // 获取攻击城市分布

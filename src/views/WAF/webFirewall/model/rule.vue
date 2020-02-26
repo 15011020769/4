@@ -5,7 +5,10 @@
       :label="t('规则名称', 'WAF.gzmc')"
       :rules="[
         { required: true, message: t('规则名称不能为空', 'WAF.gzmcbnwk') },
-        { max: 50, message: t('名称长度不能超过50个字符', 'WAF.mccd50zy') }
+        { max: 50, message: t('名称长度不能超过50个字符', 'WAF.mccd50zy') },
+        {
+          validator: isRepeatName()
+        }
       ]"
     >
       <el-input
@@ -191,11 +194,13 @@ export default {
     rule: {
       required: false,
       type: Object,
-    }
+    },
+    ruleNames: Array,
   },
   watch: {
     rule: {
       handler(r) {
+        this.names = [...this.ruleNames.filter(name => name !== (this.rule && this.rule.Name || ''))]
         if (r) {
           this.selectedMatchKeys = []
           if (r.ExpireTimeType === 1) {
@@ -250,6 +255,7 @@ export default {
       MATCH_KEY,
       LOGIC_SYMBOL_ARR,
       BY_PASS_ACTION_ARR,
+      names: [],
     }
   },
   methods: {
@@ -259,6 +265,15 @@ export default {
           return callback()
         }
         callback(this.t('重定向路径输入有误，请以/开头，128个字符以内', 'WAF.cdxtsy'))
+      }
+      return warpper
+    },
+    isRepeatName() {
+      var warpper = (rule, value, callback) => {
+        if (!this.names.includes(value)) {
+          return callback()
+        }
+        callback(this.t('名称不能重复', 'WAF.mcbncf'))
       }
       return warpper
     },

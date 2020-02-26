@@ -103,8 +103,18 @@ export const DESCRIBE_ATTACK_LOG_COUNT = 'waf2/DescribeAttackLogCount'
 /** 建攻击日志下载任务 */
 export const CREATE_ATTACK_DOWNLOAD_TASK = 'waf2/CreateAttackDownloadTask'
 /** 查询下载记录 */
-export const DESCRIBE_ATTACK_DOWNLOAD_RECORD = 'waf2/DescribeAttackDownloadRecord'
+export const DESCRIBE_ATTACK_DOWNLOAD_RECORDS = 'waf2/DescribeAttackDownloadRecords'
+/** 删除下载记录 */
+export const DELETE_DOWNLOAD_RECORD = 'waf2/DeleteDownloadRecord'
 /** 切换自定义规则的开关 */
 export const MODIFY_CUSTOM_RULE_STATUS = 'waf2/ModifyCustomRuleStatus'
 /** Bot_V2 域名bot统计 */
 export const DESCRIBE_BOT_AGGREGATE_DOMAINSTAT = 'waf2/DescribeBotAggregateDomainStat'
+/** 查询日志服务使用状况 */
+export const DESCRIBE_CLS = 'waf2/DescribeCLS'
+/** 查询满足搜索条件的访问日志数量 */
+export const DESCRIBE_ACCESSLOG_COUNT = 'waf2/DescribeAccessLogCount'
+/** 查询访问日志下载任务 */
+export const DESCRIBE_ACCESS_DOWNLOAD_RECORDS = 'waf2/DescribeAccessDownloadRecords'
+/** 下载访问日志 */
+export const CREATE_ACCESS_DOWNLOAD_RECORD = 'waf2/CreateAccessDownloadRecord'

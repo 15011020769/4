@@ -9,12 +9,11 @@
             allow-create
             class="dominList"
             default-first-option>
-            <el-option value="all">ALL</el-option>
             <el-option
               v-for="item in dominOptions"
               :key="item.DomainId"
               :label="item.Domain"
-              :value="item.DomainId">
+              :value="item.Domain">
             </el-option>
           </el-select>
           <el-button-group class="btnGroup">
@@ -34,150 +33,233 @@
           </el-date-picker>
         </div>
         <div class="newClear"> 
-          <el-select class="shortSelect" v-model="riskLevelVlaue" placeholder="请选择">
-            <el-option>{{t('全部风险等级', 'WAF.qbfxdj')}}</el-option>
-            <el-option
-              v-for="item in riskLevelOption"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value">
-            </el-option>
-          </el-select>
-          <el-select class="shortSelect" v-model="actionVlaue" placeholder="请选择">
-            <el-option>{{t('全部执行动作', 'WAF.qbzxdz')}}</el-option>
-            <el-option
-              v-for="item in actionOption"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value">
-            </el-option>
-          </el-select>
-          <el-select class="shortSelect" v-model="attackVlaue" placeholder="请选择">
-            <el-option>{{t('全部攻击类型', 'WAF.qbgjlx')}}</el-option>
-            <el-option
-              v-for="item in attackOption"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value">
-            </el-option>
-          </el-select>
-          <el-input class="inputIpt" v-model="celueId" :placeholder="t('输入策略ID', 'WAF.srclid')"></el-input>
-          <el-input class="inputIpt" v-model="attackIP" :placeholder="t('输入攻击源IP', 'WAF.srgjyip')"></el-input>
+          <el-input class="inputIpt" v-model="keyword" :placeholder="t('输入攻击源IP', 'WAF.srgjyip')"></el-input>
           <el-button class="selectBtn" @click="queryLogs">{{t('查询', 'WAF.js')}}</el-button>
-          <i class="el-icon-download" @click="createDownTask"></i>
+          <i class="el-icon-download" style="cursor: pointer;" @click="createDownTask"></i>
         </div>
       </div>
       <div class="tableCon">
-        <div class="topSet newClear">
-          <i class="el-icon-setting"></i>
-        </div>
+        <el-row type="flex" align="middle" justify="space-between" style="margin: 0 10px;">
+          {{t('总数量', 'WAF.zsl')}}：{{total}} {{t('项', 'WAF.x')}}
+          <div class="topSet newClear">
+            <i class="el-icon-setting" style="cursor: pointer;" @click="openDialog"></i>
+          </div>
+        </el-row>
         <div class="tableMian">
-          <el-table :data="tableDataBegin" :empty-text="t('暂无数据', 'WAF.zwsj')">
-            <el-table-column prop="num" :label="t('序号', 'WAF.xh')" width=""></el-table-column>
-            <el-table-column prop="attackUrl" :label="t('被攻击网址', 'WAF.bgjwz')" width=""></el-table-column>
-            <el-table-column prop="AttackIP" :label="t('攻击源IP', 'WAF.gjyip')"></el-table-column>
-            <el-table-column prop="attackType" :label="t('攻击类型', 'WAF.gjlx')"></el-table-column>
-            <el-table-column prop="methedId" label="策略ID"></el-table-column>
-            <el-table-column prop="methedName" :label="t('策略名称', 'WAF.clmc')"></el-table-column>
-            <el-table-column prop="attackCon" :label="t('攻击内容', 'WAF.gjlr')"></el-table-column>
-            <el-table-column prop="attackTime" :label="t('攻击时间', 'WAF.gjsj')"></el-table-column>
-            <el-table-column prop="actionRun" :label="t('执行动作', 'WAF.zxdz')"></el-table-column>
-            <el-table-column prop="gardenW" :label="t('风险等级', 'WAF.fxdj')"></el-table-column>
+          <el-table :data="tableDataBegin" :empty-text="t('暂无数据', 'WAF.zwsj')" v-loading="loading">
+            <el-table-column type="index" :label="t('序号', 'WAF.xh')"></el-table-column>
+            <el-table-column :label="t('时间', 'WAF.time')" v-if="columnsCopy.includes('time')">
+              <template slot-scope="scope">{{formatTime(scope.row.msec)}}</template>
+            </el-table-column>
+            <el-table-column prop="client" :label="t('访问源IP', 'WAF.fwyip')" v-if="columnsCopy.includes('client')"></el-table-column>
+            <el-table-column :label="t('来源地址', 'WAF.lydz')" v-if="columnsCopy.includes('source')">
+              <template slot-scope="scope">{{scope.row.ipinfo_nation}} • {{scope.row.ipinfo_province}}</template>
+            </el-table-column>
+            <el-table-column :label="t('请求详情', 'WAF.qqxq')" v-if="columnsCopy.includes('request')">
+              <template slot-scope="scope">
+                <div>
+                  <p><strong>方法:</strong>{{scope.row.method}}</p>
+                  <p><strong>协议:</strong>{{scope.row.schema}}</p>
+                  <p><strong>HOST:</strong>{{scope.row.host}}</p>
+                  <p><strong>URI:</strong>{{scope.row.url}}</p>
+                  <p><strong>Query:</strong>{{scope.row.query}}</p>
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column prop="body" label="Body" v-if="columnsCopy.includes('body')"></el-table-column>
+            <el-table-column :label="t('请求头', 'WAF.qqt')" v-if="columnsCopy.includes('header')">
+              <template slot-scope="scope">
+                <div>
+                  <p><strong>Referer:</strong>{{scope.row.referer}}</p>
+                  <p><strong>UA:</strong>{{scope.row.user_agent}}</p>
+                  <p><strong>Cookie:</strong>{{scope.row.cookie}}</p>
+                  <p><strong>X_Forwarded_For:</strong>{{scope.row.client}}</p>
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column label="回源信息" v-if="columnsCopy.includes('upstream')">
+              <template slot-scope="scope">
+                <div>
+                  <p><strong>回源地址:</strong>{{scope.row.upstream}}</p>
+                  <p><strong>回源耗时:</strong>{{parseFloat(scope.row.upstream_connect_time) * 1000}}ms</p>
+                  <p><strong>源站响应耗时:</strong>{{parseFloat(scope.row.upstream_response_time) * 1000}}ms</p>
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column :label="t('响应详情', 'WAF.xyxq')" v-if="columnsCopy.includes('response')">
+              <template slot-scope="scope">
+                <div>
+                  <p><strong>WAF响应码:</strong>{{scope.row.status}}</p>
+                  <p><strong>源站响应码:</strong>{{scope.row.upstream_status}}</p>
+                  <p><strong>响应大小:</strong>{{scope.row.bytes_sent}}字节</p>
+                </div>
+              </template>
+            </el-table-column>
             <el-table-column prop="action" label="操作" width="180">
-              <template slot-scope="">
-                <el-button type="text" size="small">{{t('详情', 'WAF.xq')}}</el-button>
+              <template slot-scope="scope">
+                <el-button type="text" size="small" @click="$router.push({name: 'accessLogDetail', params: {log: scope.row}})">{{t('详情', 'WAF.xq')}}</el-button>
               </template>
             </el-table-column>
           </el-table>
+          <p class="loadmore" v-if="Context && !loadmoreloading">
+            <el-button type="text" size="small" @click="loadmore">{{t('点击加载更多', 'WAF.djjzgd')}}</el-button>
+          </p>
+          <p class="loadmore" v-if="loadmoreloading">
+            <el-button type="text">{{t('加载中', 'WAF.zrz')}}</el-button>
+          </p>
         </div>
       </div>
-      <createDownTaskModel :isShow="createDownTaskModel" @closeCreateTaskModel="closeCreateTaskModel"/>
+      <el-dialog
+        :title="t('自定义列表字段', 'WAF.dzylbzd')"
+        :visible.sync="visible"
+        width="420px"
+        center
+      >
+        <el-checkbox-group v-model="columns" class="columns">
+          <el-checkbox label="index" disabled>{{t('序号', 'WAF.xh')}}</el-checkbox>
+          <el-checkbox label="time">{{t('时间', 'WAF.bgjwz')}}</el-checkbox>
+          <el-checkbox label="client">{{t('访问源IP', 'WAF.fwyip')}}</el-checkbox>
+          <el-checkbox label="source">{{t('来源地址', 'WAF.lydz')}}</el-checkbox>
+          <el-checkbox label="request">{{t('请求详情', 'WAF.qqxq')}}</el-checkbox>
+          <el-checkbox label="body">Body</el-checkbox>
+          <el-checkbox label="header">{{t('请求头', 'WAF.qqt')}}</el-checkbox>
+          <el-checkbox label="upstream">回源信息</el-checkbox>
+          <el-checkbox label="response">{{t('响应详情', 'WAF.xyxq')}}</el-checkbox>
+          <el-checkbox label="action" disabled>操作</el-checkbox>
+        </el-checkbox-group>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="cancelDialog">取消</el-button>
+          <el-button type="primary" @click="setColumns">{{t('确定', 'WAF.qd')}}</el-button>
+        </span>
+      </el-dialog>
+      <createDownTaskModel :isShow="createDownTaskModel" @create="createDownloadTask" @closeCreateTaskModel="closeCreateTaskModel"/>
     </div>
   </div>
 </template>
 <script>
-import moment from "moment";
+import moment from 'moment'
 import createDownTaskModel from '../model/createDownTaskModel'
-import { ATTACK_TYPE } from '../../constants'
-import { DESCRIBE_HOSTS, DESCRIBE_ACCESS_LOGS } from '@/constants'
+import { COMMON_ERROR } from '../../constants'
+import { DESCRIBE_HOSTS, DESCRIBE_ACCESS_LOGS, DESCRIBE_ACCESSLOG_COUNT, CREATE_ACCESS_DOWNLOAD_RECORD } from '@/constants'
 
 export default {
   data(){
     return{
-      dominList:'',//域名下拉
+      dominList: 'ALL',//域名下拉
       dominOptions:[],
       thisType:'1',//默认时间选择
       timeValue:'',//时间选择
-      riskLevelVlaue:'',//风险等级
-      riskLevelOption:[
-        {
-          label:'全部风险等级',
-          value:'全部风险等级'
-        },
-        {
-          label:'高危',
-          value:'高危'
-        },
-        {
-          label:'中危',
-          value:'中危'
-        },
-        {
-          label:'低危',
-          value:'低危'
-        }
-      ],
-      actionVlaue:'',//执行动作
-      actionOption:[
-        {
-          label:'全部执行动作',
-          value:'全部执行动作'
-        },
-        {
-          label:'观察',
-          value:'观察'
-        },
-        {
-          label:'拦截',
-          value:'拦截'
-        }
-      ],
-      attackVlaue:'',//注入攻击类型
-      attackOption:ATTACK_TYPE,
-      celueId:'',//策略ID
-      attackIP:'',//攻击源IP
+      keyword: '',
       tableDataBegin:[],
       createDownTaskModel:false,//创建下载任务弹框
       Context: '',
+      loadmoreloading: false,
+      loading: false,
+      startTime: '2020-02-19 00:00:00', //moment().format("YYYY-MM-DD HH:mm:ss"),
+      endTime: '2020-02-26 23:59:59', // moment().subtract(1, 'h').format('YYYY-MM-DD HH:mm:ss'),
+      columnsCopy: [],
+      columns: ['index', 'action', 'time', 'client', 'source', 'request', 'body', 'header', 'upstream', 'response'],
+      total: 0,
+      visible: false,
     }
   },
   components:{
     createDownTaskModel,
   },
+  watch: {
+    columns(val, oldVal) {
+      if (val.length === 3) {
+        this.$message({
+          message: this.t('至少选择4个', 'WAF.zsxz4g'),
+          type: 'error',
+          showClose: true,
+          duration: 0
+        })
+        this.columns = [...oldVal]
+      }
+    },
+  },
   mounted() {
-    this.queryLogs()
+    this.columnsCopy = [...this.columns]
+    this.init()
     this.axios.post(DESCRIBE_HOSTS, {
       Version: '2018-01-25',
     }).then(resp => {
       this.generalRespHandler(resp, ({ HostList }) => {
-        this.dominOptions = HostList
+        HostList = HostList.filter(host => host.ClsStatus === 1)
+        this.dominOptions = [{
+          Domain: 'ALL',
+        }, ...HostList]
       })
     })
   },
   methods:{
+    init() {
+      this.loading = true
+      this.queryLogs()
+      this.queryLogCount()
+    },
+    openDialog() {
+      this.columnsCopy = [...this.columns]
+      this.visible = true
+    },
+    cancelDialog() {
+      this.visible = false
+      this.columns = [...this.columnsCopy]
+    },
+    setColumns() {
+      this.columnsCopy = [...this.columns]
+      this.visible = false
+    },
+    queryLogCount() {
+      const params = {
+        Version: '2018-01-25',
+        FromTime: this.startTime,
+        ToTime: this.endTime,
+      }
+      let domain = this.dominList
+      if (domain !== 'ALL') {
+        params.Query = `domain:${domain}`
+      } else {
+        delete params.Query
+      }
+      this.axios.post(DESCRIBE_ACCESSLOG_COUNT, params).then(resp => {
+        this.generalRespHandler(resp, ({ Count }) => {
+          this.total = Count
+        })
+      })
+    },
+    formatTime(mm) {
+      return moment(Number(mm) * 1000).format('YYYY-MM-DD HH:mm:ss')
+    },
+    loadmore() {
+      this.loadmoreloading = true
+      this.queryLogs()
+    },
     queryLogs() {
-      const { Context } = this
-      this.axios.post(DESCRIBE_ACCESS_LOGS, {
+      const { Context, startTime, endTime, dominList } = this
+      const params = {
         Version: '2018-01-25',
         Count: 20,
-        FromTime: '2020-02-20 00:00:00',
-        ToTime: '2020-02-20 23:59:59',
+        FromTime: startTime,
+        ToTime: endTime,
         Context, 
-      }).then(resp => {
-        console.log(resp)
-        // this.generalRespHandler(resp, ({ HostList }) => {
-        //   this.dominOptions = HostList
-        // })
+      }
+      let domain = dominList
+      if (domain !== 'ALL') {
+        params.Query = `domain:${domain}`
+      } else {
+        delete params.Query
+      }
+      this.axios.post(DESCRIBE_ACCESS_LOGS, params).then(resp => {
+        this.generalRespHandler(resp, ({ Data: { Context, Data, Count }}) => {
+          Data = Data.map(d => JSON.parse(d))
+          this.tableDataBegin = this.tableDataBegin.concat(Data)
+          this.Context = Context
+        })
+      }).then(() => {
+        this.loading = false
+        this.loadmoreloading = false
       })
     },
     //时间选择按钮
@@ -211,7 +293,29 @@ export default {
     //关闭下载任务弹框
     closeCreateTaskModel(isShow){
       this.createDownTaskModel=false;
-    }
+    },
+    createDownloadTask(name) {
+      const { Context, startTime, endTime, dominList } = this
+      let domain = dominList
+      if (domain === 'ALL') {
+        domain = 'all'
+      }
+      const params = {
+        Version: '2018-01-25',
+        Host: domain,
+        FromTime: startTime,
+        ToTime: endTime,
+        Name: name,
+        Sort: 'desc',
+        Edition: 'clb-waf',
+        // Query: '',
+      }
+      this.axios.post(CREATE_ACCESS_DOWNLOAD_RECORD, params).then(resp => {
+        this.generalRespHandler(resp, ({ Context, Data, Count }) => {
+          this.createDownTaskModel = false
+        }, COMMON_ERROR, this.t('创建成功，你可以前往“下载任务”界面查看任务状态', 'WAF.cjcgnkyqw'))
+      })
+    },
   }
 }
 </script>
@@ -313,5 +417,24 @@ export default {
 }
 .tableMian{
   min-height: 450px;
+}
+.columns {
+  label {
+    width: 120px;
+  }
+  ::v-deep .el-checkbox+.el-checkbox {
+    margin-left: 0;
+  }
+  ::v-deep .el-checkbox {
+    font-size: 12px;
+  }
+  ::v-deep .el-checkbox__label {
+    font-size: 12px;
+  }
+}
+.loadmore {
+  border-bottom: 1px solid #ebeef5;
+  padding: 5px 0;
+  text-align: center;
 }
 </style>

@@ -37,6 +37,7 @@ export default {
   props: {
     times: Array,
     domain: String,
+    showModules: Array
   },
   data() {
     return {
@@ -46,12 +47,27 @@ export default {
     }
   },
   watch: {
-    times() {
-      this.getPeakValue()
+    showModules(val, oldVal) {
+      if (val.join() !== oldVal.join()) {
+        this.getPeakValue()
+      }
     },
-    domain() {
-
+    times(val, oldVal) {
+      if (
+        val[0] !== oldVal[0]
+        || val[1] !== oldVal[1]
+      ) {
+        this.getPeakValue()
+      }
+    },
+    domain(val, oldVal) {
+      if (val !== oldVal) {
+        this.getPeakValue()
+      }
     }
+  },
+  mounted() {
+    this.getPeakValue()
   },
   methods: {
     // 获取业务攻击峰值

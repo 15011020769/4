@@ -41,19 +41,23 @@ export default {
   props: {
     times: Array,
     domain: String,
+    showModules: Array
   },
   watch: {
-    times() {
-      this.getPeakValue()
-      this.getNormalRequest()
-      this.getWebAttack()
-      this.getAttackType()
+    showModules(val, oldVal) {
+      if (val.join() !== oldVal.join()) {
+        this.init()
+      }
     },
-    domain() {
-      this.getPeakValue()
-      this.getNormalRequest()
-      this.getWebAttack()
-      this.getAttackType()
+    times(val, oldVal) {
+      if (val.join() !== oldVal.join()) {
+        this.init()
+      }
+    },
+    domain(val, oldVal) {
+      if (val !== oldVal) {
+        this.init()
+      }
     }
   },
   components: {
@@ -73,7 +77,16 @@ export default {
       legendTextPieAttack: [],
     }
   },
+  mounted() {
+    this.init()
+  },
   methods: {
+    init() {
+      this.getPeakValue()
+      this.getNormalRequest()
+      this.getWebAttack()
+      this.getAttackType()
+    },
     // 获取正常访问次数
     getNormalRequest() {
       const params =  {

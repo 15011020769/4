@@ -22,18 +22,18 @@ const router = new Router({
       }
     },
     {
-      path: '/attackLog', // 攻击日志
-      name: 'attackLog',
-      component: () => import(/* webpackChunkName: "ipMan" */ './logService/attackLog.vue'),
+      path: '/accessLog', // 访问日志
+      name: 'accessLog',
+      component: () => import(/* webpackChunkName: "ipMan" */ './logService/accessLog.vue'),
       meta: {
         keepAlive: true,
         leftNav:true
       }
     },
     {
-      path: '/accessLog', // 访问日志
-      name: 'accessLog',
-      component: () => import(/* webpackChunkName: "ipMan" */ './logService/accessLog.vue'),
+      path: '/accessLogDetail', // 访问日志
+      name: 'accessLogDetail',
+      component: () => import(/* webpackChunkName: "ipMan" */ './logService/tab/log.vue'),
       meta: {
         keepAlive: true,
         leftNav:true
@@ -52,6 +52,15 @@ const router = new Router({
       path: '/attackDetails', // 攻击详情
       name: 'attackDetails',
       component: () => import(/* webpackChunkName: "ipMan" */ './webFirewall/attackDetails.vue'),
+      meta: {
+        keepAlive: true,
+        leftNav:true
+      }
+    },
+    {
+      path: '/attackLog', // 攻击详情
+      name: 'attackLog',
+      component: () => import(/* webpackChunkName: "ipMan" */ './webFirewall/tab/attackLog.vue'),
       meta: {
         keepAlive: true,
         leftNav:true

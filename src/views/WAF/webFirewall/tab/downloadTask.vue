@@ -3,8 +3,8 @@
     <div class="wrapper">
       <div class="topTip">{{t('创建成功的日志下载任务，只保留7天；7天后日志文件将会删除，请及时下载', 'WAF.cjrwdrzxzrw')}}。</div>
       <el-card>
-        <el-table :data="tableDataBegin" :empty-text="t('暂无数据', 'WAF.zwsj')">
-          <el-table-column prop="ID" :label="t('序号', 'WAF.xh')" width></el-table-column>
+        <el-table :data="tableDataBegin.slice(start, end)" :empty-text="t('暂无数据', 'WAF.zwsj')" v-loading="loading">
+          <el-table-column prop="Id" :label="t('序号', 'WAF.xh')" width></el-table-column>
           <el-table-column prop="Name" :label="t('任务名称', 'WAF.rwmc')" width></el-table-column>
           <el-table-column prop="Host" label="域名">
             <template slot-scope="scope">
@@ -12,16 +12,8 @@
             </template>
           </el-table-column>
           <el-table-column prop="Count" :label="t('日志条目数', 'WAF.rztms')"></el-table-column>
-          <el-table-column prop="CreateTime" :label="t('创建时间', 'WAF.cjsj')">
-            <template slot-scope="scope">
-              {{formatTime(scope.row.CreateTime)}}
-            </template>
-          </el-table-column>
-          <el-table-column prop="ExpireTime" :label="t('过期时间', 'WAF.gqsj')">
-            <template slot-scope="scope">
-              {{formatTime(scope.row.ExpireTime)}}
-            </template>
-          </el-table-column>
+          <el-table-column prop="CreateTime" :label="t('创建时间', 'WAF.cjsj')"></el-table-column>
+          <el-table-column prop="ExpireTime" :label="t('过期时间', 'WAF.gqsj')"></el-table-column>
           <el-table-column prop="Status" :label="t('状态', 'WAF.zt')">
             <template slot-scope="scope">
               <span v-if="scope.row.Status === 1" class="completed">已完成</span>
@@ -30,21 +22,21 @@
           </el-table-column>
           <el-table-column prop="action" label="操作" width="180">
             <template slot-scope="scope">
-              <el-button type="text" :disabled="scope.row.Status === 0" size="small" @click="downLoad(scope.row)">{{t('下载', 'WAF.xz')}}</el-button>
+              <el-button type="text" :disabled="scope.row.Status === 0 || scope.row.Count === 0" size="small" @click="downLoad(scope.row)">{{t('下载', 'WAF.xz')}}</el-button>
               <el-popover
                 ref="popovers"
                 placement="bottom"
                 width="280"
-                :value="deleteVisible">
+                v-model="scope.row.delDialog">
                 <div class="prpoDialog">
                   <h1>{{t('确认删除', 'WAF.qrsc')}}？</h1>
-                  <p>{{('删除后，将无法查询和下载', 'WAF.schjwfcx')}}</p>
+                  <p>{{t('删除后，将无法查询和下载', 'WAF.schjwfcx')}}</p>
                 </div>
-                <div style="text-align: right; margin: 0">
-                  <el-button type="text" size="mini" @click="deleteVisibleSure(scope.$index)">{{t('确定', 'WAF.qd')}}</el-button>
-                  <el-button size="mini" type="text" @click="deleteVisible = false">取消</el-button>
+                <div style="text-align: center; margin: 0">
+                  <el-button type="text" size="mini" @click="deleteVisibleSure(scope.row)">删除</el-button>
+                  <el-button size="mini" type="text" @click="scope.row.delDialog = false">取消</el-button>
                 </div>
-                <el-button slot="reference" style="color:#3E8EF7;" class="deleteBtn">删除</el-button>
+                <el-button slot="reference" style="color:#3E8EF7;background: transparent;" class="deleteBtn">删除</el-button>
               </el-popover>
             </template>
           </el-table-column>
@@ -56,15 +48,16 @@
           :page-sizes="[10, 15, 20, 25, 30, 35, 40, 45, 50]"
           :page-size="pageSize"
           layout="total, sizes, prev, pager, next"
-          :total="totalItems">
+          :total="total">
         </el-pagination>
       </el-card>
     </div>
   </div>
 </template>
 <script>
-import { DESCRIBE_ATTACK_DOWNLOAD_RECORD } from '@/constants'
+import { DESCRIBE_ATTACK_DOWNLOAD_RECORDS, DELETE_DOWNLOAD_RECORD } from '@/constants'
 import moment from 'moment';
+import { COMMON_ERROR } from '../../constants';
 export default {
   props: {
     active: String,
@@ -73,9 +66,10 @@ export default {
     return {
       tableDataBegin: [], //表格数据
       currentPage: 1, //当前页
-      pageSize: 10, //每页长度
-      totalItems: 0, //总长度
+      pageSize: 20, //每页长度
+      total: 0, //总长度
       deleteVisible:false,
+      loading: true,
     };
   },
   watch: {
@@ -85,21 +79,30 @@ export default {
       }
     }
   },
-  methods: {
-    formatTime(mm) {
-      return moment(mm * 1000).format('YYYY-MM-DD HH:mm:ss')
+  computed: {
+    start() {
+      return (this.currentPage - 1) * this.pageSize
     },
+    end() {
+      return (this.currentPage - 1) * this.pageSize + this.pageSize
+    }
+  },
+  methods: {
     //获取数据
     getData() {
-      this.axios.post(DESCRIBE_ATTACK_DOWNLOAD_RECORD, {
+      this.loading = true
+      this.axios.post(DESCRIBE_ATTACK_DOWNLOAD_RECORDS, {
         Version: '2018-01-25',
       }).then(resp => {
         this.generalRespHandler(resp, ({ Records }) => {
           Records.reverse()
+          Records.forEach(record => {
+            record.delDialog = false
+          })
+          this.total = Records.length
           this.tableDataBegin = Records
         })
-      })
-      this.totalItems = this.tableDataBegin.length;
+      }).then(() => this.loading = false)
     },
     // 分页开始
     handleSizeChange(val) {
@@ -114,12 +117,14 @@ export default {
       window.open(log.Url)
     },
     //删除确定按钮
-    deleteVisibleSure(index){
-      console.log(this.$refs['popovers'])
-      console.log(this.deleteVisible)
-      // this.$refs['popovers'].addEventListener('click', function(e) {
-        this.deleteVisible=false;
-      // })
+    deleteVisibleSure(record){
+      record.delDialog = false
+      this.axios.post(DELETE_DOWNLOAD_RECORD, {
+        Version: '2018-01-25',
+        Flow: record.Flow
+      }).then(resp => {
+        this.generalRespHandler(resp, this.getData, COMMON_ERROR, '删除成功')
+      })
     },
     
   }

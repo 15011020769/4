@@ -36,25 +36,17 @@
         <el-row class="iconBtn">
           <i class="el-icon-download" @click="dialogDownloadVisible = true"></i>
           <i class="el-icon-refresh"></i>
-          <i class="el-icon-setting" @click="dialogSetVisible = true"></i>
+          <i class="el-icon-setting" @click="openSetDialog"></i>
         </el-row>
       </p>
-      <component class="comp" v-for="comp in showModules" :is="comp" :times="[startTime, endTime]" :domain="selectValue" />
-      <!-- 1
-      
-      1
-      2
-      
-      2
-      3
-      
-      3
-      4
-      
-      4
-      5
-      
-      5 -->
+      <component
+        class="comp"
+        v-for="comp in showModules"
+        :is="comp"
+        :times="[startTime, endTime]"
+        :domain="selectValue"
+        :showModules="showModules"
+      />
     </div>
     <DownLoadImg
       :dialogDownloadVisible = dialogDownloadVisible
@@ -67,7 +59,7 @@
       width="40%"
     >
       <div>
-        <el-checkbox-group v-model="showModules" class="module">
+        <el-checkbox-group v-model="showModulesCopy" class="module">
           <el-checkbox border v-for="(m, index) in allModule" :key="m.name" :label="m.name">
             {{m.value}}
             <div :class="`move ${index === 0 || index === (allModule.length - 1) ? 'alone' : ''}`">
@@ -79,7 +71,7 @@
       </div>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="saveModuleDisplaySet">保存</el-button>
-        <el-button @click="dialogSetVisible = false">取消</el-button>
+        <el-button @click="cancelModuleDisplaySet">取消</el-button>
       </div>
     </el-dialog>
   </div>
@@ -103,24 +95,9 @@ export default {
       dateTimeValue: [(moment(new Date()).format("YYYY-MM-DD HH:mm:ss")), (moment(new Date()).format("YYYY-MM-DD HH:mm:ss"))], //日期绑定
       selectValue: "", //域名下拉菜单
       thisType: "1", //按钮默认选中
-      webAttack: 0,
-      ccRequest: 0,
-      botRequest: 0,
       endTime: moment(new Date()).endOf("days").format("YYYY-MM-DD HH:mm:ss"),
       startTime: moment(new Date()).startOf("days").format("YYYY-MM-DD 00:00:00"),
       host: "",
-      xAxis1: [],
-      color: ["#FF584C", "#FF9D00", "#006eff"],
-      series1: [],
-      series2: [],
-      series3: [],
-      legendText1: ['WEB攻击次数', 'CC攻击次数', 'BOT请求次数'],
-      legendText2: ['WEB攻击次数', 'CC攻击次数'],
-      seriesBarLocal: [],
-      xAxisBarLocal: [],
-      seriesBarIp: [],
-      xAxisBarIp: [],
-      legendTextBarIp: "次数",
       dialogDownloadVisible: false,
       dialogSetVisible: false,
       allModuleCopy: [
@@ -132,21 +109,7 @@ export default {
       ],
       allModule: [],
       showModules: [],
-      testcomponent: 'Overview',
-      colorPie: ['#006eff', '#434348', '#74BD48', "#F7A35C"],
-      legendTextPie: ['正常访问', 'WEB攻击次数', 'CC攻击次数', ''],
-      seriesPie: [
-        {value: 0, name: '正常访问'},
-        {value: 0, name: 'WEB攻击次数'},
-        {value: 0, name: 'CC攻击次数'},
-        {value: 0, name: ''},
-      ],
-      seriesPieAttack: [],
-      legendTextPieAttack: [],
-      seriesMap: [{
-              name: '中国',
-              value: 2
-            },]
+      showModulesCopy: [],
     };
   },
   components: {
@@ -182,8 +145,6 @@ export default {
     this.getDominList();
 　},
   watch: {
-    selectValue() {
-    },
     showModules(val, oldVal) {
       if (val.length === 1) {
         this.$message({
@@ -197,15 +158,24 @@ export default {
     },
   },
   methods: {
+    openSetDialog() {
+      this.dialogSetVisible = true
+      this.showModulesCopy = [...this.showModules]
+    },
     up(i) {
       this.allModule[i] = this.allModule.splice(i-1, 1, this.allModule[i])[0]
     },
     down(i) {
       this.allModule[i] = this.allModule.splice(i+1, 1, this.allModule[i])[0]
     },
+    cancelModuleDisplaySet() {
+      this.dialogSetVisible = false
+      this.showModulesCopy = [...this.showModules]
+    },
     saveModuleDisplaySet() {
       this.dialogSetVisible = false
-      const moduleNames = this.allModule.map(m => m.name)
+      const moduleNames = this.allModule.map(m => m.name) // 获取所有模块名称
+      this.showModules = [...this.showModulesCopy]
       this.showModules = moduleNames.filter(name => this.showModules.includes(name))
       localStorage.setItem(SAFE_OVERVIEW_SHOWMODULE_KEY, JSON.stringify(this.showModules))
     },
