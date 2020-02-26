@@ -29,19 +29,39 @@
       <div class="helm-table">
         <template>
           <el-table :data="tableData" style="width: 100%" height="450">
-            <el-table-column label="应用名" max-width="10%">
-
+            <el-table-column label="应用名" max-width="10%" prop="name">
+                <template slot-scope="scope">
+                      <div>
+                        <router-link :to="{name: 'helmDetailDetail'}">{{scope.row.name}}</router-link>
+                      </div>
+                </template>
             </el-table-column>
             <el-table-column label="状态" max-width="10%"></el-table-column>
-            <el-table-column label="版本号" max-width="15%"></el-table-column>
-            <el-table-column label="创建时间" max-width="15%"></el-table-column>
-            <el-table-column label="Chart仓库" max-width="15%"></el-table-column>
+            <el-table-column label="版本号" max-width="15%" prop="version">
+               <template slot-scope="scope">
+                 <div>{{scope.row.version}}</div>
+               </template>
+            </el-table-column>
+            <el-table-column label="创建时间" max-width="15%" prop="info"> 
+              <template slot-scope="scope">
+                 <div>{{scope.row.info.first_deployed|creationTimestamps}}</div>
+               </template>
+            </el-table-column>
+            <el-table-column label="Chart仓库" max-width="15%" prop="chart_metadata">
+              <template slot-scope="scope">
+                 <div>{{scope.row.chart_metadata.repo}}</div>
+               </template>
+            </el-table-column>
             <el-table-column label="Chart命名空间" max-width="15%"></el-table-column>
-            <el-table-column label="Chart版本" max-width="10%"></el-table-column>
+            <el-table-column label="Chart版本" max-width="10%" prop="chart_metadata">
+              <template slot-scope="scope">
+                 <div>{{scope.row.chart_metadata.version}}</div>
+               </template>
+            </el-table-column>
             <el-table-column label="操作" max-width="10%">
                <template slot-scope="scope">
-                <el-button @click="handleClick(scope.row)" type="text" size="small">查看</el-button>
-                <el-button type="text" size="small">编辑</el-button>
+                <el-button @click="handleClick(scope.row)" type="text" size="small">更新应用</el-button>
+                <el-button type="text" size="small">删除</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -107,15 +127,16 @@ export default {
     // Helm列表
     getHelmList(){
         const param = {
-          ClusterName: "cls-hjo91z66",
+          ClusterName: "cls-deip4zxm",
           Method: "GET",
-          Path: "/apis/platform.tke/v1/clusters/cls-hjo91z66/helm/tiller/v2/releases/json?status_codes=DEPLOYED&&status_codes=FAILED&&status_codes=DELETING&&status_codes=DELETED&&status_codes=UNKNOWN&&sort_by=LAST_RELEASED&&sort_order=DESC&&limit=10",
+          Path: "/apis/platform.tke/v1/clusters/cls-deip4zxm/helm/tiller/v2/releases/json?status_codes=DEPLOYED&&status_codes=FAILED&&status_codes=DELETING&&status_codes=DELETED&&status_codes=UNKNOWN&&sort_by=LAST_RELEASED&&sort_order=DESC&&limit=10",
           Version: "2018-05-25"
         }
         this.axios.post(POINT_REQUEST, param).then(res => {
           console.log(res)
-          if (res.Error == undefined) {
+          if (res.Response.Error == undefined) {
             this.tableData=JSON.parse(res.Response.ResponseBody).releases
+            // console.log(this.tableData)
             // console.log(res)
             // this.options = res.Response.Clusters
             // this.value = res.Response.Clusters[0].ClusterId
@@ -153,7 +174,22 @@ export default {
         }
       })
     }
+  },
+  filters:{
+   creationTimestamps:function(value){
+        var d = new Date(value);
+        var n = d.getFullYear();
+        var y = d.getMonth() + 1;
+        var r = d.getDate();
+        var h = d.getHours(); //12
+        var m = d.getMinutes(); //12
+        var s = d.getSeconds();
+        h < 10 ? h = "0" + h : h;
+        m < 10 ? m = "0" + m : m
+        return n + '-' + y + '-' + r + ' ' + h + ':' + m + ':' + s
+      }
   }
+
 }
 </script>
 

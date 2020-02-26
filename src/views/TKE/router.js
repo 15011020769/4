@@ -814,6 +814,34 @@ export default new Router({
       }
     },
     {
+      path: '/helmDetail', // helm详情
+      name: 'helmDetail',
+      component: () => import(/* webpackChunkName: "helm" */ './helm/helmDetail/index.vue'),
+      meta: {
+        keepAlive: true
+      },
+      children:[
+        {
+          path: 'detail', // 应用详情
+          name: 'helmDetailDetail',
+          component: () => import(/* webpackChunkName: "myMirror" */ './helm/helmDetail/detail.vue'),
+          meta: {
+            keepAlive: true,
+            flag: true
+          }
+        },
+        {
+          path: 'history', // 版本命名
+          name: 'helmDetailHistory',
+          component: () => import(/* webpackChunkName: "myMirror" */ './helm/helmDetail/history.vue'),
+          meta: {
+            keepAlive: true,
+            flag: false
+          }
+        }
+      ]
+    },
+    {
       path: '/helmCreate', // helm应用
       name: 'helmCreate',
       component: () => import(/* webpackChunkName: "helm" */ './helmCreate/index.vue'),
