@@ -656,6 +656,14 @@ export default new Router({
         },  
       ]
     },
+    { // 配置管理更新配置configmap
+      path: '/colony/sub/update/config/configMap',
+      name: 'updateConfigMap',
+      component: () => import('./colony/sub/update/config/configMap.vue'),
+      meta: {
+        keepAlive: true,
+      }
+    },   
     {
       path: '/colony/sub/detail/config/secret', // 配置管理-secret-详情
       name: 'secretDetail',

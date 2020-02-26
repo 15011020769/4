@@ -68,7 +68,8 @@
             width="200"
             >
             <template slot-scope="scope">
-              <span class="tke-text-link">编辑YAML</span>
+              <span class="tke-text-link " @click="goUpdateConfig(scope.row)">更新配置</span>
+              <span class="tke-text-link ml10">编辑YAML</span>
               <span class="tke-text-link ml10">删除</span>
             </template>
           </el-table-column>
@@ -189,6 +190,19 @@ export default {
             np:item.metadata.namespace
           }
       });
+    },
+    goUpdateConfig(item){
+
+         this.$router.push({
+          name: "updateConfigMap",
+          query: {
+            clusterId: this.clusterId,
+            name:item.metadata.name,
+            np:item.metadata.namespace
+          }
+      });
+
+
     },
     timeFormat(times) {
         var d = new Date(times);
