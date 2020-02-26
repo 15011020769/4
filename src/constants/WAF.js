@@ -106,3 +106,5 @@ export const CREATE_ATTACK_DOWNLOAD_TASK = 'waf2/CreateAttackDownloadTask'
 export const DESCRIBE_ATTACK_DOWNLOAD_RECORD = 'waf2/DescribeAttackDownloadRecord'
 /** 切换自定义规则的开关 */
 export const MODIFY_CUSTOM_RULE_STATUS = 'waf2/ModifyCustomRuleStatus'
+/** Bot_V2 域名bot统计 */
+export const DESCRIBE_BOT_AGGREGATE_DOMAINSTAT = 'waf2/DescribeBotAggregateDomainStat'

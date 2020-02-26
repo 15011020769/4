@@ -17,10 +17,6 @@ export default {
     window.onresize = this.$echarts.init(this.$refs.bar_dv).resize;
   },
   props: {
-    // color: {
-    //   type: String,
-    //   default: "#2d70f6"
-    // },
     // tooltip: {
     //   type: Object,
     //   default: function() {
@@ -29,7 +25,7 @@ export default {
     // },
     height: {
       type: Number,
-      default: 200
+      default: 300
     },
     xAxis: {
       type: Array,
@@ -63,9 +59,9 @@ export default {
       myChart.setOption({
         color: ["#006eff"],
         grid: {
-          left: '3%',
-          right: '4%',
-          bottom: '4%',
+          left: '1%',
+          right: '1%',
+          bottom: '6%',
           containLabel: true,
         },
         tooltip: {
