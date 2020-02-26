@@ -74,9 +74,9 @@
     </div>
     <!-- 设置命名空间模态框 -->
     <div>
-      <el-dialog title="$t('SCF.total.mmkjgl')" :visible.sync="SpaceVisible">
+      <el-dialog :title="$t('SCF.total.mmkjgl')" :visible.sync="SpaceVisible">
         <el-table :data="SpaceListK">
-          <el-table-column label="$t('SCF.total.mmkj')" width="250">
+          <el-table-column :label="$t('SCF.total.mmkj')" width="250">
             <template slot-scope="$scope">
               <div v-if="$scope.row.disabled">
                 <el-input v-model="SpaceListK[$scope.$index].name" :disabled="true"> </el-input>
@@ -92,7 +92,7 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column label="$t('SCF.total.ms')" width="300">
+          <el-table-column :label="$t('SCF.total.ms')" width="300">
             <template slot-scope="$scope">
               <div v-if="$scope.row.name==='default'">
                 <el-input v-model="SpaceListK[$scope.$index].Description" type="textarea" :disabled="true" :rows="3">

@@ -66,7 +66,7 @@
       <div class="Content">
         <p>{{$t('SCF.total.yxjs')}}</p>
         <div>
-          <el-select v-model="RoleValue" placeholder="$t('SCF.total.qsz')">
+          <el-select v-model="RoleValue" :placeholder="$t('SCF.total.qsz')">
             <el-option v-for="item in RoleArr" :key="item.RoleName" :label="item.RoleName" :value="item.RoleName">
             </el-option>
           </el-select>
@@ -83,7 +83,7 @@
       <div class="Content">
         <p>{{$t('SCF.total.nc')}}</p>
         <div>
-          <el-select v-model="MemoryValue" placeholder="$t('SCF.total.qsz')">
+          <el-select v-model="MemoryValue" :placeholder="$t('SCF.total.qsz')">
             <el-option v-for="item in MemoryArr" :key="item.value" :label="item.label" :value="item.value">
             </el-option>
           </el-select>
@@ -151,12 +151,12 @@
       <div class="Content" v-if="IntranetValue">
         <p></p>
         <div>
-          <el-select v-model="VPCvalue" placeholder="$t('SCF.total.qsz')">
+          <el-select v-model="VPCvalue" :placeholder="$t('SCF.total.qsz')">
             <el-option v-for="item in VPCoptions" :key="item.VpcId"
               :label="item.VpcId+' | '+ item.VpcName+' | '+item.CidrBlock" :value="item.VpcId">
             </el-option>
           </el-select>
-          <el-select v-model="Subvalue" placeholder="$t('SCF.total.qsz')">
+          <el-select v-model="Subvalue" :placeholder="$t('SCF.total.qsz')">
             <el-option v-for="item in Suboptions" :key="item.SubnetId"
               :label="item.SubnetId+' | '+ item.SubnetName+' | '+item.CidrBlock" :value="item.SubnetId">
             </el-option>

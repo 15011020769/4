@@ -9,7 +9,7 @@
         </span>
       </p>
       <p>
-        <el-select v-model="FunctionVersion" placeholder="$t('SCF.total.qsz')" @change="_Version">
+        <el-select v-model="FunctionVersion" :placeholder="$t('SCF.total.qsz')" @change="_Version">
           <el-option v-for="item in VersionList" :key="item.Version" :label="item.Version" :value="item.Version">
           </el-option>
         </el-select>
@@ -44,7 +44,7 @@
       <p>{{$t('SCF.total.jzz')}}......</p>
     </div>
     <div>
-      <el-dialog title="$t('SCF.total.fbxbb')" :visible.sync="dialogVisible" width="550px">
+      <el-dialog :title="$t('SCF.total.fbxbb')" :visible.sync="dialogVisible" width="550px">
         <div class="dialog">
           <p class="p1">{{$t('SCF.total.hsmc')}}</p>
           <p class="p2">{{functionName}}</p>
@@ -52,7 +52,7 @@
         <div class="dialog">
           <p class="p1">{{$t('SCF.total.ms')}}</p>
           <p class="p2">
-            <el-input type="textarea" :rows="4" placeholder="$t('SCF.total.qsrbbms')" v-model="textarea" @blur='_check'>
+            <el-input type="textarea" :rows="4" :placeholder="$t('SCF.total.qsrbbms')" v-model="textarea" @blur='_check'>
             </el-input>
           </p>
         </div>

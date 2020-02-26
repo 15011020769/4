@@ -7,7 +7,7 @@
       </el-select>
       <TimeDropDown :TimeArr='TimeArr' :Datecontrol='true' :Graincontrol='false' :Difference="'H'"
         v-on:switchData="GetDat" class="TimeDropDown" />
-      <el-input placeholder="$t('SCF.total.qsrid')" v-model="requestId" @change="_search"></el-input>
+      <el-input :placeholder="$t('SCF.total.qsrid')" v-model="requestId" @change="_search"></el-input>
       <el-button icon="el-icon-search" size="small" @click="_GetJournal"></el-button>
     </div>
     <div class="content" v-if="contentshow===true">
