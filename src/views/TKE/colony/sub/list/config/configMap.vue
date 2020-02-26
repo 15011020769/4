@@ -68,9 +68,27 @@
             width="200"
             >
             <template slot-scope="scope">
-              <span class="tke-text-link " @click="goUpdateConfig(scope.row)">更新配置</span>
-              <span class="tke-text-link ml10">编辑YAML</span>
-              <span class="tke-text-link ml10">删除</span>
+              <div v-if="scope.row.metadata.namespace=='kube-system'">
+               <el-tooltip class="tooltip" effect="dark" content="当前Namespace下的不可进行此操作" placement="top">
+                     <el-button   class='btn btn2'  >更新配置</el-button>
+              </el-tooltip>
+               <el-tooltip class="tooltip" effect="dark" content="当前Namespace下的不可进行此操作" placement="top">
+                     <el-button   class='btn btn2' >编辑YAML</el-button>
+              </el-tooltip>
+               <el-tooltip class="tooltip" effect="dark" content="当前Namespace下的不可进行此操作" placement="top">
+                     <el-button   class='btn btn2'  >删除</el-button>
+              </el-tooltip>
+
+              </div>
+              <div v-else>
+              <el-button   class='btn'  @click="goUpdateConfig(scope.row)">更新配置</el-button>
+              <el-button  class='btn' @click="goUpdateYaml(scope.row)">编辑YAML</el-button>
+              <el-button   class='btn' @click="delConfig(scope.row)">删除</el-button>
+
+              </div>
+              <!-- <span class="tke-text-link " @click="goUpdateConfig(scope.row)">更新配置</span> -->
+              <!-- <span class="tke-text-link ml10">编辑YAML</span> -->
+              <!-- <span class="tke-text-link ml10" @click="delConfig(scope.row)">删除</span> -->
             </template>
           </el-table-column>
         </el-table>
@@ -89,6 +107,17 @@
           </div>
         </div>
       </div>
+      <el-dialog
+        title="删除资源"
+        :visible.sync="dialogVisible"
+       width="30%"
+      :before-close="handleClose">
+        <span>您确定要删除ConfigMap:{{name}}</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="delSure">确 定</el-button>
+        <el-button @click="dialogVisible = false">取 消</el-button>
+      </span>
+    </el-dialog>
       
   </div>
 </template>
@@ -107,6 +136,9 @@ export default {
   name: "colonyConfigConfigmap",
   data() {
     return {
+      name:'',
+      np:'',
+      dialogVisible:false,
       loadShow: false, //加载是否显示
       list:[], //列表
       total:0,
@@ -146,6 +178,35 @@ export default {
       })
 
     },
+    delConfig(item){
+      this.dialogVisible=true;
+      console.log(item);
+      this.name=item.metadata.name;
+      this.np=item.metadata.namespace;
+    
+    },
+    delSure(){
+      this.dialogVisible=false;
+      var params={
+        ClusterName: "cls-a7rua9ae",
+        Method: "DELETE",
+        Path: "/api/v1/namespaces/"+this.np+"/configmaps/"+this.name,
+        RequestBody: {"propagationPolicy":"Background"},
+        Version: "2018-05-25",
+      };
+      this.axios.post(TKE_COLONY_QUERY, params).then(res=>{
+        if (res.Response.Error == undefined){
+          this.tableListData();
+        }
+      })
+    },
+    handleClose(done) {
+        this.$confirm('确认关闭？')
+          .then(_ => {
+            done();
+          })
+          .catch(_ => {});
+      },
     //命名空间选项 
     nameSpaceList() {
          if (this.clusterId) {
@@ -193,7 +254,7 @@ export default {
     },
     goUpdateConfig(item){
 
-         this.$router.push({
+      this.$router.push({
           name: "updateConfigMap",
           query: {
             clusterId: this.clusterId,
@@ -201,8 +262,16 @@ export default {
             np:item.metadata.namespace
           }
       });
-
-
+    },
+    goUpdateYaml(item){
+       this.$router.push({
+          name: "updateYaml",
+          query: {
+            clusterId: this.clusterId,
+            name:item.metadata.name,
+            np:item.metadata.namespace
+          }
+      });
     },
     timeFormat(times) {
         var d = new Date(times);
@@ -288,6 +357,18 @@ export default {
 </script>
 
 <style lang="scss" scoped>
- 
+  .btn{
+    display: inline-block;
+    width: 52px;
+    padding: 0px;
+    border: none;
+    margin-left: 6px;
+    font-size: 12px;
+    color:#409eff;
+  }
+  .btn2{
+    color:#bbb !important;
+    cursor:not-allowed;
+  }
 </style>
 

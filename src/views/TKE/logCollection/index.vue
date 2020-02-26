@@ -396,6 +396,7 @@
             Version: "2018-05-25",
           };
           this.axios.post(TKE_COLONY_QUERY, params).then(res => {
+            console.log(res)
             if (res.Response.Error == undefined) {
               this.tableFlag=false;
               var data = JSON.parse(res.Response.ResponseBody);
@@ -403,6 +404,10 @@
               console.log(this.tableData)
             }else{
               this.tableFlag=true;
+              this.$message({
+              message:res.Response.Error.Message,
+              type: "error",
+            });
             }
           })
 

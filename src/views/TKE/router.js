@@ -664,6 +664,14 @@ export default new Router({
         keepAlive: true,
       }
     },   
+    { // 配置管理更新配置configmap yaml
+      path: '/colony/sub/update/config/yaml',
+      name: 'updateYaml',
+      component: () => import('./colony/sub/update/config/yaml.vue'),
+      meta: {
+        keepAlive: true,
+      }
+    },   
     {
       path: '/colony/sub/detail/config/secret', // 配置管理-secret-详情
       name: 'secretDetail',
