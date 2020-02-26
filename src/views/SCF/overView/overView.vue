@@ -57,19 +57,19 @@
           <div class="chartShowTit">
             <el-button-group>
               <el-button @click="btnClick('MemDuration')" :class="{'addColor':type=='MemDuration'}"  >
-                资源使用量
+                {{ $t('SCF.total.zysyl') }}
                 <span>(MBms)</span>
               </el-button>
               <el-button @click="btnClick('Invocation')" :class="{'addColor':type=='Invocation'}">
-                调用次数
+                {{ $t('SCF.total.dycs') }}
                 <span>(次)</span>
               </el-button>
               <el-button @click="btnClick('OutFlow')" :class="{'addColor':type=='OutFlow'}">
-                外网出流量
+                {{ $t('SCF.total.wwcll') }}
                 <span>(MB)</span>
               </el-button>
               <el-button @click="btnClick('Error')" :class="{'addColor':type=='Error'}">
-                错误次数
+                {{ $t('SCF.total.cwcs') }}
                 <span>(次)</span>
               </el-button>
               <!-- <el-button @click="btnClick('ConcurrentExecutions')" :class="{'addColor':type=='ConcurrentExecutions'}">
@@ -77,14 +77,14 @@
                 <span>(个)</span>
               </el-button> -->
               <el-button @click="btnClick('Throttle')" :class="{'addColor':type=='Throttle'}">
-                受限次数
+                {{ $t('SCF.total.sxcs') }}
                 <span>(次)</span>
               </el-button>
             </el-button-group>
           </div>
 
           <div style="margin-top:5px">
-            <el-table :data="tableData" style="width: 100%;" :show-header="showHeader">
+            <el-table :data="tableData" style="width: 100%;" :show-header="showHeader" :empty-text="$t('SCF.total.zwsj')">
               <el-table-column prop width="150">
                 <template slot-scope="scope">
                   <span style="font-size:12px;font-weight:bolder; color:#333;font-weight:600;">
@@ -95,7 +95,7 @@
               </el-table-column>
               <el-table-column prop="DataPoints">
                 <template slot-scope="scope">
-                  <p v-if="scope.row.DataPoints[0].Values.length==0">暂无数据</p>
+                  <p v-if="scope.row.DataPoints[0].Values.length==0">{{ $t('SCF.total.zwsj') }}</p>
                   <div class="echart" v-if="scope.row.DataPoints[0].Values.length!=0">
                     <echart-line id="diskEchearrts-line" :time="scope.row.DataPoints[0].Timestamps | UpTime"
                       :opData="scope.row.DataPoints[0].Values" :scale="3" :period="period" :xdata="false">
@@ -248,59 +248,59 @@
     filters: {
       UpName(value) {
         if (value === "Duration") {
-          return (value = "运行时间");
+          return (value = "運行時間");
         }
         if (value === "Invocation") {
-          return (value = "调用次数");
+          return (value = "調用次數");
         }
         if (value === "Error") {
-          return (value = "调用错误次数");
+          return (value = "調用錯誤次數");
         }
         if (value === "ConcurrentExecutions") {
-          return (value = "并发执行次数");
+          return (value = "並發執行次數");
         }
         if (value === "ConfigMem") {
-          return (value = "配置内存");
+          return (value = "配置記憶體");
         }
         if (value === "FunctionErrorPercentage") {
-          return (value = "函数错误率");
+          return (value = "函數錯誤率");
         }
         if (value === "Http2xx") {
-          return (value = "正确调用次数");
+          return (value = "正確調用次數");
         }
         if (value === "Http432") {
-          return (value = "资源超过限制");
+          return (value = "資源超過限制");
         }
         if (value === "Http433") {
-          return (value = "函数执行超时");
+          return (value = "函數執行超時");
         }
         if (value === "Http434") {
-          return (value = "内存超过限制");
+          return (value = "內存超過限制");
         }
 
         if (value === "Http4xx") {
-          return (value = "函数错误次数");
+          return (value = "函數錯誤次數");
         }
         if (value === "Invocation") {
-          return (value = "函数调用次数");
+          return (value = "函數調用次數");
         }
         if (value === "Mem") {
-          return (value = "运行内存");
+          return (value = "運行記憶體");
         }
         if (value === "MemDuration") {
-          return (value = "时间内存");
+          return (value = "時間記憶體");
         }
         if (value === "OutFlow") {
-          return (value = "外网出流量");
+          return (value = "外網出流量");
         }
         if (value === "ServerErrorPercentage") {
-          return (value = "平台错误率");
+          return (value = "平台錯誤率");
         }
         if (value === "Syserr") {
-          return (value = "系统内部错误次数");
+          return (value = "系統內部錯誤次數");
         }
         if (value === "Throttle") {
-          return (value = "函数运行受限次数");
+          return (value = "函數運行受限次數");
         }
       },
       UpTime(value) {

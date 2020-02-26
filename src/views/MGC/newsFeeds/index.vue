@@ -15,7 +15,6 @@
           <el-table
             :data="tableData"
             style="width: 100%"
-            height="450"
             v-loading="loading"
           >
           <el-table-column
@@ -96,19 +95,19 @@ export default {
       MessageDialog:false,
       pageoptions:[{
           value: 10,
-          label: '10條/頁'
+          label: '10項/頁'
         }, {
           value: 20,
-          label: '20條/頁'
+          label: '20項/頁'
         }, {
           value: 30,
-          label: '30條/頁'
+          label: '30項/頁'
         }, {
           value: 40,
-          label: '40條/頁'
+          label: '40項/頁'
         }, {
           value: 50,
-          label: '50條/頁'
+          label: '50項/頁'
         }],//分页
         pagevalue:10//分页
     };
@@ -181,22 +180,21 @@ export default {
         padding: 20px;
         .search {
           position: relative;
-          width: 100%;
+          width: 80%;
           span {
-            height: 30px;
-            width: 30px;
+            height: 36px;
+            width: 32px;
             align-items: center;
             justify-content: center;
             display: flex;
             position: absolute;
-            top: 0;
-            right: 25px;
+            top: 2px;
+            right: -31px;
+            background:#b7b3b3;
             cursor: pointer;
-
             i {
-              font-size: 14px;
+              font-size: 18px;
               font-weight: bold;
-              margin-top: 10px;
             }
           }
         }

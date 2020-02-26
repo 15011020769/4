@@ -93,13 +93,6 @@ export default {
     display: flex;
   }
   .editTitle{
-    // height:50px;
-    // border-bottom:1px solid #ddd;
-    // padding:0 20px;
-    // line-height:50px;
-    // font-size:16px;
-    // font-weight: 600;
-    // background-color:#fff;
     .title {
       height: 50px;
       line-height: 50px;

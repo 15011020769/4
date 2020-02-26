@@ -34,7 +34,7 @@
         </div> -->
       </div>
       <div class="meaasge-table"  v-loading="loading">
-        <el-table :data="tableData" style="width: 100%" height="450" @selection-change="handleSelectionChange">
+        <el-table :data="tableData" style="width: 100%" @selection-change="handleSelectionChange">
           <el-table-column type="selection" width="55"></el-table-column>
           <el-table-column prop="title" label="訊息内容">
              <template slot-scope="scope">
@@ -47,7 +47,7 @@
             其他
           </el-table-column>
         </el-table>
-        <span class="choose-num">{{'已選擇'+this.getData.length+'條'}}</span>
+        <span class="choose-num">{{'已選擇'+this.getData.length+'項'}}</span>
         <div class="Right-style pagstyle" style="height:70px;">
           <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;{{$t('MGC.tiao')}}</span>
           <el-select v-model="pagevalue" placeholder="请選擇" size="mini" class="pageselect" @change='pagechange'>
@@ -130,19 +130,19 @@ export default {
       dataType:'',
       pageoptions:[{
           value: 10,
-          label: '10條/頁'
+          label: '10項/頁'
         }, {
           value: 20,
-          label: '20條/頁'
+          label: '20項/頁'
         }, {
           value: 30,
-          label: '30條/頁'
+          label: '30項/頁'
         }, {
           value: 40,
-          label: '40條/頁'
+          label: '40項/頁'
         }, {
           value: 50,
-          label: '50條/頁'
+          label: '50項/頁'
         }],//分页
         pagevalue:10//分页
     };
@@ -359,7 +359,8 @@ export default {
     box-sizing: border-box;
 
     .message-fun {
-      height: 65px;
+      height: 35px;
+      min-width:1350px;
       .message-funLeft {
         flex: 1;
         .message-btns {
@@ -421,7 +422,12 @@ export default {
         padding: 0 20px;
         box-sizing: border-box;
       }
+      ::v-deep .el-table td{
+        padding:18px 0;
+        font-size:14px;
+      }
     }
+   
   }
 }
 .choose-num{

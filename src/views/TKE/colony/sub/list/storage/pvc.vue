@@ -34,12 +34,12 @@
          </el-table-column>
          <el-table-column prop="status" label="Storage">
            <template slot-scope="scope">
-             <span>{{scope.row.status.capacity.storage}}</span>
+             <span>{{scope.row.status|capacitys}}</span>
            </template>
          </el-table-column>
-         <el-table-column prop="status" label="访问权限">
+         <el-table-column prop="spec" label="访问权限">
            <template slot-scope="scope">
-             <p>{{scope.row.status.accessModes | accessModess}}</p>
+             <p>{{scope.row.spec.accessModes | accessModess}}</p>
            </template>
          </el-table-column>
          <el-table-column prop="spec" label="StorageClass">
@@ -106,9 +106,6 @@
        // 从路由获取集群id
        this.clusterId = this.$route.query.clusterId;
        this.nameSpaceList()
-       if(this.searchType){
-          this.getList()
-       }
      },
      methods: {
        // 新建
@@ -116,7 +113,8 @@
          this.$router.push({
            name: "pvcCreate",
            query: {
-             clusterId: this.clusterId
+             clusterId: this.clusterId,
+             np:this.searchType,
            }
          });
        },
@@ -201,10 +199,11 @@
          this.axios.post(POINT_REQUEST, params).then(res => {
            if (res.Response.Error === undefined) {
              var mes = JSON.parse(res.Response.ResponseBody);
+             this.loadShow = true
              console.log(mes);
              this.searchType = mes.items[0].metadata.name
             //  this.list = mes.items;
-            
+             this.getList()
              mes.items.forEach(item => {
                this.searchOptions.push({
                  value: item.metadata.name,
@@ -242,11 +241,11 @@
              let ErrTips = {};
              let ErrOr = Object.assign(ErrorTips, ErrTips);
              this.$message({
-               message: ErrOr[res.Response.Error.Code],
-               type: "error",
-               showClose: true,
-               duration: 2000
-             });
+                message: ErrOr[res.Response.Error.Code],
+                type: "error",
+                showClose: true,
+                duration: 2000
+              })
            }
          });
        },
@@ -279,7 +278,7 @@
        // 删除列表
        DeleteList(row) {
          var params = {
-            ClusterName: "cls-l74ol4g0",
+            ClusterName: this.$route.query.clusterId,
             Method: "DELETE",
             Path: "/api/v1/namespaces/"+this.searchType+"/persistentvolumeclaims/"+row.metadata.name,
             RequestBody: {"propagationPolicy":"Background"},
@@ -307,12 +306,24 @@
        }
      },
      filters: {
+       capacitys:function(value){
+         console.log(value.capacity)
+         if(value.capacity){
+           return value.capacity.storage
+         } else {
+             return "-"
+         }
+       },
        accessModess: function (value) {
+        if(value){
          for (let i = 0; i < value.length; i++) {
            if (value[i] == "ReadWriteOnce") {
              return "单机读写"
            }
          }
+        } else {
+          return "-"
+        }
        },
        creationTimestamps: function (value) {
          var d = new Date(value);

@@ -144,9 +144,9 @@
                   <h1>{{t('确定删除此域名', 'WAF.qdscym')}}？</h1>
                   <p>{{t('删除后源站IP将会遭受恶意攻击的威胁', 'WAF.schyip')}}。</p>
                 </div>
-                <div style="text-align: right; margin: 0">
+                <div style="text-align: center; margin: 0">
+                  <el-button size="mini" type="text" @click="delWafs([scope.row])">{{t('确定', 'WAF.qd')}}</el-button>
                   <el-button size="mini" type="text" @click="scope.row.delDialog=false">取消</el-button>
-                  <el-button type="primary" size="mini" @click="delWafs([scope.row])">{{t('确定', 'WAF.qd')}}</el-button>
                 </div>
                 <el-button slot="reference"style="color:#3E8EF7;background: transparent;">删除</el-button>
               </el-popover>

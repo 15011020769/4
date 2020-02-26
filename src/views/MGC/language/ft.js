@@ -6,7 +6,7 @@ module.exports = {
         jssj: '接收時間',
         xxlx: '訊息類型',
         xxzlx: '訊息子類型',
-        tiao: '條',
+        tiao: '項',
         scqd: '删除后訊息将无法恢复，您确定要删除吗？',
         qd: '確 定',
         qrbjyd: '確認標記所有已讀',

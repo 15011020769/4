@@ -31,7 +31,7 @@
               <i class="el-icon-more"></i>
             </span>
             <el-dropdown-menu slot="dropdown">
-              <p style="color:#888;">自动刷新</p>
+              <p style="color:#888;">自动重新整理</p>
               <el-dropdown-item>暂停</el-dropdown-item>
               <el-dropdown-item>30秒</el-dropdown-item>
               <el-dropdown-item>1分钟</el-dropdown-item>

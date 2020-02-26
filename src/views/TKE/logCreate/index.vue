@@ -798,6 +798,9 @@
               this.pathFlag = false
             }
           })
+          if(this.pathFlag){
+            return false
+          }
           let data = this.formTwo.optionAll;
           var obj = new Object();
           data.forEach((x, y) => {
@@ -850,11 +853,11 @@
             type: "host-log"
           };
         }
-        this.axios.post(TKE_COLONY_QUERY, params).then(res => {
-          if (res.Response.Error === undefined) {
-            this.$router.go(-1);
-          }
-        });
+          this.axios.post(TKE_COLONY_QUERY, params).then(res => {
+            if (res.Response.Error === undefined) {
+              this.$router.go(-1);
+            }
+          });
       },
       //编辑数据回显
       findEditData() {

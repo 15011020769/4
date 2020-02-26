@@ -135,7 +135,7 @@
               </el-row>
             </div>
             <div class="Right-style pagstyle">
-              <span class="pagtotal">共&nbsp;{{totalItems}}&nbsp;条</span>
+              <span class="pagtotal">共&nbsp;{{totalItems}}&nbsp;{{ $t('SCF.total.tiao') }}</span>
               <el-pagination :page-size="pageSize" :pager-count="7" layout="prev, pager, next"
                 @current-change="handleCurrentChange" :total="totalItems"></el-pagination>
             </div>

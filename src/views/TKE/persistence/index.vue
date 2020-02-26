@@ -26,7 +26,7 @@
         </div>
         <!-- 内容 -->
         <el-table :data="tableData" style="width: 100%" v-loading="loadShow">
-          <el-table-column label="ID/名称" width="250">
+          <el-table-column label="ID/名称" width="220">
             <template slot-scope="scope">
               <span
                 :class="[
@@ -43,35 +43,41 @@
             </template>
           </el-table-column>
 
-          <el-table-column label="状态" width="250">
+          <el-table-column label="状态" width="220">
             <template slot-scope="scope">
-              <span v-if="scope.row.ClusterStatus == 'Running'" class="text-green">
+              <!-- {{scope.row.ClusterStatus}} -->
+              <!-- targetStatus
+              targetStatusTip -->
+              <!-- failed
+              running -->
+              <!-- {{scope.row.targetStatus}} -->
+              <el-tooltip v-if="scope.row.targetStatus == 'failed'" class="item" effect="dark" :content="scope.row.targetStatusTip" placement="left">
+                <span class="text-red">
+                  失败
+                  <i style="color:#e54545;font-size:16px" class="el-icon-warning"></i>
+                </span>
+              </el-tooltip>
+              <span v-else-if="scope.row.targetStatus == 'Running'" class="text-green">
                 已开启
                 <i style="color:#0abf5b;font-weight:900" class="el-icon-circle-check"></i>
               </span>
-              <span v-else-if="scope.row.ClusterStatus == 'Creating'" class="text-green">
-                已开启
-                <i style="color:#0abf5b;font-weight:900" class="el-icon-circle-check"></i>
-              </span>
-              <span v-else class="text-red">未开启</span>
+              <span v-else>未开启</span>
             </template>
           </el-table-column>
-          <el-table-column label="存储端" width="250">
+          <!-- 存储端参数找不到 -->
+          <el-table-column label="存储端" width="220">
             <template slot-scope="scope">
-              <span v-if="scope.row">Elasticsearch</span>
-              <span v-else-if="!scope.row">-</span>
+              <span v-if="scope.row.storageObject">Elasticsearch</span>
+              <span v-else-if="!scope.row.storageObject">-</span>
             </template>
           </el-table-column>
           <el-table-column label="存储对象" width="320">
             <template slot-scope="scope">
-              <span v-if="scope.row">
-                ES地址( https://233.13.41.5:5452 )
-                <br />索引( ffff )
-              </span>
-              <span v-else-if="!scope.row">-</span>
+              <span>{{scope.row.storageObject ? scope.row.storageObject: '-'}}</span>
+              <p>{{scope.row.indexName ? scope.row.indexName: ''}}</p>
             </template>
           </el-table-column>
-          <el-table-column label="操作" width="250">
+          <el-table-column label="操作" width="220">
             <template slot-scope="scope">
               <el-button @click="handleClick(scope.row)" type="text" size="small">设置</el-button>
             </template>
@@ -124,14 +130,11 @@ export default {
     };
   },
   created() {
-    // this.getData();
     this.getColonyList();
-    // this.getColonyStatus();
   },
   methods: {
     // 查看详情跳转
     goColonySub(id) {
-      // scope.row.ClusterType=='MANAGED_CLUSTER'
       this.$router.push({
         name: "colonyResourceDeployment",
         query: {
@@ -141,9 +144,9 @@ export default {
     },
     handleClick(uid) {
       //设置
-      // console.log(uid);
       this.$router.push({
-        path: "/persistenceSetting/" + uid.ClusterId
+        path: "/persistenceSetting/" + uid.ClusterId,
+        query: uid
       });
     },
     searchList() {
@@ -173,31 +176,6 @@ export default {
         this.loadShow = false;
       });
     },
-    search() {
-      //搜索数据持久化列表
-      let params = {
-        Version: "2018-05-25"
-      };
-
-      this.axios.get(TKE_COLONY_STATUS, params).then(res => {
-        console.log(res);
-        if (res.Response.Error === undefined) {
-          // this.tableData = res.Response.Clusters;
-          // this.loadShow = false;
-          // console.log(res.Response.Clusters);
-        } else {
-          this.loadShow = false;
-          let ErrTips = {};
-          let ErrOr = Object.assign(ErrorTips, ErrTips);
-          this.$message({
-            message: ErrOr[res.Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 3000
-          });
-        }
-      });
-    },
     async getColonyList() {
       this.loadShow = true;
       let params = {
@@ -211,8 +189,60 @@ export default {
       }
       const res = await this.axios.post(TKE_COLONY_LIST, params);
       if (res.Response.Error === undefined) {
+        let paramsD = {
+          Method: "GET",
+          Path: "/apis/platform.tke/v1/persistentevents",
+          Version: "2018-05-25"
+        };
+        let k8sList = [];
+        let k8sRes = await this.axios.post(TKE_COLONY_QUERY, paramsD);
+
+        if (k8sRes.Response.Error === undefined) {
+          var data = JSON.parse(k8sRes.Response.ResponseBody);
+          k8sList = data.items;
+          console.log(k8sList)
+          this.loadShow = false;
+        } else {
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[k8sRes.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 2000
+          });
+        }
+        if (res.Response.Clusters.length > 0) {
+          res.Response.Clusters.map(cluster => {
+            k8sList.map(k8s => {
+              // console.log(k8s)
+              if (cluster.ClusterId === k8s.spec.clusterName) {
+                if(k8s.status && k8s.status.phase){
+                  cluster.targetStatus=k8s.status.phase;
+                  cluster.targetStatusTip=k8s.status.reason;
+                }
+                if (
+                  k8s.spec &&
+                  k8s.spec.persistentBackEnd &&
+                  k8s.spec.persistentBackEnd.es
+                ) {
+                  cluster.storageObject =
+                    "ES地址( http://" +
+                    k8s.spec.persistentBackEnd.es.ip +
+                    ":" +
+                    k8s.spec.persistentBackEnd.es.port +
+                    ")";
+                  cluster.indexName =
+                    "索引(" + k8s.spec.persistentBackEnd.es.indexName + ")";
+                }
+              }
+            });
+            return cluster;
+          });
+        }
         this.total = res.Response.TotalCount;
-        this.tableData1 = res.Response.Clusters;
+        this.tableData = res.Response.Clusters;
+        console.log(this.tableData);
         this.loadShow = false;
       } else {
         this.loadShow = false;
@@ -235,40 +265,15 @@ export default {
           message: ErrOr[res.Response.Error.Code],
           type: "error",
           showClose: true,
-          duration: 0
+          duration: 2000
         });
       }
-      let paramsD = {
-        Method: "GET",
-        Path: "/apis/platform.tke/v1/persistentevents",
-        Version: "2018-05-25"
-      };
-      this.axios.post(TKE_COLONY_QUERY, paramsD).then(res => {
-        if (res.Response.Error === undefined) {
-          // console.log(JSON.parse(res.Response.ResponseBody));
-          var data = JSON.parse(res.Response.ResponseBody);
-          this.tableData2 = data.items;
-          console.log( this.tableData2);
-          this.loadShow = false;
-        } else {
-          let ErrTips = {};
-          let ErrOr = Object.assign(ErrorTips, ErrTips);
-          this.$message({
-            message: ErrOr[res.Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-          });
-        }
-      });
 
-      var arr = [];//执行合并任务，展示数据
-      console.log(this.tableData1, this.tableData2);
+      var arr = []; //执行合并任务，展示数据
       for (let index = 0; index < this.tableData1.length; index++) {
         arr.push(Object.assign(this.tableData1[index], this.tableData2[index]));
         this.tableData = arr;
       }
-      console.log(this.tableData);
     },
     // 监听搜索条件的值
     changeType(val) {
@@ -286,51 +291,6 @@ export default {
       this.searchInput = val;
       this.getColonyList();
     }
-    // // 获取集群列表状态(不对外单独提供文档,所以无法实现)
-    // getColonyStatus() {
-    //   let params = {
-    //     Version: "2018-05-25"
-    //   };
-    //   if (this.searchInput !== "") {
-    //     for (var i in this.tableData) {
-    //       params["ClusterIds." + i] = this.tableData[i].ClusterId;
-    //     }
-    //   }
-    //   this.axios.post(TKE_COLONY_STATUS, params).then(res => {
-    //     console.log(res)
-    //     this.listStatus = res.Response.ClusterStatusSet;
-    //     this.listStatusArr = [];
-    //     for (var i in this.listStatus) {
-    //       this.listStatusArr.push(this.listStatus[i].ClusterInstanceState);
-    //     }
-    //   });
-    // },
-    // getColonyList() {
-    //   //数据持久化集群列表
-    //   // let params = {
-    //   //   Method: "GET",
-    //   //   Path: "/apis/platform.tke/v1/persistentevents",
-    //   //   Version: "2018-05-25"
-    //   // };
-
-    //   // this.axios.post(TKE_COLONY_QUERY, params).then(res => {
-    //   //   if (res.Response.Error === undefined) {
-    //   //     console.log(JSON.parse(res.Response.ResponseBody).items)
-    //   //     var data=JSON.parse(res.Response.ResponseBody).items;
-    //   //     this.tableData = data;
-    //   //     this.loadShow = false;
-    //   //   } else {
-    //   //     let ErrTips = {};
-    //   //     let ErrOr = Object.assign(ErrorTips, ErrTips);
-    //   //     this.$message({
-    //   //       message: ErrOr[res.Response.Error.Code],
-    //   //       type: "error",
-    //   //       showClose: true,
-    //   //       duration: 0
-    //   //     });
-    //   //   }
-    //   // });
-    // }
   },
   components: {
     HeadCom,

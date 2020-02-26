@@ -205,7 +205,7 @@ export default {
     },
     // 详情
     goSecretDetail() {
-      alert(this.clusterId)
+      console.log(this.$route)
       this.$router.push({
         name: "secretDetail",
         query: {

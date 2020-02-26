@@ -36,96 +36,17 @@
         <el-row class="iconBtn">
           <i class="el-icon-download" @click="dialogDownloadVisible = true"></i>
           <i class="el-icon-refresh"></i>
-          <i class="el-icon-setting" @click="dialogSetVisible = true"></i>
+          <i class="el-icon-setting" @click="openSetDialog"></i>
         </el-row>
       </p>
-      <div class="contentNum">
-        <el-row>
-          <el-col :span="selectValue==''?12:8">
-            <div class="rowContain">
-              <p>
-                <span class="red">{{webAttack}}</span>
-                <span>次</span>
-              </p>
-              <p>WEB攻击次数</p>
-            </div>
-          </el-col>
-          <el-col :span="selectValue==''?12:8">
-            <div class="rowContain">
-              <p>
-                <span class="oarnge">{{ccRequest}}</span>
-                <span>个</span>
-              </p>
-              <p>CC攻击次数</p>
-            </div>
-          </el-col>
-          <el-col :span="selectValue==''?12:8" v-if="selectValue==''?false:true">
-            <div class="rowContain">
-              <p>
-                <span class="blue">{{botRequest}}</span>
-                <span>次</span>
-              </p>
-              <p>BOT请求次数</p>
-            </div>
-          </el-col>
-        </el-row>
-      </div>
-      <el-row class="echartsShowfirst">
-        <h3 class="topfont">
-          {{t('攻击趋势', 'WAF.gjqs')}}
-          <span style="color:#bbb;">(次)</span>
-        </h3>
-        <ELine
-          :xAxis="xAxis1"
-          :series1="series1"
-          :series2="series2"
-          :series3="series3"
-          :color="color"
-          :legendText="selectValue == '' ? legendText2 : legendText1"
-        />
-      </el-row>
-      <attack-Type
-        :seriesPie="seriesPie"
-        :colorPie="colorPie"
-        :legendTextPie="legendTextPie"
-        :seriesPieAttack="seriesPieAttack"
-        :legendTextPieAttack="legendTextPieAttack"
+      <component
+        class="comp"
+        v-for="comp in showModules"
+        :is="comp"
+        :times="[startTime, endTime]"
+        :domain="selectValue"
+        :showModules="showModules"
       />
-      <el-row class="echartsShowSecond">
-        <el-col :span="12">
-        <h3 class="topfont">
-          {{t('攻击来源地域TOP5', 'WAF.gjlydy')}}
-          <span style="color:#bbb;">(次)</span>
-        </h3>
-        <EBar
-          :xAxis="xAxisBarLocal"
-          :series="seriesBarLocal"
-          :legendText="legendTextBarIp"
-          v-if="xAxisBarLocal.length == 0 ? false : true"
-        />
-        <el-row class="empty" v-else>暂无数据</el-row>
-        </el-col>
-        <el-col :span="12">
-        <h3 class="topfont">
-          {{t('攻击来源IP TOP5', 'WAF.gjlyip')}}
-          <span style="color:#bbb;">(次)</span>
-        </h3>
-        <EBar
-          :xAxis="xAxisBarIp"
-          :series="seriesBarIp"
-          :legendText="legendTextBarIp"
-          v-if="xAxisBarIp.length == 0 ? false : true"
-        />
-        <el-row class="empty" v-else>暂无数据</el-row>
-        </el-col>
-      </el-row>
-      <el-row class="echartsShowFour">
-        <h3 class="topfont">
-          {{t('攻击来源区域分布', 'WAF.gjlyqyfb')}}
-          <span style="color:#bbb;">(次)</span>
-        </h3>
-        <EMap :series="seriesMap" />
-      </el-row>
     </div>
     <DownLoadImg
       :dialogDownloadVisible = dialogDownloadVisible
@@ -138,15 +59,19 @@
       width="40%"
     >
       <div>
-        <el-checkbox v-model="checked1" label="WEB攻击拦截、CC拦截、BOT请求、DNS劫持区域数" border></el-checkbox>
-        <el-checkbox v-model="checked2" label="业务请求趋势" border></el-checkbox>
-        <el-checkbox v-model="checked3" label="攻击来源地域TOP5 & 攻击来源IP TOP5" border></el-checkbox>
-        <el-checkbox v-model="checked4" label="访问类型占比 & 攻击类型占比" border></el-checkbox>
-        <el-checkbox v-model="checked5" label="攻击来源区域分布" border></el-checkbox>
+        <el-checkbox-group v-model="showModulesCopy" class="module">
+          <el-checkbox border v-for="(m, index) in allModule" :key="m.name" :label="m.name">
+            {{m.value}}
+            <div :class="`move ${index === 0 || index === (allModule.length - 1) ? 'alone' : ''}`">
+              <i class="el-icon-caret-top" @click.prevent="up(index)" v-if="index !== 0"></i>
+              <i class="el-icon-caret-bottom" @click.prevent="down(index)" v-if="index !== (allModule.length - 1)"></i>
+            </div>
+          </el-checkbox>
+        </el-checkbox-group>
       </div>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="dialogSetVisible = false">保存</el-button>
-        <el-button @click="dialogSetVisible = false">取消</el-button>
+        <el-button type="primary" @click="saveModuleDisplaySet">保存</el-button>
+        <el-button @click="cancelModuleDisplaySet">取消</el-button>
       </div>
     </el-dialog>
   </div>
@@ -154,24 +79,14 @@
 <script>
 import moment from "moment";
 import html2canvas from "html2canvas"
-import ELine from "../components/line"
-import EBar from "../components/bar"
-import EPie from "../components/pie"
-import EMap from '../components/worldMap'
-import attackType from "../components/attackType"
 import DownLoadImg from '../components/downLoadImg'
-import {
-  DESCRIBE_HOSTS,
-  DESCRIBE_PEAK_VALUE,
-  DESCRIBE_PEAK_POINTS,
-  DESCRIBE_ATTACK_TYPE,
-  DESCRIBE_ATTACK_WORLD_MAP,
-  DESCRIBE_ATTACK_COUNT,
-  DESCRIBE_REQUEST_COUNT,
-  DESCRIBE_HISTOGRAM,
-  DESCRIBE_BOT_COUNT,
-  DESCRIBE_BOT_POINTS
-  } from '@/constants'
+import AttackDistribution from './safeoverview/attackDistribution'
+import AttackSource from './safeoverview/attackSource'
+import AttackTypePrecent from './safeoverview/attackTypePrecent'
+import Business from './safeoverview/business'
+import Overview from './safeoverview/overview'
+import { SAFE_OVERVIEW_SHOWMODULE_KEY } from '../../constants'
+import { DESCRIBE_HOSTS } from '@/constants'
 import { flatObj } from '@/utils'
 export default {
   data() {
@@ -180,79 +95,90 @@ export default {
       dateTimeValue: [(moment(new Date()).format("YYYY-MM-DD HH:mm:ss")), (moment(new Date()).format("YYYY-MM-DD HH:mm:ss"))], //日期绑定
       selectValue: "", //域名下拉菜单
       thisType: "1", //按钮默认选中
-      webAttack: 0,
-      ccRequest: 0,
-      botRequest: 0,
       endTime: moment(new Date()).endOf("days").format("YYYY-MM-DD HH:mm:ss"),
       startTime: moment(new Date()).startOf("days").format("YYYY-MM-DD 00:00:00"),
       host: "",
-      xAxis1: [],
-      color: ["#FF584C", "#FF9D00", "#006eff"],
-      series1: [],
-      series2: [],
-      series3: [],
-      legendText1: ['WEB攻击次数', 'CC攻击次数', 'BOT请求次数'],
-      legendText2: ['WEB攻击次数', 'CC攻击次数'],
-      seriesBarLocal: [],
-      xAxisBarLocal: [],
-      seriesBarIp: [],
-      xAxisBarIp: [],
-      legendTextBarIp: "次数",
       dialogDownloadVisible: false,
       dialogSetVisible: false,
-      checked1: false,
-      checked2: false,
-      checked3: false,
-      checked4: false,
-      checked5: false,
-      colorPie: ['#006eff', '#434348', '#74BD48', "#F7A35C"],
-      legendTextPie: ['正常访问', 'WEB攻击次数', 'CC攻击次数', ''],
-      seriesPie: [
-        {value: 0, name: '正常访问'},
-        {value: 0, name: 'WEB攻击次数'},
-        {value: 0, name: 'CC攻击次数'},
-        {value: 0, name: ''},
+      allModuleCopy: [
+        { name: 'overview', value: 'WEB攻击拦截、CC拦截、BOT请求、DNS劫持区域数' },
+        { name: 'business', value: '业务请求趋势' },
+        { name: 'attackSource', value: '攻击来源地域TOP5 & 攻击来源IP TOP5' },
+        { name: 'attackTypePrecent', value: '访问类型占比 & 攻击类型占比' },
+        { name: 'attackDistribution', value: '攻击来源区域分布' },
       ],
-      seriesPieAttack: [],
-      legendTextPieAttack: [],
-      seriesMap: [{
-              name: '中国',
-              value: 2
-            },]
+      allModule: [],
+      showModules: [],
+      showModulesCopy: [],
     };
   },
   components: {
-    ELine,
-    EBar,
-    EPie,
-    EMap,
     DownLoadImg,
-    attackType,
+    Overview,
+    Business,
+    AttackTypePrecent,
+    AttackSource,
+    AttackDistribution,
   },
   mounted () {
+    const allModuleCopy = JSON.parse(JSON.stringify(this.allModuleCopy))
+    let showModules = localStorage.getItem(SAFE_OVERVIEW_SHOWMODULE_KEY)
+    if (showModules) {
+      showModules = JSON.parse(showModules)
+    } else {
+      showModules = ['overview', 'business']
+    }
+
+    this.showModules = showModules
+
+    let i = showModules.length - 1
+    allModuleCopy.forEach(mm => {
+      if (showModules.includes(mm.name)) {
+        mm.index = showModules.indexOf(mm.name)
+      } else {
+        mm.index = ++i
+      }
+    })
+    allModuleCopy.sort((a, b) => a.index - b.index)
+
+    this.allModule = allModuleCopy
     this.getDominList();
-    this.getPeakValue();
-    this.getPeakPoints();
-    this.getAttackType();
-    this.getWebAttack();
-    this.getNormalRequest();
-    this.getAttackIp("ip");
-    this.getAttackIp("local");  
-    this.getAttackWorldMap();
 　},
   watch: {
-    selectValue() {
-      this.getPeakValue();
-      this.getPeakPoints();
-      this.getAttackType();
-      this.getNormalRequest();
-      this.getWebAttack();
-      this.getAttackIp("ip");
-      this.getAttackIp("local");
-      this.getAttackWorldMap();
+    showModules(val, oldVal) {
+      if (val.length === 1) {
+        this.$message({
+          message: this.t('至少选择2个', 'WAF.zsxz2g'),
+          type: 'error',
+          showClose: true,
+          duration: 0
+        })
+        this.showModules = [...oldVal]
+      }
     },
   },
   methods: {
+    openSetDialog() {
+      this.dialogSetVisible = true
+      this.showModulesCopy = [...this.showModules]
+    },
+    up(i) {
+      this.allModule[i] = this.allModule.splice(i-1, 1, this.allModule[i])[0]
+    },
+    down(i) {
+      this.allModule[i] = this.allModule.splice(i+1, 1, this.allModule[i])[0]
+    },
+    cancelModuleDisplaySet() {
+      this.dialogSetVisible = false
+      this.showModulesCopy = [...this.showModules]
+    },
+    saveModuleDisplaySet() {
+      this.dialogSetVisible = false
+      const moduleNames = this.allModule.map(m => m.name) // 获取所有模块名称
+      this.showModules = [...this.showModulesCopy]
+      this.showModules = moduleNames.filter(name => this.showModules.includes(name))
+      localStorage.setItem(SAFE_OVERVIEW_SHOWMODULE_KEY, JSON.stringify(this.showModules))
+    },
     //获取域名列表
     getDominList() {
       this.axios.post(DESCRIBE_HOSTS, {
@@ -280,223 +206,6 @@ export default {
     onCancel() {
       this.dialogDownloadVisible = false
     },
-    // 获取业务攻击趋势
-    getPeakPoints() {
-      const axixArr = []
-      const series1Arr = []
-      const series2Arr = []
-      const params = {
-        Version: '2018-01-25',
-        FromTime: this.startTime,
-        ToTime: this.endTime,
-      }
-      if (this.selectValue != "") {
-        params["Domain"] = this.selectValue
-        this.getBotPoints()
-      } else {
-        this.series3 = []
-      }
-      this.axios.post(DESCRIBE_PEAK_POINTS, params).then(resp => {
-        this.generalRespHandler(resp, ({Points}) => {
-            Points.map((v) => {
-              axixArr.push(moment.unix(v.Time).format("YYYY-MM-DD HH:mm:ss"))
-              series1Arr.push(v.Attack)
-              series2Arr.push(v.Cc)
-            })
-            this.xAxis1 = axixArr
-            this.series1 = series1Arr
-            this.series2 = series2Arr
-        })
-      })
-    },
-    // 获取业务攻击峰值
-    getPeakValue() {
-      const params = {
-        Version: '2018-01-25',
-        FromTime: this.startTime,
-        ToTime: this.endTime,
-      }
-      if (this.selectValue != "") {
-        params["Domain"] = this.selectValue
-        this.getBotCount()
-      } else {
-        this.botRequest = 0
-        this.$set(this.seriesPie, 3, {value: 0, name: ''},)
-      }
-      this.axios.post(DESCRIBE_PEAK_VALUE, params).then((resp) => {
-        this.generalRespHandler(resp, (Response) => {
-          this.webAttack = Response.Attack
-          this.ccRequest = Response.Cc
-          this.$set(this.seriesPie, 2, {value: `${Response.Cc}`, name: 'CC攻击次数'},)
-        })
-      })
-    },
-    // 查询bot数量
-    getBotCount() {
-      const params = {
-        Version: '2018-01-25',
-        FromTime: this.startTime,
-        ToTime: this.endTime,
-        Edition: "clb-waf",
-        Host: this.selectValue
-      }
-      this.axios.post(DESCRIBE_BOT_COUNT, params).then((resp) => {
-        this.generalRespHandler(resp, (Response) => {
-          this.botRequest = Response.Count
-          this.$set(this.seriesPie, 3, {value: `${Response.Count}`, name: 'Bot请求次数'})
-          this.$set(this.legendTextPie, 3, 'Bot请求次数')
-          console.log(this.seriesPie)
-        })
-      })
-    },
-    // 查询Bot趋势
-    getBotPoints() {
-      const params = {
-        Version: '2018-01-25',
-        FromTime: this.startTime,
-        ToTime: this.endTime,
-        Edition: "clb-waf",
-        Host: this.selectValue
-      }
-      this.axios.post(DESCRIBE_BOT_POINTS, params).then((resp) => {
-        this.generalRespHandler(resp, ({Points}) => {
-          this.series3 = Points
-        })
-      })
-    },
-    // 获取正常访问次数
-    getNormalRequest() {
-      const params =  {
-        Version: '2018-01-25',
-        FromTime: this.startTime,
-        ToTime: this.endTime,
-      }
-      if (this.selectValue != "") {
-        params["Domain"] = this.selectValue
-      }
-      this.axios.post(DESCRIBE_REQUEST_COUNT, params).then((resp) => {
-        this.generalRespHandler(resp, (Response) => {
-          this.$set(this.seriesPie, 0, {value: `${Response.Count}`, name: '正常访问'},)
-        })
-      })
-    },
-    // 获取web攻击次数
-    getWebAttack() {
-      const params = {
-        Version: '2018-01-25',
-        FromTime: this.startTime,
-        ToTime: this.endTime,
-        QueryField: "web",
-        Mode: 0,
-        Host: "all",
-        Edition: "clb-waf"
-      }
-      if (this.selectValue != "") {
-        params["Host"] = this.selectValue
-      }
-      this.axios.post(DESCRIBE_ATTACK_COUNT, params).then((resp) => {
-        this.generalRespHandler(resp, (Response) => {
-          this.$set(this.seriesPie, 1, {value: `${Response.Count}`, name: 'WEB攻击次数'},)
-        })
-      })
-    },
-    // 查询TOP N攻击类型饼图
-    getAttackType() {
-      let typeArr = []
-      let typeLegend = []
-      const params = {
-        Version: '2018-01-25',
-        FromTime: this.startTime,
-        ToTime: this.endTime,
-        Host: "all",
-        Edition: "clb-waf"
-      }
-      if (this.selectValue != "") {
-        params["Host"] = this.selectValue
-      }
-      this.axios.post(DESCRIBE_ATTACK_TYPE, params).then((resp) => {
-        this.generalRespHandler(resp, ({Piechart}) => {
-          Piechart && Piechart.map(v => {
-            typeArr.push({value:v.Count, name: v.Type, })
-            typeLegend.push(v.Type)
-          })
-          this.seriesPieAttack = typeArr
-          this.legendTextPieAttack = typeLegend    
-        })
-      })
-    },
-    // 获取攻击来源地址和ip柱状图
-    getAttackIp(type) {
-      const params = {
-        Version: '2018-01-25',
-        FromTime: this.startTime,
-        ToTime: this.endTime,
-        Host: "all",
-        Edition: "clb-waf",
-        QueryField: type,
-        Source: "attack",
-      }
-      if (this.selectValue != "") {
-        params["Host"] = this.selectValue
-      }
-      this.axios.post(DESCRIBE_HISTOGRAM, params).then((resp) => {
-        let ipArrCount = []
-        let ipArr = []
-        let localArr = []
-        let localArrCount = []
-        if (type == "ip") {
-          this.generalRespHandler(resp, ({Histogram}) => {
-            Histogram && Histogram.map(v => {
-              ipArrCount.push(v.count)
-              ipArr.push(v.ip)
-            })
-            this.xAxisBarIp = ipArr
-            this.seriesBarIp = ipArrCount
-          })
-        } else if(type == "local") {
-          this.generalRespHandler(resp, ({Histogram}) => {
-            Histogram && Histogram.map(v => {
-              localArrCount.push(v.count)
-              localArr.push(v.local)
-            })
-            this.xAxisBarLocal = localArr
-            this.seriesBarLocal = localArrCount
-          })
-        }
-      })
-    },
-    // 获取攻击城市分布
-    getAttackWorldMap() {
-      const params = {
-        Version: '2018-01-25',
-        FromTime: this.startTime,
-        ToTime: this.endTime,
-        Host: "all",
-        Edition: "clb-waf"
-      }
-      if (this.selectValue != "") {
-        params["Host"] = this.selectValue
-      }
-      this.axios.post(DESCRIBE_ATTACK_WORLD_MAP, params).then((resp) => {
-        this.generalRespHandler(resp, (res) => {
-            console.log(res)
-          })
-      })
-    },
-    // getPeakValue() {
-    //   const params = {
-    //     Version: '2018-01-25',
-    //     intf: "peak_points",
-    //     data: {
-    //       fromTime: this.startTime,
-    //       toTime: this.endTime,
-    //     },
-    //     edition: "clb-waf",
-    //   }
-    //   this.axios.post(WAF_INTERFACE, flatObj(params)).then((res) => {
-    //     console.log(res)
-    //   })
-    // },
     //时间点击事件
     checkTime(type) {
       this.thisType = type;
@@ -518,31 +227,11 @@ export default {
       ipt2.value = moment(end).format("YYYY-MM-DD");
       this.startTime = moment(start).startOf("days").format("YYYY-MM-DD HH:mm:ss");
       this.endTime = moment(end).endOf("days").format("YYYY-MM-DD HH:mm:ss");
-      this.$nextTick(() => {
-        this.getPeakPoints();
-        this.getPeakValue();
-        this.getNormalRequest();
-        this.getAttackType();
-        this.getAttackIp("ip");
-        this.getAttackIp("local");
-        this.getAttackWorldMap();
-        this.getWebAttack()
-      })
     },
     changeTimeValue() {
       this.thisType = 0
       this.startTime = moment(this.dateTimeValue[0]).startOf("days").format("YYYY-MM-DD HH:mm:ss");
       this.endTime = moment(this.dateTimeValue[1]).endOf("days").format("YYYY-MM-DD HH:mm:ss");
-      this.$nextTick(() => {
-        this.getPeakPoints();
-        this.getPeakValue();
-        this.getNormalRequest();
-        this.getAttackType();
-        this.getAttackIp("ip");
-        this.getAttackIp("local");
-        this.getAttackWorldMap();
-        this.getWebAttack()
-      })
     },
     html2canvas_2(imgtype) {
       //获取截取区域的高度和宽度
@@ -561,32 +250,31 @@ export default {
         // taintTest: false,
         // canvas: canvas,
       }).then(	function(canvas) {
-          const type = imgtype
-          let imgData = canvas.toDataURL(type);
-          const _fixType = function(type) {
-            type = type.toLowerCase().replace(/jpg/i, 'jpeg');
-            const r = type.match(/png|jpeg|bmp|gif/)[0];
-            return 'image/' + r;
-          };
-          imgData = imgData.replace(_fixType(type), 'image/octet-stream');
-          /**
-           * 在本地进行文件保存
-           * @param  {String} data     要保存到本地的图片数据
-           * @param  {String} filename 文件名
-           */
-          const saveFile = function(data, filename) {
-          const save_link =document.createElementNS('http://www.w3.org/1999/xhtml', 'a'); 
-            save_link.href = data;
-            save_link.download = filename;
-            const event = document.createEvent('MouseEvents');
-            event.initMouseEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
-            save_link.dispatchEvent(event);
-          };
-          const filename = 'dashboard' + (new Date()).getTime() + '.' + type;
-          saveFile(imgData, filename);
-        })
-			},
-    //图表
+        const type = imgtype
+        let imgData = canvas.toDataURL(type);
+        const _fixType = function(type) {
+          type = type.toLowerCase().replace(/jpg/i, 'jpeg');
+          const r = type.match(/png|jpeg|bmp|gif/)[0];
+          return 'image/' + r;
+        };
+        imgData = imgData.replace(_fixType(type), 'image/octet-stream');
+        /**
+         * 在本地进行文件保存
+         * @param  {String} data     要保存到本地的图片数据
+         * @param  {String} filename 文件名
+         */
+        const saveFile = function(data, filename) {
+        const save_link =document.createElementNS('http://www.w3.org/1999/xhtml', 'a'); 
+          save_link.href = data;
+          save_link.download = filename;
+          const event = document.createEvent('MouseEvents');
+          event.initMouseEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+          save_link.dispatchEvent(event);
+        };
+        const filename = 'dashboard' + (new Date()).getTime() + '.' + type;
+        saveFile(imgData, filename);
+      })
+    },
   }
 }
 </script>
@@ -626,7 +314,7 @@ export default {
   }
   button {
     height: 30px;
-    line-height: 30px;
+    line-height: 28px;
     border-radius: 0;
   }
   .down {
@@ -653,10 +341,10 @@ export default {
       }
       .dateTimeValue {
         ::v-deep .el-range__icon {
-          line-height: 26px;
+          line-height: 22px;
         }
         ::v-deep .el-range-separator {
-          line-height: 26px;
+          line-height: 22px;
           width: 7%;
         }
       }
@@ -675,81 +363,24 @@ export default {
       }
     }
   }
-  .contentNum {
-    width: 100%;
-    height: 110px;
-    padding: 15px 0;
-    box-sizing: border-box;
-    background-color: #fff;
-    box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
-    margin-bottom: 20px;
-    .rowContain {
-      text-align: center;
-      p:nth-child(1) {
-        margin-bottom: 16px;
-        font-size: 14px;
-        span:nth-child(1) {
-          font-size: 36px;
-        }
-        span.red {
-          color: #e1504a;
-        }
-        span.oarnge {
-          color: #ff9d00;
-        }
-        span.blue {
-          color: #006eff;
-        }
-      }
-    }
+}
+.module {
+  label {
+    cursor: default;
   }
-  .echartsShowfirst {
-    width: 100%;
-    height: 378px;
-    padding: 20px 0;
-    box-sizing: border-box;
-    background-color: #fff;
-    box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
-    .topfont{
-      padding-left: 20px;
-    }
+}
+.move {
+  position: absolute;
+  right: 10px;
+  top: 5px;
+  display: flex;
+  flex-direction: column;
+  i {
+    cursor: pointer;
   }
-  .echartsShowSecond {
-    width: 100%;
-    height: 258px;
-    padding: 20px 0;
-    box-sizing: border-box;
-    background-color: #fff;
-    box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
-    margin-top: 20px;
-    .topfont{
-      padding-left: 20px;
-    }
-  }
-  // .echartsShowThird {
-  //   width: 100%;
-  //   height: 258px;
-  //   padding: 20px 0;
-  //   box-sizing: border-box;
-  //   background-color: #fff;
-  //   box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
-  //   margin-top: 20px;
-  //   .topfont{
-  //     padding-left: 20px;
-  //   }
-  // }
-  .echartsShowFour {
-    width: 100%;
-    height: 658px;
-    padding: 20px 0;
-    box-sizing: border-box;
-    background-color: #fff;
-    box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
-    margin-top: 20px;
-    .topfont{
-      padding-left: 20px;
-    }
-  }
+}
+.alone.move {
+  top: 13px;
 }
 .message_img {
   color: #007e3b;
@@ -761,5 +392,8 @@ export default {
 .label_img {
   display: inline-block;
   padding-right: 20px;
+}
+.comp {
+  margin-top: 20px;
 }
 </style>

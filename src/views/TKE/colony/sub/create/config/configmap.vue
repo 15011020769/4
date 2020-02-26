@@ -66,7 +66,7 @@
                 <el-link type="primary" style="cursor: pointer;" @click="addDomain">新增变量</el-link>
                 </p>
               </div>
-              <p  v-show="errorShow" style="color:red">变量名格式不正确，只能包含字母、数字及分隔符("-"、"_"、".")，且必须以字母、数字开头和结尾</p>
+              <p  v-show="errorShow" style="color:red">新增变量名格式不正确，只能包含字母、数字及分隔符("-"、"_"、".")，且必须以字母、数字开头和结尾</p>
             </div>
           </el-form-item>
         </el-form>

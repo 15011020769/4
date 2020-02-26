@@ -102,7 +102,7 @@
           </el-upload>
           <el-button class="exportFilter" @click="exportFile" size="mini">导出全部筛选结果</el-button>
         </div>
-        <div class="tableCon">
+        <el-card>
           <el-table
             ref="multipleTable"
             :data="tableDataBegin ? tableDataBegin.slice((currentPage-1)*pageSize,currentPage*pageSize) : []"
@@ -163,8 +163,6 @@
               </template>
             </el-table-column>
           </el-table>
-        </div>
-        <div class="tabListPage">
           <el-pagination
             @size-change="handleSizeChange"
             @current-change="handleCurrentChange"
@@ -174,7 +172,7 @@
             layout="total, sizes, prev, pager, next, jumper"
             :total="totalItems"
           ></el-pagination>
-        </div>
+        </el-card>
       </div>
     </div>
     <template :v-if="addBWmodel">
@@ -224,15 +222,6 @@ export default {
       timeOut: false, //有效截止日期
       timeValue2: [moment().subtract(1, 'hour'), new Date()], //有效截止日期
       multipleSelection: [], //tableCheck
-      tableDataBegin: [],
-      allData: [{
-        resourse:'自定义',
-        ipAddress:'10.1.1.23',
-        type:'黑名单',
-        updata:'2019-12-25 13:52:03',
-        stopTime:'2020-01-01 23:59:59',
-        descrip:'123'
-      }],//自定义数据
       tableDataBegin: [],//表格数据
       tableDataEnd: [],
       currentPage: 1,//当前页

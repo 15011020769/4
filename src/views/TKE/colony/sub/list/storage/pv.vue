@@ -19,8 +19,7 @@
             @changeInput="changeSearchInput"
             @clickSearch="clickSearch"
             @refresh='refreshList'
-            @exportExcel="exportExcel"
-          >
+            @exportExcel="exportExcel">
           </tkeSearch>
         </div>
       </div>

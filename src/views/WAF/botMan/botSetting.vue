@@ -9,12 +9,11 @@
         <span class="el-icon-close" @click="closeTip"></span>
       </div>
       <el-row type="flex" justify="end">
-          <el-input style="width: 180px;" placeholder="请输入域名">
-             <i slot="suffix" style="display: flex; justify-content: center; align-items: center; cursor: pointer" class="el-input__icon el-icon-search" />
+          <el-input v-model="iptDomain" style="width: 180px;" placeholder="请输入域名">
+             <i slot="suffix" @click="getDescribeHost" style="display: flex; justify-content: center; align-items: center; cursor: pointer" class="el-input__icon el-icon-search" />
           </el-input>
       </el-row>
-      <div class="tableList">
-        <div class="tableCon">
+      <el-card>
           <el-table
             ref="multipleTable"
             :data="tableDataBegin.slice((currentPage-1)*pageSize,currentPage*pageSize)"
@@ -25,37 +24,37 @@
             <el-table-column prop="num" label="序号" width="70%">
               <template slot-scope="scope">{{ scope.$index+1 }}</template>
             </el-table-column>
-            <el-table-column prop="host" label="域名">
+            <el-table-column prop="Domain" label="域名">
               <div slot="header" @click="togleHost" style="cursor: pointer">
                 域名
                 <i v-if="hostFlag" class="el-icon-caret-top" />
                 <i v-if="!hostFlag" class="el-icon-caret-bottom" />
               </div>
             </el-table-column>
-            <el-table-column class="bot-wrapper" prop="bot" label="BOT流量分析开关">
+            <el-table-column class="bot-wrapper" prop="Status" label="BOT流量分析开关">
               <div slot="header">
                 <el-dropdown trigger="click" style="line-height: 0">
                   <span class="el-dropdown-link" style="font-size: 12px;">
                     BOT流量分析开关<i class="el-icon-arrow-down el-icon--right"></i>
                   </span>
-                  <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item>全部</el-dropdown-item>
-                    <el-dropdown-item>开启</el-dropdown-item>
-                    <el-dropdown-item>关闭</el-dropdown-item>
+                  <el-dropdown-menu @click="getDescribeHost" slot="dropdown">
+                    <el-dropdown-item><span @click="onBotSearch(undefined)">全部</span></el-dropdown-item>
+                    <el-dropdown-item><span @click="onBotSearch('on')">开启</span></el-dropdown-item>
+                    <el-dropdown-item><span @click="onBotSearch('off')">关闭</span></el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
               </div>
               <div slot-scope="scope">
                 <el-switch
-                  v-model="scope.row.bot > 0"
+                  v-model="scope.row.botStatus > 0"
                   active-color="#13ce66"
-                  :change="togleSwitch(scope.row)"
+                  :change="upDateBotStatus(scope.row)"
                   >
                 </el-switch>
                 <!-- <span>{{scope.row.bot}}</span> -->
               </div>
             </el-table-column>
-            <el-table-column prop="waf" label="WAF开关">
+            <el-table-column label="WAF开关">
               <div slot="header">
                 WAF开关
                 <el-tooltip placement="right-end" effect="light" class="mode-tooltip">
@@ -64,17 +63,15 @@
                 </el-tooltip>
               </div>
               <div slot-scope="scope">
-                <span style="color: #13ce66">{{scope.row.waf > 0 ? '开启' : '关闭'}}</span>
+                <span :style="`color: ${scope.row.Status > 0 ? '#13ce66' : '#e1504a'}`">{{scope.row.Status > 0 ? '开启' : '关闭'}}</span>
               </div>
             </el-table-column>
             <el-table-column prop="action" label="操作">
               <template slot-scope="scope">
-                 <a style="cursor: pointer" @click="$router.push(`${$route.path}/diy/${scope.row.host}`)">防护设置</a>
+                 <a style="cursor: pointer" @click="$router.push(`${$route.path}/diy/${scope.row.Domain}`)">防护设置</a>
               </template>
             </el-table-column>
           </el-table>
-        </div>
-        <div class="tabListPage">
           <el-pagination
             @size-change="handleSizeChange"
             @current-change="handleCurrentChange"
@@ -84,14 +81,18 @@
             layout="total, sizes, prev, pager, next, jumper"
             :total="totalItems"
           ></el-pagination>
-        </div>
-      </div>
+      </el-card>
+        <!-- <div class="tabListPage"> -->
+        <!-- </div>
+      </div> -->
     </div>
   </div>
 </template>
 
 <script>
-import { DESCRIBE_ACCESS_CONTROL } from '@/constants'
+import { DESCRIBE_ACCESS_CONTROL, DESCRIBE_HOSTS, DESCRIBE_BOT_STATUS, MODIFY_BOT_STATUS } from '@/constants'
+import { COMMON_ERROR } from '../constants'
+
 export default {
   data() {
     return {
@@ -110,13 +111,15 @@ export default {
       flag: false,//定义一个开关
       loadShow:false,//加载
       visible: false,//删除弹框
-      hostFlag: true // 域名状态 true为向上箭头 false反之
+      hostFlag: true, // 域名状态 true为向上箭头 false反之
+      iptDomain: '' // 域名搜索输入
     };
   },
   components:{
   },
   mounted() {
     this.getData();
+    this.getDescribeHost()
   },
   methods: {
     onclick() {
@@ -172,9 +175,85 @@ export default {
     togleHost() {
       this.hostFlag = !this.hostFlag
     },
-    // 点击bot流量分析开关switch
-    togleSwitch(e) {
-      console.log(e);
+    // 获取防护域名列表
+    getDescribeHost(bot='') {
+      let params = {
+        Version: '2018-01-25',
+        Search: this.iptDomain,
+        'Item.FlowMode': 0,
+        'Item.Status': bot
+      } 
+      this.loadShow=true;
+      this.axios.post(DESCRIBE_HOSTS, params).then(data => {
+        this.loadShow=false;
+        if (data.Response.Error) {
+          let ErrOr = Object.assign(ErrorTips, COMMON_ERROR)
+          this.$message({
+            message: ErrOr[Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          })
+        } else {
+          this.tableDataBegin = data.Response.HostList
+          this.getBotStatus()
+        }
+      })
+    },
+
+    // 查询bot开关
+    getBotStatus() {
+      let params = {
+        Version: '2018-01-25',
+        Category: 'bot'
+      }
+      this.axios.post(DESCRIBE_BOT_STATUS, params).then(data => {
+        if (data.Response.Error) {
+          let ErrOr = Object.assign(ErrorTips, COMMON_ERROR)
+          this.$message({
+            message: ErrOr[Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          })
+        } else {
+          const botArr = data.Response.Data.Res
+          this.tableDataBegin.forEach(item => {
+           let temp = botArr.find(_item => _item.Domain === item.Domain)
+           this.$set(item, 'botStatus', temp.Status)
+          })
+          localStorage.setItem('tableList', JSON.stringify(this.tableDataBegin))
+        }
+      })
+    },
+
+    // bot开关筛选
+    onBotSearch(term) {
+      const map = {
+        'on': 1,
+        'off': 0,
+      }
+      const arr = JSON.parse(localStorage.getItem('tableList'))
+      if (term) {
+        this.tableDataBegin = arr.filter(item => item.botStatus === map[term])
+        return
+      }
+       this.tableDataBegin = arr
+    },
+
+    // bot开关更新
+    upDateBotStatus(row) {
+      let params = {
+        Version: '2018-01-25',
+        Domain: row.Domain,
+        Category: 'bot',
+        Status: row.botStatus === 0 ? 1 : 0
+      }
+      console.log(row, 'row')
+      return
+      this.axios.post(MODIFY_BOT_STATUS, params).then(res => {
+        this.generalRespHandler(res, this.getDescribeHost(), COMMON_ERROR, '切换 开关 成功')
+      })
     }
   },
 };

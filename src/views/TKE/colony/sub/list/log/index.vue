@@ -267,6 +267,7 @@ export default {
               newarrs.push({ str: data + x });
             });
           this.htmls = newarrs;
+         
           this.loadShow = false;
         } else {
           let ErrTips = {};

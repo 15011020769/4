@@ -1436,3 +1436,49 @@ export const RECORD_ACT_CFG = {
     whiteIp: { "40": "放通", "42": "拦截" }
 }
 ```
+## 高级版升级企业版参数
+```
+[{
+	"goodsCategoryId": 100217,
+	"regionId": 1,
+	"projectId": 0,
+	"goodsNum": 1,
+	"payMode": 1,
+	"platform": 1,
+	"goodsDetail": {
+		"resourceId": "waf_00000044p",
+		"curDeadline": "2020-03-12 16:00:31",
+		"oldConfig": {
+			"pid": 11416,
+			"wsm_domain_package": 0,
+			"type": "wsm_waf",
+			"wsm_package_premium": 1
+		},
+		"newConfig": {
+			"pid": 11416,
+			"wsm_domain_package": 0,
+			"type": "wsm_waf",
+			"wsm_package_enterprise": 1
+		}
+	}
+}]
+```
+
+## 高级版进入BOT拦截页面
+```
+目前该功能仅开放给企业版及以上客户，立即升级
+
+腾讯云Web应用防火墙独家提供基于AI + 规则的BOT程序管理功能，可以应用于以下业务场景。
+
+数据泄露
+恶意BOT所有者通过爬虫抓取并利用站点对外公开数据，如用户数据，商品数据，订单数据等，造成数据泄露风险；
+
+业务风险
+恶意爬虫抓取价格，库存信息等，影响营销策略有效性；站点内容被未授权抓取，转载，降低站点内容竞争力；接口烂刷，刷票，羊毛党，短信接口，垃圾注册等带来业务风险；
+
+攻击程序
+黑客利用BOT程序实现撞库攻击，漏洞嗅探，DDoS攻击，CC攻击，发送垃圾邮件等攻击，给业务带来安全威胁；
+
+站点负载
+站点流量30%-70%来自BOT机器人程序，大量的机器人程序流量占用站点负载，影响正常用户的访问速度与体验；
+```

@@ -9,11 +9,10 @@
           <left-aside></left-aside>
         </el-aside>
         <el-main>
-          <router-view />
+        　　<router-view></router-view>
         </el-main>
       </el-container>
     </el-container>
-    <router-view v-if="!$route.meta.keepAlive"></router-view>
   </div>
 </template>
 
@@ -79,5 +78,19 @@ export default {
       height: 100%;
     }
   }
+}
+</style>
+<style lang="scss">
+.el-pagination {
+  position: relative;
+  display: flex;
+  justify-content: flex-end;
+  border-bottom: 1px solid #ebeef5;
+  color: black;
+  padding: 17px 0 15px 0 !important;
+}
+.el-pagination__total {
+  position: absolute;
+  left: 7px;
 }
 </style>

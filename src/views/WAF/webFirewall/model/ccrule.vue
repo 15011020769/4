@@ -6,10 +6,13 @@
       class="middle-input"
       :rules="[
         { required: true, message: t('规则名称不能为空', 'WAF.gzmcbnwk') },
-        { max: 50, message: t('名称长度不能超过50个字符', 'WAF.mccd50zy') }
+        { max: 50, message: t('名称长度不能超过50个字符', 'WAF.mccd50zy') },
+        {
+          validator: isRepeatName()
+        }
       ]"
     >
-      <el-input v-model="form.Name" :placeholder="t('请输入名称，最长50个字符', 'WAF.qsrmc50zy')"/>
+      <el-input :disabled="rule !== undefined " v-model="form.Name" :placeholder="t('请输入名称，最长50个字符', 'WAF.qsrmc50zy')"/>
     </el-form-item>
     <el-form-item
       prop="Advance"
@@ -195,7 +198,8 @@ export default {
     rule: {
       required: false,
       type: Object,
-    }
+    },
+    ruleNames: Array,
   },
   data() {
     return {
@@ -205,11 +209,13 @@ export default {
       loading: false,
       showExplain: false,
       showExplain1: false,
+      names: [],
     }
   },
   watch: {
     rule: {
       handler(r) {
+        this.names = [...this.ruleNames.filter(name => name !== (this.rule && this.rule.Name || ''))]
         if (r) {
           const rule = JSON.parse(JSON.stringify(r))
           rule.ValidTime /= 60
@@ -245,10 +251,19 @@ export default {
   methods: {
     isValidURI() {
       var warpper = (rule, value, callback) => {
-        if (/^\/.{1,128}$/.test(value)) {
+        if (/^\/.{0,128}$/.test(value)) {
           return callback()
         }
         callback(this.t('请输入正确的路径，以/开头，不要包含域名', 'WAF.qsrzqdlj'))
+      }
+      return warpper
+    },
+    isRepeatName() {
+      var warpper = (rule, value, callback) => {
+        if (!this.names.includes(value)) {
+          return callback()
+        }
+        callback(this.t('名称不能重复', 'WAF.mcbncf'))
       }
       return warpper
     },

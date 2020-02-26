@@ -1,58 +1,58 @@
 <template>
   <div class="funCongig" v-loading='Congigload'>
     <div class="title">
-      <h4>函数配置</h4>
+      <h4>{{$t('SCF.total.hspz')}}</h4>
       <p>
-        <el-button type="text" @click="edit=true" :disabled='disedit'>编辑</el-button>
+        <el-button type="text" @click="edit=true" :disabled='disedit'>{{$t('SCF.total.bj')}}</el-button>
       </p>
     </div>
     <div v-if="edit===false">
       <div class="Content">
-        <p>函数名称</p>
+        <p>{{$t('SCF.total.hsmc')}}</p>
         <p>{{ConfigDate.FunctionName}}</p>
       </div>
       <div class="Content">
-        <p>运行角色</p>
+        <p>{{$t('SCF.total.yxjs')}}</p>
         <p v-if="ConfigDate.Role">{{ConfigDate.Role}}</p>
-        <p v-else>暂无运行角色</p>
+        <p v-else>{{$t('SCF.total.zwyxjs')}}</p>
       </div>
       <div class="Content">
-        <p>运行环境</p>
+        <p>{{$t('SCF.total.yxhj')}}</p>
         <p>{{ConfigDate.Runtime}}</p>
       </div>
       <div class="Content">
-        <p>内存</p>
+        <p>{{$t('SCF.total.nc')}}</p>
         <p>{{ConfigDate.MemorySize}}</p>
       </div>
       <div class="Content">
-        <p>超时时间</p>
+        <p>{{$t('SCF.total.cssj')}}</p>
         <p>{{ConfigDate.Timeout}}</p>
       </div>
       <div class="Content">
-        <p>描述</p>
+        <p>{{$t('SCF.total.ms')}}</p>
         <p>{{ConfigDate.Description}}</p>
       </div>
       <div class="Content">
-        <p>修改时间</p>
+        <p>{{$t('SCF.total.xgsj2')}}</p>
         <p>{{ConfigDate.ModTime}}</p>
       </div>
       <div class="Content" v-if="!Congigload">
-        <p>环境变量</p>
-        <p v-if="Variables.length===0">暂无环境变量</p>
+        <p>{{$t('SCF.total.hjbl')}}</p>
+        <p v-if="Variables.length===0">{{$t('SCF.total.whjbl')}}</p>
         <p v-else v-for="(item,index) in Variables">
           <span>{{item.Key}}={{item.Value}}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         </p>
       </div>
       <div class="Content" v-if="!Congigload">
-        <p>所属网络</p>
-        <p v-if="Vpc_Smb.Vpc===''">无VPC</p>
+        <p>{{$t('SCF.total.sswl')}}</p>
+        <p v-if="Vpc_Smb.Vpc===''">{{$t('SCF.total.w')}}</p>
         <p v-else><a href=""> {{ConfigDate.VpcConfig.VpcId}}</a>
           ({{Vpc_Smb.Vpc.VpcId}} | {{Vpc_Smb.Vpc.VpcName}} | {{Vpc_Smb.Vpc.CidrBlock}})
         </p>
       </div>
       <div class="Content" v-if="!Congigload">
-        <p>所属子网</p>
-        <p v-if="ConfigDate.VpcConfig.SubnetId===''">无子网</p>
+        <p>{{$t('SCF.total.sszw')}}</p>
+        <p v-if="ConfigDate.VpcConfig.SubnetId===''">{{$t('SCF.total.wzw')}}</p>
         <p v-else><a href=""> {{ConfigDate.VpcConfig.SubnetId}}</a>
           ({{Vpc_Smb.Smb.SubnetId}} | {{Vpc_Smb.Smb.SubnetName}} | {{Vpc_Smb.Smb.CidrBlock}})
         </p>
@@ -60,13 +60,13 @@
     </div>
     <div v-if="edit===true">
       <div class="Content">
-        <p>函数名称</p>
+        <p>{{$t('SCF.total.hsmc')}}</p>
         <p>{{ConfigDate.FunctionName}}</p>
       </div>
       <div class="Content">
-        <p>运行角色</p>
+        <p>{{$t('SCF.total.yxjs')}}</p>
         <div>
-          <el-select v-model="RoleValue" placeholder="请选择">
+          <el-select v-model="RoleValue" :placeholder="$t('SCF.total.qsz')">
             <el-option v-for="item in RoleArr" :key="item.RoleName" :label="item.RoleName" :value="item.RoleName">
             </el-option>
           </el-select>
@@ -74,23 +74,23 @@
       </div>
       <div class="Content">
         <p></p>
-        <p class="Tips">此角色将用于授权函数运行时操作其他资源的权限。您可以新建角色或对角色修改权限</p>
+        <p class="Tips">{{$t('SCF.total.jsqxxg')}}</p>
       </div>
       <div class="Content">
-        <p>运行环境</p>
+        <p>{{$t('SCF.total.yxhj')}}</p>
         <p>{{ConfigDate.Runtime}}</p>
       </div>
       <div class="Content">
-        <p>内存</p>
+        <p>{{$t('SCF.total.nc')}}</p>
         <div>
-          <el-select v-model="MemoryValue" placeholder="请选择">
+          <el-select v-model="MemoryValue" :placeholder="$t('SCF.total.qsz')">
             <el-option v-for="item in MemoryArr" :key="item.value" :label="item.label" :value="item.value">
             </el-option>
           </el-select>
         </div>
       </div>
       <div class="Content">
-        <p>超时时间</p>
+        <p>{{$t('SCF.total.cssj')}}</p>
         <div>
           <el-input v-model="TimeoutValue">
             <el-button slot="append">秒</el-button>
@@ -99,10 +99,10 @@
       </div>
       <div class="Content">
         <p></p>
-        <p class="Tips">时间范围：1-900秒</p>
+        <p class="Tips">{{$t('SCF.total.sjfw')}}</p>
       </div>
       <div class="Content">
-        <p>描述</p>
+        <p>{{$t('SCF.total.ms')}}</p>
         <p>
           <el-input type="textarea" :rows="1" v-model="ConfigDate.Description">
           </el-input>
@@ -110,10 +110,10 @@
       </div>
       <div class="Content">
         <p></p>
-        <p class="Tips">只能包含字母、数字、空格、逗号、句号、中文，长度最多1000个字符</p>
+        <p class="Tips">{{$t('SCF.total.znbh')}}</p>
       </div>
       <div class="Content" v-if="!Congigload">
-        <p>环境变量</p>
+        <p>{{$t('SCF.total.hjbl')}}</p>
         <div>
           <div class="Science borderNone">
             <p>Key</p>
@@ -137,7 +137,7 @@
       </div>
 
       <div class="Content">
-        <p>内网访问
+        <p>{{$t('SCF.total.nwfw')}}
           <el-tooltip content="Bottom center" placement="bottom" effect="light">
             <span><i class="el-icon-question"></i></span>
           </el-tooltip>
@@ -151,24 +151,24 @@
       <div class="Content" v-if="IntranetValue">
         <p></p>
         <div>
-          <el-select v-model="VPCvalue" placeholder="请选择">
+          <el-select v-model="VPCvalue" :placeholder="$t('SCF.total.qsz')">
             <el-option v-for="item in VPCoptions" :key="item.VpcId"
               :label="item.VpcId+' | '+ item.VpcName+' | '+item.CidrBlock" :value="item.VpcId">
             </el-option>
           </el-select>
-          <el-select v-model="Subvalue" placeholder="请选择">
+          <el-select v-model="Subvalue" :placeholder="$t('SCF.total.qsz')">
             <el-option v-for="item in Suboptions" :key="item.SubnetId"
               :label="item.SubnetId+' | '+ item.SubnetName+' | '+item.CidrBlock" :value="item.SubnetId">
             </el-option>
           </el-select>
-          <p style="color:#888">如现有的网络不合适，您可以去控制台
-            <a href="">新建私有网络</a>
+          <p style="color:#888">{{$t('SCF.total.wlbs')}}
+            <a href="">{{$t('SCF.total.xjsywl')}}</a>
             或
-            <a href="">新建子网</a> </p>
+            <a href="">{{$t('SCF.total.xjzw')}}</a> </p>
         </div>
       </div>
       <div class="Preservation">
-        <el-button type="primary" size="small" @click="_Preservation">保存</el-button>
+        <el-button type="primary" size="small" @click="_Preservation">{{$t('SCF.total.bc')}}</el-button>
         <el-button size="small" @click="_cancel"> 取消</el-button>
       </div>
 
@@ -308,16 +308,16 @@
             this.TimeoutValue = this.ConfigDate.Timeout
           } else {
             let ErrTips = {
-              'InternalError': '内部错误',
-              'InternalError.System': '内部系统错误',
-              'InvalidParameter.Payload': '请求参数不合法',
-              'InvalidParameterValue': '参数取值错误',
-              'InvalidParameterValue.CodeSecret': 'CodeSecret传入错误',
-              'ResourceNotFound.Function': '函数不存在',
-              'ResourceNotFound.FunctionName': '函数不存在',
-              'UnauthorizedOperation': '未授权操作',
-              'UnauthorizedOperation.CAM': 'CAM鉴权失败',
-              'UnauthorizedOperation.CodeSecret': '无访问代码权限'
+              'InternalError': '內部錯誤',
+              'InternalError.System': '內部系統錯誤',
+              'InvalidParameter.Payload': '請求參數不合法',
+              'InvalidParameterValue': '參數取值錯誤',
+              'InvalidParameterValue.CodeSecret': 'CodeSecret傳入錯誤',
+              'ResourceNotFound.Function': '函數不存在',
+              'ResourceNotFound.FunctionName': '函數不存在',
+              'UnauthorizedOperation': '未授權操作',
+              'UnauthorizedOperation.CAM': 'CAM鑒權失敗',
+              'UnauthorizedOperation.CodeSecret': '無訪問程式碼權限'
             };
             let ErrOr = Object.assign(ErrorTips, ErrTips);
             this.$message({
@@ -359,7 +359,7 @@
           } else {
             let ErrTips = {
               'InternalError.SystemError': 'InternalError.SystemError',
-              'InvalidParameter.ParamError': '非法入参'
+              'InvalidParameter.ParamError': '非法入參'
             };
             let ErrOr = Object.assign(ErrorTips, ErrTips);
             this.$message({
@@ -410,9 +410,9 @@
             }
           } else {
             let ErrTips = {
-              'InvalidParameter.Coexist': '参数不支持同时指定',
-              'InvalidParameterValue.Malformed': '入参格式不合法',
-              'ResourceNotFound': '资源不存在'
+              'InvalidParameter.Coexist': '參數不支持同時指定',
+              'InvalidParameterValue.Malformed': '入參格式不合法',
+              'ResourceNotFound': '資源不存在'
             };
             let ErrOr = Object.assign(ErrorTips, ErrTips);
             this.$message({
@@ -456,9 +456,9 @@
 
           } else {
             let ErrTips = {
-              'InvalidParameter.Coexist': '参数不支持同时指定',
-              'InvalidParameterValue.Malformed': '入参格式不合法',
-              'ResourceNotFound': '资源不存在'
+              'InvalidParameter.Coexist': '參數不支持同時指定',
+              'InvalidParameterValue.Malformed': '入參格式不合法',
+              'ResourceNotFound': '資源不存在'
             };
             let ErrOr = Object.assign(ErrorTips, ErrTips);
             this.$message({
@@ -507,24 +507,24 @@
             this.GetDate()
           } else {
             let ErrTips = {
-              'InternalError.System': '内部系统错误',
-              'InvalidParameter.Payload': '请求参数不合法',
-              'InvalidParameterValue': '参数取值错误',
-              'InvalidParameterValue.Cls': 'Cls传入错误',
-              'InvalidParameterValue.Description': 'Description传入错误',
-              'InvalidParameterValue.EipConfig': 'EipConfig参数错误',
-              'InvalidParameterValue.Environment': 'Environment传入错误',
-              'InvalidParameterValue.FunctionName': '函数不存在',
-              'InvalidParameterValue.Handler': 'Handler传入错误',
-              'InvalidParameterValue.Layers': 'Layers参数传入错误',
-              'InvalidParameterValue.MemorySize': 'MemorySize错误',
-              'LimitExceeded.Memory': '内存超出最大限制',
+              'InternalError.System': '內部系統錯誤',
+              'InvalidParameter.Payload': '請求參數不合法',
+              'InvalidParameterValue': '參數取值錯誤',
+              'InvalidParameterValue.Cls': 'Cls傳入錯誤',
+              'InvalidParameterValue.Description': 'Description傳入錯誤',
+              'InvalidParameterValue.EipConfig': 'EipConfig參數錯誤',
+              'InvalidParameterValue.Environment': 'Environment傳入錯誤',
+              'InvalidParameterValue.FunctionName': '函數不存在',
+              'InvalidParameterValue.Handler': 'Handler傳入錯誤',
+              'InvalidParameterValue.Layers': 'Layers參數傳入錯誤',
+              'InvalidParameterValue.MemorySize': 'MemorySize錯誤',
+              'LimitExceeded.Memory': '記憶體超出最大限制',
               'LimitExceeded.Timeout': 'Timeout超出最大限制',
-              'ResourceNotFound.Function': '函数不存在',
-              'ResourceNotFound.FunctionName': '函数不存在',
+              'ResourceNotFound.Function': '函數不存在',
+              'ResourceNotFound.FunctionName': '函數不存在',
               'ResourceNotFound.Layer': 'layer不存在',
-              'ResourceNotFound.Vpc': 'VPC或子网不存在',
-              'UnauthorizedOperation.CAM': 'CAM鉴权失败'
+              'ResourceNotFound.Vpc': 'VPC或子網不存在',
+              'UnauthorizedOperation.CAM': 'CAM鑒權失敗'
             };
             let ErrOr = Object.assign(ErrorTips, ErrTips);
             this.$message({

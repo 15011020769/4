@@ -43,7 +43,7 @@
         </div>
       </div>
       <p class="LocaP">
-        <a href="javascript:location.reload();">刷新</a>
+        <a href="javascript:location.reload();">重新整理</a>
       </p>
     </div>
   </div>

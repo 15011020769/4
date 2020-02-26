@@ -103,8 +103,8 @@
               </template>
             </el-table-column>
             <el-table-column prop="action" label="操作" width="180">
-              <template slot-scope="">
-                <el-button type="text" size="small">{{t('详情', 'WAF.xq')}}</el-button>
+              <template slot-scope="scope">
+                <el-button type="text" size="small" @click="$router.push({name: 'attackLog', params: {log: scope.row}})">{{t('详情', 'WAF.xq')}}</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -407,7 +407,7 @@ export default {
       this.axios.post(CREATE_ATTACK_DOWNLOAD_TASK, params).then(resp => {
         this.generalRespHandler(resp, ({ Context, Data, Count }) => {
           this.createDownTaskModel = false
-        }, COMMON_ERROR, '创建成功，你可以前往”下载任务“界面查看任务状态')
+        }, COMMON_ERROR, this.t('创建成功，你可以前往“下载任务”界面查看任务状态', 'WAF.cjcgnkyqw'))
       })
     },
     //关闭下载任务弹框

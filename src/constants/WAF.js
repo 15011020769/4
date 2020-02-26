@@ -28,6 +28,14 @@ export const DESCRIBE_ATTACK_TYPE = 'waf2/DescribeAttackType'
 export const DESCRIBE_BOT_COUNT = 'waf2/DescribeBotCount'
 /** 查询Bot趋势数据 */
 export const DESCRIBE_BOT_POINTS = 'waf2/DescribeBotPoints'
+/** 获取bot开关 */
+export const DESCRIBE_BOT_STATUS = 'waf2/DescribeBotStatus'
+/** bot策略公开类型列表 */
+export const DESCRIBE_BOTTCB_RECORDS = 'waf2/DescribeBotTCBRule'
+/** bot策略更新 */
+export const MODIFY_BOTTCB_RULE = 'waf2/ModifyBotTCBRule'
+/** bot开关更新 */
+export const MODIFY_BOT_STATUS = 'waf2/ModifyBotStatus'
 /** 攻击城市分布 */
 export const DESCRIBE_ATTACK_WORLD_MAP = 'waf2/DescribeAttackWorldMap'
 /** 查询访问类型占比 web攻击次数 */
@@ -78,6 +86,8 @@ export const DESCRIBE_CUSTOM_RULES = 'waf2/DescribeCustomRules'
 export const UPSERT_CCRULE = 'waf2/UpsertCCRule'
 /** Waf CC V2 Query接口 */
 export const DESCIRBE_CCRULE = 'waf2/DescirbeCCRule'
+/** Waf CC V2 Delete接口 */
+export const DELETE_CCRULE = 'waf2/DeleteCCRule'
 /** Waf 会话定义查询接口 */
 export const DESCRIBE_SESSION = 'waf2/DescribeSession'
 /** Waf 会话定义 Upsert接口 */
@@ -93,6 +103,20 @@ export const DESCRIBE_ATTACK_LOG_COUNT = 'waf2/DescribeAttackLogCount'
 /** 建攻击日志下载任务 */
 export const CREATE_ATTACK_DOWNLOAD_TASK = 'waf2/CreateAttackDownloadTask'
 /** 查询下载记录 */
-export const DESCRIBE_ATTACK_DOWNLOAD_RECORD = 'waf2/DescribeAttackDownloadRecord'
+export const DESCRIBE_ATTACK_DOWNLOAD_RECORDS = 'waf2/DescribeAttackDownloadRecords'
+/** 删除下载记录 */
+export const DELETE_DOWNLOAD_RECORD = 'waf2/DeleteDownloadRecord'
 /** 切换自定义规则的开关 */
 export const MODIFY_CUSTOM_RULE_STATUS = 'waf2/ModifyCustomRuleStatus'
+/** Bot_V2 域名bot统计 */
+export const DESCRIBE_BOT_AGGREGATE_DOMAINSTAT = 'waf2/DescribeBotAggregateDomainStat'
+/** 查询日志服务使用状况 */
+export const DESCRIBE_CLS = 'waf2/DescribeCLS'
+/** 查询满足搜索条件的访问日志数量 */
+export const DESCRIBE_ACCESSLOG_COUNT = 'waf2/DescribeAccessLogCount'
+/** 查询访问日志下载任务 */
+export const DESCRIBE_ACCESS_DOWNLOAD_RECORDS = 'waf2/DescribeAccessDownloadRecords'
+/** 下载访问日志 */
+export const CREATE_ACCESS_DOWNLOAD_RECORD = 'waf2/CreateAccessDownloadRecord'
+/** Bot_V2 Bot类别统计 */
+export const DESCRIBE_BOT_TYPE_STAT = 'waf2/DescribeBotTypeStat'

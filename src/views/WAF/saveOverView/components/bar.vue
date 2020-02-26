@@ -1,5 +1,6 @@
 <template>
-  <div ref="bar_dv" style="width: 100%;height: 200px;"></div>
+  <!-- <div ref="bar_dv" style="width: 100%;height: 200px;"></div> -->
+  <div ref="bar_dv" :style="{width: '100%',height: height + 'px'}"></div>
 </template>
 
 <script>
@@ -8,7 +9,8 @@ import 'echarts/lib/component/tooltip'
 export default {
   name: "myChart",
   data() {
-    return {};
+    return {
+    };
   },
   mounted() {
     this.echart();
@@ -25,6 +27,10 @@ export default {
     //     return {trigger: 'axis'}
     //   }
     // },
+    height: {
+      type: Number,
+      default: 200
+    },
     xAxis: {
       type: Array,
       default: () => []
@@ -59,8 +65,8 @@ export default {
         grid: {
           left: '3%',
           right: '4%',
-          bottom: '10%',
-          containLabel: true
+          bottom: '4%',
+          containLabel: true,
         },
         tooltip: {
           trigger: 'item',

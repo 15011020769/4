@@ -76,6 +76,10 @@ export const TKE_NEW_EDITION = 'tke2/DescribeVersions'
 // 新建集群 集群网络
 export const TKE_VPC_METWORK = 'vpc2/DescribeVpcs'
 
+// 新建集群 校验 CIDR
+// export const TKE_VPC_CIDR = 'ccs/CheckClusterCIDR'
+export const TKE_VPC_CIDR = 'tke2/CheckClusterCIDR'
+
 // 新建集群 操作系统
 export const TKE_OPERAT_SYSTEM = 'tke2/DescribeImages'
 
@@ -83,7 +87,7 @@ export const TKE_OPERAT_SYSTEM = 'tke2/DescribeImages'
 export const TKE_EXIST_NODES = 'cvm2/DescribeInstances'
 
 // 新建集群 Worker 配置 节点网络
-export const TKE_Worker_METWORK = 'vpc2/DescribeSubnets'
+export const TKE_WORKER_METWORK = 'vpc2/DescribeSubnets'
 
 // 新建集群 SSH密钥
 export const TKE_SSH = 'cvm2/DescribeKeyPairs'
@@ -142,4 +146,16 @@ export const POINT_REQUEST = 'tke2/ForwardRequest'
 export const TKE_DELETE_POLICIES = 'tke2/DeleteAlarmPolicies'
 
 // 云硬盘列表
-export const TKE_DESCRIBEDISKS = 'cbs2/DescribeDisks'
+export const TKE_DESCRIBEDISKS = 'cbs/DescribeDisks'
+
+// ingress新建 - 获取证书列表
+export const TKE_GETCERTLIST = 'account/GetCertList'
+
+// ingress新建 - 描述者（业务模块为实现）
+export const TKE_DESCRIBELISTENERS = 'clb2/DescribeListeners'
+
+// ingress新建 - 查询价格
+export const TKE_INQUIRYPRICE = 'clb2/InquiryPriceCreateLoadBalancer'
+
+// ingress新建 - 描述平衡器
+export const TKE_EDSCRIBELOADBALANCERS = 'clb2/DescribeLoadBalancers'

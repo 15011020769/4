@@ -1,14 +1,15 @@
- <!-- Ingress-事件 -->
+<!-- Ingress-事件 -->
 <template>
   <div class="colony-main">
     <div class="tke-reminder">资源事件只保存最近1小时内发生的事件，请尽快查阅。</div>
     <div class="tke-grid ">
       <!-- 右侧 -->
       <div class="grid-right">
-        <span>自动刷新</span><el-switch class="ml10" v-model="autoRefresh" ></el-switch>
+        <span>自动刷新</span>
+        <el-switch class="ml10" v-model="autoRefresh"></el-switch>
       </div>
     </div>
-    
+
     <!-- 数据列表展示 -->
     <div class="tke-card mt10">
       <el-table
@@ -17,14 +18,14 @@
         style="width: 100%">
         <el-table-column
           label="首次出现时间"
-          >
+        >
           <template slot-scope="scope">
             <p>2020-01-09 19:10:37</p>
           </template>
         </el-table-column>
         <el-table-column
           label="最后出现时间"
-          >
+        >
           <template slot-scope="scope">
             <p>2020-01-10 17:01:02</p>
           </template>
@@ -32,24 +33,24 @@
         <el-table-column
           prop=""
           label="级别"
-          >
+        >
           <template slot-scope="scope">
-              <span class="text-red">Warning</span>
+            <span class="text-red">Warning</span>
           </template>
         </el-table-column>
         <el-table-column
           prop=""
           label="资源类型"
-          >
+        >
           <template slot-scope="scope">
             <span>HorizontalPodAutoscaler</span>
           </template>
         </el-table-column>
-        
+
         <el-table-column
           prop=""
           label="资源名称"
-          >
+        >
           <template slot-scope="scope">
             <span>asdas.15e83372c763e97e</span>
           </template>
@@ -76,58 +77,73 @@
           </template>
         </el-table-column>
       </el-table>
-      
+
     </div>
   </div>
 </template>
 
 <script>
-import Loading from "@/components/public/Loading";
-import FileSaver from "file-saver";
-import XLSX from "xlsx";
-import { ALL_CITY } from "@/constants";
+import Loading from '@/components/public/Loading'
+import FileSaver from 'file-saver'
+import XLSX from 'xlsx'
+import { ALL_CITY, POINT_REQUEST } from '@/constants'
+import { ErrorTips } from '@/components/ErrorTips.js'
+
 export default {
-  name: "ingressDetailEvent",
-  data() {
+  name: 'ingressDetailEvent',
+  data () {
     return {
-      loadShow: false, //加载是否显示
-      autoRefresh: true, //自动刷新
-      list:[
-        {
-          status:false
-        },
-        {
-          status:true
-        },
-        {
-          status:true
-        },
-        {
-          status:true
-        }
-      ], //列表
-    };
+      clusterId: '',
+      namespace: '', // 所在页面的命名空间
+      ingressName: '', // 所在页面的ingress名称
+      loadShow: false, // 加载是否显示
+      autoRefresh: true, // 自动刷新
+      list: [] // 列表
+    }
   },
   components: {
     Loading
   },
-  created() {
-     // 从路由获取类型
-   
+  created () {
+    // 从路由获取类型
+    let { clusterId, ingressName, namespace } = this.$route.query
+    this.clusterId = clusterId
+    this.namespace = namespace
+    this.ingressName = ingressName
+    this.getIngressEvent()
   },
   methods: {
-    //返回上一层
-    goBack(){
-          this.$router.go(-1);
+    // 返回上一层
+    goBack () {
+      this.$router.go(-1)
     },
+    async getIngressEvent () {
+      this.loadShow = true
+      let param = {
+        Method: 'GET',
+        Path: '/apis/extensions/v1beta1/namespaces/default/ingresses/ee/events',
+        Version: '2018-05-25',
+        ClusterName: 'cls-a7rua9ae'
+      }
+      await this.axios.post(POINT_REQUEST, param).then(res => {
+        if (res.Response.Error === undefined) {
+          var mes = JSON.parse(res.Response.ResponseBody)
+          this.list = mes.items
+        } else {
+          let ErrTips = {}
+          let ErrOr = Object.assign(ErrorTips, ErrTips)
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: 'error',
+            showClose: true,
+            duration: 2000
+          })
+        }
+        this.loadShow = false
+      })
+    }
   }
-};
+}
 </script>
 
-<style lang="scss" scoped>
-
-
-
-
-</style>
-
+<style lang="scss" scoped></style>
