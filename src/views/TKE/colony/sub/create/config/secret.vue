@@ -72,8 +72,6 @@
 						</el-form-item>
 					</div>
         </el-form>
-
-       
         <!-- 底部 -->
         <div class="tke-formpanel-footer">
           <el-button size="small" type="primary" @click="creatSecret()">创建Secret</el-button>
@@ -81,8 +79,6 @@
         </div>
       </div>
     </div>
-
-   
   </div>
 </template>
 

@@ -171,13 +171,16 @@ export default {
   },
   methods: {
     refresh() {
+      this.nsOptions = [];
       if (this.autoRefresh == true) {
         var timeId = setInterval(() => {
           this.nameSpaceList();
           // this.getKind();
         }, 20000);
+         window.clearInterval(timeId);
       } else {
         window.clearInterval(timeId);
+        this.nsOptions = [];
         this.nameSpaceList();
         // this.getKind();
       }
