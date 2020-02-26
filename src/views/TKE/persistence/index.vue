@@ -26,7 +26,7 @@
         </div>
         <!-- 内容 -->
         <el-table :data="tableData" style="width: 100%" v-loading="loadShow">
-          <el-table-column label="ID/名称" width="250">
+          <el-table-column label="ID/名称" width="220">
             <template slot-scope="scope">
               <span
                 :class="[
@@ -43,7 +43,7 @@
             </template>
           </el-table-column>
 
-          <el-table-column label="状态" width="250">
+          <el-table-column label="状态" width="220">
             <template slot-scope="scope">
               <span v-if="scope.row.ClusterStatus == 'Running'" class="text-green">
                 已开启
@@ -57,7 +57,7 @@
             </template>
           </el-table-column>
           <!-- 存储端参数找不到 -->
-          <el-table-column label="存储端" width="250">
+          <el-table-column label="存储端" width="220">
             <template slot-scope="scope">
               <span v-if="scope.row">Elasticsearch</span>
               <span v-else-if="!scope.row">-</span>
@@ -69,7 +69,7 @@
               <p>{{scope.row.indexName ? scope.row.indexName: ''}}</p>
             </template>
           </el-table-column>
-          <el-table-column label="操作" width="250">
+          <el-table-column label="操作" width="220">
             <template slot-scope="scope">
               <el-button @click="handleClick(scope.row)" type="text" size="small">设置</el-button>
             </template>

@@ -196,7 +196,6 @@ export default {
     },
     status() {
       if (this.value == false) {
-        this.okFlag = true;
         this.ok = "删除";
         // this.elasticVal = "";
         // this.indexesVal = "";
@@ -224,12 +223,6 @@ export default {
           });
           return;
         }
-        
-// Method: "POST"
-// Path: "/apis/platform.tke/v1/persistentevents"
-// Version: "2018-05-25"
-// RequestBody: "{"kind":"PersistentEvent","apiVersion":"platform.tke/v1","metadata":{"generateName":"pe"},"spec":{"clusterName":"cls-8c625d4a","persistentBackEnd":{"es":{"ip":"121.1.1.1","port":9090,"scheme":"http","indexName":"aaaaaa"}}}}"
-// ClusterName: "cls-8c625d4a"
 
         let params = {
           Method: "POST",
@@ -240,23 +233,20 @@ export default {
             this.$route.query.ClusterId +
             '","persistentBackEnd":{"es":{"ip":"' +
             this.elasticVal.substring(7, this.elasticVal.length - 5) +
-            '","port":"' +
+            '","port":' +
             this.elasticVal.substring(
               this.elasticVal.length - 4,
               this.elasticVal.length
             ) +
-            '","scheme":"' +
+            ',"scheme":"' +
             this.elasticVal.substring(0, 4) +
             '","indexName":"' +
             this.indexesVal +
             '"}}}}',
           ClusterName: this.$route.query.ClusterId
         };
-        console.log(params);
         this.axios.post(TKE_COLONY_QUERY, params).then(res => {
           if (res.Response.Error === undefined) {
-            var data = JSON.parse(res.Response.ResponseBody).items;
-            this.tableData = data;
             this.loadShow = false;
           } else {
             let ErrTips = {};
