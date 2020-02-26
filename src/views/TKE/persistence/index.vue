@@ -64,11 +64,10 @@
           </el-table-column>
           <el-table-column label="存储对象" width="320">
             <template slot-scope="scope">
-              <span v-if="scope.row">
-                ES地址( https://233.13.41.5:5452 )
-                <br />索引( ffff )
+              <span>
+                {{scope.row.storageObject ? scope.row.storageObject: '-'}}
               </span>
-              <span v-else-if="!scope.row">-</span>
+              <p>{{scope.row.indexName ? scope.row.indexName: ''}}</p>
             </template>
           </el-table-column>
           <el-table-column label="操作" width="250">
@@ -211,8 +210,43 @@ export default {
       }
       const res = await this.axios.post(TKE_COLONY_LIST, params);
       if (res.Response.Error === undefined) {
+        let paramsD = {
+          Method: "GET",
+          Path: "/apis/platform.tke/v1/persistentevents",
+          Version: "2018-05-25"
+        };
+        let k8sList = [];
+        let k8sRes = await this.axios.post(TKE_COLONY_QUERY, paramsD);
+        
+        if (k8sRes.Response.Error === undefined) {
+          var data = JSON.parse(k8sRes.Response.ResponseBody);
+          k8sList = data.items;
+          this.loadShow = false;
+        } else {
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[k8sRes.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+        if(res.Response.Clusters.length > 0) {
+          res.Response.Clusters.map(cluster => {
+            k8sList.map(k8s => {
+              if(cluster.ClusterId === k8s.spec.clusterName) {
+                if(k8s.spec && k8s.spec.persistentBackEnd && k8s.spec.persistentBackEnd.es) {
+                  cluster.storageObject = 'ES地址( http://'+ k8s.spec.persistentBackEnd.es.ip + ':' + k8s.spec.persistentBackEnd.es.port + ')';
+                  cluster.indexName = '索引('+ k8s.spec.persistentBackEnd.es.indexName+')';
+                }
+              } 
+            });
+            return cluster;
+          });
+        }
         this.total = res.Response.TotalCount;
-        this.tableData1 = res.Response.Clusters;
+        this.tableData = res.Response.Clusters;
         this.loadShow = false;
       } else {
         this.loadShow = false;
@@ -238,29 +272,7 @@ export default {
           duration: 0
         });
       }
-      let paramsD = {
-        Method: "GET",
-        Path: "/apis/platform.tke/v1/persistentevents",
-        Version: "2018-05-25"
-      };
-      this.axios.post(TKE_COLONY_QUERY, paramsD).then(res => {
-        if (res.Response.Error === undefined) {
-          // console.log(JSON.parse(res.Response.ResponseBody));
-          var data = JSON.parse(res.Response.ResponseBody);
-          this.tableData2 = data.items;
-          console.log( this.tableData2);
-          this.loadShow = false;
-        } else {
-          let ErrTips = {};
-          let ErrOr = Object.assign(ErrorTips, ErrTips);
-          this.$message({
-            message: ErrOr[res.Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-          });
-        }
-      });
+      
 
       var arr = [];//执行合并任务，展示数据
       console.log(this.tableData1, this.tableData2);
