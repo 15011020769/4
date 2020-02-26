@@ -142,4 +142,16 @@ export const POINT_REQUEST = 'tke2/ForwardRequest'
 export const TKE_DELETE_POLICIES = 'tke2/DeleteAlarmPolicies'
 
 // 云硬盘列表
-export const TKE_DESCRIBEDISKS = 'cbs2/DescribeDisks'
+export const TKE_DESCRIBEDISKS = 'cbs/DescribeDisks'
+
+// ingress新建 - 获取证书列表
+export const TKE_GETCERTLIST = 'account/GetCertList'
+
+// ingress新建 - 描述者（业务模块为实现）
+export const TKE_DESCRIBELISTENERS = 'clb2/DescribeListeners'
+
+// ingress新建 - 查询价格
+export const TKE_INQUIRYPRICE = 'clb2/InquiryPriceCreateLoadBalancer'
+
+// ingress新建 - 描述平衡器
+export const TKE_EDSCRIBELOADBALANCERS = 'clb2/DescribeLoadBalancers'
