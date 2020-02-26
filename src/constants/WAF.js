@@ -28,6 +28,14 @@ export const DESCRIBE_ATTACK_TYPE = 'waf2/DescribeAttackType'
 export const DESCRIBE_BOT_COUNT = 'waf2/DescribeBotCount'
 /** 查询Bot趋势数据 */
 export const DESCRIBE_BOT_POINTS = 'waf2/DescribeBotPoints'
+/** 获取bot开关 */
+export const DESCRIBE_BOT_STATUS = 'waf2/DescribeBotStatus'
+/** bot策略公开类型列表 */
+export const DESCRIBE_BOTTCB_RECORDS = 'waf2/DescribeBotTCBRule'
+/** bot策略更新 */
+export const MODIFY_BOTTCB_RULE = 'waf2/ModifyBotTCBRule'
+/** bot开关更新 */
+export const MODIFY_BOT_STATUS = 'waf2/ModifyBotStatus'
 /** 攻击城市分布 */
 export const DESCRIBE_ATTACK_WORLD_MAP = 'waf2/DescribeAttackWorldMap'
 /** 查询访问类型占比 web攻击次数 */

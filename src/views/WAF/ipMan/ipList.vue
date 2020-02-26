@@ -222,15 +222,6 @@ export default {
       timeOut: false, //有效截止日期
       timeValue2: [moment().subtract(1, 'hour'), new Date()], //有效截止日期
       multipleSelection: [], //tableCheck
-      tableDataBegin: [],
-      allData: [{
-        resourse:'自定义',
-        ipAddress:'10.1.1.23',
-        type:'黑名单',
-        updata:'2019-12-25 13:52:03',
-        stopTime:'2020-01-01 23:59:59',
-        descrip:'123'
-      }],//自定义数据
       tableDataBegin: [],//表格数据
       tableDataEnd: [],
       currentPage: 1,//当前页
