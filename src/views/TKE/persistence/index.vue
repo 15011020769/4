@@ -56,6 +56,7 @@
               <span v-else class="text-red">未开启</span>
             </template>
           </el-table-column>
+          <!-- 存储端参数找不到 -->
           <el-table-column label="存储端" width="250">
             <template slot-scope="scope">
               <span v-if="scope.row">Elasticsearch</span>
@@ -64,9 +65,7 @@
           </el-table-column>
           <el-table-column label="存储对象" width="320">
             <template slot-scope="scope">
-              <span>
-                {{scope.row.storageObject ? scope.row.storageObject: '-'}}
-              </span>
+              <span>{{scope.row.storageObject ? scope.row.storageObject: '-'}}</span>
               <p>{{scope.row.indexName ? scope.row.indexName: ''}}</p>
             </template>
           </el-table-column>
@@ -130,7 +129,6 @@ export default {
   methods: {
     // 查看详情跳转
     goColonySub(id) {
-      // scope.row.ClusterType=='MANAGED_CLUSTER'
       this.$router.push({
         name: "colonyResourceDeployment",
         query: {
@@ -140,9 +138,9 @@ export default {
     },
     handleClick(uid) {
       //设置
-      // console.log(uid);
       this.$router.push({
-        path: "/persistenceSetting/" + uid.ClusterId
+        path: "/persistenceSetting/" + uid.ClusterId,
+        query: uid
       });
     },
     searchList() {
@@ -172,31 +170,6 @@ export default {
         this.loadShow = false;
       });
     },
-    search() {
-      //搜索数据持久化列表
-      let params = {
-        Version: "2018-05-25"
-      };
-
-      this.axios.get(TKE_COLONY_STATUS, params).then(res => {
-        console.log(res);
-        if (res.Response.Error === undefined) {
-          // this.tableData = res.Response.Clusters;
-          // this.loadShow = false;
-          // console.log(res.Response.Clusters);
-        } else {
-          this.loadShow = false;
-          let ErrTips = {};
-          let ErrOr = Object.assign(ErrorTips, ErrTips);
-          this.$message({
-            message: ErrOr[res.Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 3000
-          });
-        }
-      });
-    },
     async getColonyList() {
       this.loadShow = true;
       let params = {
@@ -217,7 +190,7 @@ export default {
         };
         let k8sList = [];
         let k8sRes = await this.axios.post(TKE_COLONY_QUERY, paramsD);
-        
+
         if (k8sRes.Response.Error === undefined) {
           var data = JSON.parse(k8sRes.Response.ResponseBody);
           k8sList = data.items;
@@ -232,15 +205,25 @@ export default {
             duration: 0
           });
         }
-        if(res.Response.Clusters.length > 0) {
+        if (res.Response.Clusters.length > 0) {
           res.Response.Clusters.map(cluster => {
             k8sList.map(k8s => {
-              if(cluster.ClusterId === k8s.spec.clusterName) {
-                if(k8s.spec && k8s.spec.persistentBackEnd && k8s.spec.persistentBackEnd.es) {
-                  cluster.storageObject = 'ES地址( http://'+ k8s.spec.persistentBackEnd.es.ip + ':' + k8s.spec.persistentBackEnd.es.port + ')';
-                  cluster.indexName = '索引('+ k8s.spec.persistentBackEnd.es.indexName+')';
+              if (cluster.ClusterId === k8s.spec.clusterName) {
+                if (
+                  k8s.spec &&
+                  k8s.spec.persistentBackEnd &&
+                  k8s.spec.persistentBackEnd.es
+                ) {
+                  cluster.storageObject =
+                    "ES地址( http://" +
+                    k8s.spec.persistentBackEnd.es.ip +
+                    ":" +
+                    k8s.spec.persistentBackEnd.es.port +
+                    ")";
+                  cluster.indexName =
+                    "索引(" + k8s.spec.persistentBackEnd.es.indexName + ")";
                 }
-              } 
+              }
             });
             return cluster;
           });
@@ -272,9 +255,8 @@ export default {
           duration: 0
         });
       }
-      
 
-      var arr = [];//执行合并任务，展示数据
+      var arr = []; //执行合并任务，展示数据
       console.log(this.tableData1, this.tableData2);
       for (let index = 0; index < this.tableData1.length; index++) {
         arr.push(Object.assign(this.tableData1[index], this.tableData2[index]));

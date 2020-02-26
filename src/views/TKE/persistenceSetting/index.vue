@@ -11,12 +11,12 @@
         <!-- 内容标题 -->
         <div class="flex padding">
           <div class="data-card-hd">集群</div>
-          <div>sssssssss({{}})</div>
+          <div>{{this.$route.query.ClusterName}}({{this.$route.query.ClusterId}})</div>
         </div>
         <div class="flex padding">
           <div class="data-card-hd">事件持久化存储</div>
           <div>
-            <el-switch v-model="value" active-color="#006EFF" inactive-color="#cccccc" ></el-switch>
+            <el-switch v-model="value" active-color="#006EFF" inactive-color="#cccccc"></el-switch>
             <div style="padding-top:8px;">
               开启事件持久化存储功能会额外占用您集群资源
               <span class="font-orange">&nbsp;CPU&nbsp;（0.2核）内存（100MB）</span>
@@ -24,34 +24,40 @@
             </div>
           </div>
         </div>
-        <div class="flex padding" style="padding-bottom:0px;">
-          <div class="data-card-hd" style="line-height:28px;">存储端选择</div>
-          <div class="flex">
-            <el-radio-group
-              v-model="tabPosition"
-              class="font"
-              style="margin-bottom: 30px;"
-              size="mini"
-            >
-              <el-radio-button class="tabs-size" style="font-size:12px;" label="Els">Elasticsearch</el-radio-button>
-              <el-radio-button class="tabs-size" label="log">日志服务CLS</el-radio-button>
-            </el-radio-group>
+        <div v-show="value">
+          <div class="flex padding" style="padding-bottom:0px;">
+            <div class="data-card-hd" style="line-height:28px;">存储端选择</div>
+            <div class="flex">
+              <el-radio-group
+                v-model="tabPosition"
+                class="font"
+                style="margin-bottom: 30px;"
+                size="mini"
+              >
+                <el-radio-button class="tabs-size" style="font-size:12px;" label="Els">Elasticsearch</el-radio-button>
+                <el-tooltip class="item" effect="light" content="该地区不支持日志服务CLS" placement="right">
+                  <el-radio-button class="tabs-size" label="log" disabled>日志服务CLS</el-radio-button>
+                </el-tooltip>
+              </el-radio-group>
+            </div>
+          </div>
+          <!-- Els -->
+
+          <div class="flex padding" v-if="tabPosition=='Els'">
+            <div class="data-card-hd" style="line-height:28px;">Elasticsearch</div>
+            <div>
+              <input type="text" placeholder="eg: http://190.0.0.1:9200" v-model="elasticVal" />
+            </div>
+          </div>
+          <div class="flex padding" style="padding-bottom:0px;" v-if="tabPosition=='Els'">
+            <div class="data-card-hd" style="line-height:28px;">索引</div>
+            <div>
+              <input type="text" placeholder="eg: fluentd" v-model="indexesVal" />
+              <div style="padding-top:10px;">最长60个字符，只能包含小写字母，数字及分隔符("-","_","+"),且必须以小写字母开头</div>
+            </div>
           </div>
         </div>
-        <!-- Els -->
-        <div class="flex padding" v-if="tabPosition=='Els'">
-          <div class="data-card-hd" style="line-height:28px;">Elasticsearch</div>
-          <div>
-            <input type="text" placeholder="eg: http://190.0.0.1:9200" />
-          </div>
-        </div>
-        <div class="flex padding" style="padding-bottom:0px;" v-if="tabPosition=='Els'">
-          <div class="data-card-hd" style="line-height:28px;">索引</div>
-          <div>
-            <input type="text" placeholder="eg: fluentd" />
-            <div style="padding-top:10px;">最长60个字符，只能包含小写字母，数字及分隔符("-","_","+"),且必须以小写字母开头</div>
-          </div>
-        </div>
+
         <!-- blog -->
         <div class="flex padding" style="padding-bottom:0px;" v-if="tabPosition=='log'">
           <div class="data-card-hd" style="line-height:28px;">日志服务实例</div>
@@ -73,7 +79,7 @@
         </div>
         <el-form>
           <el-form-item style="margin-top:40px;margin-left:30px;">
-            <el-button type="primary" @click="onSubmit" size="mini">立即创建</el-button>
+            <el-button type="primary" @click="onSubmit" size="mini">保存</el-button>
             <el-button size="mini">取消</el-button>
           </el-form-item>
         </el-form>
@@ -88,19 +94,31 @@ import { ErrorTips } from "@/components/ErrorTips.js"; //公共错误码
 export default {
   data() {
     return {
-      value: true,//事件持久化存储开关
+      value: true, //事件持久化存储开关
       tabPosition: "Els",
       loadShow: true, // 加载是否显示
-      dataList:{}
+      dataList: {},
+      elasticVal: "",
+      indexesVal: ""
     };
   },
-  methods:{
-    onSubmit(){
-      this.$router.push({
-        path:"/persistence"
-      })
+  methods: {
+    //存储
+    elastic(val) {
+      this.elasticVal = val;
+      console.log(val);
     },
-     getColonyList() {
+    //索引
+    indexes(val) {
+      this.indexesVal = val;
+      console.log(val);
+    },
+    onSubmit() {
+      this.$router.push({
+        path: "/persistence"
+      });
+    },
+    getColonyList() {
       //数据持久化集群列表
       console.log(this.$route.name); //persistence
       let params = {
@@ -112,15 +130,15 @@ export default {
       this.axios.post(TKE_COLONY_QUERY, params).then(res => {
         if (res.Response.Error === undefined) {
           // console.log(JSON.parse(res.Response.ResponseBody).items);
-          var data=JSON.parse(res.Response.ResponseBody).items;
-          var name=this.$route.params.uid;
-          data.forEach((item) => {
-            if(item.spec.clusterName==name){
+          var data = JSON.parse(res.Response.ResponseBody).items;
+          var name = this.$route.params.uid;
+          data.forEach(item => {
+            if (item.spec.clusterName == name) {
               // console.log(item)
               this.dataList = item;
             }
           });
-          console.log(this.dataList)
+          console.log(this.dataList);
           this.loadShow = false;
         } else {
           let ErrTips = {};
@@ -135,8 +153,10 @@ export default {
       });
     }
   },
-  created(){
+  created() {
     this.getColonyList();
+    this.indexes();
+    this.onSubmit();
   },
   props: ["uid"],
   components: {
