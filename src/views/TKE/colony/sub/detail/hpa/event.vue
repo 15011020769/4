@@ -5,7 +5,7 @@
     <div class="tke-grid ">
       <!-- 右侧 -->
       <div class="grid-right">
-        <span>自动刷新</span><el-switch class="ml10" v-model="autoRefresh" ></el-switch>
+        <span>自动刷新</span><el-switch class="ml10" v-model="autoRefresh" @change="useAuto"></el-switch>
       </div>
     </div>
     
@@ -19,22 +19,21 @@
           label="首次出现时间"
           >
           <template slot-scope="scope">
-            <p>2020-01-09 19:10:37</p>
+            <p>{{timeFormat(scope.row.firstTimestamp)}}</p>
           </template>
         </el-table-column>
         <el-table-column
           label="最后出现时间"
           >
           <template slot-scope="scope">
-            <p>2020-01-10 17:01:02</p>
+            <p>{{timeFormat(scope.row.lastTimestamp)}}</p>
           </template>
         </el-table-column>
         <el-table-column
-          prop=""
           label="级别"
           >
           <template slot-scope="scope">
-              <span class="text-red">Warning</span>
+              <span :class="{'text-red':scope.row.type=='Warning'}">{{scope.row.type}}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -42,7 +41,7 @@
           label="资源类型"
           >
           <template slot-scope="scope">
-            <span>HorizontalPodAutoscaler</span>
+            <span>{{scope.row.involvedObject.kind}}</span>
           </template>
         </el-table-column>
         
@@ -51,29 +50,30 @@
           label="资源名称"
           >
           <template slot-scope="scope">
-            <span>asdas.15e83372c763e97e</span>
+            <span>{{scope.row.metadata.name}}</span>
           </template>
         </el-table-column>
         <el-table-column
-          prop="address"
+          prop="reason"
           label="内容">
-          <template slot-scope="scope">
+          <!-- <template slot-scope="scope">
             <span>FailedGetPodsMetric</span>
-          </template>
+          </template> -->
         </el-table-column>
         <el-table-column
-          prop="nodeTotal"
+          prop="message"
+          :show-overflow-tooltip="true"
           label="详细描述">
-          <template slot-scope="scope">
+          <!-- <template slot-scope="scope">
             <p>Error: ImagePullBackOff</p>
-          </template>
+          </template> -->
         </el-table-column>
         <el-table-column
-          prop=""
+          prop="count"
           label="出现次数">
-          <template slot-scope="scope">
+          <!-- <template slot-scope="scope">
             <p>2617</p>
-          </template>
+          </template> -->
         </el-table-column>
       </el-table>
       
@@ -85,27 +85,18 @@
 import Loading from "@/components/public/Loading";
 import FileSaver from "file-saver";
 import XLSX from "xlsx";
-import { ALL_CITY } from "@/constants";
+import { ALL_CITY ,TKE_COLONY_QUERY} from "@/constants";
 export default {
   name: "hpaDetailEvent",
   data() {
     return {
       loadShow: false, //加载是否显示
       autoRefresh: true, //自动刷新
-      list:[
-        {
-          status:false
-        },
-        {
-          status:true
-        },
-        {
-          status:true
-        },
-        {
-          status:true
-        }
-      ], //列表
+      list:[ ], //列表
+      name:'',
+      np:'',
+      clusterId:'',
+      timer:'',
     };
   },
   components: {
@@ -113,12 +104,61 @@ export default {
   },
   created() {
      // 从路由获取类型
-   
+      this.clusterId=this.$route.query.clusterId;
+      this.name=this.$route.query.name;
+      this.np=this.$route.query.np;
+      if(this.name&&this.np&&this.clusterId){
+        this.listData()
+      }
+      this.useAuto();
+
   },
   methods: {
     //返回上一层
     goBack(){
           this.$router.go(-1);
+    },
+
+    listData(){
+      var params={
+        ClusterName: this.clusterId,
+        Method: "GET",
+        Path: "/apis/autoscaling/v2beta1/namespaces/"+this.np+"/horizontalpodautoscalers/"+this.name+"/events",
+        Version: "2018-05-25",
+      }
+
+      this.axios.post(TKE_COLONY_QUERY, params).then(res=>{
+        if (res.Response.Error == undefined){
+          var data = JSON.parse(res.Response.ResponseBody);
+            if(data.items){
+            console.log(data.items)
+              this.list=data.items
+            }
+        }
+      })
+    },
+    //自动刷新
+    useAuto(){
+      if(this.autoRefresh){
+       this.timer=setInterval(()=>{
+             this.listData()
+          },9000)
+      }else{
+           clearInterval(this.timer)
+      }
+    },
+    timeFormat(times) {
+        var d = new Date(times);
+        var n = d.getFullYear();
+        var y = d.getMonth() + 1;
+        var r = d.getDate();
+        var h = d.getHours(); //12
+        var m = d.getMinutes(); //12
+        var s = d.getSeconds();
+        h < 10 ? h = "0" + h : h;
+        m < 10 ? m = "0" + m : m
+
+        return n + '-' + y + '-' + r + ' ' + h + ':' + m + ':' + s
     },
   }
 };
@@ -126,7 +166,9 @@ export default {
 
 <style lang="scss" scoped>
 
-
+.text-red {
+    color: rgb(225, 80, 74);
+}
 
 
 </style>

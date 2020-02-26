@@ -92,7 +92,7 @@
             <template slot-scope="scope">
               <span class="tke-text-link">修改配置</span>
               <span class="tke-text-link ml10">编辑YAML</span>
-              <span class="tke-text-link ml10">删除</span>
+              <span class="tke-text-link ml10" @click="delConfig(scope.row)">删除</span>
             </template>
           </el-table-column>
         </el-table>
@@ -111,6 +111,17 @@
           </div>
         </div>
       </div>
+       <el-dialog
+        title="删除资源"
+        :visible.sync="dialogVisible"
+       width="30%"
+      :before-close="handleClose">
+        <span>您确定要删除HorizontalPodAutoscaler:{{name}}</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="delSure">确 定</el-button>
+        <el-button @click="dialogVisible = false">取 消</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -125,6 +136,8 @@ export default {
   name: "colonyResourceCronJob",
   data() {
     return {
+      name:'',
+      dialogVisible:false,
       loadShow: false, //加载是否显示
       list:[], //列表
       total:0,
@@ -193,6 +206,36 @@ export default {
           })
         }
       },
+      delConfig(item){
+      this.dialogVisible=true;
+      console.log(item);
+      this.name=item.metadata.name;
+      // this.np=item.metadata.namespace;
+    },
+      delSure(){
+          this.dialogVisible = false
+          var params={
+            ClusterName: this.clusterId,
+            Method: "DELETE",
+            Path: "/apis/autoscaling/v2beta1/namespaces/"+this.searchType+"/horizontalpodautoscalers/"+this.name,
+            RequestBody: {"propagationPolicy":"Background"},
+            Version: "2018-05-25"
+          }
+          this.axios.post(TKE_COLONY_QUERY, params).then(res=>{
+
+            if (res.Response.Error==undefined) {
+                 this.tableListData();
+            }
+          })
+
+      },
+      handleClose(done) {
+        this.$confirm('确认关闭？')
+          .then(_ => {
+            done();
+          })
+          .catch(_ => {});
+      },
      // 新建
     goHpaCreate(){
       this.$router.push({
@@ -204,11 +247,13 @@ export default {
     },
 
     // 详情
-    goHpaDetail(){
+    goHpaDetail(item){
       this.$router.push({
           name: "hpaDetail",
           query: {
-            clusterId: this.clusterId
+            clusterId: this.clusterId,
+            name:item.metadata.name,
+            np:item.metadata.namespace,
           }
       });
     },
@@ -282,7 +327,6 @@ export default {
              return "CPU利用率（占Request）"+val.resource.targetAverageUtilization+'%'
         }
       }
-
 
       if(val.pods){
        //cpu
