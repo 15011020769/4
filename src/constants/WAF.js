@@ -118,3 +118,5 @@ export const DESCRIBE_ACCESSLOG_COUNT = 'waf2/DescribeAccessLogCount'
 export const DESCRIBE_ACCESS_DOWNLOAD_RECORDS = 'waf2/DescribeAccessDownloadRecords'
 /** 下载访问日志 */
 export const CREATE_ACCESS_DOWNLOAD_RECORD = 'waf2/CreateAccessDownloadRecord'
+/** Bot_V2 Bot类别统计 */
+export const DESCRIBE_BOT_TYPE_STAT = 'waf2/DescribeBotTypeStat'

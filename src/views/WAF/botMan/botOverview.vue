@@ -34,20 +34,22 @@
             <!-- {{t('攻击趋势', 'WAF.gjqs')}} -->
             BOT 记录数 域名 TOP {{topValue}}
           </h3>
-          排名：<el-select
-            v-model="topValue"
-            filterable
-            class="selectDomin"
-            default-first-option
-            size="small"
-          >
-            <el-option
-              v-for="item in options"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            ></el-option>
-          </el-select>
+          <div>
+            排名：<el-select
+              v-model="topValue"
+              filterable
+              class="selectDomin"
+              default-first-option
+              size="small"
+            >
+              <el-option
+                v-for="item in options"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              ></el-option>
+            </el-select>
+          </div>
         </el-row>
         <Bar
           :xAxis="xAxisBotIp"
@@ -55,6 +57,25 @@
           :legendText="legendTextBarIp"
           v-if="xAxisBotIp.length == 0 ? false : true"
         />
+        <div class="empty" v-else>暂无数据</div>
+      </div>
+      <div class="botDetail">
+        <div class="botDetailCon">
+          <p class="detailTop">1{{xAxisBotIp}}</p>
+          <div class="detailbottom">
+            <el-row class="bitPie">
+              <el-col :sapn="12">
+                111
+                <Pie
+
+                />
+              </el-col>
+              <el-col :sapn="12">
+                222
+              </el-col>
+            </el-row>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -62,8 +83,9 @@
 
 <script>
 import moment from 'moment'
-import { DESCRIBE_BOT_AGGREGATE_DOMAINSTAT } from '@/constants'
+import { DESCRIBE_BOT_AGGREGATE_DOMAINSTAT, DESCRIBE_BOT_TYPE_STAT } from '@/constants'
 import Bar from '../components/bar'
+import Pie from '../components/pie'
 export default {
   data () {
     return {
@@ -73,36 +95,52 @@ export default {
       startTime: moment().startOf("day").utc().valueOf(),
       endTime: moment().endOf("day").utc().valueOf(),
       seriesBotIp: [],
-      xAxisBotIp: [],
+      xAxisBotIp: [], // 域名数组
       legendTextBarIp: "Bot记录",
-      topValue: "5",
+      topValue: 5,
+      seriesPieType: [
+        {value: 0, name: '公开类型'},
+        {value: 0, name: '未知类型'},
+        {value: 0, name: '用户自定义类型'},
+      ],
+      colorPieType: ['#2277da', '#e54545', '#ff9d00',],
+      legendTextPie: ['公开类型', '未知类型', '用户自定义类型'],
       options: [{
-          value: '5',
+          value: 5,
           label: 'TOP5'
         }, {
-          value: '6',
+          value: 6,
           label: 'TOP6'
         }, {
-          value: '7',
+          value: 7,
           label: 'TOP7'
         }, {
-          value: '8',
+          value: 8,
           label: 'TOP8'
         }, {
-          value: '9',
+          value: 9,
           label: 'TOP9'
         }, {
-          value: '10',
+          value: 10,
           label: 'TOP10'
         }
-        ]
+      ],
     }
   },
   components: {
     Bar,
+    Pie,
   },
   watch: {
     dateTimeValue() {
+    },
+    topValue() {
+      this.getBotDomainStat()
+    },
+    xAxisBotIp(val){
+      if(val.length) {
+        this.getBotType()
+      }
     }
   },
   mounted() {
@@ -115,11 +153,11 @@ export default {
     },
     // 获取BOT 记录数 域名 TOP N
     getBotDomainStat() {
-      const params = {
+       const params = {
         Version: "2018-01-25",
         StartTs: this.startTime,
         EndTs: this.endTime,
-        TopNums: 6,
+        TopNums: this.topValue,
       }
       this.axios.post(DESCRIBE_BOT_AGGREGATE_DOMAINSTAT, params).then((resp) => {
         let arrIp = []
@@ -131,6 +169,23 @@ export default {
           })
           this.seriesBotIp = arrIpCount
           this.xAxisBotIp = arrIp
+        })
+      })
+    },
+    // 获取Bot_V2 Bot类别统计
+    getBotType() {
+      console.log(this.xAxisBotIp)
+     const params = {
+        Version: "2018-01-25",
+        StartTs: this.startTime,
+        EndTs: this.endTime,
+        Domain: this.xAxisBotIp[0],
+      }
+      this.axios.post(DESCRIBE_BOT_TYPE_STAT, params).then((resp) => {
+        this.generalRespHandler(resp, (Response) => {
+          this.$set(this.seriesPieType, 0, {value: Response.TCB, name: '公开类型'})
+          this.$set(this.seriesPieType, 1, {value: Response.UB, name: '未知类型'})
+          this.$set(this.seriesPieType, 2, {value: Response.UCB, name: '用户自定义类型'})
         })
       })
     },
@@ -156,6 +211,11 @@ export default {
       }
       times[1] = times[1].endOf('day')
       this.dateTimeValue = times
+      this.startTime = moment(this.dateTimeValue[0]).utc().valueOf()
+      this.endTime = moment(this.dateTimeValue[1]).utc().valueOf()
+      this.$nextTick(() => {
+        this.getBotDomainStat()
+      })
     },
     changeTimeValue(val) {
       this.selBtn = 0
@@ -250,10 +310,40 @@ export default {
     background: #fff;
     padding: 20px;
     box-sizing: border-box;
-    margin-top: 30px;
+    margin: 30px 0 20px 0;
     .topfont {
       margin-bottom: 20px;
       flex: 1;
+    }
+    .empty {
+      height: 300px;
+      width: 100%;
+      line-height: 300px;
+      text-align: center;
+      font-weight: bold
+    }
+  }
+  .botDetail {
+    height: 680px;
+    width: 100%;
+    background: #fff;
+    padding: 20px;
+    box-sizing: border-box;
+    .botDetailCon {
+      height: 640px;
+      border: 1px solid #E5E5E5;
+      .detailTop {
+        font-size: 14px;
+        padding: 10px;
+        background-color: #f2f2f2
+      }
+      .detailbottom {
+        padding: 10px;
+        .bitPie {
+          height: 260px;
+          // background: pink;
+        }
+      }
     }
   }
 }
