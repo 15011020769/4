@@ -234,6 +234,7 @@ module.exports = {
       djjzgd: '點擊載入更多',
       zrz: '載入中',
       zsxz4g: '至少選擇4個',
+      zsxz2g: '至少選擇2個',
       dzylbzd: '自定義列表欄位',
       zsl: '總數量',
       x: '項',

@@ -11,10 +11,11 @@
           <el-input v-model="keyword" :placeholder="t('请输入规则名称或匹配条件', 'WAF.qsrzgmcpptj')" style="width: 200px">
             <i slot="suffix" class="el-input__icon el-icon-search" @click="query" />
           </el-input>
-          <i class="el-icon-refresh refresh" />
+          <i class="el-icon-refresh refresh" @click="getCustomRules" />
         </el-row>
       </el-col>
     </el-row>
+    <el-card>
     <el-table :data="customRules" v-loading="loading" :empty-text="t('暂无数据', 'WAF.zwsj')">
       <el-table-column prop="RuleId" :label="t('序号', 'WAF.xh')" width="80">
       </el-table-column>
@@ -84,6 +85,7 @@
       layout="total, sizes, prev, pager, next"
       :total="total">
     </el-pagination>
+    </el-card>
     <el-dialog
       :title="t(!rule ? '添加规则' : '编辑自定义策略', !rule ? 'WAF.tjgz' : 'WAF.bjzdycl')"
       :visible.sync="dialogRule"

@@ -114,7 +114,25 @@ export default {
     },
     //立即购买按钮
     renewImmediate(){
-      this.$emit("renewModelClose",this.dialogModel)
+      this.dialogModel=false
+      this.$router.push({
+        name: 'pay',
+        // params: {
+        //   orders: [{
+        //     name: `Web${this.t('应用防火墙', 'WAF.yyfhq')}-${CLB_PACKAGE_CFG_TYPES[package.Level].name}-CLB${this.t('续费', 'WAF.xf')}`,
+        //     config: `Web${this.t('应用防火墙', 'WAF.yyfhq')}：${CLB_PACKAGE_CFG_TYPES[package.Level].name}`,
+        //     price: this.price / this.month,
+        //     quantity: 1,
+        //     paymentMethod: '预付费',
+        //     purchaseTime: this.month,
+        //     cost: this.price,
+        //   }, {
+        //     name: `Web${this.t('应用防火墙', 'WAF.yyfhq')}-${'安全日志服务续费', 'WAF.aqrzfwxf'}`,
+        //     config: `this.t('全量日志服务包', 'WAF.全量日誌服務包')：1T`,
+        //   }]
+        // }
+      })
+      // this.$emit("renewModelClose",this.dialogModel)
     },
     //点击续费时长按钮
     checkType(type){

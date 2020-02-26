@@ -8,7 +8,7 @@
           <span class="goback" @click="goBack">
             <i class="el-icon-back"></i>
           </span>
-          <h2 class="header-title">新建ConfigMap</h2>
+          <h2 class="header-title">更新配置</h2>
         </div>
         <!-- 右侧 -->
         <div class="grid-right"></div>
@@ -16,22 +16,8 @@
     </div>
     <div class="colony-main">
       <div class="tke-card tke-formpanel-wrap mb60">
-        <el-form  ref="form"   class="tke-form" :model="cm" label-position="left"  :rules="rules" label-width="120px" size="mini">
-          <el-form-item label="名称" prop='name'>
-            <el-input class="w200" v-model="cm.name" placeholder="请输入名称"></el-input>
-            <p  :class="{ activeColor: fontColor }">最长63个字符，只能包含小写字母、数字及分隔符("-")，且必须以小写字母开头，数字或小写字母结尾</p>
-          </el-form-item>
-          <el-form-item label="命名空间">
-            <el-select v-model="cm.value" placeholder="请选择">
-              <el-option
-                v-for="(item,index) in cm.options"
-                :key="index"
-                :label="item"
-                :value="item"
-              ></el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item>
+       
+          
             <div class="border">
               <!-- 头部 -->
               <div class="flex f12 header">
@@ -39,10 +25,9 @@
                 <div class="pl5" style="width:50%">变量值</div>
               </div>
               <!-- 主体 -->
-              <div class="flex" style="padding:10px;border-top:1px solid #ddd;">
-                <!-- <addValue></addValue> -->
+              <div class="flex " style="padding:10px;border-top:1px solid #ddd;">
                 <el-form
-                  style="margin-bottom:10px;"
+                class="set"
                 >
                   <el-form-item
                     v-for="(domain, index) in dynamicValidateForm.domains"
@@ -62,18 +47,16 @@
                     </div>
                   </el-form-item>
                 </el-form>
-                <p>
-                <el-link type="primary" style="cursor: pointer;" @click="addDomain">新增变量</el-link>
-                </p>
               </div>
-              <p  v-show="errorShow" style="color:red">新增变量名格式不正确，只能包含字母、数字及分隔符("-"、"_"、".")，且必须以字母、数字开头和结尾</p>
+              <p  v-show="errorShow" style="color:red;margin:-10px 0px 10px 10px">新增变量名格式不正确，只能包含字母、数字及分隔符("-"、"_"、".")，且必须以字母、数字开头和结尾</p>
+                <p>
+                <el-link type="primary" style="cursor: pointer;margin:0px 0px 10px 10px" @click="addDomain">新增变量</el-link>
+                </p>
             </div>
-          </el-form-item>
-        </el-form>
 
         <!-- 底部 -->
         <div class="tke-formpanel-footer">
-          <el-button size="small" type="primary" @click="creatConfigmap">创建ConfigMap</el-button>
+          <el-button size="small" type="primary" @click="updateConfigmap">完成</el-button>
           <el-button size="small" @click="$router.go(-1)">取消</el-button>
         </div>
       </div>
@@ -83,44 +66,19 @@
 
 <script>
 // import AddValue from '@/views/TKE/colony/sub/create/config/components/addValue.vue'
-import addValue from "./components/addValue";
 import FileSaver from "file-saver";
 import XLSX from "xlsx";
 import { ALL_CITY, TKE_COLONY_QUERY } from "@/constants";
 export default {
   name: "configmapCreate",
   components: {
-    addValue
   },
   data() {
-     //验证名称
-      var validateName = (rule, value, callback) => {
-        console.log(value);
-        if (value === "") {
-          this.fontColor = true;
-          callback();
-        } else {
-          let reg = /^[a-z]([a-z0-9]|-){0,61}([a-z0-9])$/;
-          let flag = reg.test(this.cm.name);
-          if (!flag) {
-            this.fontColor = true;
-            callback();
-          } else {
-            this.fontColor = false;
-            callback();
-          }
-        }
-      };
     return {
-       rules: {
-          name: [{
-            validator: validateName,
-            trigger: "blur",
-            required: false
-          }],
-        },
+     
         fontColor:false,
         errorShow:false,
+        nFlag:true,
       cm: {
         name: "",
         value: "default",
@@ -139,13 +97,29 @@ export default {
     dynamicValidateForm:{
       handler(val){
           let reg= /^[a-z]([a-z0-9]|-|_|.)*([a-z0-9])$/;
+          let arr=[];
           val.domains.forEach(v=>{
+            arr.push(v.value)
              if(!reg.test(v.value)){
                this.errorShow=true
              }else{
                this.errorShow=false
              } 
           })
+
+         if(arr.length!=Array.from(new Set(arr)).length){
+              this.$message({
+                message: "函数名不能重复",
+                type: "error",
+                 showClose: true,
+                duration: 0
+              });
+              this.nFlag=false;
+         }else{
+             this.nFlag=true
+         }   
+
+
       },
       deep:true
     }
@@ -153,7 +127,10 @@ export default {
   created() {
     // 从路由获取类型
     this.clusterId = this.$route.query.clusterId;
-    this.nameSpaceList();
+    if(this.$route.query.np&&this.$route.query.name){
+        this.findData()
+    }
+    console.log([1].length==[1].length)
   },
   methods: {
     //返回上一层
@@ -161,13 +138,8 @@ export default {
        this.$router.go(-1);
     },
 
-    creatConfigmap(){
+    updateConfigmap(){
 
-        if (this.cm.name == "") {
-          this.$refs.form.validateField("name");
-          this.$message("名称不能為空");
-          return false;
-        }
       
       let arr=this.dynamicValidateForm.domains;
       let obj={};
@@ -175,26 +147,17 @@ export default {
         obj[v.value]=v.valueKey
       })
 
-      if(arr[0].value==''){
-        this.$message({
-                message: "变量名不能為空，至少设置一项",
-                type: "error",
-              });
-          return false;
-      }
       var params={
-        ClusterName: this.clusterId,
-        Method: "POST",
-        Path: "/api/v1/namespaces/"+this.cm.value+"/configmaps",
-        RequestBody:{
-          "kind":"ConfigMap",
-          "apiVersion":"v1",
-          "metadata":{"name":this.cm.name,"namespace":this.cm.value},
-          "data":obj
-          },
-        Version: "2018-05-25",
+       ClusterName: this.clusterId,
+       ContentType: "application/strategic-merge-patch+json",
+       Method: "PATCH",
+       Path: "/api/v1/namespaces/"+this.$route.query.np+"/configmaps/"+this.$route.query.name,
+       RequestBody: {
+           "data":obj
+           },
+       Version: "2018-05-25",
       }
-      if(!this.errorShow){
+      if(!this.errorShow&&this.nFlag){
 
         this.axios.post(TKE_COLONY_QUERY, params).then(res=>{
           if (res.Response.Error == undefined){
@@ -204,28 +167,31 @@ export default {
       }
 
     },
-
-
-    //命名空间选项
-    nameSpaceList() {
-      if (this.clusterId) {
-        var params = {
+    findData(){
+         var params={
           ClusterName: this.clusterId,
           Method: "GET",
-          Path: "/api/v1/namespaces",
-          Version: "2018-05-25"
-        };
-        this.axios.post(TKE_COLONY_QUERY, params).then(res => {
-          if (res.Response.Error == undefined) {
-            var data = JSON.parse(res.Response.ResponseBody);
-            var nameList = [];
-            data.items.forEach(item => {
-              this.cm.options.push(item.metadata.name);
-            });
-          }
-        });
+          Path: "/api/v1/namespaces/"+this.$route.query.np+"/configmaps?fieldSelector=metadata.name="+this.$route.query.name,
+          Version: "2018-05-25",
       }
+      this.axios.post(TKE_COLONY_QUERY, params).then(res=>{
+        if (res.Response.Error == undefined) {
+               var data = JSON.parse(res.Response.ResponseBody);
+              var nd=data.items.filter(x=>{
+                  return x.metadata.name==this.$route.query.name
+              })
+              var arr=[];
+              for(let i in nd[0].data){
+                  arr.push({value:i,valueKey:nd[0].data[i]})
+              }
+              console.log(arr)
+              this.dynamicValidateForm.domains=arr
+        }
+      })
     },
+
+
+   
     removeDomain (item) {
       var index = this.dynamicValidateForm.domains.indexOf(item)
       if (index !== -1) {
@@ -333,6 +299,11 @@ textarea {
   }
    .activeColor {
     color: #f56c6c !important;
+  }
+  .set{
+        ::v-deep .el-form-item{
+          margin-bottom: 0px !important;
+      }
   }
 </style>
 

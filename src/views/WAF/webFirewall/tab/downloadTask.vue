@@ -2,7 +2,7 @@
   <div>
     <div class="wrapper">
       <div class="topTip">{{t('创建成功的日志下载任务，只保留7天；7天后日志文件将会删除，请及时下载', 'WAF.cjrwdrzxzrw')}}。</div>
-      <div class="taskListCon">
+      <el-card>
         <el-table :data="tableDataBegin" :empty-text="t('暂无数据', 'WAF.zwsj')">
           <el-table-column prop="ID" :label="t('序号', 'WAF.xh')" width></el-table-column>
           <el-table-column prop="Name" :label="t('任务名称', 'WAF.rwmc')" width></el-table-column>
@@ -49,8 +49,6 @@
             </template>
           </el-table-column>
         </el-table>
-      </div>
-      <div class="Right-style pagstyle tabListPage">
         <el-pagination
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
@@ -60,7 +58,7 @@
           layout="total, sizes, prev, pager, next"
           :total="totalItems">
         </el-pagination>
-      </div>
+      </el-card>
     </div>
   </div>
 </template>
@@ -141,6 +139,7 @@ export default {
   color: #003b80;
   border: 1px solid #97c7ff;
   background: #e5f0ff;
+  margin-bottom: 15px;
 }
 .taskListCon {
   min-height: 450px;

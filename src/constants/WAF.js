@@ -78,6 +78,8 @@ export const DESCRIBE_CUSTOM_RULES = 'waf2/DescribeCustomRules'
 export const UPSERT_CCRULE = 'waf2/UpsertCCRule'
 /** Waf CC V2 Query接口 */
 export const DESCIRBE_CCRULE = 'waf2/DescirbeCCRule'
+/** Waf CC V2 Delete接口 */
+export const DELETE_CCRULE = 'waf2/DeleteCCRule'
 /** Waf 会话定义查询接口 */
 export const DESCRIBE_SESSION = 'waf2/DescribeSession'
 /** Waf 会话定义 Upsert接口 */

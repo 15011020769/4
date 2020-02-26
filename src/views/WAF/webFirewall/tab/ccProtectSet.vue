@@ -164,7 +164,7 @@
   </div>
 </template>
 <script>
-import { DESCIRBE_CCRULE, DESCRIBE_SESSION, DELETE_SESSION } from '@/constants'
+import { DESCIRBE_CCRULE, DESCRIBE_SESSION, DELETE_SESSION, DELETE_CCRULE } from '@/constants'
 import SessionSet from '../model/sessionSet'
 import SessionTest from '../model/sessionTest'
 import { flatObj } from '@/utils'
@@ -214,7 +214,14 @@ export default {
   },
   methods: {
     delCCRule(rule) {
-      console.log(rule)
+      this.axios.post(DELETE_CCRULE, {
+        Version: '2018-01-25',
+        Domain: this.domain.Domain,
+        Name: rule.Name,
+        Edition: 'clb-waf',
+      }).then(resp => {
+        this.generalRespHandler(resp, this.getCCRule, COMMON_ERROR, '删除成功')
+      })
     },
     onSuccess() {
       this.dialogCCRule = false

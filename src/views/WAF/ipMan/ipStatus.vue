@@ -51,8 +51,7 @@
           <el-button @click="onSearch" size="mini" class="lookSearch">查询</el-button>
         </div>
       </div>
-      <div class="tableList">
-        <div class="tableCon">
+        <el-card>
           <el-table ref="multipleTable" :data="tableDataBegin && tableDataBegin.slice((currentPage-1)*pageSize,currentPage*pageSize)" tooltip-effect="dark" style="width: 100%" v-loading="loadShow">
             <el-table-column prop="num" label="序号">
               <template slot-scope="scope">{{ scope.$index+1}}</template>
@@ -94,11 +93,8 @@
               </template>
             </el-table-column>
           </el-table>
-        </div>
-        <div class="tabListPage">
           <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage" :page-sizes="[10, 20, 30, 50]" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper" :total="totalItems"></el-pagination>
-        </div>
-      </div>
+        </el-card>
     </div>
     <!-- <addBWmodel :isShow="addBWmodel"/> -->
     <addBlackWhite @closeModel="closeModel" :isShow="addBWmodel" :ipInfo="Object.assign(ipInfo, { Domain: ipSearch, type: 'ipStatus' })" />

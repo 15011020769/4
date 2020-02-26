@@ -138,13 +138,13 @@
                       @click="addRroup(scope.row.Uid)"
                     >{{$t('CAM.userList.userAddGroup')}}</el-button>
                   </el-dropdown-item>
-                  <el-dropdown-item>
+                  <!-- <el-dropdown-item>
                     <el-button
                       type="text"
                       style="color:#000"
                       @click="bindMesg"
                     >{{$t('CAM.userList.userdep')}}</el-button>
-                  </el-dropdown-item>
+                  </el-dropdown-item> -->
                   <el-button
                     type="text"
                     style="color:#000;padding-left:20px;"

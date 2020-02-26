@@ -1,5 +1,5 @@
 import { obj2Arr, addVal2Key, isValidIPAddressNew, isValidIPv6 } from '@/utils'
-
+export const SAFE_OVERVIEW_SHOWMODULE_KEY = 'waf:safeOverView:showModules'
 /** 套餐包信息 */
 export const PACKAGE_CFG_TYPES = {
   2: {

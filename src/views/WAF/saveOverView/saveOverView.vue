@@ -11,9 +11,6 @@
         <el-tab-pane label="业务概览" name="second">
           <businessOverview v-if="isChildUpdate2"/>
         </el-tab-pane>
-        <el-tab-pane label="访问日志" name="third">
-          <accessLog v-if="isChildUpdate3"/>
-        </el-tab-pane>
       </el-tabs>
     </div>
   </div>

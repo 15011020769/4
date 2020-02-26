@@ -13,8 +13,7 @@
              <i slot="suffix" style="display: flex; justify-content: center; align-items: center; cursor: pointer" class="el-input__icon el-icon-search" />
           </el-input>
       </el-row>
-      <div class="tableList">
-        <div class="tableCon">
+      <el-card>
           <el-table
             ref="multipleTable"
             :data="tableDataBegin.slice((currentPage-1)*pageSize,currentPage*pageSize)"
@@ -73,8 +72,6 @@
               </template>
             </el-table-column>
           </el-table>
-        </div>
-        <div class="tabListPage">
           <el-pagination
             @size-change="handleSizeChange"
             @current-change="handleCurrentChange"
@@ -84,8 +81,10 @@
             layout="total, sizes, prev, pager, next, jumper"
             :total="totalItems"
           ></el-pagination>
-        </div>
-      </div>
+      </el-card>
+        <!-- <div class="tabListPage"> -->
+        <!-- </div>
+      </div> -->
     </div>
   </div>
 </template>

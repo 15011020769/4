@@ -81,3 +81,17 @@ export default {
   }
 }
 </style>
+<style lang="scss">
+.el-pagination {
+  position: relative;
+  display: flex;
+  justify-content: flex-end;
+  border-bottom: 1px solid #ebeef5;
+  color: black;
+  padding: 17px 0 15px 0 !important;
+}
+.el-pagination__total {
+  position: absolute;
+  left: 7px;
+}
+</style>
