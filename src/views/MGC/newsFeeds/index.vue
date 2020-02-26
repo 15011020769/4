@@ -15,7 +15,6 @@
           <el-table
             :data="tableData"
             style="width: 100%"
-            height="450"
             v-loading="loading"
           >
           <el-table-column

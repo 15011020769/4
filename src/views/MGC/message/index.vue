@@ -34,7 +34,7 @@
         </div> -->
       </div>
       <div class="meaasge-table"  v-loading="loading">
-        <el-table :data="tableData" style="width: 100%" height="450" @selection-change="handleSelectionChange">
+        <el-table :data="tableData" style="width: 100%" @selection-change="handleSelectionChange">
           <el-table-column type="selection" width="55"></el-table-column>
           <el-table-column prop="title" label="訊息内容">
              <template slot-scope="scope">
@@ -359,7 +359,8 @@ export default {
     box-sizing: border-box;
 
     .message-fun {
-      height: 65px;
+      height: 35px;
+      min-width:1350px;
       .message-funLeft {
         flex: 1;
         .message-btns {
@@ -421,7 +422,12 @@ export default {
         padding: 0 20px;
         box-sizing: border-box;
       }
+      ::v-deep .el-table td{
+        padding:18px 0;
+        font-size:14px;
+      }
     }
+   
   }
 }
 .choose-num{
