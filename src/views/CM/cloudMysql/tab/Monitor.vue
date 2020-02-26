@@ -1,37 +1,35 @@
 <template>
   <div class="Monitor">
-    <!-- 时间粒度搜素 -->
-    <XTimeX v-on:switchData="GetDat" :classsvalue="value"></XTimeX>
-    <div class="box-dis p-style">
+    <TimeDropDown :TimeArr='TimeArr' :Datecontrol='true' :Graincontrol='true' :Difference="'H'"
+      v-on:switchData="GetDat" />
+    <div class="box-dis">
       <p>
-        <i class="el-icon-info"></i>{{ $t('CVM.clBload.zs') }}
+        <i class="el-icon-info"></i>注釋：Max、Min和Avg數值統計為當前折線圖內所有點的最大值、最小值和平均值
       </p>
-      <!-- <p>
-        <el-button type="text">{{ $t('CVM.clBload.dcsj') }}</el-button>
-      </p> -->
+
     </div>
     <div class="box-table">
       <!-- 表格 -->
-      <el-table :data="tableData" style="width: 100%">
-        <el-table-column prop width="200" :empty-text="$t('CVM.clBload.zwsj')">
+      <el-table :data="tableData" style="width: 100%" v-loading='TableLoad'>
+        <el-table-column prop width="200">
           <template slot-scope="scope">
-            <span style="font-size:12px;font-weight:bolder;  color:#333;font-weight:600;">
-              {{scope.row.MetricName | UpName(value)}}
-              <span class="symbol">{{scope.row.symbol}}</span>
+            <p>
+              <span class='span_1'>{{disName[scope.row.MetricName]}}</span>
+              <span class='span_2'>{{Company[scope.row.MetricName]}}</span>
               <el-popover placement="bottom-start" title width="200" trigger="hover">
-                <p>{{scope.row.MetricName | UpName(value)}}</p>
+                <p>{{Tips[scope.row.MetricName]}}</p>
                 <i class="el-icon-warning" slot="reference"></i>
               </el-popover>
-            </span>
+            </p>
           </template>
         </el-table-column>
 
-        <el-table-column prop="DataPoints" width="600">
+        <el-table-column width="550">
           <template slot-scope="scope">
-            <p v-if="scope.row.DataPoints[0].Values.length==0">{{ $t('CVM.clBload.zwsj') }}</p>
-            <div class="echart" v-if="scope.row.DataPoints[0].Values.length!=0">
+            <p v-if="scope.row.DataPoints[0].Values.length==0">暂无数据</p>
+            <div v-if="scope.row.DataPoints[0].Values.length!=0">
               <echart-line id="diskEchearrts-line" :time="scope.row.DataPoints[0].Timestamps | UpTime"
-                :opData="scope.row.DataPoints[0].Values" :scale="3" :period="period" :xdata="false"></echart-line>
+                :opData="scope.row.DataPoints[0].Values" :scale="3" :period="Period" :xdata="false"></echart-line>
             </div>
           </template>
         </el-table-column>
@@ -40,7 +38,8 @@
           <template slot-scope="scope">
             <p style="font-size:12px;color:#bbb;font-weight:600">Max:</p>
             <template v-if="scope.row.DataPoints[0].Values.length!==0">
-              <span style="color:#333;font-weight:600;font-size: 12px;">{{scope.row.DataPoints[0].Values|CMMax}}</span>
+              <span style="color:#333;font-weight:600;font-size: 12px;">{{scope.row.DataPoints[0].Values|CMMax}} <span
+                  class='span_2'>{{Company[scope.row.MetricName]}}</span></span>
               <span style="color:#333;font-weight:600;font-size: 12px;">{{scope.row.symbol}}</span>
             </template>
             <template v-if="scope.row.DataPoints[0].Values.length==0">-</template>
@@ -50,7 +49,8 @@
           <template slot-scope="scope">
             <p style="font-size:12px;color:#bbb;font-weight:600">Min:</p>
             <template v-if="scope.row.DataPoints[0].Values.length!==0">
-              <span style="color:#333;font-weight:600;font-size: 12px;">{{scope.row.DataPoints[0].Values|CMMin}}</span>
+              <span style="color:#333;font-weight:600;font-size: 12px;">{{scope.row.DataPoints[0].Values|CMMin}} <span
+                  class='span_2'>{{Company[scope.row.MetricName]}}</span></span>
               <span style="color:#333;font-weight:600;font-size: 12px;">{{scope.row.symbol}}</span>
             </template>
             <template v-if="scope.row.DataPoints[0].Values.length==0">-</template>
@@ -61,517 +61,438 @@
           <template slot-scope="scope">
             <p style="font-size:12px;color:#bbb;font-weight:600">Avg:</p>
             <template v-if="scope.row.DataPoints[0].Values.length!==0">
-              <span style="color:#333;font-weight:600;font-size: 12px;">{{scope.row.DataPoints[0].Values|CMAvg}}</span>
+              <span style="color:#333;font-weight:600;font-size: 12px;">{{scope.row.DataPoints[0].Values|CMAvg}} <span
+                  class='span_2'>{{Company[scope.row.MetricName]}}</span></span>
               <span style="color:#333;font-weight:600;font-size: 12px;">{{scope.row.symbol}}</span>
             </template>
             <template v-if="scope.row.DataPoints[0].Values.length==0">-</template>
           </template>
         </el-table-column>
-
-
-
-        <el-table-column prop>
-          <template slot-scope="scope">
-            <!-- <p>
-              <i class="el-icon-menu i-font" style="font-size:26px;" @click="Modality(scope.row.MetricName)"></i>
-            </p> -->
-          </template>
-        </el-table-column>
       </el-table>
-      <!-- 模态框 -->
-      <el-dialog :title="$t('CVM.clBload.jqjkzt')" :visible.sync="dialogVisible" width="60%"
-        :before-close="handleClose">
-        <XTimeX v-on:switchData="GetDat" :classsvalue="value"></XTimeX>
-        <echart-line id="diskEchearrts-line" class="echart-wh" :time="timeData | UpTime" :opData="jingData"
-          :period="period" :xdata="true"></echart-line>
-      </el-dialog>
+
     </div>
   </div>
 </template>
-
 <script>
   import moment from "moment";
-  import XTimeX from "@/components/public/TimeXK";
-  import echartLine from "@/components/public/echars-line";
-  import {
-    All_MONITOR
-  } from "@/constants";
+  import TimeDropDown from '@/components/public/TimeDropDown' //引入时间组件
+  import echartLine from "@/components/public/echars-line"; //引入图标组件
   import {
     ErrorTips
-  } from '@/components/ErrorTips'
+  } from "@/components/ErrorTips";
+  import {
+    ALL_Basics,
+    All_MONITOR
+  } from '@/constants'
   export default {
     data() {
       return {
+        TimeArr: [{
+            name: '实时',
+            Time: 'realTime',
+            TimeGranularity: [{
+                value: "5",
+                label: "5秒"
+              }, {
+                value: "10",
+                label: "10秒"
+              },
+              {
+                value: "60",
+                label: "1分鐘"
+              },
+              {
+                value: "300",
+                label: "5分鐘"
+              }
+            ]
+          },
+          {
+            name: '近24小时',
+            Time: 'Nearly_24_hours',
+            TimeGranularity: [{
+                value: "60",
+                label: "1分鐘"
+              },
+              {
+                value: "300",
+                label: "5分鐘"
+              },
+              {
+                value: "3600",
+                label: "1小時"
+              },
+              {
+                value: "86400",
+                label: "1天"
+              }
+            ]
+          },
+          {
+            name: '近7天',
+            Time: 'Nearly_7_days',
+            TimeGranularity: [{
+                value: "3600",
+                label: "1小時"
+              },
+              {
+                value: "86400",
+                label: "1天"
+              }
+            ]
+          }
+        ],
         ID: this.$route.query.id,
-        period: "",
-        Start_End: [],
-        value: 1,
-        dialogVisible: false, // 模态框 （放大后的折线图）
-        pageIndex: 1, // 当前页
-        pageSize: 10, // 每页数
-        totalPage: 0, // 表格数据数组长度
-        tableData: [], // 获取列表数据
-        timeData: [], // 折线图的x轴数据
-        jingData: [],
-        MetricName: ""
-      };
-    },
-    components: {
-      echartLine,
-      XTimeX
-    },
-    created() {},
-    methods: {
-      //获取数据
-      GetDat(data) {
-        this.period = data[0];
-        this.Start_End = data[1];
-        this.value = data[2];
-        const metricNArr = [
-          "CPUUseRate",
-          "MemoryUseRate",
-          "MemoryUse",
-          "VolumeRate",
-          "RealCapacity",
-          "Capacity",
-          "BytesSent",
-          "BytesReceived",
-          "QPS",
-          "TPS",
-          "MaxConnections",
-          "ThreadsConnected",
-          "ConnectionUseRate",
-          "SlowQueries",
-          "SelectScan",
-          "SelectCount",
-          "ComUpdate",
-          "ComDelete",
-          "ComInsert",
-          "ComReplace",
-          "Queries",
-          "QueryRate",
-          "CreatedTmpTables",
-          "TableLocksWaited",
-          "InnodbCacheUseRate",
-          "InnodbCacheHitRate",
-          "InnodbOsFileReads",
-          "InnodbOsFileWrites",
-          "InnodbOsFsyncs",
-          "InnodbNumOpenFiles",
-          "KeyCacheUseRate",
-          "KeyCacheHitRate",
-          "ComCommit",
-          "ComRollback",
-          "ThreadsCreated",
-          "ThreadsRunning",
-          "CreatedTmpDiskTables",
-          "CreatedTmpFiles",
-          "HandlerReadRndNext",
-          "HandlerRollback",
-          "HandlerCommit",
-          "InnodbBufferPoolPagesFree",
-          "InnodbBufferPoolPagesTotal",
-          "InnodbBufferPoolReadRequests",
-          "InnodbBufferPoolReads",
-          "InnodbDataReads",
-          "InnodbDataRead",
-          "InnodbDataWrites",
-          "InnodbDataWritten",
-          "InnodbRowsDeleted",
-          "InnodbRowsInserted",
-          "InnodbRowsUpdated",
-          "InnodbRowsRead",
-          "InnodbRowLockTimeAvg",
-          "InnodbRowLockWaits",
-          "KeyBlocksUnused",
-          "KeyBlocksUsed",
-          "KeyReadRequests",
-          "KeyReads",
-          "KeyWriteRequests",
-          "KeyWrites",
-          "OpenedTables",
-          "TableLocksImmediate",
-          "OpenFiles",
-          "LogCapacity",
-          "SlaveIoRunning",
-          "SlaveSqlRunning",
-          "MasterSlaveSyncDistance",
-          "SecondsBehindMaster"
-        ];
-        const symbol = [
-          "%",
-          "%",
-          "MB",
-          "%",
-          "MB",
-          "MB",
-          "Byte/秒",
-          "Byte/秒",
-          "次/秒",
-          "次/秒",
-          "個",
-          "個",
-          "%",
-          "次/分",
-          "次/秒",
-          "次/秒",
-          "次/秒",
-          "次/秒",
-          "次/秒",
-          "次/秒",
-          "次/秒",
-          "%",
-          "次/秒",
-          "次/秒",
-          "%",
-          "%",
-          "次/秒",
-          "次/秒",
-          "次/秒",
-          "個",
-          "%",
-          "%",
-          "次/秒",
-          "次/秒",
-          "個",
-          "個",
-          "次/秒",
-          "次/秒",
-          "次/秒",
-          "次/秒",
-          "次/秒",
-          "個",
-          "個",
-          "次/秒",
-          "次/秒",
-          "次/秒",
-          "Byte/秒",
-          "次/秒",
-          "Byte/秒",
-          "次/秒",
-          "次/秒",
-          "次/秒",
-          "次/秒",
-          "毫秒",
-          "次/秒",
-          "個",
-          "個",
-          "次/秒",
-          "次/秒",
-          "次/秒",
-          "次/秒",
-          "個",
-          "個",
-          "個",
-          "MB",
-          "-",
-          "-",
-          "MB",
-          "秒"
-        ];
+        BaseList: [], //全部指标列表
+        BaseListK: [], //用到的指标列表
+        TableLoad: true,
+        Period: '', //粒度
+        Time: {}, //监控传递时间
+        MonitorData: [], //监控数据
+        tableData: [], // 组合数据
+        disName: {
+          'BytesReceived': '内网入流量',
+          'BytesSent': '内网出流量',
+          'Capacity': '磁盘占用空间',
+          'ComCommit': '提交数',
+          'ComDelete': '删除数',
+          'ComInsert': '插入数',
+          'ComReplace': '覆盖数',
+          'ComRollback': '回滚数',
+          'ComUpdate': '更新数',
+          'ConnectionUseRate': '连接数利用率',
+          'CpuUseRate': 'CPU利用率',
+          'CreatedTmpDiskTables': '磁盘临时表数量',
+          'CreatedTmpFiles': '临时文件数量',
+          'CreatedTmpTables': '临时表数量',
+          'HandlerCommit': '内部提交数',
+          'HandlerReadRndNext': '读下一行请求数',
+          'HandlerRollback': '内部回滚数',
+          'InnodbBufferPoolPagesFree': 'InnoDB空页数',
+          'InnodbBufferPoolPagesTotal': 'InnoDB总页数',
+          'InnodbBufferPoolReads': 'InnoDB物理读',
+          'InnodbBufferPoolReadRequests': 'InnoDB逻辑读',
+          'InnodbCacheHitRate': 'innodb缓存命中率',
+          'InnodbCacheUseRate': 'innodb缓存使用率',
+          'InnodbDataRead': 'InnoDB读取量',
+          'InnodbDataReads': 'InnoDB总读取量',
+          'InnodbDataWrites': 'InnoDB总写入量',
+          'InnodbDataWritten': 'InnoDB写入量',
+          'InnodbNumOpenFiles': '当前InnoDB打开表的数量',
+          'InnodbOsFileReads': 'innodb读磁盘数量',
+          'InnodbOsFileWrites': 'innodb写磁盘数量',
+          'InnodbOsFsyncs': 'innodb fsync数量',
+          'InnodbRowsDeleted': 'InnoDB行删除量',
+          'InnodbRowsInserted': 'InnoDB行插入量',
+          'InnodbRowsRead': 'InnoDB行读取量',
+          'InnodbRowsUpdated': 'InnoDB行更新量',
+          'InnodbRowLockTimeAvg': 'InnoDB平均获取行锁时间',
+          'InnodbRowLockWaits': 'InnoDB等待行锁次数',
+          'KeyBlocksUnused': '键缓存内未使用的块数量',
+          'KeyBlocksUsed': '键缓存内使用的块数量',
+          'KeyCacheHitRate': 'myisam缓存命中率',
+          'KeyCacheUseRate': 'myisam缓存使用率',
+          'KeyReads': '硬盘读取数据块次数',
+          'KeyReadRequests': '键缓存读取数据块次数',
+          'KeyWrites': '数据块写入磁盘次数',
+          'KeyWriteRequests': '数据块写入键缓冲次数',
+          'LogCapacity': '日志使用量',
+          'MasterSlaveSyncDistance': '主从延迟距离',
+          'MaxConnections': '最大连接数',
+          'MemoryUse': '内存占用',
+          'MemoryUseRate': '内存利用率',
+          'OpenedTables': '已经打开的表数',
+          'OpenFiles': '打开文件总数',
+          'QcacheFreeBlocks': '查询缓存空闲块',
+          'QcacheFreeMemory': '缓存中空闲内存量',
+          'QcacheHits': '缓存命中次数',
+          'QcacheHitRate': '查询缓存命中率',
+          'QcacheInserts': '缓存写入次数',
+          'QcacheLowmemPrunes': '因内存不足删除缓存次数',
+          'QcacheNotCached': '查询未被缓存次数',
+          'QcacheQueriesInCache': '以注册到缓存内的查询数',
+          'QcacheTotalBlocks': '查询缓存内的总块数',
+          'QcacheUseRate': '查询缓存使用率',
+          'Qps': '每秒执行操作数',
+          'Queries': '总请求数',
+          'QueryRate': '查询使用率',
+          'RealCapacity': '磁盘使用空间',
+          'SecondsBehindMaster': '主从延迟时间',
+          'SelectCount': '查询数',
+          'SelectScan': '全表扫描数',
+          'SlaveIoRunning': 'IO线程状态',
+          'SlaveSqlRunning': 'SQL线程状态',
+          'SlowQueries': '慢查询数',
+          'TableLocksImmediate': '立即释放的表锁数',
+          'TableLocksWaited': '等待表锁次数',
+          'ThreadsConnected': '当前打开连接数',
+          'ThreadsCreated': '已创建的线程数',
+          'ThreadsRunning': '运行的线程数',
+          'Tps': '每秒执行事务数',
+          'VolumeRate': '磁盘使用率',
+        },
+        Company: {
+          'BytesReceived': 'Byte/秒',
+          'BytesSent': 'Byte/秒',
+          'Capacity': 'MB',
+          'ComCommit': '次/秒',
+          'ComDelete': '次/秒',
+          'ComInsert': '次/秒',
+          'ComReplace': '次/秒',
+          'ComRollback': '次/秒',
+          'ComUpdate': '次/秒',
+          'ConnectionUseRate': '%',
+          'CpuUseRate': '%',
+          'CreatedTmpDiskTables': '次/秒',
+          'CreatedTmpFiles': '次/秒',
+          'CreatedTmpTables': '次/秒',
+          'HandlerCommit': '次/秒',
+          'HandlerReadRndNext': '次/秒',
+          'HandlerRollback': '次/秒',
+          'InnodbBufferPoolPagesFree': '个',
+          'InnodbBufferPoolPagesTotal': '个',
+          'InnodbBufferPoolReads': '次/秒',
+          'InnodbBufferPoolReadRequests': '次/秒',
+          'InnodbCacheHitRate': '%',
+          'InnodbCacheUseRate': '%',
+          'InnodbDataRead': 'Byte/秒',
+          'InnodbDataReads': '次/秒',
+          'InnodbDataWrites': '次/秒',
+          'InnodbDataWritten': 'Byte/秒',
+          'InnodbNumOpenFiles': '个',
+          'InnodbOsFileReads': '次/秒',
+          'InnodbOsFileWrites': '次/秒',
+          'InnodbOsFsyncs': '次/秒',
+          'InnodbRowsDeleted': '次/秒',
+          'InnodbRowsInserted': '次/秒',
+          'InnodbRowsRead': '次/秒',
+          'InnodbRowsUpdated': '次/秒',
+          'InnodbRowLockTimeAvg': '毫秒',
+          'InnodbRowLockWaits': '次/秒',
+          'KeyBlocksUnused': '个',
+          'KeyBlocksUsed': '个',
+          'KeyCacheHitRate': '%',
+          'KeyCacheUseRate': '%',
+          'KeyReads': '次/秒',
+          'KeyReadRequests': '次/秒',
+          'KeyWrites': '次/秒',
+          'KeyWriteRequests': '次/秒',
+          'LogCapacity': 'MB',
+          'MasterSlaveSyncDistance': 'MB',
+          'MaxConnections': '个',
+          'MemoryUse': 'MB',
+          'MemoryUseRate': '%',
+          'OpenedTables': '个',
+          'OpenFiles': '个',
+          'QcacheFreeBlocks': '块',
+          'QcacheFreeMemory': 'MB',
+          'QcacheHits': '次/秒',
+          'QcacheHitRate': '%',
+          'QcacheInserts': '次/秒',
+          'QcacheLowmemPrunes': '次/秒',
+          'QcacheNotCached': '次/秒',
+          'QcacheQueriesInCache': '次/秒',
+          'QcacheTotalBlocks': '块',
+          'QcacheUseRate': '%',
+          'Qps': '次/秒',
+          'Queries': '次/秒',
+          'QueryRate': '%',
+          'RealCapacity': 'MB',
+          'SecondsBehindMaster': '秒',
+          'SelectCount': '次/秒',
+          'SelectScan': '次/秒 ',
+          'SlaveIoRunning': '',
+          'SlaveSqlRunning': '',
+          'SlowQueries': '次/分',
+          'TableLocksImmediate': '个',
+          'TableLocksWaited': '次/秒',
+          'ThreadsConnected': '个',
+          'ThreadsCreated': '个',
+          'ThreadsRunning': '个',
+          'Tps': '次/秒',
+          'VolumeRate': '%',
+        },
+        Tips: {
+          'BytesReceived': '内网入流量',
+          'BytesSent': '内网出流量',
+          'Capacity': '磁盘占用空间（包含数据及日志空间使用量）',
+          'ComCommit': '提交数',
+          'ComDelete': '删除数',
+          'ComInsert': '插入数',
+          'ComReplace': '覆盖数',
+          'ComRollback': '回滚数',
+          'ComUpdate': '更新数',
+          'ConnectionUseRate': '连接数利用率',
+          'CpuUseRate': 'CPU利用率',
+          'CreatedTmpDiskTables': '磁盘临时表数量',
+          'CreatedTmpFiles': '临时文件数量',
+          'CreatedTmpTables': '临时表数量',
+          'HandlerCommit': '内部提交数',
+          'HandlerReadRndNext': '读下一行请求数',
+          'HandlerRollback': '内部回滚数',
+          'InnodbBufferPoolPagesFree': 'InnoDB空页数',
+          'InnodbBufferPoolPagesTotal': 'InnoDB总页数',
+          'InnodbBufferPoolReads': 'InnoDB物理读',
+          'InnodbBufferPoolReadRequests': 'InnoDB逻辑读',
+          'InnodbCacheHitRate': 'innodb缓存命中率',
+          'InnodbCacheUseRate': 'innodb缓存使用率',
+          'InnodbDataRead': 'InnoDB读取量',
+          'InnodbDataReads': 'InnoDB总读取量',
+          'InnodbDataWrites': 'InnoDB总写入量',
+          'InnodbDataWritten': 'InnoDB写入量',
+          'InnodbNumOpenFiles': '当前InnoDB打开表的数量',
+          'InnodbOsFileReads': 'innodb读磁盘数量',
+          'InnodbOsFileWrites': 'innodb写磁盘数量',
+          'InnodbOsFsyncs': 'innodb fsync数量',
+          'InnodbRowsDeleted': 'InnoDB行删除量',
+          'InnodbRowsInserted': 'InnoDB行插入量',
+          'InnodbRowsRead': 'InnoDB行读取量',
+          'InnodbRowsUpdated': 'InnoDB行更新量',
+          'InnodbRowLockTimeAvg': 'InnoDB平均获取行锁时间',
+          'InnodbRowLockWaits': 'InnoDB等待行锁次数',
+          'KeyBlocksUnused': '键缓存内未使用的块数量',
+          'KeyBlocksUsed': '键缓存内使用的块数量',
+          'KeyCacheHitRate': 'myisam缓存命中率',
+          'KeyCacheUseRate': 'myisam缓存使用率',
+          'KeyReads': '硬盘读取数据块次数',
+          'KeyReadRequests': '键缓存读取数据块次数',
+          'KeyWrites': '数据块写入磁盘次数',
+          'KeyWriteRequests': '数据块写入键缓冲次数',
+          'LogCapacity': '日志使用量',
+          'MasterSlaveSyncDistance': '主从延迟距离',
+          'MaxConnections': '最大连接数',
+          'MemoryUse': '内存占用',
+          'MemoryUseRate': '内存利用率',
+          'OpenedTables': '已经打开的表数',
+          'OpenFiles': '打开文件总数',
+          'QcacheFreeBlocks': '查询缓存空闲块',
+          'QcacheFreeMemory': '缓存中空闲内存量',
+          'QcacheHits': '缓存命中次数',
+          'QcacheHitRate': '查询缓存命中率',
+          'QcacheInserts': '缓存写入次数',
+          'QcacheLowmemPrunes': '因内存不足删除缓存次数',
+          'QcacheNotCached': '查询未被缓存次数',
+          'QcacheQueriesInCache': '以注册到缓存内的查询数',
+          'QcacheTotalBlocks': '查询缓存内的总块数',
+          'QcacheUseRate': '查询缓存使用率',
+          'Qps': '每秒执行操作数',
+          'Queries': '总请求数',
+          'QueryRate': '查询使用率',
+          'RealCapacity': '磁盘使用空间（仅包含数据空间使用量）',
+          'SecondsBehindMaster': '主从延迟时间',
+          'SelectCount': '查询数',
+          'SelectScan': '全表扫描数',
+          'SlaveIoRunning': 'IO线程状态',
+          'SlaveSqlRunning': 'SQL线程状态',
+          'SlowQueries': '慢查询数',
+          'TableLocksImmediate': '立即释放的表锁数',
+          'TableLocksWaited': '等待表锁次数',
+          'ThreadsConnected': '当前打开连接数',
+          'ThreadsCreated': '已创建的线程数',
+          'ThreadsRunning': '运行的线程数',
+          'Tps': '每秒执行事务数',
+          'VolumeRate': '磁盘使用率',
+        },
 
-        this.tableData = [];
-        for (let i = 0; i < metricNArr.length; i++) {
-          this.Obtain(metricNArr[i], symbol[i]);
-        }
-
-        if (this.MetricName) {
-          this.getModality(this.MetricName);
-        }
-      },
-      //
-      Obtain(metricN, symbol) {
-        const param = {
-          Version: "2018-07-24",
-          Region: localStorage.getItem('regionv2'),
-          Namespace: "QCE/CDB",
-          MetricName: metricN,
-          "Instances.0.Dimensions.0.Name": "InstanceId",
-          "Instances.0.Dimensions.0.Value": this.ID,
-          Period: this.period,
-          StartTime: this.Start_End.StartTIme,
-          EndTime: this.Start_End.EndTIme
-        };
-        this.axios.post(All_MONITOR, param).then(data => {
-          if (data.Response.Error == undefined) {
-            data.Response.symbol = symbol;
-            this.tableData.push(data.Response);
-          } else {
-            this.$message({
-              message: ErrorTips[data.Response.Error.Code],
-              type: "error",
-              showClose: true,
-              duration: 0
-            });
-          }
-        });
-      },
-      getModality(MetricName) {
-        const param = {
-          Version: "2018-07-24",
-          Region: localStorage.getItem('regionv2'),
-          Namespace: "QCE/CVM",
-          MetricName: MetricName,
-          "Instances.0.Dimensions.0.Name": "InstanceId",
-          "Instances.0.Dimensions.0.Value": this.ID,
-          Period: this.period,
-          StartTime: this.Start_End.StartTIme,
-          EndTime: this.Start_End.EndTIme
-        };
-        this.axios.post(All_MONITOR, param).then(data => {
-          if (data.Response.Error == undefined) {
-            this.timeData = data.Response.DataPoints[0].Timestamps;
-            this.jingData = data.Response.DataPoints[0].Values;
-          } else {
-            this.$message({
-              message: ErrorTips[data.Response.Error.Code],
-              type: "error",
-              showClose: true,
-              duration: 0
-            });
-          }
-        });
-      },
-      // 模态框
-      Modality(MetricName) {
-        this.MetricName = MetricName;
-        // this.dialogVisible = true;
-        this.getModality(this.MetricName);
-      },
-      handleClose(done) {
-        done();
       }
     },
-    filters: {
-      //文字过滤
-      UpName(value) {
-        if (value === "CPUUseRate") {
-          return (value = "CPU利用率");
-        }
-        if (value === "MemoryUseRate") {
-          return (value = "内存利用率");
-        }
-        if (value === "MemoryUse") {
-          return (value = "記憶體佔用");
-        }
-        if (value === "VolumeRate") {
-          return (value = "磁碟使用率");
-        }
-        if (value === "RealCapacity") {
-          return (value = "磁碟使用空間（僅包含數據空間使用量）");
-        }
-        if (value === "Capacity") {
-          return (value = "	磁碟佔用空間（包含數據及日誌空間使用量）");
-        }
-        if (value === "BytesSent") {
-          return (value = "内網出流量");
-        }
-        if (value === "BytesReceived") {
-          return (value = "	内網入流量");
-        }
-        if (value === "QPS") {
-          return (value = "每秒執行操作數");
-        }
-        if (value === "TPS") {
-          return (value = "每秒執行事務數");
-        }
-        if (value === "MaxConnections") {
-          return (value = "最大連接數");
-        }
-        if (value === "ThreadsConnected") {
-          return (value = "當前打開連接數");
-        }
-        if (value === "ConnectionUseRate") {
-          return (value = "連接數利用率");
-        }
-        if (value === "SlowQueries") {
-          return (value = "慢查詢數");
-        }
-        if (value === "SelectScan") {
-          return (value = "全表掃描數");
-        }
-        if (value === "SelectCount") {
-          return (value = "查詢數");
-        }
-        if (value === "ComUpdate") {
-          return (value = "更新數");
-        }
-        if (value === "ComDelete") {
-          return (value = "刪除數");
-        }
-        if (value === "ComInsert") {
-          return (value = "插入數");
-        }
-        if (value === "ComReplace") {
-          return (value = "覆蓋數");
-        }
-        if (value === "Queries") {
-          return (value = "總請求數");
-        }
-        if (value === "QueryRate") {
-          return (value = "查詢使用率");
-        }
-        if (value === "CreatedTmpTables") {
-          return (value = "臨時表數量");
-        }
-        if (value === "TableLocksWaited") {
-          return (value = "等待表鎖次數");
-        }
-        if (value === "InnodbCacheUseRate") {
-          return (value = "innodb緩存使用率");
-        }
-        if (value === "InnodbCacheHitRate") {
-          return (value = "innodb緩存命中率");
-        }
-        if (value === "InnodbOsFileReads") {
-          return (value = "innodb讀磁碟數量");
-        }
-        if (value === "InnodbOsFileWrites") {
-          return (value = "innodb寫磁碟數量");
-        }
-        if (value === "InnodbOsFsyncs") {
-          return (value = "innodb fsync數量");
-        }
-        if (value === "InnodbNumOpenFiles") {
-          return (value = "當前InnoDB打開表的數量");
-        }
-        if (value === "KeyCacheUseRate") {
-          return (value = "myisam緩存使用率");
-        }
-        if (value === "KeyCacheHitRate") {
-          return (value = "myisam緩存命中率");
-        }
-        if (value === "ComCommit") {
-          return (value = "提交數");
-        }
-        if (value === "ComRollback") {
-          return (value = "回滾數");
-        }
-        if (value === "ThreadsCreated") {
-          return (value = "已創建的線程數");
-        }
-        if (value === "ThreadsRunning") {
-          return (value = "運行的線程數");
-        }
-        if (value === "CreatedTmpDiskTables") {
-          return (value = "磁碟臨時表數量");
-        }
-        if (value === "CreatedTmpFiles") {
-          return (value = "臨時文件數量");
-        }
-        if (value === "HandlerReadRndNext") {
-          return (value = "讀下一行請求數");
-        }
-        if (value === "HandlerRollback") {
-          return (value = "內部回滾數");
-        }
-        if (value === "HandlerCommit") {
-          return (value = "內部提交數");
-        }
-        if (value === "InnodbBufferPoolPagesFree") {
-          return (value = "InnoDB空頁數");
-        }
-        if (value === "InnodbBufferPoolPagesTotal") {
-          return (value = "InnoDB總頁數");
-        }
-        if (value === "InnodbBufferPoolReadRequests") {
-          return (value = "InnoDB邏輯讀");
-        }
-        if (value === "InnodbBufferPoolReads") {
-          return (value = "InnoDB物理讀");
-        }
-        if (value === "InnodbDataReads") {
-          return (value = "InnoDB總讀取量");
-        }
-        if (value === "InnodbDataRead") {
-          return (value = "InnoDB讀取量");
-        }
-        if (value === "InnodbDataWrites") {
-          return (value = "	InnoDB總寫入量");
-        }
-        if (value === "InnodbDataWritten") {
-          return (value = "InnoDB寫入量");
-        }
-        if (value === "InnodbRowsDeleted") {
-          return (value = "InnoDB行刪除量");
-        }
-        if (value === "InnodbRowsInserted") {
-          return (value = "InnoDB行插入量");
-        }
-        if (value === "InnodbRowsUpdated") {
-          return (value = "InnoDB行更新量");
-        }
-        if (value === "InnodbRowsRead") {
-          return (value = "	InnoDB行讀取量");
-        }
-        if (value === "InnodbRowLockTimeAvg") {
-          return (value = "InnoDB平均獲取行鎖時間");
-        }
-        if (value === "InnodbRowLockWaits") {
-          return (value = "InnoDB等待行鎖次數");
-        }
-        if (value === "KeyBlocksUnused") {
-          return (value = "鍵緩存內未使用的塊數量");
-        }
-        if (value === "KeyBlocksUsed") {
-          return (value = "	鍵緩存內使用的塊數量");
-        }
-        if (value === "KeyReadRequests") {
-          return (value = "鍵緩存讀取數據塊次數");
-        }
-        if (value === "KeyReads") {
-          return (value = "硬碟讀取數據塊次數");
-        }
-        if (value === "KeyWriteRequests") {
-          return (value = "數據塊寫入鍵緩衝次數");
-        }
-        if (value === "KeyWrites") {
-          return (value = "數據塊寫入磁碟次數");
-        }
-        if (value === "OpenedTables") {
-          return (value = "已經打開的表數");
-        }
-        if (value === "TableLocksImmediate") {
-          return (value = "立即釋放的表鎖數");
-        }
-        if (value === "OpenFiles") {
-          return (value = "打開文件總數");
-        }
-        if (value === "LogCapacity") {
-          return (value = "日誌使用量");
-        }
-        if (value === "SlaveIoRunning") {
-          return (value = "IO線程狀態");
-        }
-        if (value === "SlaveSqlRunning") {
-          return (value = "SQL線程狀態");
-        }
-        if (value === "MasterSlaveSyncDistance") {
-          return (value = "主從延遲距離");
-        }
-        if (value === "SecondsBehindMaster") {
-          return (value = "SlaveSqlRunning");
-        }
+    components: {
+      TimeDropDown,
+      echartLine
+    },
+    watch: {
+      MonitorData(val) {
+        if (this.MonitorData) {
+          this.MonitorData.forEach(element => {
+            this.BaseListK.forEach(item => {
+              if (item.MetricName === element.MetricName) {
+                item.DataPoints = element.DataPoints
+              }
+            });
+          });
+          if (this.BaseListK.length == val.length) {
+            this.tableData = this.BaseListK
+            this.TableLoad = false
+          }
+        }
+      }
+    },
+    methods: {
+      GetDat(data) {
+        this.Period = data[0]
+        this.Time = data[1]
+        this.TableLoad = true
+        this._GetBase()
       },
+      //获取基础指标详情
+      _GetBase() {
+        let parms = {
+          Version: '2018-07-24',
+          Region: localStorage.getItem('regionv2'),
+          Namespace: 'QCE/CDB'
+        }
+        this.axios.post(ALL_Basics, parms).then(res => {
+          if (res.Response.Error == undefined) {
+            this.BaseList = res.Response.MetricSet
+            this.MonitorData = []
+            this.BaseListK = []
+            this.BaseList.forEach(item => {
+              if (item.Period.indexOf(Number(this.Period)) !== -1) {
+                this.BaseListK.push(item)
+                this._GetMonitorData(item.MetricName)
+              }
+            });
+          } else {
+            this.$message({
+              message: ErrorTips[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+          }
+        });
+      },
+      //获取监控数据
+      _GetMonitorData(MetricName) {
+        let parms = {
+          Version: '2018-07-24',
+          Region: localStorage.getItem('regionv2'),
+          Namespace: 'QCE/CDB',
+          Period: this.Period,
+          StartTime: this.Time.StartTIme,
+          EndTime: this.Time.EndTIme,
+          MetricName: MetricName,
+          'Instances.0.Dimensions.0.Name': 'InstanceId',
+          'Instances.0.Dimensions.0.Value': this.ID,
+        }
+        this.axios.post(All_MONITOR, parms).then(data => {
+          if (data.Response.Error == undefined) {
+            this.MonitorData.push(data.Response);
+          } else {
+            this.$message({
+              message: ErrorTips[data.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+          }
+        });
+      },
+    },
+    filters: {
       UpTime(value) {
         let timeArr = [];
         for (let i = 0; i < value.length; i++) {
           let uptime = moment(value[i] * 1000).format("YYYY-MM-DD HH:mm:ss");
           timeArr.push(uptime);
         }
-
         return timeArr;
       }
     }
-  };
-
-</script>
-
-<style scoped lang="scss">
-  .symbol {
-    color: #bbb;
   }
 
+</script>
+<style lang="scss" scoped>
   .Monitor {
     background: #ffffff;
     margin-top: 20px;
@@ -580,106 +501,26 @@
     -webkit-box-shadow: 0px 3px 3px #c8c8c8;
     -moz-box-shadow: 0px 3px 3px #c8c8c8;
     box-shadow: 0px 3px 3px #c8c8c8;
-  }
+    padding: 20px;
 
-  .box-dis {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 40px;
-
-    .btn-style {
-      margin-left: 20px;
-      display: flex;
-      line-height: 32px;
-
-      .drop {
-        margin-left: 30px;
-
-        span {
-          color: #cccccc;
-          font-size: 10px;
-        }
-
-        ::v-deep.el-input {
-          width: 100px !important;
-          border: none;
-        }
-      }
-    }
-
-    p:nth-child(1) {
+    .box-dis {
+      margin-top: 20px;
       color: #ccc;
       font-size: 14px;
-      margin-left: 30px;
     }
 
-    p:nth-child(2) {
-      margin-right: 20px;
-    }
-  }
-
-  .btn-sty {
-    display: flex;
-    justify-content: space-between;
-  }
-
-  .p-dis {
-    display: flex;
-
-    span {
-      line-height: 40px;
-    }
-
-    .width-date {
-      width: 150px;
-      margin-left: 20px;
-    }
-  }
-
-  .margin-row {
-    margin-top: 30px;
-    margin-left: 55%;
-  }
-
-  .dateheight {
-    height: 34px;
-  }
-
-  ::v-deep.echart-wh {
-    width: 100% !important;
-    height: 500px !important;
-  }
-
-  .btn-style {
-    margin-left: 20px;
-    display: flex;
-    line-height: 32px;
-
-    .drop {
-      margin-left: 500px;
-
-      span {
-        color: #cccccc;
-        font-size: 10px;
+    .box-table {
+      .span_1 {
+        font-size: 14px;
+        font-weight: bold;
+        color: black;
       }
 
-      ::v-deep.el-input {
-        width: 100px !important;
-        border: none;
+      .span_2 {
+        font-size: 12px;
+        color: #BBBBBB;
       }
     }
-  }
-
-  .box-table {
-    width: 100%;
-  }
-
-  ::v-deep.i-font {
-    font-size: 36px;
-  }
-
-  ::v-deep.el-button--small {
-    font-size: 14px !important;
   }
 
 </style>

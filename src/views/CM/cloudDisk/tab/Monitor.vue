@@ -10,8 +10,7 @@
     </div>
     <div class="box-table">
       <!-- 表格 -->
-      <el-table :data="tableData" style="width: 100%">
-        <!-- v-loading='TableLoad' -->
+      <el-table :data="tableData" style="width: 100%" v-loading='TableLoad'>
         <el-table-column prop width="200">
           <template slot-scope="scope">
             <p>
@@ -30,7 +29,7 @@
             <p v-if="scope.row.DataPoints[0].Values.length==0">暂无数据</p>
             <div v-if="scope.row.DataPoints[0].Values.length!=0">
               <echart-line id="diskEchearrts-line" :time="scope.row.DataPoints[0].Timestamps | UpTime"
-                :opData="scope.row.DataPoints[0].Values" :scale="3" :period="period" :xdata="false"></echart-line>
+                :opData="scope.row.DataPoints[0].Values" :scale="3" :period="Period" :xdata="false"></echart-line>
             </div>
           </template>
         </el-table-column>
@@ -172,9 +171,11 @@
               }
             });
           });
+          console.log(this.BaseListK.length, val.length)
           if (this.BaseListK.length == val.length) {
             this.tableData = this.BaseListK
             this.TableLoad = false
+            console.log(this.tableData)
           }
         }
       }
@@ -203,7 +204,6 @@
                 this.BaseListK.push(item)
                 this._GetMonitorData(item.MetricName)
               }
-              console.log(this.BaseListK)
             });
           } else {
             this.$message({
@@ -241,6 +241,8 @@
           }
         });
       },
+    },
+    filters: {
       UpTime(value) {
         let timeArr = [];
         for (let i = 0; i < value.length; i++) {
