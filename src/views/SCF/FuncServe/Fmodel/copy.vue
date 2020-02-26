@@ -3,17 +3,17 @@
     <el-dialog :visible.sync="CopyVisible" width="550px" :show-close=false :close-on-click-modal=false
       :close-on-press-escape=false>
       <div slot="title" class="copyTitle">
-        <h4>函数复制</h4>
+        <h4>{{$t('SCF.total.hsfz')}}</h4>
         <p>
           <el-button type="text" icon="el-icon-close" @click="_cancel"></el-button>
         </p>
       </div>
       <div>
         <div class="Tips">
-          <p> 提示：如果云函数配置了vpc，在跨地域复制时，不会将vpc配置也复制过去。</p>
+          <p> {{$t('SCF.total.ts3')}}</p>
         </div>
         <div class="content">
-          <p>所属地域</p>
+          <p>{{$t('SCF.total.ssdy')}}</p>
           <div>
             <el-select v-model="Cityvalue">
               <el-option v-for="item in cityArr" :key="item.Region" :label="item.lable" :value="item.Region">
@@ -22,7 +22,7 @@
           </div>
         </div>
         <div class="content">
-          <p>命名空间</p>
+          <p>{{$t('SCF.total.mmkj')}}</p>
           <div>
             <el-select v-model="NewSpacevalue">
               <el-option v-for="item in SpaceList" :key="item.Name" :label="item.Name" :value="item.Name">
@@ -31,30 +31,30 @@
           </div>
         </div>
         <div class="content">
-          <p>函数名称</p>
+          <p>{{$t('SCF.total.hsmc')}}</p>
           <div>
             <el-input v-model="NewFuncName" @change="_changeName"></el-input>
-            <div class="rubC" v-show="showA">函数名称不能为空</div>
+            <div class="rubC" v-show="showA">{{$t('SCF.total.hsmcbwk')}}</div>
             <div class="rubC" v-show="showB">
-              <p class="p_style"> 1. 最多60个字符，最少2个字符</p>
-              <p class="p_style"> 2. 字母开头，支持 a-z，A-Z，0-9，-，_，且需要以数字或字母结尾</p>
+              <p class="p_style"> {{$t('SCF.total.ts1')}}</p>
+              <p class="p_style"> {{$t('SCF.total.ts2')}}</p>
             </div>
-            <div class="rubC" v-show="showC">该函数名在当前地域和命名空间下已存在</div>
+            <div class="rubC" v-show="showC">{{$t('SCF.total.ghsmycz')}}</div>
           </div>
         </div>
         <div class="content">
-          <p>复制内容</p>
+          <p>{{$t('SCF.total.fznr')}}</p>
           <div>
             <p>
-              <el-checkbox v-model="checked1" disabled>函数代码</el-checkbox>
+              <el-checkbox v-model="checked1" disabled>{{$t('SCF.total.hsdm')}}</el-checkbox>
             </p>
             <p>
-              <el-checkbox v-model="checked2">函数配置</el-checkbox>
+              <el-checkbox v-model="checked2">{{$t('SCF.total.hspz')}}</el-checkbox>
             </p>
           </div>
         </div>
         <div class="content">
-          <p>覆盖目标函数</p>
+          <p>{{$t('SCF.total.fghs')}}</p>
           <div>
             <p>
               <el-checkbox v-model="checked3"></el-checkbox>
@@ -62,7 +62,7 @@
           </div>
         </div>
         <div class="content">
-          <p>描述</p>
+          <p>{{$t('SCF.total.ms')}}</p>
           <div>
             <el-input type="textarea" :rows="5" v-model="textarea">
             </el-input>
@@ -70,8 +70,8 @@
         </div>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="_Determine">提 交</el-button>
-        <el-button @click="_cancel">关 闭</el-button>
+        <el-button type="primary" @click="_Determine">{{$t('SCF.total.tj')}}</el-button>
+        <el-button @click="_cancel">{{$t('SCF.total.gb')}}</el-button>
       </span>
     </el-dialog>
   </div>
@@ -148,9 +148,9 @@
             console.log(this.SpaceList)
           } else {
             let ErrTips = {
-              'InvalidParameterValue.Filters': 'Filters参数错误',
-              'InvalidParameterValue.Order': 'Order传入错误',
-              'InvalidParameterValue.Orderby': 'Orderby传入错误',
+              'InvalidParameterValue.Filters': 'Filters參數錯誤',
+              'InvalidParameterValue.Order': 'Order傳入錯誤',
+              'InvalidParameterValue.Orderby': 'Orderby傳入錯誤',
               'InvalidParameterValue.SearchKey': 'searchkey 不是 Keyword,Tag 或者 Runtime'
             }
             let ErrOr = Object.assign(ErrorTips, ErrTips)

@@ -21,7 +21,7 @@
                 :placeholder="$t('SCF.total.srdsrwmc')" @input="tasksNameChange" />
               <p class="tipCon" v-show="warnFlag">{{ $t('SCF.total.ts1') }}</p>
               <p class="tipCon" v-show="warnFlag">{{ $t('SCF.total.ts2') }}</p>
-              <p class="tipCon" v-show="notNullFlag">触发器名称必须输入</p>
+              <p class="tipCon" v-show="notNullFlag">{{$t('SCF.total.cfqmc')}}</p>
             </el-form-item>
             <el-form-item :label="$t('SCF.total.cfzq')" :required="true">
               <el-select v-model="formTriggerForm.triggerTime" @change="triggerChange" class="selectSetWidth">
@@ -47,9 +47,9 @@
             </el-form-item>
             <el-form-item v-show="formTriggerForm.writeIsTrue=='true'" class="writeIsTrue">
               <span slot="label"></span>
-              <el-input class="inputSetWidth" type="textarea" :rows="3" placeholder="请输入内容"
+              <el-input class="inputSetWidth" type="textarea" :rows="3" placeholder="$t('SCF.total.qsrnr')"
                 v-model="formTriggerForm.CustomArgument"></el-input>
-              <p>请填写附加信息,长度不超过4KiB</p>
+              <p>{{$t('SCF.total.qtxfjxx')}}</p>
             </el-form-item>
             <el-form-item :label="$t('SCF.total.ljqy')">
               <el-checkbox class="inputSetWidth" type="checkbox" v-model="formTriggerForm.nowStart"></el-checkbox>
@@ -272,13 +272,13 @@
               if (state == "OPEN") {
                 this.$message({
                   showClose: true,
-                  message: "触发器已启用",
+                  message: "觸發器已啟用",
                   type: "success"
                 });
               } else {
                 this.$message({
                   showClose: true,
-                  message: "触发器已关闭",
+                  message: "觸發器已關閉",
                   type: "success"
                 });
               }

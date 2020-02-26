@@ -7,7 +7,7 @@
       </el-select>
       <TimeDropDown :TimeArr='TimeArr' :Datecontrol='true' :Graincontrol='false' :Difference="'H'"
         v-on:switchData="GetDat" class="TimeDropDown" />
-      <el-input placeholder="请输入requestId" v-model="requestId" @change="_search"></el-input>
+      <el-input placeholder="$t('SCF.total.qsrid')" v-model="requestId" @change="_search"></el-input>
       <el-button icon="el-icon-search" size="small" @click="_GetJournal"></el-button>
     </div>
     <div class="content" v-if="contentshow===true">
@@ -16,29 +16,29 @@
           <li @click="_switch(item)">
             <span> {{item.StartTime}}</span>
             <span v-if="item.RetCode===0" class="success">
-              调用成功
+              {{$t('SCF.total.dycg')}}
             </span>
             <span v-else class="fail">
-              调用失败
+              {{$t('SCF.total.dysb')}}
             </span>
           </li>
         </ul>
       </div>
       <div class="contentx">
-        <p class="contentID">请求ID:&nbsp;&nbsp;&nbsp;{{content.RequestId}}</p>
+        <p class="contentID">{{$t('SCF.total.qqid')}}:&nbsp;&nbsp;&nbsp;{{content.RequestId}}</p>
         <div class="information">
-          <p>时间:<span>{{content.StartTime}}</span></p>
-          <p>运行时间:<span>{{content.Duration}}ms</span></p>
-          <p>计费时间:<span>{{content.BillDuration}}ms</span></p>
-          <p>运行内存:<span>{{content.MemUsage |UpMB()}}MB</span></p>
+          <p>{{$t('SCF.total.sj')}}:<span>{{content.StartTime}}</span></p>
+          <p>{{$t('SCF.total.yxsj')}}:<span>{{content.Duration}}ms</span></p>
+          <p>{{$t('SCF.total.jfsj')}}:<span>{{content.BillDuration}}ms</span></p>
+          <p>{{$t('SCF.total.yxnc')}}:<span>{{content.MemUsage |UpMB()}}MB</span></p>
         </div>
         <div class="RetMsg_Log">
           <div>
-            <p class="title">返回数据:</p>
+            <p class="title">{{$t('SCF.total.fhsj')}}:</p>
             <p>{{content.RetMsg}}</p>
           </div>
           <div>
-            <p class="title">日志:</p>
+            <p class="title">{{$t('SCF.total.rz')}}:</p>
             <p>{{content.Log}}</p>
           </div>
         </div>
@@ -49,25 +49,25 @@
       <div class="menu">
         <ul>
           <li>
-            暂无日志信息
+            {{$t('SCF.total.zwrzxx')}}
           </li>
         </ul>
       </div>
       <div class="contentx">
-        <p class="contentID">请求ID:&nbsp;&nbsp;&nbsp;</p>
+        <p class="contentID">{{$t('SCF.total.qqid')}}:&nbsp;&nbsp;&nbsp;</p>
         <div class="information">
-          <p>时间:<span></span></p>
-          <p>运行时间:<span>0ms</span></p>
-          <p>计费时间:<span>0ms</span></p>
-          <p>运行内存:<span>0MB</span></p>
+          <p>{{$t('SCF.total.sj')}}:<span></span></p>
+          <p>{{$t('SCF.total.yxsj')}}:<span>0ms</span></p>
+          <p>{{$t('SCF.total.jfsj')}}:<span>0ms</span></p>
+          <p>{{$t('SCF.total.yxnc')}}:<span>0MB</span></p>
         </div>
         <div class="RetMsg_Log">
           <div>
-            <p class="title">返回数据:</p>
+            <p class="title">{{$t('SCF.total.fhsj')}}:</p>
             <p></p>
           </div>
           <div>
-            <p class="title">日志:</p>
+            <p class="title">{{$t('SCF.total.rz')}}:</p>
             <p></p>
           </div>
         </div>
@@ -89,21 +89,21 @@
       return {
         functionName: this.$route.query.functionName,
         ChoiceOptions: [{
-            label: '全部日志',
+            label: '全部日誌',
             value: ''
           },
           {
-            label: '正确日志',
+            label: '正確日誌',
             value: 'is0'
           },
           {
-            label: '错误日志',
+            label: '錯誤日誌',
             value: 'not0'
           },
         ],
         ChoiceValue: '',
         TimeArr: [{
-            name: '实时',
+            name: '實時',
             Time: 'realTime',
             TimeGranularity: [{
               value: "",
@@ -111,7 +111,7 @@
             }]
           },
           {
-            name: '近24小时',
+            name: '近24小時',
             Time: 'Nearly_24_hours',
             TimeGranularity: [{
               value: "",
@@ -169,13 +169,13 @@
             }
           } else {
             let ErrTips = {
-              'InternalError': '内部错误',
-              'nternalError.ES': 'ES错误',
-              'InternalError.System': '内部系统错误',
-              'InvalidParameter.Payload': '请求参数不合法',
-              'InvalidParameterValue': '参数取值错误',
-              'InvalidParameterValue.DateTime': 'DateTime传入错误',
-              'InvalidParameterValue.StartTimeOrEndTime': '开始时间与结束时间仅可相差一天'
+              'InternalError': '內部錯誤',
+              'nternalError.ES': 'ES錯誤',
+              'InternalError.System': '內部系統錯誤',
+              'InvalidParameter.Payload': '請求參數不合法',
+              'InvalidParameterValue': '參數取值錯誤',
+              'InvalidParameterValue.DateTime': 'DateTime傳入錯誤',
+              'InvalidParameterValue.StartTimeOrEndTime': '開始時間與結束時間僅可相差一天'
             };
             let ErrOr = Object.assign(ErrorTips, ErrTips);
             this.$message({

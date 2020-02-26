@@ -146,7 +146,7 @@
           descStep: "",
           runRole: "",
           runFun: "",
-          tipFun: "在线编辑",
+          tipFun: "在線編輯",
           codeContent: ""
         },
         ScienceArr: [{}],
@@ -280,7 +280,7 @@
           } else {
             let ErrTips = {
               'InternalError.SystemError': 'InternalError.SystemError',
-              'InvalidParameter.ParamError': '非法入参'
+              'InvalidParameter.ParamError': '非法入參'
             };
             let ErrOr = Object.assign(ErrorTips, ErrTips);
             this.$message({
@@ -332,45 +332,45 @@
               });
             } else {
               let ErrTips = {
-                'FailedOperation.CreateFunction': '操作失败',
+                'FailedOperation.CreateFunction': '操作失敗',
                 'FailedOperation.Namespace': 'Namespace已存在',
-                'InternalError': '内部错误',
-                'InternalError.System': '内部系统错误',
-                'InvalidParameter.Payload': '请求参数不合法',
-                'InvalidParameterValue': '参数取值错误',
-                'InvalidParameterValue.Code': 'Code传入错误',
-                'InvalidParameterValue.CodeSecret': 'CodeSecret传入错误',
-                'InvalidParameterValue.CodeSource': 'CodeSource传入错误',
-                'InvalidParameterValue.Cos': 'Cos传入错误',
-                'InvalidParameterValue.CosBucketName': 'CosBucketName不符合规范',
-                'InvalidParameterValue.CosObjectName': 'CosObjectName不符合规范',
-                'InvalidParameterValue.Description': 'Description传入错误',
-                'InvalidParameterValue.EipConfig': 'EipConfig参数错误',
-                'InvalidParameterValue.Environment': 'Environment传入错误',
-                'InvalidParameterValue.FunctionName': '函数不存在',
-                'InvalidParameterValue.Handler': 'Handler传入错误',
-                'InvalidParameterValue.Layers': 'Layers参数传入错误',
-                'InvalidParameterValue.MemorySize': 'MemorySize错误',
-                'InvalidParameterValue.Namespace': 'Namespace参数传入错误',
-                'InvalidParameterValue.Runtime': 'Runtime传入错误',
+                'InternalError': '內部錯誤',
+                'InternalError.System': '內部系統錯誤',
+                'InvalidParameter.Payload': '請求參數不合法',
+                'InvalidParameterValue': '參數取值錯誤',
+                'InvalidParameterValue.Code': 'Code傳入錯誤',
+                'InvalidParameterValue.CodeSecret': 'CodeSecret傳入錯誤',
+                'InvalidParameterValue.CodeSource': 'CodeSource傳入錯誤',
+                'InvalidParameterValue.Cos': 'Cos傳入錯誤',
+                'InvalidParameterValue.CosBucketName': 'CosBucketName不符合規範',
+                'InvalidParameterValue.CosObjectName': 'CosObjectName不符合規範',
+                'InvalidParameterValue.Description': 'Description傳入錯誤',
+                'InvalidParameterValue.EipConfig': 'EipConfig參數錯誤',
+                'InvalidParameterValue.Environment': 'Environment傳入錯誤',
+                'InvalidParameterValue.FunctionName': '函數不存在',
+                'InvalidParameterValue.Handler': 'Handler傳入錯誤',
+                'InvalidParameterValue.Layers': 'Layers參數傳入錯誤',
+                'InvalidParameterValue.MemorySize': 'MemorySize錯誤',
+                'InvalidParameterValue.Namespace': 'Namespace參數傳入錯誤',
+                'InvalidParameterValue.Runtime': 'Runtime傳入錯誤',
                 'InvalidParameterValue.TempCosObjectName': '非法的TempCosObjectName',
-                'InvalidParameterValue.Type': 'Type传入错误',
+                'InvalidParameterValue.Type': 'Type傳入錯誤',
                 'InvalidParameterValue.ZipFile': 'ZipFile非法',
-                'LimitExceeded.Function': '函数数量超出最大限制',
-                'LimitExceeded.Memory': '内存超出最大限制',
+                'LimitExceeded.Function': '函數數量超出最大限制',
+                'LimitExceeded.Memory': '記憶體超出最大限制',
                 'LimitExceeded.Timeout': 'Timeout超出最大限制',
-                'MissingParameter.Code': 'Code没有传入',
-                'MissingParameter.Runtime': '缺失 Runtime 字段',
-                'ResourceInUse.Function': '函数已存在',
+                'MissingParameter.Code': 'Code沒有傳入',
+                'MissingParameter.Runtime': '缺失 Runtime 欄位',
+                'ResourceInUse.Function': '函數已存在',
                 'ResourceInUse.FunctionName': 'FunctionName已存在',
                 'ResourceNotFound.Demo': '不存在的Demo',
                 'ResourceNotFound.Role': '角色不存在',
-                'ResourceNotFound.Vpc': 'VPC或子网不存在',
+                'ResourceNotFound.Vpc': 'VPC或子網不存在',
                 'ResourceUnavailable.Namespace': 'Namespace不可用',
-                'UnauthorizedOperation.CAM': 'CAM鉴权失败',
-                'UnauthorizedOperation.Region': 'Region错误',
-                'UnauthorizedOperation.Role': '没有权限访问您的Cos资源',
-                'UnauthorizedOperation.TempCosAppid': 'TempCos的Appid和请求账户的Appid不一致'
+                'UnauthorizedOperation.CAM': 'CAM鑒權失敗',
+                'UnauthorizedOperation.Region': 'Region錯誤',
+                'UnauthorizedOperation.Role': '沒有許可權訪問您的Cos資源',
+                'UnauthorizedOperation.TempCosAppid': 'TempCos的Appid和請求帳戶的Appid不一致'
               };
               let ErrOr = Object.assign(ErrorTips, ErrTips);
               this.$message({

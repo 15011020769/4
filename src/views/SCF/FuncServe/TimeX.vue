@@ -84,7 +84,7 @@
           </el-select>
         </div>
       </div>
-      <p class="LocaP"><a href="javascript:location.reload();">刷新</a></p>
+      <p class="LocaP"><a href="javascript:location.reload();">重新整理</a></p>
     </div>
 
   </div>
