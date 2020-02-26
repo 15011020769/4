@@ -122,9 +122,7 @@ export default {
     };
   },
   created() {
-    // this.getData();
     this.getColonyList();
-    // this.getColonyStatus();
   },
   methods: {
     // 查看详情跳转
@@ -280,51 +278,6 @@ export default {
       this.searchInput = val;
       this.getColonyList();
     }
-    // // 获取集群列表状态(不对外单独提供文档,所以无法实现)
-    // getColonyStatus() {
-    //   let params = {
-    //     Version: "2018-05-25"
-    //   };
-    //   if (this.searchInput !== "") {
-    //     for (var i in this.tableData) {
-    //       params["ClusterIds." + i] = this.tableData[i].ClusterId;
-    //     }
-    //   }
-    //   this.axios.post(TKE_COLONY_STATUS, params).then(res => {
-    //     console.log(res)
-    //     this.listStatus = res.Response.ClusterStatusSet;
-    //     this.listStatusArr = [];
-    //     for (var i in this.listStatus) {
-    //       this.listStatusArr.push(this.listStatus[i].ClusterInstanceState);
-    //     }
-    //   });
-    // },
-    // getColonyList() {
-    //   //数据持久化集群列表
-    //   // let params = {
-    //   //   Method: "GET",
-    //   //   Path: "/apis/platform.tke/v1/persistentevents",
-    //   //   Version: "2018-05-25"
-    //   // };
-
-    //   // this.axios.post(TKE_COLONY_QUERY, params).then(res => {
-    //   //   if (res.Response.Error === undefined) {
-    //   //     console.log(JSON.parse(res.Response.ResponseBody).items)
-    //   //     var data=JSON.parse(res.Response.ResponseBody).items;
-    //   //     this.tableData = data;
-    //   //     this.loadShow = false;
-    //   //   } else {
-    //   //     let ErrTips = {};
-    //   //     let ErrOr = Object.assign(ErrorTips, ErrTips);
-    //   //     this.$message({
-    //   //       message: ErrOr[res.Response.Error.Code],
-    //   //       type: "error",
-    //   //       showClose: true,
-    //   //       duration: 0
-    //   //     });
-    //   //   }
-    //   // });
-    // }
   },
   components: {
     HeadCom,

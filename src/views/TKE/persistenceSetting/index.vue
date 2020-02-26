@@ -46,13 +46,31 @@
           <div class="flex padding" v-if="tabPosition=='Els'">
             <div class="data-card-hd" style="line-height:28px;">Elasticsearch</div>
             <div>
-              <input type="text" placeholder="eg: http://190.0.0.1:9200" v-model="elasticVal" />
+              <el-tooltip
+                content="Bottom center"
+                placement="请输入正确的格式eg: http://190.0.0.1:9200"
+                effect="light"
+              >
+                <input
+                  style="color:#000;"
+                  type="text"
+                  v-model="elasticVal"
+                  placeholder="eg: http://190.0.0.1:9200"
+                  @change="elastic"
+                />
+              </el-tooltip>
             </div>
           </div>
           <div class="flex padding" style="padding-bottom:0px;" v-if="tabPosition=='Els'">
             <div class="data-card-hd" style="line-height:28px;">索引</div>
             <div>
-              <input type="text" placeholder="eg: fluentd" v-model="indexesVal" />
+              <input
+                style="color:#000;"
+                type="text"
+                v-model="indexesVal"
+                placeholder="eg: fluentd"
+                @change="indexes"
+              />
               <div style="padding-top:10px;">最长60个字符，只能包含小写字母，数字及分隔符("-","_","+"),且必须以小写字母开头</div>
             </div>
           </div>
@@ -80,7 +98,7 @@
         <el-form>
           <el-form-item style="margin-top:40px;margin-left:30px;">
             <el-button type="primary" @click="onSubmit" size="mini">保存</el-button>
-            <el-button size="mini">取消</el-button>
+            <el-button size="mini" @click="onCancel">取消</el-button>
           </el-form-item>
         </el-form>
       </div>
@@ -99,21 +117,74 @@ export default {
       loadShow: true, // 加载是否显示
       dataList: {},
       elasticVal: "",
-      indexesVal: ""
+      indexesVal: "",
+      placement: "格式为eg: http://190.0.0.1:9200"
     };
   },
   methods: {
     //存储
-    elastic(val) {
-      this.elasticVal = val;
-      console.log(val);
+    elastic() {
+      // var reg = "http://[1-9]{1}.[1-9]{1}.[1-9]{1}.[1-9]{1}";
+      // if (this.elasticVal.match(reg)) {
+      //   this.placement="输入正确"
+      // }else{
+      //   this.placement="输入正确"
+      // }
+      console.log(this.elasticVal);
     },
     //索引
-    indexes(val) {
-      this.indexesVal = val;
-      console.log(val);
+    indexes() {
+      console.log(this.indexesVal);
     },
     onSubmit() {
+      // 数据持久化集群列表
+      let params = {
+        Method: "POST",
+        Path: "/apis/platform.tke/v1/persistentevents",
+        Version: "2018-05-25",
+        RequestBody:
+          '{"kind":"PersistentEvent","apiVersion":"platform.tke/v1","metadata":{"generateName":"pe"},"spec":{"clusterName":"' +
+          this.$route.query.ClusterId +
+          '","persistentBackEnd":{"es":{"ip":"' +
+          this.elasticVal.substring(7, this.elasticVal.length - 5) +
+          '","port":' +
+          this.elasticVal.substring(
+            this.elasticVal.length - 4,
+            this.elasticVal.length
+          ) +
+          ',"scheme":"' +
+          this.elasticVal.substring(0, 4) +
+          '","indexName":"' +
+          this.indexesVal +
+          '"}}}}',
+        ClusterName: this.$route.query.ClusterId
+      };
+      this.axios.post(TKE_COLONY_QUERY, params).then(res => {
+        if (res.Response.Error === undefined) {
+          var data = JSON.parse(res.Response.ResponseBody).items;
+          this.tableData = data;
+          this.loadShow = false;
+        } else {
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
+      this.$router.push({
+        path: "/persistence",
+        query: {
+          elasticVal: this.elasticVal,
+          indexesVal: this.indexesVal,
+          targetId: this.$route.query.ClusterId
+        }
+      });
+    },
+    onCancel() {
       this.$router.push({
         path: "/persistence"
       });
@@ -126,7 +197,6 @@ export default {
         Path: "/apis/platform.tke/v1/persistentevents/",
         Version: "2018-05-25"
       };
-
       this.axios.post(TKE_COLONY_QUERY, params).then(res => {
         if (res.Response.Error === undefined) {
           // console.log(JSON.parse(res.Response.ResponseBody).items);
@@ -134,7 +204,6 @@ export default {
           var name = this.$route.params.uid;
           data.forEach(item => {
             if (item.spec.clusterName == name) {
-              // console.log(item)
               this.dataList = item;
             }
           });
@@ -155,8 +224,18 @@ export default {
   },
   created() {
     this.getColonyList();
-    this.indexes();
-    this.onSubmit();
+    if (this.$route.query.storageObject && this.$route.query.indexName) {
+      this.elasticVal = this.$route.query.storageObject.substring(
+        6,
+        this.$route.query.storageObject.length - 1
+      );
+      this.indexesVal = this.$route.query.indexName.substring(
+        3,
+        this.$route.query.indexName.length - 1
+      );
+    } else {
+      this.value = false;
+    }
   },
   props: ["uid"],
   components: {
