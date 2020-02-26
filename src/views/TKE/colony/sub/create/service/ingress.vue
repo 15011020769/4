@@ -87,13 +87,13 @@
             <el-checkbox disabled v-model="ing.checked">Http:80</el-checkbox>
             <el-checkbox v-model="ing.checkedtwo">Https:443</el-checkbox>
           </el-form-item>
-          <el-form-item label="服务器证书">
-            <el-select v-model="ing.value" placeholder="请选择">
+          <el-form-item label="服务器证书" v-if="ing.checkedtwo">
+            <el-select v-model="ing.certValue" placeholder="请选择">
               <el-option
-                v-for="item in ing.options"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value">
+                v-for="item in ing.certList"
+                :key="item.id"
+                :label="`${item.alias} (${item.id})`"
+                :value="item.id">
               </el-option>
             </el-select>
             <div>如您现有的证书不合适，可以<a href="">现在创建</a><i class="el-icon-edit-outline"></i></div>
@@ -133,20 +133,20 @@
                   <span style="padding-left:23px">80</span>
                   <el-input style="width:200px;padding-left:75px;" placeholder="默认为IPv4 IP"></el-input>
                   <el-input style="width:120px;padding-left:30px;"></el-input>
-                  <el-select v-model="ing.value" placeholder="请选择" style="padding-left:30px;width:150px;">
+                  <el-select v-model="NameSpaceSelect" placeholder="请选择" style="padding-left:30px;width:150px;">
                     <el-option
-                      v-for="item in ing.options"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.value">
+                      v-for="item in NameSpaceList"
+                      :key="item.metadata.name"
+                      :label="item.metadata.name"
+                      :value="item.spec.ports">
                     </el-option>
                   </el-select>
-                  <el-select v-model="ing.value" placeholder="请选择" style="padding-left:30px;width:150px;">
+                  <el-select v-model="portSelect" placeholder="请选择" style="padding-left:30px;width:150px;" :disabled="!NameSpaceSelect.length">
                     <el-option
-                      v-for="item in ing.options"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.value">
+                      v-for="item in NameSpaceSelect"
+                      :key="item.name"
+                      :label="item.port"
+                      :value="item.port">
                     </el-option>
                   </el-select>
                   <el-tooltip class="item" effect="dark" content="删除" placement="right">
@@ -171,12 +171,28 @@
 <script>
 import FileSaver from 'file-saver'
 import XLSX from 'xlsx'
-import { ALL_CITY } from '@/constants'
+import {
+  ALL_CITY,
+  TKE_GETCERTLIST,
+  TKE_DESCRIBELISTENERS,
+  TKE_INQUIRYPRICE,
+  TKE_EDSCRIBELOADBALANCERS,
+  TKE_Worker_METWORK,
+  TKE_VPC_METWORK,
+  TKE_COLONY_LIST,
+  POINT_REQUEST
+} from '@/constants'
 export default {
   name: 'svcCreate',
   data () {
     return {
       dialogFormVisible: false,
+      clusterId: '',
+      namespace: '', // route 传入的命名空间名
+      NameSpaceList: [], // 命名空间列表
+      NameSpaceSelect: {}, // 命名空间选中的值
+      portSelect: '', // 选中的端口号
+      certList: [], // 证书列表
       ing: {
         fz: 'zd',
         checked: true,
@@ -186,29 +202,32 @@ export default {
         value: '',
         options: [],
         input: '',
+        certValue: '',
+        certList: [],
         list: [{}]
       }
     }
   },
   components: {},
+  watch: {
+    NameSpaceSelect: function (val) {
+      console.log(val)
+      this.portSelect = ''
+    }
+  },
   created () {
     // 从路由获取类型
-    console.log(process.env.VUE_APP_adminUrl)
-    this.axios.post(`clb/InquiryPriceCreateLoadBalancer`, {
-      Version: '2018-03-17',
-      LoadBalancerType: 'OPEN',
-      LoadBalancerChargeType: 'POSTPAID',
-      InternetAccessible: { InternetChargeType: 'BANDWIDTH_POSTPAID_BY_HOUR', InternetMaxBandwidthOut: 1 }
-    }).then(res => {
-    })
-    this.axios.post(`account/GetCertList`, {
-      certType: 'SVR',
-      count: 999,
-      page: 1,
-      withCert: 0,
-      regionId: 39
-    }).then(res => {
-    })
+    let { clusterId, np } = this.$route.query
+    this.clusterId = clusterId
+    this.namespace = np
+    this.getCertList()
+    this.getDescribeListeners()
+    this.getInquiryPrice()
+    this.getDescribeLoadBalancers()
+    this.getWorkerNetwork()
+    this.getVpcNetwork()
+    this.getColonyList()
+    this.getNameSpaceList()
   },
   methods: {
     removeprot (item) {
@@ -226,6 +245,110 @@ export default {
     // 返回上一层
     goBack () {
       this.$router.go(-1)
+    },
+    // 获取证书列表
+    getCertList: async function () {
+      let param = {
+        certType: 'SVR',
+        count: 999,
+        page: 1,
+        withCert: 0,
+        regionId: 39
+      }
+      this.axios.post(TKE_GETCERTLIST, param).then(res => {
+        res.data.list.forEach((item) => {
+          let { alias, id } = item
+          if (alias === '') {
+            alias = '未命名'
+          }
+          this.ing.certList.push({ alias, id })
+        })
+      })
+    },
+    // 获取描述者
+    getDescribeListeners: async function () {
+      let param = {
+        Version: '2018-03-17',
+        LoadBalancerId: 'lb-304y2b8e'
+      }
+      this.axios.post(TKE_DESCRIBELISTENERS, param).then(res => {
+        console.log('getDescribeListeners', res)
+      })
+    },
+    // 查询价格
+    getInquiryPrice: async function () {
+      let param = {
+        Version: '2018-03-17',
+        LoadBalancerType: 'OPEN',
+        LoadBalancerChargeType: 'POSTPAID',
+        'InternetAccessible.InternetChargeType': 'BANDWIDTH_POSTPAID_BY_HOUR',
+        'InternetAccessible.InternetMaxBandwidthOut': 1
+      }
+      await this.axios.post(TKE_INQUIRYPRICE, param).then(res => {
+        console.log('getInquiryPrice', res)
+      })
+    },
+    // 获取描述平衡器
+    getDescribeLoadBalancers: async function () {
+      let param = {
+        Version: '2018-03-17',
+        Forward: 1,
+        Offset: 0,
+        Limit: 100
+      }
+      await this.axios.post(TKE_EDSCRIBELOADBALANCERS, param).then(res => {
+        console.log('getDescribeLoadBalancers', res)
+      })
+    },
+    // 获取子网列表
+    getWorkerNetwork: async function () {
+      let param = {
+        Version: '2017-03-12',
+        'Filters.0.Name': 'vpc-id',
+        'Filters.0.Values.0': 'vpc-apm60zou',
+        Offset: 0,
+        Limit: 100
+      }
+      this.axios.post(TKE_Worker_METWORK, param).then(res => {
+        console.log('getWorkerNetwork', res)
+      })
+    },
+    // 获取子网列表
+    getVpcNetwork: async function () {
+      let param = {
+        Version: '2017-03-12',
+        'VpcIds.0': 'vpc-apm60zou',
+        Offset: 0,
+        Limit: 100
+      }
+      this.axios.post(TKE_VPC_METWORK, param).then(res => {
+        console.log('getVpcNetwork', res)
+      })
+    },
+    // 获取集群列表
+    getColonyList: async function () {
+      let param = {
+        'ClusterIds.0': 'cls-a7rua9ae',
+        Version: '2018-05-25'
+      }
+      this.axios.post(TKE_COLONY_LIST, param).then(res => {
+        console.log('getColonyList', res)
+      })
+    },
+    // 获取命名空间
+    async getNameSpaceList () {
+      let param = {
+        Method: 'GET',
+        Path: `/api/v1/namespaces/${this.namespace}/services`,
+        Version: '2018-05-25',
+        ClusterName: this.clusterId
+      }
+
+      await this.axios.post(POINT_REQUEST, param).then(res => {
+        let { Response: { ResponseBody } } = res
+        this.NameSpaceList = JSON.parse(ResponseBody).items
+        console.log('getNameSpaceList', res)
+      })
     }
   }
 }

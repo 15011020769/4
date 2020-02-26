@@ -23,10 +23,10 @@
 
     <!-- 详情子菜单导航 -->
     <div class="tke-detial-nav">
-      <router-link class="nav-item" :to="{name:'ingressDetailInfo',query: {clusterId: clusterId}}">详情</router-link>
-      <router-link class="nav-item" :to="{name:'ingressDetailEvent',query: {clusterId: clusterId}}">事件</router-link>
-      <router-link class="nav-item" :to="{name:'ingressDetailYaml',query: {clusterId: clusterId}}">YAML</router-link>
-    </div> 
+      <router-link class="nav-item" :to="{name:'ingressDetailInfo',query: {clusterId: clusterId, namespace: namespace, ingressName: ingressName}}">详情</router-link>
+      <router-link class="nav-item" :to="{name:'ingressDetailEvent',query: {clusterId: clusterId, namespace: namespace, ingressName: ingressName}}">事件</router-link>
+      <router-link class="nav-item" :to="{name:'ingressDetailYaml',query: {clusterId: clusterId, namespace: namespace, ingressName: ingressName}}">YAML</router-link>
+    </div>
 
     <!-- 子页面 -->
     <keep-alive>
@@ -34,49 +34,48 @@
           <router-view></router-view>
         </transition>
     </keep-alive>
-   
+
   </div>
 </template>
 
 <script>
-import XLSX from "xlsx";
-import { ALL_CITY } from "@/constants";
+import XLSX from 'xlsx'
+import { ALL_CITY } from '@/constants'
+
 export default {
-  name: "ingressDetail",
-  data() {
+  name: 'ingressDetail',
+  data () {
     return {
-        clusterId:'',
-    };
+      clusterId: '',
+      namespace: '', // 所在页面的命名空间
+      ingressName: '' // 所在页面的ingress名称
+    }
   },
-  components: {
-    
-  },
-  created() {
+  components: {},
+  created () {
     // 从路由获取集群id
-    this.clusterId=this.$route.query.clusterId;
+    let { clusterId, ingressName, namespace } = this.$route.query
+    this.clusterId = clusterId
+    this.namespace = namespace
+    this.ingressName = ingressName
   },
   methods: {
-    //返回上一层
-    goBack(){
+    // 返回上一层
+    goBack () {
       this.$router.push({
-        name:'colonyServiceIngress',
-        
+        name: 'colonyServiceIngress'
+
       })
     },
-    //返回集群列表
-    goColonyList(){
+    // 返回集群列表
+    goColonyList () {
       this.$router.push({
-        name:'colony',
-        
+        name: 'colony'
       })
-    },
+    }
   }
-};
+}
 </script>
 
-<style lang="scss" scoped>
-
-
-
-</style>
-
+ <style lang="scss" scoped>
+ </style>
