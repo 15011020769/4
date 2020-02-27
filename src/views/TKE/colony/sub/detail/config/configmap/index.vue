@@ -12,9 +12,9 @@
             集群(中国台北) /
           </span>
           <span class="goback" @click="goBack()">
-            cls-gwblk71e(tfy_test1) /
+            {{clusterId}} /
           </span>
-          <h2 class="header-title">ConfigMap:ccas(default)</h2>
+          <h2 class="header-title">ConfigMap:{{Info.name}}({{Info.np}})</h2>
         </div>
         <!-- 右侧 -->
         <div class="grid-right"></div>

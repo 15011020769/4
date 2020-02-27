@@ -90,9 +90,22 @@
             label="操作"
             >
             <template slot-scope="scope">
-              <span class="tke-text-link">修改配置</span>
-              <span class="tke-text-link ml10">编辑YAML</span>
-              <span class="tke-text-link ml10" @click="delConfig(scope.row)">删除</span>
+              <div v-if="scope.row.metadata.namespace=='kube-system'">
+               <el-tooltip class="tooltip" effect="dark" content="当前Namespace下的不可进行此操作" placement="top">
+                     <el-button   class='btn btn2'  >修改配置</el-button>
+              </el-tooltip>
+               <el-tooltip class="tooltip" effect="dark" content="当前Namespace下的不可进行此操作" placement="top">
+                     <el-button   class='btn btn2' >编辑YAML</el-button>
+              </el-tooltip>
+               <el-tooltip class="tooltip" effect="dark" content="当前Namespace下的不可进行此操作" placement="top">
+                     <el-button   class='btn btn2'  >删除</el-button>
+              </el-tooltip>
+              </div>
+              <div v-else>
+                   <el-button   class='btn' @click="goUpdatepz(scope.row)" >修改配置</el-button>
+                   <el-button  class='btn' >编辑YAML</el-button>
+                   <el-button   class='btn' @click="delConfig(scope.row)">删除</el-button>
+              </div>
             </template>
           </el-table-column>
         </el-table>
@@ -257,6 +270,18 @@ export default {
           }
       });
     },
+    //编辑
+    goUpdatepz(item){
+      console.log(item)
+       this.$router.push({
+          name: "updateHpa",
+          query: {
+            clusterId: this.clusterId,
+            name:item.metadata.name,
+            np:item.metadata.namespace,
+          }
+      });
+    },
 
     //选择搜索条件
     changeSearchType(val) {
@@ -320,8 +345,6 @@ export default {
   },
   filters:{
     dataShow(val){
-      console.log(val)
-
       if(val.resource){
          if(val.resource.name=='cpu'){
              return "CPU利用率（占Request）"+val.resource.targetAverageUtilization+'%'
@@ -413,5 +436,18 @@ export default {
 
 <style lang="scss">
  .el-tooltip__popper{font-size: 14px; max-width:30% } /*设置显示隐藏部分内容，按50%显示*/
+  .btn{
+    display: inline-block;
+    width: 52px;
+    padding: 0px;
+    border: none;
+    margin-left: 6px;
+    font-size: 12px;
+    color:#409eff;
+  }
+  .btn2{
+    color:#bbb !important;
+    cursor:not-allowed;
+  }
 </style>
 
