@@ -14,7 +14,7 @@
               <el-option v-for="(item,index) in this.options" :key="index" :label="item.Label" :value="item.Value">
               </el-option>
             </el-select>
-            <el-input :placeholder="placeholder" v-model="input3" class="inp" @input="_inpChange"></el-input>
+            <el-input :placeholder="placeholder" v-model="input3" class="inp" @input="_inpChange" clearable></el-input>
             <el-button icon="el-icon-search" @click="seach()"></el-button>
           </div>
           <div class="date">
@@ -504,12 +504,14 @@
       display: flex;
     }
 
-    // .inp{
-    //   width: 200px;
-    // }
-    // .inp >>> .el-input__inner {
-    //   width: 200px;
-    // }
+    .inp {
+      width: 300px !important;
+    }
+
+    .inp>>>.el-input__inner {
+      width: 300px;
+    }
+
     .search_dropdown>>>.el-input__inner {
       height: 30px;
       line-height: 30px;
@@ -522,7 +524,6 @@
       border-radius: 0px;
       padding-top: 0;
       font-size: 12px;
-      margin-left: -20px;
       position: relative;
       z-index: 100;
     }
@@ -557,9 +558,6 @@
       cursor: pointer;
     }
 
-    .date {
-      margin-left: -30px;
-    }
 
     .el-date-editor--daterange.el-input__inner {
       width: 287px;
