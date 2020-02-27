@@ -45,12 +45,6 @@
 
           <el-table-column label="状态" width="220">
             <template slot-scope="scope">
-              <!-- {{scope.row.ClusterStatus}} -->
-              <!-- targetStatus
-              targetStatusTip-->
-              <!-- failed
-              running-->
-              <!-- {{scope.row.targetStatus}} -->
               <el-tooltip
                 v-if="scope.row.targetStatus == 'failed'"
                 class="item"
@@ -70,7 +64,6 @@
               <span v-else>未开启</span>
             </template>
           </el-table-column>
-          <!-- 存储端参数找不到 -->
           <el-table-column label="存储端" width="220">
             <template slot-scope="scope">
               <span v-if="scope.row.storageObject">Elasticsearch</span>
@@ -227,7 +220,6 @@ export default {
             k8sList.map(k8s => {
               if (cluster.ClusterId == k8s.spec.clusterName) {
                 if (k8s.status && k8s.status.phase) {
-                  console.log(k8s);
                   cluster.targetStatus = k8s.status.phase;
                   cluster.targetStatusTip = k8s.status.reason;
                 }

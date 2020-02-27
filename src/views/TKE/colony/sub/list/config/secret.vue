@@ -129,20 +129,29 @@ export default {
     getData() {
       this.loadShow = true;
       //获取列表数据
-      // Method: "GET"
-      // Path: "/api/v1/namespaces/default/secrets?limit=20"
-      // Version: "2018-05-25"
-      // ClusterName: "cls-a7rua9ae"
-      var params = {
-        Method: "GET",
-        Path:
-          "/api/v1/namespaces/" +
-          this.searchType +
-          "/secrets?&limit=" +
-          this.pageSize,
-        Version: "2018-05-25",
-        ClusterName: this.clusterId
-      };
+      if (this.searchInput == "") {
+        var params = {
+          Method: "GET",
+          Path:
+            "/api/v1/namespaces/" +
+            this.searchType +
+            "/secrets?&limit=" +
+            this.pageSize,
+          Version: "2018-05-25",
+          ClusterName: this.clusterId
+        };
+      }else{
+         var params = {
+          Method: "GET",
+          Path:
+            "/api/v1/namespaces/" +
+            this.searchType +
+            "/secrets?fieldSelector=metadata.name="+this.searchInput,
+          Version: "2018-05-25",
+          ClusterName: this.clusterId
+        };
+      }
+
       this.axios.post(TKE_COLONY_QUERY, params).then(res => {
         if (res.Response.Error === undefined) {
           var mes = JSON.parse(res.Response.ResponseBody);
@@ -161,7 +170,6 @@ export default {
         }
       });
     },
-    getColonyList() {},
     //命名空间选项
     nameSpaceList() {
       var params = {
@@ -205,7 +213,7 @@ export default {
     },
     // 详情
     goSecretDetail() {
-      console.log(this.$route)
+      console.log(this.$route);
       this.$router.push({
         name: "secretDetail",
         query: {
@@ -221,12 +229,15 @@ export default {
     //监听搜索框的值
     changeSearchInput(val) {
       this.searchInput = val;
-      console.log(this.searchInput);
+      if (val === "") {
+        this.getData();
+      }
     },
     // 点击搜索
     clickSearch(val) {
       this.searchInput = val;
-      console.log(this.searchInput);
+
+      this.getData();
     },
     //刷新数据
     refreshList() {
@@ -259,13 +270,13 @@ export default {
     // 分页
     handleCurrentChange(val) {
       this.pageIndex = val - 1;
-      this.getColonyList();
+      this.getData();
       this.pageIndex += 1;
     },
     handleSizeChange(val) {
       // console.log(`每页 ${val} 条`);
       this.pageSize = val;
-      this.getColonyList();
+      this.getData();
     },
     //打开删除
     deleteNameSpace(row) {
