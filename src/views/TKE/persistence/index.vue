@@ -63,7 +63,7 @@
                   <i style="color:#e54545;font-size:16px" class="el-icon-warning"></i>
                 </span>
               </el-tooltip>
-              <span v-else-if="scope.row.targetStatus == 'Running'" class="text-green">
+              <span v-else-if="scope.row.targetStatus == 'running'" class="text-green">
                 已开启
                 <i style="color:#0abf5b;font-weight:900" class="el-icon-circle-check"></i>
               </span>
@@ -155,7 +155,6 @@ export default {
     },
     handleClick(uid) {
       //设置
-      console.log(uid);
       this.$router.push({
         path: "/persistenceSetting/" + uid.ClusterId,
         query: uid
@@ -212,7 +211,6 @@ export default {
         if (k8sRes.Response.Error === undefined) {
           var data = JSON.parse(k8sRes.Response.ResponseBody);
           k8sList = data.items;
-          console.log(k8sList);
           this.loadShow = false;
         } else {
           let ErrTips = {};
@@ -227,9 +225,9 @@ export default {
         if (res.Response.Clusters.length > 0) {
           res.Response.Clusters.map(cluster => {
             k8sList.map(k8s => {
-              // console.log(k8s)
-              if (cluster.ClusterId === k8s.spec.clusterName) {
+              if (cluster.ClusterId == k8s.spec.clusterName) {
                 if (k8s.status && k8s.status.phase) {
+                  console.log(k8s);
                   cluster.targetStatus = k8s.status.phase;
                   cluster.targetStatusTip = k8s.status.reason;
                 }
@@ -254,7 +252,6 @@ export default {
         }
         this.total = res.Response.TotalCount;
         this.tableData = res.Response.Clusters;
-        console.log(this.tableData);
         this.loadShow = false;
       } else {
         this.loadShow = false;
