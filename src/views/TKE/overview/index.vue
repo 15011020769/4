@@ -5,7 +5,7 @@
       <div class="tf-g">
         <el-row>
           <!-- 左边内容 -->
-          <el-col :span="16">
+          <el-col >
             <!-- 第一行内容 -->
             <div class="resource-overview">
               <h3 class="font" style="margin-bottom:20px">资源概览</h3>
@@ -49,352 +49,202 @@
                 </li>
               </ul>
             </div>
-            <!-- 第二行内容 -->
-            <div class="resource-overview" style="margin-top:20px">
-              <h3 class="font" style="margin:6px 0 6px 0;">集群健康</h3>
-            </div>
-            <!-- 集群卡片内容 -->
-            <div
-              @click="show()"
-              class="resource-overview twoRow-data-card-border-top"
-            >
-              <h3 class="font" style="margin:0;">
-                <i
-                  v-if="isShow"
-                  class="el-icon-caret-bottom data-card-icon"
-                  style="margin-right:5px"
-                ></i>
-                <i
-                  v-else
-                  class="el-icon-caret-right data-card-icon"
-                  style="margin-right:5px"
-                ></i
-                >中国台北
-                <span class="font-small"
-                  >共&nbsp;{{ TotalCount }}&nbsp;个集群</span
-                >
-                <i
-                  class="data-card-icon el-icon-info font-red"
-                  style="margin-left:2px"
-                ></i>
-              </h3>
-              <div
-                v-for="(item, index) in clusters"
-                :key="index"
-                v-if="isShow"
-                class="resource-overview data-card-border"
-                style="box-shadow:none;"
-              >
-                <div>
-                  <!-- 第二行集群头 -->
-                  <div class="font-small">
-                    <a href="javascrpit:;">{{ item.ClusterId }}</a>
-                    <span style="margin-left:6px">{{ item.ClusterName }}</span>
-                  </div>
-                  <!-- 第二行集群内容 -->
-                  <div class="ro-data-card" style="margin:0">
-                    <div class="twoROW-data-card-list">
-                      <div>
-                        <span style="font-size:18px;">0.04</span>
-                        <span class="font-small" style="color:black;"
-                          >%&nbsp;CPU利用率</span
-                        >
-                      </div>
-                      <div class="font-small" style="margin-top:10px;">
-                        总数：7.91核&nbsp;Request已分配：1.26%
-                      </div>
-                    </div>
-                    <div class="twoROW-data-card-list">
-                      <div>
-                        <span style="font-size:18px;">0.43</span>
-                        <span class="font-small" style="color:black;"
-                          >%&nbsp;内存利用率</span
-                        >
-                      </div>
-                      <div class="font-small" style="margin-top:10px;">
-                        总数：29.37GB&nbsp;Request已分配：0.1%
-                      </div>
-                    </div>
-                    <div
-                      class="twoROW-data-card-list font-small"
-                      style="background:none;padding:0"
-                    >
-                      <div style="padding-top:0;">
-                        <span>节点</span>
-                        <a href="">（1个）</a>
-                        <span style="margin-left:72px" class="font-green"
-                          >正常</span
-                        >
-                      </div>
-                      <div style="padding-top:17px;">
-                        <span>Master&Etcd</span>
-                        <a href="">（0个）</a>
-                        <span style="margin-left:20px" class="font-green"
-                          >正常</span
-                        >
-                      </div>
-                      <div style="padding-top:17px;">
-                        <span>工作负载</span>
-                        <a href="">（5个）</a>
-                        <span style="margin-left:47px" class="font-red"
-                          >异常&nbsp;1&nbsp;个</span
-                        >
-                        <el-tooltip placement="right" effect="light">
-                          <div slot="content" style="width:200px;height:200px">
-                            <div class="font-small">
-                              <span>命名空间</span>
-                              <div class="hsd"></div>
-                              <span>Deployment</span>
-                            </div>
-                            <div class="font-small" style="margin-top:10px">
-                              <span>kube-system</span>
-                              <a style="margin-left:55px;" href="">coredns</a>
-                              <br />
-                              <a style="margin-left:130px" href="">查看事件</a>
-                            </div>
-                          </div>
-                          <i
-                            style="margin-left:25px"
-                            class="el-icon-more-outline"
-                          ></i>
-                        </el-tooltip>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <!-- 左边底部内容 -->
-            <div
-              class="resource-overview twoRow-data-card-border-top"
-              style="margin-top:20px;"
-            >
-              <h3 class="font" style="margin:0;">使用指引</h3>
-              <div class="zn">
-                <div class="data-card-img">
-                  <img
-                    src="https://imgcache.qq.com/open_proj/proj_qcloud_v2/mc_2014/docker/css/img/overview-zhiying.svg"
-                    alt=""
-                  />
-                </div>
-                <div class="data-card-img">
-                  <div class="font-small" style="color:black">使用指引</div>
-                  <div class="font-small">
-                    通过固定流程，快速创建容器服务
-                    <a href="">开始使用</a>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </el-col>
-          <!-- 右边内容 -->
-          <el-col :span="8">
-            <div class="resource-overview" style="margin-left:20px">
-              <div class="zn" style="justify-content: space-between;">
-                <h3 class="font" style="margin-bottom:20px;font-size:14px">
-                  帮助文档
-                </h3>
-                <label class="font-small">
-                  <a href="">更多</a>
-                  <i class="el-icon-edit-outline"></i>
-                </label>
-              </div>
-              <ul class="font-small">
-                <li class="help-list">
-                  <a class="font-black" href="">容器服务如何使用</a>
-                </li>
-                <li class="help-list">
-                  <a class="font-black" href="">容器服务提供了哪些功能</a>
-                </li>
-                <li class="help-list">
-                  <a class="font-black" href="">容器服务如何计费</a>
-                </li>
-                <li class="help-list">
-                  <a class="font-black" href="">如何构建docker镜像</a>
-                </li>
-                <li class="help-list">
-                  <a class="font-black" href="">如何登陆到容器</a>
-                </li>
-              </ul>
-            </div>
-            <div class="resource-overview" style="margin:20px 0 0 20px;">
-              <div class="zn" style="justify-content: space-between;">
-                <h3 class="font" style="margin-bottom:20px;font-size:14px">
-                  最近更新
-                </h3>
-                <label class="font-small">
-                  <a href="">更多</a>
-                  <i class="el-icon-edit-outline"></i>
-                </label>
-              </div>
-              <ul class="font-small">
-                <li class="help-list">
-                  <div class="zn" style="justify-content: space-between;">
-                    <a class="font-black" href=""
-                      >TKE支持自定义节点&nbsp;Hostname（内测）</a
-                    >
-                    <div>
-                      2019-11-15
-                    </div>
-                  </div>
-                </li>
-                <li class="help-list">
-                  <div class="zn" style="justify-content: space-between;">
-                    <a class="font-black" href=""
-                      >TKE支持自定义节点&nbsp;Hostname（内测）</a
-                    >
-                    <div>
-                      2019-11-15
-                    </div>
-                  </div>
-                </li>
-                <li class="help-list">
-                  <div class="zn" style="justify-content: space-between;">
-                    <a class="font-black" href=""
-                      >TKE支持自定义节点&nbsp;Hostname（内测）</a
-                    >
-                    <div>
-                      2019-11-15
-                    </div>
-                  </div>
-                </li>
-                <li class="help-list">
-                  <div class="zn" style="justify-content: space-between;">
-                    <a class="font-black" href=""
-                      >TKE支持自定义节点&nbsp;Hostname（内测）</a
-                    >
-                    <div>
-                      2019-11-15
-                    </div>
-                  </div>
-                </li>
-                <li class="help-list">
-                  <div class="zn" style="justify-content: space-between;">
-                    <a class="font-black" href=""
-                      >TKE支持自定义节点&nbsp;Hostname（内测）</a
-                    >
-                    <div>
-                      2019-11-15
-                    </div>
-                  </div>
-                </li>
-              </ul>
-            </div>
-            <div class="resource-overview" style="margin:20px 0 0 20px;">
-              <div class="zn" style="justify-content: space-between;">
-                <h3 class="font" style="margin-bottom:20px;font-size:14px">
-                  配置限额
-                </h3>
-                <label class="font-small">
-                  <a href="">申请配额</a>
-                  <i class="el-icon-edit-outline"></i>
-                </label>
-              </div>
-              <ul class="font-small">
-                <li>
-                  <div class="zn">
-                    <div style="margin:0 40px 20px 0;">命名空间</div>
-                    <div class="font-black">10个</div>
-                  </div>
-                </li>
-                <li>
-                  <div class="zn">
-                    <div style="margin:0 65px 20px 0;">集群</div>
-                    <div class="font-black">5个/地域</div>
-                  </div>
-                </li>
-                <li>
-                  <div class="zn">
-                    <div style="margin:0 65px 20px 0;">节点</div>
-                    <div class="font-black">5000个/集群</div>
-                  </div>
-                </li>
-                <li>
-                  <div class="zn">
-                    <div style="margin:0 65px 20px 0;">镜像</div>
-                    <div class="font-black">500个/地域</div>
-                  </div>
-                </li>
-                <li>
-                  <div class="zn">
-                    <div style="margin:0 40px 20px 0;">镜像版本</div>
-                    <div @click="show()" class="font-black">100个/镜像</div>
-                  </div>
-                </li>
-              </ul>
-            </div>
           </el-col>
         </el-row>
+      </div>
+     <!--  -->
+      <div class="chars-wrap">
+          <h3>使用统计</h3>
+         <el-button size="small"  class="btn" readonly="readonly"  style="margin-top:20px">台湾台北</el-button>
+         <div style="margin-top:10px">
+             <div class="chartShowTit">
+            <el-button-group>
+              <el-button v-for="(v,i) in arr" :key="i" @click="selectA(i)" :class="{'addColor':selectIndex==i,'initColor':true}">
+                <span>{{v}}</span>
+              </el-button>
+            </el-button-group>
+          </div>
+             <TimeDropDown :TimeArr='TimeArr' :Datecontrol='true' :Graincontrol='true' :Difference="'H'"
+                v-on:switchData="GetDat" />
+            <p class="box-dis">
+               <i class="el-icon-info"></i>注釋：Max、Min和Avg數值統計為當前折線圖內所有點的最大值、最小值和平均值
+            </p>
+            
+         </div>
+         <div style="margin-top:5px">
+            <el-table :data="tableData" style="width: 100%;" :show-header="showHeader" empty-text="暂无数据">
+              <el-table-column prop width="150">
+                <template slot-scope="scope">
+                  <span style="font-size:12px;font-weight:bolder; color:#333;font-weight:600;">
+                    {{scope.row.MetricName}}
+                    <span class="symbol">{{scope.row.symbol}}</span>
+                  </span>
+                </template>
+              </el-table-column>
+              <el-table-column prop="DataPoints">
+                <template slot-scope="scope">
+                    {{scope.row.DataPoints}}
+                  <!-- <p v-if="scope.row.DataPoints[0].Values.length==0">暂无数据</p>
+                  <div class="echart" v-if="scope.row.DataPoints[0].Values.length!=0">
+                    <echart-line id="diskEchearrts-line" :time="scope.row.DataPoints[0].Timestamps | UpTime"
+                      :opData="scope.row.DataPoints[0].Values" :scale="3" :period="period" :xdata="false">
+                    </echart-line>
+                  </div> -->
+                </template>
+              </el-table-column>
+            </el-table>
+          </div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import moment from "moment";
+import TimeDropDown from '@/components/public/TimeDropDown' //引入时间组件
+import echartLine from "@/components/public/echars-line"; //引入图标组件
 import HeadCom from "@/components/public/Head";
-import { TKE_COLONY_LIST, TKE_COLONY_STATUS_JZ } from "@/constants";
+import { TKE_COLONY_LIST, TKE_COLONY_STATUS_JZ,All_MONITOR,ALL_Basics } from "@/constants";
 import { ErrorTips } from "@/components/ErrorTips";
 export default {
   name: "overview",
   data() {
     return {
       isShow: false,
+      selectIndex:'',
       shows:true,
+      showHeader:false,
       TotalCount: "",
       nodeNum: 0,
       abnormalNodeNum: 0,
       workLoad: 0,
       abWorkLoad: 0,
-      clusters: [] //集群
+      clusters: [], //集群
+      arr:['CPU使用率','CPU平均负载','内存使用量','内存利用率','TCP连接数'],
+     TimeArr: [{
+            name: '实时',
+            Time: 'realTime',
+            TimeGranularity: [{
+                value: "5",
+                label: "5秒"
+              }, {
+                value: "10",
+                label: "10秒"
+              },
+              {
+                value: "60",
+                label: "1分鐘"
+              },
+              {
+                value: "300",
+                label: "5分鐘"
+              }
+            ]
+          },
+          {
+            name: '近24小时',
+            Time: 'Nearly_24_hours',
+            TimeGranularity: [{
+                value: "60",
+                label: "1分鐘"
+              },
+              {
+                value: "300",
+                label: "5分鐘"
+              },
+              {
+                value: "3600",
+                label: "1小時"
+              },
+              {
+                value: "86400",
+                label: "1天"
+              }
+            ]
+          },
+          {
+            name: '近7天',
+            Time: 'Nearly_7_days',
+            TimeGranularity: [{
+                value: "3600",
+                label: "1小時"
+              },
+              {
+                value: "86400",
+                label: "1天"
+              }
+            ]
+          }
+        ],
+        MonitorData: [], //监控数据
+        BaseList: [], //全部指标列表
+        BaseListK: [], //用到的指标列表
+        Time: {}, //监控传递时间
+        MonitorData: [], //监控数据
+        tableData: [], // 组合数据
+        period:'',
+        Start_End:"",
     };
   },
   components: {
-    HeadCom
+    HeadCom,TimeDropDown,echartLine
   },
+
   created() {
-    // this.resourceList();
     this.resourceStatusData();
   },
-  methods: {
-    show() {
-      this.isShow = !this.isShow;
-    },
-    // async resourceList() {
-    //   var params = {
-    //     Version: "2018-05-25",
-    //     Region: this.$cookie.get("regionv2")
-    //   };
-    //   const res = await this.axios.post(TKE_COLONY_LIST, params);
-
-    //   if (res.Response.Error === undefined) {
-    //     this.TotalCount = res.Response.TotalCount;
-
-    //     this.clusters = res.Response.Clusters;
-    //     console.log(this.clusters);
-    //   } else {
-    //     let ErrTips = {
-    //       InternalError: "内部错误",
-    //       "InternalError.CamNoAuth": "没有权限",
-    //       "InternalError.Db": "db错误",
-    //       "InternalError.DbAffectivedRows": "DB错误",
-    //       "InternalError.Param": "Param",
-    //       "InternalError.PublicClusterOpNotSupport": "集群不支持当前操作",
-    //       "InternalError.QuotaMaxClsLimit": "超过配额限制",
-    //       "InternalError.QuotaMaxNodLimit": "超过配额限制",
-    //       InvalidParameter: "参数错误",
-    //       "InvalidParameter.Param": "参数错误",
-    //       LimitExceeded: "超过配额限制",
-    //       ResourceNotFound: "资源不存在"
-    //     };
-    //     let ErrOr = Object.assign(ErrorTips, ErrTips);
-    //     this.$message({
-    //       message: ErrOr[res.Response.Error.Code],
-    //       type: "error",
-    //       showClose: true,
-    //       duration: 0
-    //     });
+   watch: {
+    //   MonitorData(val) {
+    //     if (this.MonitorData) {
+    //       this.MonitorData.forEach(element => {
+    //         this.BaseListK.forEach(item => {
+    //           if (item.MetricName === element.MetricName) {
+    //             item.DataPoints = element.DataPoints
+    //           }
+    //         });
+    //       });
+    //       console.log(this.BaseListK.length, val.length)
+    //       if (this.BaseListK.length == val.length) {
+    //         this.tableData = this.BaseListK
+    //         console.log(this.tableData)
+    //       }
+    //     }
     //   }
-    // },
+    },
+  methods: {
+      GetDat(data) {
+         this.Period = data[0]
+        this.Time = data[1]
+        // this._GetMonitorData('CPUUsage')
+      },
+      //获取监控数据
+      _GetMonitorData(MetricName) {
+        let parms = {
+          Version: '2018-07-24',
+          Region: localStorage.getItem('regionv2'),
+          Namespace: 'QCE/BLOCK_STORAGE',
+          Period: this.Period,
+          StartTime: this.Time.StartTIme,
+          EndTime: this.Time.EndTIme,
+          MetricName: MetricName,
+          'Instances.0.Dimensions.0.Name': 'diskId',
+          'Instances.0.Dimensions.0.Value': this.ID,
+        }
+        this.axios.post(All_MONITOR, parms).then(data => {
+          if (data.Response.Error == undefined) {
+            this.MonitorData.push(data.Response);
+          } else {
+            this.$message({
+              message: ErrorTips[data.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+          }
+        });
+      },
+    
+    //概览数据
     resourceStatusData() {
       var params = {
         Version: "2018-05-25",
@@ -429,49 +279,29 @@ export default {
           this.TotalCount = res.data.clusterResourceStatusList.length;//集群数
         }
       });
+    },
+    show() {
+      this.isShow = !this.isShow;
+    },
+    selectA(index){
+        this.selectIndex=index;
     }
-  }
+  },
+  filters: {
+      UpTime(value) {
+        let timeArr = [];
+        for (let i = 0; i < value.length; i++) {
+          let uptime = moment(value[i] * 1000).format("YYYY-MM-DD HH:mm:ss");
+          timeArr.push(uptime);
+        }
+        return timeArr;
+      }
+    }
 };
 </script>
 
 <style lang="scss" scoped>
-.font-black {
-  color: black !important;
-}
-.help-list {
-  margin: 20px 0 20px 0;
-}
-.zn {
-  display: flex;
-}
-.data-card-img {
-  padding: 20px;
-}
-.hsd {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: #f2f2f2;
-  display: inline-block;
-  margin: 0 30px 0 30px;
-}
-a:hover {
-  text-decoration: underline;
-}
-.twoROW-data-card-list {
-  width: 272px;
-  height: 78px;
-  background: #f2f2f2;
-  margin: 20px 14px 0 0;
-  padding: 16px 12px;
-}
-.data-card-border {
-  margin-top: 20px;
-  border: 1px solid #dddddd;
-}
-.twoRow-data-card-border-top {
-  border-top: 1px solid #dddddd;
-}
+
 .data-card-icon {
   font-size: 10px;
 }
@@ -479,30 +309,21 @@ a:hover {
   margin-left: 20px;
 }
 
-.font-small {
-  font-size: 12px;
-  color: #888888;
-  font-weight: lighter;
-}
 .font-big {
   font-size: 36px;
 }
-.font-green {
-  color: #0abf5b;
-}
+
 .font-red {
   color: #e54545;
 }
 .app-tke-fe-content__inner {
-  // padding-top: 20px;
   max-width: 1360px;
   margin: 0 auto;
-  padding: 20px 15px 0px;
+  padding: 20px 15px 20px;
 }
 .tf-g {
   font-size: 0;
-  margin-bottom: 50px;
-  // background: pink;
+  margin-bottom: 16px;
 }
 .el-row {
   margin-bottom: 20px;
@@ -535,15 +356,53 @@ a:hover {
 }
 .ro-data-card-hd {
   margin: 10px 0;
-  // width: 282px;
-}
-.show {
-  display: block;
-}
-.hide {
-  display: none;
 }
 .ro-data-card-list{
   width:33%
+}
+.chars-wrap{
+    padding:20px;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+    background:white;
+    width:100%;
+    min-height:400px;
+    .btn{
+        background:#ECF5FF;
+        color:#409eff;
+    }
+    .box-dis {
+      margin-top: 20px;
+      color: #ccc;
+      font-size: 14px;
+    }
+  .chartShowTit {
+    width: 100%;
+    border-bottom: 1px solid #eaeaea;
+    height: 35px;
+    line-height: 38px;
+
+    button {
+      padding: 5px 10px;
+      border-bottom: 2px solid transparent;
+      margin-right: 20px !important;
+      border: none;
+      border-radius: 0;
+
+      span {
+        font-size: 12px;
+        color: #888;
+      }
+    }
+    .initColor{
+         border-bottom: 2px solid transparent;
+         margin-bottom:10px;
+    }
+    .addColor {
+      border-bottom: 2px solid #006eff !important;
+      background-color: transparent;
+      font-weight: 600;
+      color: #000;
+    }
+  }
 }
 </style>
