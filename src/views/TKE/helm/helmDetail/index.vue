@@ -5,19 +5,19 @@
         <router-link :to="{name: 'helm'}">
           <li>
             <i class="el-icon-back"></i>
-            <span>niha</span>
+            <span>{{this.$route.query.helmName}}详情</span>
           </li>
         </router-link>
       </ul>
     </div>
     <div class="my-title">
         <ul class="my-ul">
-          <router-link :to="{name: 'helmDetailDetail'}">
+          <router-link :to="{name: 'helmDetailDetail',query:{clusterId:this.$route.query.clusterId,helmName:this.$route.query.helmName}}">
             <li @click="getTrue()" class="li-one" :style="{fontWeight:this.dataObject.flag==true?'700':''}">
                应用详情<div class="bottom-one" :style="{width:this.dataObject.flag==true?'78px':'0'}"></div>
             </li>
           </router-link>
-          <router-link :to="{name: 'helmDetailHistory'}">
+          <router-link :to="{name: 'helmDetailHistory',query:{clusterId:this.$route.query.clusterId,helmName:this.$route.query.helmName}}">
             <li @click="getFalse()" class="li-two" :style="{fontWeight:this.dataObject.flag==false?'700':''}">
                 版本历史<div class="bottom-two" :style="{width:this.dataObject.flag==false?'78px':'0'}"></div>
             </li>
