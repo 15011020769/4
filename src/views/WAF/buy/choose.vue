@@ -122,16 +122,23 @@
 </template>
 <script>
 import { DESCRIBE_WAF_PRICE } from '@/constants'
-import { CLB_PACKAGE_CFG_TYPES, PACKAGE_CFG_TYPES, BUY_LOG_TYPES, CLB_BUY_DOMAIN_TYPES } from '../constants'
+import { 
+  CLB_PACKAGE_CFG_TYPES,
+  PACKAGE_CFG_TYPES,
+  BUY_LOG_TYPES,
+  CLB_BUY_DOMAIN_TYPES,
+  CLB_BUY_QPS_TYPES,
+} from '../constants'
 export default {
   data(){
     return{
       thisType: 2,//套餐
-      domainPackageCount: 1,//扩展域名包
+      domainPackageCount: 0,//扩展域名包
       qpsPackageCount: 0,//QPS扩展包
       clsPackageCount: 0,//安全日志服务包
       mounthType: 1,//购买时长
       loading: true,
+      costInfo: undefined,
       price: 0,
     }
   },
@@ -162,30 +169,29 @@ export default {
       this.mounthType = mounthType;
     },
     queryPrice() {
-      this.axios.post(DESCRIBE_WAF_PRICE, {
-        Version: '2018-01-25',
-        ResInfo: [{
-          goodsCategoryId: PACKAGE_CFG_TYPES[this.thisType].first_categoryid,
+      const commonParam = {
           "regionId": 1,
           "projectId": 0,
           "goodsNum": 1,
           "payMode": 1,
           "platform": 1,
-          goodsDetail: {
-            "timeSpan": this.mounthType,
-            "timeUnit": "m",
-            "type": 'wsm_waf',
-            "pid": 11416, // 1001156,
-            [PACKAGE_CFG_TYPES[this.thisType].key]: 1,
-          }
-        }, 
-        {
+      }
+      const resInfo = [{
+        goodsCategoryId: PACKAGE_CFG_TYPES[this.thisType].first_categoryid,
+        ...commonParam,
+        goodsDetail: {
+          "pid": 11416, // WAF的pid,
+          "timeSpan": this.mounthType,
+          "timeUnit": "m",
+          "type": 'wsm_waf',
+          [PACKAGE_CFG_TYPES[this.thisType].key]: 1,
+        }
+      }]
+      // 选择了扩展域名包
+      if (this.domainPackageCount) {
+        resInfo.push({
           goodsCategoryId: CLB_BUY_DOMAIN_TYPES.first_categoryid,
-          "regionId": 1,
-          "projectId": 0,
-          "goodsNum": 1,
-          "payMode": 1,
-          "platform": 1,
+          ...commonParam,
           goodsDetail: {
             "pid": CLB_BUY_DOMAIN_TYPES.pid, // 1001156,
             "timeSpan": this.mounthType,
@@ -193,11 +199,49 @@ export default {
             [CLB_BUY_DOMAIN_TYPES.pricetype]: this.domainPackageCount,
             "type": CLB_BUY_DOMAIN_TYPES.goodstype,
           }
-        }
-        ]
+        })
+      }
+      // 选择了QPS扩展包
+      if (this.qpsPackageCount) {
+        resInfo.push({
+          goodsCategoryId: CLB_BUY_QPS_TYPES.first_categoryid,
+          ...commonParam,
+          goodsDetail: {
+            "pid": CLB_BUY_QPS_TYPES.pid, // 1001156,
+            "timeSpan": this.mounthType,
+            "timeUnit": "m",
+            [CLB_BUY_QPS_TYPES.pricetype]: this.qpsPackageCount * 1000,
+            "type": CLB_BUY_QPS_TYPES.goodstype,
+          }
+        })
+      }
+      // 选择了安全日志服务包
+      if (this.clsPackageCount) {
+        resInfo.push({
+          goodsCategoryId: BUY_LOG_TYPES.first_categoryid,
+          ...commonParam,
+          goodsDetail: {
+            "pid": BUY_LOG_TYPES.pid, // 1001156,
+            "timeSpan": this.mounthType,
+            "timeUnit": "m",
+            [BUY_LOG_TYPES.pricetype]: this.clsPackageCount,
+            "type": BUY_LOG_TYPES.goodstype,
+          }
+        })
+      }
+      this.axios.post(DESCRIBE_WAF_PRICE, {
+        Version: '2018-01-25',
+        ResInfo: resInfo,
       }).then(resp => {
-        this.generalRespHandler(resp, ({ RealTotalCost }) => {
-          this.price = RealTotalCost
+        this.generalRespHandler(resp, ({ CostInfo }) => {
+          const costInfo = {}
+          let price = 0
+          CostInfo.forEach(cost => {
+            costInfo[cost.Pid] = cost
+            price += cost.realTotalCost_rmb // RealTotalCost
+          })
+          this.costInfo = costInfo
+          this.price = price
           this.loading = false
         })
       })

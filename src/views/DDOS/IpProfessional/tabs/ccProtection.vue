@@ -11,6 +11,7 @@
         ></el-option>
       </el-select>
     </div>
+    <template v-if="resourceIPs.length > 0">
     <div class="ccProtectPartTwo">
       <h2>{{$t('DDOS.Proteccon_figura.HTTP_protection')}}</h2>
       <div class="partTwoIpt">
@@ -56,6 +57,7 @@
     <div>
       <addIpList :ccResourceId="ccResourceId" :switchState="switchState" />
     </div>
+    </template>
   </div>
 </template>
 <script>
@@ -180,7 +182,9 @@ export default {
       };
       this.axios.post(GET_ID, params).then(res => {
         this.resourceIPs = res.Response.Resource;
-        this.ccResourceId = res.Response.Resource[0].Id;
+        if (this.resourceIPs.length > 0) {
+          this.ccResourceId = res.Response.Resource[0].Id;
+        }
       });
     },
     // 1.1.通过获取资源列表，获取资源对象

@@ -28,7 +28,7 @@
         <el-tab-pane :label="t('日志查询', 'WAF.rzcx')" name="first">
           <logQuery/>
         </el-tab-pane>
-        <el-tab-pane :label="t('下载任务', 'WAF.xzrw')" name="second">
+        <el-tab-pane :label="t('查询下载任务', 'WAF.cxxzrw')" name="second">
           <downloadTask :active="attackLog"/>
         </el-tab-pane>
       </el-tabs>

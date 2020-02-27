@@ -98,7 +98,6 @@
             </el-table-column>
           </el-table>
         </div>
-
         <div class="Right-style pagstyle">
           <span class="pagtotal">共&nbsp;{{totalItems}}&nbsp;{{$t('DDOS.UnsealCode.tiao')}}</span>
           <el-pagination

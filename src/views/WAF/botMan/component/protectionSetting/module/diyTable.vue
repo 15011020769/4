@@ -10,8 +10,8 @@
   <div class="main">
     <el-row type="flex" justify="between">
       <el-col>
-        <el-button type="primary" @click="onAdd">添加</el-button>
-        <el-button>复制</el-button>
+        <el-button type="primary" size="small" @click="onAdd">添加</el-button>
+        <el-button size="small">复制</el-button>
         <span style="color: #bbb; font-size: 12px; margin-left: 10px">最多可以添加50条</span>
       </el-col>
       <el-row type="flex" align="middle">
@@ -23,19 +23,22 @@
         <i style="margin-left: 10px" class="el-icon-refresh" />
       </el-row>
     </el-row>
+    <el-card>
     <el-table 
       style="margin-top: 20px"
       :data="tableData"
-      >
+      v-loading="loading" :empty-text="t('暂无数据', 'WAF.zwsj')"
+    >
       <el-table-column
       type="selection"
       width="55"
       />
-      <el-table-column label="序号">
-        <!-- <span slot-scope="scope">{{scope.row}}</span> -->
-        <span slot-scope="scope">1</span>
+      <el-table-column label="序号" type="index"></el-table-column>
+      <el-table-column prop="name" label="策略名称/描述">
+      <template slot-scope="scope">
+        
+      </template>
       </el-table-column>
-      <el-table-column prop="name" label="策略名称/描述" />
       <el-table-column prop="term" label="匹配条件" />
       <el-table-column prop="action" label="动作" />
       <el-table-column label="策略开关">
@@ -49,23 +52,31 @@
         </template>
       </el-table-column>
     </el-table>
+    <el-pagination
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
+      :current-page="skip"
+      :page-sizes="[10, 15, 20, 25, 30, 35, 40, 45, 50]"
+      :page-size="limit"
+      layout="total, sizes, prev, pager, next"
+      :total="total">
+    </el-pagination>
+    </el-card>
     <DiySessionDialog :visible.sync="showSessionDialog" :infoProp="infoProp" />
   </div>
 </template>
 
 <script>
 import DiySessionDialog from '../../diySessionDIalog'
+import { DESCRIBE_BOT_UCB_FEATURE_RULE } from '@/constants'
 export default {
   data() {
     return {
-      tableData: [{
-        name: 'testpp3',
-        term: 'IP所有者 属于 百度云 腾讯云',
-        action: '放行',
-        switch: '1',
-        time: '2020-02-20 17:26:32	'
-      }],
-
+      tableData: [],
+      skip: 1,
+      limit: 10,
+      loading: true,
+      total: 0,
       showSessionDialog: false,
       infoProp: {}
     }
@@ -74,8 +85,34 @@ export default {
   components: {
     DiySessionDialog
   },
-
+  mounted() {
+    console.log(this.$route)
+    this.getUCBRule()
+  },
   methods: {
+    getUCBRule() {
+      this.axios.post(DESCRIBE_BOT_UCB_FEATURE_RULE, {
+        "Version": 
+        "2018-01-25",
+        "Domain": "tfc.dhycloud.com", 
+        "Skip": this.skip, 
+        "Limit": this.limit
+      }).then(resp => {
+        this.generalRespHandler(resp, ({ Data }) => {
+          const data = Data.Res.map(data => JSON.parse(data))
+          this.tableData = data
+          this.total = Data.TotalCount
+        })
+      })
+    },
+    handleCurrentChange(page) {
+      this.skip = page
+      this.getUCBRule()
+    },
+    handleSizeChange(size) {
+      this.limit = size
+      this.getUCBRule()
+    },
     onAdd() {
       this.showSessionDialog = true
       this.infoProp.title = '添加自定义会话特征'

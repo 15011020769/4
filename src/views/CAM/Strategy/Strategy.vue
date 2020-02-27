@@ -136,10 +136,10 @@ export default {
           value: "All",
           label: "全部策略"
         },
-        {
-          value: "Local",
-          label: "自定義策略"
-        },
+        // {
+        //   value: "Local",
+        //   label: "自定義策略"
+        // },
         {
           value: "QCS",
           label: "預設策略"

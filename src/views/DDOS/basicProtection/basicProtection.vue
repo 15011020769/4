@@ -202,7 +202,7 @@ export default {
         this.totalItems = 0;
       }
     },
-    // 1.1.查询实例列表
+    // 1.1.查询云服务器实例列表
     describeInstances() {
       this.loading = true;
       let params = {
@@ -306,12 +306,34 @@ export default {
         this.tableDataBegin = new Array();
         this.filterTableDataEnd = new Array();
         var arr = [];
-        this.allData.forEach((val, index) => {
-          if (val.InstanceName.includes(this.searchInputVal)) {
-            arr.push(val);
-          }
-        });
-        this.tableDataBegin = arr;
+        let cb
+        switch (this.selectedSubarea) {
+          case 'cvm':
+            cb = item => {
+              return item.InstanceName.includes(this.searchInputVal)
+                    || item.PrivateIpAddresses.includes(this.searchInputVal)
+                    || item.PublicIpAddresses.includes(this.searchInputVal)
+            }
+            break
+          case 'clb':
+            cb = item => {
+              return item.LoadBalancerName.includes(this.searchInputVal)
+                    || item.LoadBalancerVips.includes(this.searchInputVal)
+            }
+            break
+          case 'nat':
+            cb = item => item.NatGatewayName.includes(this.searchInputVal)
+            break
+          // case 'cvm':
+          //   break
+        }
+        this.tableDataBegin = this.allData.filter(cb)
+        // this.allData.forEach((val, index) => {
+        //   if (val.InstanceName.includes(this.searchInputVal)) {
+        //     arr.push(val);
+        //   }
+        // });
+        // this.tableDataBegin = arr;
       } else {
         // 如果没有输入搜素内容
         this.tableDataBegin = this.allData;
