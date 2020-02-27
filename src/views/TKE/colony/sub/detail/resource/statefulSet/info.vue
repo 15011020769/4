@@ -134,6 +134,7 @@ export default {
     this.clusterId=this.$route.query.clusterId;
     this.spaceName = this.$route.query.spaceName;
     this.rowData = this.$route.query.rowData;
+    console.log("rowData",this.rowData);
   },
   methods: {
     handleClick(tab, event) {
