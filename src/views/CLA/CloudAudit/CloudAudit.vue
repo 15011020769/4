@@ -77,7 +77,7 @@
               <p style="color:#006eff">{{scope.row.Username}}</p>
             </template>
           </el-table-column>
-          <el-table-column :label="$t('CLA.total.sjmc')" width="300">
+          <el-table-column :label="$t('CLA.total.sjmc')" width="350">
             <template slot-scope="scope">
               <div>
                 {{scope.row.EventName}}
