@@ -47,11 +47,17 @@
             <template slot-scope="scope">
               <!-- {{scope.row.ClusterStatus}} -->
               <!-- targetStatus
-              targetStatusTip -->
+              targetStatusTip-->
               <!-- failed
-              running -->
+              running-->
               <!-- {{scope.row.targetStatus}} -->
-              <el-tooltip v-if="scope.row.targetStatus == 'failed'" class="item" effect="dark" :content="scope.row.targetStatusTip" placement="left">
+              <el-tooltip
+                v-if="scope.row.targetStatus == 'failed'"
+                class="item"
+                effect="dark"
+                :content="scope.row.targetStatusTip"
+                placement="left"
+              >
                 <span class="text-red">
                   失败
                   <i style="color:#e54545;font-size:16px" class="el-icon-warning"></i>
@@ -79,7 +85,12 @@
           </el-table-column>
           <el-table-column label="操作" width="220">
             <template slot-scope="scope">
-              <el-button @click="handleClick(scope.row)" type="text" size="small">设置</el-button>
+              <span v-if="!scope.row.storageObject">
+                <el-button @click="handleClick(scope.row)" type="text" size="small">设置</el-button>
+              </span>
+              <span v-else-if="scope.row.storageObject">
+                <el-button @click="handleClick(scope.row)" type="text" size="small">更新设置</el-button>
+              </span>
             </template>
           </el-table-column>
         </el-table>
@@ -144,6 +155,7 @@ export default {
     },
     handleClick(uid) {
       //设置
+      console.log(uid);
       this.$router.push({
         path: "/persistenceSetting/" + uid.ClusterId,
         query: uid
@@ -200,7 +212,7 @@ export default {
         if (k8sRes.Response.Error === undefined) {
           var data = JSON.parse(k8sRes.Response.ResponseBody);
           k8sList = data.items;
-          console.log(k8sList)
+          console.log(k8sList);
           this.loadShow = false;
         } else {
           let ErrTips = {};
@@ -217,9 +229,9 @@ export default {
             k8sList.map(k8s => {
               // console.log(k8s)
               if (cluster.ClusterId === k8s.spec.clusterName) {
-                if(k8s.status && k8s.status.phase){
-                  cluster.targetStatus=k8s.status.phase;
-                  cluster.targetStatusTip=k8s.status.reason;
+                if (k8s.status && k8s.status.phase) {
+                  cluster.targetStatus = k8s.status.phase;
+                  cluster.targetStatusTip = k8s.status.reason;
                 }
                 if (
                   k8s.spec &&
