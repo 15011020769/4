@@ -15,9 +15,9 @@
             <ul>
               <li class="li-title">{{$t("COM.calculate")}}</li>
               <li class="li-sub" @click="go('../CVM/index.html#/cloudHost')">{{$t("COM.cvm")}}</li>
-              <li @click="testFun">{{$t("COM.tke")}}</li>
+              <li class="li-sub" @click="go('../TKE/index.html#/overview')">{{$t("COM.tke")}}</li>
               <li class="li-sub" @click="go('../AS/index.html#/flexGroup')">{{$t("COM.as")}}</li>
-              <li @click="testFun">{{$t("COM.scf")}}</li>
+              <li class="li-sub" @click="go('../SCF/index.html#/overView')">{{$t("COM.scf")}}</li>
             </ul>
             <ul>
               <li class="li-title">{{$t("COM.tool")}}</li>
@@ -27,17 +27,16 @@
             </ul>
             <ul>
               <li class="li-title">{{$t("COM.server")}}</li>
-              <li @click="testFun">{{$t("COM.vod")}}</li>
-              <li @click="testFun">{{$t("COM.live")}}</li>
+              <li class="li-sub" @click="go('../VOD/index.html#/overview')">{{$t("COM.vod")}}</li>
+              <li class="li-sub" @click="go('../CSS/index.html#/overview')">{{$t("COM.live")}}</li>
             </ul>
           </div>
           <div class="item">
             <ul>
               <li class="li-title">{{$t("COM.safe")}}</li>
               <li class="li-sub" @click="go('../HS/index.html#/overview')">{{$t("COM.yunjing")}}</li>
-              <!-- <li @click="testFun">{{$t("COM.captcha")}}</li> -->
               <li class="li-sub" @click="go('../CAP/index.html#/appId')">{{$t("COM.captcha")}}</li>
-              <li @click="testFun">{{$t("COM.waf")}}</li>
+              <li class="li-sub" @click="go('../WAF/index.html#/saveOverView')">{{$t("COM.waf")}}</li>
               <li class="li-sub" @click="go('../DDOS/index.html#/ProtectOverview')">{{$t("COM.ddos")}}</li>
               <li class="li-sub" @click="go('../DDOS/index.html#/IpProfessional')">{{$t("COM.bgp")}}</li>
               <li class="li-sub" @click="go('../KMS/index.html#/userKms')">{{$t("COM.kms")}}</li>
@@ -73,9 +72,10 @@
           <div class="item">
             <ul>
               <li class="li-title">{{$t("COM.cdnTitle")}}</li>
-              <li @click="testFun">{{$t("COM.cdn")}}</li>
-              <li @click="testFun">{{$t("COM.dsa")}}</li>
-              <li @click="testFun">{{$t("COM.gaap")}}</li>
+              <!-- <li @click="testFun">{{$t("COM.cdn")}}</li> -->
+              <li class="li-sub" @click="go('../CDN/index.html#/domainMan')">{{$t("COM.cdn")}}</li>
+              <li class="li-sub" @click="go('../DSA/index.html#/overview')">{{$t("COM.dsa")}}</li>
+              <li class="li-sub" @click="go('../GAAP/index.html#/joinMan')">{{$t("COM.gaap")}}</li>
             </ul>
             <ul>
               <li class="li-title">{{$t("COM.pro")}}</li>
