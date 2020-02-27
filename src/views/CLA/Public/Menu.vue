@@ -31,14 +31,13 @@
     },
     methods: {
       _class(key) {
-        console.log(key.index)
         this.classValue = key.index
       },
       handleOpen(key, keyPath) {
-        console.log(key, keyPath);
+        // console.log(key, keyPath);
       },
       handleClose(key, keyPath) {
-        console.log(key, keyPath);
+        // console.log(key, keyPath);
       }
     }
   };
