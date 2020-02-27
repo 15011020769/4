@@ -14,14 +14,26 @@
           </div>
           <div class="message-btns btnStyle">
             <el-button @click="getDataListByType('')" style="border: 1px #c5ddfd solid;
-            color: #3e8ef7;background-color:#ecf4fe;" v-if="focus">全部</el-button>
+            color: #3e8ef7;background-color:#ecf4fe;" v-if="focus==''">全部</el-button>
             <el-button @click="getDataListByType('')" v-else>全部</el-button>
-            <el-button @click="getDataListByType('運維訊息')">{{$t('MGC.ywxx')}}</el-button>
-            <el-button @click="getDataListByType('台富雲動態')">{{$t('MGC.tfygn')}}</el-button>
-            <el-button @click="getDataListByType('產品訊息')">{{$t('MGC.cpxx')}}</el-button>
-            <el-button @click="getDataListByType('安全訊息')">安全訊息</el-button>
-            <el-button @click="getDataListByType('其他訊息')">其他訊息</el-button>
-            <el-button @click="getDataListByType('財務訊息')">{{$t('MGC.cwxx')}}</el-button>
+            <el-button @click="getDataListByType('運維訊息')" style="border: 1px #c5ddfd solid;
+            color: #3e8ef7;background-color:#ecf4fe;" v-if="focus=='運維訊息'">{{$t('MGC.ywxx')}}</el-button>
+            <el-button @click="getDataListByType('運維訊息')"  v-else>{{$t('MGC.ywxx')}}</el-button>
+            <el-button @click="getDataListByType('台富雲動態')" style="border: 1px #c5ddfd solid;
+            color: #3e8ef7;background-color:#ecf4fe;" v-if="focus=='台富雲動態'">{{$t('MGC.tfygn')}}</el-button>
+            <el-button @click="getDataListByType('台富雲動態')"  v-else>{{$t('MGC.tfygn')}}</el-button>
+            <el-button @click="getDataListByType('產品訊息')" style="border: 1px #c5ddfd solid;
+            color: #3e8ef7;background-color:#ecf4fe;" v-if="focus=='產品訊息'">{{$t('MGC.cpxx')}}</el-button>
+            <el-button @click="getDataListByType('產品訊息')"  v-else>{{$t('MGC.cpxx')}}</el-button>
+            <el-button @click="getDataListByType('安全訊息')" style="border: 1px #c5ddfd solid;
+            color: #3e8ef7;background-color:#ecf4fe;" v-if="focus=='安全訊息'">安全訊息</el-button>
+            <el-button @click="getDataListByType('安全訊息')"  v-else>安全訊息</el-button>
+            <el-button @click="getDataListByType('其他訊息')" style="border: 1px #c5ddfd solid;
+            color: #3e8ef7;background-color:#ecf4fe;" v-if="focus=='其他訊息'">其他訊息</el-button>
+            <el-button @click="getDataListByType('其他訊息')"  v-else>其他訊息</el-button>
+            <el-button @click="getDataListByType('財務訊息')" style="border: 1px #c5ddfd solid;
+            color: #3e8ef7;background-color:#ecf4fe;" v-if="focus=='財務訊息'">{{$t('MGC.cwxx')}}</el-button>
+            <el-button @click="getDataListByType('財務訊息')"  v-else>{{$t('MGC.cwxx')}}</el-button>
           </div>
         </div>
         <!-- <div class="message-funRight">
@@ -63,6 +75,7 @@
             :pager-count="7"
             layout="prev, pager, next"
             @current-change="handleCurrentChange"
+            :current-page.sync="currpage"
             :total="TotalCount"
           ></el-pagination>
         </div>
@@ -103,7 +116,7 @@ export default {
   name: "message",
   data() {
     return {
-      focus:true,
+      focus:'全部',
       loading:true,
       dialogVisible:false,//删除弹框
       MessageDialog:false,//訊息弹框
@@ -151,14 +164,19 @@ export default {
     HeaderCom
   },
   created(){
+     this.currpage=parseInt(this.$route.query.page?this.$route.query.page:1) 
+     this.focus=sessionStorage.getItem('portal-inmail-type')?sessionStorage.getItem('portal-inmail-type'):""
+  },
+  mounted() {
      this.init();
-     this.getCount()
+     this.getCount();
   },
   methods: {
    //初始化数据
     init(){
        this.loading = true
        let uin = "100011921910"
+       this.dataType = sessionStorage.getItem('portal-inmail-type')
        let Page = this.currpage //当前页码
        let Rp = this.pagesize  //条数
        let typeUrl = ""
@@ -168,7 +186,6 @@ export default {
       //  let uin = VueCookie.get('uuid')
        this.axios.get(`${process.env.VUE_APP_adminUrl + INMAIL_LIST}`+'?uin='+uin+'&page='+Page+'&limit='+Rp+typeUrl).then(res=>{
         if(res != ''){
-            console.log(res)
             this.tableData = res.page.list;
             this.TotalCount = res.page.totalCount
             this.json = res.page.list;
@@ -186,14 +203,12 @@ export default {
     //分页
     pagechange(){
     this.pagesize=this.pagevalue;
-    console.log(123)
     this.init()
     },
     //获取未读数据
     getCount(){
        let uin = "100011921910"
        this.axios.get(`${process.env.VUE_APP_adminUrl + UNREAD_DATA}`+'?uin='+uin).then(res=>{
-          console.log(res)
        })
     },
     //批量删除弹框点击确定删除
@@ -258,8 +273,10 @@ export default {
     },
     //获取不同类型的数据
     getDataListByType(val){
-      this.dataType = val
-      this.focus=false
+      sessionStorage.setItem("portal-inmail-type",val)
+      this.dataType = sessionStorage.getItem("portal-inmail-type")
+      this.focus=sessionStorage.getItem("portal-inmail-type")
+      this.currpage=1
       this.init()
     },
     //跳转详情
@@ -267,7 +284,9 @@ export default {
      this.$router.push({
         path: "/mesgdetils",
         query: {
-          detailsData: val.id
+          detailsData: val.id,
+          time:val.sendTime,
+          page:this.currpage
         }
       });
     },
@@ -375,12 +394,6 @@ export default {
         }
         .btnStyle >>> .el-button:nth-child(1) {
           margin-left: 0;
-        }
-        .btn-active {
-          border: 1px #006eff solid;
-          color: #006eff;
-          position: relative;
-          z-index: 100;
         }
       }
       .message-funRight {

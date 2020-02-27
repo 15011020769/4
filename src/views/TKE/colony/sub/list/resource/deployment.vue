@@ -64,7 +64,7 @@
           label="Labels"
           >
           <template slot-scope="scope">
-              <span>k8s-app:{{scope.row.k8sApp}}、qcloud-app:{{scope.rowqcloudApp}}</span>
+              <span>{{changeLabel(scope.row.metadata && scope.row.metadata.labels)}}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -72,7 +72,7 @@
           label="Selector"
           >
           <template slot-scope="scope">
-              <span><span>k8s-app:{{scope.row.k8sApp}}、qcloud-app:{{scope.rowqcloudApp}}</span></span>
+              <span>{{changeSelector(scope.row.spec && scope.row.spec.selector && scope.row.spec.selector.matchLabels)}}</span>
           </template>
         </el-table-column>
         
@@ -154,6 +154,7 @@ export default {
   data() {
     return {
       loadShow: false, //加载是否显示
+      clusterId: '',//集群id
       list:[], //列表
       total:0,
       pageSize:10,
@@ -162,7 +163,7 @@ export default {
       flag:false,//是否开启抽屉
       searchOptions: [],//命名空间列表
       nameSpaceName: '',//选中的命名空间名称
-      searchType: "default", //下拉选中的值
+      searchType: "", //下拉选中的值
       searchInput: "", //输入的搜索关键字
       isShowRedeployment: false,//是否打开重新部署modal
       isShowDeleteModal: false,//是否打开删除弹窗
@@ -215,15 +216,8 @@ export default {
             if(res.Response.Error === undefined) {
               this.loadShow = false;
               let response = JSON.parse(res.Response.ResponseBody);
-              if(response.items.length > 0) {
-                response.items.map(deployment => {
-                  deployment.k8sApp = deployment.metadata.labels && deployment.metadata.labels.k8s,
-                  deployment.qcloudApp = deployment.metadata.labels && deployment.metadata.labels.qcloud
-                });
-              }
-              console.log(response,"response");
               this.list = response.items;
-              this.total = response.items.lenght;
+              this.total = response.items.length;
             } else {
               this.loadShow = false;
               let ErrTips = {
@@ -284,9 +278,8 @@ export default {
               deployment.qcloudApp = deployment.metadata.labels && deployment.metadata.labels.qcloud
             });
           }
-          console.log(response,"response");
           this.list = response.items;
-          this.total = response.items.lenght;
+          this.total = response.items.length;
         } else {
           this.loadShow = false;
           let ErrTips = {
@@ -375,11 +368,9 @@ export default {
       this.getDeploymentList();
     },
     setFlag (data) {
-      console.log(data)
       this.flag = data
     },
     setTime (data) {
-      console.log(data)
     },
     // 导出表格
     exportExcel() {
@@ -479,6 +470,30 @@ export default {
           });
         }
       });
+    },
+    //转换label
+    changeLabel(value){
+      if(value) {
+        let labels = '';
+        for(let i in value) {
+          labels += i + " : " + value[i] + '、'
+        }
+        return labels.substring(0,labels.length - 1);
+      } else {
+        return "-"
+      }
+    },
+    //转换Selector
+    changeSelector(value){
+      if(value) {
+        let labels = '';
+        for(let i in value) {
+          labels += i + " : " + value[i] + '、'
+        }
+        return labels.substring(0,labels.length - 1);
+      } else {
+        return "-"
+      }
     }
 
   },

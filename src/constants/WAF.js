@@ -120,3 +120,7 @@ export const DESCRIBE_ACCESS_DOWNLOAD_RECORDS = 'waf2/DescribeAccessDownloadReco
 export const CREATE_ACCESS_DOWNLOAD_RECORD = 'waf2/CreateAccessDownloadRecord'
 /** Bot_V2 Bot类别统计 */
 export const DESCRIBE_BOT_TYPE_STAT = 'waf2/DescribeBotTypeStat'
+/** Bot_V2 获取bot动作统计 */
+export const DESCRIBE_BOT_ACTION_STAT = 'waf2/DescribeBotActionStat'
+/** Bot_V2 获取UCB自定义策略 */
+export const DESCRIBE_BOT_UCB_FEATURE_RULE = 'waf2/DescribeBotUCBFeatureRule'

@@ -20,7 +20,7 @@
               ></el-option>
             </el-select>
           </div>
-          <div class="mainContent">
+          <div class="mainContent" v-if="resList.length !== 0">
             <div class="topCreateSelect">
               <el-button
                 class="newCreate"
@@ -273,6 +273,14 @@ export default {
         if (res.Response.Error === undefined) {
 					this.resList = [];
           const resourceList = res.Response.ServicePacks;
+          if (resourceList.length === 0) {
+            this.$message({
+              message: '暫無服務',
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+          }
           resourceList.forEach(val => {
             const obj = {
               Id: "",

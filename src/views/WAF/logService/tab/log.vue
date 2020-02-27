@@ -84,11 +84,11 @@
               <el-row type="flex">
                 <el-col :span="12">
                   <span class="w80">IP类型</span>
-                  {{log.ipinfo_type}}
+                  {{log.ipinfo_type || '-'}}
                 </el-col>
                 <el-col :span="12">
                   <span class="w80">IP详情</span>
-                  {{log.ipinfo_type}}
+                  {{log.ipinfo_type || '-'}}
                 </el-col>
               </el-row>
             </el-col>
@@ -104,7 +104,7 @@
             <el-col :span="8">
               <el-row type="flex">
                 <span class="w80">IP所有者</span>
-                {{log.ipinfo_operator}}
+                {{log.ipinfo_operator || '-'}}
               </el-row>
             </el-col>
           </el-row>

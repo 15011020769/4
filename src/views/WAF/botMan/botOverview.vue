@@ -65,15 +65,37 @@
           <div class="detailbottom">
             <el-row class="bitPie">
               <el-col :sapn="12">
-                111
+                <h3>
+                  <!-- {{t('BOT 类型', 'WAF.gjlxzb')}} -->
+                  BOT 类型
+                </h3>
                 <Pie
-
+                  :series="seriesPieType"
+                  :color="colorPie"
+                  :legendText="legendTextPieType"
                 />
               </el-col>
               <el-col :sapn="12">
-                222
+                <h3>
+                  <!-- {{t('BOT 动作', 'WAF.gjlxzb')}} -->
+                  BOT 动作
+                </h3>
+                <Pie
+                  :series="seriesPieAction"
+                  :color="colorPie"
+                  :legendText="legendTextPieAction"
+                />
               </el-col>
             </el-row>
+            <h3>
+              <!-- {{t('BOT 动作', 'WAF.gjlxzb')}} -->
+              BOT 动作
+            </h3>
+            <Pie
+                :series="seriesPieAction"
+                :color="colorPie"
+                :legendText="legendTextPieAction"
+              />
           </div>
         </div>
       </div>
@@ -83,9 +105,14 @@
 
 <script>
 import moment from 'moment'
-import { DESCRIBE_BOT_AGGREGATE_DOMAINSTAT, DESCRIBE_BOT_TYPE_STAT } from '@/constants'
+import {
+    DESCRIBE_BOT_AGGREGATE_DOMAINSTAT,
+    DESCRIBE_BOT_TYPE_STAT,
+    DESCRIBE_BOT_ACTION_STAT
+  } from '@/constants'
 import Bar from '../components/bar'
 import Pie from '../components/pie'
+import Line from '../saveOverView/components/line'
 export default {
   data () {
     return {
@@ -98,13 +125,16 @@ export default {
       xAxisBotIp: [], // 域名数组
       legendTextBarIp: "Bot记录",
       topValue: 5,
-      seriesPieType: [
-        {value: 0, name: '公开类型'},
-        {value: 0, name: '未知类型'},
-        {value: 0, name: '用户自定义类型'},
-      ],
-      colorPieType: ['#2277da', '#e54545', '#ff9d00',],
-      legendTextPie: ['公开类型', '未知类型', '用户自定义类型'],
+      seriesPieType: [],
+      seriesPieAction: [],
+      // seriesPieType: [
+      //   {value: 0, name: '公开类型'},
+      //   {value: 0, name: '未知类型'},
+      //   {value: 0, name: '用户自定义类型'},
+      // ],
+      colorPie: ['#2277da', '#e54545', '#ff9d00', '#f5736e'],
+      legendTextPieType: ['公开类型', '未知类型', '用户自定义类型'],
+      legendTextPieAction: ['验证码', '拦截', '监控', '重定向'],
       options: [{
           value: 5,
           label: 'TOP5'
@@ -140,6 +170,7 @@ export default {
     xAxisBotIp(val){
       if(val.length) {
         this.getBotType()
+        this.getBotAction()
       }
     }
   },
@@ -174,7 +205,6 @@ export default {
     },
     // 获取Bot_V2 Bot类别统计
     getBotType() {
-      console.log(this.xAxisBotIp)
      const params = {
         Version: "2018-01-25",
         StartTs: this.startTime,
@@ -186,6 +216,23 @@ export default {
           this.$set(this.seriesPieType, 0, {value: Response.TCB, name: '公开类型'})
           this.$set(this.seriesPieType, 1, {value: Response.UB, name: '未知类型'})
           this.$set(this.seriesPieType, 2, {value: Response.UCB, name: '用户自定义类型'})
+        })
+      })
+    },
+    // Bot_V2 获取bot动作统计
+    getBotAction() {
+     const params = {
+        Version: "2018-01-25",
+        StartTs: this.startTime,
+        EndTs: this.endTime,
+        Domain: this.xAxisBotIp[0],
+      }
+      this.axios.post(DESCRIBE_BOT_ACTION_STAT, params).then((resp) => {
+        this.generalRespHandler(resp, (Response) => {
+          this.$set(this.seriesPieAction, 0, {value: Response.Captcha, name: '验证码'})
+          this.$set(this.seriesPieAction, 1, {value: Response.Intercept, name: '拦截'})
+          this.$set(this.seriesPieAction, 2, {value: Response.Monitor, name: '监控'})
+          this.$set(this.seriesPieAction, 3, {value: Response.Redirect, name: '重定向'})
         })
       })
     },

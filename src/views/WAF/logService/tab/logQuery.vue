@@ -32,10 +32,27 @@
             :end-placeholder="t('结束日期', 'WAF.jsrq')">
           </el-date-picker>
         </div>
-        <div class="newClear"> 
-          <el-input class="inputIpt" v-model="keyword" :placeholder="t('输入攻击源IP', 'WAF.srgjyip')"></el-input>
-          <el-button class="selectBtn" @click="queryLogs">{{t('查询', 'WAF.js')}}</el-button>
+        <div>
+          <el-input placeholder="请输入" v-model="keyword" class="input-with-select">
+            <el-select v-model="condi" value-key="label" slot="prepend" placeholder="请选择过滤条件" style="width: 150px;">
+              <el-option v-for="item in query" :key="item.value" :label="item.value" :value="item"></el-option>
+            </el-select>
+            <el-button slot="append" @click="addCondi">添加过滤条件</el-button>
+          </el-input>&nbsp;&nbsp;
+          <el-button class="selectBtn" @click="search">{{t('查询', 'WAF.js')}}</el-button>
           <i class="el-icon-download" style="cursor: pointer;" @click="createDownTask"></i>
+        </div>
+        <div style="margin-top: 10px;">
+          <el-tag
+            size="small"
+            v-for="(tag, i) in condis"
+            :key="tag.condi.label"
+            closable
+            @close="removeCondi(tag, i)"
+            style="margin-right: 10px;"
+          >
+          {{tag.condi.value}}:{{tag.keyword}}
+        </el-tag>
         </div>
       </div>
       <div class="tableCon">
@@ -150,17 +167,51 @@ export default {
       thisType:'1',//默认时间选择
       timeValue:'',//时间选择
       keyword: '',
+      condi: {},
+      condis: [],
       tableDataBegin:[],
       createDownTaskModel:false,//创建下载任务弹框
       Context: '',
       loadmoreloading: false,
       loading: false,
-      startTime: '2020-02-19 00:00:00', //moment().format("YYYY-MM-DD HH:mm:ss"),
-      endTime: '2020-02-26 23:59:59', // moment().subtract(1, 'h').format('YYYY-MM-DD HH:mm:ss'),
+      startTime: '2020-02-20 00:00:00', //moment().format("YYYY-MM-DD HH:mm:ss"),
+      endTime: '2020-02-27 23:59:59', // moment().subtract(1, 'h').format('YYYY-MM-DD HH:mm:ss'),
       columnsCopy: [],
       columns: ['index', 'action', 'time', 'client', 'source', 'request', 'body', 'header', 'upstream', 'response'],
       total: 0,
       visible: false,
+      queryCopy: [{
+        label: 'client',
+        value: '访问源IP',
+      }, {
+        label: 'url',
+        value: '访问URI',
+      }, {
+        label: 'query',
+        value: 'Query',
+      }, {
+        label: 'referer',
+        value: 'Referer',
+      }, {
+        label: 'cookie',
+        value: 'Cookie',
+      }, {
+        label: 'user_agent',
+        value: 'User-Agent',
+      }, {
+        label: 'x_forwarded_for',
+        value: 'X-Forwarded-For',
+      }, {
+        label: 'status',
+        value: 'WAF响应码',
+      }, {
+        label: 'upstream_status',
+        value: '源站响应码',
+      }, {
+        label: 'body',
+        value: 'Body',
+      }],
+      query: []
     }
   },
   components:{
@@ -181,6 +232,7 @@ export default {
   },
   mounted() {
     this.columnsCopy = [...this.columns]
+    this.query = JSON.parse(JSON.stringify(this.queryCopy))
     this.init()
     this.axios.post(DESCRIBE_HOSTS, {
       Version: '2018-01-25',
@@ -199,6 +251,21 @@ export default {
       this.queryLogs()
       this.queryLogCount()
     },
+    addCondi() {
+      const { condi, keyword, condis, queryCopy, query } = this
+      if (condi.label && keyword && keyword.trim()) {
+        condis.push({ condi, keyword })
+        this.condi = {}
+        this.keyword = ''
+        this.query = query.filter(q => q.value !== condi.value)
+      }
+    },
+    removeCondi(tag, index) {
+      const vals = this.query.map(q => q.value)
+      vals.push(tag.condi.value)
+      this.query = this.queryCopy.filter(q => vals.includes(q.value))
+      this.condis.splice(index, 1)
+    },
     openDialog() {
       this.columnsCopy = [...this.columns]
       this.visible = true
@@ -211,18 +278,18 @@ export default {
       this.columnsCopy = [...this.columns]
       this.visible = false
     },
+    search() { // 检索
+      this.tableDataBegin = []
+      this.Context = ''
+      this.init()
+    },
     queryLogCount() {
       const params = {
         Version: '2018-01-25',
         FromTime: this.startTime,
         ToTime: this.endTime,
       }
-      let domain = this.dominList
-      if (domain !== 'ALL') {
-        params.Query = `domain:${domain}`
-      } else {
-        delete params.Query
-      }
+      this.addQuery(params)
       this.axios.post(DESCRIBE_ACCESSLOG_COUNT, params).then(resp => {
         this.generalRespHandler(resp, ({ Count }) => {
           this.total = Count
@@ -236,6 +303,20 @@ export default {
       this.loadmoreloading = true
       this.queryLogs()
     },
+    addQuery(params) {
+      let domain = this.dominList
+      const condis = JSON.parse(JSON.stringify(this.condis))
+      if (domain !== 'ALL') {
+        condis.push({
+          condi: {label: 'domain'},
+          keyword: domain
+        })
+      }
+      const Query = condis.map(item => `${item.condi.label}:${item.keyword}`).join(' and ')
+      if (Query) {
+        params.Query = Query
+      }
+    },
     queryLogs() {
       const { Context, startTime, endTime, dominList } = this
       const params = {
@@ -245,12 +326,7 @@ export default {
         ToTime: endTime,
         Context, 
       }
-      let domain = dominList
-      if (domain !== 'ALL') {
-        params.Query = `domain:${domain}`
-      } else {
-        delete params.Query
-      }
+      this.addQuery(params)
       this.axios.post(DESCRIBE_ACCESS_LOGS, params).then(resp => {
         this.generalRespHandler(resp, ({ Data: { Context, Data, Count }}) => {
           Data = Data.map(d => JSON.parse(d))
@@ -308,12 +384,12 @@ export default {
         Name: name,
         Sort: 'desc',
         Edition: 'clb-waf',
-        // Query: '',
       }
+      this.addQuery(params)
       this.axios.post(CREATE_ACCESS_DOWNLOAD_RECORD, params).then(resp => {
         this.generalRespHandler(resp, ({ Context, Data, Count }) => {
           this.createDownTaskModel = false
-        }, COMMON_ERROR, this.t('创建成功，你可以前往“下载任务”界面查看任务状态', 'WAF.cjcgnkyqw'))
+        }, COMMON_ERROR, this.t('创建成功，你可以前往“查询下载任务”界面查看任务状态', 'WAF.cjcgnkyqwcx'))
       })
     },
   }
@@ -341,7 +417,6 @@ export default {
 }
 .topDateIpt{
   width:100%;
-  height:120px;
   background-color: #fff;
   box-shadow: 0 2px 3px 0 rgba(0,0,0,.2);
   padding:20px;
@@ -436,5 +511,14 @@ export default {
   border-bottom: 1px solid #ebeef5;
   padding: 5px 0;
   text-align: center;
+}
+.input-with-select {
+  width: 600px;
+  ::v-deep .el-input-group__append {
+    button {
+      padding: 0 5px;
+      font-size: 12px;
+    }
+  }
 }
 </style>

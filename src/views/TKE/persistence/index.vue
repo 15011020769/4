@@ -45,26 +45,25 @@
 
           <el-table-column label="状态" width="220">
             <template slot-scope="scope">
-              <!-- {{scope.row.ClusterStatus}} -->
-              <!-- targetStatus
-              targetStatusTip -->
-              <!-- failed
-              running -->
-              <!-- {{scope.row.targetStatus}} -->
-              <el-tooltip v-if="scope.row.targetStatus == 'failed'" class="item" effect="dark" :content="scope.row.targetStatusTip" placement="left">
+              <el-tooltip
+                v-if="scope.row.targetStatus == 'failed'"
+                class="item"
+                effect="dark"
+                :content="scope.row.targetStatusTip"
+                placement="left"
+              >
                 <span class="text-red">
                   失败
                   <i style="color:#e54545;font-size:16px" class="el-icon-warning"></i>
                 </span>
               </el-tooltip>
-              <span v-else-if="scope.row.targetStatus == 'Running'" class="text-green">
+              <span v-else-if="scope.row.targetStatus == 'running'" class="text-green">
                 已开启
                 <i style="color:#0abf5b;font-weight:900" class="el-icon-circle-check"></i>
               </span>
               <span v-else>未开启</span>
             </template>
           </el-table-column>
-          <!-- 存储端参数找不到 -->
           <el-table-column label="存储端" width="220">
             <template slot-scope="scope">
               <span v-if="scope.row.storageObject">Elasticsearch</span>
@@ -79,7 +78,12 @@
           </el-table-column>
           <el-table-column label="操作" width="220">
             <template slot-scope="scope">
-              <el-button @click="handleClick(scope.row)" type="text" size="small">设置</el-button>
+              <span v-if="!scope.row.storageObject">
+                <el-button @click="handleClick(scope.row)" type="text" size="small">设置</el-button>
+              </span>
+              <span v-else-if="scope.row.storageObject">
+                <el-button @click="handleClick(scope.row)" type="text" size="small">更新设置</el-button>
+              </span>
             </template>
           </el-table-column>
         </el-table>
@@ -200,7 +204,6 @@ export default {
         if (k8sRes.Response.Error === undefined) {
           var data = JSON.parse(k8sRes.Response.ResponseBody);
           k8sList = data.items;
-          console.log(k8sList)
           this.loadShow = false;
         } else {
           let ErrTips = {};
@@ -215,11 +218,10 @@ export default {
         if (res.Response.Clusters.length > 0) {
           res.Response.Clusters.map(cluster => {
             k8sList.map(k8s => {
-              // console.log(k8s)
-              if (cluster.ClusterId === k8s.spec.clusterName) {
-                if(k8s.status && k8s.status.phase){
-                  cluster.targetStatus=k8s.status.phase;
-                  cluster.targetStatusTip=k8s.status.reason;
+              if (cluster.ClusterId == k8s.spec.clusterName) {
+                if (k8s.status && k8s.status.phase) {
+                  cluster.targetStatus = k8s.status.phase;
+                  cluster.targetStatusTip = k8s.status.reason;
                 }
                 if (
                   k8s.spec &&
@@ -242,7 +244,6 @@ export default {
         }
         this.total = res.Response.TotalCount;
         this.tableData = res.Response.Clusters;
-        console.log(this.tableData);
         this.loadShow = false;
       } else {
         this.loadShow = false;

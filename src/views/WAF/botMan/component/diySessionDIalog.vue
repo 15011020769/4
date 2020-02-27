@@ -36,7 +36,52 @@
             <i class="el-icon-info" />
           </el-tooltip>
         </div>
-        <ul class="table-wrapper" >
+        <el-table :data="formValue.rules">
+          <el-table-column :label="t('匹配字段', 'WAF.pplw')" width="160">
+            <template slot-scope="scope">
+              <el-input suffix-icon="el-icon-caret-bottom" />
+              <DiySessionItem :showSelectMenu.sync="showSelectMenu" :selectInfo="selectInfo"  />
+            </template>
+          </el-table-column>
+          <el-table-column :label="t('匹配参数', 'WAF.ppcs')" width="180">
+            <template slot-scope="scope">
+            </template>
+          </el-table-column>
+          <el-table-column :label="t('逻辑符号', 'WAF.ljfh')" width="120">
+            <template slot-scope="scope">
+              <!-- <el-select v-model="scope.row.CompareFunc" popper-class="small" class="small">
+                <el-option
+                  v-for="item in LOGIC_SYMBOL_ARR"
+                  :key="item.value"
+                  :label="item.name"
+                  :value="item.value"
+                  v-if="MATCH_KEY[scope.row.Field].symbol.includes(item.value)"
+                >
+                </el-option>
+              </el-select> -->
+            </template>
+          </el-table-column>
+          <el-table-column :label="t('匹配内容', 'WAF.ppnr')" width="230" class-name="match-content">
+            <template slot-scope="scope">
+              <!-- <el-form-item
+                v-if="MATCH_KEY[scope.row.Field].input !== false"
+                :prop="`Strategies[${scope.$index}].Content`"
+                :rules="[
+                  { validator:  MATCH_KEY[scope.row.Field].validator(MATCH_KEY[scope.row.Field])},
+                ]"
+                class="content-input"
+              >
+              <el-input v-model="form.Strategies[scope.$index].Content" :placeholder="MATCH_KEY[scope.row.Field].placeholder" class="small"/>
+              </el-form-item> -->
+            </template>
+          </el-table-column>
+          <el-table-column label="操作">
+            <template slot-scope="scope">
+              <el-link type="info" @click="delStrategy(scope.$index)" style="cursor: pointer;">删除</el-link>
+            </template>
+          </el-table-column>
+        </el-table>
+        <!-- <ul class="table-wrapper" >
           <li class="table-title">
             <h4 style="width: 166px">匹配字段</h4>
             <h4 style="width: 233px">匹配参数</h4>
@@ -45,6 +90,9 @@
             <h4 style="width: 166px">操作</h4>
           </li>
           <li class="table-content">
+            <el-select v-model="input">
+
+            </el-select> -->
             <!-- <div>
               <div @click="showSelectMenu=true" style="position: relative; width: 170px;">
                 <span class="match-field">{{selectInfo.label}}</span>
@@ -80,13 +128,13 @@
               :placeholder="selectInfo.placeholder"
             />
             <el-button class="delete-box">删除</el-button> -->
-            <DiySessionItem :showSelectMenu.sync="showSelectMenu" :selectInfo="selectInfo"  />
-          </li>
+            <!-- <DiySessionItem :showSelectMenu.sync="showSelectMenu" :selectInfo="selectInfo"  /> -->
+          <!-- </li>
           <li class="table-footer">
             <el-button>添加</el-button>
             <span>还可以添加8条，最多10条</span>
           </li>
-        </ul>
+        </ul> -->
       </el-form-item>
     </el-form>
     <el-row slot="footer" type="flex" justify="center">
@@ -106,7 +154,8 @@ export default {
       formValue: {
         name: '',
         describe: '',
-        switch: ''
+        switch: '',
+        rules: [{}]
       },
       rule: {
         name: [

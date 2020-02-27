@@ -282,7 +282,7 @@ export default {
 
 ::v-deep .el-col-12:nth-child(1) {
   height: 100%;
-  border-right: 1px solid #ccc;
+  border-right: 1px solid #e5e5e5;
 }
 ::v-deep .el-checkbox {
   width: 100%;

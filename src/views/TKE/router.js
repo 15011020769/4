@@ -525,6 +525,66 @@ export default new Router({
       ]
     },
     {
+      path: '/colony/sub/detail/resource/statefulSet', // 工作负载-Deployment-详情
+      name: 'statefulSetDetail',
+      component: () => import('./colony/sub/detail/resource/statefulSet/index.vue'),
+      redirect: '/colony/sub/detail/resource/statefulSet/pod', // 默认子路由
+      meta: {
+        keepAlive: true
+      },
+      children: [ // 子路由
+        { // Pod管理
+          path: '/colony/sub/detail/resource/statefulSet/pod',
+          name: 'statefulSetDetailPod',
+          component: () => import('./colony/sub/detail/resource/statefulSet/pod.vue'),
+          meta: {
+            keepAlive: true,
+          }
+        },
+        { // 修订历史
+          path: '/colony/sub/detail/resource/statefulSet/history',
+          name: 'statefulSetDetailHistory',
+          component: () => import('./colony/sub/detail/resource/statefulSet/history.vue'),
+          meta: {
+            keepAlive: true,
+          }
+        },
+        { // 事件
+          path: '/colony/sub/detail/resource/statefulSet/event',
+          name: 'statefulSetDetailEvent',
+          component: () => import('./colony/sub/detail/resource/statefulSet/event.vue'),
+          meta: {
+            keepAlive: true,
+          }
+        },
+        { // 日志
+          path: '/colony/sub/detail/resource/statefulSet/log',
+          name: 'statefulSetDetailLog',
+          component: () => import('./colony/sub/detail/resource/statefulSet/log.vue'),
+          meta: {
+            keepAlive: true,
+          }
+        },
+        { // 详情
+          path: '/colony/sub/detail/resource/statefulSet/info',
+          name: 'statefulSetDetailInfo',
+          component: () => import('./colony/sub/detail/resource/statefulSet/info.vue'),
+          meta: {
+            keepAlive: true,
+          }
+        },
+          
+        { // yaml
+          path: '/colony/sub/detail/resource/statefulSet/yaml',
+          name: 'statefulSetDetailYaml',
+          component: () => import('./colony/sub/detail/resource/statefulSet/yaml.vue'),
+          meta: {
+            keepAlive: true,
+          }
+        },  
+      ]
+    },
+    {
       path: '/colony/sub/detail/hpa', // 自动伸缩-详情
       name: 'hpaDetail',
       component: () => import('./colony/sub/detail/hpa/index.vue'),

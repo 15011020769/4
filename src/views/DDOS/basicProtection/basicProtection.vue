@@ -33,21 +33,18 @@
           >
             <el-table-column prop="Name" :label="$t('DDOS.basicProtection.zjm')">
               <template slot-scope="scope">
-                <a
-                  href="#"
+                <el-button type="text"
                   v-if="selectedSubarea=='cvm'"
                   @click="toDoDetail(scope.row)"
-                >{{scope.row.InstanceName}}</a>
-                <a
-                  href="#"
+                >{{scope.row.InstanceName}}</el-button>
+                <el-button type="text"
                   v-else-if="selectedSubarea=='clb'"
                   @click="toDoDetail(scope.row)"
-                >{{scope.row.LoadBalancerName}}</a>
-                <a
-                  href="#"
+                >{{scope.row.LoadBalancerName}}</el-button>
+                <el-button type="text"
                   v-else-if="selectedSubarea=='nat'"
                   @click="toDoDetail(scope.row)"
-                >{{scope.row.NatGatewayName}}</a>
+                >{{scope.row.NatGatewayName}}</el-button>
               </template>
             </el-table-column>
             <el-table-column prop="IP" :label="$t('DDOS.basicProtection.bdip')">
@@ -134,7 +131,7 @@
   </div>
 </template>
 <script>
-import { CVM_LIST, CLB_LIST, NAT_LIST, ALL_CITY } from "@/constants";
+import { CVM_LIST, CLB_LIST, NAT_LIST, ALL_CITY, DESCRIBE_CHANNEL_DEVICE_RESOURCE } from "@/constants";
 import { ErrorTips } from "@/components/ErrorTips";
 export default {
   data() {
@@ -197,13 +194,23 @@ export default {
       } else if (this.selectedSubarea == "nat") {
         this.describeNatGateway();
       } else if (this.selectedSubarea == "net") {
-        this.$message("此服務功能暫未開通！");
+        // this.describeNetInstances()
+        // this.$message("此服務功能暫未開通！");
         this.tableDataBegin = this.allData;
         this.totalItems = 0;
       }
     },
-    // 1.1.查询实例列表
+    describeNetInstances() {
+       this.axios.post(DESCRIBE_CHANNEL_DEVICE_RESOURCE, {
+         Version: '2018-07-09',
+         BasicRegion: 'tpe',
+         BasicBizType: 'channel',
+       }).then(res => {
+         console.log(res)
+       })
+    },
     describeInstances() {
+    // 1.1.查询云服务器实例列表
       this.loading = true;
       let params = {
         Version: "2017-03-12",
@@ -306,12 +313,34 @@ export default {
         this.tableDataBegin = new Array();
         this.filterTableDataEnd = new Array();
         var arr = [];
-        this.allData.forEach((val, index) => {
-          if (val.InstanceName.includes(this.searchInputVal)) {
-            arr.push(val);
-          }
-        });
-        this.tableDataBegin = arr;
+        let cb
+        switch (this.selectedSubarea) {
+          case 'cvm':
+            cb = item => {
+              return item.InstanceName.includes(this.searchInputVal)
+                    || item.PrivateIpAddresses.includes(this.searchInputVal)
+                    || item.PublicIpAddresses.includes(this.searchInputVal)
+            }
+            break
+          case 'clb':
+            cb = item => {
+              return item.LoadBalancerName.includes(this.searchInputVal)
+                    || item.LoadBalancerVips.includes(this.searchInputVal)
+            }
+            break
+          case 'nat':
+            cb = item => item.NatGatewayName.includes(this.searchInputVal)
+            break
+          // case 'cvm':
+          //   break
+        }
+        this.tableDataBegin = this.allData.filter(cb)
+        // this.allData.forEach((val, index) => {
+        //   if (val.InstanceName.includes(this.searchInputVal)) {
+        //     arr.push(val);
+        //   }
+        // });
+        // this.tableDataBegin = arr;
       } else {
         // 如果没有输入搜素内容
         this.tableDataBegin = this.allData;

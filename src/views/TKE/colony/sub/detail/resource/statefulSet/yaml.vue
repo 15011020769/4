@@ -45,7 +45,7 @@ export default {
       this.loadShow = true;
       let params = {
           Method: "GET",
-          Path: "/apis/apps/v1beta2/namespaces/"+this.rowData.metadata.namespace+"/deployments/"+this.rowData.metadata.name,
+          Path: "/apis/apps/v1beta2/namespaces/"+this.rowData.metadata.namespace+"/statefulsets/"+this.rowData.metadata.name,
           Version: "2018-05-25",
           Accept: "application/yaml",
           ClusterName: this.clusterId,

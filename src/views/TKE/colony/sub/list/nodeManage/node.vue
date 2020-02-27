@@ -392,8 +392,6 @@ export default {
               nodeRes.Response.InstanceSet.map(node => {
                 node.addTime = moment(node.CreatedTime).format("YYYY-MM-DD HH:mm:ss");
                 nodeInfoList.map(info => {
-          debugger
-
                   if(node.InstanceId === info.InstanceId) {
                     node.status = info.InstanceState;
                   }
@@ -407,6 +405,7 @@ export default {
                     node.unschedulable = k8s.spec.unschedulable;
                   }
                 });
+                return node;
               });
               this.list = nodeRes.Response.InstanceSet;
               console.log(this.list);

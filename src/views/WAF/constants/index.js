@@ -76,6 +76,7 @@ export const CLB_BUY_DOMAIN_TYPES = {
   first_categoryid: 101207, categoryid: 101208, edit_categoryid: 101209,
   pid: 1001156
 }
+// SAAS和CLBWAF 的 日志服务 改成是共享的了 ，使用BUY_LOG_TYPES， 域名包和QPS使用CLB_XXX
 export const BUY_LOG_TYPES = {
   goodstype: "sp_wsm_waf_scls",
   pricetype: "sv_wsm_waf_scls",

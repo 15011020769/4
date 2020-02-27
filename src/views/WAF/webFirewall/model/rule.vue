@@ -83,7 +83,6 @@
             </el-form-item>
           </template>
         </el-table-column>
-        </el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
             <el-link type="info" @click="delStrategy(scope.$index)" style="cursor: pointer;">删除</el-link>

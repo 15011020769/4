@@ -63,7 +63,7 @@ export default {
         legend: {
             data: this.legendText,
             orient: 'vertical',
-            left: '50%',
+            left: '60%',
             y: 'center',
             icon: "circle",
             textStyle:{

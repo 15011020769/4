@@ -438,8 +438,10 @@
             this.axios.post(GZJ_UPDATEAUDIT, params).then(res => {
               if (res.Response.Error === undefined) {
                 this.$message({
-                  message: "更新成功",
-                  type: "success"
+                  message: "保存成功",
+                  type: "success",
+                  showClose: true,
+                  duration: 0
                 });
                 this.inpShow1 = false;
                 this.detailList();
@@ -659,7 +661,7 @@
         this.axios.post(GZJ_UPDATEAUDIT, params).then(res => {
           if (res.Response.Error === undefined) {
             this.$message({
-              message: "更新成功",
+              message: "保存成功",
               type: "success",
               showClose: true,
               duration: 0

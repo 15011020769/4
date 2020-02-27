@@ -113,7 +113,7 @@
                 <el-table-column prop="AddTime" :label="$t('CAM.userList.AssociationTime')"></el-table-column>
                 <el-table-column :label="$t('CAM.Role.failure')">
                   <template slot-scope="scope">
-                    <span>-</span>
+                    <span v-if="scope.row.validTime">{{scope.row.validTime}}</span>
                   </template>
                 </el-table-column>
                 <el-table-column label="操作">
@@ -168,12 +168,13 @@
                   </el-table-column>
                   <el-table-column label="操作" width="180">
                     <template slot-scope="scope">
+                      <el-tooltip v-if="roleCarrier.length === 1" effect="dark" content="无法删除唯一的载体" placement="top-start">
                       <el-button
-                        v-if="roleCarrier.length === 1"
+                        
                         type="text"
                         size="small"
-                        disabled
                       >解除</el-button>
+                      </el-tooltip>
                       <el-button
                         v-if="roleCarrier.length > 1"
                         @click.native.prevent="delRolePolicy(scope.$index, roleCarrier)"
@@ -292,13 +293,13 @@
       </el-dialog>
       <!-- 撤销所有会话弹窗 -->
       <el-dialog
-        title="撤销所有会话"
+        title="撤銷所有會話"
         :visible.sync="dialogVisibleCancelAllSession"        
         >
-          <p>您是否确定要撤销角色的当前所有会话？撤销会话后，该角色当前所有访问将立即被拒绝。</p>
-          <el-checkbox v-model="cancelAllSessionChecked">我已知晓上述信息并确认要撤销该角色所有会话</el-checkbox>
+          <p>您是否確定要撤銷角色的當前所有會話？撤銷會話後，該角色當前所有訪問將立即被拒絕。</p>
+          <el-checkbox v-model="cancelAllSessionChecked">我已知曉上述信息並確認要撤銷該角色所有會話</el-checkbox>
         <span slot="footer" class="dialog-footer">
-          <el-button type="primary" :disabled="!cancelAllSessionChecked" @click="cancelAllSession">确认撤销会话</el-button>
+          <el-button type="primary" :disabled="!cancelAllSessionChecked" @click="cancelAllSession">確認撤銷會話</el-button>
           <el-button @click="dialogVisibleCancelAllSession = false">取消</el-button>
         </span>
       </el-dialog>
@@ -314,6 +315,7 @@ import {
   Loading
 } from 'element-ui'
 import {
+  GET_POLICY,
   GET_ROLE,
   LIST_ATTACHE,
   DEACH_ROLE,
@@ -484,6 +486,7 @@ export default {
     },
     // 获取角色策略
     getRolePolicy() {
+      console.log(1234)
       this.loading = true;
       this.selTotalNum = 0;
       let paramsList = {
@@ -495,11 +498,26 @@ export default {
       if (this.rolePolicyType != "") {
         paramsList["PolicyType"] = this.rolePolicyType;
       }
+      
       this.axios
         .post(LIST_ATTACHE, paramsList)
         .then(res => {
           if (res.Response.Error === undefined) {
-            this.rolePolicies = res.Response.List;
+            // this.rolePolicies = res.Response.List;
+            const index = res.Response.List.findIndex(item => item.PolicyName === 'RevokeOlderSessionFor6')
+            if (index !== -1) {
+              this.axios.post(GET_POLICY, {
+                Version: '2019-01-16',
+                PolicyId: res.Response.List[index].PolicyId
+              }).then(({ Response }) => {
+                res.Response.List[index].validTime = moment(JSON.parse(Response.PolicyDocument).statement[0].condition.date_less_than['qcs:token_create_time']).format('YYYY-MM-DD HH:mm:ss')
+              }).then(() => {
+                this.rolePolicies = res.Response.List;
+              })
+
+            } else {
+              this.rolePolicies = res.Response.List;
+            }
             this.TotalNum = res.Response.TotalNum;
             this.TotalCount = res.Response.TotalNum;
           } else {
@@ -859,6 +877,7 @@ export default {
               roleId: this.$route.query.RoleId
             })
             loading.close()
+            this.getRolePolicy()
             if (res.code === 0) {
               this.$message({
                 message: '撤銷成功',

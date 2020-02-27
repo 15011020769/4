@@ -1,6 +1,7 @@
 <template>
   <div class="mesg-detils">
     <HeaderCom :title="$t('MGC.znxxq')" @_back="back"  :backShow="true"></HeaderCom>
+    <p class="time">{{$route.query.time}}</p>
     <div class="detilswrap">
         <div class="wrap" v-html="content">123</div>
     </div>
@@ -21,7 +22,7 @@ export default {
   methods:{
     //返回上一页
     back(){
-       this.$router.go(-1);
+       this.$router.push({path:"/message",query:{page:this.$route.query.page}});
     },
     //获取详情数据
     init(){
@@ -54,5 +55,11 @@ export default {
        background: white;
        box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
      }
+   }
+   .time{
+     font-size:17px;
+     margin:0 auto;
+     width:200px;
+     padding-top:10px
    }
 </style>
