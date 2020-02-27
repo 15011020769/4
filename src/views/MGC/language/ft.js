@@ -21,7 +21,9 @@ module.exports = {
         bt: '標題',
         fbsj: '發布時間',
         zt: '狀態',
-        tzggxq: '通知公告詳情'
+        tzggxq: '通知公告詳情',
+        fb: "已發布",
+        zd: "是否置頂"
     },
     COM: require('@/components/language/ft'),
 }

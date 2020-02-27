@@ -25,23 +25,20 @@
         width="80"
         label="序號"
       ></el-table-column>
-            <el-table-column prop="title" :label="$t('MGC.bt')" width="160px">
-                <template slot-scope="scope">
-                   <el-link @click="detailsMesg(scope.row)" type="primary" class="edit">{{scope.row.title}}</el-link>
-                </template>
+            <el-table-column prop="title" :label="$t('MGC.bt')" >
             </el-table-column>
-            <el-table-column prop="publishTime" :label="$t('MGC.fbsj')" width="200px"></el-table-column>
-            <el-table-column prop="content" label="訊息内容">
+            <el-table-column prop="publishTime" :label="$t('MGC.fbsj')" ></el-table-column>
+            <el-table-column prop="isTop" :label="$t('MGC.zd')">
             <template slot-scope="scope">
-                  <p v-html="scope.row.content"></p>
+                  <p>{{scope.row.isTop==0?"否":"是"}}</p>
                 </template>
             </el-table-column>
-            <el-table-column prop="publishStatus" :label="$t('MGC.zt')" fixed="right" width="100px">
+            <el-table-column prop="publishStatus" :label="$t('MGC.zt')" fixed="right">
             <template slot-scope="scope">
-                  <p>{{'已发布'}}</p>
+                  <p>{{$t('MGC.fb')}}</p>
                 </template>
             </el-table-column>
-            <el-table-column label="操作" fixed="right" width="50px">
+            <el-table-column label="操作" fixed="right">
               <template slot-scope="scope">
                 <el-button
                   @click.native.prevent="detailsMesg(scope.row)"
