@@ -169,6 +169,8 @@
         .then(data => {
           if (data.Response.Error === undefined) {
             this.options = data.Response.AttributeKeyDetails;
+            this.value = 'ReadOnly'
+            this._select('ReadOnly')
           } else {
             let ErrTips = {
               "InternalError.SearchError": "內部錯誤，請聯繫開發人員"
