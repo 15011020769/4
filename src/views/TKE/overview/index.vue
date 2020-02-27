@@ -11,7 +11,7 @@
               <h3 class="font" style="margin-bottom:20px">资源概览</h3>
               <ul class="ro-data-card"  v-loading="shows">
                 <li class="ro-data-card-list">
-                  <div class="font data-card-border-right">
+                  <div class="font ">
                     <h3 class="ro-data-card-hd font">集群</h3>
                     <div>
                       <span class="font-big">{{ TotalCount }}</span>
@@ -19,8 +19,8 @@
                     </div>
                   </div>
                 </li>
-                <li>
-                  <div class="font data-card-border-right data-card-list">
+                <li class="ro-data-card-list" >
+                  <div class="font  border-set">
                     <h3 class="ro-data-card-hd font">节点</h3>
                     <div>
                       <span class="font-big">{{ nodeNum }}</span>
@@ -30,8 +30,8 @@
                     </div>
                   </div>
                 </li>
-                <li>
-                  <div class="font data-card-border-right data-card-list">
+                <li class="ro-data-card-list">
+                  <div class="font  ">
                     <h5 class="ro-data-card-hd font">工作负载</h5>
                     <div>
                       <span class="font-big">{{ workLoad }}</span>
@@ -478,12 +478,7 @@ a:hover {
 .data-card-list {
   margin-left: 20px;
 }
-.data-card-border-right {
-  border-right: 1px solid #dddddd;
-}
-.ro-data-card li:last-child.data-card-border-right {
-  border-right: none;
-}
+
 .font-small {
   font-size: 12px;
   color: #888888;
@@ -527,18 +522,28 @@ a:hover {
   font-size: 15px;
   margin-bottom: 20px;
 }
+.border-set{
+  border-left: solid 1px #ddd;
+  border-right: solid 1px #ddd;
+  padding-left: 20px;
+  margin-right: 20px;
+}
 .ro-data-card {
   display: flex;
+  justify-content: space-between;
   margin: -10px 0;
 }
 .ro-data-card-hd {
   margin: 10px 0;
-  width: 282px;
+  // width: 282px;
 }
 .show {
   display: block;
 }
 .hide {
   display: none;
+}
+.ro-data-card-list{
+  width:33%
 }
 </style>
