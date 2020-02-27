@@ -24,9 +24,9 @@
         >
           <el-option
             v-for="item in options"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
+            :key="item.Domain"
+            :label="item.Domain"
+            :value="item.Domain"
           ></el-option>
         </el-select>
         <el-button-group>
@@ -57,6 +57,7 @@
 
 <script>
 import moment from 'moment'
+import { DESCRIBE_HOSTS, DESCRIBE_BOT_STATUS } from '@/constants'
 import overView from './component/botdetail/overView'
 import Ub from './component/botdetail/ub'
 import Ucb from './component/botdetail/ucb'
@@ -71,6 +72,7 @@ export default {
       activeName: "overview",
       options: [],
       routerParams: "overview",
+      tableDataBegin: [],
     }
   },
   components: {
@@ -79,6 +81,9 @@ export default {
     Ucb,
     Tcb
   },
+  mounted() {
+    this.getDescribeHost()
+  },
   methods: {
     //关闭提示文字
     closeTip() {
@@ -86,6 +91,65 @@ export default {
     },
     handleTabClick(tab, event) {
       this.routerParams = tab.name
+    },
+    // 获取防护域名列表
+    getDescribeHost(bot='') {
+      let params = {
+        Version: '2018-01-25',
+        Search: this.iptDomain,
+        'Item.FlowMode': 0,
+        'Item.Status': bot
+      } 
+      this.loadShow=true;
+      this.axios.post(DESCRIBE_HOSTS, params).then(data => {
+        this.loadShow=false;
+        if (data.Response.Error) {
+          let ErrOr = Object.assign(ErrorTips, COMMON_ERROR)
+          this.$message({
+            message: ErrOr[Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          })
+        } else {
+          this.tableDataBegin = data.Response.HostList
+          this.getBotStatus()
+        }
+      })
+    },
+    // 查询bot开关
+    getBotStatus() {
+      let params = {
+        Version: '2018-01-25',
+        Category: 'bot'
+      }
+      this.axios.post(DESCRIBE_BOT_STATUS, params).then(data => {
+        if (data.Response.Error) {
+          let ErrOr = Object.assign(ErrorTips, COMMON_ERROR)
+          this.$message({
+            message: ErrOr[Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          })
+        } else {
+          const botArr = data.Response.Data.Res
+          let tempArr = []
+          let arr = []
+          this.tableDataBegin.forEach(item => {
+            let temp = botArr.find(_item => _item.Domain === item.Domain)
+            tempArr.push(temp)
+          })
+          tempArr.map((v) => {
+            if(v.Status == 1) {
+              arr.push(v)
+            }
+          })
+          this.options = arr
+          this.domainValue = this.options[0].Domain;
+          console.log(this.options)
+        }
+      })
     },
     //时间点击事件
     checkTime(val) {
@@ -175,7 +239,6 @@ export default {
     }
   }
   .topSelect {
-    margin-bottom: 30px;
     ::v-deep .el-range__icon {
         line-height: 22px;
     }
