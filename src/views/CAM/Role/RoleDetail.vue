@@ -113,7 +113,7 @@
                 <el-table-column prop="AddTime" :label="$t('CAM.userList.AssociationTime')"></el-table-column>
                 <el-table-column :label="$t('CAM.Role.failure')">
                   <template slot-scope="scope">
-                    <span>-</span>
+                    <span v-if="scope.row.validTime">{{scope.row.validTime}}</span>
                   </template>
                 </el-table-column>
                 <el-table-column label="操作">
@@ -315,6 +315,7 @@ import {
   Loading
 } from 'element-ui'
 import {
+  GET_POLICY,
   GET_ROLE,
   LIST_ATTACHE,
   DEACH_ROLE,
@@ -485,6 +486,7 @@ export default {
     },
     // 获取角色策略
     getRolePolicy() {
+      console.log(1234)
       this.loading = true;
       this.selTotalNum = 0;
       let paramsList = {
@@ -496,11 +498,26 @@ export default {
       if (this.rolePolicyType != "") {
         paramsList["PolicyType"] = this.rolePolicyType;
       }
+      
       this.axios
         .post(LIST_ATTACHE, paramsList)
         .then(res => {
           if (res.Response.Error === undefined) {
-            this.rolePolicies = res.Response.List;
+            // this.rolePolicies = res.Response.List;
+            const index = res.Response.List.findIndex(item => item.PolicyName === 'RevokeOlderSessionFor6')
+            if (index !== -1) {
+              this.axios.post(GET_POLICY, {
+                Version: '2019-01-16',
+                PolicyId: res.Response.List[index].PolicyId
+              }).then(({ Response }) => {
+                res.Response.List[index].validTime = moment(JSON.parse(Response.PolicyDocument).statement[0].condition.date_less_than['qcs:token_create_time']).format('YYYY-MM-DD HH:mm:ss')
+              }).then(() => {
+                this.rolePolicies = res.Response.List;
+              })
+
+            } else {
+              this.rolePolicies = res.Response.List;
+            }
             this.TotalNum = res.Response.TotalNum;
             this.TotalCount = res.Response.TotalNum;
           } else {

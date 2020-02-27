@@ -2,11 +2,10 @@
   <div v-loading='loading'>
     <div class="newClear">
       <el-button-group class="buttonGroupAll">
-        <el-button class="buttonGroup" @click="thisTime(1)">今天</el-button>
+        <el-button class="buttonGroup"  @click="thisTime(1)">今天</el-button>
         <el-button class="buttonGroup" @click="thisTime(2)">近7天</el-button>
         <el-button class="buttonGroup" @click="thisTime(3)">近15天</el-button>
         <el-button class="buttonGroup" @click="thisTime(4)">近30天</el-button>
-        <el-button class="buttonGroup" @click="thisTime(5)">近半年</el-button>
       </el-button-group>
       <el-date-picker
         v-model="timeValue"
@@ -76,7 +75,7 @@ export default {
       currentPage: 1,
       pageSize: 10,
       totalItems: 0,
-      Period: 3600,
+      Period: 300,
       timeValue: {},
       thisStart: "",
       thisEnd: "",
@@ -125,7 +124,6 @@ export default {
         Business: this.business,
         Ip: this.ddosAttack["Ip.0"],
         MetricName: this.metricName,
-        Period: this.period,
         StartTime: this.startTime,
         EndTime: this.endTime,
         Period: this.Period
@@ -189,82 +187,82 @@ export default {
     thisTime(thisTime) {
       var ipt1 = document.querySelector(".newDataTime input:nth-child(2)");
       var ipt2 = document.querySelector(".newDataTime input:nth-child(4)");
-      const end = new Date();
-      const start = new Date();
+      let start
+      let end = moment()
+      const times = []
       if (thisTime == "1") {
-        var arr = [];
-        for (var i = 0; i <= 86400000 / 3600000; i++) {
-          var d = new Date(end.getTime() - 3600000 * i);
-          arr.push(moment(d).format("MM-DD HH:mm:ss"));
+        start = moment().startOf('day')
+        times.push(start.format('YYYY-MM-DD HH:mm:ss'))
+        while (!start.isSameOrAfter(end)) {
+          times.push(start.add(5, 'm').format('YYYY-MM-DD HH:mm:ss'))
         }
-        this.startTime = moment(new Date(end.getTime() - 86400000)).format(
+        this.startTime = moment().startOf('day').format(
           "YYYY-MM-DD HH:mm:ss"
         );
-        this.endTime = moment(end).format("YYYY-MM-DD HH:mm:ss");
-        this.period = 3600;
-        this.timey = arr;
+        this.endTime = moment().endOf('day').format("YYYY-MM-DD HH:mm:ss");
+        this.Period = 300;
+        this.timey = times;
       } else if (thisTime == "2") {
-        //ddos攻击-攻击流量带宽
-        start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
-        ipt1.value = moment(start).format("YYYY-MM-DD");
-        ipt2.value = moment(end).format("YYYY-MM-DD");
-        this.startTime = moment(start).format("YYYY-MM-DD HH:mm:ss");
-        this.endTime = moment(end).format("YYYY-MM-DD HH:mm:ss");
-        this.period = 86400;
-        this.timedone(end, start, 86400000);
+        start = moment().subtract(6, 'd').startOf('day')
+        times.push(start.format('YYYY-MM-DD HH:mm:ss'))
+        while (!start.isSameOrAfter(end)) {
+          times.push(start.add(1, 'h').format('YYYY-MM-DD HH:mm:ss'))
+        }
+        console.log(times)
+        ipt1.value = moment().subtract(6, 'd').format('YYYY-MM-DD')
+        ipt2.value = moment().format('YYYY-MM-DD')
+        this.startTime = moment().subtract(6, 'd').startOf('day').format("YYYY-MM-DD HH:mm:ss");
+        this.endTime = moment().endOf('day').format("YYYY-MM-DD HH:mm:ss");
+        this.Period = 3600;
+        this.timey = times
         //ddos攻击-攻击流量带宽
       } else if (thisTime == "3") {
         //ddos攻击-攻击流量带宽
-        start.setTime(start.getTime() - 3600 * 1000 * 24 * 15);
-        ipt1.value = moment(start).format("YYYY-MM-DD");
-        ipt2.value = moment(end).format("YYYY-MM-DD");
-        this.startTime = moment(start).format("YYYY-MM-DD HH:mm:ss");
-        this.endTime = moment(end).format("YYYY-MM-DD HH:mm:ss");
-        this.period = 86400;
-        this.timedone(end, start, 86400000);
+        start = moment().subtract(14, 'd').startOf('day')
+        times.push(start.format('YYYY-MM-DD HH:mm:ss'))
+        while (!start.isSameOrAfter(end)) {
+          times.push(start.add(1, 'd').format('YYYY-MM-DD HH:mm:ss'))
+        }
+        ipt1.value = moment().subtract(14, 'd').format('YYYY-MM-DD')
+        ipt2.value = moment().format('YYYY-MM-DD')
+        this.startTime = moment().subtract(14, 'd').startOf('day').format("YYYY-MM-DD HH:mm:ss");
+        this.endTime = moment().endOf('day').format("YYYY-MM-DD HH:mm:ss");
+        this.Period = 86400;
+        this.timey = times
         //ddos攻击-攻击流量带宽
       } else if (thisTime == "4") {
-        //ddos攻击-攻击流量带宽
-        start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
-        ipt1.value = moment(start).format("YYYY-MM-DD");
-        ipt2.value = moment(end).format("YYYY-MM-DD");
-        this.startTime = moment(start).format("YYYY-MM-DD HH:mm:ss");
-        this.endTime = moment(end).format("YYYY-MM-DD HH:mm:ss");
-        this.period = 86400;
-        this.timedone(end, start, 86400000);
-        //ddos攻击-攻击流量带宽
-      } else if (thisTime == "5") {
-        //ddos攻击-攻击流量带宽
-        start.setTime(start.getTime() - 3600 * 1000 * 24 * 30 * 6);
-        ipt1.value = moment(start).format("YYYY-MM-DD");
-        ipt2.value = moment(end).format("YYYY-MM-DD");
-        this.startTime = moment(start).format("YYYY-MM-DD HH:mm:ss");
-        this.endTime = moment(end).format("YYYY-MM-DD HH:mm:ss");
-        this.period = 86400;
-        this.timedone(end, start, 86400000);
-        //ddos攻击-攻击流量带宽
+        start = moment().subtract(29, 'd').startOf('day')
+        times.push(start.format('YYYY-MM-DD HH:mm:ss'))
+        while (!start.isSameOrAfter(end)) {
+          times.push(start.add(1, 'd').format('YYYY-MM-DD HH:mm:ss'))
+        }
+        ipt1.value = moment().subtract(29, 'd').format('YYYY-MM-DD')
+        ipt2.value = moment().format('YYYY-MM-DD')
+        this.startTime = moment().subtract(29, 'd').startOf('day').format("YYYY-MM-DD HH:mm:ss");
+        this.endTime = moment().endOf('day').format("YYYY-MM-DD HH:mm:ss");
+        this.Period = 86400;
+        this.timey = times
       }
       this.describeDDoSTrend(this.timey);
       this.describeDDoSEvList();
     },
 
     drawLine(y, date) {
-      var arr = [];
-      for (let i in date) {
-        arr.unshift(date[i]); //属性
-      }
-      arr.splice(arr.length - 1, 1);
+
       // 基于准备好的dom，初始化echarts实例
       let myChart = this.$echarts.init(document.getElementById("myChart"));
       // 绘制图表
       myChart.setOption({
         color: ["rgb(124, 181, 236)"],
         title: { text: "" },
-        tooltip: {},
+        tooltip: {
+          trigger: 'axis'
+        },
         xAxis: {
-          data: arr
+          data: date
         },
         yAxis: {
+          type: 'value',
           axisLine: {
             //y轴
             show: false
