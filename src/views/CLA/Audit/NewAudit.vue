@@ -10,7 +10,7 @@
               <el-input v-model="ruleForm.AuditName"></el-input>
               <span>{{ $t('CLA.total.jzcfmsz') }}</span>
             </el-form-item>
-            <el-form-item :label="$t('CLA.total.gzqy')">
+            <el-form-item :label="$t('CLA.total.gzqy')" style="marginTop:30px">
               <p style="font-size:12px;">{{ $t('CLA.total.s') }}</p>
             </el-form-item>
           </div>
