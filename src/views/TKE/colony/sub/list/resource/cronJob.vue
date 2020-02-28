@@ -8,7 +8,7 @@
       <!-- 左侧 -->
       <div class="grid-left">
         <el-button @click="goWorkloadCreate('cronJob')" size="small" type="primary">新建</el-button>
-        <el-button size="small">监控</el-button>
+        <!-- <el-button size="small">监控</el-button> -->
       </div>
       <!-- 右侧 -->
       <div class="grid-right">
@@ -32,7 +32,12 @@
 
     <!-- 数据列表展示 -->
     <div class="tke-card mt10">
-      <el-table :data="list.slice((pageIndex - 1) * pageSize, pageIndex * pageSize)" v-loading="loadShow" id='exportTable' style="width: 100%">
+      <el-table
+        :data="list.slice((pageIndex - 1) * pageSize, pageIndex * pageSize)"
+        v-loading="loadShow"
+        id="exportTable"
+        style="width: 100%"
+      >
         <el-table-column label="名称">
           <template slot-scope="scope">
             <span class="tke-text-link">{{scope.row.metadata.name}}</span>
@@ -65,10 +70,10 @@
               </span>
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item command="a">
-                   <span class="tke-text-link">编辑YAML</span>
+                  <span class="tke-text-link">编辑YAML</span>
                 </el-dropdown-item>
                 <el-dropdown-item command="a">
-                   <span class="tke-text-link">删除</span>
+                  <span class="tke-text-link">删除</span>
                 </el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
@@ -229,22 +234,26 @@ export default {
         });
       }
     },
-    listData(){
-      var params={
+    listData() {
+      var params = {
         ClusterName: this.clusterId,
         Method: "GET",
-        Path: "/apis/batch/v1beta1/namespaces/"+this.searchType+"/cronjobs?fieldSelector=metadata.name="+this.searchInput,
-        Version: "2018-05-25",
-      }
-      this.axios.post(TKE_COLONY_QUERY, params).then(res=>{
-         if (res.Response.Error == undefined) {
-            var data = JSON.parse(res.Response.ResponseBody);
-            console.log(data)
-            this.list=data.items;
-            this.total=data.items.length;
-          }
-      })
-    },
+        Path:
+          "/apis/batch/v1beta1/namespaces/" +
+          this.searchType +
+          "/cronjobs?fieldSelector=metadata.name=" +
+          this.searchInput,
+        Version: "2018-05-25"
+      };
+      this.axios.post(TKE_COLONY_QUERY, params).then(res => {
+        if (res.Response.Error == undefined) {
+          var data = JSON.parse(res.Response.ResponseBody);
+          console.log(data);
+          this.list = data.items;
+          this.total = data.items.length;
+        }
+      });
+    }
   },
   components: {
     subTitle,

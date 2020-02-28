@@ -11,10 +11,12 @@
           <el-button size="small" @click='flag=!flag'>监控</el-button>
         </div>
         <!-- 抽屉 -->
+        <div class="dra" v-if="flag">
         <openDrawer :flag='flag'
           title='工作负载监控'
           @changeFlag='setFlag'
           @setTime='setTime'></openDrawer>
+        </div>
         <!-- 右侧 -->
         <div class="grid-right">
           <div>
