@@ -115,10 +115,10 @@
           <span>{{$t("menu.title13")}}</span>
         </template>
         <el-menu-item-group>
-          <el-menu-item index="Physics">
+          <el-menu-item index="Physics" @click="_class" :class="{'active':classValue=='Physics'}">
             <span slot="title">{{$t("menu.title14")}}</span>
           </el-menu-item>
-          <el-menu-item index="Private">
+          <el-menu-item index="Private" @click="_class" :class="{'active':classValue=='Private'}">
             <span slot="title">{{$t("menu.title15")}}</span>
           </el-menu-item>
         </el-menu-item-group>
@@ -128,7 +128,7 @@
         <span slot="title">对等连接</span>
       </el-menu-item>-->
 
-      <el-menu-item index="objectStorage">
+      <el-menu-item index="objectStorage" @click="_class" :class="{'active':classValue=='objectStorage'}">
         <span slot="title">{{$t("menu.title16")}}</span>
       </el-menu-item>
     </el-menu>
