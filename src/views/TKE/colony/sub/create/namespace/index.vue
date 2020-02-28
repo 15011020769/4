@@ -109,12 +109,45 @@ export default {
     //新增命名空间
     async createNameSpace () {
       this.loadShow = true;
+      let requesBody1 = {
+        kind: "Namespace", apiVersion: "v1",
+        metadata:{name: this.np.spaceName, annotations: {description: this.np.desc}}
+      }
+      let requesBody2 = {
+        kind:"Secret",
+        apiVersion:"v1",
+        metadata:{name: this.secretNameMap.qcloudregistrykey,
+          namespace: this.np.spaceName,
+          labels:{"qcloud-app": this.secretNameMap.qcloudregistrykey}
+        },
+        type: "kubernetes.io/dockercfg",
+        data:{".dockercfg":"eyJ0cGVjY3IuY2NzLnRlbmNlbnR5dW4uY29tIjp7InVzZXJuYW1lIjoiMTAwMDExOTIxOTEwIiwicGFzc3dvcmQiOiJ7QXBwbGljYXRpb25Ub2tlbjo"
+            + "2MTljNTYwNzhkZTIzNTE2ODVhOWI1YmMwZTFjMWFiMH0iLCJhdXRoIjoiTVRBd01ERXhPVEl4T1RFd09udEJjSEJzYVdOaGRHbHZibFJ2YTJWdU9qWXhPV00xTmpBM"
+            + "09HUmxNak0xTVRZNE5XRTVZalZpWXpCbE1XTXhZV0l3ZlE9PSJ9fQ=="
+        }
+      }
+      let requesBody3 = {
+        kind:"Secret",
+        apiVersion:"v1",
+        metadata:{name: this.secretNameMap.tencenthubkey,
+          namespace: this.np.spaceName,
+          labels:{"qcloud-app": this.secretNameMap.tencenthubkey}
+        },
+        type: "kubernetes.io/dockercfg",
+        data:{".dockercfg":"eyJodWIudGVuY2VudHl1bi5jb20iOnsidXNlcm5hbWUiOiIxMDAwMTE5MjE5MTAiLCJwYXNzd29yZCI6ImV5SmhiR2NpT2lKSVV6STFO"
+          + "aUlzSW5SNWNDSTZJa3BYVkNKOS5leUpsZUhBaU9qRTRPVGd5TWprMk9Ea3NJbXAwYVNJNklqUm1OVFEyTldRekxURTBZbVl0TkRoa1pDMWlZVGc1TFRZMVl6Z3lZMk"
+          + "kzTnpkbE9DSXNJbWxoZENJNk1UVTRNamcyT1RZNE9Td2libUptSWpveE5UZ3lPRFk1TmpnNUxDSnpkV0lpT2lJeE1EQXdNVEU1TWpFNU1UQWlmUS5PaFlZT1lfdF"
+          + "JyMzItYlc2WDRtM212Q2QteGJzVDhaZVFqZGFzQlB6ZV9vIiwiYXV0aCI6Ik1UQXdNREV4T1RJeE9URXdPbVY1U21oaVIyTnBUMmxLU1ZWNlNURk9hVWx6U1c1U05XT"
+          + "kRTVFpKYTNCWVZrTktPUzVsZVVwc1pVaEJhVTlxUlRSUFZHZDVUV3ByTWs5RWEzTkpiWEF3WVZOSk5rbHFVbTFPVkZFeVRsZFJla3hVUlRCWmJWbDBUa1JvYTFwRE1X"
+          + "bFpWR2MxVEZSWk1WbDZaM2xaTWtrelRucGtiRTlEU1hOSmJXeG9aRU5KTmsxVVZUUk5hbWN5VDFSWk5FOVRkMmxpYlVwdFNXcHZlRTVVWjNsUFJGazFUbXBuTlV4RFNuc"
+          + "GtWMGxwVDJsSmVFMUVRWGROVkVVMVRXcEZOVTFVUVdsbVVTNVBhRmxaVDFsZmRGSnlNekl0WWxjMldEUnRNMjEyUTJRdGVHSnpWRGhhWlZGcVpHRnpRbEI2WlY5diJ9fQ=="
+        }
+      }
       let param = {
         Method: "POST",
         Path: "/apis/platform.tke/v1/clusters/"+this.clusterId+"/apply",
         Version: "2018-05-25",
-        RequestBody: {kind: "Namespace", apiVersion: "v1",
-            metadata:{name: this.np.spaceName, annotations: {description: this.np.desc}}},
+        RequestBody: JSON.stringify(requesBody1) + JSON.stringify(requesBody2) + JSON.stringify(requesBody3),
         ClusterName: this.clusterId
       }
 

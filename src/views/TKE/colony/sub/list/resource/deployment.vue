@@ -64,7 +64,7 @@
           label="Labels"
           >
           <template slot-scope="scope">
-              <span>{{changeLabel(scope.row.metadata && scope.row.metadata.labels)}}</span>
+              <span>{{scope.row.metadata && scope.row.metadata.labels | changeLabel}}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -72,7 +72,7 @@
           label="Selector"
           >
           <template slot-scope="scope">
-              <span>{{changeSelector(scope.row.spec && scope.row.spec.selector && scope.row.spec.selector.matchLabels)}}</span>
+              <span>{{scope.row.spec && scope.row.spec.selector && scope.row.spec.selector.matchLabels | changeSelector}}</span>
           </template>
         </el-table-column>
         
@@ -177,7 +177,7 @@ export default {
     this.getNameSpaceList();
   },
   methods: {
-    //获取命名空间列表数据
+    //启动时获取命名空间列表数据
     async getNameSpaceList() {
       this.loadShow = true;
       let param = {
@@ -470,7 +470,9 @@ export default {
           });
         }
       });
-    },
+    }
+  },
+  filters: {
     //转换label
     changeLabel(value){
       if(value) {
@@ -495,7 +497,6 @@ export default {
         return "-"
       }
     }
-
   },
   components: {
     subTitle,

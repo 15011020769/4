@@ -12,17 +12,20 @@
         </div>
         <!-- 右侧 -->
         <div class="grid-right">
+          <div>
+            <span>命名空间</span>
+            <el-select size="mini" v-model="searchType" placeholder="请选择" @change="changeSearchType()" style="margin-bottom:5px;">
+              <el-option v-for="item in searchOptions" :key="item.metadata.name" :value="item.metadata.name">
+              </el-option>
+            </el-select>
+          </div>
           <tkeSearch 
-            typeSelect 
             refreshData
             exportData
-            typeLabel='命名空间' 
-            :typeOptions='searchOptions'
             :typeValue='searchType' 
             inputPlaceholder='请输入关键词搜索'
             :searchInput='searchInput'
 
-            @changeType="changeSearchType"
             @changeInput="changeSearchInput"
             @clickSearch="clickSearch"
             @refresh='refreshList'
@@ -39,12 +42,13 @@
         <el-table
           :data="list"
           v-loading="loadShow"
+          id="exportTable"
           style="width: 100%">
           <el-table-column
             label="名称"
             >
             <template slot-scope="scope">
-              <span class="tke-text-link">job</span>
+              <span class="tke-text-link" @click="goJobDetail(scope.row)">{{scope.row.metadata && scope.row.metadata.name}}</span>
             </template>
           </el-table-column>
           <el-table-column
@@ -52,7 +56,7 @@
             label="Labels"
             >
             <template slot-scope="scope">
-               <span>k8s-app:job、qcloud-app:job</span>
+              <span>{{scope.row.metadata && scope.row.metadata.labels | changeLabel}}</span>
             </template>
           </el-table-column>
           <el-table-column
@@ -60,16 +64,19 @@
             label="Selector"
             >
             <template slot-scope="scope">
-                <span>k8s-app:job、qcloud-app:job</span>
+              <span>{{scope.row.spec && scope.row.spec.selector && scope.row.spec.selector.matchLabels | changeSelector}}</span>
             </template>
           </el-table-column>
           
-          <el-table-column
-            prop=""
-            label="运行/期望Pod数量"
-            >
+          <el-table-column prop label="并行度">
             <template slot-scope="scope">
-              <span>1/1</span>
+              <span>{{scope.row.spec.parallelism || 0}}</span>
+            </template>
+          </el-table-column>
+
+          <el-table-column prop label="重复次数">
+            <template slot-scope="scope">
+              <span>{{scope.row.spec.completions || 0}}</span>
             </template>
           </el-table-column>
           <el-table-column
@@ -115,42 +122,25 @@
 import subTitle from "@/views/TKE/components/subTitle";
 import tkeSearch from "@/views/TKE/components/tkeSearch";
 import Loading from "@/components/public/Loading";
-import { ALL_CITY } from "@/constants";
+import { ErrorTips } from "@/components/ErrorTips";
+import moment from 'moment';
+import XLSX from "xlsx";
+import FileSaver from "file-saver";
+import { ALL_CITY,POINT_REQUEST } from "@/constants";
 export default {
   name: "colonyResourceJob",
   data() {
     return {
       loadShow: false, //加载是否显示
-      list:[
-        {
-          status:false
-        },
-        {
-          status:true
-        }
-      ], //列表
+      clusterId: '',//集群id
+      list:[], //列表
       total:0,
       pageSize:10,
       pageIndex:0,
-      multipleSelection: [],
-      
+      multipleSelection: [],//全选数据
       //搜索下拉框
-      searchOptions: [
-        {
-          value: "default",
-          label: "default"
-        },
-        {
-          value: "kube-system",
-          label: "kube-system"
-        },
-        {
-          value: "kube-public",
-          label: "kube-public"
-        }
-        
-      ],
-      searchType: "default", //下拉选中的值
+      searchOptions: [],
+      searchType: "", //下拉选中的值
       searchInput: "", //输入的搜索关键字
     };
   },
@@ -158,8 +148,122 @@ export default {
   created() {
     // 从路由获取集群id
     this.clusterId=this.$route.query.clusterId;
+    this.getNameSpaceList();
   },
   methods: {
+    //启动时获取JOB列表数据
+    async getNameSpaceList() {
+      this.loadShow = true;
+      let param = {
+        Method: "GET",
+        Path: "/api/v1/namespaces",
+        Version: "2018-05-25",
+        ClusterName: this.clusterId
+      }
+
+      await this.axios.post(POINT_REQUEST, param).then(async (res) => {
+        if(res.Response.Error === undefined) {
+          this.loadShow = false;
+          let response = JSON.parse(res.Response.ResponseBody);
+          //默认选中第一项
+          let nameSpace = response.items[0];
+          this.searchType = nameSpace.metadata.name;
+          this.searchOptions = response.items;
+          this.loadShow = true;
+          let params = {};
+          if(this.searchInput === '') {
+            params = {
+              Method: "GET",
+              Path: "/apis/batch/v1/namespaces/"+nameSpace.metadata.name+"/jobs?limit="+this.pageSize,
+              Version: "2018-05-25",
+              ClusterName: this.clusterId
+            }
+          } else {
+            params = {
+              Method: "GET",
+              Path: "/apis/batch/v1/namespaces/"+nameSpace.metadata.name+"/jobs?fieldSelector=metadata.name="+this.searchInput,
+              Version: "2018-05-25",
+              ClusterName: this.clusterId
+            }
+          }
+          await this.axios.post(POINT_REQUEST, params).then(res1 => {
+            if(res1.Response.Error === undefined) {
+              this.loadShow = false;
+              let response1 = JSON.parse(res1.Response.ResponseBody);
+              if(response1.items.length > 0) {
+                response1.items.map(stateful => {
+                  stateful.addTime = moment(stateful.metadata.creationTimestamp).format("YYYY-MM-DD HH:mm:ss");
+                });
+              }
+              this.list = response1.items;
+              this.total = response1.items.length;
+            } else {
+              this.loadShow = false;
+              let ErrTips = {
+                
+              };
+              let ErrOr = Object.assign(ErrorTips, ErrTips);
+              this.$message({
+                message: ErrOr[res1.Response.Error.Code],
+                type: "error",
+                showClose: true,
+                duration: 0
+              });
+            }
+          });
+        } else {
+          this.loadShow = false;
+          let ErrTips = {
+            
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
+    },
+    //获取StatefulSet列表
+    async getJobList() {
+      this.loadShow = true;
+      let params = {};
+      if(this.searchInput === '') {
+        params = {
+          Method: "GET",
+          Path: "/apis/batch/v1/namespaces/"+this.searchType+"/jobs?limit="+this.pageSize,
+          Version: "2018-05-25",
+          ClusterName: this.clusterId
+        }
+      } else {
+        params = {
+          Method: "GET",
+          Path: "/apis/batch/v1/namespaces/"+this.searchType+"/jobs?fieldSelector=metadata.name="+this.searchInput,
+          Version: "2018-05-25",
+          ClusterName: this.clusterId
+        }
+      }
+      await this.axios.post(POINT_REQUEST, params).then(res1 => {
+        if(res1.Response.Error === undefined) {
+          this.loadShow = false;
+          let response = JSON.parse(res1.Response.ResponseBody);
+          this.list = response.items;
+          this.total = response.items.length;
+        } else {
+          this.loadShow = false;
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res1.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
+    },
      // 新建
     goWorkloadCreate(type){
       this.$router.push({
@@ -180,10 +284,21 @@ export default {
           }
       });
     },
+    //跳转详情
+    goJobDetail(rowData) {
+      this.$router.push({
+          name: "jobDetail",
+          query: {
+            clusterId: this.clusterId,
+            spaceName: this.searchType,
+            rowData: rowData,
+            jobList: this.list
+          }
+      });
+    },
     //选择搜索条件
     changeSearchType(val) {
-      this.searchType = val;
-      console.log(this.searchType)
+      this.getJobList();
     },
     //监听搜索框的值
     changeSearchInput(val) {
@@ -193,48 +308,71 @@ export default {
     // 点击搜索
     clickSearch(val){
       this.searchInput = val;
-      console.log(this.searchInput)
+      this.getJobList();
     },
     //刷新数据
     refreshList(){
-      console.log('refreshList....')
+      this.getJobList();
     },
     // 导出表格
     exportExcel() {
-      console.log('exportExcel...')
-      /* generate workbook object from table */
-      // var wb = XLSX.utils.table_to_book(document.querySelector("#exportTable"));
-      /* get binary string as output */
-      // var wbout = XLSX.write(wb, {
-      //   bookType: "xlsx",
-      //   bookSST: true,
-      //   type: "array"
-      // });
-      // try {
-      //   FileSaver.saveAs(
-      //     new Blob([wbout], {
-      //       type: "application/octet-stream"
-      //     }),
-      //     this.$t("CVM.clBload.fzjh") + ".xlsx"
-      //   );
-      // } catch (e) {
-      //   if (typeof console !== "undefined") console.log(e, wbout);
-      // }
-      // return wbout;
+      var wb = XLSX.utils.table_to_book(document.querySelector("#exportTable"));
+      var wbout = XLSX.write(wb, {
+        bookType: "xlsx",
+        bookSST: true,
+        type: "array"
+      });
+      try {
+        FileSaver.saveAs(
+          new Blob([wbout], {
+            type: "application/octet-stream"
+          }),
+          this.$t("tke-nodeList") + ".xlsx"
+        );
+      } catch (e) {
+        if (typeof console !== "undefined") console.log(e, wbout);
+      }
+      return wbout;
     },
 
     // 分页
     handleCurrentChange(val) {
       this.pageIndex = val-1;
-      // this.getColonyList();
+      this.getJobList();
       this.pageIndex+=1;
     },
     handleSizeChange(val) {
       // console.log(`每页 ${val} 条`);
       this.pageSize=val;
-      // this.getColonyList();
+      this.getJobList();
     },
 
+  },
+  filters: {
+    //转换label
+    changeLabel(value){
+      if(value) {
+        let labels = '';
+        for(let i in value) {
+          labels += i + " : " + value[i] + '、'
+        }
+        return labels.substring(0,labels.length - 1);
+      } else {
+        return "-"
+      }
+    },
+    //转换Selector
+    changeSelector(value){
+      if(value) {
+        let labels = '';
+        for(let i in value) {
+          labels += i + " : " + value[i] + '、'
+        }
+        return labels.substring(0,labels.length - 1);
+      } else {
+        return "-"
+      }
+    }
   },
   components: {
     subTitle,

@@ -66,7 +66,7 @@
             label="Labels"
             >
             <template slot-scope="scope">
-               <span>{{changeLabel(scope.row.metadata && scope.row.metadata.labels)}}</span>
+               <span>{{scope.row.metadata && scope.row.metadata.labels | changeLabel}}</span>
             </template>
           </el-table-column>
           <el-table-column
@@ -74,7 +74,7 @@
             label="Selector"
             >
             <template slot-scope="scope">
-                <span>{{changeSelector(scope.row.spec && scope.row.spec.selector && scope.row.spec.selector.matchLabels)}}</span>
+                <span>{{scope.row.spec && scope.row.spec.selector && scope.row.spec.selector.matchLabels | changeSelector}}</span>
             </template>
           </el-table-column>
           
@@ -83,14 +83,14 @@
             label="运行/期望Pod数量"
             >
             <template slot-scope="scope">
-              <span>{{scope.row.status && scope.row.status.readyReplicas || 0}}/{{scope.row.status && scope.row.status.replicas || 0}}</span>
+              <span>{{scope.row.status && scope.row.status.replicas || 0}}/{{scope.row.spec && scope.row.spec.replicas || 0}}</span>
             </template>
           </el-table-column>
           <el-table-column
             label="操作"
             >
             <template slot-scope="scope">
-              <span class="tke-text-link" @click="goPodUpdate('number')">更新Pod数量</span>
+              <span class="tke-text-link" @click="goPodUpdate('number', scope.row)">更新Pod数量</span>
               <span class="tke-text-link ml10" @click="goPodUpdate('config')">更新Pod配置</span>
               <el-dropdown class=" tke-dropdown" >
                 <span class="el-dropdown-link ml10" >
@@ -130,6 +130,7 @@ import subTitle from "@/views/TKE/components/subTitle";
 import tkeSearch from "@/views/TKE/components/tkeSearch";
 import Loading from "@/components/public/Loading";
 import openDrawer from "./components/openDrawer";
+import { ErrorTips } from "@/components/ErrorTips";
 import moment from 'moment';
 import XLSX from "xlsx";
 import FileSaver from "file-saver";
@@ -158,7 +159,7 @@ export default {
     this.getNameSpaceList();
   },
   methods: {
-    //获取StatefulSet列表数据
+    //启动时获取StatefulSet列表数据
     async getNameSpaceList() {
       this.loadShow = true;
       let param = {
@@ -194,7 +195,6 @@ export default {
             }
           }
           await this.axios.post(POINT_REQUEST, params).then(res1 => {
-            debugger
             if(res1.Response.Error === undefined) {
               this.loadShow = false;
               let response1 = JSON.parse(res1.Response.ResponseBody);
@@ -386,7 +386,9 @@ export default {
             type: "StatefulSet"
           }
       });
-    },
+    }
+  },
+  filters: {
     //转换label
     changeLabel(value){
       if(value) {

@@ -197,15 +197,15 @@ export default {
     this.clusterId=this.$route.query.clusterId;
     this.spaceName = this.$route.query.spaceName;
     this.rowData = this.$route.query.rowData;
-    this.getStatefulsetsPodList();
+    this.getDaemonsetsPodList();
   },
   methods: {
     //获取列表
-    async getStatefulsetsPodList() {
+    async getDaemonsetsPodList() {
       this.loadShow = true;
       let params = {
         Method: "GET",
-        Path: "/apis/apps/v1beta2/namespaces/"+this.rowData.metadata.namespace+"/deployments/"+this.rowData.metadata.name+"/pods",
+        Path: "/apis/apps/v1beta2/namespaces/"+this.rowData.metadata.namespace+"/daemonsets/"+this.rowData.metadata.name+"/pods",
         Version: "2018-05-25",
         ClusterName: this.clusterId
       }
@@ -214,6 +214,7 @@ export default {
         if(res.Response.Error === undefined) {
           this.loadShow = false;
           let response = JSON.parse(res.Response.ResponseBody);
+          console.log(response);
           if(response.items.length > 0) {
             response.items.map(pod => {
               pod.addTime = moment(pod.metadata.creationTimestamp).format("YYYY-MM-DD HH:mm:ss");
@@ -285,7 +286,7 @@ export default {
         if(res.Response.Error === undefined) {
           this.loadShow = false;
           this.isShowRedeployment = false;
-          this.getStatefulsetsPodList();
+          this.getDaemonsetsPodList();
         } else {
           this.loadShow = false;
           let ErrTips = {

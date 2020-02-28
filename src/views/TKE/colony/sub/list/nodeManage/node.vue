@@ -59,10 +59,10 @@
         </el-table-column>
         <el-table-column prop="" label="状态">
           <template slot-scope="scope">
-            <span v-if="scope.row.status = 'running'" class="text-green"
-              >{{changeStatus(scope.row.status)}}</span
-            >
-            <span v-else class="text-red">{{changeStatus(scope.row.status)}}</span>
+            <span :class="[
+                scope.row.ClusterStatus !== 'Running' ? 'text-red' : 'text-green'
+              ]" >{{scope.row.status | changeStatus}}
+            </span>
           </template>
         </el-table-column>
         <el-table-column prop="" label="可用区">
@@ -106,7 +106,7 @@
         </el-table-column>
         <el-table-column width="200" prop="" label="计费模式">
           <template slot-scope="scope">
-            <p>{{changeChargeType(scope.row.InstanceChargeType)}}</p>
+            <p>{{scope.row.InstanceChargeType | changeChargeType}}</p>
             <p>{{scope.row.addTime}}创建</p>
           </template>
         </el-table-column>
@@ -343,7 +343,7 @@ export default {
           Method: "GET",
           Path: "/api/v1/nodes",
           Version: "2018-05-25",
-          ClusterName: "cls-l74ol4g0",
+          ClusterName: this.clusterId,
         }
         let paramJob = {
           Conditions: [JSON.stringify(["tke_cluster_instance_id","=",this.clusterId],["node_role","=","Node"])],
@@ -397,7 +397,6 @@ export default {
                   }
                 });
                 k8sNodeList.map(k8s => {
-                  debugger
                   let providerId = k8s.spec.providerID;
                   if(node.InstanceId === providerId.substring(providerId.lastIndexOf("/")+1)) {
                     node.kubeletVersion = k8s.status.nodeInfo.kubeletVersion;
@@ -605,7 +604,6 @@ export default {
       } else {
         param["InstanceDeleteMode"] = 'retain';
       }
-      debugger
       await this.axios.post(DELETE_NODE, param).then(res => {
         if(res.Response.RequestId) {
           this.showDelModal = false;
@@ -789,10 +787,11 @@ export default {
           this.loadShow = true
         }
       })
-    },
+    }  
+  },
+  filters: {
     //返回状态
     changeStatus(status) {
-      debugger
       if(status === 'failed') {
         return '异常';
       } else if(status === 'initializing') {
@@ -812,8 +811,8 @@ export default {
       } else if(type === 'SPOTPAID') {
         return '按量计费-竞价';
       }
-    }  
-  }
+    }
+  }  
 };
 </script>
   

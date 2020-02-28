@@ -223,7 +223,7 @@ export default {
                   if(pod.status.containerStatuses) {
                     pod.status.containerStatuses.map(conStatus => {
                       if(contain.name === conStatus.name) {
-                        contain.imageID = conStatus.imageID;
+                        contain.imageID = conStatus.containerID;
                         contain.restartCount = conStatus.restartCount;
                         contain.state = conStatus.state;
                       }
