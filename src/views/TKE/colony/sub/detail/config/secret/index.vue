@@ -2,19 +2,15 @@
 <template>
   <div class="colony-wrap">
     <div class="tke-content-header tke-detail-header">
-      <div class="tke-grid ">
+      <div class="tke-grid">
         <!-- 左侧 -->
         <div class="grid-left">
           <span class="goback" @click="goBack()">
             <i class="el-icon-back"></i>
           </span>
-          <span class="goback" @click="goColonyList()">
-            集群(中国台北) /
-          </span>
-          <span class="goback" @click="goBack()">
-            cls-gwblk71e(tfy_test1) /
-          </span>
-          <h2 class="header-title">Secret:default-token-x7wsp(default)</h2>
+          <span class="goback" @click="goColonyList()">集群(中国台北) /</span>
+          <span class="goback" @click="goBack()">{{clusterId}} /</span>
+          <h2 class="header-title">Secret:{{Info.name}}({{Info.np}})</h2>
         </div>
         <!-- 右侧 -->
         <div class="grid-right"></div>
@@ -23,17 +19,22 @@
 
     <!-- 详情子菜单导航 -->
     <div class="tke-detial-nav">
-      <router-link class="nav-item" :to="{name:'secretDetailInfo',query: {clusterId: clusterId}}">详情</router-link>
-      <router-link class="nav-item" :to="{name:'secretDetailYaml',query: {clusterId: clusterId}}">YAML</router-link>
-    </div> 
+      <router-link
+        class="nav-item"
+        :to="{name:'secretDetailInfo', query: {clusterId: clusterId,name:Info.name,np:Info.np}}"
+      >详情</router-link>
+      <router-link
+        class="nav-item"
+        :to="{name:'secretDetailYaml', query: {clusterId: clusterId,name:Info.name,np:Info.np}}"
+      >YAML</router-link>
+    </div>
 
     <!-- 子页面 -->
     <keep-alive>
-        <transition name="fade" mode="out-in">
-          <router-view></router-view>
-        </transition>
+      <transition name="fade" mode="out-in">
+        <router-view></router-view>
+      </transition>
     </keep-alive>
-   
   </div>
 </template>
 
@@ -44,38 +45,40 @@ export default {
   name: "secretDetail",
   data() {
     return {
-        clusterId:'',
+      clusterId: "",
+       Info: {
+        name: "",
+        np: "",
+        time: ""
+      }
     };
   },
-  components: {
-    
-  },
+  components: {},
   created() {
     // 从路由获取集群id
-    this.clusterId=this.$route.query.clusterId;
+    this.clusterId = this.$route.query.clusterId;
+    if (this.$route.query.name && this.$route.query.np) {
+      this.Info.name = this.$route.query.name;
+      this.Info.np = this.$route.query.np;
+    }
   },
   methods: {
     //返回上一层
-    goBack(){
+    goBack() {
       this.$router.push({
-        name:'colonyConfigSecret',
-        
-      })
+        name: "colonyConfigSecret"
+      });
     },
     //返回集群列表
-    goColonyList(){
+    goColonyList() {
       this.$router.push({
-        name:'colony',
-        
-      })
-    },
+        name: "colony"
+      });
+    }
   }
 };
 </script>
 
 <style lang="scss" scoped>
-
-
-
 </style>
 

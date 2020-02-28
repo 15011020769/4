@@ -34,7 +34,10 @@
       <el-table :data="list" v-loading="loadShow" style="width: 100%" id="exportTable">
         <el-table-column label="名称">
           <template slot-scope="scope">
-            <span @click="goSecretDetail()" class="tke-text-link">{{scope.row.metadata.name}}</span>
+            <span
+              @click="goSecretDetail(scope.row)"
+              class="tke-text-link"
+            >{{scope.row.metadata.name}}</span>
           </template>
         </el-table-column>
         <el-table-column prop label="类型">
@@ -140,13 +143,14 @@ export default {
           Version: "2018-05-25",
           ClusterName: this.clusterId
         };
-      }else{
-         var params = {
+      } else {
+        var params = {
           Method: "GET",
           Path:
             "/api/v1/namespaces/" +
             this.searchType +
-            "/secrets?fieldSelector=metadata.name="+this.searchInput,
+            "/secrets?fieldSelector=metadata.name=" +
+            this.searchInput,
           Version: "2018-05-25",
           ClusterName: this.clusterId
         };
@@ -212,12 +216,14 @@ export default {
       });
     },
     // 详情
-    goSecretDetail() {
+    goSecretDetail(data) {
       console.log(this.$route);
       this.$router.push({
         name: "secretDetail",
         query: {
-          clusterId: this.clusterId
+          clusterId: this.clusterId,
+          name: data.metadata.name,
+          np: data.metadata.namespace
         }
       });
     },
