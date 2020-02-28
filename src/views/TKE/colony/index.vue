@@ -117,27 +117,34 @@
               (
               <span
                 class="text-green"
-                v-if="listStatusArr[scope.$index] == 'AllNormal'"
+                v-if="scope.row.ClusterInstanceState == 'AllNormal'"
                 >全部正常</span
               >
+              <span class="text-red" v-else-if="scope.row.ClusterInstanceState == 'AllAbnormal'">全部异常</span>
               <span class="text-red" v-else>部分异常</span>)
               <el-popover
                 width="50"
                 trigger="hover"
                 placement="top"
-                v-if="listStatusArr[scope.$index] != 'AllNormal'"
+                v-if="scope.row.ClusterInstanceState != 'AllNormal'"
               >
                 <div class="node-popover">
                   <p>
-                    创建中：{{ listStatus[scope.$index].ClusterInitNodeNum }}台
+                    创建中：{{ scope.row.ClusterInitNodeNum }}台
                   </p>
                   <p>
                     运行中：{{
-                      listStatus[scope.$index].ClusterRunningNodeNum
+                      scope.row.ClusterRunningNodeNum
                     }}台
                   </p>
                   <p>
-                    异常：{{ listStatus[scope.$index].ClusterFailedNodeNum }}台
+                    异常：{{ scope.row.ClusterRunningNodeNum }}台
+                  </p>
+                  <p>
+                    已关机：{{ scope.row.ClusterClosedNodeNum }}台
+                  </p>
+                  <p>
+                    关机中：{{ scope.row.ClusterClosingNodeNum }}台
                   </p>
                 </div>
                 <i class="el-icon-warning-outline" slot="reference"></i>
@@ -430,6 +437,7 @@ export default {
   created() {
     this._region();
     this.getColonyList();
+    this.getColonyStatus();
   },
   mounted() {},
   methods: {
@@ -448,15 +456,38 @@ export default {
       const res = await this.axios.post(TKE_COLONY_LIST, params);
       if (res.Response.Error === undefined) {
         if (res.Response.Clusters.length > 0) {
-          let ids = [];
-          res.Response.Clusters = res.Response.Clusters.map(item => {
-            ids.push(item.ClusterId);
-            return item;
+          let params = {
+            Version: "2018-05-25"
+          };
+          if(res.Response.Clusters.length > 0) {
+            for (var i in res.Response.Clusters) {
+              params["ClusterIds." + i] = res.Response.Clusters[i].ClusterId;
+            }
+          }
+          await this.axios.post(TKE_COLONY_STATUS, params).then(res1 => {
+            this.listStatus = res1.Response.ClusterStatusSet;
+            let status = res1.Response.ClusterStatusSet;
+            res.Response.Clusters.map(cluster => {
+              for(var i in status) {
+                if(cluster.ClusterId === status[i].ClusterId) {
+                  cluster.status = status[i].ClusterState;
+                  cluster.ClusterInstanceState = status[i].ClusterInstanceState;
+                  cluster.ClusterBMonitor = status[i].ClusterBMonitor;
+                  cluster.ClusterInitNodeNum = status[i].ClusterInitNodeNum;
+                  cluster.ClusterRunningNodeNum = status[i].ClusterRunningNodeNum;
+                  cluster.ClusterFailedNodeNum = status[i].ClusterFailedNodeNum;
+                  cluster.ClusterClosedNodeNum = status[i].ClusterClosedNodeNum;
+                  cluster.ClusterClosingNodeNum = status[i].ClusterClosingNodeNum;
+                }
+              }
+              return cluster;
+            });
           });
+          this.list = res.Response.Clusters;
           this.total = res.Response.TotalCount;
         }
-        this.list = res.Response.Clusters;
-        this.getColonyStatus();
+        // this.getColonyStatus();
+        console.log("list",this.list);
         this.loadShow = false;
       } else {
         this.loadShow = false;
@@ -484,22 +515,37 @@ export default {
       }
     },
     // 获取集群列表状态(不对外单独提供文档,所以无法实现)
-    getColonyStatus() {
+    async getColonyStatus() {
+      let list = this.list;
       let params = {
         Version: "2018-05-25"
       };
-      if (this.searchInput !== "") {
-        for (var i in this.list) {
-          params["ClusterIds." + i] = this.list[i].ClusterId;
+      if(list.length > 0) {
+        for (var i in list) {
+          params["ClusterIds." + i] = list[i].ClusterId;
         }
       }
 
-      this.axios.post(TKE_COLONY_STATUS, params).then(res => {
+      await this.axios.post(TKE_COLONY_STATUS, params).then(res => {
         this.listStatus = res.Response.ClusterStatusSet;
         this.listStatusArr = [];
-        for (var i in this.listStatus) {
-          this.listStatusArr.push(this.listStatus[i].ClusterInstanceState);
-        }
+        let status = res.Response.ClusterStatusSet;
+        list.map(cluster => {
+          for(var i in status) {
+            if(cluster.ClusterId === status[i].ClusterId) {
+              cluster.ClusterState = status[i].ClusterState;
+              cluster.ClusterInstanceState = status[i].ClusterInstanceState;
+              cluster.ClusterBMonitor = status[i].ClusterBMonitor;
+              cluster.ClusterInitNodeNum = status[i].ClusterInitNodeNum;
+              cluster.ClusterRunningNodeNum = status[i].ClusterRunningNodeNum;
+              cluster.ClusterFailedNodeNum = status[i].ClusterFailedNodeNum;
+              cluster.ClusterClosedNodeNum = status[i].ClusterClosedNodeNum;
+              cluster.ClusterClosingNodeNum = status[i].ClusterClosingNodeNum;
+            }
+          }
+          return cluster;
+        });
+        this.list = list;
       });
     },
     // 分页
