@@ -196,6 +196,7 @@ export default {
       if (this.value == false) {
         this.ok = "删除";
         this.deteleFlag = true;
+        this.okFlag = true;
         // this.elasticVal = "";
         // this.indexesVal = "";
       } else {
