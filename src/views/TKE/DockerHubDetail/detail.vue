@@ -4,7 +4,8 @@
             <p class="box-info">以下内容来自Docker Hub，详情请访问：<a href="https://hub.docker.com/_/nginx" target="_blank">https://hub.docker.com/_/nginx</a></p>
             <div class="room">
                 <div class="item-left">
-                    <div v-html='detailDesc'></div>
+                     <mavon-editor v-model="detailDesc" @change="changeMd" style="display:none"></mavon-editor>
+                     <div v-html="contentHtml"></div>
                 </div>
                 <div class="item-right">
                     <div style='border: 1px solid #ddd;'>
@@ -19,8 +20,9 @@
     </div>
 </template>
 <script>
-import mavonEditor from 'mavon-editor'
-// import 'mavon-editor/dist/css/index.css'
+import { mavonEditor } from 'mavon-editor'
+import 'mavon-editor/dist/css/index.css'
+// import VueMarkdown from 'vue-markdown'
 import { TKE_DOCKERHUB_INFO,TKE_DOCKERHUB_TAGLIST } from "@/constants"
 export default {
     name: 'DockerHubDetail',
@@ -28,14 +30,21 @@ export default {
         return {
             detailDesc:'',
             tagList:'',
-            List:[]
+            List:[],
+            contentHtml:''
         }
     },
     created(){
         this.getInfo()
         this.getTagList()
+       
     },
     methods:{
+        changeMd(value, render) {
+            // console.log(render)
+            this.contentHtml = render;
+        // console.log(this.contentHtml)
+        },
         getInfo () {
             const param = {
                 reponame: this.$route.query.id,
@@ -75,7 +84,10 @@ export default {
                 }
           })
         }
-    }
+    },
+    components: {
+        mavonEditor,
+    },
 }
 </script>
 <style lang="scss" scoped>

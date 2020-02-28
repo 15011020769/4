@@ -61,6 +61,7 @@
 <script>
 import HeadCom from '@/components/public/Head'
 import { TKE_DOCKERHUB_LIST, TKE_DELETE_FAVOR,TKE_ADD_FAVOR } from '@/constants'
+import { ErrorTips } from "@/components/ErrorTips";
 export default {
   name: 'DockerHub',
   components: {
@@ -79,6 +80,13 @@ export default {
   },
   created () {
     this.GetDockerHub()
+  },
+  watch:{
+    input(val){
+      if(val === ""){
+        this.searchName()
+      }
+    }
   },
   methods: {
      handleClick (row) {
@@ -136,6 +144,13 @@ export default {
         if (res.code === 0) {
           this.loadShow = true
           this.GetDockerHub()
+        } else {
+          this.$message({
+              message: ErrorTips[res.data.codeDesc],
+              type: "error",
+              showClose: true,
+              duration: 0
+          })
         }
       })
     },
@@ -149,6 +164,13 @@ export default {
         if (res.code === 0) {
           this.loadShow = true
           this.GetDockerHub()
+        } else {
+          this.$message({
+              message: ErrorTips[res.data.codeDesc],
+              type: "error",
+              showClose: true,
+              duration: 0
+          })
         }
       })
     },

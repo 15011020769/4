@@ -63,6 +63,7 @@
   </div>
 </template>
 <script>
+import { ErrorTips } from "@/components/ErrorTips";
 import HeadCom from '@/components/public/Head'
 import XLSX from "xlsx";
  import FileSaver from "file-saver";
@@ -83,9 +84,17 @@ export default {
       loadShow: true,
     }
   },
+  watch:{
+    input(value){
+      if(value === ""){
+        this.getSearch()
+      }
+    }
+  },
   created () {
     this.GetFavor()
   },
+
   methods: {
     handleClick (row) {
       console.log(row)
@@ -131,7 +140,7 @@ export default {
           this.loadShow = false
         } else {
           this.$message({
-              message: ErrorTips[res.codeDesc],
+              message: ErrorTips[res.data.codeDesc],
               type: "error",
               showClose: true,
               duration: 0
@@ -145,11 +154,17 @@ export default {
       this.axios.post(TKE_DELETE_BATCHDELETEFAVOR, param).then(res => {
         if (res.code == 0 && res.Error == undefined) {
           this.currpage = 1
-          this.GetFavor()
           this.loadShow = true
+          this.GetFavor()
+          this.$message({
+            message: "删除成功",
+            type: "success",
+            showClose: true,
+            duration: 0
+        })
         } else {
            this.$message({
-              message: ErrorTips[res.codeDesc],
+              message: ErrorTips[res.data.codeDesc],
               type: "error",
               showClose: true,
               duration: 0
@@ -167,11 +182,17 @@ export default {
         console.log(res)
         if (res.code === 0 && res.Error == undefined) {
           this.currpage = 1
-          this.GetFavor()
           this.loadShow = true
+          this.GetFavor()
+          this.$message({
+            message: "删除成功",
+            type: "success",
+            showClose: true,
+            duration: 0
+        })
         } else {
            this.$message({
-              message: ErrorTips[res.codeDesc],
+              message: ErrorTips[res.data.codeDesc],
               type: "error",
               showClose: true,
               duration: 0

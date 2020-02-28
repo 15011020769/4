@@ -35,7 +35,7 @@
       :visible.sync="dialogVisible"
       width="50%"
     >
-      <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
+      <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm tke-form">
         <el-form-item label="名称:" prop="name">
            <!-- @blur="getExist()" -->
           <el-input v-model="ruleForm.name" size="mini" style="width:40%;"></el-input>
@@ -57,6 +57,7 @@ export default {
   data () {
     var validatePass = (rule, value, callback) => {
       // 获取命名空间是否存在的接口
+      var regex = /^[a-z0-9\.\-_]+$/g
       const param = {
         namespace: this.ruleForm.name
       }
@@ -64,7 +65,9 @@ export default {
         console.log(res)
         if (res.code === 0 && res.data.isExist) {
           callback(new Error('命名空间已存在'))
-        } else {
+        } else if(!regex.test(value)){
+          callback(new Error('命名空间格式不正确'))
+        }else {
           callback()
         }
       })
@@ -96,12 +99,13 @@ export default {
   created () {
     this.GetSpaceName()
   },
-  // watch: {
-  //   isExist (val) {
-  //     this.isExist = val
-  //   },
-  //   immediate: true
-  // },
+  watch: {
+    input(val){
+      if(val == ""){
+        this.getSearch()
+      }
+    }
+  },
   methods: {
     handleClick (row) {
       this.namespace = row.namespace
@@ -132,11 +136,13 @@ export default {
         }
       })
     },
+    // 是否存在命名空间
     getExist () {
       if (this.ruleForm.name.length >= 4) {
         this.GetIsExist()
       }
     },
+    // 查询
     getSearch () {
       var regex = /^[a-z0-9\.\-_]+$/g
       if (regex.test(this.input) || this.input === '') {
@@ -179,6 +185,12 @@ export default {
         if (res.code === 0 && res.Error == undefined) {
           this.loadShow = true
           this.GetSpaceName()
+          this.$message({
+            message: "删除成功",
+            type: "success",
+            showClose: true,
+            duration: 0
+          })
         } else {
           this.$message({
               message: ErrorTips[res.codeDesc],
@@ -196,7 +208,14 @@ export default {
       this.axios.post(CREATE_SPACENAME, param).then(res => {
         console.log(res)
         if(res.code == 0 && res.Error == undefined){
-           return 
+           this.GetSpaceName() 
+           this.$message({
+              message: "新建成功",
+              type: "success",
+              showClose: true,
+              duration: 0
+          })
+           return
         }
         let Errtip = {
           'UserNamespaceMaxLimit':'(202)用户命名空间数达到配额'
