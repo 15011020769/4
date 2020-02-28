@@ -2,7 +2,7 @@
 <template>
   <div class="colony-wrap">
     <div class="tke-content-header">
-      <div class="tke-grid ">
+      <div class="tke-grid">
         <!-- 左侧 -->
         <div class="grid-left">
           <span class="goback" @click="goBack">
@@ -13,11 +13,10 @@
         <!-- 右侧 -->
         <div class="grid-right"></div>
       </div>
-    </div>  
+    </div>
     <div class="colony-main">
-
       <div class="tke-card tke-formpanel-wrap mb60">
-        <el-form  class="tke-form" :model="se" label-position='left' label-width="120px" size="mini">
+        <el-form class="tke-form" :model="se" label-position="left" label-width="120px" size="mini">
           <el-form-item label="名称">
             <el-input class="w200" v-model="se.name" placeholder="请输入名称"></el-input>
             <p>最长63个字符，只能包含小写字母、数字及分隔符("-")，且必须以小写字母开头，数字或小写字母结尾</p>
@@ -38,39 +37,39 @@
                 <el-radio v-model="se.radio" label="2">指定命名空间</el-radio>
                 <div v-if="se.radio=='2'">
                   <el-transfer
-                  filterable
-                  :filter-method="filterMethod"
-                  filter-placeholder="请输入"
-                  v-model="se.value"
-                  :data="data">
-                  </el-transfer>
+                    filterable
+                    :filter-method="filterMethod"
+                    filter-placeholder="请输入"
+                    v-model="se.value"
+                    :data="data"
+                  ></el-transfer>
                 </div>
               </div>
             </div>
           </el-form-item>
-					<div v-if="se.tabPosition=='jt'">
-						<el-form-item label="内容">
-							<div style="width:400px;">
-								<!-- 头部 -->
-								<div class="flex header">
-									<div style="width:200px">变量名</div>
-									<div>变量值</div>
-								</div>
-								<addSecret></addSecret>
-							</div>
-          	</el-form-item>
-					</div>
+          <div v-if="se.tabPosition=='jt'">
+            <el-form-item label="内容">
+              <div style="width:400px;">
+                <!-- 头部 -->
+                <div class="flex header">
+                  <div style="width:200px">变量名</div>
+                  <div>变量值</div>
+                </div>
+                <addSecret></addSecret>
+              </div>
+            </el-form-item>
+          </div>
           <div v-if="se.tabPosition=='dt'">
-						<el-form-item label="仓库域名">
-							 <el-input class="w200" v-model="se.name" placeholder="请输入域名或IP"></el-input>
-						</el-form-item>
-						<el-form-item label="用户名">
-							 <el-input class="w200" v-model="se.name" placeholder="请输入第三方仓库的用户名"></el-input>
-						</el-form-item>
-						<el-form-item label="密码">
-							 <el-input class="w200" v-model="se.name" placeholder="请输入第三方仓库的登录密码"></el-input>
-						</el-form-item>
-					</div>
+            <el-form-item label="仓库域名">
+              <el-input class="w200" v-model="se.name" placeholder="请输入域名或IP"></el-input>
+            </el-form-item>
+            <el-form-item label="用户名">
+              <el-input class="w200" v-model="se.name" placeholder="请输入第三方仓库的用户名"></el-input>
+            </el-form-item>
+            <el-form-item label="密码">
+              <el-input class="w200" v-model="se.name" placeholder="请输入第三方仓库的登录密码"></el-input>
+            </el-form-item>
+          </div>
         </el-form>
         <!-- 底部 -->
         <div class="tke-formpanel-footer">
@@ -83,7 +82,7 @@
 </template>
 
 <script>
-import addSecret from './components/addValue'
+import addSecret from "./components/addValue";
 import FileSaver from "file-saver";
 import XLSX from "xlsx";
 import { ALL_CITY } from "@/constants";
@@ -92,8 +91,20 @@ export default {
   data() {
     const generateData = _ => {
       const data = [];
-      const cities = ['上海', '北京', '广州', '深圳', '南京', '西安', '成都'];
-      const pinyin = ['shanghai', 'beijing', 'guangzhou', 'shenzhen', 'nanjing', 'xian', 'chengdu'];
+      const cities = [
+        "testname",
+        "default",
+        "kube-node-lease",
+        "kube-public",
+        "kube-system"
+      ];
+      const pinyin = [
+        "testname",
+        "default",
+        "kube-node-lease",
+        "kube-public",
+        "kube-system"
+      ];
       cities.forEach((city, index) => {
         data.push({
           label: city,
@@ -106,30 +117,108 @@ export default {
     return {
       data: generateData(),
       filterMethod(query, item) {
-          return item.pinyin.indexOf(query) > -1;
-        },
+        return item.pinyin.indexOf(query) > -1;
+      },
       se: {
-        tabPosition: 'jt',
+        tabPosition: "jt",
         value: [],
-        name: '',
-        radio: '2'
-      }  
+        name: "",
+        radio: "2"
+      }
     };
   },
   components: {
-   addSecret
+    addSecret
   },
   created() {
-     // 从路由获取类型
-    
+    // 从路由获取类型
+    this.nameSpaceList();
+    this.getData();
   },
   methods: {
     //返回上一层
-    goBack(){
-          this.$router.go(-1);
+    goBack() {
+      this.$router.go(-1);
     },
-    creatSecret(){
-       this.$router.push({name:'secret'});
+    creatSecret() {
+      this.$router.push({ name: "secret" });
+    },
+    //命名空间选项
+    nameSpaceList() {
+      var params = {
+        Method: "GET",
+        Path: "/api/v1/namespaces",
+        Version: "2018-05-25",
+        ClusterName: this.clusterId
+      };
+      // this.axios.post(TKE_COLONY_QUERY, params).then(res => {
+      //   if (res.Response.Error === undefined) {
+      //     var mes = JSON.parse(res.Response.ResponseBody);
+      //     console.log(mes);
+      //     this.total = mes.items.length;
+      //     mes.items.forEach(item => {
+      //       this.searchOptions.push({
+      //         value: item.metadata.name,
+      //         label: item.metadata.name
+      //       });
+      //     });
+      //     this.loadShow = false;
+      //   } else {
+      //     let ErrTips = {};
+      //     let ErrOr = Object.assign(ErrorTips, ErrTips);
+      //     this.$message({
+      //       message: ErrOr[res.Response.Error.Code],
+      //       type: "error",
+      //       showClose: true,
+      //       duration: 2000
+      //     });
+      //   }
+      // });
+    },
+    getData() {
+      this.loadShow = true;
+      //获取列表数据
+      if (this.searchInput == "") {
+        var params = {
+          Method: "GET",
+          Path:
+            "/api/v1/namespaces/" +
+            this.searchType +
+            "/secrets?&limit=" +
+            this.pageSize,
+          Version: "2018-05-25",
+          ClusterName: this.clusterId
+        };
+      } else {
+        var params = {
+          Method: "GET",
+          Path:
+            "/api/v1/namespaces/" +
+            this.searchType +
+            "/secrets?fieldSelector=metadata.name=" +
+            this.searchInput,
+          Version: "2018-05-25",
+          ClusterName: this.clusterId
+        };
+      }
+
+      // this.axios.post(TKE_COLONY_QUERY, params).then(res => {
+      //   if (res.Response.Error === undefined) {
+      //     var mes = JSON.parse(res.Response.ResponseBody);
+      //     this.list = mes.items;
+      //     this.total = mes.items.length;
+      //     this.loadShow = false;
+      //   } else {
+      //     let ErrTips = {};
+      //     let ErrOr = Object.assign(ErrorTips, ErrTips);
+      //     this.$message({
+      //       message: ErrOr[res.Response.Error.Code],
+      //       type: "error",
+      //       showClose: true,
+      //       duration: 2000
+      //     });
+      //   }
+      // });
     }
   }
 };
@@ -137,18 +226,18 @@ export default {
 
 <style lang="scss" scoped>
 .header {
-  height:40px;
-  border-bottom:1px solid #ddd;
-  padding-bottom:10px;
+  height: 40px;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 10px;
 }
 .flex {
   display: flex;
 }
 .bg {
-  background-color: #F2F2F2;
+  background-color: #f2f2f2;
   margin-bottom: 10px;
   padding: 10px;
-  width:590px;
+  width: 590px;
 }
 </style>
 
