@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2020-02-20 17:09:59
- * @LastEditTime: 2020-02-21 11:05:49
+ * @LastEditTime: 2020-02-28 12:39:30
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: /new_product/src/views/WAF/botMan/component/protectionSetting/module/diyTable.vue
@@ -10,8 +10,8 @@
   <div class="main">
     <el-row type="flex" justify="between">
       <el-col>
-        <el-button type="primary" size="small" @click="onAdd">添加</el-button>
-        <el-button size="small">复制</el-button>
+        <el-button  style="padding: 5px 10px; margin-right: 10px;"  type="primary" @click="onAdd">添加</el-button>
+        <el-button style="padding: 5px 10px; margin-right: 10px;" >复制</el-button>
         <span style="color: #bbb; font-size: 12px; margin-left: 10px">最多可以添加50条</span>
       </el-col>
       <el-row type="flex" align="middle">

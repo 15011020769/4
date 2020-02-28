@@ -36,6 +36,8 @@ export const DESCRIBE_BOTTCB_RECORDS = 'waf2/DescribeBotTCBRule'
 export const MODIFY_BOTTCB_RULE = 'waf2/ModifyBotTCBRule'
 /** bot开关更新 */
 export const MODIFY_BOT_STATUS = 'waf2/ModifyBotStatus'
+/** bot TCB策略域名拷贝 */
+export const COPY_BOTTCB_RULE = 'waf2/CopyBotTCBRule'
 /** 攻击城市分布 */
 export const DESCRIBE_ATTACK_WORLD_MAP = 'waf2/DescribeAttackWorldMap'
 /** 查询访问类型占比 web攻击次数 */

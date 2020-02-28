@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2020-02-19 17:26:56
- * @LastEditTime: 2020-02-26 21:06:18
+ * @LastEditTime: 2020-02-28 11:57:16
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: /new_product/src/views/WAF/botMan/component/protectionSetting/diyType.vue
@@ -13,7 +13,7 @@
         <el-button 
           style="padding: 5px 10px; margin-right: 10px;" 
           type="primary"
-          @click="dialogVisible=true"
+          @click="() => {dialogVisible=true}"
           >复制</el-button>
         <el-tooltip placement="right" content="你可以将当前域名的公开BOT策略复制到目标域名；注意，复制后，目标域名的公开BOT策略将会被覆盖。">
           <i class="el-icon-info" />
@@ -21,59 +21,47 @@
       </el-col>
       <i style="cursor: pointer" @click="getTableList" class="el-icon-refresh" />
     </el-row>
-    <el-table style="margin-top: 20px" :data="tabList ? tabList.slice((currentPage-1)*pageSize,currentPage*pageSize) : []" v-loading="loadShow">
-      <el-table-column width="80%" label="序号">
-        <template slot-scope="scope">
-          &nbsp;&nbsp;&nbsp;&nbsp;{{scope.$index+1}}
-        </template>
-      </el-table-column>
-      <el-table-column prop="type" label="BOT 分类" />
-      <el-table-column prop="Count" label="BOT 种类数" />
-      <el-table-column prop="Action" label="动作">
-        <div slot="header">
-          <el-dropdown trigger="click" style="line-height: 0">
-            <span class="el-dropdown-link" style="font-size: 12px;">
-              动作<i class="el-icon-arrow-down el-icon--right"></i>
-            </span>
-            <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item><span @click="filterAction(undefined)">全部</span></el-dropdown-item>
-              <el-dropdown-item><span @click="filterAction('monitor')">监控</span></el-dropdown-item>
-              <el-dropdown-item><span @click="filterAction('intercept')">拦截</span></el-dropdown-item>
-              <el-dropdown-item><span @click="filterAction('permit')">放行</span></el-dropdown-item>
-            </el-dropdown-menu>
-          </el-dropdown>
-        </div>
-        <template slot-scope="scope">
-          <span :class="scope.row.Action">{{scope.row.Action | actionFilter}}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="操作">
-        <template slot-scope="scope">
-          <el-button @click="upDateRule(scope.row, 'monitor')" v-if="scope.row.Action !== 'monitor'" type="text">设为监控</el-button>
-          <el-button @click="upDateRule(scope.row, 'intercept')" v-if="scope.row.Action !== 'intercept'" type="text">设为拦截</el-button>
-          <el-button @click="upDateRule(scope.row, 'permit')" v-if="scope.row.Action !== 'permit'" type="text">设为放行</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
-    <div class="tabListPage">
-      <el-pagination layout="total, sizes, prev, pager, next, jumper" :total="tabList.length" :page-sizes="[10, 20, 30, 50]" @size-change="val => pageSize = val" @current-change="val => currentPage = val" />
-    </div>
-
-    <el-dialog
-      title="复制策略"
-      :visible.sync="dialogVisible"
-      width="850px"
-      destroy-on-close
-      >
-      <!-- <span>这是一段信息</span> -->
-        <Transfer v-if="showFlag" />
-        <div slot="footer">
-          <el-row type="flex" justify="center">
-            <el-button type="primary">复制</el-button>
-            <el-button @click="onClose">取消</el-button>
-          </el-row>
-        </div>
-    </el-dialog>
+    <el-card  style="margin-top: 20px">
+      <el-table :data="tabList ? tabList.slice((currentPage-1)*pageSize,currentPage*pageSize) : []" v-loading="loadShow">
+        <el-table-column width="80%" label="序号">
+          <template slot-scope="scope">
+            &nbsp;&nbsp;&nbsp;&nbsp;{{scope.$index+1}}
+          </template>
+        </el-table-column>
+        <el-table-column prop="type" label="BOT 分类" />
+        <el-table-column prop="Count" label="BOT 种类数" />
+        <el-table-column prop="Action" label="动作">
+          <div slot="header">
+            <el-dropdown trigger="click" style="line-height: 0">
+              <span class="el-dropdown-link" style="font-size: 12px;">
+                动作<i class="el-icon-arrow-down el-icon--right"></i>
+              </span>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item><span @click="filterAction(undefined)">全部</span></el-dropdown-item>
+                <el-dropdown-item><span @click="filterAction('monitor')">监控</span></el-dropdown-item>
+                <el-dropdown-item><span @click="filterAction('intercept')">拦截</span></el-dropdown-item>
+                <el-dropdown-item><span @click="filterAction('permit')">放行</span></el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
+          </div>
+          <template slot-scope="scope">
+            <span :class="scope.row.Action">{{scope.row.Action | actionFilter}}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="操作">
+          <template slot-scope="scope">
+            <el-button @click="upDateRule(scope.row, 'monitor')" v-if="scope.row.Action !== 'monitor'" type="text">设为监控</el-button>
+            <el-button @click="upDateRule(scope.row, 'intercept')" v-if="scope.row.Action !== 'intercept'" type="text">设为拦截</el-button>
+            <el-button @click="upDateRule(scope.row, 'permit')" v-if="scope.row.Action !== 'permit'" type="text">设为放行</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+      <div class="tabListPage">
+        <el-pagination layout="total, sizes, prev, pager, next, jumper" :total="tabList.length" :page-sizes="[10, 20, 30, 50]" @size-change="val => pageSize = val" @current-change="val => currentPage = val" />
+      </div>
+    </el-card>
+    
+    <Transfer :dialogVisible.sync="dialogVisible" v-if="dialogVisible" :iptDomain="ipSearch" />
   </div>
 </template>
 
@@ -91,7 +79,6 @@ export default {
       currentPage: 1,
       pageSize: 10,
       dialogVisible: false,
-      showFlag: true
     }
   },
 
@@ -110,7 +97,13 @@ export default {
   watch: {
     pageSize(n, o) {
       console.log(n)
+    },
+    ipSearch(n, o) {
+      if(n) {
+        this.getTableList()
+      }
     }
+
   },
 
   methods: {
@@ -178,14 +171,6 @@ export default {
 
       this.tabList = arr
     },
-
-    onClose() {
-      this.dialogVisible = false
-      this.showFlag = false
-      setTimeout(() => {
-        this.showFlag = true
-      })
-    }
   },
 
   filters: {

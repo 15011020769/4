@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2020-02-19 17:26:56
- * @LastEditTime: 2020-02-20 17:11:13
+ * @LastEditTime: 2020-02-28 12:36:27
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: /new_product/src/views/WAF/botMan/component/protectionSetting/diyType.vue
@@ -13,8 +13,8 @@
       <el-tab-pane name="ip" label="ip情报特征" />
       <el-tab-pane name="diy" label="自定义会话特征" />
     </el-tabs>
-    <PublicTable v-if="tabsFlag !== 'diy'" :tabsFlag="tabsFlag" />
-    <DiyTable v-if="tabsFlag === 'diy'" />
+    <PublicTable :ipSearch="ipSearch" v-if="tabsFlag !== 'diy'" :tabsFlag="tabsFlag" />
+    <DiyTable :ipSearch="ipSearch" v-if="tabsFlag === 'diy'" />
   </div>
 </template>
 <script>
@@ -25,6 +25,10 @@ export default {
     return {
       tabsFlag: 'diy'
     }
+  },
+
+  props: {
+    ipSearch: ''
   },
 
   components: {

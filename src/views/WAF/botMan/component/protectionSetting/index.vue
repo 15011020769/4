@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="topHeader">
-      <i class="el-icon-back" data-reactid=".1a.0.0.0" />
+      <i @click="$router.push('/botSetting')" class="el-icon-back" style="cursor: pointer" />
       <span style="margin-left: 20px">BOT 策略设置</span>
       <el-select
         v-model="ipSearch"
@@ -26,14 +26,14 @@
         <p style="width: 99%">BOT 行为管理能够对友好及恶意机器人程序进行甄别分类，并采取针对性的流量管理策略，如放通搜索引擎类机器人流量，而对恶意数据爬取商品信息流量采取不响应或减缓响应或差异化响应策略，能够应对恶意机器人程序爬取带来的资源消耗，信息泄露及无效营销问题，同时也保障友好机器人程序（如搜索引擎，广告程序）的正常运行。了解更多</p>
         <span class="el-icon-close" @click="closeTip"></span>
       </div>
-      <DiyType :ipSearch="ipSearch" v-if="routerTips === 'diy'" />
+      <DiyType :ipSearch="ipSearch" v-if="routerTips === 'diy'"/>
       <PublicType :ipSearch="ipSearch" v-if="routerTips === 'public'" />
     </div>
   </div>
 </template>
 
 <script>
-import { DESCRIBE_ACCESS_CONTROL, DESCRIBE_HOSTS } from '@/constants'
+import { DESCRIBE_HOSTS } from '@/constants'
 import DiyType from './diyType'
 import PublicType from './publicType'
 
@@ -108,6 +108,8 @@ export default {
   mounted() {
     this.getDescribeHost(),
     this.getTabs()
+    const host = this.$route.path.split('/').reverse()[0]
+    this.ipSearch = host
   },
 };
 </script>
