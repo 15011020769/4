@@ -60,8 +60,8 @@
             </el-radio-group>
           </el-form-item>
           <el-form-item label="定期备份" class="m0">
-            <el-checkbox v-model="checked" @click="">设置定期备份</el-checkbox>
-            <div v-if="checked">
+            <el-checkbox v-model="pv.checked" @change="!pv.checked">设置定期备份</el-checkbox>
+            <div v-show="pv.checked">
                <el-select v-model="value" filterable placeholder="请选择">
                   <el-option
                     v-for="item in info"
@@ -109,7 +109,8 @@ export default {
         info:[],
         checked: false,
         checkListO:[],
-        checkListT:["台北一区"]
+        checkListT:["台北一区"],
+        city:''
       }  
     };
   },
