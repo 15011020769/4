@@ -223,7 +223,7 @@
               return item;
             })
             if (sessionStorage.getItem('clusterId')){
-              if(arr.indexOf(sessionStorage.getItem('clusterId'))==-1){
+              if(arr.indexOf(sessionStorage.getItem('clusterId').split('(')[0])==-1){
                 sessionStorage.setItem('clusterId','')
               }
             }
@@ -350,6 +350,7 @@
             Version: "2018-05-25",
           };
           this.axios.post(TKE_COLONY_QUERY, params).then(res => {
+            console.log(res)
             if (res.Response.Error==undefined) {
               var data = JSON.parse(res.Response.ResponseBody);
               data.items.forEach(item => {
