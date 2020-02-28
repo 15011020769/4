@@ -213,6 +213,9 @@ export default {
   .el-table{
     font-size:15px !important;
   }
+  ::v-deep .el-table td{
+        padding:5px 0;
+      }
 }
 .Right-style {
   display: flex;
