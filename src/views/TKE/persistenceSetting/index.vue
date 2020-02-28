@@ -27,6 +27,7 @@
               <span class="font-orange">&nbsp;CPU&nbsp;（0.2核）内存（100MB）</span>
               。关闭本功能会释放占用的资源
             </div>
+            <div v-if="deteleFlag" style="color:#e54545;padding-top:12px;">当前集群尚未开启集群持久化，无法删除该资源</div>
           </div>
         </div>
         <div v-show="value">
@@ -136,6 +137,7 @@ export default {
       indexesVal: "",
       ok: "保存",
       okFlag: false,
+      deteleFlag: false,
       showNameSpaceModal: false,
       placement: "格式为eg: http://190.0.0.1:9200"
     };
@@ -146,10 +148,6 @@ export default {
       this.elasticVal = "";
       this.indexesVal = "";
       this.loadShow = true;
-      //       Method: "DELETE"
-      // Path: "/apis/platform.tke/v1/persistentevents/pe-x7z24hzn"
-      // Version: "2018-05-25"
-      // ClusterName: "cls-a7rua9ae"
       console.log(this.dataList);
       const params1 = {
         Method: "DELETE",
@@ -197,9 +195,11 @@ export default {
     status() {
       if (this.value == false) {
         this.ok = "删除";
+        this.deteleFlag = true;
         // this.elasticVal = "";
         // this.indexesVal = "";
       } else {
+        this.deteleFlag = false;
         this.okFlag = false;
         this.ok = "保存";
       }
@@ -320,7 +320,7 @@ export default {
         this.$route.query.indexName.length - 1
       );
     } else {
-      this.value = false;
+      // this.value = false;
       this.okFlag = true;
       this.status();
     }
