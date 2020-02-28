@@ -8,7 +8,7 @@
  -->
 <template>
   <div>
-    <el-tabs @tab-click="tabChange">
+    <el-tabs :value="active" @tab-click="tabChange">
       <el-tab-pane name="xy" label="协议特征" />
       <el-tab-pane name="ip" label="ip情报特征" />
       <el-tab-pane name="diy" label="自定义会话特征" />
@@ -23,7 +23,8 @@ import DiyTable from './module/diyTable'
 export default {
   data() {
     return {
-      tabsFlag: 'diy'
+      tabsFlag: 'diy',
+      active: 'diy'
     }
   },
 

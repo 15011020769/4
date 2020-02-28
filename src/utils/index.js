@@ -149,6 +149,12 @@ export const flatObj = (obj, prefix = '', result = {}) => {
  */
 export const obj2Arr = (obj, key='name', val='value') => Object.keys(obj).map(k => ({ [key]: obj[k], [val]: k }))
 
+export const arr2Obj = (arr, key) => {
+  const obj = {}
+  arr.forEach(item => obj[item[key]] = item)
+  return obj
+} 
+
 /**
  * 把对象的 key value互换添加到新的key 不适应value为对象类型
  * @param {Object} obj 

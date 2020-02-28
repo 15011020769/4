@@ -288,6 +288,7 @@ module.exports = {
       qqxq: '請求詳情',
       fwyip: '訪問源IP',
       lydz: '來源地址',
+      qlrzfwb: '全量日誌服務包',
       dxzfym: '當選擇泛域名（如：*.abc.com）時，所有關聯子域名（以.abc.com結尾）的日誌也將會被下載',
     },
     COM: require('@/components/language/ft'),

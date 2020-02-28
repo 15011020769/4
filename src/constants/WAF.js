@@ -132,3 +132,5 @@ export const DESCRIBE_BOT_UB_RECORDS = 'waf2/DescribeBotUBRecords'
 export const DESCRIBE_BOT_UCB_RECORDS = 'waf2/DescribeBotUCBRecords'
 /** Bot_V2 获取UCB自定义策略 */
 export const DESCRIBE_BOT_UCB_FEATURE_RULE = 'waf2/DescribeBotUCBFeatureRule'
+/** Bot_V2 UCB策略更新/添加 */
+export const UPSERT_BOT_UCB_FEATURE_RULE = 'waf2/UpsertBotUCBFeatureRule'

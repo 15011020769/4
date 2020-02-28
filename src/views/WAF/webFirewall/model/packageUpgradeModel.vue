@@ -48,8 +48,9 @@
             <div class="packpageLabel">
               {{t('费用', 'WAF.fy')}}
             </div>
-            <div>
-              <p class="totalMoney">NT$ {{price}}</p>
+            <div class="totalMoney">
+              <template v-if="loading">计算中...</template>
+              <template v-else>NT$ {{price}}</template>
             </div>
           </div>
         </div>
@@ -79,6 +80,7 @@ export default {
       dialogModel: '', // 弹框
       type: '',
       price: 0,
+      loading: true,
     }
   },
   watch: {
@@ -97,6 +99,7 @@ export default {
   },
   methods:{
     queryPrice() {
+      this.loading = true
       this.axios.post(DESCRIBE_WAF_PRICE, {
         Version: '2018-01-25',
         ResInfo: [{
@@ -122,8 +125,9 @@ export default {
           }
         }]
       }).then(resp => {
-        this.generalRespHandler(resp, ({ RealTotalCost }) => {
-          this.price = RealTotalCost
+        this.generalRespHandler(resp, ({ CostInfo }) => {
+          this.price = CostInfo[0].RealTotalCost // RealTotalCost
+          this.loading = false
         })
       })
     },
@@ -198,7 +202,7 @@ export default {
     margin-bottom:7px;
   }
   .totalMoney{
-    font-size:24px;
+    font-size:24px !important;
     color:#ff7800;
   }
 }
