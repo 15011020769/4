@@ -77,7 +77,7 @@ export default {
   },
   mounted() {
     this.getBotUbList()
-    console.log(scene_flag_list)
+    // console.log(scene_flag_list)
   },
   methods: {
     onChangeScene(scene) {

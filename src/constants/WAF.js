@@ -126,7 +126,9 @@ export const DESCRIBE_BOT_TYPE_STAT = 'waf2/DescribeBotTypeStat'
 export const DESCRIBE_BOT_REGIONS_STAT = 'waf2/DescribeBotRegionsStat'
 /** Bot_V2 获取bot动作统计 */
 export const DESCRIBE_BOT_ACTION_STAT = 'waf2/DescribeBotActionStat'
-/** Bot_V2 获取UCB自定义策略 */
-export const DESCRIBE_BOT_UCB_FEATURE_RULE = 'waf2/DescribeBotUCBFeatureRule'
 /** Bot_V2 获取UB类型Bots */
 export const DESCRIBE_BOT_UB_RECORDS = 'waf2/DescribeBotUBRecords'
+/** Bot_V2 获取UCB类型Bots */
+export const DESCRIBE_BOT_UCB_RECORDS = 'waf2/DescribeBotUCBRecords'
+/** Bot_V2 获取UCB自定义策略 */
+export const DESCRIBE_BOT_UCB_FEATURE_RULE = 'waf2/DescribeBotUCBFeatureRule'
