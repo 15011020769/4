@@ -346,7 +346,7 @@ export default {
           ClusterName: this.clusterId,
         }
         let paramJob = {
-          Conditions: [JSON.stringify(["tke_cluster_instance_id","=",this.clusterId],["node_role","=","Node"])],
+          Conditions: [JSON.stringify(["tke_cluster_instance_id","=",this.clusterId]),JSON.stringify(["node_role","=","Node"])],
           EndTime: new Date().getTime(),
           Fields: ["avg(k8s_node_cpu_core_request_total)", "avg(k8s_node_memory_request_bytes_total)"],
           GroupBys: ["timestamp(60s)", "unInstanceId"],
@@ -383,7 +383,8 @@ export default {
               duration: 0
             });
           }
-          // let jobRes = await this.axios.post(JOB_ID, paramJob);
+          let jobRes = await this.axios.post(JOB_ID, paramJob);
+          debugger
           this.loadShow = true;
           let nodeRes = await this.axios.post(NODE_LIST, param);
           if(nodeRes.Response.Error === undefined) {
@@ -782,10 +783,10 @@ export default {
         ClusterName: 'cls-n1xokuh6'
       }
       this.axios.post(POINT_REQUEST, param).then(res => {
-        console.log(JSON.parse(res.Response.ResponseBody))
-        if (res.code === 0) {
-          this.loadShow = true
-        }
+        // console.log(JSON.parse(res.Response.ResponseBody))
+        // if (res.code === 0) {
+        //   this.loadShow = true
+        // }
       })
     }  
   },
