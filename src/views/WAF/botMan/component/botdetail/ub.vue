@@ -5,16 +5,30 @@
     </el-row>
     <el-card>
       <el-table>
-        <el-table-column prop="date" label="序号"></el-table-column>
-        <el-table-column prop="date" label="日期"></el-table-column>
+        <el-table-column prop="date" label="序号"  width="55"></el-table-column>
         <el-table-column prop="date" label="访问源IP"></el-table-column>
-        <el-table-column prop="date" label="预测标签"></el-table-column>
+        <el-table-column prop="date" label="预测策略">
+          <template slot="header" slot-scope="scope">
+            <el-dropdown trigger="click" @command="onChangeScene" size="small">
+              <span>
+                预测策略<i class="el-icon-arrow-down el-icon--right"></i>
+              </span>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item command="">全部</el-dropdown-item>
+                <el-dropdown-item v-for="item in scene_flag_list"
+                  :key="item.value" :command="item.label">
+                  {{item.label}}
+                </el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
+          </template>
+        </el-table-column>
         <el-table-column prop="date" label="异常特征"></el-table-column>
-        <el-table-column prop="date" label="动作"></el-table-column>
-        <el-table-column prop="date" label="BOT得分" sortable></el-table-column>
-        <el-table-column prop="date" label="会话总次数" sortable></el-table-column>
-        <el-table-column prop="date" label="会话持续时间" sortable></el-table-column>
-        <el-table-column prop="date" label="平均速率" sortable></el-table-column>
+        <el-table-column prop="date" label="动作" width="60"></el-table-column>
+        <el-table-column prop="date" label="BOT得分" width="100" sortable></el-table-column>
+        <el-table-column prop="date" label="会话总次数" width="110" sortable></el-table-column>
+        <el-table-column prop="date" label="会话持续时间" width="118" sortable></el-table-column>
+        <el-table-column prop="date" label="平均速率" sortable width="100"></el-table-column>
         <el-table-column prop="date" label="最新检测时间" sortable></el-table-column>
         <el-table-column prop="date" label="操作" ></el-table-column>
       </el-table>
@@ -32,8 +46,9 @@
 </template>
 
 <script>
-import { DESCRIBE_BOT_UB_RECORDS } from '@/constants'
 import moment from 'moment'
+import { DESCRIBE_BOT_UB_RECORDS } from '@/constants'
+import { scene_flag_list } from '../../../constants'
 export default {
   data () {
     return {
@@ -41,10 +56,12 @@ export default {
       currentPage: 1,//当前页
       pageSize: 10,//每页长度
       totalItems: 0,//总长度
+      sceneValue: "", // 预测标签匹配字段绑定值
+      scene_flag_list, // 预测标签匹配字段
     }
   },
   props: {
-    domin: {
+    domain: {
       type: String,
       default: "tfc.dhycloud.com"
     },
@@ -53,14 +70,27 @@ export default {
       defaule: () => []
     }
   },
+  watch: {
+    domain() {
+
+    }
+  },
   mounted() {
     this.getBotUbList()
+    console.log(scene_flag_list)
   },
   methods: {
+    onChangeScene(scene) {
+      // if (status === -1) {
+      //   this.Status = ''
+      // } else {
+      //   this.Status = status
+      // }
+    },
     getBotUbList() {
       const params = {
         Version: "2018-01-25",
-        Domain: this.domin,
+        Domain: this.domain,
         StartTs: moment(this.times[0]).utc().valueOf(),
         EndTs: moment(this.times[1]).utc().valueOf(),
         Skip: 0,
