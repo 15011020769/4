@@ -126,7 +126,7 @@
                   </template>
                 </el-table-column>
               </el-table>
-              <div class="Right-style pagstyle">
+              <div class="Right-style pagstyle" v-show="activeName == 'first'">
                 <span
                   style="font-size:12px;color:#888;margin-right:20px;"
                 >{{$t('CAM.userList.choose')}} {{selTotalNum}} {{$t('CAM.Role.item')}}</span>
@@ -184,18 +184,18 @@
                     </template>
                   </el-table-column>
                 </el-table>
-                <div class="Right-style pagstyle" v-show="activeName == 'first'">
-                  <span
-                    style="font-size:12px;color:#888;margin-right:20px;"
-                  >{{$t('CAM.userList.choose')}} {{selTotalNum}} {{$t('CAM.Role.item')}}，共 {{TotalNum}} {{$t('CAM.Role.item')}}</span>
-                  <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;{{$t("CAM.strip")}}</span>
+                <div class="Right-style pagstyle" v-show="activeName == 'second'" style="height:70px;display:flex;align-items:center;">
+                  <span class='pagtotal'>共&nbsp;{{TotalCounts}}&nbsp;{{$t("CAM.strip")}}</span>
                   <el-pagination
                     :page-size="pagesize"
                     :pager-count="7"
-                    layout="prev, pager, next"
+                    layout="prev, sizes, pager, next"
+                    :page-sizes="[10, 20, 30, 40, 50]"
                     @current-change="handleCurrentChange"
-                    :total="TotalCount"
-                  ></el-pagination>
+                    @size-change="handleSizeChange"
+                    :total="TotalCounts"
+                  >
+                  </el-pagination>
                 </div>
               </div>
             </div>
@@ -394,6 +394,7 @@ export default {
       pagePolicies: 1,
       rpPolicies: 20,
       roleCarrier: [],
+      TotalCounts: [],
       TotalNum: 0,
       selTotalNum: 0,
       roleServeCarrier: [],
