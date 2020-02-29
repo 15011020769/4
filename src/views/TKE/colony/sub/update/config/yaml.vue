@@ -16,8 +16,6 @@
     </div>
     <div class="colony-main">
       <div class="tke-card tke-formpanel-wrap mb60">
-       
-
         <!-- 底部 -->
         <div class="tke-formpanel-footer">
           <el-button size="small" type="primary">完成</el-button>

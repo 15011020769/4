@@ -120,8 +120,8 @@ export default {
         Version: '2018-01-25',
         ResInfo: [resInfo]
       }).then(resp => {
-        this.generalRespHandler(resp, ({ RealTotalCost }) => {
-          this.price = RealTotalCost
+        this.generalRespHandler(resp, ({ CostInfo }) => {
+          this.price = CostInfo[0].RealTotalCost // RealTotalCost
           this.loading = false
         })
       })

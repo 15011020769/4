@@ -166,7 +166,9 @@ export default {
       } else {
         this.$message({
           message: "请重新输入",
-          type: "error"
+          type: "error",
+          showClose: true,
+          duration: 0
         });
       }
     },
@@ -212,7 +214,7 @@ export default {
             message: ErrOr[k8sRes.Response.Error.Code],
             type: "error",
             showClose: true,
-            duration: 2000
+            duration: 0
           });
         }
         if (res.Response.Clusters.length > 0) {
@@ -266,7 +268,7 @@ export default {
           message: ErrOr[res.Response.Error.Code],
           type: "error",
           showClose: true,
-          duration: 2000
+          duration: 0
         });
       }
 

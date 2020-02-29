@@ -167,7 +167,7 @@ export default {
     topValue() {
       this.getBotDomainStat()
     },
-    xAxisBotIp(val){
+    xAxisBotIp(val){ // 域名存在时
       if(val.length) {
         this.getBotType()
         this.getBotAction()

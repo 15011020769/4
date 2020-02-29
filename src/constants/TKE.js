@@ -95,6 +95,9 @@ export const TKE_SSH = 'cvm2/DescribeKeyPairs'
 // 新建集群 创建集群
 export const TKE_CREATW_CLUSTERS = 'tke2/CreateCluster'
 
+// 新建集群 总费计算
+export const TKE_PRICE = 'cvm2/InquiryPriceRunInstances'
+
 // 获取告警设置列表信息
 export const TKE_WARNING_GETCOLONY = 'tke2/DescribeAlarmPolicies'
 

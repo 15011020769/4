@@ -1,41 +1,6 @@
-import { obj2Arr, addVal2Key, isValidIPAddressNew, isValidIPv6 } from '@/utils'
+import { obj2Arr, addVal2Key, isValidIPAddressNew, isValidIPv6, arr2Obj } from '@/utils'
 export const SAFE_OVERVIEW_SHOWMODULE_KEY = 'waf:safeOverView:showModules'
 /** 套餐包信息 */
-export const PACKAGE_CFG_TYPES = {
-  2: {
-      key: "wsm_package_premium",
-      goodstype: "wsm_waf",
-      name: "高級版", 
-      index: 2,
-      mainCount: 2,
-      subCount: 20,
-      busQps: 2500,
-      CCQps: 30000,
-      first_categoryid: 100215, categoryid: 100216, edit_categoryid: 100217
-  },
-  3: {
-      key: "wsm_package_enterprise",
-      goodstype: "wsm_waf",
-      name: "企業版",
-      index: 3,
-      mainCount: 3,
-      subCount: 30,
-      busQps: 5000,
-      CCQps: 150000,
-      first_categoryid: 100215, categoryid: 100216, edit_categoryid: 100217,
-  },
-  4: {
-      key: "wsm_package_ultimate",
-      goodstype: "wsm_waf",
-      name: "旗艦版",
-      index: 4,
-      mainCount: 4,
-      subCount: 40,
-      busQps: 10000,
-      CCQps: 500000,
-      first_categoryid: 100215, categoryid: 100216, edit_categoryid: 100217,
-  }
-}
 export const CLB_PACKAGE_CFG_TYPES = {
 
   2: {
@@ -354,6 +319,17 @@ const POLICY_RULE_ACTION_LOCAL = {
 }
 export const POLICY_RULE_ACTION = addVal2Key(POLICY_RULE_ACTION_LOCAL)
 export const POLICY_RULE_ACTION_ARR = obj2Arr(POLICY_RULE_ACTION_LOCAL)
+
+/** 自定义会话执行动作  */
+const CUSTOM_SESSION_ACTION_LOCAL = {
+  permit: '放行',
+  monitor: '监控',
+  redirect: '重定向',
+  captcha: '验证码',
+  intercept: '拦截',
+}
+export const CUSTOM_SESSION_ACTION = addVal2Key(CUSTOM_SESSION_ACTION_LOCAL)
+export const CUSTOM_SESSION_ACTION_ARR = obj2Arr(CUSTOM_SESSION_ACTION_LOCAL)
 
 /** 放行后继续执行的动作 */
 export const BY_PASS_ACTION = {
@@ -824,6 +800,19 @@ export const advanceRules = [
         placeholder: "请输入百分比，如50%",
         reg: /^(\d|[1-9]\d|100)%$/
     }];
+export const ALL_RULE_ARR = [
+  ...sessionRules,
+  ...ipRules,
+  ...reqRules,
+  ...advanceRules,
+  ...uaRules,
+  ...cookieRules,
+  ...referRules,
+  ...headerRules
+]
+
+export const ALL_RULE = arr2Obj(ALL_RULE_ARR, 'key')
+export const ALL_OPTION = arr2Obj([...ip_owner_list, ...ip_type_list, ...ua_type_list, ...scene_flag_list], 'value')
 
 export const ARGS_MAP = {
   "ARGS_GET": "GET参数值",

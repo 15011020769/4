@@ -12,7 +12,7 @@
               <p>
                 <span>套餐</span>
                 <span v-if="package.Level">
-                  {{PACKAGE_CFG_TYPES[package.Level].name}}
+                  {{CLB_PACKAGE_CFG_TYPES[package.Level].name}}
                   <a v-if="package.Level !== 0" href="#" class="blueHref" @click="packageUpgradeModel">{{t('升级', 'WAF.sj')}}</a>
                 </span>
               </p>
@@ -65,7 +65,7 @@
                   <a class="greenHref">{{package.MaxQPS}}</a> 
                   {{t('当前套餐QPS', 'WAF.dqqps')}} 
                   <a class="orangeHref">
-                    {{package.Level && PACKAGE_CFG_TYPES[package.Level].busQps + (package.QPS && package.QPS.Count || 0)}}
+                    {{package.Level && CLB_PACKAGE_CFG_TYPES[package.Level].busQps + (package.QPS && package.QPS.Count || 0)}}
                   </a>，
                   <a href="#" class="blueHref" @click="qpsBack">
                     <template v-if="package.QPS">{{t('立即升级', 'WAF.ljsj')}}</template>
@@ -97,7 +97,7 @@ import buyLogBackModel from './model/buyLogBackModel'
 import qpsBackModel from './model/qpsBackModel'
 import { DESCRIBE_USER_INFO, MODIFY_PACKAGE_RENEW } from '@/constants'
 import { ErrorTips } from "@/components/ErrorTips"
-import { PACKAGE_CFG_TYPES, COMMON_ERROR } from '../constants'
+import { CLB_PACKAGE_CFG_TYPES, COMMON_ERROR } from '../constants'
 
 export default {
   data(){
@@ -109,7 +109,7 @@ export default {
       buyLogBackModel:false,//安全日志服务包
       qpsBackModel:false,//qps扩展包
       package: {}, // 套餐信息
-      PACKAGE_CFG_TYPES,
+      CLB_PACKAGE_CFG_TYPES,
       AutoRenewBool: false,
     }
   },

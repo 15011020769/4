@@ -36,6 +36,8 @@ export const DESCRIBE_BOTTCB_RECORDS = 'waf2/DescribeBotTCBRule'
 export const MODIFY_BOTTCB_RULE = 'waf2/ModifyBotTCBRule'
 /** bot开关更新 */
 export const MODIFY_BOT_STATUS = 'waf2/ModifyBotStatus'
+/** bot TCB策略域名拷贝 */
+export const COPY_BOTTCB_RULE = 'waf2/CopyBotTCBRule'
 /** 攻击城市分布 */
 export const DESCRIBE_ATTACK_WORLD_MAP = 'waf2/DescribeAttackWorldMap'
 /** 查询访问类型占比 web攻击次数 */
@@ -120,7 +122,17 @@ export const DESCRIBE_ACCESS_DOWNLOAD_RECORDS = 'waf2/DescribeAccessDownloadReco
 export const CREATE_ACCESS_DOWNLOAD_RECORD = 'waf2/CreateAccessDownloadRecord'
 /** Bot_V2 Bot类别统计 */
 export const DESCRIBE_BOT_TYPE_STAT = 'waf2/DescribeBotTypeStat'
+/** Bot_V2 bot地理纬度统计 */
+export const DESCRIBE_BOT_REGIONS_STAT = 'waf2/DescribeBotRegionsStat'
 /** Bot_V2 获取bot动作统计 */
 export const DESCRIBE_BOT_ACTION_STAT = 'waf2/DescribeBotActionStat'
+/** Bot_V2 获取UB类型Bots */
+export const DESCRIBE_BOT_UB_RECORDS = 'waf2/DescribeBotUBRecords'
+/** Bot_V2 获取UCB类型Bots */
+export const DESCRIBE_BOT_UCB_RECORDS = 'waf2/DescribeBotUCBRecords'
 /** Bot_V2 获取UCB自定义策略 */
 export const DESCRIBE_BOT_UCB_FEATURE_RULE = 'waf2/DescribeBotUCBFeatureRule'
+/** Bot_V2 UCB策略更新/添加 */
+export const UPSERT_BOT_UCB_FEATURE_RULE = 'waf2/UpsertBotUCBFeatureRule'
+/** Bot_V2 获取UCB预设策略 */
+export const DESCRIBE_BOT_UCB_PREINSTALLRULE = 'waf2/DescribeBotUCBPreinstallRule'

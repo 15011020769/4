@@ -390,368 +390,334 @@
               </p>
             </div>
           </el-form-item>
-          <el-form-item label="Worker 节点" v-if="colonySecond.workerShow">
-            <div class="tke-second-radio-btn">
-              <el-radio-group v-model="colonySecond.worker">
-                <el-radio-button label="1">立即部署</el-radio-button>
-                <el-radio-button label="2">暂不部署</el-radio-button>
-              </el-radio-group>
-            </div>
-          </el-form-item>
-          <div
-            class="tke-second-tips"
-            style="border: 0px;margin:0px;"
-            v-if="colonySecond.sourceShow"
-          >
-            <p>计费模式<i class="el-icon-info"></i></p>
-            <div class="tke-second-radio-btn tke-second-icon-btn">
-              <el-radio-group
-                v-model="colonySecond.charging"
-                @change="SecondCharging"
-              >
-                <el-radio-button label="1">按量计费</el-radio-button>
-                <el-radio-button label="2">包年包月</el-radio-button>
-              </el-radio-group>
-              <a href="#">详细对比</a>
-            </div>
-          </div>
-          <el-form-item
-            label="购买时长"
-            v-if="colonySecond.chargingShow"
-            class="tke-second-radio-time"
-          >
-            <div class="tke-second-radio-btn">
-              <el-radio-group v-model="colonySecond.buyTime">
-                <el-radio-button label="1">1个月</el-radio-button>
-                <el-radio-button label="2">2个月</el-radio-button>
-                <el-radio-button label="3">3个月</el-radio-button>
-                <el-radio-button label="4">6个月</el-radio-button>
-                <el-radio-button label="5">1年</el-radio-button>
-                <el-radio-button label="6">2年</el-radio-button>
-                <el-radio-button label="7">3年</el-radio-button>
-              </el-radio-group>
-            </div>
-          </el-form-item>
-          <el-form-item label="自动续费" v-if="colonySecond.chargingShow">
-            <div class="tke-second-checkbox">
-              <el-checkbox v-model="colonySecond.renew"
-                >账户余额足够时，设备到期后按月自动续费</el-checkbox
-              >
-            </div>
-          </el-form-item>
-          <div
-            class="tke-second-worker"
-            v-if="colonySecond.workerShow === true && colonySecond.source == 1"
-          >
-            <p class="tke-second-worker-l">Master&Etcd 配置</p>
-            <div class="tke-second-worker-r">
-              <div class="tke-second-worker-array">
-                <p>
-                  <span>编辑</span>
-                  <span>删除</span>
-                </p>
-                <ol>
-                  <li>
-                    <span>可用区</span>
-                    <span>台北一区</span>
-                  </li>
-                  <li>
-                    <span>节点网络</span>
-                    <span>10.19.2.0</span>
-                  </li>
-                  <li>
-                    <span>配置</span>
-                    <span>S3.LARGE8(标准型S3,4核8GB)</span>
-                  </li>
-                  <li>
-                    <span>系统盘</span>
-                    <span>SSD云硬盘 50GB</span>
-                  </li>
-                  <li>
-                    <span>数据盘</span>
-                    <span>暂不购买</span>
-                  </li>
-                  <li>
-                    <span>公网带宽</span>
-                    <span>按带宽计费 1Mbps</span>
-                  </li>
-                  <li>
-                    <span>数量</span>
-                    <span>1 台</span>
-                  </li>
-                </ol>
+          <div v-if="colonySecond.boxShow">
+            <el-form-item label="Worker 节点" v-if="colonySecond.workerShow">
+              <div class="tke-second-radio-btn">
+                <el-radio-group v-model="colonySecond.worker">
+                  <el-radio-button label="1">立即部署</el-radio-button>
+                  <el-radio-button label="2">暂不部署</el-radio-button>
+                </el-radio-group>
               </div>
-              <ul>
-                <li>
-                  <p>可用区<i class="el-icon-info"></i></p>
-                  <div>
-                    <el-radio-group v-model="colonySecond.usableArea">
-                      <el-radio-button label="1">台北一区</el-radio-button>
-                    </el-radio-group>
-                  </div>
-                </li>
-                <li>
-                  <p>节点网络<i class="el-icon-info"></i></p>
-                  <div class="tke-second-worker-select">
-                    <el-select
-                      v-model="colony.networkValue"
-                      placeholder="请选择"
-                      disabled
-                    >
-                      <el-option
-                        v-for="item in colony.networkOptions"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value"
-                      >
-                      </el-option>
-                    </el-select>
-                    <el-select
-                      v-model="colonySecond.workerNodeNetworkVal"
-                      placeholder="请选择"
-                      @change="NodeSelect"
-                    >
-                      <el-option
-                        v-for="item in colonySecond.workerNodeNetOpt"
-                        :key="item.SubnetId"
-                        :label="item.SubnetName"
-                        :value="item.SubnetId"
-                      >
-                      </el-option>
-                    </el-select>
-                    <span
-                      >共{{ colonySecond.nodeTotalNum }}个子网IP，剩{{
-                        colonySecond.nodeSurplusNum
-                      }}个可用</span
-                    >
-                    <p>CIDR:{{ colony.CidrBlock }}</p>
-                    <p>
-                      如现有的网络不合适，您可以去控制台<a href="#"
-                        >新建私有网络</a
-                      >或<a href="#">新建子网</a>
+            </el-form-item>
+            <div
+              class="tke-second-tips"
+              style="border: 0px;margin:0px;"
+              v-if="colonySecond.sourceShow"
+            >
+              <p>计费模式<i class="el-icon-info"></i></p>
+              <div class="tke-second-radio-btn tke-second-icon-btn">
+                <el-radio-group
+                  v-model="colonySecond.charging"
+                  @change="SecondCharging"
+                >
+                  <el-radio-button label="1">按量计费</el-radio-button>
+                  <el-radio-button label="2">包年包月</el-radio-button>
+                </el-radio-group>
+                <a href="#">详细对比</a>
+              </div>
+            </div>
+            <el-form-item
+              label="购买时长"
+              v-if="colonySecond.chargingShow"
+              class="tke-second-radio-time"
+            >
+              <div class="tke-second-radio-btn">
+                <el-radio-group v-model="colonySecond.buyTime">
+                  <el-radio-button label="1">1个月</el-radio-button>
+                  <el-radio-button label="2">2个月</el-radio-button>
+                  <el-radio-button label="3">3个月</el-radio-button>
+                  <el-radio-button label="4">6个月</el-radio-button>
+                  <el-radio-button label="5">1年</el-radio-button>
+                  <el-radio-button label="6">2年</el-radio-button>
+                  <el-radio-button label="7">3年</el-radio-button>
+                </el-radio-group>
+              </div>
+            </el-form-item>
+            <el-form-item label="自动续费" v-if="colonySecond.chargingShow">
+              <div class="tke-second-checkbox">
+                <el-checkbox v-model="colonySecond.renew"
+                  >账户余额足够时，设备到期后按月自动续费</el-checkbox
+                >
+              </div>
+            </el-form-item>
+            <div
+              class="tke-second-worker"
+              v-if="
+                colonySecond.workerShow === true && colonySecond.source == 1
+              "
+            >
+              <p class="tke-second-worker-l">Master&Etcd 配置</p>
+              <div class="tke-second-worker-r">
+                <div
+                  v-for="(item, index) in colonySecond.masterOneList"
+                  :key="index"
+                >
+                  <div class="tke-second-worker-array" v-if="item.showText">
+                    <p v-if="colonySecond.masterOneList.length > 1">
+                      <span @click="EditWorker(index, 2)">编辑</span>
+                      <span @click="DeleteWorker(index, 2)">删除</span>
                     </p>
+                    <ol>
+                      <li>
+                        <span>可用区</span>
+                        <span>台北一区</span>
+                      </li>
+                      <li>
+                        <span>节点网络</span>
+                        <span>{{ item.workerNodeNetworkValue }}</span>
+                      </li>
+                      <li>
+                        <span>配置</span>
+                        <span
+                          >{{ item.modelName }}({{ item.modelType }},{{
+                            item.modelHe
+                          }}核{{ item.modelGB }}GB)</span
+                        >
+                      </li>
+                      <li>
+                        <span>系统盘</span>
+                        <span
+                          >{{ item.systemDiskValue }}
+                          {{ item.systemDiskNumber }}GB</span
+                        >
+                      </li>
+                      <li>
+                        <span>数据盘</span>
+                        <span>{{ item.dataDiskValue }}</span>
+                      </li>
+                      <li>
+                        <span>公网带宽</span>
+                        <span
+                          >{{ item.broadbandValue }}
+                          {{ item.broadbandNumber }}Mbps</span
+                        >
+                      </li>
+                      <li>
+                        <span>数量</span>
+                        <span>{{ item.dataNum }} 台</span>
+                      </li>
+                    </ol>
                   </div>
-                </li>
-                <li>
-                  <p>机型</p>
-                  <p class="tke-second-worker-text">
-                    S3.SMALL1(标准型S3,1核1GB)
-                    <i
-                      class="el-icon-edit"
-                      @click="colonySecond.modelShow = true"
-                    ></i>
-                  </p>
-                  <div
-                    class="tke-second-worker-model-box"
-                    v-if="colonySecond.modelShow"
-                  >
-                    <div class="tke-second-worker-model">
-                      <p>
-                        <span>选择机型</span
-                        ><i
-                          class="el-icon-close"
-                          @click="colonySecond.modelShow = false"
+                  <ul v-if="item.showEdit">
+                    <li>
+                      <p>可用区<i class="el-icon-info"></i></p>
+                      <div>
+                        <el-radio-group v-model="colonySecond.usableArea">
+                          <el-radio-button label="1">台北一区</el-radio-button>
+                        </el-radio-group>
+                      </div>
+                    </li>
+                    <li>
+                      <p>节点网络<i class="el-icon-info"></i></p>
+                      <div class="tke-second-worker-select">
+                        <el-select
+                          v-model="colony.networkValue"
+                          placeholder="请选择"
+                          disabled
+                        >
+                          <el-option
+                            v-for="item in colony.networkOptions"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value"
+                          >
+                          </el-option>
+                        </el-select>
+                        <el-select
+                          v-model="item.workerNodeNetworkVal"
+                          placeholder="请选择"
+                          @change="NodeSelect"
+                        >
+                          <el-option
+                            v-for="item in colonySecond.workerNodeNetOpt"
+                            :key="item.SubnetId"
+                            :label="item.SubnetName"
+                            :value="item.SubnetId"
+                          >
+                          </el-option>
+                        </el-select>
+                        <span
+                          >共{{ item.nodeTotalNum }}个子网IP，剩{{
+                            item.nodeSurplusNum
+                          }}个可用</span
+                        >
+                        <p>CIDR:{{ colony.CidrBlock }}</p>
+                        <p>
+                          如现有的网络不合适，您可以去控制台<a href="#"
+                            >新建私有网络</a
+                          >或<a href="#">新建子网</a>
+                        </p>
+                      </div>
+                    </li>
+                    <li>
+                      <p>机型</p>
+                      <p class="tke-second-worker-text">
+                        {{ item.modelName }}({{ item.modelType }},{{
+                          item.modelHe
+                        }}核{{ item.modelGB }}GB)
+                        <i
+                          class="el-icon-edit"
+                          @click="item.modelShow = true"
                         ></i>
                       </p>
-                      <div class="model-bg">
-                        <div>
-                          <el-select
-                            v-model="colonySecond.AllCPUVal"
-                            placeholder="请选择"
-                          >
-                            <el-option
-                              v-for="item in colonySecond.AllCPU"
-                              :key="item.value"
-                              :label="item.label"
-                              :value="item.value"
-                            >
-                            </el-option>
-                          </el-select>
-                          <el-select
-                            v-model="colonySecond.AllRAMVal"
-                            placeholder="请选择"
-                          >
-                            <el-option
-                              v-for="item in colonySecond.AllRAM"
-                              :key="item.value"
-                              :label="item.label"
-                              :value="item.value"
-                            >
-                            </el-option>
-                          </el-select>
-                        </div>
-                        <div style="margin-top:16px;">
-                          <el-radio-group v-model="colonySecond.caseRace">
-                            <el-radio-button label="1"
-                              >全部实例族</el-radio-button
-                            >
-                            <el-radio-button label="2">标准型</el-radio-button>
-                            <el-radio-button label="3">内存型</el-radio-button>
-                            <el-radio-button label="4">计算型</el-radio-button>
-                          </el-radio-group>
-                        </div>
-                        <div style="margin-top:16px;">
-                          <el-radio-group v-model="colonySecond.caseType">
-                            <el-radio-button label="1"
-                              >全部实例类型</el-radio-button
-                            >
-                            <el-radio-button label="2"
-                              >标准型S3</el-radio-button
-                            >
-                            <el-radio-button label="3"
-                              >计算型C3</el-radio-button
-                            >
-                            <el-radio-button label="4"
-                              >内存型M3</el-radio-button
-                            >
-                          </el-radio-group>
-                        </div>
-                        <div style="margin-top:16px;">
-                          <el-table
-                            ref="singleTable"
-                            :data="colonySecond.tableList"
-                            highlight-current-row
-                            @current-change="handleCurrentChange"
-                            style="width: 100%"
-                            height="500px"
-                          >
-                            <el-table-column width="50">
-                              <template slot-scope="scope">
-                                <el-radio v-model="radio1" :label="scope.row">
-                                  <i></i>
-                                </el-radio>
-                              </template>
-                            </el-table-column>
-                            <el-table-column label="机型">
-                              <template slot-scope="scope">
-                                {{ ModelTypeName(scope.row.TypeName) }}
-                              </template>
-                            </el-table-column>
-                            <el-table-column label="规则">
-                              <template slot-scope="scope">
-                                {{ scope.row.InstanceType }}
-                              </template>
-                            </el-table-column>
-                            <el-table-column label="CPU">
-                              <template slot-scope="scope">
-                                {{ scope.row.Cpu }}核
-                              </template>
-                            </el-table-column>
-                            <el-table-column label="内存">
-                              <template slot-scope="scope">
-                                {{ scope.row.Memory }}GB
-                              </template>
-                            </el-table-column>
-                            <el-table-column label="配置费用">
-                              <template slot-scope="scope">
-                                <span class="text-orange"
-                                  >￥{{ scope.row.Price.UnitPrice }}</span
-                                >元/小时起
-                              </template>
-                            </el-table-column>
-                          </el-table>
-                        </div>
-                      </div>
-                      <div class="model-btn">
-                        <el-button class="determine">确定</el-button>
-                        <el-button
-                          class="cancel"
-                          @click="colonySecond.modelShow = false"
-                          >取消</el-button
-                        >
-                      </div>
-                    </div>
-                  </div>
-                </li>
-                <li>
-                  <p>系统盘</p>
-                  <div class="tke-second-worker-text">
-                    <span
-                      >{{ colonySecond.systemDiskValue }}
-                      {{ colonySecond.systemDiskNumber }}GB</span
-                    >
-                    <div class="tke-second-worker-icon-pen">
-                      <el-popover
-                        placement="bottom"
-                        width="450"
-                        trigger="click"
-                        v-model="colonySecond.systemDiskShow"
+                      <div
+                        class="tke-second-worker-model-box"
+                        v-if="item.modelShow"
                       >
-                        <i class="el-icon-edit" slot="reference"></i>
-                        <div class="tke-second-worker-popover-disk">
-                          <div>
-                            <el-select
-                              v-model="colonySecond.systemDiskVal"
-                              placeholder="请选择"
-                            >
-                              <el-option
-                                v-for="item in colonySecond.systemDiskOptions"
-                                :key="item.value"
-                                :label="item.label"
-                                :value="item.value"
+                        <div class="tke-second-worker-model">
+                          <p>
+                            <span>选择机型</span
+                            ><i
+                              class="el-icon-close"
+                              @click="item.modelShow = false"
+                            ></i>
+                          </p>
+                          <div class="model-bg">
+                            <div>
+                              <el-select
+                                v-model="colonySecond.AllCPUVal"
+                                placeholder="请选择"
                               >
-                              </el-option>
-                            </el-select>
-                            <el-input-number
-                              v-model="colonySecond.systemDiskNum"
-                              :min="50"
-                              :max="500"
-                            ></el-input-number>
-                            <span>GB</span>
-                            <p>范围：50~500，步长：1</p>
-                            <div class="btn">
-                              <el-button @click="SystemDiskSure"
-                                >确定</el-button
+                                <el-option
+                                  v-for="item in colonySecond.AllCPU"
+                                  :key="item.value"
+                                  :label="item.label"
+                                  :value="item.value"
+                                >
+                                </el-option>
+                              </el-select>
+                              <el-select
+                                v-model="colonySecond.AllRAMVal"
+                                placeholder="请选择"
                               >
-                              <el-button
-                                @click="colonySecond.systemDiskShow = false"
-                                >取消</el-button
+                                <el-option
+                                  v-for="item in colonySecond.AllRAM"
+                                  :key="item.value"
+                                  :label="item.label"
+                                  :value="item.value"
+                                >
+                                </el-option>
+                              </el-select>
+                            </div>
+                            <div style="margin-top:16px;">
+                              <el-radio-group v-model="colonySecond.caseRace">
+                                <el-radio-button label="1"
+                                  >全部实例族</el-radio-button
+                                >
+                                <el-radio-button label="2"
+                                  >标准型</el-radio-button
+                                >
+                                <el-radio-button label="3"
+                                  >内存型</el-radio-button
+                                >
+                                <el-radio-button label="4"
+                                  >计算型</el-radio-button
+                                >
+                              </el-radio-group>
+                            </div>
+                            <div style="margin-top:16px;">
+                              <el-radio-group v-model="colonySecond.caseType">
+                                <el-radio-button label="1"
+                                  >全部实例类型</el-radio-button
+                                >
+                                <el-radio-button label="2"
+                                  >标准型S3</el-radio-button
+                                >
+                                <el-radio-button label="3"
+                                  >计算型C3</el-radio-button
+                                >
+                                <el-radio-button label="4"
+                                  >内存型M3</el-radio-button
+                                >
+                              </el-radio-group>
+                            </div>
+                            <div style="margin-top:16px;">
+                              <el-table
+                                ref="masterSingleTable"
+                                :data="colonySecond.masterTableList"
+                                highlight-current-row
+                                @current-change="handleCurrentChange"
+                                style="width: 100%"
+                                height="500px"
                               >
+                                <el-table-column width="50">
+                                  <template slot-scope="scope">
+                                    <el-radio
+                                      v-model="item.radio1"
+                                      :label="scope.$index"
+                                    >
+                                      <i></i>
+                                    </el-radio>
+                                  </template>
+                                </el-table-column>
+                                <el-table-column label="机型">
+                                  <template slot-scope="scope">
+                                    {{ ModelTypeName(scope.row.TypeName) }}
+                                  </template>
+                                </el-table-column>
+                                <el-table-column label="规则">
+                                  <template slot-scope="scope">
+                                    {{ scope.row.InstanceType }}
+                                  </template>
+                                </el-table-column>
+                                <el-table-column label="CPU">
+                                  <template slot-scope="scope">
+                                    {{ scope.row.Cpu }}核
+                                  </template>
+                                </el-table-column>
+                                <el-table-column label="内存">
+                                  <template slot-scope="scope">
+                                    {{ scope.row.Memory }}GB
+                                  </template>
+                                </el-table-column>
+                                <el-table-column label="配置费用">
+                                  <template slot-scope="scope">
+                                    <span class="text-orange"
+                                      >￥{{ scope.row.Price.UnitPrice }}</span
+                                    >元/小时起
+                                  </template>
+                                </el-table-column>
+                              </el-table>
                             </div>
                           </div>
-                        </div>
-                      </el-popover>
-                    </div>
-                  </div>
-                </li>
-                <li>
-                  <p>数据盘</p>
-                  <div class="tke-second-worker-text">
-                    <span>{{ colonySecond.dataDiskValue }}</span>
-                    <div class="tke-second-worker-icon-pen">
-                      <el-popover
-                        placement="bottom"
-                        :width="colonySecond.buyDataWidth"
-                        trigger="click"
-                        v-model="colonySecond.dataDiskShow"
-                      >
-                        <i class="el-icon-edit" slot="reference"></i>
-                        <div
-                          class="tke-second-worker-popover-disk tke-second-box"
-                        >
-                          <div
-                            class="tke-second-checkbox"
-                            style="padding-left:20px;"
-                          >
-                            <el-checkbox
-                              v-model="colonySecond.buyDataDisk"
-                              @change="BuyDataDisk"
-                              >购买数据盘</el-checkbox
+                          <div class="model-btn">
+                            <el-button
+                              class="determine"
+                              @click="ModelSure(index, 2)"
+                              >确定</el-button
+                            >
+                            <el-button
+                              class="cancel"
+                              @click="item.modelShow = false"
+                              >取消</el-button
                             >
                           </div>
-                          <div
-                            class="tke-second-worker-popover-data-bg"
-                            v-if="colonySecond.buyDataDisk"
+                        </div>
+                      </div>
+                    </li>
+                    <li>
+                      <p>系统盘</p>
+                      <div class="tke-second-worker-text">
+                        <span
+                          >{{ item.systemDiskValue }}
+                          {{ item.systemDiskNumber }}GB</span
+                        >
+                        <div class="tke-second-worker-icon-pen">
+                          <el-popover
+                            placement="bottom"
+                            width="450"
+                            trigger="click"
+                            v-model="item.systemDiskShow"
                           >
-                            <div>
-                              <p>云盘设置</p>
+                            <i class="el-icon-edit" slot="reference"></i>
+                            <div class="tke-second-worker-popover-disk">
                               <div>
                                 <el-select
-                                  v-model="colonySecond.dataDiskVal"
+                                  v-model="item.systemDiskVal"
                                   placeholder="请选择"
                                 >
                                   <el-option
-                                    v-for="item in colonySecond.dataDiskOptions"
+                                    v-for="item in colonySecond.systemDiskOptions"
                                     :key="item.value"
                                     :label="item.label"
                                     :value="item.value"
@@ -759,835 +725,986 @@
                                   </el-option>
                                 </el-select>
                                 <el-input-number
-                                  v-model="colonySecond.dataDiskNum"
-                                  :min="10"
-                                  :max="16000"
+                                  v-model="colonySecond.systemDiskNum"
+                                  :min="50"
+                                  :max="500"
                                 ></el-input-number>
                                 <span>GB</span>
-                                <el-checkbox
-                                  v-model="colonySecond.formatMount"
-                                  class="format-and-mount"
-                                  >格式化并挂载</el-checkbox
-                                >
-                                <p>范围：10~16000，步长：10</p>
+                                <p>范围：50~500，步长：1</p>
+                                <div class="btn">
+                                  <el-button @click="SystemDiskSure(index, 2)"
+                                    >确定</el-button
+                                  >
+                                  <el-button
+                                    @click="item.systemDiskShow = false"
+                                    >取消</el-button
+                                  >
+                                </div>
                               </div>
-                              <p
-                                style="margin-top:16px;"
-                                v-if="colonySecond.formatMount"
-                              >
-                                格式化设置
-                              </p>
+                            </div>
+                          </el-popover>
+                        </div>
+                      </div>
+                    </li>
+                    <li>
+                      <p>数据盘</p>
+                      <div class="tke-second-worker-text">
+                        <span>{{ item.dataDiskValue }}</span>
+                        <div class="tke-second-worker-icon-pen">
+                          <el-popover
+                            placement="bottom"
+                            :width="colonySecond.buyDataWidth"
+                            trigger="click"
+                            v-model="item.dataDiskShow"
+                          >
+                            <i class="el-icon-edit" slot="reference"></i>
+                            <div
+                              class="tke-second-worker-popover-disk tke-second-box"
+                            >
                               <div
-                                style="margin-top:16px;"
-                                v-if="colonySecond.formatMount"
+                                class="tke-second-checkbox"
+                                style="padding-left:20px;"
                               >
+                                <el-checkbox
+                                  v-model="item.buyDataDisk"
+                                  @change="BuyDataDisk"
+                                  >购买数据盘</el-checkbox
+                                >
+                              </div>
+                              <div v-if="item.buyDataDisk">
+                                <div
+                                  class="tke-second-worker-popover-data-bg"
+                                  v-for="(x, i) in colonySecond.buyDataDiskArr"
+                                  :key="i"
+                                >
+                                  <div>
+                                    <div class="box">
+                                      <p>云盘设置</p>
+                                      <div>
+                                        <el-select
+                                          v-model="x.dataDiskVal"
+                                          placeholder="请选择"
+                                        >
+                                          <el-option
+                                            v-for="item in colonySecond.dataDiskOptions"
+                                            :key="item.value"
+                                            :label="item.label"
+                                            :value="item.value"
+                                          >
+                                          </el-option>
+                                        </el-select>
+                                        <el-input-number
+                                          v-model="x.dataDiskNum"
+                                          :min="10"
+                                          :max="16000"
+                                          :step="10"
+                                        ></el-input-number>
+                                        <span>GB</span>
+                                        <el-checkbox
+                                          v-model="x.formatMount"
+                                          class="format-and-mount"
+                                          >格式化并挂载</el-checkbox
+                                        >
+                                        <p>范围：10~16000，步长：10</p>
+                                      </div>
+                                      <p
+                                        style="margin-top:16px;"
+                                        v-if="x.formatMount"
+                                      >
+                                        格式化设置
+                                      </p>
+                                      <div
+                                        style="margin-top:16px;"
+                                        v-if="x.formatMount"
+                                      >
+                                        <el-select
+                                          v-model="x.latticeSetVal"
+                                          placeholder="请选择"
+                                        >
+                                          <el-option
+                                            v-for="x in colonySecond.latticeSetOpt"
+                                            :key="x.value"
+                                            :label="x.label"
+                                            :value="x.value"
+                                          >
+                                          </el-option>
+                                        </el-select>
+                                        <el-input
+                                          v-model="x.setValue"
+                                        ></el-input>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <i
+                                    class="el-icon-error ml5"
+                                    style="margin-top:10px;"
+                                    @click="deleteDataDisk(i)"
+                                  ></i>
+                                </div>
+                              </div>
+                              <div
+                                class="add-data-disk"
+                                v-if="
+                                  item.buyDataDisk &&
+                                    colonySecond.buyDataDiskArr.length != 0
+                                "
+                                @click="AddDataDisk()"
+                              >
+                                添加数据盘
+                              </div>
+                              <div class="btn">
+                                <el-button @click="DataDiskSure(index, 2)"
+                                  >确定</el-button
+                                >
+                                <el-button @click="item.dataDiskShow = false"
+                                  >取消</el-button
+                                >
+                              </div>
+                            </div>
+                          </el-popover>
+                        </div>
+                      </div>
+                    </li>
+                    <li>
+                      <p>公网带宽</p>
+                      <div class="tke-second-worker-text">
+                        <span
+                          >{{ item.broadbandValue }}
+                          {{ item.broadbandNumber }}Mbps</span
+                        >
+                        <div class="tke-second-worker-icon-pen">
+                          <el-popover
+                            placement="bottom"
+                            width="450"
+                            trigger="click"
+                            v-model="item.broadbandShow"
+                          >
+                            <i class="el-icon-edit" slot="reference"></i>
+                            <div class="tke-second-worker-popover-disk">
+                              <div>
                                 <el-select
-                                  v-model="colonySecond.dataDiskVal"
+                                  v-model="item.broadbandVal"
                                   placeholder="请选择"
                                 >
                                   <el-option
-                                    v-for="item in colonySecond.dataDiskOptions"
+                                    v-for="item in colonySecond.broadbandOptions"
                                     :key="item.value"
                                     :label="item.label"
                                     :value="item.value"
                                   >
                                   </el-option>
                                 </el-select>
-                                <el-input v-model="value"></el-input>
+                                <el-input-number
+                                  v-model="colonySecond.broadbandNum"
+                                  :min="0"
+                                  :max="100"
+                                ></el-input-number>
+                                <span>Mbps</span>
+                                <p>带宽上限：0~100</p>
+                                <div
+                                  class="tke-second-worker-popover-data-bg distribution"
+                                >
+                                  <el-checkbox
+                                    v-model="colonySecond.pubBroadbandShow"
+                                    class="format-and-mount"
+                                    >分配免费公网IP，<a href="#"
+                                      >查看详情</a
+                                    ></el-checkbox
+                                  >
+                                </div>
+                                <div class="btn">
+                                  <el-button @click="BroadbandSure(index, 2)"
+                                    >确定</el-button
+                                  >
+                                  <el-button @click="item.broadbandShow = false"
+                                    >取消</el-button
+                                  >
+                                </div>
                               </div>
                             </div>
-                          </div>
-                          <div
-                            class="add-data-disk"
-                            v-if="colonySecond.buyDataDisk"
+                          </el-popover>
+                        </div>
+                      </div>
+                    </li>
+                    <li>
+                      <p>数据</p>
+                      <div class="tke-second-worker-data">
+                        <el-input-number
+                          v-model="item.dataNum"
+                          :min="1"
+                          :max="1"
+                        ></el-input-number>
+                        <p v-if="!colonySecond.chargingShow">
+                          CVM配额:您当前云服务器个数配额为0/0，您最多可购买0台，
+                          您可以通过<a href="#">提交工单</a>申请提升配额。
+                        </p>
+                        <p v-if="colonySecond.chargingShow">
+                          CVM配额:当前账号最大可购买100台
+                        </p>
+                        <el-row>
+                          <el-button
+                            class="worker-determine-btn"
+                            @click="WorkerSure(index, 2)"
+                            >确定</el-button
                           >
-                            添加数据盘
+                          <el-button class="worker-cancel-btn-dis"
+                            >取消</el-button
+                          >
+                          <el-button
+                            class="worker-cancel-btn"
+                            style="display:none;"
+                            >取消</el-button
+                          >
+                        </el-row>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+                <div class="tke-second-worker-add-models">
+                  <el-button @click="MasterAddModel">添加机型</el-button>
+                </div>
+              </div>
+            </div>
+            <div
+              class="tke-second-worker"
+              v-if="colonySecond.source == 2 && colonySecond.master == 2"
+            >
+              <p class="tke-second-worker-l">Master&Etcd 配置</p>
+              <div class="tke-second-worker-r">
+                <div class="bg">
+                  <div class="flex">
+                    <div class="left-box">
+                      <div class="search">
+                        <el-input
+                          placeholder="请输入节点名称或完整ID"
+                          v-model="searchInputMaster"
+                          class="input-with-select"
+                        >
+                          <el-select
+                            v-model="selectListMaster"
+                            slot="prepend"
+                            placeholder="请选择"
+                          >
+                            <el-option label="完整ID" value="1"></el-option>
+                            <el-option label="节点名称" value="2"></el-option>
+                          </el-select>
+                          <el-button
+                            slot="append"
+                            icon="el-icon-search"
+                            @click="ExistingNodes"
+                          ></el-button>
+                        </el-input>
+                      </div>
+                      <div class="right-table">
+                        <el-table
+                          ref="multipleTableMaster"
+                          :data="leftList"
+                          tooltip-effect="dark"
+                          style="width: 430px"
+                          height="250"
+                          @selection-change="handleSelectionChangeMaster"
+                        >
+                          <el-table-column
+                            align="center"
+                            type="selection"
+                            :selectable="selectInitMaster"
+                            width="55"
+                            :key="Math.random()"
+                          >
+                          </el-table-column>
+                          <el-table-column
+                            :label="leftListMasterVal"
+                            :key="Math.random()"
+                          >
+                            <template slot-scope="scope">
+                              <p>
+                                {{ scope.row.InstanceId }}
+                              </p>
+
+                              <p>{{ scope.row.InstanceName }}</p>
+                            </template>
+                          </el-table-column>
+                        </el-table>
+                      </div>
+                    </div>
+                    <div class="center-box">
+                      <i class="el-icon-arrow-left"></i>
+                      <i class="el-icon-arrow-right"></i>
+                    </div>
+                    <div class="right-box">
+                      <el-table
+                        :data="rightListMaster"
+                        tooltip-effect="dark"
+                        style="width: 430px;"
+                        height="290"
+                      >
+                        <el-table-column :label="rightListMasterVal">
+                          <template slot-scope="scope">
+                            <p>
+                              {{ scope.row.InstanceId }}
+                            </p>
+
+                            <p>{{ scope.row.InstanceName }}</p>
+                          </template>
+                        </el-table-column>
+                        <el-table-column width="55">
+                          <template slot-scope="scope">
+                            <span
+                              class="el-delete"
+                              @click="DeleteListMaster(scope.row)"
+                              >删除</span
+                            >
+                          </template>
+                        </el-table-column>
+                      </el-table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              class="tke-second-worker"
+              v-if="colonySecond.sourceShow && colonySecond.worker != 2"
+            >
+              <p class="tke-second-worker-l">Worker 配置</p>
+              <div class="tke-second-worker-r">
+                <div
+                  v-for="(item, index) in colonySecond.workerOneList"
+                  :key="index"
+                >
+                  <div class="tke-second-worker-array" v-if="item.showText">
+                    <p v-if="colonySecond.workerOneList.length > 1">
+                      <span @click="EditWorker(index, 1)">编辑</span>
+                      <span @click="DeleteWorker(index, i)">删除</span>
+                    </p>
+                    <ol>
+                      <li>
+                        <span>可用区</span>
+                        <span>台北一区</span>
+                      </li>
+                      <li>
+                        <span>节点网络</span>
+                        <span>{{ item.workerNodeNetworkValue }}</span>
+                      </li>
+                      <li>
+                        <span>配置</span>
+                        <span
+                          >{{ item.modelName }}({{ item.modelType }},{{
+                            item.modelHe
+                          }}核{{ item.modelGB }}GB)</span
+                        >
+                      </li>
+                      <li>
+                        <span>系统盘</span>
+                        <span
+                          >{{ item.systemDiskValue }}
+                          {{ item.systemDiskNumber }}GB</span
+                        >
+                      </li>
+                      <li>
+                        <span>数据盘</span>
+                        <span>{{ item.dataDiskValue }}</span>
+                      </li>
+                      <li>
+                        <span>公网带宽</span>
+                        <span
+                          >{{ item.broadbandValue }}
+                          {{ item.broadbandNumber }}Mbps</span
+                        >
+                      </li>
+                      <li>
+                        <span>数量</span>
+                        <span>{{ item.dataNum }} 台</span>
+                      </li>
+                    </ol>
+                  </div>
+                  <ul v-if="item.showEdit">
+                    <li>
+                      <p>可用区<i class="el-icon-info"></i></p>
+                      <div>
+                        <el-radio-group v-model="colonySecond.usableArea">
+                          <el-radio-button label="1">台北一区</el-radio-button>
+                        </el-radio-group>
+                      </div>
+                    </li>
+                    <li>
+                      <p>节点网络<i class="el-icon-info"></i></p>
+                      <div class="tke-second-worker-select">
+                        <el-select
+                          v-model="colony.networkValue"
+                          placeholder="请选择"
+                          disabled
+                        >
+                          <el-option
+                            v-for="item in colony.networkOptions"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value"
+                          >
+                          </el-option>
+                        </el-select>
+                        <el-select
+                          v-model="item.workerNodeNetworkVal"
+                          placeholder="请选择"
+                          @change="NodeSelect"
+                        >
+                          <el-option
+                            v-for="item in colonySecond.workerNodeNetOpt"
+                            :key="item.SubnetId"
+                            :label="item.SubnetName"
+                            :value="item.SubnetId"
+                          >
+                          </el-option>
+                        </el-select>
+                        <span
+                          >共{{ item.nodeTotalNum }}个子网IP，剩{{
+                            item.nodeSurplusNum
+                          }}个可用</span
+                        >
+                        <p>CIDR:{{ colony.CidrBlock }}</p>
+                        <p>
+                          如现有的网络不合适，您可以去控制台<a href="#"
+                            >新建私有网络</a
+                          >或<a href="#">新建子网</a>
+                        </p>
+                      </div>
+                    </li>
+                    <li>
+                      <p>机型</p>
+                      <p class="tke-second-worker-text">
+                        {{ item.modelName }}({{ item.modelType }},{{
+                          item.modelHe
+                        }}核{{ item.modelGB }}GB)
+                        <i
+                          class="el-icon-edit"
+                          @click="item.modelShow = true"
+                        ></i>
+                      </p>
+                      <div
+                        class="tke-second-worker-model-box"
+                        v-if="item.modelShow"
+                      >
+                        <div class="tke-second-worker-model">
+                          <p>
+                            <span>选择机型</span
+                            ><i
+                              class="el-icon-close"
+                              @click="item.modelShow = false"
+                            ></i>
+                          </p>
+                          <div class="model-bg">
+                            <div>
+                              <el-select
+                                v-model="colonySecond.AllCPUVal"
+                                placeholder="请选择"
+                              >
+                                <el-option
+                                  v-for="item in colonySecond.AllCPU"
+                                  :key="item.value"
+                                  :label="item.label"
+                                  :value="item.value"
+                                >
+                                </el-option>
+                              </el-select>
+                              <el-select
+                                v-model="colonySecond.AllRAMVal"
+                                placeholder="请选择"
+                              >
+                                <el-option
+                                  v-for="item in colonySecond.AllRAM"
+                                  :key="item.value"
+                                  :label="item.label"
+                                  :value="item.value"
+                                >
+                                </el-option>
+                              </el-select>
+                            </div>
+                            <div style="margin-top:16px;">
+                              <el-radio-group v-model="colonySecond.caseRace">
+                                <el-radio-button label="1"
+                                  >全部实例族</el-radio-button
+                                >
+                                <el-radio-button label="2"
+                                  >标准型</el-radio-button
+                                >
+                                <el-radio-button label="3"
+                                  >内存型</el-radio-button
+                                >
+                                <el-radio-button label="4"
+                                  >计算型</el-radio-button
+                                >
+                              </el-radio-group>
+                            </div>
+                            <div style="margin-top:16px;">
+                              <el-radio-group v-model="colonySecond.caseType">
+                                <el-radio-button label="1"
+                                  >全部实例类型</el-radio-button
+                                >
+                                <el-radio-button label="2"
+                                  >标准型S3</el-radio-button
+                                >
+                                <el-radio-button label="3"
+                                  >计算型C3</el-radio-button
+                                >
+                                <el-radio-button label="4"
+                                  >内存型M3</el-radio-button
+                                >
+                              </el-radio-group>
+                            </div>
+                            <div style="margin-top:16px;">
+                              <el-table
+                                ref="singleTable"
+                                :data="colonySecond.tableList"
+                                highlight-current-row
+                                @current-change="handleCurrentChange1"
+                                style="width: 100%"
+                                height="500px"
+                              >
+                                <!-- InquiryPriceRunInstances -->
+                                <el-table-column width="50">
+                                  <template slot-scope="scope">
+                                    <el-radio
+                                      v-model="item.radio1"
+                                      :label="scope.$index"
+                                    >
+                                      <i></i>
+                                    </el-radio>
+                                  </template>
+                                </el-table-column>
+                                <el-table-column label="机型">
+                                  <template slot-scope="scope">
+                                    {{ ModelTypeName(scope.row.TypeName) }}
+                                  </template>
+                                </el-table-column>
+                                <el-table-column label="规则">
+                                  <template slot-scope="scope">
+                                    {{ scope.row.InstanceType }}
+                                  </template>
+                                </el-table-column>
+                                <el-table-column label="CPU">
+                                  <template slot-scope="scope">
+                                    {{ scope.row.Cpu }}核
+                                  </template>
+                                </el-table-column>
+                                <el-table-column label="内存">
+                                  <template slot-scope="scope">
+                                    {{ scope.row.Memory }}GB
+                                  </template>
+                                </el-table-column>
+                                <el-table-column label="配置费用">
+                                  <template slot-scope="scope">
+                                    <span class="text-orange"
+                                      >￥{{ scope.row.Price.UnitPrice }}</span
+                                    >元/小时起
+                                  </template>
+                                </el-table-column>
+                              </el-table>
+                            </div>
                           </div>
-                          <div class="btn">
-                            <el-button @click="DataDiskSure">确定</el-button>
+                          <div class="model-btn">
                             <el-button
-                              @click="colonySecond.dataDiskShow = false"
+                              class="determine"
+                              @click="ModelSure(index, 1)"
+                              >确定</el-button
+                            >
+                            <el-button
+                              class="cancel"
+                              @click="item.modelShow = false"
                               >取消</el-button
                             >
                           </div>
                         </div>
-                      </el-popover>
-                    </div>
-                  </div>
-                </li>
-                <li>
-                  <p>公网带宽</p>
-                  <div class="tke-second-worker-text">
-                    <span>按带宽计费 1Mbps</span>
-                    <div class="tke-second-worker-icon-pen">
-                      <el-popover
-                        placement="bottom"
-                        width="450"
-                        trigger="click"
-                        v-model="colonySecond.broadbandShow"
-                      >
-                        <i class="el-icon-edit" slot="reference"></i>
-                        <div class="tke-second-worker-popover-disk">
-                          <div>
-                            <el-select
-                              v-model="colonySecond.broadbandVal"
-                              placeholder="请选择"
-                            >
-                              <el-option
-                                v-for="item in colonySecond.broadbandOptions"
-                                :key="item.value"
-                                :label="item.label"
-                                :value="item.value"
-                              >
-                              </el-option>
-                            </el-select>
-                            <el-input-number
-                              v-model="colonySecond.broadbandNum"
-                              :min="50"
-                              :max="500"
-                            ></el-input-number>
-                            <span>Mbps</span>
-                            <p>带宽上限：0~100</p>
-                            <div
-                              class="tke-second-worker-popover-data-bg distribution"
-                            >
-                              <el-checkbox
-                                v-model="colonySecond.formatMount"
-                                class="format-and-mount"
-                                >分配免费公网IP，<a href="#"
-                                  >查看详情</a
-                                ></el-checkbox
-                              >
-                            </div>
-                            <div class="btn">
-                              <el-button @click="SystemDiskSure"
-                                >确定</el-button
-                              >
-                              <el-button
-                                @click="colonySecond.broadbandShow = false"
-                                >取消</el-button
-                              >
-                            </div>
-                          </div>
-                        </div>
-                      </el-popover>
-                    </div>
-                  </div>
-                </li>
-                <li>
-                  <p>数据</p>
-                  <div class="tke-second-worker-data">
-                    <el-input-number
-                      v-model="num"
-                      :min="1"
-                      :max="10"
-                    ></el-input-number>
-                    <p v-if="!colonySecond.chargingShow">
-                      CVM配额:您当前云服务器个数配额为0/0，您最多可购买0台，
-                      您可以通过<a href="#">提交工单</a>申请提升配额。
-                    </p>
-                    <p v-if="colonySecond.chargingShow">
-                      CVM配额:当前账号最大可购买100台
-                    </p>
-                    <el-row>
-                      <el-button class="worker-determine-btn">确定</el-button>
-                      <el-button class="worker-cancel-btn-dis">取消</el-button>
-                      <el-button class="worker-cancel-btn" style="display:none;"
-                        >取消</el-button
-                      >
-                    </el-row>
-                  </div>
-                </li>
-              </ul>
-              <div class="tke-second-worker-add-models">
-                <el-button>添加机型</el-button>
-              </div>
-            </div>
-          </div>
-          <div
-            class="tke-second-worker"
-            v-if="colonySecond.source == 2 && colonySecond.master == 2"
-          >
-            <p class="tke-second-worker-l">Master&Etcd 配置</p>
-            <div class="tke-second-worker-r">
-              <div class="bg">
-                <div class="flex">
-                  <div class="left-box">
-                    <div class="search">
-                      <el-input
-                        placeholder="请输入节点名称或完整ID"
-                        v-model="searchInputMaster"
-                        class="input-with-select"
-                      >
-                        <el-select
-                          v-model="selectListMaster"
-                          slot="prepend"
-                          placeholder="请选择"
-                        >
-                          <el-option label="完整ID" value="1"></el-option>
-                          <el-option label="节点名称" value="2"></el-option>
-                        </el-select>
-                        <el-button
-                          slot="append"
-                          icon="el-icon-search"
-                          @click="ExistingNodes"
-                        ></el-button>
-                      </el-input>
-                    </div>
-
-                    <div class="right-table">
-                      <el-table
-                        ref="multipleTableMaster"
-                        :data="leftListMaster"
-                        tooltip-effect="dark"
-                        style="width: 430px"
-                        height="250"
-                        @selection-change="handleSelectionChangeMaster"
-                      >
-                        <el-table-column
-                          align="center"
-                          type="selection"
-                          :selectable="selectInitMaster"
-                          width="55"
-                        >
-                        </el-table-column>
-
-                        <el-table-column :label="leftListMasterVal">
-                          <template slot-scope="scope">
-                            <p>{{ scope.row.InstanceId }}</p>
-
-                            <p>{{ scope.row.InstanceName }}</p>
-                          </template>
-                        </el-table-column>
-                      </el-table>
-                    </div>
-                  </div>
-                  <div class="center-box">
-                    <i class="el-icon-arrow-left"></i>
-                    <i class="el-icon-arrow-right"></i>
-                  </div>
-                  <div class="right-box">
-                    <el-table
-                      :data="rightListMaster"
-                      tooltip-effect="dark"
-                      style="width: 430px;"
-                      height="290"
-                    >
-                      <el-table-column :label="rightListMasterVal">
-                        <template slot-scope="scope">
-                          <p>
-                            {{ scope.row.InstanceId }}
-                          </p>
-
-                          <p>{{ scope.row.InstanceName }}</p>
-                        </template>
-                      </el-table-column>
-                      <el-table-column width="55">
-                        <template slot-scope="scope">
-                          <span
-                            class="el-delete"
-                            @click="DeleteListMaster(scope.row)"
-                            >删除</span
-                          >
-                        </template>
-                      </el-table-column>
-                    </el-table>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div
-            class="tke-second-worker"
-            v-if="colonySecond.sourceShow && colonySecond.worker != 2"
-          >
-            <p class="tke-second-worker-l">Worker 配置</p>
-            <div class="tke-second-worker-r">
-              <div>
-                <div class="tke-second-worker-array" style="display:none;">
-                  <p>
-                    <span>编辑</span>
-                    <span>删除</span>
-                  </p>
-                  <ol>
-                    <li>
-                      <span>可用区</span>
-                      <span>台北一区</span>
-                    </li>
-                    <li>
-                      <span>节点网络</span>
-                      <span>10.19.2.0</span>
-                    </li>
-                    <li>
-                      <span>配置</span>
-                      <span>S3.LARGE8(标准型S3,4核8GB)</span>
-                    </li>
-                    <li>
-                      <span>系统盘</span>
-                      <span>SSD云硬盘 50GB</span>
-                    </li>
-                    <li>
-                      <span>数据盘</span>
-                      <span>暂不购买</span>
-                    </li>
-                    <li>
-                      <span>公网带宽</span>
-                      <span>按带宽计费 1Mbps</span>
-                    </li>
-                    <li>
-                      <span>数量</span>
-                      <span>1 台</span>
-                    </li>
-                  </ol>
-                </div>
-                <ul>
-                  <li>
-                    <p>可用区<i class="el-icon-info"></i></p>
-                    <div>
-                      <el-radio-group v-model="colonySecond.usableArea">
-                        <el-radio-button label="1">台北一区</el-radio-button>
-                      </el-radio-group>
-                    </div>
-                  </li>
-                  <li>
-                    <p>节点网络<i class="el-icon-info"></i></p>
-                    <div class="tke-second-worker-select">
-                      <el-select
-                        v-model="colony.networkValue"
-                        placeholder="请选择"
-                        disabled
-                      >
-                        <el-option
-                          v-for="item in colony.networkOptions"
-                          :key="item.value"
-                          :label="item.label"
-                          :value="item.value"
-                        >
-                        </el-option>
-                      </el-select>
-                      <el-select
-                        v-model="colonySecond.workerNodeNetworkVal"
-                        placeholder="请选择"
-                        @change="NodeSelect"
-                      >
-                        <el-option
-                          v-for="item in colonySecond.workerNodeNetOpt"
-                          :key="item.SubnetId"
-                          :label="item.SubnetName"
-                          :value="item.SubnetId"
-                        >
-                        </el-option>
-                      </el-select>
-                      <span
-                        >共{{ colonySecond.nodeTotalNum }}个子网IP，剩{{
-                          colonySecond.nodeSurplusNum
-                        }}个可用</span
-                      >
-                      <p>CIDR:{{ colony.CidrBlock }}</p>
-                      <p>
-                        如现有的网络不合适，您可以去控制台<a href="#"
-                          >新建私有网络</a
-                        >或<a href="#">新建子网</a>
-                      </p>
-                    </div>
-                  </li>
-                  <li>
-                    <p>机型</p>
-                    <p class="tke-second-worker-text">
-                      S3.SMALL1(标准型S3,1核1GB)
-                      <i
-                        class="el-icon-edit"
-                        @click="colonySecond.modelShow = true"
-                      ></i>
-                    </p>
-                    <div
-                      class="tke-second-worker-model-box"
-                      v-if="colonySecond.modelShow"
-                    >
-                      <div class="tke-second-worker-model">
-                        <p>
-                          <span>选择机型</span
-                          ><i
-                            class="el-icon-close"
-                            @click="colonySecond.modelShow = false"
-                          ></i>
-                        </p>
-                        <div class="model-bg">
-                          <div>
-                            <el-select
-                              v-model="colonySecond.AllCPUVal"
-                              placeholder="请选择"
-                            >
-                              <el-option
-                                v-for="item in colonySecond.AllCPU"
-                                :key="item.value"
-                                :label="item.label"
-                                :value="item.value"
-                              >
-                              </el-option>
-                            </el-select>
-                            <el-select
-                              v-model="colonySecond.AllRAMVal"
-                              placeholder="请选择"
-                            >
-                              <el-option
-                                v-for="item in colonySecond.AllRAM"
-                                :key="item.value"
-                                :label="item.label"
-                                :value="item.value"
-                              >
-                              </el-option>
-                            </el-select>
-                          </div>
-                          <div style="margin-top:16px;">
-                            <el-radio-group v-model="colonySecond.caseRace">
-                              <el-radio-button label="1"
-                                >全部实例族</el-radio-button
-                              >
-                              <el-radio-button label="2"
-                                >标准型</el-radio-button
-                              >
-                              <el-radio-button label="3"
-                                >内存型</el-radio-button
-                              >
-                              <el-radio-button label="4"
-                                >计算型</el-radio-button
-                              >
-                            </el-radio-group>
-                          </div>
-                          <div style="margin-top:16px;">
-                            <el-radio-group v-model="colonySecond.caseType">
-                              <el-radio-button label="1"
-                                >全部实例类型</el-radio-button
-                              >
-                              <el-radio-button label="2"
-                                >标准型S3</el-radio-button
-                              >
-                              <el-radio-button label="3"
-                                >计算型C3</el-radio-button
-                              >
-                              <el-radio-button label="4"
-                                >内存型M3</el-radio-button
-                              >
-                            </el-radio-group>
-                          </div>
-                          <div style="margin-top:16px;">
-                            <el-table
-                              ref="singleTable"
-                              :data="colonySecond.tableList"
-                              highlight-current-row
-                              @current-change="handleCurrentChange"
-                              style="width: 100%"
-                              height="500px"
-                            >
-                              <!-- InquiryPriceRunInstances -->
-                              <el-table-column width="50">
-                                <template slot-scope="scope">
-                                  <el-radio
-                                    v-model="radio1"
-                                    :label="scope.$index"
-                                  >
-                                    <i></i>
-                                  </el-radio>
-                                </template>
-                              </el-table-column>
-                              <el-table-column label="机型">
-                                <template slot-scope="scope">
-                                  {{ ModelTypeName(scope.row.TypeName) }}
-                                </template>
-                              </el-table-column>
-                              <el-table-column label="规则">
-                                <template slot-scope="scope">
-                                  {{ scope.row.InstanceType }}
-                                </template>
-                              </el-table-column>
-                              <el-table-column label="CPU">
-                                <template slot-scope="scope">
-                                  {{ scope.row.Cpu }}核
-                                </template>
-                              </el-table-column>
-                              <el-table-column label="内存">
-                                <template slot-scope="scope">
-                                  {{ scope.row.Memory }}GB
-                                </template>
-                              </el-table-column>
-                              <el-table-column label="配置费用">
-                                <template slot-scope="scope">
-                                  <span class="text-orange"
-                                    >￥{{ scope.row.Price.UnitPrice }}</span
-                                  >元/小时起
-                                </template>
-                              </el-table-column>
-                            </el-table>
-                          </div>
-                        </div>
-                        <div class="model-btn">
-                          <el-button class="determine">确定</el-button>
-                          <el-button
-                            class="cancel"
-                            @click="colonySecond.modelShow = false"
-                            >取消</el-button
-                          >
-                        </div>
                       </div>
-                    </div>
-                  </li>
-                  <li>
-                    <p>系统盘</p>
-                    <div class="tke-second-worker-text">
-                      <span
-                        >{{ colonySecond.systemDiskValue }}
-                        {{ colonySecond.systemDiskNumber }}GB</span
-                      >
-                      <div class="tke-second-worker-icon-pen">
-                        <el-popover
-                          placement="bottom"
-                          width="450"
-                          trigger="click"
-                          v-model="colonySecond.systemDiskShow"
+                    </li>
+                    <li>
+                      <p>系统盘</p>
+                      <div class="tke-second-worker-text">
+                        <span
+                          >{{ item.systemDiskValue }}
+                          {{ item.systemDiskNumber }}GB</span
                         >
-                          <i class="el-icon-edit" slot="reference"></i>
-                          <div class="tke-second-worker-popover-disk">
-                            <div>
-                              <el-select
-                                v-model="colonySecond.systemDiskVal"
-                                placeholder="请选择"
-                              >
-                                <el-option
-                                  v-for="item in colonySecond.systemDiskOptions"
-                                  :key="item.value"
-                                  :label="item.label"
-                                  :value="item.value"
-                                >
-                                </el-option>
-                              </el-select>
-                              <el-input-number
-                                v-model="colonySecond.systemDiskNum"
-                                :min="50"
-                                :max="500"
-                              ></el-input-number>
-                              <span>GB</span>
-                              <p>范围：50~500，步长：1</p>
-                              <div class="btn">
-                                <el-button @click="SystemDiskSure"
-                                  >确定</el-button
-                                >
-                                <el-button
-                                  @click="colonySecond.systemDiskShow = false"
-                                  >取消</el-button
-                                >
-                              </div>
-                            </div>
-                          </div>
-                        </el-popover>
-                      </div>
-                    </div>
-                  </li>
-                  <li>
-                    <p>数据盘</p>
-                    <div class="tke-second-worker-text">
-                      <span>{{ colonySecond.dataDiskValue }}</span>
-                      <div class="tke-second-worker-icon-pen">
-                        <el-popover
-                          placement="bottom"
-                          :width="colonySecond.buyDataWidth"
-                          trigger="click"
-                          v-model="colonySecond.dataDiskShow"
-                        >
-                          <i class="el-icon-edit" slot="reference"></i>
-                          <div
-                            class="tke-second-worker-popover-disk tke-second-box"
+                        <div class="tke-second-worker-icon-pen">
+                          <el-popover
+                            placement="bottom"
+                            width="450"
+                            trigger="click"
+                            v-model="item.systemDiskShow"
                           >
-                            <div
-                              class="tke-second-checkbox"
-                              style="padding-left:20px;"
-                            >
-                              <el-checkbox
-                                v-model="colonySecond.buyDataDisk"
-                                @change="BuyDataDisk"
-                                >购买数据盘</el-checkbox
-                              >
-                            </div>
-                            <div
-                              class="tke-second-worker-popover-data-bg"
-                              v-if="colonySecond.buyDataDisk"
-                            >
+                            <i class="el-icon-edit" slot="reference"></i>
+                            <div class="tke-second-worker-popover-disk">
                               <div>
-                                <p>云盘设置</p>
-                                <div>
-                                  <el-select
-                                    v-model="colonySecond.dataDiskVal"
-                                    placeholder="请选择"
-                                  >
-                                    <el-option
-                                      v-for="item in colonySecond.dataDiskOptions"
-                                      :key="item.value"
-                                      :label="item.label"
-                                      :value="item.value"
-                                    >
-                                    </el-option>
-                                  </el-select>
-                                  <el-input-number
-                                    v-model="colonySecond.dataDiskNum"
-                                    :min="10"
-                                    :max="16000"
-                                  ></el-input-number>
-                                  <span>GB</span>
-                                  <el-checkbox
-                                    v-model="colonySecond.formatMount"
-                                    class="format-and-mount"
-                                    >格式化并挂载</el-checkbox
-                                  >
-                                  <p>范围：10~16000，步长：10</p>
-                                </div>
-                                <p
-                                  style="margin-top:16px;"
-                                  v-if="colonySecond.formatMount"
+                                <el-select
+                                  v-model="item.systemDiskVal"
+                                  placeholder="请选择"
                                 >
-                                  格式化设置
-                                </p>
-                                <div
-                                  style="margin-top:16px;"
-                                  v-if="colonySecond.formatMount"
-                                >
-                                  <el-select
-                                    v-model="colonySecond.dataDiskVal"
-                                    placeholder="请选择"
+                                  <el-option
+                                    v-for="item in colonySecond.systemDiskOptions"
+                                    :key="item.value"
+                                    :label="item.label"
+                                    :value="item.value"
                                   >
-                                    <el-option
-                                      v-for="item in colonySecond.dataDiskOptions"
-                                      :key="item.value"
-                                      :label="item.label"
-                                      :value="item.value"
-                                    >
-                                    </el-option>
-                                  </el-select>
-                                  <el-input v-model="value"></el-input>
+                                  </el-option>
+                                </el-select>
+                                <el-input-number
+                                  v-model="colonySecond.systemDiskNum"
+                                  :min="50"
+                                  :max="500"
+                                ></el-input-number>
+                                <span>GB</span>
+                                <p>范围：50~500，步长：1</p>
+                                <div class="btn">
+                                  <el-button @click="SystemDiskSure(index, 1)"
+                                    >确定</el-button
+                                  >
+                                  <el-button
+                                    @click="item.systemDiskShow = false"
+                                    >取消</el-button
+                                  >
                                 </div>
                               </div>
                             </div>
-                            <div
-                              class="add-data-disk"
-                              v-if="colonySecond.buyDataDisk"
-                            >
-                              添加数据盘
-                            </div>
-                            <div class="btn">
-                              <el-button @click="DataDiskSure">确定</el-button>
-                              <el-button
-                                @click="colonySecond.dataDiskShow = false"
-                                >取消</el-button
-                              >
-                            </div>
-                          </div>
-                        </el-popover>
+                          </el-popover>
+                        </div>
                       </div>
-                    </div>
-                  </li>
-                  <li>
-                    <p>公网带宽</p>
-                    <div class="tke-second-worker-text">
-                      <span>按带宽计费 1Mbps</span>
-                      <div class="tke-second-worker-icon-pen">
-                        <el-popover
-                          placement="bottom"
-                          width="450"
-                          trigger="click"
-                          v-model="colonySecond.broadbandShow"
-                        >
-                          <i class="el-icon-edit" slot="reference"></i>
-                          <div class="tke-second-worker-popover-disk">
-                            <div>
-                              <el-select
-                                v-model="colonySecond.broadbandVal"
-                                placeholder="请选择"
-                              >
-                                <el-option
-                                  v-for="item in colonySecond.broadbandOptions"
-                                  :key="item.value"
-                                  :label="item.label"
-                                  :value="item.value"
-                                >
-                                </el-option>
-                              </el-select>
-                              <el-input-number
-                                v-model="colonySecond.broadbandNum"
-                                :min="50"
-                                :max="500"
-                              ></el-input-number>
-                              <span>Mbps</span>
-                              <p>带宽上限：0~100</p>
+                    </li>
+                    <li>
+                      <p>数据盘</p>
+                      <div class="tke-second-worker-text">
+                        <span>{{ item.dataDiskValue }}</span>
+                        <div class="tke-second-worker-icon-pen">
+                          <el-popover
+                            placement="bottom"
+                            :width="colonySecond.buyDataWidth"
+                            trigger="click"
+                            v-model="item.dataDiskShow"
+                          >
+                            <i class="el-icon-edit" slot="reference"></i>
+                            <div
+                              class="tke-second-worker-popover-disk tke-second-box"
+                            >
                               <div
-                                class="tke-second-worker-popover-data-bg distribution"
+                                class="tke-second-checkbox"
+                                style="padding-left:20px;"
                               >
                                 <el-checkbox
-                                  v-model="colonySecond.formatMount"
-                                  class="format-and-mount"
-                                  >分配免费公网IP，<a href="#"
-                                    >查看详情</a
-                                  ></el-checkbox
+                                  v-model="item.buyDataDisk"
+                                  @change="BuyDataDisk"
+                                  >购买数据盘</el-checkbox
                                 >
                               </div>
+                              <div v-if="item.buyDataDisk">
+                                <div
+                                  class="tke-second-worker-popover-data-bg"
+                                  v-for="(x, i) in colonySecond.buyDataDiskArr"
+                                  :key="i"
+                                >
+                                  <div>
+                                    <div class="box">
+                                      <p>云盘设置</p>
+                                      <div>
+                                        <el-select
+                                          v-model="x.dataDiskVal"
+                                          placeholder="请选择"
+                                        >
+                                          <el-option
+                                            v-for="item in colonySecond.dataDiskOptions"
+                                            :key="item.value"
+                                            :label="item.label"
+                                            :value="item.value"
+                                          >
+                                          </el-option>
+                                        </el-select>
+                                        <el-input-number
+                                          v-model="x.dataDiskNum"
+                                          :min="10"
+                                          :max="16000"
+                                          :step="10"
+                                        ></el-input-number>
+                                        <span>GB</span>
+                                        <el-checkbox
+                                          v-model="x.formatMount"
+                                          class="format-and-mount"
+                                          >格式化并挂载</el-checkbox
+                                        >
+                                        <p>范围：10~16000，步长：10</p>
+                                      </div>
+                                      <p
+                                        style="margin-top:16px;"
+                                        v-if="x.formatMount"
+                                      >
+                                        格式化设置
+                                      </p>
+                                      <div
+                                        style="margin-top:16px;"
+                                        v-if="x.formatMount"
+                                      >
+                                        <el-select
+                                          v-model="x.latticeSetVal"
+                                          placeholder="请选择"
+                                        >
+                                          <el-option
+                                            v-for="x in colonySecond.latticeSetOpt"
+                                            :key="x.value"
+                                            :label="x.label"
+                                            :value="x.value"
+                                          >
+                                          </el-option>
+                                        </el-select>
+                                        <el-input
+                                          v-model="x.setValue"
+                                        ></el-input>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <i
+                                    class="el-icon-error ml5"
+                                    style="margin-top:10px;"
+                                    @click="deleteDataDisk(i)"
+                                  ></i>
+                                </div>
+                              </div>
+                              <div
+                                class="add-data-disk"
+                                v-if="
+                                  item.buyDataDisk &&
+                                    colonySecond.buyDataDiskArr.length != 0
+                                "
+                                @click="AddDataDisk()"
+                              >
+                                添加数据盘
+                              </div>
                               <div class="btn">
-                                <el-button @click="SystemDiskSure"
+                                <el-button @click="DataDiskSure(index, 1)"
                                   >确定</el-button
                                 >
-                                <el-button
-                                  @click="colonySecond.broadbandShow = false"
+                                <el-button @click="item.dataDiskShow = false"
                                   >取消</el-button
                                 >
                               </div>
                             </div>
-                          </div>
-                        </el-popover>
+                          </el-popover>
+                        </div>
                       </div>
-                    </div>
-                  </li>
-                  <li>
-                    <p>数据</p>
-                    <div class="tke-second-worker-data">
-                      <el-input-number
-                        v-model="num"
-                        :min="1"
-                        :max="10"
-                      ></el-input-number>
-                      <p v-if="!colonySecond.chargingShow">
-                        CVM配额:您当前云服务器个数配额为0/0，您最多可购买0台，
-                        您可以通过<a href="#">提交工单</a>申请提升配额。
-                      </p>
-                      <p v-if="colonySecond.chargingShow">
-                        CVM配额:当前账号最大可购买100台
-                      </p>
-                      <el-row>
-                        <el-button class="worker-determine-btn">确定</el-button>
-                        <el-button class="worker-cancel-btn-dis"
-                          >取消</el-button
+                    </li>
+                    <li>
+                      <p>公网带宽</p>
+                      <div class="tke-second-worker-text">
+                        <span
+                          >{{ item.broadbandValue }}
+                          {{ item.broadbandNumber }}Mbps</span
                         >
-                        <el-button
-                          class="worker-cancel-btn"
-                          style="display:none;"
-                          >取消</el-button
-                        >
-                      </el-row>
-                    </div>
-                  </li>
-                </ul>
-              </div>
-              <div class="tke-second-worker-add-models">
-                <el-button>添加机型</el-button>
+                        <div class="tke-second-worker-icon-pen">
+                          <el-popover
+                            placement="bottom"
+                            width="450"
+                            trigger="click"
+                            v-model="item.broadbandShow"
+                          >
+                            <i class="el-icon-edit" slot="reference"></i>
+                            <div class="tke-second-worker-popover-disk">
+                              <div>
+                                <el-select
+                                  v-model="item.broadbandVal"
+                                  placeholder="请选择"
+                                >
+                                  <el-option
+                                    v-for="item in colonySecond.broadbandOptions"
+                                    :key="item.value"
+                                    :label="item.label"
+                                    :value="item.value"
+                                  >
+                                  </el-option>
+                                </el-select>
+                                <el-input-number
+                                  v-model="colonySecond.broadbandNum"
+                                  :min="0"
+                                  :max="100"
+                                ></el-input-number>
+                                <span>Mbps</span>
+                                <p>带宽上限：0~100</p>
+                                <div
+                                  class="tke-second-worker-popover-data-bg distribution"
+                                >
+                                  <el-checkbox
+                                    v-model="colonySecond.pubBroadbandShow"
+                                    class="format-and-mount"
+                                    >分配免费公网IP，<a href="#"
+                                      >查看详情</a
+                                    ></el-checkbox
+                                  >
+                                </div>
+                                <div class="btn">
+                                  <el-button @click="BroadbandSure(index, 1)"
+                                    >确定</el-button
+                                  >
+                                  <el-button @click="item.broadbandShow = false"
+                                    >取消</el-button
+                                  >
+                                </div>
+                              </div>
+                            </div>
+                          </el-popover>
+                        </div>
+                      </div>
+                    </li>
+                    <li>
+                      <p>数据</p>
+                      <div class="tke-second-worker-data">
+                        <el-input-number
+                          v-model="item.dataNum"
+                          :min="1"
+                          :max="1"
+                        ></el-input-number>
+                        <p v-if="!colonySecond.chargingShow">
+                          CVM配额:您当前云服务器个数配额为0/0，您最多可购买0台，
+                          您可以通过<a href="#">提交工单</a>申请提升配额。
+                        </p>
+                        <p v-if="colonySecond.chargingShow">
+                          CVM配额:当前账号最大可购买100台
+                        </p>
+                        <el-row>
+                          <el-button
+                            class="worker-determine-btn"
+                            @click="WorkerSure(index, 1)"
+                            >确定</el-button
+                          >
+                          <el-button class="worker-cancel-btn-dis"
+                            >取消</el-button
+                          >
+                          <el-button
+                            class="worker-cancel-btn"
+                            style="display:none;"
+                            >取消</el-button
+                          >
+                        </el-row>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+                <div class="tke-second-worker-add-models">
+                  <el-button @click="OneAddModel">添加机型</el-button>
+                </div>
               </div>
             </div>
-          </div>
-          <div class="tke-second-worker" v-if="!colonySecond.sourceShow">
-            <p class="tke-second-worker-l">Worker 配置</p>
-            <div class="tke-second-worker-r">
-              <div class="bg">
-                <div class="flex">
-                  <div class="left-box">
-                    <div class="search">
-                      <el-input
-                        placeholder="请输入节点名称或完整ID"
-                        v-model="searchInput"
-                        class="input-with-select"
-                      >
-                        <el-select
-                          v-model="selectList"
-                          slot="prepend"
-                          placeholder="请选择"
+            <div class="tke-second-worker" v-if="!colonySecond.sourceShow">
+              <p class="tke-second-worker-l">Worker 配置</p>
+              <div class="tke-second-worker-r">
+                <div class="bg">
+                  <div class="flex">
+                    <div class="left-box">
+                      <div class="search">
+                        <el-input
+                          placeholder="请输入节点名称或完整ID"
+                          v-model="searchInput"
+                          class="input-with-select"
                         >
-                          <el-option label="完整ID" value="1"></el-option>
-                          <el-option label="节点名称" value="2"></el-option>
-                        </el-select>
-                        <el-button
-                          slot="append"
-                          icon="el-icon-search"
-                          @click="DataList"
-                        ></el-button>
-                      </el-input>
+                          <el-select
+                            v-model="selectList"
+                            slot="prepend"
+                            placeholder="请选择"
+                          >
+                            <el-option label="完整ID" value="1"></el-option>
+                            <el-option label="节点名称" value="2"></el-option>
+                          </el-select>
+                          <el-button
+                            slot="append"
+                            icon="el-icon-search"
+                            @click="DataList"
+                          ></el-button>
+                        </el-input>
+                      </div>
+
+                      <div class="right-table">
+                        <el-table
+                          ref="multipleTable"
+                          :data="leftList"
+                          tooltip-effect="dark"
+                          style="width: 430px"
+                          height="250"
+                          @selection-change="handleSelectionChange"
+                        >
+                          <el-table-column
+                            align="center"
+                            type="selection"
+                            :selectable="selectInit"
+                            width="55"
+                            :key="Math.random()"
+                          >
+                          </el-table-column>
+
+                          <el-table-column
+                            :label="leftListVal"
+                            :key="Math.random()"
+                          >
+                            <template slot-scope="scope">
+                              <p>
+                                {{ scope.row.InstanceId }}
+                              </p>
+
+                              <p>{{ scope.row.InstanceName }}</p>
+                            </template>
+                          </el-table-column>
+                        </el-table>
+                      </div>
                     </div>
-
-                    <div class="right-table">
+                    <div class="center-box">
+                      <i class="el-icon-arrow-left"></i>
+                      <i class="el-icon-arrow-right"></i>
+                    </div>
+                    <div class="right-box">
                       <el-table
-                        ref="multipleTable"
-                        :data="leftList"
+                        :data="rightList"
                         tooltip-effect="dark"
-                        style="width: 430px"
-                        height="250"
-                        @selection-change="handleSelectionChange"
+                        style="width: 430px;"
+                        height="290"
                       >
-                        <el-table-column
-                          align="center"
-                          type="selection"
-                          :selectable="selectInit"
-                          width="55"
-                        >
-                        </el-table-column>
-
-                        <el-table-column :label="leftListVal">
+                        <el-table-column :label="rightListVal">
                           <template slot-scope="scope">
-                            <p>{{ scope.row.InstanceId }}</p>
+                            <p>
+                              {{ scope.row.InstanceId }}
+                            </p>
 
                             <p>{{ scope.row.InstanceName }}</p>
+                          </template>
+                        </el-table-column>
+                        <el-table-column width="55">
+                          <template slot-scope="scope">
+                            <span
+                              class="el-delete"
+                              @click="DeleteList(scope.row)"
+                            >
+                              删除</span
+                            >
                           </template>
                         </el-table-column>
                       </el-table>
                     </div>
                   </div>
-                  <div class="center-box">
-                    <i class="el-icon-arrow-left"></i>
-                    <i class="el-icon-arrow-right"></i>
-                  </div>
-                  <div class="right-box">
-                    <el-table
-                      :data="rightList"
-                      tooltip-effect="dark"
-                      style="width: 430px;"
-                      height="290"
-                    >
-                      <el-table-column :label="rightListVal">
-                        <template slot-scope="scope">
-                          <p>
-                            {{ scope.row.InstanceId }}
-                          </p>
-
-                          <p>{{ scope.row.InstanceName }}</p>
-                        </template>
-                      </el-table-column>
-                      <el-table-column width="55">
-                        <template slot-scope="scope">
-                          <span
-                            class="el-delete"
-                            @click="DeleteList(scope.row)"
-                          >
-                            删除</span
-                          >
-                        </template>
-                      </el-table-column>
-                    </el-table>
-                  </div>
+                </div>
+                <div class="tips">
+                  <p>注意细则：</p>
+                  <p>
+                    1、所选云服务器需重装系统，重装后云服务器系统盘所有数据将被清除；
+                  </p>
+                  <p>2、所选云服务器将迁移至集群所属项目；</p>
+                  <p>
+                    3、云服务器迁移项目会导致安全组解绑，需要重新绑定安全组；
+                  </p>
                 </div>
               </div>
-              <div class="tips">
-                <p>注意细则：</p>
-                <p>
-                  1、所选云服务器需重装系统，重装后云服务器系统盘所有数据将被清除；
-                </p>
-                <p>2、所选云服务器将迁移至集群所属项目；</p>
-                <p>3、云服务器迁移项目会导致安全组解绑，需要重新绑定安全组；</p>
+            </div>
+            <el-form-item label="总计费用" v-if="colonySecond.sourceShow">
+              <div class="tke-second-cost">
+                <span class="tke-second-cost-num">{{Math.round(colonySecond.allocationCost)}}</span
+                ><span class="tke-second-cost-h">元/小时</span
+                ><span class="tke-second-cost-t">(配置费用)</span>
+                <i>|</i>
+                <span class="tke-second-cost-num">{{Math.round(colonySecond.networkCost)}}</span
+                ><span class="tke-second-cost-h">元/小时</span
+                ><span class="tke-second-cost-w"> (网络费用-按带宽计费)</span>
               </div>
-            </div>
+            </el-form-item>
           </div>
-          <el-form-item label="总计费用" v-if="colonySecond.sourceShow">
-            <div class="tke-second-cost">
-              <span class="tke-second-cost-num">0.16</span
-              ><span class="tke-second-cost-h">元/小时</span
-              ><span class="tke-second-cost-t">(配置费用)</span>
-              <i>|</i>
-              <span class="tke-second-cost-num">0.06</span
-              ><span class="tke-second-cost-h">元/小时</span
-              ><span class="tke-second-cost-w"> (网络费用-按带宽计费)</span>
-            </div>
-          </el-form-item>
         </el-form>
         <!-- 底部 -->
         <div class="tke-formpanel-footer">
@@ -1607,6 +1724,9 @@
           </span>
           <span class="footer-tips" v-if="colonySecond.masterTips">
             Master 节点最少选择3台
+          </span>
+          <span size="small" type="primary" v-if="colonySecond.completeBtn">
+            完成
           </span>
         </div>
       </div>
@@ -1634,10 +1754,13 @@
           <el-form-item label="容器网络">
             <p>{{ dispose.container }}</p>
           </el-form-item>
+          <!-- <el-form-item label="计费模式">
+            <p>{{ dispose.container }}</p>
+          </el-form-item> -->
           <div class="tke-second-tips">
-            <p>操作���统<i class="el-icon-info"></i></p>
+            <p>操作系统<i class="el-icon-info"></i></p>
             <p>
-              Ubuntu Server 18.04.1 LTS 64bit TKE-Optimized
+              {{ colony.OSvalue }}
             </p>
           </div>
           <el-form-item label="容器目录">
@@ -1652,16 +1775,46 @@
           </el-form-item>
           <div class="tke-third-tips">
             <p>安全组<i class="el-icon-info"></i></p>
-            <div>
-              <el-input value="新建并绑定默认安全组" disabled></el-input>
+            <div class="input-box">
               <p>
+                <el-input value="新建并绑定默认安全组" disabled></el-input>
+                <!-- <i class="el-icon-error" v-if="colonyThird.safeArr.length > 0"></i> -->
+              </p>
+              <div
+                v-for="(item, index) in colonyThird.safeArr"
+                v-if="colonyThird.safeArr.length > 0"
+              >
+                <div>
+                  <el-select
+                    placeholder="请选择安全组"
+                    v-model="item.securityGroupSel"
+                  >
+                    <el-option
+                      v-for="x in securityGroupOpt"
+                      :key="x.value"
+                      :label="x.label"
+                      :value="x.value"
+                    >
+                    </el-option>
+                  </el-select>
+                  <i class="el-icon-refresh ml5"></i>
+                  <i
+                    class="el-icon-error ml5"
+                    @click="deleteExceptPrice(index)"
+                  ></i>
+                </div>
+              </div>
+              <p v-if="colonyThird.safeArr.length === 0">
                 集群节点间的正常通信需要放通部分端口，集群创建完成后可查看安全组及修改规则。<a
                   href="#"
                   >预览默认安全组规则</a
                 >
               </p>
+
               <p>
-                如您业务需要自定义配置安全组规则，可<a href="#">添加安全组</a>
+                <span v-if="colonyThird.safeArr.length === 0"
+                  >如您业务需要自定义配置安全组规则，可</span
+                ><a href="javascript:;" @click="AddSafe">添加安全组</a>
               </p>
             </div>
           </div>
@@ -1684,19 +1837,20 @@
             label="用户名"
             v-if="colonyThird.one || colonyThird.three"
           >
-            <p>名字</p>
+            <p>ubuntu</p>
           </el-form-item>
           <el-form-item label="SSH密钥" v-if="colonyThird.one">
             <div class="tke-third-select">
-              <el-select v-model="value" placeholder="请选择">
+              <el-select placeholder="请选择" v-model="colonyThird.sshKeySel">
                 <el-option
-                  v-for="item in options"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
+                  v-for="item in colonyThird.sshKey"
+                  :key="item.KeyId"
+                  :label="item.KeyName"
+                  :value="item.KeyId"
                 >
                 </el-option>
               </el-select>
+              <i class="el-icon-refresh ml5"></i>
               <p>如您现有的密钥不合适，可以<a href="#">现在创建</a></p>
             </div>
           </el-form-item>
@@ -1828,15 +1982,19 @@ import {
   TKE_EXIST_NODES,
   TKE_WORKER_METWORK,
   TKE_EXIST,
-  DESCRIBE_ZONE_INFO
+  DESCRIBE_ZONE_INFO,
+  TKE_PRICE,
+  // 第三步
+  TKE_MISG,
+  TKE_SSH
 } from "@/constants";
 export default {
   name: "create",
   data() {
     return {
       // 步骤显示
-      firstBox: false,
-      secondBox: true,
+      firstBox: true,
+      secondBox: false,
       thirdBox: false,
       fourthBox: false,
       // 第一步
@@ -1849,7 +2007,7 @@ export default {
             projectName: "默认项目"
           }
         ],
-        projectValue: "默认项目",
+        projectValue: "0",
         kuOptions: [],
         kuValue: "",
         assemblyRadio: "docker",
@@ -1982,6 +2140,74 @@ export default {
         master: 1,
         workerShow: false,
         worker: 1,
+        boxShow: true,
+        masterOneList: [
+          {
+            showText: false,
+            showEdit: true,
+            radio1: 0,
+            modelShow: false,
+            modelName: "",
+            InstanceChargeType: "POSTPAID_BY_HOUR",
+            modelType: "",
+            modelHe: "",
+            modelGB: "",
+            systemDiskShow: false,
+            dataDiskShow: false,
+            broadbandShow: false,
+            workerNodeNetworkValue: "",
+            systemDiskVal: "CLOUD_PREMIUM",
+            systemDiskValue: "高性能云硬盘",
+            systemDiskNumber: "50",
+            // 数据盘
+            dataDiskValue: "暂不购买",
+            buyDataDisk: false,
+            dataDiskArr: [],
+            dataDiskVal: "CLOUD_PREMIUM",
+            dataDiskNumber: "10",
+            latticeSetVal: "ext3",
+            setValue: "/var/lib/docker",
+            broadbandValue: "按宽带计费",
+            broadbandVal: "BANDWIDTH_POSTPAID_BY_HOUR",
+            broadbandNumber: "1",
+            formatMount: true,
+            dataNum: "1"
+          }
+        ],
+        workerOneList: [
+          {
+            showText: false,
+            showEdit: true,
+            radio1: 0,
+            modelShow: false,
+            modelName: "",
+            modelType: "",
+            modelHe: "",
+            modelGB: "",
+            systemDiskShow: false,
+            dataDiskShow: false,
+            broadbandShow: false,
+            workerNodeNetworkValue: "",
+            systemDiskVal: "CLOUD_PREMIUM",
+            systemDiskValue: "高性能云硬盘",
+            systemDiskNumber: "50",
+            // 数据盘
+            dataDiskValue: "暂不购买",
+            dataDiskArr: [],
+            buyDataDisk: false,
+            dataDiskVal: "CLOUD_PREMIUM",
+            dataDiskNumber: "10",
+            latticeSetVal: "ext3",
+            setValue: "/var/lib/docker",
+            broadbandValue: "按宽带计费",
+            broadbandVal: "BANDWIDTH_POSTPAID_BY_HOUR",
+            broadbandNumber: "1",
+            formatMount: true,
+            dataNum: "1"
+          }
+        ],
+        index: 0,
+        masterIndex: 0,
         buyTime: 1, // 购买时长
         renew: false, // 自动续费
         charging: 1,
@@ -1994,6 +2220,9 @@ export default {
         nodeSurplusNum: "",
         // 机型
         tableList: [],
+        masterTableList: [],
+        modelText: "",
+        modelText2: "",
         modelShow: false,
         // 选中机型
         AllCPU: [
@@ -2126,61 +2355,60 @@ export default {
         caseType: "1",
         // 系统盘
         systemDiskNum: 50,
-        systemDiskShow: false,
+
         systemDiskOptions: [
           {
-            value: "1",
+            value: "CLOUD_PREMIUM",
             label: "高性能云硬盘"
           },
           {
-            value: "2",
+            value: "CLOUD_SSD",
             label: "SSD云硬盘"
           }
         ],
-        systemDiskVal: "1",
-        systemDiskValue: "高性能云硬盘",
         systemDiskNumber: "50",
-        // 数据盘
-        dataDiskValue: "暂不购买",
-        dataDiskShow: false,
         buyDataWidth: 300,
-        buyDataDisk: false,
-        formatMount: false,
-        dataDiskNum: 10,
+        buyDataDiskArr: [],
         dataDiskOptions: [
           {
-            value: "1",
+            value: "CLOUD_PREMIUM",
             label: "高性能云硬盘"
           },
           {
-            value: "2",
+            value: "CLOUD_SSD",
             label: "SSD云硬盘"
           }
         ],
-        dataDiskVal: "1",
+        latticeSetOpt: [
+          { value: "ext3", label: "ext3" },
+          { value: "ext4", label: "ext4" },
+          { value: "xfs", label: "xfs" }
+        ],
         dataDiskNumber: "10",
         // 公网宽带
-        broadbandValue: "暂不购买",
-        broadbandShow: false,
         broadbandWidth: 300,
-        broadbandDisk: false,
-        broadbandNum: 10,
+        broadbandNum: 0,
+        pubBroadbandShow: true,
         broadbandOptions: [
           {
-            value: "1",
+            value: "BANDWIDTH_POSTPAID_BY_HOUR",
             label: "按宽带计费"
           },
           {
-            value: "2",
+            value: "TRAFFIC_POSTPAID_BY_HOUR",
             label: "按使用流量"
           }
         ],
-        broadbandVal: "1",
-        broadbandNumber: "10",
+        // 总计费用
+        // 配置费用
+        allocationCost:"",
+        // 网络费用
+        networkCost:"",
         // 下一步
         secondNextShow: true,
         workerTips: false,
-        masterTips: false
+        masterTips: false,
+        completeBtn: false
       },
       // worker 配置
       searchInput: "",
@@ -2204,7 +2432,9 @@ export default {
       colonyThird: {
         // 容器目录
         containerChecked: false,
-        containerInput: "",
+        containerInput: "/var/lib/docker",
+        // 安全组
+        safeArr: [],
         // 登录方式
         loginModeRadio: 1,
         one: true,
@@ -2214,11 +2444,16 @@ export default {
         password: "",
         // 确认密码
         confirmPassword: "",
+        // SSH密钥
+        sshKey: [],
+        sshKeySel: "",
         // 安全加固
         safetyChecked: true,
         // 云监控
         cloudwatchChecked: true
       },
+      securityGroupOpt: [],
+      securityGroupSel: "",
       radio1: 0,
       options: [
         {
@@ -2274,8 +2509,11 @@ export default {
     // 操作系统
     this.OperatSystemData();
     //  --------------------------------  第二步 -----------------------------
-    // 机型 选择机型
-    this.getDescribeZoneInstanceConfigInfos();
+    //  --------------------------------  第三步 -----------------------------
+    // 安全组
+    this.SecurityGroup();
+    // SSH密钥
+    this.SSHKey();
   },
   methods: {
     // 返回上一层
@@ -2368,7 +2606,6 @@ export default {
       });
     },
     NetWork(val) {
-      // console.log(val)
       if (val) {
         let array = this.colony.networkOptions;
         for (var i in array) {
@@ -2507,6 +2744,8 @@ export default {
           });
         }
         this.ChildNodes();
+        // 机型 选择机型
+        this.getDescribeZoneInstanceConfigInfos();
       } else {
         this.colony.nameWran = true;
       }
@@ -2522,10 +2761,7 @@ export default {
         this.colonySecond.sourceShow = true;
         this.colonySecond.secondNextShow = true;
       }
-      if (
-        (this.colonySecond.source == 2 && this.colonySecond.master == 1) ||
-        (this.colonySecond.source == 2 && this.colonySecond.master == 2)
-      ) {
+      if (this.colonySecond.source == 2) {
         this.colonySecond.workerTips = true;
         this.colonySecond.masterTips = false;
         this.colonySecond.secondNextShow = false;
@@ -2533,6 +2769,17 @@ export default {
         this.colonySecond.workerTips = false;
         this.colonySecond.masterTips = false;
         this.colonySecond.secondNextShow = true;
+      }
+      if (
+        this.colonySecond.worker == 2 &&
+        this.colonySecond.source == 2 &&
+        this.colonySecond.master == 1
+      ) {
+        this.colonySecond.boxShow = false;
+        this.colonySecond.completeBtn = true;
+      } else {
+        this.colonySecond.boxShow = true;
+        this.colonySecond.completeBtn = false;
       }
     },
     // 节点来源 已有节点 worker 配置
@@ -2596,7 +2843,7 @@ export default {
     },
     // 复选框操作
     selectInitMaster(row, index) {
-      if (row.VirtualPrivateCloud.AsVpcGateway === false) {
+      if (row.Usable === false || row.CPU < 4) {
         return false; // 不可勾选
       } else {
         return true; // 可勾选
@@ -2645,6 +2892,7 @@ export default {
           this.leftList = res.Response.ExistedInstanceSet;
           // console.log(res.Response.ExistedInstanceSet);
           this.leftListVal = " 共 " + this.leftList.length + " 云服务器";
+          this.ExistingNodes();
         } else {
           this.leftList = [];
           let ErrTips = {
@@ -2696,10 +2944,11 @@ export default {
       this.axios.post(TKE_EXIST_NODES, param).then(res => {
         if (res.Response.Error === undefined) {
           this.leftListMaster = res.Response.InstanceSet;
-          console.log(res.Response.InstanceSet);
+          // console.log(res.Response.InstanceSet);
           this.leftListMasterVal =
             " 共 " + this.leftListMaster.length + " 云服务器";
         } else {
+          this.leftListMaster = [];
           let ErrTips = {
             InternalServerError: "操作內部錯誤",
             InvalidFilter: "無效的過濾器",
@@ -2726,7 +2975,6 @@ export default {
     },
     // 子网络
     ChildNodes() {
-      console.log(this.colony.networkValue);
       const param = {
         // Region: "ap-taipei",
         Version: "2017-03-12",
@@ -2737,9 +2985,40 @@ export default {
         if (res.Response.Error === undefined) {
           this.colonySecond.workerNodeNetOpt = res.Response.SubnetSet;
           // console.log(res.Response.SubnetSet)
-          this.colonySecond.workerNodeNetworkVal = this.colonySecond.workerNodeNetOpt[0].SubnetId;
-          this.colonySecond.nodeTotalNum = this.colonySecond.workerNodeNetOpt[0].TotalIpAddressCount;
-          this.colonySecond.nodeSurplusNum = this.colonySecond.workerNodeNetOpt[0].AvailableIpAddressCount;
+          for (var i in this.colonySecond.workerOneList) {
+            this.colonySecond.workerOneList[
+              i
+            ].workerNodeNetworkVal = this.colonySecond.workerNodeNetOpt[
+              i
+            ].SubnetId;
+            this.colonySecond.workerOneList[
+              i
+            ].nodeTotalNum = this.colonySecond.workerNodeNetOpt[
+              i
+            ].TotalIpAddressCount;
+            this.colonySecond.workerOneList[
+              i
+            ].nodeSurplusNum = this.colonySecond.workerNodeNetOpt[
+              i
+            ].AvailableIpAddressCount;
+          }
+          for (var i in this.colonySecond.masterOneList) {
+            this.colonySecond.masterOneList[
+              i
+            ].workerNodeNetworkVal = this.colonySecond.workerNodeNetOpt[
+              i
+            ].SubnetId;
+            this.colonySecond.masterOneList[
+              i
+            ].nodeTotalNum = this.colonySecond.workerNodeNetOpt[
+              i
+            ].TotalIpAddressCount;
+            this.colonySecond.masterOneList[
+              i
+            ].nodeSurplusNum = this.colonySecond.workerNodeNetOpt[
+              i
+            ].AvailableIpAddressCount;
+          }
         } else {
           let ErrTips = {};
           let ErrOr = Object.assign(ErrorTips, ErrTips);
@@ -2754,28 +3033,100 @@ export default {
     },
     //
     NodeSelect(val) {
-      console.log(val);
       let arr = this.colonySecond.workerNodeNetOpt;
       for (let i = 0; i < arr.length; i++) {
-        console.log(arr[i].SubnetId);
         if (val === arr[i].SubnetId) {
           this.colonySecond.nodeTotalNum = arr[i].TotalIpAddressCount;
           this.colonySecond.nodeSurplusNum = arr[i].AvailableIpAddressCount;
         }
       }
     },
+    // Master 节点
+    SecondMaster(val) {
+      // console.log(val)
+      this.rightListMaster = [];
+      if (val === "2") {
+        this.colonySecond.workerShow = true;
+        if (this.colonySecond.worker == 2 && this.colonySecond.source == 1) {
+          this.TotalCost(0, 2);
+        }
+      } else {
+        this.colonySecond.workerShow = false;
+        this.colonySecond.secondNextShow = true;
+      }
+      this.colonySecond.workerTips = false;
+      this.colonySecond.masterTips = true;
+      this.colonySecond.secondNextShow = false;
+      if (
+        this.colonySecond.worker == 2 &&
+        this.colonySecond.source == 2 &&
+        this.colonySecond.master == 1
+      ) {
+        this.colonySecond.boxShow = false;
+        this.colonySecond.completeBtn = true;
+      } else {
+        this.colonySecond.boxShow = true;
+        this.colonySecond.completeBtn = false;
+      }
+    },
+    // 计费模式
+    SecondCharging(val) {
+      // console.log(val);
+      if (val === "2") {
+        this.colonySecond.chargingShow = true;
+      } else {
+        this.colonySecond.chargingShow = false;
+      }
+    },
     // 机型  选择机型
     //获取可用区机型配置信息
-    async getDescribeZoneInstanceConfigInfos() {
+    getDescribeZoneInstanceConfigInfos() {
       let param = {
         Version: "2017-03-12"
       };
       param["Filters.0.Name"] = "instance-charge-type";
       param["Filters.0.Values.0"] = "POSTPAID_BY_HOUR";
-      await this.axios.post(DESCRIBE_ZONE_INFO, param).then(res => {
+      this.axios.post(DESCRIBE_ZONE_INFO, param).then(res => {
         if (res.Response.Error === undefined) {
           this.colonySecond.tableList = res.Response.InstanceTypeQuotaSet;
-          console.log(res.Response.InstanceTypeQuotaSet);
+          // console.log(res.Response.InstanceTypeQuotaSet);
+          for (var i in this.colonySecond.workerOneList) {
+            this.colonySecond.workerOneList[
+              i
+            ].modelName = this.colonySecond.tableList[i].InstanceType;
+            this.colonySecond.workerOneList[i].modelType = this.ModelTypeName(
+              this.colonySecond.tableList[i].TypeName
+            );
+            this.colonySecond.workerOneList[
+              i
+            ].modelHe = this.colonySecond.tableList[i].Cpu;
+            this.colonySecond.workerOneList[
+              i
+            ].modelGB = this.colonySecond.tableList[i].Memory;
+          }
+          for (let x in this.colonySecond.tableList) {
+            if (this.colonySecond.tableList[x].Cpu >= 4) {
+              this.colonySecond.masterTableList.push(
+                this.colonySecond.tableList[x]
+              );
+            }
+          }
+          for (var i in this.colonySecond.masterOneList) {
+            this.colonySecond.masterOneList[
+              i
+            ].modelName = this.colonySecond.masterTableList[i].InstanceType;
+            this.colonySecond.masterOneList[i].modelType = this.ModelTypeName(
+              this.colonySecond.masterTableList[i].TypeName
+            );
+            this.colonySecond.masterOneList[
+              i
+            ].modelHe = this.colonySecond.masterTableList[i].Cpu;
+            this.colonySecond.masterOneList[
+              i
+            ].modelGB = this.colonySecond.masterTableList[i].Memory;
+          }
+          // 总计费用
+          this.ModelSure(0, 1);
         } else {
           let ErrTips = {
             "InvalidInstanceType.Malformed": "指定InstanceType参数格式不合法",
@@ -2802,67 +3153,407 @@ export default {
         return "内存型M3";
       }
     },
-    // Master 节点
-    SecondMaster(val) {
-      // console.log(val)
-      this.rightListMaster = [];
-      if (val === "2") {
-        this.colonySecond.workerShow = true;
-      } else {
-        this.colonySecond.workerShow = false;
-        this.colonySecond.secondNextShow = true;
-      }
-      if (this.colonySecond.source == 2 && this.colonySecond.master == 1) {
-        this.colonySecond.masterTips = false;
-        this.colonySecond.secondNextShow = false;
-        if (this.rightList.length === 0) {
-          this.colonySecond.workerTips = true;
-        } else {
-          this.colonySecond.workerTips = false;
-        }
-      }
-      if (this.colonySecond.source == 2 && this.colonySecond.master == 2) {
-        this.colonySecond.workerTips = false;
-        this.colonySecond.masterTips = true;
-        this.colonySecond.secondNextShow = false;
-        this.ExistingNodes();
-      }
-    },
-    // 计费模式
-    SecondCharging(val) {
-      // console.log(val);
-      if (val === "2") {
-        this.colonySecond.chargingShow = true;
-      } else {
-        this.colonySecond.chargingShow = false;
-      }
+    // 机型
+    handleCurrentChange1(val) {
+      this.modelText = val;
     },
     // 机型
     handleCurrentChange(val) {
-      console.log(val);
+      this.modelText2 = val;
+    },
+    // 机型 弹框确认
+    ModelSure(index, a) {
+      if (this.modelText === undefined || this.modelText2 === undefined) {
+        this.modelText = this.colonySecond.tableList[index];
+        this.modelText2 = this.colonySecond.masterTableList[index];
+      }
+      if (a == 1) {
+        this.colonySecond.workerOneList[
+          index
+        ].modelName = this.modelText.InstanceType;
+        this.colonySecond.workerOneList[
+          index
+        ].InstanceChargeType = this.modelText.InstanceChargeType;
+        this.colonySecond.workerOneList[index].modelType = this.ModelTypeName(
+          this.modelText.TypeName
+        );
+        this.colonySecond.workerOneList[index].modelHe = this.modelText.Cpu;
+        this.colonySecond.workerOneList[index].modelGB = this.modelText.Memory;
+        this.colonySecond.workerOneList[index].modelShow = false;
+      } else {
+        this.colonySecond.masterOneList[
+          index
+        ].modelName = this.modelText2.InstanceType;
+        this.colonySecond.masterOneList[
+          index
+        ].InstanceChargeType = this.modelText2.InstanceChargeType;
+        this.colonySecond.masterOneList[index].modelType = this.ModelTypeName(
+          this.modelText2.TypeName
+        );
+        this.colonySecond.masterOneList[index].modelHe = this.modelText2.Cpu;
+        this.colonySecond.masterOneList[index].modelGB = this.modelText2.Memory;
+        this.colonySecond.masterOneList[index].modelShow = false;
+      }
+      // 总计费用
+      this.TotalCost(index, a);
     },
     // 系统盘 弹框确认
-    SystemDiskSure() {
-      this.colonySecond.systemDiskNumber = this.colonySecond.systemDiskNum;
+    SystemDiskSure(index, a) {
       var systemDiskOptions = this.colonySecond.systemDiskOptions;
       for (var i in systemDiskOptions) {
-        if (systemDiskOptions[i].value == this.colonySecond.systemDiskVal) {
-          this.colonySecond.systemDiskValue = systemDiskOptions[i].label;
+        if (a == 1) {
+          this.colonySecond.workerOneList[
+            index
+          ].systemDiskNumber = this.colonySecond.systemDiskNum;
+          this.TotalCost(index, a);
+          if (
+            this.colonySecond.workerOneList[index].systemDiskVal ==
+            systemDiskOptions[i].value
+          ) {
+            this.colonySecond.workerOneList[index].systemDiskValue =
+              systemDiskOptions[i].label;
+          }
+          this.colonySecond.workerOneList[index].systemDiskShow = false;
+        } else {
+          this.colonySecond.masterOneList[
+            index
+          ].systemDiskNumber = this.colonySecond.systemDiskNum;
+          this.TotalCost(index, a);
+          if (
+            this.colonySecond.masterOneList[index].systemDiskVal ==
+            systemDiskOptions[i].value
+          ) {
+            this.colonySecond.masterOneList[index].systemDiskValue =
+              systemDiskOptions[i].label;
+          }
+          this.colonySecond.masterOneList[index].systemDiskShow = false;
         }
       }
-      this.colonySecond.systemDiskShow = false;
     },
     // 购买数据盘
     BuyDataDisk(val) {
       if (val === true) {
         this.colonySecond.buyDataWidth = 764;
+        this.AddDataDisk();
       } else {
+        this.colonySecond.buyDataWidth = 300;
+        this.colonySecond.buyDataDiskArr = [];
+      }
+    },
+    // 购买数据盘 添加数据盘
+    AddDataDisk() {
+      this.colonySecond.buyDataDiskArr.push({
+        dataDiskVal: "CLOUD_PREMIUM",
+        dataDiskNum: "10",
+        formatMount: false,
+        latticeSetVal: "ext3",
+        setValue: ""
+      });
+    },
+    // 删除
+    deleteDataDisk(index) {
+      this.colonySecond.buyDataDiskArr.splice(index, 1);
+      if (this.colonySecond.buyDataDiskArr.length === 0) {
+        this.colonySecond.buyDataDisk = false;
         this.colonySecond.buyDataWidth = 300;
       }
     },
     // 数据盘 弹框确认
-    DataDiskSure() {},
+    DataDiskSure(index, a) {
+      let buyDataDiskArr = this.colonySecond.buyDataDiskArr;
+      this.colonySecond.workerOneList[index].dataDiskArr = [];
+      this.colonySecond.masterOneList[index].dataDiskArr = [];
+      let text = [];
+      if (buyDataDiskArr.length === 0) {
+        this.colonySecond.workerOneList[index].dataDiskValue = "暂不购买";
+      } else {
+        for (var i in buyDataDiskArr) {
+          for (let j in this.colonySecond.dataDiskOptions) {
+            if (
+              buyDataDiskArr[i].dataDiskVal ===
+              this.colonySecond.dataDiskOptions[j].value
+            ) {
+              let num = i - 0 + (1 - 0);
+              text.push(
+                "[" +
+                  num +
+                  "]" +
+                  this.colonySecond.dataDiskOptions[j].label +
+                  " " +
+                  buyDataDiskArr[i].dataDiskNum +
+                  "GB;"
+              );
 
+              if (a == 1) {
+                this.colonySecond.workerOneList[
+                  index
+                ].dataDiskValue = text.toString().replace(",", "");
+                this.colonySecond.workerOneList[index].dataDiskShow = false;
+                this.colonySecond.workerOneList[index].dataDiskArr.push({
+                  DiskType: this.colonySecond.dataDiskOptions[j].value,
+                  DiskSize: buyDataDiskArr[i].dataDiskNum
+                });
+              } else {
+                this.colonySecond.masterOneList[
+                  index
+                ].dataDiskValue = text.toString().replace(",", "");
+                this.colonySecond.masterOneList[index].dataDiskShow = false;
+                this.colonySecond.masterOneList[index].dataDiskArr.push({
+                  DiskType: this.colonySecond.dataDiskOptions[j].value,
+                  DiskSize: buyDataDiskArr[i].dataDiskNum
+                });
+              }
+            }
+          }
+        }
+      }
+      // 总计费用
+      this.TotalCost(index, a);
+    },
+    // 公网带宽 弹框确认
+    BroadbandSure(index, a) {
+      var broadbandOptions = this.colonySecond.broadbandOptions;
+      if (a == 1) {
+        this.colonySecond.workerOneList[
+          index
+        ].broadbandNumber = this.colonySecond.broadbandNum;
+        this.TotalCost(index, a);
+        for (var i in broadbandOptions) {
+          if (
+            this.colonySecond.workerOneList[index].broadbandVal ===
+            broadbandOptions[i].value
+          ) {
+            this.colonySecond.workerOneList[index].broadbandValue =
+              broadbandOptions[i].label;
+          }
+        }
+        this.colonySecond.workerOneList[index].broadbandShow = false;
+      } else {
+        this.colonySecond.masterOneList[
+          index
+        ].broadbandNumber = this.colonySecond.broadbandNum;
+        this.TotalCost(index, a);
+        for (var i in broadbandOptions) {
+          if (
+            this.colonySecond.masterOneList[index].broadbandVal ===
+            broadbandOptions[i].value
+          ) {
+            this.colonySecond.masterOneList[index].broadbandValue =
+              broadbandOptions[i].label;
+          }
+        }
+        this.colonySecond.masterOneList[index].broadbandShow = false;
+      }
+    },
+    // 确定
+    WorkerSure(index, a) {
+      if (a == 1) {
+        let worker = this.colonySecond.workerNodeNetOpt;
+        for (var i in worker) {
+          if (
+            this.colonySecond.workerOneList[index].workerNodeNetworkVal ===
+            worker[i].SubnetId
+          ) {
+            this.colonySecond.workerOneList[index].workerNodeNetworkValue =
+              worker[i].SubnetName;
+          }
+        }
+        this.colonySecond.workerOneList[index].showText = true;
+      this.colonySecond.workerOneList[index].showEdit = false;
+      } else {
+        let worker = this.colonySecond.workerNodeNetOpt;
+        for (var i in worker) {
+          if (
+            this.colonySecond.masterOneList[index].workerNodeNetworkVal ===
+            worker[i].SubnetId
+          ) {
+            this.colonySecond.masterOneList[index].workerNodeNetworkValue =
+              worker[i].SubnetName;
+          }
+        }
+        this.colonySecond.masterOneList[index].showText = true;
+      this.colonySecond.masterOneList[index].showEdit = false;
+      }
+    },
+    // worker 配置 编辑
+    EditWorker(index, a) {
+      if (a == 1) {
+        let workerOneList = this.colonySecond.workerOneList;
+        for (let i in workerOneList) {
+          if (index == i) {
+            this.colonySecond.workerOneList[index].showText = false;
+            this.colonySecond.workerOneList[index].showEdit = true;
+          } else {
+            this.colonySecond.workerOneList[i].showText = true;
+            this.colonySecond.workerOneList[i].showEdit = false;
+          }
+        }
+      } else {
+        let masterOneList = this.colonySecond.masterOneList;
+        for (let i in masterOneList) {
+          if (index == i) {
+            this.colonySecond.masterOneList[index].showText = false;
+            this.colonySecond.masterOneList[index].showEdit = true;
+          } else {
+            this.colonySecond.masterOneList[i].showText = true;
+            this.colonySecond.masterOneList[i].showEdit = false;
+          }
+        }
+      }
+    },
+    // worker 配置 删除
+    DeleteWorker(index, a) {
+      if (a == 1) {
+        this.colonySecond.workerOneList.splice(index, 1);
+      } else {
+        this.colonySecond.masterOneList.splice(index, 1);
+      }
+    },
+    // 添加机型
+    OneAddModel() {
+      this.colonySecond.index++;
+      this.colonySecond.workerOneList.push({
+        showText: false,
+        showEdit: true,
+        radio1: this.colonySecond.index,
+        modelShow: false,
+        modelName: "",
+        modelType: "",
+        modelHe: "",
+        modelGB: "",
+        systemDiskShow: false,
+        dataDiskShow: false,
+        broadbandShow: false,
+        workerNodeNetworkValue: "",
+        systemDiskVal: "CLOUD_PREMIUM",
+        systemDiskValue: "高性能云硬盘",
+        systemDiskNumber: "50",
+        // 数据盘
+        dataDiskValue: "暂不购买",
+        buyDataDisk: false,
+        dataDiskArr: [],
+        dataDiskVal: "1",
+        dataDiskNumber: "10",
+        latticeSetVal: "ext3",
+        setValue: "/var/lib/docker",
+        broadbandValue: "按宽带计费",
+        broadbandVal: "BANDWIDTH_POSTPAID_BY_HOUR",
+        broadbandNumber: "1",
+        formatMount: true,
+        dataNum: "1"
+      });
+      var _length = this.colonySecond.workerOneList.length;
+      this.colonySecond.workerOneList[_length - 2].showText = true;
+      this.colonySecond.workerOneList[_length - 2].showEdit = false;
+      this.ChildNodes();
+      this.getDescribeZoneInstanceConfigInfos();
+      // 总计费用
+      this.TotalCost(this.colonySecond.workerOneList.length - 1, 1);
+    },
+    // Master&Etcd 配置 添加机型
+    MasterAddModel() {
+      this.colonySecond.masterIndex++;
+      this.colonySecond.masterOneList.push({
+        showText: false,
+        showEdit: true,
+        radio1: this.colonySecond.masterIndex,
+        modelShow: false,
+        modelName: "",
+        modelType: "",
+        modelHe: "",
+        modelGB: "",
+        systemDiskShow: false,
+        dataDiskShow: false,
+        broadbandShow: false,
+        workerNodeNetworkValue: "",
+        systemDiskVal: "CLOUD_PREMIUM",
+        systemDiskValue: "高性能云硬盘",
+        systemDiskNumber: "50",
+        // 数据盘
+        dataDiskValue: "暂不购买",
+        buyDataDisk: false,
+        dataDiskArr: [],
+        dataDiskVal: "1",
+        dataDiskNumber: "10",
+        latticeSetVal: "ext3",
+        setValue: "/var/lib/docker",
+        broadbandValue: "按宽带计费",
+        broadbandVal: "BANDWIDTH_POSTPAID_BY_HOUR",
+        broadbandNumber: "1",
+        formatMount: true,
+        dataNum: "1"
+      });
+      var _length = this.colonySecond.masterOneList.length;
+      this.colonySecond.masterOneList[_length - 2].showText = true;
+      this.colonySecond.masterOneList[_length - 2].showEdit = false;
+      this.ChildNodes();
+      this.getDescribeZoneInstanceConfigInfos();
+      if (this.colonySecond.masterOneList.length > 2) {
+        this.colonySecond.masterTips = false;
+      }
+    },
+    // 总计费用
+    TotalCost(index, a) {
+      console.log(this.colonySecond.workerOneList[index]);
+      var array = [];
+      if (a == 1) {
+        array = this.colonySecond.workerOneList;
+      } else {
+        array = this.colonySecond.masterOneList;
+      }
+      let param = {
+        Version: "2017-03-12",
+        ImageId: "img-6yudrskj",
+        "Placement.ProjectId": this.colony.projectValue,
+        "Placement.Zone": "ap-taipei-1",
+        // 机型
+        InstanceChargeType: array[index].InstanceChargeType,
+        InstanceType: array[index].modelName,
+        // 数量
+        InstanceCount: 1,
+        // 系统盘
+        "SystemDisk.DiskSize": Number(array[index].systemDiskNumber),
+        "SystemDisk.DiskType": array[index].systemDiskVal,
+        PurchaseSource: "MC"
+      };
+      // 数据盘
+      if (array[index].dataDiskShow) {
+        let dataDisk = array[index].dataDiskArr;
+        for (let i in dataDisk) {
+          param["DataDisks." + i + ".DiskSize"] = dataDisk[i].DiskSize;
+          param["DataDisks." + i + ".DiskType"] = dataDisk[i].DiskSize;
+        }
+      }
+      // 公网带宽
+      param["InternetAccessible.InternetChargeType"] =
+        array[index].broadbandVal;
+      param["InternetAccessible.InternetMaxBandwidthOut"] = Number(
+        array[index].broadbandNumber
+      );
+      if (array[index].broadbandNumber == 0) {
+        param["InternetAccessible.PublicIpAssigned"] = false;
+      } else {
+        param["InternetAccessible.PublicIpAssigned"] = true;
+      }
+      console.log(param);
+      this.axios.post(TKE_PRICE, param).then(res => {
+        if (res.Response.Error === undefined) {
+          console.log(res.Response.Price);
+          let _data = res.Response.Price
+          this.colonySecond.allocationCost = _data.InstancePrice.UnitPrice
+          this.colonySecond.networkCost = _data.BandwidthPrice.UnitPrice
+        } else {
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
+    },
     // 第二步 上一步
     secondPrev() {
       this.firstBox = true;
@@ -2878,6 +3569,44 @@ export default {
       this.fourthBox = false;
     },
     // ----------------------------------------- 第三步 -------------------------------------
+    // 安全组
+    SecurityGroup() {
+      let param = {
+        Version: "2017-03-12"
+      };
+      param["Filters.0.Name"] = "project-id";
+      param["Filters.0.Values.0"] = this.colony.projectValue;
+      this.axios.post(TKE_MISG, param).then(res => {
+        if (res.Response.Error === undefined) {
+          var arr = res.Response.SecurityGroupSet;
+          for (var i in arr) {
+            this.securityGroupOpt.push({
+              label: arr[i].SecurityGroupId + "|" + arr[i].SecurityGroupName,
+              value: arr[i].SecurityGroupId
+            });
+          }
+          this.securityGroupSel = this.securityGroupOpt[0].value;
+        } else {
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
+    },
+    AddSafe() {
+      this.colonyThird.safeArr.push({
+        securityGroupSel: ""
+      });
+    },
+    //删除一项
+    deleteExceptPrice(index) {
+      this.colonyThird.safeArr.splice(index, 1);
+    },
     // 登录方式
     LoginMode(val) {
       console.log(val);
@@ -2894,6 +3623,28 @@ export default {
         this.colonyThird.two = false;
         this.colonyThird.three = true;
       }
+    },
+    // SSH密钥
+    SSHKey() {
+      let param = {
+        Version: "2017-03-12"
+      };
+      this.axios.post(TKE_SSH, param).then(res => {
+        if (res.Response.Error === undefined) {
+          this.colonyThird.sshKey = res.Response.KeyPairSet;
+          // console.log(res.Response.KeyPairSet);
+          this.colonyThird.sshKeySel = this.colonyThird.sshKey[0].KeyId;
+        } else {
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
     },
     // 第三步 上一步
     thirdPrev() {
@@ -3605,6 +4356,15 @@ export default {
         }
       }
     }
+    .input-box {
+      ::v-deep .el-input {
+        width: auto;
+      }
+      i {
+        font-size: 16px;
+        margin-left: 6px;
+      }
+    }
   }
   .tke-third-radio-btn {
     margin-top: 0px;
@@ -3741,7 +4501,13 @@ export default {
   }
   .tke-second-worker-popover-data-bg {
     padding: 0 20px;
+    display: flex;
     & > div {
+      display: flex;
+      width: 99%;
+    }
+    .box {
+      width: 99%;
       background-color: #f2f2f2;
       padding: 10px;
       margin-top: 10px;

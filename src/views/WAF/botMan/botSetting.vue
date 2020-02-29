@@ -8,7 +8,7 @@
         <p style="width: 99%">BOT 行为管理能够对友好及恶意机器人程序进行甄别分类，并采取针对性的流量管理策略，如放通搜索引擎类机器人流量，而对恶意数据爬取商品信息流量采取不响应或减缓响应或差异化响应策略，能够应对恶意机器人程序爬取带来的资源消耗，信息泄露及无效营销问题，同时也保障友好机器人程序（如搜索引擎，广告程序）的正常运行。了解更多</p>
         <span class="el-icon-close" @click="closeTip"></span>
       </div>
-      <el-row type="flex" justify="end">
+      <el-row style="margin-bottom: 10px" type="flex" justify="end">
           <el-input v-model="iptDomain" style="width: 180px;" placeholder="请输入域名">
              <i slot="suffix" @click="getDescribeHost" style="display: flex; justify-content: center; align-items: center; cursor: pointer" class="el-input__icon el-icon-search" />
           </el-input>
@@ -176,12 +176,11 @@ export default {
       this.hostFlag = !this.hostFlag
     },
     // 获取防护域名列表
-    getDescribeHost(bot='') {
+    getDescribeHost() {
       let params = {
         Version: '2018-01-25',
         Search: this.iptDomain,
-        'Item.FlowMode': 0,
-        'Item.Status': bot
+        // 'Item.FlowMode': 0,
       } 
       this.loadShow=true;
       this.axios.post(DESCRIBE_HOSTS, params).then(data => {

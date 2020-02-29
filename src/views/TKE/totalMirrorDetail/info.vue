@@ -9,7 +9,9 @@
             <div class="tke-form-item_text"><span>{{publics | publicsEdit}}</span></div>
           </el-form-item>
           <el-form-item label="仓库地址">
-            <div class="tke-form-item_text"><span>{{server}}/{{$route.query.id}}</span><i class="el-icon-document" style="cursor: pointer;"  @click="getContext($event)"></i></div>
+            <div class="tke-form-item_text"><span>{{server}}/{{$route.query.id}}</span>
+            <!-- <i class="el-icon-document" style="cursor: pointer;"  @click="getContext($event)"></i> -->
+            </div>
           </el-form-item>
           <el-form-item label="收藏量">
             <div class="tke-form-item_text"><span>{{favorCount}}</span></div>

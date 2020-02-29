@@ -173,7 +173,7 @@
 import packageUpgradeModel from '../model/packageUpgradeModel'
 import { DESCRIBE_HOSTS, DELETE_HOST, MODIFY_HOST_STATUS, MODIFY_HOST_ACCESS_LOG_STATUS } from '@/constants'
 import { ErrorTips } from "@/components/ErrorTips"
-import { PACKAGE_CFG_TYPES, COMMON_ERROR } from '../../constants'
+import { COMMON_ERROR } from '../../constants'
 import { flatObj } from '@/utils'
 
 export default {

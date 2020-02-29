@@ -12,9 +12,9 @@
             集群(中国台北) /
           </span>
           <span class="goback" @click="goBack()">
-            cls-gwblk71e(tfy_test1) /
+            {{this.clusterId}}(tfy_test1) /
           </span>
-          <h2 class="header-title">Node:10.0.0.9</h2>
+          <h2 class="header-title">DaemonSet:{{this.rowData.metadata.name}}({{spaceName}})</h2>
         </div>
         <!-- 右侧 -->
         <div class="grid-right"></div>
@@ -23,12 +23,11 @@
 
     <!-- 详情子菜单导航 -->
     <div class="tke-detial-nav">
-      <router-link class="nav-item" :to="{name:'deploymentDetailPod',query: {clusterId: clusterId}}">Pod管理</router-link>
-      <router-link class="nav-item" :to="{name:'deploymentDetailHistory',query: {clusterId: clusterId}}">修订历史</router-link>
-      <router-link class="nav-item" :to="{name:'deploymentDetailEvent',query: {clusterId: clusterId}}">事件</router-link>
-      <router-link class="nav-item" :to="{name:'deploymentDetailLog',query: {clusterId: clusterId}}">日志</router-link>
-      <router-link class="nav-item" :to="{name:'deploymentDetailInfo',query: {clusterId: clusterId}}">详情</router-link>
-      <router-link class="nav-item" :to="{name:'deploymentDetailYaml',query: {clusterId: clusterId}}">YAML</router-link>
+      <router-link class="nav-item" :to="{name:'daemonSetDetailPod',query: {clusterId: clusterId,spaceName: spaceName,rowData: rowData}}">Pod管理</router-link>
+      <router-link class="nav-item" :to="{name:'daemonSetDetailEvent',query: {clusterId: clusterId,spaceName: spaceName,rowData: rowData}}">事件</router-link>
+      <router-link class="nav-item" :to="{name:'daemonSetDetailLog',query: {clusterId: clusterId,spaceName: spaceName,rowData: rowData,statefulSetList: statefulSetList,potList: potList}}">日志</router-link>
+      <router-link class="nav-item" :to="{name:'daemonSetDetailInfo',query: {clusterId: clusterId,spaceName: spaceName,rowData: rowData}}">详情</router-link>
+      <router-link class="nav-item" :to="{name:'daemonSetDetailYaml',query: {clusterId: clusterId,spaceName: spaceName,rowData: rowData}}">YAML</router-link>
     </div> 
 
     <!-- 子页面 -->
@@ -43,12 +42,18 @@
 
 <script>
 import XLSX from "xlsx";
-import { ALL_CITY } from "@/constants";
+import { ALL_CITY,POINT_REQUEST } from "@/constants";
+import { ErrorTips } from "@/components/ErrorTips";
+import moment from 'moment';
 export default {
   name: "deploymentDetail",
   data() {
     return {
-        clusterId:'',
+      clusterId:'',//集群id
+      rowData: {},//传过来的数据
+      spaceName: '',//路由传过来的命名空间名称
+      statefulSetList: [],//statefulSet列表
+      potList: []//pod列表
     };
   },
   components: {
@@ -57,12 +62,44 @@ export default {
   created() {
     // 从路由获取集群id
     this.clusterId=this.$route.query.clusterId;
+    this.spaceName = this.$route.query.spaceName;
+    this.rowData = this.$route.query.rowData;
+    this.statefulSetList = this.$route.query.statefulSetList;
+    this.getDaemonSetPodList();
   },
   methods: {
+    //获取列表
+    async getDaemonSetPodList() {
+      this.loadShow = true;
+      let params = {
+        Method: "GET",
+        Path: "/apis/apps/v1beta2/namespaces/"+this.rowData.metadata.namespace+"/daemonsets/"+this.rowData.metadata.name+"/pods",
+        Version: "2018-05-25",
+        ClusterName: this.clusterId
+      }
+
+      await this.axios.post(POINT_REQUEST, params).then(res => {
+        if(res.Response.Error === undefined) {
+          this.loadShow = false;
+          let response = JSON.parse(res.Response.ResponseBody);
+          this.potList = response.items;
+        } else {
+          this.loadShow = false;
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
+    },
     //返回上一层
     goBack(){
       this.$router.push({
-        name:'colonyResourceDeployment',
+        name:'colonyResourceDaemonSet',
       })
     },
     //返回集群列表

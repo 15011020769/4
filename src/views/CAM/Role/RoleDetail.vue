@@ -111,7 +111,13 @@
                   </template>
                 </el-table-column>
                 <el-table-column prop="AddTime" :label="$t('CAM.userList.AssociationTime')"></el-table-column>
-                <el-table-column :label="$t('CAM.Role.failure')">
+                <el-table-column >
+                  <div slot="header" style="padding: 0;">
+                    {{$t('CAM.Role.failure')}}
+                    <el-tooltip placement="top" :content="$t('CAM.Role.rgnxzcx')" effect="light">
+                      <i class="el-icon-info"></i>
+                    </el-tooltip>
+                  </div>
                   <template slot-scope="scope">
                     <span v-if="scope.row.validTime">{{scope.row.validTime}}</span>
                   </template>
@@ -126,18 +132,18 @@
                   </template>
                 </el-table-column>
               </el-table>
-              <div class="Right-style pagstyle">
-                <span
-                  style="font-size:12px;color:#888;margin-right:20px;"
-                >{{$t('CAM.userList.choose')}} {{selTotalNum}} {{$t('CAM.Role.item')}}</span>
-                <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;{{$t("CAM.strip")}}</span>
+              <div class="Right-style pagstyle" v-show="activeName == 'first'" style="height:70px;display:flex;align-items:center;">
+                <span class='pagtotal'>共&nbsp;{{TotalCount}}&nbsp;{{$t("CAM.strip")}}</span>
                 <el-pagination
                   :page-size="pagesize"
                   :pager-count="7"
-                  layout="prev, pager, next"
+                  layout="prev, sizes, pager, next"
+                  :page-sizes="[10, 20, 30, 40, 50]"
                   @current-change="handleCurrentChange"
+                  @size-change="handleSizeChange"
                   :total="TotalCount"
-                ></el-pagination>
+                >
+                </el-pagination>
               </div>
             </div>
           </el-tab-pane>
@@ -168,9 +174,8 @@
                   </el-table-column>
                   <el-table-column label="操作" width="180">
                     <template slot-scope="scope">
-                      <el-tooltip v-if="roleCarrier.length === 1" effect="dark" content="无法删除唯一的载体" placement="top-start">
+                      <el-tooltip v-if="roleCarrier.length === 1" effect="dark" :content="$t('CAM.Role.wfscwydzt')" placement="top-start">
                       <el-button
-                        
                         type="text"
                         size="small"
                       >解除</el-button>
@@ -184,18 +189,18 @@
                     </template>
                   </el-table-column>
                 </el-table>
-                <div class="Right-style pagstyle" v-show="activeName == 'first'">
-                  <span
-                    style="font-size:12px;color:#888;margin-right:20px;"
-                  >{{$t('CAM.userList.choose')}} {{selTotalNum}} {{$t('CAM.Role.item')}}，共 {{TotalNum}} {{$t('CAM.Role.item')}}</span>
-                  <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;{{$t("CAM.strip")}}</span>
+                <div class="Right-style pagstyle" v-show="activeName == 'second'" style="height:70px;display:flex;align-items:center;">
+                  <span class='pagtotal'>共&nbsp;{{TotalCounts}}&nbsp;{{$t("CAM.strip")}}</span>
                   <el-pagination
                     :page-size="pagesize"
                     :pager-count="7"
-                    layout="prev, pager, next"
+                    layout="prev, sizes, pager, next"
+                    :page-sizes="[10, 20, 30, 40, 50]"
                     @current-change="handleCurrentChange"
-                    :total="TotalCount"
-                  ></el-pagination>
+                    @size-change="handleSizeChange"
+                    :total="TotalCounts"
+                  >
+                  </el-pagination>
                 </div>
               </div>
             </div>
@@ -394,6 +399,7 @@ export default {
       pagePolicies: 1,
       rpPolicies: 20,
       roleCarrier: [],
+      TotalCounts: [],
       TotalNum: 0,
       selTotalNum: 0,
       roleServeCarrier: [],
@@ -1019,6 +1025,9 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+// ::v-deep .el-tooltip__popper .is-light{
+//   max-width: 50%;
+// }
 .wrap >>> .el-button,
 .wrap >>> .el-input__inner {
   border-radius: 0;

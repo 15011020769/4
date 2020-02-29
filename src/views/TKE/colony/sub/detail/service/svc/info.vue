@@ -5,37 +5,44 @@
       <h4  class="tke-formpanel-title">基本信息</h4>
       <el-form  class="tke-form" label-position='left' label-width="120px" size="mini">
         <el-form-item label="名称">
-          <div class="tke-form-item_text">sdsd</div>
+          <div class="tke-form-item_text">{{detailData.metadata && detailData.metadata.name}}</div>
         </el-form-item>
         <el-form-item label="Namespace">
-          <div class="tke-form-item_text">default</div>
+          <div class="tke-form-item_text">{{detailData.metadata && detailData.metadata.namespace}}</div>
         </el-form-item>
         <el-form-item label="描述">
           <div class="tke-form-item_text">-</div>
         </el-form-item>
         <el-form-item label="Labels">
-          <div class="tke-form-item_text">-</div>
+          <div class="tke-form-item_text">
+            <!-- {{detailData.metadata && detailData.metadata.labels}} -->
+            <span v-for="(v,i) in detailData.metadata && detailData.metadata.labels" :key="v">
+              {{i}}:{{v+'  '}}
+              </span>
+          </div>
         </el-form-item>
         <el-form-item label="创建时间">
-          <div class="tke-form-item_text">2020-01-02 14:02:26</div>
+          <div class="tke-form-item_text">{{upTime(detailData.metadata && detailData.metadata.creationTimestamp)}}</div>
         </el-form-item>
         <el-form-item label="Selector">
-          <div class="tke-form-item_text">k8s-app：asdasd、qcloud-app：asdasd</div>
+          <!-- <div class="tke-form-item_text">k8s-app：{{detailData.k8sApp}} 、qcloud-app：{{detailData.qcloudApp}}</div> -->
+          <div class="tke-form-item_text">{{detailData.k8sApp?'k8s-app：'+detailData.k8sApp+' 、'+'qcloud-app：'+detailData.qcloudApp:'-'}}</div>
         </el-form-item>
         <el-form-item label="访问方式">
-          <div class="tke-form-item_text">LoadBalancer</div>
+          <div class="tke-form-item_text">{{detailData.spec && detailData.spec.type}}</div>
         </el-form-item>
         <el-form-item label="集群IP">
-          <div class="tke-form-item_text">172.16.253.125</div>
+          <div class="tke-form-item_text">{{detailData.spec && detailData.spec.clusterIP}}</div>
         </el-form-item>
         <el-form-item label="负载均衡IP">
-          <div class="tke-form-item_text">175.97.144.48</div>
+          <!-- <div class="tke-form-item_text">{{detailData.status && detailData.status.loadBalancer.ingress && detailData.status.loadBalancer.ingress[0].ip}}</div> -->
+          <div class="tke-form-item_text">{{detailData.status && detailData.status.loadBalancer.ingress? detailData.status.loadBalancer.ingress[0].ip:'-'}}</div>
         </el-form-item>
         <el-form-item label="端口映射">
           <div style="max-width:800px">
             <el-table
               :data="list"
-             
+
               style="width: 100%">
               <el-table-column
                 prop="protocol"
@@ -43,21 +50,21 @@
                 >
               </el-table-column>
               <el-table-column
-                prop="containerPort"
+                prop="port"
                 label="容器端口"
                 >
               </el-table-column>
               <el-table-column
-                prop="hostPort"
+                prop="nodePort"
                 label="主机端口"
                 >
               </el-table-column>
               <el-table-column
-                prop="servicePort"
+                prop="targetPort"
                 label="服务端口"
                 >
               </el-table-column>
-              
+
             </el-table>
           </div>
         </el-form-item>
@@ -79,41 +86,85 @@
 </template>
 
 <script>
-import FileSaver from "file-saver";
-import XLSX from "xlsx";
-import { ALL_CITY } from "@/constants";
+import FileSaver from 'file-saver'
+import XLSX from 'xlsx'
+import { ALL_CITY, POINT_REQUEST } from '@/constants'
+import { ErrorTips } from '@/components/ErrorTips'
+import moment from 'moment'
 export default {
-  name: "svcDetailInfo",
-  data() {
+  name: 'svcDetailInfo',
+  data () {
     return {
-      list:[
+      list: [
         {
-          protocol:'TCP',
-          containerPort:'333',
-          hostPort:'32436',
-          servicePort:'333',
-        },
-        
-      ], //列表  
-    };
+          protocol: 'TCP',
+          containerPort: '333',
+          hostPort: '32436',
+          servicePort: '333'
+        }
+
+      ], // 列表
+      clusterId: '', // 集群id
+      spaceName: '', // 命名空间的名称
+      serviceName: '', // 服务的名称
+      detailData: {}// 详情数据
+    }
   },
   components: {
-   
+
   },
-  created() {
-     // 从路由获取类型
-   
+  created () {
+    // 从路由获取类型
+    let { clusterId, spaceName, serviceName } = this.$route.query
+    this.clusterId = clusterId
+    this.spaceName = spaceName
+    this.serviceName = serviceName
+    // console.log(this.spaceName, this.serviceName)
+    this.getServiceNameInfo()
   },
   methods: {
-   
+    // 获取详情信息
+    async getServiceNameInfo () {
+      this.loadShow = true
+      let param = {
+        Method: 'GET',
+        Path: `/api/v1/namespaces/${this.spaceName}/services/${this.serviceName}`,
+        Version: '2018-05-25',
+        ClusterName: this.clusterId
+      }
+      await this.axios.post(POINT_REQUEST, param).then(res => {
+        if (res.Response.Error === undefined) {
+          this.loadShow = false
+          let response = JSON.parse(res.Response.ResponseBody)
+          this.detailData = response
+          this.detailData.k8sApp = this.detailData.spec.selector && this.detailData.spec.selector['k8s-app']
+          this.detailData.qcloudApp = this.detailData.spec.selector && this.detailData.spec.selector['qcloud-app']
+          this.list = response.spec.ports
+          // console.log(this.detailData, 'detail')
+          // console.log(this.list)
+        } else {
+          this.loadShow = false
+          let ErrTips = {
+
+          }
+          let ErrOr = Object.assign(ErrorTips, ErrTips)
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: 'error',
+            showClose: true,
+            duration: 0
+          })
+        }
+      })
+    },
+    // 处理时间格式
+    upTime (value) {
+      return moment(value).format('YYYY-MM-DD HH :mm:ss')
+    }
   }
-};
+}
 </script>
 
 <style lang="scss" scoped>
 
-
-
-
 </style>
-

@@ -156,7 +156,7 @@
           </el-table-column>
         </el-table>
         <div class="Right-style pagstyle" style="height:70px;">
-          <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;{{$t("CAM.strip")}}</span>
+          <span class="pagtotal">已选{{selectData.length}}{{$t("CAM.strip")}},&nbsp;共&nbsp;{{TotalCount}}&nbsp;{{$t("CAM.strip")}}</span>
           <el-pagination
             @size-change="handleSizeChange"
             :page-size="pagesize"
@@ -979,7 +979,7 @@ export default {
   background: rgb(250, 250, 250);
 }
 
-.wrap >>> .el-input__clear {
+::v-deep .el-input__clear {
   position: absolute;
   right: calc(100% + 2px);
 }
@@ -1058,7 +1058,8 @@ export default {
 
   .Right-style {
     display: flex;
-    justify-content: flex-end;
+    // justify-content: flex-end;
+    justify-content: space-between;
 
     .esach-inputL {
       width: 300px;

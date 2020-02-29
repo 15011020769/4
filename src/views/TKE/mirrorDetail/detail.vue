@@ -6,13 +6,15 @@
             <div class="tke-form-item_text"><span>{{name}}</span></div>
           </el-form-item>
           <el-form-item label="类型">
-            <div class="tke-form-item_text"><span>{{form.region|publicsEdit}}<i class="el-icon-edit" style="cursor: pointer;" @click="getEdit()"></i></span></div>
+            <div class="tke-form-item_text"><span>{{region|publicsEdit}}<i class="el-icon-edit" style="cursor: pointer;" @click="getEdit()"></i></span></div>
           </el-form-item>
           <el-form-item label="仓库地址">
-            <div class="tke-form-item_text"><span>{{server}}/{{name}}</span><i class="el-icon-document" style="cursor: pointer;"  @click="getContext($event)"></i></div>
+            <div class="tke-form-item_text"><span>{{server}}/{{name}}</span>
+            <!-- <i class="el-icon-document" style="cursor: pointer;"  @click="getContext($event)"></i> -->
+            </div>
           </el-form-item>
           <el-form-item label="描述">
-            <div class="tke-form-item_text"><span>{{forminput.textarea | descriptions}}<i class="el-icon-edit" style="cursor: pointer;" @click="getEditTwo()"></i></span></div>
+            <div class="tke-form-item_text"><span>{{description| descriptions}}<i class="el-icon-edit" style="cursor: pointer;" @click="getEditTwo()"></i></span></div>
           </el-form-item>
           <el-form-item label="创建时间">
             <div class="tke-form-item_text"><span>{{creationTime}}</span></div>
@@ -20,9 +22,9 @@
         </el-form>
         <!-- 修改类型 -->
         <el-dialog title="修改镜像仓库类型" :visible.sync="dialogFormVisible">
-          <el-form :model="form">
+          <el-form :model="form" class="tke-form">
             <el-form-item label="类型" :label-width="formLabelWidth">
-              <el-select v-model="form.region" placeholder="请选择活动区域" @change="setPublic()">
+              <el-select v-model="form.region" placeholder="请选择活动区域" @change="setPublic()" size="mini">
                 <el-option label="私有" value='0'></el-option>
                 <el-option label="公有" value='1'></el-option>
               </el-select>
@@ -35,17 +37,17 @@
         </el-dialog>
         <!-- 修改描述 -->
         <el-dialog title="修改镜像仓库描述" :visible.sync="dialogFormVisible2">
-          <el-form :model="forminput" ref="forminput">
+          <el-form :model="forminput" ref="forminput" :rules="rules">
             <el-form-item label="描述" :label-width="formLabelWidth"  prop="textarea"
             :rules="[
               { max: 1000, message: '长度不能超过1000个字符', trigger: 'blur' }
-            ]">
+            ]" class="tke-form">
                 <el-input
                   type="textarea"
                   :rows="4"
                   placeholder="请输入内容"
                   v-model="forminput.textarea"
-                  >
+                  size="mini">
                 </el-input>
                  <p style="font-size:12px;color:#bbb;">最长为1000个字符</p>
             </el-form-item>
@@ -79,7 +81,12 @@ export default {
       forminput: {
         textarea: ''
       },
-      formLabelWidth: '100px'
+      formLabelWidth: '100px',
+      rules:{
+         textarea: [
+          { max: 1000, message: '镜像名称不能超过1000个字符', trigger: 'blur' },
+        ]
+      }
     }
   },
   created () {
@@ -97,18 +104,14 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           this.dialogFormVisible2 = !valid
-          this.description = this.forminput.textarea
-          console.log(this.description)
+          // this.description = this.forminput.textarea
+          // console.log(this.description)
           this.SetMyMirrorDesc()
         } else {
           console.log('error submit!!')
           return false
         }
       })
-    },
-    // @blur="setDescription()"
-    setDescription () {
-      this.description = this.forminput.textarea
     },
     getEditTwo () {
       this.dialogFormVisible2 = true
@@ -142,7 +145,9 @@ export default {
         if (res.code == 0 && res.Error == undefined) {
           this.name = res.data.repoInfo[0].reponame
           this.form.region = res.data.repoInfo[0].public.toString()
+          this.region = res.data.repoInfo[0].public.toString()
           this.forminput.textarea = res.data.repoInfo[0].description
+          this.description = res.data.repoInfo[0].description
           this.creationTime = res.data.repoInfo[0].creationTime
           this.server = res.data.server
         } else {
@@ -162,7 +167,14 @@ export default {
       }
       this.axios.post(TKE_MIRROR_UPDATE, param).then(res => {
         if(res.code == 0 && res.Error == undefined){
-            return
+          this.GetMyMirror()
+          this.$message({
+                  message: "修改成功",
+                  type: "success",
+                  showClose: true,
+                  duration: 0
+              })
+          return
         } 
         this.$message({
             message: ErrorTips[res.codeDesc],
@@ -175,12 +187,19 @@ export default {
     SetMyMirrorDesc () { // 修改描述
       const param = {
         reponame: this.name,
-        description: this.description
+        description: this.forminput.textarea
       }
       this.axios.post(TKE_MIRROR_UPDATE_DESC, param).then(res => {
         if(res.code == 0 && res.Error == undefined){
+            this.GetMyMirror()
+            this.$message({
+                  message: "修改成功",
+                  type: "success",
+                  showClose: true,
+                  duration: 0
+              })
             return
-        } 
+        }
         this.$message({
             message: ErrorTips[res.codeDesc],
             type: "error",

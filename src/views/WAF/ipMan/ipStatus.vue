@@ -62,11 +62,19 @@
             <el-table-column prop="name" label="策略名称"></el-table-column>
             <el-table-column prop="action" label="动作"></el-table-column>
             <el-table-column prop="ts_version" label="创建时间">
+              <span slot="header">
+                创建时间
+                <i @click="() => { onSearch('Cts'); ctsFlag = !ctsFlag }" style="cursor: pointer" class="el-icon-d-caret" />
+              </span>
               <template slot-scope="scope">
                 {{scope.row.ts_version | currentTimeFilter}}
               </template>
             </el-table-column>
             <el-table-column prop="valid_ts" label="有效截止时间">
+              <span slot="header">
+                有效截止时间
+                <i @click="() => { onSearch('Vts'); vtsFlag = !vtsFlag }" style="cursor: pointer" class="el-icon-d-caret" />
+              </span>
               <template slot-scope="scope">
                 {{scope.row.valid_ts | currentTimeFilter}}
               </template>
@@ -147,7 +155,8 @@ export default {
       disabledIp: false, // 如果有输入ip地址，则禁用别的按钮
       triggerStrategy: '', // 触发策略
       ipInfo: {}, // 保存编辑信息
-
+      ctsFlag: false, // 更新时间升降序
+      vtsFlag: false, // 有效时间时间升降序
     };
   },
   components: {
@@ -271,7 +280,7 @@ export default {
     },
 
     // 条件查询
-    onSearch() {
+    onSearch(sort) {
       let params = {
         Version: '2018-01-25',
         Domain: this.ipSearch,
@@ -296,6 +305,20 @@ export default {
         delete params.VtsMin
         delete params.VtsMax
         delete params.Name
+      }
+
+      if (params.sort) {
+        delete params.sort
+      }
+
+      if (sort === 'Cts') {
+        this.vtsFlag = false
+        params.Sort = this.ctsFlag ? 'ts_version:1' : 'ts_version:-1' 
+      }
+
+      if (sort === 'Vts') {
+        this.ctsFlag = false
+        params.Sort = this.vtsFlag ? 'valid_ts:1' : 'valid_ts:-1' 
       }
 
       this.axios.post(DESCRIBEIP_HITITEMS, params).then(data => {

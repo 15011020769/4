@@ -34,7 +34,10 @@
       <el-table :data="list" v-loading="loadShow" style="width: 100%" id="exportTable">
         <el-table-column label="名称">
           <template slot-scope="scope">
-            <span @click="goSecretDetail()" class="tke-text-link">{{scope.row.metadata.name}}</span>
+            <span
+              @click="goSecretDetail(scope.row)"
+              class="tke-text-link"
+            >{{scope.row.metadata.name}}</span>
           </template>
         </el-table-column>
         <el-table-column prop label="类型">
@@ -62,7 +65,7 @@
         </el-table-column>
         <el-table-column label="操作" width="200">
           <template slot-scope="scope">
-            <span class="tke-text-link">编辑YAML</span>
+            <span class="tke-text-link" @click="editYaml">编辑YAML</span>
             <span class="tke-text-link ml10" @click="deleteNameSpace(scope.row)">删除</span>
           </template>
         </el-table-column>
@@ -140,13 +143,14 @@ export default {
           Version: "2018-05-25",
           ClusterName: this.clusterId
         };
-      }else{
-         var params = {
+      } else {
+        var params = {
           Method: "GET",
           Path:
             "/api/v1/namespaces/" +
             this.searchType +
-            "/secrets?fieldSelector=metadata.name="+this.searchInput,
+            "/secrets?fieldSelector=metadata.name=" +
+            this.searchInput,
           Version: "2018-05-25",
           ClusterName: this.clusterId
         };
@@ -211,13 +215,24 @@ export default {
         }
       });
     },
+    editYaml(){
+      console.log("不用编辑yaml");
+      //  this.$router.push({
+      //   name: "secretCreate",
+      //   query: {
+      //     clusterId: this.clusterId
+      //   }
+      // });
+    },
     // 详情
-    goSecretDetail() {
+    goSecretDetail(data) {
       console.log(this.$route);
       this.$router.push({
         name: "secretDetail",
         query: {
-          clusterId: this.clusterId
+          clusterId: this.clusterId,
+          name: data.metadata.name,
+          np: data.metadata.namespace
         }
       });
     },
@@ -236,7 +251,6 @@ export default {
     // 点击搜索
     clickSearch(val) {
       this.searchInput = val;
-
       this.getData();
     },
     //刷新数据
@@ -283,9 +297,9 @@ export default {
       this.showNameSpaceModal = true;
       this.nameSpaceName = row.metadata.name;
     },
-    //删除命名空间
+    //删除
     async submitDelete() {
-      console.log("正在开发");
+      // console.log("正在开发");
       this.loadShow = true;
       const param = {
         Method: "DELETE",
@@ -294,25 +308,25 @@ export default {
         RequestBody: { propagationPolicy: "Background", gracePeriodSeconds: 0 },
         ClusterName: this.clusterId
       };
-      // this.axios.post(POINT_REQUEST, param).then(res => {
-      //   if (res.Response.Error === undefined) {
-      //     this.getNameSpaceList();
-      //     this.loadShow = false;
-      //     this.showNameSpaceModal = false;
-      //   } else {
-      //     this.loadShow = false;
-      //     let ErrTips = {
-
-      //     };
-      //     let ErrOr = Object.assign(ErrorTips, ErrTips);
-      //     this.$message({
-      //       message: ErrOr[res.Response.Error.Code],
-      //       type: "error",
-      //       showClose: true,
-      //       duration: 0
-      //     });
-      //   }
-      // });
+      this.axios.post(POINT_REQUEST, param).then(res => {
+        if (res.Response.Error === undefined) {
+          this.getNameSpaceList();
+          this.showNameSpaceModal = false;
+          this.loadShow = false;
+          
+        } else {
+          this.loadShow = false;
+          let ErrTips = {
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
     }
   },
   components: {

@@ -525,7 +525,7 @@ export default new Router({
       ]
     },
     {
-      path: '/colony/sub/detail/resource/statefulSet', // 工作负载-Deployment-详情
+      path: '/colony/sub/detail/resource/statefulSet', // 工作负载-StatefulSet-详情
       name: 'statefulSetDetail',
       component: () => import('./colony/sub/detail/resource/statefulSet/index.vue'),
       redirect: '/colony/sub/detail/resource/statefulSet/pod', // 默认子路由
@@ -537,14 +537,6 @@ export default new Router({
           path: '/colony/sub/detail/resource/statefulSet/pod',
           name: 'statefulSetDetailPod',
           component: () => import('./colony/sub/detail/resource/statefulSet/pod.vue'),
-          meta: {
-            keepAlive: true,
-          }
-        },
-        { // 修订历史
-          path: '/colony/sub/detail/resource/statefulSet/history',
-          name: 'statefulSetDetailHistory',
-          component: () => import('./colony/sub/detail/resource/statefulSet/history.vue'),
           meta: {
             keepAlive: true,
           }
@@ -578,6 +570,110 @@ export default new Router({
           path: '/colony/sub/detail/resource/statefulSet/yaml',
           name: 'statefulSetDetailYaml',
           component: () => import('./colony/sub/detail/resource/statefulSet/yaml.vue'),
+          meta: {
+            keepAlive: true,
+          }
+        },  
+      ]
+    },
+    {
+      path: '/colony/sub/detail/resource/daemonSet', // 工作负载-DaemonSet-详情
+      name: 'daemonSetDetail',
+      component: () => import('./colony/sub/detail/resource/daemonSet/index.vue'),
+      redirect: '/colony/sub/detail/resource/daemonSet/pod', // 默认子路由
+      meta: {
+        keepAlive: true
+      },
+      children: [ // 子路由
+        { // Pod管理
+          path: '/colony/sub/detail/resource/daemonSet/pod',
+          name: 'daemonSetDetailPod',
+          component: () => import('./colony/sub/detail/resource/daemonSet/pod.vue'),
+          meta: {
+            keepAlive: true,
+          }
+        },
+        { // 事件
+          path: '/colony/sub/detail/resource/daemonSet/event',
+          name: 'daemonSetDetailEvent',
+          component: () => import('./colony/sub/detail/resource/daemonSet/event.vue'),
+          meta: {
+            keepAlive: true,
+          }
+        },
+        { // 日志
+          path: '/colony/sub/detail/resource/daemonSet/log',
+          name: 'daemonSetDetailLog',
+          component: () => import('./colony/sub/detail/resource/daemonSet/log.vue'),
+          meta: {
+            keepAlive: true,
+          }
+        },
+        { // 详情
+          path: '/colony/sub/detail/resource/daemonSet/info',
+          name: 'daemonSetDetailInfo',
+          component: () => import('./colony/sub/detail/resource/daemonSet/info.vue'),
+          meta: {
+            keepAlive: true,
+          }
+        },
+          
+        { // yaml
+          path: '/colony/sub/detail/resource/daemonSet/yaml',
+          name: 'daemonSetDetailYaml',
+          component: () => import('./colony/sub/detail/resource/daemonSet/yaml.vue'),
+          meta: {
+            keepAlive: true,
+          }
+        },  
+      ]
+    },
+    {
+      path: '/colony/sub/detail/resource/job', // 工作负载-Job-详情
+      name: 'jobDetail',
+      component: () => import('./colony/sub/detail/resource/job/index.vue'),
+      redirect: '/colony/sub/detail/resource/job/pod', // 默认子路由
+      meta: {
+        keepAlive: true
+      },
+      children: [ // 子路由
+        { // Pod管理
+          path: '/colony/sub/detail/resource/job/pod',
+          name: 'jobDetailPod',
+          component: () => import('./colony/sub/detail/resource/job/pod.vue'),
+          meta: {
+            keepAlive: true,
+          }
+        },
+        { // 事件
+          path: '/colony/sub/detail/resource/job/event',
+          name: 'jobDetailEvent',
+          component: () => import('./colony/sub/detail/resource/job/event.vue'),
+          meta: {
+            keepAlive: true,
+          }
+        },
+        { // 日志
+          path: '/colony/sub/detail/resource/job/log',
+          name: 'jobDetailLog',
+          component: () => import('./colony/sub/detail/resource/job/log.vue'),
+          meta: {
+            keepAlive: true,
+          }
+        },
+        { // 详情
+          path: '/colony/sub/detail/resource/job/info',
+          name: 'jobDetailInfo',
+          component: () => import('./colony/sub/detail/resource/job/info.vue'),
+          meta: {
+            keepAlive: true,
+          }
+        },
+          
+        { // yaml
+          path: '/colony/sub/detail/resource/job/yaml',
+          name: 'jobDetailYaml',
+          component: () => import('./colony/sub/detail/resource/job/yaml.vue'),
           meta: {
             keepAlive: true,
           }

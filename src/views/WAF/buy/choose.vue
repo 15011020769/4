@@ -22,7 +22,7 @@
               <el-button @click="taocan(3)" :class="thisType===3?'addColor':''">{{t('企业版', 'WAF.qyb')}}</el-button>
               <el-button @click="taocan(4)" :class="thisType===4?'addColor':''">{{t('旗舰版', 'WAF.qjb')}}</el-button>
             </el-button-group>
-            <div v-if="thisType=='1'" class="pList">
+            <div v-if="thisType === 2" class="pList">
               <p class="tipColr">{{t('适用于中小非业务网站的标准防护，', 'WAF.tt0')}}{{t('基于AI + 规则双引擎防护；', 'WAF.ttjyaijgz1')}}</p>
               <p>{{t('支持常见的Web攻击防护，包括SQL注入、XSS、Webshell上传、目录遍历等；', 'WAF.tt01')}}</p>
               <p>{{t('云端自动更新Web 0 day漏洞的防护规则；', 'WAF.tt02')}}</p>
@@ -36,7 +36,7 @@
               <p>{{t('支持二级域名个数：20；', 'WAF.tt010')}}</p>
               <p>{{t('业务宽带（云外/云内）', 'WAF.ywkp')}}：10Mbps/200Mbps；</p>
             </div>
-            <div v-if="thisType=='2'" class="pList">
+            <div v-if="thisType === 3" class="pList">
               <p class="tipColr">{{t('适用于中小型普通业务站点及中大型官网站点定制化防护服务，', 'WAF.syyzxqy')}}{{t('基于AI + 规则双引擎防护；', 'WAF.ttjyaijgz1')}}</p>
               <p>{{t('包含高级版所有功能；', 'WAF.tt1')}}</p>
               <p>{{t('支持链路劫持检测（5个）；', 'WAF.tt12')}}</p>
@@ -52,7 +52,7 @@
               <p>{{t('支持二级域名个数:30；', 'WAF.tt112')}}</p>
               <p>{{t('业务宽带（云外/云内）', 'WAF.ywkp')}}：30Mbps/200Mbps；</p>
             </div>
-            <div v-if="thisType=='3'" class="pList">
+            <div v-if="thisType === 4" class="pList">
               <p class="tipColr">{{t('适用于大型及超大型业务网站及复杂业务站点定制化防护服务，', 'WAF.syydxjcdxqy')}}{{t('基于AI + 规则双引擎防护；', 'WAF.ttjyaijgz1')}}</p>
               <p>{{t('包含企业版所有功能；', 'WAF.tt2')}}</p>
               <p>{{t('支持链路劫持检测（10个）；', 'WAF.tt21')}}</p>
@@ -124,7 +124,6 @@
 import { DESCRIBE_WAF_PRICE } from '@/constants'
 import { 
   CLB_PACKAGE_CFG_TYPES,
-  PACKAGE_CFG_TYPES,
   BUY_LOG_TYPES,
   CLB_BUY_DOMAIN_TYPES,
   CLB_BUY_QPS_TYPES,
@@ -162,13 +161,15 @@ export default {
   methods:{
     //套餐选择
     taocan(thisType){
-      this.thisType=thisType;
+      this.thisType = thisType
+      this.queryPrice()
     },
     //购买时长
     mounth(mounthType){
       this.mounthType = mounthType;
     },
     queryPrice() {
+      this.loading = true
       const commonParam = {
           "regionId": 1,
           "projectId": 0,
@@ -176,15 +177,16 @@ export default {
           "payMode": 1,
           "platform": 1,
       }
+      const { categoryid, goodstype, pid, pricetype } = CLB_PACKAGE_CFG_TYPES[this.thisType]
       const resInfo = [{
-        goodsCategoryId: PACKAGE_CFG_TYPES[this.thisType].first_categoryid,
+        goodsCategoryId: categoryid,
         ...commonParam,
         goodsDetail: {
-          "pid": 11416, // WAF的pid,
+          "pid": pid, // WAF的pid,
           "timeSpan": this.mounthType,
           "timeUnit": "m",
-          "type": 'wsm_waf',
-          [PACKAGE_CFG_TYPES[this.thisType].key]: 1,
+          "type": goodstype,
+          [pricetype]: 1,
         }
       }]
       // 选择了扩展域名包
@@ -238,7 +240,7 @@ export default {
           let price = 0
           CostInfo.forEach(cost => {
             costInfo[cost.Pid] = cost
-            price += cost.realTotalCost_rmb // RealTotalCost
+            price += cost.RealTotalCost // RealTotalCost
           })
           this.costInfo = costInfo
           this.price = price

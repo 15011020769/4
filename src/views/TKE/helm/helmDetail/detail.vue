@@ -86,9 +86,9 @@ export default {
         // 详情1
         getHelmDetail(){
             const param = {
-                ClusterName: "cls-deip4zxm",
+                ClusterName: this.$route.query.clusterId,
                 Method: "GET",
-                Path: "/apis/platform.tke/v1/clusters/cls-deip4zxm/helm/tiller/v2/releases/wangyu66/status/json",
+                Path: "/apis/platform.tke/v1/clusters/"+this.$route.query.clusterId+"/helm/tiller/v2/releases/"+this.$route.query.helmName+"/status/json",
                 Version: "2018-05-25"
             }
             this.axios.post(POINT_REQUEST, param).then(res => {
@@ -114,9 +114,9 @@ export default {
         // 详情2
         getHelmList(){
             const param = {
-                ClusterName: "cls-deip4zxm",
+                ClusterName: this.$route.query.clusterId,
                 Method: "GET",
-                Path: "/apis/platform.tke/v1/clusters/cls-deip4zxm/helm/tiller/v2/releases/wangyu66/content/json",
+                Path: "/apis/platform.tke/v1/clusters/"+this.$route.query.clusterId+"/helm/tiller/v2/releases/"+this.$route.query.helmName+"/content/json",
                 Version: "2018-05-25"
             }
             this.axios.post(POINT_REQUEST, param).then(res => {

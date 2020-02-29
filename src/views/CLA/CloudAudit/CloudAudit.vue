@@ -214,10 +214,27 @@
         }
       },
       _select(val) {
+        console.log(val)
         if (val == "ReadOnly") {
           this.placeholder = "支持搜索關鍵字為true或false";
-        } else {
-          this.placeholder = "請輸入內容";
+        } else if (val === 'AccessKeyId') {
+          this.placeholder = "請輸入訪問秘鑰";
+        } else if (val === 'RequestId') {
+          this.placeholder = "請輸入請求ID";
+        } else if (val === 'EventId') {
+          this.placeholder = "請輸入事件ID";
+        } else if (val === 'EventName') {
+          this.placeholder = "請輸入事件名稱";
+        } else if (val === 'ResourceName') {
+          this.placeholder = "請輸入資源名稱";
+        } else if (val === 'ResourceType') {
+          this.placeholder = "請輸入資源類型";
+        } else if (val === 'Username') {
+          this.placeholder = "請輸入用戶名稱";
+        } else if (val === 'ApiErrorCode') {
+          this.placeholder = "請輸入API錯誤碼";
+        } else if (val === 'CamErrorCode') {
+          this.placeholder = "請輸入CAM錯誤碼";
         }
         this.AttributeKey = val;
       },

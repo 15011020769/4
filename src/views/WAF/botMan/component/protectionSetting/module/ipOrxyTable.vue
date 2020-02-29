@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2020-02-20 10:13:21
- * @LastEditTime: 2020-02-20 15:40:55
+ * @LastEditTime: 2020-02-28 18:06:58
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: /new_product/src/views/WAF/botMan/component/protectionSetting/module/ipOrxyTable.vue
@@ -40,21 +40,7 @@
         </template>
       </el-table-column>
     </el-table>
-    <el-dialog
-      title="复制策略"
-      :visible.sync="dialogVisible"
-      width="850px"
-      destroy-on-close
-      >
-      <!-- <span>这是一段信息</span> -->
-        <Transfer v-if="showFlag" />
-        <div slot="footer">
-          <el-row type="flex" justify="center">
-            <el-button type="primary">复制</el-button>
-            <el-button @click="onClose">取消</el-button>
-          </el-row>
-        </div>
-    </el-dialog>
+    <Transfer :dialogVisible.sync="dialogVisible" v-if="dialogVisible" :iptDomain="ipSearch" />
     <EditDialog :visible.sync="showEditDialog" :info="editDialogProp" />
   </div>
 </template>
@@ -62,6 +48,7 @@
 <script>
 import Transfer from '../../transfer'
 import EditDialog from '../../editDialog'
+import { DESCRIBE_BOT_UCB_PREINSTALLRULE } from '@/constants'
 export default {
   data() {
     return {
@@ -132,7 +119,10 @@ export default {
   props: {
     tabsFlag: {
       default: 'diy'
-    }
+    },
+
+    ipSearch: ''
+    
   },
   watch: {
     tabsFlag(n, o) {
@@ -145,6 +135,10 @@ export default {
     EditDialog
   },
 
+  mounted() {
+    this.getPreinstallRule()
+  },
+
   methods: {
     onEdit(row) {
       this.showEditDialog = true
@@ -155,6 +149,18 @@ export default {
       this.showFlag = false
       setTimeout(() => {
         this.showFlag = true
+      })
+    },
+
+    // 获取协议特征策略
+    getPreinstallRule() {
+      let params = {
+        Version: '2018-01-25',
+        Domain: 'tfc.dhycloud.com',
+        Category: 1
+      }
+      this.axios.post(DESCRIBE_BOT_UCB_PREINSTALLRULE, params).then(res => {
+        console.log(res);
       })
     }
   }

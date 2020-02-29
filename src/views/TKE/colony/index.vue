@@ -20,7 +20,9 @@
       <div class="tke-grid">
         <!-- 左侧 -->
         <div class="grid-left">
-          <el-button @click="goColonyCreate" size="small" type="primary">新建</el-button>
+          <el-button @click="goColonyCreate" size="small" type="primary"
+            >新建</el-button
+          >
         </div>
         <!-- 右侧 -->
         <div class="grid-right">
@@ -41,7 +43,12 @@
 
       <!-- 数据列表展示 -->
       <div class="tke-card mt10">
-        <el-table :data="list" v-loading="loadShow" style="width: 100%" id="exportTable">
+        <el-table
+          :data="list"
+          v-loading="loadShow"
+          style="width: 100%"
+          id="exportTable"
+        >
           <el-table-column label="ID/名称">
             <template slot-scope="scope">
               <span
@@ -53,7 +60,8 @@
                     ? goColonySub(scope.row.ClusterId)
                     : ''
                 "
-              >{{ scope.row.ClusterId }}</span>
+                >{{ scope.row.ClusterId }}</span
+              >
               <p class="stk-editor-name">
                 <span>{{ scope.row.ClusterName }}</span>
                 <i
@@ -77,40 +85,67 @@
               <span class="tag-danger">未配告警</span>
             </template>
           </el-table-column>
-          <el-table-column prop="ClusterVersion" label="kubernetes版本"></el-table-column>
+          <el-table-column
+            prop="ClusterVersion"
+            label="kubernetes版本"
+          ></el-table-column>
           <el-table-column prop="address" label="类型/状态">
             <template slot-scope="scope">
-              <span v-if="scope.row.ClusterType == 'MANAGED_CLUSTER'">托管集群</span>
+              <span v-if="scope.row.ClusterType == 'MANAGED_CLUSTER'"
+                >托管集群</span
+              >
               <span v-else>独立部署</span>
               (
-              <span v-if="scope.row.ClusterStatus == 'Running'" class="text-green">运行中</span>
-              <span v-else-if="scope.row.ClusterStatus == 'Creating'" class="text-green">创建中</span>
+              <span
+                v-if="scope.row.ClusterStatus == 'Running'"
+                class="text-green"
+                >运行中</span
+              >
+              <span
+                v-else-if="scope.row.ClusterStatus == 'Creating'"
+                class="text-green"
+                >创建中</span
+              >
               <span v-else class="text-red">异常</span>)
             </template>
           </el-table-column>
           <el-table-column prop="nodeTotal" label="节点数">
             <template slot-scope="scope">
-              <a
-                href="javascript:;"
-                @click="NodeTotal(scope.row.ClusterId)"
-              >{{ scope.row.ClusterNodeNum }}台</a>
+              <a href="javascript:;" @click="NodeTotal(scope.row.ClusterId)"
+                >{{ scope.row.ClusterNodeNum }}台</a
+              >
               (
-              <span class="text-red" v-if="listStatusArr[scope.$index] == 'PartialAbnormal'">部分异常</span>
-              <span class="text-green" v-else-if="listStatusArr[scope.$index] == 'AllNormal'">全部正常</span>)
+              <span
+                class="text-green"
+                v-if="scope.row.ClusterInstanceState == 'AllNormal'"
+                >全部正常</span
+              >
+              <span class="text-red" v-else-if="scope.row.ClusterInstanceState == 'AllAbnormal'">全部异常</span>
+              <span class="text-red" v-else>部分异常</span>)
               <el-popover
                 width="50"
                 trigger="hover"
                 placement="top"
-                v-if="listStatusArr[scope.$index] == 'PartialAbnormal'"
+                v-if="scope.row.ClusterInstanceState != 'AllNormal'"
               >
                 <div class="node-popover">
-                  <p>创建中：{{ listStatus[scope.$index].ClusterInitNodeNum }}台</p>
+                  <p>
+                    创建中：{{ scope.row.ClusterInitNodeNum }}台
+                  </p>
                   <p>
                     运行中：{{
-                    listStatus[scope.$index].ClusterRunningNodeNum
+                      scope.row.ClusterRunningNodeNum
                     }}台
                   </p>
-                  <p>异常：{{ listStatus[scope.$index].ClusterFailedNodeNum }}台</p>
+                  <p>
+                    异常：{{ scope.row.ClusterRunningNodeNum }}台
+                  </p>
+                  <p>
+                    已关机：{{ scope.row.ClusterClosedNodeNum }}台
+                  </p>
+                  <p>
+                    关机中：{{ scope.row.ClusterClosingNodeNum }}台
+                  </p>
                 </div>
                 <i class="el-icon-warning-outline" slot="reference"></i>
               </el-popover>
@@ -128,34 +163,63 @@
                 @click="ConfigWarn"
                 class="tke-text-link"
                 v-if="scope.row.ClusterStatus == 'Running'"
-              >配置告警</span>
-              <span class="tke-text-link tke-text-link-dis" v-else>配置告警</span>
+                >配置告警</span
+              >
+              <span class="tke-text-link tke-text-link-dis" v-else
+                >配置告警</span
+              >
               <span
                 @click="goAddExist(scope.row.ClusterId)"
                 v-if="scope.row.ClusterStatus == 'Running'"
                 class="tke-text-link ml10"
-              >添加已有节点</span>
-              <span v-else class="tke-text-link ml10 tke-text-link-dis">添加已有节点</span>
+                >添加已有节点</span
+              >
+              <span v-else class="tke-text-link ml10 tke-text-link-dis"
+                >添加已有节点</span
+              >
               <el-dropdown class="ml10 tke-dropdown">
                 <span class="el-dropdown-link">
                   更多
                   <i class="el-icon-arrow-down el-icon--right"></i>
                 </span>
                 <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item command="a" v-if="scope.row.ClusterStatus == 'Running'">
-                    <span class="tke-text-link" @click="ViewCluster(scope.row.ClusterId)">查看集群凭证</span>
+                  <el-dropdown-item
+                    command="a"
+                    v-if="scope.row.ClusterStatus == 'Running'"
+                  >
+                    <span
+                      class="tke-text-link"
+                      @click="ViewCluster(scope.row.ClusterId)"
+                      >查看集群凭证</span
+                    >
                   </el-dropdown-item>
                   <el-dropdown-item command="a" v-else>
-                    <span class="tke-text-link tke-text-link-dis">查看集群凭证</span>
+                    <span class="tke-text-link tke-text-link-dis"
+                      >查看集群凭证</span
+                    >
                   </el-dropdown-item>
-                  <el-dropdown-item command="b" v-if="scope.row.ClusterStatus == 'Running'">
-                    <span class="tke-text-link" @click="goExpand(scope.row.ClusterId)">新建节点</span>
+                  <el-dropdown-item
+                    command="b"
+                    v-if="scope.row.ClusterStatus == 'Running'"
+                  >
+                    <span
+                      class="tke-text-link"
+                      @click="goExpand(scope.row.ClusterId)"
+                      >新建节点</span
+                    >
                   </el-dropdown-item>
                   <el-dropdown-item command="b" v-else>
-                    <span class="tke-text-link tke-text-link-dis">新建节点</span>
+                    <span class="tke-text-link tke-text-link-dis"
+                      >新建节点</span
+                    >
                   </el-dropdown-item>
                   <el-dropdown-item command="c">
-                    <span class="tke-text-link" href="javascript:;" @click="Delete(scope.row)">删除</span>
+                    <span
+                      class="tke-text-link"
+                      href="javascript:;"
+                      @click="Delete(scope.row)"
+                      >删除</span
+                    >
                   </el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
@@ -192,7 +256,11 @@
             <p>集群测试</p>
           </el-form-item>
           <el-form-item label="新名称">
-            <el-input size="small" placeholder="请输入新名称" v-model="editSearchVal"></el-input>
+            <el-input
+              size="small"
+              placeholder="请输入新名称"
+              v-model="editSearchVal"
+            ></el-input>
           </el-form-item>
         </el-form>
       </div>
@@ -213,9 +281,7 @@
       <div class="content">
         <p>您确定要删除集群"{{ deleteID }}（{{ deleteName }}）"吗？</p>
         <p>
-          该集群下拥有{{
-          deteleNodeNum + deteleMaterNodeNum
-          }}个节点，其中
+          该集群下拥有{{ deteleNodeNum + deteleMaterNodeNum }}个节点，其中
           <span>0台</span>为包年包月节点，
           <a href="javascript:;" @click="DetailsShow">查看详情</a>
           <i class="el-icon-caret-bottom" v-if="!detailsShow"></i>
@@ -235,7 +301,9 @@
             <el-table-column label="状态" width="180">
               <template slot-scope="scope">
                 <p v-if="scope.row.InstanceState === 'running'">健康</p>
-                <p v-else-if="scope.row.InstanceState === 'initializing'">创建中</p>
+                <p v-else-if="scope.row.InstanceState === 'initializing'">
+                  创建中
+                </p>
                 <p v-else>异常</p>
               </template>
             </el-table-column>
@@ -246,7 +314,10 @@
             </el-table-column>
           </el-table>
         </div>
-        <div class="delete-table tke-card tke-formpanel-wrap" v-if="detailsShow">
+        <div
+          class="delete-table tke-card tke-formpanel-wrap"
+          v-if="detailsShow"
+        >
           <el-table :data="detaleTableData" style="width: 100%">
             <el-table-column label="ID" width="180">
               <template slot-scope="scope">
@@ -257,7 +328,9 @@
             <el-table-column label="状态" width="180">
               <template slot-scope="scope">
                 <p v-if="scope.row.InstanceState === 'running'">健康</p>
-                <p v-else-if="scope.row.InstanceState === 'initializing'">创建中</p>
+                <p v-else-if="scope.row.InstanceState === 'initializing'">
+                  创建中
+                </p>
                 <p v-else>异常</p>
               </template>
             </el-table-column>
@@ -270,9 +343,15 @@
         </div>
 
         <div class="detele-destruction">
-          <p>集群在删除期间，无法对外提供服务，请提前做好准备，以免造成影响；</p>
-          <p>删除集群将移出节点包年包月节点，您可以选择是否销毁按量计费节点。</p>
-          <el-checkbox v-model="deteleCheck">销毁按量计费的节点（销毁后不可恢复，请谨慎操作，并提前备份好数据）</el-checkbox>
+          <p>
+            集群在删除期间，无法对外提供服务，请提前做好准备，以免造成影响；
+          </p>
+          <p>
+            删除集群将移出节点包年包月节点，您可以选择是否销毁按量计费节点。
+          </p>
+          <el-checkbox v-model="deteleCheck"
+            >销毁按量计费的节点（销毁后不可恢复，请谨慎操作，并提前备份好数据）</el-checkbox
+          >
         </div>
       </div>
       <span slot="footer" class="dialog-footer">
@@ -358,6 +437,7 @@ export default {
   created() {
     this._region();
     this.getColonyList();
+    this.getColonyStatus();
   },
   mounted() {},
   methods: {
@@ -376,15 +456,38 @@ export default {
       const res = await this.axios.post(TKE_COLONY_LIST, params);
       if (res.Response.Error === undefined) {
         if (res.Response.Clusters.length > 0) {
-          let ids = [];
-          res.Response.Clusters = res.Response.Clusters.map(item => {
-            ids.push(item.ClusterId);
-            return item;
+          let params = {
+            Version: "2018-05-25"
+          };
+          if(res.Response.Clusters.length > 0) {
+            for (var i in res.Response.Clusters) {
+              params["ClusterIds." + i] = res.Response.Clusters[i].ClusterId;
+            }
+          }
+          await this.axios.post(TKE_COLONY_STATUS, params).then(res1 => {
+            this.listStatus = res1.Response.ClusterStatusSet;
+            let status = res1.Response.ClusterStatusSet;
+            res.Response.Clusters.map(cluster => {
+              for(var i in status) {
+                if(cluster.ClusterId === status[i].ClusterId) {
+                  cluster.status = status[i].ClusterState;
+                  cluster.ClusterInstanceState = status[i].ClusterInstanceState;
+                  cluster.ClusterBMonitor = status[i].ClusterBMonitor;
+                  cluster.ClusterInitNodeNum = status[i].ClusterInitNodeNum;
+                  cluster.ClusterRunningNodeNum = status[i].ClusterRunningNodeNum;
+                  cluster.ClusterFailedNodeNum = status[i].ClusterFailedNodeNum;
+                  cluster.ClusterClosedNodeNum = status[i].ClusterClosedNodeNum;
+                  cluster.ClusterClosingNodeNum = status[i].ClusterClosingNodeNum;
+                }
+              }
+              return cluster;
+            });
           });
+          this.list = res.Response.Clusters;
           this.total = res.Response.TotalCount;
         }
-        this.list = res.Response.Clusters;
-        this.getColonyStatus();
+        // this.getColonyStatus();
+        console.log("list",this.list);
         this.loadShow = false;
       } else {
         this.loadShow = false;
@@ -412,22 +515,37 @@ export default {
       }
     },
     // 获取集群列表状态(不对外单独提供文档,所以无法实现)
-    getColonyStatus() {
+    async getColonyStatus() {
+      let list = this.list;
       let params = {
         Version: "2018-05-25"
       };
-      if (this.searchInput !== "") {
-        for (var i in this.list) {
-          params["ClusterIds." + i] = this.list[i].ClusterId;
+      if(list.length > 0) {
+        for (var i in list) {
+          params["ClusterIds." + i] = list[i].ClusterId;
         }
       }
 
-      this.axios.post(TKE_COLONY_STATUS, params).then(res => {
+      await this.axios.post(TKE_COLONY_STATUS, params).then(res => {
         this.listStatus = res.Response.ClusterStatusSet;
         this.listStatusArr = [];
-        for (var i in this.listStatus) {
-          this.listStatusArr.push(this.listStatus[i].ClusterInstanceState);
-        }
+        let status = res.Response.ClusterStatusSet;
+        list.map(cluster => {
+          for(var i in status) {
+            if(cluster.ClusterId === status[i].ClusterId) {
+              cluster.ClusterState = status[i].ClusterState;
+              cluster.ClusterInstanceState = status[i].ClusterInstanceState;
+              cluster.ClusterBMonitor = status[i].ClusterBMonitor;
+              cluster.ClusterInitNodeNum = status[i].ClusterInitNodeNum;
+              cluster.ClusterRunningNodeNum = status[i].ClusterRunningNodeNum;
+              cluster.ClusterFailedNodeNum = status[i].ClusterFailedNodeNum;
+              cluster.ClusterClosedNodeNum = status[i].ClusterClosedNodeNum;
+              cluster.ClusterClosingNodeNum = status[i].ClusterClosingNodeNum;
+            }
+          }
+          return cluster;
+        });
+        this.list = list;
       });
     },
     // 分页

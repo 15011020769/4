@@ -12,7 +12,7 @@
         <el-button size="mini" class="botton-size" @click="dialogFormVisible2 = true">重置密码</el-button>
       </div>
       <div class="top-right">
-          <el-input v-model.trim="input" placeholder="请输入镜像名称" size="mini"></el-input>
+          <el-input v-model.trim="input" placeholder="请输入镜像名称" size="mini" @change="changeSearch()"></el-input>
           <el-button icon="el-icon-search" size="mini" style="margin-left:-1px;height:28px;" :plain="true" @click="getSearch()"></el-button>
       </div>
     </div>
@@ -77,26 +77,27 @@
         :rules="rules"
         ref="ruleForm"
         label-width="100px"
-        class="demo-ruleForm"
+        class="demo-ruleForm tke-form"
         size="small"
         style="width:500px"
+        label-position="left"
       >
-        <el-form-item label="名称" prop="name">
+        <el-form-item label="名称" prop="name" size="mini">
           <el-input  v-model="name" @change="getName()" style="width:200px"></el-input>
           <p class="form-p">最长为200个字符，只能包含小写字母、数字及分隔符("."、"_"、"-")，且不能以分隔符开头或结尾</p>
         </el-form-item>
-        <el-form-item label="类型" prop="region">
+        <el-form-item label="类型" prop="region" size="mini">
           <el-select v-model="ruleForm.region" label="私有">
             <el-option label="私有" value="0"></el-option>
             <el-option label="公有" value="1"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="命名空间" prop="region2">
+        <el-form-item label="命名空间" prop="region2" size="mini">
            <el-select v-model="ruleForm.region2" filterable placeholder="请选择">
               <el-option v-for="(item,key) in spaceName" :key="key" :label="item.namespace" :value="item.namespace"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="描述" prop="desc">
+        <el-form-item label="描述" prop="desc" size="mini">
           <el-input type="textarea" size="medium" v-model="ruleForm.desc" :autosize="{ minRows: 2, maxRows: 4}" maxlength=1000></el-input>
           <p class="form-p">最长为1000个字符</p>
         </el-form-item>
@@ -113,18 +114,19 @@
         :rules="rules"
         ref="rulePass"
         label-width="100px"
-        class="demo-ruleForm"
+        class="demo-ruleForm tke-form"
         size="small"
         style="width:500px"
+        label-position="left"
       >
         <p class="form-pt">您将重置使用docker login命令登录到腾讯云镜像仓库的密码</p>
         <el-form-item label="名称">
             <p>{{nameId}}</p>
         </el-form-item>
-        <el-form-item label="密码" prop="pass">
+        <el-form-item label="密码" prop="pass" size="mini"> 
           <el-input type="password" v-model="rulePass.pass" autocomplete="off" style="width:200px"></el-input>
         </el-form-item>
-        <el-form-item label="确认密码" prop="checkPass">
+        <el-form-item label="确认密码" prop="checkPass" size="mini">
           <el-input type="password" v-model="rulePass.checkPass" autocomplete="off" style="width:200px"></el-input>
         </el-form-item>
       </el-form>
@@ -175,22 +177,33 @@ export default {
   name:'MirrorUser',
   data () {
     var validatePass = (rule, value, callback) => {
+      var ckAll = /^(?![a-zA-Z]+$)(?!\d+$)(?![^\x00-\xff]+$).+$/
       if (value === '') {
         callback(new Error('请输入密码'))
+      }else if(value.length<8 && value.length>16){
+        callback(new Error('密码必须为8到16位'))
+      }else if(!ckAll.test(value)){
+        callback(new Error('密码必须包含数字、字母、特殊字符中至少两项'))
       } else {
         if (this.rulePass.checkPass !== '') {
           this.$refs.rulePass.validateField('checkPass')
         }
+        // console.log(value.length)
         callback()
       }
     }
     var validatePass2 = (rule, value, callback) => {
+      var ckAll = /^(?![a-zA-Z]+$)(?!\d+$)(?![^\x00-\xff]+$).+$/
       if (value === '') {
         callback(new Error('请再次输入密码'))
       } else if (value !== this.rulePass.pass) {
         callback(new Error('两次输入密码不一致!'))
-      } else {
-        callback()
+      } else if(value.length<8 && value.length>16){
+        callback(new Error('密码必须为8到16位'))
+      }else if(!ckAll.test(value)){
+        callback(new Error('密码必须包含数字、字母、特殊字符中至少两项'))
+      }  else {
+        callback()  
       }
     }
     var validatePass3 = (rule, value, callback) => {
@@ -240,10 +253,8 @@ export default {
       },
       ruleForm: {
         name: '',
-        region: '0',
+        // region: '0',
         region2: '',
-        type: [],
-        resource: '',
         desc: '',
       },
       rules: {
@@ -260,12 +271,6 @@ export default {
         ],
         region2: [
           { required: true, message: '命名空间不能为空', trigger: 'change' }
-        ],
-        type: [
-          { type: 'array', message: '请至少选择一个活动性质', trigger: 'change' }
-        ],
-        resource: [
-          { message: '请选择活动资源', trigger: 'change' }
         ]
       }
     }
@@ -290,6 +295,11 @@ export default {
         this.isReponame = val.region2 + '/' + val.name
         // this.isPresence()
       }
+    },
+    input(val){
+      if(val == ""){
+        this.getSearch()
+      }
     }
   },
   methods: {
@@ -308,10 +318,9 @@ export default {
       // console.log(formName)
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          // console.log(valid)
           this.dialogFormVisible = !valid
           this.CreateMyMirror()
-          this.GetMyMirror()
+          
           this.$refs.ruleForm.clearValidate()
           this.$refs.ruleForm.resetFields()
           this.name = ''
@@ -336,6 +345,11 @@ export default {
         }
     })
     },
+    // changeSearch(){
+    //   if(this.input === ""){
+    //     this.getSearch()
+    //   }
+    // },
     // 命名空间列表
     // setListName(){
 
@@ -372,7 +386,9 @@ export default {
       } else {
         this.$message({
           message: '当前输入的镜像名称不符合镜像仓库命名规范，仅支持小写字母、数字及分隔符("."、"_"、"-")',
-          type: 'warning'
+          type: 'warning',
+          showClose: true,
+          duration: 0
         })
       }
     },
@@ -386,7 +402,7 @@ export default {
     deleteOpen () {
       this.dialogTableVisible = true
       this.deleteData = this.multipleSelection
-      console.log(this.deleteData)
+      // console.log(this.deleteData)
     },
     // 全选删除
     deleteAll () {
@@ -398,13 +414,14 @@ export default {
       this.deleteSpace = obj
       this.DeleteMyMirror()
     },
-    open3 () {
-      this.$message({
-        message: '警告哦，这是一条警告消息',
-        type: 'warning'
-      })
-    },
-    GetMyMirror () { // 获得我的镜像数据
+    // open3 () {
+    //   this.$message({
+    //     message: '警告哦，这是一条警告消息',
+    //     type: 'warning'
+    //   })
+    // },
+    // 获得我的镜像数据
+    GetMyMirror () { 
       const param = {
         reponame: this.input,
         offset: 20 * (this.currpage - 1),
@@ -417,6 +434,7 @@ export default {
           this.TotalCount = res.data.totalCount
           this.loadShow = false
         } else {
+          console.log(2)
           this.$message({
               message: ErrorTips[res.codeDesc],
               type: "error",
@@ -434,6 +452,12 @@ export default {
           this.GetMyMirror()
           this.loadShow = true
           this.deleteSpace = ''
+          this.$message({
+              message: "删除成功",
+              type: "success",
+              showClose: true,
+              duration: 0
+          })
         } else {
           this.$message({
               message: ErrorTips[res.codeDesc],
@@ -472,8 +496,15 @@ export default {
       }
       this.axios.post(TKE_MIRROR_CREATE, param).then(res => {
         if (res.code === 0 && res.Error == undefined) {
+          this.GetMyMirror()
           this.loadShow = false
           console.log(res)
+          this.$message({
+              message: "新建成功",
+              type: "success",
+              showClose: true,
+              duration: 0
+          })
         } else {
           this.$message({
               message: ErrorTips[res.codeDesc],

@@ -59,19 +59,19 @@
               <el-radio-button label="two">指定容器</el-radio-button>
             </el-radio-group>
             <div v-for="(item, index) in formFour" :key="index" style="margin-bottom:10px;">
-              <div class="form-form position-form" v-if="
+              <div class="form-form position-form" v-show="
                   vlog == 'two' && tabPosition == 'one' && item.flag == false
                 ">
                 <i class="el-icon-edit-outline icon-edit-outline" @click="roomShow(index)"></i>
                 <i class="el-icon-close icon-close" @click="removeNewRoom(formFour, index)"></i>
                 <div>
                   <span>Namespace:</span><span>{{item.value1}}</span>|<span>采集对象:</span>
-                  <span v-if="item.radio=='1'">全部容器</span>
-                  <span v-else>{{item.workload}}个工作负载</span>
+                  <span v-show="item.radio=='1'">全部容器</span>
+                  <span v-show="item.radio!='1'">{{item.workload}}个工作负载</span>
                 </div>
               </div>
 
-              <div class="form-form position-form" v-if="
+              <div class="form-form position-form" v-show="
                   vlog == 'two' && tabPosition == 'one' && item.flag == true 
                 ">
                 <i class="el-icon-check icon-check" @click="roomShow(index)"></i>
@@ -89,7 +89,7 @@
                     <el-radio label="2">按工作负载（Workload）选择</el-radio>
                   </el-radio-group>
                 </el-form-item>
-                <el-form-item v-if="item.radio == 2">
+                <el-form-item v-show="item.radio == 2">
                   <div class="border-room">
                     <div class="border-text">
                       <div class="border-left">工作负载类型</div>
@@ -99,66 +99,66 @@
                     <el-tabs tab-position="left" class="tab-set" style="height: 200px;" v-model="item.activeName"
                       @tab-click="workLoadTab(item.activeName, index)">
                       <el-tab-pane label="Deployment" name="Deployment">
-                        <div v-if="workload1.length!='0'" style="overflow:auto">
-                          <el-checkbox-group v-model="Checkbox.checkbox0" @change="checkboxChange0">
+                        <div v-show="workload1.length!='0'" style="overflow:auto">
+                          <el-checkbox-group v-model="Checkbox.checkbox0" @change="checkboxChange0(Checkbox.checkbox0,item.value1)">
                             <p v-for="(item,index) in workload1" :key="index">
-                              <el-checkbox :label="item">{{item.metadata.name}}</el-checkbox>
+                              <el-checkbox :label="item.metadata.name" >{{item.metadata.name}}</el-checkbox>
                             </p>
                           </el-checkbox-group>
 
                         </div>
-                        <span v-else>当前命名空间下，该工作负载类型列表为空</span>
+                        <span  v-show="workload1.length=='0'">当前命名空间下，该工作负载类型列表为空</span>
                       </el-tab-pane>
                       <el-tab-pane label="DaemonSet " name="DaemonSet">
-                        <div v-if="workload1.length!='0'" style="overflow:auto">
-                          <el-checkbox-group v-model="Checkbox.checkbox1" @change="checkboxChange1">
+                        <div v-show="workload1.length!='0'" style="overflow:auto">
+                          <el-checkbox-group v-model="Checkbox.checkbox1" @change="checkboxChange1(Checkbox.checkbox1,item.value1)">
                             <p v-for="(item,index) in workload1" :key="index">
-                              <el-checkbox :label="item">{{item.metadata.name}}</el-checkbox>
+                              <el-checkbox :label="item.metadata.name">{{item.metadata.name}}</el-checkbox>
                             </p>
                           </el-checkbox-group>
                         </div>
-                        <span v-else>当前命名空间下，该工作负载类型列表为空</span>
+                        <span  v-show="workload1.length=='0'">当前命名空间下，该工作负载类型列表为空</span>
                       </el-tab-pane>
                       <el-tab-pane label="StatefulSet" name="StatefulSet">
-                        <div v-if="workload1.length!='0'" style="overflow:auto">
-                          <el-checkbox-group v-model="Checkbox.checkbox2" @change="checkboxChange2">
+                        <div v-show="workload1.length!='0'" style="overflow:auto">
+                          <el-checkbox-group v-model="Checkbox.checkbox2" @change="checkboxChange2(Checkbox.checkbox2,item.value1)">
                             <p v-for="(item,index) in workload1" :key="index">
-                              <el-checkbox :label="item">{{item.metadata.name}}</el-checkbox>
+                              <el-checkbox :label="item.metadata.name">{{item.metadata.name}}</el-checkbox>
                             </p>
                           </el-checkbox-group>
                         </div>
-                        <span v-else>当前命名空间下，该工作负载类型列表为空</span>
+                        <span  v-show="workload1.length=='0'">当前命名空间下，该工作负载类型列表为空</span>
                       </el-tab-pane>
                       <el-tab-pane label="CronJob" name="CronJob">
-                        <div v-if="workload1.length!='0'" style="overflow:auto">
-                          <el-checkbox-group v-model="Checkbox.checkbox3" @change="checkboxChange3">
+                        <div v-show="workload1.length!='0'" style="overflow:auto">
+                          <el-checkbox-group v-model="Checkbox.checkbox3" @change="checkboxChange3(Checkbox.checkbox3,item.value1)">
                             <p v-for="(item,index) in workload1" :key="index">
-                              <el-checkbox :label="item">{{item.metadata.name}}</el-checkbox>
+                              <el-checkbox :label="item.metadata.name">{{item.metadata.name}}</el-checkbox>
                             </p>
                           </el-checkbox-group>
                         </div>
-                        <span v-else>当前命名空间下，该工作负载类型列表为空</span>
+                        <span  v-show="workload1.length=='0'">当前命名空间下，该工作负载类型列表为空</span>
                       </el-tab-pane>
                       <el-tab-pane label="Job" name="Job">
-                        <div v-if="workload1.length!='0'" style="overflow:auto">
-                          <el-checkbox-group v-model="Checkbox.checkbox4" @change="checkboxChange4">
+                        <div v-show="workload1.length!='0'" style="overflow:auto">
+                          <el-checkbox-group v-model="Checkbox.checkbox4" @change="checkboxChange4(Checkbox.checkbox4,item.value1)">
                             <p v-for="(item,index) in workload1" :key="index">
-                              <el-checkbox :label="item">{{item.metadata.name}}</el-checkbox>
+                              <el-checkbox :label="item.metadata.name">{{item.metadata.name}}</el-checkbox>
                             </p>
                           </el-checkbox-group>
                         </div>
-                        <span v-else>当前命名空间下，该工作负载类型列表为空</span>
+                        <span  v-show="workload1.length=='0'">当前命名空间下，该工作负载类型列表为空</span>
                       </el-tab-pane>
                     </el-tabs>
                     <!--数据展示 -->
                     <!-- <div v-if="item.activeName=='deployment'">
                         asdsadadssad
-                      </div> -->
+                    </div> -->
                   </div>
                 </el-form-item>
               </div>
             </div>
-            <el-button :disabled="newroomFlag" v-if="vlog == 'two' && tabPosition == 'one'" class="new-room"
+            <el-button :disabled="newroomFlag" v-show="vlog == 'two' && tabPosition == 'one'" class="new-room"
               @click="addNewRoom()">
               添加Namespace
             </el-button>
@@ -205,7 +205,7 @@
                     </el-form-item>
                   </div>
                   <el-link type="primary" style="cursor: pointer;font-size:12px;" @click="addDomain">新增变量</el-link>
-                  <p v-show="pathFlag" style="color:red">容器名、文件路径不能为空,请输入正确文件路径</p>
+                  <p v-show="pathFlag" style="color:red">容器名、文件路径不能为空,请输入正确文件路径,路径必须以`/`开头，支持通配符（*），</p>
                   <p>
                     可配置多个路径，路径必须以`/`开头，支持通配符（*），请保证容器的日志文件保存在数据卷，否则收集规则无法生效
                   </p>
@@ -698,7 +698,12 @@
       logCreat() {
         if (this.form.name == "") {
           this.$refs.form.validateField("name");
-          this.$message("函數名不能為空");
+          this.$message({
+            message:"函數名不能為空",
+            type:'warning',
+            showClose: true,
+            duration: 0
+            });
           return false;
         }
 
@@ -1123,85 +1128,90 @@
           }
         });
       },
-      checkboxChange0(val) {
-        // console.log(val)
+      checkboxChange0(val,np) {
         if (val.length != '0') {
           var filterData = [],
             filterDatac = [];
           val.forEach(item => {
             filterDatac.push({
-              name: item.metadata.name,
-              type: item.metadata.namespace
+              name: item.name,
+              type:np
             })
           })
           this.newroomFlag = false;
           this.Checkbox2.checkbox0 = filterDatac;
         } else {
           this.newroomFlag = true;
+           this.Checkbox2.checkbox0=[];
         }
+        console.log(this.Checkbox2)
       },
-      checkboxChange1(val) {
+      checkboxChange1(val,np) {
         if (val.length != '0') {
           var filterData = [],
             filterDatac = [];
           val.forEach(item => {
             filterDatac.push({
-              name: item.metadata.name,
-              type: item.metadata.namespace
+              name: item.name,
+              type: item.np
             })
           })
           this.newroomFlag = false;
           this.Checkbox2.checkbox1 = filterDatac;
         } else {
           this.newroomFlag = true;
+           this.Checkbox2.checkbox1=[];
         }
       },
-      checkboxChange2(val) {
+      checkboxChange2(val,np) {
         if (val.length != '0') {
           var filterData = [],
             filterDatac = [];
           val.forEach(item => {
             filterDatac.push({
-              name: item.metadata.name,
-              type: item.metadata.namespace
+              name: item.name,
+              type:np
             })
           })
           this.newroomFlag = false;
           this.Checkbox2.checkbox2 = filterDatac;
         } else {
           this.newroomFlag = true;
+          this.Checkbox2.checkbox2=[];
         }
       },
-      checkboxChange3(val) {
+      checkboxChange3(val,np) {
         if (val.length != '0') {
           var filterData = [],
             filterDatac = [];
           val.forEach(item => {
             filterDatac.push({
-              name: item.metadata.name,
-              type: item.metadata.namespace
+              name: item.name,
+              type: np
             })
           })
           this.newroomFlag = false;
           this.Checkbox2.checkbox3 = filterDatac;
         } else {
           this.newroomFlag = true;
+           this.Checkbox2.checkbox3=[];
         }
       },
-      checkboxChange4(val) {
+      checkboxChange4(val,np) {
         if (val.length != '0') {
           var filterData = [],
             filterDatac = [];
           val.forEach(item => {
             filterDatac.push({
-              name: item.metadata.name,
-              type: item.metadata.namespace
+              name: item.name,
+              type: np
             })
           })
           this.newroomFlag = false;
           this.Checkbox2.checkbox4 = filterDatac;
         } else {
           this.newroomFlag = true;
+           this.Checkbox2.checkbox4=[];
         }
       },
 
@@ -1227,24 +1237,13 @@
       //kafka列表
       kafkaList() {
         var params = {
-          // action: "DescribeInstancesDetail",
-          // serviceType: "ckafka",
-          // regionId: 39,
-
-          // data: {
-          //   Status: [1],
-          //   Version: "2019-08-19",
-          //   Limit: 20,
-          //   Offset: 0,
-
-          // }
-          // Status: [1],
+          //  action: "DescribeInstancesDetail",
         };
-        this.axios.post(TKE_KAFKA_LIST, params).then(res => {
-          // this.axios.post(TKE_KAFKA_LIST+'&uin=100011921910', params).then(res => {
-          console.log(res)
+        // this.axios.post(TKE_KAFKA_LIST, params).then(res => {
+        // this.axios.post('ckafka/DescribeInstancesDetail&uin=100011921910', params).then(res => {
+          this.axios.post(TKE_KAFKA_LIST, params).then(res => {
           if (res.codeDesc === "Success") {
-            // console.log( res.data)
+              // console.log(res)
             res.data.instanceList.forEach((item, index) => {
               this.Ckafka.options.push(
                 item.instanceId + "(" + item.instanceName + ")"
@@ -1348,8 +1347,18 @@
         for (let i in this.Checkbox2) {
           s += this.Checkbox2[i].length
         }
-        this.formFour[index].workload = s;
-        this.formFour[index].flag = !this.formFour[index].flag;
+        if(s==0){
+           this.$message({
+                message: '已选工作负载项为0个，请至少选择一个工作负载项或者选择全部容器',
+                type: "warning",
+                showClose: true,
+                duration: 0
+              });
+        }else{
+
+          this.formFour[index].workload = s;
+          this.formFour[index].flag = !this.formFour[index].flag;
+        }
 
       },
       addNewRoom() { //

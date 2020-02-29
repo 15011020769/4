@@ -140,7 +140,12 @@ export default {
         .post(UPDATE_ASSUME, paramsPolicy)
         .then(res => {
           if (res.Response.Error === undefined) {
-            this.$message.success('操作成功')
+            this.$message({
+              message: '操作成功',
+              type: "success",
+              showClose: true,
+              duration: 0
+            });
             this._back()
           } else {
             let ErrTips = {

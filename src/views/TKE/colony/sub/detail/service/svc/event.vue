@@ -8,7 +8,7 @@
         <span>自动刷新</span><el-switch class="ml10" v-model="autoRefresh" ></el-switch>
       </div>
     </div>
-    
+
     <!-- 数据列表展示 -->
     <div class="tke-card mt10">
       <el-table
@@ -19,14 +19,14 @@
           label="首次出现时间"
           >
           <template slot-scope="scope">
-            <p>2020-01-09 19:10:37</p>
+            <p>{{upTime(scope.row.firstTimestamp)}}</p>
           </template>
         </el-table-column>
         <el-table-column
           label="最后出现时间"
           >
           <template slot-scope="scope">
-            <p>2020-01-10 17:01:02</p>
+            <p>{{upTime(scope.row.lastTimestamp)}}</p>
           </template>
         </el-table-column>
         <el-table-column
@@ -34,7 +34,7 @@
           label="级别"
           >
           <template slot-scope="scope">
-              <span class="text-red">Warning</span>
+              <span class="text-red">{{scope.row.type}}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -42,92 +42,130 @@
           label="资源类型"
           >
           <template slot-scope="scope">
-            <span>HorizontalPodAutoscaler</span>
+            <span>{{scope.row.involvedObject && scope.row.involvedObject.kind}}</span>
           </template>
         </el-table-column>
-        
+
         <el-table-column
           prop=""
           label="资源名称"
           >
           <template slot-scope="scope">
-            <span>asdas.15e83372c763e97e</span>
+            <span>{{scope.row.metadata && scope.row.metadata.name}}</span>
           </template>
         </el-table-column>
         <el-table-column
           prop="address"
           label="内容">
           <template slot-scope="scope">
-            <span>FailedGetPodsMetric</span>
+            <span>{{scope.row.reason}}</span>
           </template>
         </el-table-column>
         <el-table-column
+          width=200
           prop="nodeTotal"
           label="详细描述">
           <template slot-scope="scope">
-            <p>Error: ImagePullBackOff</p>
+            <p style="white-space: nowrap; width: 180px; overflow: hidden;text-overflow: ellipsis">{{scope.row.message}}</p>
           </template>
         </el-table-column>
         <el-table-column
           prop=""
           label="出现次数">
           <template slot-scope="scope">
-            <p>2617</p>
+            <p>{{scope.row.count}}</p>
           </template>
         </el-table-column>
       </el-table>
-      
+
     </div>
   </div>
 </template>
 
 <script>
-import Loading from "@/components/public/Loading";
-import FileSaver from "file-saver";
-import XLSX from "xlsx";
-import { ALL_CITY } from "@/constants";
+import Loading from '@/components/public/Loading'
+import FileSaver from 'file-saver'
+import XLSX from 'xlsx'
+import { ALL_CITY, POINT_REQUEST } from '@/constants'
+import { ErrorTips } from '@/components/ErrorTips'
+import moment from 'moment'
 export default {
-  name: "svcDetailEvent",
-  data() {
+  name: 'svcDetailEvent',
+  data () {
     return {
-      loadShow: false, //加载是否显示
-      autoRefresh: true, //自动刷新
-      list:[
+      loadShow: false, // 加载是否显示
+      autoRefresh: true, // 自动刷新
+      list: [
         {
-          status:false
+          status: false
         },
         {
-          status:true
+          status: true
         },
         {
-          status:true
+          status: true
         },
         {
-          status:true
+          status: true
         }
-      ], //列表
-    };
+      ], // 列表
+      clusterId: '', // 集群id
+      spaceName: '', // 命名空间的名称
+      serviceName: '' // 服务的名称
+    }
   },
   components: {
     Loading
   },
-  created() {
-     // 从路由获取类型
-   
+  created () {
+    // 从路由获取类型
+    let { clusterId, spaceName, serviceName } = this.$route.query
+    this.clusterId = clusterId
+    this.spaceName = spaceName
+    this.serviceName = serviceName
+    this.handleEvent()
   },
   methods: {
-    //返回上一层
-    goBack(){
-          this.$router.go(-1);
+    // 返回上一层
+    goBack () {
+      this.$router.go(-1)
     },
+    async handleEvent () {
+      this.loadShow = true
+      let param = {
+        Method: 'GET',
+        Path: `/api/v1/namespaces/${this.spaceName}/services/${this.serviceName}/events`,
+        Version: '2018-05-25',
+        ClusterName: this.clusterId
+      }
+      await this.axios.post(POINT_REQUEST, param).then(res => {
+        if (res.Response.Error === undefined) {
+          this.loadShow = false
+          this.list = JSON.parse(res.Response.ResponseBody).items
+          // console.log(this.list, 123)
+        } else {
+          this.loadShow = false
+          let ErrTips = {
+
+          }
+          let ErrOr = Object.assign(ErrorTips, ErrTips)
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: 'error',
+            showClose: true,
+            duration: 0
+          })
+        }
+      })
+    },
+    // 处理时间格式
+    upTime (value) {
+      return moment(value).format('YYYY-MM-DD HH :mm:ss')
+    }
   }
-};
+}
 </script>
 
 <style lang="scss" scoped>
 
-
-
-
 </style>
-

@@ -12,7 +12,7 @@
             集群(中国台北) /
           </span>
           <span class="goback" @click="goBack()">
-            cls-gwblk71e(tfy_test1) /
+            {{this.clusterId}}(tfy_test1) /
           </span>
           <h2 class="header-title">Namespace:{{this.name}}</h2>
         </div>

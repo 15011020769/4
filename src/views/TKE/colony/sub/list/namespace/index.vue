@@ -191,7 +191,7 @@ export default {
         RequestBody: {"propagationPolicy": "Background", "gracePeriodSeconds": 0},
         ClusterName: this.clusterId
       }
-      this.axios.post(POINT_REQUEST, param).then(res => {
+      await this.axios.post(POINT_REQUEST, param).then(res => {
         if (res.Response.Error === undefined) {
           this.getNameSpaceList();
           this.loadShow = false;

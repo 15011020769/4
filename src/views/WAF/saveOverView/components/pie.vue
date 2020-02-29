@@ -71,7 +71,7 @@ export default {
               fontWeight: 'bold',
             },
             formatter(name){
-              let total = 0
+              let total = 1
               let arrdetail = []
               that.series.map(v => {
                 total += Number(v.value)

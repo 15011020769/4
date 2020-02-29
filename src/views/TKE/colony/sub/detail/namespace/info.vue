@@ -46,7 +46,7 @@
                 >
                 <template slot-scope="scope">
                   <el-tooltip v-if="scope.row.status===true" effect="dark" content="当前密钥已下发，无需再次下发" placement="right">
-                    <span  class="text-gray">下发</span>
+                    <span  class="text-gray" @click="sendDown(scope.row)">下发</span>
                   </el-tooltip>
                   <span v-else class="tke-text-link">下发</span>
                 </template>
@@ -87,6 +87,8 @@ export default {
       loadShow: false, //加载是否显示
       detail: {},//详情数据
       secretsList: [],//秘钥列表
+      isShowSendDown: false,//是否显示下发modal
+      secret: {},//选择的某一条秘钥对象
     };
   },
   components: {
@@ -114,7 +116,6 @@ export default {
           this.loadShow = false;
           let response = JSON.parse(res.Response.ResponseBody);
           this.detail = response;
-          console.log(this.detail,"detail");
         } else {
           this.loadShow = false;
           let ErrTips = {
@@ -144,6 +145,7 @@ export default {
         if(res.Response.Error === undefined) {
           this.loadShow = false;
           let response = JSON.parse(res.Response.ResponseBody);
+          console.log("list",response.items);
           this.secretsList = response.items;
           // this.detail = response;
           console.log(response,"response");
@@ -161,6 +163,10 @@ export default {
           });
         }
       });
+    },
+    sendDown(secret) {
+      this.isShowSendDown = true;
+      this.secret = secret;
     },
     //时间格式化
     changeTime(time) {

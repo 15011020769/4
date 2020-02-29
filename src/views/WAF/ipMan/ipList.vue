@@ -8,7 +8,7 @@
         allow-create
         default-first-option
         placeholder="请选择文章标签"
-        @change="onSearch"
+        @change="pageOffset === 0 ? onSearch() : pageOffset = 0"
       >
         <el-option
           key="all"
@@ -79,7 +79,7 @@
           ></el-date-picker>
         </div>
         <div>
-          <el-button @click="onSearch" size="mini" class="lookSearch">查询</el-button>
+          <el-button @click="pageOffset === 0 ? onSearch() : pageOffset = 0" size="mini" class="lookSearch">查询</el-button>
         </div>
       </div>
       <div class="tableList">
@@ -105,7 +105,7 @@
         <el-card>
           <el-table
             ref="multipleTable"
-            :data="tableDataBegin ? tableDataBegin.slice((currentPage-1)*pageSize,currentPage*pageSize) : []"
+            :data="tableDataBegin"
             tooltip-effect="dark"
             style="width: 100%" 
             v-loading="loadShow"
@@ -127,11 +127,19 @@
               </template>
             </el-table-column>
             <el-table-column prop="TsVersion" label="更新时间">
+              <span slot="header">
+                更新时间
+                <i @click="() => { onSearch('Cts'); ctsFlag = !ctsFlag }" style="cursor: pointer" class="el-icon-d-caret" />
+              </span>
               <template slot-scope="scope">
                 {{scope.row.TsVersion | currentTimeFilter}}
               </template>
             </el-table-column>
             <el-table-column prop="ValidTs" label="截止时间">
+              <span slot="header">
+                截止时间
+                <i @click="() => { onSearch('Vts'); vtsFlag = !vtsFlag }" style="cursor: pointer" class="el-icon-d-caret" />
+              </span>
               <template slot-scope="scope">
                 {{scope.row.ValidTs | currentTimeFilter}}
               </template>
@@ -164,11 +172,12 @@
             </el-table-column>
           </el-table>
           <el-pagination
+            v-if="pageShow"
             @size-change="handleSizeChange"
             @current-change="handleCurrentChange"
             :current-page="currentPage"
             :page-sizes="[10, 20, 30, 50]"
-            :page-size="pageSize"
+            :page-size="pageLimit"
             layout="total, sizes, prev, pager, next, jumper"
             :total="totalItems"
           ></el-pagination>
@@ -225,7 +234,6 @@ export default {
       tableDataBegin: [],//表格数据
       tableDataEnd: [],
       currentPage: 1,//当前页
-      pageSize: 10,//每页长度
       totalItems: 0,//总长度
       filterTableDataEnd: [],
       loadShow:false,//加载
@@ -234,6 +242,11 @@ export default {
       data: [],
       ipInfo: {}, // 保存编辑信息
       dialogVisible: false, // 批量删除弹窗
+      pageLimit: 10,  // 分页限制
+      pageOffset: 0,  // 分页偏移量
+      pageShow: true,  // 切换分页显示
+      ctsFlag: false, // 更新时间升降序
+      vtsFlag: false, // 有效时间时间升降序
     };
   },
   components:{
@@ -243,6 +256,20 @@ export default {
     this.getDescribeHost()
     this.onSearch();
   },
+
+  watch: {
+    pageOffset(n, o) {
+      if(n === 0) {
+        this.currentPage = 1
+      }
+      this.onSearch()
+    },
+
+    pageLimit() {
+      this.onSearch()
+    }
+  },
+
   methods: {
     fileChange(file) {
       const reader = new FileReader();
@@ -292,28 +319,13 @@ export default {
     // 获取数据
     getData(params) {
       this.loadShow=true;
-      // this.axios.get('', {}).then((res) => {
-      // console.log(res.data.tableData);
-      // this.tableDataBegin = res.data.tableData;
-      // this.tableDataBegin = this.allData;
-      // 将数据的长度赋值给totalItems
-      // this.totalItems = this.tableDataBegin.length;
-      // if (this.totalItems > this.pageSize) {
-      //   for (let index = 0; index < this.pageSize; index++) {
-      //     this.tableDataEnd.push(this.tableDataBegin[index]);
-      //   }
-      // } else {
-      //   this.tableDataEnd = this.tableDataBegin;
-      // }
-      // this.loadShow=false;
-      // })
       if (!params) {
         let params = {
           Version: '2018-01-25',
-          Domain: 'tfc.dhycloud.com',
+          Domain: 'global',
           Count: 1,
-          Limit: 20,
-          OffSet: 0
+          Limit: this.pageLimit,
+          OffSet: this.pageOffset
         }
       }
       this.axios.post(DESCRIBE_ACCESS_CONTROL, params).then(data => {
@@ -327,52 +339,26 @@ export default {
             duration: 0
           })
         } else {
-           this.tableDataBegin = data.Response.Data.Res;
-            // this.tableDataBegin = this.allData;
-            // 将数据的长度赋值给totalItems
+           this.tableDataBegin = data.Response.Data.Res || [];
             this.tableDataBegin.forEach(item => {
               this.$set(item, 'delDialog', false)
             })
-            this.totalItems = this.tableDataBegin.length;
-            if (this.totalItems > this.pageSize) {
-              for (let index = 0; index < this.pageSize; index++) {
-                this.tableDataEnd.push(this.tableDataBegin[index]);
-              }
-            } else {
-              this.tableDataEnd = this.tableDataBegin;
-            }
+            this.totalItems = data.Response.Data.TotalCount;
         }
       })
     },
     // 分页开始
     handleSizeChange(val) {
-      console.log(`每页 ${val} 条`);
-      this.pageSize = val;
-      this.handleCurrentChange(this.currentPage);
+      this.pageLimit = val
+      this.pageOffset = 0
+
     },
     handleCurrentChange(val) {
-      console.log(`当前页: ${val}`);
-      this.currentPage = val;
-      //需要判断是否检索
-      if (!this.flag) {
-        this.currentChangePage(this.tableDataEnd);
-      } else {
-        this.currentChangePage(this.filterTableDataEnd);
-      }
-    }, //组件自带监控当前页码
-    currentChangePage(list) {
-      let from = (this.currentPage - 1) * this.pageSize;
-      let to = this.currentPage * this.pageSize;
-      this.tableDataEnd = [];
-      for (; from < to; from++) {
-        if (list[from]) {
-          this.tableDataEnd.push(list[from]);
-        }
-      }
-    },
+      this.pageOffset = (val - 1) * this.pageLimit
+    }, 
+
     //添加黑白名单按钮
     addBW(){
-      console.log(11);
       this.addBWmodel=true;
     },
 
@@ -398,18 +384,39 @@ export default {
     },
 
     //  查询
-    onSearch() {
+    onSearch(sort) {
       let params = {
         Version: '2018-01-25',
         Domain: this.ipSearch,
         Count: 1,
-        Limit: 20,
-        OffSet: 0,
+        Limit: this.pageLimit,
+        OffSet: this.pageOffset,
         Ip: this.iptIP || undefined,
         CtsMin: this.timeValue1 ? moment(new Date(this.timeValue1[0])).format('x') : undefined, //创建最小时间戳
         CtsMax: this.timeValue1 ? moment(new Date(this.timeValue1[1])).format('x') : undefined,
         ActionType: this.typeCheck,
         Source: this.resouseC || undefined,
+      }
+
+      if (params.sort) {
+        delete params.sort
+      }
+
+      if (sort === 'Cts') {
+        this.vtsFlag = false
+        params.Sort = this.ctsFlag ? 'ts_version:1' : 'ts_version:-1' 
+      }
+
+      if (sort === 'Vts') {
+        this.ctsFlag = false
+        params.Sort = this.vtsFlag ? 'valid_ts:1' : 'valid_ts:-1' 
+      }
+
+      if (this.pageOffset === 0) {
+        this.pageShow = false
+        this.$nextTick(() => {
+          this.pageShow = true
+        })
       }
 
       if (this.timeOut) {
@@ -443,7 +450,6 @@ export default {
     // 编辑
     onEdit(info) {
       this.ipInfo = info.row
-      // this.addBWmodel = false
       setTimeout(() => {
         this.addBWmodel = true
       })
