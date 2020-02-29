@@ -46,7 +46,7 @@
                 </el-form-item>
                 <el-form-item label="机型">
                   <div class="tke-form-item_text">
-                    <span>S3.SMALL1(标准型S3,1核1GB)</span>
+                    <span>{{asg.zoneInstanceConfigInfo}}</span>
                     <i class="el-icon-edit tke-icon" @click="typeModelShow = true"></i>
                   </div>
                 </el-form-item>
@@ -80,7 +80,7 @@
           <el-form-item label="SSH密钥" v-show="flag1">
              <el-select v-model="value" filterable placeholder="请选择"  class="w200">
               <el-option
-                v-for="item in options"
+                v-for="item in secretList"
                 :key="item.value"
                 :label="item.label"
                 :value="item.value">
@@ -251,7 +251,7 @@
         </el-form>
         <!-- 底部 -->
         <div class="tke-formpanel-footer">
-          <el-button size="small" type="primary">创建伸缩组</el-button>
+          <el-button size="small" type="primary" @click="submitGroup()">创建伸缩组</el-button>
           <el-button size="small">取消</el-button>
         </div>
       </div>
@@ -264,18 +264,18 @@
         <div class="tke-second-worker-model">
           <div class="model-bg">
             <div>
-              <el-select v-model="value" placeholder="请选择">
+              <el-select v-model="cpuValue" placeholder="请选择">
                 <el-option
-                  v-for="item in options"
+                  v-for="item in AllCPU"
                   :key="item.value"
                   :label="item.label"
                   :value="item.value"
                 >
                 </el-option>
               </el-select>
-              <el-select v-model="value" placeholder="请选择">
+              <el-select v-model="memeryValue" placeholder="请选择">
                 <el-option
-                  v-for="item in options"
+                  v-for="item in AllRAM"
                   :key="item.value"
                   :label="item.label"
                   :value="item.value"
@@ -312,57 +312,65 @@
             <div style="margin-top:16px;">
               <el-table
                 ref="singleTable"
+                :data="zoneInfoList"
                 highlight-current-row
                 @current-change="handleCurrentChange"
                 style="width: 100%"
+                height="500px"
               >
                 <el-table-column width="50">
                   <template slot-scope="scope">
-                    <el-radio v-model="radio1" :label="scope.row"
-                      ><i></i
-                    ></el-radio>
+                    <el-radio v-model="modeRadio" :label="scope.$index">
+                      <i></i>
+                    </el-radio>
                   </template>
                 </el-table-column>
-                <el-table-column property="date" label="机型">
+                <el-table-column label="机型">
+                  <template slot-scope="scope">
+                    {{ModelTypeName(scope.row.TypeName)}}
+                  </template>
                 </el-table-column>
-                <el-table-column property="name" label="规则">
+                <el-table-column label="规格">
+                  <template slot-scope="scope">
+                    {{ scope.row.InstanceType }}
+                  </template>
                 </el-table-column>
-                <el-table-column property="address" label="CPU">
+                <el-table-column label="CPU">
+                  <template slot-scope="scope">
+                    {{ scope.row.Cpu }}核
+                  </template>
                 </el-table-column>
-                <el-table-column property="address" label="内存">
+                <el-table-column label="内存">
+                  <template slot-scope="scope">
+                    {{ scope.row.Memory }}GB
+                  </template>
                 </el-table-column>
-                <el-table-column
-                  property="address"
-                  label="配置费用"
-                >
+                <el-table-column label="配置费用">
+                  <template slot-scope="scope">
+                    <span class="text-orange"
+                      >￥{{ scope.row.Price.UnitPrice }}</span
+                    >元/小时起
+                  </template>
                 </el-table-column>
               </el-table>
             </div>
           </div>
-          <div class="model-btn">
-            <el-button class="determine">确定</el-button>
-            <el-button
-              class="cancel"
-              @click="colonySecond.modelShow = false"
-              >取消</el-button
-            >
-          </div>
         </div>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="deleteSingleGroup('single')">确 定</el-button>
-        <el-button @click="deleteSingleModal = false">取 消</el-button>
+        <el-button type="primary" @click="ModelSure()">确 定</el-button>
+        <el-button @click="typeModelShow = false">取 消</el-button>
       </span>
     </el-dialog>
     <el-dialog :visible.sync="diskModelShow" width="35%">
       <div class="tke-second-worker-popover-disk">
         <div>
           <el-select
-            v-model="options"
+            v-model="secretList"
             placeholder="请选择"
           >
             <el-option
-              v-for="item in options"
+              v-for="item in secretList"
               :key="item.value"
               :label="item.label"
               :value="item.value"
@@ -370,7 +378,7 @@
             </el-option>
           </el-select>
           <el-input-number
-            v-model="options"
+            v-model="secretList"
             :min="50"
             :max="500"
           ></el-input-number>
@@ -399,7 +407,7 @@
             placeholder="请选择"
           >
             <el-option
-              v-for="item in options"
+              v-for="item in secretList"
               :key="item.value"
               :label="item.label"
               :value="item.value"
@@ -407,13 +415,13 @@
             </el-option>
           </el-select>
           <el-input-number
-            v-model="options"
+            v-model="secretList"
             :min="10"
             :max="16000"
           ></el-input-number>
           <span>GB</span>
           <el-checkbox
-            v-model="options"
+            v-model="secretList"
             class="format-and-mount"
             >格式化并挂载</el-checkbox
           >
@@ -421,7 +429,7 @@
         </div>
         <p
           style="margin-top:16px;"
-          v-if="options"
+          v-if="secretList"
         >
           格式化设置
         </p>
@@ -433,7 +441,7 @@
             placeholder="请选择"
           >
             <el-option
-              v-for="item in options"
+              v-for="item in secretList"
               :key="item.value"
               :label="item.label"
               :value="item.value"
@@ -456,7 +464,9 @@ import FileSaver from "file-saver";
 import XLSX from "xlsx";
 import { ErrorTips } from "@/components/ErrorTips";
 import { ALL_CITY,
-      DESCRIBE_ZONE_INFO } from "@/constants";
+      DESCRIBE_ZONE_INFO,
+      TKE_MISG,
+      TKE_SSH } from "@/constants";
 export default {
   name: "asgCreate",
   data() {
@@ -472,8 +482,13 @@ export default {
       dataDiskShow: false,//是否打开数据盘modal
       buyDataDisk: false,//是否显示是否购买数据盘
       buyDataDiskShow: false,//是否显示购买数据盘
-      
-      zoneInfoList: [],
+      securityGroups: [],//安全组列表
+      secretList: [],//SSH秘钥密码
+      cpuValue: '0',//选中的cpu类型
+      memeryValue: '0',//选中的内存类型
+      zoneInfoList: [],//电脑机型列表
+      modeRadio: '0',//默认选中的机型
+      modeData: {},//机型表格中选中的数据
       textarea2: '',
       inputRoom: '/var/lib/docker',
       isActive: false,
@@ -485,21 +500,65 @@ export default {
         typeRadio:'type1',
         pwdRadio:'pwd1',
         regionRadio:'region1',
+        sshKeySel: "",//ssh秘钥
+        security:'',//安全组
+        zoneInstanceConfigInfo: '',//机型
       },
       pass:{
         password:'',
         passwordAgin: ''
       },
-      options: [{
-        value: '选项1',
-        label: 'xijian'
-      }, {
-        value: '选项2',
-        label: 'SSEE'
-      }, {
-        value: '选项3',
-        label: 'SSEEE'
-      }],
+      // 选中机型
+      AllCPU: [
+        {
+          label: "全部CPU",
+          value: "0"
+        },
+        {
+          value: "1",
+          label: "1核"
+        },
+        {
+          value: "2",
+          label: "2核"
+        },
+        {
+          value: "4",
+          label: "4核"
+        },
+        {
+          value: "8",
+          label: "8核"
+        },
+        {
+          value: "12",
+          label: "12核"
+        },
+        {
+          value: "16",
+          label: "16核"
+        },
+        {
+          value: "24",
+          label: "24核"
+        },
+        {
+          value: "32",
+          label: "32核"
+        },
+        {
+          value: "48",
+          label: "48核"
+        },
+        {
+          value: "64",
+          label: "64核"
+        },
+        {
+          value: "80",
+          label: "80核"
+        }
+      ],
       optionsOne: [{
         value: '选项1',
         label: 'xijian'
@@ -510,10 +569,85 @@ export default {
         value: '选项3',
         label: 'SSEEE'
       }],
+      //所有内存
+      AllRAM: [
+        {
+          value: "0",
+          label: "全部内存"
+        },
+        {
+          value: "1",
+          label: "1GB"
+        },
+        {
+          value: "2",
+          label: "2GB"
+        },
+        {
+          value: "4",
+          label: "4GB"
+        },
+        {
+          value: "8",
+          label: "8GB"
+        },
+        {
+          value: "16",
+          label: "16GB"
+        },
+        {
+          value: "24",
+          label: "24GB"
+        },
+        {
+          value: "32",
+          label: "32GB"
+        },
+        {
+          value: "48",
+          label: "48GB"
+        },
+        {
+          value: "64",
+          label: "64GB"
+        },
+        {
+          value: "96",
+          label: "96GB"
+        },
+        {
+          value: "128",
+          label: "128GB"
+        },
+        {
+          value: "144",
+          label: "144GB"
+        },
+        {
+          value: "192",
+          label: "192GB"
+        },
+        {
+          value: "256",
+          label: "256GB"
+        },
+        {
+          value: "320",
+          label: "320GB"
+        },
+        {
+          value: "384",
+          label: "384GB"
+        },
+        {
+          value: "512",
+          label: "512GB"
+        }
+      ],
       optionsOne: [],
       domains: [],
       domainstion: [],
-      value: '',
+      value: '0',
       valueOne: '',
       values: [],
       tableData: [{
@@ -549,9 +683,21 @@ export default {
    
   },
   created() {
-    // this.getDescribeZoneInstanceConfigInfos();
+    this.getDescribeZoneInstanceConfigInfos();
+    this.getSecurityGroups();
+    this.getSecretList();
   },
   methods: {
+    //提交添加伸缩组
+    async submitGroup() {
+      this.loadShow = true;
+      let params = {
+        Version: '2018-05-25',
+        ClusterId: this.clusterId,
+        LaunchConfigurePara: {},
+        InstanceAdvancedSettings: {},
+      }
+    },
     //返回上一层
     goBack(){
         this.$router.go(-1);
@@ -608,15 +754,29 @@ export default {
     handleSelectionChange(){
 
     },
+    //机型表格选中的数据
+    handleCurrentChange(val) {
+      this.modeData = val;
+    },
+    //机型model确定选择数据
+    ModelSure() {
+      let modeData = this.modeData;
+      this.asg.zoneInstanceConfigInfo = modeData.InstanceType+"("+ this.ModelTypeName(modeData.TypeName)+","+ modeData.Cpu+ "核" + modeData.Memory +"GB)";
+      this.typeModelShow =false;
+    },
     //获取可用区机型配置信息
     async getDescribeZoneInstanceConfigInfos() {
       let param = {
         Version: "2017-03-12"        
       }
-      param["Filters.0"] = [{Name: "instance-charge-type", Values:["POSTPAID_BY_HOUR"]}]
+      param["Filters.0.Name"] = "instance-charge-type";
+      param["Filters.0.Values.0"] = "POSTPAID_BY_HOUR";
       await this.axios.post(DESCRIBE_ZONE_INFO, param).then(res => {
         if(res.Response.Error === undefined) {
           this.zoneInfoList = res.Response.InstanceTypeQuotaSet;
+          this.asg.zoneInstanceConfigInfo = res.Response.InstanceTypeQuotaSet[0].InstanceType 
+            +"("+ this.ModelTypeName(res.Response.InstanceTypeQuotaSet[0].TypeName)+","+ res.Response.InstanceTypeQuotaSet[0].Cpu 
+            + "核" + res.Response.InstanceTypeQuotaSet[0].Memory +"GB)";
         } else {
           this.loadShow = false;
           let ErrTips = {
@@ -635,13 +795,79 @@ export default {
       });
     },
     //选择是否购买数据盘
-  changeIsBuy() {
-    if(this.buyDataDisk) {
-      this.dataDiskShow = false;
-      this.buyDataDiskShow = true;
+    changeIsBuy() {
+      if(this.buyDataDisk) {
+        this.dataDiskShow = false;
+        this.buyDataDiskShow = true;
+      }
+    },
+    //获取安全组列表
+    async getSecurityGroups() {
+      this.loadShow = true;
+      let params = {
+        Version: "2017-03-12",
+        Offset: 0,
+        Limit: 100,
+      }
+      params["Filters.0.Name"] = "project-id";
+      params["Filters.0.Values.0"] = 0;
+
+      await this.axios.post(TKE_MISG, params).then(res => {
+        if(res.Response.Error === undefined) {
+          this.SecurityGroupSet = res.Response.SecurityGroupSet;
+          this.asg.security = res.Response.SecurityGroupSet[0].SecurityGroupName
+          this.loadShow = false;
+        } else {
+          this.loadShow = false;
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[k8sRes.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
+    },
+    //获取ssh秘钥密码
+    async getSecretList() {
+      this.loadShow = true;
+      let params = {
+        Version: "2017-03-12",
+        Limit: 100
+      }
+      await this.axios.post(TKE_SSH, params).then(res => {
+        if(res.Response.Error === undefined) {
+          this.secretList = res.Response.KeyPairSet;
+          this.loadShow = false;
+        } else {
+          this.loadShow = false;
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[k8sRes.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
+      secretList  
+    },
+    ModelTypeName(val) {
+      if (val === "Standard S3") {
+        return "标准型S3";
+      } else if (val === "Compute C3") {
+        return "计算型C3";
+      } else if (val === "MEM-optimized M3") {
+        return "内存型M3";
+      }
     }
-  }
   },
+  filters: {
+    
+  }
 };
 </script>
 
@@ -668,6 +894,12 @@ export default {
     margin-bottom: 10px;
     font-size: 12px;
     color: #888;
+}
+
+.text-orange {
+  font-size: 14px;
+  color: #ff7800;
+  font-weight: 600;
 }
 
 </style>
