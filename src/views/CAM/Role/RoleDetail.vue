@@ -132,18 +132,18 @@
                   </template>
                 </el-table-column>
               </el-table>
-              <div class="Right-style pagstyle" v-show="activeName == 'first'">
-                <span
-                  style="font-size:12px;color:#888;margin-right:20px;"
-                >{{$t('CAM.userList.choose')}} {{selTotalNum}} {{$t('CAM.Role.item')}}</span>
-                <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;{{$t("CAM.strip")}}</span>
+              <div class="Right-style pagstyle" v-show="activeName == 'first'" style="height:70px;display:flex;align-items:center;">
+                <span class='pagtotal'>共&nbsp;{{TotalCount}}&nbsp;{{$t("CAM.strip")}}</span>
                 <el-pagination
                   :page-size="pagesize"
                   :pager-count="7"
-                  layout="prev, pager, next"
+                  layout="prev, sizes, pager, next"
+                  :page-sizes="[10, 20, 30, 40, 50]"
                   @current-change="handleCurrentChange"
+                  @size-change="handleSizeChange"
                   :total="TotalCount"
-                ></el-pagination>
+                >
+                </el-pagination>
               </div>
             </div>
           </el-tab-pane>
