@@ -265,6 +265,7 @@ module.exports = {
       sqtfy: '授權台富雲外部用戶身份(如企業用戶目錄)使用您的資源',
       jsxx: '角色訊息',
       gljszt: '管理角色載體',
+      wfscwydzt: '無法刪除唯一的載體'
     },
     strategy: {
       straGroup: '關聯用戶/組',

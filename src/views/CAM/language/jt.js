@@ -265,6 +265,7 @@ module.exports = {
             sqtfy: '授权台富云外部用户身份(如企业用户目录)使用您的资源',
             jsxx: '角色信息',
             gljszt: '管理角色载体',
+            wfscwydzt: '无法删除唯一的载体',
         },
         strategy: {
             straGroup: '关联用户/组',

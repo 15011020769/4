@@ -168,9 +168,8 @@
                   </el-table-column>
                   <el-table-column label="操作" width="180">
                     <template slot-scope="scope">
-                      <el-tooltip v-if="roleCarrier.length === 1" effect="dark" content="无法删除唯一的载体" placement="top-start">
+                      <el-tooltip v-if="roleCarrier.length === 1" effect="dark" :content="$t('CAM.Role.wfscwydzt')" placement="top-start">
                       <el-button
-                        
                         type="text"
                         size="small"
                       >解除</el-button>
