@@ -358,7 +358,6 @@
     },
     created() {
       this.getData();
-      console.log(ErrorTips);
     },
     methods: {
       //取消修改姓名
@@ -382,7 +381,7 @@
         };
         this.axios.post(CCN_LIST, params).then(res => {
           if (res.Response.Error === undefined) {
-            this.tableData = res.Response.CcnSet;
+            this.tableData = res.Response.CcnSet.reverse();
             this.total = res.Response.TotalCount;
             if (this.total === 5) {
               this.newCreateshow = true
@@ -455,7 +454,6 @@
           this.axios.post(VPCS_LIST, params).then(res => {
             if (res.Response.Error === undefined) {
               this.vpcs = res.Response.VpcSet;
-              console.log(this.vpcs);
             } else {
               let ErrTips = {
                 "InvalidParameter.Coexist": "參數不支持同時指定",
