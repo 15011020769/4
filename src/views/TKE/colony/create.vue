@@ -766,12 +766,12 @@
                                 style="padding-left:20px;"
                               >
                                 <el-checkbox
-                                  v-model="colonySecond.buyDataDisk"
+                                  v-model="item.buyDataDisk"
                                   @change="BuyDataDisk"
                                   >购买数据盘</el-checkbox
                                 >
                               </div>
-                              <div v-if="colonySecond.buyDataDisk">
+                              <div v-if="item.buyDataDisk">
                                 <div
                                   class="tke-second-worker-popover-data-bg"
                                   v-for="(x, i) in colonySecond.buyDataDiskArr"
@@ -845,7 +845,7 @@
                               <div
                                 class="add-data-disk"
                                 v-if="
-                                  colonySecond.buyDataDisk &&
+                                  item.buyDataDisk &&
                                     colonySecond.buyDataDiskArr.length != 0
                                 "
                                 @click="AddDataDisk()"
@@ -883,7 +883,7 @@
                             <div class="tke-second-worker-popover-disk">
                               <div>
                                 <el-select
-                                  v-model="colonySecond.broadbandVal"
+                                  v-model="item.broadbandVal"
                                   placeholder="请选择"
                                 >
                                   <el-option
@@ -896,7 +896,7 @@
                                 </el-select>
                                 <el-input-number
                                   v-model="colonySecond.broadbandNum"
-                                  :min="1"
+                                  :min="0"
                                   :max="100"
                                 ></el-input-number>
                                 <span>Mbps</span>
@@ -1256,7 +1256,7 @@
                                 ref="singleTable"
                                 :data="colonySecond.tableList"
                                 highlight-current-row
-                                @current-change="handleCurrentChange"
+                                @current-change="handleCurrentChange1"
                                 style="width: 100%"
                                 height="500px"
                               >
@@ -1387,12 +1387,12 @@
                                 style="padding-left:20px;"
                               >
                                 <el-checkbox
-                                  v-model="colonySecond.buyDataDisk"
+                                  v-model="item.buyDataDisk"
                                   @change="BuyDataDisk"
                                   >购买数据盘</el-checkbox
                                 >
                               </div>
-                              <div v-if="colonySecond.buyDataDisk">
+                              <div v-if="item.buyDataDisk">
                                 <div
                                   class="tke-second-worker-popover-data-bg"
                                   v-for="(x, i) in colonySecond.buyDataDiskArr"
@@ -1466,7 +1466,7 @@
                               <div
                                 class="add-data-disk"
                                 v-if="
-                                  colonySecond.buyDataDisk &&
+                                  item.buyDataDisk &&
                                     colonySecond.buyDataDiskArr.length != 0
                                 "
                                 @click="AddDataDisk()"
@@ -1504,7 +1504,7 @@
                             <div class="tke-second-worker-popover-disk">
                               <div>
                                 <el-select
-                                  v-model="colonySecond.broadbandVal"
+                                  v-model="item.broadbandVal"
                                   placeholder="请选择"
                                 >
                                   <el-option
@@ -1517,7 +1517,7 @@
                                 </el-select>
                                 <el-input-number
                                   v-model="colonySecond.broadbandNum"
-                                  :min="1"
+                                  :min="0"
                                   :max="100"
                                 ></el-input-number>
                                 <span>Mbps</span>
@@ -1695,11 +1695,11 @@
             </div>
             <el-form-item label="总计费用" v-if="colonySecond.sourceShow">
               <div class="tke-second-cost">
-                <span class="tke-second-cost-num">0.16</span
+                <span class="tke-second-cost-num">{{Math.round(colonySecond.allocationCost)}}</span
                 ><span class="tke-second-cost-h">元/小时</span
                 ><span class="tke-second-cost-t">(配置费用)</span>
                 <i>|</i>
-                <span class="tke-second-cost-num">0.06</span
+                <span class="tke-second-cost-num">{{Math.round(colonySecond.networkCost)}}</span
                 ><span class="tke-second-cost-h">元/小时</span
                 ><span class="tke-second-cost-w"> (网络费用-按带宽计费)</span>
               </div>
@@ -1993,8 +1993,8 @@ export default {
   data() {
     return {
       // 步骤显示
-      firstBox: false,
-      secondBox: true,
+      firstBox: true,
+      secondBox: false,
       thirdBox: false,
       fourthBox: false,
       // 第一步
@@ -2148,6 +2148,7 @@ export default {
             radio1: 0,
             modelShow: false,
             modelName: "",
+            InstanceChargeType: "POSTPAID_BY_HOUR",
             modelType: "",
             modelHe: "",
             modelGB: "",
@@ -2160,11 +2161,14 @@ export default {
             systemDiskNumber: "50",
             // 数据盘
             dataDiskValue: "暂不购买",
+            buyDataDisk: false,
+            dataDiskArr: [],
             dataDiskVal: "CLOUD_PREMIUM",
             dataDiskNumber: "10",
             latticeSetVal: "ext3",
             setValue: "/var/lib/docker",
             broadbandValue: "按宽带计费",
+            broadbandVal: "BANDWIDTH_POSTPAID_BY_HOUR",
             broadbandNumber: "1",
             formatMount: true,
             dataNum: "1"
@@ -2189,11 +2193,14 @@ export default {
             systemDiskNumber: "50",
             // 数据盘
             dataDiskValue: "暂不购买",
+            dataDiskArr: [],
+            buyDataDisk: false,
             dataDiskVal: "CLOUD_PREMIUM",
             dataDiskNumber: "10",
             latticeSetVal: "ext3",
             setValue: "/var/lib/docker",
             broadbandValue: "按宽带计费",
+            broadbandVal: "BANDWIDTH_POSTPAID_BY_HOUR",
             broadbandNumber: "1",
             formatMount: true,
             dataNum: "1"
@@ -2215,6 +2222,7 @@ export default {
         tableList: [],
         masterTableList: [],
         modelText: "",
+        modelText2: "",
         modelShow: false,
         // 选中机型
         AllCPU: [
@@ -2360,7 +2368,6 @@ export default {
         ],
         systemDiskNumber: "50",
         buyDataWidth: 300,
-
         buyDataDiskArr: [],
         dataDiskOptions: [
           {
@@ -2380,7 +2387,7 @@ export default {
         dataDiskNumber: "10",
         // 公网宽带
         broadbandWidth: 300,
-        broadbandNum: 1,
+        broadbandNum: 0,
         pubBroadbandShow: true,
         broadbandOptions: [
           {
@@ -2392,8 +2399,11 @@ export default {
             label: "按使用流量"
           }
         ],
-        broadbandVal: "BANDWIDTH_POSTPAID_BY_HOUR",
-        broadbandNumber: "1",
+        // 总计费用
+        // 配置费用
+        allocationCost:"",
+        // 网络费用
+        networkCost:"",
         // 下一步
         secondNextShow: true,
         workerTips: false,
@@ -2596,7 +2606,6 @@ export default {
       });
     },
     NetWork(val) {
-      // console.log(val)
       if (val) {
         let array = this.colony.networkOptions;
         for (var i in array) {
@@ -2627,8 +2636,6 @@ export default {
         }
       });
       this.DataList();
-      // 机型 选择机型
-      this.getDescribeZoneInstanceConfigInfos();
     },
     // 容器网络 CID
     CIDchange_1(val) {
@@ -2737,6 +2744,8 @@ export default {
           });
         }
         this.ChildNodes();
+        // 机型 选择机型
+        this.getDescribeZoneInstanceConfigInfos();
       } else {
         this.colony.nameWran = true;
       }
@@ -3038,6 +3047,9 @@ export default {
       this.rightListMaster = [];
       if (val === "2") {
         this.colonySecond.workerShow = true;
+        if (this.colonySecond.worker == 2 && this.colonySecond.source == 1) {
+          this.TotalCost(0, 2);
+        }
       } else {
         this.colonySecond.workerShow = false;
         this.colonySecond.secondNextShow = true;
@@ -3113,6 +3125,8 @@ export default {
               i
             ].modelGB = this.colonySecond.masterTableList[i].Memory;
           }
+          // 总计费用
+          this.ModelSure(0, 1);
         } else {
           let ErrTips = {
             "InvalidInstanceType.Malformed": "指定InstanceType参数格式不合法",
@@ -3140,15 +3154,26 @@ export default {
       }
     },
     // 机型
-    handleCurrentChange(val) {
+    handleCurrentChange1(val) {
       this.modelText = val;
+    },
+    // 机型
+    handleCurrentChange(val) {
+      this.modelText2 = val;
     },
     // 机型 弹框确认
     ModelSure(index, a) {
+      if (this.modelText === undefined || this.modelText2 === undefined) {
+        this.modelText = this.colonySecond.tableList[index];
+        this.modelText2 = this.colonySecond.masterTableList[index];
+      }
       if (a == 1) {
         this.colonySecond.workerOneList[
           index
         ].modelName = this.modelText.InstanceType;
+        this.colonySecond.workerOneList[
+          index
+        ].InstanceChargeType = this.modelText.InstanceChargeType;
         this.colonySecond.workerOneList[index].modelType = this.ModelTypeName(
           this.modelText.TypeName
         );
@@ -3158,24 +3183,29 @@ export default {
       } else {
         this.colonySecond.masterOneList[
           index
-        ].modelName = this.modelText.InstanceType;
+        ].modelName = this.modelText2.InstanceType;
+        this.colonySecond.masterOneList[
+          index
+        ].InstanceChargeType = this.modelText2.InstanceChargeType;
         this.colonySecond.masterOneList[index].modelType = this.ModelTypeName(
-          this.modelText.TypeName
+          this.modelText2.TypeName
         );
-        this.colonySecond.masterOneList[index].modelHe = this.modelText.Cpu;
-        this.colonySecond.masterOneList[index].modelGB = this.modelText.Memory;
+        this.colonySecond.masterOneList[index].modelHe = this.modelText2.Cpu;
+        this.colonySecond.masterOneList[index].modelGB = this.modelText2.Memory;
         this.colonySecond.masterOneList[index].modelShow = false;
       }
+      // 总计费用
+      this.TotalCost(index, a);
     },
     // 系统盘 弹框确认
     SystemDiskSure(index, a) {
       var systemDiskOptions = this.colonySecond.systemDiskOptions;
-      // if (a == 1) {
       for (var i in systemDiskOptions) {
         if (a == 1) {
           this.colonySecond.workerOneList[
             index
           ].systemDiskNumber = this.colonySecond.systemDiskNum;
+          this.TotalCost(index, a);
           if (
             this.colonySecond.workerOneList[index].systemDiskVal ==
             systemDiskOptions[i].value
@@ -3188,6 +3218,7 @@ export default {
           this.colonySecond.masterOneList[
             index
           ].systemDiskNumber = this.colonySecond.systemDiskNum;
+          this.TotalCost(index, a);
           if (
             this.colonySecond.masterOneList[index].systemDiskVal ==
             systemDiskOptions[i].value
@@ -3230,6 +3261,8 @@ export default {
     // 数据盘 弹框确认
     DataDiskSure(index, a) {
       let buyDataDiskArr = this.colonySecond.buyDataDiskArr;
+      this.colonySecond.workerOneList[index].dataDiskArr = [];
+      this.colonySecond.masterOneList[index].dataDiskArr = [];
       let text = [];
       if (buyDataDiskArr.length === 0) {
         this.colonySecond.workerOneList[index].dataDiskValue = "暂不购买";
@@ -3250,21 +3283,32 @@ export default {
                   buyDataDiskArr[i].dataDiskNum +
                   "GB;"
               );
+
               if (a == 1) {
                 this.colonySecond.workerOneList[
                   index
                 ].dataDiskValue = text.toString().replace(",", "");
                 this.colonySecond.workerOneList[index].dataDiskShow = false;
+                this.colonySecond.workerOneList[index].dataDiskArr.push({
+                  DiskType: this.colonySecond.dataDiskOptions[j].value,
+                  DiskSize: buyDataDiskArr[i].dataDiskNum
+                });
               } else {
                 this.colonySecond.masterOneList[
                   index
                 ].dataDiskValue = text.toString().replace(",", "");
                 this.colonySecond.masterOneList[index].dataDiskShow = false;
+                this.colonySecond.masterOneList[index].dataDiskArr.push({
+                  DiskType: this.colonySecond.dataDiskOptions[j].value,
+                  DiskSize: buyDataDiskArr[i].dataDiskNum
+                });
               }
             }
           }
         }
       }
+      // 总计费用
+      this.TotalCost(index, a);
     },
     // 公网带宽 弹框确认
     BroadbandSure(index, a) {
@@ -3273,8 +3317,12 @@ export default {
         this.colonySecond.workerOneList[
           index
         ].broadbandNumber = this.colonySecond.broadbandNum;
+        this.TotalCost(index, a);
         for (var i in broadbandOptions) {
-          if (this.colonySecond.broadbandVal === broadbandOptions[i].value) {
+          if (
+            this.colonySecond.workerOneList[index].broadbandVal ===
+            broadbandOptions[i].value
+          ) {
             this.colonySecond.workerOneList[index].broadbandValue =
               broadbandOptions[i].label;
           }
@@ -3284,8 +3332,12 @@ export default {
         this.colonySecond.masterOneList[
           index
         ].broadbandNumber = this.colonySecond.broadbandNum;
+        this.TotalCost(index, a);
         for (var i in broadbandOptions) {
-          if (this.colonySecond.broadbandVal === broadbandOptions[i].value) {
+          if (
+            this.colonySecond.masterOneList[index].broadbandVal ===
+            broadbandOptions[i].value
+          ) {
             this.colonySecond.masterOneList[index].broadbandValue =
               broadbandOptions[i].label;
           }
@@ -3295,7 +3347,6 @@ export default {
     },
     // 确定
     WorkerSure(index, a) {
-      console.log(index);
       if (a == 1) {
         let worker = this.colonySecond.workerNodeNetOpt;
         for (var i in worker) {
@@ -3307,7 +3358,8 @@ export default {
               worker[i].SubnetName;
           }
         }
-        this.OneAddModel();
+        this.colonySecond.workerOneList[index].showText = true;
+      this.colonySecond.workerOneList[index].showEdit = false;
       } else {
         let worker = this.colonySecond.workerNodeNetOpt;
         for (var i in worker) {
@@ -3319,7 +3371,8 @@ export default {
               worker[i].SubnetName;
           }
         }
-        this.MasterAddModel();
+        this.colonySecond.masterOneList[index].showText = true;
+      this.colonySecond.masterOneList[index].showEdit = false;
       }
     },
     // worker 配置 编辑
@@ -3377,11 +3430,14 @@ export default {
         systemDiskNumber: "50",
         // 数据盘
         dataDiskValue: "暂不购买",
+        buyDataDisk: false,
+        dataDiskArr: [],
         dataDiskVal: "1",
         dataDiskNumber: "10",
         latticeSetVal: "ext3",
         setValue: "/var/lib/docker",
         broadbandValue: "按宽带计费",
+        broadbandVal: "BANDWIDTH_POSTPAID_BY_HOUR",
         broadbandNumber: "1",
         formatMount: true,
         dataNum: "1"
@@ -3391,6 +3447,8 @@ export default {
       this.colonySecond.workerOneList[_length - 2].showEdit = false;
       this.ChildNodes();
       this.getDescribeZoneInstanceConfigInfos();
+      // 总计费用
+      this.TotalCost(this.colonySecond.workerOneList.length - 1, 1);
     },
     // Master&Etcd 配置 添加机型
     MasterAddModel() {
@@ -3413,11 +3471,14 @@ export default {
         systemDiskNumber: "50",
         // 数据盘
         dataDiskValue: "暂不购买",
+        buyDataDisk: false,
+        dataDiskArr: [],
         dataDiskVal: "1",
         dataDiskNumber: "10",
         latticeSetVal: "ext3",
         setValue: "/var/lib/docker",
-        broadbandValue: "按��带计费",
+        broadbandValue: "按宽带计费",
+        broadbandVal: "BANDWIDTH_POSTPAID_BY_HOUR",
         broadbandNumber: "1",
         formatMount: true,
         dataNum: "1"
@@ -3432,26 +3493,55 @@ export default {
       }
     },
     // 总计费用
-    TotalCost() {
+    TotalCost(index, a) {
+      console.log(this.colonySecond.workerOneList[index]);
+      var array = [];
+      if (a == 1) {
+        array = this.colonySecond.workerOneList;
+      } else {
+        array = this.colonySecond.masterOneList;
+      }
       let param = {
         Version: "2017-03-12",
         ImageId: "img-6yudrskj",
-        "Placement.ProjectId": "",
+        "Placement.ProjectId": this.colony.projectValue,
         "Placement.Zone": "ap-taipei-1",
-        InstanceChargeType: "POSTPAID_BY_HOUR",
-        InstanceType: "S3.SMALL2",
-        "SystemDisk.DiskSize": "50",
-        "SystemDisk.DiskType": "CLOUD_PREMIUM",
-        InstanceCount: "1"
+        // 机型
+        InstanceChargeType: array[index].InstanceChargeType,
+        InstanceType: array[index].modelName,
+        // 数量
+        InstanceCount: 1,
+        // 系统盘
+        "SystemDisk.DiskSize": Number(array[index].systemDiskNumber),
+        "SystemDisk.DiskType": array[index].systemDiskVal,
+        PurchaseSource: "MC"
       };
-      param["DataDisks.0.DiskSize"] = "1";
-      param["DataDisks.0.DiskType"] = "高性能云硬盘";
-      param["InternetAccessible.InternetChargeType"] = "带宽按小时后付费";
-      param["InternetAccessible.InternetMaxBandwidthOut"] = "11";
-      param["InternetAccessible.PublicIpAssigned"] = true;
+      // 数据盘
+      if (array[index].dataDiskShow) {
+        let dataDisk = array[index].dataDiskArr;
+        for (let i in dataDisk) {
+          param["DataDisks." + i + ".DiskSize"] = dataDisk[i].DiskSize;
+          param["DataDisks." + i + ".DiskType"] = dataDisk[i].DiskSize;
+        }
+      }
+      // 公网带宽
+      param["InternetAccessible.InternetChargeType"] =
+        array[index].broadbandVal;
+      param["InternetAccessible.InternetMaxBandwidthOut"] = Number(
+        array[index].broadbandNumber
+      );
+      if (array[index].broadbandNumber == 0) {
+        param["InternetAccessible.PublicIpAssigned"] = false;
+      } else {
+        param["InternetAccessible.PublicIpAssigned"] = true;
+      }
+      console.log(param);
       this.axios.post(TKE_PRICE, param).then(res => {
         if (res.Response.Error === undefined) {
-          console.log(res);
+          console.log(res.Response.Price);
+          let _data = res.Response.Price
+          this.colonySecond.allocationCost = _data.InstancePrice.UnitPrice
+          this.colonySecond.networkCost = _data.BandwidthPrice.UnitPrice
         } else {
           let ErrTips = {};
           let ErrOr = Object.assign(ErrorTips, ErrTips);
