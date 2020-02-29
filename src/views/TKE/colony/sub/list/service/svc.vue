@@ -151,25 +151,26 @@ export default {
         Version: '2018-05-25',
         ClusterName: this.clusterId
       }
-      try {
-        const { Response: { ResponseBody } } = await this.axios.post(POINT_REQUEST, param)
-        this.loadShow = false
-        let searchOpt = JSON.parse(ResponseBody).items// 得到空间列表
-        this.searchOptions = searchOpt// 赋值
-        this.nameSpaceName = searchOpt[0].metadata.name// 默认选中第一项
-      } catch (e) {
-        this.loadShow = false
-        let ErrTips = {
+      await this.axios.post(POINT_REQUEST, param).then(res => {
+        if (res.Response.Error === undefined) {
+          this.loadShow = false
+          let searchOpt = JSON.parse(res.Response.ResponseBody).items// 得到空间列表
+          this.searchOptions = searchOpt// 赋值
+          this.nameSpaceName = searchOpt[0].metadata.name// 默认选中第一项
+        } else {
+          this.loadShow = false
+          let ErrTips = {
 
+          }
+          let ErrOr = Object.assign(ErrorTips, ErrTips)
+          this.$message({
+            message: ErrOr[Response.Error.Code],
+            type: 'error',
+            showClose: true,
+            duration: 0
+          })
         }
-        let ErrOr = Object.assign(ErrorTips, ErrTips)
-        this.$message({
-          message: ErrOr[Response.Error.Code],
-          type: 'error',
-          showClose: true,
-          duration: 0
-        })
-      }
+      })
     },
     // 获取列表数据
     async getList () {
