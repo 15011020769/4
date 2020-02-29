@@ -88,7 +88,7 @@ export default {
       legendTextPieType: ['公开类型', '未知类型', '用户自定义类型'], // bot类型
       legendTextPieAction: ['验证码', '拦截', '监控', '重定向'], // bot动作
       seriesWorldMap: [{ name: '中国', value: 2 }], // 世界地图查询值
-      seriesChinaMap:[{name: '河南', value: 2}], // 中国地图查询值
+      seriesChinaMap:[{name: '广东', value: 2}], // 中国地图查询值
       radio: "global", // 全球/全国绑定值
       botType: "ALL", // bot类型下拉绑定值
       options: [{value: 'ALL', label: '全部'},

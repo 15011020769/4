@@ -66,10 +66,10 @@ export default {
   data () {
     return {
       tipShow: true, //提示文字
-      selBtn: 3,
+      selBtn: 3, // 默认选中今天按钮
       dateTimeValue: [moment().startOf("day"), moment().endOf("day")], // 日期绑定
-      domainValue: "",
-      activeName: "overview",
+      domainValue: "", // 域名绑定
+      activeName: "overview", // 默认选中概览页
       options: [],
       routerParams: "overview",
       tableDataBegin: [],
@@ -147,7 +147,6 @@ export default {
           })
           this.options = arr
           this.domainValue = this.options[0].Domain;
-          console.log(this.options)
         }
       })
     },
