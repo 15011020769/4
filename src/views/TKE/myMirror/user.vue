@@ -253,7 +253,7 @@ export default {
       },
       ruleForm: {
         name: '',
-        region: '0',
+        // region: '0',
         region2: '',
         desc: '',
       },
@@ -434,6 +434,7 @@ export default {
           this.TotalCount = res.data.totalCount
           this.loadShow = false
         } else {
+          console.log(2)
           this.$message({
               message: ErrorTips[res.codeDesc],
               type: "error",
