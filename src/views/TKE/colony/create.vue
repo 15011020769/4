@@ -298,9 +298,9 @@
               >
                 <el-option
                   v-for="group in colony.OSoptions"
-                  :key="group.Alias"
-                  :label="group.Alias"
-                  :value="group.Alias"
+                  :key="group.value"
+                  :label="group.label"
+                  :value="group.value"
                 >
                 </el-option>
               </el-select>
@@ -422,14 +422,17 @@
               class="tke-second-radio-time"
             >
               <div class="tke-second-radio-btn">
-                <el-radio-group v-model="colonySecond.buyTime">
+                <el-radio-group
+                  v-model="colonySecond.buyTime"
+                  @change="BuyTime"
+                >
                   <el-radio-button label="1">1个月</el-radio-button>
                   <el-radio-button label="2">2个月</el-radio-button>
                   <el-radio-button label="3">3个月</el-radio-button>
                   <el-radio-button label="4">6个月</el-radio-button>
-                  <el-radio-button label="5">1年</el-radio-button>
-                  <el-radio-button label="6">2年</el-radio-button>
-                  <el-radio-button label="7">3年</el-radio-button>
+                  <el-radio-button label="12">1年</el-radio-button>
+                  <el-radio-button label="24">2年</el-radio-button>
+                  <el-radio-button label="36">3年</el-radio-button>
                 </el-radio-group>
               </div>
             </el-form-item>
@@ -442,6 +445,7 @@
             </el-form-item>
             <div
               class="tke-second-worker"
+              style="margin-bottom:10px;"
               v-if="
                 colonySecond.workerShow === true && colonySecond.source == 1
               "
@@ -1695,13 +1699,17 @@
             </div>
             <el-form-item label="总计费用" v-if="colonySecond.sourceShow">
               <div class="tke-second-cost">
-                <span class="tke-second-cost-num">{{Math.round(colonySecond.allocationCost)}}</span
+                <span class="tke-second-cost-num">{{
+                  colonySecond.allocationCost
+                }}</span
                 ><span class="tke-second-cost-h">元/小时</span
                 ><span class="tke-second-cost-t">(配置费用)</span>
                 <i>|</i>
-                <span class="tke-second-cost-num">{{Math.round(colonySecond.networkCost)}}</span
+                <span class="tke-second-cost-num">{{
+                  colonySecond.networkCost
+                }}</span
                 ><span class="tke-second-cost-h">元/小时</span
-                ><span class="tke-second-cost-w"> (网络费用-按带宽计费)</span>
+                ><span class="tke-second-cost-w"> (网络费用)</span>
               </div>
             </el-form-item>
           </div>
@@ -1709,25 +1717,31 @@
         <!-- 底部 -->
         <div class="tke-formpanel-footer">
           <el-button size="small" @click="secondPrev">上一步</el-button>
-          <el-button
-            size="small"
-            type="primary"
-            @click="secondNext"
-            v-if="colonySecond.secondNextShow"
-            >下一步</el-button
-          >
-          <el-button size="small" disabled v-if="!colonySecond.secondNextShow"
-            >下一步</el-button
-          >
+          <p v-if="!colonySecond.completeBtn">
+            <el-button
+              size="small"
+              type="primary"
+              @click="secondNext"
+              v-if="colonySecond.secondNextShow"
+              >下一步</el-button
+            >
+            <el-button size="small" disabled v-if="!colonySecond.secondNextShow"
+              >下一步</el-button
+            >
+          </p>
           <span class="footer-tips" v-if="colonySecond.workerTips">
             请选择 Worker 节点
           </span>
           <span class="footer-tips" v-if="colonySecond.masterTips">
             Master 节点最少选择3台
           </span>
-          <span size="small" type="primary" v-if="colonySecond.completeBtn">
+          <el-button
+            size="small"
+            type="primary"
+            v-if="colonySecond.completeBtn"
+          >
             完成
-          </span>
+          </el-button>
         </div>
       </div>
       <!-- 第三步 云服务器配置 -->
@@ -1754,9 +1768,9 @@
           <el-form-item label="容器网络">
             <p>{{ dispose.container }}</p>
           </el-form-item>
-          <!-- <el-form-item label="计费模式">
-            <p>{{ dispose.container }}</p>
-          </el-form-item> -->
+          <el-form-item label="计费模式">
+            <p>{{ colonySecond.charging == 1 ? "按量计费" : "包年包月" }}</p>
+          </el-form-item>
           <div class="tke-second-tips">
             <p>操作系统<i class="el-icon-info"></i></p>
             <p>
@@ -1780,28 +1794,27 @@
                 <el-input value="新建并绑定默认安全组" disabled></el-input>
                 <!-- <i class="el-icon-error" v-if="colonyThird.safeArr.length > 0"></i> -->
               </p>
-              <div
-                v-for="(item, index) in colonyThird.safeArr"
-                v-if="colonyThird.safeArr.length > 0"
-              >
-                <div>
-                  <el-select
-                    placeholder="请选择安全组"
-                    v-model="item.securityGroupSel"
-                  >
-                    <el-option
-                      v-for="x in securityGroupOpt"
-                      :key="x.value"
-                      :label="x.label"
-                      :value="x.value"
+              <div v-if="colonyThird.safeArr.length > 0">
+                <div v-for="(item, index) in colonyThird.safeArr" :key="index">
+                  <div>
+                    <el-select
+                      placeholder="请选择安全组"
+                      v-model="item.securityGroupSel"
                     >
-                    </el-option>
-                  </el-select>
-                  <i class="el-icon-refresh ml5"></i>
-                  <i
-                    class="el-icon-error ml5"
-                    @click="deleteExceptPrice(index)"
-                  ></i>
+                      <el-option
+                        v-for="x in securityGroupOpt"
+                        :key="x.value"
+                        :label="x.label"
+                        :value="x.value"
+                      >
+                      </el-option>
+                    </el-select>
+                    <i class="el-icon-refresh ml5"></i>
+                    <i
+                      class="el-icon-error ml5"
+                      @click="deleteExceptPrice(index)"
+                    ></i>
+                  </div>
                 </div>
               </div>
               <p v-if="colonyThird.safeArr.length === 0">
@@ -1865,7 +1878,7 @@
               [0-9]和[()`~!@#$%^&}*-+=|{}[]:;',.?/]的特殊符号）
             </p>
           </el-form-item>
-          <el-form-item
+          <!-- <el-form-item
             label="确认密码"
             v-if="colonyThird.three"
             class="password"
@@ -1875,7 +1888,7 @@
               v-model="colonyThird.confirmPassword"
               show-password
             ></el-input>
-          </el-form-item>
+          </el-form-item> -->
           <el-form-item label="安全加固">
             <div class="tke-third-checkbox" style="padding-bottom:10px;">
               <el-checkbox v-model="colonyThird.safetyChecked"
@@ -1935,30 +1948,77 @@
           <el-form-item label="操作系统">
             {{ colony.OSvalue }}
           </el-form-item>
+          <el-form-item
+            label="Master&Etcd节点"
+            class="tke-fourth-node"
+            style="padding:0px;border:0px;"
+            v-if="colonySecond.workerShow === true && colonySecond.source == 1"
+          >
+            <div
+              v-for="(item, index) in colonySecond.masterOneList"
+              :key="index"
+            >
+              <p>可用区:台北一区</p>
+              <p>
+                机型:>{{ item.modelName }}({{ item.modelType }},{{
+                  item.modelHe
+                }}核{{ item.modelGB }}GB)
+              </p>
+              <p>
+                系统盘:{{ item.systemDiskValue }} {{ item.systemDiskNumber }}GB
+              </p>
+              <p>数据盘:{{ item.dataDiskValue }}</p>
+              <p>
+                公网带宽:{{ item.broadbandValue }}
+                {{ item.broadbandNumber }}Mbps
+              </p>
+              <p>数量:{{ item.dataNum }}</p>
+            </div>
+          </el-form-item>
           <el-form-item label="Node节点" class="tke-fourth-node">
-            <p>可用区:台北一区</p>
-            <p>机型:S3.SMALL1(标准型S3,1核1GB)</p>
-            <p>系统盘:高性能云硬盘 50GB</p>
-            <p>数据盘:暂不购买</p>
-            <p>公网带宽:按带宽计费 1Mbps</p>
-            <p>数量:1</p>
+            <div
+              v-for="(item, index) in colonySecond.workerOneList"
+              :key="index"
+            >
+              <p>可用区:台北一区</p>
+              <p>
+                机型:>{{ item.modelName }}({{ item.modelType }},{{
+                  item.modelHe
+                }}核{{ item.modelGB }}GB)
+              </p>
+              <p>
+                系统盘:{{ item.systemDiskValue }} {{ item.systemDiskNumber }}GB
+              </p>
+              <p>数据盘:{{ item.dataDiskValue }}</p>
+              <p>
+                公网带宽:{{ item.broadbandValue }}
+                {{ item.broadbandNumber }}Mbps
+              </p>
+              <p>数量:{{ item.dataNum }}</p>
+            </div>
           </el-form-item>
           <el-form-item label="总计费用">
             <div class="tke-second-cost">
-              <span class="tke-second-cost-num">0.16</span
+              <span class="tke-second-cost-num">{{
+                colonySecond.allocationCost
+              }}</span
               ><span class="tke-second-cost-h">元/小时</span
               ><span class="tke-second-cost-t">(配置费用)</span>
               <i>|</i>
-              <span class="tke-second-cost-num">0.06</span
+              <span class="tke-second-cost-num">{{
+                colonySecond.networkCost
+              }}</span
               ><span class="tke-second-cost-h">元/小时</span
-              ><span class="tke-second-cost-w"> (网络费用-按带宽计费)</span>
+              ><span class="tke-second-cost-w"> (网络费用)</span>
             </div>
           </el-form-item>
         </el-form>
         <!-- 底部 -->
         <div class="tke-formpanel-footer">
           <el-button size="small" @click="fourthPrev">上一步</el-button>
-          <el-button size="small" type="primary">完成</el-button>
+          <el-button size="small" type="primary" @click="CreateFinish"
+            >完成</el-button
+          >
         </div>
       </div>
     </div>
@@ -1986,7 +2046,9 @@ import {
   TKE_PRICE,
   // 第三步
   TKE_MISG,
-  TKE_SSH
+  TKE_SSH,
+  // 第四步
+  TKE_CREATW_CLUSTERS
 } from "@/constants";
 export default {
   name: "create",
@@ -2128,8 +2190,17 @@ export default {
         // 集群描述
         desc: "",
         // 操作系统
-        OSoptions: [],
-        OSvalue: "",
+        OSoptions: [
+          {
+            value: "ubuntu16.04.1 LTSx86_64",
+            label: "Ubuntu Server 16.04.1 LTS 64bit"
+          },
+          {
+            value: "centos7.2x86_64",
+            label: "CentOS 7.2 64bit"
+          }
+        ],
+        OSvalue: "ubuntu16.04.1 LTSx86_64",
         ipvs: false
       },
       // 第二步
@@ -2401,9 +2472,9 @@ export default {
         ],
         // 总计费用
         // 配置费用
-        allocationCost:"",
+        allocationCost: "",
         // 网络费用
-        networkCost:"",
+        networkCost: "",
         // 下一步
         secondNextShow: true,
         workerTips: false,
@@ -2455,39 +2526,19 @@ export default {
       securityGroupOpt: [],
       securityGroupSel: "",
       radio1: 0,
-      options: [
-        {
-          value: "选项1",
-          label: "黄金糕"
-        },
-        {
-          value: "选项2",
-          label: "双皮奶"
-        },
-        {
-          value: "选项3",
-          label: "蚵仔煎"
-        },
-        {
-          value: "选项4",
-          label: "龙须面"
-        },
-        {
-          value: "选项5",
-          label: "北京烤鸭"
-        }
-      ],
-      value: "",
-      num: 1,
       checked: true,
       input: "",
+      costAll: [],
+      costAll2: [],
       // 已选配置
       dispose: {
         name: "",
         kuValue: "",
         cityRadio: "台湾台北",
         container: ""
-      }
+      },
+      param: [],
+      params: []
     };
   },
   components: {
@@ -2506,8 +2557,8 @@ export default {
     this.KubernetesEditionData();
     // 集群网络
     this.ClusterNetworkData();
-    // 操作系统
-    this.OperatSystemData();
+    // // 操作系统
+    // this.OperatSystemData();
     //  --------------------------------  第二步 -----------------------------
     //  --------------------------------  第三步 -----------------------------
     // 安全组
@@ -2679,28 +2730,28 @@ export default {
       }
       this.NetWork();
     },
-    // 操作系统
-    OperatSystemData() {
-      const param = {
-        Version: "2018-05-25"
-      };
-      this.axios.post(TKE_OPERAT_SYSTEM, param).then(res => {
-        if (res.Response.Error === undefined) {
-          this.colony.OSoptions = res.Response.ImageInstanceSet;
-          this.colony.OSvalue = res.Response.ImageInstanceSet[0].Alias;
-          // console.log(this.colony.OSoptions);
-        } else {
-          let ErrTips = {};
-          let ErrOr = Object.assign(ErrorTips, ErrTips);
-          this.$message({
-            message: ErrOr[res.Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-          });
-        }
-      });
-    },
+    // // 操作系统
+    // OperatSystemData() {
+    //   const param = {
+    //     Version: "2018-05-25"
+    //   };
+    //   this.axios.post(TKE_OPERAT_SYSTEM, param).then(res => {
+    //     if (res.Response.Error === undefined) {
+    //       this.colony.OSoptions = res.Response.ImageInstanceSet;
+    //       this.colony.OSvalue = res.Response.ImageInstanceSet[0].Alias;
+    //       // console.log(this.colony.OSoptions);
+    //     } else {
+    //       let ErrTips = {};
+    //       let ErrOr = Object.assign(ErrorTips, ErrTips);
+    //       this.$message({
+    //         message: ErrOr[res.Response.Error.Code],
+    //         type: "error",
+    //         showClose: true,
+    //         duration: 0
+    //       });
+    //     }
+    //   });
+    // },
     // 第一步 下一步
     firstNext() {
       if (this.colony.name !== "" && this.colony.CIDRTips.IsConflict !== true) {
@@ -2745,7 +2796,7 @@ export default {
         }
         this.ChildNodes();
         // 机型 选择机型
-        this.getDescribeZoneInstanceConfigInfos();
+        this.getDescribeZoneInstanceConfigInfos(0, 1);
       } else {
         this.colony.nameWran = true;
       }
@@ -2755,20 +2806,15 @@ export default {
     NodeSource(val) {
       this.rightList = [];
       if (val == "2") {
-        this.colonySecond.sourceShow = false;
-      } else {
-        this.colonySecond.workerTips = false;
-        this.colonySecond.sourceShow = true;
-        this.colonySecond.secondNextShow = true;
-      }
-      if (this.colonySecond.source == 2) {
         this.colonySecond.workerTips = true;
         this.colonySecond.masterTips = false;
         this.colonySecond.secondNextShow = false;
       } else {
+        this.colonySecond.worker = 1;
         this.colonySecond.workerTips = false;
         this.colonySecond.masterTips = false;
         this.colonySecond.secondNextShow = true;
+        this.colonySecond.sourceShow = true;
       }
       if (
         this.colonySecond.worker == 2 &&
@@ -2988,36 +3034,30 @@ export default {
           for (var i in this.colonySecond.workerOneList) {
             this.colonySecond.workerOneList[
               i
-            ].workerNodeNetworkVal = this.colonySecond.workerNodeNetOpt[
-              i
-            ].SubnetId;
+            ].workerNodeNetworkVal = this.colonySecond.workerNodeNetOpt[0].SubnetId;
             this.colonySecond.workerOneList[
               i
-            ].nodeTotalNum = this.colonySecond.workerNodeNetOpt[
-              i
-            ].TotalIpAddressCount;
+            ].workerNodeNetworkValue = this.colonySecond.workerNodeNetOpt[0].SubnetName;
             this.colonySecond.workerOneList[
               i
-            ].nodeSurplusNum = this.colonySecond.workerNodeNetOpt[
+            ].nodeTotalNum = this.colonySecond.workerNodeNetOpt[0].TotalIpAddressCount;
+            this.colonySecond.workerOneList[
               i
-            ].AvailableIpAddressCount;
+            ].nodeSurplusNum = this.colonySecond.workerNodeNetOpt[0].AvailableIpAddressCount;
           }
           for (var i in this.colonySecond.masterOneList) {
             this.colonySecond.masterOneList[
               i
-            ].workerNodeNetworkVal = this.colonySecond.workerNodeNetOpt[
-              i
-            ].SubnetId;
+            ].workerNodeNetworkVal = this.colonySecond.workerNodeNetOpt[0].SubnetId;
             this.colonySecond.masterOneList[
               i
-            ].nodeTotalNum = this.colonySecond.workerNodeNetOpt[
-              i
-            ].TotalIpAddressCount;
+            ].workerNodeNetworkValue = this.colonySecond.workerNodeNetOpt[0].SubnetName;
             this.colonySecond.masterOneList[
               i
-            ].nodeSurplusNum = this.colonySecond.workerNodeNetOpt[
+            ].nodeTotalNum = this.colonySecond.workerNodeNetOpt[0].TotalIpAddressCount;
+            this.colonySecond.masterOneList[
               i
-            ].AvailableIpAddressCount;
+            ].nodeSurplusNum = this.colonySecond.workerNodeNetOpt[0].AvailableIpAddressCount;
           }
         } else {
           let ErrTips = {};
@@ -3045,16 +3085,17 @@ export default {
     SecondMaster(val) {
       // console.log(val)
       this.rightListMaster = [];
-      if (val === "2") {
+      if (val == "2") {
         this.colonySecond.workerShow = true;
-        if (this.colonySecond.worker == 2 && this.colonySecond.source == 1) {
-          this.TotalCost(0, 2);
+        if (this.colonySecond.master == 2 && this.colonySecond.source == 1) {
+          this.TotalCost();
         }
       } else {
         this.colonySecond.workerShow = false;
         this.colonySecond.secondNextShow = true;
       }
       this.colonySecond.workerTips = false;
+      this.colonySecond.completeBtn = false;
       this.colonySecond.masterTips = true;
       this.colonySecond.secondNextShow = false;
       if (
@@ -3064,6 +3105,9 @@ export default {
       ) {
         this.colonySecond.boxShow = false;
         this.colonySecond.completeBtn = true;
+        this.colonySecond.workerTips = false;
+        this.colonySecond.masterTips = false;
+        this.colonySecond.secondNextShow = false;
       } else {
         this.colonySecond.boxShow = true;
         this.colonySecond.completeBtn = false;
@@ -3077,10 +3121,15 @@ export default {
       } else {
         this.colonySecond.chargingShow = false;
       }
+      this.TotalCost();
+    },
+    // 购买时长
+    BuyTime(val) {
+      this.TotalCost();
     },
     // 机型  选择机型
     //获取可用区机型配置信息
-    getDescribeZoneInstanceConfigInfos() {
+    getDescribeZoneInstanceConfigInfos(index, a) {
       let param = {
         Version: "2017-03-12"
       };
@@ -3125,8 +3174,9 @@ export default {
               i
             ].modelGB = this.colonySecond.masterTableList[i].Memory;
           }
+
           // 总计费用
-          this.ModelSure(0, 1);
+          this.TotalCost();
         } else {
           let ErrTips = {
             "InvalidInstanceType.Malformed": "指定InstanceType参数格式不合法",
@@ -3195,7 +3245,7 @@ export default {
         this.colonySecond.masterOneList[index].modelShow = false;
       }
       // 总计费用
-      this.TotalCost(index, a);
+      this.TotalCost();
     },
     // 系统盘 弹框确认
     SystemDiskSure(index, a) {
@@ -3205,7 +3255,7 @@ export default {
           this.colonySecond.workerOneList[
             index
           ].systemDiskNumber = this.colonySecond.systemDiskNum;
-          this.TotalCost(index, a);
+
           if (
             this.colonySecond.workerOneList[index].systemDiskVal ==
             systemDiskOptions[i].value
@@ -3218,7 +3268,6 @@ export default {
           this.colonySecond.masterOneList[
             index
           ].systemDiskNumber = this.colonySecond.systemDiskNum;
-          this.TotalCost(index, a);
           if (
             this.colonySecond.masterOneList[index].systemDiskVal ==
             systemDiskOptions[i].value
@@ -3229,6 +3278,7 @@ export default {
           this.colonySecond.masterOneList[index].systemDiskShow = false;
         }
       }
+      this.TotalCost();
     },
     // 购买数据盘
     BuyDataDisk(val) {
@@ -3308,7 +3358,7 @@ export default {
         }
       }
       // 总计费用
-      this.TotalCost(index, a);
+      this.TotalCost();
     },
     // 公网带宽 弹框确认
     BroadbandSure(index, a) {
@@ -3317,7 +3367,6 @@ export default {
         this.colonySecond.workerOneList[
           index
         ].broadbandNumber = this.colonySecond.broadbandNum;
-        this.TotalCost(index, a);
         for (var i in broadbandOptions) {
           if (
             this.colonySecond.workerOneList[index].broadbandVal ===
@@ -3332,7 +3381,6 @@ export default {
         this.colonySecond.masterOneList[
           index
         ].broadbandNumber = this.colonySecond.broadbandNum;
-        this.TotalCost(index, a);
         for (var i in broadbandOptions) {
           if (
             this.colonySecond.masterOneList[index].broadbandVal ===
@@ -3344,6 +3392,7 @@ export default {
         }
         this.colonySecond.masterOneList[index].broadbandShow = false;
       }
+      this.TotalCost();
     },
     // 确定
     WorkerSure(index, a) {
@@ -3359,7 +3408,7 @@ export default {
           }
         }
         this.colonySecond.workerOneList[index].showText = true;
-      this.colonySecond.workerOneList[index].showEdit = false;
+        this.colonySecond.workerOneList[index].showEdit = false;
       } else {
         let worker = this.colonySecond.workerNodeNetOpt;
         for (var i in worker) {
@@ -3372,7 +3421,7 @@ export default {
           }
         }
         this.colonySecond.masterOneList[index].showText = true;
-      this.colonySecond.masterOneList[index].showEdit = false;
+        this.colonySecond.masterOneList[index].showEdit = false;
       }
     },
     // worker 配置 编辑
@@ -3400,6 +3449,7 @@ export default {
           }
         }
       }
+      this.TotalCost();
     },
     // worker 配置 删除
     DeleteWorker(index, a) {
@@ -3408,6 +3458,7 @@ export default {
       } else {
         this.colonySecond.masterOneList.splice(index, 1);
       }
+      this.TotalCost();
     },
     // 添加机型
     OneAddModel() {
@@ -3446,9 +3497,7 @@ export default {
       this.colonySecond.workerOneList[_length - 2].showText = true;
       this.colonySecond.workerOneList[_length - 2].showEdit = false;
       this.ChildNodes();
-      this.getDescribeZoneInstanceConfigInfos();
-      // 总计费用
-      this.TotalCost(this.colonySecond.workerOneList.length - 1, 1);
+      this.getDescribeZoneInstanceConfigInfos(this.colonySecond.index, 1);
     },
     // Master&Etcd 配置 添加机型
     MasterAddModel() {
@@ -3487,72 +3536,223 @@ export default {
       this.colonySecond.masterOneList[_length - 2].showText = true;
       this.colonySecond.masterOneList[_length - 2].showEdit = false;
       this.ChildNodes();
-      this.getDescribeZoneInstanceConfigInfos();
+      this.getDescribeZoneInstanceConfigInfos(this.colonySecond.masterIndex, 2);
       if (this.colonySecond.masterOneList.length > 2) {
         this.colonySecond.masterTips = false;
+        this.colonySecond.secondNextShow = true;
       }
     },
     // 总计费用
-    TotalCost(index, a) {
-      console.log(this.colonySecond.workerOneList[index]);
-      var array = [];
-      if (a == 1) {
-        array = this.colonySecond.workerOneList;
-      } else {
-        array = this.colonySecond.masterOneList;
-      }
-      let param = {
-        Version: "2017-03-12",
-        ImageId: "img-6yudrskj",
-        "Placement.ProjectId": this.colony.projectValue,
-        "Placement.Zone": "ap-taipei-1",
-        // 机型
-        InstanceChargeType: array[index].InstanceChargeType,
-        InstanceType: array[index].modelName,
-        // 数量
-        InstanceCount: 1,
-        // 系统盘
-        "SystemDisk.DiskSize": Number(array[index].systemDiskNumber),
-        "SystemDisk.DiskType": array[index].systemDiskVal,
-        PurchaseSource: "MC"
-      };
-      // 数据盘
-      if (array[index].dataDiskShow) {
-        let dataDisk = array[index].dataDiskArr;
-        for (let i in dataDisk) {
-          param["DataDisks." + i + ".DiskSize"] = dataDisk[i].DiskSize;
-          param["DataDisks." + i + ".DiskType"] = dataDisk[i].DiskSize;
+    async TotalCost() {
+      var _allcost,
+        _netcost,
+        _allcost2,
+        _netcost2 = "";
+      var num = 0;
+      var _workerOneList = this.colonySecond.workerOneList;
+      this.costAll = [];
+      this.param = [];
+      this.params = [];
+      for (var i in _workerOneList) {
+        let param = {
+          Version: "2017-03-12",
+          ImageId: "img-6yudrskj",
+          "Placement.ProjectId": this.colony.projectValue,
+          "Placement.Zone": "ap-taipei-1",
+          // 机型
+          InstanceChargeType: _workerOneList[i].InstanceChargeType,
+          InstanceType: _workerOneList[i].modelName,
+          // 数量
+          InstanceCount: 1,
+          // 系统盘
+          "SystemDisk.DiskSize": Number(_workerOneList[i].systemDiskNumber),
+          "SystemDisk.DiskType": _workerOneList[i].systemDiskVal,
+          PurchaseSource: "MC"
+        };
+        // 数据盘
+        if (_workerOneList[i].dataDiskShow) {
+          let dataDisk = _workerOneList[i].dataDiskArr;
+          for (let j in dataDisk) {
+            param["DataDisks." + j + ".DiskSize"] = dataDisk[j].DiskSize;
+            param["DataDisks." + j + ".DiskType"] = dataDisk[j].DiskSize;
+          }
         }
-      }
-      // 公网带宽
-      param["InternetAccessible.InternetChargeType"] =
-        array[index].broadbandVal;
-      param["InternetAccessible.InternetMaxBandwidthOut"] = Number(
-        array[index].broadbandNumber
-      );
-      if (array[index].broadbandNumber == 0) {
-        param["InternetAccessible.PublicIpAssigned"] = false;
-      } else {
-        param["InternetAccessible.PublicIpAssigned"] = true;
-      }
-      console.log(param);
-      this.axios.post(TKE_PRICE, param).then(res => {
-        if (res.Response.Error === undefined) {
-          console.log(res.Response.Price);
-          let _data = res.Response.Price
-          this.colonySecond.allocationCost = _data.InstancePrice.UnitPrice
-          this.colonySecond.networkCost = _data.BandwidthPrice.UnitPrice
+        // 公网带宽
+        param["InternetAccessible.InternetChargeType"] =
+          _workerOneList[i].broadbandVal;
+        param["InternetAccessible.InternetMaxBandwidthOut"] = Number(
+          _workerOneList[i].broadbandNumber
+        );
+        if (_workerOneList[i].broadbandNumber == 0) {
+          param["InternetAccessible.PublicIpAssigned"] = false;
         } else {
-          let ErrTips = {};
-          let ErrOr = Object.assign(ErrorTips, ErrTips);
-          this.$message({
-            message: ErrOr[res.Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-          });
+          param["InternetAccessible.PublicIpAssigned"] = true;
         }
-      });
+        if (this.colonySecond.charging == 2) {
+          param["EnhancedService.SecurityService.Enabled"] = true;
+          param["EnhancedService.MonitorService.Enabled"] = true;
+          param["InstanceChargePrepaid.Period"] = this.colonySecond.buyTime;
+          // if(this.colonySecond.renew === true){
+          param["InstanceChargePrepaid.RenewFlag"] = "NOTIFY_AND_AUTO_RENEW";
+          // }
+        }
+        this.param.push(param);
+        await this.axios.post(TKE_PRICE, param).then(res => {
+          if (res.Response.Error === undefined) {
+            let _data = res.Response.Price;
+            this.costAll.push(_data);
+          } else {
+            let ErrTips = {
+              AccountQualificationRestrictions: "该请求账户未通过资格审计。",
+              InstancesQuotaLimitExceeded:
+                "表示当前创建的实例个数超过了该账户允许购买的剩余配额数。",
+              "InvalidClientToken.TooLong":
+                "指定的ClientToken字符串长度超出限制，必须小于等于64字节。",
+              "InvalidHostId.NotFound":
+                "指定的HostId不存在，或不属于该请求账号所有。",
+              "InvalidInstanceName.TooLong":
+                "指定的InstanceName字符串长度超出限制，必须小于等于60字节。",
+              "InvalidInstanceType.Malformed":
+                "指定InstanceType参数格式不合法。",
+              InvalidParameterCombination: "表示参数组合不正确。",
+              InvalidParameterValue:
+                "无效参数值。参数值格式错误或者参数值不被支持等。",
+              "InvalidParameterValue.Range":
+                "无效参数值。参数值取值范围不合法。",
+              InvalidPassword:
+                "无效密码。指定的密码不符合密码复杂度限制。例如密码长度不符合限制等。",
+              InvalidPeriod:
+                "无效时长。目前只支持时长：[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 24, 36]，单位：月。",
+              InvalidPermission: "账户不支持该操作。",
+              "InvalidZone.MismatchRegion": "指定的zone不存在。",
+              MissingParameter: "参数缺失。请求没有带必选参数。"
+            };
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+          }
+        });
+      }
+
+      var _masterOneList = this.colonySecond.masterOneList;
+      this.costAll2 = [];
+      for (var i in _masterOneList) {
+        let params = {
+          Version: "2017-03-12",
+          ImageId: "img-6yudrskj",
+          "Placement.ProjectId": this.colony.projectValue,
+          "Placement.Zone": "ap-taipei-1",
+          // 机型
+          InstanceChargeType: _masterOneList[i].InstanceChargeType,
+          InstanceType: _masterOneList[i].modelName,
+          // 数量
+          InstanceCount: 1,
+          // 系统盘
+          "SystemDisk.DiskSize": Number(_masterOneList[i].systemDiskNumber),
+          "SystemDisk.DiskType": _masterOneList[i].systemDiskVal,
+          PurchaseSource: "MC"
+        };
+        // 数据盘
+        if (_masterOneList[i].dataDiskShow) {
+          let dataDisk = _masterOneList[i].dataDiskArr;
+          for (let j in dataDisk) {
+            params["DataDisks." + j + ".DiskSize"] = dataDisk[j].DiskSize;
+            params["DataDisks." + j + ".DiskType"] = dataDisk[j].DiskSize;
+          }
+        }
+        // 公网带宽
+        params["InternetAccessible.InternetChargeType"] =
+          _masterOneList[i].broadbandVal;
+        params["InternetAccessible.InternetMaxBandwidthOut"] = Number(
+          _masterOneList[i].broadbandNumber
+        );
+        if (_masterOneList[i].broadbandNumber == 0) {
+          params["InternetAccessible.PublicIpAssigned"] = false;
+        } else {
+          params["InternetAccessible.PublicIpAssigned"] = true;
+        }
+        if (this.colonySecond.charging == 2) {
+          params["EnhancedService.SecurityService.Enabled"] = true;
+          params["EnhancedService.MonitorService.Enabled"] = true;
+        }
+        if (this.colonySecond.charging == 2) {
+          params["EnhancedService.SecurityService.Enabled"] = true;
+          params["EnhancedService.MonitorService.Enabled"] = true;
+          params["InstanceChargePrepaid.Period"] = this.colonySecond.buyTime;
+          // if(this.colonySecond.renew === true){
+          params["InstanceChargePrepaid.RenewFlag"] = "NOTIFY_AND_AUTO_RENEW";
+          // }
+        }
+        this.params.push(params);
+        await this.axios.post(TKE_PRICE, params).then(res => {
+          if (res.Response.Error === undefined) {
+            let _data = res.Response.Price;
+            this.costAll2.push(_data);
+          } else {
+            let ErrTips = {
+              AccountQualificationRestrictions: "该请求账户未通过资格审计。",
+              InstancesQuotaLimitExceeded:
+                "表示当前创建的实例个数超过了该账户允许购买的剩余配额数。",
+              "InvalidClientToken.TooLong":
+                "指定的ClientToken字符串长度超出限制，必须小于等于64字节。",
+              "InvalidHostId.NotFound":
+                "指定的HostId不存在，或不属于该请求账号所有。",
+              "InvalidInstanceName.TooLong":
+                "指定的InstanceName字符串长度超出限制，必须小于等于60字节。",
+              "InvalidInstanceType.Malformed":
+                "指定InstanceType参数格式不合法。",
+              InvalidParameterCombination: "表示参数组合不正确。",
+              InvalidParameterValue:
+                "无效参数值。参数值格式错误或者参数值不被支持等。",
+              "InvalidParameterValue.Range":
+                "无效参数值。参数值取值范围不合法。",
+              InvalidPassword:
+                "无效密码。指定的密码不符合密码复杂度限制。例如密码长度不符合限制等。",
+              InvalidPeriod:
+                "无效时长。目前只支持时长：[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 24, 36]，单位：月。",
+              InvalidPermission: "账户不支持该操作。",
+              "InvalidZone.MismatchRegion": "指定的zone不存在。",
+              MissingParameter: "参数缺失。请求没有带必选参数。"
+            };
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+          }
+        });
+      }
+
+      _allcost = this.costAll.reduce(
+        (num, item) => num + item.InstancePrice.UnitPrice,
+        0
+      );
+      _netcost = this.costAll.reduce(
+        (num, item) => num + item.BandwidthPrice.UnitPrice,
+        0
+      );
+
+      this.colonySecond.allocationCost = _allcost.toFixed(2);
+      this.colonySecond.networkCost = _netcost.toFixed(2);
+
+      if (this.colonySecond.source == 1 && this.colonySecond.master == 2) {
+        _allcost2 = this.costAll2.reduce(
+          (num, item) => num + item.InstancePrice.UnitPrice,
+          0
+        );
+        _netcost2 = this.costAll2.reduce(
+          (num, item) => num + item.BandwidthPrice.UnitPrice,
+          0
+        );
+        this.colonySecond.allocationCost = (_allcost + _allcost2).toFixed(2);
+        this.colonySecond.networkCost = (_netcost + _netcost2).toFixed(2);
+      }
     },
     // 第二步 上一步
     secondPrev() {
@@ -3609,7 +3809,6 @@ export default {
     },
     // 登录方式
     LoginMode(val) {
-      console.log(val);
       if (val === "1") {
         this.colonyThird.one = true;
         this.colonyThird.two = false;
@@ -3666,12 +3865,88 @@ export default {
       this.fourthBox = true;
     },
     // ----------------------------------------- 第四步 ---------------------------------------
-    // 第三步 下一步
+    // 第四步 上一步
     fourthPrev() {
       this.firstBox = false;
       this.secondBox = false;
       this.thirdBox = true;
       this.fourthBox = false;
+    },
+    // 创建 完成
+    CreateFinish() {
+      console.log(this.param);
+      console.log(this.params);
+      let param = {
+        Version: "2018-05-25",
+        "ClusterCIDRSettings.ClusterCIDR": this.dispose.container,
+        "ClusterCIDRSettings.IgnoreClusterCIDRConflict": false,
+        "ClusterCIDRSettings.MaxNodePodNum": this.colony.PodValue,
+        "ClusterCIDRSettings.MaxClusterServiceNum": this.colony.ServiceValue
+      };
+      if (this.colonySecond.master == 1) {
+        param["ClusterType"] = "MANAGED_CLUSTER";
+      } else {
+        param["ClusterType"] = "INDEPENDENT_CLUSTER";
+      }
+      // if (
+      //   this.colonySecond.workerShow === true &&
+      //   this.colonySecond.source == 1
+      // ) {
+      //   param["RunInstancesForNode.1.NodeRole"] = "MASTER_ETCD";
+      //   // param['RunInstancesForNode.1.RunInstancesPara'] = "MASTER_ETCD"
+      //   param["RunInstancesForNode.1.InstanceAdvancedSettingsOverrides"] =
+      //     "MASTER_ETCD";
+      // }
+      // param["RunInstancesForNode.0.NodeRole"] = "WORKER";
+      // for (let i in this.param) {
+      //   // param['RunInstancesForNode.0.RunInstancesPara'] = "MASTER_ETCD"
+      //   param[
+      //     "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." + i
+      //   ] = '{"Version":"2017-03-12","InstanceChargeType":"POSTPAID_BY_HOUR","Placement":{"Zone":"ap-taipei-1","ProjectId":0},"InstanceType":"S3.SMALL1","ImageId":"img-49iszl8j","SystemDisk":{"DiskType":"CLOUD_PREMIUM","DiskSize":50},"VirtualPrivateCloud":{"VpcId":"vpc-lgw7cgr2","SubnetId":"subnet-mkhrav7h"},"InternetAccessible":{"InternetChargeType":"BANDWIDTH_POSTPAID_BY_HOUR","InternetMaxBandwidthOut":1,"PublicIpAssigned":true},"InstanceCount":1,"InstanceName":"","LoginSettings":{"KeyIds":["skey-120yh2jb"]},"EnhancedService":{"SecurityService":{"Enabled":true},"MonitorService":{"Enabled":true}},"PurchaseSource":"docker_dashboard","UserData":""}'
+      //   // JSON.stringify(this.param[i]);
+      // }
+      param["ClusterBasicSettings.ClusterOs"] = this.colony.OSvalue;
+      param["ClusterBasicSettings.ClusterVersion"] = this.colony.kuValue;
+      param["ClusterBasicSettings.ClusterName"] = this.colony.name;
+      param["ClusterBasicSettings.ClusterDescription"] = this.colony.desc;
+      param["ClusterBasicSettings.VpcId"] = this.colony.networkValue;
+      param["ClusterBasicSettings.ProjectId"] = this.colony.projectValue;
+      param["ClusterBasicSettings.NeedWorkSecurityGroup"] = true;
+      param["ClusterBasicSettings.OsCustomizeType"] = "GENERAL";
+      param["ClusterBasicSettings.TagSpecification.0.ResourceType"] = "cluster";
+      param["ClusterBasicSettings.TagSpecification.0.Tags"] = "";
+
+      param["ClusterAdvancedSettings.IPVS"] = false;
+      param["ClusterAdvancedSettings.AsEnabled"] = false;
+      param["ClusterAdvancedSettings.ContainerRuntime"] = "docker";
+      param["ClusterAdvancedSettings.NodeNameType"] = "lan-ip";
+      param["ClusterAdvancedSettings.ExtraArgs.KubeAPIServer.0"] = "";
+      param["ClusterAdvancedSettings.ExtraArgs.KubeControllerManager.0"] = "";
+      param["ClusterAdvancedSettings.ExtraArgs.KubeScheduler.0"] = "";
+      param["ClusterAdvancedSettings.NetworkType"] = "lan-ip";
+      param["ClusterAdvancedSettings.IsNonStaticIpMode"] = false;
+
+      param["InstanceAdvancedSettings.MountTarget"] = "";
+      param["InstanceAdvancedSettings.DockerGraphPath"] = "";
+      param["InstanceAdvancedSettings.UserScript"] = "";
+      param["InstanceAdvancedSettings.Unschedulable"] = 0;
+      param["InstanceAdvancedSettings.Unschedulable.Labels.0"] = "";
+      param["InstanceAdvancedSettings.Unschedulable.DataDisks.0"] = "";
+      param["InstanceAdvancedSettings.ExtraArgs"] = "";
+      this.axios.post(TKE_CREATW_CLUSTERS, param).then(res => {
+        if (res.Response.Error === undefined) {
+          console.log(res.Response);
+        } else {
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
     }
   }
 };
@@ -3700,6 +3975,11 @@ export default {
   ::v-deep .el-button--primary {
     background: #006eff;
     border-color: #006eff;
+    margin-left: 10px;
+  }
+  ::v-deep .el-button.is-disabled {
+    height: 37px;
+    margin-left: 10px;
   }
   .footer-tips {
     display: inline-block;
@@ -4172,6 +4452,7 @@ export default {
           color: #006eff;
           padding: 0px;
           line-height: 50px;
+          height: 48px;
           &:active {
             background: #fff;
           }
