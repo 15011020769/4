@@ -16,17 +16,25 @@
     </div>
     <div class="colony-main">
       <div class="tke-card tke-formpanel-wrap mb60">
-        <el-form class="tke-form" :model="se" label-position="left" label-width="120px" size="mini">
-          <el-form-item label="名称">
+        <el-form
+          ref="form"
+          class="tke-form"
+          :model="se"
+          :rules="rules"
+          label-position="left"
+          label-width="120px"
+          size="mini"
+        >
+          <el-form-item label="名称" prop="name">
             <el-input class="w200" v-model="se.name" placeholder="请输入名称"></el-input>
-            <p>最长63个字符，只能包含小写字母、数字及分隔符("-")，且必须以小写字母开头，数字或小写字母结尾</p>
+            <p :class="{ activeColor: fontColor }">最长63个字符，只能包含小写字母、数字及分隔符("-")，且必须以小写字母开头，数字或小写字母结尾</p>
           </el-form-item>
           <el-form-item label="Secret类型">
             <el-radio-group v-model="se.tabPosition" style="margin-bottom: 30px;">
               <el-radio-button label="jt">Opaque</el-radio-button>
               <el-radio-button label="dt">Dockercfg</el-radio-button>
             </el-radio-group>
-            <div>适用于保存秘钥证书和配置文件，Value将以base64格式编码</div>
+            <!-- <div>适用于保存秘钥证书和配置文件，Value将以base64格式编码</div> -->
           </el-form-item>
           <el-form-item label="生效范围">
             <div>
@@ -35,6 +43,9 @@
               </div>
               <div class="bg">
                 <el-radio v-model="se.radio" label="2">指定命名空间</el-radio>
+                <p>
+                  <b>当前集群有以下可用命名空间</b>
+                </p>
                 <div v-if="se.radio=='2'">
                   <el-transfer
                     filterable
@@ -49,15 +60,67 @@
           </el-form-item>
           <div v-if="se.tabPosition=='jt'">
             <el-form-item label="内容">
-              <div style="width:400px;">
+              <div class="border">
                 <!-- 头部 -->
-                <div class="flex header">
-                  <div style="width:200px">变量名</div>
-                  <div>变量值</div>
+                <div class="flex f12 header">
+                  <div class="pl5">变量名</div>
+                  <div class="pl5">变量值</div>
                 </div>
-                <addSecret></addSecret>
+                <!-- 主体 -->
+                <div class="flex1" style="padding:10px;border-top:1px solid #ddd;">
+                  <!-- <addValue></addValue> -->
+                  <el-form style="margin:5px 0;">
+                    <el-form-item
+                      v-for="(domain, index) in dynamicValidateForm.domains"
+                      :key="index"
+                      :prop="'domains.' + index + '.value'"
+                    >
+                      <div class="form-input">
+                        <el-input v-model="domain.value" size="mini" placeholder="变量名"></el-input>
+                        <span>=</span>
+                        <textarea class="text" v-model="domain.valueKey"></textarea>
+                        <el-tooltip
+                          v-if="dynamicValidateForm.domains.length=='1'"
+                          class="item"
+                          effect="dark"
+                          content="不可删除，至少设置一项"
+                          placement="right"
+                        >
+                          <i class="el-icon-close"></i>
+                        </el-tooltip>
+                        <el-tooltip
+                          v-else
+                          class="item"
+                          effect="dark"
+                          content="删除"
+                          placement="right"
+                        >
+                          <i class="el-icon-close" @click.prevent="removeDomain(domain)"></i>
+                        </el-tooltip>
+                      </div>
+                    </el-form-item>
+                  </el-form>
+                  <div>
+                    <el-link type="primary" style="cursor: pointer;" @click="addDomain">新增变量</el-link>
+                  </div>
+                </div>
+                <p
+                  v-show="errorShow"
+                  style="color:red"
+                >新增变量名格式不正确，只能包含字母、数字及分隔符("-"、"_"、".")，且必须以字母、数字开头和结尾</p>
               </div>
             </el-form-item>
+            <!-- <el-form-item label="内容">
+              <div style="width:400px;">
+                头部
+                <div class="flex f12 header">
+                  <div class="pl5" style="width:800px;">变量名</div>
+                  <div class="pl5" style="width:50%">变量值</div>
+                </div>
+                不用了
+                <addSecret></addSecret>
+              </div>
+            </el-form-item>-->
           </div>
           <div v-if="se.tabPosition=='dt'">
             <el-form-item label="仓库域名">
@@ -74,7 +137,7 @@
         <!-- 底部 -->
         <div class="tke-formpanel-footer">
           <el-button size="small" type="primary" @click="creatSecret()">创建Secret</el-button>
-          <el-button size="small">取消</el-button>
+          <el-button size="small" @click="$router.go(-1)">取消</el-button>
         </div>
       </div>
     </div>
@@ -85,37 +148,34 @@
 import addSecret from "./components/addValue";
 import FileSaver from "file-saver";
 import XLSX from "xlsx";
-import { ALL_CITY } from "@/constants";
+import { ErrorTips } from "@/components/ErrorTips.js"; //公共错误码
+import { ALL_CITY, POINT_REQUEST, TKE_COLONY_QUERY } from "@/constants";
 export default {
   name: "secretCreate",
   data() {
-    const generateData = _ => {
-      const data = [];
-      const cities = [
-        "testname",
-        "default",
-        "kube-node-lease",
-        "kube-public",
-        "kube-system"
-      ];
-      const pinyin = [
-        "testname",
-        "default",
-        "kube-node-lease",
-        "kube-public",
-        "kube-system"
-      ];
-      cities.forEach((city, index) => {
-        data.push({
-          label: city,
-          key: index,
-          pinyin: pinyin[index]
-        });
-      });
-      return data;
+    var validateName = (rule, value, callback) => {
+      console.log(value);
+      if (value === "") {
+        this.fontColor = true;
+        callback();
+      } else {
+        let reg = /^[a-z]([a-z0-9]|-){0,61}([a-z0-9])$/;
+        let flag = reg.test(this.se.name);
+        if (!flag) {
+          this.fontColor = true;
+          callback();
+        } else {
+          this.fontColor = false;
+          callback();
+        }
+      }
     };
     return {
-      data: generateData(),
+      data: [],
+      total: "",
+      clusterId: "",
+      cities: [],
+      pinyin: [],
       filterMethod(query, item) {
         return item.pinyin.indexOf(query) > -1;
       },
@@ -124,16 +184,51 @@ export default {
         value: [],
         name: "",
         radio: "2"
+      },
+      rules: {
+        name: [
+          {
+            validator: validateName,
+            trigger: "blur",
+            required: false
+          }
+        ]
+      },
+      fontColor: "",
+      errorShow: false,
+      dynamicValidateForm: {
+        domains: [
+          {
+            value: "",
+            valueKey: ""
+          }
+        ]
       }
     };
   },
   components: {
     addSecret
   },
+  watch: {
+    dynamicValidateForm: {
+      handler(val) {
+        let reg = /^[a-z]([a-z0-9]|-|_|.)*([a-z0-9])$/;
+        val.domains.forEach(v => {
+          if (!reg.test(v.value)) {
+            this.errorShow = true;
+          } else {
+            this.errorShow = false;
+          }
+        });
+      },
+      deep: true
+    }
+  },
   created() {
     // 从路由获取类型
+    this.clusterId = this.$route.query.clusterId;
     this.nameSpaceList();
-    this.getData();
+    // this.getData();//获取数据目前没用
   },
   methods: {
     //返回上一层
@@ -141,7 +236,43 @@ export default {
       this.$router.go(-1);
     },
     creatSecret() {
-      this.$router.push({ name: "secret" });
+      if (this.se.name == "") {
+        this.$refs.form.validateField("name");
+        this.$message("名称不能為空");
+        return false;
+      }
+      let arr = this.dynamicValidateForm.domains;
+      let obj = {};
+      arr.forEach(v => {
+        obj[v.value] = v.valueKey;
+      });
+      if (arr[0].value == "") {
+        this.$message({
+          message: "变量名不能為空，至少设置一项",
+          type: "error"
+        });
+        return false;
+      }
+      // var params = {
+      //   ClusterName: this.clusterId,
+      //   Method: "POST",
+      //   Path: "/api/v1/namespaces/" + this.se.value + "/configmaps",
+      //   RequestBody: {
+      //     kind: "ConfigMap",
+      //     apiVersion: "v1",
+      //     metadata: { name: this.se.name, namespace: this.se.value },
+      //     data: obj
+      //   },
+      //   Version: "2018-05-25"
+      // };
+      // if (!this.errorShow) {
+      //   this.axios.post(TKE_COLONY_QUERY, params).then(res => {
+      //   this.$router.push({ name: "secret" });//预留跳转
+      //     if (res.Response.Error == undefined) {
+      //       this.$router.go(-1);
+      //     }
+      //   });
+      // }
     },
     //命名空间选项
     nameSpaceList() {
@@ -151,84 +282,127 @@ export default {
         Version: "2018-05-25",
         ClusterName: this.clusterId
       };
-      // this.axios.post(TKE_COLONY_QUERY, params).then(res => {
-      //   if (res.Response.Error === undefined) {
-      //     var mes = JSON.parse(res.Response.ResponseBody);
-      //     console.log(mes);
-      //     this.total = mes.items.length;
-      //     mes.items.forEach(item => {
-      //       this.searchOptions.push({
-      //         value: item.metadata.name,
-      //         label: item.metadata.name
-      //       });
-      //     });
-      //     this.loadShow = false;
-      //   } else {
-      //     let ErrTips = {};
-      //     let ErrOr = Object.assign(ErrorTips, ErrTips);
-      //     this.$message({
-      //       message: ErrOr[res.Response.Error.Code],
-      //       type: "error",
-      //       showClose: true,
-      //       duration: 2000
-      //     });
-      //   }
-      // });
+      this.axios.post(TKE_COLONY_QUERY, params).then(res => {
+        if (res.Response.Error === undefined) {
+          var mes = JSON.parse(res.Response.ResponseBody);
+          this.total = mes.items.length;
+          mes.items.forEach(item => {
+            this.cities.push(item.metadata.name);
+            this.pinyin.push(item.metadata.name);
+          });
+          const datas = [];
+          this.cities.forEach((city, index) => {
+            datas.push({
+              label: city,
+              key: index,
+              pinyin: this.pinyin[index]
+            });
+          });
+          this.data = datas;
+        } else {
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 2000
+          });
+        }
+      });
     },
-    getData() {
-      this.loadShow = true;
-      //获取列表数据
-      if (this.searchInput == "") {
-        var params = {
-          Method: "GET",
-          Path:
-            "/api/v1/namespaces/" +
-            this.searchType +
-            "/secrets?&limit=" +
-            this.pageSize,
-          Version: "2018-05-25",
-          ClusterName: this.clusterId
-        };
-      } else {
-        var params = {
-          Method: "GET",
-          Path:
-            "/api/v1/namespaces/" +
-            this.searchType +
-            "/secrets?fieldSelector=metadata.name=" +
-            this.searchInput,
-          Version: "2018-05-25",
-          ClusterName: this.clusterId
-        };
+    removeDomain(item) {
+      var index = this.dynamicValidateForm.domains.indexOf(item);
+      if (index !== -1) {
+        this.dynamicValidateForm.domains.splice(index, 1);
       }
-
-      // this.axios.post(TKE_COLONY_QUERY, params).then(res => {
-      //   if (res.Response.Error === undefined) {
-      //     var mes = JSON.parse(res.Response.ResponseBody);
-      //     this.list = mes.items;
-      //     this.total = mes.items.length;
-      //     this.loadShow = false;
-      //   } else {
-      //     let ErrTips = {};
-      //     let ErrOr = Object.assign(ErrorTips, ErrTips);
-      //     this.$message({
-      //       message: ErrOr[res.Response.Error.Code],
-      //       type: "error",
-      //       showClose: true,
-      //       duration: 2000
-      //     });
-      //   }
-      // });
+    },
+    addDomain() {
+      this.dynamicValidateForm.domains.push({
+        value: "",
+        valueKey: ""
+      });
     }
+    // getData() {
+    //   //获取列表数据
+    //   if (this.searchInput == "") {
+    //     var params = {
+    //       Method: "GET",
+    //       Path:
+    //         "/api/v1/namespaces/" +
+    //         this.searchType +
+    //         "/secrets?&limit=" +
+    //         this.pageSize,
+    //       Version: "2018-05-25",
+    //       ClusterName: this.clusterId
+    //     };
+    //   } else {
+    //     var params = {
+    //       Method: "GET",
+    //       Path:
+    //         "/api/v1/namespaces/" +
+    //         this.searchType +
+    //         "/secrets?fieldSelector=metadata.name=" +
+    //         this.searchInput,
+    //       Version: "2018-05-25",
+    //       ClusterName: this.clusterId
+    //     };
+    //   }
+
+    //   // this.axios.post(TKE_COLONY_QUERY, params).then(res => {
+    //   //   if (res.Response.Error === undefined) {
+    //   //     var mes = JSON.parse(res.Response.ResponseBody);
+    //   //     this.list = mes.items;
+    //   //     this.total = mes.items.length;
+    //   //     this.loadShow = false;
+    //   //   } else {
+    //   //     let ErrTips = {};
+    //   //     let ErrOr = Object.assign(ErrorTips, ErrTips);
+    //   //     this.$message({
+    //   //       message: ErrOr[res.Response.Error.Code],
+    //   //       type: "error",
+    //   //       showClose: true,
+    //   //       duration: 2000
+    //   //     });
+    //   //   }
+    //   // });
+    // }
   }
 };
 </script>
 
 <style lang="scss" scoped>
+.ipu {
+  border: 1px solid #ddd;
+}
+textarea {
+  width: 90%;
+  max-width: 260px;
+  height: 30px;
+  line-height: normal;
+  border: 1px solid #ddd;
+}
+.flex {
+  display: flex;
+  align-items: center;
+}
+.flex1 {
+  display: flex;
+  flex-direction: column;
+}
+.f12 {
+  font-size: 12px;
+  color: #888;
+  font-weight: bold;
+}
+.pl5 {
+  width: 50%;
+  padding-left: 10px;
+}
 .header {
   height: 40px;
   border-bottom: 1px solid #ddd;
-  padding-bottom: 10px;
+  padding: 10px 0;
 }
 .flex {
   display: flex;
@@ -238,6 +412,70 @@ export default {
   margin-bottom: 10px;
   padding: 10px;
   width: 590px;
+}
+.border {
+  width: 550px;
+  max-height: 400px;
+  border: 1px solid #ddd;
+}
+.text {
+  width: 90%;
+  max-width: 260px;
+  height: 30px;
+  line-height: normal;
+  border: 1px solid #ddd;
+}
+.form-input {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+  span {
+    margin: 0 10px;
+  }
+  i {
+    margin: 0 10px;
+    cursor: pointer;
+  }
+}
+.form-p {
+  margin-bottom: 10px;
+  font-size: 12px;
+  color: #888;
+}
+.box {
+  width: 400px;
+
+  .top {
+    text-align: center;
+  }
+
+  .left {
+    float: left;
+    width: 60px;
+  }
+
+  .right {
+    float: right;
+    width: 60px;
+  }
+
+  .bottom {
+    clear: both;
+    text-align: center;
+  }
+
+  .item {
+    margin: 4px;
+  }
+
+  .left .el-tooltip__popper,
+  .right .el-tooltip__popper {
+    padding: 8px 10px;
+  }
+}
+.activeColor {
+  color: #f56c6c !important;
 }
 </style>
 
