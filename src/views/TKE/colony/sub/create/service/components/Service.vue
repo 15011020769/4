@@ -6,7 +6,7 @@
 			<el-radio v-model="svc.radio" label="2">仅在集群内访问</el-radio>
 			<el-radio v-model="svc.radio" label="3">VPC内网访问</el-radio>
 			<el-radio v-model="svc.radio" label="4">主机端口访问</el-radio>
-			<a href="" style="padding-left:10px;">如何选择</a><i class="el-icon-edit-outline"></i>
+			<a href="javascript:;" target="_blank" style="padding-left:10px;">如何选择</a><i class="el-icon-edit-outline"></i>
 			<!-- 方式介绍 -->
 			<div>
 				<div v-if="svc.radio=='1'">
@@ -14,7 +14,7 @@
 						自动创建公网CLB（<span class="text-warning">0.02元/小时</span>）以提供Internet访问入口，支持TCP/UDP协议，如web前台类服务可以选择公网访问。
 					</div>
 					<div>
-						如您需要公网通过HTTP/HTTPS协议或根据URL转发，您可以在Ingress页面使用Ingress进行路由转发，<a href="">查看详情</a><i class="el-icon-edit-outline"></i>
+						如您需要公网通过HTTP/HTTPS协议或根据URL转发，您可以在Ingress页面使用Ingress进行路由转发，<a href="javascript:;">查看详情</a><i class="el-icon-edit-outline"></i>
 					</div>
 				</div>
 				<div v-if="svc.radio=='2'">
@@ -37,17 +37,48 @@
 				</div>
 			</div>
 		</el-form-item>
-		<el-form-item label="负载均衡器" >
+
+    <el-form-item v-if="svc.radio=='3'" label="LB所在子网">
+			<el-select v-model="svc.LBvalue1" placeholder="请选择" disabled>
+				<el-option
+					v-for="item in personObj.vpcNameAry"
+					:key="item.VpcName"
+					:label="item.VpcName"
+					:value="item.VpcName">
+				</el-option>
+			</el-select>
+			<el-select v-model="svc.LBvalue2" placeholder="请选择">
+				<el-option
+					v-for="item in personObj.LBsubnet"
+					:key="item.SubnetName"
+					:label="item.SubnetName"
+					:value="item.SubnetName">
+				</el-option>
+			</el-select>
+			<el-button style="border:none;"><i class="el-icon-refresh"></i></el-button>
+			共<span>{{addressCount.TotalIpAddressCount}}</span>个子网点，剩下<span>{{addressCount.AvailableIpAddressCount}}</span>个可用
+		</el-form-item>
+
+		<el-form-item label="负载均衡器" v-if="svc.radio=='1' || svc.radio=='3'">
 			<div class="radio1">
-			<el-radio-group   v-model='svc.loadBalance' style="margin-bottom: 5px;">
-                      <el-radio-button label="1">自动创建</el-radio-button>
-                      <el-radio-button label="2">使用已有</el-radio-button>
-            </el-radio-group>
+			<el-radio-group v-model='svc.loadBalance' style="margin-bottom: 5px;">
+        <el-radio-button label="1">自动创建</el-radio-button>
+        <el-radio-button label="2">使用已有</el-radio-button>
+      </el-radio-group>
 
 			</div>
 			<p v-show="svc.loadBalance=='1'">自动创建CLB用于公网/内网访问Service，请勿手动修改由TKE创建的CLB监听器，<a href="javascript:;">查看更多说明</a></p>
 			<div v-show="svc.loadBalance=='2'">使用已有的CLB用于公网/内网访问Service，不覆盖已有监听器规则，请勿手动修改由TKE创建的CLB监听器，仅支持未被容器服务TKE使用的CLB<a href="javascript:;">查看更多说明</a>
-			<p></p>
+			<p>
+				<el-select v-model="svc.balancerValue" placeholder="请选择">
+					<el-option
+						v-for="item in personObj.ownLoadBalancer"
+						:key="item.LoadBalancerId"
+						:label="item.LoadBalancerId+'  ('+item.LoadBalancerName+')'"
+						:value="item.LoadBalancerId+'  ('+item.LoadBalancerName+')'">
+					</el-option>
+				</el-select>
+			</p>
 			</div>
 		</el-form-item>
 		<el-form-item label="端口映射">
@@ -64,7 +95,7 @@
 						<i class="el-icon-warning"></i>
 						</el-tooltip>
 					</div>
-					<div>服务端口
+					<div style="padding-left:30px">服务端口
 						<el-tooltip content="集群外通过负载均衡域名或IP+服务端口访问服务，集群内通过服务名+服务端口访问服务" placement="top" effect="light">
 						<i class="el-icon-warning"></i>
 						</el-tooltip>
@@ -72,21 +103,28 @@
 				</div>
 				<!-- 内容 -->
 				<div style="border-top:1px solid #ddd;padding: 10px;">
-					<div style="padding:5px 0;" v-for="it in svc.list" :key="it.key">
-						<el-select class="w100" v-model="svc.value" placeholder="请选择">
-						<el-option
-							v-for="item in svc.options"
-							:key="item.value"
-							:label="item.label"
-							:value="item.value">
-						</el-option>
-						</el-select>
-						<el-input class="w250" style="padding-left:30px;" v-model="svc.input" placeholder="请输入内容"></el-input>
-						<el-input class="w250" style="padding-left:30px;" v-model="svc.input" placeholder="请输入内容"></el-input>
+					<div style="padding:5px 0;" v-for="(it,i) in svc.list" :key="it.key">
+						<el-form-item style="display: inline-block">
+							<!-- <el-select class="w100" v-model="svc.protocol" placeholder="请选择"> -->
+							<el-select class="w100" v-model="it.protocol" placeholder="请选择">
+						    <el-option
+						    	v-for="item in protocolList"
+						    	:key="item"
+						    	:label="item"
+						    	:value="item">
+						    </el-option>
+						  </el-select>
+						</el-form-item>
+						<el-form-item style="display: inline-block;padding-left:30px;"  :prop="`list.${i}.input1`" :rules="verifyPort">
+						  <el-input class="w250" v-model="it.input1" placeholder="请输入内容"></el-input>
+						</el-form-item>
+						<el-form-item style="display: inline-block;padding-left:30px;"  :prop="`list.${i}.input2`" :rules="verifyPort">
+						  <el-input class="w250" v-model="it.input2" placeholder="请输入内容"></el-input>
+						</el-form-item>
 						<el-tooltip class="item" effect="dark" content="删除" placement="right">
 							<i style="font-size:18px;padding-left:20px;" class="el-icon-close" @click="removeprot(it)"></i>
 						</el-tooltip>
-					</div>					
+					</div>
 				</div>
 			</div>
 			<a href="javascript:;" @click="addport()">添加端口映射</a>
@@ -106,7 +144,7 @@
 					<el-radio v-model="svc.SA" label="2">None</el-radio>
 				</el-form-item>
 				<div v-if="svc.SA=='1'">
-					<el-form-item label-width="150px" label="最大会话保持时间">
+					<el-form-item prop="time" :rules="timeRules" label-width="150px" label="最大会话保持时间">
 						<el-input v-model="svc.time" class="w200"></el-input>
 						<div>会话保持时间范围为0~86400</div>
 					</el-form-item>
@@ -120,46 +158,107 @@
 
 <script>
 export default {
-	data(){
-		return{
-			svc:{
-				show: true,
-				time: 30,
-				checked:false,
-				 name: '',
-				 loadBalance:'1',//负载均衡
-				value: 'default',
-				options: ['default','kube-public','kube-system','tfy-pub'],
-				radio: '1',
-				ETP: '1',
-				SA: '2',
-				input: '',
-				list: [{}],
-				workload: [],
-				tabPosition: 'dep'
-			}
-		}
-	},
-	methods:{
-		// 显示或隐藏高级设置
-		show(){
-			this.svc.show = !this.svc.show;
-		},
-		// 删除端口
-		removeprot(item){
-			var index = this.svc.list.indexOf(item)
-			if(index !== -1){
-				this.svc.list.splice(index,1)
-			}
-		},
-		// 新增端口
-		addport(){
-			this.svc.list.push({
-				value: '',
-				key: Date.now()
-			})
-		},
-	}
+  props: ['personObj', 'svcData'],
+  data () {
+    return {
+      svc: this.svcData,
+      // TotalIpAddressCount: '', // 总共的子网数
+      // AvailableIpAddressCount: '', // 剩余可用子网数
+      protocolList: ['TCP', 'UDP'], // 协议列表
+      addressCount: {}, // 子网点对象
+      // 会话事件的验证
+      timeRules: [{
+        validator: (rule, value, callback) => {
+          if (value > 0 && value < 68400) {
+            callback()
+          } else if (!value) {
+            callback(new Error('会话保持时间不能为空'))
+          } else if (value < 0 && value > 68400) {
+            callback(new Error('不在会话保持时间范围'))
+          } else if (/^\d+\.\d+$/.test(value)) {
+            callback(new Error('会话保持时间格式错误'))
+          } else {
+            callback(new Error('会话保持时间格式错误'))
+          }
+        },
+        trigger: 'blur',
+        required: true
+      }],
+      // 端口映射的验证
+      verifyPort: [
+        { validator: (rule, value, callback) => {
+          let portNumber = /^([1-9][0-9]{0,3}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]{1}|6553[0-5])$/
+          if (!value) {
+            callback(new Error('端口号不能为空'))
+          } else if (!portNumber.test(value)) {
+            callback(new Error('端口号格式不正确'))
+          } else {
+            callback()
+          }
+        },
+        trigger: 'blur',
+        required: true }
+      ]
+    }
+  },
+  created: function () {
+    this.addport()
+  },
+  watch: {
+    svc: {
+      handler: function (val) {
+        this.$emit('update:svcData', val)
+      },
+      deep: true,
+      immediate: true
+    },
+    svcData: {
+      handler: function (val) {
+        this.svc = val
+      },
+      deep: true,
+      immediate: true
+    },
+  	'svc.LBvalue2': function (val) {
+  		this.addressCount = this.personObj.LBsubnet.find(item => {
+        return item.SubnetName === val
+      })
+    },
+    personObj: {
+      handler: function () {
+        let { LBsubnet, vpcNameAry, ownLoadBalancer } = this.personObj
+        if (!(LBsubnet[0] && vpcNameAry[0] && ownLoadBalancer[0])) return
+        this.svc.LBvalue2 = LBsubnet[0].SubnetName
+        this.svc.LBvalue1 = vpcNameAry[0].VpcName
+        this.svc.balancerValue = ownLoadBalancer[0].LoadBalancerId + ' (' + ownLoadBalancer[0].LoadBalancerName + ')'
+      }
+    }
+  },
+  methods: {
+    // 显示或隐藏高级设置
+    show () {
+      this.svc.show = !this.svc.show
+      // console.log(this.personObj.ownLoadBalancer)
+    },
+    // 删除端口
+    removeprot (item) {
+      var index = this.svc.list.indexOf(item)
+      if (index !== -1) {
+        this.svc.list.splice(index, 1)
+      }
+    },
+    // 新增端口
+    addport () {
+      // console.log(this.svc.list)
+      this.svc.list.push({
+        value: '',
+        input1: '',
+        input2: '',
+        protocol: 'TCP',
+        key: Date.now()
+      })
+    }
+  }
 }
 </script>
 
@@ -182,7 +281,7 @@ export default {
 	display: flex;
 }
 .port {
-	max-width: 680px;
+	max-width: 720px;
 	border: 1px solid #ddd;
 }
 .card {
