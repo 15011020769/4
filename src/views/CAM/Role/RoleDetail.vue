@@ -111,7 +111,13 @@
                   </template>
                 </el-table-column>
                 <el-table-column prop="AddTime" :label="$t('CAM.userList.AssociationTime')"></el-table-column>
-                <el-table-column :label="$t('CAM.Role.failure')">
+                <el-table-column >
+                  <div slot="header" style="padding: 0;">
+                    {{$t('CAM.Role.failure')}}
+                    <el-tooltip placement="top" :content="$t('CAM.Role.rgnxzcx')" effect="light">
+                      <i class="el-icon-info"></i>
+                    </el-tooltip>
+                  </div>
                   <template slot-scope="scope">
                     <span v-if="scope.row.validTime">{{scope.row.validTime}}</span>
                   </template>
@@ -1019,6 +1025,9 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+// ::v-deep .el-tooltip__popper .is-light{
+//   max-width: 50%;
+// }
 .wrap >>> .el-button,
 .wrap >>> .el-input__inner {
   border-radius: 0;
