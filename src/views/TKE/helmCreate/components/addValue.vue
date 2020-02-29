@@ -1,8 +1,8 @@
 <template>
     <div>
-        <el-form :model="dynamicValidateForm" ref="dynamicValidateForm"  class="demo-dynamic">
+        <el-form class="demo-dynamic">
             <el-form-item
-                v-for="(domain, index) in dynamicValidateForm.domains"
+                v-for="(domain, index) in domains"
                 :key="domain.key"
                 :prop="'domains.' + index + '.value'"
             >
@@ -15,32 +15,54 @@
                 </el-tooltip>
             </div>
             </el-form-item>
-            <p v-show="dynamicValidateForm.domains.length?true:false" class="form-p">可通过设置自定义参数替换Chart包的默认配置，如：image.repository = nginx</p>
+            <p v-show="domains.length?true:false" class="form-p">可通过设置自定义参数替换Chart包的默认配置，如：image.repository = nginx</p>
         </el-form>
-        <el-link type="primary" style="cursor: pointer;"  @click="addDomain">新增变量</el-link>
+        <el-link type="primary" style="cursor: pointer;"  @click="addDomain" :disabled="flag">新增变量</el-link>
     </div>
 </template>
 <script>
 export default {
   data () {
     return {
-      dynamicValidateForm: {
-        domains: []
-      }
+        domains: [],
+        flag: false
     }
   },
+  watch:{
+      domains:{
+        handler(news,old){
+          for(var i in news){
+            if(news[i].value == "" || news[i].valueKey == "" && news.length != 0 ){
+                this.flag = true
+            } else if(news.length == 0){
+                this.flag = false
+            } else {
+                this.flag = false
+            }
+          }
+        },
+        immediate: true,
+        deep: true
+      }
+    },
+  
+
   methods: {
     removeDomain (item) {
-      var index = this.dynamicValidateForm.domains.indexOf(item)
+      var index = this.domains.indexOf(item)
       if (index !== -1) {
-        this.dynamicValidateForm.domains.splice(index, 1)
+        this.domains.splice(index, 1)
+       
+      }
+      if(this.domains.length == 0){
+        this.flag = false
       }
     },
     addDomain () {
-      this.dynamicValidateForm.domains.push({
+      this.domains.push({
         value: '',
         valueKey: '',
-        key: Date.now()
+        // key: Date.now()
       })
     }
   }
@@ -51,6 +73,7 @@ export default {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding-top:10px;
     span{
         margin:0 10px;
     }

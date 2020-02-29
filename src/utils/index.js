@@ -149,6 +149,12 @@ export const flatObj = (obj, prefix = '', result = {}) => {
  */
 export const obj2Arr = (obj, key='name', val='value') => Object.keys(obj).map(k => ({ [key]: obj[k], [val]: k }))
 
+export const arr2Obj = (arr, key) => {
+  const obj = {}
+  arr.forEach(item => obj[item[key]] = item)
+  return obj
+} 
+
 /**
  * 把对象的 key value互换添加到新的key 不适应value为对象类型
  * @param {Object} obj 
@@ -168,3 +174,8 @@ export const addVal2Key = obj => {
   Object.keys(result).forEach(k => result[result[k]] = k)
   return result
 }
+
+/** 验证ip地址是否有效 */
+export const isValidIPAddressNew = e => /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])(\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])){3}(\/\d+)?$/.test(e.trim())
+/** 验证ipv6地址是否有效 */
+export const isValidIPv6 = e => /(^\w{1,4}(:\w{0,4}){7}$)|(^\w{1,4}(:\w{1,4}){0,5}::$)|(^::(\w{1,4}:){0,5}\w{1,4}$)|(^(\w{1,4}:){0,3}\w{1,4}::(\w{1,4}:){0,3}\w{1,4}$)/.test(e.trim())

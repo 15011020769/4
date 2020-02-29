@@ -69,6 +69,7 @@
   </div>
 </template>
 <script>
+import { ErrorTips } from "@/components/ErrorTips";
 import HeadCom from '@/components/public/Head'
 import City from '@/components/public/CITY'
 import { TKE_GET_REPOSITORY_LIST, TKE_DELETE_FAVOR, TKE_ADD_FAVOR,ALL_CITY } from '@/constants'
@@ -97,6 +98,13 @@ export default {
   created () {
     this.GetRepositoryList()
     this.GetCity()
+  },
+  watch:{
+    input(val){
+      if(val === ""){
+        this.getSearch()
+      }
+    }
   },
   methods: {
     handleClick (row) {

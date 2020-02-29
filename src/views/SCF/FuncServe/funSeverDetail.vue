@@ -9,58 +9,61 @@
         </span>
       </p>
       <p>
-        <el-select v-model="FunctionVersion" placeholder="请选择" @change="_FunctionVersion">
+        <el-select v-model="FunctionVersion" :placeholder="$t('SCF.total.qsz')" @change="_Version">
           <el-option v-for="item in VersionList" :key="item.Version" :label="item.Version" :value="item.Version">
           </el-option>
         </el-select>
-        <el-button @click="dialogVisible = true" size="small">发布新版本</el-button>
+        <el-button @click="dialogVisible = true" size="small">{{$t('SCF.total.fbxbb')}}</el-button>
       </p>
     </div>
-    <div class="wrapTab">
+    <div class="wrapTab" v-if="detailsshow">
       <el-tabs v-model="activeName" @tab-click="handleClick" class="tabs">
         <!-- 函数配置 -->
         <el-tab-pane :label="$t('SCF.total.hspz')" name="first">
-          <funConfig />
+          <funConfig :FunctionVersion='FunctionVersion' />
         </el-tab-pane>
         <!-- 函数代码 -->
         <el-tab-pane :label="$t('SCF.total.hsdm')" name="second">
-          <funCode />
+          <funCode :FunctionVersion='FunctionVersion' />
         </el-tab-pane>
         <!-- 触发方式 -->
         <el-tab-pane :label="$t('SCF.total.cffs')" name="third">
-          <triggerMode ref="mychild" />
+          <triggerMode ref="mychild" :FunctionVersion='FunctionVersion' />
         </el-tab-pane>
         <!-- 通行日志 -->
         <el-tab-pane :label="$t('SCF.total.yxrz')" name="fouth">
-          <runningLog />
+          <runningLog :FunctionVersion='FunctionVersion' />
         </el-tab-pane>
         <!-- 监控信息 -->
         <el-tab-pane :label="$t('SCF.total.jkxx')" name="fifth">
-          <monitInfo v-if="montshow" />
+          <monitInfo v-if="montshow" :FunctionVersion='FunctionVersion' />
         </el-tab-pane>
       </el-tabs>
     </div>
+    <div v-if="!detailsshow" class="loadwrap">
+      <p>{{$t('SCF.total.jzz')}}......</p>
+    </div>
     <div>
-      <el-dialog title="发布新版本" :visible.sync="dialogVisible" width="550px">
+      <el-dialog :title="$t('SCF.total.fbxbb')" :visible.sync="dialogVisible" width="550px">
         <div class="dialog">
-          <p class="p1">函数名称</p>
+          <p class="p1">{{$t('SCF.total.hsmc')}}</p>
           <p class="p2">{{functionName}}</p>
         </div>
         <div class="dialog">
-          <p class="p1">描述</p>
+          <p class="p1">{{$t('SCF.total.ms')}}</p>
           <p class="p2">
-            <el-input type="textarea" :rows="4" placeholder="请输入版本描述" v-model="textarea" @blur='_check'>
+            <el-input type="textarea" :rows="4" :placeholder="$t('SCF.total.qsrbbms')" v-model="textarea" @blur='_check'>
             </el-input>
           </p>
         </div>
         <div class="dialog">
           <p class="p1"></p>
-          <p class="p3" v-if="check">只能包含字母、数字、空格、逗号、句号、中文，长度最多1000个字符</p>
-          <p class="p4" v-if="!check">请输入版本发布描述</p>
+          <p class="p3" v-if="check">{{$t('SCF.total.znbh')}}</p>
+          <p class="p4" v-if="!check">{{$t('SCF.total.qsrbbfbms')}}</p>
         </div>
 
         <span slot="footer" class="dialog-footer">
-          <el-button type="primary" @click="_PublishVersion">确 定</el-button>
+          <el-button type="primary" @click="_PublishVersion">{{$t('SCF.total.qd')}}</el-button>
           <el-button @click="dialogVisible = false">取 消</el-button>
         </span>
       </el-dialog>
@@ -84,6 +87,7 @@
   export default {
     data() {
       return {
+        detailsshow: false, //控制详情加载
         check: true,
         dialogVisible: false,
         functionName: this.$route.query.functionName,
@@ -101,7 +105,7 @@
         } else {
           this.montshow = false
         }
-      }
+      },
     },
     components: {
       funConfig,
@@ -111,8 +115,6 @@
       monitInfo
     },
     created() {
-      localStorage.setItem('FunctionVersion', '$LATEST')
-      this.GetDate()
       this.GetVersion()
     },
     methods: {
@@ -126,40 +128,12 @@
         this.childData = val;
         this.centerDialogVisible = true;
       },
-      //获取详情数据
-      GetDate() {
-        this.Congigload = true
-        let param = {
-          Region: localStorage.getItem('regionv2'),
-          Version: "2018-04-16",
-          FunctionName: this.functionName,
-          Qualifier: localStorage.getItem('FunctionVersion')
-        };
-        this.axios.post(SCF_DETAILS, param).then(res => {
-          if (res.Response.Error === undefined) {
-            this.FunctionVersion = res.Response.FunctionVersion
-          } else {
-            let ErrTips = {
-              'InternalError': '内部错误',
-              'InternalError.System': '内部系统错误',
-              'InvalidParameter.Payload': '请求参数不合法',
-              'InvalidParameterValue': '参数取值错误',
-              'InvalidParameterValue.CodeSecret': 'CodeSecret传入错误',
-              'ResourceNotFound.Function': '函数不存在',
-              'ResourceNotFound.FunctionName': '函数不存在',
-              'UnauthorizedOperation': '未授权操作',
-              'UnauthorizedOperation.CAM': 'CAM鉴权失败',
-              'UnauthorizedOperation.CodeSecret': '无访问代码权限'
-            };
-            let ErrOr = Object.assign(ErrorTips, ErrTips);
-            this.$message({
-              message: ErrOr[res.Response.Error.Code],
-              type: "error",
-              showClose: true,
-              duration: 0
-            });
-          }
-        })
+      //切换版本
+      _Version() {
+        this.detailsshow = false
+        setTimeout(() => {
+          this.detailsshow = true
+        }, 1000);
       },
       //获取函数版本
       GetVersion() {
@@ -172,13 +146,15 @@
         this.axios.post(LIST_VERSION, param).then(res => {
           if (res.Response.Error === undefined) {
             this.VersionList = res.Response.Versions
+            this.FunctionVersion = this.VersionList[0].Version
+            this.detailsshow = true
           } else {
             let ErrTips = {
-              'InternalError': '内部错误',
-              'InvalidParameterValue': '参数取值错误',
-              'ResourceNotFound.Function': '函数不存在',
-              'ResourceNotFound.FunctionName': '函数不存在',
-              'UnauthorizedOperation.CAM': 'CAM鉴权失败'
+              'InternalError': '內部錯誤',
+              'InvalidParameterValue': '參數取值錯誤',
+              'ResourceNotFound.Function': '函數不存在',
+              'ResourceNotFound.FunctionName': '函數不存在',
+              'UnauthorizedOperation.CAM': 'CAM鑒權失敗'
             };
             let ErrOr = Object.assign(ErrorTips, ErrTips);
             this.$message({
@@ -189,10 +165,6 @@
             });
           }
         })
-      },
-      //切换版本
-      _FunctionVersion(val) {
-        localStorage.setItem('FunctionVersion', val)
       },
       //发布新版本
       _PublishVersion() {
@@ -208,7 +180,7 @@
           this.axios.post(PUBLISH_VERSION, param).then(res => {
             if (res.Response.Error === undefined) {
               this.$message({
-                message: '发布成功',
+                message: '發布成功',
                 type: "success",
                 showClose: true,
                 duration: 0
@@ -217,11 +189,11 @@
               this.dialogVisible = false
             } else {
               let ErrTips = {
-                'InternalError': '内部错误',
-                'InvalidParameterValue': '参数取值错误',
-                'ResourceNotFound.Function': '函数不存在',
-                'ResourceNotFound.FunctionName': '函数不存在',
-                'UnauthorizedOperation.CAM': 'CAM鉴权失败'
+                'InternalError': '內部錯誤',
+                'InvalidParameterValue': '參數取值錯誤',
+                'ResourceNotFound.Function': '函數不存在',
+                'ResourceNotFound.FunctionName': '函數不存在',
+                'UnauthorizedOperation.CAM': 'CAM鑒權失敗'
               };
               let ErrOr = Object.assign(ErrorTips, ErrTips);
               this.$message({
@@ -258,7 +230,13 @@
       height: 32px;
     }
 
+    .loadwrap {
+      height: 500px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
 
+    }
 
     .title {
       display: flex;

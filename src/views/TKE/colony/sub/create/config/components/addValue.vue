@@ -6,8 +6,8 @@
                 :key="domain.key"
                 :prop="'domains.' + index + '.value'"
             >
-            <div class="form-input">
-                <el-input v-model="domain.value" size="mini" placeholder="变量名"></el-input>
+            <div class="form-input" style="padding-bottom:10px;margin-top:10px;border-bottom:1px solid #eee;">
+                <el-input v-model="domain.value" size="mini" style="" placeholder=""></el-input>
                 <span>=</span>
                 <textarea class="text" v-model="domain.valueKey"></textarea>
                  <el-tooltip class="item" effect="dark" content="删除" placement="right">

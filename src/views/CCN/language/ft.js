@@ -141,7 +141,7 @@ module.exports = {
       title1: '集群健康狀態',
       placeh1: '請選擇',
       worked: '有效',
-      refrush: '刷新',
+      refrush: '重新整理',
     },
     timeX: {
       constantly: '實時',

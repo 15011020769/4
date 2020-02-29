@@ -94,9 +94,9 @@ export default {
       loadShow: false, //加载是否显示
       autoRefresh: true, //自动刷新
       list:[], //列表
-      node: '',
-      timer: null,
-      clusterId: ''
+      node: '',//节点
+      timer: null,//定时器
+      clusterId: ''//集群名称
     };
   },
   components: {

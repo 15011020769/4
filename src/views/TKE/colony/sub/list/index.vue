@@ -11,7 +11,7 @@
             <span>集群 /</span>
           </span>
           
-          <h2 class="header-title">cls-n1xokuh6(DBA-test)</h2>
+          <h2 class="header-title">{{this.$route.query.clusterId}}</h2>
         </div>
         <!-- 右侧 -->
         <div class="grid-right">

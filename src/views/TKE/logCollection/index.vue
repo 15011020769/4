@@ -19,7 +19,8 @@
       <div class="flex">
         <div class="font" style="flex:1;padding-top:20px;">
           <!-- <router-link :to="{path:'/logCreate',query:{clusterId:value}}"> -->
-          <button class="data-card-hd" @click="newCread">新建</button>
+          <button class="data-card-hd" v-if="!xjF"   @click="newCread">新建</button>
+          <button class="data-card-hd" v-if="xjF" @click="dialogVisible = true">新建</button>
           <!-- </router-link> -->
         </div>
         <div style="position: relative;" class="flex">
@@ -80,6 +81,24 @@
         </span>
       </el-dialog>
     </div>
+  <!-- 新建弹框 -->
+    <el-dialog
+  title="集群日志采集功能"
+  :visible.sync="dialogVisible"
+  width="40%"
+  center
+  :before-close="handleClose">
+  <div>
+    <p>新建日志收集规则，需要先开通日志收集功能。当前您所选的集群尚未开通。</p>
+    <p>开通日志收集功能：</p>
+    <p>1. 将在集群内所有节点（包括后续新增节点）创建日志采集服务。</p>
+    <p>2.请为每个节点预留 <span style="color:#ff9d00">0.3核 250M</span> 以上可用资源。</p>
+  </div>
+  <span slot="footer" class="dialog-footer">
+    <el-button type="primary" @click="newCread2">确 定</el-button>
+    <el-button @click="dialogVisible = false">取 消</el-button>
+  </span>
+</el-dialog>
   </div>
 </template>
 
@@ -97,14 +116,16 @@
     data() {
       return {
         tableData: [],
+        xjF:false,
         funllscreenLoading: false,
+        dialogVisible:false,
         tableFlag:true,
         delLogFlag: false,
         delLogName: '',
         delLogNameSpace: '',
         options: [],
         search: '',
-        value: '',
+        value: '',//集群名
         value2: '',
         Name: {
           value: '请选择Namespace',
@@ -178,7 +199,9 @@
               }
             })
 
+
           }
+
         },
         deep: true
       }
@@ -193,11 +216,18 @@
         const res = await this.axios.post(TKE_COLONY_LIST, params);
         if (res.Response.Error === undefined) {
           if (res.Response.Clusters.length > 0) {
-            let ids = [];
+            let ids = [],arr=[];
             res.Response.Clusters = res.Response.Clusters.map(item => {
               ids.push(item.ClusterId + '(' + item.ClusterName + ')');
+              arr.push(item.ClusterId);
               return item;
             })
+            if (sessionStorage.getItem('clusterId')){
+              if(arr.indexOf(sessionStorage.getItem('clusterId').split('(')[0])==-1){
+                sessionStorage.setItem('clusterId','')
+              }
+            }
+
             // 放到页面上
             for (let i = 0; i < ids.length; i++) {
               let option = {}
@@ -260,6 +290,40 @@
         })
         sessionStorage.setItem('clusterId', this.value)
       },
+      //新建2
+      newCread2() {
+        this.dialogVisible=false;
+        var params={
+          ClusterName: this.value2,
+          Method: "POST",
+          Path: "/apis/platform.tke/v1/logcollectors",
+          RequestBody:
+              {"kind":"LogCollector","apiVersion":"platform.tke/v1",
+              "metadata":{"name":this.value2},
+              "spec":{"clusterName":this.value2}},
+          Version: "2018-05-25",
+        }
+        console.log(params)
+         this.axios.post(TKE_COLONY_QUERY, params).then(res=>{
+           console.log(res)
+            if (res.Response.Error === undefined){
+                this.$router.push({
+                path: '/logCreate',
+                  query: {
+                   clusterId: this.value
+                 }
+                 })
+             sessionStorage.setItem('clusterId', this.value)
+            }
+         })
+      },
+       handleClose(done) {
+        this.$confirm('确认关闭？')
+          .then(_ => {
+            done();
+          })
+          .catch(_ => {});
+      },
       //编辑
       editLogCollection(row){
         console.log(row)
@@ -286,6 +350,7 @@
             Version: "2018-05-25",
           };
           this.axios.post(TKE_COLONY_QUERY, params).then(res => {
+            console.log(res)
             if (res.Response.Error==undefined) {
               var data = JSON.parse(res.Response.ResponseBody);
               data.items.forEach(item => {
@@ -342,6 +407,7 @@
 
           console.log(res)
           if (res.Response.Error === undefined) {
+            this.xjF=false;
             this.$message({
               message: '删除成功',
               type: "success",
@@ -396,13 +462,27 @@
             Version: "2018-05-25",
           };
           this.axios.post(TKE_COLONY_QUERY, params).then(res => {
+            console.log(this.xjF)
+            console.log(res)
             if (res.Response.Error == undefined) {
+              this.xjF=false;
               this.tableFlag=false;
               var data = JSON.parse(res.Response.ResponseBody);
               this.tableData = data.items;
               console.log(this.tableData)
+            }else if(res.Response.Error.Code=='ResourceNotFound'){
+              console.log(res.Response.Error)
+              this.xjF=true;
+              this.tableFlag=false;
+              this.tableData=[]
+              // this.$message({
+              // message:res.Response.Error.Message,
+              // type: "error",
+              // });
             }else{
               this.tableFlag=true;
+              this.xjF=false;
+              this.tableData=[]
             }
           })
 

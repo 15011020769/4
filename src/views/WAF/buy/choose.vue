@@ -18,11 +18,11 @@
           <div class="listLabel">套餐</div>
           <div class="listCon">
             <el-button-group class="btnGroup">
-              <el-button @click="taocan(1)" :class="thisType=='1'?'addColor':''">{{t('高级版', 'WAF.gjb')}}</el-button>
-              <el-button @click="taocan(2)" :class="thisType=='2'?'addColor':''">{{t('企业版', 'WAF.qyb')}}</el-button>
-              <el-button @click="taocan(3)" :class="thisType=='3'?'addColor':''">{{t('旗舰版', 'WAF.qjb')}}</el-button>
+              <el-button @click="taocan(2)" :class="thisType===2?'addColor':''">{{t('高级版', 'WAF.gjb')}}</el-button>
+              <el-button @click="taocan(3)" :class="thisType===3?'addColor':''">{{t('企业版', 'WAF.qyb')}}</el-button>
+              <el-button @click="taocan(4)" :class="thisType===4?'addColor':''">{{t('旗舰版', 'WAF.qjb')}}</el-button>
             </el-button-group>
-            <div v-if="thisType=='1'" class="pList">
+            <div v-if="thisType === 2" class="pList">
               <p class="tipColr">{{t('适用于中小非业务网站的标准防护，', 'WAF.tt0')}}{{t('基于AI + 规则双引擎防护；', 'WAF.ttjyaijgz1')}}</p>
               <p>{{t('支持常见的Web攻击防护，包括SQL注入、XSS、Webshell上传、目录遍历等；', 'WAF.tt01')}}</p>
               <p>{{t('云端自动更新Web 0 day漏洞的防护规则；', 'WAF.tt02')}}</p>
@@ -36,7 +36,7 @@
               <p>{{t('支持二级域名个数：20；', 'WAF.tt010')}}</p>
               <p>{{t('业务宽带（云外/云内）', 'WAF.ywkp')}}：10Mbps/200Mbps；</p>
             </div>
-            <div v-if="thisType=='2'" class="pList">
+            <div v-if="thisType === 3" class="pList">
               <p class="tipColr">{{t('适用于中小型普通业务站点及中大型官网站点定制化防护服务，', 'WAF.syyzxqy')}}{{t('基于AI + 规则双引擎防护；', 'WAF.ttjyaijgz1')}}</p>
               <p>{{t('包含高级版所有功能；', 'WAF.tt1')}}</p>
               <p>{{t('支持链路劫持检测（5个）；', 'WAF.tt12')}}</p>
@@ -52,7 +52,7 @@
               <p>{{t('支持二级域名个数:30；', 'WAF.tt112')}}</p>
               <p>{{t('业务宽带（云外/云内）', 'WAF.ywkp')}}：30Mbps/200Mbps；</p>
             </div>
-            <div v-if="thisType=='3'" class="pList">
+            <div v-if="thisType === 4" class="pList">
               <p class="tipColr">{{t('适用于大型及超大型业务网站及复杂业务站点定制化防护服务，', 'WAF.syydxjcdxqy')}}{{t('基于AI + 规则双引擎防护；', 'WAF.ttjyaijgz1')}}</p>
               <p>{{t('包含企业版所有功能；', 'WAF.tt2')}}</p>
               <p>{{t('支持链路劫持检测（10个）；', 'WAF.tt21')}}</p>
@@ -72,21 +72,21 @@
         <div class="chooseList newClear">
           <div class="listLabel">{{t('扩展域名包', 'WAF.kzymb')}}</div>
           <div class="listCon">
-            <el-input-number size="mini" v-model="num1" @change="handleChange1" :min="0" :max="10"></el-input-number>
+            <el-input-number size="mini" v-model="domainPackageCount" :min="0" :max="500"></el-input-number>
             <p class="Ptext">{{t('每个域名包包含: 10个域名防护，仅支持1个一级域名；一次最多购买500个）', 'WAF.mhymbbh')}}</p>
           </div>
         </div>
         <div class="chooseList newClear">
           <div class="listLabel">{{t('QPS扩展包', 'WAF.qpskzb')}}</div>
           <div class="listCon">
-            <el-input-number size="mini" v-model="num2" @change="handleChange2" :min="0" :max="10"></el-input-number>
+            <el-input-number size="mini" v-model="qpsPackageCount" :min="0" :max="500"></el-input-number>
             <p class="Ptext">{{t('一个QPS扩展包包含：1000QPS（套餐有效期内，一次最多可购买500个）', 'WAF.ygqpskzbbh')}}</p>
           </div>
         </div>
         <div class="chooseList newClear">
           <div class="listLabel">{{t('安全日志服务包', 'WAF.aqrzfwb')}}</div>
           <div class="listCon">
-            <el-input-number size="mini" v-model="num3" @change="handleChange3" :min="0" :max="10"></el-input-number>
+            <el-input-number size="mini" v-model="clsPackageCount" :min="0" :max="500"></el-input-number>
             <p class="Ptext">{{t('一个日志服务包包含：1T日志服务存储容量（套餐有效期内，日志存储时长为180天，一次最多可购买500个）', 'WAF.ygrzbbh')}}</p>
           </div>
         </div>
@@ -95,13 +95,13 @@
             <div class="listLabel">{{t('购买时长', 'WAF.gmsc')}}</div>
             <div class="listCon">
               <el-button-group class="btnGroup">
-                <el-button @click="mounth(1)" :class="mounthType=='1'?'addColor':''">1{{t('个', 'WAF.g')}}月</el-button>
-                <el-button @click="mounth(2)" :class="mounthType=='2'?'addColor':''">2{{t('个', 'WAF.g')}}月</el-button>
-                <el-button @click="mounth(3)" :class="mounthType=='3'?'addColor':''">3{{t('个', 'WAF.g')}}月</el-button>
-                <el-button @click="mounth(4)" :class="mounthType=='4'?'addColor':''">半年</el-button>
-                <el-button @click="mounth(5)" :class="mounthType=='5'?'addColor':''">1年</el-button>
-                <el-button @click="mounth(6)" :class="mounthType=='6'?'addColor':''">2年</el-button>
-                <el-button @click="mounth(7)" :class="mounthType=='7'?'addColor':''">3年</el-button>
+                <el-button @click="mounth(1)" :class="mounthType===1?'addColor':''">1{{t('个', 'WAF.g')}}月</el-button>
+                <el-button @click="mounth(2)" :class="mounthType===2?'addColor':''">2{{t('个', 'WAF.g')}}月</el-button>
+                <el-button @click="mounth(3)" :class="mounthType===3?'addColor':''">3{{t('个', 'WAF.g')}}月</el-button>
+                <el-button @click="mounth(6)" :class="mounthType===6?'addColor':''">半年</el-button>
+                <el-button @click="mounth(12)" :class="mounthType==12?'addColor':''">1年</el-button>
+                <el-button @click="mounth(24)" :class="mounthType==24?'addColor':''">2年</el-button>
+                <el-button @click="mounth(36)" :class="mounthType==36?'addColor':''">3年</el-button>
               </el-button-group>
             </div>
           </div>
@@ -109,7 +109,10 @@
         <div class="bottomTotal newClear">
           <p class="totaoLabel">{{t('总计费用', 'WAF.zjfy')}}:</p>
           <p class="totalMoney">
-            <span class="money">3,880.00<i>元</i></span><br/>
+            <span class="money">
+              <template v-if="loading">计算中...</template>
+              <template v-else>NT$ {{price}}</template>
+            </span><br/>
             <el-button size="mini" class="immePay" @click="pay">立即支付</el-button>
           </p>
         </div>
@@ -118,36 +121,132 @@
   </div>
 </template>
 <script>
+import { DESCRIBE_WAF_PRICE } from '@/constants'
+import { 
+  CLB_PACKAGE_CFG_TYPES,
+  BUY_LOG_TYPES,
+  CLB_BUY_DOMAIN_TYPES,
+  CLB_BUY_QPS_TYPES,
+} from '../constants'
 export default {
   data(){
     return{
-      thisType:'1',//套餐
-      num1:'',//扩展域名包
-      num2:'',//QPS扩展包
-      num3:'',//安全日志服务包
-      mounthType:'1',//购买时长
+      thisType: 2,//套餐
+      domainPackageCount: 0,//扩展域名包
+      qpsPackageCount: 0,//QPS扩展包
+      clsPackageCount: 0,//安全日志服务包
+      mounthType: 1,//购买时长
+      loading: true,
+      costInfo: undefined,
+      price: 0,
     }
+  },
+  watch: {
+    domainPackageCount() {
+      this.queryPrice()
+    },
+    qpsPackageCount() {
+      this.queryPrice()
+    },
+    clsPackageCount() {
+      this.queryPrice()
+    },
+    mounthType() {
+      this.queryPrice()
+    },
+  },
+  mounted() {
+    this.queryPrice()
   },
   methods:{
     //套餐选择
     taocan(thisType){
-      this.thisType=thisType;
+      this.thisType = thisType
+      this.queryPrice()
     },
     //购买时长
     mounth(mounthType){
-      this.mounthType=mounthType;
+      this.mounthType = mounthType;
     },
-    //扩展域名包
-    handleChange1(val){
-      console.log(val)
-    },
-    //QPS扩展包
-    handleChange2(val){
-      console.log(val)
-    },
-    //安全日志服务包
-    handleChange3(val){
-      console.log(val)
+    queryPrice() {
+      this.loading = true
+      const commonParam = {
+          "regionId": 1,
+          "projectId": 0,
+          "goodsNum": 1,
+          "payMode": 1,
+          "platform": 1,
+      }
+      const { categoryid, goodstype, pid, pricetype } = CLB_PACKAGE_CFG_TYPES[this.thisType]
+      const resInfo = [{
+        goodsCategoryId: categoryid,
+        ...commonParam,
+        goodsDetail: {
+          "pid": pid, // WAF的pid,
+          "timeSpan": this.mounthType,
+          "timeUnit": "m",
+          "type": goodstype,
+          [pricetype]: 1,
+        }
+      }]
+      // 选择了扩展域名包
+      if (this.domainPackageCount) {
+        resInfo.push({
+          goodsCategoryId: CLB_BUY_DOMAIN_TYPES.first_categoryid,
+          ...commonParam,
+          goodsDetail: {
+            "pid": CLB_BUY_DOMAIN_TYPES.pid, // 1001156,
+            "timeSpan": this.mounthType,
+            "timeUnit": "m",
+            [CLB_BUY_DOMAIN_TYPES.pricetype]: this.domainPackageCount,
+            "type": CLB_BUY_DOMAIN_TYPES.goodstype,
+          }
+        })
+      }
+      // 选择了QPS扩展包
+      if (this.qpsPackageCount) {
+        resInfo.push({
+          goodsCategoryId: CLB_BUY_QPS_TYPES.first_categoryid,
+          ...commonParam,
+          goodsDetail: {
+            "pid": CLB_BUY_QPS_TYPES.pid, // 1001156,
+            "timeSpan": this.mounthType,
+            "timeUnit": "m",
+            [CLB_BUY_QPS_TYPES.pricetype]: this.qpsPackageCount * 1000,
+            "type": CLB_BUY_QPS_TYPES.goodstype,
+          }
+        })
+      }
+      // 选择了安全日志服务包
+      if (this.clsPackageCount) {
+        resInfo.push({
+          goodsCategoryId: BUY_LOG_TYPES.first_categoryid,
+          ...commonParam,
+          goodsDetail: {
+            "pid": BUY_LOG_TYPES.pid, // 1001156,
+            "timeSpan": this.mounthType,
+            "timeUnit": "m",
+            [BUY_LOG_TYPES.pricetype]: this.clsPackageCount,
+            "type": BUY_LOG_TYPES.goodstype,
+          }
+        })
+      }
+      this.axios.post(DESCRIBE_WAF_PRICE, {
+        Version: '2018-01-25',
+        ResInfo: resInfo,
+      }).then(resp => {
+        this.generalRespHandler(resp, ({ CostInfo }) => {
+          const costInfo = {}
+          let price = 0
+          CostInfo.forEach(cost => {
+            costInfo[cost.Pid] = cost
+            price += cost.RealTotalCost // RealTotalCost
+          })
+          this.costInfo = costInfo
+          this.price = price
+          this.loading = false
+        })
+      })
     },
     //跳转支付页面
     pay(){

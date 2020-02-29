@@ -472,6 +472,7 @@ export default {
       dataDiskShow: false,//是否打开数据盘modal
       buyDataDisk: false,//是否显示是否购买数据盘
       buyDataDiskShow: false,//是否显示购买数据盘
+      
       zoneInfoList: [],
       textarea2: '',
       inputRoom: '/var/lib/docker',

@@ -71,10 +71,21 @@ export default {
   },
   data(){
     return{
-      internalCheck: this.areaBanAreas && this.areaBanAreas.Areas.filter(area => this.availableBanProvinces.includes(area)) || [],//国内选择
-      foreignCheck: this.areaBanAreas && this.areaBanAreas.Areas.filter(area => !this.availableBanProvinces.includes(area)) || [],//国外选择
-      internalRadio: this.areaBanAreas && this.areaBanAreas.Areas.includes(this.t('国内', 'WAF.gn')) ? 1: 0,
-      foreignRadio: this.areaBanAreas && this.areaBanAreas.Areas.includes(this.t('国外', 'WAF.gw')) ? 1: 0
+      internalCheck: [],
+      foreignCheck: [],
+      internalRadio: [],
+      foreignRadio: [],
+    }
+  },
+  watch: {
+    areaBanAreas: {
+      handler() {
+        this.internalCheck = this.areaBanAreas && this.areaBanAreas.Areas.filter(area => this.availableBanProvinces.includes(area)) || [],//国内选择
+        this.foreignCheck = this.areaBanAreas && this.areaBanAreas.Areas.filter(area => !this.availableBanProvinces.includes(area) && area !== this.t('国内', 'WAF.gn')) || [],//国外选择
+        this.internalRadio = this.areaBanAreas && this.areaBanAreas.Areas.includes(this.t('国内', 'WAF.gn')) ? 1: 0,
+        this.foreignRadio = this.areaBanAreas && this.areaBanAreas.Areas.includes(this.t('国外', 'WAF.gw')) ? 1: 0
+      },
+      immediate: true
     }
   },
   methods:{
@@ -114,7 +125,7 @@ export default {
         this.generalRespHandler(resp, () => {
           this.$emit("update:visible", false)
           this.$emit("success", this.domain)
-        }, COMMON_ERROR, '编辑地域封禁成功')
+        }, COMMON_ERROR, this.t('编辑地域封禁成功', 'WAF.bjfjdycg'))
       })
     }
   }

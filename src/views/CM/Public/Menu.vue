@@ -3,7 +3,7 @@
     <div class="big-title">{{$t("menu.title1")}} CM</div>
     <el-menu default-active="2" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose"
       background-color="#292b36" text-color="#fff" active-text-color="#fff" :router="true">
-      <el-menu-item index="overview">
+      <!-- <el-menu-item index="overview">
         <span slot="title">监控概览</span>
       </el-menu-item>
       <el-menu-item index="Dashboard">
@@ -14,8 +14,8 @@
       </el-menu-item>
       <el-menu-item index="History">
         <span slot="title">告警历史</span>
-      </el-menu-item>
-      <el-submenu index="4">
+      </el-menu-item> -->
+      <!-- <el-submenu index="4">
         <template slot="title">
           <span>告警配置</span>
         </template>
@@ -30,8 +30,8 @@
             <span slot="title">自定义消息</span>
           </el-menu-item>
         </el-menu-item-group>
-      </el-submenu>
-      <el-menu-item index="Template">
+      </el-submenu> -->
+      <!-- <el-menu-item index="Template">
         <span slot="title">触发条件模板</span>
       </el-menu-item>
       <el-submenu index="5">
@@ -46,8 +46,8 @@
             <span slot="title">平台事件</span>
           </el-menu-item>
         </el-menu-item-group>
-      </el-submenu>
-      <el-submenu index="6">
+      </el-submenu> -->
+      <!-- <el-submenu index="6">
         <template slot="title">
           <span>自定义监控</span>
         </template>
@@ -62,14 +62,14 @@
       </el-submenu>
       <el-menu-item index="flow">
         <span slot="title">流量监控</span>
-      </el-menu-item>
-      <el-menu-item index="CVM">
+      </el-menu-item> -->
+      <el-menu-item index="CVM" @click="_class" :class="{'active':classValue=='CVM'}">
         <span slot="title">{{$t("menu.title2")}}</span>
       </el-menu-item>
-      <el-menu-item index="cloudDisk">
+      <el-menu-item index="cloudDisk" @click="_class" :class="{'active':classValue=='cloudDisk'}">
         <span slot="title">{{$t("menu.title3")}}</span>
       </el-menu-item>
-      <el-menu-item index="CLBload">
+      <el-menu-item index="CLBload" @click="_class" :class="{'active':classValue=='CLBload'}">
         <span slot="title">{{$t("menu.title4")}}</span>
       </el-menu-item>
 
@@ -78,10 +78,10 @@
           <span>{{$t("menu.title5")}}</span>
         </template>
         <el-menu-item-group>
-          <el-menu-item index="cloudMysql">
+          <el-menu-item index="cloudMysql" @click="_class" :class="{'active':classValue=='cloudMysql'}">
             <span slot="title">{{$t("menu.title6")}}</span>
           </el-menu-item>
-          <el-menu-item index="Redis">
+          <el-menu-item index="Redis" @click="_class" :class="{'active':classValue=='Redis'}">
             <span slot="title">{{$t("menu.title7")}}</span>
           </el-menu-item>
         </el-menu-item-group>
@@ -92,19 +92,19 @@
           <span>{{$t("menu.title8")}}</span>
         </template>
         <el-menu-item-group>
-          <el-menu-item index="NATgateway">
+          <el-menu-item index="NATgateway" @click="_class" :class="{'active':classValue=='NATgateway'}">
             <span slot="title">{{$t("menu.title9")}}</span>
           </el-menu-item>
-          <el-menu-item index="VPNgateway">
+          <el-menu-item index="VPNgateway" @click="_class" :class="{'active':classValue=='VPNgateway'}">
             <span slot="title">{{$t("menu.title10")}}</span>
           </el-menu-item>
-          <el-menu-item index="VPNchannel">
+          <el-menu-item index="VPNchannel" @click="_class" :class="{'active':classValue=='VPNchannel'}">
             <span slot="title">{{$t("menu.title11")}}</span>
           </el-menu-item>
-          <el-menu-item index="networkIP">
+          <el-menu-item index="networkIP" @click="_class" :class="{'active':classValue=='networkIP'}">
             <span slot="title">{{$t("menu.title12")}}</span>
           </el-menu-item>
-          <el-menu-item index="PrivateGateway">
+          <el-menu-item index="PrivateGateway" @click="_class" :class="{'active':classValue=='PrivateGateway'}">
             <span slot="title">{{$t("CVM.zxwg")}}</span>
           </el-menu-item>
         </el-menu-item-group>
@@ -115,10 +115,10 @@
           <span>{{$t("menu.title13")}}</span>
         </template>
         <el-menu-item-group>
-          <el-menu-item index="Physics">
+          <el-menu-item index="Physics" @click="_class" :class="{'active':classValue=='Physics'}">
             <span slot="title">{{$t("menu.title14")}}</span>
           </el-menu-item>
-          <el-menu-item index="Private">
+          <el-menu-item index="Private" @click="_class" :class="{'active':classValue=='Private'}">
             <span slot="title">{{$t("menu.title15")}}</span>
           </el-menu-item>
         </el-menu-item-group>
@@ -128,7 +128,7 @@
         <span slot="title">对等连接</span>
       </el-menu-item>-->
 
-      <el-menu-item index="objectStorage">
+      <el-menu-item index="objectStorage" @click="_class" :class="{'active':classValue=='objectStorage'}">
         <span slot="title">{{$t("menu.title16")}}</span>
       </el-menu-item>
     </el-menu>
@@ -139,12 +139,9 @@
   export default {
     data() {
       return {
-        activeName: "",
-        activeName1: "",
-        activeName2: "",
         activeIndex: "1",
-        activeIndex2: "1",
-        routeName: ""
+        routeName: "",
+        classValue: ''
       };
     },
     watch: {
@@ -152,8 +149,13 @@
         this.routeName = val;
       }
     },
-    created() {},
+    created() {
+      this.classValue = this.$route.name
+    },
     methods: {
+      _class(key) {
+        this.classValue = key.index
+      },
       handleOpen(key, keyPath) {
         // console.log(key, keyPath)
       },
@@ -210,6 +212,11 @@
       display: flex;
       align-items: center;
       font-size: 14px;
+    }
+
+    .active {
+      background-color: #20222c !important;
+      color: white;
     }
   }
 

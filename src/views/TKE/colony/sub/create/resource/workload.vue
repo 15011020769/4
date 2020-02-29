@@ -16,9 +16,9 @@
     </div>
     <div class="colony-main">
       <div class="tke-card tke-formpanel-wrap mb60">
-        <el-form class="tke-form special" :model="wl" label-position="left" label-width="120px" size="mini">
-          <el-form-item label="名称">
-            <el-input class="w200" v-model="wl.name" placeholder="请输入Workload名称"></el-input>
+        <el-form class="tke-form special" :model="wl" :rules="rules" ref="wl" label-position="left" label-width="120px" size="mini">
+          <el-form-item label="名称" prop="name">
+            <el-input class="w200" v-model="wl.name" placeholder="请输入Workload名称" @blur="addLabel(e)"></el-input>
             <p>
               最长40个字符，只能包含小写字母、数字及分隔符("-")，且必须以小写字母开头，数字或小写字母结尾
             </p>
@@ -28,12 +28,12 @@
             </el-input>
           </el-form-item>
 
-          <el-form-item label="标签">
+          <el-form-item label="标签" >
             <div v-for="(v,i) in wl.labels" :key="i">
-             <el-input :disabled="v.key=='k8s-app'" class="w100" v-model="v.key"></el-input> = <el-input class="w100"  v-model="v.value"></el-input>
+             <el-input :disabled="v.key=='k8s-app'" class="w100" v-model="v.key"></el-input> = <el-input class="w100"  v-model="v.value" prop="labels"></el-input>
               <el-tooltip class="item" effect="light" content="默认标签不可删除" placement="right" v-if="v.key=='k8s-app'">
-                   <i class="el-icon-close"  style="font-size:20px;margin-left:20px;cursor:pointer"></i>
-                </el-tooltip>
+                <i class="el-icon-close"  style="font-size:20px;margin-left:20px;cursor:pointer"></i>
+              </el-tooltip>
               <i class="el-icon-close"  style="font-size:20px;margin-left:20px;cursor:pointer" v-else @click="delAddVar(i)"></i>
             </div>
              <span class="disable" v-if="addVarFlag">新增变量</span>
@@ -44,7 +44,7 @@
           </el-form-item>
            <el-form-item label="命名空间">
               <el-select v-model="wl.nameSpace"  placeholder="请选择">
-                <el-option v-for="item in nameSpaceOptions" :key="item.value" :label="item.label" :value="item.value">
+                <el-option v-for="item in nameSpaceList" :key="item.metadata.name" :label="item.metadata.name" :value="item.metadata.name">
                 </el-option>
               </el-select>
           </el-form-item>
@@ -102,7 +102,7 @@
               <div class="search-hidden">
                 <p v-if="item.name1 == 'usePath'">
                   暂未设置主机路径设置主机路径
-                  <span class="add-check" @click="dialogVisiblePath = true">设置主机路径</span>
+                  <span class="add-check" @click="dialogVisiblePath = true">主机路径设置</span>
                 </p>
                 <p v-if="item.name1 == 'useNFS'">
                   <el-input class="search-input" v-model="item.name3" placeholder="NFS路径 如：127.0.0.1:/dir"></el-input>
@@ -141,31 +141,40 @@
             </p>
           </el-form-item>
           <el-form-item label="实例内容器">
-            <div class="case-content">
+            <div class="case-content" v-for="(v,i) in wl.container" :key="i">
               <el-form :model="wl" label-position="left" label-width="120px" size="mini">
                 <el-form-item label="名称">
-                  <el-input class="w192" v-model="wl.caseContent.name" placeholder="请输入容器名称"></el-input>
+                  <el-input class="w192" v-model="v.name" placeholder="请输入容器名称"></el-input>
                   <p>请输入容器名称最长63个字符，只能包含小写字母、数字及分隔符("-")，且不能以分隔符开头或结尾</p>
                 </el-form-item>
                 <el-form-item label="镜像">
-                  <el-input class="w192" v-model="wl.caseContent.mirrorImg"></el-input>
+                  <el-input class="w192" v-model="v.mirrorImg"></el-input>
                   <span> <a  @click="SelectMirrorImgFlag=true"> 选择镜像</a> </span>
                   <SelectMirrorImg :dialogVisible='SelectMirrorImgFlag' @close='close'></SelectMirrorImg>
                 </el-form-item>
                 <el-form-item label="镜像版本（Tag）">
-                  <el-input class="w192" v-model="wl.caseContent.versions"></el-input>
+                  <el-input class="w192" v-model="v.versions"></el-input>
                 </el-form-item>
                 <el-form-item label="镜像拉取策略">
                   <template>
-                    <el-radio-group v-model="wl.caseContent.mirrorPullTactics" style="margin-bottom: 5px;">
+                    <el-radio-group v-model="v.mirrorPullTactics" style="margin-bottom: 5px;">
                       <el-radio-button label="Always">Always</el-radio-button>
                       <el-radio-button label="IfNotPresent">IfNotPresent</el-radio-button>
                       <el-radio-button label="Never">Never</el-radio-button>
                     </el-radio-group>
-                    <p v-show="wl.caseContent.mirrorPullTactics=='Always'">总是从远程拉取该镜像</p>
-                    <p v-show="wl.caseContent.mirrorPullTactics=='IfNotPresent'">默认使用本地镜像，若本地无该镜像则远程拉取该镜像</p>
-                    <p v-show="wl.caseContent.mirrorPullTactics=='Never'">只使用本地镜像，若本地没有该镜像将报异常</p>
+                    <p v-show="v.mirrorPullTactics=='Always'">总是从远程拉取该镜像</p>
+                    <p v-show="v.mirrorPullTactics=='IfNotPresent'">默认使用本地镜像，若本地无该镜像则远程拉取该镜像</p>
+                    <p v-show="v.mirrorPullTactics=='Never'">只使用本地镜像，若本地没有该镜像将报异常</p>
                   </template>
+                </el-form-item>
+                <el-form-item label="挂载点" v-show="wl.dataJuan.length > 0">
+                  <div v-show="showMountPoint" v-for="(i,point) in wl.pointList" :key="i">
+                    <el-select v-model="wl.pointName"></el-select>
+                    <el-input v-model="wl.mountPath"></el-input>
+                    <el-input v-model="wl.subPath"></el-input>
+                    <el-select></el-select>
+                  </div>
+                  <el-button type="text" @click="changIsShowmount()">添加挂载点</el-button>
                 </el-form-item>
                 <el-form-item label="CPU/内存限制">
                   <div class="cpu-limit">
@@ -174,11 +183,11 @@
                       <div style="display:flex">
                         <div class="cpu-limit2">
                           <span>request</span>
-                          <el-input class="w192" v-model="wl.caseContent.requestCpu"></el-input>
+                          <el-input class="w192" v-model="v.requestCpu"></el-input>
                         </div>-
                         <div class="cpu-limit2">
                           <span>limit</span>
-                          <el-input class="w192" v-model="wl.caseContent.limitCpu"></el-input>
+                          <el-input class="w192" v-model="v.limitCpu"></el-input>
                         </div>核
                       </div>
                     </div>
@@ -187,11 +196,11 @@
                       <div style="display:flex">
                         <div class="cpu-limit2">
                           <span>request</span>
-                          <el-input class="w192" v-model="wl.caseContent.requestMemory"></el-input>
+                          <el-input class="w192" v-model="v.requestMemory"></el-input>
                         </div>-
                         <div class="cpu-limit2">
                           <span>limit</span>
-                          <el-input class="w192" v-model="wl.caseContent.limitMemory"></el-input>
+                          <el-input class="w192" v-model="v.limitMemory"></el-input>
                         </div>Mib
                       </div>
                     </div>
@@ -199,19 +208,19 @@
                   <p style="margin-top:10px;">
                     Request用于预分配资源,当集群中的节点没有request所要求的资源数量时,容器会创建失败。Limit用于设置容器使用资源的最大上限,避免异常情况下节点资源消耗过多。</p>
                 </el-form-item>
-                  <el-form-item label="GPU限制">
-                    <el-input-number  v-model="wl.caseContent.limitNum"   size="small" :min="0"></el-input-number>个
-                  </el-form-item>
+                <el-form-item label="GPU限制">
+                  <el-input-number  v-model="v.gpuNum"   size="small" :min="0"></el-input-number>个
+                </el-form-item>
                 <el-form-item label="环境变量">
                   <el-tooltip class="item" effect="light" content="设置容器中的变量" placement="top">
                     <i class="el-icon-info  setPosition"></i>
                   </el-tooltip>
-                  <div style="padding:0px 0px 6px;" v-for="(v,i) in wl.caseContent.environmentVar"  :key="i">
-                    <el-input class="w100" v-model="v.key" placeholder="变量名"></el-input> = 
-                    <el-input class="w192" v-model="v.value" placeholder="变量值"></el-input> 
-                    <i class="el-icon-close" style="font-size:20px;margin-left:20px;cursor:pointer" @click="wl.caseContent.environmentVar.splice(i,1)"></i> 
+                  <div style="padding:0px 0px 6px;" v-for="(itemValue,i) in v.environmentVar"  :key="i">
+                    <el-input class="w100" v-model="itemValue.key" placeholder="变量名"></el-input> = 
+                    <el-input class="w192" v-model="itemValue.value" placeholder="变量值"></el-input> 
+                    <i class="el-icon-close" style="font-size:20px;margin-left:20px;cursor:pointer" @click="v.environmentVar.splice(i,1)"></i> 
                   </div>
-                  <hr v-if="wl.caseContent.environmentVar.length>0&&wl.caseContent.citeCs.length>0">
+                  <hr v-if="v.environmentVar.length>0&&v.citeCs.length>0">
                   <div>
                       <el-select v-model="containerCheck.type" class="w100">
                             <el-option v-for="item in containerTypeOptions" :key="item.value" :label="item.label"
@@ -412,7 +421,7 @@
               <p>直接设定实例数量</p>
               <p style="background:#f2f2f2;width:80%;height:60px;line-height:60px;margin-top:6px;padding:0px 10px;">
                 <span>实例数量</span>
-                <el-input-number class="ml100" size="small" :min="0"></el-input-number>个
+                <el-input-number class="ml100" v-model="wl.replicas" size="small" :min="0"></el-input-number>个
               </p>
             </div>
             <div v-show="wl.caseNum.adjustType=='autoAdjust'">
@@ -610,8 +619,139 @@
           </div>
           <!--  </el-form> -->
         </el-form>
-         <el-form  class="tke-form" :model="svc" label-position='left' label-width="120px" size="mini">
-            <Service></Service>
+        <el-form  class="tke-form" :model="wl" label-position='left' label-width="120px" size="mini">
+            <!-- <Service></Service> -->
+          <div class="card">
+            <h3 style="margin-bottom:11px;">访问设置(Service)</h3>
+            <el-form-item label="Service">
+              <el-checkbox v-model="wl.serviceEnbel" @change="changEnbel()">启用</el-checkbox> 
+            </el-form-item>
+            <div v-if="showServiceModal">
+              <el-form-item label="服务访问方式">
+                <el-radio v-model="wl.radio" label="1">提供公网访问</el-radio>
+                <el-radio v-model="wl.radio" label="2">仅在集群内访问</el-radio>
+                <el-radio v-model="wl.radio" label="3">VPC内网访问</el-radio>
+                <el-radio v-model="wl.radio" label="4">主机端口访问</el-radio>
+                <a href="" style="padding-left:10px;">如何选择</a><i class="el-icon-edit-outline"></i>
+                <!-- 方式介绍 -->
+                <div>
+                  <div v-if="wl.radio=='1'">
+                    <div>
+                      自动创建公网CLB（<span class="text-warning">0.02元/小时</span>）以提供Internet访问入口，支持TCP/UDP协议，如web前台类服务可以选择公网访问。
+                    </div>
+                    <div>
+                      如您需要公网通过HTTP/HTTPS协议或根据URL转发，您可以在Ingress页面使用Ingress进行路由转发，<a href="">查看详情</a><i class="el-icon-edit-outline"></i>
+                    </div>
+                  </div>
+                  <div v-if="wl.radio=='2'">
+                    <div>将提供一个可以被集群内其他服务或容器访问的入口，支持TCP/UDP协议，数据库类服务如Mysql可以选择集群内访问,来保证服务网络隔离性。</div>
+                    <div>
+                      <el-checkbox v-model="wl.handlessChecked">Headless&nbsp;Service</el-checkbox>
+                      <el-tooltip content="不创建用于集群内访问的ClusterIP,访问Service名称时返回后端Pods IP地址,用于适配自有的服务发现机制。" placement="top" effect="light">
+                      <i class="el-icon-question" style="margin-left:5px;"></i>
+                      </el-tooltip>
+                      （Headless&nbsp;Service只支持创建时选择，<span class="text-error">创建完成后不支持变更访问方式）</span>
+                    </div>
+                  </div>
+                  <div v-if="wl.radio=='3'">
+                    <div>将提供一个可以被集群所在VPC下的其他资源访问的入口，支持TCP/UDP协议，需要被同一VPC下其他集群、云服务器等访问的服务可以选择VPC内网访问的形式。</div>
+                    <div>支持Ingress<a href="">查看详情</a><i class="el-icon-edit-outline"></i></div>
+                  </div>
+                  <div v-if="wl.radio=='4'">
+                    <div>提供一个主机端口映射到容器的访问方式，支持TCP&UDP， 可用于业务定制上层LB转发到Node。</div>
+                    <div>支持Ingress<a href="">查看详情</a><i class="el-icon-edit-outline"></i></div>
+                  </div>
+                </div>
+              </el-form-item>
+              <el-form-item v-show="wl.radio === '3'">
+                <el-select ></el-select> 
+                <el-select ></el-select> 
+                <span>共253个子网IP，剩247个可用</span>
+              </el-form-item>
+              <el-form-item label="负载均衡器" v-show="wl.radio=='1' || wl.radio=='3'">
+                <div class="radio1">
+                <el-radio-group   v-model='wl.loadBalance' style="margin-bottom: 5px;">
+                  <el-radio-button label="1">自动创建</el-radio-button>
+                  <el-radio-button label="2">使用已有</el-radio-button>
+                </el-radio-group>
+                </div>
+                <p v-show="wl.loadBalance=='1'">自动创建CLB用于公网/内网访问Service，请勿手动修改由TKE创建的CLB监听器，<a href="javascript:;">查看更多说明</a></p>
+                <div v-show="wl.loadBalance=='2'">使用已有的CLB用于公网/内网访问Service，不覆盖已有监听器规则，请勿手动修改由TKE创建的CLB监听器，仅支持未被容器服务TKE使用的CLB<a href="javascript:;">查看更多说明</a>
+                </div>
+              </el-form-item>
+              <el-form-item v-show="wl.loadBalance=='2'">
+                <el-select >
+
+                </el-select>  
+              </el-form-item>
+              <el-form-item label="端口映射" v-show="wl.radio !=='4'">
+                <div class="port">
+                  <!-- 头部 -->
+                  <div class="flex">
+                    <div style="width:140px;padding-left:14px">协议
+                      <el-tooltip content="使用公网/内网负载均衡时，TCP和UDP协议不能混合使用" placement="top" effect="light">
+                      <i class="el-icon-warning"></i>
+                      </el-tooltip>
+                    </div>
+                    <div style="width:250px;">容器端口
+                      <el-tooltip content="端口范围1~65535" placement="top" effect="light">
+                      <i class="el-icon-warning"></i>
+                      </el-tooltip>
+                    </div>
+                    <div>服务端口
+                      <el-tooltip content="集群外通过负载均衡域名或IP+服务端口访问服务，集群内通过服务名+服务端口访问服务" placement="top" effect="light">
+                      <i class="el-icon-warning"></i>
+                      </el-tooltip>
+                    </div>
+                  </div>
+                  <!-- 内容 -->
+                  <div style="border-top:1px solid #ddd;padding: 10px;">
+                    <div style="padding:5px 0;" v-for="(it,i) in wl.list" :key="i">
+                      <el-select class="w100" v-model="wl.portValue" placeholder="请选择">
+                        <el-option
+                          v-for="item in wl.options"
+                          :key="item.value"
+                          :label="item.label"
+                          :value="item.value">
+                        </el-option>
+                      </el-select>
+                      <el-input class="w250" style="padding-left:30px;" v-model="wl.conPort" placeholder="容器内应用程序监听的端口"></el-input>
+                      <el-input class="w250" style="padding-left:30px;" v-model="wl.servicePort" placeholder="建议与容器端口一致"></el-input>
+                      <el-tooltip class="item" effect="dark" content="不能删除，在至少指定一个设置端口" placement="right" v-if="i === 0">
+                        <i style="font-size:18px;padding-left:20px;" class="el-icon-close"></i>
+                      </el-tooltip>
+                      <i class="el-icon-close"  style="font-size:20px;margin-left:20px;cursor:pointer" v-else @click="removeprot(it)"></i>
+                    </div>					
+                  </div>
+                </div>
+                <a href="javascript:;" @click="addport()">添加端口映射</a>
+              </el-form-item>
+              <!-- 高级设置 -->
+              <div v-if="wl.isShowAdvancedSet">
+                <h3 style="padding-bottom:10px;">高级设置（选填）</h3>
+                <el-form-item label-width="150px" label="ExtermalTrafficPolicy">
+                  <el-radio v-model="wl.ETP" label="1">Cluster</el-radio>
+                  <el-radio v-model="wl.ETP" label="2">Local</el-radio>
+                  <div v-if="wl.ETP=='1'">默认均衡转发到工作负载的所有Pod</div>
+                  <div v-if="wl.ETP=='2'">能够保留来源IP，并可以保证公网、VPC内网访问（LoadBalancer）和主机端口访问（NodePort）模式下流量仅在本节点转发。Local转发使部分没有业务Pod存在的节点健康检查失败，可能存在流量不均衡的转发的风险。</div>
+                </el-form-item>
+                <div>
+                  <el-form-item label-width="150px" label="Session Affinity">
+                    <el-radio v-model="wl.SA" label="1">ClienIP</el-radio>
+                    <el-radio v-model="wl.SA" label="2">None</el-radio>
+                  </el-form-item>
+                  <div v-if="wl.SA=='1'">
+                    <el-form-item label-width="150px" label="最大会话保持时间">
+                      <el-input v-model="wl.time" class="w200"></el-input>
+                      <div>会话保持时间范围为0~86400</div>
+                    </el-form-item>
+                  </div>
+                </div>
+              </div>
+              <div v-if="!wl.isShowAdvancedSet"><a href="javascript:;" @click="showAdvancedSet()">显示高级设置</a></div>
+              <div v-if="wl.isShowAdvancedSet"><a href="javascript:;" @click="showAdvancedSet()">隐藏高级设置</a></div>
+            </div>
+          </div>
         </el-form>
         <!-- 设置主机路径 -->
         <el-dialog title="设置主机路径" :visible.sync="dialogVisiblePath" width="30%">
@@ -743,7 +883,7 @@
 
         <!-- 底部 -->
         <div class="tke-formpanel-footer">
-          <el-button size="small" type="primary">创建Workload</el-button>
+          <el-button size="small" type="primary" @click="submit()">创建Workload</el-button>
           <el-button size="small">取消</el-button>
         </div>
       </div>
@@ -752,63 +892,111 @@
 </template>
 
 <script>
-  import FileSaver from "file-saver";
   import Service from '../service/components/Service'
   import SelectMirrorImg from './components/selectMirrorImg'
-  import XLSX from "xlsx";
+  import { ErrorTips } from "@/components/ErrorTips";
   import {
-    ALL_CITY
+    ALL_CITY,
+    POINT_REQUEST
   } from "@/constants";
   export default {
     name: "workloadCreate",
     data() {
+      var validateName = (rule, value, callback) => {
+        if (value === '') {
+          callback(new Error('Workload名称不能为空'));
+        } else if(value.length > 40) {
+          callback(new Error('Workload名称不能超过40个字符'));
+        } else {
+          callback();
+        }
+      }
+      var validateLabel = (rule, value, callback) => {
+        if (value === '') {
+          callback(new Error('Value不能为空'));
+        } else {
+          callback();
+        }
+      }
       return {
+        nameSpaceList: [],//命名空间列表
+        clusterId: '',//集群id
+        loadShow: false,//是否显示加载
+        showServiceModal: true,//是否显示service
+        showMountPoint: false,//是否显示添加挂载点
         wl: {
           name: "",
           desc: "",
           type: "",
-          labels:[{key:'k8s-app',value:''}],
-          nameSpace:'tfy-pub',
+          labels:[{key:'k8s-app',value: name}],
+          nameSpace:'',
           dataJuan: [],
-          caseContent:{
+          container:[
+            {
             name:'',
             mirrorImg:'',
             versions:'',
-            mirrorPullTactics: 'Always', //镜像拉取策略
-            requestCpu:'',
-            limitCpu:'',
-            requestMemory:'',
-            limitMemory:'',
-            limitNum:0,
+            mirrorPullTactics: '', //镜像拉取策略
+            requestCpu:'0.25',
+            limitCpu:'0.5',
+            requestMemory:'256',
+            limitMemory:'1024',
+            gpuNum: 0,
             environmentVar:[],
             citeCs:[],
-          },
+          }],
           caseNum: {
             adjustType: 'handAdjust',
           },
           updateWay: '滚动更新（推荐）',
           updateTactics: '1',
           nodeTactics: "1",
-
+          replicas: 0,
+          serviceEnbel: true,//是否启用service
+          radio: '1',
+          handlessChecked: false,
+          loadBalance: "1",
+          list:[],
+          portValue: 'TCP',
+          options: [
+            {
+              value: 'TCP',
+              label: 'TCP'
+            },
+            {
+              value: 'UDP',
+              label: 'UDP'
+            }
+          ],
+          conPort: '',
+          servicePort: '',
+          isShowAdvancedSet: true,
+          ETP: '1',
+          SA: '2',
+          time: 30,
+          pointList:[],
+          mountPath: '',
+          subPath: '',
+          pointName: '',
         },
         nameSpaceOptions:[{value:'tfy-pub',label:'tfy-pub'},{value:'default',label:'default'},{value:'kube-public',label:'kube-public'},{value:'kube-system',label:'kube-system'},],
         
         addVarFlag:true,
         	svc:{
-				show: true,
-				time: 30,
-				checked:false,
-        name: '',
-				value: 'default',
-				options: ['default','kube-public','kube-system','tfy-pub'],
-				radio: '1',
-				ETP: '1',
-				SA: '2',
-				input: '',
-				list: [{}],
-				workload: [],
-				tabPosition: 'dep'
-			},
+            show: true,
+            time: 30,
+            checked:false,
+            name: '',
+            value: 'default',
+            options: ['default','kube-public','kube-system','tfy-pub'],
+            radio: '1',
+            ETP: '1',
+            SA: '2',
+            input: '',
+            list: [{}],
+            workload: [],
+            tabPosition: 'dep'
+          },
         // 实例数量自动调节下拉框内容
         touchTactics: [{
           touch1: 'CPU',
@@ -955,6 +1143,14 @@
         highLevelSetShow: false,
         highLevelSetShow2: false,
         SelectMirrorImgFlag:false,
+        rules:{
+          name: [
+            {validator: validateName, trigger: "blur", required: true}
+          ],
+          labels: [
+            {validator: validateLabel, trigger: "blur", required: true}
+          ]
+        }
       };
     },
     components: {Service, SelectMirrorImg},
@@ -990,7 +1186,10 @@
     created() {
       // 从路由获取类型
       this.wl.type = this.$route.query.type;
-    
+      this.nameSpaceList = this.$route.query.nameSpaceList;
+      this.clusterId = this.$route.query.clusterId;
+      this.wl.nameSpace = this.$route.query.spaceName;
+      console.log(this.labels,"nameSpaceList");
     },
     methods: {
       //返回上一层
@@ -1022,7 +1221,7 @@
       },
 
        addEnvironmentVar(){
-         this.wl.caseContent.environmentVar.push({key:'',value:''})
+         this.wl.container.environmentVar.push({key:'',value:''})
        } ,
       //  delEnvironmentVar(index){
       //      this.wl.caseContent.environmentVar.splice()
@@ -1094,11 +1293,179 @@
       },
       //新增变量
       addVar(){
-        console.log(1)
-        this.wl.labels.push({key:'',value:''})
+        this.wl.labels.push({key:'',value:''});
+        console.log(this.wl.labels);
+      },
+      //填写名称后将名称默认复制给标签第一条
+      addLabel(e){
+        let labels = this.wl.labels;
+        if(labels.length > 0) {
+          for(let i = 0; i < labels.length; i++) {
+            if(labels[i].key === 'k8s-app') {
+              labels[i].value = this.wl.name;
+              return;
+            }
+          }
+        }
       },
       delAddVar(index){
         this.wl.labels.splice(index,1)
+      },
+      //选择是否启用service
+      changEnbel() {
+        if(this.serviceEnbel) {
+          this.showServiceModal = true;
+        } else {
+          this.showServiceModal = false;
+        }
+      },
+      // 删除端口
+		removeprot(item){
+			var index = this.wl.list.indexOf(item)
+			if(index !== -1){
+				this.wl.list.splice(index,1)
+			}
+		},
+		// 新增端口
+		addport(){
+			this.wl.list.push({
+				value: '',
+				key: Date.now()
+			})
+    },
+    //是否显示高级设置
+    showAdvancedSet() {
+      this.wl.isShowAdvancedSet = !this.wl.isShowAdvancedSet;
+    },
+    //
+    changIsShowmount() {
+      this.showMountPoint = true;
+    },
+      //提交新增
+      async submit() {
+        this.loadShow = true;
+        let labels = 'qcloud-app:' + this.wl.labels[0].value + ",";
+        if(this.wl.labels.length > 0) {
+          for(var i = 0; i < this.wl.labels.length; i++) {
+            labels += this.wl.labels[i].key + ":" + this.wl.labels[i].value + ",";
+          }
+        }
+        labels = labels.substring(0,labels.length - 1);
+        let container = this.wl.container;
+        let containerObj = {};
+        let containerList = [];
+        if(container.length > 0) {
+          for(var i = 0; i < container.length; i++) {
+            containerObj = {
+              name: container[i].name,
+              image: container[i].mirrorImg + ":" + container[i].versions,//'tpeccr.ccs.tencentyun.com/22333/sdf:tagv1',
+              imagePullPolicy: container[i].mirrorPullTactics,
+              volumeMounts:[],
+              resources: {
+                limits: 
+                {cpu: container[i].limitCpu, 
+                  memory: container[i].limitMemory + "Mi",
+                  'nvidia.com/gpu': container[i].gpuNum
+                },
+                requests: 
+                {
+                  cpu: container[i].requestCpu,
+                  memory: container[i].requestMemory+'Mi'
+                }
+              },
+              env:[{name:"resource-huanjing","value":"resourcehuajingvalue"},{"name":"resourcebieming",
+"valueFrom":{"secretKeyRef":{"key":".dockercfg","name":"qcloudregistrykey","optional":false}}}],
+              workingDir: "",
+              command:[],
+              args:[],
+              securityContext: {privileged:false}
+            }
+            containerList.push(containerObj);
+          }
+        }
+        console.log("labels",labels);
+        console.log("containerList",containerList);
+        let requestBody = {
+          kind: "Deployment",
+          apiVersion: "apps/v1beta2",
+          metadata:{
+            name: this.wl.name,
+            namespace: this.spaceName,
+            labels:{labels},
+            annotations: {description: this.wl.desc}
+          },
+          spec: {
+            replicas: this.wl.replicas,
+            template:{
+              metadata: {
+                labels: {labels},
+                spec: {
+                  volumes: [],
+                  containers: containerList,
+                  restartPolicy: this.wl.mirrorPullTactics,
+                  imagePullSecrets: [{name: 'qcloudregistrykey'},{name:'tencenthubkey'}]
+                }
+              },
+              selector: {matchLabels: {labels}},
+              minReadySeconds: 0,
+              strategy: {
+                type: "RollingUpdate",
+                rollingUpdate: {maxSurge:1,maxUnavailable:0}
+              }
+            }
+          }
+        }
+        let requestBody1 = {
+          kind: "Service",
+          apiVersion: "v1",
+          metadata:{
+            name: this.wl.name,
+            namespace: this.spaceName
+            ,annotations: {"service.kubernetes.io/service.extensiveParameters": {AddressIPVersion:"IPV4"}}
+          },
+          spec:{
+            type: "LoadBalancer",
+            ports: [{name:this.wl.conPort+'-'+this.wl.servicePort+'-tcp',port:this.wl.conPort,targetPort:this.wl.servicePort,protocol:this.wl.portValue}],
+            selector:{labels},
+            externalTrafficPolicy:this.wl.ETP,
+            sessionAffinity: this.wl.SA,
+            sessionAffinityConfig:{}
+          }
+        }
+        if(this.wl.SA === 'ClientIP') {
+          requestBody1.spec.sessionAffinityConfig = {
+            clientIP: {
+              timeoutSeconds: this.wl.time
+            }
+          }
+        }
+        console.log("requestBody1",requestBody1);
+        let params = {
+          Method: "POST",
+          Path: "/apis/platform.tke/v1/clusters/"+this.clusterId+"/apply?notUpdate=true",
+          Version: "2018-05-25",
+          RequestBody: JSON.stringify(requestBody1)+JSON.stringify(requestBody),
+          ClusterName: this.clusterId
+        }
+
+        await this.axios.post(POINT_REQUEST, params).then(res => {
+          if(res.Response.Error === undefined) {
+            this.loadShow = false;
+            this.goBack();
+          } else {
+            this.loadShow = false;
+            let ErrTips = {
+              
+            };
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+          }
+        });
       }
     }
   };
@@ -1345,6 +1712,27 @@ a{
 
   .bottom10 {
     margin-bottom: 10px;
+  }
+
+  .card {
+    padding: 10px;border-bottom:1px solid #dcdfe6;
+  }
+  .text-error {
+    color: #e54545;
+  }
+  .text-warning {
+  color: #ff9d00
+  }
+  .ms {
+    width: 330px;
+    padding: 5px 8px 8px 5px;
+    height: 100px;
+    border-radius: 4px;
+    border: 1px solid #dcdfe6;
+    resize: none;
+  }
+  .w250 {
+    width:250px;
   }
 
 </style>

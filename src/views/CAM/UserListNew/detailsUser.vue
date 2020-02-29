@@ -51,7 +51,7 @@
           <p>{{$t('CAM.userList.fastToDo')}}</p>
         </div>
         <div class="rightBody">
-          <el-button size="small" @click="bindMesg">{{$t('CAM.userList.userdep')}}</el-button>
+          <!-- <el-button size="small" @click="bindMesg">{{$t('CAM.userList.userdep')}}</el-button> -->
           <el-button size="small" class="delete" @click="deleteUser">{{$t('CAM.userList.userDel')}}</el-button>
         </div>
       </div>
@@ -88,8 +88,14 @@
                 <el-link @click="handleClicks(scope.row)" type="primary">{{scope.row.PolicyName}}</el-link>
               </template>
             </el-table-column>
-            <el-table-column :label="$t('CAM.userList.cjly')" prop="CreateMode">
-              <template slot-scope="scope">{{CreateMode[scope.row.CreateMode]}}</template>
+            <el-table-column :label="$t('CAM.userList.gllx')" prop="CreateMode" show-overflow-tooltip>
+              <template slot-scope="scope">
+                <span v-if="scope.row.Groups.length">
+                  随组关联 来自
+                  <el-button type="text" size="small" v-for="group in scope.row.Groups" @click="$router.push(`/Interfacedetails?GroupId=${group.GroupId}`)">{{group.GroupName}}</el-button>
+                </span>
+                <span v-else>直接关联</span>
+              </template>
             </el-table-column>
             <el-table-column :label="$t('CAM.userList.strategyChose')" prop="Type">
               <template slot-scope="scope">{{scope.row.Type == '1'?'自定義策略':'預設策略'}}</template>
@@ -173,7 +179,7 @@
             </el-table-column>
           </el-table>
           <div class="Right-style pagstyle">
-            <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;{{$t("CAM.strip")}}</span>
+            <span class="pagtotal">111共&nbsp;{{TotalCount}}&nbsp;{{$t("CAM.strip")}}</span>
             <el-pagination
               :page-size="pagesize"
               :pager-count="7"
@@ -271,7 +277,7 @@ import { ErrorTips } from "@/components/ErrorTips";
 import Headcom from "./components/Head"; //头部组件引入
 import {
   QUERY_USER,
-  QUERY_POLICY,
+  QUERY_USER_ALLPOLICY,
   RELATE_USER,
   REMOVEBIND_USER,
   REMOVEGROUP_USER,
@@ -532,18 +538,18 @@ export default {
         let ploicyParams = {
           Version: "2019-01-16",
           TargetUin: this.userData.Uin,
-          Rp: this.pagesizes
+          Rp: this.pagesizes,
+          Page: this.currpages,
+          AttachType: 0,
         };
-        this.axios.post(QUERY_POLICY, ploicyParams).then(res => {
+        this.axios.post(QUERY_USER_ALLPOLICY, ploicyParams).then(res => {
           if (res.Response.Error === undefined) {
             if (res != "") {
               this.loading = false;
-              this.StrategyData = res.Response.List.slice(
-                (this.currpages - 1) * this.pagesizes,
-                this.currpages * this.pagesizes
-              );
-              this.TotalCounts = res.Response.List.length;
-              this.totalNum = "許可權(" + res.Response.List.length + ")";
+              const strategies = res.Response.PolicyList
+              this.StrategyData = strategies
+              this.TotalCounts = res.Response.TotalNum
+              this.totalNum = "許可權(" + res.Response.TotalNum + ")";
             } else {
               this.loading = false;
               this.$message({

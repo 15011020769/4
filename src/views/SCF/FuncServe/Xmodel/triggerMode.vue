@@ -21,7 +21,7 @@
                 :placeholder="$t('SCF.total.srdsrwmc')" @input="tasksNameChange" />
               <p class="tipCon" v-show="warnFlag">{{ $t('SCF.total.ts1') }}</p>
               <p class="tipCon" v-show="warnFlag">{{ $t('SCF.total.ts2') }}</p>
-              <p class="tipCon" v-show="notNullFlag">触发器名称必须输入</p>
+              <p class="tipCon" v-show="notNullFlag">{{$t('SCF.total.cfqmc')}}</p>
             </el-form-item>
             <el-form-item :label="$t('SCF.total.cfzq')" :required="true">
               <el-select v-model="formTriggerForm.triggerTime" @change="triggerChange" class="selectSetWidth">
@@ -47,9 +47,9 @@
             </el-form-item>
             <el-form-item v-show="formTriggerForm.writeIsTrue=='true'" class="writeIsTrue">
               <span slot="label"></span>
-              <el-input class="inputSetWidth" type="textarea" :rows="3" placeholder="请输入内容"
+              <el-input class="inputSetWidth" type="textarea" :rows="3" placeholder="$t('SCF.total.qsrnr')"
                 v-model="formTriggerForm.CustomArgument"></el-input>
-              <p>请填写附加信息,长度不超过4KiB</p>
+              <p>{{$t('SCF.total.qtxfjxx')}}</p>
             </el-form-item>
             <el-form-item :label="$t('SCF.total.ljqy')">
               <el-checkbox class="inputSetWidth" type="checkbox" v-model="formTriggerForm.nowStart"></el-checkbox>
@@ -127,8 +127,8 @@
     UPDATE_TRIGGER,
     DEL_TRIGGER
   } from "@/constants";
-
   export default {
+    props: ['FunctionVersion'],
     data() {
       var validateTasksName = (rule, value, callback) => {
         if (value === "") {
@@ -198,7 +198,8 @@
           Region: localStorage.getItem('regionv2'),
           Action: "DeleteTrigger",
           TriggerName: this.childData.TriggerName,
-          Type: this.childData.Type
+          Type: this.childData.Type,
+          Qualifier: this.FunctionVersion
         };
         let functionName = this.$route.query.functionName;
         if (functionName != "" && functionName != null) {
@@ -229,15 +230,14 @@
               Type: this.formTriggerForm.triggerType,
               TriggerDesc: this.desc,
               CustomArgument: this.formTriggerForm.CustomArgument,
-              Enable: this.formTriggerForm.nowStart == true ? "OPEN" : "CLOSE"
+              Enable: this.formTriggerForm.nowStart == true ? "OPEN" : "CLOSE",
+              Qualifier: this.FunctionVersion
             };
             let functionName = this.$route.query.functionName;
             if (functionName != "" && functionName != null) {
               params["FunctionName"] = functionName;
             }
-            // console.log("向后台发送的params", params);
             this.axios.post(CREAT_TRIGGER, params).then(res => {
-              // console.log("保存成功后的返回值", res);
               _this.getfunction();
               _this.formTriggerForm.tasksName = "";
               _this.formTriggerForm.writeIsTrue = "false";
@@ -272,13 +272,13 @@
               if (state == "OPEN") {
                 this.$message({
                   showClose: true,
-                  message: "触发器已启用",
+                  message: "觸發器已啟用",
                   type: "success"
                 });
               } else {
                 this.$message({
                   showClose: true,
-                  message: "触发器已关闭",
+                  message: "觸發器已關閉",
                   type: "success"
                 });
               }
@@ -325,7 +325,8 @@
         let params = {
           Version: "2018-04-16",
           Region: localStorage.getItem("regionv2"),
-          Action: "GetFunction"
+          Action: "GetFunction",
+          Qualifier: this.FunctionVersion
         };
         let functionName = this.$route.query.functionName;
         if (functionName != "" && functionName != null) {
@@ -340,7 +341,6 @@
               this.switch1[i] = false;
             }
           }
-          console.log(this.switch1);
           this.loading = false;
         });
       },

@@ -58,9 +58,9 @@
           </el-menu-item>
         </el-menu-item-group>
       </el-submenu>
-      <el-menu-item index="/logManagement">
+      <!-- <el-menu-item index="/logManagement">
         <span slot="title">日志分析</span>
-      </el-menu-item>
+      </el-menu-item> -->
       <!-- <el-submenu index="3">
         <template slot="title">
           <span>直播SDK</span>

@@ -4,7 +4,7 @@
       v-on:switchData="GetDat" />
     <div class="box-dis">
       <p>
-        <i class="el-icon-info"></i>注釋：Max、Min和Avg數值統計為當前折線圖內所有點的最大值、最小值和平均值
+        <i class="el-icon-info"></i>{{$t('SCF.total.zs')}}
       </p>
 
     </div>
@@ -26,7 +26,7 @@
 
         <el-table-column width="550">
           <template slot-scope="scope">
-            <p v-if="scope.row.DataPoints[0].Values.length==0">暂无数据</p>
+            <p v-if="scope.row.DataPoints[0].Values.length==0">{{$t('SCF.total.zwsj')}}</p>
             <div v-if="scope.row.DataPoints[0].Values.length!=0">
               <echart-line id="diskEchearrts-line" :time="scope.row.DataPoints[0].Timestamps | UpTime"
                 :opData="scope.row.DataPoints[0].Values" :scale="3" :period="Period" :xdata="false"></echart-line>
@@ -82,10 +82,11 @@
     All_MONITOR
   } from '@/constants'
   export default {
+    props: ['FunctionVersion'],
     data() {
       return {
         TimeArr: [{
-            name: '实时',
+            name: '實時',
             Time: 'realTime',
             TimeGranularity: [{
                 value: "60",
@@ -98,7 +99,7 @@
             ]
           },
           {
-            name: '近24小时',
+            name: '近24小時',
             Time: 'Nearly_24_hours',
             TimeGranularity: [{
                 value: "60",
@@ -141,24 +142,24 @@
         MonitorData: [], //监控数据
         tableData: [], // 组合数据
         disName: {
-          'Duration': '运行时间',
-          'Invocation': '调用次数',
-          'Error': '调用错误次数',
-          'ConcurrentExecutions': '并发执行次数',
-          'ConfigMem': '配置内存',
-          'FunctionErrorPercentage': '函数错误率',
-          'Http2xx': '正确调用次数',
-          'Http432': '资源超过限制',
-          'Http433': '函数执行超时',
-          'Http434': '内存超过限制',
-          'Http4xx': '函数错误次数',
-          'Invocation': '函数调用次数',
-          'Mem': '运行内存',
-          'MemDuration': '时间内存',
-          'OutFlow': '外网出流量',
-          'ServerErrorPercentage': '平台错误率',
-          'Syserr': '系统内部错误次数',
-          'Throttle': '函数运行受限次数'
+          'Duration': '運行時間',
+          'Invocation': '調用次數',
+          'Error': '調用錯誤次數',
+          'ConcurrentExecutions': '並發執行次數',
+          'ConfigMem': '配置記憶體',
+          'FunctionErrorPercentage': '函數錯誤率',
+          'Http2xx': '正確調用次數',
+          'Http432': '資源超過限制',
+          'Http433': '函數執行超時',
+          'Http434': '記憶體超過限制',
+          'Http4xx': '函數錯誤次數',
+          'Invocation': '函數調用次數',
+          'Mem': '運行記憶體',
+          'MemDuration': '時間記憶體',
+          'OutFlow': '外網出流量',
+          'ServerErrorPercentage': '平台錯誤率',
+          'Syserr': '系統內部錯誤次數',
+          'Throttle': '函數運行受限次數'
 
         },
         Company: {
@@ -182,24 +183,24 @@
           'Throttle': '次'
         },
         Tips: {
-          'Duration': '函数运行时间，按粒度（1分鐘、5分鐘）统计求平均值',
-          'Invocation': '函数调用次数，按粒度（1分鐘、5分鐘）统计求和',
-          'Error': '调用错误次数',
-          'ConcurrentExecutions': '并发执行次数',
-          'ConfigMem': '配置内存',
-          'FunctionErrorPercentage': '函数错误率',
-          'Http2xx': '正确调用次数',
-          'Http432': '资源超过限制',
-          'Http433': '函数执行超时',
-          'Http434': '内存超过限制',
-          'Http4xx': '函数运行错误次数，按粒度（1分鐘、5分鐘）统计求和',
-          'Invocation': '函数调用次数',
-          'Mem': '运行内存',
-          'MemDuration': '时间内存',
-          'OutFlow': '外网出流量',
-          'ServerErrorPercentage': '平台错误率',
-          'Syserr': '系统内部错误次数',
-          'Throttle': '函数运行受限次数'
+          'Duration': '函數運行時間，按粒度（1分鐘、5分鐘）統計求平均值',
+          'Invocation': '函數調用次數，按粒度（1分鐘、5分鐘）統計求和',
+          'Error': '調用錯誤次數',
+          'ConcurrentExecutions': '並發執行次數',
+          'ConfigMem': '配置記憶體',
+          'FunctionErrorPercentage': '函數錯誤率',
+          'Http2xx': '正確調用次數',
+          'Http432': '資源超過限制',
+          'Http433': '函數執行超時',
+          'Http434': '記憶體超過限制',
+          'Http4xx': '函數運行錯誤次數，按粒度（1分鐘、5分鐘）統計求和',
+          'Invocation': '函數調用次數',
+          'Mem': '運行記憶體',
+          'MemDuration': '時間記憶體',
+          'OutFlow': '外網出流量',
+          'ServerErrorPercentage': '平台錯誤率',
+          'Syserr': '系統內部錯誤次數',
+          'Throttle': '函數運行受限次數'
         },
 
       }
@@ -273,7 +274,7 @@
           'Instances.0.Dimensions.0.Name': 'functionName',
           'Instances.0.Dimensions.0.Value': this.functionName,
           'Instances.0.Dimensions.1.Name': 'version',
-          'Instances.0.Dimensions.1.Value': '$latest'
+          'Instances.0.Dimensions.1.Value': this.FunctionVersion
         }
         this.axios.post(All_MONITOR, parms).then(data => {
           if (data.Response.Error == undefined) {

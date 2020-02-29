@@ -48,8 +48,9 @@
             <div class="packpageLabel">
               {{t('费用', 'WAF.fy')}}
             </div>
-            <div>
-              <p class="totalMoney">24,657.53元</p>
+            <div class="totalMoney">
+              <template v-if="loading">计算中...</template>
+              <template v-else>NT$ {{price}}</template>
             </div>
           </div>
         </div>
@@ -62,6 +63,8 @@
   </div>
 </template>
 <script>
+import { DESCRIBE_WAF_PRICE } from '@/constants'
+import { CLB_PACKAGE_CFG_TYPES } from '../../constants'
 export default {
   props:{
     isShow: Boolean,
@@ -76,12 +79,15 @@ export default {
     return{
       dialogModel: '', // 弹框
       type: '',
+      price: 0,
+      loading: true,
     }
   },
   watch: {
     isShow(n) {
       if (n) {
         this.type = this.package.Level + 1
+        this.queryPrice()
       }
     }
   },
@@ -92,6 +98,39 @@ export default {
     }
   },
   methods:{
+    queryPrice() {
+      this.loading = true
+      this.axios.post(DESCRIBE_WAF_PRICE, {
+        Version: '2018-01-25',
+        ResInfo: [{
+          "goodsCategoryId": CLB_PACKAGE_CFG_TYPES[this.package.Level].edit_categoryid,
+          "regionId":1,
+          "projectId":0,
+          "goodsNum":1,
+          "payMode":1,
+          "platform":1,
+          "goodsDetail":{
+            "resourceId": this.package.ResourceIds,
+            "curDeadline": this.package.ValidTime,
+            "oldConfig": {
+              "pid": CLB_PACKAGE_CFG_TYPES[this.package.Level].pid, // 1001152,
+              "type": CLB_PACKAGE_CFG_TYPES[this.package.Level].key, // "sp_wsm_waf_enterprise_clb",
+              [CLB_PACKAGE_CFG_TYPES[this.package.Level].pricetype]: 1
+            },
+            "newConfig": {
+              "pid": CLB_PACKAGE_CFG_TYPES[this.type].pid, // 1001154,
+              "type": CLB_PACKAGE_CFG_TYPES[this.type].key, // "sp_wsm_waf_ultimate_clb",
+              [CLB_PACKAGE_CFG_TYPES[this.type].pricetype]: 1
+            }
+          }
+        }]
+      }).then(resp => {
+        this.generalRespHandler(resp, ({ CostInfo }) => {
+          this.price = CostInfo[0].RealTotalCost // RealTotalCost
+          this.loading = false
+        })
+      })
+    },
     //关闭按钮
     handleClose(){
       this.dialogModel=false;
@@ -101,9 +140,8 @@ export default {
     upgradeImmediately(){
       this.$emit("packageUpModelClose",this.dialogModel)
     },
-    //企业版旗舰版按钮
     checkType(type){
-      this.type = type;
+      this.type = type
     }
   }
 }
@@ -164,7 +202,7 @@ export default {
     margin-bottom:7px;
   }
   .totalMoney{
-    font-size:24px;
+    font-size:24px !important;
     color:#ff7800;
   }
 }

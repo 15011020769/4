@@ -32,7 +32,8 @@
             <el-form-item label="Provisioner" class="m0">
               <el-radio-group v-model="pv.ps" style="margin-bottom: 30px;">
                 <el-radio-button label="CBS">云硬盘CBS</el-radio-button>
-                <el-radio-button label="CFS">文件存储CFS</el-radio-button>
+                <el-radio-button label="CFS" disabled>文件存储CFS</el-radio-button>
+                <el-radio-button label="CFS" disabled>对象存储COS</el-radio-button>
               </el-radio-group>
             </el-form-item>
             <el-form-item label="读写权利" class="m0">
@@ -56,7 +57,7 @@
                 <el-button size="mini" style="height:28px;padding-bottom:2px;border:none;" icon="el-icon-refresh"></el-button>
               </el-form-item>
               <el-form-item label="选择云盘" class="m0">
-                <div>未选择数据盘<a href="">选择云硬盘</a></div>
+                <div>未选择数据盘<a @click="dialogFormVisible=true">选择云硬盘</a></div>
               </el-form-item>
               <el-form-item label="文件系统" class="m0">
                 <el-radio v-model="pv.radio" label="1">ext4</el-radio>
@@ -100,8 +101,6 @@
             </el-form-item>
           </div>
         </el-form>
-
-       
         <!-- 底部 -->
         <div class="tke-formpanel-footer">
           <el-button size="small" type="primary">创建PersistentVolume</el-button>
@@ -109,15 +108,66 @@
         </div>
       </div>
     </div>
-
-   
+    <el-dialog title="选择云硬盘" :visible.sync="dialogFormVisible">
+      <div class="post-room">
+        <el-select v-model="form.value" placeholder="请选择" size='mini' style="width:200px;">
+            <el-option
+              v-for="item in options"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
+        </el-select>
+        <el-input v-model="form.input" placeholder="请输入内容" size='mini' style="width:200px;margin-left:10px;"></el-input>
+          <div class="room-bottom">
+          <el-table
+            :data="tableData"
+            stripe
+            style="width: 100%;margin:20px 0;">
+            <el-table-column
+              prop="date"
+              label=""
+              width="80">
+            </el-table-column>
+            <el-table-column
+              prop="date"
+              label="ID"
+              width="180">
+            </el-table-column>
+            <el-table-column
+              prop="name"
+              label="名称"
+              width="180">
+            </el-table-column>
+            <el-table-column
+              prop="address"
+              label="大小">
+            </el-table-column>
+          </el-table>
+          <div class="Right-style pagstyle">
+            <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;条</span>
+            <el-pagination
+              :page-size="pagesize"
+              layout="prev, pager, next"
+              :current-page.sync="currpage"
+              @current-change="handleCurrentChange"
+              :total="TotalCount"
+            ></el-pagination>
+          </div>
+        </div>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="dialogFormVisible = false">取 消</el-button>
+          <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
+        </div>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import FileSaver from "file-saver";
 import XLSX from "xlsx";
-import { ALL_CITY } from "@/constants";
+import { ALL_CITY,TKE_DESCRIBEDISKS } from "@/constants";
 export default {
   name: "pvCreate",
   data() {
@@ -130,7 +180,14 @@ export default {
         value: 'cbs',
         options: ['cbs','ttt'],
         radio: '1'
-      }  
+      },
+      options:[],
+      form:{
+        value:'',
+        input:''
+      },
+      tableData:[],
+      dialogFormVisible:false
     };
   },
   components: {
@@ -138,9 +195,32 @@ export default {
   },
   created() {
      // 从路由获取类型
-   
+   this.GetDescribeDisks()
   },
   methods: {
+     // 获取云硬盘
+   GetDescribeDisks(){
+      const param = {
+         Filters:[{Name: "disk-usage", Values: ["DATA_DISK"]}, {Name: "portable", Values: ["TRUE"]},{Name: "disk-state", Values: ["UNATTACHED"]},{Name: "zone", Values: ["ap-taipei-1"]}],
+         Limit: 20,
+         Offset: 0,
+         Version: "2017-03-12"
+      }
+      this.axios.post(TKE_DESCRIBEDISKS, param).then(res => {
+        console.log(res)
+          if (res.Response.Error == undefined) {
+            console.log(res)
+            // this.loadShow = false
+          } else {
+            this.$message({
+              message: ErrorTips[res.Response.Error.code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            })
+          }
+        })
+    },
     //返回上一层
     goBack(){
           this.$router.go(-1);
@@ -158,6 +238,31 @@ export default {
 };
 .err {
   border: 1px solid #e54544;
+}
+.post-room{
+  width:100%;
+  padding:20px;
+}
+.Right-style {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 20px;
+  .esach-inputL {
+    width: 300px;
+    margin-right: 20px;
+  }
+}
+.pagstyle {
+  padding: 20px;
+  .pagtotal {
+    font-size: 13px;
+    font-weight: 400;
+    color: #565656;
+    line-height: 32px;
+  }
+}
+.room-bottom {
+  background: white;
 }
 </style>
 

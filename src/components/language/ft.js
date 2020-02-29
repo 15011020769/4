@@ -46,10 +46,11 @@ module.exports = {
   register: '免費註冊',
   bill: '費用中心',
   userCenter: '用戶中心',
-  info: '消息中心',
+  info: '訊息中心',
   workorder: '我的工單',
   back: '賬號系統',
   h: '退出',
   hintTitle: '提示',
-  hintContent: '確定進行[退出]操作?'
+  hintContent: '確定進行[退出]操作?',
+  lockText: '您的賬戶已鎖定，暫不支持購買'
 }

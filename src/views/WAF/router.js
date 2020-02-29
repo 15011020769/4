@@ -1,18 +1,16 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import { DESCRIBE_USER_EDITION } from '@/constants'
 
 Vue.use(Router)
 
-export default new Router({
+const router = new Router({
   // mode: 'history',
   base: process.env.BASE_URL,
-  redirect: {
-    name: 'toBuy'
-  },
   routes: [
     {
       path: '/',
-      redirect: '/toBuy'
+      redirect: '/protectionSettings'
     },
     {
       path: '/saveOverView', // 安全概览
@@ -24,18 +22,18 @@ export default new Router({
       }
     },
     {
-      path: '/attackLog', // 攻击日志
-      name: 'attackLog',
-      component: () => import(/* webpackChunkName: "ipMan" */ './logService/attackLog.vue'),
+      path: '/accessLog', // 访问日志
+      name: 'accessLog',
+      component: () => import(/* webpackChunkName: "ipMan" */ './logService/accessLog.vue'),
       meta: {
         keepAlive: true,
         leftNav:true
       }
     },
     {
-      path: '/accessLog', // 访问日志
-      name: 'accessLog',
-      component: () => import(/* webpackChunkName: "ipMan" */ './logService/accessLog.vue'),
+      path: '/accessLogDetail', // 访问日志
+      name: 'accessLogDetail',
+      component: () => import(/* webpackChunkName: "ipMan" */ './logService/tab/log.vue'),
       meta: {
         keepAlive: true,
         leftNav:true
@@ -54,6 +52,15 @@ export default new Router({
       path: '/attackDetails', // 攻击详情
       name: 'attackDetails',
       component: () => import(/* webpackChunkName: "ipMan" */ './webFirewall/attackDetails.vue'),
+      meta: {
+        keepAlive: true,
+        leftNav:true
+      }
+    },
+    {
+      path: '/attackLog', // 攻击详情
+      name: 'attackLog',
+      component: () => import(/* webpackChunkName: "ipMan" */ './webFirewall/tab/attackLog.vue'),
       meta: {
         keepAlive: true,
         leftNav:true
@@ -200,3 +207,32 @@ export default new Router({
     }
   ]
 })
+
+// let waf = -1 // 0 未购买 1 已购买
+// router.beforeEach((to, from, next) => {
+//   if (to.path === '/toBuy') {
+//     next()
+//     return
+//   }
+//   if (waf === -1) {
+//     Vue.prototype.axios.post(DESCRIBE_USER_EDITION, {
+//       Version: '2018-01-25'
+//     }).then(resp => {
+//       Vue.prototype.generalRespHandler(resp, ({ Data }) => {
+//         if (!Data || !Data.includes('clb-waf')) {
+//           waf = 0
+//           next('/toBuy')
+//         } else {
+//           waf = 1
+//           next()
+//         }
+//       }, )
+//     })
+//   } else if (waf === 0) {
+//     next('/toBuy')
+//   } else {
+//     next()
+//   }
+// })
+
+export default router

@@ -21,7 +21,7 @@
 
 <script>
 export default {
-  name: "myChart",
+  name: "downLoadImg",
   data() {
     return {
       imgFormat: "",

@@ -94,14 +94,14 @@
             </template>
           </el-table-column>
           <el-table-column prop="logSwitch" width="140" align="center">
-            <el-dropdown slot="header" style="padding: 0">
+            <el-dropdown slot="header" style="padding: 0" @command="onChangeLogStatus">
               <span class="el-dropdown-link" style="color: #909399;">
                 {{t('访问日志开关', 'WAF.logkg')}}<i class="el-icon-arrow-down el-icon--right"></i>
               </span>
               <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item>全部</el-dropdown-item>
-                <el-dropdown-item >{{t('开启', 'WAF.open')}}</el-dropdown-item>
-                <el-dropdown-item>{{t('关闭', 'WAF.close')}}</el-dropdown-item>
+                <el-dropdown-item :command="-1">全部</el-dropdown-item>
+                <el-dropdown-item :command="1">{{t('开启', 'WAF.open')}}</el-dropdown-item>
+                <el-dropdown-item :command="0">{{t('关闭', 'WAF.close')}}</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
             <template slot-scope="scope">
@@ -119,9 +119,9 @@
                 {{t('WAF开关', 'WAF.waflg')}}<i class="el-icon-arrow-down el-icon--right"></i>
               </span>
               <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item command="">全部</el-dropdown-item>
-                <el-dropdown-item command="1">{{t('开启', 'WAF.open')}}</el-dropdown-item>
-                <el-dropdown-item command="0">{{t('关闭', 'WAF.close')}}</el-dropdown-item>
+                <el-dropdown-item :command="-1">全部</el-dropdown-item>
+                <el-dropdown-item :command="1">{{t('开启', 'WAF.open')}}</el-dropdown-item>
+                <el-dropdown-item :command="0">{{t('关闭', 'WAF.close')}}</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
             <template slot-scope="scope">
@@ -144,11 +144,11 @@
                   <h1>{{t('确定删除此域名', 'WAF.qdscym')}}？</h1>
                   <p>{{t('删除后源站IP将会遭受恶意攻击的威胁', 'WAF.schyip')}}。</p>
                 </div>
-                <div style="text-align: right; margin: 0">
+                <div style="text-align: center; margin: 0">
+                  <el-button size="mini" type="text" @click="delWafs([scope.row])">{{t('确定', 'WAF.qd')}}</el-button>
                   <el-button size="mini" type="text" @click="scope.row.delDialog=false">取消</el-button>
-                  <el-button type="primary" size="mini" @click="delWafs([scope.row])">{{t('确定', 'WAF.qd')}}</el-button>
                 </div>
-                <el-button slot="reference"style="color:#3E8EF7;">删除</el-button>
+                <el-button slot="reference"style="color:#3E8EF7;background: transparent;">删除</el-button>
               </el-popover>
               <el-button type="text" size="small" @click="handelEdit(scope.row)">{{t('编辑', 'WAF.bj')}}</el-button>
               <el-button @click.native.prevent="toProtectConfig(scope.row)" type="text" size="small">{{t('防护配置', 'WAF.fhpz')}}</el-button>
@@ -173,7 +173,7 @@
 import packageUpgradeModel from '../model/packageUpgradeModel'
 import { DESCRIBE_HOSTS, DELETE_HOST, MODIFY_HOST_STATUS, MODIFY_HOST_ACCESS_LOG_STATUS } from '@/constants'
 import { ErrorTips } from "@/components/ErrorTips"
-import { PACKAGE_CFG_TYPES, COMMON_ERROR } from '../../constants'
+import { COMMON_ERROR } from '../../constants'
 import { flatObj } from '@/utils'
 
 export default {
@@ -225,7 +225,18 @@ export default {
   },
   methods:{
     onChangeWafStatus(status) {
-      console.log(status)
+      if (status === -1) {
+        this.Status = ''
+      } else {
+        this.Status = status
+      }
+    },
+    onChangeLogStatus(status) {
+      if (status === -1) {
+        this.ClsStatus = ''
+      } else {
+        this.ClsStatus = status
+      }
     },
     handleCurrentChange(page) {
       this.currentPage = page
@@ -289,14 +300,23 @@ export default {
     },
     //获取数据
     getData() {
-      this.axios.post(DESCRIBE_HOSTS, ({
+      this.loading = true
+      const param = {
         Version: '2018-01-25',
         Search: this.keyword,
-        // Item: {
-        //   LogStatus: this.ClsStatus,
-        //   Status: this.Status
-        // }
-      })).then(resp => {
+      }
+      const item = {}
+      if (this.Status !== undefined) {
+        item.Status = this.Status
+      }
+      if (this.ClsStatus !== undefined) {
+        item.ClsStatus = this.ClsStatus
+      }
+      if (Object.keys(item).length) {
+        param.Item = item
+      }
+      this.axios.post(DESCRIBE_HOSTS, flatObj(param))
+      .then(resp => {
         this.generalRespHandler(resp, ({ HostList, TotalCount }) => {
           const domains = HostList
           domains.forEach(domain => {

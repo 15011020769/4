@@ -10,8 +10,7 @@
     </div>
     <div class="box-table">
       <!-- 表格 -->
-      <el-table :data="tableData" style="width: 100%">
-        <!-- v-loading='TableLoad' -->
+      <el-table :data="tableData" style="width: 100%" v-loading='TableLoad'>
         <el-table-column prop width="200">
           <template slot-scope="scope">
             <p>
@@ -30,7 +29,7 @@
             <p v-if="scope.row.DataPoints[0].Values.length==0">暂无数据</p>
             <div v-if="scope.row.DataPoints[0].Values.length!=0">
               <echart-line id="diskEchearrts-line" :time="scope.row.DataPoints[0].Timestamps | UpTime"
-                :opData="scope.row.DataPoints[0].Values" :scale="3" :period="period" :xdata="false"></echart-line>
+                :opData="scope.row.DataPoints[0].Values" :scale="3" :period="Period" :xdata="false"></echart-line>
             </div>
           </template>
         </el-table-column>
@@ -39,7 +38,8 @@
           <template slot-scope="scope">
             <p style="font-size:12px;color:#bbb;font-weight:600">Max:</p>
             <template v-if="scope.row.DataPoints[0].Values.length!==0">
-              <span style="color:#333;font-weight:600;font-size: 12px;">{{scope.row.DataPoints[0].Values|CMMax}}</span>
+              <span style="color:#333;font-weight:600;font-size: 12px;">{{scope.row.DataPoints[0].Values|CMMax}} <span
+                  class='span_2'>{{Company[scope.row.MetricName]}}</span></span>
               <span style="color:#333;font-weight:600;font-size: 12px;">{{scope.row.symbol}}</span>
             </template>
             <template v-if="scope.row.DataPoints[0].Values.length==0">-</template>
@@ -49,7 +49,8 @@
           <template slot-scope="scope">
             <p style="font-size:12px;color:#bbb;font-weight:600">Min:</p>
             <template v-if="scope.row.DataPoints[0].Values.length!==0">
-              <span style="color:#333;font-weight:600;font-size: 12px;">{{scope.row.DataPoints[0].Values|CMMin}}</span>
+              <span style="color:#333;font-weight:600;font-size: 12px;">{{scope.row.DataPoints[0].Values|CMMin}} <span
+                  class='span_2'>{{Company[scope.row.MetricName]}}</span></span>
               <span style="color:#333;font-weight:600;font-size: 12px;">{{scope.row.symbol}}</span>
             </template>
             <template v-if="scope.row.DataPoints[0].Values.length==0">-</template>
@@ -60,7 +61,8 @@
           <template slot-scope="scope">
             <p style="font-size:12px;color:#bbb;font-weight:600">Avg:</p>
             <template v-if="scope.row.DataPoints[0].Values.length!==0">
-              <span style="color:#333;font-weight:600;font-size: 12px;">{{scope.row.DataPoints[0].Values|CMAvg}}</span>
+              <span style="color:#333;font-weight:600;font-size: 12px;">{{scope.row.DataPoints[0].Values|CMAvg}} <span
+                  class='span_2'>{{Company[scope.row.MetricName]}}</span></span>
               <span style="color:#333;font-weight:600;font-size: 12px;">{{scope.row.symbol}}</span>
             </template>
             <template v-if="scope.row.DataPoints[0].Values.length==0">-</template>
@@ -174,6 +176,7 @@
           });
           if (this.BaseListK.length == val.length) {
             this.tableData = this.BaseListK
+            console.log(this.tableData)
             this.TableLoad = false
           }
         }
@@ -203,7 +206,6 @@
                 this.BaseListK.push(item)
                 this._GetMonitorData(item.MetricName)
               }
-              console.log(this.BaseListK)
             });
           } else {
             this.$message({
@@ -240,7 +242,9 @@
             });
           }
         });
-      },
+      }
+    },
+    filters: {
       UpTime(value) {
         let timeArr = [];
         for (let i = 0; i < value.length; i++) {

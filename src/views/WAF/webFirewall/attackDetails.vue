@@ -4,12 +4,12 @@
       {{t('攻击日志', 'WAF.gjrz')}}
     </div>
     <div class="tabList">
-      <el-tabs v-model="attackLog" @tab-click="handleClick">
+      <el-tabs v-model="attackLog">
         <el-tab-pane :label="t('日志查询', 'WAF.rzcx')" name="first">
           <logQuery/>
         </el-tab-pane>
         <el-tab-pane :label="t('下载任务', 'WAF.xzrw')" name="second">
-          <downloadTask/>
+          <downloadTask :active="attackLog"/>
         </el-tab-pane>
       </el-tabs>
     </div>
@@ -28,12 +28,6 @@ export default {
     logQuery:logQuery,//日志查询
     downloadTask:downloadTask,//下载任务
   },
-  methods:{
-    //tab切换
-    handleClick(tab, event) {
-      console.log(tab, event);
-    }
-  }
 }
 </script>
 <style lang="scss" scoped>

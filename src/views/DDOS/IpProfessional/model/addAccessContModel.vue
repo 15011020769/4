@@ -43,8 +43,8 @@
               <p>
                 <table class="">
                   <tr class="t-body" v-for="(item, index) in ruleList" :key="index">
-                    <td v-if="index==0">当</td>
-                    <td v-else>且当</td>
+                    <td v-if="index==0">當</td>
+                    <td v-else>且當</td>
                     <td width="110px">
                       <el-select v-model="item.Skey" class="hoseDomin">
                         <el-option label="host" value="host"></el-option>

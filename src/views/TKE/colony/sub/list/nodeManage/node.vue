@@ -59,10 +59,10 @@
         </el-table-column>
         <el-table-column prop="" label="状态">
           <template slot-scope="scope">
-            <span v-if="scope.row.status === true" class="text-green"
-              ></span
-            >
-            <span v-else class="text-red"></span>
+            <span :class="[
+                scope.row.ClusterStatus !== 'Running' ? 'text-red' : 'text-green'
+              ]" >{{scope.row.status | changeStatus}}
+            </span>
           </template>
         </el-table-column>
         <el-table-column prop="" label="可用区">
@@ -76,7 +76,7 @@
         <el-table-column prop="" label="kubernetes版本">
           <template slot-scope="scope">
             <el-tooltip effect="light" content="v1.10.5-tke.6" placement="top">
-              <span></span>
+              <span>{{scope.row.kubeletVersion}}</span>
             </el-tooltip>
           </template>
         </el-table-column>
@@ -106,7 +106,7 @@
         </el-table-column>
         <el-table-column width="200" prop="" label="计费模式">
           <template slot-scope="scope">
-            <p></p>
+            <p>{{scope.row.InstanceChargeType | changeChargeType}}</p>
             <p>{{scope.row.addTime}}创建</p>
           </template>
         </el-table-column>
@@ -249,7 +249,8 @@ import { ErrorTips } from "@/components/ErrorTips";
 import moment from 'moment';
 import XLSX from "xlsx";
 import FileSaver from "file-saver";
-import { ALL_CITY, NODE_INFO, NODE_LIST, POINT_REQUEST, OBJ_LIST, DELETE_NODE, BLOCK_NODE, NODE_ID_LIST, NODE_POD_LIST } from '@/constants';
+import { ALL_CITY, NODE_INFO, NODE_LIST, POINT_REQUEST, OBJ_LIST, DELETE_NODE, BLOCK_NODE, 
+  NODE_ID_LIST, NODE_POD_LIST, JOB_ID } from '@/constants';
 export default {
   name: "colonyNodeManageNode",
   data() {
@@ -325,34 +326,107 @@ export default {
         })
       }
       const res = await this.axios.post(NODE_INFO, params);
-      this.loadShow = false;
-      let ids = [];
-      if (res.Response.InstanceSet.length > 0) {
-        res.Response.InstanceSet.map(obj => {
-          ids.push(obj.InstanceId);
-        });
-      }
-      let param = {
-        Version: "2017-03-12",
-        Limit: this.pageSize
-      }
-      if(ids.length > 0) {
-        for(let i = 0; i < ids.length; i++) {
-          param['InstanceIds.'+i] = ids[i];
+      if(res.Response.Error === undefined) {
+        this.loadShow = false;
+        let ids = [];
+        if (res.Response.InstanceSet.length > 0) {
+          res.Response.InstanceSet.map(obj => {
+            ids.push(obj.InstanceId);
+          });
         }
-        this.loadShow = true;
-        let nodeRes = await this.axios.post(NODE_LIST, param);
-        if(nodeRes.Response.Error === undefined) {
-          this.loadShow = false;
-          if(nodeRes.Response.InstanceSet.length > 0) {
-            nodeRes.Response.InstanceSet.map(node => {
-              node.addTime = moment(node.CreatedTime).format("YYYY-MM-DD HH:mm:ss");
-            });
-            this.list = nodeRes.Response.InstanceSet;
+        let nodeInfoList = res.Response.InstanceSet;
+        let param = {
+          Version: "2017-03-12",
+          Limit: this.pageSize
+        }
+        let param1 = {
+          Method: "GET",
+          Path: "/api/v1/nodes",
+          Version: "2018-05-25",
+          ClusterName: this.clusterId,
+        }
+        let paramJob = {
+          Conditions: [JSON.stringify(["tke_cluster_instance_id","=",this.clusterId]),JSON.stringify(["node_role","=","Node"])],
+          EndTime: new Date().getTime(),
+          Fields: ["avg(k8s_node_cpu_core_request_total)", "avg(k8s_node_memory_request_bytes_total)"],
+          GroupBys: ["timestamp(60s)", "unInstanceId"],
+          Limit: 65535,
+          Module: "/front/v1",
+          NamespaceName: "k8s_node",
+          Offset: 0,
+          Order: "desc",
+          OrderBy: "timestamp",
+          StartTime: new Date().getTime(),
+          Version: "2019-06-06"
+        }
+        if(ids.length > 0) {
+          for(let i = 0; i < ids.length; i++) {
+            param['InstanceIds.'+i] = ids[i];
           }
-          this.total = res.Response.TotalCount;
-        } else {
-          this.loadShow = false;
+          let k8sNodeList = [];
+          this.loadShow = true;
+          let k8sRes = await this.axios.post(POINT_REQUEST,param1);
+          if(k8sRes.Response.Error === undefined) {
+            let response = JSON.parse(k8sRes.Response.ResponseBody);
+            k8sNodeList = response.items;
+            this.loadShow = false;
+          } else {
+            this.loadShow = false;
+            let ErrTips = {
+              
+            };
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[k8sRes.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+          }
+          let jobRes = await this.axios.post(JOB_ID, paramJob);
+          debugger
+          this.loadShow = true;
+          let nodeRes = await this.axios.post(NODE_LIST, param);
+          if(nodeRes.Response.Error === undefined) {
+            this.loadShow = false;
+            if(nodeRes.Response.InstanceSet.length > 0) {
+              nodeRes.Response.InstanceSet.map(node => {
+                node.addTime = moment(node.CreatedTime).format("YYYY-MM-DD HH:mm:ss");
+                nodeInfoList.map(info => {
+                  if(node.InstanceId === info.InstanceId) {
+                    node.status = info.InstanceState;
+                  }
+                });
+                k8sNodeList.map(k8s => {
+                  let providerId = k8s.spec.providerID;
+                  if(node.InstanceId === providerId.substring(providerId.lastIndexOf("/")+1)) {
+                    node.kubeletVersion = k8s.status.nodeInfo.kubeletVersion;
+                    node.allocatable = k8s.status.allocatable;
+                    node.unschedulable = k8s.spec.unschedulable;
+                  }
+                });
+                return node;
+              });
+              this.list = nodeRes.Response.InstanceSet;
+              console.log(this.list);
+            }
+            this.total = res.Response.TotalCount;
+          } else {
+            this.loadShow = false;
+            let ErrTips = {
+              
+            };
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[nodeRes.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+          }
+        }
+      } else {
+        this.loadShow = false;
           let ErrTips = {
             
           };
@@ -363,7 +437,6 @@ export default {
             showClose: true,
             duration: 0
           });
-        }
       }
     },
 
@@ -532,7 +605,6 @@ export default {
       } else {
         param["InstanceDeleteMode"] = 'retain';
       }
-      debugger
       await this.axios.post(DELETE_NODE, param).then(res => {
         if(res.Response.RequestId) {
           this.showDelModal = false;
@@ -711,13 +783,37 @@ export default {
         ClusterName: 'cls-n1xokuh6'
       }
       this.axios.post(POINT_REQUEST, param).then(res => {
-        console.log(JSON.parse(res.Response.ResponseBody))
-        if (res.code === 0) {
-          this.loadShow = true
-        }
+        // console.log(JSON.parse(res.Response.ResponseBody))
+        // if (res.code === 0) {
+        //   this.loadShow = true
+        // }
       })
+    }  
+  },
+  filters: {
+    //返回状态
+    changeStatus(status) {
+      if(status === 'failed') {
+        return '异常';
+      } else if(status === 'initializing') {
+        return '创建中';
+      } else if(status === 'upgrading') {
+        return "升级中";
+      } else if(status === 'running') {
+        return '健康';
+      }
     },
-  }
+    //返回计费模式
+    changeChargeType(type) {
+      if(type === 'POSTPAID_BY_HOUR') {
+        return '按量计费';
+      } else if(type === 'PREPAID') {
+        return '报年报月';
+      } else if(type === 'SPOTPAID') {
+        return '按量计费-竞价';
+      }
+    }
+  }  
 };
 </script>
   

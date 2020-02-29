@@ -3,13 +3,13 @@
     <!-- ----------------头部----------------- -->
     <div class="title">
       <p class="text">
-        函数服务
+        {{ $t('SCF.total.title') }}
       </p>
       <p>
         <el-button size="small">{{regionName}}</el-button>
       </p>
       <div>
-        <span class="namespace">命名空间:</span>
+        <span class="namespace">{{ $t('SCF.total.mmkj') }}:</span>
         <el-select v-model="SpaceValue" @change="_GetFuncList">
           <el-option v-for="(item,index) in SpaceList" :key="index" :label="item.label" :value="item.name">
           </el-option>
@@ -66,7 +66,7 @@
         </el-table-column>
       </el-table>
       <div class="Right-style pagstyle">
-        <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;条</span>
+        <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;{{ $t('SCF.total.tiao') }}</span>
         <el-pagination :page-size="pagesize" :pager-count="7" layout="prev, pager, next"
           @current-change="handleCurrentChange" :total="TotalCount"></el-pagination>
       </div>
@@ -74,9 +74,9 @@
     </div>
     <!-- 设置命名空间模态框 -->
     <div>
-      <el-dialog title="命名空间管理" :visible.sync="SpaceVisible">
+      <el-dialog :title="$t('SCF.total.mmkjgl')" :visible.sync="SpaceVisible">
         <el-table :data="SpaceListK">
-          <el-table-column label="命名空间" width="250">
+          <el-table-column :label="$t('SCF.total.mmkj')" width="250">
             <template slot-scope="$scope">
               <div v-if="$scope.row.disabled">
                 <el-input v-model="SpaceListK[$scope.$index].name" :disabled="true"> </el-input>
@@ -92,7 +92,7 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column label="描述" width="300">
+          <el-table-column :label="$t('SCF.total.ms')" width="300">
             <template slot-scope="$scope">
               <div v-if="$scope.row.name==='default'">
                 <el-input v-model="SpaceListK[$scope.$index].Description" type="textarea" :disabled="true" :rows="3">
@@ -108,17 +108,17 @@
             <template slot-scope="$scope">
               <div>
                 <p v-if="$scope.row.name==='default'">-</p>
-                <p v-else><a @click="_deleteSpace($scope.row,$scope.$index)">删除</a></p>
+                <p v-else><a @click="_deleteSpace($scope.row,$scope.$index)">{{$t('SCF.total.sc')}}</a></p>
               </div>
             </template>
           </el-table-column>
         </el-table>
         <p v-if="SpaceListK.length<5">
-          <a @click="_addSpace"> 新增命名空间（{{SpaceListK.length}}/5）</a>
+          <a @click="_addSpace"> {{$t('SCF.total.xzmmkj')}}（{{SpaceListK.length}}/5）</a>
         </p>
-        <p v-else><a>新增命名空间（共5个命名空间，已满额）</a></p>
+        <p v-else><a>{{$t('SCF.total.xzmmkj')}}{{$t('SCF.total.me')}}</a></p>
         <span slot="footer" class="dialog-footer">
-          <el-button type="primary" @click="_keepSpace" :loading='keeploanding' size="small">提 交</el-button>
+          <el-button type="primary" @click="_keepSpace" :loading='keeploanding' size="small">{{$t('SCF.total.tj')}}</el-button>
           <el-button @click="SpaceVisible = false">取 消</el-button>
         </span>
       </el-dialog>
@@ -127,11 +127,11 @@
     <div>
       <el-dialog :visible.sync="DeleteVisible" width="550px" center>
         <div slot="title" class="DeleteVisible">
-          您确定要删除函数 {{FunctionName}} 吗？
+          {{$t('SCF.total.qdschs')}} {{FunctionName}} 吗？
         </div>
-        <span>删除函数将永久删除函数代码及已绑定的触发器。是否确定删除此函数？</span>
+        <span>{{$t('SCF.total.scqd')}}</span>
         <span slot="footer" class="dialog-footer">
-          <el-button type="primary" @click="_DeleteDetermine">确 定</el-button>
+          <el-button type="primary" @click="_DeleteDetermine">{{$t('SCF.total.qd')}}</el-button>
           <el-button @click="DeleteVisible = false">取 消</el-button>
         </span>
       </el-dialog>
@@ -219,15 +219,15 @@
             this.TotalCount = res.Response.TotalCount
           } else {
             let ErrTips = {
-              'InternalError.System': '内部系统错误',
-              'InvalidParameter.Payload': '请求参数不合法',
-              'InvalidParameterValue': '参数取值错误',
-              'InvalidParameterValue.Limit': 'Limit传入错误',
+              'InternalError.System': '內部系統錯誤',
+              'InvalidParameter.Payload': '請求參數不合法',
+              'InvalidParameterValue': '參數取值錯誤',
+              'InvalidParameterValue.Limit': 'Limit傳入錯誤',
               'InvalidParameterValue.Offset': '偏移量不合法',
-              'InvalidParameterValue.Order': 'Order传入错误',
-              'InvalidParameterValue.Orderby': 'Orderby传入错误',
-              'UnauthorizedOperation.CAM': 'CAM鉴权失败',
-              'UnauthorizedOperation.Region': 'Region错误',
+              'InvalidParameterValue.Order': 'Order傳入錯誤',
+              'InvalidParameterValue.Orderby': 'Orderby傳入錯誤',
+              'UnauthorizedOperation.CAM': 'CAM鑒權失敗',
+              'UnauthorizedOperation.Region': 'Region錯誤',
             }
             let ErrOr = Object.assign(ErrorTips, ErrTips)
             this.$message({
@@ -260,7 +260,7 @@
               })
               if (item.Name === 'default') {
                 this.SpaceList.push({
-                  label: `${item.Name}(${this.TotalCount})`,
+                  label: `${item.Name}`,
                   name: item.Name
                 })
               }
@@ -273,9 +273,9 @@
             });
           } else {
             let ErrTips = {
-              'InvalidParameterValue.Filters': 'Filters参数错误',
-              'InvalidParameterValue.Order': 'Order传入错误',
-              'InvalidParameterValue.Orderby': 'Orderby传入错误',
+              'InvalidParameterValue.Filters': 'Filters參數錯誤',
+              'InvalidParameterValue.Order': 'Order傳入錯誤',
+              'InvalidParameterValue.Orderby': 'Orderby傳入錯誤',
               'InvalidParameterValue.SearchKey': 'searchkey 不是 Keyword,Tag 或者 Runtime'
             }
             let ErrOr = Object.assign(ErrorTips, ErrTips)
@@ -294,7 +294,7 @@
           this._GetFuncList()
         } else {
           this.$message({
-            message: '请选择过滤条件且输入搜索值',
+            message: '請選擇過濾條件且輸入搜索值',
             type: "warning",
             showClose: true,
             duration: 0
@@ -323,17 +323,17 @@
           };
           this.axios.post(NAME_SPACE_DEL, param).then(res => {
             if (res.Response.Error == undefined) {
-              console.log('删除成功')
+              console.log('刪除成功')
             } else {
               let ErrTips = {
-                'FailedOperation.DeleteNamespace': '无法删除默认Namespace',
-                'InternalError': '内部错误',
-                'InvalidParameterValue': '参数取值错误',
-                'InvalidParameterValue.Namespace': 'Namespace参数传入错误',
-                'InvalidParameterValue.NamespaceInvalid': '规则不正确，Namespace为英文字母、数字、-_ 符号组成，长度30',
+                'FailedOperation.DeleteNamespace': '無法刪除默認Namespace',
+                'InternalError': '內部錯誤',
+                'InvalidParameterValue': '參數取值錯誤',
+                'InvalidParameterValue.Namespace': 'Namespace參數傳入錯誤',
+                'InvalidParameterValue.NamespaceInvalid': '規則不正確，Namespace為英文字母、數字、-_ 符號組成，長度30',
                 'ResourceInUse.Namespace': 'Namespace已存在',
                 'ResourceNotFound.Namespace': 'Namespace不存在',
-                'UnauthorizedOperation.CAM': 'CAM鉴权失败'
+                'UnauthorizedOperation.CAM': 'CAM鑒權失敗'
               }
               let ErrOr = Object.assign(ErrorTips, ErrTips)
               this.$message({
@@ -400,9 +400,9 @@
             this._GetSpaceList()
           } else {
             let ErrTips = {
-              'InvalidParameterValue.Filters': 'Filters参数错误',
-              'InvalidParameterValue.Order': 'Order传入错误',
-              'InvalidParameterValue.Orderby': 'Orderby传入错误',
+              'InvalidParameterValue.Filters': 'Filters參數錯誤',
+              'InvalidParameterValue.Order': 'Order傳入錯誤',
+              'InvalidParameterValue.Orderby': 'Orderby傳入錯誤',
               'InvalidParameterValue.SearchKey': 'searchkey 不是 Keyword,Tag 或者 Runtime'
             }
             let ErrOr = Object.assign(ErrorTips, ErrTips)
@@ -434,16 +434,16 @@
 
           } else {
             let ErrTips = {
-              'FailedOperation.CreateNamespace': '创建命名空间失败',
-              'InternalError': '内部错误',
-              'InvalidParameterValue': '参数取值错误',
-              'InvalidParameterValue.DefaultNamespace': '默认Namespace无法创建',
-              'InvalidParameterValue.Description': 'Description传入错误',
-              'InvalidParameterValue.Namespace': 'Namespace参数传入错误',
-              'InvalidParameterValue.NamespaceInvalid': '规则不正确，Namespace为英文字母、数字、-_ 符号组成，长度30',
-              'LimitExceeded.Namespace': 'Namespace数量超过上限',
+              'FailedOperation.CreateNamespace': '創建命名空間失敗',
+              'InternalError': '内部錯誤',
+              'InvalidParameterValue': '參數取值錯誤',
+              'InvalidParameterValue.DefaultNamespace': '預設Namespace无法创建',
+              'InvalidParameterValue.Description': 'Description傳入錯誤',
+              'InvalidParameterValue.Namespace': 'Namespace參數傳入錯誤',
+              'InvalidParameterValue.NamespaceInvalid': '規則不正確，Namespace為英文字母、數字、-_ 符號組成，長度30',
+              'LimitExceeded.Namespace': 'Namespace數量超過上限',
               'ResourceInUse.Namespace': 'Namespace已存在',
-              'UnauthorizedOperation.CAM': 'CAM鉴权失败'
+              'UnauthorizedOperation.CAM': 'CAM鑒權失敗'
             }
             let ErrOr = Object.assign(ErrorTips, ErrTips)
             this.$message({
@@ -468,7 +468,7 @@
 
           } else {
             let ErrTips = {
-              'InvalidParameterValue.Description': 'Description传入错误',
+              'InvalidParameterValue.Description': 'Description傳入錯誤',
               'ResourceNotFound.Namespace': 'Namespace不存在'
             }
             let ErrOr = Object.assign(ErrorTips, ErrTips)
@@ -505,16 +505,16 @@
             this._GetFuncList()
           } else {
             let ErrTips = {
-              'FailedOperation.FunctionNameStatusError': '函数在部署中，无法更新代码',
-              'FailedOperation.FunctionStatusError': '函数在部署中,无法做此操作',
-              'InternalError.Cmq': '删除cmq触发器失败',
-              'InternalError.System': '内部系统错误',
-              'InvalidParameter.Payload': '请求参数不合法',
-              'InvalidParameterValue': '参数取值错误',
-              'ResourceNotFound.Function': '函数不存在',
-              'ResourceNotFound.FunctionName': '函数不存在',
-              'UnauthorizedOperation.CAM': 'CAM鉴权失败',
-              'UnauthorizedOperation.DeleteFunction': '没有权限的操作',
+              'FailedOperation.FunctionNameStatusError': '函數在部署中，無法更新程式碼',
+              'FailedOperation.FunctionStatusError': '函數在部署中,無法做此操作',
+              'InternalError.Cmq': '刪除cmq觸發器失敗',
+              'InternalError.System': '內部系統錯誤',
+              'InvalidParameter.Payload': '請求參數不合法',
+              'InvalidParameterValue': '參數取值錯誤',
+              'ResourceNotFound.Function': '函數不存在',
+              'ResourceNotFound.FunctionName': '函數不存在',
+              'UnauthorizedOperation.CAM': 'CAM鑒權失敗',
+              'UnauthorizedOperation.DeleteFunction': '沒有權限的操作',
             }
             let ErrOr = Object.assign(ErrorTips, ErrTips)
             this.$message({

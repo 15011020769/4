@@ -1,11 +1,11 @@
 <template>
   <div class="child">
-    <div class="mainConList" v-loading="loading">
+    <div class="mainConList">
       <div
         class="mainConListAll mainConListOne newClear"
         style="display: flex;flex-direction: column;"
       >
-        <div class="newClear">
+        <div class="newClear" v-if="ResIpList.length > 0">
           <el-button-group class="buttonGroupAll">
             <el-button
               class="buttonGroup"
@@ -53,6 +53,7 @@
           </el-select>
         </div>
       </div>
+      <template  v-if="ResIpList.length > 0">
       <div class="mainConListAll mainConListTwo">
         <el-tabs class="tabsCard" v-model="activeName" type="card" @tab-click="handleClick1">
           <el-tab-pane :label="$t('DDOS.Statistical_forms.Overview_broadband')" name="bps">
@@ -121,6 +122,7 @@
           ></el-pagination>
         </div>
       </div>
+      </template>
     </div>
   </div>
 </template>
@@ -196,6 +198,15 @@ export default {
       };
       this.axios.post(GET_ID, params).then(res => {
         if (res.Response.Error === undefined) {
+          if (res.Response.Resource.length === 0) {
+            this.$message({
+              message: '暫無服務',
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+            return
+          }
           this.ResIpList = res.Response.Resource;
           this.selectId = this.ResIpList[0].Id;
 				} else {
@@ -224,6 +235,7 @@ export default {
     },
     // 1.3.获取高防IP专业版资源的DDoS攻击事件列表
     describeDDoSNetEvList() {
+      console.log(1)
       this.loading = true;
       let params = {
         Version: "2018-07-09",

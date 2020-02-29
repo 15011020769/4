@@ -41,7 +41,7 @@ export default {
   mounted() {
     this.initChart();
     // this.chinaConfigure();
-    console.log(this.series)
+    // console.log(this.series)
   },
   watch: {
     series(val) {
@@ -55,24 +55,17 @@ export default {
       window.onresize = this.$echarts.init(this.$refs.worldmap_dv).resize;
       // 把配置和数据放这里
       this.chart.setOption({
-        title: {
-          text: '世界地图', // 主标题文本，支持使用 \n 换行
-          top: 20, // 定位 值: 'top', 'middle', 'bottom' 也可以是具体的值或者百分比
-          left: 'center', // 值: 'left', 'center', 'right' 同上
-          textStyle: { // 文本样式
-            fontSize: 24,
-            fontWeight: 600,
-            color: '#fff'
-          }
-        },
         // 提示框组件
         tooltip: {
           trigger: 'item', // 触发类型, 数据项图形触发，主要在散点图，饼图等无类目轴的图表中使用
           // 提示框浮层内容格式器，支持字符串模板和回调函数两种形式
           // 使用函数模板  传入的数据值 -> value: number | Array
-          // formatter: function (val) {
-          //   return val.data.name + ': ' + val.data.value
-          // }
+          formatter: function (val) {
+            if (!val.data) {
+              return val.name + ': ' + 0
+            }
+            return val.data.name + ': ' + val.data.value
+          }
         },
         // 视觉映射组件
         visualMap: {
@@ -118,7 +111,6 @@ export default {
             },
             // 地图区域的多边形 图形样式
             itemStyle: {
-              // areaColor: '#7B68EE', // 地图区域的颜色 如果设置了visualMap，areaColor属性将不起作用
               borderWidth: 0.5, // 描边线宽 为 0 时无描边
               borderColor: '#000', // 图形的描边颜色 支持的颜色格式同 color，不支持回调函数
               borderType: 'solid' // 描边类型，默认为实线，支持 'solid', 'dashed', 'dotted'
@@ -127,7 +119,7 @@ export default {
             emphasis: {
               label: {
                 show: true, // 是否显示标签
-                color: '#fff' // 文字的颜色 如果设置为 'auto'，则为视觉映射得到的颜色，如系列色
+                color: '#94002d' // 文字的颜色 如果设置为 'auto'，则为视觉映射得到的颜色，如系列色
               },
             },
             // 自定义地区的名称映射

@@ -12,7 +12,7 @@
               <p>
                 <span>套餐</span>
                 <span v-if="package.Level">
-                  {{PACKAGE_CFG_TYPES[package.Level].name}}
+                  {{CLB_PACKAGE_CFG_TYPES[package.Level].name}}
                   <a v-if="package.Level !== 0" href="#" class="blueHref" @click="packageUpgradeModel">{{t('升级', 'WAF.sj')}}</a>
                 </span>
               </p>
@@ -25,9 +25,11 @@
                 <span>{{t('自动续费开关', 'WAF.zdxfkg')}}</span>
                 <span>
                   <el-switch
-                    v-model="package.AutoRenew === 1"
+                    v-model="AutoRenewBool"
                     active-color="#006eff"
-                    inactive-color="#bbb">
+                    inactive-color="#bbb"
+                    @change="onChangeAutoRenew"
+                  >
                   </el-switch>
                 </span>
               </p>
@@ -35,10 +37,42 @@
           </el-col>
           <el-col :span="12">
             <div class="informationList">
-              <p><span>域名包</span><span>{{package.DomainPkg && package.DomainPkg.Count || 0}}个 ({{t('每个域名包包含10个域名防护，仅支持1个一级域名', 'WAF.mgymb')}})<a href="#" class="blueHref" @click="buyDominPackBtn">{{t('购买域名包', 'WAF.gmymb')}}</a></span></p>
-              <p><span>已使用域名</span><span>{{package.DomainCount}}/{{package.DomainLimit}}个</span></p>
-              <p><span>{{t('安全日志服务包', 'WAF.aqrzfwb')}}</span><span><a class="orangeHref">{{package.Cls && package.Cls.Count || 0}}个</a>（{{t('一个包包含1T日志服务存储容量', 'WAF.ygbbh')}}），<a href="#" class="blueHref" @click="buyLogBack"> {{t('立即购买', 'WAF.ljgm')}}</a></span></p>
-              <p><span>{{t('QPS扩展包', 'WAF.qpskzb')}}</span><span>{{t('到期时当前QPS峰值间', 'WAF.dqqpsfz')}} <a class="greenHref">{{package.MaxQPS}}</a> {{t('当前套餐QPS', 'WAF.dqqps')}} <a class="orangeHref">{{package.Level && PACKAGE_CFG_TYPES[package.Level].busQps}}</a>，<a href="#" class="blueHref" @click="qpsBack">{{t('立即购买', 'WAF.ljgm')}}</a></span></p>
+              <p>
+                <span>域名包</span>
+                <span>{{package.DomainPkg && package.DomainPkg.Count || 0}}{{t('个', 'WAF.g')}} 
+                  ({{t('每个域名包包含10个域名防护，仅支持1个一级域名', 'WAF.mgymb')}})
+                  <a href="#" class="blueHref" @click="buyDominPackBtn">
+                    <template v-if="package.DomainPkg">{{t('购买域名包', 'WAF.gmymb')}}</template>
+                    <template v-else>{{t('立即购买', 'WAF.ljgm')}}</template>
+                  </a>
+                </span>
+              </p>
+              <p><span>已使用域名</span><span>{{package.DomainCount}}/{{package.DomainLimit}}{{t('个', 'WAF.g')}}</span></p>
+              <p>
+                <span>{{t('安全日志服务包', 'WAF.aqrzfwb')}}</span>
+                <span>
+                  <a class="orangeHref">{{package.Cls && package.Cls.Count || 0}}{{t('个', 'WAF.g')}}</a>
+                  （{{t('一个包包含1T日志服务存储容量', 'WAF.ygbbh')}}），
+                  <a href="#" class="blueHref" @click="buyLogBack">
+                    <template v-if="package.Cls">{{t('立即升级', 'WAF.ljsj')}}</template>
+                    <template v-else>{{t('立即购买', 'WAF.ljgm')}}</template>
+                  </a>
+                </span>
+              </p>
+              <p>
+                <span>{{t('QPS扩展包', 'WAF.qpskzb')}}</span>
+                <span>{{t('到期时当前QPS峰值间', 'WAF.dqqpsfz')}} 
+                  <a class="greenHref">{{package.MaxQPS}}</a> 
+                  {{t('当前套餐QPS', 'WAF.dqqps')}} 
+                  <a class="orangeHref">
+                    {{package.Level && CLB_PACKAGE_CFG_TYPES[package.Level].busQps + (package.QPS && package.QPS.Count || 0)}}
+                  </a>，
+                  <a href="#" class="blueHref" @click="qpsBack">
+                    <template v-if="package.QPS">{{t('立即升级', 'WAF.ljsj')}}</template>
+                    <template v-else>{{t('立即购买', 'WAF.ljgm')}}</template>
+                  </a>
+                </span>
+              </p>
             </div>
           </el-col>
         </el-row>
@@ -61,9 +95,9 @@ import RenewModel from './model/RenewModel'
 import dominList from './components/dominList'
 import buyLogBackModel from './model/buyLogBackModel'
 import qpsBackModel from './model/qpsBackModel'
-import { DESCRIBE_USER_INFO } from '@/constants'
+import { DESCRIBE_USER_INFO, MODIFY_PACKAGE_RENEW } from '@/constants'
 import { ErrorTips } from "@/components/ErrorTips"
-import { PACKAGE_CFG_TYPES, COMMON_ERROR } from '../constants'
+import { CLB_PACKAGE_CFG_TYPES, COMMON_ERROR } from '../constants'
 
 export default {
   data(){
@@ -75,8 +109,8 @@ export default {
       buyLogBackModel:false,//安全日志服务包
       qpsBackModel:false,//qps扩展包
       package: {}, // 套餐信息
-      PACKAGE_CFG_TYPES,
-      domains: [],
+      CLB_PACKAGE_CFG_TYPES,
+      AutoRenewBool: false,
     }
   },
   components:{
@@ -94,11 +128,27 @@ export default {
     init() {
       this.getPackage()
     },
+    onChangeAutoRenew(status) {
+      this.AutoRenewBool = !status
+      this.$confirm(this.t('开启自动续费后，所有已购买的计费项将会被续费。', 'WAF.xftip'), this.t('开启自动续费', 'WAF.kqzdxf'), {
+        confirmButtonText: this.t('确定', 'WAF.qd'),
+        cancelButtonText: '取消',
+        type: ''
+      }).then(() => {
+        this.axios.post(MODIFY_PACKAGE_RENEW, {
+          Version: '2018-01-25',
+          Status: Number(status)
+        }).then(resp => {
+          this.generalRespHandler(resp, this.getPackage)
+        }, COMMON_ERROR, this.t('切换成功', 'WAF.qhcg'))
+      })
+    },
     getPackage() {
       this.axios.post(DESCRIBE_USER_INFO, {
         Version: '2018-01-25'
       }).then(resp => {
         this.generalRespHandler(resp, ({ Data }) => {
+          this.AutoRenewBool = !!Data.AutoRenew
           this.package = Data
         })
       })

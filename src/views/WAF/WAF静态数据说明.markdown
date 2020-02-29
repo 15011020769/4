@@ -1,6 +1,6 @@
 WAF静态数据说明
 
-### WAF静态数据说明V0.9.1
+###WAF静态数据说明V0.9.2
 ###套餐信息
 ####1.版本描述
 **(1)高级版**
@@ -179,6 +179,91 @@ export const BUY_TIMES = [
     { value: 36, label: "3年" }
 ];
 ```
+####3.询价逻辑说明
+1.新购（买日志包，QPS包等等）
+比如第一次购买日志包：商品goodsCategoryId取值 ***first_categoryid***，具体参数如下：
+```
+ const { defalutCount, resourceId, deadLine, isNew, counts } = this.state;
+        const { pid, goodstype, first_categoryid, edit_categoryid, pricetype } = BUY_LOG_TYPES;
+        let data: any;
+data = {
+                goodsCategoryId: first_categoryid,
+                regionId: 1,
+                projectId: 0,
+                goodsNum: 1,
+                payMode: 1,
+                platform: 1,
+                goodsDetail: {
+                    pid,
+                    timeSpan: getDays(deadLine),
+                    timeUnit: "d",
+                    [pricetype]: counts,
+                    type: goodstype
+                }
+            };
+            
+            WebAPI.fetchUpgradePrice([data]).then(data => {
+            this.setState({ realTotalCost: data[0].realTotalCost, priceLoading: false });
+        }).catch(res => {
+            tips.error("询价失败，请联系腾讯云安全售后服务人员");
+        });
+```
+2.变配（包括日志包从3个变成5个，版本从高级版升级到旗舰版等等）
+商品goodsCategoryId取值 ***edit_categoryid***，具体参数如下：
+```
+ data = {
+                goodsCategoryId: edit_categoryid,
+                regionId: 1,
+                projectId: 0,
+                goodsNum: 1,
+                payMode: 1,
+                platform: 1,
+                goodsDetail: {
+                    resourceId,
+                    curDeadline: deadLine,
+                    oldConfig: {
+                        pid,
+                        [pricetype]: defalutCount,
+                        type: goodstype
+                    },
+                    newConfig: {
+                        pid,
+                        [pricetype]: defalutCount + counts,
+                        type: goodstype
+                    }
+                }
+            };
+            
+              WebAPI.fetchUpgradePrice([data]).then(data => {
+            this.setState({ realTotalCost: data[0].realTotalCost, priceLoading: false });
+        }).catch(res => {
+            tips.error("询价失败，请联系腾讯云安全售后服务人员");
+        });
+```
+3.续费
+需要注意的是： 续费一般 主套餐 + 子产品（如果有的话）
+商品goodsCategoryId取值 ***categoryid***
+```
+ let { type, timeSpan, domainCount, qpsCount, clsCount } = this.state;
+        let { categoryid, goodstype, pid, pricetype } = CLB_PACKAGE_CFG_TYPES[type];
+        const array: any[] = [{
+            goodsCategoryId: categoryid, //续费计费代码
+            regionId: 1,
+            projectId: 0,
+            goodsNum: 1,
+            payMode: 1,
+            platform: 1,
+            goodsDetail: {
+                timeSpan,
+                timeUnit: "m",
+                type: goodstype,
+                pid,
+                [pricetype]: 1
+
+            }
+        }];
+```
+
 ###攻击日志
 ```
 //加入”|“是为了规避 被工具翻译成英文了，导致传参为英文
@@ -1350,4 +1435,50 @@ export const RECORD_ACT_CFG = {
     blackIp: { "40": "放通", "42": "拦截" },
     whiteIp: { "40": "放通", "42": "拦截" }
 }
+```
+## 高级版升级企业版参数
+```
+[{
+	"goodsCategoryId": 100217,
+	"regionId": 1,
+	"projectId": 0,
+	"goodsNum": 1,
+	"payMode": 1,
+	"platform": 1,
+	"goodsDetail": {
+		"resourceId": "waf_00000044p",
+		"curDeadline": "2020-03-12 16:00:31",
+		"oldConfig": {
+			"pid": 11416,
+			"wsm_domain_package": 0,
+			"type": "wsm_waf",
+			"wsm_package_premium": 1
+		},
+		"newConfig": {
+			"pid": 11416,
+			"wsm_domain_package": 0,
+			"type": "wsm_waf",
+			"wsm_package_enterprise": 1
+		}
+	}
+}]
+```
+
+## 高级版进入BOT拦截页面
+```
+目前该功能仅开放给企业版及以上客户，立即升级
+
+腾讯云Web应用防火墙独家提供基于AI + 规则的BOT程序管理功能，可以应用于以下业务场景。
+
+数据泄露
+恶意BOT所有者通过爬虫抓取并利用站点对外公开数据，如用户数据，商品数据，订单数据等，造成数据泄露风险；
+
+业务风险
+恶意爬虫抓取价格，库存信息等，影响营销策略有效性；站点内容被未授权抓取，转载，降低站点内容竞争力；接口烂刷，刷票，羊毛党，短信接口，垃圾注册等带来业务风险；
+
+攻击程序
+黑客利用BOT程序实现撞库攻击，漏洞嗅探，DDoS攻击，CC攻击，发送垃圾邮件等攻击，给业务带来安全威胁；
+
+站点负载
+站点流量30%-70%来自BOT机器人程序，大量的机器人程序流量占用站点负载，影响正常用户的访问速度与体验；
 ```

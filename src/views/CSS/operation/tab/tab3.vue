@@ -70,12 +70,11 @@ export default {
     //分页
     handleCurrentChange(val) {
       this.currpage = val;
-      this.init();
+      // this.init();
     },
     getData(params, arrTotal) {
       let arrDetail = []
       this.axios.post(CSS_PLAY, params).then(res => {
-        // console.log(res, 2)
         if (res.Response.Error) {
           if (
             res.Response.Error.Message ==
@@ -87,7 +86,6 @@ export default {
           }
         } else {
           var data = [];
-          console.log(res)
           arrTotal.push(res.Response.DataInfoList[0].DetailInfoList)
           arrDetail = arrTotal.reduce(function (a, b) { return a.concat(b)}).sort((a, b) => moment(a.Time) - moment(b.Time));
           arrDetail.forEach(
@@ -126,11 +124,12 @@ export default {
       if (this.operator) {
         params["IspNames.0"] = this.operator
       }
-       if (this.domain.length != 0) {
+      if (this.domain.length != 0) {
         this.domain.forEach((item, index) => {
           params["PlayDomains." + index] = item;
         });
       }
+      // CSS_MBPS参数为了获得时间，从而过滤CSS_PLAY时间
       const param = {
         Version: "2018-08-01",
         StartTime: moment(this.StartTIme).format("YYYY-MM-DD HH:mm:ss"),

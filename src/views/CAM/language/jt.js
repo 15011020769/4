@@ -121,6 +121,7 @@ module.exports = {
             choosepolicy: '选择策略',
             searchUserName: '支持搜索用户名',
             cjly: '创建来源',
+            gllx: '关联类型',
             scyh: '删除用户',
             qsrzqdsjh: '请输入正确的手机号',
             qsrzqdyx: '请输入正确的邮箱',

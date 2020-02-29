@@ -62,3 +62,6 @@ Plugin.install = function (vue) {
 Vue.use(Plugin)
 
 export default Plugin
+export {
+  instance as axios
+}

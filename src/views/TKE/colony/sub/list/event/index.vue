@@ -166,9 +166,25 @@ export default {
   created() {
     // this.getEventList();
     this.nameSpaceList();
-    this.getKind();
+    // this.getKind();
+    this.refresh();
   },
   methods: {
+    refresh() {
+      this.nsOptions = [];
+      if (this.autoRefresh == true) {
+        var timeId = setInterval(() => {
+          this.nameSpaceList();
+          // this.getKind();
+        }, 20000);
+         window.clearInterval(timeId);
+      } else {
+        window.clearInterval(timeId);
+        this.nsOptions = [];
+        this.nameSpaceList();
+        // this.getKind();
+      }
+    },
     //    /api/v1/namespaces    get
     //    /api/v1/namespaces/{namespace}/events?&limit=20 get
     //    /api/v1/namespaces//events?limit=20
@@ -183,7 +199,7 @@ export default {
       this.axios.post(TKE_COLONY_QUERY, params).then(res => {
         if (res.Response.Error === undefined) {
           var mes = JSON.parse(res.Response.ResponseBody);
-          console.log(mes);
+          // console.log(mes);
           this.list = mes.items;
           this.total = mes.items.length;
           mes.items.forEach(item => {
@@ -252,9 +268,9 @@ export default {
           this.list = mes.items;
           this.total = mes.items.length;
           console.log(mes.items[0]);
-          // if (mes.items[0].metadata.name !== "") {
-          //   this.nameFlag = false;
-          // }
+          if (mes.items[0].metadata.name !== "") {
+            this.nameFlag = false;
+          }
           this.loadShow = false;
         } else {
           let ErrTips = {};
@@ -278,10 +294,6 @@ export default {
           var mes = JSON.parse(res.Response.ResponseBody);
           this.list = mes.items;
           this.total = mes.items.length;
-          console.log(mes.items[0]);
-          // if (mes.items[0].metadata.name !== "") {
-          //   this.nameFlag = false;
-          // }
           this.loadShow = false;
         } else {
           let ErrTips = {};

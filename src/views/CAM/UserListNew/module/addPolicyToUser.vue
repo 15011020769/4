@@ -278,14 +278,13 @@ export default {
     _getList(val, bool) {
       const params = {
         Version: "2019-01-16",
-        Rp: 10,
+        Rp: 100,
         Page: this.policyPage
       };
       if (val) {
         params["Keyword"] = val;
       }
       this.axios.post(POLICY_LIST, params).then(res => {
-        // console.log(res);
         if (res.Response.Error === undefined) {
           if (!bool) {
             this.tableData = res.Response.List;

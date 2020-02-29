@@ -51,6 +51,7 @@
     LIST_VERSION
   } from "@/constants";
   export default {
+    props: ['FunctionVersion'],
     data() {
       return {
         functionName: this.$route.query.functionName,

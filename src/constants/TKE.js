@@ -76,6 +76,10 @@ export const TKE_NEW_EDITION = 'tke2/DescribeVersions'
 // 新建集群 集群网络
 export const TKE_VPC_METWORK = 'vpc2/DescribeVpcs'
 
+// 新建集群 校验 CIDR
+// export const TKE_VPC_CIDR = 'ccs/CheckClusterCIDR'
+export const TKE_VPC_CIDR = 'tke2/CheckClusterCIDR'
+
 // 新建集群 操作系统
 export const TKE_OPERAT_SYSTEM = 'tke2/DescribeImages'
 
@@ -83,7 +87,7 @@ export const TKE_OPERAT_SYSTEM = 'tke2/DescribeImages'
 export const TKE_EXIST_NODES = 'cvm2/DescribeInstances'
 
 // 新建集群 Worker 配置 节点网络
-export const TKE_Worker_METWORK = 'vpc2/DescribeSubnets'
+export const TKE_WORKER_METWORK = 'vpc2/DescribeSubnets'
 
 // 新建集群 SSH密钥
 export const TKE_SSH = 'cvm2/DescribeKeyPairs'
@@ -91,8 +95,23 @@ export const TKE_SSH = 'cvm2/DescribeKeyPairs'
 // 新建集群 创建集群
 export const TKE_CREATW_CLUSTERS = 'tke2/CreateCluster'
 
+// 新建集群 总费计算
+export const TKE_PRICE = 'cvm2/InquiryPriceRunInstances'
+
 // 获取告警设置列表信息
 export const TKE_WARNING_GETCOLONY = 'tke2/DescribeAlarmPolicies'
+
+// 添加已有节点
+export const TKE_EXIST = 'tke2/DescribeExistedInstances'
+
+// 添加已有节点 安全组
+export const TKE_MISG = 'vpc2/DescribeSecurityGroups'
+
+// 添加已有节点 完成
+export const TKE_ADD_COMPLETE = 'tke2/AddExistedInstances'
+
+// 获取集群详细信息
+export const WARNING_GetCOLONY = 'tke2/DescribeAlarmPolicies'
 
 // 获取集群基本信息相关
 export const CLUSTERS_DESCRIBE = 'tke2/DescribeClusters'
@@ -129,4 +148,17 @@ export const POINT_REQUEST = 'tke2/ForwardRequest'
 // 删除告警配置
 export const TKE_DELETE_POLICIES = 'tke2/DeleteAlarmPolicies'
 
+// 云硬盘列表
+export const TKE_DESCRIBEDISKS = 'cbs/DescribeDisks'
 
+// ingress新建 - 获取证书列表
+export const TKE_GETCERTLIST = 'account/GetCertList'
+
+// ingress新建 - 描述者（业务模块为实现）
+export const TKE_DESCRIBELISTENERS = 'clb2/DescribeListeners'
+
+// ingress新建 - 查询价格
+export const TKE_INQUIRYPRICE = 'clb2/InquiryPriceCreateLoadBalancer'
+
+// ingress新建 - 描述平衡器
+export const TKE_EDSCRIBELOADBALANCERS = 'clb2/DescribeLoadBalancers'

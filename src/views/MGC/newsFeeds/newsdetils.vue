@@ -1,19 +1,29 @@
 <template>
   <div class="news-wrap">
     <HeaderCom :title="$t('MGC.tzggxq')" @_back="back"  :backShow="true"></HeaderCom>
-    <div class="detilswrap">
-        <div class="wrap">
-               <p>{{content.content}}</p>
+    <div id="detilswrap">
+        <mavon-editor :value="content" 
+    :toolbarsFlag="false" 
+    :editable="false" 
+    :subfield="false"
+    defaultOpen="preview" 
+    :boxShadow="false" 
+    previewBackground="#fff"
+    style="margin: 20px auto; border:0;">
+    </mavon-editor>
         </div>
     </div>
   </div>
 </template>
 <script>
 import HeaderCom from "@/components/public/Head";
+import { mavonEditor } from "mavon-editor";
+import "mavon-editor/dist/css/index.css";
 import {NOTICE_DETILS} from '@/constants/MGC.js';
 export default {
   components: {
     HeaderCom,
+    mavonEditor
   },
   data() {
     return {
@@ -33,22 +43,17 @@ export default {
        let id = this.$route.query.detailsDatas
        this.axios.get(`${process.env.VUE_APP_adminUrl + NOTICE_DETILS}`+'?id='+id).then(res=>{
             console.log(res)
-            this.content = res.notice
+            this.content = res.notice.content
        })
     },
   }
 }
 </script>
 <style lang="scss" scoped>
-    .detilswrap{
-     width: 100%;
-     padding: 20px;
-     box-sizing: border-box;
-     .wrap{
-       width: 100%;
-       height: 700px;
-       background: white;
-       box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
-     }
+    #detilswrap{
+     width:80%;
+  margin:0 auto;
+  min-height:700px;
+  padding:30px 0;
    }
 </style>

@@ -84,7 +84,7 @@
               </el-select>
               <el-form-item label prop="CosBucketName" class="seletInp tips" v-show="!cosShow">
                 <el-input v-model="detailData.CosBucketName" :placeholder="$t('CLA.total.qsrmc')"></el-input>
-                <span>僅支持小寫字母、數字以及中劃線" - "的組合，不能超過40字元。</span>
+                <span>{{ $t('CLA.total.jzcxxzm') }}</span>
               </el-form-item>
               <el-select v-model="BucketSelect.name" v-show="cosShow" class="BucketSelect red">
                 <el-option v-for="(item,index) in BucketSelect.options" :key="index" :label="item.Name"
@@ -100,7 +100,7 @@
             <div class="set-box" v-show="setShow">
               <el-form-item :label="$t('CLA.total.rzwjqz')" prop="LogFilePrefix" class="tips">
                 <el-input v-model="detailData.LogFilePrefix" :placeholder="$t('CLA.total.qsrrzwjqz')"></el-input>
-                <span>僅支持字母和數字的組合，3-40個字元。</span>
+                <span>{{ $t('CLA.total.jzczh') }}</span>
               </el-form-item>
               <div class="set-child" v-show="setChild">
                 <el-form-item :label="$t('CLA.total.cjdl')" class="CMQ" required>
@@ -117,7 +117,7 @@
                   <el-form-item label prop="CmqQueueName" class="seletInp tips CmqQueueName"
                     v-if="detailData.IsEnableCmqNotify">
                     <el-input v-model="detailData.CmqQueueName" :placeholder="$t('CLA.total.qsrdlmc')"></el-input>
-                    <span>不超過64個字元的字元串，必須以字母為首字元，剩餘部分可以包含字母、數字和橫劃線(-)。</span>
+                    <span>{{ $t('CLA.total.bcg') }}</span>
                   </el-form-item>
                 </el-form-item>
               </div>
@@ -438,8 +438,10 @@
             this.axios.post(GZJ_UPDATEAUDIT, params).then(res => {
               if (res.Response.Error === undefined) {
                 this.$message({
-                  message: "更新成功",
-                  type: "success"
+                  message: "保存成功",
+                  type: "success",
+                  showClose: true,
+                  duration: 0
                 });
                 this.inpShow1 = false;
                 this.detailList();
@@ -659,7 +661,7 @@
         this.axios.post(GZJ_UPDATEAUDIT, params).then(res => {
           if (res.Response.Error === undefined) {
             this.$message({
-              message: "更新成功",
+              message: "保存成功",
               type: "success",
               showClose: true,
               duration: 0

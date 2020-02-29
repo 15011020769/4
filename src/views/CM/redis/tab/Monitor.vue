@@ -1,54 +1,45 @@
 <template>
   <div class="Monitor">
-    <!-- 时间粒度搜素 -->
-    <XTimeX v-on:switchData="GetDat" :classsvalue="value"></XTimeX>
-    <div class="box-dis p-style">
+    <TimeDropDown :TimeArr='TimeArr' :Datecontrol='true' :Graincontrol='true' :Difference="'H'"
+      v-on:switchData="GetDat" />
+    <div class="box-dis">
       <p>
-        <i class="el-icon-info"></i>
-        {{ $t('CVM.clBload.zs') }}
+        <i class="el-icon-info"></i>注釋：Max、Min和Avg數值統計為當前折線圖內所有點的最大值、最小值和平均值
       </p>
-      <!-- <p>
-        <el-button type="text">导出数据</el-button>
-      </p>-->
+
     </div>
     <div class="box-table">
       <!-- 表格 -->
-      <el-table :data="tableData" style="width: 100%" :empty-text="$t('CVM.clBload.zwsj')">
-        <el-table-column prop width="150">
+      <el-table :data="tableData" style="width: 100%" v-loading='TableLoad'>
+        <el-table-column prop width="200">
           <template slot-scope="scope">
-            <span style="font-size:12px;font-weight:bolder; color:#333;font-weight:600;">
-              {{scope.row.MetricName | UpName(value)}}
-              <span class="symbol">{{scope.row.symbol}}</span>
+            <p>
+              <span class='span_1'>{{disName[scope.row.MetricName]}}</span>
+              <span class='span_2'>{{Company[scope.row.MetricName]}}</span>
               <el-popover placement="bottom-start" title width="200" trigger="hover">
-                <p>{{scope.row.MetricName | UpTitle(value)}}</p>
+                <p>{{Tips[scope.row.MetricName]}}</p>
                 <i class="el-icon-warning" slot="reference"></i>
               </el-popover>
-            </span>
+            </p>
           </template>
         </el-table-column>
 
-        <el-table-column prop="DataPoints" width="550">
+        <el-table-column width="550">
           <template slot-scope="scope">
-            <p v-if="scope.row.DataPoints[0].Values.length==0">{{ $t('CVM.clBload.zwsj') }}</p>
-            <div class="echart" v-if="scope.row.DataPoints[0].Values.length!=0">
-              <echart-line
-                id="diskEchearrts-line"
-                :time="scope.row.DataPoints[0].Timestamps | UpTime"
-                :opData="scope.row.DataPoints[0].Values"
-                :scale="3"
-                :period="period"
-                :xdata="false"
-              ></echart-line>
+            <p v-if="scope.row.DataPoints[0].Values.length==0">暂无数据</p>
+            <div v-if="scope.row.DataPoints[0].Values.length!=0">
+              <echart-line id="diskEchearrts-line" :time="scope.row.DataPoints[0].Timestamps | UpTime"
+                :opData="scope.row.DataPoints[0].Values" :scale="3" :period="Period" :xdata="false"></echart-line>
             </div>
           </template>
         </el-table-column>
+
         <el-table-column prop>
           <template slot-scope="scope">
             <p style="font-size:12px;color:#bbb;font-weight:600">Max:</p>
             <template v-if="scope.row.DataPoints[0].Values.length!==0">
-              <span
-                style="color:#333;font-weight:600;font-size: 12px;"
-              >{{scope.row.DataPoints[0].Values|CMMax}}</span>
+              <span style="color:#333;font-weight:600;font-size: 12px;">{{scope.row.DataPoints[0].Values|CMMax}} <span
+                  class='span_2'>{{Company[scope.row.MetricName]}}</span></span>
               <span style="color:#333;font-weight:600;font-size: 12px;">{{scope.row.symbol}}</span>
             </template>
             <template v-if="scope.row.DataPoints[0].Values.length==0">-</template>
@@ -58,9 +49,8 @@
           <template slot-scope="scope">
             <p style="font-size:12px;color:#bbb;font-weight:600">Min:</p>
             <template v-if="scope.row.DataPoints[0].Values.length!==0">
-              <span
-                style="color:#333;font-weight:600;font-size: 12px;"
-              >{{scope.row.DataPoints[0].Values|CMMin}}</span>
+              <span style="color:#333;font-weight:600;font-size: 12px;">{{scope.row.DataPoints[0].Values|CMMin}} <span
+                  class='span_2'>{{Company[scope.row.MetricName]}}</span></span>
               <span style="color:#333;font-weight:600;font-size: 12px;">{{scope.row.symbol}}</span>
             </template>
             <template v-if="scope.row.DataPoints[0].Values.length==0">-</template>
@@ -71,515 +61,667 @@
           <template slot-scope="scope">
             <p style="font-size:12px;color:#bbb;font-weight:600">Avg:</p>
             <template v-if="scope.row.DataPoints[0].Values.length!==0">
-              <span
-                style="color:#333;font-weight:600;font-size: 12px;"
-              >{{scope.row.DataPoints[0].Values|CMAvg}}</span>
+              <span style="color:#333;font-weight:600;font-size: 12px;">{{scope.row.DataPoints[0].Values|CMAvg}} <span
+                  class='span_2'>{{Company[scope.row.MetricName]}}</span></span>
               <span style="color:#333;font-weight:600;font-size: 12px;">{{scope.row.symbol}}</span>
             </template>
             <template v-if="scope.row.DataPoints[0].Values.length==0">-</template>
           </template>
         </el-table-column>
-
-        <el-table-column prop>
-          <template slot-scope="scope">
-            <p>
-              <!-- <i class="el-icon-menu i-font" style="font-size:26px;" @click="Modality(scope.row.MetricName)"></i> -->
-            </p>
-          </template>
-        </el-table-column>
       </el-table>
-      <!-- 模态框 -->
-      <el-dialog
-        :title="$t('CVM.clBload.jqjkzt')"
-        :visible.sync="dialogVisible"
-        width="60%"
-        :before-close="handleClose"
-      >
-        <XTimeX v-on:switchData="GetDat" :classsvalue="value"></XTimeX>
-        <echart-line
-          id="diskEchearrts-line"
-          class="echart-wh"
-          :time="timeData | UpTime"
-          :opData="jingData"
-          :period="period"
-          :xdata="true"
-        ></echart-line>
-      </el-dialog>
+
     </div>
   </div>
 </template>
-
 <script>
-import moment from "moment";
-import XTimeX from "@/components/public/TimeXK";
-import echartLine from "@/components/public/echars-line";
-import { All_MONITOR } from "@/constants";
-import { ErrorTips } from "@/components/ErrorTips";
-export default {
-  data() {
-    return {
-      ID: this.$route.query.id, //路由传递过来的id
-      period: "",
-      Start_End: [],
-      value: 1,
-      dialogVisible: false, // 模态框 （放大后的折线图）
-      pageIndex: 1, // 当前页
-      pageSize: 10, // 每页数
-      totalPage: 0, // 表格数据数组长度
-      tableData: [], // 获取列表数据
-      timeData: [], // 折线图的x轴数据
-      jingData: [],
-      MetricName: ""
-    };
-  },
-  components: {
-    echartLine,
-    XTimeX
-  },
-  created() {},
-  methods: {
-    //获取数据
-    GetDat(data) {
-      this.period = data[0];
-      this.Start_End = data[1];
-      this.value = data[2];
-      const metricNArr = [
-        "CacheHitRatio",
-        "CmdstatGet",
-        "CmdstatGetbit",
-        "CmdstatGetrange",
-        "CmdstatHget",
-        "CmdstatHgetall",
-        "CmdstatHmget",
-        "CmdstatHmset",
-        "CmdstatHset",
-        "CmdstatHsetnx",
-        "CmdstatLset",
-        "CmdstatMget",
-        "CmdstatMset",
-        "CmdstatMsetnx",
-        "CmdstatSet",
-        "CmdstatSetbit",
-        "CmdstatSetex",
-        "CmdstatSetrange",
-        "Qps",
-        "Connections",
-        "CpuUs",
-        "InFlow",
-        "Keys",
-        "OutFlow",
-        "StatGet",
-        "StatSet",
-        "Storage",
-        "StorageUs"
-      ];
-      const symbol = [
-        "%",
-        "次/分鐘",
-        "次/分鐘",
-        "次/分鐘",
-        "次/分鐘",
-        "次/分鐘",
-        "次/分鐘",
-        "次/分鐘",
-        "次/分鐘",
-        "次/分鐘",
-        "次/分鐘",
-        "次/分鐘",
-        "次/分鐘",
-        "次/分鐘",
-        "次/分鐘",
-        "次/分鐘",
-        "次/分鐘",
-        "次/分鐘",
-        "次/秒鐘",
-        "個",
-        "%",
-        "Mb/分鐘",
-        "個",
-        "Mb/分鐘",
-        "次/分鐘",
-        "次/分鐘",
-        "MB/分鐘",
-        "%"
-      ];
-      this.tableData = [];
-      for (let i = 0; i < metricNArr.length; i++) {
-        this.Obtain(metricNArr[i], symbol[i]);
-      }
-      if (this.MetricName) {
-        this.getModality(this.MetricName);
+  import moment from "moment";
+  import TimeDropDown from '@/components/public/TimeDropDown' //引入时间组件
+  import echartLine from "@/components/public/echars-line"; //引入图标组件
+  import {
+    ErrorTips
+  } from "@/components/ErrorTips";
+  import {
+    ALL_Basics,
+    All_MONITOR
+  } from '@/constants'
+  export default {
+    data() {
+      return {
+        TimeArr: [{
+            name: '实时',
+            Time: 'realTime',
+            TimeGranularity: [{
+                value: "60",
+                label: "1分鐘"
+              },
+              {
+                value: "300",
+                label: "5分鐘"
+              }
+            ]
+          },
+          {
+            name: '近24小时',
+            Time: 'Nearly_24_hours',
+            TimeGranularity: [{
+                value: "60",
+                label: "1分鐘"
+              },
+              {
+                value: "300",
+                label: "5分鐘"
+              },
+              {
+                value: "3600",
+                label: "1小時"
+              },
+              {
+                value: "86400",
+                label: "1天"
+              }
+            ]
+          },
+          {
+            name: '近7天',
+            Time: 'Nearly_7_days',
+            TimeGranularity: [{
+                value: "3600",
+                label: "1小時"
+              },
+              {
+                value: "86400",
+                label: "1天"
+              }
+            ]
+          }
+        ],
+        ID: this.$route.query.id,
+        BaseList: [], //全部指标列表
+        BaseListK: [], //用到的指标列表
+        TableLoad: true,
+        Period: '', //粒度
+        Time: {}, //监控传递时间
+        MonitorData: [], //监控数据
+        tableData: [], // 组合数据
+        disName: {
+          'Bigkey': '大key数量',
+          'BigValue': '执行次数',
+          'BigValueMin': '执行次数',
+          'BigValueNodeMin': '大value',
+          'CacheHitRatio': 'Key命中',
+          'CacheHitRatioMin': ' Key命中',
+          'CacheHitRatioNodeMin': 'cache命中率',
+          'CmdstatDelMin': 'DEL命令执行次数',
+          'CmdstatDelNodeMin': 'DEL命令执行次数',
+          'CmdstatFlushallMin': ' Flushall执行次数',
+          'CmdstatFlushallNodeMin': 'Flushall执行次数',
+          'CmdstatFlushdbMin': 'Flushdb执行次数',
+          'CmdstatFlushdbNodeMin': 'Flushdb执行次数',
+          'CmdstatGet': 'Get执行次数',
+          'CmdstatGetbit': 'Getbit执行次数',
+          'CmdstatGetbitMin': 'Getbit执行次数',
+          'CmdstatGetbitNodeMin': 'Getbit执行次数',
+          'CmdstatGetrange': 'Getrange执行次数',
+          'CmdstatGetrangeMin': 'Getrange执行次数',
+          'CmdstatGetrangeNodeMin': 'Getrange执行次数',
+          'CmdstatGetMin': 'Get执行次数',
+          'CmdstatGetNodeMin': 'Get执行次数',
+          'CmdstatHget': 'Hget执行次数',
+          'CmdstatHgetall': 'Hgetall执行次数',
+          'CmdstatHgetallMin': 'Hgetall执行次数',
+          'CmdstatHgetallNodeMin': 'Hgetall执行次数',
+          'CmdstatHgetMin': 'Hget执行次数',
+          'CmdstatHgetNodeMin': 'Hget执行次数',
+          'CmdstatHmget': 'hmget数量',
+          'CmdstatHmgetMin': 'Hmget执行次数',
+          'CmdstatHmgetNodeMin': 'Hmget执行次数',
+          'CmdstatHmset': 'Hmset执行次数',
+          'CmdstatHmsetMin': 'Hmset执行次数',
+          'CmdstatHmsetNodeMin': 'Hmset执行次数',
+          'CmdstatHset': 'Hset执行次数',
+          'CmdstatHsetnx': 'Hsetnx执行次数',
+          'CmdstatHsetnxMin': 'Hsetnx执行次数',
+          'CmdstatHsetnxNodeMin': 'Hsetnx执行次数',
+          'CmdstatHsetMin': 'Hset执行次数',
+          'CmdstatHsetNodeMin': 'Hset执行次数',
+          'CmdstatLset': 'Lset执行次数',
+          'CmdstatLsetMin': 'Lset执行次数',
+          'CmdstatLsetNodeMin': 'Lset执行次数',
+          'CmdstatMget': 'Mget执行次数',
+          'CmdstatMgetMin': 'Mget执行次数',
+          'CmdstatMgetNodeMin': 'Mget执行次数',
+          'CmdstatMset': 'Mset执行次数',
+          'CmdstatMsetnx': 'Msetnx执行次数',
+          'CmdstatMsetnxMin': 'Msetnx执行次数',
+          'CmdstatMsetnxNodeMin': 'Msetnx执行次数',
+          'CmdstatMsetMin': 'Mset执行次数',
+          'CmdstatMsetNodeMin': 'Mset执行次数',
+          'CmdstatSet': 'Set执行次数',
+          'CmdstatSetbit': 'Setbit执行次数',
+          'CmdstatSetbitMin': 'Setbit执行次数',
+          'CmdstatSetbitNodeMin': 'Setbit执行次数',
+          'CmdstatSetex': 'Setex执行次数',
+          'CmdstatSetexMin': 'Setex执行次数',
+          'CmdstatSetexNodeMin': 'Setex执行次数',
+          'CmdstatSetnx': 'Setnx执行次数',
+          'CmdstatSetnxMin': 'Setnx执行次数',
+          'CmdstatSetnxNodeMin': 'Setnx执行次数',
+          'CmdstatSetrange': 'Setrange执行次数',
+          'CmdstatSetrangeMin': 'Setrange执行次数',
+          'CmdstatSetrangeNodeMin': 'Setrange执行次数',
+          'CmdstatSetMin': 'Set执行次数',
+          'CmdstatSetNodeMin': 'Set执行次数',
+          'CmdErr': '命令执行错误的次数',
+          'CmdErrMin': '命令执行错误的次数',
+          'CmdErrNodeMin': '错误命令数量',
+          'Connections': 'TCP连接数量',
+          'ConnectionsMin': 'TCP连接数量',
+          'ConnectionsNodeMin': '指标',
+          'ConnectionsUs': '连接数使用率',
+          'ConnectionsUsMin': '连接数使用率',
+          'CpuMaxUsMin': '单分片最大cpu使用率',
+          'CpuUs': '平均CPU使用率',
+          'CpuUsMin': '平均CPU使用率',
+          'CpuUsNodeMin': 'CPU使用率',
+          'EvictedKeys': '驱逐的Key',
+          'EvictedKeysMin': '驱逐的Key',
+          'EvictedKeysNodeMin': 'keys驱逐数量',
+          'ExpiredKeys': '淘汰的Key',
+          'ExpiredKeysMin': '淘汰的Key',
+          'ExpiredKeysNodeMin': 'keys过期数量',
+          'GossipInFlowMin': 'gossip入流',
+          'GossipInFlowNodeMin': 'gossip入流',
+          'GossipOutFlowMin': 'gossip出流',
+          'GossipOutFlowNodeMin': 'gossip出流',
+          'InFlow': '内网入流量',
+          'InFlowMin': '内网入流量',
+          'InFlowNodeMin': '指标',
+          'InFlowUs': '人流使用率',
+          'InFlowUsMin': '入流使用率',
+          'Keys': '总Key',
+          'KeysMin': '总Key',
+          'KeysNodeMin': 'Key数量',
+          'Latency': '执行时延平均值',
+          'LatencyGet': '读命令平均执行时延',
+          'LatencyGetMin': '读命令平均执行时延',
+          'LatencyGetNodeMin': '读请求平均延迟',
+          'LatencyMin': '执行时延平均值',
+          'LatencyNodeMin': '请求平均延迟',
+          'LatencyOther': '命令平均执行时延',
+          'LatencyOtherMin': '命令平均执行时延',
+          'LatencyOtherNodeMin': '平均延迟',
+          'LatencySet': '写命令平均执行时延',
+          'LatencySetMin': '写命令平均执行时延',
+          'LatencySetNodeMin': '写命令平均执行时延',
+          'MemsizeDatasetMin': '数据内存',
+          'MemsizeDatasetNodeMin': '数据内存',
+          'MemsizeOverheadMin': '其他内存',
+          'MemsizeOverheadNodeMin': '其他内存',
+          'OutFlow': '内网出流量',
+          'OutFlowMin': '内网出流量',
+          'OutFlowNodeMin': '指标',
+          'OutFlowUs': '出流使用率',
+          'OutFlowUsMin': '出流使用率',
+          'Qps': 'QPS命令执行次数',
+          'QpsMin': 'QPS命令执行次数',
+          'QpsNodeMin': 'QPS命令执行次数',
+          'SlowQuery': '命令次数',
+          'SlowQueryMin': '配置命令次数',
+          'SlowQueryNodeMin': '配置命令次数',
+          'StatGet': '读命令执行次数',
+          'StatGetMin': '读命令执行次数',
+          'StatGetNodeMin': '读命令执行次数',
+          'StatMissed': '读请求Key不存在的个数',
+          'StatMissedMin': '读请求Key不存在的个数',
+          'StatMissedNodeMin': '读请求Key不存在的个数',
+          'StatOther': ' 读写命令之外的命令执行次数',
+          'StatOtherMin': ' 读写命令之外的命令执行次数',
+          'StatOtherNodeMin': '读写命令之外的命令执行次数',
+          'StatSet': '写命令执行次数',
+          'StatSetMin': '写命令执行次数',
+          'StatSetNodeMin': '写命令执行次数',
+          'StatSuccess': '读请求Key存在的个数',
+          'StatSuccessMin': '读请求Key存在的个数',
+          'StatSuccessNodeMin': '读请求Key存在的个数',
+          'Storage': '内存容量',
+          'StorageMaxUsMin': '单分片最大使用率',
+          'StorageMin': '使用内存容量',
+          'StorageNodeMin': '使用内存容量',
+          'StorageSlopeMin': '分片内存使用率',
+          'StorageSlopeNodeMin': '分片内存使用率',
+          'StorageUs': '实际使用内存和申请总内存之比',
+          'StorageUsMin': '实际使用内存和申请总内存之比',
+          'StorageUsNodeMin': '实际使用内存和申请总内存之比',
+        },
+        Company: {
+          'Bigkey': '个',
+          'BigValue': '次/分钟',
+          'BigValueMin': '次/分钟',
+          'BigValueNodeMin': '',
+          'CacheHitRatio': '',
+          'CacheHitRatioMin': ' ',
+          'CacheHitRatioNodeMin': '%',
+          'CmdstatDelMin': '次/分钟',
+          'CmdstatDelNodeMin': '次/分钟',
+          'CmdstatFlushallMin': ' 次/分钟',
+          'CmdstatFlushallNodeMin': '次/分钟',
+          'CmdstatFlushdbMin': '次/分钟',
+          'CmdstatFlushdbNodeMin': '次/分钟',
+          'CmdstatGet': '次/分钟',
+          'CmdstatGetbit': '次/分钟',
+          'CmdstatGetbitMin': '次/分钟',
+          'CmdstatGetbitNodeMin': '次/分钟',
+          'CmdstatGetrange': '次/分钟',
+          'CmdstatGetrangeMin': '次/分钟',
+          'CmdstatGetrangeNodeMin': '次/分钟',
+          'CmdstatGetMin': '次/分钟',
+          'CmdstatGetNodeMin': '次/分钟',
+          'CmdstatHget': '次/分钟',
+          'CmdstatHgetall': '次/分钟',
+          'CmdstatHgetallMin': '次/分钟',
+          'CmdstatHgetallNodeMin': '次/分钟',
+          'CmdstatHgetMin': '次/分钟',
+          'CmdstatHgetNodeMin': '次/分钟',
+          'CmdstatHmget': 'Mb/分钟',
+          'CmdstatHmgetMin': '次/分钟',
+          'CmdstatHmgetNodeMin': '次/分钟',
+          'CmdstatHmset': '次/分钟',
+          'CmdstatHmsetMin': '次/分钟',
+          'CmdstatHmsetNodeMin': '次/分钟',
+          'CmdstatHset': '次/分钟',
+          'CmdstatHsetnx': '次/分钟',
+          'CmdstatHsetnxMin': '次/分钟',
+          'CmdstatHsetnxNodeMin': '次/分钟',
+          'CmdstatHsetMin': '次/分钟',
+          'CmdstatHsetNodeMin': '次/分钟',
+          'CmdstatLset': '次/分钟',
+          'CmdstatLsetMin': '次/分钟',
+          'CmdstatLsetNodeMin': '次/分钟',
+          'CmdstatMget': '次/分钟',
+          'CmdstatMgetMin': '次/分钟',
+          'CmdstatMgetNodeMin': '次/分钟',
+          'CmdstatMset': '次/分钟',
+          'CmdstatMsetnx': '次/分钟',
+          'CmdstatMsetnxMin': '次/分钟',
+          'CmdstatMsetnxNodeMin': '次/分钟',
+          'CmdstatMsetMin': '次/分钟',
+          'CmdstatMsetNodeMin': '次/分钟',
+          'CmdstatSet': '次/分钟',
+          'CmdstatSetbit': '次/分钟',
+          'CmdstatSetbitMin': '次/分钟',
+          'CmdstatSetbitNodeMin': '次/分钟',
+          'CmdstatSetex': '次/分钟',
+          'CmdstatSetexMin': '次/分钟',
+          'CmdstatSetexNodeMin': '次/分钟',
+          'CmdstatSetnx': '次/分钟',
+          'CmdstatSetnxMin': '次/分钟',
+          'CmdstatSetnxNodeMin': '次/分钟',
+          'CmdstatSetrange': '次/分钟',
+          'CmdstatSetrangeMin': '次/分钟',
+          'CmdstatSetrangeNodeMin': '次/分钟',
+          'CmdstatSetMin': '次/分钟',
+          'CmdstatSetNodeMin': '次/分钟',
+          'CmdErr': '次/分钟',
+          'CmdErrMin': '次/分钟',
+          'CmdErrNodeMin': 'Mb/分钟',
+          'Connections': 'Mb/分钟',
+          'ConnectionsMin': 'Mb/分钟',
+          'ConnectionsNodeMin': '%',
+          'ConnectionsUs': '%',
+          'ConnectionsUsMin': '%',
+          'CpuMaxUsMin': '%',
+          'CpuUs': '%',
+          'CpuUsMin': '%',
+          'CpuUsNodeMin': '%',
+          'EvictedKeys': '个',
+          'EvictedKeysMin': '个',
+          'EvictedKeysNodeMin': 'Mb/分钟',
+          'ExpiredKeys': '个',
+          'ExpiredKeysMin': '个',
+          'ExpiredKeysNodeMin': 'Mb/分钟',
+          'GossipInFlowMin': '',
+          'GossipInFlowNodeMin': '',
+          'GossipOutFlowMin': '',
+          'GossipOutFlowNodeMin': '',
+          'InFlow': 'Mb/分钟',
+          'InFlowMin': 'Mb/分钟',
+          'InFlowNodeMin': '%',
+          'InFlowUs': '%',
+          'InFlowUsMin': '%',
+          'Keys': '个',
+          'KeysMin': '个',
+          'KeysNodeMin': '个',
+          'Latency': 'Mb/分钟',
+          'LatencyGet': 'Mb/分钟',
+          'LatencyGetMin': 'Mb/分钟',
+          'LatencyGetNodeMin': 'Mb/分钟',
+          'LatencyMin': 'Mb/分钟',
+          'LatencyNodeMin': 'Mb/分钟',
+          'LatencyOther': 'Mb/分钟',
+          'LatencyOtherMin': 'Mb/分钟',
+          'LatencyOtherNodeMin': 'Mb/分钟',
+          'LatencySet': 'Mb/分钟',
+          'LatencySetMin': 'Mb/分钟',
+          'LatencySetNodeMin': 'Mb/分钟',
+          'MemsizeDatasetMin': 'Mb/分钟',
+          'MemsizeDatasetNodeMin': 'Mb/分钟',
+          'MemsizeOverheadMin': 'Mb/分钟',
+          'MemsizeOverheadNodeMin': 'Mb/分钟',
+          'OutFlow': 'Mb/分钟',
+          'OutFlowMin': 'Mb/分钟',
+          'OutFlowNodeMin': 'Mb/分钟',
+          'OutFlowUs': '%',
+          'OutFlowUsMin': '%',
+          'Qps': '次/分钟',
+          'QpsMin': '次/分钟',
+          'QpsNodeMin': '次/分钟',
+          'SlowQuery': '次/分钟',
+          'SlowQueryMin': '次/分钟',
+          'SlowQueryNodeMin': '次/分钟',
+          'StatGet': '次/分钟',
+          'StatGetMin': '次/分钟',
+          'StatGetNodeMin': '次/分钟',
+          'StatMissed': '个',
+          'StatMissedMin': '个',
+          'StatMissedNodeMin': '个',
+          'StatOther': '次/分钟',
+          'StatOtherMin': '次/分钟',
+          'StatOtherNodeMin': '次/分钟',
+          'StatSet': '次/分钟',
+          'StatSetMin': '次/分钟',
+          'StatSetNodeMin': '次/分钟',
+          'StatSuccess': '次/分钟',
+          'StatSuccessMin': '个',
+          'StatSuccessNodeMin': '个',
+          'Storage': 'Mb/分钟',
+          'StorageMaxUsMin': '%',
+          'StorageMin': 'Mb/分钟',
+          'StorageNodeMin': 'Mb/分钟',
+          'StorageSlopeMin': '%',
+          'StorageSlopeNodeMin': '%',
+          'StorageUs': '',
+          'StorageUsMin': '',
+          'StorageUsNodeMin': '',
+        },
+        Tips: {
+          'Bigkey': '大key数量',
+          'BigValue': '请求命令大小超过32KB的执行次数',
+          'BigValueMin': '请求命令大小超过32KB的执行次数',
+          'BigValueNodeMin': '大value',
+          'CacheHitRatio': 'Key命中/(Key命中+KeyMiss)，该指标可以反应Cache Miss的情况，当访问为0时，该值为null',
+          'CacheHitRatioMin': ' Key命中/(Key命中+KeyMiss)，该指标可以反应Cache Miss的情况，当访问为0时，该值为null',
+          'CacheHitRatioNodeMin': 'cache命中率',
+          'CmdstatDelMin': 'DEL命令执行次数',
+          'CmdstatDelNodeMin': 'DEL命令执行次数',
+          'CmdstatFlushallMin': ' Flushall执行次数',
+          'CmdstatFlushallNodeMin': 'Flushall执行次数',
+          'CmdstatFlushdbMin': 'Flushdb执行次数',
+          'CmdstatFlushdbNodeMin': 'Flushdb执行次数',
+          'CmdstatGet': 'Get执行次数',
+          'CmdstatGetbit': 'Getbit执行次数',
+          'CmdstatGetbitMin': 'Getbit执行次数',
+          'CmdstatGetbitNodeMin': 'Getbit执行次数',
+          'CmdstatGetrange': 'Getrange执行次数',
+          'CmdstatGetrangeMin': 'Getrange执行次数',
+          'CmdstatGetrangeNodeMin': 'Getrange执行次数',
+          'CmdstatGetMin': 'Get执行次数',
+          'CmdstatGetNodeMin': 'Get执行次数',
+          'CmdstatHget': 'Hget执行次数',
+          'CmdstatHgetall': 'Hgetall执行次数',
+          'CmdstatHgetallMin': 'Hgetall执行次数',
+          'CmdstatHgetallNodeMin': 'Hgetall执行次数',
+          'CmdstatHgetMin': 'Hget执行次数',
+          'CmdstatHgetNodeMin': 'Hget执行次数',
+          'CmdstatHmget': 'hmget数量',
+          'CmdstatHmgetMin': 'Hmget执行次数',
+          'CmdstatHmgetNodeMin': 'Hmget执行次数',
+          'CmdstatHmset': 'Hmset执行次数',
+          'CmdstatHmsetMin': 'Hmset执行次数',
+          'CmdstatHmsetNodeMin': 'Hmset执行次数',
+          'CmdstatHset': 'Hset执行次数',
+          'CmdstatHsetnx': 'Hsetnx执行次数',
+          'CmdstatHsetnxMin': 'Hsetnx执行次数',
+          'CmdstatHsetnxNodeMin': 'Hsetnx执行次数',
+          'CmdstatHsetMin': 'Hset执行次数',
+          'CmdstatHsetNodeMin': 'Hset执行次数',
+          'CmdstatLset': 'Lset执行次数',
+          'CmdstatLsetMin': 'Lset执行次数',
+          'CmdstatLsetNodeMin': 'Lset执行次数',
+          'CmdstatMget': 'Mget执行次数',
+          'CmdstatMgetMin': 'Mget执行次数',
+          'CmdstatMgetNodeMin': 'Mget执行次数',
+          'CmdstatMset': 'Mset执行次数',
+          'CmdstatMsetnx': 'Msetnx执行次数',
+          'CmdstatMsetnxMin': 'Msetnx执行次数',
+          'CmdstatMsetnxNodeMin': 'Msetnx执行次数',
+          'CmdstatMsetMin': 'Mset执行次数',
+          'CmdstatMsetNodeMin': 'Mset执行次数',
+          'CmdstatSet': 'Set执行次数',
+          'CmdstatSetbit': 'Setbit执行次数',
+          'CmdstatSetbitMin': 'Setbit执行次数',
+          'CmdstatSetbitNodeMin': 'Setbit执行次数',
+          'CmdstatSetex': 'Setex执行次数',
+          'CmdstatSetexMin': 'Setex执行次数',
+          'CmdstatSetexNodeMin': 'Setex执行次数',
+          'CmdstatSetnx': 'Setnx执行次数',
+          'CmdstatSetnxMin': 'Setnx执行次数',
+          'CmdstatSetnxNodeMin': 'Setnx执行次数',
+          'CmdstatSetrange': 'Setrange执行次数',
+          'CmdstatSetrangeMin': 'Setrange执行次数',
+          'CmdstatSetrangeNodeMin': 'Setrange执行次数',
+          'CmdstatSetMin': 'Set执行次数',
+          'CmdstatSetNodeMin': 'Set执行次数',
+          'CmdErr': '命令执行错误的次数， 例如命令不存在、 参数错误等情况',
+          'CmdErrMin': '命令执行错误的次数， 例如命令不存在、 参数错误等情况',
+          'CmdErrNodeMin': '错误命令数量',
+          'Connections': '连接到实例的TCP连接数量',
+          'ConnectionsMin': '连接到实例的TCP连接数量',
+          'ConnectionsNodeMin': '指标',
+          'ConnectionsUs': '连接数使用率',
+          'ConnectionsUsMin': '连接数使用率',
+          'CpuMaxUsMin': '单分片最大cpu使用率',
+          'CpuUs': '平均CPU使用率',
+          'CpuUsMin': '平均CPU使用率',
+          'CpuUsNodeMin': 'CPU使用率',
+          'EvictedKeys': '时间窗内被驱逐的Key个数， 对应info命令输出的evicted_keys',
+          'EvictedKeysMin': '时间窗内被驱逐的Key个数， 对应info命令输出的evicted_keys',
+          'EvictedKeysNodeMin': 'keys驱逐数量',
+          'ExpiredKeys': '时间窗内被淘汰的Key个数， 对应info命令输出的expired_keys',
+          'ExpiredKeysMin': '时间窗内被淘汰的Key个数， 对应info命令输出的expired_keys',
+          'ExpiredKeysNodeMin': 'keys过期数量',
+          'GossipInFlowMin': 'gossip入流',
+          'GossipInFlowNodeMin': 'gossip入流',
+          'GossipOutFlowMin': 'gossip出流',
+          'GossipOutFlowNodeMin': 'gossip出流',
+          'InFlow': '内网入流量',
+          'InFlowMin': '内网入流量',
+          'InFlowNodeMin': '指标',
+          'InFlowUs': '人流使用率',
+          'InFlowUsMin': '入流使用率',
+          'Keys': '实例存储的总Key个数（ 一级Key）',
+          'KeysMin': '实例存储的总Key个数（ 一级Key）',
+          'KeysNodeMin': 'Key数量',
+          'Latency': 'proxy到redis server的执行时延平均值',
+          'LatencyGet': 'proxy到redis server的读命令平均执行时延， 读命令分类',
+          'LatencyGetMin': 'proxy到redis server的读命令平均执行时延， 读命令分类',
+          'LatencyGetNodeMin': '读请求平均延迟',
+          'LatencyMin': 'proxy到redis server的执行时延平均值',
+          'LatencyNodeMin': '请求平均延迟',
+          'LatencyOther': 'proxy到redis server的读写命令之外的命令平均执行时延， 其他命令分类',
+          'LatencyOtherMin': 'proxy到redis server的读写命令之外的命令平均执行时延， 其他命令分类',
+          'LatencyOtherNodeMin': '其他请求平均延迟',
+          'LatencySet': 'proxy到redis server的写命令平均执行时延， 读命令分类',
+          'LatencySetMin': 'proxy到redis server的写命令平均执行时延， 读命令分类',
+          'LatencySetNodeMin': 'proxy到redis server的写命令平均执行时延， 读命令分类',
+          'MemsizeDatasetMin': '数据内存',
+          'MemsizeDatasetNodeMin': '数据内存',
+          'MemsizeOverheadMin': '其他内存',
+          'MemsizeOverheadNodeMin': '其他内存',
+          'OutFlow': '内网出流量',
+          'OutFlowMin': '内网出流量',
+          'OutFlowNodeMin': '指标',
+          'OutFlowUs': '出流使用率',
+          'OutFlowUsMin': '出流使用率',
+          'Qps': 'QPS， 命令执行次数',
+          'QpsMin': 'QPS， 命令执行次数',
+          'QpsNodeMin': 'QPS， 命令执行次数',
+          'SlowQuery': '执行时延大于slowlog - log - slower - than配置的命令次数',
+          'SlowQueryMin': '执行时延大于slowlog - log - slower - than配置的命令次数',
+          'SlowQueryNodeMin': '执行时延大于slowlog - log - slower - than配置的命令次数',
+          'StatGet': '读命令执行次数， 读命令分类， ',
+          'StatGetMin': '读命令执行次数， 读命令分类， ',
+          'StatGetNodeMin': '读命令执行次数， 读命令分类， ',
+          'StatMissed': '读请求Key不存在的个数， 对应info命令输出的keyspace_misses指标',
+          'StatMissedMin': '读请求Key不存在的个数， 对应info命令输出的keyspace_misses指标',
+          'StatMissedNodeMin': '读请求Key不存在的个数， 对应info命令输出的keyspace_misses指标',
+          'StatOther': ' 读写命令之外的命令执行次数， 其他命令分类， ',
+          'StatOtherMin': ' 读写命令之外的命令执行次数， 其他命令分类， ',
+          'StatOtherNodeMin': '读写命令之外的命令执行次数， 其他命令分类， ',
+          'StatSet': '写命令执行次数， 读命令分类， ',
+          'StatSetMin': '写命令执行次数， 读命令分类， ',
+          'StatSetNodeMin': '写命令执行次数， 读命令分类， ',
+          'StatSuccess': '读请求Key存在的个数， 对应info命令输出的keyspace_hits指标',
+          'StatSuccessMin': '读请求Key存在的个数， 对应info命令输出的keyspace_hits指标',
+          'StatSuccessNodeMin': '读请求Key存在的个数， 对应info命令输出的keyspace_hits指标',
+          'Storage': '实际使用内存容量， 包含数据和缓存部分',
+          'StorageMaxUsMin': '单分片最大使用率',
+          'StorageMin': '实际使用内存容量， 包含数据和缓存部分',
+          'StorageNodeMin': '实际使用内存容量， 包含数据和缓存部分',
+          'StorageSlopeMin': '分片内存使用率 - 所有分片平均内存使用率， 结果值范围(-100 % , +100 % )',
+          'StorageSlopeNodeMin': '分片内存使用率 - 所有分片平均内存使用率， 结果值范围(-100 % , +100 % )',
+          'StorageUs': '实际使用内存和申请总内存之比',
+          'StorageUsMin': '实际使用内存和申请总内存之比',
+          'StorageUsNodeMin': '实际使用内存和申请总内存之比',
+        },
+
       }
     },
-    //
-    Obtain(metricN, symbol) {
-      // if (this.period == 10) {
-      //   this.period = 60;
-      // }
-      const param = {
-        Version: "2018-07-24",
-        Region: this.$cookie.get("regionv2"),
-        Namespace: "QCE/REDIS",
-        MetricName: metricN,
-        "Instances.0.Dimensions.0.Name": "redis_uuid",
-        "Instances.0.Dimensions.0.Value": this.ID,
-        Period: this.period,
-        StartTime: this.Start_End.StartTIme,
-        EndTime: this.Start_End.EndTIme
-      };
-      this.axios.post(All_MONITOR, param).then(data => {
-        if (data.Response.Error == undefined) {
-          data.Response.symbol = symbol;
-          this.tableData.push(data.Response);
-        } else {
-          this.$message({
-            message: ErrorTips[data.Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
+    components: {
+      TimeDropDown,
+      echartLine
+    },
+    watch: {
+      MonitorData(val) {
+        if (this.MonitorData) {
+          this.MonitorData.forEach(element => {
+            this.BaseListK.forEach(item => {
+              if (item.MetricName === element.MetricName) {
+                item.DataPoints = element.DataPoints
+              }
+            });
           });
+          if (this.BaseListK.length == val.length) {
+            this.tableData = this.BaseListK
+            this.TableLoad = false
+          }
         }
-      });
-    },
-    getModality(MetricName) {
-      // if (this.period == 10) {
-      //   this.period = 60;
-      // }
-      const param = {
-        Version: "2018-07-24",
-        Region: this.$cookie.get("regionv2"),
-        Namespace: "QCE/REDIS",
-        MetricName: MetricName,
-        "Instances.0.Dimensions.0.Name": "redis_uuid",
-        "Instances.0.Dimensions.0.Value": this.ID,
-        Period: this.period,
-        StartTime: this.Start_End.StartTIme,
-        EndTime: this.Start_End.EndTIme
-      };
-      this.axios.post(All_MONITOR, param).then(data => {
-        this.timeData = data.Response.DataPoints[0].Timestamps;
-        this.jingData = data.Response.DataPoints[0].Values;
-      });
-    },
-    // 模态框
-    Modality(MetricName) {
-      this.MetricName = MetricName;
-      this.dialogVisible = true;
-      this.getModality(this.MetricName);
-    },
-    handleClose(done) {
-      done();
-    }
-  },
-  filters: {
-    UpName(value) {
-      if (value === "CacheHitRatio") {
-        return (value = "cache命中率");
-      }
-      if (value === "CmdstatGet") {
-        return (value = "get命令數");
-      }
-      if (value === "CmdstatGetbit") {
-        return (value = "getbit命令數");
-      }
-      if (value === "CmdstatGetrange") {
-        return (value = "getrange命令數");
-      }
-      if (value === "CmdstatHget") {
-        return (value = "hget命令數");
-      }
-      if (value === "CmdstatHgetall") {
-        return (value = "hgetall命令數");
-      }
-      if (value === "CmdstatHmget") {
-        return (value = "hmget命令數");
-      }
-      if (value === "CmdstatHmset") {
-        return (value = "hmset命令數");
-      }
-      if (value === "CmdstatHset") {
-        return (value = "hset命令數");
-      }
-      if (value === "CmdstatHsetnx") {
-        return (value = "hsetnx命令數");
-      }
-      if (value === "CmdstatLset") {
-        return (value = "lset命令數");
-      }
-
-      if (value === "CmdstatMget") {
-        return (value = "mget命令數");
-      }
-      if (value === "CmdstatMset") {
-        return (value = "mset命令數");
-      }
-      if (value === "CmdstatMsetnx") {
-        return (value = "msetnx命令數");
-      }
-      if (value === "CmdstatSet") {
-        return (value = "set命令數");
-      }
-      if (value === "CmdstatSetbit") {
-        return (value = "setbit命令數");
-      }
-      if (value === "CmdstatSetex") {
-        return (value = "setex命令數");
-      }
-      if (value === "CmdstatSetrange") {
-        return (value = "setrange命令數");
-      }
-      if (value === "Qps") {
-        return (value = "每秒執行命令數");
-      }
-      if (value === "Connections") {
-        return (value = "連接數");
-      }
-      if (value === "CpuUs") {
-        return (value = "cpu利用率");
-      }
-      if (value === "InFlow") {
-        return (value = "内網入流量");
-      }
-      if (value === "Keys") {
-        return (value = "key總數");
-      }
-      if (value === "OutFlow") {
-        return (value = "內網出流量");
-      }
-      if (value === "StatGet") {
-        return (value = "所有get命令數");
-      }
-      if (value === "StatSet") {
-        return (value = "所有set命令數");
-      }
-      if (value === "Storage") {
-        return (value = "已使用容量");
-      }
-      if (value === "StorageUs") {
-        return (value = "容量使用率");
-      }
-      if (value === "") {
-        return (value = "");
       }
     },
-    UpTitle(value) {
-      if (value === "CacheHitRatio") {
-        return (value =
-          "1分鐘取內取 keyspace_misses、keyspace_hits通過如下計算 （1- keyspace_misses/keyspace_hits）* 100% 得出。不再維護該指標");
-      }
-      if (value === "CmdstatGet") {
-        return (value = "1分鐘内 get 命令請求數");
-      }
-      if (value === "CmdstatGetbit") {
-        return (value = "	1分鐘内 getbit 命令請求數");
-      }
-      if (value === "CmdstatGetrange") {
-        return (value = "1分鐘内 getrange 命令請求數");
-      }
-      if (value === "CmdstatHget") {
-        return (value = "1分鐘内 hget 命令請求數");
-      }
-      if (value === "CmdstatHgetall") {
-        return (value = "1分鐘内 hgetall 命令請求數");
-      }
-      if (value === "CmdstatHmget") {
-        return (value = "	1分鐘内 hmget 命令請求數");
-      }
-      if (value === "CmdstatHmset") {
-        return (value = "	1分鐘内 hmset 命令請求數");
-      }
-      if (value === "CmdstatHset") {
-        return (value = "1分鐘内 hset 命令請求數");
-      }
-      if (value === "CmdstatHsetnx") {
-        return (value = "	1分鐘内 hsetnx 命令請求數");
-      }
-      if (value === "CmdstatLset") {
-        return (value = "	1分鐘内 lset 命令請求數");
-      }
-
-      if (value === "CmdstatMget") {
-        return (value = "	1分鐘内 mget 命令請求數");
-      }
-      if (value === "CmdstatMset") {
-        return (value = "	1分鐘内 mset 命令請求數");
-      }
-      if (value === "CmdstatMsetnx") {
-        return (value = "1分鐘内 msetnx 命令請求數");
-      }
-      if (value === "CmdstatSet") {
-        return (value = "	1分鐘内 set 命令請求數");
-      }
-      if (value === "CmdstatSetbit") {
-        return (value = "1分鐘内 setbit 命令請求數");
-      }
-      if (value === "CmdstatSetex") {
-        return (value = "	1分鐘内 setex 命令請求數");
-      }
-      if (value === "CmdstatSetrange") {
-        return (value = "1分鐘内 setrange 命令請求數");
-      }
-      if (value === "Qps") {
-        return (value = "1分鐘內命令總數除以60");
-      }
-      if (value === "Connections") {
-        return (value = "	1分鐘內連接數總和");
-      }
-      if (value === "CpuUs") {
-        return (value = "CPU處於非空閑狀態的百分比，取 /proc/stat數據計算得出");
-      }
-      if (value === "InFlow") {
-        return (value = "1分鐘內入流量總和v");
-      }
-      if (value === "Keys") {
-        return (value = "1分鐘內key數量的最大值");
-      }
-      if (value === "OutFlow") {
-        return (value = "1分鐘內出流量總和");
-      }
-      if (value === "StatGet") {
-        return (value =
-          "	1分鐘内 get, hget, hgetall, hmget, mget, getbit, getrange 命令請求數");
-      }
-      if (value === "StatSet") {
-        return (value =
-          "1分鐘內 set, hset, hmset, hsetnx, lset, mset, msetnx, setbit, setex, setrange, setnx 命令請求數");
-      }
-      if (value === "Storage") {
-        return (value = "	1分鐘內已使用容量的最大值");
-      }
-      if (value === "StorageUs") {
-        return (value = "1分鐘內已使用容量的百分比最大值");
-      }
-      if (value === "") {
-        return (value = "");
-      }
+    methods: {
+      GetDat(data) {
+        this.Period = data[0]
+        this.Time = data[1]
+        this.TableLoad = true
+        this._GetBase()
+      },
+      //获取基础指标详情
+      _GetBase() {
+        let parms = {
+          Version: '2018-07-24',
+          Region: localStorage.getItem('regionv2'),
+          Namespace: 'QCE/REDIS'
+        }
+        this.axios.post(ALL_Basics, parms).then(res => {
+          if (res.Response.Error == undefined) {
+            this.BaseList = res.Response.MetricSet
+            this.BaseList.splice(0, 1)
+            this.MonitorData = []
+            this.BaseListK = []
+            this.BaseList.forEach(item => {
+              if (item.Period.indexOf(Number(this.Period)) !== -1) {
+                this.BaseListK.push(item)
+                this._GetMonitorData(item.MetricName)
+              }
+            });
+          } else {
+            this.$message({
+              message: ErrorTips[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+          }
+        });
+      },
+      //获取监控数据
+      _GetMonitorData(MetricName) {
+        let parms = {
+          Version: '2018-07-24',
+          Region: localStorage.getItem('regionv2'),
+          Namespace: 'QCE/REDIS',
+          Period: this.Period,
+          StartTime: this.Time.StartTIme,
+          EndTime: this.Time.EndTIme,
+          MetricName: MetricName,
+          'Instances.0.Dimensions.0.Name': 'redis_uuid',
+          'Instances.0.Dimensions.0.Value': this.ID,
+        }
+        this.axios.post(All_MONITOR, parms).then(data => {
+          if (data.Response.Error == undefined) {
+            this.MonitorData.push(data.Response);
+          } else {
+            this.$message({
+              message: ErrorTips[data.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+          }
+        });
+      },
     },
-    UpTime(value) {
-      let timeArr = [];
-      for (let i = 0; i < value.length; i++) {
-        let uptime = moment(value[i] * 1000).format("YYYY-MM-DD HH:mm:ss");
-        timeArr.push(uptime);
+    filters: {
+      UpTime(value) {
+        let timeArr = [];
+        for (let i = 0; i < value.length; i++) {
+          let uptime = moment(value[i] * 1000).format("YYYY-MM-DD HH:mm:ss");
+          timeArr.push(uptime);
+        }
+        return timeArr;
       }
-
-      return timeArr;
     }
   }
-};
+
 </script>
+<style lang="scss" scoped>
+  .Monitor {
+    background: #ffffff;
+    margin-top: 20px;
+    margin-bottom: 50px;
+    border: 1px solid #cccccc;
+    -webkit-box-shadow: 0px 3px 3px #c8c8c8;
+    -moz-box-shadow: 0px 3px 3px #c8c8c8;
+    box-shadow: 0px 3px 3px #c8c8c8;
+    padding: 20px;
 
-<style scoped lang="scss">
-.symbol {
-  color: #bbb;
-}
+    .box-dis {
+      margin-top: 20px;
+      color: #ccc;
+      font-size: 14px;
+    }
 
-.Monitor {
-  background: #ffffff;
-  margin-top: 20px;
-  margin-bottom: 50px;
-  border: 1px solid #cccccc;
-  -webkit-box-shadow: 0px 3px 3px #c8c8c8;
-  -moz-box-shadow: 0px 3px 3px #c8c8c8;
-  box-shadow: 0px 3px 3px #c8c8c8;
-}
-
-.box-dis {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 40px;
-
-  .btn-style {
-    margin-left: 20px;
-    display: flex;
-    line-height: 32px;
-
-    .drop {
-      margin-left: 30px;
-
-      span {
-        color: #cccccc;
-        font-size: 10px;
+    .box-table {
+      .span_1 {
+        font-size: 14px;
+        font-weight: bold;
+        color: black;
       }
 
-      ::v-deep.el-input {
-        width: 100px !important;
-        border: none;
+      .span_2 {
+        font-size: 12px;
+        color: #BBBBBB;
       }
     }
   }
 
-  p:nth-child(1) {
-    color: #ccc;
-    font-size: 14px;
-    margin-left: 30px;
-  }
-
-  p:nth-child(2) {
-    margin-right: 20px;
-  }
-}
-
-.btn-sty {
-  display: flex;
-  justify-content: space-between;
-}
-
-.p-dis {
-  display: flex;
-
-  span {
-    line-height: 40px;
-  }
-
-  .width-date {
-    width: 150px;
-    margin-left: 20px;
-  }
-}
-
-.margin-row {
-  margin-top: 30px;
-  margin-left: 55%;
-}
-
-.dateheight {
-  height: 34px;
-}
-
-::v-deep.echart-wh {
-  width: 100% !important;
-  height: 500px !important;
-}
-
-.btn-style {
-  margin-left: 20px;
-  display: flex;
-  line-height: 32px;
-
-  .drop {
-    margin-left: 500px;
-
-    span {
-      color: #cccccc;
-      font-size: 10px;
-    }
-
-    ::v-deep.el-input {
-      width: 100px !important;
-      border: none;
-    }
-  }
-}
-
-.box-table {
-  width: 100%;
-}
-
-::v-deep.i-font {
-  font-size: 36px;
-}
-
-::v-deep.el-button--small {
-  font-size: 14px !important;
-}
 </style>

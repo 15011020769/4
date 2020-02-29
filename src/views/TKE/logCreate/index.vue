@@ -59,19 +59,19 @@
               <el-radio-button label="two">指定容器</el-radio-button>
             </el-radio-group>
             <div v-for="(item, index) in formFour" :key="index" style="margin-bottom:10px;">
-              <div class="form-form position-form" v-if="
+              <div class="form-form position-form" v-show="
                   vlog == 'two' && tabPosition == 'one' && item.flag == false
                 ">
                 <i class="el-icon-edit-outline icon-edit-outline" @click="roomShow(index)"></i>
                 <i class="el-icon-close icon-close" @click="removeNewRoom(formFour, index)"></i>
                 <div>
                   <span>Namespace:</span><span>{{item.value1}}</span>|<span>采集对象:</span>
-                  <span v-if="item.radio=='1'">全部容器</span>
-                  <span v-else>{{item.workload}}个工作负载</span>
+                  <span v-show="item.radio=='1'">全部容器</span>
+                  <span v-show="item.radio!='1'">{{item.workload}}个工作负载</span>
                 </div>
               </div>
 
-              <div class="form-form position-form" v-if="
+              <div class="form-form position-form" v-show="
                   vlog == 'two' && tabPosition == 'one' && item.flag == true 
                 ">
                 <i class="el-icon-check icon-check" @click="roomShow(index)"></i>
@@ -89,7 +89,7 @@
                     <el-radio label="2">按工作负载（Workload）选择</el-radio>
                   </el-radio-group>
                 </el-form-item>
-                <el-form-item v-if="item.radio == 2">
+                <el-form-item v-show="item.radio == 2">
                   <div class="border-room">
                     <div class="border-text">
                       <div class="border-left">工作负载类型</div>
@@ -99,66 +99,66 @@
                     <el-tabs tab-position="left" class="tab-set" style="height: 200px;" v-model="item.activeName"
                       @tab-click="workLoadTab(item.activeName, index)">
                       <el-tab-pane label="Deployment" name="Deployment">
-                        <div v-if="workload1.length!='0'" style="overflow:auto">
-                          <el-checkbox-group v-model="Checkbox.checkbox0" @change="checkboxChange0">
+                        <div v-show="workload1.length!='0'" style="overflow:auto">
+                          <el-checkbox-group v-model="Checkbox.checkbox0" @change="checkboxChange0(Checkbox.checkbox0,item.value1)">
                             <p v-for="(item,index) in workload1" :key="index">
-                              <el-checkbox :label="item">{{item.metadata.name}}</el-checkbox>
+                              <el-checkbox :label="item.metadata.name" >{{item.metadata.name}}</el-checkbox>
                             </p>
                           </el-checkbox-group>
 
                         </div>
-                        <span v-else>当前命名空间下，该工作负载类型列表为空</span>
+                        <span  v-show="workload1.length=='0'">当前命名空间下，该工作负载类型列表为空</span>
                       </el-tab-pane>
                       <el-tab-pane label="DaemonSet " name="DaemonSet">
-                        <div v-if="workload1.length!='0'" style="overflow:auto">
-                          <el-checkbox-group v-model="Checkbox.checkbox1" @change="checkboxChange1">
+                        <div v-show="workload1.length!='0'" style="overflow:auto">
+                          <el-checkbox-group v-model="Checkbox.checkbox1" @change="checkboxChange1(Checkbox.checkbox1,item.value1)">
                             <p v-for="(item,index) in workload1" :key="index">
-                              <el-checkbox :label="item">{{item.metadata.name}}</el-checkbox>
+                              <el-checkbox :label="item.metadata.name">{{item.metadata.name}}</el-checkbox>
                             </p>
                           </el-checkbox-group>
                         </div>
-                        <span v-else>当前命名空间下，该工作负载类型列表为空</span>
+                        <span  v-show="workload1.length=='0'">当前命名空间下，该工作负载类型列表为空</span>
                       </el-tab-pane>
                       <el-tab-pane label="StatefulSet" name="StatefulSet">
-                        <div v-if="workload1.length!='0'" style="overflow:auto">
-                          <el-checkbox-group v-model="Checkbox.checkbox2" @change="checkboxChange2">
+                        <div v-show="workload1.length!='0'" style="overflow:auto">
+                          <el-checkbox-group v-model="Checkbox.checkbox2" @change="checkboxChange2(Checkbox.checkbox2,item.value1)">
                             <p v-for="(item,index) in workload1" :key="index">
-                              <el-checkbox :label="item">{{item.metadata.name}}</el-checkbox>
+                              <el-checkbox :label="item.metadata.name">{{item.metadata.name}}</el-checkbox>
                             </p>
                           </el-checkbox-group>
                         </div>
-                        <span v-else>当前命名空间下，该工作负载类型列表为空</span>
+                        <span  v-show="workload1.length=='0'">当前命名空间下，该工作负载类型列表为空</span>
                       </el-tab-pane>
                       <el-tab-pane label="CronJob" name="CronJob">
-                        <div v-if="workload1.length!='0'" style="overflow:auto">
-                          <el-checkbox-group v-model="Checkbox.checkbox3" @change="checkboxChange3">
+                        <div v-show="workload1.length!='0'" style="overflow:auto">
+                          <el-checkbox-group v-model="Checkbox.checkbox3" @change="checkboxChange3(Checkbox.checkbox3,item.value1)">
                             <p v-for="(item,index) in workload1" :key="index">
-                              <el-checkbox :label="item">{{item.metadata.name}}</el-checkbox>
+                              <el-checkbox :label="item.metadata.name">{{item.metadata.name}}</el-checkbox>
                             </p>
                           </el-checkbox-group>
                         </div>
-                        <span v-else>当前命名空间下，该工作负载类型列表为空</span>
+                        <span  v-show="workload1.length=='0'">当前命名空间下，该工作负载类型列表为空</span>
                       </el-tab-pane>
                       <el-tab-pane label="Job" name="Job">
-                        <div v-if="workload1.length!='0'" style="overflow:auto">
-                          <el-checkbox-group v-model="Checkbox.checkbox4" @change="checkboxChange4">
+                        <div v-show="workload1.length!='0'" style="overflow:auto">
+                          <el-checkbox-group v-model="Checkbox.checkbox4" @change="checkboxChange4(Checkbox.checkbox4,item.value1)">
                             <p v-for="(item,index) in workload1" :key="index">
-                              <el-checkbox :label="item">{{item.metadata.name}}</el-checkbox>
+                              <el-checkbox :label="item.metadata.name">{{item.metadata.name}}</el-checkbox>
                             </p>
                           </el-checkbox-group>
                         </div>
-                        <span v-else>当前命名空间下，该工作负载类型列表为空</span>
+                        <span  v-show="workload1.length=='0'">当前命名空间下，该工作负载类型列表为空</span>
                       </el-tab-pane>
                     </el-tabs>
                     <!--数据展示 -->
                     <!-- <div v-if="item.activeName=='deployment'">
                         asdsadadssad
-                      </div> -->
+                    </div> -->
                   </div>
                 </el-form-item>
               </div>
             </div>
-            <el-button :disabled="newroomFlag" v-if="vlog == 'two' && tabPosition == 'one'" class="new-room"
+            <el-button :disabled="newroomFlag" v-show="vlog == 'two' && tabPosition == 'one'" class="new-room"
               @click="addNewRoom()">
               添加Namespace
             </el-button>
@@ -178,6 +178,7 @@
                     <el-option v-for="item in formTwo.option3" :key="item" :label="item" :value="item">
                     </el-option>
                   </el-select>
+                  <p v-show="wlFlag" style="color:red"> 请选择workload</p>
                 </el-form-item>
                 <el-form-item label="配置采集路径" v-if="formTwo.value3!='无'">
                   <div v-for="(domain, index) in formTwo.optionAll" :key="index">
@@ -204,6 +205,7 @@
                     </el-form-item>
                   </div>
                   <el-link type="primary" style="cursor: pointer;font-size:12px;" @click="addDomain">新增变量</el-link>
+                  <p v-show="pathFlag" style="color:red">容器名、文件路径不能为空,请输入正确文件路径,路径必须以`/`开头，支持通配符（*），</p>
                   <p>
                     可配置多个路径，路径必须以`/`开头，支持通配符（*），请保证容器的日志文件保存在数据卷，否则收集规则无法生效
                   </p>
@@ -214,7 +216,7 @@
             <div class="form-form" v-if="tabPosition == 'three'">
               <el-form-item label="收集路径">
                 <el-input size="mini" class="el-input" placeholder="请输入日志收集路径" v-model="formThree.value"></el-input>
-                <div>指定采集日志的文件路径，支持通配符(*)，必须以`/`开头</div>
+                <div :class="{active2:colFlag}">指定采集日志的文件路径，支持通配符(*)，必须以`/`开头</div>
               </el-form-item>
               <el-form-item label="metadata">
                 <div style="width:300px;">
@@ -230,6 +232,7 @@
                 <el-link type="primary" style="cursor: pointer;font-size:12px;" @click="addMetadata">新增metadata
                 </el-link>
                 <div>收集规则收集的日志会带上metadata，并上报到消费端</div>
+                <p v-show="metaFlag" class="active2">最长63个字符，只能包含小写字母、数字及分隔符("-")，且必须以小写字母开头，数字或小写字母结尾,请输入完整</p>
               </el-form-item>
             </div>
           </el-form-item>
@@ -287,6 +290,7 @@
                     <p>
                       最长64个字符，只能包含字母、数字、下划线、(".")及分隔符("-")
                     </p>
+                    <p v-show="kafkaFlag" style="color:red">请输入正确ip地址、端口号以及Topic格式</p>
                   </el-form-item>
                 </div>
 
@@ -426,10 +430,10 @@
           optionAll: [{
             option4: ['请选择容器名称'],
             option5: ['请选择挂载目录'],
-            value4: "",
-            value5: "请选择挂载目录",
-            value6: '',
-            value7: '',
+            value4: "", //容器名
+            value5: "请选择挂载目录", //挂载目录文件路径1
+            value6: '', //路径
+            value7: '', //编辑状态下的路径
             valueKey: ""
           }],
           value1: "", //命名空间
@@ -438,17 +442,14 @@
         },
         formThree: {
           value: "",
-          domains: [{
-            value: "",
-            valueKey: ""
-          }]
+          domains: []
         },
         formFour: [{
           value1: "",
           radio: "1",
           flag: true,
           activeName: "Deployment",
-          workload:[],
+          workload: [],
         }],
         namespaceOptions: [],
         namespaceOptions1: [],
@@ -475,7 +476,11 @@
           port: "",
           topic: ""
         },
-
+        wlFlag: false,
+        pathFlag: false,
+        colFlag: false,
+        metaFlag: false,
+        kafkaFlag: false,
         tabPosition: "one",
         vlog: "one",
         consumer: "one",
@@ -574,36 +579,35 @@
                   val.optionAll.forEach(v => {
                     v.option4 = ['请选择容器名称']
                   })
-                  var optionData = needData[0].spec.template.spec.containers;
+                  var optionData = needData[0].spec.template.spec.containers; //存放容器名
                   optionData.forEach(val2 => {
                     val.optionAll.forEach(v => {
-                      v.option4.push(val2.name)
+                      v.option4.push(val2.name) //容器名选项
                     })
                   })
-                  var needData2 = optionData.filter(val3 => {
-                    return val3.name == val.optionAll[0].value4
-                  })
-                  if (needData2.length != 0) {
 
-                    if (needData2[0].volumeMounts) {
-                      val.optionAll.forEach(v => {
-                        v.option5 = ['请选择挂载目录']
-                      })
-                      needData2[0].volumeMounts.forEach(val4 => {
+                  val.optionAll.forEach(vi => { //当切换容器会出现不同下拉菜单选项
+                    var needData2 = optionData.filter(val3 => {
+                      return val3.name == vi.value4
+                    }) //容器 存放
+                    if (needData2.length != 0) {
+                      if (needData2[0].volumeMounts) {
                         val.optionAll.forEach(v => {
-                          v.option5.push(val4.mountPath)
+                          v.option5 = ['请选择挂载目录']
                         })
-                        // val.optionAll[0].option5.push(val4.mountPath)
-                      })
-                    } else {
-                      val.optionAll.forEach(v => {
-                        v.value5 = "无"
-                      })
+                        needData2[0].volumeMounts.forEach(val4 => {
+                          val.optionAll.forEach(v => {
+                            v.option5.push(val4.mountPath)
+                          })
+                          // val.optionAll[0].option5.push(val4.mountPath)
+                        })
+                      } else {
+                        val.optionAll.forEach(v => {
+                          v.value5 = "无"
+                        })
+                      }
                     }
-
-                  }
-
-
+                  })
                 } else {
                   val.optionAll[0].value4 = '无'
                 }
@@ -634,7 +638,7 @@
                   ClusterName: this.$route.query.clusterId.split("(")[0],
                   Method: "GET",
                   Path: "/apis/apps/v1beta2/namespaces/" + item.value1 + "/" + item.activeName
-                  .toLocaleLowerCase() + 's',
+                    .toLocaleLowerCase() + 's',
                   Version: "2018-05-25"
                 };
                 this.axios.post(TKE_COLONY_QUERY, params).then(res => {
@@ -649,9 +653,9 @@
             //新建禁用判断
             if (item.radio == '1') {
               this.newroomFlag = false
-            } else if(item.radio == '2'&&val.length != this.namespaceOptions.length) {
+            } else if (item.radio == '2' && val.length != this.namespaceOptions.length) {
               this.newroomFlag = false
-            }else{
+            } else {
               this.newroomFlag = true
             }
           })
@@ -672,7 +676,8 @@
           }
         },
         deep: true
-      }
+      },
+
     },
     created() {
       //判断是否是编辑状态
@@ -687,23 +692,18 @@
       this.kafkaList();
       this.nameSpaceList();
     },
-    computed: {
-      sum: function () {
-        var s = 0;
-        for (let i in this.Checkbox2) {
-          console.log(this.Checkbox2[i])
-          s += this.Checkbox2[i].length
-        }
-        return s
-      }
-    },
     mounted() {},
     methods: {
       //创建
       logCreat() {
         if (this.form.name == "") {
           this.$refs.form.validateField("name");
-          this.$message("函數名不能為空");
+          this.$message({
+            message:"函數名不能為空",
+            type:'warning',
+            showClose: true,
+            duration: 0
+            });
           return false;
         }
 
@@ -736,6 +736,14 @@
           params.RequestBody.spec.output.ckafka_output = this.output;
           params.RequestBody.spec.output.type = "ckafka";
         } else {
+
+          if (!this.IsRule1(this.output2.topic) || !this.IsIp(this.output2.host) || this.output2.port == '') {
+            this.kafkaFlag = true
+            return false
+          } else {
+            this.kafkaFlag = false;
+          }
+
           params.RequestBody.spec.output.kafka_output = this.output2;
           params.RequestBody.spec.output.type = "kafka";
         }
@@ -780,13 +788,37 @@
           }
         } else if (this.tabPosition == "two") {
           //容器文件路径
+          if (!this.formTwo.value3 | this.formTwo.value3 == '请选择workload') { //工作负载选项判断
+            this.wlFlag = true
+            return false
+          } else {
+            this.wlFlag = false
+          }
+          this.formTwo.optionAll.forEach(v => { //采集路径选项判断
+            if (v.value4 == '请选择容器名称' || v.value4 == '无' || v.value5 == '请选择挂载目录' || v.value6 == '' || v.value6 ==
+              undefined || v.value6[0] != '/') {
+              this.pathFlag = true
+              return false
+            } else {
+              this.pathFlag = false
+            }
+          })
+          if(this.pathFlag){
+            return false
+          }
+          let data = this.formTwo.optionAll;
+          var obj = new Object();
+          data.forEach((x, y) => {
+            if (!obj[x.value4]) {
+              obj[x.value4] = []
+            }
+            obj[x.value4].push({
+              path: x.value5 + x.value6
+            })
+          })
           params.RequestBody.spec.input = {
             pod_log_input: {
-              container_log_files: {
-                [this.formTwo.optionAll[0].value4]: [{
-                  path: this.formTwo.optionAll[0].value5 + this.formTwo.optionAll[0].value6
-                }]
-              },
+              container_log_files: obj,
               metadata: true,
               workload: {
                 name: this.formTwo.value3,
@@ -797,6 +829,23 @@
           };
         } else if (this.tabPosition == "three") {
           //节点文件路径
+          if (!(/^\//.test(this.formThree.value))) {
+            this.colFlag = true
+            return false
+          } else {
+            this.colFlag = false
+          }
+
+          if (this.formThree.domains.length != 0) {
+            this.formThree.domains.forEach(v => {
+              if (!(/^[a-z]([a-z0-9]|-){0,61}([a-z0-9])$/.test(v.value)) || v.valueKey == '') {
+                this.metaFlag = true
+                return false
+              } else {
+                this.metaFlag = false
+              }
+            })
+          }
           var obj = new Object();
           this.formThree.domains.forEach(item => {
             obj[item.value] = item.valueKey;
@@ -809,12 +858,11 @@
             type: "host-log"
           };
         }
-
-        this.axios.post(TKE_COLONY_QUERY, params).then(res => {
-          if (res.Response.Error === undefined) {
-            this.$router.go(-1);
-          }
-        });
+          this.axios.post(TKE_COLONY_QUERY, params).then(res => {
+            if (res.Response.Error === undefined) {
+              this.$router.go(-1);
+            }
+          });
       },
       //编辑数据回显
       findEditData() {
@@ -958,21 +1006,110 @@
           params.RequestBody.spec.output.ckafka_output = this.output;
           params.RequestBody.spec.output.type = "ckafka";
         } else {
+          if (!this.IsRule1(this.output2.topic) || !this.IsIp(this.output2.host) || this.output2.port == '') {
+            this.kafkaFlag = true
+            return false
+          } else {
+            this.kafkaFlag = false;
+          }
           params.RequestBody.spec.output.kafka_output = this.output2;
           params.RequestBody.spec.output.type = "kafka";
         }
-
+        //容器标准输出
         if (this.tabPosition == "one") {
-          //容器标准输出
+
+          if (this.vlog == 'one') { //所有容器
+            params.RequestBody.spec.input = {
+              container_log_input: {
+                all_namespaces: true,
+                namespaces: []
+              },
+              type: "container-log"
+            };
+          } else { //指定容器
+
+            var arr = [];
+            //往后台发送的数据
+            var needData = [...this.Checkbox2.checkbox0, ...this.Checkbox2.checkbox1, ...this.Checkbox2.checkbox2,
+              ...this.Checkbox2.checkbox3, ...this.Checkbox2.checkbox4
+            ];
+            this.formFour.forEach(item => {
+              var obj = new Object();
+              obj['namespace'] = item.value1;
+              if (item.radio == '1') {
+                obj['all_containers'] = true;
+                obj['workloads'] = [];
+              } else {
+                obj['all_containers'] = false;
+                obj['workloads'] = needData;
+              }
+              arr.push(obj);
+            })
+            params.RequestBody.spec.input = {
+              container_log_input: {
+                all_namespaces: false,
+                namespaces: arr
+              },
+              type: "container-log"
+            };
+          }
+        } else if (this.tabPosition == "two") {
+          //容器文件路径
+          if (!this.formTwo.value3 | this.formTwo.value3 == '请选择workload') { //工作负载选项判断
+            this.wlFlag = true
+            return false
+          } else {
+            this.wlFlag = false
+          }
+          this.formTwo.optionAll.forEach(v => { //采集路径选项判断
+            if (v.value4 == '请选择容器名称' || v.value4 == '无' || v.value5 == '请选择挂载目录' || v.value6 == '' || v.value6 ==
+              undefined || v.value6[0] != '/') {
+              this.pathFlag = true
+              return false
+            } else {
+              this.pathFlag = false
+            }
+          })
+          let data = this.formTwo.optionAll;
+          var obj = new Object();
+          data.forEach((x, y) => {
+            if (!obj[x.value4]) {
+              obj[x.value4] = []
+            }
+            obj[x.value4].push({
+              path: x.value5 + x.value6
+            })
+          })
           params.RequestBody.spec.input = {
-            container_log_input: {
-              all_namespaces: true,
-              namespaces: []
+            pod_log_input: {
+              container_log_files: obj,
+              metadata: true,
+              workload: {
+                name: this.formTwo.value3,
+                type: this.formTwo.value2
+              }
             },
-            type: "container-log"
+            type: "pod-log"
           };
         } else if (this.tabPosition == "three") {
           //节点文件路径
+          if (!(/^\//.test(this.formThree.value))) {
+            this.colFlag = true
+            return false
+          } else {
+            this.colFlag = false
+          }
+
+          if (this.formThree.domains.length != 0) {
+            this.formThree.domains.forEach(v => {
+              if (!(/^[a-z]([a-z0-9]|-){0,61}([a-z0-9])$/.test(v.value)) || v.valueKey == '') {
+                this.metaFlag = true
+                return false
+              } else {
+                this.metaFlag = false
+              }
+            })
+          }
           var obj = new Object();
           this.formThree.domains.forEach(item => {
             obj[item.value] = item.valueKey;
@@ -991,85 +1128,90 @@
           }
         });
       },
-      checkboxChange0(val) {
-        // console.log(val)
+      checkboxChange0(val,np) {
         if (val.length != '0') {
           var filterData = [],
             filterDatac = [];
           val.forEach(item => {
             filterDatac.push({
-              name: item.metadata.name,
-              type: item.metadata.namespace
+              name: item.name,
+              type:np
             })
           })
           this.newroomFlag = false;
           this.Checkbox2.checkbox0 = filterDatac;
         } else {
           this.newroomFlag = true;
+           this.Checkbox2.checkbox0=[];
         }
+        console.log(this.Checkbox2)
       },
-      checkboxChange1(val) {
+      checkboxChange1(val,np) {
         if (val.length != '0') {
           var filterData = [],
             filterDatac = [];
           val.forEach(item => {
             filterDatac.push({
-              name: item.metadata.name,
-              type: item.metadata.namespace
+              name: item.name,
+              type: item.np
             })
           })
           this.newroomFlag = false;
           this.Checkbox2.checkbox1 = filterDatac;
         } else {
           this.newroomFlag = true;
+           this.Checkbox2.checkbox1=[];
         }
       },
-      checkboxChange2(val) {
+      checkboxChange2(val,np) {
         if (val.length != '0') {
           var filterData = [],
             filterDatac = [];
           val.forEach(item => {
             filterDatac.push({
-              name: item.metadata.name,
-              type: item.metadata.namespace
+              name: item.name,
+              type:np
             })
           })
           this.newroomFlag = false;
           this.Checkbox2.checkbox2 = filterDatac;
         } else {
           this.newroomFlag = true;
+          this.Checkbox2.checkbox2=[];
         }
       },
-      checkboxChange3(val) {
+      checkboxChange3(val,np) {
         if (val.length != '0') {
           var filterData = [],
             filterDatac = [];
           val.forEach(item => {
             filterDatac.push({
-              name: item.metadata.name,
-              type: item.metadata.namespace
+              name: item.name,
+              type: np
             })
           })
           this.newroomFlag = false;
           this.Checkbox2.checkbox3 = filterDatac;
         } else {
           this.newroomFlag = true;
+           this.Checkbox2.checkbox3=[];
         }
       },
-      checkboxChange4(val) {
+      checkboxChange4(val,np) {
         if (val.length != '0') {
           var filterData = [],
             filterDatac = [];
           val.forEach(item => {
             filterDatac.push({
-              name: item.metadata.name,
-              type: item.metadata.namespace
+              name: item.name,
+              type: np
             })
           })
           this.newroomFlag = false;
           this.Checkbox2.checkbox4 = filterDatac;
         } else {
           this.newroomFlag = true;
+           this.Checkbox2.checkbox4=[];
         }
       },
 
@@ -1095,12 +1237,13 @@
       //kafka列表
       kafkaList() {
         var params = {
-          // data: {
-          //   // status: [1],
-          // }
+          //  action: "DescribeInstancesDetail",
         };
-        this.axios.post(TKE_KAFKA_LIST, params).then(res => {
+        // this.axios.post(TKE_KAFKA_LIST, params).then(res => {
+        // this.axios.post('ckafka/DescribeInstancesDetail&uin=100011921910', params).then(res => {
+          this.axios.post(TKE_KAFKA_LIST, params).then(res => {
           if (res.codeDesc === "Success") {
+              // console.log(res)
             res.data.instanceList.forEach((item, index) => {
               this.Ckafka.options.push(
                 item.instanceId + "(" + item.instanceName + ")"
@@ -1132,7 +1275,7 @@
                 this.namespaceOptions1.push(item.metadata.name);
               });
               this.formFour[0].value1 = this.namespaceOptions[0];
-              // this.formTwo.value1 = this.namespaceOptions[0];
+              // this.formTwo.value1 = this.namespaceOptions[0];//设置工作负载选项命名空间默认值
             }
           });
         }
@@ -1204,18 +1347,28 @@
         for (let i in this.Checkbox2) {
           s += this.Checkbox2[i].length
         }
-        this.formFour[index].workload=s;
-        this.formFour[index].flag = !this.formFour[index].flag;
+        if(s==0){
+           this.$message({
+                message: '已选工作负载项为0个，请至少选择一个工作负载项或者选择全部容器',
+                type: "warning",
+                showClose: true,
+                duration: 0
+              });
+        }else{
+
+          this.formFour[index].workload = s;
+          this.formFour[index].flag = !this.formFour[index].flag;
+        }
 
       },
-      addNewRoom() {
+      addNewRoom() { //
         var arr = [],
           arr2, arr3 = [];
         this.formFour.forEach(v => {
           arr.push(v.value1)
         })
         for (let i in this.Checkbox2) {
-            this.Checkbox2[i].length=0;
+          this.Checkbox2[i].length = 0;
         }
         arr2 = Array.from(new Set(arr));
         arr2.forEach(v => {
@@ -1231,6 +1384,15 @@
           activeName: "Deployment"
         });
       },
+      IsRule1(str) {
+        let reg = /^[a-z]([a-z0-9]|-){0,61}([a-z0-9])$/;
+        return reg.test(str)
+      },
+      IsIp(str) {
+        let reg =
+          /^(\d|[1-9]\d|1\d{2}|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d{2}|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d{2}|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d{2}|2[0-4]\d|25[0-5])$/;
+        return reg.test(str)
+      }
     },
     props: ["uid"],
     components: {
@@ -1468,6 +1630,10 @@
         padding-left: 10px;
       }
     }
+  }
+
+  .active2 {
+    color: red
   }
 
   .new-room {

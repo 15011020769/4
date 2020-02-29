@@ -12,9 +12,9 @@
             集群(中国台北) /
           </span>
           <span class="goback" @click="goBack()">
-            cls-gwblk71e(tfy_test1) /
+            {{clusterId}} /
           </span>
-          <h2 class="header-title">HorizontalPodAutoscaler:asdas(default)</h2>
+          <h2 class="header-title">HorizontalPodAutoscaler:{{name}}({{np}})</h2>
         </div>
         <!-- 右侧 -->
         <div class="grid-right"></div>
@@ -23,9 +23,9 @@
 
     <!-- 详情子菜单导航 -->
     <div class="tke-detial-nav">
-      <router-link class="nav-item" :to="{name:'hpaDetailInfo',query: {clusterId: clusterId}}">详情</router-link>
-      <router-link class="nav-item" :to="{name:'hpaDetailEvent',query: {clusterId: clusterId}}">事件</router-link>
-      <router-link class="nav-item" :to="{name:'hpaDetailYaml',query: {clusterId: clusterId}}">YAML</router-link>
+      <router-link class="nav-item" :to="{name:'hpaDetailInfo',query: {clusterId: clusterId,name:name,np:np}}">详情</router-link>
+      <router-link class="nav-item" :to="{name:'hpaDetailEvent',query: {clusterId: clusterId,name:name,np:np}}">事件</router-link>
+      <router-link class="nav-item" :to="{name:'hpaDetailYaml',query: {clusterId: clusterId,name:name,np:np}}">YAML</router-link>
     </div> 
 
     <!-- 子页面 -->
@@ -46,6 +46,8 @@ export default {
   data() {
     return {
         clusterId:'',
+        name:'',
+        np:'',
     };
   },
   components: {
@@ -54,6 +56,8 @@ export default {
   created() {
     // 从路由获取集群id
     this.clusterId=this.$route.query.clusterId;
+     this.name=this.$route.query.name;
+      this.np=this.$route.query.np;
   },
   methods: {
     //返回上一层

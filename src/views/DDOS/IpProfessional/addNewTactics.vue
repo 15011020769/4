@@ -1370,9 +1370,9 @@ a {
   display: inline-block;
 }
 .tacticsName {
-  width: 120px !important;
+  width: 480px !important;
   input {
-    width: 120px;
+    width: 480px;
   }
 }
 .tableConOne {

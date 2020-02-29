@@ -23,7 +23,10 @@
           </div>
           <div class="newClear dominPackList">
             <p>{{t('费用', 'WAF.fy')}}</p>
-            <p class="totalMoney">9,534.24元</p>
+            <p class="totalMoney">
+              <template v-if="loading">计算中...</template>
+              <template v-else>NT$ {{price}}</template>
+            </p>
           </div>
         </div>
         <span slot="footer" class="dialog-footer">
@@ -36,6 +39,8 @@
 </template>
 <script>
 import moment from 'moment'
+import { DESCRIBE_WAF_PRICE } from '@/constants'
+import { CLB_BUY_DOMAIN_TYPES } from '../../constants'
 export default {
   props:{
     isShow:Boolean,
@@ -51,6 +56,8 @@ export default {
       dialogModel: '', // 弹框
       buyNum: 1, // 购买数量
       remainingDays: 0, // 剩余天数
+      price: 0,
+      loading: true,
     }
   },
   computed:{
@@ -60,14 +67,65 @@ export default {
     }
   },
   watch: {
-    package(n) {
+    buyNum() {
+      this.queryPrice()
+    },
+    isShow(n) {
       if (n) {
-        const ValidTime = n.Cls && n.Cls.ValidTime || n.ValidTime
+        const ValidTime = this.package.ValidTime
         this.remainingDays = Math.ceil(moment(ValidTime).diff(moment(), 'h')/24)
+        this.queryPrice()
       }
-    }
+    },
   },
   methods:{
+    queryPrice() {
+      this.loading = true
+      const resInfo = {
+        "regionId": 1,
+        "projectId": 0,
+        "goodsNum": 1,
+        "payMode": 1,
+        "platform": 1,
+      }
+      if (this.package.DomainPkg) {
+        // 升级
+        resInfo.goodsCategoryId = CLB_BUY_DOMAIN_TYPES.edit_categoryid
+        resInfo.goodsDetail = {
+          resourceId: this.package.DomainPkg.ResourceIds,
+          curDeadline: this.package.DomainPkg.ValidTime,
+          oldConfig: {
+            pid: CLB_BUY_DOMAIN_TYPES.pid,
+            [CLB_BUY_DOMAIN_TYPES.pricetype]: this.package.DomainPkg.Count,
+            type: CLB_BUY_DOMAIN_TYPES.goodstype
+          },
+          newConfig: {
+            pid: CLB_BUY_DOMAIN_TYPES.pid,
+            [CLB_BUY_DOMAIN_TYPES.pricetype]: this.package.DomainPkg.Count + this.buyNum,
+            type: CLB_BUY_DOMAIN_TYPES.goodstype
+          }
+        }
+      } else {
+        // 新购
+        resInfo.goodsCategoryId = CLB_BUY_DOMAIN_TYPES.first_categoryid
+        resInfo.goodsDetail = {
+          "pid": CLB_BUY_DOMAIN_TYPES.pid, // 1001156,
+          "timeSpan": this.remainingDays,
+          "timeUnit": "d",
+          [CLB_BUY_DOMAIN_TYPES.pricetype]: this.buyNum,
+          "type": CLB_BUY_DOMAIN_TYPES.goodstype,
+        }
+      }
+      this.axios.post(DESCRIBE_WAF_PRICE, {
+        Version: '2018-01-25',
+        ResInfo: [resInfo]
+      }).then(resp => {
+        this.generalRespHandler(resp, ({ CostInfo }) => {
+          this.price = CostInfo[0].RealTotalCost // RealTotalCost
+          this.loading = false
+        })
+      })
+    },
     //关闭按钮
     handleClose(){
       this.dialogModel=false;

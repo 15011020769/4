@@ -2,7 +2,6 @@
 <template>
   <div >
       <subTitle title='StorageClass'  />
-
       <!-- 新建、搜索相关操作 -->
       <div class="tke-grid ">
         <!-- 左侧 -->
@@ -22,8 +21,6 @@
             @exportExcel="exportExcel"
           >
           </tkeSearch>
-        
-            
         </div>
       </div>
         
@@ -32,63 +29,60 @@
         <el-table
           :data="list"
           v-loading="loadShow"
-          style="width: 100%">
+          style="width: 100%"
+          id="exportTable">
           <el-table-column
-            label="名称"
-            >
+            prop="metadata"
+            label="名称">
             <template slot-scope="scope">
-              <span @click="goScDetail()" class="tke-text-link">cbs</span>
+              <span @click="goScDetail(scope.row)" class="tke-text-link">{{scope.row.metadata.name}}</span>
             </template>
           </el-table-column>
           <el-table-column
-            prop=""
-            label="来源"
-            >
+            prop="provisioner"
+            label="来源">
             <template slot-scope="scope">
-               <p>cloud.tencent.com/qcloud-cbs</p>
+               <p>{{scope.row.provisioner}}</p>
             </template>
           </el-table-column>
           <el-table-column
-            prop=""
+            prop="parameters"
             label="云盘类型"
             >
             <template slot-scope="scope">
-               <span>高性能云硬盘</span>
+               <span>{{scope.row.parameters.type|parameterss}}</span>
             </template>
           </el-table-column>
           <el-table-column
-            prop=""
+            prop="parameters"
             label="计费模式"
-            width="100"
-            >
+            width="100">
             <template slot-scope="scope">
-               <p>按量计费</p>
+               <p>{{scope.row.parameters.paymode|paymodes}}</p>
             </template>
           </el-table-column>
           <el-table-column
-            prop=""
+            prop="reclaimPolicy"
             label="回收策略"
             width="100"
             >
             <template slot-scope="scope">
-               <p>Delete</p>
+               <p>{{scope.row.reclaimPolicy}}</p>
             </template>
           </el-table-column>
           <el-table-column
-            prop=""
-            label="创建时间"
-            >
+            prop="metadata"
+            label="创建时间">
             <template slot-scope="scope">
-              <p>2020-01-10<br>14:16:37</p>
+              <p>{{scope.row.metadata.creationTimestamp|creationTimestamps}}</p>
             </template>
           </el-table-column>
           <el-table-column
             label="操作"
-            width="200"
-            >
+            width="200">
             <template slot-scope="scope">
               <span class="tke-text-link">编辑YAML</span>
-              <span class="tke-text-link ml10">删除</span>
+              <span class="tke-text-link ml10" @click="deleteOne(scope.row)">删除</span>
             </template>
           </el-table-column>
         </el-table>
@@ -106,41 +100,49 @@
             </el-pagination>
           </div>
         </div>
+        <el-dialog
+          title="删除资源"
+          :visible.sync="centerDialogVisible"
+          width="30%"
+          >
+          <span>您确定要删除StorageClass：{{deleteName}}吗？</span>
+          <span slot="footer" class="dialog-footer">
+            <el-button @click="centerDialogVisible = false">取 消</el-button>
+            <el-button type="primary" @click="DeleteList()">确 定</el-button>
+          </span>
+        </el-dialog>
       </div>
   </div>
 </template>
 
 <script>
+import {ErrorTips} from "@/components/ErrorTips.js"; //公共错误码
 import subTitle from "@/views/TKE/components/subTitle";
 import tkeSearch from "@/views/TKE/components/tkeSearch";
 import Loading from "@/components/public/Loading";
-import { ALL_CITY } from "@/constants";
+import XLSX from "xlsx";
+import FileSaver from "file-saver";
+import { ALL_CITY ,POINT_REQUEST} from "@/constants";
 export default {
   name: "colonyStorageSc",
   data() {
     return {
-      loadShow: false, //加载是否显示
-      list:[
-        {
-          status:false
-        },
-        {
-          status:true
-        }
-      ], //列表
+      loadShow: true, //加载是否显示
+      list:[], //列表
       total:0,
       pageSize:10,
       pageIndex:0,
       multipleSelection: [],
-      
-      
+      centerDialogVisible:false,
       searchInput: "", //输入的搜索关键字
+      deleteName:''
     };
   },
  
   created() {
     // 从路由获取集群id
     this.clusterId=this.$route.query.clusterId;
+    this.GetList()
   },
   methods: {
      // 新建
@@ -154,11 +156,12 @@ export default {
     },
 
     // 详情
-    goScDetail(){
+    goScDetail(row){
       this.$router.push({
           name: "scDetail",
           query: {
-            clusterId: this.clusterId
+            clusterId: this.clusterId,
+            resourceIns: row.metadata.name
           }
       });
     },
@@ -175,34 +178,35 @@ export default {
     // 点击搜索
     clickSearch(val){
       this.searchInput = val;
-      console.log(this.searchInput)
+      this.loadShow = true
+      this.SearchList()
+      // this.GetList()
     },
     //刷新数据
     refreshList(){
-      console.log('refreshList....')
+      this.loadShow = true
+      this.GetList()
     },
     // 导出表格
     exportExcel() {
       console.log('exportExcel...')
-      /* generate workbook object from table */
-      // var wb = XLSX.utils.table_to_book(document.querySelector("#exportTable"));
-      /* get binary string as output */
-      // var wbout = XLSX.write(wb, {
-      //   bookType: "xlsx",
-      //   bookSST: true,
-      //   type: "array"
-      // });
-      // try {
-      //   FileSaver.saveAs(
-      //     new Blob([wbout], {
-      //       type: "application/octet-stream"
-      //     }),
-      //     this.$t("CVM.clBload.fzjh") + ".xlsx"
-      //   );
-      // } catch (e) {
-      //   if (typeof console !== "undefined") console.log(e, wbout);
-      // }
-      // return wbout;
+      var wb = XLSX.utils.table_to_book(document.querySelector("#exportTable"));
+      var wbout = XLSX.write(wb, {
+        bookType: "xlsx",
+        bookSST: true,
+        type: "array"
+      });
+      try {
+        FileSaver.saveAs(
+          new Blob([wbout], {
+            type: "application/octet-stream"
+          }),
+          this.$t("tke sc") + ".xlsx"
+        );
+      } catch (e) {
+        if (typeof console !== "undefined") console.log(e, wbout);
+      }
+      return wbout;
     },
 
     // 分页
@@ -214,9 +218,128 @@ export default {
     handleSizeChange(val) {
       // console.log(`每页 ${val} 条`);
       this.pageSize=val;
+      this.loadShow = true
+      this.GetList()
       // this.getColonyList();
     },
-
+    deleteOne(row){
+      this.deleteName = row.metadata.name
+      this.centerDialogVisible = true
+    },
+    // 获取列表
+    GetList() {
+      var params = {
+        ClusterName: this.$route.query.clusterId,
+        Method: "GET",
+        Path: "/apis/storage.k8s.io/v1/storageclasses?limit="+this.pageSize,
+        Version: "2018-05-25"
+      };
+      this.axios.post(POINT_REQUEST, params).then(res => {
+        if (res.Response.Error === undefined) {
+          var mes = JSON.parse(res.Response.ResponseBody);
+          console.log(mes);
+          this.list = mes.items;
+          this.total = mes.items.length;
+          this.loadShow = false
+        } else {
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 2000
+          });
+        }
+      });
+    },
+     // 查询列表
+    SearchList() {
+      var params = {
+        ClusterName: this.$route.query.clusterId,
+        Method: "GET",
+        Path: "/apis/storage.k8s.io/v1/storageclasses?fieldSelector=metadata.name="+this.searchInput,
+        Version: "2018-05-25"
+      };
+      this.axios.post(POINT_REQUEST, params).then(res => {
+        if (res.Response.Error === undefined) {
+          var mes = JSON.parse(res.Response.ResponseBody);
+          console.log(mes);
+          this.list = mes.items;
+          this.loadShow = false
+        } else {
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 2000
+          })
+        }
+      })
+    },
+    // 删除列表
+    DeleteList() {
+      this.centerDialogVisible = false
+      var params = {
+        ClusterName: this.$route.query.clusterId,
+        Method: "DELETE",
+        Path: "/apis/storage.k8s.io/v1/storageclasses/"+this.deleteName,
+        RequestBody: {"propagationPolicy":"Background"},
+        Version: "2018-05-25"
+      };
+      this.axios.post(POINT_REQUEST, params).then(res => {
+        if (res.Response.Error === undefined) {
+          var mes = JSON.parse(res.Response.ResponseBody);
+        //  console.log(mes);
+        //  this.list = mes.items;
+          this.loadShow = true
+          this.GetList()
+        } else {
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 2000
+          })
+        }
+      })
+    }
+  },
+  filters: {
+    parameterss:function(value){
+        if(value == "CLOUD_PREMIUM"){
+          return "高性能云硬盘"
+        } else if(value == "CLOUD_SSD"){
+          return "SSD云硬盘"
+        } else {
+          return "普通云硬盘"
+        }
+    },
+    paymodes:function(value){
+        if(value == "POSTPAID"){
+          return "按量计费"
+        } else if(value == 'PREPAID'){
+          return "包年包月"
+        } else {
+          return "-"
+        }
+    },
+    creationTimestamps: function (value) {
+      var d = new Date(value);
+      var n = d.getFullYear();
+      var y = d.getMonth() + 1;
+      var r = d.getDate();
+      var h = d.getHours(); //12
+      var m = d.getMinutes(); //12
+      var s = d.getSeconds();
+      h < 10 ? h = "0" + h : h;
+      m < 10 ? m = "0" + m : m
+      return n + '-' + y + '-' + r + ' ' + h + ':' + m + ':' + s
+    }
   },
   components: {
     subTitle,

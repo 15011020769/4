@@ -1,20 +1,19 @@
 <template>
   <div class="MGC">
-    <div class="big-title">消息中心</div>
+    <div class="big-title">訊息中心</div>
     <el-menu
       default-active="2"
       class="el-menu-vertical-demo"
-      @open="handleOpen"
-      @close="handleClose"
+      @select="handleSelect" 
       background-color="#292b36"
       text-color="#fff"
-      active-text-color="#fff"
+      active-text-color="#ffd04b"
       :router="true"
     >
-      <el-menu-item index="message">
+      <el-menu-item index="message" :class="{'menu-active': activeMenu === 'message'}">
         <span slot="title">站内信</span>
       </el-menu-item>
-      <el-menu-item index="newsFeeds">
+      <el-menu-item index="newsFeeds" :class="{'menu-active': activeMenu === 'newsFeeds'}">
         <span slot="title">通知公告</span>
       </el-menu-item>
     </el-menu>
@@ -25,19 +24,14 @@
 export default {
   data() {
     return {
-      activeName: "",
-      activeName1: "",
-      activeName2: "",
-      activeIndex: "1",
-      activeIndex2: "1"
+      activeMenu: localStorage.getItem('activeMenu') ? localStorage.getItem('activeMenu') : 'message'        // 默认选中的菜单
     };
   },
   methods: {
-    handleOpen(key, keyPath) {
-      // console.log(key, keyPath)
-    },
-    handleClose(key, keyPath) {
-      // console.log(key, keyPath)
+    // 选中菜单点击事件
+    handleSelect(key, keyPath) {
+      this.activeMenu = key
+      localStorage.setItem('activeMenu', this.activeMenu)
     }
   }
 };
@@ -87,7 +81,12 @@ export default {
     height: 45px;
     display: flex;
     align-items: center;
+    color: white !important;
     font-size: 14px;
+  }
+  .menu-active {
+    background-color: #20222c !important;
+    color: white !important;
   }
 }
 </style>

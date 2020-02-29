@@ -11,7 +11,7 @@
               <h3 class="font" style="margin-bottom:20px">资源概览</h3>
               <ul class="ro-data-card"  v-loading="shows">
                 <li class="ro-data-card-list">
-                  <div class="font data-card-border-right">
+                  <div class="font ">
                     <h3 class="ro-data-card-hd font">集群</h3>
                     <div>
                       <span class="font-big">{{ TotalCount }}</span>
@@ -19,8 +19,8 @@
                     </div>
                   </div>
                 </li>
-                <li>
-                  <div class="font data-card-border-right data-card-list">
+                <li class="ro-data-card-list" >
+                  <div class="font  border-set">
                     <h3 class="ro-data-card-hd font">节点</h3>
                     <div>
                       <span class="font-big">{{ nodeNum }}</span>
@@ -30,8 +30,8 @@
                     </div>
                   </div>
                 </li>
-                <li>
-                  <div class="font data-card-border-right data-card-list">
+                <li class="ro-data-card-list">
+                  <div class="font  ">
                     <h5 class="ro-data-card-hd font">工作负载</h5>
                     <div>
                       <span class="font-big">{{ workLoad }}</span>
@@ -55,10 +55,10 @@
             </div>
             <!-- 集群卡片内容 -->
             <div
-              @click="show()"
+              
               class="resource-overview twoRow-data-card-border-top"
             >
-              <h3 class="font" style="margin:0;">
+              <h3 class="font" style="margin:0;" @click="show()">
                 <i
                   v-if="isShow"
                   class="el-icon-caret-bottom data-card-icon"
@@ -88,8 +88,8 @@
                 <div>
                   <!-- 第二行集群头 -->
                   <div class="font-small">
-                    <a href="javascrpit:;">{{ item.ClusterId }}</a>
-                    <span style="margin-left:6px">{{ item.ClusterName }}</span>
+                    <a href="javascrpit:;">{{ item.name }}</a>
+                    <!-- <span style="margin-left:6px">{{ item.ClusterName }}</span> -->
                   </div>
                   <!-- 第二行集群内容 -->
                   <div class="ro-data-card" style="margin:0">
@@ -120,24 +120,39 @@
                       style="background:none;padding:0"
                     >
                       <div style="padding-top:0;">
-                        <span>节点</span>
-                        <a href="">（1个）</a>
-                        <span style="margin-left:72px" class="font-green"
+                        <span class="set-span">
+                          <span>节点</span>
+                          <a href="">（{{item.nodetotal}}个）</a>
+                        </span>
+                        <span v-if="item.nodeab==0"  class="font-green"
                           >正常</span
+                        >
+                        <span  v-if="item.nodeab!=0" class="font-red"
+                          >异常&nbsp;{{item.nodeab}}&nbsp;个</span
                         >
                       </div>
                       <div style="padding-top:17px;">
-                        <span>Master&Etcd</span>
-                        <a href="">（0个）</a>
-                        <span style="margin-left:20px" class="font-green"
+                        <span class="set-span"> 
+                          <span>Master&Etcd</span>
+                          <a href="">（{{item.matotal}}个）</a>
+                        </span>
+                        <span  v-if="item.maab==0"  class="font-green"
                           >正常</span
+                        >
+                         <span v-if="item.maab!=0"  class="font-red"
+                          >异常&nbsp;{{item.maab}}&nbsp;个</span
                         >
                       </div>
                       <div style="padding-top:17px;">
+                        <span class="set-span">
                         <span>工作负载</span>
-                        <a href="">（5个）</a>
-                        <span style="margin-left:47px" class="font-red"
-                          >异常&nbsp;1&nbsp;个</span
+                        <a href="">（{{item.workloadtotal}}个）</a>
+                         </span>
+                         <span  v-if="item.workloadab==0"  class="font-green"
+                          >正常</span
+                        >
+                        <span v-if="item.workloadab!=0"   class="font-red"
+                          >异常&nbsp;{{item.workloadab}}&nbsp;个</span
                         >
                         <el-tooltip placement="right" effect="light">
                           <div slot="content" style="width:200px;height:200px">
@@ -154,7 +169,7 @@
                             </div>
                           </div>
                           <i
-                            style="margin-left:25px"
+                            style="margin-left:2px"
                             class="el-icon-more-outline"
                           ></i>
                         </el-tooltip>
@@ -318,7 +333,7 @@
                 <li>
                   <div class="zn">
                     <div style="margin:0 40px 20px 0;">镜像版本</div>
-                    <div @click="show()" class="font-black">100个/镜像</div>
+                    <div class="font-black">100个/镜像</div>
                   </div>
                 </li>
               </ul>
@@ -352,49 +367,50 @@ export default {
     HeadCom
   },
   created() {
-    // this.resourceList();
+    this.resourceList();
     this.resourceStatusData();
+    this.statusData();
   },
   methods: {
     show() {
       this.isShow = !this.isShow;
     },
-    // async resourceList() {
-    //   var params = {
-    //     Version: "2018-05-25",
-    //     Region: this.$cookie.get("regionv2")
-    //   };
-    //   const res = await this.axios.post(TKE_COLONY_LIST, params);
+    async resourceList() {
+      var params = {
+        Version: "2018-05-25",
+        Region: this.$cookie.get("regionv2")
+      };
+      const res = await this.axios.post(TKE_COLONY_LIST, params);
 
-    //   if (res.Response.Error === undefined) {
-    //     this.TotalCount = res.Response.TotalCount;
+      if (res.Response.Error === undefined) {
+        this.TotalCount = res.Response.TotalCount;
 
-    //     this.clusters = res.Response.Clusters;
-    //     console.log(this.clusters);
-    //   } else {
-    //     let ErrTips = {
-    //       InternalError: "内部错误",
-    //       "InternalError.CamNoAuth": "没有权限",
-    //       "InternalError.Db": "db错误",
-    //       "InternalError.DbAffectivedRows": "DB错误",
-    //       "InternalError.Param": "Param",
-    //       "InternalError.PublicClusterOpNotSupport": "集群不支持当前操作",
-    //       "InternalError.QuotaMaxClsLimit": "超过配额限制",
-    //       "InternalError.QuotaMaxNodLimit": "超过配额限制",
-    //       InvalidParameter: "参数错误",
-    //       "InvalidParameter.Param": "参数错误",
-    //       LimitExceeded: "超过配额限制",
-    //       ResourceNotFound: "资源不存在"
-    //     };
-    //     let ErrOr = Object.assign(ErrorTips, ErrTips);
-    //     this.$message({
-    //       message: ErrOr[res.Response.Error.Code],
-    //       type: "error",
-    //       showClose: true,
-    //       duration: 0
-    //     });
-    //   }
-    // },
+        // this.clusters = res.Response.Clusters;
+        console.log(this.clusters);
+      } else {
+        let ErrTips = {
+          InternalError: "内部错误",
+          "InternalError.CamNoAuth": "没有权限",
+          "InternalError.Db": "db错误",
+          "InternalError.DbAffectivedRows": "DB错误",
+          "InternalError.Param": "Param",
+          "InternalError.PublicClusterOpNotSupport": "集群不支持当前操作",
+          "InternalError.QuotaMaxClsLimit": "超过配额限制",
+          "InternalError.QuotaMaxNodLimit": "超过配额限制",
+          InvalidParameter: "参数错误",
+          "InvalidParameter.Param": "参数错误",
+          LimitExceeded: "超过配额限制",
+          ResourceNotFound: "资源不存在"
+        };
+        let ErrOr = Object.assign(ErrorTips, ErrTips);
+        this.$message({
+          message: ErrOr[res.Response.Error.Code],
+          type: "error",
+          showClose: true,
+          duration: 0
+        });
+      }
+    },
     resourceStatusData() {
       var params = {
         Version: "2018-05-25",
@@ -429,7 +445,48 @@ export default {
           this.TotalCount = res.data.clusterResourceStatusList.length;//集群数
         }
       });
-    }
+    },
+     
+    statusData(){
+      var params={
+        // Dimensions: ["workload", "node", "master_etcd"],
+        "Dimensions.0": "workload",
+        "Dimensions.1": "node",
+        "Dimensions.2": "master_etcd",
+        ResourceType: "nodeWorkloadStaticNum",
+        Version: "2018-05-25",
+      }
+      this.axios.post('tke2/DescribeClustersResourceStatus', params).then(res=>{
+          console.log(res)   
+          if (res.Response.Error === undefined){
+           let  d1=res.Response.ResourceStatusSet
+           var arr=[];
+           d1.forEach(item=>{
+            let obj={};
+             obj.name=item.ClusterInstanceId;
+             item.Status.forEach(v=>{
+               if(v.Dimension=='workload'){
+                 obj.workloadtotal=v.TotalNum;
+                 obj.workloadab=v.AbnormalNum;
+               }else if(v.Dimension=='node'){
+                  obj.nodetotal=v.TotalNum;
+                 obj.nodeab=v.AbnormalNum;
+               }else if(v.Dimension=='master_etcd'){
+                  obj.matotal=v.TotalNum;
+                 obj.maab=v.AbnormalNum;
+               }
+             })
+             arr.push(obj)
+           })
+           this.clusters = arr;
+           console.log(arr)
+
+
+            console.log(d1)
+          } 
+      })
+    },
+
   }
 };
 </script>
@@ -478,12 +535,7 @@ a:hover {
 .data-card-list {
   margin-left: 20px;
 }
-.data-card-border-right {
-  border-right: 1px solid #dddddd;
-}
-.ro-data-card li:last-child.data-card-border-right {
-  border-right: none;
-}
+
 .font-small {
   font-size: 12px;
   color: #888888;
@@ -527,18 +579,32 @@ a:hover {
   font-size: 15px;
   margin-bottom: 20px;
 }
+.border-set{
+  border-left: solid 1px #ddd;
+  border-right: solid 1px #ddd;
+  padding-left: 20px;
+  margin-right: 20px;
+}
 .ro-data-card {
   display: flex;
+  justify-content: space-between;
   margin: -10px 0;
 }
 .ro-data-card-hd {
   margin: 10px 0;
-  width: 282px;
+  // width: 282px;
 }
 .show {
   display: block;
 }
 .hide {
   display: none;
+}
+.ro-data-card-list{
+  width:33%
+}
+.set-span{
+  width:130px;
+  display:inline-block;
 }
 </style>

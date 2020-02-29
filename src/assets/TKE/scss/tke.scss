@@ -410,3 +410,9 @@ hr {
 .f12 {
     font-size: 12px;
 }
+
+.point-white{
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap
+}

@@ -1,6 +1,10 @@
 <template>
   <div class="Cam wrap">
     <HeadCom title="身份提供商" />
+    <div class="explain">
+      <p style="font-weight:bold">身份提供商( IdP )使用背景</p>
+      <p>如果您的企業或組織已有內網賬號體系，您不必在騰訊雲賬戶中為企業用戶再創建子用戶或協作者，同時 IdP 為企業用戶提供SSO單點登錄能力，通過 IdP 身份驗證的外部用戶可直接訪問您的台富雲資源。</p>
+    </div>
     <div class="cam_button" style="margin-top:20px;">
       <el-row class="cam-lt">
         <el-button type="primary" size="small" @click="NewUser">新建提供商</el-button>
@@ -305,4 +309,23 @@ export default {
     margin-bottom: 0;
   }
 }
+.explain {
+    width: 96%;
+    margin: 0 auto;
+    margin-top: 20px;
+    font-size: 12px;
+    padding: 10px 30px 10px 20px;
+    vertical-align: middle;
+    color: #003b80;
+    border: 1px solid #97c7ff;
+    border-radius: 2px;
+    background: #e5f0ff;
+    position: relative;
+    box-sizing: border-box;
+    margin-bottom: 20px;
+
+    p {
+      line-height: 20px;
+    }
+  }
 </style>

@@ -29,50 +29,50 @@
         style="width: 100%">
         <el-table-column type="expand" prop="container">
           <template slot-scope="scope">
-            <el-table border :data="scope.row.status.containerStatuses" >
+            <el-table border :data="scope.row.spec.containers" >
                 <el-table-column prop="" label="容器名称" >
-                  <template slot-scope="scope">
-                    <span>{{scope.row.name}}</span>
+                  <template slot-scope="scope1">
+                    <span>{{scope1.row.name}}</span>
                   </template>
                 </el-table-column>
                 <el-table-column prop="" label="容器ID" >
-                  <template slot-scope="scope">
-                    <span>{{scope.row.containerID}}</span>
+                  <template slot-scope="scope1">
+                    <span>{{scope1.row.containerID}}</span>
                   </template>
                 </el-table-column>
                 <el-table-column prop="" label="镜像版本号" >
-                  <template slot-scope="scope">
-                    <span>{{scope.row.imageID}}</span>
+                  <template slot-scope="scope1">
+                    <span>{{scope1.row.imageID}}</span>
                   </template>
                 </el-table-column>
                 <el-table-column prop="" label="CPU Request" >
-                  <template slot-scope="scope">
-                    <span></span>
+                  <template slot-scope="scope1">
+                    <span>{{scope1.row.resources && scope1.row.resources.requests && scope1.row.resources.requests.cpu && scope1.row.resources.requests.cpu  || '无限制'}}</span>
                   </template>
                 </el-table-column>
                 <el-table-column prop="" label="CPU Limit" >
-                  <template slot-scope="scope">
-                    <span></span>
+                  <template slot-scope="scope1">
+                    <span>{{scope1.row.resources && scope1.row.resources.limits && scope1.row.resources.limits.cpu && scope1.row.resources.limits.cpu || '无限制'}}</span>
                   </template>
                 </el-table-column>
                 <el-table-column prop="" label="内存 Request" >
-                  <template slot-scope="scope">
-                    <span></span>
+                  <template slot-scope="scope1">
+                    <span>{{scope1.row.resources && scope1.row.resources.requests && scope1.row.resources.requests.memory && scope1.row.resources.requests.memory || '无限制'}}</span>
                   </template>
                 </el-table-column>
                 <el-table-column prop="" label="内存 Limit" >
-                  <template slot-scope="scope">
-                    <span></span>
+                  <template slot-scope="scope1">
+                    <span>{{scope1.row.resources && scope1.row.resources.limits && scope1.row.resources.limits.memory && scope1.row.resources.limits.memory || '无限制'}}</span>
                   </template>
                 </el-table-column>
                 <el-table-column prop="" label="重启次数" >
-                  <template slot-scope="scope">
-                    <span></span>
+                  <template>
+                    <span>{{scope.row.restart}}</span>
                   </template>
                 </el-table-column>
                 <el-table-column prop="" label="状态" >
-                  <template slot-scope="scope">
-                    <span class="text-green"></span>
+                  <template>
+                    <span class="text-green">{{scope.row.status.phase}}</span>
                   </template>
                 </el-table-column>
             </el-table>
@@ -119,7 +119,7 @@
           label="CPU Request"
           >
           <template slot-scope="scope">
-            <span></span>
+            <span>{{scope.row.cpu}}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -127,7 +127,7 @@
           label="内存 Request"
           >
           <template slot-scope="scope">
-            <span></span>
+            <span>{{scope.row.memory}}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -143,8 +143,8 @@
           label="所属工作负载"
           >
           <template slot-scope="scope">
-            <p>{{scope.row.metadata.labels && scope.row.metadata.labels.k8s}}</p>
-            <p></p>
+            <p>{{scope.row.metadata.ownerReferences && scope.row.metadata.ownerReferences[0].name}}</p>
+            <p>{{scope.row.metadata.ownerReferences && scope.row.metadata.ownerReferences[0].kind}}</p>
           </template>
         </el-table-column>
         <el-table-column
@@ -160,7 +160,7 @@
           label="重启次数"
           >
           <template slot-scope="scope">
-            <span></span>
+            <span>{{scope.row.restart}}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -303,9 +303,38 @@ export default {
           if(response.items.length > 0) {
             response.items.map(o => {
               o.addTime = moment(o.metadata.creationTimestamp).format("YYYY-MM-DD HH:mm:ss");
+              let cpu = 0, memory = 0, restart = 0;
+
+              if(o.spec && o.spec.containers.length > 0) {
+                for(var i = 0; i < o.spec.containers.length; i++) {
+                  let containers = o.spec.containers[i];
+                  cpu += containers.resources && containers.resources.requests && containers.resources.requests.cpu 
+                    && Number(containers.resources.requests.cpu.substring(0,containers.resources.requests.cpu.length - 1)) || 0;
+                  memory += containers.resources && containers.resources.requests && containers.resources.requests.memory 
+                    && Number(containers.resources.requests.memory.substring(0,containers.resources.requests.memory.length - 1)) || 0;
+                }
+              }
+              if(o.status && o.status.containerStatuses.length > 0) {
+                for(var j = 0; j < o.status.containerStatuses.length; j++) {
+                  let containerStatuses = o.status.containerStatuses[j];
+                  restart += containerStatuses.restartCount;
+                }  
+              }
+              if(cpu > 0) {
+                o.cpu = cpu/1000 + '核';
+              } else {
+                o.cpu = '无限制';
+              }
+              if(memory > 0) {
+                o.memory = memory + 'M';
+              } else {
+                o.memory = '无限制';
+              }
+              o.restart = restart;
             });
             this.list = response.items;
             this.total = response.items.length;
+            console.log(this.list);
           } 
         } else {
           this.loadShow = false;
@@ -376,22 +405,22 @@ export default {
       this.loadShow = true;
       let param = {
         Method: "DELETE",
-        Path: "/api/v1/namespaces/"+this.rowObj+"/pods/"+this.podName,
+        Path: "/api/v1/namespaces/kube-system/pods/"+this.podName,
         Version: "2018-05-25",
-        RequestBody: "{'propagationPolicy': 'Background'}",
+        RequestBody: JSON.stringify({'propagationPolicy': 'Background'}),
         ClusterName: this.clusterId
       }
       await this.axios.post(POINT_REQUEST, param).then(res => {
-        if(res.code === 0) {
+        if(res.Response.Error === undefined) {
           this.loadShow = false;
           this.showReconstModal = false;
           this.getPodList();
-          this.$message({
-            message: '删除成功',
-            type: "success",
-            showClose: true,
-            duration: 0
-          });
+          // this.$message({
+          //   message: '删除成功',
+          //   type: "success",
+          //   showClose: true,
+          //   duration: 0
+          // });
         } else {
           this.loadShow = false;
           let ErrTips = {

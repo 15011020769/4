@@ -4,7 +4,7 @@
     <div class="wrap">
       <div class="message-funRight">
           <div class="search">
-            <el-input :placeholder="$t('MGC.qsrnr')" v-model="inputVal"></el-input>
+            <el-input :placeholder="$t('MGC.qsrnr')" v-model="inputVal" clearable></el-input>
             <span>
               <i class="el-icon-search" @click="tableSearch"></i>
             </span>
@@ -15,29 +15,49 @@
           <el-table
             :data="tableData"
             style="width: 100%"
-            height="450"
             v-loading="loading"
           >
+          <el-table-column
+        prop="id"
+        type="index"
+        header-align="center"
+        align="center"
+        width="80"
+        label="序號"
+      ></el-table-column>
             <el-table-column prop="title" :label="$t('MGC.bt')" >
-                <template slot-scope="scope">
-                   <el-link @click="detailsMesg(scope.row)" type="primary" class="edit">{{scope.row.title}}</el-link>
+            </el-table-column>
+            <el-table-column prop="publishTime" :label="$t('MGC.fbsj')" ></el-table-column>
+            <el-table-column prop="isTop" :label="$t('MGC.zd')">
+            <template slot-scope="scope">
+                  <p>{{scope.row.isTop==0?"否":"是"}}</p>
                 </template>
             </el-table-column>
-            <el-table-column prop="publishTime" :label="$t('MGC.fbsj')"></el-table-column>
-            <el-table-column prop="content" label="消息内容"></el-table-column>
-            <el-table-column prop="publishStatus" :label="$t('MGC.zt')"></el-table-column>
-            <el-table-column label="操作">
+            <el-table-column prop="publishStatus" :label="$t('MGC.zt')" fixed="right">
+            <template slot-scope="scope">
+                  <p>{{$t('MGC.fb')}}</p>
+                </template>
+            </el-table-column>
+            <el-table-column label="操作" fixed="right">
               <template slot-scope="scope">
                 <el-button
                   @click.native.prevent="detailsMesg(scope.row)"
                   type="text"
                 >查看</el-button>
               </template>
-            </el-table-column>
+            </el-table-column> 
           </el-table>
         </template>
         <div class="Right-style pagstyle" style="height:70px;">
           <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;{{$t('MGC.tiao')}}</span>
+           <el-select v-model="pagevalue" placeholder="请选择" size="mini" class="pageselect" @change='pagechange'>
+            <el-option
+              v-for="item in pageoptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
+          </el-select>
           <el-pagination
             :page-size="pagesize"
             :pager-count="7"
@@ -69,7 +89,24 @@ export default {
       tableData: [], //表格数据
       dialogVisible:false,//删除弹框
       getData:[], //选中的数据
-      MessageDialog:false
+      MessageDialog:false,
+      pageoptions:[{
+          value: 10,
+          label: '10項/頁'
+        }, {
+          value: 20,
+          label: '20項/頁'
+        }, {
+          value: 30,
+          label: '30項/頁'
+        }, {
+          value: 40,
+          label: '40項/頁'
+        }, {
+          value: 50,
+          label: '50項/頁'
+        }],//分页
+        pagevalue:10//分页
     };
   },
   created() {
@@ -87,6 +124,12 @@ export default {
          this.TotalCount = res.page.totalCount
          this.loading = false
        })
+    },
+    //分页
+    pagechange(){
+    this.pagesize=this.pagevalue;
+    console.log(123)
+    this.init()
     },
     tableSearch() {
        let uin = "100011921910"
@@ -121,31 +164,34 @@ export default {
 .edit{
   cursor: pointer; 
 }
+.pageselect{
+      margin-left:20px;
+      width:100px;
+      margin-top:2px;
+    }
      .message-funRight {
-        width: 200px;
+        width: 250px;
         display: flex;
         align-items: center;
         float: right;
         padding: 20px;
         .search {
           position: relative;
-          width: 100%;
-   
+          width: 80%;
           span {
-            height: 30px;
-            width: 30px;
+            height: 36px;
+            width: 32px;
             align-items: center;
             justify-content: center;
             display: flex;
             position: absolute;
-            top: 0;
-            right: 0;
+            top: 2px;
+            right: -31px;
+            background:#b7b3b3;
             cursor: pointer;
-
             i {
-              font-size: 14px;
+              font-size: 18px;
               font-weight: bold;
-              margin-top: 10px;
             }
           }
         }
@@ -164,6 +210,12 @@ export default {
     padding: 20px 20px 0 20px;
     box-sizing: border-box;
   }
+  .el-table{
+    font-size:15px !important;
+  }
+  ::v-deep .el-table td{
+        padding:5px 0;
+      }
 }
 .Right-style {
   display: flex;
