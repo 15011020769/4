@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2020-02-20 10:13:21
- * @LastEditTime: 2020-02-28 12:34:56
+ * @LastEditTime: 2020-02-28 18:06:58
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: /new_product/src/views/WAF/botMan/component/protectionSetting/module/ipOrxyTable.vue
@@ -48,6 +48,7 @@
 <script>
 import Transfer from '../../transfer'
 import EditDialog from '../../editDialog'
+import { DESCRIBE_BOT_UCB_PREINSTALLRULE } from '@/constants'
 export default {
   data() {
     return {
@@ -134,6 +135,10 @@ export default {
     EditDialog
   },
 
+  mounted() {
+    this.getPreinstallRule()
+  },
+
   methods: {
     onEdit(row) {
       this.showEditDialog = true
@@ -144,6 +149,18 @@ export default {
       this.showFlag = false
       setTimeout(() => {
         this.showFlag = true
+      })
+    },
+
+    // 获取协议特征策略
+    getPreinstallRule() {
+      let params = {
+        Version: '2018-01-25',
+        Domain: 'tfc.dhycloud.com',
+        Category: 1
+      }
+      this.axios.post(DESCRIBE_BOT_UCB_PREINSTALLRULE, params).then(res => {
+        console.log(res);
       })
     }
   }

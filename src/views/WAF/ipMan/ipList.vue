@@ -127,11 +127,19 @@
               </template>
             </el-table-column>
             <el-table-column prop="TsVersion" label="更新时间">
+              <span slot="header">
+                更新时间
+                <i @click="() => { onSearch('Cts'); ctsFlag = !ctsFlag }" style="cursor: pointer" class="el-icon-d-caret" />
+              </span>
               <template slot-scope="scope">
                 {{scope.row.TsVersion | currentTimeFilter}}
               </template>
             </el-table-column>
             <el-table-column prop="ValidTs" label="截止时间">
+              <span slot="header">
+                截止时间
+                <i @click="() => { onSearch('Vts'); vtsFlag = !vtsFlag }" style="cursor: pointer" class="el-icon-d-caret" />
+              </span>
               <template slot-scope="scope">
                 {{scope.row.ValidTs | currentTimeFilter}}
               </template>
@@ -236,7 +244,9 @@ export default {
       dialogVisible: false, // 批量删除弹窗
       pageLimit: 10,  // 分页限制
       pageOffset: 0,  // 分页偏移量
-      pageShow: true  // 切换分页显示
+      pageShow: true,  // 切换分页显示
+      ctsFlag: false, // 更新时间升降序
+      vtsFlag: false, // 有效时间时间升降序
     };
   },
   components:{
@@ -374,7 +384,7 @@ export default {
     },
 
     //  查询
-    onSearch() {
+    onSearch(sort) {
       let params = {
         Version: '2018-01-25',
         Domain: this.ipSearch,
@@ -388,9 +398,22 @@ export default {
         Source: this.resouseC || undefined,
       }
 
+      if (params.sort) {
+        delete params.sort
+      }
+
+      if (sort === 'Cts') {
+        this.vtsFlag = false
+        params.Sort = this.ctsFlag ? 'ts_version:1' : 'ts_version:-1' 
+      }
+
+      if (sort === 'Vts') {
+        this.ctsFlag = false
+        params.Sort = this.vtsFlag ? 'valid_ts:1' : 'valid_ts:-1' 
+      }
+
       if (this.pageOffset === 0) {
         this.pageShow = false
-        console.log('pageShow');
         this.$nextTick(() => {
           this.pageShow = true
         })
