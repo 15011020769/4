@@ -56,7 +56,17 @@ export const TKE_MIRROR_ROAD = 'ccr/GetTagList'
 export const TKE_MIRROR_STRATEGY = 'ccr/SetAutoDelStrategy'
 
 // 删除镜像自动
-export const MIRROR_AUTODELELTE = 'ccr/closeAutoDelStrategy'
+export const TKE_MIRROR_AUTODELELTE = 'ccr/closeAutoDelStrategy'
+
+// 自动清理设置
+export const TKE_AUTOSTRATEGY = 'ccr/GetAutoDelStrategy'
+
+
+
+
+// export const TKE_MIRROR_AUTODELELTE = 'ccr/closeAutoDelStrategy'
+
+
 
 
 

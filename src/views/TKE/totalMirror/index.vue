@@ -166,6 +166,7 @@ export default {
           this.favor = res.data.repoInfo.isUserFavor
           this.loadShow = false
         } else {
+          console.log(1)
           this.$message({
               message: ErrorTips[res.codeDesc],
               type: "error",
@@ -182,18 +183,18 @@ export default {
         repotype: row.repotype
       }
       this.axios.post(TKE_DELETE_FAVOR, param).then(res => {
-        // console.log(res)
         if (res.code === 0 && res.Error == undefined) {
           this.loadShow = true
           this.GetRepositoryList()
-        } else {
-          this.$message({
-              message: ErrorTips[res.codeDesc],
-              type: "error",
-              showClose: true,
-              duration: 0
-          })
-        }
+        } 
+        // else {
+        //   this.$message({
+        //       message: ErrorTips[res.codeDesc],
+        //       type: "error",
+        //       showClose: true,
+        //       duration: 0
+        //   })
+        // }
       })
     },
     // 添加收藏
@@ -206,14 +207,16 @@ export default {
         if (res.code === 0 && res.Error == undefined) {
           this.loadShow = true
           this.GetRepositoryList()
-        } else {
-          this.$message({
-              message: ErrorTips[res.codeDesc],
-              type: "error",
-              showClose: true,
-              duration: 0
-          })
-        }
+        } 
+        // else {
+        //   console.log(2)
+        //   this.$message({
+        //       message: ErrorTips[res.codeDesc],
+        //       type: "error",
+        //       showClose: true,
+        //       duration: 0
+        //   })
+        // }
       })
     }
   },

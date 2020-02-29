@@ -12,12 +12,12 @@
     </div>
     <div class="room-top" style="margin-bottom:20px;">
       <div class="top-left">
-        <el-button
+        <!-- <el-button
           type="primary"
           size="mini"
           class="botton-size"
           @click="dialogFormVisible = true"
-        >使用索引</el-button>
+        >使用索引</el-button> -->
         <el-button disabled size="mini" class="botton-size">删除</el-button>
       </div>
       <div class="top-right">
@@ -52,7 +52,7 @@
         ></el-pagination>
       </div>
     </div>
-    <!-- 使用指引弹出框 -->
+    <!-- 使用指引弹出框
     <el-dialog title="使用指引" :visible.sync="dialogFormVisible" width="620px">
         <ul>
           <li>
@@ -91,7 +91,7 @@
              <p class="pli-2">其中[ImageId]请根据您的实际镜像ID信息进行填写, [tag]请根据您的镜像版本信息进行填写。</p>
           </li>
         </ul>
-    </el-dialog>
+    </el-dialog> -->
     <!-- 设置 -->
     <el-dialog
       title="自动删除镜像设置"
@@ -101,33 +101,34 @@
       <div class="explain2" style="margin-bottom:20px;">
         <p>当前账号下镜像仓库内镜像版本配额为1000个，当前仓库内镜像版本数达到此配额后，将触发自动清理策略。</p>
       </div>
-      <el-form :model="ruleForm" ref="ruleForm" label-width="30px" class="demo-ruleForm">
-        <el-form-item >
-          <el-radio v-model="radio" label="1">
+      <el-form :model="ruleForm" ref="ruleForm" label-width="30px" class="demo-ruleForm" :rules="rules" :show-message='false'>
+        <el-form-item prop="input1" >
+          <el-radio v-model="radio" label="keep_last_nums">
             保留最新的<el-input v-model.number="ruleForm.input1" :disabled="flag1" class="dialog-input" size="mini" autocomplete="off"></el-input>个镜像版本
           </el-radio>
         </el-form-item>
-         <el-form-item>
-          <el-radio v-model="radio" label="2">
+         <el-form-item prop="input2">
+          <el-radio v-model="radio" label="keep_last_days">
             保留最新的<el-input v-model.number="ruleForm.input2" :disabled="flag2" class="dialog-input" size="mini" autocomplete="off"></el-input>天内的镜像版本
           </el-radio>
         </el-form-item>
       </el-form>
         <span slot="footer" class="dialog-footer">
           <el-button @click="dialogVisible = false">取 消</el-button>
-          <el-button type="primary" @click="submitForm (ruleForm)">确 定</el-button>
+          <el-button type="primary" @click="submitForm ('ruleForm')">确 定</el-button>
         </span>
     </el-dialog>
   </div>
 </template>
 <script>
-import { TKE_MIRROR_ROAD, TKE_MIRROR_STRATEGY, TKE_MIRROR_AUTODELELTE } from '@/constants'
+import { ErrorTips } from "@/components/ErrorTips";
+import { TKE_MIRROR_ROAD, TKE_MIRROR_STRATEGY, TKE_MIRROR_AUTODELELTE,TKE_AUTOSTRATEGY } from '@/constants'
 export default {
   name:'MirrorInfos',
   data () {
     return {
       userID: 100011921910,
-      radio: '1',
+      radio: 'keep_last_nums',
       flag1: false,
       flag2: true,
       name: this.$route.query.id,
@@ -146,20 +147,38 @@ export default {
       ruleForm: {
         input1: '',
         input2: ''
+      },
+      rag1:"",
+      rag2:"",
+      rules:{
+        input1:[
+          { required: true},
+          { type: 'number', message: '请输入一个正整数'}
+        ],
+        input2:[
+          { required: true},
+          { type: 'number', message: '请输入一个正整数'}
+        ]
       }
     }
   },
   watch: {
     radio (newName, oldName) {
-      if (newName === '1') {
+      if (newName == 'keep_last_nums') {
         this.flag1 = false
         this.flag2 = true
+        // this.$refs['ruleForm'].resetField();
+        this.$refs['ruleForm'].clearValidate();
         this.input2 = ''
         this.ruleForm.input2 = ''
+        
+        // this.$refs['ruleForm'].clearValidate();
       }
-      if (newName === '2') {
+      if (newName == 'keep_last_days') {
         this.flag1 = true
         this.flag2 = false
+        // this.$refs['ruleForm'].resetField();
+        this.$refs['ruleForm'].clearValidate();
         this.input2 = ''
         this.ruleForm.input1 = ''
       }
@@ -167,6 +186,7 @@ export default {
   },
   created () {
     this.GetLink()
+    this.GetImage()
   },
   methods: {
     handleClick (row) {
@@ -176,13 +196,30 @@ export default {
     handleCurrentChange (val) {
       this.currpage = val
     },
-    submitForm (formName) {
-      // console.log(formName)
-      if (formName.input1 !== '' || formName.input2 !== '') {
-        this.dialogVisible = false
-        this.GetMirrorVersion()
-      }
-    },
+    submitForm(formName) {
+       
+        this.$refs[formName].validate((valid) => {
+          if (this.ruleForm.input1 !== '' || this.ruleForm.input2 !== '') {
+             valid = !valid
+              if (valid) {
+              this.dialogVisible = false
+              this.GetMirrorVersion()
+              // alert('submit!');
+              } else {
+                console.log('error submit!!');
+                return false;
+              }
+          }
+         
+        });
+      },
+    // submitForm (formName) {
+    //   // console.log(formName)
+    //   if (formName.input1 !== '' || formName.input2 !== '') {
+    //     this.dialogVisible = false
+    //     this.GetMirrorVersion()
+    //   }
+    // },
     getContext (e) {
       let getText = e.currentTarget.previousElementSibling.innerHTML
       this.copy(getText)
@@ -207,9 +244,42 @@ export default {
       }
       this.axios.post(TKE_MIRROR_ROAD, param).then(res => {
         if (res.code === 0 && res.Error == undefined) {
-          // console.log(res.data)
+           console.log(res)
           this.server = res.data.server
           this.reponame = res.data.reponame
+        } else {
+          this.$message({
+              message: ErrorTips[res.codeDesc],
+              type: "error",
+              showClose: true,
+              duration: 0
+          })
+        }
+      })
+    },
+    GetImage () { // 清除策略
+      const param = {
+        reponame: this.name
+      }
+      this.axios.post(TKE_AUTOSTRATEGY, param).then(res => {
+        if (res.code === 0 && res.Error == undefined) {
+           console.log(res)
+           let strategyInfo = res.data.strategyInfo
+           for(let i in strategyInfo){
+             if(strategyInfo[i].type == "keep_last_nums" && strategyInfo[i].valid){
+                  this.rag1 = true
+                  this.rag2 = false
+                  this.input1 = strategyInfo[i].value
+                  console.log(this.input1)  
+             } else if(strategyInfo[i].type == "keep_last_days" && strategyInfo[i].valid){
+                  this.rag2 = true
+                  this.rag1 = false
+                  this.input2 = strategyInfo[i].value  
+                  console.log(this.input2) 
+             }
+           }
+          // this.server = res.data.server
+          // this.reponame = res.data.reponame
         } else {
           this.$message({
               message: ErrorTips[res.codeDesc],
@@ -230,6 +300,14 @@ export default {
           // console.log(res.data)
           this.input1 = ''
           this.input2 = ''
+          this.rag1 = ''
+          this.rag2 = ''
+          this.$message({
+              message:"删除成功",
+              type: "success",
+              showClose: true,
+              duration: 0
+          })
         } else {
           this.$message({
               message: ErrorTips[res.codeDesc],
@@ -244,16 +322,16 @@ export default {
       const param = {
         type: 'keep_last_nums',
         val: this.ruleForm.input1,
-        reponame: 'cstest/as'
+        reponame: this.name
       }
       const param2 = {
         type: 'keep_last_days',
         val: this.ruleForm.input2,
-        reponame: 'cstest/as'
+        reponame: this.name
       }
       if (this.ruleForm.input1 !== '') {
         this.axios.post(TKE_MIRROR_STRATEGY, param).then(res => {
-          // console.log(res)
+          console.log(res)
           if (res.code === 0 && res.Error == undefined) {
             this.input1 = this.ruleForm.input1
           } else {

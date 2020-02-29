@@ -146,7 +146,7 @@ export default {
           this.GetDockerHub()
         } else {
           this.$message({
-              message: ErrorTips[res.data.codeDesc],
+              message: ErrorTips[res.codeDesc],
               type: "error",
               showClose: true,
               duration: 0
@@ -166,7 +166,7 @@ export default {
           this.GetDockerHub()
         } else {
           this.$message({
-              message: ErrorTips[res.data.codeDesc],
+              message: ErrorTips[res.codeDesc],
               type: "error",
               showClose: true,
               duration: 0
