@@ -405,7 +405,9 @@ export default {
          var RequestBodyAll = {"chart_url":this.ruleForm.address,"values":{"raw_original":nmAll.join(','),"values_type":"kv"}}
       }else if(this.domains.length > 0 && this.ruleForm.nameTwo && this.ruleForm.pass){
          var RequestBodyAll = {"chart_url":this.ruleForm.address,"username":this.ruleForm.nameTwo,"password":this.ruleForm.pass,"values":{"raw_original":nmAll.join(','),"values_type":"kv"}}
-      } else {
+      }else if(this.domains.length = 0 && this.ruleForm.nameTwo && this.ruleForm.pass){
+         var RequestBodyAll = {"chart_url":this.ruleForm.address,"username":this.ruleForm.nameTwo,"password":this.ruleForm.pass}
+      }else {
         var RequestBodyAll = {"chart_url":this.ruleForm.address}
       }
       const param = {
@@ -446,13 +448,7 @@ export default {
       }
       this.axios.post(POINT_REQUEST, param).then(res => {
         if (res.Response.Error == undefined) {
-          console.log(JSON.parse(res.Response.ResponseBody))
-            // this.getColony()
-            //this.Data=JSON.parse(res.Response.ResponseBody).release
-            // // this.raw =JSON.parse(res.Response.ResponseBody).release.config.raw
-            // // let rawDetail = JSON.parse(this.raw)
-            // console.log(res)
-            // this.getFlag()
+            console.log(JSON.parse(res.Response.ResponseBody))
             this.flagAgin = 3
             this.tableData=[]
           } else {
