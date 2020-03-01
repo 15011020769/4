@@ -262,6 +262,7 @@ export default {
       vpcNameAry: [], // vpcName的数据
       addressCount: {}, // LB中的子网点对象
       serviceInfo: {}, // 服务详情信息
+      vpcId: [], // (2)中vpcids数据
       timeRules: [{
         validator: (rule, value, callback) => {
           let reg = /^\d+\.\d+$/
@@ -305,7 +306,7 @@ export default {
     this.getInfo()// 获取服务详情信息
   },
   methods: {
-    // 扫描子网
+    // 扫描子网(4)
     async getDescribeSubnets () {
       let params = {
         // Filters: [{ Name: 'vpc-id', Values: ['vpc-apm60zou'] }],
@@ -332,18 +333,18 @@ export default {
         }
       })
     },
-    // 扫描vpcs
+    // 扫描vpcs(3)
     async getDescribeVpcs () {
       let params = {
         Limit: 100,
         Offset: 0,
         Version: '2017-03-12',
         'VpcIds.0': 'vpc-apm60zou'
-        // VpcIds: ["vpc-apm60zou"]
+        // 'VpcIds.0': this.vpcId[0]
       }
       await this.axios.post(TKE_VPC_METWORK, params).then(res => {
+        // console.log(22222, res)
         if (res.Response.Error === undefined) {
-          // console.log(res)
           this.vpcNameAry = res.Response.VpcSet
           this.svc.LBvalue1 = res.Response.VpcSet[0].VpcName
         } else {
@@ -358,7 +359,7 @@ export default {
         }
       })
     },
-    // 扫描均衡器
+    // 扫描均衡器(2)
     async getDescribeLoadBalancers () {
       let params = {
         Forward: 1,
@@ -371,6 +372,14 @@ export default {
           let msg = res.Response.LoadBalancerSet
           this.ownLoadBalancer = msg
           this.svc.value = msg[0].LoadBalancerId + '  (' + msg[0].LoadBalancerName + ')'
+          // this.vpcId = this.vpcId.push(msg[0].VpcId)
+          if (msg.length > 0) {
+            msg.forEach(ele => {
+              this.vpcId.push(ele.VpcId)
+            })
+          }
+          this.vpcId = new Set(this.vpcId)
+          // console.log(22222, this.vpcId)
           // console.log(this.ownLoadBalancer)
         } else {
           let ErrTips = {}
@@ -384,7 +393,7 @@ export default {
         }
       })
     },
-    // 获取集群列表
+    // 获取集群列表(1)
     async getDescribeClusters () {
       let params = {
         'ClusterIds.0': this.clusterId,
@@ -392,7 +401,9 @@ export default {
       }
       await this.axios.post(TKE_COLONY_LIST, params).then(res => {
         if (res.Response.Error === undefined) {
-          this.describeClustersList = res.Response.Clusters
+          let msg = res.Response.Clusters
+          this.describeClustersList = msg
+          // this.vpcId = msg
           // console.log(this.describeClustersList)
         } else {
           let ErrTips = {}
@@ -440,7 +451,7 @@ export default {
     async getInfo () {
       this.loadShow = true
       let params = {
-        ClusterName: 'cls-a7rua9ae',
+        ClusterName: this.clusterId,
         Method: 'GET',
         Path: `/api/v1/namespaces/${this.spaceName}/services/${this.serviceName}`,
         Version: '2018-05-25'
