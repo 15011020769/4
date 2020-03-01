@@ -91,9 +91,6 @@
             name: '实时',
             Time: 'realTime',
             TimeGranularity: [{
-                value: "5",
-                label: "5秒"
-              }, {
                 value: "10",
                 label: "10秒"
               },
@@ -151,15 +148,26 @@
         MonitorData: [], //监控数据
         tableData: [], // 组合数据
         disName: {
-
+          "OutBandwidth": '外網出頻寬',
+          "InBandwidth": '外網入頻寬',
+          "OutPkg": '出包量',
+          "InPkg": '入包量',
+          "Conns": '連接數'
         },
         Company: {
-
+          "OutBandwidth": 'Mbps',
+          "InBandwidth": 'Mbps',
+          "OutPkg": '個/秒',
+          "InPkg": '個/秒',
+          "Conns": '個/秒'
         },
         Tips: {
-
+          "OutBandwidth": 'NAT網關平均每秒出流量',
+          "InBandwidth": 'NAT網關平均每秒入流量',
+          "OutPkg": 'NAT網關平均每秒出包量',
+          "InPkg": 'NAT網關平均每秒入包量',
+          "Conns": 'NAT網關的實時並發數'
         },
-
       }
     },
     components: {
@@ -195,12 +203,11 @@
         let parms = {
           Version: '2018-07-24',
           Region: localStorage.getItem('regionv2'),
-          Namespace: 'NAT_GATEWAY'
+          Namespace: 'QCE/NAT_GATEWAY'
         }
         this.axios.post(ALL_Basics, parms).then(res => {
           if (res.Response.Error == undefined) {
             this.BaseList = res.Response.MetricSet
-            console.log(this.BaseList)
             this.MonitorData = []
             this.BaseListK = []
             this.BaseList.forEach(item => {
@@ -224,12 +231,12 @@
         let parms = {
           Version: '2018-07-24',
           Region: localStorage.getItem('regionv2'),
-          Namespace: 'NAT_GATEWAY',
+          Namespace: 'QCE/NAT_GATEWAY',
           Period: this.Period,
           StartTime: this.Time.StartTIme,
           EndTime: this.Time.EndTIme,
           MetricName: MetricName,
-          'Instances.0.Dimensions.0.Name': 'InstanceId',
+          'Instances.0.Dimensions.0.Name': 'natId',
           'Instances.0.Dimensions.0.Value': this.ID,
         }
         this.axios.post(All_MONITOR, parms).then(data => {
