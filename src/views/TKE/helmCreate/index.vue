@@ -193,10 +193,11 @@ export default {
     // 确定
     submitForm(formName) {
         this.$refs[formName].validate((valid) => {
-          if(this.isCollapse){
-            valid = !valid
-          }
           if (valid) {
+            //  if(this.isCollapse){
+            //     this.setHelm()
+            //     return
+            // }
             this.setHelm()
             this.$router.push({
               name: 'helm',
@@ -205,6 +206,10 @@ export default {
               }
             })
           } else {
+            if(valid && this.isCollapse){
+              this.setHelm()
+              return
+            }
             console.log('error submit!!');
             return false;
           }

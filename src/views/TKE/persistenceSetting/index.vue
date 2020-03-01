@@ -41,9 +41,9 @@
                 size="mini"
               >
                 <el-radio-button class="tabs-size" style="font-size:12px;" label="Els">Elasticsearch</el-radio-button>
-                <el-tooltip class="item" effect="light" content="该地区不支持日志服务CLS" placement="right">
+                <!-- <el-tooltip class="item" effect="light" content="该地区不支持日志服务CLS" placement="right">
                   <el-radio-button class="tabs-size" label="log" disabled>日志服务CLS</el-radio-button>
-                </el-tooltip>
+                </el-tooltip> -->
               </el-radio-group>
             </div>
           </div>

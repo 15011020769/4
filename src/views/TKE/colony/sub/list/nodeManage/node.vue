@@ -383,8 +383,7 @@ export default {
               duration: 0
             });
           }
-          let jobRes = await this.axios.post(JOB_ID, paramJob);
-          debugger
+          // let jobRes = await this.axios.post(JOB_ID, paramJob);
           this.loadShow = true;
           let nodeRes = await this.axios.post(NODE_LIST, param);
           if(nodeRes.Response.Error === undefined) {

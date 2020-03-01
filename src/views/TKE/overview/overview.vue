@@ -5,7 +5,8 @@
       <div class="tf-g">
         <el-row>
           <!-- 左边内容 -->
-          <el-col :span="16">
+          <el-col >
+          <!-- <el-col :span="16"> -->
             <!-- 第一行内容 -->
             <div class="resource-overview">
               <h3 class="font" style="margin-bottom:20px">资源概览</h3>
@@ -95,7 +96,7 @@
                   <div class="ro-data-card" style="margin:0">
                     <div class="twoROW-data-card-list">
                       <div>
-                        <span style="font-size:18px;">0.04</span>
+                        <span style="font-size:18px;font-weight:700">0.04</span>
                         <span class="font-small" style="color:black;"
                           >%&nbsp;CPU利用率</span
                         >
@@ -106,7 +107,7 @@
                     </div>
                     <div class="twoROW-data-card-list">
                       <div>
-                        <span style="font-size:18px;">0.43</span>
+                        <span style="font-size:18px; font-weight:700">0.43</span>
                         <span class="font-small" style="color:black;"
                           >%&nbsp;内存利用率</span
                         >
@@ -122,7 +123,7 @@
                       <div style="padding-top:0;">
                         <span class="set-span">
                           <span>节点</span>
-                          <a href="">（{{item.nodetotal}}个）</a>
+                          <a @click="goNode(item.name)">（{{item.nodetotal}}个）</a>
                         </span>
                         <span v-if="item.nodeab==0"  class="font-green"
                           >正常</span
@@ -134,7 +135,7 @@
                       <div style="padding-top:17px;">
                         <span class="set-span"> 
                           <span>Master&Etcd</span>
-                          <a href="">（{{item.matotal}}个）</a>
+                          <a @click="goMasteretcd(item.name)">（{{item.matotal}}个）</a>
                         </span>
                         <span  v-if="item.maab==0"  class="font-green"
                           >正常</span
@@ -146,7 +147,7 @@
                       <div style="padding-top:17px;">
                         <span class="set-span">
                         <span>工作负载</span>
-                        <a href="">（{{item.workloadtotal}}个）</a>
+                        <a @click="goWorkload(item.name)">（{{item.workloadtotal}}个）</a>
                          </span>
                          <span  v-if="item.workloadab==0"  class="font-green"
                           >正常</span
@@ -204,142 +205,7 @@
             </div>
           </el-col>
           <!-- 右边内容 -->
-          <el-col :span="8">
-            <div class="resource-overview" style="margin-left:20px">
-              <div class="zn" style="justify-content: space-between;">
-                <h3 class="font" style="margin-bottom:20px;font-size:14px">
-                  帮助文档
-                </h3>
-                <label class="font-small">
-                  <a href="">更多</a>
-                  <i class="el-icon-edit-outline"></i>
-                </label>
-              </div>
-              <ul class="font-small">
-                <li class="help-list">
-                  <a class="font-black" href="">容器服务如何使用</a>
-                </li>
-                <li class="help-list">
-                  <a class="font-black" href="">容器服务提供了哪些功能</a>
-                </li>
-                <li class="help-list">
-                  <a class="font-black" href="">容器服务如何计费</a>
-                </li>
-                <li class="help-list">
-                  <a class="font-black" href="">如何构建docker镜像</a>
-                </li>
-                <li class="help-list">
-                  <a class="font-black" href="">如何登陆到容器</a>
-                </li>
-              </ul>
-            </div>
-            <div class="resource-overview" style="margin:20px 0 0 20px;">
-              <div class="zn" style="justify-content: space-between;">
-                <h3 class="font" style="margin-bottom:20px;font-size:14px">
-                  最近更新
-                </h3>
-                <label class="font-small">
-                  <a href="">更多</a>
-                  <i class="el-icon-edit-outline"></i>
-                </label>
-              </div>
-              <ul class="font-small">
-                <li class="help-list">
-                  <div class="zn" style="justify-content: space-between;">
-                    <a class="font-black" href=""
-                      >TKE支持自定义节点&nbsp;Hostname（内测）</a
-                    >
-                    <div>
-                      2019-11-15
-                    </div>
-                  </div>
-                </li>
-                <li class="help-list">
-                  <div class="zn" style="justify-content: space-between;">
-                    <a class="font-black" href=""
-                      >TKE支持自定义节点&nbsp;Hostname（内测）</a
-                    >
-                    <div>
-                      2019-11-15
-                    </div>
-                  </div>
-                </li>
-                <li class="help-list">
-                  <div class="zn" style="justify-content: space-between;">
-                    <a class="font-black" href=""
-                      >TKE支持自定义节点&nbsp;Hostname（内测）</a
-                    >
-                    <div>
-                      2019-11-15
-                    </div>
-                  </div>
-                </li>
-                <li class="help-list">
-                  <div class="zn" style="justify-content: space-between;">
-                    <a class="font-black" href=""
-                      >TKE支持自定义节点&nbsp;Hostname（内测）</a
-                    >
-                    <div>
-                      2019-11-15
-                    </div>
-                  </div>
-                </li>
-                <li class="help-list">
-                  <div class="zn" style="justify-content: space-between;">
-                    <a class="font-black" href=""
-                      >TKE支持自定义节点&nbsp;Hostname（内测）</a
-                    >
-                    <div>
-                      2019-11-15
-                    </div>
-                  </div>
-                </li>
-              </ul>
-            </div>
-            <div class="resource-overview" style="margin:20px 0 0 20px;">
-              <div class="zn" style="justify-content: space-between;">
-                <h3 class="font" style="margin-bottom:20px;font-size:14px">
-                  配置限额
-                </h3>
-                <label class="font-small">
-                  <a href="">申请配额</a>
-                  <i class="el-icon-edit-outline"></i>
-                </label>
-              </div>
-              <ul class="font-small">
-                <li>
-                  <div class="zn">
-                    <div style="margin:0 40px 20px 0;">命名空间</div>
-                    <div class="font-black">10个</div>
-                  </div>
-                </li>
-                <li>
-                  <div class="zn">
-                    <div style="margin:0 65px 20px 0;">集群</div>
-                    <div class="font-black">5个/地域</div>
-                  </div>
-                </li>
-                <li>
-                  <div class="zn">
-                    <div style="margin:0 65px 20px 0;">节点</div>
-                    <div class="font-black">5000个/集群</div>
-                  </div>
-                </li>
-                <li>
-                  <div class="zn">
-                    <div style="margin:0 65px 20px 0;">镜像</div>
-                    <div class="font-black">500个/地域</div>
-                  </div>
-                </li>
-                <li>
-                  <div class="zn">
-                    <div style="margin:0 40px 20px 0;">镜像版本</div>
-                    <div class="font-black">100个/镜像</div>
-                  </div>
-                </li>
-              </ul>
-            </div>
-          </el-col>
+          
         </el-row>
       </div>
     </div>
@@ -382,12 +248,34 @@ export default {
           clusterId: id
         }
       });
-      // this.$router.push({
-      //   name: "colonyResourceDeployment",
-      //   query: {
-      //     clusterId: id
-      //   }
-      // });
+    
+    },
+    //查看节点
+    goNode(id){
+        this.$router.push({
+        name: "colonyNodeManageNode",
+        query: {
+          clusterId: id
+        }
+      });
+    },
+    //查看节点
+    goMasteretcd(id){
+        this.$router.push({
+        name: "colonyNodeManageMasteretcd",
+        query: {
+          clusterId: id
+        }
+      });
+    },
+    //查看节点
+    goWorkload(id){
+        this.$router.push({
+        name: "colonyResourceDeployment",
+        query: {
+          clusterId: id
+        }
+      });
     },
     show() {
       this.isShow = !this.isShow;
@@ -556,7 +444,8 @@ a:hover {
 .font-small {
   font-size: 12px;
   color: #888888;
-  font-weight: lighter;
+  font-weight: 700;
+//   font-weight: lighter;
 }
 .font-big {
   font-size: 36px;
@@ -626,5 +515,6 @@ a:hover {
 }
 a{
   cursor:pointer;
+  color:#006eff !important;
 }
 </style>

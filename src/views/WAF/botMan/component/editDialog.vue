@@ -7,80 +7,63 @@
  * @FilePath: /new_product/src/views/WAF/botMan/component/editDialog.vue
  -->
 <template>
-  <el-dialog
-    :visible="visible"
-    :title="info.name"
-    @close="onClose"
-    width="470px"
-  >
     <el-form 
-      :rules="rules" 
       :model="formValue"
-      label-width="160px"
-      label-position="left"
-      >
-      <el-form-item label="动作" prop="action">
-      <el-select style="width: 180px" v-model="formValue.action" placeholder="请选择">
+      label-width="140px"
+      label-position="right"
+      ref="form"
+    >
+      <el-form-item :label="t('动作', 'WAF.dz')" prop="action" required>
+      <el-select style="width: 180px" v-model="formValue.action">
         <el-option
-          v-for="item in selectData"
+          v-for="item in UCB_ACTION_ARR"
           :key="item.value"
           :label="item.name"
           :value="item.value">
         </el-option>
       </el-select>
       </el-form-item>
-      <el-form-item label="惩罚时长（分钟)" prop="time">
+      <el-form-item
+        :label="t('惩罚时长（分钟)', 'WAF.cfscfz')"
+        prop="validTime"
+        v-if="formValue.action === UCB_ACTION.拦截 || formValue.action === UCB_ACTION.验证码"
+        :rules="[
+          { required: true, message: t('请输入5~10080以内的整数', 'WAF.qsr51zs') },
+          {
+            validator: isValidTime()
+          }
+        ]"
+      >
         <div>
-          <el-input v-model="formValue.time" style="width: 180px; font-size: 12px;" placeholder="请输入5~10080以内的整数" />
-          <el-tooltip slot="append" effect="light" content="最短5分钟，最长1周。">
+          <el-input v-model="formValue.validTime" style="width: 180px; font-size: 12px;" :placeholder="t('请输入5~10080以内的整数', 'WAF.qsr51zs')" />
+          <el-tooltip slot="append" effect="light" :content="t('最短5分钟，最长1周', 'WAF.zdfzzc')">
             <i style="margin-left: 10px;" class="el-icon-info" />
           </el-tooltip>
         </div>
       </el-form-item>
-    </el-form>
-    <el-row slot="footer" type="flex" justify="center">
-      <el-button @click="onClick" type="primary">确定</el-button>
-      <el-button @click="$emit('update:visible', false)">取消</el-button>
-    </el-row>
-  </el-dialog>
+      <el-form-item style="margin-bottom: 0;">
+        <span class="tip">{{t('策略优先级按照动作类型匹配生效，优先级为：放行＞监控＞验证码＞拦截，动作相同添加时间越晚优先级越高', 'WAF.clsxazdzcdx')}}</span>
+      </el-form-item>
+      <el-form-item style="margin-bottom: 0;">
+        <el-button :loading="loading" @click="onClick" type="primary" size="small">{{t('确定', 'WAF.qd')}}</el-button>
+        <el-button :disabled="loading" @click="$emit('update:visible', false)" size="small">取消</el-button>
+      </el-form-item>
+  </el-form>
 </template>
 
 <script>
+import { UCB_ACTION_ARR, UCB_ACTION, COMMON_ERROR } from '../../constants'
+import { MODIFY_BOT_UCB_PREINSTALL_RULE } from '@/constants'
 export default {
   data() {
     return {
+      UCB_ACTION_ARR,
+      UCB_ACTION,
+      loading: false,
       formValue: {
         action: '',
         time: ''
       },
-      rules: {
-        action: [
-          { required: true, message: '请输入活动名称', trigger: 'blur' },
-          { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
-        ],
-        time: [
-          { required: true, message: '请输入活动名称', trigger: 'blur' },
-          { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
-        ]
-      },
-      selectData: [
-          {
-            name: '放行',
-            value: 1
-          },
-          {
-            name: '监控',
-            value: 2
-          },
-          {
-            name: '验证码',
-            value: 3
-          },
-          {
-            name: '拦截',
-            value: 4
-          },
-        ]
     }
   },
   props: {
@@ -89,31 +72,63 @@ export default {
     },
     info: {
       default: {}
+    },
+    iptDomain: String,
+    category: String,
+  },
+  watch: {
+    info: {
+      handler() {
+        console.log(this.info)
+        this.formValue = {
+          ...this.info
+        }
+      },
+      immediate: true
     }
   },
-
-  mounted() {
-    console.log(this.visible);
-  },
-
   methods: {
+    isValidTime() {
+      var warpper = (rule, value, callback) => {
+        if (value >= 5 && value <= 10080) {
+          return callback()
+        }
+        callback(this.t('请输入5~10080以内的整数', 'WAF.qsr51zs'))
+      }
+      return warpper
+    },
     onClick() {
-      console.log(onclick);
+      this.$refs.form.validate((valid) => {
+        if (valid) {
+          this.loading = true
+          this.axios.post(MODIFY_BOT_UCB_PREINSTALL_RULE, {
+            Version: '2018-01-25',
+            Domain: this.iptDomain,
+            Category: this.category === 'xy' ? 1 : 2,
+            Name: this.info.name,
+            Status: this.info.on_off,
+            Operate: this.formValue.action,
+            ValidTime: this.formValue.time,
+          }).then(resp => {
+            this.generalRespHandler(resp, () => {
+              this.$emit('success')
+            }, COMMON_ERROR, `${this.t('编辑', 'WAF.bj')}成功`)
+          }).then(() => {
+            this.loading = false
+          })
+        }
+      })
     },
-
-    onCancel() {
-      this.$emit("update:visible",false);
-      console.log(onCancel);
-    },
-
-    onClose() {
-      this.$emit("update:visible",false);
-    }
   }
 
 }
 </script>
 
 <style lang="scss" scoped>
-
+.tip {
+  font-size: 12px;
+  color: #bbb;
+  display: inline-block;
+  line-height: 20px;
+}
 </style>

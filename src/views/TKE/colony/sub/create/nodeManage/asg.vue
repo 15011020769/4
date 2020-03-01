@@ -28,11 +28,11 @@
             <el-input class="w200" v-model="asg.name" placeholder="请输入名称"></el-input>
           </el-form-item>
           <el-form-item label="实例类型">
-             <el-radio-group  v-model="asg.typeRadio" size="small">
-              <el-radio-button label="BANDWIDTH_POSTPAID_BY_HOUR">按量计费</el-radio-button>
-              <el-radio-button label="TRAFFIC_POSTPAID_BY_HOUR">竞价付费</el-radio-button>
+            <el-radio-group  v-model="asg.typeRadio" size="small">
+              <el-radio-button label="POSTPAID_BY_HOUR">按量计费</el-radio-button>
+              <el-radio-button label="SPOTPAID">竞价付费</el-radio-button>
             </el-radio-group>
-            <p v-if="asg.typeRadio=='TRAFFIC_POSTPAID_BY_HOUR'">	竞价实例(Spot)可以让您以一定幅度的折扣购买实例,但同时系统可能会自动回收这些折扣售卖的实例,<span class="tke-text-link">查看详情</span></p>
+            <p v-if="asg.typeRadio=='SPOTPAID'">	竞价实例(Spot)可以让您以一定幅度的折扣购买实例,但同时系统可能会自动回收这些折扣售卖的实例,<span class="tke-text-link">查看详情</span></p>
           </el-form-item>
           <el-form-item label="机型设置">
             <div class='form-controls' >
@@ -58,17 +58,21 @@
                 </el-form-item>
                 <el-form-item label="数据盘">
                   <div class="tke-form-item_text">
-                    <span>暂不购买</span>
+                    <span>{{datadisk}}</span>
                     <i class="el-icon-edit tke-icon" @click="dataDiskShow = true"></i>
                   </div>
                 </el-form-item>
                 <el-form-item label="公网带宽">
-                  <div class="tke-form-item_text"><span>按带宽计费 1Mbps</span><i class="el-icon-edit tke-icon"></i></div>
+                  <div class="tke-form-item_text"><span>{{publicband}}</span>
+                  <i class="el-icon-edit tke-icon" @click="publicBroadband = true"></i></div>
                 </el-form-item>
               </el-form>
             </div>
           </el-form-item>
-
+          <el-form-item label="最高出价" v-show="asg.typeRadio === 'SPOTPAID'">
+            <el-input type='text' v-model="asg.maxPrice" style="width: 300px;"></el-input><span>元/小时</span>
+            <p>最高出价默认为当前机型按量计费模式的刊定价(不包括带宽费用)</p>
+          </el-form-item>
           <el-form-item label="登录方式">
              <el-radio-group  v-model="asg.pwdRadio" size="small">
               <el-radio-button label="pwd1">立即关联密钥</el-radio-button>
@@ -108,7 +112,7 @@
 
           <!-- 添加安全组 -->
           <el-form-item label="安全组">
-              <el-select v-model="valueOne" placeholder="请选择"  class='w200' style="margin-bottom:15px;">
+              <el-select v-model="asg.security" placeholder="请选择"  class='w200' style="margin-bottom:15px;" @change="addsecurity()">
                 <el-option
                   v-for="item in securityGroups"
                   :key="item.SecurityGroupId"
@@ -117,7 +121,7 @@
                  >
                 </el-option>
               </el-select><i class="el-icon-refresh ml10"></i><i class="el-icon-error ml10" v-show="this.domains.length?true:false" @click.prevent="deleteAll()"></i>
-                 <el-form-item
+                 <!-- <el-form-item
                     v-for="(domain, index) in domains"
                     :key="domain.key"
                   >
@@ -133,20 +137,20 @@
                 </el-form-item>
                 <el-form-item>
                   <el-button type="text"  @click="addDomain" >新增安全组</el-button>
-                </el-form-item>
+                </el-form-item> -->
           </el-form-item>
 
           <el-form-item label="安全加固">
-             <el-checkbox v-model="checkedOne">免费开通</el-checkbox>
+             <el-checkbox v-model="asg.securityService">免费开通</el-checkbox>
               <el-form-item>
                安装组件免费开通DDoS防护、WAF和云镜主机防护<a href="https://cloud.tencent.com/product/cwp?_ga=1.173966502.440655928.1500464439" target="_blank">详细介绍</a>
               </el-form-item>
           </el-form-item>
 
           <el-form-item label="云监控">
-             <el-checkbox v-model="checkedTwo">免费开通</el-checkbox>
+             <el-checkbox v-model="asg.monitor">免费开通</el-checkbox>
               <el-form-item>
-               <p style="color:#ff9d00;" v-show='!checkedTwo'>取消勾选将无法获得集群、主机、容器等相关监控信息及告警等能力，请慎重选择</p>
+               <p style="color:#ff9d00;" v-show='!asg.monitor'>取消勾选将无法获得集群、主机、容器等相关监控信息及告警等能力，请慎重选择</p>
                <p>免费开通云产品监控、分析和实施告警，安装组件获取主机监控指标<a href="https://cloud.tencent.com/product/cm" target="_blank">详细介绍</a></p>
               </el-form-item>
           </el-form-item>
@@ -399,63 +403,143 @@
         @change="changeIsBuy()"
         >购买数据盘
       </el-checkbox>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="changeDataDisk()">确 定</el-button>
+        <el-button @click="dataDiskShow = false">取 消</el-button>
+      </span>
     </el-dialog>
-    <el-dialog :visible.sync="buyDataDiskShow" width="50%">
-      <div>
-        <p>云盘设置</p>
+    <el-dialog :visible.sync="buyDataDiskShow" width="60%">
+      <div
+        class="tke-second-worker-popover-data-bg"
+        v-for="(x, i) in buyDataDiskArr"
+        :key="i"
+      >
         <div>
-          <el-select
-            v-model="buyDataDisk"
-            placeholder="请选择"
-          >
-            <el-option
-              v-for="item in secretList"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
+          <div >
+            <p>云盘设置</p>
+            <div class="box">
+              <el-select
+                v-model="x.dataDiskVal"
+                placeholder="请选择"
+              >
+                <el-option
+                  v-for="item in systemDisk"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                >
+                </el-option>
+              </el-select>
+              <el-input-number
+                v-model="x.dataDiskNum"
+                :min="10"
+                :max="16000"
+                :step="10"
+              ></el-input-number>
+              <span>GB</span>
+              <el-checkbox
+                v-model="x.formatMount"
+                class="format-and-mount"
+                >格式化并挂载</el-checkbox
+              >
+              
+            </div>
+            <p>范围：10~16000，步长：10</p>
+            <p
+              style="margin-top:16px;" 
+              v-if="x.formatMount"
             >
-            </el-option>
-          </el-select>
-          <el-input-number
-            v-model="secretList"
-            :min="10"
-            :max="16000"
-          ></el-input-number>
-          <span>GB</span>
-          <el-checkbox
-            v-model="secretList"
-            class="format-and-mount"
-            >格式化并挂载</el-checkbox
-          >
-          <p>范围：10~16000，步长：10</p>
+              格式化设置
+            </p>
+            <div
+              style="margin-top:16px;" class="box"
+              v-if="x.formatMount"
+            >
+              <el-select
+                v-model="x.latticeSetVal"
+                placeholder="请选择"
+              >
+                <el-option
+                  v-for="x in latticeSetOpt"
+                  :key="x.value"
+                  :label="x.label"
+                  :value="x.value"
+                >
+                </el-option>
+              </el-select>
+              <el-input
+                v-model="x.setValue"
+              ></el-input>
+            </div>
+          </div>
         </div>
-        <p
-          style="margin-top:16px;"
-          v-if="secretList"
-        >
-          格式化设置
-        </p>
-        <div
-          style="margin-top:16px;"
-          
-        >
-          <el-select
-            placeholder="请选择"
-          >
-            <el-option
-              v-for="item in secretList"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            >
-            </el-option>
-          </el-select>
-          <el-input v-model="value"></el-input>
+        <i
+          class="el-icon-error ml5"
+          style="margin-top:10px;"
+          @click="deleteDataDisk(i)"
+        ></i>
+      </div>
+      <div
+        class="add-data-disk"
+        v-if="buyDataDisk && buyDataDiskArr.length != 0"
+        @click="AddDataDisk()"
+      >
+        添加数据盘
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="changeDataDisk()">确 定</el-button>
+        <el-button @click="buyDataDiskShow = false">取 消</el-button>
+      </span>
+    </el-dialog>
+    <el-dialog :visible.sync="publicBroadband" width="30%">
+      <div class="tke-second-worker-text">
+        <div class="tke-second-worker-icon-pen">
+          <!-- <el-popover
+            placement="bottom"
+            width="450"
+            trigger="click"
+            v-model="publicBroadband"
+          > -->
+            <div class="tke-second-worker-popover-disk">
+              <div>
+                <el-select
+                  v-model="asg.broadbandVal"
+                  placeholder="请选择"
+                >
+                  <el-option
+                    v-for="item in broadbandOptions"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                  >
+                  </el-option>
+                </el-select>
+                <el-input-number
+                  v-model="asg.broadbandNum"
+                  :min="0"
+                  :max="100"
+                ></el-input-number>
+                <span>Mbps</span>
+                <p>带宽上限：0~100</p>
+                <div
+                  class="tke-second-worker-popover-data-bg distribution"
+                >
+                  <el-checkbox
+                    v-model="asg.pubBroadbandShow"
+                    class="format-and-mount"
+                    >分配免费公网IP，<a href="#"
+                      >查看详情</a
+                    ></el-checkbox
+                  >
+                </div>
+              </div>
+            </div>
+          <!-- </el-popover> -->
         </div>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="deleteSingleGroup('single')">确 定</el-button>
-        <el-button @click="buyDataDiskShow = false">取 消</el-button>
+        <el-button type="primary" @click="changePublic()">确 定</el-button>
+        <el-button @click="publicBroadband = false">取 消</el-button>
       </span>
     </el-dialog>
   </div>
@@ -470,11 +554,13 @@ import { ALL_CITY,
       TKE_MISG,
       TKE_SSH,
       TKE_VPC_METWORK,
-      TKE_WORKER_METWORK } from "@/constants";
+      TKE_WORKER_METWORK,
+      CREATE_GROUP } from "@/constants";
 export default {
   name: "asgCreate",
   data() {
     return {
+      clusterId: '',//集群id
       flag1: true,
       flag2: false,
       checked: false,
@@ -486,6 +572,7 @@ export default {
       dataDiskShow: false,//是否打开数据盘modal
       buyDataDisk: false,//是否显示是否购买数据盘
       buyDataDiskShow: false,//是否显示购买数据盘
+      publicBroadband: false,
       securityGroups: [],//安全组列表
       secretList: [],//SSH秘钥密码
       cpuValue: '0',//选中的cpu类型
@@ -495,6 +582,9 @@ export default {
       modeData: {},//机型表格中选中的数据
       describeVpcs: [],//支持的网络
       subNetList: [],//子网列表
+      buyDataDiskArr: [],//购买的数据盘列表
+      publicband: '按宽带计费 1Mbps',//公共带宽
+      datadisk: '暂不购买',//数据盘
       systemDiskShow: '高性能云硬盘 50GB',
       textarea2: '',
       inputRoom: '/var/lib/docker',
@@ -504,7 +594,7 @@ export default {
       Radio: 'pwd1',
       asg: {
         name: '',//名称
-        typeRadio:'BANDWIDTH_POSTPAID_BY_HOUR',//实例类型
+        typeRadio:'POSTPAID_BY_HOUR',//实例类型
         pwdRadio:'pwd3',//登录方式
         regionRadio:'region1',
         sshKeySel: "",//ssh秘钥
@@ -520,6 +610,18 @@ export default {
         sshSecret: '',//ssh秘钥
         password:'',//密码
         passwordAgin: '',//确认密码
+        changeSubNets: [],//选中子网列表
+        securityService: true,//是否选中安全加固
+        monitor: true,//是否选中云监控
+        maxPrice: 0,//最高竞价
+        dataDiskVal: "CLOUD_PREMIUM",//默认的数据盘类型
+        dataDiskNum: 0,
+        formatMount: false,
+        latticeSetVal: "ext3",
+        setValue: "/var/lib/docker",
+        broadbandVal: "BANDWIDTH_POSTPAID_BY_HOUR",//带宽类型
+        broadbandNum: 1,//带宽大小
+        pubBroadbandShow: true,//是否分配免费IP
       },
       systemDisk: [
         {
@@ -530,6 +632,11 @@ export default {
           label: "SSD云硬盘",
           value: "CLOUD_SSD"
         }
+      ],
+      latticeSetOpt: [
+        { value: "ext3", label: "ext3" },
+        { value: "ext4", label: "ext4" },
+        { value: "xfs", label: "xfs" }
       ],
       // 选中机型
       AllCPU: [
@@ -667,6 +774,16 @@ export default {
           label: "512GB"
         }
       ],
+      broadbandOptions: [
+        {
+          value: "BANDWIDTH_POSTPAID_BY_HOUR",
+          label: "按宽带计费"
+        },
+        {
+          value: "TRAFFIC_POSTPAID_BY_HOUR",
+          label: "按使用流量"
+        }
+      ],
       optionsOne: [],
       domains: [],
       domainstion: [],
@@ -710,17 +827,25 @@ export default {
     this.getSecurityGroups();
     this.getSecretList();
     this.getDescribeVpcs();
+    this.clusterId=this.$route.query.clusterId;
   },
   methods: {
     //提交添加伸缩组
     async submitGroup() {
       this.loadShow = true;
+      let subNets = this.asg.changeSubNets;
+      let subNetList = [];
+      if(subNets.length > 0) {
+        for(let i = 0; i < subNets.length; i++) {
+          subNetList.push(subNets[i].SubnetId);
+        }
+      }
       let AutoScalingGroupPara = {
         AutoScalingGroupName: this.asg.name,
         MaxSize: this.asg.maxSize,
         MinSize: this.asg.minSize,
         VpcId: this.asg.groupVps,
-        SubnetIds: [],//未完成
+        SubnetIds: subNetList,
         RetryPolicy: this.asg.restart,
         ServiceSettings: {ScalingMode: 'CLASSIC_SCALING'}//不确定
       };
@@ -739,20 +864,99 @@ export default {
         InstanceType: this.asg.instanceType,
         SystemDisk: {DiskType: this.asg.diskType, DiskSize: this.asg.diskCapacity},
         InternetAccessible: {
-          InternetChargeType: this.asg.typeRadio,
-          InternetMaxBandwidthOut: 9,//不确定
-          PublicIpAssigned: true//不确定
+          InternetChargeType: this.asg.broadbandVal,
+          InternetMaxBandwidthOut: this.asg.broadbandNum,
+          PublicIpAssigned: this.asg.pubBroadbandShow
         },
         LoginSettings: LoginSettings,
-
+        SecurityGroupIds: [this.asg.security],//未做完整
+        EnhancedService: {SecurityService: {Enabled: this.asg.securityService}},
+        MonitorService: {Enabled: this.asg.monitor},
+        InstanceChargeType: this.asg.typeRadio,
+        InstanceMarketOptions: {SpotOptions: {MaxPrice: this.asg.maxPrice}}
       };
+      let InstanceAdvancedSettings = {
+        MountTarget:'',
+        DockerGraphPath: '',
+        UserScript: '',
+        Unschedulable: 0,
+        ExtraArgs: {Kubelet: []}
+      };
+      let dataArr = this.buyDataDiskArr;
+      let datadisk = [];
+      let dataDisks = [];
+      if(this.buyDataDisk) {
+        for(let i = 0; i < dataArr.length; i++) {
+          let disk = {
+            DiskType: dataArr[i].dataDiskVal,
+            DiskSize: dataArr[i].dataDiskNum
+          };
+          datadisk.push(disk);
+          let datadis = {
+            AutoFormatAndMount: dataArr[i].formatMount,
+            FileSystem: dataArr[i].latticeSetVal,
+            MountTarget: dataArr[i].setValue,
+            DiskType: dataArr[i].dataDiskVal,
+            DiskSize:dataArr[i].dataDiskNum
+          }
+          dataDisks.push(datadis);
+        }
+        LaunchConfigurePara.DataDisks = datadisk;
+        InstanceAdvancedSettings.DataDisks = dataDisks;
+      }
+      
       let params = {
         Version: '2018-05-25',
         ClusterId: this.clusterId,
-        AutoScalingGroupPara: {},
-        LaunchConfigurePara: {},
-        InstanceAdvancedSettings: {}
+        AutoScalingGroupPara: JSON.stringify(AutoScalingGroupPara),
+        LaunchConfigurePara: JSON.stringify(LaunchConfigurePara),
+        InstanceAdvancedSettings: InstanceAdvancedSettings
       }
+
+      await this.axios.post(CREATE_GROUP, params).then(res => {
+        if(res.Response.Error === undefined) {
+          this.$message({
+            message: '新增成功',
+            type: "success",
+            showClose: true,
+            duration: 0
+          });
+          this.$router.push({
+            name: "colonyNodeManageAsg",
+            query: {
+            
+            }
+          });
+          this.loadShow = false;
+        } else {
+          this.loadShow = false;
+          let ErrTips = {
+            "FailedOperation": "操作失败",
+            "InternalError": "内部错误",
+            "InternalError.AccountUserNotAuthenticated":"账户未通过认证。",
+            "InternalError.AsCommon":	"伸缩组资源创建报错。",
+            "InternalError.CvmCommon":	"cvm创建节点报错。",
+            "InternalError.CvmNotFound":	"cvm不存在。",
+            "InternalError.Db":	"db错误。",
+            "InternalError.DbAffectivedRows":	"DB错误",
+            "InternalError.ImageIdNotFound":	"镜像未找到。",
+            "InternalError.OsNotSupport":	"镜像OS不支持。",
+            "InternalError.Param":	"Param。",
+            "InvalidParameter":	"参数错误",
+            "InvalidParameter.AsCommonError":	"弹性伸缩组创建参数错误。",
+            "LimitExceeded":	"超过配额限制",
+            "MissingParameter":	"缺少参数错误",
+            "UnsupportedOperation":	"操作不支持",
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
     },
     //返回上一层
     goBack(){
@@ -791,8 +995,8 @@ export default {
     setRadio(e){
 
     },
-    handleSelectionChange(){
-
+    handleSelectionChange(val){
+      this.asg.changeSubNets = val;
     },
     //机型表格选中的数据
     handleCurrentChange(val) {
@@ -848,12 +1052,61 @@ export default {
       });
     },
     //选择是否购买数据盘
-    changeIsBuy() {
-      if(this.buyDataDisk) {
-        this.dataDiskShow = false;
-        this.buyDataDiskShow = true;
+    changeIsBuy(value) {
+      this.buyDataDiskShow = true;
+      this.dataDiskShow = false;
+      if (this.buyDataDisk === true) {
+        this.AddDataDisk();
+      } else {
+        this.buyDataDiskArr = [];
       }
     },
+    // 购买数据盘 添加数据盘
+    AddDataDisk() {
+      this.buyDataDiskArr.push({
+        dataDiskVal: "CLOUD_PREMIUM",
+        dataDiskNum: "10",
+        formatMount: false,
+        latticeSetVal: "ext3",
+        setValue: "/var/lib/docker"
+      });
+    },
+    //根据数据盘选择显示
+    changeDataDisk() {
+      let dataArr = this.buyDataDiskArr;
+      let datadisk = '';
+      if(this.buyDataDisk) {
+        for(let i = 0; i < dataArr.length; i++) {
+          if(dataArr[i].dataDiskVal === 'CLOUD_PREMIUM') {
+            datadisk += '['+(i+1)+']' + "高性能云硬盘" + dataArr[i].dataDiskNum + 'GB;';
+          } else if(dataArr[i].dataDiskVal === 'CLOUD_SSD') { 
+            datadisk += '['+(i+1)+']' + "SSD云硬盘" + dataArr[i].dataDiskNum + 'GB;'
+          }
+        }
+        this.datadisk = datadisk.substring(0,datadisk.length - 1);
+        this.buyDataDiskShow = false;
+      } else {
+        this.datadisk = '暂不购买';
+        this.dataDiskShow = false;
+      }
+    },
+    // 删除
+    deleteDataDisk(index) {
+      this.buyDataDiskArr.splice(index, 1);
+      if (this.buyDataDiskArr.length === 0) {
+        this.buyDataDisk = false;
+      }
+    },
+    //根据公网带宽选择数据显示
+    changePublic() {
+      this.publicBroadband = false;
+      if(this.asg.broadbandVal === 'BANDWIDTH_POSTPAID_BY_HOUR') {
+        this.publicband =  '按宽带计费 '+this.asg.broadbandNum + 'Mbps';
+      } else if (this.asg.broadbandVal === 'TRAFFIC_POSTPAID_BY_HOUR') {
+        this.publicband =  '按使用流量 '+this.asg.broadbandNum + 'Mbps';
+      }
+    },
+    
     //获取安全组列表
     async getSecurityGroups() {
       this.loadShow = true;
@@ -868,7 +1121,7 @@ export default {
       await this.axios.post(TKE_MISG, params).then(res => {
         if(res.Response.Error === undefined) {
           this.securityGroups = res.Response.SecurityGroupSet;
-          this.asg.security = res.Response.SecurityGroupSet[0].SecurityGroupName
+          // this.asg.security = res.Response.SecurityGroupSet[0].SecurityGroupName
           this.loadShow = false;
         } else {
           this.loadShow = false;
@@ -999,6 +1252,10 @@ export default {
     //选择网络
     changeVpcs() {
       this.getDescribeSubnets();
+    },
+    //点击添加安全组
+    addsecurity() {
+      let domains = this.domains;
     }
   },
   filters: {
@@ -1042,6 +1299,38 @@ export default {
   color: #ff7800;
   font-weight: 600;
 }
+
+  .tke-second-worker-popover-data-bg {
+    padding: 0 20px;
+    display: flex;
+    & > div {
+      display: flex;
+      width: 99%;
+    }
+    .box {
+      width: 99%;
+      background-color: #f2f2f2;
+      padding: 10px;
+      margin-top: 10px;
+      overflow: hidden;
+      & > p {
+        width: 120px;
+        float: left;
+        padding-top: 6px;
+        font-size: 12px;
+        color: #888;
+      }
+      & > div {
+        float: left;
+        & > p {
+          font-size: 12px;
+          color: #888;
+          vertical-align: middle;
+          margin-top: 4px;
+        }
+      }
+    }
+  }  
 
 </style>
 

@@ -121,7 +121,7 @@
   </div>
 </template>
 <script>
-import { DESCRIBE_WAF_PRICE } from '@/constants'
+import { DESCRIBE_WAF_PRICE, GENERATE_DEALS } from '@/constants'
 import { 
   CLB_PACKAGE_CFG_TYPES,
   BUY_LOG_TYPES,
@@ -246,6 +246,84 @@ export default {
           this.price = price
           this.loading = false
         })
+      })
+      this.generateDeal()
+    },
+    generateDeal() {
+      const { categoryid, edit_categoryid, goodstype, pid, pricetype, key } = CLB_PACKAGE_CFG_TYPES[4]
+      // 企业版升级到旗舰版
+      // this.axios.post(GENERATE_DEALS, {
+      //   Version: '2018-07-09',
+      //   'Goods.0.GoodsCategoryId': edit_categoryid,
+      //   'Goods.0.RegionId': 1,
+      //   'Goods.0.ZoneId': 0,
+      //   'Goods.0.GoodsNum': 1,
+      //   'Goods.0.ProjectId': 0,
+      //   'Goods.0.PayMode': 1,
+      //   'Goods.0.Platform': 1,
+      //   'Goods.0.GoodsDetail': JSON.stringify({
+      //     productInfo: [{
+      //       name: "Web应用防火墙",
+      //       value: '旗舰版', // 升级新的name
+      //     }],
+      //     curDeadline: '2020-03-13 10:13:19',
+      //     resourceId: 'waf_000q5mgau',
+      //     oldConfig: {
+      //       pid: 1001152, // 企业版的pid
+      //       type: 'sp_wsm_waf_enterprise_clb', // 企业版的key
+      //       sv_wsm_waf_package_enterprise_clb: 1,
+      //     },
+      //     newConfig: {
+      //       pid,
+      //       type: key,
+      //       [pricetype]: 1,
+      //     }
+      //   }),
+      // })
+      // 续费  去掉续费的curDeadline和resourceId，categoryid改为first_categoryid就是新购的下单
+      this.axios.post(GENERATE_DEALS, {
+        Version: '2018-07-09',
+        'Goods.0.GoodsCategoryId': categoryid,
+        'Goods.0.RegionId': 1,
+        'Goods.0.ZoneId': 0,
+        'Goods.0.GoodsNum': 1,
+        'Goods.0.ProjectId': 0,
+        'Goods.0.PayMode': 1,
+        'Goods.0.Platform': 1,
+        'Goods.0.GoodsDetail': JSON.stringify({
+           productInfo: [{
+            name: "Web应用防火墙",
+            value: '企业版'
+          }],
+          curDeadline: '2020-03-13 10:13:19',
+          timeSpan: 1,
+          timeUnit: 'm',
+          resourceId: 'waf_000q5mgau',
+          pid: pid,
+          [pricetype]: 1,
+          Currency: 'CNY'
+        }),
+        // 日志包产品
+        'Goods.1.GoodsCategoryId': BUY_LOG_TYPES.categoryid,
+        'Goods.1.RegionId': 1,
+        'Goods.1.ZoneId': 0,
+        'Goods.1.GoodsNum': 1,
+        'Goods.1.ProjectId': 0,
+        'Goods.1.PayMode': 1,
+        'Goods.1.Platform': 1,
+        'Goods.1.GoodsDetail': JSON.stringify({
+           productInfo: [{
+            name: "Web应用防火墙",
+            value: '日志服务包'
+          }],
+          curDeadline: '2020-03-13 10:51:09',
+          timeSpan: 1,
+          timeUnit: 'm',
+          resourceId: 'waf_000q5udxm_cls',
+          pid: BUY_LOG_TYPES.pid,
+          [BUY_LOG_TYPES.pricetype]: 1,
+          Currency: 'CNY'
+        }),
       })
     },
     //跳转支付页面

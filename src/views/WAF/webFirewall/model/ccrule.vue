@@ -276,7 +276,6 @@ export default {
       this.form.options.splice(index, 1)
     },
     onSubmit() {
-      this.loading = true
       this.$refs.form.validate((valid) => {
         if (valid) {
           let OptionsArr = ''
@@ -288,6 +287,7 @@ export default {
           Object.keys(_optionsArr).forEach(key => {
             OptionsArr += `,{"key":"${key}","args":[${_optionsArr[key].substr(1)}]}`
           })
+          this.loading = true
           this.axios.post(UPSERT_CCRULE, {
             Version: '2018-01-25',
             Domain: this.domain.Domain,

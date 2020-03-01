@@ -15,100 +15,103 @@
           type="primary"
           @click="dialogVisible = true"
           >
-            复制
+            {{t('复制', 'WAF.copy')}}
           </el-button>
       </el-col>
-      <i style="cursor: pointer" class="el-icon-refresh"/>
+      <i style="cursor: pointer; font-size: 16px;" @click="getPreinstallRule" class="el-icon-refresh"/>
     </el-row>
     <el-table
       style="margin-top: 10px"
-      row-key="id"
+      row-key="ftname"
       default-expand-all
-      :data="tabsFlag === 'xy' ? tableData : ipData"
+      :data="tabsFlag === 'xy' ? xyData : ipData"
+      v-loading="loading"
     >
-      <el-table-column width="200px" prop="name" label="策略名称"/>
-      <el-table-column prop="action" label="动作"/>
-      <el-table-column prop="switch" label="策略开关">
+      <el-table-column prop="ftname" :label="t('策略名称', 'WAF.clmc')"/>
+      <el-table-column prop="action" :label="t('动作', 'WAF.dz')">
         <template slot-scope="scope">
-          <el-switch v-if="!scope.row.children" />
+          <span :class="scope.row.action">{{UCB_ACTION[scope.row.action]}} </span>&nbsp;
+          <span v-if="scope.row.action === UCB_ACTION.拦截 || scope.row.action === UCB_ACTION.验证码"> {{scope.row.validTime}}{{t('分钟', 'WAF.fz')}}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="time" label="修改时间"/>
+      <el-table-column prop="status" :label="t('策略开关', 'WAF.clkg')">
+        <template slot-scope="scope">
+          <el-switch v-model="scope.row.status" @change="status => onChangeStatus(scope.row, status)" v-if="!scope.row.children" />
+        </template>
+      </el-table-column>
+      <el-table-column prop="updateTime" :label="t('修改时间', 'WAF.xgsj')"></el-table-column>
       <el-table-column label="操作">
         <template slot-scope="scope">
-          <a v-if="!scope.row.children" @click="onEdit(scope)">编辑</a>
+          <el-button type="text" v-if="!scope.row.children" @click="onEdit(scope)">{{t('编辑', 'WAF.bj')}}</el-button>
         </template>
       </el-table-column>
     </el-table>
-    <Transfer :dialogVisible.sync="dialogVisible" v-if="dialogVisible" :iptDomain="ipSearch" />
-    <EditDialog :visible.sync="showEditDialog" :info="editDialogProp" />
+
+    <el-dialog
+      :visible="showEditDialog"
+      :title="editDialogProp.ftname"
+      width="470px"
+      destroy-on-close
+    >
+      <EditDialog
+        :visible.sync="showEditDialog"
+        :info="editDialogProp"
+        :iptDomain="ipSearch"
+        :category="tabsFlag"
+        @success="onSuccess"
+      />
+    </el-dialog>
+    <el-dialog
+      :title="`${t('复制', 'WAF.copy')}策略`"
+      :visible="dialogVisible"
+      width="850px"
+      destroy-on-close
+    >
+      <Transfer :category="tabsFlag" :dialogVisible.sync="dialogVisible" :iptDomain="ipSearch" />
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import Transfer from '../../transfer'
 import EditDialog from '../../editDialog'
-import { DESCRIBE_BOT_UCB_PREINSTALLRULE } from '@/constants'
+import { DESCRIBE_BOT_UCB_PREINSTALLRULE, MODIFY_BOT_UCB_PREINSTALL_RULE } from '@/constants'
+import { UCB_PROTOCLS, UCB_IPS, UCB_ACTION } from '../../../../constants'
+import moment from 'moment'
+
 export default {
   data() {
     return {
+      UCB_ACTION,
       dialogVisible: false, // 控制弹窗显示状态
-      tableData: [
+      loading: true,
+      xyData: [
         {
-          id: 1,
-          name: 'User-Agent类别',
-          children: [
-            {
-              id: 11,
-              name: 'User-Agent为空或不存在',
-              action: '监控',
-              switch: '1',
-              time: '2020-02-15 18:00:30'
-            },
-            {
-              id: 12,
-              name: 'User-Agent为空或不存在',
-              action: '监控',
-              switch: '1',
-              time: '2020-02-15 18:00:30'
-            },
-            {
-              id: 13,
-              name: 'User-Agent为空或不存在',
-              action: '监控',
-              switch: '1',
-              time: '2020-02-15 18:00:30'
-            },
-          ]
+          type: 'ua',
+          ftname: 'User-Agent类别',
+          children: UCB_PROTOCLS.filter(item => item.type === 'ua')
+        },
+        {
+          type: 'headers',
+          ftname: 'HTTP头部',
+          children: UCB_PROTOCLS.filter(item => item.type === 'headers')
+        },
+        {
+          type: 'http',
+          ftname: 'HTTP协议特征',
+          children: UCB_PROTOCLS.filter(item => item.type === 'http')
         }
       ],
       ipData: [
-       {
-          id: 1,
-          name: 'IDC-IP库',
-          children: [
-            {
-              id: 11,
-              name: 'IDC-IP 腾讯云',
-              action: '监控',
-              switch: '1',
-              time: '2020-02-15 18:00:30'
-            },
-            {
-              id: 12,
-              name: 'IDC-IP 阿里云',
-              action: '监控',
-              switch: '1',
-              time: '2020-02-15 18:00:30'
-            },
-            {
-              id: 13,
-              name: 'IDC-IP UCloud',
-              action: '监控',
-              switch: '1',
-              time: '2020-02-15 18:00:30'
-            },
-          ]
+        {
+          type: 'boce',
+          ftname: '拨测',
+          children: UCB_IPS.filter(item => item.type === 'boce')
+        },
+        {
+          type: 'idc',
+          ftname: 'IDC-IP库',
+          children: UCB_IPS.filter(item => item.type === 'idc')
         }
       ],
       showFlag: true, // 弹窗关闭切换内部元素显示状态
@@ -120,47 +123,84 @@ export default {
     tabsFlag: {
       default: 'diy'
     },
-
     ipSearch: ''
-    
   },
   watch: {
     tabsFlag(n, o) {
-      console.log(n)
+      this.getPreinstallRule()
+    },
+    ipSearch() {
+      this.getPreinstallRule()
     }
   },
-
   components: {
     Transfer,
     EditDialog
   },
-
   mounted() {
     this.getPreinstallRule()
   },
-
   methods: {
     onEdit(row) {
       this.showEditDialog = true
       this.editDialogProp = row.row
     },
-    onClose() {
-      this.dialogVisible = false
-      this.showFlag = false
-      setTimeout(() => {
-        this.showFlag = true
+    onChangeStatus(feature, status) {
+      feature.status = !status
+      this.axios.post(MODIFY_BOT_UCB_PREINSTALL_RULE, {
+        Version: '2018-01-25',
+        Domain: this.ipSearch,
+        Category: this.tabsFlag === 'xy' ? 1 : 2,
+        Name: feature.name,
+        Status: status ? 'on' : 'off',
+      })
+      .then(resp => {
+        this.generalRespHandler(resp, this.getPreinstallRule)
       })
     },
-
+    onSuccess() {
+      this.showEditDialog = false
+      this.getPreinstallRule()
+    },
     // 获取协议特征策略
     getPreinstallRule() {
+      this.loading = true
+      // 1表示协议特征类型的内置规则；2表示IP情报类型的内置规则
       let params = {
         Version: '2018-01-25',
-        Domain: 'tfc.dhycloud.com',
-        Category: 1
+        Domain: this.ipSearch,
+        Category: this.tabsFlag === 'ip' ? 2 : 1
       }
-      this.axios.post(DESCRIBE_BOT_UCB_PREINSTALLRULE, params).then(res => {
-        console.log(res);
+      this.axios.post(DESCRIBE_BOT_UCB_PREINSTALLRULE, params)
+      .then(resp => {
+        this.generalRespHandler(resp, ({ Data }) => {
+          let key = 'xyData'
+          if (this.tabsFlag === 'ip') {
+            key = 'ipData'
+          }
+          Data.Res.forEach(data => {
+            this[key].forEach((row, parantIndex) => {
+              this.$set(this[key], parantIndex, {
+                ...row,
+                children: row.children.map((child, childIndex) => {
+                  if (child.ftname === data.Name) {
+                    return {
+                      ...child,
+                      action: data.Action,
+                      on_off: data.OnOff,
+                      status: data.OnOff === 'on',
+                      validTime: data.ValidTime,
+                      updateTime: moment(data.Timestamp).format('YYYY-MM-DD HH:mm:ss')
+                    }
+                  }
+                  return child
+                })
+              })
+            })
+          })
+        })
+      }).then(() => {
+        this.loading = false
       })
     }
   }
@@ -174,5 +214,18 @@ export default {
       display: flex;
     }
   }
+}
+::v-deep .expanded {
+  color: #444;
+  font-weight: 600;
+}
+.intercept {
+  color: #e1504a;
+}
+.permit {
+  color: #0ABF5B;
+}
+.captcha {
+  color: #FF9D00;
 }
 </style>

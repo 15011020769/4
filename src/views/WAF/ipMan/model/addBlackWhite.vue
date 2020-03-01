@@ -9,11 +9,11 @@
         >
         <div class="newClear">
           <div class="newClear newList">
-            <p>类别</p>
+            <p>{{t('类别', 'WAF.lb')}}</p>
             <p>
               <el-radio-group v-model="blackWhiteCh" :disabled="ipInfo.type === 'ipStatus'">
-                <el-radio :value="42" :label="42">黑名单</el-radio>
-                <el-radio :value="40" :label="40">白名单</el-radio>
+                <el-radio :label="42">{{t('黑名单', 'WAF.hmd')}}</el-radio>
+                <el-radio :label="40">{{t('白名单', 'WAF.bmd')}}</el-radio>
               </el-radio-group>
             </p>
           </div>
@@ -21,7 +21,7 @@
             <p>IP地址</p>
             <p>
               <el-input :disabled="ipInfo.type === 'ipStatus'" type="textarea" v-model="ipAddress" />
-              <div class="err-tips" v-show="ipTest">IP格式输入有误</div>
+              <div class="err-tips" v-show="ipTest">{{t('IP格式输入有误', 'WAF.ipgsyw')}}</div>
             </p>
           </div>
           <div class="newClear newList">
@@ -32,23 +32,17 @@
                 v-model="datatime"
                 type="date"
                 format="yyyy-MM-dd HH:mm:ss"
-                placeholder="选择日期">
+              >
               </el-date-picker>
-              <el-time-select
+              <el-time-picker
                 class="datatime"
                 v-model="timeValue"
-                :picker-options="{
-                  start: '08:30',
-                  step: '00:15',
-                  end: '18:30'
-                }"
-                placeholder="选择时间"
-                >
-              </el-time-select>
+              >
+              </el-time-picker>
             </p>
           </div>
           <div class="newClear newList">
-            <p>备注</p>
+            <p>{{t('备注', 'WAF.bz')}}</p>
             <p>
               <el-input class="des" v-model="des"></el-input>
             </p>
@@ -64,19 +58,19 @@
 </template>
 <script>
 import { UPSERTIP_ACCESS_CONTROL } from '@/constants'
-import { flatObj } from '@/utils'
+import { flatObj, isValidIPAddressNew } from '@/utils'
 import moment from 'moment'
 export default {
   props:{
     isShow:{
-      required:false,
-      type:Boolean
+      required: false,
+      type: Boolean
     },
-    ipInfo: {}
+    ipInfo: Object
   },
   data(){
     return{
-      blackWhiteCh: '42',//黑白名单
+      blackWhiteCh: 42,//黑白名单
       ipAddress:'',//ip地址
       datatime:'',//选择日期
       timeValue:'',//选择时间
@@ -84,7 +78,35 @@ export default {
       ipTest: false, // ip输入格式是否正确
     }
   },
-
+  watch: {
+    ipAddress(n) {
+      if (n) {
+        n = n.trim()
+        const ips = n.split('\n')
+        for (let i = 0; i < ips.length; i += 1) {
+          if (!isValidIPAddressNew(ips[i])) {
+            this.ipTest = true
+            return
+          }
+        }
+      }
+      this.ipTest = false
+    },
+    ipInfo: {
+      handler(n) {
+        this.ipAddress = n.Ip || n.ip
+        this.blackWhiteCh = n.Action || 42
+        this.des = n.Note || n.Name
+        this.datatime = n.ValidTs ? moment(new Date(n.ValidTs*1000)) : moment().add(7, 'd')
+        this.timeValue = n.ValidTs && moment(new Date(n.ValidTs*1000)).format('h:mm') || moment().endOf().format('YYYY-MM-DD 23:59:59')
+        if (n.type === "ipStatus") {
+          this.datatime = n.valid_ts ? moment(new Date(n.valid_ts*1000)) : ''
+          this.timeValue = n.ts_version && moment(new Date(n.ts_version*1000)).format('h:mm')
+        }
+      },
+      immediate: true
+    }
+  },
   methods:{
     //关闭按钮
     handleClose(){
@@ -92,55 +114,31 @@ export default {
     },
     //确定按钮
     addSure(){
-      let valid_ts = moment(this.datatime).format('x')
-      let timeArr = `${this.timeValue}`.split(':')
-      const timeStamp = (timeArr[0] * 60 + timeArr[1]) * 60 * 1000
-      valid_ts = Number(valid_ts) + Number(timeStamp)
-      this.axios.post(UPSERTIP_ACCESS_CONTROL, ({
-        Version: '2018-01-25',
-        Domain: this.ipInfo.Domain,
-        'Items.0': JSON.stringify({
-          ip: this.ipAddress,
-          action: this.blackWhiteCh,
-          // valid_ts: this.ipInfo.ValidTs,
-          source: this.blackWhiteCh,
-          note: this.des,
-          valid_ts: valid_ts / 1000
-        }),
-        Edition: 'clb-waf'
-      })).then(data => {
-        if (data.Response.Error) {
-          let ErrOr = Object.assign(ErrorTips, COMMON_ERROR)
-          this.$message({
-            message: ErrOr[Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-          })
-        } else {
-          this.$emit("closeModel", 'refresh')
+      if (this.ipAddress && this.ipAddress.trim()) {
+        const param = {
+          Version: '2018-01-25',
+          Domain: this.ipInfo.Domain,
+          Edition: 'clb-waf'
         }
-      })
-    },
-  },
-
-  watch: {
-    ipAddress(n) {
-      let pattern = /((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})(\.((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})){3}/g
-      this.ipTest = !pattern.test(n)
-    },
-
-    ipInfo(n) {
-      this.ipAddress = n.Ip || n.ip
-      this.blackWhiteCh = n.ActionType
-      this.des = n.Note || n.name
-      this.datatime = n.ValidTs ? moment(new Date(n.ValidTs*1000)) : ''
-      this.timeValue = n.ValidTs && moment(new Date(n.ValidTs*1000)).format('h:mm')
-      if (n.type === "ipStatus") {
-        this.datatime = n.valid_ts ? moment(new Date(n.valid_ts*1000)) : ''
-        this.timeValue = n.ts_version && moment(new Date(n.ts_version*1000)).format('h:mm')
+        this.ipAddress.split('\n').forEach((ip, i) => {
+          param[`Items.${i}`] = JSON.stringify({
+            ip,
+            action: this.blackWhiteCh,
+            source: this.blackWhiteCh,
+            note: this.des,
+            valid_ts: Number(moment(`${moment(this.datatime).format('YYYY-MM-DD')} ${moment(this.timeValue).format('HH:mm:ss')}`).format('X'))
+          })
+        })
+        this.axios.post(UPSERTIP_ACCESS_CONTROL, param)
+        .then(resp => {
+          this.generalRespHandler(resp, () => {
+            this.$emit("closeModel", 'refresh')
+          })
+        })
+      } else {
+        this.ipTest = true
       }
-    }
+    },
   },
 }
 </script>
@@ -183,7 +181,7 @@ export default {
   }
 }
 .datatime{
-  width:120px;
+  width: 150px;
   margin-right:16px;
   ::v-deep .el-input__icon{
     line-height: 26px;

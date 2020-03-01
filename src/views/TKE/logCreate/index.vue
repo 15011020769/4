@@ -626,6 +626,7 @@
       },
       formFour: {
         handler(val) {
+           console.log(this.newroomFlag)
           val.forEach(item => {
 
             if (val.length == this.namespaceOptions.length) {
@@ -655,6 +656,9 @@
             if (item.radio == '1') {
               this.newroomFlag = false
             } else if (item.radio == '2' && val.length != this.namespaceOptions.length) {
+                 console.log(this.newroomFlag)
+          console.log(val.length)
+          console.log(this.namespaceOptions.length)
               this.newroomFlag = false
             } else {
               this.newroomFlag = true
@@ -692,6 +696,7 @@
       this.checkCluster(); //检查是否可以创建日志
       this.kafkaList();
       this.nameSpaceList();
+       console.log(this.newroomFlag)
     },
     mounted() {},
     methods: {
@@ -1127,8 +1132,8 @@
             this.wlFlag = false
           }
           this.formTwo.optionAll.forEach(v => { //采集路径选项判断
-            if (v.value4 == '请选择容器名称' || v.value4 == '无' || v.value5 == '请选择挂载目录' || v.value6 == '' || v.value6 ==
-              undefined || v.value6[0] != '/') {
+            if (v.value4 == '请选择容器名称' || v.value4 == '无' || v.value7 == '' ||  v.value7==
+              undefined || v.value7[0] != '/') {
               this.pathFlag = true
               return false
             } else {
@@ -1142,7 +1147,7 @@
               obj[x.value4] = []
             }
             obj[x.value4].push({
-              path: x.value5 + x.value6
+              path: x.value7
             })
           })
           params.RequestBody.spec.input = {
@@ -1187,17 +1192,20 @@
             type: "host-log"
           };
         }
-        this.axios.post(TKE_COLONY_QUERY, params).then(res => {
-          if (res.Response.Error === undefined) {
-             this.$message({
-                type: "success",
-                message: "编辑完成",
-                duration: 0,
-                showClose: true
-              });
-            this.$router.go(-1);
-          }
-        });
+        if(!this.pathFlag ){
+
+          this.axios.post(TKE_COLONY_QUERY, params).then(res => {
+            if (res.Response.Error === undefined) {
+               this.$message({
+                  type: "success",
+                  message: "编辑完成",
+                  duration: 0,
+                  showClose: true
+                });
+              this.$router.go(-1);
+            }
+          });
+        }
       },
       checkboxChange0(val,np) {
         if (val.length != '0') {
@@ -1414,22 +1422,25 @@
         if (this.namespaceOptions1.length == '1') {
           this.namespaceOptions1 = []
         }
-        var s = 0;
-        for (let i in this.Checkbox2) {
-          s += this.Checkbox2[i].length
-        }
-        console.log(s)
-        if(s==0){
-           this.$message({
-                message: '已选工作负载项为0个，请至少选择一个工作负载项或者选择全部容器',
-                type: "warning",
-                showClose: true,
-                duration: 0
-              });
+        if(this.formFour[index].radio=='2'){
+          var s = 0;
+          for (let i in this.Checkbox2) {
+            s += this.Checkbox2[i].length
+          }
+          if(s==0){
+             this.$message({
+                  message: '已选工作负载项为0个，请至少选择一个工作负载项或者选择全部容器',
+                  type: "warning",
+                  showClose: true,
+                  duration: 0
+                });
+          }else{
+            this.formFour[index].workload = s;
+            this.formFour[index].flag = !this.formFour[index].flag;
+          }
         }else{
-
-          this.formFour[index].workload = s;
-          this.formFour[index].flag = !this.formFour[index].flag;
+           this.formFour[index].workload = '';
+            this.formFour[index].flag = !this.formFour[index].flag;
         }
 
       },
