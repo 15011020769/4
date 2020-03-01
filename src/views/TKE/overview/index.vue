@@ -88,7 +88,7 @@
                 <div>
                   <!-- 第二行集群头 -->
                   <div class="font-small">
-                    <a href="javascrpit:;">{{ item.name }}</a>
+                    <a @click='goColonySub(item.name)'>{{ item.name }}</a>
                     <!-- <span style="margin-left:6px">{{ item.ClusterName }}</span> -->
                   </div>
                   <!-- 第二行集群内容 -->
@@ -169,6 +169,7 @@
                             </div>
                           </div>
                           <i
+                            v-if="false"
                             style="margin-left:2px"
                             class="el-icon-more-outline"
                           ></i>
@@ -372,6 +373,22 @@ export default {
     this.statusData();
   },
   methods: {
+    // 查看详情跳转
+    goColonySub(id) {
+      // scope.row.ClusterType=='MANAGED_CLUSTER'
+      this.$router.push({
+        name: "colonySub",
+        query: {
+          clusterId: id
+        }
+      });
+      // this.$router.push({
+      //   name: "colonyResourceDeployment",
+      //   query: {
+      //     clusterId: id
+      //   }
+      // });
+    },
     show() {
       this.isShow = !this.isShow;
     },
@@ -606,5 +623,8 @@ a:hover {
 .set-span{
   width:130px;
   display:inline-block;
+}
+a{
+  cursor:pointer;
 }
 </style>

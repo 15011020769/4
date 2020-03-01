@@ -104,9 +104,9 @@ import {
 
       goCluster(){
       this.$router.push({
-        name: "colonyResourceDeployment",
+        name: "colonySub",
         query: {
-          clusterId: this.id
+          clusterId: this.id.split("(")[0]
         }
       });
 
@@ -207,5 +207,7 @@ import {
   .room {
     padding: 20px;
   }
-
+a{
+  cursor:pointer;
+}
 </style>
