@@ -122,10 +122,10 @@
         size="small"
         style="width:500px"
       >
-        <el-form-item label="原名称">
+        <el-form-item label="原名称" >
             <p>{{clusterInfo.ClusterName}}</p>
         </el-form-item>
-        <el-form-item label="新名称" prop="pass">
+        <el-form-item label="新名称" prop="name">
           <el-input type="text" v-model="ruleForm.name" autocomplete="off" style="width:200px"></el-input>
         </el-form-item>
       </el-form>
@@ -147,7 +147,7 @@
         <el-form-item label="原项目">
             <p>{{projectName}}</p>
         </el-form-item>
-        <el-form-item label="新项目" prop="pass">
+        <el-form-item label="新项目" prop="projectId">
           <el-select type="text" v-model="ruleForm.projectId" autocomplete="off" style="width:300px">
             <el-option
               v-for="item in projectData"
@@ -164,7 +164,7 @@
         <el-button @click="closeDialog('2')">取 消</el-button>
       </div>
     </el-dialog>
-    <el-dialog title="设置集群操作" :visible.sync="showUpdateOs" width="750px">
+    <el-dialog title="设置集群操作系统" :visible.sync="showUpdateOs" width="750px">
       <el-form
         :model="ruleForm"
         :rules="rules"
@@ -175,7 +175,7 @@
         style="width:700px"
       >
         <el-form-item label="操作系统" prop="pass">
-          <el-select type="text" v-model="os" autocomplete="off" style="width:300px">
+          <el-select type="text" v-model="os" autocomplete="off" style="width:300px" @change="changeOs(e)">
             <el-option
               v-for="item in osList"
               :key="item.Id"
@@ -204,10 +204,7 @@
         <el-form-item label="原描述">
             <p>{{clusterInfo.ClusterDescription}}</p>
         </el-form-item>
-        <el-form-item label="新描述" style="width:400px"  prop="textarea"
-        :rules="[
-          { max: 1000, message: '请输入', trigger: 'blur' }
-        ]">
+        <el-form-item label="新描述" style="width:400px"  prop="textarea">
           <el-input
             type="textarea"
             :rows="4"
@@ -247,7 +244,7 @@ export default {
       showUpdateProject: false,//是否显示更改项目modal
       showUpdateDescribe: false,//是否显示更改描述modal
       showUpdateOs: false,//是否显示更改操作系统modal
-      os: {},//操作系统
+      os: '',//操作系统
       osList: [],//所有操作系统列表
       ruleForm: {
         name: '',
@@ -257,15 +254,42 @@ export default {
       rules: {
         name: [
           {
-            required: true,
-            message: "请填写新名称",
-            trigger: "blur"
+            validator: (rule, value, callback) => {
+              if (value === '') {
+                callback(new Error('集群名称不能为空'))
+              } else if (!(/^[a-z][a-z\d-]*$/.test(value))) {
+                callback(new Error('集群名称格式不正确'))
+              } else {
+                callback()
+              }
+            },
+            trigger: "blur",
+            required: true
           }
         ],
         projectId: [
           {
             required: true,
-            message: "请选择项目",
+            validator: (rule, value, callback) => {
+              if (value === '') {
+                callback(new Error('请选择项目'))
+              } else {
+                callback()
+              }
+            },
+            trigger: "change"
+          }
+        ],
+        textarea: [
+          {
+            required: true,
+            validator: (rule, value, callback) => {
+              if (value === '') {
+                callback(new Error('请选择项目'))
+              } else {
+                callback()
+              }
+            },
             trigger: "blur"
           }
         ]
@@ -459,7 +483,6 @@ export default {
         if (valid) {
           this.updateName();
         } else {
-          console.log('error submit!!')
           return false
         }
       });
@@ -506,9 +529,40 @@ export default {
       });
     },
 
+    //选择系统
+    changeOs(val) {
+debugger
+    },
     //提交修改系统
     async submitOsForm(formName) {
-      // UPDATE_OS
+      this.loadShow = true;
+      let param = {
+        Version: "2018-05-25",
+        ClusterId: this.clusterId,
+        OsCustomizeType: "GENERAL",
+        ImageId: this.os
+      }
+
+      await this.axios.post(UPDATE_OS, param).then(res => {
+        if(res.Response.Error === undefined) {
+          this.getColonyInfo();
+          this.showUpdateOs = false;
+          this.loadShow = false;
+        } else {
+          this.loadShow = false;
+          let ErrTips = {
+            
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
+      // 
       console.log(this.os,"os");
     },
 

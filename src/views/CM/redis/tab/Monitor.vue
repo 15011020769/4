@@ -84,6 +84,7 @@
     ALL_Basics,
     All_MONITOR
   } from '@/constants'
+
   export default {
     data() {
       return {
@@ -143,6 +144,75 @@
         Time: {}, //监控传递时间
         MonitorData: [], //监控数据
         tableData: [], // 组合数据
+        available: [
+          'BigValueMin',
+          'BigValueNodeMin',
+          'CacheHitRatioMin',
+          'CacheHitRatioNodeMin',
+          'CmdstatDelNodeMin',
+          'CmdstatFlushallNodeMin',
+          'CmdstatFlushdbNodeMin',
+          'CmdstatGetbitNodeMin',
+          'CmdstatGetrangeNodeMin',
+          'CmdstatGetNodeMin',
+          'CmdstatHgetallNodeMin',
+          'CmdstatHgetNodeMin',
+          'CmdstatHmget',
+          'CmdstatHmgetNodeMin',
+          'CmdstatHmsetNodeMin',
+          'CmdstatHsetnxNodeMin',
+          'CmdstatHsetNodeMin',
+          'CmdstatLsetNodeMin',
+          'CmdstatMgetNodeMin',
+          'CmdstatMsetnxNodeMin',
+          'CmdstatMsetNodeMin',
+          'CmdstatSetbitNodeMin',
+          'CmdstatSetexNodeMin',
+          'CmdstatSetnxNodeMin',
+          'CmdstatSetrangeNodeMin',
+          'CmdstatSetNodeMin',
+          'CmdErrMin',
+          'CmdErrNodeMin',
+          'ConnectionsMin',
+          'ConnectionsUsMin',
+          'CpuMaxUsMin',
+          'CpuUsNodeMin',
+          'EvictedKeysMin',
+          'EvictedKeysNodeMin',
+          'ExpiredKeysMin',
+          'ExpiredKeysNodeMin',
+          'GossipInFlowNodeMin',
+          'GossipOutFlowNodeMin',
+          'InFlowMin',
+          'InFlowUsMin',
+          'KeysMin',
+          'KeysNodeMin',
+          'LatencyGetMin',
+          'LatencyGetNodeMin',
+          'LatencyMin',
+          'LatencyNodeMin',
+          'LatencyOtherMin',
+          'LatencyOtherNodeMin',
+          'LatencySetNodeMin',
+          'MemsizeDatasetNodeMin',
+          'MemsizeOverheadNodeMin',
+          'OutFlowMin',
+          'OutFlowNodeMin',
+          'OutFlowUsMin',
+          'QpsNodeMin',
+          'SlowQuery',
+          'SlowQueryNodeMin',
+          'StatGetNodeMin',
+          'StatMissedNodeMin',
+          'StatOtherNodeMin',
+          'StatSetNodeMin',
+          'StatSuccessNodeMin',
+          'Storage',
+          'StorageMaxUsMin',
+          'StorageNodeMin',
+          'StorageSlopeNodeMin',
+          'StorageUsNodeMin',
+        ], //可用指标
         disName: {
           'Bigkey': '大key数量',
           'BigValue': '执行次数',
@@ -634,14 +704,17 @@
         this.axios.post(ALL_Basics, parms).then(res => {
           if (res.Response.Error == undefined) {
             this.BaseList = res.Response.MetricSet
-            this.BaseList.splice(0, 1)
             this.MonitorData = []
             this.BaseListK = []
             this.BaseList.forEach(item => {
-              if (item.Period.indexOf(Number(this.Period)) !== -1) {
-                this.BaseListK.push(item)
-                this._GetMonitorData(item.MetricName)
-              }
+              this.available.forEach(element => {
+                if (item.MetricName === element) {
+                  if (item.Period.indexOf(Number(this.Period)) !== -1) {
+                    this.BaseListK.push(item)
+                    this._GetMonitorData(item.MetricName)
+                  }
+                }
+              });
             });
           } else {
             this.$message({

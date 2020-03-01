@@ -142,3 +142,7 @@ export const DESCRIBE_BOT_UCB_PREINSTALLRULE = 'waf2/DescribeBotUCBPreinstallRul
 export const COPY_BOT_UCB_PREINSTALL_RULE = 'waf2/CopyBotUCBPreinstallRule'
 /** Bot_V2 UCB预设规则更新 */
 export const MODIFY_BOT_UCB_PREINSTALL_RULE = 'waf2/ModifyBotUCBPreinstallRule'
+/** Bot_V2 UCB自定义策略删除 */
+export const DELETE_BOT_UCB_FEATURE_RULE = 'waf2/DeleteBotUCBFeatureRule'
+/** Bot_V2 UCB自定义策略拷贝 */
+export const COPY_BOT_UCB_FEATURE_RULES = 'waf2/CopyBotUCBFeatureRules'

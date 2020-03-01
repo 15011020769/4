@@ -147,17 +147,106 @@
         Time: {}, //监控传递时间
         MonitorData: [], //监控数据
         tableData: [], // 组合数据
+        available: [
+          'AccOuttraffic',
+          'BaseCpuUsage',
+          'Cpuloadavg15m',
+          'Cpuloadavg5m',
+          'CpuLoadavg',
+          'CpuUsage',
+          'DiskIoAwait',
+          'DiskReadIops',
+          'DiskReadTrafficNew',
+          'DiskSvctm',
+          'DiskUtil',
+          'DiskWriteTrafficNew',
+          'LanInpkg',
+          'LanIntraffic',
+          'LanOutpkg',
+          'LanOuttraffic',
+          'MemUsage',
+          'MemUsed',
+          'TcpCurrEstab',
+          'WanInpkg',
+          'WanIntraffic',
+          'WanOutpkg',
+          'WanOuttraffic'
+        ], //可用指标
         disName: {
-
-
+          'LanOuttraffic': '内网出带宽',
+          'LanIntraffic': '内网入带宽',
+          'LanOutpkg': '内网出包量',
+          'LanInpkg': '内网入包量 ',
+          'WanOuttraffic': '外网出带宽',
+          'WanIntraffic': '外网入带宽 ',
+          'AccOuttraffic': '外网出流量',
+          'WanOutpkg': '外网出包量',
+          'WanInpkg': '外网入包量',
+          'CpuUsage': 'CPU使用率',
+          'CpuLoadavg': 'CPU平均负载',
+          'MemUsed': '内存使用量',
+          'MemUsage': '内存利用率',
+          'TcpCurrEstab': 'TCP连接数',
+          'BaseCpuUsage': '基础CPU使用率',
+          'Cpuloadavg15m': 'CPU平均负载',
+          'Cpuloadavg5m': 'CPU平均负载',
+          'DiskIoAwait': 'IO Await',
+          'DiskReadIops': '读IOPS',
+          'DiskReadTrafficNew': '读流量',
+          'DiskSvctm': 'IO Svctm',
+          'DiskUtil': 'IO %util',
+          'DiskWriteTrafficNew': '写流量',
         },
         Company: {
-
+          'LanOuttraffic': 'Mbps',
+          'LanIntraffic': 'Mbps',
+          'LanOutpkg': '个/s',
+          'LanInpkg': '个/s ',
+          'WanOuttraffic': 'Mbps',
+          'WanIntraffic': 'Mbps ',
+          'AccOuttraffic': '个/s',
+          'WanOutpkg': '个/s',
+          'WanInpkg': '个/s',
+          'CpuUsage': '%',
+          'CpuLoadavg': '',
+          'MemUsed': 'MB',
+          'MemUsage': '%',
+          'TcpCurrEstab': '个',
+          'BaseCpuUsage': '%',
+          'Cpuloadavg15m': '',
+          'Cpuloadavg5m': '',
+          'DiskIoAwait': 'ms',
+          'DiskReadIops': '个',
+          'DiskReadTrafficNew': 'KB/s',
+          'DiskSvctm': 'ms',
+          'DiskUtil': 'ms',
+          'DiskWriteTrafficNew': 'KB/s',
         },
         Tips: {
-
+          'AccOuttraffic': '外网网卡的平均每秒出流量',
+          'BaseCpuUsage': ' 基础CPU使用率通过宿主机采集上报，无须安装监控组件即可查看数据，子机高负载情况下仍可持续采集上报数据',
+          'Cpuloadavg15m': '15分钟内CPU平均负载，取 /proc/loadavg 第三列数据（windows操作系统无此指标），依赖监控组件安装采集',
+          'Cpuloadavg5m': ' 5分钟内CPU平均负载，取 /proc/loadavg 第二列数据（windows操作系统无此指标），依赖监控组件安装采集',
+          'CpuLoadavg': '1分钟内CPU平均负载，取 /proc/loadavg 第一列数据（windows操作系统无此指标），依赖监控组件安装采集',
+          'CpuUsage': 'CPU利用率是通过CVM子机内部监控组件采集上报，数据更加精准',
+          'DiskIoAwait': ' 磁盘分区I/O平均每次操作的等待时间',
+          'DiskReadIops': '磁盘分区平均每秒读次数',
+          'DiskReadTrafficNew': '平均每秒从磁盘读到内存的数据量',
+          'DiskSvctm': '磁盘分区平均每次I/O操作所花的时间',
+          'DiskUtil': '磁盘分区有IO操作的时间与总时间的百分比',
+          'DiskWriteTrafficNew': '平均每秒从内存写到磁盘的数据量',
+          'LanInpkg': '内网网卡的平均每秒入包量',
+          'LanIntraffic': '内网网卡的平均每秒入流量',
+          'LanOutpkg': '内网网卡的平均每秒出包量',
+          'LanOuttraffic': '内网网卡的平均每秒出流量',
+          'MemUsage': '用户实际使用的内存量与总内存量之比，不包括缓冲区与系统缓存占用的内存',
+          'MemUsed': ' 使用的内存量，不包括系统缓存和缓存区占用内存，依赖监控组件安装采集',
+          'TcpCurrEstab': '处于 ESTABLISHED 状态的 TCP 连接数量，依赖监控组件安装采集',
+          'WanInpkg': '外网平均每秒入包量',
+          'WanIntraffic': '外网平均每秒入流量',
+          'WanOutpkg': '外网平均每秒出包量',
+          'WanOuttraffic': '外网平均每秒出流量，最小粒度数据为10秒总流量/10秒 计算得出'
         },
-
       }
     },
     components: {
@@ -176,7 +265,6 @@
           });
           if (this.BaseListK.length == val.length) {
             this.tableData = this.BaseListK
-            console.log(this.tableData)
             this.TableLoad = false
           }
         }
@@ -202,11 +290,17 @@
             this.MonitorData = []
             this.BaseListK = []
             this.BaseList.forEach(item => {
-              if (item.Period.indexOf(Number(this.Period)) !== -1) {
-                this.BaseListK.push(item)
-                this._GetMonitorData(item.MetricName)
-              }
+              this.available.forEach(element => {
+                if (item.MetricName === element) {
+                  if (item.Period.indexOf(Number(this.Period)) !== -1) {
+                    this.BaseListK.push(item)
+                    this._GetMonitorData(item.MetricName)
+                  }
+                }
+              });
+
             });
+
           } else {
             this.$message({
               message: ErrorTips[res.Response.Error.Code],

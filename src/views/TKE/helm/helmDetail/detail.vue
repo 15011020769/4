@@ -1,7 +1,7 @@
 <template>
     <div class="room">
         <div class="room-padding">
-            <el-card>
+            <el-card v-if="this.Data&&this.info">
                 <h3>基本信息</h3>
                  <el-form  class="tke-form top"  label-position='left' label-width="120px" size="mini">
                     <el-form-item label="Helm名称">
@@ -25,49 +25,73 @@
                 <h3>资源列表</h3>
                  <el-table
                     style="width: 100%"
-                    class="top">
+                    class="top"
+                    :data="tableDate">
                     <el-table-column
-                        prop="date"
+                        prop="resource"
                         label="资源"
                         max-width="33%">
                     </el-table-column>
                     <el-table-column
-                        prop="name"
+                        prop="type"
                         label="类型"
                         max-width="33%">
                     </el-table-column>
                     <el-table-column
-                        prop="address"
                         label="操作"
-                        max-width="34%">
-                        <div>查看YAML</div>
+                        max-width="34%"
+                        prop="yaml">
+                        <template slot-scope="scope" >
+                            <a style="cursor:pointer;" @click="getYaml(scope.row.yaml)">查看YAML</a>
+                        </template>
                     </el-table-column>
                  </el-table>
             </el-card>
-            <el-card class="top">
+            <el-card class="top" v-show="see">
                 <h3>自定义参数列表</h3>
                 <div class="top">
                     <div class="background" ><p v-for="(item,index) in count" :key="index" style="color:white">{{index+1}}&nbsp{{item}}</p></div>
                 </div>
             </el-card>
-            <el-card class="top">
+            <el-card class="top" v-if="info">
                 <h3>资源状态</h3>
                 <el-switch v-model="flag" class="pose"></el-switch>
                 <div class="top">
                     <div class="background">
-                        <div style="color:white">
+                        <pre style="color:white">
                             {{info.info.status.resources}}
-                        </div>
+                        </pre>
                     </div>
                 </div>
             </el-card>
         </div>
+        <el-dialog
+            title="查看YAML"
+            :visible.sync="centerDialogVisible"
+            width="60%"
+            >
+            <div class="yaml">
+                <codemirror style="background-color: #303133;"  ref="myCm"  :value="yamlInfo"  class="code" >
+                </codemirror>
+            </div>
+        </el-dialog>
     </div>
 </template>
 <script>
 import { ErrorTips } from "@/components/ErrorTips"
 import { POINT_REQUEST } from '@/constants'
+import 'codemirror/lib/codemirror.css';
+import { codemirror } from 'vue-codemirror'
+  require("codemirror/mode/python/python.js")
+  require('codemirror/addon/fold/foldcode.js')
+  require('codemirror/addon/fold/foldgutter.js')
+  require('codemirror/addon/fold/brace-fold.js')
+  require('codemirror/addon/fold/xml-fold.js')
+  require('codemirror/addon/fold/indent-fold.js')
+  require('codemirror/addon/fold/markdown-fold.js')
+  require('codemirror/addon/fold/comment-fold.js')
 export default {
+    
     name:'HelmDetails',
     data(){
         return{
@@ -75,7 +99,11 @@ export default {
             Data:"",
             raw:[],
             count:[],
-            flag:true
+            flag:true,
+            tableDate:[],
+            centerDialogVisible:false,
+            yamlInfo:"",
+            see:true
         }
     },
     created(){
@@ -83,7 +111,13 @@ export default {
         this.getHelmList()
     },
     methods:{
-        // 详情1
+        getYaml(row){
+            console.log(row)
+            this.centerDialogVisible = true
+            this.yamlInfo = row
+            
+        },
+        // 详情
         getHelmDetail(){
             const param = {
                 ClusterName: this.$route.query.clusterId,
@@ -96,6 +130,8 @@ export default {
             if (res.Response.Error == undefined) {
                 this.info=JSON.parse(res.Response.ResponseBody)
                 console.log(this.info)
+                // console.log(this.info.manifest)
+               
                 // console.log(res)
                 // this.options = res.Response.Clusters
                 // this.value = res.Response.Clusters[0].ClusterId
@@ -123,14 +159,43 @@ export default {
             // console.log(res)
             if (res.Response.Error == undefined) {
                 this.Data=JSON.parse(res.Response.ResponseBody).release
-                this.raw =JSON.parse(res.Response.ResponseBody).release.config.raw
-                let rawDetail = JSON.parse(this.raw)
-                // console.log(rawDetail)
-                for(let key in rawDetail){
-                    this.count.push("'"+key+"'"+":"+"'"+rawDetail[key]+"'")
+                var conYaml = this.Data.manifest.split("#")
+                this.tableDate.push( {
+                    resource:this.Data.name+"-zookeeper-headless",
+                    type:"Service",
+                    yaml:conYaml[1]
+                },
+                {
+                    resource:this.Data.name+"-zookeeper",
+                    type:"Service",
+                    yaml:conYaml[2]
+                },
+                {
+                    resource:this.Data.name+"-zookeeper",
+                    type:"StatefulSet",
+                    yaml:conYaml[3]
+                },
+                {
+                    resource:this.Data.name+"-zookeeper",
+                    type:"PodDisruptionBudget",
+                    yaml:conYaml[4]
+                })
+                this.raw =JSON.parse(res.Response.ResponseBody).release
+                let rawDetail = JSON.parse(this.raw).config.raw
+                if(this.raw  == "undefined" || this.raw ==""){
+                    console.log(3)
+                    this.see =false
+                }else{
+                    console.log(4)
+                    this.see = true
+                     for(let key in rawDetail){
+                        this.count.push("'"+key+"'"+":"+"'"+rawDetail[key]+"'")
+                    }
                 }
+               
+                console.log(this.tableDate)
                 // console.log(this.count)
-                console.log(this.Data)
+               
             } else {
                 let ErrTips = {};
                 let ErrOr = Object.assign(ErrorTips, ErrTips);
@@ -157,7 +222,10 @@ export default {
                 m < 10 ? m = "0" + m : m
                 return n + '-' + y + '-' + r + ' ' + h + ':' + m + ':' + s
             }
-        }
+        },
+        components: {
+            codemirror
+        },
 }
 </script>
 <style lang="scss" scoped>
@@ -178,5 +246,9 @@ export default {
     position:absolute;
     right:20px;
     top:20px;
+}
+.yaml{
+    width:100%;
+    background:#303133;
 }
 </style>

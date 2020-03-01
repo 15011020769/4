@@ -186,7 +186,6 @@ export default {
             value: rule.value,
             showMatchDialog: false
           }))
-          console.log(ucbrule)
           if (ucbrule.action !== CUSTOM_SESSION_ACTION.重定向) {
             ucbrule.addition_arg = ''
           }

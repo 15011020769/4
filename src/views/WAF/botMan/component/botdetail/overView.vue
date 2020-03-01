@@ -129,19 +129,25 @@ export default {
     chinaMap,
   },
   watch: {
-    times(val) {
-      this.init()
+    times(val, oldVal) {
+      if (val.join() !== oldVal.join()) {
+        this.init()
+      }
     },
     domain(val) {
       this.init()
     },
     radio(val) {
       this.radio = val
-      this.getBotRegions()
+      if(this.domain) {
+        this.getBotRegions()
+      }
     },
     botType(val) {
       this.botType = val
-      this.getBotRegions()
+      if(this.domain) {
+        this.getBotRegions()
+      }
     }
   },
   mounted() {
@@ -162,13 +168,13 @@ export default {
       // 获取业务攻击趋势参数获取时间值
       const paramsPeakPoints = {
         Version: '2018-01-25',
-        FromTime: this.times[0].format("YYYY-MM-DD HH:mm:ss"),
-        ToTime: this.times[1].format("YYYY-MM-DD HH:mm:ss"),
+        FromTime: moment(this.times[0]).format("YYYY-MM-DD HH:mm:ss"),
+        ToTime: moment(this.times[1]).format("YYYY-MM-DD HH:mm:ss"),
       }
      const params = {
         Version: "2018-01-25",
-        StartTs: moment(this.times[0]).utc().valueOf(),
-        EndTs: moment(this.times[1]).utc().valueOf(),
+        StartTs: this.times[0],
+        EndTs: this.times[1],
         Stride: 2,
         Domain: this.domain,
       }
@@ -198,8 +204,8 @@ export default {
     getBotType() {
      const params = {
         Version: "2018-01-25",
-        StartTs: moment(this.times[0]).utc().valueOf(),
-        EndTs: moment(this.times[1]).utc().valueOf(),
+        StartTs: this.times[0],
+        EndTs: this.times[1],
         Domain: this.domain,
       }
       this.axios.post(DESCRIBE_BOT_TYPE_STAT, params).then((resp) => {
@@ -214,8 +220,8 @@ export default {
     getBotAction() {
      const params = {
         Version: "2018-01-25",
-        StartTs: moment(this.times[0]).utc().valueOf(),
-        EndTs: moment(this.times[1]).utc().valueOf(),
+        StartTs: this.times[0],
+        EndTs: this.times[1],
         Domain: this.domain,
       }
       this.axios.post(DESCRIBE_BOT_ACTION_STAT, params).then((resp) => {
@@ -231,8 +237,8 @@ export default {
     getBotRegions() {
       const params = {
         Version: "2018-01-25",
-        StartTs: moment(this.times[0]).utc().valueOf(),
-        EndTs: moment(this.times[1]).utc().valueOf(),
+        StartTs: this.times[0],
+        EndTs: this.times[1],
         Domain: this.domain,
         Scope: this.radio,
         BotType: this.botType,
