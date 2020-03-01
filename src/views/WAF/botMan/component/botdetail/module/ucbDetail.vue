@@ -9,49 +9,6 @@
         <el-tab-pane label="公开类型" name="tcb"></el-tab-pane>
       </el-tabs>
     </div>
-    <div class="wrapper">
-      <div class="topTip" v-if="tipShow">
-        <p style="width: 99%">BOT 行为管理能够对友好及恶意机器人程序进行甄别分类，并采取针对性的流量管理策略，如放通搜索引擎类机器人流量，而对恶意数据爬取商品信息流量采取不响应或减缓响应或差异化响应策略，能够应对恶意机器人程序爬取带来的资源消耗，信息泄露及无效营销问题，同时也保障友好机器人程序（如搜索引擎，广告程序）的正常运行。了解更多</p>
-        <span class="el-icon-close" @click="closeTip"></span>
-      </div>
-      <el-row type="flex" class="topSelect">
-        <el-select
-          v-model="domainValue"
-          filterable
-          class="selectDomin"
-          default-first-option
-          size="small"
-        >
-          <el-option
-            v-for="item in options"
-            :key="item.Domain"
-            :label="item.Domain"
-            :value="item.Domain"
-          ></el-option>
-        </el-select>
-        <el-button-group>
-          <el-button @click="checkTime(1)" :class="selBtn=='1'?'addStyleBtn':''">近1小时</el-button>
-          <el-button @click="checkTime(2)" :class="selBtn=='2'?'addStyleBtn':''">近6小时</el-button>
-          <el-button @click="checkTime(3)" :class="selBtn=='3'?'addStyleBtn':''">今天</el-button>
-          <el-button @click="checkTime(4)" :class="selBtn=='4'?'addStyleBtn':''">昨天</el-button>
-          <el-button @click="checkTime(5)" :class="selBtn=='5'?'addStyleBtn':''">近7天</el-button>
-        </el-button-group>
-        <el-date-picker
-            v-model="dateTimeValue"
-            type="datetimerange"
-            class="timeValue"
-            range-separator="至"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期"
-            :clearable= false
-            @change="changeTimeValue"
-          ></el-date-picker>
-      </el-row>
-      <over-view :domain="domainValue" :times="dateTimeValue" v-if="routerParams == 'overview'"></over-view>
-      <Ub :domain="domainValue" :times="dateTimeValue" v-if="routerParams == 'ub'"></Ub>
-      <Ucb :domain="domainValue" :times="dateTimeValue" v-if="routerParams == 'ucb'"></Ucb>
-      <Tcb :domain="domainValue" :times="dateTimeValue" v-if="routerParams == 'tcb'"></Tcb>
-    </div>
   </div>
 </template>
 

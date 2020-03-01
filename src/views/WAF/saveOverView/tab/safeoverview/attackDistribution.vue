@@ -38,10 +38,7 @@ export default {
   },
   data() {
     return {
-      seriesMap: [{
-        name: '中国',
-        value: 2
-      },]
+      seriesMap: []
     }
   },
   mounted() {
@@ -60,10 +57,17 @@ export default {
       if (this.domain) {
         params["Host"] = this.domain
       }
+      let regionsArr = []
       this.axios.post(DESCRIBE_ATTACK_WORLD_MAP, params).then((resp) => {
-        this.generalRespHandler(resp, (res) => {
-            console.log(res)
+        this.generalRespHandler(resp, ({Map}) => {
+          Map.map(v => {
+            regionsArr.push({
+              name: v.Country,
+              value: v.Count
+            })
           })
+        })
+        this.seriesMap = regionsArr
       })
     },
   }
