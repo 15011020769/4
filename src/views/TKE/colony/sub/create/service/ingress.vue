@@ -418,7 +418,7 @@ export default {
             'kubernetes.io/ingress.extensiveParameters': '{"AddressIPVersion":"IPV4"}',
             'kubernetes.io/ingress.http-rules': JSON.stringify(httpRules),
             'kubernetes.io/ingress.https-rules': JSON.stringify(httpsRules),
-            'kubernetes.io/ingress.rule-mix': 'false'
+            'kubernetes.io/ingress.rule-mix': `${checkedtwo}`
           }
         },
         'spec': {
@@ -438,6 +438,11 @@ export default {
       }
       await this.axios.post(POINT_REQUEST, param).then(res => {
         if (res.Response.Error === undefined) {
+          this.$message({
+            message: '新建成功',
+            showClose: true,
+            duration: 2000
+          })
           this.$router.replace({
             path: '/colony/sub/detail/service/ingress/event',
             query: {
