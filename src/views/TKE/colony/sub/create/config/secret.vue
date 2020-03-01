@@ -110,17 +110,6 @@
                 >新增变量名格式不正确，只能包含字母、数字及分隔符("-"、"_"、".")，且必须以字母、数字开头和结尾</p>
               </div>
             </el-form-item>
-            <!-- <el-form-item label="内容">
-              <div style="width:400px;">
-                头部
-                <div class="flex f12 header">
-                  <div class="pl5" style="width:800px;">变量名</div>
-                  <div class="pl5" style="width:50%">变量值</div>
-                </div>
-                不用了
-                <addSecret></addSecret>
-              </div>
-            </el-form-item>-->
           </div>
           <div v-if="se.tabPosition=='dt'">
             <el-form-item label="仓库域名">
@@ -254,25 +243,80 @@ export default {
         return false;
       }
       // var params = {
-      //   ClusterName: this.clusterId,
       //   Method: "POST",
-      //   Path: "/api/v1/namespaces/" + this.se.value + "/configmaps",
-      //   RequestBody: {
-      //     kind: "ConfigMap",
-      //     apiVersion: "v1",
-      //     metadata: { name: this.se.name, namespace: this.se.value },
-      //     data: obj
-      //   },
-      //   Version: "2018-05-25"
+      //   Path:
+      //     "/apis/platform.tke/v1/clusters/cls-kfq6mwl8/apply?notUpdate=true",
+      //   Version: "2018-05-25",
+      //   RequestBody:
+      //     '{"kind":"Secret","apiVersion":"v1","metadata":{"name":"asdasd","namespace":"default","labels":{"qcloud-app":"asdasd"}},"type":"Opaque","data":{"aaa":"c3Nzcw==","bbb":"Y2NjYw=="}}',
+      //   ClusterName: "cls-kfq6mwl8"
       // };
-      // if (!this.errorShow) {
-      //   this.axios.post(TKE_COLONY_QUERY, params).then(res => {
-      //   this.$router.push({ name: "secret" });//预留跳转
-      //     if (res.Response.Error == undefined) {
-      //       this.$router.go(-1);
-      //     }
-      //   });
-      // }
+      //       Path: "/apis/platform.tke/v1/clusters/cls-kfq6mwl8/apply?notUpdate=true"
+      // Version: "2018-05-25"
+      // RequestBody: "{"kind":"Secret","apiVersion":"v1","metadata":{"name":"aaaaaaa","namespace":"default","labels":{"qcloud-app":"aaaaaaa"}},"type":"kubernetes.io/dockercfg","data":{".dockercfg":"eyJhYWEiOnsidXNlcm5hbWUiOiJhYWFhYWEiLCJwYXNzd29yZCI6ImFhYWFhYWFhYWExMjMiLCJhdXRoIjoiWVdGaFlXRmhPbUZoWVdGaFlXRmhZV0V4TWpNPSJ9fQ=="}}"
+      // ClusterName: "cls-kfq6mwl8"
+
+// RequestBody: "{"kind":"Secret","apiVersion":"v1","metadata":{"name":"asda","namespace":"default","labels":{"qcloud-app":"asda"}},"type":"kubernetes.io/dockercfg","data":{".dockercfg":"eyJodHRwOi8vMTIzLjEuMS4xOjkwOTAiOnsidXNlcm5hbWUiOiJ1c2VyIiwicGFzc3dvcmQiOiJhc2QxMjMiLCJhdXRoIjoiZFhObGNqcGhjMlF4TWpNPSJ9fQ=="}}"
+// ClusterName: "cls-kfq6mwl8"
+
+
+// "{"kind":"Secret","apiVersion":"v1","metadata":{"name":"aaaaa","namespace":"default","labels":{"qcloud-app":"aaaaa"}},"type":"Opaque","data":{"asd":"YXNkYXNk","dasasd":"YXNkYXNkYQ=="}}"
+// ClusterName: "cls-kfq6mwl8"
+ 
+      var params = {
+        ClusterName: this.clusterId,
+        Method: "POST",
+        Path:
+          "/apis/platform.tke/v1/clusters/" +
+          this.clusterId +
+          "/apply?notUpdate=true",
+        RequestBody: {
+          kind: "Secret",
+          apiVersion: "v1",
+          metadata: {
+            name: "sssssssssssssssssssssss",
+            namespace: "default",
+            labels: { "qcloud-app": "sssssssssssssssssssssss" }
+          },
+          type: "Opaque",
+          data: obj
+        },
+        Version: "2018-05-25"
+      };
+      var params = {
+        ClusterName: this.clusterId,
+        Method: "POST",
+        Path:
+          "/apis/platform.tke/v1/clusters/" +
+          this.clusterId +
+          "/apply?notUpdate=true",
+        RequestBody: {
+          kind: "Secret",
+          apiVersion: "v1",
+          metadata: {
+            name: "sssssssssssssssssssssss",
+            namespace: "default",
+            labels: { "qcloud-app": "sssssssssssssssssssssss" }
+          },
+          type: "Opaque",
+          data: {".dockercfg":""}
+        },
+        Version: "2018-05-25"
+      };
+
+      // {"kind":"Secret","apiVersion":"v1","metadata":{"name":"sssssssssssssssssssssss",
+      // "namespace":"default","labels":{"qcloud-app":"sssssssssssssssssssssss"}},
+      // "type":"Opaque","data":{"asd":"YXNkYXNk"}}"
+      // ClusterName: "cls-kfq6mwl8"
+
+      if (!this.errorShow) {
+        this.axios.post(TKE_COLONY_QUERY, params).then(res => {
+          // this.$router.push({ name: "secret" });//预留跳转
+          if (res.Response.Error == undefined) {
+            this.$router.go(-1);
+          }
+        });
+      }
     },
     //命名空间选项
     nameSpaceList() {
@@ -306,7 +350,7 @@ export default {
             message: ErrOr[res.Response.Error.Code],
             type: "error",
             showClose: true,
-            duration: 2000
+            duration: 0
           });
         }
       });
@@ -323,50 +367,6 @@ export default {
         valueKey: ""
       });
     }
-    // getData() {
-    //   //获取列表数据
-    //   if (this.searchInput == "") {
-    //     var params = {
-    //       Method: "GET",
-    //       Path:
-    //         "/api/v1/namespaces/" +
-    //         this.searchType +
-    //         "/secrets?&limit=" +
-    //         this.pageSize,
-    //       Version: "2018-05-25",
-    //       ClusterName: this.clusterId
-    //     };
-    //   } else {
-    //     var params = {
-    //       Method: "GET",
-    //       Path:
-    //         "/api/v1/namespaces/" +
-    //         this.searchType +
-    //         "/secrets?fieldSelector=metadata.name=" +
-    //         this.searchInput,
-    //       Version: "2018-05-25",
-    //       ClusterName: this.clusterId
-    //     };
-    //   }
-
-    //   // this.axios.post(TKE_COLONY_QUERY, params).then(res => {
-    //   //   if (res.Response.Error === undefined) {
-    //   //     var mes = JSON.parse(res.Response.ResponseBody);
-    //   //     this.list = mes.items;
-    //   //     this.total = mes.items.length;
-    //   //     this.loadShow = false;
-    //   //   } else {
-    //   //     let ErrTips = {};
-    //   //     let ErrOr = Object.assign(ErrorTips, ErrTips);
-    //   //     this.$message({
-    //   //       message: ErrOr[res.Response.Error.Code],
-    //   //       type: "error",
-    //   //       showClose: true,
-    //   //       duration: 2000
-    //   //     });
-    //   //   }
-    //   // });
-    // }
   }
 };
 </script>
@@ -474,7 +474,7 @@ textarea {
     padding: 8px 10px;
   }
 }
- .colony-wrap >>>  .el-checkbox,
+.colony-wrap >>> .el-checkbox,
 .el-checkbox__input {
   display: block !important;
 }
