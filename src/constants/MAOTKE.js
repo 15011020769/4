@@ -48,3 +48,6 @@ export const MODIFY_NAME = 'as/ModifyAutoScalingGroup'
 
 //获取节点JOBID
 export const JOB_ID = 'tsm/GetTkeDataJob'
+
+//新建伸缩组
+export const CREATE_GROUP = 'tke2/CreateClusterAsGroup'
