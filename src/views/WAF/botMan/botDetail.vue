@@ -47,7 +47,7 @@
             @change="changeTimeValue"
           ></el-date-picker>
       </el-row>
-      <over-view :domain="domainValue" :times="dateTimeValue" v-if="routerParams == 'overview'"></over-view>
+      <over-view :domain="domainValue" :times="[startTime, endTime]" v-if="routerParams == 'overview'"></over-view>
       <Ub :domain="domainValue" :times="dateTimeValue" v-if="routerParams == 'ub'"></Ub>
       <Ucb :domain="domainValue" :times="dateTimeValue" v-if="routerParams == 'ucb'"></Ucb>
       <Tcb :domain="domainValue" :times="dateTimeValue" v-if="routerParams == 'tcb'"></Tcb>
@@ -68,6 +68,8 @@ export default {
       tipShow: true, //提示文字
       selBtn: 3, // 默认选中今天按钮
       dateTimeValue: [moment().startOf("day"), moment().endOf("day")], // 日期绑定
+      startTime: moment().startOf("days").utc().valueOf(),
+      endTime: moment().endOf("days").utc().valueOf(),
       domainValue: "", // 域名绑定
       activeName: "overview", // 默认选中概览页
       options: [],

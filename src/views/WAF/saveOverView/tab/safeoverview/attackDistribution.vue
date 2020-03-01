@@ -22,7 +22,7 @@ export default {
   watch: {
     showModules(val, oldVal) {
       if (val.join() !== oldVal.join()) {
-        this.init()
+        this.getAttackWorldMap()
       }
     },
     times(val, oldVal) {
@@ -60,7 +60,7 @@ export default {
       let regionsArr = []
       this.axios.post(DESCRIBE_ATTACK_WORLD_MAP, params).then((resp) => {
         this.generalRespHandler(resp, ({Map}) => {
-          Map.map(v => {
+          Map && Map.map(v => {
             regionsArr.push({
               name: v.Country,
               value: v.Count
